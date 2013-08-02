@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-06-17 17:14+0300\n"
-"PO-Revision-Date: 2013-06-17 18:07+0000\n"
+"PO-Revision-Date: 2013-08-02 18:44+0000\n"
 "Last-Translator: Slice <sergey.slice@gmail.com>\n"
 "Language-Team: ru <ru@li.org>\n"
 "Language: ru\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%"
 "10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1371492450.0\n"
+"X-POOTLE-MTIME: 1375469061.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -81,15 +81,14 @@ msgstr "Clover v2"
 msgid ""
 "is open source based on different projects: Clover, rEFIt, XNU, VirtualBox."
 msgstr ""
-"это УЕФИ загрузчик с открытыми исходниками, основанный на образцах от "
-"Tianocore EDK2, и использующий технологии проектов: Chameleon, rEFIt, XNU, "
-"VirtualBox."
+"загрузчик с открытыми исходным кодом, использующий технологии проектов: "
+"Chameleon, rEFIt, XNU, VirtualBox."
 
 #
 #. type: Content of: <html><body><p><span>
 #: Resources/templates/Description.html:18
 msgid "The main is EDK2 latest revision."
-msgstr "В основе лежит EDK2 с учетом последних обновлений.."
+msgstr "В основе лежит EDK2 с учетом последних обновлений."
 
 #
 #. type: Content of: <html><body><p><b>
@@ -111,7 +110,7 @@ msgid ""
 "Legacy Bootloaders"
 msgstr ""
 "- Clover EFI предоставляет системе RuntimeServices, что невозможно для "
-"загрузчиков на основе БИОС."
+"загрузчиков на основе BIOS."
 
 #
 #. type: Content of: <html><body><p>
@@ -120,8 +119,8 @@ msgid ""
 "- mostly Clover do automatic detection of hardware and set all properties by "
 "default."
 msgstr ""
-"- в основном Clover автоматически определяет состав компьютера и выставляет "
-"нужные свойства по умолчанию,"
+"- в основном, Clover автоматически определяет установленное оборудование и "
+"выставляет нужные свойства по умолчанию,"
 
 #
 #. type: Content of: <html><body><p><span>
@@ -139,15 +138,16 @@ msgstr " "
 #: Resources/templates/Description.html:24
 msgid "But user can change them by config.plist"
 msgstr ""
-"но при желании пользователь может установить свои свойства в config.plist"
+"но при желании пользователь может изменять установленные свойства в "
+"config.plist"
 
 #
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:25
 msgid "- with Clover you may restart into other OS from Startup Disk prefPane"
 msgstr ""
-"- вы имеете возможность использовать перезагрузку через Системные настройки-"
-">Стартовый Диск"
+"- вы можете использовать перезагрузку через панель Системные "
+"настройки->Загрузочный том"
 
 #
 #. type: Content of: <html><body><p>
@@ -171,13 +171,15 @@ msgstr "- производится поправка таблиц ACPI до ст�
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:29
 msgid "Custom DSDT will be loaded from booted partition or from EFI folder"
-msgstr "Можно подгрузить свою DSDT либо из корня загружаемой системы,"
+msgstr ""
+"Изменённая DSDT будет загружена из корневого раздела загружаемой системы или "
+"из каталога EFI"
 
 #
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:30
 msgid "- customizable RestartFix and sleep/wake fixes and PCIRootUID value"
-msgstr "- корректировка проблем рестарта и сна-пробуждения"
+msgstr "- корректировка проблем перезагрузки и сна-пробуждения"
 
 #
 #. type: Content of: <html><body><p>
@@ -209,7 +211,7 @@ msgstr "- инжекция свойств звуковой и сетевой к�
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:35
 msgid "- CPU turbo and P- and C-states generator"
-msgstr "- управление питанием и частотами ЦПУ"
+msgstr "- управление питанием и частотами CPU"
 
 #
 #. type: Content of: <html><body><p>
@@ -340,8 +342,13 @@ msgid ""
 "This bootloader is a good choice when you have Windows installed on the same disk because Windows wants to have its partition active.\n"
 "This choice will not activate any partition in MBR."
 msgstr ""
-"Используется для БИОС загрузки. \n"
-"boot0ss (boot0 Signature Scanning) ищет первый раздел типа EFI/FAT32/HFS сначала в таблице MBR, затем в GPT, с правильной сигнатурой. Если таковых не найдено, будет пытаться загрузить активный раздел из MBR.Этот вариант является хорошим выбором, если Виндоус установлен на том же диске, поскольку он требует, чтобы раздел был активным.В этом варианте инсталлятор не активирует выбранный раздел."
+"Используется для легаси загрузки. \n"
+"boot0ss (boot0 Signature Scanning) ищет первый раздел типа EFI/FAT32/HFS "
+"сначала в таблице MBR, затем в GPT, с правильной сигнатурой. Если таковых не "
+"найдено, будет пытаться загрузить активный раздел из MBR.Этот вариант "
+"является хорошим выбором, если Windows установлен на том же диске, поскольку "
+"Windows требует, чтобы раздел был активным. В этом варианте инсталлятор не "
+"активирует выбранный раздел."
 
 #. type: "bootNo_title"
 #: Resources/templates/Localizable.strings:40
