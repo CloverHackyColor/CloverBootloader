@@ -138,25 +138,45 @@ fnDownloadBinutils ()
 # Function: Download Binutils source
 {
     cd $DIR_DOWNLOADS
-    [ ! -f ${DIR_DOWNLOADS}/${BINUTILS_VERSION}.tar.bz2 ] && echo "Status: ${BINUTILS_VERSION} not found." && curl --remote-name http://mirror.aarnet.edu.au/pub/gnu/binutils/${BINUTILS_VERSION}.tar.bz2
+    if [[ ! -f ${DIR_DOWNLOADS}/${BINUTILS_VERSION}.tar.bz2 ]]; then
+        echo "Status: ${BINUTILS_VERSION} not found."
+        curl -f -o download.tmp --remote-name http://mirror.aarnet.edu.au/pub/gnu/binutils/${BINUTILS_VERSION}.tar.bz2 || exit 1
+        mv download.tmp ${BINUTILS_VERSION}.tar.bz2
+    fi
 }
 
 fnDownloadGCC ()
 # Function: Download GCC source
 {
     cd $DIR_DOWNLOADS
-#    [ ! -f ${DIR_DOWNLOADS}/gcc-core-${GCC_VERSION}.tar.bz2 ] && echo "Status: gcc-core not found." && curl --remote-name ftp://ftp.gnu.org/gnu/gcc/gcc-${GCC_VERSION}/gcc-core-${GCC_VERSION}.tar.bz2
-#    [ ! -f ${DIR_DOWNLOADS}/gcc-g++-${GCC_VERSION}.tar.bz2 ] && echo "Status: gcc-g++ not found." && curl --remote-name ftp://ftp.gnu.org/gnu/gcc/gcc-${GCC_VERSION}/gcc-g++-${GCC_VERSION}.tar.bz2
-    [ ! -f ${DIR_DOWNLOADS}/gcc-${GCC_VERSION}.tar.bz2 ] && echo "Status: gcc-${GCC_VERSION} not found." && curl --remote-name http://mirrors.kernel.org/gnu/gcc/gcc-${GCC_VERSION}/gcc-${GCC_VERSION}.tar.bz2
-
+    if [[ ! -f ${DIR_DOWNLOADS}/gcc-${GCC_VERSION}.tar.bz2 ]]; then
+        echo "Status: gcc-${GCC_VERSION} not found."
+        curl -f -o download.tmp --remote-name http://mirrors.kernel.org/gnu/gcc/gcc-${GCC_VERSION}/gcc-${GCC_VERSION}.tar.bz2  || exit 1
+        mv download.tmp gcc-${GCC_VERSION}.tar.bz2
+    fi
 }
 
 fnDownloadSource ()
 {
     cd $DIR_DOWNLOADS
-    [ ! -f ${DIR_DOWNLOADS}/${GMP_VERSION}.tar.bz2 ] && echo "Status: ${GMP_VERSION} not found." && curl --remote-name http://mirror.aarnet.edu.au/pub/gnu/gmp//${GMP_VERSION}.tar.bz2
-    [ ! -f ${DIR_DOWNLOADS}/${MPFR_VERSION}.tar.bz2 ] && echo "Status: ${MPFR_VERSION} not found." && curl --remote-name http://mirror.aarnet.edu.au/pub/gnu/mpfr/${MPFR_VERSION}.tar.bz2
-    [ ! -f ${DIR_DOWNLOADS}/${MPC_VERSION}.tar.gz ] && echo "Status: ${MPC_VERSION} not found." && curl --remote-name http://www.multiprecision.org/mpc/download/${MPC_VERSION}.tar.gz
+    if [[ ! -f ${DIR_DOWNLOADS}/${GMP_VERSION}.tar.bz2 ]]; then
+        echo "Status: ${GMP_VERSION} not found."
+        curl -f -o download.tmp --remote-name http://mirror.aarnet.edu.au/pub/gnu/gmp/${GMP_VERSION}.tar.bz2 || exit 1
+        mv download.tmp ${GMP_VERSION}.tar.bz2
+    fi
+
+    if [[ ! -f ${DIR_DOWNLOADS}/${MPFR_VERSION}.tar.bz2 ]]; then
+        echo "Status: ${MPFR_VERSION} not found."
+        curl -f -o download.tmp --remote-name http://mirror.aarnet.edu.au/pub/gnu/mpfr/${MPFR_VERSION}.tar.bz2 || exit 1
+        mv download.tmp ${MPFR_VERSION}.tar.bz2
+    fi
+
+    if [[ ! -f ${DIR_DOWNLOADS}/${MPC_VERSION}.tar.gz ]]; then
+        echo "Status: ${MPC_VERSION} not found."
+        curl -f -o download.tmp --remote-name http://www.multiprecision.org/mpc/download/${MPC_VERSION}.tar.gz || exit 1
+        mv download.tmp ${MPC_VERSION}.tar.gz
+    fi
+
     fnDownloadBinutils
     fnDownloadGCC
 }
@@ -347,11 +367,11 @@ fnGCC ()
 fnALL ()
 # Functions: Build all source
 {
-    fnDownloadSource
-    fnCompileLibs
-    fnBinutils
-    fnGCC
-    fnMakeSymLinks
+    fnDownloadSource || exit 1
+    fnCompileLibs    || exit 1
+    fnBinutils       || exit 1
+    fnGCC            || exit 1
+    fnMakeSymLinks   || exit 1
 }
 
 fnArchIA32 ()
@@ -374,40 +394,29 @@ fnArchX64 ()
 
 # 1. Argument ARCH
 case "$1" in
-'')
-fnHelp && exit
-;;
-'-help')
-fnHelp && exit
-;;
-'-ia32')
-fnArchIA32
-;;
-'-x64')
-fnArchX64
-;;
-*)
-echo $"Error!"
-echo $"Usage: {ia32|x64|help}"
-exit 1
+    '')      fnHelp && exit ;;
+    '-help') fnHelp && exit ;;
+    '-ia32') fnArchIA32 ;;
+    '-x64')  fnArchX64  ;;
+    *)
+	   echo $"Error!"
+	   echo $"Usage: {ia32|x64|help}"
+	   exit 1
+	   ;;
 esac
 
 # 2. Argument Case
 case "$2" in
-'')
-echo "Example: ./buildgcc.sh -ia32 -all" && exit
-;;
-'-binutils')
-fnBinutils
-;;
-'-gcc')
-fnGCC
-;;
-'-all')
-fnALL
-;;
-*)
-echo $"Error!"
-echo $"Usage: {binutils|gcc|all}"
-exit 1
+    '')
+        echo "Example: ./buildgcc.sh -ia32 -all" && exit ;;
+    '-binutils')
+        fnBinutils ;;
+    '-gcc')
+        fnGCC ;;
+    '-all')
+        fnALL ;;
+    *)
+       echo $"Error!"
+       echo $"Usage: {binutils|gcc|all}"
+       exit 1
 esac
