@@ -613,15 +613,15 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
     }
     dict2 = GetProperty(dict, "Functions");
     if (dict2 && dict2->type == kTagTypeFalse) {
-      GlobalConfig.HideUIFlags |= HIDEUI_FLAG_FUNCTIONS;
+      GlobalConfig.HideUIFlags |= HIDEUI_FLAG_FUNCS;
     }
     dict2 = GetProperty(dict, "Label");
     if (dict2 && dict2->type == kTagTypeFalse) {
-      GlobalConfig.HideUIFlags |= HIDEUI_FLAG_FUNCTIONS;
+      GlobalConfig.HideUIFlags |= HIDEUI_FLAG_LABEL;
     }
     dict2 = GetProperty(dict, "Revision");
     if (dict2 && dict2->type == kTagTypeFalse) {
-      GlobalConfig.HideUIFlags |= HIDEUI_FLAG_FUNCTIONS;
+      GlobalConfig.HideUIFlags |= HIDEUI_FLAG_REVISION;
     }
   }
   dict = GetProperty(dictPointer, "Selection");
