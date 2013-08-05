@@ -609,19 +609,19 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
   if (dict) {
     dict2 = GetProperty(dict, "Banner");
     if (dict2 && dict2->type == kTagTypeFalse) {
-      GlobalConfig.HideUIFlags |= HIDEUI_FLAGS_BANNER;
+      GlobalConfig.HideUIFlags |= HIDEUI_FLAG_BANNER;
     }
     dict2 = GetProperty(dict, "Functions");
     if (dict2 && dict2->type == kTagTypeFalse) {
-      GlobalConfig.HideUIFlags |= HIDEUI_FLAGS_FUNCTIONS;
+      GlobalConfig.HideUIFlags |= HIDEUI_FLAG_FUNCTIONS;
     }
     dict2 = GetProperty(dict, "Label");
     if (dict2 && dict2->type == kTagTypeFalse) {
-      GlobalConfig.HideUIFlags |= HIDEUI_FLAGS_FUNCTIONS;
+      GlobalConfig.HideUIFlags |= HIDEUI_FLAG_FUNCTIONS;
     }
     dict2 = GetProperty(dict, "Revision");
     if (dict2 && dict2->type == kTagTypeFalse) {
-      GlobalConfig.HideUIFlags |= HIDEUI_FLAGS_FUNCTIONS;
+      GlobalConfig.HideUIFlags |= HIDEUI_FLAG_FUNCTIONS;
     }
   }
   dict = GetProperty(dictPointer, "Selection");
