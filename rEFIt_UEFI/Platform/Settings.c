@@ -530,7 +530,7 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
   GlobalConfig.BackgroundName = L"background.png";
   GlobalConfig.BackgroundScale = Crop;
   GlobalConfig.HideBadges = 0;
-  GlobalConfig.HideUiFlags = 0;
+  GlobalConfig.HideUIFlags = 0;
   GlobalConfig.SelectionColor = 0x80808080;
   GlobalConfig.SelectionSmallFileName = L"selection_small.png";
   GlobalConfig.SelectionBigFileName = L"selection_big.png";
@@ -609,19 +609,19 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
   if (dict) {
     dict2 = GetProperty(dict, "Banner");
     if (dict2 && dict2->type == kTagTypeFalse) {
-      GlobalConfig.HideUiFlags |= HIDEUI_FLAGS_BANNER;
+      GlobalConfig.HideUIFlags |= HIDEUI_FLAGS_BANNER;
     }
     dict2 = GetProperty(dict, "Functions");
     if (dict2 && dict2->type == kTagTypeFalse) {
-      GlobalConfig.HideUiFlags |= HIDEUI_FLAGS_FUNCTIONS;
+      GlobalConfig.HideUIFlags |= HIDEUI_FLAGS_FUNCTIONS;
     }
     dict2 = GetProperty(dict, "Label");
     if (dict2 && dict2->type == kTagTypeFalse) {
-      GlobalConfig.HideUiFlags |= HIDEUI_FLAGS_FUNCTIONS;
+      GlobalConfig.HideUIFlags |= HIDEUI_FLAGS_FUNCTIONS;
     }
     dict2 = GetProperty(dict, "Revision");
     if (dict2 && dict2->type == kTagTypeFalse) {
-      GlobalConfig.HideUiFlags |= HIDEUI_FLAGS_FUNCTIONS;
+      GlobalConfig.HideUIFlags |= HIDEUI_FLAGS_FUNCTIONS;
     }
   }
   dict = GetProperty(dictPointer, "Selection");
