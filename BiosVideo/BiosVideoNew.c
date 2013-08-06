@@ -1272,9 +1272,9 @@ BiosVideoCheckForVbe (
 	Regs.X.DX = 1; //block 0
 	Regs.E.ES = EFI_SEGMENT ((UINTN) BiosVideoPrivate->VbeEdidDataBlock);
 	Regs.X.DI = EFI_OFFSET ((UINTN) BiosVideoPrivate->VbeEdidDataBlock);
-	
+
 	LegacyBiosInt86 (BiosVideoPrivate, 0x10, &Regs);
-	
+
 	//
 	// See if the VESA call succeeded
 	//
@@ -1287,7 +1287,7 @@ BiosVideoCheckForVbe (
 	} else {
 		DBG(" Edid1-\n");
 	}
-	
+
 	//Slice - attempt Nr2
 	ZeroMem (&Regs, sizeof (Regs));
 	Regs.X.AX = VESA_BIOS_EXTENSIONS_EDID;
@@ -1296,17 +1296,17 @@ BiosVideoCheckForVbe (
 	Regs.X.DX = 0; //block 1
 	Regs.E.ES = EFI_SEGMENT ((UINTN) BiosVideoPrivate->VbeEdidDataBlock);
 	Regs.X.DI = EFI_OFFSET ((UINTN) BiosVideoPrivate->VbeEdidDataBlock);
-	
+
 	LegacyBiosInt86 (BiosVideoPrivate, 0x10, &Regs);
 	EdidFound = (Regs.X.AX == VESA_BIOS_EXTENSIONS_STATUS_SUCCESS);
 	//&& bvideo_verifyEDID((UINT8 *) BiosVideoPrivate->VbeEdidDataBlock);
-	
+
 	if (!bvideo_verifyEDID((UINT8 *) BiosVideoPrivate->VbeEdidDataBlock)) {
 		//		MsgLog(" Edid broken\n");
 	}
-    //
-    // Parse EDID data structure to retrieve modes supported by monitor
-    //
+  //
+  // Parse EDID data structure to retrieve modes supported by monitor
+  //
 	if (Regs.X.AX == VESA_BIOS_EXTENSIONS_STATUS_SUCCESS)
 	{
 		EdidFound = TRUE;
@@ -1315,66 +1315,66 @@ BiosVideoCheckForVbe (
 	} else {
 		DBG(" Edid0-\n");
 	}
-	
-    if (EdidFound ) {
-		
+
+  if (EdidFound ) {
+
 #ifdef CLOVER_VBIOS_PATCH_IN_CLOVEREFI
 		{
 			UINT8		CloverVBiosPatchDone = 1;
-			
+
 			//
 			// Do video bios patch here and signal to Clover.efi
 			// that we have done (or at least tried) it
 			//
 			VideoBiosPatchNativeFromEdid((UINT8 *)BiosVideoPrivate->VbeEdidDataBlock);
 			gRT->SetVariable (
-							  L"CloverVBiosPatchDone",
-							  &gEfiGlobalVariableGuid,
-							  EFI_VARIABLE_BOOTSERVICE_ACCESS,
-							  sizeof(CloverVBiosPatchDone),
-							  &CloverVBiosPatchDone
-							  );
+                        L"CloverVBiosPatchDone",
+                        &gEfiGlobalVariableGuid,
+                        EFI_VARIABLE_BOOTSERVICE_ACCESS,
+                        sizeof(CloverVBiosPatchDone),
+                        &CloverVBiosPatchDone
+                        );
 		}
 #endif
-		
+
 		BiosVideoPrivate->EdidDiscovered.SizeOfEdid = VESA_BIOS_EXTENSIONS_EDID_BLOCK_SIZE;
 		Status = gBS->AllocatePool (
-									EfiBootServicesData,
-									VESA_BIOS_EXTENSIONS_EDID_BLOCK_SIZE,
-									(VOID**) &BiosVideoPrivate->EdidDiscovered.Edid
-									);
+                                EfiBootServicesData,
+                                VESA_BIOS_EXTENSIONS_EDID_BLOCK_SIZE,
+                                (VOID**) &BiosVideoPrivate->EdidDiscovered.Edid
+                                );
 		if (EFI_ERROR (Status)) {
 			goto Done;
 		}
 		CopyMem (
-				 BiosVideoPrivate->EdidDiscovered.Edid,
-				 BiosVideoPrivate->VbeEdidDataBlock,
-				 VESA_BIOS_EXTENSIONS_EDID_BLOCK_SIZE
-				 );
-		
+             BiosVideoPrivate->EdidDiscovered.Edid,
+             BiosVideoPrivate->VbeEdidDataBlock,
+             VESA_BIOS_EXTENSIONS_EDID_BLOCK_SIZE
+             );
+
 		BiosVideoPrivate->EdidActive.SizeOfEdid = VESA_BIOS_EXTENSIONS_EDID_BLOCK_SIZE;
 		Status = gBS->AllocatePool (
-									EfiBootServicesData,
-									VESA_BIOS_EXTENSIONS_EDID_BLOCK_SIZE,
-									(VOID**)&BiosVideoPrivate->EdidActive.Edid
-									);
+                                EfiBootServicesData,
+                                VESA_BIOS_EXTENSIONS_EDID_BLOCK_SIZE,
+                                (VOID**)&BiosVideoPrivate->EdidActive.Edid
+                                );
 		if (EFI_ERROR (Status)) {
 			goto Done;
 		}
 		CopyMem (
-				 BiosVideoPrivate->EdidActive.Edid,
-				 BiosVideoPrivate->VbeEdidDataBlock,
-				 VESA_BIOS_EXTENSIONS_EDID_BLOCK_SIZE
-				 );
-    } else {
-		EdidFound = FALSE;
-		BiosVideoPrivate->EdidDiscovered.SizeOfEdid = 0;
-		BiosVideoPrivate->EdidDiscovered.Edid = NULL;
+             BiosVideoPrivate->EdidActive.Edid,
+             BiosVideoPrivate->VbeEdidDataBlock,
+             VESA_BIOS_EXTENSIONS_EDID_BLOCK_SIZE
+             );
+  } else {
+    EdidFound = FALSE;
+    BiosVideoPrivate->EdidDiscovered.SizeOfEdid = 0;
+    BiosVideoPrivate->EdidDiscovered.Edid = NULL;
 		
-		BiosVideoPrivate->EdidActive.SizeOfEdid = 0;
-		BiosVideoPrivate->EdidActive.Edid = NULL;
-    }
-	
+    BiosVideoPrivate->EdidActive.SizeOfEdid = 0;
+    BiosVideoPrivate->EdidActive.Edid = NULL;
+  }
+
 	//
 	// Test to see if the Video Adapter is compliant with VBE 3.0
 	//

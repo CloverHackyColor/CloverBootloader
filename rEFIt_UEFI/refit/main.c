@@ -2639,28 +2639,11 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
   // firmware detection
   gFirmwareClover = StrCmp(gST->FirmwareVendor, L"CLOVER") == 0;
-/* no effect
-  if (!gFirmwareClover) {
-    Status = gDS->FreeMemorySpace (
-                                //  EfiGcdMemoryTypeReserved,
-                                  0x9e000,
-                                  LShiftU64 (2, EFI_PAGE_SHIFT)
-                              //    EFI_MEMORY_UC
-                                  );
-    DBG("Free memory space status=%r/n", Status);
-    Status = gDS->RemoveMemorySpace (
-                                   0x9e000,
-                                   LShiftU64 (2, EFI_PAGE_SHIFT)
-                                   );
-    DBG("Remove memory space status=%r/n", Status);
-  }
-*/  
   InitializeConsoleSim();
-//  if (!GlobalConfig.FastBoot) {
-    InitBooterLog();
-    DBG("\n");
-    DBG("Starting rEFIt rev %s on %s EFI\n", FIRMWARE_REVISION, gST->FirmwareVendor);
-//  }
+  InitBooterLog();
+  DBG("\n");
+  DBG("Starting rEFIt rev %s on %s EFI\n", FIRMWARE_REVISION, gST->FirmwareVendor);
+
   Status = InitRefitLib(gImageHandle);
   if (EFI_ERROR(Status))
     return Status;
@@ -2706,6 +2689,10 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   gSettings.PointerEnabled = TRUE;
   gSettings.PointerSpeed = 2;
   gSettings.DoubleClickTime = 500;
+
+  if (!GlobalConfig.FastBoot) {
+    GetListOfThemes();
+  }
   Status = GetEarlyUserSettings(SelfRootDir);
   if (EFI_ERROR(Status)) {
     DBG("Early settings: %r\n", Status);
@@ -2817,6 +2804,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     }
 
     if (!GlobalConfig.FastBoot) {
+      GetListOfThemes();
       if (gThemeNeedInit) {
         InitTheme(TRUE);
         gThemeNeedInit = FALSE;

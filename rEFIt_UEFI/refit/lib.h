@@ -263,6 +263,7 @@ extern INTN ScrollbarYMovement;
 #define SCREEN_TABLES     11
 #define SCREEN_RC_SCRIPTS 12
 #define SCREEN_USB        13
+#define SCREEN_THEME      14
 
 #define MAX_ANIME  40
 
@@ -453,6 +454,8 @@ VOID       PauseForKey(IN CHAR16 *Msg);
 VOID CreateList(OUT VOID ***ListPtr, OUT UINTN *ElementCount, IN UINTN InitialElementCount);
 VOID AddListElement(IN OUT VOID ***ListPtr, IN OUT UINTN *ElementCount, IN VOID *NewElement);
 VOID FreeList(IN OUT VOID ***ListPtr, IN OUT UINTN *ElementCount /*, IN Callback*/);
+
+VOID GetListOfThemes(VOID);
 
 EFI_STATUS ExtractLegacyLoaderPaths(EFI_DEVICE_PATH **PathList, UINTN MaxPaths, EFI_DEVICE_PATH **HardcodedPathList);
 

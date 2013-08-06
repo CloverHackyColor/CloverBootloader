@@ -408,8 +408,14 @@ VOID GetCPUProperties (VOID)
             gCPUStructure.TSCFrequency = MultU64x32(gCPUStructure.MaxSpeed, Mega); //MHz -> Hz
             gCPUStructure.CPUFrequency = gCPUStructure.TSCFrequency;
             msr = AsmReadMsr64(MSR_IA32_PERF_STATUS);
-            TurboMsr = msr + (1 << 8);
+     //       TurboMsr = msr + (1 << 8);
             gCPUStructure.MaxRatio = (UINT32)(RShiftU64(msr, 8)) & 0x1f;
+            TurboMsr = (UINT32)(RShiftU64(msr, 40)) & 0x1f;
+            if (TurboMsr > gCPUStructure.MaxRatio) {
+              DBG(" CPU works at low speed, MaxRatio=%d CurrRatio=%d\n", TurboMsr,
+                  gCPUStructure.MaxRatio);
+    //          gCPUStructure.MaxRatio = TurboMsr;
+            }
             gCPUStructure.SubDivider = (UINT32)(RShiftU64(msr, 14)) & 0x1;
             gCPUStructure.MinRatio = 60;
             if(!gCPUStructure.MaxRatio) gCPUStructure.MaxRatio = 6; // :(
@@ -419,6 +425,9 @@ VOID GetCPUProperties (VOID)
                                 gCPUStructure.MaxRatio * 2 + gCPUStructure.SubDivider);
             gCPUStructure.MaxRatio = gCPUStructure.MaxRatio * 10 + gCPUStructure.SubDivider * 5; 
             gCPUStructure.Turbo4 = (UINT16)(gCPUStructure.MaxRatio + 10);
+            DBG("MSR dumps:\n");
+            DBG("\t@0x00CD=%lx\n", AsmReadMsr64(0xCD));
+            DBG("\t@0x0198=%lx\n", AsmReadMsr64(MSR_IA32_PERF_STATUS));
             break;
           default:
             gCPUStructure.TSCFrequency = MultU64x32(gCPUStructure.CurrentSpeed, Mega); //MHz -> Hz

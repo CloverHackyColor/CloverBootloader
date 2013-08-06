@@ -35,6 +35,9 @@ UINT8                           *gEDID = NULL;
 //UINT16                          gCPUtype;
 UINTN                           NGFX = 0; // number of GFX
 
+UINTN                           ThemesNum = 0;
+CHAR16                          *ThemesList[50]; //no more then 50 themes?
+
 // firmware
 BOOLEAN                         gFirmwareClover = FALSE;
 UINTN                           gEvent;
@@ -519,6 +522,41 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir)
 }
 #define CONFIG_THEME_FILENAME L"theme.plist"
 
+VOID GetListOfThemes()
+{
+  EFI_STATUS Status = EFI_NOT_FOUND;
+  REFIT_DIR_ITER          DirIter;
+	EFI_FILE_INFO           *DirEntry;
+  CHAR16                  *ThemeTestPath;
+  EFI_FILE                *ThemeTestDir = NULL;
+  CHAR8                   *ThemePtr = NULL;
+  UINTN                   Size = 0;
+
+  ThemesNum = 0;
+  DirIterOpen(SelfRootDir, L"\\EFI\\CLOVER\\themes", &DirIter);
+  while (DirIterNext(&DirIter, 1, L"*.EFI", &DirEntry)) {
+    if (DirEntry->FileName[0] == '.'){
+      continue;
+    }
+    DBG("found item %s\n", DirEntry->FileName);
+    ThemeTestPath = PoolPrint(L"EFI\\CLOVER\\themes\\%s", DirEntry->FileName);
+    if (ThemeTestPath) {
+      Status = SelfRootDir->Open(SelfRootDir, &ThemeTestDir, ThemeTestPath, EFI_FILE_MODE_READ, 0);
+      if (!EFI_ERROR(Status)) {
+        Status = egLoadFile(ThemeTestDir, CONFIG_THEME_FILENAME, (UINT8**)&ThemePtr, &Size);
+        if (EFI_ERROR(Status) || (ThemePtr == NULL) || (Size == 0)) {
+          Status = EFI_NOT_FOUND;
+        } else {
+          //we found a theme
+          ThemesList[ThemesNum++] = (CHAR16*)AllocateCopyPool(128, DirEntry->FileName);
+        }
+      }
+      FreePool(ThemeTestPath);
+    }
+  }
+  DirIterClose(&DirIter);
+}
+
 STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
 {
   TagPtr dict, dict2;
@@ -818,6 +856,11 @@ EFI_STATUS InitTheme(BOOLEAN useThemeDefinedInNVRam)
   CHAR8  *ThemePtr = NULL;
   CHAR8  *chosenTheme = NULL;
 
+  if (!ThemesNum) {
+    DBG("No themes found!\n");
+    return EFI_NOT_FOUND;
+  }
+
   // Invalidated BuiltinIcons
   DBG("Invalidating BuiltinIcons...\n");
   for (Index = 0; Index < BUILTIN_ICON_COUNT; Index++) {
@@ -885,8 +928,21 @@ EFI_STATUS InitTheme(BOOLEAN useThemeDefinedInNVRam)
           Status = egLoadFile(ThemeDir, CONFIG_THEME_FILENAME, (UINT8**)&ThemePtr, &Size);
           if (EFI_ERROR(Status) || (ThemePtr == NULL) || (Size == 0)) {
             Status = EFI_NOT_FOUND;
-            DBG("GlobalConfig: %s not found\n", CONFIG_THEME_FILENAME);
-          } else {
+            DBG("GlobalConfig: %s not found, get first theme %s\n", CONFIG_THEME_FILENAME, ThemesList[0]);
+            if (ThemeDir) {
+              ThemeDir->Close(ThemeDir);
+              ThemeDir = NULL;
+            }
+            if (ThemePath) {
+              FreePool(ThemePath);
+            }
+            ThemePath = PoolPrint(L"EFI\\CLOVER\\themes\\%s", ThemesList[0]);
+            Status = SelfRootDir->Open(SelfRootDir, &ThemeDir, ThemePath, EFI_FILE_MODE_READ, 0);
+            if (!EFI_ERROR(Status)) {
+              Status = egLoadFile(ThemeDir, CONFIG_THEME_FILENAME, (UINT8**)&ThemePtr, &Size);
+            }
+          }
+          if (!EFI_ERROR(Status)) {
             Status = ParseXML((const CHAR8*)ThemePtr, &ThemeDict);
             if (EFI_ERROR(Status) || (ThemeDict == NULL)) {
               Status = EFI_UNSUPPORTED;
@@ -2685,10 +2741,8 @@ VOID SetDevices(VOID)
           
           switch (Pci.Hdr.VendorId) {
             case 0x1002:
-              //             gGraphics.Vendor = Ati;
-              //              MsgLog("ATI GFX found\n");
-              //can't do in one step because of C-conventions
               if (gSettings.InjectATI) {
+                //can't do in one step because of C-conventions
                 TmpDirty = setup_ati_devprop(&PCIdevice);
                 StringDirty |=  TmpDirty;
               } else {
@@ -2703,7 +2757,6 @@ VOID SetDevices(VOID)
               } else {
                 MsgLog("Intel GFX injection not set\n");
               }
-
               break;
             case 0x10de:
               if (gSettings.InjectNVidia) {
@@ -2731,21 +2784,18 @@ VOID SetDevices(VOID)
         //USB
         else if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_SERIAL) &&
                  (Pci.Hdr.ClassCode[1] == PCI_CLASS_SERIAL_USB)) {
-          //             MsgLog("USB device found\n");
-          //set properties if no DSDT patch
-          if (!(gSettings.FixDsdt & FIX_USB)) {
+//          if (!(gSettings.FixDsdt & FIX_USB)) {
             if (gSettings.USBInjection) {
               TmpDirty = set_usb_props(&PCIdevice);
               StringDirty |=  TmpDirty;
             }
-          }
+//          }
         }
         
         // HDA
         else if (gSettings.HDAInjection &&
                  (Pci.Hdr.ClassCode[2] == PCI_CLASS_MEDIA) &&
                  (Pci.Hdr.ClassCode[1] == PCI_CLASS_MEDIA_HDA)) {
-          //							MsgLog("HDA device found\n");
           TmpDirty = set_hda_props(PciIo, &PCIdevice);
           StringDirty |=  TmpDirty;
         }

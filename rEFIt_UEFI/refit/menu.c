@@ -67,6 +67,9 @@ static INTN MaxItemOnScreen = -1;
 REFIT_MENU_SCREEN OptionMenu  = {4, L"Options", NULL, 0, NULL, 0, NULL, 0, NULL, FALSE, FALSE, 0, 0, 0, 0,
   {0, 0, 0, 0}, NULL };
 extern REFIT_MENU_ENTRY MenuEntryReturn;
+extern UINTN            ThemesNum;
+extern CHAR16            *ThemesList[];
+
 
 #define SCROLL_LINE_UP        (0)
 #define SCROLL_LINE_DOWN      (1)
@@ -2498,7 +2501,8 @@ REFIT_MENU_ENTRY  *SubMenuGraphics()
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
     
   for (i = 0; i < NGFX; i++) {
-    N = 20 + i * 5;
+    AddMenuInfoLine(SubScreen, PoolPrint(L"Card DeviceID=%04x", gGraphics[i].DeviceID));
+    N = 20 + i * 6;
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
     InputBootArgs->Entry.Title = PoolPrint(L"Model:");
     InputBootArgs->Entry.Tag = TAG_INPUT;
@@ -3346,6 +3350,49 @@ REFIT_MENU_ENTRY  *SubMenuUSB()
 }
 
 
+REFIT_MENU_ENTRY  *SubMenuThemes()
+{
+  REFIT_MENU_ENTRY   *Entry;
+  REFIT_MENU_SCREEN  *SubScreen;
+  REFIT_INPUT_DIALOG *InputBootArgs;
+  CHAR16*           Flags;
+  Flags = AllocateZeroPool(255);
+  UINTN i;
+
+  Entry = AllocateZeroPool(sizeof(REFIT_MENU_ENTRY));
+  Entry->Title = PoolPrint(L"Themes ->");
+  Entry->Image =  OptionMenu.TitleImage;
+  Entry->Tag = TAG_OPTIONS;
+  Entry->AtClick = ActionEnter;
+
+  // create the submenu
+  SubScreen = AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
+  SubScreen->Title = Entry->Title;
+  SubScreen->TitleImage = Entry->Image;
+  SubScreen->ID = SCREEN_THEME;
+  SubScreen->AnimeRun = GetAnime(SubScreen);
+
+  AddMenuInfoLine(SubScreen, L"Installed themes:");
+  for (i = 0; i < ThemesNum; i++) {
+    AddMenuInfoLine(SubScreen, PoolPrint(L"     %s", ThemesList[i]));
+  }
+  
+  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  UnicodeSPrint(Flags, 255, L"Theme:");
+  InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
+  InputBootArgs->Entry.Tag = TAG_INPUT;
+  InputBootArgs->Entry.Row = StrLen(InputItems[3].SValue);
+  InputBootArgs->Item = &InputItems[3];
+  InputBootArgs->Entry.AtClick = ActionSelect;
+  InputBootArgs->Entry.AtRightClick = ActionEnter;
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);  
+
+  AddMenuEntry(SubScreen, &MenuEntryReturn);
+  Entry->SubScreen = SubScreen;
+  return Entry;
+}
+
+
 VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
 {
   REFIT_MENU_ENTRY  *TmpChosenEntry = NULL;
@@ -3398,7 +3445,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
     //3
 	if (AllowGraphicsMode) {
-		InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+/*		InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
 		UnicodeSPrint(Flags, 255, L"Theme:");
 		InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
 		InputBootArgs->Entry.Tag = TAG_INPUT;
@@ -3407,8 +3454,8 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
 		InputBootArgs->Entry.AtClick = ActionSelect;
 		InputBootArgs->Entry.AtRightClick = ActionEnter;
 		AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
-
-    
+*/
+        
 		InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
 		InputBootArgs->Entry.Title = PoolPrint(L"Pointer speed:");
 		InputBootArgs->Entry.Tag = TAG_INPUT;
@@ -3427,6 +3474,8 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
 		InputBootArgs->Entry.AtClick = ActionEnter;
 		InputBootArgs->Entry.AtRightClick = ActionDetails;
 		AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
+
+    AddMenuEntry(&OptionMenu, SubMenuThemes());
 	}
 
  //   DFIndex = OptionMenu.EntryCount;
