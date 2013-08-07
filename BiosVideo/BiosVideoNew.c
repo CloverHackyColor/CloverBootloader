@@ -1389,6 +1389,7 @@ BiosVideoCheckForVbe (
     EdidActiveDataSize  = EdidOverrideDataSize;
     EdidActiveDataBlock = EdidOverrideDataBlock;
     EdidFound = TRUE;
+    ParseEdidData ((UINT8 *)EdidOverrideDataBlock, &ValidEdidTiming);
   } else   if (EdidFound) {
     EdidActiveDataSize  = VESA_BIOS_EXTENSIONS_EDID_BLOCK_SIZE;
     EdidActiveDataBlock = (UINT8 *)BiosVideoPrivate->VbeEdidDataBlock;

@@ -173,4 +173,4 @@ for pkg in $pkgs; do
 done
 
 # Remove old CloverEFI files
-rm -fv "$EFI_ROOT_DIR"/boot{3,6,7}
+#rm -fv "$EFI_ROOT_DIR"/boot{3,6,7}
