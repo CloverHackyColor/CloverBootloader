@@ -499,6 +499,7 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir)
         DBG("CustomEDID has wrong length=%d\n", j);
       } else {
         DBG("CustomEDID ok\n");
+        InitializeEdidOverride();
       }
     }
     
@@ -1276,8 +1277,8 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
           gSettings.DualLink = (UINT32)StrDecimalToUintn((CHAR16*)&UStr[0]);
         }
       }
-      //InjectEDID
-      prop = GetProperty(dictPointer, "InjectEDID");
+      //InjectEDID - already done in earlysettings
+/*      prop = GetProperty(dictPointer, "InjectEDID");
       gSettings.InjectEDID = FALSE;
       if(prop) {
         if ((prop->type == kTagTypeTrue) ||
@@ -1285,7 +1286,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
              ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))))
           gSettings.InjectEDID = TRUE;
       }
-      prop = GetProperty(dictPointer, "CustomEDID");
+     prop = GetProperty(dictPointer, "CustomEDID");
       if(prop) {
         UINTN j = 128;
         gSettings.CustomEDID = GetDataSetting(dictPointer, "CustomEDID", &j);
@@ -1293,9 +1294,9 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
           DBG("CustomEDID has wrong length=%d\n", j);
         } else {
           DBG("CustomEDID ok\n");
-          InitializeEdidOverride();
         }
       }
+ */
       prop = GetProperty(dictPointer, "ig-platform-id");
       if(prop) {
         if (prop->type == kTagTypeInteger) {
@@ -2608,6 +2609,7 @@ VOID GetDevices(VOID)
           gGraphics[NGFX].Bus = Bus;
           gGraphics[NGFX].Device = Device;
           gGraphics[NGFX].Function = Function;
+          gGraphics[NGFX].Handle = HandleArray[Index];
           switch (Pci.Hdr.VendorId) {
             case 0x1002:
               info = NULL;

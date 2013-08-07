@@ -52,7 +52,9 @@ InitializeEdidOverride ()
                                                    EdidOverride,
                                                    NULL
                                                    );
-
+  if (EFI_ERROR (Status)) {
+    DBG("Can't install EdidOverride on ImageHandle\n");
+  }
   return Status;
 }
 

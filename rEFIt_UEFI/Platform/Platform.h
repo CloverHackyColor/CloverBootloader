@@ -982,6 +982,7 @@ typedef struct {
   UINTN             Bus;
   UINTN             Device;
   UINTN             Function;
+  EFI_HANDLE        Handle;
 } GFX_PROPERTIES;
 
 typedef struct {

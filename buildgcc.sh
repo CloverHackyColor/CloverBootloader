@@ -21,9 +21,9 @@
 # GCC chainload source version 
 # here we can change source versions of tools
 #
-export BINUTILS_VERSION=${BINUTILS_VERSION:-binutils-2.23.1}
-export GCC_VERSION=${GCC_VERSION:-4.7.2}
-export GMP_VERSION=${GMP_VERSION:-gmp-5.1.1}
+export BINUTILS_VERSION=${BINUTILS_VERSION:-binutils-2.23.2}
+export GCC_VERSION=${GCC_VERSION:-4.8.1}
+export GMP_VERSION=${GMP_VERSION:-gmp-5.1.2}
 export MPFR_VERSION=${MPFR_VERSION:-mpfr-3.1.2}
 export MPC_VERSION=${MPC_VERSION:-mpc-1.0.1}
 
@@ -304,7 +304,7 @@ fnCompileBinutils ()
     make all 1> /dev/null 2> $DIR_LOGS/binutils.$ARCH.make.log.txt
     make install 1> $DIR_LOGS/binutils.$ARCH.install.log.txt 2> /dev/null
     rm -rf "${DIR_BUILD}/$ARCH-binutils"
-    [ ! -f $PREFIX/bin/$TARGET-ld ] && echo "Error: binutils-${BINUTILS_VERSION} not installed, check logs" && exit
+    [ ! -f $PREFIX/bin/$TARGET-ld ] && echo "Error: ${BINUTILS_VERSION} not installed, check logs" && exit
     echo "-  ${BINUTILS_VERSION} installed in $PREFIX  -"
 }
 
