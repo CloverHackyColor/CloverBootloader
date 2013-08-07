@@ -55,6 +55,7 @@
   gEfiLegacy8259ProtocolGuid
   gEfiEdidDiscoveredProtocolGuid
   gEfiEdidActiveProtocolGuid
+  gEfiEdidOverrideProtocolGuid                  # PROTOCOL TO_START
 
  [Guids]
 #   gEfiLegacyBiosGuid                            # ALWAYS_PRODUCED

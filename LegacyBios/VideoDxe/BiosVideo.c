@@ -68,22 +68,25 @@ UINT64                         mOriginalPciAttributes;
 BOOLEAN                        mPciAttributesSaved = FALSE;
 
 EFI_GRAPHICS_OUTPUT_BLT_PIXEL  mVgaColorToGraphicsOutputColor[] = {
-  { 0x00, 0x00, 0x00, 0x00 },
-  { 0x98, 0x00, 0x00, 0x00 },
-  { 0x00, 0x98, 0x00, 0x00 },
-  { 0x98, 0x98, 0x00, 0x00 },
-  { 0x00, 0x00, 0x98, 0x00 },
-  { 0x98, 0x00, 0x98, 0x00 },
-  { 0x00, 0x98, 0x98, 0x00 },
-  { 0x98, 0x98, 0x98, 0x00 },
-  { 0x10, 0x10, 0x10, 0x00 },
-  { 0xff, 0x10, 0x10, 0x00 },
-  { 0x10, 0xff, 0x10, 0x00 },
-  { 0xff, 0xff, 0x10, 0x00 },
-  { 0x10, 0x10, 0xff, 0x00 },
-  { 0xf0, 0x10, 0xff, 0x00 },
-  { 0x10, 0xff, 0xff, 0x00 },
-  { 0xff, 0xff, 0xff, 0x00 }
+  //
+  // {B, G, R, Alpha}
+  //  
+  {0x00, 0x00, 0x00, 0x00}, // BLACK
+  {0x98, 0x00, 0x00, 0x00}, // LIGHTBLUE
+  {0x00, 0x98, 0x00, 0x00}, // LIGHGREEN
+  {0x98, 0x98, 0x00, 0x00}, // LIGHCYAN
+  {0x00, 0x00, 0x98, 0x00}, // LIGHRED
+  {0x98, 0x00, 0x98, 0x00}, // MAGENTA
+  {0x00, 0x98, 0x98, 0x00}, // BROWN
+  {0x98, 0x98, 0x98, 0x00}, // LIGHTGRAY
+  {0x10, 0x10, 0x10, 0x00},
+  {0xff, 0x10, 0x10, 0x00}, // BLUE
+  {0x10, 0xff, 0x10, 0x00}, // LIME
+  {0xff, 0xff, 0x10, 0x00}, // CYAN
+  {0x10, 0x10, 0xff, 0x00}, // RED
+  {0xf0, 0x10, 0xff, 0x00}, // FUCHSIA
+  {0x10, 0xff, 0xff, 0x00}, // YELLOW
+  {0xff, 0xff, 0xff, 0x00}  // WHITE  
 };
 
 //
@@ -536,8 +539,6 @@ BiosVideoDriverBindingStop (
   UINTN                        Index;
   EFI_PCI_IO_PROTOCOL          *PciIo;
 
-  AllChildrenStopped = TRUE;
-
   if (NumberOfChildren == 0) {
     //
     // Close PCI I/O protocol on the controller handle
@@ -552,6 +553,7 @@ BiosVideoDriverBindingStop (
     return EFI_SUCCESS;
   }
 
+  AllChildrenStopped = TRUE;
   for (Index = 0; Index < NumberOfChildren; Index++) {
     Status = BiosVideoChildHandleUninstall (This, Controller, ChildHandleBuffer[Index]);
 
@@ -1297,13 +1299,13 @@ ParseEdidData (
   VESA_BIOS_EXTENSIONS_EDID_DATA_BLOCK *EdidDataBlock;
   
   EdidDataBlock = (VESA_BIOS_EXTENSIONS_EDID_DATA_BLOCK *) EdidBuffer;
-  
   //
   // Check the checksum of EDID data
   //
   if (!edid_checksum(EdidBuffer)) {
     return FALSE;
   }
+  
   ValidNumber = ValidEdidTiming->ValidNumber;
   
   if ((EdidDataBlock->EstablishedTimings[0] != 0) ||
@@ -1346,14 +1348,16 @@ ParseEdidData (
   BufferIndex = &EdidDataBlock->DetailedTimingDescriptions[0];
   for (Index = 0; Index < 4; Index ++, BufferIndex += DETAILED_TIMING_DESCRIPTION_SIZE) {
     if ((BufferIndex[0] != 0x00) || (BufferIndex[1] != 0x00) ||
-        (BufferIndex[2] != 0x00) || (BufferIndex[4] != 0x00))
-    {
+        (BufferIndex[2] != 0x00) || (BufferIndex[4] != 0x00)) {
       TempTiming.HorizontalResolution = ((UINT16)(BufferIndex[4] & 0xF0) << 4) | (BufferIndex[2]);
       TempTiming.VerticalResolution = ((UINT16)(BufferIndex[7] & 0xF0) << 4) | (BufferIndex[5]);
+			DBG(" found Detail Timing %dx%d\n", TempTiming.HorizontalResolution, TempTiming.VerticalResolution);
       TempTiming.RefreshRate = 60; //doesn't matter, it's temporary
       if (!SearchEdidTiming(ValidEdidTiming, &TempTiming)){
         ValidEdidTiming->Key[ValidNumber] = CalculateEdidKey (&TempTiming);
         ValidNumber ++;
+			} else {
+				DBG("... already present\n");
       }
     } else if (BufferIndex[3] == 0xFA) {
       for (Index2 = 0; Index2 < 6; Index2 ++) {

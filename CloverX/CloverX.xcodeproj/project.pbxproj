@@ -20,6 +20,7 @@
 		122489CD16A93FD300A0DB6B /* ComponentName.c in Sources */ = {isa = PBXBuildFile; fileRef = 122489C816A93FD300A0DB6B /* ComponentName.c */; };
 		122489CE16A93FD300A0DB6B /* MouseHid.c in Sources */ = {isa = PBXBuildFile; fileRef = 122489C916A93FD300A0DB6B /* MouseHid.c */; };
 		122489CF16A93FD300A0DB6B /* UsbMouse.c in Sources */ = {isa = PBXBuildFile; fileRef = 122489CA16A93FD300A0DB6B /* UsbMouse.c */; };
+		12B3D27517B23032009D8170 /* Edid.c in Sources */ = {isa = PBXBuildFile; fileRef = 12B3D27417B23032009D8170 /* Edid.c */; };
 		12D7546E1657CDD700376797 /* BdsConnect.c in Sources */ = {isa = PBXBuildFile; fileRef = 12D7546D1657CDD700376797 /* BdsConnect.c */; };
 		12D754711657CDE800376797 /* DevicePath.c in Sources */ = {isa = PBXBuildFile; fileRef = 12D754701657CDE800376797 /* DevicePath.c */; };
 		12DD321A16557F2E00108DFC /* BmLib.c in Sources */ = {isa = PBXBuildFile; fileRef = 12DD321916557F2E00108DFC /* BmLib.c */; };
@@ -379,6 +380,7 @@
 		12A17910166BCC15005B0D63 /* SataController.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = SataController.c; sourceTree = "<group>"; };
 		12A17911166BCC15005B0D63 /* SataController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SataController.h; sourceTree = "<group>"; };
 		12A17912166BCC15005B0D63 /* SataControllerDxe.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = SataControllerDxe.inf; sourceTree = "<group>"; };
+		12B3D27417B23032009D8170 /* Edid.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Edid.c; sourceTree = "<group>"; };
 		12B8168C1644675800A433E7 /* egemb_back_selected_small.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = egemb_back_selected_small.h; sourceTree = "<group>"; };
 		12B8168D1644675800A433E7 /* egemb_refit_banner.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = egemb_refit_banner.h; sourceTree = "<group>"; };
 		12B8168E1644675800A433E7 /* Handle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Handle.h; sourceTree = "<group>"; };
@@ -1546,6 +1548,7 @@
 				12B816BC1644675800A433E7 /* device_tree.h */,
 				12D754701657CDE800376797 /* DevicePath.c */,
 				12B816BD1644675800A433E7 /* Display.h */,
+				12B3D27417B23032009D8170 /* Edid.c */,
 				12B816BE1644675800A433E7 /* Events.c */,
 				12B816BF1644675800A433E7 /* FixBiosDsdt.c */,
 				12B816C01644675800A433E7 /* gma.c */,
@@ -1945,6 +1948,7 @@
 				122489CD16A93FD300A0DB6B /* ComponentName.c in Sources */,
 				122489CE16A93FD300A0DB6B /* MouseHid.c in Sources */,
 				122489CF16A93FD300A0DB6B /* UsbMouse.c in Sources */,
+				12B3D27517B23032009D8170 /* Edid.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

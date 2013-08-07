@@ -50,6 +50,7 @@ Headers collection for procedures
 #include <Protocol/CpuIo.h>
 #include <Protocol/DataHub.h>
 #include <Protocol/DevicePathToText.h>
+#include <Protocol/EdidOverride.h>
 #include <Protocol/FrameworkHii.h>
 #include <Protocol/SimplePointer.h>
 #include <Protocol/Smbios.h>
@@ -1109,6 +1110,9 @@ UINT8       hexstrtouint8 (CHAR8* buf); //one or two hex letters to one byte
 
 EFI_STATUS  InitializeConsoleSim (VOID);
 EFI_STATUS  GuiEventsInitialize (VOID);
+EFI_STATUS  InitializeEdidOverride (VOID);
+UINT8*      getCurrentEdid (VOID);
+EFI_STATUS      GetEdidDiscovered(VOID);
 //Settings.c
 UINT32          GetCrc32(UINT8 *Buffer, UINTN Size);
 VOID            GetCPUProperties (VOID);
@@ -1120,7 +1124,6 @@ EFI_STATUS      GetRootUUID(IN REFIT_VOLUME *Volume);
 EFI_STATUS      GetEarlyUserSettings(IN EFI_FILE *RootDir);
 EFI_STATUS      GetUserSettings(IN EFI_FILE *RootDir);
 EFI_STATUS      InitTheme(BOOLEAN useThemeDefinedInNVRam);
-EFI_STATUS      GetEdid(VOID);
 EFI_STATUS      SetFSInjection(IN LOADER_ENTRY *Entry);
 CHAR16*         GetExtraKextsDir(REFIT_VOLUME *Volume);
 EFI_STATUS      LoadKexts(IN LOADER_ENTRY *Entry);

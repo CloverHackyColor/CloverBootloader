@@ -538,7 +538,7 @@ VOID GetListOfThemes()
     if (DirEntry->FileName[0] == '.'){
       continue;
     }
-    DBG("found item %s\n", DirEntry->FileName);
+    DBG("Found theme %s", DirEntry->FileName);
     ThemeTestPath = PoolPrint(L"EFI\\CLOVER\\themes\\%s", DirEntry->FileName);
     if (ThemeTestPath) {
       Status = SelfRootDir->Open(SelfRootDir, &ThemeTestDir, ThemeTestPath, EFI_FILE_MODE_READ, 0);
@@ -546,13 +546,16 @@ VOID GetListOfThemes()
         Status = egLoadFile(ThemeTestDir, CONFIG_THEME_FILENAME, (UINT8**)&ThemePtr, &Size);
         if (EFI_ERROR(Status) || (ThemePtr == NULL) || (Size == 0)) {
           Status = EFI_NOT_FOUND;
+          DBG(" - no theme.plist");
         } else {
           //we found a theme
           ThemesList[ThemesNum++] = (CHAR16*)AllocateCopyPool(128, DirEntry->FileName);
+          
         }
       }
       FreePool(ThemeTestPath);
     }
+    DBG("\n");
   }
   DirIterClose(&DirIter);
 }
@@ -1290,6 +1293,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
           DBG("CustomEDID has wrong length=%d\n", j);
         } else {
           DBG("CustomEDID ok\n");
+          InitializeEdidOverride();
         }
       }
       prop = GetProperty(dictPointer, "ig-platform-id");
@@ -2548,40 +2552,6 @@ EFI_STATUS GetRootUUID(IN REFIT_VOLUME *Volume)
 }
 
 
-EFI_STATUS GetEdid(VOID)
-{
-	EFI_STATUS						Status;
-	UINTN i, j;
-  UINTN N;
-  gEDID = NULL;
-  
-	Status = gBS->LocateProtocol (&gEfiEdidDiscoveredProtocolGuid, NULL, (VOID **)&EdidDiscovered);
-	
-	if (!EFI_ERROR (Status)) 
-	{
-		N = EdidDiscovered->SizeOfEdid;
-    MsgLog("EdidDiscovered size=%d\n", N);
-		if (N == 0) {
-			return EFI_NOT_FOUND;
-		}
-    gEDID = AllocateAlignedPages(EFI_SIZE_TO_PAGES(N), 128);
-    if (!gSettings.CustomEDID) {
-      gSettings.CustomEDID = gEDID; //copy pointer but data if no CustomEDID
-    }
-    CopyMem(gEDID, EdidDiscovered->Edid, N);
-    if (!GlobalConfig.DebugLog) {
-      for (i=0; i<N; i+=10) {
-        MsgLog("%02d | ", i);
-        for (j=0; j<10; j++) {
-          MsgLog("%02x ", EdidDiscovered->Edid[i+j]);
-        }
-        MsgLog("\n");
-      }
-    }
-	}
-  return Status;
-}
-
 VOID GetDevices(VOID)
 {
   EFI_STATUS			Status;
@@ -2704,7 +2674,7 @@ VOID SetDevices(VOID)
   BOOLEAN       TmpDirty = FALSE;
   UINT16        PmCon;
   
-  GetEdid();
+  GetEdidDiscovered();
   // Scan PCI handles 
   Status = gBS->LocateHandleBuffer (
                                     ByProtocol,

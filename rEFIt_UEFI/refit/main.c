@@ -2369,8 +2369,8 @@ VOID DisconnectSomeDevices(VOID)
   }
 }
 
-UINT8 *mCurrentEdid;
-
+//UINT8 *mCurrentEdid;
+/*
 UINT8* getCurrentEdid (VOID)
 {
   EFI_STATUS                      Status;
@@ -2390,7 +2390,7 @@ UINT8* getCurrentEdid (VOID)
   
   return Edid;
 }
-
+*/
 
 VOID PatchVideoBios(UINT8 *Edid)
 {
@@ -2804,7 +2804,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     }
 
     if (!GlobalConfig.FastBoot) {
-      GetListOfThemes();
+ //     GetListOfThemes();
       if (gThemeNeedInit) {
         InitTheme(TRUE);
         gThemeNeedInit = FALSE;
