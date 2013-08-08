@@ -26,6 +26,8 @@ export GCC_VERSION=${GCC_VERSION:-4.8.1}
 export GMP_VERSION=${GMP_VERSION:-gmp-5.1.2}
 export MPFR_VERSION=${MPFR_VERSION:-mpfr-3.1.2}
 export MPC_VERSION=${MPC_VERSION:-mpc-1.0.1}
+export ISL_VERSION=${ISL_VERSION:-isl-0.11.1}
+export CLOOG_VERSION=${CLOOG_VERSION:-cloog-0.18.0}
 
 # Change PREFIX if you want gcc and binutils 
 # installed on different place
@@ -40,7 +42,7 @@ export TARGET_X64="x86_64-linux-gnu"
 
 # ./configure arguments for GCC
 # 
-export GCC_CONFIG="--prefix=$PREFIX --with-sysroot=$PREFIX --disable-werror --with-gmp=$PREFIX --oldincludedir=$PREFIX/include --with-gnu-as --with-gnu-ld --with-newlib --verbose --disable-libssp --disable-nls --enable-languages=c,c++"
+export GCC_CONFIG="--prefix=$PREFIX --with-sysroot=$PREFIX --disable-werror --with-gmp=$PREFIX --oldincludedir=$PREFIX/include --with-gnu-as --with-gnu-ld --with-cloog=$PREFIX --with-isl=$PREFIX --disable-isl-version-check --with-newlib --verbose --disable-libssp --disable-nls --enable-languages=c,c++"
 
 # ./configure arguments for Binutils
 #
@@ -98,7 +100,7 @@ echo "   -ia32      -binutils"
 echo "   -x64       -gcc"
 echo "              -all"
 echo
-echo " Example: ./buildgcc.sh -ia32 -all"
+echo " Example: ./buildgcc.sh -x64 -all"
 echo
 }
 
@@ -121,7 +123,7 @@ function mountRamDisk() {
     dev_ramdisk=$(mount | grep "$RAMDISK_MNT_PT" | awk '{print $1}')
     if [ -z "$dev_ramdisk" ];then
         echo "- Creating new RAM disk"
-        dev_ramdisk=`hdiutil attach -nomount ram://614400 | awk '{print $1}'`
+        dev_ramdisk=`hdiutil attach -nomount ram://1228800 | awk '{print $1}'`
         echo
         [ -n "$dev_ramdisk" ] && newfs_hfs -v "BuildGCC RamDisk" "$dev_ramdisk"
         [ ! -d "$RAMDISK_MNT_PT" ] && mkdir "$RAMDISK_MNT_PT"
@@ -175,6 +177,18 @@ fnDownloadSource ()
         echo "Status: ${MPC_VERSION} not found."
         curl -f -o download.tmp --remote-name http://www.multiprecision.org/mpc/download/${MPC_VERSION}.tar.gz || exit 1
         mv download.tmp ${MPC_VERSION}.tar.gz
+    fi
+
+    if [[ ! -f ${DIR_DOWNLOADS}/${ISL_VERSION}.tar.bz2 ]]; then
+        echo "Status: ${ISL_VERSION} not found."
+        curl -o download.tmp --remote-name ftp://gcc.gnu.org/pub/gcc/infrastructure/${ISL_VERSION}.tar.bz2 || exit 1
+        mv download.tmp ${ISL_VERSION}.tar.bz2
+    fi
+
+    if [[ ! -f ${DIR_DOWNLOADS}/${CLOOG_VERSION}.tar.gz ]]; then
+        echo "Status: ${CLOOG_VERSION} not found."
+        curl -o download.tmp --remote-name ftp://gcc.gnu.org/pub/gcc/infrastructure/${CLOOG_VERSION}.tar.gz || exit 1
+        mv download.tmp ${CLOOG_VERSION}.tar.gz
     fi
 
     fnDownloadBinutils
@@ -277,6 +291,33 @@ fnCompileLibs ()
     make install 1> $DIR_LOGS/mpc.$ARCH.install.log.txt 2> /dev/null
     rm -rf "${DIR_BUILD}/$ARCH-mpc"
     echo "-  ${MPC_VERSION} installed in $PREFIX  -"
+    
+    # Compile ISL
+    local ISL_DIR=$(fnExtract "${ISL_VERSION}.tar.bz2")
+
+    rm -rf "${DIR_BUILD}/$ARCH-isl"
+    mkdir -p "${DIR_BUILD}/$ARCH-isl" && cd "${DIR_BUILD}/$ARCH-isl"
+    echo "-  ${ISL_VERSION} configure..."
+    "${ISL_DIR}"/configure --prefix=$PREFIX --with-gmp-prefix=$PREFIX --with-gcc-arch=$ARCH > $DIR_LOGS/isl.$ARCH.config.log.txt 2> /dev/null
+    echo "-  ${ISL_VERSION} make..."
+    make 1> /dev/null 2> $DIR_LOGS/isl.$ARCH.make.log.txt
+    make install 1> $DIR_LOGS/isl.$ARCH.install.log.txt 2> /dev/null
+    rm -rf "${DIR_BUILD}/$ARCH-isl"
+    echo "-  ${ISL_VERSION} installed in $PREFIX  -"
+
+    # Compile CLOOG
+    local CLOOG_DIR=$(fnExtract "${CLOOG_VERSION}.tar.gz")
+
+    rm -rf "${DIR_BUILD}/$ARCH-cloog"
+    mkdir -p "${DIR_BUILD}/$ARCH-cloog" && cd "${DIR_BUILD}/$ARCH-cloog"
+    echo "-  ${CLOOG_VERSION} configure..."
+    "${CLOOG_DIR}"/configure --prefix=$PREFIX --with-gmp-prefix=$PREFIX --with-isl-prefix=$PREFIX --with-gcc-arch=$ARCH  > $DIR_LOGS/cloog.$ARCH.config.log.txt 2> /dev/null
+    echo "-  ${CLOOG_VERSION} make..."
+    make 1> /dev/null 2> $DIR_LOGS/cloog.$ARCH.make.log.txt
+    make install 1> $DIR_LOGS/cloog.$ARCH.install.log.txt 2> /dev/null
+    rm -rf "${DIR_BUILD}/$ARCH-cloog"
+    echo "-  ${CLOOG_VERSION} installed in $PREFIX  -"
+        
 }
 
 fnCompileBinutils ()
