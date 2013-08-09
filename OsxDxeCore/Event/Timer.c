@@ -136,24 +136,30 @@ CoreCheckTimers (
     //
     // If this is a periodic timer, set it
     //
-    if (Event->Timer.Period != 0) {
-      //
-      // Compute the timers new trigger time
-      //
-      Event->Timer.TriggerTime = Event->Timer.TriggerTime + Event->Timer.Period;
-
-      //
-      // If that's before now, then reset the timer to start from now
-      //
-      if (Event->Timer.TriggerTime <= SystemTime) {
+    if (Event->Timer.Type == TimerPeriodic) {
+      if (Event->Timer.Period != 0) {
+        //
+        // Compute the timers new trigger time
+        //
+        Event->Timer.TriggerTime = Event->Timer.TriggerTime + Event->Timer.Period;
+        
+        //
+        // If that's before now, then reset the timer to start from now
+        //
+        if (Event->Timer.TriggerTime <= SystemTime) {
+          Event->Timer.TriggerTime = SystemTime;
+          CoreSignalEvent (mEfiCheckTimerEvent);
+        }
+        
+        //
+        // Add the timer
+        //
+        CoreInsertEventTimer (Event);
+      } else {
         Event->Timer.TriggerTime = SystemTime;
-        CoreSignalEvent (mEfiCheckTimerEvent);
+        CoreInsertEventTimer (Event);
+        break;
       }
-
-      //
-      // Add the timer
-      //
-      CoreInsertEventTimer (Event);
     }
   }
 
@@ -180,7 +186,10 @@ CoreInitializeTimer (
              NULL,
              &mEfiCheckTimerEvent
              );
-  ASSERT_EFI_ERROR (Status);
+// ASSERT_EFI_ERROR (Status);
+  if (EFI_ERROR (Status)) {
+    mEfiCheckTimerEvent = NULL;
+  }
 }
 
 
@@ -277,6 +286,7 @@ CoreSetTimer (
 
   Event->Timer.TriggerTime = 0;
   Event->Timer.Period = 0;
+  Event->Timer.Type = Type;
 
   if (Type != TimerCancel) {
 

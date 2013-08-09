@@ -31,6 +31,7 @@ typedef struct {
   LIST_ENTRY      Link;
   UINT64          TriggerTime;
   UINT64          Period;
+  UINT64          Type;
 } TIMER_EVENT_INFO;
 
 #define EVENT_SIGNATURE         SIGNATURE_32('e','v','n','t')

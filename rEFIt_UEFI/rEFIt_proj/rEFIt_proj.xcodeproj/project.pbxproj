@@ -520,6 +520,7 @@
 		1292F27A164BC7A8008FAEEC /* InterruptTable.asm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm.asm; path = InterruptTable.asm; sourceTree = "<group>"; };
 		1292F27B164BC7A8008FAEEC /* InterruptTable.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = InterruptTable.S; sourceTree = "<group>"; };
 		12961B4215FCEC91008D77FB /* AcpiPatcher.c */ = {isa = PBXFileReference; indentWidth = 2; lastKnownFileType = sourcecode.c.c; path = AcpiPatcher.c; sourceTree = "<group>"; tabWidth = 2; usesTabs = 1; };
+		129E9D5C17B4C8CB00AD8EA3 /* Clover.dsc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Clover.dsc; path = ../../Clover.dsc; sourceTree = SOURCE_ROOT; };
 		129F030C16ABC19600EC5CC5 /* ComponentName.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ComponentName.c; sourceTree = "<group>"; };
 		129F030D16ABC19600EC5CC5 /* UsbBus.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = UsbBus.c; sourceTree = "<group>"; };
 		129F030E16ABC19600EC5CC5 /* UsbBus.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UsbBus.h; sourceTree = "<group>"; };
@@ -2922,11 +2923,6 @@
 		12B7FEED15F9215700177D35 /* BiosVideoNew.c */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = sourcecode.c.c; path = BiosVideoNew.c; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
 		12B7FEEE15F9215700177D35 /* ComponentName.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ComponentName.c; sourceTree = "<group>"; };
 		12B7FEEF15F9215700177D35 /* LegacyBiosThunk.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = LegacyBiosThunk.c; sourceTree = "<group>"; };
-		12B7FEF215F9217300177D35 /* ComponentName.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ComponentName.c; sourceTree = "<group>"; };
-		12B7FEF315F9217300177D35 /* ConSplitter.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ConSplitter.c; sourceTree = "<group>"; };
-		12B7FEF415F9217300177D35 /* ConSplitter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ConSplitter.h; sourceTree = "<group>"; };
-		12B7FEF515F9217300177D35 /* ConSplitterDxe.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = ConSplitterDxe.inf; sourceTree = "<group>"; };
-		12B7FEF615F9217300177D35 /* ConSplitterGraphics.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ConSplitterGraphics.c; sourceTree = "<group>"; };
 		12B7FEF815F9217300177D35 /* Cpu.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Cpu.c; sourceTree = "<group>"; };
 		12B7FEF915F9217300177D35 /* Cpu.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cpu.inf; sourceTree = "<group>"; };
 		12B7FEFA15F9217300177D35 /* CpuDxe.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CpuDxe.h; sourceTree = "<group>"; };
@@ -9997,8 +9993,8 @@
 				12B7FEE215F9215700177D35 /* BiosKeyboard */,
 				12B7FEE915F9215700177D35 /* BiosVideo */,
 				2C0DB54016145D3400CA37F9 /* Clover.fdf */,
+				129E9D5C17B4C8CB00AD8EA3 /* Clover.dsc */,
 				2C0DB54216145D3400CA37F9 /* CloverPkg.dec */,
-				12B7FEF115F9217300177D35 /* ConSplitterDxe */,
 				12B7FEF715F9217300177D35 /* CpuDxe */,
 				2C91841E161439DD0018BDC3 /* DumpUefiCalls */,
 				12B7FF0415F9217300177D35 /* DVDBus */,
@@ -10099,19 +10095,6 @@
 			);
 			name = BiosVideo;
 			path = ../../BiosVideo;
-			sourceTree = "<group>";
-		};
-		12B7FEF115F9217300177D35 /* ConSplitterDxe */ = {
-			isa = PBXGroup;
-			children = (
-				12B7FEF215F9217300177D35 /* ComponentName.c */,
-				12B7FEF315F9217300177D35 /* ConSplitter.c */,
-				12B7FEF415F9217300177D35 /* ConSplitter.h */,
-				12B7FEF515F9217300177D35 /* ConSplitterDxe.inf */,
-				12B7FEF615F9217300177D35 /* ConSplitterGraphics.c */,
-			);
-			name = ConSplitterDxe;
-			path = ../../ConSplitterDxe;
 			sourceTree = "<group>";
 		};
 		12B7FEF715F9217300177D35 /* CpuDxe */ = {
