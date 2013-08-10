@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-06-17 17:14+0300\n"
-"PO-Revision-Date: 2013-06-18 17:42+0000\n"
+"PO-Revision-Date: 2013-08-10 22:00+0000\n"
 "Last-Translator: Maniac <emafrias@gmail.com>\n"
 "Language-Team: es <es@li.org>\n"
 "Language: es\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1371577361.0\n"
+"X-POOTLE-MTIME: 1376172027.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -871,20 +871,22 @@ msgid ""
 "Install all RC scripts on target volume.\n"
 "The target volume must be a bootable OSX system volume."
 msgstr ""
-"Instala todos los scripts RC en el volumen seleccionado.\n"
+"Instala los scripts RC en el volumen seleccionado.\n"
 "El volumen seleccionado debe ser una partición del sistema OSX arrancable."
 
 #. type: "rc.scripts.on.all.volumes_title"
 #: Resources/templates/Localizable.strings:181
 #, no-wrap
 msgid "Install all RC scripts on all other bootable OSX volumes"
-msgstr "Instalar los scripts RC en todo volumen OSX arrancable, excepto el seleccionado"
+msgstr "Instalar los scripts RC en todo volumen OSX arrancable"
 
 #. type: "rc.scripts.on.all.volumes_description"
 #: Resources/templates/Localizable.strings:182
 #, no-wrap
 msgid "Install all RC scripts on all internal bootable OSX volumes other than the target volume."
-msgstr "Instala todos los scripts RC en todo volumen OSX interno y arrancable, exceptuando el volumen seleccionado."
+msgstr ""
+"Instala los scripts RC en todo volumen OSX interno y arrancable, además del "
+"volumen seleccionado."
 
 #. type: "Optional RC Scripts"
 #: Resources/templates/Localizable.strings:183
@@ -896,7 +898,9 @@ msgstr "Scripts RC opcionales"
 #: Resources/templates/Localizable.strings:184
 #, no-wrap
 msgid "Disable the mDNSResponder sleep proxy client service. This will prevent the system waking from sleep every hours"
-msgstr "Desactivar el servicio mDNSResponder. Esto evitará que el sistema salga del reposo cada ciertas horas"
+msgstr ""
+"Desactiva el servicio mDNSResponder durante el reposo. Esto evitará que el "
+"sistema salga del reposo cada ciertas horas"
 
 #. type: "CloverPrefpane_title"
 #: Resources/templates/Localizable.strings:189
@@ -1047,7 +1051,7 @@ msgstr "Copyright (c) 2013 JrCs, kozlek\\nTodos los Derechos Reservados"
 #: ../CloverPrefpane/CloverPrefpane.strings:12
 #, no-wrap
 msgid "NVRam Variables"
-msgstr "Variables NVRam"
+msgstr "Variables NVRAM"
 
 #. type: "295.label"
 #: ../CloverPrefpane/CloverPrefpane.strings:13
@@ -1065,7 +1069,7 @@ msgstr "Revisiones"
 #: ../CloverPrefpane/CloverPrefpane.strings:15
 #, no-wrap
 msgid "Current booted revision:"
-msgstr "Revisión arrancada actualmente:"
+msgstr "Revisión iniciada actualmente:"
 
 #. type: "302.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:16
@@ -1145,7 +1149,7 @@ msgstr "Tema:"
 #: ../CloverPrefpane/CloverPrefpane.strings:28
 #, no-wrap
 msgid "No Preview Available"
-msgstr "Vista previa no disponible"
+msgstr "Vista Previa No Disponible"
 
 #. type: "431.ibShadowedToolTip"
 #: ../CloverPrefpane/CloverPrefpane.strings:29
