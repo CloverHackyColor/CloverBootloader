@@ -81,31 +81,31 @@ fi
 # ---------------------------------------------
 old_revision='r0000'
 for cloverfile in BOOT/BOOTX64.efi CLOVER/CLOVERX64.efi CLOVER/CLOVERIA32.efi; do
-	cloverpath="${EFI_ROOT_DIR}/EFI/$cloverfile"
-	if [[ -f "$cloverpath" ]]; then
-		old_revision=r$(strings "$cloverpath" | sed -n 's/Clover revision: *//p')
-		break
-	fi
+    cloverpath="${EFI_ROOT_DIR}/EFI/$cloverfile"
+    if [[ -f "$cloverpath" ]]; then
+        old_revision=r$(strings "$cloverpath" | sed -n 's/Clover revision: *//p')
+        break
+    fi
 done
 
 backupDirOnDestVol=$(GetNVRamKey 'Clover.BackupDirOnDestVol')
-if [[ "$backupDirOnDestVol" =~ Y|y ]]; then
-	backupRootDir="$DEST_VOL/EFI-Backups" # backup on destination volume
+if [[ "$backupDirOnDestVol" =~ N|n ]]; then
+    backupRootDir="$EFI_ROOT_DIR/EFI-Backups"
 else
-	backupRootDir="$EFI_ROOT_DIR/EFI-Backups" # default
+    backupRootDir="$DEST_VOL/EFI-Backups" # backup on destination volume (default)
 fi
 backupDir="${backupRootDir}/$old_revision/"$( date -j "+%F-%Hh%M" )
 
 keepBackupLimit=$(GetNVRamKey 'Clover.KeepBackupLimit')
 # Remove old backup directories if needed
 if [[ "$keepBackupLimit" =~ [[:digit:]]+ ]]; then
-	index=1
-	while IFS= read -r -u3 -d $'\n' dir ;do # 'fix xemacs fontification
-		if [[ "$index" -ge "$keepBackupLimit" ]]; then
-			rm -rf "$dir"
-		fi
-		(( index++ ))
-	done 3< <(find "$backupRootDir" -type d -depth 2 2>/dev/null | tail -r)
+    index=1
+    while IFS= read -r -u3 -d $'\n' dir ;do # 'fix xemacs fontification
+        if [[ "$index" -ge "$keepBackupLimit" ]]; then
+            rm -rf "$dir"
+        fi
+        (( index++ ))
+    done 3< <(find "$backupRootDir" -type d -depth 2 2>/dev/null | tail -r)
 fi
 
 if [[ -z "$keepBackupLimit" || "$keepBackupLimit" -ne 0 ]]; then
