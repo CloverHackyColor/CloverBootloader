@@ -88,15 +88,17 @@ for cloverfile in BOOT/BOOTX64.efi CLOVER/CLOVERX64.efi CLOVER/CLOVERIA32.efi; d
     fi
 done
 
+keepBackupLimit=$(GetNVRamKey 'Clover.KeepBackupLimit')
 backupDirOnDestVol=$(GetNVRamKey 'Clover.BackupDirOnDestVol')
 if [[ "$backupDirOnDestVol" =~ N|n ]]; then
     backupRootDir="$EFI_ROOT_DIR/EFI-Backups"
+    [[ -z "$keepBackupLimit" ]] && keepBackupLimit=0
 else
     backupRootDir="$DEST_VOL/EFI-Backups" # backup on destination volume (default)
+    [[ -z "$keepBackupLimit" ]] && keepBackupLimit=10
 fi
 backupDir="${backupRootDir}/$old_revision/"$( date -j "+%F-%Hh%M" )
 
-keepBackupLimit=$(GetNVRamKey 'Clover.KeepBackupLimit')
 # Remove old backup directories if needed
 if [[ "$keepBackupLimit" =~ [[:digit:]]+ ]]; then
     index=1
@@ -108,7 +110,7 @@ if [[ "$keepBackupLimit" =~ [[:digit:]]+ ]]; then
     done 3< <(find "$backupRootDir" -type d -depth 2 2>/dev/null | tail -r)
 fi
 
-if [[ -z "$keepBackupLimit" || "$keepBackupLimit" -ne 0 ]]; then
+if [[ -n "$keepBackupLimit" && "$keepBackupLimit" -ne 0 ]]; then
     # ---------------------------------------------
     # Backing up Clover files
     # ---------------------------------------------
