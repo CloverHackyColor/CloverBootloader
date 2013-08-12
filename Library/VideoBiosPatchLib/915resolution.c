@@ -622,7 +622,7 @@ VOID set_mode(vbios_map * map, /*UINT32 mode,*/ UINT32 x, UINT32 y, UINT32 bp, U
 	//		NV_MODELINE *mode_timing = (NV_MODELINE *) map->nv_mode_table;
 			DBG("BT_NVDA\n");
 			// totally revised on work by pene
-      // http://www.projectosx.com/forum/index.php?showtopic=2304&view=findpost&p=22683
+      // http://www.projectosx.com/forum/index.php?showtopic=2562&view=findpost&p=22683
 			
 			if (getMode(&mode)) {
         break;

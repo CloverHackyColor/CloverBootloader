@@ -452,7 +452,8 @@ MainPostBuildScript() {
         #cp -v "$BUILD_DIR_ARCH"/Ps2MouseAbsolutePointerDxe.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64/Ps2MouseAbsolutePointerDxe-64.efi
         cp -v "$BUILD_DIR_ARCH"/Ps2MouseDxe.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64/Ps2MouseDxe-64.efi
         cp -v "$BUILD_DIR_ARCH"/UsbMouseDxe.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64/UsbMouseDxe-64.efi
-        cp -v "$BUILD_DIR_ARCH"/XhciDxe.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64/XhciDxe-64.efi
+        cp -v "$BUILD_DIR_ARCH"/XhciDxe.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64/XhciDxe-64.efi        
+        cp -v "$BUILD_DIR_ARCH"/NvmExpressDxe.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64/NvmExpressDxe-64.efi
         cp -v "$BUILD_DIR_ARCH"/OsxAptioFixDrv.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/OsxAptioFixDrv-64.efi
         cp -v "$BUILD_DIR_ARCH"/OsxLowMemFixDrv.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/OsxLowMemFixDrv-64.efi
         cp -v "$BUILD_DIR_ARCH"/CsmVideoDxe.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/CsmVideoDxe-64.efi
