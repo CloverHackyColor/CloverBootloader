@@ -13,7 +13,7 @@
 
 #ifndef DEBUG_FIX
 #ifndef DEBUG_ALL
-#define DEBUG_FIX 0
+#define DEBUG_FIX 1
 #else
 #define DEBUG_FIX DEBUG_ALL
 #endif
@@ -365,7 +365,7 @@ CHAR8 pwrb[] = //? \_SB_PWRB, 0x02
 };
 
 
-CHAR8 acpi3[] = {
+CHAR8 acpi3[] = {  //Name(_HID, "ACPI003")
   0x08, 0x5F, 0x48, 0x49, 0x44, 0x0D,
   0x41, 0x43, 0x50, 0x49, 0x30, 0x30, 0x30, 0x33, 0x00
 };
@@ -932,7 +932,7 @@ INT32 write_size(UINT32 adr, UINT8* buffer, UINT32 len, INT32 sizeoffset)
 	return offset;
 }
 
-//the procedure can find array CHAR8 sizeof N inside part of large array "dsdt" size of len
+//the procedure can find BIN array UNSIGNED CHAR8 sizeof N inside part of large array "dsdt" size of len
 INT32 FindBin (UINT8 *dsdt, UINT32 len, UINT8* bin, UINTN N)
 {
   UINT32 i, j;
@@ -1132,6 +1132,7 @@ UINT32 DeleteDevice(CONST CHAR8 *Name, UINT8 *dsdt, UINT32 len)
 {
   UINT32 i, j;
   INT32 size = 0, sizeoffset;
+  DBG(" deleting device %a\n", Name);
   for (i=20; i<len; i++) {
     if ((dsdt[i+0] == Name[0]) && (dsdt[i+1] == Name[1]) &&
         (dsdt[i+2] == Name[2]) && (dsdt[i+3] == Name[3]) &&
@@ -1164,6 +1165,10 @@ UINT32 GetPciDevice(UINT8 *dsdt, UINT32 len)
     // Find Device PCI0   // PNP0A03
     if (CmpPNP(dsdt, i, 0x0A03)) {
       PCIADR = devFind(dsdt, i);
+      if (!PCIADR) {
+        continue;
+      }
+
       PCISIZE = get_size(dsdt, PCIADR);
       if (PCISIZE) {
         break;
@@ -1175,6 +1180,10 @@ UINT32 GetPciDevice(UINT8 *dsdt, UINT32 len)
       // Find Device PCIE   // PNP0A08
       if (CmpPNP(dsdt, i, 0x0A08)) {
         PCIADR = devFind(dsdt, i);
+        if (!PCIADR) {
+          continue;
+        }
+
         PCISIZE = get_size(dsdt, PCIADR);
         if (PCISIZE) {
           break;
@@ -1264,6 +1273,9 @@ UINT32 FixADP1 (UINT8* dsdt, UINT32 len)
     return len;
   }
   adr = devFind(dsdt, (UINT32)shift);
+  if (!adr) {
+    return len;
+  }
   size = get_size(dsdt, adr);
   //check name and replace
   if (size < 0x40) {
@@ -1394,6 +1406,9 @@ UINT32 FixRTC (UINT8 *dsdt, UINT32 len)
     if (CmpPNP(dsdt, j, 0x0B00))
     {
       adr = devFind(dsdt, j);
+      if (!adr) {
+        continue;
+      }
       rtcsize = get_size(dsdt, adr);
       if (rtcsize) {
         break;
@@ -1486,6 +1501,9 @@ UINT32 FixTMR (UINT8 *dsdt, UINT32 len)
     if (CmpPNP(dsdt, j, 0x0100)) {
       TMRADR = devFind(dsdt, j);
       adr = TMRADR;
+      if (!adr) {
+        continue;
+      }
       tmrsize = get_size(dsdt, adr);
  //     DBG("TMR size=%x at %x\n", tmrsize, adr);
       if (tmrsize) {
@@ -1493,7 +1511,12 @@ UINT32 FixTMR (UINT8 *dsdt, UINT32 len)
       }
     } // End TMR      
   }
-  
+  if (!adr) {
+    DBG("TMR device not found!\n");
+    return len;
+  }
+
+
   // Fix TMR
 	// Find Name(_CRS, ResourceTemplate ()) find ResourceTemplate 0x11
   j = 0;
@@ -1554,6 +1577,9 @@ UINT32 FixPIC (UINT8 *dsdt, UINT32 len)
     if (CmpPNP(dsdt, j, 0x0000)) {
       PICADR = devFind(dsdt, j);
       adr = PICADR;
+      if (!adr) {
+        continue;
+      }
       picsize = get_size(dsdt, adr);
       DBG("PIC size=%x at %x\n", picsize, adr);
       if (picsize) {
@@ -1635,6 +1661,9 @@ UINT32 FixHPET (UINT8* dsdt, UINT32 len)
   for (j=0x20; j<len-10; j++) {
     if (CmpAdr(dsdt, j, 0x001F0000)) {
       LPCBADR = devFind(dsdt, j);
+      if (!LPCBADR) {
+        continue;
+      }
       LPCBSIZE = get_size(dsdt, LPCBADR);
     }  // End LPCB find
   }
@@ -1646,6 +1675,9 @@ UINT32 FixHPET (UINT8* dsdt, UINT32 len)
     // Find Device HPET   // PNP0103
     if (CmpPNP(dsdt, j, 0x0103)) {
       adr = devFind(dsdt, j);
+      if (!adr) {
+        continue;
+      }
       hpetsize = get_size(dsdt, adr);
       if (hpetsize) {
         break;
@@ -1694,6 +1726,9 @@ UINT32 FIXLPCB (UINT8 *dsdt, UINT32 len)
     if (CmpAdr(dsdt, j, 0x001F0000))
     {
       LPCBADR = devFind(dsdt, j);
+      if (!LPCBADR) {
+        continue;
+      }
       LPCBSIZE = get_size(dsdt, LPCBADR);
       device_name[3] = AllocateZeroPool(5);
       CopyMem(device_name[3], dsdt + j, 4);
@@ -1773,6 +1808,9 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
         CmpAdr(dsdt, j, DisplayADR1[0])) {
       DisplayName1 = TRUE;
       devadr = devFind(dsdt, j);
+      if (!devadr) {
+        continue;
+      }
       devsize = get_size(dsdt, devadr);
       if (devsize) {
         break;
@@ -1783,6 +1821,9 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
   for (j=devadr; j<devadr+devsize; j++) {
     if (CmpAdr(dsdt, j, 0)) {
       devadr1 = devFind(dsdt, j);
+      if (!devadr1) {
+        continue;
+      }
       devsize1 = get_size(dsdt, devadr1);
       DISPLAYFIX = TRUE;
       break;      
@@ -2265,16 +2306,22 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
       //        DBG("Found DisplayADR1[1]=%x at %x\n", DisplayADR1[1], j);
       DisplayName2 = TRUE;
       devadr = devFind(dsdt, j);
+      if (!devadr) {
+        continue;
+      }
       devsize = get_size(dsdt, devadr);
       if (devsize) {
-        break;        
+        break;
       } // End Display
     }
   }  
-//  if (!devsize) return len;
+  if (!devadr) return len;
   for (j=devadr; j<devadr+devsize; j++) {
     if (CmpAdr(dsdt, j, 0)) {
       devadr1 = devFind(dsdt, j);
+      if (!devadr1) {
+        continue;
+      }
       devsize1 = get_size(dsdt, devadr1);
       DISPLAYFIX = TRUE;
       break;      
@@ -2670,7 +2717,11 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
        */
       //         DBG("found NetworkADR1=%x at %x\n", NetworkADR1, i);
       NetworkADR = devFind(dsdt, i);
-      //         DBG("now NetworkADR=%x\n", NetworkADR); 
+      if (!NetworkADR) {
+        continue;
+      }
+
+      //         DBG("now NetworkADR=%x\n", NetworkADR);
       BridgeSize = get_size(dsdt, NetworkADR);
       if (!BridgeSize) {
         continue;
@@ -2681,6 +2732,10 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
           if (CmpAdr(dsdt, k, NetworkADR2))
           {
             NetworkADR = devFind(dsdt, k);
+            if (!NetworkADR) {
+              continue;
+            }
+
             device_name[1] = AllocateZeroPool(5);
             CopyMem(device_name[1], dsdt+k, 4);
             DBG("found NetWork device NAME(_ADR,0x%08x) at %x And Name is %a\n", 
@@ -2789,12 +2844,20 @@ UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
     // AirPort Address
     if (CmpAdr(dsdt, i, ArptADR1)) {
       ArptADR = devFind(dsdt, i);
+      if (!ArptADR) {
+        continue;
+      }
+
       BridgeSize = get_size(dsdt, ArptADR);
       if(!BridgeSize) continue;
       if (ArptADR2 != 0xFFFE){
         for (k=ArptADR+9; k<ArptADR+BridgeSize; k++) {
           if (CmpAdr(dsdt, k, ArptADR2)) {
             ArptADR = devFind(dsdt, k);
+            if (!ArptADR) {
+              continue;
+            }
+
             device_name[9] = AllocateZeroPool(5);
             CopyMem(device_name[9], dsdt+k, 4);
             DBG("found Airport device NAME(_ADR,0x%08x)/(0x%x) at %x And Name is %a\n", 
@@ -3043,11 +3106,19 @@ UINT32 FIXFirewire (UINT8 *dsdt, UINT32 len)
     if (FirewireADR1 != 0x00000000 && 
         CmpAdr(dsdt, i, FirewireADR1)) {
       FirewireADR = devFind(dsdt, i);
+      if (!FirewireADR) {
+        continue;
+      }
+
       BridgeSize = get_size(dsdt, FirewireADR);
       if (FirewireADR2 != 0xFFFE ){
         for (k=FirewireADR+9; k<FirewireADR+BridgeSize; k++) {
           if (CmpAdr(dsdt, k, FirewireADR2)) {
             FirewireADR = devFind(dsdt, k);
+            if (!FirewireADR) {
+              continue;
+            }
+
             device_name[2] = AllocateZeroPool(5);
             CopyMem(device_name[2], dsdt+k, 4);
             DBG("found Firewire device NAME(_ADR,0x%08x) at %x And Name is %a\n", 
@@ -3140,7 +3211,11 @@ UINT32 AddHDEF (UINT8 *dsdt, UINT32 len)
     if (HDAADR1 != 0x00000000 && HDAFIX &&
         CmpAdr(dsdt, i, HDAADR1)) {
       HDAADR = devFind(dsdt, i);
-      BridgeSize = get_size(dsdt, HDAADR);      
+      if (!HDAADR) {
+        continue;
+      }
+
+      BridgeSize = get_size(dsdt, HDAADR);
       device_name[4] = AllocateZeroPool(5);
       CopyMem(device_name[4], dsdt+i, 4);
       DBG("found HDA device NAME(_ADR,0x%08x) And Name is %a\n", 
@@ -3295,6 +3370,10 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
           CopyMem(UsbName[i], dsdt+j, 4);		          
           
           adr1 = devFind(dsdt, j);
+          if (!adr1) {
+            continue;
+          }
+
           adr = get_size(dsdt, adr1);
           //UINT32 k = (adr > 0x3F)?1:0; 
           /*
@@ -3379,6 +3458,10 @@ UINT32 FIXIDE (UINT8 *dsdt, UINT32 len)
     if (CmpAdr(dsdt, i, IDEADR1)) {
               DBG("Found IDEADR1=%x at %x\n", IDEADR1, i);
       IDEADR = devFind(dsdt, i);
+      if (!IDEADR) {
+        continue;
+      }
+
       BridgeSize = get_size(dsdt, IDEADR);
       if (BridgeSize) break;
     } // End IDE
@@ -3511,6 +3594,10 @@ UINT32 FIXSATAAHCI (UINT8 *dsdt, UINT32 len)
     if (CmpAdr(dsdt, i, SATAAHCIADR1)) {
            DBG("Found SATAAHCIADR1=%x at %x\n", SATAAHCIADR1, i);
       SATAAHCIADR = devFind(dsdt, i);
+      if (!SATAAHCIADR) {
+        continue;
+      }
+
       BridgeSize = get_size(dsdt, SATAAHCIADR);
       if (BridgeSize) break;
     } 
@@ -3569,6 +3656,10 @@ UINT32 FIXSATA (UINT8 *dsdt, UINT32 len)
     if (CmpAdr(dsdt, i, SATAADR1)) {
       //        DBG("Found SATAAHCIADR1=%x at %x\n", SATAAHCIADR1, j);
       SATAADR = devFind(dsdt, i);
+      if (!SATAADR) {
+        continue;
+      }
+
       BridgeSize = get_size(dsdt, SATAADR);
       if (BridgeSize) break;
     } // End IDE
@@ -3827,6 +3918,9 @@ UINT32 FIXPWRB (UINT8* dsdt, UINT32 len)
   for (i=0x20; i<len-6; i++) {
     if (CmpPNP(dsdt, i, 0x0C0C)) {
       adr = devFind(dsdt, i);
+      if (!adr) {
+        continue;
+      }
       size = get_size(dsdt, adr);
       if(size){
         hid = i + 10; //the place after HID PNP0C0C
