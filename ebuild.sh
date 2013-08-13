@@ -367,8 +367,8 @@ MainPostBuildScript() {
          "${BUILD_DIR}"/FV/DxeMain${TARGETARCH}.z                  \
          "${BUILD_DIR}"/FV/DUETEFIMAINFV${TARGETARCH}.z
 
-        cat $BOOTSECTOR_BIN_DIR/start32.com $BOOTSECTOR_BIN_DIR/efi32.com3 \
-         "${BUILD_DIR}"/FV/Efildr32 > "${BUILD_DIR}"/FV/Efildr20
+#        cat $BOOTSECTOR_BIN_DIR/start32.com $BOOTSECTOR_BIN_DIR/efi32.com3 \
+#         "${BUILD_DIR}"/FV/Efildr32 > "${BUILD_DIR}"/FV/Efildr20
         cat $BOOTSECTOR_BIN_DIR/start32H.com2 $BOOTSECTOR_BIN_DIR/efi32.com3 \
          "${BUILD_DIR}"/FV/Efildr32 > "${BUILD_DIR}"/FV/boot
 
