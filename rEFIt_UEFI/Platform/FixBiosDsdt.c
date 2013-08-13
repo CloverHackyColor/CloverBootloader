@@ -1115,14 +1115,28 @@ BOOLEAN CmpPNP (UINT8 *dsdt, UINT32 j, UINT16 PNP)
 
 //the procedure search nearest "Device" code before given address
 //should restrict the search by 6 bytes... OK, 10
+//hmmm? will check device name
 UINT32 devFind(UINT8 *dsdt, UINT32 address)
 {
-  UINT32 k;
-  for (k=address; k>address-10; k--) {
+  UINT32 k = address;
+  INT32 size = 0;
+  while (k > 30) {
+    k--;
+    if (dsdt[k] == 0x82 && dsdt[k-1] == 0x5B) {
+      size = get_size(dsdt, k+1);
+      if (!size) {
+        continue;
+      }
+      if ((k + size + 1) > address) {
+        return (k+1); //pointer to size
+      }  //else continue
+    }
+  }
+/*  for (k=address; k>address-10; k--) {
     if (dsdt[k] == 0x82 && dsdt[k-1] == 0x5B) {
       return (k+1); //pointer to size
     }
-  }
+  } */
   DBG("Device definition before adr=%x not found\n", address);
   return 0; //impossible value for fool proof  
 }
@@ -1138,7 +1152,7 @@ UINT32 DeleteDevice(CONST CHAR8 *Name, UINT8 *dsdt, UINT32 len)
         (dsdt[i+2] == Name[2]) && (dsdt[i+3] == Name[3]) &&
         ((dsdt[i-3] == 0x82) || (dsdt[i-2] == 0x82)) && 
         ((dsdt[i-4] == 0x5B) || (dsdt[i-3] == 0x5B))) {
-      if (dsdt[i-3] == 0x82) {
+      if ((dsdt[i-3] == 0x82) && (dsdt[i-4] == 0x5B)) {
         j = i - 2;
       } else {
         j = i - 1;
@@ -3078,6 +3092,47 @@ UINT32 AddMCHC (UINT8 *dsdt, UINT32 len)
   return len;  
 }
 
+UINT32 AddIMEI (UINT8 *dsdt, UINT32 len)
+{
+  UINT32  k;
+  UINT32 PCIADR, PCISIZE = 0;
+  INT32 sizeoffset;
+  AML_CHUNK* root;
+  AML_CHUNK* device;
+  CHAR8 *imei;
+
+  PCIADR = GetPciDevice(dsdt, len);
+  if (PCIADR) {
+    PCISIZE = get_size(dsdt, PCIADR);
+  }
+  if (!PCISIZE) {
+    DBG("wrong PCI0 address, patch IMEI will not be applied\n");
+    return len;
+  }
+
+  DBG("Start Add IMEI\n");
+  root = aml_create_node(NULL);
+  device = aml_add_device(root, "IMEI");
+  aml_add_name(device, "_ADR");
+  aml_add_dword(device, 0x00160000);
+
+  aml_calculate_size(root);
+  imei = AllocateZeroPool(root->Size);
+  sizeoffset = root->Size;
+  aml_write_node(root, imei, 0);
+  aml_destroy_node(root);
+  // always add on PCIX back
+  len = move_data(PCIADR+PCISIZE, dsdt, len, sizeoffset);
+  CopyMem(dsdt+PCIADR+PCISIZE, imei, sizeoffset);
+  // Fix PCIX size
+  k = write_size(PCIADR, dsdt, len, sizeoffset);
+  sizeoffset += k;
+  len += k;
+  len = CorrectOuters(dsdt, len, PCIADR-3, sizeoffset);
+  FreePool(imei);
+  return len;
+}
+
 CHAR8 dataFW[] = {0x00,0x00,0x00,0x00};
 
 UINT32 FIXFirewire (UINT8 *dsdt, UINT32 len)
@@ -4310,6 +4365,7 @@ VOID FixBiosDsdt (UINT8* temp)
   if ((gCPUStructure.Family == 0x06)  && (gSettings.FixDsdt & FIX_MCHC)) {
     DBG("patch MCHC in DSDT \n");
     DsdtLen = AddMCHC(temp, DsdtLen);
+    DsdtLen = AddIMEI(temp, DsdtLen);
   }
   
   // Always Fix USB
