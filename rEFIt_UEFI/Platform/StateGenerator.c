@@ -299,7 +299,7 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
       AML_CHUNK* packPCT;
       AML_CHUNK* metPCT;
 			AML_CHUNK* root = aml_create_node(NULL);
-      aml_add_buffer(root, (CONST CHAR8*)&pss_ssdt_header[0], sizeof(pss_ssdt_header)); // SSDT header
+      aml_add_buffer(root, (CHAR8*)&pss_ssdt_header[0], sizeof(pss_ssdt_header)); // SSDT header
       /*
        AsciiSPrint(name, 9, "_PR_CPU%1d", FirstID);
        AsciiSPrint(name1, 13, "_PR_CPU%1dPSS_", FirstID);

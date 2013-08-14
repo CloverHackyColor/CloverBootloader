@@ -171,8 +171,8 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
     case 0x0116:
     case 0x0122:
     case 0x0126:
-      if ((gma_dev->device_id == 0x112) || (gma_dev->device_id == 0x122))
-        devprop_add_value(device, "device-id", FakeID_126, 4);
+//      if ((gma_dev->device_id == 0x112) || (gma_dev->device_id == 0x122))
+//        devprop_add_value(device, "device-id", FakeID_126, 4);
     case 0x0152:
     case 0x0156:
     case 0x0162:
@@ -256,6 +256,12 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
     default:
       DBG("Intel card id=%x unsupported, please report to projectosx\n", gma_dev->device_id);
       return FALSE;
+  }
+  if (gSettings.FakeIntel) {
+    UINT32 FakeID = gSettings.FakeIntel >> 16;
+    devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
+    FakeID = gSettings.FakeIntel & 0xFFFF;
+    devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
   }
 		
 #if DEBUG_GMA == 2  

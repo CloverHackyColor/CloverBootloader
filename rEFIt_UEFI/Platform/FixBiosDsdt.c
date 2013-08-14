@@ -94,8 +94,10 @@ struct lpc_device_t
 	UINT32		id;
 };
 
-static CHAR8 dataBuiltin[] = {0x00};
-static CHAR8 dataBuiltin1[] = {0x01};
+//static
+CHAR8 dataBuiltin[] = {0x00};
+//static
+CHAR8 dataBuiltin1[] = {0x01};
 
 static struct lpc_device_t lpc_chipset[] =
 {
@@ -955,7 +957,7 @@ INT32 FindBin (UINT8 *dsdt, UINT32 len, UINT8* bin, UINTN N)
                 
 //if (!FindMethod(dsdt, len, "DTGP")) 
 // return address of size field. Assume size not more then 0x0FFF = 4095 bytes
-UINT32 FindMethod (UINT8 *dsdt, UINT32 len, CONST CHAR8* Name)
+UINT32 FindMethod (UINT8 *dsdt, UINT32 len, /* CONST*/ CHAR8* Name)
 {
   UINT32 i;
   for (i=20; i<len-7; i++) {
@@ -1026,7 +1028,7 @@ UINT32 CorrectOuters (UINT8 *dsdt, UINT32 len, UINT32 adr,  INT32 shift)
 }
 
 //ReplaceName(dsdt, len, "AZAL", "HDEF");
-VOID ReplaceName(UINT8 *dsdt, UINT32 len, CONST CHAR8 *OldName, CONST CHAR8 *NewName)
+VOID ReplaceName(UINT8 *dsdt, UINT32 len, /* CONST*/ CHAR8 *OldName, /* CONST*/ CHAR8 *NewName)
 {
   UINTN i;
   for (i=30; i<len; i++) {
@@ -1783,7 +1785,8 @@ UINT32 FIXLPCB (UINT8 *dsdt, UINT32 len)
   return len;  
 }
 
-CONST CHAR8 Yes[] = {0x01,0x00,0x00,0x00};
+//CONST
+CHAR8 Yes[] = {0x01,0x00,0x00,0x00};
 CHAR8 data2[] = {0xe0,0x00,0x56,0x28};
 
 
@@ -2709,10 +2712,19 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
   AML_CHUNK* root;
   AML_CHUNK* pack;
   CHAR8 *network;
-
+  UINT32 FakeID = 0;
+  UINT32 FakeVen = 0;
+  CHAR8 NameCard[32];
+  
   if (!NetworkADR1) return len;
   DBG("Start NetWork Fix\n");
   
+  if (gSettings.FakeWIFI) {
+    FakeID = gSettings.FakeWIFI >> 16;
+    FakeVen = gSettings.FakeWIFI & 0xFFFF;
+    AsciiSPrint(NameCard, 32, "pci%x,%x\0", FakeVen, FakeID);
+  }
+ 
   PCIADR = GetPciDevice(dsdt, len);
   if (PCIADR) {
     PCISIZE = get_size(dsdt, PCIADR);
@@ -2796,6 +2808,17 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
   aml_add_string_buffer(pack, Netmodel);
   aml_add_string(pack, "device_type");
   aml_add_string_buffer(pack, "Ethernet");
+  if (gSettings.FakeLAN) {
+//    aml_add_string(pack, "model");
+//    aml_add_string_buffer(pack, "Apple LAN card");
+    aml_add_string(pack, "device-id");
+    aml_add_byte_buffer(pack, (CHAR8 *)&FakeID, 4);
+    aml_add_string(pack, "vendor-id");
+    aml_add_byte_buffer(pack, (CHAR8 *)&FakeVen, 4);
+    aml_add_string(pack, "name");
+    aml_add_string_buffer(pack, &NameCard[0]);
+  }
+
   aml_add_local0(met);
   aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
   // finish Method(_DSM,4,NotSerialized)
@@ -2843,8 +2866,17 @@ UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
   AML_CHUNK* root;
   AML_CHUNK* pack;
   CHAR8 *network;
-  
+  UINT32 FakeID = 0;
+  UINT32 FakeVen = 0;
+  CHAR8 NameCard[32];
+
   if (!ArptADR1) return len; // no device - no patch
+  
+  if (gSettings.FakeWIFI) {
+    FakeID = gSettings.FakeWIFI >> 16;
+    FakeVen = gSettings.FakeWIFI & 0xFFFF;
+    AsciiSPrint(NameCard, 32, "pci%x,%x\0", FakeVen, FakeID);
+  }
   
   PCIADR = GetPciDevice(dsdt, len);
   if (PCIADR) {
@@ -2861,7 +2893,6 @@ UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
       if (!ArptADR) {
         continue;
       }
-
       BridgeSize = get_size(dsdt, ArptADR);
       if(!BridgeSize) continue;
       if (ArptADR2 != 0xFFFE){
@@ -2871,7 +2902,6 @@ UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
             if (!ArptADR) {
               continue;
             }
-
             device_name[9] = AllocateZeroPool(5);
             CopyMem(device_name[9], dsdt+k, 4);
             DBG("found Airport device NAME(_ADR,0x%08x)/(0x%x) at %x And Name is %a\n", 
@@ -2908,6 +2938,20 @@ UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
   aml_add_string(pack, "built-in");  
   aml_add_byte_buffer(pack, dataBuiltin, sizeof(dataBuiltin));
   
+  if (gSettings.FakeWIFI) {
+    aml_add_string(pack, "model");
+    aml_add_string_buffer(pack, "Apple WiFi card");
+    aml_add_string(pack, "device-id");
+    aml_add_byte_buffer(pack, (CHAR8 *)&FakeID, 4);
+    aml_add_string(pack, "vendor-id");
+    aml_add_byte_buffer(pack, (CHAR8 *)&FakeVen, 4);
+    aml_add_string(pack, "name");
+    aml_add_string_buffer(pack, (CHAR8 *)&NameCard[0]);
+    aml_add_string(pack, "subsystem-id");
+    aml_add_byte_buffer(pack, data2ATH, 4);
+    aml_add_string(pack, "subsystem-vendor-id");
+    aml_add_byte_buffer(pack, data3ATH, 4);    
+  } else
   if (ArptBCM) {
     aml_add_string(pack, "model");
     aml_add_string_buffer(pack, "Dell Wireless 1395");
@@ -3357,7 +3401,7 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
   met = aml_add_store(met);
   pack = aml_add_package(met);
   aml_add_string(pack, "device-id");
-  aml_add_byte_buffer(pack, (CONST CHAR8*)&USBID[0], 4);
+  aml_add_byte_buffer(pack, (/* CONST*/ CHAR8*)&USBID[0], 4);
   aml_add_string(pack, "built-in");
   aml_add_byte_buffer(pack, dataBuiltin, sizeof(dataBuiltin));
   aml_add_string(pack, "device_type");
@@ -3383,7 +3427,7 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
   met1 = aml_add_store(met1);
   pack1 = aml_add_package(met1);
   aml_add_string(pack1, "device-id");
-  aml_add_byte_buffer(pack1, (CONST CHAR8*)&USBID[0], 4);
+  aml_add_byte_buffer(pack1, (/* CONST*/ CHAR8*)&USBID[0], 4);
   aml_add_string(pack1, "built-in");
   aml_add_byte_buffer(pack1, dataBuiltin, sizeof(dataBuiltin));
   aml_add_string(pack1, "device_type");
@@ -3642,6 +3686,14 @@ UINT32 FIXSATAAHCI (UINT8 *dsdt, UINT32 len)
   AML_CHUNK* met;
   AML_CHUNK* pack;
   CHAR8 *sata;
+  UINT32 FakeID;
+  UINT32 FakeVen;
+  
+  if (gSettings.FakeSATA) {
+    FakeID = gSettings.FakeSATA >> 16;
+    FakeVen = gSettings.FakeSATA & 0xFFFF;
+  }
+
 
   if (!SATAAHCIADR1) return len;
   
@@ -3668,9 +3720,9 @@ UINT32 FIXSATAAHCI (UINT8 *dsdt, UINT32 len)
   met = aml_add_store(met);
   pack = aml_add_package(met);
   aml_add_string(pack, "device-id");
-  aml_add_byte_buffer(pack, DevSATA, 4);
+  aml_add_byte_buffer(pack, (CHAR8*)&FakeID, 4);
   aml_add_string(pack, "vendor-id");
-  aml_add_byte_buffer(pack, VenIDE, 4);
+  aml_add_byte_buffer(pack, (CHAR8*)&FakeVen, 4);
   aml_add_local0(met);
   aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
   // finish Method(_DSM,4,NotSerialized)
@@ -3704,6 +3756,13 @@ UINT32 FIXSATA (UINT8 *dsdt, UINT32 len)
   AML_CHUNK* met;
   AML_CHUNK* pack;
   CHAR8 *sata;
+  UINT32 FakeID;
+  UINT32 FakeVen;
+  
+  if (gSettings.FakeSATA) {
+    FakeID = gSettings.FakeSATA >> 16;
+    FakeVen = gSettings.FakeSATA & 0xFFFF;
+  }
 
   if (!SATAADR1) return len;
   
@@ -3729,9 +3788,9 @@ UINT32 FIXSATA (UINT8 *dsdt, UINT32 len)
   met = aml_add_store(met);
   pack = aml_add_package(met);
   aml_add_string(pack, "device-id");
-  aml_add_byte_buffer(pack, DevSATA0, 4);
+  aml_add_byte_buffer(pack, (CHAR8*)&FakeID, 4);
   aml_add_string(pack, "vendor-id");
-  aml_add_byte_buffer(pack, VenIDE, 4);
+  aml_add_byte_buffer(pack, (CHAR8*)&FakeVen, 4);
   aml_add_local0(met);
   aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
   // finish Method(_DSM,4,NotSerialized)

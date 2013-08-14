@@ -686,6 +686,15 @@ typedef struct {
   BOOLEAN NoCaches;
   BOOLEAN WithKexts;
   
+  //PCI devices
+  UINT32  FakeATI;    //97
+  UINT32  FakeNVidia;
+  UINT32  FakeIntel;
+  UINT32  FakeLAN;   //100
+  UINT32  FakeWIFI;
+  UINT32  FakeSATA;
+  UINT32  FakeXHCI;  //103
+  
   //Graphics
   UINT16  PCIRootUID;
   BOOLEAN GraphicsInjector;

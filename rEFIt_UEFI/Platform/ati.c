@@ -1394,6 +1394,7 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
 BOOLEAN setup_ati_devprop(pci_dt_t *ati_dev)
 {
 	CHAR8 *devicepath;
+  UINT32 FakeID = 0;
 	
 	if (!init_card(ati_dev))
 		return FALSE;
@@ -1421,7 +1422,15 @@ BOOLEAN setup_ati_devprop(pci_dt_t *ati_dev)
 	
 	devprop_add_list(ati_devprop_list);
 
-    devprop_add_value(card->device, "hda-gfx", (UINT8*)"onboard-1", 9);
+  devprop_add_value(card->device, "hda-gfx", (UINT8*)"onboard-1", 9);
+  if (gSettings.FakeATI) {
+    FakeID = gSettings.FakeATI >> 16;
+    devprop_add_value(card->device, "device-id", (UINT8*)&FakeID, 4);
+    devprop_add_value(card->device, "ATY,DeviceID", (UINT8*)&FakeID, 2);
+    FakeID = gSettings.FakeATI & 0xFFFF;
+    devprop_add_value(card->device, "vendor-id", (UINT8*)&FakeID, 4);
+    devprop_add_value(card->device, "ATY,VendorID", (UINT8*)&FakeID, 2);
+  }
 	
 	
 	DBG("ATI %a %a %dMB (%a) [%04x:%04x] (subsys [%04x:%04x]):: %a\n",

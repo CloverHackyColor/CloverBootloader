@@ -193,6 +193,23 @@
 		<true/>
 		<key>LpcTune</key>
 		<false/>
+		<key>FakeID</key>
+		<dict>
+			<key>ATI</key>
+			<string>0x67501002</string>
+			<key>IntelGFX</key>
+			<string>0x0</string>
+			<key>LAN</key>
+			<string>0x20008086</string>
+			<key>NVidia</key>
+			<string>0x0</string>
+			<key>SATA</key>
+			<string>0x25628086</string>
+			<key>WIFI</key>
+			<string>0x43121453</string>
+			<key>XHCI</key>
+			<string>0x0</string>
+		</dict>
 	</dict>
 	<key>ACPI</key>
 	<dict>

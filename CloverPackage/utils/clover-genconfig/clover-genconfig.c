@@ -320,6 +320,15 @@ void PrintConfig(CFTypeRef data)
     addBoolean(pciDict, CFSTR("USBFixOwnership"), s->USBFixOwnership);
     addBoolean(pciDict, CFSTR("InjectClockID"), s->InjectClockID);
     addBoolean(pciDict, CFSTR("LpcTune"), s->LpcTune);
+  CFMutableDictionaryRef fakeIDDict = addDict(pciDict, CFSTR("FakeID"));
+  addHex(fakeIDDict, CFSTR("ATI"), s->FakeATI);
+  addHex(fakeIDDict, CFSTR("NVidia"), s->FakeNVidia);
+  addHex(fakeIDDict, CFSTR("IntelGFX"), s->FakeIntel);
+  addHex(fakeIDDict, CFSTR("LAN"), s->FakeLAN);
+  addHex(fakeIDDict, CFSTR("WIFI"), s->FakeWIFI);
+  addHex(fakeIDDict, CFSTR("SATA"), s->FakeSATA);
+  addHex(fakeIDDict, CFSTR("XHCI"), s->FakeXHCI);
+  
 
     // Graphics
     CFMutableDictionaryRef graphicsDict = addDict(dict, CFSTR("Graphics"));

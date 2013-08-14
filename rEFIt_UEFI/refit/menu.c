@@ -390,7 +390,18 @@ VOID RefillInputs(VOID)
   InputItems[InputItemsCount].ItemType = BoolValue; //96
   InputItems[InputItemsCount].BValue   = gSettings.InjectClockID;
   InputItems[InputItemsCount++].SValue = gSettings.InjectClockID?L"[+]":L"[ ]";
-
+  InputItems[InputItemsCount].ItemType = Hex;  //97
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeATI);
+  InputItems[InputItemsCount].ItemType = Hex;  //98
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeNVidia);
+  InputItems[InputItemsCount].ItemType = Hex;  //99
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeIntel);
+  InputItems[InputItemsCount].ItemType = Hex;  //100
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeLAN);
+  InputItems[InputItemsCount].ItemType = Hex;  //101
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeWIFI);
+  InputItems[InputItemsCount].ItemType = Hex;  //102
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeSATA);
 }
 
 VOID FillInputs(VOID)
@@ -402,7 +413,7 @@ VOID FillInputs(VOID)
   BOOLEAN bit;
   
   InputItemsCount = 0;
-  InputItems = AllocateZeroPool(100 * sizeof(INPUT_ITEM)); //XXX
+  InputItems = AllocateZeroPool(128 * sizeof(INPUT_ITEM)); //XXX
   InputItems[InputItemsCount].ItemType = ASString;  //0
   //even though Ascii we will keep value as Unicode to convert later
   InputItems[InputItemsCount].SValue = AllocateZeroPool(SVALUE_MAX_SIZE);
@@ -657,6 +668,27 @@ VOID FillInputs(VOID)
   InputItems[InputItemsCount].ItemType = BoolValue; //96
   InputItems[InputItemsCount].BValue   = gSettings.InjectClockID;
   InputItems[InputItemsCount++].SValue = gSettings.InjectClockID?L"[+]":L"[ ]";
+  
+  InputItems[InputItemsCount].ItemType = Hex;  //97
+  InputItems[InputItemsCount].SValue = AllocateZeroPool(26);
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeATI);
+  InputItems[InputItemsCount].ItemType = Hex;  //98
+  InputItems[InputItemsCount].SValue = AllocateZeroPool(26);
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeNVidia);
+  InputItems[InputItemsCount].ItemType = Hex;  //99
+  InputItems[InputItemsCount].SValue = AllocateZeroPool(26);
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeIntel);
+  
+  InputItems[InputItemsCount].ItemType = Hex;  //100
+  InputItems[InputItemsCount].SValue = AllocateZeroPool(26);
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeLAN);
+  InputItems[InputItemsCount].ItemType = Hex;  //101
+  InputItems[InputItemsCount].SValue = AllocateZeroPool(26);
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeWIFI);
+  InputItems[InputItemsCount].ItemType = Hex;  //102
+  InputItems[InputItemsCount].SValue = AllocateZeroPool(26);
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeSATA);
+
 }
 
 
@@ -993,6 +1025,35 @@ VOID ApplyInputs(VOID)
   if (InputItems[i].Valid) {
     gSettings.InjectClockID = InputItems[i].BValue;
   }
+  i++; //97
+  if (InputItems[i].Valid) {
+    gSettings.FakeATI = (UINT32)StrHexToUint64(InputItems[i].SValue);
+  }
+  i++; //98
+  if (InputItems[i].Valid) {
+    gSettings.FakeNVidia = (UINT32)StrHexToUint64(InputItems[i].SValue);
+  }
+  i++; //99
+  if (InputItems[i].Valid) {
+    gSettings.FakeIntel = (UINT32)StrHexToUint64(InputItems[i].SValue);
+  }
+  i++; //99
+  if (InputItems[i].Valid) {
+    gSettings.FakeIntel = (UINT32)StrHexToUint64(InputItems[i].SValue);
+  }
+  i++; //100
+  if (InputItems[i].Valid) {
+    gSettings.FakeLAN = (UINT32)StrHexToUint64(InputItems[i].SValue);
+  }
+  i++; //101
+  if (InputItems[i].Valid) {
+    gSettings.FakeWIFI = (UINT32)StrHexToUint64(InputItems[i].SValue);
+  }
+  i++; //102
+  if (InputItems[i].Valid) {
+    gSettings.FakeSATA = (UINT32)StrHexToUint64(InputItems[i].SValue);
+  }
+
   if (NeedSave) {
     SaveSettings(); 
   }
@@ -2473,7 +2534,7 @@ static VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
 
 REFIT_MENU_ENTRY  *SubMenuGraphics()
 {
-  UINTN  i, N;
+  UINTN  i, N, Ven;
   REFIT_MENU_ENTRY   *Entry; //, *SubEntry;
   REFIT_MENU_SCREEN  *SubScreen;
   REFIT_INPUT_DIALOG *InputBootArgs;
@@ -2526,7 +2587,23 @@ REFIT_MENU_ENTRY  *SubMenuGraphics()
     InputBootArgs->Entry.AtClick = ActionEnter;
     InputBootArgs->Entry.AtRightClick = ActionDetails;
     AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-        
+    
+    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+    if (gGraphics[i].Vendor == Nvidia) {
+      Ven = 98;
+    } else if (gGraphics[i].Vendor == Ati) {
+      Ven = 97;
+    } else if (gGraphics[i].Vendor == Intel) {
+      Ven = 99;
+    }
+    InputBootArgs->Entry.Title = PoolPrint(L"FakeID:");
+    InputBootArgs->Entry.Tag = TAG_INPUT;
+    InputBootArgs->Entry.Row = StrLen(InputItems[Ven].SValue); //cursor
+    InputBootArgs->Item = &InputItems[Ven];
+    InputBootArgs->Entry.AtClick = ActionSelect;
+    InputBootArgs->Entry.AtDoubleClick = ActionEnter;
+    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+    
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
     if (gGraphics[i].Vendor == Nvidia) {
       InputBootArgs->Entry.Title = PoolPrint(L"DisplayCFG:");
@@ -3296,7 +3373,7 @@ REFIT_MENU_ENTRY  *SubMenuRcScripts()
   return Entry;
 }
 
-REFIT_MENU_ENTRY  *SubMenuUSB()
+REFIT_MENU_ENTRY  *SubMenuPCI()
 {
   REFIT_MENU_ENTRY   *Entry;
   REFIT_MENU_SCREEN  *SubScreen;
@@ -3305,7 +3382,7 @@ REFIT_MENU_ENTRY  *SubMenuUSB()
   Flags = AllocateZeroPool(255);
 
   Entry = AllocateZeroPool(sizeof(REFIT_MENU_ENTRY));
-  Entry->Title = PoolPrint(L"USB settings ->");
+  Entry->Title = PoolPrint(L"PCI devices ->");
   Entry->Image =  OptionMenu.TitleImage;
   Entry->Tag = TAG_OPTIONS;
   Entry->AtClick = ActionEnter;
@@ -3318,7 +3395,7 @@ REFIT_MENU_ENTRY  *SubMenuUSB()
   SubScreen->AnimeRun = GetAnime(SubScreen);
 
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"Fix Ownership:");
+  InputBootArgs->Entry.Title = PoolPrint(L"USB Ownership:");
   InputBootArgs->Entry.Tag = TAG_INPUT;
   InputBootArgs->Entry.Row = 0xFFFF;
   InputBootArgs->Item = &InputItems[74];
@@ -3327,7 +3404,7 @@ REFIT_MENU_ENTRY  *SubMenuUSB()
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
 
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"DSM Injection:");
+  InputBootArgs->Entry.Title = PoolPrint(L"USB Injection:");
   InputBootArgs->Entry.Tag = TAG_INPUT;
   InputBootArgs->Entry.Row = 0xFFFF;
   InputBootArgs->Item = &InputItems[95];
@@ -3342,6 +3419,33 @@ REFIT_MENU_ENTRY  *SubMenuUSB()
   InputBootArgs->Item = &InputItems[96];
   InputBootArgs->Entry.AtClick = ActionEnter;
   InputBootArgs->Entry.AtRightClick = ActionDetails;
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+  
+  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  InputBootArgs->Entry.Title = PoolPrint(L"FakeID LAN:");
+  InputBootArgs->Entry.Tag = TAG_INPUT;
+  InputBootArgs->Entry.Row = StrLen(InputItems[100].SValue); //cursor
+  InputBootArgs->Item = &InputItems[100];
+  InputBootArgs->Entry.AtClick = ActionSelect;
+  InputBootArgs->Entry.AtDoubleClick = ActionEnter;
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+
+  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  InputBootArgs->Entry.Title = PoolPrint(L"FakeID WIFI:");
+  InputBootArgs->Entry.Tag = TAG_INPUT;
+  InputBootArgs->Entry.Row = StrLen(InputItems[101].SValue); //cursor
+  InputBootArgs->Item = &InputItems[101];
+  InputBootArgs->Entry.AtClick = ActionSelect;
+  InputBootArgs->Entry.AtDoubleClick = ActionEnter;
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+
+  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  InputBootArgs->Entry.Title = PoolPrint(L"FakeID SATA:");
+  InputBootArgs->Entry.Tag = TAG_INPUT;
+  InputBootArgs->Entry.Row = StrLen(InputItems[102].SValue); //cursor
+  InputBootArgs->Item = &InputItems[102];
+  InputBootArgs->Entry.AtClick = ActionSelect;
+  InputBootArgs->Entry.AtDoubleClick = ActionEnter;
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
 
   AddMenuEntry(SubScreen, &MenuEntryReturn);
@@ -3482,7 +3586,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     AddMenuEntry(&OptionMenu, SubMenuDropTables());
     AddMenuEntry(&OptionMenu, SubMenuDsdtFix());
     AddMenuEntry(&OptionMenu, SubMenuSmbios());
-    AddMenuEntry(&OptionMenu, SubMenuUSB());
+    AddMenuEntry(&OptionMenu, SubMenuPCI());
     AddMenuEntry(&OptionMenu, SubMenuSpeedStep());
     AddMenuEntry(&OptionMenu, SubMenuGraphics());
     AddMenuEntry(&OptionMenu, SubMenuBinaries());

@@ -3682,6 +3682,13 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 		devprop_add_value(device, "@1,display-cfg", default_dcfg_1, DCFG1_LEN);
 	}
   devprop_add_value(device, "hda-gfx", (UINT8*)"onboard-1", 9);
+  
+  if (gSettings.FakeNVidia) {
+    UINT32 FakeID = gSettings.FakeNVidia >> 16;
+    devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
+    FakeID = gSettings.FakeNVidia & 0xFFFF;
+    devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
+  }
 
 	//add HDMI Audio back to nvidia
 	//http://forge.voodooprojects.org/p/chameleon/issues/67/

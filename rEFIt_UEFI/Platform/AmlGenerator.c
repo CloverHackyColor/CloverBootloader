@@ -83,7 +83,7 @@ void aml_destroy_node(AML_CHUNK* node)
 	FreePool(node);
 }
 
-AML_CHUNK* aml_add_buffer(AML_CHUNK* parent, CONST CHAR8* buffer, UINT32 size)
+AML_CHUNK* aml_add_buffer(AML_CHUNK* parent, /* CONST*/ CHAR8* buffer, UINT32 size)
 {
 	AML_CHUNK* node = aml_create_node(parent);
 	
@@ -170,7 +170,7 @@ AML_CHUNK* aml_add_qword(AML_CHUNK* parent, UINT64 value)
 	return node;
 }
 
-UINT32 aml_fill_simple_name(CHAR8* buffer, CONST CHAR8* name)
+UINT32 aml_fill_simple_name(CHAR8* buffer, /* CONST*/ CHAR8* name)
 {
 	if (AsciiStrLen(name) < 4) 
 	{
@@ -182,7 +182,7 @@ UINT32 aml_fill_simple_name(CHAR8* buffer, CONST CHAR8* name)
 	return 4;
 }
 
-UINT32 aml_fill_name(AML_CHUNK* node, CONST CHAR8* name)
+UINT32 aml_fill_name(AML_CHUNK* node, /* CONST*/ CHAR8* name)
 {
   INTN len, offset, count;
   UINT32 root = 0;
@@ -233,7 +233,7 @@ UINT32 aml_fill_name(AML_CHUNK* node, CONST CHAR8* name)
 	return (UINT32)offset; //node->Length;
 }
 
-AML_CHUNK* aml_add_scope(AML_CHUNK* parent, CONST CHAR8* name)
+AML_CHUNK* aml_add_scope(AML_CHUNK* parent, /* CONST*/ CHAR8* name)
 {
 	AML_CHUNK* node = aml_create_node(parent);
 	
@@ -247,7 +247,7 @@ AML_CHUNK* aml_add_scope(AML_CHUNK* parent, CONST CHAR8* name)
 	return node;
 }
 
-AML_CHUNK* aml_add_name(AML_CHUNK* parent, CONST CHAR8* name)
+AML_CHUNK* aml_add_name(AML_CHUNK* parent, /* CONST*/ CHAR8* name)
 {
 	AML_CHUNK* node = aml_create_node(parent);
 	
@@ -261,7 +261,7 @@ AML_CHUNK* aml_add_name(AML_CHUNK* parent, CONST CHAR8* name)
 	return node;
 }
 
-AML_CHUNK* aml_add_method(AML_CHUNK* parent, CONST CHAR8* name, UINT8 args)
+AML_CHUNK* aml_add_method(AML_CHUNK* parent, /* CONST*/ CHAR8* name, UINT8 args)
 {
 	AML_CHUNK* node = aml_create_node(parent);
 	
@@ -294,7 +294,7 @@ AML_CHUNK* aml_add_package(AML_CHUNK* parent)
 	return node;
 }
 
-AML_CHUNK* aml_add_alias(AML_CHUNK* parent, CONST CHAR8* name1, CONST CHAR8* name2)
+AML_CHUNK* aml_add_alias(AML_CHUNK* parent, /* CONST*/ CHAR8* name1, /* CONST*/ CHAR8* name2)
 {
 	AML_CHUNK* node = aml_create_node(parent);
 	
@@ -311,7 +311,7 @@ AML_CHUNK* aml_add_alias(AML_CHUNK* parent, CONST CHAR8* name1, CONST CHAR8* nam
 	return node;
 }
 
-AML_CHUNK* aml_add_return_name(AML_CHUNK* parent, CONST CHAR8* name)
+AML_CHUNK* aml_add_return_name(AML_CHUNK* parent, /* CONST*/ CHAR8* name)
 {
 	AML_CHUNK* node = aml_create_node(parent);
 	
@@ -337,7 +337,7 @@ AML_CHUNK* aml_add_return_byte(AML_CHUNK* parent, UINT8 value)
 	return node;
 }
 
-AML_CHUNK* aml_add_device(AML_CHUNK* parent, CONST CHAR8* name)
+AML_CHUNK* aml_add_device(AML_CHUNK* parent, /* CONST*/ CHAR8* name)
 {
 	AML_CHUNK* node = aml_create_node(parent);
 	
@@ -376,7 +376,7 @@ AML_CHUNK* aml_add_store(AML_CHUNK* parent)
 	return node;
 }
 
-AML_CHUNK* aml_add_byte_buffer(AML_CHUNK* parent, CONST CHAR8* data, UINT32 size)
+AML_CHUNK* aml_add_byte_buffer(AML_CHUNK* parent, /* CONST*/ CHAR8* data, UINT32 size)
 {
 	AML_CHUNK* node = aml_create_node(parent);
 	
@@ -388,13 +388,13 @@ AML_CHUNK* aml_add_byte_buffer(AML_CHUNK* parent, CONST CHAR8* data, UINT32 size
 		node->Buffer = AllocateZeroPool (node->Length);
 		node->Buffer[offset++] = AML_CHUNK_BYTE;  //0x0A
 		node->Buffer[offset++] = (CHAR8)size;
-		CopyMem(node->Buffer+offset,data, node->Length);
+		CopyMem(node->Buffer+offset, data, node->Length);
 	}
 	
 	return node;
 }
 
-AML_CHUNK* aml_add_string_buffer(AML_CHUNK* parent, CONST CHAR8* StringBuf)
+AML_CHUNK* aml_add_string_buffer(AML_CHUNK* parent, /* CONST*/ CHAR8* StringBuf)
 {
 	AML_CHUNK* node = aml_create_node(parent);
 	
@@ -414,7 +414,7 @@ AML_CHUNK* aml_add_string_buffer(AML_CHUNK* parent, CONST CHAR8* StringBuf)
 	return node;
 }
 
-AML_CHUNK* aml_add_string(AML_CHUNK* parent, CONST CHAR8* StringBuf)
+AML_CHUNK* aml_add_string(AML_CHUNK* parent, /* CONST*/ CHAR8* StringBuf)
 {
 	AML_CHUNK* node = aml_create_node(parent);
 	

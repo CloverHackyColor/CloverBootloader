@@ -1426,7 +1426,45 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
           DBG("USBFixOwnership: true\n");
          }
       }
-      
+      prop = GetProperty(dictPointer, "FakeID");
+      if(prop) {
+        TagPtr prop2;
+        prop2 = GetProperty(prop, "ATI");
+        if (prop2 && (prop2->type == kTagTypeString)) {
+          AsciiStrToUnicodeStr(prop2->string, (CHAR16*)&UStr[0]);
+          gSettings.FakeATI  = (UINT32)StrHexToUint64(UStr);
+        }
+        prop2 = GetProperty(prop, "NVidia");
+        if (prop2 && (prop2->type == kTagTypeString)) {
+          AsciiStrToUnicodeStr(prop2->string, (CHAR16*)&UStr[0]);
+          gSettings.FakeNVidia  = (UINT32)StrHexToUint64(UStr);
+        }
+        prop2 = GetProperty(prop, "IntelGFX");
+        if (prop2 && (prop2->type == kTagTypeString)) {
+          AsciiStrToUnicodeStr(prop2->string, (CHAR16*)&UStr[0]);
+          gSettings.FakeIntel  = (UINT32)StrHexToUint64(UStr);
+        }
+        prop2 = GetProperty(prop, "LAN");
+        if (prop2 && (prop2->type == kTagTypeString)) {
+          AsciiStrToUnicodeStr(prop2->string, (CHAR16*)&UStr[0]);
+          gSettings.FakeLAN  = (UINT32)StrHexToUint64(UStr);
+        }
+        prop2 = GetProperty(prop, "WIFI");
+        if (prop2 && (prop2->type == kTagTypeString)) {
+          AsciiStrToUnicodeStr(prop2->string, (CHAR16*)&UStr[0]);
+          gSettings.FakeWIFI  = (UINT32)StrHexToUint64(UStr);
+        }
+        prop2 = GetProperty(prop, "SATA");
+        if (prop2 && (prop2->type == kTagTypeString)) {
+          AsciiStrToUnicodeStr(prop2->string, (CHAR16*)&UStr[0]);
+          gSettings.FakeSATA  = (UINT32)StrHexToUint64(UStr);
+        }
+        prop2 = GetProperty(prop, "XHCI");
+        if (prop2 && (prop2->type == kTagTypeString)) {
+          AsciiStrToUnicodeStr(prop2->string, (CHAR16*)&UStr[0]);
+          gSettings.FakeXHCI  = (UINT32)StrHexToUint64(UStr);
+        }        
+      }      
     }
     
     //*** ACPI ***//
