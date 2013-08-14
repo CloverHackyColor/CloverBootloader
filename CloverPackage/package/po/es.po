@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-06-17 17:14+0300\n"
-"PO-Revision-Date: 2013-08-10 22:00+0000\n"
+"PO-Revision-Date: 2013-08-14 16:00+0000\n"
 "Last-Translator: Maniac <emafrias@gmail.com>\n"
 "Language-Team: es <es@li.org>\n"
 "Language: es\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1376172027.0\n"
+"X-POOTLE-MTIME: 1376496055.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -99,7 +99,7 @@ msgstr "Características principales:"
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:21
 msgid "- boot into 10.4 - 10.8 OSX, Windows EFI and Linux EFI"
-msgstr "- Arrancar en OSX 10.4 - 10.8, Windows EFI y Linux EFI"
+msgstr "- Arranca OSX 10.4 - 10.8, Windows EFI y Linux EFI"
 
 #
 #. type: Content of: <html><body><p>
@@ -109,7 +109,7 @@ msgid ""
 "Legacy Bootloaders"
 msgstr ""
 "- Su gestor de arranque EFI ofrece servicios de ejecución para el sistema "
-"operativo que es imposible con gestores antiguos"
+"operativo que son imposibles con gestores antiguos"
 
 #
 #. type: Content of: <html><body><p>
@@ -118,8 +118,8 @@ msgid ""
 "- mostly Clover do automatic detection of hardware and set all properties by "
 "default."
 msgstr ""
-"- Clover hace la detección automática de la mayoría del hardware y configura "
-"todas las propiedades por defecto."
+"- Clover detecta automáticamente la mayoría del hardware y configura todas "
+"sus propiedades por defecto."
 
 #
 #. type: Content of: <html><body><p><span>
@@ -144,13 +144,13 @@ msgstr "Pero el usuario puede cambiarlos en config.plist"
 msgid "- with Clover you may restart into other OS from Startup Disk prefPane"
 msgstr ""
 "- Con Clover puede reiniciar en otro sistema operativo desde \"Disco de "
-"arranque\" en Preferencias del Sistema"
+"arranque\" en \"Preferencias del Sistema\""
 
 #
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:26
 msgid "- UUID written into config.plist will be the same as in OS"
-msgstr "- UUID escrito en config.plist será el mismo que en el OS"
+msgstr "- Puede insertar un UUID en config.plist para ser usado por el OS"
 
 #
 #. type: Content of: <html><body><p>
@@ -166,15 +166,15 @@ msgstr "- ACPI será corregido al estándar 4.0."
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:29
 msgid "Custom DSDT will be loaded from booted partition or from EFI folder"
-msgstr ""
-"DSDT personalizados serán cargados desde la partición iniciada o desde la "
-"carpeta EFI"
+msgstr "DSDT personalizados serán cargados de la partición ESP o la carpeta EFI"
 
 #
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:30
 msgid "- customizable RestartFix and sleep/wake fixes and PCIRootUID value"
-msgstr "- RestartFix, sleep/wake y valor de PCIRootUID personalizables"
+msgstr ""
+"- Soluciona problemas de reposo y reactivación. Valores de RestartFix y "
+"PCIRootUID editables"
 
 #
 #. type: Content of: <html><body><p>
@@ -183,26 +183,28 @@ msgid ""
 "- Graphics Properties Injector for ATI, NVidia and Intel for wide range of "
 "supported cards."
 msgstr ""
-"- Inyector de propiedades de gráficas para ATI, NVidia e Intel, con una "
-"amplia gama de tarjetas soportadas."
+"- Inyector de propiedades gráficas para ATI, NVidia e Intel. Amplia gama de "
+"tarjetas soportadas."
 
 #
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:32
 msgid "Also customizable."
-msgstr "También personalizable."
+msgstr "También personalizables."
 
 #
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:33
 msgid "- USB fix (LegacyOff, Ownership, Builtin, clock-id) up to USB 3.0"
-msgstr "- USB fix (LegacyOff, Ownership, Builtin, clock-id) hasta USB 3.0"
+msgstr ""
+"- Correcciones de USB (LegacyOff, Ownership, Builtin, clock-id) hasta USB "
+"3.0"
 
 #
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:34
 msgid "- HDA injector and Ethernet builtin injector"
-msgstr "- Inyector HDA e inyector Ethernet \"builtin\""
+msgstr "- Inyector HDA personalizable y Ethernet \"builtin\""
 
 #
 #. type: Content of: <html><body><p>
@@ -221,7 +223,7 @@ msgstr ""
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:37
 msgid "- extra kexts loading and security mode for FireWire"
-msgstr "- Carga adicional de kexts y modo de seguridad para FireWire"
+msgstr "- Carga de kexts adicionales y modo de seguridad para FireWire"
 
 #
 #. type: Content of: <html><body><p>
@@ -230,17 +232,16 @@ msgid ""
 "- default boot after timeout, customizable GUI , and saving screenshots from "
 "GUI typing F10"
 msgstr ""
-"- Arranque predeterminado luego de la cuenta regresiva, interfaz "
-"personalizable, y guardado de capturas de pantalla desde la interfaz "
-"pulsando F10"
+"- Arranque por defecto con cuenta regresiva, interfaz personalizable y "
+"capturas de pantalla pulsando F10"
 
 #
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:39
 msgid "- saving boot.log in OS and preboot.log from GUI by typing F2"
 msgstr ""
-"- Guardado de boot.log en la partición del sistema iniciado y pulsando F2 "
-"desde la interfaz de Clover puede guardar el preboot.log"
+"- Guardado de boot.log en la partición del sistema y de preboot.log pulsando "
+"F2 desde la interfaz"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Conclusion.html:22
@@ -277,13 +278,14 @@ msgid ""
 "diskutil list\n"
 "newfs_msdos -v EFI -F 32 /dev/rdisk9s1"
 msgstr ""
-"Instala Clover en la partición ESP (EFI System Partition) del volumen seleccionado\n"
+"Instala Clover en la partición ESP (EFI System Partition) del volumen "
+"seleccionado\n"
 "\n"
-"Requiere formatear la partición ESP como Fat32 desde su Mac.\n"
+"Requiere formatear la partición ESP como FAT32 desde su Mac.\n"
 "\n"
-"Para Fat32 use los siguientes comandos:\n"
-"diskutil list\n"
-"newfs_msdos -v EFI -F 32 /dev/rdisk9s1"
+"Para FAT32 use los siguientes comandos:\n"
+"diskutil list (identifique la partición EFI para usarla a continuación)\n"
+"newfs_msdos -v EFI -F 32 /dev/rdiskXsY"
 
 #. type: "Bootloader_title"
 #: Resources/templates/Localizable.strings:23
@@ -358,8 +360,10 @@ msgid ""
 "Can also be use if you don't want to upgrade MBR or PBR sectors."
 msgstr ""
 "No instalar ningún gestor de arranque (boot0X, boot1X).\n"
-"Útil para placas base UEFI que no requieren los archivos del gestor de arranque.\n"
-"También puede ser usado si no quiere actualizar los sectores MBR o PBR en sistemas BIOS."
+"Útil para placas base UEFI ya que no requieren los archivos del gestor de "
+"arranque.\n"
+"También puede ser usado si no quiere actualizar los sectores MBR o PBR en "
+"sistemas BIOS."
 
 #. type: "AltBoot_title"
 #: Resources/templates/Localizable.strings:45
@@ -381,7 +385,7 @@ msgstr ""
 #: Resources/templates/Localizable.strings:50
 #, no-wrap
 msgid "Install & Start 32bit boot first"
-msgstr "Instalar e iniciar el arranque 32bit primero"
+msgstr "Instalar e iniciar en 32bit primero"
 
 #. type: "boot32_description"
 #: Resources/templates/Localizable.strings:51
@@ -568,8 +572,10 @@ msgid ""
 "Mostly UEFI boot uses hardware NVRAM but in some rare cases this driver is needed.\n"
 "Use it only if you have a problem without it"
 msgstr ""
-"Controlador 64bit que provee soporte de variables NVRAM necesarias para MacOSX.\n"
-"La mayoría de sistemas UEFI usan NVRAM por hardware pero en algunos casos excepcionales este controlador es necesario.\n"
+"Controlador 64bit que provee soporte de variables NVRAM necesarias para "
+"MacOSX.\n"
+"La mayoría de sistemas UEFI usan NVRAM por hardware pero en algunos casos "
+"este controlador es necesario.\n"
 "Usar solamente si tiene problemas sin el"
 
 #. type: "OsxAptioFixDrv-64_description"
@@ -900,7 +906,7 @@ msgstr "Scripts RC opcionales"
 msgid "Disable the mDNSResponder sleep proxy client service. This will prevent the system waking from sleep every hours"
 msgstr ""
 "Desactiva el servicio mDNSResponder durante el reposo. Esto evitará que el "
-"sistema salga del reposo cada ciertas horas"
+"sistema salga del reposo por sí mismo"
 
 #. type: "CloverPrefpane_title"
 #: Resources/templates/Localizable.strings:189
@@ -972,7 +978,7 @@ msgstr "Actualizar"
 #: ../CloverUpdater/CloverUpdater.strings:11
 #, no-wrap
 msgid "No update available !"
-msgstr "Ninguna actualización disponible!"
+msgstr "No hay actualizaciones disponibles!"
 
 #. type: "586.title"
 #: ../CloverUpdater/CloverUpdater.strings:12
@@ -1087,7 +1093,9 @@ msgstr "Archivos de Registro"
 #: ../CloverPrefpane/CloverPrefpane.strings:18
 #, no-wrap
 msgid "Number of lines of history to keep in CloverEFI/system.log file in addition to the current CloverEFI/boot.log contents"
-msgstr "Número de lineas de historial a mantener en el archivo CloverEFI/system.log en adición al contenido del archivo CloverEFI/boot.log"
+msgstr ""
+"Lineas de historial a mantener en CloverEFI/system.log, además del contenido "
+"de CloverEFI/boot.log"
 
 #. type: "327.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:19
@@ -1099,14 +1107,14 @@ msgstr "Configuración Avanzada"
 #: ../CloverPrefpane/CloverPrefpane.strings:20
 #, no-wrap
 msgid "Force mount selected ESP at startup:"
-msgstr "Montar la partición ESP al arrancar:"
+msgstr "Partición ESP a montar al arrancar:"
 
 #. type: "339.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:21
 #, no-wrap
 #| msgid "Save NVRAM contents to partition:"
 msgid "Save NVRAM contents to disk:"
-msgstr "Guardar el contenido de NVRAM en:"
+msgstr "Guardar el contenido de NVRAM:"
 
 #. type: "374.label"
 #: ../CloverPrefpane/CloverPrefpane.strings:22
@@ -1161,7 +1169,9 @@ msgstr "Montar la partición ESP al arrancar"
 #: ../CloverPrefpane/CloverPrefpane.strings:30
 #, no-wrap
 msgid "Where to save the nvram contents"
-msgstr "Guardar el contenido de nvram"
+msgstr ""
+"Nunca - No guarda el contenido de NVRAM\n"
+"Siempre - Lo almacena en la partición de arranque o alguna otra del sistema"
 
 #. type: "483.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:31
@@ -1173,13 +1183,13 @@ msgstr "Número de líneas de registro a mantener:"
 #: ../CloverPrefpane/CloverPrefpane.strings:32
 #, no-wrap
 msgid "Create timestamp CloverEFI/boot.log file on every boot"
-msgstr "Crear CloverEFI/boot.log con estampa de tiempo en cada arranque"
+msgstr "Guardar boot.log con sello de tiempo en cada arranque"
 
 #. type: "525.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:33
 #, no-wrap
 msgid "Number of timestamp boot.log files to keep:"
-msgstr "Número de boot.log con estampa de tiempo a mantener:"
+msgstr "Cantidad de archivos boot.log a mantener:"
 
 #. type: "555.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:34
@@ -1203,7 +1213,7 @@ msgstr "Número de copias de respaldo a guardar:"
 #: ../CloverPrefpane/CloverPrefpane.strings:37
 #, no-wrap
 msgid "EFI Folder path"
-msgstr "Ruta a carpeta EFI:"
+msgstr "Ruta a la carpeta EFI:"
 
 #. type: "Auto"
 #: ../CloverPrefpane/CloverPrefpane.strings:38
