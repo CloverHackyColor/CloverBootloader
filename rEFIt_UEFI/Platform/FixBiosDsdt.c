@@ -3719,10 +3719,12 @@ UINT32 FIXSATAAHCI (UINT8 *dsdt, UINT32 len)
   met = aml_add_method(root, "_DSM", 4);
   met = aml_add_store(met);
   pack = aml_add_package(met);
-  aml_add_string(pack, "device-id");
-  aml_add_byte_buffer(pack, (CHAR8*)&FakeID, 4);
-  aml_add_string(pack, "vendor-id");
-  aml_add_byte_buffer(pack, (CHAR8*)&FakeVen, 4);
+  if (gSettings.FakeSATA) {
+    aml_add_string(pack, "device-id");
+    aml_add_byte_buffer(pack, (CHAR8*)&FakeID, 4);
+    aml_add_string(pack, "vendor-id");
+    aml_add_byte_buffer(pack, (CHAR8*)&FakeVen, 4);
+  }
   aml_add_local0(met);
   aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
   // finish Method(_DSM,4,NotSerialized)
@@ -3763,17 +3765,17 @@ UINT32 FIXSATA (UINT8 *dsdt, UINT32 len)
     FakeID = gSettings.FakeSATA >> 16;
     FakeVen = gSettings.FakeSATA & 0xFFFF;
   }
-
+  
   if (!SATAADR1) return len;
   
-  for (i=0x20; i<len-10; i++) {    
+  for (i=0x20; i<len-10; i++) {
     if (CmpAdr(dsdt, i, SATAADR1)) {
       //        DBG("Found SATAAHCIADR1=%x at %x\n", SATAAHCIADR1, j);
       SATAADR = devFind(dsdt, i);
       if (!SATAADR) {
         continue;
       }
-
+      
       BridgeSize = get_size(dsdt, SATAADR);
       if (BridgeSize) break;
     } // End IDE
@@ -3783,14 +3785,16 @@ UINT32 FIXSATA (UINT8 *dsdt, UINT32 len)
   DBG("Start SATA Fix\n");
   
 	root = aml_create_node(NULL);
-	// add Method(_DSM,4,NotSerialized) 
+	// add Method(_DSM,4,NotSerialized)
   met = aml_add_method(root, "_DSM", 4);
   met = aml_add_store(met);
   pack = aml_add_package(met);
-  aml_add_string(pack, "device-id");
-  aml_add_byte_buffer(pack, (CHAR8*)&FakeID, 4);
-  aml_add_string(pack, "vendor-id");
-  aml_add_byte_buffer(pack, (CHAR8*)&FakeVen, 4);
+  if (gSettings.FakeSATA) {
+    aml_add_string(pack, "device-id");
+    aml_add_byte_buffer(pack, (CHAR8*)&FakeID, 4);
+    aml_add_string(pack, "vendor-id");
+    aml_add_byte_buffer(pack, (CHAR8*)&FakeVen, 4);
+  }
   aml_add_local0(met);
   aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
   // finish Method(_DSM,4,NotSerialized)
@@ -3798,17 +3802,17 @@ UINT32 FIXSATA (UINT8 *dsdt, UINT32 len)
   aml_calculate_size(root);
   sata = AllocateZeroPool(root->Size);
   sizeoffset = root->Size;
-  aml_write_node(root, sata, 0);  
+  aml_write_node(root, sata, 0);
   aml_destroy_node(root);
   // move data to back for add DSM
   i = SATAADR + BridgeSize;
   len = move_data(i, dsdt, len, sizeoffset);
   CopyMem(dsdt+i, sata, sizeoffset);
   // Fix Device SATA size
-  k = write_size(SATAADR, dsdt, len, sizeoffset);   
+  k = write_size(SATAADR, dsdt, len, sizeoffset);
   sizeoffset += k;
   len += k;
-
+  
   len = CorrectOuters(dsdt, len, SATAADR-3, sizeoffset);
   FreePool(sata);
   return len;
