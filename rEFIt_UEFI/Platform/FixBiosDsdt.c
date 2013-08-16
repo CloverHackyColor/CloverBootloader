@@ -1788,7 +1788,7 @@ UINT32 FIXLPCB (UINT8 *dsdt, UINT32 len)
 //CONST
 CHAR8 Yes[] = {0x01,0x00,0x00,0x00};
 CHAR8 data2[] = {0xe0,0x00,0x56,0x28};
-
+CHAR8 VenATI[] = {0x02, 0x10};
 
 UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
 {
@@ -1805,6 +1805,15 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
   AML_CHUNK* met;
   BOOLEAN DISPLAYFIX = FALSE;
   DisplayName1 = FALSE;
+  AML_CHUNK* pack;
+//  UINT32 VideoRam;
+//  UINT8 ports;
+//  CHAR8 *cfgname;
+//  CHAR8 *cardver;
+  UINT32 FakeID = 0;
+  UINT32 FakeVen = 0;
+  
+  
 
   PCIADR = GetPciDevice(dsdt, len);
   if (PCIADR) {
@@ -1857,8 +1866,8 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
         aml_add_byte(gfx0, (UINT8)DisplayADR2[0]);
     }
     // Intel GMA and HD
-/*    if (DisplayVendor[0] == 0x8086) {
-      AML_CHUNK* pack;
+    if (DisplayVendor[0] == 0x8086) {
+/*      AML_CHUNK* pack;
       CHAR8 *modelname = get_gma_model(DisplayID[0]);
       if (AsciiStrnCmp(modelname, "Unknown", 7) == 0)
       {
@@ -2071,17 +2080,33 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
         aml_add_string(pack, "AAPL00,boot-display");
         aml_add_byte_buffer(pack, Yes, sizeof(Yes));
       }
+ */
+      met = aml_add_method(root, "_DSM", 4);
+      met = aml_add_store(met);
+      pack = aml_add_package(met);
+      
+      if (gSettings.FakeIntel) {
+        FakeID = gSettings.FakeIntel >> 16;
+        aml_add_string(pack, "device-id");
+        aml_add_byte_buffer(pack, (CHAR8*)&FakeID, 4);
+        FakeVen = gSettings.FakeIntel & 0xFFFF;
+        aml_add_string(pack, "vendor-id");
+        aml_add_byte_buffer(pack, (CHAR8*)&FakeVen, 4);
+      }
+      
+      
       aml_add_local0(met);
       aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
       // finish Method(_DSM,4,NotSerialized)
     }
-*/    
+    
     // NVIDIA
- /*   if (DisplayVendor[0] == 0x10DE) {
-      AML_CHUNK* pack;
-      UINT64 VideoRam;
-      CHAR8 *modelname = nv_name((UINT16)DisplayVendor[0], DisplayID[0]);
+  if (DisplayVendor[0] == 0x10DE) {
+  //    AML_CHUNK* pack;
+  //    UINT64 VideoRam;
+  //    CHAR8 *modelname = nv_name((UINT16)DisplayVendor[0], DisplayID[0]);
       // add Method(_DSM,4,NotSerialized) for GFX0
+   
       if (!DISPLAYFIX) {
         met = aml_add_method(gfx0, "_DSM", 4);
       } else {
@@ -2090,7 +2115,7 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
       met = aml_add_store(met);
       //Slice - next I mark what is in Natit, and what no
       pack = aml_add_package(met);
-      aml_add_string(pack, "AAPL,aux-power-connected");  //-
+ /*     aml_add_string(pack, "AAPL,aux-power-connected");  //-
       aml_add_byte_buffer(pack, Yes, sizeof(Yes));
       aml_add_string(pack, "AAPL00,DualLink");          //-
       aml_add_byte_buffer(pack, Yes, sizeof(Yes));
@@ -2135,20 +2160,24 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
 //        aml_add_string(pack, "IOPCIExpressLinkStatus");     //-
 //        aml_add_dword(pack, 0x10880); //0x880); 
       }
- 
+*/
+    if (gSettings.FakeNVidia) {
+      FakeID = gSettings.FakeNVidia >> 16;
+      aml_add_string(pack, "device-id");
+      aml_add_byte_buffer(pack, (CHAR8*)&FakeID, 4);
+      FakeVen = gSettings.FakeNVidia & 0xFFFF;
+      aml_add_string(pack, "vendor-id");
+      aml_add_byte_buffer(pack, (CHAR8*)&FakeVen, 4);
+    }
+    
       aml_add_local0(met);
       aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
       // finish Method(_DSM,4,NotSerialized)
     }
- */   
+  
     // ATI
-/*    if (DisplayVendor[0] == 0x1002) {
-      AML_CHUNK* pack;
-      UINT32 VideoRam;
-      UINT8 ports;
-      CHAR8 *cfgname;
-      CHAR8 *cardver;
-      CHAR8 *modelname = ati_name(DisplayID[0], DisplaySubID[0]);
+    if (DisplayVendor[0] == 0x1002) {
+//      CHAR8 *modelname = ati_name(DisplayID[0], DisplaySubID[0]);
       // add Method(_DSM,4,NotSerialized) for GFX0
       if (!DISPLAYFIX) {
         met = aml_add_method(gfx0, "_DSM", 4);
@@ -2157,6 +2186,7 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
       }
       met = aml_add_store(met);
       pack = aml_add_package(met);
+  /*
       aml_add_string(pack, "AAPL,aux-power-connected");
       aml_add_byte_buffer(pack, Yes, sizeof(Yes));
       aml_add_string(pack, "AAPL00,DualLink");
@@ -2207,11 +2237,27 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
         aml_add_string(pack, "IOPCIExpressLinkStatus");
         aml_add_dword(pack, 0x10880); //0x880);  
       }
+*/   
+      if (gSettings.FakeATI) {
+        FakeID = gSettings.FakeATI >> 16;
+        aml_add_string(pack, "device-id");
+        aml_add_byte_buffer(pack, (CHAR8*)&FakeID, 4);
+        aml_add_string(pack, "ATY,DeviceID");
+        aml_add_byte_buffer(pack, (CHAR8*)&FakeID, 2);
+        FakeVen = gSettings.FakeATI & 0xFFFF;
+        aml_add_string(pack, "vendor-id");
+        aml_add_byte_buffer(pack, (CHAR8*)&FakeVen, 4);
+        aml_add_string(pack, "ATY,VendorID");
+        aml_add_byte_buffer(pack, (CHAR8*)&FakeVen, 2);
+      } else {
+        aml_add_string(pack, "ATY,VendorID");
+        aml_add_byte_buffer(pack, VenATI, 2);
+      }
       aml_add_local0(met);
       aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
       // finish Method(_DSM,4,NotSerialized)
     }
-*/    
+    
     // HDAU
     if (GFXHDAFIX) {
  //     CHAR8 data2[] = {0xe0,0x00,0x56,0x28};
@@ -2290,6 +2336,7 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
   return len;  
 }
 
+
 UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
 {
   UINT32 i, j, k;
@@ -2298,12 +2345,15 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
   AML_CHUNK* root;
   AML_CHUNK* gfx0;
   AML_CHUNK* met;
+  AML_CHUNK* pack;
 //  CHAR8 *portname;
   CHAR8 *CFGname  = NULL;
   CHAR8 *name     = NULL;
   CHAR8 *display  = NULL;
   UINT32 devadr=0, devsize=0, devadr1=0, devsize1=0;
   BOOLEAN DISPLAYFIX = FALSE;
+  UINT32 FakeID = 0;
+  UINT32 FakeVen = 0;
   
   DBG("Start Display2 Fix\n");
   PCIADR = GetPciDevice(dsdt, len);
@@ -2368,8 +2418,8 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
     }
     
     // Intel GMA and HD
-/*    if (DisplayVendor[1] == 0x8086) {
-      AML_CHUNK* pack;
+    if (DisplayVendor[1] == 0x8086) {
+/*      
       CHAR8 *modelname = get_gma_model(DisplayID[1]);
       if (AsciiStrnCmp(modelname, "Unknown", 7) == 0) {
         DBG("Found Unsupported Intel Display Card Vendor id 0x%04x, device id 0x%04x, don't patch DSDT.\n",
@@ -2490,16 +2540,30 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
         aml_add_string(pack, "AAPL00,boot-display");
         aml_add_byte_buffer(pack, Yes, sizeof(Yes));
       }
+ */
+      met = aml_add_method(root, "_DSM", 4);
+      met = aml_add_store(met);
+      pack = aml_add_package(met);
+      
+      if (gSettings.FakeIntel) {
+        FakeID = gSettings.FakeIntel >> 16;
+        aml_add_string(pack, "device-id");
+        aml_add_byte_buffer(pack, (CHAR8*)&FakeID, 4);
+        FakeVen = gSettings.FakeIntel & 0xFFFF;
+        aml_add_string(pack, "vendor-id");
+        aml_add_byte_buffer(pack, (CHAR8*)&FakeVen, 4);
+      }
+      
       aml_add_local0(met);
       aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
       // finish Method(_DSM,4,NotSerialized)
     }
-*/    
+    
     // NVIDIA
-/*    if (DisplayVendor[1] == 0x10DE) {
-      AML_CHUNK* pack;
-      UINT64 VideoRam;
-      CHAR8 *modelname = nv_name((UINT16)DisplayVendor[1], DisplayID[1]);
+   if (DisplayVendor[1] == 0x10DE) {
+ //     AML_CHUNK* pack;
+ //     UINT64 VideoRam;
+ //     CHAR8 *modelname = nv_name((UINT16)DisplayVendor[1], DisplayID[1]);
       // add Method(_DSM,4,NotSerialized) for GFX0
       if (!DISPLAYFIX) {
         met = aml_add_method(gfx0, "_DSM", 4);
@@ -2508,6 +2572,7 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
       }
       met = aml_add_store(met);
       pack = aml_add_package(met);
+/*     
       aml_add_string(pack, "AAPL,aux-power-connected");
       aml_add_byte_buffer(pack, Yes, sizeof(Yes));
       aml_add_string(pack, "AAPL00,DualLink");
@@ -2549,19 +2614,23 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
         aml_add_string(pack, "IOPCIExpressLinkStatus");
         aml_add_dword(pack, 0x10880); //0x880);  
       }
+ */
+     if (gSettings.FakeNVidia) {
+       FakeID = gSettings.FakeNVidia >> 16;
+       aml_add_string(pack, "device-id");
+       aml_add_byte_buffer(pack, (CHAR8*)&FakeID, 4);
+       FakeVen = gSettings.FakeNVidia & 0xFFFF;
+       aml_add_string(pack, "vendor-id");
+       aml_add_byte_buffer(pack, (CHAR8*)&FakeVen, 4);
+     }
+     
       aml_add_local0(met);
       aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
       // finish Method(_DSM,4,NotSerialized)
     }
-*/    
+    
     // ATI
-/*    if (DisplayVendor[1] == 0x1002) {
-      AML_CHUNK* pack;
-      UINT8 ports;
-      UINT64 VideoRam;
-      CHAR8 *cardver;
-      CHAR8 *cfgname;
-      CHAR8 *modelname = ati_name(DisplayID[1], DisplaySubID[1]);
+    if (DisplayVendor[1] == 0x1002) {
       // add Method(_DSM,4,NotSerialized) for GFX0
       if (!DISPLAYFIX) {
         met = aml_add_method(gfx0, "_DSM", 4);
@@ -2570,7 +2639,7 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
       }
       met = aml_add_store(met);
       pack = aml_add_package(met);
-      aml_add_string(pack, "AAPL,aux-power-connected");
+/*      aml_add_string(pack, "AAPL,aux-power-connected");
       aml_add_byte_buffer(pack, Yes, sizeof(Yes));
       aml_add_string(pack, "AAPL00,DualLink");
       aml_add_byte_buffer(pack, (CHAR8*)&gSettings.DualLink, 4);
@@ -2603,9 +2672,27 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
       aml_add_byte_buffer(pack, (CHAR8*)&DisplayVendor[1], 4); 
       aml_add_string(pack, "ATY,DeviceID");
       aml_add_byte_buffer(pack, (CHAR8*)&DisplayID[1], 4); 
-      //     aml_add_string(pack, "device-id");
+ */
+      if (gSettings.FakeATI) {
+        FakeID = gSettings.FakeATI >> 16;
+        aml_add_string(pack, "device-id");
+        aml_add_byte_buffer(pack, (CHAR8*)&FakeID, 4);
+        aml_add_string(pack, "ATY,DeviceID");
+        aml_add_byte_buffer(pack, (CHAR8*)&FakeID, 2);
+        FakeVen = gSettings.FakeATI & 0xFFFF;
+        aml_add_string(pack, "vendor-id");
+        aml_add_byte_buffer(pack, (CHAR8*)&FakeVen, 4);
+        aml_add_string(pack, "ATY,VendorID");
+        aml_add_byte_buffer(pack, (CHAR8*)&FakeVen, 2);
+      } else {
+        aml_add_string(pack, "ATY,VendorID");
+        aml_add_byte_buffer(pack, VenATI, 2);
+      }
+      
+/*      
+      aml_add_string(pack, "device-id");
       //     CHAR8 data[] = {0xE1,0x68,0x00,0x00};
-      //     aml_add_byte_buffer(pack, data, sizeof(data));
+      aml_add_byte_buffer(pack, data, sizeof(data));
       aml_add_string(pack, "org-device-id");
       aml_add_byte_buffer(pack, (CHAR8*)&DisplayID[1], 4); 
       aml_add_string(pack, "hda-gfx");
@@ -2619,11 +2706,12 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
         aml_add_string(pack, "IOPCIExpressLinkStatus");
         aml_add_dword(pack, 0x10880); //0x880); 
       }
+      */
       aml_add_local0(met);
       aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
       // finish Method(_DSM,4,NotSerialized)
     }
-*/    
+    
     // HDAU
     if (GFXHDAFIX) {
 //      AML_CHUNK* met;
@@ -2834,19 +2922,19 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
     i = PCIADR;
   }  
   Size = get_size(dsdt, i);
-  DBG("Will attach to %x size %x\n", i, Size);
+//  DBG("Will attach to %x size %x\n", i, Size);
   // move data to back for add patch 
   k = i + Size;
   len = move_data(k, dsdt, len, sizeoffset);
-  DBG("data moved, len=%x\n", len);
+//  DBG("data moved, len=%x\n", len);
   CopyMem(dsdt+k, network, sizeoffset);
   // Fix Device network size
   k = write_size(i, dsdt, len, sizeoffset);
   sizeoffset += k;
   len += k;
-  DBG("size written, shift=%x\n", k);
+//  DBG("size written, shift=%x\n", k);
   len = CorrectOuters(dsdt, len, i-3, sizeoffset);
-  DBG("final len=%x\n", len);
+//  DBG("final len=%x\n", len);
   FreePool(network);
   return len;
 }
