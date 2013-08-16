@@ -1795,7 +1795,7 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
   UINT32 i, j, k;
   INT32 sizeoffset = 0;
   UINT32 PCIADR = 0, PCISIZE = 0;
-  CHAR8 *portname;
+//  CHAR8 *portname;
   CHAR8 *CFGname = NULL;
   CHAR8 *name = NULL;
   CHAR8 *display;
@@ -1857,7 +1857,7 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
         aml_add_byte(gfx0, (UINT8)DisplayADR2[0]);
     }
     // Intel GMA and HD
-    if (DisplayVendor[0] == 0x8086) {
+/*    if (DisplayVendor[0] == 0x8086) {
       AML_CHUNK* pack;
       CHAR8 *modelname = get_gma_model(DisplayID[0]);
       if (AsciiStrnCmp(modelname, "Unknown", 7) == 0)
@@ -2075,9 +2075,9 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
       aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
       // finish Method(_DSM,4,NotSerialized)
     }
-    
+*/    
     // NVIDIA
-    if (DisplayVendor[0] == 0x10DE) {
+ /*   if (DisplayVendor[0] == 0x10DE) {
       AML_CHUNK* pack;
       UINT64 VideoRam;
       CHAR8 *modelname = nv_name((UINT16)DisplayVendor[0], DisplayID[0]);
@@ -2127,22 +2127,22 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
 //      aml_add_byte_buffer(pack, (CHAR8*)&DisplayID[0], 4);
 //      aml_add_string(pack, "name");
 //      aml_add_string_buffer(pack, "display");       //+
-/*
+
       if (!Display1PCIE)
       {
-        aml_add_string(pack, "IOPCIExpressLinkCapabilities"); //-
-        aml_add_dword(pack, 0x130d1) ;//0x1e80); 
-        aml_add_string(pack, "IOPCIExpressLinkStatus");     //-
-        aml_add_dword(pack, 0x10880); //0x880); 
+//        aml_add_string(pack, "IOPCIExpressLinkCapabilities"); //-
+//        aml_add_dword(pack, 0x130d1) ;//0x1e80); 
+//        aml_add_string(pack, "IOPCIExpressLinkStatus");     //-
+//        aml_add_dword(pack, 0x10880); //0x880); 
       }
- */
+ 
       aml_add_local0(met);
       aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
       // finish Method(_DSM,4,NotSerialized)
     }
-    
+ */   
     // ATI
-    if (DisplayVendor[0] == 0x1002) {
+/*    if (DisplayVendor[0] == 0x1002) {
       AML_CHUNK* pack;
       UINT32 VideoRam;
       UINT8 ports;
@@ -2211,7 +2211,7 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
       aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
       // finish Method(_DSM,4,NotSerialized)
     }
-    
+*/    
     // HDAU
     if (GFXHDAFIX) {
  //     CHAR8 data2[] = {0xe0,0x00,0x56,0x28};
@@ -2298,10 +2298,10 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
   AML_CHUNK* root;
   AML_CHUNK* gfx0;
   AML_CHUNK* met;
-  CHAR8 *portname;
-  CHAR8 *CFGname = NULL;
-  CHAR8 *name = NULL;
-  CHAR8 *display;
+//  CHAR8 *portname;
+  CHAR8 *CFGname  = NULL;
+  CHAR8 *name     = NULL;
+  CHAR8 *display  = NULL;
   UINT32 devadr=0, devsize=0, devadr1=0, devsize1=0;
   BOOLEAN DISPLAYFIX = FALSE;
   
@@ -2368,7 +2368,7 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
     }
     
     // Intel GMA and HD
-    if (DisplayVendor[1] == 0x8086) {
+/*    if (DisplayVendor[1] == 0x8086) {
       AML_CHUNK* pack;
       CHAR8 *modelname = get_gma_model(DisplayID[1]);
       if (AsciiStrnCmp(modelname, "Unknown", 7) == 0) {
@@ -2494,9 +2494,9 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
       aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
       // finish Method(_DSM,4,NotSerialized)
     }
-    
+*/    
     // NVIDIA
-    if (DisplayVendor[1] == 0x10DE) {
+/*    if (DisplayVendor[1] == 0x10DE) {
       AML_CHUNK* pack;
       UINT64 VideoRam;
       CHAR8 *modelname = nv_name((UINT16)DisplayVendor[1], DisplayID[1]);
@@ -2553,9 +2553,9 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
       aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
       // finish Method(_DSM,4,NotSerialized)
     }
-    
+*/    
     // ATI
-    if (DisplayVendor[1] == 0x1002) {
+/*    if (DisplayVendor[1] == 0x1002) {
       AML_CHUNK* pack;
       UINT8 ports;
       UINT64 VideoRam;
@@ -2623,7 +2623,7 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
       aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
       // finish Method(_DSM,4,NotSerialized)
     }
-    
+*/    
     // HDAU
     if (GFXHDAFIX) {
 //      AML_CHUNK* met;
@@ -2719,9 +2719,9 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
   if (!NetworkADR1) return len;
   DBG("Start NetWork Fix\n");
   
-  if (gSettings.FakeWIFI) {
-    FakeID = gSettings.FakeWIFI >> 16;
-    FakeVen = gSettings.FakeWIFI & 0xFFFF;
+  if (gSettings.FakeLAN) {
+    FakeID = gSettings.FakeLAN >> 16;
+    FakeVen = gSettings.FakeLAN & 0xFFFF;
     AsciiSPrint(NameCard, 32, "pci%x,%x\0", FakeVen, FakeID);
   }
  

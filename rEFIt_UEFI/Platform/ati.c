@@ -280,7 +280,7 @@ radeon_card_info_t radeon_cards[] = {
   //9501 - Megalodon, Triakis HD3800
 	{ 0x9500,	0x00000000, CHIP_FAMILY_RV670,	"ATI Radeon HD 3800 Series",		kMegalodon	},
 	{ 0x9501,	0x00000000, CHIP_FAMILY_RV670,	"ATI Radeon HD 3690 Series",		kMegalodon	},
-	{ 0x9505,	0x00000000, CHIP_FAMILY_RV670,	"ATI Radeon HD 3800 Series",		kMegalodon	},
+	{ 0x9505,	0x00000000, CHIP_FAMILY_RV670,	"ATI Radeon HD 3850",           kMegalodon	},
 	{ 0x9507,	0x00000000, CHIP_FAMILY_RV670,	"ATI Radeon HD 3830",           kMegalodon	},
 	{ 0x950F,	0x00000000, CHIP_FAMILY_RV670,	"ATI Radeon HD 3870 X2",        kMegalodon	},
 	{ 0x9511,	0x00000000, CHIP_FAMILY_RV670,	"ATI Radeon HD 3850 X2",        kMegalodon	},
