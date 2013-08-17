@@ -497,8 +497,8 @@ VOID GetDefaultSettings(VOID)
   gSettings.InjectIntel = (gGraphics[0].Vendor == Intel) || (gGraphics[1].Vendor == Intel);
   gSettings.InjectATI = (((gGraphics[0].Vendor == Ati) && ((gGraphics[0].DeviceID & 0xF000) != 0x6000)) ||
                          ((gGraphics[1].Vendor == Ati) && ((gGraphics[1].DeviceID & 0xF000) != 0x6000)));
-  gSettings.InjectNVidia = (((gGraphics[0].Vendor == Nvidia) && (gGraphics[0].DeviceID < 0x1080)) ||
-                            ((gGraphics[1].Vendor == Nvidia) && (gGraphics[1].DeviceID < 0x1080)));
+  gSettings.InjectNVidia = (((gGraphics[0].Vendor == Nvidia) && (gGraphics[0].Family < 0xE0)) ||
+                            ((gGraphics[1].Vendor == Nvidia) && (gGraphics[1].Family < 0xE0)));
   
   gSettings.GraphicsInjector = gSettings.InjectATI || gSettings.InjectNVidia;
 //  gSettings.CustomEDID = NULL; //no sense to assign 0 as the structure is zeroed

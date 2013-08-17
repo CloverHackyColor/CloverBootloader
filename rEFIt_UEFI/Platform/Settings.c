@@ -2604,6 +2604,8 @@ VOID GetDevices(VOID)
 	UINTN         Device = 0;
 	UINTN         Function = 0;
   UINTN         i;
+  UINT32        Bar0;
+  UINT8         *Mmio = NULL;
   radeon_card_info_t *info;
 
   NGFX = 0;
@@ -2671,6 +2673,13 @@ VOID GetDevices(VOID)
               break;
             case 0x10de:
               gGraphics[NGFX].Vendor = Nvidia;
+              Bar0 = Pci.Device.Bar[0];
+              Mmio = (UINT8 *)(UINTN)(Bar0 & ~0x0f);
+              //	DBG("BAR: 0x%p\n", Mmio);
+              // get card type
+              gGraphics[NGFX].Family = (REG32(Mmio, 0) >> 20) & 0x1ff;
+              
+
               AsciiSPrint(gGraphics[NGFX].Model, 64, "%a",
                           get_nvidia_model(((Pci.Hdr.VendorId <<16) | Pci.Hdr.DeviceId),
                                            ((Pci.Device.SubsystemVendorID << 16) | Pci.Device.SubsystemID)));

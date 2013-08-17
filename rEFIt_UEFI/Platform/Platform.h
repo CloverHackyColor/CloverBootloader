@@ -981,8 +981,9 @@ typedef struct {
   GFX_MANUFACTERER  Vendor;
   UINT8             Ports;  
   UINT16            DeviceID;
-  UINT16            Width;
-  UINT16            Height;
+  UINT16            Family;
+//  UINT16            Width;
+//  UINT16            Height;
   CHAR8             Model[64];
   CHAR8             Config[64];
   BOOLEAN           LoadVBios;

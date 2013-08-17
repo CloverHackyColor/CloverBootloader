@@ -2790,7 +2790,7 @@ static nvidia_card_info_t nvidia_cards[] = {
 	{ 0x10DE11BE,	NV_SUB_IDS,	"Quadro K3000M" },
 	// 11C0 - 11CF
   { 0x10DE11C0,	NV_SUB_IDS,	"GeForce GTX 660" },
-	{ 0x10DE11C6,	NV_SUB_IDS,	"GeForce GTX 650" },
+	{ 0x10DE11C6,	NV_SUB_IDS,	"GeForce GTX 650 TI" },
   { 0x10DE11D0, NV_SUB_IDS,	"GK106-INT353" },
 	// 11D0 - 11DF
 	// 11E0 - 11EF
@@ -3467,6 +3467,8 @@ UINT64 mem_detect(UINT16 nvCardType, pci_dt_t *nvda_dev)
 	return vram_size;
 }
 
+
+
 BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 {
 	const				INT32 MAX_BIOS_VERSION_LENGTH = 32;
@@ -3511,11 +3513,11 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
     gSettings.VRAM = videoRam;
 	}
 
-	model = get_nvidia_model(((nvda_dev->vendor_id << 16) | nvda_dev->device_id),((nvda_dev->subsys_id.subsys.vendor_id << 16) | nvda_dev->subsys_id.subsys.device_id));
-
+/*	model = get_nvidia_model(((nvda_dev->vendor_id << 16) | nvda_dev->device_id),((nvda_dev->subsys_id.subsys.vendor_id << 16) | nvda_dev->subsys_id.subsys.device_id));
+*/
 	for (j = 0; j < NGFX; j++) {    
 		if ((gGraphics[j].Vendor == Nvidia) && (gGraphics[j].DeviceID == nvda_dev->device_id)) {
-			model = gGraphics[j].Model; 
+			model = gGraphics[j].Model; //double?
 			n_ports = gGraphics[j].Ports;
 			load_vbios = gGraphics[j].LoadVBios;
 			break;
