@@ -356,7 +356,7 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model)
   AsciiStrCpy(gSettings.BoardManufactureName,   BiosVendor);
   AsciiStrCpy(gSettings.BoardSerialNumber,      AppleBoardSN);
   AsciiStrCpy(gSettings.BoardNumber,            AppleBoardID[Model]);
-  AsciiStrCpy(gSettings.BoardVersion,           AppleSystemVersion[Model]);
+  AsciiStrCpy(gSettings.BoardVersion,           AppleProductName[Model]);
   AsciiStrCpy(gSettings.LocationInChassis,      AppleBoardLocation);
   AsciiStrCpy(gSettings.ChassisManufacturer,    BiosVendor);
   AsciiStrCpy(gSettings.ChassisAssetTag,        AppleChassisAsset[Model]);
@@ -390,7 +390,8 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model)
     case iMac113:
     case iMac121:
     case iMac122:
-    case iMac131:  
+    case iMac131:
+    case iMac132:
       gSettings.ChassisType = MiscChassisTypeAllInOne; //13; 
       gSettings.Mobile = FALSE;
       break;
