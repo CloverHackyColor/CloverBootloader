@@ -310,6 +310,7 @@ radeon_card_info_t radeon_cards[] = {
 	{ 0x95C0,	0x00000000, CHIP_FAMILY_RV620,	"ATI Radeon HD 3550 Series",		kIago       },
   { 0x95C4,	0x00000000, CHIP_FAMILY_RV620,	"ATI Radeon HD 3470 Series",		kIago       },
 	{ 0x95C5,	0x00000000, CHIP_FAMILY_RV620,	"ATI Radeon HD 3450 Series",		kIago       },
+  { 0x95C6,	0x00000000, CHIP_FAMILY_RV620,	"ATI Radeon HD 3450 AGP",		kIago       },
 	
 	/* IGP */
 	{ 0x9610,	0x00000000, CHIP_FAMILY_RS780,	"ATI Radeon HD 3200 Graphics",	kNull       },
