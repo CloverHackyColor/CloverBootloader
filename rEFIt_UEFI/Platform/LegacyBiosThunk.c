@@ -147,6 +147,46 @@ InitializeInterruptRedirection (
 }
 
 /**
+  Disconnect EFI VGA driver
+  When BiosVideo disconnects, it takes care of setting Text VGA Mode (80x25) which works properly with Legacy mode
+**/
+EFI_STATUS
+DisconnectVga ( VOID )
+{
+  EFI_STATUS              Status;
+  UINTN                   HandleCount = 0;
+  UINTN                   Index;
+  EFI_HANDLE              *Handles = NULL;
+  EFI_PCI_IO_PROTOCOL     *PciIo  = NULL;
+  PCI_TYPE00              Pci;
+
+  // get all PciIo handles
+  Status = gBS->LocateHandleBuffer(ByProtocol, &gEfiPciIoProtocolGuid, NULL, &HandleCount, &Handles);
+  if (Status == EFI_SUCCESS) {
+    for (Index = 0; Index < HandleCount; Index++) {
+      Status = gBS->HandleProtocol(Handles[Index], &gEfiPciIoProtocolGuid, (VOID **) &PciIo);
+      if (EFI_ERROR(Status)) {
+        continue;
+      }
+      Status = PciIo->Pci.Read (PciIo, EfiPciIoWidthUint32, 0, sizeof (Pci) / sizeof (UINT32), &Pci);
+      if (!EFI_ERROR (Status))
+      {
+        if(IS_PCI_VGA(&Pci) == TRUE)
+        {
+          // disconnect VGA
+          DBG("Disonnecting VGA\n");
+          Status = gBS->DisconnectController(Handles[Index], NULL, NULL);
+          DBG("disconnect %r", Status);
+        }
+      }
+    }
+    FreePool(Handles);
+  }
+  return Status;
+}
+
+
+/**
   Thunk to 16-bit real mode and execute a software interrupt with a vector 
   of BiosInt. Regs will contain the 16-bit register context on entry and 
   exit.
@@ -273,6 +313,12 @@ LegacyBiosFarCall86 (
   BOOLEAN               Ret;
   UINT16                *Stack16;
 //	UINT16				BiosInt = 0x100;
+  EFI_TPL                 OriginalTpl;
+  EFI_TIMER_ARCH_PROTOCOL *Timer;
+  UINT64                  TimerPeriod;
+
+  // Disconnect EFI VGA driver (and switch to Text VGA Mode)
+  DisconnectVga();
 
   ZeroMem (&ThunkRegSet, sizeof (ThunkRegSet));
   ThunkRegSet.E.EFLAGS.Bits.Reserved_0 = 1;
@@ -309,6 +355,9 @@ LegacyBiosFarCall86 (
 		DisableInterrupts ();
 	}
 //    DisableInterrupts ();
+
+  // Critical section - execute without interruption until Legacy boots
+  OriginalTpl = gBS->RaiseTPL (TPL_HIGH_LEVEL);
 	
 //xxx - Slice
   //AsmWriteIdtr(NULL);
@@ -324,24 +373,41 @@ LegacyBiosFarCall86 (
     #if DEBUG_LBTHUNK == 2
     PauseForKey(L"LegacyBiosFarCall86");
     #endif
-  //
-  // Set Legacy16 state. 0x08, 0x70 is legacy 8259 vector bases.
-  //
-  Status = gLegacy8259->SetMode (gLegacy8259, Efi8259LegacyMode, NULL, NULL);
-//  ASSERT_EFI_ERROR (Status);
-  if (EFI_ERROR (Status)) {
-    return FALSE;
+
+  // Save current rate of DXE Timer and disable DXE timer
+  Status = gBS->LocateProtocol (&gEfiTimerArchProtocolGuid, NULL, (VOID **) &Timer);
+  if (!EFI_ERROR (Status)) {
+    Timer->GetTimerPeriod (Timer, &TimerPeriod);
+    Timer->SetTimerPeriod (Timer, 0);
   }
-  
-	AsmThunk16 (mThunkContext);
-	//
-  // Restore protected mode interrupt state
-  //
-  Status = gLegacy8259->SetMode (gLegacy8259, Efi8259ProtectedMode, NULL, NULL);
-//  ASSERT_EFI_ERROR (Status);
-  if (EFI_ERROR (Status)) {
-    return FALSE;
-  }
+
+  // Before switching to Legacy vector base, we set timer to default Legacy rate (54.9254 ms) - this is done by 3 steps:
+  IoWrite8 (TIMER_CONTROL_PORT, TIMER0_CONTROL_WORD);
+  IoWrite8 (TIMER0_COUNT_PORT, 0x00);
+  IoWrite8 (TIMER0_COUNT_PORT, 0x00);
+
+  // Set Irq Vector base to default Legacy base (master at 0x08, slave at 0x70)
+  gLegacy8259->SetVectorBase (gLegacy8259, LEGACY_MODE_BASE_VECTOR_MASTER, LEGACY_MODE_BASE_VECTOR_SLAVE);
+
+  // Set Irq Mask according to Legacy mode
+  gLegacy8259->SetMode (gLegacy8259, Efi8259LegacyMode, NULL, NULL);
+
+  // Thunk to 16-bit real mode to execute the farcall
+  AsmThunk16 (mThunkContext);
+
+  // EFI is probably overwritten here, but just in case we continue, try to restore EFI to previous state:
+
+  // Set Irq Mask according to Protected mode
+  gLegacy8259->SetMode (gLegacy8259, Efi8259ProtectedMode, NULL, NULL);
+
+  // Set Irq Vector base to Protected vector base (master at 0x68, slave at 0x70)
+  gLegacy8259->SetVectorBase (gLegacy8259, PROTECTED_MODE_BASE_VECTOR_MASTER, PROTECTED_MODE_BASE_VECTOR_SLAVE);
+
+  // Enable and restore rate of DXE Timer
+  Timer->SetTimerPeriod (Timer, TimerPeriod);
+
+  // End critical section
+  gBS->RestoreTPL (OriginalTpl);
 
   //
   // End critical section
@@ -365,6 +431,9 @@ LegacyBiosFarCall86 (
 	CopyMem (&(Regs->E.EFLAGS), &(ThunkRegSet.E.EFLAGS), sizeof (UINT32));
 	
 	Ret = (BOOLEAN) (Regs->E.EFLAGS.Bits.CF == 1);
+
+  // Connect VGA EFI Driver
+  BdsLibConnectAllDriversToAllControllers();
 	
   return Ret;
 }

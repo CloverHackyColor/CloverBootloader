@@ -207,6 +207,7 @@
   AppleDevicePropertyProtocolGuid
   gEfiConsoleControlProtocolGuid
   gEfiLegacyBiosProtocolGuid
+  gEfiTimerArchProtocolGuid
   
   gFSInjectProtocolGuid
   gMsgLogProtocolGuid

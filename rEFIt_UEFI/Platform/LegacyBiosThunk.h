@@ -34,6 +34,7 @@ Abstract:
 #include <Protocol/EdidActive.h>
 #include <Protocol/EdidDiscovered.h>
 #include <Protocol/DevicePath.h>
+#include <Protocol/Timer.h>
 
 #include <Library/UefiLib.h>
 #include <Library/DebugLib.h>
@@ -43,11 +44,27 @@ Abstract:
 #include <Library/BaseMemoryLib.h>
 #include <Library/MemoryAllocationLib.h>
 #include <Library/DevicePathLib.h>
+#include <Library/GenericBdsLib.h>
+#include <Library/IoLib.h>
 
 #include <IndustryStandard/Pci.h>
 
 #define EFI_SEGMENT(_Adr)     (UINT16) ((UINT16) (((UINTN) (_Adr)) >> 4) & 0xf000)
 #define EFI_OFFSET(_Adr)      (UINT16) (((UINT16) ((UINTN) (_Adr))) & 0xffff)
+
+// 8259 Interrupt Controller Hardware definitions
+
+#define LEGACY_MODE_BASE_VECTOR_MASTER       0x08
+#define LEGACY_MODE_BASE_VECTOR_SLAVE        0x70
+
+#define PROTECTED_MODE_BASE_VECTOR_MASTER    0x68
+#define PROTECTED_MODE_BASE_VECTOR_SLAVE     0x70
+
+// 8254 Timer Hardware definitions
+
+#define TIMER_CONTROL_PORT                   0x43
+#define TIMER0_COUNT_PORT                    0x40
+#define TIMER0_CONTROL_WORD                  0x36
 
 //
 // Function declarations
