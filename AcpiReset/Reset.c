@@ -92,6 +92,7 @@ EfiAcpiResetSystem (
     //
 		  //Slice - no! Stop here.
 		  CpuDeadLoop ();
+  case EfiResetPlatformSpecific:
   case EfiResetWarm:
   case EfiResetCold:
     if ((mAcpiDescription.RESET_REG.Address != 0) &&
