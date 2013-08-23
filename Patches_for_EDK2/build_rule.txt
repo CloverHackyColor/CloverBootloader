@@ -316,7 +316,7 @@
         #$(OBJCOPY) --only-keep-debug ${src} $(DEBUG_DIR)(+)$(MODULE_NAME).debug
 
         @$(OBJCOPY) --strip-debug ${src} $(DEBUG_DIR)(+)$(MODULE_NAME).debug
-        @$(OBJCOPY) --strip-unneeded ${src}
+        @$(OBJCOPY) --strip-unneeded  -R .eh_frame ${src}
 
         #
         #The below 2 lines are only needed for UNIXGCC tool chain, which genereates PE image directly
@@ -383,7 +383,7 @@
         Trim --asl-file -o $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.i -i $(INC_LIST) ${src}
         "$(ASLPP)" $(ASLPP_FLAGS) $(INC) -I${s_path} $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.i > $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.iii
        # "$(ASL)" $(ASL_FLAGS) $(ASL_OUTFLAGS)${dst} $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.iii
-       	"$(ASL)" $(ASL_FLAGS) $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.iii
+	"$(ASL)" $(ASL_FLAGS) $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.iii
 
 [C-Code-File.AcpiTable]
     <InputFile>
@@ -426,11 +426,9 @@
         "$(GENFW)" -o ${dst} -c $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.dll $(GENFW_FLAGS)
         
     <Command.XCODE> 
-	
-    	@"echo" [ASLCC-ACPI] $(MODULE_NAME)       
+	@"echo" [ASLCC-ACPI] $(MODULE_NAME)       
         @"$(ASLCC)" -o $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.obj  $(ASLCC_FLAGS) $(INC) ${src}
-	
-        @"echo" [ASLDLINK-ACPI] $(MODULE_NAME)
+	@"echo" [ASLDLINK-ACPI] $(MODULE_NAME)
         @"$(ASLDLINK)" -o $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.dll $(ASLDLINK_FLAGS) $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.obj
 	@"echo" [MTOC-ACPI] $(MODULE_NAME)
         @"$(MTOC)" -subsystem $(MODULE_TYPE)  $(MTOC_FLAGS) $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.dll $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.efi

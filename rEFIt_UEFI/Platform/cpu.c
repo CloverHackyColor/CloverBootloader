@@ -844,15 +844,7 @@ MACHINE_TYPES GetDefaultModel()
 				break;
       case CPU_MODEL_IVY_BRIDGE:
       case CPU_MODEL_IVY_BRIDGE_E5:  
-        DefaultType = iMac132;  
-        if (gGraphics[0].Vendor == Intel) {
-          DefaultType = MacMini62;
-					break;
-        }
-				if (AsciiStrStr(gCPUStructure.BrandString, "i3")) {
-					DefaultType = iMac131;
-					break;
-				}        
+        DefaultType = iMac131;  //
         break;
 			case CPU_MODEL_JAKETOWN:
 				DefaultType = MacPro41;

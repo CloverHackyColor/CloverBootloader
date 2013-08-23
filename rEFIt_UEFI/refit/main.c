@@ -2017,7 +2017,7 @@ static VOID ScanTool(VOID)
         DBG("Checking EFI partition Volume %d for Clover\n", VolumeIndex);
         
 #if defined(MDE_CPU_X64)
-        StrCpy(FileName, L"\\EFI\\CLOVER\\CLOVERX64.EFI");
+        StrCpy(FileName, L"");
 #else
         StrCpy(FileName, L"\\EFI\\CLOVER\\CLOVERIA32.EFI");
 #endif
