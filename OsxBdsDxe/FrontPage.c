@@ -240,7 +240,7 @@ FrontPageCallback (
                                        AsciiStrSize ((CHAR8 *) PcdGetPtr (PcdUefiVariableDefaultPlatformLangCodes)),
                                        (CHAR8 *) PcdGetPtr (PcdUefiVariableDefaultPlatformLangCodes)
                                        );
-        ASSERT (PlatformSupportedLanguages != NULL);
+//        ASSERT (PlatformSupportedLanguages != NULL);
       }
 
       //
@@ -260,11 +260,11 @@ FrontPageCallback (
                         AsciiStrSize (BestLanguage),
                         Lang
                         );
-        ASSERT_EFI_ERROR(Status);
+  //      ASSERT_EFI_ERROR(Status);
         FreePool (BestLanguage);
-      } else {
+      } /* else {
         ASSERT (FALSE);
-      }
+      } */
 
       *ActionRequest = EFI_BROWSER_ACTION_REQUEST_EXIT;
 
@@ -1060,10 +1060,10 @@ PlatformBdsEnterFrontPage (
     //
     // Get user defined text mode for setup.
     //
-    mSetupHorizontalResolution = PcdGet32 (PcdSetupVideoHorizontalResolution);
-    mSetupVerticalResolution   = PcdGet32 (PcdSetupVideoVerticalResolution);      
-    mSetupTextModeColumn       = PcdGet32 (PcdSetupConOutColumn);
-    mSetupTextModeRow          = PcdGet32 (PcdSetupConOutRow);
+   // mSetupHorizontalResolution = PcdGet32 (PcdSetupVideoHorizontalResolution);
+   // mSetupVerticalResolution   = PcdGet32 (PcdSetupVideoVerticalResolution);
+   // mSetupTextModeColumn       = PcdGet32 (PcdSetupConOutColumn);
+   // mSetupTextModeRow          = PcdGet32 (PcdSetupConOutRow);
     
     mModeInitialized           = TRUE;
   }
@@ -1305,8 +1305,8 @@ BdsSetConsoleMode (
           // Current resolution is same with required resolution, check if text mode need be set
           //
           Status = SimpleTextOut->QueryMode (SimpleTextOut, SimpleTextOut->Mode->Mode, &CurrentColumn, &CurrentRow);
-          ASSERT_EFI_ERROR (Status);
-          if (CurrentColumn == NewColumns && CurrentRow == NewRows) {
+   //       ASSERT_EFI_ERROR (Status);
+          if ((EFI_ERROR (Status)) || (CurrentColumn == NewColumns && CurrentRow == NewRows)) {
             //
             // If current text mode is same with required text mode. Do nothing
             //
@@ -1324,12 +1324,12 @@ BdsSetConsoleMode (
                   // Required text mode is supported, set it.
                   //
                   Status = SimpleTextOut->SetMode (SimpleTextOut, Index);
-                  ASSERT_EFI_ERROR (Status);
+           //       ASSERT_EFI_ERROR (Status);
                   //
                   // Update text mode PCD.
                   //
-                  PcdSet32 (PcdConOutColumn, mSetupTextModeColumn);
-                  PcdSet32 (PcdConOutRow, mSetupTextModeRow);
+                  //PcdSet32 (PcdConOutColumn, mSetupTextModeColumn);
+                  //PcdSet32 (PcdConOutRow, mSetupTextModeRow);
                   FreePool (Info);
                   return EFI_SUCCESS;
                 }
@@ -1370,10 +1370,10 @@ BdsSetConsoleMode (
   // Set PCD to Inform GraphicsConsole to change video resolution.
   // Set PCD to Inform Consplitter to change text mode.
   //
-  PcdSet32 (PcdVideoHorizontalResolution, NewHorizontalResolution);
-  PcdSet32 (PcdVideoVerticalResolution, NewVerticalResolution);
-  PcdSet32 (PcdConOutColumn, NewColumns);
-  PcdSet32 (PcdConOutRow, NewRows);
+//  PcdSet32 (PcdVideoHorizontalResolution, NewHorizontalResolution);
+//  PcdSet32 (PcdVideoVerticalResolution, NewVerticalResolution);
+//  PcdSet32 (PcdConOutColumn, NewColumns);
+//  PcdSet32 (PcdConOutRow, NewRows);
   
   
   //

@@ -255,7 +255,10 @@
   Clover/UefiCpuPkg/CpuDxe/CpuDxe.inf
   #UefiCpuPkg/CpuDxe/CpuDxe.inf
   Clover/CpuDxe/Cpu.inf
-  PcAtChipsetPkg/8259InterruptControllerDxe/8259.inf
+  PcAtChipsetPkg/8259InterruptControllerDxe/8259.inf {
+      <PcdsFixedAtBuild>
+      gPcAtChipsetPkgTokenSpaceGuid.Pcd8259LegacyModeMask|0xFFFC
+  }
   #DuetPkg/AcpiResetDxe/Reset.inf
   Clover/AcpiReset/Reset.inf
   #DuetPkg/LegacyMetronome/Metronome.inf

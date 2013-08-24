@@ -457,6 +457,9 @@
 		12B816F41644675800A433E7 /* menu.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = menu.c; sourceTree = "<group>"; };
 		12B816F51644675800A433E7 /* screen.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = screen.c; sourceTree = "<group>"; };
 		12B816F71644675800A433E7 /* refit.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = refit.inf; sourceTree = "<group>"; };
+		12BAE0DF17C8B9BA00288BEB /* Clover.dsc */ = {isa = PBXFileReference; lastKnownFileType = text; name = Clover.dsc; path = ../Clover.dsc; sourceTree = "<group>"; };
+		12BAE0E017C8B9BA00288BEB /* Clover.fdf */ = {isa = PBXFileReference; lastKnownFileType = text; name = Clover.fdf; path = ../Clover.fdf; sourceTree = "<group>"; };
+		12BAE0E217C8B9C600288BEB /* CloverPkg.dec */ = {isa = PBXFileReference; lastKnownFileType = text; name = CloverPkg.dec; path = ../CloverPkg.dec; sourceTree = "<group>"; };
 		12D7546D1657CDD700376797 /* BdsConnect.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = BdsConnect.c; sourceTree = "<group>"; };
 		12D754701657CDE800376797 /* DevicePath.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = DevicePath.c; sourceTree = "<group>"; };
 		12DCF7BA177FE41400D2BE8F /* bdmesg.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = bdmesg.c; sourceTree = "<group>"; };
@@ -1468,6 +1471,9 @@
 				123F096F164F9C00008C1C1C /* BiosVideo */,
 				124D76DA1657A47E008B5407 /* BiosKeyboard */,
 				124D76F71657A4FD008B5407 /* CpuDxe */,
+				12BAE0E217C8B9C600288BEB /* CloverPkg.dec */,
+				12BAE0DF17C8B9BA00288BEB /* Clover.dsc */,
+				12BAE0E017C8B9BA00288BEB /* Clover.fdf */,
 				1294B5C1165BF86600183BFD /* LegacyBios */,
 				123F0952164F96D0008C1C1C /* Library */,
 				123F0957164F96DB008C1C1C /* Include */,

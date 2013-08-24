@@ -4,7 +4,7 @@
 # It also provides the defintions(including PPIs/PROTOCOLs/GUIDs and library classes)
 # and libraries instances, which are used for those modules.
 #
-# Copyright (c) 2007 - 2012, Intel Corporation. All rights reserved.<BR>
+# Copyright (c) 2007 - 2013, Intel Corporation. All rights reserved.<BR>
 # This program and the accompanying materials are licensed and made available under 
 # the terms and conditions of the BSD License that accompanies this distribution.  
 # The full text of the license may be found at
@@ -98,6 +98,10 @@
   #
   CpuExceptionHandlerLib|Include/Library/CpuExceptionHandlerLib.h
   
+  ##  @libraryclass    Provides platform specific display interface.
+  #
+  CustomizedDisplayLib|Include/Library/CustomizedDisplayLib.h
+
 [Guids]
   ## MdeModule package token space guid
   # Include/Guid/MdeModulePkgTokenSpace.h
@@ -118,6 +122,14 @@
   ## Guid to specify the System Non Volatile FV
   #  Include/Guid/SystemNvDataGuid.h
   gEfiSystemNvDataFvGuid         = { 0xFFF12B8D, 0x7696, 0x4C8B, { 0xA9, 0x85, 0x27, 0x47, 0x07, 0x5B, 0x4F, 0x50 }}
+
+  ## GUID used as the signature of FTW working block header.
+  #  Include/Guid/SystemNvDataGuid.h
+  gEdkiiWorkingBlockSignatureGuid   = { 0x9e58292b, 0x7c68, 0x497d, { 0xa0, 0xce, 0x65,  0x0, 0xfd, 0x9f, 0x1b, 0x95 }}
+
+  ## GUID used to build FTW last write data hob and install PPI to inform the check for FTW last write data has been done.
+  #  Include/Guid/FaultTolerantWrite.h
+  gEdkiiFaultTolerantWriteGuid      = { 0x1d3e9cb8, 0x43af, 0x490b, { 0x83,  0xa, 0x35, 0x16, 0xaa, 0x53, 0x20, 0x47 }}
 
   ## Guid specify the device is the console out device.
   #  Include/Guid/ConsoleOutDevice.h
@@ -246,6 +258,7 @@
   ## Guid for Firmware Performance Data Table (FPDT) implementation.
   #  Include/Guid/FirmwarePerformance.h
   gEfiFirmwarePerformanceGuid = { 0xc095791a, 0x3001, 0x47b2, { 0x80, 0xc9, 0xea, 0xc7, 0x31, 0x9f, 0x2f, 0xa4 }}
+  gFirmwarePerformanceS3PointerGuid  = { 0xdc65adc,  0xa973, 0x4130, { 0x8d, 0xf0, 0x2a, 0xdb, 0xeb, 0x9e, 0x4a, 0x31 }}
 
   ## Include/Guid/ExitBootServiceFailed.h
   gEventExitBootServicesFailedGuid   = { 0x4f6c5507, 0x232f, 0x4787, { 0xb9, 0x5e, 0x72, 0xf8, 0x62, 0x49, 0xc, 0xb1 } }
@@ -325,6 +338,10 @@
   #  Include/Protocol/SmmVariableProtocol.h
   gEfiSmmVariableProtocolGuid = { 0xed32d533, 0x99e6, 0x4209, { 0x9c, 0xc0, 0x2d, 0x72, 0xcd, 0xd9, 0x98, 0xa7 }}
 
+  ## This protocol is intended for use as a means to mark a variable read-only after the event EFI_END_OF_DXE_EVENT_GUID is signaled.
+  #  Include/Protocol/VariableLock.h
+  gEdkiiVariableLockProtocolGuid = { 0xcd3d0a05, 0x9e24, 0x437c, { 0xa8, 0x91, 0x1e, 0xe0, 0x53, 0xdb, 0x76, 0x38 }}
+
   ## This protocol is similar with DXE FVB protocol and used in the UEFI SMM evvironment.
   #  Include/Protocol/SmmFirmwareVolumeBlock.h
   gEfiSmmFirmwareVolumeBlockProtocolGuid = { 0xd326d041, 0xbd31, 0x4c01, { 0xb5, 0xa8, 0x62, 0x8b, 0xe8, 0x7f, 0x6, 0x53 }}
@@ -347,6 +364,12 @@
 
   ## Include/Protocol/BootLogo.h
   gEfiBootLogoProtocolGuid = { 0xcdea2bd3, 0xfc25, 0x4c1c, { 0xb9, 0x7c, 0xb3, 0x11, 0x86, 0x6, 0x49, 0x90 } }
+
+  ## Include/Protocol/DisplayProtocol.h
+  gEdkiiFormDisplayEngineProtocolGuid = { 0x9bbe29e9, 0xfda1, 0x41ec, { 0xad, 0x52, 0x45, 0x22, 0x13, 0x74, 0x2d, 0x2e } }
+
+  ## Include/Protocol/FormBrowserEx2.h
+  gEdkiiFormBrowserEx2ProtocolGuid = { 0xa770c357, 0xb693, 0x4e6d, { 0xa6, 0xcf, 0xd2, 0x1c, 0x72, 0x8e, 0x55, 0xb } }
 
 [PcdsFeatureFlag]
   ## Indicate whether platform can support update capsule across a system reset
@@ -396,7 +419,7 @@
   ## If TRUE, force to switch off the support of legacy usb. So legacy usb device driver can not make use of SMI
   #  interrupt to access usb device in the case of absence of usb stack. 
   #  DUET platform requires the token to be TRUE.
-  gEfiMdeModulePkgTokenSpaceGuid.PcdTurnOffUsbLegacySupport|TRUE|BOOLEAN|0x00010047
+  gEfiMdeModulePkgTokenSpaceGuid.PcdTurnOffUsbLegacySupport|FALSE|BOOLEAN|0x00010047
   
   ## If TRUE, HiiImageProtocol will be installed.
   #  FALSE is for size reduction.
@@ -535,7 +558,7 @@
   ## The size of volatile buffer. This buffer is used to store VOLATILE attribute variable.
   gEfiMdeModulePkgTokenSpaceGuid.PcdVariableStoreSize|0x10000|UINT32|0x30000005
 
-  ## Size of the FTW spare block range. Note that this value should larger than PcdFlashNvStorageVariableSize
+  ## Size of the FTW spare block range. Note that this value should larger than PcdFlashNvStorageVariableSize and block size aligned.
   # The root cause is that variable driver will use FTW protocol to reclaim variable region.
   # If the length of variable region is larger than FTW spare size, it means the whole variable region can not
   # be reflushed through the manner of fault tolerant write.
@@ -550,12 +573,6 @@
   ## FFS filename to find the capsule coalesce image.
   gEfiMdeModulePkgTokenSpaceGuid.PcdCapsuleCoalesceFile|{ 0xA6, 0xE4, 0xFD, 0xF7, 0x4C, 0x29, 0x3c, 0x49, 0xB5, 0x0F, 0x97, 0x34, 0x55, 0x3B, 0xB7, 0x57 }|VOID*|0x30000017
 
-  ## Single root I/O virtualization virtual function memory BAR alignment
-  #  BITN set indicates 2 of n+12 power
-  #  BIT0 set indicates 4KB alignment
-  #  BIT1 set indicates 8KB alignment
-  gEfiMdeModulePkgTokenSpaceGuid.PcdSrIovSystemPageSize|0x1|UINT32|0x10000047
-  
   ## Flag of enabling/disabling the feature of Loading Module at Fixed Address 
   #  -1: Enable the feature as fixed offset to TOLM
   #   0: Disable the feature.
@@ -666,7 +683,7 @@
   ## Base address of the NV variable range in flash device
   gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageVariableBase|0x0|UINT32|0x30000001
 
-  ## Base address of the FTW spare block range in flash device.
+  ## Base address of the FTW spare block range in flash device. Note that this value should be block size aligned.
   gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwSpareBase|0x0|UINT32|0x30000013
 
   ## Base address of the FTW working block range in flash device.
@@ -675,7 +692,7 @@
   ## 64-bit Base address of the NV variable range in flash device
   gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageVariableBase64|0x0|UINT64|0x80000001
 
-  ## 64-bit Base address of the FTW spare block range in flash device.
+  ## 64-bit Base address of the FTW spare block range in flash device. Note that this value should be block size aligned.
   gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwSpareBase64|0x0|UINT64|0x80000013
 
   ## 64-bit Base address of the FTW working block range in flash device.
@@ -699,6 +716,12 @@
   gEfiMdeModulePkgTokenSpaceGuid.PcdMrIovSupport|FALSE|BOOLEAN|0x10000046
 
 [PcdsFixedAtBuild, PcdsPatchableInModule, PcdsDynamic, PcdsDynamicEx]
+  ## Single root I/O virtualization virtual function memory BAR alignment
+  #  BITN set indicates 2 of n+12 power
+  #  BIT0 set indicates 4KB alignment
+  #  BIT1 set indicates 8KB alignment
+  gEfiMdeModulePkgTokenSpaceGuid.PcdSrIovSystemPageSize|0x1|UINT32|0x10000047
+
   ## This PCD defines the times to print hello world string.
   #  This PCD is a sample to explain FixedAtBuild UINT32 PCD usage.
   gEfiMdeModulePkgTokenSpaceGuid.PcdHelloWorldPrintTimes|1|UINT32|0x40000005
