@@ -816,6 +816,8 @@ typedef struct {
   UINT32 *LenToFind;
   UINT8  **PatchDsdtReplace;
   UINT32 *LenToReplace;
+  UINT32 KeepSsdtNum;
+  CHAR8  **KeepTableId;
 
 } SETTINGS_DATA;
 
@@ -1183,6 +1185,7 @@ BOOLEAN     tableSign(CHAR8 *table, CONST CHAR8 *sgn);
 VOID        SaveOemDsdt(BOOLEAN FullPatch);
 VOID		    SaveOemTables(VOID);
 EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* GetFadt();
+UINT32      FixAny (UINT8* dsdt, UINT32 len, UINT8* ToFind, UINT32 LenTF, UINT8* ToReplace, UINT32 LenTR);
 
 EFI_STATUS  EventsInitialize(IN LOADER_ENTRY *Entry);
 EFI_STATUS  EjectVolume(IN REFIT_VOLUME *Volume);

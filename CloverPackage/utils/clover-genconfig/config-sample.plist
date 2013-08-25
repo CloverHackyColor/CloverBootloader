@@ -74,8 +74,8 @@
 		<string>PBR</string>
 		<key>BacklightLevel</key>
 		<string>0x0501</string>
-	    <key>InjectKexts</key>
-	    <false/>
+		<key>InjectKexts</key>
+		<false/>
 		<key>NoCaches</key>
 		<false/>
 	</dict>
@@ -215,8 +215,15 @@
 	<dict>
 		<key>DsdtName</key>
 		<string>DSDT.aml</string>
+		<key>FixDsdtMask</key>
+		<string>0xFFFF</string>
 		<key>DropOemSSDT</key>
 		<true/>
+		<key>KeepSSDT</key>
+		<array>
+			<string>SataTabl</string>
+			<string>SataAhci</string>
+		</array>
 		<key>DropAPIC</key>
 		<false/>
 		<key>DropMCFG</key>
@@ -265,8 +272,6 @@
 		<false/>
 		<key>PatchAPIC</key>
 		<false/>
-		<key>FixDsdtMask</key>
-		<string>0xFFFF</string>
 		<key>PatchesDSDT</key>
 		<array>
 			<dict>

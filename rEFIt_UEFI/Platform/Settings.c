@@ -1785,8 +1785,31 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
           gSettings.RememberBIOS = TRUE;
       }
  */
+      prop = GetProperty(dictPointer, "KeepSSDT");
+      if(prop) {
+        TagPtr prop2 = NULL;
+        UINTN Count = GetTagCount(prop);
+        if (Count > 0) {
+          gSettings.KeepSsdtNum = Count;
+          gSettings.KeepTableId = AllocateZeroPool(Count * sizeof(CHAR8*));
+          DBG("KeepSSDT: %d requested\n", Count);
+          for (i = 0; i < Count; ++i) {
+            Status = GetElement(prop, i, &prop2);
+            if (EFI_ERROR(Status)) {
+              DBG("error %r getting next element of KeepSSDT at index %d\n", Status, i);
+              continue;
+            }
+            if (!prop2) {
+              break;
+            }
+            gSettings.KeepTableId[i] = AllocateZeroPool(9); //tableID is exactly 8 byte and zero byte
+            AsciiStrCpy(gSettings.KeepTableId[i], prop2->string);
+          }
+        }
+      }
       prop = GetProperty(dictPointer,"PatchesDSDT");
       if(prop) {
+        TagPtr prop2 = NULL;
         UINTN Count = GetTagCount(prop);
         if (Count > 0) {
           gSettings.PatchDsdtNum = Count;
@@ -1797,25 +1820,24 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
           DBG("PatchesDSDT: %d requested\n", Count);
           for (i = 0; i < Count; ++i) {
             UINTN Size = 0;
-            Status = GetElement(prop, i, &dictPointer);
+            Status = GetElement(prop, i, &prop2);
             if (EFI_ERROR(Status)) {
               DBG("error %r getting next element of PatchesDSDT at index %d\n", Status, i);
               continue;
             }
-            if (!dictPointer) {
+            if (!prop2) {
               break;
             }
             DBG(" DSDT bin patch #%d ", i);
-            gSettings.PatchDsdtFind[i] = GetDataSetting(dictPointer,"Find", &Size);
+            gSettings.PatchDsdtFind[i] = GetDataSetting(prop2,"Find", &Size);
             DBG(" lenToFind=%d ", Size);
             gSettings.LenToFind[i] = Size;
-            gSettings.PatchDsdtReplace[i] = GetDataSetting(dictPointer,"Replace", &Size);
+            gSettings.PatchDsdtReplace[i] = GetDataSetting(prop2,"Replace", &Size);
             DBG(" lenToReplace=%d\n", Size);
             gSettings.LenToReplace[i] = Size;
           }
         } //if count > 0
       } //if prop PatchesDSDT
-
     }
     
     //*** SMBIOS ***//
