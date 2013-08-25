@@ -280,41 +280,45 @@ EG_IMAGE * BuiltinIcon(IN UINTN Id)
   CHAR16    *p;
   CHAR16    *Text;
   
-  if (!ThemeDir || (Id >= BUILTIN_ICON_COUNT)) {
+  if (Id >= BUILTIN_ICON_COUNT) {
     return NULL;
   }
   
   Size = BuiltinIconTable[Id].PixelSize;
   if (BuiltinIconTable[Id].Image == NULL) {
-    BuiltinIconTable[Id].Image = LoadIcnsFallback(ThemeDir, BuiltinIconTable[Id].Path, Size);
-    if (!BuiltinIconTable[Id].Image){
-      DebugLog(1, "  Icon %d (%s) not found\n", Id, BuiltinIconTable[Id].Path);
-      DebugLog(1, "  Theme path %s, ThemeDir=%p\n", ThemePath, ThemeDir);
-    }
-    if (!BuiltinIconTable[Id].Image && (Id >= BUILTIN_ICON_VOL_INTERNAL)) {
-      BuiltinIconTable[Id].Image = LoadIcnsFallback(ThemeDir, BuiltinIconTable[BUILTIN_ICON_VOL_INTERNAL].Path, Size);
+    if (ThemeDir) {
+      BuiltinIconTable[Id].Image = LoadIcnsFallback(ThemeDir, BuiltinIconTable[Id].Path, Size);
+      if (!BuiltinIconTable[Id].Image){
+        DebugLog(1, "  Icon %d (%s) not found\n", Id, BuiltinIconTable[Id].Path);
+        DebugLog(1, "  Theme path %s, ThemeDir=%p\n", ThemePath, ThemeDir);
+      }
+      if (!BuiltinIconTable[Id].Image && (Id >= BUILTIN_ICON_VOL_INTERNAL)) {
+        BuiltinIconTable[Id].Image = LoadIcnsFallback(ThemeDir, BuiltinIconTable[BUILTIN_ICON_VOL_INTERNAL].Path, Size);
+      }
     }
     if (!BuiltinIconTable[Id].Image) {
       if (Id == BUILTIN_ICON_POINTER) {
         BuiltinIconTable[Id].Image = egDecodePNG(&emb_pointer[0], sizeof(emb_pointer), 32, TRUE);
-      } else {
-//        BuiltinIconTable[Id].Image = DummyImage(BuiltinIconTable[Id].PixelSize);
-        TextBuffer = egCreateImage(Size, Size, TRUE);
-        egFillImage(TextBuffer, &MenuBackgroundPixel);
-        p = StrStr(BuiltinIconTable[Id].Path, L"_"); p++;
-        Text = (CHAR16*)AllocateCopyPool(30, (VOID*)p);
-        p = StrStr(Text, L".");
-        *p = L'\0';
- /*       while ((*p != L".") && (p > t)) {
-          *(--p) = L'\0';
-        } */
-        egRenderText(Text, TextBuffer, 0, 0, 0xFFFF);
-        BuiltinIconTable[Id].Image = TextBuffer;
-        DebugLog(1, "Text <%s> rendered\n", Text);
-        FreePool(Text);
       }
     }
   }
+  if (!BuiltinIconTable[Id].Image) {
+    //        BuiltinIconTable[Id].Image = DummyImage(BuiltinIconTable[Id].PixelSize);
+    TextBuffer = egCreateImage(Size, Size, TRUE);
+    egFillImage(TextBuffer, &MenuBackgroundPixel);
+    p = StrStr(BuiltinIconTable[Id].Path, L"_"); p++;
+    Text = (CHAR16*)AllocateCopyPool(30, (VOID*)p);
+    p = StrStr(Text, L".");
+    *p = L'\0';
+    /*       while ((*p != L".") && (p > t)) {
+     *(--p) = L'\0';
+     } */
+    egRenderText(Text, TextBuffer, 0, 0, 0xFFFF);
+    BuiltinIconTable[Id].Image = TextBuffer;
+    DebugLog(1, "Text <%s> rendered\n", Text);
+    FreePool(Text);
+  }
+  
   return BuiltinIconTable[Id].Image;
 }
 

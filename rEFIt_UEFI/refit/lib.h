@@ -381,6 +381,7 @@ typedef struct {
   UINTN       BackgroundSharp;
   BOOLEAN     BackgroundDark;
   BOOLEAN     CustomIcons;
+  BOOLEAN     SelectionOnTop;
 } REFIT_CONFIG;
 
 // types

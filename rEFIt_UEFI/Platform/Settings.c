@@ -53,7 +53,7 @@ extern INTN ScrollBarDecorationsHeight;
 extern INTN ScrollScrollDecorationsHeight;
 
 // global configuration with default values
-REFIT_CONFIG   GlobalConfig = { FALSE, -1, 0, 0, 0, TRUE, FALSE, FALSE, FALSE, FALSE, FONT_ALFA, 7, 0xFFFFFF80, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, None, 0, FALSE, FALSE };
+REFIT_CONFIG   GlobalConfig = { FALSE, -1, 0, 0, 0, TRUE, FALSE, FALSE, FALSE, FALSE, FONT_ALFA, 7, 0xFFFFFF80, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, None, 0, FALSE, FALSE, FALSE };
 
 VOID __inline WaitForSts(VOID) {
 	UINT32 inline_timeout = 100000;
@@ -693,6 +693,14 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
         }
         GlobalConfig.SelectionBigFileName = PoolPrint(L"%a", dict2->string);
       }
+    }
+    dict2 = GetProperty(dict, "OnTop");
+    if (dict2) {
+      if ((dict2->type == kTagTypeTrue) ||
+          ((dict2->type == kTagTypeString) && dict2->string &&
+           ((dict2->string[0] == 'Y') || (dict2->string[0] == 'y')))) {
+            GlobalConfig.SelectionOnTop = TRUE;
+          }
     }
   }
   dict = GetProperty(dictPointer, "Scroll");

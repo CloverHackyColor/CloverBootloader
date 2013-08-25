@@ -1113,6 +1113,10 @@ static VOID InitSelection(VOID)
       SelectionImages[2] = NULL;
       return;
     }
+    if (GlobalConfig.SelectionOnTop) {
+      SelectionImages[0]->HasAlpha = TRUE;
+      SelectionImages[2]->HasAlpha = TRUE;
+    }
     DestPtr = SelectionImages[0]->PixelData;
     SrcPtr  = SelectionImages[2]->PixelData;
     for (y = 0; y < ROW0_TILESIZE; y++) {
@@ -2286,6 +2290,7 @@ static   EG_IMAGE* MainImage;
 
 static VOID DrawMainMenuEntry(REFIT_MENU_ENTRY *Entry, BOOLEAN selected, INTN XPos, INTN YPos)
 {
+   EG_IMAGE *TmpBuffer = NULL;
 
  if (((Entry->Tag == TAG_LOADER) || (Entry->Tag == TAG_LEGACY)) &&
         !(GlobalConfig.HideBadges & HDBADGES_SWAP) &&
@@ -2303,20 +2308,32 @@ static VOID DrawMainMenuEntry(REFIT_MENU_ENTRY *Entry, BOOLEAN selected, INTN XP
       MainImage = DummyImage(128);
     }
   }
-  if (!MainImage) {
+/*  if (!MainImage) {  //looks to be impossible, else fatal bug
     Entry->Place.XPos = XPos;
     Entry->Place.YPos = YPos;
     Entry->Place.Width = 48;
     Entry->Place.Height = 48;
     return;
-  }
+  } */
 //  DBG("Entry title=%s; Width=%d\n", Entry->Title, MainImage->Width);
-  BltImageCompositeBadge(SelectionImages[((Entry->Row == 0) ? 0 : 2) + (selected ? 0 : 1)],
+//  egComposeImage();
+  if (GlobalConfig.SelectionOnTop) {
+    SelectionImages[0]->HasAlpha = TRUE;
+    SelectionImages[2]->HasAlpha = TRUE;
+//    MainImage->HasAlpha = TRUE;
+    BltImageCompositeBadge(MainImage, 
+                           SelectionImages[((Entry->Row == 0) ? 0 : 2) + (selected ? 0 : 1)],
+                           (Entry->Row == 0) ? Entry->BadgeImage:NULL, XPos, YPos);
+
+  } else {
+    BltImageCompositeBadge(SelectionImages[((Entry->Row == 0) ? 0 : 2) + (selected ? 0 : 1)],
                          MainImage, (Entry->Row == 0) ? Entry->BadgeImage:NULL, XPos, YPos);
+  }
   Entry->Place.XPos = XPos;
   Entry->Place.YPos = YPos;
   Entry->Place.Width = MainImage->Width;
   Entry->Place.Height = MainImage->Height;
+  egFreeImage(TmpBuffer);
 }
 
 static VOID FillRectAreaOfScreen(IN INTN XPos, IN INTN YPos, IN INTN Width, IN INTN Height, IN EG_PIXEL *Color, IN UINT8 XAlign)

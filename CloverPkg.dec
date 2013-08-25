@@ -95,7 +95,7 @@
   gEfiMdePkgTokenSpaceGuid.PcdPciExpressBaseAddress|0xF0000000|UINT32|0x1001000d
   gPcAtChipsetPkgTokenSpaceGuid.Pcd8259LegacyModeMask|0xFFFC|UINT32|0x1001000e
   
-[PcdsPatchableInModule]
+[PcdsPatchableInModule, PcdsDynamic, PcdsDynamicEx]
   gEfiMdeModulePkgTokenSpaceGuid.PcdConOutRow|0|UINT32|0x1001000f
   gEfiMdeModulePkgTokenSpaceGuid.PcdConOutColumn|0|UINT32|0x10010010
   gEfiMdeModulePkgTokenSpaceGuid.PcdVideoHorizontalResolution|0|UINT32|0x10010011
