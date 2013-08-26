@@ -73,14 +73,14 @@
   AppleBootKeyPressProtocolGuid          = {0x5B213447, 0x6E73, 0x4901, {0xA4, 0xF1, 0xB8, 0x64, 0xF3, 0xB7, 0xA1, 0x72}}
   AppleNetBootProtocolGuid               = {0x78EE99FB, 0x6A5E, 0x4186, {0x97, 0xDE, 0xCD, 0x0A, 0xBA, 0x34, 0x5A, 0x74}}
   AppleImageCodecProtocolGuid            = {0x0DFCE9F6, 0xC4E3, 0x45EE, {0xA0, 0x6A, 0xA8, 0x61, 0x3B, 0x98, 0xA5, 0x07}}
-  
+
 ################################################################################
 #
 # Pcd Section - list of all EDK II PCD Entries defined by this Platform
 #
 ################################################################################
 [PcdsFixedAtBuild]
-  gEfiMdeModulePkgTokenSpaceGuid.PcdSmbiosVersion|0x0206|UINT16|0x10010001
+  gEfiMdeModulePkgTokenSpaceGuid.PcdSmbiosVersion|0x0206|UINT32|0x10010001
   gEfiMdeModulePkgTokenSpaceGuid.PcdHelloWorldPrintString|L"UEFI Hello Clover!\n"|VOID*|0x10010002
   gEfiMdeModulePkgTokenSpaceGuid.PcdFirmwareVendor|L"CLOVER"|VOID*|0x10010003
   gEfiMdeModulePkgTokenSpaceGuid.PcdFirmwareRevision|0x00010010|UINT32|0x10010004
@@ -89,32 +89,32 @@
   gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x0|UINT32|0x10010007
   gEfiMdeModulePkgTokenSpaceGuid.PcdResetOnMemoryTypeInformationChange|FALSE|BOOLEAN|0x10010008
   gPcAtChipsetPkgTokenSpaceGuid.PcdIsaAcpiFloppyAEnable|FALSE|BOOLEAN|0x10010009
-  gPcAtChipsetPkgTokenSpaceGuid.PcdIsaAcpiFloppyBEnable|FALSE|BOOLEAN|0x1001000a
-  gPcAtChipsetPkgTokenSpaceGuid.PcdIsaAcpiCom1Enable|FALSE|BOOLEAN|0x1001000b
-  gPcAtChipsetPkgTokenSpaceGuid.PcdIsaAcpiCom2Enable|FALSE|BOOLEAN|0x1001000c
-  gEfiMdePkgTokenSpaceGuid.PcdPciExpressBaseAddress|0xF0000000|UINT32|0x1001000d
-  gPcAtChipsetPkgTokenSpaceGuid.Pcd8259LegacyModeMask|0xFFFC|UINT32|0x1001000e
+  gPcAtChipsetPkgTokenSpaceGuid.PcdIsaAcpiFloppyBEnable|FALSE|BOOLEAN|0x10010010
+  gPcAtChipsetPkgTokenSpaceGuid.PcdIsaAcpiCom1Enable|FALSE|BOOLEAN|0x10010011
+  gPcAtChipsetPkgTokenSpaceGuid.PcdIsaAcpiCom2Enable|FALSE|BOOLEAN|0x10010012
+  gEfiMdePkgTokenSpaceGuid.PcdPciExpressBaseAddress|0xF0000000|UINT32|0x10010013
+  gPcAtChipsetPkgTokenSpaceGuid.Pcd8259LegacyModeMask|0xFFFC|UINT16|0x10010014
   
-[PcdsPatchableInModule, PcdsDynamic, PcdsDynamicEx]
-  gEfiMdeModulePkgTokenSpaceGuid.PcdConOutRow|0|UINT32|0x1001000f
-  gEfiMdeModulePkgTokenSpaceGuid.PcdConOutColumn|0|UINT32|0x10010010
-  gEfiMdeModulePkgTokenSpaceGuid.PcdVideoHorizontalResolution|0|UINT32|0x10010011
-  gEfiMdeModulePkgTokenSpaceGuid.PcdVideoVerticalResolution|0|UINT32|0x10010012
+[PcdsPatchableInModule]
+  gEfiMdeModulePkgTokenSpaceGuid.PcdConOutRow|0|UINT32|0x10010015
+  gEfiMdeModulePkgTokenSpaceGuid.PcdConOutColumn|0|UINT32|0x10010016
+  gEfiMdeModulePkgTokenSpaceGuid.PcdVideoHorizontalResolution|0|UINT32|0x10010017
+  gEfiMdeModulePkgTokenSpaceGuid.PcdVideoVerticalResolution|0|UINT32|0x10010018
   
 #[PcdsDynamicDefault.common]
-  #gEfiMdePkgTokenSpaceGuid.PcdPciExpressBaseAddress|0xF0000000|UINT32|0x10010013
-  #gPcAtChipsetPkgTokenSpaceGuid.Pcd8259LegacyModeMask|0xFFFC|UINT32|0x10010014
+  #gEfiMdePkgTokenSpaceGuid.PcdPciExpressBaseAddress|0xF0000000|UINT32|0x10010019
+  #gPcAtChipsetPkgTokenSpaceGuid.Pcd8259LegacyModeMask|0xFFFC|UINT16|0x1001001a
 
 [PcdsFeatureFlag]
-  gEfiMdeModulePkgTokenSpaceGuid.PcdStatusCodeUseSerial|FALSE|BOOLEAN|0x10010015
-  gEfiMdeModulePkgTokenSpaceGuid.PcdRecoveryOnFatFloppyDisk|FALSE|BOOLEAN|0x10010016
-  gEfiMdeModulePkgTokenSpaceGuid.PcdFirmwarePerformanceDataTableS3Support|FALSE|BOOLEAN|0x10010017
-  gEfiMdeModulePkgTokenSpaceGuid.PcdTurnOffUsbLegacySupport|TRUE|BOOLEAN|0x10010018
-  gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdPlatformCsmSupport|FALSE|BOOLEAN|0x10010019
-  gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdPs2MouseExtendedVerification|FALSE|BOOLEAN|0x1001001a
-  gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdInstallAcpiSupportProtocol|FALSE|BOOLEAN|0x1001001b
-  gEfiMdeModulePkgTokenSpaceGuid.PcdDxeIplSwitchToLongMode|FALSE|BOOLEAN|0x1001001c
-  gPcAtChipsetPkgTokenSpaceGuid.PcdHpetMsiEnable|FALSE|BOOLEAN|0x1001001d
-  gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdBootlogoOnlyEnable|TRUE|BOOLEAN|0x1001001e
+  gEfiMdeModulePkgTokenSpaceGuid.PcdStatusCodeUseSerial|FALSE|BOOLEAN|0x1001001b
+  gEfiMdeModulePkgTokenSpaceGuid.PcdRecoveryOnFatFloppyDisk|FALSE|BOOLEAN|0x1001001c
+  gEfiMdeModulePkgTokenSpaceGuid.PcdFirmwarePerformanceDataTableS3Support|FALSE|BOOLEAN|0x1001001d
+  gEfiMdeModulePkgTokenSpaceGuid.PcdTurnOffUsbLegacySupport|TRUE|BOOLEAN|0x1001001e
+  gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdPlatformCsmSupport|FALSE|BOOLEAN|0x1001001f
+  gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdPs2MouseExtendedVerification|FALSE|BOOLEAN|0x10010020
+  gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdInstallAcpiSupportProtocol|FALSE|BOOLEAN|0x10010021
+  gEfiMdeModulePkgTokenSpaceGuid.PcdDxeIplSwitchToLongMode|FALSE|BOOLEAN|0x10010022
+  gPcAtChipsetPkgTokenSpaceGuid.PcdHpetMsiEnable|FALSE|BOOLEAN|0x10010023
+  gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdBootlogoOnlyEnable|TRUE|BOOLEAN|0x10010024
 
   

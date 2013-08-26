@@ -44,11 +44,13 @@
 		<key>Selection</key>
 		<dict>
 			<key>Big</key>
-			<string>Select_trans_big.png</string>
+			<string>arrow-144.png</string>
 			<key>Color</key>
 			<string>0xF3F3F380</string>
 			<key>Small</key>
-			<string>Select_trans_small.png</string>
+			<string>arrow-64.png</string>
+			<key>OnTop</key>
+			<true/>
 		</dict>
 		<key>Anime</key>
 		<array>

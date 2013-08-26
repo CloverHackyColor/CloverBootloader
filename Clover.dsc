@@ -155,6 +155,7 @@
   MemoryAllocationLib|MdePkg/Library/SmmMemoryAllocationLib/SmmMemoryAllocationLib.inf
   
  
+  
 ###################################################################################################
 #
 # Components Section - list of the modules and components that will be processed by compilation

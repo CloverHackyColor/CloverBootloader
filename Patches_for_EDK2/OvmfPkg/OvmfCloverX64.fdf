@@ -1,7 +1,7 @@
 ## @file
 #  Open Virtual Machine Firmware: FDF
 #
-#  Copyright (c) 2006 - 2012, Intel Corporation. All rights reserved.<BR>
+#  Copyright (c) 2006 - 2013, Intel Corporation. All rights reserved.<BR>
 #
 #  This program and the accompanying materials
 #  are licensed and made available under the terms and conditions of the BSD License
@@ -46,12 +46,12 @@ FV = SECFV
 
 [FD.MEMFD]
 BaseAddress   = 0x800000|gUefiOvmfPkgTokenSpaceGuid.PcdOvmfMemFvBase
-Size          = 0x600000|gUefiOvmfPkgTokenSpaceGuid.PcdOvmfMemFvSize
+Size          = 0x800000|gUefiOvmfPkgTokenSpaceGuid.PcdOvmfMemFvSize
 ErasePolarity = 1
 BlockSize     = 0x10000
-NumBlocks     = 0x60
+NumBlocks     = 0x80
 
-0x0|0x600000
+0x0|0x800000
 FV = MAINFV
 
 ################################################################################
@@ -155,6 +155,7 @@ READ_LOCK_CAP      = TRUE
 READ_LOCK_STATUS   = TRUE
 
 APRIORI DXE {
+  INF  MdeModulePkg/Universal/DevicePathDxe/DevicePathDxe.inf
   INF  MdeModulePkg/Universal/PCD/Dxe/Pcd.inf
 #  INF  PcAtChipsetPkg/8259InterruptControllerDxe/8259.inf
 #  INF  Clover/MsgLog/MsgLog.inf 
@@ -224,7 +225,7 @@ INF  MdeModulePkg/Universal/MemoryTest/NullMemoryTestDxe/NullMemoryTestDxe.inf
 
 
 INF  IntelFrameworkModulePkg/Universal/DataHubDxe/DataHubDxe.inf
-#INF  Clover/VBoxFsDxe/VBoxHfs.inf
+INF  Clover/VBoxFsDxe/VBoxHfs.inf
 #INF  Clover/VBoxFsDxe/VBoxIso9660.inf
 #INF  Clover/VBoxFsDxe/VBoxFsDxe.inf
 #INF  Clover/VBoxFsDxe/VBoxExt2.inf
@@ -250,14 +251,11 @@ INF  RuleOverride=ACPITABLE OvmfPkg/AcpiTables/AcpiTables.inf
 #INF  RuleOverride=BINARY Clover/HFSPlus/HFSPlus.inf
 INF  RuleOverride=BINARY FatBinPkg/EnhancedFatDxe/Fat.inf
 
-!if $(BUILD_NEW_SHELL)
+
+!ifndef $(USE_OLD_SHELL)
 INF  ShellPkg/Application/Shell/Shell.inf
 !else
-!if $(USE_NEW_SHELL)
-INF  RuleOverride = BINARY ShellBinPkg/UefiShell/UefiShell.inf
-!else
 INF  RuleOverride = BINARY EdkShellBinPkg/FullShell/FullShell.inf
-!endif
 !endif
 
 FILE FREEFORM = PCD(gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdLogoFile) {
@@ -269,10 +267,12 @@ FILE FREEFORM = PCD(gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdLogoFile) {
 #
 # Network modules
 #
-!if $(NETWORK_ENABLE)
+!if $(E1000_ENABLE)
   FILE DRIVER = 5D695E11-9B3F-4b83-B25F-4A8D5D69BE07 {
     SECTION PE32 = Intel3.5/EFIX64/E3507X2.EFI
   }
+!endif
+!if $(NETWORK_ENABLE)
   INF  MdeModulePkg/Universal/Network/SnpDxe/SnpDxe.inf
   INF  MdeModulePkg/Universal/Network/DpcDxe/DpcDxe.inf
   INF  MdeModulePkg/Universal/Network/MnpDxe/MnpDxe.inf
@@ -286,8 +286,8 @@ FILE FREEFORM = PCD(gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdLogoFile) {
   INF  MdeModulePkg/Universal/Network/Udp4Dxe/Udp4Dxe.inf
   INF  MdeModulePkg/Universal/Network/UefiPxeBcDxe/UefiPxeBcDxe.inf
   INF  MdeModulePkg/Universal/Network/IScsiDxe/IScsiDxe.inf
+  INF  OvmfPkg/VirtioNetDxe/VirtioNet.inf
 !endif
-
 #
 # Usb Support
 #
@@ -307,6 +307,7 @@ INF  RuleOverride=CSM OvmfPkg/Csm/Csm16/Csm16.inf
 !endif
 
 INF  OvmfPkg/QemuVideoDxe/QemuVideoDxe.inf
+
 
 
 ################################################################################
