@@ -593,9 +593,10 @@ VOID BltImageCompositeBadge(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN EG
   //  DBG("BaseImage: Width=%d Height=%d Alfa=%d\n", TotalWidth, TotalHeight, CompImage->HasAlpha);
   CompWidth = TopImage->Width;
   CompHeight = TopImage->Height;
-  CompImage = egCreateImage((CompWidth > TotalWidth)?CompWidth:TotalWidth,
-                            (CompHeight > TotalHeight)?CompHeight:TotalHeight,
-                            TRUE);
+  CompImage = egCreateFilledImage((CompWidth > TotalWidth)?CompWidth:TotalWidth,
+                                  (CompHeight > TotalHeight)?CompHeight:TotalHeight,
+                                  TRUE,
+                                  &MenuBackgroundPixel);
   if (!CompImage) {
     DBG("Can't create CompImage\n");
     return;
