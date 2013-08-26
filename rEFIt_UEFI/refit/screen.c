@@ -587,25 +587,38 @@ VOID BltImageCompositeBadge(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN EG
     return;
   }
 
-  // initialize buffer with base image
-  CompImage = egCopyImage(BaseImage);
   TotalWidth  = BaseImage->Width;
   TotalHeight = BaseImage->Height;
+  
   //  DBG("BaseImage: Width=%d Height=%d Alfa=%d\n", TotalWidth, TotalHeight, CompImage->HasAlpha);
-  // place the top image
   CompWidth = TopImage->Width;
-  if (CompWidth > TotalWidth)
-    CompWidth = TotalWidth;
-  OffsetX = (TotalWidth - CompWidth) >> 1;
-  //  DBG("TopImage: Width=%d Height=%d\n", TopImage->Width, TopImage->Height);
   CompHeight = TopImage->Height;
-  if (CompHeight > TotalHeight)
+  CompImage = egCreateImage((CompWidth > TotalWidth)?CompWidth:TotalWidth,
+                            (CompHeight > TotalHeight)?CompHeight:TotalHeight,
+                            TRUE);
+  if (!CompImage) {
+    DBG("Can't create CompImage\n");
+    return;
+  }
+  //to simplify suppose square images
+  if (CompWidth < TotalWidth) {
+    OffsetX = (TotalWidth - CompWidth) >> 1;
+    OffsetY = (TotalHeight - CompHeight) >> 1;
+    egComposeImage(CompImage, BaseImage, 0, 0);
+    egComposeImage(CompImage, TopImage, OffsetX, OffsetY);
+    CompWidth = TotalWidth;
     CompHeight = TotalHeight;
-  OffsetY = (TotalHeight - CompHeight) >> 1;
-  egComposeImage(CompImage, TopImage, OffsetX, OffsetY);
+  } else {
+    OffsetX = (CompWidth - TotalWidth) >> 1;
+    OffsetY = (CompHeight - TotalHeight) >> 1;
+    egComposeImage(CompImage, BaseImage, OffsetX, OffsetY);
+    egComposeImage(CompImage, TopImage, 0, 0);
+  }
 
   // place the badge image
-  if (BadgeImage != NULL && (BadgeImage->Width + 8) < CompWidth && (BadgeImage->Height + 8) < CompHeight) {
+  if (BadgeImage != NULL &&
+      (BadgeImage->Width + 8) < CompWidth &&
+      (BadgeImage->Height + 8) < CompHeight) {
     OffsetX += CompWidth  - 8 - BadgeImage->Width;
     OffsetY += CompHeight - 8 - BadgeImage->Height;
     egComposeImage(CompImage, BadgeImage, OffsetX, OffsetY);

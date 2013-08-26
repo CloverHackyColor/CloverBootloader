@@ -371,7 +371,8 @@ VOID DropTableFromXSDT (UINT32 Signature)
         break;
       }
     }
-    if (!WillDrop) {
+    if (!WillDrop &&
+        (TableEntry->Signature == EFI_ACPI_4_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE)) {
       //will patch here
       SsdtLen = TableEntry->Length;
 			DBG("SSDT len = 0x%x", SsdtLen);
