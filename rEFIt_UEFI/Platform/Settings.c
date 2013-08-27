@@ -1500,6 +1500,13 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
           gSettings.DoubleFirstState = FALSE;
           gSettings.DropSSDT        = TRUE;
           gSettings.C3Latency       = 0x3E7;
+        } else if ((prop->type == kTagTypeFalse) ||
+                   ((prop->type == kTagTypeString) &&
+                   ((prop->string[0] == 'n') ||
+                    (prop->string[0] == 'N')))) {
+           gSettings.GeneratePStates = FALSE;
+           gSettings.GenerateCStates = FALSE;
+           gSettings.DropSSDT        = FALSE;
         }
       }
 

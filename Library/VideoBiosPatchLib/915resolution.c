@@ -634,7 +634,7 @@ VOID set_mode(vbios_map * map, /*UINT32 mode,*/ UINT32 x, UINT32 y, UINT32 bp, U
         }
       }
       if (Index == RESOLUTIONS_NUMBER) {
-        DBG("the patch if not ready for the desired resolution\n");
+        DBG("the patch is not ready for the desired resolution\n");
         break; // not found
       }
       
