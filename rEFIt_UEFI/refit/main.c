@@ -3050,6 +3050,12 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   //Slice - NO!!! Return to EFI GUI
   //   gRS->ResetSystem(EfiResetCold, EFI_SUCCESS, 0, NULL);
   //   EndlessIdleLoop();
-  
+
+  // Unload EmuVariable before returning to EFI GUI, as it should not be present when booting other Operating Systems.
+  // This seems critical in some UEFI implementations, such as Phoenix UEFI 2.0
+  if (gEmuVariableControl != NULL) {
+    gEmuVariableControl->UninstallEmulation(gEmuVariableControl);
+  }  
+
   return EFI_SUCCESS;
 }
