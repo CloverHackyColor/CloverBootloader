@@ -402,6 +402,9 @@ VOID RefillInputs(VOID)
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeWIFI);
   InputItems[InputItemsCount].ItemType = Hex;  //102
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeSATA);
+  InputItems[InputItemsCount].ItemType = Hex;  //103
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeXHCI);
+
 }
 
 VOID FillInputs(VOID)
@@ -688,6 +691,9 @@ VOID FillInputs(VOID)
   InputItems[InputItemsCount].ItemType = Hex;  //102
   InputItems[InputItemsCount].SValue = AllocateZeroPool(26);
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeSATA);
+  InputItems[InputItemsCount].ItemType = Hex;  //103
+  InputItems[InputItemsCount].SValue = AllocateZeroPool(26);
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeXHCI);
 
 }
 
@@ -1053,7 +1059,11 @@ VOID ApplyInputs(VOID)
   if (InputItems[i].Valid) {
     gSettings.FakeSATA = (UINT32)StrHexToUint64(InputItems[i].SValue);
   }
-
+  i++; //103
+  if (InputItems[i].Valid) {
+    gSettings.FakeXHCI = (UINT32)StrHexToUint64(InputItems[i].SValue);
+  }
+  
   if (NeedSave) {
     SaveSettings(); 
   }
@@ -3465,6 +3475,15 @@ REFIT_MENU_ENTRY  *SubMenuPCI()
   InputBootArgs->Entry.AtDoubleClick = ActionEnter;
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
 
+  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  InputBootArgs->Entry.Title = PoolPrint(L"FakeID XHCI:");
+  InputBootArgs->Entry.Tag = TAG_INPUT;
+  InputBootArgs->Entry.Row = StrLen(InputItems[103].SValue); //cursor
+  InputBootArgs->Item = &InputItems[103];
+  InputBootArgs->Entry.AtClick = ActionSelect;
+  InputBootArgs->Entry.AtDoubleClick = ActionEnter;
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+  
   AddMenuEntry(SubScreen, &MenuEntryReturn);
   Entry->SubScreen = SubScreen;
   return Entry;

@@ -403,11 +403,16 @@ VOID BltClearScreen(IN BOOLEAN ShowBanner)
   if (!Banner) {
     if (!GlobalConfig.BannerFileName || !ThemeDir)
       Banner = egPrepareEmbeddedImage(&egemb_refit_banner, FALSE);
-    else
+    else {
       Banner = egLoadImage(ThemeDir, GlobalConfig.BannerFileName, FALSE);
+      if (Banner) {
+        CopyMem(&BlueBackgroundPixel, &Banner->PixelData[0], sizeof(EG_PIXEL));
+      }
+    }
   }
   if (!Banner) {
-    DBG("banner file not read\n");
+    DBG("banner file not read\n"); 
+    //TODO create BigText "Clover"
   }
   
   //load Background and scale

@@ -357,7 +357,7 @@ void PrintConfig(CFTypeRef data)
     addUString(acpiDict, CFSTR("DsdtName"), s->DsdtName);
     addHex(acpiDict, CFSTR("FixDsdtMask"), s->FixDsdt);
     addBoolean(acpiDict, CFSTR("DropOemSSDT"), s->DropSSDT);
-  addInteger(KernelAndKextPatchesDict, CFSTR("Number_of_KeepSSDT"), s->KeepSsdtNum);
+  addInteger(acpiDict, CFSTR("Number_of_KeepSSDT"), s->KeepSsdtNum);
     addBoolean(acpiDict, CFSTR("DropAPIC"), s->bDropAPIC);
     addBoolean(acpiDict, CFSTR("PatchAPIC"), s->PatchNMI);
     addBoolean(acpiDict, CFSTR("DropMCFG"), s->bDropMCFG);

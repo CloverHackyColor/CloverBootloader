@@ -78,6 +78,7 @@ UINT32 HDAADR1;
 UINT32 USBADR[12];
 UINT32 USBID[12];
 UINT32 USB20[12];
+UINT32 USB30[12];
 
 UINT32 HDAcodecId=0;
 UINT32 HDAlayoutId=0;
@@ -659,7 +660,7 @@ VOID CheckHardware()
             GetPciADR(DevicePath, &ArptADR1, &ArptADR2);
    //         DBG("ArptADR1 = 0x%x, ArptADR2 = 0x%x\n", ArptADR1, ArptADR2);
    //         Netmodel = get_arpt_model(deviceid);  
-            ArptBCM = (deviceid == 0x14e44315);
+            ArptBCM = (Pci.Hdr.VendorId == 0x14e4);
             ArptAtheros = (Pci.Hdr.VendorId == 0x168c);
           }
           
@@ -697,6 +698,7 @@ VOID CheckHardware()
             }       
             USBID[usb] = DID;
             USB20[usb] = (Pci.Hdr.ClassCode[0] == 0x20)?1:0;
+            USB30[usb] = (Pci.Hdr.ClassCode[0] == 0x30)?1:0;
             usb++;
           }
           
@@ -2811,6 +2813,7 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
     FakeID = gSettings.FakeLAN >> 16;
     FakeVen = gSettings.FakeLAN & 0xFFFF;
     AsciiSPrint(NameCard, 32, "pci%x,%x\0", FakeVen, FakeID);
+    Netmodel = get_net_model((FakeVen << 16) + FakeID);
   }
  
   PCIADR = GetPciDevice(dsdt, len);
@@ -3466,7 +3469,7 @@ UINT32 AddHDEF (UINT8 *dsdt, UINT32 len)
 UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
 {
   UINT32 i, j, k;
-  UINT32 size1, size2;    
+  UINT32 size1, size2, size3;    
   UINT32 adr=0, adr1=0;
   INT32 sizeoffset;
   AML_CHUNK* root;
@@ -3477,6 +3480,7 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
   AML_CHUNK* pack1;
   CHAR8 *USBDATA1;
   CHAR8 *USBDATA2;
+  CHAR8 *USBDATA3;
   
   DBG("Start USB Fix\n");
 	//DBG("len = 0x%08x\n", len);
@@ -3510,7 +3514,7 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
   aml_write_node(root, USBDATA1, 0);
   aml_destroy_node(root);
   
-  // add Method(_DSM,4,NotSerialized) for USB
+  // add Method(_DSM,4,NotSerialized) for USB2
   met1 = aml_add_method(root1, "_DSM", 4);
   met1 = aml_add_store(met1);
   pack1 = aml_add_package(met1);
@@ -3544,6 +3548,44 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
   //DBG("USB code size = 0x%08x\n", sizeoffset);
   aml_write_node(root1, USBDATA2, 0);
   aml_destroy_node(root1);
+ 
+  // add Method(_DSM,4,NotSerialized) for USB3
+  root1 = aml_create_node(NULL);
+  met1 = aml_add_method(root1, "_DSM", 4);
+  met1 = aml_add_store(met1);
+  pack1 = aml_add_package(met1);
+  aml_add_string(pack1, "device-id");
+  aml_add_byte_buffer(pack1, (/* CONST*/ CHAR8*)&USBID[0], 4);
+  aml_add_string(pack1, "built-in");
+  aml_add_byte_buffer(pack1, dataBuiltin, sizeof(dataBuiltin));
+  aml_add_string(pack1, "device_type");
+  aml_add_string_buffer(pack1, "XHCI");
+  if (gSettings.InjectClockID) {
+    aml_add_string(pack1, "AAPL,clock-id");
+    aml_add_byte_buffer(pack1, dataBuiltin, sizeof(dataBuiltin));
+  }
+  aml_add_string(pack1, "AAPL,current-available");
+  aml_add_word(pack1, 0x0834);
+  aml_add_string(pack1, "AAPL,current-extra");
+  aml_add_word(pack1, 0x0A8C);
+  aml_add_string(pack1, "AAPL,current-in-sleep");
+  aml_add_word(pack1, 0x0A8C);
+  aml_add_string(pack1, "AAPL,max-port-current-in-sleep");
+  aml_add_word(pack1, 0x0834);
+  aml_add_string(pack1, "AAPL,device-internal");
+  aml_add_byte(pack1, 0x00);
+  
+  aml_add_byte_buffer(pack1, dataBuiltin, sizeof(dataBuiltin));
+  aml_add_local0(met1);
+  aml_add_buffer(met1, dtgp_1, sizeof(dtgp_1));
+  // finish Method(_DSM,4,NotSerialized)
+  
+  aml_calculate_size(root1);
+  USBDATA3 = AllocateZeroPool(root1->Size);
+  size3 = root1->Size;
+  //DBG("USB code size = 0x%08x\n", sizeoffset);
+  aml_write_node(root1, USBDATA3, 0);
+  aml_destroy_node(root1);
   
   if (usb > 0) 
   {
@@ -3572,8 +3614,21 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
           2D 69 64 00 11 04 0A 01 00 60 44 54 47 50 68 69
           6A 6B 71 60 A4 60 
            */
-          if (USB20[i])
-          {
+          if (USB30[i]) {
+            if ((USBDATA3[25] == 0x0A) && (USBDATA3[26] == 0x04)) {
+              k = 27;
+            } else if ((USBDATA3[26] == 0x0A) && (USBDATA3[27] == 0x04)) {
+              k = 28;
+            } else {
+              continue;
+            }
+            if (gSettings.FakeXHCI) {
+              USBID[i] = gSettings.FakeXHCI >> 16;
+            }
+            
+            CopyMem(USBDATA3+k, (VOID*)&USBID[i], 4);
+            sizeoffset = size3;
+          } else if (USB20[i]) {
             if ((USBDATA2[25] == 0x0A) && (USBDATA2[26] == 0x04)) {
               k = 27;
             } else if ((USBDATA2[26] == 0x0A) && (USBDATA2[27] == 0x04)) {
@@ -3584,9 +3639,7 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
             
             CopyMem(USBDATA2+k, (VOID*)&USBID[i], 4);
             sizeoffset = size2;
-          }
-          else
-          {
+          } else {
             if ((USBDATA1[25] == 0x0A) && (USBDATA1[26] == 0x04)) {
               k = 27;
             } else if ((USBDATA1[26] == 0x0A) && (USBDATA1[27] == 0x04)) {
@@ -3600,12 +3653,11 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
           }
           
           len = move_data(adr1+adr, dsdt, len, sizeoffset);
-          if (USB20[i])
-          {
+          if (USB30[i]) {
+            CopyMem(dsdt+adr1+adr, USBDATA3, sizeoffset);
+          } else if (USB20[i]) {
             CopyMem(dsdt+adr1+adr, USBDATA2, sizeoffset);
-          }
-          else
-          {
+          } else {
             CopyMem(dsdt+adr1+adr, USBDATA1, sizeoffset);
           }
           // Fix Device USB size
@@ -3620,6 +3672,7 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
   }
   FreePool(USBDATA1);
   FreePool(USBDATA2);
+  FreePool(USBDATA3);
   return len;
   
 }
