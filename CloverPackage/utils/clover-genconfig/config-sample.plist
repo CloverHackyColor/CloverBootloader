@@ -217,6 +217,8 @@
 		<string>DSDT.aml</string>
 		<key>FixDsdtMask</key>
 		<string>0xFFFF</string>
+		<key>DebugDSDT</key>
+		<false/>
 		<key>DropOemSSDT</key>
 		<true/>
 		<key>KeepSSDT</key>

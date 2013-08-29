@@ -356,8 +356,9 @@ void PrintConfig(CFTypeRef data)
     CFMutableDictionaryRef acpiDict = addDict(dict, CFSTR("ACPI"));
     addUString(acpiDict, CFSTR("DsdtName"), s->DsdtName);
     addHex(acpiDict, CFSTR("FixDsdtMask"), s->FixDsdt);
+    addBoolean(acpiDict, CFSTR("DebugDSDT"), s->DebugDSDT);
     addBoolean(acpiDict, CFSTR("DropOemSSDT"), s->DropSSDT);
-  addInteger(acpiDict, CFSTR("Number_of_KeepSSDT"), s->KeepSsdtNum);
+    addInteger(acpiDict, CFSTR("Number_of_KeepSSDT"), s->KeepSsdtNum);
     addBoolean(acpiDict, CFSTR("DropAPIC"), s->bDropAPIC);
     addBoolean(acpiDict, CFSTR("PatchAPIC"), s->PatchNMI);
     addBoolean(acpiDict, CFSTR("DropMCFG"), s->bDropMCFG);

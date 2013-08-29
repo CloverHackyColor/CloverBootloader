@@ -962,7 +962,7 @@ INT32 FindBin (UINT8 *dsdt, UINT32 len, UINT8* bin, UINTN N)
 UINT32 FindMethod (UINT8 *dsdt, UINT32 len, /* CONST*/ CHAR8* Name)
 {
   UINT32 i;
-  for (i=20; i<len-7; i++) {
+  for (i=10; i<len-7; i++) {
     if (((dsdt[i] == 0x14) || (dsdt[i+1] == 0x14) || (dsdt[i-1] == 0x14)) &&
         (dsdt[i+3] == Name[0]) && (dsdt[i+4] == Name[1]) &&
         (dsdt[i+5] == Name[2]) && (dsdt[i+6] == Name[3])
@@ -1118,7 +1118,7 @@ BOOLEAN CmpPNP (UINT8 *dsdt, UINT32 j, UINT16 PNP)
 }
 
 //the procedure search nearest "Device" code before given address
-//should restrict the search by 6 bytes... OK, 10
+//should restrict the search by 6 bytes... OK, 10, .. until dsdt begin
 //hmmm? will check device name
 UINT32 devFind(UINT8 *dsdt, UINT32 address)
 {
@@ -1730,8 +1730,8 @@ CHAR8 dataLPC[] = {0x18, 0x3A, 0x00, 0x00};
 
 UINT32 FIXLPCB (UINT8 *dsdt, UINT32 len)
 { 
-  UINT32 j;
-  INT32 sizeoffset, shift = 0;
+  UINT32 i, j, k;
+  INT32 sizeoffset, shift = 0, Size;
   UINT32  LPCBADR = 0, LPCBSIZE = 0, LPCBADR1 = 0;
   AML_CHUNK* root;
   AML_CHUNK* met;
@@ -1759,6 +1759,16 @@ UINT32 FIXLPCB (UINT8 *dsdt, UINT32 len)
   if (!LPCBSIZE) return len;
   LPCBADR1 = LPCBADR + LPCBSIZE;
   ReplaceName(dsdt, len, device_name[3], "LPCB"); 
+  
+  if (LPCBADR) { // bridge or device
+    i = LPCBADR;
+    Size = get_size(dsdt, i);
+    k = FindMethod(dsdt + i, Size, "_DSM");
+    if (k != 0) {
+      DBG("_DSM already exists, patch LPC will not be applied\n");
+      return len;
+    }
+  }  
   
 	root = aml_create_node(NULL);
 	// add Method(_DSM,4,NotSerialized) for LPC
@@ -1796,7 +1806,7 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
 {
   UINT32 i, j, k;
   INT32 sizeoffset = 0;
-  UINT32 PCIADR = 0, PCISIZE = 0;
+  UINT32 PCIADR = 0, PCISIZE = 0, Size;
 //  CHAR8 *portname;
   CHAR8 *CFGname = NULL;
   CHAR8 *name = NULL;
@@ -1855,6 +1865,16 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
       devsize1 = get_size(dsdt, devadr1);
       DISPLAYFIX = TRUE;
       break;      
+    }
+  }
+  
+  if (devadr1) { // bridge or device
+    i = devadr1;
+    Size = get_size(dsdt, i);
+    k = FindMethod(dsdt + i, Size, "_DSM");
+    if (k != 0) {
+      DBG("_DSM already exists, patch GFX will not be applied\n");
+      return len;
     }
   }
 
@@ -2261,7 +2281,8 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
     }
     
     // HDAU
-    if (GFXHDAFIX) {
+    
+    if (GFXHDAFIX && (FindBin(dsdt, len, (UINT8*)"HDAU", 4) < 0)) {
  //     CHAR8 data2[] = {0xe0,0x00,0x56,0x28};
  //     AML_CHUNK* met;
       AML_CHUNK* pack;
@@ -2343,7 +2364,7 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
 {
   UINT32 i, j, k;
   INT32 sizeoffset;
-  UINT32 PCIADR, PCISIZE = 0;
+  UINT32 PCIADR, PCISIZE = 0, Size;
   AML_CHUNK* root;
   AML_CHUNK* gfx0;
   AML_CHUNK* met;
@@ -2396,6 +2417,16 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
       break;      
     }
   }
+  
+  if (devadr1) { // bridge or device
+    i = devadr1;
+    Size = get_size(dsdt, i);
+    k = FindMethod(dsdt + i, Size, "_DSM");
+    if (k != 0) {
+      DBG("_DSM already exists, patch GFX will not be applied\n");
+      return len;
+    }
+  }  
     
   if (DisplayADR1[1]) {
     if (!DisplayName2) {
@@ -2870,6 +2901,15 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
       break;
     } // End if Network
   }
+  if (NetworkADR) { // bridge or device
+    i = NetworkADR;
+    Size = get_size(dsdt, i);
+    k = FindMethod(dsdt + i, Size, "_DSM");
+    if (k != 0) {
+      DBG("_DSM already exists, patch LAN will not be applied\n");
+      return len;
+    }
+  }  
     
   root = aml_create_node(NULL);
   
@@ -3006,7 +3046,16 @@ UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
       break;
     } // End ArptADR2
   }
-  
+  if (ArptADR) { // bridge or device
+    i = ArptADR;
+    Size = get_size(dsdt, i);
+    k = FindMethod(dsdt + i, Size, "_DSM");
+    if (k != 0) {
+      DBG("_DSM already exists, patch WiFi will not be applied\n");
+      return len;
+    }
+  }  
+    
   root = aml_create_node(NULL);
   if (!ArptName) {//there is no Airport device at dsdt, creating new one
     AML_CHUNK* dev = aml_add_device(root, "ARPT");
@@ -3129,7 +3178,22 @@ UINT32 FIXSBUS (UINT8 *dsdt, UINT32 len)
       } // end SBUS
     }
   }
-    
+  
+  if (SBUSADR) { // bridge or device
+    i = SBUSADR;
+    Size = get_size(dsdt, i);
+    k = FindMethod(dsdt + i, Size, "_DSM");
+    if (k != 0) {
+      DBG("_DSM already exists, patch SBUS will not be applied\n");
+      return len;
+    }
+    k = FindMethod(dsdt + i, Size, "BUS0");
+    if (k != 0) {
+      DBG("BUS0 already exists, patch SBUS will not be applied\n");
+      return len;
+    }    
+  }  
+  
   if (SBUSADR)
     sizeoffset = sizeof(bus0);
   else
@@ -3138,8 +3202,6 @@ UINT32 FIXSBUS (UINT8 *dsdt, UINT32 len)
   DBG("SBUS address %x code size = 0x%08x\n", SBUSADR, sizeoffset);
     
   if (SBUSADR) {
-    // get SBUS device size
-    Size = get_size(dsdt, SBUSADR);
     // move data to back for add sbus 
     i = SBUSADR + Size;
     len = move_data(i, dsdt, len, sizeoffset);
@@ -3322,7 +3384,18 @@ UINT32 FIXFirewire (UINT8 *dsdt, UINT32 len)
       break;
     } // End Firewire
   }
-  
+  //safe for twice fix: if _DSM already present then cancel fix
+  if (FirewireADR) { // bridge or device
+    i = FirewireADR;
+  } else { 
+    i = PCIADR;
+  }  
+  Size = get_size(dsdt, i);
+  k = FindMethod(dsdt + i, Size, "_DSM");
+  if (k != 0) {
+    DBG("_DSM already exists, patch FRWR will not be applied\n");
+    return len;
+  }
   
   root = aml_create_node(NULL);
   
@@ -3357,12 +3430,6 @@ UINT32 FIXFirewire (UINT8 *dsdt, UINT32 len)
   aml_write_node(root, firewire, 0);
   aml_destroy_node(root);
   
-  if (FirewireADR) { // bridge or device
-    i = FirewireADR;
-  } else { 
-    i = PCIADR;
-  }  
-  Size = get_size(dsdt, i);
   // move data to back for add patch 
   k = i + Size;
   len = move_data(k, dsdt, len, sizeoffset);
@@ -3414,6 +3481,16 @@ UINT32 AddHDEF (UINT8 *dsdt, UINT32 len)
       HDAFIX = FALSE;
       break;
     } // End HDA
+  }
+  
+  if (HDAADR) { // bridge or device
+    i = HDAADR;
+    Size = get_size(dsdt, i);
+    k = FindMethod(dsdt + i, Size, "_DSM");
+    if (k != 0) {
+      DBG("_DSM already exists, patch HDA will not be applied\n");
+      return len;
+    }
   }
   
   root = aml_create_node(NULL);
@@ -3604,6 +3681,12 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
           }
 
           adr = get_size(dsdt, adr1);
+          k = FindMethod(dsdt + adr1, adr, "_DSM");
+          if (k != 0) {
+            DBG("_DSM already exists, patch USB will not be applied\n");
+            continue;
+          }
+
           //UINT32 k = (adr > 0x3F)?1:0; 
           /*
           14 45 06 5F 44 53 4D 04 70 12 4F 04 08 0D 64 65
@@ -3624,8 +3707,7 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
             }
             if (gSettings.FakeXHCI) {
               USBID[i] = gSettings.FakeXHCI >> 16;
-            }
-            
+            }            
             CopyMem(USBDATA3+k, (VOID*)&USBID[i], 4);
             sizeoffset = size3;
           } else if (USB20[i]) {
@@ -3635,8 +3717,7 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
               k = 28;
             } else {
               continue;
-            }
-            
+            }            
             CopyMem(USBDATA2+k, (VOID*)&USBID[i], 4);
             sizeoffset = size2;
           } else {
@@ -3685,7 +3766,7 @@ UINT32 FIXIDE (UINT8 *dsdt, UINT32 len)
 {
   UINT32  i, k;
   UINT32 j;
-  UINT32 IDEADR = 0, BridgeSize = 0; //, Size;
+  UINT32 IDEADR = 0, BridgeSize = 0, Size;
   INT32 sizeoffset;
   AML_CHUNK* root;
   AML_CHUNK* device;
@@ -3716,7 +3797,18 @@ UINT32 FIXIDE (UINT8 *dsdt, UINT32 len)
       PATAFIX = FALSE;
       break;
     }
+  } 
+  
+  if (IDEADR) { // bridge or device
+    i = IDEADR;
+    Size = get_size(dsdt, i);
+    k = FindMethod(dsdt + i, Size, "_DSM");
+    if (k != 0) {
+      DBG("_DSM already exists, patch IDE will not be applied\n");
+      return len;
+    }
   }  
+  
   
 	root = aml_create_node(NULL);
 	device = root;
@@ -3821,7 +3913,7 @@ CHAR8 DevSATA[] = {0x81, 0x26, 0x00, 0x00};
 UINT32 FIXSATAAHCI (UINT8 *dsdt, UINT32 len)
 {
   UINT32  i, k;
-  UINT32 SATAAHCIADR = 0, BridgeSize = 0; //, Size;
+  UINT32 SATAAHCIADR = 0, BridgeSize = 0, Size;
   INT32 sizeoffset;
   AML_CHUNK* root;
   AML_CHUNK* met;
@@ -3851,7 +3943,17 @@ UINT32 FIXSATAAHCI (UINT8 *dsdt, UINT32 len)
     } 
   }
   if (!BridgeSize) return len;
-    
+  
+  if (SATAAHCIADR) { // bridge or device
+    i = SATAAHCIADR;
+    Size = get_size(dsdt, i);
+    k = FindMethod(dsdt + i, Size, "_DSM");
+    if (k != 0) {
+      DBG("_DSM already exists, patch SATA will not be applied\n");
+      return len;
+    }
+  }  
+  
   DBG("Start SATA AHCI Fix\n");
   
 	root = aml_create_node(NULL);
@@ -3893,7 +3995,7 @@ CHAR8 DevSATA0[] = {0x80, 0x26, 0x00, 0x00};
 UINT32 FIXSATA (UINT8 *dsdt, UINT32 len)
 {
   UINT32  i, k;
-  UINT32 SATAADR = 0, BridgeSize = 0; //, Size;
+  UINT32 SATAADR = 0, BridgeSize = 0, Size;
   INT32 sizeoffset;
   AML_CHUNK* root;
   AML_CHUNK* met;
@@ -3922,6 +4024,15 @@ UINT32 FIXSATA (UINT8 *dsdt, UINT32 len)
     } // End IDE
   }
   if (!BridgeSize) return len;
+  if (SATAADR) { // bridge or device
+    i = SATAADR;
+    Size = get_size(dsdt, i);
+    k = FindMethod(dsdt + i, Size, "_DSM");
+    if (k != 0) {
+      DBG("_DSM already exists, patch SATA will not be applied\n");
+      return len;
+    }
+  }  
   
   DBG("Start SATA Fix\n");
   
@@ -4615,13 +4726,15 @@ VOID FixBiosDsdt (UINT8* temp)
     DsdtLen = FixADP1(temp, DsdtLen); 
     // other compiler warning fix _T_X,  MUTE .... USB _PRW value form 0x04 => 0x01
 //     DsdtLen = FIXOTHER(temp, DsdtLen);
-//    if (OSX) {
-    DsdtLen = FIXDarwin(temp, DsdtLen);
-//    }
+    if (!FindMethod(temp, DsdtLen, "GET9") && 
+        !FindMethod(temp, DsdtLen, "STR9") &&
+        !FindMethod(temp, DsdtLen, "OOSI")) {
+      DsdtLen = FIXDarwin(temp, DsdtLen);
+    }
   } 
   // Fix SHUTDOWN For ASUS
   if ((gSettings.FixDsdt & FIX_SHUTDOWN)) {
-    DsdtLen = FIXSHUTDOWN_ASUS(temp, DsdtLen);
+    DsdtLen = FIXSHUTDOWN_ASUS(temp, DsdtLen); //safe to do twice
   }
   
   // Finish DSDT patch and resize DSDT Length

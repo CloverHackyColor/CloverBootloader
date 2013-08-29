@@ -19,6 +19,8 @@ Re-Work by Slice 2011.
 
 #include "StateGenerator.h"
 
+//#define TEST 1
+
 #define offsetof(st, m) \
 ((UINTN) ( (UINT8 *)&((st *)(0))->m - (UINT8 *)0 ))
 
@@ -1756,7 +1758,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
 //		if (gSettings.FixDsdt) { //unconditional
 			bufferLen = bufferLen + bufferLen / 8;
 //		}
-
+    dsdt = EFI_SYSTEM_TABLE_MAX_ADDRESS;
     Status = gBS->AllocatePages (
                                  AllocateMaxAddress,
                                  EfiACPIReclaimMemory,
@@ -1767,7 +1769,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
     //if success insert dsdt pointer into ACPI tables
     if(!EFI_ERROR(Status))
     {
-      //      DBG("page is allocated, write DSDT into\n");
+      DBG("page is allocated, write DSDT into\n");
       CopyMem((VOID*)(UINTN)dsdt, buffer, bufferLen);
       
       FadtPointer->Dsdt  = (UINT32)dsdt;
@@ -1804,11 +1806,31 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
 				FadtPointer->Header.Checksum = (UINT8)(256 - Checksum8((CHAR8*)FadtPointer, FadtPointer->Header.Length));
 			}
 		}
-  
+  if (gSettings.DebugDSDT) {
+    DBG("Output DSDT before patch to /EFI/CLOVER/ACPI/origin/DSDT-or.aml\n");
+    Status = egSaveFile(SelfRootDir, L"\\EFI\\CLOVER\\ACPI\\origin\\DSDT-or.aml",
+                        (UINT8*)(UINTN)FadtPointer->XDsdt, bufferLen);    
+  }
   //native DSDT or loaded we want to apply autoFix to this
   //  if (gSettings.FixDsdt) { //fix even with zero mask because we want to know PCIRootUID and CPUBase and count(?)
   DBG("Apply DsdtFixMask=0x%04x\n", gSettings.FixDsdt);
-  FixBiosDsdt((UINT8*)(UINTN)FadtPointer->Dsdt);
+  FixBiosDsdt((UINT8*)(UINTN)FadtPointer->XDsdt);
+  if (gSettings.DebugDSDT) { 
+    for (Index=0; Index < 60; Index++) {
+      CHAR16					DsdtPatchedName[128];
+      UnicodeSPrint(DsdtPatchedName, 256, L"\\EFI\\CLOVER\\ACPI\\origin\\DSDT-pa%d.aml", Index);
+      if(!FileExists(SelfRootDir, DsdtPatchedName)){
+        Status = egSaveFile(SelfRootDir, DsdtPatchedName,
+                            (UINT8*)(UINTN)FadtPointer->XDsdt, bufferLen);
+        if (!EFI_ERROR(Status)) {
+          break;
+        }		
+      }
+    }
+    if (EFI_ERROR(Status)) {
+      DBG("...saving DSDT failed with status=%r\n", Status);
+    }
+  } 
   
   if (gSettings.bDropAPIC) {
     xf = ScanXSDT(APIC_SIGN);

@@ -1735,6 +1735,13 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
         }
         DBG("Config set Fix DSDT mask=%08x\n", gSettings.FixDsdt);
       }
+      prop = GetProperty(dictPointer, "DebugDSDT");
+      if(prop) {
+        if ((prop->type == kTagTypeTrue) ||
+            ((prop->type == kTagTypeString) &&
+             ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))))
+          gSettings.DebugDSDT = TRUE;
+      }      
       prop = GetProperty(dictPointer, "DropAPIC");
       gSettings.bDropAPIC = FALSE;
       if(prop) {

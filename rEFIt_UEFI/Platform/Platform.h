@@ -818,6 +818,7 @@ typedef struct {
   UINT32 *LenToReplace;
   UINT32 KeepSsdtNum;
   CHAR8  **KeepTableId;
+  BOOLEAN DebugDSDT;
 
 } SETTINGS_DATA;
 
