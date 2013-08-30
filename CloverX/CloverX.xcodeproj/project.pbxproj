@@ -382,6 +382,17 @@
 		12A17911166BCC15005B0D63 /* SataController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SataController.h; sourceTree = "<group>"; };
 		12A17912166BCC15005B0D63 /* SataControllerDxe.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = SataControllerDxe.inf; sourceTree = "<group>"; };
 		12A82BA817CFCAE50019A5D3 /* card_vlist.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = card_vlist.c; sourceTree = "<group>"; };
+		12A82BB017CFD3600019A5D3 /* ComponentName.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ComponentName.c; sourceTree = "<group>"; };
+		12A82BB117CFD3600019A5D3 /* ComponentName.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ComponentName.h; sourceTree = "<group>"; };
+		12A82BB217CFD3600019A5D3 /* UsbHcMem.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = UsbHcMem.c; sourceTree = "<group>"; };
+		12A82BB317CFD3600019A5D3 /* UsbHcMem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UsbHcMem.h; sourceTree = "<group>"; };
+		12A82BB417CFD3600019A5D3 /* Xhci.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Xhci.c; sourceTree = "<group>"; };
+		12A82BB517CFD3600019A5D3 /* Xhci.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Xhci.h; sourceTree = "<group>"; };
+		12A82BB617CFD3600019A5D3 /* XhciDxe.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = XhciDxe.inf; sourceTree = "<group>"; };
+		12A82BB717CFD3600019A5D3 /* XhciReg.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = XhciReg.c; sourceTree = "<group>"; };
+		12A82BB817CFD3600019A5D3 /* XhciReg.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XhciReg.h; sourceTree = "<group>"; };
+		12A82BB917CFD3600019A5D3 /* XhciSched.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = XhciSched.c; sourceTree = "<group>"; };
+		12A82BBA17CFD3600019A5D3 /* XhciSched.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XhciSched.h; sourceTree = "<group>"; };
 		12B3D27417B23032009D8170 /* Edid.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Edid.c; sourceTree = "<group>"; };
 		12B8168C1644675800A433E7 /* egemb_back_selected_small.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = egemb_back_selected_small.h; sourceTree = "<group>"; };
 		12B8168D1644675800A433E7 /* egemb_refit_banner.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = egemb_refit_banner.h; sourceTree = "<group>"; };
@@ -807,6 +818,7 @@
 				124D77DE1657A5E1008B5407 /* SataControllerDxe */,
 				122489B416A93FC400A0DB6B /* UsbBusDxe */,
 				122489C716A93FD300A0DB6B /* UsbMouseDxe */,
+				12A82BAF17CFD3600019A5D3 /* XhciDxe */,
 			);
 			name = CopiedFromEDK;
 			sourceTree = "<group>";
@@ -1463,6 +1475,25 @@
 			);
 			name = SataControllerDxe;
 			path = ../SataControllerDxe;
+			sourceTree = "<group>";
+		};
+		12A82BAF17CFD3600019A5D3 /* XhciDxe */ = {
+			isa = PBXGroup;
+			children = (
+				12A82BB017CFD3600019A5D3 /* ComponentName.c */,
+				12A82BB117CFD3600019A5D3 /* ComponentName.h */,
+				12A82BB217CFD3600019A5D3 /* UsbHcMem.c */,
+				12A82BB317CFD3600019A5D3 /* UsbHcMem.h */,
+				12A82BB417CFD3600019A5D3 /* Xhci.c */,
+				12A82BB517CFD3600019A5D3 /* Xhci.h */,
+				12A82BB617CFD3600019A5D3 /* XhciDxe.inf */,
+				12A82BB717CFD3600019A5D3 /* XhciReg.c */,
+				12A82BB817CFD3600019A5D3 /* XhciReg.h */,
+				12A82BB917CFD3600019A5D3 /* XhciSched.c */,
+				12A82BBA17CFD3600019A5D3 /* XhciSched.h */,
+			);
+			name = XhciDxe;
+			path = ../Patches_for_EDK2/XhciDxe;
 			sourceTree = "<group>";
 		};
 		12B8165F1644674A00A433E7 = {

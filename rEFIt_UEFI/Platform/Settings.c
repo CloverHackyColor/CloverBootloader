@@ -362,6 +362,16 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir)
           gSettings.HVHideExternalUEFI = TRUE;
         }
       }
+      dict2 = GetProperty(prop, "UEFIBootOptions");
+      if (dict2) {
+        DBG("hide UEFIBootOptions\n");
+        if (dict2->type == kTagTypeTrue) {
+          DBG("....true\n");
+          gSettings.HVHideUEFIBootOptions = TRUE;
+        } else {
+          DBG("....false\n");
+        }
+      }
     }
     // Hide volumes
     prop = GetProperty(dictPointer, "Volumes");

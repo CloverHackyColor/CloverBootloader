@@ -256,6 +256,7 @@ void PrintConfig(CFTypeRef data)
     addBoolean(hideEntriesDict, CFSTR("OpticalUEFI"), s->HVHideOpticalUEFI);
     addBoolean(hideEntriesDict, CFSTR("InternalUEFI"), s->HVHideInternalUEFI);
     addBoolean(hideEntriesDict, CFSTR("ExternalUEFI"), s->HVHideExternalUEFI);
+    addBoolean(hideEntriesDict, CFSTR("UEFIBootOptions"), s->HVHideUEFIBootOptions);
 
     // SMBIOS
     CFMutableDictionaryRef smbiosDict = addDict(dict, CFSTR("SMBIOS"));

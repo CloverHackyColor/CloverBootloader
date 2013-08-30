@@ -2100,6 +2100,77 @@ static VOID ScanTool(VOID)
    */
 }
 
+VOID AddUEFIBootOption(BO_BOOT_OPTION *bootOption)
+{
+  UINTN                       volumeIndex;
+  REFIT_VOLUME                *volume;
+  EFI_DEVICE_PATH_PROTOCOL    *devPathNode;
+  LOADER_ENTRY                *loaderEntry;
+  FILEPATH_DEVICE_PATH        *loaderDevicePath;
+  CHAR16                      *loaderPath;
+  CHAR16                      *bootParams;
+  CHAR16                      *title;
+  
+  for (volumeIndex = 0; volumeIndex < VolumesCount; volumeIndex++) {
+    volume = Volumes[volumeIndex];
+    
+    EFI_GUID *volumeGUID = FindGPTPartitionGuidInDevicePath(volume->DevicePath);
+    EFI_GUID *bootGUID = FindGPTPartitionGuidInDevicePath(bootOption->FilePathList);
+    if (!volumeGUID || !bootGUID || !CompareGuid(volumeGUID, bootGUID)) continue;
+    
+    devPathNode = bootOption->FilePathList;
+    loaderDevicePath = (FILEPATH_DEVICE_PATH *) FindDevicePathNodeWithType(devPathNode, MEDIA_DEVICE_PATH,
+                                                                           MEDIA_FILEPATH_DP);
+    if (!loaderDevicePath) continue;
+    
+    loaderPath = loaderDevicePath->PathName;
+    bootParams = (CHAR16 *) bootOption->OptionalData;
+    title = bootOption->Description;
+    
+    volume->OSIconName = L"unknown";
+    volume->BootType = BOOTING_BY_EFI;
+    
+    loaderEntry = AddLoaderEntry(loaderPath, title, volume, OSTYPE_EFI);
+    loaderEntry->LoadOptions = EfiStrDuplicate(bootParams);
+  }
+}
+
+VOID ScanUEFIBootOptions(BOOLEAN allBootOptions)
+{
+  EFI_STATUS          status;
+  UINT16              *bootOrder;
+  UINTN               bootOrderCnt;
+  UINT16              i;
+  BO_BOOT_OPTION      bootOption;
+  
+  DBG("Scanning boot options from UEFI ...\n");
+  
+  if (allBootOptions) {
+    for (i = 0; i <= 0xFFFF; i++) {
+      status = GetBootOption(i, &bootOption);
+      if (EFI_ERROR(status)) continue;
+      
+      AddUEFIBootOption(&bootOption);
+      
+      FreePool(bootOption.Variable);
+    }
+  } else {
+    status = GetBootOrder(&bootOrder, &bootOrderCnt);
+    if (EFI_ERROR(status)) return;
+    
+    for (i = 0; i < bootOrderCnt; i++) {
+      status = GetBootOption(bootOrder[i], &bootOption);
+      if (EFI_ERROR(status)) continue;
+      
+      AddUEFIBootOption(&bootOption);
+      
+      FreePool(bootOption.Variable);
+    }
+    
+    FreePool(bootOrder);
+  }
+}
+
 //
 // pre-boot driver functions
 //
@@ -2826,6 +2897,10 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
     ScanLoader();
     //        DBG("ScanLoader OK\n");
+
+    if (!gSettings.HVHideUEFIBootOptions)
+        ScanUEFIBootOptions(FALSE);
+
 
     if (!GlobalConfig.FastBoot) {
 

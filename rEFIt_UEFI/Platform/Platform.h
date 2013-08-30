@@ -769,6 +769,7 @@ typedef struct {
   BOOLEAN HVHideOpticalUEFI;
   BOOLEAN HVHideInternalUEFI;
   BOOLEAN HVHideExternalUEFI;
+  BOOLEAN HVHideUEFIBootOptions;
   CHAR16 **HVHideStrings;
   INTN    HVCount;
 #if defined(MDE_CPU_IA32)
@@ -1015,6 +1016,49 @@ typedef struct
 	UINT64            VideoRam;
 } CARDLIST;
 
+typedef struct {
+    ///
+    /// XXXX in BootXXXX.
+    ///
+    UINT16    BootNum;
+    ///
+    /// Pointer to raw EFI_LOAD_OPTION (BootXXXX) variable content.
+    ///
+    VOID    *Variable;
+    ///
+    /// Variable size in bytes.
+    ///
+    UINTN   VariableSize;
+    ///
+    /// BootOption Attributes (first 4 bytes from Variable).
+    ///
+    UINT32  Attributes;
+    ///
+    /// BootOption FilePathListLength (next 2 bytes from Variable).
+    ///
+    UINT16  FilePathListLength;
+    ///
+    /// Null terminated BootOption Description (pointer to 6th byte of Variable).
+    ///
+    CHAR16  *Description;
+    ///
+    /// Size in bytes of BootOption Description.
+    ///
+    UINTN   DescriptionSize;
+    ///
+    /// Pointer to BootOption FilePathList.
+    ///
+    EFI_DEVICE_PATH_PROTOCOL    *FilePathList;
+    ///
+    /// Pointer to BootOption OptionalData.
+    ///
+    UINT8   *OptionalData;
+    ///
+    /// BootOption OptionalData size in bytes.
+    ///
+    UINTN   OptionalDataSize;
+} BO_BOOT_OPTION;
+
 #define CARDLIST_SIGNATURE SIGNATURE_32('C','A','R','D')
 
 
@@ -1245,6 +1289,24 @@ VOID
 PrintBootOptions (
     IN  BOOLEAN         AllBootOptions
     );
+
+/** Reads BootXXXX (XXXX = BootNum) var, parses it and returns in BootOption.
+ *  Caller is responsible for releasing BootOption->Variable with FreePool().
+ */
+EFI_STATUS
+GetBootOption (
+    IN  UINT16          BootNum,
+    OUT BO_BOOT_OPTION  *BootOption
+);
+
+/** Returns gEfiGlobalVariableGuid:BootOrder as UINT16 array and it's length (num of elements).
+ *  Caller is responsible for releasing BootOrder mem (FreePool()).
+ */
+EFI_STATUS
+GetBootOrder (
+    OUT UINT16          *BootOrder[],
+    OUT UINTN           *BootOrderLen
+);
 
 /** Searches BootXXXX vars for entry that points to given FileDeviceHandle/FileName
  *  and returns BootNum (XXXX in BootXXXX variable name) and BootIndex (index in BootOrder)

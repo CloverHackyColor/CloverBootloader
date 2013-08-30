@@ -348,6 +348,8 @@
 			<true/>
 			<key>ExternalUEFI</key>
 			<true/>
+            <key>UEFIBootOptions</key>
+            <true/>
 		</dict>
 	</dict>
 	<key>RtVariables</key>
