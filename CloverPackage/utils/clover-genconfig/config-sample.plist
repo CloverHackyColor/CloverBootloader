@@ -206,7 +206,7 @@
 			<key>SATA</key>
 			<string>0x25628086</string>
 			<key>WIFI</key>
-			<string>0x43121453</string>
+			<string>0x431214e4</string>
 			<key>XHCI</key>
 			<string>0x0</string>
 		</dict>

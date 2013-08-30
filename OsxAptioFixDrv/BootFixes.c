@@ -332,6 +332,7 @@ AssignVirtualAddressesToMemMap(VOID *pBootArgs)
 	UINTN					Index;
 	EFI_MEMORY_DESCRIPTOR	*Desc;
 	UINTN					BlockSize;
+  UINTN					PhysicalEnd;
 	PAGE_MAP_AND_DIRECTORY_POINTER	*PageTable;
 	UINTN					Flags;
 	EFI_STATUS				Status;
@@ -359,14 +360,17 @@ AssignVirtualAddressesToMemMap(VOID *pBootArgs)
 	GetCurrentPageTable(&PageTable, &Flags);
 	
 	for (Index = 0; Index < NumEntries; Index++) {
-    if ((Desc->PhysicalStart >= 0x9e000) && (Desc->PhysicalStart < 0xa0000)) {
+    BlockSize = EFI_PAGES_TO_SIZE((UINTN)Desc->NumberOfPages);
+    PhysicalEnd = Desc->PhysicalStart + BlockSize;
+//    if ((Desc->PhysicalStart >= 0x9e000) && (Desc->PhysicalStart < 0xa0000)) {
+    if ((Desc->PhysicalStart < 0xa0000) && (PhysicalEnd >= 0x9e000)) {
       Desc->Type = EfiACPIMemoryNVS;
       Desc->Attribute = 0;
     }
 		
 		// assign virtual addresses to all EFI_MEMORY_RUNTIME marked pages (including MMIO)
 		if ((Desc->Attribute & EFI_MEMORY_RUNTIME) != 0) {
-			BlockSize = EFI_PAGES_TO_SIZE((UINTN)Desc->NumberOfPages);
+//			BlockSize = EFI_PAGES_TO_SIZE((UINTN)Desc->NumberOfPages);
 			if (Desc->Type == EfiRuntimeServicesCode || Desc->Type == EfiRuntimeServicesData) {
 				// for RT block - assign from kernel block
 				Desc->VirtualStart = KernelRTBlock + 0xffffff8000000000;

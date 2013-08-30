@@ -92,14 +92,14 @@
   gPcAtChipsetPkgTokenSpaceGuid.PcdIsaAcpiFloppyBEnable|FALSE|BOOLEAN|0x10010010
   gPcAtChipsetPkgTokenSpaceGuid.PcdIsaAcpiCom1Enable|FALSE|BOOLEAN|0x10010011
   gPcAtChipsetPkgTokenSpaceGuid.PcdIsaAcpiCom2Enable|FALSE|BOOLEAN|0x10010012
-  gEfiMdePkgTokenSpaceGuid.PcdPciExpressBaseAddress|0xF0000000|UINT32|0x10010013
-  gPcAtChipsetPkgTokenSpaceGuid.Pcd8259LegacyModeMask|0xFFFC|UINT16|0x10010014
   
-[PcdsPatchableInModule]
+[PcdsPatchableInModule, PcdsDynamic, PcdsDynamicEx]
   gEfiMdeModulePkgTokenSpaceGuid.PcdConOutRow|0|UINT32|0x10010015
   gEfiMdeModulePkgTokenSpaceGuid.PcdConOutColumn|0|UINT32|0x10010016
   gEfiMdeModulePkgTokenSpaceGuid.PcdVideoHorizontalResolution|0|UINT32|0x10010017
   gEfiMdeModulePkgTokenSpaceGuid.PcdVideoVerticalResolution|0|UINT32|0x10010018
+  gEfiMdePkgTokenSpaceGuid.PcdPciExpressBaseAddress|0xF0000000|UINT32|0x10010013
+  gPcAtChipsetPkgTokenSpaceGuid.Pcd8259LegacyModeMask|0xFFFC|UINT16|0x10010014
   
 #[PcdsDynamicDefault.common]
   #gEfiMdePkgTokenSpaceGuid.PcdPciExpressBaseAddress|0xF0000000|UINT32|0x10010019
