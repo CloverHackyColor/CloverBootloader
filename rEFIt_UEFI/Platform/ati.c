@@ -645,7 +645,7 @@ AtiDevProp ati_devprop_list[] = {
   {FLAGTRUE,	FALSE,	"ATY,RefCLK",				get_refclk_val,			DWRVAL(0x0a8c)		},
 	
   {FLAGTRUE,	FALSE,	"ATY,PlatformInfo",			get_platforminfo_val,	NULVAL					},
-	
+	{FLAGOLD, 	FALSE,	"compatible",						get_name_pci_val,     NULVAL							},
 	{FLAGTRUE,	FALSE,	"name",						get_nameparent_val,     NULVAL							},
 	{FLAGTRUE,	FALSE,	"device_type",		get_nameparent_val,     NULVAL							},
 	{FLAGTRUE,	FALSE,	"model",					get_model_val,          STRVAL("ATI Radeon")},
@@ -748,6 +748,21 @@ BOOLEAN get_nameparent_val(value_t *val)
 	
 	return TRUE;
 }
+
+static CHAR8 pciName[15];
+BOOLEAN get_name_pci_val(value_t *val)
+{  
+	if (!card->info->model_name)
+		return FALSE;
+  AsciiSPrint(pciName, 15, "pci1002,%x", card->info->device_id);
+
+	val->type = kStr;
+	val->size = 13;
+	val->data = (UINT8 *)&pciName[0];
+
+	return TRUE;
+}
+
 
 BOOLEAN get_model_val(value_t *val)
 {
@@ -1381,7 +1396,13 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
     DBG("ATI Radeon EVERGREEN family\n");
 		card->flags |= EVERGREEN;
 	}
-  
+
+  if (card->info->chip_family <= CHIP_FAMILY_RV670)
+	{
+    DBG("ATI Radeon OLD family\n");
+		card->flags |= FLAGOLD;
+	}
+
   if (gMobile) {
     DBG("ATI Mobile Radeon\n");
     card->flags |= FLAGMOBILE;

@@ -27,7 +27,7 @@
 
 
 
-CHAR8*  device_name[10];  // 0=>Display  1=>network  2=>firewire 3=>LPCB 4=>HDAAudio 5=>RTC 6=>TMR 7=>SBUS 8=>PIC 9=>Airport
+CHAR8*  device_name[11];  // 0=>Display  1=>network  2=>firewire 3=>LPCB 4=>HDAAudio 5=>RTC 6=>TMR 7=>SBUS 8=>PIC 9=>Airport 10=>XHCI
 CHAR8*  UsbName[10];
 CHAR8*  Netmodel;
 
@@ -37,6 +37,7 @@ BOOLEAN DisplayName1;
 BOOLEAN DisplayName2;
 BOOLEAN NetworkName;
 BOOLEAN ArptName;
+BOOLEAN XhciName;
 BOOLEAN ArptBCM;
 BOOLEAN ArptAtheros;
 BOOLEAN LPCBFIX;
@@ -76,6 +77,7 @@ UINT32 DisplaySubID[2];
 
 UINT32 HDAADR1;
 UINT32 USBADR[12];
+UINT32 USBADR2[12];
 UINT32 USBID[12];
 UINT32 USB20[12];
 UINT32 USB30[12];
@@ -682,8 +684,8 @@ VOID CheckHardware()
           if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_SERIAL) &&
               (Pci.Hdr.ClassCode[1] == PCI_CLASS_SERIAL_USB)) {
             UINT16 DID = Pci.Hdr.DeviceId;
-            GetPciADR(DevicePath, &USBADR[usb], NULL);
-  //          DBG("USBADR[%d] = 0x%x\n", usb, USBADR[usb]);
+            GetPciADR(DevicePath, &USBADR[usb], &USBADR2[usb]);
+            DBG("USBADR[%d] = 0x%x and PCIe = 0x%x\n", usb, USBADR[usb], USBADR2[usb]);
             if (USBIDFIX)
             {
               if (USBADR[usb] == 0x001D0000 && !NativeUSB(DID)) DID = 0x3a34;
@@ -1033,7 +1035,7 @@ UINT32 CorrectOuters (UINT8 *dsdt, UINT32 len, UINT32 adr,  INT32 shift)
 VOID ReplaceName(UINT8 *dsdt, UINT32 len, /* CONST*/ CHAR8 *OldName, /* CONST*/ CHAR8 *NewName)
 {
   UINTN i;
-  for (i=30; i<len; i++) {
+  for (i=10; i<len; i++) {
     if ((dsdt[i+0] == NewName[0]) && (dsdt[i+1] == NewName[1]) &&
         (dsdt[i+2] == NewName[2]) && (dsdt[i+3] == NewName[3])) {
       DBG("Name %a already present, renaming impossibble\n", NewName);
@@ -1041,7 +1043,7 @@ VOID ReplaceName(UINT8 *dsdt, UINT32 len, /* CONST*/ CHAR8 *OldName, /* CONST*/ 
     }
   }
   
-  for (i=30; i<len; i++) {
+  for (i=10; i<len; i++) {
     if ((dsdt[i+0] == OldName[0]) && (dsdt[i+1] == OldName[1]) &&
         (dsdt[i+2] == OldName[2]) && (dsdt[i+3] == OldName[3])) {
       DBG("Name %a present at 0x%x, renaming to %a\n", OldName, i, NewName);
@@ -1222,11 +1224,12 @@ UINTN  findPciRoot (UINT8 *dsdt, UINT32 len)
   UINT32 PCIADR, PCISIZE;
 
   //initialising
-  NetworkName = FALSE;
-  DisplayName1 = FALSE;
-  DisplayName2 = FALSE;
-  FirewireName = FALSE;
-  ArptName = FALSE;
+  NetworkName   = FALSE;
+  DisplayName1  = FALSE;
+  DisplayName2  = FALSE;
+  FirewireName  = FALSE;
+  ArptName      = FALSE;
+  XhciName      = FALSE;
   
   PCIADR = GetPciDevice(dsdt, len);
   if (PCIADR) {
@@ -2888,7 +2891,7 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
             CopyMem(device_name[1], dsdt+k, 4);
             DBG("found NetWork device NAME(_ADR,0x%08x) at %x And Name is %a\n", 
                 NetworkADR2, NetworkADR, device_name[1]);
-            ReplaceName(dsdt, len, device_name[1], "GIGE");
+            ReplaceName(dsdt + NetworkADR, BridgeSize, device_name[1], "GIGE");
             NetworkName = TRUE;   
             break;
           }
@@ -3037,7 +3040,7 @@ UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
             CopyMem(device_name[9], dsdt+k, 4);
             DBG("found Airport device NAME(_ADR,0x%08x)/(0x%x) at %x And Name is %a\n", 
                 ArptADR1, ArptADR2, ArptADR, device_name[9]);
-            ReplaceName(dsdt, len, device_name[9], "ARPT");
+            ReplaceName(dsdt + ArptADR, BridgeSize, device_name[9], "ARPT");
             ArptName = TRUE;
             break;
           }
@@ -3375,7 +3378,7 @@ UINT32 FIXFirewire (UINT8 *dsdt, UINT32 len)
             CopyMem(device_name[2], dsdt+k, 4);
             DBG("found Firewire device NAME(_ADR,0x%08x) at %x And Name is %a\n", 
                 FirewireADR2, k, device_name[2]);
-            ReplaceName(dsdt, len, device_name[2], "FRWR");
+            ReplaceName(dsdt + FirewireADR, BridgeSize, device_name[2], "FRWR");
             FirewireName = TRUE;   
             break;
           }
@@ -3546,7 +3549,7 @@ UINT32 AddHDEF (UINT8 *dsdt, UINT32 len)
 UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
 {
   UINT32 i, j, k;
-  UINT32 size1, size2, size3;    
+  UINT32 Size, size1, size2, size3;
   UINT32 adr=0, adr1=0;
   INT32 sizeoffset;
   AML_CHUNK* root;
@@ -3558,6 +3561,7 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
   CHAR8 *USBDATA1;
   CHAR8 *USBDATA2;
   CHAR8 *USBDATA3;
+
   
   DBG("Start USB Fix\n");
 	//DBG("len = 0x%08x\n", len);
@@ -3664,28 +3668,61 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
   aml_write_node(root1, USBDATA3, 0);
   aml_destroy_node(root1);
   
-  if (usb > 0) 
-  {
-    for (i=0; i<usb; i++) {
+  if (usb > 0) {
+    
+    for (i = 0; i < usb; i++) {
+      INTN XhciCount = 1;
+      INTN EhciCount = 0;
       // find USB adr
-      for (j=0; j<len-4; j++)
-      {
-        if (CmpAdr(dsdt, j, USBADR[i]))
-        {
+      for (j = 0; j < len - 4; j++) {
+        if (CmpAdr(dsdt, j, USBADR[i])) {
+          XhciName = FALSE;
           UsbName[i] = AllocateZeroPool(5);
-          CopyMem(UsbName[i], dsdt+j, 4);		          
+          CopyMem(UsbName[i], dsdt+j, 4);
           
           adr1 = devFind(dsdt, j);
           if (!adr1) {
             continue;
           }
 
-          adr = get_size(dsdt, adr1);
-          k = FindMethod(dsdt + adr1, adr, "_DSM");
+          Size = get_size(dsdt, adr1); //bridgesize
+          DBG("USB bridge[%x] at %x, size = %x\n", USBADR[i], adr1, Size);
+          if (USBADR2[i] != 0xFFFE ){
+            for (k = adr1 + 9; k < adr1 + Size; k++) {
+              if (CmpAdr(dsdt, k, USBADR2[i])) {
+                adr = devFind(dsdt, k);
+                if (!adr) {
+                  continue;
+                }
+
+                device_name[10] = AllocateZeroPool(5);
+                CopyMem(device_name[10], dsdt+k, 4);
+                DBG("found USB device NAME(_ADR,0x%08x) at %x and Name is %a\n",
+                    USBADR2[i], k, device_name[10]);
+                if (USB30[i]) {
+                  AsciiSPrint(UsbName[i], 5, "XHC%d", XhciCount++);
+                } else if (USB20[i]) {
+                  AsciiSPrint(UsbName[i], 5, "EHC%d", EhciCount++);
+                } else {
+                  AsciiSPrint(UsbName[i], 5, "USB%d", i);
+                }
+                ReplaceName(dsdt + adr1, Size, device_name[10], UsbName[i]);
+                XhciName = TRUE;
+                Size = get_size(dsdt, adr);
+                break;
+              }
+            }
+          }
+          if (!XhciName) {
+            adr = adr1;
+          }
+
+          k = FindMethod(dsdt + adr, Size, "_DSM");
           if (k != 0) {
             DBG("_DSM already exists, patch USB will not be applied\n");
             continue;
           }
+          
 
           //UINT32 k = (adr > 0x3F)?1:0; 
           /*
@@ -3733,19 +3770,19 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
             sizeoffset = size1;
           }
           
-          len = move_data(adr1+adr, dsdt, len, sizeoffset);
+          len = move_data(adr + Size, dsdt, len, sizeoffset);
           if (USB30[i]) {
-            CopyMem(dsdt+adr1+adr, USBDATA3, sizeoffset);
+            CopyMem(dsdt + adr + Size, USBDATA3, sizeoffset);
           } else if (USB20[i]) {
-            CopyMem(dsdt+adr1+adr, USBDATA2, sizeoffset);
+            CopyMem(dsdt + adr + Size, USBDATA2, sizeoffset);
           } else {
-            CopyMem(dsdt+adr1+adr, USBDATA1, sizeoffset);
+            CopyMem(dsdt + adr + Size, USBDATA1, sizeoffset);
           }
           // Fix Device USB size
-          k = write_size(adr1, dsdt, len, sizeoffset);
+          k = write_size(adr, dsdt, len, sizeoffset);
           sizeoffset += k;
           len += k;
-          len = CorrectOuters(dsdt, len, adr1-3, sizeoffset);
+          len = CorrectOuters(dsdt, len, adr-3, sizeoffset);
           break;
         }  
       }
@@ -3754,8 +3791,7 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
   FreePool(USBDATA1);
   FreePool(USBDATA2);
   FreePool(USBDATA3);
-  return len;
-  
+  return len;  
 }
 
 

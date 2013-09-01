@@ -177,6 +177,7 @@ typedef struct {
 #define FLAGTRUE			MKFLAG(0)
 #define EVERGREEN			MKFLAG(1)
 #define FLAGMOBILE    MKFLAG(2)
+#define FLAGOLD       MKFLAG(3)
 
 //static UINT8 atN = 0;
 
@@ -213,6 +214,7 @@ BOOLEAN get_refclk_val(value_t *val);
 BOOLEAN get_platforminfo_val(value_t *val);
 BOOLEAN get_vramtotalsize_val(value_t *val);
 BOOLEAN get_dual_link_val(value_t *val);
+BOOLEAN get_name_pci_val(value_t *val);
 
 extern card_config_t card_configs[];
 extern radeon_card_info_t radeon_cards[];
