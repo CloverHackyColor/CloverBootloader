@@ -1879,7 +1879,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
       continue;
     }
     Signature = SIGNATURE_32(SignatureString[0], SignatureString[1],
-                             SignatureString[0], SignatureString[1]);
+                             SignatureString[2], SignatureString[3]);
     xf = ScanXSDT(Signature);
     if(xf) {
       DropTableFromXSDT(Signature);
