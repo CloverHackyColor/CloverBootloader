@@ -586,6 +586,18 @@ typedef struct {
    UINT8   *Patch;
 } KEXT_PATCH;
 
+typedef struct CUSTOM_LOADER_ENTRY CUSTOM_LOADER_ENTRY;
+struct CUSTOM_LOADER_ENTRY {
+  CUSTOM_LOADER_ENTRY *Next;
+  CUSTOM_LOADER_ENTRY *SubEntries;
+  CHAR16              *Volume;
+  CHAR16              *Path;
+  CHAR16              *Options;
+  CHAR16              *Title;
+  UINT8                Flags;
+  UINT8                Type;
+};
+
 typedef struct {
   
 	// SMBIOS TYPE0
@@ -823,9 +835,8 @@ typedef struct {
   CHAR8 **DropTableNames;
 
   // Custom entries
-  BOOLEAN       DisableEntryScan;
-  UINTN         CustomEntryCount;
-  LOADER_ENTRY *CustomEntries;
+  BOOLEAN              DisableEntryScan;
+  CUSTOM_LOADER_ENTRY *CustomEntries;
 
 } SETTINGS_DATA;
 

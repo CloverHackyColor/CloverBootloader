@@ -123,9 +123,10 @@ typedef struct {
 #define OSFLAG_ENABLE(flags, flag) (flags | flag)
 #define OSFLAG_DISABLE(flags, flag) (flags & (~flag))
 #define OSFLAG_TOGGLE(flags, flag) (flags ^ flag)
-#define OSFLAG_USEGRAPHICS   (1 << 0)
-#define OSFLAG_WITHKEXTS     (1 << 1)
-#define OSFLAG_NOCACHES      (1 << 2)
+#define OSFLAG_LEGACY        (1 << 0)
+#define OSFLAG_USEGRAPHICS   (1 << 1)
+#define OSFLAG_WITHKEXTS     (1 << 2)
+#define OSFLAG_NOCACHES      (1 << 3)
 
 #define IS_EXTENDED_PART_TYPE(type) ((type) == 0x05 || (type) == 0x0f || (type) == 0x85)
 
@@ -389,11 +390,11 @@ typedef struct {
 typedef struct {
   REFIT_MENU_ENTRY  me;
   REFIT_VOLUME     *Volume;
+  CHAR16           *DevicePathString;
   CHAR16           *LoadOptions; //moved here for compatibility with legacy
   CHAR16           *LoaderPath;
   CHAR16           *VolName;
   EFI_DEVICE_PATH  *DevicePath;
-  CHAR16           *DevicePathString;
   UINT8             Flags;
   UINT8             LoaderType;
 } LOADER_ENTRY;
@@ -401,6 +402,7 @@ typedef struct {
 typedef struct {
   REFIT_MENU_ENTRY  me;
   REFIT_VOLUME     *Volume;
+  CHAR16           *DevicePathString;
   CHAR16           *LoadOptions;
 } LEGACY_ENTRY;
 

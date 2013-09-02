@@ -961,6 +961,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
   SubEntry->Volume          = Entry->Volume;
   SubEntry->VolName         = Entry->VolName;
   SubEntry->DevicePath      = Entry->DevicePath;
+  SubEntry->DevicePathString = Entry->DevicePathString;
   SubEntry->Flags           = Entry->Flags;
   SubEntry->LoadOptions     = LoaderOptions;
   SubEntry->LoaderType      = Entry->LoaderType;
@@ -979,6 +980,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
       SubEntry->Volume          = Entry->Volume;
       SubEntry->VolName         = Entry->VolName;
       SubEntry->DevicePath      = Entry->DevicePath;
+      SubEntry->DevicePathString = Entry->DevicePathString;
       SubEntry->Flags           = Entry->Flags;
       SubEntry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"arch=x86_64");
       SubEntry->LoaderType      = OSTYPE_OSX;
@@ -996,6 +998,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
       SubEntry->Volume          = Entry->Volume;
       SubEntry->VolName         = Entry->VolName;
       SubEntry->DevicePath      = Entry->DevicePath;
+      SubEntry->DevicePathString = Entry->DevicePathString;
       SubEntry->Flags           = Entry->Flags;
       SubEntry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"arch=i386");
       SubEntry->LoaderType      = OSTYPE_OSX;
@@ -1015,6 +1018,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
         SubEntry->Volume          = Entry->Volume;
         SubEntry->VolName         = Entry->VolName;
         SubEntry->DevicePath      = Entry->DevicePath;
+        SubEntry->DevicePathString = Entry->DevicePathString;
         SubEntry->Flags           = OSFLAG_DISABLE(Entry->Flags, OSFLAG_USEGRAPHICS);
         SubEntry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"-v");
         SubEntry->LoaderType      = OSTYPE_OSX;
@@ -1028,6 +1032,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
         SubEntry->Volume          = Entry->Volume;
         SubEntry->VolName         = Entry->VolName;
         SubEntry->DevicePath      = Entry->DevicePath;
+        SubEntry->DevicePathString = Entry->DevicePathString;
         SubEntry->Flags           = OSFLAG_DISABLE(Entry->Flags, OSFLAG_USEGRAPHICS);
         TempOptions = AddLoadOption(Entry->LoadOptions, L"-v");
         SubEntry->LoadOptions     = AddLoadOption(TempOptions, L"arch=x86_64");
@@ -1048,6 +1053,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
         SubEntry->Volume          = Entry->Volume;
         SubEntry->VolName         = Entry->VolName;
         SubEntry->DevicePath      = Entry->DevicePath;
+        SubEntry->DevicePathString = Entry->DevicePathString;
         SubEntry->Flags           = OSFLAG_DISABLE(Entry->Flags, OSFLAG_USEGRAPHICS);
         TempOptions = AddLoadOption(Entry->LoadOptions, L"-v");
         SubEntry->LoadOptions     = AddLoadOption(TempOptions, L"arch=i386");
@@ -1064,6 +1070,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
       SubEntry->Volume          = Entry->Volume;
       SubEntry->VolName         = Entry->VolName;
       SubEntry->DevicePath      = Entry->DevicePath;
+      SubEntry->DevicePathString = Entry->DevicePathString;
       SubEntry->Flags           = OSFLAG_DISABLE(Entry->Flags, OSFLAG_USEGRAPHICS);
       TempOptions = AddLoadOption(Entry->LoadOptions, L"-v");
       SubEntry->LoadOptions     = AddLoadOption(TempOptions, L"-x");
@@ -1078,6 +1085,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
       SubEntry->Volume          = Entry->Volume;
       SubEntry->VolName         = Entry->VolName;
       SubEntry->DevicePath      = Entry->DevicePath;
+      SubEntry->DevicePathString = Entry->DevicePathString;
       SubEntry->Flags           = OSFLAG_DISABLE(Entry->Flags, OSFLAG_USEGRAPHICS);
       TempOptions = AddLoadOption(Entry->LoadOptions, L"-v");
       SubEntry->LoadOptions     = AddLoadOption(TempOptions, L"-s");
@@ -1095,6 +1103,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
       SubEntry->Volume          = Entry->Volume;
       SubEntry->VolName         = Entry->VolName;
       SubEntry->DevicePath      = Entry->DevicePath;
+      SubEntry->DevicePathString = Entry->DevicePathString;
       SubEntry->Flags           = OSFLAG_TOGGLE(Entry->Flags, OSFLAG_NOCACHES);
       SubEntry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"-v");
       SubEntry->LoaderType      = OSTYPE_OSX;
@@ -1110,6 +1119,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
       SubEntry->Volume          = Entry->Volume;
       SubEntry->VolName         = Entry->VolName;
       SubEntry->DevicePath      = Entry->DevicePath;
+      SubEntry->DevicePathString = Entry->DevicePathString;
       SubEntry->Flags           = OSFLAG_TOGGLE(Entry->Flags, OSFLAG_WITHKEXTS);
       SubEntry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"-v");
       SubEntry->LoaderType      = OSTYPE_OSX;
@@ -1127,6 +1137,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
           SubEntry->Volume          = Entry->Volume;
           SubEntry->VolName         = Entry->VolName;
           SubEntry->DevicePath      = Entry->DevicePath;
+          SubEntry->DevicePathString = Entry->DevicePathString;
           SubEntry->Flags           = OSFLAG_DISABLE(OSFLAG_DISABLE(Entry->Flags, OSFLAG_NOCACHES), OSFLAG_WITHKEXTS);
           SubEntry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"-v");
           SubEntry->LoaderType      = OSTYPE_OSX;
@@ -1142,6 +1153,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
           SubEntry->Volume          = Entry->Volume;
           SubEntry->VolName         = Entry->VolName;
           SubEntry->DevicePath      = Entry->DevicePath;
+          SubEntry->DevicePathString = Entry->DevicePathString;
           SubEntry->Flags           = OSFLAG_DISABLE(OSFLAG_ENABLE(Entry->Flags, OSFLAG_NOCACHES), OSFLAG_WITHKEXTS);
           SubEntry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"-v");
           SubEntry->LoaderType      = OSTYPE_OSX;
@@ -1158,6 +1170,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
         SubEntry->Volume          = Entry->Volume;
         SubEntry->VolName         = Entry->VolName;
         SubEntry->DevicePath      = Entry->DevicePath;
+        SubEntry->DevicePathString = Entry->DevicePathString;
         SubEntry->Flags           = OSFLAG_ENABLE(OSFLAG_DISABLE(Entry->Flags, OSFLAG_NOCACHES), OSFLAG_WITHKEXTS);
         SubEntry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"-v");
 //        SubEntry->LoadOptions     = Entry->LoadOptions;
@@ -1174,6 +1187,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
         SubEntry->Volume          = Entry->Volume;
         SubEntry->VolName         = Entry->VolName;
         SubEntry->DevicePath      = Entry->DevicePath;
+        SubEntry->DevicePathString = Entry->DevicePathString;
         SubEntry->Flags           = OSFLAG_ENABLE(OSFLAG_ENABLE(Entry->Flags, OSFLAG_NOCACHES), OSFLAG_WITHKEXTS);
         SubEntry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"-v");
  //       SubEntry->LoadOptions     = Entry->LoadOptions;
@@ -1195,6 +1209,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
       SubEntry->Volume          = Entry->Volume;
       SubEntry->VolName         = Entry->VolName;
       SubEntry->DevicePath      = FileDevicePath(Volume->DeviceHandle, SubEntry->LoaderPath);
+      SubEntry->DevicePathString = Entry->DevicePathString;
       SubEntry->Flags           = OSFLAG_ENABLE(Entry->Flags, OSFLAG_USEGRAPHICS);
       SubEntry->me.AtClick      = ActionEnter;
       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
@@ -1208,6 +1223,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
     SubEntry->Volume          = Entry->Volume;
     SubEntry->VolName         = Entry->VolName;
     SubEntry->DevicePath      = Entry->DevicePath;
+    SubEntry->DevicePathString = Entry->DevicePathString;
     SubEntry->Flags           = Entry->Flags;
     SubEntry->LoadOptions     = L"-p";
     SubEntry->LoaderType      = OSTYPE_LIN;
@@ -1221,6 +1237,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
     SubEntry->Volume          = Entry->Volume;
     SubEntry->VolName         = Entry->VolName;
     SubEntry->DevicePath      = Entry->DevicePath;
+    SubEntry->DevicePathString = Entry->DevicePathString;
     SubEntry->Flags           = OSFLAG_ENABLE(Entry->Flags, OSFLAG_USEGRAPHICS);
     SubEntry->LoadOptions     = L"-d 0 i17";
     SubEntry->LoaderType      = OSTYPE_LIN;
@@ -1234,6 +1251,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
     SubEntry->Volume          = Entry->Volume;
     SubEntry->VolName         = Entry->VolName;
     SubEntry->DevicePath      = Entry->DevicePath;
+    SubEntry->DevicePathString = Entry->DevicePathString;
     SubEntry->Flags           = OSFLAG_ENABLE(Entry->Flags, OSFLAG_USEGRAPHICS);
     SubEntry->LoadOptions     = L"-d 0 i20";
     SubEntry->LoaderType      = OSTYPE_LIN;
@@ -1247,6 +1265,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
     SubEntry->Volume          = Entry->Volume;
     SubEntry->VolName         = Entry->VolName;
     SubEntry->DevicePath      = Entry->DevicePath;
+    SubEntry->DevicePathString = Entry->DevicePathString;
     SubEntry->Flags           = OSFLAG_ENABLE(Entry->Flags, OSFLAG_USEGRAPHICS);
     SubEntry->LoadOptions     = L"-d 0 mini";
     SubEntry->LoaderType      = OSTYPE_LIN;
@@ -1267,6 +1286,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
     SubEntry->Volume          = Entry->Volume;
     SubEntry->VolName         = Entry->VolName;
     SubEntry->DevicePath      = Entry->DevicePath;
+    SubEntry->DevicePathString = Entry->DevicePathString;
     SubEntry->Flags           = Entry->Flags;
     SubEntry->LoadOptions     = L"-s -h";
     SubEntry->LoaderType      = Entry->LoaderType;
@@ -1280,6 +1300,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
     SubEntry->Volume          = Entry->Volume;
     SubEntry->VolName         = Entry->VolName;
     SubEntry->DevicePath      = Entry->DevicePath;
+    SubEntry->DevicePathString = Entry->DevicePathString;
     SubEntry->Flags           = Entry->Flags;
     SubEntry->LoadOptions     = L"-s -c";
     SubEntry->LoaderType      = Entry->LoaderType;
@@ -1293,6 +1314,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
     SubEntry->Volume          = Entry->Volume;
     SubEntry->VolName         = Entry->VolName;
     SubEntry->DevicePath      = Entry->DevicePath;
+    SubEntry->DevicePathString = Entry->DevicePathString;
     SubEntry->Flags           = OSFLAG_DISABLE(Entry->Flags, OSFLAG_USEGRAPHICS);
     SubEntry->LoadOptions     = L"-v";
     SubEntry->LoaderType      = OSTYPE_VAR;
@@ -1325,6 +1347,7 @@ static LOADER_ENTRY * AddCloverEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
   Entry->LoaderPath      = EfiStrDuplicate(LoaderPath);
   Entry->VolName         = Volume->VolName;
   Entry->DevicePath      = FileDevicePath(Volume->DeviceHandle, Entry->LoaderPath);
+  Entry->DevicePathString = FileDevicePathToStr(Entry->DevicePath);
   Entry->Flags           = 0;
   Entry->LoadOptions     = NULL;
   
@@ -1361,6 +1384,7 @@ static LOADER_ENTRY * AddCloverEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
     SubEntry->Volume          = Entry->Volume;
     SubEntry->VolName         = Entry->VolName;
     SubEntry->DevicePath      = Entry->DevicePath;
+    SubEntry->DevicePathString = Entry->DevicePathString;
     SubEntry->Flags           = Entry->Flags;
     SubEntry->LoadOptions     = L"BO-REMOVE";
     SubEntry->LoaderType      = OSTYPE_VAR;
@@ -1374,6 +1398,7 @@ static LOADER_ENTRY * AddCloverEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
     SubEntry->Volume          = Entry->Volume;
     SubEntry->VolName         = Entry->VolName;
     SubEntry->DevicePath      = Entry->DevicePath;
+    SubEntry->DevicePathString = Entry->DevicePathString;
     SubEntry->Flags           = Entry->Flags;
     SubEntry->LoadOptions     = L"BO-ADD";
     SubEntry->LoaderType      = OSTYPE_VAR;
@@ -1388,6 +1413,7 @@ static LOADER_ENTRY * AddCloverEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
   SubEntry->Volume          = Entry->Volume;
   SubEntry->VolName         = Entry->VolName;
   SubEntry->DevicePath      = Entry->DevicePath;
+  SubEntry->DevicePathString = Entry->DevicePathString;
   SubEntry->Flags           = Entry->Flags;
   SubEntry->LoadOptions     = L"BO-REMOVE-ALL";
   SubEntry->LoaderType      = OSTYPE_VAR;
@@ -1401,6 +1427,7 @@ static LOADER_ENTRY * AddCloverEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
   SubEntry->Volume          = Entry->Volume;
   SubEntry->VolName         = Entry->VolName;
   SubEntry->DevicePath      = Entry->DevicePath;
+  SubEntry->DevicePathString = Entry->DevicePathString;
   SubEntry->Flags           = Entry->Flags;
   SubEntry->LoadOptions     = L"BO-PRINT";
   SubEntry->LoaderType      = OSTYPE_VAR;
@@ -1902,9 +1929,10 @@ static LEGACY_ENTRY * AddLegacyEntry(IN CHAR16 *LoaderTitle, IN REFIT_VOLUME *Vo
     }
   }
 
-  Entry->Volume          = Volume;
-  Entry->LoadOptions     = (Volume->DiskKind == DISK_KIND_OPTICAL) ? L"CD" :
-  ((Volume->DiskKind == DISK_KIND_EXTERNAL) ? L"USB" : L"HD");
+  Entry->Volume           = Volume;
+  Entry->DevicePathString = FileDevicePathToStr(Volume->DevicePath);
+  Entry->LoadOptions      = (Volume->DiskKind == DISK_KIND_OPTICAL) ? L"CD" :
+                            ((Volume->DiskKind == DISK_KIND_EXTERNAL) ? L"USB" : L"HD");
   
   // create the submenu
   SubScreen = AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
@@ -1914,11 +1942,12 @@ static LEGACY_ENTRY * AddLegacyEntry(IN CHAR16 *LoaderTitle, IN REFIT_VOLUME *Vo
   
   // default entry
   SubEntry = AllocateZeroPool(sizeof(LEGACY_ENTRY));
-  SubEntry->me.Title        = PoolPrint(L"Boot %s", LoaderTitle);
-  SubEntry->me.Tag          = TAG_LEGACY;
-  SubEntry->Volume          = Entry->Volume;
-  SubEntry->LoadOptions     = Entry->LoadOptions;
-  SubEntry->me.AtClick      = ActionEnter;
+  SubEntry->me.Title         = PoolPrint(L"Boot %s", LoaderTitle);
+  SubEntry->me.Tag           = TAG_LEGACY;
+  SubEntry->Volume           = Entry->Volume;
+  SubEntry->DevicePathString = Entry->DevicePathString;
+  SubEntry->LoadOptions      = Entry->LoadOptions;
+  SubEntry->me.AtClick       = ActionEnter;
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
   
   AddMenuEntry(SubScreen, &MenuEntryReturn);
