@@ -1124,7 +1124,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
         }
       }
     }
-    //*/
+    */
 
     //Graphics
     
@@ -1417,6 +1417,55 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
     
     dictPointer = GetProperty(dict,"ACPI");
     if (dictPointer) {
+      dict2 = GetProperty(dictPointer, "DropTables");
+      if (dict2) {
+        prop = GetProperty(dict2, "BySignature");
+        if (prop) {
+          INTN i, Count = GetTagCount(prop);
+          if (Count > 0) {
+            gSettings.DropTableSignatureCount = Count;
+            gSettings.DropTableSignatures = AllocateZeroPool(sizeof(CHAR8 *) * Count);
+            if (gSettings.DropTableSignatures) {
+              for (i = 0; i < Count; ++i) {
+                if (EFI_ERROR(GetElement(prop, i, &prop2))) {
+                  continue;
+                }
+                if (prop2 == NULL) {
+                  break;
+                }
+                // Add the table signatures to drop
+                if (prop2->type != kTagTypeString) {
+                  continue;
+                }
+                gSettings.DropTableSignatures[i] = prop2->string;
+              }
+            }
+          }
+        }
+        prop = GetProperty(dict2, "ByName");
+        if (prop) {
+          INTN i, Count = GetTagCount(prop);
+          if (Count > 0) {
+            gSettings.DropTableNameCount = Count;
+            gSettings.DropTableNames = AllocateZeroPool(sizeof(CHAR8 *) * Count);
+            if (gSettings.DropTableNames) {
+              for (i = 0; i < Count; ++i) {
+                if (EFI_ERROR(GetElement(prop, i, &prop2))) {
+                  continue;
+                }
+                if (prop2 == NULL) {
+                  break;
+                }
+                // Add the table names to drop
+                if (prop2->type != kTagTypeString) {
+                  continue;
+                }
+                gSettings.DropTableNames[i] = prop2->string;
+              }
+            }
+          }
+        }
+      }
 
       dict2 = GetProperty(dictPointer, "DSDT");
       if (dict2) {

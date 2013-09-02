@@ -1371,6 +1371,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
   UINT8             *SubTable;
   BOOLEAN           DsdtLoaded = FALSE;
   INTN              ApicCPUBase = 0;
+  UINTN             i;
   CHAR16*     AcpiOemPath = PoolPrint(L"%s\\ACPI\\patched", OEMPath);
   PathDsdt = PoolPrint(L"\\%s", gSettings.DsdtName);
 /*	
@@ -1832,6 +1833,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
     }
   } 
   
+  /*
   if (gSettings.bDropAPIC) {
     xf = ScanXSDT(APIC_SIGN);
     if(xf) { DropTableFromXSDT(APIC_SIGN); }
@@ -1868,7 +1870,28 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
 		rf = ScanRSDT(BGRT_SIGN);
 		if(rf) { DropTableFromRSDT(BGRT_SIGN); }
   }
+  */
+  // Drop tables by signature
+  for (i = 0; i < gSettings.DropTableSignatureCount; ++i) {
+    UINT32  Signature;
+    CHAR8  *SignatureString = gSettings.DropTableSignatures[i];
+    if (SignatureString == NULL) {
+      continue;
+    }
+    Signature = SIGNATURE_32(SignatureString[0], SignatureString[1],
+                             SignatureString[0], SignatureString[1]);
+    xf = ScanXSDT(Signature);
+    if(xf) {
+      DropTableFromXSDT(Signature);
+    }
+    rf = ScanRSDT(Signature);
+    if(rf) {
+      DropTableFromRSDT(Signature);
+    }
+  }
   
+  // TODO: Drop tables by name
+
   if (gSettings.DropSSDT) {
     DropTableFromXSDT(EFI_ACPI_4_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE);
     DropTableFromRSDT(EFI_ACPI_4_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE);

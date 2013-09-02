@@ -668,12 +668,6 @@ typedef struct {
   BOOLEAN PatchNMI;
 	CHAR16	DsdtName[60];
   UINT32  FixDsdt;
-  BOOLEAN bDropAPIC;
-  BOOLEAN bDropMCFG;
-  BOOLEAN bDropHPET;
-  BOOLEAN bDropECDT;
-  BOOLEAN bDropDMAR;
-  BOOLEAN bDropBGRT;
 //  BOOLEAN RememberBIOS;
   UINT8   MinMultiplier;
   UINT8   MaxMultiplier;
@@ -821,6 +815,12 @@ typedef struct {
   UINT32 KeepSsdtNum;
   CHAR8  **KeepTableId;
   BOOLEAN DebugDSDT;
+
+  // Table dropping
+  UINTN   DropTableSignatureCount;
+  UINTN   DropTableNameCount;
+  CHAR8 **DropTableSignatures;
+  CHAR8 **DropTableNames;
 
   // Custom entries
   BOOLEAN  DisableEntryScan;
