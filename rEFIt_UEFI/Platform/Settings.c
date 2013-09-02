@@ -697,6 +697,10 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
     if (dict2 && dict2->type == kTagTypeFalse) {
       GlobalConfig.HideUIFlags |= HIDEUI_FLAG_FUNCS;
     }
+    dict2 = GetProperty(dict, "Tools");
+    if (dict2 && dict2->type == kTagTypeFalse) {
+      GlobalConfig.DisableFlags |= DISABLE_FLAG_TOOLS;
+    }
     dict2 = GetProperty(dict, "Label");
     if (dict2 && dict2->type == kTagTypeFalse) {
       GlobalConfig.HideUIFlags |= HIDEUI_FLAG_LABEL;
@@ -1100,8 +1104,8 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
     
     DBG("Loading main settings\n");
     
-    /*
     //*** SYSTEM ***
+    /*
     dictPointer = GetProperty(dict, "SystemParameters");
     if (dictPointer) {
       // Inject kexts

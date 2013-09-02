@@ -1746,6 +1746,11 @@ VOID ScanLoader(VOID)
   }
 }
 
+// TODO: Add custom entries
+VOID AddCustomEntries(VOID)
+{
+}
+
 
 #define MAX_DISCOVERED_PATHS (16)
 //#define PREBOOT_LOG L"EFI\\CLOVER\\misc\\preboot.log"
@@ -2901,22 +2906,26 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       SetVariablesFromNvram();
       FillInputs();
       // scan for loaders and tools, add then to the menu
-      if (!GlobalConfig.NoLegacy && GlobalConfig.LegacyFirst){
+      if (!GlobalConfig.NoLegacy && GlobalConfig.LegacyFirst && !gSettings.DisableEntryScan){
         //DBG("scan legacy first\n");
         ScanLegacy();
       }
     }
 
-    ScanLoader();
-    //        DBG("ScanLoader OK\n");
+    if (gSettings.DisableEntryScan) {
+      DBG("Entry scan disabled\n");
+    } else {
+      ScanUEFIBootOptions(FALSE);
+      ScanLoader();
+      //        DBG("ScanLoader OK\n");
+    }
 
-    if (!gSettings.HVHideUEFIBootOptions)
-        ScanUEFIBootOptions(FALSE);
-
+    // Add custom entries
+    AddCustomEntries();
 
     if (!GlobalConfig.FastBoot) {
 
-      if (!GlobalConfig.NoLegacy && !GlobalConfig.LegacyFirst) {
+      if (!GlobalConfig.NoLegacy && !GlobalConfig.LegacyFirst && !gSettings.DisableEntryScan) {
         //      DBG("scan legacy second\n");
         ScanLegacy();
         //      DBG("ScanLegacy()\n");
