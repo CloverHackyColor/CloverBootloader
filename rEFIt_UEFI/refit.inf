@@ -191,7 +191,6 @@
   gEfiSimpleNetworkProtocolGuid                 # PROTOCOL CONSUMES
   gEfiStatusCodeRuntimeProtocolGuid				# PROTOCOL CONSUMES
   gEfiUgaDrawProtocolGuid |PcdUgaConsumeSupport # PROTOCOL SOMETIMES_CONSUMES
-  gEfiBdsArchProtocolGuid                       # PROTOCOL SOMETIMES_CONSUMES
   
   gEfiAbsolutePointerProtocolGuid
   gEfiAcpiTableProtocolGuid

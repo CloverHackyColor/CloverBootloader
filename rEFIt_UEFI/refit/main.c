@@ -1859,8 +1859,6 @@ static VOID StartLegacy(IN LEGACY_ENTRY *Entry)
         case BOOTING_BY_PBR:
           if (StrCmp(gSettings.LegacyBoot, L"LegacyBiosDefault") == 0) {
             Status = bootLegacyBiosDefault(Entry->Volume);
-          } else if (StrCmp(gSettings.LegacyBoot, L"LegacyBiosCustom") == 0) {
-            Status = bootLegacyBiosCustom(gSettings.LegacyBiosCustomEntry);
           } else if (StrCmp(gSettings.LegacyBoot, L"PBRtest") == 0) {
             Status = bootPBRtest(Entry->Volume);
           } else {

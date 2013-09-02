@@ -407,16 +407,6 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir)
       UnicodeSPrint(gSettings.LegacyBoot, 32, L"PBR");
     }
 
-    //Custom Entry for LegacyBiosCustom
-    gSettings.LegacyBiosCustomEntry = 0xFFFF;
-    prop = GetProperty(dictPointer, "LegacyEntry");
-    if(prop) {
-      if (prop->type == kTagTypeInteger) {
-        gSettings.LegacyBiosCustomEntry = (UINT16)(UINTN)prop->string;
-      } else if (prop->type == kTagTypeString){
-        gSettings.LegacyBiosCustomEntry = (UINT16)AsciiStrHexToUint64(prop->string);
-      }
-    }
   }
 
   dictPointer = GetProperty(dict, "GUI");
