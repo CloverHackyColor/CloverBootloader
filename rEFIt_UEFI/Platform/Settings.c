@@ -1445,7 +1445,8 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
     
     dictPointer = GetProperty(dict, "Devices");
     if (dictPointer) {
-      prop = GetProperty(dictPointer, "PCIRootUID");
+      //Slice - this is obsolete
+/*      prop = GetProperty(dictPointer, "PCIRootUID");
       gSettings.PCIRootUID = 0;
       if(prop) {
         if (prop->type == kTagTypeInteger) {
@@ -1454,7 +1455,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
           AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
           gSettings.PCIRootUID = (UINT16)StrDecimalToUintn((CHAR16*)&UStr[0]);
         }
-      }
+      }*/
       prop = GetProperty(dictPointer, "Inject");
       gSettings.StringInjector = FALSE;
       if(prop) {
@@ -1522,11 +1523,11 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
           gSettings.FakeXHCI  = (UINT32)StrHexToUint64(UStr);
         }        
       }      
-    }
-    dictPointer = GetProperty(dict, "Audio");
-    if (dictPointer) {      
+ //   }
+    prop2 = GetProperty(dictPointer, "Audio");
+    if (prop2) {      
       // HDA
-      prop = GetProperty(dictPointer, "Inject");
+      prop = GetProperty(prop2, "Inject");
       if(prop) {
         // enabled by default
         // syntax:
@@ -1556,10 +1557,10 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       }
     }
     
-    dictPointer = GetProperty(dict, "USB");
-    if (dictPointer) {      
+    prop2 = GetProperty(dictPointer, "USB");
+    if (prop2) {      
       // USB
-      prop = GetProperty(dictPointer, "Inject");
+      prop = GetProperty(prop2, "Inject");
       if(prop) {
         // enabled by default
         // syntax: USBInjection=Yes/No
@@ -1569,7 +1570,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
           gSettings.USBInjection = FALSE;
         }
       }
-      prop = GetProperty(dictPointer, "InjectClockID");
+      prop = GetProperty(dictPointer, "AddClockID");
       if(prop) {
         // disabled by default
         // syntax: InjectClockID=Yes/No
@@ -1598,6 +1599,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
           DBG("USBFixOwnership: true\n");
          }
       }
+    }
     }
 
     //*** ACPI ***//
@@ -1632,7 +1634,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
             }
           }
         }
-        prop = GetProperty(dict2, "ByName");
+        prop = GetProperty(dict2, "ByTableID");
         if (prop) {
           INTN i, Count = GetTagCount(prop);
           if (Count > 0) {
@@ -2116,21 +2118,6 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
     //CPU
     dictPointer = GetProperty(dict,"CPU");
     if (dictPointer) {
-/*      prop = GetProperty(dictPointer,"Turbo");
- //     gSettings.Turbo = FALSE;
-      if(prop) {
-        if ((prop->type == kTagTypeFalse) ||
-            ((prop->type == kTagTypeString) &&
-             ((prop->string[0] == 'n') || (prop->string[0] == 'N'))))
-          gSettings.Turbo = FALSE;
-        else if ((prop->type == kTagTypeTrue) ||
-                 ((prop->type == kTagTypeString) &&
-                  ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))) {
-          gSettings.Turbo = TRUE;
-          DBG("Config set Turbo\n");
-        }
-      }
- */
       prop = GetProperty(dictPointer,"QPI");
       gSettings.QPI = (UINT16)gCPUStructure.ProcessorInterconnectSpeed; //MHz
       if(prop) {

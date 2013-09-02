@@ -187,140 +187,148 @@ static kern_return_t GetOFVariable(const char *name, CFTypeRef *valueRef)
 
 void PrintConfig(CFTypeRef data)
 {
-    const Byte *dataPtr = NULL;
-    CFIndex    length = 0;
-    CFTypeID   typeID;
-
-    // Get the OF variable's type.
-    typeID = CFGetTypeID(data);
-
-    if (typeID == CFDataGetTypeID()) {
-        length = CFDataGetLength(data);
-        if (length == 0)
-            return;
-        else
-            dataPtr = CFDataGetBytePtr(data);
-    } else {
-        printf("<INVALID> settings\n");
-        return;
-    }
-
-    if (length != sizeof(SETTINGS_DATA)) {
-        errx(1, "Error the version of clover-genconfig didn't match current booted clover version");
-    }
-
-    SETTINGS_DATA *s = (SETTINGS_DATA*)dataPtr;
-
-    CFMutableDictionaryRef dict = CFDictionaryCreateMutable (
-                                                             kCFAllocatorDefault,
-                                                             0,
-                                                             &kCFTypeDictionaryKeyCallBacks,
-                                                             &kCFTypeDictionaryValueCallBacks
-                                                             );
-
-    // SystemParameters
-    CFMutableDictionaryRef systemParametersDict = addDict(dict, CFSTR("SystemParameters"));
-    addString(systemParametersDict, CFSTR("boot-args"), s->BootArgs);
-    addString(systemParametersDict, CFSTR("prev-lang:kbd"), s->Language);
-    addUString(systemParametersDict, CFSTR("CustomUUID"), s->CustomUuid);
-    addBoolean(systemParametersDict, CFSTR("InjectSystemID"), s->InjectSystemID);
-    addBoolean(systemParametersDict, CFSTR("NoCaches"), s->NoCaches);
-    addBoolean(systemParametersDict, CFSTR("InjectKexts"), s->WithKexts);
-    addHex(systemParametersDict, CFSTR("BacklightLevel"),s->BacklightLevel);
-    addUString(systemParametersDict, CFSTR("LegacyBoot"), s->LegacyBoot);
-    addUString(systemParametersDict, CFSTR("ConfigName"), s->ConfigName);
-    addInteger(systemParametersDict, CFSTR("XMPDetection"), s->XMPDetection);
-
-    // GUI
-    CFMutableDictionaryRef guiDict = addDict(dict, CFSTR("GUI"));
-    addUString(guiDict,CFSTR("DefaultBootVolume"), s->DefaultBoot);
-    addBoolean(guiDict,CFSTR("DebugLog"), s->Debug);
-
-    CFMutableDictionaryRef mouseDict = addDict(guiDict, CFSTR("Mouse"));
-    addBoolean(mouseDict, CFSTR("Enabled"), s->PointerEnabled);
-    addInteger(mouseDict, CFSTR("Speed"), s->PointerSpeed);
-    addInteger(mouseDict, CFSTR("DoubleClick"), s->DoubleClickTime);
-    addBoolean(mouseDict, CFSTR("Mirror"), s->PointerMirror);
-
-    CFMutableDictionaryRef volumesDict = addDict(guiDict, CFSTR("Volumes"));
-    addInteger(volumesDict, CFSTR("Hide Count"), s->HVCount);
-
-    CFMutableDictionaryRef hideEntriesDict = addDict(guiDict, CFSTR("HideEntries"));
-    addBoolean(hideEntriesDict, CFSTR("OSXInstall"), s->HVHideAllOSXInstall);
-    addBoolean(hideEntriesDict, CFSTR("Recovery"), s->HVHideAllRecovery);
-    addBoolean(hideEntriesDict, CFSTR("Duplicate"), s->HVHideDuplicatedBootTarget);
-    addBoolean(hideEntriesDict, CFSTR("WindowsEFI"), s->HVHideAllWindowsEFI);
-    addBoolean(hideEntriesDict, CFSTR("Ubuntu"), s->HVHideAllUbuntu);
-    addBoolean(hideEntriesDict, CFSTR("Grub"), s->HVHideAllGrub);
-    addBoolean(hideEntriesDict, CFSTR("Gentoo"), s->HVHideAllGentoo);
-    addBoolean(hideEntriesDict, CFSTR("OpticalUEFI"), s->HVHideOpticalUEFI);
-    addBoolean(hideEntriesDict, CFSTR("InternalUEFI"), s->HVHideInternalUEFI);
-    addBoolean(hideEntriesDict, CFSTR("ExternalUEFI"), s->HVHideExternalUEFI);
-    addBoolean(hideEntriesDict, CFSTR("UEFIBootOptions"), s->HVHideUEFIBootOptions);
-
-    // SMBIOS
-    CFMutableDictionaryRef smbiosDict = addDict(dict, CFSTR("SMBIOS"));
-    // SMBIOS TYPE0
-    addString(smbiosDict, CFSTR("BiosVendor"), s->VendorName);
-    addString(smbiosDict, CFSTR("BiosVersion"), s->RomVersion);
-    addString(smbiosDict, CFSTR("BiosReleaseDate"), s->ReleaseDate);
-    // SMBIOS TYPE1
-    addString(smbiosDict, CFSTR("Manufacturer"), s->ManufactureName);
-    addString(smbiosDict, CFSTR("ProductName"), s->ProductName);
-    addString(smbiosDict, CFSTR("Version"), s->VersionNr);
-    addString(smbiosDict, CFSTR("SerialNumber"), s->SerialNr);
-
-    addUUID(smbiosDict, CFSTR("SmUUID"), &s->SmUUID);
-    addString(smbiosDict, CFSTR("Family"), s->FamilyName);
-    // SMBIOS TYPE2
-    addString(smbiosDict, CFSTR("BoardManufacturer"), s->BoardManufactureName);
-    addString(smbiosDict, CFSTR("BoardSerialNumber"), s->BoardSerialNumber);
-    addString(smbiosDict, CFSTR("Board-ID"), s->BoardNumber);
-    addString(smbiosDict, CFSTR("BoardVersion"), s->BoardVersion);
-    addInteger(smbiosDict, CFSTR("BoardType"), s->BoardType);
-    addString(smbiosDict, CFSTR("LocationInChassis"), s->LocationInChassis);
-    addString(smbiosDict, CFSTR("ChassisManufacturer"), s->ChassisManufacturer);
-    addString(smbiosDict, CFSTR("ChassisAssetTag"), s->ChassisAssetTag);
-    addHex(smbiosDict, CFSTR("ChassisType"), s->ChassisType);
-    addBoolean(smbiosDict, CFSTR("Mobile"), s->Mobile);
-    // SMBIOS TYPE17
-    addBoolean(smbiosDict, CFSTR("Trust"), s->TrustSMBIOS);
-
-    addString(smbiosDict, CFSTR("OEMProduct"), s->OEMProduct);
-    addString(smbiosDict, CFSTR("OEMVendor"), s->OEMVendor);
-    addString(smbiosDict, CFSTR("OEMBoard"), s->OEMBoard);
-
-    if (s->InjectMemoryTables) {
-        CFMutableDictionaryRef memoryDict = addDict(smbiosDict, CFSTR("Memory"));
-        // there are wrong keys with some values
-        addString(memoryDict, CFSTR("MemoryManufacturer"), s->MemoryManufacturer);
-        addString(memoryDict, CFSTR("MemorySerialNumber"), s->MemorySerialNumber);
-        addString(memoryDict, CFSTR("MemoryPartNumber"), s->MemoryPartNumber);
-        addString(memoryDict, CFSTR("MemorySpeed"), s->MemorySpeed);
-    }
-
-    // CPU
-    CFMutableDictionaryRef cpuDict = addDict(dict, CFSTR("CPU"));
-    addBoolean(cpuDict, CFSTR("Turbo"), s->Turbo);
-    addInteger(cpuDict, CFSTR("CpuFrequencyMHz"), s->CpuFreqMHz);
-    addInteger(cpuDict, CFSTR("BusSpeedkHz"), s->BusSpeed);
-    addInteger(cpuDict, CFSTR("QPI"), s->QPI);
-    // these values read only
-    addInteger(cpuDict, CFSTR("EnabledCores"), s->EnabledCores);
-
-    // PCI
-    CFMutableDictionaryRef pciDict = addDict(dict, CFSTR("PCI"));
-    addBoolean(pciDict, CFSTR("StringInjector"), s->StringInjector);
-    addString(pciDict, CFSTR("DeviceProperties"), "_NOT_SHOWN_");
-    addInteger(pciDict, CFSTR("PCIRootUID"), s->PCIRootUID);
-    if (s->HDAInjection)
-        addInteger(pciDict, CFSTR("HDAInjection"), s->HDALayoutId);
+  const Byte *dataPtr = NULL;
+  CFIndex    length = 0;
+  CFTypeID   typeID;
+  
+  // Get the OF variable's type.
+  typeID = CFGetTypeID(data);
+  
+  if (typeID == CFDataGetTypeID()) {
+    length = CFDataGetLength(data);
+    if (length == 0)
+      return;
     else
-        addBoolean(pciDict, CFSTR("HDAInjection"), s->HDAInjection);
-    addBoolean(pciDict, CFSTR("USBInjection"), s->USBInjection);
-    addBoolean(pciDict, CFSTR("USBFixOwnership"), s->USBFixOwnership);
-    addBoolean(pciDict, CFSTR("InjectClockID"), s->InjectClockID);
-    addBoolean(pciDict, CFSTR("LpcTune"), s->LpcTune);
+      dataPtr = CFDataGetBytePtr(data);
+  } else {
+    printf("<INVALID> settings\n");
+    return;
+  }
+  
+  if (length != sizeof(SETTINGS_DATA)) {
+    errx(1, "Error the version of clover-genconfig didn't match current booted clover version");
+  }
+  
+  SETTINGS_DATA *s = (SETTINGS_DATA*)dataPtr;
+  
+  CFMutableDictionaryRef dict = CFDictionaryCreateMutable (
+                                                           kCFAllocatorDefault,
+                                                           0,
+                                                           &kCFTypeDictionaryKeyCallBacks,
+                                                           &kCFTypeDictionaryValueCallBacks
+                                                           );
+  addUString(dict, CFSTR("ConfigName"), s->ConfigName);
+  
+  //Boot
+  CFMutableDictionaryRef bootDict = addDict(dict, CFSTR("Boot"));
+  addString(bootDict, CFSTR("Arguments"), s->BootArgs);
+  addUString(bootDict, CFSTR("Legacy"), s->LegacyBoot);
+  addUString(bootDict, CFSTR("LegacyEntry"), s->LegacyBiosCustomEntry);
+  addInteger(bootDict, CFSTR("XMPDetection"), s->XMPDetection);
+  addUString(bootDict, CFSTR("DefaultVolume"), s->DefaultBoot);
+  addBoolean(bootDict, CFSTR("Log"), s->Debug);
+  
+  
+  // SystemParameters
+  CFMutableDictionaryRef systemParametersDict = addDict(dict, CFSTR("SystemParameters"));
+  addUString(systemParametersDict, CFSTR("CustomUUID"), s->CustomUuid);
+  addBoolean(systemParametersDict, CFSTR("InjectSystemID"), s->InjectSystemID);
+  addHex(systemParametersDict, CFSTR("BacklightLevel"),s->BacklightLevel);
+  
+  // GUI
+  CFMutableDictionaryRef guiDict = addDict(dict, CFSTR("GUI"));
+  addString(guiDict, CFSTR("Language"), s->Language);
+  addString(guiDict, CFSTR("Theme"), "xxx");
+  addBoolean(guiDict, CFSTR("TextOnly"), 0);
+  addBoolean(guiDict, CFSTR("CustomIcons"), 0);
+    
+  CFMutableDictionaryRef mouseDict = addDict(guiDict, CFSTR("Mouse"));
+  addBoolean(mouseDict, CFSTR("Enabled"), s->PointerEnabled);
+  addInteger(mouseDict, CFSTR("Speed"), s->PointerSpeed);
+  addInteger(mouseDict, CFSTR("DoubleClick"), s->DoubleClickTime);
+  addBoolean(mouseDict, CFSTR("Mirror"), s->PointerMirror);
+/*  
+  CFMutableDictionaryRef volumesDict = addDict(guiDict, CFSTR("Volumes"));
+  addInteger(volumesDict, CFSTR("Hide Count"), s->HVCount);
+  
+  CFMutableDictionaryRef hideEntriesDict = addDict(guiDict, CFSTR("HideEntries"));
+  addBoolean(hideEntriesDict, CFSTR("OSXInstall"), s->HVHideAllOSXInstall);
+  addBoolean(hideEntriesDict, CFSTR("Recovery"), s->HVHideAllRecovery);
+  addBoolean(hideEntriesDict, CFSTR("Duplicate"), s->HVHideDuplicatedBootTarget);
+  addBoolean(hideEntriesDict, CFSTR("WindowsEFI"), s->HVHideAllWindowsEFI);
+  addBoolean(hideEntriesDict, CFSTR("Ubuntu"), s->HVHideAllUbuntu);
+  addBoolean(hideEntriesDict, CFSTR("Grub"), s->HVHideAllGrub);
+  addBoolean(hideEntriesDict, CFSTR("Gentoo"), s->HVHideAllGentoo);
+  addBoolean(hideEntriesDict, CFSTR("OpticalUEFI"), s->HVHideOpticalUEFI);
+  addBoolean(hideEntriesDict, CFSTR("InternalUEFI"), s->HVHideInternalUEFI);
+  addBoolean(hideEntriesDict, CFSTR("ExternalUEFI"), s->HVHideExternalUEFI);
+  addBoolean(hideEntriesDict, CFSTR("UEFIBootOptions"), s->HVHideUEFIBootOptions);
+*/  
+  // SMBIOS
+  CFMutableDictionaryRef smbiosDict = addDict(dict, CFSTR("SMBIOS"));
+  // SMBIOS TYPE0
+  addString(smbiosDict, CFSTR("BiosVendor"), s->VendorName);
+  addString(smbiosDict, CFSTR("BiosVersion"), s->RomVersion);
+  addString(smbiosDict, CFSTR("BiosReleaseDate"), s->ReleaseDate);
+  // SMBIOS TYPE1
+  addString(smbiosDict, CFSTR("Manufacturer"), s->ManufactureName);
+  addString(smbiosDict, CFSTR("ProductName"), s->ProductName);
+  addString(smbiosDict, CFSTR("Version"), s->VersionNr);
+  addString(smbiosDict, CFSTR("SerialNumber"), s->SerialNr);
+  
+  addUUID(smbiosDict, CFSTR("SmUUID"), &s->SmUUID);
+  addString(smbiosDict, CFSTR("Family"), s->FamilyName);
+  // SMBIOS TYPE2
+  addString(smbiosDict, CFSTR("BoardManufacturer"), s->BoardManufactureName);
+  addString(smbiosDict, CFSTR("BoardSerialNumber"), s->BoardSerialNumber);
+  addString(smbiosDict, CFSTR("Board-ID"), s->BoardNumber);
+  addString(smbiosDict, CFSTR("BoardVersion"), s->BoardVersion);
+  addInteger(smbiosDict, CFSTR("BoardType"), s->BoardType);
+  addString(smbiosDict, CFSTR("LocationInChassis"), s->LocationInChassis);
+  addString(smbiosDict, CFSTR("ChassisManufacturer"), s->ChassisManufacturer);
+  addString(smbiosDict, CFSTR("ChassisAssetTag"), s->ChassisAssetTag);
+  addHex(smbiosDict, CFSTR("ChassisType"), s->ChassisType);
+  addBoolean(smbiosDict, CFSTR("Mobile"), s->Mobile);
+  // SMBIOS TYPE17
+  addBoolean(smbiosDict, CFSTR("Trust"), s->TrustSMBIOS);
+  
+  addString(smbiosDict, CFSTR("OEMProduct"), s->OEMProduct);
+  addString(smbiosDict, CFSTR("OEMVendor"), s->OEMVendor);
+  addString(smbiosDict, CFSTR("OEMBoard"), s->OEMBoard);
+  
+  if (s->InjectMemoryTables) {
+    CFMutableDictionaryRef memoryDict = addDict(smbiosDict, CFSTR("Memory"));
+    
+    addString(memoryDict, CFSTR("Comment"), "there are no real data here");
+    addInteger(memoryDict, CFSTR("SlotCount"), 0);
+    addInteger(memoryDict, CFSTR("Channels"), 0);
+    // there are wrong keys with some values
+    //there is no procedure to create Array?! My old version do this!!! Slice.
+    addString(memoryDict, CFSTR("MemoryManufacturer"), s->MemoryManufacturer);
+    addString(memoryDict, CFSTR("MemorySerialNumber"), s->MemorySerialNumber);
+    addString(memoryDict, CFSTR("MemoryPartNumber"), s->MemoryPartNumber);
+    addString(memoryDict, CFSTR("MemorySpeed"), s->MemorySpeed);
+  }
+  
+  // CPU
+  CFMutableDictionaryRef cpuDict = addDict(dict, CFSTR("CPU"));
+  addInteger(cpuDict, CFSTR("Type"), s->CpuType);
+  addInteger(cpuDict, CFSTR("FrequencyMHz"), s->CpuFreqMHz);
+  addInteger(cpuDict, CFSTR("BusSpeedkHz"), s->BusSpeed);
+  addInteger(cpuDict, CFSTR("QPI"), s->QPI);
+  // these values read only
+  addInteger(cpuDict, CFSTR("EnabledCores"), s->EnabledCores);
+  addBoolean(cpuDict, CFSTR("C2"), s->EnableC2);  
+  addBoolean(cpuDict, CFSTR("C4"), s->EnableC4); 
+  addBoolean(cpuDict, CFSTR("C6"), s->EnableC6); 
+  addInteger(cpuDict, CFSTR("Latency"), s->C3Latency); 
+  
+  // Devices
+  CFMutableDictionaryRef pciDict = addDict(dict, CFSTR("Devices"));
+  addBoolean(pciDict, CFSTR("Inject"), s->StringInjector);
+  addString(pciDict, CFSTR("Properties"), "_NOT_SHOWN_");
+//  addInteger(pciDict, CFSTR("PCIRootUID"), s->PCIRootUID);
+  addBoolean(pciDict, CFSTR("LpcTune"), s->LpcTune);
   CFMutableDictionaryRef fakeIDDict = addDict(pciDict, CFSTR("FakeID"));
   addHex(fakeIDDict, CFSTR("ATI"), s->FakeATI);
   addHex(fakeIDDict, CFSTR("NVidia"), s->FakeNVidia);
@@ -330,109 +338,119 @@ void PrintConfig(CFTypeRef data)
   addHex(fakeIDDict, CFSTR("SATA"), s->FakeSATA);
   addHex(fakeIDDict, CFSTR("XHCI"), s->FakeXHCI);
   
-
-    // Graphics
-    CFMutableDictionaryRef graphicsDict = addDict(dict, CFSTR("Graphics"));
-    addBoolean(graphicsDict, CFSTR("GraphicsInjector"), s->GraphicsInjector);
-    addBoolean(graphicsDict, CFSTR("InjectATI"), s->InjectATI);
-    addBoolean(graphicsDict, CFSTR("InjectNVidia"), s->InjectNVidia);
-    addBoolean(graphicsDict, CFSTR("InjectIntel"), s->InjectIntel);
-    addBoolean(graphicsDict, CFSTR("LoadVBios"), s->LoadVBios);
-    addBoolean(graphicsDict, CFSTR("InjectEDID"), s->InjectEDID);
-    addString(graphicsDict, CFSTR("CustomEDID"), "_NOT_SHOWN_");
-    addBoolean(graphicsDict, CFSTR("PatchVBios"), s->PatchVBios);
-    addInteger(graphicsDict, CFSTR("PatchVBios Manual Count"), s->PatchVBiosBytesCount);
-    addInteger(graphicsDict, CFSTR("VideoPorts"), s->VideoPorts);
-    addInteger(graphicsDict, CFSTR("VRAM"), s->VRAM);
-    addInteger(graphicsDict, CFSTR("DualLink"), s->DualLink);
-    // ATI specific"
-    addUString(graphicsDict, CFSTR("FBName"), s->FBName);
-    // NVIDIA specific
-    addIntArray(graphicsDict, CFSTR("display-cfg"), &s->Dcfg[0], 8);
-    addIntArray(graphicsDict, CFSTR("NVCAP"), &s->NVCAP[0], 20);
-    // INTEL specific
-    addHex(graphicsDict, CFSTR("ig-platform-id"), s->IgPlatform);
-
-    //ACPI
-    CFMutableDictionaryRef acpiDict = addDict(dict, CFSTR("ACPI"));
-    addUString(acpiDict, CFSTR("DsdtName"), s->DsdtName);
-    addHex(acpiDict, CFSTR("FixDsdtMask"), s->FixDsdt);
-    addBoolean(acpiDict, CFSTR("DebugDSDT"), s->DebugDSDT);
-    addBoolean(acpiDict, CFSTR("DropOemSSDT"), s->DropSSDT);
-    addInteger(acpiDict, CFSTR("Number_of_KeepSSDT"), s->KeepSsdtNum);
-    addBoolean(acpiDict, CFSTR("DropAPIC"), s->bDropAPIC);
-    addBoolean(acpiDict, CFSTR("PatchAPIC"), s->PatchNMI);
-    addBoolean(acpiDict, CFSTR("DropMCFG"), s->bDropMCFG);
-    addBoolean(acpiDict, CFSTR("DropHPET"), s->bDropHPET);
-    addBoolean(acpiDict, CFSTR("DropECDT"), s->bDropECDT);
-    addBoolean(acpiDict, CFSTR("DropDMAR"), s->bDropDMAR);
-    addBoolean(acpiDict, CFSTR("DropBGRT"), s->bDropBGRT);
-    addBoolean(acpiDict, CFSTR("GeneratePStates"), s->GeneratePStates);
-    addBoolean(acpiDict, CFSTR("GenerateCStates"), s->GenerateCStates);
-    addBoolean(acpiDict, CFSTR("DoubleFirstState"), s->DoubleFirstState);
-    addBoolean(acpiDict, CFSTR("EnableC2"), s->EnableC2);
-    addHex(acpiDict, CFSTR("C3Latency"), s->C3Latency);
-    addBoolean(acpiDict, CFSTR("EnableC4"), s->EnableC4);
-    addBoolean(acpiDict, CFSTR("EnableC6"), s->EnableC6);
-    addBoolean(acpiDict, CFSTR("EnableISS"), s->EnableISS);
-    addInteger(acpiDict, CFSTR("PLimitDict"), s->PLimitDict);
-    addInteger(acpiDict, CFSTR("UnderVoltStep"), s->UnderVoltStep);
-    addInteger(acpiDict, CFSTR("MinMultiplier"), s->MinMultiplier);
-    addInteger(acpiDict, CFSTR("MaxMultiplier"), s->MaxMultiplier);
-    addInteger(acpiDict, CFSTR("PluginType"), s->PluginType);
-    addBoolean(acpiDict, CFSTR("smartUPS"), s->smartUPS);
-    addHex(acpiDict, CFSTR("ResetAddress"), s->ResetAddr);
-    addHex(acpiDict, CFSTR("ResetValue"), s->ResetVal);
-
-    // KernelAndKextPatches
-    CFMutableDictionaryRef KernelAndKextPatchesDict = addDict(dict, CFSTR("KernelAndKextPatches"));
-    addBoolean(KernelAndKextPatchesDict, CFSTR("Debug"), s->KPDebug);
-    addBoolean(KernelAndKextPatchesDict, CFSTR("KernelCpu"), s->KPKernelCpu);
-    addBoolean(KernelAndKextPatchesDict, CFSTR("KernelLapic"), s->KPLapicPanic);
-    addBoolean(KernelAndKextPatchesDict, CFSTR("AppleRTC"), s->KPAppleRTC);
-    addBoolean(KernelAndKextPatchesDict, CFSTR("AsusAICPUPM"), s->KPAsusAICPUPM);
-    addBoolean(KernelAndKextPatchesDict, CFSTR("KextPatchesAllowed"), s->KextPatchesAllowed);
-    addInteger(KernelAndKextPatchesDict, CFSTR("Number_of_KextsToPatch"), s->NrKexts);
-
-    //TODO
-    // here we can get LogEveryBoot and MountEFI from
-    //gPlatform = IORegistryEntryFromPath(masterPort, "IODeviceTree:/options");
-    //GetOFVariable("MountEFI" ... and so on
-    CFMutableDictionaryRef rtVariablesDict = addDict(dict, CFSTR("RtVariables"));
-    addString(rtVariablesDict, CFSTR("MountEFI"), "_NOT_SHOWN_");
-    addInteger(rtVariablesDict, CFSTR("LogLineCount"), s->LogLineCount);
-    addString(rtVariablesDict, CFSTR("LogEveryBoot"), "_NOT_SHOWN_");
-
-    dump_plist(dict);
-
+  CFMutableDictionaryRef audioDict = addDict(pciDict, CFSTR("Audio"));
+  if (s->HDAInjection)
+    addInteger(audioDict, CFSTR("Inject"), s->HDALayoutId);
+  else
+    addBoolean(audioDict, CFSTR("Inject"), s->HDAInjection);
+  
+  CFMutableDictionaryRef usbDict = addDict(pciDict, CFSTR("USB"));
+  addBoolean(usbDict, CFSTR("Inject"), s->USBInjection);
+  addBoolean(usbDict, CFSTR("USBFixOwnership"), s->USBFixOwnership);
+  addBoolean(usbDict, CFSTR("AddClockID"), s->InjectClockID);
+  
+  // Graphics
+  CFMutableDictionaryRef graphicsDict = addDict(dict, CFSTR("Graphics"));
+  CFMutableDictionaryRef injectDict = addDict(graphicsDict, CFSTR("Inject"));
+  addBoolean(injectDict, CFSTR("ATI"), s->InjectATI);
+  addBoolean(injectDict, CFSTR("NVidia"), s->InjectNVidia);
+  addBoolean(injectDict, CFSTR("Intel"), s->InjectIntel);
+  addBoolean(graphicsDict, CFSTR("LoadVBios"), s->LoadVBios);
+  addBoolean(graphicsDict, CFSTR("InjectEDID"), s->InjectEDID);
+  addString(graphicsDict, CFSTR("CustomEDID"), "_NOT_SHOWN_");
+  addBoolean(graphicsDict, CFSTR("PatchVBios"), s->PatchVBios);
+  addInteger(graphicsDict, CFSTR("PatchVBios Manual Count"), s->PatchVBiosBytesCount);
+  addInteger(graphicsDict, CFSTR("VideoPorts"), s->VideoPorts);
+  addInteger(graphicsDict, CFSTR("VRAM"), s->VRAM);
+  addInteger(graphicsDict, CFSTR("DualLink"), s->DualLink);
+  // ATI specific"
+  addUString(graphicsDict, CFSTR("FBName"), s->FBName);
+  // NVIDIA specific
+  addIntArray(graphicsDict, CFSTR("display-cfg"), &s->Dcfg[0], 8);
+  addIntArray(graphicsDict, CFSTR("NVCAP"), &s->NVCAP[0], 20);
+  // INTEL specific
+  addHex(graphicsDict, CFSTR("ig-platform-id"), s->IgPlatform);
+  
+  //ACPI
+  CFMutableDictionaryRef acpiDict = addDict(dict, CFSTR("ACPI"));
+  addUString(acpiDict, CFSTR("DsdtName"), s->DsdtName);
+  addHex(acpiDict, CFSTR("FixDsdtMask"), s->FixDsdt);
+  addBoolean(acpiDict, CFSTR("DebugDSDT"), s->DebugDSDT);
+  addBoolean(acpiDict, CFSTR("DropOemSSDT"), s->DropSSDT);
+  addInteger(acpiDict, CFSTR("Number_of_KeepSSDT"), s->KeepSsdtNum);
+  addBoolean(acpiDict, CFSTR("DropAPIC"), s->bDropAPIC);
+  addBoolean(acpiDict, CFSTR("PatchAPIC"), s->PatchNMI);
+  addBoolean(acpiDict, CFSTR("DropMCFG"), s->bDropMCFG);
+  addBoolean(acpiDict, CFSTR("DropHPET"), s->bDropHPET);
+  addBoolean(acpiDict, CFSTR("DropECDT"), s->bDropECDT);
+  addBoolean(acpiDict, CFSTR("DropDMAR"), s->bDropDMAR);
+  addBoolean(acpiDict, CFSTR("DropBGRT"), s->bDropBGRT);
+  addBoolean(acpiDict, CFSTR("GeneratePStates"), s->GeneratePStates);
+  addBoolean(acpiDict, CFSTR("GenerateCStates"), s->GenerateCStates);
+  addBoolean(acpiDict, CFSTR("DoubleFirstState"), s->DoubleFirstState);
+  addBoolean(acpiDict, CFSTR("EnableC2"), s->EnableC2);
+  addHex(acpiDict, CFSTR("C3Latency"), s->C3Latency);
+  addBoolean(acpiDict, CFSTR("EnableC4"), s->EnableC4);
+  addBoolean(acpiDict, CFSTR("EnableC6"), s->EnableC6);
+  addBoolean(acpiDict, CFSTR("EnableISS"), s->EnableISS);
+  addInteger(acpiDict, CFSTR("PLimitDict"), s->PLimitDict);
+  addInteger(acpiDict, CFSTR("UnderVoltStep"), s->UnderVoltStep);
+  addInteger(acpiDict, CFSTR("MinMultiplier"), s->MinMultiplier);
+  addInteger(acpiDict, CFSTR("MaxMultiplier"), s->MaxMultiplier);
+  addInteger(acpiDict, CFSTR("PluginType"), s->PluginType);
+  addBoolean(acpiDict, CFSTR("smartUPS"), s->smartUPS);
+  addHex(acpiDict, CFSTR("ResetAddress"), s->ResetAddr);
+  addHex(acpiDict, CFSTR("ResetValue"), s->ResetVal);
+  
+  // KernelAndKextPatches
+  CFMutableDictionaryRef KernelAndKextPatchesDict = addDict(dict, CFSTR("KernelAndKextPatches"));
+  addBoolean(KernelAndKextPatchesDict, CFSTR("Debug"), s->KPDebug);
+  addBoolean(KernelAndKextPatchesDict, CFSTR("KernelCpu"), s->KPKernelCpu);
+  addBoolean(KernelAndKextPatchesDict, CFSTR("KernelLapic"), s->KPLapicPanic);
+  addBoolean(KernelAndKextPatchesDict, CFSTR("AppleRTC"), s->KPAppleRTC);
+  addBoolean(KernelAndKextPatchesDict, CFSTR("AsusAICPUPM"), s->KPAsusAICPUPM);
+  addBoolean(KernelAndKextPatchesDict, CFSTR("KextPatchesAllowed"), s->KextPatchesAllowed);
+  addInteger(KernelAndKextPatchesDict, CFSTR("Number_of_KextsToPatch"), s->NrKexts);
+  
+  //TODO
+  // here we can get LogEveryBoot and MountEFI from
+  //gPlatform = IORegistryEntryFromPath(masterPort, "IODeviceTree:/options");
+  //GetOFVariable("MountEFI" ... and so on
+  CFMutableDictionaryRef rtVariablesDict = addDict(dict, CFSTR("RtVariables"));
+  addString(rtVariablesDict, CFSTR("MountEFI"), "_NOT_SHOWN_");
+  addInteger(rtVariablesDict, CFSTR("LogLineCount"), s->LogLineCount);
+  addString(rtVariablesDict, CFSTR("LogEveryBoot"), "_NOT_SHOWN_");
+  
+  dump_plist(dict);
+  
 }
 
 int main(int argc, char **argv)
 {
-    kern_return_t       result;
-
-    result = IOMasterPort(bootstrap_port, &masterPort);
-    if (result != KERN_SUCCESS) {
-        errx(1, "Error getting the IOMaster port: %s",
-             mach_error_string(result));
-    }
-
-    gPlatform = IORegistryEntryFromPath(masterPort, "IODeviceTree:/efi/platform");
-    if (gPlatform == 0) {
-        errx(1, "EFI is not supported on this system");
-    }
-
-    CFTypeRef data;
-    result = GetOFVariable("Settings", &data);
-    if (result != KERN_SUCCESS) {
-        errx(1, "Clover absent or too old : %s",
-             mach_error_string(result));
-    }
-
-    PrintConfig(data);
-    CFRelease(data);
-
-    IOObjectRelease(gPlatform);
-
-    return 0;
+  kern_return_t       result;
+  
+  result = IOMasterPort(bootstrap_port, &masterPort);
+  if (result != KERN_SUCCESS) {
+    errx(1, "Error getting the IOMaster port: %s",
+         mach_error_string(result));
+  }
+  
+  gPlatform = IORegistryEntryFromPath(masterPort, "IODeviceTree:/efi/platform");
+  if (gPlatform == 0) {
+    errx(1, "EFI is not supported on this system");
+  }
+  
+  CFTypeRef data;
+  result = GetOFVariable("Settings", &data);
+  if (result != KERN_SUCCESS) {
+    errx(1, "Clover absent or too old : %s",
+         mach_error_string(result));
+  }
+  
+  PrintConfig(data);
+  CFRelease(data);
+  
+  IOObjectRelease(gPlatform);
+  
+  return 0;
 }

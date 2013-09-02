@@ -2,25 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>Boot</key>
-	<dict>
-		<key>Timeout</key>
-		<integer>5</integer>
-		<key>Arguments</key>
-		<string>-v arch=i386 slide=0</string>
-		<key>DefaultVolume</key>
-		<string>MacHDD</string>
-		<key>Log</key>
-		<false/>
-		<key>Fast</key>
-		<false/>
-		<key>XMPDetection</key>
-		<string>-1</string>
-		<key>Legacy</key>
-		<string>PBR</string>
-		<key>LegacyEntry</key>
-		<integer>2</integer>
-	</dict>
 	<key>KernelAndKextPatches</key>
 	<dict>
 		<key>Debug</key>
@@ -81,12 +62,22 @@
 	</dict>
 	<key>SystemParameters</key>
 	<dict>
+		<key>boot-args</key>
+		<string>-v arch=i386 slide=0</string>
+		<key>prev-lang:kbd</key>
+		<string>ru:0</string>
 		<key>CustomUUID</key>
 		<string>511CE200-1000-4000-9999-010203040506</string>
 		<key>InjectSystemID</key>
 		<false/>
+		<key>LegacyBoot</key>
+		<string>PBR</string>
 		<key>BacklightLevel</key>
 		<string>0x0501</string>
+		<key>InjectKexts</key>
+		<false/>
+		<key>NoCaches</key>
+		<false/>
 	</dict>
 	<key>SMBIOS</key>
 	<dict>
@@ -132,79 +123,28 @@
 		<string>0xC0001403</string>
 		<key>Trust</key>
 		<true/>
-		<key>Memory</key>
-		<dict>
-			<key>SlotCount</key>
-			<integer>4</integer>
-			<key>Channels</key>
-			<integer>2</integer>
-			<key>Modules</key>
-			<array>
-				<dict>
-					<key>Slot</key>
-					<integer>0</integer>
-					<key>Size</key>
-					<integer>4096</integer>
-					<key>Frequency</key>
-					<integer>1333</integer>
-					<key>Vendor</key>
-					<string>Kingston</string>
-					<key>Part</key>
-					<string>C0001403</string>
-					<key>Serial</key>
-					<string>00001001</string>
-					<key>Type</key>
-					<string>DDR3</string>
-				</dict>
-				<dict>
-					<key>Slot</key>
-					<integer>2</integer>
-					<key>Size</key>
-					<integer>4096</integer>
-					<key>Frequency</key>
-					<integer>1333</integer>
-					<key>Vendor</key>
-					<string>Kingston</string>
-					<key>Part</key>
-					<string>C0001404</string>
-					<key>Serial</key>
-					<string>00001002</string>
-					<key>Type</key>
-					<string>DDR3</string>
-				</dict>
-			</array>
-		</dict>		
 	</dict>
 	<key>CPU</key>
 	<dict>
-		<key>Type</key>
+		<key>ProcessorType</key>
 		<string>0x0201</string>
-		<key>FrequencyMHz</key>
+		<key>CpuFrequencyMHz</key>
 		<integer>3200</integer>
 		<key>BusSpeedkHz</key>
 		<integer>133330</integer>
 		<key>QPI</key>
 		<integer>4800</integer>
-		<key>C2</key>
-		<true/>
-		<key>C4</key>
-		<true/>
-		<key>C6</key>
-		<true/>
-		<key>Latency</key>
-		<integer>0xFA</integer>		
 	</dict>
 	<key>Graphics</key>
 	<dict>
-		<key>Inject</key>
-		<dict>
-			<key>Intel</key>
-			<false/>
-			<key>ATI</key>
-			<true/>
-			<key>NVidia</key>
-			<false/>			
-		</dict>
+		<key>GraphicsInjector</key>
+		<true/>
+		<key>InjectIntel</key>
+		<true/>
+		<key>InjectATI</key>
+		<true/>
+		<key>InjectNVidia</key>
+		<true/>
 		<key>InjectEDID</key>
 		<true/>
 		<key>CustomEDID</key>
@@ -237,12 +177,20 @@
 			</dict>
 		</array>
 	</dict>
-	<key>Devices</key>
+	<key>PCI</key>
 	<dict>
-		<key>Inject</key>
+		<key>StringInjector</key>
 		<false/>
-		<key>Properties</key>
+		<key>DeviceProperties</key>
 		<string>7a00000001000000010000006e0000000200000002010c00d041030a0000000001010600001b7fff040028000000500069006e0043006f006e00660069006700750072006100740069006f006e00730000000800000001080100180000006c00610079006f00750074002d00690064000000080000000c000000</string>
+		<key>HDAInjection</key>
+		<string>Detect</string>
+		<key>USBInjection</key>
+		<true/>
+		<key>USBFixOwnership</key>
+		<true/>
+		<key>InjectClockID</key>
+		<true/>
 		<key>LpcTune</key>
 		<false/>
 		<key>FakeID</key>
@@ -250,7 +198,7 @@
 			<key>ATI</key>
 			<string>0x67501002</string>
 			<key>IntelGFX</key>
-			<string>0x0126</string>
+			<string>0x0</string>
 			<key>LAN</key>
 			<string>0x20008086</string>
 			<key>NVidia</key>
@@ -262,91 +210,62 @@
 			<key>XHCI</key>
 			<string>0x0</string>
 		</dict>
-		<key>Audio</key>
-		<dict>
-			<key>Inject</key>
-			<string>0x0887</string>
-		</dict>
-		<key>USB</key>
-		<dict>
-			<key>Inject</key>
-			<true/>
-			<key>AddClockID</key>
-			<true/>
-			<key>USBFixOwnership</key>
-			<true/>		
-		</dict>
 	</dict>
 	<key>ACPI</key>
 	<dict>
-		<key>DropTables</key>
-		<dict>
-			<key>BySignature</key>
-			<array>
-				<string>DMAR</string>
-				<string>BGRT</string>
-			</array>
-			<key>ByTableID</key>
-			<array>
-				<string>CpuPm</string>
-				<string>Cpu0Ist</string>
-				<string>Cpu1Ist</string>
-				<string>Cpu0Cst</string>
-				<string>Cpu1Cst</string>
-			</array>			
-		</dict>
-		<key>DSDT</key>
-		<dict>
-			<key>Debug</key>
-			<false/>
-			<key>Name</key>
-			<string>DSDT.aml</string>
-			<key>FixMask</key>
-			<string>0xFFFF</string>
-			<key>Patches</key>
-			<array>
-				<dict>
-					<key>Comment</key>
-					<string>Remove battery device from desktop</string>					
-					<key>Find</key>
-					<data>W4IeQkFUMQhfSElEDEHQDAoIX1VJRAEUCF9TVEEApAA=</data>
-					<key>Replace</key>
-					<data></data>
-				</dict>
-				<dict>
-					<key>Comment</key>
-					<string>Add _SUN property for GIGE</string>					
-					<key>Find</key>
-					<data>UFhTWAhfQURSAAhfUFJXEgYC</data>
-					<key>Replace</key>
-					<data>UFhTWAhfQURSAAhfU1VOCgQIX1BSVxIGAg==</data>
-				</dict>
-			</array>
-		</dict>
-		<key>SSDT</key>
-		<dict>
-			<key>Generate</key>
-			<dict>
-				<key>PStates</key>
-				<true/>
-				<key>CStates</key>
-				<true/>
-			</dict>
-			<key>DropOem</key>
-			<true/>
-			<key>PLimitDict</key>
-			<integer>1</integer>
-			<key>UnderVoltStep</key>
-			<integer>1</integer>
-			<key>DoubleFirstState</key>
-			<true/>
-			<key>MinMultiplier</key>
-			<integer>8</integer>
-			<key>MaxMultiplier</key>
-			<integer>12</integer>
-			<key>PluginType</key>
-			<integer>0</integer>			
-		</dict>
+		<key>DsdtName</key>
+		<string>DSDT.aml</string>
+		<key>FixDsdtMask</key>
+		<string>0xFFFF</string>
+		<key>DebugDSDT</key>
+		<false/>
+		<key>DropOemSSDT</key>
+		<true/>
+		<key>KeepSSDT</key>
+		<array>
+			<string>SataTabl</string>
+			<string>SataAhci</string>
+		</array>
+		<key>DropAPIC</key>
+		<false/>
+		<key>DropMCFG</key>
+		<false/>
+		<key>DropHPET</key>
+		<false/>
+		<key>DropECDT</key>
+		<false/>
+		<key>DropDMAR</key>
+		<true/>
+		<key>DropBGRT</key>
+		<true/>
+		<key>GenerateIvyStates</key>
+		<true/>
+		<key>GenerateCStates</key>
+		<true/>
+		<key>GeneratePStates</key>
+		<true/>
+		<key>DoubleFirstState</key>
+		<true/>
+		<key>PLimitDict</key>
+		<integer>1</integer>
+		<key>UnderVoltStep</key>
+		<integer>1</integer>
+		<key>MinMultiplier</key>
+		<integer>8</integer>
+		<key>MaxMultiplier</key>
+		<integer>12</integer>
+		<key>PluginType</key>
+		<integer>0</integer>
+		<key>EnableC6</key>
+		<true/>
+		<key>EnableC4</key>
+		<false/>
+		<key>EnableC2</key>
+		<true/>
+		<key>EnableISS</key>
+		<true/>
+		<key>C3Latency</key>
+		<string>0x03E9</string>
 		<key>ResetAddress</key>
 		<string>0x64</string>
 		<key>ResetValue</key>
@@ -355,19 +274,36 @@
 		<false/>
 		<key>PatchAPIC</key>
 		<false/>
+		<key>PatchesDSDT</key>
+		<array>
+			<dict>
+				<key>Find</key>
+				<data>W4IeQkFUMQhfSElEDEHQDAoIX1VJRAEUCF9TVEEApAA=</data>
+				<key>Replace</key>
+				<data></data>
+			</dict>
+			<dict>
+				<key>Find</key>
+				<data>UFhTWAhfQURSAAhfUFJXEgYC</data>
+				<key>Replace</key>
+				<data>UFhTWAhfQURSAAhfU1VOCgQIX1BSVxIGAg==</data>
+			</dict>
+		</array>
 	</dict>
 	<key>GUI</key>
 	<dict>
 		<key>Theme</key>
 		<string>metal</string>
+		<key>Timeout</key>
+		<integer>5</integer>
 		<key>TextOnly</key>
 		<false/>
-		<key>CustomIcons</key>
+		<key>DebugLog</key>
 		<false/>
+		<key>DefaultBootVolume</key>
+		<string>MacHDD</string>
 		<key>ScreenResolution</key>
 		<string>1024x768</string>
-		<key>Language</key>
-		<string>ru:0</string>
 		<key>Mouse</key>
 		<dict>
 			<key>Enabled</key>
@@ -379,42 +315,56 @@
 			<key>DoubleClick</key>
 			<integer>500</integer>
 		</dict>
+		<key>Volumes</key>
+		<dict>
+			<key>Legacy</key>
+			<string>First</string>
+			<key>Hide</key>
+			<array>
+				<string>VOLUME_NAME</string>
+				<string>VOLUME_UUID</string>
+				<string>TODO_HIDE_VOLUME_BY_TYPE/GROUP</string>
+			</array>
+		</dict>
+		<key>HideEntries</key>
+		<dict>
+			<key>OSXInstall</key>
+			<true/>
+			<key>Recovery</key>
+			<true/>
+			<key>Duplicate</key>
+			<true/>
+			<key>WindowsEFI</key>
+			<false/>
+			<key>Grub</key>
+			<false/>
+			<key>Gentoo</key>
+			<false/>
+			<key>Ubuntu</key>
+			<false/>
+			<key>OpticalUEFI</key>
+			<true/>
+			<key>InternalUEFI</key>
+			<true/>
+			<key>ExternalUEFI</key>
+			<true/>
+            <key>UEFIBootOptions</key>
+            <true/>
+		</dict>
 	</dict>
 	<key>RtVariables</key>
 	<dict>
-		<key>ROM</key>
-		<string>0011223344556677</string>
-		<key>MLB</key>
-		<string>C02032101R5DC771H</string>
 		<key>MountEFI</key>
 		<false/>
 		<key>LogLineCount</key>
 		<integer>3000</integer>
 		<key>LogEveryBoot</key>
-		<string>10</string>
+		<string>Yes</string>
 	</dict>
 	<key>DisableDrivers</key>
 	<array>
 		<string>CsmVideoDxe</string>
 		<string>VBoxExt4</string>
 	</array>
-	<key>Entries</key>
-	<dict>
-		<key>Legacy</key>
-		<string>First</string>
-		<key>Hide</key>
-		<array>
-			<string>VOLUME_NAME</string>
-			<string>VOLUME_UUID</string>
-			<string>TODO_HIDE_VOLUME_BY_TYPE/GROUP</string>
-		</array>
-		<key>Scan</key>
-		<false/>
-		<key>Custom</key>
-		<array>
-			<string>ENTRY_NAME_1</string>
-			<string>TODO</string>
-		</array>
-	</dict>
 </dict>
 </plist>
