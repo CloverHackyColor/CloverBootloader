@@ -290,7 +290,7 @@ typedef struct _refit_input_dialog {
   INPUT_ITEM        *Item;
 } REFIT_INPUT_DIALOG;
 
-typedef struct _refit_menu_screen {
+struct _refit_menu_screen {
   UINTN             ID;
   CHAR16            *Title;
   EG_IMAGE          *TitleImage;
