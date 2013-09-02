@@ -1113,8 +1113,8 @@ EFI_STATUS EFIAPI GetVariableFake(IN CHAR16 *VariableName, IN EFI_GUID *VendorGu
       *DataSize = 2;
       return EFI_BUFFER_TOO_SMALL;
     } else {
-      ((UINT8 *)Data)[0] = (UINT8)BootNext;
-      ((UINT8 *)Data)[1] = 0;
+      ((UINT8 *)Data)[0] = (UINT8)(BootNext & 0xFF);
+      ((UINT8 *)Data)[1] = (UINT8)((BootNext >> 8) & 0xFF);
       return EFI_SUCCESS;
     }
   }
