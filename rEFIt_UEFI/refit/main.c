@@ -763,18 +763,12 @@ static CHAR16 *RemoveLoadOption(IN CHAR16 *LoadOptions, IN CHAR16 *LoadOption)
 
 // */
 
-static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTitle, IN REFIT_VOLUME *Volume, UINT8 OSType)
+static LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOptions, IN CHAR16 *LoaderTitle, IN REFIT_VOLUME *Volume, IN UINT8 OSType)
 {
-  CHAR16            *FileName, *OSIconName, *TempOptions;
+  CHAR16            *OSIconName;
   CHAR16            IconFileName[256];
-  CHAR16            DiagsFileName[256];
   CHAR16            ShortcutLetter;
-  UINTN             LoaderKind;
-  LOADER_ENTRY      *Entry, *SubEntry;
-  REFIT_MENU_SCREEN *SubScreen;
-  UINT64            VolumeSize;
-  EFI_GUID          *Guid = NULL;
-  BOOLEAN           UsesSlideArg;
+  LOADER_ENTRY      *Entry;
 
   // Ignore this loader if it's self path
   CHAR16 *FilePathAsString = FileDevicePathToStr(SelfLoadedImage->FilePath);
@@ -785,8 +779,6 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
       return NULL;
     }
   }
-  
-  FileName = Basename(LoaderPath);
   
   // prepare the menu entry
   Entry = AllocateZeroPool(sizeof(LOADER_ENTRY));
@@ -809,7 +801,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
   if (gSettings.NoCaches) {
      Entry->Flags = OSFLAG_ENABLE(Entry->Flags, OSFLAG_NOCACHES);
   }
-  Entry->LoadOptions     = PoolPrint(L"%a", gSettings.BootArgs);
+  Entry->LoadOptions     = PoolPrint(L"%a", LoaderOptions);
 //  Entry->LoadOptions     = InputItems[0].SValue;
 
   // locate a custom icon for the loader
@@ -821,7 +813,6 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
   
   // detect specific loaders
   OSIconName = NULL;
-  LoaderKind = 0;
   ShortcutLetter = 0;
 
   switch (OSType) {
@@ -839,33 +830,28 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
         // OSX is not booting verbose, so we can set console to graphics mode
         Entry->Flags = OSFLAG_ENABLE(Entry->Flags, OSFLAG_USEGRAPHICS);
       }
-      LoaderKind = 1;
-      ShortcutLetter = 'M';    
+      ShortcutLetter = 'M';
       Entry->LoaderType = OSTYPE_OSX;
       GetOSXVolumeName(Entry);
       break;
     case OSTYPE_WIN:
       OSIconName = L"win";
       ShortcutLetter = 'W';
-      LoaderKind = 3;
       Entry->LoaderType = OSTYPE_WIN;
       break;
     case OSTYPE_WINEFI:
       OSIconName = L"vista";
       ShortcutLetter = 'V';
-      LoaderKind = 3;
       Entry->LoaderType = OSTYPE_WINEFI;
       break;
     case OSTYPE_LIN:
       OSIconName = Volume->OSIconName != NULL ? Volume->OSIconName : L"linux";
-      LoaderKind = 2;
       ShortcutLetter = 'L';
       Entry->LoaderType = OSTYPE_LIN;
       break;
     case OSTYPE_VAR:
     case OSTYPE_EFI:
       OSIconName = L"clover";
-      LoaderKind = 4;
       ShortcutLetter = 'U';
       Entry->LoaderType = OSTYPE_VAR;
       break;
@@ -898,6 +884,24 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
       DBG("Show badge as OSImage\n");
     }
   }
+  return Entry;
+}
+
+static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTitle, IN REFIT_VOLUME *Volume, IN UINT8 OSType)
+{
+  CHAR16            *FileName, *TempOptions;
+  CHAR16            DiagsFileName[256];
+  LOADER_ENTRY      *Entry, *SubEntry;
+  REFIT_MENU_SCREEN *SubScreen;
+  UINT64            VolumeSize;
+  EFI_GUID          *Guid = NULL;
+
+  Entry = CreateLoaderEntry(LoaderPath, gSettings.BootArgs, LoaderTitle, Volume, OSType);
+  if (Entry == NULL) {
+    return NULL;
+  }
+
+  FileName = Basename(LoaderPath);
 
   // create the submenu
   SubScreen = AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
@@ -917,14 +921,10 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
     FreePool(GuidStr);
   }
 
- 
-  // Aptio UEFI ML boot requires slide=0
-  // if user have it in BootArgs, then propagate it to submenu entries
-  UsesSlideArg = AsciiStrStr(gSettings.BootArgs, "slide=0") != 0;
   
   // default entry
   SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
-  SubEntry->me.Title        = (LoaderKind == 1) ? L"Boot Mac OS X" : PoolPrint(L"Run %s", FileName);
+  SubEntry->me.Title        = (Entry->LoaderType == OSTYPE_OSX) ? L"Boot Mac OS X" : PoolPrint(L"Run %s", FileName);
   SubEntry->me.Tag          = TAG_LOADER;
   SubEntry->LoaderPath      = Entry->LoaderPath;
   SubEntry->Volume          = Entry->Volume;
@@ -937,7 +937,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
   
   // loader-specific submenu entries
-  if (LoaderKind == 1) {          // entries for Mac OS X
+  if (Entry->LoaderType == OSTYPE_OSX) {          // entries for Mac OS X
 #if defined(MDE_CPU_X64)
     SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
     if ((OSType != OSTYPE_ML) &&
@@ -1169,7 +1169,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
     }
     
-  } else if (LoaderKind == 2) {   // entries for elilo
+  } else if (Entry->LoaderType == OSTYPE_LIN) {   // entries for elilo
     SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
     SubEntry->me.Title        = PoolPrint(L"Run %s in interactive mode", FileName);
     SubEntry->me.Tag          = TAG_LOADER;
@@ -1225,7 +1225,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
     AddMenuInfoLine(SubScreen, L"NOTE: This is an example. Entries");
     AddMenuInfoLine(SubScreen, L"marked with (*) may not work.");
     
-  } else if (LoaderKind == 3) {   // entries for xom.efi
+  } else if ((Entry->LoaderType == OSTYPE_WIN) || (Entry->LoaderType == OSTYPE_WINEFI)) {   // entries for xom.efi
                                   // by default, skip the built-in selection and boot from hard disk only
     Entry->LoadOptions = L"-s -h";
     
@@ -1238,7 +1238,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
     SubEntry->DevicePath      = Entry->DevicePath;
     SubEntry->Flags           = Entry->Flags;
     SubEntry->LoadOptions     = L"-s -h";
-    SubEntry->LoaderType      = OSTYPE_WIN;
+    SubEntry->LoaderType      = Entry->LoaderType;
     SubEntry->me.AtClick      = ActionEnter;
     AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
     
@@ -1251,7 +1251,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
     SubEntry->DevicePath      = Entry->DevicePath;
     SubEntry->Flags           = Entry->Flags;
     SubEntry->LoadOptions     = L"-s -c";
-    SubEntry->LoaderType      = OSTYPE_WIN;
+    SubEntry->LoaderType      = Entry->LoaderType;
     SubEntry->me.AtClick      = ActionEnter;
     AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
     
@@ -1748,6 +1748,10 @@ VOID ScanLoader(VOID)
 
 // TODO: Add custom entries
 VOID AddCustomEntries(VOID)
+{
+}
+
+VOID AddCustomLegacy(VOID)
 {
 }
 
@@ -2908,9 +2912,13 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       // scan for loaders and tools, add then to the menu
       if (!GlobalConfig.NoLegacy && GlobalConfig.LegacyFirst && !gSettings.DisableEntryScan){
         //DBG("scan legacy first\n");
+        AddCustomLegacy();
         ScanLegacy();
       }
     }
+
+    // Add custom entries
+    AddCustomEntries();
 
     if (gSettings.DisableEntryScan) {
       DBG("Entry scan disabled\n");
@@ -2920,13 +2928,11 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       //        DBG("ScanLoader OK\n");
     }
 
-    // Add custom entries
-    AddCustomEntries();
-
     if (!GlobalConfig.FastBoot) {
 
       if (!GlobalConfig.NoLegacy && !GlobalConfig.LegacyFirst && !gSettings.DisableEntryScan) {
         //      DBG("scan legacy second\n");
+        AddCustomLegacy();
         ScanLegacy();
         //      DBG("ScanLegacy()\n");
       }

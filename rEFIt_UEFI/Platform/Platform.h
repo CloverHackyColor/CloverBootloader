@@ -823,9 +823,9 @@ typedef struct {
   CHAR8 **DropTableNames;
 
   // Custom entries
-  BOOLEAN  DisableEntryScan;
-  UINTN    CustomEntryCount;
-  VOID    *CustomEntries;
+  BOOLEAN       DisableEntryScan;
+  UINTN         CustomEntryCount;
+  LOADER_ENTRY *CustomEntries;
 
 } SETTINGS_DATA;
 

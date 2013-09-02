@@ -200,6 +200,10 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir)
         }
       }
     }
+    prop = GetProperty(dictPointer, "Arguments");
+    if (prop && (prop->type == kTagTypeString) && prop->string) {
+      AsciiStrnCpy(gSettings.BootArgs, prop->string, 255);
+    }
     
     prop = GetProperty(dictPointer, "DefaultVolume");
     if(prop) {
