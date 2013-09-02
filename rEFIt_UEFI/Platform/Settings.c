@@ -1827,7 +1827,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
         TagPtr prop2 = NULL;
         UINTN Count = GetTagCount(prop);
         if (Count > 0) {
-          gSettings.KeepSsdtNum = Count;
+          gSettings.KeepSsdtNum = (UINT32)Count;
           gSettings.KeepTableId = AllocateZeroPool(Count * sizeof(CHAR8*));
           DBG("KeepSSDT: %d requested\n", Count);
           for (i = 0; i < Count; ++i) {
@@ -1849,7 +1849,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
         TagPtr prop2 = NULL;
         UINTN Count = GetTagCount(prop);
         if (Count > 0) {
-          gSettings.PatchDsdtNum = Count;
+          gSettings.PatchDsdtNum = (UINT32)Count;
           gSettings.PatchDsdtFind = AllocateZeroPool(Count * sizeof(UINT8*));
           gSettings.PatchDsdtReplace = AllocateZeroPool(Count * sizeof(UINT8*));
           gSettings.LenToFind = AllocateZeroPool(Count * sizeof(UINT32));
@@ -1868,10 +1868,10 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
             DBG(" DSDT bin patch #%d ", i);
             gSettings.PatchDsdtFind[i] = GetDataSetting(prop2,"Find", &Size);
             DBG(" lenToFind=%d ", Size);
-            gSettings.LenToFind[i] = Size;
+            gSettings.LenToFind[i] = (UINT32)Size;
             gSettings.PatchDsdtReplace[i] = GetDataSetting(prop2,"Replace", &Size);
             DBG(" lenToReplace=%d\n", Size);
-            gSettings.LenToReplace[i] = Size;
+            gSettings.LenToReplace[i] = (UINT32)Size;
           }
         } //if count > 0
       } //if prop PatchesDSDT

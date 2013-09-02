@@ -2119,12 +2119,13 @@ VOID AddUEFIBootOption(BO_BOOT_OPTION *bootOption)
   CHAR16                      *loaderPath;
   CHAR16                      *bootParams;
   CHAR16                      *title;
+  EFI_GUID                    *volumeGUID;
+  EFI_GUID                    *bootGUID;
   
   for (volumeIndex = 0; volumeIndex < VolumesCount; volumeIndex++) {
     volume = Volumes[volumeIndex];
-    
-    EFI_GUID *volumeGUID = FindGPTPartitionGuidInDevicePath(volume->DevicePath);
-    EFI_GUID *bootGUID = FindGPTPartitionGuidInDevicePath(bootOption->FilePathList);
+    volumeGUID = FindGPTPartitionGuidInDevicePath(volume->DevicePath);
+    bootGUID = FindGPTPartitionGuidInDevicePath(bootOption->FilePathList);
     if (!volumeGUID || !bootGUID || !CompareGuid(volumeGUID, bootGUID)) continue;
     
     devPathNode = bootOption->FilePathList;
@@ -2179,6 +2180,8 @@ VOID ScanUEFIBootOptions(BOOLEAN allBootOptions)
     FreePool(bootOrder);
   }
 }
+
+// */
 
 //
 // pre-boot driver functions

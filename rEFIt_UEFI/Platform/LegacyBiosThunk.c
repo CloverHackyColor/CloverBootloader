@@ -315,7 +315,7 @@ LegacyBiosFarCall86 (
 //	UINT16				BiosInt = 0x100;
   EFI_TPL                 OriginalTpl;
   EFI_TIMER_ARCH_PROTOCOL *Timer;
-  UINT64                  TimerPeriod;
+  UINT64                  TimerPeriod = 0;
 
   // Disconnect EFI VGA driver (and switch to Text VGA Mode)
   DisconnectVga();

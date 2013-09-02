@@ -1819,7 +1819,6 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
   AML_CHUNK* gfx0;
   AML_CHUNK* met;
   BOOLEAN DISPLAYFIX = FALSE;
-  DisplayName1 = FALSE;
   AML_CHUNK* pack;
 //  UINT32 VideoRam;
 //  UINT8 ports;
@@ -1827,7 +1826,7 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
 //  CHAR8 *cardver;
   UINT32 FakeID = 0;
   UINT32 FakeVen = 0;
-  
+  DisplayName1 = FALSE;
   
 
   PCIADR = GetPciDevice(dsdt, len);
@@ -3155,7 +3154,7 @@ UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
 UINT32 FIXSBUS (UINT8 *dsdt, UINT32 len)
 {
   UINT32  i, k;
-  UINT32  SBUSADR=0, Size;
+  UINT32  SBUSADR=0, Size=0;
   UINT32 PCIADR, PCISIZE = 0;
   INT32 sizeoffset;
   PCIADR = GetPciDevice(dsdt, len);
@@ -4596,7 +4595,7 @@ VOID FixBiosDsdt (UINT8* temp)
 
   //arbitrary fixes
   if (gSettings.PatchDsdtNum > 0) {
-    INT32 i;
+    UINTN i;
     for (i = 0; i < gSettings.PatchDsdtNum; i++) {
       DsdtLen = FixAny(temp, DsdtLen,
                        gSettings.PatchDsdtFind[i], gSettings.LenToFind[i],

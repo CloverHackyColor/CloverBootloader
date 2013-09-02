@@ -1417,7 +1417,7 @@ BiosVideoCheckForVbe (
 		}
 #endif
 
-		BiosVideoPrivate->EdidDiscovered.SizeOfEdid = EdidActiveDataSize;
+		BiosVideoPrivate->EdidDiscovered.SizeOfEdid = (UINT32)EdidActiveDataSize;
 		Status = gBS->AllocatePool (
                                 EfiBootServicesData,
                                 EdidActiveDataSize,
@@ -1432,7 +1432,7 @@ BiosVideoCheckForVbe (
              EdidActiveDataSize
              );
 
-		BiosVideoPrivate->EdidActive.SizeOfEdid = EdidActiveDataSize;
+		BiosVideoPrivate->EdidActive.SizeOfEdid = (UINT32)EdidActiveDataSize;
 		Status = gBS->AllocatePool (
                                 EfiBootServicesData,
                                 EdidActiveDataSize,

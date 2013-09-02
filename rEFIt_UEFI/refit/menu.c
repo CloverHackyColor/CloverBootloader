@@ -2561,7 +2561,7 @@ static VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
 
 REFIT_MENU_ENTRY  *SubMenuGraphics()
 {
-  UINTN  i, N, Ven;
+  UINTN  i, N, Ven = 97;
   REFIT_MENU_ENTRY   *Entry; //, *SubEntry;
   REFIT_MENU_SCREEN  *SubScreen;
   REFIT_INPUT_DIALOG *InputBootArgs;
@@ -3495,9 +3495,8 @@ REFIT_MENU_ENTRY  *SubMenuThemes()
   REFIT_MENU_ENTRY   *Entry;
   REFIT_MENU_SCREEN  *SubScreen;
   REFIT_INPUT_DIALOG *InputBootArgs;
-  CHAR16*           Flags;
-  Flags = AllocateZeroPool(255);
-  UINTN i;
+  UINTN               i;
+  CHAR16*             Flags = AllocateZeroPool(255);
 
   Entry = AllocateZeroPool(sizeof(REFIT_MENU_ENTRY));
   Entry->Title = PoolPrint(L"Themes ->");

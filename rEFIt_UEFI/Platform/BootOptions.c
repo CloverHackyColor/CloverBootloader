@@ -716,7 +716,7 @@ GetBootOption (
     BootOption->BootNum = BootNum;
     UnicodeSPrint (VarName, sizeof(VarName), L"Boot%04X", BootNum);
     
-    BootOption->Variable = GetNvramVariable (VarName, &gEfiGlobalVariableGuid, NULL, &BootOption->VariableSize);
+    BootOption->Variable = GetNvramVariable (VarName, &gEfiGlobalVariableGuid, NULL, (UINTN *)(UINTN)(OFFSET_OF(BO_BOOT_OPTION, VariableSize) + (UINTN)BootOption));
     if (BootOption->Variable == NULL) {
         return EFI_NOT_FOUND;
     }

@@ -334,7 +334,7 @@ VOID DropTableFromXSDT (UINT32 Signature)
   CHAR8                           OTID[9];
   BOOLEAN                         DoubleZero = FALSE;
   BOOLEAN                         WillDrop;
-  INTN                            i, SsdtLen;
+  UINT32                          i, SsdtLen;
   
 	EntryCount = (Xsdt->Header.Length - sizeof (EFI_ACPI_DESCRIPTION_HEADER)) / sizeof(UINT64);
   DBG("Drop tables from Xsdt, count=%d\n", EntryCount); 
