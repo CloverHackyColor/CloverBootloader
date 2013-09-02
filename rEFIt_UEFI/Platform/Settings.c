@@ -1441,7 +1441,10 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
                 if (prop2->type != kTagTypeString) {
                   continue;
                 }
-                gSettings.DropTableSignatures[i] = prop2->string;
+                gSettings.DropTableSignatures[i] = AllocateZeroPool(sizeof(CHAR8) * 5);
+                if (gSettings.DropTableSignatures[i]) {
+                   AsciiStrnCpy(gSettings.DropTableSignatures[i], prop2->string, 5);
+                }
               }
             }
           }
@@ -1464,7 +1467,10 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
                 if (prop2->type != kTagTypeString) {
                   continue;
                 }
-                gSettings.DropTableNames[i] = prop2->string;
+                gSettings.DropTableNames[i] = AllocateZeroPool(sizeof(CHAR8) * 9);
+                if (gSettings.DropTableNames[i]) {
+                   AsciiStrnCpy(gSettings.DropTableNames[i], prop2->string, 9);
+                }
               }
             }
           }
