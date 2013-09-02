@@ -267,22 +267,22 @@ extern INTN ScrollbarYMovement;
 
 #define MAX_ANIME  40
 
-struct _refit_menu_screen;
+typedef struct _refit_menu_screen REFIT_MENU_SCREEN;
 
 typedef struct _refit_menu_entry {
-  CHAR16      *Title;
-  UINTN       Tag;
-  UINTN       Row;
-  CHAR16      ShortcutDigit;
-  CHAR16      ShortcutLetter;
-  EG_IMAGE    *Image;
-  EG_IMAGE    *DriveImage;
-  EG_IMAGE    *BadgeImage;
-  EG_RECT     Place;
-  ACTION      AtClick;
-  ACTION      AtDoubleClick;
-  ACTION      AtRightClick;
-  struct _refit_menu_screen *SubScreen;
+  CHAR16            *Title;
+  UINTN              Tag;
+  UINTN              Row;
+  CHAR16             ShortcutDigit;
+  CHAR16             ShortcutLetter;
+  EG_IMAGE          *Image;
+  EG_IMAGE          *DriveImage;
+  EG_IMAGE          *BadgeImage;
+  EG_RECT            Place;
+  ACTION             AtClick;
+  ACTION             AtDoubleClick;
+  ACTION             AtRightClick;
+  REFIT_MENU_SCREEN *SubScreen;
 } REFIT_MENU_ENTRY;
 
 typedef struct _refit_input_dialog {
@@ -309,7 +309,7 @@ typedef struct _refit_menu_screen {
 //  INTN              FilmX, FilmY;
   EG_RECT           FilmPlace;
   EG_IMAGE          **Film;
-} REFIT_MENU_SCREEN;
+};
 
 //this structure is used for refit.config
 typedef struct {
@@ -387,18 +387,19 @@ typedef struct {
 // types
 
 typedef struct {
-  REFIT_MENU_ENTRY me;
+  REFIT_MENU_ENTRY  me;
   REFIT_VOLUME     *Volume;
   CHAR16           *LoadOptions; //moved here for compatibility with legacy
   CHAR16           *LoaderPath;
   CHAR16           *VolName;
   EFI_DEVICE_PATH  *DevicePath;
-  UINT8            Flags;
-  UINT8            LoaderType;  
+  CHAR16           *DevicePathString;
+  UINT8             Flags;
+  UINT8             LoaderType;
 } LOADER_ENTRY;
 
 typedef struct {
-  REFIT_MENU_ENTRY me;
+  REFIT_MENU_ENTRY  me;
   REFIT_VOLUME     *Volume;
   CHAR16           *LoadOptions;
 } LEGACY_ENTRY;

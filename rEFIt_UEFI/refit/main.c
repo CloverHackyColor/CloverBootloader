@@ -565,7 +565,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     Status = GetOSVersion(Entry->Volume);
 
     // Prepare boot arguments
-    Entry->LoadOptions = PoolPrint(L"%a", gSettings.BootArgs);
+    // Entry->LoadOptions = PoolPrint(L"%a", gSettings.BootArgs);
     if ((StrCmp(gST->FirmwareVendor, L"CLOVER") != 0) &&
         (StrCmp(gST->FirmwareVendor, L"EDKII") != 0) &&
         ((Entry->Volume->OSType == OSTYPE_ML) ||
@@ -765,21 +765,56 @@ static CHAR16 *RemoveLoadOption(IN CHAR16 *LoadOptions, IN CHAR16 *LoadOption)
 
 static LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOptions, IN CHAR16 *LoaderTitle, IN REFIT_VOLUME *Volume, IN UINT8 OSType)
 {
-  CHAR16            *OSIconName;
-  CHAR16            IconFileName[256];
-  CHAR16            ShortcutLetter;
-  LOADER_ENTRY      *Entry;
+  EFI_DEVICE_PATH *LoaderDevicePath;
+  CHAR16          *LoaderDevicePathString;
+  CHAR16          *FilePathAsString;
+  CHAR16          *OSIconName;
+  CHAR16           IconFileName[256];
+  CHAR16           ShortcutLetter;
+  LOADER_ENTRY    *Entry;
+  INTN             i;
+
+  // Check parameters are valid
+  if ((LoaderPath == NULL) || (Volume == NULL)) {
+    return NULL;
+  }
+
+  // Get the loader device path
+  LoaderDevicePath = FileDevicePath(Volume->DeviceHandle, LoaderPath);
+  if (LoaderDevicePath == NULL) {
+    return NULL;
+  }
+  LoaderDevicePathString = FileDevicePathToStr(LoaderDevicePath);
+  if (LoaderDevicePathString == NULL) {
+    return NULL;
+  }
 
   // Ignore this loader if it's self path
-  CHAR16 *FilePathAsString = FileDevicePathToStr(SelfLoadedImage->FilePath);
+  FilePathAsString = FileDevicePathToStr(SelfLoadedImage->FilePath);
   if (FilePathAsString) {
-    INTN Comparison = StrCmp(FilePathAsString, LoaderPath);
+    INTN Comparison = StriCmp(FilePathAsString, LoaderDevicePathString);
     FreePool(FilePathAsString);
     if (Comparison == 0) {
+      FreePool(LoaderDevicePathString);
       return NULL;
     }
   }
-  
+
+  // Ignore this loader if it's device path is already present in another loader
+  if (MainMenu.Entries) {
+    for (i = 0; i < MainMenu.EntryCount; ++i) {
+      REFIT_MENU_ENTRY *MainEntry = MainMenu.Entries[i];
+      // Only want loaders
+      if (MainEntry && (MainEntry->Tag == TAG_LOADER)) {
+        LOADER_ENTRY *Loader = (LOADER_ENTRY *)MainEntry;
+        if (StriCmp(Loader->DevicePathString, LoaderDevicePathString) == 0) {
+          FreePool(LoaderDevicePathString);
+          return NULL;
+        }
+      }
+    }
+  }
+
   // prepare the menu entry
   Entry = AllocateZeroPool(sizeof(LOADER_ENTRY));
   if (Volume->BootType == BOOTING_BY_EFI) {
@@ -788,21 +823,15 @@ static LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
     Entry->me.Tag          = TAG_LEGACY;
   }
 
-  Entry->me.Row          = 0;
+  Entry->me.Row = 0;
   Entry->Volume = Volume;
 
-  Entry->LoaderPath      = EfiStrDuplicate(LoaderPath);
-  Entry->VolName         = Volume->VolName;
-  Entry->DevicePath      = FileDevicePath(Volume->DeviceHandle, Entry->LoaderPath);
-  Entry->Flags           = 0;
-  if (gSettings.WithKexts) {
-     Entry->Flags = OSFLAG_ENABLE(Entry->Flags, OSFLAG_WITHKEXTS);
-  }
-  if (gSettings.NoCaches) {
-     Entry->Flags = OSFLAG_ENABLE(Entry->Flags, OSFLAG_NOCACHES);
-  }
-  Entry->LoadOptions     = PoolPrint(L"%a", LoaderOptions);
-//  Entry->LoadOptions     = InputItems[0].SValue;
+  Entry->LoaderPath       = EfiStrDuplicate(LoaderPath);
+  Entry->VolName          = Volume->VolName;
+  Entry->DevicePath       = LoaderDevicePath;
+  Entry->DevicePathString = LoaderDevicePathString;
+  Entry->Flags            = 0;
+  Entry->LoadOptions      = EfiStrDuplicate(LoaderOptions);
 
   // locate a custom icon for the loader
   StrCpy(IconFileName, Volume->OSIconName);
@@ -895,9 +924,11 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
   REFIT_MENU_SCREEN *SubScreen;
   UINT64            VolumeSize;
   EFI_GUID          *Guid = NULL;
+  CHAR16            *LoaderOptions = PoolPrint(L"%a", gSettings.BootArgs);
 
-  Entry = CreateLoaderEntry(LoaderPath, gSettings.BootArgs, LoaderTitle, Volume, OSType);
+  Entry = CreateLoaderEntry(LoaderPath, LoaderOptions, LoaderTitle, Volume, OSType);
   if (Entry == NULL) {
+    FreePool(LoaderOptions);
     return NULL;
   }
 
@@ -931,7 +962,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
   SubEntry->VolName         = Entry->VolName;
   SubEntry->DevicePath      = Entry->DevicePath;
   SubEntry->Flags           = Entry->Flags;
-  SubEntry->LoadOptions     = PoolPrint(L"%a", gSettings.BootArgs);
+  SubEntry->LoadOptions     = LoaderOptions;
   SubEntry->LoaderType      = Entry->LoaderType;
   SubEntry->me.AtClick      = ActionEnter;
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
