@@ -706,7 +706,7 @@ typedef struct {
   VBIOS_PATCH_BYTES   *PatchVBiosBytes;
   UINTN   PatchVBiosBytesCount;
 #if defined(MDE_CPU_IA32)
-  UINT32  align1;
+  //UINT32  align1;
 #endif
   BOOLEAN InjectEDID;
   UINT8   *CustomEDID;
@@ -821,6 +821,11 @@ typedef struct {
   UINT32 KeepSsdtNum;
   CHAR8  **KeepTableId;
   BOOLEAN DebugDSDT;
+
+  // Custom entries
+  BOOLEAN  DisableEntryScan;
+  UINTN    CustomEntryCount;
+  VOID    *CustomEntries;
 
 } SETTINGS_DATA;
 
