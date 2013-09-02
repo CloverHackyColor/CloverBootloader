@@ -1757,6 +1757,13 @@ static VOID StartLegacy(IN LEGACY_ENTRY *Entry)
 //    UINTN               ErrorInStep = 0;
 //    EFI_DEVICE_PATH     *DiscoveredPathList[MAX_DISCOVERED_PATHS];
 
+    // Unload EmuVariable before booting legacy.
+    // This is not needed in most cases, but it seems to interfere with legacy OS
+    // booted on some UEFI bioses, such as Phoenix UEFI 2.0
+    if (gEmuVariableControl != NULL) {
+      gEmuVariableControl->UninstallEmulation(gEmuVariableControl);
+    }  
+
     SetStartupDiskVolume(Entry->Volume, NULL);
   
     egClearScreen(&DarkBackgroundPixel);
@@ -1785,6 +1792,8 @@ static VOID StartLegacy(IN LEGACY_ENTRY *Entry)
         case BOOTING_BY_PBR:
           if (StrCmp(gSettings.LegacyBoot, L"LegacyBiosDefault") == 0) {
             Status = bootLegacyBiosDefault(Entry->Volume);
+          } else if (StrCmp(gSettings.LegacyBoot, L"LegacyBiosCustom") == 0) {
+            Status = bootLegacyBiosCustom(gSettings.LegacyBiosCustomEntry);
           } else if (StrCmp(gSettings.LegacyBoot, L"PBRtest") == 0) {
             Status = bootPBRtest(Entry->Volume);
           } else {

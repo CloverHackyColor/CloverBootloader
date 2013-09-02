@@ -367,6 +367,13 @@ EFI_STATUS egSaveFile(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CHAR16 *FileName,
             return Status;
     }
     
+    // Delete existing file if it exists
+    Status = BaseDir->Open(BaseDir, &FileHandle, FileName,
+                           EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE, 0);
+    if (!EFI_ERROR(Status))
+        FileHandle->Delete(FileHandle);
+
+    // Write new file
     Status = BaseDir->Open(BaseDir, &FileHandle, FileName,
                            EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE | EFI_FILE_MODE_CREATE, 0);
     if (EFI_ERROR(Status))

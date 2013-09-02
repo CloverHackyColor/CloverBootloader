@@ -12,6 +12,7 @@ Copyright (c) 2006 JLA
 */
 #include "Platform.h"
 #include "LegacyBiosThunk.h"
+#include <Protocol/Bds.h>
 
 #ifndef DEBUG_ALL
 #define DEBUG_LBOOT 1
@@ -106,6 +107,11 @@ EFI_BLOCK_IO* hd82 = NULL;
 EFI_BLOCK_IO* hd80 = NULL;
 EFI_BLOCK_IO* pCDROMBlockIO = NULL;
 EFI_HANDLE hCDROM = NULL;
+
+extern EFI_GUID gEfiBdsArchProtocolGuid;
+UINT16 BootNext;
+EFI_GET_VARIABLE GetVariableOrig;
+EFI_SET_VARIABLE SetVariableOrig;
 
 Address addrRealFromSegOfs(UINT16 segment, UINT16 offset) {
   Address address;
@@ -1064,4 +1070,226 @@ VOID DumpBiosMemoryMap()
     BiosMap += 24;
   }
   
+}
+
+/**
+ * Disconnect specified device
+ */
+static EFI_STATUS
+DisconnectDevice(EFI_GUID Guid)
+{
+	EFI_STATUS    Status;
+	UINTN         HandleCount = 0;
+	UINTN         Index;
+	EFI_HANDLE    *Handles = NULL;
+
+	VOID *Protocol = NULL;
+	Status = gBS->LocateHandleBuffer(ByProtocol, &Guid, NULL, &HandleCount, &Handles);
+	if (!EFI_ERROR(Status)) {
+		for (Index = 0; Index < HandleCount; Index++) {
+			Status = gBS->HandleProtocol(Handles[Index], &Guid, &Protocol);
+			if (EFI_ERROR(Status)) {
+				continue;
+			}
+			// disconnect device
+			Status = gBS->DisconnectController(Handles[Index], NULL, NULL);
+		}
+		FreePool(Handles);
+	}
+	return Status;
+}
+
+/**
+ * GetVariable replacement function for LegacyBiosCustom
+ *
+ * When queried for any var other than BootNext, regular GetVariable will be used.
+ * When queried for BootNext, returned value will be according to BootNext global var
+ */
+EFI_STATUS EFIAPI GetVariableFake(IN CHAR16 *VariableName, IN EFI_GUID *VendorGuid, OUT UINT32 *Attributes, IN OUT UINTN *DataSize, OUT VOID *Data)
+{
+  if (!StrCmp(VariableName,L"BootNext"))
+  {
+    if (*DataSize<2) {
+      *DataSize = 2;
+      return EFI_BUFFER_TOO_SMALL;
+    } else {
+      ((UINT8 *)Data)[0] = BootNext;
+      ((UINT8 *)Data)[1] = 0;
+      return EFI_SUCCESS;
+    }
+  }
+  return GetVariableOrig(VariableName, VendorGuid, Attributes, DataSize, Data);
+}
+
+/**
+ * SetVariable replacement function for LegacyBiosCustom
+ *
+ * When setting any var other than BootNext, regular SetVariable is used.
+ * When an attempt to set BootNext is made, both overrides are removed (GetVariableFake &
+ * SetVariableFake), so after that call original BIOS functions will be utilized.
+ *
+ * Removing overrides is done there, as BdsEntry first reads BootNext, and then always
+ * writes BootNext, before actually booting.
+ */
+EFI_STATUS EFIAPI SetVariableFake(IN CHAR16 *VariableName, IN EFI_GUID *VendorGuid, IN UINT32 Attributes, IN UINTN DataSize, IN VOID *Data)
+{
+  if (!StrCmp(VariableName,L"BootNext"))
+  {
+    gRT->GetVariable=GetVariableOrig;
+    gRT->SetVariable=SetVariableOrig;
+    return EFI_SUCCESS;
+  }
+  return SetVariableOrig(VariableName, VendorGuid, Attributes, DataSize, Data);
+}
+
+/** 
+ * This legacy booting method can be useful in two cases:
+ * 1. For UEFI bioses that have CSM, but LegacyBiosDefault does not work
+ * 2. For UEFI bioses where we want to boot a different entry than the default one
+ *
+ * Details for case 1:
+ * Some UEFI bioses (e.g. Phoenix UEFI v2.0) will not boot when directly calling LegacyBios->LegacyBoot().
+ * This happens as these bioses apparently do some initialization work before calling LegacyBoot().
+ * For these cases, we can try to return the bios to BDS stage, and allow it to perform
+ * needed operations before starting LegacyBoot().
+ *
+ * Details for case 2:
+ * Using this method, we can specify which entry we want to boot, via LegacyBiosCustomEntry.
+ * For Example with CustomEntry == 0x000A, we try to boot NvRam boot option "Boot000A".
+ * When CustomEntry == 0xFFFF, the first Legacy HDD entry from "BootOrder" will be used.
+ *
+ * Note: Currently, this method is known to work on Phoenix UEFI v2.0, and not to work on AMI Aptio.
+ *       Some further investigation is needed.
+ */
+EFI_STATUS bootLegacyBiosCustom(UINT16 CustomEntry)
+{
+	EFI_STATUS          Status;
+	UINT16              *BootOrder;
+	UINTN               BootOrderLen;
+	UINTN               Index;
+	BO_BOOT_OPTION      BootOption;
+	BBS_BBS_DEVICE_PATH *BdsOptionBbsDP;
+	EFI_BDS_ARCH_PROTOCOL  *BdsProtocol;
+
+	DBG("LegacyBiosCustom starting with CustomEntry=");
+	if (CustomEntry==0xFFFF) {
+		DBG("None (Boot first legacy HDD)\n");
+	} else {
+		DBG("0x%04X\n",CustomEntry);
+	}
+
+	// Locate BDS protocol
+	Status = gBS->LocateProtocol (&gEfiBdsArchProtocolGuid, NULL, (VOID**)&BdsProtocol);
+	if (EFI_ERROR(Status)) {
+		DBG("BdsProtocol not found!\n");
+		return EFI_UNSUPPORTED;
+	}
+
+	// Get BootOrder from NvRam. We will scan only entries listed in BootOrder.
+	Status = GetBootOrder (&BootOrder, &BootOrderLen);
+	if (EFI_ERROR(Status)) {
+		DBG("BootOrder not found!\n");
+		return EFI_UNSUPPORTED;
+	}
+
+	// Scan BootOrder for the requested entry, or for an HDD entry
+	BootOption.Variable = NULL;
+	BootNext = 0xFFFF;
+	for (Index = 0; Index < BootOrderLen; Index++) {
+		// Clear variables
+		if (BootOption.Variable != NULL) {
+			FreePool (BootOption.Variable);
+			BootOption.Variable = NULL;
+		}
+		BdsOptionBbsDP = NULL;
+
+		// Get BootXXXX option from Nvram, and check it is valid
+		Status = GetBootOption (BootOrder[Index], &BootOption);
+		if (EFI_ERROR(Status)) {
+			DBG("Boot%04X: ERROR: %r\n", BootOrder[Index], Status);
+			continue;
+		}
+
+		// Log all entries
+		DBG("Boot%04X: Type=0x%02X, SubType=0x%02X, ", BootOrder[Index], BootOption.FilePathList->Type,BootOption.FilePathList->SubType);
+		if (BootOption.FilePathList->Type == BBS_DEVICE_PATH) {
+		        // Additional info for BBS entries
+			BdsOptionBbsDP = (BBS_BBS_DEVICE_PATH *)(BootOption.FilePathList);
+	        	DBG("BbsType=0x%02X, ",BdsOptionBbsDP->DeviceType);
+		}
+		DBG("Desc=%s, DP=%s\n", BootOption.Description, DevicePathToStr(BootOption.FilePathList));
+
+		// Check that this is a legacy device
+		if ((BootOption.FilePathList->Type != BBS_DEVICE_PATH) && (BootOption.FilePathList->Type != MESSAGING_DEVICE_PATH)) {
+			// This is not a legacy device
+			continue;
+		}
+
+		// If this is the specified entry, no further checks needed, so use it
+		if (BootOrder[Index]==CustomEntry) {
+			BootNext = BootOrder[Index];
+			continue;
+		}
+
+		// if device to boot from was already set, no further action needed (use specified entry or first HDD found)
+		if (BootNext != 0xFFFF) {
+			continue;
+        	}
+
+		// This is not the specified entry, so check that it is a hard drive
+	
+		// Some UEFI properly report BBS_DEVICE_PATH for legacy entries
+		if ((BootOption.FilePathList->Type == BBS_DEVICE_PATH) && (BdsOptionBbsDP!=NULL) && (BdsOptionBbsDP->DeviceType != BBS_TYPE_HARDDRIVE)) {
+			continue;
+		}
+		// Other UEFI report MESSAGING_DEVICE_PATH, and Description starts with "H" (HDD, Hard Disk, Hard Drive), or with "ATA " (ATA HDD, ATA SSD)
+		if ((BootOption.FilePathList->Type == MESSAGING_DEVICE_PATH) && (BootOption.Description[0] != 'H') && (StrnCmp(BootOption.Description,L"ATA ",4) != 0)) {
+			continue;
+		}
+
+		// This is a legacy hard drive, so use it
+		BootNext = BootOrder[Index];
+	}
+
+	// Free BootOption variable
+	if (BootOption.Variable != NULL) {
+		FreePool (BootOption.Variable);
+		BootOption.Variable = NULL;
+	}
+
+	if (BootNext == 0xFFFF) {
+		// Could not find a legacy device
+		return EFI_UNSUPPORTED;
+	}
+
+	// For booting the legacy OS, we need to pass the BootNext variable to Bios.
+	// We don't want to actually set BootNext actually in NvRam, as if something fails, it can persist after rebooting.
+
+	// Instead, we will override GetVariable and SetVariable.
+	// On Read of BootNext - our overrides will return the value we want.
+	// On Write of BootNext - our overrides will uninstall themselves (Bios tries to clear BootNext after reading from it).
+
+	GetVariableOrig = gRT->GetVariable;
+	gRT->GetVariable = GetVariableFake;
+	SetVariableOrig = gRT->SetVariable;
+	gRT->SetVariable = SetVariableFake;
+
+	// BDS Entry connects TextOut/TextIn devices, so disconnect them first 
+	DisconnectDevice(gEfiSimpleTextOutProtocolGuid);
+	DisconnectDevice(gEfiSimpleTextInProtocolGuid);
+
+	DBG("Attempting to start Boot%04X...\n", BootNext);
+
+	// Save log - for now we save before entering BDS also, for debugging purposes.
+	// TODO: move this save after calling BdsProtocol->Entry, so it happens only on failure
+	Status = SaveBooterLog(SelfRootDir, LEGBOOT_LOG);
+	if (EFI_ERROR(Status)) {
+		DBG("can't save legacy-boot.log\n");
+		Status = SaveBooterLog(NULL, LEGBOOT_LOG);
+	}
+
+	// Attempt to put bios back into BDS phase 
+	BdsProtocol->Entry(BdsProtocol);
+
+	return EFI_SUCCESS;
 }

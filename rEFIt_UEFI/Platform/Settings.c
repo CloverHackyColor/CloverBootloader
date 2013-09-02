@@ -1126,6 +1126,19 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       } else {
         UnicodeSPrint(gSettings.LegacyBoot, 32, L"PBR");
       }
+
+      //Custom Entry for LegacyBiosCustom
+      prop = GetProperty(dictPointer, "LegacyBiosCustomEntry");
+      if(prop) {
+        if (prop->type == kTagTypeInteger) {
+          gSettings.LegacyBiosCustomEntry = (UINT16)(UINTN)prop->string;
+        } else if (prop->type == kTagTypeString){
+          AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
+          gSettings.LegacyBiosCustomEntry = (UINT16)StrHexToUint64((CHAR16*)&UStr[0]);
+        }
+      } else {
+        gSettings.LegacyBiosCustomEntry = 0xFFFF;
+      }
         
       //BacklightLevel
       prop = GetProperty(dictPointer, "BacklightLevel");
