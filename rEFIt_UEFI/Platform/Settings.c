@@ -428,9 +428,7 @@ static BOOLEAN FillinCustomLegacy(IN OUT CUSTOM_LEGACY_ENTRY *Entry, TagPtr dict
   }
   prop = GetProperty(dictPointer, "Type");
   if (prop && (prop->type == kTagTypeString)) {
-    if (AsciiStriCmp(prop->string, "OSX") == 0) {
-      Entry->Type = OSTYPE_OSX;
-    } else if (AsciiStriCmp(prop->string, "Windows") == 0) {
+    if (AsciiStriCmp(prop->string, "Windows") == 0) {
       Entry->Type = OSTYPE_WIN;
     } else if (AsciiStriCmp(prop->string, "Linux") == 0) {
       Entry->Type = OSTYPE_LIN;
@@ -465,13 +463,6 @@ static BOOLEAN FillinCustomTool(IN OUT CUSTOM_TOOL_ENTRY *Entry, TagPtr dictPoin
     } else {
       Entry->Options = PoolPrint(L"%a", prop->string);
     }
-  }
-  prop = GetProperty(dictPointer, "Title");
-  if (prop && (prop->type == kTagTypeString)) {
-    if (Entry->Title) {
-      FreePool(Entry->Title);
-    }
-    Entry->Title = PoolPrint(L"%a", prop->string);
   }
   prop = GetProperty(dictPointer, "Title");
   if (prop && (prop->type == kTagTypeString)) {
@@ -714,120 +705,6 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir)
         }
       }
     }
-  }
-  dictPointer = GetProperty(dict, "Graphics");
-  if (dictPointer) {
-    
-    prop = GetProperty(dictPointer, "PatchVBios");
-    gSettings.PatchVBios = FALSE;
-    if(prop) {
-      if ((prop->type == kTagTypeTrue) ||
-          (prop->string[0] == 'y') || (prop->string[0] == 'Y'))
-        gSettings.PatchVBios = TRUE;
-    }
-    
-    gSettings.PatchVBiosBytesCount = 0;
-    dict2 = GetProperty(dictPointer,"PatchVBiosBytes");
-    if (dict2) {
-      UINTN Count = GetTagCount(dict2);
-      if (Count > 0) {
-        UINTN     Index = 0;
-        VBIOS_PATCH_BYTES *VBiosPatch;
-        UINTN     FindSize = 0;
-        UINTN     ReplaceSize = 0;
-        BOOLEAN   Valid;
-      
-        // alloc space for up to 16 entries
-        gSettings.PatchVBiosBytes = AllocateZeroPool(Count * sizeof(VBIOS_PATCH_BYTES));
-      
-        // get all entries
-        Index = 0;
-        for (Index = 0; Index < Count; Index++) {
-          // Get the next entry
-          if (EFI_ERROR(GetElement(dict2, Index, &prop))) {
-             continue;
-          }
-          if (prop == NULL) {
-            break;
-          }
-          Valid = TRUE;
-          // read entry
-          VBiosPatch = &gSettings.PatchVBiosBytes[gSettings.PatchVBiosBytesCount];
-          VBiosPatch->Find = GetDataSetting(prop, "Find", &FindSize);
-          VBiosPatch->Replace = GetDataSetting(prop, "Replace", &ReplaceSize);
-          if (VBiosPatch->Find == NULL || FindSize == 0) {
-            Valid = FALSE;
-            DBG("PatchVBiosBytes[%d]: missing Find data\n", Index);
-          }
-          if (VBiosPatch->Replace == NULL || ReplaceSize == 0) {
-            Valid = FALSE;
-            DBG("PatchVBiosBytes[%d]: missing Replace data\n", Index);
-          }
-          if (FindSize != ReplaceSize) {
-            Valid = FALSE;
-            DBG("PatchVBiosBytes[%d]: Find and Replace data are not the same size\n", Index);
-          }
-          if (Valid) {
-            VBiosPatch->NumberOfBytes = FindSize;
-            // go to next entry
-            ++gSettings.PatchVBiosBytesCount;
-          } else {
-            // error - release mem
-            if (VBiosPatch->Find != NULL) {
-              FreePool(VBiosPatch->Find);
-              VBiosPatch->Find = NULL;
-            }
-            if (VBiosPatch->Replace != NULL) {
-              FreePool(VBiosPatch->Replace);
-              VBiosPatch->Replace = NULL;
-            }
-          }
-        }
-        if (gSettings.PatchVBiosBytesCount == 0) {
-          FreePool(gSettings.PatchVBiosBytes);
-          gSettings.PatchVBiosBytes = NULL;
-        }
-      }
-    }
-    
-    //InjectEDID
-    prop = GetProperty(dictPointer, "InjectEDID");
-    gSettings.InjectEDID = FALSE;
-    if(prop) {
-      if ((prop->type == kTagTypeTrue) ||
-          (prop->string[0] == 'y') || (prop->string[0] == 'Y'))
-        gSettings.InjectEDID = TRUE;
-    }
-    prop = GetProperty(dictPointer, "CustomEDID");
-    if(prop) {
-      UINTN j = 128;
-      gSettings.CustomEDID = GetDataSetting(dictPointer, "CustomEDID", &j);
-      if (j != 128) {
-        DBG("CustomEDID has wrong length=%d\n", j);
-      } else {
-        DBG("CustomEDID ok\n");
-        InitializeEdidOverride();
-      }
-    }
-    
-  }
-  dictPointer = GetProperty(dict,"DisableDrivers");
-  if(dictPointer) {
-    INTN i, Count = GetTagCount(dictPointer);
-    if (Count > 0) {
-      gSettings.BlackListCount = 0;
-      gSettings.BlackList = AllocateZeroPool(Count * sizeof(CHAR16 *));
-      for (i = 0; i < Count; ++i) {
-        if (!EFI_ERROR(GetElement(dictPointer, i, &prop)) &&
-            prop && (prop->type == kTagTypeString)) {
-          gSettings.BlackList[gSettings.BlackListCount++] = PoolPrint(L"%a", prop->string);
-        }
-      }
-    }
-  }
-
-  dictPointer = GetProperty(dict, "Entries");
-  if (dictPointer) {
     // hide by name/uuid
     prop = GetProperty(dictPointer, "Hide");
     if (prop) {
@@ -990,6 +867,116 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir)
               }
             }
           }
+        }
+      }
+    }
+  }
+  dictPointer = GetProperty(dict, "Graphics");
+  if (dictPointer) {
+    
+    prop = GetProperty(dictPointer, "PatchVBios");
+    gSettings.PatchVBios = FALSE;
+    if(prop) {
+      if ((prop->type == kTagTypeTrue) ||
+          (prop->string[0] == 'y') || (prop->string[0] == 'Y'))
+        gSettings.PatchVBios = TRUE;
+    }
+    
+    gSettings.PatchVBiosBytesCount = 0;
+    dict2 = GetProperty(dictPointer,"PatchVBiosBytes");
+    if (dict2) {
+      UINTN Count = GetTagCount(dict2);
+      if (Count > 0) {
+        UINTN     Index = 0;
+        VBIOS_PATCH_BYTES *VBiosPatch;
+        UINTN     FindSize = 0;
+        UINTN     ReplaceSize = 0;
+        BOOLEAN   Valid;
+      
+        // alloc space for up to 16 entries
+        gSettings.PatchVBiosBytes = AllocateZeroPool(Count * sizeof(VBIOS_PATCH_BYTES));
+      
+        // get all entries
+        Index = 0;
+        for (Index = 0; Index < Count; Index++) {
+          // Get the next entry
+          if (EFI_ERROR(GetElement(dict2, Index, &prop))) {
+             continue;
+          }
+          if (prop == NULL) {
+            break;
+          }
+          Valid = TRUE;
+          // read entry
+          VBiosPatch = &gSettings.PatchVBiosBytes[gSettings.PatchVBiosBytesCount];
+          VBiosPatch->Find = GetDataSetting(prop, "Find", &FindSize);
+          VBiosPatch->Replace = GetDataSetting(prop, "Replace", &ReplaceSize);
+          if (VBiosPatch->Find == NULL || FindSize == 0) {
+            Valid = FALSE;
+            DBG("PatchVBiosBytes[%d]: missing Find data\n", Index);
+          }
+          if (VBiosPatch->Replace == NULL || ReplaceSize == 0) {
+            Valid = FALSE;
+            DBG("PatchVBiosBytes[%d]: missing Replace data\n", Index);
+          }
+          if (FindSize != ReplaceSize) {
+            Valid = FALSE;
+            DBG("PatchVBiosBytes[%d]: Find and Replace data are not the same size\n", Index);
+          }
+          if (Valid) {
+            VBiosPatch->NumberOfBytes = FindSize;
+            // go to next entry
+            ++gSettings.PatchVBiosBytesCount;
+          } else {
+            // error - release mem
+            if (VBiosPatch->Find != NULL) {
+              FreePool(VBiosPatch->Find);
+              VBiosPatch->Find = NULL;
+            }
+            if (VBiosPatch->Replace != NULL) {
+              FreePool(VBiosPatch->Replace);
+              VBiosPatch->Replace = NULL;
+            }
+          }
+        }
+        if (gSettings.PatchVBiosBytesCount == 0) {
+          FreePool(gSettings.PatchVBiosBytes);
+          gSettings.PatchVBiosBytes = NULL;
+        }
+      }
+    }
+    
+    //InjectEDID
+    prop = GetProperty(dictPointer, "InjectEDID");
+    gSettings.InjectEDID = FALSE;
+    if(prop) {
+      if ((prop->type == kTagTypeTrue) ||
+          (prop->string[0] == 'y') || (prop->string[0] == 'Y'))
+        gSettings.InjectEDID = TRUE;
+    }
+    prop = GetProperty(dictPointer, "CustomEDID");
+    if(prop) {
+      UINTN j = 128;
+      gSettings.CustomEDID = GetDataSetting(dictPointer, "CustomEDID", &j);
+      if (j != 128) {
+        DBG("CustomEDID has wrong length=%d\n", j);
+      } else {
+        DBG("CustomEDID ok\n");
+        InitializeEdidOverride();
+      }
+    }
+    
+  }
+  dictPointer = GetProperty(dict,"DisableDrivers");
+  if(dictPointer) {
+    INTN i, Count = GetTagCount(dictPointer);
+    if (Count > 0) {
+      gSettings.BlackListCount = 0;
+      gSettings.BlackList = AllocateZeroPool(Count * sizeof(CHAR16 *));
+      for (i = 0; i < Count; ++i) {
+        if (!EFI_ERROR(GetElement(dictPointer, i, &prop)) &&
+            prop && (prop->type == kTagTypeString)) {
+          gSettings.BlackList[gSettings.BlackListCount++] = PoolPrint(L"%a", prop->string);
         }
       }
     }

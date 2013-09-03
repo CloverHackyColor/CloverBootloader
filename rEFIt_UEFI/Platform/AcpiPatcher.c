@@ -2053,6 +2053,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
   if (gSettings.ACPIDropTables) {
     ACPI_DROP_TABLE *DropTable = gSettings.ACPIDropTables;
     while (DropTable) {
+      DBG("Attempting to drop 0x%4X 0x%8X\n", DropTable->Signature, DropTable->TableId);
       xf = ScanXSDT(DropTable->Signature, DropTable->TableId);
       if (xf) {
         DropTableFromXSDT(DropTable->Signature, DropTable->TableId);
