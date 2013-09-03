@@ -1718,7 +1718,7 @@ VOID ScanLoader(VOID)
 #if defined(MDE_CPU_X64)
     StrCpy(FileName, L"\\EFI\\RedHat\\grubx64.efi");
 #else
-    StrCpy(FileName, L"\\EFI\\Gentoo\\grub.efi");
+    StrCpy(FileName, L"\\EFI\\RedHat\\grub.efi");
 #endif
     if (FileExists(Volume->RootDir, FileName)) {
       Volume->OSIconName = L"redhat,linux";
@@ -1866,8 +1866,41 @@ static UINT8 GetOSTypeFromPath(IN CHAR16 *Path, IN UINT8 OSType)
    }
    if (StriCmp(Path, MACOSX_LOADER_PATH) == 0) {
      return OSType;
-   } else if (StriCmp(Path, L"\\EFI\\Microsoft\\Boot\\bootmgfw.efi") == 0) {
+   } else if ((StriCmp(Path, L"\\OS X Install Data\\boot.efi") == 0) ||
+              (StriCmp(Path, L"\\Mac OS X Install Data\\boot.efi") == 0) ||
+              (StriCmp(Path, L"\\.IABootFiles\\boot.efi") == 0)) {
+     return OSTYPE_OSX_INSTALLER;
+   } else if ((StriCmp(Path, L"\\EFI\\Microsoft\\Boot\\bootmgfw.efi") == 0) ||
+              (StriCmp(Path, L"\\bootmgr.efi") == 0) ||
+              (StriCmp(Path, L"\\EFI\\MICROSOFT\\BOOT\\cdboot.efi") == 0)) {
      return OSTYPE_WINEFI;
+   } else if ((StriCmp(Path, L"\\EFI\\SuSe\\elilo.efi") == 0) ||
+#if defined(MDE_CPU_X64)
+              (StriCmp(Path, L"\\EFI\\grub\\grubx64.efi") == 0) ||
+              (StriCmp(Path, L"\\EFI\\Gentoo\\grubx64.efi") == 0) ||
+              (StriCmp(Path, L"\\EFI\\Gentoo\\kernelx64.efi") == 0) ||
+              (StriCmp(Path, L"\\EFI\\RedHat\\grubx64.efi") == 0) ||
+              (StriCmp(Path, L"\\EFI\\ubuntu\\grubx64.efi") == 0) ||
+              (StriCmp(Path, L"\\EFI\\kubuntu\\grubx64.efi") == 0) ||
+              (StriCmp(Path, L"\\EFI\\LinuxMint\\grubx64.efi") == 0) ||
+              (StriCmp(Path, L"\\EFI\\Fedora\\grubx64.efi") == 0) ||
+              (StriCmp(Path, L"\\EFI\\opensuse\\grubx64.efi") == 0) ||
+              (StriCmp(Path, L"\\EFI\\arch\\grubx64.efi") == 0) ||
+              (StriCmp(Path, L"\\EFI\\arch_grub\\grubx64.efi") == 0)) {
+#else
+              (StriCmp(Path, L"\\EFI\\grub\\grub.efi") == 0) ||
+              (StriCmp(Path, L"\\EFI\\Gentoo\\grub.efi") == 0) ||
+              (StriCmp(Path, L"\\EFI\\Gentoo\\kernel.efi") == 0) ||
+              (StriCmp(Path, L"\\EFI\\RedHat\\grub.efi") == 0) ||
+              (StriCmp(Path, L"\\EFI\\ubuntu\\grub.efi") == 0) ||
+              (StriCmp(Path, L"\\EFI\\kubuntu\\grub.efi") == 0) ||
+              (StriCmp(Path, L"\\EFI\\LinuxMint\\grub.efi") == 0) ||
+              (StriCmp(Path, L"\\EFI\\Fedora\\grub.efi") == 0) ||
+              (StriCmp(Path, L"\\EFI\\opensuse\\grub.efi") == 0) ||
+              (StriCmp(Path, L"\\EFI\\arch\\grub.efi") == 0) ||
+              (StriCmp(Path, L"\\EFI\\arch_grub\\grub.efi") == 0)) {
+#endif
+     return OSTYPE_LIN;
    }
    return OSTYPE_VAR;
 }
