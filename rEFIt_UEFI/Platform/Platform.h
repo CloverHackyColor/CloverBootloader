@@ -598,6 +598,14 @@ struct CUSTOM_LOADER_ENTRY {
   UINT8                Type;
 };
 
+typedef struct ACPI_DROP_TABLE ACPI_DROP_TABLE;
+struct ACPI_DROP_TABLE
+{
+   ACPI_DROP_TABLE *Next;
+   UINT32           Signature;
+   UINT64           TableId;
+};
+
 typedef struct {
   
 	// SMBIOS TYPE0
@@ -828,10 +836,7 @@ typedef struct {
   BOOLEAN DebugDSDT;
 
   // Table dropping
-  UINTN   DropTableSignatureCount;
-  UINTN   DropTableNameCount;
-  CHAR8 **DropTableSignatures;
-  CHAR8 **DropTableNames;
+  ACPI_DROP_TABLE *ACPIDropTables;
 
   // Custom entries
   BOOLEAN              DisableEntryScan;

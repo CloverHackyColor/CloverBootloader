@@ -1606,56 +1606,61 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
     
     dictPointer = GetProperty(dict,"ACPI");
     if (dictPointer) {
-      dict2 = GetProperty(dictPointer, "DropTables");
-      if (dict2) {
-        prop = GetProperty(dict2, "BySignature");
-        if (prop) {
-          INTN i, Count = GetTagCount(prop);
-          if (Count > 0) {
-            gSettings.DropTableSignatureCount = Count;
-            gSettings.DropTableSignatures = AllocateZeroPool(sizeof(CHAR8 *) * Count);
-            if (gSettings.DropTableSignatures) {
-              for (i = 0; i < Count; ++i) {
-                if (EFI_ERROR(GetElement(prop, i, &prop2))) {
-                  continue;
+      prop = GetProperty(dictPointer, "DropTables");
+      if (prop) {
+        INTN i, Count = GetTagCount(prop);
+        if (Count > 0) {
+          for (i = 0; i < Count; ++i) {
+            UINT32 Signature = 0;
+            UINT64 TableId = 0;
+            if (EFI_ERROR(GetElement(prop, i, &dict2))) {
+              continue;
+            }
+            if (dict2 == NULL) {
+              break;
+            }
+            // Get the table signatures to drop
+            prop = GetProperty(dict2, "Signature");
+            if (prop && (prop->type == kTagTypeString) && prop->string) {
+              CHAR8  s1 = 0, s2 = 0, s3 = 0, s4 = 0;
+              CHAR8 *str = prop->string;
+              if (str) {
+                if (*str) {
+                  s1 = *str++;
                 }
-                if (prop2 == NULL) {
-                  break;
+                if (*str) {
+                  s2 = *str++;
                 }
-                // Add the table signatures to drop
-                if (prop2->type != kTagTypeString) {
-                  continue;
+                if (*str) {
+                  s3 = *str++;
                 }
-                gSettings.DropTableSignatures[i] = AllocateZeroPool(sizeof(CHAR8) * 5);
-                if (gSettings.DropTableSignatures[i]) {
-                   AsciiStrnCpy(gSettings.DropTableSignatures[i], prop2->string, 5);
+                if (*str) {
+                  s4 = *str++;
                 }
               }
+              Signature = SIGNATURE_32(s1, s2, s3, s4);
             }
-          }
-        }
-        prop = GetProperty(dict2, "ByTableID");
-        if (prop) {
-          INTN i, Count = GetTagCount(prop);
-          if (Count > 0) {
-            gSettings.DropTableNameCount = Count;
-            gSettings.DropTableNames = AllocateZeroPool(sizeof(CHAR8 *) * Count);
-            if (gSettings.DropTableNames) {
-              for (i = 0; i < Count; ++i) {
-                if (EFI_ERROR(GetElement(prop, i, &prop2))) {
-                  continue;
+            // Get the table ids to drop
+            prop = GetProperty(dict2, "TableId");
+            if (prop) {
+              UINTN  idi = 0;
+              CHAR8  id[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+              CHAR8 *str = prop->string;
+              if (str) {
+                while (*str && (idi < 8)) {
+                  id[idi++] = *str++;
                 }
-                if (prop2 == NULL) {
-                  break;
-                }
-                // Add the table names to drop
-                if (prop2->type != kTagTypeString) {
-                  continue;
-                }
-                gSettings.DropTableNames[i] = AllocateZeroPool(sizeof(CHAR8) * 9);
-                if (gSettings.DropTableNames[i]) {
-                   AsciiStrnCpy(gSettings.DropTableNames[i], prop2->string, 9);
-                }
+              }
+              TableId = *(UINT64 *)id;
+            }
+            // Add the drop table if valid
+            if ((Signature != 0) || (TableId != 0)) {
+              ACPI_DROP_TABLE *DropTable = AllocatePool(sizeof(ACPI_DROP_TABLE));
+              if (DropTable) {
+                DropTable->Signature = Signature;
+                DropTable->TableId = TableId;
+                DropTable->Next = gSettings.ACPIDropTables;
+                gSettings.ACPIDropTables = DropTable;
               }
             }
           }

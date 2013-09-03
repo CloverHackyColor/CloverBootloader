@@ -215,7 +215,7 @@ UINT8 Checksum8(VOID * startPtr, UINT32 len)
 	return Value;
 }
 
-UINT32* ScanRSDT (UINT32 Signature) 
+UINT32* ScanRSDT (UINT32 Signature, UINT64 TableId) 
 {
 	EFI_ACPI_DESCRIPTION_HEADER     *TableEntry;
 	UINTN                           Index;
@@ -225,19 +225,24 @@ UINT32* ScanRSDT (UINT32 Signature)
     return NULL;
   }
 
+  if ((Signature == 0) && (TableId == 0)) {
+    return NULL;
+  }
+
 	EntryCount = (Rsdt->Header.Length - sizeof (EFI_ACPI_DESCRIPTION_HEADER)) / sizeof(UINT32);
 
 	EntryPtr = &Rsdt->Entry;
 	for (Index = 0; Index < EntryCount; Index++, EntryPtr++) {
 		TableEntry = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(*EntryPtr));
-		if (TableEntry->Signature == Signature) {
+		if (((Signature == 0) || (TableEntry->Signature == Signature)) &&
+			((TableId == 0) || (TableEntry->OemTableId == TableId))) {
 			return EntryPtr; //point to TableEntry entry
 		}
 	}
 	return NULL;
 }
 
-UINT64* ScanXSDT (UINT32 Signature)
+UINT64* ScanXSDT (UINT32 Signature, UINT64 TableId)
 {
 	EFI_ACPI_DESCRIPTION_HEADER		*TableEntry;
 	UINTN							Index;
@@ -245,66 +250,24 @@ UINT64* ScanXSDT (UINT32 Signature)
 	CHAR8							*BasePtr;
 	UINT64							Entry64;
 
-	EntryCount = (Xsdt->Header.Length - sizeof (EFI_ACPI_DESCRIPTION_HEADER)) / sizeof(UINT64);
-	BasePtr = (CHAR8*)(&(Xsdt->Entry));
-	for (Index = 0; Index < EntryCount; Index ++, BasePtr+=sizeof(UINT64)) 
-	{
-		CopyMem (&Entry64, (VOID*)BasePtr, sizeof(UINT64)); //value from BasePtr->
-		TableEntry = (EFI_ACPI_DESCRIPTION_HEADER *)((UINTN)(Entry64));
-		if (TableEntry->Signature==Signature) 
-		{
-			return (UINT64 *)BasePtr; //pointer to the TableEntry entry
-		}
-	}
-	return NULL;
-}
-
-UINT32* ScanRSDTId (UINT64 id)
-{
-  EFI_ACPI_DESCRIPTION_HEADER     *TableEntry;
-  UINTN                           Index;
-  UINT32                          EntryCount;
-  UINT32                          *EntryPtr;
-  if (!Rsdt) {
+  if ((Signature == 0) && (TableId == 0)) {
     return NULL;
   }
 
-  EntryCount = (Rsdt->Header.Length - sizeof (EFI_ACPI_DESCRIPTION_HEADER)) / sizeof(UINT32);
-
-  EntryPtr = &Rsdt->Entry;
-  for (Index = 0; Index < EntryCount; Index++, EntryPtr++) {
-    TableEntry = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(*EntryPtr));
-    if (TableEntry->OemTableId==id) 
-    {
-      return EntryPtr; //point to TableEntry entry
-    }
-  }
-  return NULL;
-}
-
-UINT64* ScanXSDTId (UINT64 id)
-{
-	EFI_ACPI_DESCRIPTION_HEADER		*TableEntry;
-	UINTN							Index;
-	UINT32							EntryCount;
-	CHAR8							*BasePtr;
-	UINT64							Entry64;
-
 	EntryCount = (Xsdt->Header.Length - sizeof (EFI_ACPI_DESCRIPTION_HEADER)) / sizeof(UINT64);
 	BasePtr = (CHAR8*)(&(Xsdt->Entry));
-	for (Index = 0; Index < EntryCount; Index ++, BasePtr+=sizeof(UINT64)) 
-	{
+	for (Index = 0; Index < EntryCount; Index ++, BasePtr+=sizeof(UINT64)) {
 		CopyMem (&Entry64, (VOID*)BasePtr, sizeof(UINT64)); //value from BasePtr->
 		TableEntry = (EFI_ACPI_DESCRIPTION_HEADER *)((UINTN)(Entry64));
-		if (TableEntry->OemTableId==id) 
-		{
+		if (((Signature == 0) || (TableEntry->Signature == Signature)) &&
+			((TableId == 0) || (TableEntry->OemTableId == TableId))) {
 			return (UINT64 *)BasePtr; //pointer to the TableEntry entry
 		}
 	}
 	return NULL;
 }
 
-VOID DropTableFromRSDT (UINT32 Signature) 
+VOID DropTableFromRSDT (UINT32 Signature, UINT64 TableId) 
 {
 	EFI_ACPI_DESCRIPTION_HEADER     *TableEntry;
 	UINTN               Index, Index2;
@@ -315,6 +278,9 @@ VOID DropTableFromRSDT (UINT32 Signature)
   BOOLEAN 			DoubleZero = FALSE;
   
   if (!Rsdt) {
+    return;
+  }
+  if ((Signature == 0) && (TableId == 0)) {
     return;
   }
   // Если адрес RSDT < адреса XSDT и хвост RSDT наползает на XSDT, то подрезаем хвост RSDT до начала XSDT
@@ -366,7 +332,7 @@ VOID DropTableFromRSDT (UINT32 Signature)
   DBG("corrected RSDT length=%d\n", Rsdt->Header.Length);
 }
 
-VOID DropTableFromXSDT (UINT32 Signature) 
+VOID DropTableFromXSDT (UINT32 Signature, UINT64 TableId) 
 {
   EFI_STATUS                      Status = EFI_SUCCESS;
 	EFI_ACPI_DESCRIPTION_HEADER     *TableEntry;
@@ -381,6 +347,9 @@ VOID DropTableFromXSDT (UINT32 Signature)
   BOOLEAN                         WillDrop;
   UINT32                          i, SsdtLen;
   
+  if ((Signature == 0) && (TableId == 0)) {
+    return;
+  }
 	EntryCount = (Xsdt->Header.Length - sizeof (EFI_ACPI_DESCRIPTION_HEADER)) / sizeof(UINT64);
   DBG("Drop tables from Xsdt, count=%d\n", EntryCount); 
   if (EntryCount > 50) {
@@ -408,9 +377,10 @@ VOID DropTableFromXSDT (UINT32 Signature)
     CopyMem((CHAR8*)&OTID, (CHAR8*)&TableEntry->OemTableId, 8);
     OTID[8] = 0;
     DBG(" Found table: %a  %a\n", sign, OTID);
-	  if (TableEntry->Signature != Signature) {
+    if (((TableEntry->Signature != Signature) && (Signature != 0)) ||
+        ((TableEntry->OemTableId != TableId) && (TableId != 0))) {
       continue;
-	  }
+    }
     WillDrop = TRUE;
     for (i = 0; i < gSettings.KeepSsdtNum; i++) {
       if (AsciiStrCmp(OTID, gSettings.KeepTableId[i]) == 0) {
@@ -1580,7 +1550,6 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
   UINT8             *SubTable;
   BOOLEAN           DsdtLoaded = FALSE;
   INTN              ApicCPUBase = 0;
-  UINTN             i;
   CHAR16*     AcpiOemPath = PoolPrint(L"%s\\ACPI\\patched", OEMPath);
   PathDsdt = PoolPrint(L"\\%s", gSettings.DsdtName);
 /*	
@@ -1683,7 +1652,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
 	}
 	Rsdt = (RSDT_TABLE*)(UINTN)RsdPointer->RsdtAddress;
   DBG("RSDT 0x%p\n", Rsdt);
-	rf = ScanRSDT(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE_SIGNATURE);
+	rf = ScanRSDT(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE_SIGNATURE, 0);
 	if(rf) {
 		FadtPointer = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE*)(UINTN)(*rf);
     DBG("FADT from RSDT: 0x%p\n", FadtPointer);
@@ -1694,7 +1663,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
   {
     Xsdt = (XSDT_TABLE*)(UINTN)RsdPointer->XsdtAddress;
     DBG("XSDT 0x%p\n", Xsdt);
-    xf = ScanXSDT(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE_SIGNATURE);
+    xf = ScanXSDT(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE_SIGNATURE, 0);
     if(xf) {
       //Slice - change priority. First Xsdt, second Rsdt
       if (*xf) {
@@ -2080,49 +2049,28 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
 		if(rf) { DropTableFromRSDT(BGRT_SIGN); }
   }
   */
-  // Drop tables by signature
-  for (i = 0; i < gSettings.DropTableSignatureCount; ++i) {
-    UINT32  Signature;
-    CHAR8  *SignatureString = gSettings.DropTableSignatures[i];
-    if (SignatureString == NULL) {
-      continue;
-    }
-    Signature = SIGNATURE_32(SignatureString[0], SignatureString[1],
-                             SignatureString[2], SignatureString[3]);
-    xf = ScanXSDT(Signature);
-    if(xf) {
-      DropTableFromXSDT(Signature);
-    }
-    rf = ScanRSDT(Signature);
-    if(rf) {
-      DropTableFromRSDT(Signature);
-    }
-  }
-  
-  // Drop tables by name
-  for (i = 0; i < gSettings.DropTableSignatureCount; ++i) {
-    UINT64  Id;
-    CHAR8  *IdString = gSettings.DropTableNames[i];
-    if (IdString == NULL) {
-      continue;
-    }
-    Id = *(UINT64 *)IdString;
-    xf = ScanXSDTId(Id);
-    if(xf) {
-      DropTableFromXSDTId(Id);
-    }
-    rf = ScanRSDTId(Id);
-    if(rf) {
-      DropTableFromRSDTId(Id);
+  // Drop tables
+  if (gSettings.ACPIDropTables) {
+    ACPI_DROP_TABLE *DropTable = gSettings.ACPIDropTables;
+    while (DropTable) {
+      xf = ScanXSDT(DropTable->Signature, DropTable->TableId);
+      if (xf) {
+        DropTableFromXSDT(DropTable->Signature, DropTable->TableId);
+      }
+      rf = ScanRSDT(DropTable->Signature, DropTable->TableId);
+      if (rf) {
+        DropTableFromRSDT(DropTable->Signature, DropTable->TableId);
+      }
+      DropTable = DropTable->Next;
     }
   }
 
   if (gSettings.DropSSDT) {
-    DropTableFromXSDT(EFI_ACPI_4_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE);
-    DropTableFromRSDT(EFI_ACPI_4_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE);
+    DropTableFromXSDT(EFI_ACPI_4_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE, 0);
+    DropTableFromRSDT(EFI_ACPI_4_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE, 0);
   } else { //do the empty drop to clean xsdt
-    DropTableFromXSDT(XXXX_SIGN);
-    DropTableFromRSDT(XXXX_SIGN);
+    DropTableFromXSDT(XXXX_SIGN, 0);
+    DropTableFromRSDT(XXXX_SIGN, 0);
   }
   
   
@@ -2160,7 +2108,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
   }
   ApicCPUNum = 0;  
   // 2. For absent NMI subtable
-    xf = ScanXSDT(APIC_SIGN);
+    xf = ScanXSDT(APIC_SIGN, 0);
     if (xf) {
       ApicTable = (EFI_ACPI_DESCRIPTION_HEADER*)(UINTN)(*xf);
       ApicLen = ApicTable->Length;
@@ -2195,7 +2143,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
         {
           //save old table and drop it from XSDT
           CopyMem((VOID*)(UINTN)BufferPtr, ApicTable, ApicTable->Length);
-          DropTableFromXSDT(APIC_SIGN);
+          DropTableFromXSDT(APIC_SIGN, 0);
           ApicTable = (EFI_ACPI_DESCRIPTION_HEADER*)(UINTN)BufferPtr;
           ApicTable->Revision = EFI_ACPI_4_0_MULTIPLE_APIC_DESCRIPTION_TABLE_REVISION;
           CopyMem(&ApicTable->OemId, oemID, 6);
@@ -2574,8 +2522,8 @@ EFI_STATUS PatchACPI_OtherOS(CHAR16* OsSubdir, BOOLEAN DropSSDT)
   //
   if (DropSSDT)
   {
-    DropTableFromXSDT(EFI_ACPI_4_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE);
-    DropTableFromRSDT(EFI_ACPI_4_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE);
+    DropTableFromXSDT(EFI_ACPI_4_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE, 0);
+    DropTableFromRSDT(EFI_ACPI_4_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE, 0);
   }
   
   //
