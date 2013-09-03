@@ -1874,10 +1874,10 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
             }
             DBG("Drop table %d", i);
             // Get the table signatures to drop
-            prop = GetProperty(dict2, "Signature");
-            if (prop && (prop->type == kTagTypeString) && prop->string) {
+            prop2 = GetProperty(dict2, "Signature");
+            if (prop2 && (prop2->type == kTagTypeString) && prop2->string) {
               CHAR8  s1 = 0, s2 = 0, s3 = 0, s4 = 0;
-              CHAR8 *str = prop->string;
+              CHAR8 *str = prop2->string;
               DBG(" signature=\"");
               if (str) {
                 if (*str) {
@@ -1901,11 +1901,11 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
               DBG("\" (%4.4X)", Signature);
             }
             // Get the table ids to drop
-            prop = GetProperty(dict2, "TableId");
-            if (prop) {
+            prop2 = GetProperty(dict2, "TableId");
+            if (prop2) {
               UINTN  idi = 0;
               CHAR8  id[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
-              CHAR8 *str = prop->string;
+              CHAR8 *str = prop2->string;
               DBG(" table-id=\"");
               if (str) {
                 while (*str && (idi < 8)) {
