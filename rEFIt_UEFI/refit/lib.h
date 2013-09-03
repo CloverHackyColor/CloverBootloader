@@ -118,15 +118,18 @@ typedef struct {
 #define OSTYPE_MAV              (19)
 #define OSTYPE_HIDE             (100)
 
-#define OSFLAG_ENABLED(flags, flag) ((flags & flag) != 0)
-#define OSFLAG_DISABLED(flags, flag) ((flags & flag) == 0)
-#define OSFLAG_ENABLE(flags, flag) (flags | flag)
-#define OSFLAG_DISABLE(flags, flag) (flags & (~flag))
+#define OSTYPE_IS_OSX(type) ((type == OSTYPE_OSX) || ((type >= OSTYPE_TIGER) && (type <= OSTYPE_MAV)))
+
+#define OSFLAG_ISSET(flags, flag) ((flags & flag) != 0)
+#define OSFLAG_ISUNSET(flags, flag) ((flags & flag) == 0)
+#define OSFLAG_SET(flags, flag) (flags | flag)
+#define OSFLAG_UNSET(flags, flag) (flags & (~flag))
 #define OSFLAG_TOGGLE(flags, flag) (flags ^ flag)
-#define OSFLAG_LEGACY        (1 << 0)
-#define OSFLAG_USEGRAPHICS   (1 << 1)
-#define OSFLAG_WITHKEXTS     (1 << 2)
-#define OSFLAG_NOCACHES      (1 << 3)
+#define OSFLAG_USEGRAPHICS   (1 << 0)
+#define OSFLAG_WITHKEXTS     (1 << 1)
+#define OSFLAG_NOCACHES      (1 << 2)
+#define OSFLAG_HIDDEN        (1 << 6)
+#define OSFLAG_DISABLED      (1 << 7)
 
 #define IS_EXTENDED_PART_TYPE(type) ((type) == 0x05 || (type) == 0x0f || (type) == 0x85)
 
@@ -134,6 +137,7 @@ typedef struct {
   EFI_DEVICE_PATH     *DevicePath;
   EFI_HANDLE          DeviceHandle;
   EFI_FILE            *RootDir;
+  CHAR16              *DevicePathString;
   CHAR16              *VolName;
   UINT8               DiskKind;
   UINT8               OSType;
@@ -592,13 +596,14 @@ EG_IMAGE * ScanVolumeDefaultIcon(REFIT_VOLUME *Volume);
 // menu module
 //
 
-#define MENU_EXIT_ENTER   (1)
-#define MENU_EXIT_ESCAPE  (2)
-#define MENU_EXIT_DETAILS (3)
-#define MENU_EXIT_TIMEOUT (4)
-#define MENU_EXIT_OPTIONS (5)
-#define MENU_EXIT_EJECT   (6)
-#define MENU_EXIT_HELP   (7)
+#define MENU_EXIT_ENTER       (1)
+#define MENU_EXIT_ESCAPE      (2)
+#define MENU_EXIT_DETAILS     (3)
+#define MENU_EXIT_TIMEOUT     (4)
+#define MENU_EXIT_OPTIONS     (5)
+#define MENU_EXIT_EJECT       (6)
+#define MENU_EXIT_HELP        (7)
+#define MENU_EXIT_HIDE_TOGGLE (8)
 
 VOID AddMenuInfoLine(IN REFIT_MENU_SCREEN *Screen, IN CHAR16 *InfoLine);
 VOID AddMenuEntry(IN REFIT_MENU_SCREEN *Screen, IN REFIT_MENU_ENTRY *Entry);

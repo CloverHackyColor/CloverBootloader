@@ -551,7 +551,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
 //  DBG("KillMouse\n");
   KillMouse();
 //    DBG("BeginExternalScreen\n");
-  BeginExternalScreen(OSFLAG_ENABLED(Entry->Flags, OSFLAG_USEGRAPHICS), L"Booting OS");
+  BeginExternalScreen(OSFLAG_ISSET(Entry->Flags, OSFLAG_USEGRAPHICS), L"Booting OS");
   if (Entry->LoaderType == OSTYPE_OSX) {
     // first patchACPI and find PCIROOT and RTC
     // but before ACPI patch we need smbios patch
@@ -763,7 +763,7 @@ static CHAR16 *RemoveLoadOption(IN CHAR16 *LoadOptions, IN CHAR16 *LoadOption)
 
 // */
 
-static LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOptions, IN CHAR16 *LoaderTitle, IN REFIT_VOLUME *Volume, IN UINT8 OSType)
+static LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOptions, IN CHAR16 *LoaderTitle, IN REFIT_VOLUME *Volume, IN EG_IMAGE *Image, IN UINT8 OSType, IN BOOLEAN CustomEntry)
 {
   EFI_DEVICE_PATH *LoaderDevicePath;
   CHAR16          *LoaderDevicePathString;
@@ -815,6 +815,57 @@ static LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
     }
   }
 
+  // If this isn't a custom entry make sure it's not hidden by a custom entry
+  if (!CustomEntry) {
+    CUSTOM_LOADER_ENTRY *Custom = gSettings.CustomEntries;
+    while (Custom) {
+      if (OSFLAG_ISSET(Custom->Flags, OSFLAG_DISABLED) ||
+          OSFLAG_ISSET(Custom->Flags, OSFLAG_HIDDEN) && !gSettings.ShowHiddenEntries) {
+        if (Custom->Volume) {
+          if ((StrStr(Custom->Volume, Volume->DevicePathString) == NULL) &&
+              ((Volume->VolName == NULL) || (StrStr(Custom->Volume, Volume->VolName) == NULL))) {
+            if (Custom->Path) {
+              if (StriCmp(Custom->Path, LoaderPath) == 0) {
+                if (Custom->Type != 0) {
+                  if (((Custom->Type == OSTYPE_OSX) && OSTYPE_IS_OSX(OSType)) ||
+                      (Custom->Type == OSType)) {
+                    return NULL;
+                  }
+                } else {
+                  return NULL;
+                }
+              }
+            } else if (Custom->Type != 0) {
+              if (((Custom->Type == OSTYPE_OSX) && OSTYPE_IS_OSX(OSType)) ||
+                  (Custom->Type == OSType)) {
+                return NULL;
+              }
+            } else {
+              return NULL;
+            }
+          }
+        } else if (Custom->Path) {
+          if (StriCmp(Custom->Path, LoaderPath) == 0) {
+           if (Custom->Type != 0) {
+              if (((Custom->Type == OSTYPE_OSX) && OSTYPE_IS_OSX(OSType)) ||
+                  (Custom->Type == OSType)) {
+                return NULL;
+              }
+            } else {
+              return NULL;
+            }
+          }
+        } else if (Custom->Type != 0) {
+          if (((Custom->Type == OSTYPE_OSX) && OSTYPE_IS_OSX(OSType)) ||
+              (Custom->Type == OSType)) {
+            return NULL;
+          }
+        }
+      }
+      Custom = Custom->Next;
+    }
+  }
+
   // prepare the menu entry
   Entry = AllocateZeroPool(sizeof(LOADER_ENTRY));
   if (Volume->BootType == BOOTING_BY_EFI) {
@@ -857,7 +908,7 @@ static LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
       OSIconName = Volume->OSIconName;
       if (Entry->LoadOptions == NULL || (StrStr(Entry->LoadOptions, L"-v") == NULL && StrStr(Entry->LoadOptions, L"-V") == NULL)) {
         // OSX is not booting verbose, so we can set console to graphics mode
-        Entry->Flags = OSFLAG_ENABLE(Entry->Flags, OSFLAG_USEGRAPHICS);
+        Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_USEGRAPHICS);
       }
       ShortcutLetter = 'M';
       Entry->LoaderType = OSTYPE_OSX;
@@ -894,11 +945,15 @@ static LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
   Entry->me.ShortcutLetter = ShortcutLetter;
 
   // get custom volume icon if present
-  if (GlobalConfig.CustomIcons && FileExists(Volume->RootDir, L"VolumeIcon.icns")){
-    Entry->me.Image = LoadIcns(Volume->RootDir, L"VolumeIcon.icns", 128);
-    DBG("using VolumeIcon.icns image from Volume\n");
+  if (Image) {
+    Entry->me.Image = Image;
   } else {
-    Entry->me.Image = LoadOSIcon(OSIconName, L"unknown", FALSE);
+    if (GlobalConfig.CustomIcons && FileExists(Volume->RootDir, L"VolumeIcon.icns")){
+      Entry->me.Image = LoadIcns(Volume->RootDir, L"VolumeIcon.icns", 128);
+      DBG("using VolumeIcon.icns image from Volume\n");
+    } else {
+      Entry->me.Image = LoadOSIcon(OSIconName, L"unknown", FALSE);
+    }
   }
   // Load DriveImage
   Entry->me.DriveImage = ScanVolumeDefaultIcon(Volume);
@@ -926,7 +981,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
   EFI_GUID          *Guid = NULL;
   CHAR16            *LoaderOptions = PoolPrint(L"%a", gSettings.BootArgs);
 
-  Entry = CreateLoaderEntry(LoaderPath, LoaderOptions, LoaderTitle, Volume, OSType);
+  Entry = CreateLoaderEntry(LoaderPath, LoaderOptions, LoaderTitle, Volume, NULL, OSType, FALSE);
   if (Entry == NULL) {
     FreePool(LoaderOptions);
     return NULL;
@@ -1019,7 +1074,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
         SubEntry->VolName         = Entry->VolName;
         SubEntry->DevicePath      = Entry->DevicePath;
         SubEntry->DevicePathString = Entry->DevicePathString;
-        SubEntry->Flags           = OSFLAG_DISABLE(Entry->Flags, OSFLAG_USEGRAPHICS);
+        SubEntry->Flags           = OSFLAG_UNSET(Entry->Flags, OSFLAG_USEGRAPHICS);
         SubEntry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"-v");
         SubEntry->LoaderType      = OSTYPE_OSX;
         SubEntry->me.AtClick      = ActionEnter;
@@ -1033,7 +1088,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
         SubEntry->VolName         = Entry->VolName;
         SubEntry->DevicePath      = Entry->DevicePath;
         SubEntry->DevicePathString = Entry->DevicePathString;
-        SubEntry->Flags           = OSFLAG_DISABLE(Entry->Flags, OSFLAG_USEGRAPHICS);
+        SubEntry->Flags           = OSFLAG_UNSET(Entry->Flags, OSFLAG_USEGRAPHICS);
         TempOptions = AddLoadOption(Entry->LoadOptions, L"-v");
         SubEntry->LoadOptions     = AddLoadOption(TempOptions, L"arch=x86_64");
         FreePool(TempOptions);
@@ -1054,7 +1109,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
         SubEntry->VolName         = Entry->VolName;
         SubEntry->DevicePath      = Entry->DevicePath;
         SubEntry->DevicePathString = Entry->DevicePathString;
-        SubEntry->Flags           = OSFLAG_DISABLE(Entry->Flags, OSFLAG_USEGRAPHICS);
+        SubEntry->Flags           = OSFLAG_SET(Entry->Flags, OSFLAG_USEGRAPHICS);
         TempOptions = AddLoadOption(Entry->LoadOptions, L"-v");
         SubEntry->LoadOptions     = AddLoadOption(TempOptions, L"arch=i386");
         FreePool(TempOptions);
@@ -1071,7 +1126,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
       SubEntry->VolName         = Entry->VolName;
       SubEntry->DevicePath      = Entry->DevicePath;
       SubEntry->DevicePathString = Entry->DevicePathString;
-      SubEntry->Flags           = OSFLAG_DISABLE(Entry->Flags, OSFLAG_USEGRAPHICS);
+      SubEntry->Flags           = OSFLAG_UNSET(Entry->Flags, OSFLAG_USEGRAPHICS);
       TempOptions = AddLoadOption(Entry->LoadOptions, L"-v");
       SubEntry->LoadOptions     = AddLoadOption(TempOptions, L"-x");
       SubEntry->LoaderType      = OSTYPE_OSX;
@@ -1086,7 +1141,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
       SubEntry->VolName         = Entry->VolName;
       SubEntry->DevicePath      = Entry->DevicePath;
       SubEntry->DevicePathString = Entry->DevicePathString;
-      SubEntry->Flags           = OSFLAG_DISABLE(Entry->Flags, OSFLAG_USEGRAPHICS);
+      SubEntry->Flags           = OSFLAG_UNSET(Entry->Flags, OSFLAG_USEGRAPHICS);
       TempOptions = AddLoadOption(Entry->LoadOptions, L"-v");
       SubEntry->LoadOptions     = AddLoadOption(TempOptions, L"-s");
       FreePool(TempOptions);
@@ -1095,7 +1150,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
       
       SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
-      SubEntry->me.Title        = OSFLAG_ENABLED(Entry->Flags, OSFLAG_NOCACHES) ?
+      SubEntry->me.Title        = OSFLAG_ISSET(Entry->Flags, OSFLAG_NOCACHES) ?
                                     L"Boot Mac OS X with caches" :
                                     L"Boot Mac OS X without caches";
       SubEntry->me.Tag          = TAG_LOADER;
@@ -1111,7 +1166,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
 
       SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
-      SubEntry->me.Title        = OSFLAG_ENABLED(Entry->Flags, OSFLAG_WITHKEXTS) ?
+      SubEntry->me.Title        = OSFLAG_ISSET(Entry->Flags, OSFLAG_WITHKEXTS) ?
                                     L"Boot Mac OS X without injected kexts" :
                                     L"Boot Mac OS X with injected kexts";
       SubEntry->me.Tag          = TAG_LOADER;
@@ -1126,9 +1181,9 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
       SubEntry->me.AtClick      = ActionEnter;
       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
 
-      if (OSFLAG_ENABLED(Entry->Flags, OSFLAG_WITHKEXTS))
+      if (OSFLAG_ISSET(Entry->Flags, OSFLAG_WITHKEXTS))
       {
-        if (OSFLAG_ENABLED(Entry->Flags, OSFLAG_NOCACHES))
+        if (OSFLAG_ISSET(Entry->Flags, OSFLAG_NOCACHES))
         {
           SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
           SubEntry->me.Title        = L"Boot Mac OS X with caches and without injected kexts";
@@ -1138,7 +1193,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
           SubEntry->VolName         = Entry->VolName;
           SubEntry->DevicePath      = Entry->DevicePath;
           SubEntry->DevicePathString = Entry->DevicePathString;
-          SubEntry->Flags           = OSFLAG_DISABLE(OSFLAG_DISABLE(Entry->Flags, OSFLAG_NOCACHES), OSFLAG_WITHKEXTS);
+          SubEntry->Flags           = OSFLAG_UNSET(OSFLAG_UNSET(Entry->Flags, OSFLAG_NOCACHES), OSFLAG_WITHKEXTS);
           SubEntry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"-v");
           SubEntry->LoaderType      = OSTYPE_OSX;
           SubEntry->me.AtClick      = ActionEnter;
@@ -1154,14 +1209,14 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
           SubEntry->VolName         = Entry->VolName;
           SubEntry->DevicePath      = Entry->DevicePath;
           SubEntry->DevicePathString = Entry->DevicePathString;
-          SubEntry->Flags           = OSFLAG_DISABLE(OSFLAG_ENABLE(Entry->Flags, OSFLAG_NOCACHES), OSFLAG_WITHKEXTS);
+          SubEntry->Flags           = OSFLAG_UNSET(OSFLAG_SET(Entry->Flags, OSFLAG_NOCACHES), OSFLAG_WITHKEXTS);
           SubEntry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"-v");
           SubEntry->LoaderType      = OSTYPE_OSX;
           SubEntry->me.AtClick      = ActionEnter;
           AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
         }
       }
-      else if (OSFLAG_ENABLED(Entry->Flags, OSFLAG_NOCACHES))
+      else if (OSFLAG_ISSET(Entry->Flags, OSFLAG_NOCACHES))
       {
         SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
         SubEntry->me.Title        = L"Boot Mac OS X with caches and with injected kexts";
@@ -1171,7 +1226,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
         SubEntry->VolName         = Entry->VolName;
         SubEntry->DevicePath      = Entry->DevicePath;
         SubEntry->DevicePathString = Entry->DevicePathString;
-        SubEntry->Flags           = OSFLAG_ENABLE(OSFLAG_DISABLE(Entry->Flags, OSFLAG_NOCACHES), OSFLAG_WITHKEXTS);
+        SubEntry->Flags           = OSFLAG_SET(OSFLAG_UNSET(Entry->Flags, OSFLAG_NOCACHES), OSFLAG_WITHKEXTS);
         SubEntry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"-v");
 //        SubEntry->LoadOptions     = Entry->LoadOptions;
         SubEntry->LoaderType      = OSTYPE_OSX;
@@ -1188,7 +1243,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
         SubEntry->VolName         = Entry->VolName;
         SubEntry->DevicePath      = Entry->DevicePath;
         SubEntry->DevicePathString = Entry->DevicePathString;
-        SubEntry->Flags           = OSFLAG_ENABLE(OSFLAG_ENABLE(Entry->Flags, OSFLAG_NOCACHES), OSFLAG_WITHKEXTS);
+        SubEntry->Flags           = OSFLAG_SET(OSFLAG_SET(Entry->Flags, OSFLAG_NOCACHES), OSFLAG_WITHKEXTS);
         SubEntry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"-v");
  //       SubEntry->LoadOptions     = Entry->LoadOptions;
         SubEntry->LoaderType      = OSTYPE_OSX;
@@ -1210,7 +1265,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
       SubEntry->VolName         = Entry->VolName;
       SubEntry->DevicePath      = FileDevicePath(Volume->DeviceHandle, SubEntry->LoaderPath);
       SubEntry->DevicePathString = Entry->DevicePathString;
-      SubEntry->Flags           = OSFLAG_ENABLE(Entry->Flags, OSFLAG_USEGRAPHICS);
+      SubEntry->Flags           = OSFLAG_SET(Entry->Flags, OSFLAG_USEGRAPHICS);
       SubEntry->me.AtClick      = ActionEnter;
       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
     }
@@ -1238,7 +1293,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
     SubEntry->VolName         = Entry->VolName;
     SubEntry->DevicePath      = Entry->DevicePath;
     SubEntry->DevicePathString = Entry->DevicePathString;
-    SubEntry->Flags           = OSFLAG_ENABLE(Entry->Flags, OSFLAG_USEGRAPHICS);
+    SubEntry->Flags           = OSFLAG_SET(Entry->Flags, OSFLAG_USEGRAPHICS);
     SubEntry->LoadOptions     = L"-d 0 i17";
     SubEntry->LoaderType      = OSTYPE_LIN;
     SubEntry->me.AtClick      = ActionEnter;
@@ -1252,7 +1307,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
     SubEntry->VolName         = Entry->VolName;
     SubEntry->DevicePath      = Entry->DevicePath;
     SubEntry->DevicePathString = Entry->DevicePathString;
-    SubEntry->Flags           = OSFLAG_ENABLE(Entry->Flags, OSFLAG_USEGRAPHICS);
+    SubEntry->Flags           = OSFLAG_SET(Entry->Flags, OSFLAG_USEGRAPHICS);
     SubEntry->LoadOptions     = L"-d 0 i20";
     SubEntry->LoaderType      = OSTYPE_LIN;
     SubEntry->me.AtClick      = ActionEnter;
@@ -1266,7 +1321,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
     SubEntry->VolName         = Entry->VolName;
     SubEntry->DevicePath      = Entry->DevicePath;
     SubEntry->DevicePathString = Entry->DevicePathString;
-    SubEntry->Flags           = OSFLAG_ENABLE(Entry->Flags, OSFLAG_USEGRAPHICS);
+    SubEntry->Flags           = OSFLAG_SET(Entry->Flags, OSFLAG_USEGRAPHICS);
     SubEntry->LoadOptions     = L"-d 0 mini";
     SubEntry->LoaderType      = OSTYPE_LIN;
     SubEntry->me.AtClick      = ActionEnter;
@@ -1315,7 +1370,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
     SubEntry->VolName         = Entry->VolName;
     SubEntry->DevicePath      = Entry->DevicePath;
     SubEntry->DevicePathString = Entry->DevicePathString;
-    SubEntry->Flags           = OSFLAG_DISABLE(Entry->Flags, OSFLAG_USEGRAPHICS);
+    SubEntry->Flags           = OSFLAG_UNSET(Entry->Flags, OSFLAG_USEGRAPHICS);
     SubEntry->LoadOptions     = L"-v";
     SubEntry->LoaderType      = OSTYPE_VAR;
     SubEntry->me.AtClick      = ActionEnter;
@@ -1804,15 +1859,119 @@ VOID ScanLoader(VOID)
   }
 }
 
-// TODO: Add custom entries
-VOID AddCustomEntries(VOID)
+static UINT8 GetOSTypeFromPath(IN CHAR16 *Path, IN UINT8 OSType)
 {
+   if (Path == NULL) {
+     return OSTYPE_VAR;
+   }
+   if (StriCmp(Path, MACOSX_LOADER_PATH) == 0) {
+     return OSType;
+   } else if (StriCmp(Path, L"\\EFI\\Microsoft\\Boot\\bootmgfw.efi") == 0) {
+     return OSTYPE_WINEFI;
+   }
+   return OSTYPE_VAR;
 }
 
-VOID AddCustomLegacy(VOID)
+// Add custom entries
+static VOID AddCustomEntries(VOID)
 {
-}
+  UINTN                VolumeIndex;
+  REFIT_VOLUME        *Volume;
+  CUSTOM_LOADER_ENTRY *Custom, *CustomSubEntry;
+  LOADER_ENTRY        *Entry, *SubEntry;
+  EFI_GUID            *Guid = NULL;
+  UINT64               VolumeSize;
+  UINT8                OSType;
 
+  // Traverse the custom entries
+  for (Custom = gSettings.CustomEntries; Custom; Custom = Custom->Next) {
+    if (Custom->Path == NULL) {
+      continue;
+    }
+    if (OSFLAG_ISSET(Custom->Flags, OSFLAG_DISABLED)) {
+      continue;
+    }
+    if (!gSettings.ShowHiddenEntries && OSFLAG_ISSET(Custom->Flags, OSFLAG_HIDDEN)) {
+      continue;
+    }
+    for (VolumeIndex = 0; VolumeIndex < VolumesCount; ++VolumeIndex) {
+      Volume = Volumes[VolumeIndex];
+
+      if (Volume->RootDir == NULL) {
+        continue;
+      }
+      if (Volume->VolName == NULL) {
+        Volume->VolName = L"Unknown";
+      }
+
+      // skip volume if its kind is configured as disabled
+      if ((Volume->DiskKind == DISK_KIND_OPTICAL && (GlobalConfig.DisableFlags & DISABLE_FLAG_OPTICAL)) ||
+          (Volume->DiskKind == DISK_KIND_EXTERNAL && (GlobalConfig.DisableFlags & DISABLE_FLAG_EXTERNAL)) ||
+          (Volume->DiskKind == DISK_KIND_INTERNAL && (GlobalConfig.DisableFlags & DISABLE_FLAG_INTERNAL)))
+      {
+        continue;
+      }
+
+      if ((Volume->BootType == BOOTING_BY_EFI) ||
+          (Volume->BootType == BOOTING_BY_BOOTEFI)) {
+        continue;
+      }
+
+      if (Volume->OSType == OSTYPE_HIDE) {
+        continue;
+      }
+
+      // Check for exact volume matches
+      if (Custom->Volume) {
+        if ((StrStr(Custom->Volume, Volume->DevicePathString) != 0) &&
+            ((Volume->VolName == NULL) || (StrStr(Custom->Volume, Volume->VolName) == NULL))) {
+          continue;
+        }
+        // Check if the volume should be of certain os type
+        if ((Custom->Type != 0) && (Custom->Type != Volume->OSType)) {
+          continue;
+        }
+      } else if ((Custom->Type != 0) && (Custom->Type != Volume->OSType)) {
+        continue;
+      }
+      // Create a legacy entry for this volume
+      OSType = GetOSTypeFromPath(Custom->Path, Volume->OSType);
+      Entry = CreateLoaderEntry(Custom->Path, Custom->Options, Custom->Title, Volume, Custom->Image, OSType, TRUE);
+      if (Entry) {
+        if (Custom->SubEntries) {
+          // Add subscreen
+          REFIT_MENU_SCREEN *SubScreen = AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
+          if (SubScreen) {
+            SubScreen->Title = PoolPrint(L"Boot Options for %s on %s", (Custom->Title != NULL) ? Custom->Title : Custom->Path, Entry->VolName);
+            SubScreen->TitleImage = Entry->me.Image;
+            SubScreen->ID = OSType + 20;
+            SubScreen->AnimeRun = GetAnime(SubScreen);
+            VolumeSize = RShiftU64(MultU64x32(Volume->BlockIO->Media->LastBlock, Volume->BlockIO->Media->BlockSize), 20);
+            AddMenuInfoLine(SubScreen, PoolPrint(L"Volume size: %dMb", VolumeSize));
+            AddMenuInfoLine(SubScreen, DevicePathToStr(Entry->DevicePath));
+            Guid = FindGPTPartitionGuidInDevicePath(Volume->DevicePath);
+            if (Guid) {
+              CHAR8 *GuidStr = AllocateZeroPool(50);
+              AsciiSPrint(GuidStr, 50, "%g", Guid);
+              AddMenuInfoLine(SubScreen, PoolPrint(L"UUID: %a", GuidStr));
+              FreePool(GuidStr);
+            }
+            // Create sub entries
+            for (CustomSubEntry = Custom->SubEntries; CustomSubEntry; CustomSubEntry = CustomSubEntry->Next) {
+              SubEntry = CreateLoaderEntry(CustomSubEntry->Path, CustomSubEntry->Options, CustomSubEntry->Title, Volume, CustomSubEntry->Image, GetOSTypeFromPath(CustomSubEntry->Path, Volume->OSType), TRUE);
+              if (SubEntry) {
+                 AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+              }
+            }
+            AddMenuEntry(SubScreen, &MenuEntryReturn);
+            Entry->me.SubScreen = SubScreen;
+          }
+        }
+        AddMenuEntry(&MainMenu, (REFIT_MENU_ENTRY *)Entry);
+      }
+    }
+  }
+}
 
 #define MAX_DISCOVERED_PATHS (16)
 //#define PREBOOT_LOG L"EFI\\CLOVER\\misc\\preboot.log"
@@ -1883,12 +2042,58 @@ static VOID StartLegacy(IN LEGACY_ENTRY *Entry)
     FinishExternalScreen();
 }
 
-static LEGACY_ENTRY * AddLegacyEntry(IN CHAR16 *LoaderTitle, IN REFIT_VOLUME *Volume)
+static LEGACY_ENTRY * AddLegacyEntry(IN CHAR16 *LoaderTitle, IN REFIT_VOLUME *Volume, IN EG_IMAGE *Image, IN BOOLEAN CustomEntry)
 {
-  LEGACY_ENTRY            *Entry, *SubEntry;
-  REFIT_MENU_SCREEN       *SubScreen;
-  CHAR16                  *VolDesc;
-  CHAR16                  ShortcutLetter = 0;
+  LEGACY_ENTRY      *Entry, *SubEntry;
+  REFIT_MENU_SCREEN *SubScreen;
+  CHAR16            *VolDesc;
+  CHAR16             ShortcutLetter = 0;
+  INTN               i;
+
+  if (Volume == NULL) {
+     return NULL;
+  }
+
+  // Ignore this loader if it's device path is already present in another loader
+  if (MainMenu.Entries) {
+    for (i = 0; i < MainMenu.EntryCount; ++i) {
+      REFIT_MENU_ENTRY *MainEntry = MainMenu.Entries[i];
+      // Only want legacy
+      if (MainEntry && (MainEntry->Tag == TAG_LEGACY)) {
+        LOADER_ENTRY *Loader = (LOADER_ENTRY *)MainEntry;
+        if (StriCmp(Loader->DevicePathString, Volume->DevicePathString) == 0) {
+          return NULL;
+        }
+      }
+    }
+  }
+
+  // If this isn't a custom entry make sure it's not hidden by a custom entry
+  if (!CustomEntry) {
+    CUSTOM_LEGACY_ENTRY *Custom = gSettings.CustomLegacy;
+    while (Custom) {
+      if (OSFLAG_ISUNSET(Custom->Flags, OSFLAG_DISABLED) ||
+          OSFLAG_ISUNSET(Custom->Flags, OSFLAG_HIDDEN) || gSettings.ShowHiddenEntries) {
+        if (Custom->Volume) {
+          if ((StrStr(Custom->Volume, Volume->DevicePathString) == NULL) &&
+              ((Volume->VolName == NULL) || (StrStr(Custom->Volume, Volume->VolName) == NULL))) {
+            if (Custom->Type != 0) {
+              if (Custom->Type == Volume->OSType) {
+                return NULL;
+              }
+            } else {
+              return NULL;
+            }
+          }
+        } else if (Custom->Type != 0) {
+          if (Custom->Type == Volume->OSType) {
+            return NULL;
+          }
+        }
+      }
+      Custom = Custom->Next;
+    }
+  }
 
   if (LoaderTitle == NULL) {
     if (Volume->OSName != NULL) {
@@ -1909,7 +2114,11 @@ static LEGACY_ENTRY * AddLegacyEntry(IN CHAR16 *LoaderTitle, IN REFIT_VOLUME *Vo
   Entry->me.Tag          = TAG_LEGACY;
   Entry->me.Row          = 0;
   Entry->me.ShortcutLetter = ShortcutLetter;
-  Entry->me.Image = LoadOSIcon(Volume->OSIconName, L"legacy", FALSE);
+  if (Image) {
+    Entry->me.Image = Image;
+  } else {
+    Entry->me.Image = LoadOSIcon(Volume->OSIconName, L"legacy", FALSE);
+  }
   Entry->me.DriveImage = ScanVolumeDefaultIcon(Volume);
   //  DBG("HideBadges=%d Volume=%s\n", GlobalConfig.HideBadges, Volume->VolName);
   //  DBG("Title=%s OSName=%s OSIconName=%s\n", LoaderTitle, Volume->OSName, Volume->OSIconName);
@@ -1928,7 +2137,7 @@ static LEGACY_ENTRY * AddLegacyEntry(IN CHAR16 *LoaderTitle, IN REFIT_VOLUME *Vo
   }
 
   Entry->Volume           = Volume;
-  Entry->DevicePathString = FileDevicePathToStr(Volume->DevicePath);
+  Entry->DevicePathString = Volume->DevicePathString;
   Entry->LoadOptions      = (Volume->DiskKind == DISK_KIND_OPTICAL) ? L"CD" :
                             ((Volume->DiskKind == DISK_KIND_EXTERNAL) ? L"USB" : L"HD");
   
@@ -2021,11 +2230,92 @@ static VOID ScanLegacy(VOID)
         
         if (ShowVolume && (Volume->OSType != OSTYPE_HIDE)){
             DBG(" add legacy\n");
-            AddLegacyEntry(NULL, Volume);
+            AddLegacyEntry(NULL, Volume, NULL, FALSE);
         } else {
           DBG(" hidden\n");
         }
     }
+}
+
+// Add custom legacy
+static VOID AddCustomLegacy(VOID)
+{
+  UINTN                VolumeIndex, VolumeIndex2;
+  BOOLEAN              ShowVolume, HideIfOthersFound;
+  REFIT_VOLUME        *Volume;
+  CUSTOM_LEGACY_ENTRY *Custom;
+
+  // Traverse the custom entries
+  for (Custom = gSettings.CustomLegacy; Custom; Custom = Custom->Next) {
+    if (OSFLAG_ISSET(Custom->Flags, OSFLAG_DISABLED)) {
+      continue;
+    }
+    if (!gSettings.ShowHiddenEntries && OSFLAG_ISSET(Custom->Flags, OSFLAG_HIDDEN)) {
+      continue;
+    }
+    for (VolumeIndex = 0; VolumeIndex < VolumesCount; ++VolumeIndex) {
+      Volume = Volumes[VolumeIndex];
+
+      // skip volume if its kind is configured as disabled
+      if ((Volume->DiskKind == DISK_KIND_OPTICAL && (GlobalConfig.DisableFlags & DISABLE_FLAG_OPTICAL)) ||
+          (Volume->DiskKind == DISK_KIND_EXTERNAL && (GlobalConfig.DisableFlags & DISABLE_FLAG_EXTERNAL)) ||
+          (Volume->DiskKind == DISK_KIND_INTERNAL && (GlobalConfig.DisableFlags & DISABLE_FLAG_INTERNAL)))
+      {
+        continue;
+      }
+
+      if ((Volume->BootType == BOOTING_BY_EFI) ||
+          (Volume->BootType == BOOTING_BY_BOOTEFI)) {
+        continue;
+      }
+
+      ShowVolume = FALSE;
+      HideIfOthersFound = FALSE;
+      if (Volume->IsAppleLegacy) {
+        ShowVolume = TRUE;
+        HideIfOthersFound = TRUE;
+      } else if (Volume->HasBootCode) {
+        ShowVolume = TRUE;
+        if ((Volume->WholeDiskBlockIO == 0) &&
+             Volume->BlockIOOffset == 0) {
+          // this is a whole disk (MBR) entry; hide if we have entries for partitions
+          HideIfOthersFound = TRUE;
+        }
+      }
+      if (HideIfOthersFound) {
+        // check for other bootable entries on the same disk
+        //if PBR exists then Hide MBR
+        for (VolumeIndex2 = 0; VolumeIndex2 < VolumesCount; VolumeIndex2++) {
+          if (VolumeIndex2 != VolumeIndex && 
+              Volumes[VolumeIndex2]->HasBootCode && 
+              Volumes[VolumeIndex2]->WholeDiskBlockIO == Volume->BlockIO) {
+            ShowVolume = FALSE;
+            break;
+          }
+        }
+      }
+
+      if (!ShowVolume || (Volume->OSType == OSTYPE_HIDE)) {
+        continue;
+      }
+
+      // Check for exact volume matches
+      if (Custom->Volume) {
+        if ((StrStr(Custom->Volume, Volume->DevicePathString) != 0) &&
+            ((Volume->VolName == NULL) || (StrStr(Custom->Volume, Volume->VolName) == NULL))) {
+          continue;
+        }
+        // Check if the volume should be of certain os type
+        if ((Custom->Type != 0) && (Custom->Type != Volume->OSType)) {
+          continue;
+        }
+      } else if ((Custom->Type != 0) && (Custom->Type != Volume->OSType)) {
+        continue;
+      }
+      // Create a legacy entry for this volume
+      AddLegacyEntry(Custom->Title, Volume, Custom->Image, TRUE);
+    }
+  }
 }
 
 //
@@ -2035,7 +2325,7 @@ static VOID ScanLegacy(VOID)
 static VOID StartTool(IN LOADER_ENTRY *Entry)
 {
   egClearScreen(&DarkBackgroundPixel);
-    BeginExternalScreen(OSFLAG_ENABLED(Entry->Flags, OSFLAG_USEGRAPHICS), Entry->me.Title + 6);  // assumes "Start <title>" as assigned below
+    BeginExternalScreen(OSFLAG_ISSET(Entry->Flags, OSFLAG_USEGRAPHICS), Entry->me.Title + 6);  // assumes "Start <title>" as assigned below
     StartEFIImage(Entry->DevicePath, Entry->LoadOptions, Basename(Entry->LoaderPath),
                   Basename(Entry->LoaderPath), NULL, NULL);
     FinishExternalScreen();
@@ -2043,7 +2333,7 @@ static VOID StartTool(IN LOADER_ENTRY *Entry)
 }
 
 static LOADER_ENTRY * AddToolEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTitle,
-                                   IN EG_IMAGE *Image,
+                                   IN REFIT_VOLUME *Volume, IN EG_IMAGE *Image,
                                    IN CHAR16 ShortcutLetter)
 {
   LOADER_ENTRY *Entry;
@@ -2056,7 +2346,8 @@ static LOADER_ENTRY * AddToolEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTitle
   Entry->me.ShortcutLetter = ShortcutLetter;
   Entry->me.Image = Image;
   Entry->LoaderPath = EfiStrDuplicate(LoaderPath);
-  Entry->DevicePath = FileDevicePath(SelfDeviceHandle, Entry->LoaderPath);
+  Entry->DevicePath = FileDevicePath(Volume->DeviceHandle, Entry->LoaderPath);
+  Entry->DevicePathString = FileDevicePathToStr(Entry->DevicePath);
   //actions
   Entry->me.AtClick = ActionSelect;
   Entry->me.AtDoubleClick = ActionEnter;
@@ -2121,25 +2412,25 @@ static VOID ScanTool(VOID)
 #if defined(MDE_CPU_IA32)
     StrCpy(FileName, L"\\EFI\\CLOVER\\tools\\Shell32.efi");
     if (FileExists(SelfRootDir, FileName)) {
-      Entry = AddToolEntry(FileName, L"EFI Shell 32", BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S');
+      Entry = AddToolEntry(FileName, L"EFI Shell 32", SelfVolume, BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S');
       DBG("found tools\\Shell32.efi\n");
     }
 #elif defined(MDE_CPU_X64)
    if (gFirmwareClover) {
       StrCpy(FileName, L"\\EFI\\CLOVER\\tools\\Shell64.efi");
       if (FileExists(SelfRootDir, FileName)) {
-         Entry = AddToolEntry(FileName, L"EFI Shell 64", BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S');
+         Entry = AddToolEntry(FileName, L"EFI Shell 64", SelfVolume, BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S');
          DBG("found tools\\Shell64.efi\n");
       }
    } else {
      StrCpy(FileName, L"\\EFI\\CLOVER\\tools\\Shell64U.efi");
      if (FileExists(SelfRootDir, FileName)) {
-       Entry = AddToolEntry(FileName, L"UEFI Shell 64", BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S');
+       Entry = AddToolEntry(FileName, L"UEFI Shell 64", SelfVolume, BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S');
        DBG("found tools\\Shell64U.efi\n");
      } else {
        StrCpy(FileName, L"\\EFI\\CLOVER\\tools\\Shell64.efi");
        if (FileExists(SelfRootDir, FileName)) {
-          Entry = AddToolEntry(FileName, L"EFI Shell 64", BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S');
+          Entry = AddToolEntry(FileName, L"EFI Shell 64", SelfVolume, BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S');
           DBG("found tools\\Shell64.efi\n");
        }
      }
@@ -2147,7 +2438,7 @@ static VOID ScanTool(VOID)
 #else //what else? ARM?
     UnicodeSPrint(FileName, 512, L"\\EFI\\CLOVER\\tools\\shell.efi");
     if (FileExists(SelfRootDir, FileName)) {
-      Entry = AddToolEntry(FileName, L"EFI Shell", BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S');
+      Entry = AddToolEntry(FileName, L"EFI Shell", SelfVolume, BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S');
       DBG("found apps\\shell.efi\n");
     }
 #endif
@@ -2174,6 +2465,59 @@ static VOID ScanTool(VOID)
    Entry->LoadOptions = L"-d 0 mini";
    }
    */
+}
+
+// Add custom tool entries
+static VOID AddCustomTool()
+{
+  UINTN             VolumeIndex;
+  REFIT_VOLUME      *Volume;
+  CUSTOM_TOOL_ENTRY *Custom;
+
+  // Traverse the custom entries
+  for (Custom = gSettings.CustomTool; Custom; Custom = Custom->Next) {
+    if (OSFLAG_ISSET(Custom->Flags, OSFLAG_DISABLED)) {
+      continue;
+    }
+    if (!gSettings.ShowHiddenEntries && OSFLAG_ISSET(Custom->Flags, OSFLAG_HIDDEN)) {
+      continue;
+    }
+
+    for (VolumeIndex = 0; VolumeIndex < VolumesCount; ++VolumeIndex) {
+      Volume = Volumes[VolumeIndex];
+
+      // skip volume if its kind is configured as disabled
+      if ((Volume->DiskKind == DISK_KIND_OPTICAL && (GlobalConfig.DisableFlags & DISABLE_FLAG_OPTICAL)) ||
+          (Volume->DiskKind == DISK_KIND_EXTERNAL && (GlobalConfig.DisableFlags & DISABLE_FLAG_EXTERNAL)) ||
+          (Volume->DiskKind == DISK_KIND_INTERNAL && (GlobalConfig.DisableFlags & DISABLE_FLAG_INTERNAL)))
+      {
+        continue;
+      }
+
+      if ((Volume->BootType != BOOTING_BY_EFI) &&
+          (Volume->BootType != BOOTING_BY_BOOTEFI)) {
+        continue;
+      }
+
+      if (Volume->OSType == OSTYPE_HIDE) {
+        continue;
+      }
+
+      // Check for exact volume matches
+      if (Custom->Volume) {
+        if ((StrStr(Custom->Volume, Volume->DevicePathString) != 0) &&
+            ((Volume->VolName == NULL) || (StrStr(Custom->Volume, Volume->VolName) == NULL))) {
+           continue;
+        }
+      }
+      // Check the tool exists on the volume
+      if ((Volume->RootDir == NULL) || !FileExists(Volume->RootDir, Custom->Path)) {
+        continue;
+      }
+      // Create a legacy entry for this volume
+      AddToolEntry(Custom->Path, Custom->Title, Volume, Custom->Image, Custom->Shortcut);
+    }
+  }
 }
 
 VOID AddUEFIBootOption(BO_BOOT_OPTION *bootOption)
@@ -2968,10 +3312,12 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       SetVariablesFromNvram();
       FillInputs();
       // scan for loaders and tools, add then to the menu
-      if (!GlobalConfig.NoLegacy && GlobalConfig.LegacyFirst && !gSettings.DisableEntryScan){
+      if (GlobalConfig.LegacyFirst){
         //DBG("scan legacy first\n");
         AddCustomLegacy();
-        ScanLegacy();
+        if (!GlobalConfig.NoLegacy) {
+          ScanLegacy();
+        }
       }
     }
 
@@ -2988,10 +3334,12 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
     if (!GlobalConfig.FastBoot) {
 
-      if (!GlobalConfig.NoLegacy && !GlobalConfig.LegacyFirst && !gSettings.DisableEntryScan) {
+      if (!GlobalConfig.LegacyFirst) {
         //      DBG("scan legacy second\n");
         AddCustomLegacy();
-        ScanLegacy();
+        if (!GlobalConfig.NoLegacy) {
+          ScanLegacy();
+        }
         //      DBG("ScanLegacy()\n");
       }
 
@@ -3008,7 +3356,10 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       }
 
       if (!(GlobalConfig.DisableFlags & DISABLE_FLAG_TOOLS)) {
-        ScanTool();
+        AddCustomTool();
+        if (!gSettings.DisableToolScan) {
+          ScanTool();
+        }
         //      DBG("ScanTool()\n");
       }
 
@@ -3091,6 +3442,13 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
           }
         }
         continue;
+      }
+
+      // Hide toggle
+      if (MenuExit == MENU_EXIT_HIDE_TOGGLE) {
+        gSettings.ShowHiddenEntries = !gSettings.ShowHiddenEntries;
+        AfterTool = TRUE;
+        break;
       }
 
       // We don't allow exiting the main menu with the Escape key.

@@ -1001,7 +1001,7 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
   //
   // Kext add
   //
-  if ((Entry != 0) && OSFLAG_ENABLED(Entry->Flags, OSFLAG_WITHKEXTS)) {
+  if ((Entry != 0) && OSFLAG_ISSET(Entry->Flags, OSFLAG_WITHKEXTS)) {
     UINT32      deviceTreeP;
     UINT32      deviceTreeLength;
     EFI_STATUS  Status;

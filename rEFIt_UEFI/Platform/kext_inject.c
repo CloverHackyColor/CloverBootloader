@@ -223,7 +223,7 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
 	UINTN					extra_size;
 	VOID					*extra;
 
-	if ((Entry == 0) || OSFLAG_DISABLED(Entry->Flags, OSFLAG_WITHKEXTS)) {
+	if ((Entry == 0) || OSFLAG_ISUNSET(Entry->Flags, OSFLAG_WITHKEXTS)) {
 		return EFI_NOT_STARTED;
 	}
 

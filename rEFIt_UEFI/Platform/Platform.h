@@ -590,12 +590,35 @@ typedef struct CUSTOM_LOADER_ENTRY CUSTOM_LOADER_ENTRY;
 struct CUSTOM_LOADER_ENTRY {
   CUSTOM_LOADER_ENTRY *Next;
   CUSTOM_LOADER_ENTRY *SubEntries;
+  EG_IMAGE            *Image;
   CHAR16              *Volume;
   CHAR16              *Path;
   CHAR16              *Options;
   CHAR16              *Title;
   UINT8                Flags;
   UINT8                Type;
+};
+
+typedef struct CUSTOM_LEGACY_ENTRY CUSTOM_LEGACY_ENTRY;
+struct CUSTOM_LEGACY_ENTRY {
+  CUSTOM_LEGACY_ENTRY *Next;
+  EG_IMAGE            *Image;
+  CHAR16              *Volume;
+  CHAR16              *Title;
+  UINT8                Flags;
+  UINT8                Type;
+};
+
+typedef struct CUSTOM_TOOL_ENTRY CUSTOM_TOOL_ENTRY;
+struct CUSTOM_TOOL_ENTRY {
+  CUSTOM_TOOL_ENTRY *Next;
+  EG_IMAGE          *Image;
+  CHAR16            *Volume;
+  CHAR16            *Path;
+  CHAR16            *Options;
+  CHAR16            *Title;
+  CHAR16             Shortcut;
+  UINT8              Flags;
 };
 
 typedef struct ACPI_DROP_TABLE ACPI_DROP_TABLE;
@@ -840,7 +863,11 @@ typedef struct {
 
   // Custom entries
   BOOLEAN              DisableEntryScan;
+  BOOLEAN              DisableToolScan;
+  BOOLEAN              ShowHiddenEntries;
   CUSTOM_LOADER_ENTRY *CustomEntries;
+  CUSTOM_LEGACY_ENTRY *CustomLegacy;
+  CUSTOM_TOOL_ENTRY   *CustomTool;
 
 } SETTINGS_DATA;
 

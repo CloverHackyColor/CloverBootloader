@@ -1760,6 +1760,9 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
           Status = SaveBooterLog(NULL, PREBOOT_LOG);
         }
         break;
+      case SCAN_F3:
+         MenuExit = MENU_EXIT_HIDE_TOGGLE;
+         break;
       case SCAN_F4:
         SaveOemTables();
         break;

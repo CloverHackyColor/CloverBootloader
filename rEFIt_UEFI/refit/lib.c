@@ -731,6 +731,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
   DevicePathSize = GetDevicePathSize (DiskDevicePath);
   Volume->DevicePath = AllocateAlignedPages(EFI_SIZE_TO_PAGES(DevicePathSize), 64);
   CopyMem(Volume->DevicePath, DiskDevicePath, DevicePathSize);
+  Volume->DevicePathString = FileDevicePathToStr(Volume->DevicePath);
   
   //    Volume->DevicePath = DuplicateDevicePath(DevicePathFromHandle(Volume->DeviceHandle));
 #if REFIT_DEBUG > 0
@@ -1064,7 +1065,6 @@ VOID ScanVolumes(VOID)
 //  EFI_DEVICE_PATH_PROTOCOL  *VolumeDevicePath;
   EFI_GUID                *Guid;
   //  EFI_INPUT_KEY Key;
-  CHAR16                  *VolumeDevPath;
   INT32                   HVi;
   
   //    DBG("Scanning volumes...\n");
@@ -1102,10 +1102,9 @@ VOID ScanVolumes(VOID)
     if (!EFI_ERROR(Status)) {
 
       AddListElement((VOID ***) &Volumes, &VolumesCount, Volume);
-      VolumeDevPath = DevicePathToStr(Volume->DevicePath);
       for (HVi = 0; HVi < gSettings.HVCount; HVi++) {
         if (
-            StrStr(VolumeDevPath, gSettings.HVHideStrings[HVi])
+            StrStr(Volume->DevicePathString, gSettings.HVHideStrings[HVi])
             || (Volume->VolName != NULL && StrStr(Volume->VolName, gSettings.HVHideStrings[HVi]))
             )
         {
@@ -1114,7 +1113,6 @@ VOID ScanVolumes(VOID)
           break;
         }
       }
-      FreePool(VolumeDevPath);
 
       Guid = FindGPTPartitionGuidInDevicePath(Volume->DevicePath);
       DBG("  Volume '%s', OS '%s', Icon(s) '%s', GUID = %g\n",
