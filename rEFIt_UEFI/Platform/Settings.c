@@ -1860,6 +1860,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       if (prop) {
         INTN i, Count = GetTagCount(prop);
         if (Count > 0) {
+          DBG("Dropping %d tables\n", Count);
           for (i = 0; i < Count; ++i) {
             UINT32 Signature = 0;
             UINT64 TableId = 0;

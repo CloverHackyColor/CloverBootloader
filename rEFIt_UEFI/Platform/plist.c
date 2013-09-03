@@ -170,7 +170,7 @@ EFI_STATUS GetElement( TagPtr dict, INTN id,  TagPtr * dict1)
   INTN element = 0;
   TagPtr child;
   
-  if(!dict || dict->type != kTagTypeArray) {
+  if(!dict || !dict1) {
     return EFI_UNSUPPORTED;
   }
   
