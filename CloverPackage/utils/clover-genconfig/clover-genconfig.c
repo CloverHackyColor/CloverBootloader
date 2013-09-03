@@ -223,7 +223,7 @@ void PrintConfig(CFTypeRef data)
   CFMutableDictionaryRef bootDict = addDict(dict, CFSTR("Boot"));
   addString(bootDict, CFSTR("Arguments"), s->BootArgs);
   addUString(bootDict, CFSTR("Legacy"), s->LegacyBoot);
-  addUString(bootDict, CFSTR("LegacyEntry"), s->LegacyBiosCustomEntry);
+  //addUString(bootDict, CFSTR("LegacyEntry"), s->LegacyBiosCustomEntry);
   addInteger(bootDict, CFSTR("XMPDetection"), s->XMPDetection);
   addUString(bootDict, CFSTR("DefaultVolume"), s->DefaultBoot);
   addBoolean(bootDict, CFSTR("Log"), s->Debug);
@@ -378,6 +378,7 @@ void PrintConfig(CFTypeRef data)
   addBoolean(acpiDict, CFSTR("DebugDSDT"), s->DebugDSDT);
   addBoolean(acpiDict, CFSTR("DropOemSSDT"), s->DropSSDT);
   addInteger(acpiDict, CFSTR("Number_of_KeepSSDT"), s->KeepSsdtNum);
+  /*
   addBoolean(acpiDict, CFSTR("DropAPIC"), s->bDropAPIC);
   addBoolean(acpiDict, CFSTR("PatchAPIC"), s->PatchNMI);
   addBoolean(acpiDict, CFSTR("DropMCFG"), s->bDropMCFG);
@@ -385,6 +386,7 @@ void PrintConfig(CFTypeRef data)
   addBoolean(acpiDict, CFSTR("DropECDT"), s->bDropECDT);
   addBoolean(acpiDict, CFSTR("DropDMAR"), s->bDropDMAR);
   addBoolean(acpiDict, CFSTR("DropBGRT"), s->bDropBGRT);
+  */
   addBoolean(acpiDict, CFSTR("GeneratePStates"), s->GeneratePStates);
   addBoolean(acpiDict, CFSTR("GenerateCStates"), s->GenerateCStates);
   addBoolean(acpiDict, CFSTR("DoubleFirstState"), s->DoubleFirstState);
