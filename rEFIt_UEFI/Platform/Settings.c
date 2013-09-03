@@ -1864,31 +1864,40 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
             UINT32 Signature = 0;
             UINT64 TableId = 0;
             if (EFI_ERROR(GetElement(prop, i, &dict2))) {
+              DBG("Drop table continue at %d\n", i);
               continue;
             }
             if (dict2 == NULL) {
+              DBG("Drop table break at %d\n", i);
               break;
             }
+            DBG("Drop table %d", i);
             // Get the table signatures to drop
             prop = GetProperty(dict2, "Signature");
             if (prop && (prop->type == kTagTypeString) && prop->string) {
               CHAR8  s1 = 0, s2 = 0, s3 = 0, s4 = 0;
               CHAR8 *str = prop->string;
+              DBG(" signature=\"");
               if (str) {
                 if (*str) {
                   s1 = *str++;
+                  DBG("%c", s1);
                 }
                 if (*str) {
                   s2 = *str++;
+                  DBG("%c", s2);
                 }
                 if (*str) {
                   s3 = *str++;
+                  DBG("%c", s3);
                 }
                 if (*str) {
                   s4 = *str++;
+                  DBG("%c", s4);
                 }
               }
               Signature = SIGNATURE_32(s1, s2, s3, s4);
+              DBG("\" (%4.4X)", Signature);
             }
             // Get the table ids to drop
             prop = GetProperty(dict2, "TableId");
@@ -1896,13 +1905,17 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
               UINTN  idi = 0;
               CHAR8  id[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
               CHAR8 *str = prop->string;
+              DBG(" table-id=\"");
               if (str) {
                 while (*str && (idi < 8)) {
+                  DBG("%c", *str);
                   id[idi++] = *str++;
                 }
               }
               TableId = *(UINT64 *)id;
+              DBG("\" (%8.8lX)", TableId);
             }
+            DBG("\n");
             // Add the drop table if valid
             if ((Signature != 0) || (TableId != 0)) {
               ACPI_DROP_TABLE *DropTable = AllocatePool(sizeof(ACPI_DROP_TABLE));
