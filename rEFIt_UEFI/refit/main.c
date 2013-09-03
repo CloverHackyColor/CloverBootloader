@@ -820,7 +820,7 @@ static LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
     CUSTOM_LOADER_ENTRY *Custom = gSettings.CustomEntries;
     while (Custom) {
       if (OSFLAG_ISSET(Custom->Flags, OSFLAG_DISABLED) ||
-          OSFLAG_ISSET(Custom->Flags, OSFLAG_HIDDEN) && !gSettings.ShowHiddenEntries) {
+          (OSFLAG_ISSET(Custom->Flags, OSFLAG_HIDDEN) && !gSettings.ShowHiddenEntries)) {
         if (Custom->Volume) {
           if ((StrStr(Custom->Volume, Volume->DevicePathString) == NULL) &&
               ((Volume->VolName == NULL) || (StrStr(Custom->Volume, Volume->VolName) == NULL))) {
