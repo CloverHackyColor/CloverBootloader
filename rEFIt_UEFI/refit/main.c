@@ -2538,7 +2538,7 @@ static VOID AddCustomTool()
 
       // Check for exact volume matches
       if (Custom->Volume) {
-        if ((StrStr(Custom->Volume, Volume->DevicePathString) != 0) &&
+        if ((StrStr(Custom->Volume, Volume->DevicePathString) == NULL) &&
             ((Volume->VolName == NULL) || (StrStr(Custom->Volume, Volume->VolName) == NULL))) {
            continue;
         }
