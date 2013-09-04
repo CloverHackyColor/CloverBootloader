@@ -66,7 +66,7 @@ EFI_RUNTIME_SERVICES*	  gRS;
 EFI_DXE_SERVICES*       gDS;
 
 static REFIT_MENU_ENTRY MenuEntryOptions  = { L"Options", TAG_OPTIONS, 1, 0, 'O', NULL, NULL, NULL, {0, 0, 0, 0}, ActionEnter, ActionEnter, ActionNone, NULL };
-static REFIT_MENU_ENTRY MenuEntryAbout    = { L"About rEFIt", TAG_ABOUT, 1, 0, 'A', NULL, NULL, NULL, {0, 0, 0, 0}, ActionEnter, ActionEnter, ActionNone,  NULL };
+static REFIT_MENU_ENTRY MenuEntryAbout    = { L"About Clover", TAG_ABOUT, 1, 0, 'A', NULL, NULL, NULL, {0, 0, 0, 0}, ActionEnter, ActionEnter, ActionNone,  NULL };
 static REFIT_MENU_ENTRY MenuEntryReset    = { L"Restart Computer", TAG_RESET, 1, 0, 'R', NULL, NULL, NULL, {0, 0, 0, 0}, ActionSelect, ActionEnter, ActionNone,  NULL };
 static REFIT_MENU_ENTRY MenuEntryShutdown = { L"Exit Clover", TAG_SHUTDOWN, 1, 0, 'U', NULL, NULL, NULL, {0, 0, 0, 0}, ActionSelect, ActionEnter, ActionNone,  NULL };
 REFIT_MENU_ENTRY MenuEntryReturn   = { L"Return", TAG_RETURN, 0, 0, 0, NULL, NULL, NULL, {0, 0, 0, 0}, ActionEnter, ActionEnter, ActionNone,  NULL };
@@ -85,18 +85,15 @@ static VOID AboutRefit(VOID)
 //  CHAR8* Revision = NULL;
     if (AboutMenu.EntryCount == 0) {
         AboutMenu.TitleImage = BuiltinIcon(BUILTIN_ICON_FUNC_ABOUT);
-        AddMenuInfoLine(&AboutMenu, L"rEFIt Version 2.09 UEFI by Slice");
+        AddMenuInfoLine(&AboutMenu, L"Clover Version 2.09 UEFI by Slice, dmazar, apianti, JrCs, and others");
 #ifdef FIRMWARE_BUILDDATE
         AddMenuInfoLine(&AboutMenu, PoolPrint(L" Build: %a", FIRMWARE_BUILDDATE));
 #else
         AddMenuInfoLine(&AboutMenu, L" Build: unknown");
 #endif
         AddMenuInfoLine(&AboutMenu, L"");
-        AddMenuInfoLine(&AboutMenu, L"Copyright (c) 2006-2010 Christoph Pfisterer");
-        AddMenuInfoLine(&AboutMenu, L"Portions Copyright (c) Intel Corporation and others");
-      if (!gFirmwareClover){
-        AddMenuInfoLine(&AboutMenu, L"UEFI boot by dmazar 2012");
-      }
+        AddMenuInfoLine(&AboutMenu, L"Based on rEFIt Copyright (c) 2006-2010 Christoph Pfisterer");
+        AddMenuInfoLine(&AboutMenu, L"Portions Copyright (c) Intel Corporation");
         AddMenuInfoLine(&AboutMenu, L"");
         AddMenuInfoLine(&AboutMenu, L"Running on:");
         AddMenuInfoLine(&AboutMenu, PoolPrint(L" EFI Revision %d.%02d",
@@ -2105,8 +2102,8 @@ static LEGACY_ENTRY * AddLegacyEntry(IN CHAR16 *LoaderTitle, IN REFIT_VOLUME *Vo
   if (!CustomEntry) {
     CUSTOM_LEGACY_ENTRY *Custom = gSettings.CustomLegacy;
     while (Custom) {
-      if (OSFLAG_ISUNSET(Custom->Flags, OSFLAG_DISABLED) ||
-          OSFLAG_ISUNSET(Custom->Flags, OSFLAG_HIDDEN) || gSettings.ShowHiddenEntries) {
+      if (OSFLAG_ISSET(Custom->Flags, OSFLAG_DISABLED) ||
+          (OSFLAG_ISSET(Custom->Flags, OSFLAG_HIDDEN) && !gSettings.ShowHiddenEntries)) {
         if (Custom->Volume) {
           if ((StrStr(Volume->DevicePathString, Custom->Volume) == NULL) &&
               ((Volume->VolName == NULL) || (StrStr(Volume->VolName, Custom->Volume) == NULL))) {
@@ -2291,7 +2288,7 @@ static VOID AddCustomLegacy(VOID)
       continue;
     }
     if (Custom->Volume) {
-      DBG("Custom entry %d matching \"%s\" ... ", i, Custom->Volume);
+      DBG("Custom legacy %d matching \"%s\" ... ", i, Custom->Volume);
     }
     for (VolumeIndex = 0; VolumeIndex < VolumesCount; ++VolumeIndex) {
       Volume = Volumes[VolumeIndex];
@@ -2524,16 +2521,16 @@ static VOID AddCustomTool()
   // Traverse the custom entries
   for (Custom = gSettings.CustomTool; Custom; ++i, Custom = Custom->Next) {
     if (OSFLAG_ISSET(Custom->Flags, OSFLAG_DISABLED)) {
-      DBG("Custom legacy %d skipped because it is disabled.\n", i);
+      DBG("Custom tool %d skipped because it is disabled.\n", i);
       continue;
     }
     if (!gSettings.ShowHiddenEntries && OSFLAG_ISSET(Custom->Flags, OSFLAG_HIDDEN)) {
-       DBG("Custom legacy %d skipped because it is hidden.\n", i);
+       DBG("Custom tool %d skipped because it is hidden.\n", i);
       continue;
     }
 
     if (Custom->Volume) {
-      DBG("Custom entry %d matching \"%s\" ... ", i, Custom->Volume);
+      DBG("Custom tool %d matching \"%s\" ... ", i, Custom->Volume);
     }
     for (VolumeIndex = 0; VolumeIndex < VolumesCount; ++VolumeIndex) {
       Volume = Volumes[VolumeIndex];
@@ -3199,7 +3196,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   InitializeConsoleSim();
   InitBooterLog();
   DBG("\n");
-  DBG("Starting rEFIt rev %s on %s EFI\n", FIRMWARE_REVISION, gST->FirmwareVendor);
+  DBG("Starting Clover rev %s on %s EFI\n", FIRMWARE_REVISION, gST->FirmwareVendor);
 
   Status = InitRefitLib(gImageHandle);
   if (EFI_ERROR(Status))
