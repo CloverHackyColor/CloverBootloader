@@ -249,6 +249,7 @@ static CUSTOM_LOADER_ENTRY *DuplicateCustomEntry(IN CUSTOM_LOADER_ENTRY *Entry)
     if (Entry->Title) {
       DuplicateEntry->Title = EfiStrDuplicate(Entry->Title);
     }
+    DuplicateEntry->Hotkey = Entry->Hotkey;
     DuplicateEntry->Flags = Entry->Flags;
     DuplicateEntry->Type = Entry->Type;
   }
@@ -318,6 +319,10 @@ static BOOLEAN FillinCustomEntry(IN OUT CUSTOM_LOADER_ENTRY *Entry, TagPtr dictP
       FreePool(Entry->Title);
     }
     Entry->Title = PoolPrint(L"%a", prop->string);
+  }
+  prop = GetProperty(dictPointer, "Hotkey");
+  if (prop && (prop->type == kTagTypeString) && prop->string) {
+    Entry->Hotkey = *(prop->string);
   }
   prop = GetProperty(dictPointer, "Hidden");
   if (prop) {
@@ -406,6 +411,10 @@ static BOOLEAN FillinCustomLegacy(IN OUT CUSTOM_LEGACY_ENTRY *Entry, TagPtr dict
     }
     Entry->Title = PoolPrint(L"%a", prop->string);
   }
+  prop = GetProperty(dictPointer, "Hotkey");
+  if (prop && (prop->type == kTagTypeString) && prop->string) {
+    Entry->Hotkey = *(prop->string);
+  }
   prop = GetProperty(dictPointer, "Hidden");
   if (prop) {
     if ((prop->type == kTagTypeTrue) ||
@@ -471,9 +480,9 @@ static BOOLEAN FillinCustomTool(IN OUT CUSTOM_TOOL_ENTRY *Entry, TagPtr dictPoin
     }
     Entry->Title = PoolPrint(L"%a", prop->string);
   }
-  prop = GetProperty(dictPointer, "Shortcut");
+  prop = GetProperty(dictPointer, "Hotkey");
   if (prop && (prop->type == kTagTypeString) && prop->string) {
-    Entry->Shortcut = *(prop->string);
+    Entry->Hotkey = *(prop->string);
   }
   prop = GetProperty(dictPointer, "Hidden");
   if (prop) {

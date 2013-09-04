@@ -763,7 +763,8 @@ static CHAR16 *RemoveLoadOption(IN CHAR16 *LoadOptions, IN CHAR16 *LoadOption)
 
 // */
 
-static LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOptions, IN CHAR16 *LoaderTitle, IN REFIT_VOLUME *Volume, IN EG_IMAGE *Image, IN UINT8 OSType, IN BOOLEAN CustomEntry)
+static LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOptions, IN CHAR16 *LoaderTitle, IN REFIT_VOLUME *Volume,
+                                       IN EG_IMAGE *Image, IN UINT8 OSType, IN CHAR16 Hotkey, IN BOOLEAN CustomEntry)
 {
   EFI_DEVICE_PATH *LoaderDevicePath;
   CHAR16          *LoaderDevicePathString;
@@ -942,7 +943,7 @@ static LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
   }
 
   Entry->me.Title        = PoolPrint(L"Boot %s from %s", (LoaderTitle != NULL) ? LoaderTitle : LoaderPath + 1, Entry->VolName);
-  Entry->me.ShortcutLetter = ShortcutLetter;
+  Entry->me.ShortcutLetter = (Hotkey == 0) ? ShortcutLetter : Hotkey;
 
   // get custom volume icon if present
   if (Image) {
@@ -981,7 +982,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
   EFI_GUID          *Guid = NULL;
   CHAR16            *LoaderOptions = PoolPrint(L"%a", gSettings.BootArgs);
 
-  Entry = CreateLoaderEntry(LoaderPath, LoaderOptions, LoaderTitle, Volume, NULL, OSType, FALSE);
+  Entry = CreateLoaderEntry(LoaderPath, LoaderOptions, LoaderTitle, Volume, NULL, OSType, 0, FALSE);
   if (Entry == NULL) {
     FreePool(LoaderOptions);
     return NULL;
@@ -1938,7 +1939,7 @@ static VOID AddCustomEntries(VOID)
       }
       // Create a legacy entry for this volume
       OSType = GetOSTypeFromPath(Custom->Path, Volume->OSType);
-      Entry = CreateLoaderEntry(Custom->Path, Custom->Options, Custom->Title, Volume, Custom->Image, OSType, TRUE);
+      Entry = CreateLoaderEntry(Custom->Path, Custom->Options, Custom->Title, Volume, Custom->Image, OSType, Custom->Hotkey, TRUE);
       if (Entry) {
         if (Custom->SubEntries) {
           // Add subscreen
@@ -1960,7 +1961,7 @@ static VOID AddCustomEntries(VOID)
             }
             // Create sub entries
             for (CustomSubEntry = Custom->SubEntries; CustomSubEntry; CustomSubEntry = CustomSubEntry->Next) {
-              SubEntry = CreateLoaderEntry(CustomSubEntry->Path, CustomSubEntry->Options, CustomSubEntry->Title, Volume, CustomSubEntry->Image, GetOSTypeFromPath(CustomSubEntry->Path, Volume->OSType), TRUE);
+              SubEntry = CreateLoaderEntry(CustomSubEntry->Path, CustomSubEntry->Options, CustomSubEntry->Title, Volume, CustomSubEntry->Image, GetOSTypeFromPath(CustomSubEntry->Path, Volume->OSType), CustomSubEntry->Hotkey, TRUE);
               if (SubEntry) {
                  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
               }
@@ -2044,7 +2045,7 @@ static VOID StartLegacy(IN LEGACY_ENTRY *Entry)
     FinishExternalScreen();
 }
 
-static LEGACY_ENTRY * AddLegacyEntry(IN CHAR16 *LoaderTitle, IN REFIT_VOLUME *Volume, IN EG_IMAGE *Image, IN BOOLEAN CustomEntry)
+static LEGACY_ENTRY * AddLegacyEntry(IN CHAR16 *LoaderTitle, IN REFIT_VOLUME *Volume, IN EG_IMAGE *Image, IN CHAR16 Hotkey, IN BOOLEAN CustomEntry)
 {
   LEGACY_ENTRY      *Entry, *SubEntry;
   REFIT_MENU_SCREEN *SubScreen;
@@ -2115,7 +2116,7 @@ static LEGACY_ENTRY * AddLegacyEntry(IN CHAR16 *LoaderTitle, IN REFIT_VOLUME *Vo
   Entry->me.Title        = PoolPrint(L"Boot %s from %s", LoaderTitle, VolDesc);
   Entry->me.Tag          = TAG_LEGACY;
   Entry->me.Row          = 0;
-  Entry->me.ShortcutLetter = ShortcutLetter;
+  Entry->me.ShortcutLetter = (Hotkey == 0) ? ShortcutLetter : Hotkey;
   if (Image) {
     Entry->me.Image = Image;
   } else {
@@ -2232,7 +2233,7 @@ static VOID ScanLegacy(VOID)
         
         if (ShowVolume && (Volume->OSType != OSTYPE_HIDE)){
             DBG(" add legacy\n");
-            AddLegacyEntry(NULL, Volume, NULL, FALSE);
+            AddLegacyEntry(NULL, Volume, NULL, 0, FALSE);
         } else {
           DBG(" hidden\n");
         }
@@ -2315,7 +2316,7 @@ static VOID AddCustomLegacy(VOID)
         continue;
       }
       // Create a legacy entry for this volume
-      AddLegacyEntry(Custom->Title, Volume, Custom->Image, TRUE);
+      AddLegacyEntry(Custom->Title, Volume, Custom->Image, Custom->Hotkey, TRUE);
     }
   }
 }
@@ -2371,39 +2372,6 @@ static VOID ScanTool(VOID)
   if (GlobalConfig.DisableFlags & DISABLE_FLAG_TOOLS)
     return;
   
-  if (!gFirmwareClover) {
-    for (VolumeIndex = 0; VolumeIndex < VolumesCount; VolumeIndex++) {
-      Volume = Volumes[VolumeIndex];
-      if (!Volume->RootDir || !Volume->DeviceHandle) {
-        continue;
-      }
-      
-      Status = gBS->HandleProtocol (Volume->DeviceHandle, &gEfiPartTypeSystemPartGuid, &Interface);
-      if (Status == EFI_SUCCESS) {
-        DBG("Checking EFI partition Volume %d for Clover\n", VolumeIndex);
-        
-#if defined(MDE_CPU_X64)
-        StrCpy(FileName, L"\\EFI\\CLOVER\\CLOVERX64.EFI");
-#else
-        StrCpy(FileName, L"\\EFI\\CLOVER\\CLOVERIA32.EFI");
-#endif
-        
-        // OSX adds label "EFI" to EFI volumes and some UEFIs see that
-        // as a file. This file then blocks access to the /EFI directory.
-        // We will delete /EFI file here and leave only /EFI directory.
-        if (DeleteFile(Volume->RootDir, L"EFI")) {
-          DBG(" Deleted /EFI label\n");
-        }
-        
-        if (FileExists(Volume->RootDir, FileName)) {
-          DBG(" Found Clover\n");
-          Volume->BootType = BOOTING_BY_EFI;
-          AddCloverEntry(FileName, L"Clover Boot Options", Volume);
-        }
-      }
-    }
-  }
-  
   //    Print(L"Scanning for tools...\n");
   
   // look for the EFI shell
@@ -2443,8 +2411,6 @@ static VOID ScanTool(VOID)
 #endif
   }
   
-  
-  
   // look for the GPT/MBR sync tool
   /*    StrCpy(FileName, L"\\efi\\CLOVER\\tools\\gptsync.efi");
    if (FileExists(SelfRootDir, FileName)) {
@@ -2464,6 +2430,39 @@ static VOID ScanTool(VOID)
    Entry->LoadOptions = L"-d 0 mini";
    }
    */
+
+  if (!gFirmwareClover) {
+    for (VolumeIndex = 0; VolumeIndex < VolumesCount; VolumeIndex++) {
+      Volume = Volumes[VolumeIndex];
+      if (!Volume->RootDir || !Volume->DeviceHandle) {
+        continue;
+      }
+      
+      Status = gBS->HandleProtocol (Volume->DeviceHandle, &gEfiPartTypeSystemPartGuid, &Interface);
+      if (Status == EFI_SUCCESS) {
+        DBG("Checking EFI partition Volume %d for Clover\n", VolumeIndex);
+        
+#if defined(MDE_CPU_X64)
+        StrCpy(FileName, L"\\EFI\\CLOVER\\CLOVERX64.EFI");
+#else
+        StrCpy(FileName, L"\\EFI\\CLOVER\\CLOVERIA32.EFI");
+#endif
+        
+        // OSX adds label "EFI" to EFI volumes and some UEFIs see that
+        // as a file. This file then blocks access to the /EFI directory.
+        // We will delete /EFI file here and leave only /EFI directory.
+        if (DeleteFile(Volume->RootDir, L"EFI")) {
+          DBG(" Deleted /EFI label\n");
+        }
+        
+        if (FileExists(Volume->RootDir, FileName)) {
+          DBG(" Found Clover\n");
+          Volume->BootType = BOOTING_BY_EFI;
+          AddCloverEntry(FileName, L"Clover Boot Options", Volume);
+        }
+      }
+    }
+  }
 }
 
 // Add custom tool entries
@@ -2514,7 +2513,7 @@ static VOID AddCustomTool()
         continue;
       }
       // Create a legacy entry for this volume
-      AddToolEntry(Custom->Path, Custom->Title, Volume, Custom->Image, Custom->Shortcut);
+      AddToolEntry(Custom->Path, Custom->Title, Volume, Custom->Image, Custom->Hotkey);
     }
   }
 }
@@ -3346,15 +3345,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
       // fixed other menu entries
       //               DBG("FillInputs OK\n");
-      if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_FUNCS)) {
-        MenuEntryAbout.Image = BuiltinIcon(BUILTIN_ICON_FUNC_ABOUT);
-        AddMenuEntry(&MainMenu, &MenuEntryAbout);
-      }
-
-      if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_FUNCS)) {
-        MenuEntryOptions.Image = BuiltinIcon(BUILTIN_ICON_FUNC_OPTIONS);
-        AddMenuEntry(&MainMenu, &MenuEntryOptions);
-      }
 
       if (!(GlobalConfig.DisableFlags & DISABLE_FLAG_TOOLS)) {
         AddCustomTool();
@@ -3362,6 +3352,13 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
           ScanTool();
         }
         //      DBG("ScanTool()\n");
+      }
+
+      if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_FUNCS)) {
+        MenuEntryOptions.Image = BuiltinIcon(BUILTIN_ICON_FUNC_OPTIONS);
+        AddMenuEntry(&MainMenu, &MenuEntryOptions);
+        MenuEntryAbout.Image = BuiltinIcon(BUILTIN_ICON_FUNC_ABOUT);
+        AddMenuEntry(&MainMenu, &MenuEntryAbout);
       }
 
       if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_FUNCS) || MainMenu.EntryCount == 0) {
