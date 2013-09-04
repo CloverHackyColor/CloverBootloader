@@ -823,8 +823,8 @@ static LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
       if (OSFLAG_ISSET(Custom->Flags, OSFLAG_DISABLED) ||
           (OSFLAG_ISSET(Custom->Flags, OSFLAG_HIDDEN) && !gSettings.ShowHiddenEntries)) {
         if (Custom->Volume) {
-          if ((StrStr(Custom->Volume, Volume->DevicePathString) == NULL) &&
-              ((Volume->VolName == NULL) || (StrStr(Custom->Volume, Volume->VolName) == NULL))) {
+          if ((StrStr(Volume->DevicePathString, Custom->Volume) == NULL) &&
+              ((Volume->VolName == NULL) || (StrStr(Volume->VolName, Custom->Volume) == NULL))) {
             if (Custom->Path) {
               if (StriCmp(Custom->Path, LoaderPath) == 0) {
                 if (Custom->Type != 0) {
@@ -2078,8 +2078,8 @@ static LEGACY_ENTRY * AddLegacyEntry(IN CHAR16 *LoaderTitle, IN REFIT_VOLUME *Vo
       if (OSFLAG_ISUNSET(Custom->Flags, OSFLAG_DISABLED) ||
           OSFLAG_ISUNSET(Custom->Flags, OSFLAG_HIDDEN) || gSettings.ShowHiddenEntries) {
         if (Custom->Volume) {
-          if ((StrStr(Custom->Volume, Volume->DevicePathString) == NULL) &&
-              ((Volume->VolName == NULL) || (StrStr(Custom->Volume, Volume->VolName) == NULL))) {
+          if ((StrStr(Volume->DevicePathString, Custom->Volume) == NULL) &&
+              ((Volume->VolName == NULL) || (StrStr(Volume->VolName, Custom->Volume) == NULL))) {
             if (Custom->Type != 0) {
               if (Custom->Type == Volume->OSType) {
                 return NULL;
