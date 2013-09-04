@@ -761,7 +761,7 @@ static CHAR16 *RemoveLoadOption(IN CHAR16 *LoadOptions, IN CHAR16 *LoadOption)
 // */
 
 static LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOptions, IN CHAR16 *LoaderTitle, IN REFIT_VOLUME *Volume,
-                                       IN EG_IMAGE *Image, IN UINT8 OSType, IN CHAR16 Hotkey, IN BOOLEAN CustomEntry)
+                                       IN EG_IMAGE *Image, IN UINT8 OSType, IN UINT8 Flags, IN CHAR16 Hotkey, IN BOOLEAN CustomEntry)
 {
   EFI_DEVICE_PATH *LoaderDevicePath;
   CHAR16          *LoaderDevicePathString;
@@ -879,7 +879,7 @@ static LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
   Entry->VolName          = Volume->VolName;
   Entry->DevicePath       = LoaderDevicePath;
   Entry->DevicePathString = LoaderDevicePathString;
-  Entry->Flags            = 0;
+  Entry->Flags            = Flags;
   Entry->LoadOptions      = EfiStrDuplicate(LoaderOptions);
 
   // locate a custom icon for the loader
@@ -979,7 +979,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
   EFI_GUID          *Guid = NULL;
   CHAR16            *LoaderOptions = PoolPrint(L"%a", gSettings.BootArgs);
 
-  Entry = CreateLoaderEntry(LoaderPath, LoaderOptions, LoaderTitle, Volume, NULL, OSType, 0, FALSE);
+  Entry = CreateLoaderEntry(LoaderPath, LoaderOptions, LoaderTitle, Volume, NULL, OSType, 0, 0, FALSE);
   if (Entry == NULL) {
     FreePool(LoaderOptions);
     return NULL;
@@ -1963,7 +1963,7 @@ static VOID AddCustomEntries(VOID)
         continue;
       }
       // Create a legacy entry for this volume
-      Entry = CreateLoaderEntry(Custom->Path, Custom->Options, Custom->Title, Volume, Custom->Image, OSType, Custom->Hotkey, TRUE);
+      Entry = CreateLoaderEntry(Custom->Path, Custom->Options, Custom->Title, Volume, Custom->Image, OSType, Custom->Flags, Custom->Hotkey, TRUE);
       if (Entry) {
         if (Custom->SubEntries) {
           // Add subscreen
@@ -1985,7 +1985,7 @@ static VOID AddCustomEntries(VOID)
             }
             // Create sub entries
             for (CustomSubEntry = Custom->SubEntries; CustomSubEntry; CustomSubEntry = CustomSubEntry->Next) {
-              SubEntry = CreateLoaderEntry(CustomSubEntry->Path, CustomSubEntry->Options, CustomSubEntry->Title, Volume, CustomSubEntry->Image, GetOSTypeFromPath(CustomSubEntry->Path, Volume->OSType), CustomSubEntry->Hotkey, TRUE);
+              SubEntry = CreateLoaderEntry(CustomSubEntry->Path, CustomSubEntry->Options, CustomSubEntry->Title, Volume, CustomSubEntry->Image, GetOSTypeFromPath(CustomSubEntry->Path, Volume->OSType), CustomSubEntry->Flags, CustomSubEntry->Hotkey, TRUE);
               if (SubEntry) {
                  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
               }
