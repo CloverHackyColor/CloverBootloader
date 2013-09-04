@@ -1959,6 +1959,7 @@ static VOID AddCustomEntries(VOID)
       }
       // Check the volume is readable and the entry exists on the volume
       if ((Volume->RootDir == NULL) || !FileExists(Volume->RootDir, Custom->Path)) {
+        DBG("skipped because path does not exist\n");
         continue;
       }
       // Create a legacy entry for this volume

@@ -314,7 +314,8 @@ VOID DropTableFromRSDT (UINT32 Signature, UINT64 TableId)
     if (!GlobalConfig.DebugLog) {
       DBG(" Found table: %a  %a\n", sign, OTID);
     }
-	  if (TableEntry->Signature != Signature) {
+    if (((TableEntry->Signature != Signature) && (Signature != 0)) ||
+        ((TableEntry->OemTableId != TableId) && (TableId != 0))) {
 			continue;
     }
     if (!GlobalConfig.DebugLog) {
@@ -334,9 +335,9 @@ VOID DropTableFromRSDT (UINT32 Signature, UINT64 TableId)
 
 VOID DropTableFromXSDT (UINT32 Signature, UINT64 TableId) 
 {
-  EFI_STATUS                      Status = EFI_SUCCESS;
+  //EFI_STATUS                      Status = EFI_SUCCESS;
 	EFI_ACPI_DESCRIPTION_HEADER     *TableEntry;
-  EFI_PHYSICAL_ADDRESS            ssdt = EFI_SYSTEM_TABLE_MAX_ADDRESS;
+  //EFI_PHYSICAL_ADDRESS            ssdt = EFI_SYSTEM_TABLE_MAX_ADDRESS;
 	UINTN                           Index, Index2;
 	UINT32                          EntryCount;
 	CHAR8                           *BasePtr, *Ptr, *Ptr2;
@@ -344,7 +345,7 @@ VOID DropTableFromXSDT (UINT32 Signature, UINT64 TableId)
   CHAR8                           sign[5];
   CHAR8                           OTID[9];
   BOOLEAN                         DoubleZero = FALSE;
-  UINT32                          i, SsdtLen;
+  //UINT32                          i, SsdtLen;
   
   if ((Signature == 0) && (TableId == 0)) {
     return;
@@ -380,6 +381,7 @@ VOID DropTableFromXSDT (UINT32 Signature, UINT64 TableId)
         ((TableEntry->OemTableId != TableId) && (TableId != 0))) {
       continue;
     }
+    /*
     if (TableEntry->Signature == EFI_ACPI_4_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE) {
       //will patch here
       SsdtLen = TableEntry->Length;
@@ -413,161 +415,7 @@ VOID DropTableFromXSDT (UINT32 Signature, UINT64 TableId)
       DBG(" ... patched\n");
       continue;
     }
-    DBG(" ... dropped\n");
-    Ptr = BasePtr;
-    Ptr2 = Ptr + sizeof(UINT64);
-    for (Index2 = Index; Index2 < EntryCount-1; Index2++) {
-      //*Ptr++ = *Ptr2++;
-      CopyMem(Ptr, Ptr2, sizeof(UINT64));
-      Ptr  += sizeof(UINT64);
-      Ptr2 += sizeof(UINT64);
-    }
- //   ZeroMem(Ptr, sizeof(UINT64));
-    BasePtr -= sizeof(UINT64); //SunKi
-    Xsdt->Header.Length -= sizeof(UINT64);
-	}	
-  DBG("corrected XSDT length=%d\n", Xsdt->Header.Length);
-}
-
-VOID DropTableFromRSDTId (UINT64 id) 
-{
-	EFI_ACPI_DESCRIPTION_HEADER     *TableEntry;
-	UINTN               Index, Index2;
-	UINT32							EntryCount;
-	UINT32							*EntryPtr, *Ptr, *Ptr2;
-  CHAR8 sign[5];
-  CHAR8 OTID[9];
-  BOOLEAN 			DoubleZero = FALSE;
-  
-  if (!Rsdt) {
-    return;
-  }
-  // Если адрес RSDT < адреса XSDT и хвост RSDT наползает на XSDT, то подрезаем хвост RSDT до начала XSDT
-  if (((UINTN)Rsdt < (UINTN)Xsdt) && (((UINTN)Rsdt + Rsdt->Header.Length) > (UINTN)Xsdt)) {
-    Rsdt->Header.Length = ((UINTN)Xsdt - (UINTN)Rsdt) & ~3;
-    DBG("Cropped Rsdt->Header.Length=%d\n", Rsdt->Header.Length);
-  }
-  
-	EntryCount = (Rsdt->Header.Length - sizeof (EFI_ACPI_DESCRIPTION_HEADER)) / sizeof(UINT32);
-	if (EntryCount > 100) EntryCount = 100; //it's enough
-  DBG("Drop tables from Rsdt, count=%d\n", EntryCount); 
-	EntryPtr = &Rsdt->Entry;
-	for (Index = 0; Index < EntryCount; Index++, EntryPtr++) {
-    if (*EntryPtr == 0) {
-      if (DoubleZero) {
-        Rsdt->Header.Length = (UINT32)(sizeof(UINT32) * Index + sizeof(EFI_ACPI_DESCRIPTION_HEADER));
-        DBG("DoubleZero in RSDT table\n");
-        break;
-      }
-      DBG("First zero in RSDT table\n");
-      DoubleZero = TRUE;
-      Rsdt->Header.Length -= sizeof(UINT32);
-      continue; //avoid zero field
-    }
-    DoubleZero = FALSE;
-	  TableEntry = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(*EntryPtr));
-    CopyMem((CHAR8*)&sign, (CHAR8*)&TableEntry->Signature, 4);
-    sign[4] = 0;
-    CopyMem((CHAR8*)&OTID, (CHAR8*)&TableEntry->OemTableId, 8);
-    OTID[8] = 0;
-    if (!GlobalConfig.DebugLog) {
-      DBG(" Found table: %a  %a\n", sign, OTID);
-    }
-	  if (TableEntry->OemTableId != id) {
-			continue;
-    }
-    if (!GlobalConfig.DebugLog) {
-      DBG(" ... dropped\n");
-    }
-    Ptr = EntryPtr;
-    Ptr2 = Ptr + 1;
-    for (Index2 = Index; Index2 < EntryCount-1; Index2++) {
-      *Ptr++ = *Ptr2++;
-    }
-  //  *Ptr = 0; //end of table
-    EntryPtr--; //SunKi
-    Rsdt->Header.Length -= sizeof(UINT32);
-	}
-  DBG("corrected RSDT length=%d\n", Rsdt->Header.Length);
-}
-
-VOID DropTableFromXSDTId (UINT64 id) 
-{
-  EFI_STATUS                      Status = EFI_SUCCESS;
-	EFI_ACPI_DESCRIPTION_HEADER     *TableEntry;
-  EFI_PHYSICAL_ADDRESS            ssdt = EFI_SYSTEM_TABLE_MAX_ADDRESS;
-	UINTN                           Index, Index2;
-	UINT32                          EntryCount;
-	CHAR8                           *BasePtr, *Ptr, *Ptr2;
-	UINT64                          Entry64;
-  CHAR8                           sign[5];
-  CHAR8                           OTID[9];
-  BOOLEAN                         DoubleZero = FALSE;
-  UINT32                          i, SsdtLen;
-  
-	EntryCount = (Xsdt->Header.Length - sizeof (EFI_ACPI_DESCRIPTION_HEADER)) / sizeof(UINT64);
-  DBG("Drop tables from Xsdt, count=%d\n", EntryCount); 
-  if (EntryCount > 50) {
-    DBG("BUG! Too many XSDT entries \n");
-    EntryCount = 50;
-  }
-	BasePtr = (CHAR8*)(UINTN)(&(Xsdt->Entry));
-	for (Index = 0; Index < EntryCount; Index++, BasePtr += sizeof(UINT64)) {
-    if (ReadUnaligned64((CONST UINT64*)BasePtr) == 0) {
-      if (DoubleZero) {
-        Xsdt->Header.Length = (UINT32)(sizeof(UINT64) * Index + sizeof(EFI_ACPI_DESCRIPTION_HEADER));
-        DBG("DoubleZero in XSDT table\n");
-        break;
-      }
-      DBG("First zero in XSDT table\n");
-      DoubleZero = TRUE;
-      Xsdt->Header.Length -= sizeof(UINT64);
-      continue; //avoid zero field
-    }
-    DoubleZero = FALSE;
-    CopyMem (&Entry64, (VOID*)BasePtr, sizeof(UINT64)); //value from BasePtr->
-	  TableEntry = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(Entry64));
-    CopyMem((CHAR8*)&sign, (CHAR8*)&TableEntry->Signature, 4);
-    sign[4] = 0;
-    CopyMem((CHAR8*)&OTID, (CHAR8*)&TableEntry->OemTableId, 8);
-    OTID[8] = 0;
-    DBG(" Found table: %a  %a\n", sign, OTID);
-	  if (TableEntry->OemTableId != id) {
-      continue;
-	  }
-    if (TableEntry->Signature == EFI_ACPI_4_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE) {
-      //will patch here
-      SsdtLen = TableEntry->Length;
-			DBG("SSDT len = 0x%x", SsdtLen);
-//			SsdtLen += 4096;
-//			DBG(" new len = 0x%x\n", SsdtLen);
-			
-			ssdt = EFI_SYSTEM_TABLE_MAX_ADDRESS;
-			Status = gBS->AllocatePages(AllocateMaxAddress,
-                                  EfiACPIReclaimMemory,
-                                  EFI_SIZE_TO_PAGES(SsdtLen + 4096),
-                                  &ssdt);
-			if(EFI_ERROR(Status)) {
-        DBG(" ... not patched\n");
-        continue;
-      }
-      Ptr = (CHAR8*)(UINTN)ssdt;
-			CopyMem(Ptr, (VOID*)TableEntry, SsdtLen);
-        
-      for (i = 0; i < gSettings.PatchDsdtNum; i++) {
-        SsdtLen = FixAny((UINT8*)(UINTN)ssdt, SsdtLen,
-                         gSettings.PatchDsdtFind[i], gSettings.LenToFind[i],
-                         gSettings.PatchDsdtReplace[i], gSettings.LenToReplace[i]);
-      }
-      CopyMem ((VOID*)BasePtr, &ssdt, sizeof(UINT64)); //*BasePtr = ssdt;
-      // Finish SSDT patch and resize SSDT Length
-      CopyMem (&Ptr[4], &SsdtLen, 4);
-      ((EFI_ACPI_DESCRIPTION_HEADER*)Ptr)->Checksum = 0;
-      ((EFI_ACPI_DESCRIPTION_HEADER*)Ptr)->Checksum = (UINT8)(256-Checksum8(Ptr, SsdtLen));
-
-      DBG(" ... patched\n");
-      continue;
-    }
+    // */
     DBG(" ... dropped\n");
     Ptr = BasePtr;
     Ptr2 = Ptr + sizeof(UINT64);
