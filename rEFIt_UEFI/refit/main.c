@@ -1885,17 +1885,36 @@ static VOID AddCustomEntries(VOID)
   EFI_GUID            *Guid = NULL;
   UINT64               VolumeSize;
   UINT8                OSType;
+  UINTN                i = 0;
 
+  DBG("Custom entries start\n");
   // Traverse the custom entries
-  for (Custom = gSettings.CustomEntries; Custom; Custom = Custom->Next) {
+  for (Custom = gSettings.CustomEntries; Custom; ++i, Custom = Custom->Next) {
+    if (Custom->Type != 0) {
+      switch (Custom->Type) {
+      case OSTYPE_OSX:
+         Custom->Path = MACOSX_LOADER_PATH;
+         break;
+      case OSTYPE_WINEFI:
+         Custom->Path = L"\\EFI\\Microsoft\\Boot\bootmgfw.efi";
+      default:
+         break;
+      }
+    }
     if (Custom->Path == NULL) {
+      DBG("Custom entry %d skipped because it didn't have a path or valid type.\n", i);
       continue;
     }
     if (OSFLAG_ISSET(Custom->Flags, OSFLAG_DISABLED)) {
+      DBG("Custom entry %d skipped because it is disabled.\n", i);
       continue;
     }
     if (!gSettings.ShowHiddenEntries && OSFLAG_ISSET(Custom->Flags, OSFLAG_HIDDEN)) {
+      DBG("Custom entry %d skipped because it is hidden.\n", i);
       continue;
+    }
+    if (Custom->Volume) {
+      DBG("Custom entry %d matching \"%s\" ...\n", i, Custom->Volume);
     }
     for (VolumeIndex = 0; VolumeIndex < VolumesCount; ++VolumeIndex) {
       Volume = Volumes[VolumeIndex];
@@ -1907,38 +1926,47 @@ static VOID AddCustomEntries(VOID)
         Volume->VolName = L"Unknown";
       }
 
+      DBG("   Checking volume \"%s\" (%s) ... ", Volume->VolName, Volume->DevicePathString);
+
       // skip volume if its kind is configured as disabled
       if ((Volume->DiskKind == DISK_KIND_OPTICAL && (GlobalConfig.DisableFlags & DISABLE_FLAG_OPTICAL)) ||
           (Volume->DiskKind == DISK_KIND_EXTERNAL && (GlobalConfig.DisableFlags & DISABLE_FLAG_EXTERNAL)) ||
           (Volume->DiskKind == DISK_KIND_INTERNAL && (GlobalConfig.DisableFlags & DISABLE_FLAG_INTERNAL)))
       {
+        DBG("skipped\n");
         continue;
       }
 
       if ((Volume->BootType == BOOTING_BY_EFI) ||
           (Volume->BootType == BOOTING_BY_BOOTEFI)) {
+        DBG("skipped\n");
         continue;
       }
 
       if (Volume->OSType == OSTYPE_HIDE) {
+        DBG("skipped\n");
         continue;
       }
 
       // Check for exact volume matches
+      OSType = GetOSTypeFromPath(Custom->Path, Volume->OSType);
       if (Custom->Volume) {
+        
         if ((StrStr(Volume->DevicePathString, Custom->Volume) == NULL) &&
             ((Volume->VolName == NULL) || (StrStr(Volume->VolName, Custom->Volume) == NULL))) {
+          DBG("skipped\n");
           continue;
         }
         // Check if the volume should be of certain os type
-        if ((Custom->Type != 0) && (Custom->Type != Volume->OSType)) {
+        if ((Custom->Type != 0) && (OSType != Volume->OSType)) {
+          DBG("skipped\n");
           continue;
         }
-      } else if ((Custom->Type != 0) && (Custom->Type != Volume->OSType)) {
+      } else if ((Custom->Type != 0) && (OSType != Volume->OSType)) {
+        DBG("skipped\n");
         continue;
       }
       // Create a legacy entry for this volume
-      OSType = GetOSTypeFromPath(Custom->Path, Volume->OSType);
       Entry = CreateLoaderEntry(Custom->Path, Custom->Options, Custom->Title, Volume, Custom->Image, OSType, Custom->Hotkey, TRUE);
       if (Entry) {
         if (Custom->SubEntries) {
@@ -1972,8 +2000,10 @@ static VOID AddCustomEntries(VOID)
         }
         AddMenuEntry(&MainMenu, (REFIT_MENU_ENTRY *)Entry);
       }
+      DBG("match!\n");
     }
   }
+  DBG("Custom entries finish\n");
 }
 
 #define MAX_DISCOVERED_PATHS (16)
@@ -2247,28 +2277,39 @@ static VOID AddCustomLegacy(VOID)
   BOOLEAN              ShowVolume, HideIfOthersFound;
   REFIT_VOLUME        *Volume;
   CUSTOM_LEGACY_ENTRY *Custom;
+  UINTN                i = 0;
 
+  DBG("Custom legacy start\n");
   // Traverse the custom entries
-  for (Custom = gSettings.CustomLegacy; Custom; Custom = Custom->Next) {
+  for (Custom = gSettings.CustomLegacy; Custom; ++i, Custom = Custom->Next) {
     if (OSFLAG_ISSET(Custom->Flags, OSFLAG_DISABLED)) {
+      DBG("Custom legacy %d skipped because it is disabled.\n", i);
       continue;
     }
     if (!gSettings.ShowHiddenEntries && OSFLAG_ISSET(Custom->Flags, OSFLAG_HIDDEN)) {
+      DBG("Custom legacy %d skipped because it is hidden.\n", i);
       continue;
+    }
+    if (Custom->Volume) {
+      DBG("Custom entry %d matching \"%s\" ... ", i, Custom->Volume);
     }
     for (VolumeIndex = 0; VolumeIndex < VolumesCount; ++VolumeIndex) {
       Volume = Volumes[VolumeIndex];
+
+      DBG("   Checking volume \"%s\" (%s) ... ", Volume->VolName, Volume->DevicePathString);
 
       // skip volume if its kind is configured as disabled
       if ((Volume->DiskKind == DISK_KIND_OPTICAL && (GlobalConfig.DisableFlags & DISABLE_FLAG_OPTICAL)) ||
           (Volume->DiskKind == DISK_KIND_EXTERNAL && (GlobalConfig.DisableFlags & DISABLE_FLAG_EXTERNAL)) ||
           (Volume->DiskKind == DISK_KIND_INTERNAL && (GlobalConfig.DisableFlags & DISABLE_FLAG_INTERNAL)))
       {
+         DBG("skipped\n");
         continue;
       }
 
       if ((Volume->BootType == BOOTING_BY_EFI) ||
           (Volume->BootType == BOOTING_BY_BOOTEFI)) {
+        DBG("skipped\n");
         continue;
       }
 
@@ -2299,6 +2340,7 @@ static VOID AddCustomLegacy(VOID)
       }
 
       if (!ShowVolume || (Volume->OSType == OSTYPE_HIDE)) {
+        DBG("skipped\n");
         continue;
       }
 
@@ -2306,19 +2348,24 @@ static VOID AddCustomLegacy(VOID)
       if (Custom->Volume) {
         if ((StrStr(Volume->DevicePathString, Custom->Volume) == NULL) &&
             ((Volume->VolName == NULL) || (StrStr(Volume->VolName, Custom->Volume) == NULL))) {
+          DBG("skipped\n");
           continue;
         }
         // Check if the volume should be of certain os type
         if ((Custom->Type != 0) && (Custom->Type != Volume->OSType)) {
+          DBG("skipped\n");
           continue;
         }
       } else if ((Custom->Type != 0) && (Custom->Type != Volume->OSType)) {
+        DBG("skipped\n");
         continue;
       }
       // Create a legacy entry for this volume
       AddLegacyEntry(Custom->Title, Volume, Custom->Image, Custom->Hotkey, TRUE);
+      DBG("match!\n");
     }
   }
+  DBG("Custom legacy end\n");
 }
 
 //
@@ -2471,33 +2518,45 @@ static VOID AddCustomTool()
   UINTN             VolumeIndex;
   REFIT_VOLUME      *Volume;
   CUSTOM_TOOL_ENTRY *Custom;
+  UINTN              i = 0;
 
+  DBG("Custom tool start\n");
   // Traverse the custom entries
-  for (Custom = gSettings.CustomTool; Custom; Custom = Custom->Next) {
+  for (Custom = gSettings.CustomTool; Custom; ++i, Custom = Custom->Next) {
     if (OSFLAG_ISSET(Custom->Flags, OSFLAG_DISABLED)) {
+      DBG("Custom legacy %d skipped because it is disabled.\n", i);
       continue;
     }
     if (!gSettings.ShowHiddenEntries && OSFLAG_ISSET(Custom->Flags, OSFLAG_HIDDEN)) {
+       DBG("Custom legacy %d skipped because it is hidden.\n", i);
       continue;
     }
 
+    if (Custom->Volume) {
+      DBG("Custom entry %d matching \"%s\" ... ", i, Custom->Volume);
+    }
     for (VolumeIndex = 0; VolumeIndex < VolumesCount; ++VolumeIndex) {
       Volume = Volumes[VolumeIndex];
+
+      DBG("   Checking volume \"%s\" (%s) ... ", Volume->VolName, Volume->DevicePathString);
 
       // skip volume if its kind is configured as disabled
       if ((Volume->DiskKind == DISK_KIND_OPTICAL && (GlobalConfig.DisableFlags & DISABLE_FLAG_OPTICAL)) ||
           (Volume->DiskKind == DISK_KIND_EXTERNAL && (GlobalConfig.DisableFlags & DISABLE_FLAG_EXTERNAL)) ||
           (Volume->DiskKind == DISK_KIND_INTERNAL && (GlobalConfig.DisableFlags & DISABLE_FLAG_INTERNAL)))
       {
+        DBG("skipped\n");
         continue;
       }
 
       if ((Volume->BootType != BOOTING_BY_EFI) &&
           (Volume->BootType != BOOTING_BY_BOOTEFI)) {
+        DBG("skipped\n");
         continue;
       }
 
       if (Volume->OSType == OSTYPE_HIDE) {
+        DBG("skipped\n");
         continue;
       }
 
@@ -2505,17 +2564,21 @@ static VOID AddCustomTool()
       if (Custom->Volume) {
         if ((StrStr(Volume->DevicePathString, Custom->Volume) == NULL) &&
             ((Volume->VolName == NULL) || (StrStr(Volume->VolName, Custom->Volume) == NULL))) {
+           DBG("skipped\n");
            continue;
         }
       }
       // Check the tool exists on the volume
       if ((Volume->RootDir == NULL) || !FileExists(Volume->RootDir, Custom->Path)) {
+        DBG("skipped\n");
         continue;
       }
       // Create a legacy entry for this volume
       AddToolEntry(Custom->Path, Custom->Title, Volume, Custom->Image, Custom->Hotkey);
+      DBG("match!\n");
     }
   }
+  DBG("Custom tool end\n");
 }
 
 /*
