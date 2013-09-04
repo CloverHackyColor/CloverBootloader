@@ -1930,18 +1930,18 @@ static VOID AddCustomEntries(VOID)
           (Volume->DiskKind == DISK_KIND_EXTERNAL && (GlobalConfig.DisableFlags & DISABLE_FLAG_EXTERNAL)) ||
           (Volume->DiskKind == DISK_KIND_INTERNAL && (GlobalConfig.DisableFlags & DISABLE_FLAG_INTERNAL)))
       {
-        DBG("skipped\n");
+        DBG("skipped because media is disabled\n");
         continue;
       }
 
-      if ((Volume->BootType == BOOTING_BY_EFI) ||
-          (Volume->BootType == BOOTING_BY_BOOTEFI)) {
-        DBG("skipped\n");
+      if ((Volume->BootType != BOOTING_BY_EFI) &&
+          (Volume->BootType != BOOTING_BY_BOOTEFI)) {
+        DBG("skipped because it is not EFI bootable\n");
         continue;
       }
 
       if (Volume->OSType == OSTYPE_HIDE) {
-        DBG("skipped\n");
+        DBG("skipped because volume is hidden\n");
         continue;
       }
 
@@ -1956,11 +1956,11 @@ static VOID AddCustomEntries(VOID)
         }
         // Check if the volume should be of certain os type
         if ((Custom->Type != 0) && (OSType != Volume->OSType)) {
-          DBG("skipped\n");
+          DBG("skipped because wrong type\n");
           continue;
         }
       } else if ((Custom->Type != 0) && (OSType != Volume->OSType)) {
-        DBG("skipped\n");
+        DBG("skipped because wrong type\n");
         continue;
       }
       // Create a legacy entry for this volume
@@ -2300,13 +2300,13 @@ static VOID AddCustomLegacy(VOID)
           (Volume->DiskKind == DISK_KIND_EXTERNAL && (GlobalConfig.DisableFlags & DISABLE_FLAG_EXTERNAL)) ||
           (Volume->DiskKind == DISK_KIND_INTERNAL && (GlobalConfig.DisableFlags & DISABLE_FLAG_INTERNAL)))
       {
-         DBG("skipped\n");
+         DBG("skipped because media is disabled\n");
         continue;
       }
 
       if ((Volume->BootType == BOOTING_BY_EFI) ||
           (Volume->BootType == BOOTING_BY_BOOTEFI)) {
-        DBG("skipped\n");
+        DBG("skipped because volume is not legacy bootable\n");
         continue;
       }
 
@@ -2337,7 +2337,7 @@ static VOID AddCustomLegacy(VOID)
       }
 
       if (!ShowVolume || (Volume->OSType == OSTYPE_HIDE)) {
-        DBG("skipped\n");
+        DBG("skipped because volume is hidden\n");
         continue;
       }
 
@@ -2350,11 +2350,11 @@ static VOID AddCustomLegacy(VOID)
         }
         // Check if the volume should be of certain os type
         if ((Custom->Type != 0) && (Custom->Type != Volume->OSType)) {
-          DBG("skipped\n");
+          DBG("skipped because wrong type\n");
           continue;
         }
       } else if ((Custom->Type != 0) && (Custom->Type != Volume->OSType)) {
-        DBG("skipped\n");
+        DBG("skipped because wrong type\n");
         continue;
       }
       // Create a legacy entry for this volume
@@ -2542,18 +2542,18 @@ static VOID AddCustomTool()
           (Volume->DiskKind == DISK_KIND_EXTERNAL && (GlobalConfig.DisableFlags & DISABLE_FLAG_EXTERNAL)) ||
           (Volume->DiskKind == DISK_KIND_INTERNAL && (GlobalConfig.DisableFlags & DISABLE_FLAG_INTERNAL)))
       {
-        DBG("skipped\n");
+        DBG("skipped because media is disabled\n");
         continue;
       }
 
       if ((Volume->BootType != BOOTING_BY_EFI) &&
           (Volume->BootType != BOOTING_BY_BOOTEFI)) {
-        DBG("skipped\n");
+        DBG("skipped because not an EFI bootable volume\n");
         continue;
       }
 
       if (Volume->OSType == OSTYPE_HIDE) {
-        DBG("skipped\n");
+        DBG("skipped because volume is hidden\n");
         continue;
       }
 
@@ -2567,7 +2567,7 @@ static VOID AddCustomTool()
       }
       // Check the tool exists on the volume
       if ((Volume->RootDir == NULL) || !FileExists(Volume->RootDir, Custom->Path)) {
-        DBG("skipped\n");
+        DBG("skipped because path does not exist\n");
         continue;
       }
       // Create a legacy entry for this volume
