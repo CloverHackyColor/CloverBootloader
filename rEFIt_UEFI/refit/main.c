@@ -85,7 +85,7 @@ static VOID AboutRefit(VOID)
 //  CHAR8* Revision = NULL;
     if (AboutMenu.EntryCount == 0) {
         AboutMenu.TitleImage = BuiltinIcon(BUILTIN_ICON_FUNC_ABOUT);
-        AddMenuInfoLine(&AboutMenu, L"Clover Version 2.09 UEFI by Slice, dmazar, apianti, JrCs, and others");
+        AddMenuInfoLine(&AboutMenu, L"Clover Version 2.10 UEFI by Slice, dmazar, apianti, JrCs, and others");
 #ifdef FIRMWARE_BUILDDATE
         AddMenuInfoLine(&AboutMenu, PoolPrint(L" Build: %a", FIRMWARE_BUILDDATE));
 #else
@@ -1934,12 +1934,6 @@ static VOID AddCustomEntries(VOID)
         continue;
       }
 
-      if ((Volume->BootType != BOOTING_BY_EFI) &&
-          (Volume->BootType != BOOTING_BY_BOOTEFI)) {
-        DBG("skipped because it is not EFI bootable\n");
-        continue;
-      }
-
       if (Volume->OSType == OSTYPE_HIDE) {
         DBG("skipped because volume is hidden\n");
         continue;
@@ -1961,6 +1955,10 @@ static VOID AddCustomEntries(VOID)
         }
       } else if ((Custom->Type != 0) && (OSType != Volume->OSType)) {
         DBG("skipped because wrong type\n");
+        continue;
+      }
+      // Check the volume is readable and the entry exists on the volume
+      if ((Volume->RootDir == NULL) || !FileExists(Volume->RootDir, Custom->Path)) {
         continue;
       }
       // Create a legacy entry for this volume
@@ -2288,7 +2286,7 @@ static VOID AddCustomLegacy(VOID)
       continue;
     }
     if (Custom->Volume) {
-      DBG("Custom legacy %d matching \"%s\" ... ", i, Custom->Volume);
+      DBG("Custom legacy %d matching \"%s\" ...\n", i, Custom->Volume);
     }
     for (VolumeIndex = 0; VolumeIndex < VolumesCount; ++VolumeIndex) {
       Volume = Volumes[VolumeIndex];
@@ -2530,7 +2528,7 @@ static VOID AddCustomTool()
     }
 
     if (Custom->Volume) {
-      DBG("Custom tool %d matching \"%s\" ... ", i, Custom->Volume);
+      DBG("Custom tool %d matching \"%s\" ...\n", i, Custom->Volume);
     }
     for (VolumeIndex = 0; VolumeIndex < VolumesCount; ++VolumeIndex) {
       Volume = Volumes[VolumeIndex];
@@ -2543,12 +2541,6 @@ static VOID AddCustomTool()
           (Volume->DiskKind == DISK_KIND_INTERNAL && (GlobalConfig.DisableFlags & DISABLE_FLAG_INTERNAL)))
       {
         DBG("skipped because media is disabled\n");
-        continue;
-      }
-
-      if ((Volume->BootType != BOOTING_BY_EFI) &&
-          (Volume->BootType != BOOTING_BY_BOOTEFI)) {
-        DBG("skipped because not an EFI bootable volume\n");
         continue;
       }
 
