@@ -309,7 +309,7 @@ VOID RefillInputs(VOID)
   InputItems[InputItemsCount].BValue = gSettings.bDropECDT;
   InputItems[InputItemsCount++].SValue = gSettings.bDropECDT?L"[+]":L"[ ]";
   */
-
+  InputItemsCount = 52;
   InputItems[InputItemsCount].ItemType = BoolValue; //52
   InputItems[InputItemsCount].BValue = gSettings.InjectEDID;
   InputItems[InputItemsCount++].SValue = gSettings.InjectEDID?L"[+]":L"[ ]"; 
@@ -345,6 +345,7 @@ VOID RefillInputs(VOID)
   InputItems[InputItemsCount].BValue   = gSettings.bDropDMAR;
   InputItems[InputItemsCount++].SValue = gSettings.bDropDMAR?L"[+]":L"[ ]";
   */
+  InputItemsCount++;
   InputItems[InputItemsCount].ItemType = ASString;  //78
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%a", gSettings.ProductName);
   InputItems[InputItemsCount].ItemType = ASString;  //79
@@ -374,7 +375,7 @@ VOID RefillInputs(VOID)
   InputItems[InputItemsCount].BValue   = gSettings.bDropBGRT;
   InputItems[InputItemsCount++].SValue = gSettings.bDropBGRT?L"[+]":L"[ ]";
   */
-
+  InputItemsCount++;
   InputItems[InputItemsCount].ItemType = ASString; //90
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%s", gSettings.ConfigName);
   
@@ -583,7 +584,7 @@ VOID FillInputs(VOID)
   InputItems[InputItemsCount].BValue = gSettings.bDropECDT;
   InputItems[InputItemsCount++].SValue = gSettings.bDropECDT?L"[+]":L"[ ]";
   */
-  
+  InputItemsCount = 52;
   InputItems[InputItemsCount].ItemType = BoolValue; //52
   InputItems[InputItemsCount].BValue = gSettings.InjectEDID;
   InputItems[InputItemsCount++].SValue = gSettings.InjectEDID?L"[+]":L"[ ]";
@@ -619,6 +620,7 @@ VOID FillInputs(VOID)
   InputItems[InputItemsCount].BValue   = gSettings.bDropDMAR;
   InputItems[InputItemsCount++].SValue = gSettings.bDropDMAR?L"[+]":L"[ ]";
   */
+  InputItemsCount++;
   InputItems[InputItemsCount].ItemType = ASString;  //78
   InputItems[InputItemsCount].SValue = AllocateZeroPool(64);
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%a", gSettings.ProductName);
@@ -658,7 +660,7 @@ VOID FillInputs(VOID)
   InputItems[InputItemsCount].BValue   = gSettings.bDropBGRT;
   InputItems[InputItemsCount++].SValue = gSettings.bDropBGRT?L"[+]":L"[ ]";
   */
-  
+  InputItemsCount++;
   InputItems[InputItemsCount].ItemType = ASString; //90
   InputItems[InputItemsCount].SValue   = AllocateZeroPool(64);
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%s", gSettings.ConfigName);
@@ -894,7 +896,7 @@ VOID ApplyInputs(VOID)
     gSettings.bDropECDT = InputItems[i].BValue;
   }
   */
-  i++; //52
+  i=52; //52
   if (InputItems[i].Valid) {
     gSettings.InjectEDID = InputItems[i].BValue;
   }
@@ -950,7 +952,7 @@ VOID ApplyInputs(VOID)
     gSettings.bDropDMAR = InputItems[i].BValue;
   }
   */
-  i++; //78
+  i=78; //78
   if (InputItems[i].Valid) {
     AsciiSPrint(gSettings.ProductName, 64, "%s", InputItems[i].SValue);
     // let's fill all other fields based on this ProductName
@@ -1008,7 +1010,7 @@ VOID ApplyInputs(VOID)
     gSettings.bDropBGRT = InputItems[i].BValue;
   }
   */
-  i++; //90
+  i=90; //90
   if (InputItems[i].Valid) {
     UnicodeSPrint(gSettings.ConfigName, 64, L"%s", InputItems[i].SValue);
     Status = LoadUserSettings(SelfRootDir);

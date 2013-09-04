@@ -44,6 +44,8 @@ BOOLEAN LPCBFIX;
 BOOLEAN IDEFIX;
 BOOLEAN SATAFIX;
 BOOLEAN ASUSFIX;
+BOOLEAN USBIntel;
+BOOLEAN USBNForce;
 BOOLEAN USBIDFIX = TRUE;
 BOOLEAN Display1PCIE;
 BOOLEAN Display2PCIE;
@@ -78,9 +80,11 @@ UINT32 DisplaySubID[2];
 UINT32 HDAADR1;
 UINT32 USBADR[12];
 UINT32 USBADR2[12];
+UINT32 USBADR3[12]; /*<-NFORCE_USB*/
 UINT32 USBID[12];
 UINT32 USB20[12];
 UINT32 USB30[12];
+UINT32 USB40[12];  /*<-NFORCE_USB*/
 
 UINT32 HDAcodecId=0;
 UINT32 HDAlayoutId=0;
@@ -500,7 +504,7 @@ CHAR8* get_net_model(UINT32 id) {
 	return NetChipsets[0].name;
 }
 
-VOID GetPciADR(IN EFI_DEVICE_PATH_PROTOCOL *DevicePath, OUT UINT32 *Addr1, OUT UINT32 *Addr2)
+VOID GetPciADR(IN EFI_DEVICE_PATH_PROTOCOL *DevicePath, OUT UINT32 *Addr1, OUT UINT32 *Addr2, OUT UINT32 *Addr3)
 {
   PCI_DEVICE_PATH *PciNode;
   UINTN           PciNodeCount;
@@ -510,7 +514,7 @@ VOID GetPciADR(IN EFI_DEVICE_PATH_PROTOCOL *DevicePath, OUT UINT32 *Addr1, OUT U
   if (Addr1 != NULL) *Addr1 = 0;
   if (Addr2 != NULL) *Addr2 = 0xFFFE; //some code we will consider as "non-exists" b/c 0 is meaningful value
                                       // as well as 0xFFFF
-  
+  if (Addr3 != NULL) *Addr3 = 0xFFFE;
   if (!TmpDevicePath) {
     return;
   }
@@ -529,6 +533,8 @@ VOID GetPciADR(IN EFI_DEVICE_PATH_PROTOCOL *DevicePath, OUT UINT32 *Addr1, OUT U
         *Addr1 = (PciNode->Device << 16) | PciNode->Function;
       } else if (PciNodeCount == 2 && Addr2 != NULL) {
         *Addr2 = (PciNode->Device << 16) | PciNode->Function;
+      } else if (PciNodeCount == 3 && Addr3 != NULL) {
+        *Addr3 = (PciNode->Device << 16) | PciNode->Function;
       } else {
         break;
       }
@@ -544,7 +550,7 @@ VOID GetPciADR(IN EFI_DEVICE_PATH_PROTOCOL *DevicePath, OUT UINT32 *Addr1, OUT U
 BOOLEAN NativeUSB(UINT16 DID)
 {
   UINT16 d = DID & 0xFF00;
-  return ((d == 0x2600) || (d == 0x2700) || (d == 0x2800) || (d == 0x3a00));
+  return ((d == 0x2600) || (d == 0x2700) || (d == 0x2800) || (d == 0x3a00) || (d == /*NFORCE_USB->*/0x0a00));
 }
 
 VOID CheckHardware()
@@ -612,7 +618,7 @@ VOID CheckHardware()
             UINT32 dadr1, dadr2;
             PCI_IO_DEVICE *PciIoDevice;
 
-            GetPciADR(DevicePath, &DisplayADR1[display], &DisplayADR2[display]);
+            GetPciADR(DevicePath, &DisplayADR1[display], &DisplayADR2[display], NULL);
             DBG("VideoCard devID=0x%x\n", ((Pci.Hdr.DeviceId << 16) | Pci.Hdr.VendorId));
             dadr1 = DisplayADR1[display];
             dadr2 = DisplayADR2[display];
@@ -651,7 +657,7 @@ VOID CheckHardware()
           //Network ADR
           if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_NETWORK) &&
               (Pci.Hdr.ClassCode[1] == PCI_CLASS_NETWORK_ETHERNET)) {
-            GetPciADR(DevicePath, &NetworkADR1, &NetworkADR2);
+            GetPciADR(DevicePath, &NetworkADR1, &NetworkADR2, NULL);
  //           DBG("NetworkADR1 = 0x%x, NetworkADR2 = 0x%x\n", NetworkADR1, NetworkADR2);
             Netmodel = get_net_model(deviceid);            
           }
@@ -659,7 +665,7 @@ VOID CheckHardware()
           //Network WiFi ADR
           if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_NETWORK) &&
               (Pci.Hdr.ClassCode[1] == PCI_CLASS_NETWORK_OTHER)) {
-            GetPciADR(DevicePath, &ArptADR1, &ArptADR2);
+            GetPciADR(DevicePath, &ArptADR1, &ArptADR2, NULL);
    //         DBG("ArptADR1 = 0x%x, ArptADR2 = 0x%x\n", ArptADR1, ArptADR2);
    //         Netmodel = get_arpt_model(deviceid);  
             ArptBCM = (Pci.Hdr.VendorId == 0x14e4);
@@ -669,14 +675,14 @@ VOID CheckHardware()
           //Firewire ADR
           if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_SERIAL) &&
               (Pci.Hdr.ClassCode[1] == PCI_CLASS_SERIAL_FIREWIRE)) {
-            GetPciADR(DevicePath, &FirewireADR1, &FirewireADR2);
+            GetPciADR(DevicePath, &FirewireADR1, &FirewireADR2, NULL);
  //           DBG("FirewireADR1 = 0x%x, FirewireADR2 = 0x%x\n", FirewireADR1, FirewireADR2);
           }
           
           //SBUS ADR
           if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_SERIAL) &&
               (Pci.Hdr.ClassCode[1] == PCI_CLASS_SERIAL_SMB)) {
-            GetPciADR(DevicePath, &SBUSADR1, &SBUSADR2);
+            GetPciADR(DevicePath, &SBUSADR1, &SBUSADR2, NULL);
   //          DBG("SBUSADR1 = 0x%x, SBUSADR2 = 0x%x\n", SBUSADR1, SBUSADR2);
           }
           
@@ -684,7 +690,9 @@ VOID CheckHardware()
           if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_SERIAL) &&
               (Pci.Hdr.ClassCode[1] == PCI_CLASS_SERIAL_USB)) {
             UINT16 DID = Pci.Hdr.DeviceId;
-            GetPciADR(DevicePath, &USBADR[usb], &USBADR2[usb]);
+            USBIntel = (Pci.Hdr.VendorId == 0x8086);
+            USBNForce = (Pci.Hdr.VendorId == 0x10de);
+            GetPciADR(DevicePath, &USBADR[usb], &USBADR2[usb], &USBADR3[usb]);
             DBG("USBADR[%d] = 0x%x and PCIe = 0x%x\n", usb, USBADR[usb], USBADR2[usb]);
             if (USBIDFIX)
             {
@@ -697,10 +705,17 @@ VOID CheckHardware()
               if (USBADR[usb] == 0x001A0002 && !NativeUSB(DID)) DID = 0x3a39;
               if (USBADR[usb] == 0x001D0007 && !NativeUSB(DID)) DID = 0x3a3a;
               if (USBADR[usb] == 0x001A0007 && !NativeUSB(DID)) DID = 0x3a3c;
+              //NFORCE_USB_START
+              if (USBADR3[usb] == 0x00040000 && !NativeUSB(DID)) DID = 0x0aa5;
+              if (USBADR3[usb] == 0x00040001 && !NativeUSB(DID)) DID = 0x0aa6;
+              if (USBADR3[usb] == 0x00060000 && !NativeUSB(DID)) DID = 0x0aa7;
+              if (USBADR3[usb] == 0x00060001 && !NativeUSB(DID)) DID = 0x0aa9;
+              //NFORCE_USB_END
             }       
             USBID[usb] = DID;
             USB20[usb] = (Pci.Hdr.ClassCode[0] == 0x20)?1:0;
             USB30[usb] = (Pci.Hdr.ClassCode[0] == 0x30)?1:0;
+            USB40[usb] = (Pci.Hdr.ClassCode[0] == 0x20)?1:0;
             usb++;
           }
           
@@ -708,7 +723,7 @@ VOID CheckHardware()
           if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_MEDIA) &&
               (Pci.Hdr.ClassCode[1] == PCI_CLASS_MEDIA_HDA)) {
              UINT32 codecId = 0, layoutId = 0;
-            GetPciADR(DevicePath, &HDAADR1, NULL);
+            GetPciADR(DevicePath, &HDAADR1, NULL, NULL);
   //          DBG("HDAADR = 0x%x\n", HDAADR1);
             codecId = HDA_getCodecVendorAndDeviceIds(PciIo);
             if (codecId > 0) {
@@ -743,7 +758,7 @@ VOID CheckHardware()
           // IDE device
           if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_MASS_STORAGE) &&
               (Pci.Hdr.ClassCode[1] == PCI_CLASS_MASS_STORAGE_IDE)) {
-            GetPciADR(DevicePath, &IDEADR1, &IDEADR2);
+            GetPciADR(DevicePath, &IDEADR1, &IDEADR2, NULL);
   //          DBG("IDEADR1 = 0x%x, IDEADR2 = 0x%x\n", IDEADR1, IDEADR2);
             IDEFIX = get_ide_model(deviceid);
             IDEVENDOR = Pci.Hdr.VendorId;
@@ -753,7 +768,7 @@ VOID CheckHardware()
           if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_MASS_STORAGE) &&
               (Pci.Hdr.ClassCode[1] == PCI_CLASS_MASS_STORAGE_SATADPA) &&
               (Pci.Hdr.ClassCode[0] == 0x00)) {
-            GetPciADR(DevicePath, &SATAADR1, &SATAADR2);
+            GetPciADR(DevicePath, &SATAADR1, &SATAADR2, NULL);
  //           DBG("SATAADR1 = 0x%x, SATAADR2 = 0x%x\n", SATAADR1, SATAADR2);
             SATAFIX = get_ide_model(deviceid);
             SATAVENDOR = Pci.Hdr.VendorId;
@@ -763,7 +778,7 @@ VOID CheckHardware()
           if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_MASS_STORAGE) &&
               (Pci.Hdr.ClassCode[1] == PCI_CLASS_MASS_STORAGE_SATADPA) &&
               (Pci.Hdr.ClassCode[0] == 0x01)) {
-            GetPciADR(DevicePath, &SATAAHCIADR1, &SATAAHCIADR2);
+            GetPciADR(DevicePath, &SATAAHCIADR1, &SATAAHCIADR2, NULL);
   //          DBG("SATAAHCIADR1 = 0x%x, SATAAHCIADR2 = 0x%x\n", SATAAHCIADR1, SATAAHCIADR2);
             //AHCIFIX = get_ahci_model(deviceid);
             SATAAHCIVENDOR = Pci.Hdr.VendorId;
@@ -3548,7 +3563,7 @@ UINT32 AddHDEF (UINT8 *dsdt, UINT32 len)
 UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
 {
   UINT32 i, j, k;
-  UINT32 Size, size1, size2, size3;
+  UINT32 Size, size1, size2, size3, size4;
   UINT32 adr=0, adr1=0;
   INT32 sizeoffset;
   AML_CHUNK* root;
@@ -3560,7 +3575,7 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
   CHAR8 *USBDATA1;
   CHAR8 *USBDATA2;
   CHAR8 *USBDATA3;
-
+  CHAR8 *USBDATA4;
   
   DBG("Start USB Fix\n");
 	//DBG("len = 0x%08x\n", len);
@@ -3577,7 +3592,11 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
   aml_add_string(pack, "built-in");
   aml_add_byte_buffer(pack, dataBuiltin, sizeof(dataBuiltin));
   aml_add_string(pack, "device_type");
+    if (USBIntel) {
   aml_add_string_buffer(pack, "UHCI");
+    } else if (USBNForce) {
+        aml_add_string_buffer(pack, "OHCI");
+    }
   if (gSettings.InjectClockID) {
     aml_add_string(pack, "AAPL,clock-id");
     aml_add_byte_buffer(pack, dataBuiltin, 1);
@@ -3608,6 +3627,7 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
     aml_add_string(pack1, "AAPL,clock-id");
     aml_add_byte_buffer(pack1, dataBuiltin, sizeof(dataBuiltin));
   }
+  if (USBIntel) {
   aml_add_string(pack1, "AAPL,current-available");
   aml_add_word(pack1, 0x05DC);
   aml_add_string(pack1, "AAPL,current-extra");
@@ -3616,6 +3636,14 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
   aml_add_word(pack1, 0x0BB8);
 //  aml_add_string(pack1, "AAPL,device-internal");
 //  aml_add_byte(pack1, 0x02);
+  } else if (USBNForce) {
+    aml_add_string(pack1, "AAPL,current-available");
+    aml_add_word(pack1, 0x04B0);
+    aml_add_string(pack1, "AAPL,current-extra");
+    aml_add_word(pack1, 0x02BC);
+    aml_add_string(pack1, "AAPL,current-in-sleep");
+    aml_add_word(pack1, 0x03E8);
+  }
 
   aml_add_byte_buffer(pack1, dataBuiltin, sizeof(dataBuiltin));
   aml_add_local0(met1);
@@ -3629,6 +3657,15 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
   aml_write_node(root1, USBDATA2, 0);
   aml_destroy_node(root1);
  
+  //NFORCE_USB_START
+  aml_calculate_size(root1);
+  USBDATA4 = AllocateZeroPool(root1->Size);
+  size4 = root1->Size;
+  //DBG("USB code size = 0x%08x\n", sizeoffset);
+  aml_write_node(root1, USBDATA4, 0);
+  aml_destroy_node(root1);
+  //NFORCE_USB_END
+    
   // add Method(_DSM,4,NotSerialized) for USB3
   root1 = aml_create_node(NULL);
   met1 = aml_add_method(root1, "_DSM", 4);
@@ -3784,12 +3821,78 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
           len = CorrectOuters(dsdt, len, adr-3, sizeoffset);
           break;
         }  
+          //NFORCE_USB_START
+        else if (CmpAdr(dsdt, j, USBADR3[i]))
+        {
+            UsbName[i] = AllocateZeroPool(5);
+            CopyMem(UsbName[i], dsdt+j, 4);
+            
+            adr1 = devFind(dsdt, j);
+            if (!adr1) {
+                continue;
+            }
+            
+            adr = get_size(dsdt, adr1);
+            //UINT32 k = (adr > 0x3F)?1:0;
+            /*
+             14 45 06 5F 44 53 4D 04 70 12 4F 04 08 0D 64 65
+             76 69 63 65 2D 69 64 00 11 07 0A 04 31 1E 00 00
+             0D 62 75 69 6C 74 2D 69 6E 00 11 04 0A 01 00 0D
+             64 65 76 69 63 65 5F 74 79 70 65 00 11 08 0A 04
+             55 48 43 49 00 0D 41 41 50 4C 2C 63 6C 6F 63 6B
+             2D 69 64 00 11 04 0A 01 00 60 44 54 47 50 68 69
+             6A 6B 71 60 A4 60
+             */
+            
+            if (USB40[i]) {
+                if ((USBDATA4[25] == 0x0A) && (USBDATA4[26] == 0x04)) {
+                    k = 27;
+                } else if ((USBDATA4[26] == 0x0A) && (USBDATA4[27] == 0x04)) {
+                    k = 28;
+                } else {
+                    continue;
+                }
+                
+                CopyMem(USBDATA4+k, (VOID*)&USBID[i], 4);
+                sizeoffset = size4;
+                
+                
+            } else {
+                if ((USBDATA1[25] == 0x0A) && (USBDATA1[26] == 0x04)) {
+                    k = 27;
+                } else if ((USBDATA1[26] == 0x0A) && (USBDATA1[27] == 0x04)) {
+                    k = 28;
+                } else {
+                    continue;
+                }
+                
+                CopyMem(USBDATA1+k, (VOID*)&USBID[i], 4);
+                sizeoffset = size1;
+            }
+            
+            len = move_data(adr1+adr, dsdt, len, sizeoffset);
+            
+            if (USB40[i]) {
+                CopyMem(dsdt+adr1+adr, USBDATA4, sizeoffset);
+                
+            } else {
+                CopyMem(dsdt+adr1+adr, USBDATA1, sizeoffset);
+            }
+            // Fix Device USB size
+            k = write_size(adr1, dsdt, len, sizeoffset);
+            sizeoffset += k;
+            len += k;
+            len = CorrectOuters(dsdt, len, adr1-3, sizeoffset);
+            break;
+        }
+          //NFORCE_USB_END
       }
     }
   }
   FreePool(USBDATA1);
   FreePool(USBDATA2);
   FreePool(USBDATA3);
+  FreePool(USBDATA4);
   return len;  
 }
 

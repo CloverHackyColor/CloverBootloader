@@ -18,8 +18,6 @@
 		<string>-1</string>
 		<key>Legacy</key>
 		<string>PBR</string>
-		<key>LegacyEntry</key>
-		<integer>2</integer>
 	</dict>
 	<key>KernelAndKextPatches</key>
 	<dict>
@@ -173,7 +171,7 @@
 					<string>DDR3</string>
 				</dict>
 			</array>
-		</dict>		
+		</dict>
 	</dict>
 	<key>CPU</key>
 	<dict>
@@ -192,7 +190,7 @@
 		<key>C6</key>
 		<true/>
 		<key>Latency</key>
-		<integer>0xFA</integer>		
+		<integer>250</integer>
 	</dict>
 	<key>Graphics</key>
 	<dict>
@@ -203,7 +201,7 @@
 			<key>ATI</key>
 			<true/>
 			<key>NVidia</key>
-			<false/>			
+			<false/>
 		</dict>
 		<key>InjectEDID</key>
 		<true/>
@@ -274,27 +272,24 @@
 			<key>AddClockID</key>
 			<true/>
 			<key>USBFixOwnership</key>
-			<true/>		
+			<true/>
 		</dict>
 	</dict>
 	<key>ACPI</key>
 	<dict>
 		<key>DropTables</key>
-		<dict>
-			<key>BySignature</key>
-			<array>
+		<array>
+			<dict>
+				<key>Signature</key>
 				<string>DMAR</string>
-				<string>BGRT</string>
-			</array>
-			<key>ByTableID</key>
-			<array>
+			</dict>
+			<dict>
+				<key>Signature</key>
+				<string>SSDT</string>
+				<key>TableId</key>
 				<string>CpuPm</string>
-				<string>Cpu0Ist</string>
-				<string>Cpu1Ist</string>
-				<string>Cpu0Cst</string>
-				<string>Cpu1Cst</string>
-			</array>			
-		</dict>
+			</dict>
+		</array>
 		<key>DSDT</key>
 		<dict>
 			<key>Debug</key>
@@ -307,7 +302,7 @@
 			<array>
 				<dict>
 					<key>Comment</key>
-					<string>Remove battery device from desktop</string>					
+					<string>Remove battery device from desktop</string>
 					<key>Find</key>
 					<data>W4IeQkFUMQhfSElEDEHQDAoIX1VJRAEUCF9TVEEApAA=</data>
 					<key>Replace</key>
@@ -315,7 +310,7 @@
 				</dict>
 				<dict>
 					<key>Comment</key>
-					<string>Add _SUN property for GIGE</string>					
+					<string>Add _SUN property for GIGE</string>
 					<key>Find</key>
 					<data>UFhTWAhfQURSAAhfUFJXEgYC</data>
 					<key>Replace</key>
@@ -345,7 +340,7 @@
 			<key>MaxMultiplier</key>
 			<integer>12</integer>
 			<key>PluginType</key>
-			<integer>0</integer>			
+			<integer>0</integer>
 		</dict>
 		<key>ResetAddress</key>
 		<string>0x64</string>
@@ -379,6 +374,35 @@
 			<key>DoubleClick</key>
 			<integer>500</integer>
 		</dict>
+		<key>Hide</key>
+		<array>
+			<string>Windows</string>
+			<string>\EFI\BOOT\BOOTX64.EFI</string>
+		</array>
+		<key>Scan</key>
+		<dict>
+			<key>Entries</key>
+			<true/>
+			<key>Tool</key>
+			<true/>
+			<key>Legacy</key>
+			<false/>
+		</dict>
+		<key>Custom</key>
+		<dict>
+			<key>Entries</key>
+			<array>
+				<array/>
+			</array>
+		</dict>
+		<key>Legacy</key>
+		<array>
+			<string></string>
+		</array>
+		<key>Tool</key>
+		<array>
+			<string></string>
+		</array>
 	</dict>
 	<key>RtVariables</key>
 	<dict>

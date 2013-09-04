@@ -1705,16 +1705,16 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
     dictPointer = GetProperty(dict, "Devices");
     if (dictPointer) {
       //Slice - this is obsolete
-/*      prop = GetProperty(dictPointer, "PCIRootUID");
-      gSettings.PCIRootUID = 0;
-      if(prop) {
-        if (prop->type == kTagTypeInteger) {
-          gSettings.PCIRootUID = (UINT16)(UINTN)prop->string;
-        } else if (prop->type == kTagTypeString){
-          AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
-          gSettings.PCIRootUID = (UINT16)StrDecimalToUintn((CHAR16*)&UStr[0]);
-        }
-      }*/
+      /*      prop = GetProperty(dictPointer, "PCIRootUID");
+       gSettings.PCIRootUID = 0;
+       if(prop) {
+       if (prop->type == kTagTypeInteger) {
+       gSettings.PCIRootUID = (UINT16)(UINTN)prop->string;
+       } else if (prop->type == kTagTypeString){
+       AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
+       gSettings.PCIRootUID = (UINT16)StrDecimalToUintn((CHAR16*)&UStr[0]);
+       }
+       }*/
       prop = GetProperty(dictPointer, "Inject");
       gSettings.StringInjector = FALSE;
       if(prop) {
@@ -1737,12 +1737,12 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
                                      &BufferPtr
                                      );
         if (!EFI_ERROR(Status)) {
-          cProperties = (UINT8*)(UINTN)BufferPtr; 
+          cProperties = (UINT8*)(UINTN)BufferPtr;
           cPropSize = (UINT32)(strlength >> 1);
           cPropSize = hex2bin(cDeviceProperties, cProperties, cPropSize);
           DBG("Injected EFIString of length %d\n", cPropSize);
         }
-        //---------      
+        //---------
       }
       prop = GetProperty(dictPointer, "FakeID");
       if(prop) {
@@ -1780,85 +1780,85 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
         if (prop2 && (prop2->type == kTagTypeString)) {
           AsciiStrToUnicodeStr(prop2->string, (CHAR16*)&UStr[0]);
           gSettings.FakeXHCI  = (UINT32)StrHexToUint64(UStr);
-        }        
-      }      
- //   }
-    prop2 = GetProperty(dictPointer, "Audio");
-    if (prop2) {      
-      // HDA
-      prop = GetProperty(prop2, "Inject");
-      if(prop) {
-        // enabled by default
-        // syntax:
-        // - HDAInjection=No or 0 - disables injection
-        // - HDAInjection=887 - injects layout-id 887 decimal (0x00000377)
-        // - HDAInjection=0x377 - injects layout-id 887 decimal (0x00000377)
-        // - HDAInjection=Detect - reads codec device id (eg. 0x0887)
-        //   converts it to decimal 887 and injects this as layout-id.
-        //   if hex device is cannot be converted to decimal, injects legacy value 12 decimal
-        // - all other values are equal to HDAInjection=Detect
-        if (prop->type == kTagTypeInteger) {
-          gSettings.HDALayoutId = (UINTN)prop->string;
-          gSettings.HDAInjection = (gSettings.HDALayoutId > 0);
-        } else if (prop->type == kTagTypeString){
-          if ((prop->string[0] == 'n') || (prop->string[0] == 'N')) {
-            // if starts with n or N, then no HDA injection
-            gSettings.HDAInjection = FALSE;
-          } else if ((prop->string[0] == '0')  &&
-                     (prop->string[1] == 'x' || prop->string[1] == 'X')) {
-            // assume it's a hex layout id
-            gSettings.HDALayoutId = AsciiStrHexToUintn(prop->string);
-          } else {
-            // assume it's a decimal layout id
-            gSettings.HDALayoutId = AsciiStrDecimalToUintn(prop->string);
+        }
+      }
+      //   }
+      prop2 = GetProperty(dictPointer, "Audio");
+      if (prop2) {
+        // HDA
+        prop = GetProperty(prop2, "Inject");
+        if(prop) {
+          // enabled by default
+          // syntax:
+          // - HDAInjection=No or 0 - disables injection
+          // - HDAInjection=887 - injects layout-id 887 decimal (0x00000377)
+          // - HDAInjection=0x377 - injects layout-id 887 decimal (0x00000377)
+          // - HDAInjection=Detect - reads codec device id (eg. 0x0887)
+          //   converts it to decimal 887 and injects this as layout-id.
+          //   if hex device is cannot be converted to decimal, injects legacy value 12 decimal
+          // - all other values are equal to HDAInjection=Detect
+          if (prop->type == kTagTypeInteger) {
+            gSettings.HDALayoutId = (UINTN)prop->string;
+            gSettings.HDAInjection = (gSettings.HDALayoutId > 0);
+          } else if (prop->type == kTagTypeString){
+            if ((prop->string[0] == 'n') || (prop->string[0] == 'N')) {
+              // if starts with n or N, then no HDA injection
+              gSettings.HDAInjection = FALSE;
+            } else if ((prop->string[0] == '0')  &&
+                       (prop->string[1] == 'x' || prop->string[1] == 'X')) {
+              // assume it's a hex layout id
+              gSettings.HDALayoutId = AsciiStrHexToUintn(prop->string);
+            } else {
+              // assume it's a decimal layout id
+              gSettings.HDALayoutId = AsciiStrDecimalToUintn(prop->string);
+            }
           }
         }
       }
-    }
-    
-    prop2 = GetProperty(dictPointer, "USB");
-    if (prop2) {      
-      // USB
-      prop = GetProperty(prop2, "Inject");
-      if(prop) {
-        // enabled by default
-        // syntax: USBInjection=Yes/No
-        if ((prop->type == kTagTypeFalse) ||
-            ((prop->type == kTagTypeString) &&
-             ((prop->string[0] == 'n') || (prop->string[0] == 'N')))) {
-          gSettings.USBInjection = FALSE;
+
+      prop2 = GetProperty(dictPointer, "USB");
+      if (prop2) {
+        // USB
+        prop = GetProperty(prop2, "Inject");
+        if(prop) {
+          // enabled by default
+          // syntax: USBInjection=Yes/No
+          if ((prop->type == kTagTypeFalse) ||
+              ((prop->type == kTagTypeString) &&
+               ((prop->string[0] == 'n') || (prop->string[0] == 'N')))) {
+                gSettings.USBInjection = FALSE;
+              }
+        }
+        prop = GetProperty(dictPointer, "AddClockID");
+        if(prop) {
+          // disabled by default
+          // syntax: InjectClockID=Yes/No
+          if ((prop->type == kTagTypeFalse) ||
+              ((prop->type == kTagTypeString) &&
+               ((prop->string[0] == 'n') || (prop->string[0] == 'N'))))
+            gSettings.InjectClockID = FALSE;
+          else if ((prop->type == kTagTypeTrue) ||
+                   ((prop->type == kTagTypeString) &&
+                    ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))))
+            gSettings.InjectClockID = TRUE;
+        }
+        // enabled by default for CloverEFI or Duet
+        // disabled for others
+        gSettings.USBFixOwnership = gFirmwareClover || (StrCmp(gST->FirmwareVendor, L"EDK II") == 0);
+        prop = GetProperty(dictPointer, "FixOwnership");
+        if(prop) {
+          if ((prop->type == kTagTypeFalse) ||
+              ((prop->type == kTagTypeString) &&
+               ((prop->string[0] == 'n') || (prop->string[0] == 'N'))))
+            gSettings.USBFixOwnership = FALSE;
+          else if ((prop->type == kTagTypeTrue) ||
+                   ((prop->type == kTagTypeString) &&
+                    ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))) {
+            gSettings.USBFixOwnership = TRUE;
+            DBG("USBFixOwnership: true\n");
+          }
         }
       }
-      prop = GetProperty(dictPointer, "AddClockID");
-      if(prop) {
-        // disabled by default
-        // syntax: InjectClockID=Yes/No
-        if ((prop->type == kTagTypeFalse) ||
-            ((prop->type == kTagTypeString) &&
-             ((prop->string[0] == 'n') || (prop->string[0] == 'N'))))
-          gSettings.InjectClockID = FALSE;
-        else if ((prop->type == kTagTypeTrue) ||
-                 ((prop->type == kTagTypeString) &&
-                  ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))))
-          gSettings.InjectClockID = TRUE;
-      }
-      // enabled by default for CloverEFI or Duet
-      // disabled for others
-      gSettings.USBFixOwnership = gFirmwareClover || (StrCmp(gST->FirmwareVendor, L"EDK II") == 0);
-      prop = GetProperty(dictPointer, "FixOwnership");
-      if(prop) {
-        if ((prop->type == kTagTypeFalse) ||
-            ((prop->type == kTagTypeString) &&
-             ((prop->string[0] == 'n') || (prop->string[0] == 'N'))))
-          gSettings.USBFixOwnership = FALSE;
-        else if ((prop->type == kTagTypeTrue) ||
-                 ((prop->type == kTagTypeString) &&
-                  ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))) {
-          gSettings.USBFixOwnership = TRUE;
-          DBG("USBFixOwnership: true\n");
-         }
-      }
-    }
     }
 
     //*** ACPI ***//
