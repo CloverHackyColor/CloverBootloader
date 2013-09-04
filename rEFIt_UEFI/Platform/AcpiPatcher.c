@@ -406,7 +406,7 @@ VOID DropTableFromXSDT (UINT32 Signature, UINT64 TableId)
                          gSettings.PatchDsdtFind[i], gSettings.LenToFind[i],
                          gSettings.PatchDsdtReplace[i], gSettings.LenToReplace[i]);
       }
-      CopyMem ((VOID*)BasePtr, &ssdt, sizeof(UINT64)); //*BasePtr = ssdt;
+      CopyMem ((VOID*)BasePtr, &ssdt, sizeof(UINT64)); // *BasePtr = ssdt;
       // Finish SSDT patch and resize SSDT Length
       CopyMem (&Ptr[4], &SsdtLen, 4);
       ((EFI_ACPI_DESCRIPTION_HEADER*)Ptr)->Checksum = 0;
@@ -420,7 +420,7 @@ VOID DropTableFromXSDT (UINT32 Signature, UINT64 TableId)
     Ptr = BasePtr;
     Ptr2 = Ptr + sizeof(UINT64);
     for (Index2 = Index; Index2 < EntryCount-1; Index2++) {
-      //*Ptr++ = *Ptr2++;
+      // *Ptr++ = *Ptr2++;
       CopyMem(Ptr, Ptr2, sizeof(UINT64));
       Ptr  += sizeof(UINT64);
       Ptr2 += sizeof(UINT64);
