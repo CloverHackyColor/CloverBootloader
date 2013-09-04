@@ -720,8 +720,6 @@ typedef struct {
   //Injections
   BOOLEAN StringInjector;
   BOOLEAN InjectSystemID;
-  BOOLEAN NoCaches;
-  BOOLEAN WithKexts;
   
   //PCI devices
   UINT32  FakeATI;    //97
@@ -789,24 +787,6 @@ typedef struct {
   INT32   NrKexts;
   KEXT_PATCH *KextPatches;
   //Volumes hiding
-  BOOLEAN HVHideAllOSX;
-  BOOLEAN HVHideAllOSXInstall;
-  BOOLEAN HVHideAllRecovery;
-  BOOLEAN HVHideDuplicatedBootTarget;
-  BOOLEAN HVHideAllWindowsEFI;
-  BOOLEAN HVHideAllGrub;
-  BOOLEAN HVHideAllGentoo;
-  BOOLEAN HVHideAllRedHat;
-  BOOLEAN HVHideAllUbuntu;
-  BOOLEAN HVHideAllLinuxMint;
-  BOOLEAN HVHideAllFedora;
-  BOOLEAN HVHideAllSuSe;
-  BOOLEAN HVHideAllArch;
-  //BOOLEAN HVHideAllUEFI;
-  BOOLEAN HVHideOpticalUEFI;
-  BOOLEAN HVHideInternalUEFI;
-  BOOLEAN HVHideExternalUEFI;
-  BOOLEAN HVHideUEFIBootOptions;
   CHAR16 **HVHideStrings;
   INTN    HVCount;
 #if defined(MDE_CPU_IA32)
@@ -854,8 +834,6 @@ typedef struct {
   UINT32 *LenToFind;
   UINT8  **PatchDsdtReplace;
   UINT32 *LenToReplace;
-  UINT32 KeepSsdtNum;
-  CHAR8  **KeepTableId;
   BOOLEAN DebugDSDT;
 
   // Table dropping

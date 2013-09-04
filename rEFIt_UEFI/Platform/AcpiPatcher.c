@@ -344,7 +344,6 @@ VOID DropTableFromXSDT (UINT32 Signature, UINT64 TableId)
   CHAR8                           sign[5];
   CHAR8                           OTID[9];
   BOOLEAN                         DoubleZero = FALSE;
-  BOOLEAN                         WillDrop;
   UINT32                          i, SsdtLen;
   
   if ((Signature == 0) && (TableId == 0)) {
@@ -381,15 +380,7 @@ VOID DropTableFromXSDT (UINT32 Signature, UINT64 TableId)
         ((TableEntry->OemTableId != TableId) && (TableId != 0))) {
       continue;
     }
-    WillDrop = TRUE;
-    for (i = 0; i < gSettings.KeepSsdtNum; i++) {
-      if (AsciiStrCmp(OTID, gSettings.KeepTableId[i]) == 0) {
-        WillDrop = FALSE;
-        break;
-      }
-    }
-    if (!WillDrop &&
-        (TableEntry->Signature == EFI_ACPI_4_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE)) {
+    if (TableEntry->Signature == EFI_ACPI_4_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE) {
       //will patch here
       SsdtLen = TableEntry->Length;
 			DBG("SSDT len = 0x%x", SsdtLen);
@@ -512,7 +503,6 @@ VOID DropTableFromXSDTId (UINT64 id)
   CHAR8                           sign[5];
   CHAR8                           OTID[9];
   BOOLEAN                         DoubleZero = FALSE;
-  BOOLEAN                         WillDrop;
   UINT32                          i, SsdtLen;
   
 	EntryCount = (Xsdt->Header.Length - sizeof (EFI_ACPI_DESCRIPTION_HEADER)) / sizeof(UINT64);
@@ -545,15 +535,7 @@ VOID DropTableFromXSDTId (UINT64 id)
 	  if (TableEntry->OemTableId != id) {
       continue;
 	  }
-    WillDrop = TRUE;
-    for (i = 0; i < gSettings.KeepSsdtNum; i++) {
-      if (AsciiStrCmp(OTID, gSettings.KeepTableId[i]) == 0) {
-        WillDrop = FALSE;
-        break;
-      }
-    }
-    if (!WillDrop &&
-        (TableEntry->Signature == EFI_ACPI_4_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE)) {
+    if (TableEntry->Signature == EFI_ACPI_4_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE) {
       //will patch here
       SsdtLen = TableEntry->Length;
 			DBG("SSDT len = 0x%x", SsdtLen);
