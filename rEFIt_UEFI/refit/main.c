@@ -1836,7 +1836,7 @@ static UINT8 GetOSTypeFromPath(IN CHAR16 *Path, IN UINT8 OSType)
    } else if ((StriCmp(Path, L"\\OS X Install Data\\boot.efi") == 0) ||
               (StriCmp(Path, L"\\Mac OS X Install Data\\boot.efi") == 0) ||
               (StriCmp(Path, L"\\.IABootFiles\\boot.efi") == 0)) {
-     return OSTYPE_OSX_INSTALLER;
+     return OSType;
    } else if ((StriCmp(Path, L"\\EFI\\Microsoft\\Boot\\bootmgfw.efi") == 0) ||
               (StriCmp(Path, L"\\bootmgr.efi") == 0) ||
               (StriCmp(Path, L"\\EFI\\MICROSOFT\\BOOT\\cdboot.efi") == 0)) {
@@ -1880,6 +1880,7 @@ static VOID AddCustomEntries(VOID)
   CUSTOM_LOADER_ENTRY *Custom, *CustomSubEntry;
   LOADER_ENTRY        *Entry, *SubEntry;
   EFI_GUID            *Guid = NULL;
+  CHAR16              *Path;
   UINT64               VolumeSize;
   UINT8                OSType;
   UINTN                i = 0;
@@ -1892,13 +1893,16 @@ static VOID AddCustomEntries(VOID)
       case OSTYPE_OSX:
          Custom->Path = MACOSX_LOADER_PATH;
          break;
+      case OSTYPE_RECOVERY:
+         Custom->Path = L"\\com.apple.recovery.boot\\boot.efi";
+         break;
       case OSTYPE_WINEFI:
          Custom->Path = L"\\EFI\\Microsoft\\Boot\bootmgfw.efi";
       default:
          break;
       }
     }
-    if (Custom->Path == NULL) {
+    if ((Custom->Path == NULL) && (Custom->Type != OSTYPE_OSX_INSTALLER)) {
       DBG("Custom entry %d skipped because it didn't have a path or valid type.\n", i);
       continue;
     }
@@ -1939,8 +1943,29 @@ static VOID AddCustomEntries(VOID)
         continue;
       }
 
+      // Check volume for installer
+      Path = Custom->Path;
+      if ((Path == NULL) && (Custom->Type == OSTYPE_OSX_INSTALLER) && (Volume->RootDir != NULL)) {
+        static CHAR16 *InstallerPath[] = {
+           L"\\Mac OS X Install Data\\boot.efi",
+           L"\\OS X Install Data\\boot.efi",
+           L"\\.IABootFiles\\boot.efi"
+        };
+        static UINTN InstallerPathCount = (sizeof(InstallerPath) / sizeof(CHAR16 *));
+        UINTN InstallerIndex = 0;
+        while (InstallerIndex < InstallerPathCount) {
+          if (FileExists(Volume->RootDir, InstallerPath[InstallerIndex])) {
+            Path = InstallerPath[InstallerIndex];
+            break;
+          }
+        }
+      }
+      if (Path == NULL) {
+        DBG("skipped because volume is not installation media\n");
+        continue;
+      }
       // Check for exact volume matches
-      OSType = GetOSTypeFromPath(Custom->Path, Volume->OSType);
+      OSType = GetOSTypeFromPath(Path, Volume->OSType);
       if (Custom->Volume) {
         
         if ((StrStr(Volume->DevicePathString, Custom->Volume) == NULL) &&
@@ -1958,18 +1983,22 @@ static VOID AddCustomEntries(VOID)
         continue;
       }
       // Check the volume is readable and the entry exists on the volume
-      if ((Volume->RootDir == NULL) || !FileExists(Volume->RootDir, Custom->Path)) {
+      if (Volume->RootDir == NULL) {
+        DBG("skipped because filesystem is not readable\n");
+        continue;
+      }
+      if (!FileExists(Volume->RootDir, Path)) {
         DBG("skipped because path does not exist\n");
         continue;
       }
       // Create a legacy entry for this volume
-      Entry = CreateLoaderEntry(Custom->Path, Custom->Options, Custom->Title, Volume, Custom->Image, OSType, Custom->Flags, Custom->Hotkey, TRUE);
+      Entry = CreateLoaderEntry(Path, Custom->Options, Custom->Title, Volume, Custom->Image, OSType, Custom->Flags, Custom->Hotkey, TRUE);
       if (Entry) {
         if (Custom->SubEntries) {
           // Add subscreen
           REFIT_MENU_SCREEN *SubScreen = AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
           if (SubScreen) {
-            SubScreen->Title = PoolPrint(L"Boot Options for %s on %s", (Custom->Title != NULL) ? Custom->Title : Custom->Path, Entry->VolName);
+            SubScreen->Title = PoolPrint(L"Boot Options for %s on %s", (Custom->Title != NULL) ? Custom->Title : Path, Entry->VolName);
             SubScreen->TitleImage = Entry->me.Image;
             SubScreen->ID = OSType + 20;
             SubScreen->AnimeRun = GetAnime(SubScreen);
@@ -1985,7 +2014,13 @@ static VOID AddCustomEntries(VOID)
             }
             // Create sub entries
             for (CustomSubEntry = Custom->SubEntries; CustomSubEntry; CustomSubEntry = CustomSubEntry->Next) {
-              SubEntry = CreateLoaderEntry(CustomSubEntry->Path, CustomSubEntry->Options, CustomSubEntry->Title, Volume, CustomSubEntry->Image, GetOSTypeFromPath(CustomSubEntry->Path, Volume->OSType), CustomSubEntry->Flags, CustomSubEntry->Hotkey, TRUE);
+              CHAR16 *SubPath = Path;
+              if (CustomSubEntry->Path != NULL) {
+                SubPath = CustomSubEntry->Path;
+              }
+              SubEntry = CreateLoaderEntry(SubPath, CustomSubEntry->Options, (CustomSubEntry->Title == NULL) ? Custom->Title : CustomSubEntry->Title,
+                                           Volume, CustomSubEntry->Image, GetOSTypeFromPath(SubPath, Volume->OSType),
+                                           CustomSubEntry->Flags, CustomSubEntry->Hotkey, TRUE);
               if (SubEntry) {
                  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
               }
@@ -2559,7 +2594,11 @@ static VOID AddCustomTool()
         }
       }
       // Check the tool exists on the volume
-      if ((Volume->RootDir == NULL) || !FileExists(Volume->RootDir, Custom->Path)) {
+      if (Volume->RootDir == NULL) {
+        DBG("skipped because volume is not readable\n");
+        continue;
+      }
+      if (!FileExists(Volume->RootDir, Custom->Path)) {
         DBG("skipped because path does not exist\n");
         continue;
       }
