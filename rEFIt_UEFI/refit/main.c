@@ -880,7 +880,11 @@ static LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
   Entry->DevicePath       = LoaderDevicePath;
   Entry->DevicePathString = LoaderDevicePathString;
   Entry->Flags            = Flags;
-  Entry->LoadOptions      = EfiStrDuplicate(LoaderOptions);
+  if (LoaderOptions) {
+    Entry->LoadOptions    = EfiStrDuplicate(LoaderOptions);
+  } else if (AsciiStrLen(gSettings.BootArgs) > 0) {
+    Entry->LoadOptions    = PoolPrint(L"%a", gSettings.BootArgs);
+  }
 
   // locate a custom icon for the loader
   StrCpy(IconFileName, Volume->OSIconName);
