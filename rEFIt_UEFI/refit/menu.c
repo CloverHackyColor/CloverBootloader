@@ -300,9 +300,12 @@ VOID RefillInputs(VOID)
   InputItems[InputItemsCount].ItemType = BoolValue; //48
   InputItems[InputItemsCount].BValue = gSettings.bDropAPIC;
   InputItems[InputItemsCount++].SValue = gSettings.bDropAPIC?L"[+]":L"[ ]";
+   */
+  InputItemsCount = 49;
   InputItems[InputItemsCount].ItemType = BoolValue; //49
-  InputItems[InputItemsCount].BValue = gSettings.bDropMCFG;
-  InputItems[InputItemsCount++].SValue = gSettings.bDropMCFG?L"[+]":L"[ ]";
+  InputItems[InputItemsCount].BValue = gSettings.DropMCFG;
+  InputItems[InputItemsCount++].SValue = gSettings.DropMCFG?L"[+]":L"[ ]";
+  /*
   InputItems[InputItemsCount].ItemType = BoolValue; //50
   InputItems[InputItemsCount].BValue = gSettings.bDropHPET;
   InputItems[InputItemsCount++].SValue = gSettings.bDropHPET?L"[+]":L"[ ]";
@@ -577,9 +580,12 @@ VOID FillInputs(VOID)
   InputItems[InputItemsCount].ItemType = BoolValue; //48
   InputItems[InputItemsCount].BValue = gSettings.bDropAPIC;
   InputItems[InputItemsCount++].SValue = gSettings.bDropAPIC?L"[+]":L"[ ]";
+   */
+  InputItemsCount = 49;
   InputItems[InputItemsCount].ItemType = BoolValue; //49
-  InputItems[InputItemsCount].BValue = gSettings.bDropMCFG;
-  InputItems[InputItemsCount++].SValue = gSettings.bDropMCFG?L"[+]":L"[ ]";
+  InputItems[InputItemsCount].BValue = gSettings.DropMCFG;
+  InputItems[InputItemsCount++].SValue = gSettings.DropMCFG?L"[+]":L"[ ]";
+  /*
   InputItems[InputItemsCount].ItemType = BoolValue; //50
   InputItems[InputItemsCount].BValue = gSettings.bDropHPET;
   InputItems[InputItemsCount++].SValue = gSettings.bDropHPET?L"[+]":L"[ ]";
@@ -886,10 +892,12 @@ VOID ApplyInputs(VOID)
   if (InputItems[i].Valid) {
     gSettings.bDropAPIC = InputItems[i].BValue;
   }
-  i++; //49
+   */
+  i = 49; //49
   if (InputItems[i].Valid) {
-    gSettings.bDropMCFG = InputItems[i].BValue;
+    gSettings.DropMCFG = InputItems[i].BValue;
   }
+  /*
   i++; //50
   if (InputItems[i].Valid) {
     gSettings.bDropHPET = InputItems[i].BValue;
@@ -3017,16 +3025,16 @@ REFIT_MENU_ENTRY  *SubMenuDropTables()
    InputBootArgs->Entry.AtClick = ActionEnter;
    InputBootArgs->Entry.AtRightClick = ActionDetails;
    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-
+*/
    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-   InputBootArgs->Entry.Title = PoolPrint(L"Drop OEM MCFG:");
+   InputBootArgs->Entry.Title = PoolPrint(L"Drop MCFG:");
    InputBootArgs->Entry.Tag = TAG_INPUT;
    InputBootArgs->Entry.Row = 0xFFFF; //cursor
    InputBootArgs->Item = &InputItems[49];
    InputBootArgs->Entry.AtClick = ActionEnter;
    InputBootArgs->Entry.AtRightClick = ActionDetails;
    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-
+/*
    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
    InputBootArgs->Entry.Title = PoolPrint(L"Drop OEM HPET:");
    InputBootArgs->Entry.Tag = TAG_INPUT;

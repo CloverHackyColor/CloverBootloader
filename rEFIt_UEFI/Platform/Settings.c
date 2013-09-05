@@ -2100,6 +2100,16 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
           DBG("Config set PluginType=%d\n", gSettings.PluginType);
         }
       }
+      prop = GetProperty(dictPointer, "DropMCFG");
+      if(prop) {
+        if ((prop->type == kTagTypeTrue) ||
+            ((prop->type == kTagTypeString) &&
+             ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))) {
+              gSettings.DropMCFG = TRUE;
+            } else {
+              gSettings.DropMCFG = FALSE;
+            }
+      }
 
       prop = GetProperty(dictPointer, "ResetAddress");
       if(prop) {

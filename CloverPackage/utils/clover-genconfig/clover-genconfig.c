@@ -380,7 +380,7 @@ void PrintConfig(CFTypeRef data)
  // addInteger(acpiDict, CFSTR("Number_of_KeepSSDT"), s->KeepSsdtNum);
 //  addBoolean(acpiDict, CFSTR("DropAPIC"), s->bDropAPIC);
   addBoolean(acpiDict, CFSTR("PatchAPIC"), s->PatchNMI);
-//  addBoolean(acpiDict, CFSTR("DropMCFG"), s->bDropMCFG);
+  addBoolean(acpiDict, CFSTR("DropMCFG"), s->DropMCFG);
 //  addBoolean(acpiDict, CFSTR("DropHPET"), s->bDropHPET);
 //  addBoolean(acpiDict, CFSTR("DropECDT"), s->bDropECDT);
 //  addBoolean(acpiDict, CFSTR("DropDMAR"), s->bDropDMAR);

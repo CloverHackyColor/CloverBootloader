@@ -1849,12 +1849,14 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
     rf = ScanRSDT(APIC_SIGN);
     if(rf) { DropTableFromRSDT(APIC_SIGN); }
     }
-  if (gSettings.bDropMCFG) {
-		xf = ScanXSDT(MCFG_SIGN);
-		if(xf) { DropTableFromXSDT(MCFG_SIGN); }
-		rf = ScanRSDT(MCFG_SIGN);
-		if(rf) { DropTableFromRSDT(MCFG_SIGN); }
-		}
+   */
+  if (gSettings.DropMCFG) {
+		xf = ScanXSDT(MCFG_SIGN, 0);
+		if(xf) { DropTableFromXSDT(MCFG_SIGN, 0); }
+		rf = ScanRSDT(MCFG_SIGN, 0);
+		if(rf) { DropTableFromRSDT(MCFG_SIGN, 0); }
+  }
+  /*
   if (gSettings.bDropHPET) {
 		xf = ScanXSDT(HPET_SIGN);
 		if(xf) { DropTableFromXSDT(HPET_SIGN); }
