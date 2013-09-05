@@ -335,9 +335,9 @@ VOID DropTableFromRSDT (UINT32 Signature, UINT64 TableId)
 
 VOID DropTableFromXSDT (UINT32 Signature, UINT64 TableId) 
 {
-  //EFI_STATUS                      Status = EFI_SUCCESS;
+  EFI_STATUS                      Status = EFI_SUCCESS;
 	EFI_ACPI_DESCRIPTION_HEADER     *TableEntry;
-  //EFI_PHYSICAL_ADDRESS            ssdt = EFI_SYSTEM_TABLE_MAX_ADDRESS;
+  EFI_PHYSICAL_ADDRESS            ssdt = EFI_SYSTEM_TABLE_MAX_ADDRESS;
 	UINTN                           Index, Index2;
 	UINT32                          EntryCount;
 	CHAR8                           *BasePtr, *Ptr, *Ptr2;
@@ -345,13 +345,15 @@ VOID DropTableFromXSDT (UINT32 Signature, UINT64 TableId)
   CHAR8                           sign[5];
   CHAR8                           OTID[9];
   BOOLEAN                         DoubleZero = FALSE;
-  //UINT32                          i, SsdtLen;
+  BOOLEAN                         DontDrop;
+  UINT32                          i, SsdtLen;
   
   if ((Signature == 0) && (TableId == 0)) {
     return;
   }
+  DBG("Drop tables from Xsdt, SIGN=%x TableID=%x\n", Signature, TableId);
 	EntryCount = (Xsdt->Header.Length - sizeof (EFI_ACPI_DESCRIPTION_HEADER)) / sizeof(UINT64);
-  DBG("Drop tables from Xsdt, count=%d\n", EntryCount); 
+  DBG(" Xsdt has tables count=%d \n", EntryCount); 
   if (EntryCount > 50) {
     DBG("BUG! Too many XSDT entries \n");
     EntryCount = 50;
@@ -377,18 +379,14 @@ VOID DropTableFromXSDT (UINT32 Signature, UINT64 TableId)
     CopyMem((CHAR8*)&OTID, (CHAR8*)&TableEntry->OemTableId, 8);
     OTID[8] = 0;
     DBG(" Found table: %a  %a\n", sign, OTID);
-    if (((TableEntry->Signature != Signature) && (Signature != 0)) ||
-        ((TableEntry->OemTableId != TableId) && (TableId != 0))) {
-      continue;
-    }
-    /*
-    if (TableEntry->Signature == EFI_ACPI_4_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE) {
+    DontDrop = (Signature && (TableEntry->Signature != Signature)) ||
+                (TableId && (TableEntry->OemTableId != TableId));
+    
+    if ((TableEntry->Signature == EFI_ACPI_4_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE) &&
+        DontDrop) {
       //will patch here
       SsdtLen = TableEntry->Length;
 			DBG("SSDT len = 0x%x", SsdtLen);
-//			SsdtLen += 4096;
-//			DBG(" new len = 0x%x\n", SsdtLen);
-			
 			ssdt = EFI_SYSTEM_TABLE_MAX_ADDRESS;
 			Status = gBS->AllocatePages(AllocateMaxAddress,
                                   EfiACPIReclaimMemory,
@@ -406,13 +404,15 @@ VOID DropTableFromXSDT (UINT32 Signature, UINT64 TableId)
                          gSettings.PatchDsdtFind[i], gSettings.LenToFind[i],
                          gSettings.PatchDsdtReplace[i], gSettings.LenToReplace[i]);
       }
-      CopyMem ((VOID*)BasePtr, &ssdt, sizeof(UINT64)); // *BasePtr = ssdt;
+      CopyMem ((VOID*)BasePtr, &ssdt, sizeof(UINT64));
       // Finish SSDT patch and resize SSDT Length
       CopyMem (&Ptr[4], &SsdtLen, 4);
       ((EFI_ACPI_DESCRIPTION_HEADER*)Ptr)->Checksum = 0;
       ((EFI_ACPI_DESCRIPTION_HEADER*)Ptr)->Checksum = (UINT8)(256-Checksum8(Ptr, SsdtLen));
 
       DBG(" ... patched\n");
+    }
+    if (DontDrop) {
       continue;
     }
     // */
@@ -1289,6 +1289,7 @@ VOID        SaveOemDsdt(BOOLEAN FullPatch)
 */    
     FadtPointer = GetFadt();
     if (FadtPointer == NULL) {
+      DBG("Cannot found FADT in BIOS or in UEFI!\n");
       return;
     }
         
@@ -2265,21 +2266,16 @@ EFI_STATUS PatchACPI_OtherOS(CHAR16* OsSubdir, BOOLEAN DropSSDT)
   RsdPointer = NULL;
   
   Status = EfiGetSystemConfigurationTable (&gEfiAcpi20TableGuid, (VOID **) &RsdPointer);
-  if (RsdPointer != NULL)
-  {
-    DBG("Found Acpi 2.0 RSDP 0x%x\n", RsdPointer);
-  }
-  else
-  {
+  if (RsdPointer != NULL) {
+    DBG("OtherOS: Found Acpi 2.0 RSDP 0x%x\n", RsdPointer);
+  } else {
     Status = EfiGetSystemConfigurationTable (&gEfiAcpi10TableGuid, (VOID **) &RsdPointer);
-    if (RsdPointer != NULL)
-    {
+    if (RsdPointer != NULL) {
       DBG("Found Acpi 1.0 RSDP 0x%x\n", RsdPointer);
     }
   }
   // if RSDP not found - quit
-	if (!RsdPointer)
-  {
+	if (!RsdPointer) {
 		return EFI_UNSUPPORTED;
 	}
   
@@ -2294,8 +2290,7 @@ EFI_STATUS PatchACPI_OtherOS(CHAR16* OsSubdir, BOOLEAN DropSSDT)
   
   // check for XSDT
   Xsdt = NULL;
-  if (RsdPointer->Revision >=2 && (RsdPointer->XsdtAddress < (UINT64)((UINTN)(-1))))
-  {
+  if (RsdPointer->Revision >=2 && (RsdPointer->XsdtAddress < (UINT64)((UINTN)(-1)))) {
     Xsdt = (XSDT_TABLE*)(UINTN)RsdPointer->XsdtAddress;
     if (Xsdt != NULL && Xsdt->Header.Signature != EFI_ACPI_2_0_EXTENDED_SYSTEM_DESCRIPTION_TABLE_SIGNATURE) {
       Xsdt = NULL;
@@ -2304,8 +2299,7 @@ EFI_STATUS PatchACPI_OtherOS(CHAR16* OsSubdir, BOOLEAN DropSSDT)
   DBG("XSDT at %p\n", Xsdt);
   
   // if RSDT and XSDT not found - quit
-  if (Rsdt == NULL && Xsdt == NULL)
-  {
+  if (Rsdt == NULL && Xsdt == NULL) {
     return EFI_UNSUPPORTED;
   }
 
@@ -2313,12 +2307,9 @@ EFI_STATUS PatchACPI_OtherOS(CHAR16* OsSubdir, BOOLEAN DropSSDT)
   // Take FADT (FACP) from XSDT or RSDT (always first entry)
   //
   FadtPointer = NULL;
-  if (Xsdt)
-  {
+  if (Xsdt) {
     FadtPointer = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE*)(UINTN)(Xsdt->Entry);
-  }
-  else if (Rsdt)
-  {
+  } else if (Rsdt) {
     FadtPointer = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE*)(UINTN)(Rsdt->Entry);
   }
   DBG("FADT pointer = %p\n", FadtPointer);

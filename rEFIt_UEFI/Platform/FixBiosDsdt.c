@@ -1343,15 +1343,19 @@ UINT32 FixAny (UINT8* dsdt, UINT32 len, UINT8* ToFind, UINT32 LenTF, UINT8* ToRe
 {
   INT32 sizeoffset, adr;
   UINT32 i;
+  BOOLEAN found = FALSE;
   DBG("Patch DSDT %01x%01x%01x%01x\n", ToFind[0], ToFind[1], ToFind[2], ToFind[3]);
   sizeoffset = LenTR - LenTF;
   for (i = 20; i < len; i++) {
     adr = FindBin(dsdt + i, len, ToFind, LenTF);
     if (adr < 0) {
-      DBG("  bin not found\n");
+      if (!found) {
+        DBG("  bin not found\n");
+      }
       return len;
     }
     DBG("  Patch at %x\n", adr);
+    found = TRUE;
     len = move_data(adr + i, dsdt, len, sizeoffset);
     CopyMem(dsdt + adr + i, ToReplace, LenTR);
     len = CorrectOuters(dsdt, len, adr + i - 3, sizeoffset);

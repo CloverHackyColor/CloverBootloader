@@ -392,17 +392,68 @@
 		<dict>
 			<key>Entries</key>
 			<array>
-				<array/>
+				<dict>
+					<key>Volume</key>
+					<string>D68F1885-571C-4441-8DD5-F14803EFEF54</string>
+					<key>Path</key>
+					<string>\EFI\BOOT\BOOTX64.efi</string>
+					<key>Type</key>
+					<string>OSXRecovery</string>
+					<key>Arguments</key>
+					<string>Kernel=mach_kernel</string>
+					<key>AddArguments</key>
+					<string>-v</string>
+					<key>Title</key>
+					<string>MyCustomEntry</string>
+					<key>Hotkey</key>
+					<string>M</string>
+					<key>Disabled</key>
+					<true/>
+					<key>InjectKexts</key>
+					<true/>
+					<key>NoCashes</key>
+					<false/>
+					<key>Hidden</key>
+					<false/>
+				</dict>			
+			</array>
+			<key>Legacy</key>
+			<array>
+				<dict>
+					<key>Volume</key>
+					<string>89433CD3-21F2-4D3C-95FC-722C48066D3A</string>
+					<key>Type</key>
+					<string>Windows</string>
+					<key>Title</key>
+					<string>MyLegacyEntry</string>
+					<key>Hotkey</key>
+					<string>L</string>
+					<key>Disabled</key>
+					<true/>
+					<key>Hidden</key>
+					<false/>
+				</dict>			
+			</array>
+			<key>Tool</key>
+			<array>
+				<dict>
+					<key>Volume</key>
+					<string>D68F1885-571C-4441-8DD5-F14803EFEF54</string>
+					<key>Path</key>
+					<string>\EFI\CLOVER\TOOLS\Shell64-v1.efi</string>
+					<key>Arguments</key>
+					<string>-b</string>
+					<key>Title</key>
+					<string>MyCustomShell</string>
+					<key>Hotkey</key>
+					<string>S</string>
+					<key>Hidden</key>
+					<false/>
+					<key>Disabled</key>
+					<false/>					
+				</dict>			
 			</array>
 		</dict>
-		<key>Legacy</key>
-		<array>
-			<string></string>
-		</array>
-		<key>Tool</key>
-		<array>
-			<string></string>
-		</array>
 	</dict>
 	<key>RtVariables</key>
 	<dict>
@@ -422,23 +473,5 @@
 		<string>CsmVideoDxe</string>
 		<string>VBoxExt4</string>
 	</array>
-	<key>Entries</key>
-	<dict>
-		<key>Legacy</key>
-		<string>First</string>
-		<key>Hide</key>
-		<array>
-			<string>VOLUME_NAME</string>
-			<string>VOLUME_UUID</string>
-			<string>TODO_HIDE_VOLUME_BY_TYPE/GROUP</string>
-		</array>
-		<key>Scan</key>
-		<false/>
-		<key>Custom</key>
-		<array>
-			<string>ENTRY_NAME_1</string>
-			<string>TODO</string>
-		</array>
-	</dict>
 </dict>
 </plist>

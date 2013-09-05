@@ -276,7 +276,7 @@ void PrintConfig(CFTypeRef data)
   addString(smbiosDict, CFSTR("Version"), s->VersionNr);
   addString(smbiosDict, CFSTR("SerialNumber"), s->SerialNr);
   
-  addUUID(smbiosDict, CFSTR("SmUUID"), &s->SmUUID);
+  addUUID(smbiosDict,   CFSTR("SmUUID"), &s->SmUUID);
   addString(smbiosDict, CFSTR("Family"), s->FamilyName);
   // SMBIOS TYPE2
   addString(smbiosDict, CFSTR("BoardManufacturer"), s->BoardManufactureName);
@@ -377,7 +377,7 @@ void PrintConfig(CFTypeRef data)
   addHex(acpiDict, CFSTR("FixDsdtMask"), s->FixDsdt);
   addBoolean(acpiDict, CFSTR("DebugDSDT"), s->DebugDSDT);
   addBoolean(acpiDict, CFSTR("DropOemSSDT"), s->DropSSDT);
-  addInteger(acpiDict, CFSTR("Number_of_KeepSSDT"), s->KeepSsdtNum);
+ // addInteger(acpiDict, CFSTR("Number_of_KeepSSDT"), s->KeepSsdtNum);
 //  addBoolean(acpiDict, CFSTR("DropAPIC"), s->bDropAPIC);
   addBoolean(acpiDict, CFSTR("PatchAPIC"), s->PatchNMI);
 //  addBoolean(acpiDict, CFSTR("DropMCFG"), s->bDropMCFG);
@@ -385,7 +385,7 @@ void PrintConfig(CFTypeRef data)
 //  addBoolean(acpiDict, CFSTR("DropECDT"), s->bDropECDT);
 //  addBoolean(acpiDict, CFSTR("DropDMAR"), s->bDropDMAR);
 //  addBoolean(acpiDict, CFSTR("DropBGRT"), s->bDropBGRT);
-  */
+//  
   addBoolean(acpiDict, CFSTR("GeneratePStates"), s->GeneratePStates);
   addBoolean(acpiDict, CFSTR("GenerateCStates"), s->GenerateCStates);
   addBoolean(acpiDict, CFSTR("DoubleFirstState"), s->DoubleFirstState);

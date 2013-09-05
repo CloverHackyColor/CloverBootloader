@@ -2,6 +2,23 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>Boot</key>
+	<dict>
+		<key>Timeout</key>
+		<integer>5</integer>
+		<key>Arguments</key>
+		<string>npci=0x2000</string>
+		<key>DefaultVolume</key>
+		<string>MacHDD</string>
+		<key>Log</key>
+		<false/>
+		<key>Fast</key>
+		<false/>
+		<key>XMPDetection</key>
+		<string>-1</string>
+		<key>Legacy</key>
+		<string>PBR</string>
+	</dict>
 	<key>KernelAndKextPatches</key>
 	<dict>
 		<key>Debug</key>
@@ -36,34 +53,46 @@
 	</dict>
 	<key>ACPI</key>
 	<dict>
-		<key>DsdtName</key>
-		<string>DSDT.aml</string>
-		<key>DropOemSSDT</key>
-		<false/>
-		<key>DropAPIC</key>
-		<false/>
-		<key>DropMCFG</key>
-		<false/>
-		<key>DropHPET</key>
-		<false/>
-		<key>DropECDT</key>
-		<false/>
-		<key>DropDMAR</key>
-		<true/>
-		<key>DropBGRT</key>
-		<true/>
-		<key>GenerateIvyStates</key>
-		<false/>
-		<key>GenerateCStates</key>
-		<false/>
-		<key>GeneratePStates</key>
-		<false/>
-		<key>DoubleFirstState</key>
-		<false/>
-		<key>PLimitDict</key>
-		<integer>0</integer>
-		<key>UnderVoltStep</key>
-		<integer>0</integer>
+		<key>DSDT</key>
+		<dict>
+			<key>Debug</key>
+			<false/>
+			<key>Name</key>
+			<string>DSDT.aml</string>
+			<key>FixMask</key>
+			<string>0xFFFF</string>
+		</dict>
+		<key>DropTables</key>
+		<array>
+			<dict>
+				<key>Signature</key>
+				<string>DMAR</string>
+			</dict>
+			<dict>
+				<key>Signature</key>
+				<string>SSDT</string>
+				<key>TableId</key>
+				<string>CpuPm</string>
+			</dict>
+		</array>
+		<key>SSDT</key>
+		<dict>
+			<key>Generate</key>
+			<dict>
+				<key>PStates</key>
+				<true/>
+				<key>CStates</key>
+				<true/>
+			</dict>
+			<key>PLimitDict</key>
+			<integer>0</integer>
+			<key>UnderVoltStep</key>
+			<integer>0</integer>
+			<key>MinMultiplier</key>
+			<integer>8</integer>
+			<key>PluginType</key>
+			<integer>0</integer>
+		</dict>
 	</dict>
 	<key>DisableDrivers</key>
 	<array>
@@ -76,12 +105,14 @@
 		<key>LogLineCount</key>
 		<integer>3000</integer>
 		<key>LogEveryBoot</key>
-		<string>Yes</string>
+		<string>10</string>
 	</dict>
 	<key>GUI</key>
 	<dict>
 		<key>TextOnly</key>
 		<false/>
+		<key>Language</key>
+		<string>en:0</string>
 		<key>Theme</key>
 		<string>metal</string>
 		<key>Timeout</key>
@@ -97,56 +128,59 @@
 			<key>Speed</key>
 			<integer>0</integer>
 		</dict>
-		<key>Volumes</key>
+		<key>Hide</key>
+		<array>
+			<string>Windows</string>
+			<string>\EFI\BOOT\BOOTX64.EFI</string>
+		</array>
+		<key>Scan</key>
 		<dict>
-			<key>Legacy</key>
-			<string>First</string>
-			<key>Hide</key>
-			<array>
-				<string>VOLUME_NAME</string>
-				<string>VOLUME_UUID</string>
-				<string>TODO_HIDE_VOLUME_BY_TYPE/GROUP</string>
-			</array>
-		</dict>
-		<key>HideEntries</key>
-		<dict>
-			<key>OSXInstall</key>
-			<false/>
-			<key>Recovery</key>
-			<false/>
-			<key>Duplicate</key>
-			<false/>
-			<key>WindowsEFI</key>
-			<false/>
-			<key>Grub</key>
-			<false/>
-			<key>Gentoo</key>
-			<false/>
-			<key>Ubuntu</key>
-			<false/>
-			<key>OpticalUEFI</key>
-			<false/>
-			<key>InternalUEFI</key>
+			<key>Entries</key>
 			<true/>
-			<key>ExternalUEFI</key>
-			<false/>
+			<key>Tool</key>
+			<true/>
+			<key>Legacy</key>
+			<true/>
 		</dict>
 	</dict>
-	<key>PCI</key>
+	<key>Devices</key>
 	<dict>
-		<key>USBInjection</key>
-		<true/>
-		<key>USBFixOwnership</key>
-		<true/>
-		<key>InjectClockID</key>
-		<true/>
+		<key>Inject</key>
+		<false/>
+		<key>Audio</key>
+		<dict>
+			<key>Inject</key>
+			<string>No</string>
+		</dict>
+		<key>FakeID</key>
+		<dict>
+			<key>ATI</key>
+			<string>0x0</string>
+			<key>IntelGFX</key>
+			<string>0x0</string>
+			<key>NVidia</key>
+			<string>0x0</string>
+			<key>SATA</key>
+			<string>0x0</string>
+			<key>WIFI</key>
+			<string>0x0</string>
+			<key>LAN</key>
+			<string>0x0</string>
+			<key>XHCI</key>
+			<string>0x0</string>
+		</dict>
+		<key>USB</key>
+		<dict>
+			<key>Inject</key>
+			<true/>
+			<key>USBFixOwnership</key>
+			<true/>
+			<key>AddClockID</key>
+			<true/>
+		</dict>
 	</dict>
 	<key>SystemParameters</key>
 	<dict>
-		<key>boot-args</key>
-		<string>-v npci=0x2000</string>
-		<key>prev-lang:kbd</key>
-		<string>en:0</string>
 		<key>InjectSystemID</key>
 		<true/>
 		<key>LegacyBoot</key>
@@ -154,6 +188,15 @@
 	</dict>
 	<key>Graphics</key>
 	<dict>
+		<key>Inject</key>
+		<dict>
+			<key>Intel</key>
+			<true/>
+			<key>ATI</key>
+			<false/>
+			<key>NVidia</key>
+			<false/>
+		</dict>
 		<key>PatchVBios</key>
 		<false/>
 	</dict>

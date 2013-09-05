@@ -166,6 +166,7 @@ VOID RefillInputs(VOID)
 //  InputItems[InputItemsCount].BValue = gSettings.StringInjector;
 //  InputItems[InputItemsCount++].SValue = gSettings.StringInjector?L"[+]":L"[ ]";
   //GlobalConfig.Theme
+  InputItemsCount = 3;
   InputItems[InputItemsCount].ItemType = UNIString; //3
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 53, L"%s",
                 (GlobalConfig.Theme == NULL)?L"embedded":GlobalConfig.Theme);
@@ -180,7 +181,7 @@ VOID RefillInputs(VOID)
 //  InputItems[InputItemsCount].ItemType = BoolValue;  //6
 //  InputItems[InputItemsCount].BValue = gSettings.Turbo;
 //  InputItems[InputItemsCount++].SValue = gSettings.Turbo?L"[+]":L"[ ]";
-  InputItemsCount++;
+  InputItemsCount = 7;
   InputItems[InputItemsCount].ItemType = Decimal;  //7
   InputItems[InputItemsCount++].SValue = PoolPrint(L"%02d", gSettings.PLimitDict);
   InputItems[InputItemsCount].ItemType = Decimal;  //8
@@ -345,7 +346,7 @@ VOID RefillInputs(VOID)
   InputItems[InputItemsCount].BValue   = gSettings.bDropDMAR;
   InputItems[InputItemsCount++].SValue = gSettings.bDropDMAR?L"[+]":L"[ ]";
   */
-  InputItemsCount++;
+  InputItemsCount = 78;
   InputItems[InputItemsCount].ItemType = ASString;  //78
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%a", gSettings.ProductName);
   InputItems[InputItemsCount].ItemType = ASString;  //79
@@ -375,7 +376,8 @@ VOID RefillInputs(VOID)
   InputItems[InputItemsCount].BValue   = gSettings.bDropBGRT;
   InputItems[InputItemsCount++].SValue = gSettings.bDropBGRT?L"[+]":L"[ ]";
   */
-  InputItemsCount++;
+  
+  InputItemsCount = 90;
   InputItems[InputItemsCount].ItemType = ASString; //90
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%s", gSettings.ConfigName);
   
@@ -437,6 +439,7 @@ VOID FillInputs(VOID)
 //  InputItems[InputItemsCount].ItemType = BoolValue; //3
 //  InputItems[InputItemsCount].BValue = gSettings.StringInjector;
 //  InputItems[InputItemsCount++].SValue = gSettings.StringInjector?L"[+]":L"[ ]";
+  InputItemsCount = 3;
   InputItems[InputItemsCount].ItemType = UNIString; //3
   InputItems[InputItemsCount].SValue = AllocateZeroPool(53);
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 53, L"%s",
@@ -451,7 +454,7 @@ VOID FillInputs(VOID)
 //  InputItems[InputItemsCount].ItemType = BoolValue;  //6
 //  InputItems[InputItemsCount].BValue = gSettings.Turbo;
 //  InputItems[InputItemsCount++].SValue = gSettings.Turbo?L"[+]":L"[ ]";
-  InputItemsCount++;
+  InputItemsCount = 7;
   InputItems[InputItemsCount].ItemType = Decimal;  //7
   InputItems[InputItemsCount++].SValue = PoolPrint(L"%02d", gSettings.PLimitDict);
   InputItems[InputItemsCount].ItemType = Decimal;  //8
@@ -620,7 +623,7 @@ VOID FillInputs(VOID)
   InputItems[InputItemsCount].BValue   = gSettings.bDropDMAR;
   InputItems[InputItemsCount++].SValue = gSettings.bDropDMAR?L"[+]":L"[ ]";
   */
-  InputItemsCount++;
+  InputItemsCount = 78;
   InputItems[InputItemsCount].ItemType = ASString;  //78
   InputItems[InputItemsCount].SValue = AllocateZeroPool(64);
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%a", gSettings.ProductName);
@@ -660,7 +663,7 @@ VOID FillInputs(VOID)
   InputItems[InputItemsCount].BValue   = gSettings.bDropBGRT;
   InputItems[InputItemsCount++].SValue = gSettings.bDropBGRT?L"[+]":L"[ ]";
   */
-  InputItemsCount++;
+  InputItemsCount = 90;
   InputItems[InputItemsCount].ItemType = ASString; //90
   InputItems[InputItemsCount].SValue   = AllocateZeroPool(64);
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%s", gSettings.ConfigName);
@@ -907,9 +910,11 @@ VOID ApplyInputs(VOID)
       k += (1<<j);
     }
   }
-  gSettings.FixDsdt = k;
- // DBG("applied FixDsdt=%04x\n", k);
-  
+  if (gSettings.FixDsdt != k) {
+    DBG("applied FixDsdt=%04x\n", k);
+    gSettings.FixDsdt = k;
+  }
+    
   i = 70;
   if (InputItems[i].Valid) {
     INTN Minus = 0;
@@ -2963,97 +2968,111 @@ REFIT_MENU_ENTRY  *SubMenuBinaries()
 
 REFIT_MENU_ENTRY  *SubMenuDropTables()
 {
-    REFIT_MENU_ENTRY   *Entry; //, *SubEntry;
-    REFIT_MENU_SCREEN  *SubScreen;
-    REFIT_INPUT_DIALOG *InputBootArgs;
+  REFIT_MENU_ENTRY   *Entry; //, *SubEntry;
+  REFIT_MENU_SCREEN  *SubScreen;
+  REFIT_INPUT_DIALOG *InputBootArgs;
 
-    Entry = AllocateZeroPool(sizeof(REFIT_MENU_ENTRY));
-    Entry->Title = PoolPrint(L"Tables dropping menu ->");
-    Entry->Image =  OptionMenu.TitleImage;
-    Entry->Tag = TAG_OPTIONS;
-    Entry->AtClick = ActionEnter;
-    // create the submenu
-    SubScreen = AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
-    SubScreen->Title = Entry->Title;
-    SubScreen->TitleImage = Entry->Image;
-    SubScreen->ID = SCREEN_TABLES;
-    SubScreen->AnimeRun = GetAnime(SubScreen);
+  Entry = AllocateZeroPool(sizeof(REFIT_MENU_ENTRY));
+  Entry->Title = PoolPrint(L"Tables dropping menu ->");
+  Entry->Image =  OptionMenu.TitleImage;
+  Entry->Tag = TAG_OPTIONS;
+  Entry->AtClick = ActionEnter;
+  // create the submenu
+  SubScreen = AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
+  SubScreen->Title = Entry->Title;
+  SubScreen->TitleImage = Entry->Image;
+  SubScreen->ID = SCREEN_TABLES;
+  SubScreen->AnimeRun = GetAnime(SubScreen);
 
-    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-    InputBootArgs->Entry.Title = PoolPrint(L"Drop OEM SSDT:");
-    InputBootArgs->Entry.Tag = TAG_INPUT;
-    InputBootArgs->Entry.Row = 0xFFFF; //cursor
-//    InputBootArgs->Entry.ShortcutDigit = 0;
-    InputBootArgs->Entry.ShortcutLetter = 'S';
-    InputBootArgs->Item = &InputItems[4];
-    InputBootArgs->Entry.AtClick = ActionEnter;
-    InputBootArgs->Entry.AtRightClick = ActionDetails;
-    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+  //info only for now
+  if (gSettings.ACPIDropTables) {
+    ACPI_DROP_TABLE *DropTable = gSettings.ACPIDropTables;
+    while (DropTable) {
+      //      DBG("Attempting to drop \"%4.4a\" (%4.4X) \"%8.8a\" (%8.8lX)\n", &(DropTable->Signature), DropTable->Signature, &(DropTable->TableId), DropTable->TableId);
+      AddMenuInfoLine(SubScreen, PoolPrint(L"To drop \"%4.4a\": \"%8.8a\"",
+                                           &(DropTable->Signature),
+                                           &(DropTable->TableId)));
+      DropTable = DropTable->Next;
+    }
+  }
 
-    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-    InputBootArgs->Entry.Title = PoolPrint(L"Drop OEM APIC:");
-    InputBootArgs->Entry.Tag = TAG_INPUT;
-    InputBootArgs->Entry.Row = 0xFFFF; //cursor
-    InputBootArgs->Item = &InputItems[48];
-    InputBootArgs->Entry.AtClick = ActionEnter;
-    InputBootArgs->Entry.AtRightClick = ActionDetails;
-    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
 
-    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-    InputBootArgs->Entry.Title = PoolPrint(L"Drop OEM MCFG:");
-    InputBootArgs->Entry.Tag = TAG_INPUT;
-    InputBootArgs->Entry.Row = 0xFFFF; //cursor
-    InputBootArgs->Item = &InputItems[49];
-    InputBootArgs->Entry.AtClick = ActionEnter;
-    InputBootArgs->Entry.AtRightClick = ActionDetails;
-    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
 
-    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-    InputBootArgs->Entry.Title = PoolPrint(L"Drop OEM HPET:");
-    InputBootArgs->Entry.Tag = TAG_INPUT;
-    InputBootArgs->Entry.Row = 0xFFFF; //cursor
-    InputBootArgs->Item = &InputItems[50];
-    InputBootArgs->Entry.AtClick = ActionEnter;
-    InputBootArgs->Entry.AtRightClick = ActionDetails;
-    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-
-    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-    InputBootArgs->Entry.Title = PoolPrint(L"Drop OEM ECDT:");
-    InputBootArgs->Entry.Tag = TAG_INPUT;
-    InputBootArgs->Entry.Row = 0xFFFF; //cursor
-    InputBootArgs->Item = &InputItems[51];
-    InputBootArgs->Entry.AtClick = ActionEnter;
-    InputBootArgs->Entry.AtRightClick = ActionDetails;
-    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-
-    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-    InputBootArgs->Entry.Title = PoolPrint(L"Drop OEM DMAR:");
-    InputBootArgs->Entry.Tag = TAG_INPUT;
-    InputBootArgs->Entry.Row = 0xFFFF; //cursor
-    InputBootArgs->Item = &InputItems[77];
-    InputBootArgs->Entry.AtClick = ActionEnter;
-    InputBootArgs->Entry.AtRightClick = ActionDetails;
-    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-  //bDropBGRT
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"Drop OEM BGRT:");
+  InputBootArgs->Entry.Title = PoolPrint(L"Drop OEM SSDT:");
   InputBootArgs->Entry.Tag = TAG_INPUT;
   InputBootArgs->Entry.Row = 0xFFFF; //cursor
-  InputBootArgs->Item = &InputItems[89];
+  //    InputBootArgs->Entry.ShortcutDigit = 0;
+  InputBootArgs->Entry.ShortcutLetter = 'S';
+  InputBootArgs->Item = &InputItems[4];
   InputBootArgs->Entry.AtClick = ActionEnter;
   InputBootArgs->Entry.AtRightClick = ActionDetails;
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-  
-    
-    AddMenuEntry(SubScreen, &MenuEntryReturn);
-    Entry->SubScreen = SubScreen;                
-    return Entry;
-} 
+  /*
+   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+   InputBootArgs->Entry.Title = PoolPrint(L"Drop OEM APIC:");
+   InputBootArgs->Entry.Tag = TAG_INPUT;
+   InputBootArgs->Entry.Row = 0xFFFF; //cursor
+   InputBootArgs->Item = &InputItems[48];
+   InputBootArgs->Entry.AtClick = ActionEnter;
+   InputBootArgs->Entry.AtRightClick = ActionDetails;
+   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+
+   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+   InputBootArgs->Entry.Title = PoolPrint(L"Drop OEM MCFG:");
+   InputBootArgs->Entry.Tag = TAG_INPUT;
+   InputBootArgs->Entry.Row = 0xFFFF; //cursor
+   InputBootArgs->Item = &InputItems[49];
+   InputBootArgs->Entry.AtClick = ActionEnter;
+   InputBootArgs->Entry.AtRightClick = ActionDetails;
+   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+
+   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+   InputBootArgs->Entry.Title = PoolPrint(L"Drop OEM HPET:");
+   InputBootArgs->Entry.Tag = TAG_INPUT;
+   InputBootArgs->Entry.Row = 0xFFFF; //cursor
+   InputBootArgs->Item = &InputItems[50];
+   InputBootArgs->Entry.AtClick = ActionEnter;
+   InputBootArgs->Entry.AtRightClick = ActionDetails;
+   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+
+   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+   InputBootArgs->Entry.Title = PoolPrint(L"Drop OEM ECDT:");
+   InputBootArgs->Entry.Tag = TAG_INPUT;
+   InputBootArgs->Entry.Row = 0xFFFF; //cursor
+   InputBootArgs->Item = &InputItems[51];
+   InputBootArgs->Entry.AtClick = ActionEnter;
+   InputBootArgs->Entry.AtRightClick = ActionDetails;
+   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+
+   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+   InputBootArgs->Entry.Title = PoolPrint(L"Drop OEM DMAR:");
+   InputBootArgs->Entry.Tag = TAG_INPUT;
+   InputBootArgs->Entry.Row = 0xFFFF; //cursor
+   InputBootArgs->Item = &InputItems[77];
+   InputBootArgs->Entry.AtClick = ActionEnter;
+   InputBootArgs->Entry.AtRightClick = ActionDetails;
+   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+   //bDropBGRT
+   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+   InputBootArgs->Entry.Title = PoolPrint(L"Drop OEM BGRT:");
+   InputBootArgs->Entry.Tag = TAG_INPUT;
+   InputBootArgs->Entry.Row = 0xFFFF; //cursor
+   InputBootArgs->Item = &InputItems[89];
+   InputBootArgs->Entry.AtClick = ActionEnter;
+   InputBootArgs->Entry.AtRightClick = ActionDetails;
+   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+   */
+
+  AddMenuEntry(SubScreen, &MenuEntryReturn);
+  Entry->SubScreen = SubScreen;
+  return Entry;
+}
 
 
 REFIT_MENU_ENTRY  *SubMenuSmbios()
 {
-  REFIT_MENU_ENTRY   *Entry; 
+  REFIT_MENU_ENTRY   *Entry;
   REFIT_MENU_SCREEN  *SubScreen;
   REFIT_INPUT_DIALOG *InputBootArgs;
   CHAR16*           Flags;

@@ -131,6 +131,7 @@ static VOID HelpRefit(VOID)
         AddMenuInfoLine(&HelpMenu, L"ESC - Выход из подменю, обновление главного меню");
         AddMenuInfoLine(&HelpMenu, L"F1  - Помощь по горячим клавишам");
         AddMenuInfoLine(&HelpMenu, L"F2  - Сохранить отчет в preboot.log (только если FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F3  - Показать скрытые значки в меню");
         AddMenuInfoLine(&HelpMenu, L"F4  - Родной DSDT сохранить в EFI/CLOVER/ACPI/origin/ (FAT32)");
         AddMenuInfoLine(&HelpMenu, L"F5  - Патченный DSDT сохранить в EFI/CLOVER/ACPI/origin/ (FAT32)");
         AddMenuInfoLine(&HelpMenu, L"F6  - Сохранить ВидеоБиос в EFI/CLOVER/misc/ (FAT32)");
@@ -146,7 +147,8 @@ static VOID HelpRefit(VOID)
       case ukrainian:
         AddMenuInfoLine(&HelpMenu, L"ESC - Вийти з меню, оновити головне меню");
         AddMenuInfoLine(&HelpMenu, L"F1  - Ця довідка");
-        AddMenuInfoLine(&HelpMenu, L"F2  - Зберегти preboot.log (т≥льки FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F2  - Зберегти preboot.log (тiльки FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F3  - Відображати приховані розділи");
         AddMenuInfoLine(&HelpMenu, L"F4  - Зберегти OEM DSDT в EFI/CLOVER/ACPI/origin/ (FAT32)");
         AddMenuInfoLine(&HelpMenu, L"F5  - Зберегти патчений DSDT в EFI/CLOVER/ACPI/origin/ (FAT32)");
         AddMenuInfoLine(&HelpMenu, L"F6  - Зберегти VideoBios в EFI/CLOVER/misc/ (FAT32)");
@@ -163,6 +165,7 @@ static VOID HelpRefit(VOID)
         AddMenuInfoLine(&HelpMenu, L"ESC - Salir de submenu o actualizar el menu principal");
         AddMenuInfoLine(&HelpMenu, L"F1  - Esta Ayuda");
         AddMenuInfoLine(&HelpMenu, L"F2  - Guardar preboot.log (Solo FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F3  - Show hidden entries");
         AddMenuInfoLine(&HelpMenu, L"F4  - Guardar DSDT oem en EFI/CLOVER/ACPI/origin/ (FAT32)");
         AddMenuInfoLine(&HelpMenu, L"F5  - Guardar DSDT parcheado en EFI/CLOVER/ACPI/origin/ (FAT32)");
         AddMenuInfoLine(&HelpMenu, L"F6  - Guardar VideoBios en EFI/CLOVER/misc/ (FAT32)");
@@ -180,6 +183,7 @@ static VOID HelpRefit(VOID)
         AddMenuInfoLine(&HelpMenu, L"ESC - Sai do submenu, atualiza o menu principal");
         AddMenuInfoLine(&HelpMenu, L"F1  - Esta ajuda");
         AddMenuInfoLine(&HelpMenu, L"F2  - Salva preboot.log (somente FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F3  - Show hidden entries");
         AddMenuInfoLine(&HelpMenu, L"F4  - Salva oem DSDT em EFI/CLOVER/ACPI/origin/ (somente FAT32)");
         AddMenuInfoLine(&HelpMenu, L"F5  - Salva DSDT corrigido em EFI/CLOVER/ACPI/origin/ (somente FAT32)");
         AddMenuInfoLine(&HelpMenu, L"F6  - Salva VideoBios em EFI/CLOVER/misc/ (somente FAT32)");
@@ -196,6 +200,7 @@ static VOID HelpRefit(VOID)
         AddMenuInfoLine(&HelpMenu, L"ESC - Esci dal submenu, Aggiorna menu principale");
         AddMenuInfoLine(&HelpMenu, L"F1  - Aiuto");
         AddMenuInfoLine(&HelpMenu, L"F2  - Salva il preboot.log (solo su FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F3  - Show hidden entries");
         AddMenuInfoLine(&HelpMenu, L"F4  - Salva il DSDT oem in EFI/CLOVER/ACPI/origin/ (solo suFAT32)");
         AddMenuInfoLine(&HelpMenu, L"F5  - Salva il patched DSDT in EFI/CLOVER/ACPI/origin/ (FAT32)");
         AddMenuInfoLine(&HelpMenu, L"F6  - Salva il VideoBios in EFI/CLOVER/misc/ (FAT32)");
@@ -212,6 +217,7 @@ static VOID HelpRefit(VOID)
         AddMenuInfoLine(&HelpMenu, L"ESC - Zurueck aus Untermenue, Hauptmenue erneuern");
         AddMenuInfoLine(&HelpMenu, L"F1  - Diese Hilfe");
         AddMenuInfoLine(&HelpMenu, L"F2  - Sichere preboot.log (nur mit FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F3  - Show hidden entries");
         AddMenuInfoLine(&HelpMenu, L"F4  - Sichere OEM DSDT in EFI/CLOVER/ACPI/origin/ (nur mit FAT32)");
         AddMenuInfoLine(&HelpMenu, L"F5  - Sichere gepatchtes DSDT in EFI/CLOVER/ACPI/origin/ (FAT32)");
         AddMenuInfoLine(&HelpMenu, L"F6  - Sichere VideoBios in EFI/CLOVER/misc/ (FAT32)");
@@ -228,6 +234,7 @@ static VOID HelpRefit(VOID)
         AddMenuInfoLine(&HelpMenu, L"ESC - Verlaat submenu, Vernieuwen hoofdmenu");
         AddMenuInfoLine(&HelpMenu, L"F1  - Onderdeel hulp");
         AddMenuInfoLine(&HelpMenu, L"F2  - preboot.log opslaan (FAT32 only)");
+        AddMenuInfoLine(&HelpMenu, L"F3  - Show hidden entries");
         AddMenuInfoLine(&HelpMenu, L"F4  - Opslaan oem DSDT in EFI/CLOVER/ACPI/origin/ (FAT32)");
         AddMenuInfoLine(&HelpMenu, L"F5  - Opslaan gepatchte DSDT in EFI/CLOVER/ACPI/origin/ (FAT32)");
         AddMenuInfoLine(&HelpMenu, L"F6  - Opslaan VideoBios in EFI/CLOVER/misc/ (FAT32)");
@@ -244,6 +251,7 @@ static VOID HelpRefit(VOID)
         AddMenuInfoLine(&HelpMenu, L"ESC - Quitter sous-menu, Retour menu principal");
         AddMenuInfoLine(&HelpMenu, L"F1  - Aide");
         AddMenuInfoLine(&HelpMenu, L"F2  - Enregistrer preboot.log (FAT32 only)");
+        AddMenuInfoLine(&HelpMenu, L"F3  - Show hidden entries");
         AddMenuInfoLine(&HelpMenu, L"F4  - Enregistrer oem DSDT dans EFI/CLOVER/ACPI/origin/ (FAT32)");
         AddMenuInfoLine(&HelpMenu, L"F5  - Enregistrer DSDT modifié dans EFI/CLOVER/ACPI/origin/ (FAT32)");
         AddMenuInfoLine(&HelpMenu, L"F6  - Enregistrer VideoBios dans EFI/CLOVER/misc/ (FAT32)");
@@ -260,6 +268,7 @@ static VOID HelpRefit(VOID)
         AddMenuInfoLine(&HelpMenu, L"ESC - Keluar submenu, Refresh main menu");
         AddMenuInfoLine(&HelpMenu, L"F1  - Help");
         AddMenuInfoLine(&HelpMenu, L"F2  - Simpan preboot.log (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F3  - Show hidden entries");
         AddMenuInfoLine(&HelpMenu, L"F4  - Simpan oem DSDT ke EFI/CLOVER/ACPI/origin/ (FAT32)");
         AddMenuInfoLine(&HelpMenu, L"F5  - Simpan patched DSDT ke EFI/CLOVER/ACPI/origin/ (FAT32)");
         AddMenuInfoLine(&HelpMenu, L"F6  - Simpan VideoBios ke EFI/CLOVER/misc/ (FAT32)");
@@ -291,6 +300,7 @@ static VOID HelpRefit(VOID)
         AddMenuInfoLine(&HelpMenu, L"ESC - Wyjscie z podmenu, Odswiezenie glownego menu");
         AddMenuInfoLine(&HelpMenu, L"F1  - Pomoc");
         AddMenuInfoLine(&HelpMenu, L"F2  - Zapis preboot.log (tylko FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F3  - Show hidden entries");
         AddMenuInfoLine(&HelpMenu, L"F4  - Zapis DSDT do EFI/CLOVER/ACPI/origin/ (tylko FAT32)");
         AddMenuInfoLine(&HelpMenu, L"F5  - Zapis poprawionego DSDT do EFI/CLOVER/ACPI/origin/ (FAT32)");
         AddMenuInfoLine(&HelpMenu, L"F6  - Zapis BIOSu k. graficznej do EFI/CLOVER/misc/ (FAT32)");
@@ -307,6 +317,7 @@ static VOID HelpRefit(VOID)
         AddMenuInfoLine(&HelpMenu, L"ESC - izlaz iz podizbornika, Osvježi glavni izbornik");
         AddMenuInfoLine(&HelpMenu, L"F1  - Ovaj izbornik");
         AddMenuInfoLine(&HelpMenu, L"F2  - Spremi preboot.log (samo na FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F3  - Show hidden entries");
         AddMenuInfoLine(&HelpMenu, L"F4  - Spremi oem DSDT u EFI/CLOVER/ACPI/origin/ (FAT32)");
         AddMenuInfoLine(&HelpMenu, L"F5  - Spremi patched DSDT into EFI/CLOVER/ACPI/origin/ (FAT32)");
         AddMenuInfoLine(&HelpMenu, L"F6  - Spremi VideoBios into EFI/CLOVER/misc/ (FAT32)");
@@ -323,6 +334,7 @@ static VOID HelpRefit(VOID)
         AddMenuInfoLine(&HelpMenu, L"ESC - Vrátit se do hlavní nabídky");
         AddMenuInfoLine(&HelpMenu, L"F1  - Tato Nápověda");
         AddMenuInfoLine(&HelpMenu, L"F2  - Uložit preboot.log (FAT32 only)");
+        AddMenuInfoLine(&HelpMenu, L"F3  - Show hidden entries");
         AddMenuInfoLine(&HelpMenu, L"F4  - Uložit oem DSDT do EFI/CLOVER/ACPI/origin/ (FAT32)");
         AddMenuInfoLine(&HelpMenu, L"F5  - Uložit patchnuté DSDT do EFI/CLOVER/ACPI/origin/ (FAT32)");
         AddMenuInfoLine(&HelpMenu, L"F6  - Uložit VideoBios do EFI/CLOVER/misc/ (FAT32)");
@@ -339,6 +351,7 @@ static VOID HelpRefit(VOID)
         AddMenuInfoLine(&HelpMenu, L"ESC - 하위메뉴에서 나감, 메인메뉴 새로 고침");
         AddMenuInfoLine(&HelpMenu, L"F1  - 이 도움말");
         AddMenuInfoLine(&HelpMenu, L"F2  - preboot.log를 저장합니다. (FAT32방식에만 해당됨)");
+        AddMenuInfoLine(&HelpMenu, L"F3  - Show hidden entries");
         AddMenuInfoLine(&HelpMenu, L"F4  - oem DSDT를 EFI/CLOVER/ACPI/origin/에 저장합니다. (FAT32)");
         AddMenuInfoLine(&HelpMenu, L"F5  - 패치된 DSDT를 EFI/CLOVER/ACPI/origin/에 저장합니다. (FAT32)");
         AddMenuInfoLine(&HelpMenu, L"F6  - VideoBios를 EFI/CLOVER/misc/에 저장합니다. (FAT32)");
@@ -356,6 +369,7 @@ static VOID HelpRefit(VOID)
         AddMenuInfoLine(&HelpMenu, L"ESC - Escape from submenu, Refresh main menu");
         AddMenuInfoLine(&HelpMenu, L"F1  - This help");
         AddMenuInfoLine(&HelpMenu, L"F2  - Save preboot.log (FAT32 only)");
+        AddMenuInfoLine(&HelpMenu, L"F3  - Show hidden entries");
         AddMenuInfoLine(&HelpMenu, L"F4  - Save oem DSDT into EFI/CLOVER/ACPI/origin/ (FAT32)");
         AddMenuInfoLine(&HelpMenu, L"F5  - Save patched DSDT into EFI/CLOVER/ACPI/origin/ (FAT32)");
         AddMenuInfoLine(&HelpMenu, L"F6  - Save VideoBios into EFI/CLOVER/misc/ (FAT32)");
