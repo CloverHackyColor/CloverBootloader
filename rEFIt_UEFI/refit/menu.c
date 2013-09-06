@@ -3004,8 +3004,6 @@ REFIT_MENU_ENTRY  *SubMenuDropTables()
     }
   }
 
-
-
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
   InputBootArgs->Entry.Title = PoolPrint(L"Drop OEM SSDT:");
   InputBootArgs->Entry.Tag = TAG_INPUT;

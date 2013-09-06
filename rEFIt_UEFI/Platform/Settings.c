@@ -1932,6 +1932,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
               if (DropTable) {
                 DropTable->Signature = Signature;
                 DropTable->TableId = TableId;
+                DropTable->Drop = TRUE;
                 DropTable->Next = gSettings.ACPIDropTables;
                 gSettings.ACPIDropTables = DropTable;
               }

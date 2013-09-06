@@ -335,9 +335,9 @@ VOID DropTableFromRSDT (UINT32 Signature, UINT64 TableId)
 
 VOID DropTableFromXSDT (UINT32 Signature, UINT64 TableId) 
 {
-  EFI_STATUS                      Status = EFI_SUCCESS;
+//  EFI_STATUS                      Status = EFI_SUCCESS;
 	EFI_ACPI_DESCRIPTION_HEADER     *TableEntry;
-  EFI_PHYSICAL_ADDRESS            ssdt = EFI_SYSTEM_TABLE_MAX_ADDRESS;
+//  EFI_PHYSICAL_ADDRESS            ssdt = EFI_SYSTEM_TABLE_MAX_ADDRESS;
 	UINTN                           Index, Index2;
 	UINT32                          EntryCount;
 	CHAR8                           *BasePtr, *Ptr, *Ptr2;
@@ -346,7 +346,7 @@ VOID DropTableFromXSDT (UINT32 Signature, UINT64 TableId)
   CHAR8                           OTID[9];
   BOOLEAN                         DoubleZero = FALSE;
   BOOLEAN                         Drop;
-  UINT32                          i, SsdtLen;
+//  UINT32                          i, SsdtLen;
   
   if ((Signature == 0) && (TableId == 0)) {
     return;
@@ -389,7 +389,7 @@ VOID DropTableFromXSDT (UINT32 Signature, UINT64 TableId)
             ||
             (!Signature && (TableId == TableEntry->OemTableId)));
  */           
-    
+/*
     if ((TableEntry->Signature == EFI_ACPI_4_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE) &&
         !Drop) {
       //will patch here
@@ -421,10 +421,11 @@ VOID DropTableFromXSDT (UINT32 Signature, UINT64 TableId)
 
  //     DBG(" ... patched\n");
     }
+ */
     if (!Drop) {
       continue;
     }
-    // */
+    
     DBG(" ... dropped\n");
     Ptr = BasePtr;
     Ptr2 = Ptr + sizeof(UINT64);
@@ -439,6 +440,60 @@ VOID DropTableFromXSDT (UINT32 Signature, UINT64 TableId)
     Xsdt->Header.Length -= sizeof(UINT64);
 	}	
   DBG("corrected XSDT length=%d\n", Xsdt->Header.Length);
+}
+
+VOID PatchAllSSDT()
+{
+  EFI_STATUS                      Status = EFI_SUCCESS;
+	EFI_ACPI_DESCRIPTION_HEADER     *TableEntry;
+  EFI_PHYSICAL_ADDRESS            ssdt = EFI_SYSTEM_TABLE_MAX_ADDRESS;
+	UINTN                           Index;
+	UINT32                          EntryCount;
+	CHAR8                           *BasePtr, *Ptr;
+	UINT64                          Entry64;
+  CHAR8                           sign[5];
+  CHAR8                           OTID[9];
+  UINT32                          i, SsdtLen;
+
+  sign[4] = 0;
+  OTID[8] = 0;
+	EntryCount = (Xsdt->Header.Length - sizeof (EFI_ACPI_DESCRIPTION_HEADER)) / sizeof(UINT64);
+	BasePtr = (CHAR8*)(UINTN)(&(Xsdt->Entry));
+	for (Index = 0; Index < EntryCount; Index++, BasePtr += sizeof(UINT64)) {
+    CopyMem (&Entry64, (VOID*)BasePtr, sizeof(UINT64)); //value from BasePtr->
+	  TableEntry = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(Entry64));
+    if (TableEntry->Signature == EFI_ACPI_4_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE) {
+      //will patch here
+      CopyMem((CHAR8*)&sign, (CHAR8*)&TableEntry->Signature, 4);
+      CopyMem((CHAR8*)&OTID, (CHAR8*)&TableEntry->OemTableId, 8);
+      DBG(" Patch table: %a  %a\n", sign, OTID);
+      SsdtLen = TableEntry->Length;
+      DBG("SSDT len = 0x%x\n", SsdtLen);
+      ssdt = EFI_SYSTEM_TABLE_MAX_ADDRESS;
+      Status = gBS->AllocatePages(AllocateMaxAddress,
+                                  EfiACPIReclaimMemory,
+                                  EFI_SIZE_TO_PAGES(SsdtLen + 4096),
+                                  &ssdt);
+      if(EFI_ERROR(Status)) {
+        DBG(" ... not patched\n");
+        continue;
+      }
+      Ptr = (CHAR8*)(UINTN)ssdt;
+      CopyMem(Ptr, (VOID*)TableEntry, SsdtLen);
+      if (gSettings.PatchDsdtNum > 0) {
+        for (i = 0; i < gSettings.PatchDsdtNum; i++) {
+          SsdtLen = FixAny((UINT8*)(UINTN)ssdt, SsdtLen,
+                           gSettings.PatchDsdtFind[i], gSettings.LenToFind[i],
+                           gSettings.PatchDsdtReplace[i], gSettings.LenToReplace[i]);
+        }
+      }
+      CopyMem ((VOID*)BasePtr, &ssdt, sizeof(UINT64));
+      // Finish SSDT patch and resize SSDT Length
+      CopyMem (&Ptr[4], &SsdtLen, 4);
+      ((EFI_ACPI_DESCRIPTION_HEADER*)Ptr)->Checksum = 0;
+      ((EFI_ACPI_DESCRIPTION_HEADER*)Ptr)->Checksum = (UINT8)(256-Checksum8(Ptr, SsdtLen));
+    }
+  }
 }
 
 EFI_STATUS InsertTable(VOID* TableEntry, UINTN Length)
@@ -1860,12 +1915,14 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
     }
    */
   if (gSettings.DropMCFG) {
-		xf = ScanXSDT(MCFG_SIGN, 0);
+    DropTableFromXSDT(MCFG_SIGN, 0);
+    DropTableFromRSDT(MCFG_SIGN, 0);
+  }
+/*		xf = ScanXSDT(MCFG_SIGN, 0);
 		if(xf) { DropTableFromXSDT(MCFG_SIGN, 0); }
 		rf = ScanRSDT(MCFG_SIGN, 0);
-		if(rf) { DropTableFromRSDT(MCFG_SIGN, 0); }
-  }
-  /*
+		if(rf) { DropTableFromRSDT(MCFG_SIGN, 0); } 
+  } 
   if (gSettings.bDropHPET) {
 		xf = ScanXSDT(HPET_SIGN);
 		if(xf) { DropTableFromXSDT(HPET_SIGN); }
@@ -1895,13 +1952,9 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
   if (gSettings.ACPIDropTables) {
     ACPI_DROP_TABLE *DropTable = gSettings.ACPIDropTables;
     while (DropTable) {
-      DBG("Attempting to drop \"%4.4a\" (%4.4X) \"%8.8a\" (%8.8lX)\n", &(DropTable->Signature), DropTable->Signature, &(DropTable->TableId), DropTable->TableId);
-      xf = ScanXSDT(DropTable->Signature, DropTable->TableId);
-      if (xf) {
+      if (DropTable->Drop) {
+        DBG("Attempting to drop \"%4.4a\" (%4.4X) \"%8.8a\" (%8.8lX)\n", &(DropTable->Signature), DropTable->Signature, &(DropTable->TableId), DropTable->TableId);
         DropTableFromXSDT(DropTable->Signature, DropTable->TableId);
-      }
-      rf = ScanRSDT(DropTable->Signature, DropTable->TableId);
-      if (rf) {
         DropTableFromRSDT(DropTable->Signature, DropTable->TableId);
       }
       DropTable = DropTable->Next;
@@ -1909,9 +1962,13 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
   }
 
   if (gSettings.DropSSDT) {
+    //special case if we set into menu drop all SSDT
     DropTableFromXSDT(EFI_ACPI_4_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE, 0);
     DropTableFromRSDT(EFI_ACPI_4_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE, 0);
-  } else { //do the empty drop to clean xsdt
+  } else { 
+    //all remaining SSDT tables will be patched
+    PatchAllSSDT();
+    //do the empty drop to clean xsdt
     DropTableFromXSDT(XXXX_SIGN, 0);
     DropTableFromRSDT(XXXX_SIGN, 0);
   }

@@ -626,9 +626,10 @@ struct CUSTOM_TOOL_ENTRY {
 typedef struct ACPI_DROP_TABLE ACPI_DROP_TABLE;
 struct ACPI_DROP_TABLE
 {
-   ACPI_DROP_TABLE *Next;
-   UINT32           Signature;
-   UINT64           TableId;
+  ACPI_DROP_TABLE *Next;
+  UINT32          Signature;
+  UINT64          TableId;
+  BOOLEAN         Drop;
 };
 
 typedef struct {
