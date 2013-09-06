@@ -52,8 +52,11 @@ UINTN SearchAndReplace(UINT8 *Source, UINT32 SourceSize, UINT8 *Search, UINTN Se
   UINTN     NumReplaces = 0;
   BOOLEAN   NoReplacesRestriction = MaxReplaces <= 0;
   UINT8     *End = Source + SourceSize;
+  if (!Source || !Search || !Replace || !SearchSize) {
+    return 0;
+  }
   
-  while (Source < End && (NoReplacesRestriction || MaxReplaces > 0)) {   
+  while ((Source < End) && (NoReplacesRestriction || (MaxReplaces > 0))) {
     if (CompareMem(Source, Search, SearchSize) == 0) {
       CopyMem(Source, Replace, SearchSize);
       NumReplaces++;

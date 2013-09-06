@@ -345,13 +345,18 @@ VOID DropTableFromXSDT (UINT32 Signature, UINT64 TableId)
   CHAR8                           sign[5];
   CHAR8                           OTID[9];
   BOOLEAN                         DoubleZero = FALSE;
-  BOOLEAN                         DontDrop;
+  BOOLEAN                         Drop;
   UINT32                          i, SsdtLen;
   
   if ((Signature == 0) && (TableId == 0)) {
     return;
   }
-  DBG("Drop tables from Xsdt, SIGN=%x TableID=%x\n", Signature, TableId);
+  sign[4] = 0;
+  OTID[8] = 0;
+
+  CopyMem((CHAR8*)&sign, (CHAR8*)&Signature, 4);
+  CopyMem((CHAR8*)&OTID, (CHAR8*)&TableId, 8);
+  DBG("Drop tables from Xsdt, SIGN=%a TableID=%a\n", sign, OTID);
 	EntryCount = (Xsdt->Header.Length - sizeof (EFI_ACPI_DESCRIPTION_HEADER)) / sizeof(UINT64);
   DBG(" Xsdt has tables count=%d \n", EntryCount); 
   if (EntryCount > 50) {
@@ -375,18 +380,19 @@ VOID DropTableFromXSDT (UINT32 Signature, UINT64 TableId)
     CopyMem (&Entry64, (VOID*)BasePtr, sizeof(UINT64)); //value from BasePtr->
 	  TableEntry = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(Entry64));
     CopyMem((CHAR8*)&sign, (CHAR8*)&TableEntry->Signature, 4);
-    sign[4] = 0;
     CopyMem((CHAR8*)&OTID, (CHAR8*)&TableEntry->OemTableId, 8);
-    OTID[8] = 0;
     DBG(" Found table: %a  %a\n", sign, OTID);
-    DontDrop = (Signature && (TableEntry->Signature != Signature)) ||
-                (TableId && (TableEntry->OemTableId != TableId));
+    
+    Drop = (((Signature && (TableEntry->Signature == Signature)) &&
+            (!TableId || (TableId == TableEntry->OemTableId))) ||
+            (!Signature && (TableId == TableEntry->OemTableId)));
+            
     
     if ((TableEntry->Signature == EFI_ACPI_4_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE) &&
-        DontDrop) {
+        !Drop) {
       //will patch here
       SsdtLen = TableEntry->Length;
-			DBG("SSDT len = 0x%x", SsdtLen);
+			DBG("SSDT len = 0x%x\n", SsdtLen);
 			ssdt = EFI_SYSTEM_TABLE_MAX_ADDRESS;
 			Status = gBS->AllocatePages(AllocateMaxAddress,
                                   EfiACPIReclaimMemory,
@@ -398,11 +404,12 @@ VOID DropTableFromXSDT (UINT32 Signature, UINT64 TableId)
       }
       Ptr = (CHAR8*)(UINTN)ssdt;
 			CopyMem(Ptr, (VOID*)TableEntry, SsdtLen);
-        
-      for (i = 0; i < gSettings.PatchDsdtNum; i++) {
-        SsdtLen = FixAny((UINT8*)(UINTN)ssdt, SsdtLen,
-                         gSettings.PatchDsdtFind[i], gSettings.LenToFind[i],
-                         gSettings.PatchDsdtReplace[i], gSettings.LenToReplace[i]);
+      if (gSettings.PatchDsdtNum > 0) {
+        for (i = 0; i < gSettings.PatchDsdtNum; i++) {
+          SsdtLen = FixAny((UINT8*)(UINTN)ssdt, SsdtLen,
+                           gSettings.PatchDsdtFind[i], gSettings.LenToFind[i],
+                           gSettings.PatchDsdtReplace[i], gSettings.LenToReplace[i]);
+        }
       }
       CopyMem ((VOID*)BasePtr, &ssdt, sizeof(UINT64));
       // Finish SSDT patch and resize SSDT Length
@@ -410,9 +417,9 @@ VOID DropTableFromXSDT (UINT32 Signature, UINT64 TableId)
       ((EFI_ACPI_DESCRIPTION_HEADER*)Ptr)->Checksum = 0;
       ((EFI_ACPI_DESCRIPTION_HEADER*)Ptr)->Checksum = (UINT8)(256-Checksum8(Ptr, SsdtLen));
 
-      DBG(" ... patched\n");
+ //     DBG(" ... patched\n");
     }
-    if (DontDrop) {
+    if (!Drop) {
       continue;
     }
     // */

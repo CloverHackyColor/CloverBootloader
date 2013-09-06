@@ -2609,7 +2609,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
             gSettings.KextPatches[gSettings.NrKexts].Name = AllocateCopyPool(AsciiStrSize(dict2->string), dict2->string);
             dict2 = GetProperty(dictPointer,"Comment");
             if (dict2) {
-            DBG(" %a (%a)", gSettings.KextPatches[gSettings.NrKexts].Name, dict2->string);
+              DBG(" %a (%a)", gSettings.KextPatches[gSettings.NrKexts].Name, dict2->string);
             } else {
               DBG(" %a", gSettings.KextPatches[gSettings.NrKexts].Name);
             }
