@@ -384,9 +384,11 @@ VOID DropTableFromXSDT (UINT32 Signature, UINT64 TableId)
     DBG(" Found table: %a  %a\n", sign, OTID);
     
     Drop = (((Signature && (TableEntry->Signature == Signature)) &&
-            (!TableId || (TableId == TableEntry->OemTableId))) ||
+             (!TableId || (TableId == TableEntry->OemTableId)));
+ /* no! drop always by signature!
+            ||
             (!Signature && (TableId == TableEntry->OemTableId)));
-            
+ */           
     
     if ((TableEntry->Signature == EFI_ACPI_4_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE) &&
         !Drop) {
