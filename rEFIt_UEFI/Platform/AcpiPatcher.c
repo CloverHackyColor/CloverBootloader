@@ -383,8 +383,8 @@ VOID DropTableFromXSDT (UINT32 Signature, UINT64 TableId)
     CopyMem((CHAR8*)&OTID, (CHAR8*)&TableEntry->OemTableId, 8);
     DBG(" Found table: %a  %a\n", sign, OTID);
     
-    Drop = (((Signature && (TableEntry->Signature == Signature)) &&
-             (!TableId || (TableId == TableEntry->OemTableId)));
+    Drop = ((Signature && (TableEntry->Signature == Signature)) &&
+            (!TableId || (TableId == TableEntry->OemTableId)));
  /* no! drop always by signature!
             ||
             (!Signature && (TableId == TableEntry->OemTableId)));
