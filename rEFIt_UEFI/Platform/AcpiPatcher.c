@@ -989,7 +989,7 @@ EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* GetFadt()
     // Search Acpi 2.0 or newer in UEFI Sys.Tables
     //
     RsdPtr = NULL;
-    Status = EfiGetSystemConfigurationTable (&gEfiAcpi20TableGuid, &RsdPtr);
+    Status = EfiGetSystemConfigurationTable (&gEfiAcpi20TableGuid, (VOID**)&RsdPtr);
     if (RsdPtr != NULL) {
       DBG("Found UEFI Acpi 2.0 RSDP at %p\n", RsdPtr);
       Rsdt = (RSDT_TABLE*)(UINTN)(RsdPtr->RsdtAddress);
