@@ -1348,6 +1348,10 @@ UINT32 FixAny (UINT8* dsdt, UINT32 len, UINT8* ToFind, UINT32 LenTF, UINT8* ToRe
     return len;
   }
   DBG(" patch pattern %01x%01x%01x%01x\n", ToFind[0], ToFind[1], ToFind[2], ToFind[3]);
+  if ((LenTF + sizeof(EFI_ACPI_DESCRIPTION_HEADER)) > len) {
+    DBG("  the patch is too large!\n");
+    return len;
+  }
   sizeoffset = LenTR - LenTF;
   for (i = 20; i < len; i++) {
     adr = FindBin(dsdt + i, len, ToFind, LenTF);

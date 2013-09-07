@@ -449,39 +449,7 @@ VOID DropTableFromXSDT (UINT32 Signature, UINT64 TableId)
             ||
             (!Signature && (TableId == TableEntry->OemTableId)));
  */           
-/*
-    if ((TableEntry->Signature == EFI_ACPI_4_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE) &&
-        !Drop) {
-      //will patch here
-      SsdtLen = TableEntry->Length;
-			DBG("SSDT len = 0x%x\n", SsdtLen);
-			ssdt = EFI_SYSTEM_TABLE_MAX_ADDRESS;
-			Status = gBS->AllocatePages(AllocateMaxAddress,
-                                  EfiACPIReclaimMemory,
-                                  EFI_SIZE_TO_PAGES(SsdtLen + 4096),
-                                  &ssdt);
-			if(EFI_ERROR(Status)) {
-        DBG(" ... not patched\n");
-        continue;
-      }
-      Ptr = (CHAR8*)(UINTN)ssdt;
-			CopyMem(Ptr, (VOID*)TableEntry, SsdtLen);
-      if (gSettings.PatchDsdtNum > 0) {
-        for (i = 0; i < gSettings.PatchDsdtNum; i++) {
-          SsdtLen = FixAny((UINT8*)(UINTN)ssdt, SsdtLen,
-                           gSettings.PatchDsdtFind[i], gSettings.LenToFind[i],
-                           gSettings.PatchDsdtReplace[i], gSettings.LenToReplace[i]);
-        }
-      }
-      CopyMem ((VOID*)BasePtr, &ssdt, sizeof(UINT64));
-      // Finish SSDT patch and resize SSDT Length
-      CopyMem (&Ptr[4], &SsdtLen, 4);
-      ((EFI_ACPI_DESCRIPTION_HEADER*)Ptr)->Checksum = 0;
-      ((EFI_ACPI_DESCRIPTION_HEADER*)Ptr)->Checksum = (UINT8)(256-Checksum8(Ptr, SsdtLen));
 
- //     DBG(" ... patched\n");
-    }
- */
     if (!Drop) {
       continue;
     }
