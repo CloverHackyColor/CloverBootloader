@@ -1831,7 +1831,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
                 gSettings.USBInjection = FALSE;
               }
         }
-        prop = GetProperty(dictPointer, "AddClockID");
+        prop = GetProperty(prop2, "AddClockID");
         if(prop) {
           // disabled by default
           // syntax: InjectClockID=Yes/No
@@ -1847,7 +1847,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
         // enabled by default for CloverEFI or Duet
         // disabled for others
         gSettings.USBFixOwnership = gFirmwareClover || (StrCmp(gST->FirmwareVendor, L"EDK II") == 0);
-        prop = GetProperty(dictPointer, "FixOwnership");
+        prop = GetProperty(prop2, "FixOwnership");
         if(prop) {
           if ((prop->type == kTagTypeFalse) ||
               ((prop->type == kTagTypeString) &&
