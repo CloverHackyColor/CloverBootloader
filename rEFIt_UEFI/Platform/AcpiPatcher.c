@@ -985,7 +985,24 @@ EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* GetFadt()
     }
   }
   if (Rsdt == NULL && Xsdt == NULL) {
-    return NULL;
+    //
+    // Search Acpi 2.0 or newer in UEFI Sys.Tables
+    //
+    RsdPtr = NULL;
+    Status = EfiGetSystemConfigurationTable (&gEfiAcpi20TableGuid, &RsdPtr);
+    if (RsdPtr != NULL) {
+      DBG("Found UEFI Acpi 2.0 RSDP at %p\n", RsdPtr);
+      Rsdt = (RSDT_TABLE*)(UINTN)(RsdPtr->RsdtAddress);
+      if (RsdPtr->Revision > 0) {
+        if (Rsdt == NULL || Rsdt->Header.Signature != EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_TABLE_SIGNATURE) {
+          Xsdt = (XSDT_TABLE *)(UINTN)(RsdPtr->XsdtAddress);
+        }
+      }
+    }
+    if (Rsdt == NULL && Xsdt == NULL) {
+      DBG("No RSDT or XSDT found!\n");
+      return NULL;
+    }
   }
   
   if (Rsdt) {
