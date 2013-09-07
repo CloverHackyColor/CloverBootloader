@@ -1076,38 +1076,21 @@ VOID ScanVolumes(VOID)
   DBG("found %d volumes with blockIO\n", HandleCount);
   // first pass: collect information about all handles
   for (HandleIndex = 0; HandleIndex < HandleCount; HandleIndex++) {
-    
-    // for quick default volume boot - skip volumes other then self volume and GPT volume with gEfiBootDeviceGuid
-    //Slice - no! selfVolume = EFI, defaultVolume is not set yet.
- /*   if ((GlobalConfig.Timeout == 0) &&
-        gEfiBootDeviceGuid != NULL &&
-        Handles[HandleIndex] != SelfDeviceHandle) {
-      VolumeDevicePath = DevicePathFromHandle(Handles[HandleIndex]);
-      Guid = FindGPTPartitionGuidInDevicePath(VolumeDevicePath);
-      if (!Guid || !CompareGuid(Guid, gEfiBootDeviceGuid)) {
-        // not self volume and not default volume - skip it
-        continue;
-      }
-    } */
-    
+        
     Volume = AllocateZeroPool(sizeof(REFIT_VOLUME));
     Volume->DeviceHandle = Handles[HandleIndex];
-    if (Volume->DeviceHandle == SelfDeviceHandle){
+    if (Volume->DeviceHandle == SelfDeviceHandle) {
       SelfVolume = Volume;  
     }
 
     DBG("%2d. Volume:\n", HandleIndex);
     Status = ScanVolume(Volume);
-
     if (!EFI_ERROR(Status)) {
 
       AddListElement((VOID ***) &Volumes, &VolumesCount, Volume);
       for (HVi = 0; HVi < gSettings.HVCount; HVi++) {
-        if (
-            StrStr(Volume->DevicePathString, gSettings.HVHideStrings[HVi])
-            || (Volume->VolName != NULL && StrStr(Volume->VolName, gSettings.HVHideStrings[HVi]))
-            )
-        {
+        if (StrStr(Volume->DevicePathString, gSettings.HVHideStrings[HVi]) ||
+            (Volume->VolName != NULL && StrStr(Volume->VolName, gSettings.HVHideStrings[HVi]))) {
           Volume->OSType = OSTYPE_HIDE;
           DBG("  hiding this volume\n");
           break;

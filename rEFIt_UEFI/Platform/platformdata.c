@@ -534,4 +534,8 @@ VOID GetDefaultSettings(VOID)
 //  AsmWriteMsr64(MSR_IA32_MISC_ENABLE, msr);
 //  gSettings.Turbo = ((msr & (1ULL<<38)) == 0);
 //  gSettings.EnableISS = ((msr & (1ULL<<16)) != 0);
+
+  //Fill ACPI table list
+  GetAcpiTablesList();
+ 
 }

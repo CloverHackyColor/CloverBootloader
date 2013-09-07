@@ -1347,7 +1347,7 @@ UINT32 FixAny (UINT8* dsdt, UINT32 len, UINT8* ToFind, UINT32 LenTF, UINT8* ToRe
   if (!ToFind) {
     return len;
   }
-  DBG("Patch DSDT %01x%01x%01x%01x\n", ToFind[0], ToFind[1], ToFind[2], ToFind[3]);
+  DBG(" patch pattern %01x%01x%01x%01x\n", ToFind[0], ToFind[1], ToFind[2], ToFind[3]);
   sizeoffset = LenTR - LenTF;
   for (i = 20; i < len; i++) {
     adr = FindBin(dsdt + i, len, ToFind, LenTF);
@@ -1357,7 +1357,7 @@ UINT32 FixAny (UINT8* dsdt, UINT32 len, UINT8* ToFind, UINT32 LenTF, UINT8* ToRe
       }
       return len;
     }
-    DBG("  Patch at %x\n", adr);
+    DBG("  patched at %x\n", adr);
     found = TRUE;
     len = move_data(adr + i, dsdt, len, sizeoffset);
     if ((LenTR > 0) && (ToReplace != NULL)) {

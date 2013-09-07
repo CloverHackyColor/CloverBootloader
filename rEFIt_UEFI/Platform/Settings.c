@@ -1907,7 +1907,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
                 }
               }
               Signature = SIGNATURE_32(s1, s2, s3, s4);
-              DBG("\" (%4.4X)", Signature);
+              DBG("\" (%8.8X)", Signature);
             }
             // Get the table ids to drop
             prop2 = GetProperty(dict2, "TableId");
@@ -1922,21 +1922,37 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
                   id[idi++] = *str++;
                 }
               }
-              TableId = *(UINT64 *)id;
-              DBG("\" (%8.8lX)", TableId);
+              CopyMem(&TableId, (CHAR8*)&id[0], 8);
+              DBG("\" (%16.16lX)", TableId);
             }
             DBG("\n");
             // Add the drop table if valid
-            if ((Signature != 0) || (TableId != 0)) {
+/*            if ((Signature != 0) || (TableId != 0)) {
               ACPI_DROP_TABLE *DropTable = AllocatePool(sizeof(ACPI_DROP_TABLE));
               if (DropTable) {
                 DropTable->Signature = Signature;
                 DropTable->TableId = TableId;
-                DropTable->Drop = TRUE;
+                DropTable->MenuItem.BValue = TRUE;
                 DropTable->Next = gSettings.ACPIDropTables;
                 gSettings.ACPIDropTables = DropTable;
               }
+            } */
+            //set to drop
+            if (gSettings.ACPIDropTables) {
+              ACPI_DROP_TABLE *DropTable = gSettings.ACPIDropTables;
+              DBG("set table: %08x, %16x to drop:", Signature, TableId);
+              while (DropTable) {
+                if (((Signature == DropTable->Signature) &&
+                    (!TableId || (DropTable->TableId == TableId))) ||
+                    (!Signature && (DropTable->TableId == TableId))) {
+                  DropTable->MenuItem.BValue = TRUE;
+                  DBG("  true");
+                }
+                DBG("\n");
+                DropTable = DropTable->Next;
+              }
             }
+
           }
         }
       }

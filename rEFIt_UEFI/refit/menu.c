@@ -417,6 +417,16 @@ VOID RefillInputs(VOID)
   InputItems[InputItemsCount].ItemType = Hex;  //103
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeXHCI);
 
+  //menu for drop table
+  if (gSettings.ACPIDropTables) {
+    ACPI_DROP_TABLE *DropTable = gSettings.ACPIDropTables;
+    while (DropTable) {
+      DropTable->MenuItem.ItemType = BoolValue;
+      DropTable->MenuItem.SValue = DropTable->MenuItem.BValue?L"[+]":L"[ ]";
+      DropTable = DropTable->Next;
+    }
+  }
+
 }
 
 VOID FillInputs(VOID)
@@ -717,6 +727,16 @@ VOID FillInputs(VOID)
   InputItems[InputItemsCount].ItemType = Hex;  //103
   InputItems[InputItemsCount].SValue = AllocateZeroPool(26);
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeXHCI);
+
+  //menu for drop table
+  if (gSettings.ACPIDropTables) {
+    ACPI_DROP_TABLE *DropTable = gSettings.ACPIDropTables;
+    while (DropTable) {
+      DropTable->MenuItem.ItemType = BoolValue;
+      DropTable->MenuItem.SValue = DropTable->MenuItem.BValue?L"[+]":L"[ ]";
+      DropTable = DropTable->Next;
+    }
+  }
 
 }
 
@@ -2976,9 +2996,16 @@ REFIT_MENU_ENTRY  *SubMenuBinaries()
 
 REFIT_MENU_ENTRY  *SubMenuDropTables()
 {
-  REFIT_MENU_ENTRY   *Entry; //, *SubEntry;
-  REFIT_MENU_SCREEN  *SubScreen;
-  REFIT_INPUT_DIALOG *InputBootArgs;
+  CHAR8               sign[5];
+  CHAR8               OTID[9];
+  CHAR16*             Flags;
+  REFIT_MENU_ENTRY    *Entry; //, *SubEntry;
+  REFIT_MENU_SCREEN   *SubScreen;
+  REFIT_INPUT_DIALOG  *InputBootArgs;
+
+  sign[4] = 0;
+  OTID[8] = 0;
+  Flags = AllocateZeroPool(255);
 
   Entry = AllocateZeroPool(sizeof(REFIT_MENU_ENTRY));
   Entry->Title = PoolPrint(L"Tables dropping menu ->");
@@ -2992,20 +3019,36 @@ REFIT_MENU_ENTRY  *SubMenuDropTables()
   SubScreen->ID = SCREEN_TABLES;
   SubScreen->AnimeRun = GetAnime(SubScreen);
 
-  //info only for now
   if (gSettings.ACPIDropTables) {
     ACPI_DROP_TABLE *DropTable = gSettings.ACPIDropTables;
     while (DropTable) {
-      //      DBG("Attempting to drop \"%4.4a\" (%4.4X) \"%8.8a\" (%8.8lX)\n", &(DropTable->Signature), DropTable->Signature, &(DropTable->TableId), DropTable->TableId);
-      AddMenuInfoLine(SubScreen, PoolPrint(L"To drop \"%4.4a\": \"%8.8a\"",
+      //      DBG("Attempting to drop \"%4.4a\" (%8.8X) \"%8.8a\" (%16.16lX)\n", &(DropTable->Signature), DropTable->Signature, &(DropTable->TableId), DropTable->TableId);
+/*      AddMenuInfoLine(SubScreen, PoolPrint(L"To drop \"%4.4a\": \"%8.8a\"",
                                            &(DropTable->Signature),
                                            &(DropTable->TableId)));
+ */
+      CopyMem((CHAR8*)&sign, (CHAR8*)&(DropTable->Signature), 4);
+      CopyMem((CHAR8*)&OTID, (CHAR8*)&(DropTable->TableId), 8);
+
+      MsgLog("adding to menu %a (%x) %a (%lx)\n",
+             sign, DropTable->Signature,
+             OTID, DropTable->TableId);
+      InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+      UnicodeSPrint(Flags, 255, L"Drop \"%4.4a\"  \"%8.8a\":", sign, OTID);
+      InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
+      InputBootArgs->Entry.Tag = TAG_INPUT;
+      InputBootArgs->Entry.Row = 0xFFFF; //cursor
+      InputBootArgs->Item = &(DropTable->MenuItem);
+      InputBootArgs->Entry.AtClick = ActionEnter;
+      InputBootArgs->Entry.AtRightClick = ActionDetails;
+      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+
       DropTable = DropTable->Next;
     }
   }
 
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"Drop OEM SSDT:");
+  InputBootArgs->Entry.Title = PoolPrint(L"Drop all OEM SSDT:");
   InputBootArgs->Entry.Tag = TAG_INPUT;
   InputBootArgs->Entry.Row = 0xFFFF; //cursor
   //    InputBootArgs->Entry.ShortcutDigit = 0;
@@ -3023,7 +3066,7 @@ REFIT_MENU_ENTRY  *SubMenuDropTables()
    InputBootArgs->Entry.AtClick = ActionEnter;
    InputBootArgs->Entry.AtRightClick = ActionDetails;
    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-*/
+
    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
    InputBootArgs->Entry.Title = PoolPrint(L"Drop MCFG:");
    InputBootArgs->Entry.Tag = TAG_INPUT;
@@ -3032,7 +3075,7 @@ REFIT_MENU_ENTRY  *SubMenuDropTables()
    InputBootArgs->Entry.AtClick = ActionEnter;
    InputBootArgs->Entry.AtRightClick = ActionDetails;
    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-/*
+
    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
    InputBootArgs->Entry.Title = PoolPrint(L"Drop OEM HPET:");
    InputBootArgs->Entry.Tag = TAG_INPUT;

@@ -628,8 +628,9 @@ struct ACPI_DROP_TABLE
 {
   ACPI_DROP_TABLE *Next;
   UINT32          Signature;
+  UINT32          align;
   UINT64          TableId;
-  BOOLEAN         Drop;
+  INPUT_ITEM      MenuItem;
 };
 
 typedef struct {
@@ -1252,7 +1253,7 @@ CARDLIST    *FindCardWithIds(UINT32 Id, UINT32 SubId);
 VOID        AddCard(CONST CHAR8* Model, UINT32 Id, UINT32 SubId, UINT64 VideoRam);
 
 EG_IMAGE    *egDecodePNG(IN UINT8 *FileData, IN UINTN FileDataLength, IN UINTN IconSize, IN BOOLEAN WantAlpha);
-
+//ACPI
 EFI_STATUS  PatchACPI(IN REFIT_VOLUME *Volume);
 EFI_STATUS  PatchACPI_OtherOS(CHAR16* OsSubdir, BOOLEAN DropSSDT);
 UINT8       Checksum8(VOID * startPtr, UINT32 len);
@@ -1261,6 +1262,7 @@ VOID        SaveOemDsdt(BOOLEAN FullPatch);
 VOID		    SaveOemTables(VOID);
 EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* GetFadt();
 UINT32      FixAny (UINT8* dsdt, UINT32 len, UINT8* ToFind, UINT32 LenTF, UINT8* ToReplace, UINT32 LenTR);
+VOID        GetAcpiTablesList();
 
 EFI_STATUS  EventsInitialize(IN LOADER_ENTRY *Entry);
 EFI_STATUS  EjectVolume(IN REFIT_VOLUME *Volume);
