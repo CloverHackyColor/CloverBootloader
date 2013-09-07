@@ -1926,17 +1926,6 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
               DBG("\" (%16.16lX)", TableId);
             }
             DBG("\n");
-            // Add the drop table if valid
-/*            if ((Signature != 0) || (TableId != 0)) {
-              ACPI_DROP_TABLE *DropTable = AllocatePool(sizeof(ACPI_DROP_TABLE));
-              if (DropTable) {
-                DropTable->Signature = Signature;
-                DropTable->TableId = TableId;
-                DropTable->MenuItem.BValue = TRUE;
-                DropTable->Next = gSettings.ACPIDropTables;
-                gSettings.ACPIDropTables = DropTable;
-              }
-            } */
             //set to drop
             if (gSettings.ACPIDropTables) {
               ACPI_DROP_TABLE *DropTable = gSettings.ACPIDropTables;
@@ -1946,11 +1935,11 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
                     (!TableId || (DropTable->TableId == TableId))) ||
                     (!Signature && (DropTable->TableId == TableId))) {
                   DropTable->MenuItem.BValue = TRUE;
-                  DBG("  true");
-                }
-                DBG("\n");
+                  DBG("  true\n");
+                }                
                 DropTable = DropTable->Next;
               }
+              DBG("\n");
             }
 
           }
