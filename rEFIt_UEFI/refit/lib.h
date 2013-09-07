@@ -118,7 +118,7 @@ typedef struct {
 #define OSTYPE_MAV              (19)
 #define OSTYPE_HIDE             (100)
 
-#define OSTYPE_IS_OSX(type) ((type == OSTYPE_OSX) || ((type >= OSTYPE_TIGER) && (type <= OSTYPE_MAV)))
+#define OSTYPE_IS_OSX(type) ((type == OSTYPE_OSX) || ((type >= OSTYPE_BOOT_OSX) && (type <= OSTYPE_MAV)))
 
 #define OSFLAG_ISSET(flags, flag) ((flags & flag) != 0)
 #define OSFLAG_ISUNSET(flags, flag) ((flags & flag) == 0)

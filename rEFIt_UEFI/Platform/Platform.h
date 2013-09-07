@@ -691,6 +691,8 @@ typedef struct {
   CHAR16  DefaultBoot[40];
   UINT16  BacklightLevel;
   BOOLEAN MemoryFix;
+  BOOLEAN WithKexts;
+  BOOLEAN NoCaches;
 	
 	// GUI parameters
 	BOOLEAN	Debug;

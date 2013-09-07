@@ -563,12 +563,10 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
   KillMouse();
 //    DBG("BeginExternalScreen\n");
   BeginExternalScreen(OSFLAG_ISSET(Entry->Flags, OSFLAG_USEGRAPHICS), L"Booting OS");
-  if (Entry->LoaderType == OSTYPE_OSX) {
+//  if (Entry->LoaderType == OSTYPE_OSX) {
+  if (OSTYPE_IS_OSX(Entry->LoaderType)) {
     // first patchACPI and find PCIROOT and RTC
     // but before ACPI patch we need smbios patch
-//    DBG("PatchSmbios\n");
-    
-//    ApplySettings();
     PatchSmbios();
 //    DBG("PatchACPI\n");
     PatchACPI(Entry->Volume);
@@ -921,10 +919,14 @@ static LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
     case OSTYPE_MAV:
     case OSTYPE_RECOVERY:
     case OSTYPE_BOOT_OSX:
+    case OSTYPE_OSX_INSTALLER:
       OSIconName = Volume->OSIconName;
       if (Entry->LoadOptions == NULL || (StrStr(Entry->LoadOptions, L"-v") == NULL && StrStr(Entry->LoadOptions, L"-V") == NULL)) {
         // OSX is not booting verbose, so we can set console to graphics mode
         Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_USEGRAPHICS);
+      }
+      if (gSettings.WithKexts) {
+        Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_WITHKEXTS);
       }
       ShortcutLetter = 'M';
       Entry->LoaderType = OSTYPE_OSX;

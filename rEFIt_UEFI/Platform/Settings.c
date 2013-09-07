@@ -363,7 +363,9 @@ static BOOLEAN FillinCustomEntry(IN OUT CUSTOM_LOADER_ENTRY *Entry, TagPtr dictP
 
   // OS Specific flags
   switch (Entry->Type) {
-  case OSTYPE_OSX:
+    case OSTYPE_OSX:
+    case OSTYPE_OSX_INSTALLER:
+    case OSTYPE_RECOVERY:  
      prop = GetProperty(dictPointer, "InjectKexts");
      if (prop) {
        if ((prop->type == kTagTypeTrue) ||
@@ -1536,7 +1538,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
     DBG("Loading main settings\n");
     
     //*** SYSTEM ***
-    /*
+    
     dictPointer = GetProperty(dict, "SystemParameters");
     if (dictPointer) {
       // Inject kexts
@@ -1559,7 +1561,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
         }
       }
     }
-    */
+    
 
     //Graphics
     

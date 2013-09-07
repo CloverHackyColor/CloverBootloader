@@ -671,6 +671,7 @@ EG_IMAGE* ScanVolumeDefaultIcon(REFIT_VOLUME *Volume) //IN UINT8 DiskKind)
     case DISK_KIND_INTERNAL:
       switch (Volume->OSType) {
         case OSTYPE_OSX: 
+        case OSTYPE_OSX_INSTALLER:  
         case OSTYPE_TIGER: 
         case OSTYPE_LEO:
         case OSTYPE_SNOW:
