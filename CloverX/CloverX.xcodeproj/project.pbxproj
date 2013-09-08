@@ -477,7 +477,7 @@
 		12D754701657CDE800376797 /* DevicePath.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = DevicePath.c; sourceTree = "<group>"; };
 		12DCF7BA177FE41400D2BE8F /* bdmesg.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = bdmesg.c; sourceTree = "<group>"; };
 		12DCF7BB177FE41400D2BE8F /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
-		12DCF7BD177FE41400D2BE8F /* clover-genconfig.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = "clover-genconfig.c"; sourceTree = "<group>"; };
+		12DCF7BD177FE41400D2BE8F /* clover-genconfig.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = "clover-genconfig.c"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.c; };
 		12DCF7BF177FE41400D2BE8F /* config-sample.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "config-sample.plist"; sourceTree = "<group>"; };
 		12DCF7C0177FE41400D2BE8F /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		12DCF7C1177FE41400D2BE8F /* Readme.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = Readme.txt; sourceTree = "<group>"; };

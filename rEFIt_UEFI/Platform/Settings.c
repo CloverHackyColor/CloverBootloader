@@ -2052,7 +2052,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
             gSettings.DropSSDT = FALSE;
           }
         }
-        prop = GetProperty(dictPointer, "PLimitDict");
+        prop = GetProperty(dict2, "PLimitDict");
         if(prop) {
           if (prop->type == kTagTypeInteger) {
             gSettings.PLimitDict = (UINT8)(UINTN)prop->string;
@@ -2061,7 +2061,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
             gSettings.PLimitDict = (UINT8)StrDecimalToUintn((CHAR16*)&UStr[0]);	
           }
         }
-        prop = GetProperty(dictPointer, "UnderVoltStep");
+        prop = GetProperty(dict2, "UnderVoltStep");
         if(prop) {
           if (prop->type == kTagTypeInteger) {
             gSettings.UnderVoltStep = (UINT8)(UINTN)prop->string;
@@ -2070,7 +2070,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
             gSettings.UnderVoltStep = (UINT8)StrDecimalToUintn((CHAR16*)&UStr[0]);
           }
         }
-        prop = GetProperty(dictPointer, "DoubleFirstState");
+        prop = GetProperty(dict2, "DoubleFirstState");
         if(prop) {
           if ((prop->type == kTagTypeTrue) ||
               ((prop->type == kTagTypeString) &&
@@ -2082,7 +2082,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
             gSettings.DoubleFirstState = FALSE;
           }
         }
-        prop = GetProperty(dictPointer,"MinMultiplier");
+        prop = GetProperty(dict2,"MinMultiplier");
         if(prop) {
           if (prop->type == kTagTypeInteger) {
             gSettings.MinMultiplier = (UINT8)(UINTN)prop->string;
@@ -2092,7 +2092,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
           }
           DBG("Config set MinMultiplier=%d\n", gSettings.MinMultiplier);
         }
-        prop = GetProperty(dictPointer,"MaxMultiplier");
+        prop = GetProperty(dict2,"MaxMultiplier");
         if(prop) {
           if (prop->type == kTagTypeInteger) {
             gSettings.MaxMultiplier = (UINT8)(UINTN)prop->string;
@@ -2102,7 +2102,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
           }
           DBG("Config set MaxMultiplier=%d\n", gSettings.MaxMultiplier);
         }
-        prop = GetProperty(dictPointer,"PluginType");
+        prop = GetProperty(dict2,"PluginType");
         if(prop) {
           if (prop->type == kTagTypeInteger) {
             gSettings.PluginType = (UINT8)(UINTN)prop->string;
