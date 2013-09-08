@@ -810,24 +810,25 @@ static LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
     }
   }
 
-  // Ignore this loader if it's device path is already present in another loader
-  if (MainMenu.Entries) {
-    for (i = 0; i < MainMenu.EntryCount; ++i) {
-      REFIT_MENU_ENTRY *MainEntry = MainMenu.Entries[i];
-      // Only want loaders
-      if (MainEntry && (MainEntry->Tag == TAG_LOADER)) {
-        LOADER_ENTRY *Loader = (LOADER_ENTRY *)MainEntry;
-        if (StriCmp(Loader->DevicePathString, LoaderDevicePathString) == 0) {
-          FreePool(LoaderDevicePathString);
-          return NULL;
+  if (!CustomEntry) {
+    CUSTOM_LOADER_ENTRY *Custom;
+
+    // Ignore this loader if it's device path is already present in another loader
+    if (MainMenu.Entries) {
+      for (i = 0; i < MainMenu.EntryCount; ++i) {
+        REFIT_MENU_ENTRY *MainEntry = MainMenu.Entries[i];
+        // Only want loaders
+        if (MainEntry && (MainEntry->Tag == TAG_LOADER)) {
+          LOADER_ENTRY *Loader = (LOADER_ENTRY *)MainEntry;
+          if (StriCmp(Loader->DevicePathString, LoaderDevicePathString) == 0) {
+            FreePool(LoaderDevicePathString);
+            return NULL;
+          }
         }
       }
     }
-  }
-
-  // If this isn't a custom entry make sure it's not hidden by a custom entry
-  if (!CustomEntry) {
-    CUSTOM_LOADER_ENTRY *Custom = gSettings.CustomEntries;
+    // If this isn't a custom entry make sure it's not hidden by a custom entry
+    Custom = gSettings.CustomEntries;
     while (Custom) {
       if (OSFLAG_ISSET(Custom->Flags, OSFLAG_DISABLED) ||
           (OSFLAG_ISSET(Custom->Flags, OSFLAG_HIDDEN) && !gSettings.ShowHiddenEntries)) {
@@ -1830,14 +1831,12 @@ static UINT8 GetOSTypeFromPath(IN CHAR16 *Path, IN UINT8 OSType)
    if (Path == NULL) {
      return OSTYPE_VAR;
    }
-   if (StriCmp(Path, MACOSX_LOADER_PATH) == 0) {
+   if ((StriCmp(Path, MACOSX_LOADER_PATH) == 0) ||
+       (StriCmp(Path, L"\\OS X Install Data\\boot.efi") == 0) ||
+       (StriCmp(Path, L"\\Mac OS X Install Data\\boot.efi") == 0) ||
+       (StriCmp(Path, L"\\.IABootFiles\\boot.efi") == 0) ||
+       (StriCmp(Path, L"\\com.apple.recovery.boot\\boot.efi") == 0)) {
      return OSType;
-   } else if ((StriCmp(Path, L"\\OS X Install Data\\boot.efi") == 0) ||
-              (StriCmp(Path, L"\\Mac OS X Install Data\\boot.efi") == 0) ||
-              (StriCmp(Path, L"\\.IABootFiles\\boot.efi") == 0)) {
-     return OSType;
-   } else if (StriCmp(Path, L"\\com.apple.recovery.boot\\boot.efi") == 0) {
-     return OSTYPE_RECOVERY;
    } else if ((StriCmp(Path, L"\\EFI\\Microsoft\\Boot\\bootmgfw.efi") == 0) ||
               (StriCmp(Path, L"\\bootmgr.efi") == 0) ||
               (StriCmp(Path, L"\\EFI\\MICROSOFT\\BOOT\\cdboot.efi") == 0)) {
@@ -1989,12 +1988,12 @@ static VOID AddCustomEntries(VOID)
           continue;
         }
         // Check if the volume should be of certain os type
-        if ((Custom->Type != 0) && (Volume->OSType != 0) && OSTYPE_COMPARE(OSType, Volume->OSType)) {
-          DBG("skipped because wrong type (%d)\n", Volume->OSType);
+        if ((Custom->Type != 0) && (Volume->OSType != 0) && !OSTYPE_COMPARE(OSType, Volume->OSType)) {
+          DBG("skipped because wrong type (%d != %d)\n", OSType, Volume->OSType);
           continue;
         }
-      } else if ((Custom->Type != 0) && (Volume->OSType != 0) && OSTYPE_COMPARE(OSType, Volume->OSType)) {
-        DBG("skipped because wrong type\n");
+      } else if ((Custom->Type != 0) && (Volume->OSType != 0) && !OSTYPE_COMPARE(OSType, Volume->OSType)) {
+        DBG("skipped because wrong type (%d != %d)\n", OSType, Volume->OSType);
         continue;
       }
       // Check the volume is readable and the entry exists on the volume
