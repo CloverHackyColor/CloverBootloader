@@ -1832,9 +1832,10 @@ static UINT8 GetOSTypeFromPath(IN CHAR16 *Path, IN UINT8 OSType)
    if ((StriCmp(Path, MACOSX_LOADER_PATH) == 0) ||
        (StriCmp(Path, L"\\OS X Install Data\\boot.efi") == 0) ||
        (StriCmp(Path, L"\\Mac OS X Install Data\\boot.efi") == 0) ||
-       (StriCmp(Path, L"\\.IABootFiles\\boot.efi") == 0) ||
-       (StriCmp(Path, L"\\com.apple.recovery.boot\\boot.efi") == 0)) {
+       (StriCmp(Path, L"\\.IABootFiles\\boot.efi") == 0)) {
      return OSType;
+   } else if (StriCmp(Path, L"\\com.apple.recovery.boot\\boot.efi") == 0) {
+     return OSTYPE_RECOVERY;
    } else if ((StriCmp(Path, L"\\EFI\\Microsoft\\Boot\\bootmgfw.efi") == 0) ||
               (StriCmp(Path, L"\\bootmgr.efi") == 0) ||
               (StriCmp(Path, L"\\EFI\\MICROSOFT\\BOOT\\cdboot.efi") == 0)) {
