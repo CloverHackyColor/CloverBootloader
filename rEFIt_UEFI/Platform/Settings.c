@@ -806,20 +806,25 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir)
               if (FillinCustomEntry(Entry, dict3, FALSE) && AddCustomEntry(Entry)) {
                 TagPtr dict5, dict4 = GetProperty(dict2, "SubEntries");
                 if (dict4) {
-                  INTN j, Count2 = GetTagCount(dict4);
-                  if (Count2 > 0) {
-                    for (j = 0; j < Count2; ++j) {
-                      if (EFI_ERROR(GetElement(dict4, j, &dict5))) {
-                        continue;
-                      }
-                      if (dict5 == NULL) {
-                        break;
-                      }
-                      // Allocate a sub entry
-                      SubEntry = DuplicateCustomEntry(Entry);
-                      if (SubEntry) {
-                        if (!FillinCustomEntry(SubEntry, dict5, TRUE) || !AddCustomSubEntry(Entry, SubEntry)) {
-                          FreePool(SubEntry);
+                  if (dict4->type == kTagTypeFalse) {
+                    Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_NODEFAULTMENU);
+                  } else if (dict4->type != kTagTypeTrue) {
+                    INTN j, Count2 = GetTagCount(dict4);
+                    Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_NODEFAULTMENU);
+                    if (Count2 > 0) {
+                      for (j = 0; j < Count2; ++j) {
+                        if (EFI_ERROR(GetElement(dict4, j, &dict5))) {
+                          continue;
+                        }
+                        if (dict5 == NULL) {
+                          break;
+                        }
+                        // Allocate a sub entry
+                        SubEntry = DuplicateCustomEntry(Entry);
+                        if (SubEntry) {
+                          if (!FillinCustomEntry(SubEntry, dict5, TRUE) || !AddCustomSubEntry(Entry, SubEntry)) {
+                            FreePool(SubEntry);
+                          }
                         }
                       }
                     }

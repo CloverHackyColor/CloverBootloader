@@ -118,7 +118,7 @@ typedef struct {
 #define OSTYPE_MAV              (19)
 #define OSTYPE_HIDE             (100)
 
-#define OSTYPE_IS_OSX(type) ((type == OSTYPE_OSX) || ((type >= OSTYPE_BOOT_OSX) && (type <= OSTYPE_MAV)))
+#define OSTYPE_IS_OSX(type) ((type == OSTYPE_OSX) || (type == OSTYPE_BOOT_OSX) || (type == OSTYPE_RECOVERY) || (type == OSTYPE_OSX_INSTALLER) || ((type >= OSTYPE_BOOT_OSX) && (type <= OSTYPE_MAV)))
 
 #define OSFLAG_ISSET(flags, flag) ((flags & flag) != 0)
 #define OSFLAG_ISUNSET(flags, flag) ((flags & flag) == 0)
@@ -128,6 +128,7 @@ typedef struct {
 #define OSFLAG_USEGRAPHICS   (1 << 0)
 #define OSFLAG_WITHKEXTS     (1 << 1)
 #define OSFLAG_NOCACHES      (1 << 2)
+#define OSFLAG_NODEFAULTMENU (1 << 5)
 #define OSFLAG_HIDDEN        (1 << 6)
 #define OSFLAG_DISABLED      (1 << 7)
 
