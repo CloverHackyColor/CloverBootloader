@@ -835,41 +835,21 @@ static LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
           if ((StrStr(Volume->DevicePathString, Custom->Volume) == NULL) &&
               ((Volume->VolName == NULL) || (StrStr(Volume->VolName, Custom->Volume) == NULL))) {
             if (Custom->Path) {
-              if (StriCmp(Custom->Path, LoaderPath) == 0) {
-                if (Custom->Type != 0) {
-                  if ((OSTYPE_IS_OSX(Custom->Type) && OSTYPE_IS_OSX(OSType)) ||
-                      (Custom->Type == OSType)) {
-                    return NULL;
-                  }
-                } else {
-                  return NULL;
-                }
-              }
-            } else if (Custom->Type != 0) {
-              if ((OSTYPE_IS_OSX(Custom->Type) && OSTYPE_IS_OSX(OSType)) ||
-                  (Custom->Type == OSType)) {
+              if ((StriCmp(Custom->Path, LoaderPath) == 0) &&
+                  ((Custom->Type == 0) || OSTYPE_COMPARE(Custom->Type, OSType))) {
                 return NULL;
               }
-            } else {
+            } else if ((Custom->Type == 0) || OSTYPE_COMPARE(Custom->Type, OSType)) {
               return NULL;
             }
           }
         } else if (Custom->Path) {
-          if (StriCmp(Custom->Path, LoaderPath) == 0) {
-           if (Custom->Type != 0) {
-              if ((OSTYPE_IS_OSX(Custom->Type) && OSTYPE_IS_OSX(OSType)) ||
-                  (Custom->Type == OSType)) {
-                return NULL;
-              }
-            } else {
-              return NULL;
-            }
-          }
-        } else if (Custom->Type != 0) {
-          if ((OSTYPE_IS_OSX(Custom->Type) && OSTYPE_IS_OSX(OSType)) ||
-              (Custom->Type == OSType)) {
+          if ((StriCmp(Custom->Path, LoaderPath) == 0) &&
+              ((Custom->Type == 0) || OSTYPE_COMPARE(Custom->Type, OSType))) {
             return NULL;
           }
+        } else if ((Custom->Type != 0) && OSTYPE_COMPARE(Custom->Type, OSType)) {
+          return NULL;
         }
       }
       Custom = Custom->Next;
@@ -1995,11 +1975,11 @@ static VOID AddCustomEntries(VOID)
           continue;
         }
         // Check if the volume should be of certain os type
-        if ((Custom->Type != 0) && (OSType != Volume->OSType)) {
+        if ((Custom->Type != 0) && OSTYPE_COMPARE(OSType, Volume->OSType)) {
           DBG("skipped because wrong type\n");
           continue;
         }
-      } else if ((Custom->Type != 0) && (OSType != Volume->OSType)) {
+      } else if ((Custom->Type != 0) && OSTYPE_COMPARE(OSType, Volume->OSType)) {
         DBG("skipped because wrong type\n");
         continue;
       }
