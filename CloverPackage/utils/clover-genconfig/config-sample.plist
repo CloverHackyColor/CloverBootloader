@@ -271,7 +271,7 @@
 			<true/>
 			<key>AddClockID</key>
 			<true/>
-			<key>USBFixOwnership</key>
+			<key>FixOwnership</key>
 			<true/>
 		</dict>
 	</dict>
@@ -415,7 +415,7 @@
 					<false/>
 					<key>Hidden</key>
 					<false/>
-				</dict>			
+				</dict>
 			</array>
 			<key>Legacy</key>
 			<array>
@@ -432,7 +432,7 @@
 					<true/>
 					<key>Hidden</key>
 					<false/>
-				</dict>			
+				</dict>
 			</array>
 			<key>Tool</key>
 			<array>
@@ -450,8 +450,8 @@
 					<key>Hidden</key>
 					<false/>
 					<key>Disabled</key>
-					<false/>					
-				</dict>			
+					<false/>
+				</dict>
 			</array>
 		</dict>
 	</dict>

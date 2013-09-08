@@ -173,7 +173,7 @@
 		<dict>
 			<key>Inject</key>
 			<true/>
-			<key>USBFixOwnership</key>
+			<key>FixOwnership</key>
 			<true/>
 			<key>AddClockID</key>
 			<true/>
