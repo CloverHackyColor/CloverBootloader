@@ -1897,7 +1897,7 @@ static VOID AddCustomEntries(VOID)
          Custom->Path = L"\\com.apple.recovery.boot\\boot.efi";
          break;
       case OSTYPE_WINEFI:
-         Custom->Path = L"\\EFI\\Microsoft\\Boot\bootmgfw.efi";
+         Custom->Path = L"\\EFI\\Microsoft\\Boot\\bootmgfw.efi";
       default:
          break;
       }
@@ -1917,19 +1917,19 @@ static VOID AddCustomEntries(VOID)
     if (Custom->Volume) {
       if (Custom->Title) {
         if (Custom->Path) {
-          DBG("Custom entry %d \"%s\" \"%s\" \"%s\" (%d) 0x%X matching \"%s\" ...\n", i, Custom->Title, Custom->Path, ((Custom->Options == NULL) ? Custom->Options : L""), Custom->Type, Custom->Flags, Custom->Volume);
+          DBG("Custom entry %d \"%s\" \"%s\" \"%s\" (%d) 0x%X matching \"%s\" ...\n", i, Custom->Title, Custom->Path, ((Custom->Options != NULL) ? Custom->Options : L""), Custom->Type, Custom->Flags, Custom->Volume);
         } else {
-          DBG("Custom entry %d \"%s\" \"%s\" (%d) 0x%X matching \"%s\" ...\n", i, Custom->Title, ((Custom->Options == NULL) ? Custom->Options : L""), Custom->Type, Custom->Flags, Custom->Volume);
+          DBG("Custom entry %d \"%s\" \"%s\" (%d) 0x%X matching \"%s\" ...\n", i, Custom->Title, ((Custom->Options != NULL) ? Custom->Options : L""), Custom->Type, Custom->Flags, Custom->Volume);
         }
       } else if (Custom->Path) {
-        DBG("Custom entry %d \"%s\" \"%s\" (%d) 0x%X matching \"%s\" ...\n", i, Custom->Path, ((Custom->Options == NULL) ? Custom->Options : L""), Custom->Type, Custom->Flags, Custom->Volume);
+        DBG("Custom entry %d \"%s\" \"%s\" (%d) 0x%X matching \"%s\" ...\n", i, Custom->Path, ((Custom->Options != NULL) ? Custom->Options : L""), Custom->Type, Custom->Flags, Custom->Volume);
       } else {
-        DBG("Custom entry %d \"%s\" (%d) 0x%X matching \"%s\" ...\n", i, ((Custom->Options == NULL) ? Custom->Options : L""), Custom->Type, Custom->Flags, Custom->Volume);
+        DBG("Custom entry %d \"%s\" (%d) 0x%X matching \"%s\" ...\n", i, ((Custom->Options != NULL) ? Custom->Options : L""), Custom->Type, Custom->Flags, Custom->Volume);
       }
     } else if (Custom->Path) {
-      DBG("Custom entry %d \"%s\" \"%s\" (%d) 0x%X matching all volumes ...\n", i, Custom->Path, ((Custom->Options == NULL) ? Custom->Options : L""), Custom->Type, Custom->Flags);
+      DBG("Custom entry %d \"%s\" \"%s\" (%d) 0x%X matching all volumes ...\n", i, Custom->Path, ((Custom->Options != NULL) ? Custom->Options : L""), Custom->Type, Custom->Flags);
     } else {
-      DBG("Custom entry %d \"%s\" (%d) 0x%X matching all volumes ...\n", i, ((Custom->Options == NULL) ? Custom->Options : L""), Custom->Type, Custom->Flags);
+      DBG("Custom entry %d \"%s\" (%d) 0x%X matching all volumes ...\n", i, ((Custom->Options != NULL) ? Custom->Options : L""), Custom->Type, Custom->Flags);
     }
     for (VolumeIndex = 0; VolumeIndex < VolumesCount; ++VolumeIndex) {
       Volume = Volumes[VolumeIndex];
