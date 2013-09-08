@@ -2148,24 +2148,56 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
         EntriesPosY += TextHeight;  // also add a blank line
       }
       if (ThemeDir) {
-        if (!ScrollbarBackgroundImage)
+        if (!ScrollbarBackgroundImage) {
           ScrollbarBackgroundImage = egLoadImage(ThemeDir, L"scrollbar\\bar_fill.png", FALSE);
-        if (!BarStartImage)
+        }
+        if (!BarStartImage) {
           BarStartImage = egLoadImage(ThemeDir, L"scrollbar\\bar_start.png", TRUE);
-        if (!BarEndImage)
+        }
+        if (!BarEndImage) {
           BarEndImage = egLoadImage(ThemeDir, L"scrollbar\\bar_end.png", TRUE);
-        if (!ScrollbarImage)
+        }
+        if (!ScrollbarImage) {
           ScrollbarImage = egLoadImage(ThemeDir, L"scrollbar\\scroll_fill.png", FALSE);
-        if (!ScrollStartImage)
+        }
+        if (!ScrollStartImage) {
           ScrollStartImage = egLoadImage(ThemeDir, L"scrollbar\\scroll_start.png", TRUE);
-        if (!ScrollEndImage)
+        }
+        if (!ScrollEndImage) {
           ScrollEndImage = egLoadImage(ThemeDir, L"scrollbar\\scroll_end.png", TRUE);
-        if (!UpButtonImage)
+        }
+        if (!UpButtonImage) {
           UpButtonImage = egLoadImage(ThemeDir, L"scrollbar\\up_button.png", TRUE);
-        if (!DownButtonImage)
-          DownButtonImage = egLoadImage(ThemeDir, L"scrollbar\\down_button.png", TRUE);        
+        }
+        if (!DownButtonImage) {
+          DownButtonImage = egLoadImage(ThemeDir, L"scrollbar\\down_button.png", TRUE);
+        }
       }
-      
+      if (!BarStartImage) {
+        BarStartImage = egCreateFilledImage(16, 5, TRUE, &StdBackgroundPixel);
+      }
+      if (!BarEndImage) {
+        BarEndImage = egCreateFilledImage(16, 5, TRUE, &StdBackgroundPixel);
+      }
+      if (!ScrollbarBackgroundImage) {
+        ScrollbarBackgroundImage = egCreateFilledImage(16, 1, TRUE, &DarkBackgroundPixel);
+      }
+      if (!ScrollbarImage) {
+        ScrollbarImage = egCreateFilledImage(16, 1, TRUE, &StdBackgroundPixel);
+      }
+      if (!ScrollStartImage) {
+        ScrollStartImage = egCreateFilledImage(16, 7, TRUE, &StdBackgroundPixel);
+      }
+      if (!ScrollEndImage) {
+        ScrollEndImage = egCreateFilledImage(16, 7, TRUE, &StdBackgroundPixel);
+      }
+      if (!UpButtonImage) {
+        UpButtonImage = egCreateFilledImage(16, 20, TRUE, &StdBackgroundPixel);
+      }
+      if (!DownButtonImage) {
+        DownButtonImage = egCreateFilledImage(16, 20, TRUE, &StdBackgroundPixel);
+      }
+
       break;
       
     case MENU_FUNCTION_CLEANUP:

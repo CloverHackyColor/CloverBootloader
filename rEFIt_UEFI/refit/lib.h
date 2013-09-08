@@ -527,6 +527,7 @@ extern BOOLEAN AllowGraphicsMode;
 extern EG_PIXEL StdBackgroundPixel;
 extern EG_PIXEL MenuBackgroundPixel;
 extern EG_PIXEL InputBackgroundPixel;
+extern EG_PIXEL BlueBackgroundPixel;
 //extern EG_PIXEL TransBackgroundPixel;
 extern EG_PIXEL DarkBackgroundPixel;
 
