@@ -346,7 +346,7 @@ void PrintConfig(CFTypeRef data)
   
   CFMutableDictionaryRef usbDict = addDict(pciDict, CFSTR("USB"));
   addBoolean(usbDict, CFSTR("Inject"), s->USBInjection);
-  addBoolean(usbDict, CFSTR("USBFixOwnership"), s->USBFixOwnership);
+  addBoolean(usbDict, CFSTR("FixOwnership"), s->USBFixOwnership);
   addBoolean(usbDict, CFSTR("AddClockID"), s->InjectClockID);
   
   // Graphics
@@ -359,7 +359,7 @@ void PrintConfig(CFTypeRef data)
   addBoolean(graphicsDict, CFSTR("InjectEDID"), s->InjectEDID);
   addString(graphicsDict, CFSTR("CustomEDID"), "_NOT_SHOWN_");
   addBoolean(graphicsDict, CFSTR("PatchVBios"), s->PatchVBios);
-  addInteger(graphicsDict, CFSTR("PatchVBios Manual Count"), s->PatchVBiosBytesCount);
+  addInteger(graphicsDict, CFSTR("PatchVBiosBytes Manual Count"), s->PatchVBiosBytesCount);
   addInteger(graphicsDict, CFSTR("VideoPorts"), s->VideoPorts);
   addInteger(graphicsDict, CFSTR("VRAM"), s->VRAM);
   addInteger(graphicsDict, CFSTR("DualLink"), s->DualLink);
@@ -373,35 +373,42 @@ void PrintConfig(CFTypeRef data)
   
   //ACPI
   CFMutableDictionaryRef acpiDict = addDict(dict, CFSTR("ACPI"));
-  addUString(acpiDict, CFSTR("DsdtName"), s->DsdtName);
-  addHex(acpiDict, CFSTR("FixDsdtMask"), s->FixDsdt);
-  addBoolean(acpiDict, CFSTR("DebugDSDT"), s->DebugDSDT);
   addBoolean(acpiDict, CFSTR("DropOemSSDT"), s->DropSSDT);
- // addInteger(acpiDict, CFSTR("Number_of_KeepSSDT"), s->KeepSsdtNum);
-//  addBoolean(acpiDict, CFSTR("DropAPIC"), s->bDropAPIC);
   addBoolean(acpiDict, CFSTR("PatchAPIC"), s->PatchNMI);
-  addBoolean(acpiDict, CFSTR("DropMCFG"), s->DropMCFG);
+  addBoolean(acpiDict, CFSTR("smartUPS"), s->smartUPS);
+  addHex(acpiDict, CFSTR("ResetAddress"), s->ResetAddr);
+  addHex(acpiDict, CFSTR("ResetValue"), s->ResetVal);
+  CFMutableDictionaryRef dsdtDict = addDict(acpiDict, CFSTR("DSDT"));
+  addUString(dsdtDict, CFSTR("Name"), s->DsdtName);
+  addHex(dsdtDict, CFSTR("FixMask"), s->FixDsdt);
+  addBoolean(dsdtDict, CFSTR("Debug"), s->DebugDSDT);
+  addInteger(dsdtDict, CFSTR("Patches count"), s->PatchDsdtNum);
+  
+  CFMutableDictionaryRef ssdtDict = addDict(acpiDict, CFSTR("SSDT"));
+    CFMutableDictionaryRef genDict = addDict(ssdtDict, CFSTR("Generate"));
+    addBoolean(genDict, CFSTR("PStates"), s->GeneratePStates);
+    addBoolean(genDict, CFSTR("CStates"), s->GenerateCStates);
+  addBoolean(ssdtDict, CFSTR("DoubleFirstState"), s->DoubleFirstState);
+  addInteger(ssdtDict, CFSTR("MinMultiplier"), s->MinMultiplier);
+  addInteger(ssdtDict, CFSTR("MaxMultiplier"), s->MaxMultiplier);
+  addInteger(ssdtDict, CFSTR("PLimitDict"), s->PLimitDict);
+  addInteger(ssdtDict, CFSTR("UnderVoltStep"), s->UnderVoltStep);
+  addInteger(ssdtDict, CFSTR("PluginType"), s->PluginType);
+
+//  addBoolean(acpiDict, CFSTR("EnableC2"), s->EnableC2);
+//  addHex(acpiDict, CFSTR("C3Latency"), s->C3Latency);
+//  addBoolean(acpiDict, CFSTR("EnableC4"), s->EnableC4);
+//  addBoolean(acpiDict, CFSTR("EnableC6"), s->EnableC6);
+//  addBoolean(acpiDict, CFSTR("EnableISS"), s->EnableISS);
+  
+//  addBoolean(acpiDict, CFSTR("DropAPIC"), s->bDropAPIC);
+//  addBoolean(acpiDict, CFSTR("DropMCFG"), s->DropMCFG);
 //  addBoolean(acpiDict, CFSTR("DropHPET"), s->bDropHPET);
 //  addBoolean(acpiDict, CFSTR("DropECDT"), s->bDropECDT);
 //  addBoolean(acpiDict, CFSTR("DropDMAR"), s->bDropDMAR);
 //  addBoolean(acpiDict, CFSTR("DropBGRT"), s->bDropBGRT);
-//  
-  addBoolean(acpiDict, CFSTR("GeneratePStates"), s->GeneratePStates);
-  addBoolean(acpiDict, CFSTR("GenerateCStates"), s->GenerateCStates);
-  addBoolean(acpiDict, CFSTR("DoubleFirstState"), s->DoubleFirstState);
-  addBoolean(acpiDict, CFSTR("EnableC2"), s->EnableC2);
-  addHex(acpiDict, CFSTR("C3Latency"), s->C3Latency);
-  addBoolean(acpiDict, CFSTR("EnableC4"), s->EnableC4);
-  addBoolean(acpiDict, CFSTR("EnableC6"), s->EnableC6);
-  addBoolean(acpiDict, CFSTR("EnableISS"), s->EnableISS);
-  addInteger(acpiDict, CFSTR("PLimitDict"), s->PLimitDict);
-  addInteger(acpiDict, CFSTR("UnderVoltStep"), s->UnderVoltStep);
-  addInteger(acpiDict, CFSTR("MinMultiplier"), s->MinMultiplier);
-  addInteger(acpiDict, CFSTR("MaxMultiplier"), s->MaxMultiplier);
-  addInteger(acpiDict, CFSTR("PluginType"), s->PluginType);
-  addBoolean(acpiDict, CFSTR("smartUPS"), s->smartUPS);
-  addHex(acpiDict, CFSTR("ResetAddress"), s->ResetAddr);
-  addHex(acpiDict, CFSTR("ResetValue"), s->ResetVal);
+//
+//  CFMutableDictionaryRef dropDict = addArray(acpiDict, CFSTR("DropTables"));
   
   // KernelAndKextPatches
   CFMutableDictionaryRef KernelAndKextPatchesDict = addDict(dict, CFSTR("KernelAndKextPatches"));

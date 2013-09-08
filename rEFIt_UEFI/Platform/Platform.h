@@ -748,7 +748,7 @@ typedef struct {
   VBIOS_PATCH_BYTES   *PatchVBiosBytes;
   UINTN   PatchVBiosBytesCount;
 #if defined(MDE_CPU_IA32)
-  //UINT32  align1;
+  UINT32  align1;
 #endif
   BOOLEAN InjectEDID;
   UINT8   *CustomEDID;
