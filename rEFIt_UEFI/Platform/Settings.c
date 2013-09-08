@@ -360,6 +360,13 @@ static BOOLEAN FillinCustomEntry(IN OUT CUSTOM_LOADER_ENTRY *Entry, TagPtr dictP
       Entry->Type = OSTYPE_VAR;
     }
   }
+  if (!Entry->Title){
+    if (Entry->Type == OSTYPE_RECOVERY)) {
+      Entry->Title = PoolPrint(L"Recovery");
+    } else if (Entry->Type == OSTYPE_OSX_INSTALLER)) {
+      Entry->Title = PoolPrint(L"Install OSX");
+    }
+  }
 
   // OS Specific flags
   switch (Entry->Type) {
