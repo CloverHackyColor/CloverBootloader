@@ -594,6 +594,7 @@ struct CUSTOM_LOADER_ENTRY {
   CHAR16              *Volume;
   CHAR16              *Path;
   CHAR16              *Options;
+  CHAR16              *FullTitle;
   CHAR16              *Title;
   CHAR16               Hotkey;
   UINT8                Flags;
@@ -605,6 +606,7 @@ struct CUSTOM_LEGACY_ENTRY {
   CUSTOM_LEGACY_ENTRY *Next;
   EG_IMAGE            *Image;
   CHAR16              *Volume;
+  CHAR16              *FullTitle;
   CHAR16              *Title;
   CHAR16               Hotkey;
   UINT8                Flags;
@@ -618,6 +620,7 @@ struct CUSTOM_TOOL_ENTRY {
   CHAR16            *Volume;
   CHAR16            *Path;
   CHAR16            *Options;
+  CHAR16            *FullTitle;
   CHAR16            *Title;
   CHAR16             Hotkey;
   UINT8              Flags;

@@ -313,6 +313,13 @@ static BOOLEAN FillinCustomEntry(IN OUT CUSTOM_LOADER_ENTRY *Entry, TagPtr dictP
       }
     }
   }
+  prop = GetProperty(dictPointer, "FullTitle");
+  if (prop && (prop->type == kTagTypeString)) {
+    if (Entry->FullTitle) {
+      FreePool(Entry->FullTitle);
+    }
+    Entry->FullTitle = PoolPrint(L"%a", prop->string);
+  }
   prop = GetProperty(dictPointer, "Title");
   if (prop && (prop->type == kTagTypeString)) {
     if (Entry->Title) {
@@ -413,6 +420,13 @@ static BOOLEAN FillinCustomLegacy(IN OUT CUSTOM_LEGACY_ENTRY *Entry, TagPtr dict
     }
     Entry->Volume = PoolPrint(L"%a", prop->string);
   }
+  prop = GetProperty(dictPointer, "FullTitle");
+  if (prop && (prop->type == kTagTypeString)) {
+    if (Entry->FullTitle) {
+      FreePool(Entry->FullTitle);
+    }
+    Entry->FullTitle = PoolPrint(L"%a", prop->string);
+  }
   prop = GetProperty(dictPointer, "Title");
   if (prop && (prop->type == kTagTypeString)) {
     if (Entry->Title) {
@@ -481,6 +495,13 @@ static BOOLEAN FillinCustomTool(IN OUT CUSTOM_TOOL_ENTRY *Entry, TagPtr dictPoin
     } else {
       Entry->Options = PoolPrint(L"%a", prop->string);
     }
+  }
+  prop = GetProperty(dictPointer, "FullTitle");
+  if (prop && (prop->type == kTagTypeString)) {
+    if (Entry->FullTitle) {
+      FreePool(Entry->FullTitle);
+    }
+    Entry->FullTitle = PoolPrint(L"%a", prop->string);
   }
   prop = GetProperty(dictPointer, "Title");
   if (prop && (prop->type == kTagTypeString)) {
