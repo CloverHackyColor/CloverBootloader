@@ -619,7 +619,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
       BlockConOut = TRUE;
     }
   }
-  else if ((Entry->LoaderType == OSTYPE_WIN) ||  (Entry->LoaderType == OSTYPE_WINEFI)) {
+  else if (OSTYPE_IS_WINDOWS(Entry->LoaderType)) {
     
     if (gEmuVariableControl != NULL) {
       gEmuVariableControl->UninstallEmulation(gEmuVariableControl);
@@ -629,7 +629,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     //PauseForKey(L"continue");
       
   }
-  else if (Entry->LoaderType == OSTYPE_LIN) {
+  else if (OSTYPE_IS_LINUX(Entry->LoaderType)) {
     if (gEmuVariableControl != NULL) {
       gEmuVariableControl->UninstallEmulation(gEmuVariableControl);
     }
@@ -1916,7 +1916,21 @@ static VOID AddCustomEntries(VOID)
       continue;
     }
     if (Custom->Volume) {
-      DBG("Custom entry %d matching \"%s\" ...\n", i, Custom->Volume);
+      if (Custom->Title) {
+        if (Custom->Path) {
+          DBG("Custom entry %d \"%s\" \"%s\" \"%s\" (%d) 0x%X matching \"%s\" ...\n", i, Custom->Title, Custom->Path, ((Custom->Options == NULL) ? Custom->Options : L""), Custom->Type, Custom->Flags, Custom->Volume);
+        } else {
+          DBG("Custom entry %d \"%s\" \"%s\" (%d) 0x%X matching \"%s\" ...\n", i, Custom->Title, ((Custom->Options == NULL) ? Custom->Options : L""), Custom->Type, Custom->Flags, Custom->Volume);
+        }
+      } else if (Custom->Path) {
+        DBG("Custom entry %d \"%s\" \"%s\" (%d) 0x%X matching \"%s\" ...\n", i, Custom->Path, ((Custom->Options == NULL) ? Custom->Options : L""), Custom->Type, Custom->Flags, Custom->Volume);
+      } else {
+        DBG("Custom entry %d \"%s\" (%d) 0x%X matching \"%s\" ...\n", i, ((Custom->Options == NULL) ? Custom->Options : L""), Custom->Type, Custom->Flags, Custom->Volume);
+      }
+    } else if (Custom->Path) {
+      DBG("Custom entry %d \"%s\" \"%s\" (%d) 0x%X matching all volumes ...\n", i, Custom->Path, ((Custom->Options == NULL) ? Custom->Options : L""), Custom->Type, Custom->Flags);
+    } else {
+      DBG("Custom entry %d \"%s\" (%d) 0x%X matching all volumes ...\n", i, ((Custom->Options == NULL) ? Custom->Options : L""), Custom->Type, Custom->Flags);
     }
     for (VolumeIndex = 0; VolumeIndex < VolumesCount; ++VolumeIndex) {
       Volume = Volumes[VolumeIndex];
@@ -1975,11 +1989,11 @@ static VOID AddCustomEntries(VOID)
           continue;
         }
         // Check if the volume should be of certain os type
-        if ((Custom->Type != 0) && OSTYPE_COMPARE(OSType, Volume->OSType)) {
-          DBG("skipped because wrong type\n");
+        if ((Custom->Type != 0) && (Volume->OSType != 0) && OSTYPE_COMPARE(OSType, Volume->OSType)) {
+          DBG("skipped because wrong type (%d)\n", Volume->OSType);
           continue;
         }
-      } else if ((Custom->Type != 0) && OSTYPE_COMPARE(OSType, Volume->OSType)) {
+      } else if ((Custom->Type != 0) && (Volume->OSType != 0) && OSTYPE_COMPARE(OSType, Volume->OSType)) {
         DBG("skipped because wrong type\n");
         continue;
       }
