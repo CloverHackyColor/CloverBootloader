@@ -122,7 +122,7 @@ typedef struct {
 #define OSTYPE_IS_WINDOWS(type) ((type == OSTYPE_WIN) || (type == OSTYPE_WINEFI) || (type == OSTYPE_EFI))
 #define OSTYPE_IS_LINUX(type) ((type == OSTYPE_LIN) || (type == OSTYPE_EFI))
 #define OSTYPE_IS_OTHER(type) ((type == OSTYPE_VAR) || (type == OSTYPE_EFI))
-#define OSTYPE_COMPARE(type1, type2) ((OSTYPE_IS_OSX(type1) && OSTYPE_IS_OSX(type2)) || (OSTYPE_IS_WINDOWS(type1) && OSTYPE_IS_WINDOWS(type2)) || (OSTYPE_IS_LINUX(type1) && OSTYPE_IS_LINUX(type2)))
+#define OSTYPE_COMPARE(type1, type2) ((OSTYPE_IS_OSX(type1) && OSTYPE_IS_OSX(type2)) || (OSTYPE_IS_WINDOWS(type1) && OSTYPE_IS_WINDOWS(type2)) || (OSTYPE_IS_LINUX(type1) && OSTYPE_IS_LINUX(type2)) || (OSTYPE_IS_OTHER(type1) && OSTYPE_IS_OTHER(type2)))
 
 #define OSFLAG_ISSET(flags, flag) ((flags & flag) != 0)
 #define OSFLAG_ISUNSET(flags, flag) ((flags & flag) == 0)
@@ -568,7 +568,7 @@ BOOLEAN GetAnime(REFIT_MENU_SCREEN *Screen);
 // icns loader module
 //
 
-EG_IMAGE * LoadOSIcon(IN CHAR16 *OSIconName OPTIONAL, IN CHAR16 *FallbackIconName, BOOLEAN BootLogo);
+EG_IMAGE * LoadOSIcon(IN CHAR16 *OSIconName OPTIONAL, IN CHAR16 *FallbackIconName, BOOLEAN BootLogo, BOOLEAN WantDummy);
 
 EG_IMAGE * LoadIcns(IN EFI_FILE_HANDLE BaseDir, IN CHAR16 *FileName, IN UINTN PixelSize);
 EG_IMAGE * LoadIcnsFallback(IN EFI_FILE_HANDLE BaseDir, IN CHAR16 *FileName, IN UINTN PixelSize);

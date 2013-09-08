@@ -326,7 +326,7 @@ EG_IMAGE * BuiltinIcon(IN UINTN Id)
 // Load an icon for an operating system
 //
 
-EG_IMAGE * LoadOSIcon(IN CHAR16 *OSIconName OPTIONAL, IN CHAR16 *FallbackIconName, BOOLEAN BootLogo)
+EG_IMAGE * LoadOSIcon(IN CHAR16 *OSIconName OPTIONAL, IN CHAR16 *FallbackIconName, BOOLEAN BootLogo, BOOLEAN WantDummy)
 {
   EG_IMAGE        *Image;
   CHAR16          CutoutName[16];
@@ -373,11 +373,14 @@ EG_IMAGE * LoadOSIcon(IN CHAR16 *OSIconName OPTIONAL, IN CHAR16 *FallbackIconNam
   
   // try the fallback name with os_ instead of boot_
   if (BootLogo) {
-    Image = LoadOSIcon(NULL, FallbackIconName, FALSE);
+    Image = LoadOSIcon(NULL, FallbackIconName, FALSE, WantDummy);
     if (Image != NULL)
       return Image;
   }
   
+  if (!WantDummy) {
+    return NULL;
+  }
   return DummyImage(128);
 }
 

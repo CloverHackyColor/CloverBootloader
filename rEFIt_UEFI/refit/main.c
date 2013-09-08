@@ -953,7 +953,7 @@ static LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
       Entry->me.Image = LoadIcns(Volume->RootDir, L"VolumeIcon.icns", 128);
       DBG("using VolumeIcon.icns image from Volume\n");
     } else {
-      Entry->me.Image = LoadOSIcon(OSIconName, L"unknown", FALSE);
+      Entry->me.Image = LoadOSIcon(OSIconName, L"unknown", FALSE, TRUE);
     }
   }
   // Load DriveImage
@@ -1882,6 +1882,7 @@ static VOID AddCustomEntries(VOID)
   REFIT_VOLUME        *Volume;
   CUSTOM_LOADER_ENTRY *Custom, *CustomSubEntry;
   LOADER_ENTRY        *Entry, *SubEntry;
+  EG_IMAGE            *Image;
   EFI_GUID            *Guid = NULL;
   CHAR16              *Path;
   UINT64               VolumeSize;
@@ -2009,11 +2010,28 @@ static VOID AddCustomEntries(VOID)
         DBG("skipped because path does not exist\n");
         continue;
       }
+      // Change to custom image if needed
+      Image = Custom->Image;
+      if ((Image == NULL) && Custom->ImagePath) {
+        Image = egLoadImage(Volume->RootDir, Custom->ImagePath, TRUE);
+        if (Image == NULL) {
+          Image = egLoadImage(ThemeDir, Custom->ImagePath, TRUE);
+          if (Image == NULL) {
+            Image = egLoadImage(SelfDir, Custom->ImagePath, TRUE);
+            if (Image == NULL) {
+              Image = egLoadImage(SelfRootDir, Custom->ImagePath, TRUE);
+              if (Image == NULL) {
+                Image = LoadOSIcon(Custom->ImagePath, L"unknown", FALSE, FALSE);
+              }
+            }
+          }
+        }
+      }
       // Create a legacy entry for this volume
       if (OSFLAG_ISUNSET(Custom->Flags, OSFLAG_NODEFAULTMENU)) {
-        Entry = AddLoaderEntry(Path, Custom->Options, Custom->FullTitle, Custom->Title, Volume, Custom->Image, OSType, Custom->Flags, Custom->Hotkey, TRUE);
+        Entry = AddLoaderEntry(Path, Custom->Options, Custom->FullTitle, Custom->Title, Volume, Image, OSType, Custom->Flags, Custom->Hotkey, TRUE);
       } else {
-        Entry = CreateLoaderEntry(Path, Custom->Options, Custom->FullTitle, Custom->Title, Volume, Custom->Image, OSType, Custom->Flags, Custom->Hotkey, TRUE);
+        Entry = CreateLoaderEntry(Path, Custom->Options, Custom->FullTitle, Custom->Title, Volume, Image, OSType, Custom->Flags, Custom->Hotkey, TRUE);
         if (Entry) {
           if (Custom->SubEntries) {
             // Add subscreen
@@ -2082,7 +2100,7 @@ static VOID StartLegacy(IN LEGACY_ENTRY *Entry)
     egClearScreen(&DarkBackgroundPixel);
     BeginExternalScreen(TRUE, L"Booting Legacy OS");
     
-    BootLogoImage = LoadOSIcon(Entry->Volume->OSIconName, L"legacy", TRUE);
+    BootLogoImage = LoadOSIcon(Entry->Volume->OSIconName, L"legacy", TRUE, TRUE);
     if (BootLogoImage != NULL)
         BltImageAlpha(BootLogoImage,
                       (UGAWidth  - BootLogoImage->Width) >> 1,
@@ -2208,7 +2226,7 @@ static LEGACY_ENTRY * AddLegacyEntry(IN CHAR16 *FullTitle, IN CHAR16 *LoaderTitl
   if (Image) {
     Entry->me.Image = Image;
   } else {
-    Entry->me.Image = LoadOSIcon(Volume->OSIconName, L"legacy", FALSE);
+    Entry->me.Image = LoadOSIcon(Volume->OSIconName, L"legacy", FALSE, TRUE);
   }
   Entry->me.DriveImage = ScanVolumeDefaultIcon(Volume);
   //  DBG("HideBadges=%d Volume=%s\n", GlobalConfig.HideBadges, Volume->VolName);
@@ -2335,6 +2353,7 @@ static VOID AddCustomLegacy(VOID)
   BOOLEAN              ShowVolume, HideIfOthersFound;
   REFIT_VOLUME        *Volume;
   CUSTOM_LEGACY_ENTRY *Custom;
+  EG_IMAGE            *Image;
   UINTN                i = 0;
 
   DBG("Custom legacy start\n");
@@ -2418,8 +2437,25 @@ static VOID AddCustomLegacy(VOID)
         DBG("skipped because wrong type\n");
         continue;
       }
+      // Change to custom image if needed
+      Image = Custom->Image;
+      if ((Image == NULL) && Custom->ImagePath) {
+        Image = egLoadImage(Volume->RootDir, Custom->ImagePath, TRUE);
+        if (Image == NULL) {
+          Image = egLoadImage(ThemeDir, Custom->ImagePath, TRUE);
+          if (Image == NULL) {
+            Image = egLoadImage(SelfDir, Custom->ImagePath, TRUE);
+            if (Image == NULL) {
+              Image = egLoadImage(SelfRootDir, Custom->ImagePath, TRUE);
+              if (Image == NULL) {
+                Image = LoadOSIcon(Custom->ImagePath, L"unknown", FALSE, FALSE);
+              }
+            }
+          }
+        }
+      }
       // Create a legacy entry for this volume
-      AddLegacyEntry(Custom->FullTitle, Custom->Title, Volume, Custom->Image, Custom->Hotkey, TRUE);
+      AddLegacyEntry(Custom->FullTitle, Custom->Title, Volume, Image, Custom->Hotkey, TRUE);
       DBG("match!\n");
     }
   }
@@ -2579,6 +2615,7 @@ static VOID AddCustomTool()
   UINTN             VolumeIndex;
   REFIT_VOLUME      *Volume;
   CUSTOM_TOOL_ENTRY *Custom;
+  EG_IMAGE          *Image;
   UINTN              i = 0;
 
   DBG("Custom tool start\n");
@@ -2632,8 +2669,25 @@ static VOID AddCustomTool()
         DBG("skipped because path does not exist\n");
         continue;
       }
+      // Change to custom image if needed
+      Image = Custom->Image;
+      if ((Image == NULL) && Custom->ImagePath) {
+        Image = egLoadImage(Volume->RootDir, Custom->ImagePath, TRUE);
+        if (Image == NULL) {
+          Image = egLoadImage(ThemeDir, Custom->ImagePath, TRUE);
+          if (Image == NULL) {
+            Image = egLoadImage(SelfDir, Custom->ImagePath, TRUE);
+            if (Image == NULL) {
+              Image = egLoadImage(SelfRootDir, Custom->ImagePath, TRUE);
+              if (Image == NULL) {
+                Image = LoadOSIcon(Custom->ImagePath, L"unknown", FALSE, FALSE);
+              }
+            }
+          }
+        }
+      }
       // Create a legacy entry for this volume
-      AddToolEntry(Custom->Path, Custom->FullTitle, Custom->Title, Volume, Custom->Image, Custom->Hotkey);
+      AddToolEntry(Custom->Path, Custom->FullTitle, Custom->Title, Volume, Image, Custom->Hotkey);
       DBG("match!\n");
     }
   }
