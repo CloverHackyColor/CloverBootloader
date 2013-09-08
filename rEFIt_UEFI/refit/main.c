@@ -3371,7 +3371,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   
   gCPUStructure.CPUFrequency = gCPUStructure.TSCFrequency;
   gCPUStructure.FSBFrequency = DivU64x32(MultU64x32(gCPUStructure.CPUFrequency, 10),
-                                         gCPUStructure.MaxRatio);
+                                         (gCPUStructure.MaxRatio == 0) ? 1 : gCPUStructure.MaxRatio);
   gCPUStructure.ExternalClock = (UINT32)DivU64x32(gCPUStructure.FSBFrequency, kilo);
   gCPUStructure.MaxSpeed = (UINT32)DivU64x32(gCPUStructure.TSCFrequency, Mega);
   
