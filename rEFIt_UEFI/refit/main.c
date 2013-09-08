@@ -1970,6 +1970,7 @@ static VOID AddCustomEntries(VOID)
             Path = InstallerPath[InstallerIndex];
             break;
           }
+          ++InstallerIndex;
         }
       }
       if (Path == NULL) {
