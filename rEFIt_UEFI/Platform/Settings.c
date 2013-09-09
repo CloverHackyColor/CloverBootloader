@@ -341,7 +341,7 @@ static BOOLEAN FillinCustomEntry(IN OUT CUSTOM_LOADER_ENTRY *Entry, TagPtr dictP
       Entry->ImagePath = PoolPrint(L"%a", prop->string);
     }
   } else {
-    prop = GetProperty(dictPointer, "ImagePNG");
+    prop = GetProperty(dictPointer, "ImageData");
     if (prop) {
       if (Entry->Image) {
         egFreeImage(Entry->Image);
@@ -352,30 +352,11 @@ static BOOLEAN FillinCustomEntry(IN OUT CUSTOM_LOADER_ENTRY *Entry, TagPtr dictP
         if (len > 0) {
           UINT8 *data = (UINT8 *)AllocateZeroPool(len);
           if (data) {
-            Entry->Image = egDecodeImage(data, hex2bin(prop->string, data, len), L"PNG", TRUE);
+            Entry->Image = egDecodeImage(data, hex2bin(prop->string, data, len), NULL, TRUE);
           }
         }
       } else if (prop->type == kTagTypeData) {
-        Entry->Image = egDecodeImage(prop->data, prop->dataLen, L"PNG", TRUE);
-      }
-    } else {
-      prop = GetProperty(dictPointer, "ImageBMP");
-      if (prop) {
-        if (Entry->Image) {
-          egFreeImage(Entry->Image);
-          Entry->Image = NULL;
-        }
-        if (prop->type == kTagTypeString) {
-          UINT32 len = (UINT32)(AsciiStrLen(prop->string) >> 1);
-          if (len > 0) {
-            UINT8 *data = (UINT8 *)AllocateZeroPool(len);
-            if (data) {
-              Entry->Image = egDecodeImage(data, hex2bin(prop->string, data, len), L"BMP", TRUE);
-            }
-          }
-        } else if (prop->type == kTagTypeData) {
-          Entry->Image = egDecodeImage(prop->data, prop->dataLen, L"BMP", TRUE);
-        }
+        Entry->Image = egDecodeImage(prop->data, prop->dataLen, NULL, TRUE);
       }
     }
   }
@@ -505,7 +486,7 @@ static BOOLEAN FillinCustomLegacy(IN OUT CUSTOM_LEGACY_ENTRY *Entry, TagPtr dict
       Entry->ImagePath = PoolPrint(L"%a", prop->string);
     }
   } else {
-    prop = GetProperty(dictPointer, "ImagePNG");
+    prop = GetProperty(dictPointer, "ImageData");
     if (prop) {
       if (Entry->Image) {
         egFreeImage(Entry->Image);
@@ -516,30 +497,11 @@ static BOOLEAN FillinCustomLegacy(IN OUT CUSTOM_LEGACY_ENTRY *Entry, TagPtr dict
         if (len > 0) {
           UINT8 *data = (UINT8 *)AllocateZeroPool(len);
           if (data) {
-            Entry->Image = egDecodeImage(data, hex2bin(prop->string, data, len), L"PNG", TRUE);
+            Entry->Image = egDecodeImage(data, hex2bin(prop->string, data, len), NULL, TRUE);
           }
         }
       } else if (prop->type == kTagTypeData) {
-        Entry->Image = egDecodeImage(prop->data, prop->dataLen, L"PNG", TRUE);
-      }
-    } else {
-      prop = GetProperty(dictPointer, "ImageBMP");
-      if (prop) {
-        if (Entry->Image) {
-          egFreeImage(Entry->Image);
-          Entry->Image = NULL;
-        }
-        if (prop->type == kTagTypeString) {
-          UINT32 len = (UINT32)(AsciiStrLen(prop->string) >> 1);
-          if (len > 0) {
-            UINT8 *data = (UINT8 *)AllocateZeroPool(len);
-            if (data) {
-              Entry->Image = egDecodeImage(data, hex2bin(prop->string, data, len), L"BMP", TRUE);
-            }
-          }
-        } else if (prop->type == kTagTypeData) {
-          Entry->Image = egDecodeImage(prop->data, prop->dataLen, L"BMP", TRUE);
-        }
+        Entry->Image = egDecodeImage(prop->data, prop->dataLen, NULL, TRUE);
       }
     }
   }
@@ -633,7 +595,7 @@ static BOOLEAN FillinCustomTool(IN OUT CUSTOM_TOOL_ENTRY *Entry, TagPtr dictPoin
       Entry->ImagePath = PoolPrint(L"%a", prop->string);
     }
   } else {
-    prop = GetProperty(dictPointer, "ImagePNG");
+    prop = GetProperty(dictPointer, "ImageData");
     if (prop) {
       if (Entry->Image) {
         egFreeImage(Entry->Image);
@@ -644,30 +606,11 @@ static BOOLEAN FillinCustomTool(IN OUT CUSTOM_TOOL_ENTRY *Entry, TagPtr dictPoin
         if (len > 0) {
           UINT8 *data = (UINT8 *)AllocateZeroPool(len);
           if (data) {
-            Entry->Image = egDecodeImage(data, hex2bin(prop->string, data, len), L"PNG", TRUE);
+            Entry->Image = egDecodeImage(data, hex2bin(prop->string, data, len), NULL, TRUE);
           }
         }
       } else if (prop->type == kTagTypeData) {
-        Entry->Image = egDecodeImage(prop->data, prop->dataLen, L"PNG", TRUE);
-      }
-    } else {
-      prop = GetProperty(dictPointer, "ImageBMP");
-      if (prop) {
-        if (Entry->Image) {
-          egFreeImage(Entry->Image);
-          Entry->Image = NULL;
-        }
-        if (prop->type == kTagTypeString) {
-          UINT32 len = (UINT32)(AsciiStrLen(prop->string) >> 1);
-          if (len > 0) {
-            UINT8 *data = (UINT8 *)AllocateZeroPool(len);
-            if (data) {
-              Entry->Image = egDecodeImage(data, hex2bin(prop->string, data, len), L"BMP", TRUE);
-            }
-          }
-        } else if (prop->type == kTagTypeData) {
-          Entry->Image = egDecodeImage(prop->data, prop->dataLen, L"BMP", TRUE);
-        }
+        Entry->Image = egDecodeImage(prop->data, prop->dataLen, NULL, TRUE);
       }
     }
   }
