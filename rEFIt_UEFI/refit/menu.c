@@ -146,11 +146,12 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
 VOID RefillInputs(VOID)
 {
   UINTN i,j; //for loops
-  CHAR8 tmp[40];
+  CHAR8 tmp[41];  
   CHAR8 *s = NULL;
   UINT8 a;
   BOOLEAN bit;
   
+  tmp[41] = 0;  //make it null-terminated
   // it's safe to remove type assigning, but there'are numbers in comments
   
   InputItemsCount = 0; 
@@ -432,10 +433,12 @@ VOID RefillInputs(VOID)
 VOID FillInputs(VOID)
 {
   UINTN i,j; //for loops
-  CHAR8 tmp[40];
+  CHAR8 tmp[41];
   CHAR8 *s = NULL;
   UINT8 a;
   BOOLEAN bit;
+  
+  tmp[41] = 0;  //make it null-terminated
   
   InputItemsCount = 0;
   InputItems = AllocateZeroPool(128 * sizeof(INPUT_ITEM)); //XXX

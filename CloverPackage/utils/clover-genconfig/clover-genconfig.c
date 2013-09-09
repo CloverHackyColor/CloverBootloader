@@ -54,7 +54,10 @@ static kern_return_t GetOFVariable(const char *name, CFTypeRef *valueRef);
 static io_registry_entry_t gPlatform;
 static mach_port_t         masterPort;
 
-CFMutableDictionaryRef addDict(CFMutableDictionaryRef dest, CFStringRef key) {
+static CFMutableDictionaryRef patchDict[100];
+
+CFMutableDictionaryRef addDict(CFMutableDictionaryRef dest, CFStringRef key)
+{
     assert(dest);
     CFMutableDictionaryRef dict = CFDictionaryCreateMutable (
                                                              kCFAllocatorDefault,
@@ -70,7 +73,51 @@ CFMutableDictionaryRef addDict(CFMutableDictionaryRef dest, CFStringRef key) {
     return dict;
 }
 
-void addString(CFMutableDictionaryRef dest, CFStringRef key, const char* value) {
+CFMutableArrayRef addArray(CFMutableDictionaryRef dest, CFStringRef key)
+{
+  assert(dest);
+  CFMutableArrayRef array = CFArrayCreateMutable (
+                                                   kCFAllocatorDefault,
+                                                   0,
+                                                   &kCFTypeArrayCallBacks
+                                                  );
+  if (!array) {
+    errx(1,"Error can't allocate array for key '%s'",
+         CFStringGetCStringPtr( key, kCFStringEncodingMacRoman ));
+  }
+  CFDictionaryAddValue(dest, key, array );
+  return array;
+}
+
+CFMutableDictionaryRef addDictToArray(CFMutableArrayRef dest)
+{
+  assert(dest);
+  CFMutableDictionaryRef dict = CFDictionaryCreateMutable (
+                                                             kCFAllocatorDefault,
+                                                             0,
+                                                             &kCFTypeDictionaryKeyCallBacks,
+                                                             &kCFTypeDictionaryValueCallBacks
+                                                             ); 
+  if (!dict) {
+    errx(1,"Error can't allocate dictionnary for array");
+  }
+  CFArrayAppendValue(dest, dict);
+  return dict;
+}
+
+void addStringToArray(CFMutableArrayRef dest, const char* value)
+{
+  assert(dest);
+  CFStringRef strValue = CFStringCreateWithCString(kCFAllocatorDefault,
+                                                   value,
+                                                   kCFStringEncodingMacRoman);
+  assert(strValue);
+  CFArrayAppendValue(dest, strValue);
+  CFRelease(strValue);
+}
+
+void addString(CFMutableDictionaryRef dest, CFStringRef key, const char* value)
+{
     assert(dest);
     CFStringRef strValue = CFStringCreateWithCString(kCFAllocatorDefault,
                                                      value,
@@ -80,7 +127,8 @@ void addString(CFMutableDictionaryRef dest, CFStringRef key, const char* value) 
     CFRelease(strValue);
 }
 
-void addUString(CFMutableDictionaryRef dest, CFStringRef key, const UniChar* value) {
+void addUString(CFMutableDictionaryRef dest, CFStringRef key, const UniChar* value)
+{
     assert(dest);
     CFStringRef strValue = CFStringCreateWithFormat(kCFAllocatorDefault, NULL, CFSTR("%S"), value);
     assert(strValue);
@@ -190,6 +238,7 @@ void PrintConfig(CFTypeRef data)
   const Byte *dataPtr = NULL;
   CFIndex    length = 0;
   CFTypeID   typeID;
+  int i;
   
   // Get the OF variable's type.
   typeID = CFGetTypeID(data);
@@ -206,7 +255,8 @@ void PrintConfig(CFTypeRef data)
   }
   
   if (length != sizeof(SETTINGS_DATA)) {
-    errx(1, "Error the version of clover-genconfig didn't match current booted clover version");
+//    errx(1, "Error the version of clover-genconfig didn't match current booted clover version");
+    printf("Error the version of clover-genconfig didn't match current booted clover version");
   }
   
   SETTINGS_DATA *s = (SETTINGS_DATA*)dataPtr;
@@ -217,7 +267,13 @@ void PrintConfig(CFTypeRef data)
                                                            &kCFTypeDictionaryKeyCallBacks,
                                                            &kCFTypeDictionaryValueCallBacks
                                                            );
-  addUString(dict, CFSTR("ConfigName"), s->ConfigName);
+  if (s->ConfigName != NULL) {
+    addUString(dict, CFSTR("ConfigName"), s->ConfigName);
+  } else {
+    addString(dict, CFSTR("ConfigName"), "config");
+  }
+
+  
   
   //Boot
   CFMutableDictionaryRef bootDict = addDict(dict, CFSTR("Boot"));
@@ -234,6 +290,24 @@ void PrintConfig(CFTypeRef data)
   addUString(systemParametersDict, CFSTR("CustomUUID"), s->CustomUuid);
   addBoolean(systemParametersDict, CFSTR("InjectSystemID"), s->InjectSystemID);
   addHex(systemParametersDict, CFSTR("BacklightLevel"),s->BacklightLevel);
+  addBoolean(systemParametersDict, CFSTR("InjectKexts"), 0);
+  
+  //test
+//  CFMutableArrayRef testArray = addArray(dict, CFSTR("TestArray"));
+  //Sample 1
+/* 
+  addStringToArray(testArray, "TestString1");
+  addStringToArray(testArray, s->VendorName);
+ */
+  //Sample 2
+/*
+  CFMutableDictionaryRef test1Dict = addDictToArray(testArray);
+  addUString(test1Dict, CFSTR("CustomUUID"), s->CustomUuid);
+  CFMutableDictionaryRef test2Dict = addDictToArray(testArray);
+  addUString(test2Dict, CFSTR("CustomUUID"), s->CustomUuid);
+  addBoolean(test2Dict, CFSTR("InjectSystemID"), s->InjectSystemID);
+*/
+ 
   
   // GUI
   CFMutableDictionaryRef guiDict = addDict(dict, CFSTR("GUI"));
@@ -247,6 +321,55 @@ void PrintConfig(CFTypeRef data)
   addInteger(mouseDict, CFSTR("Speed"), s->PointerSpeed);
   addInteger(mouseDict, CFSTR("DoubleClick"), s->DoubleClickTime);
   addBoolean(mouseDict, CFSTR("Mirror"), s->PointerMirror);
+  
+  CFMutableArrayRef hideArray = addArray(guiDict, CFSTR("Hide"));
+  addStringToArray(hideArray, "VolumeName_NOT_SHOWN");
+  addStringToArray(hideArray, "VolumeUUID_NOT_SHOWN");
+  addStringToArray(hideArray, "EntryPath_NOT_SHOWN");
+  
+  CFMutableDictionaryRef scanDict = addDict(guiDict, CFSTR("Scan"));
+  addBoolean(scanDict, CFSTR("Entries"), 1);
+  addBoolean(scanDict, CFSTR("Tool"), 1);
+  addBoolean(scanDict, CFSTR("Legacy"), 1);
+  
+  CFMutableDictionaryRef customDict = addDict(guiDict, CFSTR("Custom"));
+    CFMutableArrayRef entriesArray = addArray(customDict, CFSTR("Entries"));
+      CFMutableDictionaryRef entries1Dict = addDictToArray(entriesArray);
+      addString(entries1Dict, CFSTR("Volume"), "VolumeUUID_NOT_SHOWN");
+      addString(entries1Dict, CFSTR("Path"), "_NOT_SHOWN_");
+      addString(entries1Dict, CFSTR("Type"), "_NOT_SHOWN_");
+      addString(entries1Dict, CFSTR("Arguments"), "_NOT_SHOWN_");
+      addString(entries1Dict, CFSTR("Title"), "_NOT_SHOWN_");
+      addString(entries1Dict, CFSTR("FullTitle"), "_NOT_SHOWN_");
+      addString(entries1Dict, CFSTR("Image"), "_NOT_SHOWN_");
+      addString(entries1Dict, CFSTR("Hotkey"), "_NOT_SHOWN_");
+      addBoolean(entries1Dict, CFSTR("Disabled"), 1);
+      addBoolean(entries1Dict, CFSTR("InjectKexts"), 1);
+      addBoolean(entries1Dict, CFSTR("NoCaches"), 0);
+      addBoolean(entries1Dict, CFSTR("Hidden"), 1);
+      CFMutableArrayRef subEntriesArray = addArray(entries1Dict, CFSTR("SubEntries"));
+        CFMutableDictionaryRef subEntries1Dict = addDictToArray(subEntriesArray);
+        addString(subEntries1Dict, CFSTR("Title"), "_NOT_SHOWN_");
+        addString(subEntries1Dict, CFSTR("AddArguments"), "_NOT_SHOWN_");
+    CFMutableArrayRef legacyArray = addArray(customDict, CFSTR("Legacy"));
+      CFMutableDictionaryRef legacy1Dict = addDictToArray(legacyArray);
+      addString(legacy1Dict, CFSTR("Volume"), "VolumeUUID_NOT_SHOWN");
+      addString(legacy1Dict, CFSTR("Type"), "_NOT_SHOWN_");
+      addString(legacy1Dict, CFSTR("Title"), "_NOT_SHOWN_");
+      addString(legacy1Dict, CFSTR("Hotkey"), "_NOT_SHOWN_");
+      addBoolean(legacy1Dict, CFSTR("Disabled"), 1);
+      addBoolean(legacy1Dict, CFSTR("Hidden"), 1);
+    CFMutableArrayRef toolArray = addArray(customDict, CFSTR("Tool"));
+      CFMutableDictionaryRef tool1Dict = addDictToArray(toolArray);
+      addString(tool1Dict, CFSTR("Volume"), "VolumeUUID_NOT_SHOWN");
+      addString(tool1Dict, CFSTR("Path"), "_NOT_SHOWN_");
+      addString(tool1Dict, CFSTR("Type"), "_NOT_SHOWN_");
+      addString(tool1Dict, CFSTR("Title"), "_NOT_SHOWN_");
+      addString(tool1Dict, CFSTR("Arguments"), "_NOT_SHOWN_");
+      addString(tool1Dict, CFSTR("Hotkey"), "_NOT_SHOWN_");
+      addBoolean(tool1Dict, CFSTR("Disabled"), 1);
+      addBoolean(tool1Dict, CFSTR("Hidden"), 1);
+  
 /*  
   CFMutableDictionaryRef volumesDict = addDict(guiDict, CFSTR("Volumes"));
   addInteger(volumesDict, CFSTR("Hide Count"), s->HVCount);
@@ -302,12 +425,16 @@ void PrintConfig(CFTypeRef data)
     addString(memoryDict, CFSTR("Comment"), "there are no real data here");
     addInteger(memoryDict, CFSTR("SlotCount"), 0);
     addInteger(memoryDict, CFSTR("Channels"), 0);
-    // there are wrong keys with some values
-    //there is no procedure to create Array?! My old version do this!!! Slice.
-    addString(memoryDict, CFSTR("MemoryManufacturer"), s->MemoryManufacturer);
-    addString(memoryDict, CFSTR("MemorySerialNumber"), s->MemorySerialNumber);
-    addString(memoryDict, CFSTR("MemoryPartNumber"), s->MemoryPartNumber);
-    addString(memoryDict, CFSTR("MemorySpeed"), s->MemorySpeed);
+    
+    CFMutableArrayRef modulesArray = addArray(memoryDict, CFSTR("Modules"));
+    CFMutableDictionaryRef moduleDict = addDictToArray(modulesArray);
+    addInteger(moduleDict, CFSTR("Slot"), 0);
+    addInteger(moduleDict, CFSTR("Size"), 0);
+    addString(moduleDict, CFSTR("Vendor"), s->MemoryManufacturer);
+    addString(moduleDict, CFSTR("Serial"), s->MemorySerialNumber);
+    addString(moduleDict, CFSTR("Part"), s->MemoryPartNumber);
+    addString(moduleDict, CFSTR("Frequency"), s->MemorySpeed);
+    addString(moduleDict, CFSTR("Type"), "DDRx");
   }
   
   // CPU
@@ -359,7 +486,6 @@ void PrintConfig(CFTypeRef data)
   addBoolean(graphicsDict, CFSTR("InjectEDID"), s->InjectEDID);
   addString(graphicsDict, CFSTR("CustomEDID"), "_NOT_SHOWN_");
   addBoolean(graphicsDict, CFSTR("PatchVBios"), s->PatchVBios);
-  addInteger(graphicsDict, CFSTR("PatchVBiosBytes Manual Count"), s->PatchVBiosBytesCount);
   addInteger(graphicsDict, CFSTR("VideoPorts"), s->VideoPorts);
   addInteger(graphicsDict, CFSTR("VRAM"), s->VRAM);
   addInteger(graphicsDict, CFSTR("DualLink"), s->DualLink);
@@ -370,6 +496,11 @@ void PrintConfig(CFTypeRef data)
   addIntArray(graphicsDict, CFSTR("NVCAP"), &s->NVCAP[0], 20);
   // INTEL specific
   addHex(graphicsDict, CFSTR("ig-platform-id"), s->IgPlatform);
+  addInteger(graphicsDict, CFSTR("PatchVBiosBytes Count"), s->PatchVBiosBytesCount);
+  CFMutableArrayRef vbiosArray = addArray(graphicsDict, CFSTR("PatchVBiosBytes"));
+  CFMutableDictionaryRef vbiosDict = addDictToArray(vbiosArray);
+  addString(vbiosDict, CFSTR("Find"), "_NOT_SHOWN_");
+  addString(vbiosDict, CFSTR("Replace"), "_NOT_SHOWN_");
   
   //ACPI
   CFMutableDictionaryRef acpiDict = addDict(dict, CFSTR("ACPI"));
@@ -383,6 +514,11 @@ void PrintConfig(CFTypeRef data)
   addHex(dsdtDict, CFSTR("FixMask"), s->FixDsdt);
   addBoolean(dsdtDict, CFSTR("Debug"), s->DebugDSDT);
   addInteger(dsdtDict, CFSTR("Patches count"), s->PatchDsdtNum);
+  CFMutableArrayRef dsdtPatchArray = addArray(dsdtDict, CFSTR("Patches"));
+  CFMutableDictionaryRef dsdtPatchDict = addDictToArray(dsdtPatchArray);
+  addString(dsdtPatchDict, CFSTR("Find"), "_NOT_SHOWN_");
+  addString(dsdtPatchDict, CFSTR("Replace"), "_NOT_SHOWN_");
+  
   
   CFMutableDictionaryRef ssdtDict = addDict(acpiDict, CFSTR("SSDT"));
     CFMutableDictionaryRef genDict = addDict(ssdtDict, CFSTR("Generate"));
@@ -408,7 +544,11 @@ void PrintConfig(CFTypeRef data)
 //  addBoolean(acpiDict, CFSTR("DropDMAR"), s->bDropDMAR);
 //  addBoolean(acpiDict, CFSTR("DropBGRT"), s->bDropBGRT);
 //
-//  CFMutableDictionaryRef dropDict = addArray(acpiDict, CFSTR("DropTables"));
+  CFMutableArrayRef dropArray = addArray(acpiDict, CFSTR("DropTables"));
+  CFMutableDictionaryRef drop1Dict = addDictToArray(dropArray);
+  addString(drop1Dict, CFSTR("Signature"), "_NOT_SHOWN_");
+  addString(drop1Dict, CFSTR("TableId"), "_NOT_SHOWN_");
+  
   
   // KernelAndKextPatches
   CFMutableDictionaryRef KernelAndKextPatchesDict = addDict(dict, CFSTR("KernelAndKextPatches"));
@@ -419,15 +559,29 @@ void PrintConfig(CFTypeRef data)
   addBoolean(KernelAndKextPatchesDict, CFSTR("AsusAICPUPM"), s->KPAsusAICPUPM);
   addBoolean(KernelAndKextPatchesDict, CFSTR("KextPatchesAllowed"), s->KextPatchesAllowed);
   addInteger(KernelAndKextPatchesDict, CFSTR("Number_of_KextsToPatch"), s->NrKexts);
+    
+  CFMutableArrayRef KKPatchArray = addArray(KernelAndKextPatchesDict, CFSTR("KextsToPatch"));
+  for (i = 0; i < s->NrKexts; i++) {
+    patchDict[i] = addDictToArray(KKPatchArray);
+    addString(patchDict[i], CFSTR("Name"), "_NOT_SHOWN_");
+    addString(patchDict[i], CFSTR("Find"), "_NOT_SHOWN_");
+    addString(patchDict[i], CFSTR("Replace"), "_NOT_SHOWN_");
+  }
+  
   
   //TODO
   // here we can get LogEveryBoot and MountEFI from
   //gPlatform = IORegistryEntryFromPath(masterPort, "IODeviceTree:/options");
   //GetOFVariable("MountEFI" ... and so on
   CFMutableDictionaryRef rtVariablesDict = addDict(dict, CFSTR("RtVariables"));
+  addString(rtVariablesDict, CFSTR("ROM"), "_NOT_SHOWN_" /*s->RtROM*/);
+  addString(rtVariablesDict, CFSTR("MLB"), s->BoardSerialNumber);
   addString(rtVariablesDict, CFSTR("MountEFI"), "_NOT_SHOWN_");
   addInteger(rtVariablesDict, CFSTR("LogLineCount"), s->LogLineCount);
   addString(rtVariablesDict, CFSTR("LogEveryBoot"), "_NOT_SHOWN_");
+  
+  CFMutableArrayRef disArray = addArray(dict, CFSTR("DisableDrivers"));
+  addStringToArray(disArray, "_NOT_SHOWN_");
   
   dump_plist(dict);
   

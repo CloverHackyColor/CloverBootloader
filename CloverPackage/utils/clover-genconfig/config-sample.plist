@@ -413,7 +413,7 @@
 					<true/>
 					<key>InjectKexts</key>
 					<true/>
-					<key>NoCashes</key>
+					<key>NoCaches</key>
 					<false/>
 					<key>Hidden</key>
 					<false/>

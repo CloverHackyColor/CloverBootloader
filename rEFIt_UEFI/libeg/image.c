@@ -409,25 +409,36 @@ static EG_IMAGE * egDecodeAny(IN UINT8 *FileData, IN UINTN FileDataLength,
   EG_DECODE_FUNC  DecodeFunc;
   EG_IMAGE        *NewImage;
   
-  // dispatch by extension
-  DecodeFunc = NULL;
-  if (StriCmp(Format, L"BMP") == 0)
-    DecodeFunc = egDecodeBMP;
-  else if (StriCmp(Format, L"ICNS") == 0)
-    DecodeFunc = egDecodeICNS;
-  else if (StriCmp(Format, L"PNG") == 0){
-//    DBG("decode PNG\n");
-    DecodeFunc = egDecodePNG;
+  if (Format) {
+    // dispatch by extension
+    DecodeFunc = NULL;
+    if (StriCmp(Format, L"BMP") == 0)
+      DecodeFunc = egDecodeBMP;
+    else if (StriCmp(Format, L"ICNS") == 0)
+      DecodeFunc = egDecodeICNS;
+    else if (StriCmp(Format, L"PNG") == 0){
+      //    DBG("decode PNG\n");
+      DecodeFunc = egDecodePNG;
+    }
+    //  else if (StriCmp(Format, L"TGA") == 0)
+    //    DecodeFunc = egDecodeTGA;
+    
+    if (DecodeFunc == NULL)
+      return NULL;
+    //  DBG("will decode data=%x len=%d icns=%d alpha=%c\n", FileData, FileDataLength, IconSize, WantAlpha?'Y':'N'); 
+    // decode it
+    NewImage = DecodeFunc(FileData, FileDataLength, IconSize, WantAlpha);    
+  } else {
+    //automatic choose format
+    NewImage = egDecodePNG(FileData, FileDataLength, IconSize, WantAlpha);
+    if (!NewImage) {
+      NewImage = egDecodeICNS(FileData, FileDataLength, IconSize, WantAlpha);
+    }
+    if (!NewImage) {
+      NewImage = egDecodeBMP(FileData, FileDataLength, IconSize, WantAlpha);
+    }
   }
-//  else if (StriCmp(Format, L"TGA") == 0)
-//    DecodeFunc = egDecodeTGA;
-  
-  if (DecodeFunc == NULL)
-    return NULL;
-//  DBG("will decode data=%x len=%d icns=%d alpha=%c\n", FileData, FileDataLength, IconSize, WantAlpha?'Y':'N'); 
-  // decode it
-  NewImage = DecodeFunc(FileData, FileDataLength, IconSize, WantAlpha);
-  
+
   return NewImage;
 }
 
