@@ -151,7 +151,7 @@ VOID RefillInputs(VOID)
   UINT8 a;
   BOOLEAN bit;
   
-  tmp[41] = 0;  //make it null-terminated
+  tmp[40] = 0;  //make it null-terminated
   // it's safe to remove type assigning, but there'are numbers in comments
   
   InputItemsCount = 0; 
@@ -438,7 +438,7 @@ VOID FillInputs(VOID)
   UINT8 a;
   BOOLEAN bit;
   
-  tmp[41] = 0;  //make it null-terminated
+  tmp[40] = 0;  //make it null-terminated
   
   InputItemsCount = 0;
   InputItems = AllocateZeroPool(128 * sizeof(INPUT_ITEM)); //XXX
