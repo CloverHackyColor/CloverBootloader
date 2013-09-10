@@ -3150,6 +3150,7 @@ REFIT_MENU_ENTRY  *SubMenuDropTables()
 
   AddMenuEntry(SubScreen, &MenuEntryReturn);
   Entry->SubScreen = SubScreen;
+  FreePool(Flags);
   return Entry;
 }
 
@@ -3279,7 +3280,8 @@ REFIT_MENU_ENTRY  *SubMenuSmbios()
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
     
   AddMenuEntry(SubScreen, &MenuEntryReturn);
-  Entry->SubScreen = SubScreen;                
+  Entry->SubScreen = SubScreen;
+  FreePool(Flags);
   return Entry;  
 }
 
@@ -3465,7 +3467,8 @@ REFIT_MENU_ENTRY  *SubMenuDsdtFix()
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
   
   AddMenuEntry(SubScreen, &MenuEntryReturn);
-  Entry->SubScreen = SubScreen;                
+  Entry->SubScreen = SubScreen;
+  FreePool(Flags);
   return Entry;
 } 
 
@@ -3522,6 +3525,7 @@ REFIT_MENU_ENTRY  *SubMenuRcScripts()
 
   AddMenuEntry(SubScreen, &MenuEntryReturn);
   Entry->SubScreen = SubScreen;
+  FreePool(Flags);
   return Entry;
 }
 
@@ -3611,6 +3615,7 @@ REFIT_MENU_ENTRY  *SubMenuPCI()
   
   AddMenuEntry(SubScreen, &MenuEntryReturn);
   Entry->SubScreen = SubScreen;
+  FreePool(Flags);
   return Entry;
 }
 
@@ -3653,6 +3658,7 @@ REFIT_MENU_ENTRY  *SubMenuThemes()
 
   AddMenuEntry(SubScreen, &MenuEntryReturn);
   Entry->SubScreen = SubScreen;
+  FreePool(Flags);
   return Entry;
 }
 

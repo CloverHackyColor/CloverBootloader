@@ -1842,12 +1842,14 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
   CHAR8 *CFGname = NULL;
   CHAR8 *name = NULL;
   CHAR8 *display;
+  CHAR8 *hdmi = NULL;
   UINT32 devadr=0, devsize=0, devadr1=0, devsize1=0;
   AML_CHUNK* root;
   AML_CHUNK* gfx0;
   AML_CHUNK* met;
   BOOLEAN DISPLAYFIX = FALSE;
   AML_CHUNK* pack;
+  AML_CHUNK* hdaudev;
 //  UINT32 VideoRam;
 //  UINT8 ports;
 //  CHAR8 *cfgname;
@@ -1873,28 +1875,44 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
 //search DisplayADR1[0]
   for (j=0x20; j<len-10; j++) {
     if (DisplayADR1[0] != 0x00000000 && 
-        CmpAdr(dsdt, j, DisplayADR1[0])) {
+        CmpAdr(dsdt, j, DisplayADR1[0])) { //for example 0x00010000=1,0
       DisplayName1 = TRUE;
-      devadr = devFind(dsdt, j);
+      devadr = devFind(dsdt, j);  //PEG0@1,0
       if (!devadr) {
         continue;
       }
-      devsize = get_size(dsdt, devadr);
+      devsize = get_size(dsdt, devadr); //sizeof PEG0  0x35
       if (devsize) {
         break;
       }
     } // End Display1
   }
   
-  for (j=devadr; j<devadr+devsize; j++) {
+  for (j=devadr; j<devadr+devsize; j++) { //search card inside PEGP@0
     if (CmpAdr(dsdt, j, 0)) {
-      devadr1 = devFind(dsdt, j);
+      devadr1 = devFind(dsdt, j); //found PEGP
       if (!devadr1) {
         continue;
       }
       devsize1 = get_size(dsdt, devadr1);
       DISPLAYFIX = TRUE;
       break;      
+    }
+  }
+
+  if (!devadr1) { 
+    for (j=devadr; j<devadr+devsize; j++) { //search card inside PEGP@0
+      if (CmpAdr(dsdt, j, 0xFFFF)) {  //Special case? want to change to 0
+        devadr1 = devFind(dsdt, j); //found PEGP
+        if (!devadr1) {
+          continue;
+        }
+        dsdt[j+10] = 0;
+        dsdt[j+11] = 0;
+        devsize1 = get_size(dsdt, devadr1); //13
+        DISPLAYFIX = TRUE;
+        break;
+      }
     }
   }
   
@@ -1909,7 +1927,7 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
   }
 
   if (DisplayADR1[0]) {
-    if (!DisplayName1) {
+    if (!DisplayName1) {   //bridge or builtin not found
       gfx0 = aml_add_device(root, "GFX0");
       aml_add_name(gfx0, "_ADR");
       if (DisplayADR2[0] > 0x3F)
@@ -2232,9 +2250,9 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
 //      CHAR8 *modelname = ati_name(DisplayID[0], DisplaySubID[0]);
       // add Method(_DSM,4,NotSerialized) for GFX0
       if (!DISPLAYFIX) {
-        met = aml_add_method(gfx0, "_DSM", 4);
+        met = aml_add_method(gfx0, "_DSM", 4);  //if no subdevice
       } else {
-        met = aml_add_method(root, "_DSM", 4);
+        met = aml_add_method(root, "_DSM", 4); //add to subdevice
       }
       met = aml_add_store(met);
       pack = aml_add_package(met);
@@ -2311,12 +2329,14 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
     }
     
     // HDAU
-    
+    hdaudev = aml_create_node(NULL);
     if (GFXHDAFIX && (FindBin(dsdt, len, (UINT8*)"HDAU", 4) < 0)) {
  //     CHAR8 data2[] = {0xe0,0x00,0x56,0x28};
  //     AML_CHUNK* met;
       AML_CHUNK* pack;
-      AML_CHUNK* device = aml_add_device(root, "HDAU");
+      AML_CHUNK* device;
+      
+      device = aml_add_device(hdaudev, "HDAU");
       aml_add_name(device, "_ADR");
       aml_add_byte(device, 0x01);
       // add Method(_DSM,4,NotSerialized) for GFX0
@@ -2344,17 +2364,34 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
       aml_add_local0(met);
       aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
       // finish Method(_DSM,4,NotSerialized)
+      
+      aml_calculate_size(hdaudev);
+      hdmi = AllocateZeroPool(hdaudev->Size);
+      sizeoffset = hdaudev->Size;
+      aml_write_node(hdaudev, hdmi, 0);
+      aml_destroy_node(hdaudev);
+      //insert HDAU
+      i = devadr+devsize;
+      len = move_data(i, dsdt, len, sizeoffset);
+      CopyMem(dsdt+i, hdmi, sizeoffset);
+      j = write_size(devadr, dsdt, len, sizeoffset);
+      sizeoffset += j;
+      len += j;
+      devadr1 += j;
+      len = CorrectOuters(dsdt, len, devadr-3, sizeoffset);
     }
   }
   
-  aml_calculate_size(root);  
+//now insert video
+  aml_calculate_size(root);
   display = AllocateZeroPool(root->Size);
   sizeoffset = root->Size;
   aml_write_node(root, display, 0);  
   aml_destroy_node(root);
-  if (DisplayName1) {
+
+  if (DisplayName1) {   //bridg is present
     // move data to back for add Display
-    if (!DISPLAYFIX) { 
+    if (!DISPLAYFIX) {   //subdevice absent
       i = devadr+devsize;
       len = move_data(i, dsdt, len, sizeoffset);
       CopyMem(dsdt+i, display, sizeoffset);
@@ -2384,7 +2421,10 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
   if (name) {
     FreePool(name);
   } 
-  
+  if (hdmi) {
+    FreePool(hdmi);
+  }
+
   FreePool(display);
   return len;  
 }
