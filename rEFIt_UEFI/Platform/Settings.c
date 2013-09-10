@@ -2795,7 +2795,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
               gSettings.KextPatches[gSettings.NrKexts].Patch = GetDataSetting(dictPointer,"Replace", &j);
             }
         
-            if (gSettings.KextPatches[gSettings.NrKexts].DataLen != j || j == 0) {
+            if ((gSettings.KextPatches[gSettings.NrKexts].DataLen != (INTN)j) || (j == 0)) {
               DBG(" - invalid Find/Replace data - skipping!\n");
               if (gSettings.KextPatches[gSettings.NrKexts].Name != NULL) {
                 FreePool(gSettings.KextPatches[gSettings.NrKexts].Name); //just erase name

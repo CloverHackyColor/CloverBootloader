@@ -1008,7 +1008,7 @@ typedef struct {
 */
 
 typedef enum {
-  english,  //en
+  english = 0,  //en
   russian,  //ru
   french,   //fr
   german,   //de

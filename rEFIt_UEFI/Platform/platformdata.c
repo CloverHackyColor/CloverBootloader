@@ -485,7 +485,7 @@ VOID GetDefaultSettings(VOID)
   MACHINE_TYPES   Model;
 //  UINT64 msr = 0;
   
-  gLanguage         = english;
+  // gLanguage         = english;
   Model             = GetDefaultModel();
   gSettings.CpuType	= GetAdvancedCpuType();
   
