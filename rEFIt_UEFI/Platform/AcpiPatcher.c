@@ -289,13 +289,16 @@ VOID GetAcpiTablesList()
     EntryCount = (Xsdt->Header.Length - sizeof (EFI_ACPI_DESCRIPTION_HEADER)) / sizeof(UINT64);
     BasePtr = (CHAR8*)(&(Xsdt->Entry));
     DBG("from XSDT:\n");
-    for (Index = 0; Index < EntryCount; Index ++, BasePtr+=sizeof(UINT64)) {
+    for (Index = 0; Index < EntryCount; Index ++, BasePtr += sizeof(UINT64)) {
+      if (ReadUnaligned64((CONST UINT64*)BasePtr) == 0) {
+        continue;
+      }
       CopyMem (&Entry64, (VOID*)BasePtr, sizeof(UINT64)); //value from BasePtr->
       TableEntry = (EFI_ACPI_DESCRIPTION_HEADER *)((UINTN)(Entry64));
-      CopyMem((CHAR8*)&sign, (CHAR8*)&TableEntry->Signature, 4);      
-      CopyMem((CHAR8*)&OTID, (CHAR8*)&TableEntry->OemTableId, 8);
+      CopyMem((CHAR8*)&sign[0], (CHAR8*)&TableEntry->Signature, 4);      
+      CopyMem((CHAR8*)&OTID[0], (CHAR8*)&TableEntry->OemTableId, 8);
       DBG(" Found table: %a  %a\n", sign, OTID);
-      DropTable = AllocatePool(sizeof(ACPI_DROP_TABLE));
+      DropTable = AllocateZeroPool(sizeof(ACPI_DROP_TABLE));
       DropTable->Signature = TableEntry->Signature;
       DropTable->TableId = TableEntry->OemTableId;
       DropTable->MenuItem.BValue = FALSE;
@@ -308,10 +311,13 @@ VOID GetAcpiTablesList()
     EntryPtr = &Rsdt->Entry;    
     for (Index = 0; Index < EntryCount; Index++, EntryPtr++) {
       TableEntry = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(*EntryPtr));
-      CopyMem((CHAR8*)&sign, (CHAR8*)&TableEntry->Signature, 4);
-      CopyMem((CHAR8*)&OTID, (CHAR8*)&TableEntry->OemTableId, 8);
+      if (TableEntry == 0) {
+        continue;
+      }
+      CopyMem((CHAR8*)&sign[0], (CHAR8*)&TableEntry->Signature, 4);
+      CopyMem((CHAR8*)&OTID[0], (CHAR8*)&TableEntry->OemTableId, 8);
       DBG(" Found table: %a  %a\n", sign, OTID);
-      DropTable = AllocatePool(sizeof(ACPI_DROP_TABLE));
+      DropTable = AllocateZeroPool(sizeof(ACPI_DROP_TABLE));
       DropTable->Signature = TableEntry->Signature;
       DropTable->TableId = TableEntry->OemTableId;
       DropTable->MenuItem.BValue = FALSE;
@@ -367,8 +373,8 @@ VOID DropTableFromRSDT (UINT32 Signature, UINT64 TableId)
     }
     DoubleZero = FALSE;
 	  TableEntry = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(*EntryPtr));
-    CopyMem((CHAR8*)&sign, (CHAR8*)&TableEntry->Signature, 4);
-    CopyMem((CHAR8*)&OTID, (CHAR8*)&TableEntry->OemTableId, 8);
+    CopyMem((CHAR8*)&sign[0], (CHAR8*)&TableEntry->Signature, 4);
+    CopyMem((CHAR8*)&OTID[0], (CHAR8*)&TableEntry->OemTableId, 8);
 //    if (!GlobalConfig.DebugLog) {
 //      DBG(" Found table: %a  %a\n", sign, OTID);
 //    }
@@ -414,8 +420,8 @@ VOID DropTableFromXSDT (UINT32 Signature, UINT64 TableId)
   sign[4] = 0;
   OTID[8] = 0;
 
-  CopyMem((CHAR8*)&sign, (CHAR8*)&Signature, 4);
-  CopyMem((CHAR8*)&OTID, (CHAR8*)&TableId, 8);
+  CopyMem((CHAR8*)&sign[0], (CHAR8*)&Signature, 4);
+  CopyMem((CHAR8*)&OTID[0], (CHAR8*)&TableId, 8);
   DBG("Drop tables from Xsdt, SIGN=%a TableID=%a\n", sign, OTID);
 	EntryCount = (Xsdt->Header.Length - sizeof (EFI_ACPI_DESCRIPTION_HEADER)) / sizeof(UINT64);
   DBG(" Xsdt has tables count=%d \n", EntryCount); 

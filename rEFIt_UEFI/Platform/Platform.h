@@ -579,11 +579,15 @@ typedef struct {
 */
 
 typedef struct {
-   CHAR8   *Name;
-   BOOLEAN  IsPlistPatch;
-   UINTN    DataLen;
-   UINT8   *Data;
-   UINT8   *Patch;
+  CHAR8   *Name;
+  BOOLEAN IsPlistPatch;
+  CHAR8   align[7];
+  INTN    DataLen;
+#if defined(MDE_CPU_IA32)
+  UINT32  align1;
+#endif  
+  UINT8   *Data;
+  UINT8   *Patch;
 } KEXT_PATCH;
 
 typedef struct CUSTOM_LOADER_ENTRY CUSTOM_LOADER_ENTRY;
@@ -718,6 +722,7 @@ typedef struct {
   BOOLEAN EnableC4;
   BOOLEAN EnableC6;
   BOOLEAN EnableISS;
+  UINT8   pad3;
   UINT16  C3Latency;
 	BOOLEAN	smartUPS;
   BOOLEAN PatchNMI;
@@ -733,6 +738,8 @@ typedef struct {
   //Injections
   BOOLEAN StringInjector;
   BOOLEAN InjectSystemID;
+  UINT8   pad4[2];
+  
   
   //PCI devices
   UINT32  FakeATI;    //97
@@ -757,6 +764,7 @@ typedef struct {
   UINT32  align1;
 #endif
   BOOLEAN InjectEDID;
+  UINT8   pad5[3];
   UINT8   *CustomEDID;
   CHAR16  FBName[16];
   UINT16  VideoPorts;
@@ -768,6 +776,7 @@ typedef struct {
  	
   // HDA
   BOOLEAN HDAInjection;
+  UINT8   pad6[3];
   UINTN   HDALayoutId;
 #if defined(MDE_CPU_IA32)
   UINT32  align2;
@@ -778,6 +787,7 @@ typedef struct {
   // USB ownership fix
   BOOLEAN USBFixOwnership;
   BOOLEAN InjectClockID;
+  UINT8   pad7[1];
   
   // LegacyBoot
   CHAR16  LegacyBoot[32];
@@ -790,6 +800,7 @@ typedef struct {
   BOOLEAN KPAsusAICPUPM;
   BOOLEAN KPAppleRTC;
   BOOLEAN KextPatchesAllowed;
+  UINT8   pad8[1];
   CHAR16  *KPATIConnectorsController;
   UINT8   *KPATIConnectorsData;
   UINTN   KPATIConnectorsDataLen;
@@ -808,6 +819,7 @@ typedef struct {
   
   //Pointer
   BOOLEAN PointerEnabled;
+  UINT8   pad82[3];
   INTN    PointerSpeed;
 #if defined(MDE_CPU_IA32)
   UINT32  align5;
@@ -829,7 +841,7 @@ typedef struct {
   // Multi-config
   CHAR16  ConfigName[64];
   //Drivers
-  INTN     BlackListCount;
+  INTN    BlackListCount;
 #if defined(MDE_CPU_IA32)
   UINT32  align7;
 #endif
@@ -848,6 +860,7 @@ typedef struct {
   UINT8  **PatchDsdtReplace;
   UINT32 *LenToReplace;
   BOOLEAN DebugDSDT;
+  UINT8   pad9[3];
 
   // Table dropping
   ACPI_DROP_TABLE *ACPIDropTables;
@@ -856,6 +869,7 @@ typedef struct {
   BOOLEAN              DisableEntryScan;
   BOOLEAN              DisableToolScan;
   BOOLEAN              ShowHiddenEntries;
+  UINT8   pad10[1];
   CUSTOM_LOADER_ENTRY *CustomEntries;
   CUSTOM_LEGACY_ENTRY *CustomLegacy;
   CUSTOM_TOOL_ENTRY   *CustomTool;
@@ -976,6 +990,7 @@ typedef struct {
   UINT8  SMBIOSInUse;
   UINT8  UserInUse;
   UINT8  UserChannels;
+  UINT8  pad[2];
 
   RAM_SLOT_INFO SPD[MAX_RAM_SLOTS];
   RAM_SLOT_INFO SMBIOS[MAX_RAM_SLOTS];

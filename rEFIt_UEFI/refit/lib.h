@@ -215,8 +215,8 @@ typedef struct {
   ITEM_TYPE ItemType; //string, value, boolean
   BOOLEAN Valid;
   BOOLEAN BValue;
-//  UINT8   Pad8;
-//  UINT32  Pad32;
+  UINT8   Pad8;
+  UINT32  Pad32;
 //  UINT64  UValue;
 //  CHAR8*  AValue;
   CHAR16* SValue; // Max Size (see below) so the field can be edit by the GUI
