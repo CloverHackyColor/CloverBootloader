@@ -1998,23 +1998,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
             DBG("USB FixOwnership: true\n");
           }
         }
-      }
-      prop = GetProperty(dictPointer, "DropOEM_DSM"); 
-      defDSM = FALSE;
-      if(prop) {
-        if ((prop->type == kTagTypeTrue) ||
-            ((prop->type == kTagTypeString) &&
-             ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))) {
-              gSettings.DropOEM_DSM = TRUE;
-              defDSM = TRUE;
-            } else if ((prop->type == kTagTypeFalse) ||
-                       ((prop->type == kTagTypeString) &&
-                        ((prop->string[0] == 'n') || (prop->string[0] == 'N')))) {
-              gSettings.DropOEM_DSM = FALSE;
-              defDSM = TRUE;
-            } 
-      }
-      
+      }      
     }
 
     //*** ACPI ***//
@@ -2101,6 +2085,23 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
           }
         }
       }
+      
+      prop = GetProperty(dictPointer, "DropOEM_DSM"); 
+      defDSM = FALSE;
+      if(prop) {
+        if ((prop->type == kTagTypeTrue) ||
+            ((prop->type == kTagTypeString) &&
+             ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))) {
+          gSettings.DropOEM_DSM = TRUE;
+          defDSM = TRUE;
+        } else if ((prop->type == kTagTypeFalse) ||
+                       ((prop->type == kTagTypeString) &&
+                        ((prop->string[0] == 'n') || (prop->string[0] == 'N')))) {
+          gSettings.DropOEM_DSM = FALSE;
+          defDSM = TRUE;
+        } 
+      }
+      
 
       dict2 = GetProperty(dictPointer, "DSDT");
       if (dict2) {

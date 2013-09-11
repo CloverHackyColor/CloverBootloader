@@ -239,6 +239,8 @@
 	</dict>
 	<key>Devices</key>
 	<dict>
+		<key>DropOEM_DSM</key>
+		<true/>
 		<key>Inject</key>
 		<false/>
 		<key>Properties</key>
@@ -418,29 +420,29 @@
 					<key>Hidden</key>
 					<false/>
 				</dict>
-                <dict>
-                    <key>Volume</key>
-                    <string>454794AC-760D-46E8-8F77-D6EB23D2FD32</string>
-                    <key>Type</key>
-                    <string>OSX</string>
-                    <key>Title</key>
-                    <string>OS X 10.8.5 (12F36) Mountain Lion</string>
-                    <key>InjectKexts</key>
-                    <true/>
-                    <key>NoCaches</key>
-                    <false/>
-                    <key>Hidden</key>
-                    <false/>
-                    <key>SubEntries</key>
-                    <array>
-                        <dict>
-                            <key>Title</key>
-                            <string>Boot OS X 10.8.5 (12F36) Mountain Lion in Verbose Mode</string>
-                            <key>AddArguments</key>
-                            <string>-v</string>
-                        </dict>
-                    </array>
-                </dict>
+				<dict>
+					<key>Volume</key>
+					<string>454794AC-760D-46E8-8F77-D6EB23D2FD32</string>
+					<key>Type</key>
+					<string>OSX</string>
+					<key>Title</key>
+					<string>OS X 10.8.5 (12F36) Mountain Lion</string>
+					<key>InjectKexts</key>
+					<true/>
+					<key>NoCaches</key>
+					<false/>
+					<key>Hidden</key>
+					<false/>
+					<key>SubEntries</key>
+					<array>
+						<dict>
+							<key>Title</key>
+							<string>Boot OS X 10.8.5 (12F36) Mountain Lion in Verbose Mode</string>
+							<key>AddArguments</key>
+							<string>-v</string>
+						</dict>
+					</array>
+				</dict>
 			</array>
 			<key>Legacy</key>
 			<array>

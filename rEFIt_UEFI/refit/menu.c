@@ -417,7 +417,13 @@ VOID RefillInputs(VOID)
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeSATA);
   InputItems[InputItemsCount].ItemType = Hex;  //103
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeXHCI);
-
+  InputItems[InputItemsCount].ItemType = BoolValue; //104
+  InputItems[InputItemsCount].BValue   = gSettings.DropOEM_DSM;
+  InputItems[InputItemsCount++].SValue = gSettings.DropOEM_DSM?L"[+]":L"[ ]";
+  InputItems[InputItemsCount].ItemType = BoolValue; //105
+  InputItems[InputItemsCount].BValue   = gSettings.DebugDSDT;
+  InputItems[InputItemsCount++].SValue = gSettings.DebugDSDT?L"[+]":L"[ ]";
+  
   //menu for drop table
   if (gSettings.ACPIDropTables) {
     ACPI_DROP_TABLE *DropTable = gSettings.ACPIDropTables;
@@ -730,7 +736,13 @@ VOID FillInputs(VOID)
   InputItems[InputItemsCount].ItemType = Hex;  //103
   InputItems[InputItemsCount].SValue = AllocateZeroPool(26);
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeXHCI);
-
+  InputItems[InputItemsCount].ItemType = BoolValue; //104
+  InputItems[InputItemsCount].BValue   = gSettings.DropOEM_DSM;
+  InputItems[InputItemsCount++].SValue = gSettings.DropOEM_DSM?L"[+]":L"[ ]";
+  InputItems[InputItemsCount].ItemType = BoolValue; //105
+  InputItems[InputItemsCount].BValue   = gSettings.DebugDSDT;
+  InputItems[InputItemsCount++].SValue = gSettings.DebugDSDT?L"[+]":L"[ ]";
+  
   //menu for drop table
   if (gSettings.ACPIDropTables) {
     ACPI_DROP_TABLE *DropTable = gSettings.ACPIDropTables;
@@ -1117,6 +1129,16 @@ VOID ApplyInputs(VOID)
   i++; //103
   if (InputItems[i].Valid) {
     gSettings.FakeXHCI = (UINT32)StrHexToUint64(InputItems[i].SValue);
+  }
+
+  i++; //104
+  if (InputItems[i].Valid) {
+    gSettings.DropOEM_DSM = InputItems[i].BValue;
+    defDSM = TRUE;
+  }
+  i++; //105
+  if (InputItems[i].Valid) {
+    gSettings.DebugDSDT = InputItems[i].BValue;
   }
   
   if (NeedSave) {
@@ -3308,6 +3330,15 @@ REFIT_MENU_ENTRY  *SubMenuDsdtFix()
   SubScreen->AnimeRun = GetAnime(SubScreen);
 
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  InputBootArgs->Entry.Title = PoolPrint(L"Debug DSDT  :");
+  InputBootArgs->Entry.Tag = TAG_INPUT;
+  InputBootArgs->Entry.Row = 0xFFFF; //cursor
+  InputBootArgs->Item = &InputItems[105];    
+  InputBootArgs->Entry.AtClick = ActionEnter;
+  InputBootArgs->Entry.AtRightClick = ActionDetails;
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);  
+  
+  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
   UnicodeSPrint(Flags, 255, L"DSDT name:");
   InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
   InputBootArgs->Entry.Tag = TAG_INPUT;
@@ -3321,6 +3352,15 @@ REFIT_MENU_ENTRY  *SubMenuDsdtFix()
   InputBootArgs->Entry.AtClick = ActionSelect;
   InputBootArgs->Entry.AtDoubleClick = ActionEnter;
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+  
+  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  InputBootArgs->Entry.Title = PoolPrint(L"Drop _DSM   :");
+  InputBootArgs->Entry.Tag = TAG_INPUT;
+  InputBootArgs->Entry.Row = 0xFFFF; //cursor
+  InputBootArgs->Item = &InputItems[104];    
+  InputBootArgs->Entry.AtClick = ActionEnter;
+  InputBootArgs->Entry.AtRightClick = ActionDetails;
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);  
   
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
   InputBootArgs->Entry.Title = PoolPrint(L"Add DTGP    :");
