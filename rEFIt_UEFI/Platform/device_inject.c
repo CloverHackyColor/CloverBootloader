@@ -344,6 +344,8 @@ BOOLEAN set_eth_props(pci_dt_t *eth_dev)
 	CHAR8           *devicepath;
   DevPropDevice   *device;
   UINT8           builtin = 0x0;
+  BOOLEAN         Injected;
+  INT32           i;
 	
 	if (!string)
     string = devprop_create_string();
@@ -360,6 +362,22 @@ BOOLEAN set_eth_props(pci_dt_t *eth_dev)
  		builtin_set = 1;
  		builtin = 0x01;
  	}
+
+  for (i = 0; i < gSettings.NrAddProperties; i++) {
+    if (gSettings.AddProperties[i].Device != DEV_LAN) {
+      continue;
+    }
+    Injected = TRUE;
+    devprop_add_value(device,
+                      gSettings.AddProperties[i].Key,
+                      (UINT8*)gSettings.AddProperties[i].Value,
+                      gSettings.AddProperties[i].ValueLen);
+  }
+  if (Injected) {
+    DBG("custom LAN properties injected, continue\n");
+    //    return TRUE;
+  }
+
 //  DBG("Setting dev.prop built-in=0x%x\n", builtin);
   devprop_add_value(device, "device_type", (UINT8*)"ethernet", 8);
   if (gSettings.FakeLAN) {
@@ -384,7 +402,9 @@ BOOLEAN set_usb_props(pci_dt_t *usb_dev)
   UINT16  current_extra     = 700;
   UINT16  current_in_sleep  = 1000;
   UINT32   fake_devid;
-	
+  BOOLEAN         Injected;
+  INT32           i;
+
 	if (!string)
     string = devprop_create_string();
   
@@ -396,6 +416,22 @@ BOOLEAN set_usb_props(pci_dt_t *usb_dev)
 	// -------------------------------------------------
 	DBG("USB Controller [%04x:%04x] :: %a\n", usb_dev->vendor_id, usb_dev->device_id, devicepath);
   //  DBG("Setting dev.prop built-in=0x%x\n", builtin);
+
+  for (i = 0; i < gSettings.NrAddProperties; i++) {
+    if (gSettings.AddProperties[i].Device != DEV_USB) {
+      continue;
+    }
+    Injected = TRUE;
+    devprop_add_value(device,
+                      gSettings.AddProperties[i].Key,
+                      (UINT8*)gSettings.AddProperties[i].Value,
+                      gSettings.AddProperties[i].ValueLen);
+  }
+  if (Injected) {
+    DBG("custom USB properties injected, continue\n");
+    //    return TRUE;
+  }
+
   if (gSettings.InjectClockID) {
     devprop_add_value(device, "AAPL,clock-id", (UINT8*)&clock_id, 1);
     clock_id++;
@@ -582,7 +618,9 @@ BOOLEAN set_hda_props(EFI_PCI_IO_PROTOCOL *PciIo, pci_dt_t *hda_dev)
 	CHAR8           *devicepath;
 	DevPropDevice   *device;
 	UINT32           layoutId = 0, codecId = 0;
-	
+  BOOLEAN         Injected = FALSE;
+  INT32           i;
+
 	if (!gSettings.HDAInjection) {
 		return FALSE;
 	}
@@ -599,10 +637,23 @@ BOOLEAN set_hda_props(EFI_PCI_IO_PROTOCOL *PciIo, pci_dt_t *hda_dev)
   DBG("HDA Controller [%04x:%04x] :: %a =>", hda_dev->vendor_id, hda_dev->device_id, devicepath);
   
   if (IsHDMIAudio(hda_dev->DeviceHandle)) {
-    
-    DBG(" HDMI Audio, setting hda-gfx=onboard-1\n");
-    devprop_add_value(device, "hda-gfx", (UINT8*)"onboard-1", 10);
-    
+    for (i = 0; i < gSettings.NrAddProperties; i++) {
+      if (gSettings.AddProperties[i].Device != DEV_HDMI) {
+        continue;
+      }
+      Injected = TRUE;
+      devprop_add_value(device,
+                        gSettings.AddProperties[i].Key,
+                        (UINT8*)gSettings.AddProperties[i].Value,
+                        gSettings.AddProperties[i].ValueLen);
+    }
+    if (Injected) {
+      DBG("custom USB properties injected, continue\n");
+      //    return TRUE;
+    } else {
+      DBG(" HDMI Audio, setting hda-gfx=onboard-1\n");
+      devprop_add_value(device, "hda-gfx", (UINT8*)"onboard-1", 10);
+    }    
   } else {
     
     // HDA - determine layout-id
@@ -625,10 +676,23 @@ BOOLEAN set_hda_props(EFI_PCI_IO_PROTOCOL *PciIo, pci_dt_t *hda_dev)
       }
       DBG(", setting layout-id=%d (0x%x)\n", layoutId, layoutId);
     }
+    for (i = 0; i < gSettings.NrAddProperties; i++) {
+      if (gSettings.AddProperties[i].Device != DEV_HDA) {
+        continue;
+      }
+      Injected = TRUE;
+      devprop_add_value(device,
+                        gSettings.AddProperties[i].Key,
+                        (UINT8*)gSettings.AddProperties[i].Value,
+                        gSettings.AddProperties[i].ValueLen);
+    }
+    if (!Injected) {
+
     // inject layout and pin config
-    devprop_add_value(device, "layout-id", (UINT8*)&layoutId, 4);
-    layoutId = 0; // reuse variable
-    devprop_add_value(device, "PinConfigurations", (UINT8*)&layoutId, 1);
+      devprop_add_value(device, "layout-id", (UINT8*)&layoutId, 4);
+      layoutId = 0; // reuse variable
+      devprop_add_value(device, "PinConfigurations", (UINT8*)&layoutId, 1);
+    }
     
   }
   

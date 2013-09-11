@@ -1468,7 +1468,8 @@ BOOLEAN setup_ati_devprop(pci_dt_t *ati_dev)
 {
 	CHAR8 *devicepath;
   UINT32 FakeID = 0;
-	
+  INT32 i;
+
 	if (!init_card(ati_dev))
 		return FALSE;
 	
@@ -1483,16 +1484,7 @@ BOOLEAN setup_ati_devprop(pci_dt_t *ati_dev)
 	if (!card->device)
 		return FALSE;
 	// -------------------------------------------------
-	
-#if 0
-	UINT64 fb		= (UINT32)card->fb;
-	UINT64 mmio	= (UINT32)card->mmio;
-	UINT64 io		= (UINT32)card->io;
-	devprop_add_value(card->device, "ATY,FrameBufferOffset", &fb, 8);
-	devprop_add_value(card->device, "ATY,RegisterSpaceOffset", &mmio, 8);
-	devprop_add_value(card->device, "ATY,IOSpaceOffset", &io, 8);
-#endif
-	
+		
 	devprop_add_list(ati_devprop_list);
 
   devprop_add_value(card->device, "hda-gfx", (UINT8*)"onboard-1", 9);
@@ -1504,7 +1496,17 @@ BOOLEAN setup_ati_devprop(pci_dt_t *ati_dev)
     devprop_add_value(card->device, "vendor-id", (UINT8*)&FakeID, 4);
     devprop_add_value(card->device, "ATY,VendorID", (UINT8*)&FakeID, 2);
   }
-	
+
+  for (i = 0; i < gSettings.NrAddProperties; i++) {
+    if (gSettings.AddProperties[i].Device != DEV_ATI) {
+      continue;
+    }
+    devprop_add_value(card->device,
+                      gSettings.AddProperties[i].Key,
+                      (UINT8*)gSettings.AddProperties[i].Value,
+                      gSettings.AddProperties[i].ValueLen);
+  }
+
 	
 	DBG("ATI %a %a %dMB (%a) [%04x:%04x] (subsys [%04x:%04x]):: %a\n",
 			chip_family_name[card->info->chip_family], card->info->model_name,

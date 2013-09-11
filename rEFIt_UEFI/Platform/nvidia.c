@@ -3476,6 +3476,7 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 	DevPropDevice			*device = NULL;
 	CHAR8				*devicepath = NULL;
 	BOOLEAN				load_vbios = gSettings.LoadVBios;
+  BOOLEAN				Injected;
 	UINT8				*rom = NULL;
 	UINT16				nvCardType = 0;
 	UINT64				videoRam = 0;
@@ -3635,6 +3636,20 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 	device = devprop_add_device_pci(string, nvda_dev);
 	devprop_add_nvidia_template(device);
 
+  for (i = 0; i < gSettings.NrAddProperties; i++) {
+    if (gSettings.AddProperties[i].Device != DEV_NVIDIA) {
+      continue;
+    }
+    Injected = TRUE;
+    devprop_add_value(device,
+                      gSettings.AddProperties[i].Key,
+                      (UINT8*)gSettings.AddProperties[i].Value,
+                      gSettings.AddProperties[i].ValueLen);
+  }
+  if (Injected) {
+    DBG("custom NVIDIA properties injected, continue\n");
+    //    return TRUE;
+  }
 
 	/* FIXME: for primary graphics card only */
 	boot_display = 1;
@@ -3691,6 +3706,7 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
     FakeID = gSettings.FakeNVidia & 0xFFFF;
     devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
   }
+
 
 	//add HDMI Audio back to nvidia
 	//http://forge.voodooprojects.org/p/chameleon/issues/67/

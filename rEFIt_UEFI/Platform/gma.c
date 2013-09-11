@@ -117,11 +117,11 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
 	CHAR8					*model;
 	UINT8 BuiltIn =		0x00;
   UINTN j;
+  INT32 i;
 	UINT8 ClassFix[4] =	{ 0x00, 0x00, 0x03, 0x00 };
+  BOOLEAN Injected = FALSE;
 //  UINT8 IG_ID[4] = { 0x00, 0x00, 0x62, 0x01 };
   
-  
-	
 	devicepath = get_pci_dev_path(gma_dev);
 	
 //	bar[0] = pci_config_read32(gma_dev, PCI_BASE_ADDRESS_0);
@@ -146,16 +146,29 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
 	//device = devprop_add_device(string, devicepath); //AllocatePool inside
 	device = devprop_add_device_pci(string, gma_dev);
 	
-	if (!device)
-	{
+	if (!device) {
 		DBG("Failed initializing dev-prop string dev-entry.\n");
 		//pause();
 		return FALSE;
 	}
 
-//  DualLink = ((UGAWidth * UGAHeight) > (1<<20))?1:0; //this is wrong b/c depends on current resolution while it must be
+  for (i = 0; i < gSettings.NrAddProperties; i++) {
+    if (gSettings.AddProperties[i].Device != DEV_INTEL) {
+      continue;
+    }
+    Injected = TRUE;
+    devprop_add_value(device,
+                      gSettings.AddProperties[i].Key,
+                      (UINT8*)gSettings.AddProperties[i].Value,
+                      gSettings.AddProperties[i].ValueLen);
+  }
+  if (Injected) {
+    DBG("custom IntelGFX properties injected, continue\n");
+//    return TRUE;
+  }
+
   DualLink = gSettings.DualLink;
-                                                    //maximum for the VideoCard
+                                  
   if (gSettings.InjectEDID) {
     devprop_add_value(device, "AAPL00,override-no-connect", gSettings.CustomEDID, 128);
   }

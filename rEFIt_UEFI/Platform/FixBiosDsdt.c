@@ -62,6 +62,10 @@ UINT32 FirewireADR1;
 UINT32 FirewireADR2;
 UINT32 SBUSADR1;
 UINT32 SBUSADR2;
+UINT32 MCHCADR1;
+UINT32 MCHCADR2;
+UINT32 IMEIADR1;
+UINT32 IMEIADR2;
 UINT32 IDEADR1;
 UINT32 IDEADR2;
 UINT32 SATAADR1;
@@ -685,7 +689,17 @@ VOID CheckHardware()
             GetPciADR(DevicePath, &SBUSADR1, &SBUSADR2, NULL);
   //          DBG("SBUSADR1 = 0x%x, SBUSADR2 = 0x%x\n", SBUSADR1, SBUSADR2);
           }
-          
+          //MCHC ADR
+          if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_BRIDGE) &&
+              (Pci.Hdr.ClassCode[1] == PCI_CLASS_BRIDGE_HOST)) {
+            GetPciADR(DevicePath, &MCHCADR1, &MCHCADR2, NULL);
+          }
+          //IMEI ADR
+          if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_SCC) &&
+              (Pci.Hdr.ClassCode[1] == PCI_SUBCLASS_SCC_OTHER)) {
+            GetPciADR(DevicePath, &IMEIADR1, &IMEIADR2, NULL);
+          }
+
           //USB
           if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_SERIAL) &&
               (Pci.Hdr.ClassCode[1] == PCI_CLASS_SERIAL_USB)) {
@@ -1153,11 +1167,6 @@ UINT32 devFind(UINT8 *dsdt, UINT32 address)
       }  //else continue
     }
   }
-/*  for (k=address; k>address-10; k--) {
-    if (dsdt[k] == 0x82 && dsdt[k-1] == 0x5B) {
-      return (k+1); //pointer to size
-    }
-  } */
   DBG("Device definition before adr=%x not found\n", address);
   return 0; //impossible value for fool proof  
 }
@@ -1165,7 +1174,8 @@ UINT32 devFind(UINT8 *dsdt, UINT32 address)
 
 BOOLEAN AddProperties(AML_CHUNK* pack, UINT32 Dev)
 {
-  BOOLEAN Injected = FALSE
+  INT32 i;
+  BOOLEAN Injected = FALSE;
   for (i = 0; i < gSettings.NrAddProperties; i++) {
     if (gSettings.AddProperties[i].Device != Dev) {
       continue;
@@ -1173,28 +1183,45 @@ BOOLEAN AddProperties(AML_CHUNK* pack, UINT32 Dev)
     Injected = TRUE;
     aml_add_string(pack, gSettings.AddProperties[i].Key);
     aml_add_byte_buffer(pack, gSettings.AddProperties[i].Value,
-                        gSettings.AddProperties[i].ValueLen));    
+                        gSettings.AddProperties[i].ValueLen);    
   }
   return Injected;
 }
 
+INT32 CmpDev(UINT8 *dsdt, UINT32 i, UINT8 *Name)
+{
+  if ((dsdt[i+0] == Name[0]) && (dsdt[i+1] == Name[1]) &&
+      (dsdt[i+2] == Name[2]) && (dsdt[i+3] == Name[3]) &&
+      ((dsdt[i-3] == 0x82) || (dsdt[i-2] == 0x82)) &&
+      ((dsdt[i-4] == 0x5B) || (dsdt[i-3] == 0x5B))) {
+    if ((dsdt[i-3] == 0x82) && (dsdt[i-4] == 0x5B)) {
+      return i - 2;
+    } else {
+      return i - 1;
+    }
+  }
+  return 0;
+}
 
 //len = DeleteDevice("AZAL", dsdt, len);
-UINT32 DeleteDevice(CONST CHAR8 *Name, UINT8 *dsdt, UINT32 len)
+UINT32 DeleteDevice(/*CONST*/ CHAR8 *Name, UINT8 *dsdt, UINT32 len)
 {
   UINT32 i, j;
   INT32 size = 0, sizeoffset;
   DBG(" deleting device %a\n", Name);
   for (i=20; i<len; i++) {
-    if ((dsdt[i+0] == Name[0]) && (dsdt[i+1] == Name[1]) &&
+   /* if ((dsdt[i+0] == Name[0]) && (dsdt[i+1] == Name[1]) &&
         (dsdt[i+2] == Name[2]) && (dsdt[i+3] == Name[3]) &&
         ((dsdt[i-3] == 0x82) || (dsdt[i-2] == 0x82)) && 
-        ((dsdt[i-4] == 0x5B) || (dsdt[i-3] == 0x5B))) {
+        ((dsdt[i-4] == 0x5B) || (dsdt[i-3] == 0x5B))) { */
+ /*   if (CmpDev(dsdt, i, Name)) {
       if ((dsdt[i-3] == 0x82) && (dsdt[i-4] == 0x5B)) {
         j = i - 2;
       } else {
         j = i - 1;
-      }
+      } */
+    j = CmpDev(dsdt, i, (UINT8*)Name);
+    if (j != 0) {
       size = get_size(dsdt, j);
       if (!size) {
         continue;
@@ -1817,6 +1844,9 @@ UINT32 FIXLPCB (UINT8 *dsdt, UINT32 len)
     if (k != 0) {
       if ((dropDSM & DEV_LPC) != 0) {
         Size = get_size(dsdt, k);
+        if(!Size) {
+          return len;
+        }
         sizeoffset = - 1 - Size;
         len = move_data(k - 1, dsdt, len, sizeoffset);
         //to correct outers we have to calculate offset
@@ -1879,10 +1909,6 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
   BOOLEAN DISPLAYFIX = FALSE;
   AML_CHUNK* pack;
   AML_CHUNK* hdaudev;
-//  UINT32 VideoRam;
-//  UINT8 ports;
-//  CHAR8 *cfgname;
-//  CHAR8 *cardver;
   UINT32 FakeID = 0;
   UINT32 FakeVen = 0;
   DisplayName1 = FALSE;
@@ -1977,220 +2003,7 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
     }
     // Intel GMA and HD
     if (DisplayVendor[0] == 0x8086) {
-/*      AML_CHUNK* pack;
-      CHAR8 *modelname = get_gma_model(DisplayID[0]);
-      if (AsciiStrnCmp(modelname, "Unknown", 7) == 0)
-      {
-        DBG("Found Unsupported Intel Display Card Vendor id 0x%04x, device id 0x%04x, don't patch DSDT.\n",
-            DisplayVendor[0], DisplayID[0]);
-        return len;
-      }   
-      
-      // add Method(_DSM,4,NotSerialized) for GFX0
-      //if (!DISPLAYFIX)
-      //{
-      //    met = aml_add_method(gfx0, "_DSM", 4);
-      //}
-      //else
-      //{      
-      
-      met = aml_add_method(gfx0, "_DSM", 4);
-      //}
-      met = aml_add_store(met);
-      pack = aml_add_package(met);
-      aml_add_string(pack, "AAPL,aux-power-connected");
-      aml_add_byte_buffer(pack, Yes, sizeof(Yes));
-      aml_add_string(pack, "model");
-      aml_add_string_buffer(pack, modelname);
-      aml_add_string(pack, "device_type");
-      aml_add_string_buffer(pack, "display");
-      //
-      if ((AsciiStrnCmp(modelname, "Mobile GMA950", 13) == 0) ||
-          (AsciiStrnCmp(modelname, "Mobile GMA3150", 14) == 0)) {
-        aml_add_string(pack, "AAPL,HasPanel");
-        aml_add_byte_buffer(pack, Yes, sizeof(Yes)); 
-        aml_add_string(pack, "built-in");
-        aml_add_byte_buffer(pack, dataBuiltin1, 1);
-        //    aml_add_string(pack, "class-code");
-        //    aml_add_byte_buffer(pack, ClassFix, sizeof(ClassFix)); 
-      } 
-      else if (AsciiStrnCmp(modelname, "Desktop GMA950", 14) == 0 ||
-               AsciiStrnCmp(modelname, "Desktop GMA3150", 15) == 0) {
-        aml_add_string(pack, "built-in");
-        aml_add_byte_buffer(pack, dataBuiltin1, 1);
-        //     aml_add_string(pack, "class-code");
-        //     aml_add_byte_buffer(pack, ClassFix, sizeof(ClassFix));
-      } 
-      else if (AsciiStrnCmp(modelname, "GMAX3100", 8) == 0) {
-        aml_add_string(pack, "AAPL,HasPanel");
-        aml_add_byte_buffer(pack, GMAX3100_vals_bad[0], 4); 
-        aml_add_string(pack, "AAPL,SelfRefreshSupported");
-        aml_add_byte_buffer(pack, GMAX3100_vals_bad[1], 4); 
-        aml_add_string(pack, "AAPL,backlight-control");
-        aml_add_byte_buffer(pack, GMAX3100_vals_bad[2], 4);
-        aml_add_string(pack, "AAPL00,blackscreen-preferences");
-        aml_add_byte_buffer(pack, GMAX3100_vals_bad[3], 4);
-        aml_add_string(pack, "AAPL01,BacklightIntensity");
-        aml_add_byte_buffer(pack, GMAX3100_vals_bad[4], 4);
-        aml_add_string(pack, "AAPL01,blackscreen-preferences");
-        aml_add_byte_buffer(pack, GMAX3100_vals_bad[5], 4);
-        aml_add_string(pack, "AAPL01,DataJustify");
-        aml_add_byte_buffer(pack, GMAX3100_vals_bad[6], 4);
-        aml_add_string(pack, "AAPL01,Depth");
-        aml_add_byte_buffer(pack, GMAX3100_vals_bad[7], 4);
-        aml_add_string(pack, "AAPL01,Dither");
-        aml_add_byte_buffer(pack, GMAX3100_vals_bad[8], 4);
-        aml_add_string(pack, "AAPL01,DualLink");
-        aml_add_byte_buffer(pack, (CHAR8*)&gSettings.DualLink , 4);
-        aml_add_string(pack, "AAPL01,Height");
-        aml_add_byte_buffer(pack, GMAX3100_vals_bad[10], 4);
-        aml_add_string(pack, "AAPL01,Interlace");
-        aml_add_byte_buffer(pack, GMAX3100_vals_bad[11], 4);
-        aml_add_string(pack, "AAPL01,Inverter");
-        aml_add_byte_buffer(pack, GMAX3100_vals_bad[12], 4);
- //       aml_add_string(pack, "AAPL01,InverterCurrent");
- //       aml_add_byte_buffer(pack, GMAX3100_vals_bad[13], 4);
- //       aml_add_string(pack, "AAPL01,InverterCurrency");
- //       aml_add_byte_buffer(pack, GMAX3100_vals_bad[14], 4);
-        aml_add_string(pack, "AAPL01,LinkFormat");
-        aml_add_byte_buffer(pack, GMAX3100_vals_bad[15], 4);
-        aml_add_string(pack, "AAPL01,LinkType");
-        aml_add_byte_buffer(pack, GMAX3100_vals_bad[16], 4);
-        aml_add_string(pack, "AAPL01,Pipe");
-        aml_add_byte_buffer(pack, GMAX3100_vals_bad[17], 4);
-        aml_add_string(pack, "AAPL01,PixelFormat");
-        aml_add_byte_buffer(pack, GMAX3100_vals_bad[18], 4);
-        aml_add_string(pack, "AAPL01,Refresh");
-        aml_add_byte_buffer(pack, GMAX3100_vals_bad[19], 4);
-        aml_add_string(pack, "AAPL01,Stretch");
-        aml_add_byte_buffer(pack, GMAX3100_vals_bad[20], 4);
-        //     aml_add_string(pack, "class-code");
-        //     aml_add_byte_buffer(pack, ClassFix, sizeof(ClassFix));
-        aml_add_string(pack, "AAPL01,boot-display");
-        aml_add_byte_buffer(pack, Yes, sizeof(Yes));
-      }
-      else if (AsciiStrnCmp(modelname, "HD2000", 29) == 0) {
-            aml_add_string(pack, "class-code");
-            aml_add_byte_buffer(pack, ClassFix, sizeof(ClassFix));
-        aml_add_string(pack, "hda-gfx");
-        aml_add_string_buffer(pack, "onboard-1");
-        aml_add_string(pack, "AAPL00,PixelFormat");
-        aml_add_byte_buffer(pack, HD2000_vals[0], 4); 
-        aml_add_string(pack, "AAPL00,T1");
-        aml_add_byte_buffer(pack, HD2000_vals[1], 4);
-        aml_add_string(pack, "AAPL00,T2");
-        aml_add_byte_buffer(pack, HD2000_vals[2], 4);
-        aml_add_string(pack, "AAPL00,T3");
-        aml_add_byte_buffer(pack, HD2000_vals[3], 4);
-        aml_add_string(pack, "AAPL00,T4");
-        aml_add_byte_buffer(pack, HD2000_vals[4], 4);
-        aml_add_string(pack, "AAPL00,T5");
-        aml_add_byte_buffer(pack, HD2000_vals[5], 4);
-        aml_add_string(pack, "AAPL00,T6");
-        aml_add_byte_buffer(pack, HD2000_vals[6], 4);
-        aml_add_string(pack, "AAPL00,T7");
-        aml_add_byte_buffer(pack, HD2000_vals[7], 4);
-        aml_add_string(pack, "AAPL00,LinkType");
-        aml_add_byte_buffer(pack, HD2000_vals[8], 4);
-        aml_add_string(pack, "AAPL00,LinkFormat");
-        aml_add_byte_buffer(pack, HD2000_vals[9], 4);
-        aml_add_string(pack, "AAPL00,DualLink");
-        aml_add_byte_buffer(pack, (CHAR8*)&gSettings.DualLink , 4);
-        aml_add_string(pack, "AAPL00,Dither");
-        aml_add_byte_buffer(pack, HD2000_vals[11], 4);
-        aml_add_string(pack, "AAPL00,DataJustify");
-        aml_add_byte_buffer(pack, HD2000_vals[12], 4);
-        aml_add_string(pack, "graphic-options");
-        aml_add_byte_buffer(pack, HD2000_vals[13], 4);
-        aml_add_string(pack, "AAPL,tbl-info");
-        aml_add_byte_buffer(pack, HD2000_tbl_info, 18);
-        aml_add_string(pack, "AAPL,os-info");
-        aml_add_byte_buffer(pack, HD2000_os_info, 20);
-        aml_add_string(pack, "AAPL00,boot-display");
-        aml_add_byte_buffer(pack, Yes, sizeof(Yes));
-        aml_add_string(pack, "built-in");
-        aml_add_byte_buffer(pack, dataBuiltin1, 1);
-        
-      }
-      else if (AsciiStrnCmp(modelname, "HD3000", 29) == 0) {
-        aml_add_string(pack, "class-code");
-        aml_add_byte_buffer(pack, ClassFix, sizeof(ClassFix));
-        aml_add_string(pack, "hda-gfx");
-        aml_add_string_buffer(pack, "onboard-1");
-        aml_add_string(pack, "AAPL00,PixelFormat");
-        aml_add_byte_buffer(pack, HD3000_vals[0], 4); 
-        aml_add_string(pack, "AAPL00,T1");
-        aml_add_byte_buffer(pack, HD3000_vals[1], 4);
-        aml_add_string(pack, "AAPL00,T2");
-        aml_add_byte_buffer(pack, HD3000_vals[2], 4);
-        aml_add_string(pack, "AAPL00,T3");
-        aml_add_byte_buffer(pack, HD3000_vals[3], 4);
-        aml_add_string(pack, "AAPL00,T4");
-        aml_add_byte_buffer(pack, HD3000_vals[4], 4);
-        aml_add_string(pack, "AAPL00,T5");
-        aml_add_byte_buffer(pack, HD3000_vals[5], 4);
-        aml_add_string(pack, "AAPL00,T6");
-        aml_add_byte_buffer(pack, HD3000_vals[6], 4);
-        aml_add_string(pack, "AAPL00,T7");
-        aml_add_byte_buffer(pack, HD3000_vals[7], 4);
-        aml_add_string(pack, "AAPL00,LinkType");
-        aml_add_byte_buffer(pack, HD3000_vals[8], 4);
-        aml_add_string(pack, "AAPL00,LinkFormat");
-        aml_add_byte_buffer(pack, HD3000_vals[9], 4);
-        aml_add_string(pack, "AAPL00,DualLink");
-        aml_add_byte_buffer(pack, (CHAR8*)&gSettings.DualLink, 4);
-        aml_add_string(pack, "AAPL00,Dither");
-        aml_add_byte_buffer(pack, HD3000_vals[11], 4);
-        aml_add_string(pack, "AAPL00,DataJustify");
-        aml_add_byte_buffer(pack, HD3000_vals[12], 4);
-        aml_add_string(pack, "graphic-options");
-        aml_add_byte_buffer(pack, HD3000_vals[13], 4);
-        aml_add_string(pack, "AAPL,tbl-info");
-        aml_add_byte_buffer(pack, HD3000_tbl_info, 18);
-        aml_add_string(pack, "AAPL,os-info");
-        aml_add_byte_buffer(pack, HD3000_os_info, 20);
-        aml_add_string(pack, "AAPL,snb-platform-id");
-        aml_add_byte_buffer(pack, HD3000_vals[16], 4);
-        aml_add_string(pack, "AAPL00,boot-display");
-        aml_add_byte_buffer(pack, Yes, sizeof(Yes));
-      }
-      else if (AsciiStrStr(modelname, "HD Graphics 2000")) {
-        aml_add_string(pack, "built-in");
-        aml_add_byte_buffer(pack, dataBuiltin1, 1);
-        //      aml_add_string(pack, "class-code");
-        //      aml_add_byte_buffer(pack, ClassFix, sizeof(ClassFix));
-        aml_add_string(pack, "device-id");
-        aml_add_byte_buffer(pack, (CHAR8*)&DisplayID[0], 4);
-        aml_add_string(pack, "hda-gfx");
-        aml_add_string_buffer(pack, "onboard-1");
-        aml_add_string(pack, "AAPL,tbl-info");
-        aml_add_byte_buffer(pack, HD2000_tbl_info, 18);
-        aml_add_string(pack, "AAPL,os-info");
-        aml_add_byte_buffer(pack, HD2000_os_info, 20);
-//        aml_add_string(pack, "AAPL,snb-platform-id");
-//        aml_add_byte_buffer(pack, HD3000_vals[16], 4);
-        aml_add_string(pack, "AAPL00,boot-display");
-        aml_add_byte_buffer(pack, Yes, sizeof(Yes));
-      }
-      else if (AsciiStrStr(modelname, "HD Graphics 3000")) {
-        aml_add_string(pack, "built-in");
-        aml_add_byte_buffer(pack, dataBuiltin1, 1);
-        //      aml_add_string(pack, "class-code");
-        //      aml_add_byte_buffer(pack, ClassFix, sizeof(ClassFix));
-        aml_add_string(pack, "device-id");
-        aml_add_byte_buffer(pack, (CHAR8*)&DisplayID[0], 4);
-        aml_add_string(pack, "hda-gfx");
-        aml_add_string_buffer(pack, "onboard-1");
-        aml_add_string(pack, "AAPL,tbl-info");
-        aml_add_byte_buffer(pack, HD3000_tbl_info, 18);
-        aml_add_string(pack, "AAPL,os-info");
-        aml_add_byte_buffer(pack, HD3000_os_info, 20);
-        aml_add_string(pack, "AAPL,snb-platform-id");
-        aml_add_byte_buffer(pack, HD3000_vals[16], 4);
-        aml_add_string(pack, "AAPL00,boot-display");
-        aml_add_byte_buffer(pack, Yes, sizeof(Yes));
-      }
- */
+
       met = aml_add_method(root, "_DSM", 4);
       met = aml_add_store(met);
       pack = aml_add_package(met);
@@ -2212,11 +2025,7 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
     
     // NVIDIA
   if (DisplayVendor[0] == 0x10DE) {
-  //    AML_CHUNK* pack;
-  //    UINT64 VideoRam;
-  //    CHAR8 *modelname = nv_name((UINT16)DisplayVendor[0], DisplayID[0]);
-      // add Method(_DSM,4,NotSerialized) for GFX0
-   
+  
       if (!DISPLAYFIX) {
         met = aml_add_method(gfx0, "_DSM", 4);
       } else {
@@ -2225,52 +2034,7 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
       met = aml_add_store(met);
       //Slice - next I mark what is in Natit, and what no
       pack = aml_add_package(met);
- /*     aml_add_string(pack, "AAPL,aux-power-connected");  //-
-      aml_add_byte_buffer(pack, Yes, sizeof(Yes));
-      aml_add_string(pack, "AAPL00,DualLink");          //-
-      aml_add_byte_buffer(pack, Yes, sizeof(Yes));
-      aml_add_string(pack, "@0,AAPL,boot-display");     //-
-      aml_add_byte_buffer(pack, Yes, sizeof(Yes));  
-      aml_add_string(pack, "@0,name");
-      aml_add_string_buffer(pack, "NVDA,Display-A");  //+
-      aml_add_string(pack, "@0,compatible");
-      aml_add_string_buffer(pack, "NVDA,NVMac");    //+
-      aml_add_string(pack, "@0,device_type");
-      aml_add_string_buffer(pack, "display");     //+
-      aml_add_string(pack, "@1,name");
-      aml_add_string_buffer(pack, "NVDA,Display-B");      //+
-      aml_add_string(pack, "@1,compatible");
-      aml_add_string_buffer(pack, "NVDA,NVMac");    //+
-      aml_add_string(pack, "@1,device_type");
-      aml_add_string_buffer(pack, "display");       //+
-      aml_add_string(pack, "device_type");
-      aml_add_string_buffer(pack, "NVDA,Parent");   //+
-      aml_add_string(pack, "NVCAP");
-      aml_add_byte_buffer(pack, (CHAR8*)&gSettings.NVCAP[0], 20);  //+
-      aml_add_string(pack, "NVPM");
-      aml_add_byte_buffer(pack, (CHAR8*)&default_NVPM[0], 28);  //+
-      aml_add_string(pack, "model");
-      aml_add_string_buffer(pack, modelname);       //+
-      aml_add_string(pack, "rom-revision");
-      aml_add_string_buffer(pack, "Clover auto patch DSDT ver1.1");  //+
-      aml_add_string(pack, "hda-gfx");
-      aml_add_string_buffer(pack, "onboard-1");         //-
-      VideoRam = nv_mem_detect(&Displaydevice[0]); 
-      aml_add_string(pack, "VRAM,totalsize");         //+
-      aml_add_dword(pack, (UINT32)VideoRam); 
-//      aml_add_string(pack, "device-id");              //-
-//      aml_add_byte_buffer(pack, (CHAR8*)&DisplayID[0], 4);
-//      aml_add_string(pack, "name");
-//      aml_add_string_buffer(pack, "display");       //+
 
-      if (!Display1PCIE)
-      {
-//        aml_add_string(pack, "IOPCIExpressLinkCapabilities"); //-
-//        aml_add_dword(pack, 0x130d1) ;//0x1e80); 
-//        aml_add_string(pack, "IOPCIExpressLinkStatus");     //-
-//        aml_add_dword(pack, 0x10880); //0x880); 
-      }
-*/
     if (gSettings.FakeNVidia) {
       FakeID = gSettings.FakeNVidia >> 16;
       aml_add_string(pack, "device-id");
@@ -2287,8 +2051,6 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
   
     // ATI
     if (DisplayVendor[0] == 0x1002) {
-//      CHAR8 *modelname = ati_name(DisplayID[0], DisplaySubID[0]);
-      // add Method(_DSM,4,NotSerialized) for GFX0
       if (!DISPLAYFIX) {
         met = aml_add_method(gfx0, "_DSM", 4);  //if no subdevice
       } else {
@@ -2296,58 +2058,7 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
       }
       met = aml_add_store(met);
       pack = aml_add_package(met);
-  /*
-      aml_add_string(pack, "AAPL,aux-power-connected");
-      aml_add_byte_buffer(pack, Yes, sizeof(Yes));
-      aml_add_string(pack, "AAPL00,DualLink");
-      aml_add_byte_buffer(pack, (CHAR8*)&gSettings.DualLink, 4);
-      aml_add_string(pack, "@0,AAPL,boot-display");
-      aml_add_byte_buffer(pack, Yes, sizeof(Yes));
-      ports = ati_port(DisplayID[0], DisplaySubID[0]);
-      cfgname = ati_cfg_name(DisplayID[0], DisplaySubID[0]);
-      CFGname = AllocateZeroPool(sizeof(cfgname)+5);
-      AsciiSPrint(CFGname, sizeof(cfgname)+5, "ATY,%a", cfgname);
-      for (i=0; i<ports; i++) {
-        portname = AllocateZeroPool(8);
-        AsciiSPrint(portname, 8, "@%d,name", i);
-        aml_add_string(pack, portname);
-        aml_add_string_buffer(pack, CFGname);  
-      } 
-      
-      cardver = ATI_romrevision(&Displaydevice[0]);
-      aml_add_string(pack, "ATY,Card#");
-      aml_add_string_buffer(pack, cardver);       
-      aml_add_string(pack, "ATY,Copyright");
-      aml_add_string_buffer(pack, "Copyright AMD Inc. All Rights Reserved. 2005-2011");    
-      aml_add_string(pack, "ATY,EFIVersion");
-      aml_add_string_buffer(pack, "01.00.3180");  
-      aml_add_string(pack, "model");
-      aml_add_string_buffer(pack, modelname);
-      aml_add_string(pack, "name");
-      name = AllocateZeroPool(sizeof(cfgname)+11);
-      AsciiSPrint(name, sizeof(cfgname)+11, "ATY,%aParent", cfgname);
-      aml_add_string_buffer(pack, name);  
-      aml_add_string(pack, "ATY,VendorID");
-      aml_add_byte_buffer(pack, (CHAR8*)&DisplayVendor[0], 4); 
-      aml_add_string(pack, "ATY,DeviceID");
-      aml_add_byte_buffer(pack, (CHAR8*)&DisplayID[0], 4); 
- //     aml_add_string(pack, "device-id");
- //     CHAR8 data[] = {0xE1,0x68,0x00,0x00};
- //     aml_add_byte_buffer(pack, data, sizeof(data));
-      aml_add_string(pack, "org-device-id");
-      aml_add_byte_buffer(pack, (CHAR8*)&DisplayID[0], 4); 
-      aml_add_string(pack, "hda-gfx");
-      aml_add_string_buffer(pack, "onboard-1");
-      VideoRam = ATI_vram_size(&Displaydevice[0]); 
-      aml_add_string(pack, "VRAM,totalsize");
-      aml_add_dword(pack, VideoRam); 
-      if (!Display1PCIE) {
-        aml_add_string(pack, "IOPCIExpressLinkCapabilities");
-        aml_add_dword(pack, 0x130d1) ;//0x1e80); 
-        aml_add_string(pack, "IOPCIExpressLinkStatus");
-        aml_add_dword(pack, 0x10880); //0x880);  
-      }
-*/   
+ 
       if (gSettings.FakeATI) {
         FakeID = gSettings.FakeATI >> 16;
         aml_add_string(pack, "device-id");
@@ -2384,12 +2095,7 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
       met = aml_add_method(device, "_DSM", 4);
       met = aml_add_store(met);
       pack = aml_add_package(met);
-      //aml_add_string(pack, "device-id");
-      //CHAR8 data[] = {0x38,0xAA,0x00,0x00};
-      //aml_add_byte_buffer(pack, data, sizeof(data));
-      //aml_add_string(pack, "codec-id");
-      //aml_add_byte_buffer(pack, (CHAR8*)&GfxcodecId, 4);
-      if (!AddProperties(pack, DEV_HDMI);) {
+      if (!AddProperties(pack, DEV_HDMI)) {
         aml_add_string(pack, "layout-id");
         aml_add_byte_buffer(pack, (CHAR8*)&GfxlayoutId, 4);
         aml_add_string(pack, "hda-gfx");
@@ -2397,13 +2103,6 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
         aml_add_string(pack, "PinConfigurations");
         aml_add_byte_buffer(pack, data2, sizeof(data2));        
       }
-      //aml_add_string(pack, "name");
-      //aml_add_string(pack, "pci1002,aa38");
-      //aml_add_string(pack, "IOName");
-      //aml_add_string(pack, "pci1002,aa38");
-      //aml_add_string(pack, "layout-id");
-      //CHAR8 data1[] = {0x12,0x00,0x00,0x00};
-      //aml_add_byte_buffer(pack, data1, sizeof(data1));
       aml_add_local0(met);
       aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
       // finish Method(_DSM,4,NotSerialized)
@@ -2576,128 +2275,6 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
     
     // Intel GMA and HD
     if (DisplayVendor[1] == 0x8086) {
-/*      
-      CHAR8 *modelname = get_gma_model(DisplayID[1]);
-      if (AsciiStrnCmp(modelname, "Unknown", 7) == 0) {
-        DBG("Found Unsupported Intel Display Card Vendor id 0x%04x, device id 0x%04x, don't patch DSDT.\n",
-            DisplayVendor[1], DisplayID[1]);
-        return len;
-      }   
-      
-      //CHAR8 ClassFix[] =	{ 0x00, 0x00, 0x03, 0x00 };   
-      // add Method(_DSM,4,NotSerialized) for GFX0
-      //if (!DISPLAYFIX)
-      //{
-      //    met = aml_add_method(gfx0, "_DSM", 4);
-      //}
-      //else
-      //{
-      met = aml_add_method(root, "_DSM", 4);
-      //}
-      met = aml_add_store(met);
-      pack = aml_add_package(met);
-      aml_add_string(pack, "AAPL,aux-power-connected");
-      aml_add_byte_buffer(pack, Yes, sizeof(Yes));
-      aml_add_string(pack, "model");
-      aml_add_string_buffer(pack, modelname);
-      aml_add_string(pack, "device_type");
-      aml_add_string_buffer(pack, "display");
-      //
-      if (AsciiStrnCmp(modelname, "Mobile GMA950", 13) == 0 ||
-          AsciiStrnCmp(modelname, "Mobile GMA3150", 14) == 0) {
-        aml_add_string(pack, "AAPL,HasPanel");
-        aml_add_byte_buffer(pack, Yes, sizeof(Yes)); 
-        aml_add_string(pack, "built-in");
-        aml_add_byte_buffer(pack, dataBuiltin1, 1);
-        //   aml_add_string(pack, "class-code");
-        //   aml_add_byte_buffer(pack, ClassFix, sizeof(ClassFix)); 
-      } else if (AsciiStrnCmp(modelname, "Desktop GMA950", 14) == 0 ||
-               AsciiStrnCmp(modelname, "Desktop GMA3150", 15) == 0) {
-        aml_add_string(pack, "built-in");
-        aml_add_byte_buffer(pack, dataBuiltin1, 1);
-        //    aml_add_string(pack, "class-code");
-        //    aml_add_byte_buffer(pack, ClassFix, sizeof(ClassFix));
-      } else if (AsciiStrnCmp(modelname, "GMAX3100", 8) == 0) {
-        aml_add_string(pack, "AAPL,HasPanel");
-        aml_add_byte_buffer(pack, GMAX3100_vals_bad[0], 4); 
-        aml_add_string(pack, "AAPL,SelfRefreshSupported");
-        aml_add_byte_buffer(pack, GMAX3100_vals_bad[1], 4); 
-        aml_add_string(pack, "AAPL,backlight-control");
-        aml_add_byte_buffer(pack, GMAX3100_vals_bad[2], 4);
-        aml_add_string(pack, "AAPL00,blackscreen-preferences");
-        aml_add_byte_buffer(pack, GMAX3100_vals_bad[3], 4);
-        aml_add_string(pack, "AAPL01,BacklightIntensity");
-        aml_add_byte_buffer(pack, GMAX3100_vals_bad[4], 4);
-        aml_add_string(pack, "AAPL01,blackscreen-preferences");
-        aml_add_byte_buffer(pack, GMAX3100_vals_bad[5], 4);
-        aml_add_string(pack, "AAPL01,DataJustify");
-        aml_add_byte_buffer(pack, GMAX3100_vals_bad[6], 4);
-        aml_add_string(pack, "AAPL01,Depth");
-        aml_add_byte_buffer(pack, GMAX3100_vals_bad[7], 4);
-        aml_add_string(pack, "AAPL01,Dither");
-        aml_add_byte_buffer(pack, GMAX3100_vals_bad[8], 4);
-        aml_add_string(pack, "AAPL01,DualLink");
-        aml_add_byte_buffer(pack, (CHAR8*)&gSettings.DualLink , 4);
-        aml_add_string(pack, "AAPL01,Height");
-        aml_add_byte_buffer(pack, GMAX3100_vals_bad[10], 4);
-        aml_add_string(pack, "AAPL01,Interlace");
-        aml_add_byte_buffer(pack, GMAX3100_vals_bad[11], 4);
-        aml_add_string(pack, "AAPL01,Inverter");
-        aml_add_byte_buffer(pack, GMAX3100_vals_bad[12], 4);
-        aml_add_string(pack, "AAPL01,InverterCurrent");
-        aml_add_byte_buffer(pack, GMAX3100_vals_bad[13], 4);
-        aml_add_string(pack, "AAPL01,InverterCurrency");
-        aml_add_byte_buffer(pack, GMAX3100_vals_bad[14], 4);
-        aml_add_string(pack, "AAPL01,LinkFormat");
-        aml_add_byte_buffer(pack, GMAX3100_vals_bad[15], 4);
-        aml_add_string(pack, "AAPL01,LinkType");
-        aml_add_byte_buffer(pack, GMAX3100_vals_bad[16], 4);
-        aml_add_string(pack, "AAPL01,Pipe");
-        aml_add_byte_buffer(pack, GMAX3100_vals_bad[17], 4);
-        aml_add_string(pack, "AAPL01,PixelFormat");
-        aml_add_byte_buffer(pack, GMAX3100_vals_bad[18], 4);
-        aml_add_string(pack, "AAPL01,Refresh");
-        aml_add_byte_buffer(pack, GMAX3100_vals_bad[19], 4);
-        aml_add_string(pack, "AAPL01,Stretch");
-        aml_add_byte_buffer(pack, GMAX3100_vals_bad[20], 4);
-        //     aml_add_string(pack, "class-code");
-        //     aml_add_byte_buffer(pack, ClassFix, sizeof(ClassFix));
-        aml_add_string(pack, "AAPL01,boot-display");
-        aml_add_byte_buffer(pack, Yes, sizeof(Yes));
-      }  else if (AsciiStrStr(modelname, "HD Graphics 2000")) {
-        aml_add_string(pack, "built-in");
-        aml_add_byte_buffer(pack, dataBuiltin1, 1);
-        //      aml_add_string(pack, "class-code");
-        //      aml_add_byte_buffer(pack, ClassFix, sizeof(ClassFix));
-        aml_add_string(pack, "device-id");
-        aml_add_byte_buffer(pack, (CHAR8*)&DisplayID[1], 4);
-        aml_add_string(pack, "hda-gfx");
-        aml_add_string_buffer(pack, "onboard-1");
-        aml_add_string(pack, "AAPL,tbl-info");
-        aml_add_byte_buffer(pack, HD2000_tbl_info, 18);
-        aml_add_string(pack, "AAPL,os-info");
-        aml_add_byte_buffer(pack, HD2000_os_info, 20);
-        aml_add_string(pack, "AAPL00,boot-display");
-        aml_add_byte_buffer(pack, Yes, sizeof(Yes));
-      } else if (AsciiStrStr(modelname, "HD Graphics 3000")) {
-        aml_add_string(pack, "built-in");
-        aml_add_byte_buffer(pack, dataBuiltin1, 1);
-        aml_add_string(pack, "class-code");
-        aml_add_byte_buffer(pack, ClassFix, sizeof(ClassFix));
-        aml_add_string(pack, "device-id");
-        aml_add_byte_buffer(pack, (CHAR8*)&DisplayID[1], 4);
-        aml_add_string(pack, "hda-gfx");
-        aml_add_string_buffer(pack, "onboard-1");
-        aml_add_string(pack, "AAPL,tbl-info");
-        aml_add_byte_buffer(pack, HD3000_tbl_info, 18);
-        aml_add_string(pack, "AAPL,os-info");
-        aml_add_byte_buffer(pack, HD3000_os_info, 20);
-        aml_add_string(pack, "AAPL,snb-platform-id");
-        aml_add_byte_buffer(pack, HD3000_vals[16], 4);
-        aml_add_string(pack, "AAPL00,boot-display");
-        aml_add_byte_buffer(pack, Yes, sizeof(Yes));
-      }
- */
       met = aml_add_method(root, "_DSM", 4);
       met = aml_add_store(met);
       pack = aml_add_package(met);
@@ -2718,10 +2295,6 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
     
     // NVIDIA
    if (DisplayVendor[1] == 0x10DE) {
- //     AML_CHUNK* pack;
- //     UINT64 VideoRam;
- //     CHAR8 *modelname = nv_name((UINT16)DisplayVendor[1], DisplayID[1]);
-      // add Method(_DSM,4,NotSerialized) for GFX0
       if (!DISPLAYFIX) {
         met = aml_add_method(gfx0, "_DSM", 4);
       } else {
@@ -2729,49 +2302,7 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
       }
       met = aml_add_store(met);
       pack = aml_add_package(met);
-/*     
-      aml_add_string(pack, "AAPL,aux-power-connected");
-      aml_add_byte_buffer(pack, Yes, sizeof(Yes));
-      aml_add_string(pack, "AAPL00,DualLink");
-      aml_add_byte_buffer(pack, (CHAR8*)&gSettings.DualLink, 4);
-      aml_add_string(pack, "@0,AAPL,boot-display");
-      aml_add_byte_buffer(pack, Yes, sizeof(Yes));  
-      aml_add_string(pack, "@0,name");
-      aml_add_string_buffer(pack, "NVDA,Display-A");  
-      aml_add_string(pack, "@0,compatible");
-      aml_add_string_buffer(pack, "NVDA,NVMac");  
-      aml_add_string(pack, "@0,device_type");
-      aml_add_string_buffer(pack, "display");  
-      aml_add_string(pack, "@1,name");
-      aml_add_string_buffer(pack, "NVDA,Display-B");  
-      aml_add_string(pack, "@1,compatible");
-      aml_add_string_buffer(pack, "NVDA,NVMac"); 
-      aml_add_string(pack, "@1,device_type");
-      aml_add_string_buffer(pack, "display"); 
-      aml_add_string(pack, "device_type");
-      aml_add_string_buffer(pack, "NVDA,Parent"); 
-      aml_add_string(pack, "NVCAP");
-      aml_add_byte_buffer(pack, (CHAR8*)&gSettings.NVCAP[0], 20); 
-      aml_add_string(pack, "NVPM");
-      aml_add_byte_buffer(pack, (CHAR8*)&default_NVPM[0], 28); 
-      aml_add_string(pack, "model");
-      aml_add_string_buffer(pack, modelname); 
-      aml_add_string(pack, "rom-revision");
-      aml_add_string_buffer(pack, "pcj auto patch DSDT ver1.0");
-      aml_add_string(pack, "hda-gfx");
-      aml_add_string_buffer(pack, "onboard-1"); 
-      VideoRam = nv_mem_detect(&Displaydevice[1]); 
-      aml_add_string(pack, "VRAM,totalsize");
-      aml_add_dword(pack, (UINT32)VideoRam); 
-      aml_add_string(pack, "device-id");
-      aml_add_byte_buffer(pack, (CHAR8*)&DisplayID[1], 4);
-      if (!Display2PCIE) {
-        aml_add_string(pack, "IOPCIExpressLinkCapabilities");
-        aml_add_dword(pack, 0x130d1) ;//0x1e80); 
-        aml_add_string(pack, "IOPCIExpressLinkStatus");
-        aml_add_dword(pack, 0x10880); //0x880);  
-      }
- */
+
      if (gSettings.FakeNVidia) {
        FakeID = gSettings.FakeNVidia >> 16;
        aml_add_string(pack, "device-id");
@@ -2796,40 +2327,7 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
       }
       met = aml_add_store(met);
       pack = aml_add_package(met);
-/*      aml_add_string(pack, "AAPL,aux-power-connected");
-      aml_add_byte_buffer(pack, Yes, sizeof(Yes));
-      aml_add_string(pack, "AAPL00,DualLink");
-      aml_add_byte_buffer(pack, (CHAR8*)&gSettings.DualLink, 4);
-      aml_add_string(pack, "@0,AAPL,boot-display");
-      aml_add_byte_buffer(pack, Yes, sizeof(Yes));  
-      ports = ati_port(DisplayID[1], DisplaySubID[1]);
-      cfgname = ati_cfg_name(DisplayID[1], DisplaySubID[1]);
-      CFGname = AllocateZeroPool(sizeof(cfgname)+5);
-      AsciiSPrint(CFGname, sizeof(cfgname)+5, "ATY,%a", cfgname);
-      for (i=0; i<ports; i++) {
-        portname = AllocateZeroPool(8);
-        AsciiSPrint(portname, 8, "@%d,name", i);
-        aml_add_string(pack, portname);
-        aml_add_string_buffer(pack, CFGname);  
-      }          
-      cardver = ATI_romrevision(&Displaydevice[1]);
-      aml_add_string(pack, "ATY,Card#");
-      aml_add_string_buffer(pack, cardver);       
-      aml_add_string(pack, "ATY,Copyright");
-      aml_add_string_buffer(pack, "Copyright AMD Inc. All Rights Reserved. 2005-2011");    
-      aml_add_string(pack, "ATY,EFIVersion");
-      aml_add_string_buffer(pack, "01.00.3180");  
-      aml_add_string(pack, "model");
-      aml_add_string_buffer(pack, modelname);
-      aml_add_string(pack, "name");
-      name = AllocateZeroPool(sizeof(cfgname)+11);
-      AsciiSPrint(name, sizeof(cfgname)+11, "ATY,%aParent", cfgname);
-      aml_add_string_buffer(pack, name);  
-      aml_add_string(pack, "ATY,VendorID");
-      aml_add_byte_buffer(pack, (CHAR8*)&DisplayVendor[1], 4); 
-      aml_add_string(pack, "ATY,DeviceID");
-      aml_add_byte_buffer(pack, (CHAR8*)&DisplayID[1], 4); 
- */
+
       if (gSettings.FakeATI) {
         FakeID = gSettings.FakeATI >> 16;
         aml_add_string(pack, "device-id");
@@ -2846,24 +2344,7 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
         aml_add_byte_buffer(pack, VenATI, 2);
       }
       AddProperties(pack, DEV_ATI);
-/*      
-      aml_add_string(pack, "device-id");
-      //     CHAR8 data[] = {0xE1,0x68,0x00,0x00};
-      aml_add_byte_buffer(pack, data, sizeof(data));
-      aml_add_string(pack, "org-device-id");
-      aml_add_byte_buffer(pack, (CHAR8*)&DisplayID[1], 4); 
-      aml_add_string(pack, "hda-gfx");
-      aml_add_string_buffer(pack, "onboard-1");
-      VideoRam = ATI_vram_size(&Displaydevice[1]); 
-      aml_add_string(pack, "VRAM,totalsize");
-      aml_add_dword(pack, (UINT32)VideoRam); 
-      if (!Display1PCIE) {
-        aml_add_string(pack, "IOPCIExpressLinkCapabilities");
-        aml_add_dword(pack, 0x130d1) ;//0x1e80); 
-        aml_add_string(pack, "IOPCIExpressLinkStatus");
-        aml_add_dword(pack, 0x10880); //0x880); 
-      }
-      */
+
       aml_add_local0(met);
       aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
       // finish Method(_DSM,4,NotSerialized)
@@ -2880,11 +2361,6 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
       met = aml_add_method(device, "_DSM", 4);
       met = aml_add_store(met);
       pack = aml_add_package(met);
-      //aml_add_string(pack, "device-id");
-      //CHAR8 data[] = {0x38,0xAA,0x00,0x00};
-      //aml_add_byte_buffer(pack, data, sizeof(data));
-      //aml_add_string(pack, "codec-id");
-      //aml_add_byte_buffer(pack, (CHAR8*)&GfxcodecId, 4);
       if (!AddProperties(pack, DEV_HDMI)) {
         aml_add_string(pack, "layout-id");
         aml_add_byte_buffer(pack, (CHAR8*)&GfxlayoutId, 4);
@@ -2893,13 +2369,6 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
         aml_add_string(pack, "PinConfigurations");
         aml_add_byte_buffer(pack, data2, sizeof(data2));        
       }
-      //aml_add_string(pack, "name");
-      //aml_add_string(pack, "pci1002,aa38");
-      //aml_add_string(pack, "IOName");
-      //aml_add_string(pack, "pci1002,aa38");
-      //aml_add_string(pack, "layout-id");
-      //CHAR8 data1[] = {0x12,0x00,0x00,0x00};
-      //aml_add_byte_buffer(pack, data1, sizeof(data1));
       aml_add_local0(met);
       aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
       // finish Method(_DSM,4,NotSerialized)
@@ -2982,25 +2451,15 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
   // Network Address
   for (i=0x20; i<len-10; i++) {
     if (CmpAdr(dsdt, i, NetworkADR1)) {
-      //this is not a LAN, this is bridge of the lan
-      // we have to find next Device
-      /*
-       Device (NIC)
-       {
-       Name (_ADR, Zero) - this is NetworkADR2
-       */
-      //         DBG("found NetworkADR1=%x at %x\n", NetworkADR1, i);
       NetworkADR = devFind(dsdt, i);
       if (!NetworkADR) {
         continue;
       }
 
-      //         DBG("now NetworkADR=%x\n", NetworkADR);
       BridgeSize = get_size(dsdt, NetworkADR);
       if (!BridgeSize) {
         continue;
       }
-      //      DBG("its size=%x\n", BridgeSize);
       if (NetworkADR2 != 0xFFFE){
         for (k=NetworkADR+9; k<NetworkADR+BridgeSize; k++) {
           if (CmpAdr(dsdt, k, NetworkADR2))
@@ -3387,7 +2846,7 @@ CHAR8 dataMCHC[] = {0x44,0x00,0x00,0x00};
 
 UINT32 AddMCHC (UINT8 *dsdt, UINT32 len)
 {    
-  UINT32  k;
+  UINT32  i, k;
   UINT32 PCIADR, PCISIZE = 0;
   INT32 sizeoffset;
   AML_CHUNK* root;
@@ -3404,7 +2863,21 @@ UINT32 AddMCHC (UINT8 *dsdt, UINT32 len)
     DBG("wrong PCI0 address, patch MCHC will not be applied\n");
     return len;
   }
-  
+
+  // Find Device MCHC
+  if (MCHCADR1) {
+    for (i=0x20; i<len-10; i++) {
+      if (CmpAdr(dsdt, i, MCHCADR1)) {
+        k = devFind(dsdt, i);
+        if (k) {
+          DBG("device (MCHC) found at %x, don't add!\n", k);
+ //         break;
+          return len;
+        }
+      }
+    }
+  }
+ 
   DBG("Start Add MCHC\n");
   root = aml_create_node(NULL);
   	
@@ -3445,7 +2918,7 @@ UINT32 AddMCHC (UINT8 *dsdt, UINT32 len)
 
 UINT32 AddIMEI (UINT8 *dsdt, UINT32 len)
 {
-  UINT32  k;
+  UINT32  i, k;
   UINT32 PCIADR, PCISIZE = 0;
   INT32 sizeoffset;
   AML_CHUNK* root;
@@ -3460,6 +2933,20 @@ UINT32 AddIMEI (UINT8 *dsdt, UINT32 len)
     DBG("wrong PCI0 address, patch IMEI will not be applied\n");
     return len;
   }
+  // Find Device MCHC
+  if (IMEIADR1) {
+    for (i=0x20; i<len-10; i++) {
+      if (CmpAdr(dsdt, i, IMEIADR1)) {
+        k = devFind(dsdt, i);
+        if (k) {
+          DBG("device (IMEI) found at %x, don't add!\n", k);
+          //         break;
+          return len;
+        }
+      }
+    }
+  }
+
 
   DBG("Start Add IMEI\n");
   root = aml_create_node(NULL);
@@ -3906,7 +3393,6 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
                 }
                 ReplaceName(dsdt + adr1, Size, device_name[10], UsbName[i]);
                 XhciName = TRUE;
-                Size = get_size(dsdt, adr);
                 break;
               }
             }
@@ -3914,15 +3400,19 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
           if (!XhciName) {
             adr = adr1;
           }
+          Size = get_size(dsdt, adr);
 
           k = FindMethod(dsdt + adr, Size, "_DSM");
           if (k != 0) {
             if ((dropDSM & DEV_USB) != 0) {
               Size = get_size(dsdt, k);
+              if (!Size) {
+                continue;
+              }
               sizeoffset = - 1 - Size;
               len = move_data(k - 1, dsdt, len, sizeoffset);
               len = CorrectOuters(dsdt, len, k - 2, sizeoffset);
-              DBG("_DSM in USB already exists, dropped\n");
+              DBG("_DSM in USB already exists, dropped by 0x%x\n", sizeoffset);
             } else {
               DBG("_DSM already exists, patch USB will not be applied\n");
               continue;
