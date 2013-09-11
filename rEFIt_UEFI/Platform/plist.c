@@ -269,7 +269,7 @@ TagPtr GetProperty( TagPtr dict, const CHAR8* key )
       
     }
     
-		if (!AsciiStrCmp(tag->string, key)) {
+		if (!AsciiStriCmp(tag->string, key)) {
 			return tag->tag;            
     }
 	}

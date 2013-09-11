@@ -1878,9 +1878,14 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
   //
   DsdtLoaded = FALSE;
   if (!EFI_ERROR(Status)) {
+    //custom DSDT is loaded so not need to drop _DSM
+    dropDSM = FALSE;
+    if (defDSM) {
+      dropDSM = gSettings.DropOEM_DSM;   //if set by user
+    }
     // if we will apply fixes, allocate additional space
 //		if (gSettings.FixDsdt) { //unconditional
-			bufferLen = bufferLen + bufferLen / 8;
+		bufferLen = bufferLen + bufferLen / 8;
 //		}
     dsdt = EFI_SYSTEM_TABLE_MAX_ADDRESS;
     Status = gBS->AllocatePages (
@@ -1905,31 +1910,38 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
     }
   } 
   
-		if (!DsdtLoaded) {
-			// allocate space for fixes
-			TableHeader = (EFI_ACPI_DESCRIPTION_HEADER*)(UINTN)FadtPointer->Dsdt;
-			bufferLen = TableHeader->Length;
-			DBG("DSDT len = 0x%x", bufferLen);
-			bufferLen = bufferLen + bufferLen / 8;
-			DBG(" new len = 0x%x\n", bufferLen);
-			
-			dsdt = EFI_SYSTEM_TABLE_MAX_ADDRESS;
-			Status = gBS->AllocatePages(AllocateMaxAddress,
-                                  EfiACPIReclaimMemory,
-                                  EFI_SIZE_TO_PAGES(bufferLen),
-                                  &dsdt);
-			
-			//if success insert dsdt pointer into ACPI tables
-			if(!EFI_ERROR(Status)) {
-				CopyMem((VOID*)(UINTN)dsdt, (VOID*)TableHeader, bufferLen);
-				
-				FadtPointer->Dsdt  = (UINT32)dsdt;
-				FadtPointer->XDsdt = dsdt;
-				// verify checksum
-				FadtPointer->Header.Checksum = 0;
-				FadtPointer->Header.Checksum = (UINT8)(256 - Checksum8((CHAR8*)FadtPointer, FadtPointer->Header.Length));
-			}
-		}
+  if (!DsdtLoaded) {
+    //using BIOS DSDT so we probably want to drop OEM _DSM
+    dropDSM = TRUE;
+    if (defDSM) {
+      dropDSM = gSettings.DropOEM_DSM;   //if set by user
+    }
+    
+    // allocate space for fixes
+    TableHeader = (EFI_ACPI_DESCRIPTION_HEADER*)(UINTN)FadtPointer->Dsdt;
+    bufferLen = TableHeader->Length;
+    DBG("DSDT len = 0x%x", bufferLen);
+    bufferLen = bufferLen + bufferLen / 8;
+    DBG(" new len = 0x%x\n", bufferLen);
+    
+    dsdt = EFI_SYSTEM_TABLE_MAX_ADDRESS;
+    Status = gBS->AllocatePages(AllocateMaxAddress,
+                                EfiACPIReclaimMemory,
+                                EFI_SIZE_TO_PAGES(bufferLen),
+                                &dsdt);
+    
+    //if success insert dsdt pointer into ACPI tables
+    if(!EFI_ERROR(Status)) {
+      CopyMem((VOID*)(UINTN)dsdt, (VOID*)TableHeader, bufferLen);
+      
+      FadtPointer->Dsdt  = (UINT32)dsdt;
+      FadtPointer->XDsdt = dsdt;
+      // verify checksum
+      FadtPointer->Header.Checksum = 0;
+      FadtPointer->Header.Checksum = (UINT8)(256 - Checksum8((CHAR8*)FadtPointer, FadtPointer->Header.Length));
+    }
+  }
+  
   if (gSettings.DebugDSDT) {
     DBG("Output DSDT before patch to /EFI/CLOVER/ACPI/origin/DSDT-or.aml\n");
     Status = egSaveFile(SelfRootDir, L"\\EFI\\CLOVER\\ACPI\\origin\\DSDT-or.aml",
@@ -1963,12 +1975,12 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
     rf = ScanRSDT(APIC_SIGN);
     if(rf) { DropTableFromRSDT(APIC_SIGN); }
     }
-   */
+   
   if (gSettings.DropMCFG) {
     DropTableFromXSDT(MCFG_SIGN, 0);
     DropTableFromRSDT(MCFG_SIGN, 0);
   }
-/*		xf = ScanXSDT(MCFG_SIGN, 0);
+		xf = ScanXSDT(MCFG_SIGN, 0);
 		if(xf) { DropTableFromXSDT(MCFG_SIGN, 0); }
 		rf = ScanRSDT(MCFG_SIGN, 0);
 		if(rf) { DropTableFromRSDT(MCFG_SIGN, 0); } 

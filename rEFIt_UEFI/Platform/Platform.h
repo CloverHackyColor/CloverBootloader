@@ -764,7 +764,8 @@ typedef struct {
   UINT32  align1;
 #endif
   BOOLEAN InjectEDID;
-  UINT8   pad5[3];
+  BOOLEAN DropOEM_DSM;
+  UINT8   pad5[2];
   UINT8   *CustomEDID;
   CHAR16  FBName[16];
   UINT16  VideoPorts;
@@ -1190,6 +1191,8 @@ extern UINT8	  acpi_cpu_count;
 extern CHAR8*   acpi_cpu_name[32];
 extern CHAR8*   OSVersion;
 extern BOOLEAN  SSSE3;
+extern BOOLEAN  defDSM;
+extern BOOLEAN  dropDSM;
 
 extern TagPtr gConfigDict;
 //-----------------------------------

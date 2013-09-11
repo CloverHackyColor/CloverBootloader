@@ -42,6 +42,8 @@ CHAR16                          *ThemesList[50]; //no more then 50 themes?
 BOOLEAN                         gFirmwareClover = FALSE;
 UINTN                           gEvent;
 UINT16                          gBacklightLevel;
+BOOLEAN                         defDSM;
+BOOLEAN                         dropDSM = FALSE;
 
 extern MEM_STRUCTURE            gRAM;
 
@@ -1761,7 +1763,6 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
           gSettings.VRAM = LShiftU64(StrDecimalToUintn((CHAR16*)&UStr[0]), 20);  //Mb -> bytes
         }
       }
-      
       prop = GetProperty(dictPointer, "LoadVBios");
       gSettings.LoadVBios = FALSE;
       if(prop) {
@@ -1998,6 +1999,22 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
           }
         }
       }
+      prop = GetProperty(dictPointer, "DropOEM_DSM"); 
+      defDSM = FALSE;
+      if(prop) {
+        if ((prop->type == kTagTypeTrue) ||
+            ((prop->type == kTagTypeString) &&
+             ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))) {
+              gSettings.DropOEM_DSM = TRUE;
+              defDSM = TRUE;
+            } else if ((prop->type == kTagTypeFalse) ||
+                       ((prop->type == kTagTypeString) &&
+                        ((prop->string[0] == 'n') || (prop->string[0] == 'N')))) {
+              gSettings.DropOEM_DSM = FALSE;
+              defDSM = TRUE;
+            } 
+      }
+      
     }
 
     //*** ACPI ***//

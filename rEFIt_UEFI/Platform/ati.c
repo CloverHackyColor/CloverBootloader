@@ -446,7 +446,7 @@ radeon_card_info_t radeon_cards[] = {
 	{ 0x6720,	0x00000000, CHIP_FAMILY_VANCOUVER,	"AMD Radeon HD 6900M Series",		kFanwort	 },	
 	{ 0x6722,	0x00000000, CHIP_FAMILY_BARTS,		"AMD Radeon HD 6900M Series",		kFanwort	 },	
 	{ 0x6729,	0x00000000, CHIP_FAMILY_BARTS,		"AMD Radeon HD 6900M Series",		kFanwort	 },	
-	{ 0x6738,	0x00000000, CHIP_FAMILY_BARTS,		"AMD Radeon HD 6870 X2",		kDuckweed  },
+	{ 0x6738,	0x00000000, CHIP_FAMILY_BARTS,		"AMD Radeon HD 6870",		kDuckweed  },
 	{ 0x6739,	0x00000000, CHIP_FAMILY_BARTS,		"AMD Radeon HD 6850 X2",		kDuckweed  },
 	{ 0x673E,	0x00000000, CHIP_FAMILY_BARTS,		"AMD Radeon HD 6790 Series",		kDuckweed	 },
 	
@@ -480,7 +480,7 @@ radeon_card_info_t radeon_cards[] = {
   { 0x6790,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7900 Series",		kFutomaki	},
   { 0x6798,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7970 X-Edition",	kFutomaki	},
   { 0x679A,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7950 Series",		kFutomaki	},
-  { 0x679E,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7870 XT",        kFutomaki	},
+  { 0x679E,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7870",        kFutomaki	},
   { 0x679F,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7950 Series",		kFutomaki	},
   //Pitcairn
 	{ 0x6800,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7970m ",         kBuri	},
