@@ -417,9 +417,12 @@ VOID RefillInputs(VOID)
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeSATA);
   InputItems[InputItemsCount].ItemType = Hex;  //103
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeXHCI);
-  InputItems[InputItemsCount].ItemType = BoolValue; //104
+  InputItems[InputItemsCount].ItemType = Hex;  //104
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%04X", gSettings.DropOEM_DSM);
+  
+/*  InputItems[InputItemsCount].ItemType = BoolValue; //104
   InputItems[InputItemsCount].BValue   = gSettings.DropOEM_DSM;
-  InputItems[InputItemsCount++].SValue = gSettings.DropOEM_DSM?L"[+]":L"[ ]";
+  InputItems[InputItemsCount++].SValue = gSettings.DropOEM_DSM?L"[+]":L"[ ]"; */
   InputItems[InputItemsCount].ItemType = BoolValue; //105
   InputItems[InputItemsCount].BValue   = gSettings.DebugDSDT;
   InputItems[InputItemsCount++].SValue = gSettings.DebugDSDT?L"[+]":L"[ ]";
@@ -736,9 +739,12 @@ VOID FillInputs(VOID)
   InputItems[InputItemsCount].ItemType = Hex;  //103
   InputItems[InputItemsCount].SValue = AllocateZeroPool(26);
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeXHCI);
-  InputItems[InputItemsCount].ItemType = BoolValue; //104
+  InputItems[InputItemsCount].ItemType = Hex;  //104
+  InputItems[InputItemsCount].SValue = AllocateZeroPool(26);
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%04X", gSettings.DropOEM_DSM);
+/*  InputItems[InputItemsCount].ItemType = BoolValue; //104
   InputItems[InputItemsCount].BValue   = gSettings.DropOEM_DSM;
-  InputItems[InputItemsCount++].SValue = gSettings.DropOEM_DSM?L"[+]":L"[ ]";
+  InputItems[InputItemsCount++].SValue = gSettings.DropOEM_DSM?L"[+]":L"[ ]";*/
   InputItems[InputItemsCount].ItemType = BoolValue; //105
   InputItems[InputItemsCount].BValue   = gSettings.DebugDSDT;
   InputItems[InputItemsCount++].SValue = gSettings.DebugDSDT?L"[+]":L"[ ]";
@@ -1133,7 +1139,8 @@ VOID ApplyInputs(VOID)
 
   i++; //104
   if (InputItems[i].Valid) {
-    gSettings.DropOEM_DSM = InputItems[i].BValue;
+//    gSettings.DropOEM_DSM = InputItems[i].BValue;
+    gSettings.DropOEM_DSM = (UINT16)StrHexToUint64(InputItems[i].SValue);
     defDSM = TRUE;
   }
   i++; //105
@@ -1637,7 +1644,7 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
   //    UINTN         Index;
   INTN          ShortcutEntry;
   BOOLEAN       HaveTimeout = FALSE;
-  UINTN         TimeoutCountdown = 0;
+  INTN          TimeoutCountdown = 0;
   CHAR16        *TimeoutMessage;
   UINTN         MenuExit;
   //UINTN         LogSize;
@@ -1693,7 +1700,7 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
     Status = WaitForInputEventPoll(Screen, 1); //wait for 1 seconds.
     if (Status == EFI_TIMEOUT) {
       if (HaveTimeout) {
-        if (TimeoutCountdown == 0) {
+        if (TimeoutCountdown <= 0) {
           // timeout expired
           MenuExit = MENU_EXIT_TIMEOUT;
           break;
@@ -3356,7 +3363,7 @@ REFIT_MENU_ENTRY  *SubMenuDsdtFix()
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
   InputBootArgs->Entry.Title = PoolPrint(L"Drop _DSM   :");
   InputBootArgs->Entry.Tag = TAG_INPUT;
-  InputBootArgs->Entry.Row = 0xFFFF; //cursor
+  InputBootArgs->Entry.Row = StrLen(InputItems[104].SValue);; //cursor
   InputBootArgs->Item = &InputItems[104];    
   InputBootArgs->Entry.AtClick = ActionEnter;
   InputBootArgs->Entry.AtRightClick = ActionDetails;

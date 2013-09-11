@@ -1879,7 +1879,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
   DsdtLoaded = FALSE;
   if (!EFI_ERROR(Status)) {
     //custom DSDT is loaded so not need to drop _DSM
-    dropDSM = FALSE;
+    dropDSM = 0;
     if (defDSM) {
       dropDSM = gSettings.DropOEM_DSM;   //if set by user
     }
@@ -1912,7 +1912,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
   
   if (!DsdtLoaded) {
     //using BIOS DSDT so we probably want to drop OEM _DSM
-    dropDSM = TRUE;
+    dropDSM = 0xFFFF;
     if (defDSM) {
       dropDSM = gSettings.DropOEM_DSM;   //if set by user
     }

@@ -245,6 +245,25 @@
 		<string>7a00000001000000010000006e0000000200000002010c00d041030a0000000001010600001b7fff040028000000500069006e0043006f006e00660069006700750072006100740069006f006e00730000000800000001080100180000006c00610079006f00750074002d00690064000000080000000c000000</string>
 		<key>LpcTune</key>
 		<false/>
+		<key>AddProperties</key>
+		<array>
+			<dict>
+				<key>Device</key>
+				<string>NVidia</string>
+				<key>Key</key>
+				<string>AAPL,HasPanel</string>
+				<key>Value</key>
+				<data>AQAAAA==</data>
+			</dict>
+			<dict>
+				<key>Device</key>
+				<string>NVidia</string>
+				<key>Key</key>
+				<string>AAPL,Haslid</string>
+				<key>Value</key>
+				<data>AQAAAA==</data>
+			</dict>
+		</array>
 		<key>FakeID</key>
 		<dict>
 			<key>ATI</key>
@@ -293,7 +312,22 @@
 			</dict>
 		</array>
 		<key>DropOEM_DSM</key>
-		<true/>
+		<dict>
+			<key>ATI</key>
+			<true/>
+			<key>IntelGFX</key>
+			<true/>
+			<key>LAN</key>
+			<true/>
+			<key>NVidia</key>
+			<true/>
+			<key>SATA</key>
+			<true/>
+			<key>WIFI</key>
+			<true/>
+			<key>XHCI</key>
+			<true/>
+		</dict>
 		<key>DSDT</key>
 		<dict>
 			<key>Debug</key>

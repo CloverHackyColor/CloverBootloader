@@ -1796,7 +1796,7 @@ UINT32 FIXLPCB (UINT8 *dsdt, UINT32 len)
     Size = get_size(dsdt, i);
     k = FindMethod(dsdt + i, Size, "_DSM");
     if (k != 0) {
-      if (dropDSM) {
+      if ((dropDSM & 0x0100) != 0) {
         Size = get_size(dsdt, k);
         sizeoffset = - 1 - Size;
         len = move_data(k - 1, dsdt, len, sizeoffset);
@@ -1930,14 +1930,17 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
     Size = get_size(dsdt, i);
     k = FindMethod(dsdt + i, Size, "_DSM");
     if (k != 0) {
-      if (dropDSM) {
+      if ((((dropDSM & 0x01) != 0) && (DisplayVendor[0] == 0x1002)) ||
+          (((dropDSM & 0x02) != 0) && (DisplayVendor[0] == 0x10DE)) ||
+          (((dropDSM & 0x04) != 0) && (DisplayVendor[0] == 0x8086)) ||
+          (((dropDSM & 0x08) != 0) && GFXHDAFIX)) {
         Size = get_size(dsdt, k);
         sizeoffset = - 1 - Size;
         len = move_data(k - 1, dsdt, len, sizeoffset);
         len = CorrectOuters(dsdt, len, k - 2, sizeoffset);
-        DBG("_DSM in LPC already exists, dropped\n");
+        DBG("_DSM in display already exists, dropped\n");
       } else {
-        DBG("_DSM already exists, patch LPC will not be applied\n");
+        DBG("_DSM already exists, patch display will not be applied\n");
         return len;
       }
     }
@@ -2510,7 +2513,10 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
     Size = get_size(dsdt, i);
     k = FindMethod(dsdt + i, Size, "_DSM");
     if (k != 0) {
-      if (dropDSM) {
+      if ((((dropDSM & 0x01) != 0) && (DisplayVendor[0] == 0x1002)) ||
+          (((dropDSM & 0x02) != 0) && (DisplayVendor[0] == 0x10DE)) ||
+          (((dropDSM & 0x04) != 0) && (DisplayVendor[0] == 0x8086)) ||
+          (((dropDSM & 0x08) != 0) && GFXHDAFIX)) {
         Size = get_size(dsdt, k);
         sizeoffset = - 1 - Size;
         len = move_data(k - 1, dsdt, len, sizeoffset);
@@ -3001,7 +3007,7 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
     Size = get_size(dsdt, i);
     k = FindMethod(dsdt + i, Size, "_DSM");
     if (k != 0) {
-      if (dropDSM) {
+      if ((dropDSM & 0x20) != 0) {
         Size = get_size(dsdt, k);
         sizeoffset = - 1 - Size;
         len = move_data(k - 1, dsdt, len, sizeoffset);
@@ -3154,7 +3160,7 @@ UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
     Size = get_size(dsdt, i);
     k = FindMethod(dsdt + i, Size, "_DSM");
     if (k != 0) {
-      if (dropDSM) {
+      if ((dropDSM & 0x40) != 0) {
         Size = get_size(dsdt, k);
         sizeoffset = - 1 - Size;
         len = move_data(k - 1, dsdt, len, sizeoffset);
@@ -3295,7 +3301,7 @@ UINT32 FIXSBUS (UINT8 *dsdt, UINT32 len)
     Size = get_size(dsdt, i);
     k = FindMethod(dsdt + i, Size, "_DSM");
     if (k != 0) {
-      if (dropDSM) {
+      if ((dropDSM & 0x0200) != 0) {
         Size = get_size(dsdt, k);
         sizeoffset = - 1 - Size;
         len = move_data(k - 1, dsdt, len, sizeoffset);
@@ -3512,7 +3518,7 @@ UINT32 FIXFirewire (UINT8 *dsdt, UINT32 len)
   Size = get_size(dsdt, i);
   k = FindMethod(dsdt + i, Size, "_DSM");
   if (k != 0) {
-    if (dropDSM) {
+    if ((dropDSM & 0x0400) != 0) {
       Size = get_size(dsdt, k);
       sizeoffset = - 1 - Size;
       len = move_data(k - 1, dsdt, len, sizeoffset);
@@ -3615,7 +3621,7 @@ UINT32 AddHDEF (UINT8 *dsdt, UINT32 len)
     Size = get_size(dsdt, i);
     k = FindMethod(dsdt + i, Size, "_DSM");
     if (k != 0) {
-      if (dropDSM) {
+      if ((dropDSM & 0x08) != 0) {
         Size = get_size(dsdt, k);
         sizeoffset = - 1 - Size;
         len = move_data(k - 1, dsdt, len, sizeoffset);
@@ -3873,7 +3879,7 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
 
           k = FindMethod(dsdt + adr, Size, "_DSM");
           if (k != 0) {
-            if (dropDSM) {
+            if ((dropDSM & 0x80) != 0) {
               Size = get_size(dsdt, k);
               sizeoffset = - 1 - Size;
               len = move_data(k - 1, dsdt, len, sizeoffset);
@@ -4068,7 +4074,7 @@ UINT32 FIXIDE (UINT8 *dsdt, UINT32 len)
     Size = get_size(dsdt, i);
     k = FindMethod(dsdt + i, Size, "_DSM");
     if (k != 0) {
-      if (dropDSM) {
+      if ((dropDSM & 0x0800) != 0) {
         Size = get_size(dsdt, k);
         sizeoffset = - 1 - Size;
         len = move_data(k - 1, dsdt, len, sizeoffset);
@@ -4221,7 +4227,7 @@ UINT32 FIXSATAAHCI (UINT8 *dsdt, UINT32 len)
     Size = get_size(dsdt, i);
     k = FindMethod(dsdt + i, Size, "_DSM");
     if (k != 0) {
-      if (dropDSM) {
+      if ((dropDSM & 0x10) != 0) {
         Size = get_size(dsdt, k);
         sizeoffset = - 1 - Size;
         len = move_data(k - 1, dsdt, len, sizeoffset);
@@ -4309,7 +4315,7 @@ UINT32 FIXSATA (UINT8 *dsdt, UINT32 len)
     Size = get_size(dsdt, i);
     k = FindMethod(dsdt + i, Size, "_DSM");
     if (k != 0) {
-      if (dropDSM) {
+      if ((dropDSM & 0x10) != 0) {
         Size = get_size(dsdt, k);
         sizeoffset = - 1 - Size;
         len = move_data(k - 1, dsdt, len, sizeoffset);
