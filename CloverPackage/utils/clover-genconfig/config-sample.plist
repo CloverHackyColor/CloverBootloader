@@ -239,8 +239,6 @@
 	</dict>
 	<key>Devices</key>
 	<dict>
-		<key>DropOEM_DSM</key>
-		<true/>
 		<key>Inject</key>
 		<false/>
 		<key>Properties</key>
@@ -294,6 +292,8 @@
 				<string>CpuPm</string>
 			</dict>
 		</array>
+		<key>DropOEM_DSM</key>
+		<true/>
 		<key>DSDT</key>
 		<dict>
 			<key>Debug</key>
