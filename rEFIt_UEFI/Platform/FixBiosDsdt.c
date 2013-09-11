@@ -1162,6 +1162,23 @@ UINT32 devFind(UINT8 *dsdt, UINT32 address)
   return 0; //impossible value for fool proof  
 }
 
+
+BOOLEAN AddProperties(AML_CHUNK* pack, UINT32 Dev)
+{
+  BOOLEAN Injected = FALSE
+  for (i = 0; i < gSettings.NrAddProperties; i++) {
+    if (gSettings.AddProperties[i].Device != Dev) {
+      continue;
+    }
+    Injected = TRUE;
+    aml_add_string(pack, gSettings.AddProperties[i].Key);
+    aml_add_byte_buffer(pack, gSettings.AddProperties[i].Value,
+                        gSettings.AddProperties[i].ValueLen));    
+  }
+  return Injected;
+}
+
+
 //len = DeleteDevice("AZAL", dsdt, len);
 UINT32 DeleteDevice(CONST CHAR8 *Name, UINT8 *dsdt, UINT32 len)
 {
@@ -1768,6 +1785,8 @@ UINT32 FIXLPCB (UINT8 *dsdt, UINT32 len)
   AML_CHUNK* met;
   AML_CHUNK* pack;
   CHAR8 *lpcb;
+
+  
   DBG("Start LPCB Fix\n");
 	//DBG("len = 0x%08x\n", len);
   //have to find LPC
@@ -1796,7 +1815,7 @@ UINT32 FIXLPCB (UINT8 *dsdt, UINT32 len)
     Size = get_size(dsdt, i);
     k = FindMethod(dsdt + i, Size, "_DSM");
     if (k != 0) {
-      if ((dropDSM & 0x0100) != 0) {
+      if ((dropDSM & DEV_LPC) != 0) {
         Size = get_size(dsdt, k);
         sizeoffset = - 1 - Size;
         len = move_data(k - 1, dsdt, len, sizeoffset);
@@ -1817,6 +1836,7 @@ UINT32 FIXLPCB (UINT8 *dsdt, UINT32 len)
   pack = aml_add_package(met);
   aml_add_string(pack, "device-id");
   aml_add_byte_buffer(pack, dataLPC, 4);
+  AddProperties(pack, DEV_LPC);
   aml_add_local0(met);
   aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
   // finish Method(_DSM,4,NotSerialized)
@@ -1930,10 +1950,10 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
     Size = get_size(dsdt, i);
     k = FindMethod(dsdt + i, Size, "_DSM");
     if (k != 0) {
-      if ((((dropDSM & 0x01) != 0) && (DisplayVendor[0] == 0x1002)) ||
-          (((dropDSM & 0x02) != 0) && (DisplayVendor[0] == 0x10DE)) ||
-          (((dropDSM & 0x04) != 0) && (DisplayVendor[0] == 0x8086)) ||
-          (((dropDSM & 0x08) != 0) && GFXHDAFIX)) {
+      if ((((dropDSM & DEV_ATI)   != 0) && (DisplayVendor[0] == 0x1002)) ||
+          (((dropDSM & DEV_NVIDIA)!= 0) && (DisplayVendor[0] == 0x10DE)) ||
+          (((dropDSM & DEV_INTEL) != 0) && (DisplayVendor[0] == 0x8086)) ||
+          (((dropDSM & DEV_HDMI)  != 0) && GFXHDAFIX)) {
         Size = get_size(dsdt, k);
         sizeoffset = - 1 - Size;
         len = move_data(k - 1, dsdt, len, sizeoffset);
@@ -2183,7 +2203,7 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
         aml_add_string(pack, "vendor-id");
         aml_add_byte_buffer(pack, (CHAR8*)&FakeVen, 4);
       }
-      
+      AddProperties(pack, DEV_INTEL);
       
       aml_add_local0(met);
       aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
@@ -2259,7 +2279,7 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
       aml_add_string(pack, "vendor-id");
       aml_add_byte_buffer(pack, (CHAR8*)&FakeVen, 4);
     }
-    
+    AddProperties(pack, DEV_NVIDIA);
       aml_add_local0(met);
       aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
       // finish Method(_DSM,4,NotSerialized)
@@ -2343,6 +2363,7 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
         aml_add_string(pack, "ATY,VendorID");
         aml_add_byte_buffer(pack, VenATI, 2);
       }
+      AddProperties(pack, DEV_ATI);
       aml_add_local0(met);
       aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
       // finish Method(_DSM,4,NotSerialized)
@@ -2368,10 +2389,14 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
       //aml_add_byte_buffer(pack, data, sizeof(data));
       //aml_add_string(pack, "codec-id");
       //aml_add_byte_buffer(pack, (CHAR8*)&GfxcodecId, 4);
-      aml_add_string(pack, "layout-id");
-      aml_add_byte_buffer(pack, (CHAR8*)&GfxlayoutId, 4);
-      aml_add_string(pack, "hda-gfx");
-      aml_add_string_buffer(pack, "onboard-2");
+      if (!AddProperties(pack, DEV_HDMI);) {
+        aml_add_string(pack, "layout-id");
+        aml_add_byte_buffer(pack, (CHAR8*)&GfxlayoutId, 4);
+        aml_add_string(pack, "hda-gfx");
+        aml_add_string_buffer(pack, "onboard-2");
+        aml_add_string(pack, "PinConfigurations");
+        aml_add_byte_buffer(pack, data2, sizeof(data2));        
+      }
       //aml_add_string(pack, "name");
       //aml_add_string(pack, "pci1002,aa38");
       //aml_add_string(pack, "IOName");
@@ -2379,8 +2404,6 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
       //aml_add_string(pack, "layout-id");
       //CHAR8 data1[] = {0x12,0x00,0x00,0x00};
       //aml_add_byte_buffer(pack, data1, sizeof(data1));
-      aml_add_string(pack, "PinConfigurations");
-      aml_add_byte_buffer(pack, data2, sizeof(data2));
       aml_add_local0(met);
       aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
       // finish Method(_DSM,4,NotSerialized)
@@ -2513,10 +2536,10 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
     Size = get_size(dsdt, i);
     k = FindMethod(dsdt + i, Size, "_DSM");
     if (k != 0) {
-      if ((((dropDSM & 0x01) != 0) && (DisplayVendor[0] == 0x1002)) ||
-          (((dropDSM & 0x02) != 0) && (DisplayVendor[0] == 0x10DE)) ||
-          (((dropDSM & 0x04) != 0) && (DisplayVendor[0] == 0x8086)) ||
-          (((dropDSM & 0x08) != 0) && GFXHDAFIX)) {
+      if ((((dropDSM & DEV_ATI)    != 0) && (DisplayVendor[0] == 0x1002)) ||
+          (((dropDSM & DEV_NVIDIA) != 0) && (DisplayVendor[0] == 0x10DE)) ||
+          (((dropDSM & DEV_INTEL)  != 0) && (DisplayVendor[0] == 0x8086)) ||
+          (((dropDSM & DEV_HDMI)   != 0) && GFXHDAFIX)) {
         Size = get_size(dsdt, k);
         sizeoffset = - 1 - Size;
         len = move_data(k - 1, dsdt, len, sizeoffset);
@@ -2687,7 +2710,7 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
         aml_add_string(pack, "vendor-id");
         aml_add_byte_buffer(pack, (CHAR8*)&FakeVen, 4);
       }
-      
+      AddProperties(pack, DEV_INTEL);
       aml_add_local0(met);
       aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
       // finish Method(_DSM,4,NotSerialized)
@@ -2757,7 +2780,7 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
        aml_add_string(pack, "vendor-id");
        aml_add_byte_buffer(pack, (CHAR8*)&FakeVen, 4);
      }
-     
+     AddProperties(pack, DEV_NVIDIA);
       aml_add_local0(met);
       aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
       // finish Method(_DSM,4,NotSerialized)
@@ -2822,7 +2845,7 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
         aml_add_string(pack, "ATY,VendorID");
         aml_add_byte_buffer(pack, VenATI, 2);
       }
-      
+      AddProperties(pack, DEV_ATI);
 /*      
       aml_add_string(pack, "device-id");
       //     CHAR8 data[] = {0xE1,0x68,0x00,0x00};
@@ -2862,10 +2885,14 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
       //aml_add_byte_buffer(pack, data, sizeof(data));
       //aml_add_string(pack, "codec-id");
       //aml_add_byte_buffer(pack, (CHAR8*)&GfxcodecId, 4);
-      aml_add_string(pack, "layout-id");
-      aml_add_byte_buffer(pack, (CHAR8*)&GfxlayoutId, 4);
-      aml_add_string(pack, "hda-gfx");
-      aml_add_string_buffer(pack, "onboard-2");
+      if (!AddProperties(pack, DEV_HDMI)) {
+        aml_add_string(pack, "layout-id");
+        aml_add_byte_buffer(pack, (CHAR8*)&GfxlayoutId, 4);
+        aml_add_string(pack, "hda-gfx");
+        aml_add_string_buffer(pack, "onboard-2");
+        aml_add_string(pack, "PinConfigurations");
+        aml_add_byte_buffer(pack, data2, sizeof(data2));        
+      }
       //aml_add_string(pack, "name");
       //aml_add_string(pack, "pci1002,aa38");
       //aml_add_string(pack, "IOName");
@@ -2873,8 +2900,6 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
       //aml_add_string(pack, "layout-id");
       //CHAR8 data1[] = {0x12,0x00,0x00,0x00};
       //aml_add_byte_buffer(pack, data1, sizeof(data1));
-      aml_add_string(pack, "PinConfigurations");
-      aml_add_byte_buffer(pack, data2, sizeof(data2));
       aml_add_local0(met);
       aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
       // finish Method(_DSM,4,NotSerialized)
@@ -3007,7 +3032,7 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
     Size = get_size(dsdt, i);
     k = FindMethod(dsdt + i, Size, "_DSM");
     if (k != 0) {
-      if ((dropDSM & 0x20) != 0) {
+      if ((dropDSM & DEV_LAN) != 0) {
         Size = get_size(dsdt, k);
         sizeoffset = - 1 - Size;
         len = move_data(k - 1, dsdt, len, sizeoffset);
@@ -3042,12 +3067,14 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
   // add Method(_DSM,4,NotSerialized) for network
   met = aml_add_store(met);
   pack = aml_add_package(met);
-  aml_add_string(pack, "built-in");
-  aml_add_byte_buffer(pack, dataBuiltin, sizeof(dataBuiltin));
-  aml_add_string(pack, "model");
-  aml_add_string_buffer(pack, Netmodel);
-  aml_add_string(pack, "device_type");
-  aml_add_string_buffer(pack, "Ethernet");
+  if (!AddProperties(pack, DEV_LAN)) {
+    aml_add_string(pack, "built-in");
+    aml_add_byte_buffer(pack, dataBuiltin, sizeof(dataBuiltin));
+    aml_add_string(pack, "model");
+    aml_add_string_buffer(pack, Netmodel);
+    aml_add_string(pack, "device_type");
+    aml_add_string_buffer(pack, "Ethernet");    
+  }
   if (gSettings.FakeLAN) {
 //    aml_add_string(pack, "model");
 //    aml_add_string_buffer(pack, "Apple LAN card");
@@ -3160,7 +3187,7 @@ UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
     Size = get_size(dsdt, i);
     k = FindMethod(dsdt + i, Size, "_DSM");
     if (k != 0) {
-      if ((dropDSM & 0x40) != 0) {
+      if ((dropDSM & DEV_WIFI) != 0) {
         Size = get_size(dsdt, k);
         sizeoffset = - 1 - Size;
         len = move_data(k - 1, dsdt, len, sizeoffset);
@@ -3192,46 +3219,48 @@ UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
   // add Method(_DSM,4,NotSerialized) for network
   met = aml_add_store(met);
   pack = aml_add_package(met);
-  aml_add_string(pack, "built-in");  
-  aml_add_byte_buffer(pack, dataBuiltin, sizeof(dataBuiltin));
-  
-  if (gSettings.FakeWIFI) {
+  if (!AddProperties(pack, DEV_WIFI)) {
+    aml_add_string(pack, "built-in");  
+    aml_add_byte_buffer(pack, dataBuiltin, sizeof(dataBuiltin));
     aml_add_string(pack, "model");
     aml_add_string_buffer(pack, "Apple WiFi card");
+    aml_add_string(pack, "subsystem-id");
+    aml_add_byte_buffer(pack, data2ATH, 4);
+    aml_add_string(pack, "subsystem-vendor-id");
+    aml_add_byte_buffer(pack, data3ATH, 4);    
+    if (ArptBCM) {
+      aml_add_string(pack, "model");
+      aml_add_string_buffer(pack, "Dell Wireless 1395");
+      aml_add_string(pack, "name");
+      aml_add_string_buffer(pack, "pci14e4,4312");
+      aml_add_string(pack, "device-id");
+      aml_add_byte_buffer(pack, dataBCM, 4);
+    } else if (ArptAtheros) {
+      aml_add_string(pack, "model");
+      aml_add_string_buffer(pack, "Atheros AR9285 WiFi card");
+      aml_add_string(pack, "name");
+      aml_add_string_buffer(pack, "pci168c,2a");
+      aml_add_string(pack, "device-id");
+      aml_add_byte_buffer(pack, data1ATH, 4);        
+      aml_add_string(pack, "subsystem-id");
+      aml_add_byte_buffer(pack, data2ATH, 4);
+      aml_add_string(pack, "subsystem-vendor-id");
+      aml_add_byte_buffer(pack, data3ATH, 4);        
+    }
+    aml_add_string(pack, "device_type");
+    aml_add_string_buffer(pack, "Airport");
+    aml_add_string(pack, "AAPL,slot-name");
+    aml_add_string_buffer(pack, "AirPort");    
+  }
+    
+  if (gSettings.FakeWIFI) {
     aml_add_string(pack, "device-id");
     aml_add_byte_buffer(pack, (CHAR8 *)&FakeID, 4);
     aml_add_string(pack, "vendor-id");
     aml_add_byte_buffer(pack, (CHAR8 *)&FakeVen, 4);
     aml_add_string(pack, "name");
     aml_add_string_buffer(pack, (CHAR8 *)&NameCard[0]);
-    aml_add_string(pack, "subsystem-id");
-    aml_add_byte_buffer(pack, data2ATH, 4);
-    aml_add_string(pack, "subsystem-vendor-id");
-    aml_add_byte_buffer(pack, data3ATH, 4);    
-  } else
-  if (ArptBCM) {
-    aml_add_string(pack, "model");
-    aml_add_string_buffer(pack, "Dell Wireless 1395");
-    aml_add_string(pack, "name");
-    aml_add_string_buffer(pack, "pci14e4,4312");
-    aml_add_string(pack, "device-id");
-    aml_add_byte_buffer(pack, dataBCM, 4);
-  } else if (ArptAtheros) {
-    aml_add_string(pack, "model");
-    aml_add_string_buffer(pack, "Atheros AR9285 WiFi card");
-    aml_add_string(pack, "name");
-    aml_add_string_buffer(pack, "pci168c,2a");
-    aml_add_string(pack, "device-id");
-    aml_add_byte_buffer(pack, data1ATH, 4);        
-    aml_add_string(pack, "subsystem-id");
-    aml_add_byte_buffer(pack, data2ATH, 4);
-    aml_add_string(pack, "subsystem-vendor-id");
-    aml_add_byte_buffer(pack, data3ATH, 4);        
-  }
-  aml_add_string(pack, "device_type");
-  aml_add_string_buffer(pack, "Airport");
-  aml_add_string(pack, "AAPL,slot-name");
-  aml_add_string_buffer(pack, "AirPort");
+  } 
   
   aml_add_local0(met);
   aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
@@ -3301,7 +3330,7 @@ UINT32 FIXSBUS (UINT8 *dsdt, UINT32 len)
     Size = get_size(dsdt, i);
     k = FindMethod(dsdt + i, Size, "_DSM");
     if (k != 0) {
-      if ((dropDSM & 0x0200) != 0) {
+      if ((dropDSM & DEV_SMBUS) != 0) {
         Size = get_size(dsdt, k);
         sizeoffset = - 1 - Size;
         len = move_data(k - 1, dsdt, len, sizeoffset);
@@ -3518,7 +3547,7 @@ UINT32 FIXFirewire (UINT8 *dsdt, UINT32 len)
   Size = get_size(dsdt, i);
   k = FindMethod(dsdt + i, Size, "_DSM");
   if (k != 0) {
-    if ((dropDSM & 0x0400) != 0) {
+    if ((dropDSM & DEV_FIREWIRE) != 0) {
       Size = get_size(dsdt, k);
       sizeoffset = - 1 - Size;
       len = move_data(k - 1, dsdt, len, sizeoffset);
@@ -3551,8 +3580,10 @@ UINT32 FIXFirewire (UINT8 *dsdt, UINT32 len)
     met = aml_add_method(root, "_DSM", 4);
   stro = aml_add_store(met);
   pack = aml_add_package(stro);
-  aml_add_string(pack, "fwhub");
-  aml_add_byte_buffer(pack, dataFW, sizeof(dataFW));
+  if (!AddProperties(pack, DEV_FIREWIRE)) {
+    aml_add_string(pack, "fwhub");
+    aml_add_byte_buffer(pack, dataFW, sizeof(dataFW));
+  }
   aml_add_local0(stro);
   aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
   // finish Method(_DSM,4,NotSerialized)  
@@ -3587,7 +3618,7 @@ UINT32 AddHDEF (UINT8 *dsdt, UINT32 len)
   AML_CHUNK* device;
   AML_CHUNK* pack;
   CHAR8 *hdef;
-
+ 
   PCIADR = GetPciDevice(dsdt, len);
   if (PCIADR) {
     PCISIZE = get_size(dsdt, PCIADR);
@@ -3621,7 +3652,7 @@ UINT32 AddHDEF (UINT8 *dsdt, UINT32 len)
     Size = get_size(dsdt, i);
     k = FindMethod(dsdt + i, Size, "_DSM");
     if (k != 0) {
-      if ((dropDSM & 0x08) != 0) {
+      if ((dropDSM & DEV_HDA) != 0) {
         Size = get_size(dsdt, k);
         sizeoffset = - 1 - Size;
         len = move_data(k - 1, dsdt, len, sizeoffset);
@@ -3650,11 +3681,13 @@ UINT32 AddHDEF (UINT8 *dsdt, UINT32 len)
   pack = aml_add_package(met);
   //aml_add_string(pack, "codec-id");
   //aml_add_byte_buffer(pack, (CHAR8*)&HDAcodecId, 4);
-  aml_add_string(pack, "layout-id");
-  aml_add_byte_buffer(pack, (CHAR8*)&HDAlayoutId, 4);
-  aml_add_string(pack, "PinConfigurations");
-  //CHAR8 data[] = {};
-  aml_add_byte_buffer(pack, 0, 0);//data, sizeof(data));
+  if (!AddProperties(pack, DEV_HDA)) {
+    aml_add_string(pack, "layout-id");
+    aml_add_byte_buffer(pack, (CHAR8*)&HDAlayoutId, 4);
+    aml_add_string(pack, "PinConfigurations");
+    aml_add_byte_buffer(pack, 0, 0);//data, sizeof(data));    
+  }
+  
   aml_add_local0(met);
   aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
   // finish Method(_DSM,4,NotSerialized)
@@ -3711,19 +3744,21 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
   met = aml_add_method(root, "_DSM", 4);
   met = aml_add_store(met);
   pack = aml_add_package(met);
-  aml_add_string(pack, "device-id");
-  aml_add_byte_buffer(pack, (/* CONST*/ CHAR8*)&USBID[0], 4);
-  aml_add_string(pack, "built-in");
-  aml_add_byte_buffer(pack, dataBuiltin, sizeof(dataBuiltin));
-  aml_add_string(pack, "device_type");
+  if (!AddProperties(pack, DEV_USB)) {
+    aml_add_string(pack, "device-id");
+    aml_add_byte_buffer(pack, (/* CONST*/ CHAR8*)&USBID[0], 4);
+    aml_add_string(pack, "built-in");
+    aml_add_byte_buffer(pack, dataBuiltin, sizeof(dataBuiltin));
+    aml_add_string(pack, "device_type");
     if (USBIntel) {
-  aml_add_string_buffer(pack, "UHCI");
+      aml_add_string_buffer(pack, "UHCI");
     } else if (USBNForce) {
-        aml_add_string_buffer(pack, "OHCI");
+      aml_add_string_buffer(pack, "OHCI");
     }
-  if (gSettings.InjectClockID) {
-    aml_add_string(pack, "AAPL,clock-id");
-    aml_add_byte_buffer(pack, dataBuiltin, 1);
+    if (gSettings.InjectClockID) {
+      aml_add_string(pack, "AAPL,clock-id");
+      aml_add_byte_buffer(pack, dataBuiltin, 1);
+    }    
   }
   
   aml_add_local0(met);
@@ -3741,34 +3776,35 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
   met1 = aml_add_method(root1, "_DSM", 4);
   met1 = aml_add_store(met1);
   pack1 = aml_add_package(met1);
-  aml_add_string(pack1, "device-id");
-  aml_add_byte_buffer(pack1, (/* CONST*/ CHAR8*)&USBID[0], 4);
-  aml_add_string(pack1, "built-in");
-  aml_add_byte_buffer(pack1, dataBuiltin, sizeof(dataBuiltin));
-  aml_add_string(pack1, "device_type");
-  aml_add_string_buffer(pack1, "EHCI");
-  if (gSettings.InjectClockID) {
-    aml_add_string(pack1, "AAPL,clock-id");
+  if (!AddProperties(pack, DEV_USB)) {
+    aml_add_string(pack1, "device-id");
+    aml_add_byte_buffer(pack1, (/* CONST*/ CHAR8*)&USBID[0], 4);
+    aml_add_string(pack1, "built-in");
     aml_add_byte_buffer(pack1, dataBuiltin, sizeof(dataBuiltin));
+    aml_add_string(pack1, "device_type");
+    aml_add_string_buffer(pack1, "EHCI");
+    if (gSettings.InjectClockID) {
+      aml_add_string(pack1, "AAPL,clock-id");
+      aml_add_byte_buffer(pack1, dataBuiltin, sizeof(dataBuiltin));
+    }
+    if (USBIntel) {
+      aml_add_string(pack1, "AAPL,current-available");
+      aml_add_word(pack1, 0x05DC);
+      aml_add_string(pack1, "AAPL,current-extra");
+      aml_add_word(pack1, 0x03E8);
+      aml_add_string(pack1, "AAPL,current-in-sleep");
+      aml_add_word(pack1, 0x0BB8);
+      //  aml_add_string(pack1, "AAPL,device-internal");
+      //  aml_add_byte(pack1, 0x02);
+    } else if (USBNForce) {
+      aml_add_string(pack1, "AAPL,current-available");
+      aml_add_word(pack1, 0x04B0);
+      aml_add_string(pack1, "AAPL,current-extra");
+      aml_add_word(pack1, 0x02BC);
+      aml_add_string(pack1, "AAPL,current-in-sleep");
+      aml_add_word(pack1, 0x03E8);
+    }
   }
-  if (USBIntel) {
-  aml_add_string(pack1, "AAPL,current-available");
-  aml_add_word(pack1, 0x05DC);
-  aml_add_string(pack1, "AAPL,current-extra");
-  aml_add_word(pack1, 0x03E8);
-  aml_add_string(pack1, "AAPL,current-in-sleep");
-  aml_add_word(pack1, 0x0BB8);
-//  aml_add_string(pack1, "AAPL,device-internal");
-//  aml_add_byte(pack1, 0x02);
-  } else if (USBNForce) {
-    aml_add_string(pack1, "AAPL,current-available");
-    aml_add_word(pack1, 0x04B0);
-    aml_add_string(pack1, "AAPL,current-extra");
-    aml_add_word(pack1, 0x02BC);
-    aml_add_string(pack1, "AAPL,current-in-sleep");
-    aml_add_word(pack1, 0x03E8);
-  }
-
   aml_add_byte_buffer(pack1, dataBuiltin, sizeof(dataBuiltin));
   aml_add_local0(met1);
   aml_add_buffer(met1, dtgp_1, sizeof(dtgp_1));
@@ -3795,26 +3831,28 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
   met1 = aml_add_method(root1, "_DSM", 4);
   met1 = aml_add_store(met1);
   pack1 = aml_add_package(met1);
-  aml_add_string(pack1, "device-id");
-  aml_add_byte_buffer(pack1, (/* CONST*/ CHAR8*)&USBID[0], 4);
-  aml_add_string(pack1, "built-in");
-  aml_add_byte_buffer(pack1, dataBuiltin, sizeof(dataBuiltin));
-  aml_add_string(pack1, "device_type");
-  aml_add_string_buffer(pack1, "XHCI");
-  if (gSettings.InjectClockID) {
-    aml_add_string(pack1, "AAPL,clock-id");
+  if (!AddProperties(pack, DEV_USB)) {
+    aml_add_string(pack1, "device-id");
+    aml_add_byte_buffer(pack1, (/* CONST*/ CHAR8*)&USBID[0], 4);
+    aml_add_string(pack1, "built-in");
     aml_add_byte_buffer(pack1, dataBuiltin, sizeof(dataBuiltin));
+    aml_add_string(pack1, "device_type");
+    aml_add_string_buffer(pack1, "XHCI");
+    if (gSettings.InjectClockID) {
+      aml_add_string(pack1, "AAPL,clock-id");
+      aml_add_byte_buffer(pack1, dataBuiltin, sizeof(dataBuiltin));
+    }
+    aml_add_string(pack1, "AAPL,current-available");
+    aml_add_word(pack1, 0x0834);
+    aml_add_string(pack1, "AAPL,current-extra");
+    aml_add_word(pack1, 0x0A8C);
+    aml_add_string(pack1, "AAPL,current-in-sleep");
+    aml_add_word(pack1, 0x0A8C);
+    aml_add_string(pack1, "AAPL,max-port-current-in-sleep");
+    aml_add_word(pack1, 0x0834);
+    aml_add_string(pack1, "AAPL,device-internal");
+    aml_add_byte(pack1, 0x00);    
   }
-  aml_add_string(pack1, "AAPL,current-available");
-  aml_add_word(pack1, 0x0834);
-  aml_add_string(pack1, "AAPL,current-extra");
-  aml_add_word(pack1, 0x0A8C);
-  aml_add_string(pack1, "AAPL,current-in-sleep");
-  aml_add_word(pack1, 0x0A8C);
-  aml_add_string(pack1, "AAPL,max-port-current-in-sleep");
-  aml_add_word(pack1, 0x0834);
-  aml_add_string(pack1, "AAPL,device-internal");
-  aml_add_byte(pack1, 0x00);
   
   aml_add_byte_buffer(pack1, dataBuiltin, sizeof(dataBuiltin));
   aml_add_local0(met1);
@@ -3879,7 +3917,7 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
 
           k = FindMethod(dsdt + adr, Size, "_DSM");
           if (k != 0) {
-            if ((dropDSM & 0x80) != 0) {
+            if ((dropDSM & DEV_USB) != 0) {
               Size = get_size(dsdt, k);
               sizeoffset = - 1 - Size;
               len = move_data(k - 1, dsdt, len, sizeoffset);
@@ -4074,7 +4112,7 @@ UINT32 FIXIDE (UINT8 *dsdt, UINT32 len)
     Size = get_size(dsdt, i);
     k = FindMethod(dsdt + i, Size, "_DSM");
     if (k != 0) {
-      if ((dropDSM & 0x0800) != 0) {
+      if ((dropDSM & DEV_IDE) != 0) {
         Size = get_size(dsdt, k);
         sizeoffset = - 1 - Size;
         len = move_data(k - 1, dsdt, len, sizeoffset);
@@ -4106,35 +4144,37 @@ UINT32 FIXIDE (UINT8 *dsdt, UINT32 len)
     met = aml_add_method(device, "_DSM", 4);
     met = aml_add_store(met);
     pack = aml_add_package(met);
-    aml_add_string(pack, "device-id");
-    aml_add_byte_buffer(pack, DevIDE, sizeof(DevIDE));
-    aml_add_string(pack, "vendor-id");
-    aml_add_byte_buffer(pack, VenIDE, sizeof(VenIDE));
-    aml_add_string(pack, "name");
-    aml_add_string(pack, "pci8086,269e");
-    aml_add_string(pack, "IOName");
-    aml_add_string(pack, "pci8086,269e");
-    aml_add_local0(met);
-    aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
-    device1 = aml_add_device(device, "PRIM");
-    aml_add_name(device1, "_ADR");
-    aml_add_byte(device1, 0x00);
-    device2 = aml_add_device(device1, "MAST");
-    aml_add_name(device2, "_ADR");
-    aml_add_byte(device2, 0x00);
-    device2 = aml_add_device(device1, "SLAV");
-    aml_add_name(device2, "_ADR");
-    aml_add_byte(device2, 0x01);
-    // Marvell only one connected cable
-    //AML_CHUNK* device3 = aml_add_device(device, "SLAB");
-    //aml_add_name(device3, "_ADR");
-    //aml_add_byte(device3, 0x00);
-    //AML_CHUNK* device4 = aml_add_device(device3, "MAST");
-    //aml_add_name(device4, "_ADR");
-    //aml_add_byte(device4, 0x00);
-    //device4 = aml_add_device(device3, "SLAV");
-    //aml_add_name(device4, "_ADR");
-    //aml_add_byte(device4, 0x01);
+    if (!AddProperties(pack, DEV_IDE)) {
+      aml_add_string(pack, "device-id");
+      aml_add_byte_buffer(pack, DevIDE, sizeof(DevIDE));
+      aml_add_string(pack, "vendor-id");
+      aml_add_byte_buffer(pack, VenIDE, sizeof(VenIDE));
+      aml_add_string(pack, "name");
+      aml_add_string(pack, "pci8086,269e");
+      aml_add_string(pack, "IOName");
+      aml_add_string(pack, "pci8086,269e");
+      aml_add_local0(met);
+      aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
+      device1 = aml_add_device(device, "PRIM");
+      aml_add_name(device1, "_ADR");
+      aml_add_byte(device1, 0x00);
+      device2 = aml_add_device(device1, "MAST");
+      aml_add_name(device2, "_ADR");
+      aml_add_byte(device2, 0x00);
+      device2 = aml_add_device(device1, "SLAV");
+      aml_add_name(device2, "_ADR");
+      aml_add_byte(device2, 0x01);
+      // Marvell only one connected cable
+      //AML_CHUNK* device3 = aml_add_device(device, "SLAB");
+      //aml_add_name(device3, "_ADR");
+      //aml_add_byte(device3, 0x00);
+      //AML_CHUNK* device4 = aml_add_device(device3, "MAST");
+      //aml_add_name(device4, "_ADR");
+      //aml_add_byte(device4, 0x00);
+      //device4 = aml_add_device(device3, "SLAV");
+      //aml_add_name(device4, "_ADR");
+      //aml_add_byte(device4, 0x01);      
+    }
     
   }
   else
@@ -4143,16 +4183,18 @@ UINT32 FIXIDE (UINT8 *dsdt, UINT32 len)
     AML_CHUNK* met = aml_add_method(root, "_DSM", 4);
     met = aml_add_store(met);
     pack = aml_add_package(met);
-    aml_add_string(pack, "device-id");
-    aml_add_byte_buffer(pack, DevIDE, sizeof(DevIDE));
-    aml_add_string(pack, "vendor-id");
-    aml_add_byte_buffer(pack, VenIDE, sizeof(VenIDE));
-    aml_add_string(pack, "name");
-    aml_add_string(pack, "pci8086,269e");
-    aml_add_string(pack, "IOName");
-    aml_add_string(pack, "pci8086,269e");
-    aml_add_local0(met);
-    aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
+    if (!AddProperties(pack, DEV_IDE)) {
+      aml_add_string(pack, "device-id");
+      aml_add_byte_buffer(pack, DevIDE, sizeof(DevIDE));
+      aml_add_string(pack, "vendor-id");
+      aml_add_byte_buffer(pack, VenIDE, sizeof(VenIDE));
+      aml_add_string(pack, "name");
+      aml_add_string(pack, "pci8086,269e");
+      aml_add_string(pack, "IOName");
+      aml_add_string(pack, "pci8086,269e");
+      aml_add_local0(met);
+      aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));      
+    }
   }
   // finish Method(_DSM,4,NotSerialized) 
   
@@ -4227,7 +4269,7 @@ UINT32 FIXSATAAHCI (UINT8 *dsdt, UINT32 len)
     Size = get_size(dsdt, i);
     k = FindMethod(dsdt + i, Size, "_DSM");
     if (k != 0) {
-      if ((dropDSM & 0x10) != 0) {
+      if ((dropDSM & DEV_SATA) != 0) {
         Size = get_size(dsdt, k);
         sizeoffset = - 1 - Size;
         len = move_data(k - 1, dsdt, len, sizeoffset);
@@ -4254,6 +4296,7 @@ UINT32 FIXSATAAHCI (UINT8 *dsdt, UINT32 len)
     aml_add_string(pack, "vendor-id");
     aml_add_byte_buffer(pack, (CHAR8*)&FakeVen, 4);
   }
+  AddProperties(pack, DEV_SATA);
   aml_add_local0(met);
   aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
   // finish Method(_DSM,4,NotSerialized)
@@ -4315,7 +4358,7 @@ UINT32 FIXSATA (UINT8 *dsdt, UINT32 len)
     Size = get_size(dsdt, i);
     k = FindMethod(dsdt + i, Size, "_DSM");
     if (k != 0) {
-      if ((dropDSM & 0x10) != 0) {
+      if ((dropDSM & DEV_SATA) != 0) {
         Size = get_size(dsdt, k);
         sizeoffset = - 1 - Size;
         len = move_data(k - 1, dsdt, len, sizeoffset);
@@ -4341,6 +4384,7 @@ UINT32 FIXSATA (UINT8 *dsdt, UINT32 len)
     aml_add_string(pack, "vendor-id");
     aml_add_byte_buffer(pack, (CHAR8*)&FakeVen, 4);
   }
+  AddProperties(pack, DEV_SATA);
   aml_add_local0(met);
   aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
   // finish Method(_DSM,4,NotSerialized)

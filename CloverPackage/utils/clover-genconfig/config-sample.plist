@@ -331,6 +331,8 @@
 			<true/>
 			<key>HDA</key>
 			<true/>
+			<key>HDMI</key>
+			<true/>
 			<key>LPC</key>
 			<false/>
 			<key>SmBUS</key>

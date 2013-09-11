@@ -1884,6 +1884,69 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
         }
         //---------
       }
+      prop = GetProperty(dictPointer, "AddProperties");
+      if(prop) {
+        INTN i, Index, Count = GetTagCount(prop);
+        Index = 0;  //begin from 0 if second enter
+        if (Count > 0) {
+          DBG("Add %d properties\n", Count);
+          gSettings.AddProperties = AllocateZeroPool(Count * sizeof(DEV_PROPERTY));
+          
+          for (i = 0; i < Count; i++) {
+            if (EFI_ERROR(GetElement(prop, i, &dict2))) {
+              DBG("AddProperties continue at %d\n", i);
+              continue;
+            }
+            if (dict2 == NULL) {
+              DBG("AddProperties break at %d\n", i);
+              break;
+            }
+            prop2 = GetProperty(dict2, "Device");
+            if (prop2 && (prop2->type == kTagTypeString) && prop2->string) {
+              if (AsciiStriCmp(prop2->string,        "ATI") == 0) {
+                gSettings.AddProperties[Index].Device = DEV_ATI;
+              } else if (AsciiStriCmp(prop2->string, "NVidia") == 0) {
+                gSettings.AddProperties[Index].Device = DEV_NVIDIA;
+              } else if (AsciiStriCmp(prop2->string, "IntelGFX") == 0) {
+                gSettings.AddProperties[Index].Device = DEV_INTEL;
+              } else if (AsciiStriCmp(prop2->string, "LAN") == 0) {
+                gSettings.AddProperties[Index].Device = DEV_LAN;
+              } else if (AsciiStriCmp(prop2->string, "WIFI") == 0) {
+                gSettings.AddProperties[Index].Device = DEV_WIFI;
+              } else if (AsciiStriCmp(prop2->string, "Firewire") == 0) {
+                gSettings.AddProperties[Index].Device = DEV_FIREWIRE;
+              } else if (AsciiStriCmp(prop2->string, "SATA") == 0) {
+                gSettings.AddProperties[Index].Device = DEV_SATA;
+              } else if (AsciiStriCmp(prop2->string, "IDE") == 0) {
+                gSettings.AddProperties[Index].Device = DEV_IDE;
+              } else if (AsciiStriCmp(prop2->string, "HDA") == 0) {
+                gSettings.AddProperties[Index].Device = DEV_HDA;
+              } else if (AsciiStriCmp(prop2->string, "HDMI") == 0) {
+                gSettings.AddProperties[Index].Device = DEV_HDMI;
+              } else if (AsciiStriCmp(prop2->string, "LPC") == 0) {
+                gSettings.AddProperties[Index].Device = DEV_LPC;
+              } else if (AsciiStriCmp(prop2->string, "SmBUS") == 0) {
+                gSettings.AddProperties[Index].Device = DEV_SMBUS;
+              } else if (AsciiStriCmp(prop2->string, "USB") == 0) {
+                gSettings.AddProperties[Index].Device = DEV_USB;
+              } else {
+                DBG(" add properties to unknown device, ignored\n");
+                continue; 
+              }              
+            }
+
+            prop2 = GetProperty(dict2, "Key");
+            if (prop2 && (prop2->type == kTagTypeString) && prop2->string) {
+              gSettings.AddProperties[Index].Key = AllocateCopyPool(AsciiStrSize(prop2->string), prop2->string);
+            }
+            gSettings.AddProperties[Index].Value = GetDataSetting(dict2, "Value",
+                                                                  &gSettings.AddProperties[Index].ValueLen);
+            Index++;
+          }
+          gSettings.NrAddProperties = Index;
+        }
+      }
+      
       prop = GetProperty(dictPointer, "FakeID");
       if(prop) {
         prop2 = GetProperty(prop, "ATI");
@@ -2003,7 +2066,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
 
     //*** ACPI ***//
     
-    dictPointer = GetProperty(dict,"ACPI");
+    dictPointer = GetProperty(dict, "ACPI");
     if (dictPointer) {
       prop = GetProperty(dictPointer, "DropTables");
       if (prop) {
@@ -2106,7 +2169,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
             if ((prop2->type == kTagTypeTrue) ||
                 ((prop2->type == kTagTypeString) &&
                  ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
-                gSettings.DropOEM_DSM |= 0x01;
+                gSettings.DropOEM_DSM |= DEV_ATI;
             }
           }
           prop2 = GetProperty(prop, "NVidia");
@@ -2114,7 +2177,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
             if ((prop2->type == kTagTypeTrue) ||
                 ((prop2->type == kTagTypeString) &&
                  ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
-                  gSettings.DropOEM_DSM |= 0x02;
+                  gSettings.DropOEM_DSM |= DEV_NVIDIA;
                 }
           }
           prop2 = GetProperty(prop, "IntelGFX");
@@ -2122,7 +2185,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
             if ((prop2->type == kTagTypeTrue) ||
                 ((prop2->type == kTagTypeString) &&
                  ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
-                  gSettings.DropOEM_DSM |= 0x04;
+                  gSettings.DropOEM_DSM |= DEV_INTEL;
                 }
           }
           prop2 = GetProperty(prop, "HDA");
@@ -2130,7 +2193,15 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
             if ((prop2->type == kTagTypeTrue) ||
                 ((prop2->type == kTagTypeString) &&
                  ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
-                  gSettings.DropOEM_DSM |= 0x08;
+                  gSettings.DropOEM_DSM |= DEV_HDA;
+                }
+          }
+          prop2 = GetProperty(prop, "HDMI");
+          if(prop2) {
+            if ((prop2->type == kTagTypeTrue) ||
+                ((prop2->type == kTagTypeString) &&
+                 ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
+                  gSettings.DropOEM_DSM |= DEV_HDMI;
                 }
           }
           prop2 = GetProperty(prop, "SATA");
@@ -2138,7 +2209,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
             if ((prop2->type == kTagTypeTrue) ||
                 ((prop2->type == kTagTypeString) &&
                  ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
-                  gSettings.DropOEM_DSM |= 0x10;
+                  gSettings.DropOEM_DSM |= DEV_SATA;
                 }
           }
           prop2 = GetProperty(prop, "LAN");
@@ -2146,7 +2217,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
             if ((prop2->type == kTagTypeTrue) ||
                 ((prop2->type == kTagTypeString) &&
                  ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
-                  gSettings.DropOEM_DSM |= 0x20;
+                  gSettings.DropOEM_DSM |= DEV_LAN;
                 }
           }
           prop2 = GetProperty(prop, "WIFI");
@@ -2154,7 +2225,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
             if ((prop2->type == kTagTypeTrue) ||
                 ((prop2->type == kTagTypeString) &&
                  ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
-                  gSettings.DropOEM_DSM |= 0x40;
+                  gSettings.DropOEM_DSM |= DEV_WIFI;
                 }
           }
           prop2 = GetProperty(prop, "USB");
@@ -2162,7 +2233,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
             if ((prop2->type == kTagTypeTrue) ||
                 ((prop2->type == kTagTypeString) &&
                  ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
-                  gSettings.DropOEM_DSM |= 0x80;
+                  gSettings.DropOEM_DSM |= DEV_USB;
                 }
           }          
           prop2 = GetProperty(prop, "LPC");
@@ -2170,7 +2241,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
             if ((prop2->type == kTagTypeTrue) ||
                 ((prop2->type == kTagTypeString) &&
                  ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
-                  gSettings.DropOEM_DSM |= 0x0100;
+                  gSettings.DropOEM_DSM |= DEV_LPC;
                 }
           }          
           prop2 = GetProperty(prop, "SmBUS");
@@ -2178,7 +2249,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
             if ((prop2->type == kTagTypeTrue) ||
                 ((prop2->type == kTagTypeString) &&
                  ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
-                  gSettings.DropOEM_DSM |= 0x0200;
+                  gSettings.DropOEM_DSM |= DEV_SMBUS;
                 }
           }          
           prop2 = GetProperty(prop, "Firewire");
@@ -2186,7 +2257,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
             if ((prop2->type == kTagTypeTrue) ||
                 ((prop2->type == kTagTypeString) &&
                  ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
-                  gSettings.DropOEM_DSM |= 0x0400;
+                  gSettings.DropOEM_DSM |= DEV_FIREWIRE;
                 }
           }          
           prop2 = GetProperty(prop, "IDE");
@@ -2194,7 +2265,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
             if ((prop2->type == kTagTypeTrue) ||
                 ((prop2->type == kTagTypeString) &&
                  ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
-                  gSettings.DropOEM_DSM |= 0x0800;
+                  gSettings.DropOEM_DSM |= DEV_IDE;
                 }
           }          
         }

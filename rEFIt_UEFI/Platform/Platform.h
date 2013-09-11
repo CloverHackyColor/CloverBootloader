@@ -476,6 +476,20 @@ Headers collection for procedures
 #define FIX_WIFI      bit(14)
 #define FIX_HDA       bit(15)
 
+//devices
+#define DEV_ATI       bit(0)
+#define DEV_NVIDIA    bit(1)
+#define DEV_INTEL     bit(2)
+#define DEV_HDA       bit(3)
+#define DEV_HDMI      bit(4)
+#define DEV_LAN       bit(5)
+#define DEV_WIFI      bit(6)
+#define DEV_SATA      bit(7)
+#define DEV_IDE       bit(8)
+#define DEV_LPC       bit(9)
+#define DEV_SMBUS     bit(10)
+#define DEV_USB       bit(11)
+#define DEV_FIREWIRE  bit(12)
 
 struct aml_chunk 
 {
@@ -589,6 +603,13 @@ typedef struct {
   UINT8   *Data;
   UINT8   *Patch;
 } KEXT_PATCH;
+
+typedef struct {
+  UINT32  Device;
+  CHAR8   *Key;
+  CHAR8   *Value;
+  UINTN   ValueLen;
+} DEV_PROPERTY;
 
 typedef struct CUSTOM_LOADER_ENTRY CUSTOM_LOADER_ENTRY;
 struct CUSTOM_LOADER_ENTRY {
@@ -874,6 +895,10 @@ typedef struct {
   CUSTOM_LOADER_ENTRY *CustomEntries;
   CUSTOM_LEGACY_ENTRY *CustomLegacy;
   CUSTOM_TOOL_ENTRY   *CustomTool;
+  
+  //Add custom properties
+  INT32          NrAddProperties;
+  DEV_PROPERTY   *AddProperties;
 
 } SETTINGS_DATA;
 
