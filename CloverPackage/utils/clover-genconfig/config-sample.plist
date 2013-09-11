@@ -323,9 +323,19 @@
 			<true/>
 			<key>SATA</key>
 			<true/>
+			<key>IDE</key>
+			<true/>
 			<key>WIFI</key>
 			<true/>
-			<key>XHCI</key>
+			<key>USB</key>
+			<true/>
+			<key>HDA</key>
+			<true/>
+			<key>LPC</key>
+			<false/>
+			<key>SmBUS</key>
+			<false/>
+			<key>Firewire</key>
 			<true/>
 		</dict>
 		<key>DSDT</key>

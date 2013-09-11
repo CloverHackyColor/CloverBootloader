@@ -2098,6 +2098,8 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
                        ((prop->type == kTagTypeString) &&
                         ((prop->string[0] == 'n') || (prop->string[0] == 'N')))) {
           gSettings.DropOEM_DSM = 0;
+        } else if (prop->type == kTagTypeInteger) {
+          gSettings.DropOEM_DSM = (UINT16)(UINTN)prop->string;
         } else if (prop->type == kTagTypeDict) {
           prop2 = GetProperty(prop, "ATI");
           if(prop2) {
