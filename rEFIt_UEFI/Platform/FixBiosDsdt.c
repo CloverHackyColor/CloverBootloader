@@ -2864,7 +2864,7 @@ UINT32 AddMCHC (UINT8 *dsdt, UINT32 len)
     return len;
   }
 
-  // Find Device MCHC
+  // Find Device MCHC by address
   if (MCHCADR1) {
     for (i=0x20; i<len-10; i++) {
       if (CmpAdr(dsdt, i, MCHCADR1)) {
@@ -2877,7 +2877,17 @@ UINT32 AddMCHC (UINT8 *dsdt, UINT32 len)
       }
     }
   }
- 
+  //Find Device MCHC by name
+  for (i=0x20; i<len-10; i++) {
+    k = CmpDev(dsdt, i, "MCHC");
+    if (k != 0) {
+      DBG("device name (MCHC) found at %x, don't add!\n", k);
+        //         break;
+      return len;
+    }
+  }
+ //TODO - if device found then check _DSM. If not found then add
+
   DBG("Start Add MCHC\n");
   root = aml_create_node(NULL);
   	
@@ -3360,12 +3370,11 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
       INTN EhciCount = 0;
       // find USB adr
       for (j = 0; j < len - 4; j++) {
-        if (CmpAdr(dsdt, j, USBADR[i])) {
+        if (CmpAdr(dsdt, j, USBADR[i])) {   //j+4 -> _ADR
           XhciName = FALSE;
           UsbName[i] = AllocateZeroPool(5);
-          CopyMem(UsbName[i], dsdt+j, 4);
-          
-          adr1 = devFind(dsdt, j);
+           
+          adr1 = devFind(dsdt, j + 2);
           if (!adr1) {
             continue;
           }
@@ -4506,14 +4515,14 @@ VOID FixBiosDsdt (UINT8* temp)
   
   //Always add MCHC for PM
   if ((gCPUStructure.Family == 0x06)  && (gSettings.FixDsdt & FIX_MCHC)) {
-    DBG("patch MCHC in DSDT \n");
+//    DBG("patch MCHC in DSDT \n");
     DsdtLen = AddMCHC(temp, DsdtLen);
     DsdtLen = AddIMEI(temp, DsdtLen);
   }
   
   // Always Fix USB
   if ((gSettings.FixDsdt & FIX_USB)) {
-    DBG("patch USB in DSDT \n");
+//    DBG("patch USB in DSDT \n");
     DsdtLen = FIXUSB(temp, DsdtLen);
   }
   
