@@ -62,8 +62,6 @@ UINT32 FirewireADR1;
 UINT32 FirewireADR2;
 UINT32 SBUSADR1;
 UINT32 SBUSADR2;
-UINT32 MCHCADR1;
-UINT32 MCHCADR2;
 UINT32 IMEIADR1;
 UINT32 IMEIADR2;
 UINT32 IDEADR1;
@@ -688,11 +686,6 @@ VOID CheckHardware()
               (Pci.Hdr.ClassCode[1] == PCI_CLASS_SERIAL_SMB)) {
             GetPciADR(DevicePath, &SBUSADR1, &SBUSADR2, NULL);
   //          DBG("SBUSADR1 = 0x%x, SBUSADR2 = 0x%x\n", SBUSADR1, SBUSADR2);
-          }
-          //MCHC ADR
-          if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_BRIDGE) &&
-              (Pci.Hdr.ClassCode[1] == PCI_CLASS_BRIDGE_HOST)) {
-            GetPciADR(DevicePath, &MCHCADR1, &MCHCADR2, NULL);
           }
           //IMEI ADR
           if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_SCC) &&
@@ -1902,7 +1895,7 @@ CHAR8 Yes[] = {0x01,0x00,0x00,0x00};
 CHAR8 data2[] = {0xe0,0x00,0x56,0x28};
 CHAR8 VenATI[] = {0x02, 0x10};
 
-UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
+UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len, INT32 VCard)
 {
   UINT32 i, j, k;
   INT32 sizeoffset = 0;
@@ -1930,7 +1923,7 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
   }
   if (!PCISIZE) return len; //what is the bad DSDT ?!
     
-  DBG("Start Display1 Fix\n");
+  DBG("Start Display%d Fix\n", VCard);
 	//DBG("len = 0x%08x\n", len);
   // Display device_id 
   root = aml_create_node(NULL);
@@ -1939,8 +1932,8 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
   
 //search DisplayADR1[0]
   for (j=0x20; j<len-10; j++) {
-    if (DisplayADR1[0] != 0x00000000 && 
-        CmpAdr(dsdt, j, DisplayADR1[0])) { //for example 0x00010000=1,0
+    if (DisplayADR1[VCard] != 0x00000000 && 
+        CmpAdr(dsdt, j, DisplayADR1[VCard])) { //for example 0x00010000=1,0
       DisplayName1 = TRUE;
       devadr = devFind(dsdt, j);  //PEG0@1,0
       if (!devadr) {
@@ -1961,13 +1954,14 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
       }
       devsize1 = get_size(dsdt, devadr1);
       if (devsize1) {
+        DBG("Found internal video device 0000@%x\n", devadr1);
         DISPLAYFIX = TRUE;
         break;      
       }
     }
   }
-
-  if (!devadr1) { 
+/*
+  if (!DISPLAYFIX) { 
     for (j=devadr; j<devadr+devsize; j++) { //search card inside PEGP@0
       if (CmpAdr(dsdt, j, 0xFFFF)) {  //Special case? want to change to 0
         devadr1 = devFind(dsdt, j); //found PEGP
@@ -1979,22 +1973,22 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
           dsdt[j+10] = 0;
           dsdt[j+11] = 0;
           DISPLAYFIX = TRUE;
-          DBG("found device with ADR=0xFFFF, changed to 0\n");
+          DBG("Found internal video device FFFF@%x\n", devadr1);
           break;      
         }
       }
     }
   }
-  
-  if (devadr1 && devsize1) { // bridge or device
+ */ 
+  if (DISPLAYFIX) { // bridge or device
     i = devadr1;
     Size = get_size(dsdt, i);
     k = FindMethod(dsdt + i, Size, "_DSM");
     if (k != 0) {
-      if ((((dropDSM & DEV_ATI)   != 0) && (DisplayVendor[0] == 0x1002)) ||
-          (((dropDSM & DEV_NVIDIA)!= 0) && (DisplayVendor[0] == 0x10DE)) ||
-          (((dropDSM & DEV_INTEL) != 0) && (DisplayVendor[0] == 0x8086))) {
-        Size = get_size(dsdt, k);  //sizeof _DSM
+      if ((((dropDSM & DEV_ATI)   != 0) && (DisplayVendor[VCard] == 0x1002)) ||
+          (((dropDSM & DEV_NVIDIA)!= 0) && (DisplayVendor[VCard] == 0x10DE)) ||
+          (((dropDSM & DEV_INTEL) != 0) && (DisplayVendor[VCard] == 0x8086))) {
+        Size = get_size(dsdt, k);
         sizeoffset = - 1 - Size;
         len = move_data(k - 1, dsdt, len, sizeoffset); //kill _DSM
         len = CorrectOuters(dsdt, len, k - 2, sizeoffset);
@@ -2006,17 +2000,17 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
     }
   }
 
-  if (DisplayADR1[0]) {
+  if (DisplayADR1[VCard]) {
     if (!DisplayName1) {   //bridge or builtin not found
       gfx0 = aml_add_device(root, "GFX0");
       aml_add_name(gfx0, "_ADR");
-      if (DisplayADR2[0] > 0x3F)
-        aml_add_dword(gfx0, DisplayADR2[0]);
+      if (DisplayADR2[VCard] > 0x3F)
+        aml_add_dword(gfx0, DisplayADR2[VCard]);
       else
-        aml_add_byte(gfx0, (UINT8)DisplayADR2[0]);
+        aml_add_byte(gfx0, (UINT8)DisplayADR2[VCard]);
     }
     // Intel GMA and HD
-    if (DisplayVendor[0] == 0x8086) {
+    if (DisplayVendor[VCard] == 0x8086) {
 
       met = aml_add_method(root, "_DSM", 4);
       met = aml_add_store(met);
@@ -2038,7 +2032,7 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
     }
     
     // NVIDIA
-    if (DisplayVendor[0] == 0x10DE) {
+    if (DisplayVendor[VCard] == 0x10DE) {
       
       if (!DISPLAYFIX) {
         met = aml_add_method(gfx0, "_DSM", 4);
@@ -2064,7 +2058,7 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
     }
   
     // ATI
-    if (DisplayVendor[0] == 0x1002) {
+    if (DisplayVendor[VCard] == 0x1002) {
       if (!DISPLAYFIX) {
         met = aml_add_method(gfx0, "_DSM", 4);  //if no subdevice
       } else {
@@ -2102,6 +2096,7 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
       AML_CHUNK* pack;
       AML_CHUNK* device;
       
+      DBG("insert HDAU device @%x\n", devadr+devsize);
       device = aml_add_device(hdaudev, "HDAU");
       aml_add_name(device, "_ADR");
       aml_add_byte(device, 0x01);
@@ -2145,7 +2140,7 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
   aml_write_node(root, display, 0);  
   aml_destroy_node(root);
 
-  if (DisplayName1) {   //bridg is present
+  if (DisplayName1) {   //bridge is present
     // move data to back for add Display
     if (!DISPLAYFIX) {   //subdevice absent
       i = devadr+devsize;
@@ -2185,7 +2180,7 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
   return len;  
 }
 
-
+//obsolete
 UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
 {
   UINT32 i, j, k;
@@ -2877,21 +2872,6 @@ UINT32 AddMCHC (UINT8 *dsdt, UINT32 len)
     DBG("wrong PCI0 address, patch MCHC will not be applied\n");
     return len;
   }
-/*
-  // Find Device MCHC by address, no... this address is not unique
-  if (MCHCADR1) {
-    for (i=0x20; i<len-10; i++) {
-      if (CmpAdr(dsdt, i, MCHCADR1)) {
-        k = devFind(dsdt, i);
-        if (k) {
-          DBG("device (MCHC) found at %x, don't add!\n", k);
- //         break;
-          return len;
-        }
-      }
-    }
-  }
- */
   //Find Device MCHC by name
   for (i=0x20; i<len-10; i++) {
     k = CmpDev(dsdt, i, (UINT8*)"MCHC");
@@ -2954,7 +2934,7 @@ UINT32 AddMCHC (UINT8 *dsdt, UINT32 len)
 
 UINT32 AddIMEI (UINT8 *dsdt, UINT32 len)
 {
-  UINT32  i, k;
+  UINT32  i, k = 0;
   UINT32 PCIADR, PCISIZE = 0;
   INT32 sizeoffset;
   AML_CHUNK* root;
@@ -2995,7 +2975,7 @@ UINT32 AddIMEI (UINT8 *dsdt, UINT32 len)
   root = aml_create_node(NULL);
   device = aml_add_device(root, "IMEI");
   aml_add_name(device, "_ADR");
-  aml_add_dword(device, 0x00160000);
+  aml_add_dword(device, IMEIADR1);
 
   aml_calculate_size(root);
   imei = AllocateZeroPool(root->Size);
@@ -3446,6 +3426,9 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
 
           k = FindMethod(dsdt + adr, Size, "_DSM");
           if (k != 0) {
+            //here we want to check who is the master of the _DSM
+            adr1 = devFind(dsdt, k);
+            if (adr1 == adr) {
             if ((dropDSM & DEV_USB) != 0) {
               Size = get_size(dsdt, k);
               if (!Size) {
@@ -3458,6 +3441,9 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
             } else {
               DBG("_DSM already exists, patch USB will not be applied\n");
               continue;
+            }
+            } else {
+              DBG(" found slave _DSM, ignore\n");
             }
           }
           
@@ -4419,12 +4405,12 @@ VOID FixBiosDsdt (UINT8* temp)
   if (gSettings.FixDsdt & FIX_DISPLAY) {
     if (DisplayADR1[0]) {
 //      DBG("patch Display0 in DSDT \n");
-      DsdtLen = FIXDisplay1(temp, DsdtLen);
+      DsdtLen = FIXDisplay1(temp, DsdtLen, 0);
     }
     
     if (DisplayADR1[1]) {
 //      DBG("patch Display1 in DSDT \n");
-      DsdtLen = FIXDisplay2(temp, DsdtLen);
+      DsdtLen = FIXDisplay1(temp, DsdtLen, 1);
     }    
   }
   
