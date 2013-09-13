@@ -245,6 +245,8 @@
 		<string>7a00000001000000010000006e0000000200000002010c00d041030a0000000001010600001b7fff040028000000500069006e0043006f006e00660069006700750072006100740069006f006e00730000000800000001080100180000006c00610079006f00750074002d00690064000000080000000c000000</string>
 		<key>LpcTune</key>
 		<false/>
+		<key>NoDefaultProperties</key>
+		<false/>
 		<key>AddProperties</key>
 		<array>
 			<dict>
@@ -311,35 +313,6 @@
 				<string>CpuPm</string>
 			</dict>
 		</array>
-		<key>DropOEM_DSM</key>
-		<dict>
-			<key>ATI</key>
-			<true/>
-			<key>IntelGFX</key>
-			<true/>
-			<key>LAN</key>
-			<true/>
-			<key>NVidia</key>
-			<true/>
-			<key>SATA</key>
-			<true/>
-			<key>IDE</key>
-			<true/>
-			<key>WIFI</key>
-			<true/>
-			<key>USB</key>
-			<true/>
-			<key>HDA</key>
-			<true/>
-			<key>HDMI</key>
-			<true/>
-			<key>LPC</key>
-			<false/>
-			<key>SmBUS</key>
-			<false/>
-			<key>Firewire</key>
-			<true/>
-		</dict>
 		<key>DSDT</key>
 		<dict>
 			<key>Debug</key>
@@ -348,6 +321,8 @@
 			<string>DSDT.aml</string>
 			<key>FixMask</key>
 			<string>0xFFFF</string>
+			<key>ReuseFFFF</key>
+			<false/>
 			<key>Patches</key>
 			<array>
 				<dict>
@@ -367,6 +342,35 @@
 					<data>UFhTWAhfQURSAAhfU1VOCgQIX1BSVxIGAg==</data>
 				</dict>
 			</array>
+			<key>DropOEM_DSM</key>
+			<dict>
+				<key>ATI</key>
+				<true/>
+				<key>NVidia</key>
+				<true/>
+				<key>IntelGFX</key>
+				<true/>
+				<key>HDA</key>
+				<true/>
+				<key>HDMI</key>
+				<true/>
+				<key>LAN</key>
+				<true/>
+				<key>WIFI</key>
+				<true/>
+				<key>SATA</key>
+				<true/>
+				<key>IDE</key>
+				<true/>
+				<key>USB</key>
+				<true/>
+				<key>LPC</key>
+				<false/>
+				<key>SmBUS</key>
+				<false/>
+				<key>Firewire</key>
+				<true/>
+			</dict>
 		</dict>
 		<key>SSDT</key>
 		<dict>

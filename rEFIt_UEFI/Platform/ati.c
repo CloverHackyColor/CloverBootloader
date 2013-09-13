@@ -1466,6 +1466,7 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
 
 BOOLEAN setup_ati_devprop(pci_dt_t *ati_dev)
 {
+  CHAR8 compatible[64];
 	CHAR8 *devicepath;
   UINT32 FakeID = 0;
   INT32 i;
@@ -1496,6 +1497,8 @@ BOOLEAN setup_ati_devprop(pci_dt_t *ati_dev)
     FakeID = gSettings.FakeATI >> 16;
     devprop_add_value(card->device, "device-id", (UINT8*)&FakeID, 4);
     devprop_add_value(card->device, "ATY,DeviceID", (UINT8*)&FakeID, 2);
+    AsciiSPrint(compatible, 64, "pci1002,%04x", FakeID);
+    devprop_add_value(card->device, "compatible", (UINT8*)&compatible[0], 12);
     FakeID = gSettings.FakeATI & 0xFFFF;
     devprop_add_value(card->device, "vendor-id", (UINT8*)&FakeID, 4);
     devprop_add_value(card->device, "ATY,VendorID", (UINT8*)&FakeID, 2);

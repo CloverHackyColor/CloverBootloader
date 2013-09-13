@@ -273,8 +273,6 @@ void PrintConfig(CFTypeRef data)
     addString(dict, CFSTR("ConfigName"), "config");
   }
 
-  
-  
   //Boot
   CFMutableDictionaryRef bootDict = addDict(dict, CFSTR("Boot"));
   addString(bootDict, CFSTR("Arguments"), s->BootArgs);
@@ -283,6 +281,8 @@ void PrintConfig(CFTypeRef data)
   addInteger(bootDict, CFSTR("XMPDetection"), s->XMPDetection);
   addUString(bootDict, CFSTR("DefaultVolume"), s->DefaultBoot);
   addBoolean(bootDict, CFSTR("Log"), s->Debug);
+  addString(bootDict, CFSTR("Timeout"), "_NOT_SHOWN_");
+  addBoolean(bootDict, CFSTR("Fast"), 0);
   
   
   // SystemParameters
@@ -455,6 +455,13 @@ void PrintConfig(CFTypeRef data)
   addBoolean(pciDict, CFSTR("Inject"), s->StringInjector);
   addString(pciDict, CFSTR("Properties"), "_NOT_SHOWN_");
 //  addInteger(pciDict, CFSTR("PCIRootUID"), s->PCIRootUID);
+  addBoolean(pciDict, CFSTR("NoDefaultProperties"), s->NoDefaultProperties);
+  CFMutableArrayRef appPropArray = addArray(pciDict, CFSTR("AddProperties"));
+  CFMutableDictionaryRef appPropDict = addDictToArray(appPropArray);
+  addString(appPropDict, CFSTR("Device"), "XXX");
+  addString(appPropDict, CFSTR("Key"), "AAPL,XXX");
+  addHex(appPropDict, CFSTR("Value"), 0xFFFF);
+  
   addBoolean(pciDict, CFSTR("LpcTune"), s->LpcTune);
   CFMutableDictionaryRef fakeIDDict = addDict(pciDict, CFSTR("FakeID"));
   addHex(fakeIDDict, CFSTR("ATI"), s->FakeATI);
@@ -513,12 +520,26 @@ void PrintConfig(CFTypeRef data)
   addUString(dsdtDict, CFSTR("Name"), s->DsdtName);
   addHex(dsdtDict, CFSTR("FixMask"), s->FixDsdt);
   addBoolean(dsdtDict, CFSTR("Debug"), s->DebugDSDT);
+  addBoolean(dsdtDict, CFSTR("ReuseFFFF"), s->ReuseFFFF);
   addInteger(dsdtDict, CFSTR("Patches count"), s->PatchDsdtNum);
   CFMutableArrayRef dsdtPatchArray = addArray(dsdtDict, CFSTR("Patches"));
   CFMutableDictionaryRef dsdtPatchDict = addDictToArray(dsdtPatchArray);
   addString(dsdtPatchDict, CFSTR("Find"), "_NOT_SHOWN_");
   addString(dsdtPatchDict, CFSTR("Replace"), "_NOT_SHOWN_");
-  
+  CFMutableDictionaryRef dsmDict = addDict(dsdtDict, CFSTR("DropOEM_DSM"));
+  addBoolean(dsmDict, CFSTR("ATI"),       !!(s->DropOEM_DSM & DEV_ATI));
+  addBoolean(dsmDict, CFSTR("IntelGFX"),  !!(s->DropOEM_DSM & DEV_INTEL));
+  addBoolean(dsmDict, CFSTR("NVidia"),    !!(s->DropOEM_DSM & DEV_NVIDIA));
+  addBoolean(dsmDict, CFSTR("LAN"),       !!(s->DropOEM_DSM & DEV_LAN));
+  addBoolean(dsmDict, CFSTR("WIFI"),      !!(s->DropOEM_DSM & DEV_WIFI));
+  addBoolean(dsmDict, CFSTR("HDA"),       !!(s->DropOEM_DSM & DEV_HDA));
+  addBoolean(dsmDict, CFSTR("HDMI"),      !!(s->DropOEM_DSM & DEV_HDMI));
+  addBoolean(dsmDict, CFSTR("LPC"),       !!(s->DropOEM_DSM & DEV_LPC));
+  addBoolean(dsmDict, CFSTR("SmBUS"),     !!(s->DropOEM_DSM & DEV_SMBUS));
+  addBoolean(dsmDict, CFSTR("Firewire"),  !!(s->DropOEM_DSM & DEV_FIREWIRE));
+  addBoolean(dsmDict, CFSTR("USB"),       !!(s->DropOEM_DSM & DEV_USB));
+  addBoolean(dsmDict, CFSTR("IDE"),       !!(s->DropOEM_DSM & DEV_IDE));
+  addBoolean(dsmDict, CFSTR("SATA"),      !!(s->DropOEM_DSM & DEV_SATA));
   
   CFMutableDictionaryRef ssdtDict = addDict(acpiDict, CFSTR("SSDT"));
     CFMutableDictionaryRef genDict = addDict(ssdtDict, CFSTR("Generate"));
