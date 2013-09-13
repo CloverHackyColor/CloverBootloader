@@ -50,7 +50,7 @@ declare -r CLOVER_VERSION=$( cat version )
 # stage
 CLOVER_STAGE=${CLOVER_VERSION##*-}
 CLOVER_STAGE=${CLOVER_STAGE/RC/Release Candidate }
-CLOVER_STAGE=${CLOVER_STAGE/FINAL/2.1 Final}
+CLOVER_STAGE=${CLOVER_STAGE/FINAL/2.2 Final}
 declare -r CLOVER_STAGE
 declare -r CLOVER_REVISION=$( cat revision )
 declare -r CLOVER_BUILDDATE=$( sed -n 's/.*FIRMWARE_BUILDDATE *\"\(.*\)\".*/\1/p' "${PKGROOT}/../../Version.h" )

@@ -5,7 +5,7 @@
 # Go to the script directory to create the package
 cd "$(dirname $0)"
 
-version=v2
+version=v2k
 revision=$(cat ../vers.txt)
 
 SRCROOT="${PWD}"
