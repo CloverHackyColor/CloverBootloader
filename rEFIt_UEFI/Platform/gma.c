@@ -164,7 +164,17 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
   }
   if (Injected) {
     DBG("custom IntelGFX properties injected, continue\n");
-//    return TRUE;
+  }
+  if (gSettings.FakeIntel) {
+    UINT32 FakeID = gSettings.FakeIntel >> 16;
+    devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
+    FakeID = gSettings.FakeIntel & 0xFFFF;
+    devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
+  }
+    
+  if (gSettings.NoDefaultProperties) {
+    DBG("Intel: no default properties\n");
+    return TRUE;
   }
 
   DualLink = gSettings.DualLink;
@@ -270,13 +280,6 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
       DBG("Intel card id=%x unsupported, please report to projectosx\n", gma_dev->device_id);
       return FALSE;
   }
-  if (gSettings.FakeIntel) {
-    UINT32 FakeID = gSettings.FakeIntel >> 16;
-    devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
-    FakeID = gSettings.FakeIntel & 0xFFFF;
-    devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
-  }
-		
 #if DEBUG_GMA == 2  
 	gBS->Stall(5000000);
 #endif  

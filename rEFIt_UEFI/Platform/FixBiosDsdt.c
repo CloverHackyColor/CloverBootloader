@@ -1960,8 +1960,8 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len, INT32 VCard)
       }
     }
   }
-/*
-  if (!DISPLAYFIX) { 
+
+  if (!DISPLAYFIX && gSettings.ReuseFFFF) { 
     for (j=devadr; j<devadr+devsize; j++) { //search card inside PEGP@0
       if (CmpAdr(dsdt, j, 0xFFFF)) {  //Special case? want to change to 0
         devadr1 = devFind(dsdt, j); //found PEGP
@@ -1973,13 +1973,13 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len, INT32 VCard)
           dsdt[j+10] = 0;
           dsdt[j+11] = 0;
           DISPLAYFIX = TRUE;
-          DBG("Found internal video device FFFF@%x\n", devadr1);
+          DBG("Found internal video device FFFF@%x, set to 0\n", devadr1);
           break;      
         }
       }
     }
   }
- */ 
+  
   if (DISPLAYFIX) { // bridge or device
     i = devadr1;
     Size = get_size(dsdt, i);
@@ -2179,253 +2179,6 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len, INT32 VCard)
   FreePool(display);
   return len;  
 }
-
-//obsolete
-UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
-{
-  UINT32 i, j, k;
-  INT32 sizeoffset;
-  UINT32 PCIADR, PCISIZE = 0, Size;
-  AML_CHUNK* root;
-  AML_CHUNK* gfx0;
-  AML_CHUNK* met;
-  AML_CHUNK* pack;
-//  CHAR8 *portname;
-  CHAR8 *CFGname  = NULL;
-  CHAR8 *name     = NULL;
-  CHAR8 *display  = NULL;
-  UINT32 devadr=0, devsize=0, devadr1=0, devsize1=0;
-  BOOLEAN DISPLAYFIX = FALSE;
-  UINT32 FakeID = 0;
-  UINT32 FakeVen = 0;
-  
-  DBG("Start Display2 Fix\n");
-  PCIADR = GetPciDevice(dsdt, len);
-  if (PCIADR) {
-    PCISIZE = get_size(dsdt, PCIADR);
-  }
-  if (!PCISIZE)
-    return len; //what is the bad DSDT ?!
-  
-  root = aml_create_node(NULL);
-  gfx0 = aml_create_node(NULL);
-  met = aml_create_node(NULL);
-  
-  for (j=0x20; j<len-10; j++) {
-    if (DisplayADR1[1] != 0x00000000 && 
-        CmpAdr(dsdt, j, DisplayADR1[1])) {
-      //        DBG("Found DisplayADR1[1]=%x at %x\n", DisplayADR1[1], j);
-      DisplayName2 = TRUE;
-      devadr = devFind(dsdt, j);
-      if (!devadr) {
-        continue;
-      }
-      devsize = get_size(dsdt, devadr);
-      if (devsize) {
-        break;
-      } // End Display
-    }
-  }  
-  if (!devadr) return len;
-  for (j=devadr; j<devadr+devsize; j++) {
-    if (CmpAdr(dsdt, j, 0)) {
-      devadr1 = devFind(dsdt, j);
-      if (!devadr1) {
-        continue;
-      }
-      devsize1 = get_size(dsdt, devadr1);
-      DISPLAYFIX = TRUE;
-      break;      
-    }
-  }
-  
-  if (devadr1) { // bridge or device
-    i = devadr1;
-    Size = get_size(dsdt, i);
-    k = FindMethod(dsdt + i, Size, "_DSM");
-    if (k != 0) {
-      if ((((dropDSM & DEV_ATI)    != 0) && (DisplayVendor[0] == 0x1002)) ||
-          (((dropDSM & DEV_NVIDIA) != 0) && (DisplayVendor[0] == 0x10DE)) ||
-          (((dropDSM & DEV_INTEL)  != 0) && (DisplayVendor[0] == 0x8086)) ||
-          (((dropDSM & DEV_HDMI)   != 0) && GFXHDAFIX)) {
-        Size = get_size(dsdt, k);
-        sizeoffset = - 1 - Size;
-        len = move_data(k - 1, dsdt, len, sizeoffset);
-        len = CorrectOuters(dsdt, len, k - 2, sizeoffset);
-        DBG("_DSM in VID already exists, dropped\n");
-      } else {
-        DBG("_DSM already exists, patch VID will not be applied\n");
-        return len;
-      }
-    }
-  }  
-    
-  if (DisplayADR1[1]) {
-    if (!DisplayName2) {
-      AML_CHUNK* pegp = aml_add_device(root, "PEGP");
-      aml_add_name(pegp, "_ADR");
-      aml_add_dword(pegp, DisplayADR1[1]);
-      gfx0 = aml_add_device(pegp, "GFX0");
-      aml_add_name(gfx0, "_ADR");
-      if (DisplayADR2[1] > 0x3F)
-        aml_add_dword(gfx0, DisplayADR2[1]);
-      else
-        aml_add_byte(gfx0, (UINT8)DisplayADR2[1]);
-    } else {    
-      if(!DISPLAYFIX && DisplayVendor[1] != 0x8086) {
-        gfx0 = aml_add_device(root, "GFX0");
-        aml_add_name(gfx0, "_ADR");
-        if (DisplayADR2[1] > 0x3F)
-          aml_add_dword(gfx0, DisplayADR2[1]);
-        else
-          aml_add_byte(gfx0, (UINT8)DisplayADR2[1]);  
-      }
-    }
-    
-    // Intel GMA and HD
-    if (DisplayVendor[1] == 0x8086) {
-      met = aml_add_method(root, "_DSM", 4);
-      met = aml_add_store(met);
-      pack = aml_add_package(met);
-      
-      if (gSettings.FakeIntel) {
-        FakeID = gSettings.FakeIntel >> 16;
-        aml_add_string(pack, "device-id");
-        aml_add_byte_buffer(pack, (CHAR8*)&FakeID, 4);
-        FakeVen = gSettings.FakeIntel & 0xFFFF;
-        aml_add_string(pack, "vendor-id");
-        aml_add_byte_buffer(pack, (CHAR8*)&FakeVen, 4);
-      }
-      AddProperties(pack, DEV_INTEL);
-      aml_add_local0(met);
-      aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
-      // finish Method(_DSM,4,NotSerialized)
-    }
-    
-    // NVIDIA
-   if (DisplayVendor[1] == 0x10DE) {
-      if (!DISPLAYFIX) {
-        met = aml_add_method(gfx0, "_DSM", 4);
-      } else {
-        met = aml_add_method(root, "_DSM", 4);
-      }
-      met = aml_add_store(met);
-      pack = aml_add_package(met);
-
-     if (gSettings.FakeNVidia) {
-       FakeID = gSettings.FakeNVidia >> 16;
-       aml_add_string(pack, "device-id");
-       aml_add_byte_buffer(pack, (CHAR8*)&FakeID, 4);
-       FakeVen = gSettings.FakeNVidia & 0xFFFF;
-       aml_add_string(pack, "vendor-id");
-       aml_add_byte_buffer(pack, (CHAR8*)&FakeVen, 4);
-     }
-     AddProperties(pack, DEV_NVIDIA);
-      aml_add_local0(met);
-      aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
-      // finish Method(_DSM,4,NotSerialized)
-    }
-    
-    // ATI
-    if (DisplayVendor[1] == 0x1002) {
-      // add Method(_DSM,4,NotSerialized) for GFX0
-      if (!DISPLAYFIX) {
-        met = aml_add_method(gfx0, "_DSM", 4);
-      } else {
-        met = aml_add_method(root, "_DSM", 4);
-      }
-      met = aml_add_store(met);
-      pack = aml_add_package(met);
-
-      if (gSettings.FakeATI) {
-        FakeID = gSettings.FakeATI >> 16;
-        aml_add_string(pack, "device-id");
-        aml_add_byte_buffer(pack, (CHAR8*)&FakeID, 4);
-        aml_add_string(pack, "ATY,DeviceID");
-        aml_add_byte_buffer(pack, (CHAR8*)&FakeID, 2);
-        FakeVen = gSettings.FakeATI & 0xFFFF;
-        aml_add_string(pack, "vendor-id");
-        aml_add_byte_buffer(pack, (CHAR8*)&FakeVen, 4);
-        aml_add_string(pack, "ATY,VendorID");
-        aml_add_byte_buffer(pack, (CHAR8*)&FakeVen, 2);
-      } else {
-        aml_add_string(pack, "ATY,VendorID");
-        aml_add_byte_buffer(pack, VenATI, 2);
-      }
-      AddProperties(pack, DEV_ATI);
-
-      aml_add_local0(met);
-      aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
-      // finish Method(_DSM,4,NotSerialized)
-    }
-    
-    // HDAU
-    if (GFXHDAFIX) {
-//      AML_CHUNK* met;
-      AML_CHUNK* pack;
-      AML_CHUNK* device = aml_add_device(root, "HDAU");
-      aml_add_name(device, "_ADR");
-      aml_add_byte(device, 0x01);
-      // add Method(_DSM,4,NotSerialized) for GFX0
-      met = aml_add_method(device, "_DSM", 4);
-      met = aml_add_store(met);
-      pack = aml_add_package(met);
-      if (!AddProperties(pack, DEV_HDMI)) {
-        aml_add_string(pack, "layout-id");
-        aml_add_byte_buffer(pack, (CHAR8*)&GfxlayoutId, 4);
-        aml_add_string(pack, "hda-gfx");
-        aml_add_string_buffer(pack, "onboard-2");
-        aml_add_string(pack, "PinConfigurations");
-        aml_add_byte_buffer(pack, data2, sizeof(data2));        
-      }
-      aml_add_local0(met);
-      aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
-      // finish Method(_DSM,4,NotSerialized)
-    }
-  }
-  
-  aml_calculate_size(root);  
-  display = AllocateZeroPool(root->Size);
-  sizeoffset = root->Size;
-  aml_write_node(root, display, 0);  
-  aml_destroy_node(root);  
-  if (DisplayName2) {
-    // move data to back for add Display
-    if (!DISPLAYFIX) { 
-      i = devadr+devsize;
-      len = move_data(i, dsdt, len, sizeoffset);
-      CopyMem(dsdt+i, display, sizeoffset);
-      len = CorrectOuters(dsdt, len, devadr-3, sizeoffset);
-    } else {
-      i = devadr1+devsize1;
-      len = move_data(i, dsdt, len, sizeoffset);
-      CopyMem(dsdt+i, display, sizeoffset);
-      j = write_size(devadr1, dsdt, len, sizeoffset);
-      sizeoffset += j;
-      len += j;
-      len = CorrectOuters(dsdt, len, devadr1-3, sizeoffset);
-    }
-  } else {
-    len = move_data(PCIADR+PCISIZE, dsdt, len, sizeoffset);
-    CopyMem(dsdt+PCIADR+PCISIZE, display, sizeoffset);
-    // Fix PCIX size
-    k = write_size(PCIADR, dsdt, len, sizeoffset);
-    sizeoffset += k;
-    len += k;
-    len = CorrectOuters(dsdt, len, PCIADR-3, sizeoffset);    
-  }
-
-  if (CFGname) {
-    FreePool(CFGname);
-  }
-  if (name) {
-    FreePool(name);
-  } 
-  FreePool(display);
-  
-  return len;  
-}
-
 
 UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
 {

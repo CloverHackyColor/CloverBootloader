@@ -755,11 +755,12 @@ typedef struct {
   UINT8   PluginType;
   BOOLEAN	DropMCFG;
   
-  
   //Injections
   BOOLEAN StringInjector;
   BOOLEAN InjectSystemID;
-  UINT8   pad4[2];
+  BOOLEAN NoDefaultProperties;
+  
+  BOOLEAN	ReuseFFFF;
   
   
   //PCI devices

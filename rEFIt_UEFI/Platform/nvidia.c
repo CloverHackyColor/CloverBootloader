@@ -3650,7 +3650,19 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
     DBG("custom NVIDIA properties injected, continue\n");
     //    return TRUE;
   }
-
+  
+  if (gSettings.FakeNVidia) {
+    UINT32 FakeID = gSettings.FakeNVidia >> 16;
+    devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
+    FakeID = gSettings.FakeNVidia & 0xFFFF;
+    devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
+  }
+    
+  if (gSettings.NoDefaultProperties) {
+    DBG("NVidia: no default properties\n");
+    return TRUE;
+  }
+  
 	/* FIXME: for primary graphics card only */
 	boot_display = 1;
 	devprop_add_value(device, "@0,AAPL,boot-display", (UINT8*)&boot_display, 4);
@@ -3700,13 +3712,6 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 	}
   devprop_add_value(device, "hda-gfx", (UINT8*)"onboard-1", 9);
   
-  if (gSettings.FakeNVidia) {
-    UINT32 FakeID = gSettings.FakeNVidia >> 16;
-    devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
-    FakeID = gSettings.FakeNVidia & 0xFFFF;
-    devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
-  }
-
 
 	//add HDMI Audio back to nvidia
 	//http://forge.voodooprojects.org/p/chameleon/issues/67/
