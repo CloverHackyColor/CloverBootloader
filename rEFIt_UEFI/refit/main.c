@@ -2027,6 +2027,8 @@ static VOID AddCustomEntries(VOID)
           }
         }
       }
+      // Update volume boot type
+      Volume->BootType = BOOTING_BY_EFI;
       // Create a legacy entry for this volume
       if (OSFLAG_ISUNSET(Custom->Flags, OSFLAG_NODEFAULTMENU)) {
         Entry = AddLoaderEntry(Path, Custom->Options, Custom->FullTitle, Custom->Title, Volume, Image, OSType, Custom->Flags, Custom->Hotkey, TRUE);
