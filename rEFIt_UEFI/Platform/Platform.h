@@ -898,7 +898,10 @@ typedef struct {
   CUSTOM_TOOL_ENTRY   *CustomTool;
   
   //Add custom properties
-  INT32          NrAddProperties;
+  INTN          NrAddProperties;
+#if defined(MDE_CPU_IA32)
+  UINT32  align8;
+#endif
   DEV_PROPERTY   *AddProperties;
 
 } SETTINGS_DATA;

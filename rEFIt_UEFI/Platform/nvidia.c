@@ -3476,7 +3476,7 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 	DevPropDevice			*device = NULL;
 	CHAR8				*devicepath = NULL;
 	BOOLEAN				load_vbios = gSettings.LoadVBios;
-  BOOLEAN				Injected;
+  BOOLEAN				Injected = FALSE;
 	UINT8				*rom = NULL;
 	UINT16				nvCardType = 0;
 	UINT64				videoRam = 0;

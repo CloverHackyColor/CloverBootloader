@@ -193,7 +193,7 @@ DevPropDevice *devprop_add_device_pci(DevPropString *StringBuf, pci_dt_t *PciDt)
 
 
 
-BOOLEAN devprop_add_value(DevPropDevice *device, CHAR8 *nm, UINT8 *vl, UINT32 len)
+BOOLEAN devprop_add_value(DevPropDevice *device, CHAR8 *nm, UINT8 *vl, UINTN len)
 {
   UINT32 offset;
   UINT32 off;
@@ -344,7 +344,7 @@ BOOLEAN set_eth_props(pci_dt_t *eth_dev)
 	CHAR8           *devicepath;
   DevPropDevice   *device;
   UINT8           builtin = 0x0;
-  BOOLEAN         Injected;
+  BOOLEAN         Injected = FALSE;
   INT32           i;
 	
 	if (!string)
@@ -402,7 +402,7 @@ BOOLEAN set_usb_props(pci_dt_t *usb_dev)
   UINT16  current_extra     = 700;
   UINT16  current_in_sleep  = 1000;
   UINT32   fake_devid;
-  BOOLEAN         Injected;
+  BOOLEAN         Injected = FALSE;
   INT32           i;
 
 	if (!string)

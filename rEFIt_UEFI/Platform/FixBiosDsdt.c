@@ -1201,7 +1201,7 @@ BOOLEAN AddProperties(AML_CHUNK* pack, UINT32 Dev)
     Injected = TRUE;
     aml_add_string(pack, gSettings.AddProperties[i].Key);
     aml_add_byte_buffer(pack, gSettings.AddProperties[i].Value,
-                        gSettings.AddProperties[i].ValueLen);    
+                        (UINT32)gSettings.AddProperties[i].ValueLen);    
   }
   return Injected;
 }

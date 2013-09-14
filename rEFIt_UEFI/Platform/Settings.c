@@ -1902,6 +1902,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
           gSettings.AddProperties = AllocateZeroPool(Count * sizeof(DEV_PROPERTY));
           
           for (i = 0; i < Count; i++) {
+            UINTN Size = 0;
             if (EFI_ERROR(GetElement(prop, i, &dict2))) {
               DBG("AddProperties continue at %d\n", i);
               continue;
@@ -1948,8 +1949,8 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
             if (prop2 && (prop2->type == kTagTypeString) && prop2->string) {
               gSettings.AddProperties[Index].Key = AllocateCopyPool(AsciiStrSize(prop2->string), prop2->string);
             }
-            gSettings.AddProperties[Index].Value = GetDataSetting(dict2, "Value",
-                                                                  &gSettings.AddProperties[Index].ValueLen);
+            gSettings.AddProperties[Index].Value = GetDataSetting(dict2, "Value", &Size);
+            gSettings.AddProperties[Index].ValueLen = Size;
             Index++;
           }
           gSettings.NrAddProperties = Index;
