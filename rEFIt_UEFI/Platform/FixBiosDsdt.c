@@ -652,7 +652,7 @@ VOID CheckHardware()
               else
                 Display2PCIE = TRUE;
             }  
-            DBG("Display %d is %a PCIE\n", display, (PciIoDevice->IsPciExp)?"":"not");
+            DBG("Display %d is %aPCIE\n", display, (PciIoDevice->IsPciExp) ? "" :" not");
             display++;
           }
           
@@ -729,9 +729,8 @@ VOID CheckHardware()
           // HDA Audio
           if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_MEDIA) &&
               (Pci.Hdr.ClassCode[1] == PCI_CLASS_MEDIA_HDA)) {
-             UINT32 codecId = 0, layoutId = 0;
+            UINT32 codecId = 0, layoutId = 0;
             GetPciADR(DevicePath, &HDAADR1, NULL, NULL);
-  //          DBG("HDAADR = 0x%x\n", HDAADR1);
             codecId = HDA_getCodecVendorAndDeviceIds(PciIo);
             if (codecId > 0) {
               layoutId = getLayoutIdFromVendorAndDeviceId(codecId);
@@ -742,7 +741,7 @@ VOID CheckHardware()
             if (gSettings.HDALayoutId > 0) {
               // layoutId is specified - use it
               layoutId = (UINT32)gSettings.HDALayoutId;
-              DBG(" setting specified layout-id=%d (0x%x)\n", layoutId, layoutId);
+              DBG("Audio HDA (addr:0x%x) setting specified layout-id=%d (0x%x)\n", HDAADR1, layoutId, layoutId);
             }
             if (layoutId > 0) {
               HDAFIX = TRUE;
@@ -766,7 +765,7 @@ VOID CheckHardware()
           if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_MASS_STORAGE) &&
               (Pci.Hdr.ClassCode[1] == PCI_CLASS_MASS_STORAGE_IDE)) {
             GetPciADR(DevicePath, &IDEADR1, &IDEADR2, NULL);
-  //          DBG("IDEADR1 = 0x%x, IDEADR2 = 0x%x\n", IDEADR1, IDEADR2);
+            // DBG("IDEADR1 = 0x%x, IDEADR2 = 0x%x\n", IDEADR1, IDEADR2);
             IDEFIX = get_ide_model(deviceid);
             IDEVENDOR = Pci.Hdr.VendorId;
           }
@@ -776,7 +775,7 @@ VOID CheckHardware()
               (Pci.Hdr.ClassCode[1] == PCI_CLASS_MASS_STORAGE_SATADPA) &&
               (Pci.Hdr.ClassCode[0] == 0x00)) {
             GetPciADR(DevicePath, &SATAADR1, &SATAADR2, NULL);
- //           DBG("SATAADR1 = 0x%x, SATAADR2 = 0x%x\n", SATAADR1, SATAADR2);
+            // DBG("SATAADR1 = 0x%x, SATAADR2 = 0x%x\n", SATAADR1, SATAADR2);
             SATAFIX = get_ide_model(deviceid);
             SATAVENDOR = Pci.Hdr.VendorId;
           }
@@ -786,8 +785,8 @@ VOID CheckHardware()
               (Pci.Hdr.ClassCode[1] == PCI_CLASS_MASS_STORAGE_SATADPA) &&
               (Pci.Hdr.ClassCode[0] == 0x01)) {
             GetPciADR(DevicePath, &SATAAHCIADR1, &SATAAHCIADR2, NULL);
-  //          DBG("SATAAHCIADR1 = 0x%x, SATAAHCIADR2 = 0x%x\n", SATAAHCIADR1, SATAAHCIADR2);
-            //AHCIFIX = get_ahci_model(deviceid);
+            // DBG("SATAAHCIADR1 = 0x%x, SATAAHCIADR2 = 0x%x\n", SATAAHCIADR1, SATAAHCIADR2);
+            // AHCIFIX = get_ahci_model(deviceid);
             SATAAHCIVENDOR = Pci.Hdr.VendorId;
           }
         }
@@ -1317,7 +1316,7 @@ UINTN  findPciRoot (UINT8 *dsdt, UINT32 len)
         dsdt[j+5] = 0;  //AML_BYTE_PREFIX followed by a number
       else
         dsdt[j+4] = 0;  //any other will be considered as ONE or WRONG, replace to ZERO
-      DBG("found PCIROOTUID = %d\n", root);
+      DBG("Found PCIROOTUID = %d\n", root);
       break;
     }	
   }  
@@ -4095,7 +4094,7 @@ VOID FixBiosDsdt (UINT8* temp)
     return;
   }
   
-  DBG("\nAuto patch DSDT Starting.................\n\n");
+  DBG("========= Auto patch DSDT Starting ========\n");
   
   // First check hardware address: GetPciADR(DevicePath, &NetworkADR1, &NetworkADR2);
   CheckHardware();
@@ -4287,6 +4286,6 @@ VOID FixBiosDsdt (UINT8* temp)
   ((EFI_ACPI_DESCRIPTION_HEADER*)temp)->Checksum = 0;
   ((EFI_ACPI_DESCRIPTION_HEADER*)temp)->Checksum = (UINT8)(256-Checksum8(temp, DsdtLen));
     
-  DBG("\nAuto patch BiosDSDT Finish.................\n\n");
+  DBG("========= Auto patch DSDT Finished ========\n");
   //PauseForKey(L"waiting for key press...\n");
 }
