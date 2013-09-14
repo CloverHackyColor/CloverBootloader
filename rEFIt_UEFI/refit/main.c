@@ -959,14 +959,14 @@ static LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
   // Load DriveImage
   Entry->me.DriveImage = ScanVolumeDefaultIcon(Volume);
 
-  DBG("HideBadges=%d Volume=%s\n", GlobalConfig.HideBadges, Volume->VolName);
+  // DBG("HideBadges=%d Volume=%s ", GlobalConfig.HideBadges, Volume->VolName);
   if (GlobalConfig.HideBadges & HDBADGES_SHOW) {
     if (GlobalConfig.HideBadges & HDBADGES_SWAP) {
       Entry->me.BadgeImage = egCopyScaledImage(Entry->me.DriveImage, 4);
-      DBG("Show badge as Drive\n");
+      // DBG(" Show badge as Drive.");
     } else {
       Entry->me.BadgeImage = egCopyScaledImage(Entry->me.Image, 8);
-      DBG("Show badge as OSImage\n");
+      // DBG(" Show badge as OSImage.");
     }
   }
   return Entry;
@@ -1381,7 +1381,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOpt
   AddMenuEntry(SubScreen, &MenuEntryReturn);
   Entry->me.SubScreen = SubScreen;
   AddMenuEntry(&MainMenu, (REFIT_MENU_ENTRY *)Entry);
-  DBG("  added '%s'\n", Entry->me.Title);
+  DBG("    Added '%s'\n", Entry->me.Title);
   return Entry;
 }
 
@@ -2029,6 +2029,7 @@ static VOID AddCustomEntries(VOID)
       }
       // Update volume boot type
       Volume->BootType = BOOTING_BY_EFI;
+      DBG("match!\n");
       // Create a legacy entry for this volume
       if (OSFLAG_ISUNSET(Custom->Flags, OSFLAG_NODEFAULTMENU)) {
         Entry = AddLoaderEntry(Path, Custom->Options, Custom->FullTitle, Custom->Title, Volume, Image, OSType, Custom->Flags, Custom->Hotkey, TRUE);
@@ -2074,7 +2075,6 @@ static VOID AddCustomEntries(VOID)
           AddMenuEntry(&MainMenu, (REFIT_MENU_ENTRY *)Entry);
         }
       }
-      DBG("match!\n");
     }
   }
   DBG("Custom entries finish\n");
