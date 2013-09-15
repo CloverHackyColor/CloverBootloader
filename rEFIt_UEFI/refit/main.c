@@ -1892,7 +1892,7 @@ static VOID AddCustomEntries(VOID)
   DBG("Custom entries start\n");
   // Traverse the custom entries
   for (Custom = gSettings.CustomEntries; Custom; ++i, Custom = Custom->Next) {
-    if (Custom->Type != 0) {
+    if ((Custom->Path == NULL) && (Custom->Type != 0)) {
       switch (Custom->Type) {
       case OSTYPE_OSX:
          Custom->Path = MACOSX_LOADER_PATH;
