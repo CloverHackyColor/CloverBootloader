@@ -537,6 +537,8 @@ static BOOLEAN FillinCustomLegacy(IN OUT CUSTOM_LEGACY_ENTRY *Entry, TagPtr dict
       Entry->Type = OSTYPE_WIN;
     } else if (AsciiStriCmp(prop->string, "Linux") == 0) {
       Entry->Type = OSTYPE_LIN;
+    } else {
+      Entry->Type = OSTYPE_VAR;
     }
   }
   return TRUE;
