@@ -106,7 +106,10 @@ XhcReadOpReg (
   UINT32                  Data;
   EFI_STATUS              Status;
 
-  ASSERT (Xhc->CapLength != 0);
+//  ASSERT (Xhc->CapLength != 0);
+  if (!Xhc->CapLength) {
+    return 0;
+  }
 
   Status = Xhc->PciIo->Mem.Read (
                              Xhc->PciIo,
@@ -142,7 +145,10 @@ XhcWriteOpReg (
 {
   EFI_STATUS              Status;
 
-  ASSERT (Xhc->CapLength != 0);
+//  ASSERT (Xhc->CapLength != 0);
+  if (!Xhc->CapLength) {
+    return;
+  }
 
   Status = Xhc->PciIo->Mem.Write (
                              Xhc->PciIo,
@@ -175,7 +181,10 @@ XhcWriteOpReg16 (
 {
   EFI_STATUS              Status;
 
-  ASSERT (Xhc->CapLength != 0);
+//  ASSERT (Xhc->CapLength != 0);
+  if (!Xhc->CapLength) {
+    return;
+  }
 
   Status = Xhc->PciIo->Mem.Write (
                              Xhc->PciIo,
@@ -209,7 +218,10 @@ XhcReadDoorBellReg (
   UINT32                  Data;
   EFI_STATUS              Status;
 
-  ASSERT (Xhc->DBOff != 0);
+//  ASSERT (Xhc->DBOff != 0);
+  if (!Xhc->DBOff) {
+    return 0;
+  }
 
   Status = Xhc->PciIo->Mem.Read (
                              Xhc->PciIo,
@@ -245,7 +257,10 @@ XhcWriteDoorBellReg (
 {
   EFI_STATUS              Status;
 
-  ASSERT (Xhc->DBOff != 0);
+//  ASSERT (Xhc->DBOff != 0);
+  if (!Xhc->DBOff) {
+    return;
+  }
 
   Status = Xhc->PciIo->Mem.Write (
                              Xhc->PciIo,
@@ -279,7 +294,10 @@ XhcReadRuntimeReg (
   UINT32                  Data;
   EFI_STATUS              Status;
 
-  ASSERT (Xhc->RTSOff != 0);
+//  ASSERT (Xhc->RTSOff != 0);
+  if (!Xhc->RTSOff) {
+    return 0;
+  }
 
   Status = Xhc->PciIo->Mem.Read (
                              Xhc->PciIo,
@@ -315,7 +333,10 @@ XhcWriteRuntimeReg (
 {
   EFI_STATUS              Status;
 
-  ASSERT (Xhc->RTSOff != 0);
+//  ASSERT (Xhc->RTSOff != 0);
+  if (!Xhc->RTSOff) {
+    return;
+  }
 
   Status = Xhc->PciIo->Mem.Write (
                              Xhc->PciIo,
@@ -349,7 +370,10 @@ XhcReadExtCapReg (
   UINT32                  Data;
   EFI_STATUS              Status;
 
-  ASSERT (Xhc->ExtCapRegBase != 0);
+//  ASSERT (Xhc->ExtCapRegBase != 0);
+  if (!Xhc->ExtCapRegBase) {
+    return 0;
+  }
 
   Status = Xhc->PciIo->Mem.Read (
                              Xhc->PciIo,
@@ -385,7 +409,10 @@ XhcWriteExtCapReg (
 {
   EFI_STATUS              Status;
 
-  ASSERT (Xhc->ExtCapRegBase != 0);
+//  ASSERT (Xhc->ExtCapRegBase != 0);
+  if (!Xhc->ExtCapRegBase) {
+    return;
+  }
 
   Status = Xhc->PciIo->Mem.Write (
                              Xhc->PciIo,
@@ -544,6 +571,9 @@ XhcSetBiosOwnership (
   UINT32                    Buffer;
 
   DEBUG ((EFI_D_INFO, "XhcSetBiosOwnership: called to set BIOS ownership\n"));
+  if (!Xhc || !Xhc->UsbLegSupOffset) {
+    return;
+  }
 
   Buffer = XhcReadExtCapReg (Xhc, Xhc->UsbLegSupOffset);
   Buffer = ((Buffer & (~USBLEGSP_OS_SEMAPHORE)) | USBLEGSP_BIOS_SEMAPHORE);
@@ -562,6 +592,9 @@ XhcClearBiosOwnership (
   )
 {
   UINT32                    Buffer;
+  if (!Xhc || !Xhc->UsbLegSupOffset) {
+    return;
+  }
 
   DEBUG ((EFI_D_INFO, "XhcClearBiosOwnership: called to clear BIOS ownership\n"));
 

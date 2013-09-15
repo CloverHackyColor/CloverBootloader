@@ -18,7 +18,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #include <Library/PrintLib.h>
 
 #ifndef DEBUG_ALL
-#define DEBUG_XHCI 0
+#define DEBUG_XHCI 1
 #else
 #define DEBUG_XHCI DEBUG_ALL
 #endif
@@ -28,7 +28,8 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #elif DEBUG_XHCI == 1
 #define DBG(...) MemLog(TRUE, 1, __VA_ARGS__)
 #else
-#define DBG(...) MemLog(TRUE, 0, __VA_ARGS__)
+//#define DBG(...) MemLog(TRUE, 0, __VA_ARGS__)
+#define DBG(...) AsciiPrint(__VA_ARGS__)
 #endif
 
 
@@ -161,6 +162,7 @@ XhcReset (
   USB_XHCI_INSTANCE  *Xhc;
   EFI_STATUS         Status;
   EFI_TPL            OldTpl;
+  UINTN           HCbit = 0;
 
   Xhc = XHC_FROM_THIS (This);
   
@@ -178,50 +180,57 @@ XhcReset (
   OldTpl = gBS->RaiseTPL (XHC_TPL);
 
   switch (Attributes) {
-  case EFI_USB_HC_RESET_GLOBAL:
-  //
-  // Flow through, same behavior as Host Controller Reset
-  //
-  case EFI_USB_HC_RESET_HOST_CONTROLLER:
-    //
-    // Host Controller must be Halt when Reset it
-    //
-    if (!XhcIsHalt (Xhc)) {
-      Status = XhcHaltHC (Xhc, XHC_GENERIC_TIMEOUT);
+    case EFI_USB_HC_RESET_GLOBAL:
+      //
+      // Flow through, same behavior as Host Controller Reset
+      //
+    case EFI_USB_HC_RESET_HOST_CONTROLLER:
+      //
+      // Host Controller must be Halt when Reset it
+      //
+      if (!XhcIsHalt (Xhc)) {
+        Status = XhcHaltHC (Xhc, XHC_GENERIC_TIMEOUT);
 
+        if (EFI_ERROR (Status)) {
+          Status = EFI_DEVICE_ERROR;
+          goto ON_EXIT;
+        }
+      }
+
+      Status = XhcResetHC (Xhc, XHC_RESET_TIMEOUT);
       if (EFI_ERROR (Status)) {
-        Status = EFI_DEVICE_ERROR;
         goto ON_EXIT;
       }
-    }
 
-    Status = XhcResetHC (Xhc, XHC_RESET_TIMEOUT);
-    ASSERT (!(XHC_REG_BIT_IS_SET (Xhc, XHC_USBSTS_OFFSET, XHC_USBSTS_CNR)));
+      HCbit = XHC_REG_BIT_IS_SET (Xhc, XHC_USBSTS_OFFSET, XHC_USBSTS_CNR);
+      if (HCbit) {
+        DBG("ResetHC bit is set=%x, exitting\n", HCbit);
+        goto ON_EXIT;
+      }
+//    ASSERT (!(XHC_REG_BIT_IS_SET (Xhc, XHC_USBSTS_OFFSET, XHC_USBSTS_CNR)));
 
-    if (EFI_ERROR (Status)) {
-      goto ON_EXIT;
-    }
-    //
-    // Clean up the asynchronous transfers, currently only
-    // interrupt supports asynchronous operation.
-    //
-    XhciDelAllAsyncIntTransfers (Xhc);
-    XhcFreeSched (Xhc);
+      //
+      // Clean up the asynchronous transfers, currently only
+      // interrupt supports asynchronous operation.
+      //
+      XhciDelAllAsyncIntTransfers (Xhc);
+      XhcFreeSched (Xhc);
 
-    XhcInitSched (Xhc);
-    break;
+      XhcInitSched (Xhc);
+      break;
 
-  case EFI_USB_HC_RESET_GLOBAL_WITH_DEBUG:
-  case EFI_USB_HC_RESET_HOST_WITH_DEBUG:
-    Status = EFI_UNSUPPORTED;
-    break;
+    case EFI_USB_HC_RESET_GLOBAL_WITH_DEBUG:
+    case EFI_USB_HC_RESET_HOST_WITH_DEBUG:
+      Status = EFI_UNSUPPORTED;
+      break;
 
-  default:
-    Status = EFI_INVALID_PARAMETER;
+    default:
+      Status = EFI_INVALID_PARAMETER;
   }
 
 ON_EXIT:
 //  DEBUG ((EFI_D_INFO, "XhcReset: status %r\n", Status));
+  DBG("XhcReset: status %r\n", Status);
   gBS->RestoreTPL (OldTpl);
 
   return Status;
@@ -538,7 +547,8 @@ XhcSetRootHubPortFeature (
       Status = XhcRunHC (Xhc, XHC_GENERIC_TIMEOUT);
 
       if (EFI_ERROR (Status)) {
-        DEBUG ((EFI_D_INFO, "XhcSetRootHubPortFeature :failed to start HC - %r\n", Status));
+//        DEBUG ((EFI_D_INFO, "XhcSetRootHubPortFeature :failed to start HC - %r\n", Status));
+        DBG("XhcSetRootHubPortFeature :failed to start HC - %r\n", Status);
         break;
       }
     }
@@ -940,7 +950,7 @@ XhcControlTransfer (
   
   if (Urb->DataMap != NULL) {
     Status = Xhc->PciIo->Unmap (Xhc->PciIo, Urb->DataMap);
-    ASSERT_EFI_ERROR (Status);
+ //   ASSERT_EFI_ERROR (Status);
     if (EFI_ERROR (Status)) {
       Status = EFI_DEVICE_ERROR;
       goto FREE_URB;
@@ -991,7 +1001,11 @@ XhcControlTransfer (
         // Get configuration value from request, Store the configuration descriptor for Configure_Endpoint cmd.
         //
         Index = (UINT8)Request->Value;
-        ASSERT (Index < Xhc->UsbDevContext[SlotId].DevDesc.NumConfigurations);
+ //       ASSERT (Index < Xhc->UsbDevContext[SlotId].DevDesc.NumConfigurations);
+        if (Index >= Xhc->UsbDevContext[SlotId].DevDesc.NumConfigurations) {
+          DBG("Index=%d while NumConf=%d\n", Index, Xhc->UsbDevContext[SlotId].DevDesc.NumConfigurations);
+          Index = Xhc->UsbDevContext[SlotId].DevDesc.NumConfigurations - 1;
+        }
         Xhc->UsbDevContext[SlotId].ConfDesc[Index] = AllocateZeroPool(*DataLength);
         CopyMem (Xhc->UsbDevContext[SlotId].ConfDesc[Index], Data, *DataLength);
       }
@@ -1806,13 +1820,14 @@ XhcCreateUsbHc (
   Xhc->HcCParams.Dword  = XhcReadCapReg (Xhc, XHC_HCCPARAMS_OFFSET);
   Xhc->DBOff            = XhcReadCapReg (Xhc, XHC_DBOFF_OFFSET);
   Xhc->RTSOff           = XhcReadCapReg (Xhc, XHC_RTSOFF_OFFSET);
-
+  DBG("Xhc HCI version=%x\n", XhcReadCapReg8 (Xhc, XHC_HCIVERSION_OFFSET));
   //
   // This PageSize field defines the page size supported by the xHC implementation.
   // This xHC supports a page size of 2^(n+12) if bit n is Set. For example,
   // if bit 0 is Set, the xHC supports 4k byte page sizes.
   //
   PageSize      = XhcReadOpReg(Xhc, XHC_PAGESIZE_OFFSET) & XHC_PAGESIZE_MASK;
+  DBG("PageSize = %x\n", PageSize);
   Xhc->PageSize = 1 << (HighBitSet32(PageSize) + 12);
 
   ExtCapReg            = (UINT16) (Xhc->HcCParams.Data.ExtCapReg);
@@ -1820,6 +1835,7 @@ XhcCreateUsbHc (
   Xhc->UsbLegSupOffset = XhcGetLegSupCapAddr (Xhc);
 
   DBG ("XhcCreateUsb3Hc: Capability length 0x%x\n", Xhc->CapLength);
+  DBG ("XhcCreateUsb3Hc: ExtCapRegBase 0x%x\n", Xhc->ExtCapRegBase);
   DBG ("XhcCreateUsb3Hc: HcSParams1 0x%x\n", Xhc->HcSParams1);
   DBG ("XhcCreateUsb3Hc: HcSParams2 0x%x\n", Xhc->HcSParams2);
   DBG ("XhcCreateUsb3Hc: HcCParams 0x%x\n", Xhc->HcCParams);
@@ -1869,7 +1885,7 @@ XhcExitBootService (
 
   Xhc = (USB_XHCI_INSTANCE*) Context;
   PciIo = Xhc->PciIo;
-
+  DBG("Xhci onExitBootSevice\n");
   //
   // Stop AsyncRequest Polling timer then stop the XHCI driver
   // and uninstall the XHCI protocl.
@@ -1892,6 +1908,7 @@ XhcExitBootService (
                   Xhc->OriginalPciAttributes,
                   NULL
                   );
+  DBG("...attributes restored\n");  //for a what?
 }
 
 /**
@@ -1938,7 +1955,7 @@ XhcDriverBindingStart (
   if (EFI_ERROR (Status)) {
     return Status;
   }
-
+  DBG("PciIo started\n");
   //
   // Open Device Path Protocol for on USB host controller
   //
@@ -1953,6 +1970,8 @@ XhcDriverBindingStart (
                   );
 
   PciAttributesSaved = FALSE;
+//  DBG("HcDevicePath found=%s\n", ConvertDevicePathToText((EFI_DEVICE_PATH_PROTOCOL*)&HcDevicePath, FALSE, FALSE));
+  DBG("HcDevicePath found\n");
   //
   // Save original PCI attributes
   //
@@ -1967,6 +1986,7 @@ XhcDriverBindingStart (
     goto CLOSE_PCIIO;
   }
   PciAttributesSaved = TRUE;
+  DBG("attribute saved=%x\n", OriginalPciAttributes);
 
   Status = PciIo->Attributes (
                     PciIo,
@@ -1974,7 +1994,9 @@ XhcDriverBindingStart (
                     0,
                     &Supports
                     );
+  DBG("attribute supports=%x Status=%r\n", Supports, Status);
   if (!EFI_ERROR (Status)) {
+    
     Supports &= EFI_PCI_DEVICE_ENABLE;
     Status = PciIo->Attributes (
                       PciIo,
@@ -1982,6 +2004,7 @@ XhcDriverBindingStart (
                       Supports,
                       NULL
                       );
+    DBG("device enable status=%r\n", Status);
   }
 
   if (EFI_ERROR (Status)) {
@@ -1993,6 +2016,7 @@ XhcDriverBindingStart (
   //
   // Create then install USB2_HC_PROTOCOL
   //
+  DBG("Create USB2HC\n");
   Xhc = XhcCreateUsbHc (PciIo, HcDevicePath, OriginalPciAttributes);
 
   if (Xhc == NULL) {
@@ -2000,9 +2024,9 @@ XhcDriverBindingStart (
 //    DEBUG ((EFI_D_ERROR, "XhcDriverBindingStart: failed to create USB2_HC\n"));
     return EFI_OUT_OF_RESOURCES;
   }
-
+DBG("XhcSetBiosOwnership\n");
   XhcSetBiosOwnership (Xhc);
-
+DBG("XhcResetHC\n");
   XhcResetHC (Xhc, XHC_RESET_TIMEOUT);
 //  ASSERT (XhcIsHalt (Xhc));
   if (!XhcIsHalt (Xhc)) {
@@ -2015,17 +2039,20 @@ XhcDriverBindingStart (
   //
 //  ASSERT (!(XHC_REG_BIT_IS_SET (Xhc, XHC_USBSTS_OFFSET, XHC_USBSTS_CNR)));
   if (XHC_REG_BIT_IS_SET (Xhc, XHC_USBSTS_OFFSET, XHC_USBSTS_CNR)) {
+    DBG("Xhci USBSTS bit is set\n");
     goto FREE_POOL;
   }
 
   //
   // Initialize the schedule
   //
+  DBG("Initialize the schedule\n");
   XhcInitSched (Xhc);
 
   //
   // Start the Host Controller
   //
+  DBG("Start the Host Controller\n");
   XhcRunHC(Xhc, XHC_GENERIC_TIMEOUT);
 
   //

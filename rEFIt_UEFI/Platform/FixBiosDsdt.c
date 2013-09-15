@@ -2105,7 +2105,7 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len, INT32 VCard)
       pack = aml_add_package(met);
       if (!AddProperties(pack, DEV_HDMI)) {
         aml_add_string(pack, "layout-id");
-        aml_add_byte_buffer(pack, (CHAR8*)&GfxlayoutId, 4);
+        aml_add_byte_buffer(pack, (CHAR8*)&GfxlayoutId[1], 4);
         aml_add_string(pack, "hda-gfx");
         aml_add_string_buffer(pack, "onboard-2");
         aml_add_string(pack, "PinConfigurations");

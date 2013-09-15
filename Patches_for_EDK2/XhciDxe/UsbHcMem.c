@@ -51,7 +51,7 @@ UsbHcAllocMemBlock (
   // each bit in the bit array represents USBHC_MEM_UNIT
   // bytes of memory in the memory block.
   //
-  ASSERT (USBHC_MEM_UNIT * 8 <= EFI_PAGE_SIZE);
+//  ASSERT (USBHC_MEM_UNIT * 8 <= EFI_PAGE_SIZE);
 
   Block->BufLen   = EFI_PAGES_TO_SIZE (Pages);
   Block->BitsLen  = Block->BufLen / (USBHC_MEM_UNIT * 8);
@@ -162,7 +162,10 @@ UsbHcAllocMemFromBlock (
   UINTN                   Available;
   UINTN                   Count;
 
-  ASSERT ((Block != 0) && (Units != 0));
+//  ASSERT ((Block != 0) && (Units != 0));
+  if (!Block || !Units) {
+    return NULL;
+  }
 
   StartByte  = 0;
   StartBit   = 0;
@@ -203,7 +206,10 @@ UsbHcAllocMemFromBlock (
   Bit   = StartBit;
 
   for (Count = 0; Count < Units; Count++) {
-    ASSERT (!USB_HC_BIT_IS_SET (Block->Bits[Byte], Bit));
+//    ASSERT (!USB_HC_BIT_IS_SET (Block->Bits[Byte], Bit));
+    if (USB_HC_BIT_IS_SET (Block->Bits[Byte], Bit)) {
+      break;
+    }
 
     Block->Bits[Byte] = (UINT8) (Block->Bits[Byte] | USB_HC_BIT (Bit));
     NEXT_BIT (Byte, Bit);
@@ -252,7 +258,10 @@ UsbHcGetPciAddrForHostAddr (
     }
   }
 
-  ASSERT ((Block != NULL));
+//  ASSERT ((Block != NULL));
+  if (!Block) {
+    return 0;
+  }
   //
   // calculate the pci memory address for host memory address.
   //
@@ -301,7 +310,11 @@ UsbHcGetHostAddrForPciAddr (
     }
   }
 
-  ASSERT ((Block != NULL));
+//  ASSERT ((Block != NULL));
+  if (!Block) {
+    return 0;
+  }
+
   //
   // calculate the pci memory address for host memory address.
   //
@@ -323,7 +336,10 @@ UsbHcInsertMemBlockToPool (
   IN USBHC_MEM_BLOCK      *Block
   )
 {
-  ASSERT ((Head != NULL) && (Block != NULL));
+//  ASSERT ((Head != NULL) && (Block != NULL));
+  if (!Head || !Block) {
+    return;
+  }
   Block->Next = Head->Next;
   Head->Next  = Block;
 }
@@ -344,6 +360,9 @@ UsbHcIsMemBlockEmpty (
   )
 {
   UINTN                   Index;
+  if (!Block) {
+    return FALSE;
+  }
 
   for (Index = 0; Index < Block->BitsLen; Index++) {
     if (Block->Bits[Index] != 0) {
@@ -370,7 +389,10 @@ UsbHcUnlinkMemBlock (
 {
   USBHC_MEM_BLOCK         *Block;
 
-  ASSERT ((Head != NULL) && (BlockToUnlink != NULL));
+//  ASSERT ((Head != NULL) && (BlockToUnlink != NULL));
+  if (!Head || !BlockToUnlink) {
+    return;
+  }
 
   for (Block = Head; Block != NULL; Block = Block->Next) {
     if (Block->Next == BlockToUnlink) {
@@ -432,7 +454,10 @@ UsbHcFreeMemPool (
 {
   USBHC_MEM_BLOCK *Block;
 
-  ASSERT (Pool->Head != NULL);
+//  ASSERT (Pool->Head != NULL);
+  if (!Pool || !Pool->Head) {
+    return EFI_INVALID_PARAMETER;
+  }
 
   //
   // Unlink all the memory blocks from the pool, then free them.
@@ -473,10 +498,17 @@ UsbHcAllocateMem (
   UINTN                   AllocSize;
   UINTN                   Pages;
 
+  if (!Pool) {
+    return NULL;
+  }
+
   Mem       = NULL;
   AllocSize = USBHC_MEM_ROUND (Size);
   Head      = Pool->Head;
-  ASSERT (Head != NULL);
+//  ASSERT (Head != NULL);
+  if (!Head) {
+    return NULL;
+  }
 
   //
   // First check whether current memory blocks can satisfy the allocation.
@@ -550,6 +582,10 @@ UsbHcFreeMem (
   UINTN                   Bit;
   UINTN                   Count;
 
+  if (!Pool || !Mem) {
+    return;
+  }
+
   Head      = Pool->Head;
   AllocSize = USBHC_MEM_ROUND (Size);
   ToFree    = (UINT8 *) Mem;
@@ -570,7 +606,10 @@ UsbHcFreeMem (
       // reset associated bits in bit arry
       //
       for (Count = 0; Count < (AllocSize / USBHC_MEM_UNIT); Count++) {
-        ASSERT (USB_HC_BIT_IS_SET (Block->Bits[Byte], Bit));
+//        ASSERT (USB_HC_BIT_IS_SET (Block->Bits[Byte], Bit));
+        if (!(USB_HC_BIT_IS_SET (Block->Bits[Byte], Bit))) {
+          continue;
+        }
 
         Block->Bits[Byte] = (UINT8) (Block->Bits[Byte] ^ USB_HC_BIT (Bit));
         NEXT_BIT (Byte, Bit);
@@ -585,7 +624,10 @@ UsbHcFreeMem (
   // in the host controller's pool. This is critical because
   // the caller has passed in a wrong memory point
   //
-  ASSERT (Block != NULL);
+//  ASSERT (Block != NULL);
+  if (!Block) {
+    return;
+  }
 
   //
   // Release the current memory block if it is empty and not the head
@@ -638,7 +680,7 @@ UsbHcAllocateAlignedPages (
   //
   // Alignment must be a power of two or zero.
   //
-  ASSERT ((Alignment & (Alignment - 1)) == 0);
+//  ASSERT ((Alignment & (Alignment - 1)) == 0);
   
   if ((Alignment & (Alignment - 1)) != 0) {
     return EFI_INVALID_PARAMETER;
@@ -656,7 +698,10 @@ UsbHcAllocateAlignedPages (
     //
     // Make sure that Pages plus EFI_SIZE_TO_PAGES (Alignment) does not overflow.
     //
-    ASSERT (RealPages > Pages);
+//    ASSERT (RealPages > Pages);
+    if (RealPages < Pages) {
+      return EFI_INVALID_PARAMETER;
+    }
  
     Status = PciIo->AllocateBuffer (
                       PciIo,
@@ -676,7 +721,10 @@ UsbHcAllocateAlignedPages (
       // Free first unaligned page(s).
       //
       Status = PciIo->FreeBuffer (PciIo, UnalignedPages, Memory);
-      ASSERT_EFI_ERROR (Status);
+//      ASSERT_EFI_ERROR (Status);
+      if (EFI_ERROR (Status)) {
+        return EFI_OUT_OF_RESOURCES;
+      }
     }
     Memory         = (VOID *)(UINTN)(AlignedMemory + EFI_PAGES_TO_SIZE (Pages));
     UnalignedPages = RealPages - Pages - UnalignedPages;
@@ -685,7 +733,10 @@ UsbHcAllocateAlignedPages (
       // Free last unaligned page(s).
       //
       Status = PciIo->FreeBuffer (PciIo, UnalignedPages, Memory);
-      ASSERT_EFI_ERROR (Status);
+//      ASSERT_EFI_ERROR (Status);
+      if (EFI_ERROR (Status)) {
+        return EFI_OUT_OF_RESOURCES;
+      }
     }
   } else {
     //
@@ -744,15 +795,25 @@ UsbHcFreeAlignedPages (
 {
   EFI_STATUS      Status;
   
-  ASSERT (Pages != 0);
+//  ASSERT (Pages != 0);
+  if (!Pages) {
+    return;
+  }
   
   Status = PciIo->Unmap (PciIo, Mapping);
-  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR (Status);
+  if (EFI_ERROR (Status)) {
+    return;
+  }
 
   Status = PciIo->FreeBuffer (
                     PciIo,
                     Pages,
                     HostAddress
                     );     
-  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR (Status);
+  if (EFI_ERROR (Status)) {
+    return;
+  }
+
 }

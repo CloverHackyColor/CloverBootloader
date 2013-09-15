@@ -65,6 +65,7 @@
   ReportStatusCodeLib
     MemLogLib
   PrintLib
+DevicePathLib
 
 
 [Guids]

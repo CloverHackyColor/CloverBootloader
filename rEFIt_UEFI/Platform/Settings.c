@@ -3546,7 +3546,9 @@ VOID SetDevices(VOID)
         else if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_SERIAL) &&
                  (Pci.Hdr.ClassCode[1] == PCI_CLASS_SERIAL_USB)) {
 //          if (!(gSettings.FixDsdt & FIX_USB)) {
-            if (gSettings.USBInjection) {
+            if (gSettings.USBInjection &&
+                (Pci.Hdr.VendorId != 0x1002) &&
+                (Pci.Hdr.VendorId != 0x10de)) {
               TmpDirty = set_usb_props(&PCIdevice);
               StringDirty |=  TmpDirty;
             }

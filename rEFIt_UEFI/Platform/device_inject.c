@@ -31,6 +31,7 @@ UINT8  *stringdata    = NULL;
 UINT32 stringlength   = 0;
 
 //pci_dt_t* nvdevice;
+//SwapBytes16 or 32
 
 static UINT16 dp_swap16(UINT16 toswap)
 {
