@@ -3545,22 +3545,22 @@ VOID SetDevices(VOID)
         //USB
         else if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_SERIAL) &&
                  (Pci.Hdr.ClassCode[1] == PCI_CLASS_SERIAL_USB)) {
-//          if (!(gSettings.FixDsdt & FIX_USB)) {
-            if (gSettings.USBInjection &&
-                (Pci.Hdr.VendorId != 0x1002) &&
-                (Pci.Hdr.VendorId != 0x10de)) {
+            if (gSettings.USBInjection) {
               TmpDirty = set_usb_props(&PCIdevice);
               StringDirty |=  TmpDirty;
             }
-//          }
         }
         
         // HDA
         else if (gSettings.HDAInjection &&
                  (Pci.Hdr.ClassCode[2] == PCI_CLASS_MEDIA) &&
                  (Pci.Hdr.ClassCode[1] == PCI_CLASS_MEDIA_HDA)) {
-          TmpDirty = set_hda_props(PciIo, &PCIdevice);
-          StringDirty |=  TmpDirty;
+          //no HDMI injection
+          if ((Pci.Hdr.VendorId != 0x1002) &&
+              (Pci.Hdr.VendorId != 0x10de)) {
+            TmpDirty = set_hda_props(PciIo, &PCIdevice);
+            StringDirty |=  TmpDirty;
+          }
         }
         
         //LPC
