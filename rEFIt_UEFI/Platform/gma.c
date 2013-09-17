@@ -94,6 +94,7 @@ static struct gma_gpu_t KnownGPUS[] = {
   { 0x0156, "Intel HD Graphics 4000"  },  //MacBook
   { 0x016a, "Intel HD Graphics P4000" },  //Xeon E3-1245
   { 0x0412, "Intel HD Graphics 4600"  },  //Haswell
+  { 0x0416, "Intel HD Graphics 4600"  },  //Haswell
 };
 
 CHAR8 *get_gma_model(UINT16 id) {
@@ -202,6 +203,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
     case 0x0166:
     case 0x016a:
     case 0x0412:
+    case 0x0416:
       if (!gSettings.IgPlatform) {
         if ((gma_dev->device_id == 0x162) ||
             (gma_dev->device_id == 0x16a)) {
@@ -215,6 +217,8 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
         else if (gma_dev->device_id == 0x156)
           devprop_add_value(device, "AAPL,ig-platform-id", GMAX3100_vals[25], 4);
         else if (gma_dev->device_id == 0x412)
+          devprop_add_value(device, "AAPL,ig-platform-id", GMAX3100_vals[26], 4);
+        else if (gma_dev->device_id == 0x416)
           devprop_add_value(device, "AAPL,ig-platform-id", GMAX3100_vals[26], 4);
 
         /*    IG_ID[0] = gma_dev->revision;
