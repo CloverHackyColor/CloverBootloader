@@ -564,7 +564,9 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
 //    DBG("BeginExternalScreen\n");
   BeginExternalScreen(OSFLAG_ISSET(Entry->Flags, OSFLAG_USEGRAPHICS), L"Booting OS");
 //  if (Entry->LoaderType == OSTYPE_OSX) {
-  if (OSTYPE_IS_OSX(Entry->LoaderType)) {
+  if (OSTYPE_IS_OSX(Entry->LoaderType) ||
+      OSTYPE_IS_OSX_RECOVERY(Entry->LoaderType) ||
+      OSTYPE_IS_OSX_INSTALLER(Entry->LoaderType)) {
     // first patchACPI and find PCIROOT and RTC
     // but before ACPI patch we need smbios patch
     PatchSmbios();
@@ -1892,21 +1894,22 @@ static VOID AddCustomEntries(VOID)
   DBG("Custom entries start\n");
   // Traverse the custom entries
   for (Custom = gSettings.CustomEntries; Custom; ++i, Custom = Custom->Next) {
-    if ((Custom->Path == NULL) && (Custom->Type != 0)) {
+    CHAR16 *CustomPath = Custom->Path;
+    if ((CustomPath == NULL) && (Custom->Type != 0)) {
       switch (Custom->Type) {
       case OSTYPE_OSX:
-         Custom->Path = MACOSX_LOADER_PATH;
+         CustomPath = MACOSX_LOADER_PATH;
          break;
       case OSTYPE_RECOVERY:
-         Custom->Path = L"\\com.apple.recovery.boot\\boot.efi";
+         CustomPath = L"\\com.apple.recovery.boot\\boot.efi";
          break;
       case OSTYPE_WINEFI:
-         Custom->Path = L"\\EFI\\Microsoft\\Boot\\bootmgfw.efi";
+         CustomPath = L"\\EFI\\Microsoft\\Boot\\bootmgfw.efi";
       default:
          break;
       }
     }
-    if ((Custom->Path == NULL) && (Custom->Type != OSTYPE_OSX_INSTALLER)) {
+    if ((CustomPath == NULL) && (Custom->Type != OSTYPE_OSX_INSTALLER)) {
       DBG("Custom entry %d skipped because it didn't have a path or valid type.\n", i);
       continue;
     }
@@ -1920,18 +1923,18 @@ static VOID AddCustomEntries(VOID)
     }
     if (Custom->Volume) {
       if (Custom->Title) {
-        if (Custom->Path) {
-          DBG("Custom entry %d \"%s\" \"%s\" \"%s\" (%d) 0x%X matching \"%s\" ...\n", i, Custom->Title, Custom->Path, ((Custom->Options != NULL) ? Custom->Options : L""), Custom->Type, Custom->Flags, Custom->Volume);
+        if (CustomPath) {
+          DBG("Custom entry %d \"%s\" \"%s\" \"%s\" (%d) 0x%X matching \"%s\" ...\n", i, Custom->Title, CustomPath, ((Custom->Options != NULL) ? Custom->Options : L""), Custom->Type, Custom->Flags, Custom->Volume);
         } else {
           DBG("Custom entry %d \"%s\" \"%s\" (%d) 0x%X matching \"%s\" ...\n", i, Custom->Title, ((Custom->Options != NULL) ? Custom->Options : L""), Custom->Type, Custom->Flags, Custom->Volume);
         }
-      } else if (Custom->Path) {
-        DBG("Custom entry %d \"%s\" \"%s\" (%d) 0x%X matching \"%s\" ...\n", i, Custom->Path, ((Custom->Options != NULL) ? Custom->Options : L""), Custom->Type, Custom->Flags, Custom->Volume);
+      } else if (CustomPath) {
+        DBG("Custom entry %d \"%s\" \"%s\" (%d) 0x%X matching \"%s\" ...\n", i, CustomPath, ((Custom->Options != NULL) ? Custom->Options : L""), Custom->Type, Custom->Flags, Custom->Volume);
       } else {
         DBG("Custom entry %d \"%s\" (%d) 0x%X matching \"%s\" ...\n", i, ((Custom->Options != NULL) ? Custom->Options : L""), Custom->Type, Custom->Flags, Custom->Volume);
       }
-    } else if (Custom->Path) {
-      DBG("Custom entry %d \"%s\" \"%s\" (%d) 0x%X matching all volumes ...\n", i, Custom->Path, ((Custom->Options != NULL) ? Custom->Options : L""), Custom->Type, Custom->Flags);
+    } else if (CustomPath) {
+      DBG("Custom entry %d \"%s\" \"%s\" (%d) 0x%X matching all volumes ...\n", i, CustomPath, ((Custom->Options != NULL) ? Custom->Options : L""), Custom->Type, Custom->Flags);
     } else {
       DBG("Custom entry %d \"%s\" (%d) 0x%X matching all volumes ...\n", i, ((Custom->Options != NULL) ? Custom->Options : L""), Custom->Type, Custom->Flags);
     }
@@ -1962,7 +1965,7 @@ static VOID AddCustomEntries(VOID)
       }
 
       // Check volume for installer
-      Path = Custom->Path;
+      Path = CustomPath;
       if ((Path == NULL) && (Custom->Type == OSTYPE_OSX_INSTALLER) && (Volume->RootDir != NULL)) {
         static CHAR16 *InstallerPath[] = {
            L"\\Mac OS X Install Data\\boot.efi",
