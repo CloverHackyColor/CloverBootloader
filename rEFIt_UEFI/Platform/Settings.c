@@ -711,6 +711,44 @@ static BOOLEAN FillinCustomTool(IN OUT CUSTOM_TOOL_ENTRY *Entry, TagPtr dictPoin
       Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_DISABLED);
     }
   }
+  prop = GetProperty(dictPointer, "VolumeType");
+  if (prop && (prop->type == kTagTypeString)) {
+    if (AsciiStriCmp(prop->string, "Internal") == 0) {
+      Entry->VolumeType = DISABLE_FLAG_INTERNAL;
+    } else if (AsciiStriCmp(prop->string, "External") == 0) {
+      Entry->VolumeType = DISABLE_FLAG_EXTERNAL;
+    } else if (AsciiStriCmp(prop->string, "Optical") == 0) {
+      Entry->VolumeType = DISABLE_FLAG_OPTICAL;
+    } else if (AsciiStriCmp(prop->string, "FireWire") == 0) {
+      Entry->VolumeType = DISABLE_FLAG_FIREWIRE;
+    }
+  } else {
+    INTN i, count = GetTagCount(prop);
+    if (count > 0)
+    {
+      TagPtr prop2;
+      for (i = 0; i < count; ++i) {
+        if (EFI_ERROR(GetElement(prop, i, &prop2))) {
+          continue;
+        }
+        if (prop2 == NULL) {
+          break;
+        }
+        if ((prop2->type != kTagTypeString) || (prop2->string == NULL)) {
+          continue;
+        }
+        if (AsciiStriCmp(prop2->string, "Internal") == 0) {
+          Entry->VolumeType |= DISABLE_FLAG_INTERNAL;
+        } else if (AsciiStriCmp(prop2->string, "External") == 0) {
+          Entry->VolumeType |= DISABLE_FLAG_EXTERNAL;
+        } else if (AsciiStriCmp(prop2->string, "Optical") == 0) {
+          Entry->VolumeType |= DISABLE_FLAG_OPTICAL;
+        } else if (AsciiStriCmp(prop2->string, "FireWire") == 0) {
+          Entry->VolumeType |= DISABLE_FLAG_FIREWIRE;
+        }
+      }
+    }
+  }
   return TRUE;
 }
 

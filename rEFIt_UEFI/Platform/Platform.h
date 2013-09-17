@@ -654,6 +654,7 @@ struct CUSTOM_TOOL_ENTRY {
   CHAR16            *Title;
   CHAR16             Hotkey;
   UINT8              Flags;
+  UINT8              VolumeType;
 };
 
 typedef struct ACPI_DROP_TABLE ACPI_DROP_TABLE;
