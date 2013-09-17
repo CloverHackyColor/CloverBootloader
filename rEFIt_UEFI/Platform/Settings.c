@@ -402,6 +402,44 @@ static BOOLEAN FillinCustomEntry(IN OUT CUSTOM_LOADER_ENTRY *Entry, TagPtr dictP
       Entry->Type = OSTYPE_OTHER;
     }
   }
+  prop = GetProperty(dictPointer, "VolumeType");
+  if (prop && (prop->type == kTagTypeString)) {
+    if (AsciiStriCmp(prop->string, "Internal") == 0) {
+      Entry->VolumeType = DISABLE_FLAG_INTERNAL;
+    } else if (AsciiStriCmp(prop->string, "External") == 0) {
+      Entry->VolumeType = DISABLE_FLAG_EXTERNAL;
+    } else if (AsciiStriCmp(prop->string, "Optical") == 0) {
+      Entry->VolumeType = DISABLE_FLAG_OPTICAL;
+    } else if (AsciiStriCmp(prop->string, "FireWire") == 0) {
+      Entry->VolumeType = DISABLE_FLAG_FIREWIRE;
+    }
+  } else {
+    INTN i, count = GetTagCount(prop);
+    if (count > 0)
+    {
+      TagPtr prop2;
+      for (i = 0; i < count; ++i) {
+        if (EFI_ERROR(GetElement(prop, i, &prop2))) {
+          continue;
+        }
+        if (prop2 == NULL) {
+          break;
+        }
+        if ((prop2->type != kTagTypeString) || (prop2->string == NULL)) {
+          continue;
+        }
+        if (AsciiStriCmp(prop2->string, "Internal") == 0) {
+          Entry->VolumeType |= DISABLE_FLAG_INTERNAL;
+        } else if (AsciiStriCmp(prop2->string, "External") == 0) {
+          Entry->VolumeType |= DISABLE_FLAG_EXTERNAL;
+        } else if (AsciiStriCmp(prop2->string, "Optical") == 0) {
+          Entry->VolumeType |= DISABLE_FLAG_OPTICAL;
+        } else if (AsciiStriCmp(prop2->string, "FireWire") == 0) {
+          Entry->VolumeType |= DISABLE_FLAG_FIREWIRE;
+        }
+      }
+    }
+  }
   if (Entry->Title == NULL) {
     if (Entry->Type == OSTYPE_RECOVERY) {
       Entry->Title = PoolPrint(L"Recovery");
@@ -416,10 +454,7 @@ static BOOLEAN FillinCustomEntry(IN OUT CUSTOM_LOADER_ENTRY *Entry, TagPtr dictP
   }
 
   // OS Specific flags
-  switch (Entry->Type) {
-    case OSTYPE_OSX:
-    case OSTYPE_OSX_INSTALLER:
-    case OSTYPE_RECOVERY:  
+  if (OSTYPE_IS_OSX(Entry->Type) || OSTYPE_IS_OSX_RECOVERY(Entry->Type) || OSTYPE_IS_OSX_INSTALLER(Entry->Type)) {
      prop = GetProperty(dictPointer, "InjectKexts");
      if (prop) {
        if ((prop->type == kTagTypeTrue) ||
@@ -440,10 +475,6 @@ static BOOLEAN FillinCustomEntry(IN OUT CUSTOM_LOADER_ENTRY *Entry, TagPtr dictP
          Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_NOCACHES);
        }
      }
-     break;
-
-  default:
-     break;
   }
   return TRUE;
 }
@@ -539,6 +570,44 @@ static BOOLEAN FillinCustomLegacy(IN OUT CUSTOM_LEGACY_ENTRY *Entry, TagPtr dict
       Entry->Type = OSTYPE_LIN;
     } else {
       Entry->Type = OSTYPE_OTHER;
+    }
+  }
+  prop = GetProperty(dictPointer, "VolumeType");
+  if (prop && (prop->type == kTagTypeString)) {
+    if (AsciiStriCmp(prop->string, "Internal") == 0) {
+      Entry->VolumeType = DISABLE_FLAG_INTERNAL;
+    } else if (AsciiStriCmp(prop->string, "External") == 0) {
+      Entry->VolumeType = DISABLE_FLAG_EXTERNAL;
+    } else if (AsciiStriCmp(prop->string, "Optical") == 0) {
+      Entry->VolumeType = DISABLE_FLAG_OPTICAL;
+    } else if (AsciiStriCmp(prop->string, "FireWire") == 0) {
+      Entry->VolumeType = DISABLE_FLAG_FIREWIRE;
+    }
+  } else {
+    INTN i, count = GetTagCount(prop);
+    if (count > 0)
+    {
+      TagPtr prop2;
+      for (i = 0; i < count; ++i) {
+        if (EFI_ERROR(GetElement(prop, i, &prop2))) {
+          continue;
+        }
+        if (prop2 == NULL) {
+          break;
+        }
+        if ((prop2->type != kTagTypeString) || (prop2->string == NULL)) {
+          continue;
+        }
+        if (AsciiStriCmp(prop2->string, "Internal") == 0) {
+          Entry->VolumeType |= DISABLE_FLAG_INTERNAL;
+        } else if (AsciiStriCmp(prop2->string, "External") == 0) {
+          Entry->VolumeType |= DISABLE_FLAG_EXTERNAL;
+        } else if (AsciiStriCmp(prop2->string, "Optical") == 0) {
+          Entry->VolumeType |= DISABLE_FLAG_OPTICAL;
+        } else if (AsciiStriCmp(prop2->string, "FireWire") == 0) {
+          Entry->VolumeType |= DISABLE_FLAG_FIREWIRE;
+        }
+      }
     }
   }
   return TRUE;

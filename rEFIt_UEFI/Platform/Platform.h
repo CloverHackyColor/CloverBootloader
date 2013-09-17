@@ -625,6 +625,7 @@ struct CUSTOM_LOADER_ENTRY {
   CHAR16               Hotkey;
   UINT8                Flags;
   UINT8                Type;
+  UINT8                VolumeType;
 };
 
 typedef struct CUSTOM_LEGACY_ENTRY CUSTOM_LEGACY_ENTRY;
@@ -638,6 +639,7 @@ struct CUSTOM_LEGACY_ENTRY {
   CHAR16               Hotkey;
   UINT8                Flags;
   UINT8                Type;
+  UINT8                VolumeType;
 };
 
 typedef struct CUSTOM_TOOL_ENTRY CUSTOM_TOOL_ENTRY;

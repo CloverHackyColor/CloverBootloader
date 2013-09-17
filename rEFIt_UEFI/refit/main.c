@@ -1896,20 +1896,15 @@ static VOID AddCustomEntries(VOID)
   for (Custom = gSettings.CustomEntries; Custom; ++i, Custom = Custom->Next) {
     CHAR16 *CustomPath = Custom->Path;
     if ((CustomPath == NULL) && (Custom->Type != 0)) {
-      switch (Custom->Type) {
-      case OSTYPE_OSX:
+      if (OSTYPE_IS_OSX(Custom->Type)) {
          CustomPath = MACOSX_LOADER_PATH;
-         break;
-      case OSTYPE_RECOVERY:
+      } else if (OSTYPE_IS_OSX_RECOVERY(Custom->Type)) {
          CustomPath = L"\\com.apple.recovery.boot\\boot.efi";
-         break;
-      case OSTYPE_WINEFI:
+      } else if (OSTYPE_IS_WINDOWS(Custom->Type)) {
          CustomPath = L"\\EFI\\Microsoft\\Boot\\bootmgfw.efi";
-      default:
-         break;
       }
     }
-    if ((CustomPath == NULL) && (Custom->Type != OSTYPE_OSX_INSTALLER)) {
+    if ((CustomPath == NULL) && !OSTYPE_IS_OSX_RECOVERY(Custom->Type)) {
       DBG("Custom entry %d skipped because it didn't have a path or valid type.\n", i);
       continue;
     }
@@ -1957,6 +1952,15 @@ static VOID AddCustomEntries(VOID)
       {
         DBG("skipped because media is disabled\n");
         continue;
+      }
+
+      if (Custom->VolumeType != 0) {
+        if ((Volume->DiskKind == DISK_KIND_OPTICAL && (Custom->VolumeType & DISABLE_FLAG_OPTICAL)) ||
+            (Volume->DiskKind == DISK_KIND_EXTERNAL && (Custom->VolumeType & DISABLE_FLAG_EXTERNAL)) ||
+            (Volume->DiskKind == DISK_KIND_INTERNAL && (Custom->VolumeType & DISABLE_FLAG_INTERNAL))) {
+          DBG("skipped because media is ignored\n");
+          continue;
+        }
       }
 
       if (Volume->OSType == OSTYPE_HIDE) {
@@ -2387,6 +2391,15 @@ static VOID AddCustomLegacy(VOID)
       {
          DBG("skipped because media is disabled\n");
         continue;
+      }
+
+      if (Custom->VolumeType != 0) {
+        if ((Volume->DiskKind == DISK_KIND_OPTICAL && (Custom->VolumeType & DISABLE_FLAG_OPTICAL)) ||
+            (Volume->DiskKind == DISK_KIND_EXTERNAL && (Custom->VolumeType & DISABLE_FLAG_EXTERNAL)) ||
+            (Volume->DiskKind == DISK_KIND_INTERNAL && (Custom->VolumeType & DISABLE_FLAG_INTERNAL))) {
+          DBG("skipped because media is ignored\n");
+          continue;
+        }
       }
 
       if ((Volume->BootType == BOOTING_BY_EFI) ||
