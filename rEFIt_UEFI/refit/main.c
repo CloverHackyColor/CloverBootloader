@@ -1966,6 +1966,36 @@ VOID ScanLoader(VOID)
   }
 }
 
+static CHAR16 *LinuxEntryPaths[] = {
+   L"\\EFI\\SuSe\\elilo.efi",
+#if defined(MDE_CPU_X64)
+   L"\\EFI\\grub\\grubx64.efi",
+   L"\\EFI\\Gentoo\\grubx64.efi",
+   L"\\EFI\\Gentoo\\kernelx64.efi",
+   L"\\EFI\\RedHat\\grubx64.efi",
+   L"\\EFI\\ubuntu\\grubx64.efi",
+   L"\\EFI\\kubuntu\\grubx64.efi",
+   L"\\EFI\\LinuxMint\\grubx64.efi",
+   L"\\EFI\\Fedora\\grubx64.efi",
+   L"\\EFI\\opensuse\\grubx64.efi",
+   L"\\EFI\\arch\\grubx64.efi",
+   L"\\EFI\\arch_grub\\grubx64.efi",
+#else
+   L"\\EFI\\grub\\grub.efi",
+   L"\\EFI\\Gentoo\\grub.efi",
+   L"\\EFI\\Gentoo\\kernel.efi",
+   L"\\EFI\\RedHat\\grub.efi",
+   L"\\EFI\\ubuntu\\grub.efi",
+   L"\\EFI\\kubuntu\\grub.efi",
+   L"\\EFI\\LinuxMint\\grub.efi",
+   L"\\EFI\\Fedora\\grub.efi",
+   L"\\EFI\\opensuse\\grub.efi",
+   L"\\EFI\\arch\\grub.efi",
+   L"\\EFI\\arch_grub\\grub.efi",
+#endif
+};
+static const UINTN LinuxEntryPathsCount = (sizeof(LinuxEntryPaths) / sizeof(CHAR16 *));
+
 static UINT8 GetOSTypeFromPath(IN CHAR16 *Path, IN UINT8 OSType)
 {
    if (Path == NULL) {
@@ -1982,244 +2012,241 @@ static UINT8 GetOSTypeFromPath(IN CHAR16 *Path, IN UINT8 OSType)
               (StriCmp(Path, L"\\bootmgr.efi") == 0) ||
               (StriCmp(Path, L"\\EFI\\MICROSOFT\\BOOT\\cdboot.efi") == 0)) {
      return OSTYPE_WINEFI;
-   } else if ((StriCmp(Path, L"\\EFI\\SuSe\\elilo.efi") == 0) ||
-#if defined(MDE_CPU_X64)
-              (StriCmp(Path, L"\\EFI\\grub\\grubx64.efi") == 0) ||
-              (StriCmp(Path, L"\\EFI\\Gentoo\\grubx64.efi") == 0) ||
-              (StriCmp(Path, L"\\EFI\\Gentoo\\kernelx64.efi") == 0) ||
-              (StriCmp(Path, L"\\EFI\\RedHat\\grubx64.efi") == 0) ||
-              (StriCmp(Path, L"\\EFI\\ubuntu\\grubx64.efi") == 0) ||
-              (StriCmp(Path, L"\\EFI\\kubuntu\\grubx64.efi") == 0) ||
-              (StriCmp(Path, L"\\EFI\\LinuxMint\\grubx64.efi") == 0) ||
-              (StriCmp(Path, L"\\EFI\\Fedora\\grubx64.efi") == 0) ||
-              (StriCmp(Path, L"\\EFI\\opensuse\\grubx64.efi") == 0) ||
-              (StriCmp(Path, L"\\EFI\\arch\\grubx64.efi") == 0) ||
-              (StriCmp(Path, L"\\EFI\\arch_grub\\grubx64.efi") == 0)) {
-#else
-              (StriCmp(Path, L"\\EFI\\grub\\grub.efi") == 0) ||
-              (StriCmp(Path, L"\\EFI\\Gentoo\\grub.efi") == 0) ||
-              (StriCmp(Path, L"\\EFI\\Gentoo\\kernel.efi") == 0) ||
-              (StriCmp(Path, L"\\EFI\\RedHat\\grub.efi") == 0) ||
-              (StriCmp(Path, L"\\EFI\\ubuntu\\grub.efi") == 0) ||
-              (StriCmp(Path, L"\\EFI\\kubuntu\\grub.efi") == 0) ||
-              (StriCmp(Path, L"\\EFI\\LinuxMint\\grub.efi") == 0) ||
-              (StriCmp(Path, L"\\EFI\\Fedora\\grub.efi") == 0) ||
-              (StriCmp(Path, L"\\EFI\\opensuse\\grub.efi") == 0) ||
-              (StriCmp(Path, L"\\EFI\\arch\\grub.efi") == 0) ||
-              (StriCmp(Path, L"\\EFI\\arch_grub\\grub.efi") == 0)) {
-#endif
-     return OSTYPE_LIN;
+   } else {
+     UINTN Index = 0;
+     while (Index < LinuxEntryPathsCount) {
+       if (StriCmp(Path, LinuxEntryPaths[Index]) == 0) {
+         return OSTYPE_LIN;
+       }
+       ++Index;
+     }
    }
    return (OSType == 0) ? OSTYPE_OTHER : OSType;
 }
 
-// Add custom entries
-static VOID AddCustomEntries(VOID)
+static VOID AddCustomEntry(IN UINTN                CustomIndex,
+                           IN CHAR16              *CustomPath,
+                           IN CUSTOM_LOADER_ENTRY *Custom)
 {
   UINTN                VolumeIndex;
   REFIT_VOLUME        *Volume;
-  CUSTOM_LOADER_ENTRY *Custom, *CustomSubEntry;
+  CUSTOM_LOADER_ENTRY *CustomSubEntry;
   LOADER_ENTRY        *Entry, *SubEntry;
   EG_IMAGE            *Image;
   EFI_GUID            *Guid = NULL;
   CHAR16              *Path;
   UINT64               VolumeSize;
   UINT8                OSType;
+
+  if ((CustomPath == NULL) && !OSTYPE_IS_OSX_INSTALLER(Custom->Type)) {
+    DBG("Custom entry %d skipped because it didn't have a path or valid type.\n", CustomIndex);
+    return;
+  }
+  if (OSFLAG_ISSET(Custom->Flags, OSFLAG_DISABLED)) {
+    DBG("Custom entry %d skipped because it is disabled.\n", CustomIndex);
+    return;
+  }
+  if (!gSettings.ShowHiddenEntries && OSFLAG_ISSET(Custom->Flags, OSFLAG_HIDDEN)) {
+    DBG("Custom entry %d skipped because it is hidden.\n", CustomIndex);
+    return;
+  }
+  if (Custom->Volume) {
+    if (Custom->Title) {
+      if (CustomPath) {
+        DBG("Custom entry %d \"%s\" \"%s\" \"%s\" (%d) 0x%X matching \"%s\" ...\n", CustomIndex, Custom->Title, CustomPath, ((Custom->Options != NULL) ? Custom->Options : L""), Custom->Type, Custom->Flags, Custom->Volume);
+      } else {
+        DBG("Custom entry %d \"%s\" \"%s\" (%d) 0x%X matching \"%s\" ...\n", CustomIndex, Custom->Title, ((Custom->Options != NULL) ? Custom->Options : L""), Custom->Type, Custom->Flags, Custom->Volume);
+      }
+    } else if (CustomPath) {
+      DBG("Custom entry %d \"%s\" \"%s\" (%d) 0x%X matching \"%s\" ...\n", CustomIndex, CustomPath, ((Custom->Options != NULL) ? Custom->Options : L""), Custom->Type, Custom->Flags, Custom->Volume);
+    } else {
+      DBG("Custom entry %d \"%s\" (%d) 0x%X matching \"%s\" ...\n", CustomIndex, ((Custom->Options != NULL) ? Custom->Options : L""), Custom->Type, Custom->Flags, Custom->Volume);
+    }
+  } else if (CustomPath) {
+    DBG("Custom entry %d \"%s\" \"%s\" (%d) 0x%X matching all volumes ...\n", CustomIndex, CustomPath, ((Custom->Options != NULL) ? Custom->Options : L""), Custom->Type, Custom->Flags);
+  } else {
+    DBG("Custom entry %d \"%s\" (%d) 0x%X matching all volumes ...\n", CustomIndex, ((Custom->Options != NULL) ? Custom->Options : L""), Custom->Type, Custom->Flags);
+  }
+  for (VolumeIndex = 0; VolumeIndex < VolumesCount; ++VolumeIndex) {
+    Volume = Volumes[VolumeIndex];
+
+    if (Volume->RootDir == NULL) {
+      continue;
+    }
+    if (Volume->VolName == NULL) {
+      Volume->VolName = L"Unknown";
+    }
+
+    DBG("   Checking volume \"%s\" (%s) ... ", Volume->VolName, Volume->DevicePathString);
+
+    // skip volume if its kind is configured as disabled
+    if ((Volume->DiskKind == DISK_KIND_OPTICAL && (GlobalConfig.DisableFlags & DISABLE_FLAG_OPTICAL)) ||
+        (Volume->DiskKind == DISK_KIND_EXTERNAL && (GlobalConfig.DisableFlags & DISABLE_FLAG_EXTERNAL)) ||
+        (Volume->DiskKind == DISK_KIND_INTERNAL && (GlobalConfig.DisableFlags & DISABLE_FLAG_INTERNAL)) ||
+        (Volume->DiskKind == DISK_KIND_FIREWIRE && (GlobalConfig.DisableFlags & DISABLE_FLAG_FIREWIRE)))
+    {
+      DBG("skipped because media is disabled\n");
+      continue;
+    }
+
+    if (Custom->VolumeType != 0) {
+      if ((Volume->DiskKind == DISK_KIND_OPTICAL && ((Custom->VolumeType & DISABLE_FLAG_OPTICAL) == 0)) ||
+          (Volume->DiskKind == DISK_KIND_EXTERNAL && ((Custom->VolumeType & DISABLE_FLAG_EXTERNAL) == 0)) ||
+          (Volume->DiskKind == DISK_KIND_INTERNAL && ((Custom->VolumeType & DISABLE_FLAG_INTERNAL) == 0)) ||
+          (Volume->DiskKind == DISK_KIND_FIREWIRE && ((Custom->VolumeType & DISABLE_FLAG_FIREWIRE) == 0))) {
+        DBG("skipped because media is ignored\n");
+        continue;
+      }
+    }
+
+      if (Volume->OSType == OSTYPE_HIDE) {
+      DBG("skipped because volume is hidden\n");
+      continue;
+    }
+
+    // Check volume for installer
+    Path = CustomPath;
+    if ((Path == NULL) && (Volume->RootDir != NULL) && OSTYPE_IS_OSX_INSTALLER(Custom->Type)) {
+      static CHAR16 *InstallerPath[] = {
+        L"\\Mac OS X Install Data\\boot.efi",
+        L"\\OS X Install Data\\boot.efi",
+        L"\\.IABootFiles\\boot.efi"
+      };
+      static UINTN InstallerPathCount = (sizeof(InstallerPath) / sizeof(CHAR16 *));
+      UINTN InstallerIndex = 0;
+      while (InstallerIndex < InstallerPathCount) {
+        if (FileExists(Volume->RootDir, InstallerPath[InstallerIndex])) {
+          Path = InstallerPath[InstallerIndex];
+          break;
+        }
+        ++InstallerIndex;
+      }
+    }
+    if (Path == NULL) {
+      DBG("skipped because volume is not installation media\n", Custom->Type);
+      continue;
+    }
+    // Check for exact volume matches
+    OSType = GetOSTypeFromPath(Path, Volume->OSType);
+    if (Custom->Volume) {
+      
+      if ((StrStr(Volume->DevicePathString, Custom->Volume) == NULL) &&
+          ((Volume->VolName == NULL) || (StrStr(Volume->VolName, Custom->Volume) == NULL))) {
+        DBG("skipped\n");
+        continue;
+      }
+      // Check if the volume should be of certain os type
+      if ((Custom->Type != 0) && (Volume->OSType != 0) && !OSTYPE_COMPARE(OSType, Volume->OSType)) {
+        DBG("skipped because wrong type (%d != %d)\n", OSType, Volume->OSType);
+        continue;
+      }
+    } else if ((Custom->Type != 0) && (Volume->OSType != 0) && !OSTYPE_COMPARE(OSType, Volume->OSType)) {
+      DBG("skipped because wrong type (%d != %d)\n", OSType, Volume->OSType);
+      continue;
+    }
+    // Check the volume is readable and the entry exists on the volume
+    if (Volume->RootDir == NULL) {
+      DBG("skipped because filesystem is not readable\n");
+      continue;
+    }
+    if (!FileExists(Volume->RootDir, Path)) {
+      DBG("skipped because path does not exist\n");
+      continue;
+    }
+    // Change to custom image if needed
+    Image = Custom->Image;
+    if ((Image == NULL) && Custom->ImagePath) {
+      Image = egLoadImage(Volume->RootDir, Custom->ImagePath, TRUE);
+      if (Image == NULL) {
+        Image = egLoadImage(ThemeDir, Custom->ImagePath, TRUE);
+        if (Image == NULL) {
+          Image = egLoadImage(SelfDir, Custom->ImagePath, TRUE);
+          if (Image == NULL) {
+            Image = egLoadImage(SelfRootDir, Custom->ImagePath, TRUE);
+            if (Image == NULL) {
+              Image = LoadOSIcon(Custom->ImagePath, L"unknown", FALSE, FALSE);
+            }
+          }
+        }
+      }
+    }
+    // Update volume boot type
+    Volume->BootType = BOOTING_BY_EFI;
+    DBG("match!\n");
+    // Create a legacy entry for this volume
+    if (OSFLAG_ISUNSET(Custom->Flags, OSFLAG_NODEFAULTMENU)) {
+      Entry = AddLoaderEntry(Path, Custom->Options, Custom->FullTitle, Custom->Title, Volume, Image, OSType, Custom->Flags, Custom->Hotkey, TRUE);
+    } else {
+      Entry = CreateLoaderEntry(Path, Custom->Options, Custom->FullTitle, Custom->Title, Volume, Image, OSType, Custom->Flags, Custom->Hotkey, TRUE);
+      if (Entry) {
+        if (Custom->SubEntries) {
+          // Add subscreen
+          REFIT_MENU_SCREEN *SubScreen = AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
+          if (SubScreen) {
+            SubScreen->Title = PoolPrint(L"Boot Options for %s on %s", (Custom->Title != NULL) ? Custom->Title : Path, Entry->VolName);
+            SubScreen->TitleImage = Entry->me.Image;
+            SubScreen->ID = OSType + 20;
+            SubScreen->AnimeRun = GetAnime(SubScreen);
+            VolumeSize = RShiftU64(MultU64x32(Volume->BlockIO->Media->LastBlock, Volume->BlockIO->Media->BlockSize), 20);
+            AddMenuInfoLine(SubScreen, PoolPrint(L"Volume size: %dMb", VolumeSize));
+            AddMenuInfoLine(SubScreen, DevicePathToStr(Entry->DevicePath));
+            Guid = FindGPTPartitionGuidInDevicePath(Volume->DevicePath);
+            if (Guid) {
+              CHAR8 *GuidStr = AllocateZeroPool(50);
+              AsciiSPrint(GuidStr, 50, "%g", Guid);
+              AddMenuInfoLine(SubScreen, PoolPrint(L"UUID: %a", GuidStr));
+              FreePool(GuidStr);
+            }
+            // Create sub entries
+            for (CustomSubEntry = Custom->SubEntries; CustomSubEntry; CustomSubEntry = CustomSubEntry->Next) {
+              CHAR16 *SubPath = Path;
+              if (CustomSubEntry->Path != NULL) {
+                SubPath = CustomSubEntry->Path;
+              }
+              SubEntry = CreateLoaderEntry(SubPath, CustomSubEntry->Options, CustomSubEntry->FullTitle,
+                                           (CustomSubEntry->Title == NULL) ? Custom->Title : CustomSubEntry->Title,
+                                           Volume, CustomSubEntry->Image, GetOSTypeFromPath(SubPath, Volume->OSType),
+                                           CustomSubEntry->Flags, CustomSubEntry->Hotkey, TRUE);
+              if (SubEntry) {
+                AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+              }
+            }
+            AddMenuEntry(SubScreen, &MenuEntryReturn);
+            Entry->me.SubScreen = SubScreen;
+          }
+        }
+        AddMenuEntry(&MainMenu, (REFIT_MENU_ENTRY *)Entry);
+      }
+    }
+  }
+}
+
+// Add custom entries
+static VOID AddCustomEntries(VOID)
+{
+  CUSTOM_LOADER_ENTRY *Custom;
   UINTN                i = 0;
 
   DBG("Custom entries start\n");
   // Traverse the custom entries
   for (Custom = gSettings.CustomEntries; Custom; ++i, Custom = Custom->Next) {
-    CHAR16 *CustomPath = Custom->Path;
-    if ((CustomPath == NULL) && (Custom->Type != 0)) {
+    if ((Custom->Path == NULL) && (Custom->Type != 0)) {
       if (OSTYPE_IS_OSX(Custom->Type)) {
-         CustomPath = MACOSX_LOADER_PATH;
+        AddCustomEntry(i, MACOSX_LOADER_PATH, Custom);
       } else if (OSTYPE_IS_OSX_RECOVERY(Custom->Type)) {
-         CustomPath = L"\\com.apple.recovery.boot\\boot.efi";
+        AddCustomEntry(i, L"\\com.apple.recovery.boot\\boot.efi", Custom);
       } else if (OSTYPE_IS_WINDOWS(Custom->Type)) {
-         CustomPath = L"\\EFI\\Microsoft\\Boot\\bootmgfw.efi";
-      }
-    }
-    if ((CustomPath == NULL) && !OSTYPE_IS_OSX_RECOVERY(Custom->Type)) {
-      DBG("Custom entry %d skipped because it didn't have a path or valid type.\n", i);
-      continue;
-    }
-    if (OSFLAG_ISSET(Custom->Flags, OSFLAG_DISABLED)) {
-      DBG("Custom entry %d skipped because it is disabled.\n", i);
-      continue;
-    }
-    if (!gSettings.ShowHiddenEntries && OSFLAG_ISSET(Custom->Flags, OSFLAG_HIDDEN)) {
-      DBG("Custom entry %d skipped because it is hidden.\n", i);
-      continue;
-    }
-    if (Custom->Volume) {
-      if (Custom->Title) {
-        if (CustomPath) {
-          DBG("Custom entry %d \"%s\" \"%s\" \"%s\" (%d) 0x%X matching \"%s\" ...\n", i, Custom->Title, CustomPath, ((Custom->Options != NULL) ? Custom->Options : L""), Custom->Type, Custom->Flags, Custom->Volume);
-        } else {
-          DBG("Custom entry %d \"%s\" \"%s\" (%d) 0x%X matching \"%s\" ...\n", i, Custom->Title, ((Custom->Options != NULL) ? Custom->Options : L""), Custom->Type, Custom->Flags, Custom->Volume);
+        AddCustomEntry(i, L"\\EFI\\Microsoft\\Boot\\bootmgfw.efi", Custom);
+      } else if (OSTYPE_IS_LINUX(Custom->Type)) {
+         UINTN Index = 0;
+        while (Index < LinuxEntryPathsCount) {
+          AddCustomEntry(i, LinuxEntryPaths[Index++], Custom);
         }
-      } else if (CustomPath) {
-        DBG("Custom entry %d \"%s\" \"%s\" (%d) 0x%X matching \"%s\" ...\n", i, CustomPath, ((Custom->Options != NULL) ? Custom->Options : L""), Custom->Type, Custom->Flags, Custom->Volume);
       } else {
-        DBG("Custom entry %d \"%s\" (%d) 0x%X matching \"%s\" ...\n", i, ((Custom->Options != NULL) ? Custom->Options : L""), Custom->Type, Custom->Flags, Custom->Volume);
+        AddCustomEntry(i, Custom->Path, Custom);
       }
-    } else if (CustomPath) {
-      DBG("Custom entry %d \"%s\" \"%s\" (%d) 0x%X matching all volumes ...\n", i, CustomPath, ((Custom->Options != NULL) ? Custom->Options : L""), Custom->Type, Custom->Flags);
     } else {
-      DBG("Custom entry %d \"%s\" (%d) 0x%X matching all volumes ...\n", i, ((Custom->Options != NULL) ? Custom->Options : L""), Custom->Type, Custom->Flags);
-    }
-    for (VolumeIndex = 0; VolumeIndex < VolumesCount; ++VolumeIndex) {
-      Volume = Volumes[VolumeIndex];
-
-      if (Volume->RootDir == NULL) {
-        continue;
-      }
-      if (Volume->VolName == NULL) {
-        Volume->VolName = L"Unknown";
-      }
-
-      DBG("   Checking volume \"%s\" (%s) ... ", Volume->VolName, Volume->DevicePathString);
-
-      // skip volume if its kind is configured as disabled
-      if ((Volume->DiskKind == DISK_KIND_OPTICAL && (GlobalConfig.DisableFlags & DISABLE_FLAG_OPTICAL)) ||
-          (Volume->DiskKind == DISK_KIND_EXTERNAL && (GlobalConfig.DisableFlags & DISABLE_FLAG_EXTERNAL)) ||
-          (Volume->DiskKind == DISK_KIND_INTERNAL && (GlobalConfig.DisableFlags & DISABLE_FLAG_INTERNAL)) ||
-          (Volume->DiskKind == DISK_KIND_FIREWIRE && (GlobalConfig.DisableFlags & DISABLE_FLAG_FIREWIRE)))
-      {
-        DBG("skipped because media is disabled\n");
-        continue;
-      }
-
-      if (Custom->VolumeType != 0) {
-        if ((Volume->DiskKind == DISK_KIND_OPTICAL && (Custom->VolumeType & DISABLE_FLAG_OPTICAL)) ||
-            (Volume->DiskKind == DISK_KIND_EXTERNAL && (Custom->VolumeType & DISABLE_FLAG_EXTERNAL)) ||
-            (Volume->DiskKind == DISK_KIND_INTERNAL && (Custom->VolumeType & DISABLE_FLAG_INTERNAL)) ||
-            (Volume->DiskKind == DISK_KIND_FIREWIRE && (Custom->VolumeType & DISABLE_FLAG_FIREWIRE))) {
-          DBG("skipped because media is ignored\n");
-          continue;
-        }
-      }
-
-      if (Volume->OSType == OSTYPE_HIDE) {
-        DBG("skipped because volume is hidden\n");
-        continue;
-      }
-
-      // Check volume for installer
-      Path = CustomPath;
-      if ((Path == NULL) && (Custom->Type == OSTYPE_OSX_INSTALLER) && (Volume->RootDir != NULL)) {
-        static CHAR16 *InstallerPath[] = {
-           L"\\Mac OS X Install Data\\boot.efi",
-           L"\\OS X Install Data\\boot.efi",
-           L"\\.IABootFiles\\boot.efi"
-        };
-        static UINTN InstallerPathCount = (sizeof(InstallerPath) / sizeof(CHAR16 *));
-        UINTN InstallerIndex = 0;
-        while (InstallerIndex < InstallerPathCount) {
-          if (FileExists(Volume->RootDir, InstallerPath[InstallerIndex])) {
-            Path = InstallerPath[InstallerIndex];
-            break;
-          }
-          ++InstallerIndex;
-        }
-      }
-      if (Path == NULL) {
-        DBG("skipped because volume is not installation media\n");
-        continue;
-      }
-      // Check for exact volume matches
-      OSType = GetOSTypeFromPath(Path, Volume->OSType);
-      if (Custom->Volume) {
-        
-        if ((StrStr(Volume->DevicePathString, Custom->Volume) == NULL) &&
-            ((Volume->VolName == NULL) || (StrStr(Volume->VolName, Custom->Volume) == NULL))) {
-          DBG("skipped\n");
-          continue;
-        }
-        // Check if the volume should be of certain os type
-        if ((Custom->Type != 0) && (Volume->OSType != 0) && !OSTYPE_COMPARE(OSType, Volume->OSType)) {
-          DBG("skipped because wrong type (%d != %d)\n", OSType, Volume->OSType);
-          continue;
-        }
-      } else if ((Custom->Type != 0) && (Volume->OSType != 0) && !OSTYPE_COMPARE(OSType, Volume->OSType)) {
-        DBG("skipped because wrong type (%d != %d)\n", OSType, Volume->OSType);
-        continue;
-      }
-      // Check the volume is readable and the entry exists on the volume
-      if (Volume->RootDir == NULL) {
-        DBG("skipped because filesystem is not readable\n");
-        continue;
-      }
-      if (!FileExists(Volume->RootDir, Path)) {
-        DBG("skipped because path does not exist\n");
-        continue;
-      }
-      // Change to custom image if needed
-      Image = Custom->Image;
-      if ((Image == NULL) && Custom->ImagePath) {
-        Image = egLoadImage(Volume->RootDir, Custom->ImagePath, TRUE);
-        if (Image == NULL) {
-          Image = egLoadImage(ThemeDir, Custom->ImagePath, TRUE);
-          if (Image == NULL) {
-            Image = egLoadImage(SelfDir, Custom->ImagePath, TRUE);
-            if (Image == NULL) {
-              Image = egLoadImage(SelfRootDir, Custom->ImagePath, TRUE);
-              if (Image == NULL) {
-                Image = LoadOSIcon(Custom->ImagePath, L"unknown", FALSE, FALSE);
-              }
-            }
-          }
-        }
-      }
-      // Update volume boot type
-      Volume->BootType = BOOTING_BY_EFI;
-      DBG("match!\n");
-      // Create a legacy entry for this volume
-      if (OSFLAG_ISUNSET(Custom->Flags, OSFLAG_NODEFAULTMENU)) {
-        Entry = AddLoaderEntry(Path, Custom->Options, Custom->FullTitle, Custom->Title, Volume, Image, OSType, Custom->Flags, Custom->Hotkey, TRUE);
-      } else {
-        Entry = CreateLoaderEntry(Path, Custom->Options, Custom->FullTitle, Custom->Title, Volume, Image, OSType, Custom->Flags, Custom->Hotkey, TRUE);
-        if (Entry) {
-          if (Custom->SubEntries) {
-            // Add subscreen
-            REFIT_MENU_SCREEN *SubScreen = AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
-            if (SubScreen) {
-              SubScreen->Title = PoolPrint(L"Boot Options for %s on %s", (Custom->Title != NULL) ? Custom->Title : Path, Entry->VolName);
-              SubScreen->TitleImage = Entry->me.Image;
-              SubScreen->ID = OSType + 20;
-              SubScreen->AnimeRun = GetAnime(SubScreen);
-              VolumeSize = RShiftU64(MultU64x32(Volume->BlockIO->Media->LastBlock, Volume->BlockIO->Media->BlockSize), 20);
-              AddMenuInfoLine(SubScreen, PoolPrint(L"Volume size: %dMb", VolumeSize));
-              AddMenuInfoLine(SubScreen, DevicePathToStr(Entry->DevicePath));
-              Guid = FindGPTPartitionGuidInDevicePath(Volume->DevicePath);
-              if (Guid) {
-                CHAR8 *GuidStr = AllocateZeroPool(50);
-                AsciiSPrint(GuidStr, 50, "%g", Guid);
-                AddMenuInfoLine(SubScreen, PoolPrint(L"UUID: %a", GuidStr));
-                FreePool(GuidStr);
-              }
-              // Create sub entries
-              for (CustomSubEntry = Custom->SubEntries; CustomSubEntry; CustomSubEntry = CustomSubEntry->Next) {
-                CHAR16 *SubPath = Path;
-                if (CustomSubEntry->Path != NULL) {
-                  SubPath = CustomSubEntry->Path;
-                }
-                SubEntry = CreateLoaderEntry(SubPath, CustomSubEntry->Options, CustomSubEntry->FullTitle,
-                                             (CustomSubEntry->Title == NULL) ? Custom->Title : CustomSubEntry->Title,
-                                             Volume, CustomSubEntry->Image, GetOSTypeFromPath(SubPath, Volume->OSType),
-                                             CustomSubEntry->Flags, CustomSubEntry->Hotkey, TRUE);
-                if (SubEntry) {
-                  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
-                }
-              }
-              AddMenuEntry(SubScreen, &MenuEntryReturn);
-              Entry->me.SubScreen = SubScreen;
-            }
-          }
-          AddMenuEntry(&MainMenu, (REFIT_MENU_ENTRY *)Entry);
-        }
-      }
+      AddCustomEntry(i, Custom->Path, Custom);
     }
   }
   DBG("Custom entries finish\n");
@@ -2534,10 +2561,10 @@ static VOID AddCustomLegacy(VOID)
       }
 
       if (Custom->VolumeType != 0) {
-        if ((Volume->DiskKind == DISK_KIND_OPTICAL && (Custom->VolumeType & DISABLE_FLAG_OPTICAL)) ||
-            (Volume->DiskKind == DISK_KIND_EXTERNAL && (Custom->VolumeType & DISABLE_FLAG_EXTERNAL)) ||
-            (Volume->DiskKind == DISK_KIND_INTERNAL && (Custom->VolumeType & DISABLE_FLAG_INTERNAL)) ||
-            (Volume->DiskKind == DISK_KIND_FIREWIRE && (Custom->VolumeType & DISABLE_FLAG_FIREWIRE))) {
+        if ((Volume->DiskKind == DISK_KIND_OPTICAL && ((Custom->VolumeType & DISABLE_FLAG_OPTICAL) == 0)) ||
+            (Volume->DiskKind == DISK_KIND_EXTERNAL && ((Custom->VolumeType & DISABLE_FLAG_EXTERNAL) == 0)) ||
+            (Volume->DiskKind == DISK_KIND_INTERNAL && ((Custom->VolumeType & DISABLE_FLAG_INTERNAL) == 0)) ||
+            (Volume->DiskKind == DISK_KIND_FIREWIRE && ((Custom->VolumeType & DISABLE_FLAG_FIREWIRE) == 0))) {
           DBG("skipped because media is ignored\n");
           continue;
         }
@@ -2808,10 +2835,10 @@ static VOID AddCustomTool()
       }
 
       if (Custom->VolumeType != 0) {
-        if ((Volume->DiskKind == DISK_KIND_OPTICAL && (Custom->VolumeType & DISABLE_FLAG_OPTICAL)) ||
-            (Volume->DiskKind == DISK_KIND_EXTERNAL && (Custom->VolumeType & DISABLE_FLAG_EXTERNAL)) ||
-            (Volume->DiskKind == DISK_KIND_INTERNAL && (Custom->VolumeType & DISABLE_FLAG_INTERNAL)) ||
-            (Volume->DiskKind == DISK_KIND_FIREWIRE && (Custom->VolumeType & DISABLE_FLAG_FIREWIRE))) {
+        if ((Volume->DiskKind == DISK_KIND_OPTICAL && ((Custom->VolumeType & DISABLE_FLAG_OPTICAL) == 0)) ||
+            (Volume->DiskKind == DISK_KIND_EXTERNAL && ((Custom->VolumeType & DISABLE_FLAG_EXTERNAL) == 0)) ||
+            (Volume->DiskKind == DISK_KIND_INTERNAL && ((Custom->VolumeType & DISABLE_FLAG_INTERNAL) == 0)) ||
+            (Volume->DiskKind == DISK_KIND_FIREWIRE && ((Custom->VolumeType & DISABLE_FLAG_FIREWIRE) == 0))) {
           DBG("skipped because media is ignored\n");
           continue;
         }
