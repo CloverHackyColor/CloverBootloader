@@ -1831,7 +1831,7 @@ VOID ScanLoader(VOID)
 static UINT8 GetOSTypeFromPath(IN CHAR16 *Path, IN UINT8 OSType)
 {
    if (Path == NULL) {
-     return OSTYPE_VAR;
+     return (OSType == 0) ? OSTYPE_OTHER : OSType;
    }
    if ((StriCmp(Path, MACOSX_LOADER_PATH) == 0) ||
        (StriCmp(Path, L"\\OS X Install Data\\boot.efi") == 0) ||
@@ -1872,7 +1872,7 @@ static UINT8 GetOSTypeFromPath(IN CHAR16 *Path, IN UINT8 OSType)
 #endif
      return OSTYPE_LIN;
    }
-   return OSTYPE_VAR;
+   return (OSType == 0) ? OSTYPE_OTHER : OSType;
 }
 
 // Add custom entries

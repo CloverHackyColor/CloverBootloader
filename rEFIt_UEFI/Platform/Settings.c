@@ -399,7 +399,7 @@ static BOOLEAN FillinCustomEntry(IN OUT CUSTOM_LOADER_ENTRY *Entry, TagPtr dictP
     } else if (AsciiStriCmp(prop->string, "Linux") == 0) {
       Entry->Type = OSTYPE_LIN;
     } else {
-      Entry->Type = OSTYPE_VAR;
+      Entry->Type = OSTYPE_OTHER;
     }
   }
   if (Entry->Title == NULL) {
@@ -538,7 +538,7 @@ static BOOLEAN FillinCustomLegacy(IN OUT CUSTOM_LEGACY_ENTRY *Entry, TagPtr dict
     } else if (AsciiStriCmp(prop->string, "Linux") == 0) {
       Entry->Type = OSTYPE_LIN;
     } else {
-      Entry->Type = OSTYPE_VAR;
+      Entry->Type = OSTYPE_OTHER;
     }
   }
   return TRUE;
