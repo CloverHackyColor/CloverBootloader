@@ -1100,7 +1100,7 @@ XhcCheckUrbResult (
   UINT32                  Low;
   EFI_PHYSICAL_ADDRESS    PhyAddr;
 
-  ASSERT ((Xhc != NULL) && (Urb != NULL));
+//  ASSERT ((Xhc != NULL) && (Urb != NULL));
   if (!Xhc || !Urb) {
     return EFI_INVALID_PARAMETER;
   }
@@ -1289,7 +1289,8 @@ XhcExecTransfer (
     Dci  = XhcEndpointToDci (Urb->Ep.EpAddr, (UINT8)(Urb->Ep.Direction));
 //    ASSERT (Dci < 32);
     if (Dci >= 32) {
-      Dci = 0;
+//      Dci = 0;
+      return EFI_DEVICE_ERROR;
     }
   }
 
@@ -1529,7 +1530,10 @@ XhcMonitorAsyncRequests (
     //
     ProcBuf = NULL;
     if (Urb->Result == EFI_USB_NOERROR) {
-      ASSERT (Urb->Completed <= Urb->DataLen);
+//      ASSERT (Urb->Completed <= Urb->DataLen);
+      if (Urb->Completed > Urb->DataLen) {
+        continue;
+      }
 
       ProcBuf = AllocateZeroPool (Urb->Completed);
 
@@ -1766,7 +1770,10 @@ XhcSyncEventRing (
   UINTN               Index;
   TRB_TEMPLATE        *EvtTrb1;
 
-  ASSERT (EvtRing != NULL);
+//  ASSERT (EvtRing != NULL);
+  if (!EvtRing) {
+    return EFI_INVALID_PARAMETER;
+  }
 
   //
   // Calculate the EventRingEnqueue and EventRingCCS.
@@ -1790,7 +1797,8 @@ XhcSyncEventRing (
   if (Index < EvtRing->TrbNumber) {
     EvtRing->EventRingEnqueue = EvtTrb1;
   } else {
-    ASSERT (FALSE);
+//    ASSERT (FALSE);
+    return EFI_DEVICE_ERROR;
   }
 
   return EFI_SUCCESS;
@@ -2775,8 +2783,9 @@ XhcSetConfigCmd (
 
         case USB_ENDPOINT_CONTROL:
         default:
-          ASSERT (0);
-          break;
+//          ASSERT (0);
+          return EFI_INVALID_PARAMETER;
+//          break;
       }
 
       PhyAddr = UsbHcGetPciAddrForHostAddr (
@@ -2955,7 +2964,10 @@ XhcSetConfigCmd64 (
             InputContext->EP[Dci-1].Interval = 6;
           } else if ((DeviceSpeed == EFI_USB_SPEED_HIGH) || (DeviceSpeed == EFI_USB_SPEED_SUPER)) {
             Interval = EpDesc->Interval;
-            ASSERT (Interval >= 1 && Interval <= 16);
+   //         ASSERT (Interval >= 1 && Interval <= 16);
+            if ((Interval < 1) || (Interval > 16)) {
+              Interval = 7;
+            }
             //
             // Refer to XHCI 1.0 spec section 6.2.3.6, table 61
             //

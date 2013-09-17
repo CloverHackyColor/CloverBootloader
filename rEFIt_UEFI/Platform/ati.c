@@ -391,7 +391,7 @@ radeon_card_info_t radeon_cards[] = {
 	
 	{ 0x6898,	0x00000000, CHIP_FAMILY_CYPRESS,	"ATI Radeon HD 5870 Series",		kUakari   },
 	{ 0x6899,	0x00000000, CHIP_FAMILY_CYPRESS,	"ATI Radeon HD 5850 Series",		kUakari   },
-	{ 0x689C,	0x00000000, CHIP_FAMILY_HEMLOCK,	"ATI Radeon HD 5900 Series",		kUakari		},
+	{ 0x689C,	0x00000000, CHIP_FAMILY_HEMLOCK,	"ATI Radeon HD 5970 Series",		kUakari		},
 	{ 0x689E,	0x00000000, CHIP_FAMILY_HEMLOCK,	"ATI Radeon HD 5800 Series",		kUakari   },
   
   { 0x68A0,	0x00000000, CHIP_FAMILY_MANHATTAN,	"ATI Radeon HD 5770 Series",		kHoolock	},

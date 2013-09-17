@@ -512,7 +512,7 @@ VOID GetDefaultSettings(VOID)
   gSettings.LogLineCount = 500;
   gSettings.TrustSMBIOS = TRUE;
   
-  if (gCPUStructure.Model == CPU_MODEL_IVY_BRIDGE) {
+  if (gCPUStructure.Model >= CPU_MODEL_IVY_BRIDGE) {
     gSettings.GeneratePStates = TRUE;
     gSettings.GenerateCStates = TRUE;
     // gSettings.EnableISS       = FALSE;

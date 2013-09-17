@@ -108,7 +108,7 @@ XhcReadOpReg (
 
 //  ASSERT (Xhc->CapLength != 0);
   if (!Xhc->CapLength) {
-    return 0;
+    return 0xFFFFFFFF;
   }
 
   Status = Xhc->PciIo->Mem.Read (
@@ -220,7 +220,7 @@ XhcReadDoorBellReg (
 
 //  ASSERT (Xhc->DBOff != 0);
   if (!Xhc->DBOff) {
-    return 0;
+    return 0xFFFFFFFF;
   }
 
   Status = Xhc->PciIo->Mem.Read (
@@ -296,7 +296,7 @@ XhcReadRuntimeReg (
 
 //  ASSERT (Xhc->RTSOff != 0);
   if (!Xhc->RTSOff) {
-    return 0;
+    return 0xFFFFFFFF;
   }
 
   Status = Xhc->PciIo->Mem.Read (
@@ -372,7 +372,7 @@ XhcReadExtCapReg (
 
 //  ASSERT (Xhc->ExtCapRegBase != 0);
   if (!Xhc->ExtCapRegBase) {
-    return 0;
+    return 0xFFFFFFFF;
   }
 
   Status = Xhc->PciIo->Mem.Read (
@@ -491,6 +491,9 @@ XhcSetOpRegBit (
   UINT32                  Data;
 
   Data  = XhcReadOpReg (Xhc, Offset);
+  if (Data == 0xFFFFFFFF) {
+    return;
+  }
   Data |= Bit;
   XhcWriteOpReg (Xhc, Offset, Data);
 }
@@ -514,6 +517,9 @@ XhcClearOpRegBit (
   UINT32                  Data;
 
   Data  = XhcReadOpReg (Xhc, Offset);
+  if (Data == 0xFFFFFFFF) {
+    return;
+  }
   Data &= ~Bit;
   XhcWriteOpReg (Xhc, Offset, Data);
 }
@@ -571,7 +577,7 @@ XhcSetBiosOwnership (
   UINT32                    Buffer;
 
   DEBUG ((EFI_D_INFO, "XhcSetBiosOwnership: called to set BIOS ownership\n"));
-  if (!Xhc || !Xhc->UsbLegSupOffset) {
+  if (!Xhc || (Xhc->UsbLegSupOffset == 0xFFFFFFFF)) {
     return;
   }
 
@@ -592,7 +598,7 @@ XhcClearBiosOwnership (
   )
 {
   UINT32                    Buffer;
-  if (!Xhc || !Xhc->UsbLegSupOffset) {
+  if (!Xhc || (Xhc->UsbLegSupOffset == 0xFFFFFFFF)) {
     return;
   }
 
@@ -637,7 +643,7 @@ XhcGetLegSupCapAddr (
     ExtCapOffset += (NextExtCapReg << 2);
   } while (NextExtCapReg != 0);
 
-  return 0;
+  return 0xFFFFFFFF;
 }
 
 /**

@@ -336,6 +336,7 @@ XhcSetState (
     // refers to Spec[XHCI1.0-2.3.1]
     //
     if (!XHC_REG_BIT_IS_SET (Xhc, XHC_USBSTS_OFFSET, XHC_USBSTS_HALT)) {
+      DBG("bit halt is not set\n");
       Status = EFI_DEVICE_ERROR;
       break;
     }
