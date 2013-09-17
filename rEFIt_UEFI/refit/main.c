@@ -854,12 +854,16 @@ static LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
                         DBG("skipped path `%s` because it is a volume, volumetype, path and type match for custom entry %d!\n", LoaderDevicePathString, CustomIndex);
                         FreePool(LoaderDevicePathString);
                         return NULL;
+                      } else {
+                         DBG("partial volume, volumetype, and path match for path `%s` and custom entry %d, type did not match\n", LoaderDevicePathString, CustomIndex);
                       }
                     } else {
                       DBG("skipped path `%s` because it is a volume, volumetype and path match for custom entry %d!\n", LoaderDevicePathString, CustomIndex);
                       FreePool(LoaderDevicePathString);
                       return NULL;
                     }
+                  } else {
+                    DBG("partial volume, and volumetype match for path `%s` and custom entry %d, path did not match\n", LoaderDevicePathString, CustomIndex);
                   }
                 } else if (Custom->Type != 0) {
                   if (OSTYPE_COMPARE(Custom->Type, OSType)) {
@@ -867,12 +871,16 @@ static LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
                     DBG("skipped path `%s` because it is a volume, volumetype and type match for custom entry %d!\n", LoaderDevicePathString, CustomIndex);
                     FreePool(LoaderDevicePathString);
                     return NULL;
+                  } else {
+                     DBG("partial volume, and volumetype match for path `%s` and custom entry %d, type did not match\n", LoaderDevicePathString, CustomIndex);
                   }
                 } else {
                   DBG("skipped path `%s` because it is a volume and volumetype match for custom entry %d!\n", LoaderDevicePathString, CustomIndex);
                   FreePool(LoaderDevicePathString);
                   return NULL;
                 }
+              } else {
+                DBG("partial volume match for path `%s` and custom entry %d, volumetype did not match\n", LoaderDevicePathString, CustomIndex);
               }
             } if (Custom->Path != NULL) {
               // Check if there needs to be a path match also
@@ -882,24 +890,32 @@ static LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
                     DBG("skipped path `%s` because it is a volume, path and type match for custom entry %d!\n", LoaderDevicePathString, CustomIndex);
                     FreePool(LoaderDevicePathString);
                     return NULL;
+                  } else {
+                    DBG("partial volume, and path match for path `%s` and custom entry %d, type did not match\n", LoaderDevicePathString, CustomIndex);
                   }
                 } else {
                   DBG("skipped path `%s` because it is a volume and path match for custom entry %d!\n", LoaderDevicePathString, CustomIndex);
                   FreePool(LoaderDevicePathString);
                   return NULL;
                 }
+              } else {
+                DBG("partial volume match for path `%s` and custom entry %d, path did not match\n", LoaderDevicePathString, CustomIndex);
               }
             } else if (Custom->Type != 0) {
               if (OSTYPE_COMPARE(Custom->Type, OSType)) {
                 DBG("skipped path `%s` because it is a volume and type match for custom entry %d!\n", LoaderDevicePathString, CustomIndex);
                 FreePool(LoaderDevicePathString);
                 return NULL;
+              } else {
+                DBG("partial volume match for path `%s` and custom entry %d, type did not match\n", LoaderDevicePathString, CustomIndex);
               }
             } else {
               DBG("skipped path `%s` because it is a volume match for custom entry %d!\n", LoaderDevicePathString, CustomIndex);
               FreePool(LoaderDevicePathString);
               return NULL;
             }
+          } else {
+            DBG("volume did not match for path `%s` and custom entry %d\n", LoaderDevicePathString, CustomIndex);
           }
         } else if (Custom->VolumeType != 0) {
           if (((Volume->DiskKind == DISK_KIND_INTERNAL) && (Custom->VolumeType & DISABLE_FLAG_INTERNAL)) ||
@@ -914,12 +930,16 @@ static LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
                     DBG("skipped path `%s` because it is a volumetype, path and type match for custom entry %d!\n", LoaderDevicePathString, CustomIndex);
                     FreePool(LoaderDevicePathString);
                     return NULL;
+                  } else {
+                    DBG("partial volumetype, and path match for path `%s` and custom entry %d, type did not match\n", LoaderDevicePathString, CustomIndex);
                   }
                 } else {
                   DBG("skipped path `%s` because it is a volumetype and path match for custom entry %d!\n", LoaderDevicePathString, CustomIndex);
                   FreePool(LoaderDevicePathString);
                   return NULL;
                 }
+              } else {
+                DBG("partial volumetype match for path `%s` and custom entry %d, path did not match\n", LoaderDevicePathString, CustomIndex);
               }
             } else if (Custom->Type != 0) {
               if (OSTYPE_COMPARE(Custom->Type, OSType)) {
@@ -927,12 +947,16 @@ static LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
                 DBG("skipped path `%s` because it is a volumetype and type match for custom entry %d!\n", LoaderDevicePathString, CustomIndex);
                 FreePool(LoaderDevicePathString);
                 return NULL;
+              } else {
+                DBG("partial volumetype match for path `%s` and custom entry %d, type did not match\n", LoaderDevicePathString, CustomIndex);
               }
             } else {
               DBG("skipped path `%s` because it is a volumetype match for custom entry %d!\n", LoaderDevicePathString, CustomIndex);
               FreePool(LoaderDevicePathString);
               return NULL;
             }
+          } else {
+            DBG("did not match volumetype for path `%s` and custom entry %d\n", LoaderDevicePathString, CustomIndex);
           }
         } else if (Custom->Path != NULL) {
           // Try to match the loader paths and types
@@ -942,18 +966,26 @@ static LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
                 DBG("skipped path `%s` because it is a path and type match for custom entry %d!\n", LoaderDevicePathString, CustomIndex);
                 FreePool(LoaderDevicePathString);
                 return NULL;
+              } else {
+                DBG("partial path match for path `%s` and custom entry %d, type did not match\n", LoaderDevicePathString, CustomIndex);
               }
             } else {
               DBG("skipped path `%s` because it is a path match for custom entry %d!\n", LoaderDevicePathString, CustomIndex);
               FreePool(LoaderDevicePathString);
               return NULL;
             }
+          } else {
+            DBG("did not match path for path `%s` and custom entry %d\n", LoaderDevicePathString, CustomIndex);
           }
-        } else if ((Custom->Type != 0) && OSTYPE_COMPARE(Custom->Type, OSType)) {
-          // Only match the loader type
-          DBG("skipped path `%s` because it is a type match for custom entry %d!\n", LoaderDevicePathString, CustomIndex);
-          FreePool(LoaderDevicePathString);
-          return NULL;
+        } else if (Custom->Type != 0) {
+          if (OSTYPE_COMPARE(Custom->Type, OSType)) {
+            // Only match the loader type
+            DBG("skipped path `%s` because it is a type match for custom entry %d!\n", LoaderDevicePathString, CustomIndex);
+            FreePool(LoaderDevicePathString);
+            return NULL;
+          } else {
+            DBG("did not match type for path `%s` and custom entry %d!\n", LoaderDevicePathString, CustomIndex);
+          }
         }
       }
       Custom = Custom->Next;
