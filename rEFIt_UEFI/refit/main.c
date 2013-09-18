@@ -839,8 +839,8 @@ static LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
         // Check if there needs to be a volume match
         if (Custom->Volume != NULL) {
           // Check if the string matches the volume
-          if ((StrStr(Volume->DevicePathString, Custom->Volume) == NULL) &&
-              ((Volume->VolName == NULL) || (StrStr(Volume->VolName, Custom->Volume) == NULL))) {
+          if ((StrStr(Volume->DevicePathString, Custom->Volume) != NULL) ||
+              ((Volume->VolName != NULL) && (StrStr(Volume->VolName, Custom->Volume) != NULL))) {
             if (Custom->VolumeType != 0) {
               if (((Volume->DiskKind == DISK_KIND_INTERNAL) && ((Custom->VolumeType & DISABLE_FLAG_INTERNAL) == 0)) ||
                   ((Volume->DiskKind == DISK_KIND_EXTERNAL) && ((Custom->VolumeType & DISABLE_FLAG_EXTERNAL) == 0)) ||
