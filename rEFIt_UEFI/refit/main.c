@@ -2201,12 +2201,12 @@ static LOADER_ENTRY *AddCustomEntry(IN UINTN                CustomIndex,
           Image = egLoadImage(SelfDir, Custom->ImagePath, TRUE);
           if (Image == NULL) {
             Image = egLoadImage(SelfRootDir, Custom->ImagePath, TRUE);
+            if (Image == NULL) {
+              Image = LoadOSIcon(Custom->ImagePath, L"unknown", 128, FALSE, FALSE);
+            }
           }
         }
       }
-    }
-    if (Image == NULL) {
-      Image = LoadOSIcon(Custom->ImagePath, L"unknown", 128, FALSE, FALSE);
     }
     // Change to custom drive image if needed
     DriveImage = Custom->DriveImage;
@@ -2224,9 +2224,6 @@ static LOADER_ENTRY *AddCustomEntry(IN UINTN                CustomIndex,
           }
         }
       }
-    }
-    if (Image == NULL) {
-      Image = LoadOSIcon(Custom->ImagePath, L"unknown", 128, FALSE, FALSE);
     }
     // Change custom drive image if needed
     // Update volume boot type
@@ -2686,12 +2683,12 @@ static VOID AddCustomLegacy(VOID)
             Image = egLoadImage(SelfDir, Custom->ImagePath, TRUE);
             if (Image == NULL) {
               Image = egLoadImage(SelfRootDir, Custom->ImagePath, TRUE);
+              if (Image == NULL) {
+                Image = LoadOSIcon(Custom->ImagePath, L"unknown", 128, FALSE, FALSE);
+              }
             }
           }
         }
-      }
-      if (Image == NULL) {
-        Image = LoadOSIcon(Custom->ImagePath, L"unknown", 128, FALSE, FALSE);
       }
       // Change to custom drive image if needed
       DriveImage = Custom->DriveImage;
@@ -2709,9 +2706,6 @@ static VOID AddCustomLegacy(VOID)
             }
           }
         }
-      }
-      if (Image == NULL) {
-        Image = LoadOSIcon(Custom->ImagePath, L"unknown", 128, FALSE, FALSE);
       }
       // Create a legacy entry for this volume
       AddLegacyEntry(Custom->FullTitle, Custom->Title, Volume, Image, DriveImage, Custom->Hotkey, TRUE);
@@ -2954,7 +2948,7 @@ static VOID AddCustomTool()
         }
       }
       if (Image == NULL) {
-        Image = LoadOSIcon(Custom->ImagePath, L"unknown", 48, FALSE, FALSE);
+        Image = LoadBuiltinIcon(L"Shell");
       }
       // Create a legacy entry for this volume
       AddToolEntry(Custom->Path, Custom->FullTitle, Custom->Title, Volume, Image, Custom->Hotkey);
