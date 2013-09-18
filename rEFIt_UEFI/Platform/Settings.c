@@ -349,6 +349,10 @@ static BOOLEAN FillinCustomEntry(IN OUT CUSTOM_LOADER_ENTRY *Entry, TagPtr dictP
         egFreeImage(Entry->Image);
         Entry->Image = NULL;
       }
+      if (Entry->ImagePath) {
+        FreePool(Entry->ImagePath);
+        Entry->ImagePath = NULL;
+      }
       if (prop->type == kTagTypeString) {
         UINT32 len = (UINT32)(AsciiStrLen(prop->string) >> 1);
         if (len > 0) {
@@ -359,6 +363,43 @@ static BOOLEAN FillinCustomEntry(IN OUT CUSTOM_LOADER_ENTRY *Entry, TagPtr dictP
         }
       } else if (prop->type == kTagTypeData) {
         Entry->Image = egDecodeImage(prop->data, prop->dataLen, NULL, TRUE);
+      }
+    }
+  }
+  prop = GetProperty(dictPointer, "DriveImage");
+  if (prop) {
+    if (Entry->DriveImagePath) {
+      FreePool(Entry->DriveImagePath);
+      Entry->DriveImagePath = NULL;
+    }
+    if (Entry->DriveImage) {
+      egFreeImage(Entry->DriveImage);
+      Entry->DriveImage = NULL;
+    }
+    if (prop->type == kTagTypeString) {
+      Entry->DriveImagePath = PoolPrint(L"%a", prop->string);
+    }
+  } else {
+    prop = GetProperty(dictPointer, "DriveImageData");
+    if (prop) {
+      if (Entry->DriveImage) {
+        egFreeImage(Entry->DriveImage);
+        Entry->Image = NULL;
+      }
+      if (Entry->DriveImagePath) {
+        FreePool(Entry->DriveImagePath);
+        Entry->DriveImagePath = NULL;
+      }
+      if (prop->type == kTagTypeString) {
+        UINT32 len = (UINT32)(AsciiStrLen(prop->string) >> 1);
+        if (len > 0) {
+          UINT8 *data = (UINT8 *)AllocateZeroPool(len);
+          if (data) {
+            Entry->DriveImage = egDecodeImage(data, hex2bin(prop->string, data, len), NULL, TRUE);
+          }
+        }
+      } else if (prop->type == kTagTypeData) {
+        Entry->DriveImage = egDecodeImage(prop->data, prop->dataLen, NULL, TRUE);
       }
     }
   }
@@ -535,6 +576,43 @@ static BOOLEAN FillinCustomLegacy(IN OUT CUSTOM_LEGACY_ENTRY *Entry, TagPtr dict
         }
       } else if (prop->type == kTagTypeData) {
         Entry->Image = egDecodeImage(prop->data, prop->dataLen, NULL, TRUE);
+      }
+    }
+  }
+  prop = GetProperty(dictPointer, "DriveImage");
+  if (prop) {
+    if (Entry->DriveImagePath) {
+      FreePool(Entry->DriveImagePath);
+      Entry->DriveImagePath = NULL;
+    }
+    if (Entry->DriveImage) {
+      egFreeImage(Entry->DriveImage);
+      Entry->DriveImage = NULL;
+    }
+    if (prop->type == kTagTypeString) {
+      Entry->DriveImagePath = PoolPrint(L"%a", prop->string);
+    }
+  } else {
+    prop = GetProperty(dictPointer, "DriveImageData");
+    if (prop) {
+      if (Entry->DriveImage) {
+        egFreeImage(Entry->DriveImage);
+        Entry->Image = NULL;
+      }
+      if (Entry->DriveImagePath) {
+        FreePool(Entry->DriveImagePath);
+        Entry->DriveImagePath = NULL;
+      }
+      if (prop->type == kTagTypeString) {
+        UINT32 len = (UINT32)(AsciiStrLen(prop->string) >> 1);
+        if (len > 0) {
+          UINT8 *data = (UINT8 *)AllocateZeroPool(len);
+          if (data) {
+            Entry->DriveImage = egDecodeImage(data, hex2bin(prop->string, data, len), NULL, TRUE);
+          }
+        }
+      } else if (prop->type == kTagTypeData) {
+        Entry->DriveImage = egDecodeImage(prop->data, prop->dataLen, NULL, TRUE);
       }
     }
   }

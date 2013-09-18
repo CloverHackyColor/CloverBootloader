@@ -773,7 +773,7 @@ static CHAR16 *RemoveLoadOption(IN CHAR16 *LoadOptions, IN CHAR16 *LoadOption)
 // */
 
 static LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOptions, IN CHAR16 *FullTitle, IN CHAR16 *LoaderTitle, IN REFIT_VOLUME *Volume,
-                                       IN EG_IMAGE *Image, IN UINT8 OSType, IN UINT8 Flags, IN CHAR16 Hotkey, IN BOOLEAN CustomEntry)
+                                       IN EG_IMAGE *Image, IN EG_IMAGE *DriveImage, IN UINT8 OSType, IN UINT8 Flags, IN CHAR16 Hotkey, IN BOOLEAN CustomEntry)
 {
   EFI_DEVICE_PATH *LoaderDevicePath;
   CHAR16          *LoaderDevicePathString;
@@ -1091,11 +1091,11 @@ static LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
       Entry->me.Image = LoadIcns(Volume->RootDir, L"VolumeIcon.icns", 128);
       DBG("using VolumeIcon.icns image from Volume\n");
     } else {
-      Entry->me.Image = LoadOSIcon(OSIconName, L"unknown", FALSE, TRUE);
+      Entry->me.Image = LoadOSIcon(OSIconName, L"unknown", 128, FALSE, TRUE);
     }
   }
   // Load DriveImage
-  Entry->me.DriveImage = ScanVolumeDefaultIcon(Volume);
+  Entry->me.DriveImage = (DriveImage != NULL) ? DriveImage : ScanVolumeDefaultIcon(Volume);
 
   // DBG("HideBadges=%d Volume=%s ", GlobalConfig.HideBadges, Volume->VolName);
   if (GlobalConfig.HideBadges & HDBADGES_SHOW) {
@@ -1111,7 +1111,7 @@ static LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
 }
 
 static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOptions, IN CHAR16 *FullTitle, IN CHAR16 *LoaderTitle, IN REFIT_VOLUME *Volume,
-                                     IN EG_IMAGE *Image, IN UINT8 OSType, IN UINT8 Flags, IN CHAR16 Hotkey, IN BOOLEAN CustomEntry)
+                                     IN EG_IMAGE *Image, IN EG_IMAGE *DriveImage, IN UINT8 OSType, IN UINT8 Flags, IN CHAR16 Hotkey, IN BOOLEAN CustomEntry)
 {
   CHAR16            *FileName, *TempOptions;
   CHAR16            DiagsFileName[256];
@@ -1120,7 +1120,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOpt
   UINT64            VolumeSize;
   EFI_GUID          *Guid = NULL;
 
-  Entry = CreateLoaderEntry(LoaderPath, LoaderOptions, FullTitle, LoaderTitle, Volume, Image, OSType, Flags, Hotkey, CustomEntry);
+  Entry = CreateLoaderEntry(LoaderPath, LoaderOptions, FullTitle, LoaderTitle, Volume, Image, DriveImage, OSType, Flags, Hotkey, CustomEntry);
   if (Entry == NULL) {
     return NULL;
   }
@@ -1697,10 +1697,10 @@ VOID ScanLoader(VOID)
         if(!EFI_ERROR(Status)) {
             Volume->OSType = OSTYPE_BOOT_OSX;
             if (isFirstRootUUID(Volume))
-            Entry = AddLoaderEntry(FileName, NULL, NULL, L"Mac OS X", Volume, NULL, Volume->OSType, 0, 0, FALSE);
+            Entry = AddLoaderEntry(FileName, NULL, NULL, L"Mac OS X", Volume, NULL, NULL, Volume->OSType, 0, 0, FALSE);
         }
         else {
-            Entry = AddLoaderEntry(FileName, NULL, NULL, L"Mac OS X", Volume, NULL, Volume->OSType, 0, 0, FALSE);
+            Entry = AddLoaderEntry(FileName, NULL, NULL, L"Mac OS X", Volume, NULL, NULL, Volume->OSType, 0, 0, FALSE);
         }
       //     continue; //boot MacOSX only
     }
@@ -1712,7 +1712,7 @@ VOID ScanLoader(VOID)
       Volume->BootType = BOOTING_BY_EFI;
       Volume->OSType = OSTYPE_ML;
       Volume->OSIconName = L"cougar";
-      Entry = AddLoaderEntry(FileName, NULL, NULL, L"OS X Install", Volume, NULL, Volume->OSType, 0, 0, FALSE);
+      Entry = AddLoaderEntry(FileName, NULL, NULL, L"OS X Install", Volume, NULL, NULL, Volume->OSType, 0, 0, FALSE);
       continue; //boot MacOSX only
     }
     // check for Mac OS X Install Data
@@ -1721,7 +1721,7 @@ VOID ScanLoader(VOID)
       Volume->BootType = BOOTING_BY_EFI;
       Volume->OSType = OSTYPE_LION;
       Volume->OSIconName = L"lion";
-      Entry = AddLoaderEntry(FileName, NULL, NULL, L"Mac OS X Install", Volume, NULL, Volume->OSType, 0, 0, FALSE);
+      Entry = AddLoaderEntry(FileName, NULL, NULL, L"Mac OS X Install", Volume, NULL, NULL, Volume->OSType, 0, 0, FALSE);
       continue; //boot MacOSX only
     }
     // dmazar: ML install from Lion to empty partition
@@ -1733,7 +1733,7 @@ VOID ScanLoader(VOID)
       Volume->BootType = BOOTING_BY_EFI;
       Volume->OSType = OSTYPE_ML;
       Volume->OSIconName = L"cougar";
-      Entry = AddLoaderEntry(FileName, NULL, NULL, L"OS X Install", Volume, NULL, Volume->OSType, 0, 0, FALSE);
+      Entry = AddLoaderEntry(FileName, NULL, NULL, L"OS X Install", Volume, NULL, NULL, Volume->OSType, 0, 0, FALSE);
       //continue; //boot MacOSX only
     }
     //============ add in end ============
@@ -1744,7 +1744,7 @@ VOID ScanLoader(VOID)
       Volume->BootType = BOOTING_BY_EFI;
       Volume->OSType = OSTYPE_RECOVERY;
       Volume->OSIconName = L"mac";
-      Entry = AddLoaderEntry(FileName, NULL, NULL, L"Recovery", Volume, NULL, Volume->OSType, 0, 0, FALSE);
+      Entry = AddLoaderEntry(FileName, NULL, NULL, L"Recovery", Volume, NULL, NULL, Volume->OSType, 0, 0, FALSE);
       continue; //boot recovery only
     }
           
@@ -1757,7 +1757,7 @@ VOID ScanLoader(VOID)
       //     Print(L"  - Microsoft boot menu found\n");
       Volume->OSType = OSTYPE_WINEFI;
       Volume->BootType = BOOTING_BY_EFI;
-      Entry = AddLoaderEntry(FileName, L"", NULL, L"Microsoft EFI boot menu", Volume, NULL, OSTYPE_WINEFI, 0, 0, FALSE);
+      Entry = AddLoaderEntry(FileName, L"", NULL, L"Microsoft EFI boot menu", Volume, NULL, NULL, OSTYPE_WINEFI, 0, 0, FALSE);
       //     continue;
       
     } else {
@@ -1770,7 +1770,7 @@ VOID ScanLoader(VOID)
         //     Print(L"  - Microsoft boot menu found\n");
         Volume->OSType = OSTYPE_WINEFI;
         Volume->BootType = BOOTING_BY_EFI;
-        Entry = AddLoaderEntry(FileName, L"", NULL, L"Microsoft EFI boot menu", Volume, NULL, OSTYPE_WINEFI, 0, 0, FALSE);
+        Entry = AddLoaderEntry(FileName, L"", NULL, L"Microsoft EFI boot menu", Volume, NULL, NULL, OSTYPE_WINEFI, 0, 0, FALSE);
         //     continue;
       }
       
@@ -1782,7 +1782,7 @@ VOID ScanLoader(VOID)
       //     Print(L"  - Microsoft boot menu found\n");
       Volume->OSType = OSTYPE_WINEFI;
       Volume->BootType = BOOTING_BY_EFI;
-      Entry = AddLoaderEntry(FileName, L"", NULL, L"Microsoft EFI boot menu", Volume, NULL, OSTYPE_WINEFI, 0, 0, FALSE);
+      Entry = AddLoaderEntry(FileName, L"", NULL, L"Microsoft EFI boot menu", Volume, NULL, NULL, OSTYPE_WINEFI, 0, 0, FALSE);
       continue;
     }
  
@@ -1792,7 +1792,7 @@ VOID ScanLoader(VOID)
       //     Print(L"  - Microsoft boot menu found\n");
       Volume->OSType = OSTYPE_WINEFI;
       Volume->BootType = BOOTING_BY_EFI;
-      Entry = AddLoaderEntry(FileName, L"", NULL, L"Microsoft EFI boot menu", Volume, NULL, OSTYPE_WINEFI, 0, 0, FALSE);
+      Entry = AddLoaderEntry(FileName, L"", NULL, L"Microsoft EFI boot menu", Volume, NULL, NULL, OSTYPE_WINEFI, 0, 0, FALSE);
       continue;
     }
     
@@ -1807,7 +1807,7 @@ VOID ScanLoader(VOID)
       Volume->OSType = OSTYPE_LIN;
       Volume->OSIconName = L"grub,linux";
       Volume->BootType = BOOTING_BY_EFI;
-      Entry = AddLoaderEntry(FileName, L"", NULL, L"Grub EFI boot menu", Volume, NULL, OSTYPE_LIN, 0, 0, FALSE);
+      Entry = AddLoaderEntry(FileName, L"", NULL, L"Grub EFI boot menu", Volume, NULL, NULL, OSTYPE_LIN, 0, 0, FALSE);
     }
 
     // check for Gentoo boot loader/menu
@@ -1819,7 +1819,7 @@ VOID ScanLoader(VOID)
     if (FileExists(Volume->RootDir, FileName)) {
       Volume->OSIconName = L"gentoo,linux";
       Volume->BootType = BOOTING_BY_EFI;
-      Entry = AddLoaderEntry(FileName, L"", NULL, L"Gentoo EFI boot menu", Volume, NULL, OSTYPE_LIN, 0, 0, FALSE);
+      Entry = AddLoaderEntry(FileName, L"", NULL, L"Gentoo EFI boot menu", Volume, NULL, NULL, OSTYPE_LIN, 0, 0, FALSE);
     }
     
     // check for Gentoo kernel
@@ -1831,7 +1831,7 @@ VOID ScanLoader(VOID)
     if (FileExists(Volume->RootDir, FileName)) {
       Volume->OSIconName = L"gentoo,linux";
       Volume->BootType = BOOTING_BY_EFI;
-      Entry = AddLoaderEntry(FileName, L"", NULL, L"Gentoo EFI kernel", Volume, NULL, OSTYPE_LIN, 0, 0, FALSE);
+      Entry = AddLoaderEntry(FileName, L"", NULL, L"Gentoo EFI kernel", Volume, NULL, NULL, OSTYPE_LIN, 0, 0, FALSE);
     }
     
     // check for Redhat boot loader/menu
@@ -1843,7 +1843,7 @@ VOID ScanLoader(VOID)
     if (FileExists(Volume->RootDir, FileName)) {
       Volume->OSIconName = L"redhat,linux";
       Volume->BootType = BOOTING_BY_EFI;
-      Entry = AddLoaderEntry(FileName, L"", NULL, L"RedHat EFI boot menu", Volume, NULL, OSTYPE_LIN, 0, 0, FALSE);
+      Entry = AddLoaderEntry(FileName, L"", NULL, L"RedHat EFI boot menu", Volume, NULL, NULL, OSTYPE_LIN, 0, 0, FALSE);
     }
     
     // check for Ubuntu boot loader/menu
@@ -1855,7 +1855,7 @@ VOID ScanLoader(VOID)
     if (FileExists(Volume->RootDir, FileName)) {
       Volume->OSIconName = L"ubuntu,linux";
       Volume->BootType = BOOTING_BY_EFI;
-      Entry = AddLoaderEntry(FileName, L"", NULL, L"Ubuntu EFI boot menu", Volume, NULL, OSTYPE_LIN, 0, 0, FALSE);
+      Entry = AddLoaderEntry(FileName, L"", NULL, L"Ubuntu EFI boot menu", Volume, NULL, NULL, OSTYPE_LIN, 0, 0, FALSE);
     }
     
     // check for kubuntu boot loader/menu
@@ -1867,7 +1867,7 @@ VOID ScanLoader(VOID)
     if (FileExists(Volume->RootDir, FileName)) {
       Volume->OSIconName = L"kubuntu,linux";
       Volume->BootType = BOOTING_BY_EFI;
-      Entry = AddLoaderEntry(FileName, L"", NULL, L"kubuntu EFI boot menu", Volume, NULL, OSTYPE_LIN, 0, 0, FALSE);
+      Entry = AddLoaderEntry(FileName, L"", NULL, L"kubuntu EFI boot menu", Volume, NULL, NULL, OSTYPE_LIN, 0, 0, FALSE);
     }
     
     // check for Linux Mint boot loader/menu
@@ -1879,7 +1879,7 @@ VOID ScanLoader(VOID)
     if (FileExists(Volume->RootDir, FileName)) {
       Volume->OSIconName = L"mint,linux";
       Volume->BootType = BOOTING_BY_EFI;
-      Entry = AddLoaderEntry(FileName, L"", NULL, L"Linux Mint EFI boot menu", Volume, NULL, OSTYPE_LIN, 0, 0, FALSE);
+      Entry = AddLoaderEntry(FileName, L"", NULL, L"Linux Mint EFI boot menu", Volume, NULL, NULL, OSTYPE_LIN, 0, 0, FALSE);
     }
     
     // check for Fedora boot loader/menu
@@ -1891,7 +1891,7 @@ VOID ScanLoader(VOID)
     if (FileExists(Volume->RootDir, FileName)) {
       Volume->OSIconName = L"fedora,linux";
       Volume->BootType = BOOTING_BY_EFI;
-      Entry = AddLoaderEntry(FileName, L"", NULL, L"Fedora EFI boot menu", Volume, NULL, OSTYPE_LIN, 0, 0, FALSE);
+      Entry = AddLoaderEntry(FileName, L"", NULL, L"Fedora EFI boot menu", Volume, NULL, NULL, OSTYPE_LIN, 0, 0, FALSE);
     }
     
     // check for OpenSuse boot loader/menu
@@ -1899,7 +1899,7 @@ VOID ScanLoader(VOID)
     if (FileExists(Volume->RootDir, FileName)) {
       Volume->OSIconName = L"suse,linux";
       Volume->BootType = BOOTING_BY_EFI;
-      Entry = AddLoaderEntry(FileName, L"", NULL, L"OpenSuse EFI boot menu", Volume, NULL, OSTYPE_LIN, 0, 0, FALSE);
+      Entry = AddLoaderEntry(FileName, L"", NULL, L"OpenSuse EFI boot menu", Volume, NULL, NULL, OSTYPE_LIN, 0, 0, FALSE);
     }
 
 #if defined(MDE_CPU_X64)
@@ -1910,7 +1910,7 @@ VOID ScanLoader(VOID)
     if (FileExists(Volume->RootDir, FileName)) {
       Volume->OSIconName = L"suse,linux";
       Volume->BootType = BOOTING_BY_EFI;
-      Entry = AddLoaderEntry(FileName, L"", NULL, L"OpenSuse EFI boot menu", Volume, NULL, OSTYPE_LIN, 0, 0, FALSE);
+      Entry = AddLoaderEntry(FileName, L"", NULL, L"OpenSuse EFI boot menu", Volume, NULL, NULL, OSTYPE_LIN, 0, 0, FALSE);
     }
     
     // check for archlinux boot loader/menu
@@ -1922,7 +1922,7 @@ VOID ScanLoader(VOID)
     if (FileExists(Volume->RootDir, FileName)) {
       Volume->OSIconName = L"arch,linux";
       Volume->BootType = BOOTING_BY_EFI;
-      Entry = AddLoaderEntry(FileName, L"", NULL, L"ArchLinux EFI boot menu", Volume, NULL, OSTYPE_LIN, 0, 0, FALSE);
+      Entry = AddLoaderEntry(FileName, L"", NULL, L"ArchLinux EFI boot menu", Volume, NULL, NULL, OSTYPE_LIN, 0, 0, FALSE);
     }
 
 #if defined(MDE_CPU_X64)
@@ -1933,7 +1933,7 @@ VOID ScanLoader(VOID)
     if (FileExists(Volume->RootDir, FileName)) {
       Volume->OSIconName = L"arch,linux";
       Volume->BootType = BOOTING_BY_EFI;
-      Entry = AddLoaderEntry(FileName, L"", NULL, L"ArchLinux EFI boot menu", Volume, NULL, OSTYPE_LIN, 0, 0, FALSE);
+      Entry = AddLoaderEntry(FileName, L"", NULL, L"ArchLinux EFI boot menu", Volume, NULL, NULL, OSTYPE_LIN, 0, 0, FALSE);
     }
 
 #if defined(MDE_CPU_X64)
@@ -1945,7 +1945,7 @@ VOID ScanLoader(VOID)
       if (FileExists(Volume->RootDir, FileName) && Volume->DiskKind == DISK_KIND_OPTICAL) {
           //      Volume->OSType = OSTYPE_VAR;
           Volume->BootType = BOOTING_BY_EFI;
-          AddLoaderEntry(FileName, L"", NULL, L"UEFI optical", Volume, NULL, OSTYPE_VAR, 0, 0, FALSE);
+          AddLoaderEntry(FileName, L"", NULL, L"UEFI optical", Volume, NULL, NULL, OSTYPE_VAR, 0, 0, FALSE);
           //      continue;
       }
       
@@ -1953,7 +1953,7 @@ VOID ScanLoader(VOID)
       if (FileExists(Volume->RootDir, FileName) && Volume->DiskKind == DISK_KIND_INTERNAL) {
           //      Volume->OSType = OSTYPE_VAR;
           Volume->BootType = BOOTING_BY_EFI;
-          AddLoaderEntry(FileName, L"", NULL, L"UEFI internal", Volume, NULL, OSTYPE_VAR, 0, 0, FALSE);
+          AddLoaderEntry(FileName, L"", NULL, L"UEFI internal", Volume, NULL, NULL, OSTYPE_VAR, 0, 0, FALSE);
           //      continue;
       }
 
@@ -1961,7 +1961,7 @@ VOID ScanLoader(VOID)
       if (FileExists(Volume->RootDir, FileName) && Volume->DiskKind == DISK_KIND_EXTERNAL) {
           //      Volume->OSType = OSTYPE_VAR;
           Volume->BootType = BOOTING_BY_EFI;
-          AddLoaderEntry(FileName, L"", NULL, L"UEFI external", Volume, NULL, OSTYPE_VAR, 0, 0, FALSE);
+          AddLoaderEntry(FileName, L"", NULL, L"UEFI external", Volume, NULL, NULL, OSTYPE_VAR, 0, 0, FALSE);
           //      continue;
     }
   }
@@ -2025,15 +2025,20 @@ static UINT8 GetOSTypeFromPath(IN CHAR16 *Path, IN UINT8 OSType)
    return (OSType == 0) ? OSTYPE_OTHER : OSType;
 }
 
-static VOID AddCustomEntry(IN UINTN                CustomIndex,
-                           IN CHAR16              *CustomPath,
-                           IN CUSTOM_LOADER_ENTRY *Custom)
+static EG_IMAGE *LoadBuiltinIcon(IN CHAR16 *IconName)
+{
+   return NULL;
+}
+
+static LOADER_ENTRY *AddCustomEntry(IN UINTN                CustomIndex,
+                                    IN CHAR16              *CustomPath,
+                                    IN CUSTOM_LOADER_ENTRY *Custom)
 {
   UINTN                VolumeIndex;
   REFIT_VOLUME        *Volume;
   CUSTOM_LOADER_ENTRY *CustomSubEntry;
-  LOADER_ENTRY        *Entry, *SubEntry;
-  EG_IMAGE            *Image;
+  LOADER_ENTRY        *Entry = NULL, *SubEntry;
+  EG_IMAGE            *Image, *DriveImage;
   EFI_GUID            *Guid = NULL;
   CHAR16              *Path;
   UINT64               VolumeSize;
@@ -2041,15 +2046,15 @@ static VOID AddCustomEntry(IN UINTN                CustomIndex,
 
   if ((CustomPath == NULL) && !OSTYPE_IS_OSX_INSTALLER(Custom->Type)) {
     DBG("Custom entry %d skipped because it didn't have a path or valid type.\n", CustomIndex);
-    return;
+    return NULL;
   }
   if (OSFLAG_ISSET(Custom->Flags, OSFLAG_DISABLED)) {
     DBG("Custom entry %d skipped because it is disabled.\n", CustomIndex);
-    return;
+    return NULL;
   }
   if (!gSettings.ShowHiddenEntries && OSFLAG_ISSET(Custom->Flags, OSFLAG_HIDDEN)) {
     DBG("Custom entry %d skipped because it is hidden.\n", CustomIndex);
-    return;
+    return NULL;
   }
   if (Custom->Volume) {
     if (Custom->Title) {
@@ -2128,7 +2133,7 @@ static VOID AddCustomEntry(IN UINTN                CustomIndex,
       continue;
     }
     // Check for exact volume matches
-    OSType = GetOSTypeFromPath(Path, Volume->OSType);
+    OSType = (Custom->Type == 0) ? GetOSTypeFromPath(Path, Volume->OSType) : Custom->Type;
     if (Custom->Volume) {
       
       if ((StrStr(Volume->DevicePathString, Custom->Volume) == NULL) &&
@@ -2164,21 +2169,42 @@ static VOID AddCustomEntry(IN UINTN                CustomIndex,
           Image = egLoadImage(SelfDir, Custom->ImagePath, TRUE);
           if (Image == NULL) {
             Image = egLoadImage(SelfRootDir, Custom->ImagePath, TRUE);
-            if (Image == NULL) {
-              Image = LoadOSIcon(Custom->ImagePath, L"unknown", FALSE, FALSE);
+          }
+        }
+      }
+    }
+    if (Image == NULL) {
+      Image = LoadOSIcon(Custom->ImagePath, L"unknown", 128, FALSE, FALSE);
+    }
+    // Change to custom drive image if needed
+    DriveImage = Custom->DriveImage;
+    if ((DriveImage == NULL) && Custom->DriveImagePath) {
+      DriveImage = egLoadImage(Volume->RootDir, Custom->DriveImagePath, TRUE);
+      if (DriveImage == NULL) {
+        DriveImage = egLoadImage(ThemeDir, Custom->DriveImagePath, TRUE);
+        if (DriveImage == NULL) {
+          DriveImage = egLoadImage(SelfDir, Custom->DriveImagePath, TRUE);
+          if (DriveImage == NULL) {
+            DriveImage = egLoadImage(SelfRootDir, Custom->DriveImagePath, TRUE);
+            if (DriveImage == NULL) {
+              DriveImage = LoadBuiltinIcon(Custom->DriveImagePath);
             }
           }
         }
       }
     }
+    if (Image == NULL) {
+      Image = LoadOSIcon(Custom->ImagePath, L"unknown", 128, FALSE, FALSE);
+    }
+    // Change custom drive image if needed
     // Update volume boot type
     Volume->BootType = BOOTING_BY_EFI;
     DBG("match!\n");
     // Create a legacy entry for this volume
     if (OSFLAG_ISUNSET(Custom->Flags, OSFLAG_NODEFAULTMENU)) {
-      Entry = AddLoaderEntry(Path, Custom->Options, Custom->FullTitle, Custom->Title, Volume, Image, OSType, Custom->Flags, Custom->Hotkey, TRUE);
+      Entry = AddLoaderEntry(Path, Custom->Options, Custom->FullTitle, Custom->Title, Volume, Image, DriveImage, OSType, Custom->Flags, Custom->Hotkey, TRUE);
     } else {
-      Entry = CreateLoaderEntry(Path, Custom->Options, Custom->FullTitle, Custom->Title, Volume, Image, OSType, Custom->Flags, Custom->Hotkey, TRUE);
+      Entry = CreateLoaderEntry(Path, Custom->Options, Custom->FullTitle, Custom->Title, Volume, Image, DriveImage, OSType, Custom->Flags, Custom->Hotkey, TRUE);
       if (Entry) {
         if (Custom->SubEntries) {
           // Add subscreen
@@ -2200,14 +2226,7 @@ static VOID AddCustomEntry(IN UINTN                CustomIndex,
             }
             // Create sub entries
             for (CustomSubEntry = Custom->SubEntries; CustomSubEntry; CustomSubEntry = CustomSubEntry->Next) {
-              CHAR16 *SubPath = Path;
-              if (CustomSubEntry->Path != NULL) {
-                SubPath = CustomSubEntry->Path;
-              }
-              SubEntry = CreateLoaderEntry(SubPath, CustomSubEntry->Options, CustomSubEntry->FullTitle,
-                                           (CustomSubEntry->Title == NULL) ? Custom->Title : CustomSubEntry->Title,
-                                           Volume, CustomSubEntry->Image, GetOSTypeFromPath(SubPath, Volume->OSType),
-                                           CustomSubEntry->Flags, CustomSubEntry->Hotkey, TRUE);
+              SubEntry = AddCustomEntry(CustomIndex, (CustomSubEntry->Path != NULL) ? CustomSubEntry->Path : Path, CustomSubEntry);
               if (SubEntry) {
                 AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
               }
@@ -2220,6 +2239,7 @@ static VOID AddCustomEntry(IN UINTN                CustomIndex,
       }
     }
   }
+  return Entry;
 }
 
 // Add custom entries
@@ -2275,7 +2295,7 @@ static VOID StartLegacy(IN LEGACY_ENTRY *Entry)
     egClearScreen(&DarkBackgroundPixel);
     BeginExternalScreen(TRUE, L"Booting Legacy OS");
     
-    BootLogoImage = LoadOSIcon(Entry->Volume->OSIconName, L"legacy", TRUE, TRUE);
+    BootLogoImage = LoadOSIcon(Entry->Volume->OSIconName, L"legacy", 128, TRUE, TRUE);
     if (BootLogoImage != NULL)
         BltImageAlpha(BootLogoImage,
                       (UGAWidth  - BootLogoImage->Width) >> 1,
@@ -2322,7 +2342,7 @@ static VOID StartLegacy(IN LEGACY_ENTRY *Entry)
     FinishExternalScreen();
 }
 
-static LEGACY_ENTRY * AddLegacyEntry(IN CHAR16 *FullTitle, IN CHAR16 *LoaderTitle, IN REFIT_VOLUME *Volume, IN EG_IMAGE *Image, IN CHAR16 Hotkey, IN BOOLEAN CustomEntry)
+static LEGACY_ENTRY * AddLegacyEntry(IN CHAR16 *FullTitle, IN CHAR16 *LoaderTitle, IN REFIT_VOLUME *Volume, IN EG_IMAGE *Image, IN EG_IMAGE *DriveImage, IN CHAR16 Hotkey, IN BOOLEAN CustomEntry)
 {
   LEGACY_ENTRY      *Entry, *SubEntry;
   REFIT_MENU_SCREEN *SubScreen;
@@ -2401,9 +2421,9 @@ static LEGACY_ENTRY * AddLegacyEntry(IN CHAR16 *FullTitle, IN CHAR16 *LoaderTitl
   if (Image) {
     Entry->me.Image = Image;
   } else {
-    Entry->me.Image = LoadOSIcon(Volume->OSIconName, L"legacy", FALSE, TRUE);
+    Entry->me.Image = LoadOSIcon(Volume->OSIconName, L"legacy", 128, FALSE, TRUE);
   }
-  Entry->me.DriveImage = ScanVolumeDefaultIcon(Volume);
+  Entry->me.DriveImage = (DriveImage != NULL) ? DriveImage : ScanVolumeDefaultIcon(Volume);
   //  DBG("HideBadges=%d Volume=%s\n", GlobalConfig.HideBadges, Volume->VolName);
   //  DBG("Title=%s OSName=%s OSIconName=%s\n", LoaderTitle, Volume->OSName, Volume->OSIconName);
   
@@ -2515,7 +2535,7 @@ static VOID ScanLegacy(VOID)
         
         if (ShowVolume && (Volume->OSType != OSTYPE_HIDE)){
             DBG(" add legacy\n");
-            AddLegacyEntry(NULL, NULL, Volume, NULL, 0, FALSE);
+            AddLegacyEntry(NULL, NULL, Volume, NULL, NULL, 0, FALSE);
         } else {
           DBG(" hidden\n");
         }
@@ -2529,7 +2549,7 @@ static VOID AddCustomLegacy(VOID)
   BOOLEAN              ShowVolume, HideIfOthersFound;
   REFIT_VOLUME        *Volume;
   CUSTOM_LEGACY_ENTRY *Custom;
-  EG_IMAGE            *Image;
+  EG_IMAGE            *Image, *DriveImage;
   UINTN                i = 0;
 
   DBG("Custom legacy start\n");
@@ -2634,15 +2654,35 @@ static VOID AddCustomLegacy(VOID)
             Image = egLoadImage(SelfDir, Custom->ImagePath, TRUE);
             if (Image == NULL) {
               Image = egLoadImage(SelfRootDir, Custom->ImagePath, TRUE);
-              if (Image == NULL) {
-                Image = LoadOSIcon(Custom->ImagePath, L"unknown", FALSE, FALSE);
+            }
+          }
+        }
+      }
+      if (Image == NULL) {
+        Image = LoadOSIcon(Custom->ImagePath, L"unknown", 128, FALSE, FALSE);
+      }
+      // Change to custom drive image if needed
+      DriveImage = Custom->DriveImage;
+      if ((DriveImage == NULL) && Custom->DriveImagePath) {
+        DriveImage = egLoadImage(Volume->RootDir, Custom->DriveImagePath, TRUE);
+        if (DriveImage == NULL) {
+          DriveImage = egLoadImage(ThemeDir, Custom->DriveImagePath, TRUE);
+          if (DriveImage == NULL) {
+            DriveImage = egLoadImage(SelfDir, Custom->DriveImagePath, TRUE);
+            if (DriveImage == NULL) {
+              DriveImage = egLoadImage(SelfRootDir, Custom->DriveImagePath, TRUE);
+              if (DriveImage == NULL) {
+                DriveImage = LoadBuiltinIcon(Custom->DriveImagePath);
               }
             }
           }
         }
       }
+      if (Image == NULL) {
+        Image = LoadOSIcon(Custom->ImagePath, L"unknown", 128, FALSE, FALSE);
+      }
       // Create a legacy entry for this volume
-      AddLegacyEntry(Custom->FullTitle, Custom->Title, Volume, Image, Custom->Hotkey, TRUE);
+      AddLegacyEntry(Custom->FullTitle, Custom->Title, Volume, Image, DriveImage, Custom->Hotkey, TRUE);
       DBG("match!\n");
     }
   }
@@ -2877,12 +2917,12 @@ static VOID AddCustomTool()
             Image = egLoadImage(SelfDir, Custom->ImagePath, TRUE);
             if (Image == NULL) {
               Image = egLoadImage(SelfRootDir, Custom->ImagePath, TRUE);
-              if (Image == NULL) {
-                Image = LoadOSIcon(Custom->ImagePath, L"unknown", FALSE, FALSE);
-              }
             }
           }
         }
+      }
+      if (Image == NULL) {
+        Image = LoadOSIcon(Custom->ImagePath, L"unknown", 48, FALSE, FALSE);
       }
       // Create a legacy entry for this volume
       AddToolEntry(Custom->Path, Custom->FullTitle, Custom->Title, Volume, Image, Custom->Hotkey);

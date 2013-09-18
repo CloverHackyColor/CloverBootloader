@@ -616,7 +616,9 @@ struct CUSTOM_LOADER_ENTRY {
   CUSTOM_LOADER_ENTRY *Next;
   CUSTOM_LOADER_ENTRY *SubEntries;
   EG_IMAGE            *Image;
+  EG_IMAGE            *DriveImage;
   CHAR16              *ImagePath;
+  CHAR16              *DriveImagePath;
   CHAR16              *Volume;
   CHAR16              *Path;
   CHAR16              *Options;
@@ -632,7 +634,9 @@ typedef struct CUSTOM_LEGACY_ENTRY CUSTOM_LEGACY_ENTRY;
 struct CUSTOM_LEGACY_ENTRY {
   CUSTOM_LEGACY_ENTRY *Next;
   EG_IMAGE            *Image;
+  EG_IMAGE            *DriveImage;
   CHAR16              *ImagePath;
+  CHAR16              *DriveImagePath;
   CHAR16              *Volume;
   CHAR16              *FullTitle;
   CHAR16              *Title;
