@@ -842,10 +842,10 @@ static LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
           if ((StrStr(Volume->DevicePathString, Custom->Volume) != NULL) ||
               ((Volume->VolName != NULL) && (StrStr(Volume->VolName, Custom->Volume) != NULL))) {
             if (Custom->VolumeType != 0) {
-              if (((Volume->DiskKind == DISK_KIND_INTERNAL) && ((Custom->VolumeType & DISABLE_FLAG_INTERNAL) == 0)) ||
-                  ((Volume->DiskKind == DISK_KIND_EXTERNAL) && ((Custom->VolumeType & DISABLE_FLAG_EXTERNAL) == 0)) ||
-                  ((Volume->DiskKind == DISK_KIND_OPTICAL) && ((Custom->VolumeType & DISABLE_FLAG_OPTICAL) == 0)) ||
-                  ((Volume->DiskKind == DISK_KIND_FIREWIRE) && ((Custom->VolumeType & DISABLE_FLAG_FIREWIRE) == 0))) {
+              if (((Volume->DiskKind == DISK_KIND_INTERNAL) && (Custom->VolumeType & DISABLE_FLAG_INTERNAL)) ||
+                  ((Volume->DiskKind == DISK_KIND_EXTERNAL) && (Custom->VolumeType & DISABLE_FLAG_EXTERNAL)) ||
+                  ((Volume->DiskKind == DISK_KIND_OPTICAL) && (Custom->VolumeType & DISABLE_FLAG_OPTICAL)) ||
+                  ((Volume->DiskKind == DISK_KIND_FIREWIRE) && (Custom->VolumeType & DISABLE_FLAG_FIREWIRE))) {
                 if (Custom->Path != NULL) {
                   // Try to match the loader paths and types
                   if (StriCmp(Custom->Path, LoaderPath) == 0) {
@@ -918,10 +918,10 @@ static LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
             DBG("volume did not match for path `%s` and custom entry %d\n", LoaderDevicePathString, CustomIndex);
           }
         } else if (Custom->VolumeType != 0) {
-          if (((Volume->DiskKind == DISK_KIND_INTERNAL) && ((Custom->VolumeType & DISABLE_FLAG_INTERNAL) == 0)) ||
-              ((Volume->DiskKind == DISK_KIND_EXTERNAL) && ((Custom->VolumeType & DISABLE_FLAG_EXTERNAL) == 0)) ||
-              ((Volume->DiskKind == DISK_KIND_OPTICAL) && ((Custom->VolumeType & DISABLE_FLAG_OPTICAL) == 0)) ||
-              ((Volume->DiskKind == DISK_KIND_FIREWIRE) && ((Custom->VolumeType & DISABLE_FLAG_FIREWIRE) == 0))) {
+          if (((Volume->DiskKind == DISK_KIND_INTERNAL) && (Custom->VolumeType & DISABLE_FLAG_INTERNAL)) ||
+              ((Volume->DiskKind == DISK_KIND_EXTERNAL) && (Custom->VolumeType & DISABLE_FLAG_EXTERNAL)) ||
+              ((Volume->DiskKind == DISK_KIND_OPTICAL) && (Custom->VolumeType & DISABLE_FLAG_OPTICAL)) ||
+              ((Volume->DiskKind == DISK_KIND_FIREWIRE) && (Custom->VolumeType & DISABLE_FLAG_FIREWIRE))) {
             if (Custom->Path != NULL) {
               // Try to match the loader paths and types
               if (StriCmp(Custom->Path, LoaderPath) == 0) {
@@ -2028,6 +2028,7 @@ static UINT8 GetOSTypeFromPath(IN CHAR16 *Path, IN UINT8 OSType)
 static EG_IMAGE *LoadBuiltinIcon(IN CHAR16 *IconName)
 {
   static CHAR16 *BuiltinIconNames[] = {
+    /*
     L"About",
     L"Options",
     L"Clover",
@@ -2038,6 +2039,7 @@ static EG_IMAGE *LoadBuiltinIcon(IN CHAR16 *IconName)
     L"Part",
     L"Rescue",
     L"Pointer",
+    */
     L"Internal",
     L"External",
     L"Optical",
@@ -2055,7 +2057,7 @@ static EG_IMAGE *LoadBuiltinIcon(IN CHAR16 *IconName)
   }
   while (Index < BuiltinIconNamesCount) {
     if (StriCmp(IconName, BuiltinIconNames[Index]) == 0) {
-      return BuiltinIcon(Index);
+      return BuiltinIcon(BUILTIN_ICON_VOL_INTERNAL + Index);
     }
     ++Index;
   }
@@ -2948,7 +2950,7 @@ static VOID AddCustomTool()
         }
       }
       if (Image == NULL) {
-        Image = LoadBuiltinIcon(L"Shell");
+        Image = BuiltinIcon(BUILTIN_ICON_TOOL_SHELL);
       }
       // Create a legacy entry for this volume
       AddToolEntry(Custom->Path, Custom->FullTitle, Custom->Title, Volume, Image, Custom->Hotkey);
