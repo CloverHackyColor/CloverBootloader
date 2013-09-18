@@ -119,9 +119,9 @@ typedef struct {
 #define OSTYPE_OTHER            (99)
 #define OSTYPE_HIDE             (100)
 
-#define OSTYPE_IS_OSX(type) ((type == OSTYPE_OSX) || (type == OSTYPE_BOOT_OSX) || ((type >= OSTYPE_BOOT_OSX) && (type <= OSTYPE_MAV)) || (type == OSTYPE_VAR))
-#define OSTYPE_IS_OSX_RECOVERY(type) ((type == OSTYPE_RECOVERY) || ((type >= OSTYPE_BOOT_OSX) && (type <= OSTYPE_MAV)) || (type == OSTYPE_VAR))
-#define OSTYPE_IS_OSX_INSTALLER(type) ((type == OSTYPE_OSX_INSTALLER) || ((type >= OSTYPE_BOOT_OSX) && (type <= OSTYPE_MAV)) || (type == OSTYPE_VAR))
+#define OSTYPE_IS_OSX(type) ((type == OSTYPE_OSX) || (type == OSTYPE_BOOT_OSX) || ((type >= OSTYPE_TIGER) && (type <= OSTYPE_MAV)) || (type == OSTYPE_VAR))
+#define OSTYPE_IS_OSX_RECOVERY(type) ((type == OSTYPE_RECOVERY) || ((type >= OSTYPE_TIGER) && (type <= OSTYPE_MAV)) || (type == OSTYPE_VAR))
+#define OSTYPE_IS_OSX_INSTALLER(type) ((type == OSTYPE_OSX_INSTALLER) || ((type >= OSTYPE_TIGER) && (type <= OSTYPE_MAV)) || (type == OSTYPE_VAR))
 #define OSTYPE_IS_WINDOWS(type) ((type == OSTYPE_WIN) || (type == OSTYPE_WINEFI) || (type == OSTYPE_EFI) || (type == OSTYPE_VAR))
 #define OSTYPE_IS_LINUX(type) ((type == OSTYPE_LIN) || (type == OSTYPE_EFI) || (type == OSTYPE_VAR))
 #define OSTYPE_IS_OTHER(type) ((type == OSTYPE_OTHER) || (type == OSTYPE_EFI) || (type == OSTYPE_VAR))
