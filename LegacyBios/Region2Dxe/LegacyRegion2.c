@@ -658,6 +658,7 @@ DetectChipset (
     case 0x29808086: // G965
     case 0x29908086: // Q965
     case 0x29a08086: // P965
+    case 0x29b08086: // R845  
     case 0x29c08086: // G31/P35
     case 0x29d08086: // Q33
     case 0x29e08086: // X38/X48
