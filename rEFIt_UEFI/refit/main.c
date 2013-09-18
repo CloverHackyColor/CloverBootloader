@@ -2027,7 +2027,39 @@ static UINT8 GetOSTypeFromPath(IN CHAR16 *Path, IN UINT8 OSType)
 
 static EG_IMAGE *LoadBuiltinIcon(IN CHAR16 *IconName)
 {
-   return NULL;
+  static CHAR16 *BuiltinIconNames[] = {
+    L"About",
+    L"Options",
+    L"Clover",
+    L"Reset",
+    L"Shutdown",
+    L"Help",
+    L"Shell",
+    L"Part",
+    L"Rescue",
+    L"Pointer",
+    L"Internal",
+    L"External",
+    L"Optical",
+    L"FireWire",
+    L"Boot",
+    L"HFS",
+    L"NTFS",
+    L"EXT",
+    L"Recovery",
+  };
+  static const UINTN BuiltinIconNamesCount = (sizeof(BuiltinIconNames) / sizeof(CHAR16 *));
+  UINTN Index = 0;
+  if (IconName == NULL) {
+    return NULL;
+  }
+  while (Index < BuiltinIconNamesCount) {
+    if (StriCmp(IconName, BuiltinIconNames[Index]) == 0) {
+      return BuiltinIcon(Index);
+    }
+    ++Index;
+  }
+  return NULL;
 }
 
 static LOADER_ENTRY *AddCustomEntry(IN UINTN                CustomIndex,

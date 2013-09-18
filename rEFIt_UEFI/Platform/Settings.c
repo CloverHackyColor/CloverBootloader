@@ -482,15 +482,20 @@ static BOOLEAN FillinCustomEntry(IN OUT CUSTOM_LOADER_ENTRY *Entry, TagPtr dictP
     }
   }
   if (Entry->Title == NULL) {
-    if (Entry->Type == OSTYPE_RECOVERY) {
+    if (OSTYPE_IS_OSX_RECOVERY(Entry->Type)) {
       Entry->Title = PoolPrint(L"Recovery");
-    } else if (Entry->Type == OSTYPE_OSX_INSTALLER) {
+    } else if (OSTYPE_IS_OSX_INSTALLER(Entry->Type)) {
       Entry->Title = PoolPrint(L"Install OSX");
     }
   }
   if ((Entry->Image == NULL) && (Entry->ImagePath == NULL)) {
-    if (Entry->Type == OSTYPE_RECOVERY) {
+    if (OSTYPE_IS_OSX_RECOVERY(Entry->Type)) {
       Entry->ImagePath = L"mac";
+    }
+  }
+  if ((Entry->DriveImage == NULL) && (Entry->DriveImagePath == NULL)) {
+    if (OSTYPE_IS_OSX_RECOVERY(Entry->Type)) {
+      Entry->DriveImagePath = L"recovery";
     }
   }
 
