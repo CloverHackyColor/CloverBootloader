@@ -842,10 +842,10 @@ static LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
           if ((StrStr(Volume->DevicePathString, Custom->Volume) == NULL) &&
               ((Volume->VolName == NULL) || (StrStr(Volume->VolName, Custom->Volume) == NULL))) {
             if (Custom->VolumeType != 0) {
-              if (((Volume->DiskKind == DISK_KIND_INTERNAL) && (Custom->VolumeType & DISABLE_FLAG_INTERNAL)) ||
-                  ((Volume->DiskKind == DISK_KIND_EXTERNAL) && (Custom->VolumeType & DISABLE_FLAG_EXTERNAL)) ||
-                  ((Volume->DiskKind == DISK_KIND_OPTICAL) && (Custom->VolumeType & DISABLE_FLAG_OPTICAL)) ||
-                  ((Volume->DiskKind == DISK_KIND_FIREWIRE) && (Custom->VolumeType & DISABLE_FLAG_FIREWIRE))) {
+              if (((Volume->DiskKind == DISK_KIND_INTERNAL) && ((Custom->VolumeType & DISABLE_FLAG_INTERNAL) == 0)) ||
+                  ((Volume->DiskKind == DISK_KIND_EXTERNAL) && ((Custom->VolumeType & DISABLE_FLAG_EXTERNAL) == 0)) ||
+                  ((Volume->DiskKind == DISK_KIND_OPTICAL) && ((Custom->VolumeType & DISABLE_FLAG_OPTICAL) == 0)) ||
+                  ((Volume->DiskKind == DISK_KIND_FIREWIRE) && ((Custom->VolumeType & DISABLE_FLAG_FIREWIRE) == 0))) {
                 if (Custom->Path != NULL) {
                   // Try to match the loader paths and types
                   if (StriCmp(Custom->Path, LoaderPath) == 0) {
@@ -918,10 +918,10 @@ static LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
             DBG("volume did not match for path `%s` and custom entry %d\n", LoaderDevicePathString, CustomIndex);
           }
         } else if (Custom->VolumeType != 0) {
-          if (((Volume->DiskKind == DISK_KIND_INTERNAL) && (Custom->VolumeType & DISABLE_FLAG_INTERNAL)) ||
-              ((Volume->DiskKind == DISK_KIND_EXTERNAL) && (Custom->VolumeType & DISABLE_FLAG_EXTERNAL)) ||
-              ((Volume->DiskKind == DISK_KIND_OPTICAL) && (Custom->VolumeType & DISABLE_FLAG_OPTICAL)) ||
-              ((Volume->DiskKind == DISK_KIND_FIREWIRE) && (Custom->VolumeType & DISABLE_FLAG_FIREWIRE))) {
+          if (((Volume->DiskKind == DISK_KIND_INTERNAL) && ((Custom->VolumeType & DISABLE_FLAG_INTERNAL) == 0)) ||
+              ((Volume->DiskKind == DISK_KIND_EXTERNAL) && ((Custom->VolumeType & DISABLE_FLAG_EXTERNAL) == 0)) ||
+              ((Volume->DiskKind == DISK_KIND_OPTICAL) && ((Custom->VolumeType & DISABLE_FLAG_OPTICAL) == 0)) ||
+              ((Volume->DiskKind == DISK_KIND_FIREWIRE) && ((Custom->VolumeType & DISABLE_FLAG_FIREWIRE) == 0))) {
             if (Custom->Path != NULL) {
               // Try to match the loader paths and types
               if (StriCmp(Custom->Path, LoaderPath) == 0) {
@@ -1674,7 +1674,8 @@ VOID ScanLoader(VOID)
     // skip volume if its kind is configured as disabled
     if ((Volume->DiskKind == DISK_KIND_OPTICAL && (GlobalConfig.DisableFlags & DISABLE_FLAG_OPTICAL)) ||
         (Volume->DiskKind == DISK_KIND_EXTERNAL && (GlobalConfig.DisableFlags & DISABLE_FLAG_EXTERNAL)) ||
-        (Volume->DiskKind == DISK_KIND_INTERNAL && (GlobalConfig.DisableFlags & DISABLE_FLAG_INTERNAL)))
+        (Volume->DiskKind == DISK_KIND_INTERNAL && (GlobalConfig.DisableFlags & DISABLE_FLAG_INTERNAL)) ||
+        (Volume->DiskKind == DISK_KIND_FIREWIRE && (GlobalConfig.DisableFlags & DISABLE_FLAG_FIREWIRE)))
     {
       DBG(" hidden\n");
       continue;
@@ -2099,7 +2100,7 @@ static VOID AddCustomEntry(IN UINTN                CustomIndex,
       }
     }
 
-      if (Volume->OSType == OSTYPE_HIDE) {
+    if (Volume->OSType == OSTYPE_HIDE) {
       DBG("skipped because volume is hidden\n");
       continue;
     }
