@@ -925,8 +925,12 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir)
     prop = GetProperty(dictPointer, "Legacy");
     if(prop)  {
       AsciiStrToUnicodeStr(prop->string, gSettings.LegacyBoot);
+    } else if (gFirmwareClover) {
+      // default for CLOVER EFI boot
+      UnicodeSPrint(gSettings.LegacyBoot, sizeof(gSettings.LegacyBoot), L"PBR");
     } else {
-      UnicodeSPrint(gSettings.LegacyBoot, 32, L"PBR");
+      // default for UEFI boot
+      UnicodeSPrint(gSettings.LegacyBoot, sizeof(gSettings.LegacyBoot), L"LegacyBiosDefault");
     }
 
   }

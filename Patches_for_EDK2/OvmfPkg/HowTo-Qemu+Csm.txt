@@ -1,0 +1,29 @@
+- Copy Clover/Patches_for_EDK2/OvmfPkg/* to OvmfPkg/
+
+- Build OvmfPkg using: ./ebuild.sh -D CSM_ENABLE
+
+- A patched Cirrus Vga Bios will be needed for Qemu (still not included in Qemu v1.6.0)
+  Get it at: http://www.coreboot.org/images/0/0d/Vgabios-cirrus.zip
+     (or at: http://www.kraxel.org/repos/jenkins/seabios/           - take seavgabios.git-*.x86_64.rpm)
+  Extract it and put it in Qemu directory.
+
+- Run Qemu, Csm will be working (you can legacy boot with LegacyBiosDefault)
+
+Note:
+- A prebuilt Csm16.bin is provided in Csm/Csm16
+- If you want to build Csm16.bin from source:
+  * Enter SeaBios directory:  # cd OvmfPkg/SeaBios
+  * Get Seabios from source:  # git clone git://git.seabios.org/seabios.git seabios
+  * Apply patch:              # patch -p0 < seabiospatches.diff
+  * Edit 'seabiosmake' and specify at the beginning location of TOOLCHAIN (same ToolChain which we use for building BaseTools).
+  * Run config utility:       # ./seabiosmake.sh menuconfig
+                         (or: # ./seabiosmake.sh config     - if you don't have ncurses)
+    - Under General Features, set 'Build Target' to 'Compatibility Support Module for EFI BIOS'
+    - Under General Fetaures, add 'Support hardware found on emulators'
+    - Save and exit.
+  * Build seabios:            # ./seabiosmake.sh
+  * Copy resulting seabios/out/bios.bin to OvmfPkg/Csm/Csm16/Csm16.bin
+
+Csm patches are based on dwmw2's work:
+- edk2 (Csm/LegacyBiosDxe) patches: http://git.infradead.org/users/dwmw2/edk2.git/
+- seabios patches: http://git.infradead.org/users/dwmw2/seabios.git/commit/e738f28b2595515e274c53f8ee93081ff1956642

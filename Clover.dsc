@@ -226,6 +226,9 @@
   MdeModulePkg/Universal/Console/ConSplitterDxe/ConSplitterDxe.inf {
     <LibraryClasses>
       PcdLib|MdePkg/Library/DxePcdLib/DxePcdLib.inf
+    <PcdsPatchableInModule>
+      gEfiMdeModulePkgTokenSpaceGuid.PcdConOutRow|0
+      gEfiMdeModulePkgTokenSpaceGuid.PcdConOutColumn|0
   }
   MdeModulePkg/Universal/HiiDatabaseDxe/HiiDatabaseDxe.inf
   MdeModulePkg/Universal/SetupBrowserDxe/SetupBrowserDxe.inf

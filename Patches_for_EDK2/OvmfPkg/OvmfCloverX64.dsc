@@ -455,10 +455,12 @@
   MdeModulePkg/Universal/DisplayEngineDxe/DisplayEngineDxe.inf
   MdeModulePkg/Universal/MemoryTest/NullMemoryTestDxe/NullMemoryTestDxe.inf
 
+!ifndef $(CSM_ENABLE)
   OvmfPkg/QemuVideoDxe/QemuVideoDxe.inf {
     <LibraryClasses>
       BltLib|OptionRomPkg/Library/FrameBufferBltLib/FrameBufferBltLib.inf
   }
+!endif
 
 #Clover
   IntelFrameworkModulePkg/Universal/DataHubDxe/DataHubDxe.inf
@@ -526,7 +528,8 @@
 
 !ifdef $(CSM_ENABLE)
   IntelFrameworkModulePkg/Csm/BiosThunk/VideoDxe/VideoDxe.inf
-  IntelFrameworkModulePkg/Csm/LegacyBiosDxe/LegacyBiosDxe.inf
+  #IntelFrameworkModulePkg/Csm/LegacyBiosDxe/LegacyBiosDxe.inf
+  OvmfPkg/Csm/LegacyBiosDxe/LegacyBiosDxe.inf
   OvmfPkg/Csm/Csm16/Csm16.inf
 !endif
 

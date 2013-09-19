@@ -1,0 +1,52 @@
+--- seabios/src/fw/csm.c
++++ seabios/src/fw/csm.c
+@@ -34,6 +34,8 @@ EFI_COMPATIBILITY16_TABLE csm_compat_tab
+     .Compatibility16CallOffset = 0 /* Filled in by checkrom.py */,
+     .OemIdStringPointer = (u32)"SeaBIOS",
+     .AcpiRsdPtrPointer = (u32)&csm_rsdp,
++    .UmbStart = 0xe0,
++    .UmbEnd = 0xf0,
+ };
+ 
+ EFI_TO_COMPATIBILITY16_INIT_TABLE *csm_init_table;
+@@ -46,7 +48,9 @@ extern void __csm_return(struct bregs *r
+ static void
+ csm_return(struct bregs *regs)
+ {
+-    dprintf(3, "handle_csm returning AX=%04x\n", regs->ax);
++    u32 top = rom_get_max();
++    dprintf(3, "handle_csm returning AX=%04x, UmbStart %08x\n", regs->ax, top);
++    csm_compat_table.UmbStart = top >> 12;
+ 
+     PICMask = pic_irqmask_read();
+     __csm_return(regs);
+--- seabios/src/output.c
++++ seabios/src/output.c
+@@ -82,7 +82,7 @@ putc_debug(struct putcinfo *action, char
+ {
+     if (! CONFIG_DEBUG_LEVEL)
+         return;
+-    if (CONFIG_DEBUG_IO && runningOnQEMU())
++    if (CONFIG_DEBUG_IO && ((CONFIG_CSM && CONFIG_QEMU_HARDWARE) || runningOnQEMU()))
+         // Send character to debug port.
+         outb(c, GET_GLOBAL(DebugOutputPort));
+     if (!MODESEGMENT)
+--- seabios/src/std/LegacyBios.h
++++ seabios/src/std/LegacyBios.h
+@@ -228,6 +228,16 @@ typedef struct {
+   /// Maximum PCI bus number assigned.
+   ///
+   UINT8                             LastPciBus;
++
++  ///
++  /// Start address of UMB RAM (>> 12)
++  ///
++  UINT8                             UmbStart;
++
++  ///
++  /// End address of UMB RAM (>> 12)
++  ///
++  UINT8                             UmbEnd;
+ } EFI_COMPATIBILITY16_TABLE;
+ 
+ ///
