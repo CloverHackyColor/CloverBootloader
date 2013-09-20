@@ -27,3 +27,10 @@ Note:
 Csm patches are based on dwmw2's work:
 - edk2 (Csm/LegacyBiosDxe) patches: http://git.infradead.org/users/dwmw2/edk2.git/
 - seabios patches: http://git.infradead.org/users/dwmw2/seabios.git/commit/e738f28b2595515e274c53f8ee93081ff1956642
+
+
+qemu-system-x86_64 -L . -cpu core2duo -m 2048 -vga cirrus -localtime \
+-chardev stdio,id=qemudbg -device isa-debugcon,iobase=0x402,chardev=qemudbg \
+-bios Ovmf.fd \
+-hda freedos.img \
+-hdb QEMU-Clover.img
