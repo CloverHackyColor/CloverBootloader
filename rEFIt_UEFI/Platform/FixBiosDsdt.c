@@ -2,6 +2,8 @@
  * Copyright (c) 2011-2012 Frank Peng. All rights reserved.
  *
  */
+//totally rebuilt by Slice, 2012-2013
+// NForce additions by Oscar09, 2013
 
 #include "StateGenerator.h"
 #include "Display.h"
@@ -24,7 +26,6 @@
 #else
 #define DBG(...) DebugLog(DEBUG_FIX, __VA_ARGS__)	
 #endif
-
 
 
 CHAR8*  device_name[11];  // 0=>Display  1=>network  2=>firewire 3=>LPCB 4=>HDAAudio 5=>RTC 6=>TMR 7=>SBUS 8=>PIC 9=>Airport 10=>XHCI
@@ -671,7 +672,13 @@ VOID CheckHardware()
    //         DBG("ArptADR1 = 0x%x, ArptADR2 = 0x%x\n", ArptADR1, ArptADR2);
    //         Netmodel = get_arpt_model(deviceid);  
             ArptBCM = (Pci.Hdr.VendorId == 0x14e4);
+            if (ArptBCM) {
+              DBG("Found Airport BCM at 0x%x, 0x0x\n", ArptADR1, ArptADR2);
+            }
             ArptAtheros = (Pci.Hdr.VendorId == 0x168c);
+            if (ArptAtheros) {
+              DBG("Found Airport Atheros at 0x%x, 0x0x\n", ArptADR1, ArptADR2);
+            }
           }
           
           //Firewire ADR
@@ -2186,6 +2193,7 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
   UINT32 PCIADR, PCISIZE = 0;
   INT32 sizeoffset;
   AML_CHUNK* met;
+  AML_CHUNK* brd;
   AML_CHUNK* root;
   AML_CHUNK* pack;
   CHAR8 *network;
@@ -2263,10 +2271,17 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
         return len;
       }
     }
+    root = aml_create_node(NULL);
   }  
-    
-  root = aml_create_node(NULL);
-  
+  //what to do if no LAN bridge?
+  else {
+    brd = aml_create_node(NULL);
+    root = aml_add_device(brd, "NET0");
+    aml_add_name(root, "_ADR");
+    aml_add_dword(root, NetworkADR1);
+    DBG("Created  bridge device with ADR=0x%x\n", NetworkADR1);
+  }
+
   DBG("NetworkADR1=%x NetworkADR2=%x\n", NetworkADR1, NetworkADR2);
   if (!NetworkName) //there is no network device at dsdt, creating new one
   {
@@ -2350,8 +2365,10 @@ UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
   UINT32 PCIADR, PCISIZE = 0;
   INT32 sizeoffset;
   AML_CHUNK* met;
+  AML_CHUNK* brd;
   AML_CHUNK* root;
   AML_CHUNK* pack;
+  AML_CHUNK* dev;
   CHAR8 *network;
   UINT32 FakeID = 0;
   UINT32 FakeVen = 0;
@@ -2418,11 +2435,19 @@ UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
         return len;
       }
     }
-  }  
-    
-  root = aml_create_node(NULL);
+    root = aml_create_node(NULL);
+  }
+  //what to do if no Arpt bridge?
+  else {
+    brd = aml_create_node(NULL);
+    root = aml_add_device(brd, "ARP0");
+    aml_add_name(root, "_ADR");
+    aml_add_dword(root, ArptADR1);
+    DBG("Created  bridge device with ADR=0x%x\n", ArptADR1);
+  }
+
   if (!ArptName) {//there is no Airport device at dsdt, creating new one
-    AML_CHUNK* dev = aml_add_device(root, "ARPT");
+    dev = aml_add_device(root, "ARPT");
     aml_add_name(dev, "_ADR");
     if (ArptADR2) {
       if (ArptADR2> 0x3F)
@@ -2449,19 +2474,23 @@ UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
     aml_add_string(pack, "subsystem-vendor-id");
     aml_add_byte_buffer(pack, data3ATH, 4);    
     if (ArptBCM) {
-      aml_add_string(pack, "model");
-      aml_add_string_buffer(pack, "Dell Wireless 1395");
-      aml_add_string(pack, "name");
-      aml_add_string_buffer(pack, "pci14e4,4312");
-      aml_add_string(pack, "device-id");
-      aml_add_byte_buffer(pack, dataBCM, 4);
+      if (!gSettings.FakeWIFI) {
+        aml_add_string(pack, "model");
+        aml_add_string_buffer(pack, "Dell Wireless 1395");
+        aml_add_string(pack, "name");
+        aml_add_string_buffer(pack, "pci14e4,4312");
+        aml_add_string(pack, "device-id");
+        aml_add_byte_buffer(pack, dataBCM, 4);
+      }
     } else if (ArptAtheros) {
       aml_add_string(pack, "model");
       aml_add_string_buffer(pack, "Atheros AR9285 WiFi card");
-      aml_add_string(pack, "name");
-      aml_add_string_buffer(pack, "pci168c,2a");
-      aml_add_string(pack, "device-id");
-      aml_add_byte_buffer(pack, data1ATH, 4);        
+      if (gSettings.FakeWIFI) {
+        aml_add_string(pack, "name");
+        aml_add_string_buffer(pack, "pci168c,2a");
+        aml_add_string(pack, "device-id");
+        aml_add_byte_buffer(pack, data1ATH, 4);
+      }
       aml_add_string(pack, "subsystem-id");
       aml_add_byte_buffer(pack, data2ATH, 4);
       aml_add_string(pack, "subsystem-vendor-id");
