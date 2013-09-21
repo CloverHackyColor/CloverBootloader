@@ -9,7 +9,7 @@ Index: BaseTools/Source/C/Makefiles/header.makefile
 -CPPFLAGS = $(INCLUDE)
 -CFLAGS = -MD -fshort-wchar -fno-strict-aliasing -fno-merge-constants -nostdlib -Wall -Werror -c -g
 +CPPFLAGS = $(INCLUDE) 
-+CFLAGS = -MD -fshort-wchar -fno-strict-aliasing -fno-merge-constants -nostdlib -Wall -Werror -c -g -Qunused-arguments -Wno-tautological-compare -Wno-self-assign
++CFLAGS = -MD -fshort-wchar -fno-strict-aliasing -fno-merge-constants -nostdlib -Wall -Werror -c -g -Qunused-arguments -Wno-tautological-compare -Wno-self-assign -Wno-deprecated-declarations
  LFLAGS =
  
  ifeq ($(ARCH), IA32)
