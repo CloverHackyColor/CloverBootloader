@@ -2554,12 +2554,12 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
             gSettings.GeneratePStates = TRUE;
             gSettings.GenerateCStates = TRUE;
           } else
-            if ((prop->type == kTagTypeFalse) ||
-                ((prop->type == kTagTypeString) &&
-                ((prop->string[0] == 'n') || (prop->string[0] == 'N')))) {
+            if ((prop2->type == kTagTypeFalse) ||
+                ((prop2->type == kTagTypeString) &&
+                ((prop2->string[0] == 'n') || (prop2->string[0] == 'N')))) {
             gSettings.GeneratePStates = FALSE;
             gSettings.GenerateCStates = FALSE;
-         } else  if (prop2->type == kTagTypeDict) {
+         } else if (prop2->type == kTagTypeDict) {
             prop = GetProperty(prop2, "PStates");
             if(prop) {
               if ((prop->type == kTagTypeTrue) ||
