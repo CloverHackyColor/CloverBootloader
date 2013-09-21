@@ -11,7 +11,6 @@
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		A3298B0E1736975F000EFB93 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = A3298B0C1736975F000EFB93 /* MainMenu.xib */; };
-		A3502EAE1736DA6C00F28732 /* CloverUpdater-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8D1107310486CEB800E47090 /* CloverUpdater-Info.plist */; };
 		A3E8C75F1731872100228CA8 /* clover.iconset in Resources */ = {isa = PBXBuildFile; fileRef = A3E8C75E1731872100228CA8 /* clover.iconset */; };
 		A3FE43AD176DEF6100D74133 /* CloverLogo.png in Resources */ = {isa = PBXBuildFile; fileRef = A3FE43AC176DEF6100D74133 /* CloverLogo.png */; };
 		A3FE43AF176DF39C00D74133 /* CloverTitle.png in Resources */ = {isa = PBXBuildFile; fileRef = A3FE43AE176DF39C00D74133 /* CloverTitle.png */; };
@@ -179,7 +178,7 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0460;
+				LastUpgradeCheck = 0500;
 			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "CloverUpdater" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -231,7 +230,6 @@
 				A3E8C75F1731872100228CA8 /* clover.iconset in Resources */,
 				A3298B0E1736975F000EFB93 /* MainMenu.xib in Resources */,
 				A3FEE1941736995100D18280 /* InfoPlist.strings in Resources */,
-				A3502EAE1736DA6C00F28732 /* CloverUpdater-Info.plist in Resources */,
 				A3FE43AD176DEF6100D74133 /* CloverLogo.png in Resources */,
 				A3FE43AF176DF39C00D74133 /* CloverTitle.png in Resources */,
 			);
@@ -346,7 +344,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
-				ONLY_ACTIVE_ARCH = NO;
+				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = "";
 			};
 			name = Debug;
