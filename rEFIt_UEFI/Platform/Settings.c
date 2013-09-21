@@ -1016,7 +1016,7 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir)
             gSettings.PointerSpeed = -gSettings.PointerSpeed;
           }
         } else if ((dict2->type == kTagTypeString) && dict2->string) {
-          gSettings.PointerSpeed = (UINT16)AsciiStrDecimalToUintn(prop->string + ((dict2->string[0] == '-') ? 1 : 0));
+          gSettings.PointerSpeed = (UINT16)AsciiStrDecimalToUintn(dict2->string + ((dict2->string[0] == '-') ? 1 : 0));
         }
         gSettings.PointerEnabled = (gSettings.PointerSpeed != 0);
       }
@@ -1031,18 +1031,18 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir)
       }
       dict2 = GetProperty(prop, "Mirror");
       if (dict2) {
-        if ((prop->type == kTagTypeTrue) ||
-            ((prop->type == kTagTypeString) && prop->string &&
-            ((prop->string[0] == 'Y') || (prop->string[0] == 'y')))) {
+        if ((dict2->type == kTagTypeTrue) ||
+            ((dict2->type == kTagTypeString) && dict2->string &&
+            ((dict2->string[0] == 'Y') || (dict2->string[0] == 'y')))) {
           gSettings.PointerMirror = TRUE;
         }
       }
       dict2 = GetProperty(prop, "DoubleClickTime");
       if (dict2) {
-        if (prop->type == kTagTypeInteger) {
-          gSettings.DoubleClickTime = (UINTN)prop->string;
-        } else if (prop->type == kTagTypeString) {
-          gSettings.DoubleClickTime = (UINT16)AsciiStrDecimalToUintn(prop->string + ((dict2->string[0] == '-') ? 1 : 0));
+        if (dict2->type == kTagTypeInteger) {
+          gSettings.DoubleClickTime = (UINTN)dict2->string;
+        } else if (dict2->type == kTagTypeString) {
+          gSettings.DoubleClickTime = (UINT16)AsciiStrDecimalToUintn(dict2->string + ((dict2->string[0] == '-') ? 1 : 0));
         }
       }
     }
