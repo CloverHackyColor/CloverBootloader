@@ -18,6 +18,11 @@
 # Enhanced by JrCs on 01/19/2013.
 #
 
+set -u # exit with error if unbound variables
+
+# Use standard PATH
+export PATH=/usr/bin:/bin:/usr/sbin:/sbin
+
 # GCC chainload source version 
 # here we can change source versions of tools
 #
@@ -59,23 +64,10 @@ export DIR_BUILD=${DIR_BUILD:-$RAMDISK_MNT_PT}
 export DIR_DOWNLOADS=${DIR_DOWNLOADS:-$DIR_GCC/download}
 export DIR_LOGS=${DIR_LOGS:-$DIR_GCC/logs}
 
-## Paths for GCC (Xcode 4.1 fix) - works with Xcode 3.2 - Xcode 4.2
-#
-export CC="/usr/bin/gcc"
-export CXX="/usr/bin/g++"
-export CPP="/usr/bin/cpp"
-export LD="/usr/bin/ld"
-
-#export CC="/opt/local/bin/gcc-apple-4.2"
-#export CXX="/opt/local/bin/g++-apple-4.2"
-#export CPP="/opt/local/bin/cpp-apple-4.2"
-#export LD="/opt/local/bin/ld"
-
 # Here we set MAKEFLAGS for GCC so it knows how many cores can use
 # faster compile!
 #
-export MAKEFLAGS="-j `sysctl -n hw.ncpu`"
-
+export MAKEFLAGS="-j $(sysctl -n hw.ncpu)"
 
 ### Check Functions ###
 
@@ -206,7 +198,6 @@ fnExtract ()
     local tarball="$1"
     local package=${tarball%%.tar*}
     tarball="${DIR_DOWNLOADS}/$tarball"
-    local flagfile="${DIR_GCC}/$package.extracted"
 
     local filetype=$(file -L --brief "$tarball" | tr '[A-Z]' '[a-z]')
     local tar_filter_option=""
@@ -232,15 +223,12 @@ fnExtract ()
 
     [ -z "$top_level_dir" ] && echo "Error can't extract top level dir from $tarball" && exit 1
 
-    if [[ ! -d "${DIR_GCC}/$top_level_dir" || ! -f "$flagfile" ]]; then
-        echo "-  ${package} extract..."
-        rm -rf "${DIR_GCC}/$top_level_dir" # Remove old directory if exists
-        tar -C "$DIR_GCC" -x "$tar_filter_option" -f "${tarball}" && touch "${DIR_GCC}/$package.extracted"
-        echo "-  ${package} extracted"
+    echo "-  ${package} extract..."
+    rm -rf "${DIR_GCC}/$top_level_dir" # Remove old directory if exists
+    tar -C "$DIR_GCC" -x "$tar_filter_option" -f "${tarball}" && touch "${DIR_GCC}/$package.extracted"
+    echo "-  ${package} extracted"
 
-    fi
-
-    # Restore stdout for the result and close file desciptor 3
+    # Restore stdout for the result and close file descriptor 3
     exec 1>&3-
     echo "${DIR_GCC}/$top_level_dir" # Return the full path where the tarball has been extracted
 }
@@ -259,7 +247,7 @@ fnCompileLibs ()
     rm -rf "${DIR_BUILD}/$ARCH-gmp"
     mkdir -p "${DIR_BUILD}/$ARCH-gmp" && cd "${DIR_BUILD}/$ARCH-gmp"
     echo "-  ${GMP_VERSION} configure..."
-    "${GMP_DIR}"/configure --prefix=$PREFIX > $DIR_LOGS/gmp.$ARCH.config.log.txt 2> /dev/null
+    "${GMP_DIR}"/configure --prefix=$PREFIX > $DIR_LOGS/gmp.$ARCH.configure.log.txt 2> /dev/null
     echo "-  ${GMP_VERSION} make..."
     make 1> /dev/null 2> $DIR_LOGS/gmp.$ARCH.make.log.txt
     make install 1> $DIR_LOGS/gmp.$ARCH.install.log.txt 2> /dev/null
@@ -272,7 +260,7 @@ fnCompileLibs ()
     rm -rf "${DIR_BUILD}/$ARCH-mpfr"
     mkdir -p "${DIR_BUILD}/$ARCH-mpfr" && cd "${DIR_BUILD}/$ARCH-mpfr"
     echo "-  ${MPFR_VERSION} configure..."
-    "${MPFR_DIR}"/configure --prefix=$PREFIX --with-gmp=$PREFIX > $DIR_LOGS/mpfr.$ARCH.config.log.txt 2> /dev/null
+    "${MPFR_DIR}"/configure --prefix=$PREFIX --with-gmp=$PREFIX > $DIR_LOGS/mpfr.$ARCH.configure.log.txt 2> /dev/null
     echo "-  ${MPFR_VERSION} make..."
     make 1> /dev/null 2> $DIR_LOGS/mpfr.$ARCH.make.log.txt
     make install 1> $DIR_LOGS/mpfr.$ARCH.install.log.txt 2> /dev/null
@@ -285,7 +273,7 @@ fnCompileLibs ()
     rm -rf "${DIR_BUILD}/$ARCH-mpc"
     mkdir -p "${DIR_BUILD}/$ARCH-mpc" && cd "${DIR_BUILD}/$ARCH-mpc"
     echo "-  ${MPC_VERSION} configure..."
-    "${MPC_DIR}"/configure --prefix=$PREFIX --with-gmp=$PREFIX --with-mpfr=$PREFIX  > $DIR_LOGS/mpc.$ARCH.config.log.txt 2> /dev/null
+    "${MPC_DIR}"/configure --prefix=$PREFIX --with-gmp=$PREFIX --with-mpfr=$PREFIX  > $DIR_LOGS/mpc.$ARCH.configure.log.txt 2> /dev/null
     echo "-  ${MPC_VERSION} make..."
     make 1> /dev/null 2> $DIR_LOGS/mpc.$ARCH.make.log.txt
     make install 1> $DIR_LOGS/mpc.$ARCH.install.log.txt 2> /dev/null
@@ -298,7 +286,7 @@ fnCompileLibs ()
     rm -rf "${DIR_BUILD}/$ARCH-isl"
     mkdir -p "${DIR_BUILD}/$ARCH-isl" && cd "${DIR_BUILD}/$ARCH-isl"
     echo "-  ${ISL_VERSION} configure..."
-    "${ISL_DIR}"/configure --prefix=$PREFIX --with-gmp-prefix=$PREFIX --with-gcc-arch=$ARCH > $DIR_LOGS/isl.$ARCH.config.log.txt 2> /dev/null
+    "${ISL_DIR}"/configure --prefix=$PREFIX --with-gmp-prefix=$PREFIX --with-gcc-arch=$ARCH > $DIR_LOGS/isl.$ARCH.configure.log.txt 2> /dev/null
     echo "-  ${ISL_VERSION} make..."
     make 1> /dev/null 2> $DIR_LOGS/isl.$ARCH.make.log.txt
     make install 1> $DIR_LOGS/isl.$ARCH.install.log.txt 2> /dev/null
@@ -311,7 +299,7 @@ fnCompileLibs ()
     rm -rf "${DIR_BUILD}/$ARCH-cloog"
     mkdir -p "${DIR_BUILD}/$ARCH-cloog" && cd "${DIR_BUILD}/$ARCH-cloog"
     echo "-  ${CLOOG_VERSION} configure..."
-    "${CLOOG_DIR}"/configure --prefix=$PREFIX --with-gmp-prefix=$PREFIX --with-isl-prefix=$PREFIX --with-gcc-arch=$ARCH  > $DIR_LOGS/cloog.$ARCH.config.log.txt 2> /dev/null
+    "${CLOOG_DIR}"/configure --prefix=$PREFIX --with-gmp-prefix=$PREFIX --with-isl-prefix=$PREFIX --with-gcc-arch=$ARCH  > $DIR_LOGS/cloog.$ARCH.configure.log.txt 2> /dev/null
     echo "-  ${CLOOG_VERSION} make..."
     make 1> /dev/null 2> $DIR_LOGS/cloog.$ARCH.make.log.txt
     make install 1> $DIR_LOGS/cloog.$ARCH.install.log.txt 2> /dev/null
@@ -323,31 +311,49 @@ fnCompileLibs ()
 fnCompileBinutils ()
 # Function: Compiling Binutils in PREFIX location
 {
-    # Mount RamDisk
-    mountRamDisk
-
-    export BUILD_BINUTILS_DIR=$DIR_BUILD/$ARCH-binutils
-
-    # Extract the tarball
-    local BINUTILS_DIR=$(fnExtract "${BINUTILS_VERSION}.tar.bz2")
-    
     # Check GMP/MPFR/MPC
     [ ! -f $PREFIX/include/gmp.h ]  && echo "Error: ${GMP_VERSION} not installed, check logs"  && exit
     [ ! -f $PREFIX/include/mpfr.h ] && echo "Error: ${MPFR_VERSION} not installed, check logs" && exit
     [ ! -f $PREFIX/include/mpc.h ]  && echo "Error: ${MPC_VERSION} not installed, check logs"  && exit
 
+    # Mount RamDisk
+    mountRamDisk
+
+    export BUILD_BINUTILS_DIR=${DIR_BUILD}/$ARCH-binutils
+
+    # Extract the tarball
+    local BINUTILS_DIR=$(fnExtract "${BINUTILS_VERSION}.tar.bz2")
+    # echo "-  ${BINUTILS_VERSION} patch..."
+    # cp "${DIR_MAIN}"/edk2/Clover/Patches_to_compilers/"${BINUTILS_VERSION}"/binutils/readelf-new.c "${BINUTILS_DIR}"/binutils/readelf.c || exit 1
+    # cp "${DIR_MAIN}"/edk2/Clover/Patches_to_compilers/"${BINUTILS_VERSION}"/opcodes/i386-dis-new.c "${BINUTILS_DIR}"/opcodes/i386-dis.c || exit 1
+    
     # Binutils build
-    rm -rf "${DIR_BUILD}/$ARCH-binutils"
-    mkdir -p "${DIR_BUILD}/$ARCH-binutils" && cd "${DIR_BUILD}/$ARCH-binutils"
+    rm -rf "$BUILD_BINUTILS_DIR"
+    mkdir -p "$BUILD_BINUTILS_DIR" && cd "$BUILD_BINUTILS_DIR"
     echo "-  ${BINUTILS_VERSION} configure..."
-    "${BINUTILS_DIR}"/configure --target=$TARGET $BINUTILS_CONFIG > $DIR_LOGS/binutils.$ARCH.config.log.txt 2> /dev/null
-    echo "-  ${BINUTILS_VERSION} patch..."
-    cp "${DIR_MAIN}"/edk2/Clover/Patches_to_compilers/"${BINUTILS_VERSION}"/binutils/readelf-new.c "${BINUTILS_DIR}"/binutils/readelf.c || exit 1
-    cp "${DIR_MAIN}"/edk2/Clover/Patches_to_compilers/"${BINUTILS_VERSION}"/opcodes/i386-dis-new.c "${BINUTILS_DIR}"/opcodes/i386-dis.c || exit 1
+    local cmd="${BINUTILS_DIR}/configure --target=$TARGET $BINUTILS_CONFIG"
+    local logfile="$DIR_LOGS/binutils.$ARCH.configure.log.txt"
+    echo "$cmd" > "$logfile"
+    eval "$cmd" >> "$logfile" 2>&1
     echo "-  ${BINUTILS_VERSION} make..."
-    make all 1> /dev/null 2> $DIR_LOGS/binutils.$ARCH.make.log.txt
-    make install 1> $DIR_LOGS/binutils.$ARCH.install.log.txt 2> /dev/null
-    rm -rf "${DIR_BUILD}/$ARCH-binutils"
+    cmd="make all"
+    logfile="$DIR_LOGS/binutils.$ARCH.make.log.txt"
+    echo "$cmd" > "$logfile"
+    eval "$cmd" >/dev/null 2>> "$logfile"
+    if [[ $? -ne 0 ]]; then
+        echo "Error compiling ${BINUTILS_VERSION} ! Check the log $logfile"
+        exit 1
+    fi
+    cmd="make install"
+    logfile="$DIR_LOGS/binutils.$ARCH.install.log.txt"
+    echo "$cmd" > "$logfile"
+    eval "$cmd" >> "$logfile" 2>&1
+    if [[ $? -ne 0 ]]; then
+        echo "Error installing ${BINUTILS_VERSION} ! Check the log $logfile"
+        exit 1
+    fi
+
+    rm -rf "$BUILD_BINUTILS_DIR"
     [ ! -f $PREFIX/bin/$TARGET-ld ] && echo "Error: ${BINUTILS_VERSION} not installed, check logs in $DIR_LOGS" && exit 1
     echo "-  ${BINUTILS_VERSION} installed in $PREFIX  -"
 }
@@ -367,7 +373,7 @@ fnCompileGCC ()
     mkdir -p "${DIR_BUILD}/$ARCH-gcc" && cd "${DIR_BUILD}/$ARCH-gcc"
 
     echo "-  gcc-${GCC_VERSION} configure..."
-    "${GCC_DIR}"/configure --target=$TARGET $GCC_CONFIG > $DIR_LOGS/gcc.$ARCH.config.log.txt 2> /dev/null
+    "${GCC_DIR}"/configure --target=$TARGET $GCC_CONFIG > $DIR_LOGS/gcc.$ARCH.configure.log.txt 2> /dev/null
 
     echo "-  gcc-${GCC_VERSION} make..."
     make all-gcc 1> /dev/null 2> $DIR_LOGS/gcc.$ARCH.make.log.txt
@@ -375,7 +381,7 @@ fnCompileGCC ()
 
     rm -rf "${DIR_BUILD}/$ARCH-gcc"
 
-    [ ! -x $PREFIX/bin/$TARGET-gcc ] && echo "Error: gcc-${GCC_VERSION} not installed, check logs" && exit
+    [ ! -x $PREFIX/bin/$TARGET-gcc ] && echo "Error: gcc-${GCC_VERSION} not installed, check logs in $DIR_LOGS" && exit 1
     echo "-  gcc-${GCC_VERSION} installed in $PREFIX  -"  
     echo
 }
