@@ -1016,7 +1016,7 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir)
             gSettings.PointerSpeed = -gSettings.PointerSpeed;
           }
         } else if ((dict2->type == kTagTypeString) && dict2->string) {
-          gSettings.DoubleClickTime = (UINT16)AsciiStrDecimalToUintn(prop->string + ((dict2->string[0] == '-') ? 1 : 0));
+          gSettings.PointerSpeed = (UINT16)AsciiStrDecimalToUintn(prop->string + ((dict2->string[0] == '-') ? 1 : 0));
         }
         gSettings.PointerEnabled = (gSettings.PointerSpeed != 0);
       }
