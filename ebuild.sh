@@ -33,10 +33,29 @@ USE_BIOS_BLOCKIO=0
 set -e # errexit
 set -u # Blow on unbound variable
 
+
+if [[ -x /usr/bin/git ]]; then
+    PATCH_CMD="/usr/bin/git apply --whitespace=nowarn"
+else
+    PATCH_CMD="/usr/bin/patch"
+fi
+
 # Go to the script directory to build
 cd "$(dirname $0)"
 
 ## FUNCTIONS ##
+
+function exitTrap() {
+    if [[ -n "$WORKSPACE" ]]; then
+        echo -n "Unpatching edk2..."
+        ( cd "$WORKSPACE" && cat Clover/Patches_for_EDK2/BaseTools_XCode5.patch | eval "$PATCH_CMD -p0 -R" &>/dev/null )
+        if [[ $? -eq 0 ]]; then
+            echo " done"
+        else
+            echo " failed"
+        fi
+    fi
+}
 
 print_option_help () {
   if [[ x$print_option_help_wc = x ]]; then
@@ -252,6 +271,7 @@ MainBuildScript() {
         if [[ ! -x "${PWD}"/edksetup.sh ]]; then
             cd ..
         fi
+
         # This version is for the tools in the BaseTools project.
         # this assumes svn pulls have the same root dir
         #  export EDK_TOOLS_PATH=`pwd`/../BaseTools
@@ -260,6 +280,15 @@ MainBuildScript() {
         source edksetup.sh BaseTools
     else
         echo "Building from: $WORKSPACE"
+    fi
+
+    # Trying to patch edk2
+    echo -n "Patching edk2..."
+    ( cd "$WORKSPACE" && cat Clover/Patches_for_EDK2/BaseTools_XCode5.patch | eval "$PATCH_CMD -p0" &>/dev/null )
+    if [[ $? -eq 0 ]]; then
+        echo " done"
+    else
+        echo " failed"
     fi
 
     export CLOVER_PKG_DIR="$WORKSPACE"/Clover/CloverPackage/CloverV2
@@ -474,6 +503,8 @@ MainPostBuildScript() {
 } 
 
 # BUILD START #
+trap 'exitTrap' EXIT
+
 MainBuildScript $@
 MainPostBuildScript
 

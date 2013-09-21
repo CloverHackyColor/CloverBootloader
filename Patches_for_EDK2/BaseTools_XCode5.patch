@@ -1,0 +1,41 @@
+Index: BaseTools/Source/C/Makefiles/header.makefile
+===================================================================
+--- BaseTools/Source/C/Makefiles/header.makefile	(révision 14689)
++++ BaseTools/Source/C/Makefiles/header.makefile	(copie de travail)
+@@ -40,8 +40,8 @@
+ endif
+ 
+ INCLUDE = $(TOOL_INCLUDE) -I $(MAKEROOT) -I $(MAKEROOT)/Include/Common -I $(MAKEROOT)/Include/ -I $(MAKEROOT)/Include/IndustryStandard -I $(MAKEROOT)/Common/ -I .. -I . $(ARCH_INCLUDE) 
+-CPPFLAGS = $(INCLUDE)
+-CFLAGS = -MD -fshort-wchar -fno-strict-aliasing -fno-merge-constants -nostdlib -Wall -Werror -c -g
++CPPFLAGS = $(INCLUDE) 
++CFLAGS = -MD -fshort-wchar -fno-strict-aliasing -fno-merge-constants -nostdlib -Wall -Werror -c -g -Qunused-arguments -Wno-tautological-compare -Wno-self-assign
+ LFLAGS =
+ 
+ ifeq ($(ARCH), IA32)
+Index: BaseTools/Source/C/VfrCompile/VfrFormPkg.cpp
+===================================================================
+--- BaseTools/Source/C/VfrCompile/VfrFormPkg.cpp	(révision 14689)
++++ BaseTools/Source/C/VfrCompile/VfrFormPkg.cpp	(copie de travail)
+@@ -95,7 +95,7 @@
+ }
+ 
+ CFormPkg::CFormPkg (
+-  IN UINT32 BufferSize = 4096
++  IN UINT32 BufferSize
+   )
+ {
+   CHAR8       *BufferStart;
+Index: BaseTools/Source/C/VfrCompile/VfrFormPkg.h
+===================================================================
+--- BaseTools/Source/C/VfrCompile/VfrFormPkg.h	(révision 14689)
++++ BaseTools/Source/C/VfrCompile/VfrFormPkg.h	(copie de travail)
+@@ -124,7 +124,7 @@
+   SPendingAssign      *PendingAssignList;
+ 
+ public:
+-  CFormPkg (IN UINT32 BufferSize);
++  CFormPkg (IN UINT32 BufferSize = 4096);
+   ~CFormPkg ();
+ 
+   CHAR8             * IfrBinBufferGet (IN UINT32);
