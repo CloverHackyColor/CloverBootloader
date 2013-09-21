@@ -342,13 +342,13 @@ fnCompileBinutils ()
     echo "-  ${BINUTILS_VERSION} configure..."
     "${BINUTILS_DIR}"/configure --target=$TARGET $BINUTILS_CONFIG > $DIR_LOGS/binutils.$ARCH.config.log.txt 2> /dev/null
     echo "-  ${BINUTILS_VERSION} patch..."
-    cp -v "${DIR_MAIN}"/edk2/Clover/Patches_to_compilers/"${BINUTILS_VERSION}"/binutils/readelf-new.c "${BINUTILS_DIR}"/binutils/readelf.c
-    cp -v "${DIR_MAIN}"/edk2/Clover/Patches_to_compilers/"${BINUTILS_VERSION}"/opcodes/i386-dis-new.c "${BINUTILS_DIR}"/opcodes/i386-dis.c
+    cp "${DIR_MAIN}"/edk2/Clover/Patches_to_compilers/"${BINUTILS_VERSION}"/binutils/readelf-new.c "${BINUTILS_DIR}"/binutils/readelf.c || exit 1
+    cp "${DIR_MAIN}"/edk2/Clover/Patches_to_compilers/"${BINUTILS_VERSION}"/opcodes/i386-dis-new.c "${BINUTILS_DIR}"/opcodes/i386-dis.c || exit 1
     echo "-  ${BINUTILS_VERSION} make..."
     make all 1> /dev/null 2> $DIR_LOGS/binutils.$ARCH.make.log.txt
     make install 1> $DIR_LOGS/binutils.$ARCH.install.log.txt 2> /dev/null
     rm -rf "${DIR_BUILD}/$ARCH-binutils"
-    [ ! -f $PREFIX/bin/$TARGET-ld ] && echo "Error: ${BINUTILS_VERSION} not installed, check logs" && exit
+    [ ! -f $PREFIX/bin/$TARGET-ld ] && echo "Error: ${BINUTILS_VERSION} not installed, check logs in $DIR_LOGS" && exit 1
     echo "-  ${BINUTILS_VERSION} installed in $PREFIX  -"
 }
 
