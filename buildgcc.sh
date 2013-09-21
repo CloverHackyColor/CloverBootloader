@@ -341,6 +341,9 @@ fnCompileBinutils ()
     mkdir -p "${DIR_BUILD}/$ARCH-binutils" && cd "${DIR_BUILD}/$ARCH-binutils"
     echo "-  ${BINUTILS_VERSION} configure..."
     "${BINUTILS_DIR}"/configure --target=$TARGET $BINUTILS_CONFIG > $DIR_LOGS/binutils.$ARCH.config.log.txt 2> /dev/null
+    echo "-  ${BINUTILS_VERSION} patch..."
+    cp -v "${DIR_MAIN}"/edk2/Clover/Patches_to_compilers/"${BINUTILS_VERSION}"/binutils/readelf-new.c "${BINUTILS_DIR}"/binutils/readelf.c
+    cp -v "${DIR_MAIN}"/edk2/Clover/Patches_to_compilers/"${BINUTILS_VERSION}"/opcodes/i386-dis-new.c "${BINUTILS_DIR}"/opcodes/i386-dis.c
     echo "-  ${BINUTILS_VERSION} make..."
     make all 1> /dev/null 2> $DIR_LOGS/binutils.$ARCH.make.log.txt
     make install 1> $DIR_LOGS/binutils.$ARCH.install.log.txt 2> /dev/null
