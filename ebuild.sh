@@ -33,12 +33,18 @@ USE_BIOS_BLOCKIO=0
 set -e # errexit
 set -u # Blow on unbound variable
 
-
 if [[ -x /usr/bin/git ]]; then
     PATCH_CMD="/usr/bin/git apply --whitespace=nowarn"
 else
     PATCH_CMD="/usr/bin/patch"
 fi
+
+# Check if we need to patch the sources
+PATCH_FILE=
+declare -r XCODE_MAJOR_VERSION="$(xcodebuild -version | sed -nE 's/^Xcode ([0-9]).*/\1/p')"
+case "$XCODE_MAJOR_VERSION" in
+    5) PATCH_FILE=BaseTools_XCode5.patch ;;
+esac
 
 # Go to the script directory to build
 cd "$(dirname $0)"
@@ -46,9 +52,10 @@ cd "$(dirname $0)"
 ## FUNCTIONS ##
 
 function exitTrap() {
-    if [[ -n "$WORKSPACE" ]]; then
+
+    if [[ -n "$PATCH_FILE" && -n "$WORKSPACE" ]]; then
         echo -n "Unpatching edk2..."
-        ( cd "$WORKSPACE" && cat Clover/Patches_for_EDK2/BaseTools_XCode5.patch | eval "$PATCH_CMD -p0 -R" &>/dev/null )
+        ( cd "$WORKSPACE" && cat Clover/Patches_for_EDK2/$PATCH_FILE | eval "$PATCH_CMD -p0 -R" &>/dev/null )
         if [[ $? -eq 0 ]]; then
             echo " done"
         else
@@ -283,12 +290,14 @@ MainBuildScript() {
     fi
 
     # Trying to patch edk2
-    echo -n "Patching edk2..."
-    ( cd "$WORKSPACE" && cat Clover/Patches_for_EDK2/BaseTools_XCode5.patch | eval "$PATCH_CMD -p0" &>/dev/null )
-    if [[ $? -eq 0 ]]; then
-        echo " done"
-    else
-        echo " failed"
+    if [[ -n "$PATCH_FILE" ]]; then
+        echo -n "Patching edk2..."
+        ( cd "$WORKSPACE" && cat Clover/Patches_for_EDK2/$PATCH_FILE | eval "$PATCH_CMD -p0" &>/dev/null )
+        if [[ $? -eq 0 ]]; then
+            echo " done"
+        else
+            echo " failed"
+        fi
     fi
 
     export CLOVER_PKG_DIR="$WORKSPACE"/Clover/CloverPackage/CloverV2
