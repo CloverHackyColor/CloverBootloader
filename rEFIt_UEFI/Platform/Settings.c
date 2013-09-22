@@ -860,7 +860,7 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir)
     prop = GetProperty(dictPointer, "Timeout");
     if (prop) {
       if (prop->type == kTagTypeInteger) {
-        GlobalConfig.Timeout = (INTN)prop->string;
+        GlobalConfig.Timeout = (INT32)(UINTN)prop->string;
         DBG("timeout set to %d\n", GlobalConfig.Timeout);
       } else if ((prop->type == kTagTypeString) && prop->string) {
         if (prop->string[0] == '-') {
@@ -913,7 +913,7 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir)
           gSettings.XMPDetection = (INT8)AsciiStrDecimalToUintn(prop->string);
         }
       } else if (prop->type == kTagTypeInteger) {
-        gSettings.XMPDetection = (INT8)(INTN)prop->string;
+        gSettings.XMPDetection = (INT8)(UINTN)prop->string;
       }
       // Check that the setting value is sane
       if ((gSettings.XMPDetection < -1) || (gSettings.XMPDetection > 2)) {
@@ -1011,7 +1011,7 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir)
       dict2 = GetProperty(prop, "Speed");
       if (dict2) {
         if (dict2->type == kTagTypeInteger) {
-          gSettings.PointerSpeed = (INTN)dict2->string;
+          gSettings.PointerSpeed = (INT32)(UINTN)dict2->string;
           if (gSettings.PointerSpeed < 0) {
             gSettings.PointerSpeed = -gSettings.PointerSpeed;
           }
