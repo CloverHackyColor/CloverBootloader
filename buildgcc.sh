@@ -457,7 +457,7 @@ case "${1:-}" in
 esac
 
 # 2. Argument Case
-case "$2" in
+case "${2:-}" in
     '')
         echo "Example: ./buildgcc.sh -ia32 -all" && exit ;;
     '-binutils')
