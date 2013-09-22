@@ -12,6 +12,7 @@
 # Script tested on "Xcode 3.2" - Snow Leopard  
 #                  "Xcode 4.1" - Lion
 #                  "Xcode 4.6" - Mountain Lion
+#                  "Xcode 5.0" - Mountain Lion
 #
 #  
 # Created by Jadran Puharic on 1/25/12.
@@ -443,7 +444,7 @@ fnArchX64 ()
 }
 
 # 1. Argument ARCH
-case "$1" in
+case "${1:-}" in
     '')      fnHelp && exit ;;
     '-help') fnHelp && exit ;;
     '-ia32') fnArchIA32 ;;
