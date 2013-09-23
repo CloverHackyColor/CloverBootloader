@@ -2186,6 +2186,8 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len, INT32 VCard)
   return len;  
 }
 
+//Network -------------------------------------------------------------
+
 UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
 {
   UINT32 i, k;
@@ -2253,7 +2255,7 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
         }
       }
       break;
-    } // End if Network
+    } // End if NetworkADR find
   }
   if (NetworkADR) { // bridge or device
     i = NetworkADR;
@@ -2283,7 +2285,7 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
   }
 
   DBG("NetworkADR1=%x NetworkADR2=%x\n", NetworkADR1, NetworkADR2);
-  if (!NetworkName) //there is no network device at dsdt, creating new one
+  if (!NetworkName && (NetworkADR2 != 0xFFFE)) //there is no network device at dsdt, creating new one
   {
     AML_CHUNK* dev = aml_add_device(root, "GIGE");
     aml_add_name(dev, "_ADR");
@@ -2352,6 +2354,8 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
   FreePool(network);
   return len;
 }
+
+//Airport--------------------------------------------------
 
 CHAR8 dataBCM[]  = {0x12, 0x43, 0x00, 0x00};
 CHAR8 data1ATH[] = {0x2a, 0x00, 0x00, 0x00};
@@ -2446,7 +2450,7 @@ UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
     DBG("Created  bridge device with ADR=0x%x\n", ArptADR1);
   }
 
-  if (!ArptName) {//there is no Airport device at dsdt, creating new one
+  if (!ArptName && (ArptADR2 != 0xFFFE)) {//there is no Airport device at dsdt, creating new one
     dev = aml_add_device(root, "ARPT");
     aml_add_name(dev, "_ADR");
     if (ArptADR2) {
@@ -2485,7 +2489,7 @@ UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
     } else if (ArptAtheros) {
       aml_add_string(pack, "model");
       aml_add_string_buffer(pack, "Atheros AR9285 WiFi card");
-      if (gSettings.FakeWIFI) {
+      if (!gSettings.FakeWIFI) {
         aml_add_string(pack, "name");
         aml_add_string_buffer(pack, "pci168c,2a");
         aml_add_string(pack, "device-id");
