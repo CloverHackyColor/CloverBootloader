@@ -1044,9 +1044,13 @@ INT32 CmpDev(UINT8 *dsdt, UINT32 i, UINT8 *Name)
 {
   if ((dsdt[i+0] == Name[0]) && (dsdt[i+1] == Name[1]) &&
       (dsdt[i+2] == Name[2]) && (dsdt[i+3] == Name[3]) &&
-      ((dsdt[i-3] == 0x82) || (dsdt[i-2] == 0x82)) &&
-      ((dsdt[i-4] == 0x5B) || (dsdt[i-3] == 0x5B))) {
-    if ((dsdt[i-3] == 0x82) && (dsdt[i-4] == 0x5B)) {
+      (((dsdt[i-2] == 0x82) && (dsdt[i-3] == 0x5B) && (dsdt[i-1] < 0x40)) ||
+       ((dsdt[i-3] == 0x82) && (dsdt[i-4] == 0x5B) && ((dsdt[i-2] & 0xF0) == 0x40)) ||
+       ((dsdt[i-4] == 0x82) && (dsdt[i-5] == 0x5B) && ((dsdt[i-3] & 0xF0) == 0x80)))
+      ) {
+    if (dsdt[i-5] == 0x5B) {
+      return i - 3;
+    } else if (dsdt[i-4] == 0x5B){
       return i - 2;
     } else {
       return i - 1;
@@ -1129,18 +1133,17 @@ UINT32 CorrectOuters (UINT8 *dsdt, UINT32 len, UINT32 adr,  INT32 shift)
           SBSIZE = get_size(dsdt, SBADR);
        //     DBG("found Scope(\\_SB) address = 0x%08x size = 0x%08x\n", SBADR, SBSIZE);
           if ((SBSIZE != 0) && (SBSIZE < len)) {  //if zero or too large then search more
-            break;
+            //if found
+            k = SBADR - 6;
+            if ((SBADR + SBSIZE) > adr+4) {  //Yes - it is outer
+              DBG("found outer scope begin=%x end=%x\n", SBADR, SBADR+SBSIZE);
+              offset = write_size(SBADR, dsdt, len, shift);
+              shift += offset;
+              len += offset;
+            }  //else not an outer scope
+            break;  //SB found
           }          
         }
-      }
-      if (SBSIZE) { //if found
-        k = SBADR - 6;
-        if ((SBADR + SBSIZE) > adr+4) {  //Yes - it is outer
-              DBG("found outer scope begin=%x end=%x\n", SBADR, SBADR+SBSIZE);
-          offset = write_size(SBADR, dsdt, len, shift); 
-          shift += offset;
-          len += offset;
-        }  //else not an outer scope          
       }
     } //else not a scope
     i = k - 3;    //if found then search again from found 

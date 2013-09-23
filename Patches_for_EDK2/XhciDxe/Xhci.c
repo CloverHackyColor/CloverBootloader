@@ -131,7 +131,7 @@ XhcGetCapability (
   *PortNumber     = (UINT8) (Xhc->HcSParams1.Data.MaxPorts);
   *Is64BitCapable = (UINT8) (Xhc->HcCParams.Data.Ac64);
 //  DEBUG ((EFI_D_INFO, "XhcGetCapability: %d ports, 64 bit %d\n", *PortNumber, *Is64BitCapable));
-  DBG("XhcGetCapability: %d ports, 64 bit %d\n", *PortNumber, *Is64BitCapable);
+  DBG("XhcGetCapability: %d ports, 64 bit capable=%d\n", *PortNumber, *Is64BitCapable);
 
   gBS->RestoreTPL (OldTpl);
 
@@ -1817,6 +1817,9 @@ XhcCreateUsbHc (
   //
   Xhc->CapLength        = XhcReadCapReg8 (Xhc, XHC_CAPLENGTH_OFFSET);
   Xhc->HcSParams1.Dword = XhcReadCapReg (Xhc, XHC_HCSPARAMS1_OFFSET);
+  if (Xhc->HcSParams1.Data.MaxPorts > 4) {
+    Xhc->HcSParams1.Data.MaxPorts = 4; //workaround for VL800
+  }
   Xhc->HcSParams2.Dword = XhcReadCapReg (Xhc, XHC_HCSPARAMS2_OFFSET);
   Xhc->HcCParams.Dword  = XhcReadCapReg (Xhc, XHC_HCCPARAMS_OFFSET);
   Xhc->DBOff            = XhcReadCapReg (Xhc, XHC_DBOFF_OFFSET);
