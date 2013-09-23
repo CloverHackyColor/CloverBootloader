@@ -138,6 +138,7 @@ typedef struct {
 #define OSFLAG_USEGRAPHICS   (1 << 0)
 #define OSFLAG_WITHKEXTS     (1 << 1)
 #define OSFLAG_NOCACHES      (1 << 2)
+#define OSFLAG_NODEFAULTARGS (1 << 4)
 #define OSFLAG_NODEFAULTMENU (1 << 5)
 #define OSFLAG_HIDDEN        (1 << 6)
 #define OSFLAG_DISABLED      (1 << 7)

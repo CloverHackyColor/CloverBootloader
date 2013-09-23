@@ -1010,8 +1010,12 @@ static LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
   Entry->DevicePathString = LoaderDevicePathString;
   Entry->Flags            = Flags;
   if (LoaderOptions) {
-    Entry->LoadOptions    = EfiStrDuplicate(LoaderOptions);
-  } else if (AsciiStrLen(gSettings.BootArgs) > 0) {
+    if (OSFLAG_ISSET(Flags, OSFLAG_NODEFAULTARGS)) {
+      Entry->LoadOptions  = EfiStrDuplicate(LoaderOptions);
+    } else {
+      Entry->LoadOptions  = PoolPrint(L"%a %s", gSettings.BootArgs, LoaderOptions);
+    }
+  } else if ((AsciiStrLen(gSettings.BootArgs) > 0) && OSFLAG_ISUNSET(Flags, OSFLAG_NODEFAULTARGS)) {
     Entry->LoadOptions    = PoolPrint(L"%a", gSettings.BootArgs);
   }
 
@@ -2066,7 +2070,8 @@ static EG_IMAGE *LoadBuiltinIcon(IN CHAR16 *IconName)
 
 static LOADER_ENTRY *AddCustomEntry(IN UINTN                CustomIndex,
                                     IN CHAR16              *CustomPath,
-                                    IN CUSTOM_LOADER_ENTRY *Custom)
+                                    IN CUSTOM_LOADER_ENTRY *Custom,
+                                    IN BOOLEAN              IsSubEntry)
 {
   UINTN                VolumeIndex;
   REFIT_VOLUME        *Volume;
@@ -2079,33 +2084,33 @@ static LOADER_ENTRY *AddCustomEntry(IN UINTN                CustomIndex,
   UINT8                OSType;
 
   if ((CustomPath == NULL) && !OSTYPE_IS_OSX_INSTALLER(Custom->Type)) {
-    DBG("Custom entry %d skipped because it didn't have a path or valid type.\n", CustomIndex);
+    DBG("Custom %sentry %d skipped because it didn't have a path or valid type.\n", IsSubEntry ? L"sub " : L"", CustomIndex);
     return NULL;
   }
   if (OSFLAG_ISSET(Custom->Flags, OSFLAG_DISABLED)) {
-    DBG("Custom entry %d skipped because it is disabled.\n", CustomIndex);
+    DBG("Custom %sentry %d skipped because it is disabled.\n", IsSubEntry ? L"sub " : L"", CustomIndex);
     return NULL;
   }
   if (!gSettings.ShowHiddenEntries && OSFLAG_ISSET(Custom->Flags, OSFLAG_HIDDEN)) {
-    DBG("Custom entry %d skipped because it is hidden.\n", CustomIndex);
+    DBG("Custom %sentry %d skipped because it is hidden.\n", IsSubEntry ? L"sub " : L"", CustomIndex);
     return NULL;
   }
   if (Custom->Volume) {
     if (Custom->Title) {
       if (CustomPath) {
-        DBG("Custom entry %d \"%s\" \"%s\" \"%s\" (%d) 0x%X matching \"%s\" ...\n", CustomIndex, Custom->Title, CustomPath, ((Custom->Options != NULL) ? Custom->Options : L""), Custom->Type, Custom->Flags, Custom->Volume);
+        DBG("Custom %sentry %d \"%s\" \"%s\" \"%s\" (%d) 0x%X matching \"%s\" ...\n", IsSubEntry ? L"sub " : L"", CustomIndex, Custom->Title, CustomPath, ((Custom->Options != NULL) ? Custom->Options : L""), Custom->Type, Custom->Flags, Custom->Volume);
       } else {
-        DBG("Custom entry %d \"%s\" \"%s\" (%d) 0x%X matching \"%s\" ...\n", CustomIndex, Custom->Title, ((Custom->Options != NULL) ? Custom->Options : L""), Custom->Type, Custom->Flags, Custom->Volume);
+        DBG("Custom %sentry %d \"%s\" \"%s\" (%d) 0x%X matching \"%s\" ...\n", IsSubEntry ? L"sub " : L"", CustomIndex, Custom->Title, ((Custom->Options != NULL) ? Custom->Options : L""), Custom->Type, Custom->Flags, Custom->Volume);
       }
     } else if (CustomPath) {
-      DBG("Custom entry %d \"%s\" \"%s\" (%d) 0x%X matching \"%s\" ...\n", CustomIndex, CustomPath, ((Custom->Options != NULL) ? Custom->Options : L""), Custom->Type, Custom->Flags, Custom->Volume);
+      DBG("Custom %sentry %d \"%s\" \"%s\" (%d) 0x%X matching \"%s\" ...\n", IsSubEntry ? L"sub " : L"", CustomIndex, CustomPath, ((Custom->Options != NULL) ? Custom->Options : L""), Custom->Type, Custom->Flags, Custom->Volume);
     } else {
-      DBG("Custom entry %d \"%s\" (%d) 0x%X matching \"%s\" ...\n", CustomIndex, ((Custom->Options != NULL) ? Custom->Options : L""), Custom->Type, Custom->Flags, Custom->Volume);
+      DBG("Custom %sentry %d \"%s\" (%d) 0x%X matching \"%s\" ...\n", IsSubEntry ? L"sub " : L"", CustomIndex, ((Custom->Options != NULL) ? Custom->Options : L""), Custom->Type, Custom->Flags, Custom->Volume);
     }
   } else if (CustomPath) {
-    DBG("Custom entry %d \"%s\" \"%s\" (%d) 0x%X matching all volumes ...\n", CustomIndex, CustomPath, ((Custom->Options != NULL) ? Custom->Options : L""), Custom->Type, Custom->Flags);
+    DBG("Custom %sentry %d \"%s\" \"%s\" (%d) 0x%X matching all volumes ...\n", IsSubEntry ? L"sub " : L"", CustomIndex, CustomPath, ((Custom->Options != NULL) ? Custom->Options : L""), Custom->Type, Custom->Flags);
   } else {
-    DBG("Custom entry %d \"%s\" (%d) 0x%X matching all volumes ...\n", CustomIndex, ((Custom->Options != NULL) ? Custom->Options : L""), Custom->Type, Custom->Flags);
+    DBG("Custom %sentry %d \"%s\" (%d) 0x%X matching all volumes ...\n", IsSubEntry ? L"sub " : L"", CustomIndex, ((Custom->Options != NULL) ? Custom->Options : L""), Custom->Type, Custom->Flags);
   }
   for (VolumeIndex = 0; VolumeIndex < VolumesCount; ++VolumeIndex) {
     Volume = Volumes[VolumeIndex];
@@ -2238,6 +2243,7 @@ static LOADER_ENTRY *AddCustomEntry(IN UINTN                CustomIndex,
       Entry = CreateLoaderEntry(Path, Custom->Options, Custom->FullTitle, Custom->Title, Volume, Image, DriveImage, OSType, Custom->Flags, Custom->Hotkey, TRUE);
       if (Entry) {
         if (Custom->SubEntries) {
+          UINTN CustomSubIndex = 0;
           // Add subscreen
           REFIT_MENU_SCREEN *SubScreen = AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
           if (SubScreen) {
@@ -2257,7 +2263,7 @@ static LOADER_ENTRY *AddCustomEntry(IN UINTN                CustomIndex,
             }
             // Create sub entries
             for (CustomSubEntry = Custom->SubEntries; CustomSubEntry; CustomSubEntry = CustomSubEntry->Next) {
-              SubEntry = AddCustomEntry(CustomIndex, (CustomSubEntry->Path != NULL) ? CustomSubEntry->Path : Path, CustomSubEntry);
+              SubEntry = AddCustomEntry(CustomSubIndex++, (CustomSubEntry->Path != NULL) ? CustomSubEntry->Path : Path, CustomSubEntry, TRUE);
               if (SubEntry) {
                 AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
               }
@@ -2284,21 +2290,21 @@ static VOID AddCustomEntries(VOID)
   for (Custom = gSettings.CustomEntries; Custom; ++i, Custom = Custom->Next) {
     if ((Custom->Path == NULL) && (Custom->Type != 0)) {
       if (OSTYPE_IS_OSX(Custom->Type)) {
-        AddCustomEntry(i, MACOSX_LOADER_PATH, Custom);
+        AddCustomEntry(i, MACOSX_LOADER_PATH, Custom, FALSE);
       } else if (OSTYPE_IS_OSX_RECOVERY(Custom->Type)) {
-        AddCustomEntry(i, L"\\com.apple.recovery.boot\\boot.efi", Custom);
+        AddCustomEntry(i, L"\\com.apple.recovery.boot\\boot.efi", Custom, FALSE);
       } else if (OSTYPE_IS_WINDOWS(Custom->Type)) {
-        AddCustomEntry(i, L"\\EFI\\Microsoft\\Boot\\bootmgfw.efi", Custom);
+        AddCustomEntry(i, L"\\EFI\\Microsoft\\Boot\\bootmgfw.efi", Custom, FALSE);
       } else if (OSTYPE_IS_LINUX(Custom->Type)) {
          UINTN Index = 0;
         while (Index < LinuxEntryPathsCount) {
-          AddCustomEntry(i, LinuxEntryPaths[Index++], Custom);
+          AddCustomEntry(i, LinuxEntryPaths[Index++], Custom, FALSE);
         }
       } else {
-        AddCustomEntry(i, Custom->Path, Custom);
+        AddCustomEntry(i, Custom->Path, Custom, FALSE);
       }
     } else {
-      AddCustomEntry(i, Custom->Path, Custom);
+      AddCustomEntry(i, Custom->Path, Custom, FALSE);
     }
   }
   DBG("Custom entries finish\n");
@@ -3863,7 +3869,12 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       }
 
       if (MenuExit == MENU_EXIT_OPTIONS){
+        InputItems[0].Valid = FALSE;
         OptionsMenu(&OptionEntry);
+        if (InputItems[0].Valid) {
+          AfterTool = TRUE;
+          break;
+        }
         continue;
       }
 

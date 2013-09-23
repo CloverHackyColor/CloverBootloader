@@ -248,12 +248,24 @@ static CUSTOM_LOADER_ENTRY *DuplicateCustomEntry(IN CUSTOM_LOADER_ENTRY *Entry)
     if (Entry->Options) {
       DuplicateEntry->Options = EfiStrDuplicate(Entry->Options);
     }
+    if (Entry->FullTitle) {
+      DuplicateEntry->FullTitle = EfiStrDuplicate(Entry->FullTitle);
+    }
     if (Entry->Title) {
       DuplicateEntry->Title = EfiStrDuplicate(Entry->Title);
     }
+    if (Entry->ImagePath) {
+      DuplicateEntry->ImagePath = EfiStrDuplicate(Entry->ImagePath);
+    }
+    if (Entry->DriveImagePath) {
+      DuplicateEntry->DriveImagePath = EfiStrDuplicate(Entry->DriveImagePath);
+    }
+    DuplicateEntry->Image = Entry->Image;
+    DuplicateEntry->DriveImage = Entry->DriveImage;
     DuplicateEntry->Hotkey = Entry->Hotkey;
     DuplicateEntry->Flags = Entry->Flags;
     DuplicateEntry->Type = Entry->Type;
+    DuplicateEntry->VolumeType = Entry->VolumeType;
   }
   return DuplicateEntry;
 }
@@ -277,42 +289,23 @@ static BOOLEAN FillinCustomEntry(IN OUT CUSTOM_LOADER_ENTRY *Entry, TagPtr dictP
     }
     Entry->Path = PoolPrint(L"%a", prop->string);
   }
-  prop = GetProperty(dictPointer, "Arguments");
+  prop = GetProperty(dictPointer, "AddArguments");
   if (prop && (prop->type == kTagTypeString)) {
     if (Entry->Options) {
-      FreePool(Entry->Options);
+      CHAR16 *OldOptions = Entry->Options;
+      Entry->Options = PoolPrint(L"%s %a", OldOptions, prop->string);
+      FreePool(OldOptions);
     } else {
       Entry->Options = PoolPrint(L"%a", prop->string);
     }
-  }
-  prop = GetProperty(dictPointer, "AddArguments");
-  if (prop && (prop->type == kTagTypeString) && prop->string && *(prop->string)) {
-    if (SubEntry) {
-      if (Entry->Options && *(Entry->Options)) {
-        CHAR16 *PreviousOptions = Entry->Options;
-        Entry->Options = PoolPrint(L"%s %a", PreviousOptions, prop->string);
-        FreePool(PreviousOptions);
-      } else {
-        Entry->Options = PoolPrint(L"%a", prop->string);
+  } else {
+    prop = GetProperty(dictPointer, "Arguments");
+    if (prop && (prop->type == kTagTypeString)) {
+      if (Entry->Options) {
+        FreePool(Entry->Options);
       }
-    } else {
-      if (gSettings.BootArgs[0]) {
-        if (Entry->Options && *(Entry->Options)) {
-          CHAR16 *PreviousOptions = Entry->Options;
-          Entry->Options = PoolPrint(L"%s %s %a", gSettings.BootArgs, PreviousOptions, prop->string);
-          FreePool(PreviousOptions);
-        } else {
-          Entry->Options = PoolPrint(L"%a %a", gSettings.BootArgs, prop->string);
-        }
-      } else {
-        if (Entry->Options && *(Entry->Options)) {
-          CHAR16 *PreviousOptions = Entry->Options;
-          Entry->Options = PoolPrint(L"%s %a", PreviousOptions, prop->string);
-          FreePool(PreviousOptions);
-        } else {
-          Entry->Options = PoolPrint(L"%a", prop->string);
-        }
-      }
+      Entry->Options = PoolPrint(L"%a", prop->string);
+      Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_NODEFAULTARGS);
     }
   }
   prop = GetProperty(dictPointer, "FullTitle");
@@ -481,6 +474,11 @@ static BOOLEAN FillinCustomEntry(IN OUT CUSTOM_LOADER_ENTRY *Entry, TagPtr dictP
       }
     }
   }
+  if (Entry->Options == NULL) {
+    if (OSTYPE_IS_WINDOWS(Entry->Type)) {
+      Entry->Options = L"-s -h";
+    }
+  }
   if (Entry->Title == NULL) {
     if (OSTYPE_IS_OSX_RECOVERY(Entry->Type)) {
       Entry->Title = PoolPrint(L"Recovery");
@@ -521,6 +519,36 @@ static BOOLEAN FillinCustomEntry(IN OUT CUSTOM_LOADER_ENTRY *Entry, TagPtr dictP
          Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_NOCACHES);
        }
      }
+  }
+
+  // Sub entries
+  prop = GetProperty(dictPointer, "SubEntries");
+  if (prop) {
+    if (prop->type == kTagTypeFalse) {
+      Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_NODEFAULTMENU);
+    } else if (prop->type != kTagTypeTrue) {
+      CUSTOM_LOADER_ENTRY *SubEntry;
+      INTN   i, Count = GetTagCount(prop);
+      TagPtr dict = NULL;
+      Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_NODEFAULTMENU);
+      if (Count > 0) {
+        for (i = 0; i < Count; ++i) {
+          if (EFI_ERROR(GetElement(prop, i, &dict))) {
+            continue;
+          }
+          if (dict == NULL) {
+            break;
+          }
+          // Allocate a sub entry
+          SubEntry = DuplicateCustomEntry(Entry);
+          if (SubEntry) {
+            if (!FillinCustomEntry(SubEntry, dict, TRUE) || !AddCustomSubEntry(Entry, SubEntry)) {
+              FreePool(SubEntry);
+            }
+          }
+        }
+      }
+    }
   }
   return TRUE;
 }
@@ -1118,7 +1146,7 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir)
     if (dict2) {
       prop = GetProperty(dict2, "Entries");
       if (prop) {
-        CUSTOM_LOADER_ENTRY *Entry, *SubEntry;
+        CUSTOM_LOADER_ENTRY *Entry;
         INTN   i, Count = GetTagCount(prop);
         TagPtr dict3;
         if (Count > 0) {
@@ -1133,34 +1161,7 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir)
             Entry = (CUSTOM_LOADER_ENTRY *)AllocateZeroPool(sizeof(CUSTOM_LOADER_ENTRY));
             if (Entry) {
               // Fill it in
-              if (FillinCustomEntry(Entry, dict3, FALSE) && AddCustomEntry(Entry)) {
-                TagPtr dict5, dict4 = GetProperty(dict2, "SubEntries");
-                if (dict4) {
-                  if (dict4->type == kTagTypeFalse) {
-                    Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_NODEFAULTMENU);
-                  } else if (dict4->type != kTagTypeTrue) {
-                    INTN j, Count2 = GetTagCount(dict4);
-                    Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_NODEFAULTMENU);
-                    if (Count2 > 0) {
-                      for (j = 0; j < Count2; ++j) {
-                        if (EFI_ERROR(GetElement(dict4, j, &dict5))) {
-                          continue;
-                        }
-                        if (dict5 == NULL) {
-                          break;
-                        }
-                        // Allocate a sub entry
-                        SubEntry = DuplicateCustomEntry(Entry);
-                        if (SubEntry) {
-                          if (!FillinCustomEntry(SubEntry, dict5, TRUE) || !AddCustomSubEntry(Entry, SubEntry)) {
-                            FreePool(SubEntry);
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              } else {
+              if (!FillinCustomEntry(Entry, dict3, FALSE) || !AddCustomEntry(Entry)) {
                 FreePool(Entry);
               }
             }
@@ -2553,10 +2554,9 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
                ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
             gSettings.GeneratePStates = TRUE;
             gSettings.GenerateCStates = TRUE;
-          } else
-            if ((prop2->type == kTagTypeFalse) ||
-                ((prop2->type == kTagTypeString) &&
-                ((prop2->string[0] == 'n') || (prop2->string[0] == 'N')))) {
+          } else if ((prop2->type == kTagTypeFalse) ||
+                     ((prop2->type == kTagTypeString) &&
+                     ((prop2->string[0] == 'n') || (prop2->string[0] == 'N')))) {
             gSettings.GeneratePStates = FALSE;
             gSettings.GenerateCStates = FALSE;
          } else if (prop2->type == kTagTypeDict) {
