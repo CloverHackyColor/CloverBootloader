@@ -122,13 +122,26 @@ EFI_STATUS SetVariablesForOSX()
 	UINT32      FwFeaturesMask  = 0xC003ffff;
 	CHAR8*      None	= "none";
 	CHAR8       Buffer[32];
-  UINTN       SNLen;
+  UINTN       SNLen = 20;
+	UINTN       bootArgsLen = 256;
+  UINTN       LangLen = 16;
+
 //  CHAR8*      FmmName = &gSettings.FamilyName[0];
 //  UINTN       FmmLen  = AsciiStrLen(FmmName);
   UINT16      BacklightLevel = 0x0503;
-  
+  CHAR8*      BA = &gSettings.BootArgs[255];
 
-  SNLen = AsciiStrLen(gSettings.BoardSerialNumber);
+	while (((*BA == ' ') || (*BA == 0)) && (bootArgsLen != 0)) {
+		BA--; bootArgsLen--;
+	}
+  BA = &gSettings.Language[15];
+  while (((*BA == ' ') || (*BA == 0)) && (LangLen != 0)) {
+		BA--; LangLen--;
+	}
+  BA = &gSettings.BoardSerialNumber[19];
+  while (((*BA == ' ') || (*BA == 0)) && (SNLen != 0)) {
+		BA--; SNLen--;
+	}
   
   if (gSettings.RtMLB == NULL && SNLen > 0) {
     gSettings.RtMLB = AllocateCopyPool(SNLen + 1, gSettings.BoardSerialNumber);
@@ -180,7 +193,10 @@ EFI_STATUS SetVariablesForOSX()
 
     // Don't overwrite boot-args var as it was already set by PutNvramPlistToRtVars()
     // boot-args nvram var contain ONLY parameters to be merged with the boot-args global variable
-
+  //NO! This was old boot-args without changes in OptionsMenu, so override them!
+  Status = gRS->SetVariable(L"boot-args", &gEfiAppleBootGuid,
+                            /*   EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                            bootArgsLen ,&gSettings.BootArgs);
 
 	Status = gRS->SetVariable(L"security-mode", &gEfiAppleBootGuid,
                                          /*   EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
@@ -196,7 +212,7 @@ EFI_STATUS SetVariablesForOSX()
   
   Status = gRS->SetVariable(L"prev-lang:kbd", &gEfiAppleBootGuid,
                             /*   EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-                                AsciiStrLen(gSettings.Language), &gSettings.Language);
+                                LangLen, &gSettings.Language);
   
   
   if (gMobile && (gSettings.BacklightLevel != 0xFFFF)) {

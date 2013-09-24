@@ -3739,8 +3739,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     Flags = AllocateZeroPool(255);
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
     *ChosenEntry = (REFIT_MENU_ENTRY*)InputBootArgs;   
-    //  UnicodeSPrint(Flags, 255, L"Boot Args:%a", gSettings.BootArgs);
-    
+
     UnicodeSPrint(Flags, 255, L"Config:");
     InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
     InputBootArgs->Entry.Tag = TAG_INPUT;
@@ -3909,7 +3908,11 @@ UINTN RunMainMenu(IN REFIT_MENU_SCREEN *Screen, IN INTN DefaultSelection, OUT RE
     }
   }
 
-  if (ChosenEntry)
+  if (ChosenEntry) {
     *ChosenEntry = TempChosenEntry;
-    return MenuExit;
+    if ((*ChosenEntry)->Tag == TAG_LOADER) {
+      ((LOADER_ENTRY*)(*ChosenEntry))->LoadOptions = PoolPrint(L"%a%", gSettings.BootArgs);
+    }
+  }
+  return MenuExit;
 }

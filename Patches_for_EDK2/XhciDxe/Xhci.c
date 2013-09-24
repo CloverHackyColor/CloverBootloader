@@ -651,6 +651,20 @@ XhcClearRootHubPortFeature (
   //
   State  = XhcReadOpReg (Xhc, Offset);
   State &= ~ (BIT1 | BIT17 | BIT18 | BIT19 | BIT20 | BIT21 | BIT22 | BIT23);
+  /*
+   typedef enum {
+   EfiUsbPortEnable            = 1,
+   EfiUsbPortSuspend           = 2,
+   EfiUsbPortReset             = 4,  // 4
+   EfiUsbPortPower             = 8,
+   EfiUsbPortOwner             = 13,
+   EfiUsbPortConnectChange     = 16, // 10
+   EfiUsbPortEnableChange      = 17,
+   EfiUsbPortSuspendChange     = 18,
+   EfiUsbPortOverCurrentChange = 19,
+   EfiUsbPortResetChange       = 20   //14
+   } EFI_USB_PORT_FEATURE;
+   */
 
   switch (PortFeature) {
   case EfiUsbPortEnable:
@@ -730,7 +744,7 @@ XhcClearRootHubPortFeature (
 
 ON_EXIT:
 //  DEBUG ((EFI_D_INFO, "XhcClearRootHubPortFeature: status %r\n", Status));
-  DBG("XhcClearRootHubPortFeature: status %r\n", Status);
+  DBG("XhcClearRootHubPortFeature for port %d Feature=%x: status %r\n",PortNumber, PortFeature, Status);
   gBS->RestoreTPL (OldTpl);
 
   return Status;
@@ -1818,7 +1832,8 @@ XhcCreateUsbHc (
   Xhc->CapLength        = XhcReadCapReg8 (Xhc, XHC_CAPLENGTH_OFFSET);
   Xhc->HcSParams1.Dword = XhcReadCapReg (Xhc, XHC_HCSPARAMS1_OFFSET);
   if (Xhc->HcSParams1.Data.MaxPorts > 4) {
-    Xhc->HcSParams1.Data.MaxPorts = 4; //workaround for VL800
+//    Xhc->HcSParams1.Data.MaxPorts = 4; //workaround for VL800
+    DBG("will not apply workaround to test, N=%d\n", Xhc->HcSParams1.Data.MaxPorts);
   }
   Xhc->HcSParams2.Dword = XhcReadCapReg (Xhc, XHC_HCSPARAMS2_OFFSET);
   Xhc->HcCParams.Dword  = XhcReadCapReg (Xhc, XHC_HCCPARAMS_OFFSET);
