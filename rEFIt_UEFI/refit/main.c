@@ -1068,15 +1068,15 @@ static LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
       ShortcutLetter = 'L';
       Entry->LoaderType = OSTYPE_LIN;
       break;
-    case OSTYPE_VAR:
+    case OSTYPE_OTHER:
     case OSTYPE_EFI:
       OSIconName = L"clover";
       ShortcutLetter = 'U';
-      Entry->LoaderType = OSTYPE_VAR;
+      Entry->LoaderType = OSTYPE_OTHER;
       break;
     default:
       OSIconName = L"unknown";
-      Entry->LoaderType = OSTYPE_VAR;
+      Entry->LoaderType = OSTYPE_OTHER;
       break;
   }
 
@@ -1514,7 +1514,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOpt
     SubEntry->DevicePathString = Entry->DevicePathString;
     SubEntry->Flags           = OSFLAG_UNSET(Entry->Flags, OSFLAG_USEGRAPHICS);
     SubEntry->LoadOptions     = L"-v";
-    SubEntry->LoaderType      = OSTYPE_VAR;
+    SubEntry->LoaderType      = OSTYPE_OTHER;
     SubEntry->me.AtClick      = ActionEnter;
     AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
     
@@ -1584,7 +1584,7 @@ static LOADER_ENTRY * AddCloverEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
     SubEntry->DevicePathString = Entry->DevicePathString;
     SubEntry->Flags           = Entry->Flags;
     SubEntry->LoadOptions     = L"BO-REMOVE";
-    SubEntry->LoaderType      = OSTYPE_VAR;
+    SubEntry->LoaderType      = OSTYPE_OTHER;
     SubEntry->me.AtClick      = ActionEnter;
     AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
   } else {
@@ -1598,7 +1598,7 @@ static LOADER_ENTRY * AddCloverEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
     SubEntry->DevicePathString = Entry->DevicePathString;
     SubEntry->Flags           = Entry->Flags;
     SubEntry->LoadOptions     = L"BO-ADD";
-    SubEntry->LoaderType      = OSTYPE_VAR;
+    SubEntry->LoaderType      = OSTYPE_OTHER;
     SubEntry->me.AtClick      = ActionEnter;
     AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
   }
@@ -1613,7 +1613,7 @@ static LOADER_ENTRY * AddCloverEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
   SubEntry->DevicePathString = Entry->DevicePathString;
   SubEntry->Flags           = Entry->Flags;
   SubEntry->LoadOptions     = L"BO-REMOVE-ALL";
-  SubEntry->LoaderType      = OSTYPE_VAR;
+  SubEntry->LoaderType      = OSTYPE_OTHER;
   SubEntry->me.AtClick      = ActionEnter;
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
   
@@ -1627,7 +1627,7 @@ static LOADER_ENTRY * AddCloverEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
   SubEntry->DevicePathString = Entry->DevicePathString;
   SubEntry->Flags           = Entry->Flags;
   SubEntry->LoadOptions     = L"BO-PRINT";
-  SubEntry->LoaderType      = OSTYPE_VAR;
+  SubEntry->LoaderType      = OSTYPE_OTHER;
   SubEntry->me.AtClick      = ActionEnter;
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
   AddMenuEntry(SubScreen, &MenuEntryReturn);
@@ -1949,7 +1949,7 @@ VOID ScanLoader(VOID)
       if (FileExists(Volume->RootDir, FileName) && Volume->DiskKind == DISK_KIND_OPTICAL) {
           //      Volume->OSType = OSTYPE_VAR;
           Volume->BootType = BOOTING_BY_EFI;
-          AddLoaderEntry(FileName, L"", NULL, L"UEFI optical", Volume, NULL, NULL, OSTYPE_VAR, 0, 0, FALSE);
+          AddLoaderEntry(FileName, L"", NULL, L"UEFI optical", Volume, NULL, NULL, OSTYPE_OTHER, 0, 0, FALSE);
           //      continue;
       }
       
@@ -1957,7 +1957,7 @@ VOID ScanLoader(VOID)
       if (FileExists(Volume->RootDir, FileName) && Volume->DiskKind == DISK_KIND_INTERNAL) {
           //      Volume->OSType = OSTYPE_VAR;
           Volume->BootType = BOOTING_BY_EFI;
-          AddLoaderEntry(FileName, L"", NULL, L"UEFI internal", Volume, NULL, NULL, OSTYPE_VAR, 0, 0, FALSE);
+          AddLoaderEntry(FileName, L"", NULL, L"UEFI internal", Volume, NULL, NULL, OSTYPE_OTHER, 0, 0, FALSE);
           //      continue;
       }
 
@@ -1965,7 +1965,7 @@ VOID ScanLoader(VOID)
       if (FileExists(Volume->RootDir, FileName) && Volume->DiskKind == DISK_KIND_EXTERNAL) {
           //      Volume->OSType = OSTYPE_VAR;
           Volume->BootType = BOOTING_BY_EFI;
-          AddLoaderEntry(FileName, L"", NULL, L"UEFI external", Volume, NULL, NULL, OSTYPE_VAR, 0, 0, FALSE);
+          AddLoaderEntry(FileName, L"", NULL, L"UEFI external", Volume, NULL, NULL, OSTYPE_OTHER, 0, 0, FALSE);
           //      continue;
     }
   }
