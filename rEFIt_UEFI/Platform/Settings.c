@@ -308,25 +308,24 @@ static BOOLEAN FillinCustomEntry(IN OUT CUSTOM_LOADER_ENTRY *Entry, TagPtr dictP
       Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_NODEFAULTARGS);
     }
   }
+  prop = GetProperty(dictPointer, "Title");
+  if (prop && (prop->type == kTagTypeString)) {
+    if (Entry->FullTitle) {
+      FreePool(Entry->FullTitle);
+      Entry->FullTitle = NULL;
+    }
+    if (Entry->Title) {
+      FreePool(Entry->Title);
+    }
+    Entry->Title = PoolPrint(L"%a", prop->string);
+  }
   prop = GetProperty(dictPointer, "FullTitle");
   if (prop && (prop->type == kTagTypeString)) {
     if (Entry->FullTitle) {
       FreePool(Entry->FullTitle);
     }
     Entry->FullTitle = PoolPrint(L"%a", prop->string);
-  } else {
-    prop = GetProperty(dictPointer, "Title");
-    if (prop && (prop->type == kTagTypeString)) {
-      if (Entry->FullTitle) {
-        FreePool(Entry->FullTitle);
-        Entry->FullTitle = NULL;
-      }
-      if (Entry->Title) {
-        FreePool(Entry->Title);
-      }
-      Entry->Title = PoolPrint(L"%a", prop->string);
-    }
-  }
+  } 
   prop = GetProperty(dictPointer, "Image");
   if (prop) {
     if (Entry->ImagePath) {
