@@ -2282,12 +2282,12 @@ static LOADER_ENTRY *AddCustomEntry(IN UINTN                CustomIndex,
 static VOID AddCustomEntries(VOID)
 {
   CUSTOM_LOADER_ENTRY *Custom;
-  LOADER_ENTRY *Entry = NULL;
   UINTN                i = 0;
 
   DBG("Custom entries start\n");
   // Traverse the custom entries
   for (Custom = gSettings.CustomEntries; Custom; ++i, Custom = Custom->Next) {
+    LOADER_ENTRY *Entry = NULL;
     if ((Custom->Path == NULL) && (Custom->Type != 0)) {
       if (OSTYPE_IS_OSX(Custom->Type)) {
         Entry = AddCustomEntry(i, MACOSX_LOADER_PATH, Custom, FALSE);
