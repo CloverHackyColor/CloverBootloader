@@ -2010,6 +2010,13 @@ static CHAR16 *LinuxEntryPaths[] = {
 };
 static const UINTN LinuxEntryPathsCount = (sizeof(LinuxEntryPaths) / sizeof(CHAR16 *));
 
+static CHAR16 *OSXInstallerPaths[] = {
+  L"\\Mac OS X Install Data\\boot.efi",
+  L"\\OS X Install Data\\boot.efi",
+  L"\\.IABootFiles\\boot.efi"
+};
+static const UINTN OSXInstallerPathsCount = (sizeof(OSXInstallerPaths) / sizeof(CHAR16 *));
+
 static UINT8 GetOSTypeFromPath(IN CHAR16 *Path, IN UINT8 OSType)
 {
    if (Path == NULL) {
@@ -2088,12 +2095,11 @@ static LOADER_ENTRY *AddCustomEntry(IN UINTN                CustomIndex,
   LOADER_ENTRY        *Entry = NULL, *SubEntry;
   EG_IMAGE            *Image, *DriveImage;
   EFI_GUID            *Guid = NULL;
-  CHAR16              *Path;
   UINT64               VolumeSize;
   UINT8                OSType;
 
-  if ((CustomPath == NULL) && !OSTYPE_IS_OSX_INSTALLER(Custom->Type)) {
-    DBG("Custom %sentry %d skipped because it didn't have a path or valid type.\n", IsSubEntry ? L"sub " : L"", CustomIndex);
+  if (CustomPath == NULL) {
+    DBG("Custom %sentry %d skipped because it didn't have a path.\n", IsSubEntry ? L"sub " : L"", CustomIndex);
     return NULL;
   }
   if (OSFLAG_ISSET(Custom->Flags, OSFLAG_DISABLED)) {
@@ -2157,31 +2163,8 @@ static LOADER_ENTRY *AddCustomEntry(IN UINTN                CustomIndex,
       DBG("skipped because volume is hidden\n");
       continue;
     }
-
-    // Check volume for installer
-    Path = CustomPath;
-    if ((Path == NULL) && (Volume->RootDir != NULL) && OSTYPE_IS_OSX_INSTALLER(Custom->Type)) {
-      static CHAR16 *InstallerPath[] = {
-        L"\\Mac OS X Install Data\\boot.efi",
-        L"\\OS X Install Data\\boot.efi",
-        L"\\.IABootFiles\\boot.efi"
-      };
-      static UINTN InstallerPathCount = (sizeof(InstallerPath) / sizeof(CHAR16 *));
-      UINTN InstallerIndex = 0;
-      while (InstallerIndex < InstallerPathCount) {
-        if (FileExists(Volume->RootDir, InstallerPath[InstallerIndex])) {
-          Path = InstallerPath[InstallerIndex];
-          break;
-        }
-        ++InstallerIndex;
-      }
-    }
-    if (Path == NULL) {
-      DBG("skipped because volume is not installation media\n", Custom->Type);
-      continue;
-    }
     // Check for exact volume matches
-    OSType = (Custom->Type == 0) ? GetOSTypeFromPath(Path, Volume->OSType) : Custom->Type;
+    OSType = (Custom->Type == 0) ? GetOSTypeFromPath(CustomPath, Volume->OSType) : Custom->Type;
     if (Custom->Volume) {
       
       if ((StrStr(Volume->DevicePathString, Custom->Volume) == NULL) &&
@@ -2203,7 +2186,7 @@ static LOADER_ENTRY *AddCustomEntry(IN UINTN                CustomIndex,
       DBG("skipped because filesystem is not readable\n");
       continue;
     }
-    if (!FileExists(Volume->RootDir, Path)) {
+    if (!FileExists(Volume->RootDir, CustomPath)) {
       DBG("skipped because path does not exist\n");
       continue;
     }
@@ -2247,16 +2230,16 @@ static LOADER_ENTRY *AddCustomEntry(IN UINTN                CustomIndex,
     DBG("match!\n");
     // Create a legacy entry for this volume
     if (OSFLAG_ISUNSET(Custom->Flags, OSFLAG_NODEFAULTMENU)) {
-      Entry = AddLoaderEntry2(Path, Custom->Options, Custom->FullTitle, Custom->Title, Volume, Image, DriveImage, OSType, Custom->Flags, Custom->Hotkey, TRUE);
+      Entry = AddLoaderEntry2(CustomPath, Custom->Options, Custom->FullTitle, Custom->Title, Volume, Image, DriveImage, OSType, Custom->Flags, Custom->Hotkey, TRUE);
     } else {
-      Entry = CreateLoaderEntry(Path, Custom->Options, Custom->FullTitle, Custom->Title, Volume, Image, DriveImage, OSType, Custom->Flags, Custom->Hotkey, TRUE);
+      Entry = CreateLoaderEntry(CustomPath, Custom->Options, Custom->FullTitle, Custom->Title, Volume, Image, DriveImage, OSType, Custom->Flags, Custom->Hotkey, TRUE);
       if (Entry) {
         if (Custom->SubEntries) {
           UINTN CustomSubIndex = 0;
           // Add subscreen
           REFIT_MENU_SCREEN *SubScreen = AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
           if (SubScreen) {
-            SubScreen->Title = PoolPrint(L"Boot Options for %s on %s", (Custom->Title != NULL) ? Custom->Title : Path, Entry->VolName);
+            SubScreen->Title = PoolPrint(L"Boot Options for %s on %s", (Custom->Title != NULL) ? Custom->Title : CustomPath, Entry->VolName);
             SubScreen->TitleImage = Entry->me.Image;
             SubScreen->ID = OSType + 20;
             SubScreen->AnimeRun = GetAnime(SubScreen);
@@ -2272,7 +2255,7 @@ static LOADER_ENTRY *AddCustomEntry(IN UINTN                CustomIndex,
             }
             // Create sub entries
             for (CustomSubEntry = Custom->SubEntries; CustomSubEntry; CustomSubEntry = CustomSubEntry->Next) {
-              SubEntry = AddCustomEntry(CustomSubIndex++, (CustomSubEntry->Path != NULL) ? CustomSubEntry->Path : Path, CustomSubEntry, TRUE);
+              SubEntry = AddCustomEntry(CustomSubIndex++, (CustomSubEntry->Path != NULL) ? CustomSubEntry->Path : CustomPath, CustomSubEntry, TRUE);
               if (SubEntry) {
                 AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
               }
@@ -2297,15 +2280,21 @@ static VOID AddCustomEntries(VOID)
   // Traverse the custom entries
   for (Custom = gSettings.CustomEntries; Custom; ++i, Custom = Custom->Next) {
     LOADER_ENTRY *Entry = NULL;
+
     if ((Custom->Path == NULL) && (Custom->Type != 0)) {
       if (OSTYPE_IS_OSX(Custom->Type)) {
         Entry = AddCustomEntry(i, MACOSX_LOADER_PATH, Custom, FALSE);
       } else if (OSTYPE_IS_OSX_RECOVERY(Custom->Type)) {
         Entry = AddCustomEntry(i, L"\\com.apple.recovery.boot\\boot.efi", Custom, FALSE);
+      } else if (OSTYPE_IS_OSX_INSTALLER(Custom->Type)) {
+        UINTN Index = 0;
+        while (Index < OSXInstallerPathsCount) {
+          Entry = AddCustomEntry(i, OSXInstallerPaths[Index++], Custom, FALSE);
+        }
       } else if (OSTYPE_IS_WINDOWS(Custom->Type)) {
         Entry = AddCustomEntry(i, L"\\EFI\\Microsoft\\Boot\\bootmgfw.efi", Custom, FALSE);
       } else if (OSTYPE_IS_LINUX(Custom->Type)) {
-         UINTN Index = 0;
+        UINTN Index = 0;
         while (Index < LinuxEntryPathsCount) {
           Entry = AddCustomEntry(i, LinuxEntryPaths[Index++], Custom, FALSE);
         }
