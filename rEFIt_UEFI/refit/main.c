@@ -3538,6 +3538,7 @@ VOID SetVariablesFromNvram()
       if ((AsciiStrCmp(arg, "-v") == 0) ||
           (AsciiStrCmp(arg, "-s") == 0) ||
           (AsciiStrCmp(arg, "-x") == 0)) {
+        DBG("...skipping temporary arg:%a\n", arg);
         continue;
       }
       if (!AsciiStrStr(gSettings.BootArgs, arg)) {
