@@ -193,11 +193,7 @@ EFI_STATUS SetVariablesForOSX()
 
     // Don't overwrite boot-args var as it was already set by PutNvramPlistToRtVars()
     // boot-args nvram var contain ONLY parameters to be merged with the boot-args global variable
-  //NO! This was old boot-args without changes in OptionsMenu, so override them!
-  Status = gRS->SetVariable(L"boot-args", &gEfiAppleBootGuid,
-                            /*   EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-                            bootArgsLen ,&gSettings.BootArgs);
-
+  
 	Status = gRS->SetVariable(L"security-mode", &gEfiAppleBootGuid,
                                          /*   EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                                          AsciiStrLen(None), (VOID*)None);
