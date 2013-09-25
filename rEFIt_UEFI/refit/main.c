@@ -2272,7 +2272,10 @@ static LOADER_ENTRY *AddCustomEntry(IN UINTN                CustomIndex,
             Entry->me.SubScreen = SubScreen;
           }
         }
-        AddMenuEntry(&MainMenu, (REFIT_MENU_ENTRY *)Entry);
+        if (!IsSubEntry)
+        {
+          AddMenuEntry(&MainMenu, (REFIT_MENU_ENTRY *)Entry);
+        }
       }
     }
   }
