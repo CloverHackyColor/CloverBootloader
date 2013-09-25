@@ -3535,10 +3535,9 @@ VOID SetVariablesFromNvram()
       while (tmpString[index] == 0x20) {
         index++;
       }
-      if ((AsciiStrCmp(arg, "-v") == 0) ||
-          (AsciiStrCmp(arg, "-s") == 0) ||
-          (AsciiStrCmp(arg, "-x") == 0)) {
-        DBG("...skipping temporary arg:%a\n", arg);
+      // For the moment only arg -s must be ignored
+      if (AsciiStrCmp(arg, "-s") == 0) {
+          DBG("...ignoring arg:%a\n", arg);
         continue;
       }
       if (!AsciiStrStr(gSettings.BootArgs, arg)) {
