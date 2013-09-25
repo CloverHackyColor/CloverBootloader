@@ -314,13 +314,18 @@ static BOOLEAN FillinCustomEntry(IN OUT CUSTOM_LOADER_ENTRY *Entry, TagPtr dictP
       FreePool(Entry->FullTitle);
     }
     Entry->FullTitle = PoolPrint(L"%a", prop->string);
-  }
-  prop = GetProperty(dictPointer, "Title");
-  if (prop && (prop->type == kTagTypeString)) {
-    if (Entry->Title) {
-      FreePool(Entry->Title);
+  } else {
+    prop = GetProperty(dictPointer, "Title");
+    if (prop && (prop->type == kTagTypeString)) {
+      if (Entry->FullTitle) {
+        FreePool(Entry->FullTitle);
+        Entry->FullTitle = NULL;
+      }
+      if (Entry->Title) {
+        FreePool(Entry->Title);
+      }
+      Entry->Title = PoolPrint(L"%a", prop->string);
     }
-    Entry->Title = PoolPrint(L"%a", prop->string);
   }
   prop = GetProperty(dictPointer, "Image");
   if (prop) {
