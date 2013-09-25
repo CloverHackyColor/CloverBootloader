@@ -3911,7 +3911,7 @@ UINTN RunMainMenu(IN REFIT_MENU_SCREEN *Screen, IN INTN DefaultSelection, OUT RE
   if (ChosenEntry) {
     *ChosenEntry = TempChosenEntry;
     if ((*ChosenEntry)->Tag == TAG_LOADER) {
-      ((LOADER_ENTRY*)(*ChosenEntry))->LoadOptions = PoolPrint(L"%a%", gSettings.BootArgs);
+      ((LOADER_ENTRY*)(*ChosenEntry))->LoadOptions = PoolPrint(L"%a ", gSettings.BootArgs);
     }
   }
   return MenuExit;

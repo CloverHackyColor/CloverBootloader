@@ -725,6 +725,20 @@ UINT16 GetAdvancedCpuType ()
               return 0x604;
             }
 						return 0x704;
+          case CPU_MODEL_HASWELL:
+          case CPU_MODEL_HASWELL_MB:
+          case CPU_MODEL_HASWELL_ULT:
+          case CPU_MODEL_HASWELL_ULX:
+            if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i3"))
+							return 0x905; // Core i3 - Apple doesn't use it
+            if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i5"))
+              return 0x605; // Core i5
+            if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i7"))
+              return 0x705; // Core i7
+            if (gCPUStructure.Cores <= 2) {
+              return 0x605;
+            }
+						return 0x705;
 				}
 			}
 		}

@@ -3379,6 +3379,8 @@ EFI_STATUS GetOSVersion(IN REFIT_VOLUME *Volume)
   CHAR16*     RecoveryPlist = L"\\com.apple.recovery.boot\\SystemVersion.plist";
   CHAR16*     InstallLionPlist = L"\\Mac OS X Install Data\\com.apple.Boot.plist";
   CHAR16*     InstallMountainPlist = L"\\OS X Install Data\\com.apple.Boot.plist";
+  CHAR16*     InstallLionSProduct = L"\\Mac OS X Install Data\\index.sproduct";
+  CHAR16*     InstallMountainSProduct = L"\\OS X Install Data\\index.sproduct";
   
   if (!Volume) {
     return EFI_NOT_FOUND;
@@ -3399,8 +3401,8 @@ EFI_STATUS GetOSVersion(IN REFIT_VOLUME *Volume)
 		Status = egLoadFile(Volume->RootDir, RecoveryPlist, (UINT8 **)&plistBuffer, &plistLen);
 	}
 	/* Mac OS X Lion Installer */
-  else if(FileExists(Volume->RootDir, InstallLionPlist))
-	{
+  else if ((FileExists(Volume->RootDir, InstallLionPlist)) ||
+          (FileExists(Volume->RootDir, InstallLionSProduct))) {
 		Volume->OSType = OSTYPE_OSX_INSTALLER;
 		Volume->OSIconName = L"mac";
     Volume->BootType = BOOTING_BY_EFI;
@@ -3408,8 +3410,8 @@ EFI_STATUS GetOSVersion(IN REFIT_VOLUME *Volume)
     return EFI_SUCCESS;
 	}
 	/* Mac OS X Mountain Lion Installer */
-  else if(FileExists(Volume->RootDir, InstallMountainPlist))
-	{
+  else if ((FileExists(Volume->RootDir, InstallMountainPlist)) ||
+           (FileExists(Volume->RootDir, InstallMountainSProduct))) {
 		Volume->OSType = OSTYPE_OSX_INSTALLER;
 		Volume->OSIconName = L"mac";
     Volume->BootType = BOOTING_BY_EFI;
