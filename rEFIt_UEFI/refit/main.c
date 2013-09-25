@@ -2272,10 +2272,6 @@ static LOADER_ENTRY *AddCustomEntry(IN UINTN                CustomIndex,
             Entry->me.SubScreen = SubScreen;
           }
         }
-        if (!IsSubEntry)
-        {
-          AddMenuEntry(&MainMenu, (REFIT_MENU_ENTRY *)Entry);
-        }
       }
     }
   }
@@ -2286,6 +2282,7 @@ static LOADER_ENTRY *AddCustomEntry(IN UINTN                CustomIndex,
 static VOID AddCustomEntries(VOID)
 {
   CUSTOM_LOADER_ENTRY *Custom;
+  LOADER_ENTRY *Entry = NULL;
   UINTN                i = 0;
 
   DBG("Custom entries start\n");
@@ -2293,21 +2290,24 @@ static VOID AddCustomEntries(VOID)
   for (Custom = gSettings.CustomEntries; Custom; ++i, Custom = Custom->Next) {
     if ((Custom->Path == NULL) && (Custom->Type != 0)) {
       if (OSTYPE_IS_OSX(Custom->Type)) {
-        AddCustomEntry(i, MACOSX_LOADER_PATH, Custom, FALSE);
+        Entry = AddCustomEntry(i, MACOSX_LOADER_PATH, Custom, FALSE);
       } else if (OSTYPE_IS_OSX_RECOVERY(Custom->Type)) {
-        AddCustomEntry(i, L"\\com.apple.recovery.boot\\boot.efi", Custom, FALSE);
+        Entry = AddCustomEntry(i, L"\\com.apple.recovery.boot\\boot.efi", Custom, FALSE);
       } else if (OSTYPE_IS_WINDOWS(Custom->Type)) {
-        AddCustomEntry(i, L"\\EFI\\Microsoft\\Boot\\bootmgfw.efi", Custom, FALSE);
+        Entry = AddCustomEntry(i, L"\\EFI\\Microsoft\\Boot\\bootmgfw.efi", Custom, FALSE);
       } else if (OSTYPE_IS_LINUX(Custom->Type)) {
          UINTN Index = 0;
         while (Index < LinuxEntryPathsCount) {
-          AddCustomEntry(i, LinuxEntryPaths[Index++], Custom, FALSE);
+          Entry = AddCustomEntry(i, LinuxEntryPaths[Index++], Custom, FALSE);
         }
       } else {
-        AddCustomEntry(i, Custom->Path, Custom, FALSE);
+        Entry = AddCustomEntry(i, Custom->Path, Custom, FALSE);
       }
     } else {
-      AddCustomEntry(i, Custom->Path, Custom, FALSE);
+      Entry = AddCustomEntry(i, Custom->Path, Custom, FALSE);
+    }
+    if (Entry != NULL) {
+      AddMenuEntry(&MainMenu, (REFIT_MENU_ENTRY *)Entry);
     }
   }
   DBG("Custom entries finish\n");
