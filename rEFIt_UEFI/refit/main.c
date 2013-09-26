@@ -1089,12 +1089,13 @@ static LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
         } else if (Custom->Type != 0) {
           if (OSTYPE_COMPARE(Custom->Type, OSType)) {
             // Because OS X recovery and installer might end up same type as normal OS X, check to make sure they aren't normal entries
-            if (((Custom->Type != OSTYPE_RECOVERY) && (Custom->Type != OSTYPE_OSX_INSTALLER)) ||
-                (Volume->RootDir == NULL) || !FileExists(Volume->RootDir, MACOSX_LOADER_PATH)) {
-               // Only match the loader type
-               DBG("skipped path `%s` because it is a type match for custom entry %d!\n", LoaderDevicePathString, CustomIndex);
-               FreePool(LoaderDevicePathString);
-               return NULL;
+            if ((Volume->RootDir == NULL) ||
+                ((Custom->Type != OSTYPE_RECOVERY) || FileExists(Volume->RootDir, L"\\com.apple.recovery.boot\\boot.efi")) &&
+                ((Custom->Type != OSTYPE_OSX_INSTALLER) || !FileExists(Volume->RootDir, MACOSX_LOADER_PATH))) {
+              // Only match the loader type
+              DBG("skipped path `%s` because it is a type match for custom entry %d!\n", LoaderDevicePathString, CustomIndex);
+              FreePool(LoaderDevicePathString);
+              return NULL;
             }
           } else {
             DBG("did not match type for path `%s` and custom entry %d!\n", LoaderDevicePathString, CustomIndex);
