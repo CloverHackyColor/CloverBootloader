@@ -391,20 +391,17 @@ static VOID HelpRefit(VOID)
 }
 
 
-static EFI_STATUS StartEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
-                                    IN CHAR16 *LoadOptions, IN CHAR16 *LoadOptionsPrefix,
+static EFI_STATUS LoadEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
                                     IN CHAR16 *ImageTitle,
                                     OUT UINTN *ErrorInStep,
                                     OUT EFI_HANDLE *NewImageHandle)
 {
   EFI_STATUS              Status, ReturnStatus;
   EFI_HANDLE              ChildImageHandle = 0;
-  EFI_LOADED_IMAGE        *ChildLoadedImage;
   UINTN                   DevicePathIndex;
   CHAR16                  ErrorInfo[256];
-  CHAR16                  *FullLoadOptions = NULL;
   
-  DBG("Starting %s\n", ImageTitle);
+  DBG("Loading %s\n", ImageTitle);
   if (ErrorInStep != NULL) {
     *ErrorInStep = 0;
   }
@@ -423,6 +420,40 @@ static EFI_STATUS StartEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
   if (CheckError(Status, ErrorInfo)) {
     if (ErrorInStep != NULL)
       *ErrorInStep = 1;
+    goto bailout;
+  }
+  
+  if (!EFI_ERROR(ReturnStatus)) { //why unload driver?!
+    if (NewImageHandle != NULL) {
+      *NewImageHandle = ChildImageHandle;
+    }
+    goto bailout;
+  }
+  
+  // unload the image, we don't care if it works or not...
+  Status = gBS->UnloadImage(ChildImageHandle);
+bailout:
+  return ReturnStatus;
+}
+
+
+static EFI_STATUS StartEFILoadedImage(IN EFI_HANDLE ChildImageHandle,
+                                    IN CHAR16 *LoadOptions, IN CHAR16 *LoadOptionsPrefix,
+                                    IN CHAR16 *ImageTitle,
+                                    OUT UINTN *ErrorInStep)
+{
+  EFI_STATUS              Status, ReturnStatus;
+  EFI_LOADED_IMAGE        *ChildLoadedImage;
+  CHAR16                  ErrorInfo[256];
+  CHAR16                  *FullLoadOptions = NULL;
+  
+  DBG("Starting %s\n", ImageTitle);
+  if (ErrorInStep != NULL) {
+    *ErrorInStep = 0;
+  }
+  ReturnStatus = Status = EFI_NOT_FOUND;  // in case no image handle was specified
+  if (ChildImageHandle == NULL) {
+    *ErrorInStep = 1;
     goto bailout;
   }
   
@@ -487,9 +518,6 @@ static EFI_STATUS StartEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
   }
  */
   if (!EFI_ERROR(ReturnStatus)) { //why unload driver?!
-    if (NewImageHandle != NULL) {
-      *NewImageHandle = ChildImageHandle;
-    }
     goto bailout;
   }
   
@@ -502,8 +530,8 @@ bailout:
   return ReturnStatus;
 }
 
-static EFI_STATUS StartEFIImage(IN EFI_DEVICE_PATH *DevicePath,
-                                IN CHAR16 *LoadOptions, IN CHAR16 *LoadOptionsPrefix,
+
+static EFI_STATUS LoadEFIImage(IN EFI_DEVICE_PATH *DevicePath,
                                 IN CHAR16 *ImageTitle,
                                 OUT UINTN *ErrorInStep,
                                 OUT EFI_HANDLE *NewImageHandle)
@@ -512,8 +540,50 @@ static EFI_STATUS StartEFIImage(IN EFI_DEVICE_PATH *DevicePath,
   
   DevicePaths[0] = DevicePath;
   DevicePaths[1] = NULL;
-  return StartEFIImageList(DevicePaths, LoadOptions, LoadOptionsPrefix, ImageTitle, ErrorInStep, NewImageHandle);
+  return LoadEFIImageList(DevicePaths, ImageTitle, ErrorInStep, NewImageHandle);
 }
+
+
+static EFI_STATUS StartEFIImage(IN EFI_DEVICE_PATH *DevicePath,
+                                IN CHAR16 *LoadOptions, IN CHAR16 *LoadOptionsPrefix,
+                                IN CHAR16 *ImageTitle,
+                                OUT UINTN *ErrorInStep,
+                                OUT EFI_HANDLE *NewImageHandle)
+{
+  EFI_STATUS Status;
+  EFI_HANDLE ChildImageHandle = NULL;
+
+  Status = LoadEFIImage(DevicePath, ImageTitle, ErrorInStep, &ChildImageHandle);  
+  if (!EFI_ERROR(Status)) {
+    Status = StartEFILoadedImage(ChildImageHandle, LoadOptions, LoadOptionsPrefix, ImageTitle, ErrorInStep);
+  }
+
+  if (NewImageHandle != NULL) {
+      *NewImageHandle = ChildImageHandle;
+  }
+  return Status;
+}
+
+
+static CHAR8 *SearchString (
+  IN  CHAR8       *Source,
+  IN  UINTN       SourceSize,
+  IN  CHAR8       *Search,
+  IN  UINTN       SearchSize
+  )
+{
+  CHAR8 *End = Source + SourceSize;
+
+  while (Source < End) {
+    if (CompareMem(Source, Search, SearchSize) == 0) {
+      return Source;
+    } else {
+      Source++;
+    }
+  }
+  return NULL;
+}
+
 
 //
 // Null ConOut OutputString() implementation - for blocking
@@ -549,6 +619,9 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
   EFI_STATUS              Status;
   BOOLEAN                 BlockConOut = FALSE;
   EFI_TEXT_STRING         ConOutOutputString = 0;
+  EFI_HANDLE              ImageHandle = NULL;
+  EFI_LOADED_IMAGE        *LoadedImage;
+  CHAR8                   *InstallerVersion;
   
   DBG("StartLoader() start\n");
   egClearScreen(&DarkBackgroundPixel);
@@ -563,6 +636,13 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
   KillMouse();
 //    DBG("BeginExternalScreen\n");
   BeginExternalScreen(OSFLAG_ISSET(Entry->Flags, OSFLAG_USEGRAPHICS), L"Booting OS");
+
+  // Load image into memory (will be started later) 
+  Status = LoadEFIImage(Entry->DevicePath, Basename(Entry->LoaderPath), NULL, &ImageHandle);
+  if (EFI_ERROR(Status)) {
+    return; // no reason to continue if loading image failed
+  }
+
 //  if (Entry->LoaderType == OSTYPE_OSX) {
   if (OSTYPE_IS_OSX(Entry->LoaderType) ||
       OSTYPE_IS_OSX_RECOVERY(Entry->LoaderType) ||
@@ -574,6 +654,31 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     PatchACPI(Entry->Volume);
 //DBG("GetOSVersion\n");
     Status = GetOSVersion(Entry->Volume);
+
+    // Correct OSVersion for 10.7-10.9 OSTYPE_OSX_INSTALLER 
+    // For these cases, take OSVersion from loaded boot.efi image in memory
+    if (Entry->Volume->OSType == OSTYPE_OSX_INSTALLER) {
+      Status = gBS->HandleProtocol(ImageHandle, &gEfiLoadedImageProtocolGuid, (VOID **) &LoadedImage);
+      if (!EFI_ERROR(Status)) {
+        // version in boot.efi appears as "Mac OS X 10.?"
+        InstallerVersion = SearchString(LoadedImage->ImageBase, LoadedImage->ImageSize, "Mac OS X ", 9);
+        if (InstallerVersion != NULL) { // string was found
+          InstallerVersion += 9; // advance to version location
+          if (!AsciiStrnCmp(InstallerVersion, "10.7", 4)) {
+            Entry->Volume->OSType = OSTYPE_LION;
+          } else if (!AsciiStrnCmp(InstallerVersion, "10.8", 4)) {
+            Entry->Volume->OSType = OSTYPE_ML;
+          } else if (!AsciiStrnCmp(InstallerVersion, "10.9", 4)) {
+            Entry->Volume->OSType = OSTYPE_MAV;
+          }
+          if (Entry->Volume->OSType != OSTYPE_OSX_INSTALLER) { // OSType was updated
+            OSVersion = AllocateCopyPool(5, InstallerVersion);
+            OSVersion[4] = '\0';
+            DBG("Installer OSVersion: %a\n", OSVersion);
+          }
+        }
+      }
+    }
 
     // Prepare boot arguments
 //    if ((StrCmp(gST->FirmwareVendor, L"CLOVER") != 0) &&
@@ -648,8 +753,12 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     gST->ConOut->OutputString = NullConOutOutputString;
   }
 //  DBG("StartEFIImage\n");
-  StartEFIImage(Entry->DevicePath, Entry->LoadOptions,
-                Basename(Entry->LoaderPath), Basename(Entry->LoaderPath), NULL, NULL);
+//  StartEFIImage(Entry->DevicePath, Entry->LoadOptions,
+//                Basename(Entry->LoaderPath), Basename(Entry->LoaderPath), NULL, NULL);
+
+//  DBG("StartEFILoadedImage\n");
+  StartEFILoadedImage(ImageHandle, Entry->LoadOptions, 
+                Basename(Entry->LoaderPath), Basename(Entry->LoaderPath), NULL);
   
   if (BlockConOut) {
     // return back orig OutputString
@@ -1723,8 +1832,8 @@ VOID ScanLoader(VOID)
     StrCpy(FileName, L"\\OS X Install Data\\boot.efi");
     if (FileExists(Volume->RootDir, FileName)) {
       Volume->BootType = BOOTING_BY_EFI;
-      Volume->OSType = OSTYPE_ML;
-      Volume->OSIconName = L"cougar";
+      Volume->OSType = OSTYPE_OSX_INSTALLER; //OSTYPE_ML; - this can now also be Mav, so properly detect OSTYPE when booting
+      Volume->OSIconName = L"mac"; //L"cougar";
       Entry = AddLoaderEntry(FileName, NULL, NULL, L"OS X Install", Volume, NULL, NULL, Volume->OSType, 0, 0);
       continue; //boot MacOSX only
     }
@@ -1732,8 +1841,8 @@ VOID ScanLoader(VOID)
     StrCpy(FileName, L"\\Mac OS X Install Data\\boot.efi");
     if (FileExists(Volume->RootDir, FileName)) {
       Volume->BootType = BOOTING_BY_EFI;
-      Volume->OSType = OSTYPE_LION;
-      Volume->OSIconName = L"lion";
+      Volume->OSType = OSTYPE_OSX_INSTALLER; //OSTYPE_LION;
+      Volume->OSIconName = L"mac"; //L"lion";
       Entry = AddLoaderEntry(FileName, NULL, NULL, L"Mac OS X Install", Volume, NULL, NULL, Volume->OSType, 0, 0);
       continue; //boot MacOSX only
     }
@@ -1744,8 +1853,8 @@ VOID ScanLoader(VOID)
     StrCpy(FileName, L"\\.IABootFiles\\boot.efi");
     if (FileExists(Volume->RootDir, FileName)) {
       Volume->BootType = BOOTING_BY_EFI;
-      Volume->OSType = OSTYPE_ML;
-      Volume->OSIconName = L"cougar";
+      Volume->OSType = OSTYPE_OSX_INSTALLER; //OSTYPE_ML;
+      Volume->OSIconName = L"mac"; //L"cougar";
       Entry = AddLoaderEntry(FileName, NULL, NULL, L"OS X Install", Volume, NULL, NULL, Volume->OSType, 0, 0);
       //continue; //boot MacOSX only
     }
