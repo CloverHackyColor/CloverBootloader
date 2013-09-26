@@ -1915,7 +1915,7 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len, INT32 VCard)
   CHAR8 *display;
   CHAR8 *hdmi = NULL;
   UINT32 devadr=0, devsize=0, devadr1=0, devsize1=0;
-  AML_CHUNK* root;
+  AML_CHUNK* root = NULL;
   AML_CHUNK* gfx0;
   AML_CHUNK* met;
   BOOLEAN DISPLAYFIX = FALSE;
@@ -1934,7 +1934,7 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len, INT32 VCard)
     
   DBG("Start Display%d Fix\n", VCard);
 	//DBG("len = 0x%08x\n", len);
-  // Display device_id 
+  // Display device_id
   root = aml_create_node(NULL);
   gfx0 = aml_create_node(NULL);
   met = aml_create_node(NULL);
@@ -1943,71 +1943,78 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len, INT32 VCard)
   for (j=0x20; j<len-10; j++) {
     if (DisplayADR1[VCard] != 0x00000000 && 
         CmpAdr(dsdt, j, DisplayADR1[VCard])) { //for example 0x00010000=1,0
-      DisplayName1 = TRUE;
       devadr = devFind(dsdt, j);  //PEG0@1,0
       if (!devadr) {
         continue;
       }
       devsize = get_size(dsdt, devadr); //sizeof PEG0  0x35
       if (devsize) {
+        DisplayName1 = TRUE;
         break;
       }
     } // End Display1
   }
-  
-  for (j=devadr; j<devadr+devsize; j++) { //search card inside PEGP@0
-    if (CmpAdr(dsdt, j, 0)) {
-      devadr1 = devFind(dsdt, j); //found PEGP
-      if (!devadr1) {
-        continue;
-      }
-      devsize1 = get_size(dsdt, devadr1);
-      if (devsize1) {
-        DBG("Found internal video device 0000@%x\n", devadr1);
-        DISPLAYFIX = TRUE;
-        break;      
-      }
-    }
-  }
 
-  if (!DISPLAYFIX && gSettings.ReuseFFFF) { 
-    for (j=devadr; j<devadr+devsize; j++) { //search card inside PEGP@0
-      if (CmpAdr(dsdt, j, 0xFFFF)) {  //Special case? want to change to 0
+  //what if PEG0 is not found?
+  if (devadr) {
+    for (j=devadr; j<devadr+devsize; j++) { //search card inside PEG0@0
+      if (CmpAdr(dsdt, j, 0)) {
         devadr1 = devFind(dsdt, j); //found PEGP
         if (!devadr1) {
           continue;
         }
-        devsize1 = get_size(dsdt, devadr1); //13
+        devsize1 = get_size(dsdt, devadr1);
         if (devsize1) {
-          dsdt[j+10] = 0;
-          dsdt[j+11] = 0;
+          DBG("Found internal video device 0000@%x\n", devadr1);
           DISPLAYFIX = TRUE;
-          DBG("Found internal video device FFFF@%x, set to 0\n", devadr1);
-          break;      
+          break;
+        }
+      }
+    }
+
+    if (!DISPLAYFIX && gSettings.ReuseFFFF) {
+      for (j=devadr; j<devadr+devsize; j++) { //search card inside PEGP@0
+        if (CmpAdr(dsdt, j, 0xFFFF)) {  //Special case? want to change to 0
+          devadr1 = devFind(dsdt, j); //found PEGP
+          if (!devadr1) {
+            continue;
+          }
+          devsize1 = get_size(dsdt, devadr1); //13
+          if (devsize1) {
+            dsdt[j+10] = 0;
+            dsdt[j+11] = 0;
+            DISPLAYFIX = TRUE;
+            DBG("Found internal video device FFFF@%x, set to 0\n", devadr1);
+            break;      
+          }
+        }
+      }
+    }
+    if (DISPLAYFIX) { // bridge or device
+      i = devadr1;
+    } else if (DisplayADR1[VCard] == 0xFFFE) {
+      i = devadr;
+    } else i=0;
+    if (i != 0) {
+      Size = get_size(dsdt, i);
+      k = FindMethod(dsdt + i, Size, "_DSM");
+      if (k != 0) {
+        if ((((dropDSM & DEV_ATI)   != 0) && (DisplayVendor[VCard] == 0x1002)) ||
+            (((dropDSM & DEV_NVIDIA)!= 0) && (DisplayVendor[VCard] == 0x10DE)) ||
+            (((dropDSM & DEV_INTEL) != 0) && (DisplayVendor[VCard] == 0x8086))) {
+          Size = get_size(dsdt, k);
+          sizeoffset = - 1 - Size;
+          len = move_data(k - 1, dsdt, len, sizeoffset); //kill _DSM
+          len = CorrectOuters(dsdt, len, k - 2, sizeoffset);
+          DBG("_DSM in display already exists, dropped\n");
+        } else {
+          DBG("_DSM already exists, patch display will not be applied\n");
+          return len;
         }
       }
     }
   }
-  
-  if (DISPLAYFIX) { // bridge or device
-    i = devadr1;
-    Size = get_size(dsdt, i);
-    k = FindMethod(dsdt + i, Size, "_DSM");
-    if (k != 0) {
-      if ((((dropDSM & DEV_ATI)   != 0) && (DisplayVendor[VCard] == 0x1002)) ||
-          (((dropDSM & DEV_NVIDIA)!= 0) && (DisplayVendor[VCard] == 0x10DE)) ||
-          (((dropDSM & DEV_INTEL) != 0) && (DisplayVendor[VCard] == 0x8086))) {
-        Size = get_size(dsdt, k);
-        sizeoffset = - 1 - Size;
-        len = move_data(k - 1, dsdt, len, sizeoffset); //kill _DSM
-        len = CorrectOuters(dsdt, len, k - 2, sizeoffset);
-        DBG("_DSM in display already exists, dropped\n");
-      } else {
-        DBG("_DSM already exists, patch display will not be applied\n");
-        return len;
-      }
-    }
-  }
+
 
   if (DisplayADR1[VCard]) {
     if (!DisplayName1) {   //bridge or builtin not found
