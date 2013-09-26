@@ -3397,7 +3397,6 @@ EFI_STATUS GetOSVersion(IN REFIT_VOLUME *Volume)
   
 	if (Volume->OSType == OSTYPE_OSX_INSTALLER) {
 		// for installer type we determine exact version prior to booting boot.efi
-		Volume->OSType = OSTYPE_OSX_INSTALLER;
 		Volume->OSIconName = L"mac";
 		Volume->BootType = BOOTING_BY_EFI;
 		Volume->OSName = L"Install Mac OS X";

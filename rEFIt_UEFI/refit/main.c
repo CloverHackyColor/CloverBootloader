@@ -655,9 +655,10 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
 //DBG("GetOSVersion\n");
     Status = GetOSVersion(Entry->Volume);
 
-    // Correct OSVersion for 10.7-10.9 OSTYPE_OSX_INSTALLER 
+    // Correct OSVersion if it was not found
+    // This should happen only for 10.7-10.9 OSTYPE_OSX_INSTALLER 
     // For these cases, take OSVersion from loaded boot.efi image in memory
-    if (Entry->Volume->OSType == OSTYPE_OSX_INSTALLER) {
+    if (Entry->Volume->OSType == OSTYPE_OSX_INSTALLER || AsciiStrCmp(OSVersion,"") == 0) {
       Status = gBS->HandleProtocol(ImageHandle, &gEfiLoadedImageProtocolGuid, (VOID **) &LoadedImage);
       if (!EFI_ERROR(Status)) {
         // version in boot.efi appears as "Mac OS X 10.?"
@@ -670,11 +671,13 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
             Entry->Volume->OSType = OSTYPE_ML;
           } else if (!AsciiStrnCmp(InstallerVersion, "10.9", 4)) {
             Entry->Volume->OSType = OSTYPE_MAV;
+          } else {
+            InstallerVersion = NULL; // flag known version was not found
           }
-          if (Entry->Volume->OSType != OSTYPE_OSX_INSTALLER) { // OSType was updated
+          if (InstallerVersion != NULL) { // known version was found in image
             OSVersion = AllocateCopyPool(5, InstallerVersion);
             OSVersion[4] = '\0';
-            DBG("Installer OSVersion: %a\n", OSVersion);
+            DBG("Corrected OSVersion: %a\n", OSVersion);
           }
         }
       }
