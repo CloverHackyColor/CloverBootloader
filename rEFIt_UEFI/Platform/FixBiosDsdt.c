@@ -976,6 +976,21 @@ BOOLEAN CmpNum(UINT8 *dsdt, INT32 i, BOOLEAN Sure)
                      (dsdt[i-4] == 0x0C))));
 }
 
+BOOLEAN GetName(UINT8 *dsdt, INT32 adr, CHAR8* name)
+{
+  INT32 i;
+  for (i = adr; i < adr + 4; i++) {
+    if ((dsdt[i] < 0x30) ||
+        ((dsdt[i] > 0x39) && (dsdt[i] < 0x41)) ||
+        ((dsdt[i] > 0x5A) && (dsdt[i] != 0x5F))) {
+      return FALSE;
+    }
+    name[i - adr] = dsdt[i];
+  }
+  name[5] = 0;
+  return TRUE;
+}
+
 // if (CmpAdr(dsdt, j, NetworkADR1))
 // Name (_ADR, 0x90000)                
 BOOLEAN CmpAdr (UINT8 *dsdt, UINT32 j, UINT32 PciAdr)
@@ -1095,6 +1110,41 @@ UINT32 FindMethod (UINT8 *dsdt, UINT32 len, /* CONST*/ CHAR8* Name)
     }
   }
   return 0;
+}
+
+UINT32 CorrectOuterMethod (UINT8 *dsdt, UINT32 len, UINT32 adr,  INT32 shift)
+{
+  INT32    i,  k;
+  UINT32   size = 0;
+  INT32  offset = 0;
+  CHAR8  Name[5];
+
+  if (shift == 0) {
+    return len;
+  }
+  i = adr; //usually adr = @5B - 1 = sizefield - 3
+  while (i-- > 0x20) {  //find method that previous to adr
+    k = i + 1;
+    if ((dsdt[i] == 0x14) && !CmpNum(dsdt, i, FALSE)) { //method candidate
+      size = get_size(dsdt, k);
+      if (!size) {
+        continue;
+      }
+      if (((size <= 0x3F) && !GetName(dsdt, k+2, &Name[0])) ||
+          ((size > 0x3F) && (size <= 0xFFF) && !GetName(dsdt, k+3, &Name[0])) ||
+          ((size > 0xFFF) && !GetName(dsdt, k+4, &Name[0]))) {
+        continue;
+      }
+      if ((k+size) > adr+4) {  //Yes - it is outer
+        DBG("found outer method %a begin=%x end=%x\n", Name, k, k+size);
+        offset = write_size(k, dsdt, len, shift);  //size corrected to sizeoffset at address j
+ //       shift += offset;
+        len += offset;
+      }  //else not an outer device
+      break;
+    }
+  }
+  return len;
 }
 
 //return final length of dsdt
@@ -1423,6 +1473,7 @@ UINT32 FixAny (UINT8* dsdt, UINT32 len, UINT8* ToFind, UINT32 LenTF, UINT8* ToRe
     if ((LenTR > 0) && (ToReplace != NULL)) {
       CopyMem(dsdt + adr + i, ToReplace, LenTR);
     }
+    len = CorrectOuterMethod(dsdt, len, adr + i - 2, sizeoffset);
     len = CorrectOuters(dsdt, len, adr + i - 3, sizeoffset);
   }
 
