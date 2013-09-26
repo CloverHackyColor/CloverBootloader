@@ -183,8 +183,6 @@
 	<dict>
 		<key>InjectSystemID</key>
 		<true/>
-		<key>LegacyBoot</key>
-		<string>PBR</string>
 	</dict>
 	<key>Graphics</key>
 	<dict>
