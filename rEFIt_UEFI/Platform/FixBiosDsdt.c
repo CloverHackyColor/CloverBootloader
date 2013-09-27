@@ -907,7 +907,7 @@ UINT32 get_size(UINT8* Buffer, UINT32 adr)
 		        Buffer[adr+3]         << 20;	
 	} 
   else {
-    DBG("wrong pointer to size field at %x\n", adr);
+  //  DBG("wrong pointer to size field at %x\n", adr);
     return 0;  //this means wrong pointer to size field
   }
 	return temp;
@@ -2230,7 +2230,7 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len, INT32 VCard)
       len = CorrectOuters(dsdt, len, devadr1-3, sizeoffset);
     }
   } else { //insert PEG0 into PCI0 at the end
-    //PCI correcting so search again
+    //PCI corrected so search again
     DBG("... into created bridge\n");
     PCIADR = GetPciDevice(dsdt, len);
     if (PCIADR) {
@@ -2246,11 +2246,14 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len, INT32 VCard)
     k = write_size(PCIADR, dsdt, len, sizeoffset);
     sizeoffset += k;
     len += k;
-    len = CorrectOuters(dsdt, len, PCIADR-3, sizeoffset);    
+    devadr += k;
+    k = CorrectOuters(dsdt, len, PCIADR-3, sizeoffset);
+    devadr += k - len;
+    len = k;
   }
 
     if (hdmi) { //not inserted yet because PEG0 was absent
-      DBG("insert HDAU into created bridge\n");
+      DBG("insert HDAU into created bridge @0x%x\n", devadr);
       k = get_size(dsdt, devadr);
       if (k > 0) {
         i = devadr + k;
