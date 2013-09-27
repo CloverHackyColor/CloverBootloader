@@ -2150,8 +2150,19 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
             if (prop2 && (prop2->type == kTagTypeString) && prop2->string) {
               gSettings.AddProperties[Index].Key = AllocateCopyPool(AsciiStrSize(prop2->string), prop2->string);
             }
-            gSettings.AddProperties[Index].Value = GetDataSetting(dict2, "Value", &Size);
-            gSettings.AddProperties[Index].ValueLen = Size;
+            prop2 = GetProperty(dict2, "Value");
+            if (prop2 && (prop2->type == kTagTypeString) && prop2->string) {
+              //first suppose it is Ascii string
+              gSettings.AddProperties[Index].Value = AllocateCopyPool(AsciiStrSize(prop2->string), prop2->string);
+              gSettings.AddProperties[Index].ValueLen = AsciiStrLen(prop2->string);
+            } else if (prop2 && (prop2->type == kTagTypeInteger)) {
+              gSettings.AddProperties[Index].Value = (INTN)prop->string;
+              gSettings.AddProperties[Index].ValueLen = 4;
+            } else {
+              //else  data
+              gSettings.AddProperties[Index].Value = GetDataSetting(dict2, "Value", &Size);
+              gSettings.AddProperties[Index].ValueLen = Size;
+            }
             Index++;
           }
           gSettings.NrAddProperties = Index;
