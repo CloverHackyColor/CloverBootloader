@@ -23,7 +23,7 @@ Copyright (c) 2006 JLA
 #if DEBUG_LBOOT == 0
 #define DBG(...)
 #else
-#define DBG(...) DebugLog(DEBUG_LBOOT, __VA_ARGS__)
+#define DBG(...) DebugLog(0, __VA_ARGS__) // until a better solution is found, force DebugLog(0, ...) to prevent saving to DebugLog, which may cause legacy boot to fail
 #endif
 
 #pragma pack(push)
