@@ -673,11 +673,11 @@ VOID CheckHardware()
    //         Netmodel = get_arpt_model(deviceid);  
             ArptBCM = (Pci.Hdr.VendorId == 0x14e4);
             if (ArptBCM) {
-              DBG("Found Airport BCM at 0x%x, 0x0x\n", ArptADR1, ArptADR2);
+              DBG("Found Airport BCM at 0x%x, 0x%x\n", ArptADR1, ArptADR2);
             }
             ArptAtheros = (Pci.Hdr.VendorId == 0x168c);
             if (ArptAtheros) {
-              DBG("Found Airport Atheros at 0x%x, 0x0x\n", ArptADR1, ArptADR2);
+              DBG("Found Airport Atheros at 0x%x, 0x%x\n", ArptADR1, ArptADR2);
             }
           }
           
@@ -1979,6 +1979,8 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len, INT32 VCard)
   UINT32 FakeVen = 0;
   DisplayName1 = FALSE;
 
+  if (!DisplayADR1[VCard]) return len;
+
   PCIADR = GetPciDevice(dsdt, len);
   if (PCIADR) {
     PCISIZE = get_size(dsdt, PCIADR);
@@ -1988,14 +1990,13 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len, INT32 VCard)
   DBG("Start Display%d Fix\n", VCard);
 	//DBG("len = 0x%08x\n", len);
   // Display device_id
-
+  root = aml_create_node(NULL);
   gfx0 = aml_create_node(NULL);
   met = aml_create_node(NULL);
   
 //search DisplayADR1[0]
   for (j=0x20; j<len-10; j++) {
-    if (DisplayADR1[VCard] != 0x00000000 && 
-        CmpAdr(dsdt, j, DisplayADR1[VCard])) { //for example 0x00010000=1,0
+    if (CmpAdr(dsdt, j, DisplayADR1[VCard])) { //for example 0x00010000=1,0
       devadr = devFind(dsdt, j);  //PEG0@1,0
       if (!devadr) {
         continue;
@@ -2010,7 +2011,6 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len, INT32 VCard)
 
   //what if PEG0 is not found?
   if (devadr) {
-    root = aml_create_node(NULL);
     for (j=devadr; j<devadr+devsize; j++) { //search card inside PEG0@0
       if (CmpAdr(dsdt, j, DisplayADR2[VCard])) {
         devadr1 = devFind(dsdt, j); //found PEGP
@@ -2070,8 +2070,6 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len, INT32 VCard)
     }
   }
 
-
-  if (DisplayADR1[VCard]) {
     if (!DisplayName1) {
       peg0 = aml_add_device(root, "PEG0");
       aml_add_name(peg0, "_ADR");
@@ -2090,6 +2088,7 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len, INT32 VCard)
       gfx0 = peg0;
     // Intel GMA and HD
     if (DisplayVendor[VCard] == 0x8086) {
+      DBG("Injecting DSM for Intel card\n");
       met = aml_add_method(gfx0, "_DSM", 4);
       met = aml_add_store(met);
       pack = aml_add_package(met);
@@ -2111,6 +2110,7 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len, INT32 VCard)
     
     // NVIDIA
     if (DisplayVendor[VCard] == 0x10DE) {
+      DBG("Injecting DSM for NVIDIA card\n");
       met = aml_add_method(gfx0, "_DSM", 4);
       met = aml_add_store(met);
       pack = aml_add_package(met);
@@ -2131,11 +2131,8 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len, INT32 VCard)
   
     // ATI
     if (DisplayVendor[VCard] == 0x1002) {
-      if (!DISPLAYFIX) {
-        met = aml_add_method(gfx0, "_DSM", 4);  //if no subdevice
-      } else {
-        met = aml_add_method(root, "_DSM", 4); //add to subdevice
-      }
+      DBG("Injecting DSM for ATI card\n");
+      met = aml_add_method(gfx0, "_DSM", 4);  //if no subdevice
       met = aml_add_store(met);
       pack = aml_add_package(met);
  
@@ -2160,7 +2157,7 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len, INT32 VCard)
       // finish Method(_DSM,4,NotSerialized)
     }
     
-    // HDAU
+    // HDAU - separate device
     hdaudev = aml_create_node(NULL);
     if (GFXHDAFIX && (FindBin(dsdt, len, (UINT8*)"HDAU", 4) < 0)) {
 
@@ -2169,6 +2166,7 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len, INT32 VCard)
       aml_add_name(device, "_ADR");
       aml_add_byte(device, 0x01);
       // add Method(_DSM,4,NotSerialized) for GFX0
+      DBG("Injecting DSM for HDAU\n");
       met = aml_add_method(device, "_DSM", 4);
       met = aml_add_store(met);
       pack = aml_add_package(met);
@@ -2191,6 +2189,7 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len, INT32 VCard)
       aml_destroy_node(hdaudev);
       //insert HDAU
       if (DisplayName1) {   //bridge is present
+        DBG("insert HDAU into existing PEG0\n");
         i = devadr+devsize;
         len = move_data(i, dsdt, len, sizeoffset2);
         CopyMem(dsdt+i, hdmi, sizeoffset2);
@@ -2203,9 +2202,10 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len, INT32 VCard)
         hdmi = NULL;
       }
     }
-  }
+
   
 //now insert video
+  DBG("now inserting Video device\n");
   aml_calculate_size(root);
   display = AllocateZeroPool(root->Size);
   sizeoffset = root->Size;
@@ -2214,6 +2214,7 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len, INT32 VCard)
 
   if (DisplayName1) {   //bridge is present
     // move data to back for add Display
+    DBG("... into existing bridge\n");
     if (!DISPLAYFIX) {   //subdevice absent
       i = devadr + devsize;
       len = move_data(i, dsdt, len, sizeoffset);
@@ -2229,6 +2230,14 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len, INT32 VCard)
       len = CorrectOuters(dsdt, len, devadr1-3, sizeoffset);
     }
   } else { //insert PEG0 into PCI0 at the end
+    //PCI correcting so search again
+    DBG("... into created bridge\n");
+    PCIADR = GetPciDevice(dsdt, len);
+    if (PCIADR) {
+      PCISIZE = get_size(dsdt, PCIADR);
+    }
+    if (!PCISIZE) return len; //what is the bad DSDT ?!
+
     i = PCIADR + PCISIZE;
     devadr = i + 2;  //skip 5B 82
     len = move_data(i, dsdt, len, sizeoffset);
@@ -2239,7 +2248,9 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len, INT32 VCard)
     len += k;
     len = CorrectOuters(dsdt, len, PCIADR-3, sizeoffset);    
   }
+
     if (hdmi) { //not inserted yet because PEG0 was absent
+      DBG("insert HDAU into created bridge\n");
       k = get_size(dsdt, devadr);
       if (k > 0) {
         i = devadr + k;

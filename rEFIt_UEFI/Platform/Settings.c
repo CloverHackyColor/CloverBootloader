@@ -2156,7 +2156,8 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
               gSettings.AddProperties[Index].Value = AllocateCopyPool(AsciiStrSize(prop2->string), prop2->string);
               gSettings.AddProperties[Index].ValueLen = AsciiStrLen(prop2->string);
             } else if (prop2 && (prop2->type == kTagTypeInteger)) {
-              gSettings.AddProperties[Index].Value = (INTN)prop->string;
+              gSettings.AddProperties[Index].Value = AllocatePool(4);
+              CopyMem(gSettings.AddProperties[Index].Value, &(prop->string), 4);
               gSettings.AddProperties[Index].ValueLen = 4;
             } else {
               //else  data
