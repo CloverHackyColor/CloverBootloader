@@ -317,7 +317,6 @@ CHAR8 *devprop_generate_string(DevPropString *StringBuf)
 VOID devprop_free_string(DevPropString *StringBuf)
 {
    INT32 i;
-	//DBG("devprop_free_string\n");
 	if(!StringBuf)
 		return;
 	
@@ -328,10 +327,7 @@ VOID devprop_free_string(DevPropString *StringBuf)
 			if(StringBuf->entries[i]->data)
 			{
 				FreePool(StringBuf->entries[i]->data);
-		//		StringBuf->entries[i]->data = NULL;
 			}
-		//	FreePool(StringBuf->entries[i]);
-		//	StringBuf->entries[i] = NULL;
 		}
 	}
 	FreePool(StringBuf->entries);
@@ -347,7 +343,9 @@ BOOLEAN set_eth_props(pci_dt_t *eth_dev)
   UINT8           builtin = 0x0;
   BOOLEAN         Injected = FALSE;
   INT32           i;
-	
+  CHAR8           compatible[64];
+
+
 	if (!string)
     string = devprop_create_string();
     
@@ -384,6 +382,9 @@ BOOLEAN set_eth_props(pci_dt_t *eth_dev)
   if (gSettings.FakeLAN) {
     UINT32 FakeID = gSettings.FakeLAN >> 16;
     devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
+    AsciiSPrint(compatible, 64, "pci%x,%x", (gSettings.FakeLAN & 0xFFFF), FakeID);
+    LowCase(compatible);
+    devprop_add_value(device, "compatible", (UINT8*)&compatible[0], 12);
     FakeID = gSettings.FakeLAN & 0xFFFF;
     devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
   }

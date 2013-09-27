@@ -157,7 +157,7 @@ VOID RefillInputs(VOID)
   InputItemsCount = 0; 
   InputItems[InputItemsCount].ItemType = ASString;  //0
   //even though Ascii we will keep value as Unicode to convert later
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, SVALUE_MAX_SIZE, L"%a", gSettings.BootArgs);
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, SVALUE_MAX_SIZE, L"%a ", gSettings.BootArgs);
   InputItems[InputItemsCount].ItemType = UNIString; //1
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 63, L"%s", gSettings.DsdtName);
   InputItems[InputItemsCount].ItemType = BoolValue; //2
@@ -454,7 +454,7 @@ VOID FillInputs(VOID)
   InputItems[InputItemsCount].ItemType = ASString;  //0
   //even though Ascii we will keep value as Unicode to convert later
   InputItems[InputItemsCount].SValue = AllocateZeroPool(SVALUE_MAX_SIZE);
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, SVALUE_MAX_SIZE, L"%a", gSettings.BootArgs);
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, SVALUE_MAX_SIZE, L"%a ", gSettings.BootArgs);
   InputItems[InputItemsCount].ItemType = UNIString; //1
   InputItems[InputItemsCount].SValue = AllocateZeroPool(63);
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 63, L"%s", gSettings.DsdtName); // 1-> 2
@@ -773,7 +773,7 @@ VOID ApplyInputs(VOID)
   CHAR8  AString[256];
 //  DBG("ApplyInputs\n");
   if (InputItems[i].Valid) {
-    AsciiSPrint(gSettings.BootArgs, 255, "%s", InputItems[i].SValue);
+    AsciiSPrint(gSettings.BootArgs, 255, "%s ", InputItems[i].SValue);
   }
   i++; //1
   if (InputItems[i].Valid) {

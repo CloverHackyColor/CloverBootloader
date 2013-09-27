@@ -93,21 +93,6 @@ Headers collection for procedures
 #define Tera (kilo * Giga)
 #define Peta (kilo * Tera)
 
-#define IS_COMMA(a)                ((a) == L',')
-#define IS_HYPHEN(a)               ((a) == L'-')
-#define IS_DOT(a)                  ((a) == L'.')
-#define IS_LEFT_PARENTH(a)         ((a) == L'(')
-#define IS_RIGHT_PARENTH(a)        ((a) == L')')
-#define IS_SLASH(a)                ((a) == L'/')
-#define IS_NULL(a)                 ((a) == L'\0')
-#define IS_DIGIT(a)            (((a) >= '0') && ((a) <= '9'))
-#define IS_HEX(a)            (((a) >= 'a') && ((a) <= 'f'))
-#define IS_UPPER(a)          (((a) >= 'A') && ((a) <= 'Z'))
-#define IS_ALFA(x) (((x >= 'a') && (x <='z')) || ((x >= 'A') && (x <='Z')))
-#define IS_ASCII(x) ((x>=0x20) && (x<=0x7F))
-#define IS_PUNCT(x) ((x == '.') || (x == '-'))
-
-
 #define EBDA_BASE_ADDRESS 0x40E
 #define EFI_SYSTEM_TABLE_MAX_ADDRESS 0xFFFFFFFF
 #define ROUND_PAGE(x)  ((((unsigned)(x)) + EFI_PAGE_SIZE - 1) & ~(EFI_PAGE_SIZE - 1))
@@ -1256,8 +1241,6 @@ VOID        ApplyInputs(VOID);
 BOOLEAN     IsValidGuidAsciiString(IN CHAR8 *Str);
 EFI_STATUS  StrToGuid (IN  CHAR16   *Str, OUT EFI_GUID *Guid);
 EFI_STATUS  StrToGuidLE (IN  CHAR16   *Str, OUT EFI_GUID *Guid);
-UINT32      hex2bin(IN CHAR8 *hex, OUT UINT8 *bin, UINT32 len);
-UINT8       hexstrtouint8 (CHAR8* buf); //one or two hex letters to one byte
 
 EFI_STATUS  InitializeConsoleSim (VOID);
 EFI_STATUS  GuiEventsInitialize (VOID);

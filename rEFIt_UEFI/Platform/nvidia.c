@@ -3336,69 +3336,6 @@ static INT32 devprop_add_nvidia_template(DevPropDevice *device)
 
 	return 1;
 }
-
-UINT8 hexstrtouint8 (CHAR8* buf)
-{
-	INT8 i;
-	if (IS_DIGIT(buf[0]))
-		i = buf[0]-'0';
-	else if (IS_HEX(buf[0])) 
-		i = buf[0]-'a' + 10; 
-	else
-		i = buf[0]-'A' + 10;
-	if (AsciiStrLen(buf) == 1) {
-		return i;
-	}
-	i <<= 4;
-	if (IS_DIGIT(buf[1]))
-		i += buf[1]-'0';
-	else if (IS_HEX(buf[1])) 
-		i += buf[1]-'a' + 10; 
-	else
-		i += buf[1]-'A'+ 10; //no error checking
-	return i;
-}
-
-BOOLEAN IsHexDigit (CHAR8 c) {
-	return (IS_DIGIT(c) || (c>='A'&&c<='F') || (c>='a'&&c<='f'))?TRUE:FALSE;
-}
-
-
-UINT32 hex2bin(IN CHAR8 *hex, OUT UINT8 *bin, UINT32 len) //assume len = number of UINT8 values
-{
-	CHAR8	*p;
-	UINT32	i, outlen = 0;
-	CHAR8	buf[3];
-
-	if (hex == NULL || bin == NULL || len <= 0 || AsciiStrLen(hex) < len * 2) {
-//		DBG("[ERROR] bin2hex input error\n"); //this is not error, this is empty value
-		return FALSE;
-	}
-
-	buf[2] = '\0';
-	p = (CHAR8 *) hex;
-
-	for (i = 0; i < len; i++)
-	{
-		while ((*p == 0x20) || (*p == ',')) {
-			p++; //skip spaces and commas
-		}
-		if (*p == 0) {
-			break;
-		}
-		if (!IsHexDigit(p[0]) || !IsHexDigit(p[1])) {
-			DBG("[ERROR] bin2hex '%a' syntax error\n", hex);
-			return 0;
-		}
-		buf[0] = *p++;
-		buf[1] = *p++;
-		bin[i] = hexstrtouint8(buf);
-		outlen++;
-	}
-	bin[outlen] = 0;
-	return outlen;
-}
-
 UINT64 mem_detect(UINT16 nvCardType, pci_dt_t *nvda_dev)
 {
 	

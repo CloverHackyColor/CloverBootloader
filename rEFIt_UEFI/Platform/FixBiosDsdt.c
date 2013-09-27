@@ -1959,6 +1959,7 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len, INT32 VCard)
 {
   UINT32 i, j, k;
   INT32 sizeoffset = 0;
+  INT32 sizeoffset2 = 0;
   UINT32 PCIADR = 0, PCISIZE = 0, Size;
 //  CHAR8 *portname;
   CHAR8 *CFGname = NULL;
@@ -1966,12 +1967,13 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len, INT32 VCard)
   CHAR8 *display;
   CHAR8 *hdmi = NULL;
   UINT32 devadr=0, devsize=0, devadr1=0, devsize1=0;
+  BOOLEAN DISPLAYFIX = FALSE;
   AML_CHUNK* root = NULL;
   AML_CHUNK* gfx0;
   AML_CHUNK* met;
-  BOOLEAN DISPLAYFIX = FALSE;
   AML_CHUNK* pack;
   AML_CHUNK* hdaudev;
+  AML_CHUNK* device;
   UINT32 FakeID = 0;
   UINT32 FakeVen = 0;
   DisplayName1 = FALSE;
@@ -2078,8 +2080,12 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len, INT32 VCard)
     }
     // Intel GMA and HD
     if (DisplayVendor[VCard] == 0x8086) {
+      if (DisplayName1) {
+        met = aml_add_method(root, "_DSM", 4);
+      } else {
+        met = aml_add_method(gfx0, "_DSM", 4);
+      }
 
-      met = aml_add_method(root, "_DSM", 4);
       met = aml_add_store(met);
       pack = aml_add_package(met);
       
@@ -2107,7 +2113,6 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len, INT32 VCard)
         met = aml_add_method(root, "_DSM", 4);
       }
       met = aml_add_store(met);
-      //Slice - next I mark what is in Natit, and what no
       pack = aml_add_package(met);
       
       if (gSettings.FakeNVidia) {
@@ -2158,11 +2163,7 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len, INT32 VCard)
     // HDAU
     hdaudev = aml_create_node(NULL);
     if (GFXHDAFIX && (FindBin(dsdt, len, (UINT8*)"HDAU", 4) < 0)) {
- //     CHAR8 data2[] = {0xe0,0x00,0x56,0x28};
- //     AML_CHUNK* met;
-      AML_CHUNK* pack;
-      AML_CHUNK* device;
-      
+
       DBG("insert HDAU device @%x\n", devadr+devsize);
       device = aml_add_device(hdaudev, "HDAU");
       aml_add_name(device, "_ADR");
@@ -2185,22 +2186,29 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len, INT32 VCard)
       
       aml_calculate_size(hdaudev);
       hdmi = AllocateZeroPool(hdaudev->Size);
-      sizeoffset = hdaudev->Size;
+      sizeoffset2 = hdaudev->Size;
       aml_write_node(hdaudev, hdmi, 0);
       aml_destroy_node(hdaudev);
       //insert HDAU
-      i = devadr+devsize;
-      len = move_data(i, dsdt, len, sizeoffset);
-      CopyMem(dsdt+i, hdmi, sizeoffset);
-      j = write_size(devadr, dsdt, len, sizeoffset);
-      sizeoffset += j;
-      len += j;
-      devadr1 += j;
-      len = CorrectOuters(dsdt, len, devadr-3, sizeoffset);
+      if (DisplayName1) {   //bridge is present
+        i = devadr+devsize;
+        len = move_data(i, dsdt, len, sizeoffset2);
+        CopyMem(dsdt+i, hdmi, sizeoffset2);
+        j = write_size(devadr, dsdt, len, sizeoffset2);
+        sizeoffset2 += j;
+        len += j;
+        devadr1 += j;
+        len = CorrectOuters(dsdt, len, devadr-3, sizeoffset2);
+        FreePool(hdmi);
+        hdmi = NULL;
+      }
     }
   }
   
 //now insert video
+  if (gfx0) {
+    root = gfx0; //memory leak?
+  }
   aml_calculate_size(root);
   display = AllocateZeroPool(root->Size);
   sizeoffset = root->Size;
@@ -2224,8 +2232,18 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len, INT32 VCard)
       len = CorrectOuters(dsdt, len, devadr1-3, sizeoffset);
     }
   } else {
-    len = move_data(PCIADR+PCISIZE, dsdt, len, sizeoffset);
-    CopyMem(dsdt+PCIADR+PCISIZE, display, sizeoffset);
+    i = PCIADR + PCISIZE;
+    devadr = i + 2;
+    len = move_data(i, dsdt, len, sizeoffset);
+    CopyMem(dsdt+i, display, sizeoffset);
+    if (hdmi) {
+      len = move_data(i+sizeoffset, dsdt, len, sizeoffset2);
+      CopyMem(dsdt+i+sizeoffset, hdmi, sizeoffset2);
+      sizeoffset += sizeoffset2;
+      j = write_size(devadr, dsdt, len, sizeoffset);
+      sizeoffset += j;
+      len += j;
+    }
     // Fix PCIX size
     k = write_size(PCIADR, dsdt, len, sizeoffset);
     sizeoffset += k;
@@ -2259,11 +2277,11 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
   AML_CHUNK* brd;
   AML_CHUNK* root;
   AML_CHUNK* pack;
-  CHAR8 *network;
+  CHAR8  *network;
   UINT32 FakeID = 0;
   UINT32 FakeVen = 0;
-  CHAR8 NameCard[32];
-  
+  CHAR8  NameCard[32];
+
   if (!NetworkADR1) return len;
   DBG("Start NetWork Fix\n");
   
@@ -2271,6 +2289,7 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
     FakeID = gSettings.FakeLAN >> 16;
     FakeVen = gSettings.FakeLAN & 0xFFFF;
     AsciiSPrint(NameCard, 32, "pci%x,%x\0", FakeVen, FakeID);
+    LowCase(NameCard);
     Netmodel = get_net_model((FakeVen << 16) + FakeID);
   }
  
@@ -2382,6 +2401,8 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
     aml_add_byte_buffer(pack, (CHAR8 *)&FakeVen, 4);
     aml_add_string(pack, "name");
     aml_add_string_buffer(pack, &NameCard[0]);
+    aml_add_string(pack, "compatible");
+    aml_add_string_buffer(pack, &NameCard[0]);
   }
 
   aml_add_local0(met);
@@ -2445,6 +2466,7 @@ UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
     FakeID = gSettings.FakeWIFI >> 16;
     FakeVen = gSettings.FakeWIFI & 0xFFFF;
     AsciiSPrint(NameCard, 32, "pci%x,%x\0", FakeVen, FakeID);
+    LowCase(NameCard);
   }
   
   PCIADR = GetPciDevice(dsdt, len);
@@ -2574,7 +2596,9 @@ UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
     aml_add_byte_buffer(pack, (CHAR8 *)&FakeVen, 4);
     aml_add_string(pack, "name");
     aml_add_string_buffer(pack, (CHAR8 *)&NameCard[0]);
-  } 
+    aml_add_string(pack, "compatible");
+    aml_add_string_buffer(pack, (CHAR8 *)&NameCard[0]);
+  }
   
   aml_add_local0(met);
   aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));

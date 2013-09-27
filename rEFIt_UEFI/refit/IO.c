@@ -291,111 +291,7 @@ Returns:
   VA_COPY(ps.args, args);
   _PPrint (&ps);
 }
-/*
-UINTN
-SPrint (
-  OUT CHAR16    *Str,
-  IN UINTN      StrSize,
-  IN CHAR16     *fmt,
-  ...
-  )*/
-/*++
 
-Routine Description:
-
-  Prints a formatted unicode string to a buffer
-
-Arguments:
-
-  Str         - Output buffer to print the formatted string into
-
-  StrSize     - Size of Str.  String is truncated to this size.
-                A size of 0 means there is no limit
-
-  fmt         - The format string
-
-Returns:
-
-  String length returned in buffer
-
--- /
-{
-  POOL_PRINT  spc;
-  VA_LIST     args;
-
-  VA_START (args, fmt);
-  spc.Str     = Str;
-  spc.Maxlen  = StrSize / sizeof (CHAR16) - 1;
-  spc.Len     = 0;
-
-  _PoolCatPrint (fmt, args, &spc, _SPrint);
-  return spc.Len;
-}*/
-/*
-UINTN
-VSPrint (
-  OUT CHAR16  *Str,
-  IN UINTN    StrSize,
-  IN CHAR16   *fmt,
-  IN VA_LIST  vargs
-  )
-/ ++
-
-Routine Description:
-
-    Prints a formatted unicode string to a buffer
-
-Arguments:
-
-    Str         - Output buffer to print the formatted string into
-    StrSize     - Size of Str.  String is truncated to this size.
-                  A size of 0 means there is no limit
-    fmt         - The format string
-
-Returns:
-
-    String length returned in buffer
-
--- /
-{
-  POOL_PRINT  spc;
-
-  spc.Str     = Str;
-  spc.Maxlen  = StrSize / sizeof (CHAR16) - 1;
-  spc.Len     = 0;
-
-  _PoolCatPrint (fmt, vargs, &spc, _SPrint);
-  return spc.Len;
-} */
-/*
-UINTN
-Print (
-  IN CHAR16     *fmt,
-  ...
-  ) */
-/*++
-
-Routine Description:
-
-  Prints a formatted unicode string to the default console
-
-Arguments:
-
-  fmt         - Format string
-
-Returns:
-
-  Length of string printed to the console
-
---*/
-/*
-{
-  VA_LIST args;
-
-  VA_START (args, fmt);
-  return _IPrint ((UINTN) -1, (UINTN) -1, gST->ConOut, fmt, NULL, args);
-}
-*/
 CHAR16 *
 PoolPrint (
   IN CHAR16             *fmt,
@@ -428,101 +324,7 @@ Returns:
   _PoolCatPrint (fmt, args, &spc, _PoolPrint);
   return spc.Str;
 }
-/*
-UINTN
-PrintToken (
-  IN UINT16           Token,
-  IN EFI_HII_HANDLE   Handle,
-  ...
-  )
- */
-/*++
 
-Routine Description:
-
-  Prints a formatted unicode string to the default console
-
-Arguments:
-
-  fmt         - Format string
-  Token       - The tokens
-  Handle      - Handle
-Returns:
-
-  Length of string printed to the console
-
---*/
-/*
-{
-  VA_LIST           args;
-  CHAR16            *StringPtr;
-  UINTN             StringSize;
-  UINTN             Value;
-  EFI_STATUS        Status;
-#if (EFI_SPECIFICATION_VERSION < 0x0002000A)
-  EFI_HII_PROTOCOL  *Hii = NULL;
-#endif
-  
-  StringPtr   = NULL;
-  StringSize  = 0x1000;
-
-#if (EFI_SPECIFICATION_VERSION < 0x0002000A)
-  //
-  // There should only be one HII protocol
-  //
-  Status = EfiLibLocateProtocol (
-            &gEfiHiiProtocolGuid,
-            (VOID **) &Hii
-            );
-  if (EFI_ERROR (Status)) {
-    return 0;
-  }
-#endif
-  //
-  // Allocate BufferSize amount of memory
-  //
-  StringPtr = AllocatePool (StringSize);
-
-  if (StringPtr == NULL) {
-    return 0;
-  }
-  //
-  // Retrieve string from HII
-  //
-#if (EFI_SPECIFICATION_VERSION < 0x0002000A)
-  Status = Hii->GetString (Hii, Handle, Token, FALSE, NULL, &StringSize, StringPtr);
-#else
-  Status = LibGetString (Handle, Token, StringPtr, &StringSize);
-#endif
-
-  if (EFI_ERROR (Status)) {
-    if (Status == EFI_BUFFER_TOO_SMALL) {
-      FreePool (StringPtr);
-      StringPtr = AllocatePool (StringSize);
-
-      //
-      // Retrieve string from HII
-      //
-#if (EFI_SPECIFICATION_VERSION < 0x0002000A)
-      Status = Hii->GetString (Hii, Handle, Token, FALSE, NULL, &StringSize, StringPtr);
-#else
-      Status = LibGetString (Handle, Token, StringPtr, &StringSize);
-#endif
-
-      if (EFI_ERROR (Status)) {
-        return 0;
-      }
-    } else {
-      return 0;
-    }
-  }
-
-  VA_START (args, Handle);
-  Value = _IPrint ((UINTN) -1, (UINTN) -1, gST->ConOut, StringPtr, NULL, args);
-  FreePool (StringPtr);
-  return Value;
-}
-*/
 UINTN
 PrintAt (
   IN UINTN      Column,
@@ -553,42 +355,7 @@ Returns:
   VA_START (args, fmt);
   return _IPrint (Column, Row, gST->ConOut, fmt, NULL, args);
 }
-/*
-CHAR16 *
-CatPrint (
-  IN OUT POOL_PRINT     *Str,
-  IN CHAR16             *fmt,
-  ...
-  )
-/ ++
 
-Routine Description:
-
-  Concatenates a formatted unicode string to allocated pool.  
-  The caller must free the resulting buffer.
-
-Arguments:
-
-  Str         - Tracks the allocated pool, size in use, and 
-                amount of pool allocated.
-
-  fmt         - The format string
-
-Returns:
-
-  Allocated buffer with the formatted string printed in it.  
-  The caller must free the allocated buffer.   The buffer
-  allocation is not packed.
-
---/
-{
-  VA_LIST args;
-
-  VA_START (args, fmt);
-  _PoolCatPrint (fmt, args, Str, _PoolPrint);
-  return Str->Str;
-}
-*/
 UINTN
 _IPrint (
   IN UINTN                            Column,
@@ -759,35 +526,7 @@ PFLUSH (
     );
   ps->Pos = ps->Buffer;
 }
-/*
-UINTN
-APrint (
-  IN CHAR8      *fmt,
-  ...
-  )
-/ ++
 
-Routine Description:
-
-    For those whom really can't deal with unicode, a print
-    function that takes an ascii format string
-
-Arguments:
-
-    fmt         - ascii format string
-
-Returns:
-
-    Length of string printed to the console
-
--- /
-{
-  VA_LIST args;
-
-  VA_START (args, fmt);
-  return _IPrint ((UINTN) -1, (UINTN) -1, gST->ConOut, NULL, fmt, args);
-}
-*/
 void
 PSETATTR (
   IN OUT PRINT_STATE    *ps,
@@ -2083,146 +1822,76 @@ LibGetPageBreak (
 {
   return mPrintMode.PageBreak;
 }
-
-BOOLEAN
-GetOutputPause (
-  VOID
-  )
+//
+VOID LowCase (IN OUT CHAR8 *Str)
 {
-  return mPrintMode.OutputPause;
-}
-/*
-INTN
-DbgPrint (
-  IN INTN       mask,
-  IN CHAR8      *fmt,
-  ...
-  )
- */
-/*++
-
-Routine Description:
-
-    Prints a formatted unicode string to the default StandardError console
-
-Arguments:
-
-    mask        - Bit mask of debug string.  If a bit is set in the
-                  mask that is also set in EFIDebug the string is 
-                  printed; otherwise, the string is not printed
-
-    fmt         - Format string
-
-Returns:
-
-    Length of string printed to the StandardError console
-
---*/
-/*
-{
-  EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL  *DbgOut;
-  PRINT_STATE                   ps;
-  VA_LIST                       args;
-  UINTN                         back;
-  UINTN                         attr;
-  UINTN                         SavedAttribute;
-
-  UPDATE_DEBUG_MASK ();
-
-  if (!(EFIDebug & mask)) {
-    return 0;
-  }
-
-  VA_START (args, fmt);
-  ZeroMem (&ps, sizeof (ps));
-
-  ps.Output     = _DbgOut;
-  ps.fmt.Ascii  = TRUE;
-  ps.fmt.u.pc   = fmt;
-  ps.args       = args;
-  ps.Attr       = EFI_TEXT_ATTR (EFI_LIGHTGRAY, EFI_RED);
-
-  DbgOut        = LibRuntimeDebugOut;
-
-  if (!DbgOut) {
-    DbgOut = gST->StdErr;
-    if (!DbgOut) {
-      DbgOut = gST->ConOut;
+  while (*Str) {
+    if (IS_UPPER(*Str)) {
+      *Str |= 0x20;
     }
+    Str++;
   }
-
-  if (DbgOut) {
-    ps.Attr     = DbgOut->Mode->Attribute;
-    ps.Context  = DbgOut;
-    ps.SetAttr  = (INTN (*) (VOID *, UINTN)) DbgOut->SetAttribute;
-  }
-
-  SavedAttribute    = ps.Attr;
-
-  back              = (ps.Attr >> 4) & 0xf;
-  ps.AttrNorm       = EFI_TEXT_ATTR (EFI_LIGHTGRAY, back);
-  ps.AttrHighlight  = EFI_TEXT_ATTR (EFI_WHITE, back);
-  ps.AttrError      = EFI_TEXT_ATTR (EFI_YELLOW, back);
-  ps.AttrBlueColor  = EFI_TEXT_ATTR (EFI_LIGHTBLUE, back);
-  ps.AttrGreenColor = EFI_TEXT_ATTR (EFI_LIGHTGREEN, back);
-
-  attr              = ps.AttrNorm;
-
-  if (mask & EFI_D_WARN) {
-    attr = ps.AttrHighlight;
-  }
-
-  if (mask & EFI_D_ERROR) {
-    attr = ps.AttrError;
-  }
-
-  if (ps.SetAttr) {
-    ps.Attr = attr;
-    ps.SetAttr (ps.Context, attr);
-  }
-
-  _PPrint (&ps);
-
-  //
-  // Restore original attributes
-  //
-  if (ps.SetAttr) {
-    ps.SetAttr (ps.Context, SavedAttribute);
-  }
-
-  return 0;
 }
 
-INTN
-_DbgOut (
-  IN VOID     *Context,
-  IN CHAR16   *Buffer
-  )
- */
-/*++
 
-Routine Description:
+UINT8 hexstrtouint8 (CHAR8* buf)
+{
+	INT8 i = 0;
+	if (IS_DIGIT(buf[0]))
+		i = buf[0]-'0';
+	else if (IS_HEX(buf[0]))
+		i = (buf[0] | 0x20) - 'a' + 10;
 
-    Append string worker for DbgPrint
+	if (AsciiStrLen(buf) == 1) {
+		return i;
+	}
+	i <<= 4;
+	if (IS_DIGIT(buf[1]))
+		i += buf[1]-'0';
+	else if (IS_HEX(buf[1]))
+		i += (buf[1] | 0x20) - 'a' + 10;
 
-Arguments:
-
-    Context - Context
-    Buffer  - Buffer
-
-Returns:
- 
-
---*/
-/*
-{ 
-  EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL  *DbgOut;
-
-  DbgOut = Context;
-  if (DbgOut) {
-    DbgOut->OutputString (DbgOut, Buffer);
-  }
-
-  return 0;
+	return i;
 }
-*/
+
+BOOLEAN IsHexDigit (CHAR8 c) {
+	return (IS_DIGIT(c) || (IS_HEX(c)))?TRUE:FALSE;
+}
+
+
+UINT32 hex2bin(IN CHAR8 *hex, OUT UINT8 *bin, UINT32 len) //assume len = number of UINT8 values
+{
+	CHAR8	*p;
+	UINT32	i, outlen = 0;
+	CHAR8	buf[3];
+
+	if (hex == NULL || bin == NULL || len <= 0 || AsciiStrLen(hex) < len * 2) {
+    //		DBG("[ERROR] bin2hex input error\n"); //this is not error, this is empty value
+		return FALSE;
+	}
+
+	buf[2] = '\0';
+	p = (CHAR8 *) hex;
+
+	for (i = 0; i < len; i++)
+	{
+		while ((*p == 0x20) || (*p == ',')) {
+			p++; //skip spaces and commas
+		}
+		if (*p == 0) {
+			break;
+		}
+		if (!IsHexDigit(p[0]) || !IsHexDigit(p[1])) {
+			MsgLog("[ERROR] bin2hex '%a' syntax error\n", hex);
+			return 0;
+		}
+		buf[0] = *p++;
+		buf[1] = *p++;
+		bin[i] = hexstrtouint8(buf);
+		outlen++;
+	}
+	bin[outlen] = 0;
+	return outlen;
+}
+
+

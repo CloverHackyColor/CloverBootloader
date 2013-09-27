@@ -30,6 +30,22 @@ Revision History
 #define EFI_TPL_CALLBACK    8
 #define EFI_TPL_NOTIFY      16
 #define EFI_TPL_HIGH_LEVEL  31
+//Unicode
+#define IS_COMMA(a)                ((a) == L',')
+#define IS_HYPHEN(a)               ((a) == L'-')
+#define IS_DOT(a)                  ((a) == L'.')
+#define IS_LEFT_PARENTH(a)         ((a) == L'(')
+#define IS_RIGHT_PARENTH(a)        ((a) == L')')
+#define IS_SLASH(a)                ((a) == L'/')
+#define IS_NULL(a)                 ((a) == L'\0')
+//Ascii
+#define IS_DIGIT(a)            (((a) >= '0') && ((a) <= '9'))
+#define IS_HEX(a)            ((((a) >= 'a') && ((a) <= 'f')) || (((a) >= 'A') && ((a) <= 'F')))
+#define IS_UPPER(a)          (((a) >= 'A') && ((a) <= 'Z'))
+#define IS_ALFA(x) (((x >= 'a') && (x <='z')) || ((x >= 'A') && (x <='Z')))
+#define IS_ASCII(x) ((x>=0x20) && (x<=0x7F))
+#define IS_PUNCT(x) ((x == '.') || (x == '-'))
+
 
 /*
 typedef struct {
@@ -178,6 +194,9 @@ WaitFor2EventWithTsc (
                       IN UINT64           Timeout OPTIONAL
                     );
 
+VOID        LowCase (IN OUT CHAR8 *Str);
+UINT32      hex2bin(IN CHAR8 *hex, OUT UINT8 *bin, UINT32 len);
+UINT8       hexstrtouint8 (CHAR8* buf); //one or two hex letters to one byte
 
 
 
