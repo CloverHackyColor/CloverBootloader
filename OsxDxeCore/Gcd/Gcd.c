@@ -148,7 +148,11 @@ CoreDumpGcdMemorySpaceMap (
     UINTN                            Index;
    
     Status = CoreGetMemorySpaceMap (&NumberOfDescriptors, &MemorySpaceMap);
-    ASSERT_EFI_ERROR (Status);
+//    ASSERT_EFI_ERROR (Status);
+    if (EFI_ERROR(Status)) {
+      DEBUG ((DEBUG_GCD, "GCD:CoreGetMemorySpaceMap failed %r\n", Status));
+      return;
+    }
 
     if (InitialMap) {
       DEBUG ((DEBUG_GCD, "GCD:Initial GCD Memory Space Map\n"));
@@ -190,8 +194,12 @@ CoreDumpGcdIoSpaceMap (
     UINTN                        Index;
     
     Status = CoreGetIoSpaceMap (&NumberOfDescriptors, &IoSpaceMap);
-    ASSERT_EFI_ERROR (Status);
-    
+              //    ASSERT_EFI_ERROR (Status);
+              if (EFI_ERROR(Status)) {
+                DEBUG ((DEBUG_GCD, "GCD:CoreGetIoSpaceMap failed %r\n", Status));
+                return;
+              }
+
     if (InitialMap) {
       DEBUG ((DEBUG_GCD, "GCD:Initial GCD I/O Space Map\n"));
     }  
@@ -412,10 +420,16 @@ CoreInsertGcdMapEntry (
   IN EFI_GCD_MAP_ENTRY     *BottomEntry
   )
 {
-  ASSERT (Length != 0);
+//  ASSERT (Length != 0);
+  if (!Length) {
+    return EFI_INVALID_PARAMETER;
+  }
 
   if (BaseAddress > Entry->BaseAddress) {
-    ASSERT (BottomEntry->Signature == 0);
+  //  ASSERT (BottomEntry->Signature == 0);
+    if (BottomEntry->Signature) {
+      return EFI_INVALID_PARAMETER;
+    }
 
     CopyMem (BottomEntry, Entry, sizeof (EFI_GCD_MAP_ENTRY));
     Entry->BaseAddress      = BaseAddress;
@@ -424,7 +438,10 @@ CoreInsertGcdMapEntry (
   }
 
   if ((BaseAddress + Length - 1) < Entry->EndAddress) {
-    ASSERT (TopEntry->Signature == 0);
+//    ASSERT (TopEntry->Signature == 0);
+    if (TopEntry->Signature) {
+      return EFI_INVALID_PARAMETER;
+    }
 
     CopyMem (TopEntry, Entry, sizeof (EFI_GCD_MAP_ENTRY));
     TopEntry->BaseAddress = BaseAddress + Length;
@@ -577,7 +594,11 @@ CoreSearchGcdMapEntry (
   LIST_ENTRY         *Link;
   EFI_GCD_MAP_ENTRY  *Entry;
 
-  ASSERT (Length != 0);
+  //  ASSERT (Length != 0);
+  if (!Length) {
+    return EFI_INVALID_PARAMETER;
+  }
+
 
   *StartLink = NULL;
   *EndLink   = NULL;
@@ -725,9 +746,9 @@ CoreConvertSpace (
   } else if ((Operation & GCD_IO_SPACE_OPERATION) != 0) {
     CoreAcquireGcdIoLock ();
     Map = &mGcdIoSpaceMap;
-  } else {
+  } /* else {
     ASSERT (FALSE);
-  }
+  } */
 
   //
   // Search for the list of descriptors that cover the range BaseAddress to BaseAddress+Length
@@ -738,7 +759,10 @@ CoreConvertSpace (
 
     goto Done;
   }
-  ASSERT (StartLink != NULL && EndLink != NULL);
+//  ASSERT (StartLink != NULL && EndLink != NULL);
+  if (!StartLink || !EndLink) {
+    return EFI_INVALID_PARAMETER;
+  }
 
   //
   // Verify that the list of descriptors are unallocated non-existent memory.
@@ -824,7 +848,11 @@ CoreConvertSpace (
     Status = EFI_OUT_OF_RESOURCES;
     goto Done;
   }
-  ASSERT (TopEntry != NULL && BottomEntry != NULL);
+//  ASSERT (TopEntry != NULL && BottomEntry != NULL);
+  if (!TopEntry || !BottomEntry) {
+    Status =  EFI_INVALID_PARAMETER;
+    goto Done;
+  }
 
   if (Operation == GCD_SET_ATTRIBUTES_MEMORY_OPERATION) {
     //
@@ -1048,9 +1076,9 @@ CoreAllocateSpace (
   } else if ((Operation & GCD_IO_SPACE_OPERATION) != 0) {
     CoreAcquireGcdIoLock ();
     Map = &mGcdIoSpaceMap;
-  } else {
+  } /*else {
     ASSERT (FALSE);
-  }
+  } */
 
   Found     = FALSE;
   StartLink = NULL;
@@ -1077,7 +1105,11 @@ CoreAllocateSpace (
       Status = EFI_NOT_FOUND;
       goto Done;
     }
-    ASSERT (StartLink != NULL && EndLink != NULL);
+//    ASSERT (StartLink != NULL && EndLink != NULL);
+    if (!StartLink || !EndLink) {
+      Status = EFI_NOT_FOUND;
+      goto Done;
+    }
 
     //
     // Verify that the list of descriptors are unallocated memory matching GcdMemoryType.
@@ -1161,7 +1193,11 @@ CoreAllocateSpace (
         Status = EFI_NOT_FOUND;
         goto Done;
       }
-      ASSERT (StartLink != NULL && EndLink != NULL);
+      //    ASSERT (StartLink != NULL && EndLink != NULL);
+      if (!StartLink || !EndLink) {
+        Status = EFI_NOT_FOUND;
+        goto Done;
+      }
 
       Link = StartLink;
       //
@@ -1197,7 +1233,11 @@ CoreAllocateSpace (
     Status = EFI_OUT_OF_RESOURCES;
     goto Done;
   }
-  ASSERT (TopEntry != NULL && BottomEntry != NULL);
+//  ASSERT (TopEntry != NULL && BottomEntry != NULL);
+  if (!TopEntry || !BottomEntry) {
+    Status = EFI_OUT_OF_RESOURCES;
+    goto Done;
+  }
 
   //
   // Convert/Insert the list of descriptors from StartLink to EndLink
@@ -1507,12 +1547,14 @@ CoreGetMemorySpaceDescriptor (
   if (EFI_ERROR (Status)) {
     Status = EFI_NOT_FOUND;
   } else {
-    ASSERT (StartLink != NULL && EndLink != NULL);
-    //
-    // Copy the contents of the found descriptor into Descriptor
-    //
-    Entry = CR (StartLink, EFI_GCD_MAP_ENTRY, Link, EFI_GCD_MAP_SIGNATURE);
-    BuildMemoryDescriptor (Descriptor, Entry);
+ //   ASSERT (StartLink != NULL && EndLink != NULL);
+    if (StartLink != NULL && EndLink != NULL) {
+      //
+      // Copy the contents of the found descriptor into Descriptor
+      //
+      Entry = CR (StartLink, EFI_GCD_MAP_ENTRY, Link, EFI_GCD_MAP_SIGNATURE);
+      BuildMemoryDescriptor (Descriptor, Entry);
+    }
   }
 
   CoreReleaseGcdMemoryLock ();
@@ -1551,8 +1593,8 @@ CoreSetMemorySpaceAttributes (
   IN UINT64                Attributes
   )
 {
-  DEBUG ((DEBUG_GCD, "GCD:SetMemorySpaceAttributes(Base=%016lx,Length=%016lx)\n", BaseAddress, Length));
-  DEBUG ((DEBUG_GCD, "  Attributes  = %016lx\n", Attributes));
+//  DEBUG ((DEBUG_GCD, "GCD:SetMemorySpaceAttributes(Base=%016lx,Length=%016lx)\n", BaseAddress, Length));
+//  DEBUG ((DEBUG_GCD, "  Attributes  = %016lx\n", Attributes));
 
   return CoreConvertSpace (GCD_SET_ATTRIBUTES_MEMORY_OPERATION, (EFI_GCD_MEMORY_TYPE) 0, (EFI_GCD_IO_TYPE) 0, BaseAddress, Length, 0, Attributes);
 }
@@ -1814,12 +1856,14 @@ CoreGetIoSpaceDescriptor (
   if (EFI_ERROR (Status)) {
     Status = EFI_NOT_FOUND;
   } else {
-    ASSERT (StartLink != NULL && EndLink != NULL);
-    //
-    // Copy the contents of the found descriptor into Descriptor
-    //
-    Entry = CR (StartLink, EFI_GCD_MAP_ENTRY, Link, EFI_GCD_MAP_SIGNATURE);
-    BuildIoDescriptor (Descriptor, Entry);
+//    ASSERT (StartLink != NULL && EndLink != NULL);
+    if (StartLink != NULL && EndLink != NULL) {
+      //
+      // Copy the contents of the found descriptor into Descriptor
+      //
+      Entry = CR (StartLink, EFI_GCD_MAP_ENTRY, Link, EFI_GCD_MAP_SIGNATURE);
+      BuildIoDescriptor (Descriptor, Entry);
+    }
   }
 
   CoreReleaseGcdIoLock ();
@@ -1977,7 +2021,10 @@ CoreInitializeMemoryServices (
   // Point at the first HOB.  This must be the PHIT HOB.
   //
   Hob.Raw = *HobStart;
-  ASSERT (GET_HOB_TYPE (Hob) == EFI_HOB_TYPE_HANDOFF);
+//  ASSERT (GET_HOB_TYPE (Hob) == EFI_HOB_TYPE_HANDOFF);
+  if (GET_HOB_TYPE (Hob) != EFI_HOB_TYPE_HANDOFF) {
+    return EFI_INVALID_PARAMETER;
+  }
 
   //
   // Initialize the spin locks and maps in the memory services.
@@ -2092,8 +2139,10 @@ CoreInitializeMemoryServices (
   //
   // Assert if a resource descriptor HOB for the memory region described by the PHIT was not found
   //
-  ASSERT (Found);
-
+//  ASSERT (Found);
+  if (!Found) {
+    return EFI_INVALID_PARAMETER;
+  }
   //
   // Search all the resource descriptor HOBs from the highest possible addresses down for a memory
   // region that is big enough to initialize the DXE core.  Always skip the PHIT Resource HOB.
@@ -2169,7 +2218,10 @@ CoreInitializeMemoryServices (
   //
   // If no memory regions are found that are big enough to initialize the DXE core, then ASSERT().
   //
-  ASSERT (Length >= MINIMUM_INITIAL_MEMORY_SIZE);
+//  ASSERT (Length >= MINIMUM_INITIAL_MEMORY_SIZE);
+  if (Length < MINIMUM_INITIAL_MEMORY_SIZE) {
+    return EFI_ACCESS_DENIED;
+  }
 
   //
   // Convert the Resource HOB Attributes to an EFI Memory Capabilities mask
@@ -2244,7 +2296,10 @@ CoreInitializeGcdServices (
   // Get the number of address lines in the I/O and Memory space for the CPU
   //
   CpuHob = GetFirstHob (EFI_HOB_TYPE_CPU);
-  ASSERT (CpuHob != NULL);
+//  ASSERT (CpuHob != NULL);
+  if (!CpuHob) {
+    return EFI_INVALID_PARAMETER;
+  }
   SizeOfMemorySpace = CpuHob->SizeOfMemorySpace;
   SizeOfIoSpace     = CpuHob->SizeOfIoSpace;
 
@@ -2252,7 +2307,10 @@ CoreInitializeGcdServices (
   // Initialize the GCD Memory Space Map
   //
   Entry = AllocateCopyPool (sizeof (EFI_GCD_MAP_ENTRY), &mGcdMemorySpaceMapEntryTemplate);
-  ASSERT (Entry != NULL);
+//  ASSERT (Entry != NULL);
+  if (!Entry) {
+    return EFI_NOT_AVAILABLE_YET;
+  }
 
   Entry->EndAddress = LShiftU64 (1, SizeOfMemorySpace) - 1;
 
@@ -2264,7 +2322,10 @@ CoreInitializeGcdServices (
   // Initialize the GCD I/O Space Map
   //
   Entry = AllocateCopyPool (sizeof (EFI_GCD_MAP_ENTRY), &mGcdIoSpaceMapEntryTemplate);
-  ASSERT (Entry != NULL);
+//  ASSERT (Entry != NULL);
+  if (!Entry) {
+    return EFI_NOT_AVAILABLE_YET;
+  }
 
   Entry->EndAddress = LShiftU64 (1, SizeOfIoSpace) - 1;
 
@@ -2316,7 +2377,7 @@ CoreInitializeGcdServices (
         //
         // Validate the Resource HOB Attributes
         //
-        CoreValidateResourceDescriptorHobAttributes (ResourceHob->ResourceAttribute);
+     //   CoreValidateResourceDescriptorHobAttributes (ResourceHob->ResourceAttribute);
 
         //
         // Convert the Resource HOB Attributes to an EFI Memory Capabilities mask
@@ -2409,7 +2470,10 @@ CoreInitializeGcdServices (
                  (UINTN)PhitHob->EfiFreeMemoryBottom - (UINTN)(*HobStart),
                  *HobStart
                  );
-  ASSERT (NewHobList != NULL);
+//  ASSERT (NewHobList != NULL);
+  if (!NewHobList) {
+    return EFI_NOT_AVAILABLE_YET;
+  }
 
   *HobStart = NewHobList;
   gHobList  = NewHobList;
@@ -2418,7 +2482,11 @@ CoreInitializeGcdServices (
   // Add and allocate the remaining unallocated system memory to the memory services.
   //
   Status = CoreGetMemorySpaceMap (&NumberOfDescriptors, &MemorySpaceMap);
-  ASSERT (Status == EFI_SUCCESS);
+//  ASSERT (Status == EFI_SUCCESS);
+  if (EFI_ERROR(Status)) {
+    return Status;
+  }
+
 
   for (Index = 0; Index < NumberOfDescriptors; Index++) {
     if (MemorySpaceMap[Index].GcdMemoryType == EfiGcdMemoryTypeSystemMemory) {

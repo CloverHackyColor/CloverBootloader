@@ -750,11 +750,12 @@ VOID CheckHardware()
               layoutId = (UINT32)gSettings.HDALayoutId;
               DBG("Audio HDA (addr:0x%x) setting specified layout-id=%d (0x%x)\n", HDAADR1, layoutId, layoutId);
             }
-            if (layoutId > 0) {
+            if (Pci.Hdr.VendorId == 0x8086) { //this is HDA
               HDAFIX = TRUE;
               HDAcodecId = codecId;
               HDAlayoutId = layoutId;
-            } else {
+            }
+            if (Pci.Hdr.VendorId != 0x8086) { //this is HDMI
               GFXHDAFIX = TRUE;
               GfxcodecId[gfxid] = codecId;
               GfxlayoutId[gfxid] = layoutId;
@@ -1968,16 +1969,15 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len, INT32 VCard)
   CHAR8 *hdmi = NULL;
   UINT32 devadr=0, devsize=0, devadr1=0, devsize1=0;
   BOOLEAN DISPLAYFIX = FALSE;
-  AML_CHUNK* root = NULL;
-  AML_CHUNK* gfx0;
-  AML_CHUNK* met;
-  AML_CHUNK* pack;
-  AML_CHUNK* hdaudev;
-  AML_CHUNK* device;
+  AML_CHUNK *root = NULL;
+  AML_CHUNK *gfx0, *peg0;
+  AML_CHUNK *met;
+  AML_CHUNK *pack;
+  AML_CHUNK *hdaudev;
+  AML_CHUNK *device;
   UINT32 FakeID = 0;
   UINT32 FakeVen = 0;
   DisplayName1 = FALSE;
-  
 
   PCIADR = GetPciDevice(dsdt, len);
   if (PCIADR) {
@@ -1988,7 +1988,7 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len, INT32 VCard)
   DBG("Start Display%d Fix\n", VCard);
 	//DBG("len = 0x%08x\n", len);
   // Display device_id
-  root = aml_create_node(NULL);
+
   gfx0 = aml_create_node(NULL);
   met = aml_create_node(NULL);
   
@@ -2010,8 +2010,9 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len, INT32 VCard)
 
   //what if PEG0 is not found?
   if (devadr) {
+    root = aml_create_node(NULL);
     for (j=devadr; j<devadr+devsize; j++) { //search card inside PEG0@0
-      if (CmpAdr(dsdt, j, 0)) {
+      if (CmpAdr(dsdt, j, DisplayADR2[VCard])) {
         devadr1 = devFind(dsdt, j); //found PEGP
         if (!devadr1) {
           continue;
@@ -2043,9 +2044,9 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len, INT32 VCard)
         }
       }
     }
-    if (DISPLAYFIX) { // bridge or device
+    if (DISPLAYFIX) { // device on bridge
       i = devadr1;
-    } else if (DisplayADR1[VCard] == 0xFFFE) {
+    } else if (DisplayADR2[VCard] == 0xFFFE) { //builtin
       i = devadr;
     } else i=0;
     if (i != 0) {
@@ -2062,7 +2063,8 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len, INT32 VCard)
           DBG("_DSM in display already exists, dropped\n");
         } else {
           DBG("_DSM already exists, patch display will not be applied\n");
-          return len;
+  //        return len;
+          DisplayADR1[VCard] = 0;
         }
       }
     }
@@ -2070,22 +2072,25 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len, INT32 VCard)
 
 
   if (DisplayADR1[VCard]) {
-    if (!DisplayName1) {   //bridge or builtin not found
-      gfx0 = aml_add_device(root, "GFX0");
+    if (!DisplayName1) {
+      peg0 = aml_add_device(root, "PEG0");
+      aml_add_name(peg0, "_ADR");
+      aml_add_dword(peg0, DisplayADR1[VCard]);
+    } else
+      peg0 = root;
+
+    if (!DISPLAYFIX) {   //bridge or builtin not found
+      gfx0 = aml_add_device(peg0, "GFX0");
       aml_add_name(gfx0, "_ADR");
       if (DisplayADR2[VCard] > 0x3F)
         aml_add_dword(gfx0, DisplayADR2[VCard]);
       else
         aml_add_byte(gfx0, (UINT8)DisplayADR2[VCard]);
-    }
+    } else
+      gfx0 = peg0;
     // Intel GMA and HD
     if (DisplayVendor[VCard] == 0x8086) {
-      if (DisplayName1) {
-        met = aml_add_method(root, "_DSM", 4);
-      } else {
-        met = aml_add_method(gfx0, "_DSM", 4);
-      }
-
+      met = aml_add_method(gfx0, "_DSM", 4);
       met = aml_add_store(met);
       pack = aml_add_package(met);
       
@@ -2106,12 +2111,7 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len, INT32 VCard)
     
     // NVIDIA
     if (DisplayVendor[VCard] == 0x10DE) {
-      
-      if (!DISPLAYFIX) {
-        met = aml_add_method(gfx0, "_DSM", 4);
-      } else {
-        met = aml_add_method(root, "_DSM", 4);
-      }
+      met = aml_add_method(gfx0, "_DSM", 4);
       met = aml_add_store(met);
       pack = aml_add_package(met);
       
@@ -2174,7 +2174,7 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len, INT32 VCard)
       pack = aml_add_package(met);
       if (!AddProperties(pack, DEV_HDMI)) {
         aml_add_string(pack, "layout-id");
-        aml_add_byte_buffer(pack, (CHAR8*)&GfxlayoutId[1], 4);
+        aml_add_byte_buffer(pack, (CHAR8*)&GfxlayoutId[VCard], 4);
         aml_add_string(pack, "hda-gfx");
         aml_add_string_buffer(pack, "onboard-2");
         aml_add_string(pack, "PinConfigurations");
@@ -2183,7 +2183,7 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len, INT32 VCard)
       aml_add_local0(met);
       aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
       // finish Method(_DSM,4,NotSerialized)
-      
+
       aml_calculate_size(hdaudev);
       hdmi = AllocateZeroPool(hdaudev->Size);
       sizeoffset2 = hdaudev->Size;
@@ -2206,9 +2206,6 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len, INT32 VCard)
   }
   
 //now insert video
-  if (gfx0) {
-    root = gfx0; //memory leak?
-  }
   aml_calculate_size(root);
   display = AllocateZeroPool(root->Size);
   sizeoffset = root->Size;
@@ -2218,12 +2215,12 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len, INT32 VCard)
   if (DisplayName1) {   //bridge is present
     // move data to back for add Display
     if (!DISPLAYFIX) {   //subdevice absent
-      i = devadr+devsize;
+      i = devadr + devsize;
       len = move_data(i, dsdt, len, sizeoffset);
       CopyMem(dsdt+i, display, sizeoffset);
       len = CorrectOuters(dsdt, len, devadr-3, sizeoffset);
     } else {
-      i = devadr1+devsize1;
+      i = devadr1 + devsize1;
       len = move_data(i, dsdt, len, sizeoffset);
       CopyMem(dsdt+i, display, sizeoffset);
       j = write_size(devadr1, dsdt, len, sizeoffset);
@@ -2231,25 +2228,29 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len, INT32 VCard)
       len += j;
       len = CorrectOuters(dsdt, len, devadr1-3, sizeoffset);
     }
-  } else {
+  } else { //insert PEG0 into PCI0 at the end
     i = PCIADR + PCISIZE;
-    devadr = i + 2;
+    devadr = i + 2;  //skip 5B 82
     len = move_data(i, dsdt, len, sizeoffset);
-    CopyMem(dsdt+i, display, sizeoffset);
-    if (hdmi) {
-      len = move_data(i+sizeoffset, dsdt, len, sizeoffset2);
-      CopyMem(dsdt+i+sizeoffset, hdmi, sizeoffset2);
-      sizeoffset += sizeoffset2;
-      j = write_size(devadr, dsdt, len, sizeoffset);
-      sizeoffset += j;
-      len += j;
-    }
-    // Fix PCIX size
+    CopyMem(dsdt + i, display, sizeoffset);
+    // Fix PCI0 size
     k = write_size(PCIADR, dsdt, len, sizeoffset);
     sizeoffset += k;
     len += k;
     len = CorrectOuters(dsdt, len, PCIADR-3, sizeoffset);    
   }
+    if (hdmi) { //not inserted yet because PEG0 was absent
+      k = get_size(dsdt, devadr);
+      if (k > 0) {
+        i = devadr + k;
+        len = move_data(i, dsdt, len, sizeoffset2);
+        CopyMem(dsdt + i, hdmi, sizeoffset2);
+        j = write_size(devadr, dsdt, len, sizeoffset2);
+        sizeoffset2 += j;
+        len += j;
+        len = CorrectOuters(dsdt, len, devadr-3, sizeoffset2);
+      }
+    }
   
   if (CFGname) {
     FreePool(CFGname);
