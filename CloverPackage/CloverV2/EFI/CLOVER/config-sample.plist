@@ -115,12 +115,6 @@
 		<string>en:0</string>
 		<key>Theme</key>
 		<string>metal</string>
-		<key>Timeout</key>
-		<integer>5</integer>
-		<key>DefaultBootVolume</key>
-		<string>SnowHD</string>
-		<key>DebugLog</key>
-		<false/>
 		<key>Mouse</key>
 		<dict>
 			<key>Enabled</key>
