@@ -905,12 +905,12 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
     // Kernel patches
     //
     DBG_RT("Enabled: ");
-    if ((gCPUStructure.Family!=0x06 && AsciiStrStr(OSVersion,"10.7")!=0)||
+ /*   if ((gCPUStructure.Family!=0x06 && AsciiStrStr(OSVersion,"10.7")!=0)||
         (gCPUStructure.Model==CPU_MODEL_ATOM &&
          ((AsciiStrStr(OSVersion,"10.7")!=0) || AsciiStrStr(OSVersion,"10.6")!=0)) ||
         (gCPUStructure.Model==CPU_MODEL_IVY_BRIDGE && AsciiStrStr(OSVersion,"10.7")!=0) ||
         (gCPUStructure.Model==CPU_MODEL_IVY_BRIDGE_E5 && AsciiStrStr(OSVersion,"10.7")!=0)
-        ) {
+        ) { */
       KernelAndKextPatcherInit();
       if (KernelData == NULL) {
         if (gSettings.KPDebug) {
@@ -928,9 +928,9 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
         KernelPatcher_32(KernelData);
       }
       DBG_RT(" OK\n");
-    } else {
+ /*   } else {
       DBG_RT(" Not executed!\n");
-    }
+    } */
   } else {
     DBG_RT("Not done - Disabled.\n");
   }
