@@ -908,7 +908,7 @@ UINT32 get_size(UINT8* Buffer, UINT32 adr)
 	} 
   else {
   //  DBG("wrong pointer to size field at %x\n", adr);
-    return 0;  //this means wrong pointer to size field
+    return 0;  
   }
 	return temp;
 }
@@ -1273,16 +1273,6 @@ UINT32 DeleteDevice(/*CONST*/ CHAR8 *Name, UINT8 *dsdt, UINT32 len)
   INT32 size = 0, sizeoffset;
   DBG(" deleting device %a\n", Name);
   for (i=20; i<len; i++) {
-   /* if ((dsdt[i+0] == Name[0]) && (dsdt[i+1] == Name[1]) &&
-        (dsdt[i+2] == Name[2]) && (dsdt[i+3] == Name[3]) &&
-        ((dsdt[i-3] == 0x82) || (dsdt[i-2] == 0x82)) && 
-        ((dsdt[i-4] == 0x5B) || (dsdt[i-3] == 0x5B))) { */
- /*   if (CmpDev(dsdt, i, Name)) {
-      if ((dsdt[i-3] == 0x82) && (dsdt[i-4] == 0x5B)) {
-        j = i - 2;
-      } else {
-        j = i - 1;
-      } */
     j = CmpDev(dsdt, i, (UINT8*)Name);
     if (j != 0) {
       size = get_size(dsdt, j);
@@ -2252,20 +2242,20 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len, INT32 VCard)
     len = k;
   }
 
-    if (hdmi) { //not inserted yet because PEG0 was absent
-      DBG("insert HDAU into created bridge @0x%x\n", devadr);
-      k = get_size(dsdt, devadr);
-      if (k > 0) {
-        i = devadr + k;
-        len = move_data(i, dsdt, len, sizeoffset2);
-        CopyMem(dsdt + i, hdmi, sizeoffset2);
-        j = write_size(devadr, dsdt, len, sizeoffset2);
-        sizeoffset2 += j;
-        len += j;
-        len = CorrectOuters(dsdt, len, devadr-3, sizeoffset2);
-      }
+  if (hdmi) { //not inserted yet because PEG0 was absent
+    DBG("insert HDAU into created bridge @0x%x\n", devadr);
+    k = get_size(dsdt, devadr);
+    if (k > 0) {
+      i = devadr + k;
+      len = move_data(i, dsdt, len, sizeoffset2);
+      CopyMem(dsdt + i, hdmi, sizeoffset2);
+      j = write_size(devadr, dsdt, len, sizeoffset2);
+      sizeoffset2 += j;
+      len += j;
+      len = CorrectOuters(dsdt, len, devadr-3, sizeoffset2);
     }
-  
+  }
+
   if (CFGname) {
     FreePool(CFGname);
   }

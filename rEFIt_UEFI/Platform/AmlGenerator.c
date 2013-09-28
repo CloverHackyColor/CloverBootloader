@@ -479,7 +479,7 @@ UINT32 aml_calculate_size(AML_CHUNK* node)
 		{
 			case AML_CHUNK_NONE:
 			case AML_STORE_OP:
-            case AML_CHUNK_LOCAL0:
+      case AML_CHUNK_LOCAL0:
 				node->Size += node->Length;
 				break;  
             
@@ -628,12 +628,12 @@ UINT32 aml_write_node(AML_CHUNK* node, CHAR8* buffer, UINT32 offset)
 			case AML_CHUNK_DEVICE:
 				offset = aml_write_byte(AML_CHUNK_OP, buffer, offset);
 				offset = aml_write_byte(node->Type, buffer, offset);
-				offset = aml_write_size(node->Size-3, buffer, offset);
+				offset = aml_write_size(node->Size-2, buffer, offset);
 				offset = aml_write_buffer(node->Buffer, node->Length, buffer, offset);
 				break;
 
 			case AML_CHUNK_SCOPE:
-            case AML_CHUNK_METHOD:        
+      case AML_CHUNK_METHOD:
 			case AML_CHUNK_PACKAGE:
 			case AML_CHUNK_BUFFER:
 				offset = aml_write_byte(node->Type, buffer, offset);
@@ -642,12 +642,9 @@ UINT32 aml_write_node(AML_CHUNK* node, CHAR8* buffer, UINT32 offset)
 				break;
 				
 			case AML_CHUNK_BYTE:
-				if (node->Buffer[0] == 0x0 || node->Buffer[0] == 0x1) 
-				{
+				if (node->Buffer[0] == 0x0 || node->Buffer[0] == 0x1) {
 					offset = aml_write_buffer(node->Buffer, node->Length, buffer, offset);
-				}
-				else 
-				{
+				} else {
 					offset = aml_write_byte(node->Type, buffer, offset);
 					offset = aml_write_buffer(node->Buffer, node->Length, buffer, offset);
 				}
@@ -658,8 +655,8 @@ UINT32 aml_write_node(AML_CHUNK* node, CHAR8* buffer, UINT32 offset)
 			case AML_CHUNK_QWORD:
 			case AML_CHUNK_ALIAS:
 			case AML_CHUNK_NAME:
-            case AML_CHUNK_RETURN:
-            case AML_CHUNK_STRING:
+      case AML_CHUNK_RETURN:
+      case AML_CHUNK_STRING:
 				offset = aml_write_byte(node->Type, buffer, offset);
 				offset = aml_write_buffer(node->Buffer, node->Length, buffer, offset);
 				break;
@@ -668,16 +665,15 @@ UINT32 aml_write_node(AML_CHUNK* node, CHAR8* buffer, UINT32 offset)
 				break;
 		}
 
-		while (child) 
-		{
+		while (child) {
 			offset = aml_write_node(child, buffer, offset);
-			
 			child = child->Next;
 		}
 		
-		if (offset - old != node->Size) 
+		if (offset - old != node->Size) {
 			MsgLog("Node size incorrect: type=0x%x size=%x offset=%x\n",
              node->Type, node->Size, (offset - old));
+    }
 	}
 	
 	return offset;
