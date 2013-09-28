@@ -378,13 +378,6 @@ MainPostBuildScript() {
     export BUILD_DIR="${WORKSPACE}/Build/Clover/${BUILDTARGET}_${TOOLCHAIN}"
     export BUILD_DIR_ARCH="${BUILD_DIR}/$TARGETARCH"
 
-    #[ ! -f $BUILD_DIR/FV/DUETEFIMAINFV.z ] && \
-    #echo "ERROR: Build not finished exiting PostBuild Part..." && exit
-
-    #
-    # Boot sector module could only be built under IA32 tool chain - sure?
-    #
-
     echo Compressing DUETEFIMainFv.FV ...
     "$BASETOOLS_DIR"/LzmaCompress -e -o "${BUILD_DIR}/FV/DUETEFIMAINFV${TARGETARCH}.z" "${BUILD_DIR}/FV/DUETEFIMAINFV${TARGETARCH}.Fv"
 
@@ -405,8 +398,6 @@ MainPostBuildScript() {
          "${BUILD_DIR}"/FV/DxeMain${TARGETARCH}.z                  \
          "${BUILD_DIR}"/FV/DUETEFIMAINFV${TARGETARCH}.z
 
-#        cat $BOOTSECTOR_BIN_DIR/start32.com $BOOTSECTOR_BIN_DIR/efi32.com3 \
-#         "${BUILD_DIR}"/FV/Efildr32 > "${BUILD_DIR}"/FV/Efildr20
         cat $BOOTSECTOR_BIN_DIR/start32H.com2 $BOOTSECTOR_BIN_DIR/efi32.com3 \
          "${BUILD_DIR}"/FV/Efildr32 > "${BUILD_DIR}"/FV/boot
 
@@ -449,16 +440,12 @@ MainPostBuildScript() {
          "${BUILD_DIR}"/FV/DxeIpl${TARGETARCH}.z                   \
          "${BUILD_DIR}"/FV/DxeMain${TARGETARCH}.z                  \
          "${BUILD_DIR}"/FV/DUETEFIMAINFV${TARGETARCH}.z
-
-        #cat $BOOTSECTOR_BIN_DIR/Start64.com $BOOTSECTOR_BIN_DIR/efi64.com2 "${BUILD_DIR}"/FV/Efildr64 > "${BUILD_DIR}"/FV/EfildrPure
-        #"$BASETOOLS_DIR"/GenPage "${BUILD_DIR}"/FV/EfildrPure -o "${BUILD_DIR}"/FV/Efildr
-        #cat $BOOTSECTOR_BIN_DIR/St16_64.com $BOOTSECTOR_BIN_DIR/efi64.com2 "${BUILD_DIR}"/FV/Efildr64 > "${BUILD_DIR}"/FV/Efildr16Pure
-        #"$BASETOOLS_DIR"/GenPage "${BUILD_DIR}"/FV/Efildr16Pure -o "${BUILD_DIR}"/FV/Efildr16
-        cat $BOOTSECTOR_BIN_DIR/Start64H.com $BOOTSECTOR_BIN_DIR/efi64.com3 "${BUILD_DIR}"/FV/Efildr64 > "${BUILD_DIR}"/FV/Efildr20Pure
+	if [[ "$USE_BIOS_BLOCKIO" -ne 0 ]]; then
+        cat $BOOTSECTOR_BIN_DIR/Start64H2.com $BOOTSECTOR_BIN_DIR/efi64.com3 "${BUILD_DIR}"/FV/Efildr64 > "${BUILD_DIR}"/FV/Efildr20Pure
+    else
+        cat $BOOTSECTOR_BIN_DIR/Start64H.com $BOOTSECTOR_BIN_DIR/efi64.com3 "${BUILD_DIR}"/FV/Efildr64 > "${BUILD_DIR}"/FV/Efildr20Pure    
+    fi
         "$BASETOOLS_DIR"/GenPage "${BUILD_DIR}"/FV/Efildr20Pure -o "${BUILD_DIR}"/FV/Efildr20
-        #cat $BOOTSECTOR_BIN_DIR/Start64.com2 $BOOTSECTOR_BIN_DIR/efi64.com2 "${BUILD_DIR}"/FV/Efildr64 > "${BUILD_DIR}"/FV/bootPure
-        #"$BASETOOLS_DIR"/GenPage "${BUILD_DIR}"/FV/bootPure -o "${BUILD_DIR}"/FV/boot
-
         # Create CloverEFI file
         dd if="${BUILD_DIR}"/FV/Efildr20 of="${BUILD_DIR}"/FV/boot bs=512 skip=1
 

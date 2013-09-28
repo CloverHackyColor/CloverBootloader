@@ -53,6 +53,8 @@
 	</dict>
 	<key>ACPI</key>
 	<dict>
+		<key>HaltEnabler</key>
+		<false/>
 		<key>DSDT</key>
 		<dict>
 			<key>Debug</key>
@@ -90,8 +92,6 @@
 			<integer>0</integer>
 			<key>MinMultiplier</key>
 			<integer>8</integer>
-			<key>PluginType</key>
-			<integer>0</integer>
 		</dict>
 	</dict>
 	<key>DisableDrivers</key>

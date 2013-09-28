@@ -178,11 +178,11 @@ VOID RefillInputs(VOID)
   InputItems[InputItemsCount].ItemType = BoolValue;  //5
   InputItems[InputItemsCount].BValue = gSettings.GeneratePStates;
   InputItems[InputItemsCount++].SValue = gSettings.GeneratePStates?L"[+]":L"[ ]";
-  //no more used
-//  InputItems[InputItemsCount].ItemType = BoolValue;  //6
-//  InputItems[InputItemsCount].BValue = gSettings.Turbo;
-//  InputItems[InputItemsCount++].SValue = gSettings.Turbo?L"[+]":L"[ ]";
-  InputItemsCount = 7;
+
+  InputItems[InputItemsCount].ItemType = BoolValue;  //6
+  InputItems[InputItemsCount].BValue = gSettings.SlpSmiEnable;
+  InputItems[InputItemsCount++].SValue = gSettings.SlpSmiEnable?L"[+]":L"[ ]";
+//  InputItemsCount = 7;
   InputItems[InputItemsCount].ItemType = Decimal;  //7
   InputItems[InputItemsCount++].SValue = PoolPrint(L"%02d", gSettings.PLimitDict);
   InputItems[InputItemsCount].ItemType = Decimal;  //8
@@ -476,10 +476,10 @@ VOID FillInputs(VOID)
   InputItems[InputItemsCount].ItemType = BoolValue;  //5
   InputItems[InputItemsCount].BValue = gSettings.GeneratePStates;
   InputItems[InputItemsCount++].SValue = gSettings.GeneratePStates?L"[+]":L"[ ]";
-//  InputItems[InputItemsCount].ItemType = BoolValue;  //6
-//  InputItems[InputItemsCount].BValue = gSettings.Turbo;
-//  InputItems[InputItemsCount++].SValue = gSettings.Turbo?L"[+]":L"[ ]";
-  InputItemsCount = 7;
+  InputItems[InputItemsCount].ItemType = BoolValue;  //6
+  InputItems[InputItemsCount].BValue = gSettings.SlpSmiEnable;
+  InputItems[InputItemsCount++].SValue = gSettings.SlpSmiEnable?L"[+]":L"[ ]";
+//  InputItemsCount = 7;
   InputItems[InputItemsCount].ItemType = Decimal;  //7
   InputItems[InputItemsCount++].SValue = PoolPrint(L"%02d", gSettings.PLimitDict);
   InputItems[InputItemsCount].ItemType = Decimal;  //8
@@ -802,9 +802,9 @@ VOID ApplyInputs(VOID)
     gSettings.GeneratePStates = InputItems[i].BValue;
   }
   i++; //6
-/*  if (InputItems[i].Valid) {
-    gSettings.Turbo = InputItems[i].BValue;
-  } */
+  if (InputItems[i].Valid) {
+    gSettings.SlpSmiEnable = InputItems[i].BValue;
+  }
   i++; //7
   if (InputItems[i].Valid) {
 //    DBG("InputItems[i]: %s\n", InputItems[i].SValue);
@@ -2851,17 +2851,17 @@ REFIT_MENU_ENTRY  *SubMenuSpeedStep()
   InputBootArgs->Entry.AtClick = ActionEnter;
   InputBootArgs->Entry.AtRightClick = ActionDetails;
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-/*  
+
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"Turbo:");
+  InputBootArgs->Entry.Title = PoolPrint(L"Halt Enabler:");
   InputBootArgs->Entry.Tag = TAG_INPUT;
   InputBootArgs->Entry.Row = 0xFFFF; //cursor
-  InputBootArgs->Entry.ShortcutLetter = 'T';
+  InputBootArgs->Entry.ShortcutLetter = 'H';
   InputBootArgs->Item = &InputItems[6];    
   InputBootArgs->Entry.AtClick = ActionEnter;
   InputBootArgs->Entry.AtRightClick = ActionDetails;
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-*/  
+
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
   InputBootArgs->Entry.Title = PoolPrint(L"PLimitDict:");
   InputBootArgs->Entry.Tag = TAG_INPUT;
@@ -2933,7 +2933,7 @@ REFIT_MENU_ENTRY  *SubMenuSpeedStep()
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
   
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"EnableISS:");
+  InputBootArgs->Entry.Title = PoolPrint(L"Use SystemIO:");
   InputBootArgs->Entry.Tag = TAG_INPUT;
   InputBootArgs->Entry.Row = 0xFFFF; //cursor
   InputBootArgs->Entry.ShortcutLetter = 'S';

@@ -1,7 +1,7 @@
 /** @file
   BDS Lib functions which relate with create or process the boot option.
 
-Copyright (c) 2004 - 2012, Intel Corporation. All rights reserved.<BR>
+Copyright (c) 2004 - 2013, Intel Corporation. All rights reserved.<BR>
 This program and the accompanying materials
 are licensed and made available under the terms and conditions of the BSD License
 which accompanies this distribution.  The full text of the license may be found at
@@ -2682,17 +2682,16 @@ BdsExpandPartitionPartialDevicePathToFull (
           TempNewDevicePath = CachedDevicePath;
           CachedDevicePath = BdsLibDelPartMatchInstance (CachedDevicePath, BlockIoDevicePath);
           FreePool(TempNewDevicePath);
-
-          TempNewDevicePath = CachedDevicePath;
-          CachedDevicePath = AppendDevicePathInstance (BlockIoDevicePath, CachedDevicePath);
-          if (TempNewDevicePath != NULL) {
-            FreePool(TempNewDevicePath);
-          }
-        } else {
-          TempNewDevicePath = CachedDevicePath;
-          CachedDevicePath = AppendDevicePathInstance (BlockIoDevicePath, CachedDevicePath);
-          FreePool(TempNewDevicePath);
         }
+
+        if (CachedDevicePath != NULL) {
+          TempNewDevicePath = CachedDevicePath;
+          CachedDevicePath = AppendDevicePathInstance (BlockIoDevicePath, CachedDevicePath);
+            FreePool(TempNewDevicePath);
+        } else {
+          CachedDevicePath = DuplicateDevicePath (BlockIoDevicePath);
+        }
+
         //
         // Here limit the device path instance number to 12, which is max number for a system support 3 IDE controller
         // If the user try to boot many OS in different HDs or partitions, in theory, 

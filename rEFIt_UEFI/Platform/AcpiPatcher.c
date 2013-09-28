@@ -1460,12 +1460,6 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
 	EFI_ACPI_4_0_FIXED_ACPI_DESCRIPTION_TABLE		*newFadt	 = NULL;
   //	EFI_ACPI_HIGH_PRECISION_EVENT_TIMER_TABLE_HEADER	*Hpet    = NULL;
 	EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE	*Facs = NULL;
-  //	EFI_GUID										*gTableGuidArray[] = {&gEfiAcpi20TableGuid, &gEfiAcpi10TableGuid};
-  //	EFI_PEI_HOB_POINTERS							GuidHob;
-  //	EFI_PEI_HOB_POINTERS							HobStart;
-  //	EFI_DEVICE_PATH_PROTOCOL*	PathBooter = NULL;
-  //	EFI_DEVICE_PATH_PROTOCOL*	FilePath;
-  //	EFI_HANDLE					FileSystemHandle;
 	EFI_PHYSICAL_ADDRESS		dsdt = EFI_SYSTEM_TABLE_MAX_ADDRESS; //0xFE000000;
 	EFI_PHYSICAL_ADDRESS		BufferPtr;
   SSDT_TABLE              *Ssdt = NULL;
@@ -1473,7 +1467,6 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
 	UINTN                   bufferLen = 0;
 	CHAR16*                 PathPatched   = L"\\EFI\\CLOVER\\ACPI\\patched";
 	CHAR16*                 PathDsdt;    //  = L"\\DSDT.aml";
- // CHAR16*                 PathDsdtMini  = L"\\EFI\\CLOVER\\ACPI\\mini\\DSDT.aml";
   CHAR16*                 PatchedAPIC = L"\\EFI\\CLOVER\\ACPI\\origin\\APIC-p.aml";
 	UINT32*                 rf = NULL;
 	UINT64*                 xf = NULL;
@@ -1795,53 +1788,58 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
     } 
     FadtPointer->Header.Checksum = 0;
     FadtPointer->Header.Checksum = (UINT8)(256-Checksum8((CHAR8*)FadtPointer, FadtPointer->Header.Length));
-    
+    if (gSettings.SlpSmiEnable) {
+      UINT32 *SlpSmiEn = (UINT32*)((UINTN)(newFadt->Pm1aEvtBlk) + 0x30);
+      UINT32 Value = *SlpSmiEn;
+      Value &= ~ bit(4);
+      *SlpSmiEn = Value;
+    }
   }
   
-  /*  
-   BufferPtr = EFI_SYSTEM_TABLE_MAX_ADDRESS;
-   Status=gBS->AllocatePages(AllocateMaxAddress, EfiACPIReclaimMemory, 1, &BufferPtr);
-   if(!EFI_ERROR(Status))
-   {
-   xf = ScanXSDT(HPET_SIGN);
-   if(!xf) { //we want to make the new table if OEM is not found
-   DBG("HPET creation\n");
-   Hpet = (EFI_ACPI_HIGH_PRECISION_EVENT_TIMER_TABLE_HEADER*)(UINTN)BufferPtr;
-   Hpet->Header.Signature = EFI_ACPI_3_0_HIGH_PRECISION_EVENT_TIMER_TABLE_SIGNATURE;
-   Hpet->Header.Length = sizeof(EFI_ACPI_HIGH_PRECISION_EVENT_TIMER_TABLE_HEADER);
-   Hpet->Header.Revision = EFI_ACPI_HIGH_PRECISION_EVENT_TIMER_TABLE_REVISION;
-   CopyMem(&Hpet->Header.OemId, oemID, 6);
-   CopyMem(&Hpet->Header.OemTableId, oemTableID, sizeof(oemTableID));
-   Hpet->Header.OemRevision = 0x00000001;
-   CopyMem(&Hpet->Header.CreatorId, creatorID, sizeof(creatorID));
-   Hpet->EventTimerBlockId = 0x8086A201; // we should remember LPC VendorID to place here
-   Hpet->BaseAddressLower32Bit.AddressSpaceId = EFI_ACPI_2_0_SYSTEM_IO;
-   Hpet->BaseAddressLower32Bit.RegisterBitWidth = 0x40; //64bit
-   Hpet->BaseAddressLower32Bit.RegisterBitOffset = 0x00; 
-   Hpet->BaseAddressLower32Bit.Address = 0xFED00000; //Physical Addr.
-   Hpet->HpetNumber = 0;
-   Hpet->MainCounterMinimumClockTickInPeriodicMode = 0x0080; 
-   Hpet->PageProtectionAndOemAttribute = EFI_ACPI_64KB_PAGE_PROTECTION; //Flags |= EFI_ACPI_4KB_PAGE_PROTECTION , EFI_ACPI_64KB_PAGE_PROTECTION
-   // verify checksum
-   Hpet->Header.Checksum = 0;
-   Hpet->Header.Checksum = (UINT8)(256-Checksum8((CHAR8*)Hpet,Hpet->Header.Length));
-   
-   //then we have to install new table into Xsdt
-   if (Xsdt!=NULL) {
-   //we have no such table. Add a new entry into Xsdt
-   UINT64	EntryCount;
-   
-   EntryCount = (Xsdt->Header.Length - sizeof (EFI_ACPI_DESCRIPTION_HEADER)) / sizeof(UINT64);
-   xf = (UINT64*)(&(Xsdt->Entry)) + EntryCount;
-   Xsdt->Header.Length += sizeof(UINT64);				
-   *xf = (UINT64)(UINTN)Hpet;
-   DBG("HPET placed into XSDT: %lx\n", *xf);
-   Xsdt->Header.Checksum = 0;
-   Xsdt->Header.Checksum = (UINT8)(256-Checksum8((CHAR8*)Xsdt, Xsdt->Header.Length));
-   }
-   }
-   }
-   */  
+/*
+  BufferPtr = EFI_SYSTEM_TABLE_MAX_ADDRESS;
+  Status=gBS->AllocatePages(AllocateMaxAddress, EfiACPIReclaimMemory, 1, &BufferPtr);
+  if(!EFI_ERROR(Status))
+  {
+    xf = ScanXSDT(HPET_SIGN);
+    if(!xf) { //we want to make the new table if OEM is not found
+      DBG("HPET creation\n");
+      Hpet = (EFI_ACPI_HIGH_PRECISION_EVENT_TIMER_TABLE_HEADER*)(UINTN)BufferPtr;
+      Hpet->Header.Signature = EFI_ACPI_3_0_HIGH_PRECISION_EVENT_TIMER_TABLE_SIGNATURE;
+      Hpet->Header.Length = sizeof(EFI_ACPI_HIGH_PRECISION_EVENT_TIMER_TABLE_HEADER);
+      Hpet->Header.Revision = EFI_ACPI_HIGH_PRECISION_EVENT_TIMER_TABLE_REVISION;
+      CopyMem(&Hpet->Header.OemId, oemID, 6);
+      CopyMem(&Hpet->Header.OemTableId, oemTableID, sizeof(oemTableID));
+      Hpet->Header.OemRevision = 0x00000001;
+      CopyMem(&Hpet->Header.CreatorId, creatorID, sizeof(creatorID));
+      Hpet->EventTimerBlockId = 0x8086A201; // we should remember LPC VendorID to place here
+      Hpet->BaseAddressLower32Bit.AddressSpaceId = EFI_ACPI_2_0_SYSTEM_IO;
+      Hpet->BaseAddressLower32Bit.RegisterBitWidth = 0x40; //64bit
+      Hpet->BaseAddressLower32Bit.RegisterBitOffset = 0x00;
+      Hpet->BaseAddressLower32Bit.Address = 0xFED00000; //Physical Addr.
+      Hpet->HpetNumber = 0;
+      Hpet->MainCounterMinimumClockTickInPeriodicMode = 0x0080;
+      Hpet->PageProtectionAndOemAttribute = EFI_ACPI_64KB_PAGE_PROTECTION; //Flags |= EFI_ACPI_4KB_PAGE_PROTECTION , EFI_ACPI_64KB_PAGE_PROTECTION
+      // verify checksum
+      Hpet->Header.Checksum = 0;
+      Hpet->Header.Checksum = (UINT8)(256-Checksum8((CHAR8*)Hpet,Hpet->Header.Length));
+
+      //then we have to install new table into Xsdt
+      if (Xsdt!=NULL) {
+        //we have no such table. Add a new entry into Xsdt
+        UINT64	EntryCount;
+
+        EntryCount = (Xsdt->Header.Length - sizeof (EFI_ACPI_DESCRIPTION_HEADER)) / sizeof(UINT64);
+        xf = (UINT64*)(&(Xsdt->Entry)) + EntryCount;
+        Xsdt->Header.Length += sizeof(UINT64);
+        *xf = (UINT64)(UINTN)Hpet;
+        DBG("HPET placed into XSDT: %lx\n", *xf);
+        Xsdt->Header.Checksum = 0;
+        Xsdt->Header.Checksum = (UINT8)(256-Checksum8((CHAR8*)Xsdt, Xsdt->Header.Length));
+      }
+    }
+  }
+*/
   //  DBG("DSDT finding\n");
   if (!Volume) {
     DBG("Volume not found!\n");
@@ -1850,14 +1848,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
   
   RootDir = Volume->RootDir;
   Status = EFI_NOT_FOUND;
-/*  if (gSettings.UseDSDTmini) {
-    DBG("search DSDTmini\n"); 
-    if (FileExists(SelfRootDir, PathDsdtMini)) {
-      DBG(" DSDTmini found\n");
-      Status = egLoadFile(SelfRootDir, PathDsdtMini, &buffer, &bufferLen);
-    }
-  }*/
-  
+
   if (EFI_ERROR(Status) && FileExists(SelfRootDir, PoolPrint(L"%s%s", AcpiOemPath, PathDsdt))) {
     DBG("DSDT found in Clover volume OEM folder: %s%s\n", AcpiOemPath, PathDsdt);
     Status = egLoadFile(SelfRootDir, PoolPrint(L"%s%s", AcpiOemPath, PathDsdt), &buffer, &bufferLen);

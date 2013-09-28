@@ -408,10 +408,16 @@ CHAR8 pwrbprw[] =
   0x0A, 0x0B, 0x0A, 0x04
 };
 
-CHAR8 shutdown[] =
+CHAR8 shutdown0[] =
 {
     0xA0, 0x05, 0x93, 0x68, 0x0A, 0x05, 0xA1, 0x01
 };
+
+CHAR8 shutdown[] =
+{
+  0xA0, 0x0F, 0x91, 0x91, 0x93, 0x68, 0x0A, 0x03, 0x93, 0x68, 0x0A, 0x04, 0x93, 0x68, 0x0A, 0x05, 0xA1, 0x01
+};
+
 
 CHAR8 pnlf[] =
 {
@@ -1946,7 +1952,7 @@ CHAR8 Yes[] = {0x01,0x00,0x00,0x00};
 CHAR8 data2[] = {0xe0,0x00,0x56,0x28};
 CHAR8 VenATI[] = {0x02, 0x10};
 
-UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len, INT32 VCard)
+UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
 {
   UINT32 i, j, k;
   INT32 sizeoffset = 0;
@@ -1959,6 +1965,7 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len, INT32 VCard)
   CHAR8 *hdmi = NULL;
   UINT32 devadr=0, devsize=0, devadr1=0, devsize1=0;
   BOOLEAN DISPLAYFIX = FALSE;
+  BOOLEAN NonUsable = FALSE;
   AML_CHUNK *root = NULL;
   AML_CHUNK *gfx0, *peg0;
   AML_CHUNK *met;
@@ -2009,14 +2016,14 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len, INT32 VCard)
         }
         devsize1 = get_size(dsdt, devadr1);
         if (devsize1) {
-          DBG("Found internal video device 0000@%x\n", devadr1);
+          DBG("Found internal video device %x @%x\n", DisplayADR2[VCard], devadr1);
           DISPLAYFIX = TRUE;
           break;
         }
       }
     }
 
-    if (!DISPLAYFIX && gSettings.ReuseFFFF) {
+    if (!DISPLAYFIX) {
       for (j=devadr; j<devadr+devsize; j++) { //search card inside PEGP@0
         if (CmpAdr(dsdt, j, 0xFFFF)) {  //Special case? want to change to 0
           devadr1 = devFind(dsdt, j); //found PEGP
@@ -2025,10 +2032,15 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len, INT32 VCard)
           }
           devsize1 = get_size(dsdt, devadr1); //13
           if (devsize1) {
-            dsdt[j+10] = 0;
-            dsdt[j+11] = 0;
+            if (gSettings.ReuseFFFF) {
+              dsdt[j+10] = 0;
+              dsdt[j+11] = 0;
+              DBG("Found internal video device FFFF@%x, set to 0\n", devadr1);
+            } else {
+              NonUsable = TRUE;
+              DBG("Found internal video device FFFF@%x, unusable\n", devadr1);
+            }
             DISPLAYFIX = TRUE;
-            DBG("Found internal video device FFFF@%x, set to 0\n", devadr1);
             break;      
           }
         }
@@ -2076,6 +2088,7 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len, INT32 VCard)
         aml_add_byte(gfx0, (UINT8)DisplayADR2[VCard]);
     } else
       gfx0 = peg0;
+
     // Intel GMA and HD
     if (DisplayVendor[VCard] == 0x8086) {
       DBG("Injecting DSM for Intel card\n");
@@ -2151,7 +2164,7 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len, INT32 VCard)
     hdaudev = aml_create_node(NULL);
     if (GFXHDAFIX && (FindBin(dsdt, len, (UINT8*)"HDAU", 4) < 0)) {
 
-      DBG("insert HDAU device @%x\n", devadr+devsize);
+      DBG("Inject HDAU device @%x\n", devadr+devsize);
       device = aml_add_device(hdaudev, "HDAU");
       aml_add_name(device, "_ADR");
       aml_add_byte(device, 0x01);
@@ -2193,67 +2206,85 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len, INT32 VCard)
       }
     }
 
-  
-//now insert video
-  DBG("now inserting Video device\n");
-  aml_calculate_size(root);
-  display = AllocateZeroPool(root->Size);
-  sizeoffset = root->Size;
-  aml_write_node(root, display, 0);  
-  aml_destroy_node(root);
+  if (!NonUsable) {
+    //now insert video
+    DBG("now inserting Video device\n");
+    aml_calculate_size(root);
+    display = AllocateZeroPool(root->Size);
+    sizeoffset = root->Size;
+    aml_write_node(root, display, 0);
+    aml_destroy_node(root);
 
-  if (DisplayName1) {   //bridge is present
-    // move data to back for add Display
-    DBG("... into existing bridge\n");
-    if (!DISPLAYFIX) {   //subdevice absent
-      i = devadr + devsize;
+
+    if (DisplayName1) {   //bridge is present
+      // move data to back for add Display
+      DBG("... into existing bridge\n");
+      if (!DISPLAYFIX) {   //subdevice absent
+        devsize = get_size(dsdt, devadr);
+        if (!devsize) {
+          DBG("BUG! Address of existing PEG0 is lost %x\n", devadr);
+          FreePool(display);
+          return len;
+        }
+        i = devadr + devsize;
+        len = move_data(i, dsdt, len, sizeoffset);
+        CopyMem(dsdt+i, display, sizeoffset);
+        j = write_size(devadr, dsdt, len, sizeoffset); //correct bridge size
+        sizeoffset += j;
+        len += j;
+        len = CorrectOuters(dsdt, len, devadr-3, sizeoffset);
+      } else {
+        devsize1 = get_size(dsdt, devadr1);
+        if (!devsize1) {
+          DBG("BUG! Address of existing GFX0 is lost %x\n", devadr1);
+          FreePool(display);
+          return len;
+        }
+        i = devadr1 + devsize1;
+        len = move_data(i, dsdt, len, sizeoffset);
+        CopyMem(dsdt+i, display, sizeoffset);
+        j = write_size(devadr1, dsdt, len, sizeoffset);
+        sizeoffset += j;
+        len += j;
+        len = CorrectOuters(dsdt, len, devadr1-3, sizeoffset);
+      }
+    } else { //insert PEG0 into PCI0 at the end
+      //PCI corrected so search again
+      DBG("... into created bridge\n");
+      PCIADR = GetPciDevice(dsdt, len);
+      if (PCIADR) {
+        PCISIZE = get_size(dsdt, PCIADR);
+      }
+      if (!PCISIZE) return len; //what is the bad DSDT ?!
+
+      i = PCIADR + PCISIZE;
+      devadr = i + 2;  //skip 5B 82
       len = move_data(i, dsdt, len, sizeoffset);
-      CopyMem(dsdt+i, display, sizeoffset);
-      len = CorrectOuters(dsdt, len, devadr-3, sizeoffset);
-    } else {
-      i = devadr1 + devsize1;
-      len = move_data(i, dsdt, len, sizeoffset);
-      CopyMem(dsdt+i, display, sizeoffset);
-      j = write_size(devadr1, dsdt, len, sizeoffset);
-      sizeoffset += j;
-      len += j;
-      len = CorrectOuters(dsdt, len, devadr1-3, sizeoffset);
+      CopyMem(dsdt + i, display, sizeoffset);
+      // Fix PCI0 size
+      k = write_size(PCIADR, dsdt, len, sizeoffset);
+      sizeoffset += k;
+      len += k;
+      devadr += k;
+      k = CorrectOuters(dsdt, len, PCIADR-3, sizeoffset);
+      devadr += k - len;
+      len = k;
     }
-  } else { //insert PEG0 into PCI0 at the end
-    //PCI corrected so search again
-    DBG("... into created bridge\n");
-    PCIADR = GetPciDevice(dsdt, len);
-    if (PCIADR) {
-      PCISIZE = get_size(dsdt, PCIADR);
-    }
-    if (!PCISIZE) return len; //what is the bad DSDT ?!
 
-    i = PCIADR + PCISIZE;
-    devadr = i + 2;  //skip 5B 82
-    len = move_data(i, dsdt, len, sizeoffset);
-    CopyMem(dsdt + i, display, sizeoffset);
-    // Fix PCI0 size
-    k = write_size(PCIADR, dsdt, len, sizeoffset);
-    sizeoffset += k;
-    len += k;
-    devadr += k;
-    k = CorrectOuters(dsdt, len, PCIADR-3, sizeoffset);
-    devadr += k - len;
-    len = k;
-  }
-
-  if (hdmi) { //not inserted yet because PEG0 was absent
-    DBG("insert HDAU into created bridge @0x%x\n", devadr);
-    k = get_size(dsdt, devadr);
-    if (k > 0) {
-      i = devadr + k;
-      len = move_data(i, dsdt, len, sizeoffset2);
-      CopyMem(dsdt + i, hdmi, sizeoffset2);
-      j = write_size(devadr, dsdt, len, sizeoffset2);
-      sizeoffset2 += j;
-      len += j;
-      len = CorrectOuters(dsdt, len, devadr-3, sizeoffset2);
+    if (hdmi) { //not inserted yet because PEG0 was absent
+      DBG("insert HDAU into created bridge @0x%x\n", devadr);
+      k = get_size(dsdt, devadr);
+      if (k > 0) {
+        i = devadr + k;
+        len = move_data(i, dsdt, len, sizeoffset2);
+        CopyMem(dsdt + i, hdmi, sizeoffset2);
+        j = write_size(devadr, dsdt, len, sizeoffset2);
+        sizeoffset2 += j;
+        len += j;
+        len = CorrectOuters(dsdt, len, devadr-3, sizeoffset2);
+      }
     }
+    FreePool(display);
   }
 
   if (CFGname) {
@@ -2266,7 +2297,7 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len, INT32 VCard)
     FreePool(hdmi);
   }
 
-  FreePool(display);
+
   return len;  
 }
 
@@ -4072,18 +4103,6 @@ UINT32 FIXSHUTDOWN_ASUS (UINT8 *dsdt, UINT32 len)
     DBG("no _PTS???\n");
     return len;
   }
-  //one more patch possible here
-  /*
-   70 53 4D 49 4D 5C 2E 5F 53 42 5F 50 49 4E 58 5C
-   5C 2E 5F 53 42 5F 49 53 4D 49 0A 90 
-   Store (SMIM, \_SB.PINX)
-   \_SB.ISMI (0x90)
-   */
-/*  size = get_size(dsdt, adr);
-  adr1 = FindBin(dsdt, len, Ismi, 28);
-  if (adr1 < adr + size) {
-    len = move_data(adr1, dsdt, len, -28);
-  } */
   
   /*
       adr \  _  P  T  S       insert               offset
@@ -4092,7 +4111,7 @@ UINT32 FIXSHUTDOWN_ASUS (UINT8 *dsdt, UINT32 len)
    53 4D 49 5F 0A 8A 68 
 
    */
-  sizeoffset = sizeof(shutdown); // == 8
+  sizeoffset = sizeof(shutdown); // == 18
   size = get_size(dsdt, adr);
   adr1 = adr;
   for (j=0; j<20; j++) {
@@ -4288,12 +4307,12 @@ VOID FixBiosDsdt (UINT8* temp)
   if (gSettings.FixDsdt & FIX_DISPLAY) {
     if (DisplayADR1[0]) {
 //      DBG("patch Display0 in DSDT \n");
-      DsdtLen = FIXDisplay1(temp, DsdtLen, 0);
+      DsdtLen = FIXDisplay(temp, DsdtLen, 0);
     }
     
     if (DisplayADR1[1]) {
 //      DBG("patch Display1 in DSDT \n");
-      DsdtLen = FIXDisplay1(temp, DsdtLen, 1);
+      DsdtLen = FIXDisplay(temp, DsdtLen, 1);
     }    
   }
   

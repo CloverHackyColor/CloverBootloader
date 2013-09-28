@@ -1900,6 +1900,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
           gSettings.NoCaches = TRUE;
         }
       }
+
     }
     
 
@@ -2608,6 +2609,17 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
             gSettings.DropSSDT = FALSE;
           }
         }
+        prop = GetProperty(dict2, "UseSystemIO");
+        if(prop) {
+          if ((prop->type == kTagTypeTrue) ||
+              ((prop->type == kTagTypeString) &&
+               ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))) {
+                gSettings.EnableISS = TRUE;
+              } else {
+                gSettings.EnableISS = FALSE;
+              }
+        }
+
         prop = GetProperty(dict2, "PLimitDict");
         if(prop) {
           if (prop->type == kTagTypeInteger) {
@@ -2707,6 +2719,16 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
         DBG("Config set ResetVal=0x%x\n", gSettings.ResetVal);
       }
       //other known pair is 0x0CF9/0x06. What about 0x92/0x01 ?
+
+
+      prop = GetProperty(dictPointer, "HaltEnabler");
+      if(prop) {
+        if ((prop->type == kTagTypeTrue) ||
+            ((prop->type == kTagTypeString) &&
+             ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))) {
+          gSettings.SlpSmiEnable = TRUE;
+        }
+      }
       
       prop = GetProperty(dictPointer, "smartUPS");
       gSettings.smartUPS = FALSE;
@@ -3893,51 +3915,7 @@ VOID SetDevices(VOID)
   
 	MsgLog("CurrentMode: Width=%d Height=%d\n", UGAWidth, UGAHeight);  
 }
-/*
-EFI_STATUS ApplySettings()
-{
-  UINT64  msr;
 
-  if (gCPUStructure.Vendor == CPU_VENDOR_INTEL) {
-     if (gCPUStructure.Turbo) {
-        // Read in msr for turbo and test whether it needs disabled/enabled
-        msr = AsmReadMsr64(MSR_IA32_MISC_ENABLE);
-        if (gSettings.Turbo) { // != ((msr & (1ULL<<38)) == 0)) {
-          // Don't change cpu speed because we aren't changing control state
-           if (gCPUStructure.Turbo4) {
-             gCPUStructure.MaxSpeed = (UINT32)DivU64x32(gCPUStructure.CPUFrequency, Mega);
-           }
-           //
-          //attempt to make turbo
-      //    msr = AsmReadMsr64(MSR_IA32_MISC_ENABLE);
-          DBG("MSR_IA32_MISC_ENABLE = %lx\n", msr);
-          msr &= ~(1ULL<<38);
-       //   if (!gSettings.Turbo) msr |= (1ULL<<38); //0x4000000000 == 0 if Turbo enabled
-          AsmWriteMsr64(MSR_IA32_MISC_ENABLE, msr);
-          gBS->Stall(100);
-          msr = AsmReadMsr64(MSR_IA32_MISC_ENABLE);
-          DBG("Set turbo: MSR_IA32_MISC_ENABLE = %lx\n", msr);
-          // Don't set performance control state, let OS handle it - apianti
-        }
-     }
-     //Slice: I disable this until to be clear why it should be disabled any way
-     // moreover ISS is not EIST, I may enable or not ISS but I always want EIST.
- */  /*  if (gSettings.EnableISS != ((msr & (1ULL<<16)) != 0)){
-      //attempt to speedstep
-      msr = AsmReadMsr64(MSR_IA32_MISC_ENABLE);
-      DBG("MSR_IA32_MISC_ENABLE = %lx\n", msr);
-      msr &= ~(1ULL<<16);
-      if (gSettings.EnableISS) msr |= (1ULL<<16);
-      AsmWriteMsr64(MSR_IA32_MISC_ENABLE, msr);
-      gBS->Stall(100);
-      msr = AsmReadMsr64(MSR_IA32_MISC_ENABLE);
-      DBG("Set speedstep: MSR_IA32_MISC_ENABLE = %lx\n", msr);
-      }
-   */
-/*  }
-  return EFI_SUCCESS;
-}
-*/
 EFI_STATUS SaveSettings()
 {
   // TODO: SetVariable()..

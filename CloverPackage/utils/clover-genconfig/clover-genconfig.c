@@ -291,24 +291,7 @@ void PrintConfig(CFTypeRef data)
   addBoolean(systemParametersDict, CFSTR("InjectSystemID"), s->InjectSystemID);
   addHex(systemParametersDict, CFSTR("BacklightLevel"),s->BacklightLevel);
   addBoolean(systemParametersDict, CFSTR("InjectKexts"), 0);
-  
-  //test
-//  CFMutableArrayRef testArray = addArray(dict, CFSTR("TestArray"));
-  //Sample 1
-/* 
-  addStringToArray(testArray, "TestString1");
-  addStringToArray(testArray, s->VendorName);
- */
-  //Sample 2
-/*
-  CFMutableDictionaryRef test1Dict = addDictToArray(testArray);
-  addUString(test1Dict, CFSTR("CustomUUID"), s->CustomUuid);
-  CFMutableDictionaryRef test2Dict = addDictToArray(testArray);
-  addUString(test2Dict, CFSTR("CustomUUID"), s->CustomUuid);
-  addBoolean(test2Dict, CFSTR("InjectSystemID"), s->InjectSystemID);
-*/
- 
-  
+
   // GUI
   CFMutableDictionaryRef guiDict = addDict(dict, CFSTR("GUI"));
   addString(guiDict, CFSTR("Language"), s->Language);
@@ -516,6 +499,8 @@ void PrintConfig(CFTypeRef data)
   addBoolean(acpiDict, CFSTR("smartUPS"), s->smartUPS);
   addHex(acpiDict, CFSTR("ResetAddress"), s->ResetAddr);
   addHex(acpiDict, CFSTR("ResetValue"), s->ResetVal);
+  addBoolean(acpiDict, CFSTR("HaltEnabler"), s->SlpSmiEnable);
+
   CFMutableDictionaryRef dsdtDict = addDict(acpiDict, CFSTR("DSDT"));
   addUString(dsdtDict, CFSTR("Name"), s->DsdtName);
   addHex(dsdtDict, CFSTR("FixMask"), s->FixDsdt);
@@ -551,12 +536,13 @@ void PrintConfig(CFTypeRef data)
   addInteger(ssdtDict, CFSTR("PLimitDict"), s->PLimitDict);
   addInteger(ssdtDict, CFSTR("UnderVoltStep"), s->UnderVoltStep);
   addInteger(ssdtDict, CFSTR("PluginType"), s->PluginType);
+  addBoolean(acpiDict, CFSTR("UseSystemIO"), s->EnableISS);
 
 //  addBoolean(acpiDict, CFSTR("EnableC2"), s->EnableC2);
 //  addHex(acpiDict, CFSTR("C3Latency"), s->C3Latency);
 //  addBoolean(acpiDict, CFSTR("EnableC4"), s->EnableC4);
 //  addBoolean(acpiDict, CFSTR("EnableC6"), s->EnableC6);
-//  addBoolean(acpiDict, CFSTR("EnableISS"), s->EnableISS);
+//
   
 //  addBoolean(acpiDict, CFSTR("DropAPIC"), s->bDropAPIC);
 //  addBoolean(acpiDict, CFSTR("DropMCFG"), s->DropMCFG);

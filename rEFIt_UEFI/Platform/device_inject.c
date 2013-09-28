@@ -689,10 +689,15 @@ BOOLEAN set_hda_props(EFI_PCI_IO_PROTOCOL *PciIo, pci_dt_t *hda_dev)
                         gSettings.AddProperties[i].ValueLen);
     }
     if (!Injected) {
-
-    // inject layout and pin config
-      devprop_add_value(device, "layout-id", (UINT8*)&layoutId, 4);
+      CHAR8* OSVR = NULL;
+      if (OSVersion) {
+        OSVR = AsciiStrStr(OSVersion, "10.");
+      }
+      if ((OSVR && (OSVR[3] <= '7')) || (gSettings.HDALayoutId > 0)) {
+        devprop_add_value(device, "layout-id", (UINT8*)&layoutId, 4);
+      }
       layoutId = 0; // reuse variable
+      devprop_add_value(device, "MaximumBootBeepVolume", (UINT8*)&layoutId, 1);
       devprop_add_value(device, "PinConfigurations", (UINT8*)&layoutId, 1);
     }
     

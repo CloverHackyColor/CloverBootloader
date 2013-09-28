@@ -735,7 +735,7 @@ typedef struct {
   BOOLEAN EnableC4;
   BOOLEAN EnableC6;
   BOOLEAN EnableISS;
-  UINT8   pad3;
+  BOOLEAN SlpSmiEnable;
   UINT16  C3Latency;
 	BOOLEAN	smartUPS;
   BOOLEAN PatchNMI;
