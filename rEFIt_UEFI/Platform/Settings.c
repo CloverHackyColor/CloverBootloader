@@ -3454,127 +3454,94 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
 
 EFI_STATUS GetOSVersion(IN REFIT_VOLUME *Volume)
 {
-	EFI_STATUS				Status = EFI_NOT_FOUND;
-	CHAR8*						plistBuffer = 0;
-	UINTN             plistLen;
-	TagPtr						dict  = NULL;
-	TagPtr						prop  = NULL;
-  CHAR16*     SystemPlist = L"System\\Library\\CoreServices\\SystemVersion.plist";
-  CHAR16*     ServerPlist = L"System\\Library\\CoreServices\\ServerVersion.plist";
-  CHAR16*     RecoveryPlist = L"\\com.apple.recovery.boot\\SystemVersion.plist";
-//  CHAR16*     InstallLionPlist = L"\\Mac OS X Install Data\\com.apple.Boot.plist";
-//  CHAR16*     InstallMountainPlist = L"\\OS X Install Data\\com.apple.Boot.plist";
-//  CHAR16*     InstallLionSProduct = L"\\Mac OS X Install Data\\index.sproduct";
-//  CHAR16*     InstallMountainSProduct = L"\\OS X Install Data\\index.sproduct";
-  
-  if (!Volume) {
-    return EFI_NOT_FOUND;
-  }
+	EFI_STATUS	Status = EFI_NOT_FOUND;
+	CHAR8*		plistBuffer = NULL;
+	UINTN		plistLen;
+	TagPtr		dict  = NULL;
+	TagPtr		prop  = NULL;
+	UINTN		Index = 0;
+
+	// SystemPlists contain proper OS X version number
+	CHAR16*		SystemPlists[] = { L"System\\Library\\CoreServices\\SystemVersion.plist", // OS X Regular
+					   L"System\\Library\\CoreServices\\ServerVersion.plist", // OS X Server
+					   L"\\com.apple.recovery.boot\\SystemVersion.plist",     // OS X Recovery
+					   NULL };
+
+	// InstallerPlists do not contain proper version, but can be used to detect Installer presence
+	CHAR16*		InstallerPlists[] = { L"\\Mac OS X Install Data\\com.apple.boot.plist",   // OS X Installer (Lion)
+					      L"\\OS X Install Data\\com.apple.boot.plist",	  // OS X Installer (ML, Mav)
+					      L"\\.IABootFiles\\com.apple.boot.plist",		  // OS X Installer (ML, Mav?)
+					      NULL };
+	if (!Volume) {
+		return EFI_NOT_FOUND;
+	}
 
 	if (OSVersion != NULL) {
 		FreePool(OSVersion);
 		OSVersion = NULL;
 	}
-  
-	if (Volume->OSType == OSTYPE_OSX_INSTALLER) {
-		// for installer type we determine exact version prior to booting boot.efi
+
+	/* Mac OS X Installer */
+	for (Index = 0; InstallerPlists[Index] != NULL && !FileExists(Volume->RootDir, InstallerPlists[Index]); Index++);
+        if (InstallerPlists[Index] != NULL) { // found OSX Installer
+		// for installer type, exact version will be detected prior to booting boot.efi
+		Volume->OSType = OSTYPE_OSX_INSTALLER;
 		Volume->OSIconName = L"mac";
 		Volume->BootType = BOOTING_BY_EFI;
 		Volume->OSName = L"Install Mac OS X";
-	}
-	/* Mac OS X */
-	else if(FileExists(Volume->RootDir, SystemPlist))
-	{
-		Status = egLoadFile(Volume->RootDir, SystemPlist, (UINT8 **)&plistBuffer, &plistLen);
-	}
-	/* Mac OS X Server */
-	else if(FileExists(Volume->RootDir, ServerPlist))
-	{
-		Status = egLoadFile(Volume->RootDir, ServerPlist, (UINT8 **)&plistBuffer, &plistLen);
-	}
-	else if(FileExists(Volume->RootDir, RecoveryPlist))
-	{
-		Status = egLoadFile(Volume->RootDir, RecoveryPlist, (UINT8 **)&plistBuffer, &plistLen);
-	}
-/* These files should not be trusted, as they are not necessarily in the same volume we are booting from!
-	// Mac OS X Lion Installer
-  else if ((FileExists(Volume->RootDir, InstallLionPlist)) ||
-          (FileExists(Volume->RootDir, InstallLionSProduct))) {
-		Volume->OSType = OSTYPE_OSX_INSTALLER;
-		Volume->OSIconName = L"mac";
-    Volume->BootType = BOOTING_BY_EFI;
-    Volume->OSName = L"Install Lion";
-    return EFI_SUCCESS;
-	}
-	// Mac OS X Mountain Lion Installer
-  else if ((FileExists(Volume->RootDir, InstallMountainPlist)) ||
-           (FileExists(Volume->RootDir, InstallMountainSProduct))) {
-		Volume->OSType = OSTYPE_OSX_INSTALLER;
-		Volume->OSIconName = L"mac";
-    Volume->BootType = BOOTING_BY_EFI;
-    Volume->OSName = L"Install ML";
-    return EFI_SUCCESS;
-	}
-*/
-	if(!EFI_ERROR(Status) && plistBuffer != 0)
-	{
-		if(ParseXML(plistBuffer, &dict, 0) != EFI_SUCCESS)
-		{
-			FreePool(plistBuffer);
-			return EFI_NOT_FOUND;
+		Status = EFI_SUCCESS;
+	} else {
+		/* Mac OS X Regular/Server/Recovery */
+		for (Index = 0; SystemPlists[Index] != NULL && !FileExists(Volume->RootDir, SystemPlists[Index]); Index++);
+		if (SystemPlists[Index] != NULL) { // found OSX System 
+			Status = egLoadFile(Volume->RootDir, SystemPlists[Index], (UINT8 **)&plistBuffer, &plistLen);
 		}
-    
+	}
+
+	// Detect exact version for Mac OS X Regular/Server/Recovery
+	if(!EFI_ERROR(Status) && plistBuffer != NULL && ParseXML(plistBuffer, &dict, 0) == EFI_SUCCESS ) {
 		prop = GetProperty(dict, "ProductVersion");
-
-    if(prop != NULL) {
-      OSVersion = AllocateCopyPool(AsciiStrSize(prop->string), prop->string);
-
+		if(prop != NULL && prop->string != NULL && prop->string[0] != '\0') {
+			OSVersion = AllocateCopyPool(AsciiStrSize(prop->string), prop->string);
+			Volume->BootType = BOOTING_BY_EFI;
 			if (AsciiStrStr(prop->string, "10.4") != 0) {
-        // Tiger
-        Volume->OSType = OSTYPE_TIGER;
-        Volume->OSIconName = L"tiger,mac";
-        Volume->BootType = BOOTING_BY_EFI;
-        Volume->OSName = L"Tiger";
-        Status = EFI_SUCCESS;
-      } else if (AsciiStrStr(prop->string, "10.5") != 0) {
-        // Leopard
-        Volume->OSType = OSTYPE_LEO;
-        Volume->OSIconName = L"leo,mac";
-        Volume->BootType = BOOTING_BY_EFI;
-        Volume->OSName = L"Leo";
-        Status = EFI_SUCCESS;
-      } else if (AsciiStrStr(prop->string, "10.6") != 0) {
-        // Snow Leopard
-        Volume->OSType = OSTYPE_SNOW;
-        Volume->OSIconName = L"snow,mac";
-        Volume->BootType = BOOTING_BY_EFI;
-        Volume->OSName = L"Snow";
-        Status = EFI_SUCCESS;
-      } else if (AsciiStrStr(prop->string, "10.7") != 0) {
-        // Lion
-        Volume->OSType = OSTYPE_LION;
-        Volume->OSIconName = L"lion,mac";
-        Volume->BootType = BOOTING_BY_EFI;
-        Volume->OSName = L"Lion";
-        Status = EFI_SUCCESS;
-      } else if (AsciiStrStr(prop->string, "10.8") != 0) {
-        // Mountain Lion
-        Volume->OSType = OSTYPE_ML;
-        Volume->OSIconName = L"cougar,mac";
-        Volume->BootType = BOOTING_BY_EFI;
-        Volume->OSName = L"ML";
-        Status = EFI_SUCCESS;
-      } else if (AsciiStrStr(prop->string, "10.9") != 0) {
-        // Mavericks
-        Volume->OSType = OSTYPE_MAV;
-        Volume->OSIconName = L"mav,mac";
-        Volume->BootType = BOOTING_BY_EFI;
-        Volume->OSName = L"Mavericks";
-        Status = EFI_SUCCESS;
-      }
+				// Tiger
+				Volume->OSType = OSTYPE_TIGER;
+				Volume->OSIconName = L"tiger,mac";
+				Volume->OSName = L"Tiger";
+			} else if (AsciiStrStr(prop->string, "10.5") != 0) {
+				// Leopard
+				Volume->OSType = OSTYPE_LEO;
+				Volume->OSIconName = L"leo,mac";
+				Volume->OSName = L"Leo";
+			} else if (AsciiStrStr(prop->string, "10.6") != 0) {
+				// Snow Leopard
+				Volume->OSType = OSTYPE_SNOW;
+				Volume->OSIconName = L"snow,mac";
+				Volume->OSName = L"Snow";
+			} else if (AsciiStrStr(prop->string, "10.7") != 0) {
+				// Lion
+				Volume->OSType = OSTYPE_LION;
+				Volume->OSIconName = L"lion,mac";
+				Volume->OSName = L"Lion";
+			} else if (AsciiStrStr(prop->string, "10.8") != 0) {
+				// Mountain Lion
+				Volume->OSType = OSTYPE_ML;
+				Volume->OSIconName = L"cougar,mac";
+				Volume->OSName = L"ML";
+			} else if (AsciiStrStr(prop->string, "10.9") != 0) {
+				// Mavericks
+				Volume->OSType = OSTYPE_MAV;
+				Volume->OSIconName = L"mav,mac";
+				Volume->OSName = L"Mavericks";
+			}
 
-      MsgLog("  Booting OS %a\n", prop->string);
-    }
+			MsgLog("  Detected OS %a\n", prop->string);
+		}
+	}
+
+	if (plistBuffer != NULL) {
+		FreePool(plistBuffer);
 	}
 
 	if (OSVersion == NULL) {
