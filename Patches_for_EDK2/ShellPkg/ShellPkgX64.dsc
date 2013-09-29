@@ -35,6 +35,10 @@
   BaseLib|MdePkg/Library/BaseLib/BaseLib.inf
   BaseMemoryLib|MdePkg/Library/BaseMemoryLib/BaseMemoryLib.inf
   PrintLib|MdePkg/Library/BasePrintLib/BasePrintLib.inf
+  TimerLib|MdePkg/Library/BaseTimerLibNullTemplate/BaseTimerLibNullTemplate.inf
+  PerformanceLib|MdePkg/Library/BasePerformanceLibNull/BasePerformanceLibNull.inf
+  DxeServicesLib|MdePkg/Library/DxeServicesLib/DxeServicesLib.inf
+  #HobLib|MdePkg/Library/DxeHobLib/DxeHobLib.inf
   UefiRuntimeServicesTableLib|MdePkg/Library/UefiRuntimeServicesTableLib/UefiRuntimeServicesTableLib.inf
   UefiHiiServicesLib|MdeModulePkg/Library/UefiHiiServicesLib/UefiHiiServicesLib.inf
   HiiLib|MdeModulePkg/Library/UefiHiiLib/UefiHiiLib.inf
@@ -96,3 +100,5 @@
 !endif #$(NO_SHELL_PROFILES)
   }
 
+[BuildOptions]
+GCC:*_*_*_CC_FLAGS   = -Os -DMDEPKG_NDEBUG 

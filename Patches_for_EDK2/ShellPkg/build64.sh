@@ -52,7 +52,7 @@ case `uname` in
         echo ShellPkg requires Snow Leopard or later OS
         exit 1
       else
-        TARGET_TOOLS=GCC46
+        TARGET_TOOLS=GCC47
       fi
       ;;
   Linux*)
