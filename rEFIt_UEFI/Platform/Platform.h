@@ -476,6 +476,8 @@ Headers collection for procedures
 #define DEV_USB       bit(11)
 #define DEV_FIREWIRE  bit(12)
 
+#define NUM_OF_CONFIGS 3
+
 struct aml_chunk 
 {
 	UINT8     Type;
@@ -854,7 +856,8 @@ typedef struct {
   CHAR8   *LogEveryBoot;
   
   // Multi-config
-  CHAR16  ConfigName[64];
+  CHAR16  *ConfigName;
+  CHAR16  *MainConfigName;
   //Drivers
   INTN    BlackListCount;
 #if defined(MDE_CPU_IA32)
@@ -1215,7 +1218,7 @@ extern BOOLEAN  SSSE3;
 extern BOOLEAN  defDSM;
 extern UINT16  dropDSM;
 
-extern TagPtr gConfigDict;
+extern TagPtr gConfigDict[];
 //-----------------------------------
 
 VOID        FixBiosDsdt (UINT8* Dsdt);
@@ -1255,13 +1258,13 @@ MACHINE_TYPES   GetDefaultModel(VOID);
 UINT16          GetAdvancedCpuType(VOID);
 EFI_STATUS      GetOSVersion(IN REFIT_VOLUME *Volume);
 EFI_STATUS      GetRootUUID(IN REFIT_VOLUME *Volume);
-EFI_STATUS      GetEarlyUserSettings(IN EFI_FILE *RootDir);
-EFI_STATUS      GetUserSettings(IN EFI_FILE *RootDir);
+EFI_STATUS      GetEarlyUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict);
+EFI_STATUS      GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict);
 EFI_STATUS      InitTheme(BOOLEAN useThemeDefinedInNVRam);
 EFI_STATUS      SetFSInjection(IN LOADER_ENTRY *Entry);
 CHAR16*         GetExtraKextsDir(REFIT_VOLUME *Volume);
 EFI_STATUS      LoadKexts(IN LOADER_ENTRY *Entry);
-
+VOID            ParseLoadOptions(OUT CHAR16** conf, OUT TagPtr* dict);
 //
 // Nvram.c
 //
@@ -1321,7 +1324,7 @@ EFI_STATUS  bootLegacyBiosDefault(IN REFIT_VOLUME* volume);
 VOID        DumpBiosMemoryMap();
 
 CHAR8*      XMLDecode(CHAR8* src);
-EFI_STATUS  ParseXML(const CHAR8* buffer, TagPtr * dict);
+EFI_STATUS  ParseXML(const CHAR8* buffer, TagPtr * dict, UINT32 bufSize);
 TagPtr      GetProperty( TagPtr dict, const CHAR8* key );
 EFI_STATUS  XMLParseNextTag(CHAR8* buffer, TagPtr * tag, UINT32* lenPtr);
 VOID        FreeTag( TagPtr tag );
@@ -1438,6 +1441,6 @@ DeleteBootOptionsContainingFile (
  */
 VOID RegisterDriversToHighestPriority(IN EFI_HANDLE *PriorityDrivers);
 
-EFI_STATUS LoadUserSettings(IN EFI_FILE *RootDir);
+EFI_STATUS LoadUserSettings(IN EFI_FILE *RootDir, CHAR16 *ConfName, TagPtr * dict);
 
 #endif

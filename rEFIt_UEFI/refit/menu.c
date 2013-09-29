@@ -771,6 +771,7 @@ VOID ApplyInputs(VOID)
   UINTN j;
   UINT16 k;
   CHAR8  AString[256];
+    TagPtr dict;
 //  DBG("ApplyInputs\n");
   if (InputItems[i].Valid) {
     AsciiSPrint(gSettings.BootArgs, 255, "%s ", InputItems[i].SValue);
@@ -1066,10 +1067,33 @@ VOID ApplyInputs(VOID)
   */
   i=90; //90
   if (InputItems[i].Valid) {
-    UnicodeSPrint(gSettings.ConfigName, 64, L"%s", InputItems[i].SValue);
-    Status = LoadUserSettings(SelfRootDir);
-    if (!EFI_ERROR(Status)) {
-      GetUserSettings(SelfRootDir);
+      if (StrCmp(InputItems[i].SValue, gSettings.ConfigName) != 0) {
+          if ((StrLen(InputItems[i].SValue) == 0) ||
+              (StrCmp(InputItems[i].SValue, gSettings.MainConfigName) == 0)) {
+              for (i=0; i<2; i++) {
+                  if (gConfigDict[i]) {
+                      Status = GetUserSettings(SelfRootDir, gConfigDict[i]);
+                      if (!EFI_ERROR(Status)) {
+                          if (gSettings.ConfigName) FreePool(gSettings.ConfigName);
+                          gSettings.ConfigName = EfiStrDuplicate(gSettings.MainConfigName);
+                          if (gConfigDict[3]) FreeTag(gConfigDict[3]);
+                          gConfigDict[3] = NULL;
+                      }
+                      DBG("Main settings%d from menu: %r\n", i, Status);
+                  }
+              }
+          } else {
+              LoadUserSettings(SelfRootDir, InputItems[i].SValue, &dict);
+              Status = GetUserSettings(SelfRootDir, dict);
+              if (!EFI_ERROR(Status)) {
+                  if (gConfigDict[3]) FreeTag(gConfigDict[3]);
+                  gConfigDict[3] = dict;
+                  if (gSettings.ConfigName) FreePool(gSettings.ConfigName);
+                  gSettings.ConfigName = EfiStrDuplicate(InputItems[i].SValue);
+              }
+              DBG("Main settings3 from menu: %r\n", Status);
+          }
+    //    if (!EFI_ERROR(Status)) {
       RefillInputs();
       NeedSave = FALSE;
     }

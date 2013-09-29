@@ -6,47 +6,44 @@
 #include "Platform.h"
 #include "nvidia.h"
 
+
 /*
- 
  injection for NVIDIA card usage e.g (to be placed in the config.plist, under graphics tag): 
- 
- <key>NVIDIA</key>
- <array>
- <dict>
- <key>Chipset Name</key>
- <string>Quadro FX 380</string>
- <key>IOPCIPrimaryMatch</key>
- <string>0x10DE0658</string>
- <key>VRam Size</key>
- <string>256</string>
- </dict>
- <dict>
- <key>Chipset Name</key>
- <string>YOUR_CARD_NAME</string>
- <key>IOPCIPrimaryMatch</key>
- <string>YOUR_CARD_ID</string>
- <key>IOPCISubDevId</key>
- <string>YOUR_CARD_SUB_ID(if necessary)</string>
- <key>VRam Size</key>
- <string>YOUR_CARD_VRAM_SIZE</string>
- </dict>
- <dict>
- <key>Chipset Name</key>
- <string>YOUR_SECOND_CARD_NAME</string>
- <key>IOPCIPrimaryMatch</key>
- <string>YOUR_SECOND_CARD_ID</string>
- <key>IOPCISubDevId</key>
- <string>YOUR_SECOND_CARD_SUB_ID(if necessary)</string>
- <key>VRam Size</key>
- <string>YOUR_SECOND_CARD_VRAM_SIZE</string>
- </dict>
- .
- .
- .
- .
- </array>
- 
- */
+	<key>Graphics</key>
+	<dict>
+		<key>NVIDIA</key>
+		<array>
+			<dict>
+				<key>Chipset Name</key>
+				<string>Quadro FX 380</string>
+				<key>IOPCIPrimaryMatch</key>
+				<string>0x10DE0658</string>
+				<key>VRam Size</key>
+				<string>256</string>
+			</dict>
+			<dict>
+				<key>Chipset Name</key>
+				<string>ATI Radeon HD6670</string>
+				<key>IOPCIPrimaryMatch</key>
+				<string>0x6758</string>
+				<key>IOPCISubDevId</key>
+				<string>0x1342</string>
+				<key>VRam Size</key>
+				<integer>2048</integer>
+			</dict>
+			<dict>
+				<key>Chipset Name</key>
+				<string>YOUR_SECOND_CARD_NAME</string>
+				<key>IOPCIPrimaryMatch</key>
+				<string>YOUR_SECOND_CARD_ID</string>
+				<key>IOPCISubDevId</key>
+				<string>YOUR_SECOND_CARD_SUB_ID(if necessary)</string>
+				<key>VRam Size</key>
+				<string>YOUR_SECOND_CARD_VRAM_SIZE</string>
+			</dict>
+		</array>
+	</dict>
+*/
 
 #define DEBUG_CARD_VLIST 1
 
@@ -103,91 +100,95 @@ VOID FillCardList(VOID)
 	TagPtr      dictPointer;
 	if (IsListEmpty(&gCardList)) 
 	{
-		dict = gConfigDict;
-		if(dict != NULL) {
-			dictPointer = GetProperty(dict, "Graphics");
-			if (dictPointer) {
-				prop = GetProperty(dictPointer, "NVIDIA");
-				if(prop && (prop->type == kTagTypeArray)) 
-				{
-					INTN		i;
-					INTN		 count;
-					
-					TagPtr		element		= 0; 
-					TagPtr		prop2		= 0; 
-					count = GetTagCount(prop);
-					
-					for (i=0; i<count; i++) 
-					{		
-						CHAR8		*model_name;	
-						CHAR8		*match_id;	
-						CHAR8		*sub_id;	
-						CHAR8		*vram_size;
-						UINT32		dev_id		= 0;
-						UINT32		subdev_id	= 0;
-						UINT64		VramSize	= 0;
-						EFI_STATUS status = GetElement(prop, i, &element);
-						
-						if (status == EFI_SUCCESS) 
-						{
-							if (element) 
-							{
-								model_name	= NULL;
-								match_id	= NULL;
-								sub_id		= NULL;
-								vram_size	= NULL;
-								
-								if ((prop2 = GetProperty(element, "Chipset Name")) != 0) {
-									model_name = prop2->string;
-								}
-								
-								if ((prop2 = GetProperty(element, "IOPCIPrimaryMatch")) != 0) {
-									match_id = prop2->string;
-								}
-								
-								if ((prop2 = GetProperty(element, "IOPCISubDevId")) != 0) {
-									sub_id = prop2->string;
-								}
-								
-								if ((prop2 = GetProperty(element, "VRam Size")) != 0) {
-									vram_size = prop2->string;
-								}
-								
-								if (match_id) {
-									if ((match_id[0] == '0')  && 
-                      (match_id[1] == 'x' || match_id[1] == 'X')) {
-										dev_id = (UINT32)AsciiStrHexToUintn(match_id);
-									} else {
-										dev_id = (UINT32)AsciiStrDecimalToUintn(match_id);
-									}
-								}
-								
-								if (sub_id) {
-									if ((sub_id[0] == '0')  && 
-                      (sub_id[1] == 'x' || sub_id[1] == 'X')) {
-										subdev_id = (UINT32)AsciiStrHexToUintn(sub_id);
-									} else {
-										subdev_id = (UINT32)AsciiStrDecimalToUintn(sub_id);
-									}
-								}
-								
-								if (vram_size) {
-									if ((vram_size[0] == '0')  && 
-                      (vram_size[1] == 'x' || vram_size[1] == 'X')) {
-										VramSize = AsciiStrHexToUintn(vram_size);
-									} else {
-										VramSize = AsciiStrDecimalToUintn(vram_size);
-									}
-								}		
-								
-								AddCard(model_name, dev_id, subdev_id, VramSize);
-								
-							}
-						}
-						
-					}					
+		INTN cfgN = NUM_OF_CONFIGS-1;
+    for (; cfgN > 0; cfgN--) {
+      dict = gConfigDict[cfgN];
+      if(dict != NULL) {
+        dictPointer = GetProperty(dict, "Graphics");
+        if (dictPointer) {
+          prop = GetProperty(dictPointer, "NVIDIA");
+          if(prop && (prop->type == kTagTypeArray))
+          {
+            INTN		i;
+            INTN		 count;
+
+            TagPtr		element		= 0;
+            TagPtr		prop2		= 0;
+            count = GetTagCount(prop);
+
+            for (i=0; i<count; i++)
+            {
+              CHAR8		*model_name;
+              CHAR8		*match_id;
+              CHAR8		*sub_id;
+              CHAR8		*vram_size;
+              UINT32		dev_id		= 0;
+              UINT32		subdev_id	= 0;
+              UINT64		VramSize	= 0;
+              EFI_STATUS status = GetElement(prop, i, &element);
+
+              if (status == EFI_SUCCESS)
+              {
+                if (element)
+                {
+                  model_name	= NULL;
+                  match_id	= NULL;
+                  sub_id		= NULL;
+                  vram_size	= NULL;
+
+                  if ((prop2 = GetProperty(element, "Chipset Name")) != 0) {
+                    model_name = prop2->string;
+                  }
+
+                  if ((prop2 = GetProperty(element, "IOPCIPrimaryMatch")) != 0) {
+                    match_id = prop2->string;
+                  }
+
+                  if ((prop2 = GetProperty(element, "IOPCISubDevId")) != 0) {
+                    sub_id = prop2->string;
+                  }
+
+                  if ((prop2 = GetProperty(element, "VRam Size")) != 0) {
+                    vram_size = prop2->string;
+                  }
+
+                  if (match_id) {
+                    if ((match_id[0] == '0')  &&
+                        (match_id[1] == 'x' || match_id[1] == 'X')) {
+                      dev_id = (UINT32)AsciiStrHexToUintn(match_id);
+                    } else {
+                      dev_id = (UINT32)AsciiStrDecimalToUintn(match_id);
+                    }
+                  }
+
+                  if (sub_id) {
+                    if ((sub_id[0] == '0')  &&
+                        (sub_id[1] == 'x' || sub_id[1] == 'X')) {
+                      subdev_id = (UINT32)AsciiStrHexToUintn(sub_id);
+                    } else {
+                      subdev_id = (UINT32)AsciiStrDecimalToUintn(sub_id);
+                    }
+                  }
+                  
+                  if (vram_size) {
+                    if ((vram_size[0] == '0')  && 
+                        (vram_size[1] == 'x' || vram_size[1] == 'X')) {
+                      VramSize = AsciiStrHexToUintn(vram_size);
+                    } else {
+                      VramSize = AsciiStrDecimalToUintn(vram_size);
+                    }
+                  }		
+                  
+                  AddCard(model_name, dev_id, subdev_id, VramSize);
+                  
+                }
+              }
+              
+            }					
+            return;
+          } 
 				} 
 			}
 		}
-	}	
+	}
 }

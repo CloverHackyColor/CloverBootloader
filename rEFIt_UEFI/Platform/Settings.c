@@ -24,7 +24,8 @@
 
 //EFI_GUID gRandomUUID = {0x0A0B0C0D, 0x0000, 0x1010, {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07}};
 
-TagPtr                          gConfigDict = NULL;
+TagPtr                          gConfigDict[NUM_OF_CONFIGS] = {NULL, NULL, NULL};
+
 SETTINGS_DATA                   gSettings;
 LANGUAGES                       gLanguage;
 GFX_PROPERTIES                  gGraphics[4]; //no more then 4 graphics cards
@@ -82,7 +83,58 @@ UINT32 GetCrc32(UINT8 *Buffer, UINTN Size)
   return x;
 }
 
-
+VOID ParseLoadOptions(OUT CHAR16** conf, OUT TagPtr* dict)
+{
+    CHAR8* start = (CHAR8*)SelfLoadedImage->LoadOptions;
+    CHAR8* end   = (CHAR8*)(SelfLoadedImage->LoadOptions+SelfLoadedImage->LoadOptionsSize);
+    INTN   TailSize;
+    UINTN  i = 0;
+    CHAR8* PlistStrings[] = {"<?xml",
+                            "<!DOCTYPE plist",
+                            "<plist",
+                            "<dict>",
+                            '\0'};
+    UINTN  PlistStringsLen;
+    CHAR8*  AsciiConf = NULL;
+    
+    *conf = NULL;
+    *dict = NULL;
+    for (; (start < end) && ((*start == ' ') || (*start == '\\') || (*start == '/')); start++) {}
+    TailSize = end-start;
+//    DBG("TailSize = %d\n", TailSize);
+    if ((TailSize) <= 0) return;
+    for (i=0; PlistStrings[i] != '\0'; i++) {
+        PlistStringsLen = AsciiStrLen(PlistStrings[i]);
+//        DBG("PlistStrings[%d] = %a\n", i, PlistStrings[i]);
+        if (PlistStringsLen < TailSize)
+            if (AsciiStriNCmp(PlistStrings[i],start, PlistStringsLen)) {
+                DBG("Found Plist String = %a, parse XML in LoadOptions\n", PlistStrings[i]);
+                if (ParseXML(start, dict, TailSize) != EFI_SUCCESS) {
+                    *dict = NULL;
+                    DBG("Xml in load options is bad\n");
+                    return;
+                }
+                return;
+            }
+    }
+    for (; (end > start) && ((*end == ' ') || (*end == '\\') || (*end == '/')); end--) {}
+    TailSize = end-start;
+//    DBG("TailSize2 = %d\n", TailSize);
+    if (TailSize <= 0) return;
+    if (TailSize > 6)
+        if (AsciiStriNCmp(".plist",end-6, 6)) {
+            end-=6;
+            TailSize-=6;
+//            DBG("TailSize3 = %d\n", TailSize);
+        }
+    AsciiConf = AllocateCopyPool(TailSize + 1, start);
+    if (!AsciiConf) return;
+    *(AsciiConf+TailSize) = '\0';
+    *conf = AllocateZeroPool((TailSize + 1) * sizeof (CHAR16));
+    AsciiStrToUnicodeStr(AsciiConf, *conf);
+    FreePool(AsciiConf);
+    return;
+}
 
 //
 // returns binary setting in a new allocated buffer and data length in dataLen.
@@ -124,21 +176,27 @@ VOID *GetDataSetting(IN TagPtr dict, IN CHAR8 *propName, OUT UINTN *dataLen)
     return data;
 }
 
-EFI_STATUS LoadUserSettings(IN EFI_FILE *RootDir)
+EFI_STATUS LoadUserSettings(IN EFI_FILE *RootDir, IN CHAR16 *ConfName, TagPtr * dict)
 {
   EFI_STATUS	Status = EFI_NOT_FOUND;
   UINTN       size;
   CHAR8*      gConfigPtr = NULL;
-  CHAR16*     ConfigPlistPath = PoolPrint(L"EFI\\CLOVER\\%s.plist", gSettings.ConfigName);
-  CHAR16*     ConfigOemPath = PoolPrint(L"%s\\%s.plist", OEMPath, gSettings.ConfigName);
+  CHAR16*     ConfigPlistPath;
+  CHAR16*     ConfigOemPath;
   
+      // load config
+    if ((ConfName == NULL) || (dict == NULL)) {
+        DBG("Can't load config in LoadUserSettings: NULL\n");
+        return EFI_NOT_FOUND;
+    }
+    
+        ConfigPlistPath = PoolPrint(L"EFI\\CLOVER\\%s.plist", ConfName);
+        ConfigOemPath = PoolPrint(L"%s\\%s.plist", OEMPath, ConfName);
   DBG("ConfigPlistPath: %s\n", ConfigPlistPath);
-  
-  // load config
   if (FileExists(SelfRootDir, ConfigOemPath)) {
     Status = egLoadFile(SelfRootDir, ConfigOemPath, (UINT8**)&gConfigPtr, &size);
   } else {
-    DBG("Oem %s.plist not found at path: %s\n", gSettings.ConfigName, ConfigOemPath);
+        DBG("Oem %s.plist not found at path: %s\n", ConfName, ConfigOemPath);
   }
   
   if (EFI_ERROR(Status)) {
@@ -158,8 +216,8 @@ EFI_STATUS LoadUserSettings(IN EFI_FILE *RootDir)
     return Status;
   }
   
-  if(ParseXML((const CHAR8*)gConfigPtr, &gConfigDict) != EFI_SUCCESS) {
-    gConfigDict = NULL;
+  if(ParseXML((const CHAR8*)gConfigPtr, dict, size) != EFI_SUCCESS) {
+    dict = NULL;
     DBG(" config parse error\n");
     return EFI_UNSUPPORTED;
   }
@@ -867,26 +925,20 @@ static BOOLEAN FillinCustomTool(IN OUT CUSTOM_TOOL_ENTRY *Entry, TagPtr dictPoin
   return TRUE;
 }
 
-EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir)
+EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
 {
-  EFI_STATUS	Status = EFI_NOT_FOUND;
+  EFI_STATUS	Status = EFI_SUCCESS;
   TagPtr      dict;
   TagPtr      dict2;
   TagPtr      dictPointer;
   TagPtr      prop;
  // CHAR8       ANum[4];
  // UINTN       i = 0;
-  if (gConfigDict == NULL) {
-    Status = LoadUserSettings(RootDir);
-    if (EFI_ERROR(Status)) {
-      return Status;
-    }
-  }
+
+    dict = CfgDict;
+ if(dict != NULL) {
   DBG("Loading early settings\n");
-  //Graphics
-  // это не переносится в refit.conf, потому что оно загружается только один раз
   
-  dict = gConfigDict;
   dictPointer = GetProperty(dict, "Boot");
   if (dictPointer) {
     prop = GetProperty(dictPointer, "Timeout");
@@ -1332,6 +1384,7 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir)
       }
     }
   }
+ }
   return Status;
 }
 #define CONFIG_THEME_FILENAME L"theme.plist"
@@ -1682,6 +1735,7 @@ EFI_STATUS InitTheme(BOOLEAN useThemeDefinedInNVRam)
   UINTN   Size = 0;
   UINTN   Index;
   TagPtr  ThemeDict = NULL;
+  TagPtr  dict = NULL;
   CHAR8  *ThemePtr = NULL;
   CHAR8  *chosenTheme = NULL;
 
@@ -1724,7 +1778,7 @@ EFI_STATUS InitTheme(BOOLEAN useThemeDefinedInNVRam)
           if (EFI_ERROR(Status) || (ThemePtr == NULL) || (Size == 0)) {
             Status = EFI_NOT_FOUND;
           } else {
-            Status = ParseXML((const CHAR8*)ThemePtr, &ThemeDict);
+            Status = ParseXML((const CHAR8*)ThemePtr, &ThemeDict, 0);
             if (EFI_ERROR(Status) || (ThemeDict == NULL)) {
               Status = EFI_UNSUPPORTED;
             } else {
@@ -1772,12 +1826,12 @@ EFI_STATUS InitTheme(BOOLEAN useThemeDefinedInNVRam)
             }
           }
           if (!EFI_ERROR(Status)) {
-            Status = ParseXML((const CHAR8*)ThemePtr, &ThemeDict);
+            Status = ParseXML((const CHAR8*)ThemePtr, &ThemeDict, 0);
             if (EFI_ERROR(Status) || (ThemeDict == NULL)) {
               Status = EFI_UNSUPPORTED;
               DBG("xml file %s not parsed\n", CONFIG_THEME_FILENAME);
             } else {
-              gConfigDict = ThemeDict;
+              dict = ThemeDict;
             }
 
           }
@@ -1795,8 +1849,8 @@ EFI_STATUS InitTheme(BOOLEAN useThemeDefinedInNVRam)
   }
 
   // Read defaults from config
-  if (gConfigDict && !chosenTheme) {
-    TagPtr dictPointer = GetProperty(gConfigDict, "Theme");
+  if (dict && !chosenTheme) {
+    TagPtr dictPointer = GetProperty(dict, "Theme");
     if (dictPointer) {
       EFI_STATUS S = GetThemeTagSettings(dictPointer);
       if (EFI_ERROR(S)) {
@@ -1855,7 +1909,7 @@ EFI_STATUS InitTheme(BOOLEAN useThemeDefinedInNVRam)
   return Status;
 }
 
-EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
+EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
 {
   EFI_STATUS	Status = EFI_NOT_FOUND;
   TagPtr      dict, dict2;
@@ -1865,14 +1919,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
   //CHAR8       ANum[4];
   CHAR16      UStr[64];
   
-  if (gConfigDict == NULL) {
-    Status = LoadUserSettings(RootDir);
-    if (EFI_ERROR(Status)) {
-      return Status;
-    }
-  }
-  
-  dict = gConfigDict;
+    dict = CfgDict;
   if(dict != NULL) {
     
     DBG("Loading main settings\n");
@@ -3471,7 +3518,7 @@ EFI_STATUS GetOSVersion(IN REFIT_VOLUME *Volume)
 */
 	if(!EFI_ERROR(Status) && plistBuffer != 0)
 	{
-		if(ParseXML(plistBuffer, &dict) != EFI_SUCCESS)
+		if(ParseXML(plistBuffer, &dict, 0) != EFI_SUCCESS)
 		{
 			FreePool(plistBuffer);
 			return EFI_NOT_FOUND;
@@ -3570,7 +3617,7 @@ EFI_STATUS GetRootUUID(IN REFIT_VOLUME *Volume)
    
 	if(!EFI_ERROR(Status))
 	{
-		if(ParseXML(plistBuffer, &dict) != EFI_SUCCESS)
+		if(ParseXML(plistBuffer, &dict, 0) != EFI_SUCCESS)
 		{
 			FreePool(plistBuffer);
 			return EFI_NOT_FOUND;

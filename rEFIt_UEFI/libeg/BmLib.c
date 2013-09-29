@@ -166,18 +166,57 @@ EfiStrDuplicate (
 //Compare strings case insensitive
 INTN
 StriCmp (
-		IN      CONST CHAR16              *FirstString,
-		IN      CONST CHAR16              *SecondString
+		IN      CONST CHAR16              *FirstS,
+		IN      CONST CHAR16              *SecondS
 		)
 {
 	
-	while ((*FirstString != L'\0') && ((*FirstString & ~0x20) == (*SecondString & ~0x20))) {
-		FirstString++;
-		SecondString++;
+	while (*FirstS != L'\0') {
+		if ( (((*FirstS >= 'a') && (*FirstS <= 'z')) ? (*FirstS - ('a' - 'A')) : *FirstS ) !=
+            (((*SecondS >= 'a') && (*SecondS <= 'z')) ? (*SecondS - ('a' - 'A')) : *SecondS ) ) break;
+		FirstS++;
+		SecondS++;
 	}
-	return *FirstString - *SecondString;
+	return *FirstS - *SecondS;
 }
 
+// If Null-terminated strings are case insensitive equal or its sSize symbols are equal then TRUE
+BOOLEAN
+AsciiStriNCmp (
+              IN      CONST CHAR8              *FirstS,
+              IN      CONST CHAR8              *SecondS,
+              IN      CONST UINTN               sSize
+              )
+{
+    INTN i = sSize;
+	while ( i && (*FirstS != '\0') ) {
+		if ( (((*FirstS >= 'a') && (*FirstS <= 'z')) ? (*FirstS - ('a' - 'A')) : *FirstS ) !=
+            (((*SecondS >= 'a') && (*SecondS <= 'z')) ? (*SecondS - ('a' - 'A')) : *SecondS ) ) return FALSE;
+		FirstS++;
+		SecondS++;
+        i--;
+	}
+	return TRUE;
+}
+
+// Case insensitive search of WhatString in WhereString
+BOOLEAN
+AsciiStrStriN (
+               IN      CONST CHAR8              *WhatString,
+               IN      CONST UINTN               sWhatSize,
+               IN      CONST CHAR8              *WhereString,
+               IN      CONST UINTN               sWhereSize
+              )
+{
+    if (sWhatSize > sWhereSize) return FALSE;
+	INTN i = sWhereSize;
+    BOOLEAN Finded = FALSE;
+    for (; i && !Finded; i--) {
+        Finded = AsciiStriNCmp(WhatString, WhereString, sWhatSize);
+        WhereString++;
+    }
+	return Finded;
+}
 
 /**
 

@@ -426,7 +426,7 @@ EFI_STATUS LoadNvramPlist(IN EFI_FILE *RootDir, IN CHAR16* NVRAMPlistPath)
     //
     // parse it into gNvramDict 
     //
-    Status = ParseXML((const CHAR8*)NvramPtr, &gNvramDict);
+    Status = ParseXML((const CHAR8*)NvramPtr, &gNvramDict,0);
     if(Status != EFI_SUCCESS) {
         DBG(" parsing error\n");
     }

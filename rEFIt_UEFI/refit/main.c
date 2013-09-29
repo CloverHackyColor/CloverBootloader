@@ -3668,6 +3668,23 @@ VOID SetVariablesFromNvram()
   }
 }
 
+VOID SetOEMPath(CHAR16 *ConfName)
+  {
+    if (ConfName == NULL) {
+      OEMPath = L"EFI\\CLOVER";
+    } else if (!gFirmwareClover &&
+               FileExists(SelfRootDir,
+                          PoolPrint(L"EFI\\CLOVER\\OEM\\%a\\UEFI\\%s.plist", gSettings.OEMBoard, ConfName))) {
+      OEMPath = PoolPrint(L"EFI\\CLOVER\\OEM\\%a\\UEFI", gSettings.OEMBoard);
+    } else if (FileExists(SelfRootDir, PoolPrint(L"EFI\\CLOVER\\OEM\\%a\\%s.plist", gSettings.OEMProduct, ConfName))) {
+      OEMPath = PoolPrint(L"EFI\\CLOVER\\OEM\\%a", gSettings.OEMProduct);
+    } else if (FileExists(SelfRootDir, PoolPrint(L"EFI\\CLOVER\\OEM\\%a\\%s.plist", gSettings.OEMBoard, ConfName))) {
+      OEMPath = PoolPrint(L"EFI\\CLOVER\\OEM\\%a", gSettings.OEMBoard);
+    } else {
+      OEMPath = L"EFI\\CLOVER";
+    }
+  }
+
 //
 // main entry point
 //
@@ -3689,6 +3706,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 //  UINT64            TscDiv;
 //  UINT64            TscRemainder = 0;
   LOADER_ENTRY      *LoaderEntry;
+  CHAR16            *ConfName = NULL;
+  TagPtr            UniteTag = NULL;
+  BOOLEAN           UniteConfigs = FALSE;
   
   // CHAR16            *InputBuffer; //, *Y;
   //  EFI_INPUT_KEY Key;
@@ -3741,17 +3761,38 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   DBG("  running on %a\n",   gSettings.OEMProduct);
   DBG("... with board %a\n", gSettings.OEMBoard);
   
-  UnicodeSPrint(gSettings.ConfigName, 64, L"config");
-  
-  if (!gFirmwareClover && FileExists(SelfRootDir, PoolPrint(L"EFI\\CLOVER\\OEM\\%a\\UEFI\\%s.plist", gSettings.OEMBoard, gSettings.ConfigName))) {
-    OEMPath = PoolPrint(L"EFI\\CLOVER\\OEM\\%a\\UEFI", gSettings.OEMBoard);
-  } else if (FileExists(SelfRootDir, PoolPrint(L"EFI\\CLOVER\\OEM\\%a\\%s.plist", gSettings.OEMProduct, gSettings.ConfigName))) {
-    OEMPath = PoolPrint(L"EFI\\CLOVER\\OEM\\%a", gSettings.OEMProduct);
-  } else if (FileExists(SelfRootDir, PoolPrint(L"EFI\\CLOVER\\OEM\\%a\\%s.plist", gSettings.OEMBoard, gSettings.ConfigName))) {
-    OEMPath = PoolPrint(L"EFI\\CLOVER\\OEM\\%a", gSettings.OEMBoard);
-  } else {
-    OEMPath = L"EFI\\CLOVER";
+  // LoadOptions Parsing
+  DBG("Clover load options size = %d bytes\n", SelfLoadedImage->LoadOptionsSize);
+    ParseLoadOptions(&ConfName, &gConfigDict[1]);
+  if (ConfName) {
+      SetOEMPath(ConfName);
+      Status = LoadUserSettings(SelfRootDir, ConfName, &gConfigDict[1]);
+      DBG("%s\\%s.plist%s loaded with name from LoadOptions: %r\n",
+                OEMPath, ConfName, EFI_ERROR(Status) ? L" not" : L"", Status);
+      if (EFI_ERROR(Status)) {
+        gConfigDict[1] = NULL;
+        FreePool(ConfName);
+      }
   }
+  if (gConfigDict[1]) {
+    UniteTag = GetProperty(gConfigDict[1], "Unite");
+    if(UniteTag) {
+      UniteConfigs =  (UniteTag->type == kTagTypeTrue) ||
+                      ((UniteTag->type == kTagTypeString) &&
+                      ((UniteTag->string[0] == 'y') || (UniteTag->string[0] == 'Y')));
+      DBG("UniteConfigs = %s", UniteConfigs ? L"TRUE\n": L"FALSE\n" );
+    }
+  }
+  if (!gConfigDict[1] || UniteConfigs) {
+    SetOEMPath(L"config");
+    Status = LoadUserSettings(SelfRootDir, L"config", &gConfigDict[0]);
+      DBG("%s\\config.plist%s loaded: %r\n", OEMPath, EFI_ERROR(Status) ? L" not" : L"", Status);
+  }
+  gSettings.ConfigName = PoolPrint(L"%s%s%s",
+                                   gConfigDict[0] ? L"config": L"",
+                                   (gConfigDict[0] && gConfigDict[1]) ? L" + ": L"",
+                                   !gConfigDict[1] ? L"": (ConfName ? ConfName : L"Load Options"));
+  gSettings.MainConfigName = EfiStrDuplicate(gSettings.ConfigName);
 
   gSettings.PointerEnabled = TRUE;
   gSettings.PointerSpeed = 2;
@@ -3760,9 +3801,14 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   if (!GlobalConfig.FastBoot) {
     GetListOfThemes();
   }
-  Status = GetEarlyUserSettings(SelfRootDir);
+
+  for (i=0; i<2; i++) {
+    if (gConfigDict[i]) {
+      Status = GetEarlyUserSettings(SelfRootDir, gConfigDict[i]);
   if (EFI_ERROR(Status)) {
-    DBG("Early settings: %r\n", Status);
+        DBG("Error in Early settings%d: %r\n", i, Status);
+      }
+    }
   }
 
   MainMenu.TimeoutSeconds = GlobalConfig.Timeout >= 0 ? GlobalConfig.Timeout : 0;
@@ -3841,7 +3887,14 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   gCPUStructure.MaxSpeed = (UINT32)DivU64x32(gCPUStructure.TSCFrequency, Mega);
   
   //Second step. Load config.plist into gSettings	
-	Status = GetUserSettings(SelfRootDir);  
+  for (i=0; i<2; i++) {
+    if (gConfigDict[i]) {
+      Status = GetUserSettings(SelfRootDir, gConfigDict[i]);
+      if (EFI_ERROR(Status)) {
+        DBG("Error in Second part of settings%d: %r\n", i, Status);
+      }
+    }
+  }
  //       DBG("GetUserSettings OK\n");
   
   if (!gFirmwareClover && !gDriversFlags.EmuVariableLoaded &&

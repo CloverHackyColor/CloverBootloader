@@ -102,7 +102,7 @@ EFI_STATUS EFIAPI LoadKext(IN CHAR16 *FileName, IN cpu_type_t archCpuType, IN OU
     }
     NoContents = TRUE;
 	}
-		if(ParseXML((CHAR8*)infoDictBuffer,&dict)!=0) {
+		if(ParseXML((CHAR8*)infoDictBuffer,&dict,0)!=0) {
 			FreePool(infoDictBuffer);
 			MsgLog("Failed to load extra kext: %s\n", FileName);
 			return EFI_NOT_FOUND;

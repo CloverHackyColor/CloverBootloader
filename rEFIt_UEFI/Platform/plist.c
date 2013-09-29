@@ -190,20 +190,26 @@ EFI_STATUS GetElement( TagPtr dict, INTN id,  TagPtr * dict1)
 // tag pointer and returns the end of the dic, or returns -1 if not found.
 //
 
-EFI_STATUS ParseXML(const CHAR8* buffer, TagPtr * dict)
+EFI_STATUS ParseXML(const CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
 {
 	EFI_STATUS	Status;
 	UINT32		length=0;
 	UINT32		pos=0;
 	TagPtr		tag=NULL;
 	CHAR8*		configBuffer=NULL;
-	UINT32		bufferSize=(UINT32)AsciiStrLen(buffer)+1;
+	UINT32		bufferSize=0;
+	
+	if (bufSize) {
+		bufferSize=bufSize;
+	} else {
+		bufferSize=(UINT32)AsciiStrLen(buffer);
+	}
   
 	if(dict == NULL) {
     return EFI_INVALID_PARAMETER;
   }
   
-	configBuffer=AllocateZeroPool(bufferSize);
+	configBuffer=AllocateZeroPool(bufferSize+1);
 	if(configBuffer == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }

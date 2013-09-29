@@ -665,6 +665,24 @@ extern INTN StriCmp (
 		 IN      CONST CHAR16              *SecondString
 		 );
 
+extern INTN AsciiStriCmp (
+              IN      CONST CHAR8              *FirstString,
+              IN      CONST CHAR8              *SecondString
+              );
+
+extern BOOLEAN AsciiStriNCmp (
+               IN      CONST CHAR8              *FirstString,
+               IN      CONST CHAR8              *SecondString,
+               IN      CONST UINTN               sSize
+               );
+
+extern BOOLEAN AsciiStrStriN (
+                IN      CONST CHAR8              *WhatString,
+                IN      CONST UINTN               sWhatSize,
+                IN      CONST CHAR8              *WhereString,
+                IN      CONST UINTN               sWhereSize
+                );
+
 extern EFI_FILE_INFO * EfiLibFileInfo (IN EFI_FILE_HANDLE      FHand);
 extern EFI_FILE_SYSTEM_INFO * EfiLibFileSystemInfo (IN EFI_FILE_HANDLE   Root);
 
