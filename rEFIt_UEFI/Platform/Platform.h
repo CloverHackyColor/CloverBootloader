@@ -732,7 +732,7 @@ typedef struct {
   UINT8   PLimitDict;
   UINT8   UnderVoltStep;
   BOOLEAN DoubleFirstState;
-  BOOLEAN LpcTune;
+  BOOLEAN SuspendOverride;
   BOOLEAN EnableC2;
   BOOLEAN EnableC4;
   BOOLEAN EnableC6;
@@ -780,7 +780,7 @@ typedef struct {
   UINT32  align1;
 #endif
   BOOLEAN InjectEDID;
-  UINT8   pad5[1];
+  BOOLEAN  LpcTune;
   UINT16   DropOEM_DSM;
   UINT8   *CustomEDID;
   CHAR16  FBName[16];

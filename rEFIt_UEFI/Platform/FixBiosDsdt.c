@@ -413,7 +413,7 @@ CHAR8 shutdown0[] =
     0xA0, 0x05, 0x93, 0x68, 0x0A, 0x05, 0xA1, 0x01
 };
 
-CHAR8 shutdown[] =
+CHAR8 shutdown1[] =
 {
   0xA0, 0x0F, 0x91, 0x91, 0x93, 0x68, 0x0A, 0x03, 0x93, 0x68, 0x0A, 0x04, 0x93, 0x68, 0x0A, 0x05, 0xA1, 0x01
 };
@@ -4094,8 +4094,9 @@ UINT32 FIXPWRB (UINT8* dsdt, UINT32 len)
 
 UINT32 FIXSHUTDOWN_ASUS (UINT8 *dsdt, UINT32 len)
 {
-	UINT32 i, j, sizeoffset;
+	UINT32 i, j, sizeoffset = 0;
 	UINT32 adr, adr1 = 0, adr2, size, shift = 0;
+  CHAR8 *shutdown = NULL;
 	
 	DBG("Start SHUTDOWN Fix len=%x\n", len);
   adr = FindMethod(dsdt, len, "_PTS");
@@ -4103,7 +4104,15 @@ UINT32 FIXSHUTDOWN_ASUS (UINT8 *dsdt, UINT32 len)
     DBG("no _PTS???\n");
     return len;
   }
-  
+
+  if (gSettings.SuspendOverride) {
+    shutdown = @shutdown1[0];
+    sizeoffset = sizeof(shutdown1);
+  } else {
+    shutdown = @shutdown0[0];
+    sizeoffset = sizeof(shutdown0);
+  }
+
   /*
       adr \  _  P  T  S       insert               offset
    14 16 5C 5F 50 54 53 01  < A0 05 93 68 0A 05 A1 08	>
@@ -4111,7 +4120,7 @@ UINT32 FIXSHUTDOWN_ASUS (UINT8 *dsdt, UINT32 len)
    53 4D 49 5F 0A 8A 68 
 
    */
-  sizeoffset = sizeof(shutdown); // == 18
+//  sizeoffset = sizeof(shutdown); // == 18
   size = get_size(dsdt, adr);
   adr1 = adr;
   for (j=0; j<20; j++) {

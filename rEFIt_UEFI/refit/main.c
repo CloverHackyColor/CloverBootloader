@@ -82,43 +82,49 @@ EMU_VARIABLE_CONTROL_PROTOCOL *gEmuVariableControl = NULL;
 
 static VOID AboutRefit(VOID)
 {
-//  CHAR8* Revision = NULL;
-    if (AboutMenu.EntryCount == 0) {
-        AboutMenu.TitleImage = BuiltinIcon(BUILTIN_ICON_FUNC_ABOUT);
-        AddMenuInfoLine(&AboutMenu, L"Clover Version 2.10 UEFI by Slice, dmazar, apianti, JrCs, and others");
+  //  CHAR8* Revision = NULL;
+  if (AboutMenu.EntryCount == 0) {
+    AboutMenu.TitleImage = BuiltinIcon(BUILTIN_ICON_FUNC_ABOUT);
+    AddMenuInfoLine(&AboutMenu, L"Clover Version 2k"); // by Slice, dmazar, apianti, JrCs, and others");
 #ifdef FIRMWARE_BUILDDATE
-        AddMenuInfoLine(&AboutMenu, PoolPrint(L" Build: %a", FIRMWARE_BUILDDATE));
+    AddMenuInfoLine(&AboutMenu, PoolPrint(L" Build: %a", FIRMWARE_BUILDDATE));
 #else
-        AddMenuInfoLine(&AboutMenu, L" Build: unknown");
+    AddMenuInfoLine(&AboutMenu, L" Build: unknown");
 #endif
-        AddMenuInfoLine(&AboutMenu, L"");
-        AddMenuInfoLine(&AboutMenu, L"Based on rEFIt Copyright (c) 2006-2010 Christoph Pfisterer");
-        AddMenuInfoLine(&AboutMenu, L"Portions Copyright (c) Intel Corporation");
-        AddMenuInfoLine(&AboutMenu, L"");
-        AddMenuInfoLine(&AboutMenu, L"Running on:");
-        AddMenuInfoLine(&AboutMenu, PoolPrint(L" EFI Revision %d.%02d",
-            gST->Hdr.Revision >> 16, gST->Hdr.Revision & ((1 << 16) - 1)));
+    AddMenuInfoLine(&AboutMenu, L"");
+    AddMenuInfoLine(&AboutMenu, L"Based on rEFIt (c) 2006-2010 Christoph Pfisterer");
+    AddMenuInfoLine(&AboutMenu, L"Portions Copyright (c) Intel Corporation");
+    AddMenuInfoLine(&AboutMenu, L"Developers:");
+    AddMenuInfoLine(&AboutMenu, L"  Slice, dmazar, apianti, JrCs, pene, usrsse2, SoThOr");
+    AddMenuInfoLine(&AboutMenu, L"Credits also:");
+    AddMenuInfoLine(&AboutMenu, L"  Kabyl, pcj, jadran, Blackosx, STLVNUB, ycr.ru");
+    AddMenuInfoLine(&AboutMenu, L"  FrodoKenny, skoczy, crazybirdy, Oscar09, xsmile");
+    AddMenuInfoLine(&AboutMenu, L"  projectosx.com, applelife.ru");
+    AddMenuInfoLine(&AboutMenu, L"");
+    AddMenuInfoLine(&AboutMenu, L"Running on:");
+    AddMenuInfoLine(&AboutMenu, PoolPrint(L" EFI Revision %d.%02d",
+                                          gST->Hdr.Revision >> 16, gST->Hdr.Revision & ((1 << 16) - 1)));
 #if defined(MDE_CPU_IA32)
-        AddMenuInfoLine(&AboutMenu, L" Platform: i386 (32 bit)");
+    AddMenuInfoLine(&AboutMenu, L" Platform: i386 (32 bit)");
 #elif defined(MDE_CPU_X64)
-        AddMenuInfoLine(&AboutMenu, L" Platform: x86_64 (64 bit)");
+    AddMenuInfoLine(&AboutMenu, L" Platform: x86_64 (64 bit)");
 #else
-        AddMenuInfoLine(&AboutMenu, L" Platform: unknown");
+    AddMenuInfoLine(&AboutMenu, L" Platform: unknown");
 #endif
 #ifdef FIRMWARE_REVISION
-        AddMenuInfoLine(&AboutMenu, PoolPrint(L" Firmware: %s rev %s", gST->FirmwareVendor, FIRMWARE_REVISION));
+    AddMenuInfoLine(&AboutMenu, PoolPrint(L" Firmware: %s rev %s", gST->FirmwareVendor, FIRMWARE_REVISION));
 #else
-      AddMenuInfoLine(&AboutMenu, PoolPrint(L" Firmware: %s rev %d", gST->FirmwareVendor, gST->FirmwareRevision));
+    AddMenuInfoLine(&AboutMenu, PoolPrint(L" Firmware: %s rev %d", gST->FirmwareVendor, gST->FirmwareRevision));
 #endif
-        AddMenuInfoLine(&AboutMenu, PoolPrint(L" Screen Output: %s", egScreenDescription()));
-      AboutMenu.AnimeRun = GetAnime(&AboutMenu);
-        AddMenuEntry(&AboutMenu, &MenuEntryReturn);
-    }  else {
-      FreePool(AboutMenu.InfoLines[AboutMenu.InfoLineCount-1]);
-      AboutMenu.InfoLines[AboutMenu.InfoLineCount-1]=PoolPrint(L" Screen Output: %s", egScreenDescription());
-    }
-    
-    RunMenu(&AboutMenu, NULL);
+    AddMenuInfoLine(&AboutMenu, PoolPrint(L" Screen Output: %s", egScreenDescription()));
+    AboutMenu.AnimeRun = GetAnime(&AboutMenu);
+    AddMenuEntry(&AboutMenu, &MenuEntryReturn);
+  }  else {
+    FreePool(AboutMenu.InfoLines[AboutMenu.InfoLineCount-1]);
+    AboutMenu.InfoLines[AboutMenu.InfoLineCount-1]=PoolPrint(L" Screen Output: %s", egScreenDescription());
+  }
+
+  RunMenu(&AboutMenu, NULL);
 }
 
 static VOID HelpRefit(VOID)

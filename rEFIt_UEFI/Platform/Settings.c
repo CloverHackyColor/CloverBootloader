@@ -2483,6 +2483,14 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
                 gSettings.ReuseFFFF = TRUE;
               }
         }
+        prop = GetProperty(dict2, "SuspendOverride");
+        if(prop) {
+          if ((prop->type == kTagTypeTrue) ||
+              ((prop->type == kTagTypeString) &&
+               ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))) {
+            gSettings.SuspendOverride = TRUE;
+          }
+        }
         
         prop = GetProperty(dict2, "DropOEM_DSM"); 
         defDSM = FALSE;

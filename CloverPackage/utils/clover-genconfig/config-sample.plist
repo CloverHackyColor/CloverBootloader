@@ -320,8 +320,10 @@
 			<key>Name</key>
 			<string>DSDT.aml</string>
 			<key>FixMask</key>
-			<string>0xFFFF</string>
+			<string>0xFFDF</string>
 			<key>ReuseFFFF</key>
+			<false/>
+			<key>SuspendOverride</key>
 			<false/>
 			<key>Patches</key>
 			<array>
@@ -393,6 +395,8 @@
 			<integer>8</integer>
 			<key>MaxMultiplier</key>
 			<integer>12</integer>
+			<key>UseSystemIO</key>
+			<false/>
 			<key>PluginType</key>
 			<integer>0</integer>
 		</dict>
@@ -400,6 +404,8 @@
 		<string>0x64</string>
 		<key>ResetValue</key>
 		<string>0xFE</string>
+		<key>HaltEnabler</key>
+		<false/>
 		<key>smartUPS</key>
 		<false/>
 		<key>PatchAPIC</key>

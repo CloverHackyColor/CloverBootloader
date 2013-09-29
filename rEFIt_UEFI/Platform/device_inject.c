@@ -676,7 +676,7 @@ BOOLEAN set_hda_props(EFI_PCI_IO_PROTOCOL *PciIo, pci_dt_t *hda_dev)
       if (layoutId == 0) {
         layoutId = 12;
       }
-      DBG(", setting layout-id=%d (0x%x)\n", layoutId, layoutId);
+ //     DBG(", setting layout-id=%d (0x%x)\n", layoutId, layoutId);
     }
     for (i = 0; i < gSettings.NrAddProperties; i++) {
       if (gSettings.AddProperties[i].Device != DEV_HDA) {

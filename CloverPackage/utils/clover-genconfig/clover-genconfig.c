@@ -506,6 +506,7 @@ void PrintConfig(CFTypeRef data)
   addHex(dsdtDict, CFSTR("FixMask"), s->FixDsdt);
   addBoolean(dsdtDict, CFSTR("Debug"), s->DebugDSDT);
   addBoolean(dsdtDict, CFSTR("ReuseFFFF"), s->ReuseFFFF);
+  addBoolean(dsdtDict, CFSTR("SuspendOverride"), s->SuspendOverride);
   addInteger(dsdtDict, CFSTR("Patches count"), s->PatchDsdtNum);
   CFMutableArrayRef dsdtPatchArray = addArray(dsdtDict, CFSTR("Patches"));
   CFMutableDictionaryRef dsdtPatchDict = addDictToArray(dsdtPatchArray);
