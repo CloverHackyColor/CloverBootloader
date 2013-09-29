@@ -4106,10 +4106,10 @@ UINT32 FIXSHUTDOWN_ASUS (UINT8 *dsdt, UINT32 len)
   }
 
   if (gSettings.SuspendOverride) {
-    shutdown = @shutdown1[0];
+    shutdown = &shutdown1[0];
     sizeoffset = sizeof(shutdown1);
   } else {
-    shutdown = @shutdown0[0];
+    shutdown = &shutdown0[0];
     sizeoffset = sizeof(shutdown0);
   }
 
