@@ -44,6 +44,13 @@ if [[ -n "$xcode_path" ]]; then
   make -C "${SRCROOT}"/CloverPrefpane || exit $?
   # Make utils
   make -C "${SRCROOT}"/utils || exit $?
+  # Save for ISO
+  cp -v "${SYMROOT}"/clover-genconfig/clover-genconfig "${SRCROOT}"/imgskel/usr/local/bin
+  cp -v "${SYMROOT}"/bdmesg/bdmesg "${SRCROOT}"/imgskel/usr/local/bin
+  cp -v "${SYMROOT}"/fdisk440/fdisk440 "${SRCROOT}"/imgskel/usr/local/bin
+  cp -v "${SRCROOT}"/CloverUpdater/CloverUpdaterUtility "${SRCROOT}"/imgskel/Library/Application\ Support/Clover
+  cp -r -v "${SRCROOT}"/CloverUpdater/build/CloverUpdater.app "${SRCROOT}"/imgskel/Library/Application\ Support/Clover
+  cp -r -v "${SRCROOT}"/CloverPrefpane/Build/Clover.prefPane "${SRCROOT}"/imgskel/Library/PreferencePanes 
 fi
 
 # Start to build installer.

@@ -70,10 +70,10 @@ echo "[MKDIR] ${IMGROOT}/EFI/CLOVER/themes/"
 mkdir -p ${IMGROOT}/EFI/CLOVER/themes/
 echo "[MKDIR] ${IMGROOT}/usr/bin"
 mkdir -p ${IMGROOT}/usr/bin
-if [ -e "${IMGSKELROOT}"/* ];then
+#if [ -e "${IMGSKELROOT}"/* ];then
     echo "[CP] ${IMGSKELROOT} ${IMGROOT}"
-    cp -R -f "${IMGSKELROOT}"/* "${IMGROOT}"
-fi
+    cp -r -f "${IMGSKELROOT}"/* "${IMGROOT}"
+#fi
 echo "[CP] cdboot"
 cp -f ${SYMROOT}/i386/cdboot ${CDBOOT}
 if [[ ${IMAGE_WITH_IA32} -eq 1 ]]; then
