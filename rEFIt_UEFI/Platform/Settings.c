@@ -3468,9 +3468,9 @@ EFI_STATUS GetOSVersion(IN REFIT_VOLUME *Volume)
 					   NULL };
 
 	// InstallerPlists do not contain proper version, but can be used to detect Installer presence
-	CHAR16*		InstallerPlists[] = { L"\\Mac OS X Install Data\\com.apple.boot.plist",   // OS X Installer (Lion)
-					      L"\\OS X Install Data\\com.apple.boot.plist",	  // OS X Installer (ML, Mav)
-					      L"\\.IABootFiles\\com.apple.boot.plist",		  // OS X Installer (ML, Mav?)
+	CHAR16*		InstallerPlists[] = { L"\\Mac OS X Install Data\\com.apple.Boot.plist",   // OS X Installer (Lion)
+					      L"\\OS X Install Data\\com.apple.Boot.plist",	  // OS X Installer (ML, Mav)
+					      L"\\.IABootFiles\\com.apple.Boot.plist",		  // OS X Installer (ML, Mav?)
 					      NULL };
 	if (!Volume) {
 		return EFI_NOT_FOUND;
@@ -3483,7 +3483,7 @@ EFI_STATUS GetOSVersion(IN REFIT_VOLUME *Volume)
 
 	/* Mac OS X Installer */
 	for (Index = 0; InstallerPlists[Index] != NULL && !FileExists(Volume->RootDir, InstallerPlists[Index]); Index++);
-        if (InstallerPlists[Index] != NULL) { // found OSX Installer
+	if (InstallerPlists[Index] != NULL) { // found OSX Installer
 		// for installer type, exact version will be detected prior to booting boot.efi
 		Volume->OSType = OSTYPE_OSX_INSTALLER;
 		Volume->OSIconName = L"mac";
