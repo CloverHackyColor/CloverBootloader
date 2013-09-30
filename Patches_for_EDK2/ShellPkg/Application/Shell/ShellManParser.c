@@ -336,7 +336,7 @@ ManFileFindSections(
       //
       // copy and save the current line.
       //
-      ASSERT((*HelpText == NULL && *HelpSize == 0) || (*HelpText != NULL));
+ //     ASSERT((*HelpText == NULL && *HelpSize == 0) || (*HelpText != NULL));
       StrnCatGrow (HelpText, HelpSize, ReadLine, 0);
       StrnCatGrow (HelpText, HelpSize, L"\r\n", 0);
     }

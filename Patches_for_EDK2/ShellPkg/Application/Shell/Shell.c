@@ -194,9 +194,6 @@ UefiMain (
   // verify we dont allow for spec violation
   //
 //  ASSERT(ShellInfoObject.LogScreenCount >= 3);
-  if (ShellInfoObject.LogScreenCount < 3) {
-    return (EFI_UNSUPPORTED);
-  }
 
   //
   // Initialize the LIST ENTRY objects...

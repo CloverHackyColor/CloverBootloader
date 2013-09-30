@@ -1281,7 +1281,7 @@ UpdateArgcArgv(
 }
 
 /**
-  Funcion will replace the current Argc and Argv in the ShellParameters protocol
+  Function will replace the current Argc and Argv in the ShellParameters protocol
   structure with Argv and Argc.  The current values are de-allocated and the
   OldArgv must not be deallocated by the caller.
 

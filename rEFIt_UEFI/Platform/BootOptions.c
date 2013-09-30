@@ -661,9 +661,9 @@ CompileBootOption (
     }
     
     BootOption->DescriptionSize = StrSize(BootOption->Description);
-    BootOption->VariableSize = sizeof(BootOption->Attributes)
-                                + sizeof(BootOption->FilePathListLength)
-                                + BootOption->DescriptionSize
+    BootOption->VariableSize = sizeof(BootOption->Attributes)   //UINT32
+                                + sizeof(BootOption->FilePathListLength) //UINT16
+                                + BootOption->DescriptionSize 
                                 + BootOption->FilePathListLength
                                 + BootOption->OptionalDataSize;
     BootOption->Variable = AllocateZeroPool (BootOption->VariableSize);

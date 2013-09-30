@@ -667,10 +667,10 @@ BOOLEAN set_hda_props(EFI_PCI_IO_PROTOCOL *PciIo, pci_dt_t *hda_dev)
       // use detection: layoutId=codec dviceId or use default 12
       codecId = HDA_getCodecVendorAndDeviceIds(PciIo);
       if (codecId != 0) {
-        DBG(" detected codec: %04x:%04x", (codecId >> 16), (codecId & 0xFFFF));
+        DBG(" detected codec: %04x:%04x\n", (codecId >> 16), (codecId & 0xFFFF));
         layoutId = getLayoutIdFromVendorAndDeviceId(codecId);
       } else {
-        DBG(" codec not detected");
+        DBG(" codec not detected\n");
       }
       // if not detected - use 12 as default
       if (layoutId == 0) {
