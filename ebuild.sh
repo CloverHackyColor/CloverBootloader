@@ -24,6 +24,7 @@ export TARGETARCH=X64
 export BUILDTARGET=RELEASE
 export BUILDTHREADS=$(( NUMBER_OF_CPUS + 1 ))
 export WORKSPACE=${WORKSPACE:-}
+export TOOLCHAIN_DIR=${TOOLCHAIN_DIR:-~/src/opt/local}
 
 VBIOSPATCHCLOVEREFI=0
 ONLYSATA0PATCH=0
@@ -43,8 +44,15 @@ fi
 PATCH_FILE=
 declare -r XCODE_MAJOR_VERSION="$(xcodebuild -version | sed -nE 's/^Xcode ([0-9]).*/\1/p')"
 case "$XCODE_MAJOR_VERSION" in
-    5) PATCH_FILE=BaseTools_XCode5.patch ;;
+    5) PATCH_FILE=;;
 esac
+
+if [[ ! -x "$TOOLCHAIN_DIR"/cross/bin/x86_64-clover-linux-gnu-gcc || \
+      ! -x "$TOOLCHAIN_DIR"/cross/bin/i686-clover-linux-gnu-gcc ]]; then
+    echo "No clover toolchain found !" >&2
+    echo "Build it with the buidgcc.sh script or defined the TOOLCHAIN_DIR variable." >&2
+    exit 1
+fi
 
 # Go to the script directory to build
 cd "$(dirname $0)"
@@ -109,6 +117,17 @@ print_option_help () {
       echo "$print_option_help_split" | awk 'BEGIN   { n = 0 }
           { if (n == 1) print "                          " $0; else print $0; n = 1 ; }'
   fi
+}
+
+# Function to manage PATH
+pathmunge () {
+    if [[ ! $PATH =~ (^|:)$1(:|$) ]]; then
+        if [[ "${2:-}" = "after" ]]; then
+            export PATH=$PATH:$1
+        else
+            export PATH=$1:$PATH
+        fi
+    fi
 }
 
 # Add edk2 build option
@@ -500,6 +519,12 @@ MainPostBuildScript() {
 
 # BUILD START #
 trap 'exitTrap' EXIT
+
+# Default locale
+export LC_ALL=POSIX
+
+# Add toolchain bin directory to the PATH
+pathmunge "$TOOLCHAIN_DIR/bin"
 
 MainBuildScript $@
 MainPostBuildScript

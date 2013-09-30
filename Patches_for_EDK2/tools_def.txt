@@ -151,8 +151,8 @@ DEFINE GCC46_X64_PREFIX        = ENV(HOME)/src/opt/local/x64/
 #DEFINE GCC46_IA32_PREFIX = ENV(WORKSPACE)/BaseTools/gcc/symlinks/Ia32/
 #DEFINE GCC46_X64_PREFIX  = ENV(WORKSPACE)/BaseTools/gcc/symlinks/X64/
 
-DEFINE GCC47_IA32_PREFIX       = ENV(HOME)/src/opt/local/ia32/
-DEFINE GCC47_X64_PREFIX        = ENV(HOME)/src/opt/local/x64/
+DEFINE GCC47_IA32_PREFIX       = ENV(HOME)/src/opt/local/cross/bin/i686-clover-linux-gnu-
+DEFINE GCC47_X64_PREFIX        = ENV(HOME)/src/opt/local/cross/bin/x86_64-clover-linux-gnu-
 #DEFINE GCC47_IA32_PREFIX = ENV(WORKSPACE)/BaseTools/gcc/symlinks/Ia32/
 #DEFINE GCC47_X64_PREFIX  = ENV(WORKSPACE)/BaseTools/gcc/symlinks/X64/
 
