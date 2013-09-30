@@ -453,7 +453,7 @@ CompileCrossGCC () {
     mkdir -p "$BUILD_DIR" && cd "$BUILD_DIR"
 
     echo "-  gcc-${GCC_VERSION} configure..."
-    "${GCC_DIR}"/configure --target=$TARGET --prefix="$PREFIX/cross" --with-sysroot="$PREFIX" --with-gmp="$PREFIX" --with-mpfr="$PREFIX" --with-mpc="$PREFIX" --with-isl="$PREFIX" --with-cloog="$PREFIX" --with-system-zlib --with-gnu-as --with-gnu-ld --with-newlib --disable-libssp --disable-nls --disable-werror --enable-languages=c,c++ --enable-cloog-backend=isl --disable-multilib > "$DIR_LOGS"/gcc.$ARCH.configure.log.txt 2> /dev/null
+    "${GCC_DIR}"/configure --target=$TARGET --prefix="$PREFIX/cross" --with-sysroot="$PREFIX" --with-gmp="$PREFIX" --with-mpfr="$PREFIX" --with-mpc="$PREFIX" --with-isl="$PREFIX" --with-cloog="$PREFIX" --with-system-zlib --with-gnu-as --with-gnu-ld --with-newlib --disable-libssp --disable-nls --disable-werror --enable-languages=c,c++ --enable-cloog-backend=isl  > "$DIR_LOGS"/gcc.$ARCH.configure.log.txt 2> /dev/null
 
     echo "-  gcc-${GCC_VERSION} make..."
     make all-gcc 1> /dev/null 2> $DIR_LOGS/gcc.$ARCH.make.log.txt
