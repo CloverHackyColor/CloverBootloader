@@ -2213,7 +2213,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
             if (prop2 && (prop2->type == kTagTypeString) && prop2->string) {
               //first suppose it is Ascii string
               gSettings.AddProperties[Index].Value = AllocateCopyPool(AsciiStrSize(prop2->string), prop2->string);
-              gSettings.AddProperties[Index].ValueLen = AsciiStrLen(prop2->string);
+              gSettings.AddProperties[Index].ValueLen = AsciiStrLen(prop2->string) + 1;
             } else if (prop2 && (prop2->type == kTagTypeInteger)) {
               gSettings.AddProperties[Index].Value = AllocatePool(4);
               CopyMem(gSettings.AddProperties[Index].Value, &(prop2->string), 4);
