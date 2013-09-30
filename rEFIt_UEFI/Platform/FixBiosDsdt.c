@@ -2183,7 +2183,7 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
         aml_add_string(pack, "layout-id");
         aml_add_byte_buffer(pack, (CHAR8*)&GfxlayoutId[VCard], 4);
         aml_add_string(pack, "hda-gfx");
-        aml_add_string_buffer(pack, "onboard-2");
+        aml_add_string_buffer(pack, "onboard-2\0");
         aml_add_string(pack, "PinConfigurations");
         aml_add_byte_buffer(pack, data2, sizeof(data2));        
       }
