@@ -18,6 +18,8 @@
 		<string>-1</string>
 		<key>Legacy</key>
 		<string>PBR</string>
+		<key>LegacyBiosDefaultEntry</key>
+		<integer>0</integer>
 	</dict>
 	<key>KernelAndKextPatches</key>
 	<dict>

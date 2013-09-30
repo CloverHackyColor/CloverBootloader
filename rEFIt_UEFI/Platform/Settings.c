@@ -1017,6 +1017,17 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
       UnicodeSPrint(gSettings.LegacyBoot, sizeof(gSettings.LegacyBoot), L"LegacyBiosDefault");
     }
 
+    // Entry for LegacyBiosDefault
+    prop = GetProperty(dictPointer, "LegacyBiosDefaultEntry");
+    if (prop) {
+      if (prop->type == kTagTypeInteger) {
+        gSettings.LegacyBiosDefaultEntry = (UINTN)prop->string;
+      } else if ((prop->type == kTagTypeString) && prop->string) {
+        gSettings.LegacyBiosDefaultEntry = AsciiStrDecimalToUintn(prop->string);
+      }
+    } else {
+	gSettings.LegacyBiosDefaultEntry = 0; // disabled by default
+    }
   }
 
   dictPointer = GetProperty(dict, "GUI");

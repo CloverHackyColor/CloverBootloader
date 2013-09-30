@@ -966,10 +966,73 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume)
 	return EFI_SUCCESS;	
 }	
 
+
+/** For DefaultLegacyBios (UEFI)
+ * Patch BBS Table priorities to allow booting not only from first partition.
+ */
+static VOID PatchBbsTable(EFI_LEGACY_BIOS_PROTOCOL *LegacyBios, UINT16 BootEntry)
+{
+	UINT16		Idx;
+	UINT16		IdxCount = 0;
+	UINT16		Priority = 1;
+	UINT16		OldPriority;
+	UINT16		HddCount;
+	UINT16		BbsCount;
+	HDD_INFO	*LocalHddInfo;
+	BBS_TABLE	*LocalBbsTable;
+
+	LegacyBios->GetBbsInfo (
+		LegacyBios,
+		&HddCount,
+		&LocalHddInfo,
+		&BbsCount,
+		&LocalBbsTable
+		);
+
+	DBG ("BBS Table of size %d, patching priorities Pold->Pnew:\n", BbsCount);
+	DBG (" NO: BBS# Pold Pnew bb/dd/ff cl/sc Type Stat segm:offs\n");
+	DBG (" =====================================================\n");
+
+	for (Idx = 0; Idx < BbsCount; Idx++) {
+		if ((LocalBbsTable[Idx].BootPriority == BBS_IGNORE_ENTRY) ||
+		    (LocalBbsTable[Idx].BootPriority == BBS_DO_NOT_BOOT_FROM) ||
+		    (LocalBbsTable[Idx].BootPriority == BBS_LOWEST_PRIORITY)
+		    ) {
+			continue;
+		}
+
+		OldPriority = LocalBbsTable[Idx].BootPriority;
+		if (++IdxCount==BootEntry) { 
+			LocalBbsTable[Idx].BootPriority = 0;
+		} else {
+			LocalBbsTable[Idx].BootPriority = Priority++;
+		}
+
+		DBG (" %02d: 0x%02x %04x %04x %02x/%02x/%02x %02x/%02x %04x %04x %04x:%04x\n",
+		    (UINTN) IdxCount,
+		    (UINTN) Idx,
+		    (UINTN) OldPriority,
+		    (UINTN) LocalBbsTable[Idx].BootPriority,
+		    (UINTN) LocalBbsTable[Idx].Bus,
+		    (UINTN) LocalBbsTable[Idx].Device,
+		    (UINTN) LocalBbsTable[Idx].Function,
+		    (UINTN) LocalBbsTable[Idx].Class,
+		    (UINTN) LocalBbsTable[Idx].SubClass,
+		    (UINTN) LocalBbsTable[Idx].DeviceType,
+		    (UINTN) * (UINT16 *) &LocalBbsTable[Idx].StatusFlags,
+		    (UINTN) LocalBbsTable[Idx].BootHandlerSegment,
+		    (UINTN) LocalBbsTable[Idx].BootHandlerOffset,
+		    (UINTN) ((LocalBbsTable[Idx].MfgStringSegment << 4) + LocalBbsTable[Idx].MfgStringOffset),
+		    (UINTN) ((LocalBbsTable[Idx].DescStringSegment << 4) + LocalBbsTable[Idx].DescStringOffset)
+		    );
+
+	}
+}
+
 /** For some UEFI boots that have EfiLegacyBiosProtocol.
  * Starts legacy boot from the first BIOS drive.
  */
-EFI_STATUS bootLegacyBiosDefault(IN REFIT_VOLUME* volume) 
+EFI_STATUS bootLegacyBiosDefault(IN UINTN LegacyBiosDefaultEntry) 
 {
 	EFI_STATUS					Status;
 	EFI_LEGACY_BIOS_PROTOCOL	*LegacyBios;
@@ -986,6 +1049,16 @@ EFI_STATUS bootLegacyBiosDefault(IN REFIT_VOLUME* volume)
 		return Status;
 	}
 	
+	// Patch BBS Table
+	if (LegacyBiosDefaultEntry > 0) {
+		PatchBbsTable(LegacyBios, LegacyBiosDefaultEntry);
+		Status = SaveBooterLog(SelfRootDir, LEGBOOT_LOG);
+		if (EFI_ERROR(Status)) {
+			DBG("can't save legacy-boot.log\n");
+			Status = SaveBooterLog(NULL, LEGBOOT_LOG);
+		}
+	}
+
 	/* commented out - it seems it does not have any effect
 	//
 	// create BBS device path for HDD
