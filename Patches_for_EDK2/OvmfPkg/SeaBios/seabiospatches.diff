@@ -20,17 +20,6 @@
  
      PICMask = pic_irqmask_read();
      __csm_return(regs);
---- seabios/src/output.c
-+++ seabios/src/output.c
-@@ -82,7 +82,7 @@ putc_debug(struct putcinfo *action, char
- {
-     if (! CONFIG_DEBUG_LEVEL)
-         return;
--    if (CONFIG_DEBUG_IO && runningOnQEMU())
-+    if (CONFIG_DEBUG_IO && ((CONFIG_CSM && CONFIG_QEMU_HARDWARE) || runningOnQEMU()))
-         // Send character to debug port.
-         outb(c, GET_GLOBAL(DebugOutputPort));
-     if (!MODESEGMENT)
 --- seabios/src/std/LegacyBios.h
 +++ seabios/src/std/LegacyBios.h
 @@ -228,6 +228,16 @@ typedef struct {
