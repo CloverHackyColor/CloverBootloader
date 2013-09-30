@@ -46,7 +46,6 @@ declare -r XCODE_MAJOR_VERSION="$(xcodebuild -version | sed -nE 's/^Xcode ([0-9]
 case "$XCODE_MAJOR_VERSION" in
     5) PATCH_FILE=;;
 esac
-set -xv
 
 if [[ ! -x "$TOOLCHAIN_DIR"/cross/bin/x86_64-clover-linux-gnu-gcc && \
       ! -x "$TOOLCHAIN_DIR"/cross/bin/i686-clover-linux-gnu-gcc ]]; then
