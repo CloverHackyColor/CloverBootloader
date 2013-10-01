@@ -1434,7 +1434,7 @@ VOID        SaveOemDsdt(BOOLEAN FullPatch)
     CopyMem((UINT8*)(UINTN)dsdt, buffer, DsdtLen);
     buffer = (UINT8*)(UINTN)dsdt;
     if (FullPatch) {
-      FixBiosDsdt(buffer);
+      FixBiosDsdt(buffer, FadtPointer);
       DsdtLen = ((EFI_ACPI_DESCRIPTION_HEADER*)buffer)->Length;
 			OriginDsdt = OriginDsdtFixed;
     }
@@ -1941,7 +1941,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
   //native DSDT or loaded we want to apply autoFix to this
   //  if (gSettings.FixDsdt) { //fix even with zero mask because we want to know PCIRootUID and CPUBase and count(?)
   DBG("Apply DsdtFixMask=0x%04x\n", gSettings.FixDsdt);
-  FixBiosDsdt((UINT8*)(UINTN)FadtPointer->XDsdt);
+  FixBiosDsdt((UINT8*)(UINTN)FadtPointer->XDsdt, FadtPointer);
   if (gSettings.DebugDSDT) { 
     for (Index=0; Index < 60; Index++) {
       CHAR16					DsdtPatchedName[128];
@@ -1959,48 +1959,6 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
     }
   } 
   
-  /*
-  if (gSettings.bDropAPIC) {
-    xf = ScanXSDT(APIC_SIGN);
-    if(xf) { DropTableFromXSDT(APIC_SIGN); }
-    rf = ScanRSDT(APIC_SIGN);
-    if(rf) { DropTableFromRSDT(APIC_SIGN); }
-    }
-   
-  if (gSettings.DropMCFG) {
-    DropTableFromXSDT(MCFG_SIGN, 0);
-    DropTableFromRSDT(MCFG_SIGN, 0);
-  }
-		xf = ScanXSDT(MCFG_SIGN, 0);
-		if(xf) { DropTableFromXSDT(MCFG_SIGN, 0); }
-		rf = ScanRSDT(MCFG_SIGN, 0);
-		if(rf) { DropTableFromRSDT(MCFG_SIGN, 0); } 
-  } 
-  if (gSettings.bDropHPET) {
-		xf = ScanXSDT(HPET_SIGN);
-		if(xf) { DropTableFromXSDT(HPET_SIGN); }
-		rf = ScanRSDT(HPET_SIGN);
-		if(rf) { DropTableFromRSDT(HPET_SIGN); }
-		}
-  if (gSettings.bDropECDT) {
-		xf = ScanXSDT(ECDT_SIGN);
-		if(xf) { DropTableFromXSDT(ECDT_SIGN); }
-		rf = ScanRSDT(ECDT_SIGN);
-		if(rf) { DropTableFromRSDT(ECDT_SIGN); }
-		}
-  if (gSettings.bDropDMAR) {
-		xf = ScanXSDT(DMAR_SIGN);
-		if(xf) { DropTableFromXSDT(DMAR_SIGN); }
-		rf = ScanRSDT(DMAR_SIGN);
-		if(rf) { DropTableFromRSDT(DMAR_SIGN); }
-  }
-  if (gSettings.bDropBGRT) {
-		xf = ScanXSDT(BGRT_SIGN);
-		if(xf) { DropTableFromXSDT(BGRT_SIGN); }
-		rf = ScanRSDT(BGRT_SIGN);
-		if(rf) { DropTableFromRSDT(BGRT_SIGN); }
-  }
-  */
   // Drop tables
   if (gSettings.ACPIDropTables) {
     ACPI_DROP_TABLE *DropTable = gSettings.ACPIDropTables;

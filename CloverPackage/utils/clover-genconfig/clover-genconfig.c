@@ -129,6 +129,9 @@ void addString(CFMutableDictionaryRef dest, CFStringRef key, const char* value)
 
 void addUString(CFMutableDictionaryRef dest, CFStringRef key, const UniChar* value)
 {
+  if (!value) {
+    return;
+  }
     assert(dest);
     CFStringRef strValue = CFStringCreateWithFormat(kCFAllocatorDefault, NULL, CFSTR("%S"), value);
     assert(strValue);
@@ -136,9 +139,16 @@ void addUString(CFMutableDictionaryRef dest, CFStringRef key, const UniChar* val
     CFRelease(strValue);
 }
 
-void addHex(CFMutableDictionaryRef dest, CFStringRef key, UInt64 value) {
-    assert(dest);
-    CFStringRef strValue = CFStringCreateWithFormat(kCFAllocatorDefault, NULL, CFSTR("0x%llx"), value);
+void addHex(CFMutableDictionaryRef dest, CFStringRef key, UInt64 value)
+{
+  CFStringRef strValue = NULL;
+
+  assert(dest);
+  if (value > 0xFFFF) {
+    strValue = CFStringCreateWithFormat(kCFAllocatorDefault, NULL, CFSTR("0x%08llx"), value);
+  } else {
+    strValue = CFStringCreateWithFormat(kCFAllocatorDefault, NULL, CFSTR("0x%04llx"), value);
+  }
     assert(strValue);
     CFDictionaryAddValue( dest, key, strValue );
     CFRelease(strValue);
@@ -268,7 +278,7 @@ void PrintConfig(CFTypeRef data)
                                                            &kCFTypeDictionaryValueCallBacks
                                                            );
   if (s->ConfigName != NULL) {
-    addUString(dict, CFSTR("ConfigName"), s->ConfigName);
+    addUString(dict, CFSTR("ConfigName"), (const UniChar *)&s->ConfigName);
   } else {
     addString(dict, CFSTR("ConfigName"), "config");
   }
@@ -276,10 +286,10 @@ void PrintConfig(CFTypeRef data)
   //Boot
   CFMutableDictionaryRef bootDict = addDict(dict, CFSTR("Boot"));
   addString(bootDict, CFSTR("Arguments"), s->BootArgs);
-  addUString(bootDict, CFSTR("Legacy"), s->LegacyBoot);
+  addUString(bootDict, CFSTR("Legacy"), (const UniChar *)&s->LegacyBoot);
  // addUString(bootDict, CFSTR("LegacyEntry"), s->LegacyBiosCustomEntry);
   addInteger(bootDict, CFSTR("XMPDetection"), s->XMPDetection);
-  addUString(bootDict, CFSTR("DefaultVolume"), s->DefaultBoot);
+  addUString(bootDict, CFSTR("DefaultVolume"), (const UniChar *)&s->DefaultBoot);
   addBoolean(bootDict, CFSTR("Log"), s->Debug);
   addString(bootDict, CFSTR("Timeout"), "_NOT_SHOWN_");
   addBoolean(bootDict, CFSTR("Fast"), 0);
@@ -287,7 +297,7 @@ void PrintConfig(CFTypeRef data)
   
   // SystemParameters
   CFMutableDictionaryRef systemParametersDict = addDict(dict, CFSTR("SystemParameters"));
-  addUString(systemParametersDict, CFSTR("CustomUUID"), s->CustomUuid);
+  addUString(systemParametersDict, CFSTR("CustomUUID"), (const UniChar *)&s->CustomUuid);
   addBoolean(systemParametersDict, CFSTR("InjectSystemID"), s->InjectSystemID);
   addHex(systemParametersDict, CFSTR("BacklightLevel"),s->BacklightLevel);
   addBoolean(systemParametersDict, CFSTR("InjectKexts"), 0);
@@ -480,7 +490,7 @@ void PrintConfig(CFTypeRef data)
   addInteger(graphicsDict, CFSTR("VRAM"), s->VRAM);
   addInteger(graphicsDict, CFSTR("DualLink"), s->DualLink);
   // ATI specific"
-  addUString(graphicsDict, CFSTR("FBName"), s->FBName);
+  addUString(graphicsDict, CFSTR("FBName"), (const UniChar *)&s->FBName);
   // NVIDIA specific
   addIntArray(graphicsDict, CFSTR("display-cfg"), &s->Dcfg[0], 8);
   addIntArray(graphicsDict, CFSTR("NVCAP"), &s->NVCAP[0], 20);
@@ -502,16 +512,40 @@ void PrintConfig(CFTypeRef data)
   addBoolean(acpiDict, CFSTR("HaltEnabler"), s->SlpSmiEnable);
 
   CFMutableDictionaryRef dsdtDict = addDict(acpiDict, CFSTR("DSDT"));
-  addUString(dsdtDict, CFSTR("Name"), s->DsdtName);
-  addHex(dsdtDict, CFSTR("FixMask"), s->FixDsdt);
+  addUString(dsdtDict, CFSTR("Name"), (const UniChar *)&s->DsdtName);
+//  addHex(dsdtDict, CFSTR("FixMask"), s->FixDsdt);
   addBoolean(dsdtDict, CFSTR("Debug"), s->DebugDSDT);
   addBoolean(dsdtDict, CFSTR("ReuseFFFF"), s->ReuseFFFF);
   addBoolean(dsdtDict, CFSTR("SuspendOverride"), s->SuspendOverride);
+  addBoolean(dsdtDict, CFSTR("SlpSmiAtWake"), s->SlpWak);
   addInteger(dsdtDict, CFSTR("Patches count"), s->PatchDsdtNum);
+
+  CFMutableDictionaryRef fixDict = addDict(dsdtDict, CFSTR("Fixes"));
+  addBoolean(fixDict, CFSTR("AddDTGP_0001"),       !!(s->FixDsdt & FIX_DTGP));
+  addBoolean(fixDict, CFSTR("FixDarwin_0002"),     !!(s->FixDsdt & FIX_WARNING));
+  addBoolean(fixDict, CFSTR("FixShutdown_0004"),   !!(s->FixDsdt & FIX_SHUTDOWN));
+  addBoolean(fixDict, CFSTR("AddMCFG_0008"),       !!(s->FixDsdt & FIX_MCHC));
+  addBoolean(fixDict, CFSTR("FixHPET_0010"),       !!(s->FixDsdt & FIX_HPET));
+  addBoolean(fixDict, CFSTR("FakeLPC_0020"),       !!(s->FixDsdt & FIX_LPC));
+  addBoolean(fixDict, CFSTR("FixIPIC_0040"),       !!(s->FixDsdt & FIX_IPIC));
+  addBoolean(fixDict, CFSTR("FixSBUS_0080"),       !!(s->FixDsdt & FIX_SBUS));
+  addBoolean(fixDict, CFSTR("FixDisplay_0100"),    !!(s->FixDsdt & FIX_DISPLAY));
+  addBoolean(fixDict, CFSTR("FixIDE_0200"),        !!(s->FixDsdt & FIX_IDE));
+  addBoolean(fixDict, CFSTR("FixSATA_0400"),       !!(s->FixDsdt & FIX_SATA));
+  addBoolean(fixDict, CFSTR("FixFirewire_0800"),   !!(s->FixDsdt & FIX_FIREWIRE));
+  addBoolean(fixDict, CFSTR("FixUSB_1000"),        !!(s->FixDsdt & FIX_USB));
+  addBoolean(fixDict, CFSTR("FixLAN_2000"),        !!(s->FixDsdt & FIX_LAN));
+  addBoolean(fixDict, CFSTR("FixAirport_4000"),    !!(s->FixDsdt & FIX_WIFI));
+  addBoolean(fixDict, CFSTR("FixHDA_8000"),        !!(s->FixDsdt & FIX_HDA));
+
+
+
   CFMutableArrayRef dsdtPatchArray = addArray(dsdtDict, CFSTR("Patches"));
-  CFMutableDictionaryRef dsdtPatchDict = addDictToArray(dsdtPatchArray);
-  addString(dsdtPatchDict, CFSTR("Find"), "_NOT_SHOWN_");
-  addString(dsdtPatchDict, CFSTR("Replace"), "_NOT_SHOWN_");
+    CFMutableDictionaryRef dsdtPatchDict = addDictToArray(dsdtPatchArray);
+    addString(dsdtPatchDict, CFSTR("Comment"), "This is for sample");
+    addString(dsdtPatchDict, CFSTR("Find"), "_NOT_SHOWN_");
+    addString(dsdtPatchDict, CFSTR("Replace"), "_NOT_SHOWN_");
+
   CFMutableDictionaryRef dsmDict = addDict(dsdtDict, CFSTR("DropOEM_DSM"));
   addBoolean(dsmDict, CFSTR("ATI"),       !!(s->DropOEM_DSM & DEV_ATI));
   addBoolean(dsmDict, CFSTR("IntelGFX"),  !!(s->DropOEM_DSM & DEV_INTEL));
@@ -539,19 +573,6 @@ void PrintConfig(CFTypeRef data)
   addInteger(ssdtDict, CFSTR("PluginType"), s->PluginType);
   addBoolean(acpiDict, CFSTR("UseSystemIO"), s->EnableISS);
 
-//  addBoolean(acpiDict, CFSTR("EnableC2"), s->EnableC2);
-//  addHex(acpiDict, CFSTR("C3Latency"), s->C3Latency);
-//  addBoolean(acpiDict, CFSTR("EnableC4"), s->EnableC4);
-//  addBoolean(acpiDict, CFSTR("EnableC6"), s->EnableC6);
-//
-  
-//  addBoolean(acpiDict, CFSTR("DropAPIC"), s->bDropAPIC);
-//  addBoolean(acpiDict, CFSTR("DropMCFG"), s->DropMCFG);
-//  addBoolean(acpiDict, CFSTR("DropHPET"), s->bDropHPET);
-//  addBoolean(acpiDict, CFSTR("DropECDT"), s->bDropECDT);
-//  addBoolean(acpiDict, CFSTR("DropDMAR"), s->bDropDMAR);
-//  addBoolean(acpiDict, CFSTR("DropBGRT"), s->bDropBGRT);
-//
   CFMutableArrayRef dropArray = addArray(acpiDict, CFSTR("DropTables"));
   CFMutableDictionaryRef drop1Dict = addDictToArray(dropArray);
   addString(drop1Dict, CFSTR("Signature"), "_NOT_SHOWN_");

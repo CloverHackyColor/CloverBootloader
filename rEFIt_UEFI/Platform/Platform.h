@@ -879,7 +879,8 @@ typedef struct {
   UINT8  **PatchDsdtReplace;
   UINT32 *LenToReplace;
   BOOLEAN DebugDSDT;
-  UINT8   pad9[3];
+  BOOLEAN SlpWak;
+  UINT8   pad9[2];
 
   // Table dropping
   ACPI_DROP_TABLE *ACPIDropTables;
@@ -1222,7 +1223,7 @@ extern UINT16  dropDSM;
 extern TagPtr gConfigDict[];
 //-----------------------------------
 
-VOID        FixBiosDsdt (UINT8* Dsdt);
+VOID        FixBiosDsdt (UINT8* Dsdt, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt);
 EFI_STATUS  MouseBirth();
 VOID        KillMouse();
 VOID        HidePointer();

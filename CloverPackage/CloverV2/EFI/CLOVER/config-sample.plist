@@ -33,14 +33,6 @@
 		<array>
 			<dict>
 				<key>Name</key>
-				<string>VoodooHDA</string>
-				<key>Find</key>
-				<data>SGVhZHBob25lcwA=</data>
-				<key>Replace</key>
-				<data>VGVsZXBob25lcwA=</data>
-			</dict>
-			<dict>
-				<key>Name</key>
 				<string>AppleAHCIPort</string>
 				<key>Comment</key>
 				<string>External icons patch</string>
@@ -61,8 +53,41 @@
 			<false/>
 			<key>Name</key>
 			<string>DSDT.aml</string>
-			<key>FixMask</key>
-			<string>0xFFFF</string>
+			<key>Fixes</key>
+			<dict>
+				<key>AddDTGP_0001</key>
+				<true/>
+				<key>FixDarwin_0002</key>
+				<true/>
+				<key>FixShutdown_0004</key>
+				<true/>
+				<key>AddMCFG_0008</key>
+				<false/>
+				<key>FixHPET_0010</key>
+				<true/>
+				<key>FakeLPC_0020</key>
+				<false/>
+				<key>FixIPIC_0040</key>
+				<true/>
+				<key>FixSBUS_0080</key>
+				<true/>
+				<key>FixDisplay_0100</key>
+				<true/>
+				<key>FixIDE_0200</key>
+				<false/>
+				<key>FixSATA_0400</key>
+				<false/>
+				<key>FixFirewire_0800</key>
+				<true/>
+				<key>FixUSB_1000</key>
+				<true/>
+				<key>FixLAN_2000</key>
+				<true/>
+				<key>FixAirport_4000</key>
+				<true/>
+				<key>FixHDA_8000</key>
+				<true/>
+			</dict>
 		</dict>
 		<key>DropTables</key>
 		<array>

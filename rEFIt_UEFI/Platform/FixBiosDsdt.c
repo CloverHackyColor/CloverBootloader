@@ -366,10 +366,10 @@ UINT8 hpet1[] =  // Name (_CID, EisaId ("PNP0C01"))
     0x08, 0x5F, 0x43, 0x49, 0x44, 0x0C, 0x41, 0xD0, 0x0C, 0x01
 };
 */
-CHAR8 wakret[] =
-{
-    0xA4, 0x12, 0x04, 0x02, 0x00, 0x00
-};
+CHAR8 wakret[] = {    0xA4, 0x12, 0x04, 0x02, 0x00, 0x00 };
+CHAR8 wakslp1[] = { 0x5B, 0x80, 0x50, 0x4D, 0x33, 0x30, 0x01 };
+CHAR8 wakslp2[] = { 0x0A, 0x08, 0x5B, 0x81, 0x0D, 0x50, 0x4D, 0x33, 0x30, 0x01,
+  0x00, 0x04, 0x53, 0x4C, 0x4D, 0x45, 0x01, 0x70, 0x00, 0x53, 0x4C, 0x4D, 0x45 };
 
 CHAR8 pwrb[] = //? \_SB_PWRB, 0x02
 {
@@ -986,13 +986,14 @@ BOOLEAN CmpNum(UINT8 *dsdt, INT32 i, BOOLEAN Sure)
 BOOLEAN GetName(UINT8 *dsdt, INT32 adr, CHAR8* name)
 {
   INT32 i;
-  for (i = adr; i < adr + 4; i++) {
+  INT32 j = (dsdt[adr] == 0x5C)?1:0; //now we accept \NAME
+  for (i = adr + j; i < adr + j + 4; i++) {
     if ((dsdt[i] < 0x2F) ||
         ((dsdt[i] > 0x39) && (dsdt[i] < 0x41)) ||
         ((dsdt[i] > 0x5A) && (dsdt[i] != 0x5F))) {
       return FALSE;
     }
-    name[i - adr] = dsdt[i];
+    name[i - adr - j] = dsdt[i];
   }
   name[5] = 0;
   return TRUE;
@@ -1179,7 +1180,7 @@ UINT32 CorrectOuters (UINT8 *dsdt, UINT32 len, UINT32 adr,  INT32 shift)
       size = get_size(dsdt, k);
       if (size) {
         if ((k+size) > adr+4) {  //Yes - it is outer
-              DBG("found outer device begin=%x end=%x\n", k, k+size);
+    //          DBG("found outer device begin=%x end=%x\n", k, k+size);
           offset = write_size(k, dsdt, len, shift);  //size corrected to sizeoffset at address j
           shift += offset;
           len += offset;
@@ -1198,7 +1199,7 @@ UINT32 CorrectOuters (UINT8 *dsdt, UINT32 len, UINT32 adr,  INT32 shift)
             //if found
             k = SBADR - 6;
             if ((SBADR + SBSIZE) > adr+4) {  //Yes - it is outer
-              DBG("found outer scope begin=%x end=%x\n", SBADR, SBADR+SBSIZE);
+        //      DBG("found outer scope begin=%x end=%x\n", SBADR, SBADR+SBSIZE);
               offset = write_size(SBADR, dsdt, len, shift);
               shift += offset;
               len += offset;
@@ -3926,12 +3927,14 @@ UINT32 FIXCPU1 (UINT8 *dsdt, UINT32 len)
   return len;             
 }
 
-UINT32 FIXWAK (UINT8 *dsdt, UINT32 len)
+UINT32 FIXWAK (UINT8 *dsdt, UINT32 len, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt)
 {    
   UINT32 i, j, k;
   UINT32 wakadr=0;
   UINT32 waksize=0;
-  UINT32 sizeoffset = 0;
+  UINT32 sizeoffset = 0, sizeoffset2 = 0;
+  UINT16 PM30 = 0x430;  //default
+  BOOLEAN ReturnFound = FALSE;
   
   DBG("Start _WAK Return Fix\n");
   DBG("len = 0x%08x\n", len);
@@ -3942,26 +3945,54 @@ UINT32 FIXWAK (UINT8 *dsdt, UINT32 len)
 		{
       for (j=0; j<10; j++) 
       {
-        if(dsdt[i-j] == 0x14) 
+        if(dsdt[i-j] == 0x14)  //Method _WAK found
         {
-          waksize = get_size(dsdt, i-j+1);
           wakadr = i-j+1;
+          waksize = get_size(dsdt, wakadr);
+          if (!waksize) {
+            continue;
+          }
           //DBG( "_WAK adr = 0x%08x, size = 0x%08x\n", wakadr, waksize);
           for (k=0; k<waksize; k++) 
           {
-            if (dsdt[i+k] == 0xA4) 
+            if (dsdt[i+k] == 0xA4)  // Return
             {
               DBG( "_WAK Method find return data, don't need to patch.\n");
-              return len;
+       //       return len;
+              ReturnFound = TRUE;
             }
           }
-          DBG( "_WAK Method need return data, will patch it.\n");
-          sizeoffset = sizeof(wakret);
-          len = move_data(wakadr+waksize, dsdt, len, sizeoffset);
-          CopyMem(dsdt+wakadr+waksize, wakret, sizeoffset);
-          k = write_size(wakadr, dsdt, len, sizeoffset);
-          sizeoffset += k;
-          len += k;
+
+          if (gSettings.SlpWak) {
+            DBG(" add SLP_SMI_EN=0 into _WAK\n");
+            PM30 = fadt->Pm1aEvtBlk + 0x30;
+            sizeoffset = sizeof(wakslp1) + 3 + sizeof(wakslp2);
+            len = move_data(i + 5, dsdt, len, sizeoffset);
+            CopyMem(dsdt + i + 5, wakslp1, sizeof(wakslp1));
+            k = i + 5 + sizeof(wakslp1);
+            dsdt[k++] = 0x0B;
+            dsdt[k++] = PM30 & 0xFF;
+            dsdt[k++] = PM30 >> 8;
+            CopyMem(dsdt + k, wakslp2, sizeof(wakslp2));
+            k = write_size(wakadr, dsdt, len, sizeoffset);
+            sizeoffset += k;
+            len += k;
+          }
+
+          if (!ReturnFound) {
+            DBG( "_WAK Method need return data, will patch it.\n");
+            waksize = get_size(dsdt, wakadr);
+            if (!waksize) {
+              continue;
+            }
+            sizeoffset2 = sizeof(wakret);
+            len = move_data(wakadr + waksize, dsdt, len, sizeoffset2);
+            CopyMem(dsdt + wakadr + waksize, wakret, sizeoffset2);
+            k = write_size(wakadr, dsdt, len, sizeoffset2);
+            sizeoffset += k + sizeoffset2;
+            len += k;
+          }
+
           len = CorrectOuters(dsdt, len, wakadr-2, sizeoffset);
           break;
         }
@@ -4247,7 +4278,7 @@ UINT32 FIXOTHER (UINT8 *dsdt, UINT32 len)
   
 }
 
-VOID FixBiosDsdt (UINT8* temp)
+VOID FixBiosDsdt (UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt)
 {    
   UINT32 DsdtLen;
   if (!temp)
@@ -4397,16 +4428,18 @@ VOID FixBiosDsdt (UINT8* temp)
 //    DBG("patch USB in DSDT \n");
     DsdtLen = FIXUSB(temp, DsdtLen);
   }
+
+  if (gSettings.SlpWak || (gSettings.FixDsdt & FIX_WARNING)) {
+    // Always Fix _WAK Return value
+    DsdtLen = FIXWAK(temp, DsdtLen, fadt);
+  }
   
   if ((gSettings.FixDsdt & FIX_WARNING)) {
     DBG("patch warnings \n");
     // Always Fix alias cpu FIX cpus=1
   //  DsdtLen = FIXCPU1(temp, DsdtLen);
   //  DsdtLen = FIXPWRB(temp, DsdtLen);
-    
-    // Always Fix _WAK Return value
-    DsdtLen = FIXWAK(temp, DsdtLen);
-    
+
     // USB Device remove error Fix
    // DsdtLen = FIXGPE(temp, DsdtLen);
     

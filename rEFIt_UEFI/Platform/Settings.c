@@ -2072,25 +2072,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
         }
       }
       //InjectEDID - already done in earlysettings
-/*      prop = GetProperty(dictPointer, "InjectEDID");
-      gSettings.InjectEDID = FALSE;
-      if(prop) {
-        if ((prop->type == kTagTypeTrue) ||
-            ((prop->type == kTagTypeString) &&
-             ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))))
-          gSettings.InjectEDID = TRUE;
-      }
-     prop = GetProperty(dictPointer, "CustomEDID");
-      if(prop) {
-        UINTN j = 128;
-        gSettings.CustomEDID = GetDataSetting(dictPointer, "CustomEDID", &j);
-        if (j != 128) {
-          DBG("CustomEDID has wrong length=%d\n", j);
-        } else {
-          DBG("CustomEDID ok\n");
-        }
-      }
- */
+
       prop = GetProperty(dictPointer, "ig-platform-id");
       if(prop) {
         if (prop->type == kTagTypeInteger) {
@@ -2104,17 +2086,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
     
     dictPointer = GetProperty(dict, "Devices");
     if (dictPointer) {
-      //Slice - this is obsolete
-      /*      prop = GetProperty(dictPointer, "PCIRootUID");
-       gSettings.PCIRootUID = 0;
-       if(prop) {
-       if (prop->type == kTagTypeInteger) {
-       gSettings.PCIRootUID = (UINT16)(UINTN)prop->string;
-       } else if (prop->type == kTagTypeString){
-       AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
-       gSettings.PCIRootUID = (UINT16)StrDecimalToUintn((CHAR16*)&UStr[0]);
-       }
-       }*/
+
       prop = GetProperty(dictPointer, "Inject");
       gSettings.StringInjector = FALSE;
       if(prop) {
@@ -2456,6 +2428,144 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
           }
           DBG("Config set Fix DSDT mask=%08x\n", gSettings.FixDsdt);
         }
+        prop = GetProperty(dict2, "Fixes");
+        if (prop) {
+          DBG("Config set Fixes will override FixMask mask!\n");
+          if (prop->type == kTagTypeDict) {
+            gSettings.FixDsdt = 0;
+            prop2 = GetProperty(prop, "AddDTGP_0001");
+            if(prop2) {
+              if ((prop2->type == kTagTypeTrue) ||
+                  ((prop2->type == kTagTypeString) &&
+                   ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
+                    gSettings.FixDsdt |= FIX_DTGP;
+                  }
+            }
+            prop2 = GetProperty(prop, "FixDarwin_0002");
+            if(prop2) {
+              if ((prop2->type == kTagTypeTrue) ||
+                  ((prop2->type == kTagTypeString) &&
+                   ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
+                    gSettings.FixDsdt |= FIX_WARNING;
+                  }
+            }
+            prop2 = GetProperty(prop, "FixShutdown_0004");
+            if(prop2) {
+              if ((prop2->type == kTagTypeTrue) ||
+                  ((prop2->type == kTagTypeString) &&
+                   ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
+                    gSettings.FixDsdt |= FIX_SHUTDOWN;
+                  }
+            }
+            prop2 = GetProperty(prop, "AddMCFG_0008");
+            if(prop2) {
+              if ((prop2->type == kTagTypeTrue) ||
+                  ((prop2->type == kTagTypeString) &&
+                   ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
+                    gSettings.FixDsdt |= FIX_MCHC;
+                  }
+            }
+            prop2 = GetProperty(prop, "FixHPET_0010");
+            if(prop2) {
+              if ((prop2->type == kTagTypeTrue) ||
+                  ((prop2->type == kTagTypeString) &&
+                   ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
+                    gSettings.FixDsdt |= FIX_HPET;
+                  }
+            }
+            prop2 = GetProperty(prop, "FakeLPC_0020");
+            if(prop2) {
+              if ((prop2->type == kTagTypeTrue) ||
+                  ((prop2->type == kTagTypeString) &&
+                   ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
+                    gSettings.FixDsdt |= FIX_LPC;
+                  }
+            }
+            prop2 = GetProperty(prop, "FixIPIC_0040");
+            if(prop2) {
+              if ((prop2->type == kTagTypeTrue) ||
+                  ((prop2->type == kTagTypeString) &&
+                   ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
+                    gSettings.FixDsdt |= FIX_IPIC;
+                  }
+            }
+            prop2 = GetProperty(prop, "FixSBUS_0080");
+            if(prop2) {
+              if ((prop2->type == kTagTypeTrue) ||
+                  ((prop2->type == kTagTypeString) &&
+                   ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
+                    gSettings.FixDsdt |= FIX_SBUS;
+                  }
+            }
+            prop2 = GetProperty(prop, "FixDisplay_0100");
+            if(prop2) {
+              if ((prop2->type == kTagTypeTrue) ||
+                  ((prop2->type == kTagTypeString) &&
+                   ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
+                    gSettings.FixDsdt |= FIX_DISPLAY;
+                  }
+            }
+            prop2 = GetProperty(prop, "FixIDE_0200");
+            if(prop2) {
+              if ((prop2->type == kTagTypeTrue) ||
+                  ((prop2->type == kTagTypeString) &&
+                   ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
+                    gSettings.FixDsdt |= FIX_IDE;
+                  }
+            }
+            prop2 = GetProperty(prop, "FixSATA_0400");
+            if(prop2) {
+              if ((prop2->type == kTagTypeTrue) ||
+                  ((prop2->type == kTagTypeString) &&
+                   ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
+                    gSettings.FixDsdt |= FIX_SATA;
+                  }
+            }
+            prop2 = GetProperty(prop, "FixFirewire_0800");
+            if(prop2) {
+              if ((prop2->type == kTagTypeTrue) ||
+                  ((prop2->type == kTagTypeString) &&
+                   ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
+                    gSettings.FixDsdt |= FIX_FIREWIRE;
+                  }
+            }
+            prop2 = GetProperty(prop, "FixUSB_1000");
+            if(prop2) {
+              if ((prop2->type == kTagTypeTrue) ||
+                  ((prop2->type == kTagTypeString) &&
+                   ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
+                    gSettings.FixDsdt |= FIX_USB;
+                  }
+            }
+            prop2 = GetProperty(prop, "FixLAN_2000");
+            if(prop2) {
+              if ((prop2->type == kTagTypeTrue) ||
+                  ((prop2->type == kTagTypeString) &&
+                   ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
+                    gSettings.FixDsdt |= FIX_LAN;
+                  }
+            }
+            prop2 = GetProperty(prop, "FixAirport_4000");
+            if(prop2) {
+              if ((prop2->type == kTagTypeTrue) ||
+                  ((prop2->type == kTagTypeString) &&
+                   ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
+                    gSettings.FixDsdt |= FIX_WIFI;
+                  }
+            }
+            prop2 = GetProperty(prop, "FixHDA_8000");
+            if(prop2) {
+              if ((prop2->type == kTagTypeTrue) ||
+                  ((prop2->type == kTagTypeString) &&
+                   ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
+                    gSettings.FixDsdt |= FIX_HDA;
+                  }
+            }
+
+          }
+          DBG("   final mask=%08x\n", gSettings.FixDsdt);
+        }
+
         prop = GetProperty(dict2,"Patches");
         if(prop) {
           UINTN Count = GetTagCount(prop);
@@ -2502,7 +2612,16 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
             gSettings.SuspendOverride = TRUE;
           }
         }
-        
+
+        prop = GetProperty(dict2, "SlpSmiAtWake");
+        if(prop) {
+          if ((prop->type == kTagTypeTrue) ||
+              ((prop->type == kTagTypeString) &&
+               ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))) {
+                gSettings.SlpWak = TRUE;
+              }
+        }
+
         prop = GetProperty(dict2, "DropOEM_DSM"); 
         defDSM = FALSE;
         if(prop) {
