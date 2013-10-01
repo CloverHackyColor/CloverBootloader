@@ -428,9 +428,17 @@
   MdeModulePkg/Universal/MonotonicCounterRuntimeDxe/MonotonicCounterRuntimeDxe.inf
   MdeModulePkg/Universal/CapsuleRuntimeDxe/CapsuleRuntimeDxe.inf
   MdeModulePkg/Universal/Console/ConPlatformDxe/ConPlatformDxe.inf
-  MdeModulePkg/Universal/Console/ConSplitterDxe/ConSplitterDxe.inf
+  MdeModulePkg/Universal/Console/ConSplitterDxe/ConSplitterDxe.inf {
+    <PcdsPatchableInModule>
+      gEfiMdeModulePkgTokenSpaceGuid.PcdConOutRow|0
+      gEfiMdeModulePkgTokenSpaceGuid.PcdConOutColumn|0
+  }
   #Clover/ConSplitterDxe/ConSplitterDxe.inf
-  MdeModulePkg/Universal/Console/GraphicsConsoleDxe/GraphicsConsoleDxe.inf
+  MdeModulePkg/Universal/Console/GraphicsConsoleDxe/GraphicsConsoleDxe.inf {
+    <PcdsPatchableInModule>
+      gEfiMdeModulePkgTokenSpaceGuid.PcdVideoHorizontalResolution|0
+      gEfiMdeModulePkgTokenSpaceGuid.PcdVideoVerticalResolution|0
+}
   #Clover/GraphicsConsoleDxe/GraphicsConsoleDxe.inf
   MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe.inf
   MdeModulePkg/Universal/DevicePathDxe/DevicePathDxe.inf {
@@ -527,7 +535,11 @@
   #Clover/Patches_for_EDK2/UsbMouseDxe/UsbMouseDxe.inf 
 
 !ifdef $(CSM_ENABLE)
-  IntelFrameworkModulePkg/Csm/BiosThunk/VideoDxe/VideoDxe.inf
+  IntelFrameworkModulePkg/Csm/BiosThunk/VideoDxe/VideoDxe.inf {
+    <PcdsPatchableInModule>
+      gEfiMdeModulePkgTokenSpaceGuid.PcdVideoHorizontalResolution|0
+      gEfiMdeModulePkgTokenSpaceGuid.PcdVideoVerticalResolution|0
+}
   #IntelFrameworkModulePkg/Csm/LegacyBiosDxe/LegacyBiosDxe.inf
   OvmfPkg/Csm/LegacyBiosDxe/LegacyBiosDxe.inf
   OvmfPkg/Csm/Csm16/Csm16.inf
