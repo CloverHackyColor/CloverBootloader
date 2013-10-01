@@ -356,7 +356,7 @@ MainBuildScript() {
     # Create edk tools if necessary
     if  [[ ! -x "$EDK_TOOLS_PATH/Source/C/bin/GenFv" ]]; then
         echo "Building tools as they are not found"
-        make -C "$WORKSPACE"/BaseTools
+        make -C "$WORKSPACE"/BaseTools CC="gcc -Wno-deprecated-declarations"
     fi
 
     # Build Clover
