@@ -640,8 +640,6 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
 //  MsgLog("PatchVBios=%c\n", gSettings.PatchVBios?'Y':'N');
 //  DBG("KillMouse\n");
   KillMouse();
-//    DBG("BeginExternalScreen\n");
-  BeginExternalScreen(OSFLAG_ISSET(Entry->Flags, OSFLAG_USEGRAPHICS), L"Booting OS");
 
   // Load image into memory (will be started later) 
   Status = LoadEFIImage(Entry->DevicePath, Basename(Entry->LoaderPath), NULL, &ImageHandle);
@@ -733,7 +731,12 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     // /Library/Preferences/SystemConfiguration/com.apple.Boot.plist
     // which is wrong
     if (Entry->LoadOptions == NULL || (StrStr(Entry->LoadOptions, L"-v") == NULL && StrStr(Entry->LoadOptions, L"-V") == NULL)) {
+      // OSX is not booting verbose, so block console output and set graphics mode
       BlockConOut = TRUE;
+      Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_USEGRAPHICS);
+    } else {
+      // OSX is booting verbose, so set text mode
+      Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_USEGRAPHICS);
     }
   }
   else if (OSTYPE_IS_WINDOWS(Entry->LoaderType)) {
@@ -758,6 +761,9 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
   
   SetStartupDiskVolume(Entry->Volume, Entry->LoaderType == OSTYPE_OSX ? NULL : Entry->LoaderPath);
   
+//    DBG("BeginExternalScreen\n");
+  BeginExternalScreen(OSFLAG_ISSET(Entry->Flags, OSFLAG_USEGRAPHICS), L"Booting OS");
+
   if (BlockConOut) {
     // save orig OutputString and replace it with
     // null implementation
