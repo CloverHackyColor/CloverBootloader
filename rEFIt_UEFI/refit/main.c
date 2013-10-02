@@ -722,9 +722,6 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     SetupDataForOSX();
 //    DBG("LoadKexts\n");
     LoadKexts(Entry);
-//    DBG("SetupBooterLog\n");
-    DBG("Closing log\n");
-    Status = SetupBooterLog();
     
     // blocking boot.efi output if -v is not specified
     // note: this blocks output even if -v is specified in
@@ -770,6 +767,14 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     ConOutOutputString = gST->ConOut->OutputString;
     gST->ConOut->OutputString = NullConOutOutputString;
   }
+
+  if (OSTYPE_IS_OSX(Entry->LoaderType) ||
+      OSTYPE_IS_OSX_RECOVERY(Entry->LoaderType) ||
+      OSTYPE_IS_OSX_INSTALLER(Entry->LoaderType)) {
+    DBG("Closing log\n");
+    Status = SetupBooterLog();
+  }
+
 //  DBG("StartEFIImage\n");
 //  StartEFIImage(Entry->DevicePath, Entry->LoadOptions,
 //                Basename(Entry->LoaderPath), Basename(Entry->LoaderPath), NULL, NULL);
