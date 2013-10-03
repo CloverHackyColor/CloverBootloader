@@ -155,7 +155,7 @@ VOID egSetMaxConsoleMode(VOID)
     }
 
     if (BestMode != -1 && BestMode != gST->ConOut->Mode->Mode) {
-        Status = gST->ConOut->SetMode(gST->ConOut, gST->ConOut->Mode->MaxMode-1);
+        Status = gST->ConOut->SetMode(gST->ConOut, BestMode);
         MsgLog("  Setting highest mode (%d): %r\n",BestMode, Status);
     } else {
         MsgLog("  Highest mode (%d) is already set\n",BestMode);
