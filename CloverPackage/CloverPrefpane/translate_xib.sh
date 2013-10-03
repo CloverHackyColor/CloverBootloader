@@ -39,19 +39,23 @@ if [[ "$XCODE_MAJOR_VERSION" -ge 4 ]]; then
     # Extract source locale strings (use this to check if you added new strings to your xibs)
     echo -n "Updating '$src_locale' strings file for ${application}... "
     ibtool --generate-strings-file $strings_file.utf16 "$SOURCE_DIR/$src_locale.lproj/$xib_file"
-    iconv -f utf-16 -t utf-8 $strings_file.utf16 | grep -vE '^\/\*.*\*\/$' | \
-     grep -vE '^$' >$strings_file.new
-    rm -f $strings_file.utf16
-    cmp --silent $strings_file $strings_file.new
     if [[ $? -eq 0 ]]; then
-        # No change
-        rm -f $strings_file.new
+        iconv -f utf-16 -t utf-8 $strings_file.utf16 | grep -vE '^\/\*.*\*\/$' | \
+        grep -vE '^$' >$strings_file.new
+        rm -f $strings_file.utf16
+        cmp --silent $strings_file $strings_file.new
+        if [[ $? -eq 0 ]]; then
+            # No change
+            rm -f $strings_file.new
+        else
+            mv -f $strings_file.new $strings_file
+        fi
+        echo "done"
     else
-        mv -f $strings_file.new $strings_file
+        echo "Generation failed. Not extracting locale strings from source XIB file"
     fi
-    echo "done"
 else
-    echo "XCode version too old. Don't extracting locale strings from source XIB file"
+    echo "XCode version too old. Not extracting locale strings from source XIB file"
 fi
 
 [[ "$EXTRACT_ONLY" -eq 1 ]] && exit 0
