@@ -130,6 +130,24 @@ VOID egDumpGOPVideoModes(VOID)
     }
 }
 
+VOID egDumpConsoleVideoModes(VOID)
+{
+    UINTN i;
+    UINTN Width, Height;
+    EFI_STATUS Status;
+    if (gST->ConOut != NULL && gST->ConOut->Mode != NULL) {
+        MsgLog("Console modes reported: %d, available modes:\n",gST->ConOut->Mode->MaxMode);
+        for (i=0; i < gST->ConOut->Mode->MaxMode; i++) {
+            Status = gST->ConOut->QueryMode(gST->ConOut, i, &Width, &Height);
+            if (Status == EFI_SUCCESS) {
+                MsgLog("  Mode %d: %dx%d%s\n", i, Width, Height, (i==gST->ConOut->Mode->Mode)?L" (current mode)":L"");
+            }
+        }
+    } else {
+        MsgLog("Console modes are not available.\n");
+    }
+}
+
 EFI_STATUS egSetMaxResolution()
 {
   EFI_STATUS  Status = EFI_UNSUPPORTED;
@@ -301,6 +319,8 @@ VOID egInitScreen(IN BOOLEAN SetMaxResolution)
             }
         }
     }
+
+    egDumpConsoleVideoModes();
 
     // get screen size
     egHasGraphics = FALSE;
@@ -613,6 +633,7 @@ static EFI_STATUS GopSetModeAndReconnectTextOut(IN UINT32 ModeNumber)
     EFI_STATUS  Status;
 
     Status = GraphicsOutput->SetMode(GraphicsOutput, ModeNumber);
+    MsgLog("Video mode change to mode #%d: %r\n", ModeNumber, Status);
 
     if (gFirmwareClover && !EFI_ERROR (Status)) { 
         // When we change mode on GOP, we need to reconnect the drivers which produce simple text out
@@ -636,8 +657,10 @@ static EFI_STATUS GopSetModeAndReconnectTextOut(IN UINT32 ModeNumber)
             }
         }
         // return value is according to whether SetMode succeeded
-        return EFI_SUCCESS;
+        Status = EFI_SUCCESS;
     } 
+
+    egDumpConsoleVideoModes();
     return Status;
 }
 
