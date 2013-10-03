@@ -130,11 +130,11 @@ VOID egDumpGOPVideoModes(VOID)
     }
 }
 
-VOID egSetMaxConsoleMode(VOID)
+VOID egDumpConsoleVideoModes(VOID)
 {
     UINTN i;
     UINTN Width, Height;
-    UINTN BestMode = -1, BestWidth = 0, BestHeight = 0;
+    //UINTN BestMode = -1, BestWidth = 0, BestHeight = 0;
     EFI_STATUS Status;
 
     if (gST->ConOut != NULL && gST->ConOut->Mode != NULL) {
@@ -143,23 +143,26 @@ VOID egSetMaxConsoleMode(VOID)
             Status = gST->ConOut->QueryMode(gST->ConOut, i, &Width, &Height);
             if (Status == EFI_SUCCESS) {
                 MsgLog("  Mode %d: %dx%d%s\n", i, Width, Height, (i==gST->ConOut->Mode->Mode)?L" (current mode)":L"");
+                /*
                 if (BestMode < 0 || Width > BestWidth || (Width == BestWidth && Height > BestHeight)) {
                     BestMode = i;
                     BestWidth = Width;
                     BestHeight = Height;
                 }
+                */
             }
         }
     } else {
         MsgLog("Console modes are not available.\n");
     }
-
+    /*
     if (BestMode != -1 && BestMode != gST->ConOut->Mode->Mode) {
         Status = gST->ConOut->SetMode(gST->ConOut, BestMode);
         MsgLog("  Setting highest mode (%d): %r\n",BestMode, Status);
     } else {
         MsgLog("  Highest mode (%d) is already set\n",BestMode);
     }
+    */
 }
 
 EFI_STATUS egSetMaxResolution()
@@ -366,7 +369,7 @@ VOID egInitScreen(IN BOOLEAN SetMaxResolution)
         }
     }
 
-    egSetMaxConsoleMode();
+    egDumpConsoleVideoModes();
 }
 
 VOID egGetScreenSize(OUT INTN *ScreenWidth, OUT INTN *ScreenHeight)
@@ -669,7 +672,7 @@ static EFI_STATUS GopSetModeAndReconnectTextOut(IN UINT32 ModeNumber)
             if (HandleBuffer != NULL) {
                 FreePool (HandleBuffer);
             }
-            egSetMaxConsoleMode();
+            egDumpConsoleVideoModes();
         }
         // return value is according to whether SetMode succeeded
         Status = EFI_SUCCESS;
