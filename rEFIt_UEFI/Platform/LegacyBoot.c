@@ -1032,7 +1032,7 @@ static VOID PatchBbsTable(EFI_LEGACY_BIOS_PROTOCOL *LegacyBios, UINT16 BootEntry
 /** For some UEFI boots that have EfiLegacyBiosProtocol.
  * Starts legacy boot from the first BIOS drive.
  */
-EFI_STATUS bootLegacyBiosDefault(IN UINTN LegacyBiosDefaultEntry) 
+EFI_STATUS bootLegacyBiosDefault(IN UINT16 LegacyBiosDefaultEntry) 
 {
 	EFI_STATUS					Status;
 	EFI_LEGACY_BIOS_PROTOCOL	*LegacyBios;
@@ -1051,7 +1051,7 @@ EFI_STATUS bootLegacyBiosDefault(IN UINTN LegacyBiosDefaultEntry)
 	
 	// Patch BBS Table
 	if (LegacyBiosDefaultEntry > 0) {
-		PatchBbsTable(LegacyBios, (UINT16)LegacyBiosDefaultEntry);
+		PatchBbsTable(LegacyBios, LegacyBiosDefaultEntry);
 		Status = SaveBooterLog(SelfRootDir, LEGBOOT_LOG);
 		if (EFI_ERROR(Status)) {
 			DBG("can't save legacy-boot.log\n");

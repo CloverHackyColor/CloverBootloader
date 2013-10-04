@@ -1021,9 +1021,9 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
     prop = GetProperty(dictPointer, "LegacyBiosDefaultEntry");
     if (prop) {
       if (prop->type == kTagTypeInteger) {
-        gSettings.LegacyBiosDefaultEntry = (UINTN)prop->string;
+        gSettings.LegacyBiosDefaultEntry = (UINT16)(UINTN)prop->string;
       } else if ((prop->type == kTagTypeString) && prop->string) {
-        gSettings.LegacyBiosDefaultEntry = AsciiStrDecimalToUintn(prop->string);
+        gSettings.LegacyBiosDefaultEntry = (UINT16)AsciiStrDecimalToUintn(prop->string);
       }
     } else {
 	gSettings.LegacyBiosDefaultEntry = 0; // disabled by default

@@ -808,7 +808,7 @@ typedef struct {
   
   // LegacyBoot
   CHAR16  LegacyBoot[32];
-  UINTN   LegacyBiosDefaultEntry;
+  UINT16  LegacyBiosDefaultEntry;
   
   // KernelAndKextPatches
   BOOLEAN KPDebug;
@@ -1321,7 +1321,7 @@ EFI_STATUS  bootElTorito(IN REFIT_VOLUME*	volume);
 EFI_STATUS  bootMBR(IN REFIT_VOLUME* volume);
 EFI_STATUS  bootPBR(IN REFIT_VOLUME* volume);
 EFI_STATUS  bootPBRtest(IN REFIT_VOLUME* volume);
-EFI_STATUS  bootLegacyBiosDefault(IN UINTN LegacyBiosDefaultEntry);
+EFI_STATUS  bootLegacyBiosDefault(IN UINT16 LegacyBiosDefaultEntry);
 
 VOID        DumpBiosMemoryMap();
 

@@ -75,6 +75,15 @@ CheckXCode () {
     if [[ ! -x /usr/bin/xcodebuild ]]; then
         echo "ERROR: Install Xcode Tools from Apple before using this script." >&2
         exit 1
+    else
+        export SDK="`/usr/bin/xcodebuild -version -sdk macosx Path 2>/dev/null`"
+        if [ -z "${SDK}" ]; then
+            echo "ERROR: Cannot retreive Xcode SDK." >&2
+            echo "Please run Xcode and select an available \"Command Line Tools\" from Xcode->Preferences->Locations." >&2
+            exit 1
+        else
+            echo "  Using Xcode SDK: ${SDK}"
+        fi
     fi
 }
 
@@ -394,7 +403,7 @@ GCC_native () {
         mkdir -p "$BUILD_DIR" && cd "$BUILD_DIR"
 
         # Remove --disable-bootstrap to compile a full (3 pass) compiler
-        local cmd="${GCC_DIR}/configure --prefix='$PREFIX' --enable-languages=c,c++ --libdir='$PREFIX'/lib/gcc$GCC_MAJOR_VERSION --includedir='$PREFIX'/include/gcc$GCC_MAJOR_VERSION  --datarootdir='$PREFIX'/share/gcc$GCC_MAJOR_VERSION --with-local-prefix='$PREFIX' --with-system-zlib --disable-nls --with-gxx-include-dir='$PREFIX'/include/gcc$GCC_MAJOR_VERSION/c++/ --with-gmp='$PREFIX' --with-mpfr='$PREFIX' --with-mpc='$PREFIX' --with-isl='$PREFIX' --with-cloog='$PREFIX' --enable-cloog-backend=isl --disable-multilib --disable-bootstrap"
+        local cmd="${GCC_DIR}/configure --prefix='$PREFIX' --enable-languages=c,c++ --with-sysroot='$SDK' --libdir='$PREFIX'/lib/gcc$GCC_MAJOR_VERSION --includedir='$PREFIX'/include/gcc$GCC_MAJOR_VERSION  --datarootdir='$PREFIX'/share/gcc$GCC_MAJOR_VERSION --with-local-prefix='$PREFIX' --with-system-zlib --disable-nls --with-gxx-include-dir='$PREFIX'/include/gcc$GCC_MAJOR_VERSION/c++/ --with-gmp='$PREFIX' --with-mpfr='$PREFIX' --with-mpc='$PREFIX' --with-isl='$PREFIX' --with-cloog='$PREFIX' --enable-cloog-backend=isl --disable-multilib --disable-bootstrap"
         local logfile="$DIR_LOGS/gcc-native.$ARCH.configure.log.txt"
         echo "$cmd" > "$logfile"
         echo "-  gcc-${GCC_VERSION} (native) configure..."
