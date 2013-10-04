@@ -86,8 +86,8 @@ UINT32 GetCrc32(UINT8 *Buffer, UINTN Size)
 VOID ParseLoadOptions(OUT CHAR16** conf, OUT TagPtr* dict)
 {
     CHAR8* start = (CHAR8*)SelfLoadedImage->LoadOptions;
-    CHAR8* end   = (CHAR8*)(SelfLoadedImage->LoadOptions+SelfLoadedImage->LoadOptionsSize);
-    INTN   TailSize;
+    CHAR8* end   = (CHAR8*)((CHAR8*)SelfLoadedImage->LoadOptions+SelfLoadedImage->LoadOptionsSize);
+    UINTN   TailSize;
     UINTN  i = 0;
     CHAR8* PlistStrings[] = {"<?xml",
                             "<!DOCTYPE plist",
@@ -109,7 +109,7 @@ VOID ParseLoadOptions(OUT CHAR16** conf, OUT TagPtr* dict)
         if (PlistStringsLen < TailSize)
             if (AsciiStriNCmp(PlistStrings[i],start, PlistStringsLen)) {
                 DBG("Found Plist String = %a, parse XML in LoadOptions\n", PlistStrings[i]);
-                if (ParseXML(start, dict, TailSize) != EFI_SUCCESS) {
+                if (ParseXML(start, dict, (UINT32)TailSize) != EFI_SUCCESS) {
                     *dict = NULL;
                     DBG("Xml in load options is bad\n");
                     return;
@@ -179,7 +179,7 @@ VOID *GetDataSetting(IN TagPtr dict, IN CHAR8 *propName, OUT UINTN *dataLen)
 EFI_STATUS LoadUserSettings(IN EFI_FILE *RootDir, IN CHAR16 *ConfName, TagPtr * dict)
 {
   EFI_STATUS	Status = EFI_NOT_FOUND;
-  UINTN       size;
+  UINTN       size = 0;
   CHAR8*      gConfigPtr = NULL;
   CHAR16*     ConfigPlistPath;
   CHAR16*     ConfigOemPath;
@@ -216,7 +216,7 @@ EFI_STATUS LoadUserSettings(IN EFI_FILE *RootDir, IN CHAR16 *ConfName, TagPtr * 
     return Status;
   }
   
-  if(ParseXML((const CHAR8*)gConfigPtr, dict, size) != EFI_SUCCESS) {
+  if(ParseXML((const CHAR8*)gConfigPtr, dict, (UINT32)size) != EFI_SUCCESS) {
     dict = NULL;
     DBG(" config parse error\n");
     return EFI_UNSUPPORTED;

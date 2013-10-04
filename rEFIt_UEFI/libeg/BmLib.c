@@ -208,14 +208,14 @@ AsciiStrStriN (
                IN      CONST UINTN               sWhereSize
               )
 {
-    if (sWhatSize > sWhereSize) return FALSE;
-	INTN i = sWhereSize;
-    BOOLEAN Finded = FALSE;
-    for (; i && !Finded; i--) {
-        Finded = AsciiStriNCmp(WhatString, WhereString, sWhatSize);
-        WhereString++;
-    }
-	return Finded;
+  INTN i = sWhereSize;
+  BOOLEAN Found = FALSE;
+  if (sWhatSize > sWhereSize) return FALSE;
+  for (; i && !Found; i--) {
+    Found = AsciiStriNCmp(WhatString, WhereString, sWhatSize);
+    WhereString++;
+  }
+	return Found;
 }
 
 /**

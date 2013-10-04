@@ -1051,7 +1051,7 @@ EFI_STATUS bootLegacyBiosDefault(IN UINTN LegacyBiosDefaultEntry)
 	
 	// Patch BBS Table
 	if (LegacyBiosDefaultEntry > 0) {
-		PatchBbsTable(LegacyBios, LegacyBiosDefaultEntry);
+		PatchBbsTable(LegacyBios, (UINT16)LegacyBiosDefaultEntry);
 		Status = SaveBooterLog(SelfRootDir, LEGBOOT_LOG);
 		if (EFI_ERROR(Status)) {
 			DBG("can't save legacy-boot.log\n");

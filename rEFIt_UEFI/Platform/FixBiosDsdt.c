@@ -3965,7 +3965,7 @@ UINT32 FIXWAK (UINT8 *dsdt, UINT32 len, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABL
 
           if (gSettings.SlpWak) {
             DBG(" add SLP_SMI_EN=0 into _WAK\n");
-            PM30 = fadt->Pm1aEvtBlk + 0x30;
+            PM30 = (UINT16)fadt->Pm1aEvtBlk + 0x30;
             sizeoffset = sizeof(wakslp1) + 3 + sizeof(wakslp2);
             len = move_data(i + 5, dsdt, len, sizeoffset);
             CopyMem(dsdt + i + 5, wakslp1, sizeof(wakslp1));
