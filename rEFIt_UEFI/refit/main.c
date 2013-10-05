@@ -752,7 +752,6 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     //FinalizeSmbios();
     PatchACPI_OtherOS(L"Linux", FALSE);
     //PauseForKey(L"continue");
-    Entry->LoadOptions     = NULL;
   }
   
   SetStartupDiskVolume(Entry->Volume, Entry->LoaderType == OSTYPE_OSX ? NULL : Entry->LoaderPath);
@@ -1832,7 +1831,7 @@ VOID ScanLoader(VOID)
       // Sothor - we know what icon we are looking for lets just load it now
       Image = LoadOSIcon(L"grub,linux", L"unknown", 128, FALSE, TRUE);
       Volume->BootType = BOOTING_BY_EFI;
-      Entry = AddLoaderEntry(FileName, L"", NULL, L"Grub EFI boot menu", Volume, Image, NULL, OSTYPE_LIN, 0, 0);
+      Entry = AddLoaderEntry(FileName, L"", NULL, L"Grub EFI boot menu", Volume, Image, NULL, OSTYPE_LIN, OSFLAG_NODEFAULTARGS, 0);
     }
 
     // check for Gentoo boot loader/menu
@@ -1845,7 +1844,7 @@ VOID ScanLoader(VOID)
       // Sothor - we know what icon we are looking for lets just load it now
       Image = LoadOSIcon(L"gentoo,linux", L"unknown", 128, FALSE, TRUE);
       Volume->BootType = BOOTING_BY_EFI;
-      Entry = AddLoaderEntry(FileName, L"", NULL, L"Gentoo EFI boot menu", Volume, Image, NULL, OSTYPE_LIN, 0, 0);
+      Entry = AddLoaderEntry(FileName, L"", NULL, L"Gentoo EFI boot menu", Volume, Image, NULL, OSTYPE_LIN, OSFLAG_NODEFAULTARGS, 0);
     }
     
     // check for Gentoo kernel
@@ -1858,7 +1857,7 @@ VOID ScanLoader(VOID)
       // Sothor - we know what icon we are looking for lets just load it now
       Image = LoadOSIcon(L"gentoo,linux", L"unknown", 128, FALSE, TRUE);
       Volume->BootType = BOOTING_BY_EFI;
-      Entry = AddLoaderEntry(FileName, L"", NULL, L"Gentoo EFI kernel", Volume, Image, NULL, OSTYPE_LIN, 0, 0);
+      Entry = AddLoaderEntry(FileName, L"", NULL, L"Gentoo EFI kernel", Volume, Image, NULL, OSTYPE_LIN, OSFLAG_NODEFAULTARGS, 0);
     }
     
     // check for Redhat boot loader/menu
@@ -1871,7 +1870,7 @@ VOID ScanLoader(VOID)
       // Sothor - we know what icon we are looking for lets just load it now
       Image = LoadOSIcon(L"redhat,linux", L"unknown", 128, FALSE, TRUE);
       Volume->BootType = BOOTING_BY_EFI;
-      Entry = AddLoaderEntry(FileName, L"", NULL, L"RedHat EFI boot menu", Volume, Image, NULL, OSTYPE_LIN, 0, 0);
+      Entry = AddLoaderEntry(FileName, L"", NULL, L"RedHat EFI boot menu", Volume, Image, NULL, OSTYPE_LIN, OSFLAG_NODEFAULTARGS, 0);
     }
     
     // check for Ubuntu boot loader/menu
@@ -1884,7 +1883,7 @@ VOID ScanLoader(VOID)
       // Sothor - we know what icon we are looking for lets just load it now
       Image = LoadOSIcon(L"ubuntu,linux", L"unknown", 128, FALSE, TRUE);
       Volume->BootType = BOOTING_BY_EFI;
-      Entry = AddLoaderEntry(FileName, L"", NULL, L"Ubuntu EFI boot menu", Volume, Image, NULL, OSTYPE_LIN, 0, 0);
+      Entry = AddLoaderEntry(FileName, L"", NULL, L"Ubuntu EFI boot menu", Volume, Image, NULL, OSTYPE_LIN, OSFLAG_NODEFAULTARGS, 0);
     }
     
     // check for kubuntu boot loader/menu
@@ -1897,7 +1896,7 @@ VOID ScanLoader(VOID)
       // Sothor - we know what icon we are looking for lets just load it now
       Image = LoadOSIcon(L"kubuntu,linux", L"unknown", 128, FALSE, TRUE);
       Volume->BootType = BOOTING_BY_EFI;
-      Entry = AddLoaderEntry(FileName, L"", NULL, L"kubuntu EFI boot menu", Volume, Image, NULL, OSTYPE_LIN, 0, 0);
+      Entry = AddLoaderEntry(FileName, L"", NULL, L"kubuntu EFI boot menu", Volume, Image, NULL, OSTYPE_LIN, OSFLAG_NODEFAULTARGS, 0);
     }
     
     // check for Linux Mint boot loader/menu
@@ -1910,7 +1909,7 @@ VOID ScanLoader(VOID)
       // Sothor - we know what icon we are looking for lets just load it now
       Image = LoadOSIcon(L"mint,linux", L"unknown", 128, FALSE, TRUE);
       Volume->BootType = BOOTING_BY_EFI;
-      Entry = AddLoaderEntry(FileName, L"", NULL, L"Linux Mint EFI boot menu", Volume, Image, NULL, OSTYPE_LIN, 0, 0);
+      Entry = AddLoaderEntry(FileName, L"", NULL, L"Linux Mint EFI boot menu", Volume, Image, NULL, OSTYPE_LIN, OSFLAG_NODEFAULTARGS, 0);
     }
     
     // check for Fedora boot loader/menu
@@ -1923,7 +1922,7 @@ VOID ScanLoader(VOID)
       // Sothor - we know what icon we are looking for lets just load it now
       Image = LoadOSIcon(L"fedora,linux", L"unknown", 128, FALSE, TRUE);
       Volume->BootType = BOOTING_BY_EFI;
-      Entry = AddLoaderEntry(FileName, L"", NULL, L"Fedora EFI boot menu", Volume, Image, NULL, OSTYPE_LIN, 0, 0);
+      Entry = AddLoaderEntry(FileName, L"", NULL, L"Fedora EFI boot menu", Volume, Image, NULL, OSTYPE_LIN, OSFLAG_NODEFAULTARGS, 0);
     }
     
     // check for OpenSuse boot loader/menu
@@ -1932,7 +1931,7 @@ VOID ScanLoader(VOID)
       // Sothor - we know what icon we are looking for lets just load it now
       Image = LoadOSIcon(L"suse,linux", L"unknown", 128, FALSE, TRUE);
       Volume->BootType = BOOTING_BY_EFI;
-      Entry = AddLoaderEntry(FileName, L"", NULL, L"OpenSuse EFI boot menu", Volume, Image, NULL, OSTYPE_LIN, 0, 0);
+      Entry = AddLoaderEntry(FileName, L"", NULL, L"OpenSuse EFI boot menu", Volume, Image, NULL, OSTYPE_LIN, OSFLAG_NODEFAULTARGS, 0);
     }
 
 #if defined(MDE_CPU_X64)
@@ -1944,7 +1943,7 @@ VOID ScanLoader(VOID)
       // Sothor - we know what icon we are looking for lets just load it now
       Image = LoadOSIcon(L"suse,linux", L"unknown", 128, FALSE, TRUE);
       Volume->BootType = BOOTING_BY_EFI;
-      Entry = AddLoaderEntry(FileName, L"", NULL, L"OpenSuse EFI boot menu", Volume, Image, NULL, OSTYPE_LIN, 0, 0);
+      Entry = AddLoaderEntry(FileName, L"", NULL, L"OpenSuse EFI boot menu", Volume, Image, NULL, OSTYPE_LIN, OSFLAG_NODEFAULTARGS, 0);
     }
     
     // check for archlinux boot loader/menu
@@ -1957,7 +1956,7 @@ VOID ScanLoader(VOID)
       // Sothor - we know what icon we are looking for lets just load it now
       Image = LoadOSIcon(L"arch,linux", L"unknown", 128, FALSE, TRUE);
       Volume->BootType = BOOTING_BY_EFI;
-      Entry = AddLoaderEntry(FileName, L"", NULL, L"ArchLinux EFI boot menu", Volume, Image, NULL, OSTYPE_LIN, 0, 0);
+      Entry = AddLoaderEntry(FileName, L"", NULL, L"ArchLinux EFI boot menu", Volume, Image, NULL, OSTYPE_LIN, OSFLAG_NODEFAULTARGS, 0);
     }
 
 #if defined(MDE_CPU_X64)
@@ -1969,7 +1968,7 @@ VOID ScanLoader(VOID)
       // Sothor - we know what icon we are looking for lets just load it now
       Image = LoadOSIcon(L"arch,linux", L"unknown", 128, FALSE, TRUE);
       Volume->BootType = BOOTING_BY_EFI;
-      Entry = AddLoaderEntry(FileName, L"", NULL, L"ArchLinux EFI boot menu", Volume, Image, NULL, OSTYPE_LIN, 0, 0);
+      Entry = AddLoaderEntry(FileName, L"", NULL, L"ArchLinux EFI boot menu", Volume, Image, NULL, OSTYPE_LIN, OSFLAG_NODEFAULTARGS, 0);
     }
 
 #if defined(MDE_CPU_X64)
