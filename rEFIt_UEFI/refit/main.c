@@ -1386,8 +1386,8 @@ static LOADER_ENTRY * AddLoaderEntry2(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOp
       SubEntry = DuplicateLoaderEntry(Entry);
       if (SubEntry) {
         SubEntry->me.Title        = L"Boot Mac OS X in single user verbose mode";
-        SubEntry->Flags           = OSFLAG_UNSET(Entry->Flags, OSFLAG_USEGRAPHICS);
-        TempOptions = AddLoadOption(Entry->LoadOptions, L"-v");
+        SubEntry->Flags           = OSFLAG_UNSET(SubEntry->Flags, OSFLAG_USEGRAPHICS);
+        TempOptions = AddLoadOption(SubEntry->LoadOptions, L"-v");
         SubEntry->LoadOptions     = AddLoadOption(TempOptions, L"-s");
         FreePool(TempOptions);
         AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
@@ -1488,7 +1488,7 @@ static LOADER_ENTRY * AddLoaderEntry2(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOp
     SubEntry = DuplicateLoaderEntry(Entry);
     if (SubEntry) {
       SubEntry->me.Title        = L"Boot Linux for a 17\" iMac or a 15\" MacBook Pro (*)";
-      SubEntry->Flags           = OSFLAG_SET(Entry->Flags, OSFLAG_USEGRAPHICS);
+      SubEntry->Flags           = OSFLAG_SET(SubEntry->Flags, OSFLAG_USEGRAPHICS);
       SubEntry->LoadOptions     = L"-d 0 i17";
       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
     }
@@ -1496,7 +1496,7 @@ static LOADER_ENTRY * AddLoaderEntry2(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOp
     SubEntry = DuplicateLoaderEntry(Entry);
     if (SubEntry) {
       SubEntry->me.Title        = L"Boot Linux for a 20\" iMac (*)";
-      SubEntry->Flags           = OSFLAG_SET(Entry->Flags, OSFLAG_USEGRAPHICS);
+      SubEntry->Flags           = OSFLAG_SET(SubEntry->Flags, OSFLAG_USEGRAPHICS);
       SubEntry->LoadOptions     = L"-d 0 i20";
       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
     }
@@ -1504,7 +1504,7 @@ static LOADER_ENTRY * AddLoaderEntry2(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOp
     SubEntry = DuplicateLoaderEntry(Entry);
     if (SubEntry) {
       SubEntry->me.Title        = L"Boot Linux for a Mac Mini (*)";
-      SubEntry->Flags           = OSFLAG_SET(Entry->Flags, OSFLAG_USEGRAPHICS);
+      SubEntry->Flags           = OSFLAG_SET(SubEntry->Flags, OSFLAG_USEGRAPHICS);
       SubEntry->LoadOptions     = L"-d 0 mini";
       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
     }
@@ -1532,7 +1532,7 @@ static LOADER_ENTRY * AddLoaderEntry2(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOp
     SubEntry = DuplicateLoaderEntry(Entry);
     if (SubEntry) {
       SubEntry->me.Title        = PoolPrint(L"Run %s in text mode", FileName);
-      SubEntry->Flags           = OSFLAG_UNSET(Entry->Flags, OSFLAG_USEGRAPHICS);
+      SubEntry->Flags           = OSFLAG_UNSET(SubEntry->Flags, OSFLAG_USEGRAPHICS);
       SubEntry->LoadOptions     = L"-v";
       SubEntry->LoaderType      = OSTYPE_OTHER; // Sothor - Why are we using OSTYPE_OTHER here?
       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
