@@ -1151,6 +1151,7 @@ static LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
       Entry->LoadOptions  = EfiStrDuplicate(LoaderOptions);
     } else {
       Entry->LoadOptions  = PoolPrint(L"%a %s", gSettings.BootArgs, LoaderOptions);
+      Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_NODEFAULTARGS);// Sothor - Once we add arguments once we cannot do it again. So prevent being updated with boot arguments from options menu (unless reinit?).
     }
   } else if ((AsciiStrLen(gSettings.BootArgs) > 0) && OSFLAG_ISUNSET(Flags, OSFLAG_NODEFAULTARGS)) {
     Entry->LoadOptions    = PoolPrint(L"%a", gSettings.BootArgs);
