@@ -615,7 +615,7 @@ BOOLEAN IsHDMIAudio(EFI_HANDLE PciDevHandle)
   return FALSE;
 }
 
-BOOLEAN set_hda_props(EFI_PCI_IO_PROTOCOL *PciIo, pci_dt_t *hda_dev)
+BOOLEAN set_hda_props(EFI_PCI_IO_PROTOCOL *PciIo, pci_dt_t *hda_dev, CHAR8 *OSVersion)
 {
 	CHAR8           *devicepath;
 	DevPropDevice   *device;

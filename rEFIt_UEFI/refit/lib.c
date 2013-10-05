@@ -415,8 +415,8 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
   CHAR16      *kind = NULL;
   
   Volume->HasBootCode = FALSE;
-  Volume->OSIconName = NULL;
-  Volume->OSName = NULL;
+  Volume->LegacyOS->IconName = NULL;
+  Volume->LegacyOS->Name = NULL;
   Volume->BootType = 0;
   *Bootable = FALSE;
 
@@ -480,18 +480,18 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
           if (AsciiStrStr((CHAR8*)&SectorBuffer[i], "APPLE")) {
             //		StrCpy(Volume->VolName, volumeName);
             DBG("Found AppleDVD\n");
-            Volume->OSType = OSTYPE_OSX;
+            Volume->LegacyOS->Type = OSTYPE_OSX;
             Volume->BootType = BOOTING_BY_EFI; //sure? or _BY_CD?
-            Volume->OSIconName = L"mac";
+            Volume->LegacyOS->IconName = L"mac";
             break;
           }
         } else if (SectorBuffer[i] == 'M') {
           if (AsciiStrStr((CHAR8*)&SectorBuffer[i], "MICROSOFT")) {
             //		StrCpy(Volume->VolName, volumeName);
             DBG("Found Windows DVD\n");
-            Volume->OSType = OSTYPE_WIN;
+            Volume->LegacyOS->Type = OSTYPE_WIN;
             Volume->BootType = BOOTING_BY_CD;
-            Volume->OSIconName = L"win";
+            Volume->LegacyOS->IconName = L"win";
             break;
           }
           
@@ -501,9 +501,9 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
             
             //		StrCpy(Volume->VolName, volumeName);
             DBG("Found Linux DVD\n");
-            Volume->OSType = OSTYPE_LIN;
+            Volume->LegacyOS->Type = OSTYPE_LIN;
             Volume->BootType = BOOTING_BY_CD;
-            Volume->OSIconName = L"linux";
+            Volume->LegacyOS->IconName = L"linux";
             break;
           }						
         }
@@ -516,9 +516,9 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
         *Bootable = TRUE;
         Volume->HasBootCode = TRUE;
         //    DBG("The volume has bootcode\n");
-        Volume->OSIconName = L"legacy";
-        Volume->OSName = L"Legacy";
-        Volume->OSType = OSTYPE_VAR;
+        Volume->LegacyOS->IconName = L"legacy";
+        Volume->LegacyOS->Name = L"Legacy";
+        Volume->LegacyOS->Type = OSTYPE_VAR;
         Volume->BootType = BOOTING_BY_PBR;
       }
       
@@ -528,23 +528,23 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
           CompareMem(SectorBuffer + 3, "SYSLINUX", 8) == 0 ||
           FindMem(SectorBuffer, 2048, "ISOLINUX", 8) >= 0) {
         Volume->HasBootCode = TRUE;
-        Volume->OSIconName = L"linux";
-        Volume->OSName = L"Linux";
-        Volume->OSType = OSTYPE_LIN;
+        Volume->LegacyOS->IconName = L"linux";
+        Volume->LegacyOS->Name = L"Linux";
+        Volume->LegacyOS->Type = OSTYPE_LIN;
         Volume->BootType = BOOTING_BY_PBR;
 
       } else if (FindMem(SectorBuffer, 512, "Geom\0Hard Disk\0Read\0 Error", 26) >= 0) {   // GRUB
         Volume->HasBootCode = TRUE;
-        Volume->OSIconName = L"grub,linux";
-        Volume->OSName = L"Linux";
+        Volume->LegacyOS->IconName = L"grub,linux";
+        Volume->LegacyOS->Name = L"Linux";
         
       } else if ((*((UINT32 *)(SectorBuffer)) == 0x4d0062e9 &&
                   *((UINT16 *)(SectorBuffer + 510)) == 0xaa55) ||
                  FindMem(SectorBuffer, 2048, "BOOT      ", 10) >= 0) { //reboot Clover
         Volume->HasBootCode = TRUE;
-        Volume->OSIconName = L"clover";
-        Volume->OSName = L"MacOSX";
-        Volume->OSType = OSTYPE_VAR;
+        Volume->LegacyOS->IconName = L"clover";
+        Volume->LegacyOS->Name = L"MacOSX";
+        Volume->LegacyOS->Type = OSTYPE_VAR;
         Volume->BootType = BOOTING_BY_PBR;
         //        DBG("Detected Clover FAT32 bootcode\n");
         
@@ -554,79 +554,79 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
                   *((UINT16 *)(SectorBuffer + 510)) == 0xaa55) ||
                  FindMem(SectorBuffer, 2048, "Starting the BTX loader", 23) >= 0) {
         Volume->HasBootCode = TRUE;
-        Volume->OSIconName = L"freebsd";
-        Volume->OSName = L"FreeBSD";
-        Volume->OSType = OSTYPE_VAR;
+        Volume->LegacyOS->IconName = L"freebsd";
+        Volume->LegacyOS->Name = L"FreeBSD";
+        Volume->LegacyOS->Type = OSTYPE_VAR;
         Volume->BootType = BOOTING_BY_PBR;
         
         
       } else if (FindMem(SectorBuffer, 512, "!Loading", 8) >= 0 ||
                  FindMem(SectorBuffer, 2048, "/cdboot\0/CDBOOT\0", 16) >= 0) {
         Volume->HasBootCode = TRUE;
-        Volume->OSIconName = L"openbsd";
-        Volume->OSName = L"OpenBSD";
-        Volume->OSType = OSTYPE_VAR;
+        Volume->LegacyOS->IconName = L"openbsd";
+        Volume->LegacyOS->Name = L"OpenBSD";
+        Volume->LegacyOS->Type = OSTYPE_VAR;
         Volume->BootType = BOOTING_BY_PBR;
         
       } else if (FindMem(SectorBuffer, 512, "Not a bootxx image", 18) >= 0 ||
                  *((UINT32 *)(SectorBuffer + 1028)) == 0x7886b6d1) {
         Volume->HasBootCode = TRUE;
-        Volume->OSIconName = L"netbsd";
-        Volume->OSName = L"NetBSD";
-        Volume->OSType = OSTYPE_VAR;
+        Volume->LegacyOS->IconName = L"netbsd";
+        Volume->LegacyOS->Name = L"NetBSD";
+        Volume->LegacyOS->Type = OSTYPE_VAR;
         Volume->BootType = BOOTING_BY_PBR;
         
       } else if (FindMem(SectorBuffer, 2048, "NTLDR", 5) >= 0) {
         Volume->HasBootCode = TRUE;
-        Volume->OSIconName = L"win";
-        Volume->OSName = L"Windows";
-        Volume->OSType = OSTYPE_WIN;
+        Volume->LegacyOS->IconName = L"win";
+        Volume->LegacyOS->Name = L"Windows";
+        Volume->LegacyOS->Type = OSTYPE_WIN;
         Volume->BootType = BOOTING_BY_PBR;
         
         
       } else if (FindMem(SectorBuffer, 2048, "BOOTMGR", 7) >= 0) {
         Volume->HasBootCode = TRUE;
-        Volume->OSIconName = L"vista,win";
-        Volume->OSName = L"Windows";
-        Volume->OSType = OSTYPE_WIN;
+        Volume->LegacyOS->IconName = L"vista,win";
+        Volume->LegacyOS->Name = L"Windows";
+        Volume->LegacyOS->Type = OSTYPE_WIN;
         Volume->BootType = BOOTING_BY_PBR;
         
       } else if (FindMem(SectorBuffer, 512, "CPUBOOT SYS", 11) >= 0 ||
                  FindMem(SectorBuffer, 512, "KERNEL  SYS", 11) >= 0) {
         Volume->HasBootCode = TRUE;
-        Volume->OSIconName = L"freedos";
-        Volume->OSName = L"FreeDOS";
-        Volume->OSType = OSTYPE_VAR;
+        Volume->LegacyOS->IconName = L"freedos";
+        Volume->LegacyOS->Name = L"FreeDOS";
+        Volume->LegacyOS->Type = OSTYPE_VAR;
         Volume->BootType = BOOTING_BY_PBR;
         
       } else if (FindMem(SectorBuffer, 512, "OS2LDR", 6) >= 0 ||
                  FindMem(SectorBuffer, 512, "OS2BOOT", 7) >= 0) {
         Volume->HasBootCode = TRUE;
-        Volume->OSIconName = L"ecomstation";
-        Volume->OSName = L"eComStation";
-        Volume->OSType = OSTYPE_VAR;
+        Volume->LegacyOS->IconName = L"ecomstation";
+        Volume->LegacyOS->Name = L"eComStation";
+        Volume->LegacyOS->Type = OSTYPE_VAR;
         Volume->BootType = BOOTING_BY_PBR;
         
       } else if (FindMem(SectorBuffer, 512, "Be Boot Loader", 14) >= 0) {
         Volume->HasBootCode = TRUE;
-        Volume->OSIconName = L"beos";
-        Volume->OSName = L"BeOS";
-        Volume->OSType = OSTYPE_VAR;
+        Volume->LegacyOS->IconName = L"beos";
+        Volume->LegacyOS->Name = L"BeOS";
+        Volume->LegacyOS->Type = OSTYPE_VAR;
         Volume->BootType = BOOTING_BY_PBR;
         
       } else if (FindMem(SectorBuffer, 512, "yT Boot Loader", 14) >= 0) {
         Volume->HasBootCode = TRUE;
-        Volume->OSIconName = L"zeta";
-        Volume->OSName = L"ZETA";
-        Volume->OSType = OSTYPE_VAR;
+        Volume->LegacyOS->IconName = L"zeta";
+        Volume->LegacyOS->Name = L"ZETA";
+        Volume->LegacyOS->Type = OSTYPE_VAR;
         Volume->BootType = BOOTING_BY_PBR;
         
       } else if (FindMem(SectorBuffer, 512, "\x04" "beos\x06" "system\x05" "zbeos", 18) >= 0 ||
                  FindMem(SectorBuffer, 512, "\x06" "system\x0c" "haiku_loader", 20) >= 0) {
         Volume->HasBootCode = TRUE;
-        Volume->OSIconName = L"haiku";
-        Volume->OSName = L"Haiku";
-        Volume->OSType = OSTYPE_VAR;
+        Volume->LegacyOS->IconName = L"haiku";
+        Volume->LegacyOS->Name = L"Haiku";
+        Volume->LegacyOS->Type = OSTYPE_VAR;
         Volume->BootType = BOOTING_BY_PBR;          
       }
     }
@@ -637,7 +637,7 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
 #if REFIT_DEBUG > 0
     DBG("  Result of bootcode detection: %s %s (%s)\n",
         Volume->HasBootCode ? L"bootable" : L"non-bootable",
-        Volume->OSName, Volume->OSIconName);
+        Volume->LegacyOS->Name, Volume->LegacyOS->IconName);
 #endif
     
     if (FindMem(SectorBuffer, 512, "Non-system disk", 15) >= 0)   // dummy FAT boot sector
@@ -669,15 +669,9 @@ EG_IMAGE* ScanVolumeDefaultIcon(REFIT_VOLUME *Volume) //IN UINT8 DiskKind)
     // default volume icon based on disk kind
   switch (Volume->DiskKind) {
     case DISK_KIND_INTERNAL:
-      switch (Volume->OSType) {
+      switch (Volume->LegacyOS->Type) {
         case OSTYPE_OSX: 
-        case OSTYPE_OSX_INSTALLER:  
-        case OSTYPE_TIGER: 
-        case OSTYPE_LEO:
-        case OSTYPE_SNOW:
-        case OSTYPE_LION:
-        case OSTYPE_ML:
-        case OSTYPE_MAV:
+        case OSTYPE_OSX_INSTALLER:
           IconNum = BUILTIN_ICON_VOL_INTERNAL_HFS;
           break;
         case OSTYPE_RECOVERY:
@@ -927,8 +921,8 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
     } else if (!Volume->VolName) {
       Volume->VolName =  L"Whole Disc Boot";
     }
-    if (!Volume->OSIconName)
-      Volume->OSIconName = L"legacy";
+    if (!Volume->LegacyOS->IconName)
+      Volume->LegacyOS->IconName = L"legacy";
 
     return EFI_SUCCESS;
   }
@@ -987,7 +981,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
     }
   }
   
-  Status = GetOSVersion(Volume); //here we set Volume->IconName (tiger,leo,snow,lion,cougar, etc)
+  //Status = GetOSVersion(Volume); NOTE: Sothor - We will find icon names later once we have found boot.efi on the volume //here we set Volume->IconName (tiger,leo,snow,lion,cougar, etc)
   
   return EFI_SUCCESS;
 }
@@ -1085,6 +1079,9 @@ VOID ScanVolumes(VOID)
     }
 
     DBG("%2d. Volume:\n", HandleIndex);
+    
+    Volume->Hidden = FALSE; // default to not hidden
+    
     Status = ScanVolume(Volume);
     if (!EFI_ERROR(Status)) {
 
@@ -1092,7 +1089,7 @@ VOID ScanVolumes(VOID)
       for (HVi = 0; HVi < gSettings.HVCount; HVi++) {
         if (StrStr(Volume->DevicePathString, gSettings.HVHideStrings[HVi]) ||
             (Volume->VolName != NULL && StrStr(Volume->VolName, gSettings.HVHideStrings[HVi]))) {
-          Volume->OSType = OSTYPE_HIDE;
+          Volume->Hidden = TRUE;
           DBG("  hiding this volume\n");
           break;
         }
@@ -1100,7 +1097,7 @@ VOID ScanVolumes(VOID)
 
       Guid = FindGPTPartitionGuidInDevicePath(Volume->DevicePath);
       DBG("  Volume '%s', OS '%s', Icon(s) '%s', GUID = %g\n",
-          Volume->VolName, Volume->OSName ? Volume->OSName : L"", Volume->OSIconName, Guid);
+          Volume->VolName, Volume->LegacyOS->Name ? Volume->LegacyOS->Name : L"", Volume->LegacyOS->IconName, Guid);
       if (SelfVolume == Volume) {
         DBG("  This is SelfVolume !!\n");
       }
@@ -1120,7 +1117,7 @@ VOID ScanVolumes(VOID)
     SelfVolume->RootDir = SelfRootDir;
     SelfVolume->DiskKind = DISK_KIND_BOOTER;
     SelfVolume->VolName = L"Clover";
-    SelfVolume->OSType = OSTYPE_EFI;
+    SelfVolume->LegacyOS->Type = OSTYPE_EFI;
     SelfVolume->HasBootCode = TRUE;
     SelfVolume->BootType = BOOTING_BY_PBR;
     //   AddListElement((VOID ***) &Volumes, &VolumesCount, SelfVolume);

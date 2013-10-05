@@ -1215,7 +1215,6 @@ extern UINT64   BiosDsdt;
 extern UINT32   BiosDsdtLen;
 extern UINT8	  acpi_cpu_count;
 extern CHAR8*   acpi_cpu_name[32];
-extern CHAR8*   OSVersion;
 extern BOOLEAN  SSSE3;
 extern BOOLEAN  defDSM;
 extern UINT16  dropDSM;
@@ -1223,7 +1222,7 @@ extern UINT16  dropDSM;
 extern TagPtr gConfigDict[];
 //-----------------------------------
 
-VOID        FixBiosDsdt (UINT8* Dsdt, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt);
+VOID        FixBiosDsdt (UINT8* Dsdt, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, CHAR8 *OSVersion);
 EFI_STATUS  MouseBirth();
 VOID        KillMouse();
 VOID        HidePointer();
@@ -1258,13 +1257,14 @@ VOID            GetCPUProperties (VOID);
 VOID            GetDevices(VOID);
 MACHINE_TYPES   GetDefaultModel(VOID);
 UINT16          GetAdvancedCpuType(VOID);
-EFI_STATUS      GetOSVersion(IN REFIT_VOLUME *Volume);
+CHAR8          *GetOSVersion(IN REFIT_VOLUME *Volume);
+CHAR16         *GetOSIconName(IN CHAR8 *OSVersion);
 EFI_STATUS      GetRootUUID(IN REFIT_VOLUME *Volume);
 EFI_STATUS      GetEarlyUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict);
 EFI_STATUS      GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict);
 EFI_STATUS      InitTheme(BOOLEAN useThemeDefinedInNVRam);
 EFI_STATUS      SetFSInjection(IN LOADER_ENTRY *Entry);
-CHAR16*         GetExtraKextsDir(REFIT_VOLUME *Volume);
+CHAR16*         GetExtraKextsDir(CHAR8 *OSVersion);
 EFI_STATUS      LoadKexts(IN LOADER_ENTRY *Entry);
 VOID            ParseLoadOptions(OUT CHAR16** conf, OUT TagPtr* dict);
 //
@@ -1289,7 +1289,7 @@ LogDataHub(
 EFI_STATUS SetVariablesForOSX();
 VOID       SetupDataForOSX();
 EFI_STATUS SetPrivateVarProto(VOID);
-VOID       SetDevices(VOID);
+VOID       SetDevices(CHAR8 *OSVersion);
 VOID       ScanSPD();
 BOOLEAN    setup_ati_devprop(pci_dt_t *ati_dev);
 BOOLEAN    setup_gma_devprop(pci_dt_t *gma_dev);
@@ -1304,7 +1304,7 @@ VOID        AddCard(CONST CHAR8* Model, UINT32 Id, UINT32 SubId, UINT64 VideoRam
 
 EG_IMAGE    *egDecodePNG(IN UINT8 *FileData, IN UINTN FileDataLength, IN UINTN IconSize, IN BOOLEAN WantAlpha);
 //ACPI
-EFI_STATUS  PatchACPI(IN REFIT_VOLUME *Volume);
+EFI_STATUS  PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion);
 EFI_STATUS  PatchACPI_OtherOS(CHAR16* OsSubdir, BOOLEAN DropSSDT);
 UINT8       Checksum8(VOID * startPtr, UINT32 len);
 BOOLEAN     tableSign(CHAR8 *table, CONST CHAR8 *sgn);

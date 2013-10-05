@@ -3590,103 +3590,70 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
   return Status;
 }
 
-EFI_STATUS GetOSVersion(IN REFIT_VOLUME *Volume)
+CHAR8 *GetOSVersion(IN REFIT_VOLUME *Volume)
 {
-	EFI_STATUS	Status = EFI_NOT_FOUND;
-	CHAR8*		plistBuffer = NULL;
-	UINTN		plistLen;
-	TagPtr		dict  = NULL;
-	TagPtr		prop  = NULL;
-	UINTN		Index = 0;
-
+  CHAR8        *OSVersion = NULL;
+  EFI_STATUS    Status = EFI_NOT_FOUND;
+  CHAR8*        plistBuffer = NULL;
+  UINTN         plistLen;
+  TagPtr        dict  = NULL;
+  TagPtr        prop  = NULL;
+  UINTN         Index = 0;
+  
 	// SystemPlists contain proper OS X version number
 	CHAR16*		SystemPlists[] = { L"System\\Library\\CoreServices\\SystemVersion.plist", // OS X Regular
-					   L"System\\Library\\CoreServices\\ServerVersion.plist", // OS X Server
-					   L"\\com.apple.recovery.boot\\SystemVersion.plist",     // OS X Recovery
-					   NULL };
-
-	// InstallerPlists do not contain proper version, but can be used to detect Installer presence
-	CHAR16*		InstallerPlists[] = { L"\\Mac OS X Install Data\\com.apple.Boot.plist",   // OS X Installer (Lion)
-					      L"\\OS X Install Data\\com.apple.Boot.plist",	  // OS X Installer (ML, Mav)
-					      L"\\.IABootFiles\\com.apple.Boot.plist",		  // OS X Installer (ML, Mav?)
-					      NULL };
-	if (!Volume) {
-		return EFI_NOT_FOUND;
-	}
-
-	if (OSVersion != NULL) {
-		FreePool(OSVersion);
-		OSVersion = NULL;
-	}
-
-	/* Mac OS X Installer */
-	for (Index = 0; InstallerPlists[Index] != NULL && !FileExists(Volume->RootDir, InstallerPlists[Index]); Index++);
-	if (InstallerPlists[Index] != NULL) { // found OSX Installer
-		// for installer type, exact version will be detected prior to booting boot.efi
-		Volume->OSType = OSTYPE_OSX_INSTALLER;
-		Volume->OSIconName = L"mac";
-		Volume->BootType = BOOTING_BY_EFI;
-		Volume->OSName = L"Install Mac OS X";
-		Status = EFI_SUCCESS;
-	} else {
-		/* Mac OS X Regular/Server/Recovery */
-		for (Index = 0; SystemPlists[Index] != NULL && !FileExists(Volume->RootDir, SystemPlists[Index]); Index++);
-		if (SystemPlists[Index] != NULL) { // found OSX System 
-			Status = egLoadFile(Volume->RootDir, SystemPlists[Index], (UINT8 **)&plistBuffer, &plistLen);
-		}
-	}
-
-	// Detect exact version for Mac OS X Regular/Server/Recovery
-	if(!EFI_ERROR(Status) && plistBuffer != NULL && ParseXML(plistBuffer, &dict, 0) == EFI_SUCCESS ) {
-		prop = GetProperty(dict, "ProductVersion");
-		if(prop != NULL && prop->string != NULL && prop->string[0] != '\0') {
+             L"System\\Library\\CoreServices\\ServerVersion.plist", // OS X Server
+             L"\\com.apple.recovery.boot\\SystemVersion.plist",     // OS X Recovery
+             NULL };
+  
+  if (!Volume) {
+    return OSVersion;
+  }
+  
+  for (Index = 0; SystemPlists[Index] != NULL && !FileExists(Volume->RootDir, SystemPlists[Index]); Index++);
+  if (SystemPlists[Index] != NULL) { // found OSX System
+    Status = egLoadFile(Volume->RootDir, SystemPlists[Index], (UINT8 **)&plistBuffer, &plistLen);
+  }
+  // Detect exact version for Mac OS X Regular/Server/Recovery
+  if(!EFI_ERROR(Status) && plistBuffer != NULL && ParseXML(plistBuffer, &dict, 0) == EFI_SUCCESS ) {
+    prop = GetProperty(dict, "ProductVersion");
+    if(prop != NULL && prop->string != NULL && prop->string[0] != '\0') {
 			OSVersion = AllocateCopyPool(AsciiStrSize(prop->string), prop->string);
-			Volume->BootType = BOOTING_BY_EFI;
-			if (AsciiStrStr(prop->string, "10.4") != 0) {
-				// Tiger
-				Volume->OSType = OSTYPE_TIGER;
-				Volume->OSIconName = L"tiger,mac";
-				Volume->OSName = L"Tiger";
-			} else if (AsciiStrStr(prop->string, "10.5") != 0) {
-				// Leopard
-				Volume->OSType = OSTYPE_LEO;
-				Volume->OSIconName = L"leo,mac";
-				Volume->OSName = L"Leo";
-			} else if (AsciiStrStr(prop->string, "10.6") != 0) {
-				// Snow Leopard
-				Volume->OSType = OSTYPE_SNOW;
-				Volume->OSIconName = L"snow,mac";
-				Volume->OSName = L"Snow";
-			} else if (AsciiStrStr(prop->string, "10.7") != 0) {
-				// Lion
-				Volume->OSType = OSTYPE_LION;
-				Volume->OSIconName = L"lion,mac";
-				Volume->OSName = L"Lion";
-			} else if (AsciiStrStr(prop->string, "10.8") != 0) {
-				// Mountain Lion
-				Volume->OSType = OSTYPE_ML;
-				Volume->OSIconName = L"cougar,mac";
-				Volume->OSName = L"ML";
-			} else if (AsciiStrStr(prop->string, "10.9") != 0) {
-				// Mavericks
-				Volume->OSType = OSTYPE_MAV;
-				Volume->OSIconName = L"mav,mac";
-				Volume->OSName = L"Mavericks";
-			}
+    }
+  }
+  
+  if (plistBuffer != NULL) {
+    FreePool(plistBuffer);
+  }
+  
+  return OSVersion;
+}
 
-			MsgLog("  Detected OS %a\n", prop->string);
-		}
-	}
-
-	if (plistBuffer != NULL) {
-		FreePool(plistBuffer);
-	}
-
-	if (OSVersion == NULL) {
-		OSVersion = AllocateZeroPool(1);
-	}
-
-	return Status;
+CHAR16 *GetOSIconName(IN CHAR8 *OSVersion)
+{
+  CHAR16 *OSIconName;
+  if (AsciiStrStr(OSVersion, "10.4") != 0) {
+    // Tiger
+    OSIconName = L"tiger,mac";
+  } else if (AsciiStrStr(OSVersion, "10.5") != 0) {
+    // Leopard
+    OSIconName = L"leo,mac";
+  } else if (AsciiStrStr(OSVersion, "10.6") != 0) {
+    // Snow Leopard
+    OSIconName = L"snow,mac";
+  } else if (AsciiStrStr(OSVersion, "10.7") != 0) {
+    // Lion
+    OSIconName = L"lion,mac";
+  } else if (AsciiStrStr(OSVersion, "10.8") != 0) {
+    // Mountain Lion
+    OSIconName = L"cougar,mac";
+  } else if (AsciiStrStr(OSVersion, "10.9") != 0) {
+    // Mavericks
+    OSIconName = L"mav,mac";
+  } else {
+    OSIconName = L"mac";
+  }
+  return OSIconName;
 }
 
 //Get the UUID of the AppleRaid or CoreStorage volume from the boot helper partition
@@ -3855,7 +3822,7 @@ VOID GetDevices(VOID)
   }
 }  
 
-VOID SetDevices(VOID)
+VOID SetDevices(CHAR8 *OSVersion)
 {
   //	EFI_GRAPHICS_OUTPUT_MODE_INFORMATION  *modeInfo;
   EFI_STATUS						Status;
@@ -3966,7 +3933,7 @@ VOID SetDevices(VOID)
           //no HDMI injection
           if ((Pci.Hdr.VendorId != 0x1002) &&
               (Pci.Hdr.VendorId != 0x10de)) {
-            TmpDirty = set_hda_props(PciIo, &PCIdevice);
+            TmpDirty = set_hda_props(PciIo, &PCIdevice, OSVersion);
             StringDirty |=  TmpDirty;
           }
         }
@@ -4092,47 +4059,23 @@ EFI_STATUS SaveSettings()
 }
 
 //dmazar
-CHAR16* GetExtraKextsDir(REFIT_VOLUME *Volume)
+CHAR16* GetExtraKextsDir(CHAR8 *OSVersion)
 {
-  CHAR16                      *OSTypeStr = NULL;
-  CHAR16                      *SrcDir = NULL;
+  CHAR8       *OSTypeStr = AllocatePool(5);
+  CHAR16      *SrcDir = NULL;
   
-  // get os version as string
-  switch (Volume->OSType) {
-    case OSTYPE_TIGER:
-      OSTypeStr = L"10.4";
-      break;
-      
-    case OSTYPE_LEO:
-      OSTypeStr = L"10.5";
-      break;
-      
-    case OSTYPE_SNOW:
-      OSTypeStr = L"10.6";
-      break;
-      
-    case OSTYPE_LION:
-      OSTypeStr = L"10.7";
-      break;
-      
-    case OSTYPE_ML:
-      OSTypeStr = L"10.8";
-      break;
-      
-    case OSTYPE_MAV:
-      OSTypeStr = L"10.9";
-      break;
-
-    default:
-      OSTypeStr = L"Other";
-      break;
+  if (OSVersion) {
+    AsciiStrnCpy(OSTypeStr, OSVersion, 4); // TODO: Sothor - is this right?
+  } else {
+    UnicodeStrToAsciiStr(L"Other", OSTypeStr);
   }
+  
   //MsgLog("OS=%s\n", OSTypeStr);
   
   // find source injection folder with kexts
   // note: we are just checking for existance of particular folder, not checking if it is empty or not
   // check OEM subfolders: version speciffic or default to Other
-  SrcDir = PoolPrint(L"%s\\kexts\\%s", OEMPath, OSTypeStr);
+  SrcDir = PoolPrint(L"%s\\kexts\\%a", OEMPath, OSTypeStr);
   if (!FileExists(SelfVolume->RootDir, SrcDir)) {
     FreePool(SrcDir);
     SrcDir = PoolPrint(L"%s\\kexts\\Other", OEMPath);
@@ -4143,7 +4086,7 @@ CHAR16* GetExtraKextsDir(REFIT_VOLUME *Volume)
   }
   if (SrcDir == NULL) {
     // if not found, check EFI\kexts\...
-    SrcDir = PoolPrint(L"\\EFI\\CLOVER\\kexts\\%s", OSTypeStr);
+    SrcDir = PoolPrint(L"\\EFI\\CLOVER\\kexts\\%a", OSTypeStr);
     if (!FileExists(SelfVolume->RootDir, SrcDir)) {
       FreePool(SrcDir);
  //     SrcDir = PoolPrint(L"\\EFI\\CLOVER\\kexts\\Other", gSettings.OEMProduct);
@@ -4154,6 +4097,8 @@ CHAR16* GetExtraKextsDir(REFIT_VOLUME *Volume)
       }
     }
   }
+  
+  FreePool(OSTypeStr);
   
   return SrcDir;
 }
@@ -4208,7 +4153,7 @@ EFI_STATUS SetFSInjection(IN LOADER_ENTRY *Entry)
     // (will be done only if caches are blocked or if boot.efi refuses to load kernelcache)
     SrcDir = NULL;
     if (OSFLAG_ISSET(Entry->Flags, OSFLAG_WITHKEXTS)) {
-        SrcDir = GetExtraKextsDir(Volume);
+        SrcDir = GetExtraKextsDir(Entry->OSVersion);
         if (SrcDir != NULL) {
           // we have found it - injection will be done
           MsgLog(", injecting kexts from: '%s'", SrcDir);

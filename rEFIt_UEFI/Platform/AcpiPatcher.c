@@ -49,7 +49,6 @@ UINT64    BiosDsdt;
 UINT32    BiosDsdtLen;
 UINT8     acpi_cpu_count;
 CHAR8*    acpi_cpu_name[32];
-CHAR8*    OSVersion;
 
 //-----------------------------------
 
@@ -1434,7 +1433,7 @@ VOID        SaveOemDsdt(BOOLEAN FullPatch)
     CopyMem((UINT8*)(UINTN)dsdt, buffer, DsdtLen);
     buffer = (UINT8*)(UINTN)dsdt;
     if (FullPatch) {
-      FixBiosDsdt(buffer, FadtPointer);
+      FixBiosDsdt(buffer, FadtPointer, NULL);
       DsdtLen = ((EFI_ACPI_DESCRIPTION_HEADER*)buffer)->Length;
 			OriginDsdt = OriginDsdtFixed;
     }
@@ -1451,7 +1450,7 @@ VOID        SaveOemDsdt(BOOLEAN FullPatch)
   }
 }
 
-EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
+EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
 {
 	EFI_STATUS										Status = EFI_SUCCESS;
 	UINTN                         Index;
@@ -1941,7 +1940,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
   //native DSDT or loaded we want to apply autoFix to this
   //  if (gSettings.FixDsdt) { //fix even with zero mask because we want to know PCIRootUID and CPUBase and count(?)
   DBG("Apply DsdtFixMask=0x%04x\n", gSettings.FixDsdt);
-  FixBiosDsdt((UINT8*)(UINTN)FadtPointer->XDsdt, FadtPointer);
+  FixBiosDsdt((UINT8*)(UINTN)FadtPointer->XDsdt, FadtPointer, OSVersion);
   if (gSettings.DebugDSDT) { 
     for (Index=0; Index < 60; Index++) {
       CHAR16					DsdtPatchedName[128];

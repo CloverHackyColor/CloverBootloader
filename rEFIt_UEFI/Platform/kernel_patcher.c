@@ -143,7 +143,7 @@ VOID SetKernelRelocBase()
 
 
 
-VOID KernelPatcher_64(VOID* kernelData)
+VOID KernelPatcher_64(VOID* kernelData, CHAR8 *OSVersion)
 {
   BOOLEAN     check = TRUE;
   
@@ -287,7 +287,7 @@ VOID KernelPatcher_64(VOID* kernelData)
   
 }
 
-VOID KernelPatcher_32(VOID* kernelData)
+VOID KernelPatcher_32(VOID* kernelData, CHAR8 *OSVersion)
 {
   UINT8* bytes = (UINT8*)kernelData;
   UINT32 patchLocation=0, patchLocation1=0;
@@ -922,10 +922,10 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
       
       if(is64BitKernel) {
         DBG_RT("64 bit patch ...");
-        KernelPatcher_64(KernelData);
+        KernelPatcher_64(KernelData, Entry->OSVersion);
       } else {
         DBG_RT("32 bit patch ...");
-        KernelPatcher_32(KernelData);
+        KernelPatcher_32(KernelData, Entry->OSVersion);
       }
       DBG_RT(" OK\n");
  /*   } else {

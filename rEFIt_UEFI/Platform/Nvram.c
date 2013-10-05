@@ -811,7 +811,7 @@ INTN FindStartupDiskVolume(REFIT_MENU_SCREEN *MainMenu)
         //DBG("  checking legacy entry %d. %s\n", Index, LegacyEntry->me.Title);
         //DBG("   %s\n", DevicePathToStr(Volume->DevicePath));
         //DBG("   OSType = %d\n", Volume->OSType);
-        if (Volume->OSType == OSTYPE_WIN) {
+        if (Volume->LegacyOS->Type == OSTYPE_WIN) {
           // that's the one - legacy win partition
           DBG("  found legacy entry %d. '%s', Volume '%s'\n", Index, LegacyEntry->me.Title, Volume->VolName);
           return Index;

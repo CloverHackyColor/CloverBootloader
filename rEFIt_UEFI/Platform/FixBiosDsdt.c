@@ -3036,7 +3036,7 @@ UINT32 FIXFirewire (UINT8 *dsdt, UINT32 len)
   return len;
 }
 
-UINT32 AddHDEF (UINT8 *dsdt, UINT32 len)
+UINT32 AddHDEF (UINT8 *dsdt, UINT32 len, CHAR8* OSVersion)
 {  
   UINT32  i, k;
   UINT32 PCIADR, PCISIZE = 0;
@@ -4278,7 +4278,7 @@ UINT32 FIXOTHER (UINT8 *dsdt, UINT32 len)
   
 }
 
-VOID FixBiosDsdt (UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt)
+VOID FixBiosDsdt (UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, CHAR8 *OSVersion)
 {    
   UINT32 DsdtLen;
   if (!temp)
@@ -4413,7 +4413,7 @@ VOID FixBiosDsdt (UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt)
   // HDA HDEF
   if (HDAFIX  && (gSettings.FixDsdt & FIX_HDA)) {
     DBG("patch HDEF in DSDT \n");
-    DsdtLen = AddHDEF(temp, DsdtLen);
+    DsdtLen = AddHDEF(temp, DsdtLen, OSVersion);
   }
   
   //Always add MCHC for PM

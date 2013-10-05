@@ -110,18 +110,18 @@ typedef struct {
 #define OSTYPE_BOOT_OSX         (9)
 #define OSTYPE_RECOVERY         (10)
 #define OSTYPE_OSX_INSTALLER    (11)
-#define OSTYPE_TIGER            (14)
+/*#define OSTYPE_TIGER            (14)
 #define OSTYPE_LEO              (15)
 #define OSTYPE_SNOW             (16)
 #define OSTYPE_LION             (17)
 #define OSTYPE_ML               (18)
-#define OSTYPE_MAV              (19)
+#define OSTYPE_MAV              (19)*/
 #define OSTYPE_OTHER            (99)
-#define OSTYPE_HIDE             (100)
+//#define OSTYPE_HIDE             (100)
 
-#define OSTYPE_IS_OSX(type) ((type == OSTYPE_OSX) || (type == OSTYPE_BOOT_OSX) || ((type >= OSTYPE_TIGER) && (type <= OSTYPE_MAV)) || (type == OSTYPE_VAR))
-#define OSTYPE_IS_OSX_RECOVERY(type) ((type == OSTYPE_RECOVERY) || ((type >= OSTYPE_TIGER) && (type <= OSTYPE_MAV)) || (type == OSTYPE_VAR))
-#define OSTYPE_IS_OSX_INSTALLER(type) ((type == OSTYPE_OSX_INSTALLER) || ((type >= OSTYPE_TIGER) && (type <= OSTYPE_MAV)) || (type == OSTYPE_VAR))
+#define OSTYPE_IS_OSX(type) ((type == OSTYPE_OSX) || (type == OSTYPE_BOOT_OSX) /*|| ((type >= OSTYPE_TIGER) && (type <= OSTYPE_MAV))*/ || (type == OSTYPE_VAR))
+#define OSTYPE_IS_OSX_RECOVERY(type) ((type == OSTYPE_RECOVERY) /*|| ((type >= OSTYPE_TIGER) && (type <= OSTYPE_MAV))*/ || (type == OSTYPE_VAR))
+#define OSTYPE_IS_OSX_INSTALLER(type) ((type == OSTYPE_OSX_INSTALLER) /*|| ((type >= OSTYPE_TIGER) && (type <= OSTYPE_MAV))*/ || (type == OSTYPE_VAR))
 #define OSTYPE_IS_WINDOWS(type) ((type == OSTYPE_WIN) || (type == OSTYPE_WINEFI) || (type == OSTYPE_EFI) || (type == OSTYPE_VAR))
 #define OSTYPE_IS_LINUX(type) ((type == OSTYPE_LIN) || (type == OSTYPE_EFI) || (type == OSTYPE_VAR))
 #define OSTYPE_IS_OTHER(type) ((type == OSTYPE_OTHER) || (type == OSTYPE_EFI) || (type == OSTYPE_VAR))
@@ -146,18 +146,23 @@ typedef struct {
 #define IS_EXTENDED_PART_TYPE(type) ((type) == 0x05 || (type) == 0x0f || (type) == 0x85)
 
 typedef struct {
+  UINT8               Type;
+  CHAR16              *IconName;
+  CHAR16              *Name;
+} LEGACY_OS;
+
+typedef struct {
   EFI_DEVICE_PATH     *DevicePath;
   EFI_HANDLE          DeviceHandle;
   EFI_FILE            *RootDir;
   CHAR16              *DevicePathString;
   CHAR16              *VolName;
   UINT8               DiskKind;
-  UINT8               OSType;
+  LEGACY_OS           *LegacyOS;
+  BOOLEAN             Hidden;
   UINT8               BootType;
   BOOLEAN             IsAppleLegacy;
   BOOLEAN             HasBootCode;
-  CHAR16              *OSIconName;
-  CHAR16              *OSName;
   BOOLEAN             IsMbrPartition;
   UINTN               MbrPartitionIndex;
   EFI_BLOCK_IO        *BlockIO;
@@ -414,6 +419,7 @@ typedef struct {
   EFI_DEVICE_PATH  *DevicePath;
   UINT8             Flags;
   UINT8             LoaderType;
+  CHAR8            *OSVersion;
 } LOADER_ENTRY;
 
 typedef struct {
