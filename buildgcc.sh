@@ -382,11 +382,14 @@ GCC_native () {
         mkdir -p "$BUILD_DIR" && cd "$BUILD_DIR"
 
         # Create the sdk directory and link it to the native sdk directory
-        rm -f "$PREFIX/sdk"
-        ln -sf "$SDK" "$PREFIX/sdk"
+        # We need to create individual links, as creating a link to just $SDK would result in the real path being followed and resolved
+        rm -rf "$PREFIX/sdk"
+        mkdir -p "$PREFIX/sdk"
+        ln -sf "$SDK/usr" "$PREFIX/sdk/usr"
+        ln -sf "$SDK/System" "$PREFIX/sdk/System"
 
         local cmd="${GCC_DIR}/configure --prefix='$PREFIX' --with-sysroot='$PREFIX/sdk' --enable-languages=c,c++ --libdir='$PREFIX'/lib/gcc$GCC_MAJOR_VERSION --includedir='$PREFIX/include/gcc$GCC_MAJOR_VERSION' --datarootdir='$PREFIX'/share/gcc$GCC_MAJOR_VERSION  --with-system-zlib --disable-nls --with-gxx-include-dir='$PREFIX'/include/gcc$GCC_MAJOR_VERSION/c++/ --with-gmp='$PREFIX' --with-mpfr='$PREFIX' --with-mpc='$PREFIX' --with-isl='$PREFIX' --with-cloog='$PREFIX' --enable-cloog-backend=isl --disable-multilib --disable-bootstrap"
-       local logfile="$DIR_LOGS/gcc-native.$ARCH.configure.log.txt"
+        local logfile="$DIR_LOGS/gcc-native.$ARCH.configure.log.txt"
         echo "$cmd" > "$logfile"
         echo "-  gcc-${GCC_VERSION} (native) configure..."
         eval "$cmd" >> "$logfile" 2>&1
@@ -411,8 +414,6 @@ GCC_native () {
         if [[ $? -ne 0 ]]; then
             echo "Error installing GCC-${GCC_VERSION} ! Check the log $logfile" && exit 1
         fi
-
-        rm -f "$PREFIX/sdk"
 
         echo "-  gcc-${GCC_VERSION} installed in $PREFIX"
         rm -rf "$BUILD_DIR"
