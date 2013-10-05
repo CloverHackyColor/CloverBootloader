@@ -651,6 +651,12 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
   if (OSTYPE_IS_OSX(Entry->LoaderType) ||
       OSTYPE_IS_OSX_RECOVERY(Entry->LoaderType) ||
       OSTYPE_IS_OSX_INSTALLER(Entry->LoaderType)) {
+
+      //we are booting OSX - restore emulation if it's not installed before starting boot.efi
+      if (gEmuVariableControl != NULL) {
+          gEmuVariableControl->InstallEmulation(gEmuVariableControl);
+      }
+
     // first patchACPI and find PCIROOT and RTC
     // but before ACPI patch we need smbios patch
     PatchSmbios();
@@ -1715,9 +1721,11 @@ static LOADER_ENTRY * AddCloverEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
                                   NULL,
                                   NULL
                                   );
+/* don't need to restore emulation here
   if (gEmuVariableControl != NULL) {
     gEmuVariableControl->InstallEmulation(gEmuVariableControl);
   }
+*/
   
   if (Status == EFI_SUCCESS) {
     SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
@@ -3570,10 +3578,19 @@ INTN FindDefaultEntry(VOID)
   
   //
   // try to detect volume set by Startup Disk or previous Clover selection
-  //
+  // with broken nvram this requires emulation to be installed
+  // enabled emulation to determin efi-boot-device-data
+  if (gEmuVariableControl != NULL) {
+    gEmuVariableControl->InstallEmulation(gEmuVariableControl);
+  }
+    
   Index = FindStartupDiskVolume(&MainMenu);
   if (Index >= 0) {
     DBG("Boot redirected to Entry %d. '%s'\n", Index, MainMenu.Entries[Index]->Title);
+    // we got boot-device-data, no need to keep emulating anymore
+    if (gEmuVariableControl != NULL) {
+        gEmuVariableControl->UninstallEmulation(gEmuVariableControl);
+    }
     return Index;
   }
   
@@ -3597,12 +3614,20 @@ INTN FindDefaultEntry(VOID)
       }
       
       DBG(" found\nBoot redirected to Entry %d. '%s', Volume '%s'\n", Index, Entry->me.Title, Volume->VolName);
+      // if first method failed and second succeeded - uninstall emulation
+      if (gEmuVariableControl != NULL) {
+        gEmuVariableControl->UninstallEmulation(gEmuVariableControl);
+      }
       return Index;
     }
     
   }
   
   DBG("Default boot entry not found\n");
+ // if both methods to determine default boot entry have failed - uninstall emulation before GUI
+ if (gEmuVariableControl != NULL) {
+    gEmuVariableControl->UninstallEmulation(gEmuVariableControl);
+ }
   return -1;
 }
 
@@ -4152,6 +4177,8 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
           LoaderEntry = (LOADER_ENTRY *)ChosenEntry;
           if (LoaderEntry->LoadOptions != NULL) {
 
+            // we are uninstalling in case user selected Clover Options and EmuVar is installed
+            // because adding bios boot option requires access to real nvram
             if (gEmuVariableControl != NULL) {
               gEmuVariableControl->UninstallEmulation(gEmuVariableControl);
             }
@@ -4181,9 +4208,11 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
               PrintBootOptions(TRUE);
             }
 
+/* we don't need to restore emulation after user has finished with this menu
             if (gEmuVariableControl != NULL) {
               gEmuVariableControl->InstallEmulation(gEmuVariableControl);
             }
+*/
           }
           MainLoopRunning = FALSE;
           AfterTool = TRUE;

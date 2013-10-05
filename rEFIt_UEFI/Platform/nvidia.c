@@ -3072,9 +3072,10 @@ static INT32 patch_nvidia_rom(UINT8 *rom)
 	}
 	else if (dcbtable_version >= 0x14) /* some NV15/16, and NV11+ */
 	{
-		CHAR8 sig[8] = { 0 };
+		CHAR8 sig[8]; // = { 0 };
 		
 		AsciiStrnCpy(sig, (CHAR8 *)&dcbtable[-7], 7);
+    sig[7] = 0;
 		recordlength = 10;
 
 		if (AsciiStrCmp(sig, "DEV_REC"))
