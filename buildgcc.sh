@@ -39,12 +39,6 @@ export CLOOG_VERSION=${CLOOG_VERSION:-cloog-0.18.0}
 #
 export PREFIX=${PREFIX:-~/src/opt/local}
 
-# Change target mode of crosscompiler for
-# IA32 and X64 - (we know that this one works best)
-# 
-export TARGET_IA32="i686-clover-linux-gnu"
-export TARGET_X64="x86_64-clover-linux-gnu"
-
 export GCC_MAJOR_VERSION=$(echo $GCC_VERSION | awk -F. '{ print $1$2}')
 
 # You can change DIR_MAIN if u wan't gcc source downloaded
@@ -87,22 +81,6 @@ CheckXCode () {
         fi
     fi
 }
-
-# Function: Help
-Help () {
-	echo
-	echo " Script for building GCC toolchain on Darwin OS X"
-	echo
-	echo "   Usage: ./buildgcc.sh [ARCH]"
-	echo
-	echo "   [ARCH]"
-	echo "   -ia32"
-	echo "   -x64"
-	echo
-	echo " Example: ./buildgcc.sh -x64"
-	echo
-}
-
 
 ### Main Function START ### 
 
@@ -403,9 +381,12 @@ GCC_native () {
         rm -rf "$BUILD_DIR"
         mkdir -p "$BUILD_DIR" && cd "$BUILD_DIR"
 
-        # Remove --disable-bootstrap to compile a full (3 pass) compiler
-        local cmd="${GCC_DIR}/configure --prefix='$PREFIX' --enable-languages=c,c++ --with-sysroot='$SDK' --libdir='$PREFIX'/lib/gcc$GCC_MAJOR_VERSION --includedir='$PREFIX'/include/gcc$GCC_MAJOR_VERSION  --datarootdir='$PREFIX'/share/gcc$GCC_MAJOR_VERSION --with-local-prefix='$PREFIX' --with-system-zlib --disable-nls --with-gxx-include-dir='$PREFIX'/include/gcc$GCC_MAJOR_VERSION/c++/ --with-gmp='$PREFIX' --with-mpfr='$PREFIX' --with-mpc='$PREFIX' --with-isl='$PREFIX' --with-cloog='$PREFIX' --enable-cloog-backend=isl --disable-multilib --disable-bootstrap"
-        local logfile="$DIR_LOGS/gcc-native.$ARCH.configure.log.txt"
+        # Create the sdk directory and link it to the native sdk directory
+        rm -f "$PREFIX/sdk"
+        ln -sf "$SDK" "$PREFIX/sdk"
+
+        local cmd="${GCC_DIR}/configure --prefix='$PREFIX' --with-sysroot='$PREFIX/sdk' --enable-languages=c,c++ --libdir='$PREFIX'/lib/gcc$GCC_MAJOR_VERSION --includedir='$PREFIX/include/gcc$GCC_MAJOR_VERSION' --datarootdir='$PREFIX'/share/gcc$GCC_MAJOR_VERSION  --with-system-zlib --disable-nls --with-gxx-include-dir='$PREFIX'/include/gcc$GCC_MAJOR_VERSION/c++/ --with-gmp='$PREFIX' --with-mpfr='$PREFIX' --with-mpc='$PREFIX' --with-isl='$PREFIX' --with-cloog='$PREFIX' --enable-cloog-backend=isl --disable-multilib --disable-bootstrap"
+       local logfile="$DIR_LOGS/gcc-native.$ARCH.configure.log.txt"
         echo "$cmd" > "$logfile"
         echo "-  gcc-${GCC_VERSION} (native) configure..."
         eval "$cmd" >> "$logfile" 2>&1
@@ -430,6 +411,8 @@ GCC_native () {
         if [[ $? -ne 0 ]]; then
             echo "Error installing GCC-${GCC_VERSION} ! Check the log $logfile" && exit 1
         fi
+
+        rm -f "$PREFIX/sdk"
 
         echo "-  gcc-${GCC_VERSION} installed in $PREFIX"
         rm -rf "$BUILD_DIR"
@@ -478,37 +461,10 @@ CompileCrossGCC () {
     echo
 }
 
-### ARGUMENTS fnFunctions ### 
-
-ArchIA32 ()
-# Function: setting arch type ia32
-{
-    export TARGET="$TARGET_IA32"
-    export ARCH="ia32"
-    export ABI_VER="32"
-    echo "- Building GCC toolchain for $ARCH"
-}
-
-ArchX64 ()
-# Function: setting arch type x64
-{
-    export TARGET="$TARGET_X64"
-    export ARCH="x64"
-    export ABI_VER="64"
-    echo "- Building GCC toolchain for $ARCH"
-}
-
-# 1. Argument ARCH
-case "${1:-}" in
-    '-help') Help && exit ;;
-    '-ia32') ArchIA32 ;;
-    '-x64')  ArchX64  ;;
-    *)
-       echo "Error!"
-       echo "Usage: $0 {-ia32|-x64|-help}"
-       exit 1
-       ;;
-esac
+export TARGET="x86_64-clover-linux-gnu"
+export ARCH="x64"
+export ABI_VER="64"
+echo "- Building GCC toolchain for $ARCH"
 
 CheckXCode      || exit 1
 
