@@ -77,8 +77,9 @@ CheckXCode () {
         exit 1
     else
         export SDK="`/usr/bin/xcodebuild -version -sdk macosx Path 2>/dev/null`"
-        if [ -z "${SDK}" ]; then
-            echo "ERROR: Cannot retreive Xcode SDK." >&2
+        [ -z "${SDK}" ] && export SDK="/"
+        if [ ! -d "${SDK}/usr/include" ]; then
+            echo "ERROR: Cannot find Xcode SDK." >&2
             echo "Please run Xcode and select an available \"Command Line Tools\" from Xcode->Preferences->Locations." >&2
             exit 1
         else

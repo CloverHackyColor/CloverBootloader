@@ -17,7 +17,7 @@ Note:
   * Enter SeaBios directory:  # cd OvmfPkg/SeaBios
   * Get Seabios from source:  # git clone git://git.seabios.org/seabios.git seabios
   * Apply patch:              # patch -p0 < seabiospatches.diff
-  * Edit 'seabiosmake' and specify at the beginning location of TOOLCHAIN (same ToolChain which we use for building BaseTools).
+  * Edit 'seabiosmake' and specify at the beginning location of TOOLCHAIN and PREFIX (same ToolChain which we use for building Clover).
   * Run config utility:       # ./seabiosmake.sh menuconfig
                          (or: # ./seabiosmake.sh config     - if you don't have ncurses)
     - Under General Features, set 'Build Target' to 'Compatibility Support Module for EFI BIOS'

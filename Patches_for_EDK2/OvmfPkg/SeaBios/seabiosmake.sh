@@ -1,6 +1,6 @@
 #!/bin/sh
-TOOLCHAIN=`echo $(cd ../../../CloverTools/bin/; pwd)`
-PREFIX=x86_64-linux-gnu
+TOOLCHAIN=`echo $(cd ../../../toolchain/cross/bin/; pwd)`
+PREFIX=x86_64-clover-linux-gnu
 
 cd seabios
 
