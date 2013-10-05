@@ -1243,6 +1243,29 @@ static LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
   return Entry;
 }
 
+static LOADER_ENTRY * DuplicateLoaderEntry(IN LOADER_ENTRY *Entry)
+{
+  LOADER_ENTRY *DuplicateEntry;
+  if(Entry == NULL) {
+    return NULL;
+  }
+  DuplicateEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
+  if (DuplicateEntry) {
+    DuplicateEntry->me.Tag          = TAG_LOADER;
+    DuplicateEntry->me.AtClick      = ActionEnter;
+    DuplicateEntry->Volume          = Entry->Volume;
+    DuplicateEntry->DevicePathString = Entry->DevicePathString;
+    DuplicateEntry->LoadOptions     = Entry->LoadOptions;
+    DuplicateEntry->LoaderPath      = Entry->LoaderPath;
+    DuplicateEntry->VolName         = Entry->VolName;
+    DuplicateEntry->DevicePath      = Entry->DevicePath;
+    DuplicateEntry->Flags           = Entry->Flags;
+    DuplicateEntry->LoaderType      = Entry->LoaderType;
+    DuplicateEntry->OSVersion       = Entry->OSVersion;
+  }
+  return DuplicateEntry;
+}
+
 static LOADER_ENTRY * AddLoaderEntry2(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOptions, IN CHAR16 *FullTitle, IN CHAR16 *LoaderTitle, IN REFIT_VOLUME *Volume,
                                       IN EG_IMAGE *Image, IN EG_IMAGE *DriveImage, IN UINT8 OSType, IN UINT8 Flags, IN CHAR16 Hotkey, IN BOOLEAN CustomEntry)
 {
@@ -1280,55 +1303,35 @@ static LOADER_ENTRY * AddLoaderEntry2(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOp
 
   
   // default entry
-  SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
-  SubEntry->me.Title        = (Entry->LoaderType == OSTYPE_OSX || Entry->LoaderType == OSTYPE_OSX_INSTALLER || Entry->LoaderType == OSTYPE_RECOVERY) ? L"Boot Mac OS X" : PoolPrint(L"Run %s", FileName);
-  SubEntry->me.Tag          = TAG_LOADER;
-  SubEntry->LoaderPath      = Entry->LoaderPath;
-  SubEntry->Volume          = Entry->Volume;
-  SubEntry->VolName         = Entry->VolName;
-  SubEntry->DevicePath      = Entry->DevicePath;
-  SubEntry->DevicePathString = Entry->DevicePathString;
-  SubEntry->Flags           = Entry->Flags;
-  SubEntry->LoadOptions     = LoaderOptions;
-  SubEntry->LoaderType      = Entry->LoaderType;
-  SubEntry->me.AtClick      = ActionEnter;
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
-  
+  SubEntry = DuplicateLoaderEntry(Entry);
+  if (SubEntry) {
+    SubEntry->me.Title = (Entry->LoaderType == OSTYPE_OSX ||
+                          Entry->LoaderType == OSTYPE_OSX_INSTALLER ||
+                          Entry->LoaderType == OSTYPE_RECOVERY) ?
+                              L"Boot Mac OS X" : PoolPrint(L"Run %s", FileName);
+    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+  }
   // loader-specific submenu entries
   if (Entry->LoaderType == OSTYPE_OSX || Entry->LoaderType == OSTYPE_OSX_INSTALLER || Entry->LoaderType == OSTYPE_RECOVERY) {          // entries for Mac OS X
 #if defined(MDE_CPU_X64)
-    SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
     if (AsciiStrnCmp(Entry->OSVersion,"10.7",4) &&
         AsciiStrnCmp(Entry->OSVersion,"10.8",4)) {
-      SubEntry->me.Title        = L"Boot Mac OS X (64-bit)";
-      SubEntry->me.Tag          = TAG_LOADER;
-      SubEntry->LoaderPath      = Entry->LoaderPath;
-      SubEntry->Volume          = Entry->Volume;
-      SubEntry->VolName         = Entry->VolName;
-      SubEntry->DevicePath      = Entry->DevicePath;
-      SubEntry->DevicePathString = Entry->DevicePathString;
-      SubEntry->Flags           = Entry->Flags;
-      SubEntry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"arch=x86_64");
-      SubEntry->LoaderType      = Entry->LoaderType;
-      SubEntry->me.AtClick      = ActionEnter;
-      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);   
+      SubEntry = DuplicateLoaderEntry(Entry);
+      if (SubEntry) {
+        SubEntry->LoadOptions     = AddLoadOption(SubEntry->LoadOptions, L"arch=x86_64");
+        SubEntry->me.Title        = L"Boot Mac OS X (64-bit)";
+        AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+      }
     }
 #endif
     if (AsciiStrnCmp(Entry->OSVersion,"10.7",4) &&
         AsciiStrnCmp(Entry->OSVersion,"10.8",4)) {
-      SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
-      SubEntry->me.Title        = L"Boot Mac OS X (32-bit)";
-      SubEntry->me.Tag          = TAG_LOADER;
-      SubEntry->LoaderPath      = Entry->LoaderPath;
-      SubEntry->Volume          = Entry->Volume;
-      SubEntry->VolName         = Entry->VolName;
-      SubEntry->DevicePath      = Entry->DevicePath;
-      SubEntry->DevicePathString = Entry->DevicePathString;
-      SubEntry->Flags           = Entry->Flags;
-      SubEntry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"arch=i386");
-      SubEntry->LoaderType      = Entry->LoaderType;
-      SubEntry->me.AtClick      = ActionEnter;
-      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);      
+      SubEntry = DuplicateLoaderEntry(Entry);
+      if (SubEntry) {
+        SubEntry->me.Title        = L"Boot Mac OS X (32-bit)";
+        SubEntry->LoadOptions     = AddLoadOption(SubEntry->LoadOptions, L"arch=i386");
+        AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+      }
     }
     
     if (!(GlobalConfig.DisableFlags & DISABLE_FLAG_SINGLEUSER)) {
@@ -1336,189 +1339,122 @@ static LOADER_ENTRY * AddLoaderEntry2(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOp
 #if defined(MDE_CPU_X64)
       if (AsciiStrnCmp(Entry->OSVersion,"10.7",4) == 0 ||
           AsciiStrnCmp(Entry->OSVersion,"10.8",4) == 0 ) {
-        SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
-        SubEntry->me.Title        = L"Boot Mac OS X in verbose mode";
-        SubEntry->me.Tag          = TAG_LOADER;
-        SubEntry->LoaderPath      = Entry->LoaderPath;
-        SubEntry->Volume          = Entry->Volume;
-        SubEntry->VolName         = Entry->VolName;
-        SubEntry->DevicePath      = Entry->DevicePath;
-        SubEntry->DevicePathString = Entry->DevicePathString;
-        SubEntry->Flags           = OSFLAG_UNSET(Entry->Flags, OSFLAG_USEGRAPHICS);
-        SubEntry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"-v");
-        SubEntry->LoaderType      = Entry->LoaderType;
-        SubEntry->me.AtClick      = ActionEnter;
-        AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
-      } else {        
-        SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
-        SubEntry->me.Title        = L"Boot Mac OS X in verbose mode (64bit)";
-        SubEntry->me.Tag          = TAG_LOADER;
-        SubEntry->LoaderPath      = Entry->LoaderPath;
-        SubEntry->Volume          = Entry->Volume;
-        SubEntry->VolName         = Entry->VolName;
-        SubEntry->DevicePath      = Entry->DevicePath;
-        SubEntry->DevicePathString = Entry->DevicePathString;
-        SubEntry->Flags           = OSFLAG_UNSET(Entry->Flags, OSFLAG_USEGRAPHICS);
-        TempOptions = AddLoadOption(Entry->LoadOptions, L"-v");
-        SubEntry->LoadOptions     = AddLoadOption(TempOptions, L"arch=x86_64");
-        FreePool(TempOptions);
-        SubEntry->LoaderType      = Entry->LoaderType;
-        SubEntry->me.AtClick      = ActionEnter;
-        AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);        
+        SubEntry = DuplicateLoaderEntry(Entry);
+        if (SubEntry) {
+          SubEntry->me.Title        = L"Boot Mac OS X in verbose mode";
+          SubEntry->Flags           = OSFLAG_UNSET(SubEntry->Flags, OSFLAG_USEGRAPHICS);
+          SubEntry->LoadOptions     = AddLoadOption(SubEntry->LoadOptions, L"-v");
+          AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+        }
+      } else {
+        SubEntry = DuplicateLoaderEntry(Entry);
+        if (SubEntry) {
+          SubEntry->me.Title        = L"Boot Mac OS X in verbose mode (64bit)";
+          SubEntry->Flags           = OSFLAG_UNSET(SubEntry->Flags, OSFLAG_USEGRAPHICS);
+          TempOptions = AddLoadOption(SubEntry->LoadOptions, L"-v");
+          SubEntry->LoadOptions     = AddLoadOption(TempOptions, L"arch=x86_64");
+          FreePool(TempOptions);
+          AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+        }
       }
 
 #endif
 
       if (AsciiStrnCmp(Entry->OSVersion,"10.7",4) &&
           AsciiStrnCmp(Entry->OSVersion,"10.8",4)) {
-        SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
-        SubEntry->me.Title        = L"Boot Mac OS X in verbose mode (32-bit)";
-        SubEntry->me.Tag          = TAG_LOADER;
-        SubEntry->LoaderPath      = Entry->LoaderPath;
-        SubEntry->Volume          = Entry->Volume;
-        SubEntry->VolName         = Entry->VolName;
-        SubEntry->DevicePath      = Entry->DevicePath;
-        SubEntry->DevicePathString = Entry->DevicePathString;
-        SubEntry->Flags           = OSFLAG_SET(Entry->Flags, OSFLAG_USEGRAPHICS);
-        TempOptions = AddLoadOption(Entry->LoadOptions, L"-v");
-        SubEntry->LoadOptions     = AddLoadOption(TempOptions, L"arch=i386");
-        FreePool(TempOptions);
-        SubEntry->LoaderType      = Entry->LoaderType;
-        SubEntry->me.AtClick      = ActionEnter;
-        AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);        
+        SubEntry = DuplicateLoaderEntry(Entry);
+        if (SubEntry) {
+          SubEntry->me.Title        = L"Boot Mac OS X in verbose mode (32-bit)";
+          SubEntry->Flags           = OSFLAG_SET(SubEntry->Flags, OSFLAG_USEGRAPHICS);
+          TempOptions = AddLoadOption(SubEntry->LoadOptions, L"-v");
+          SubEntry->LoadOptions     = AddLoadOption(TempOptions, L"arch=i386");
+          FreePool(TempOptions);
+          AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+        }
       }
       
-      SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
-      SubEntry->me.Title        = L"Boot Mac OS X in safe mode";
-      SubEntry->me.Tag          = TAG_LOADER;
-      SubEntry->LoaderPath      = Entry->LoaderPath;
-      SubEntry->Volume          = Entry->Volume;
-      SubEntry->VolName         = Entry->VolName;
-      SubEntry->DevicePath      = Entry->DevicePath;
-      SubEntry->DevicePathString = Entry->DevicePathString;
-      SubEntry->Flags           = OSFLAG_UNSET(Entry->Flags, OSFLAG_USEGRAPHICS);
-      TempOptions = AddLoadOption(Entry->LoadOptions, L"-v");
-      SubEntry->LoadOptions     = AddLoadOption(TempOptions, L"-x");
-      SubEntry->LoaderType      = Entry->LoaderType;
-      SubEntry->me.AtClick      = ActionEnter;
-      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+      SubEntry = DuplicateLoaderEntry(Entry);
+      if (SubEntry) {
+        SubEntry->me.Title        = L"Boot Mac OS X in safe mode";
+        SubEntry->Flags           = OSFLAG_UNSET(SubEntry->Flags, OSFLAG_USEGRAPHICS);
+        TempOptions = AddLoadOption(SubEntry->LoadOptions, L"-v");
+        SubEntry->LoadOptions     = AddLoadOption(TempOptions, L"-x");
+        FreePool(TempOptions);
+        AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+      }
       
-      SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
-      SubEntry->me.Title        = L"Boot Mac OS X in single user verbose mode";
-      SubEntry->me.Tag          = TAG_LOADER;
-      SubEntry->LoaderPath      = Entry->LoaderPath;
-      SubEntry->Volume          = Entry->Volume;
-      SubEntry->VolName         = Entry->VolName;
-      SubEntry->DevicePath      = Entry->DevicePath;
-      SubEntry->DevicePathString = Entry->DevicePathString;
-      SubEntry->Flags           = OSFLAG_UNSET(Entry->Flags, OSFLAG_USEGRAPHICS);
-      TempOptions = AddLoadOption(Entry->LoadOptions, L"-v");
-      SubEntry->LoadOptions     = AddLoadOption(TempOptions, L"-s");
-      FreePool(TempOptions);
-      SubEntry->LoaderType      = Entry->LoaderType;
-      SubEntry->me.AtClick      = ActionEnter;
-      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+      SubEntry = DuplicateLoaderEntry(Entry);
+      if (SubEntry) {
+        SubEntry->me.Title        = L"Boot Mac OS X in single user verbose mode";
+        SubEntry->Flags           = OSFLAG_UNSET(Entry->Flags, OSFLAG_USEGRAPHICS);
+        TempOptions = AddLoadOption(Entry->LoadOptions, L"-v");
+        SubEntry->LoadOptions     = AddLoadOption(TempOptions, L"-s");
+        FreePool(TempOptions);
+        AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+      }
       
-      SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
-      SubEntry->me.Title        = OSFLAG_ISSET(Entry->Flags, OSFLAG_NOCACHES) ?
-                                    L"Boot Mac OS X with caches" :
-                                    L"Boot Mac OS X without caches";
-      SubEntry->me.Tag          = TAG_LOADER;
-      SubEntry->LoaderPath      = Entry->LoaderPath;
-      SubEntry->Volume          = Entry->Volume;
-      SubEntry->VolName         = Entry->VolName;
-      SubEntry->DevicePath      = Entry->DevicePath;
-      SubEntry->DevicePathString = Entry->DevicePathString;
-      SubEntry->Flags           = OSFLAG_TOGGLE(Entry->Flags, OSFLAG_NOCACHES);
-      SubEntry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"-v");
-      SubEntry->LoaderType      = Entry->LoaderType;
-      SubEntry->me.AtClick      = ActionEnter;
-      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+      SubEntry = DuplicateLoaderEntry(Entry);
+      if (SubEntry) {
+        SubEntry->me.Title        = OSFLAG_ISSET(SubEntry->Flags, OSFLAG_NOCACHES) ?
+                                      L"Boot Mac OS X with caches" :
+                                      L"Boot Mac OS X without caches";
+        SubEntry->Flags           = OSFLAG_TOGGLE(SubEntry->Flags, OSFLAG_NOCACHES);
+        SubEntry->LoadOptions     = AddLoadOption(SubEntry->LoadOptions, L"-v");
+        AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+      }
 
-      SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
-      SubEntry->me.Title        = OSFLAG_ISSET(Entry->Flags, OSFLAG_WITHKEXTS) ?
-                                    L"Boot Mac OS X without injected kexts" :
-                                    L"Boot Mac OS X with injected kexts";
-      SubEntry->me.Tag          = TAG_LOADER;
-      SubEntry->LoaderPath      = Entry->LoaderPath;
-      SubEntry->Volume          = Entry->Volume;
-      SubEntry->VolName         = Entry->VolName;
-      SubEntry->DevicePath      = Entry->DevicePath;
-      SubEntry->DevicePathString = Entry->DevicePathString;
-      SubEntry->Flags           = OSFLAG_TOGGLE(Entry->Flags, OSFLAG_WITHKEXTS);
-      SubEntry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"-v");
-      SubEntry->LoaderType      = Entry->LoaderType;
-      SubEntry->me.AtClick      = ActionEnter;
-      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+      SubEntry = DuplicateLoaderEntry(Entry);
+      if (SubEntry) {
+        SubEntry->me.Title        = OSFLAG_ISSET(SubEntry->Flags, OSFLAG_WITHKEXTS) ?
+                                      L"Boot Mac OS X without injected kexts" :
+                                      L"Boot Mac OS X with injected kexts";
+        SubEntry->Flags           = OSFLAG_TOGGLE(SubEntry->Flags, OSFLAG_WITHKEXTS);
+        SubEntry->LoadOptions     = AddLoadOption(SubEntry->LoadOptions, L"-v");
+        AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+      }
 
       if (OSFLAG_ISSET(Entry->Flags, OSFLAG_WITHKEXTS))
       {
         if (OSFLAG_ISSET(Entry->Flags, OSFLAG_NOCACHES))
         {
-          SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
-          SubEntry->me.Title        = L"Boot Mac OS X with caches and without injected kexts";
-          SubEntry->me.Tag          = TAG_LOADER;
-          SubEntry->LoaderPath      = Entry->LoaderPath;
-          SubEntry->Volume          = Entry->Volume;
-          SubEntry->VolName         = Entry->VolName;
-          SubEntry->DevicePath      = Entry->DevicePath;
-          SubEntry->DevicePathString = Entry->DevicePathString;
-          SubEntry->Flags           = OSFLAG_UNSET(OSFLAG_UNSET(Entry->Flags, OSFLAG_NOCACHES), OSFLAG_WITHKEXTS);
-          SubEntry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"-v");
-          SubEntry->LoaderType      = Entry->LoaderType;
-          SubEntry->me.AtClick      = ActionEnter;
-          AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+          SubEntry = DuplicateLoaderEntry(Entry);
+          if (SubEntry) {
+            SubEntry->me.Title        = L"Boot Mac OS X with caches and without injected kexts";
+            SubEntry->Flags           = OSFLAG_UNSET(OSFLAG_UNSET(SubEntry->Flags, OSFLAG_NOCACHES), OSFLAG_WITHKEXTS);
+            SubEntry->LoadOptions     = AddLoadOption(SubEntry->LoadOptions, L"-v");
+            AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+          }
         }
         else
         {
-          SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
-          SubEntry->me.Title        = L"Boot Mac OS X without caches and without injected kexts";
-          SubEntry->me.Tag          = TAG_LOADER;
-          SubEntry->LoaderPath      = Entry->LoaderPath;
-          SubEntry->Volume          = Entry->Volume;
-          SubEntry->VolName         = Entry->VolName;
-          SubEntry->DevicePath      = Entry->DevicePath;
-          SubEntry->DevicePathString = Entry->DevicePathString;
-          SubEntry->Flags           = OSFLAG_UNSET(OSFLAG_SET(Entry->Flags, OSFLAG_NOCACHES), OSFLAG_WITHKEXTS);
-          SubEntry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"-v");
-          SubEntry->LoaderType      = Entry->LoaderType;
-          SubEntry->me.AtClick      = ActionEnter;
-          AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+          SubEntry = DuplicateLoaderEntry(Entry);
+          if (SubEntry) {
+            SubEntry->me.Title        = L"Boot Mac OS X without caches and without injected kexts";
+            SubEntry->Flags           = OSFLAG_UNSET(OSFLAG_SET(SubEntry->Flags, OSFLAG_NOCACHES), OSFLAG_WITHKEXTS);
+            SubEntry->LoadOptions     = AddLoadOption(SubEntry->LoadOptions, L"-v");
+            AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+          }
         }
       }
       else if (OSFLAG_ISSET(Entry->Flags, OSFLAG_NOCACHES))
       {
-        SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
-        SubEntry->me.Title        = L"Boot Mac OS X with caches and with injected kexts";
-        SubEntry->me.Tag          = TAG_LOADER;
-        SubEntry->LoaderPath      = Entry->LoaderPath;
-        SubEntry->Volume          = Entry->Volume;
-        SubEntry->VolName         = Entry->VolName;
-        SubEntry->DevicePath      = Entry->DevicePath;
-        SubEntry->DevicePathString = Entry->DevicePathString;
-        SubEntry->Flags           = OSFLAG_SET(OSFLAG_UNSET(Entry->Flags, OSFLAG_NOCACHES), OSFLAG_WITHKEXTS);
-        SubEntry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"-v");
-//        SubEntry->LoadOptions     = Entry->LoadOptions;
-        SubEntry->LoaderType      = Entry->LoaderType;
-        SubEntry->me.AtClick      = ActionEnter;
-        AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+        SubEntry = DuplicateLoaderEntry(Entry);
+        if (SubEntry) {
+          SubEntry->me.Title        = L"Boot Mac OS X with caches and with injected kexts";
+          SubEntry->Flags           = OSFLAG_SET(OSFLAG_UNSET(SubEntry->Flags, OSFLAG_NOCACHES), OSFLAG_WITHKEXTS);
+          SubEntry->LoadOptions     = AddLoadOption(SubEntry->LoadOptions, L"-v");
+          AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+        }
       }
       else
       {
-        SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
-        SubEntry->me.Title        = L"Boot Mac OS X without caches and with injected kexts";
-        SubEntry->me.Tag          = TAG_LOADER;
-        SubEntry->LoaderPath      = Entry->LoaderPath;
-        SubEntry->Volume          = Entry->Volume;
-        SubEntry->VolName         = Entry->VolName;
-        SubEntry->DevicePath      = Entry->DevicePath;
-        SubEntry->DevicePathString = Entry->DevicePathString;
-        SubEntry->Flags           = OSFLAG_SET(OSFLAG_SET(Entry->Flags, OSFLAG_NOCACHES), OSFLAG_WITHKEXTS);
-        SubEntry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"-v");
- //       SubEntry->LoadOptions     = Entry->LoadOptions;
-        SubEntry->LoaderType      = Entry->LoaderType;
-        SubEntry->me.AtClick      = ActionEnter;
-        AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+        SubEntry = DuplicateLoaderEntry(Entry);
+        if (SubEntry) {
+          SubEntry->me.Title        = L"Boot Mac OS X without caches and with injected kexts";
+          SubEntry->Flags           = OSFLAG_SET(OSFLAG_SET(SubEntry->Flags, OSFLAG_NOCACHES), OSFLAG_WITHKEXTS);
+          SubEntry->LoadOptions     = AddLoadOption(SubEntry->LoadOptions, L"-v");
+          AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+        }
       }
     }
     
@@ -1527,6 +1463,7 @@ static LOADER_ENTRY * AddLoaderEntry2(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOp
     if (FileExists(Volume->RootDir, DiagsFileName) && !(GlobalConfig.DisableFlags & DISABLE_FLAG_HWTEST)) {
       DBG("  - Apple Hardware Test found\n");
       
+      // NOTE: Sothor - I'm not sure if to duplicate parent entry here.
       SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
       SubEntry->me.Title        = L"Run Apple Hardware Test";
       SubEntry->me.Tag          = TAG_LOADER;
@@ -1541,61 +1478,36 @@ static LOADER_ENTRY * AddLoaderEntry2(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOp
     }
     
   } else if (Entry->LoaderType == OSTYPE_LIN) {   // entries for elilo
-    SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
-    SubEntry->me.Title        = PoolPrint(L"Run %s in interactive mode", FileName);
-    SubEntry->me.Tag          = TAG_LOADER;
-    SubEntry->LoaderPath      = Entry->LoaderPath;
-    SubEntry->Volume          = Entry->Volume;
-    SubEntry->VolName         = Entry->VolName;
-    SubEntry->DevicePath      = Entry->DevicePath;
-    SubEntry->DevicePathString = Entry->DevicePathString;
-    SubEntry->Flags           = Entry->Flags;
-    SubEntry->LoadOptions     = L"-p";
-    SubEntry->LoaderType      = Entry->LoaderType;
-    SubEntry->me.AtClick      = ActionEnter;
-    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+    SubEntry = DuplicateLoaderEntry(Entry);
+    if (SubEntry) {
+      SubEntry->me.Title        = PoolPrint(L"Run %s in interactive mode", FileName);
+      SubEntry->LoadOptions     = L"-p";
+      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+    }
     
-    SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
-    SubEntry->me.Title        = L"Boot Linux for a 17\" iMac or a 15\" MacBook Pro (*)";
-    SubEntry->me.Tag          = TAG_LOADER;
-    SubEntry->LoaderPath      = Entry->LoaderPath;
-    SubEntry->Volume          = Entry->Volume;
-    SubEntry->VolName         = Entry->VolName;
-    SubEntry->DevicePath      = Entry->DevicePath;
-    SubEntry->DevicePathString = Entry->DevicePathString;
-    SubEntry->Flags           = OSFLAG_SET(Entry->Flags, OSFLAG_USEGRAPHICS);
-    SubEntry->LoadOptions     = L"-d 0 i17";
-    SubEntry->LoaderType      = Entry->LoaderType;
-    SubEntry->me.AtClick      = ActionEnter;
-    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+    SubEntry = DuplicateLoaderEntry(Entry);
+    if (SubEntry) {
+      SubEntry->me.Title        = L"Boot Linux for a 17\" iMac or a 15\" MacBook Pro (*)";
+      SubEntry->Flags           = OSFLAG_SET(Entry->Flags, OSFLAG_USEGRAPHICS);
+      SubEntry->LoadOptions     = L"-d 0 i17";
+      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+    }
     
-    SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
-    SubEntry->me.Title        = L"Boot Linux for a 20\" iMac (*)";
-    SubEntry->me.Tag          = TAG_LOADER;
-    SubEntry->LoaderPath      = Entry->LoaderPath;
-    SubEntry->Volume          = Entry->Volume;
-    SubEntry->VolName         = Entry->VolName;
-    SubEntry->DevicePath      = Entry->DevicePath;
-    SubEntry->DevicePathString = Entry->DevicePathString;
-    SubEntry->Flags           = OSFLAG_SET(Entry->Flags, OSFLAG_USEGRAPHICS);
-    SubEntry->LoadOptions     = L"-d 0 i20";
-    SubEntry->LoaderType      = Entry->LoaderType;
-    SubEntry->me.AtClick      = ActionEnter;
-    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+    SubEntry = DuplicateLoaderEntry(Entry);
+    if (SubEntry) {
+      SubEntry->me.Title        = L"Boot Linux for a 20\" iMac (*)";
+      SubEntry->Flags           = OSFLAG_SET(Entry->Flags, OSFLAG_USEGRAPHICS);
+      SubEntry->LoadOptions     = L"-d 0 i20";
+      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+    }
     
-    SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
-    SubEntry->me.Title        = L"Boot Linux for a Mac Mini (*)";
-    SubEntry->me.Tag          = TAG_LOADER;
-    SubEntry->LoaderPath      = Entry->LoaderPath;
-    SubEntry->Volume          = Entry->Volume;
-    SubEntry->VolName         = Entry->VolName;
-    SubEntry->DevicePath      = Entry->DevicePath;
-    SubEntry->DevicePathString = Entry->DevicePathString;
-    SubEntry->Flags           = OSFLAG_SET(Entry->Flags, OSFLAG_USEGRAPHICS);
-    SubEntry->LoadOptions     = L"-d 0 mini";
-    SubEntry->LoaderType      = Entry->LoaderType;
-    SubEntry->me.AtClick      = ActionEnter;
-    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+    SubEntry = DuplicateLoaderEntry(Entry);
+    if (SubEntry) {
+      SubEntry->me.Title        = L"Boot Linux for a Mac Mini (*)";
+      SubEntry->Flags           = OSFLAG_SET(Entry->Flags, OSFLAG_USEGRAPHICS);
+      SubEntry->LoadOptions     = L"-d 0 mini";
+      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+    }
     
     AddMenuInfoLine(SubScreen, L"NOTE: This is an example. Entries");
     AddMenuInfoLine(SubScreen, L"marked with (*) may not work.");
@@ -1604,47 +1516,27 @@ static LOADER_ENTRY * AddLoaderEntry2(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOp
                                   // by default, skip the built-in selection and boot from hard disk only
     Entry->LoadOptions = L"-s -h";
     
-    SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
-    SubEntry->me.Title        = L"Boot Windows from Hard Disk";
-    SubEntry->me.Tag          = TAG_LOADER;
-    SubEntry->LoaderPath      = Entry->LoaderPath;
-    SubEntry->Volume          = Entry->Volume;
-    SubEntry->VolName         = Entry->VolName;
-    SubEntry->DevicePath      = Entry->DevicePath;
-    SubEntry->DevicePathString = Entry->DevicePathString;
-    SubEntry->Flags           = Entry->Flags;
-    SubEntry->LoadOptions     = L"-s -h";
-    SubEntry->LoaderType      = Entry->LoaderType;
-    SubEntry->me.AtClick      = ActionEnter;
-    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+    SubEntry = DuplicateLoaderEntry(Entry);
+    if (SubEntry) {
+      SubEntry->me.Title        = L"Boot Windows from Hard Disk";
+      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+    }
     
-    SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
-    SubEntry->me.Title        = L"Boot Windows from CD-ROM";
-    SubEntry->me.Tag          = TAG_LOADER;
-    SubEntry->LoaderPath      = Entry->LoaderPath;
-    SubEntry->Volume          = Entry->Volume;
-    SubEntry->VolName         = Entry->VolName;
-    SubEntry->DevicePath      = Entry->DevicePath;
-    SubEntry->DevicePathString = Entry->DevicePathString;
-    SubEntry->Flags           = Entry->Flags;
-    SubEntry->LoadOptions     = L"-s -c";
-    SubEntry->LoaderType      = Entry->LoaderType;
-    SubEntry->me.AtClick      = ActionEnter;
-    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+    SubEntry = DuplicateLoaderEntry(Entry);
+    if (SubEntry) {
+      SubEntry->me.Title        = L"Boot Windows from CD-ROM";
+      SubEntry->LoadOptions     = L"-s -c";
+      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+    }
     
-    SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
-    SubEntry->me.Title        = PoolPrint(L"Run %s in text mode", FileName);
-    SubEntry->me.Tag          = TAG_LOADER;
-    SubEntry->LoaderPath      = Entry->LoaderPath;
-    SubEntry->Volume          = Entry->Volume;
-    SubEntry->VolName         = Entry->VolName;
-    SubEntry->DevicePath      = Entry->DevicePath;
-    SubEntry->DevicePathString = Entry->DevicePathString;
-    SubEntry->Flags           = OSFLAG_UNSET(Entry->Flags, OSFLAG_USEGRAPHICS);
-    SubEntry->LoadOptions     = L"-v";
-    SubEntry->LoaderType      = OSTYPE_OTHER; // Sothor - Why are we using OSTYPE_OTHER here?
-    SubEntry->me.AtClick      = ActionEnter;
-    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+    SubEntry = DuplicateLoaderEntry(Entry);
+    if (SubEntry) {
+      SubEntry->me.Title        = PoolPrint(L"Run %s in text mode", FileName);
+      SubEntry->Flags           = OSFLAG_UNSET(Entry->Flags, OSFLAG_USEGRAPHICS);
+      SubEntry->LoadOptions     = L"-v";
+      SubEntry->LoaderType      = OSTYPE_OTHER; // Sothor - Why are we using OSTYPE_OTHER here?
+      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+    }
     
   }
   
