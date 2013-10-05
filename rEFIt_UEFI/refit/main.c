@@ -805,21 +805,22 @@ static EFI_STATUS GetOSXVolumeName(LOADER_ENTRY *Entry)
     Status = egLoadFile(Entry->Volume->RootDir, targetNameFile, (UINT8 **)&fileBuffer, &fileLen);
     if(!EFI_ERROR(Status)) {
       CHAR16  *tmpName;
-      INTN i;
       //Create null terminated string
       targetString = (CHAR8*) AllocateZeroPool(fileLen+1);
       CopyMem( (VOID*)targetString, (VOID*)fileBuffer, fileLen);
       
-      if (Entry->LoaderType == OSTYPE_BOOT_OSX) { // TODO: Sothor - is this right? or should it be Entry->Volume->LegacyOS->Type?
-        //remove occurence number. eg: "vol_name 2" --> "vol_name"
-        i=fileLen-1;
-        while ((i>0) && (targetString[i]>='0') && (targetString[i]<='9')) {
-          i--;
-        }
-        if (targetString[i] == ' ') {
-          targetString[i] = 0;
-        }
-      }
+//      NOTE: Sothor - This was never run. If we need this correct it and uncomment it.
+//      if (Entry->LoaderType == OSTYPE_OSX) {
+//        INTN i;
+//        //remove occurence number. eg: "vol_name 2" --> "vol_name"
+//        i=fileLen-1;
+//        while ((i>0) && (targetString[i]>='0') && (targetString[i]<='9')) {
+//          i--;
+//        }
+//        if (targetString[i] == ' ') {
+//          targetString[i] = 0;
+//        }
+//      }
       
       //Convert to Unicode
       tmpName = (CHAR16*)AllocateZeroPool((fileLen+1)*2);
@@ -1154,8 +1155,6 @@ static LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
   } else if ((AsciiStrLen(gSettings.BootArgs) > 0) && OSFLAG_ISUNSET(Flags, OSFLAG_NODEFAULTARGS)) {
     Entry->LoadOptions    = PoolPrint(L"%a", gSettings.BootArgs);
   }
-  
-  Entry->OSVersion = GetOSVersion(Entry->Volume);
 
   // locate a custom icon for the loader
   //StrCpy(IconFileName, Volume->OSIconName); Sothor - Unused?
@@ -1164,6 +1163,9 @@ static LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
   Entry->me.AtDoubleClick = ActionEnter;
   Entry->me.AtRightClick = ActionDetails;
   
+  Entry->LoaderType = OSType;
+  Entry->OSVersion = GetOSVersion(Entry->Volume);
+  
   // detect specific loaders
   OSIconName = NULL;
   ShortcutLetter = 0;
@@ -1171,7 +1173,6 @@ static LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
   switch (OSType) {
     case OSTYPE_OSX:
     case OSTYPE_RECOVERY:
-    case OSTYPE_BOOT_OSX:
     case OSTYPE_OSX_INSTALLER:
       OSIconName = GetOSIconName(Entry->OSVersion);// Sothor - Get OSIcon name using OSVersion
       if (Entry->LoadOptions == NULL || (StrStr(Entry->LoadOptions, L"-v") == NULL && StrStr(Entry->LoadOptions, L"-V") == NULL)) {
@@ -1182,23 +1183,19 @@ static LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
         Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_WITHKEXTS);
       }
       ShortcutLetter = 'M';
-      Entry->LoaderType = OSTYPE_OSX;
       GetOSXVolumeName(Entry);
       break;
     case OSTYPE_WIN:
       OSIconName = L"win";
       ShortcutLetter = 'W';
-      Entry->LoaderType = OSTYPE_WIN;
       break;
     case OSTYPE_WINEFI:
       OSIconName = L"vista";
       ShortcutLetter = 'V';
-      Entry->LoaderType = OSTYPE_WINEFI;
       break;
     case OSTYPE_LIN:
       OSIconName = L"linux";// Sothor - This is now here only for Custom Entries, the default scan loads them and passes as a parameter
       ShortcutLetter = 'L';
-      Entry->LoaderType = OSTYPE_LIN;
       break;
     case OSTYPE_OTHER:
     case OSTYPE_EFI:
@@ -1284,7 +1281,7 @@ static LOADER_ENTRY * AddLoaderEntry2(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOp
   
   // default entry
   SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
-  SubEntry->me.Title        = (Entry->LoaderType == OSTYPE_OSX) ? L"Boot Mac OS X" : PoolPrint(L"Run %s", FileName);
+  SubEntry->me.Title        = (Entry->LoaderType == OSTYPE_OSX || Entry->LoaderType == OSTYPE_OSX_INSTALLER || Entry->LoaderType == OSTYPE_RECOVERY) ? L"Boot Mac OS X" : PoolPrint(L"Run %s", FileName);
   SubEntry->me.Tag          = TAG_LOADER;
   SubEntry->LoaderPath      = Entry->LoaderPath;
   SubEntry->Volume          = Entry->Volume;
@@ -1298,7 +1295,7 @@ static LOADER_ENTRY * AddLoaderEntry2(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOp
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
   
   // loader-specific submenu entries
-  if (Entry->LoaderType == OSTYPE_OSX) {          // entries for Mac OS X
+  if (Entry->LoaderType == OSTYPE_OSX || Entry->LoaderType == OSTYPE_OSX_INSTALLER || Entry->LoaderType == OSTYPE_RECOVERY) {          // entries for Mac OS X
 #if defined(MDE_CPU_X64)
     SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
     if (AsciiStrnCmp(Entry->OSVersion,"10.7",4) &&
@@ -1312,7 +1309,7 @@ static LOADER_ENTRY * AddLoaderEntry2(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOp
       SubEntry->DevicePathString = Entry->DevicePathString;
       SubEntry->Flags           = Entry->Flags;
       SubEntry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"arch=x86_64");
-      SubEntry->LoaderType      = OSTYPE_OSX;
+      SubEntry->LoaderType      = Entry->LoaderType;
       SubEntry->me.AtClick      = ActionEnter;
       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);   
     }
@@ -1329,7 +1326,7 @@ static LOADER_ENTRY * AddLoaderEntry2(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOp
       SubEntry->DevicePathString = Entry->DevicePathString;
       SubEntry->Flags           = Entry->Flags;
       SubEntry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"arch=i386");
-      SubEntry->LoaderType      = OSTYPE_OSX;
+      SubEntry->LoaderType      = Entry->LoaderType;
       SubEntry->me.AtClick      = ActionEnter;
       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);      
     }
@@ -1349,7 +1346,7 @@ static LOADER_ENTRY * AddLoaderEntry2(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOp
         SubEntry->DevicePathString = Entry->DevicePathString;
         SubEntry->Flags           = OSFLAG_UNSET(Entry->Flags, OSFLAG_USEGRAPHICS);
         SubEntry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"-v");
-        SubEntry->LoaderType      = OSTYPE_OSX;
+        SubEntry->LoaderType      = Entry->LoaderType;
         SubEntry->me.AtClick      = ActionEnter;
         AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
       } else {        
@@ -1365,7 +1362,7 @@ static LOADER_ENTRY * AddLoaderEntry2(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOp
         TempOptions = AddLoadOption(Entry->LoadOptions, L"-v");
         SubEntry->LoadOptions     = AddLoadOption(TempOptions, L"arch=x86_64");
         FreePool(TempOptions);
-        SubEntry->LoaderType      = OSTYPE_OSX;
+        SubEntry->LoaderType      = Entry->LoaderType;
         SubEntry->me.AtClick      = ActionEnter;
         AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);        
       }
@@ -1386,7 +1383,7 @@ static LOADER_ENTRY * AddLoaderEntry2(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOp
         TempOptions = AddLoadOption(Entry->LoadOptions, L"-v");
         SubEntry->LoadOptions     = AddLoadOption(TempOptions, L"arch=i386");
         FreePool(TempOptions);
-        SubEntry->LoaderType      = OSTYPE_OSX;
+        SubEntry->LoaderType      = Entry->LoaderType;
         SubEntry->me.AtClick      = ActionEnter;
         AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);        
       }
@@ -1402,7 +1399,7 @@ static LOADER_ENTRY * AddLoaderEntry2(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOp
       SubEntry->Flags           = OSFLAG_UNSET(Entry->Flags, OSFLAG_USEGRAPHICS);
       TempOptions = AddLoadOption(Entry->LoadOptions, L"-v");
       SubEntry->LoadOptions     = AddLoadOption(TempOptions, L"-x");
-      SubEntry->LoaderType      = OSTYPE_OSX;
+      SubEntry->LoaderType      = Entry->LoaderType;
       SubEntry->me.AtClick      = ActionEnter;
       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
       
@@ -1418,7 +1415,7 @@ static LOADER_ENTRY * AddLoaderEntry2(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOp
       TempOptions = AddLoadOption(Entry->LoadOptions, L"-v");
       SubEntry->LoadOptions     = AddLoadOption(TempOptions, L"-s");
       FreePool(TempOptions);
-      SubEntry->LoaderType      = OSTYPE_OSX;
+      SubEntry->LoaderType      = Entry->LoaderType;
       SubEntry->me.AtClick      = ActionEnter;
       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
       
@@ -1434,7 +1431,7 @@ static LOADER_ENTRY * AddLoaderEntry2(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOp
       SubEntry->DevicePathString = Entry->DevicePathString;
       SubEntry->Flags           = OSFLAG_TOGGLE(Entry->Flags, OSFLAG_NOCACHES);
       SubEntry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"-v");
-      SubEntry->LoaderType      = OSTYPE_OSX;
+      SubEntry->LoaderType      = Entry->LoaderType;
       SubEntry->me.AtClick      = ActionEnter;
       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
 
@@ -1450,7 +1447,7 @@ static LOADER_ENTRY * AddLoaderEntry2(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOp
       SubEntry->DevicePathString = Entry->DevicePathString;
       SubEntry->Flags           = OSFLAG_TOGGLE(Entry->Flags, OSFLAG_WITHKEXTS);
       SubEntry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"-v");
-      SubEntry->LoaderType      = OSTYPE_OSX;
+      SubEntry->LoaderType      = Entry->LoaderType;
       SubEntry->me.AtClick      = ActionEnter;
       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
 
@@ -1468,7 +1465,7 @@ static LOADER_ENTRY * AddLoaderEntry2(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOp
           SubEntry->DevicePathString = Entry->DevicePathString;
           SubEntry->Flags           = OSFLAG_UNSET(OSFLAG_UNSET(Entry->Flags, OSFLAG_NOCACHES), OSFLAG_WITHKEXTS);
           SubEntry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"-v");
-          SubEntry->LoaderType      = OSTYPE_OSX;
+          SubEntry->LoaderType      = Entry->LoaderType;
           SubEntry->me.AtClick      = ActionEnter;
           AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
         }
@@ -1484,7 +1481,7 @@ static LOADER_ENTRY * AddLoaderEntry2(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOp
           SubEntry->DevicePathString = Entry->DevicePathString;
           SubEntry->Flags           = OSFLAG_UNSET(OSFLAG_SET(Entry->Flags, OSFLAG_NOCACHES), OSFLAG_WITHKEXTS);
           SubEntry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"-v");
-          SubEntry->LoaderType      = OSTYPE_OSX;
+          SubEntry->LoaderType      = Entry->LoaderType;
           SubEntry->me.AtClick      = ActionEnter;
           AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
         }
@@ -1502,7 +1499,7 @@ static LOADER_ENTRY * AddLoaderEntry2(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOp
         SubEntry->Flags           = OSFLAG_SET(OSFLAG_UNSET(Entry->Flags, OSFLAG_NOCACHES), OSFLAG_WITHKEXTS);
         SubEntry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"-v");
 //        SubEntry->LoadOptions     = Entry->LoadOptions;
-        SubEntry->LoaderType      = OSTYPE_OSX;
+        SubEntry->LoaderType      = Entry->LoaderType;
         SubEntry->me.AtClick      = ActionEnter;
         AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
       }
@@ -1519,7 +1516,7 @@ static LOADER_ENTRY * AddLoaderEntry2(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOp
         SubEntry->Flags           = OSFLAG_SET(OSFLAG_SET(Entry->Flags, OSFLAG_NOCACHES), OSFLAG_WITHKEXTS);
         SubEntry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"-v");
  //       SubEntry->LoadOptions     = Entry->LoadOptions;
-        SubEntry->LoaderType      = OSTYPE_OSX;
+        SubEntry->LoaderType      = Entry->LoaderType;
         SubEntry->me.AtClick      = ActionEnter;
         AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
       }
@@ -1554,7 +1551,7 @@ static LOADER_ENTRY * AddLoaderEntry2(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOp
     SubEntry->DevicePathString = Entry->DevicePathString;
     SubEntry->Flags           = Entry->Flags;
     SubEntry->LoadOptions     = L"-p";
-    SubEntry->LoaderType      = OSTYPE_LIN;
+    SubEntry->LoaderType      = Entry->LoaderType;
     SubEntry->me.AtClick      = ActionEnter;
     AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
     
@@ -1568,7 +1565,7 @@ static LOADER_ENTRY * AddLoaderEntry2(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOp
     SubEntry->DevicePathString = Entry->DevicePathString;
     SubEntry->Flags           = OSFLAG_SET(Entry->Flags, OSFLAG_USEGRAPHICS);
     SubEntry->LoadOptions     = L"-d 0 i17";
-    SubEntry->LoaderType      = OSTYPE_LIN;
+    SubEntry->LoaderType      = Entry->LoaderType;
     SubEntry->me.AtClick      = ActionEnter;
     AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
     
@@ -1582,7 +1579,7 @@ static LOADER_ENTRY * AddLoaderEntry2(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOp
     SubEntry->DevicePathString = Entry->DevicePathString;
     SubEntry->Flags           = OSFLAG_SET(Entry->Flags, OSFLAG_USEGRAPHICS);
     SubEntry->LoadOptions     = L"-d 0 i20";
-    SubEntry->LoaderType      = OSTYPE_LIN;
+    SubEntry->LoaderType      = Entry->LoaderType;
     SubEntry->me.AtClick      = ActionEnter;
     AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
     
@@ -1596,7 +1593,7 @@ static LOADER_ENTRY * AddLoaderEntry2(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOp
     SubEntry->DevicePathString = Entry->DevicePathString;
     SubEntry->Flags           = OSFLAG_SET(Entry->Flags, OSFLAG_USEGRAPHICS);
     SubEntry->LoadOptions     = L"-d 0 mini";
-    SubEntry->LoaderType      = OSTYPE_LIN;
+    SubEntry->LoaderType      = Entry->LoaderType;
     SubEntry->me.AtClick      = ActionEnter;
     AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
     
@@ -1645,7 +1642,7 @@ static LOADER_ENTRY * AddLoaderEntry2(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOp
     SubEntry->DevicePathString = Entry->DevicePathString;
     SubEntry->Flags           = OSFLAG_UNSET(Entry->Flags, OSFLAG_USEGRAPHICS);
     SubEntry->LoadOptions     = L"-v";
-    SubEntry->LoaderType      = OSTYPE_OTHER;
+    SubEntry->LoaderType      = OSTYPE_OTHER; // Sothor - Why are we using OSTYPE_OTHER here?
     SubEntry->me.AtClick      = ActionEnter;
     AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
     
@@ -1844,10 +1841,10 @@ VOID ScanLoader(VOID)
         if(!EFI_ERROR(Status)) {
             //Volume->OSType = OSTYPE_BOOT_OSX;
             if (isFirstRootUUID(Volume))
-            Entry = AddLoaderEntry(FileName, NULL, NULL, L"Mac OS X", Volume, NULL, NULL, OSTYPE_BOOT_OSX, 0, 0);
+            Entry = AddLoaderEntry(FileName, NULL, NULL, L"Mac OS X", Volume, NULL, NULL, OSTYPE_OSX, 0, 0);
         }
         else {
-            Entry = AddLoaderEntry(FileName, NULL, NULL, L"Mac OS X", Volume, NULL, NULL, OSTYPE_BOOT_OSX, 0, 0);
+            Entry = AddLoaderEntry(FileName, NULL, NULL, L"Mac OS X", Volume, NULL, NULL, OSTYPE_OSX, 0, 0);
         }
       //     continue; //boot MacOSX only
     }
