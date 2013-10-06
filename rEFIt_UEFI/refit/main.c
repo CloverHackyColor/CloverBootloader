@@ -1251,7 +1251,7 @@ static LOADER_ENTRY * DuplicateLoaderEntry(IN LOADER_ENTRY *Entry)
   }
   DuplicateEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
   if (DuplicateEntry) {
-    DuplicateEntry->me.Tag          = TAG_LOADER;
+    DuplicateEntry->me.Tag          = Entry->me.Tag;
     DuplicateEntry->me.AtClick      = ActionEnter;
     DuplicateEntry->Volume          = Entry->Volume;
     DuplicateEntry->DevicePathString = Entry->DevicePathString;
@@ -1576,6 +1576,7 @@ static LOADER_ENTRY * AddCloverEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
   Entry->DevicePathString = FileDevicePathToStr(Entry->DevicePath);
   Entry->Flags           = 0;
   Entry->LoadOptions     = NULL;
+  Entry->LoaderType      = OSTYPE_OTHER;
   
   //actions
   Entry->me.AtClick = ActionSelect;
@@ -1605,62 +1606,35 @@ static LOADER_ENTRY * AddCloverEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
 */
   
   if (Status == EFI_SUCCESS) {
-    SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
-    SubEntry->me.Title        = L"Remove Clover as UEFI boot option";
-    SubEntry->me.Tag          = TAG_CLOVER;
-    SubEntry->LoaderPath      = Entry->LoaderPath;
-    SubEntry->Volume          = Entry->Volume;
-    SubEntry->VolName         = Entry->VolName;
-    SubEntry->DevicePath      = Entry->DevicePath;
-    SubEntry->DevicePathString = Entry->DevicePathString;
-    SubEntry->Flags           = Entry->Flags;
-    SubEntry->LoadOptions     = L"BO-REMOVE";
-    SubEntry->LoaderType      = OSTYPE_OTHER;
-    SubEntry->me.AtClick      = ActionEnter;
-    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+    SubEntry = DuplicateLoaderEntry(Entry);
+    if (SubEntry) {
+      SubEntry->me.Title        = L"Remove Clover as UEFI boot option";
+      SubEntry->LoadOptions     = L"BO-REMOVE";
+      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+    }
   } else {
-    SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
-    SubEntry->me.Title        = L"Add Clover as UEFI boot option";
-    SubEntry->me.Tag          = TAG_CLOVER;
-    SubEntry->LoaderPath      = Entry->LoaderPath;
-    SubEntry->Volume          = Entry->Volume;
-    SubEntry->VolName         = Entry->VolName;
-    SubEntry->DevicePath      = Entry->DevicePath;
-    SubEntry->DevicePathString = Entry->DevicePathString;
-    SubEntry->Flags           = Entry->Flags;
-    SubEntry->LoadOptions     = L"BO-ADD";
-    SubEntry->LoaderType      = OSTYPE_OTHER;
-    SubEntry->me.AtClick      = ActionEnter;
+    SubEntry = DuplicateLoaderEntry(Entry);
+    if (SubEntry) {
+      SubEntry->me.Title        = L"Add Clover as UEFI boot option";
+      SubEntry->LoadOptions     = L"BO-ADD";
+      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+    }
+  }
+  
+  SubEntry = DuplicateLoaderEntry(Entry);
+  if (SubEntry) {
+    SubEntry->me.Title        = L"Remove all Clover boot options";
+    SubEntry->LoadOptions     = L"BO-REMOVE-ALL";
     AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
   }
   
-  SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
-  SubEntry->me.Title        = L"Remove all Clover boot options";
-  SubEntry->me.Tag          = TAG_CLOVER;
-  SubEntry->LoaderPath      = Entry->LoaderPath;
-  SubEntry->Volume          = Entry->Volume;
-  SubEntry->VolName         = Entry->VolName;
-  SubEntry->DevicePath      = Entry->DevicePath;
-  SubEntry->DevicePathString = Entry->DevicePathString;
-  SubEntry->Flags           = Entry->Flags;
-  SubEntry->LoadOptions     = L"BO-REMOVE-ALL";
-  SubEntry->LoaderType      = OSTYPE_OTHER;
-  SubEntry->me.AtClick      = ActionEnter;
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+  SubEntry = DuplicateLoaderEntry(Entry);
+  if (SubEntry) {
+    SubEntry->me.Title        = L"Print all UEFI boot options to log";
+    SubEntry->LoadOptions     = L"BO-PRINT";
+    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+  }
   
-  SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
-  SubEntry->me.Title        = L"Print all UEFI boot options to log";
-  SubEntry->me.Tag          = TAG_CLOVER;
-  SubEntry->LoaderPath      = Entry->LoaderPath;
-  SubEntry->Volume          = Entry->Volume;
-  SubEntry->VolName         = Entry->VolName;
-  SubEntry->DevicePath      = Entry->DevicePath;
-  SubEntry->DevicePathString = Entry->DevicePathString;
-  SubEntry->Flags           = Entry->Flags;
-  SubEntry->LoadOptions     = L"BO-PRINT";
-  SubEntry->LoaderType      = OSTYPE_OTHER;
-  SubEntry->me.AtClick      = ActionEnter;
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
   AddMenuEntry(SubScreen, &MenuEntryReturn);
   Entry->me.SubScreen = SubScreen;
   AddMenuEntry(&MainMenu, (REFIT_MENU_ENTRY *)Entry);
