@@ -2457,7 +2457,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
                     gSettings.FixDsdt |= FIX_SHUTDOWN;
                   }
             }
-            prop2 = GetProperty(prop, "AddMCFG_0008");
+            prop2 = GetProperty(prop, "AddMCHC_0008");
             if(prop2) {
               if ((prop2->type == kTagTypeTrue) ||
                   ((prop2->type == kTagTypeString) &&

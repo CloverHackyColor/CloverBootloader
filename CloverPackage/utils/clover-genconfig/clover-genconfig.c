@@ -524,7 +524,7 @@ void PrintConfig(CFTypeRef data)
   addBoolean(fixDict, CFSTR("AddDTGP_0001"),       !!(s->FixDsdt & FIX_DTGP));
   addBoolean(fixDict, CFSTR("FixDarwin_0002"),     !!(s->FixDsdt & FIX_WARNING));
   addBoolean(fixDict, CFSTR("FixShutdown_0004"),   !!(s->FixDsdt & FIX_SHUTDOWN));
-  addBoolean(fixDict, CFSTR("AddMCFG_0008"),       !!(s->FixDsdt & FIX_MCHC));
+  addBoolean(fixDict, CFSTR("AddMCHC_0008"),       !!(s->FixDsdt & FIX_MCHC));
   addBoolean(fixDict, CFSTR("FixHPET_0010"),       !!(s->FixDsdt & FIX_HPET));
   addBoolean(fixDict, CFSTR("FakeLPC_0020"),       !!(s->FixDsdt & FIX_LPC));
   addBoolean(fixDict, CFSTR("FixIPIC_0040"),       !!(s->FixDsdt & FIX_IPIC));
