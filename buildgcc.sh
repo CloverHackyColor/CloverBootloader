@@ -383,12 +383,13 @@ GCC_native () {
 
         # Create the sdk directory and link it to the native sdk directory
         # We need to create individual links, as creating a link to just $SDK would result in the real path being followed and resolved
-        rm -rf "$PREFIX/sdk"
-        mkdir -p "$PREFIX/sdk"
-        ln -sf "$SDK/usr" "$PREFIX/sdk/usr"
-        ln -sf "$SDK/System" "$PREFIX/sdk/System"
+        local TOOLCHAIN_SDK_DIR="$PREFIX/sdk"
+        rm -rf "$TOOLCHAIN_SDK_DIR"
+        mkdir -p "$TOOLCHAIN_SDK_DIR"
+        ln -sf "$SDK/usr" "$TOOLCHAIN_SDK_DIR/usr"
+        ln -sf "$SDK/System" "$TOOLCHAIN_SDK_DIR/System"
 
-        local cmd="${GCC_DIR}/configure --prefix='$PREFIX' --with-sysroot='$PREFIX/sdk' --enable-languages=c,c++ --libdir='$PREFIX'/lib/gcc$GCC_MAJOR_VERSION --includedir='$PREFIX/include/gcc$GCC_MAJOR_VERSION' --datarootdir='$PREFIX'/share/gcc$GCC_MAJOR_VERSION  --with-system-zlib --disable-nls --with-gxx-include-dir='$PREFIX'/include/gcc$GCC_MAJOR_VERSION/c++/ --with-gmp='$PREFIX' --with-mpfr='$PREFIX' --with-mpc='$PREFIX' --with-isl='$PREFIX' --with-cloog='$PREFIX' --enable-cloog-backend=isl --disable-multilib --disable-bootstrap"
+        local cmd="${GCC_DIR}/configure --prefix='$PREFIX' --with-sysroot='$TOOLCHAIN_SDK_DIR' --enable-languages=c,c++ --libdir='$PREFIX/lib/gcc$GCC_MAJOR_VERSION' --includedir='$PREFIX/include/gcc$GCC_MAJOR_VERSION' --datarootdir='$PREFIX/share/gcc$GCC_MAJOR_VERSION'  --with-system-zlib --disable-nls --with-gxx-include-dir='$PREFIX/include/gcc$GCC_MAJOR_VERSION/c++/' --with-gmp='$PREFIX' --with-mpfr='$PREFIX' --with-mpc='$PREFIX' --with-isl='$PREFIX' --with-cloog='$PREFIX' --enable-cloog-backend=isl --disable-multilib --disable-bootstrap"
         local logfile="$DIR_LOGS/gcc-native.$ARCH.configure.log.txt"
         echo "$cmd" > "$logfile"
         echo "-  gcc-${GCC_VERSION} (native) configure..."
@@ -414,6 +415,14 @@ GCC_native () {
         if [[ $? -ne 0 ]]; then
             echo "Error installing GCC-${GCC_VERSION} ! Check the log $logfile" && exit 1
         fi
+
+        # Create a new and clean sdk directory
+        rm -rf "$TOOLCHAIN_SDK_DIR"
+        mkdir -p "$TOOLCHAIN_SDK_DIR/usr/lib"
+        # Copy header and library files needed to compile Basetools
+        echo "-  Copying headers and library files..."
+        rsync -aH "$SDK/usr/include" "$TOOLCHAIN_SDK_DIR/usr/"
+        rsync -aH "$SDK/usr/lib"/libSystem* "$TOOLCHAIN_SDK_DIR/usr/lib/"
 
         echo "-  gcc-${GCC_VERSION} installed in $PREFIX"
         rm -rf "$BUILD_DIR"
