@@ -4061,7 +4061,7 @@ EFI_STATUS SaveSettings()
 //dmazar
 CHAR16* GetExtraKextsDir(CHAR8 *OSVersion)
 {
-  CHAR8       *OSTypeStr = AllocatePool(5);
+  CHAR8       *OSTypeStr = AllocateZeroPool(5);
   CHAR16      *SrcDir = NULL;
   
   if (OSVersion) {
