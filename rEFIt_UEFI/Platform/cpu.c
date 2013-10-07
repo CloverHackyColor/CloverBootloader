@@ -411,10 +411,10 @@ VOID GetCPUProperties (VOID)
      //       TurboMsr = msr + (1 << 8);
             gCPUStructure.MaxRatio = (UINT32)(RShiftU64(msr, 8)) & 0x1f;
             TurboMsr = (UINT32)(RShiftU64(msr, 40)) & 0x1f;
-            if (TurboMsr > gCPUStructure.MaxRatio) {
+            if ((TurboMsr > gCPUStructure.MaxRatio) && (gCPUStructure.Model == CPU_MODEL_MEROM)) {
               DBG(" CPU works at low speed, MaxRatio=%d CurrRatio=%d\n", TurboMsr,
                   gCPUStructure.MaxRatio);
-    //          gCPUStructure.MaxRatio = TurboMsr;
+              gCPUStructure.MaxRatio = TurboMsr;
             }
             gCPUStructure.SubDivider = (UINT32)(RShiftU64(msr, 14)) & 0x1;
             gCPUStructure.MinRatio = 60;
