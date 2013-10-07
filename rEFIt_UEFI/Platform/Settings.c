@@ -4061,12 +4061,14 @@ EFI_STATUS SaveSettings()
 //dmazar
 CHAR16* GetExtraKextsDir(CHAR8 *OSVersion)
 {
-  CHAR8       *OSTypeStr = AllocateZeroPool(5);
+  CHAR8       *OSTypeStr;
   CHAR16      *SrcDir = NULL;
-  
+
   if (OSVersion) {
+    AllocateZeroPool(5);
     AsciiStrnCpy(OSTypeStr, OSVersion, 4); // TODO: Sothor - is this right?
   } else {
+    OSTypeStr = AllocateZeroPool(6);
     UnicodeStrToAsciiStr(L"Other", OSTypeStr);
   }
   
