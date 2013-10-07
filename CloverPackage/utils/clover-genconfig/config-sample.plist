@@ -273,7 +273,7 @@
 			<key>ATI</key>
 			<string>0x67501002</string>
 			<key>IntelGFX</key>
-			<string>0x0126</string>
+			<string>0x01268086</string>
 			<key>LAN</key>
 			<string>0x20008086</string>
 			<key>NVidia</key>
