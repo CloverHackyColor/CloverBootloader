@@ -1073,6 +1073,7 @@ VOID ScanVolumes(VOID)
   for (HandleIndex = 0; HandleIndex < HandleCount; HandleIndex++) {
         
     Volume = AllocateZeroPool(sizeof(REFIT_VOLUME));
+    Volume->LegacyOS = AllocateZeroPool(sizeof(LEGACY_OS));
     Volume->DeviceHandle = Handles[HandleIndex];
     if (Volume->DeviceHandle == SelfDeviceHandle) {
       SelfVolume = Volume;  
