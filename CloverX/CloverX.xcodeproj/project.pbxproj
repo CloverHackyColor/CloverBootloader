@@ -588,6 +588,12 @@
 		12FA1597173F4E7400F847F1 /* NVRAMDebug.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NVRAMDebug.h; sourceTree = "<group>"; };
 		12FA1598173F4E7400F847F1 /* OsxLowMemFixDrv.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = OsxLowMemFixDrv.c; sourceTree = "<group>"; };
 		12FA1599173F4E7400F847F1 /* OsxLowMemFixDrv.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = OsxLowMemFixDrv.inf; sourceTree = "<group>"; };
+		DEDA9729180530BE003AD904 /* common.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = common.c; sourceTree = "<group>"; };
+		DEDA972A180530BE003AD904 /* legacy.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = legacy.c; sourceTree = "<group>"; };
+		DEDA972B180530BE003AD904 /* loader.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = loader.c; sourceTree = "<group>"; };
+		DEDA972C180530BE003AD904 /* entry_scan.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = entry_scan.h; sourceTree = "<group>"; };
+		DEDA972D180530BE003AD904 /* tool.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = tool.c; sourceTree = "<group>"; };
+		DEDA972E180530BE003AD904 /* uefibootoption.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = uefibootoption.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1523,6 +1529,7 @@
 		12B816771644675800A433E7 /* rEFIt_UEFI */ = {
 			isa = PBXGroup;
 			children = (
+				DEDA9728180530BE003AD904 /* entry_scan */,
 				12B8168A1644675800A433E7 /* include */,
 				12B816931644675800A433E7 /* libeg */,
 				12B816A31644675800A433E7 /* Platform */,
@@ -1915,6 +1922,19 @@
 			);
 			name = OsxLowMemFixDrv;
 			path = ../OsxLowMemFixDrv;
+			sourceTree = "<group>";
+		};
+		DEDA9728180530BE003AD904 /* entry_scan */ = {
+			isa = PBXGroup;
+			children = (
+				DEDA9729180530BE003AD904 /* common.c */,
+				DEDA972A180530BE003AD904 /* legacy.c */,
+				DEDA972B180530BE003AD904 /* loader.c */,
+				DEDA972C180530BE003AD904 /* entry_scan.h */,
+				DEDA972D180530BE003AD904 /* tool.c */,
+				DEDA972E180530BE003AD904 /* uefibootoption.c */,
+			);
+			path = entry_scan;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

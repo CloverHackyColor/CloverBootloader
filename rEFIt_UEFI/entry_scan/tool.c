@@ -1,0 +1,364 @@
+/*
+ * refit/scan/tool.c
+ *
+ * Copyright (c) 2006-2010 Christoph Pfisterer
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are
+ * met:
+ *
+ *  * Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ *
+ *  * Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the
+ *    distribution.
+ *
+ *  * Neither the name of Christoph Pfisterer nor the names of the
+ *    contributors may be used to endorse or promote products derived
+ *    from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "entry_scan.h"
+
+#ifndef DEBUG_ALL
+#define DEBUG_SCAN_TOOL 1
+#else
+#define DEBUG_SCAN_TOOL DEBUG_ALL
+#endif
+
+#if DEBUG_SCAN_TOOL == 0
+#define DBG(...)
+#else
+#define DBG(...) DebugLog(DEBUG_SCAN_TOOL, __VA_ARGS__)
+#endif
+
+extern EMU_VARIABLE_CONTROL_PROTOCOL *gEmuVariableControl;
+
+static LOADER_ENTRY * AddToolEntry(IN CHAR16 *LoaderPath, IN CHAR16 *FullTitle, IN CHAR16 *LoaderTitle,
+                                   IN REFIT_VOLUME *Volume, IN EG_IMAGE *Image, IN CHAR16 ShortcutLetter)
+{
+  LOADER_ENTRY *Entry;
+  
+  Entry = AllocateZeroPool(sizeof(LOADER_ENTRY));
+  
+  if (FullTitle) {
+    Entry->me.Title = EfiStrDuplicate(FullTitle);
+  } else {
+    Entry->me.Title = PoolPrint(L"Start %s", LoaderTitle);
+  }
+  Entry->me.Tag = TAG_TOOL;
+  Entry->me.Row = 1;
+  Entry->me.ShortcutLetter = ShortcutLetter;
+  Entry->me.Image = Image;
+  Entry->LoaderPath = EfiStrDuplicate(LoaderPath);
+  Entry->DevicePath = FileDevicePath(Volume->DeviceHandle, Entry->LoaderPath);
+  Entry->DevicePathString = FileDevicePathToStr(Entry->DevicePath);
+  //actions
+  Entry->me.AtClick = ActionSelect;
+  Entry->me.AtDoubleClick = ActionEnter;
+  Entry->me.AtRightClick = ActionHelp;
+  
+  AddMenuEntry(&MainMenu, (REFIT_MENU_ENTRY *)Entry);
+  return Entry;
+}
+
+static LOADER_ENTRY * AddCloverEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTitle, IN REFIT_VOLUME *Volume)
+{
+  LOADER_ENTRY      *Entry, *SubEntry;
+  REFIT_MENU_SCREEN *SubScreen;
+  EFI_STATUS        Status;
+  
+  // prepare the menu entry
+  Entry = AllocateZeroPool(sizeof(LOADER_ENTRY));
+  Entry->me.Title          = LoaderTitle;
+  Entry->me.Tag            = TAG_CLOVER;
+  Entry->me.Row            = 1;
+  Entry->me.ShortcutLetter = 'C';
+  Entry->me.Image          = BuiltinIcon(BUILTIN_ICON_FUNC_CLOVER);
+  Entry->Volume = Volume;
+  Entry->LoaderPath      = EfiStrDuplicate(LoaderPath);
+  Entry->VolName         = Volume->VolName;
+  Entry->DevicePath      = FileDevicePath(Volume->DeviceHandle, Entry->LoaderPath);
+  Entry->DevicePathString = FileDevicePathToStr(Entry->DevicePath);
+  Entry->Flags           = 0;
+  Entry->LoadOptions     = NULL;
+  Entry->LoaderType      = OSTYPE_OTHER;
+  
+  //actions
+  Entry->me.AtClick = ActionSelect;
+  Entry->me.AtDoubleClick = ActionDetails;
+  Entry->me.AtRightClick = ActionDetails;
+  
+  // create the submenu
+  SubScreen = AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
+  SubScreen->Title = EfiStrDuplicate(LoaderTitle);
+  SubScreen->TitleImage = Entry->me.Image;
+  SubScreen->ID = SCREEN_BOOT;
+  SubScreen->AnimeRun = GetAnime(SubScreen);
+  AddMenuInfoLine(SubScreen, DevicePathToStr(Volume->DevicePath));
+  
+  if (gEmuVariableControl != NULL) {
+    gEmuVariableControl->UninstallEmulation(gEmuVariableControl);
+  }
+  Status = FindBootOptionForFile (Entry->Volume->DeviceHandle,
+                                  Entry->LoaderPath,
+                                  NULL,
+                                  NULL
+                                  );
+  /* don't need to restore emulation here
+   if (gEmuVariableControl != NULL) {
+   gEmuVariableControl->InstallEmulation(gEmuVariableControl);
+   }
+   */
+  
+  if (Status == EFI_SUCCESS) {
+    SubEntry = DuplicateLoaderEntry(Entry);
+    if (SubEntry) {
+      SubEntry->me.Title        = L"Remove Clover as UEFI boot option";
+      SubEntry->LoadOptions     = L"BO-REMOVE";
+      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+    }
+  } else {
+    SubEntry = DuplicateLoaderEntry(Entry);
+    if (SubEntry) {
+      SubEntry->me.Title        = L"Add Clover as UEFI boot option";
+      SubEntry->LoadOptions     = L"BO-ADD";
+      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+    }
+  }
+  
+  SubEntry = DuplicateLoaderEntry(Entry);
+  if (SubEntry) {
+    SubEntry->me.Title        = L"Remove all Clover boot options";
+    SubEntry->LoadOptions     = L"BO-REMOVE-ALL";
+    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+  }
+  
+  SubEntry = DuplicateLoaderEntry(Entry);
+  if (SubEntry) {
+    SubEntry->me.Title        = L"Print all UEFI boot options to log";
+    SubEntry->LoadOptions     = L"BO-PRINT";
+    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+  }
+  
+  AddMenuEntry(SubScreen, &MenuEntryReturn);
+  Entry->me.SubScreen = SubScreen;
+  AddMenuEntry(&MainMenu, (REFIT_MENU_ENTRY *)Entry);
+  return Entry;
+}
+
+VOID ScanTool(VOID)
+{
+  EFI_STATUS              Status;
+  CHAR16                  FileName[256];
+  LOADER_ENTRY            *Entry;
+  UINTN                   VolumeIndex;
+  REFIT_VOLUME            *Volume;
+  VOID                    *Interface;
+  
+  if (GlobalConfig.DisableFlags & DISABLE_FLAG_TOOLS)
+    return;
+  
+  //    Print(L"Scanning for tools...\n");
+  
+  // look for the EFI shell
+  if (!(GlobalConfig.DisableFlags & DISABLE_FLAG_SHELL)) {
+#if defined(MDE_CPU_IA32)
+    StrCpy(FileName, L"\\EFI\\CLOVER\\tools\\Shell32.efi");
+    if (FileExists(SelfRootDir, FileName)) {
+      Entry = AddToolEntry(FileName, NULL, L"EFI Shell 32", SelfVolume, BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S');
+      DBG("found tools\\Shell32.efi\n");
+    }
+#elif defined(MDE_CPU_X64)
+    if (gFirmwareClover) {
+      StrCpy(FileName, L"\\EFI\\CLOVER\\tools\\Shell64.efi");
+      if (FileExists(SelfRootDir, FileName)) {
+        Entry = AddToolEntry(FileName, NULL, L"EFI Shell 64", SelfVolume, BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S');
+        DBG("found tools\\Shell64.efi\n");
+      }
+    } else {
+      StrCpy(FileName, L"\\EFI\\CLOVER\\tools\\Shell64U.efi");
+      if (FileExists(SelfRootDir, FileName)) {
+        Entry = AddToolEntry(FileName, NULL, L"UEFI Shell 64", SelfVolume, BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S');
+        DBG("found tools\\Shell64U.efi\n");
+      } else {
+        StrCpy(FileName, L"\\EFI\\CLOVER\\tools\\Shell64.efi");
+        if (FileExists(SelfRootDir, FileName)) {
+          Entry = AddToolEntry(FileName, NULL, L"EFI Shell 64", SelfVolume, BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S');
+          DBG("found tools\\Shell64.efi\n");
+        }
+      }
+    }
+#else //what else? ARM?
+    UnicodeSPrint(FileName, 512, L"\\EFI\\CLOVER\\tools\\shell.efi");
+    if (FileExists(SelfRootDir, FileName)) {
+      Entry = AddToolEntry(FileName, NULL, L"EFI Shell", SelfVolume, BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S');
+      DBG("found apps\\shell.efi\n");
+    }
+#endif
+  }
+  
+  // look for the GPT/MBR sync tool
+  /*    StrCpy(FileName, L"\\efi\\CLOVER\\tools\\gptsync.efi");
+   if (FileExists(SelfRootDir, FileName)) {
+   Entry = AddToolEntry(FileName, L"Partitioning Tool", BuiltinIcon(BUILTIN_ICON_TOOL_PART), 'P');
+   }*/
+  /*
+   // look for rescue Linux
+   StrCpy(FileName, L"\\efi\\rescue\\elilo.efi");
+   if (SelfVolume != NULL && FileExists(SelfRootDir, FileName)) {
+   Entry = AddToolEntry(FileName, L"Rescue Linux", BuiltinIcon(BUILTIN_ICON_TOOL_RESCUE), 0);
+   
+   if (UGAWidth == 1440 && UGAHeight == 900)
+   Entry->LoadOptions = L"-d 0 i17";
+   else if (UGAWidth == 1680 && UGAHeight == 1050)
+   Entry->LoadOptions = L"-d 0 i20";
+   else
+   Entry->LoadOptions = L"-d 0 mini";
+   }
+   */
+  
+  if (!gFirmwareClover) {
+    for (VolumeIndex = 0; VolumeIndex < VolumesCount; VolumeIndex++) {
+      Volume = Volumes[VolumeIndex];
+      if (!Volume->RootDir || !Volume->DeviceHandle) {
+        continue;
+      }
+      
+      Status = gBS->HandleProtocol (Volume->DeviceHandle, &gEfiPartTypeSystemPartGuid, &Interface);
+      if (Status == EFI_SUCCESS) {
+        DBG("Checking EFI partition Volume %d for Clover\n", VolumeIndex);
+        
+#if defined(MDE_CPU_X64)
+        StrCpy(FileName, L"\\EFI\\CLOVER\\CLOVERX64.EFI");
+#else
+        StrCpy(FileName, L"\\EFI\\CLOVER\\CLOVERIA32.EFI");
+#endif
+        
+        // OSX adds label "EFI" to EFI volumes and some UEFIs see that
+        // as a file. This file then blocks access to the /EFI directory.
+        // We will delete /EFI file here and leave only /EFI directory.
+        if (DeleteFile(Volume->RootDir, L"EFI")) {
+          DBG(" Deleted /EFI label\n");
+        }
+        
+        if (FileExists(Volume->RootDir, FileName)) {
+          DBG(" Found Clover\n");
+          Volume->BootType = BOOTING_BY_EFI;
+          AddCloverEntry(FileName, L"Clover Boot Options", Volume);
+        }
+      }
+    }
+  }
+}
+
+// Add custom tool entries
+VOID AddCustomTool(VOID)
+{
+  UINTN             VolumeIndex;
+  REFIT_VOLUME      *Volume;
+  CUSTOM_TOOL_ENTRY *Custom;
+  EG_IMAGE          *Image;
+  UINTN              i = 0;
+  
+  DBG("Custom tool start\n");
+  // Traverse the custom entries
+  for (Custom = gSettings.CustomTool; Custom; ++i, Custom = Custom->Next) {
+    if (OSFLAG_ISSET(Custom->Flags, OSFLAG_DISABLED)) {
+      DBG("Custom tool %d skipped because it is disabled.\n", i);
+      continue;
+    }
+    if (!gSettings.ShowHiddenEntries && OSFLAG_ISSET(Custom->Flags, OSFLAG_HIDDEN)) {
+      DBG("Custom tool %d skipped because it is hidden.\n", i);
+      continue;
+    }
+    
+    if (Custom->Volume) {
+      DBG("Custom tool %d matching \"%s\" ...\n", i, Custom->Volume);
+    }
+    for (VolumeIndex = 0; VolumeIndex < VolumesCount; ++VolumeIndex) {
+      Volume = Volumes[VolumeIndex];
+      
+      DBG("   Checking volume \"%s\" (%s) ... ", Volume->VolName, Volume->DevicePathString);
+      
+      // skip volume if its kind is configured as disabled
+      if ((Volume->DiskKind == DISK_KIND_OPTICAL && (GlobalConfig.DisableFlags & DISABLE_FLAG_OPTICAL)) ||
+          (Volume->DiskKind == DISK_KIND_EXTERNAL && (GlobalConfig.DisableFlags & DISABLE_FLAG_EXTERNAL)) ||
+          (Volume->DiskKind == DISK_KIND_INTERNAL && (GlobalConfig.DisableFlags & DISABLE_FLAG_INTERNAL)) ||
+          (Volume->DiskKind == DISK_KIND_FIREWIRE && (GlobalConfig.DisableFlags & DISABLE_FLAG_FIREWIRE)))
+      {
+        DBG("skipped because media is disabled\n");
+        continue;
+      }
+      
+      if (Custom->VolumeType != 0) {
+        if ((Volume->DiskKind == DISK_KIND_OPTICAL && ((Custom->VolumeType & DISABLE_FLAG_OPTICAL) == 0)) ||
+            (Volume->DiskKind == DISK_KIND_EXTERNAL && ((Custom->VolumeType & DISABLE_FLAG_EXTERNAL) == 0)) ||
+            (Volume->DiskKind == DISK_KIND_INTERNAL && ((Custom->VolumeType & DISABLE_FLAG_INTERNAL) == 0)) ||
+            (Volume->DiskKind == DISK_KIND_FIREWIRE && ((Custom->VolumeType & DISABLE_FLAG_FIREWIRE) == 0))) {
+          DBG("skipped because media is ignored\n");
+          continue;
+        }
+      }
+      
+      if (Volume->Hidden) {
+        DBG("skipped because volume is hidden\n");
+        continue;
+      }
+      
+      // Check for exact volume matches
+      if (Custom->Volume) {
+        if ((StrStr(Volume->DevicePathString, Custom->Volume) == NULL) &&
+            ((Volume->VolName == NULL) || (StrStr(Volume->VolName, Custom->Volume) == NULL))) {
+          DBG("skipped\n");
+          continue;
+        }
+      }
+      // Check the tool exists on the volume
+      if (Volume->RootDir == NULL) {
+        DBG("skipped because volume is not readable\n");
+        continue;
+      }
+      if (!FileExists(Volume->RootDir, Custom->Path)) {
+        DBG("skipped because path does not exist\n");
+        continue;
+      }
+      // Change to custom image if needed
+      Image = Custom->Image;
+      if ((Image == NULL) && Custom->ImagePath) {
+        Image = egLoadImage(Volume->RootDir, Custom->ImagePath, TRUE);
+        if (Image == NULL) {
+          Image = egLoadImage(ThemeDir, Custom->ImagePath, TRUE);
+          if (Image == NULL) {
+            Image = egLoadImage(SelfDir, Custom->ImagePath, TRUE);
+            if (Image == NULL) {
+              Image = egLoadImage(SelfRootDir, Custom->ImagePath, TRUE);
+            }
+          }
+        }
+      }
+      if (Image == NULL) {
+        Image = BuiltinIcon(BUILTIN_ICON_TOOL_SHELL);
+      }
+      // Create a legacy entry for this volume
+      AddToolEntry(Custom->Path, Custom->FullTitle, Custom->Title, Volume, Image, Custom->Hotkey);
+      DBG("match!\n");
+    }
+  }
+  DBG("Custom tool end\n");
+}

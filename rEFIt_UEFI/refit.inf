@@ -42,6 +42,10 @@
   refit/menu.c
   refit/screen.c
   refit/IO.c
+  entry_scan/common.c
+  entry_scan/legacy.c
+  entry_scan/loader.c
+  entry_scan/tool.c
   libeg/BmLib.c
   libeg/image.c
   libeg/load_bmp.c
