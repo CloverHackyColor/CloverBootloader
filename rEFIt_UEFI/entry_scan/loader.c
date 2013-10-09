@@ -814,7 +814,9 @@ VOID ScanLoader(VOID)
     
     // check for Mac OS X boot loader
     StrCpy(FileName, MACOSX_LOADER_PATH);
-    if (FileExists(Volume->RootDir, FileName)) {
+    // Use standard location for boot.efi, unless the file /.IAPhysicalMedia is present
+    // That file indentifies a 2nd-stage Install Media, so when present, skip standard path to avoid entry duplication
+    if (FileExists(Volume->RootDir, FileName) && !FileExists(Volume->RootDir, L"\\.IAPhysicalMedia")) {
       //     Print(L"  - Mac OS X boot file found\n");
       Volume->BootType = BOOTING_BY_EFI;
       // check for Mac OS X Boot target
