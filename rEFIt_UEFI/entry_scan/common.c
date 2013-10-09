@@ -75,6 +75,46 @@ EG_IMAGE *LoadBuiltinIcon(IN CHAR16 *IconName)
   return NULL;
 }
 
+EG_IMAGE* ScanVolumeDefaultIcon(REFIT_VOLUME *Volume, IN UINT8 OSType) //IN UINT8 DiskKind)
+{
+  UINTN IconNum;
+  // default volume icon based on disk kind
+  switch (Volume->DiskKind) {
+    case DISK_KIND_INTERNAL:
+      switch (OSType) {
+        case OSTYPE_OSX:
+        case OSTYPE_OSX_INSTALLER:
+          IconNum = BUILTIN_ICON_VOL_INTERNAL_HFS;
+          break;
+        case OSTYPE_RECOVERY:
+          IconNum = BUILTIN_ICON_VOL_INTERNAL_REC;
+          break;
+        case OSTYPE_LIN:
+          IconNum = BUILTIN_ICON_VOL_INTERNAL_EXT3;
+          break;
+        case OSTYPE_WIN:
+        case OSTYPE_WINEFI:
+          IconNum = BUILTIN_ICON_VOL_INTERNAL_NTFS;
+          break;
+        default:
+          IconNum = BUILTIN_ICON_VOL_INTERNAL;
+          break;
+      }
+      return BuiltinIcon(IconNum);
+    case DISK_KIND_EXTERNAL:
+      return BuiltinIcon(BUILTIN_ICON_VOL_EXTERNAL);
+    case DISK_KIND_OPTICAL:
+      return BuiltinIcon(BUILTIN_ICON_VOL_OPTICAL);
+    case DISK_KIND_FIREWIRE:
+      return BuiltinIcon(BUILTIN_ICON_VOL_FIREWIRE);
+    case DISK_KIND_BOOTER:
+      return BuiltinIcon(BUILTIN_ICON_VOL_BOOTER);
+    default:
+      break;
+  }
+  return NULL;
+}
+
 LOADER_ENTRY * DuplicateLoaderEntry(IN LOADER_ENTRY *Entry)
 {
   LOADER_ENTRY *DuplicateEntry;

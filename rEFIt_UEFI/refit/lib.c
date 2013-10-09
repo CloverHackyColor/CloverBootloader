@@ -663,46 +663,6 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
   gBS->FreePages((EFI_PHYSICAL_ADDRESS)(UINTN)SectorBuffer, 1);
 }
 
-EG_IMAGE* ScanVolumeDefaultIcon(REFIT_VOLUME *Volume) //IN UINT8 DiskKind)
-{  
-  UINTN IconNum;
-    // default volume icon based on disk kind
-  switch (Volume->DiskKind) {
-    case DISK_KIND_INTERNAL:
-      switch (Volume->LegacyOS->Type) {
-        case OSTYPE_OSX: 
-        case OSTYPE_OSX_INSTALLER:
-          IconNum = BUILTIN_ICON_VOL_INTERNAL_HFS;
-          break;
-        case OSTYPE_RECOVERY:
-          IconNum = BUILTIN_ICON_VOL_INTERNAL_REC;
-          break;          
-        case OSTYPE_LIN:
-          IconNum = BUILTIN_ICON_VOL_INTERNAL_EXT3;
-          break;
-        case OSTYPE_WIN:
-        case OSTYPE_WINEFI:
-          IconNum = BUILTIN_ICON_VOL_INTERNAL_NTFS;
-          break;
-        default:
-          IconNum = BUILTIN_ICON_VOL_INTERNAL;
-          break;
-      }
-      return BuiltinIcon(IconNum);
-    case DISK_KIND_EXTERNAL:
-      return BuiltinIcon(BUILTIN_ICON_VOL_EXTERNAL);
-    case DISK_KIND_OPTICAL:
-      return BuiltinIcon(BUILTIN_ICON_VOL_OPTICAL);
-    case DISK_KIND_FIREWIRE:
-      return BuiltinIcon(BUILTIN_ICON_VOL_FIREWIRE);
-    case DISK_KIND_BOOTER:
-      return BuiltinIcon(BUILTIN_ICON_VOL_BOOTER);
-    default:
-      break;
-  }
-  return NULL;
-}
-
 //at start we have only Volume->DeviceHandle
 static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
 {
