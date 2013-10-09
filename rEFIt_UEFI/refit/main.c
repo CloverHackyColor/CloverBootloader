@@ -1537,7 +1537,7 @@ static LOADER_ENTRY * AddLoaderEntry2(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOp
   
   AddMenuEntry(SubScreen, &MenuEntryReturn);
   Entry->me.SubScreen = SubScreen;
-  DBG("    Added '%s'\n", Entry->me.Title);
+  DBG("    Added '%s': OSType='%d', OSVersion='%a'\n", Entry->me.Title, Entry->LoaderType, Entry->OSVersion);
   return Entry;
 }
 

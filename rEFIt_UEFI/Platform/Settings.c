@@ -3600,11 +3600,11 @@ CHAR8 *GetOSVersion(IN REFIT_VOLUME *Volume)
   TagPtr        prop  = NULL;
   UINTN         Index = 0;
   
-	// SystemPlists contain proper OS X version number
-	CHAR16*		SystemPlists[] = { L"System\\Library\\CoreServices\\SystemVersion.plist", // OS X Regular
-             L"System\\Library\\CoreServices\\ServerVersion.plist", // OS X Server
-             L"\\com.apple.recovery.boot\\SystemVersion.plist",     // OS X Recovery
-             NULL };
+  // SystemPlists contain proper OS X version number
+  CHAR16*       SystemPlists[] = { L"\\System\\Library\\CoreServices\\SystemVersion.plist", // OS X Regular
+                  L"\\System\\Library\\CoreServices\\ServerVersion.plist", // OS X Server
+                  L"\\com.apple.recovery.boot\\SystemVersion.plist", // OS X Recovery
+                  NULL };
   
   if (!Volume) {
     return OSVersion;
@@ -3615,10 +3615,18 @@ CHAR8 *GetOSVersion(IN REFIT_VOLUME *Volume)
     Status = egLoadFile(Volume->RootDir, SystemPlists[Index], (UINT8 **)&plistBuffer, &plistLen);
   }
   // Detect exact version for Mac OS X Regular/Server/Recovery
-  if(!EFI_ERROR(Status) && plistBuffer != NULL && ParseXML(plistBuffer, &dict, 0) == EFI_SUCCESS ) {
+  if (!EFI_ERROR(Status) && plistBuffer != NULL && ParseXML(plistBuffer, &dict, 0) == EFI_SUCCESS ) {
     prop = GetProperty(dict, "ProductVersion");
-    if(prop != NULL && prop->string != NULL && prop->string[0] != '\0') {
-			OSVersion = AllocateCopyPool(AsciiStrSize(prop->string), prop->string);
+    if (prop != NULL && prop->string != NULL && prop->string[0] != '\0') {
+      OSVersion = AllocateCopyPool(AsciiStrSize(prop->string), prop->string);
+    }
+  } else {
+    // SystemPlists files were not found - check for special cases
+    
+    // Special case - com.apple.recovery.boot/boot.efi exists but SystemVersion.plist doesn't --> 10.9 recovery
+    if (FileExists(Volume->RootDir, L"\\com.apple.recovery.boot\\boot.efi")) {
+      OSVersion = AllocateZeroPool(5);
+      UnicodeStrToAsciiStr(L"10.9", OSVersion);
     }
   }
   
@@ -3632,7 +3640,9 @@ CHAR8 *GetOSVersion(IN REFIT_VOLUME *Volume)
 CHAR16 *GetOSIconName(IN CHAR8 *OSVersion)
 {
   CHAR16 *OSIconName;
-  if (AsciiStrStr(OSVersion, "10.4") != 0) {
+  if (OSVersion == NULL) {
+    OSIconName = L"mac";
+  } else if (AsciiStrStr(OSVersion, "10.4") != 0) {
     // Tiger
     OSIconName = L"tiger,mac";
   } else if (AsciiStrStr(OSVersion, "10.5") != 0) {

@@ -1097,7 +1097,7 @@ VOID ScanVolumes(VOID)
       }
 
       Guid = FindGPTPartitionGuidInDevicePath(Volume->DevicePath);
-      DBG("  Volume '%s', OS '%s', Icon(s) '%s', GUID = %g\n",
+      DBG("  Volume '%s', LegacyOS '%s', LegacyIcon(s) '%s', GUID = %g\n",
           Volume->VolName, Volume->LegacyOS->Name ? Volume->LegacyOS->Name : L"", Volume->LegacyOS->IconName, Guid);
       if (SelfVolume == Volume) {
         DBG("  This is SelfVolume !!\n");
