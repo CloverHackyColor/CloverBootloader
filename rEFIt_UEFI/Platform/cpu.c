@@ -788,6 +788,10 @@ MACHINE_TYPES GetDefaultModel()
       case CPU_MODEL_IVY_BRIDGE_E5:  
         DefaultType = MacBookAir52;
 				break;
+      case CPU_MODEL_HASWELL_ULT:
+      case CPU_MODEL_HASWELL_ULX:
+        DefaultType = MacBookAir62;
+				break;  
 			default:
 				if ((gGraphics[0].Vendor == Nvidia) ||
             (gGraphics[1].Vendor == Nvidia)) {
@@ -871,6 +875,14 @@ MACHINE_TYPES GetDefaultModel()
 			case CPU_MODEL_JAKETOWN:
 				DefaultType = MacPro41;
 				break;
+      case CPU_MODEL_HASWELL:
+      case CPU_MODEL_HASWELL_MB:
+        DefaultType = iMac142;
+        if (AsciiStrStr(gCPUStructure.BrandString, "70S")) {
+        	DefaultType = iMac141;
+        	break;
+        }
+        break;        
 			default:
 				DefaultType = MacPro31;
 				break;

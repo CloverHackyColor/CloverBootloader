@@ -185,6 +185,11 @@ XhcReset (
       // Flow through, same behavior as Host Controller Reset
       //
     case EFI_USB_HC_RESET_HOST_CONTROLLER:
+    if (((XhcReadExtCapReg (Xhc, Xhc->DebugCapSupOffset) & 0xFF) == XHC_CAP_USB_DEBUG) &&
+        ((XhcReadExtCapReg (Xhc, Xhc->DebugCapSupOffset + XHC_DC_DCCTRL) & BIT0) != 0)) {
+      Status = EFI_SUCCESS;
+      goto ON_EXIT;
+    }
       //
       // Host Controller must be Halt when Reset it
       //
@@ -1851,7 +1856,8 @@ XhcCreateUsbHc (
 
   ExtCapReg            = (UINT16) (Xhc->HcCParams.Data.ExtCapReg);
   Xhc->ExtCapRegBase   = ExtCapReg << 2;
-  Xhc->UsbLegSupOffset = XhcGetLegSupCapAddr (Xhc);
+  Xhc->UsbLegSupOffset = XhcGetCapabilityAddr (Xhc, XHC_CAP_USB_LEGACY);
+  Xhc->DebugCapSupOffset = XhcGetCapabilityAddr (Xhc, XHC_CAP_USB_DEBUG);
 
   DBG ("XhcCreateUsb3Hc: Capability length 0x%x\n", Xhc->CapLength);
   DBG ("XhcCreateUsb3Hc: ExtCapRegBase 0x%x\n", Xhc->ExtCapRegBase);
@@ -1861,6 +1867,7 @@ XhcCreateUsbHc (
   DBG ("XhcCreateUsb3Hc: DBOff 0x%x\n", Xhc->DBOff);
   DBG ("XhcCreateUsb3Hc: RTSOff 0x%x\n", Xhc->RTSOff);
   DBG ("XhcCreateUsb3Hc: UsbLegSupOffset 0x%x\n", Xhc->UsbLegSupOffset);
+  DBG ("XhcCreateUsb3Hc: DebugCapSupOffset 0x%x\n", Xhc->DebugCapSupOffset);
 
   //
   // Create AsyncRequest Polling Timer

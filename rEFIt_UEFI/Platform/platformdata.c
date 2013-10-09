@@ -29,6 +29,7 @@ CHAR8* AppleFirmwareVersion[] =
   "MBP91.88Z.00D3.B08.1205101904",
 	"MBA31.88Z.0061.B07.0712201139",
   "MBA51.88Z.00EF.B01.1205221442",
+  "MBA61.88Z.0099.B00.1305241529", //MBA62
 	"MM21.88Z.009A.B00.0706281359",
   "MM51.88Z.0077.B10.1202231410",
   "MM61.88Z.0106.B03.1211161202", //MM61.88Z.0106.B00.1208091121
@@ -41,6 +42,8 @@ CHAR8* AppleFirmwareVersion[] =
   "IM122.88Z.0047.B1F.1223021110",
   "IM131.88Z.010A.B05.1211151146", //IM131.88Z.010A.B05.1209042338
   "IM131.88Z.010A.B05.1211151146",
+  "IM141.88Z.0118.B00.1309031248",
+  "IM142.88Z.0118.B00.1309031249",
 	"MP31.88Z.006C.B05.0802291410",
 	"MP41.88Z.0081.B04.0903051113",
 	"MP51.88Z.007F.B03.1010071432", //007F.B00.1008031144"
@@ -58,6 +61,7 @@ CHAR8* AppleBoardID[] = //Lion DR1 compatible
   "Mac-6F01561E16C75D06",  //MBP92 - i5-3210M IvyBridge HD4000
 	"Mac-942452F5819B1C1B",  //MBA31
   "Mac-2E6FAB96566FE58C",  //MBA52 - i5-3427U IVY BRIDGE IntelHD4000 did=166
+  "Mac-7DF21CB3ED6977E5",  //MBA62 - i5-4250U/i7-4650U HD5000
 	"Mac-F4208EAA",          //MM21 - merom GMA950 07/07
   "Mac-8ED6AF5B48C039E1",  //MM51 - Sandy + Intel 30000
   "Mac-F65AE981FFA204ED",  //MM62 - Ivy
@@ -70,6 +74,8 @@ CHAR8* AppleBoardID[] = //Lion DR1 compatible
   "Mac-942B59F58194171B",  //IM122 - i7-2600
   "Mac-00BE6ED71E35EB86",  //IM131 - -i5-3470S -IVY
   "Mac-FC02E91DDD3FA6A4",  //IM132 - i5-3470 CPU @ 3.20GHz
+  "Mac-031B6874CF7F642A",  //IM141 - i5-4570S/i7-4770S
+  "Mac-27ADBB7B4CEE8E61",  //IM142 - i5-4670/i7-4771
 	"Mac-F2268DC8",  //MP31 - xeon quad 02/09 conroe
 	"Mac-F4238CC8",  //MP41 - xeon wolfdale
 	"Mac-F221BEC8"   //MP51 - Xeon Nehalem 4 cores
@@ -87,6 +93,7 @@ CHAR8* AppleReleaseDate[] =
   "05/10/2012", //MBP92
 	"12/20/07",
   "05/22/2012", //mba52
+  "05/24/2013",
 	"08/07/07",   //mm21
   "02/23/12", //MM51
   "11/16/2012", //MM62
@@ -99,6 +106,8 @@ CHAR8* AppleReleaseDate[] =
   "02/23/12",  //122
   "11/15/2012",  //131
   "11/15/2012",  //IM132
+  "09/03/2013",
+  "09/03/2013", //IM142
 	"02/29/08",
 	"03/05/09",
 	"10/07/10"
@@ -116,6 +125,7 @@ CHAR8* AppleProductName[] =
   "MacBookPro9,2",
 	"MacBookAir3,1",
   "MacBookAir5,2",
+  "MacBookAir6,2",
 	"Macmini2,1",
   "Macmini5,1",
   "Macmini6,2",
@@ -128,6 +138,8 @@ CHAR8* AppleProductName[] =
   "iMac12,2",
   "iMac13,1",
   "iMac13,2",
+  "iMac14,1",
+  "iMac14,2",
 	"MacPro3,1",
 	"MacPro4,1",
 	"MacPro5,1"
@@ -145,6 +157,7 @@ CHAR8* AppleFamilies[] =
   "MacBook Pro",
 	"MacBookAir",
   "MacBook Air",
+  "MacBook Air",
 	"Macmini",
   "Mac mini",
   "Macmini",
@@ -154,6 +167,8 @@ CHAR8* AppleFamilies[] =
 	"iMac",
 	"iMac",
 	"iMac",
+  "iMac",
+  "iMac",
   "iMac",
   "iMac",
   "iMac",
@@ -175,6 +190,7 @@ CHAR8* AppleSystemVersion[] =
   "1.0",
 	"1.0",
   "1.0",
+  "1.0",
   "1.1",
   "1.0", //MM51
   "1.0",
@@ -185,6 +201,8 @@ CHAR8* AppleSystemVersion[] =
   "1.0",
 	"1.9",
   "1.9",
+  "1.0",
+  "1.0",
   "1.0",
   "1.0",
 	"1.3",
@@ -204,6 +222,7 @@ CHAR8* AppleSerialNumber[] = //random generated
   "C02HA041DTY3", //MBP92 - i5 IvyBridge HD4000
 	"W8649476DQX",  //MBA31
   "C02HA041DRVC", //MBA52 - IvyBridge
+  "C02HACKUF5V7", //MBA62
 	"W88A56BYYL2",  //MM21 - merom GMA950 07/07
   "C07GA041DJD0", //MM51 - sandy
   "C07JD041DWYN", //MM62 - IVY
@@ -216,9 +235,11 @@ CHAR8* AppleSerialNumber[] = //random generated
   "W88GG136DHJQ", //IM122 -i7-2600
   "C02JA041DNCT", //IM131 -i5-3470S -IVY
   "C02JB041DNCW", //IM132
+  "D25LHACKF8J3", //IM141 - i5-4570S/i7-4770S
+  "D25LHACKF8JC", //IM142 - i5-4670/i7-4771
 	"W88A77AA5J4",  //MP31 - xeon quad 02/09
 	"CT93051DK9Y",  //MP41
-	"C07J77F7F4MC"   //MP51 C07J50F7F4MC  CK04000AHFC  "CG154TB9WU3"
+	"C07J77F7F4MC"  //MP51 C07J50F7F4MC  CK04000AHFC  "CG154TB9WU3"
 };
 //no! ChassisVersion == BoardID
 CHAR8* AppleChassisAsset[] = 
@@ -231,6 +252,7 @@ CHAR8* AppleChassisAsset[] =
 	"MacBook-Aluminum",
 	"MacBook-Aluminum",
   "MacBook-Aluminum",
+  "MacBook-Aluminum",
 	"Air-Enclosure",
   "Air-Enclosure",
 	"Mini-Aluminum",
@@ -242,6 +264,8 @@ CHAR8* AppleChassisAsset[] =
 	"iMac-Aluminum",
 	"iMac-Aluminum",
 	"iMac-Aluminum",
+  "iMac-Aluminum",
+  "iMac-Aluminum",
   "iMac-Aluminum",
   "iMac-Aluminum",
   "iMac-Aluminum",
@@ -262,19 +286,22 @@ CHAR8* SmcPlatform[] =
   "j30",  //"MacBookPro9,2",
 	"k99",  //"MacBookAir3,1",
   "NA",  //"MacBookAir5,2",
+  "NA",  //"MacBookAir6,2",
 	"NA",  //"Macmini2,1",  //31 -> m88
   "NA",  //"Macmini5,1",
   "j50s", //"Macmini6,2",
 	"k3",  //"iMac8,1",
 	"NA",  //"iMac10,1",
   "NA",  //"iMac11,1",
-	"k74",  //"iMac11,2",
+	"k74", //"iMac11,2",
   "NA",  //"iMac11,3",
 	"k60", //"iMac12,1",
   "k62", //"iMac12,2",
   "d8",  //"iMac13,1",  
   "d8",  // iMac13,2
-	"m86",  //"MacPro3,1",
+  "NA",  // iMac14,1
+  "NA",  // iMac14,2
+	"m86", //"MacPro3,1",
 	"NA",  //"MacPro4,1",
 	"k5",  //"MacPro5,1"
 };
@@ -291,6 +318,7 @@ UINT8 SmcRevision[][6] = {
   {0x02, 0x02, 0x0F, 0, 0, 0x41},  //"MacBookPro9,2",
 	{0x01, 0x67, 0x0F, 0, 0, 0x09},  //"MacBookAir3,1",
   {0x02, 0x05, 0x0F, 0, 0, 0x07},  //"MacBookAir5,2",
+  {0x02, 0x13, 0x0F, 0, 0, 0x07},  //"MacBookAir6,2",
 	{0x01, 0x19, 0x0F, 0, 0, 0x02},  //"Macmini2,1", 
   {0x01, 0x30, 0x0F, 0, 0, 0x03},  //"Macmini5,1",
   {0x02, 0x08, 0x0F, 0, 0, 0x00},  //"Macmini6,2",
@@ -303,6 +331,8 @@ UINT8 SmcRevision[][6] = {
   {0x01, 0x72, 0x0F, 0, 0, 0x02},  //"iMac12,2",
   {0x02, 0x11, 0x0F, 0, 0, 0x14},  //"iMac13,1", 
   {0x02, 0x11, 0x0F, 0, 0, 0x14},  // iMac13,2
+  {0x02, 0x13, 0x0F, 0, 0, 0x07},  // iMac14,1
+  {0x02, 0x13, 0x0F, 0, 0, 0x07},  // iMac14,2
 	{0x01, 0x25, 0x0F, 0, 0, 0x04},  //"MacPro3,1",
 	{0x01, 0x39, 0x0F, 0, 0, 0x05},  //"MacPro4,1",
 	{0x01, 0x39, 0x0F, 0, 0, 0x11},  //"MacPro5,1"
@@ -322,6 +352,7 @@ UINT32 SmcConfig[] =
   0x76006,  //"MacBookPro9,2",
 	0x76005,  //"MacBookAir3,1",
   0x7b006,  //"MacBookAir5,2",
+  0x7b007,  //"MacBookAir6,2",
 	0x78002,  //"Macmini2,1",  //31 -> m88
   0x7d005,  //"Macmini5,1",
   0x7d006,  //"Macmini6,2",
@@ -334,6 +365,8 @@ UINT32 SmcConfig[] =
   0x75005,  //"iMac12,2",
   0x78006,  //"iMac13,1", 
   0x79006,  //iMac13,2
+  0x79007,  //iMac14,1
+  0x7a007,  //iMac14,2
 	0x79001,  //"MacPro3,1",
 	0x7c002,  //"MacPro4,1",
 	0x7c002,  //"MacPro5,1"
@@ -373,6 +406,7 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model)
     case MacBook52:
     case MacBookAir31:
     case MacBookAir52:
+    case MacBookAir62:  
       gSettings.ChassisType = MiscChassisTypeNotebook; //10; 
       gSettings.Mobile = TRUE;
       break;
@@ -392,6 +426,8 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model)
     case iMac122:
     case iMac131:
     case iMac132:
+    case iMac141:
+    case iMac142:  
       gSettings.ChassisType = MiscChassisTypeAllInOne; //13; 
       gSettings.Mobile = FALSE;
       break;
