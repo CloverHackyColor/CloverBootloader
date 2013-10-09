@@ -68,7 +68,7 @@ Headers collection for procedures
 #include "IO.h"
 #include "device_inject.h"
 #include "kext_inject.h"
-#include "entry_scan.h"
+//#include "entry_scan.h"
 
 /* XML Tags */
 #define kXMLTagPList  		"plist"

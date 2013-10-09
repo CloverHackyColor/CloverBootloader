@@ -34,7 +34,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "Platform.h"
+#include "entry_scan.h"
+//#include "Platform.h"
 //#include "../include/Handle.h"
 
 #include "Version.h"
