@@ -493,20 +493,16 @@ static LOADER_ENTRY * AddLoaderEntry2(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOp
   REFIT_MENU_SCREEN *SubScreen;
   UINT64            VolumeSize;
   EFI_GUID          *Guid = NULL;
-  CHAR8             *OSVersion;
+  BOOLEAN           KernelIs64BitOnly;
   
   Entry = CreateLoaderEntry(LoaderPath, LoaderOptions, FullTitle, LoaderTitle, Volume, Image, DriveImage, OSType, Flags, Hotkey, CustomEntry);
   if (Entry == NULL) {
     return NULL;
   }
+
+  KernelIs64BitOnly = (Entry->OSVersion != NULL && !AsciiStrnCmp(Entry->OSVersion,"10.",3) && (Entry->OSVersion[3] - '8') >= 0);
   
   FileName = Basename(LoaderPath);
-  
-  if (Entry->OSVersion != NULL) {
-    OSVersion = AllocateCopyPool(AsciiStrSize(Entry->OSVersion), Entry->OSVersion);
-  } else {
-    OSVersion = AllocateZeroPool(1);
-  }
   
   // create the submenu
   SubScreen = AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
@@ -539,8 +535,7 @@ static LOADER_ENTRY * AddLoaderEntry2(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOp
   // loader-specific submenu entries
   if (Entry->LoaderType == OSTYPE_OSX || Entry->LoaderType == OSTYPE_OSX_INSTALLER || Entry->LoaderType == OSTYPE_RECOVERY) {          // entries for Mac OS X
 #if defined(MDE_CPU_X64)
-    if (AsciiStrnCmp(OSVersion,"10.7",4) &&
-        AsciiStrnCmp(OSVersion,"10.8",4)) {
+    if (!KernelIs64BitOnly) {
       SubEntry = DuplicateLoaderEntry(Entry);
       if (SubEntry) {
         SubEntry->LoadOptions     = AddLoadOption(SubEntry->LoadOptions, L"arch=x86_64");
@@ -549,8 +544,7 @@ static LOADER_ENTRY * AddLoaderEntry2(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOp
       }
     }
 #endif
-    if (AsciiStrnCmp(OSVersion,"10.7",4) &&
-        AsciiStrnCmp(OSVersion,"10.8",4)) {
+    if (!KernelIs64BitOnly) {
       SubEntry = DuplicateLoaderEntry(Entry);
       if (SubEntry) {
         SubEntry->me.Title        = L"Boot Mac OS X (32-bit)";
@@ -562,8 +556,7 @@ static LOADER_ENTRY * AddLoaderEntry2(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOp
     if (!(GlobalConfig.DisableFlags & DISABLE_FLAG_SINGLEUSER)) {
       
 #if defined(MDE_CPU_X64)
-      if (AsciiStrnCmp(OSVersion,"10.7",4) == 0 ||
-          AsciiStrnCmp(OSVersion,"10.8",4) == 0 ) {
+      if (KernelIs64BitOnly) {
         SubEntry = DuplicateLoaderEntry(Entry);
         if (SubEntry) {
           SubEntry->me.Title        = L"Boot Mac OS X in verbose mode";
@@ -585,8 +578,7 @@ static LOADER_ENTRY * AddLoaderEntry2(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOp
       
 #endif
       
-      if (AsciiStrnCmp(OSVersion,"10.7",4) &&
-          AsciiStrnCmp(OSVersion,"10.8",4)) {
+      if (!KernelIs64BitOnly) {
         SubEntry = DuplicateLoaderEntry(Entry);
         if (SubEntry) {
           SubEntry->me.Title        = L"Boot Mac OS X in verbose mode (32-bit)";
@@ -763,9 +755,6 @@ static LOADER_ENTRY * AddLoaderEntry2(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOp
       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
     }
     
-  }
-  if (OSVersion != NULL) {
-    FreePool(OSVersion);
   }
   
   AddMenuEntry(SubScreen, &MenuEntryReturn);
