@@ -458,16 +458,16 @@ static LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
   Entry->me.ShortcutLetter = (Hotkey == 0) ? ShortcutLetter : Hotkey;
   
   // get custom volume icon if present
-  if (Image) {
-    Entry->me.Image = Image;
-  } else {
-    if (GlobalConfig.CustomIcons && FileExists(Volume->RootDir, L"VolumeIcon.icns")){
-      Entry->me.Image = LoadIcns(Volume->RootDir, L"VolumeIcon.icns", 128);
+
+    if (GlobalConfig.CustomIcons && FileExists(Volume->RootDir, L"\\.VolumeIcon.icns")){
+      Entry->me.Image = LoadIcns(Volume->RootDir, L"\\.VolumeIcon.icns", 128);
       DBG("using VolumeIcon.icns image from Volume\n");
-    } else {
+    } else if (Image) {
+      Entry->me.Image = Image;
+    } else {      
       Entry->me.Image = LoadOSIcon(OSIconName, L"unknown", 128, FALSE, TRUE);
     }
-  }
+
   // Load DriveImage
   Entry->me.DriveImage = (DriveImage != NULL) ? DriveImage : ScanVolumeDefaultIcon(Volume, Entry->LoaderType);
   
