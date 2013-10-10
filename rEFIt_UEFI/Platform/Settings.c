@@ -3600,10 +3600,11 @@ CHAR8 *GetOSVersion(IN REFIT_VOLUME *Volume)
   TagPtr        prop  = NULL;
   UINTN         Index = 0;
   
-  // SystemPlists contain proper OS X version number
+  // SystemPlists for getting OS X version number
   CHAR16*       SystemPlists[] = { L"\\System\\Library\\CoreServices\\SystemVersion.plist", // OS X Regular
                   L"\\System\\Library\\CoreServices\\ServerVersion.plist", // OS X Server
                   L"\\com.apple.recovery.boot\\SystemVersion.plist", // OS X Recovery
+                  L"\\.IABootFiles\\com.apple.Boot.plist", // OS X Installer
                   NULL };
   
   if (!Volume) {
@@ -3614,11 +3615,28 @@ CHAR8 *GetOSVersion(IN REFIT_VOLUME *Volume)
   if (SystemPlists[Index] != NULL) { // found OSX System
     Status = egLoadFile(Volume->RootDir, SystemPlists[Index], (UINT8 **)&plistBuffer, &plistLen);
   }
-  // Detect exact version for Mac OS X Regular/Server/Recovery
-  if (!EFI_ERROR(Status) && plistBuffer != NULL && ParseXML(plistBuffer, &dict, 0) == EFI_SUCCESS ) {
+  if (!EFI_ERROR(Status) && plistBuffer != NULL && ParseXML(plistBuffer, &dict, 0) == EFI_SUCCESS) {
+    // Regular case - detect exact version for Mac OS X Regular/Server/Recovery
     prop = GetProperty(dict, "ProductVersion");
     if (prop != NULL && prop->string != NULL && prop->string[0] != '\0') {
       OSVersion = AllocateCopyPool(AsciiStrSize(prop->string), prop->string);
+    } else {
+      // Special case - Installer (thanks to dmazar for this idea)
+      // We are checking "\\.IABootFiles\\com.apple.Boot.plist"
+      // This should work for most installer cases. Rest cases will be read from boot.efi before booting.
+      prop = GetProperty(dict, "Kernel Flags");
+      if(prop != NULL && prop->string != NULL && prop->string[0] != '\0') {
+        if (AsciiStrStr(prop->string, "Install%20OS%20X%20Mavericks.app")) {
+          OSVersion = AllocateZeroPool(5);
+          UnicodeStrToAsciiStr(L"10.9", OSVersion);
+        } else if (AsciiStrStr(prop->string, "Install%20OS%20X%20Mountain%20Lion.app")) {
+          OSVersion = AllocateZeroPool(5);
+          UnicodeStrToAsciiStr(L"10.8", OSVersion);
+        } else if (AsciiStrStr(prop->string, "Install%20Mac%20OS%20X%20Lion.app")) {
+          OSVersion = AllocateZeroPool(5);
+          UnicodeStrToAsciiStr(L"10.7", OSVersion);
+        }
+      }
     }
   } else {
     // SystemPlists files were not found - check for special cases
