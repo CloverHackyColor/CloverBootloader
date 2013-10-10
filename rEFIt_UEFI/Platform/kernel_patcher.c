@@ -250,39 +250,41 @@ VOID KernelPatcher_64(VOID* kernelData, CHAR8 *OSVersion)
     bytes[patchLocation - 10] = (CPUFAMILY_INTEL_YONAH & 0xFF000000) >> 24;
   }
   
-  if (check && (AsciiStrnCmp(OSVersion,"10.6.8",6)!=0) && (AsciiStrnCmp(OSVersion,"10.7",4)==0))
-    cpuid_family_addr -= 255;
-  
-  if (!check) 
+  if (!check)
     cpuid_family_addr += 10;
   
-  if (AsciiStrnCmp(OSVersion,"10.6.8",6)) {
-    
-    //patch info->cpuid_cpufamily
-    bytes[patchLocation -  9] = 0x90;
-    bytes[patchLocation -  8] = 0x90;
-    
-    bytes[patchLocation -  7] = 0xC7;
-    bytes[patchLocation -  6] = 0x05;
-    
-    bytes[patchLocation -  5] = (cpuid_family_addr & 0x000000FF);
-    bytes[patchLocation -  4] = (UINT8)((cpuid_family_addr & 0x0000FF00) >>  8);
-    bytes[patchLocation -  3] = (UINT8)((cpuid_family_addr & 0x00FF0000) >> 16);
-    bytes[patchLocation -  2] = (UINT8)((cpuid_family_addr & 0xFF000000) >> 24);
-    
-    bytes[patchLocation -  1] = CPUIDFAMILY_DEFAULT; //cpuid_family need alway set 0x06
-    bytes[patchLocation +  0] = CPUID_MODEL_YONAH;   //cpuid_model set CPUID_MODEL_MEROM
-    bytes[patchLocation +  1] = 0x01;                //cpuid_extmodel alway set 0x01
-    bytes[patchLocation +  2] = 0x00;                //cpuid_extfamily alway set 0x00
-    bytes[patchLocation +  3] = 0x90;                
-    bytes[patchLocation +  4] = 0x90;
-  }
-  // patch sse3
-  if (!SSSE3 && (AsciiStrnCmp(OSVersion,"10.6",4)==0)) {
-    Patcher_SSE3_6((VOID*)bytes);
-  }
-  if (!SSSE3 && (AsciiStrnCmp(OSVersion,"10.7",4)==0)) {
-    Patcher_SSE3_7((VOID*)bytes);
+  if (OSVersion) {
+    if (check && (AsciiStrnCmp(OSVersion,"10.6.8",6)!=0) && (AsciiStrnCmp(OSVersion,"10.7",4)==0))
+      cpuid_family_addr -= 255;
+  
+    if (AsciiStrnCmp(OSVersion,"10.6.8",6)) {
+      
+      //patch info->cpuid_cpufamily
+      bytes[patchLocation -  9] = 0x90;
+      bytes[patchLocation -  8] = 0x90;
+      
+      bytes[patchLocation -  7] = 0xC7;
+      bytes[patchLocation -  6] = 0x05;
+      
+      bytes[patchLocation -  5] = (cpuid_family_addr & 0x000000FF);
+      bytes[patchLocation -  4] = (UINT8)((cpuid_family_addr & 0x0000FF00) >>  8);
+      bytes[patchLocation -  3] = (UINT8)((cpuid_family_addr & 0x00FF0000) >> 16);
+      bytes[patchLocation -  2] = (UINT8)((cpuid_family_addr & 0xFF000000) >> 24);
+      
+      bytes[patchLocation -  1] = CPUIDFAMILY_DEFAULT; //cpuid_family need alway set 0x06
+      bytes[patchLocation +  0] = CPUID_MODEL_YONAH;   //cpuid_model set CPUID_MODEL_MEROM
+      bytes[patchLocation +  1] = 0x01;                //cpuid_extmodel alway set 0x01
+      bytes[patchLocation +  2] = 0x00;                //cpuid_extfamily alway set 0x00
+      bytes[patchLocation +  3] = 0x90;                
+      bytes[patchLocation +  4] = 0x90;
+    }
+    // patch sse3
+    if (!SSSE3 && (AsciiStrnCmp(OSVersion,"10.6",4)==0)) {
+      Patcher_SSE3_6((VOID*)bytes);
+    }
+    if (!SSSE3 && (AsciiStrnCmp(OSVersion,"10.7",4)==0)) {
+      Patcher_SSE3_7((VOID*)bytes);
+    }
   }
   
 }
@@ -383,14 +385,16 @@ VOID KernelPatcher_32(VOID* kernelData, CHAR8 *OSVersion)
   bytes[patchLocation +  3] = 0x90;
   bytes[patchLocation +  4] = 0x90;
   
-  if (AsciiStrnCmp(OSVersion,"10.7",4)==0) return;
-  
-  if (!SSSE3 && (AsciiStrnCmp(OSVersion,"10.6",4)==0)) {
-    Patcher_SSE3_6((VOID*)bytes);
+  if (OSVersion) {
+    if (AsciiStrnCmp(OSVersion,"10.7",4)==0) return;
+    
+    if (!SSSE3 && (AsciiStrnCmp(OSVersion,"10.6",4)==0)) {
+      Patcher_SSE3_6((VOID*)bytes);
+    }
+    if (!SSSE3 && (AsciiStrnCmp(OSVersion,"10.5",4)==0)) {
+      Patcher_SSE3_5((VOID*)bytes);
+    }
   }
-  if (!SSSE3 && (AsciiStrnCmp(OSVersion,"10.5",4)==0)) {
-    Patcher_SSE3_5((VOID*)bytes);
-  } 
 }
 
 

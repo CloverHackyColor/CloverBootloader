@@ -229,9 +229,11 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
 
 	if     (AsciiStrStr(gSettings.BootArgs,"arch=x86_64")!=NULL)	archCpuType = CPU_TYPE_X86_64;
 	else if(AsciiStrStr(gSettings.BootArgs,"arch=i386")!=NULL)		archCpuType = CPU_TYPE_I386;
-	else if(AsciiStrnCmp(Entry->OSVersion,"10.8",4)==0)    	         	archCpuType = CPU_TYPE_X86_64;
-  else if(AsciiStrnCmp(Entry->OSVersion,"10.9",4)==0)    	         	archCpuType = CPU_TYPE_X86_64;
-	else if(AsciiStrnCmp(Entry->OSVersion,"10.7",4)!=0)					archCpuType = CPU_TYPE_I386;
+  else if(Entry->OSVersion) {
+    if(AsciiStrnCmp(Entry->OSVersion,"10.8",4)==0)    	        archCpuType = CPU_TYPE_X86_64;
+    else if(AsciiStrnCmp(Entry->OSVersion,"10.9",4)==0)    	    archCpuType = CPU_TYPE_X86_64;
+    else if(AsciiStrnCmp(Entry->OSVersion,"10.7",4)!=0)					archCpuType = CPU_TYPE_I386;
+  }
 
 	Volume = Entry->Volume;
 	SrcDir = GetExtraKextsDir(Entry->OSVersion);

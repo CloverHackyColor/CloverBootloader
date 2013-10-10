@@ -3618,7 +3618,6 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
         }
       }
     }
-    
   }
   if (OSTYPE_IS_OSX_INSTALLER(Entry->LoaderType)) {
     // Detect exact version for 2nd stage Installer (thanks to dmazar for this idea)

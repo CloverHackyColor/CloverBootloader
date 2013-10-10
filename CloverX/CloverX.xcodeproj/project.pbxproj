@@ -431,7 +431,7 @@
 		12B816C11644675800A433E7 /* gma.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gma.h; sourceTree = "<group>"; };
 		12B816C21644675800A433E7 /* guid.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = guid.c; sourceTree = "<group>"; };
 		12B816C31644675800A433E7 /* Injectors.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Injectors.c; sourceTree = "<group>"; };
-		12B816C41644675800A433E7 /* kernel_patcher.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = kernel_patcher.c; sourceTree = "<group>"; };
+		12B816C41644675800A433E7 /* kernel_patcher.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = kernel_patcher.c; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.c; };
 		12B816C51644675800A433E7 /* kernel_patcher.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = kernel_patcher.h; sourceTree = "<group>"; };
 		12B816C61644675800A433E7 /* kext_inject.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = kext_inject.c; sourceTree = "<group>"; };
 		12B816C71644675800A433E7 /* kext_inject.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = kext_inject.h; sourceTree = "<group>"; };
