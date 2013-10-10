@@ -405,7 +405,7 @@ static LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
   Entry->me.AtRightClick = ActionDetails;
   
   Entry->LoaderType = OSType;
-  Entry->OSVersion = GetOSVersion(Entry->Volume);
+  Entry->OSVersion = GetOSVersion(Entry);
   
   // detect specific loaders
   OSIconName = NULL;

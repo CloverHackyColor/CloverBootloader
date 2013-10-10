@@ -463,10 +463,10 @@
 		12B816EE1644675800A433E7 /* icns.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = icns.c; sourceTree = "<group>"; };
 		12B816EF1644675800A433E7 /* IO.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = IO.c; sourceTree = "<group>"; };
 		12B816F01644675800A433E7 /* IO.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IO.h; sourceTree = "<group>"; };
-		12B816F11644675800A433E7 /* lib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = lib.c; sourceTree = "<group>"; };
+		12B816F11644675800A433E7 /* lib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = lib.c; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.c; };
 		12B816F21644675800A433E7 /* lib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = lib.h; sourceTree = "<group>"; };
 		12B816F31644675800A433E7 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
-		12B816F41644675800A433E7 /* menu.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = menu.c; sourceTree = "<group>"; };
+		12B816F41644675800A433E7 /* menu.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = menu.c; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.c; };
 		12B816F51644675800A433E7 /* screen.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = screen.c; sourceTree = "<group>"; };
 		12B816F71644675800A433E7 /* refit.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = refit.inf; sourceTree = "<group>"; };
 		12BAE0DF17C8B9BA00288BEB /* Clover.dsc */ = {isa = PBXFileReference; lastKnownFileType = text; name = Clover.dsc; path = ../Clover.dsc; sourceTree = "<group>"; };

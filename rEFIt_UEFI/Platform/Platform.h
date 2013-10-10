@@ -1261,7 +1261,7 @@ VOID            GetCPUProperties (VOID);
 VOID            GetDevices(VOID);
 MACHINE_TYPES   GetDefaultModel(VOID);
 UINT16          GetAdvancedCpuType(VOID);
-CHAR8          *GetOSVersion(IN REFIT_VOLUME *Volume);
+CHAR8          *GetOSVersion(IN LOADER_ENTRY *Entry);
 CHAR16         *GetOSIconName(IN CHAR8 *OSVersion);
 EFI_STATUS      GetRootUUID(IN REFIT_VOLUME *Volume);
 EFI_STATUS      GetEarlyUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict);
