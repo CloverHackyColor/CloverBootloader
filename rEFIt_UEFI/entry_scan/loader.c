@@ -1224,6 +1224,10 @@ static LOADER_ENTRY *AddCustomEntry(IN UINTN                CustomIndex,
       DBG("skipped because path does not exist\n");
       continue;
     }
+    if (StriCmp(CustomPath, MACOSX_LOADER_PATH) == 0 && FileExists(Volume->RootDir, L"\\.IAPhysicalMedia")) {
+      DBG("skipped standard OSX path because volume is 2nd stage Install Media\n");
+      continue;
+    }
     // Change to custom image if needed
     Image = Custom->Image;
     if ((Image == NULL) && Custom->ImagePath) {
