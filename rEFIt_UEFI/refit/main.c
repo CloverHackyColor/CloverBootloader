@@ -636,16 +636,6 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
       OSTYPE_IS_OSX_RECOVERY(Entry->LoaderType) ||
       OSTYPE_IS_OSX_INSTALLER(Entry->LoaderType)) {
 
-      //we are booting OSX - restore emulation if it's not installed before starting boot.efi
-      if (gEmuVariableControl != NULL) {
-          gEmuVariableControl->InstallEmulation(gEmuVariableControl);
-      }
-
-    // first patchACPI and find PCIROOT and RTC
-    // but before ACPI patch we need smbios patch
-    PatchSmbios();
-//    DBG("PatchACPI\n");
-    PatchACPI(Entry->Volume, Entry->OSVersion);
 //DBG("GetOSVersion\n");
 
     // Correct OSVersion if it was not found
@@ -672,6 +662,17 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
         }
       }
     }
+
+    //we are booting OSX - restore emulation if it's not installed before starting boot.efi
+    if (gEmuVariableControl != NULL) {
+        gEmuVariableControl->InstallEmulation(gEmuVariableControl);
+    }
+
+    // first patchACPI and find PCIROOT and RTC
+    // but before ACPI patch we need smbios patch
+    PatchSmbios();
+//    DBG("PatchACPI\n");
+    PatchACPI(Entry->Volume, Entry->OSVersion);
 
     // Prepare boot arguments
 //    if ((StrCmp(gST->FirmwareVendor, L"CLOVER") != 0) &&

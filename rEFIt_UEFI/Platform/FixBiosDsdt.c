@@ -3111,11 +3111,7 @@ UINT32 AddHDEF (UINT8 *dsdt, UINT32 len, CHAR8* OSVersion)
   //aml_add_string(pack, "codec-id");
   //aml_add_byte_buffer(pack, (CHAR8*)&HDAcodecId, 4);
   if (!AddProperties(pack, DEV_HDA)) {
-    CHAR8* OSVR = NULL;
-    if (OSVersion) {
-      OSVR = AsciiStrStr(OSVersion, "10.");
-    }
-    if ((OSVR && (OSVR[3] <= '7')) || (gSettings.HDALayoutId > 0)) {
+    if ((OSVersion != NULL && AsciiStrnCmp(OSVersion, "10.", 3) == 0 && OSVersion[3] >= '0' && OSVersion[3] <= '7') || (gSettings.HDALayoutId > 0)) {
       aml_add_string(pack, "layout-id");
       aml_add_byte_buffer(pack, (CHAR8*)&HDAlayoutId, 4);
     }
