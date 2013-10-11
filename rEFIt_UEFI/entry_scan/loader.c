@@ -500,7 +500,8 @@ static LOADER_ENTRY * AddLoaderEntry2(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOp
     return NULL;
   }
 
-  KernelIs64BitOnly = (Entry->OSVersion != NULL && !AsciiStrnCmp(Entry->OSVersion,"10.",3) && (Entry->OSVersion[3] - '8') >= 0);
+  // Only kernels up to 10.7 have 32-bit mode
+  KernelIs64BitOnly = (Entry->OSVersion == NULL || AsciiStrnCmp(Entry->OSVersion,"10.",3) != 0 || Entry->OSVersion[3] > '7');
   
   FileName = Basename(LoaderPath);
   

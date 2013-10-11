@@ -3653,12 +3653,10 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
           OSVersion = AllocateCopyPool(AsciiStrSize(prop->string), prop->string);
         }
       }
-    } else {
+    } else if (FileExists(Entry->Volume->RootDir, L"\\com.apple.recovery.boot\\boot.efi")) {
       // Special case - com.apple.recovery.boot/boot.efi exists but SystemVersion.plist doesn't --> 10.9 recovery
-      if (FileExists(Entry->Volume->RootDir, L"\\com.apple.recovery.boot\\boot.efi")) {
-        OSVersion = AllocateZeroPool(5);
-        UnicodeStrToAsciiStr(L"10.9", OSVersion);
-      }
+      OSVersion = AllocateZeroPool(5);
+      UnicodeStrToAsciiStr(L"10.9", OSVersion);
     }
   }
   

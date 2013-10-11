@@ -213,6 +213,8 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
 	EFI_FILE_INFO           *PlugInFile;
 	CHAR16                  FileName[256];
 	CHAR16                  PlugIns[256];
+	CHAR16			*Arch = NULL;
+	CHAR16			*Ptr = NULL;
 #if defined(MDE_CPU_X64)
 	cpu_type_t archCpuType=CPU_TYPE_X86_64;
 #else
@@ -227,18 +229,27 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
 		return EFI_NOT_STARTED;
 	}
 
-	if     (AsciiStrStr(gSettings.BootArgs,"arch=x86_64")!=NULL)	archCpuType = CPU_TYPE_X86_64;
-	else if(AsciiStrStr(gSettings.BootArgs,"arch=i386")!=NULL)		archCpuType = CPU_TYPE_I386;
-  else if(Entry->OSVersion) {
-    if(AsciiStrnCmp(Entry->OSVersion,"10.8",4)==0)    	        archCpuType = CPU_TYPE_X86_64;
-    else if(AsciiStrnCmp(Entry->OSVersion,"10.9",4)==0)    	    archCpuType = CPU_TYPE_X86_64;
-    else if(AsciiStrnCmp(Entry->OSVersion,"10.7",4)!=0)					archCpuType = CPU_TYPE_I386;
-  }
+	// Make Arch point to the last appearance of "arch=" in LoadOptions (which is what boot.efi will use).
+	if (Entry->LoadOptions != NULL) {
+		for (Ptr = StrStr(Entry->LoadOptions, L"arch="); Ptr!=NULL; Arch=Ptr+StrLen(L"arch="), Ptr=StrStr(Arch, L"arch="));
+	}
+
+	if (Arch != NULL && StrnCmp(Arch,L"x86_64",StrLen(L"x86_64")) == 0) {
+		archCpuType = CPU_TYPE_X86_64;
+	} else if (Arch != NULL && StrnCmp(Arch,L"i386",StrLen(L"i386")) == 0) {
+		archCpuType = CPU_TYPE_I386;
+	} else if (Entry->OSVersion != NULL && AsciiStrnCmp(Entry->OSVersion,"10.",3) == 0) {
+		if (Entry->OSVersion[3] >= '8') {
+			archCpuType = CPU_TYPE_X86_64; // For >= 10.8, only x86_64 exists
+		} else if (Entry->OSVersion[3] >= '0' && Entry->OSVersion[3] <= '6') {
+			archCpuType = CPU_TYPE_I386; // For <= 10.6, use default of i386
+		}
+	}
 
 	Volume = Entry->Volume;
 	SrcDir = GetExtraKextsDir(Entry->OSVersion);
 	if (SrcDir != NULL) {
-		MsgLog("Injecting kexts from %s\n", SrcDir);
+		MsgLog("Injecting kexts for arch=%s from %s\n", (archCpuType==CPU_TYPE_X86_64)?L"x86_64":(archCpuType==CPU_TYPE_I386)?L"i386":L"", SrcDir);
 		// look through contents of the directory
 		DirIterOpen(SelfVolume->RootDir, SrcDir, &KextIter);
 		while (DirIterNext(&KextIter, 1, L"*.kext", &KextFile)) {
