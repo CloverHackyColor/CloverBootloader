@@ -9,10 +9,12 @@
 # development
 #
 # Xcode Tools are required
-# Script tested on "Xcode 3.2" - Snow Leopard
-#                  "Xcode 4.1" - Lion
-#                  "Xcode 4.6" - Mountain Lion
-#                  "Xcode 5.0" - Mountain Lion
+# Script tested on "Xcode 3.2.2" - Snow Leopard
+#                  "Xcode 4.2"   - Snow Leopard
+#                  "Xcode 4.6"   - Lion
+#                  "Xcode 4.6"   - Mountain Lion
+#                  "Xcode 5.0"   - Mountain Lion
+#                  "Xcode 5.0.1" - Mavericks
 #
 #  
 # Created by Jadran Puharic on 1/25/12.
@@ -421,7 +423,7 @@ GCC_native () {
         mkdir -p "$TOOLCHAIN_SDK_DIR/usr/lib"
         # Copy header and library files needed to compile Basetools
         echo "- Copying headers and library files..."
-        rsync -aHL "$SDK/usr/include" "$TOOLCHAIN_SDK_DIR/usr/"
+        rsync -aH --copy-unsafe-links "$SDK/usr/include" "$TOOLCHAIN_SDK_DIR/usr/"
         rsync -aH "$SDK/usr/lib"/libSystem* "$SDK/usr/lib"/crt* "$TOOLCHAIN_SDK_DIR/usr/lib/"
 
         echo "- gcc-${GCC_VERSION} installed in $PREFIX"
