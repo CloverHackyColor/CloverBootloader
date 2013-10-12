@@ -202,14 +202,14 @@ ExtractTarball ()
     [ -z "$top_level_dir" ] && echo "Error can't extract top level dir from $tarball" && exit 1
 
     if [[ ! -d "${DIR_GCC}/$top_level_dir" ]]; then
-        echo "-  ${package} extracting..."
+        echo "- ${package} extracting..."
         rm -rf "${DIR_GCC}/$top_level_dir" # Remove old directory if exists
         rm -rf "$DIR_GCC/tmp"   # Remove old partial extraction
         mkdir -p "$DIR_GCC/tmp" # Create temporary directory
         tar -C "$DIR_GCC/tmp" -x "$tar_filter_option" -f "${tarball}"
         mv "$DIR_GCC/tmp/$top_level_dir" "$DIR_GCC/$top_level_dir"
         rm -rf "$DIR_GCC/tmp"
-        echo "-  ${package} extracted"
+        echo "- ${package} extracted"
     fi
 
     # Restore stdout for the result and close file descriptor 3
@@ -230,14 +230,14 @@ CompileLibs () {
 
         rm -rf "${DIR_BUILD}/$ARCH-gmp"
         mkdir -p "${DIR_BUILD}/$ARCH-gmp" && cd "${DIR_BUILD}/$ARCH-gmp"
-        echo "-  ${GMP_VERSION} configure..."
+        echo "- ${GMP_VERSION} configure..."
         "${GMP_DIR}"/configure --prefix=$PREFIX > $DIR_LOGS/gmp.$ARCH.configure.log.txt 2> /dev/null
-        echo "-  ${GMP_VERSION} make..."
+        echo "- ${GMP_VERSION} make..."
         make 1> /dev/null 2> $DIR_LOGS/gmp.$ARCH.make.log.txt
         make install 1> $DIR_LOGS/gmp.$ARCH.install.log.txt 2> /dev/null
         rm -rf "${DIR_BUILD}/$ARCH-gmp" "$GMP_DIR"
 
-        echo "-  ${GMP_VERSION} installed in $PREFIX"
+        echo "- ${GMP_VERSION} installed in $PREFIX"
     fi
 
     if [[ ! -f $PREFIX/include/mpfr.h ]]; then
@@ -249,13 +249,13 @@ CompileLibs () {
 
         rm -rf "${DIR_BUILD}/$ARCH-mpfr"
         mkdir -p "${DIR_BUILD}/$ARCH-mpfr" && cd "${DIR_BUILD}/$ARCH-mpfr"
-        echo "-  ${MPFR_VERSION} configure..."
+        echo "- ${MPFR_VERSION} configure..."
         "${MPFR_DIR}"/configure --prefix=$PREFIX --with-gmp=$PREFIX > $DIR_LOGS/mpfr.$ARCH.configure.log.txt 2> /dev/null
-        echo "-  ${MPFR_VERSION} make..."
+        echo "- ${MPFR_VERSION} make..."
         make 1> /dev/null 2> $DIR_LOGS/mpfr.$ARCH.make.log.txt
         make install 1> $DIR_LOGS/mpfr.$ARCH.install.log.txt 2> /dev/null
         rm -rf "${DIR_BUILD}/$ARCH-mpfr" "$MPFR_DIR"
-        echo "-  ${MPFR_VERSION} installed in $PREFIX"
+        echo "- ${MPFR_VERSION} installed in $PREFIX"
     fi
 
     if [[ ! -f $PREFIX/include/mpc.h ]]; then
@@ -267,13 +267,13 @@ CompileLibs () {
 
         rm -rf "${DIR_BUILD}/$ARCH-mpc"
         mkdir -p "${DIR_BUILD}/$ARCH-mpc" && cd "${DIR_BUILD}/$ARCH-mpc"
-        echo "-  ${MPC_VERSION} configure..."
+        echo "- ${MPC_VERSION} configure..."
         "${MPC_DIR}"/configure --prefix=$PREFIX --with-gmp=$PREFIX --with-mpfr=$PREFIX  > $DIR_LOGS/mpc.$ARCH.configure.log.txt 2> /dev/null
-        echo "-  ${MPC_VERSION} make..."
+        echo "- ${MPC_VERSION} make..."
         make 1> /dev/null 2> $DIR_LOGS/mpc.$ARCH.make.log.txt
         make install 1> $DIR_LOGS/mpc.$ARCH.install.log.txt 2> /dev/null
         rm -rf "${DIR_BUILD}/$ARCH-mpc" "$MPC_DIR"
-        echo "-  ${MPC_VERSION} installed in $PREFIX"
+        echo "- ${MPC_VERSION} installed in $PREFIX"
     fi
     
     if [[ ! -f $PREFIX/lib/libisl.a ]]; then
@@ -285,13 +285,13 @@ CompileLibs () {
 
         rm -rf "${DIR_BUILD}/$ARCH-isl"
         mkdir -p "${DIR_BUILD}/$ARCH-isl" && cd "${DIR_BUILD}/$ARCH-isl"
-        echo "-  ${ISL_VERSION} configure..."
+        echo "- ${ISL_VERSION} configure..."
         "${ISL_DIR}"/configure --prefix=$PREFIX --with-gmp-prefix=$PREFIX --with-gcc-arch=$ARCH > $DIR_LOGS/isl.$ARCH.configure.log.txt 2> /dev/null
-        echo "-  ${ISL_VERSION} make..."
+        echo "- ${ISL_VERSION} make..."
         make 1> /dev/null 2> $DIR_LOGS/isl.$ARCH.make.log.txt
         make install 1> $DIR_LOGS/isl.$ARCH.install.log.txt 2> /dev/null
         rm -rf "${DIR_BUILD}/$ARCH-isl" "$ISL_DIR"
-        echo "-  ${ISL_VERSION} installed in $PREFIX"
+        echo "- ${ISL_VERSION} installed in $PREFIX"
     fi
 
     if [[ ! -f $PREFIX/lib/libcloog-isl.a ]]; then
@@ -303,13 +303,13 @@ CompileLibs () {
         
         rm -rf "${DIR_BUILD}/$ARCH-cloog"
         mkdir -p "${DIR_BUILD}/$ARCH-cloog" && cd "${DIR_BUILD}/$ARCH-cloog"
-        echo "-  ${CLOOG_VERSION} configure..."
+        echo "- ${CLOOG_VERSION} configure..."
         "${CLOOG_DIR}"/configure --prefix=$PREFIX --with-gmp-prefix=$PREFIX --with-isl-prefix=$PREFIX --with-gcc-arch=$ARCH --with-isl=system --with-bits=gmp > $DIR_LOGS/cloog.$ARCH.configure.log.txt 2> /dev/null
-        echo "-  ${CLOOG_VERSION} make..."
+        echo "- ${CLOOG_VERSION} make..."
         make 1> /dev/null 2> $DIR_LOGS/cloog.$ARCH.make.log.txt
         make install 1> $DIR_LOGS/cloog.$ARCH.install.log.txt 2> /dev/null
         rm -rf "${DIR_BUILD}/$ARCH-cloog" "$CLOOG_DIR"
-        echo "-  ${CLOOG_VERSION} installed in $PREFIX"
+        echo "- ${CLOOG_VERSION} installed in $PREFIX"
     fi
 }
 
@@ -341,12 +341,12 @@ CompileBinutils () {
     # Binutils build
     rm -rf "$BUILD_BINUTILS_DIR"
     mkdir -p "$BUILD_BINUTILS_DIR" && cd "$BUILD_BINUTILS_DIR"
-    echo "-  ${BINUTILS_VERSION} configure..."
+    echo "- ${BINUTILS_VERSION} configure..."
     local cmd="${BINUTILS_DIR}/configure  --target=$TARGET  --prefix=$PREFIX/cross  --with-sysroot=$PREFIX --disable-werror --with-gmp=$PREFIX --with-mpfr=$PREFIX --with-mpc=$PREFIX"
     local logfile="$DIR_LOGS/binutils.$ARCH.configure.log.txt"
     echo "$cmd" > "$logfile"
     eval "$cmd" >> "$logfile" 2>&1
-    echo "-  ${BINUTILS_VERSION} make..."
+    echo "- ${BINUTILS_VERSION} make..."
     cmd="make"
     logfile="$DIR_LOGS/binutils.$ARCH.make.log.txt"
     echo "$cmd" > "$logfile"
@@ -366,7 +366,7 @@ CompileBinutils () {
     rm -rf "$BUILD_BINUTILS_DIR" "$BINUTILS_DIR"
 
     [ ! -f $PREFIX/cross/bin/$TARGET-ld ] && echo "Error: ${BINUTILS_VERSION} not installed, check logs in $DIR_LOGS" && exit 1
-    echo "-  ${BINUTILS_VERSION} installed in $PREFIX/cross"
+    echo "- ${BINUTILS_VERSION} installed in $PREFIX/cross"
 }
 
 
@@ -392,7 +392,7 @@ GCC_native () {
         local cmd="${GCC_DIR}/configure --prefix='$PREFIX' --with-sysroot='$TOOLCHAIN_SDK_DIR' --enable-languages=c,c++ --libdir='$PREFIX/lib/gcc$GCC_MAJOR_VERSION' --includedir='$PREFIX/include/gcc$GCC_MAJOR_VERSION' --datarootdir='$PREFIX/share/gcc$GCC_MAJOR_VERSION'  --with-system-zlib --disable-nls --with-gxx-include-dir='$PREFIX/include/gcc$GCC_MAJOR_VERSION/c++/' --with-gmp='$PREFIX' --with-mpfr='$PREFIX' --with-mpc='$PREFIX' --with-isl='$PREFIX' --with-cloog='$PREFIX' --enable-cloog-backend=isl --disable-multilib --disable-bootstrap"
         local logfile="$DIR_LOGS/gcc-native.$ARCH.configure.log.txt"
         echo "$cmd" > "$logfile"
-        echo "-  gcc-${GCC_VERSION} (native) configure..."
+        echo "- gcc-${GCC_VERSION} (native) configure..."
         eval "$cmd" >> "$logfile" 2>&1
         if [[ $? -ne 0 ]]; then
             echo "Error configuring GCC-${GCC_VERSION} ! Check the log $logfile" && exit 1
@@ -401,7 +401,7 @@ GCC_native () {
         cmd="make BOOT_CFLAGS='-O2'"
         local logfile="$DIR_LOGS/gcc-native.$ARCH.make.log.txt"
         echo "$cmd" > "$logfile"
-        echo "-  gcc-${GCC_VERSION} (native) make..."
+        echo "- gcc-${GCC_VERSION} (native) make..."
         eval "$cmd" >> "$logfile" 2>&1
         if [[ $? -ne 0 ]]; then
             echo "Error compiling GCC-${GCC_VERSION} ! Check the log $logfile" && exit 1
@@ -410,7 +410,7 @@ GCC_native () {
         cmd="make install-strip"
         local logfile="$DIR_LOGS/gcc-native.$ARCH.install.log.txt"
         echo "$cmd" > "$logfile"
-        echo "-  gcc-${GCC_VERSION} (native) installing..."
+        echo "- gcc-${GCC_VERSION} (native) installing..."
         eval "$cmd" >> "$logfile" 2>&1
         if [[ $? -ne 0 ]]; then
             echo "Error installing GCC-${GCC_VERSION} ! Check the log $logfile" && exit 1
@@ -420,11 +420,11 @@ GCC_native () {
         rm -rf "$TOOLCHAIN_SDK_DIR"
         mkdir -p "$TOOLCHAIN_SDK_DIR/usr/lib"
         # Copy header and library files needed to compile Basetools
-        echo "-  Copying headers and library files..."
-        rsync -aH "$SDK/usr/include" "$TOOLCHAIN_SDK_DIR/usr/"
+        echo "- Copying headers and library files..."
+        rsync -aHL "$SDK/usr/include" "$TOOLCHAIN_SDK_DIR/usr/"
         rsync -aH "$SDK/usr/lib"/libSystem* "$TOOLCHAIN_SDK_DIR/usr/lib/"
 
-        echo "-  gcc-${GCC_VERSION} installed in $PREFIX"
+        echo "- gcc-${GCC_VERSION} installed in $PREFIX"
         rm -rf "$BUILD_DIR"
 
         # Create a link for cc
@@ -455,10 +455,10 @@ CompileCrossGCC () {
     rm -rf "$BUILD_DIR"
     mkdir -p "$BUILD_DIR" && cd "$BUILD_DIR"
 
-    echo "-  gcc-${GCC_VERSION} configure..."
+    echo "- gcc-${GCC_VERSION} configure..."
     "${GCC_DIR}"/configure --target=$TARGET --prefix="$PREFIX/cross" --with-sysroot="$PREFIX" --with-gmp="$PREFIX" --with-mpfr="$PREFIX" --with-mpc="$PREFIX" --with-isl="$PREFIX" --with-cloog="$PREFIX" --with-system-zlib --with-gnu-as --with-gnu-ld --with-newlib --disable-libssp --disable-nls --disable-werror --enable-languages=c,c++ --enable-cloog-backend=isl  > "$DIR_LOGS"/gcc.$ARCH.configure.log.txt 2> /dev/null
 
-    echo "-  gcc-${GCC_VERSION} make..."
+    echo "- gcc-${GCC_VERSION} make..."
     make all-gcc 1> /dev/null 2> $DIR_LOGS/gcc.$ARCH.make.log.txt
     make install-gcc 1> $DIR_LOGS/gcc.$ARCH.install.log.txt 2> /dev/null
 
@@ -467,7 +467,7 @@ CompileCrossGCC () {
 
     rm -rf "${BUILD_DIR}" "$GCC_DIR"
 
-    echo "-  gcc-${GCC_VERSION} installed in $PREFIX/cross"
+    echo "- gcc-${GCC_VERSION} installed in $PREFIX/cross"
     echo
 }
 
@@ -481,10 +481,15 @@ CheckXCode      || exit 1
 DownloadSource  || exit 1
 
 startBuildEpoch=$(date -u "+%s")
+
 CompileLibs     || exit 1
 GCC_native      || exit 1
 CompileBinutils || exit 1
 CompileCrossGCC || exit 1
+
+# Remove GCC source directory
+[[ -d "$DIR_GCC" ]] && rm -rf "$DIR_GCC"
+
 stopBuildEpoch=$(date -u "+%s")
 buildTime=$(expr $stopBuildEpoch - $startBuildEpoch)
 if [[ $buildTime -gt 59 ]]; then
@@ -492,4 +497,4 @@ if [[ $buildTime -gt 59 ]]; then
 else
     timeToBuild=$(printf "%ds" $((buildTime)))
 fi
-printf -- "- %s %s %s\n" "GCC toolchain Build process took" "$timeToBuild" "to complete..."
+printf -- "\n* %s %s %s\n" "GCC toolchain Build process took" "$timeToBuild" "to complete..."
