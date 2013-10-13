@@ -68,11 +68,14 @@ export PATH="/usr/bin:/bin:/usr/sbin:/sbin"
 
 # Function: checking installation of Xcode Tools
 CheckXCode () {
+    local OSXVER="`/usr/bin/sw_vers -productVersion | cut -d '.' -f1,2`"
+    local OSXARCH="`/usr/bin/uname -m`"
+    echo "  Running on Mac OS X ${OSXVER}, with ${OSXARCH} architecture."
     if [[ ! -x /usr/bin/xcodebuild ]]; then
         echo "ERROR: Install Xcode Tools from Apple before using this script." >&2
         exit 1
     else
-        export SDK="`/usr/bin/xcodebuild -version -sdk macosx Path 2>/dev/null`"
+        export SDK="`/usr/bin/xcodebuild -version -sdk macosx${OSXVER} Path 2>/dev/null`"
         [ -z "${SDK}" ] && export SDK="/"
         if [ ! -d "${SDK}/usr/include" ]; then
             echo "ERROR: Cannot find Xcode SDK." >&2
@@ -424,7 +427,7 @@ GCC_native () {
         # Copy header and library files needed to compile Basetools
         echo "- Copying headers and library files..."
         rsync -aH --copy-unsafe-links "$SDK/usr/include" "$TOOLCHAIN_SDK_DIR/usr/"
-        rsync -aH "$SDK/usr/lib"/libSystem* "$SDK/usr/lib"/crt* "$TOOLCHAIN_SDK_DIR/usr/lib/"
+        rsync -aH --copy-unsafe-links "$SDK/usr/lib"/libSystem* "$SDK/usr/lib"/crt* "$TOOLCHAIN_SDK_DIR/usr/lib/"
 
         echo "- gcc-${GCC_VERSION} installed in $PREFIX"
         rm -rf "$BUILD_DIR"
