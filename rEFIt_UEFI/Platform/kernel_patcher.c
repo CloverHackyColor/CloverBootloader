@@ -416,6 +416,14 @@ BOOLEAN KernelLapicPatch_64(VOID *kernelData)
       patchLocation = i+30;
       DBG("Found Lapic panic at 0x%08x\n", patchLocation);
       break;
+    } else if (bytes[i+0] == 0x65 && bytes[i+1] == 0x8B && bytes[i+2] == 0x04 && bytes[i+3] == 0x25 &&
+               bytes[i+4] == 0x1C && bytes[i+5] == 0x00 && bytes[i+6] == 0x00 && bytes[i+7] == 0x00 &&
+               bytes[i+36] == 0x65 && bytes[i+37] == 0x8B && bytes[i+38] == 0x04 && bytes[i+39] == 0x25 &&
+               bytes[i+40] == 0x1C && bytes[i+41] == 0x00 && bytes[i+42] == 0x00 && bytes[i+43] == 0x00)
+    {
+      patchLocation = i+31;
+      DBG("Found MV Lapic panic at 0x%08x\n", patchLocation);
+      break;
     }
   }
   
