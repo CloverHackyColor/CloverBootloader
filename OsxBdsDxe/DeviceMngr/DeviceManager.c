@@ -1,7 +1,7 @@
 /** @file
   The platform device manager reference implementation
 
-Copyright (c) 2004 - 2012, Intel Corporation. All rights reserved.<BR>
+Copyright (c) 2004 - 2013, Intel Corporation. All rights reserved.<BR>
 This program and the accompanying materials
 are licensed and made available under the terms and conditions of the BSD License
 which accompanies this distribution.  The full text of the license may be found at
@@ -141,23 +141,23 @@ DeviceManagerCallback (
   }
 
   if (Value == NULL) {
-      return EFI_INVALID_PARAMETER;
-    }
+    return EFI_INVALID_PARAMETER;
+  }
 
-    gCallbackKey = QuestionId;
-    if ((QuestionId < MAX_KEY_SECTION_LEN + NETWORK_DEVICE_LIST_KEY_OFFSET) && (QuestionId >= NETWORK_DEVICE_LIST_KEY_OFFSET)) {
-      //
-      // If user select the mac address, need to record mac address string to support next form show.
-      //
-      for (CurIndex = 0; CurIndex < mMacDeviceList.CurListLen; CurIndex ++) {
-        if (mMacDeviceList.NodeList[CurIndex].QuestionId == QuestionId) {
-           mSelectedMacAddrString = HiiGetString (gDeviceManagerPrivate.HiiHandle, mMacDeviceList.NodeList[CurIndex].PromptId, NULL);
-        }
+  gCallbackKey = QuestionId;
+  if ((QuestionId < MAX_KEY_SECTION_LEN + NETWORK_DEVICE_LIST_KEY_OFFSET) && (QuestionId >= NETWORK_DEVICE_LIST_KEY_OFFSET)) {
+    //
+    // If user select the mac address, need to record mac address string to support next form show.
+    //
+    for (CurIndex = 0; CurIndex < mMacDeviceList.CurListLen; CurIndex ++) {
+      if (mMacDeviceList.NodeList[CurIndex].QuestionId == QuestionId) {
+         mSelectedMacAddrString = HiiGetString (gDeviceManagerPrivate.HiiHandle, mMacDeviceList.NodeList[CurIndex].PromptId, NULL);
       }
     }
-  
-    return EFI_SUCCESS;
   }
+
+  return EFI_SUCCESS;
+}
 
 /**
 
@@ -574,7 +574,6 @@ IsNeedAddNetworkMenu (
   EFI_STATUS     Status;
   UINTN          EntryCount;
   UINTN          Index;  
-//  EFI_HII_HANDLE HiiDeviceManagerHandle;
   EFI_HANDLE     DriverHandle;
   EFI_HANDLE     ControllerHandle;
   EFI_DEVICE_PATH_PROTOCOL   *DevicePath;
@@ -618,7 +617,7 @@ IsNeedAddNetworkMenu (
 
   //
   // Search whether this path is the controller path, not he child handle path.
-  // And the child handle has the network device connected.
+  // And the child handle has the network devcie connected.
   //
   TmpDevicePath = DevicePath;
   Status = gBS->LocateDevicePath(&gEfiDevicePathProtocolGuid, &TmpDevicePath, &ControllerHandle);
@@ -1944,7 +1943,7 @@ ProcessSingleControllerHealth (
                                DriverHealth,
                                ControllerHandle,
                                ChildHandle,
-                               (EFI_DRIVER_HEALTH_REPAIR_PROGRESS_NOTIFY) RepairNotify
+                               RepairNotify
                                );
     }
     //
@@ -2020,24 +2019,20 @@ ProcessSingleControllerHealth (
 
 
 /**
-  Platform specific notification function for controller repair operations.
+  Reports the progress of a repair operation.
 
-  If the driver for a controller support the Driver Health Protocol and the
-  current state of the controller is EfiDriverHealthStatusRepairRequired then
-  when the Repair() service of the Driver Health Protocol is called, this 
-  platform specific notification function can display the progress of the repair
-  operation.  Some platforms may choose to not display anything, other may choose
-  to show the percentage complete on text consoles, and other may choose to render
-  a progress bar on text and graphical consoles.
+  @param[in]  Value             A value between 0 and Limit that identifies the current 
+                                progress of the repair operation.
 
-  This function displays the percentage of the repair operation that has been
-  completed on text consoles.  The percentage is Value / Limit * 100%.
-  
-  @param  Value               Value in the range 0..Limit the the repair has completed..
-  @param  Limit               The maximum value of Value
+  @param[in]  Limit             The maximum value of Value for the current repair operation.
+                                For example, a driver that wants to specify progress in 
+                                percent would use a Limit value of 100.
+
+  @retval EFI_SUCCESS           The progress of a repair operation is reported successfully.
 
 **/
-VOID
+EFI_STATUS
+EFIAPI
 RepairNotify (
   IN  UINTN Value,
   IN  UINTN Limit
@@ -2051,6 +2046,7 @@ RepairNotify (
     Percent = Value * 100 / Limit;
     Print(L"Repair Progress = %3d%%\n\r", Percent);
   }
+  return EFI_SUCCESS;
 }
 
 /**
