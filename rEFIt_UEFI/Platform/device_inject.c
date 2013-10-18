@@ -394,16 +394,20 @@ BOOLEAN set_eth_props(pci_dt_t *eth_dev)
 
 #define PCI_IF_XHCI 0x30
 
-static UINT8 clock_id = 0;
+static UINT8   clock_id = 0;
+static UINT8   builtin = 0x0;
+
+static UINT16  current_available = 1200; //mA
+static UINT16  current_extra     = 700;
+static UINT16  current_in_sleep  = 1000;
+static UINT16  current_available_high = 2100; //mA
+static UINT16  current_extra_high    = 2700;
+
 BOOLEAN set_usb_props(pci_dt_t *usb_dev)
 {
 	CHAR8           *devicepath;
   DevPropDevice   *device;
-  UINT8           builtin = 0x0;
-  UINT16  current_available = 1200; //mA
-  UINT16  current_extra     = 700;
-  UINT16  current_in_sleep  = 1000;
-  UINT32   fake_devid;
+  UINT32          fake_devid;
   BOOLEAN         Injected = FALSE;
   INT32           i;
 
@@ -453,9 +457,14 @@ BOOLEAN set_usb_props(pci_dt_t *usb_dev)
       break;
     case PCI_IF_EHCI:
       devprop_add_value(device, "device_type", (UINT8*)"EHCI", 4);
-      devprop_add_value(device, "AAPL,current-available", (UINT8*)&current_available, 2);
-      devprop_add_value(device, "AAPL,current-extra",     (UINT8*)&current_extra, 2);
-      devprop_add_value(device, "AAPL,current-in-sleep",  (UINT8*)&current_in_sleep, 2);      
+      if (gSettings.HighCurrent) {
+        devprop_add_value(device, "AAPL,current-available", (UINT8*)&current_available_high, 2);
+        devprop_add_value(device, "AAPL,current-extra",     (UINT8*)&current_extra_high, 2);
+      } else {
+        devprop_add_value(device, "AAPL,current-available", (UINT8*)&current_available, 2);
+        devprop_add_value(device, "AAPL,current-extra",     (UINT8*)&current_extra, 2);
+      }
+      devprop_add_value(device, "AAPL,current-in-sleep",  (UINT8*)&current_in_sleep, 2);
       break;
     case PCI_IF_XHCI:
       devprop_add_value(device, "device_type", (UINT8*)"XHCI", 4);

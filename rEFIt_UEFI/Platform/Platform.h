@@ -805,7 +805,7 @@ typedef struct {
   // USB ownership fix
   BOOLEAN USBFixOwnership;
   BOOLEAN InjectClockID;
-  UINT8   pad7[1];
+  BOOLEAN HighCurrent;
   
   // LegacyBoot
   CHAR16  LegacyBoot[32];

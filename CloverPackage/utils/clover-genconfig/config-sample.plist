@@ -296,6 +296,8 @@
 			<true/>
 			<key>AddClockID</key>
 			<true/>
+			<key>HighCurrent</key>
+			<false/>
 			<key>FixOwnership</key>
 			<true/>
 		</dict>

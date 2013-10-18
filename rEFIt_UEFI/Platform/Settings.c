@@ -2315,7 +2315,19 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
             DBG("USB FixOwnership: true\n");
           }
         }
-      }      
+        prop = GetProperty(prop2, "HighCurrent");
+        if(prop) {
+          // disabled by default
+          if ((prop->type == kTagTypeFalse) ||
+              ((prop->type == kTagTypeString) &&
+               ((prop->string[0] == 'n') || (prop->string[0] == 'N'))))
+            gSettings.HighCurrent = FALSE;
+          else if ((prop->type == kTagTypeTrue) ||
+                   ((prop->type == kTagTypeString) &&
+                    ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))))
+            gSettings.HighCurrent = TRUE;
+        }
+      }
     }
 
     //*** ACPI ***//

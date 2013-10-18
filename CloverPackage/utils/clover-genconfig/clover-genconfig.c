@@ -475,6 +475,7 @@ void PrintConfig(CFTypeRef data)
   addBoolean(usbDict, CFSTR("Inject"), s->USBInjection);
   addBoolean(usbDict, CFSTR("FixOwnership"), s->USBFixOwnership);
   addBoolean(usbDict, CFSTR("AddClockID"), s->InjectClockID);
+  addBoolean(usbDict, CFSTR("HighCurrent"), s->HighCurrent);
   
   // Graphics
   CFMutableDictionaryRef graphicsDict = addDict(dict, CFSTR("Graphics"));

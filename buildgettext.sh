@@ -8,7 +8,7 @@
 # Gettext source version
 # here we can change source versions of tools
 #
-export GETTEXT_VERSION=${GETTEXT_VERSION:-gettext-0.18.2.1}
+export GETTEXT_VERSION=${GETTEXT_VERSION:-gettext-0.18.3.1}
 
 # Change PREFIX if you want gettext installed on different place
 #

@@ -3222,9 +3222,17 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
     }
     if (USBIntel) {
       aml_add_string(pack1, "AAPL,current-available");
-      aml_add_word(pack1, 0x05DC);
+      if (gSettings.HighCurrent) {
+        aml_add_word(pack1, 0x0834);
+      } else {
+        aml_add_word(pack1, 0x05DC);
+      }
       aml_add_string(pack1, "AAPL,current-extra");
-      aml_add_word(pack1, 0x03E8);
+      if (gSettings.HighCurrent) {
+        aml_add_word(pack1, 0x0A8C);
+      } else {
+        aml_add_word(pack1, 0x03E8);
+      }
       aml_add_string(pack1, "AAPL,current-in-sleep");
       aml_add_word(pack1, 0x0BB8);
       //  aml_add_string(pack1, "AAPL,device-internal");
