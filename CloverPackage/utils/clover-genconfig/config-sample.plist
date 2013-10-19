@@ -89,6 +89,8 @@
 		<string>0x0501</string>
 		<key>InjectKexts</key>
 		<false/>
+		<key>NoCaches</key>
+		<false/>
 	</dict>
 	<key>SMBIOS</key>
 	<dict>
@@ -441,6 +443,8 @@
 			<key>PluginType</key>
 			<integer>0</integer>
 		</dict>
+		<key>DropMCFG</key>
+		<false/>
 		<key>ResetAddress</key>
 		<string>0x64</string>
 		<key>ResetValue</key>
