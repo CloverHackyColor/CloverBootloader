@@ -26,16 +26,28 @@ install_log="${DEST_VOL}/Clover_Install_Log.txt"
 config_plist_file="${EFI_ROOT_DIR}"/EFI/CLOVER/config.plist
 plistbuddy='/usr/libexec/PlistBuddy'
 
+echo "" >> "${install_log}"
+
 # Change config.plist if needed
 boottype=$( cat "${DEST_VOL}/boottype" )
 
 case "${boottype}" in
-	ia32) perl -i -p -e "s/arch=x86_64/arch=i386/g" "${config_plist_file}" ;;
-	 x64) perl -i -p -e "s/arch=i386/arch=x86_64/g" "${config_plist_file}" ;;
+    ia32) perl -i -p -e "s/arch=x86_64/arch=i386/g" "${config_plist_file}" ;;
+     x64) perl -i -p -e "s/arch=i386/arch=x86_64/g" "${config_plist_file}" ;;
 esac
 
 # Store last install revision
 $plistbuddy -c "Add CloverRevision integer %CLOVERREVISION%" "$CLOVER_INSTALLER_PLIST_NEW" >/dev/null
+
+# Get theme from config.plist
+config_theme=''
+if [[ -f "$config_plist_file" ]]; then
+    config_theme=$( $plistbuddy -c "Print :GUI:Theme" "$config_plist_file" 2>/dev/null )
+fi
+
+# Check if theme is found
+theme_found=0
+themes_installed=()
 
 # Store installed themes
 $plistbuddy -c "Add InstalledThemes array" "$CLOVER_INSTALLER_PLIST_NEW" >/dev/null
@@ -44,10 +56,22 @@ while read -r -u3 theme_plist; do
     theme=${theme_plist%/*}
     theme=${theme##*/}
     $plistbuddy -c "Add InstalledThemes:$index string $theme" "$CLOVER_INSTALLER_PLIST_NEW" >/dev/null
-	index=$((index + 1))
-done 3< <(find "/Volumes/BootLoader/EFI/CLOVER/themes" -iname 'theme.plist')
+    [[ -n "config_theme" && "$config_theme" == "$theme" ]] && theme_found=1
+    themes_installed+=("$theme")
+    index=$((index + 1))
+done 3< <(find "${EFI_ROOT_DIR}"/EFI/CLOVER/themes -iname 'theme.plist' 2>/dev/null)
 
-echo "" >> "${install_log}"
+# Replace theme if theme directory not found
+if [[ "$theme_found" -eq 0 ]]; then
+    [[ -n "$config_theme" ]] && echo "Theme '$config_theme' (defined in config.plist) not found !" >> "${install_log}"
+    default_theme=${themes_installed[0]}
+    if [[ -n "$default_theme" ]]; then
+        echo "Using default theme '$default_theme'" >> "${install_log}"
+        $plistbuddy -c "Delete :GUI:Theme" "$config_plist_file" &>/dev/null
+        $plistbuddy -c "Add :GUI:Theme string $default_theme" "$config_plist_file" 2>&1 >> "${install_log}"
+    fi
+fi
+
 echo "======================================================" >> "${install_log}"
 echo "=========== Clover EFI Installation Finish ===========" >> "${install_log}"
 echo "======================================================" >> "${install_log}"
