@@ -185,7 +185,7 @@
 					../../../../IntelFrameworkPkg/Include,
 					../../../rEFIt_UEFI/refit,
 					../../../rEFIt_UEFI/libeg,
-					../../../include,
+					../../../Include,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -201,7 +201,7 @@
 					../../../../IntelFrameworkPkg/Include,
 					../../../rEFIt_UEFI/refit,
 					../../../rEFIt_UEFI/libeg,
-					../../../include,
+					../../../Include,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
