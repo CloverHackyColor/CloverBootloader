@@ -234,7 +234,7 @@ VOID RefillInputs(VOID)
       InputItems[InputItemsCount++].SValue = gSettings.InjectATI?L"[+]":L"[ ]";
       InputItems[InputItemsCount].ItemType = ASString; //22+6i
 //      InputItems[InputItemsCount].SValue = AllocateZeroPool(20);
-      if (StrLen(gSettings.FBName) > 3) {
+      if (StrLen(gSettings.FBName) > 2) { //fool proof: cfg_name is 3 character or more.
         UnicodeSPrint(InputItems[InputItemsCount++].SValue, 20, L"%s", gSettings.FBName);
       } else {
         UnicodeSPrint(InputItems[InputItemsCount++].SValue, 20, L"%s", gGraphics[i].Config);
@@ -533,7 +533,7 @@ VOID FillInputs(VOID)
       InputItems[InputItemsCount++].SValue = gSettings.InjectATI?L"[+]":L"[ ]";
       InputItems[InputItemsCount].ItemType = ASString; //22+6i
       InputItems[InputItemsCount].SValue = AllocateZeroPool(20);
-      if (StrLen(gSettings.FBName) > 3) {
+      if (StrLen(gSettings.FBName) > 2) { //fool proof: cfg_name is 3 character or more.
         UnicodeSPrint(InputItems[InputItemsCount++].SValue, 20, L"%s", gSettings.FBName);
       } else {
         UnicodeSPrint(InputItems[InputItemsCount++].SValue, 20, L"%s", gGraphics[i].Config);

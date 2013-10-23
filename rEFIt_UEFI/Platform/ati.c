@@ -1415,7 +1415,7 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
   }
   
 	NameLen = StrLen(gSettings.FBName);
-  if (NameLen > 2) {  //fool proof: cfg_name is 4 character or more.
+  if (NameLen > 2) {  //fool proof: cfg_name is 3 character or more.
     CfgName = AllocateZeroPool(NameLen);
     UnicodeStrToAsciiStr((CHAR16*)&gSettings.FBName[0], CfgName);
     DBG("Users config name %a\n", CfgName);
