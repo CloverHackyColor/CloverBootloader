@@ -2790,6 +2790,7 @@ static nvidia_card_info_t nvidia_cards[] = {
 	{ 0x10DE11BE,	NV_SUB_IDS,	"Quadro K3000M" },
 	// 11C0 - 11CF
   { 0x10DE11C0,	NV_SUB_IDS,	"GeForce GTX 660" },
+  { 0x10DE11C2,	NV_SUB_IDS,	"GeForce GTX 650 TI BOOST" },
 	{ 0x10DE11C6,	NV_SUB_IDS,	"GeForce GTX 650 TI" },
   { 0x10DE11D0, NV_SUB_IDS,	"GK106-INT353" },
 	// 11D0 - 11DF

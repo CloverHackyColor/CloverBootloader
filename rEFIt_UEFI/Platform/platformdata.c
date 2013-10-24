@@ -222,7 +222,7 @@ CHAR8* AppleSerialNumber[] = //random generated
   "C02HA041DTY3", //MBP92 - i5 IvyBridge HD4000
 	"W8649476DQX",  //MBA31
   "C02HA041DRVC", //MBA52 - IvyBridge
-  "C02HACKUF5V7", //MBA62
+  "C02HACKUF5V7", //MBA62  //F5V8
 	"W88A56BYYL2",  //MM21 - merom GMA950 07/07
   "C07GA041DJD0", //MM51 - sandy
   "C07JD041DWYN", //MM62 - IVY

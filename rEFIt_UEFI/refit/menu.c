@@ -1076,8 +1076,8 @@ VOID ApplyInputs(VOID)
                       if (!EFI_ERROR(Status)) {
                           if (gSettings.ConfigName) FreePool(gSettings.ConfigName);
                           gSettings.ConfigName = EfiStrDuplicate(gSettings.MainConfigName);
-                          if (gConfigDict[3]) FreeTag(gConfigDict[3]);
-                          gConfigDict[3] = NULL;
+                          if (gConfigDict[2]) FreeTag(gConfigDict[2]);
+                          gConfigDict[2] = NULL;
                       }
                       DBG("Main settings%d from menu: %r\n", i, Status);
                   }
@@ -1086,8 +1086,8 @@ VOID ApplyInputs(VOID)
               LoadUserSettings(SelfRootDir, InputItems[i].SValue, &dict);
               Status = GetUserSettings(SelfRootDir, dict);
               if (!EFI_ERROR(Status)) {
-                  if (gConfigDict[3]) FreeTag(gConfigDict[3]);
-                  gConfigDict[3] = dict;
+                  if (gConfigDict[2]) FreeTag(gConfigDict[2]);
+                  gConfigDict[2] = dict;
                   if (gSettings.ConfigName) FreePool(gSettings.ConfigName);
                   gSettings.ConfigName = EfiStrDuplicate(InputItems[i].SValue);
               }
