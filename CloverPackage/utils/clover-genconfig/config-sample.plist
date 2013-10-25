@@ -10,6 +10,8 @@
 		<string>-v arch=i386 slide=0</string>
 		<key>DefaultVolume</key>
 		<string>MacHDD</string>
+		<key>DefaultLoader</key>
+		<string>boot.efi</string>
 		<key>Log</key>
 		<false/>
 		<key>Fast</key>

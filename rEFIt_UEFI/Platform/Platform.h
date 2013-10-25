@@ -714,7 +714,8 @@ typedef struct {
 	CHAR8 	Language[16];
 	CHAR8   BootArgs[256];
 	CHAR16	CustomUuid[40];
-  CHAR16  DefaultBoot[40];
+  CHAR16  *DefaultVolume;
+  CHAR16  *DefaultLoader;
   UINT16  BacklightLevel;
   BOOLEAN MemoryFix;
   BOOLEAN WithKexts;
@@ -1356,6 +1357,13 @@ UINT64      TimeDiff(UINT64 t0, UINT64 t1);
 // BootOptions.c
 //
 
+/** Returns the first occurrence of a Null-terminated Unicode SearchString in a Null-terminated Unicode String. Compares just first 8 bits of chars (valid for ASCII), case insensitive. */
+CHAR16 *
+EFIAPI
+StrStriBasic (
+              IN      CONST CHAR16              *String,
+              IN      CONST CHAR16              *SearchString
+              );
 /** Returns 0 if two strings are equal, !=0 otherwise. Compares just first 8 bits of chars (valid for ASCII), case insensitive. */
 UINTN
 EFIAPI

@@ -961,7 +961,14 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
     
     prop = GetProperty(dictPointer, "DefaultVolume");
     if(prop) {
-      AsciiStrToUnicodeStr(prop->string, gSettings.DefaultBoot);
+      gSettings.DefaultVolume = AllocateZeroPool(AsciiStrSize(prop->string) * sizeof(CHAR16));
+      AsciiStrToUnicodeStr(prop->string, gSettings.DefaultVolume);
+    }
+    
+    prop = GetProperty(dictPointer, "DefaultLoader");
+    if(prop) {
+      gSettings.DefaultLoader = AllocateZeroPool(AsciiStrSize(prop->string) * sizeof(CHAR16));
+      AsciiStrToUnicodeStr(prop->string, gSettings.DefaultLoader);
     }
 
     prop = GetProperty(dictPointer, "Log");

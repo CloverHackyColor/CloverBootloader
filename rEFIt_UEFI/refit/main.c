@@ -1239,7 +1239,7 @@ INTN FindDefaultEntry(VOID)
   INTN                Index;
   REFIT_VOLUME        *Volume;
   LOADER_ENTRY        *Entry;
-
+  BOOLEAN             SearchForLoader;
   
   DBG("FindDefaultEntry ...\n");
   
@@ -1262,12 +1262,20 @@ INTN FindDefaultEntry(VOID)
   }
   
   //
-  // if not found, then try DefaultBoot from config.plist
-  // search volume with name == gSettings.DefaultBoot
+  // if not found, then try DefaultVolume from config.plist
+  // if not null or empty, search volume that matches gSettings.DefaultVolume
   //
-  if (gSettings.DefaultBoot != NULL && gSettings.DefaultBoot[0] != L'\0') {
+  if (gSettings.DefaultVolume != NULL && gSettings.DefaultVolume[0] != L'\0') {
     
-    DBG("Searching config.plist DefaultBoot ...");
+    // if not null or empty, also search for loader that matches gSettings.DefaultLoader
+    SearchForLoader = (gSettings.DefaultLoader != NULL && gSettings.DefaultLoader[0] != L'\0');
+    
+    if (SearchForLoader) {
+      DBG("Searching for DefaultVolume '%s', DefaultLoader '%s' ...\n", gSettings.DefaultVolume, gSettings.DefaultLoader);
+    } else {
+      DBG("Searching for DefaultVolume '%s' ...\n", gSettings.DefaultVolume);
+    }
+    
     for (Index = 0; ((Index < (INTN)MainMenu.EntryCount) && (MainMenu.Entries[Index]->Row == 0)); Index++) {
       
       Entry = (LOADER_ENTRY*)MainMenu.Entries[Index];
@@ -1276,11 +1284,15 @@ INTN FindDefaultEntry(VOID)
       }
       
       Volume = Entry->Volume;
-      if (StrCmp(Volume->VolName, gSettings.DefaultBoot) != 0) {
+      if ((Volume->VolName == NULL || StrCmp(Volume->VolName, gSettings.DefaultVolume) != 0) && !StrStr(Volume->DevicePathString, gSettings.DefaultVolume)) {
         continue;
       }
       
-      DBG(" found\nBoot redirected to Entry %d. '%s', Volume '%s'\n", Index, Entry->me.Title, Volume->VolName);
+      if (SearchForLoader && (Entry->me.Tag != TAG_LOADER || !StrStriBasic(Entry->LoaderPath, gSettings.DefaultLoader))) {
+        continue;
+      }
+      
+      DBG(" found entry %d. '%s', Volume '%s', DevicePath '%s'\n", Index, Entry->me.Title, Volume->VolName, Entry->DevicePathString);
       // if first method failed and second succeeded - uninstall emulation
       if (gEmuVariableControl != NULL) {
         gEmuVariableControl->UninstallEmulation(gEmuVariableControl);

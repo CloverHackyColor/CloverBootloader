@@ -289,7 +289,8 @@ void PrintConfig(CFTypeRef data)
   addUString(bootDict, CFSTR("Legacy"), (const UniChar *)&s->LegacyBoot);
  // addUString(bootDict, CFSTR("LegacyEntry"), s->LegacyBiosCustomEntry);
   addInteger(bootDict, CFSTR("XMPDetection"), s->XMPDetection);
-  addUString(bootDict, CFSTR("DefaultVolume"), (const UniChar *)&s->DefaultBoot);
+  addUString(bootDict, CFSTR("DefaultVolume"), (const UniChar *)&s->DefaultVolume);
+  addUString(bootDict, CFSTR("DefaultLoader"), (const UniChar *)&s->DefaultLoader);
   addBoolean(bootDict, CFSTR("Log"), s->Debug);
   addString(bootDict, CFSTR("Timeout"), "_NOT_SHOWN_");
   addBoolean(bootDict, CFSTR("Fast"), 0);
