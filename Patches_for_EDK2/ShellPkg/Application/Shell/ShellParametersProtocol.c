@@ -2,7 +2,8 @@
   Member functions of EFI_SHELL_PARAMETERS_PROTOCOL and functions for creation,
   manipulation, and initialization of EFI_SHELL_PARAMETERS_PROTOCOL.
 
-  Copyright (c) 2009 - 2012, Intel Corporation. All rights reserved.<BR>
+  Copyright (c) 2013 Hewlett-Packard Development Company, L.P.
+  Copyright (c) 2009 - 2013, Intel Corporation. All rights reserved.<BR>
   This program and the accompanying materials
   are licensed and made available under the terms and conditions of the BSD License
   which accompanies this distribution.  The full text of the license may be found at
@@ -328,9 +329,7 @@ CreatePopulateInstallShellParametersProtocol (
     FullCommandLine = AllocateZeroPool(Size);
   }
   if (FullCommandLine != NULL) {
-    if (LoadedImage->LoadOptionsSize != 0){
-      StrCpy(FullCommandLine, LoadedImage->LoadOptions);
-    }
+    CopyMem (FullCommandLine, LoadedImage->LoadOptions, LoadedImage->LoadOptionsSize);
     //
     // Populate Argc and Argv
     //
@@ -1031,7 +1030,7 @@ UpdateStdInStdOutStdErr(
         }
         if (!EFI_ERROR(Status)) {
           ShellParameters->StdErr = TempHandle;
-          gST->StdErr = CreateSimpleTextOutOnFile(TempHandle, &gST->StandardErrorHandle);
+          gST->StdErr = CreateSimpleTextOutOnFile(TempHandle, &gST->StandardErrorHandle, gST->StdErr);
         }
       }
 
@@ -1077,7 +1076,7 @@ UpdateStdInStdOutStdErr(
           }
           if (!EFI_ERROR(Status)) {
             ShellParameters->StdOut = TempHandle;
-            gST->ConOut = CreateSimpleTextOutOnFile(TempHandle, &gST->ConsoleOutHandle);
+            gST->ConOut = CreateSimpleTextOutOnFile(TempHandle, &gST->ConsoleOutHandle, gST->ConOut);
           }
         }
       }
@@ -1098,7 +1097,7 @@ UpdateStdInStdOutStdErr(
           return EFI_NOT_FOUND;
         }
         ShellParameters->StdOut = TempHandle;
-        gST->ConOut = CreateSimpleTextOutOnFile(TempHandle, &gST->ConsoleOutHandle);
+        gST->ConOut = CreateSimpleTextOutOnFile(TempHandle, &gST->ConsoleOutHandle, gST->ConOut);
       }
 
       //
@@ -1117,7 +1116,7 @@ UpdateStdInStdOutStdErr(
           return EFI_NOT_FOUND;
         }
         ShellParameters->StdErr = TempHandle;
-        gST->StdErr = CreateSimpleTextOutOnFile(TempHandle, &gST->StandardErrorHandle);
+        gST->StdErr = CreateSimpleTextOutOnFile(TempHandle, &gST->StandardErrorHandle, gST->StdErr);
       }
 
       //
