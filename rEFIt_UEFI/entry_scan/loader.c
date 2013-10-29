@@ -423,6 +423,9 @@ static LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
       if (gSettings.WithKexts) {
         Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_WITHKEXTS);
       }
+      if (gSettings.NoCaches) {
+        Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_NOCACHES);
+      }
       ShortcutLetter = 'M';
       GetOSXVolumeName(Entry);
       break;
