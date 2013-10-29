@@ -3756,7 +3756,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
   if (OptionMenu.EntryCount == 0) {
     OptionMenu.TitleImage = BuiltinIcon(BUILTIN_ICON_FUNC_OPTIONS);
     OptionMenu.ID = SCREEN_OPTIONS;
-    OptionMenu.AnimeRun = GetAnime(SubScreen); //FALSE;
+    OptionMenu.AnimeRun = GetAnime(&OptionMenu); //FALSE;
     Flags = AllocateZeroPool(255);
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
     *ChosenEntry = (REFIT_MENU_ENTRY*)InputBootArgs;   
