@@ -2411,6 +2411,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
                     (!TableId || (DropTable->TableId == TableId))) ||
                     (!Signature && (DropTable->TableId == TableId))) {
                   DropTable->MenuItem.BValue = TRUE;
+                  gSettings.DropSSDT = FALSE; //if one item=true then dropAll=false by default
                   DBG("  true\n");
                 }                
                 DropTable = DropTable->Next;
