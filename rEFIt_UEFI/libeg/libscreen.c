@@ -139,10 +139,10 @@ VOID egDumpConsoleVideoModes(VOID)
 
     if (gST->ConOut != NULL && gST->ConOut->Mode != NULL) {
         MsgLog("Console modes reported: %d, available modes:\n",gST->ConOut->Mode->MaxMode);
-        for (i=0; i < gST->ConOut->Mode->MaxMode; i++) {
+        for (i=0; i < (UINTN)gST->ConOut->Mode->MaxMode; i++) {
             Status = gST->ConOut->QueryMode(gST->ConOut, i, &Width, &Height);
             if (Status == EFI_SUCCESS) {
-                MsgLog("  Mode %d: %dx%d%s\n", i, Width, Height, (i==gST->ConOut->Mode->Mode)?L" (current mode)":L"");
+                MsgLog("  Mode %d: %dx%d%s\n", i, Width, Height, (i==(UINTN)gST->ConOut->Mode->Mode)?L" (current mode)":L"");
                 /*
                 if (BestMode < 0 || Width > BestWidth || (Width == BestWidth && Height > BestHeight)) {
                     BestMode = i;

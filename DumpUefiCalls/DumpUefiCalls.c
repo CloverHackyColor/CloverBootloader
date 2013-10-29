@@ -22,6 +22,10 @@
 /** Original StartImage UEFI method. */
 EFI_IMAGE_START OrgStartImage = NULL;
 
+#if LOG_TO_FILE == 2
+/** The self root directory */
+EFI_FILE_PROTOCOL *gSelfDir = NULL;
+#endif
 
 /** Installs our overrides of UEFI services.*/
 EFI_STATUS
@@ -116,6 +120,9 @@ DumpUefiCallsEntrypoint (
 	IN EFI_SYSTEM_TABLE			*SystemTable
 )
 {
+#if LOG_TO_FILE == 2
+   gSelfDir = FsGetSelfRootDir();
+#endif
 	//
 	// Override StartImage
 	// other overrides will be done from there when boot loader is started

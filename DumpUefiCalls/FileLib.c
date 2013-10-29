@@ -313,3 +313,71 @@ FsSaveMemToFileToDefaultDir(
     
     return Status;
 }
+
+/** Appends memory block to a file. */
+EFI_STATUS
+FsAppendMemToFile(
+	IN EFI_FILE_PROTOCOL	*Dir,
+	IN CHAR16				*FileName,
+	IN VOID					*Data,
+	IN UINTN				DataSize
+)
+{
+   EFI_STATUS				Status;
+	EFI_FILE_PROTOCOL		*File;
+	
+	
+	if (Dir == NULL || FileName == NULL) {
+		return EFI_NOT_FOUND;
+	}
+	
+	// open to create it
+	Status = Dir->Open(Dir, &File, FileName, EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE | EFI_FILE_MODE_CREATE, 0);
+	if (EFI_ERROR(Status)) {
+		return Status;
+	}
+	Status = File->SetPosition(File, 0xFFFFFFFFFFFFFFFF);
+	if (EFI_ERROR(Status)) {
+		return Status;
+	}
+	Status = File->Write(File, &DataSize, Data);
+	File->Close(File);
+    
+    return Status;
+}
+
+/** Appends memory block to a file. Tries to save in "self dir",
+ *  and if this is not possible then to first ESP/EFI partition.
+ */
+EFI_STATUS
+FsAppendMemToFileToDefaultDir(
+	IN CHAR16			*FileName,
+	IN VOID				*Data,
+	IN UINTN			DataSize
+)
+{
+   EFI_STATUS			Status;
+	EFI_FILE_PROTOCOL	*Dir;
+	
+	
+	if (FileName == NULL) {
+		return EFI_NOT_FOUND;
+	}
+	
+	// try saving to "self dir"
+	Dir = FsGetSelfDir();
+	Status = FsAppendMemToFile(Dir, FileName, Data, DataSize);
+	if (Dir != NULL) {
+		Dir->Close(Dir);
+	}
+	if (EFI_ERROR(Status)) {
+		// error - try saving to ESP root dir
+		Dir = FsGetEspRootDir();
+		Status = FsAppendMemToFile(Dir, FileName, Data, DataSize);
+		if (Dir != NULL) {
+			Dir->Close(Dir);
+		}
+	}
+    
+    return Status;
+}

@@ -22,11 +22,14 @@
 #define MEM_LOG_MAX_SIZE		(2 * 1024 * 1024)
 #define MEM_LOG_MAX_LINE_SIZE	1024
 
+/** The self root directory */
+extern EFI_FILE_PROTOCOL *gSelfDir;
 
 /** Prints log messages to memory buffer. */
 EFI_STATUS
 MemLogPrint(IN MEM_LOG *MemLog, IN CHAR8 *Format, ...)
 {
+   EFI_STATUS Status = EFI_SUCCESS;
 	VA_LIST		Marker;
 	UINTN		DataWritten;
 	
@@ -55,9 +58,16 @@ MemLogPrint(IN MEM_LOG *MemLog, IN CHAR8 *Format, ...)
 		Format,
 		Marker);
 	VA_END (Marker);
+
+#if LOG_TO_FILE == 2
+   if (gSelfDir != NULL) {
+      Status = FsAppendMemToFile(gSelfDir, LOG_TO_FILE_PATH, (VOID*)(MemLog->Buffer + MemLog->Size), DataWritten);
+   }
+#endif
+   // write to file
 	MemLog->Size += DataWritten;
 	
-	return EFI_SUCCESS;
+	return Status;
 }
 
 
@@ -65,5 +75,5 @@ MemLogPrint(IN MEM_LOG *MemLog, IN CHAR8 *Format, ...)
 EFI_STATUS
 MemLogSave(IN MEM_LOG *MemLog)
 {
-	return FsSaveMemToFileToDefaultDir(L"Log.txt", (VOID*)MemLog->Buffer, MemLog->Size);
+	return FsSaveMemToFileToDefaultDir(LOG_TO_FILE_PATH, (VOID*)MemLog->Buffer, MemLog->Size);
 }	

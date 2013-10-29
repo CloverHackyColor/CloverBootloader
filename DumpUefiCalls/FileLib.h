@@ -74,5 +74,23 @@ FsSaveMemToFileToDefaultDir(
 	IN UINTN			DataSize
 );
 
+/** Appends memory block to a file. */
+EFI_STATUS
+FsAppendMemToFile(
+	IN EFI_FILE_PROTOCOL	*Dir,
+	IN CHAR16				*FileName,
+	IN VOID					*Data,
+	IN UINTN				DataSize
+);
+
+/** Appends memory block to a file. Tries to save in "self dir",
+ *  and if this is not possible then to first ESP/EFI partition.
+ */
+EFI_STATUS
+FsAppendMemToFileToDefaultDir(
+	IN CHAR16			*FileName,
+	IN VOID				*Data,
+	IN UINTN			DataSize
+);
 
 #endif // __DMP_FILE_LIB_H__

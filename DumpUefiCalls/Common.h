@@ -25,9 +25,19 @@
 //  gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0xFFFFFFFF
 // in package DSC file
 //
-#define LOG_TO_SCREEN		0
+#define LOG_TO_SCREEN		1
 #define LOG_TO_SERIAL		0
-#define LOG_TO_FILE			1
+
+//
+// LOG_TO_FILE
+// Enable/disable output: 1 or 0, 2 for append
+//
+#define LOG_TO_FILE			2
+
+//
+// LOG_TO_FILE_PATH
+//
+#define LOG_TO_FILE_PATH L"\\EFI\\CLOVER\\misc\\UefiCalls.log"
 
 //
 // PRINT calls our main logger.
@@ -47,7 +57,7 @@
 // 1 - will print shell vars in PrintRTVariables()
 // 0 - will skipp shell vars
 //
-#define PRINT_SHELL_VARS		0
+#define PRINT_SHELL_VARS		1
 
 
 #endif // __DMP_COMMON_H__

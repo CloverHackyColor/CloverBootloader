@@ -26,7 +26,7 @@
 CHAR8	*gLogLineBuffer = NULL;
 
 /** Pool for log into memory. */
-MEM_LOG gMemLog;
+static MEM_LOG gMemLog;
 
 
 /** Prints log messages to outputs defined by PRINT_TO_* defs in Common.h. */
@@ -67,7 +67,7 @@ LogPrint(CHAR8 *Format, ...)
 	DebugPrint(1, gLogLineBuffer);
 	#endif
 	
-	#if LOG_TO_FILE == 1
+	#if LOG_TO_FILE >= 1
 	if (InBootServices) {
 		MemLogPrint(&gMemLog, gLogLineBuffer);
 	}
