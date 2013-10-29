@@ -286,11 +286,14 @@ CoreSetTimer (
 
   Event->Timer.TriggerTime = 0;
   Event->Timer.Period = 0;
-  Event->Timer.Type = Type;
+//  Event->Timer.Type = Type;
 
   if (Type != TimerCancel) {
 
     if (Type == TimerPeriodic) {
+      if (TriggerTime == 0) {
+        gTimer->GetTimerPeriod (gTimer, &TriggerTime);
+      }
       Event->Timer.Period = TriggerTime;
     }
 

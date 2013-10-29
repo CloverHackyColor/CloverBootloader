@@ -147,8 +147,12 @@ L_64Eip:    .space      4
 L_SavedCs:  .space      2
 L_64BitCode:
     .byte   0x90
-    .byte   0x67,0xbc                  # mov esp, imm32
-L_SavedSp:  .space      4              # restore stack
+#    .byte   0x67,0xbc                  # mov esp, imm32
+#L_SavedSp:  .space      4              # restore stack
+# change from 29.10.2013 rev 14814
+    .byte   0x48,0xbc                  # mov rsp, imm64
+L_SavedSp:  .space      8              # restore stack
+
     nop
     ret
 

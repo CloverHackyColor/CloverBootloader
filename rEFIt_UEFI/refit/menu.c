@@ -3739,7 +3739,6 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
   REFIT_MENU_ENTRY  *TmpChosenEntry = NULL;
   UINTN             MenuExit = 0;
   UINTN             SubMenuExit;
-  //  SCROLL_STATE      State;
   CHAR16*           Flags;
   MENU_STYLE_FUNC   Style = TextMenuStyle;
   MENU_STYLE_FUNC   SubStyle;
@@ -3753,13 +3752,11 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
   
   //remember, if you extended this menu then change procedures
   // FillInputs and ApplyInputs
- // if (gThemeChanged || (OptionMenu.EntryCount == 0)) {
-//    OptionMenu.TitleImage = BuiltinIcon(BUILTIN_ICON_FUNC_OPTIONS);
-//  }
   
   if (OptionMenu.EntryCount == 0) {
     OptionMenu.TitleImage = BuiltinIcon(BUILTIN_ICON_FUNC_OPTIONS);
-    OptionMenu.AnimeRun = FALSE;
+    OptionMenu.ID = SCREEN_OPTIONS;
+    OptionMenu.AnimeRun = GetAnime(SubScreen); //FALSE;
     Flags = AllocateZeroPool(255);
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
     *ChosenEntry = (REFIT_MENU_ENTRY*)InputBootArgs;   
@@ -3869,7 +3866,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
             }
             if (TmpChosenEntry->ShortcutDigit == 0xF1) {
               MenuExit = MENU_EXIT_ENTER;
-              DBG("Escape menu from input dialog\n");
+         //     DBG("Escape menu from input dialog\n");
               ApplyInputs();
               return;
             } //if F1                  
@@ -3879,7 +3876,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
       MenuExit = 0;
       if ((*ChosenEntry)->ShortcutDigit == 0xF1) {
         MenuExit = MENU_EXIT_ENTER;
-        DBG("Escape options menu\n"); 
+   //     DBG("Escape options menu\n"); 
         break;
       } //if F1      
     } // if MENU_EXIT_ENTER
