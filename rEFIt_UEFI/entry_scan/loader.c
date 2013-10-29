@@ -1118,31 +1118,26 @@ static UINT8 GetOSTypeFromPath(IN CHAR16 *Path, IN UINT8 OSType)
   return (OSType == 0) ? OSTYPE_OTHER : OSType;
 }
 
-static LOADER_ENTRY *AddCustomEntry(IN UINTN                CustomIndex,
-                                    IN CHAR16              *CustomPath,
-                                    IN CUSTOM_LOADER_ENTRY *Custom,
-                                    IN BOOLEAN              IsSubEntry)
+static VOID AddCustomEntry(IN UINTN                CustomIndex,
+                           IN CHAR16              *CustomPath,
+                           IN CUSTOM_LOADER_ENTRY *Custom,
+                           IN REFIT_MENU_SCREEN   *SubMenu)
 {
-  UINTN                VolumeIndex;
-  REFIT_VOLUME        *Volume;
-  CUSTOM_LOADER_ENTRY *CustomSubEntry;
-  LOADER_ENTRY        *Entry = NULL, *SubEntry;
-  EG_IMAGE            *Image, *DriveImage;
-  EFI_GUID            *Guid = NULL;
-  UINT64               VolumeSize;
-  UINT8                OSType;
-  
+  UINTN         VolumeIndex;
+  REFIT_VOLUME *Volume;
+  BOOLEAN       IsSubEntry = (SubMenu != NULL);
+
   if (CustomPath == NULL) {
     DBG("Custom %sentry %d skipped because it didn't have a path.\n", IsSubEntry ? L"sub " : L"", CustomIndex);
-    return NULL;
+    return;
   }
   if (OSFLAG_ISSET(Custom->Flags, OSFLAG_DISABLED)) {
     DBG("Custom %sentry %d skipped because it is disabled.\n", IsSubEntry ? L"sub " : L"", CustomIndex);
-    return NULL;
+    return;
   }
   if (!gSettings.ShowHiddenEntries && OSFLAG_ISSET(Custom->Flags, OSFLAG_HIDDEN)) {
     DBG("Custom %sentry %d skipped because it is hidden.\n", IsSubEntry ? L"sub " : L"", CustomIndex);
-    return NULL;
+    return;
   }
   if (Custom->Volume) {
     if (Custom->Title) {
@@ -1162,9 +1157,15 @@ static LOADER_ENTRY *AddCustomEntry(IN UINTN                CustomIndex,
     DBG("Custom %sentry %d \"%s\" (%d) 0x%X matching all volumes ...\n", IsSubEntry ? L"sub " : L"", CustomIndex, ((Custom->Options != NULL) ? Custom->Options : L""), Custom->Type, Custom->Flags);
   }
   for (VolumeIndex = 0; VolumeIndex < VolumesCount; ++VolumeIndex) {
+    CUSTOM_LOADER_ENTRY *CustomSubEntry;
+    LOADER_ENTRY        *Entry = NULL;
+    EG_IMAGE            *Image, *DriveImage;
+    EFI_GUID            *Guid = NULL;
+    UINT64               VolumeSize;
+    UINT8                OSType;
+
     Volume = Volumes[VolumeIndex];
-    
-    if (Volume->RootDir == NULL) {
+    if ((Volume == NULL) || (Volume->RootDir == NULL)) {
       continue;
     }
     if (Volume->VolName == NULL) {
@@ -1293,10 +1294,7 @@ static LOADER_ENTRY *AddCustomEntry(IN UINTN                CustomIndex,
             }
             // Create sub entries
             for (CustomSubEntry = Custom->SubEntries; CustomSubEntry; CustomSubEntry = CustomSubEntry->Next) {
-              SubEntry = AddCustomEntry(CustomSubIndex++, (CustomSubEntry->Path != NULL) ? CustomSubEntry->Path : CustomPath, CustomSubEntry, TRUE);
-              if (SubEntry) {
-                AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
-              }
+              AddCustomEntry(CustomSubIndex++, (CustomSubEntry->Path != NULL) ? CustomSubEntry->Path : CustomPath, CustomSubEntry, SubScreen);
             }
             AddMenuEntry(SubScreen, &MenuEntryReturn);
             Entry->me.SubScreen = SubScreen;
@@ -1304,8 +1302,10 @@ static LOADER_ENTRY *AddCustomEntry(IN UINTN                CustomIndex,
         }
       }
     }
+    if (Entry != NULL) {
+      AddMenuEntry(IsSubEntry ? SubMenu : &MainMenu, (REFIT_MENU_ENTRY *)Entry);
+    }
   }
-  return Entry;
 }
 
 // Add custom entries
@@ -1317,37 +1317,32 @@ VOID AddCustomEntries(VOID)
   DBG("Custom entries start\n");
   // Traverse the custom entries
   for (Custom = gSettings.CustomEntries; Custom; ++i, Custom = Custom->Next) {
-    LOADER_ENTRY *Entry = NULL;
-    
     if ((Custom->Path == NULL) && (Custom->Type != 0)) {
       if (OSTYPE_IS_OSX(Custom->Type)) {
-        Entry = AddCustomEntry(i, MACOSX_LOADER_PATH, Custom, FALSE);
+        AddCustomEntry(i, MACOSX_LOADER_PATH, Custom, NULL);
       } else if (OSTYPE_IS_OSX_RECOVERY(Custom->Type)) {
-        Entry = AddCustomEntry(i, L"\\com.apple.recovery.boot\\boot.efi", Custom, FALSE);
+        AddCustomEntry(i, L"\\com.apple.recovery.boot\\boot.efi", Custom, NULL);
       } else if (OSTYPE_IS_OSX_INSTALLER(Custom->Type)) {
         UINTN Index = 0;
         while (Index < OSXInstallerPathsCount) {
-          Entry = AddCustomEntry(i, OSXInstallerPaths[Index++], Custom, FALSE);
+          AddCustomEntry(i, OSXInstallerPaths[Index++], Custom, NULL);
         }
       } else if (OSTYPE_IS_WINDOWS(Custom->Type)) {
-        Entry = AddCustomEntry(i, L"\\EFI\\Microsoft\\Boot\\bootmgfw.efi", Custom, FALSE);
+        AddCustomEntry(i, L"\\EFI\\Microsoft\\Boot\\bootmgfw.efi", Custom, NULL);
       } else if (OSTYPE_IS_LINUX(Custom->Type)) {
         UINTN Index = 0;
         while (Index < LinuxEntryPathsCount) {
-          Entry = AddCustomEntry(i, LinuxEntryPaths[Index++], Custom, FALSE);
+          AddCustomEntry(i, LinuxEntryPaths[Index++], Custom, NULL);
         }
       } else {
 #if defined(MDE_CPU_X64)
-        Entry = AddCustomEntry(i, L"\\EFI\\BOOT\\BOOTX64.efi", Custom, FALSE);
+        AddCustomEntry(i, L"\\EFI\\BOOT\\BOOTX64.efi", Custom, NULL);
 #else
-        Entry = AddCustomEntry(i, L"\\EFI\\BOOT\\BOOTIA32.efi", Custom, FALSE);
+        AddCustomEntry(i, L"\\EFI\\BOOT\\BOOTIA32.efi", Custom, NULL);
 #endif
       }
     } else {
-      Entry = AddCustomEntry(i, Custom->Path, Custom, FALSE);
-    }
-    if (Entry != NULL) {
-      AddMenuEntry(&MainMenu, (REFIT_MENU_ENTRY *)Entry);
+      AddCustomEntry(i, Custom->Path, Custom, NULL);
     }
   }
   DBG("Custom entries finish\n");
