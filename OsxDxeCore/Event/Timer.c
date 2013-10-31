@@ -291,9 +291,9 @@ CoreSetTimer (
   if (Type != TimerCancel) {
 
     if (Type == TimerPeriodic) {
-      if (TriggerTime == 0) {
+/*      if (TriggerTime == 0) {
         gTimer->GetTimerPeriod (gTimer, &TriggerTime);
-      }
+      } */
       Event->Timer.Period = TriggerTime;
     }
 
