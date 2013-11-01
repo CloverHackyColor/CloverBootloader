@@ -49,7 +49,8 @@
 
 #define MACOSX_LOADER_PATH L"\\System\\Library\\CoreServices\\boot.efi"
 
-#define LINUX_LOADER_PATH L"\\boot\\vmlinuz"
+#define LINUX_BOOT_PATH L"\\boot"
+#define LINUX_LOADER_PATH L"vmlinuz"
 #define LINUX_DEFAULT_OPTIONS L"quiet splash"
 
 #if defined(MDE_CPU_X64)
@@ -944,7 +945,7 @@ VOID ScanLoader(VOID)
     // Use standard location for boot.efi, unless the file /.IAPhysicalMedia is present
     // That file indentifies a 2nd-stage Install Media, so when present, skip standard path to avoid entry duplication
     if (!FileExists(Volume->RootDir, L"\\.IAPhysicalMedia")) {
-      if(!EFI_ERROR(GetRootUUID(Volume)) || isFirstRootUUID(Volume)) {
+      if(EFI_ERROR(GetRootUUID(Volume)) || isFirstRootUUID(Volume)) {
         AddLoaderEntry(MACOSX_LOADER_PATH, NULL, L"Mac OS X", Volume, NULL, OSTYPE_OSX, 0);
       }
     }
@@ -980,26 +981,15 @@ VOID ScanLoader(VOID)
       REFIT_DIR_ITER  Iter;
       EFI_FILE_INFO  *FileInfo = NULL;
       // open the /boot directory (or whatever directory path)
-      CHAR16         *Path = LINUX_LOADER_PATH;
-      CHAR16         *FileName = Basename(Path);
-      CHAR16         *BootDir = NULL;
-      UINTN           Length = (FileName - Path);
-      if (Length > 1) {
-        BootDir = AllocateZeroPool(Length--);
-        StrnCpy(BootDir, FileName, Length);
-        DirIterOpen(Volume->RootDir, BootDir, &Iter);
-        FreePool(BootDir);
-      } else {
-        DirIterOpen(Volume->RootDir, NULL, &Iter);
-      }
+      DirIterOpen(Volume->RootDir, LINUX_BOOT_PATH, &Iter);
       // get all the filename matches
-      while (DirIterNext(&Iter, 2, FileName, &FileInfo)) {
+      while (DirIterNext(&Iter, 2, LINUX_LOADER_PATH, &FileInfo)) {
         if (FileInfo != NULL) {
           // get the kernel file path
-          CHAR16 *Path = PoolPrint(L"%s\\%s", (BootDir == NULL) ? L"" : BootDir, FileInfo->FileName);
+          CHAR16 *Path = PoolPrint(L"%s\\%s", LINUX_BOOT_PATH, FileInfo->FileName);
           CHAR16 *Options = NULL;
           // Find the init ram image
-          CHAR16 *InitRd = LinuxMatchInitImage(Iter.DirHandle, FileInfo->FileName + StrLen(FileName));
+          CHAR16 *InitRd = LinuxMatchInitImage(Iter.DirHandle, FileInfo->FileName + StrLen(LINUX_LOADER_PATH));
           if (InitRd != NULL) {
             Options = PoolPrint(L"initrd=%s %s", InitRd, LINUX_DEFAULT_OPTIONS);
             FreePool(InitRd);
@@ -1016,9 +1006,6 @@ VOID ScanLoader(VOID)
       }
       //close the directory
       DirIterClose(&Iter);
-      if (BootDir != NULL) {
-        FreePool(BootDir);
-      }
     }
 
     //     DBG("search for  optical UEFI\n");
