@@ -50,8 +50,10 @@
 #define MACOSX_LOADER_PATH L"\\System\\Library\\CoreServices\\boot.efi"
 
 #define LINUX_BOOT_PATH L"\\boot"
+#define LINUX_BOOT_ALT_PATH L"/boot"
 #define LINUX_LOADER_PATH L"vmlinuz"
-#define LINUX_DEFAULT_OPTIONS L"quiet splash"
+#define LINUX_LOADER_SEARCH_PATH L"vmlinuz*"
+#define LINUX_DEFAULT_OPTIONS L"ro quiet splash"
 
 #if defined(MDE_CPU_X64)
 #define BOOT_LOADER_PATH L"\\EFI\\BOOT\\BOOTX64.efi"
@@ -912,6 +914,7 @@ VOID ScanLoader(VOID)
 {
   UINTN         VolumeIndex, Index;
   REFIT_VOLUME *Volume;
+  EFI_GUID     *PartGUID;
   
   DBG("Scanning loaders...\n");
   
@@ -977,27 +980,34 @@ VOID ScanLoader(VOID)
                      LoadOSIcon(LinuxEntryData[Index].Icon, L"unknown", 128, FALSE, TRUE), OSTYPE_LIN, OSFLAG_NODEFAULTARGS);
     }
     // check for linux kernels
-    if (Volume->RootDir != NULL) {
+    PartGUID = FindGPTPartitionGuidInDevicePath(Volume->DevicePath);
+    if ((PartGUID != NULL) && (Volume->RootDir != NULL)) {
       REFIT_DIR_ITER  Iter;
       EFI_FILE_INFO  *FileInfo = NULL;
+      CHAR16          PartUUID[40];
+      UnicodeSPrint(PartUUID, sizeof(PartUUID), L"%g", PartGUID);
       // open the /boot directory (or whatever directory path)
       DirIterOpen(Volume->RootDir, LINUX_BOOT_PATH, &Iter);
       // get all the filename matches
-      while (DirIterNext(&Iter, 2, LINUX_LOADER_PATH, &FileInfo)) {
+      while (DirIterNext(&Iter, 2, LINUX_LOADER_SEARCH_PATH, &FileInfo)) {
         if (FileInfo != NULL) {
-          // get the kernel file path
-          CHAR16 *Path = PoolPrint(L"%s\\%s", LINUX_BOOT_PATH, FileInfo->FileName);
-          CHAR16 *Options = NULL;
-          // Find the init ram image
-          CHAR16 *InitRd = LinuxMatchInitImage(Iter.DirHandle, FileInfo->FileName + StrLen(LINUX_LOADER_PATH));
-          if (InitRd != NULL) {
-            Options = PoolPrint(L"initrd=%s %s", InitRd, LINUX_DEFAULT_OPTIONS);
-            FreePool(InitRd);
-          }
-          // Add the entry
-          AddLoaderEntry(Path, (Options == NULL) ? LINUX_DEFAULT_OPTIONS : Options, NULL, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
-          if (Options != NULL) {
-            FreePool(Options);
+          if (FileInfo->FileSize > 0) {
+            // get the kernel file path
+            CHAR16 *Path = PoolPrint(L"%s\\%s", LINUX_BOOT_PATH, FileInfo->FileName);
+            CHAR16 *Options = NULL;
+            // Find the init ram image
+            CHAR16 *InitRd = LinuxMatchInitImage(Iter.DirHandle, FileInfo->FileName + StrLen(LINUX_LOADER_PATH));
+            if (InitRd != NULL) {
+              Options = PoolPrint(L"root=PARTUUID=%s initrd=%s/%s %s", PartUUID, LINUX_BOOT_ALT_PATH, InitRd, LINUX_DEFAULT_OPTIONS);
+              FreePool(InitRd);
+            } else {
+              Options = PoolPrint(L"root=PARTUUID=%s %s", PartUUID, LINUX_DEFAULT_OPTIONS);
+            }
+            // Add the entry
+            AddLoaderEntry(Path, (Options == NULL) ? LINUX_DEFAULT_OPTIONS : Options, NULL, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
+            if (Options != NULL) {
+              FreePool(Options);
+            }
           }
           // free the file info
           FreePool(FileInfo);
