@@ -55,6 +55,8 @@ extern INTN ScrollButtonsHeight;
 extern INTN ScrollBarDecorationsHeight;
 extern INTN ScrollScrollDecorationsHeight;
 
+extern UINT8 GetOSTypeFromPath(IN CHAR16 *Path);
+
 // global configuration with default values
 REFIT_CONFIG   GlobalConfig = { FALSE, -1, 0, 0, 0, TRUE, FALSE, FALSE, FALSE, FALSE, FONT_ALFA, 7, 0xFFFFFF80, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, None, 0, FALSE, FALSE, FALSE };
 
@@ -330,6 +332,7 @@ static CUSTOM_LOADER_ENTRY *DuplicateCustomEntry(IN CUSTOM_LOADER_ENTRY *Entry)
 static BOOLEAN FillinCustomEntry(IN OUT CUSTOM_LOADER_ENTRY *Entry, TagPtr dictPointer, IN BOOLEAN SubEntry)
 {
   TagPtr prop;
+  UINT8  OSType;
   if ((Entry == NULL) || (dictPointer == NULL)) {
     return FALSE;
   }
@@ -494,9 +497,16 @@ static BOOLEAN FillinCustomEntry(IN OUT CUSTOM_LOADER_ENTRY *Entry, TagPtr dictP
       Entry->Type = OSTYPE_WINEFI;
     } else if (AsciiStriCmp(prop->string, "Linux") == 0) {
       Entry->Type = OSTYPE_LIN;
+    } else if (AsciiStriCmp(prop->string, "LinuxKernel") == 0) {
+      Entry->Type = OSTYPE_LINEFI;
     } else {
       Entry->Type = OSTYPE_OTHER;
     }
+  }
+  // fix the type if it's forgotten or incorrect
+  OSType = GetOSTypeFromPath(Entry->Path);
+  if ((Entry->Type != OSType) && ((OSType != OSTYPE_OTHER) || (Entry->Type == 0))) {
+    Entry->Type = OSType;
   }
   prop = GetProperty(dictPointer, "VolumeType");
   if (prop && (prop->type == kTagTypeString)) {
@@ -4121,15 +4131,10 @@ EFI_STATUS SaveSettings()
 //dmazar
 CHAR16* GetExtraKextsDir(CHAR8 *OSVersion)
 {
-  CHAR8       *OSTypeStr;
-  CHAR16      *SrcDir = NULL;
+  CHAR16 *SrcDir = NULL;
 
-  if (OSVersion) {
-    OSTypeStr = AllocateZeroPool(5);
-    AsciiStrnCpy(OSTypeStr, OSVersion, 4); // TODO: Sothor - is this right?
-  } else {
-    OSTypeStr = AllocateZeroPool(6);
-    UnicodeStrToAsciiStr(L"Other", OSTypeStr);
+  if (OSVersion == NULL) {
+    OSVersion = "Other";
   }
   
   //MsgLog("OS=%s\n", OSTypeStr);
@@ -4137,7 +4142,7 @@ CHAR16* GetExtraKextsDir(CHAR8 *OSVersion)
   // find source injection folder with kexts
   // note: we are just checking for existance of particular folder, not checking if it is empty or not
   // check OEM subfolders: version speciffic or default to Other
-  SrcDir = PoolPrint(L"%s\\kexts\\%a", OEMPath, OSTypeStr);
+  SrcDir = PoolPrint(L"%s\\kexts\\%a", OEMPath, OSVersion);
   if (!FileExists(SelfVolume->RootDir, SrcDir)) {
     FreePool(SrcDir);
     SrcDir = PoolPrint(L"%s\\kexts\\Other", OEMPath);
@@ -4148,7 +4153,7 @@ CHAR16* GetExtraKextsDir(CHAR8 *OSVersion)
   }
   if (SrcDir == NULL) {
     // if not found, check EFI\kexts\...
-    SrcDir = PoolPrint(L"\\EFI\\CLOVER\\kexts\\%a", OSTypeStr);
+    SrcDir = PoolPrint(L"\\EFI\\CLOVER\\kexts\\%a", OSVersion);
     if (!FileExists(SelfVolume->RootDir, SrcDir)) {
       FreePool(SrcDir);
  //     SrcDir = PoolPrint(L"\\EFI\\CLOVER\\kexts\\Other", gSettings.OEMProduct);
@@ -4159,8 +4164,6 @@ CHAR16* GetExtraKextsDir(CHAR8 *OSVersion)
       }
     }
   }
-  
-  FreePool(OSTypeStr);
   
   return SrcDir;
 }
@@ -4181,10 +4184,13 @@ EFI_STATUS SetFSInjection(IN LOADER_ENTRY *Entry)
     Volume = Entry->Volume;
     
     // some checks?
+    /*
+    // apianti - can't really rely on this because it's a stupid dummy head
     if (Volume->BootType != BOOTING_BY_EFI) {
         MsgLog("not started - not an EFI boot\n");
         return EFI_UNSUPPORTED;
     }
+    // */
     
     // get FSINJECTION_PROTOCOL
     Status = gBS->LocateProtocol(&gFSInjectProtocolGuid, NULL, (void **)&FSInject);

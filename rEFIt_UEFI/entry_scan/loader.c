@@ -47,38 +47,56 @@
 #define DBG(...) DebugLog(DEBUG_SCAN_LOADER, __VA_ARGS__)
 #endif
 
-#define MACOSX_LOADER_PATH      L"\\System\\Library\\CoreServices\\boot.efi"
+#define MACOSX_LOADER_PATH L"\\System\\Library\\CoreServices\\boot.efi"
 
-STATIC CHAR16 *LinuxEntryPaths[] = {
-  L"\\EFI\\SuSe\\elilo.efi",
+#define LINUX_LOADER_PATH L"\\boot\\vmlinuz"
+#define LINUX_DEFAULT_OPTIONS L"quiet splash"
+
 #if defined(MDE_CPU_X64)
-  L"\\EFI\\grub\\grubx64.efi",
-  L"\\EFI\\Gentoo\\grubx64.efi",
-  L"\\EFI\\Gentoo\\kernelx64.efi",
-  L"\\EFI\\RedHat\\grubx64.efi",
-  L"\\EFI\\ubuntu\\grubx64.efi",
-  L"\\EFI\\kubuntu\\grubx64.efi",
-  L"\\EFI\\LinuxMint\\grubx64.efi",
-  L"\\EFI\\Fedora\\grubx64.efi",
-  L"\\EFI\\opensuse\\grubx64.efi",
-  L"\\EFI\\arch\\grubx64.efi",
-  L"\\EFI\\arch_grub\\grubx64.efi",
+#define BOOT_LOADER_PATH L"\\EFI\\BOOT\\BOOTX64.efi"
 #else
-  L"\\EFI\\grub\\grub.efi",
-  L"\\EFI\\Gentoo\\grub.efi",
-  L"\\EFI\\Gentoo\\kernel.efi",
-  L"\\EFI\\RedHat\\grub.efi",
-  L"\\EFI\\ubuntu\\grub.efi",
-  L"\\EFI\\kubuntu\\grub.efi",
-  L"\\EFI\\LinuxMint\\grub.efi",
-  L"\\EFI\\Fedora\\grub.efi",
-  L"\\EFI\\opensuse\\grub.efi",
-  L"\\EFI\\arch\\grub.efi",
-  L"\\EFI\\arch_grub\\grub.efi",
+#define BOOT_LOADER_PATH L"\\EFI\\BOOT\\BOOTIA32.efi"
 #endif
-};
-STATIC CONST UINTN LinuxEntryPathsCount = (sizeof(LinuxEntryPaths) / sizeof(CHAR16 *));
 
+// Linux loader path data
+typedef struct LINUX_PATH_DATA
+{
+   CHAR16 *Path;
+   CHAR16 *Title;
+   CHAR16 *Icon;
+} LINUX_PATH_DATA;
+
+STATIC LINUX_PATH_DATA LinuxEntryData[] = {
+#if defined(MDE_CPU_X64)
+  { L"\\EFI\\grub\\grubx64.efi", L"Grub EFI boot menu", L"grub,linux" },
+  { L"\\EFI\\Gentoo\\grubx64.efi", L"Gentoo EFI boot menu", L"gentoo,linux" },
+  { L"\\EFI\\Gentoo\\kernelx64.efi", L"Gentoo EFI kernel", L"gentoo,linux" },
+  { L"\\EFI\\RedHat\\grubx64.efi", L"RedHat EFI boot menu", L"rehat,linux" },
+  { L"\\EFI\\ubuntu\\grubx64.efi", L"Ubuntu EFI boot menu", L"ubuntu,linux" },
+  { L"\\EFI\\kubuntu\\grubx64.efi", L"kubuntu EFI boot menu", L"kubuntu,linux" },
+  { L"\\EFI\\LinuxMint\\grubx64.efi", L"Linux Mint EFI boot menu", L"mint,linux" },
+  { L"\\EFI\\Fedora\\grubx64.efi", L"Fedora EFI boot menu", L"fedora,linux" },
+  { L"\\EFI\\opensuse\\grubx64.efi", L"OpenSuse EFI boot menu", L"suse,linux" },
+  { L"\\EFI\\arch\\grubx64.efi", L"ArchLinux EFI boot menu", L"arch,linux" },
+  { L"\\EFI\\arch_grub\\grubx64.efi", L"ArchLinux EFI boot menu", L"arch,linux" },
+#else
+  { L"\\EFI\\grub\\grub.efi", L"Grub EFI boot menu", L"grub,linux" },
+  { L"\\EFI\\Gentoo\\grub.efi", L"Gentoo EFI boot menu", L"gentoo,linux" },
+  { L"\\EFI\\Gentoo\\kernel.efi", L"Gentoo EFI kernel", L"gentoo,linux" },
+  { L"\\EFI\\RedHat\\grub.efi", L"RedHat EFI boot menu", L"rehat,linux" },
+  { L"\\EFI\\ubuntu\\grub.efi", L"Ubuntu EFI boot menu", L"ubuntu,linux" },
+  { L"\\EFI\\kubuntu\\grub.efi", L"kubuntu EFI boot menu", L"kubuntu,linux" },
+  { L"\\EFI\\LinuxMint\\grub.efi", L"Linux Mint EFI boot menu", L"mint,linux" },
+  { L"\\EFI\\Fedora\\grub.efi", L"Fedora EFI boot menu", L"fedora,linux" },
+  { L"\\EFI\\opensuse\\grub.efi", L"OpenSuse EFI boot menu", L"suse,linux" },
+  { L"\\EFI\\arch\\grub.efi", L"ArchLinux EFI boot menu", L"arch,linux" },
+  { L"\\EFI\\arch_grub\\grub.efi", L"ArchLinux EFI boot menu", L"arch,linux" },
+#endif
+  { L"\\EFI\\SuSe\\elilo.efi", L"OpenSuse EFI boot menu", L"suse,linux" },
+};
+STATIC CONST UINTN LinuxEntryDataCount = (sizeof(LinuxEntryData) / sizeof(LINUX_PATH_DATA));
+
+// OS X installer paths
 STATIC CHAR16 *OSXInstallerPaths[] = {
   L"\\Mac OS X Install Data\\boot.efi",
   L"\\OS X Install Data\\boot.efi",
@@ -86,11 +104,107 @@ STATIC CHAR16 *OSXInstallerPaths[] = {
 };
 STATIC CONST UINTN OSXInstallerPathsCount = (sizeof(OSXInstallerPaths) / sizeof(CHAR16 *));
 
+#define TO_LOWER(ch) (((ch >= L'A') || (ch <= L'Z')) ? (ch - L'A' + L'a') : ch)
+STATIC INTN StrniCmp(IN CHAR16 *Str1,
+                     IN CHAR16 *Str2,
+                     IN UINTN   Count)
+{
+  CHAR16 Ch1, Ch2;
+  if (Count == 0) {
+    return 0;
+  }
+  if (Str1 == NULL) {
+    if (Str2 == NULL) {
+      return 0;
+    } else {
+      return -1;
+    }
+  } else  if (Str2 == NULL) {
+    return 1;
+  }
+  do {
+    Ch1 = TO_LOWER(*Str1);
+    Ch2 = TO_LOWER(*Str2);
+    Str1++;
+    Str2++;
+  } while ((--Count > 0) && (Ch1 == Ch2) && (Ch1 != 0));
+  return (Ch1 - Ch2);
+}
+
+UINT8 GetOSTypeFromPath(IN CHAR16 *Path)
+{
+  if (Path == NULL) {
+    return OSTYPE_OTHER;
+  }
+  if (StriCmp(Path, MACOSX_LOADER_PATH) == 0) {
+    return OSTYPE_OSX;
+  } else if ((StriCmp(Path, L"\\OS X Install Data\\boot.efi") == 0) ||
+             (StriCmp(Path, L"\\Mac OS X Install Data\\boot.efi") == 0) ||
+             (StriCmp(Path, L"\\.IABootFiles\\boot.efi") == 0)) {
+    return OSTYPE_OSX_INSTALLER;
+  } else if (StriCmp(Path, L"\\com.apple.recovery.boot\\boot.efi") == 0) {
+    return OSTYPE_RECOVERY;
+  } else if ((StriCmp(Path, L"\\EFI\\Microsoft\\Boot\\bootmgfw.efi") == 0) ||
+             (StriCmp(Path, L"\\EFI\\Microsoft\\Boot\\bootmgfw-orig.efi") == 0) ||
+             (StriCmp(Path, L"\\bootmgr.efi") == 0) ||
+             (StriCmp(Path, L"\\EFI\\MICROSOFT\\BOOT\\cdboot.efi") == 0)) {
+    return OSTYPE_WINEFI;
+  } else if (StrniCmp(Path, LINUX_LOADER_PATH, StrLen(LINUX_LOADER_PATH)) == 0) {
+    return OSTYPE_LINEFI;
+  } else {
+    UINTN Index = 0;
+    while (Index < LinuxEntryDataCount) {
+      if (StriCmp(Path, LinuxEntryData[Index].Path) == 0) {
+        return OSTYPE_LIN;
+      }
+      ++Index;
+    }
+  }
+  return OSTYPE_OTHER;
+}
+
+STATIC CHAR16 *LinuxIconNameFromPath(IN CHAR16 *Path)
+{
+  UINTN Index = 0;
+  while (Index < LinuxEntryDataCount) {
+    if (StriCmp(Path, LinuxEntryData[Index].Path) == 0) {
+      return LinuxEntryData[Index].Icon;
+    }
+    ++Index;
+  }
+  return L"linux";
+}
+
+STATIC CHAR16 *LinuxInitImagePath[] = {
+   L"initrd%s",
+   L"initrd.img%s",
+   L"initrd%s.img",
+   L"initramfs%s",
+   L"initramfs.img%s",
+   L"initramfs%s.img",
+};
+STATIC CONST UINTN LinuxInitImagePathCount = (sizeof(LinuxInitImagePath) / sizeof(CHAR16 *));
+
+STATIC CHAR16 *LinuxMatchInitImage(IN EFI_FILE_PROTOCOL *Dir,
+                                   IN CHAR16            *Version)
+{
+   UINTN Index = 0;
+   while (Index < LinuxInitImagePathCount) {
+     CHAR16 *InitRd = PoolPrint(LinuxInitImagePath[Index++], Version);
+     if (InitRd != NULL) {
+       if (FileExists(Dir, InitRd)) {
+         return InitRd;
+       }
+       FreePool(InitRd);
+     }
+   }
+   return NULL;
+}
 
 STATIC BOOLEAN isFirstRootUUID(REFIT_VOLUME *Volume)
 {
-  UINTN                   VolumeIndex;
-  REFIT_VOLUME            *scanedVolume;
+  UINTN         VolumeIndex;
+  REFIT_VOLUME *scanedVolume;
   
   for (VolumeIndex = 0; VolumeIndex < VolumesCount; VolumeIndex++) {
     scanedVolume = Volumes[VolumeIndex];
@@ -372,12 +486,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
   
   // prepare the menu entry
   Entry = AllocateZeroPool(sizeof(LOADER_ENTRY));
-  if (Volume->BootType == BOOTING_BY_EFI) {
-    Entry->me.Tag          = TAG_LOADER;
-  } else {
-    Entry->me.Tag          = TAG_LEGACY;
-  }
-  
+  Entry->me.Tag = TAG_LOADER;
   Entry->me.Row = 0;
   Entry->Volume = Volume;
   
@@ -438,7 +547,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
       ShortcutLetter = 'V';
       break;
     case OSTYPE_LIN:
-      OSIconName = L"linux";// Sothor - This is now here only for Custom Entries, the default scan loads them and passes as a parameter
+      OSIconName = LinuxIconNameFromPath(LoaderPath);
       ShortcutLetter = 'L';
       break;
     case OSTYPE_OTHER:
@@ -701,42 +810,57 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
     }
     
-  } else if (Entry->LoaderType == OSTYPE_LIN) {   // entries for elilo
+  } else if (Entry->LoaderType == OSTYPE_LINEFI) {
+    BOOLEAN Quiet = (StrStr(Entry->LoadOptions, L"quiet") != NULL);
+    BOOLEAN WithSplash = (StrStr(Entry->LoadOptions, L"splash") != NULL);
     SubEntry = DuplicateLoaderEntry(Entry);
     if (SubEntry) {
-      SubEntry->me.Title        = PoolPrint(L"Run %s in interactive mode", FileName);
-      SubEntry->LoadOptions     = L"-p";
-      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+      FreePool(SubEntry->LoadOptions);
+      if (Quiet) {
+        SubEntry->me.Title    = PoolPrint(L"%s verbose", Entry->me.Title);
+        SubEntry->LoadOptions = RemoveLoadOption(Entry->LoadOptions, L"quiet");
+      } else {
+        SubEntry->me.Title    = PoolPrint(L"%s quiet", Entry->me.Title);
+        SubEntry->LoadOptions = AddLoadOption(Entry->LoadOptions, L"quiet");
+      }
     }
-    
     SubEntry = DuplicateLoaderEntry(Entry);
     if (SubEntry) {
-      SubEntry->me.Title        = L"Boot Linux for a 17\" iMac or a 15\" MacBook Pro (*)";
-      SubEntry->Flags           = OSFLAG_SET(SubEntry->Flags, OSFLAG_USEGRAPHICS);
-      SubEntry->LoadOptions     = L"-d 0 i17";
-      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+      FreePool(SubEntry->LoadOptions);
+      if (WithSplash) {
+        SubEntry->me.Title    = PoolPrint(L"%s without splash", Entry->me.Title);
+        SubEntry->LoadOptions = RemoveLoadOption(Entry->LoadOptions, L"splash");
+      } else {
+        SubEntry->me.Title    = PoolPrint(L"%s with splash", Entry->me.Title);
+        SubEntry->LoadOptions = AddLoadOption(Entry->LoadOptions, L"splash");
+      }
     }
-    
     SubEntry = DuplicateLoaderEntry(Entry);
     if (SubEntry) {
-      SubEntry->me.Title        = L"Boot Linux for a 20\" iMac (*)";
-      SubEntry->Flags           = OSFLAG_SET(SubEntry->Flags, OSFLAG_USEGRAPHICS);
-      SubEntry->LoadOptions     = L"-d 0 i20";
-      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+      FreePool(SubEntry->LoadOptions);
+      if (WithSplash) {
+        if (Quiet) {
+          CHAR16 *TempOptions = RemoveLoadOption(Entry->LoadOptions, L"splash");
+          SubEntry->me.Title    = PoolPrint(L"%s verbose without splash", Entry->me.Title);
+          SubEntry->LoadOptions = RemoveLoadOption(Entry->LoadOptions, L"quiet");
+          FreePool(TempOptions);
+        } else {
+          CHAR16 *TempOptions = RemoveLoadOption(Entry->LoadOptions, L"splash");
+          SubEntry->me.Title    = PoolPrint(L"%s quiet without splash", Entry->me.Title);
+          SubEntry->LoadOptions = AddLoadOption(Entry->LoadOptions, L"quiet");
+          FreePool(TempOptions);
+        }
+      } else if (Quiet) {
+        CHAR16 *TempOptions = RemoveLoadOption(Entry->LoadOptions, L"quiet");
+        SubEntry->me.Title    = PoolPrint(L"%s verbose with splash", Entry->me.Title);
+        SubEntry->LoadOptions = AddLoadOption(Entry->LoadOptions, L"splash");
+        FreePool(TempOptions);
+      } else {
+        SubEntry->me.Title    = PoolPrint(L"%s quiet with splash", Entry->me.Title);
+        SubEntry->LoadOptions = AddLoadOption(Entry->LoadOptions, L"quiet splash");
+      }
     }
-    
-    SubEntry = DuplicateLoaderEntry(Entry);
-    if (SubEntry) {
-      SubEntry->me.Title        = L"Boot Linux for a Mac Mini (*)";
-      SubEntry->Flags           = OSFLAG_SET(SubEntry->Flags, OSFLAG_USEGRAPHICS);
-      SubEntry->LoadOptions     = L"-d 0 mini";
-      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
-    }
-    
-    AddMenuInfoLine(SubScreen, L"NOTE: This is an example. Entries");
-    AddMenuInfoLine(SubScreen, L"marked with (*) may not work.");
-    
-  } else if ((Entry->LoaderType == OSTYPE_WIN) || (Entry->LoaderType == OSTYPE_WINEFI)) {   // entries for xom.efi
+  } else if ((Entry->LoaderType == OSTYPE_WIN) || (Entry->LoaderType == OSTYPE_WINEFI)) {
     // by default, skip the built-in selection and boot from hard disk only
     Entry->LoadOptions = L"-s -h";
     
@@ -769,10 +893,14 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
   // DBG("    Added '%s': OSType='%d', OSVersion='%a'\n", Entry->me.Title, Entry->LoaderType, Entry->OSVersion);
 }
 
-STATIC VOID AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOptions, IN CHAR16 *FullTitle, IN CHAR16 *LoaderTitle, IN REFIT_VOLUME *Volume,
-                                  IN EG_IMAGE *Image, IN EG_IMAGE *DriveImage, IN UINT8 OSType, IN UINT8 Flags, IN CHAR16 Hotkey)
+STATIC VOID AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOptions, IN CHAR16 *LoaderTitle,
+                           IN REFIT_VOLUME *Volume, IN EG_IMAGE *Image, IN UINT8 OSType, IN UINT8 Flags)
 {
-  LOADER_ENTRY *Entry = CreateLoaderEntry(LoaderPath, LoaderOptions, FullTitle, LoaderTitle, Volume, Image, DriveImage, OSType, Flags, Hotkey, FALSE);
+  LOADER_ENTRY *Entry;
+  if ((LoaderPath == NULL) || (Volume == NULL) || (Volume->RootDir == NULL) || !FileExists(Volume->RootDir, LoaderPath)) {
+    return;
+  }
+  Entry = CreateLoaderEntry(LoaderPath, LoaderOptions, NULL, LoaderTitle, Volume, Image, NULL, OSType, Flags, 0, FALSE);
   if (Entry != NULL) {
     AddDefaultMenu(Entry);
     AddMenuEntry(&MainMenu, (REFIT_MENU_ENTRY *)Entry);
@@ -781,11 +909,8 @@ STATIC VOID AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOptions, IN C
 
 VOID ScanLoader(VOID)
 {
-  UINTN                   VolumeIndex;
-  REFIT_VOLUME            *Volume;
-  CHAR16                  FileName[256];
-  EFI_STATUS              Status;
-  EG_IMAGE                *Image;
+  UINTN         VolumeIndex, Index;
+  REFIT_VOLUME *Volume;
   
   DBG("Scanning loaders...\n");
   
@@ -816,310 +941,99 @@ VOID ScanLoader(VOID)
     }
     DBG("\n");
     
-    // check for Mac OS X boot loader
-    StrCpy(FileName, MACOSX_LOADER_PATH);
     // Use standard location for boot.efi, unless the file /.IAPhysicalMedia is present
     // That file indentifies a 2nd-stage Install Media, so when present, skip standard path to avoid entry duplication
-    if (FileExists(Volume->RootDir, FileName) && !FileExists(Volume->RootDir, L"\\.IAPhysicalMedia")) {
-      //     Print(L"  - Mac OS X boot file found\n");
-      Volume->BootType = BOOTING_BY_EFI;
-      // check for Mac OS X Boot target
-      Status = GetRootUUID(Volume);
-      if(!EFI_ERROR(Status)) {
-        //Volume->OSType = OSTYPE_BOOT_OSX;
-        if (isFirstRootUUID(Volume))
-          AddLoaderEntry(FileName, NULL, NULL, L"Mac OS X", Volume, NULL, NULL, OSTYPE_OSX, 0, 0);
+    if (!FileExists(Volume->RootDir, L"\\.IAPhysicalMedia")) {
+      if(!EFI_ERROR(GetRootUUID(Volume)) || isFirstRootUUID(Volume)) {
+        AddLoaderEntry(MACOSX_LOADER_PATH, NULL, L"Mac OS X", Volume, NULL, OSTYPE_OSX, 0);
       }
-      else {
-        AddLoaderEntry(FileName, NULL, NULL, L"Mac OS X", Volume, NULL, NULL, OSTYPE_OSX, 0, 0);
-      }
-      //     continue; //boot MacOSX only
-    }
-    //crazybirdy
-    //============ add in begin ============
-    // check for Mac OS X Install Data
-    StrCpy(FileName, L"\\OS X Install Data\\boot.efi");
-    if (FileExists(Volume->RootDir, FileName)) {
-      Volume->BootType = BOOTING_BY_EFI;
-      AddLoaderEntry(FileName, NULL, NULL, L"OS X Install", Volume, NULL, NULL, OSTYPE_OSX_INSTALLER, 0, 0);
-      continue; //boot MacOSX only
     }
     // check for Mac OS X Install Data
-    StrCpy(FileName, L"\\Mac OS X Install Data\\boot.efi");
-    if (FileExists(Volume->RootDir, FileName)) {
-      Volume->BootType = BOOTING_BY_EFI;
-      AddLoaderEntry(FileName, NULL, NULL, L"Mac OS X Install", Volume, NULL, NULL, OSTYPE_OSX_INSTALLER, 0, 0);
-      continue; //boot MacOSX only
-    }
-    // dmazar: ML install from Lion to empty partition
-    // starting (Lion) partition: /.IABootFiles with boot.efi and kernelcache,
-    // and with DMGs used from Install app.
-    // destination partition: just logs and config
-    StrCpy(FileName, L"\\.IABootFiles\\boot.efi");
-    if (FileExists(Volume->RootDir, FileName)) {
-      Volume->BootType = BOOTING_BY_EFI;
-      AddLoaderEntry(FileName, NULL, NULL, L"OS X Install", Volume, NULL, NULL, OSTYPE_OSX_INSTALLER, 0, 0);
-      //continue; //boot MacOSX only
-    }
-    //============ add in end ============
-    
+    AddLoaderEntry(L"\\OS X Install Data\\boot.efi", NULL, L"OS X Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
+    AddLoaderEntry(L"\\Mac OS X Install Data\\boot.efi", NULL, L"Mac OS X Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
+    AddLoaderEntry(L"\\.IABootFiles\\boot.efi", NULL, L"OS X Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
     // check for Mac OS X Recovery Boot
-    StrCpy(FileName,  L"\\com.apple.recovery.boot\\boot.efi");
-    if (FileExists(Volume->RootDir, FileName)) {
-      Volume->BootType = BOOTING_BY_EFI;
-      AddLoaderEntry(FileName, NULL, NULL, L"Recovery", Volume, NULL, NULL, OSTYPE_RECOVERY, 0, 0);
-      continue; //boot recovery only
-    }
-    
+    AddLoaderEntry(L"\\com.apple.recovery.boot\\boot.efi", NULL, L"Recovery", Volume, NULL, OSTYPE_RECOVERY, 0);
+
     // Sometimes, on some systems (HP UEFI, if Win is installed first)
     // it is needed to get rid of bootmgfw.efi to allow starting of
     // Clover as /efi/boot/bootx64.efi from HD. We can do that by renaming
     // bootmgfw.efi to bootmgfw-orig.efi
-    StrCpy(FileName, L"\\EFI\\Microsoft\\Boot\\bootmgfw-orig.efi");
-    if (FileExists(Volume->RootDir, FileName)) {
-      //     Print(L"  - Microsoft boot menu found\n");
-      Volume->BootType = BOOTING_BY_EFI;
-      AddLoaderEntry(FileName, L"", NULL, L"Microsoft EFI boot menu", Volume, NULL, NULL, OSTYPE_WINEFI, 0, 0);
-      //     continue;
-      
-    } else {
-      // check for Microsoft boot loader/menu
-      // If there is bootmgfw-orig.efi, then do not check for bootmgfw.efi
-      // since on some systems this will actually be CloverX64.efi
-      // renamed to bootmgfw.efi
-      StrCpy(FileName, L"\\EFI\\Microsoft\\Boot\\bootmgfw.efi");
-      if (FileExists(Volume->RootDir, FileName)) {
-        //     Print(L"  - Microsoft boot menu found\n");
-        Volume->BootType = BOOTING_BY_EFI;
-        AddLoaderEntry(FileName, L"", NULL, L"Microsoft EFI boot menu", Volume, NULL, NULL, OSTYPE_WINEFI, 0, 0);
-        //     continue;
-      }
-      
-    }
-    
+    AddLoaderEntry(L"\\EFI\\Microsoft\\Boot\\bootmgfw-orig.efi", L"", L"Microsoft EFI boot menu", Volume, NULL, OSTYPE_WINEFI, 0);
     // check for Microsoft boot loader/menu
-    StrCpy(FileName, L"\\bootmgr.efi");
-    if (FileExists(Volume->RootDir, FileName)) {
-      //     Print(L"  - Microsoft boot menu found\n");
-      Volume->BootType = BOOTING_BY_EFI;
-      AddLoaderEntry(FileName, L"", NULL, L"Microsoft EFI boot menu", Volume, NULL, NULL, OSTYPE_WINEFI, 0, 0);
-      continue;
-    }
-    
+    // If there is bootmgfw-orig.efi, then do not check for bootmgfw.efi
+    // since on some systems this will actually be CloverX64.efi
+    // renamed to bootmgfw.efi
+    AddLoaderEntry(L"\\EFI\\Microsoft\\Boot\\bootmgfw.efi", L"", L"Microsoft EFI boot menu", Volume, NULL, OSTYPE_WINEFI, 0);
+    // check for Microsoft boot loader/menu
+    AddLoaderEntry(L"\\bootmgr.efi", L"", L"Microsoft EFI boot menu", Volume, NULL, OSTYPE_WINEFI, 0);
     // check for Microsoft boot loader/menu on CDROM
-    StrCpy(FileName, L"\\EFI\\MICROSOFT\\BOOT\\cdboot.efi");
-    if (FileExists(Volume->RootDir, FileName)) {
-      //     Print(L"  - Microsoft boot menu found\n");
-      Volume->BootType = BOOTING_BY_EFI;
-      AddLoaderEntry(FileName, L"", NULL, L"Microsoft EFI boot menu", Volume, NULL, NULL, OSTYPE_WINEFI, 0, 0);
-      continue;
-    }
+    AddLoaderEntry(L"\\EFI\\MICROSOFT\\BOOT\\cdboot.efi", L"", L"Microsoft EFI boot menu", Volume, NULL, OSTYPE_WINEFI, 0);
     
-    
-    // check for grub boot loader/menu
-#if defined(MDE_CPU_X64)
-    StrCpy(FileName, L"\\EFI\\grub\\grubx64.efi");
-#else
-    StrCpy(FileName, L"\\EFI\\grub\\grub.efi");
-#endif
-    if (FileExists(Volume->RootDir, FileName)) {
-      // Sothor - we know what icon we are looking for lets just load it now
-      Image = LoadOSIcon(L"grub,linux", L"unknown", 128, FALSE, TRUE);
-      Volume->BootType = BOOTING_BY_EFI;
-      AddLoaderEntry(FileName, L"", NULL, L"Grub EFI boot menu", Volume, Image, NULL, OSTYPE_LIN, OSFLAG_NODEFAULTARGS, 0);
+    // check for linux loaders
+    for (Index = 0; Index < LinuxEntryDataCount; ++Index) {
+      AddLoaderEntry(LinuxEntryData[Index].Path, L"", LinuxEntryData[Index].Title, Volume,
+                     LoadOSIcon(LinuxEntryData[Index].Icon, L"unknown", 128, FALSE, TRUE), OSTYPE_LIN, OSFLAG_NODEFAULTARGS);
     }
-    
-    // check for Gentoo boot loader/menu
-#if defined(MDE_CPU_X64)
-    StrCpy(FileName, L"\\EFI\\Gentoo\\grubx64.efi");
-#else
-    StrCpy(FileName, L"\\EFI\\Gentoo\\grub.efi");
-#endif
-    if (FileExists(Volume->RootDir, FileName)) {
-      // Sothor - we know what icon we are looking for lets just load it now
-      Image = LoadOSIcon(L"gentoo,linux", L"unknown", 128, FALSE, TRUE);
-      Volume->BootType = BOOTING_BY_EFI;
-      AddLoaderEntry(FileName, L"", NULL, L"Gentoo EFI boot menu", Volume, Image, NULL, OSTYPE_LIN, OSFLAG_NODEFAULTARGS, 0);
-    }
-    
-    // check for Gentoo kernel
-#if defined(MDE_CPU_X64)
-    StrCpy(FileName, L"\\EFI\\Gentoo\\kernelx64.efi");
-#else
-    StrCpy(FileName, L"\\EFI\\Gentoo\\kernel.efi");
-#endif
-    if (FileExists(Volume->RootDir, FileName)) {
-      // Sothor - we know what icon we are looking for lets just load it now
-      Image = LoadOSIcon(L"gentoo,linux", L"unknown", 128, FALSE, TRUE);
-      Volume->BootType = BOOTING_BY_EFI;
-      AddLoaderEntry(FileName, L"", NULL, L"Gentoo EFI kernel", Volume, Image, NULL, OSTYPE_LIN, OSFLAG_NODEFAULTARGS, 0);
-    }
-    
-    // check for Redhat boot loader/menu
-#if defined(MDE_CPU_X64)
-    StrCpy(FileName, L"\\EFI\\RedHat\\grubx64.efi");
-#else
-    StrCpy(FileName, L"\\EFI\\RedHat\\grub.efi");
-#endif
-    if (FileExists(Volume->RootDir, FileName)) {
-      // Sothor - we know what icon we are looking for lets just load it now
-      Image = LoadOSIcon(L"redhat,linux", L"unknown", 128, FALSE, TRUE);
-      Volume->BootType = BOOTING_BY_EFI;
-      AddLoaderEntry(FileName, L"", NULL, L"RedHat EFI boot menu", Volume, Image, NULL, OSTYPE_LIN, OSFLAG_NODEFAULTARGS, 0);
-    }
-    
-    // check for Ubuntu boot loader/menu
-#if defined(MDE_CPU_X64)
-    StrCpy(FileName, L"\\EFI\\Ubuntu\\grubx64.efi");
-#else
-    StrCpy(FileName, L"\\EFI\\Ubuntu\\grub.efi");
-#endif
-    if (FileExists(Volume->RootDir, FileName)) {
-      // Sothor - we know what icon we are looking for lets just load it now
-      Image = LoadOSIcon(L"ubuntu,linux", L"unknown", 128, FALSE, TRUE);
-      Volume->BootType = BOOTING_BY_EFI;
-      AddLoaderEntry(FileName, L"", NULL, L"Ubuntu EFI boot menu", Volume, Image, NULL, OSTYPE_LIN, OSFLAG_NODEFAULTARGS, 0);
-    }
-    
-    // check for kubuntu boot loader/menu
-#if defined(MDE_CPU_X64)
-    StrCpy(FileName, L"\\EFI\\kubuntu\\grubx64.efi");
-#else
-    StrCpy(FileName, L"\\EFI\\kubuntu\\grub.efi");
-#endif
-    if (FileExists(Volume->RootDir, FileName)) {
-      // Sothor - we know what icon we are looking for lets just load it now
-      Image = LoadOSIcon(L"kubuntu,linux", L"unknown", 128, FALSE, TRUE);
-      Volume->BootType = BOOTING_BY_EFI;
-      AddLoaderEntry(FileName, L"", NULL, L"kubuntu EFI boot menu", Volume, Image, NULL, OSTYPE_LIN, OSFLAG_NODEFAULTARGS, 0);
-    }
-    
-    // check for Linux Mint boot loader/menu
-#if defined(MDE_CPU_X64)
-    StrCpy(FileName, L"\\EFI\\Linuxmint\\grubx64.efi");
-#else
-    StrCpy(FileName, L"\\EFI\\Linuxmint\\grub.efi");
-#endif
-    if (FileExists(Volume->RootDir, FileName)) {
-      // Sothor - we know what icon we are looking for lets just load it now
-      Image = LoadOSIcon(L"mint,linux", L"unknown", 128, FALSE, TRUE);
-      Volume->BootType = BOOTING_BY_EFI;
-      AddLoaderEntry(FileName, L"", NULL, L"Linux Mint EFI boot menu", Volume, Image, NULL, OSTYPE_LIN, OSFLAG_NODEFAULTARGS, 0);
-    }
-    
-    // check for Fedora boot loader/menu
-#if defined(MDE_CPU_X64)
-    StrCpy(FileName, L"\\EFI\\Fedora\\grubx64.efi");
-#else
-    StrCpy(FileName, L"\\EFI\\Fedora\\grub.efi");
-#endif
-    if (FileExists(Volume->RootDir, FileName)) {
-      // Sothor - we know what icon we are looking for lets just load it now
-      Image = LoadOSIcon(L"fedora,linux", L"unknown", 128, FALSE, TRUE);
-      Volume->BootType = BOOTING_BY_EFI;
-      AddLoaderEntry(FileName, L"", NULL, L"Fedora EFI boot menu", Volume, Image, NULL, OSTYPE_LIN, OSFLAG_NODEFAULTARGS, 0);
-    }
-    
-    // check for OpenSuse boot loader/menu
-    StrCpy(FileName, L"\\EFI\\SuSe\\elilo.efi");
-    if (FileExists(Volume->RootDir, FileName)) {
-      // Sothor - we know what icon we are looking for lets just load it now
-      Image = LoadOSIcon(L"suse,linux", L"unknown", 128, FALSE, TRUE);
-      Volume->BootType = BOOTING_BY_EFI;
-      AddLoaderEntry(FileName, L"", NULL, L"OpenSuse EFI boot menu", Volume, Image, NULL, OSTYPE_LIN, OSFLAG_NODEFAULTARGS, 0);
-    }
-    
-#if defined(MDE_CPU_X64)
-    StrCpy(FileName, L"\\EFI\\opensuse\\grubx64.efi");
-#else
-    StrCpy(FileName, L"\\EFI\\opensuse\\grub.efi");
-#endif
-    if (FileExists(Volume->RootDir, FileName)) {
-      // Sothor - we know what icon we are looking for lets just load it now
-      Image = LoadOSIcon(L"suse,linux", L"unknown", 128, FALSE, TRUE);
-      Volume->BootType = BOOTING_BY_EFI;
-      AddLoaderEntry(FileName, L"", NULL, L"OpenSuse EFI boot menu", Volume, Image, NULL, OSTYPE_LIN, OSFLAG_NODEFAULTARGS, 0);
-    }
-    
-    // check for archlinux boot loader/menu
-#if defined(MDE_CPU_X64)
-    StrCpy(FileName, L"\\EFI\\arch\\grubx64.efi");
-#else
-    StrCpy(FileName, L"\\EFI\\arch\\grub.efi");
-#endif
-    if (FileExists(Volume->RootDir, FileName)) {
-      // Sothor - we know what icon we are looking for lets just load it now
-      Image = LoadOSIcon(L"arch,linux", L"unknown", 128, FALSE, TRUE);
-      Volume->BootType = BOOTING_BY_EFI;
-      AddLoaderEntry(FileName, L"", NULL, L"ArchLinux EFI boot menu", Volume, Image, NULL, OSTYPE_LIN, OSFLAG_NODEFAULTARGS, 0);
-    }
-    
-#if defined(MDE_CPU_X64)
-    StrCpy(FileName, L"\\EFI\\arch_grub\\grubx64.efi");
-#else
-    StrCpy(FileName, L"\\EFI\\arch_grub\\grub.efi");
-#endif
-    if (FileExists(Volume->RootDir, FileName)) {
-      // Sothor - we know what icon we are looking for lets just load it now
-      Image = LoadOSIcon(L"arch,linux", L"unknown", 128, FALSE, TRUE);
-      Volume->BootType = BOOTING_BY_EFI;
-      AddLoaderEntry(FileName, L"", NULL, L"ArchLinux EFI boot menu", Volume, Image, NULL, OSTYPE_LIN, OSFLAG_NODEFAULTARGS, 0);
-    }
-    
-#if defined(MDE_CPU_X64)
-    StrCpy(FileName, L"\\EFI\\BOOT\\BOOTX64.efi");
-#else
-    StrCpy(FileName, L"\\EFI\\BOOT\\BOOTIA32.efi");
-#endif
-    //     DBG("search for  optical UEFI\n");
-    if (FileExists(Volume->RootDir, FileName) && Volume->DiskKind == DISK_KIND_OPTICAL) {
-      Volume->BootType = BOOTING_BY_EFI;
-      AddLoaderEntry(FileName, L"", NULL, L"UEFI optical", Volume, NULL, NULL, OSTYPE_OTHER, 0, 0);
-      //      continue;
-    }
-    
-    //     DBG("search for internal UEFI\n");
-    if (FileExists(Volume->RootDir, FileName) && Volume->DiskKind == DISK_KIND_INTERNAL) {
-      Volume->BootType = BOOTING_BY_EFI;
-      AddLoaderEntry(FileName, L"", NULL, L"UEFI internal", Volume, NULL, NULL, OSTYPE_OTHER, 0, 0);
-      //      continue;
-    }
-    
-    //    DBG("search for external UEFI\n");
-    if (FileExists(Volume->RootDir, FileName) && Volume->DiskKind == DISK_KIND_EXTERNAL) {
-      Volume->BootType = BOOTING_BY_EFI;
-      AddLoaderEntry(FileName, L"", NULL, L"UEFI external", Volume, NULL, NULL, OSTYPE_OTHER, 0, 0);
-      //      continue;
-    }
-  }
-}
-
-static UINT8 GetOSTypeFromPath(IN CHAR16 *Path, IN UINT8 OSType)
-{
-  if (Path == NULL) {
-    return (OSType == 0) ? OSTYPE_OTHER : OSType;
-  }
-  if ((StriCmp(Path, MACOSX_LOADER_PATH) == 0) ||
-      (StriCmp(Path, L"\\OS X Install Data\\boot.efi") == 0) ||
-      (StriCmp(Path, L"\\Mac OS X Install Data\\boot.efi") == 0) ||
-      (StriCmp(Path, L"\\.IABootFiles\\boot.efi") == 0)) {
-    return OSType;
-  } else if (StriCmp(Path, L"\\com.apple.recovery.boot\\boot.efi") == 0) {
-    return OSTYPE_RECOVERY;
-  } else if ((StriCmp(Path, L"\\EFI\\Microsoft\\Boot\\bootmgfw.efi") == 0) ||
-             (StriCmp(Path, L"\\bootmgr.efi") == 0) ||
-             (StriCmp(Path, L"\\EFI\\MICROSOFT\\BOOT\\cdboot.efi") == 0)) {
-    return OSTYPE_WINEFI;
-  } else {
-    UINTN Index = 0;
-    while (Index < LinuxEntryPathsCount) {
-      if (StriCmp(Path, LinuxEntryPaths[Index]) == 0) {
-        return OSTYPE_LIN;
+    // check for linux kernels
+    if (Volume->RootDir != NULL) {
+      REFIT_DIR_ITER  Iter;
+      EFI_FILE_INFO  *FileInfo = NULL;
+      // open the /boot directory (or whatever directory path)
+      CHAR16         *Path = LINUX_LOADER_PATH;
+      CHAR16         *FileName = Basename(Path);
+      CHAR16         *BootDir = NULL;
+      UINTN           Length = (FileName - Path);
+      if (Length > 1) {
+        BootDir = AllocateZeroPool(Length--);
+        StrnCpy(BootDir, FileName, Length);
+        DirIterOpen(Volume->RootDir, BootDir, &Iter);
+        FreePool(BootDir);
+      } else {
+        DirIterOpen(Volume->RootDir, NULL, &Iter);
       }
-      ++Index;
+      // get all the filename matches
+      while (DirIterNext(&Iter, 2, FileName, &FileInfo)) {
+        if (FileInfo != NULL) {
+          // get the kernel file path
+          CHAR16 *Path = PoolPrint(L"%s\\%s", (BootDir == NULL) ? L"" : BootDir, FileInfo->FileName);
+          CHAR16 *Options = NULL;
+          // Find the init ram image
+          CHAR16 *InitRd = LinuxMatchInitImage(Iter.DirHandle, FileInfo->FileName + StrLen(FileName));
+          if (InitRd != NULL) {
+            Options = PoolPrint(L"initrd=%s %s", InitRd, LINUX_DEFAULT_OPTIONS);
+            FreePool(InitRd);
+          }
+          // Add the entry
+          AddLoaderEntry(Path, (Options == NULL) ? LINUX_DEFAULT_OPTIONS : Options, NULL, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
+          if (Options != NULL) {
+            FreePool(Options);
+          }
+          // free the file info
+          FreePool(FileInfo);
+          FileInfo = NULL;
+        }
+      }
+      //close the directory
+      DirIterClose(&Iter);
+      if (BootDir != NULL) {
+        FreePool(BootDir);
+      }
+    }
+
+    //     DBG("search for  optical UEFI\n");
+    if (Volume->DiskKind == DISK_KIND_OPTICAL) {
+      AddLoaderEntry(BOOT_LOADER_PATH, L"", L"UEFI optical", Volume, NULL, OSTYPE_OTHER, 0);
+    }
+    //     DBG("search for internal UEFI\n");
+    if (Volume->DiskKind == DISK_KIND_INTERNAL) {
+      AddLoaderEntry(BOOT_LOADER_PATH, L"", L"UEFI internal", Volume, NULL, OSTYPE_OTHER, 0);
+    }
+    //    DBG("search for external UEFI\n");
+    if (Volume->DiskKind == DISK_KIND_EXTERNAL) {
+      AddLoaderEntry(BOOT_LOADER_PATH, L"", L"UEFI external", Volume, NULL, OSTYPE_OTHER, 0);
     }
   }
-  return (OSType == 0) ? OSTYPE_OTHER : OSType;
 }
 
 STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
@@ -1166,7 +1080,6 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
     EG_IMAGE            *Image, *DriveImage;
     EFI_GUID            *Guid = NULL;
     UINT64               VolumeSize;
-    UINT8                OSType;
 
     Volume = Volumes[VolumeIndex];
     if ((Volume == NULL) || (Volume->RootDir == NULL)) {
@@ -1203,7 +1116,6 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
       continue;
     }
     // Check for exact volume matches
-    OSType = (Custom->Type == 0) ? GetOSTypeFromPath(CustomPath, 0/*Volume->OSType FIXME: Sothor - what should be here? We don't care what legacy os type is found */) : Custom->Type;
     if (Custom->Volume) {
       
       if ((StrStr(Volume->DevicePathString, Custom->Volume) == NULL) &&
@@ -1272,7 +1184,7 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
     Volume->BootType = BOOTING_BY_EFI;
     DBG("match!\n");
     // Create a entry for this volume
-    Entry = CreateLoaderEntry(CustomPath, Custom->Options, Custom->FullTitle, Custom->Title, Volume, Image, DriveImage, OSType, Custom->Flags, Custom->Hotkey, TRUE);
+    Entry = CreateLoaderEntry(CustomPath, Custom->Options, Custom->FullTitle, Custom->Title, Volume, Image, DriveImage, Custom->Type, Custom->Flags, Custom->Hotkey, TRUE);
     if (Entry != NULL) {
       if (OSFLAG_ISUNSET(Custom->Flags, OSFLAG_NODEFAULTMENU)) {
         AddDefaultMenu(Entry);
@@ -1283,7 +1195,7 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
         if (SubScreen) {
           SubScreen->Title = PoolPrint(L"Boot Options for %s on %s", (Custom->Title != NULL) ? Custom->Title : CustomPath, Entry->VolName);
           SubScreen->TitleImage = Entry->me.Image;
-          SubScreen->ID = OSType + 20;
+          SubScreen->ID = Custom->Type + 20;
           SubScreen->AnimeRun = GetAnime(SubScreen);
           VolumeSize = RShiftU64(MultU64x32(Volume->BlockIO->Media->LastBlock, Volume->BlockIO->Media->BlockSize), 20);
           AddMenuInfoLine(SubScreen, PoolPrint(L"Volume size: %dMb", VolumeSize));
@@ -1331,15 +1243,11 @@ VOID AddCustomEntries(VOID)
         AddCustomEntry(i, L"\\EFI\\Microsoft\\Boot\\bootmgfw.efi", Custom, NULL);
       } else if (OSTYPE_IS_LINUX(Custom->Type)) {
         UINTN Index = 0;
-        while (Index < LinuxEntryPathsCount) {
-          AddCustomEntry(i, LinuxEntryPaths[Index++], Custom, NULL);
+        while (Index < LinuxEntryDataCount) {
+          AddCustomEntry(i, LinuxEntryData[Index++].Path, Custom, NULL);
         }
       } else {
-#if defined(MDE_CPU_X64)
-        AddCustomEntry(i, L"\\EFI\\BOOT\\BOOTX64.efi", Custom, NULL);
-#else
-        AddCustomEntry(i, L"\\EFI\\BOOT\\BOOTIA32.efi", Custom, NULL);
-#endif
+        AddCustomEntry(i, BOOT_LOADER_PATH, Custom, NULL);
       }
     } else {
       AddCustomEntry(i, Custom->Path, Custom, NULL);

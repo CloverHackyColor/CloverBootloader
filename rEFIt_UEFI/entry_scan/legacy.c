@@ -203,12 +203,14 @@ VOID ScanLegacy(VOID)
       DBG(" hidden\n");
       continue;
     }
-    
+    /*
+    // apianti - this is not good since these get arbitrarily changed
     if ((Volume->BootType == BOOTING_BY_EFI) ||
         (Volume->BootType == BOOTING_BY_BOOTEFI)) {
       DBG(" not legacy\n");
       continue;
     }
+    // */
     
     ShowVolume = FALSE;
     HideIfOthersFound = FALSE;
@@ -296,12 +298,14 @@ VOID AddCustomLegacy(VOID)
           continue;
         }
       }
-      
+      /*
+      // apianti - this is not good since these get arbitrarily changed
       if ((Volume->BootType == BOOTING_BY_EFI) ||
           (Volume->BootType == BOOTING_BY_BOOTEFI)) {
         DBG("skipped because volume is not legacy bootable\n");
         continue;
       }
+      // */
       
       ShowVolume = FALSE;
       HideIfOthersFound = FALSE;
