@@ -53,7 +53,7 @@
 #define LINUX_BOOT_ALT_PATH L"/boot"
 #define LINUX_LOADER_PATH L"vmlinuz"
 #define LINUX_LOADER_SEARCH_PATH L"vmlinuz*"
-#define LINUX_DEFAULT_OPTIONS L"ro quiet splash"
+#define LINUX_DEFAULT_OPTIONS L"ro add_efi_memmap quiet splash vt.handoff=7"
 
 #if defined(MDE_CPU_X64)
 #define BOOT_LOADER_PATH L"\\EFI\\BOOT\\BOOTX64.efi"
@@ -107,7 +107,7 @@ STATIC CHAR16 *OSXInstallerPaths[] = {
 };
 STATIC CONST UINTN OSXInstallerPathsCount = (sizeof(OSXInstallerPaths) / sizeof(CHAR16 *));
 
-#define TO_LOWER(ch) (((ch >= L'A') || (ch <= L'Z')) ? (ch - L'A' + L'a') : ch)
+#define TO_LOWER(ch) (((ch >= L'A') && (ch <= L'Z')) ? ((ch - L'A') + L'a') : ch)
 STATIC INTN StrniCmp(IN CHAR16 *Str1,
                      IN CHAR16 *Str2,
                      IN UINTN   Count)
@@ -132,6 +132,13 @@ STATIC INTN StrniCmp(IN CHAR16 *Str1,
     Str2++;
   } while ((--Count > 0) && (Ch1 == Ch2) && (Ch1 != 0));
   return (Ch1 - Ch2);
+}
+STATIC VOID StrToLower(IN CHAR16 *Str)
+{
+   while (*Str) {
+     *Str = TO_LOWER(*Str);
+     ++Str;
+   }
 }
 
 UINT8 GetOSTypeFromPath(IN CHAR16 *Path)
@@ -984,8 +991,10 @@ VOID ScanLoader(VOID)
     if ((PartGUID != NULL) && (Volume->RootDir != NULL)) {
       REFIT_DIR_ITER  Iter;
       EFI_FILE_INFO  *FileInfo = NULL;
+      // Get the partition UUID and make sure it's lower case
       CHAR16          PartUUID[40];
       UnicodeSPrint(PartUUID, sizeof(PartUUID), L"%g", PartGUID);
+      StrToLower(PartUUID);
       // open the /boot directory (or whatever directory path)
       DirIterOpen(Volume->RootDir, LINUX_BOOT_PATH, &Iter);
       // get all the filename matches
@@ -995,13 +1004,13 @@ VOID ScanLoader(VOID)
             // get the kernel file path
             CHAR16 *Path = PoolPrint(L"%s\\%s", LINUX_BOOT_PATH, FileInfo->FileName);
             CHAR16 *Options = NULL;
-            // Find the init ram image
+            // Find the init ram image and select root
             CHAR16 *InitRd = LinuxMatchInitImage(Iter.DirHandle, FileInfo->FileName + StrLen(LINUX_LOADER_PATH));
             if (InitRd != NULL) {
-              Options = PoolPrint(L"root=PARTUUID=%s initrd=%s/%s %s", PartUUID, LINUX_BOOT_ALT_PATH, InitRd, LINUX_DEFAULT_OPTIONS);
+              Options = PoolPrint(L"root=/dev/disk/by-partuuid/%s initrd=%s/%s %s", PartUUID, LINUX_BOOT_ALT_PATH, InitRd, LINUX_DEFAULT_OPTIONS);
               FreePool(InitRd);
             } else {
-              Options = PoolPrint(L"root=PARTUUID=%s %s", PartUUID, LINUX_DEFAULT_OPTIONS);
+              Options = PoolPrint(L"root=/dev/disk/by-partuuid/%s %s", PartUUID, LINUX_DEFAULT_OPTIONS);
             }
             // Add the entry
             AddLoaderEntry(Path, (Options == NULL) ? LINUX_DEFAULT_OPTIONS : Options, NULL, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
