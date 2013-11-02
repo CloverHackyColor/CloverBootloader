@@ -49,6 +49,7 @@
 
 #define MACOSX_LOADER_PATH L"\\System\\Library\\CoreServices\\boot.efi"
 
+#define LINUX_ISSUE_PATH L"\\etc\\issue"
 #define LINUX_BOOT_PATH L"\\boot"
 #define LINUX_BOOT_ALT_PATH L"/boot"
 #define LINUX_LOADER_PATH L"vmlinuz"
@@ -68,31 +69,32 @@ typedef struct LINUX_PATH_DATA
    CHAR16 *Path;
    CHAR16 *Title;
    CHAR16 *Icon;
+   CHAR8  *Issue;
 } LINUX_PATH_DATA;
 
 STATIC LINUX_PATH_DATA LinuxEntryData[] = {
 #if defined(MDE_CPU_X64)
   { L"\\EFI\\grub\\grubx64.efi", L"Grub EFI boot menu", L"grub,linux" },
-  { L"\\EFI\\Gentoo\\grubx64.efi", L"Gentoo EFI boot menu", L"gentoo,linux" },
+  { L"\\EFI\\Gentoo\\grubx64.efi", L"Gentoo EFI boot menu", L"gentoo,linux", "Gentoo" },
   { L"\\EFI\\Gentoo\\kernelx64.efi", L"Gentoo EFI kernel", L"gentoo,linux" },
-  { L"\\EFI\\RedHat\\grubx64.efi", L"RedHat EFI boot menu", L"rehat,linux" },
-  { L"\\EFI\\ubuntu\\grubx64.efi", L"Ubuntu EFI boot menu", L"ubuntu,linux" },
-  { L"\\EFI\\kubuntu\\grubx64.efi", L"kubuntu EFI boot menu", L"kubuntu,linux" },
-  { L"\\EFI\\LinuxMint\\grubx64.efi", L"Linux Mint EFI boot menu", L"mint,linux" },
-  { L"\\EFI\\Fedora\\grubx64.efi", L"Fedora EFI boot menu", L"fedora,linux" },
-  { L"\\EFI\\opensuse\\grubx64.efi", L"OpenSuse EFI boot menu", L"suse,linux" },
+  { L"\\EFI\\RedHat\\grubx64.efi", L"RedHat EFI boot menu", L"redhat,linux", "Redhat" },
+  { L"\\EFI\\ubuntu\\grubx64.efi", L"Ubuntu EFI boot menu", L"ubuntu,linux", "Ubuntu" },
+  { L"\\EFI\\kubuntu\\grubx64.efi", L"kubuntu EFI boot menu", L"kubuntu,linux", "kubuntu" },
+  { L"\\EFI\\LinuxMint\\grubx64.efi", L"Linux Mint EFI boot menu", L"mint,linux", "Linux Mint" },
+  { L"\\EFI\\Fedora\\grubx64.efi", L"Fedora EFI boot menu", L"fedora,linux", "Fedora" },
+  { L"\\EFI\\opensuse\\grubx64.efi", L"OpenSuse EFI boot menu", L"suse,linux", "openSUSE" },
   { L"\\EFI\\arch\\grubx64.efi", L"ArchLinux EFI boot menu", L"arch,linux" },
   { L"\\EFI\\arch_grub\\grubx64.efi", L"ArchLinux EFI boot menu", L"arch,linux" },
 #else
   { L"\\EFI\\grub\\grub.efi", L"Grub EFI boot menu", L"grub,linux" },
-  { L"\\EFI\\Gentoo\\grub.efi", L"Gentoo EFI boot menu", L"gentoo,linux" },
+  { L"\\EFI\\Gentoo\\grub.efi", L"Gentoo EFI boot menu", L"gentoo,linux", "Gentoo" },
   { L"\\EFI\\Gentoo\\kernel.efi", L"Gentoo EFI kernel", L"gentoo,linux" },
-  { L"\\EFI\\RedHat\\grub.efi", L"RedHat EFI boot menu", L"rehat,linux" },
-  { L"\\EFI\\ubuntu\\grub.efi", L"Ubuntu EFI boot menu", L"ubuntu,linux" },
-  { L"\\EFI\\kubuntu\\grub.efi", L"kubuntu EFI boot menu", L"kubuntu,linux" },
-  { L"\\EFI\\LinuxMint\\grub.efi", L"Linux Mint EFI boot menu", L"mint,linux" },
-  { L"\\EFI\\Fedora\\grub.efi", L"Fedora EFI boot menu", L"fedora,linux" },
-  { L"\\EFI\\opensuse\\grub.efi", L"OpenSuse EFI boot menu", L"suse,linux" },
+  { L"\\EFI\\RedHat\\grub.efi", L"RedHat EFI boot menu", L"redhat,linux", "Redhat" },
+  { L"\\EFI\\ubuntu\\grub.efi", L"Ubuntu EFI boot menu", L"ubuntu,linux", "Ubuntu" },
+  { L"\\EFI\\kubuntu\\grub.efi", L"kubuntu EFI boot menu", L"kubuntu,linux", "kubuntu" },
+  { L"\\EFI\\LinuxMint\\grub.efi", L"Linux Mint EFI boot menu", L"mint,linux", "Linux Mint" },
+  { L"\\EFI\\Fedora\\grub.efi", L"Fedora EFI boot menu", L"fedora,linux", "Fedora" },
+  { L"\\EFI\\opensuse\\grub.efi", L"OpenSuse EFI boot menu", L"suse,linux", "openSUSE" },
   { L"\\EFI\\arch\\grub.efi", L"ArchLinux EFI boot menu", L"arch,linux" },
   { L"\\EFI\\arch_grub\\grub.efi", L"ArchLinux EFI boot menu", L"arch,linux" },
 #endif
@@ -180,7 +182,8 @@ UINT8 GetOSTypeFromPath(IN CHAR16 *Path)
   return OSTYPE_OTHER;
 }
 
-STATIC CHAR16 *LinuxIconNameFromPath(IN CHAR16 *Path)
+STATIC CHAR16 *LinuxIconNameFromPath(IN CHAR16            *Path,
+                                     IN EFI_FILE_PROTOCOL *RootDir)
 {
   UINTN Index = 0;
   while (Index < LinuxEntryDataCount) {
@@ -188,6 +191,23 @@ STATIC CHAR16 *LinuxIconNameFromPath(IN CHAR16 *Path)
       return LinuxEntryData[Index].Icon;
     }
     ++Index;
+  }
+  // Try to open the linux issue
+  if ((RootDir != NULL) && (StrniCmp(Path, LINUX_FULL_LOADER_PATH, StrLen(LINUX_FULL_LOADER_PATH)) == 0)) {
+    CHAR8 *Issue = NULL;
+    UINTN  IssueLen = 0;
+    if (!EFI_ERROR(egLoadFile(RootDir, LINUX_ISSUE_PATH, (UINT8 **)&Issue, &IssueLen)) && (Issue != NULL)) {
+      if (IssueLen > 0) {
+        for (Index = 0; Index < LinuxEntryDataCount; ++Index) {
+          if ((LinuxEntryData[Index].Issue != NULL) &&
+              (AsciiStrStr(Issue, LinuxEntryData[Index].Issue) != NULL)) {
+            FreePool(Issue);
+            return LinuxEntryData[Index].Icon;
+          }
+        }
+      }
+      FreePool(Issue);
+    }
   }
   return L"linux";
 }
@@ -565,7 +585,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
       break;
     case OSTYPE_LIN:
     case OSTYPE_LINEFI:
-      OSIconName = LinuxIconNameFromPath(LoaderPath);
+      OSIconName = LinuxIconNameFromPath(LoaderPath, Volume->RootDir);
       ShortcutLetter = 'L';
       break;
     case OSTYPE_OTHER:
@@ -655,7 +675,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
     AddMenuInfoLine(SubScreen, PoolPrint(L"UUID: %a", GuidStr));
     FreePool(GuidStr);
   }
-  
+  AddMenuInfoLine(SubScreen, PoolPrint(L"Options: %s", Entry->LoadOptions));
   
   // default entry
   SubEntry = DuplicateLoaderEntry(Entry);
@@ -820,9 +840,9 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
       SubEntry->me.Tag          = TAG_LOADER;
       SubEntry->LoaderPath      = EfiStrDuplicate(DiagsFileName);
       SubEntry->Volume          = Volume;
-      SubEntry->VolName         = Entry->VolName;
+      SubEntry->VolName         = EfiStrDuplicate(Entry->VolName);
       SubEntry->DevicePath      = FileDevicePath(Volume->DeviceHandle, SubEntry->LoaderPath);
-      SubEntry->DevicePathString = Entry->DevicePathString;
+      SubEntry->DevicePathString = EfiStrDuplicate(Entry->DevicePathString);
       SubEntry->Flags           = OSFLAG_SET(Entry->Flags, OSFLAG_USEGRAPHICS);
       SubEntry->me.AtClick      = ActionEnter;
       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
@@ -842,6 +862,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
         SubEntry->LoadOptions = AddLoadOption(Entry->LoadOptions, L"quiet");
       }
     }
+    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
     SubEntry = DuplicateLoaderEntry(Entry);
     if (SubEntry) {
       FreePool(SubEntry->LoadOptions);
@@ -853,6 +874,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
         SubEntry->LoadOptions = AddLoadOption(Entry->LoadOptions, L"splash");
       }
     }
+    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
     SubEntry = DuplicateLoaderEntry(Entry);
     if (SubEntry) {
       FreePool(SubEntry->LoadOptions);
@@ -860,12 +882,12 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
         if (Quiet) {
           CHAR16 *TempOptions = RemoveLoadOption(Entry->LoadOptions, L"splash");
           SubEntry->me.Title    = PoolPrint(L"%s verbose without splash", Entry->me.Title);
-          SubEntry->LoadOptions = RemoveLoadOption(Entry->LoadOptions, L"quiet");
+          SubEntry->LoadOptions = RemoveLoadOption(TempOptions, L"quiet");
           FreePool(TempOptions);
         } else {
           CHAR16 *TempOptions = RemoveLoadOption(Entry->LoadOptions, L"splash");
           SubEntry->me.Title    = PoolPrint(L"%s quiet without splash", Entry->me.Title);
-          SubEntry->LoadOptions = AddLoadOption(Entry->LoadOptions, L"quiet");
+          SubEntry->LoadOptions = AddLoadOption(TempOptions, L"quiet");
           FreePool(TempOptions);
         }
       } else if (Quiet) {
@@ -878,6 +900,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
         SubEntry->LoadOptions = AddLoadOption(Entry->LoadOptions, L"quiet splash");
       }
     }
+    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
   } else if ((Entry->LoaderType == OSTYPE_WIN) || (Entry->LoaderType == OSTYPE_WINEFI)) {
     // by default, skip the built-in selection and boot from hard disk only
     Entry->LoadOptions = L"-s -h";
@@ -1221,6 +1244,7 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
             AddMenuInfoLine(SubScreen, PoolPrint(L"UUID: %a", GuidStr));
             FreePool(GuidStr);
           }
+          AddMenuInfoLine(SubScreen, PoolPrint(L"Options: %s", Entry->LoadOptions));
           // Create sub entries
           for (CustomSubEntry = Custom->SubEntries; CustomSubEntry; CustomSubEntry = CustomSubEntry->Next) {
             AddCustomEntry(CustomSubIndex++, (CustomSubEntry->Path != NULL) ? CustomSubEntry->Path : CustomPath, CustomSubEntry, SubScreen);

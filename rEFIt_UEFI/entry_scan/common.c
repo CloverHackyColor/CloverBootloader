@@ -127,10 +127,10 @@ LOADER_ENTRY * DuplicateLoaderEntry(IN LOADER_ENTRY *Entry)
     DuplicateEntry->me.Tag          = Entry->me.Tag;
     DuplicateEntry->me.AtClick      = ActionEnter;
     DuplicateEntry->Volume          = Entry->Volume;
-    DuplicateEntry->DevicePathString = Entry->DevicePathString;
-    DuplicateEntry->LoadOptions     = Entry->LoadOptions;
-    DuplicateEntry->LoaderPath      = Entry->LoaderPath;
-    DuplicateEntry->VolName         = Entry->VolName;
+    DuplicateEntry->DevicePathString = EfiStrDuplicate(Entry->DevicePathString);
+    DuplicateEntry->LoadOptions     = EfiStrDuplicate(Entry->LoadOptions);
+    DuplicateEntry->LoaderPath      = EfiStrDuplicate(Entry->LoaderPath);
+    DuplicateEntry->VolName         = EfiStrDuplicate(Entry->VolName);
     DuplicateEntry->DevicePath      = Entry->DevicePath;
     DuplicateEntry->Flags           = Entry->Flags;
     DuplicateEntry->LoaderType      = Entry->LoaderType;

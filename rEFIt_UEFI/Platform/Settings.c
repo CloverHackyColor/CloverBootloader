@@ -4185,12 +4185,15 @@ EFI_STATUS SetFSInjection(IN LOADER_ENTRY *Entry)
     Volume = Entry->Volume;
     
     // some checks?
+    /*
+    // apianti - this seems to not work sometimes or ever, so just always start
     if ((Volume->BootType == BOOTING_BY_PBR) ||
         (Volume->BootType == BOOTING_BY_MBR) ||
         (Volume->BootType == BOOTING_BY_CD)) {
         MsgLog("not started - not an EFI boot\n");
         return EFI_UNSUPPORTED;
     }
+    //*/
     
     // get FSINJECTION_PROTOCOL
     Status = gBS->LocateProtocol(&gFSInjectProtocolGuid, NULL, (void **)&FSInject);

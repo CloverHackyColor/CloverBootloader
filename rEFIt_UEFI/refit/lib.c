@@ -406,8 +406,8 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
   EFI_STATUS              Status;
   UINT8                   *SectorBuffer;
   UINTN                   i;
-  MBR_PARTITION_INFO      *MbrTable;
-  BOOLEAN                 MbrTableFound;
+  //MBR_PARTITION_INFO      *MbrTable;
+  //BOOLEAN                 MbrTableFound;
   UINTN       BlockSize = 0;  
   CHAR16      volumeName[255];
   CHAR8         tmp[64];
@@ -417,7 +417,7 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
   Volume->HasBootCode = FALSE;
   Volume->LegacyOS->IconName = NULL;
   Volume->LegacyOS->Name = NULL;
-  Volume->BootType = 0;
+  Volume->BootType = BOOTING_BY_EFI;
   *Bootable = FALSE;
 
   if ((Volume->BlockIO == NULL) || (!Volume->BlockIO->Media->MediaPresent))
@@ -512,6 +512,8 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
     }
     //else HDD
     else { //HDD
+      /*
+      // apianti - does this detect every partition as legacy?
       if (*((UINT16 *)(SectorBuffer + 510)) == 0xaa55 && SectorBuffer[0] != 0) {
         *Bootable = TRUE;
         Volume->HasBootCode = TRUE;
@@ -521,6 +523,7 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
         Volume->LegacyOS->Type = OSTYPE_VAR;
         Volume->BootType = BOOTING_BY_PBR;
       }
+      // */
       
       // detect specific boot codes
       if (CompareMem(SectorBuffer + 2, "LILO", 4) == 0 ||
@@ -644,6 +647,8 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
       Volume->HasBootCode = FALSE;
     
     // check for MBR partition table
+    /*
+    // apianti - this is littered with bugs and probably not needed lol
     if (*((UINT16 *)(SectorBuffer + 510)) == 0xaa55) {
       MbrTableFound = FALSE;
       MbrTable = (MBR_PARTITION_INFO *)(SectorBuffer + 446);
@@ -659,6 +664,7 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
         Volume->BootType = BOOTING_BY_MBR;
       }
     }
+    // */
   }
   gBS->FreePages((EFI_PHYSICAL_ADDRESS)(UINTN)SectorBuffer, 1);
 }
