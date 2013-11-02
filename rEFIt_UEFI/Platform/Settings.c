@@ -4132,9 +4132,10 @@ EFI_STATUS SaveSettings()
 CHAR16* GetExtraKextsDir(CHAR8 *OSVersion)
 {
   CHAR16 *SrcDir = NULL;
+  CHAR8   FixedVersion[6] = "Other";
 
-  if (OSVersion == NULL) {
-    OSVersion = "Other";
+  if (OSVersion != NULL) {
+    AsciiStrnCpy(FixedVersion, OSVersion, 4);
   }
   
   //MsgLog("OS=%s\n", OSTypeStr);
@@ -4142,7 +4143,7 @@ CHAR16* GetExtraKextsDir(CHAR8 *OSVersion)
   // find source injection folder with kexts
   // note: we are just checking for existance of particular folder, not checking if it is empty or not
   // check OEM subfolders: version speciffic or default to Other
-  SrcDir = PoolPrint(L"%s\\kexts\\%a", OEMPath, OSVersion);
+  SrcDir = PoolPrint(L"%s\\kexts\\%a", OEMPath, FixedVersion);
   if (!FileExists(SelfVolume->RootDir, SrcDir)) {
     FreePool(SrcDir);
     SrcDir = PoolPrint(L"%s\\kexts\\Other", OEMPath);
@@ -4153,7 +4154,7 @@ CHAR16* GetExtraKextsDir(CHAR8 *OSVersion)
   }
   if (SrcDir == NULL) {
     // if not found, check EFI\kexts\...
-    SrcDir = PoolPrint(L"\\EFI\\CLOVER\\kexts\\%a", OSVersion);
+    SrcDir = PoolPrint(L"\\EFI\\CLOVER\\kexts\\%a", FixedVersion);
     if (!FileExists(SelfVolume->RootDir, SrcDir)) {
       FreePool(SrcDir);
  //     SrcDir = PoolPrint(L"\\EFI\\CLOVER\\kexts\\Other", gSettings.OEMProduct);

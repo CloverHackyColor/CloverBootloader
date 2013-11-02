@@ -52,6 +52,7 @@
 #define LINUX_BOOT_PATH L"\\boot"
 #define LINUX_BOOT_ALT_PATH L"/boot"
 #define LINUX_LOADER_PATH L"vmlinuz"
+#define LINUX_FULL_LOADER_PATH LINUX_BOOT_PATH L"\\" LINUX_LOADER_PATH
 #define LINUX_LOADER_SEARCH_PATH L"vmlinuz*"
 #define LINUX_DEFAULT_OPTIONS L"ro add_efi_memmap quiet splash vt.handoff=7"
 
@@ -130,8 +131,14 @@ STATIC INTN StrniCmp(IN CHAR16 *Str1,
     Ch2 = TO_LOWER(*Str2);
     Str1++;
     Str2++;
-  } while ((--Count > 0) && (Ch1 == Ch2) && (Ch1 != 0));
-  return (Ch1 - Ch2);
+    if (Ch1 != Ch2) {
+      return (Ch1 - Ch2);
+    }
+    if (Ch1 == 0) {
+      return 0;
+    }
+  } while (--Count > 0);
+  return 0;
 }
 STATIC VOID StrToLower(IN CHAR16 *Str)
 {
@@ -159,7 +166,7 @@ UINT8 GetOSTypeFromPath(IN CHAR16 *Path)
              (StriCmp(Path, L"\\bootmgr.efi") == 0) ||
              (StriCmp(Path, L"\\EFI\\MICROSOFT\\BOOT\\cdboot.efi") == 0)) {
     return OSTYPE_WINEFI;
-  } else if (StrniCmp(Path, LINUX_LOADER_PATH, StrLen(LINUX_LOADER_PATH)) == 0) {
+  } else if (StrniCmp(Path, LINUX_FULL_LOADER_PATH, StrLen(LINUX_FULL_LOADER_PATH)) == 0) {
     return OSTYPE_LINEFI;
   } else {
     UINTN Index = 0;
@@ -557,6 +564,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
       ShortcutLetter = 'V';
       break;
     case OSTYPE_LIN:
+    case OSTYPE_LINEFI:
       OSIconName = LinuxIconNameFromPath(LoaderPath);
       ShortcutLetter = 'L';
       break;
