@@ -1195,7 +1195,7 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
     }
     // Change custom drive image if needed
     // Update volume boot type
-    Volume->BootType = BOOTING_BY_EFI;
+    // Volume->BootType = BOOTING_BY_EFI;
     DBG("match!\n");
     // Create a entry for this volume
     Entry = CreateLoaderEntry(CustomPath, Custom->Options, Custom->FullTitle, Custom->Title, Volume, Image, DriveImage, Custom->Type, Custom->Flags, Custom->Hotkey, TRUE);

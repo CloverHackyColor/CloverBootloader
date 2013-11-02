@@ -481,7 +481,7 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
             //		StrCpy(Volume->VolName, volumeName);
             DBG("Found AppleDVD\n");
             Volume->LegacyOS->Type = OSTYPE_OSX;
-            Volume->BootType = BOOTING_BY_EFI; //sure? or _BY_CD?
+            Volume->BootType = BOOTING_BY_CD;
             Volume->LegacyOS->IconName = L"mac";
             break;
           }

@@ -259,7 +259,7 @@ VOID ScanTool(VOID)
         
         if (FileExists(Volume->RootDir, FileName)) {
           DBG(" Found Clover\n");
-          Volume->BootType = BOOTING_BY_EFI;
+          // Volume->BootType = BOOTING_BY_EFI;
           AddCloverEntry(FileName, L"Clover Boot Options", Volume);
         }
       }
