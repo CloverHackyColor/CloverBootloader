@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-06-17 17:14+0300\n"
+"POT-Creation-Date: 2013-11-02 09:49+0100\n"
 "PO-Revision-Date: 2013-06-18 00:20+0000\n"
 "Last-Translator: AlexKord <alexkord@lan.com.ua>\n"
 "Language-Team: ua <ua@li.org>\n"
@@ -14,8 +14,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%"
-"10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
 "X-POOTLE-MTIME: 1371514800.0\n"
 
@@ -625,14 +625,34 @@ msgstr ""
 "Тема в стилі Apple від Eps,\n"
 "Встановити в /EFI/CLOVER/themes/applestyle."
 
-#. type: "black_green_title"
+#. type: "BGM_title"
 #: Resources/templates/Localizable.strings:115
+#, fuzzy, no-wrap
+#| msgid "Black_Green"
+msgid "Black_Green_Moody"
+msgstr "Чорна та зелена"
+
+#. type: "BGM_description"
+#: Resources/templates/Localizable.strings:116
+#, fuzzy, no-wrap
+#| msgid ""
+#| "Default black_green theme from Blackosx,\n"
+#| "Install to /EFI/CLOVER/themes/black_green"
+msgid ""
+"Black Green and Moody theme from Blackosx,\n"
+"Install to /EFI/CLOVER/themes/BGM"
+msgstr ""
+"Чорно-зелена тема від Blackosx,\n"
+"Встановити в /EFI/CLOVER/themes/black_green."
+
+#. type: "black_green_title"
+#: Resources/templates/Localizable.strings:119
 #, no-wrap
 msgid "Black_Green"
 msgstr "Чорна та зелена"
 
 #. type: "black_green_description"
-#: Resources/templates/Localizable.strings:116
+#: Resources/templates/Localizable.strings:120
 #, no-wrap
 msgid ""
 "Default black_green theme from Blackosx,\n"
@@ -642,13 +662,13 @@ msgstr ""
 "Встановити в /EFI/CLOVER/themes/black_green."
 
 #. type: "bluemac_title"
-#: Resources/templates/Localizable.strings:119
+#: Resources/templates/Localizable.strings:123
 #, no-wrap
 msgid "Bluemac"
 msgstr "Bluemac"
 
 #. type: "bluemac_description"
-#: Resources/templates/Localizable.strings:120
+#: Resources/templates/Localizable.strings:124
 #, no-wrap
 msgid ""
 "Bluemac theme from FowZiey,\n"
@@ -658,13 +678,13 @@ msgstr ""
 "Встановити в /EFI/CLOVER/themes/bluemac."
 
 #. type: "bootcamp_title"
-#: Resources/templates/Localizable.strings:123
+#: Resources/templates/Localizable.strings:127
 #, no-wrap
 msgid "BootCamp"
 msgstr "BootCamp"
 
 #. type: "bootcamp_description"
-#: Resources/templates/Localizable.strings:124
+#: Resources/templates/Localizable.strings:128
 #, no-wrap
 msgid ""
 "Bootcamp theme from Bijo,\n"
@@ -674,13 +694,13 @@ msgstr ""
 "Встановити в /EFI/CLOVER/themes/bootcamp."
 
 #. type: "iclover_title"
-#: Resources/templates/Localizable.strings:127
+#: Resources/templates/Localizable.strings:131
 #, no-wrap
 msgid "iClover"
 msgstr "iClover"
 
 #. type: "iclover_description"
-#: Resources/templates/Localizable.strings:128
+#: Resources/templates/Localizable.strings:132
 #, no-wrap
 msgid ""
 "Grey style theme by winlog,\n"
@@ -690,13 +710,13 @@ msgstr ""
 "Встановити в /EFI/CLOVER/themes/iclover."
 
 #. type: "magnifico_title"
-#: Resources/templates/Localizable.strings:131
+#: Resources/templates/Localizable.strings:135
 #, no-wrap
 msgid "Magnifico"
 msgstr "Magnifico"
 
 #. type: "magnifico_description"
-#: Resources/templates/Localizable.strings:132
+#: Resources/templates/Localizable.strings:136
 #, no-wrap
 msgid ""
 "Magnifico theme from Magnifico,\n"
@@ -706,13 +726,13 @@ msgstr ""
 "Встановити в /EFI/CLOVER/themes/magnifico."
 
 #. type: "metal_title"
-#: Resources/templates/Localizable.strings:135
+#: Resources/templates/Localizable.strings:139
 #, no-wrap
 msgid "metal"
 msgstr "Метал"
 
 #. type: "metal_description"
-#: Resources/templates/Localizable.strings:136
+#: Resources/templates/Localizable.strings:140
 #, no-wrap
 msgid ""
 "The original metal theme from Slice,\n"
@@ -722,13 +742,13 @@ msgstr ""
 "Встановити в /EFI/CLOVER/themes/metal."
 
 #. type: "mrengles_title"
-#: Resources/templates/Localizable.strings:139
+#: Resources/templates/Localizable.strings:143
 #, no-wrap
 msgid "mrengles"
 msgstr "mrengles"
 
 #. type: "mrengles_description"
-#: Resources/templates/Localizable.strings:140
+#: Resources/templates/Localizable.strings:144
 #, no-wrap
 msgid ""
 "mrengles theme from mrengles,\n"
@@ -738,13 +758,13 @@ msgstr ""
 "Встановити в /EFI/CLOVER/themes/mrengles."
 
 #. type: "orange_title"
-#: Resources/templates/Localizable.strings:143
+#: Resources/templates/Localizable.strings:147
 #, no-wrap
 msgid "Orange"
 msgstr "Orange"
 
 #. type: "orange_description"
-#: Resources/templates/Localizable.strings:144
+#: Resources/templates/Localizable.strings:148
 #, no-wrap
 msgid ""
 "Orange theme from dwm,\n"
@@ -754,13 +774,13 @@ msgstr ""
 "Встановити в /EFI/CLOVER/themes/orange."
 
 #. type: "os_box_title"
-#: Resources/templates/Localizable.strings:147
+#: Resources/templates/Localizable.strings:151
 #, no-wrap
 msgid "OS Box"
 msgstr "OS Box"
 
 #. type: "os_box_description"
-#: Resources/templates/Localizable.strings:148
+#: Resources/templates/Localizable.strings:152
 #, no-wrap
 msgid ""
 "OS Box theme from Kyndder,\n"
@@ -770,13 +790,13 @@ msgstr ""
 "Встановити в /EFI/CLOVER/themes/os_box."
 
 #. type: "os_one_title"
-#: Resources/templates/Localizable.strings:151
+#: Resources/templates/Localizable.strings:155
 #, no-wrap
 msgid "OS One"
 msgstr "OS One"
 
 #. type: "os_one_description"
-#: Resources/templates/Localizable.strings:152
+#: Resources/templates/Localizable.strings:156
 #, no-wrap
 msgid ""
 "OS One theme from Kyndder,\n"
@@ -786,13 +806,13 @@ msgstr ""
 "Встановити в /EFI/CLOVER/themes/os_one."
 
 #. type: "thinkpad_title"
-#: Resources/templates/Localizable.strings:155
+#: Resources/templates/Localizable.strings:159
 #, no-wrap
 msgid "ThinkPad"
 msgstr "ThinkPad"
 
 #. type: "thinkpad_description"
-#: Resources/templates/Localizable.strings:156
+#: Resources/templates/Localizable.strings:160
 #, no-wrap
 msgid ""
 "ThinkPad theme from Kogen Mantis,\n"
@@ -802,13 +822,13 @@ msgstr ""
 "Встановити в /EFI/CLOVER/themes/thinkpad."
 
 #. type: "buttons_title"
-#: Resources/templates/Localizable.strings:159
+#: Resources/templates/Localizable.strings:163
 #, no-wrap
 msgid "buttons"
 msgstr "Клавіші"
 
 #. type: "buttons_description"
-#: Resources/templates/Localizable.strings:160
+#: Resources/templates/Localizable.strings:164
 #, no-wrap
 msgid ""
 "Buttons theme from Trauma,\n"
@@ -818,13 +838,13 @@ msgstr ""
 "Встановити в /EFI/CLOVER/themes/buttons."
 
 #. type: "hellfire_title"
-#: Resources/templates/Localizable.strings:163
+#: Resources/templates/Localizable.strings:167
 #, no-wrap
 msgid "hellfire"
 msgstr "Пекельний Вогонь"
 
 #. type: "hellfire_description"
-#: Resources/templates/Localizable.strings:164
+#: Resources/templates/Localizable.strings:168
 #, no-wrap
 msgid ""
 "Hellfire theme from lllevelll,\n"
@@ -834,13 +854,13 @@ msgstr ""
 "Встановити в /EFI/CLOVER/themes/hellfire."
 
 #. type: "simple_gray_title"
-#: Resources/templates/Localizable.strings:167
+#: Resources/templates/Localizable.strings:171
 #, no-wrap
 msgid "simple_gray"
 msgstr "Проста Сіра"
 
 #. type: "simple_gray_description"
-#: Resources/templates/Localizable.strings:168
+#: Resources/templates/Localizable.strings:172
 #, no-wrap
 msgid ""
 "Simple_gray theme from hijeane,\n"
@@ -850,13 +870,13 @@ msgstr ""
 "Встановити в /EFI/CLOVER/themes/simple_gray."
 
 #. type: "wooden_title"
-#: Resources/templates/Localizable.strings:171
+#: Resources/templates/Localizable.strings:175
 #, no-wrap
 msgid "wooden"
 msgstr "Деревинки"
 
 #. type: "wooden_description"
-#: Resources/templates/Localizable.strings:172
+#: Resources/templates/Localizable.strings:176
 #, no-wrap
 msgid ""
 "Wooden theme from iROOTa,\n"
@@ -866,13 +886,13 @@ msgstr ""
 "Встановити в /EFI/CLOVER/themes/wooden."
 
 #. type: "rc.scripts.on.target_title"
-#: Resources/templates/Localizable.strings:178
+#: Resources/templates/Localizable.strings:182
 #, no-wrap
 msgid "Install RC scripts on target volume"
 msgstr "Встановити системні RC скріпти на цільовий розділ"
 
 #. type: "rc.scripts.on.target_description"
-#: Resources/templates/Localizable.strings:179
+#: Resources/templates/Localizable.strings:183
 #, no-wrap
 msgid ""
 "Install all RC scripts on target volume.\n"
@@ -882,37 +902,37 @@ msgstr ""
 "Розділ повинен бути завантажувальний в OSX."
 
 #. type: "rc.scripts.on.all.volumes_title"
-#: Resources/templates/Localizable.strings:181
+#: Resources/templates/Localizable.strings:185
 #, no-wrap
 msgid "Install all RC scripts on all other bootable OSX volumes"
 msgstr "Встановити скрипти RC на всі інші завантажувальні розділи OSX"
 
 #. type: "rc.scripts.on.all.volumes_description"
-#: Resources/templates/Localizable.strings:182
+#: Resources/templates/Localizable.strings:186
 #, no-wrap
 msgid "Install all RC scripts on all internal bootable OSX volumes other than the target volume."
 msgstr "Встановити скрипти RC на всі внутрішні завантажувальні розділи OSX, окрім цільового розділу"
 
 #. type: "Optional RC Scripts"
-#: Resources/templates/Localizable.strings:183
+#: Resources/templates/Localizable.strings:187
 #, no-wrap
 msgid "Optional RC Scripts"
 msgstr "Додаткові RC скрипти"
 
 #. type: "disable_sleep_proxy_client_description"
-#: Resources/templates/Localizable.strings:184
+#: Resources/templates/Localizable.strings:188
 #, no-wrap
 msgid "Disable the mDNSResponder sleep proxy client service. This will prevent the system waking from sleep every hours"
 msgstr "Заборонити mDNSResponder sleep proxy client service. Це запобігає пробудження системи кожної години"
 
 #. type: "CloverPrefpane_title"
-#: Resources/templates/Localizable.strings:189
+#: Resources/templates/Localizable.strings:193
 #, no-wrap
 msgid "Install Clover Preference Pane"
 msgstr "Встановити Контрольну Панель Clover "
 
 #. type: "CloverPrefpane_description"
-#: Resources/templates/Localizable.strings:190
+#: Resources/templates/Localizable.strings:194
 #, no-wrap
 msgid ""
 "Install Clover Preference Pane on target volume.\n"
@@ -1107,7 +1127,6 @@ msgstr "Змонтувати обраний ESP під час запуску"
 #. type: "339.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:21
 #, no-wrap
-#| msgid "Save NVRAM contents to partition:"
 msgid "Save NVRAM contents to disk:"
 msgstr "Зберегти вміст NVRAM на розділ:"
 

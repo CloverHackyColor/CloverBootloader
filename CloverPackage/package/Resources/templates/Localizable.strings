@@ -112,6 +112,10 @@ Use it only if you have a problem without it";
 "applestyle_description" = "AppleStyle theme from Eps,
 Install to /EFI/CLOVER/themes/applestyle";
 
+"BGM_title" = "Black_Green_Moody";
+"BGM_description" = "Black Green and Moody theme from Blackosx,
+Install to /EFI/CLOVER/themes/BGM";
+
 "black_green_title" = "Black_Green";
 "black_green_description" = "Default black_green theme from Blackosx,
 Install to /EFI/CLOVER/themes/black_green";
