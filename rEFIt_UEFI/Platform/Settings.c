@@ -4136,7 +4136,7 @@ CHAR16* GetExtraKextsDir(CHAR8 *OSVersion)
 
   if (OSVersion != NULL) {
     AsciiStrnCpy(FixedVersion, OSVersion, 4);
-    FixedVersion[5] = 0;
+    FixedVersion[4] = 0;
   }
   
   //MsgLog("OS=%s\n", OSTypeStr);
