@@ -479,6 +479,16 @@ Headers collection for procedures
 
 #define NUM_OF_CONFIGS 3
 
+// Kernel scan states
+#define KERNEL_SCAN_ALL        (0)
+#define KERNEL_SCAN_NEWEST     (1)
+#define KERNEL_SCAN_OLDEST     (2)
+#define KERNEL_SCAN_FIRST      (3)
+#define KERNEL_SCAN_LAST       (4)
+#define KERNEL_SCAN_MOSTRECENT (5)
+#define KERNEL_SCAN_EARLIEST   (6)
+#define KERNEL_SCAN_NONE       (100)
+
 struct aml_chunk 
 {
 	UINT8     Type;
@@ -616,6 +626,7 @@ struct CUSTOM_LOADER_ENTRY {
   UINT8                Flags;
   UINT8                Type;
   UINT8                VolumeType;
+  UINT8                KernelScan;
 };
 
 typedef struct CUSTOM_LEGACY_ENTRY CUSTOM_LEGACY_ENTRY;
@@ -891,7 +902,7 @@ typedef struct {
   BOOLEAN              DisableEntryScan;
   BOOLEAN              DisableToolScan;
   BOOLEAN              ShowHiddenEntries;
-  UINT8   pad10[1];
+  UINT8                KernelScan;
   CUSTOM_LOADER_ENTRY *CustomEntries;
   CUSTOM_LEGACY_ENTRY *CustomLegacy;
   CUSTOM_TOOL_ENTRY   *CustomTool;

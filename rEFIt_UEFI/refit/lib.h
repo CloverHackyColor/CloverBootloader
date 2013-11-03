@@ -124,7 +124,7 @@ typedef struct {
 #define OSTYPE_IS_OSX_RECOVERY(type) ((type == OSTYPE_RECOVERY) /*|| ((type >= OSTYPE_TIGER) && (type <= OSTYPE_MAV))*/ || (type == OSTYPE_VAR))
 #define OSTYPE_IS_OSX_INSTALLER(type) ((type == OSTYPE_OSX_INSTALLER) /*|| ((type >= OSTYPE_TIGER) && (type <= OSTYPE_MAV))*/ || (type == OSTYPE_VAR))
 #define OSTYPE_IS_WINDOWS(type) ((type == OSTYPE_WIN) || (type == OSTYPE_WINEFI) || (type == OSTYPE_EFI) || (type == OSTYPE_VAR))
-#define OSTYPE_IS_LINUX(type) ((type == OSTYPE_LIN) || (type == OSTYPE_LINEFI) || (type == OSTYPE_EFI) || (type == OSTYPE_VAR))
+#define OSTYPE_IS_LINUX(type) ((type == OSTYPE_LIN) || (type == OSTYPE_EFI) || (type == OSTYPE_VAR))
 #define OSTYPE_IS_OTHER(type) ((type == OSTYPE_OTHER) || (type == OSTYPE_EFI) || (type == OSTYPE_VAR))
 #define OSTYPE_COMPARE_IMP(comparator, type1, type2) (comparator(type1) && comparator(type2))
 #define OSTYPE_COMPARE(type1, type2) (OSTYPE_COMPARE_IMP(OSTYPE_IS_OSX, type1, type2) || OSTYPE_COMPARE_IMP(OSTYPE_IS_OSX_RECOVERY, type1, type2) || \
@@ -345,20 +345,19 @@ typedef struct {
   CHAR16  *End16Ptr;
 } REFIT_FILE;
 
-#define DISABLE_FLAG_SHELL      (0x0001)
-#define DISABLE_FLAG_TOOLS      (0x0002)
-#define DISABLE_FLAG_SINGLEUSER (0x0002)
-#define DISABLE_FLAG_HWTEST     (0x0004)
-#define DISABLE_FLAG_OPTICAL    (0x0010)
-#define DISABLE_FLAG_EXTERNAL   (0x0020)
-#define DISABLE_FLAG_INTERNAL   (0x0040)
-#define DISABLE_FLAG_FIREWIRE   (0x0080)
-#define DISABLE_ALL             ((0xffff) & (~DISABLE_FLAG_INTERNAL))
+#define VOLTYPE_OPTICAL    (0x0001)
+#define VOLTYPE_EXTERNAL   (0x0002)
+#define VOLTYPE_INTERNAL   (0x0004)
+#define VOLTYPE_FIREWIRE   (0x0008)
 
-#define HIDEUI_FLAG_BANNER      (0x0001)
-#define HIDEUI_FLAG_FUNCS       (0x0002)
-#define HIDEUI_FLAG_LABEL       (0x0004)
-#define HIDEUI_FLAG_REVISION    (0x0008)
+#define HIDEUI_FLAG_SHELL      (0x0001)
+#define HIDEUI_FLAG_TOOLS      (0x0002)
+#define HIDEUI_FLAG_SINGLEUSER (0x0002)
+#define HIDEUI_FLAG_HWTEST     (0x0004)
+#define HIDEUI_FLAG_BANNER      (0x0010)
+#define HIDEUI_FLAG_FUNCS       (0x0020)
+#define HIDEUI_FLAG_LABEL       (0x0040)
+#define HIDEUI_FLAG_REVISION    (0x0080)
 #define HIDEUI_ALL              (0xffff)
 /*
 #define HDBADGES_NONE   0

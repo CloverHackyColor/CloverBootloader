@@ -150,6 +150,41 @@ STATIC VOID StrToLower(IN CHAR16 *Str)
    }
 }
 
+STATIC INTN TimeCmp(IN EFI_TIME *Time1,
+                    IN EFI_TIME *Time2)
+{
+   INTN Comparison;
+   if (Time1 == NULL) {
+     if (Time2 == NULL) {
+       return 0;
+     } else {
+       return -1;
+     }
+   } else if (Time2 == NULL) {
+     return 1;
+   }
+   Comparison = Time1->Year - Time2->Year;
+   if (Comparison == 0) {
+     Comparison = Time1->Month - Time2->Month;
+     if (Comparison == 0) {
+       Comparison = Time1->Day - Time2->Day;
+       if (Comparison == 0) {
+         Comparison = Time1->Hour - Time2->Hour;
+         if (Comparison == 0) {
+           Comparison = Time1->Minute - Time2->Minute;
+           if (Comparison == 0) {
+             Comparison = Time1->Second - Time2->Second;
+             if (Comparison == 0) {
+               Comparison = Time1->Nanosecond - Time2->Nanosecond;
+             }
+           }
+         }
+       }
+     }
+   }
+   return Comparison;
+}
+
 UINT8 GetOSTypeFromPath(IN CHAR16 *Path)
 {
   if (Path == NULL) {
@@ -222,20 +257,27 @@ STATIC CHAR16 *LinuxInitImagePath[] = {
 };
 STATIC CONST UINTN LinuxInitImagePathCount = (sizeof(LinuxInitImagePath) / sizeof(CHAR16 *));
 
-STATIC CHAR16 *LinuxMatchInitImage(IN EFI_FILE_PROTOCOL *Dir,
-                                   IN CHAR16            *Version)
+STATIC CHAR16 *LinuxKernelOptions(IN EFI_FILE_PROTOCOL *Dir,
+                                  IN CHAR16            *Version,
+                                  IN CHAR16            *PartUUID,
+                                  IN CHAR16            *Options OPTIONAL)
 {
-   UINTN Index = 0;
-   while (Index < LinuxInitImagePathCount) {
-     CHAR16 *InitRd = PoolPrint(LinuxInitImagePath[Index++], Version);
-     if (InitRd != NULL) {
-       if (FileExists(Dir, InitRd)) {
-         return InitRd;
-       }
-       FreePool(InitRd);
-     }
-   }
-   return NULL;
+  UINTN Index = 0;
+  if ((Dir == NULL) || (PartUUID == NULL)) {
+    return (Options == NULL) ? NULL : EfiStrDuplicate(Options);
+  }
+  while (Index < LinuxInitImagePathCount) {
+    CHAR16 *InitRd = PoolPrint(LinuxInitImagePath[Index++], (Version == NULL) ? L"" : Version);
+    if (InitRd != NULL) {
+      if (FileExists(Dir, InitRd)) {
+        CHAR16 *CustomOptions = PoolPrint(L"root=/dev/disk/by-partuuid/%s initrd=%s/%s %s %s", PartUUID, LINUX_BOOT_ALT_PATH, InitRd, LINUX_DEFAULT_OPTIONS, (Options == NULL) ? L"" : Options);
+        FreePool(InitRd);
+        return CustomOptions;
+      }
+      FreePool(InitRd);
+    }
+  }
+  return PoolPrint(L"root=/dev/disk/by-partuuid/%s %s %s", PartUUID, LINUX_DEFAULT_OPTIONS, (Options == NULL) ? L"" : Options);
 }
 
 STATIC BOOLEAN isFirstRootUUID(REFIT_VOLUME *Volume)
@@ -370,10 +412,10 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
           if ((StrStr(Volume->DevicePathString, Custom->Volume) != NULL) ||
               ((Volume->VolName != NULL) && (StrStr(Volume->VolName, Custom->Volume) != NULL))) {
             if (Custom->VolumeType != 0) {
-              if (((Volume->DiskKind == DISK_KIND_INTERNAL) && (Custom->VolumeType & DISABLE_FLAG_INTERNAL)) ||
-                  ((Volume->DiskKind == DISK_KIND_EXTERNAL) && (Custom->VolumeType & DISABLE_FLAG_EXTERNAL)) ||
-                  ((Volume->DiskKind == DISK_KIND_OPTICAL) && (Custom->VolumeType & DISABLE_FLAG_OPTICAL)) ||
-                  ((Volume->DiskKind == DISK_KIND_FIREWIRE) && (Custom->VolumeType & DISABLE_FLAG_FIREWIRE))) {
+              if (((Volume->DiskKind == DISK_KIND_INTERNAL) && (Custom->VolumeType & VOLTYPE_INTERNAL)) ||
+                  ((Volume->DiskKind == DISK_KIND_EXTERNAL) && (Custom->VolumeType & VOLTYPE_EXTERNAL)) ||
+                  ((Volume->DiskKind == DISK_KIND_OPTICAL) && (Custom->VolumeType & VOLTYPE_OPTICAL)) ||
+                  ((Volume->DiskKind == DISK_KIND_FIREWIRE) && (Custom->VolumeType & VOLTYPE_FIREWIRE))) {
                 if (Custom->Path != NULL) {
                   // Try to match the loader paths and types
                   if (StriCmp(Custom->Path, LoaderPath) == 0) {
@@ -446,10 +488,10 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
             DBG("volume did not match for path `%s` and custom entry %d\n", LoaderDevicePathString, CustomIndex);
           }
         } else if (Custom->VolumeType != 0) {
-          if (((Volume->DiskKind == DISK_KIND_INTERNAL) && (Custom->VolumeType & DISABLE_FLAG_INTERNAL)) ||
-              ((Volume->DiskKind == DISK_KIND_EXTERNAL) && (Custom->VolumeType & DISABLE_FLAG_EXTERNAL)) ||
-              ((Volume->DiskKind == DISK_KIND_OPTICAL) && (Custom->VolumeType & DISABLE_FLAG_OPTICAL)) ||
-              ((Volume->DiskKind == DISK_KIND_FIREWIRE) && (Custom->VolumeType & DISABLE_FLAG_FIREWIRE))) {
+          if (((Volume->DiskKind == DISK_KIND_INTERNAL) && (Custom->VolumeType & VOLTYPE_INTERNAL)) ||
+              ((Volume->DiskKind == DISK_KIND_EXTERNAL) && (Custom->VolumeType & VOLTYPE_EXTERNAL)) ||
+              ((Volume->DiskKind == DISK_KIND_OPTICAL) && (Custom->VolumeType & VOLTYPE_OPTICAL)) ||
+              ((Volume->DiskKind == DISK_KIND_FIREWIRE) && (Custom->VolumeType & VOLTYPE_FIREWIRE))) {
             if (Custom->Path != NULL) {
               // Try to match the loader paths and types
               if (StriCmp(Custom->Path, LoaderPath) == 0) {
@@ -602,8 +644,10 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
   
   if (FullTitle) {
     Entry->me.Title = EfiStrDuplicate(FullTitle);
+  } else if ((Entry->VolName == NULL) || (StrLen(Entry->VolName) == 0)) {
+    Entry->me.Title = PoolPrint(L"Boot %s from %s", (LoaderTitle != NULL) ? LoaderTitle : Basename(LoaderPath), Basename(Volume->DevicePathString));
   } else {
-    Entry->me.Title = PoolPrint(L"Boot %s from %s", (LoaderTitle != NULL) ? LoaderTitle : LoaderPath + 1, Entry->VolName);
+    Entry->me.Title = PoolPrint(L"Boot %s from %s", (LoaderTitle != NULL) ? LoaderTitle : Basename(LoaderPath), Entry->VolName);
   }
   Entry->me.ShortcutLetter = (Hotkey == 0) ? ShortcutLetter : Hotkey;
   
@@ -707,7 +751,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
       }
     }
     
-    if (!(GlobalConfig.DisableFlags & DISABLE_FLAG_SINGLEUSER)) {
+    if (!(GlobalConfig.DisableFlags & HIDEUI_FLAG_SINGLEUSER)) {
       
 #if defined(MDE_CPU_X64)
       if (KernelIs64BitOnly) {
@@ -831,7 +875,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
     
     // check for Apple hardware diagnostics
     StrCpy(DiagsFileName, L"\\System\\Library\\CoreServices\\.diagnostics\\diags.efi");
-    if (FileExists(Volume->RootDir, DiagsFileName) && !(GlobalConfig.DisableFlags & DISABLE_FLAG_HWTEST)) {
+    if (FileExists(Volume->RootDir, DiagsFileName) && !(GlobalConfig.DisableFlags & HIDEUI_FLAG_HWTEST)) {
       DBG("  - Apple Hardware Test found\n");
       
       // NOTE: Sothor - I'm not sure if to duplicate parent entry here.
@@ -968,10 +1012,10 @@ VOID ScanLoader(VOID)
     }
     
     // skip volume if its kind is configured as disabled
-    if ((Volume->DiskKind == DISK_KIND_OPTICAL && (GlobalConfig.DisableFlags & DISABLE_FLAG_OPTICAL)) ||
-        (Volume->DiskKind == DISK_KIND_EXTERNAL && (GlobalConfig.DisableFlags & DISABLE_FLAG_EXTERNAL)) ||
-        (Volume->DiskKind == DISK_KIND_INTERNAL && (GlobalConfig.DisableFlags & DISABLE_FLAG_INTERNAL)) ||
-        (Volume->DiskKind == DISK_KIND_FIREWIRE && (GlobalConfig.DisableFlags & DISABLE_FLAG_FIREWIRE)))
+    if ((Volume->DiskKind == DISK_KIND_OPTICAL && (GlobalConfig.DisableFlags & VOLTYPE_OPTICAL)) ||
+        (Volume->DiskKind == DISK_KIND_EXTERNAL && (GlobalConfig.DisableFlags & VOLTYPE_EXTERNAL)) ||
+        (Volume->DiskKind == DISK_KIND_INTERNAL && (GlobalConfig.DisableFlags & VOLTYPE_INTERNAL)) ||
+        (Volume->DiskKind == DISK_KIND_FIREWIRE && (GlobalConfig.DisableFlags & VOLTYPE_FIREWIRE)))
     {
       DBG(" hidden\n");
       continue;
@@ -1022,37 +1066,229 @@ VOID ScanLoader(VOID)
     if ((PartGUID != NULL) && (Volume->RootDir != NULL)) {
       REFIT_DIR_ITER  Iter;
       EFI_FILE_INFO  *FileInfo = NULL;
+      EFI_TIME        PreviousTime;
+      CHAR16         *Path = NULL;
+      CHAR16         *Options;
       // Get the partition UUID and make sure it's lower case
       CHAR16          PartUUID[40];
+      ZeroMem(&PreviousTime, sizeof(EFI_TIME));
       UnicodeSPrint(PartUUID, sizeof(PartUUID), L"%g", PartGUID);
       StrToLower(PartUUID);
       // open the /boot directory (or whatever directory path)
       DirIterOpen(Volume->RootDir, LINUX_BOOT_PATH, &Iter);
-      // get all the filename matches
-      while (DirIterNext(&Iter, 2, LINUX_LOADER_SEARCH_PATH, &FileInfo)) {
-        if (FileInfo != NULL) {
-          if (FileInfo->FileSize > 0) {
+      // Check which kernel scan to use
+      switch (gSettings.KernelScan) {
+      case KERNEL_SCAN_FIRST:
+        // First kernel found only
+        while (DirIterNext(&Iter, 2, LINUX_LOADER_SEARCH_PATH, &FileInfo)) {
+          if (FileInfo != NULL) {
+            if (FileInfo->FileSize == 0) {
+              FreePool(FileInfo);
+              FileInfo = NULL;
+              continue;
+            }
             // get the kernel file path
-            CHAR16 *Path = PoolPrint(L"%s\\%s", LINUX_BOOT_PATH, FileInfo->FileName);
-            CHAR16 *Options = NULL;
-            // Find the init ram image and select root
-            CHAR16 *InitRd = LinuxMatchInitImage(Iter.DirHandle, FileInfo->FileName + StrLen(LINUX_LOADER_PATH));
-            if (InitRd != NULL) {
-              Options = PoolPrint(L"root=/dev/disk/by-partuuid/%s initrd=%s/%s %s", PartUUID, LINUX_BOOT_ALT_PATH, InitRd, LINUX_DEFAULT_OPTIONS);
-              FreePool(InitRd);
-            } else {
-              Options = PoolPrint(L"root=/dev/disk/by-partuuid/%s %s", PartUUID, LINUX_DEFAULT_OPTIONS);
+            Path = PoolPrint(L"%s\\%s", LINUX_BOOT_PATH, FileInfo->FileName);
+            if (Path != NULL) {
+              Options = LinuxKernelOptions(Iter.DirHandle, Basename(Path) + StrLen(LINUX_LOADER_PATH), PartUUID, NULL);
+              // Add the entry
+              AddLoaderEntry(Path, (Options == NULL) ? LINUX_DEFAULT_OPTIONS : Options, NULL, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
+              if (Options != NULL) {
+                FreePool(Options);
+              }
+              FreePool(Path);
             }
-            // Add the entry
-            AddLoaderEntry(Path, (Options == NULL) ? LINUX_DEFAULT_OPTIONS : Options, NULL, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
-            if (Options != NULL) {
-              FreePool(Options);
-            }
+            // free the file info
+            FreePool(FileInfo);
+            FileInfo = NULL;
+            break;
           }
-          // free the file info
-          FreePool(FileInfo);
-          FileInfo = NULL;
         }
+        break;
+
+      case KERNEL_SCAN_LAST:
+        // Last kernel found only
+        while (DirIterNext(&Iter, 2, LINUX_LOADER_SEARCH_PATH, &FileInfo)) {
+          if (FileInfo != NULL) {
+            if (FileInfo->FileSize > 0) {
+              // get the kernel file path
+              if (Path != NULL) {
+                FreePool(Path);
+              }
+              Path = PoolPrint(L"%s\\%s", LINUX_BOOT_PATH, FileInfo->FileName);
+            }
+            // free the file info
+            FreePool(FileInfo);
+            FileInfo = NULL;
+          }
+        }
+        if (Path != NULL) {
+          Options = LinuxKernelOptions(Iter.DirHandle, Basename(Path) + StrLen(LINUX_LOADER_PATH), PartUUID, NULL);
+          // Add the entry
+          AddLoaderEntry(Path, (Options == NULL) ? LINUX_DEFAULT_OPTIONS : Options, NULL, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
+          if (Options != NULL) {
+            FreePool(Options);
+          }
+          FreePool(Path);
+        }
+        break;
+
+      case KERNEL_SCAN_NEWEST:
+        // Newest dated kernel only
+        while (DirIterNext(&Iter, 2, LINUX_LOADER_SEARCH_PATH, &FileInfo)) {
+          if (FileInfo != NULL) {
+            if (FileInfo->FileSize > 0) {
+              // get the kernel file path
+              if ((PreviousTime.Year == 0) || (TimeCmp(&PreviousTime, &(FileInfo->ModificationTime)) < 0)) {
+                if (Path != NULL) {
+                  FreePool(Path);
+                }
+                Path = PoolPrint(L"%s\\%s", LINUX_BOOT_PATH, FileInfo->FileName);
+                PreviousTime = FileInfo->ModificationTime;
+              }
+            }
+            // free the file info
+            FreePool(FileInfo);
+            FileInfo = NULL;
+          }
+        }
+        if (Path != NULL) {
+          Options = LinuxKernelOptions(Iter.DirHandle, Basename(Path) + StrLen(LINUX_LOADER_PATH), PartUUID, NULL);
+          // Add the entry
+          AddLoaderEntry(Path, (Options == NULL) ? LINUX_DEFAULT_OPTIONS : Options, NULL, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
+          if (Options != NULL) {
+            FreePool(Options);
+          }
+          FreePool(Path);
+        }
+        break;
+
+      case KERNEL_SCAN_OLDEST:
+        // Oldest dated kernel only
+        while (DirIterNext(&Iter, 2, LINUX_LOADER_SEARCH_PATH, &FileInfo)) {
+          if (FileInfo != NULL) {
+            if (FileInfo->FileSize > 0) {
+              // get the kernel file path
+              if ((PreviousTime.Year == 0) || (TimeCmp(&PreviousTime, &(FileInfo->ModificationTime)) > 0)) {
+                if (Path != NULL) {
+                  FreePool(Path);
+                }
+                Path = PoolPrint(L"%s\\%s", LINUX_BOOT_PATH, FileInfo->FileName);
+                PreviousTime = FileInfo->ModificationTime;
+              }
+            }
+            // free the file info
+            FreePool(FileInfo);
+            FileInfo = NULL;
+          }
+        }
+        if (Path != NULL) {
+          Options = LinuxKernelOptions(Iter.DirHandle, Basename(Path) + StrLen(LINUX_LOADER_PATH), PartUUID, NULL);
+          // Add the entry
+          AddLoaderEntry(Path, (Options == NULL) ? LINUX_DEFAULT_OPTIONS : Options, NULL, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
+          if (Options != NULL) {
+            FreePool(Options);
+          }
+          FreePool(Path);
+        }
+        break;
+
+      case KERNEL_SCAN_MOSTRECENT:
+        // most recent kernel version only
+        while (DirIterNext(&Iter, 2, LINUX_LOADER_SEARCH_PATH, &FileInfo)) {
+          if (FileInfo != NULL) {
+            if (FileInfo->FileSize > 0) {
+              // get the kernel file path
+              CHAR16 *NewPath = PoolPrint(L"%s\\%s", LINUX_BOOT_PATH, FileInfo->FileName);
+              if (NewPath != NULL) {
+                if ((Path == NULL) || (StrCmp(Path, NewPath) < 0)) {
+                  if (Path != NULL) {
+                    FreePool(Path);
+                  }
+                  Path = NewPath;
+                } else {
+                  FreePool(NewPath);
+                }
+              }
+            }
+            // free the file info
+            FreePool(FileInfo);
+            FileInfo = NULL;
+          }
+        }
+        if (Path != NULL) {
+          Options = LinuxKernelOptions(Iter.DirHandle, Basename(Path) + StrLen(LINUX_LOADER_PATH), PartUUID, NULL);
+          // Add the entry
+          AddLoaderEntry(Path, (Options == NULL) ? LINUX_DEFAULT_OPTIONS : Options, NULL, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
+          if (Options != NULL) {
+            FreePool(Options);
+          }
+          FreePool(Path);
+        }
+        break;
+
+      case KERNEL_SCAN_EARLIEST:
+        // earliest kernel version only
+        while (DirIterNext(&Iter, 2, LINUX_LOADER_SEARCH_PATH, &FileInfo)) {
+          if (FileInfo != NULL) {
+            if (FileInfo->FileSize > 0) {
+              // get the kernel file path
+              CHAR16 *NewPath = PoolPrint(L"%s\\%s", LINUX_BOOT_PATH, FileInfo->FileName);
+              if (NewPath != NULL) {
+                if ((Path == NULL) || (StrCmp(Path, NewPath) > 0)) {
+                  if (Path != NULL) {
+                    FreePool(Path);
+                  }
+                  Path = NewPath;
+                } else {
+                  FreePool(NewPath);
+                }
+              }
+            }
+            // free the file info
+            FreePool(FileInfo);
+            FileInfo = NULL;
+          }
+        }
+        if (Path != NULL) {
+          Options = LinuxKernelOptions(Iter.DirHandle, Basename(Path) + StrLen(LINUX_LOADER_PATH), PartUUID, NULL);
+          // Add the entry
+          AddLoaderEntry(Path, (Options == NULL) ? LINUX_DEFAULT_OPTIONS : Options, NULL, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
+          if (Options != NULL) {
+            FreePool(Options);
+          }
+          FreePool(Path);
+        }
+        break;
+
+      case KERNEL_SCAN_ALL:
+        // get all the filename matches
+        while (DirIterNext(&Iter, 2, LINUX_LOADER_SEARCH_PATH, &FileInfo)) {
+          if (FileInfo != NULL) {
+            if (FileInfo->FileSize > 0) {
+              // get the kernel file path
+              Path = PoolPrint(L"%s\\%s", LINUX_BOOT_PATH, FileInfo->FileName);
+              if (Path != NULL) {
+                Options = LinuxKernelOptions(Iter.DirHandle, Basename(Path) + StrLen(LINUX_LOADER_PATH), PartUUID, NULL);
+                // Add the entry
+                AddLoaderEntry(Path, (Options == NULL) ? LINUX_DEFAULT_OPTIONS : Options, NULL, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
+                if (Options != NULL) {
+                  FreePool(Options);
+                }
+                FreePool(Path);
+              }
+            }
+            // free the file info
+            FreePool(FileInfo);
+            FileInfo = NULL;
+          }
+        }
+        break;
+
+      default:
+      case KERNEL_SCAN_NONE:
+        // No kernel scan
+        break;
       }
       //close the directory
       DirIterClose(&Iter);
@@ -1078,11 +1314,18 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
                            IN CUSTOM_LOADER_ENTRY *Custom,
                            IN REFIT_MENU_SCREEN   *SubMenu)
 {
-  UINTN         VolumeIndex;
-  REFIT_VOLUME *Volume;
-  BOOLEAN       IsSubEntry = (SubMenu != NULL);
+  UINTN           VolumeIndex;
+  REFIT_VOLUME   *Volume;
+  REFIT_DIR_ITER  SIter;
+  REFIT_DIR_ITER *Iter = &SIter;
+  CHAR16          PartUUID[40];
+  BOOLEAN         IsSubEntry = (SubMenu != NULL);
+  BOOLEAN         FindCustomPath = (CustomPath == NULL);
 
-  if (CustomPath == NULL) {
+  if (Custom == NULL) {
+    return;
+  }
+  if (FindCustomPath && (Custom->Type != OSTYPE_LINEFI)) {
     DBG("Custom %sentry %d skipped because it didn't have a path.\n", IsSubEntry ? L"sub " : L"", CustomIndex);
     return;
   }
@@ -1129,20 +1372,20 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
     DBG("   Checking volume \"%s\" (%s) ... ", Volume->VolName, Volume->DevicePathString);
     
     // skip volume if its kind is configured as disabled
-    if ((Volume->DiskKind == DISK_KIND_OPTICAL && (GlobalConfig.DisableFlags & DISABLE_FLAG_OPTICAL)) ||
-        (Volume->DiskKind == DISK_KIND_EXTERNAL && (GlobalConfig.DisableFlags & DISABLE_FLAG_EXTERNAL)) ||
-        (Volume->DiskKind == DISK_KIND_INTERNAL && (GlobalConfig.DisableFlags & DISABLE_FLAG_INTERNAL)) ||
-        (Volume->DiskKind == DISK_KIND_FIREWIRE && (GlobalConfig.DisableFlags & DISABLE_FLAG_FIREWIRE)))
+    if ((Volume->DiskKind == DISK_KIND_OPTICAL && (GlobalConfig.DisableFlags & VOLTYPE_OPTICAL)) ||
+        (Volume->DiskKind == DISK_KIND_EXTERNAL && (GlobalConfig.DisableFlags & VOLTYPE_EXTERNAL)) ||
+        (Volume->DiskKind == DISK_KIND_INTERNAL && (GlobalConfig.DisableFlags & VOLTYPE_INTERNAL)) ||
+        (Volume->DiskKind == DISK_KIND_FIREWIRE && (GlobalConfig.DisableFlags & VOLTYPE_FIREWIRE)))
     {
       DBG("skipped because media is disabled\n");
       continue;
     }
     
     if (Custom->VolumeType != 0) {
-      if ((Volume->DiskKind == DISK_KIND_OPTICAL && ((Custom->VolumeType & DISABLE_FLAG_OPTICAL) == 0)) ||
-          (Volume->DiskKind == DISK_KIND_EXTERNAL && ((Custom->VolumeType & DISABLE_FLAG_EXTERNAL) == 0)) ||
-          (Volume->DiskKind == DISK_KIND_INTERNAL && ((Custom->VolumeType & DISABLE_FLAG_INTERNAL) == 0)) ||
-          (Volume->DiskKind == DISK_KIND_FIREWIRE && ((Custom->VolumeType & DISABLE_FLAG_FIREWIRE) == 0))) {
+      if ((Volume->DiskKind == DISK_KIND_OPTICAL && ((Custom->VolumeType & VOLTYPE_OPTICAL) == 0)) ||
+          (Volume->DiskKind == DISK_KIND_EXTERNAL && ((Custom->VolumeType & VOLTYPE_EXTERNAL) == 0)) ||
+          (Volume->DiskKind == DISK_KIND_INTERNAL && ((Custom->VolumeType & VOLTYPE_INTERNAL) == 0)) ||
+          (Volume->DiskKind == DISK_KIND_FIREWIRE && ((Custom->VolumeType & VOLTYPE_FIREWIRE) == 0))) {
         DBG("skipped because media is ignored\n");
         continue;
       }
@@ -1174,12 +1417,159 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
       DBG("skipped because filesystem is not readable\n");
       continue;
     }
-    if (!FileExists(Volume->RootDir, CustomPath)) {
-      DBG("skipped because path does not exist\n");
-      continue;
-    }
     if (StriCmp(CustomPath, MACOSX_LOADER_PATH) == 0 && FileExists(Volume->RootDir, L"\\.IAPhysicalMedia")) {
       DBG("skipped standard OSX path because volume is 2nd stage Install Media\n");
+      continue;
+    }
+    Guid = FindGPTPartitionGuidInDevicePath(Volume->DevicePath);
+    // Open the boot directory to search for kernels
+    if (FindCustomPath) {
+      EFI_FILE_INFO *FileInfo = NULL;
+      EFI_TIME       PreviousTime;
+      ZeroMem(&PreviousTime, sizeof(EFI_TIME));
+      // Get the partition UUID and make sure it's lower case
+      if (Guid == NULL) {
+        DBG("skipped because volume does not have partition uuid\n");
+        continue;
+      }
+      UnicodeSPrint(PartUUID, sizeof(PartUUID), L"%g", Guid);
+      StrToLower(PartUUID);
+      // open the /boot directory (or whatever directory path)
+      DirIterOpen(Volume->RootDir, LINUX_BOOT_PATH, Iter);
+      // TODO: Check if user wants to find newest kernel only
+      switch (Custom->KernelScan) {
+      case KERNEL_SCAN_FIRST:
+        // First kernel found only
+        while (DirIterNext(Iter, 2, LINUX_LOADER_SEARCH_PATH, &FileInfo)) {
+          if (FileInfo != NULL) {
+            if (FileInfo->FileSize == 0) {
+              FreePool(FileInfo);
+              FileInfo = NULL;
+              continue;
+            }
+            // get the kernel file path
+            CustomPath = PoolPrint(L"%s\\%s", LINUX_BOOT_PATH, FileInfo->FileName);
+            // free the file info
+            FreePool(FileInfo);
+            FileInfo = NULL;
+            break;
+          }
+        }
+        break;
+
+      case KERNEL_SCAN_LAST:
+        // Last kernel found only
+        while (DirIterNext(Iter, 2, LINUX_LOADER_SEARCH_PATH, &FileInfo)) {
+          if (FileInfo != NULL) {
+            if (FileInfo->FileSize > 0) {
+              // get the kernel file path
+              if (CustomPath != NULL) {
+                FreePool(CustomPath);
+              }
+              CustomPath = PoolPrint(L"%s\\%s", LINUX_BOOT_PATH, FileInfo->FileName);
+            }
+            // free the file info
+            FreePool(FileInfo);
+            FileInfo = NULL;
+          }
+        }
+        break;
+
+      case KERNEL_SCAN_NEWEST:
+        // Newest dated kernel only
+        while (DirIterNext(Iter, 2, LINUX_LOADER_SEARCH_PATH, &FileInfo)) {
+          if (FileInfo != NULL) {
+            if (FileInfo->FileSize > 0) {
+              // get the kernel file path
+              if ((PreviousTime.Year == 0) || (TimeCmp(&PreviousTime, &(FileInfo->ModificationTime)) < 0)) {
+                if (CustomPath != NULL) {
+                  FreePool(CustomPath);
+                }
+                CustomPath = PoolPrint(L"%s\\%s", LINUX_BOOT_PATH, FileInfo->FileName);
+                PreviousTime = FileInfo->ModificationTime;
+              }
+            }
+            // free the file info
+            FreePool(FileInfo);
+            FileInfo = NULL;
+          }
+        }
+        break;
+
+      case KERNEL_SCAN_OLDEST:
+        // Oldest dated kernel only
+        while (DirIterNext(Iter, 2, LINUX_LOADER_SEARCH_PATH, &FileInfo)) {
+          if (FileInfo != NULL) {
+            if (FileInfo->FileSize > 0) {
+              // get the kernel file path
+              if ((PreviousTime.Year == 0) || (TimeCmp(&PreviousTime, &(FileInfo->ModificationTime)) > 0)) {
+                if (CustomPath != NULL) {
+                  FreePool(CustomPath);
+                }
+                CustomPath = PoolPrint(L"%s\\%s", LINUX_BOOT_PATH, FileInfo->FileName);
+                PreviousTime = FileInfo->ModificationTime;
+              }
+            }
+            // free the file info
+            FreePool(FileInfo);
+            FileInfo = NULL;
+          }
+        }
+        break;
+
+      case KERNEL_SCAN_MOSTRECENT:
+        // most recent kernel version only
+        while (DirIterNext(Iter, 2, LINUX_LOADER_SEARCH_PATH, &FileInfo)) {
+          if (FileInfo != NULL) {
+            if (FileInfo->FileSize > 0) {
+              // get the kernel file path
+              CHAR16 *NewPath = PoolPrint(L"%s\\%s", LINUX_BOOT_PATH, FileInfo->FileName);
+              if ((CustomPath == NULL) || (StrCmp(CustomPath, NewPath) < 0)) {
+                if (CustomPath != NULL) {
+                  FreePool(CustomPath);
+                }
+                CustomPath = NewPath;
+              } else {
+                FreePool(NewPath);
+              }
+            }
+            // free the file info
+            FreePool(FileInfo);
+            FileInfo = NULL;
+          }
+        }
+        break;
+
+      case KERNEL_SCAN_EARLIEST:
+        // earliest kernel version only
+        while (DirIterNext(Iter, 2, LINUX_LOADER_SEARCH_PATH, &FileInfo)) {
+          if (FileInfo != NULL) {
+            if (FileInfo->FileSize > 0) {
+              // get the kernel file path
+              CHAR16 *NewPath = PoolPrint(L"%s\\%s", LINUX_BOOT_PATH, FileInfo->FileName);
+              if ((CustomPath == NULL) || (StrCmp(CustomPath, NewPath) > 0)) {
+                if (CustomPath != NULL) {
+                  FreePool(CustomPath);
+                }
+                CustomPath = NewPath;
+              } else {
+                FreePool(NewPath);
+              }
+            }
+            // free the file info
+            FreePool(FileInfo);
+            FileInfo = NULL;
+          }
+        }
+        break;
+
+      default:
+        // Set scan to all just in case
+        Custom->KernelScan = KERNEL_SCAN_ALL;
+        break;
+      }
+    } else if (!FileExists(Volume->RootDir, CustomPath)) {
+      DBG("skipped because path does not exist\n");
       continue;
     }
     // Change to custom image if needed
@@ -1216,44 +1606,202 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
         }
       }
     }
-    // Change custom drive image if needed
-    // Update volume boot type
-    // Volume->BootType = BOOTING_BY_EFI;
-    DBG("match!\n");
-    // Create a entry for this volume
-    Entry = CreateLoaderEntry(CustomPath, Custom->Options, Custom->FullTitle, Custom->Title, Volume, Image, DriveImage, Custom->Type, Custom->Flags, Custom->Hotkey, TRUE);
-    if (Entry != NULL) {
-      if (OSFLAG_ISUNSET(Custom->Flags, OSFLAG_NODEFAULTMENU)) {
-        AddDefaultMenu(Entry);
-      } else if (Custom->SubEntries != NULL) {
-        UINTN CustomSubIndex = 0;
-        // Add subscreen
-        REFIT_MENU_SCREEN *SubScreen = AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
-        if (SubScreen) {
-          SubScreen->Title = PoolPrint(L"Boot Options for %s on %s", (Custom->Title != NULL) ? Custom->Title : CustomPath, Entry->VolName);
-          SubScreen->TitleImage = Entry->me.Image;
-          SubScreen->ID = Custom->Type + 20;
-          SubScreen->AnimeRun = GetAnime(SubScreen);
-          VolumeSize = RShiftU64(MultU64x32(Volume->BlockIO->Media->LastBlock, Volume->BlockIO->Media->BlockSize), 20);
-          AddMenuInfoLine(SubScreen, PoolPrint(L"Volume size: %dMb", VolumeSize));
-          AddMenuInfoLine(SubScreen, DevicePathToStr(Entry->DevicePath));
-          Guid = FindGPTPartitionGuidInDevicePath(Volume->DevicePath);
-          if (Guid) {
-            CHAR8 *GuidStr = AllocateZeroPool(50);
-            AsciiSPrint(GuidStr, 50, "%g", Guid);
-            AddMenuInfoLine(SubScreen, PoolPrint(L"UUID: %a", GuidStr));
-            FreePool(GuidStr);
+    do
+    {
+      // Search for linux kernels
+      CHAR16 *CustomOptions = Custom->Options;
+      if (FindCustomPath && (Custom->KernelScan == KERNEL_SCAN_ALL)) {
+        EFI_FILE_INFO *FileInfo = NULL;
+        // Get the next kernel path or stop looking
+        if (!DirIterNext(Iter, 2, LINUX_LOADER_SEARCH_PATH, &FileInfo) || (FileInfo == NULL)) {
+          DBG("\n");
+          break;
+        }
+        // who knows....
+        if (FileInfo->FileSize == 0) {
+          FreePool(FileInfo);
+          continue;
+        }
+        // get the kernel file path
+        CustomPath = PoolPrint(L"%s\\%s", LINUX_BOOT_PATH, FileInfo->FileName);
+        // free the file info
+        FreePool(FileInfo);
+      }
+      if (CustomPath == NULL) {
+        DBG("skipped\n");
+        break;
+      }
+      // Check to make sure we should update custom options or not
+      if (FindCustomPath && OSFLAG_ISUNSET(Custom->Flags, OSFLAG_NODEFAULTARGS)) {
+        // Find the init ram image and select root
+        CustomOptions = LinuxKernelOptions(Iter->DirHandle, Basename(CustomPath) + StrLen(LINUX_LOADER_PATH), PartUUID, Custom->Options);
+      }
+      // Check to make sure that this entry is not hidden or disabled by another custom entry
+      if (!IsSubEntry) {
+        CUSTOM_LOADER_ENTRY *Ptr;
+        UINTN                i = 0;
+        BOOLEAN              BetterMatch = FALSE;
+        for (Ptr = gSettings.CustomEntries; Ptr != NULL; ++i, Ptr = Ptr->Next) {
+          // Don't match against this custom
+          if (Ptr == Custom) {
+            continue;
           }
-          AddMenuInfoLine(SubScreen, PoolPrint(L"Options: %s", Entry->LoadOptions));
-          // Create sub entries
-          for (CustomSubEntry = Custom->SubEntries; CustomSubEntry; CustomSubEntry = CustomSubEntry->Next) {
-            AddCustomEntry(CustomSubIndex++, (CustomSubEntry->Path != NULL) ? CustomSubEntry->Path : CustomPath, CustomSubEntry, SubScreen);
+          // Can only match the same types
+          if (Custom->Type != Ptr->Type) {
+            continue;
           }
-          AddMenuEntry(SubScreen, &MenuEntryReturn);
-          Entry->me.SubScreen = SubScreen;
+          // Check if the volume string matches
+          if (Custom->Volume != Ptr->Volume) {
+            if (Ptr->Volume == NULL) {
+              // Less precise volume match
+              if (Custom->Path != Ptr->Path) {
+                // Better path match
+                BetterMatch = ((Ptr->Path != NULL) && (StrCmp(CustomPath, Ptr->Path) == 0) &&
+                               ((Custom->VolumeType == Ptr->VolumeType) ||
+                                (Volume->DiskKind == DISK_KIND_OPTICAL && (Custom->VolumeType & VOLTYPE_OPTICAL)) ||
+                                (Volume->DiskKind == DISK_KIND_EXTERNAL && (Custom->VolumeType & VOLTYPE_EXTERNAL)) ||
+                                (Volume->DiskKind == DISK_KIND_INTERNAL && (Custom->VolumeType & VOLTYPE_INTERNAL)) ||
+                                (Volume->DiskKind == DISK_KIND_FIREWIRE && (Custom->VolumeType & VOLTYPE_FIREWIRE))));
+              }
+            } else if ((StrStr(Volume->DevicePathString, Custom->Volume) == NULL) &&
+                       ((Volume->VolName == NULL) || (StrStr(Volume->VolName, Custom->Volume) == NULL))) {
+              if (Custom->Volume == NULL) {
+                // More precise volume match
+                if (Custom->Path != Ptr->Path) {
+                  // Better path match
+                  BetterMatch = ((Ptr->Path != NULL) && (StrCmp(CustomPath, Ptr->Path) == 0) &&
+                                 ((Custom->VolumeType == Ptr->VolumeType) ||
+                                  (Volume->DiskKind == DISK_KIND_OPTICAL && (Custom->VolumeType & VOLTYPE_OPTICAL)) ||
+                                  (Volume->DiskKind == DISK_KIND_EXTERNAL && (Custom->VolumeType & VOLTYPE_EXTERNAL)) ||
+                                  (Volume->DiskKind == DISK_KIND_INTERNAL && (Custom->VolumeType & VOLTYPE_INTERNAL)) ||
+                                  (Volume->DiskKind == DISK_KIND_FIREWIRE && (Custom->VolumeType & VOLTYPE_FIREWIRE))));
+                } else if (Custom->VolumeType != Ptr->VolumeType) {
+                  // More precise volume type match
+                  BetterMatch = ((Custom->VolumeType == 0) &&
+                                 ((Volume->DiskKind == DISK_KIND_OPTICAL && (Custom->VolumeType & VOLTYPE_OPTICAL)) ||
+                                  (Volume->DiskKind == DISK_KIND_EXTERNAL && (Custom->VolumeType & VOLTYPE_EXTERNAL)) ||
+                                  (Volume->DiskKind == DISK_KIND_INTERNAL && (Custom->VolumeType & VOLTYPE_INTERNAL)) ||
+                                  (Volume->DiskKind == DISK_KIND_FIREWIRE && (Custom->VolumeType & VOLTYPE_FIREWIRE))));
+                } else {
+                  // Better match
+                  BetterMatch = TRUE;
+                }
+              // Duplicate volume match
+              } else if (Custom->Path != Ptr->Path) {
+                // Better path match
+                BetterMatch = ((Ptr->Path != NULL) && (StrCmp(CustomPath, Ptr->Path) == 0) &&
+                               ((Custom->VolumeType == Ptr->VolumeType) ||
+                                (Volume->DiskKind == DISK_KIND_OPTICAL && (Custom->VolumeType & VOLTYPE_OPTICAL)) ||
+                                (Volume->DiskKind == DISK_KIND_EXTERNAL && (Custom->VolumeType & VOLTYPE_EXTERNAL)) ||
+                                (Volume->DiskKind == DISK_KIND_INTERNAL && (Custom->VolumeType & VOLTYPE_INTERNAL)) ||
+                                (Volume->DiskKind == DISK_KIND_FIREWIRE && (Custom->VolumeType & VOLTYPE_FIREWIRE))));
+              // Duplicate path match
+              } else if (Custom->VolumeType != Ptr->VolumeType) {
+                // More precise volume type match
+                BetterMatch = ((Custom->VolumeType == 0) &&
+                               ((Volume->DiskKind == DISK_KIND_OPTICAL && (Custom->VolumeType & VOLTYPE_OPTICAL)) ||
+                                (Volume->DiskKind == DISK_KIND_EXTERNAL && (Custom->VolumeType & VOLTYPE_EXTERNAL)) ||
+                                (Volume->DiskKind == DISK_KIND_INTERNAL && (Custom->VolumeType & VOLTYPE_INTERNAL)) ||
+                                (Volume->DiskKind == DISK_KIND_FIREWIRE && (Custom->VolumeType & VOLTYPE_FIREWIRE))));
+              } else {
+                // Duplicate entry
+                BetterMatch = (i <= CustomIndex);
+              }
+            }
+          // Duplicate volume match
+          } else if (Custom->Path != Ptr->Path) {
+            if (Ptr->Path == NULL) {
+              // Less precise path match
+              BetterMatch = ((Custom->VolumeType != Ptr->VolumeType) &&
+                              ((Volume->DiskKind == DISK_KIND_OPTICAL && (Custom->VolumeType & VOLTYPE_OPTICAL)) ||
+                               (Volume->DiskKind == DISK_KIND_EXTERNAL && (Custom->VolumeType & VOLTYPE_EXTERNAL)) ||
+                               (Volume->DiskKind == DISK_KIND_INTERNAL && (Custom->VolumeType & VOLTYPE_INTERNAL)) ||
+                               (Volume->DiskKind == DISK_KIND_FIREWIRE && (Custom->VolumeType & VOLTYPE_FIREWIRE))));
+            } else if (StrCmp(CustomPath, Ptr->Path) == 0) {
+              if (Custom->Path == NULL) {
+                // More precise path and volume type match
+                BetterMatch = ((Custom->VolumeType == Ptr->VolumeType) ||
+                               (Volume->DiskKind == DISK_KIND_OPTICAL && (Custom->VolumeType & VOLTYPE_OPTICAL)) ||
+                               (Volume->DiskKind == DISK_KIND_EXTERNAL && (Custom->VolumeType & VOLTYPE_EXTERNAL)) ||
+                               (Volume->DiskKind == DISK_KIND_INTERNAL && (Custom->VolumeType & VOLTYPE_INTERNAL)) ||
+                               (Volume->DiskKind == DISK_KIND_FIREWIRE && (Custom->VolumeType & VOLTYPE_FIREWIRE)));
+              } else if (Custom->VolumeType != Ptr->VolumeType) {
+                // More precise volume type match
+                BetterMatch = ((Custom->VolumeType == 0) &&
+                               ((Volume->DiskKind == DISK_KIND_OPTICAL && (Custom->VolumeType & VOLTYPE_OPTICAL)) ||
+                                (Volume->DiskKind == DISK_KIND_EXTERNAL && (Custom->VolumeType & VOLTYPE_EXTERNAL)) ||
+                                (Volume->DiskKind == DISK_KIND_INTERNAL && (Custom->VolumeType & VOLTYPE_INTERNAL)) ||
+                                (Volume->DiskKind == DISK_KIND_FIREWIRE && (Custom->VolumeType & VOLTYPE_FIREWIRE))));
+              } else {
+                // Duplicate entry
+                BetterMatch = (i <= CustomIndex);
+              }
+            }
+          // Duplicate path match
+          } else if (Custom->VolumeType != Ptr->VolumeType) {
+            // More precise volume type match
+            BetterMatch = ((Custom->VolumeType == 0) &&
+                           ((Volume->DiskKind == DISK_KIND_OPTICAL && (Custom->VolumeType & VOLTYPE_OPTICAL)) ||
+                            (Volume->DiskKind == DISK_KIND_EXTERNAL && (Custom->VolumeType & VOLTYPE_EXTERNAL)) ||
+                            (Volume->DiskKind == DISK_KIND_INTERNAL && (Custom->VolumeType & VOLTYPE_INTERNAL)) ||
+                            (Volume->DiskKind == DISK_KIND_FIREWIRE && (Custom->VolumeType & VOLTYPE_FIREWIRE))));
+          } else {
+            // Duplicate entry
+            BetterMatch = (i <= CustomIndex);
+          }
+          if (BetterMatch) {
+            break;
+          }
+        }
+        if (BetterMatch) {
+          DBG("skipped because custom entry %d is a better match and will produce a duplicate entry\n", i);
+          continue;
         }
       }
-      AddMenuEntry(IsSubEntry ? SubMenu : &MainMenu, (REFIT_MENU_ENTRY *)Entry);
+      DBG("match!\n");
+      // Create a entry for this volume
+      Entry = CreateLoaderEntry(CustomPath, CustomOptions, Custom->FullTitle, Custom->Title, Volume, Image, DriveImage, Custom->Type, Custom->Flags, Custom->Hotkey, TRUE);
+      if (Entry != NULL) {
+        if (OSFLAG_ISUNSET(Custom->Flags, OSFLAG_NODEFAULTMENU)) {
+          AddDefaultMenu(Entry);
+        } else if (Custom->SubEntries != NULL) {
+          UINTN CustomSubIndex = 0;
+          // Add subscreen
+          REFIT_MENU_SCREEN *SubScreen = AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
+          if (SubScreen) {
+            SubScreen->Title = PoolPrint(L"Boot Options for %s on %s", (Custom->Title != NULL) ? Custom->Title : CustomPath, Entry->VolName);
+            SubScreen->TitleImage = Entry->me.Image;
+            SubScreen->ID = Custom->Type + 20;
+            SubScreen->AnimeRun = GetAnime(SubScreen);
+            VolumeSize = RShiftU64(MultU64x32(Volume->BlockIO->Media->LastBlock, Volume->BlockIO->Media->BlockSize), 20);
+            AddMenuInfoLine(SubScreen, PoolPrint(L"Volume size: %dMb", VolumeSize));
+            AddMenuInfoLine(SubScreen, DevicePathToStr(Entry->DevicePath));
+            if (Guid) {
+              CHAR8 *GuidStr = AllocateZeroPool(50);
+              AsciiSPrint(GuidStr, 50, "%g", Guid);
+              AddMenuInfoLine(SubScreen, PoolPrint(L"UUID: %a", GuidStr));
+              FreePool(GuidStr);
+            }
+            AddMenuInfoLine(SubScreen, PoolPrint(L"Options: %s", Entry->LoadOptions));
+            // Create sub entries
+            for (CustomSubEntry = Custom->SubEntries; CustomSubEntry; CustomSubEntry = CustomSubEntry->Next) {
+              AddCustomEntry(CustomSubIndex++, (CustomSubEntry->Path != NULL) ? CustomSubEntry->Path : CustomPath, CustomSubEntry, SubScreen);
+            }
+            AddMenuEntry(SubScreen, &MenuEntryReturn);
+            Entry->me.SubScreen = SubScreen;
+          }
+        }
+        AddMenuEntry(IsSubEntry ? SubMenu : &MainMenu, (REFIT_MENU_ENTRY *)Entry);
+      }
+      // cleanup custom
+      if (FindCustomPath) {
+        FreePool(CustomPath);
+        FreePool(CustomOptions);
+      }
+    } while (FindCustomPath && (Custom->KernelScan == KERNEL_SCAN_ALL));
+    // Close the kernel boot directory
+    if (FindCustomPath) {
+      DirIterClose(Iter);
     }
   }
 }
@@ -1284,6 +1832,8 @@ VOID AddCustomEntries(VOID)
         while (Index < LinuxEntryDataCount) {
           AddCustomEntry(i, LinuxEntryData[Index++].Path, Custom, NULL);
         }
+      } else if (Custom->Type == OSTYPE_LINEFI) {
+        AddCustomEntry(i, NULL, Custom, NULL);
       } else {
         AddCustomEntry(i, BOOT_LOADER_PATH, Custom, NULL);
       }

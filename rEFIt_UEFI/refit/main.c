@@ -730,7 +730,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     //PauseForKey(L"continue");
       
   }
-  else if (OSTYPE_IS_LINUX(Entry->LoaderType)) {
+  else if (OSTYPE_IS_LINUX(Entry->LoaderType) || (Entry->LoaderType == OSTYPE_LINEFI)) {
     if (gEmuVariableControl != NULL) {
       gEmuVariableControl->UninstallEmulation(gEmuVariableControl);
     }
@@ -1693,7 +1693,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       // fixed other menu entries
       //               DBG("FillInputs OK\n");
 
-      if (!(GlobalConfig.DisableFlags & DISABLE_FLAG_TOOLS)) {
+      if (!(GlobalConfig.DisableFlags & HIDEUI_FLAG_TOOLS)) {
         AddCustomTool();
         if (!gSettings.DisableToolScan) {
           ScanTool();

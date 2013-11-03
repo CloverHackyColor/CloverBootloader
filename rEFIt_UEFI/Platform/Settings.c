@@ -511,13 +511,13 @@ static BOOLEAN FillinCustomEntry(IN OUT CUSTOM_LOADER_ENTRY *Entry, TagPtr dictP
   prop = GetProperty(dictPointer, "VolumeType");
   if (prop && (prop->type == kTagTypeString)) {
     if (AsciiStriCmp(prop->string, "Internal") == 0) {
-      Entry->VolumeType = DISABLE_FLAG_INTERNAL;
+      Entry->VolumeType = VOLTYPE_INTERNAL;
     } else if (AsciiStriCmp(prop->string, "External") == 0) {
-      Entry->VolumeType = DISABLE_FLAG_EXTERNAL;
+      Entry->VolumeType = VOLTYPE_EXTERNAL;
     } else if (AsciiStriCmp(prop->string, "Optical") == 0) {
-      Entry->VolumeType = DISABLE_FLAG_OPTICAL;
+      Entry->VolumeType = VOLTYPE_OPTICAL;
     } else if (AsciiStriCmp(prop->string, "FireWire") == 0) {
-      Entry->VolumeType = DISABLE_FLAG_FIREWIRE;
+      Entry->VolumeType = VOLTYPE_FIREWIRE;
     }
   } else {
     INTN i, count = GetTagCount(prop);
@@ -535,13 +535,13 @@ static BOOLEAN FillinCustomEntry(IN OUT CUSTOM_LOADER_ENTRY *Entry, TagPtr dictP
           continue;
         }
         if (AsciiStriCmp(prop2->string, "Internal") == 0) {
-          Entry->VolumeType |= DISABLE_FLAG_INTERNAL;
+          Entry->VolumeType |= VOLTYPE_INTERNAL;
         } else if (AsciiStriCmp(prop2->string, "External") == 0) {
-          Entry->VolumeType |= DISABLE_FLAG_EXTERNAL;
+          Entry->VolumeType |= VOLTYPE_EXTERNAL;
         } else if (AsciiStriCmp(prop2->string, "Optical") == 0) {
-          Entry->VolumeType |= DISABLE_FLAG_OPTICAL;
+          Entry->VolumeType |= VOLTYPE_OPTICAL;
         } else if (AsciiStriCmp(prop2->string, "FireWire") == 0) {
-          Entry->VolumeType |= DISABLE_FLAG_FIREWIRE;
+          Entry->VolumeType |= VOLTYPE_FIREWIRE;
         }
       }
     }
@@ -591,6 +591,26 @@ static BOOLEAN FillinCustomEntry(IN OUT CUSTOM_LOADER_ENTRY *Entry, TagPtr dictP
          Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_NOCACHES);
        }
      }
+  }
+  if (Entry->Type == OSTYPE_LINEFI) {
+    prop = GetProperty(dictPointer, "Kernel");
+    if (prop) {
+      if ((prop->type == kTagTypeString) && prop->string) {
+        if ((prop->string[0] == 'N') || (prop->string[0] == 'n')) {
+          Entry->KernelScan = KERNEL_SCAN_NEWEST;
+        } else if ((prop->string[0] == 'O') || (prop->string[0] == 'o')) {
+          Entry->KernelScan = KERNEL_SCAN_OLDEST;
+        } else if ((prop->string[0] == 'F') || (prop->string[0] == 'f')) {
+          Entry->KernelScan = KERNEL_SCAN_FIRST;
+        } else if ((prop->string[0] == 'L') || (prop->string[0] == 'l')) {
+          Entry->KernelScan = KERNEL_SCAN_LAST;
+        } else if ((prop->string[0] == 'M') || (prop->string[0] == 'm')) {
+          Entry->KernelScan = KERNEL_SCAN_MOSTRECENT;
+        } else if ((prop->string[0] == 'E') || (prop->string[0] == 'e')) {
+          Entry->KernelScan = KERNEL_SCAN_EARLIEST;
+        }
+      }
+    }
   }
 
   // Sub entries
@@ -758,13 +778,13 @@ static BOOLEAN FillinCustomLegacy(IN OUT CUSTOM_LEGACY_ENTRY *Entry, TagPtr dict
   prop = GetProperty(dictPointer, "VolumeType");
   if (prop && (prop->type == kTagTypeString)) {
     if (AsciiStriCmp(prop->string, "Internal") == 0) {
-      Entry->VolumeType = DISABLE_FLAG_INTERNAL;
+      Entry->VolumeType = VOLTYPE_INTERNAL;
     } else if (AsciiStriCmp(prop->string, "External") == 0) {
-      Entry->VolumeType = DISABLE_FLAG_EXTERNAL;
+      Entry->VolumeType = VOLTYPE_EXTERNAL;
     } else if (AsciiStriCmp(prop->string, "Optical") == 0) {
-      Entry->VolumeType = DISABLE_FLAG_OPTICAL;
+      Entry->VolumeType = VOLTYPE_OPTICAL;
     } else if (AsciiStriCmp(prop->string, "FireWire") == 0) {
-      Entry->VolumeType = DISABLE_FLAG_FIREWIRE;
+      Entry->VolumeType = VOLTYPE_FIREWIRE;
     }
   } else {
     INTN i, count = GetTagCount(prop);
@@ -782,13 +802,13 @@ static BOOLEAN FillinCustomLegacy(IN OUT CUSTOM_LEGACY_ENTRY *Entry, TagPtr dict
           continue;
         }
         if (AsciiStriCmp(prop2->string, "Internal") == 0) {
-          Entry->VolumeType |= DISABLE_FLAG_INTERNAL;
+          Entry->VolumeType |= VOLTYPE_INTERNAL;
         } else if (AsciiStriCmp(prop2->string, "External") == 0) {
-          Entry->VolumeType |= DISABLE_FLAG_EXTERNAL;
+          Entry->VolumeType |= VOLTYPE_EXTERNAL;
         } else if (AsciiStriCmp(prop2->string, "Optical") == 0) {
-          Entry->VolumeType |= DISABLE_FLAG_OPTICAL;
+          Entry->VolumeType |= VOLTYPE_OPTICAL;
         } else if (AsciiStriCmp(prop2->string, "FireWire") == 0) {
-          Entry->VolumeType |= DISABLE_FLAG_FIREWIRE;
+          Entry->VolumeType |= VOLTYPE_FIREWIRE;
         }
       }
     }
@@ -897,13 +917,13 @@ static BOOLEAN FillinCustomTool(IN OUT CUSTOM_TOOL_ENTRY *Entry, TagPtr dictPoin
   prop = GetProperty(dictPointer, "VolumeType");
   if (prop && (prop->type == kTagTypeString)) {
     if (AsciiStriCmp(prop->string, "Internal") == 0) {
-      Entry->VolumeType = DISABLE_FLAG_INTERNAL;
+      Entry->VolumeType = VOLTYPE_INTERNAL;
     } else if (AsciiStriCmp(prop->string, "External") == 0) {
-      Entry->VolumeType = DISABLE_FLAG_EXTERNAL;
+      Entry->VolumeType = VOLTYPE_EXTERNAL;
     } else if (AsciiStriCmp(prop->string, "Optical") == 0) {
-      Entry->VolumeType = DISABLE_FLAG_OPTICAL;
+      Entry->VolumeType = VOLTYPE_OPTICAL;
     } else if (AsciiStriCmp(prop->string, "FireWire") == 0) {
-      Entry->VolumeType = DISABLE_FLAG_FIREWIRE;
+      Entry->VolumeType = VOLTYPE_FIREWIRE;
     }
   } else {
     INTN i, count = GetTagCount(prop);
@@ -921,13 +941,13 @@ static BOOLEAN FillinCustomTool(IN OUT CUSTOM_TOOL_ENTRY *Entry, TagPtr dictPoin
           continue;
         }
         if (AsciiStriCmp(prop2->string, "Internal") == 0) {
-          Entry->VolumeType |= DISABLE_FLAG_INTERNAL;
+          Entry->VolumeType |= VOLTYPE_INTERNAL;
         } else if (AsciiStriCmp(prop2->string, "External") == 0) {
-          Entry->VolumeType |= DISABLE_FLAG_EXTERNAL;
+          Entry->VolumeType |= VOLTYPE_EXTERNAL;
         } else if (AsciiStriCmp(prop2->string, "Optical") == 0) {
-          Entry->VolumeType |= DISABLE_FLAG_OPTICAL;
+          Entry->VolumeType |= VOLTYPE_OPTICAL;
         } else if (AsciiStriCmp(prop2->string, "FireWire") == 0) {
-          Entry->VolumeType |= DISABLE_FLAG_FIREWIRE;
+          Entry->VolumeType |= VOLTYPE_FIREWIRE;
         }
       }
     }
@@ -1220,6 +1240,26 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
               GlobalConfig.NoLegacy = TRUE;
             } else if ((dict2->string[0] == 'F') || (dict2->string[0] == 'f')) {
               GlobalConfig.LegacyFirst = TRUE;
+            }
+          }
+        }
+        dict2 = GetProperty(prop, "Kernel");
+        if (dict2) {
+          if (dict2->type == kTagTypeFalse) {
+            gSettings.KernelScan = KERNEL_SCAN_NONE;
+          } else if ((dict2->type == kTagTypeString) && dict2->string) {
+            if ((dict2->string[0] == 'N') || (dict2->string[0] == 'n')) {
+              gSettings.KernelScan = ((dict2->string[1] == 'E') || (dict2->string[1] == 'e')) ? KERNEL_SCAN_NEWEST : KERNEL_SCAN_NONE;
+            } else if ((dict2->string[0] == 'O') || (dict2->string[0] == 'o')) {
+              gSettings.KernelScan = KERNEL_SCAN_OLDEST;
+            } else if ((dict2->string[0] == 'F') || (dict2->string[0] == 'f')) {
+              gSettings.KernelScan = KERNEL_SCAN_FIRST;
+            } else if ((dict2->string[0] == 'L') || (dict2->string[0] == 'l')) {
+              gSettings.KernelScan = KERNEL_SCAN_LAST;
+            } else if ((dict2->string[0] == 'M') || (dict2->string[0] == 'm')) {
+              gSettings.KernelScan = KERNEL_SCAN_MOSTRECENT;
+            } else if ((dict2->string[0] == 'E') || (dict2->string[0] == 'e')) {
+              gSettings.KernelScan = KERNEL_SCAN_EARLIEST;
             }
           }
         }
@@ -1553,7 +1593,7 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
     }
     dict2 = GetProperty(dict, "Tools");
     if (dict2 && dict2->type == kTagTypeFalse) {
-      GlobalConfig.DisableFlags |= DISABLE_FLAG_TOOLS;
+      GlobalConfig.DisableFlags |= HIDEUI_FLAG_TOOLS;
     }
     dict2 = GetProperty(dict, "Label");
     if (dict2 && dict2->type == kTagTypeFalse) {
