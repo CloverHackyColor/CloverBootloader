@@ -7,17 +7,17 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-11-02 09:49+0100\n"
-"PO-Revision-Date: 2013-08-02 18:44+0000\n"
+"PO-Revision-Date: 2013-11-03 01:29+0000\n"
 "Last-Translator: Slice <sergey.slice@gmail.com>\n"
 "Language-Team: ru <ru@li.org>\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%"
+"10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1375469061.0\n"
+"X-POOTLE-MTIME: 1383442196.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -73,7 +73,7 @@ msgstr "Copyright © %CPRYEAR%"
 #. type: Content of: <html><body><p><span>
 #: Resources/templates/Description.html:17
 msgid "Clover v2"
-msgstr "Clover v2"
+msgstr "Clover v2k"
 
 #
 #. type: Content of: <html><body><p>
@@ -100,7 +100,7 @@ msgstr "Основные возможности:"
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:21
 msgid "- boot into 10.4 - 10.8 OSX, Windows EFI and Linux EFI"
-msgstr "- загрузка систем 10.4 - 10.8 OSX, Windows EFI и Linux EFI"
+msgstr "- загрузка систем 10.4 - 10.9 OSX, Windows EFI и Linux EFI"
 
 #
 #. type: Content of: <html><body><p>
@@ -218,8 +218,8 @@ msgstr "- управление питанием и частотами CPU"
 #: Resources/templates/Description.html:36
 msgid "- ACPI tables loading (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI...)"
 msgstr ""
-"- подгрузка дополнительных таблиц ACPI (SSDT-xx, APIC, BOOT, SLIC, SLIT, "
-"SRAT, UEFI...)"
+"- подгрузка или сброс дополнительных таблиц ACPI (SSDT-xx, APIC, BOOT, SLIC, "
+"SLIT, SRAT, UEFI...)"
 
 #
 #. type: Content of: <html><body><p>
@@ -623,14 +623,14 @@ msgstr ""
 
 #. type: "BGM_title"
 #: Resources/templates/Localizable.strings:115
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Black_Green"
 msgid "Black_Green_Moody"
-msgstr "black_green"
+msgstr "Black_Green_Moody"
 
 #. type: "BGM_description"
 #: Resources/templates/Localizable.strings:116
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "Default black_green theme from Blackosx,\n"
 #| "Install to /EFI/CLOVER/themes/black_green"
@@ -638,8 +638,8 @@ msgid ""
 "Black Green and Moody theme from Blackosx,\n"
 "Install to /EFI/CLOVER/themes/BGM"
 msgstr ""
-"Черно-зеленая тема от Blackosx,\n"
-"Установить в /EFI/CLOVER/themes/black_green."
+"Тоскливо-зеленая тема от Blackosx,\n"
+"Установить в /EFI/CLOVER/themes/BGM."
 
 #. type: "black_green_title"
 #: Resources/templates/Localizable.strings:119
