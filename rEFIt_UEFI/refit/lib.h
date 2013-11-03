@@ -350,15 +350,15 @@ typedef struct {
 #define VOLTYPE_INTERNAL   (0x0004)
 #define VOLTYPE_FIREWIRE   (0x0008)
 
-#define HIDEUI_FLAG_SHELL      (0x0001)
-#define HIDEUI_FLAG_TOOLS      (0x0002)
-#define HIDEUI_FLAG_SINGLEUSER (0x0002)
-#define HIDEUI_FLAG_HWTEST     (0x0004)
-#define HIDEUI_FLAG_BANNER      (0x0010)
-#define HIDEUI_FLAG_FUNCS       (0x0020)
-#define HIDEUI_FLAG_LABEL       (0x0040)
-#define HIDEUI_FLAG_REVISION    (0x0080)
-#define HIDEUI_ALL              (0xffff)
+#define HIDEUI_FLAG_SHELL      (0x0010)
+#define HIDEUI_FLAG_TOOLS      (0x0020)
+#define HIDEUI_FLAG_SINGLEUSER (0x0040)
+#define HIDEUI_FLAG_HWTEST     (0x0080)
+#define HIDEUI_FLAG_BANNER     (0x0100)
+#define HIDEUI_FLAG_FUNCS      (0x0200)
+#define HIDEUI_FLAG_LABEL      (0x0400)
+#define HIDEUI_FLAG_REVISION   (0x0800)
+#define HIDEUI_ALL             (0xffff & (~VOLTYPE_INTERNAL))
 /*
 #define HDBADGES_NONE   0
 #define HDBADGES_INT    1
