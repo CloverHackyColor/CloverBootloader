@@ -188,7 +188,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
   devprop_add_value(device, "model", (UINT8*)model, (UINT32)AsciiStrLen(model));
 	devprop_add_value(device, "device_type", (UINT8*)"display", 7);	
   devprop_add_value(device, "subsystem-vendor-id", GMAX3100_vals[21], 4);
-  devprop_add_value(device, "hda-gfx", (UINT8*)"onboard-1", 9);
+  devprop_add_value(device, "hda-gfx", (UINT8*)"onboard-1", 10);
   switch (gma_dev->device_id) {
     case 0x0102: 
       devprop_add_value(device, "class-code",	ClassFix, 4);

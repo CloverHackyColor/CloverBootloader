@@ -3605,7 +3605,7 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 	/* FIXME: for primary graphics card only */
 	boot_display = 1;
 	devprop_add_value(device, "@0,AAPL,boot-display", (UINT8*)&boot_display, 4);
-  devprop_add_value(device, "hda-gfx", (UINT8*)"onboard-1", 9);
+  devprop_add_value(device, "hda-gfx", (UINT8*)"onboard-1", 10);
 	if (nvPatch == PATCH_ROM_SUCCESS_HAS_LVDS) {
 		UINT8 built_in = 0x01;
 		devprop_add_value(device, "@0,built-in", &built_in, 1);
@@ -3649,7 +3649,7 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 		devprop_add_value(device, "@0,display-cfg", default_dcfg_0, DCFG0_LEN);
 		devprop_add_value(device, "@1,display-cfg", default_dcfg_1, DCFG1_LEN);
 	}
-  devprop_add_value(device, "hda-gfx", (UINT8*)"onboard-1", 9);
+  devprop_add_value(device, "hda-gfx", (UINT8*)"onboard-1", 10);
   
 
 	//add HDMI Audio back to nvidia
