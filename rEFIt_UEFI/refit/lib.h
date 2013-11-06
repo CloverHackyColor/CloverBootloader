@@ -143,6 +143,7 @@ typedef struct {
 #define OSFLAG_NODEFAULTMENU (1 << 5)
 #define OSFLAG_HIDDEN        (1 << 6)
 #define OSFLAG_DISABLED      (1 << 7)
+#define OSFLAG_FORCEWITHKEXTSFLAG     (1 << 8)
 
 #define IS_EXTENDED_PART_TYPE(type) ((type) == 0x05 || (type) == 0x0f || (type) == 0x85)
 
@@ -417,7 +418,7 @@ typedef struct {
   CHAR16           *LoaderPath;
   CHAR16           *VolName;
   EFI_DEVICE_PATH  *DevicePath;
-  UINT8             Flags;
+  UINTN             Flags;
   UINT8             LoaderType;
   CHAR8            *OSVersion;
 } LOADER_ENTRY;

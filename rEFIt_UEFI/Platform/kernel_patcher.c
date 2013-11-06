@@ -908,7 +908,7 @@ KernelAndKextPatcherInit(VOID)
 
 VOID
 KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
-{  
+{
   // we will call KernelAndKextPatcherInit() only if needed
   
   DBG_RT("\nKernelCpu patch: ");
@@ -984,6 +984,14 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
   //
   // Kext patches
   //
+  
+  // we need to scan kexts if WithKextsIfNoFakeSMC is specified
+  if (gSettings.WithKextsIfNoFakeSMC) {
+    DBG_RT("\nWithKextsIfNoFakeSMC specified - we need kext patching to search for FakeSMC\n");
+    gSettings.KPKextPatchesNeeded = TRUE;
+    gSettings.KextPatchesAllowed = TRUE;
+  }
+  
   DBG_RT("\nKextPatches Needed: %c, Allowed: %c ... ",
          (gSettings.KPKextPatchesNeeded ? L'Y' : L'n'),
          (gSettings.KextPatchesAllowed ? L'Y' : L'n')
@@ -1013,7 +1021,17 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
   //
   // Kext add
   //
-  if ((Entry != 0) && OSFLAG_ISSET(Entry->Flags, OSFLAG_WITHKEXTS)) {
+  if (Entry != 0 && gSettings.WithKextsIfNoFakeSMC && gSettings.FakeSMCFound) {
+    // disable kext injection if WithKextsIfNoFakeSMC is set
+    // and FakeSMC is already present
+    Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_WITHKEXTS);
+    if (gSettings.KPDebug) {
+      DBG_RT("\nWithKextsIfNoFakeSMC is set and FakeSMC is found - disabling kext injection\n");
+      gBS->Stall(5000000);
+    }
+  }
+  if ((Entry != 0) && OSFLAG_ISSET(Entry->Flags, OSFLAG_WITHKEXTS))
+  {
     UINT32      deviceTreeP;
     UINT32      deviceTreeLength;
     EFI_STATUS  Status;

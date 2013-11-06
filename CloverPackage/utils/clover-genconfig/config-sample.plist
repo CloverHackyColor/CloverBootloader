@@ -91,6 +91,8 @@
 		<string>0x0501</string>
 		<key>InjectKexts</key>
 		<false/>
+		<key>InjectKextsOnlyIfNoFakeSMC</key>
+		<false/>
 		<key>NoCaches</key>
 		<false/>
 	</dict>

@@ -375,6 +375,29 @@ VOID AppleRTCPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 In
 
 
 
+///////////////////////////////////
+//
+// WithKextsIfNoFakeSMC: Detect FakeSMC and if present then
+// disable kext injection InjectKexts()
+//
+
+VOID CheckForFakeSMC(CHAR8 *InfoPlist)
+{
+  if (gSettings.WithKextsIfNoFakeSMC && !gSettings.FakeSMCFound) {
+    if (AsciiStrStr(InfoPlist, "<string>org.netkas.driver.FakeSMC</string>") != NULL
+        || AsciiStrStr(InfoPlist, "<string>org.netkas.FakeSMC</string>") != NULL)
+    {
+      gSettings.FakeSMCFound = TRUE;
+      if (gSettings.KPDebug) {
+        DBG_RT("\nFakeSMC found (WithKextsIfNoFakeSMC)\n");
+        gBS->Stall(5000000);
+      }
+    }
+  }
+}
+
+
+
 ////////////////////////////////////
 //
 // Place other kext patches here
@@ -501,7 +524,11 @@ VOID PatchKext(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPl
       }
     }    
   }
-
+  
+  //
+  // Check for FakeSMC (WithKextsIfNoFakeSMC)
+  //
+  CheckForFakeSMC(InfoPlist);
 }
 
 //
@@ -673,8 +700,20 @@ VOID PatchPrelinkedKexts(VOID)
   
   
   WholePlist = (CHAR8*)(UINTN)PrelinkInfoAddr;
-  DictPtr = WholePlist;
   
+  //
+  // Detect FakeSMC and if present then
+  // disable kext injection InjectKexts().
+  // There is some bug in the folowing code that
+  // searches for individual kexts in prelink info
+  // and FakeSMC is not found on my SnowLeo although
+  // it is present in kernelcache.
+  // But searching through the whole prelink info
+  // works and that's the reason why it is here.
+  //
+  CheckForFakeSMC(WholePlist);
+  
+  DictPtr = WholePlist;
   while ((DictPtr = AsciiStrStr(DictPtr, "dict>")) != NULL) {
     
     if (DictPtr[-1] == '<') {

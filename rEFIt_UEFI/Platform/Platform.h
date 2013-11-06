@@ -730,6 +730,8 @@ typedef struct {
   UINT16  BacklightLevel;
   BOOLEAN MemoryFix;
   BOOLEAN WithKexts;
+  BOOLEAN WithKextsIfNoFakeSMC;
+  BOOLEAN FakeSMCFound;
   BOOLEAN NoCaches;
 	
 	// GUI parameters

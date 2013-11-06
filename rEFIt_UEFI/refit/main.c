@@ -662,6 +662,14 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
         }
       }
     }
+    
+    // if OSFLAG_FORCEWITHKEXTSFLAG is set then it means that user
+    // selected submenu entry and explicitly requested with or without
+    // kext injection option. respect it even if global InjectKextsOnlyIfNoFakeSMC
+    // is specified - meaning, disable InjectKextsOnlyIfNoFakeSMC in that case.
+    if (OSFLAG_ISSET(Entry->Flags, OSFLAG_FORCEWITHKEXTSFLAG)) {
+      gSettings.WithKextsIfNoFakeSMC = FALSE;
+    }
 
     //we are booting OSX - restore emulation if it's not installed before starting boot.efi
     if (gEmuVariableControl != NULL) {
