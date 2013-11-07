@@ -302,7 +302,6 @@ void PrintConfig(CFTypeRef data)
   addBoolean(systemParametersDict, CFSTR("InjectSystemID"), s->InjectSystemID);
   addHex(systemParametersDict, CFSTR("BacklightLevel"),s->BacklightLevel);
   addBoolean(systemParametersDict, CFSTR("InjectKexts"), 0);
-  addBoolean(systemParametersDict, CFSTR("InjectKextsOnlyIfNoFakeSMC"), 0);
 
   // GUI
   CFMutableDictionaryRef guiDict = addDict(dict, CFSTR("GUI"));
