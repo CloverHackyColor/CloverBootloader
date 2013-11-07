@@ -824,7 +824,6 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
         L"Boot Mac OS X without injected kexts" :
         L"Boot Mac OS X with injected kexts";
         SubEntry->Flags           = OSFLAG_TOGGLE(SubEntry->Flags, OSFLAG_WITHKEXTS);
-        SubEntry->Flags           = OSFLAG_SET(SubEntry->Flags, OSFLAG_FORCEWITHKEXTSFLAG);
         SubEntry->LoadOptions     = AddLoadOption(SubEntry->LoadOptions, L"-v");
         AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
       }
@@ -837,7 +836,6 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
           if (SubEntry) {
             SubEntry->me.Title        = L"Boot Mac OS X with caches and without injected kexts";
             SubEntry->Flags           = OSFLAG_UNSET(OSFLAG_UNSET(SubEntry->Flags, OSFLAG_NOCACHES), OSFLAG_WITHKEXTS);
-            SubEntry->Flags           = OSFLAG_SET(SubEntry->Flags, OSFLAG_FORCEWITHKEXTSFLAG);
             SubEntry->LoadOptions     = AddLoadOption(SubEntry->LoadOptions, L"-v");
             AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
           }
@@ -848,7 +846,6 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
           if (SubEntry) {
             SubEntry->me.Title        = L"Boot Mac OS X without caches and without injected kexts";
             SubEntry->Flags           = OSFLAG_UNSET(OSFLAG_SET(SubEntry->Flags, OSFLAG_NOCACHES), OSFLAG_WITHKEXTS);
-            SubEntry->Flags           = OSFLAG_SET(SubEntry->Flags, OSFLAG_FORCEWITHKEXTSFLAG);
             SubEntry->LoadOptions     = AddLoadOption(SubEntry->LoadOptions, L"-v");
             AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
           }
@@ -860,7 +857,6 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
         if (SubEntry) {
           SubEntry->me.Title        = L"Boot Mac OS X with caches and with injected kexts";
           SubEntry->Flags           = OSFLAG_SET(OSFLAG_UNSET(SubEntry->Flags, OSFLAG_NOCACHES), OSFLAG_WITHKEXTS);
-          SubEntry->Flags           = OSFLAG_SET(SubEntry->Flags, OSFLAG_FORCEWITHKEXTSFLAG);
           SubEntry->LoadOptions     = AddLoadOption(SubEntry->LoadOptions, L"-v");
           AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
         }
@@ -871,7 +867,6 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
         if (SubEntry) {
           SubEntry->me.Title        = L"Boot Mac OS X without caches and with injected kexts";
           SubEntry->Flags           = OSFLAG_SET(OSFLAG_SET(SubEntry->Flags, OSFLAG_NOCACHES), OSFLAG_WITHKEXTS);
-          SubEntry->Flags           = OSFLAG_SET(SubEntry->Flags, OSFLAG_FORCEWITHKEXTSFLAG);
           SubEntry->LoadOptions     = AddLoadOption(SubEntry->LoadOptions, L"-v");
           AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
         }

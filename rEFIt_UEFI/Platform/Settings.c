@@ -2001,17 +2001,17 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
       if(prop) {
         if ((prop->type == kTagTypeTrue) ||
             ((prop->type == kTagTypeString) &&
-             ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))) {
+             ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))))
+        {
           gSettings.WithKexts = TRUE;
-        }
-      }
-      prop = GetProperty(dictPointer, "InjectKextsOnlyIfNoFakeSMC");
-      if(prop) {
-        if ((prop->type == kTagTypeTrue) ||
-          ((prop->type == kTagTypeString) &&
-           ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))) {
-              gSettings.WithKexts = TRUE;
-              gSettings.WithKextsIfNoFakeSMC = TRUE;
+        } else if ((prop->type == kTagTypeString) &&
+                   ((AsciiStrStr(prop->string, "IfNoFakeSMC") != NULL) ||
+                    (AsciiStrStr(prop->string, "Automatic") != NULL) ||
+                    (AsciiStrStr(prop->string, "Detect") != NULL))
+                   )
+        {
+          gSettings.WithKexts = TRUE;
+          gSettings.WithKextsIfNoFakeSMC = TRUE;
         }
       }
 

@@ -377,7 +377,7 @@ VOID AppleRTCPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 In
 
 ///////////////////////////////////
 //
-// WithKextsIfNoFakeSMC: Detect FakeSMC and if present then
+// InjectKexts if no FakeSMC: Detect FakeSMC and if present then
 // disable kext injection InjectKexts()
 //
 
@@ -389,7 +389,7 @@ VOID CheckForFakeSMC(CHAR8 *InfoPlist)
     {
       gSettings.FakeSMCFound = TRUE;
       if (gSettings.KPDebug) {
-        DBG_RT("\nFakeSMC found (WithKextsIfNoFakeSMC)\n");
+        DBG_RT("\nFakeSMC found\n");
         gBS->Stall(5000000);
       }
     }
@@ -526,7 +526,7 @@ VOID PatchKext(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPl
   }
   
   //
-  // Check for FakeSMC (WithKextsIfNoFakeSMC)
+  // Check for FakeSMC (InjectKexts if no FakeSMC)
   //
   CheckForFakeSMC(InfoPlist);
 }
