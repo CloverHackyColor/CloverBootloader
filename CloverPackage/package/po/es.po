@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-11-02 09:49+0100\n"
-"PO-Revision-Date: 2013-08-14 16:00+0000\n"
+"PO-Revision-Date: 2013-11-07 04:07+0000\n"
 "Last-Translator: Maniac <emafrias@gmail.com>\n"
 "Language-Team: es <es@li.org>\n"
 "Language: es\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1376496055.0\n"
+"X-POOTLE-MTIME: 1383797272.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -621,14 +621,14 @@ msgstr ""
 
 #. type: "BGM_title"
 #: Resources/templates/Localizable.strings:115
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Black_Green"
 msgid "Black_Green_Moody"
-msgstr "Black_Green"
+msgstr "Black Green Moody"
 
 #. type: "BGM_description"
 #: Resources/templates/Localizable.strings:116
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "Default black_green theme from Blackosx,\n"
 #| "Install to /EFI/CLOVER/themes/black_green"
@@ -636,8 +636,8 @@ msgid ""
 "Black Green and Moody theme from Blackosx,\n"
 "Install to /EFI/CLOVER/themes/BGM"
 msgstr ""
-"Tema por defecto black_green de Blackosx,\n"
-"Se instala en /EFI/CLOVER/themes/black_green"
+"Tema Black Green Moody de Blackosx,\n"
+"Se instala en /EFI/CLOVER/themes/BGM"
 
 #. type: "black_green_title"
 #: Resources/templates/Localizable.strings:119
