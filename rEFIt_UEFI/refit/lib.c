@@ -546,7 +546,7 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
                  FindMem(SectorBuffer, 2048, "BOOT      ", 10) >= 0) { //reboot Clover
         Volume->HasBootCode = TRUE;
         Volume->LegacyOS->IconName = L"clover";
-        Volume->LegacyOS->Name = L"MacOSX";
+        Volume->LegacyOS->Name = L"Clover";
         Volume->LegacyOS->Type = OSTYPE_VAR;
         Volume->BootType = BOOTING_BY_PBR;
         //        DBG("Detected Clover FAT32 bootcode\n");

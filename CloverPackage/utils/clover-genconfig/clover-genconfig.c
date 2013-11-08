@@ -456,7 +456,6 @@ void PrintConfig(CFTypeRef data)
   addString(appPropDict, CFSTR("Key"), "AAPL,XXX");
   addHex(appPropDict, CFSTR("Value"), 0xFFFF);
   
-  addBoolean(pciDict, CFSTR("LpcTune"), s->LpcTune);
   CFMutableDictionaryRef fakeIDDict = addDict(pciDict, CFSTR("FakeID"));
   addHex(fakeIDDict, CFSTR("ATI"), s->FakeATI);
   addHex(fakeIDDict, CFSTR("NVidia"), s->FakeNVidia);
