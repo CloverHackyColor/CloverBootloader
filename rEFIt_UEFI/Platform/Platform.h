@@ -627,6 +627,7 @@ struct CUSTOM_LOADER_ENTRY {
   UINT8                Type;
   UINT8                VolumeType;
   UINT8                KernelScan;
+  EG_PIXEL            *BootBgColor;
 };
 
 typedef struct CUSTOM_LEGACY_ENTRY CUSTOM_LEGACY_ENTRY;

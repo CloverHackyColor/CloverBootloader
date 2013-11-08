@@ -420,6 +420,7 @@ typedef struct {
   UINT8             Flags;
   UINT8             LoaderType;
   CHAR8            *OSVersion;
+  EG_PIXEL         *BootBgColor;
 } LOADER_ENTRY;
 
 typedef struct {

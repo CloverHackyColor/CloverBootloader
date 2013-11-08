@@ -320,6 +320,9 @@ static CUSTOM_LOADER_ENTRY *DuplicateCustomEntry(IN CUSTOM_LOADER_ENTRY *Entry)
     if (Entry->DriveImagePath) {
       DuplicateEntry->DriveImagePath = EfiStrDuplicate(Entry->DriveImagePath);
     }
+    if (Entry->BootBgColor) {
+      DuplicateEntry->BootBgColor = AllocateCopyPool(sizeof(EG_PIXEL), Entry->BootBgColor);
+    }
     DuplicateEntry->Image = Entry->Image;
     DuplicateEntry->DriveImage = Entry->DriveImage;
     DuplicateEntry->Hotkey = Entry->Hotkey;
@@ -464,6 +467,16 @@ static BOOLEAN FillinCustomEntry(IN OUT CUSTOM_LOADER_ENTRY *Entry, TagPtr dictP
   prop = GetProperty(dictPointer, "Hotkey");
   if (prop && (prop->type == kTagTypeString) && prop->string) {
     Entry->Hotkey = *(prop->string);
+  }
+  prop = GetProperty(dictPointer, "BootBgColor");
+  if (prop && prop->type == kTagTypeString) {
+    UINTN   Color;
+    Color = AsciiStrHexToUintn(prop->string);
+    Entry->BootBgColor = AllocateZeroPool(sizeof(EG_PIXEL));
+    Entry->BootBgColor->r = (Color >> 24) & 0xFF;
+    Entry->BootBgColor->g = (Color >> 16) & 0xFF;
+    Entry->BootBgColor->b = (Color >> 8) & 0xFF;
+    Entry->BootBgColor->a = (Color >> 0) & 0xFF;
   }
   prop = GetProperty(dictPointer, "Hidden");
   if (prop) {

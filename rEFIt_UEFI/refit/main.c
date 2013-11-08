@@ -614,7 +614,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
   CHAR8                   *InstallerVersion;
   
   DBG("StartLoader() start\n");
-  egClearScreen(&DarkBackgroundPixel);
+  egClearScreen(Entry->BootBgColor ? Entry->BootBgColor : &DarkBackgroundPixel);
   MsgLog("Finally: Bus=%ldkHz CPU=%ldMHz\n",
          DivU64x32(gCPUStructure.FSBFrequency, kilo),
          gCPUStructure.MaxSpeed);

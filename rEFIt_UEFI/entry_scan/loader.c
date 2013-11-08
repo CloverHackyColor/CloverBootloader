@@ -51,7 +51,7 @@
 
 #define LINUX_ISSUE_PATH L"\\etc\\issue"
 #define LINUX_BOOT_PATH L"\\boot"
-#define LINUX_BOOT_ALT_PATH L"/boot"
+#define LINUX_BOOT_ALT_PATH L"\\boot"
 #define LINUX_LOADER_PATH L"vmlinuz"
 #define LINUX_FULL_LOADER_PATH LINUX_BOOT_PATH L"\\" LINUX_LOADER_PATH
 #define LINUX_LOADER_SEARCH_PATH L"vmlinuz*"
@@ -270,7 +270,7 @@ STATIC CHAR16 *LinuxKernelOptions(IN EFI_FILE_PROTOCOL *Dir,
     CHAR16 *InitRd = PoolPrint(LinuxInitImagePath[Index++], (Version == NULL) ? L"" : Version);
     if (InitRd != NULL) {
       if (FileExists(Dir, InitRd)) {
-        CHAR16 *CustomOptions = PoolPrint(L"root=/dev/disk/by-partuuid/%s initrd=%s/%s %s %s", PartUUID, LINUX_BOOT_ALT_PATH, InitRd, LINUX_DEFAULT_OPTIONS, (Options == NULL) ? L"" : Options);
+        CHAR16 *CustomOptions = PoolPrint(L"root=/dev/disk/by-partuuid/%s initrd=%s\\%s %s %s", PartUUID, LINUX_BOOT_ALT_PATH, InitRd, LINUX_DEFAULT_OPTIONS, (Options == NULL) ? L"" : Options);
         FreePool(InitRd);
         return CustomOptions;
       }
@@ -343,7 +343,7 @@ STATIC EFI_STATUS GetOSXVolumeName(LOADER_ENTRY *Entry)
 
 
 STATIC LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOptions, IN CHAR16 *FullTitle, IN CHAR16 *LoaderTitle, IN REFIT_VOLUME *Volume,
-                                       IN EG_IMAGE *Image, IN EG_IMAGE *DriveImage, IN UINT8 OSType, IN UINT8 Flags, IN CHAR16 Hotkey, IN BOOLEAN CustomEntry)
+                                       IN EG_IMAGE *Image, IN EG_IMAGE *DriveImage, IN UINT8 OSType, IN UINT8 Flags, IN CHAR16 Hotkey, EG_PIXEL *BootBgColor, IN BOOLEAN CustomEntry)
 {
   EFI_DEVICE_PATH *LoaderDevicePath;
   CHAR16          *LoaderDevicePathString;
@@ -675,6 +675,11 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
       // DBG(" Show badge as OSImage.");
     }
   }
+  
+  if (BootBgColor != NULL) {
+    Entry->BootBgColor = BootBgColor;
+  }
+  
   return Entry;
 }
 
@@ -985,7 +990,7 @@ STATIC VOID AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOptions, IN C
   if ((LoaderPath == NULL) || (Volume == NULL) || (Volume->RootDir == NULL) || !FileExists(Volume->RootDir, LoaderPath)) {
     return;
   }
-  Entry = CreateLoaderEntry(LoaderPath, LoaderOptions, NULL, LoaderTitle, Volume, Image, NULL, OSType, Flags, 0, FALSE);
+  Entry = CreateLoaderEntry(LoaderPath, LoaderOptions, NULL, LoaderTitle, Volume, Image, NULL, OSType, Flags, 0, NULL, FALSE);
   if (Entry != NULL) {
     AddDefaultMenu(Entry);
     AddMenuEntry(&MainMenu, (REFIT_MENU_ENTRY *)Entry);
@@ -1760,7 +1765,7 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
       }
       DBG("match!\n");
       // Create a entry for this volume
-      Entry = CreateLoaderEntry(CustomPath, CustomOptions, Custom->FullTitle, Custom->Title, Volume, Image, DriveImage, Custom->Type, Custom->Flags, Custom->Hotkey, TRUE);
+      Entry = CreateLoaderEntry(CustomPath, CustomOptions, Custom->FullTitle, Custom->Title, Volume, Image, DriveImage, Custom->Type, Custom->Flags, Custom->Hotkey, Custom->BootBgColor, TRUE);
       if (Entry != NULL) {
         if (OSFLAG_ISUNSET(Custom->Flags, OSFLAG_NODEFAULTMENU)) {
           AddDefaultMenu(Entry);
