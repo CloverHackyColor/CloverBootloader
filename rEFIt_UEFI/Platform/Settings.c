@@ -2420,6 +2420,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
           DBG("Dropping %d tables\n", Count);
           for (i = 0; i < Count; ++i) {
             UINT32 Signature = 0;
+            UINT32 TabLength = 0;
             UINT64 TableId = 0;
             if (EFI_ERROR(GetElement(prop, i, &dict2))) {
               DBG("Drop table continue at %d\n", i);
@@ -2473,6 +2474,18 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
               CopyMem(&TableId, (CHAR8*)&id[0], 8);
               DBG("\" (%16.16lX)", TableId);
             }
+            // Get the table len to drop
+            prop2 = GetProperty(dict2, "Length");
+            if (prop2) {
+              if (prop2->type == kTagTypeInteger) {
+                TabLength  = (UINT32)(UINTN)prop->string;
+              } else if (prop2->type == kTagTypeString){
+                AsciiStrToUnicodeStr(prop2->string, (CHAR16*)&UStr[0]);
+                TabLength  = (UINT32)StrHexToUint64(UStr);
+              }
+              DBG(" length=%d(0x%x)", TabLength);
+
+            }
             DBG("\n");
             //set to drop
             if (gSettings.ACPIDropTables) {
@@ -2480,7 +2493,8 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
               DBG("set table: %08x, %16x to drop:", Signature, TableId);
               while (DropTable) {
                 if (((Signature == DropTable->Signature) &&
-                    (!TableId || (DropTable->TableId == TableId))) ||
+                    (!TableId || (DropTable->TableId == TableId)) &&
+                    (!TabLength || (DropTable->Length == TabLength))) ||
                     (!Signature && (DropTable->TableId == TableId))) {
                   DropTable->MenuItem.BValue = TRUE;
                   gSettings.DropSSDT = FALSE; //if one item=true then dropAll=false by default
@@ -3936,6 +3950,9 @@ VOID GetDevices(VOID)
               gGraphics[NGFX].Ports = 2;
               break;
             default:
+              gGraphics[NGFX].Vendor = Unknown;
+              AsciiSPrint(gGraphics[NGFX].Model, 64, "pci%x,%x", Pci.Hdr.VendorId, Pci.Hdr.DeviceId);
+              gGraphics[NGFX].Ports = 1;
               break;
           }                
 

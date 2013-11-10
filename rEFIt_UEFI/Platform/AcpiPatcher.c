@@ -296,10 +296,11 @@ VOID GetAcpiTablesList()
       TableEntry = (EFI_ACPI_DESCRIPTION_HEADER *)((UINTN)(Entry64));
       CopyMem((CHAR8*)&sign[0], (CHAR8*)&TableEntry->Signature, 4);      
       CopyMem((CHAR8*)&OTID[0], (CHAR8*)&TableEntry->OemTableId, 8);
-      DBG(" Found table: %a  %a\n", sign, OTID);
+      DBG(" Found table: %a  %a len=%d\n", sign, OTID, (INT32)TableEntry->Length);
       DropTable = AllocateZeroPool(sizeof(ACPI_DROP_TABLE));
       DropTable->Signature = TableEntry->Signature;
       DropTable->TableId = TableEntry->OemTableId;
+      DropTable->Length = TableEntry->Length;
       DropTable->MenuItem.BValue = FALSE;
       DropTable->Next = gSettings.ACPIDropTables;
       gSettings.ACPIDropTables = DropTable;
@@ -315,10 +316,11 @@ VOID GetAcpiTablesList()
       }
       CopyMem((CHAR8*)&sign[0], (CHAR8*)&TableEntry->Signature, 4);
       CopyMem((CHAR8*)&OTID[0], (CHAR8*)&TableEntry->OemTableId, 8);
-      DBG(" Found table: %a  %a\n", sign, OTID);
+      DBG(" Found table: %a  %a len=%d\n", sign, OTID, (INT32)TableEntry->Length);
       DropTable = AllocateZeroPool(sizeof(ACPI_DROP_TABLE));
       DropTable->Signature = TableEntry->Signature;
       DropTable->TableId = TableEntry->OemTableId;
+      DropTable->Length = TableEntry->Length;
       DropTable->MenuItem.BValue = FALSE;
       DropTable->Next = gSettings.ACPIDropTables;
       gSettings.ACPIDropTables = DropTable;
@@ -329,14 +331,14 @@ VOID GetAcpiTablesList()
 
 }
 
-VOID DropTableFromRSDT (UINT32 Signature, UINT64 TableId)
+VOID DropTableFromRSDT (UINT32 Signature, UINT64 TableId, UINT32 Length)
 {
 	EFI_ACPI_DESCRIPTION_HEADER     *TableEntry;
 	UINTN               Index, Index2;
 	UINT32							EntryCount;
 	UINT32							*EntryPtr, *Ptr, *Ptr2;
-  CHAR8 sign[5];
-  CHAR8 OTID[9];
+  CHAR8         sign[5];
+  CHAR8         OTID[9];
   BOOLEAN 			DoubleZero = FALSE;
   
   if (!Rsdt) {
@@ -383,8 +385,9 @@ VOID DropTableFromRSDT (UINT32 Signature, UINT64 TableId)
     }
  */
     if ((Signature && (TableEntry->Signature == Signature)) &&
-          (!TableId || (TableEntry->OemTableId == TableId))) {
-      DBG(" Table: %a  %a  dropped\n", sign, OTID);
+        (!TableId || (TableEntry->OemTableId == TableId)) &&
+        (!Length || (TableEntry->Length == Length))) {
+      DBG(" Table: %a  %a  %d dropped\n", sign, OTID, (INT32)TableEntry->Length);
       Ptr = EntryPtr;
       Ptr2 = Ptr + 1;
       for (Index2 = Index; Index2 < EntryCount-1; Index2++) {
@@ -398,7 +401,7 @@ VOID DropTableFromRSDT (UINT32 Signature, UINT64 TableId)
   DBG("corrected RSDT length=%d\n", Rsdt->Header.Length);
 }
 
-VOID DropTableFromXSDT (UINT32 Signature, UINT64 TableId) 
+VOID DropTableFromXSDT (UINT32 Signature, UINT64 TableId, UINT32 Length)
 {
 //  EFI_STATUS                      Status = EFI_SUCCESS;
 	EFI_ACPI_DESCRIPTION_HEADER     *TableEntry;
@@ -421,7 +424,7 @@ VOID DropTableFromXSDT (UINT32 Signature, UINT64 TableId)
 
   CopyMem((CHAR8*)&sign[0], (CHAR8*)&Signature, 4);
   CopyMem((CHAR8*)&OTID[0], (CHAR8*)&TableId, 8);
-  DBG("Drop tables from Xsdt, SIGN=%a TableID=%a\n", sign, OTID);
+  DBG("Drop tables from Xsdt, SIGN=%a TableID=%a Length=%d\n", sign, OTID, (INT32)Length);
 	EntryCount = (Xsdt->Header.Length - sizeof (EFI_ACPI_DESCRIPTION_HEADER)) / sizeof(UINT64);
   DBG(" Xsdt has tables count=%d \n", EntryCount); 
   if (EntryCount > 50) {
@@ -449,7 +452,8 @@ VOID DropTableFromXSDT (UINT32 Signature, UINT64 TableId)
 //    DBG(" Found table: %a  %a\n", sign, OTID);
     
     Drop = ((Signature && (TableEntry->Signature == Signature)) &&
-            (!TableId  || (TableEntry->OemTableId == TableId)));
+            (!TableId  || (TableEntry->OemTableId == TableId))  &&
+            (!Length || (TableEntry->Length == Length)));
  /* no! drop always by signature!
             ||
             (!Signature && (TableId == TableEntry->OemTableId)));
@@ -458,7 +462,7 @@ VOID DropTableFromXSDT (UINT32 Signature, UINT64 TableId)
     if (!Drop) {
       continue;
     }
-    DBG(" Table: %a  %a  dropped\n", sign, OTID);
+    DBG(" Table: %a  %a  %d dropped\n", sign, OTID, (INT32)TableEntry->Length);
     Ptr = BasePtr;
     Ptr2 = Ptr + sizeof(UINT64);
     for (Index2 = Index; Index2 < EntryCount-1; Index2++) {
@@ -1963,9 +1967,9 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
     ACPI_DROP_TABLE *DropTable = gSettings.ACPIDropTables;
     while (DropTable) {
       if (DropTable->MenuItem.BValue) {
-        DBG("Attempting to drop \"%4.4a\" (%8.8X) \"%8.8a\" (%16.16lX)\n", &(DropTable->Signature), DropTable->Signature, &(DropTable->TableId), DropTable->TableId);
-        DropTableFromXSDT(DropTable->Signature, DropTable->TableId);
-        DropTableFromRSDT(DropTable->Signature, DropTable->TableId);
+        DBG("Attempting to drop \"%4.4a\" (%8.8X) \"%8.8a\" (%16.16lX) L=%d\n", &(DropTable->Signature), DropTable->Signature, &(DropTable->TableId), DropTable->TableId, DropTable->Length);
+        DropTableFromXSDT(DropTable->Signature, DropTable->TableId, DropTable->Length);
+        DropTableFromRSDT(DropTable->Signature, DropTable->TableId, DropTable->Length);
       }
       DropTable = DropTable->Next;
     }
@@ -1973,14 +1977,14 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
 
   if (gSettings.DropSSDT) {
     //special case if we set into menu drop all SSDT
-    DropTableFromXSDT(EFI_ACPI_4_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE, 0);
-    DropTableFromRSDT(EFI_ACPI_4_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE, 0);
+    DropTableFromXSDT(EFI_ACPI_4_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE, 0, 0);
+    DropTableFromRSDT(EFI_ACPI_4_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE, 0, 0);
   } else { 
     //all remaining SSDT tables will be patched
     PatchAllSSDT();
     //do the empty drop to clean xsdt
-    DropTableFromXSDT(XXXX_SIGN, 0);
-    DropTableFromRSDT(XXXX_SIGN, 0);
+    DropTableFromXSDT(XXXX_SIGN, 0, 0);
+    DropTableFromRSDT(XXXX_SIGN, 0, 0);
   }
   
   
@@ -2053,7 +2057,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
         {
           //save old table and drop it from XSDT
           CopyMem((VOID*)(UINTN)BufferPtr, ApicTable, ApicTable->Length);
-          DropTableFromXSDT(APIC_SIGN, 0);
+          DropTableFromXSDT(APIC_SIGN, 0, 0);
           ApicTable = (EFI_ACPI_DESCRIPTION_HEADER*)(UINTN)BufferPtr;
           ApicTable->Revision = EFI_ACPI_4_0_MULTIPLE_APIC_DESCRIPTION_TABLE_REVISION;
           CopyMem(&ApicTable->OemId, oemID, 6);
@@ -2422,8 +2426,8 @@ EFI_STATUS PatchACPI_OtherOS(CHAR16* OsSubdir, BOOLEAN DropSSDT)
   //
   if (DropSSDT)
   {
-    DropTableFromXSDT(EFI_ACPI_4_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE, 0);
-    DropTableFromRSDT(EFI_ACPI_4_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE, 0);
+    DropTableFromXSDT(EFI_ACPI_4_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE, 0, 0);
+    DropTableFromRSDT(EFI_ACPI_4_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE, 0, 0);
   }
   
   //

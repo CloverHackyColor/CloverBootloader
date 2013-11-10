@@ -666,7 +666,7 @@ struct ACPI_DROP_TABLE
 {
   ACPI_DROP_TABLE *Next;
   UINT32          Signature;
-  UINT32          align;
+  UINT32          Length;
   UINT64          TableId;
   INPUT_ITEM      MenuItem;
 };

@@ -318,6 +318,12 @@
 				<key>TableId</key>
 				<string>CpuPm</string>
 			</dict>
+			<dict>
+				<key>Signature</key>
+				<string>SSDT</string>
+				<key>Length</key>
+				<integer>720</integer>
+			</dict>
 		</array>
 		<key>DSDT</key>
 		<dict>

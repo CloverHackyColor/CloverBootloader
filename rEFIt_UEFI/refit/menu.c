@@ -251,14 +251,13 @@ VOID RefillInputs(VOID)
       UnicodeSPrint(InputItems[InputItemsCount++].SValue, 40, L"%a", tmp);
       
   //    InputItems[InputItemsCount++].SValue = PoolPrint(L"%08x",*(UINT64*)&gSettings.Dcfg[0]);
-    } else if (gGraphics[i].Vendor == Intel) {
+    } else /*if (gGraphics[i].Vendor == Intel) */ {
       InputItems[InputItemsCount].ItemType = BoolValue; //21+i*6
       InputItems[InputItemsCount].BValue = gSettings.InjectIntel;
       InputItems[InputItemsCount++].SValue = gSettings.InjectIntel?L"[+]":L"[ ]";
       InputItems[InputItemsCount].ItemType = ASString; //22+6i
       InputItems[InputItemsCount++].SValue = L"NA";
     }
-    
     InputItems[InputItemsCount].ItemType = Decimal;  //23+6i
     if (gSettings.VideoPorts > 0) {
       InputItems[InputItemsCount++].SValue = PoolPrint(L"%02d", gSettings.VideoPorts);
@@ -551,7 +550,7 @@ VOID FillInputs(VOID)
       UnicodeSPrint(InputItems[InputItemsCount++].SValue, 40, L"%a", tmp);
       
       //    InputItems[InputItemsCount++].SValue = PoolPrint(L"%08x",*(UINT64*)&gSettings.Dcfg[0]);
-    } else if (gGraphics[i].Vendor == Intel) {
+    } else /*if (gGraphics[i].Vendor == Intel) */ {
       InputItems[InputItemsCount].ItemType = BoolValue; //21+i*6
       InputItems[InputItemsCount].BValue = gSettings.InjectIntel;
       InputItems[InputItemsCount++].SValue = gSettings.InjectIntel?L"[+]":L"[ ]";
@@ -2750,7 +2749,9 @@ REFIT_MENU_ENTRY  *SubMenuGraphics()
       InputBootArgs->Entry.Title = PoolPrint(L"InjectATI:");
     } else if (gGraphics[i].Vendor == Intel) {
       InputBootArgs->Entry.Title = PoolPrint(L"InjectIntel:");
-    }      
+    } else {
+      InputBootArgs->Entry.Title = PoolPrint(L"InjectX3:");
+    }
     InputBootArgs->Entry.Tag = TAG_INPUT;
     InputBootArgs->Entry.Row = 0xFFFF; //cursor
     InputBootArgs->Item = &InputItems[N+1];
@@ -2763,7 +2764,7 @@ REFIT_MENU_ENTRY  *SubMenuGraphics()
       Ven = 98;
     } else if (gGraphics[i].Vendor == Ati) {
       Ven = 97;
-    } else if (gGraphics[i].Vendor == Intel) {
+    } else /*if (gGraphics[i].Vendor == Intel)*/ {
       Ven = 99;
     }
     InputBootArgs->Entry.Title = PoolPrint(L"FakeID:");
@@ -3118,11 +3119,12 @@ REFIT_MENU_ENTRY  *SubMenuDropTables()
       CopyMem((CHAR8*)&sign, (CHAR8*)&(DropTable->Signature), 4);
       CopyMem((CHAR8*)&OTID, (CHAR8*)&(DropTable->TableId), 8);
 
-      MsgLog("adding to menu %a (%x) %a (%lx)\n",
+      MsgLog("adding to menu %a (%x) %a (%lx) L=%d(0x%x)\n",
              sign, DropTable->Signature,
-             OTID, DropTable->TableId);
+             OTID, DropTable->TableId,
+             DropTable->Length, DropTable->Length);
       InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-      UnicodeSPrint(Flags, 255, L"Drop \"%4.4a\"  \"%8.8a\":", sign, OTID);
+      UnicodeSPrint(Flags, 255, L"Drop \"%4.4a\"  \"%8.8a\" %d:", sign, OTID, DropTable->Length);
       InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
       InputBootArgs->Entry.Tag = TAG_INPUT;
       InputBootArgs->Entry.Row = 0xFFFF; //cursor
