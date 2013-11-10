@@ -132,12 +132,12 @@ EFI_STATUS MouseBirth()
   }
   CurrentMode = gPointer.SimplePointerProtocol->Mode;
   DBG("Found Mouse device:\n");
-  DBG(" - ResolutionX=%ld\n", CurrentMode->ResolutionX);
-  DBG(" - ResolutionY=%ld\n", CurrentMode->ResolutionY);
-  DBG(" - ResolutionZ=%ld\n", CurrentMode->ResolutionZ);
-  DBG(" - Left button %a present\n", CurrentMode->LeftButton?" ":"not");
-  DBG(" - Right button %a present\n", CurrentMode->RightButton?" ":"not");
-  DBG(" - WaitForInput %a present\n", gPointer.SimplePointerProtocol->WaitForInput?" ":"not");
+//  DBG(" - ResolutionX=%ld\n", CurrentMode->ResolutionX);
+//  DBG(" - ResolutionY=%ld\n", CurrentMode->ResolutionY);
+//  DBG(" - ResolutionZ=%ld\n", CurrentMode->ResolutionZ);
+//  DBG(" - Left button %a present\n", CurrentMode->LeftButton?" ":"not");
+//  DBG(" - Right button %a present\n", CurrentMode->RightButton?" ":"not");
+//  DBG(" - WaitForInput %a present\n", gPointer.SimplePointerProtocol->WaitForInput?" ":"not");
   //TODO - config and menu?
   //CurrentMode->ResolutionX = gSettings.PointerSpeed;
   //CurrentMode->ResolutionY = gSettings.PointerSpeed;

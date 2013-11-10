@@ -462,7 +462,7 @@ EG_IMAGE * egLoadImage(IN EFI_FILE_HANDLE BaseDir, IN CHAR16 *FileName, IN BOOLE
     
     // load file
     Status = egLoadFile(BaseDir, FileName, &FileData, &FileDataLength);
-  DBG("File=%s loaded with status=%r length=%d\n", FileName, Status, FileDataLength);
+//  DBG("File=%s loaded with status=%r length=%d\n", FileName, Status, FileDataLength);
     if (EFI_ERROR(Status))
         return NULL;
 //  DBG("   extension = %s\n", egFindExtension(FileName));

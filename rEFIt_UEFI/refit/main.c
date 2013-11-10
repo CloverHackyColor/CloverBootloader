@@ -452,7 +452,7 @@ static EFI_STATUS StartEFILoadedImage(IN EFI_HANDLE ChildImageHandle,
   CHAR16                  ErrorInfo[256];
   CHAR16                  *FullLoadOptions = NULL;
   
-  DBG("Starting %s\n", ImageTitle);
+//  DBG("Starting %s\n", ImageTitle);
   if (ErrorInStep != NULL) {
     *ErrorInStep = 0;
   }
@@ -481,7 +481,7 @@ static EFI_STATUS StartEFILoadedImage(IN EFI_HANDLE ChildImageHandle,
     ChildLoadedImage->LoadOptions = (VOID *)LoadOptions;
     ChildLoadedImage->LoadOptionsSize = (UINT32)StrSize(LoadOptions);
     //((UINT32)StrLen(LoadOptions) + 1) * sizeof(CHAR16);
-    DBG("Using load options '%s'\n", LoadOptions);
+//    DBG("Using load options '%s'\n", LoadOptions);
   }
   //DBG("Image loaded at: %p\n", ChildLoadedImage->ImageBase);
   //PauseForKey(L"continue");
@@ -513,15 +513,6 @@ static EFI_STATUS StartEFILoadedImage(IN EFI_HANDLE ChildImageHandle,
     if (ErrorInStep != NULL)
       *ErrorInStep = 3;
   }
-//  PauseForKey(L"Error checked\n");
-  // re-open file handles
-//  Status = ReinitRefitLib();  
-//  PauseForKey(L"ReinitRefitLib OK\n");
-  //Slice
-/*  if (EFI_ERROR(Status)) {
-    goto bailout_unload;
-  }
- */
   if (!EFI_ERROR(ReturnStatus)) { //why unload driver?!
     goto bailout;
   }
