@@ -961,7 +961,11 @@ InitializeBM (
                                     BdsDxeStrings,
                                     NULL
                                     );
-  ASSERT (BmmCallbackInfo->BmmHiiHandle != NULL);
+//  ASSERT (BmmCallbackInfo->BmmHiiHandle != NULL);
+  if (!BmmCallbackInfo->BmmHiiHandle) {
+    Status = EFI_OUT_OF_RESOURCES;
+    goto Exit;
+  }
 
   //
   // Post our File Explorer VFR binary to the HII database.
@@ -973,7 +977,11 @@ InitializeBM (
                                    BdsDxeStrings,
                                    NULL
                                    );
-  ASSERT (BmmCallbackInfo->FeHiiHandle != NULL);
+//  ASSERT (BmmCallbackInfo->FeHiiHandle != NULL);
+  if (!BmmCallbackInfo->FeHiiHandle) {
+    Status = EFI_OUT_OF_RESOURCES;
+    goto Exit;
+  }
 
   //
   // Init OpCode Handle and Allocate space for creation of Buffer
