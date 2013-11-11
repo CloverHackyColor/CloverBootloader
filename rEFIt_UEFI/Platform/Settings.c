@@ -2478,7 +2478,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
             prop2 = GetProperty(dict2, "Length");
             if (prop2) {
               if (prop2->type == kTagTypeInteger) {
-                TabLength  = (UINT32)(UINTN)prop->string;
+                TabLength  = (UINT32)(UINTN)prop2->string;
               } else if (prop2->type == kTagTypeString){
                 AsciiStrToUnicodeStr(prop2->string, (CHAR16*)&UStr[0]);
                 TabLength  = (UINT32)StrHexToUint64(UStr);
