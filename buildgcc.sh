@@ -118,6 +118,7 @@ function mountRamDisk() {
         [ -n "$dev_ramdisk" ] && newfs_hfs -v "BuildGCC RamDisk" "$dev_ramdisk"
         [ ! -d "$RAMDISK_MNT_PT" ] && mkdir "$RAMDISK_MNT_PT"
         mount -t hfs "$dev_ramdisk" "$RAMDISK_MNT_PT"
+        touch "$RAMDISK_MNT_PT/.metadata_never_index"
         echo
     fi
     # Automatically remove RAMDISK on exit

@@ -74,7 +74,7 @@ function mountRamDisk() {
         [ -n "$dev_ramdisk" ] && newfs_hfs -v "Build Gettext RamDisk" "$dev_ramdisk"
         [ ! -d "$RAMDISK_MNT_PT" ] && mkdir "$RAMDISK_MNT_PT"
         mount -t hfs "$dev_ramdisk" "$RAMDISK_MNT_PT"
-
+        touch "$RAMDISK_MNT_PT/.metadata_never_index"
     fi
     # Automatically remove RAMDISK on exit
     trap 'echo; echo "- Ejecting RAM disk"; cd "$HOME"; umount "$RAMDISK_MNT_PT" && hdiutil detach "$dev_ramdisk"' EXIT
