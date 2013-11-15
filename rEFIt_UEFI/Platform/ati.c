@@ -486,12 +486,13 @@ radeon_card_info_t radeon_cards[] = {
   { 0x6790,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7900 Series",		kFutomaki	},
   { 0x6798,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7970 X-Edition",	kFutomaki	},
   { 0x679A,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7950 Series",		kFutomaki	},
-  { 0x679E,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7870",        kFutomaki	},
+  { 0x679E,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7870",           kFutomaki	},
   { 0x679F,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7950 Series",		kFutomaki	},
   //Pitcairn
 	{ 0x6800,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7970m ",         kBuri	},
 	{ 0x6806,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7600 Series",		kFutomaki	},
 	{ 0x6808,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7600 Series",		kFutomaki	},
+  { 0x6810,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon R9 270X",           kFutomaki	},
 	{ 0x6818,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7870 Series",		kFutomaki	},
   { 0x6819,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7850 Series",		kFutomaki	},
   
@@ -509,7 +510,7 @@ radeon_card_info_t radeon_cards[] = {
   { 0x6840,	0x00000000, CHIP_FAMILY_LOMBOK,		"AMD Radeon HD 7670m ",         kPondweed	},
   { 0x6841,	0x00000000, CHIP_FAMILY_LOMBOK,		"AMD Radeon HD 7650m ",         kPondweed	},
   { 0x6842,	0x00000000, CHIP_FAMILY_LOMBOK,		"AMD Radeon HD 7600m Series",   kPondweed	},
-  { 0x6843,	0x00000000, CHIP_FAMILY_VANCOUVER,		"AMD Radeon HD 7670M",          kPondweed	},
+  { 0x6843,	0x00000000, CHIP_FAMILY_VANCOUVER,		"AMD Radeon HD 7670M",      kPondweed	},
   { 0x6849,	0x00000000, CHIP_FAMILY_LOMBOK,		"AMD Radeon HD 7600m Series",   kPondweed	},
   { 0x6850,	0x00000000, CHIP_FAMILY_LOMBOK,		"AMD Radeon HD 7600m Series",   kPondweed	},
   { 0x6859,	0x00000000, CHIP_FAMILY_LOMBOK,		"AMD Radeon HD 7600m Series",   kPondweed	},
