@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-11-02 09:49+0100\n"
-"PO-Revision-Date: 2013-07-18 05:59+0000\n"
+"PO-Revision-Date: 2013-11-15 13:39+0000\n"
 "Last-Translator: Mill <ceruns@ymail.com>\n"
 "Language-Team: ko <ko@li.org>\n"
 "Language: ko\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1374127161.0\n"
+"X-POOTLE-MTIME: 1384522778.0\n"
 
 # //Don't need change
 #. type: Content of: <html><body><div><p>
@@ -102,9 +102,7 @@ msgstr "- OSX 10.4 ~ 10.8, Windows EFI, 그리고 Linux EFI로 부팅"
 msgid ""
 "- It's EFI bootloader provides RuntimeServices for OS that impossible for "
 "Legacy Bootloaders"
-msgstr ""
-"- 구식(Legacy) 부트로더가 지원할 수 없는 런타임 서비스들을 지원하는 EFI 부트"
-"로더입니다"
+msgstr "- 이전 세대의 부트로더가 지원할 수 없는 런타임 서비스들을 지원하는 EFI 부트로더입니다"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:23
@@ -155,41 +153,39 @@ msgstr "- ACPI는 standard 4.0으로 정정될 것입니다"
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:29
 msgid "Custom DSDT will be loaded from booted partition or from EFI folder"
-msgstr "커스톰 DSDT는 부팅된 파티션 또는 EFI 폴더에서 읽혀집니다"
+msgstr "- 이전 세대의 부트로더가 지원할 수 없는 런타임 서비스들을 지원하는 EFI 부트로더입니다"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:30
 msgid "- customizable RestartFix and sleep/wake fixes and PCIRootUID value"
-msgstr ""
-"- 커스톰 가능한 RestartFix(재부팅 수정), sleep/wake fix(잠자기,깨어나기 수"
-"정), PCIRootUID 값"
+msgstr "- 사용자 환경에 맞게 재부팅 오류, 잠자기/깨어나기 오류, PCIRootUID 값 등을 수정할 수 있습니다."
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:31
 msgid ""
 "- Graphics Properties Injector for ATI, NVidia and Intel for wide range of "
 "supported cards."
-msgstr "- ATI, NVidia, Intel 등 폭 넓은 그래픽카드를 지원하는 Injector."
+msgstr "- ATI, NVidia, Intel 등 폭넓은 그래픽카드를 지원하도록 그래픽 속성을 입력할 수 있습니다."
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:32
 msgid "Also customizable."
-msgstr "역시 커스톰 가능합니다."
+msgstr "이 역시 사용자 환경에 맞게 조절할 수 있습니다."
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:33
 msgid "- USB fix (LegacyOff, Ownership, Builtin, clock-id) up to USB 3.0"
-msgstr "- USB3.0까지 지원되는 USB fix(LegacyOff, Ownership, BuiltIn, clock-id)"
+msgstr "- USB 3.0까지 지원되는 USB 속성 수정(LegacyOff, Ownership, BuiltIn, clock-id)"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:34
 msgid "- HDA injector and Ethernet builtin injector"
-msgstr "- HDA와 내장 이더넷 Injector"
+msgstr "- HDA와 내장 이더넷의 속성 부여"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:35
 msgid "- CPU turbo and P- and C-states generator"
-msgstr "- CPU 터보와 P-state, C-state 생성기"
+msgstr "- CPU 터보 기능 구현과 P-state, C-state 생성 가능"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:36
@@ -199,21 +195,19 @@ msgstr "- ACPI 테이블 로딩(SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI...)"
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:37
 msgid "- extra kexts loading and security mode for FireWire"
-msgstr "- FireWire를 위한 추가 kext 로딩 및 시큐리티 모드"
+msgstr "- FireWire를 위한 추가 kext 로딩 및 보안 모드"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:38
 msgid ""
 "- default boot after timeout, customizable GUI , and saving screenshots from "
 "GUI typing F10"
-msgstr ""
-"- 설정된 시간 직후 기본 값으로 부팅, 커스톰 가능한 GUI, GUI에서의 스크린샷 기"
-"능(F10키를 누르세요)"
+msgstr "- 사용자가 설정한 대기시간 이후 기본 값으로 부팅, 수정 가능한 GUI, GUI 화면의 스크린샷 기능(F10키)"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:39
 msgid "- saving boot.log in OS and preboot.log from GUI by typing F2"
-msgstr "- F12키를 눌러 boot.log(OS)와 preboot.log (GUI) 저장"
+msgstr "- F12키로 boot.log(OS)와 preboot.log(GUI) 저장"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Conclusion.html:22
@@ -596,14 +590,14 @@ msgstr ""
 
 #. type: "BGM_title"
 #: Resources/templates/Localizable.strings:115
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Black_Green"
 msgid "Black_Green_Moody"
-msgstr "Black_Green"
+msgstr "흑녹색조"
 
 #. type: "BGM_description"
 #: Resources/templates/Localizable.strings:116
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "Default black_green theme from Blackosx,\n"
 #| "Install to /EFI/CLOVER/themes/black_green"
@@ -612,7 +606,7 @@ msgid ""
 "Install to /EFI/CLOVER/themes/BGM"
 msgstr ""
 "Blackosx의 흑녹색조 기본 테마,\n"
-"다음에 설치합니다: /EFI/CLOVER/themes/black_green"
+"다음에 설치합니다: /EFI/CLOVER/themes/BGM"
 
 #. type: "black_green_title"
 #: Resources/templates/Localizable.strings:119
@@ -1161,15 +1155,15 @@ msgstr "부트 로그에 저장할 줄 수:"
 
 #. type: "522.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:32
-#, fuzzy, no-wrap
+#, no-wrap
 msgid "Create timestamp CloverEFI/boot.log file on every boot"
-msgstr "매 부팅시마다 CloverEFI/boot.log 타임스탬프 생성"
+msgstr "부팅시 마다 CloverEFI/boot.log 파일에 타임스탬프 생성"
 
 #. type: "525.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:33
-#, fuzzy, no-wrap
+#, no-wrap
 msgid "Number of timestamp boot.log files to keep:"
-msgstr "boot.log 파일에 유지할 타임스탬프 수:"
+msgstr "유지할 타임스탬프 boot.log 파일의 수:"
 
 #. type: "555.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:34
@@ -1179,9 +1173,9 @@ msgstr "백업"
 
 #. type: "557.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:35
-#, fuzzy, no-wrap
+#, no-wrap
 msgid "On install backup EFI folder to destination volume"
-msgstr "설치시 해당 볼륨에 EFI 폴더 백업"
+msgstr "클로버 설치시, 해당 볼륨에 EFI 폴더 백업"
 
 #. type: "560.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:36
