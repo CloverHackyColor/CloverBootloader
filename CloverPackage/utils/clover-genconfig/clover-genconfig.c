@@ -505,12 +505,11 @@ void PrintConfig(CFTypeRef data)
   
   //ACPI
   CFMutableDictionaryRef acpiDict = addDict(dict, CFSTR("ACPI"));
-  addBoolean(acpiDict, CFSTR("DropOemSSDT"), s->DropSSDT);
-  addBoolean(acpiDict, CFSTR("PatchAPIC"), s->PatchNMI);
-  addBoolean(acpiDict, CFSTR("smartUPS"), s->smartUPS);
   addHex(acpiDict, CFSTR("ResetAddress"), s->ResetAddr);
   addHex(acpiDict, CFSTR("ResetValue"), s->ResetVal);
   addBoolean(acpiDict, CFSTR("HaltEnabler"), s->SlpSmiEnable);
+  addBoolean(acpiDict, CFSTR("PatchAPIC"), s->PatchNMI);
+  addBoolean(acpiDict, CFSTR("smartUPS"), s->smartUPS);
 
   CFMutableDictionaryRef dsdtDict = addDict(acpiDict, CFSTR("DSDT"));
   addUString(dsdtDict, CFSTR("Name"), (const UniChar *)&s->DsdtName);
@@ -566,18 +565,20 @@ void PrintConfig(CFTypeRef data)
     CFMutableDictionaryRef genDict = addDict(ssdtDict, CFSTR("Generate"));
     addBoolean(genDict, CFSTR("PStates"), s->GeneratePStates);
     addBoolean(genDict, CFSTR("CStates"), s->GenerateCStates);
+  addBoolean(ssdtDict, CFSTR("DropOem"), s->DropSSDT);
   addBoolean(ssdtDict, CFSTR("DoubleFirstState"), s->DoubleFirstState);
   addInteger(ssdtDict, CFSTR("MinMultiplier"), s->MinMultiplier);
   addInteger(ssdtDict, CFSTR("MaxMultiplier"), s->MaxMultiplier);
   addInteger(ssdtDict, CFSTR("PLimitDict"), s->PLimitDict);
   addInteger(ssdtDict, CFSTR("UnderVoltStep"), s->UnderVoltStep);
   addInteger(ssdtDict, CFSTR("PluginType"), s->PluginType);
-  addBoolean(acpiDict, CFSTR("UseSystemIO"), s->EnableISS);
+  addBoolean(ssdtDict, CFSTR("UseSystemIO"), s->EnableISS);
 
   CFMutableArrayRef dropArray = addArray(acpiDict, CFSTR("DropTables"));
   CFMutableDictionaryRef drop1Dict = addDictToArray(dropArray);
   addString(drop1Dict, CFSTR("Signature"), "_NOT_SHOWN_");
   addString(drop1Dict, CFSTR("TableId"), "_NOT_SHOWN_");
+  addInteger(drop1Dict, CFSTR("Length"), 0);
   
   
   // KernelAndKextPatches

@@ -2774,6 +2774,7 @@ static nvidia_card_info_t nvidia_cards[] = {
 	{ 0x10DE1183,	NV_SUB_IDS,	"GeForce GTX 660 Ti" },
   { 0x10DE1184,	NV_SUB_IDS,	"GeForce GTX 770" },
 	{ 0x10DE1185,	NV_SUB_IDS,	"GeForce GTX 660" },
+  { 0x10DE1187,	NV_SUB_IDS,	"GeForce GTX 760" },
 	{ 0x10DE1188,	NV_SUB_IDS,	"GeForce GTX 690" },
 	{ 0x10DE1189,	NV_SUB_IDS,	"GeForce GTX 670" },
   // 118A - 118E
