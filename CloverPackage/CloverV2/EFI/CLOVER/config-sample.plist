@@ -202,6 +202,8 @@
 	<dict>
 		<key>InjectSystemID</key>
 		<true/>
+		<key>InjectKexts</key>
+		<string>Detect</string>
 	</dict>
 	<key>Graphics</key>
 	<dict>

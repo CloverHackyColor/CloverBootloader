@@ -214,11 +214,16 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
                 (gCPUStructure.Model == CPU_MODEL_IVY_BRIDGE_E5) ||
                 (gCPUStructure.Model == CPU_MODEL_JAKETOWN))
             {
-              maximum.Control.Control = RShiftU64(AsmReadMsr64(MSR_IA32_PERF_STATUS), 8) & 0xff;
+              maximum.Control.Control = RShiftU64(AsmReadMsr64(MSR_PLATFORM_INFO), 8) & 0xff;
             } else {
-              maximum.Control.Control = AsmReadMsr64(MSR_IA32_PERF_STATUS) & 0xff;
+              maximum.Control.Control = AsmReadMsr64(MSR_PLATFORM_INFO) & 0xff;
             }
-            
+            if (gSettings.MaxMultiplier) {
+              DBG("Using custom MaxMultiplier %d instead of automatic %d\n",
+                  gSettings.MaxMultiplier, maximum.Control.Control);
+              maximum.Control.Control = gSettings.MaxMultiplier;
+            }
+						
             realMax = maximum.Control.Control;
             DBG("Maximum control=%x\n", realMax);
             if (gSettings.Turbo) {
@@ -228,10 +233,6 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
               MsgLog("Turbo control=%x\n", realTurbo);
             }
             Apsn = (realTurbo > realMax)?(realTurbo - realMax):0;
-            if (gSettings.MaxMultiplier) {
-              maximum.Control.Control = gSettings.MaxMultiplier;
-            }
-						
             if (gSettings.MinMultiplier) {
               minimum.Control.Control = gSettings.MinMultiplier;
             } else {
