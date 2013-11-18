@@ -1,5 +1,5 @@
 /*
- * refit/scan/entry_scan.h
+ * refit/scan/secureboot.c
  *
  * Copyright (c) 2006-2010 Christoph Pfisterer
  * All rights reserved.
@@ -33,29 +33,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "Platform.h"
+#include "entry_scan.h"
 
-extern REFIT_MENU_ENTRY MenuEntryReturn;
-extern REFIT_MENU_SCREEN MainMenu;
+#ifndef DEBUG_ALL
+#define DEBUG_SECURE_BOOT 1
+#else
+#define DEBUG_SECURE_BOOT DEBUG_ALL
+#endif
 
-// common
-EG_IMAGE *LoadBuiltinIcon(IN CHAR16 *IconName);
-LOADER_ENTRY * DuplicateLoaderEntry(IN LOADER_ENTRY *Entry);
-CHAR16 *AddLoadOption(IN CHAR16 *LoadOptions, IN CHAR16 *LoadOption);
-CHAR16 *RemoveLoadOption(IN CHAR16 *LoadOptions, IN CHAR16 *LoadOption);
-EG_IMAGE * ScanVolumeDefaultIcon(REFIT_VOLUME *Volume, IN UINT8 OSType);
-
-// legacy
-VOID ScanLegacy(VOID);
-VOID AddCustomLegacy(VOID);
-
-// loader
-VOID ScanLoader(VOID);
-VOID AddCustomEntries(VOID);
-
-// tool
-VOID ScanTool(VOID);
-VOID AddCustomTool(VOID);
+#if DEBUG_SECURE_BOOT == 0
+#define DBG(...)
+#else
+#define DBG(...) DebugLog(DEBUG_SCAN_TOOL, __VA_ARGS__)
+#endif
 
 // secure boot
-VOID EnableSecureBoot(VOID);
+VOID EnableSecureBoot(VOID)
+{
+}

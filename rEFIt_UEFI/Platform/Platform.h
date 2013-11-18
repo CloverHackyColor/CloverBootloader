@@ -896,7 +896,10 @@ typedef struct {
   UINT32 *LenToReplace;
   BOOLEAN DebugDSDT;
   BOOLEAN SlpWak;
-  UINT8   pad9[2];
+
+  // Secure boot
+  UINT8 SecureBoot;
+  UINT8 SecureBootSetupMode;
 
   // Table dropping
   ACPI_DROP_TABLE *ACPIDropTables;

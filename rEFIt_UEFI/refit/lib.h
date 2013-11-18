@@ -63,9 +63,9 @@ extern EFI_RUNTIME_SERVICES*	gRS;
 #define TAG_OPTIONS  (8)
 #define TAG_INPUT    (9)
 #define TAG_HELP     (10)
+#define TAG_SECURE_BOOT (13)
 #define TAG_RETURN   (99)
 #define TAG_CLOVER   (100)
-
 
 //
 // lib module
@@ -467,6 +467,7 @@ extern EG_IMAGE         *BigBack;
 extern EG_IMAGE         *FontImage;
 extern EG_IMAGE         *SelectionImages[];
 extern BOOLEAN          gThemeChanged;
+extern BOOLEAN          gBootArgsChanged;
 //extern POINTERS         gPointer;
 extern REFIT_MENU_SCREEN OptionMenu;
 
@@ -591,26 +592,27 @@ EG_IMAGE * DummyImage(IN UINTN PixelSize);
 
 EG_IMAGE * BuiltinIcon(IN UINTN Id);
 
-#define BUILTIN_ICON_FUNC_ABOUT     (0)
-#define BUILTIN_ICON_FUNC_OPTIONS   (1)
-#define BUILTIN_ICON_FUNC_CLOVER    (2)
-#define BUILTIN_ICON_FUNC_RESET     (3)
-#define BUILTIN_ICON_FUNC_SHUTDOWN  (4)
-#define BUILTIN_ICON_FUNC_HELP      (5)
-#define BUILTIN_ICON_TOOL_SHELL     (6)
-#define BUILTIN_ICON_TOOL_PART      (7)
-#define BUILTIN_ICON_TOOL_RESCUE    (8)
-#define BUILTIN_ICON_POINTER        (9)
-#define BUILTIN_ICON_VOL_INTERNAL   (10)
-#define BUILTIN_ICON_VOL_EXTERNAL   (11)
-#define BUILTIN_ICON_VOL_OPTICAL    (12)
-#define BUILTIN_ICON_VOL_FIREWIRE   (13)
-#define BUILTIN_ICON_VOL_BOOTER     (14)
-#define BUILTIN_ICON_VOL_INTERNAL_HFS   (15)
-#define BUILTIN_ICON_VOL_INTERNAL_NTFS  (16)
-#define BUILTIN_ICON_VOL_INTERNAL_EXT3  (17)
-#define BUILTIN_ICON_VOL_INTERNAL_REC   (18)
-#define BUILTIN_ICON_COUNT              (19)
+#define BUILTIN_ICON_FUNC_ABOUT         (0)
+#define BUILTIN_ICON_FUNC_OPTIONS       (1)
+#define BUILTIN_ICON_FUNC_CLOVER        (2)
+#define BUILTIN_ICON_FUNC_SECURE_BOOT   (3)
+#define BUILTIN_ICON_FUNC_RESET         (4)
+#define BUILTIN_ICON_FUNC_SHUTDOWN      (5)
+#define BUILTIN_ICON_FUNC_HELP          (6)
+#define BUILTIN_ICON_TOOL_SHELL         (7)
+#define BUILTIN_ICON_TOOL_PART          (8)
+#define BUILTIN_ICON_TOOL_RESCUE        (9)
+#define BUILTIN_ICON_POINTER            (10)
+#define BUILTIN_ICON_VOL_INTERNAL       (11)
+#define BUILTIN_ICON_VOL_EXTERNAL       (12)
+#define BUILTIN_ICON_VOL_OPTICAL        (13)
+#define BUILTIN_ICON_VOL_FIREWIRE       (14)
+#define BUILTIN_ICON_VOL_BOOTER         (15)
+#define BUILTIN_ICON_VOL_INTERNAL_HFS   (16)
+#define BUILTIN_ICON_VOL_INTERNAL_NTFS  (17)
+#define BUILTIN_ICON_VOL_INTERNAL_EXT3  (18)
+#define BUILTIN_ICON_VOL_INTERNAL_REC   (19)
+#define BUILTIN_ICON_COUNT              (20)
 
 //
 // menu module

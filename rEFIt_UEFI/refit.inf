@@ -46,6 +46,7 @@
   entry_scan/legacy.c
   entry_scan/loader.c
   entry_scan/tool.c
+  entry_scan/secureboot.c
   libeg/BmLib.c
   libeg/image.c
   libeg/load_bmp.c

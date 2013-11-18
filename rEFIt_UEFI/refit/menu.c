@@ -773,6 +773,7 @@ VOID ApplyInputs(VOID)
     TagPtr dict;
 //  DBG("ApplyInputs\n");
   if (InputItems[i].Valid) {
+    gBootArgsChanged = TRUE;
     AsciiSPrint(gSettings.BootArgs, 255, "%s ", InputItems[i].SValue);
   }
   i++; //1
@@ -3933,9 +3934,6 @@ UINTN RunMainMenu(IN REFIT_MENU_SCREEN *Screen, IN INTN DefaultSelection, OUT RE
 
   if (ChosenEntry) {
     *ChosenEntry = TempChosenEntry;
-    if ((*ChosenEntry)->Tag == TAG_LOADER && OSFLAG_ISUNSET(((LOADER_ENTRY*)(*ChosenEntry))->Flags, OSFLAG_NODEFAULTARGS)) {
-      ((LOADER_ENTRY*)(*ChosenEntry))->LoadOptions = PoolPrint(L"%a ", gSettings.BootArgs);
-    }
   }
   return MenuExit;
 }

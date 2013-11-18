@@ -254,6 +254,7 @@ BUILTIN_ICON BuiltinIconTable[BUILTIN_ICON_COUNT] = {
   { NULL, L"icons\\func_about.png",          48 },
   { NULL, L"icons\\func_options.png",        48 },
   { NULL, L"icons\\func_clover.png",         48 },
+  { NULL, L"icons\\func_secureboot.png",     48 },
   { NULL, L"icons\\func_reset.png",          48 },
   { NULL, L"icons\\func_shutdown.png",       48 },
   { NULL, L"icons\\func_help.png",          128 }, //5

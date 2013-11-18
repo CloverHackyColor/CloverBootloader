@@ -35,6 +35,27 @@
 
 #include "entry_scan.h"
 
+//
+// Clover File location to boot from on removable media devices
+//
+#define CLOVER_MEDIA_FILE_NAME_IA32    L"\\EFI\\CLOVER\\CLOVERIA32.EFI"
+#define CLOVER_MEDIA_FILE_NAME_IA64    L"\\EFI\\CLOVER\\CLOVERIA64.EFI"
+#define CLOVER_MEDIA_FILE_NAME_X64     L"\\EFI\\CLOVER\\CLOVERX64.EFI"
+#define CLOVER_MEDIA_FILE_NAME_ARM     L"\\EFI\\CLOVER\\CLOVERARM.EFI"
+
+#if   defined (MDE_CPU_IA32)
+#define CLOVER_MEDIA_FILE_NAME   CLOVER_MEDIA_FILE_NAME_IA32
+#elif defined (MDE_CPU_IPF)
+#define CLOVER_MEDIA_FILE_NAME   CLOVER_MEDIA_FILE_NAME_IA64
+#elif defined (MDE_CPU_X64)
+#define CLOVER_MEDIA_FILE_NAME   CLOVER_MEDIA_FILE_NAME_X64
+#elif defined (MDE_CPU_EBC)
+#elif defined (MDE_CPU_ARM)
+#define CLOVER_MEDIA_FILE_NAME   CLOVER_MEDIA_FILE_NAME_ARM
+#else
+#error Unknown Processor Type
+#endif
+
 #ifndef DEBUG_ALL
 #define DEBUG_SCAN_TOOL 1
 #else
@@ -49,12 +70,20 @@
 
 extern EMU_VARIABLE_CONTROL_PROTOCOL *gEmuVariableControl;
 
-static LOADER_ENTRY * AddToolEntry(IN CHAR16 *LoaderPath, IN CHAR16 *FullTitle, IN CHAR16 *LoaderTitle,
-                                   IN REFIT_VOLUME *Volume, IN EG_IMAGE *Image, IN CHAR16 ShortcutLetter)
+STATIC BOOLEAN AddToolEntry(IN CHAR16 *LoaderPath, IN CHAR16 *FullTitle, IN CHAR16 *LoaderTitle,
+                            IN REFIT_VOLUME *Volume, IN EG_IMAGE *Image, IN CHAR16 ShortcutLetter)
 {
   LOADER_ENTRY *Entry;
-  
+  // Check the loader exists
+  if ((LoaderPath == NULL) || (Volume == NULL) || (Volume->RootDir == NULL) ||
+      !FileExists(Volume->RootDir, LoaderPath)) {
+    return FALSE;
+  }
+  // Allocate the entry
   Entry = AllocateZeroPool(sizeof(LOADER_ENTRY));
+  if (Entry == NULL) {
+    return FALSE;
+  }
   
   if (FullTitle) {
     Entry->me.Title = EfiStrDuplicate(FullTitle);
@@ -73,11 +102,28 @@ static LOADER_ENTRY * AddToolEntry(IN CHAR16 *LoaderPath, IN CHAR16 *FullTitle, 
   Entry->me.AtDoubleClick = ActionEnter;
   Entry->me.AtRightClick = ActionHelp;
   
+  DBG("found tool %s\n", LoaderPath);
   AddMenuEntry(&MainMenu, (REFIT_MENU_ENTRY *)Entry);
-  return Entry;
+  return TRUE;
 }
 
-static LOADER_ENTRY * AddCloverEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTitle, IN REFIT_VOLUME *Volume)
+STATIC VOID AddSecureBootEntry(VOID)
+{
+  LOADER_ENTRY *Entry;
+  
+  Entry = AllocateZeroPool(sizeof(LOADER_ENTRY));
+  Entry->me.Title = PoolPrint(L"Enable Clover Secure Boot");
+  Entry->me.Tag = TAG_SECURE_BOOT;
+  Entry->me.Row = 1;
+  Entry->me.Image = BuiltinIcon(BUILTIN_ICON_FUNC_SECURE_BOOT);
+  //actions
+  Entry->me.AtClick = ActionSelect;
+  Entry->me.AtDoubleClick = ActionEnter;
+  Entry->me.AtRightClick = ActionHelp;
+  AddMenuEntry(&MainMenu, (REFIT_MENU_ENTRY *)Entry);
+}
+
+STATIC VOID AddCloverEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTitle, IN REFIT_VOLUME *Volume)
 {
   LOADER_ENTRY      *Entry, *SubEntry;
   REFIT_MENU_SCREEN *SubScreen;
@@ -159,14 +205,11 @@ static LOADER_ENTRY * AddCloverEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
   AddMenuEntry(SubScreen, &MenuEntryReturn);
   Entry->me.SubScreen = SubScreen;
   AddMenuEntry(&MainMenu, (REFIT_MENU_ENTRY *)Entry);
-  return Entry;
 }
 
 VOID ScanTool(VOID)
 {
   EFI_STATUS              Status;
-  CHAR16                  FileName[256];
-  LOADER_ENTRY            *Entry;
   UINTN                   VolumeIndex;
   REFIT_VOLUME            *Volume;
   VOID                    *Interface;
@@ -178,60 +221,18 @@ VOID ScanTool(VOID)
   
   // look for the EFI shell
   if (!(GlobalConfig.DisableFlags & HIDEUI_FLAG_SHELL)) {
-#if defined(MDE_CPU_IA32)
-    StrCpy(FileName, L"\\EFI\\CLOVER\\tools\\Shell32.efi");
-    if (FileExists(SelfRootDir, FileName)) {
-      Entry = AddToolEntry(FileName, NULL, L"EFI Shell 32", SelfVolume, BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S');
-      DBG("found tools\\Shell32.efi\n");
-    }
-#elif defined(MDE_CPU_X64)
+#if defined(MDE_CPU_X64)
     if (gFirmwareClover) {
-      StrCpy(FileName, L"\\EFI\\CLOVER\\tools\\Shell64.efi");
-      if (FileExists(SelfRootDir, FileName)) {
-        Entry = AddToolEntry(FileName, NULL, L"EFI Shell 64", SelfVolume, BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S');
-        DBG("found tools\\Shell64.efi\n");
-      }
+      AddToolEntry(L"\\EFI\\CLOVER\\tools\\Shell64.efi", NULL, L"EFI Shell 64", SelfVolume, BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S');
     } else {
-      StrCpy(FileName, L"\\EFI\\CLOVER\\tools\\Shell64U.efi");
-      if (FileExists(SelfRootDir, FileName)) {
-        Entry = AddToolEntry(FileName, NULL, L"UEFI Shell 64", SelfVolume, BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S');
-        DBG("found tools\\Shell64U.efi\n");
-      } else {
-        StrCpy(FileName, L"\\EFI\\CLOVER\\tools\\Shell64.efi");
-        if (FileExists(SelfRootDir, FileName)) {
-          Entry = AddToolEntry(FileName, NULL, L"EFI Shell 64", SelfVolume, BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S');
-          DBG("found tools\\Shell64.efi\n");
-        }
+      if (!AddToolEntry(L"\\EFI\\CLOVER\\tools\\Shell64U.efi", NULL, L"UEFI Shell 64", SelfVolume, BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S')) {
+        AddToolEntry(L"\\EFI\\CLOVER\\tools\\Shell64.efi", NULL, L"EFI Shell 64", SelfVolume, BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S');
       }
     }
-#else //what else? ARM?
-    UnicodeSPrint(FileName, 512, L"\\EFI\\CLOVER\\tools\\shell.efi");
-    if (FileExists(SelfRootDir, FileName)) {
-      Entry = AddToolEntry(FileName, NULL, L"EFI Shell", SelfVolume, BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S');
-      DBG("found apps\\shell.efi\n");
-    }
+#else
+    AddToolEntry(L"\\EFI\\CLOVER\\tools\\Shell32.efi", NULL, L"EFI Shell 32", SelfVolume, BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S');
 #endif
   }
-  
-  // look for the GPT/MBR sync tool
-  /*    StrCpy(FileName, L"\\efi\\CLOVER\\tools\\gptsync.efi");
-   if (FileExists(SelfRootDir, FileName)) {
-   Entry = AddToolEntry(FileName, L"Partitioning Tool", BuiltinIcon(BUILTIN_ICON_TOOL_PART), 'P');
-   }*/
-  /*
-   // look for rescue Linux
-   StrCpy(FileName, L"\\efi\\rescue\\elilo.efi");
-   if (SelfVolume != NULL && FileExists(SelfRootDir, FileName)) {
-   Entry = AddToolEntry(FileName, L"Rescue Linux", BuiltinIcon(BUILTIN_ICON_TOOL_RESCUE), 0);
-   
-   if (UGAWidth == 1440 && UGAHeight == 900)
-   Entry->LoadOptions = L"-d 0 i17";
-   else if (UGAWidth == 1680 && UGAHeight == 1050)
-   Entry->LoadOptions = L"-d 0 i20";
-   else
-   Entry->LoadOptions = L"-d 0 mini";
-   }
-   */
   
   if (!gFirmwareClover) {
     for (VolumeIndex = 0; VolumeIndex < VolumesCount; VolumeIndex++) {
@@ -244,12 +245,6 @@ VOID ScanTool(VOID)
       if (Status == EFI_SUCCESS) {
         DBG("Checking EFI partition Volume %d for Clover\n", VolumeIndex);
         
-#if defined(MDE_CPU_X64)
-        StrCpy(FileName, L"\\EFI\\CLOVER\\CLOVERX64.EFI");
-#else
-        StrCpy(FileName, L"\\EFI\\CLOVER\\CLOVERIA32.EFI");
-#endif
-        
         // OSX adds label "EFI" to EFI volumes and some UEFIs see that
         // as a file. This file then blocks access to the /EFI directory.
         // We will delete /EFI file here and leave only /EFI directory.
@@ -257,13 +252,18 @@ VOID ScanTool(VOID)
           DBG(" Deleted /EFI label\n");
         }
         
-        if (FileExists(Volume->RootDir, FileName)) {
+        if (FileExists(Volume->RootDir, CLOVER_MEDIA_FILE_NAME)) {
           DBG(" Found Clover\n");
           // Volume->BootType = BOOTING_BY_EFI;
-          AddCloverEntry(FileName, L"Clover Boot Options", Volume);
+          AddCloverEntry(CLOVER_MEDIA_FILE_NAME, L"Clover Boot Options", Volume);
         }
       }
     }
+  }
+
+  // Check for secure boot setup mode
+  if (gSettings.SecureBootSetupMode) {
+    AddSecureBootEntry();
   }
 }
 

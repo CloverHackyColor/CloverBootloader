@@ -60,6 +60,7 @@ EFI_DEVICE_PATH  *SelfDevicePath;
 EFI_FILE         *ThemeDir = NULL;
 CHAR16           *ThemePath;
 BOOLEAN          gThemeChanged = FALSE;
+BOOLEAN          gBootArgsChanged = FALSE;
 
 EFI_FILE         *OEMDir;
 CHAR16           *OEMPath = L"EFI\\CLOVER";

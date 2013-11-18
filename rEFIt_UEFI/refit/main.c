@@ -532,11 +532,15 @@ static EFI_STATUS LoadEFIImage(IN EFI_DEVICE_PATH *DevicePath,
                                 OUT UINTN *ErrorInStep,
                                 OUT EFI_HANDLE *NewImageHandle)
 {
+  EFI_STATUS       Status;
   EFI_DEVICE_PATH *DevicePaths[2];
   
   DevicePaths[0] = DevicePath;
   DevicePaths[1] = NULL;
-  return LoadEFIImageList(DevicePaths, ImageTitle, ErrorInStep, NewImageHandle);
+  Status = LoadEFIImageList(DevicePaths, ImageTitle, ErrorInStep, NewImageHandle);
+  // TODO: Check if this failed because of secure boot, if so perform user action
+
+  return Status;
 }
 
 
@@ -1518,6 +1522,12 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   gSettings.PointerSpeed = 2;
   gSettings.DoubleClickTime = 500;
 
+  // Set secure boot variables to firmware values
+  Size = sizeof(gSettings.SecureBootSetupMode);
+  // TODO: gRT->GetVariable(L"SetupMode", &gEfiGlobalVariableGuid, NULL, &Size, &gSettings.SecureBootSetupMode);
+  Size = sizeof(gSettings.SecureBoot);
+  gRT->GetVariable(L"SecureBoot", &gEfiGlobalVariableGuid, NULL, &Size, &gSettings.SecureBoot);
+
   if (!GlobalConfig.FastBoot) {
     GetListOfThemes();
   }
@@ -1767,10 +1777,11 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       }
 
       if (MenuExit == MENU_EXIT_OPTIONS){
-        InputItems[0].Valid = FALSE;
+        gBootArgsChanged = FALSE;
         OptionsMenu(&OptionEntry);
-        if (InputItems[0].Valid) {
+        if (gBootArgsChanged) {
           AfterTool = TRUE;
+          MainLoopRunning = FALSE;
           break;
         }
         continue;
@@ -1824,8 +1835,11 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
           break;
 
         case TAG_OPTIONS:    // Options like KernelFlags, DSDTname etc.
+          gBootArgsChanged = FALSE;
           OptionsMenu(&OptionEntry);
-          if (gThemeChanged) // If theme has changed reinit the desktop
+          if (gBootArgsChanged)
+            AfterTool = TRUE;
+          if (gBootArgsChanged || gThemeChanged) // If theme has changed reinit the desktop
             MainLoopRunning = FALSE;
           break;
 
@@ -1849,6 +1863,10 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
           //    PauseForKey(L"Returned from StartTool\n");
           MainLoopRunning = FALSE;
           AfterTool = TRUE;
+          break;
+
+        case TAG_SECURE_BOOT: // Try to enable secure boot
+          EnableSecureBoot();
           break;
 
         case TAG_CLOVER:     // Clover options
