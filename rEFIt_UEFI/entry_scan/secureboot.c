@@ -54,19 +54,22 @@
 VOID AddSecureBootTool(VOID)
 {
   LOADER_ENTRY *Entry;
-  if (!gSettings.SecureBoot && !gSettings.SecureBootSetupMode) {
+  // If in forced mode or no secure boot then don't add tool
+  if ((gSettings.SecureBoot && gSettings.SecureBootSetupMode) ||
+      (!gSettings.SecureBoot && !gSettings.SecureBootSetupMode)) {
     return;
   }
   Entry = AllocateZeroPool(sizeof(LOADER_ENTRY));
   if (gSettings.SecureBoot) {
     Entry->me.Title = PoolPrint(L"Clover Secure Boot Configuration");
     Entry->me.Tag = TAG_SECURE_BOOT_CONFIG;
+    Entry->me.Image = BuiltinIcon(BUILTIN_ICON_FUNC_SECURE_BOOT_CONFIG);
   } else {
     Entry->me.Title = PoolPrint(L"Enable Clover Secure Boot");
     Entry->me.Tag = TAG_SECURE_BOOT;
+    Entry->me.Image = BuiltinIcon(BUILTIN_ICON_FUNC_SECURE_BOOT);
   }
   Entry->me.Row = 1;
-  Entry->me.Image = BuiltinIcon(BUILTIN_ICON_FUNC_SECURE_BOOT);
   //actions
   Entry->me.AtClick = ActionSelect;
   Entry->me.AtDoubleClick = ActionEnter;
@@ -119,13 +122,9 @@ STATIC VOID PrintSecureBootInfo(VOID)
   // Nothing to do if secure boot is disabled or in setup mode
   if (!gSettings.SecureBoot) {
     DBG("Secure boot: %a\n", (gSettings.SecureBootSetupMode ? "Setup" : "Disabled"));
-  } else if (gSettings.SecureBootSetupMode) {
-    // If setup mode is enabled then secure boot mode is forced, also nothing to do now
-    DBG("Secure boot: Forced\n");
-    DBG("Boot Policy: %s\n", SecureBootPolicyToStr(gSettings.SecureBootPolicy));
   } else {
-    // Secure boot is enabled so install policy hooks
-    DBG("Secure boot: Enabled\n");
+    // Secure boot is enabled
+    DBG("Secure boot: %a\n", (gSettings.SecureBootSetupMode ? "Forced" : "Enabled"));
     DBG("Boot Policy: %s\n", SecureBootPolicyToStr(gSettings.SecureBootPolicy));
   }
 }
@@ -144,6 +143,37 @@ VOID DisableSecureBoot(VOID)
   // Reinit secure boot now
   InitializeSecureBoot();
   PrintSecureBootInfo();
+}
+
+// Insert secure boot image signature
+STATIC EFI_STATUS InsertSecureBootImage(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath,
+                                        IN VOID                           *FileBuffer,
+                                        IN UINTN                           FileSize)
+{
+  EFI_STATUS  Status = EFI_INVALID_PARAMETER;
+  VOID       *TempFileBuffer = NULL;
+  // Check that either the device path or the file buffer is valid
+  if ((DevicePath == NULL) && ((FileBuffer == NULL) || (FileSize == 0))) {
+    return EFI_INVALID_PARAMETER;
+  }
+  // If the file buffer is not valid load file by device path
+  if (FileBuffer == NULL) {
+    UINT32 AuthenticationStatus = 0;
+    FileBuffer = TempFileBuffer = GetFileBufferByFilePath(FALSE, DevicePath, &FileSize, &AuthenticationStatus);
+  }
+  // Check the file buffer is valid
+  if ((FileBuffer != NULL) && (FileSize > 0)) {
+    // TODO: Get the image signature
+    Status = EFI_SUCCESS; // GetImageSignature(FileBuffer, FileSize, Signature);
+    if (!EFI_ERROR(Status)) {
+      // TODO: Add the image signature to database
+    }
+  }
+  // Cleanup buffer if needed
+  if (TempFileBuffer != NULL) {
+    FreePool(TempFileBuffer);
+  }
+  return Status;
 }
 
 // The previous protocol functions
@@ -208,22 +238,34 @@ CheckSecureBootPolicy(IN OUT EFI_STATUS                     *AuthenticationStatu
                       IN     VOID                           *FileBuffer,
                       IN     UINTN                           FileSize)
 {
-  // UINTN  FileSize = 0;
-  // VOID  *FileBuffer;
   switch (gSettings.SecureBootPolicy) {
   case SECURE_BOOT_POLICY_QUERY:
     // TODO: Query user to allow image or deny image or insert image signature
-
-  case SECURE_BOOT_POLICY_INSERT:
-    // Load image file
     /*
-    FileBuffer = GetFileBufferByFilePath(FALSE, DevicePath, &FileSize, &AuthenticationStatus);
-    if (FileBuffer != NULL) {
-      // TODO: Get image signature
-      // TODO: Add image signature
-      FreePool(FileBuffer);
+    // Perform user action
+    switch (UserResponse) {
+    case SECURE_BOOT_POLICY_ALLOW:
+      *AuthenticationStatus = EFI_SUCCESS;
+
+    case SECURE_BOOT_POLICY_DENY:
+      return TRUE;
+
+    default:
+      break;
     }
     // */
+    // If this is forced mode then no insert
+    if (gSettings.SecureBootSetupMode) {
+      return TRUE;
+    }
+    // Purposeful fallback to insert
+
+  case SECURE_BOOT_POLICY_INSERT:
+    // Insert image signature
+    if (!EFI_ERROR(InsertSecureBootImage(DevicePath, FileBuffer, FileSize))) {
+      *AuthenticationStatus = EFI_SUCCESS;
+      return TRUE;
+    }
     break;
 
   case SECURE_BOOT_POLICY_ALLOW:

@@ -251,27 +251,28 @@ UINT8 emb_pointer[] =
 //
 
 BUILTIN_ICON BuiltinIconTable[BUILTIN_ICON_COUNT] = {
-  { NULL, L"icons\\func_about.png",          48 },
-  { NULL, L"icons\\func_options.png",        48 },
-  { NULL, L"icons\\func_clover.png",         48 },
-  { NULL, L"icons\\func_secureboot.png",     48 },
-  { NULL, L"icons\\func_reset.png",          48 },
-  { NULL, L"icons\\func_shutdown.png",       48 },
-  { NULL, L"icons\\func_help.png",          128 }, //5
-  { NULL, L"icons\\tool_shell.png",          48 },
-  { NULL, L"icons\\tool_part.png",           48 },
-  { NULL, L"icons\\tool_rescue.png",         48 },
-  { NULL, L"icons\\pointer.png",             32 },
+  { NULL, L"icons\\func_about.png",              48 },
+  { NULL, L"icons\\func_options.png",            48 },
+  { NULL, L"icons\\func_clover.png",             48 },
+  { NULL, L"icons\\func_secureboot.png",         48 },
+  { NULL, L"icons\\func_secureboot_config.png",  48 },
+  { NULL, L"icons\\func_reset.png",              48 },
+  { NULL, L"icons\\func_shutdown.png",           48 },
+  { NULL, L"icons\\func_help.png",              128 }, //5
+  { NULL, L"icons\\tool_shell.png",              48 },
+  { NULL, L"icons\\tool_part.png",               48 },
+  { NULL, L"icons\\tool_rescue.png",             48 },
+  { NULL, L"icons\\pointer.png",                 32 },
   
-  { NULL, L"icons\\vol_internal.icns",      128 }, //8+2
-  { NULL, L"icons\\vol_external.icns",      128 },
-  { NULL, L"icons\\vol_optical.icns",       128 },
-  { NULL, L"icons\\vol_firewire.icns",      128 }, //13
-  { NULL, L"icons\\vol_clover.icns",        128 },
-  { NULL, L"icons\\vol_internal_hfs.icns",  128 },
-  { NULL, L"icons\\vol_internal_ntfs.icns", 128 },
-  { NULL, L"icons\\vol_internal_ext3.icns", 128 },
-  { NULL, L"icons\\vol_recovery.icns",      128 }, //18
+  { NULL, L"icons\\vol_internal.icns",          128 }, //8+2
+  { NULL, L"icons\\vol_external.icns",          128 },
+  { NULL, L"icons\\vol_optical.icns",           128 },
+  { NULL, L"icons\\vol_firewire.icns",          128 }, //13
+  { NULL, L"icons\\vol_clover.icns",            128 },
+  { NULL, L"icons\\vol_internal_hfs.icns",      128 },
+  { NULL, L"icons\\vol_internal_ntfs.icns",     128 },
+  { NULL, L"icons\\vol_internal_ext3.icns",     128 },
+  { NULL, L"icons\\vol_recovery.icns",          128 }, //18
 };
 
 EG_IMAGE * BuiltinIcon(IN UINTN Id)
