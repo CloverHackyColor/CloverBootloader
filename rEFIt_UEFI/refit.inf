@@ -162,7 +162,7 @@
   gEfiPartTypeSystemPartGuid
   gEfiSmbiosTableGuid
   gEfiSasDevicePathGuid
-  
+  gEfiImageSecurityDatabaseGuid
 	
 
 [Ppis]

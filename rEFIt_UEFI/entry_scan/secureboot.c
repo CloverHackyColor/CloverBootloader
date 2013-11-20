@@ -38,6 +38,8 @@
 #include <Protocol/Security.h>
 #include <Protocol/Security2.h>
 
+#include <Guid/ImageAuthentication.h>
+
 #ifndef DEBUG_ALL
 #define DEBUG_SECURE_BOOT 1
 #else
@@ -145,33 +147,137 @@ VOID DisableSecureBoot(VOID)
   PrintSecureBootInfo();
 }
 
+// Find a device path's signature list
+STATIC VOID *GetImageSignatureList(IN  CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath,
+                                   OUT UINTN                          *SignatureListSize)
+{
+  EFI_IMAGE_EXECUTION_INFO_TABLE  *ImageExeInfoTable = NULL;
+  EFI_IMAGE_EXECUTION_INFO        *ImageExeInfo;
+  CHAR16                          *FDP;
+  UINT8                           *Ptr;
+  UINTN                            Index;
+  // Check parameters
+  if (SignatureListSize == NULL) {
+    return NULL;
+  }
+  *SignatureListSize = 0;
+  if (DevicePath == NULL) {
+    return NULL;
+  }
+  // Get the execution information table
+  if (EFI_ERROR(EfiGetSystemConfigurationTable(&gEfiImageSecurityDatabaseGuid, (VOID **)&ImageExeInfoTable)) ||
+      (ImageExeInfoTable == NULL)) {
+    return NULL;
+  }
+  // Get device path string
+  FDP = FileDevicePathToStr(DevicePath);
+  if (FDP == NULL) {
+    return NULL;
+  }
+  // Get the execution information
+  Ptr = (UINT8 *)ImageExeInfoTable;
+  Ptr += sizeof(EFI_IMAGE_EXECUTION_INFO_TABLE);
+  // Traverse the execution information table
+  ImageExeInfo = (EFI_IMAGE_EXECUTION_INFO *)Ptr;
+  for (Index = 0; Index < ImageExeInfoTable->NumberOfImages; ++Index, Ptr += ImageExeInfo->InfoSize) {
+    UINT8  *Offset = Ptr + OFFSET_OF(EFI_IMAGE_EXECUTION_INFO, InfoSize) + sizeof(ImageExeInfo->InfoSize);
+    CHAR16 *Name = (CHAR16 *)Offset;
+    // Check to make sure this is valid
+    if (ImageExeInfo->Action != EFI_IMAGE_EXECUTION_AUTH_SIG_NOT_FOUND) {
+      continue;
+    }
+    // Skip the name
+    do
+    {
+      Offset += sizeof(CHAR16);
+    } while (*Name++);
+    // Compare the device paths
+    Name = FileDevicePathToStr((EFI_DEVICE_PATH_PROTOCOL *)Offset);
+    if (Name) {
+      if (StrCmp(FDP, Name) == 0) {
+        // Get the signature list and size
+        Offset += GetDevicePathSize((EFI_DEVICE_PATH_PROTOCOL *)Offset);
+        *SignatureListSize = (ImageExeInfo->InfoSize - (Offset - Ptr));
+        FreePool(Name);
+        FreePool(FDP);
+        return Offset;
+      }
+      FreePool(Name);
+    }
+  }
+  FreePool(FDP);
+  // Not found
+  return NULL;
+}
+
+// Create a secure boot image signature
+STATIC VOID *CreateImageSignatureList(IN VOID  *FileBuffer,
+                                      IN UINTN  FileSize,
+                                      IN UINTN *SignatureListSize)
+{
+  // Check parameters
+  if (SignatureListSize == 0) {
+    return NULL;
+  }
+  *SignatureListSize = 0;
+  if ((FileBuffer == NULL) || (FileSize == 0)) {
+    return NULL;
+  }
+  // TODO: Hash the pe image
+  return NULL;
+}
+
+// TODO: Add image signature list
+STATIC EFI_STATUS AddImageSignatureList(IN VOID  *SignatureList,
+                                        IN UINTN  SignatureListSize)
+{
+  if ((SignatureList == NULL) || (SignatureListSize == 0)) {
+    return EFI_INVALID_PARAMETER;
+  }
+  return EFI_ABORTED;
+}
+
 // Insert secure boot image signature
 STATIC EFI_STATUS InsertSecureBootImage(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath,
                                         IN VOID                           *FileBuffer,
                                         IN UINTN                           FileSize)
 {
   EFI_STATUS  Status = EFI_INVALID_PARAMETER;
-  VOID       *TempFileBuffer = NULL;
+  VOID       *SignatureList = NULL;
+  UINTN       SignatureListSize = 0;
   // Check that either the device path or the file buffer is valid
   if ((DevicePath == NULL) && ((FileBuffer == NULL) || (FileSize == 0))) {
     return EFI_INVALID_PARAMETER;
   }
-  // If the file buffer is not valid load file by device path
-  if (FileBuffer == NULL) {
+  // Get the image signature
+  SignatureList = GetImageSignatureList(DevicePath, &SignatureListSize);
+  if (SignatureList) {
+    // Add the image signature to database
+    Status = AddImageSignatureList(SignatureList, SignatureListSize);
+  } else if ((FileBuffer == NULL) || (FileSize == 0)) {
+    // Load file by device path
     UINT32 AuthenticationStatus = 0;
-    FileBuffer = TempFileBuffer = GetFileBufferByFilePath(FALSE, DevicePath, &FileSize, &AuthenticationStatus);
-  }
-  // Check the file buffer is valid
-  if ((FileBuffer != NULL) && (FileSize > 0)) {
-    // TODO: Get the image signature
-    Status = EFI_SUCCESS; // GetImageSignature(FileBuffer, FileSize, Signature);
-    if (!EFI_ERROR(Status)) {
-      // TODO: Add the image signature to database
+    FileBuffer = GetFileBufferByFilePath(FALSE, DevicePath, &FileSize, &AuthenticationStatus);
+    if (FileBuffer) {
+      if (FileSize > 0) {
+        // Create image signature
+        SignatureList = CreateImageSignatureList(FileBuffer, FileSize, &SignatureListSize);
+        if (SignatureList) {
+          // Add the image signature to database
+          Status = AddImageSignatureList(SignatureList, SignatureListSize);
+          FreePool(SignatureList);
+        }
+      }
+      FreePool(FileBuffer);
     }
-  }
-  // Cleanup buffer if needed
-  if (TempFileBuffer != NULL) {
-    FreePool(TempFileBuffer);
+  } else {
+    // Create image signature
+    SignatureList = CreateImageSignatureList(FileBuffer, FileSize, &SignatureListSize);
+    if (SignatureList) {
+      // Add the image signature to database
+      Status = AddImageSignatureList(SignatureList, SignatureListSize);
+      FreePool(SignatureList);
+    }
   }
   return Status;
 }
@@ -238,10 +344,10 @@ CheckSecureBootPolicy(IN OUT EFI_STATUS                     *AuthenticationStatu
                       IN     VOID                           *FileBuffer,
                       IN     UINTN                           FileSize)
 {
+  UINT8 UserResponse = SECURE_BOOT_POLICY_DENY;
   switch (gSettings.SecureBootPolicy) {
   case SECURE_BOOT_POLICY_QUERY:
     // TODO: Query user to allow image or deny image or insert image signature
-    /*
     // Perform user action
     switch (UserResponse) {
     case SECURE_BOOT_POLICY_ALLOW:
@@ -253,10 +359,9 @@ CheckSecureBootPolicy(IN OUT EFI_STATUS                     *AuthenticationStatu
     default:
       break;
     }
-    // */
     // If this is forced mode then no insert
     if (gSettings.SecureBootSetupMode) {
-      return TRUE;
+      break;
     }
     // Purposeful fallback to insert
 

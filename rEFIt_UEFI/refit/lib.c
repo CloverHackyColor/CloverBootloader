@@ -1539,7 +1539,7 @@ CHAR16 *FileDevicePathToStr(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevPath)
     // "\\\\" into '\\'
     Char = StrStr(FilePath, L"\\\\");
     while (Char != NULL) {
-      StrnCpy(Char, Char + 1, StrLen(Char) - 1);
+      StrCpy(Char, Char + 1);
       Char = StrStr(FilePath, L"\\\\");
     }
     return FilePath;
