@@ -1058,6 +1058,50 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
         gSettings.SecureBootPolicy = SECURE_BOOT_POLICY_QUERY;
       }
     }
+    // Secure boot white list
+    prop = GetProperty(dictPointer, "WhiteList");
+    if (prop && (prop->type == kTagTypeArray)) {
+      INTN i, Count = GetTagCount(prop);
+      if (Count > 0) {
+        gSettings.SecureBootWhiteListCount = 0;
+        gSettings.SecureBootWhiteList = AllocateZeroPool(Count * sizeof(CHAR16 *));
+        if (gSettings.SecureBootWhiteList) {
+          for (i = 0; i < Count; ++i) {
+            if (EFI_ERROR(GetElement(prop, i, &dict2))) {
+              continue;
+            }
+            if (dict2 == NULL) {
+              break;
+            }
+            if ((dict2->type == kTagTypeString) && dict2->string) {
+              gSettings.SecureBootWhiteList[gSettings.SecureBootWhiteListCount++] = PoolPrint(L"%a", dict2->string);
+            }
+          }
+        }
+      }
+    }
+    // Secure boot black list
+    prop = GetProperty(dictPointer, "BlackList");
+    if (prop && (prop->type == kTagTypeArray)) {
+      INTN i, Count = GetTagCount(prop);
+      if (Count > 0) {
+        gSettings.SecureBootBlackListCount = 0;
+        gSettings.SecureBootBlackList = AllocateZeroPool(Count * sizeof(CHAR16 *));
+        if (gSettings.SecureBootBlackList) {
+          for (i = 0; i < Count; ++i) {
+            if (EFI_ERROR(GetElement(prop, i, &dict2))) {
+              continue;
+            }
+            if (dict2 == NULL) {
+              break;
+            }
+            if ((dict2->type == kTagTypeString) && dict2->string) {
+              gSettings.SecureBootBlackList[gSettings.SecureBootBlackListCount++] = PoolPrint(L"%a", dict2->string);
+            }
+          }
+        }
+      }
+    }
 
     // XMP memory profiles
     prop = GetProperty(dictPointer, "XMPDetection");

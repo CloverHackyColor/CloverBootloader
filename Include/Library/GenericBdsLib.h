@@ -570,7 +570,7 @@ BdsLibMatchDevicePaths (
 CHAR16 *
 EFIAPI
 DevicePathToStr (
-  IN EFI_DEVICE_PATH_PROTOCOL     *DevPath
+  IN CONST EFI_DEVICE_PATH_PROTOCOL     *DevPath
   );
 
 //

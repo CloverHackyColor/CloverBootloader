@@ -491,11 +491,17 @@ Headers collection for procedures
 
 // Secure boot policies
 // Deny all images
-#define SECURE_BOOT_POLICY_DENY  (0)
+#define SECURE_BOOT_POLICY_DENY      (0)
 // Allow all images
-#define SECURE_BOOT_POLICY_ALLOW (1)
+#define SECURE_BOOT_POLICY_ALLOW     (1)
 // Query the user to choose action
-#define SECURE_BOOT_POLICY_QUERY (2)
+#define SECURE_BOOT_POLICY_QUERY     (2)
+// Insert signature into db
+#define SECURE_BOOT_POLICY_INSERT    (3)
+// White list
+#define SECURE_BOOT_POLICY_WHITELIST (4)
+// Black list
+#define SECURE_BOOT_POLICY_BLACKLIST (5)
 
 struct aml_chunk 
 {
@@ -815,6 +821,12 @@ typedef struct {
   UINT32  DualLink;
   UINT32  IgPlatform;
  	
+  // Secure boot white/black list
+  UINT32   SecureBootWhiteListCount;
+  UINT32   SecureBootBlackListCount;
+  CHAR16 **SecureBootWhiteList;
+  CHAR16 **SecureBootBlackList;
+
   // Secure boot
   UINT8 SecureBoot;
   UINT8 SecureBootSetupMode;

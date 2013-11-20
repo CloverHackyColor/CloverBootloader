@@ -44,6 +44,12 @@ LOADER_ENTRY * DuplicateLoaderEntry(IN LOADER_ENTRY *Entry);
 CHAR16 *AddLoadOption(IN CHAR16 *LoadOptions, IN CHAR16 *LoadOption);
 CHAR16 *RemoveLoadOption(IN CHAR16 *LoadOptions, IN CHAR16 *LoadOption);
 EG_IMAGE * ScanVolumeDefaultIcon(REFIT_VOLUME *Volume, IN UINT8 OSType);
+INTN StrniCmp(IN CHAR16 *Str1,
+              IN CHAR16 *Str2,
+              IN UINTN   Count);
+CHAR16 *StriStr(IN CHAR16 *Str,
+                IN CHAR16 *SearchFor);
+VOID StrToLower(IN CHAR16 *Str);
 
 // legacy
 VOID ScanLegacy(VOID);
@@ -64,3 +70,4 @@ EFI_STATUS InstallSecureBoot(VOID);
 VOID UninstallSecureBoot(VOID);
 VOID EnableSecureBoot(VOID);
 VOID DisableSecureBoot(VOID);
+EFI_STATUS VerifySecureBootImage(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath);

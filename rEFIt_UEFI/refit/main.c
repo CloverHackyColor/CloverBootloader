@@ -533,7 +533,15 @@ static EFI_STATUS LoadEFIImage(IN EFI_DEVICE_PATH *DevicePath,
                                 OUT EFI_HANDLE *NewImageHandle)
 {
   EFI_DEVICE_PATH *DevicePaths[2];
-  
+  // Verify secure boot policy
+  if (gSettings.SecureBoot && gSettings.SecureBootSetupMode) {
+    // Only verify if in forced secure boot mode
+    EFI_STATUS Status = VerifySecureBootImage(DevicePath);
+    if (EFI_ERROR(Status)) {
+      return Status;
+    }
+  }
+  // Load the image now
   DevicePaths[0] = DevicePath;
   DevicePaths[1] = NULL;
   return LoadEFIImageList(DevicePaths, ImageTitle, ErrorInStep, NewImageHandle);
@@ -1871,6 +1879,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
           EnableSecureBoot();
           MainLoopRunning = FALSE;
           AfterTool = TRUE;
+          break;
+
+        case TAG_SECURE_BOOT_CONFIG: // TODO: Configure secure boot
           break;
 
         case TAG_CLOVER:     // Clover options

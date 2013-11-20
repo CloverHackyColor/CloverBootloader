@@ -53,19 +53,20 @@ extern EFI_SYSTEM_TABLE*			gST;
 extern EFI_BOOT_SERVICES*			gBS; 
 extern EFI_RUNTIME_SERVICES*	gRS;
 
-#define TAG_ABOUT    (1)
-#define TAG_RESET    (2)
-#define TAG_SHUTDOWN (3)
-#define TAG_TOOL     (4)
-#define TAG_LOADER   (5)
-#define TAG_LEGACY   (6)
-#define TAG_INFO     (7)
-#define TAG_OPTIONS  (8)
-#define TAG_INPUT    (9)
-#define TAG_HELP     (10)
-#define TAG_SECURE_BOOT (13)
-#define TAG_RETURN   (99)
-#define TAG_CLOVER   (100)
+#define TAG_ABOUT              (1)
+#define TAG_RESET              (2)
+#define TAG_SHUTDOWN           (3)
+#define TAG_TOOL               (4)
+#define TAG_LOADER             (5)
+#define TAG_LEGACY             (6)
+#define TAG_INFO               (7)
+#define TAG_OPTIONS            (8)
+#define TAG_INPUT              (9)
+#define TAG_HELP               (10)
+#define TAG_SECURE_BOOT        (13)
+#define TAG_SECURE_BOOT_CONFIG (14)
+#define TAG_RETURN             (99)
+#define TAG_CLOVER             (100)
 
 //
 // lib module
@@ -505,7 +506,7 @@ VOID   ReplaceExtension(IN OUT CHAR16 *Path, IN CHAR16 *Extension);
 
 INTN FindMem(IN VOID *Buffer, IN UINTN BufferLength, IN VOID *SearchString, IN UINTN SearchStringLength);
 
-CHAR16 *FileDevicePathToStr(IN EFI_DEVICE_PATH_PROTOCOL *DevPath);
+CHAR16 *FileDevicePathToStr(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevPath);
 
 EFI_STATUS InitializeUnicodeCollationProtocol (VOID);
 //

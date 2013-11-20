@@ -98,7 +98,7 @@ BOOLEAN MetaiMatch (
 CHAR16 *
 EFIAPI
 DevicePathToStr (
-                 IN EFI_DEVICE_PATH_PROTOCOL     *DevPath
+                 IN CONST EFI_DEVICE_PATH_PROTOCOL     *DevPath
                  )
 {
   return ConvertDevicePathToText (DevPath, TRUE, TRUE);
@@ -1522,7 +1522,7 @@ INTN FindMem(IN VOID *Buffer, IN UINTN BufferLength, IN VOID *SearchString, IN U
 //
 // Aptio UEFI returns File DevPath as 2 nodes (dir, file)
 // and DevicePathToStr connects them with /, but we need '\\'
-CHAR16 *FileDevicePathToStr(IN EFI_DEVICE_PATH_PROTOCOL *DevPath)
+CHAR16 *FileDevicePathToStr(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevPath)
 {
     CHAR16      *FilePath;
     CHAR16      *Char;

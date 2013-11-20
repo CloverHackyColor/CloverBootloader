@@ -110,46 +110,6 @@ STATIC CHAR16 *OSXInstallerPaths[] = {
 };
 STATIC CONST UINTN OSXInstallerPathsCount = (sizeof(OSXInstallerPaths) / sizeof(CHAR16 *));
 
-#define TO_LOWER(ch) (((ch >= L'A') && (ch <= L'Z')) ? ((ch - L'A') + L'a') : ch)
-STATIC INTN StrniCmp(IN CHAR16 *Str1,
-                     IN CHAR16 *Str2,
-                     IN UINTN   Count)
-{
-  CHAR16 Ch1, Ch2;
-  if (Count == 0) {
-    return 0;
-  }
-  if (Str1 == NULL) {
-    if (Str2 == NULL) {
-      return 0;
-    } else {
-      return -1;
-    }
-  } else  if (Str2 == NULL) {
-    return 1;
-  }
-  do {
-    Ch1 = TO_LOWER(*Str1);
-    Ch2 = TO_LOWER(*Str2);
-    Str1++;
-    Str2++;
-    if (Ch1 != Ch2) {
-      return (Ch1 - Ch2);
-    }
-    if (Ch1 == 0) {
-      return 0;
-    }
-  } while (--Count > 0);
-  return 0;
-}
-STATIC VOID StrToLower(IN CHAR16 *Str)
-{
-   while (*Str) {
-     *Str = TO_LOWER(*Str);
-     ++Str;
-   }
-}
-
 STATIC INTN TimeCmp(IN EFI_TIME *Time1,
                     IN EFI_TIME *Time2)
 {
