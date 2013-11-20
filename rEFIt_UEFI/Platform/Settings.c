@@ -1032,6 +1032,33 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
           }
     }
 
+    // Secure boot
+    prop = GetProperty(dictPointer, "Secure");
+    if (prop) {
+      if (prop->type == kTagTypeFalse) {
+        // Only disable setup mode, we want always secure boot
+        gSettings.SecureBootSetupMode = 0;
+      } else if ((prop->type == kTagTypeTrue) && !gSettings.SecureBoot) {
+        // This mode will force boot policy even when no secure boot or it is disabled
+        gSettings.SecureBootSetupMode = 1;
+        gSettings.SecureBoot = 1;
+      }
+    }
+    // Secure boot policy
+    prop = GetProperty(dictPointer, "Policy");
+    if (prop && (prop->type == kTagTypeString) && prop->string) {
+      if ((prop->string[0] == 'D') || (prop->string[0] == 'd')) {
+        // Deny all images
+        gSettings.SecureBootPolicy = SECURE_BOOT_POLICY_DENY;
+      } else if ((prop->string[0] == 'A') || (prop->string[0] == 'a')) {
+        // Allow all images
+        gSettings.SecureBootPolicy = SECURE_BOOT_POLICY_ALLOW;
+      } else if ((prop->string[0] == 'Q') || (prop->string[0] == 'q')) {
+        // Query user
+        gSettings.SecureBootPolicy = SECURE_BOOT_POLICY_QUERY;
+      }
+    }
+
     // XMP memory profiles
     prop = GetProperty(dictPointer, "XMPDetection");
     if (prop) {

@@ -107,22 +107,6 @@ STATIC BOOLEAN AddToolEntry(IN CHAR16 *LoaderPath, IN CHAR16 *FullTitle, IN CHAR
   return TRUE;
 }
 
-STATIC VOID AddSecureBootEntry(VOID)
-{
-  LOADER_ENTRY *Entry;
-  
-  Entry = AllocateZeroPool(sizeof(LOADER_ENTRY));
-  Entry->me.Title = PoolPrint(L"Enable Clover Secure Boot");
-  Entry->me.Tag = TAG_SECURE_BOOT;
-  Entry->me.Row = 1;
-  Entry->me.Image = BuiltinIcon(BUILTIN_ICON_FUNC_SECURE_BOOT);
-  //actions
-  Entry->me.AtClick = ActionSelect;
-  Entry->me.AtDoubleClick = ActionEnter;
-  Entry->me.AtRightClick = ActionHelp;
-  AddMenuEntry(&MainMenu, (REFIT_MENU_ENTRY *)Entry);
-}
-
 STATIC VOID AddCloverEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTitle, IN REFIT_VOLUME *Volume)
 {
   LOADER_ENTRY      *Entry, *SubEntry;
@@ -259,11 +243,6 @@ VOID ScanTool(VOID)
         }
       }
     }
-  }
-
-  // Check for secure boot setup mode
-  if (gSettings.SecureBootSetupMode) {
-    AddSecureBootEntry();
   }
 }
 

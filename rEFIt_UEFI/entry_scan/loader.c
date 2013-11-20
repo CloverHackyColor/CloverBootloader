@@ -355,12 +355,12 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
   INTN             i;
   
   // Check parameters are valid
-  if ((LoaderPath == NULL) || (Volume == NULL)) {
+  if ((LoaderPath == NULL) || (*LoaderPath == 0) || (Volume == NULL)) {
     return NULL;
   }
   
   // Get the loader device path
-  LoaderDevicePath = FileDevicePath(Volume->DeviceHandle, LoaderPath);
+  LoaderDevicePath = FileDevicePath(Volume->DeviceHandle, (*LoaderPath == '\\') ? (LoaderPath + 1) : LoaderPath);
   if (LoaderDevicePath == NULL) {
     return NULL;
   }
@@ -678,7 +678,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
   if (BootBgColor != NULL) {
     Entry->BootBgColor = BootBgColor;
   }
-  
+  DBG("found %s\n", Entry->DevicePathString);
   return Entry;
 }
 
@@ -1440,7 +1440,7 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
       StrToLower(PartUUID);
       // open the /boot directory (or whatever directory path)
       DirIterOpen(Volume->RootDir, LINUX_BOOT_PATH, Iter);
-      // TODO: Check if user wants to find newest kernel only
+      // Check if user wants to find newest kernel only
       switch (Custom->KernelScan) {
       case KERNEL_SCAN_FIRST:
         // First kernel found only

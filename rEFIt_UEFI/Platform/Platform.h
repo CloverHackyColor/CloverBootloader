@@ -489,6 +489,14 @@ Headers collection for procedures
 #define KERNEL_SCAN_EARLIEST   (6)
 #define KERNEL_SCAN_NONE       (100)
 
+// Secure boot policies
+// Deny all images
+#define SECURE_BOOT_POLICY_DENY  (0)
+// Allow all images
+#define SECURE_BOOT_POLICY_ALLOW (1)
+// Query the user to choose action
+#define SECURE_BOOT_POLICY_QUERY (2)
+
 struct aml_chunk 
 {
 	UINT8     Type;
@@ -807,9 +815,13 @@ typedef struct {
   UINT32  DualLink;
   UINT32  IgPlatform;
  	
+  // Secure boot
+  UINT8 SecureBoot;
+  UINT8 SecureBootSetupMode;
+  UINT8 SecureBootPolicy;
+
   // HDA
   BOOLEAN HDAInjection;
-  UINT8   pad6[3];
   UINTN   HDALayoutId;
 #if defined(MDE_CPU_IA32)
   UINT32  align2;
@@ -897,9 +909,7 @@ typedef struct {
   BOOLEAN DebugDSDT;
   BOOLEAN SlpWak;
 
-  // Secure boot
-  UINT8 SecureBoot;
-  UINT8 SecureBootSetupMode;
+  UINT8   pad6[2];
 
   // Table dropping
   ACPI_DROP_TABLE *ACPIDropTables;

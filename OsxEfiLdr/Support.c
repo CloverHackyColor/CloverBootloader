@@ -162,7 +162,16 @@ GenMemoryMap (
   UINTN                 Attr;
   UINT64                Ceiling;
   UINT64                EBDAaddr = 0x9E000;
+  UINT64                EBDAmax = 0x100000;
   UINT64                EBDAsize = 2;
+
+  // EBDA memory protection
+  
+  EBDAaddr = LShiftU64((UINT64)(*(UINT16 *)(UINTN)(0x40E)), 4);
+  //fool proof
+  if (EBDAaddr < 0x9A000 || EBDAaddr > 0x9F800) {
+    EBDAaddr = 0x9A000;
+  }
 
   Ceiling = 0xFFFFFFFF;
   for (Index = 0; Index < BiosMemoryMap->MemoryMapSize / sizeof(BIOS_MEMORY_MAP_ENTRY); Index++) {
@@ -214,6 +223,14 @@ GenMemoryMap (
           Ceiling = BaseAddress;
         }
       }
+      // Ignore the EBDA and bios rom area
+      if (BaseAddress < EBDAaddr) {
+        if ((BaseAddress + Length) >= EBDAaddr) {
+          continue;
+        }
+      } else if (BaseAddress < EBDAmax) {
+        continue;
+      }
     }
     EfiAddMemoryDescriptor (
       NumberOfMemoryMapEntries,
@@ -235,15 +252,8 @@ GenMemoryMap (
   /* 
    before I am proposing 9E000 and 2 page  = 8kb. It is not common case.
   */
-  // EBDA memory protection
-  
-  EBDAaddr = LShiftU64((UINT64)(*(UINT16 *)(UINTN)(0x40E)), 4);
-  //fool proof
-  if (EBDAaddr < 0x9A000 || EBDAaddr > 0x9F800) {
-    EBDAaddr = 0x9A000;
-  }
-  
-  EBDAsize = 0xA0000 - EBDAaddr;
+  //protect from the EBDA to the 1MB barrier
+  EBDAsize = EBDAmax - EBDAaddr;
     
   EfiAddMemoryDescriptor (
                           NumberOfMemoryMapEntries,
@@ -254,6 +264,7 @@ GenMemoryMap (
                           EFI_MEMORY_UC
                           );
  // this is just BIOS rom protection. Seems to be not needed. 
+  /*
   EfiAddMemoryDescriptor (
                           NumberOfMemoryMapEntries,
                           EfiMemoryDescriptor,
@@ -262,7 +273,7 @@ GenMemoryMap (
                           0x20,
                           EFI_MEMORY_UC
                           );
-   
+   // */
   
   //
   // Update MemoryMap according to Ceiling

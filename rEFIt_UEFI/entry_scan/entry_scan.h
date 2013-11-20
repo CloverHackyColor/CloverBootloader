@@ -58,4 +58,9 @@ VOID ScanTool(VOID);
 VOID AddCustomTool(VOID);
 
 // secure boot
+VOID AddSecureBootTool(VOID);
+VOID InitializeSecureBoot(VOID);
+EFI_STATUS InstallSecureBoot(VOID);
+VOID UninstallSecureBoot(VOID);
 VOID EnableSecureBoot(VOID);
+VOID DisableSecureBoot(VOID);

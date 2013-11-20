@@ -207,7 +207,8 @@
   gEfiHiiProtocolGuid
   gEfiSimplePointerProtocolGuid
   gEfiSmbiosProtocolGuid
-  gEfiSecurityArchProtocolGuid  
+  gEfiSecurityArchProtocolGuid
+  gEfiSecurity2ArchProtocolGuid
 
   AppleDevicePropertyProtocolGuid
   gEfiConsoleControlProtocolGuid
