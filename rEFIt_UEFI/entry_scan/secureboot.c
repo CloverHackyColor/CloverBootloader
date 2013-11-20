@@ -90,14 +90,43 @@ VOID EnableSecureBoot(VOID)
   // TODO: Enroll this image's certificate
   // Reinit secure boot now
   InitializeSecureBoot();
-  if (!gSettings.SecureBoot) {
-    DBG("Secure boot enable failed!\n");
-    return;
-  }
   // Install the security policy hooks or redisable
   if (EFI_ERROR(Status = InstallSecureBoot())) {
     DBG("Secure boot install failed: %r!\n", Status);
     DisableSecureBoot();
+  }
+}
+
+STATIC CONST CHAR16 *SecureBootPolicyToStr(IN UINTN Policy)
+{
+   STATIC CONST CHAR16 *SecureBootPolicyStrings[] = {
+     L"Deny",
+     L"Allow",
+     L"Query",
+     L"Insert",
+     L"WhiteList",
+     L"BlackList",
+   };
+   STATIC CONST UINTN  SecureBootPolicyStringsCount = (sizeof(SecureBootPolicyStrings) / (sizeof(CONST CHAR16 *)));
+   if (Policy < SecureBootPolicyStringsCount) {
+     return SecureBootPolicyStrings[Policy];
+   }
+   return L"Unknown";
+}
+
+STATIC VOID PrintSecureBootInfo(VOID)
+{
+  // Nothing to do if secure boot is disabled or in setup mode
+  if (!gSettings.SecureBoot) {
+    DBG("Secure boot: %a\n", (gSettings.SecureBootSetupMode ? "Setup" : "Disabled"));
+  } else if (gSettings.SecureBootSetupMode) {
+    // If setup mode is enabled then secure boot mode is forced, also nothing to do now
+    DBG("Secure boot: Forced\n");
+    DBG("Boot Policy: %s\n", SecureBootPolicyToStr(gSettings.SecureBootPolicy));
+  } else {
+    // Secure boot is enabled so install policy hooks
+    DBG("Secure boot: Enabled\n");
+    DBG("Boot Policy: %s\n", SecureBootPolicyToStr(gSettings.SecureBootPolicy));
   }
 }
 
@@ -114,6 +143,7 @@ VOID DisableSecureBoot(VOID)
   // TODO: Delete PK
   // Reinit secure boot now
   InitializeSecureBoot();
+  PrintSecureBootInfo();
 }
 
 // The previous protocol functions
@@ -178,9 +208,22 @@ CheckSecureBootPolicy(IN OUT EFI_STATUS                     *AuthenticationStatu
                       IN     VOID                           *FileBuffer,
                       IN     UINTN                           FileSize)
 {
+  // UINTN  FileSize = 0;
+  // VOID  *FileBuffer;
   switch (gSettings.SecureBootPolicy) {
   case SECURE_BOOT_POLICY_QUERY:
     // TODO: Query user to allow image or deny image or insert image signature
+
+  case SECURE_BOOT_POLICY_INSERT:
+    // Load image file
+    /*
+    FileBuffer = GetFileBufferByFilePath(FALSE, DevicePath, &FileSize, &AuthenticationStatus);
+    if (FileBuffer != NULL) {
+      // TODO: Get image signature
+      // TODO: Add image signature
+      FreePool(FileBuffer);
+    }
+    // */
     break;
 
   case SECURE_BOOT_POLICY_ALLOW:
@@ -208,14 +251,15 @@ InternalFileAuthentication(IN CONST EFI_SECURITY_ARCH_PROTOCOL *This,
     // Return original security policy
     Status = gSecurityFileAuthentication(This, AuthenticationStatus, DevicePath);
     if (EFI_ERROR(Status)) {
-      // Load image file
-      UINTN  FileSize = 0;
-      VOID  *FileBuffer = GetFileBufferByFilePath(FALSE, DevicePath, &FileSize, &AuthenticationStatus);
-      if (FileBuffer != NULL) {
-        // Check security policy on image
-        CheckSecureBootPolicy(&Status, DevicePath, FileBuffer, FileSize);
-        FreePool(FileBuffer);
-      }
+      // Check security policy on image
+      CheckSecureBootPolicy(&Status, DevicePath, NULL, 0);
+    }
+  }
+  if (EFI_ERROR(Status)) {
+    CHAR16 *DevicePathStr = DevicePathToStr(DevicePath);
+    if (DevicePathStr) {
+      DBG("VerifySecureBootImage(1): %r %s\n", Status, DevicePathStr);
+      FreePool(DevicePathStr);
     }
   }
   return Status;
@@ -238,6 +282,13 @@ Internal2FileAuthentication(IN CONST EFI_SECURITY2_ARCH_PROTOCOL *This,
       CheckSecureBootPolicy(&Status, DevicePath, FileBuffer, FileSize);
     }
   }
+  if (EFI_ERROR(Status)) {
+    CHAR16 *DevicePathStr = DevicePathToStr(DevicePath);
+    if (DevicePathStr) {
+      DBG("VerifySecureBootImage(2): %r %s\n", Status, DevicePathStr);
+      FreePool(DevicePathStr);
+    }
+  }
   return Status;
 }
 
@@ -248,6 +299,13 @@ EFI_STATUS VerifySecureBootImage(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath)
   if (!PrecheckSecureBootPolicy(&Status, DevicePath)) {
     if (!CheckSecureBootPolicy(&Status, DevicePath, NULL, 0)) {
       Status = EFI_SUCCESS;
+    }
+  }
+  if (EFI_ERROR(Status)) {
+    CHAR16 *DevicePathStr = DevicePathToStr(DevicePath);
+    if (DevicePathStr) {
+      DBG("VerifySecureBootImage: %r %s\n", Status, DevicePathStr);
+      FreePool(DevicePathStr);
     }
   }
   return Status;
@@ -263,18 +321,11 @@ EFI_STATUS InstallSecureBoot(VOID)
   if (gSecurityFileAuthentication) {
     return EFI_SUCCESS;
   }
+  PrintSecureBootInfo();
   // Nothing to do if secure boot is disabled or in setup mode
-  if (!gSettings.SecureBoot) {
-    DBG("Secure boot: %a\n", (gSettings.SecureBootSetupMode ? "Setup" : "Disabled"));
+  if (!gSettings.SecureBoot || gSettings.SecureBootSetupMode) {
     return EFI_SUCCESS;
   }
-  // If setup mode is enabled then secure boot mode is forced, also nothing to do now
-  if (gSettings.SecureBootSetupMode) {
-    DBG("Secure boot: Forced\nBoot Policy: %d\n", gSettings.SecureBootPolicy);
-    return EFI_SUCCESS;
-  }
-  // Secure boot is enabled so install policy hooks
-  DBG("Secure boot: Enabled\nBoot Policy: %d\n", gSettings.SecureBootPolicy);
   // Locate security protocols
   gBS->LocateProtocol(&gEfiSecurity2ArchProtocolGuid, NULL, (VOID **)&Security2);
   Status = gBS->LocateProtocol(&gEfiSecurityArchProtocolGuid, NULL, (VOID **)&Security);
