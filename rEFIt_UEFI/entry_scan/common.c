@@ -247,16 +247,23 @@ INTN StrniCmp(IN CHAR16 *Str1,
 CHAR16 *StriStr(IN CHAR16 *Str,
                 IN CHAR16 *SearchFor)
 {
-  UINTN Length = 0;
+  CHAR16 *End;
+  UINTN   Length;
+  UINTN   SearchLength;
   if ((Str == NULL) || (SearchFor == NULL)) {
     return NULL;
   }
-  Length = StrLen(SearchFor);
-  if (Length == 0){
+  Length = StrLen(Str);
+  if (Length == 0) {
     return NULL;
   }
-  while (*Str) {
-    if (StrniCmp(Str, SearchFor, Length) == 0) {
+  SearchLength = StrLen(SearchFor);
+  if (SearchLength < Length) {
+    return NULL;
+  }
+  End = Str + (Length - SearchLength);
+  while (Str < End) {
+    if (StrniCmp(Str, SearchFor, SearchLength) == 0) {
       return Str;
     }
     ++Str;

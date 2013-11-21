@@ -1241,7 +1241,7 @@ CallDriverHealth (
       // Can not get the Driver name, so use the Device path
       //
       DriverDevicePath = DevicePathFromHandle (DriverHealthInfo->DriverHandle);
-      DriverName       = DevicePathToStr (DriverDevicePath);
+      DriverName       = FileDevicePathToStr (DriverDevicePath);
     }
     //
     // Add the Driver name & Controller name into FormSetTitle string

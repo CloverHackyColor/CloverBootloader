@@ -675,7 +675,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
   SubScreen->AnimeRun = GetAnime(SubScreen);
   VolumeSize = RShiftU64(MultU64x32(Volume->BlockIO->Media->LastBlock, Volume->BlockIO->Media->BlockSize), 20);
   AddMenuInfoLine(SubScreen, PoolPrint(L"Volume size: %dMb", VolumeSize));
-  AddMenuInfoLine(SubScreen, DevicePathToStr(Entry->DevicePath));
+  AddMenuInfoLine(SubScreen, FileDevicePathToStr(Entry->DevicePath));
   Guid = FindGPTPartitionGuidInDevicePath(Volume->DevicePath);
   if (Guid) {
     CHAR8 *GuidStr = AllocateZeroPool(50);
@@ -1739,7 +1739,7 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
             SubScreen->AnimeRun = GetAnime(SubScreen);
             VolumeSize = RShiftU64(MultU64x32(Volume->BlockIO->Media->LastBlock, Volume->BlockIO->Media->BlockSize), 20);
             AddMenuInfoLine(SubScreen, PoolPrint(L"Volume size: %dMb", VolumeSize));
-            AddMenuInfoLine(SubScreen, DevicePathToStr(Entry->DevicePath));
+            AddMenuInfoLine(SubScreen, FileDevicePathToStr(Entry->DevicePath));
             if (Guid) {
               CHAR8 *GuidStr = AllocateZeroPool(50);
               AsciiSPrint(GuidStr, 50, "%g", Guid);

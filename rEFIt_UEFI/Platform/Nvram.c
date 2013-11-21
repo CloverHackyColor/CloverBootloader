@@ -181,7 +181,7 @@ BootVolumeDevicePathEqual (
   BOOLEAN         ForceEqualNodes;
   
   
-  DBG_DP("   BootVolumeDevicePathEqual:\n    %s\n    %s\n", DevicePathToStr (DevicePath1), DevicePathToStr (DevicePath2));
+  DBG_DP("   BootVolumeDevicePathEqual:\n    %s\n    %s\n", FileDevicePathToStr (DevicePath1), FileDevicePathToStr (DevicePath2));
   DBG_DP("    N1: (Type, Subtype, Len) N2: (Type, Subtype, Len)\n");
   
   Equal = FALSE;
@@ -347,7 +347,7 @@ EFI_STATUS GetEfiBootDeviceFromNvram(VOID)
   }
   
   DBG("\n");
-  DBG(" efi-boot-device-data: %s\n", DevicePathToStr(gEfiBootDeviceData));
+  DBG(" efi-boot-device-data: %s\n", FileDevicePathToStr(gEfiBootDeviceData));
   
   gEfiBootVolume = gEfiBootDeviceData;
   
@@ -362,7 +362,7 @@ EFI_STATUS GetEfiBootDeviceFromNvram(VOID)
       DBG(" Error: BootCampHD not found\n");
       return EFI_NOT_FOUND;
     }
-    DBG(" BootCampHD: %s\n", DevicePathToStr(gBootCampHD));
+    DBG(" BootCampHD: %s\n", FileDevicePathToStr(gBootCampHD));
   }
   
   //
@@ -378,7 +378,7 @@ EFI_STATUS GetEfiBootDeviceFromNvram(VOID)
     SetDevicePathEndNode(FileDevPath);
     // gEfiBootVolume now contains only Volume path
   }
-  DBG( " Volume: '%s'\n", DevicePathToStr(gEfiBootVolume));
+  DBG( " Volume: '%s'\n", FileDevicePathToStr(gEfiBootVolume));
   DBG( " LoaderPath: '%s'\n", gEfiBootLoaderPath);
   
   //
@@ -679,7 +679,7 @@ INTN FindStartupDiskVolume(REFIT_MENU_SCREEN *MainMenu)
   //
   // Check if gEfiBootVolume is disk or partition volume
   //
-  EfiBootVolumeStr = DevicePathToStr(gEfiBootVolume);
+  EfiBootVolumeStr = FileDevicePathToStr(gEfiBootVolume);
   IsPartitionVolume = NULL != FindDevicePathNodeWithType(gEfiBootVolume, MEDIA_DEVICE_PATH, 0);
   DBG(" volume: %s = %s\n", IsPartitionVolume ? L"partition" : L"disk", EfiBootVolumeStr);
   
@@ -890,7 +890,7 @@ EFI_STATUS SetStartupDiskVolume(IN REFIT_VOLUME *Volume, IN CHAR16 *LoaderPath)
     FileDevPath = FileDevicePath(NULL, LoaderPath);
     DevPath = AppendDevicePathNode(DevPath, FileDevPath);
   }
-  DBG(" DevPath: %s\n", Volume->VolName, DevicePathToStr(DevPath));
+  DBG(" DevPath: %s\n", Volume->VolName, FileDevicePathToStr(DevPath));
   
   Guid = FindGPTPartitionGuidInDevicePath(Volume->DevicePath);
   DBG(" GUID = %g\n", Guid);

@@ -156,7 +156,7 @@ EFI_STATUS InitRefitLib(IN EFI_HANDLE ImageHandle)
     SelfDevicePath = AllocateAlignedPages(EFI_SIZE_TO_PAGES(DevicePathSize), 64);
     CopyMem(SelfDevicePath, TmpDevicePath, DevicePathSize);
   
-    DBG("SelfDevicePath=%s @%x\n", DevicePathToStr(SelfDevicePath), SelfDeviceHandle);
+    DBG("SelfDevicePath=%s @%x\n", FileDevicePathToStr(SelfDevicePath), SelfDeviceHandle);
   
   // find the current directory
     FilePathAsString = FileDevicePathToStr(SelfLoadedImage->FilePath);
@@ -230,7 +230,7 @@ EFI_STATUS ReinitSelfLib(VOID)
   }
 
   TmpDevicePath = DuplicateDevicePath(SelfDevicePath);
-  DBG("reinit: self device path=%s\n", DevicePathToStr(TmpDevicePath));
+  DBG("reinit: self device path=%s\n", FileDevicePathToStr(TmpDevicePath));
   if(TmpDevicePath == NULL)
 		return EFI_NOT_FOUND;
 
@@ -698,7 +698,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
   //    Volume->DevicePath = DuplicateDevicePath(DevicePathFromHandle(Volume->DeviceHandle));
 #if REFIT_DEBUG > 0
   if (Volume->DevicePath != NULL) {
-    DBG("  %s\n", DevicePathToStr(Volume->DevicePath));
+    DBG("  %s\n", FileDevicePathToStr(Volume->DevicePath));
 #if REFIT_DEBUG >= 2
     //       DumpHex(1, 0, GetDevicePathSize(Volume->DevicePath), Volume->DevicePath);
 #endif
@@ -1207,7 +1207,7 @@ VOID ReinitVolumes(VOID)
       continue;
     }
     DBG("Volume %d at reinit found:\n", VolumeIndex);
-    DBG("Volume->DevicePath=%s\n", DevicePathToStr(Volume->DevicePath));
+    DBG("Volume->DevicePath=%s\n", FileDevicePathToStr(Volume->DevicePath));
     VolumesFound++;
     if (Volume->DevicePath != NULL) {
       // get the handle for that path

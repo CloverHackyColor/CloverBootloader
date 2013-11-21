@@ -640,7 +640,7 @@ Var_UpdateDriverOption (
     GetDevicePathSize (CallbackData->LoadContext->FilePathList)
     );
 
-  NewMenuEntry->HelpString    = DevicePathToStr (NewLoadContext->FilePathList);
+  NewMenuEntry->HelpString    = FileDevicePathToStr (NewLoadContext->FilePathList);
   NewMenuEntry->OptionNumber  = Index;
   NewMenuEntry->DisplayStringToken = GetStringTokenFromDepository (
                                       CallbackData,
@@ -812,7 +812,7 @@ Var_UpdateBootOption (
     GetDevicePathSize (CallbackData->LoadContext->FilePathList)
     );
 
-  NewMenuEntry->HelpString    = DevicePathToStr (NewLoadContext->FilePathList);
+  NewMenuEntry->HelpString    = FileDevicePathToStr (NewLoadContext->FilePathList);
   NewMenuEntry->OptionNumber  = Index;
   NewMenuEntry->DisplayStringToken = GetStringTokenFromDepository (
                                       CallbackData,

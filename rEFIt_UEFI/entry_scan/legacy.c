@@ -188,7 +188,7 @@ VOID ScanLegacy(VOID)
     
 #if 0 // REFIT_DEBUG > 0
     DBG(" %d %s\n  %d %d %s %d %s\n",
-        VolumeIndex, DevicePathToStr(Volume->DevicePath),
+        VolumeIndex, FileDevicePathToStr(Volume->DevicePath),
         Volume->DiskKind, Volume->MbrPartitionIndex,
         Volume->IsAppleLegacy ? L"AL" : L"--", Volume->HasBootCode,
         Volume->VolName ? Volume->VolName : L"(no name)");

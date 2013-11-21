@@ -574,6 +574,11 @@ DevicePathToStr (
   );
 
 //
+// Aptio UEFI returns File DevPath as 2 nodes (dir, file)
+// and DevicePathToStr connects them with /, but we need '\\'
+CHAR16 *FileDevicePathToStr(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevPath);
+
+//
 // Internal definitions
 //
 typedef struct {

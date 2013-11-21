@@ -493,7 +493,7 @@ LocateSerialIo (
       //
       NewMenuEntry->DisplayString = EfiLibStrFromDatahub (DevicePath);
       if (NULL == NewMenuEntry->DisplayString) {
-        NewMenuEntry->DisplayString = DevicePathToStr (DevicePath);
+        NewMenuEntry->DisplayString = FileDevicePathToStr (DevicePath);
       }
 
       NewMenuEntry->HelpString = NULL;
@@ -866,7 +866,7 @@ GetConsoleMenu (
     }
     NewMenuEntry->DisplayString   = EfiLibStrFromDatahub (NewConsoleContext->DevicePath);
     if (NULL == NewMenuEntry->DisplayString) {
-      NewMenuEntry->DisplayString = DevicePathToStr (NewConsoleContext->DevicePath);
+      NewMenuEntry->DisplayString = FileDevicePathToStr (NewConsoleContext->DevicePath);
     }
 
     NewConsoleContext->IsTerminal = IsTerminalDevicePath (

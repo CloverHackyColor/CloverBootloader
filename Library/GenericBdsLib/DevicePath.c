@@ -33,6 +33,32 @@ DevicePathToStr (
   return ConvertDevicePathToText (DevPath, TRUE, TRUE);
 }
 
+//
+// Aptio UEFI returns File DevPath as 2 nodes (dir, file)
+// and DevicePathToStr connects them with /, but we need '\\'
+CHAR16 *FileDevicePathToStr(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevPath)
+{
+    CHAR16      *FilePath;
+    CHAR16      *Char;
+    
+    FilePath = DevicePathToStr(DevPath);
+    // fix / into '\\'
+    if (FilePath != NULL) {
+        for (Char = FilePath; *Char != L'\0'; Char++) {
+            if (*Char == L'/') {
+                *Char = L'\\';
+            }
+        }
+    }
+    // "\\\\" into '\\'
+    Char = StrStr(FilePath, L"\\\\");
+    while (Char != NULL) {
+      StrCpy(Char, Char + 1);
+      Char = StrStr(FilePath, L"\\\\");
+    }
+    return FilePath;
+}
+
 #if 0
 /**
   Concatenates a formatted unicode string to allocated pool.

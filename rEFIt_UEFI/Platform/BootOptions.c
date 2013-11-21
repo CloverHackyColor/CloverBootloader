@@ -547,8 +547,8 @@ PrintBootOption (
     
     DBG("%2d) Boot%04X: %s, Attr: 0x%x\n",
         Index, BootOption->BootNum, BootOption->Description, BootOption->Attributes);
-    FPStr = DevicePathToStr(BootOption->FilePathList);
-    DBG("    %s\n", DevicePathToStr(BootOption->FilePathList));
+    FPStr = FileDevicePathToStr(BootOption->FilePathList);
+    DBG("    %s\n", FPStr);
     FreePool (FPStr);
     
     VarSizeTmp = sizeof(BootOption->Attributes)
@@ -793,14 +793,14 @@ FindBootOptionForFile (
         return Status;
     }
     SearchedDevicePathSize[0] = GetDevicePathSize (SearchedDevicePath[0]);
-    DBG(" Searching for: %s (Len: %d)\n", DevicePathToStr(SearchedDevicePath[0]), SearchedDevicePathSize[0]);
+    DBG(" Searching for: %s (Len: %d)\n", FileDevicePathToStr(SearchedDevicePath[0]), SearchedDevicePathSize[0]);
     
     Status = CreateBootOptionDevicePath (FileDeviceHandle, FileName, TRUE, &SearchedDevicePath[1]);
     if (EFI_ERROR(Status)) {
         return Status;
     }
     SearchedDevicePathSize[1] = GetDevicePathSize (SearchedDevicePath[1]);
-    DBG(" and for: %s (Len: %d)\n", DevicePathToStr(SearchedDevicePath[1]), SearchedDevicePathSize[1]);
+    DBG(" and for: %s (Len: %d)\n", FileDevicePathToStr(SearchedDevicePath[1]), SearchedDevicePathSize[1]);
     
     //
     // Iterate over all BootXXXX vars (actually, only ones that are in BootOrder list)
@@ -954,7 +954,7 @@ AddBootOption (
     
     
     DBG("AddBootOption: %s\n", BootOption->Description);
-    DBG(" FP: %s\n", DevicePathToStr(BootOption->FilePathList));
+    DBG(" FP: %s\n", FileDevicePathToStr(BootOption->FilePathList));
     DBG(" BootIndex: %d\n", BootIndex);
     
     //

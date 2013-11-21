@@ -71,7 +71,7 @@ CHAR8 *get_pci_dev_path(pci_dt_t *PciDt)
   DevicePath = DevicePathFromHandle (PciDt->DeviceHandle);
   if (!DevicePath)
     return NULL;
-  devpathstr = DevicePathToStr(DevicePath);
+  devpathstr = FileDevicePathToStr(DevicePath);
   tmp = AllocateZeroPool((StrLen(devpathstr)+1)*sizeof(CHAR8));
   UnicodeStrToAsciiStr(devpathstr, tmp);		
   return tmp;

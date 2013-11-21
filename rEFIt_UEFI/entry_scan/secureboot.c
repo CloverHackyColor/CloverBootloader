@@ -123,10 +123,10 @@ STATIC VOID PrintSecureBootInfo(VOID)
 {
   // Nothing to do if secure boot is disabled or in setup mode
   if (!gSettings.SecureBoot) {
-    DBG("Secure boot: %a\n", (gSettings.SecureBootSetupMode ? "Setup" : "Disabled"));
+    DBG("Secure Boot: %a\n", (gSettings.SecureBootSetupMode ? "Setup" : "Disabled"));
   } else {
     // Secure boot is enabled
-    DBG("Secure boot: %a\n", (gSettings.SecureBootSetupMode ? "Forced" : "Enabled"));
+    DBG("Secure Boot: %a\n", (gSettings.SecureBootSetupMode ? "Forced" : "Enabled"));
     DBG("Boot Policy: %s\n", SecureBootPolicyToStr(gSettings.SecureBootPolicy));
   }
 }
@@ -183,7 +183,8 @@ STATIC VOID *GetImageSignatureList(IN  CONST EFI_DEVICE_PATH_PROTOCOL *DevicePat
     UINT8  *Offset = Ptr + OFFSET_OF(EFI_IMAGE_EXECUTION_INFO, InfoSize) + sizeof(ImageExeInfo->InfoSize);
     CHAR16 *Name = (CHAR16 *)Offset;
     // Check to make sure this is valid
-    if (ImageExeInfo->Action != EFI_IMAGE_EXECUTION_AUTH_SIG_NOT_FOUND) {
+    if ((ImageExeInfo->Action == EFI_IMAGE_EXECUTION_AUTH_SIG_FAILED) ||
+        (ImageExeInfo->Action == EFI_IMAGE_EXECUTION_AUTH_SIG_FOUND)) {
       continue;
     }
     // Skip the name
@@ -354,13 +355,14 @@ CheckSecureBootPolicy(IN OUT EFI_STATUS                     *AuthenticationStatu
       *AuthenticationStatus = EFI_SUCCESS;
 
     case SECURE_BOOT_POLICY_DENY:
+    default:
       return TRUE;
 
-    default:
-      break;
-    }
-    // If this is forced mode then no insert
-    if (gSettings.SecureBootSetupMode) {
+    case SECURE_BOOT_POLICY_INSERT:
+      // If this is forced mode then no insert
+      if (gSettings.SecureBootSetupMode) {
+        return TRUE;
+      }
       break;
     }
     // Purposeful fallback to insert

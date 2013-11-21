@@ -317,7 +317,7 @@ CallBootManager (
     
     Token = HiiSetString (HiiHandle, 0, Option->Description, NULL);
 
-    TempStr = DevicePathToStr (Option->DevicePath);
+    TempStr = FileDevicePathToStr (Option->DevicePath);
     TempSize = StrSize (TempStr);
     HelpString = AllocateZeroPool (TempSize + StrSize (L"Device Path : "));
     ASSERT (HelpString != NULL);

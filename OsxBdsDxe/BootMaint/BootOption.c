@@ -354,7 +354,7 @@ BOpt_FindFileSystem (
         continue;
       }
 
-      MenuEntry->HelpString = DevicePathToStr (DevicePathFromHandle (FileContext->Handle));
+      MenuEntry->HelpString = FileDevicePathToStr (DevicePathFromHandle (FileContext->Handle));
       FileContext->Info = EfiLibFileSystemVolumeLabelInfo (FileContext->FHandle);
       FileContext->FileName = EfiStrDuplicate (L"\\");
       FileContext->DevicePath = FileDevicePath (
@@ -437,9 +437,9 @@ BOpt_FindFileSystem (
       FileContext->IsRoot           = TRUE;
 
       FileContext->DevicePath       = DevicePathFromHandle (FileContext->Handle);
-      FileContext->FileName         = DevicePathToStr (FileContext->DevicePath);
+      FileContext->FileName         = FileDevicePathToStr (FileContext->DevicePath);
 
-      MenuEntry->HelpString     = DevicePathToStr (FileContext->DevicePath);
+      MenuEntry->HelpString     = FileDevicePathToStr (FileContext->DevicePath);
 
       TempStr                   = MenuEntry->HelpString;
       MenuEntry->DisplayString  = AllocateZeroPool (MAX_CHAR);
@@ -498,7 +498,7 @@ BOpt_FindFileSystem (
                     );
 
       FileContext->DevicePath   = DevicePath;
-      MenuEntry->HelpString     = DevicePathToStr (FileContext->DevicePath);
+      MenuEntry->HelpString     = FileDevicePathToStr (FileContext->DevicePath);
 
       TempStr                   = MenuEntry->HelpString;
       MenuEntry->DisplayString  = AllocateZeroPool (MAX_CHAR);
@@ -1044,7 +1044,7 @@ BOpt_GetBootOptions (
       NewLoadContext->FilePathListLength
       );
 
-    NewMenuEntry->HelpString = DevicePathToStr (NewLoadContext->FilePathList);
+    NewMenuEntry->HelpString = FileDevicePathToStr (NewLoadContext->FilePathList);
     NewMenuEntry->DisplayStringToken = GetStringTokenFromDepository (
                                         CallbackData,
                                         BootOptionStrDepository
@@ -1352,7 +1352,7 @@ BOpt_FindDrivers (
     NewHandleContext              = (BM_HANDLE_CONTEXT *) NewMenuEntry->VariableContext;
     NewHandleContext->Handle      = CurHandle;
     NewHandleContext->DevicePath  = DevicePathFromHandle (CurHandle);
-    NewMenuEntry->DisplayString = DevicePathToStr (NewHandleContext->DevicePath);
+    NewMenuEntry->DisplayString = FileDevicePathToStr (NewHandleContext->DevicePath);
     NewMenuEntry->HelpString    = NULL;
     NewMenuEntry->OptionNumber  = OptionNumber;
     OptionNumber++;
@@ -1593,7 +1593,7 @@ BOpt_GetDriverOptions (
       NewLoadContext->FilePathListLength
       );
 
-    NewMenuEntry->HelpString = DevicePathToStr (NewLoadContext->FilePathList);
+    NewMenuEntry->HelpString = FileDevicePathToStr (NewLoadContext->FilePathList);
     NewMenuEntry->DisplayStringToken = GetStringTokenFromDepository (
                                         CallbackData,
                                         DriverOptionStrDepository
