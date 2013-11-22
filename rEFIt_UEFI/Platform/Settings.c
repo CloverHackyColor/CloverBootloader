@@ -1065,6 +1065,9 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
       } else if ((prop->string[0] == 'B') || (prop->string[0] == 'b')) {
         // Black list
         gSettings.SecureBootPolicy = SECURE_BOOT_POLICY_BLACKLIST;
+      } else if ((prop->string[0] == 'U') || (prop->string[0] == 'u')) {
+        // User policy
+        gSettings.SecureBootPolicy = SECURE_BOOT_POLICY_USER;
       }
     }
     // Secure boot white list

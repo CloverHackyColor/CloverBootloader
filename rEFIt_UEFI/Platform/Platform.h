@@ -502,6 +502,8 @@ Headers collection for procedures
 #define SECURE_BOOT_POLICY_WHITELIST (4)
 // Black list
 #define SECURE_BOOT_POLICY_BLACKLIST (5)
+// User policy, white and black list with query
+#define SECURE_BOOT_POLICY_USER      (6)
 
 struct aml_chunk 
 {

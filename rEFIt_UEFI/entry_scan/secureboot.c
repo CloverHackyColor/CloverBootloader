@@ -106,6 +106,7 @@ STATIC CONST CHAR16 *SecureBootPolicyToStr(IN UINTN Policy)
     L"Insert",
     L"WhiteList",
     L"BlackList",
+    L"User",
   };
   STATIC CONST UINTN  SecureBootPolicyStringsCount = (sizeof(SecureBootPolicyStrings) / (sizeof(CONST CHAR16 *)));
   if (Policy < SecureBootPolicyStringsCount) {
@@ -300,6 +301,30 @@ PrecheckSecureBootPolicy(IN OUT EFI_STATUS                     *AuthenticationSt
     }
     *AuthenticationStatus = EFI_SUCCESS;
     return TRUE;
+
+  case SECURE_BOOT_POLICY_USER:
+    DevicePathStr = FileDevicePathToStr(DevicePath);
+    if (DevicePathStr == NULL) {
+      return FALSE;
+    }
+    // Check the black list for this image
+    for (Index = 0; Index < gSettings.SecureBootBlackListCount; ++Index) {
+      if ((gSettings.SecureBootBlackList[Index] != NULL) &&
+          (StriStr(DevicePathStr, gSettings.SecureBootBlackList[Index]) != NULL)) {
+        // Black listed
+        return TRUE;
+      }
+    }
+    // Check the white list for this image
+    for (Index = 0; Index < gSettings.SecureBootWhiteListCount; ++Index) {
+      if ((gSettings.SecureBootWhiteList[Index] != NULL) &&
+          (StriStr(DevicePathStr, gSettings.SecureBootWhiteList[Index]) != NULL)) {
+        // White listed
+        *AuthenticationStatus = EFI_SUCCESS;
+        return TRUE;
+      }
+    }
+    break;
   }
   return FALSE;
 }
@@ -314,6 +339,7 @@ CheckSecureBootPolicy(IN OUT EFI_STATUS                     *AuthenticationStatu
   UINTN UserResponse = SECURE_BOOT_POLICY_DENY;
   switch (gSettings.SecureBootPolicy) {
   case SECURE_BOOT_POLICY_QUERY:
+  case SECURE_BOOT_POLICY_USER:
     // Query user to allow image or deny image or insert image signature
     UserResponse = QuerySecureBootUser(DevicePath);
     DBG("VerifySecureBootImage: User selected policy: %s\n", SecureBootPolicyToStr(UserResponse));
