@@ -507,6 +507,7 @@ VOID   ReplaceExtension(IN OUT CHAR16 *Path, IN CHAR16 *Extension);
 INTN FindMem(IN VOID *Buffer, IN UINTN BufferLength, IN VOID *SearchString, IN UINTN SearchStringLength);
 
 CHAR16 *FileDevicePathToStr(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevPath);
+CHAR16 *FileDevicePathFileToStr(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevPath);
 
 EFI_STATUS InitializeUnicodeCollationProtocol (VOID);
 //

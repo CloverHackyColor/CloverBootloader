@@ -52,51 +52,46 @@
 #define DBG(...) DebugLog(DEBUG_SECURE_BOOT, __VA_ARGS__)
 #endif
 
-// Add secure boot tool entry
-VOID AddSecureBootTool(VOID)
-{
-  LOADER_ENTRY *Entry;
-  // If in forced mode or no secure boot then don't add tool
-  if ((gSettings.SecureBoot && gSettings.SecureBootSetupMode) ||
-      (!gSettings.SecureBoot && !gSettings.SecureBootSetupMode)) {
-    return;
-  }
-  Entry = AllocateZeroPool(sizeof(LOADER_ENTRY));
-  if (gSettings.SecureBoot) {
-    Entry->me.Title = PoolPrint(L"Clover Secure Boot Configuration");
-    Entry->me.Tag = TAG_SECURE_BOOT_CONFIG;
-    Entry->me.Image = BuiltinIcon(BUILTIN_ICON_FUNC_SECURE_BOOT_CONFIG);
-  } else {
-    Entry->me.Title = PoolPrint(L"Enable Clover Secure Boot");
-    Entry->me.Tag = TAG_SECURE_BOOT;
-    Entry->me.Image = BuiltinIcon(BUILTIN_ICON_FUNC_SECURE_BOOT);
-  }
-  Entry->me.Row = 1;
-  //actions
-  Entry->me.AtClick = ActionSelect;
-  Entry->me.AtDoubleClick = ActionEnter;
-  Entry->me.AtRightClick = ActionHelp;
-  AddMenuEntry(&MainMenu, (REFIT_MENU_ENTRY *)Entry);
-}
-
 // Enable secure boot
 VOID EnableSecureBoot(VOID)
 {
-   EFI_STATUS Status;
+  EFI_STATUS  Status = EFI_SUCCESS;
   // Check in setup mode
   if (gSettings.SecureBoot || !gSettings.SecureBootSetupMode) {
     return;
   }
-  // TODO: Generate PK
-  // TODO: Enroll PK
-  // TODO: Generate KEK?
-  // TODO: Enroll KEK?
-  // TODO: Get this image's certificate
-  // TODO: Enroll this image's certificate
+  // TODO: Load keys
+  // TODO: Enroll keys
+  // Get this image's certificate
+  if (!EFI_ERROR(Status)) {
+    if (SelfLoadedImage != NULL) {
+      UINTN  CloverSignatureSize = 0;
+      VOID  *CloverSignature = GetImageSignatureList(SelfLoadedImage->ImageBase, SelfLoadedImage->ImageSize, &CloverSignatureSize);
+      if (CloverSignature != NULL) {
+        if (CloverSignatureSize > 0) {
+          // Enroll this image's certificate
+          Status = AddImageSignatureList(CloverSignature, CloverSignatureSize);
+        } else {
+          // No signature list found
+          Status = EFI_NOT_FOUND;
+        }
+        FreePool(CloverSignature);
+      } else {
+        // No signature list found
+        Status = EFI_NOT_FOUND;
+      }
+    } else {
+      // No signature list found
+      Status = EFI_NOT_FOUND;
+    }
+  }
   // Reinit secure boot now
   InitializeSecureBoot();
   // Install the security policy hooks or redisable
-  if (EFI_ERROR(Status = InstallSecureBoot())) {
+  if (!EFI_ERROR(Status)) {
+    Status = InstallSecureBoot();
+  }
+  if (EFI_ERROR(Status)) {
     DBG("Secure boot install failed: %r!\n", Status);
     DisableSecureBoot();
   }
@@ -104,19 +99,19 @@ VOID EnableSecureBoot(VOID)
 
 STATIC CONST CHAR16 *SecureBootPolicyToStr(IN UINTN Policy)
 {
-   STATIC CONST CHAR16 *SecureBootPolicyStrings[] = {
-     L"Deny",
-     L"Allow",
-     L"Query",
-     L"Insert",
-     L"WhiteList",
-     L"BlackList",
-   };
-   STATIC CONST UINTN  SecureBootPolicyStringsCount = (sizeof(SecureBootPolicyStrings) / (sizeof(CONST CHAR16 *)));
-   if (Policy < SecureBootPolicyStringsCount) {
-     return SecureBootPolicyStrings[Policy];
-   }
-   return L"Unknown";
+  STATIC CONST CHAR16 *SecureBootPolicyStrings[] = {
+    L"Deny",
+    L"Allow",
+    L"Query",
+    L"Insert",
+    L"WhiteList",
+    L"BlackList",
+  };
+  STATIC CONST UINTN  SecureBootPolicyStringsCount = (sizeof(SecureBootPolicyStrings) / (sizeof(CONST CHAR16 *)));
+  if (Policy < SecureBootPolicyStringsCount) {
+    return SecureBootPolicyStrings[Policy];
+  }
+  return L"Deny";
 }
 
 STATIC VOID PrintSecureBootInfo(VOID)
@@ -138,18 +133,16 @@ VOID DisableSecureBoot(VOID)
   if (gSettings.SecureBootSetupMode || !gSettings.SecureBoot) {
     return;
   }
-  // TODO: Get this image's certificate
-  // TODO: Remove this image's certificate
-  // TODO: Delete KEK?
-  // TODO: Delete PK
+  UninstallSecureBoot();
+  // TODO: Remove keys
   // Reinit secure boot now
   InitializeSecureBoot();
   PrintSecureBootInfo();
 }
 
 // Find a device path's signature list
-STATIC VOID *GetImageSignatureList(IN  CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath,
-                                   OUT UINTN                          *SignatureListSize)
+STATIC VOID *FindImageSignatureList(IN  CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath,
+                                    OUT UINTN                          *SignatureListSize)
 {
   EFI_IMAGE_EXECUTION_INFO_TABLE  *ImageExeInfoTable = NULL;
   EFI_IMAGE_EXECUTION_INFO        *ImageExeInfo;
@@ -211,33 +204,6 @@ STATIC VOID *GetImageSignatureList(IN  CONST EFI_DEVICE_PATH_PROTOCOL *DevicePat
   return NULL;
 }
 
-// Create a secure boot image signature
-STATIC VOID *CreateImageSignatureList(IN VOID  *FileBuffer,
-                                      IN UINTN  FileSize,
-                                      IN UINTN *SignatureListSize)
-{
-  // Check parameters
-  if (SignatureListSize == 0) {
-    return NULL;
-  }
-  *SignatureListSize = 0;
-  if ((FileBuffer == NULL) || (FileSize == 0)) {
-    return NULL;
-  }
-  // TODO: Hash the pe image
-  return NULL;
-}
-
-// TODO: Add image signature list
-STATIC EFI_STATUS AddImageSignatureList(IN VOID  *SignatureList,
-                                        IN UINTN  SignatureListSize)
-{
-  if ((SignatureList == NULL) || (SignatureListSize == 0)) {
-    return EFI_INVALID_PARAMETER;
-  }
-  return EFI_ABORTED;
-}
-
 // Insert secure boot image signature
 STATIC EFI_STATUS InsertSecureBootImage(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath,
                                         IN VOID                           *FileBuffer,
@@ -251,7 +217,7 @@ STATIC EFI_STATUS InsertSecureBootImage(IN CONST EFI_DEVICE_PATH_PROTOCOL *Devic
     return EFI_INVALID_PARAMETER;
   }
   // Get the image signature
-  SignatureList = GetImageSignatureList(DevicePath, &SignatureListSize);
+  SignatureList = FindImageSignatureList(DevicePath, &SignatureListSize);
   if (SignatureList) {
     // Add the image signature to database
     Status = AddImageSignatureList(SignatureList, SignatureListSize);
@@ -262,7 +228,7 @@ STATIC EFI_STATUS InsertSecureBootImage(IN CONST EFI_DEVICE_PATH_PROTOCOL *Devic
     if (FileBuffer) {
       if (FileSize > 0) {
         // Create image signature
-        SignatureList = CreateImageSignatureList(FileBuffer, FileSize, &SignatureListSize);
+        SignatureList = GetImageSignatureList(FileBuffer, FileSize, &SignatureListSize);
         if (SignatureList) {
           // Add the image signature to database
           Status = AddImageSignatureList(SignatureList, SignatureListSize);
@@ -273,7 +239,7 @@ STATIC EFI_STATUS InsertSecureBootImage(IN CONST EFI_DEVICE_PATH_PROTOCOL *Devic
     }
   } else {
     // Create image signature
-    SignatureList = CreateImageSignatureList(FileBuffer, FileSize, &SignatureListSize);
+    SignatureList = GetImageSignatureList(FileBuffer, FileSize, &SignatureListSize);
     if (SignatureList) {
       // Add the image signature to database
       Status = AddImageSignatureList(SignatureList, SignatureListSize);
@@ -345,10 +311,12 @@ CheckSecureBootPolicy(IN OUT EFI_STATUS                     *AuthenticationStatu
                       IN     VOID                           *FileBuffer,
                       IN     UINTN                           FileSize)
 {
-  UINT8 UserResponse = SECURE_BOOT_POLICY_DENY;
+  UINTN UserResponse = SECURE_BOOT_POLICY_DENY;
   switch (gSettings.SecureBootPolicy) {
   case SECURE_BOOT_POLICY_QUERY:
-    // TODO: Query user to allow image or deny image or insert image signature
+    // Query user to allow image or deny image or insert image signature
+    UserResponse = QuerySecureBootUser(DevicePath);
+    DBG("VerifySecureBootImage: User selected policy: %s\n", SecureBootPolicyToStr(UserResponse));
     // Perform user action
     switch (UserResponse) {
     case SECURE_BOOT_POLICY_ALLOW:

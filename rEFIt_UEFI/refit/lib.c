@@ -1545,4 +1545,23 @@ CHAR16 *FileDevicePathToStr(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevPath)
     return FilePath;
 }
 
+CHAR16 *FileDevicePathFileToStr(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevPath)
+{
+  CONST EFI_DEVICE_PATH_PROTOCOL *Node;
+
+  if (DevPath == NULL) {
+    return NULL;
+  }
+
+  Node = (CONST EFI_DEVICE_PATH_PROTOCOL *)DevPath;
+  while (!IsDevicePathEnd(Node)) {
+    if ((Node->Type == MEDIA_DEVICE_PATH) &&
+        (Node->SubType == MEDIA_FILEPATH_DP)) {
+      return FileDevicePathToStr(Node);
+    }
+    Node = NextDevicePathNode(Node);
+  }
+  return NULL;
+}
+
 // EOF

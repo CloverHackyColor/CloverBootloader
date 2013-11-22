@@ -57,6 +57,7 @@
 
 //static CHAR8 FirmwareRevisionStr[] = FIRMWARE_REVISION_STR;
 
+BOOLEAN                 gGuiIsReady = FALSE;
 BOOLEAN                 gThemeNeedInit = TRUE;
 EFI_HANDLE              gImageHandle;
 EFI_SYSTEM_TABLE*       gST;
@@ -1579,7 +1580,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   } else {
     InitScreen(FALSE);
   }
-  
   //Now we have to reinit handles
   Status = ReinitSelfLib();
   if (EFI_ERROR(Status)){
@@ -1645,6 +1645,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 //    DBG("GetEfiBootDeviceFromNvram()\n");
   }
   AfterTool = FALSE;
+  gGuiIsReady = TRUE;
   do {
     //     PauseForKey(L"Enter main cycle");
     //    DBG("Enter main cycle\n");
@@ -1881,7 +1882,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
           AfterTool = TRUE;
           break;
 
-        case TAG_SECURE_BOOT_CONFIG: // TODO: Configure secure boot
+        case TAG_SECURE_BOOT_CONFIG: // Configure secure boot
+          MainLoopRunning = !ConfigureSecureBoot();
+          AfterTool = TRUE;
           break;
 
         case TAG_CLOVER:     // Clover options

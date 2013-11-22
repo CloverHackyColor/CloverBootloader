@@ -47,6 +47,9 @@
   entry_scan/loader.c
   entry_scan/tool.c
   entry_scan/secureboot.c
+  entry_scan/securehash.c
+  entry_scan/securemenu.c
+  entry_scan/securevars.c
   libeg/BmLib.c
   libeg/image.c
   libeg/load_bmp.c

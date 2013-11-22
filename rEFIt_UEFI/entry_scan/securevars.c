@@ -1,5 +1,5 @@
 /*
- * refit/scan/entry_scan.h
+ * refit/scan/securevars.c
  *
  * Copyright (c) 2006-2010 Christoph Pfisterer
  * All rights reserved.
@@ -33,48 +33,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "Platform.h"
+#include "entry_scan.h"
 
-extern REFIT_MENU_ENTRY MenuEntryReturn;
-extern REFIT_MENU_SCREEN MainMenu;
+#ifndef DEBUG_ALL
+#define DEBUG_SECURE_VARS 1
+#else
+#define DEBUG_SECURE_VARS DEBUG_ALL
+#endif
 
-// common
-EG_IMAGE *LoadBuiltinIcon(IN CHAR16 *IconName);
-LOADER_ENTRY * DuplicateLoaderEntry(IN LOADER_ENTRY *Entry);
-CHAR16 *AddLoadOption(IN CHAR16 *LoadOptions, IN CHAR16 *LoadOption);
-CHAR16 *RemoveLoadOption(IN CHAR16 *LoadOptions, IN CHAR16 *LoadOption);
-EG_IMAGE * ScanVolumeDefaultIcon(REFIT_VOLUME *Volume, IN UINT8 OSType);
-INTN StrniCmp(IN CHAR16 *Str1,
-              IN CHAR16 *Str2,
-              IN UINTN   Count);
-CHAR16 *StriStr(IN CHAR16 *Str,
-                IN CHAR16 *SearchFor);
-VOID StrToLower(IN CHAR16 *Str);
+#if DEBUG_SECURE_VARS == 0
+#define DBG(...)
+#else
+#define DBG(...) DebugLog(DEBUG_SECURE_VARS, __VA_ARGS__)
+#endif
 
-// legacy
-VOID ScanLegacy(VOID);
-VOID AddCustomLegacy(VOID);
-
-// loader
-VOID ScanLoader(VOID);
-VOID AddCustomEntries(VOID);
-
-// tool
-VOID ScanTool(VOID);
-VOID AddCustomTool(VOID);
-
-// secure boot
-VOID AddSecureBootTool(VOID);
-VOID InitializeSecureBoot(VOID);
-EFI_STATUS InstallSecureBoot(VOID);
-VOID UninstallSecureBoot(VOID);
-VOID EnableSecureBoot(VOID);
-VOID DisableSecureBoot(VOID);
-BOOLEAN ConfigureSecureBoot(VOID);
-EFI_STATUS VerifySecureBootImage(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath);
-EFI_STATUS AddImageSignatureList(IN VOID  *SignatureList,
-                                 IN UINTN  SignatureListSize);
-VOID *GetImageSignatureList(IN VOID   *FileBuffer,
-                            IN UINT64  FileSize,
-                            IN UINTN  *SignatureListSize);
-UINTN QuerySecureBootUser(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath);
+// TODO: Check out linux efitools
