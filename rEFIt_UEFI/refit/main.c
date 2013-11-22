@@ -614,7 +614,6 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
   CHAR8                   *InstallerVersion;
   
   DBG("StartLoader() start\n");
-  egClearScreen(Entry->BootBgColor ? Entry->BootBgColor : &DarkBackgroundPixel);
   MsgLog("Finally: Bus=%ldkHz CPU=%ldMHz\n",
          DivU64x32(gCPUStructure.FSBFrequency, kilo),
          gCPUStructure.MaxSpeed);
@@ -623,13 +622,15 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
 //  MsgLog("PatchAPIC=%c\n", gSettings.PatchNMI?'Y':'N');
 //  MsgLog("PatchVBios=%c\n", gSettings.PatchVBios?'Y':'N');
 //  DBG("KillMouse\n");
-  KillMouse();
 
   // Load image into memory (will be started later) 
   Status = LoadEFIImage(Entry->DevicePath, Basename(Entry->LoaderPath), NULL, &ImageHandle);
   if (EFI_ERROR(Status)) {
     return; // no reason to continue if loading image failed
   }
+
+  egClearScreen(Entry->BootBgColor ? Entry->BootBgColor : &DarkBackgroundPixel);
+  KillMouse();
 
 //  if (Entry->LoaderType == OSTYPE_OSX) {
   if (OSTYPE_IS_OSX(Entry->LoaderType) ||

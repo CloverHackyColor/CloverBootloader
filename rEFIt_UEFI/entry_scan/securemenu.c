@@ -91,10 +91,10 @@ UINTN QuerySecureBootUser(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath)
         REFIT_MENU_SCREEN  QueryUserMenu = { 10101, L"Secure Boot Authentication", NULL, 0, NULL, 0, NULL, 0, NULL, FALSE, FALSE, 0, 0, 0, 0, {0, 0, 0, 0}, NULL };
         REFIT_MENU_ENTRY   DenyImage = { L"Deny authentication", SECURE_BOOT_POLICY_DENY, 0, 0, 0, NULL, NULL, NULL, {0, 0, 0, 0}, ActionEnter, ActionNone, ActionNone, NULL };
         REFIT_MENU_ENTRY   AllowImage = { L"Allow authentication", SECURE_BOOT_POLICY_ALLOW, 0, 0, 0, NULL, NULL, NULL, {0, 0, 0, 0}, ActionEnter, ActionNone, ActionNone, NULL };
-        REFIT_MENU_ENTRY   InsertImage = { L"Insert image signatures into authorized database", SECURE_BOOT_POLICY_INSERT, 0, 0, 0, NULL, NULL, NULL, {0, 0, 0, 0}, ActionEnter, ActionNone, ActionNone, NULL };
+        REFIT_MENU_ENTRY   InsertImage = { L"Insert image authentication into database", SECURE_BOOT_POLICY_INSERT, 0, 0, 0, NULL, NULL, NULL, {0, 0, 0, 0}, ActionEnter, ActionNone, ActionNone, NULL };
         REFIT_MENU_ENTRY  *ChosenEntry = NULL;
         // Debug message
-        DBG("VerifySecureBootImage: Query user for authentication action for %s\n", DevicePathStr, DevicePathFileStr);
+        DBG("VerifySecureBootImage: Query user for authentication action for %s\n", DevicePathStr);
         // Set the menu up
         AddMenuInfoLine(&QueryUserMenu, L"Please select the authentication action for");
         AddMenuInfoLine(&QueryUserMenu, DevicePathStr);
@@ -102,7 +102,7 @@ UINTN QuerySecureBootUser(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath)
         AddMenuEntry(&QueryUserMenu, &DenyImage);
         AddMenuEntry(&QueryUserMenu, &AllowImage);
         if (!gSettings.SecureBootSetupMode) {
-          // Only insert image if pure secure boot but not in forced mode
+          // Only insert image if secure boot but not in forced mode
           AddMenuEntry(&QueryUserMenu, &InsertImage);
         }
         // Because we may
