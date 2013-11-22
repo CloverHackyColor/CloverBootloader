@@ -258,10 +258,10 @@ CHAR16 *StriStr(IN CHAR16 *Str,
     return NULL;
   }
   SearchLength = StrLen(SearchFor);
-  if (SearchLength < Length) {
+  if (SearchLength > Length) {
     return NULL;
   }
-  End = Str + (Length - SearchLength);
+  End = Str + (Length - SearchLength) + 1;
   while (Str < End) {
     if (StrniCmp(Str, SearchFor, SearchLength) == 0) {
       return Str;
