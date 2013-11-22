@@ -389,6 +389,9 @@ GetPeCoffImageFixLoadingAssignedAddress(
      if (EFI_ERROR (Status)) {
        return Status;
      }
+     if (Size != sizeof (EFI_IMAGE_SECTION_HEADER)) {
+       return EFI_NOT_FOUND;
+     }
      
      Status = EFI_NOT_FOUND;
      

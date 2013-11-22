@@ -1,7 +1,7 @@
 /** @file
   DXE Core Main Entry Point
 
-Copyright (c) 2006 - 2012, Intel Corporation. All rights reserved.<BR>
+Copyright (c) 2006 - 2013, Intel Corporation. All rights reserved.<BR>
 This program and the accompanying materials
 are licensed and made available under the terms and conditions of the BSD License
 which accompanies this distribution.  The full text of the license may be found at
@@ -242,11 +242,25 @@ DxeMain (
   EFI_PHYSICAL_ADDRESS          MemoryBaseAddress;
   UINT64                        MemoryLength;
   PE_COFF_LOADER_IMAGE_CONTEXT  ImageContext;
+  UINTN                         Index;
+  EFI_HOB_GUID_TYPE             *GuidHob;
+  EFI_VECTOR_HANDOFF_INFO       *VectorInfoList;
+  EFI_VECTOR_HANDOFF_INFO       *VectorInfo;
 
   //
   // Setup the default exception handlers
   //
-  SetupCpuExceptionHandlers ();
+  VectorInfoList = NULL;
+  GuidHob = GetNextGuidHob (&gEfiVectorHandoffInfoPpiGuid, HobStart);
+  if (GuidHob != NULL) {
+    VectorInfoList = (EFI_VECTOR_HANDOFF_INFO *) (GET_GUID_HOB_DATA(GuidHob));
+  }
+  Status = InitializeCpuExceptionHandlers (VectorInfoList);
+//  ASSERT_EFI_ERROR (Status);
+  if (EFI_ERROR(Status)) {
+    return;
+  }
+
   
   //
   // Initialize Debug Agent to support source level debug in DXE phase
@@ -274,7 +288,12 @@ DxeMain (
   // Start the Image Services.
   //
   Status = CoreInitializeImageServices (HobStart);
-  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR (Status);
+    if (EFI_ERROR(Status)) {
+    return;
+  }
+
+
 
   //
   // Call constructor for all libraries
@@ -294,25 +313,39 @@ DxeMain (
   // Initialize the Global Coherency Domain Services
   //
   Status = CoreInitializeGcdServices (&HobStart, MemoryBaseAddress, MemoryLength);
-  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR (Status);
+  if (EFI_ERROR(Status)) {
+    return;
+  }
+
+
 
   //
   // Install the DXE Services Table into the EFI System Tables's Configuration Table
   //
   Status = CoreInstallConfigurationTable (&gEfiDxeServicesTableGuid, gDxeCoreDS);
-  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR (Status);
+  if (EFI_ERROR(Status)) {
+    return;
+  }
 
   //
   // Install the HOB List into the EFI System Tables's Configuration Table
   //
   Status = CoreInstallConfigurationTable (&gEfiHobListGuid, HobStart);
-  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR (Status);
+  if (EFI_ERROR(Status)) {
+    return;
+  }
 
   //
   // Install Memory Type Information Table into the EFI System Tables's Configuration Table
   //
   Status = CoreInstallConfigurationTable (&gEfiMemoryTypeInformationGuid, &gMemoryTypeInformation);
-  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR (Status);
+  if (EFI_ERROR(Status)) {
+    return;
+  }
 
   //
   // If Loading modules At fixed address feature is enabled, install Load moduels at fixed address
@@ -321,7 +354,10 @@ DxeMain (
   //
   if (PcdGet64(PcdLoadModuleAtFixAddressEnable) != 0) {
     Status = CoreInstallConfigurationTable (&gLoadFixedAddressConfigurationTableGuid, &gLoadModuleAtFixAddressConfigurationTable);
-    ASSERT_EFI_ERROR (Status);
+//    ASSERT_EFI_ERROR (Status);
+    if (EFI_ERROR(Status)) {
+      return;
+    }
   }
   //
   // Report Status Code here for DXE_ENTRY_POINT once it is available
@@ -369,8 +405,33 @@ DxeMain (
   // Initialize the Event Services
   //
   Status = CoreInitializeEventServices ();
-  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR (Status);
+  if (EFI_ERROR(Status)) {
+    return;
+  }
 
+  //
+  // Get persisted vector hand-off info from GUIDeed HOB again due to HobStart may be updated,
+  // and install configuration table
+  //
+  GuidHob = GetNextGuidHob (&gEfiVectorHandoffInfoPpiGuid, HobStart);
+  if (GuidHob != NULL) {
+    VectorInfoList = (EFI_VECTOR_HANDOFF_INFO *) (GET_GUID_HOB_DATA(GuidHob));
+    VectorInfo = VectorInfoList;
+    Index = 1;
+    while (VectorInfo->Attribute != EFI_VECTOR_HANDOFF_LAST_ENTRY) {
+      VectorInfo ++;
+      Index ++;
+    }
+    VectorInfo = AllocateCopyPool (sizeof (EFI_VECTOR_HANDOFF_INFO) * Index, (VOID *) VectorInfoList);
+ //   ASSERT (VectorInfo != NULL);
+ 	if (!VectorInfo) return;
+    Status = CoreInstallConfigurationTable (&gEfiVectorHandoffTableGuid, (VOID *) VectorInfo);
+//    ASSERT_EFI_ERROR (Status);
+    if (EFI_ERROR(Status)) {
+      return;
+    }    
+  }
 
   //
   // Get the Protocols that were passed in from PEI to DXE through GUIDed HOBs
@@ -392,7 +453,10 @@ DxeMain (
              &gEfiDecompressProtocolGuid,           &gEfiDecompress,
              NULL
              );
-  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR (Status);
+  if (EFI_ERROR(Status)) {
+    return;
+  }
 
   //
   // Register for the GUIDs of the Architectural Protocols, so the rest of the
@@ -405,16 +469,25 @@ DxeMain (
   // Produce Firmware Volume Protocols, one for each FV in the HOB list.
   //
   Status = FwVolBlockDriverInit (gDxeCoreImageHandle, gDxeCoreST);
-  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR (Status);
+  if (EFI_ERROR(Status)) {
+    return;
+  }
 
   Status = FwVolDriverInit (gDxeCoreImageHandle, gDxeCoreST);
-  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR (Status);
+  if (EFI_ERROR(Status)) {
+    return;
+  }
 
   //
   // Produce the Section Extraction Protocol
   //
   Status = InitializeSectionExtraction (gDxeCoreImageHandle, gDxeCoreST);
-  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR (Status);
+  if (EFI_ERROR(Status)) {
+    return;
+  }
 
   //
   // Initialize the DXE Dispatcher
@@ -458,8 +531,10 @@ DxeMain (
       (EFI_SOFTWARE_DXE_CORE | EFI_SW_DXE_CORE_EC_NO_ARCH)
       );    
   }
-  ASSERT_EFI_ERROR (Status);
-
+//  ASSERT_EFI_ERROR (Status);
+  if (EFI_ERROR(Status)) {
+    return;
+  }
   //
   // Report Status code before transfer control to BDS
   //
@@ -476,8 +551,8 @@ DxeMain (
   //
   // BDS should never return
   //
-  ASSERT (FALSE);
-  CpuDeadLoop ();
+//  ASSERT (FALSE);
+//  CpuDeadLoop ();
 }
 
 

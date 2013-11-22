@@ -1036,6 +1036,12 @@ CoreProcessFvImageFile (
     //
     FvHeader = (EFI_FIRMWARE_VOLUME_HEADER *) Buffer;
     //
+    // If EFI_FVB2_WEAK_ALIGNMENT is set in the volume header then the first byte of the volume
+    // can be aligned on any power-of-two boundary. A weakly aligned volume can not be moved from
+    // its initial linked location and maintain its alignment.
+    //
+    if ((FvHeader->Attributes & EFI_FVB2_WEAK_ALIGNMENT) != EFI_FVB2_WEAK_ALIGNMENT) {
+      //
     // Get FvHeader alignment
     //
     FvAlignment = 1 << ((FvHeader->Attributes & EFI_FVB2_ALIGNMENT) >> 16);
@@ -1056,20 +1062,22 @@ CoreProcessFvImageFile (
       // Move FvImage into the aligned buffer and release the original buffer.
       //
       CopyMem (AlignedBuffer, Buffer, BufferSize);
+        FvHeader = (EFI_FIRMWARE_VOLUME_HEADER *) AlignedBuffer;
       CoreFreePool (Buffer);
       Buffer = NULL;
+      }
+    }
       //
       // Produce a FVB protocol for the file
       //
       Status = ProduceFVBProtocolOnBuffer (
-                (EFI_PHYSICAL_ADDRESS) (UINTN) AlignedBuffer,
+              (EFI_PHYSICAL_ADDRESS) (UINTN) FvHeader,
                 (UINT64)BufferSize,
                 FvHandle,
                 AuthenticationStatus,
                 NULL
                 );
     }
-  }
 
   if (EFI_ERROR (Status)) {
     //

@@ -474,6 +474,13 @@ ProduceFVBProtocolOnBuffer (
   if (FwVolHeader->Signature != EFI_FVH_SIGNATURE) {
     return EFI_VOLUME_CORRUPTED;
   }
+
+  //
+  // If EFI_FVB2_WEAK_ALIGNMENT is set in the volume header then the first byte of the volume
+  // can be aligned on any power-of-two boundary. A weakly aligned volume can not be moved from
+  // its initial linked location and maintain its alignment.
+  //
+  if ((FwVolHeader->Attributes & EFI_FVB2_WEAK_ALIGNMENT) != EFI_FVB2_WEAK_ALIGNMENT) {
   //
   // Get FvHeader alignment
   //
@@ -490,6 +497,8 @@ ProduceFVBProtocolOnBuffer (
     //
     return EFI_VOLUME_CORRUPTED;
   }
+  }
+
   //
   // Allocate EFI_FW_VOL_BLOCK_DEVICE
   //

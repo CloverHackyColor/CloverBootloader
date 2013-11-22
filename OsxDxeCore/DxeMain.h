@@ -67,6 +67,8 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #include <Guid/EventExitBootServiceFailed.h>
 #include <Guid/LoadModuleAtFixedAddress.h>
 #include <Guid/IdleLoopEvent.h>
+#include <Guid/VectorHandoffTable.h>
+#include <Ppi/VectorHandoffInfo.h>
 
 #include <Library/DxeCoreEntryPoint.h>
 #include <Library/DebugLib.h>
@@ -673,6 +675,10 @@ CoreInstallProtocolInterfaceNotify (
                                  arguments to InstallProtocolInterface(). All the
                                  protocols are added to Handle.
 
+  @retval EFI_SUCCESS            All the protocol interface was installed.
+  @retval EFI_OUT_OF_RESOURCES   There was not enough memory in pool to install all the protocols.
+  @retval EFI_ALREADY_STARTED    A Device Path Protocol instance was passed in that is already present in
+                                 the handle database.
   @retval EFI_INVALID_PARAMETER  Handle is NULL.
   @retval EFI_SUCCESS            Protocol interfaces successfully installed.
 

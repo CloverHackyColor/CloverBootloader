@@ -111,6 +111,10 @@
   #  Include/Guid/PcdDataBaseHobGuid.h
   gPcdDataBaseHobGuid            = { 0xEA296D92, 0x0B69, 0x423C, { 0x8C, 0x28, 0x33, 0xB4, 0xE0, 0xA9, 0x12, 0x68 }}
 
+  ## Guid for PCD DataBase signature.
+  # Include/Guid/PcdDataBaseSignatureGuid.h
+  gPcdDataBaseSignatureGuid = { 0x3c7d193c, 0x682c, 0x4c14, { 0xa6, 0x8f, 0x55, 0x2d, 0xea, 0x4f, 0x43, 0x7e }}
+
   ## Guid for EDKII implementation GUIDed opcodes
   #  Include/Guid/MdeModuleHii.h
   gEfiIfrTianoGuid      = { 0xf0b1735, 0x87a0, 0x4193, {0xb2, 0x66, 0x53, 0x8c, 0x38, 0xaf, 0x48, 0xce }}
@@ -662,6 +666,24 @@
   #
   gEfiMdeModulePkgTokenSpaceGuid.PcdMaxEfiSystemTablePointerAddress|0x0|UINT64|0x30001027
   
+  ## This PCD specifies whether to shadow PEIM on S3 boot path after memory is ready. 
+  gEfiMdeModulePkgTokenSpaceGuid.PcdShadowPeimOnS3Boot|FALSE|BOOLEAN|0x30001028
+
+  ## Default OEM ID for ACPI table creation, its length must be 0x6 bytes to follow ACPI specification.
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultOemId|"INTEL "|VOID*|0x30001034
+
+  ## Default OEM Table ID for ACPI table creation, it is "EDK2    ".
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultOemTableId|0x20202020324B4445|UINT64|0x30001035
+
+  ## Default OEM Revision for ACPI table creation.
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultOemRevision|0x00000002|UINT32|0x30001036
+
+  ## Default Creator ID for ACPI table creation.
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultCreatorId|0x20202020|UINT32|0x30001037
+
+  ## Default Creator Revision for ACPI table creation.
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultCreatorRevision|0x01000013|UINT32|0x30001038
+
 [PcdsPatchableInModule, PcdsDynamic, PcdsDynamicEx]
   ## This PCD defines the Console output column and the default value is 25 according to UEFI spec.
   #  This PCD could be set to 0 then console output could be at max column and max row.
