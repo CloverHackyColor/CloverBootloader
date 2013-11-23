@@ -418,7 +418,7 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
   Volume->HasBootCode = FALSE;
   Volume->LegacyOS->IconName = NULL;
   Volume->LegacyOS->Name = NULL;
-  Volume->BootType = BOOTING_BY_EFI;
+  Volume->BootType = BOOTING_BY_MBR; //default value
   *Bootable = FALSE;
 
   if ((Volume->BlockIO == NULL) || (!Volume->BlockIO->Media->MediaPresent))
