@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-11-02 09:49+0100\n"
-"PO-Revision-Date: 2013-11-23 03:08+0000\n"
+"PO-Revision-Date: 2013-11-23 14:36+0000\n"
 "Last-Translator: cool_recep <rbaltas@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: tr\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1385176134.0\n"
+"X-POOTLE-MTIME: 1385217414.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -103,7 +103,7 @@ msgid ""
 "Legacy Bootloaders"
 msgstr ""
 "- EFI bootloader sayesinde işletim sistemine eski önyükleyicilerin "
-"sağlayamadığı çalışma hizmetleri sağlar"
+"sağlayamadığı RunTime servislerini sağlar"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:23
