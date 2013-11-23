@@ -38,8 +38,6 @@
 #include <Protocol/Security.h>
 #include <Protocol/Security2.h>
 
-#include <Guid/ImageAuthentication.h>
-
 #ifndef DEBUG_ALL
 #define DEBUG_SECURE_BOOT 1
 #else
@@ -56,6 +54,7 @@
 VOID EnableSecureBoot(VOID)
 {
   EFI_STATUS  Status = EFI_SUCCESS;
+  CHAR16     *ErrorString = NULL;
   // Check in setup mode
   if (gSettings.SecureBoot || !gSettings.SecureBootSetupMode) {
     return;
@@ -66,7 +65,7 @@ VOID EnableSecureBoot(VOID)
   if (!EFI_ERROR(Status)) {
     if (SelfLoadedImage != NULL) {
       UINTN  CloverSignatureSize = 0;
-      VOID  *CloverSignature = GetImageSignatureList(SelfLoadedImage->ImageBase, SelfLoadedImage->ImageSize, &CloverSignatureSize);
+      VOID  *CloverSignature = GetImageSignatureList(SelfLoadedImage->ImageBase, SelfLoadedImage->ImageSize, &CloverSignatureSize, FALSE);
       if (CloverSignature != NULL) {
         if (CloverSignatureSize > 0) {
           // Enroll this image's certificate
@@ -84,15 +83,26 @@ VOID EnableSecureBoot(VOID)
       // No signature list found
       Status = EFI_NOT_FOUND;
     }
+    if (EFI_ERROR(Status)) {
+      ErrorString = L"Clover does not have a certificate";
+    }
   }
   // Reinit secure boot now
   InitializeSecureBoot();
   // Install the security policy hooks or redisable
   if (!EFI_ERROR(Status)) {
     Status = InstallSecureBoot();
+    if (EFI_ERROR(Status)) {
+      ErrorString = L"secure boot protocols not found";
+    }
   }
   if (EFI_ERROR(Status)) {
-    DBG("Secure boot install failed: %r!\n", Status);
+    CHAR16 *Str = PoolPrint(L"Enabling secure boot failed because\n%s", ErrorString);
+    if (Str != NULL) {
+      AlertMessage(L"Enable Secure Boot", Str);
+      FreePool(Str);
+    }
+    DBG("Enabling secure boot failed because %s! Status: %r\n", ErrorString, Status);
     DisableSecureBoot();
   }
 }
@@ -139,115 +149,6 @@ VOID DisableSecureBoot(VOID)
   // Reinit secure boot now
   InitializeSecureBoot();
   PrintSecureBootInfo();
-}
-
-// Find a device path's signature list
-STATIC VOID *FindImageSignatureList(IN  CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath,
-                                    OUT UINTN                          *SignatureListSize)
-{
-  EFI_IMAGE_EXECUTION_INFO_TABLE  *ImageExeInfoTable = NULL;
-  EFI_IMAGE_EXECUTION_INFO        *ImageExeInfo;
-  CHAR16                          *FDP;
-  UINT8                           *Ptr;
-  UINTN                            Index;
-  // Check parameters
-  if (SignatureListSize == NULL) {
-    return NULL;
-  }
-  *SignatureListSize = 0;
-  if (DevicePath == NULL) {
-    return NULL;
-  }
-  // Get the execution information table
-  if (EFI_ERROR(EfiGetSystemConfigurationTable(&gEfiImageSecurityDatabaseGuid, (VOID **)&ImageExeInfoTable)) ||
-      (ImageExeInfoTable == NULL)) {
-    return NULL;
-  }
-  // Get device path string
-  FDP = FileDevicePathToStr(DevicePath);
-  if (FDP == NULL) {
-    return NULL;
-  }
-  // Get the execution information
-  Ptr = (UINT8 *)ImageExeInfoTable;
-  Ptr += sizeof(EFI_IMAGE_EXECUTION_INFO_TABLE);
-  // Traverse the execution information table
-  ImageExeInfo = (EFI_IMAGE_EXECUTION_INFO *)Ptr;
-  for (Index = 0; Index < ImageExeInfoTable->NumberOfImages; ++Index, Ptr += ImageExeInfo->InfoSize) {
-    UINT8  *Offset = Ptr + OFFSET_OF(EFI_IMAGE_EXECUTION_INFO, InfoSize) + sizeof(ImageExeInfo->InfoSize);
-    CHAR16 *Name = (CHAR16 *)Offset;
-    // Check to make sure this is valid
-    if ((ImageExeInfo->Action == EFI_IMAGE_EXECUTION_AUTH_SIG_FAILED) ||
-        (ImageExeInfo->Action == EFI_IMAGE_EXECUTION_AUTH_SIG_FOUND)) {
-      continue;
-    }
-    // Skip the name
-    do
-    {
-      Offset += sizeof(CHAR16);
-    } while (*Name++);
-    // Compare the device paths
-    Name = FileDevicePathToStr((EFI_DEVICE_PATH_PROTOCOL *)Offset);
-    if (Name) {
-      if (StrCmp(FDP, Name) == 0) {
-        // Get the signature list and size
-        Offset += GetDevicePathSize((EFI_DEVICE_PATH_PROTOCOL *)Offset);
-        *SignatureListSize = (ImageExeInfo->InfoSize - (Offset - Ptr));
-        FreePool(Name);
-        FreePool(FDP);
-        return Offset;
-      }
-      FreePool(Name);
-    }
-  }
-  FreePool(FDP);
-  // Not found
-  return NULL;
-}
-
-// Insert secure boot image signature
-STATIC EFI_STATUS InsertSecureBootImage(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath,
-                                        IN VOID                           *FileBuffer,
-                                        IN UINTN                           FileSize)
-{
-  EFI_STATUS  Status = EFI_INVALID_PARAMETER;
-  VOID       *SignatureList = NULL;
-  UINTN       SignatureListSize = 0;
-  // Check that either the device path or the file buffer is valid
-  if ((DevicePath == NULL) && ((FileBuffer == NULL) || (FileSize == 0))) {
-    return EFI_INVALID_PARAMETER;
-  }
-  // Get the image signature
-  SignatureList = FindImageSignatureList(DevicePath, &SignatureListSize);
-  if (SignatureList) {
-    // Add the image signature to database
-    Status = AddImageSignatureList(SignatureList, SignatureListSize);
-  } else if ((FileBuffer == NULL) || (FileSize == 0)) {
-    // Load file by device path
-    UINT32 AuthenticationStatus = 0;
-    FileBuffer = GetFileBufferByFilePath(FALSE, DevicePath, &FileSize, &AuthenticationStatus);
-    if (FileBuffer) {
-      if (FileSize > 0) {
-        // Create image signature
-        SignatureList = GetImageSignatureList(FileBuffer, FileSize, &SignatureListSize);
-        if (SignatureList) {
-          // Add the image signature to database
-          Status = AddImageSignatureList(SignatureList, SignatureListSize);
-          FreePool(SignatureList);
-        }
-      }
-      FreePool(FileBuffer);
-    }
-  } else {
-    // Create image signature
-    SignatureList = GetImageSignatureList(FileBuffer, FileSize, &SignatureListSize);
-    if (SignatureList) {
-      // Add the image signature to database
-      Status = AddImageSignatureList(SignatureList, SignatureListSize);
-      FreePool(SignatureList);
-    }
-  }
-  return Status;
 }
 
 // The previous protocol functions
@@ -363,11 +264,9 @@ CheckSecureBootPolicy(IN OUT EFI_STATUS                     *AuthenticationStatu
 
   case SECURE_BOOT_POLICY_INSERT:
     // Insert image signature
-    if (!EFI_ERROR(InsertSecureBootImage(DevicePath, FileBuffer, FileSize))) {
-      *AuthenticationStatus = EFI_SUCCESS;
-      return TRUE;
-    }
-    break;
+    InsertSecureBootImage(DevicePath, FileBuffer, FileSize);
+    *AuthenticationStatus = EFI_SUCCESS;
+    return TRUE;
 
   case SECURE_BOOT_POLICY_ALLOW:
     // Allow all images

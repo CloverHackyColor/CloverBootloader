@@ -75,18 +75,10 @@ EFI_STATUS ClearImageSignatureDatabase(VOID)
    return EFI_ABORTED;
 }
 
-// TODO: Get a secure boot image signature
-VOID *GetImageSignatureList(IN VOID   *FileBuffer,
-                            IN UINT64  FileSize,
-                            IN UINTN  *SignatureListSize)
-{
-   return NULL;
-}
-
 // TODO: Create a secure boot image signature
-VOID *CreateImageSignatureList(IN VOID   *FileBuffer,
-                               IN UINT64  FileSize,
-                               IN UINTN  *SignatureListSize)
+STATIC VOID *CreateImageSignatureList(IN VOID   *FileBuffer,
+                                      IN UINT64  FileSize,
+                                      IN UINTN  *SignatureListSize)
 {
   // Check parameters
   if (SignatureListSize == 0) {
@@ -98,4 +90,18 @@ VOID *CreateImageSignatureList(IN VOID   *FileBuffer,
   }
   // TODO: Hash the pe image
   return NULL;
+}
+
+// TODO: Get a secure boot image signature
+VOID *GetImageSignatureList(IN VOID    *FileBuffer,
+                            IN UINT64   FileSize,
+                            IN UINTN   *SignatureListSize,
+                            IN BOOLEAN  HashIfNoCertificate)
+{
+   if ((FileBuffer == NULL) || (FileSize == 0) || (SignatureListSize == 0)) {
+   }
+   if (HashIfNoCertificate) {
+     return CreateImageSignatureList(FileBuffer, FileSize, SignatureListSize);
+   }
+   return NULL;
 }

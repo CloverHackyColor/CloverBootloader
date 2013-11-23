@@ -35,6 +35,8 @@
 
 #include "entry_scan.h"
 
+#include <Guid/ImageAuthentication.h>
+
 #ifndef DEBUG_ALL
 #define DEBUG_SECURE_MENU 1
 #else
@@ -133,6 +135,208 @@ UINTN QuerySecureBootUser(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath)
   return Response;
 }
 
+// Find a device path's signature list
+STATIC VOID *FindImageSignatureList(IN  CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath,
+                                    OUT UINTN                          *SignatureListSize)
+{
+  EFI_IMAGE_EXECUTION_INFO_TABLE  *ImageExeInfoTable = NULL;
+  EFI_IMAGE_EXECUTION_INFO        *ImageExeInfo;
+  CHAR16                          *FDP;
+  UINT8                           *Ptr;
+  UINTN                            Index;
+  // Check parameters
+  if (SignatureListSize == NULL) {
+    return NULL;
+  }
+  *SignatureListSize = 0;
+  if (DevicePath == NULL) {
+    return NULL;
+  }
+  // Get the execution information table
+  if (EFI_ERROR(EfiGetSystemConfigurationTable(&gEfiImageSecurityDatabaseGuid, (VOID **)&ImageExeInfoTable)) ||
+      (ImageExeInfoTable == NULL)) {
+    return NULL;
+  }
+  // Get device path string
+  FDP = FileDevicePathToStr(DevicePath);
+  if (FDP == NULL) {
+    return NULL;
+  }
+  // Get the execution information
+  Ptr = (UINT8 *)ImageExeInfoTable;
+  Ptr += sizeof(EFI_IMAGE_EXECUTION_INFO_TABLE);
+  // Traverse the execution information table
+  ImageExeInfo = (EFI_IMAGE_EXECUTION_INFO *)Ptr;
+  for (Index = 0; Index < ImageExeInfoTable->NumberOfImages; ++Index, Ptr += ImageExeInfo->InfoSize) {
+    UINT8  *Offset = Ptr + OFFSET_OF(EFI_IMAGE_EXECUTION_INFO, InfoSize) + sizeof(ImageExeInfo->InfoSize);
+    CHAR16 *Name = (CHAR16 *)Offset;
+    // Check to make sure this is valid
+    if ((ImageExeInfo->Action == EFI_IMAGE_EXECUTION_AUTH_SIG_FAILED) ||
+        (ImageExeInfo->Action == EFI_IMAGE_EXECUTION_AUTH_SIG_FOUND)) {
+      continue;
+    }
+    // Skip the name
+    do
+    {
+      Offset += sizeof(CHAR16);
+    } while (*Name++);
+    // Compare the device paths
+    Name = FileDevicePathToStr((EFI_DEVICE_PATH_PROTOCOL *)Offset);
+    if (Name) {
+      if (StrCmp(FDP, Name) == 0) {
+        // Get the signature list and size
+        Offset += GetDevicePathSize((EFI_DEVICE_PATH_PROTOCOL *)Offset);
+        *SignatureListSize = (ImageExeInfo->InfoSize - (Offset - Ptr));
+        FreePool(Name);
+        FreePool(FDP);
+        return Offset;
+      }
+      FreePool(Name);
+    }
+  }
+  FreePool(FDP);
+  // Not found
+  return NULL;
+}
+
+// Insert secure boot image signature
+VOID InsertSecureBootImage(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath,
+                           IN VOID                           *FileBuffer,
+                           IN UINTN                           FileSize)
+{
+  CHAR16     *ErrorString = NULL;
+  EFI_STATUS  Status = EFI_INVALID_PARAMETER;
+  VOID       *SignatureList = NULL;
+  UINTN       SignatureListSize = 0;
+  // Check that either the device path or the file buffer is valid
+  if ((DevicePath == NULL) && ((FileBuffer == NULL) || (FileSize == 0))) {
+    return;
+  }
+  // Get the image signature
+  SignatureList = FindImageSignatureList(DevicePath, &SignatureListSize);
+  if (SignatureList) {
+    // Add the image signature to database
+    Status = AddImageSignatureList(SignatureList, SignatureListSize);
+  } else if ((FileBuffer == NULL) || (FileSize == 0)) {
+    // Load file by device path
+    UINT32 AuthenticationStatus = 0;
+    FileBuffer = GetFileBufferByFilePath(FALSE, DevicePath, &FileSize, &AuthenticationStatus);
+    if (FileBuffer) {
+      if (FileSize > 0) {
+        // Create image signature
+        SignatureList = GetImageSignatureList(FileBuffer, FileSize, &SignatureListSize, TRUE);
+        if (SignatureList) {
+          // Add the image signature to database
+          if (EFI_ERROR(AddImageSignatureList(SignatureList, SignatureListSize))) {
+            ErrorString = L"Failed to insert image authentication";
+          }
+          FreePool(SignatureList);
+        } else {
+          ErrorString = L"Image has no certificate or is not valid";
+        }
+      } else {
+        ErrorString = L"Image has no certificate or is not valid";
+      }
+      FreePool(FileBuffer);
+    } else {
+      ErrorString = L"Failed to load the image";
+    }
+  } else {
+    // Create image signature
+    SignatureList = GetImageSignatureList(FileBuffer, FileSize, &SignatureListSize, TRUE);
+    if (SignatureList) {
+      // Add the image signature to database
+      if (!EFI_ERROR(AddImageSignatureList(SignatureList, SignatureListSize))) {
+        ErrorString = L"Failed to insert image authentication";
+      }
+      FreePool(SignatureList);
+    } else {
+      ErrorString = L"Image has no certificate or is not valid";
+    }
+  }
+  if (ErrorString != NULL) {
+    CHAR16 *DevicePathStr = FileDevicePathToStr(DevicePath);
+    if (DevicePathStr != NULL) {
+      CHAR16 *FileDevicePathStr = FileDevicePathFileToStr(DevicePath);
+      if (FileDevicePathStr != NULL) {
+        CHAR16 *Str = PoolPrint(L"%s\n%s\n%s", ErrorString, DevicePathStr, FileDevicePathStr);
+        if (Str != NULL) {
+          AlertMessage(L"Insert Image Authentication", Str);
+          FreePool(Str);
+        }
+        FreePool(FileDevicePathStr);
+      } else {
+        CHAR16 *Str = PoolPrint(L"%s\n%s", ErrorString, DevicePathStr);
+        if (Str != NULL) {
+          AlertMessage(L"Insert Image Authentication", Str);
+          FreePool(Str);
+        }
+      }
+      FreePool(DevicePathStr);
+    } else {
+      AlertMessage(L"Insert Image Authentication", ErrorString);
+    }
+  }
+}
+
+// Insert secure boot image signature
+STATIC VOID RemoveSecureBootImage(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath)
+{
+  CHAR16     *ErrorString = NULL;
+  VOID       *SignatureList = NULL;
+  VOID       *FileBuffer = NULL;
+  UINTN       SignatureListSize = 0;
+  UINTN       FileSize = 0;
+  UINT32      AuthenticationStatus = 0;
+  // Check that either the device path or the file buffer is valid
+  if (DevicePath == NULL) {
+    return;
+  }
+  // Load file by device path
+  FileBuffer = GetFileBufferByFilePath(FALSE, DevicePath, &FileSize, &AuthenticationStatus);
+  if (FileBuffer) {
+    if (FileSize > 0) {
+      // Create image signature
+      SignatureList = GetImageSignatureList(FileBuffer, FileSize, &SignatureListSize, TRUE);
+      if (SignatureList) {
+        // Remove the image signature from database
+        if (EFI_ERROR(RemoveImageSignatureList(SignatureList, SignatureListSize))) {
+          ErrorString = L"Failed to remove image authentication";
+        }
+        FreePool(SignatureList);
+      }
+    } else {
+      ErrorString = L"Image has no certificate or is not valid";
+    }
+    FreePool(FileBuffer);
+  } else {
+    ErrorString = L"Failed to load the image";
+  }
+  if (ErrorString != NULL) {
+    CHAR16 *DevicePathStr = FileDevicePathToStr(DevicePath);
+    if (DevicePathStr != NULL) {
+      CHAR16 *FileDevicePathStr = FileDevicePathFileToStr(DevicePath);
+      if (FileDevicePathStr != NULL) {
+        CHAR16 *Str = PoolPrint(L"%s\n%s\n%s", ErrorString, DevicePathStr, FileDevicePathStr);
+        if (Str != NULL) {
+          AlertMessage(L"Remove Image Authentication", Str);
+          FreePool(Str);
+        }
+        FreePool(FileDevicePathStr);
+      } else {
+        CHAR16 *Str = PoolPrint(L"%s\n%s", ErrorString, DevicePathStr);
+        if (Str != NULL) {
+          AlertMessage(L"Remove Image Authentication", Str);
+          FreePool(Str);
+        }
+      }
+      FreePool(DevicePathStr);
+    } else {
+      AlertMessage(L"Remove Image Authentication", ErrorString);
+    }
+  }
+}
+
 extern REFIT_MENU_ENTRY MenuEntryReturn;
 
 #define TAG_POLICY  1
@@ -181,6 +385,7 @@ BOOLEAN ConfigureSecureBoot(VOID)
   {
     UINTN             Index = 0, MenuExit;
     REFIT_MENU_ENTRY *ChosenEntry = NULL;
+    EFI_DEVICE_PATH  *DevicePath = NULL;
     // Add the entry for secure boot policy
     SecureBootPolicyEntry.Title = PoolPrint(L"Secure boot policy: %s", SecureBootPolicyToStr(gSettings.SecureBootPolicy));
     if (SecureBootPolicyEntry.Title == NULL) {
@@ -189,7 +394,7 @@ BOOLEAN ConfigureSecureBoot(VOID)
     SecureBootPolicyMenu.Title = SecureBootPolicyEntry.Title;
     SecureBootMenu.Entries[Index++] = &SecureBootPolicyEntry;
     // Get the proper entries for the secure boot mode
-    if (!gSettings.SecureBootSetupMode) {
+    if (gSettings.SecureBootSetupMode) {
       SecureBootMenu.Entries[Index++] = &InsertImageSignatureEntry;
       SecureBootMenu.Entries[Index++] = &RemoveImageSignatureEntry;
       SecureBootMenu.Entries[Index++] = &ClearImageSignatureEntry;
@@ -231,11 +436,19 @@ BOOLEAN ConfigureSecureBoot(VOID)
         break;
 
       case TAG_INSERT:
-        // TODO: Insert authentication
+        // Insert authentication
+         if (AskUserForFilePathFromVolumes(L"Select Image to Insert Authentication...", &DevicePath) &&
+             (DevicePath != NULL)) {
+          InsertSecureBootImage(DevicePath, NULL, 0);
+        }
         break;
 
       case TAG_REMOVE:
-        // TODO: Remove authentication
+        // Remove authentication
+        if (AskUserForFilePathFromVolumes(L"Select Image to Remove Authentication...", &DevicePath) &&
+            (DevicePath != NULL)) {
+          RemoveSecureBootImage(DevicePath);
+        }
         break;
 
       case TAG_CLEAR:
@@ -265,7 +478,7 @@ BOOLEAN ConfigureSecureBoot(VOID)
         StillConfiguring = FALSE;
         break;
       }
-    } else if (MenuExit != MENU_EXIT_ESCAPE) {
+    } else if (MenuExit == MENU_EXIT_ESCAPE) {
       StillConfiguring = FALSE;
     }
     FreePool(SecureBootPolicyEntry.Title);

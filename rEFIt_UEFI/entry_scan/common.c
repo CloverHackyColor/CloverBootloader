@@ -35,6 +35,18 @@
 
 #include "entry_scan.h"
 
+#ifndef DEBUG_ALL
+#define DEBUG_COMMON_MENU 1
+#else
+#define DEBUG_COMMON_MENU DEBUG_ALL
+#endif
+
+#if DEBUG_COMMON_MENU == 0
+#define DBG(...)
+#else
+#define DBG(...) DebugLog(DEBUG_COMMON_MENU, __VA_ARGS__)
+#endif
+
 static CHAR16 *BuiltinIconNames[] = {
   /*
    L"About",
@@ -373,4 +385,145 @@ BOOLEAN YesNoMessage(IN CHAR16 *Title, IN CHAR16 *Message)
     FreePool(Information);
   }
   return Result;
+}
+
+// Ask user for file path from directory menu
+BOOLEAN AskUserForFilePathFromDir(IN CHAR16 *Title OPTIONAL, IN REFIT_VOLUME *Volume,
+                                  IN CHAR16 *ParentPath OPTIONAL, IN EFI_FILE *Dir,
+                                  OUT EFI_DEVICE_PATH_PROTOCOL **Result)
+{
+  // Check parameters
+  if ((Volume == NULL) || (Dir == NULL) || (Result == NULL)) {
+    return FALSE;
+  }
+  // TODO: Generate directory menu
+  return FALSE;
+}
+
+#define TAG_OFFSET 1000
+
+// Ask user for file path from volumes menu
+BOOLEAN AskUserForFilePathFromVolumes(IN CHAR16 *Title OPTIONAL, OUT EFI_DEVICE_PATH_PROTOCOL **Result)
+{
+  REFIT_MENU_SCREEN   Menu = { 0, L"Please Select File...", NULL, 0, NULL, 0, NULL,
+                               0, NULL, FALSE, FALSE, 0, 0, 0, 0, { 0, 0, 0, 0 }, NULL};
+  REFIT_MENU_ENTRY  **Entries;
+  REFIT_MENU_ENTRY   *EntryPtr;
+  UINTN               Index = 0, Count = 0, MenuExit;
+  BOOLEAN             Responded = FALSE;
+  if (Result == NULL) {
+    return FALSE;
+  }
+  // Allocate entries
+  Entries = (REFIT_MENU_ENTRY **)AllocateZeroPool(sizeof(REFIT_MENU_ENTRY *) + ((sizeof(REFIT_MENU_ENTRY *) + sizeof(REFIT_MENU_ENTRY)) * VolumesCount));
+  if (Entries == NULL) {
+    return FALSE;
+  }
+  EntryPtr = (REFIT_MENU_ENTRY *)(Entries + (VolumesCount + 1));
+  // Create volume entries
+  for (Index = 0; Index < VolumesCount; ++Index) {
+    REFIT_MENU_ENTRY *Entry;
+    REFIT_VOLUME     *Volume = Volumes[Index];
+    if ((Volume == NULL) || (Volume->RootDir == NULL) ||
+        ((Volume->DevicePathString == NULL) && (Volume->VolName == NULL))) {
+      continue;
+    }
+    Entry = Entries[Count++] = EntryPtr++;
+    Entry->Title = (Volume->VolName == NULL) ? Volume->DevicePathString : Volume->VolName;
+    Entry->Tag = TAG_OFFSET + Index;
+    Entry->AtClick = MENU_EXIT_ENTER;
+  }
+  // Setup menu
+  Entries[Count++] = &MenuEntryReturn;
+  Menu.EntryCount = Count;
+  Menu.Entries = Entries;
+  Menu.Title = Title;
+  do
+  {
+    REFIT_MENU_ENTRY *ChosenEntry = NULL;
+    // Run the volume chooser menu
+    MenuExit = RunMenu(&Menu, &ChosenEntry);
+    if ((ChosenEntry != NULL) &&
+        ((MenuExit == MENU_EXIT_ENTER) || (MenuExit == MENU_EXIT_DETAILS))) {
+      if (ChosenEntry->Tag >= TAG_OFFSET) {
+        Index = (ChosenEntry->Tag - TAG_OFFSET);
+        if (Index < VolumesCount) {
+          // Run directory chooser menu
+          if (!AskUserForFilePathFromDir(Title, Volumes[Index], NULL, Volumes[Index]->RootDir, Result)) {
+            continue;
+          }
+          Responded = TRUE;
+        }
+      }
+      break;
+    }
+  } while (MenuExit != MENU_EXIT_ESCAPE);
+  FreePool(Entries);
+  return Responded;
+}
+
+// Ask user for file path
+BOOLEAN AskUserForFilePath(IN CHAR16 *Title OPTIONAL, IN EFI_DEVICE_PATH_PROTOCOL *Root OPTIONAL, OUT EFI_DEVICE_PATH_PROTOCOL **Result)
+{
+  EFI_FILE *Dir = NULL;
+  if (Result == NULL) {
+    return FALSE;
+  }
+  if (Root != NULL) {
+    // Get the file path
+    CHAR16 *DevicePathStr = FileDevicePathToStr(Root);
+    if (DevicePathStr != NULL) {
+      UINTN Index = 0;
+      // Check the volumes for a match
+      for (Index = 0; Index < VolumesCount; ++Index) {
+        REFIT_VOLUME *Volume = Volumes[Index];
+        UINTN         Length;
+        if ((Volume == NULL) || (Volume->RootDir == NULL) ||
+            (Volume->DevicePathString == NULL)) {
+          continue;
+        }
+        Length = StrLen(Volume->DevicePathString);
+        if (Length == 0) {
+          continue;
+        }
+        // If the path begins with this volumes path it matches
+        if (StrniCmp(DevicePathStr, Volume->DevicePathString, Length)) {
+          // Need to
+          CHAR16 *FilePath = DevicePathStr + Length;
+          UINTN   FileLength = StrLen(FilePath);
+          if (FileLength == 0) {
+            // If there is no path left then open the root
+            return AskUserForFilePathFromDir(Title, Volume, NULL, Volume->RootDir, Result);
+          } else {
+            // Check to make sure this is directory
+            if (!EFI_ERROR(Volume->RootDir->Open(Volume->RootDir, &Dir, FilePath, EFI_FILE_MODE_READ, 0)) &&
+                (Dir != NULL)) {
+              // Get file information
+              EFI_FILE_INFO *Info = EfiLibFileInfo(Dir);
+              if (Info != NULL) {
+                // Check if the file is a directory
+                if ((Info->Attribute & EFI_FILE_DIRECTORY) == 0) {
+                  // Return the passed device path if it is a file
+                  FreePool(Info);
+                  Dir->Close(Dir);
+                  *Result = Root;
+                  return TRUE;
+                } else {
+                  // Ask user other wise
+                  BOOLEAN Success = AskUserForFilePathFromDir(Title, Volume, FilePath, Dir, Result);
+                  FreePool(Info);
+                  Dir->Close(Dir);
+                  return Success;
+                }
+                FreePool(Info);
+              }
+              Dir->Close(Dir);
+            }
+          }
+        }
+      }
+      FreePool(DevicePathStr);
+    }
+  }
+  return AskUserForFilePathFromVolumes(Title, Result);
 }

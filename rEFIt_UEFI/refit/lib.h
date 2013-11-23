@@ -65,8 +65,8 @@ extern EFI_RUNTIME_SERVICES*	gRS;
 #define TAG_HELP               (10)
 #define TAG_SECURE_BOOT        (13)
 #define TAG_SECURE_BOOT_CONFIG (14)
-#define TAG_RETURN             (99)
 #define TAG_CLOVER             (100)
+#define TAG_RETURN             ((UINTN)(-1))
 
 //
 // lib module

@@ -53,6 +53,15 @@ VOID StrToLower(IN CHAR16 *Str);
 VOID AlertMessage(IN CHAR16 *Title, IN CHAR16 *Message);
 BOOLEAN YesNoMessage(IN CHAR16 *Title, IN CHAR16 *Message);
 
+// Ask user for file path from directory menu
+BOOLEAN AskUserForFilePathFromDir(IN CHAR16 *Title OPTIONAL, IN REFIT_VOLUME *Volume,
+                                  IN CHAR16 *ParentPath, IN EFI_FILE *Dir,
+                                  OUT EFI_DEVICE_PATH_PROTOCOL **Result);
+// Ask user for file path from volumes menu
+BOOLEAN AskUserForFilePathFromVolumes(IN CHAR16 *Title OPTIONAL, OUT EFI_DEVICE_PATH_PROTOCOL **Result);
+// Ask user for file path
+BOOLEAN AskUserForFilePath(IN CHAR16 *Title OPTIONAL, IN EFI_DEVICE_PATH_PROTOCOL *Root OPTIONAL, OUT EFI_DEVICE_PATH_PROTOCOL **Result);
+
 // legacy
 VOID ScanLegacy(VOID);
 VOID AddCustomLegacy(VOID);
@@ -78,7 +87,14 @@ EFI_STATUS VerifySecureBootImage(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath);
 EFI_STATUS ClearImageSignatureDatabase(VOID);
 EFI_STATUS AddImageSignatureList(IN VOID  *SignatureList,
                                  IN UINTN  SignatureListSize);
-VOID *GetImageSignatureList(IN VOID   *FileBuffer,
-                            IN UINT64  FileSize,
-                            IN UINTN  *SignatureListSize);
+EFI_STATUS RemoveImageSignatureList(IN VOID  *SignatureList,
+                                    IN UINTN  SignatureListSize);
+VOID *GetImageSignatureList(IN VOID    *FileBuffer,
+                            IN UINT64   FileSize,
+                            IN UINTN   *SignatureListSize,
+                            IN BOOLEAN  HashIfNoCertificate);
 UINTN QuerySecureBootUser(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath);
+// Insert secure boot image signature
+VOID InsertSecureBootImage(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath,
+                           IN VOID                           *FileBuffer,
+                           IN UINTN                           FileSize);
