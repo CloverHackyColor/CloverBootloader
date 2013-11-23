@@ -2,92 +2,49 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>Boot</key>
-	<dict>
-		<key>Timeout</key>
-		<integer>5</integer>
-		<key>Arguments</key>
-		<string>npci=0x2000</string>
-		<key>DefaultVolume</key>
-		<string>MacHDD</string>
-		<key>Log</key>
-		<false/>
-		<key>Fast</key>
-		<false/>
-		<key>XMPDetection</key>
-		<string>-1</string>
-		<key>Legacy</key>
-		<string>PBR</string>
-	</dict>
-	<key>KernelAndKextPatches</key>
-	<dict>
-		<key>Debug</key>
-		<false/>
-		<key>KernelCpu</key>
-		<false/>
-		<key>AsusAICPUPM</key>
-		<true/>
-		<key>AppleRTC</key>
-		<true/>
-		<key>KextsToPatch</key>
-		<array>
-			<dict>
-				<key>Name</key>
-				<string>AppleAHCIPort</string>
-				<key>Comment</key>
-				<string>External icons patch</string>
-				<key>Find</key>
-				<data>RXh0ZXJuYWw=</data>
-				<key>Replace</key>
-				<data>SW50ZXJuYWw=</data>
-			</dict>
-		</array>
-	</dict>
 	<key>ACPI</key>
 	<dict>
-		<key>HaltEnabler</key>
-		<false/>
 		<key>DSDT</key>
 		<dict>
 			<key>Debug</key>
 			<false/>
-			<key>Name</key>
-			<string>DSDT.aml</string>
 			<key>Fixes</key>
 			<dict>
 				<key>AddDTGP_0001</key>
 				<true/>
-				<key>FixDarwin_0002</key>
-				<true/>
-				<key>FixShutdown_0004</key>
-				<true/>
 				<key>AddMCFG_0008</key>
 				<false/>
-				<key>FixHPET_0010</key>
-				<true/>
 				<key>FakeLPC_0020</key>
 				<false/>
-				<key>FixIPIC_0040</key>
+				<key>FixAirport_4000</key>
 				<true/>
-				<key>FixSBUS_0080</key>
+				<key>FixDarwin_0002</key>
 				<true/>
 				<key>FixDisplay_0100</key>
 				<true/>
-				<key>FixIDE_0200</key>
-				<false/>
-				<key>FixSATA_0400</key>
-				<false/>
 				<key>FixFirewire_0800</key>
-				<true/>
-				<key>FixUSB_1000</key>
-				<true/>
-				<key>FixLAN_2000</key>
-				<true/>
-				<key>FixAirport_4000</key>
 				<true/>
 				<key>FixHDA_8000</key>
 				<true/>
+				<key>FixHPET_0010</key>
+				<true/>
+				<key>FixIDE_0200</key>
+				<false/>
+				<key>FixIPIC_0040</key>
+				<true/>
+				<key>FixLAN_2000</key>
+				<true/>
+				<key>FixSATA_0400</key>
+				<false/>
+				<key>FixSBUS_0080</key>
+				<true/>
+				<key>FixShutdown_0004</key>
+				<true/>
+				<key>FixUSB_1000</key>
+				<true/>
 			</dict>
+			<key>Name</key>
+			<string>DSDT.aml</string>
 		</dict>
 		<key>DropTables</key>
 		<array>
@@ -102,70 +59,42 @@
 				<string>CpuPm</string>
 			</dict>
 		</array>
+		<key>HaltEnabler</key>
+		<false/>
 		<key>SSDT</key>
 		<dict>
 			<key>Generate</key>
 			<dict>
-				<key>PStates</key>
-				<true/>
 				<key>CStates</key>
 				<true/>
+				<key>PStates</key>
+				<true/>
 			</dict>
+			<key>MinMultiplier</key>
+			<integer>8</integer>
 			<key>PLimitDict</key>
 			<integer>0</integer>
 			<key>UnderVoltStep</key>
 			<integer>0</integer>
-			<key>MinMultiplier</key>
-			<integer>8</integer>
 		</dict>
 	</dict>
-	<key>DisableDrivers</key>
-	<array>
-		<string>Nothing</string>
-	</array>
-	<key>RtVariables</key>
+	<key>Boot</key>
 	<dict>
-		<key>MountEFI</key>
-		<true/>
-		<key>LogLineCount</key>
-		<integer>3000</integer>
-		<key>LogEveryBoot</key>
-		<string>10</string>
-	</dict>
-	<key>GUI</key>
-	<dict>
-		<key>TextOnly</key>
+		<key>DefaultVolume</key>
+		<string>MacHDD</string>
+		<key>Fast</key>
 		<false/>
-		<key>Language</key>
-		<string>en:0</string>
-		<key>Theme</key>
-		<string>metal</string>
-		<key>Mouse</key>
-		<dict>
-			<key>Enabled</key>
-			<false/>
-			<key>Speed</key>
-			<integer>0</integer>
-		</dict>
-		<key>Hide</key>
-		<array>
-			<string>Windows</string>
-			<string>\EFI\BOOT\BOOTX64.EFI</string>
-		</array>
-		<key>Scan</key>
-		<dict>
-			<key>Entries</key>
-			<true/>
-			<key>Tool</key>
-			<true/>
-			<key>Legacy</key>
-			<true/>
-		</dict>
+		<key>Legacy</key>
+		<string>PBR</string>
+		<key>Log</key>
+		<false/>
+		<key>Timeout</key>
+		<integer>5</integer>
+		<key>XMPDetection</key>
+		<string>-1</string>
 	</dict>
 	<key>Devices</key>
 	<dict>
-		<key>Inject</key>
-		<false/>
 		<key>Audio</key>
 		<dict>
 			<key>Inject</key>
@@ -177,47 +106,120 @@
 			<string>0x0</string>
 			<key>IntelGFX</key>
 			<string>0x0</string>
+			<key>LAN</key>
+			<string>0x0</string>
 			<key>NVidia</key>
 			<string>0x0</string>
 			<key>SATA</key>
 			<string>0x0</string>
 			<key>WIFI</key>
 			<string>0x0</string>
-			<key>LAN</key>
-			<string>0x0</string>
 			<key>XHCI</key>
 			<string>0x0</string>
 		</dict>
+		<key>Inject</key>
+		<false/>
 		<key>USB</key>
 		<dict>
-			<key>Inject</key>
+			<key>AddClockID</key>
 			<true/>
 			<key>FixOwnership</key>
 			<true/>
-			<key>AddClockID</key>
+			<key>Inject</key>
 			<true/>
 		</dict>
 	</dict>
-	<key>SystemParameters</key>
+	<key>DisableDrivers</key>
+	<array>
+		<string>Nothing</string>
+	</array>
+	<key>GUI</key>
 	<dict>
-		<key>InjectSystemID</key>
-		<true/>
-		<key>InjectKexts</key>
-		<string>Detect</string>
+		<key>Hide</key>
+		<array>
+			<string>Windows</string>
+			<string>\EFI\BOOT\BOOTX64.EFI</string>
+		</array>
+		<key>Language</key>
+		<string>en:0</string>
+		<key>Mouse</key>
+		<dict>
+			<key>Enabled</key>
+			<false/>
+			<key>Speed</key>
+			<integer>0</integer>
+		</dict>
+		<key>Scan</key>
+		<dict>
+			<key>Entries</key>
+			<true/>
+			<key>Legacy</key>
+			<true/>
+			<key>Tool</key>
+			<true/>
+		</dict>
+		<key>TextOnly</key>
+		<false/>
+		<key>Theme</key>
+		<string>metal</string>
 	</dict>
 	<key>Graphics</key>
 	<dict>
 		<key>Inject</key>
 		<dict>
-			<key>Intel</key>
-			<true/>
 			<key>ATI</key>
 			<false/>
+			<key>Intel</key>
+			<true/>
 			<key>NVidia</key>
 			<false/>
 		</dict>
 		<key>PatchVBios</key>
 		<false/>
+	</dict>
+	<key>KernelAndKextPatches</key>
+	<dict>
+		<key>AppleRTC</key>
+		<true/>
+		<key>AsusAICPUPM</key>
+		<true/>
+		<key>Debug</key>
+		<false/>
+		<key>KernelCpu</key>
+		<false/>
+		<key>KextsToPatch</key>
+		<array>
+			<dict>
+				<key>Comment</key>
+				<string>External icons patch</string>
+				<key>Find</key>
+				<data>
+				RXh0ZXJuYWw=
+				</data>
+				<key>Name</key>
+				<string>AppleAHCIPort</string>
+				<key>Replace</key>
+				<data>
+				SW50ZXJuYWw=
+				</data>
+			</dict>
+		</array>
+	</dict>
+	<key>RtVariables</key>
+	<dict>
+		<key>LogEveryBoot</key>
+		<string>10</string>
+		<key>LogLineCount</key>
+		<integer>3000</integer>
+		<key>MountEFI</key>
+		<true/>
+	</dict>
+	<key>SystemParameters</key>
+	<dict>
+		<key>InjectKexts</key>
+		<string>Detect</string>
+		<key>InjectSystemID</key>
+		<true/>
 	</dict>
 </dict>
 </plist>
