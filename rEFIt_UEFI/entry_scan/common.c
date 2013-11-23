@@ -278,3 +278,88 @@ VOID StrToLower(IN CHAR16 *Str)
      ++Str;
    }
 }
+
+STATIC CHAR16 **CreateInfoLines(IN CHAR16 *Message, OUT UINTN *Count)
+{
+  CHAR16 *Ptr, **Information;
+  UINTN   Index = 0, Total = 0;
+  UINTN   Length = ((Message == NULL) ? 0 : StrLen(Message));
+  // Check parameters
+  if (Length == 0) {
+    return NULL;
+  }
+  // Count how many new lines
+  Ptr = Message;
+  while (Ptr != NULL) {
+    ++Total;
+    Ptr = StrStr(Ptr, L"\n");
+  }
+  // Create information
+  Information = (CHAR16 **)AllocatePool((Total * sizeof(CHAR16 *)) + (Length + Total * sizeof(CHAR16)));
+  Information[Index++] = Ptr = (CHAR16 *)(Information + Total);
+  StrCpy(Ptr, Message);
+  while ((Index < Total) &&
+         (Ptr = StrStr(Ptr, L"\n")) != NULL) {
+    *Ptr++ = 0;
+    Information[Index++] = Ptr;
+  }
+  // Return the info lines
+  if (Count != NULL) {
+    *Count = Total;
+  }
+  return Information;
+}
+
+extern REFIT_MENU_ENTRY MenuEntryReturn;
+
+STATIC REFIT_MENU_ENTRY  *AlertMessageEntries[] = { &MenuEntryReturn };
+STATIC REFIT_MENU_SCREEN  AlertMessageMenu = { 0, NULL, NULL, 0, NULL, 1, AlertMessageEntries,
+                                               0, NULL, FALSE, FALSE, 0, 0, 0, 0, { 0, 0, 0, 0 } , NULL };
+
+// Display an alert message
+VOID AlertMessage(IN CHAR16 *Title, IN CHAR16 *Message)
+{
+  UINTN              Count = 0;
+  // Break message into info lines
+  CHAR16           **Information = CreateInfoLines(Message, &Count);
+  // Check parameters
+  if (Information != NULL) {
+    if (Count > 0) {
+      // Display the alert message
+      AlertMessageMenu.InfoLineCount = Count;
+      AlertMessageMenu.InfoLines = Information;
+      AlertMessageMenu.Title = Title;
+      RunMenu(&AlertMessageMenu, NULL);
+    }
+    FreePool(Information);
+  }
+}
+
+#define TAG_YES 1
+#define TAG_NO  2
+
+STATIC REFIT_MENU_ENTRY   YesMessageEntry = { L"Yes", TAG_YES, 0, 0, 0, NULL, NULL, NULL, { 0, 0, 0, 0 }, ActionEnter, ActionNone, ActionNone, NULL };
+STATIC REFIT_MENU_ENTRY   NoMessageEntry = { L"No", TAG_NO, 0, 0, 0, NULL, NULL, NULL, { 0, 0, 0, 0 }, ActionEnter, ActionNone, ActionNone, NULL };
+STATIC REFIT_MENU_ENTRY  *YesNoMessageEntries[] = { &YesMessageEntry, &NoMessageEntry };
+STATIC REFIT_MENU_SCREEN  YesNoMessageMenu = { 0, NULL, NULL, 0, NULL, 2, YesNoMessageEntries,
+                                               0, NULL, FALSE, FALSE, 0, 0, 0, 0, { 0, 0, 0, 0 } , NULL };
+
+// Display a yes/no prompt
+BOOLEAN YesNoMessage(IN CHAR16 *Title, IN CHAR16 *Message)
+{
+  BOOLEAN            Result = FALSE;
+  UINTN              Count = 0;
+  REFIT_MENU_ENTRY  *ChosenEntry = NULL;
+  // Break message into info lines
+  CHAR16           **Information = CreateInfoLines(Message, &Count);
+  // Display the yes/no message
+  YesNoMessageMenu.InfoLineCount = Count;
+  YesNoMessageMenu.InfoLines = Information;
+  YesNoMessageMenu.Title = Title;
+  Result = ((RunMenu(&YesNoMessageMenu, &ChosenEntry) == MENU_EXIT_ENTER) &&
+            (ChosenEntry != NULL) && (ChosenEntry->Tag == TAG_YES));
+  if (Information != NULL) {
+    FreePool(Information);
+  }
+  return Result;
+}

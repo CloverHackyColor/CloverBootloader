@@ -97,7 +97,7 @@ VOID EnableSecureBoot(VOID)
   }
 }
 
-STATIC CONST CHAR16 *SecureBootPolicyToStr(IN UINTN Policy)
+CONST CHAR16 *SecureBootPolicyToStr(IN UINTN Policy)
 {
   STATIC CONST CHAR16 *SecureBootPolicyStrings[] = {
     L"Deny",

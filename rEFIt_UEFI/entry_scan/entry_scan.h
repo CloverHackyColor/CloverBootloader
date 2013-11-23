@@ -50,6 +50,8 @@ INTN StrniCmp(IN CHAR16 *Str1,
 CHAR16 *StriStr(IN CHAR16 *Str,
                 IN CHAR16 *SearchFor);
 VOID StrToLower(IN CHAR16 *Str);
+VOID AlertMessage(IN CHAR16 *Title, IN CHAR16 *Message);
+BOOLEAN YesNoMessage(IN CHAR16 *Title, IN CHAR16 *Message);
 
 // legacy
 VOID ScanLegacy(VOID);
@@ -71,7 +73,9 @@ VOID UninstallSecureBoot(VOID);
 VOID EnableSecureBoot(VOID);
 VOID DisableSecureBoot(VOID);
 BOOLEAN ConfigureSecureBoot(VOID);
+CONST CHAR16 *SecureBootPolicyToStr(IN UINTN Policy);
 EFI_STATUS VerifySecureBootImage(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath);
+EFI_STATUS ClearImageSignatureDatabase(VOID);
 EFI_STATUS AddImageSignatureList(IN VOID  *SignatureList,
                                  IN UINTN  SignatureListSize);
 VOID *GetImageSignatureList(IN VOID   *FileBuffer,

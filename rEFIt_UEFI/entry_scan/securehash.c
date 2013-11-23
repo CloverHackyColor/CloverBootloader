@@ -51,11 +51,28 @@
 EFI_STATUS AddImageSignatureList(IN VOID  *SignatureList,
                                  IN UINTN  SignatureListSize)
 {
-   // Check parameters
+  // Check parameters
   if ((SignatureList == NULL) || (SignatureListSize == 0)) {
     return EFI_INVALID_PARAMETER;
   }
   return EFI_ABORTED;
+}
+
+// TODO: Remove image signatures
+EFI_STATUS RemoveImageSignatureList(IN VOID  *SignatureList,
+                                    IN UINTN  SignatureListSize)
+{
+  // Check parameters
+  if ((SignatureList == NULL) || (SignatureListSize == 0)) {
+    return EFI_INVALID_PARAMETER;
+  }
+  return EFI_ABORTED;
+}
+
+// TODO: Clear signatures database
+EFI_STATUS ClearImageSignatureDatabase(VOID)
+{
+   return EFI_ABORTED;
 }
 
 // TODO: Get a secure boot image signature
