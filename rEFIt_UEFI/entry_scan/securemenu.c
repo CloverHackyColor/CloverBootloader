@@ -394,7 +394,7 @@ BOOLEAN ConfigureSecureBoot(VOID)
     SecureBootPolicyMenu.Title = SecureBootPolicyEntry.Title;
     SecureBootMenu.Entries[Index++] = &SecureBootPolicyEntry;
     // Get the proper entries for the secure boot mode
-    if (gSettings.SecureBootSetupMode) {
+    if (!gSettings.SecureBootSetupMode) {
       SecureBootMenu.Entries[Index++] = &InsertImageSignatureEntry;
       SecureBootMenu.Entries[Index++] = &RemoveImageSignatureEntry;
       SecureBootMenu.Entries[Index++] = &ClearImageSignatureEntry;
@@ -453,12 +453,12 @@ BOOLEAN ConfigureSecureBoot(VOID)
 
       case TAG_CLEAR:
         // Clear authentication database
-        if (YesNoMessage(L"Clear Authentication Database", L"Are you sure you want to clear\nthe authentication database?")) {
-          DBG("User clear authentication database\n");
+        if (YesNoMessage(L"Clear Authentication Database", L"Are you sure you want to clear\nthe image authentication database?")) {
+          DBG("User cleared authentication database\n");
           AlertMessage(L"Clear Authentication Database",
                        EFI_ERROR(ClearImageSignatureDatabase()) ?
-                         L"Clearing authentication database failed!" :
-                         L"Authentication database was cleared successfully");
+                         L"Clearing the image authentication database failed!" :
+                         L"Cleared image authentication database successfully");
         }
         break;
 
