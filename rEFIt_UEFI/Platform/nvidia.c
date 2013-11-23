@@ -2693,6 +2693,7 @@ static nvidia_card_info_t nvidia_cards[] = {
 	{ 0x10DE0FFD,	NV_SUB_IDS,	"NVS 510" },
 	{ 0x10DE0FFF,	NV_SUB_IDS,	"Quadro 410" },
 	// 1000 - 100F
+  { 0x10DE1004,	NV_SUB_IDS,	"GTX 780 TI" },
 	// 1010 - 101F
 	// 1020 - 102F
 	// 1030 - 103F
@@ -2796,6 +2797,7 @@ static nvidia_card_info_t nvidia_cards[] = {
   { 0x10DE11D0, NV_SUB_IDS,	"GK106-INT353" },
 	// 11D0 - 11DF
 	// 11E0 - 11EF
+  { 0x10DE11E0, NV_SUB_IDS,	"GeForce GTX 770M" },
 	// 11F0 - 11FF
 	{ 0x10DE11FA,	NV_SUB_IDS,	"Quadro K4000" },
 	// 1200 - 120F

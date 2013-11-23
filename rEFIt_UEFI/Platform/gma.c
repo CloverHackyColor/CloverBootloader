@@ -192,6 +192,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
   switch (gma_dev->device_id) {
     case 0x0102: 
       devprop_add_value(device, "class-code",	ClassFix, 4);
+    case 0x0106:
     case 0x0112:  
     case 0x0116:
     case 0x0122:
