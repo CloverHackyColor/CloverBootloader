@@ -201,6 +201,9 @@ VOID GetCPUProperties (VOID)
 			case CPU_MODEL_IVY_BRIDGE:	
       case CPU_MODEL_IVY_BRIDGE_E5: 
       case CPU_MODEL_HASWELL:  
+      case CPU_MODEL_HASWELL_MB:
+      case CPU_MODEL_HASWELL_ULT:
+      case CPU_MODEL_HASWELL_ULX:
         msr = AsmReadMsr64(MSR_CORE_THREAD_COUNT);  //0x35
         gCPUStructure.Cores   = (UINT8)bitfield((UINT32)msr, 31, 16);  
         gCPUStructure.Threads = (UINT8)bitfield((UINT32)msr, 15,  0);
@@ -334,6 +337,9 @@ VOID GetCPUProperties (VOID)
           case CPU_MODEL_IVY_BRIDGE_E5:  
           case CPU_MODEL_JAKETOWN:
           case CPU_MODEL_HASWELL:
+          case CPU_MODEL_HASWELL_MB:
+          case CPU_MODEL_HASWELL_ULT:
+          case CPU_MODEL_HASWELL_ULX:
             gCPUStructure.TSCFrequency = MultU64x32(gCPUStructure.CurrentSpeed, Mega); //MHz -> Hz
             gCPUStructure.CPUFrequency = gCPUStructure.TSCFrequency;
             msr = AsmReadMsr64(MSR_PLATFORM_INFO);       //0xCE     

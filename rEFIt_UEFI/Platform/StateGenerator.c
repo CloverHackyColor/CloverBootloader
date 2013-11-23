@@ -207,10 +207,16 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
           case CPU_MODEL_IVY_BRIDGE:
           case CPU_MODEL_HASWELL:
           case CPU_MODEL_IVY_BRIDGE_E5:  
+          case CPU_MODEL_HASWELL_MB:
+          case CPU_MODEL_HASWELL_ULT:
+          case CPU_MODEL_HASWELL_ULX:
 					{
             if ((gCPUStructure.Model == CPU_MODEL_SANDY_BRIDGE) ||
                 (gCPUStructure.Model == CPU_MODEL_IVY_BRIDGE) ||
                 (gCPUStructure.Model == CPU_MODEL_HASWELL) ||
+                (gCPUStructure.Model == CPU_MODEL_HASWELL_MB) ||
+                (gCPUStructure.Model == CPU_MODEL_HASWELL_ULT) ||
+                (gCPUStructure.Model == CPU_MODEL_HASWELL_ULX) ||
                 (gCPUStructure.Model == CPU_MODEL_IVY_BRIDGE_E5) ||
                 (gCPUStructure.Model == CPU_MODEL_JAKETOWN))
             {
@@ -258,6 +264,9 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
                 if ((gCPUStructure.Model == CPU_MODEL_SANDY_BRIDGE) ||
                     (gCPUStructure.Model == CPU_MODEL_IVY_BRIDGE) ||
                     (gCPUStructure.Model == CPU_MODEL_HASWELL) ||
+                    (gCPUStructure.Model == CPU_MODEL_HASWELL_MB) ||
+                    (gCPUStructure.Model == CPU_MODEL_HASWELL_ULT) ||
+                    (gCPUStructure.Model == CPU_MODEL_HASWELL_ULX) ||
                     (gCPUStructure.Model == CPU_MODEL_IVY_BRIDGE_E5) ||
                     (gCPUStructure.Model == CPU_MODEL_JAKETOWN))
                 {

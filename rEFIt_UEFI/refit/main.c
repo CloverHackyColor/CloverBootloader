@@ -76,7 +76,7 @@ REFIT_MENU_SCREEN MainMenu    = {1, L"Main Menu", NULL, 0, NULL, 0, NULL, 0, L"A
 static REFIT_MENU_SCREEN AboutMenu   = {2, L"About", NULL, 0, NULL, 0, NULL, 0, NULL, FALSE, FALSE, 0, 0, 0, 0, {0, 0, 0, 0}, NULL };
 static REFIT_MENU_SCREEN HelpMenu    = {3, L"Help",  NULL, 0, NULL, 0, NULL, 0, NULL, FALSE, FALSE, 0, 0, 0, 0, {0, 0, 0, 0}, NULL };
 
-DRIVERS_FLAGS gDriversFlags = {FALSE, FALSE, FALSE};
+DRIVERS_FLAGS gDriversFlags = {FALSE, FALSE, FALSE, FALSE};  //MemFixLoaded
 
 EMU_VARIABLE_CONTROL_PROTOCOL *gEmuVariableControl = NULL;
 
@@ -905,6 +905,19 @@ static VOID ScanDriverDir(IN CHAR16 *Path, OUT EFI_HANDLE **DriversToConnect, OU
     if (Skip) {
       continue;
     }
+    // either AptioFix or LowMemFix but not both
+    if (StrStr(DirEntry->FileName, L"AptioFix") != NULL) {
+      if (gDriversFlags.MemFixLoaded) {
+        continue; //if other driver loaded then skip new one
+      }
+      gDriversFlags.MemFixLoaded = TRUE;
+    } else if (StrStr(DirEntry->FileName, L"LowMemFix") != NULL) {
+      if (gDriversFlags.MemFixLoaded) {
+        continue; //if other driver loaded then skip new one
+      }
+      gDriversFlags.MemFixLoaded = TRUE;
+    }
+
     UnicodeSPrint(FileName, 512, L"%s\\%s", Path, DirEntry->FileName);
     Status = StartEFIImage(FileDevicePath(SelfLoadedImage->DeviceHandle, FileName),
                            L"", DirEntry->FileName, DirEntry->FileName, NULL, &DriverHandle);
