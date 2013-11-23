@@ -100,6 +100,7 @@ UINTN QuerySecureBootUser(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath)
       if (Information[2] != NULL) {
         // Create the entries
         REFIT_MENU_ENTRY  *ChosenEntry = NULL;
+        UINTN              MenuExit;
         // Update the menu
         QueryUserMenu.InfoLines = Information;
         QueryUserMenu.EntryCount = gSettings.SecureBootSetupMode ? 2 : 3;
@@ -108,15 +109,22 @@ UINTN QuerySecureBootUser(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath)
         // Because we may
         if (!gGuiIsReady) {
           InitScreen(FALSE);
-          InitTheme(TRUE);
-          gThemeNeedInit = FALSE;
+          if (gThemeNeedInit) {
+            InitTheme(TRUE);
+            gThemeNeedInit = FALSE;
+          }
           gGuiIsReady = TRUE;
         }
         // Run the query menu
-        if ((RunMenu(&QueryUserMenu, &ChosenEntry) == MENU_EXIT_ENTER) &&
-            (ChosenEntry != NULL)) {
-          Response = (UINTN)ChosenEntry->Tag;
-        }
+        do
+        {
+           MenuExit = RunMenu(&QueryUserMenu, &ChosenEntry);
+           if ((ChosenEntry != NULL) &&
+               ((MenuExit == MENU_EXIT_ENTER) || (MenuExit == MENU_EXIT_DETAILS))) {
+             Response = (UINTN)ChosenEntry->Tag;
+             MenuExit = MENU_EXIT_ESCAPE;
+           }
+        } while (MenuExit != MENU_EXIT_ESCAPE);
         FreePool(Information[2]);
       }
       FreePool(Information[1]);
@@ -139,7 +147,7 @@ STATIC REFIT_MENU_ENTRY   RemoveImageSignatureEntry = { L"Remove image authentic
 STATIC REFIT_MENU_ENTRY   ClearImageSignatureEntry = { L"Clear image authentication database", TAG_CLEAR, 0, 0, 0, NULL, NULL, NULL, {0, 0, 0, 0}, ActionEnter, ActionNone, ActionNone, NULL };
 STATIC REFIT_MENU_ENTRY   DisableSecureBootEntry = { L"Disable secure boot", TAG_DISABLE, 0, 0, 0, NULL, NULL, NULL, {0, 0, 0, 0}, ActionEnter, ActionNone, ActionNone, NULL };
 STATIC REFIT_MENU_ENTRY  *SecureBootEntries[] = { NULL, NULL, NULL, NULL, NULL, NULL };
-STATIC REFIT_MENU_SCREEN  SecureBootMenu = { 0, L"Secure Boot Configuration", NULL, 0, NULL, 0, NULL,
+STATIC REFIT_MENU_SCREEN  SecureBootMenu = { 0, L"Secure Boot Configuration", NULL, 0, NULL, 0, SecureBootEntries,
                                              0, NULL, FALSE, FALSE, 0, 0, 0, 0, { 0, 0, 0, 0 }, NULL };
 
 STATIC REFIT_MENU_ENTRY   SecureBootPolicyNameEntry[] = {
@@ -171,8 +179,8 @@ BOOLEAN ConfigureSecureBoot(VOID)
   BOOLEAN StillConfiguring = TRUE;
   do
   {
+    UINTN             Index = 0, MenuExit;
     REFIT_MENU_ENTRY *ChosenEntry = NULL;
-    UINTN             Index = 0;
     // Add the entry for secure boot policy
     SecureBootPolicyEntry.Title = PoolPrint(L"Secure boot policy: %s", SecureBootPolicyToStr(gSettings.SecureBootPolicy));
     if (SecureBootPolicyEntry.Title == NULL) {
@@ -190,31 +198,36 @@ BOOLEAN ConfigureSecureBoot(VOID)
     SecureBootMenu.Entries[Index++] = &MenuEntryReturn;
     SecureBootMenu.EntryCount = Index;
     // Run the configuration menu
-    if ((RunMenu(&SecureBootMenu, &ChosenEntry) == MENU_EXIT_ENTER) &&
-        (ChosenEntry != NULL)) {
+    MenuExit = RunMenu(&SecureBootMenu, &ChosenEntry);
+    if ((ChosenEntry != NULL) &&
+        ((MenuExit == MENU_EXIT_ENTER) || (MenuExit == MENU_EXIT_DETAILS))) {
       switch (ChosenEntry->Tag) {
       case TAG_POLICY:
         // Change the secure boot policy
-        ChosenEntry = NULL;
-        if ((RunMenu(&SecureBootPolicyMenu, &ChosenEntry) == MENU_EXIT_ENTER) &&
-            (ChosenEntry != NULL)) {
-          switch (ChosenEntry->Tag) {
-          case SECURE_BOOT_POLICY_DENY:
-          case SECURE_BOOT_POLICY_ALLOW:
-          case SECURE_BOOT_POLICY_QUERY:
-          case SECURE_BOOT_POLICY_INSERT:
-          case SECURE_BOOT_POLICY_WHITELIST:
-          case SECURE_BOOT_POLICY_BLACKLIST:
-          case SECURE_BOOT_POLICY_USER:
-             // Set a new policy
-             gSettings.SecureBootPolicy = (UINT8)ChosenEntry->Tag;
-             DBG("User changed secure boot policy: %s\n", SecureBootPolicyToStr(gSettings.SecureBootPolicy));
-             break;
+        do
+        {
+          ChosenEntry = NULL;
+          MenuExit = RunMenu(&SecureBootPolicyMenu, &ChosenEntry);
+          if ((ChosenEntry != NULL) &&
+              ((MenuExit == MENU_EXIT_ENTER) || (MenuExit == MENU_EXIT_DETAILS))) {
+            switch (ChosenEntry->Tag) {
+            case SECURE_BOOT_POLICY_DENY:
+            case SECURE_BOOT_POLICY_ALLOW:
+            case SECURE_BOOT_POLICY_QUERY:
+            case SECURE_BOOT_POLICY_INSERT:
+            case SECURE_BOOT_POLICY_WHITELIST:
+            case SECURE_BOOT_POLICY_BLACKLIST:
+            case SECURE_BOOT_POLICY_USER:
+              // Set a new policy
+              gSettings.SecureBootPolicy = (UINT8)ChosenEntry->Tag;
+              DBG("User changed secure boot policy: %s\n", SecureBootPolicyToStr(gSettings.SecureBootPolicy));
 
-          default:
-             break;
+            default:
+              MenuExit = MENU_EXIT_ESCAPE;
+              break;
+            }
           }
-        }
+        } while (MenuExit != MENU_EXIT_ESCAPE);
         break;
 
       case TAG_INSERT:
@@ -227,7 +240,7 @@ BOOLEAN ConfigureSecureBoot(VOID)
 
       case TAG_CLEAR:
         // Clear authentication database
-        if (YesNoMessage(L"Clear Authentication Database", L"Are you sure you want to clear the authentication database?")) {
+        if (YesNoMessage(L"Clear Authentication Database", L"Are you sure you want to clear\nthe authentication database?")) {
           DBG("User clear authentication database\n");
           AlertMessage(L"Clear Authentication Database",
                        EFI_ERROR(ClearImageSignatureDatabase()) ?
@@ -252,7 +265,7 @@ BOOLEAN ConfigureSecureBoot(VOID)
         StillConfiguring = FALSE;
         break;
       }
-    } else {
+    } else if (MenuExit != MENU_EXIT_ESCAPE) {
       StillConfiguring = FALSE;
     }
     FreePool(SecureBootPolicyEntry.Title);

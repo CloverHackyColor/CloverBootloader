@@ -289,17 +289,21 @@ STATIC CHAR16 **CreateInfoLines(IN CHAR16 *Message, OUT UINTN *Count)
     return NULL;
   }
   // Count how many new lines
-  Ptr = Message;
+  Ptr = Message - 1;
   while (Ptr != NULL) {
     ++Total;
-    Ptr = StrStr(Ptr, L"\n");
+    Ptr = StrStr(++Ptr, L"\n");
   }
   // Create information
-  Information = (CHAR16 **)AllocatePool((Total * sizeof(CHAR16 *)) + (Length + Total * sizeof(CHAR16)));
+  Information = (CHAR16 **)AllocatePool((Total * sizeof(CHAR16 *)) + ((Length + 1) * sizeof(CHAR16)));
+  if (Information == NULL) {
+    return NULL;
+  }
+  // Copy strings
   Information[Index++] = Ptr = (CHAR16 *)(Information + Total);
   StrCpy(Ptr, Message);
   while ((Index < Total) &&
-         (Ptr = StrStr(Ptr, L"\n")) != NULL) {
+         ((Ptr = StrStr(Ptr, L"\n")) != NULL)) {
     *Ptr++ = 0;
     Information[Index++] = Ptr;
   }
@@ -348,16 +352,23 @@ STATIC REFIT_MENU_SCREEN  YesNoMessageMenu = { 0, NULL, NULL, 0, NULL, 2, YesNoM
 BOOLEAN YesNoMessage(IN CHAR16 *Title, IN CHAR16 *Message)
 {
   BOOLEAN            Result = FALSE;
-  UINTN              Count = 0;
-  REFIT_MENU_ENTRY  *ChosenEntry = NULL;
+  UINTN              Count = 0, MenuExit;
   // Break message into info lines
   CHAR16           **Information = CreateInfoLines(Message, &Count);
   // Display the yes/no message
   YesNoMessageMenu.InfoLineCount = Count;
   YesNoMessageMenu.InfoLines = Information;
   YesNoMessageMenu.Title = Title;
-  Result = ((RunMenu(&YesNoMessageMenu, &ChosenEntry) == MENU_EXIT_ENTER) &&
-            (ChosenEntry != NULL) && (ChosenEntry->Tag == TAG_YES));
+  do
+  {
+     REFIT_MENU_ENTRY  *ChosenEntry = NULL;
+     MenuExit = RunMenu(&YesNoMessageMenu, &ChosenEntry);
+     if ((ChosenEntry != NULL) && (ChosenEntry->Tag == TAG_YES) &&
+         ((MenuExit == MENU_EXIT_ENTER) || (MenuExit == MENU_EXIT_DETAILS))) {
+       Result = TRUE;
+       MenuExit = MENU_EXIT_ENTER;
+     }
+  } while (MenuExit != MENU_EXIT_ENTER);
   if (Information != NULL) {
     FreePool(Information);
   }
