@@ -7,90 +7,94 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-11-02 09:49+0100\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"PO-Revision-Date: 2013-11-23 03:08+0000\n"
+"Last-Translator: cool_recep <rbaltas@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: tr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Translate Toolkit 1.10.0\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Pootle 2.5.0-rc1\n"
+"X-POOTLE-MTIME: 1385176134.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
 msgid "Clover EFI"
-msgstr ""
+msgstr "Clover EFI"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:22 Resources/templates/Conclusion.html:20
 msgid "%CLOVERVERSION% r%CLOVERREVISION%"
-msgstr ""
+msgstr "%CLOVERVERSION% r%CLOVERREVISION%"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:25
 msgid "Developers:"
-msgstr ""
+msgstr "Geliştiriciler:"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:26
 msgid "%DEVELOP%"
-msgstr ""
+msgstr "%DEVELOP%"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:28
 msgid "Source code credits to:"
-msgstr ""
+msgstr "Kaynak koduna katkıda bulunanlar:"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:29
 msgid "%CREDITS%"
-msgstr ""
+msgstr "%CREDITS%"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:31
 msgid "Package credits to:"
-msgstr ""
+msgstr "Pakete katkıda bulunanlar:"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:32
 msgid "%PKGDEV%"
-msgstr ""
+msgstr "%PKGDEV%"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:34
 msgid "Supports Fat32, HFS+, ESP."
-msgstr ""
+msgstr "Fat32, HFS+ ve ESP destekler."
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:35 Resources/templates/Conclusion.html:25
 msgid "Copyright © %CPRYEAR%"
-msgstr ""
+msgstr "Telif hakkı © %CPRYEAR%"
 
 #. type: Content of: <html><body><p><span>
 #: Resources/templates/Description.html:17
 msgid "Clover v2"
-msgstr ""
+msgstr "Clover v2"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:17
 msgid ""
 "is open source based on different projects: Clover, rEFIt, XNU, VirtualBox."
 msgstr ""
+"açık kaynaklıdır ve farklı projeler üzerine temellendirilmiştir: Clover, "
+"rEFIt, XNU, VirtualBox."
 
 #. type: Content of: <html><body><p><span>
 #: Resources/templates/Description.html:18
 msgid "The main is EDK2 latest revision."
-msgstr ""
+msgstr "Temeli EDK2 son revizyondur."
 
 #. type: Content of: <html><body><p><b>
 #: Resources/templates/Description.html:20
 msgid "Main features:"
-msgstr ""
+msgstr "Ana özellikler:"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:21
 msgid "- boot into 10.4 - 10.8 OSX, Windows EFI and Linux EFI"
-msgstr ""
+msgstr "- 10.4 - 10.9 OS X, Windows EFI ve Linux EFI'ye boot edebilme"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:22
@@ -98,6 +102,8 @@ msgid ""
 "- It's EFI bootloader provides RuntimeServices for OS that impossible for "
 "Legacy Bootloaders"
 msgstr ""
+"- EFI bootloader sayesinde işletim sistemine eski önyükleyicilerin "
+"sağlayamadığı çalışma hizmetleri sağlar"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:23
@@ -105,6 +111,8 @@ msgid ""
 "- mostly Clover do automatic detection of hardware and set all properties by "
 "default."
 msgstr ""
+"- Clover çoğunlukla donanımları otomatik tespit eder ve buna göre "
+"özellikleri varsayılan olarak ayarlar"
 
 #. type: Content of: <html><body><p><span>
 #: Resources/templates/Description.html:23
@@ -119,37 +127,41 @@ msgstr ""
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:24
 msgid "But user can change them by config.plist"
-msgstr ""
+msgstr "Fakat kullanıcılar config.plist ile bunları değiştirebilir"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:25
 msgid "- with Clover you may restart into other OS from Startup Disk prefPane"
 msgstr ""
+"- Clover ile Startup Disk prefPane'den diğer işletim sistemlerini "
+"açabilirsiniz"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:26
 msgid "- UUID written into config.plist will be the same as in OS"
-msgstr ""
+msgstr "- config.plist'e yazılan UUID, işletim sistemindeki ile aynı olacaktır"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:27
 msgid "- SMBIOS will be corrected to standard 2.6"
-msgstr ""
+msgstr "- SMBIOS, 2.6 standardına düzeltilecektir"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:28
 msgid "- ACPI will be corrected to standard 4.0."
-msgstr ""
+msgstr "- ACPI, 4.0 standardına düzeltilecektir"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:29
 msgid "Custom DSDT will be loaded from booted partition or from EFI folder"
-msgstr ""
+msgstr "Özel DSDT, boot edilen bölümden veya EFI klasöründen yüklenecektir"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:30
 msgid "- customizable RestartFix and sleep/wake fixes and PCIRootUID value"
 msgstr ""
+"- Özelleştirilebilir RestartFix ve uyku/uyanma onarımları ve PCIRootUID "
+"değeri"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:31
@@ -157,36 +169,38 @@ msgid ""
 "- Graphics Properties Injector for ATI, NVidia and Intel for wide range of "
 "supported cards."
 msgstr ""
+"- Desteklenen geniş çaplı ATI, NVidia ve Intel grafik işlemciler için "
+"Graphics Properties Injector"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:32
 msgid "Also customizable."
-msgstr ""
+msgstr "Ayrıca özelleştirilebilir."
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:33
 msgid "- USB fix (LegacyOff, Ownership, Builtin, clock-id) up to USB 3.0"
-msgstr ""
+msgstr "- USB 3.0 dahil USB onarımı (LegacyOff, Ownership, Builtin, clock-id)"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:34
 msgid "- HDA injector and Ethernet builtin injector"
-msgstr ""
+msgstr "- HDA ve Ethernet builtin enjektörü"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:35
 msgid "- CPU turbo and P- and C-states generator"
-msgstr ""
+msgstr "- CPU turbo ve P- ve C-states oluşturucu"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:36
 msgid "- ACPI tables loading (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI...)"
-msgstr ""
+msgstr "- ACPI tablosu yükleme (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI...)"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:37
 msgid "- extra kexts loading and security mode for FireWire"
-msgstr ""
+msgstr "- Fazladan kext yükleme ve FireWire için güvenlik modu"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:38
@@ -194,34 +208,36 @@ msgid ""
 "- default boot after timeout, customizable GUI , and saving screenshots from "
 "GUI typing F10"
 msgstr ""
+"- Süre dolunca varsayılan olarak boot etme, kişiselleştirilebilir arabirim "
+"ve F10 tuşu ile arabirimden ekran görüntüsü kaydetme"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:39
 msgid "- saving boot.log in OS and preboot.log from GUI by typing F2"
-msgstr ""
+msgstr "- İşletim sistemine boot.log ve F2 ile arabirimden preboot.log kaydetme"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Conclusion.html:22
 msgid "Installation Complete!"
-msgstr ""
+msgstr "Kurulum Tamamlandı!"
 
 #. type: "UEFI.only_title"
 #: Resources/templates/Localizable.strings:4
 #, no-wrap
 msgid "Install for UEFI motherboards"
-msgstr ""
+msgstr "UEFI anakartlar için yükleme"
 
 #. type: "UEFI.only_description"
 #: Resources/templates/Localizable.strings:5
 #, no-wrap
 msgid "Install Clover to be used with UEFI motherboards only."
-msgstr ""
+msgstr "Clover'ı sadece UEFI anakartlarda kullanılacak şekilde yükle."
 
 #. type: "Target.ESP_title"
 #: Resources/templates/Localizable.strings:10
 #, no-wrap
 msgid "Install Clover in the ESP"
-msgstr ""
+msgstr "Clover'ı ESP'ye yükle"
 
 #. type: "Target.ESP_description"
 #: Resources/templates/Localizable.strings:11
@@ -235,12 +251,19 @@ msgid ""
 "diskutil list\n"
 "newfs_msdos -v EFI -F 32 /dev/rdisk9s1"
 msgstr ""
+"Clover'ı hedef sürücünün ESP'sine (EFI Ssistem Bölümü) yükle\n"
+"\n"
+"İlk olarak ESP'yi Mac üzerinde Fat32 olarak birçimlendirmelisiniz.\n"
+"\n"
+"Fat32 için bu gibi komutları kullanın:\n"
+"diskutil list\n"
+"newfs_msdos -v EFI -F 32 /dev/rdisk9s1"
 
 #. type: "Bootloader_title"
 #: Resources/templates/Localizable.strings:23
 #, no-wrap
 msgid "Bootloader"
-msgstr ""
+msgstr "Önyükleyici"
 
 #. type: "Bootloader_description"
 #: Resources/templates/Localizable.strings:24
@@ -251,12 +274,17 @@ msgid ""
 "boot1 (On the partition's boot-sector) to finding boot2.\n"
 "boot2 (On the partition's root directory) for loading /EFI/CLOVER/CLOVERIA32.efi or CLOVERX64.efi, and kernel etc."
 msgstr ""
+"Clover EFI üç ana dosyaya ihtiyaç duyar. (basitçe)\n"
+"boot0 (Sürücünün MBR'sinde) boot1'i yüklemekten sorumlu.\n"
+"boot1 (Bölümün önyükleme-sektöründe) boot2'yi bulmak için.\n"
+"boot2 (Bölümün kök dizininde) /EFI/CLOVER/CLOVERIA32.efi veya CLOVERX64.efi "
+"ve çekirdek vb. yüklemek için."
 
 #. type: "boot0af_title"
 #: Resources/templates/Localizable.strings:29
 #, no-wrap
 msgid "Install boot0af in MBR"
-msgstr ""
+msgstr "boot0af'yi MBR'ye yükle"
 
 #. type: "boot0af_description"
 #: Resources/templates/Localizable.strings:30
@@ -266,12 +294,18 @@ msgid ""
 "boot0af (boot0 Active First) bootloader try to boot the active partition defined in MBR. If there is no active partition, it will try to boot the first EFI/FAT32/HFS partition (defined in the MBR and then the GPT) with a valid PBR signature.\n"
 "This choice will setup selected HFS/Fat32 partition to be active."
 msgstr ""
+"BIOS anakartlarda BIOS önyükleme için kullanılır.\n"
+"boot0af (boot0 Active First/Aktif Öncelikli) önyükleyici tanımlanan MBR'deki "
+"aktif bölümden önyükleme yapmaya çalışır. Eğer aktif bölüm yoksa, geçerli "
+"bir PBR imzasına sahip ilk EFI/FAT32/HFS bölümünü (MBR'de  ve sonra da "
+"GPT'de tanımlanan) önyüklemeye çalışacaktır.\n"
+"Bu seçim işaretlenmiş HFS/Fat32  bölümünü aktif olarak ayarlayacaktır."
 
 #. type: "boot0ss_title"
 #: Resources/templates/Localizable.strings:34
 #, no-wrap
 msgid "Install boot0ss in MBR"
-msgstr ""
+msgstr "boot0ss'yi MBR'ye yükle"
 
 #. type: "boot0ss_description"
 #: Resources/templates/Localizable.strings:35
@@ -282,12 +316,20 @@ msgid ""
 "This bootloader is a good choice when you have Windows installed on the same disk because Windows wants to have its partition active.\n"
 "This choice will not activate any partition in MBR."
 msgstr ""
+"BIOS anakartlarda BIOS önyükleme için kullanılır.\n"
+"boot0ss (boot0 Signature Scanning/İmza Tarama) önyükleyici geçerli bir PBR "
+"imzasına sahip ilk EFI/FAT32/HFS bölümünü (MBR'de ve sonra da GPT'de "
+"tanımlanan) önyüklemeye çalışacaktır. Eğer bölüm bulunamazsa MBR'de "
+"tanımlanan aktif bölümü önyüklemeye çalışacaktır.\n"
+"Eğer aynı diskke Windows yüklü ise bu önyükleyici iyi bir seimdir zira "
+"Windows, yüklü olduğu bölümün aktif olmasını ister.\n"
+"Bu seçim MBR'deki hiçbir bölümü aktif yapmayacaktır."
 
 #. type: "bootNo_title"
 #: Resources/templates/Localizable.strings:40
 #, no-wrap
 msgid "Don't update MBR and PBR sectors"
-msgstr ""
+msgstr "MBR ve PBR sektörlerini güncelleme"
 
 #. type: "bootNo_description"
 #: Resources/templates/Localizable.strings:41
@@ -297,12 +339,15 @@ msgid ""
 "Usefull for UEFI motherboards that don't need bootloader files.\n"
 "Can also be use if you don't want to upgrade MBR or PBR sectors."
 msgstr ""
+"Hiçbir nöyükleyici yükleme (boot0X, boot1X).\n"
+"Önyükleyici dosyalarına ihtiyaç duymayan UEFI anakartlar için kullanışlı.\n"
+"MBR ve PBR sektörlerini yükseltmek istemiyorsanız da kullanılabilir."
 
 #. type: "AltBoot_title"
 #: Resources/templates/Localizable.strings:45
 #, no-wrap
 msgid "Use alternative booting PBR"
-msgstr ""
+msgstr "Alternatif önyüklemeli PBR kullan"
 
 #. type: "AltBoot_description"
 #: Resources/templates/Localizable.strings:46
@@ -311,12 +356,15 @@ msgid ""
 "Install alternative booting PBR with choice of boot with a key pressed.\n"
 "File to boot = boot{keypressed}"
 msgstr ""
+"Alternatif önyüklemeli PBR'yi bir tuşa basınca önyükleme yapma seçeneği ile "
+"yükle.\n"
+"Önyüklemesi yapılacak dosya = önyükleme{tuşabasıldı}"
 
 #. type: "boot32_title"
 #: Resources/templates/Localizable.strings:50
 #, no-wrap
 msgid "Install & Start 32bit boot first"
-msgstr ""
+msgstr "İlk olarak 32bit önyüklemeyi yükle ve başlat"
 
 #. type: "boot32_description"
 #: Resources/templates/Localizable.strings:51
@@ -328,12 +376,17 @@ msgid ""
 "Press key 3 to boot3 = Clover EFI 32bit boot,\n"
 "Press key 6 to boot6 = Clover EFI 64bit boot."
 msgstr ""
+"Önyükleme dosyalarını yükle ve ilk olarak 32bit başlayacak şekilde ayarla.\n"
+"Varsayılan önyükleme önyükleyecek = Clover EFI 32bit. Yapabilecekleriniz...\n"
+"boot1 için 1'e basın = Chameleon önyükleme,\n"
+"boot3 için 3'e basın = Clover EFI 32bit önyükleme,\n"
+"boot6 için 6'ya basın = Clover EFI 64bit önyükleme."
 
 #. type: "boot64_title"
 #: Resources/templates/Localizable.strings:57
 #, no-wrap
 msgid "Install & Start 64bit boot first"
-msgstr ""
+msgstr "İlk olarak 64bit önyüklemeyi yükle ve başlat"
 
 #. type: "boot64_description"
 #: Resources/templates/Localizable.strings:58
@@ -345,121 +398,126 @@ msgid ""
 "Press key 3 to boot3 = Clover EFI 32bit boot,\n"
 "Press key 6 to boot6 = Clover EFI 64bit boot."
 msgstr ""
+"Önyükleme dosyalarını yükle ve ilk olarak 64bit başlayacak şekilde ayarla.\n"
+"Varsayılan önyükleme önyükleyecek = Clover EFI 64bit. Yapabilecekleriniz...\n"
+"boot1 için 1'e basın = Chameleon önyükleme,\n"
+"boot3 için 3'e basın = Clover EFI 32bit önyükleme,\n"
+"boot6 için 6'ya basın = Clover EFI 64bit önyükleme."
 
 #. type: "CloverEFI_title"
 #: Resources/templates/Localizable.strings:67
 #, no-wrap
 msgid "CloverEFI"
-msgstr ""
+msgstr "CloverEFI"
 
 #. type: "CloverEFI_description"
 #: Resources/templates/Localizable.strings:68
 #, no-wrap
 msgid "Select the version of CloverEFI to install."
-msgstr ""
+msgstr "Yüklenecek CloverEFI sürümünü seçin."
 
 #. type: "cloverEFI.32_description"
 #: Resources/templates/Localizable.strings:69
 #: Resources/templates/Localizable.strings:70
 #, no-wrap
 msgid "CloverEFI 32-bits"
-msgstr ""
+msgstr "CloverEFI 32-bit"
 
 #. type: "cloverEFI.64.sata_title"
 #: Resources/templates/Localizable.strings:71
 #, no-wrap
 msgid "CloverEFI 64-bits SATA"
-msgstr ""
+msgstr "CloverEFI 64-bit SATA"
 
 #. type: "cloverEFI.64.sata_description"
 #: Resources/templates/Localizable.strings:72
 #, no-wrap
 msgid "CloverEFI 64-bits using SATA to access drives"
-msgstr ""
+msgstr "CloverEFI 64-bit sürücülere SATA kullanarak erişim"
 
 #. type: "cloverEFI.64.blockio_title"
 #: Resources/templates/Localizable.strings:73
 #, no-wrap
 msgid "CloverEFI 64-bits BiosBlockIO"
-msgstr ""
+msgstr "CloverEFI 64-bit BiosBlockIO"
 
 #. type: "cloverEFI.64.blockio_description"
 #: Resources/templates/Localizable.strings:74
 #, no-wrap
 msgid "CloverEFI 64-bits using Bios Block I/O to access drives"
-msgstr ""
+msgstr "CloverEFI 64-bit sürücülere Bios Block G/Ç kullanarak erişim"
 
 #. type: "Ps2KeyboardDxe-32_description"
 #: Resources/templates/Localizable.strings:79
 #, no-wrap
 msgid "PS/2 keyboard driver, 32bit"
-msgstr ""
+msgstr "PS/2 klavye sürücüsü, 32bit"
 
 #. type: "Ps2MouseAbsolutePointerDxe-32_description"
 #: Resources/templates/Localizable.strings:80
 #, no-wrap
 msgid "PS/2 trackpad driver, 32bit"
-msgstr ""
+msgstr "PS/2 touchpad sürücüsü, 32bit"
 
 #. type: "Ps2MouseDxe-32_description"
 #: Resources/templates/Localizable.strings:81
 #, no-wrap
 msgid "PS/2 mouse driver, 32bit"
-msgstr ""
+msgstr "PS/2 fare sürücüsü, 32bit"
 
 #. type: "Ps2MouseDxe-64_description"
 #: Resources/templates/Localizable.strings:82
 #, no-wrap
 msgid "PS/2 mouse driver, 64bit"
-msgstr ""
+msgstr "PS/2 fare sürücüsü, 64bit"
 
 #. type: "UsbMouseDxe-32_description"
 #: Resources/templates/Localizable.strings:83
 #, no-wrap
 msgid "USB mouse driver, 32bit"
-msgstr ""
+msgstr "USB fare sürücüsü, 32bit"
 
 #. type: "UsbMouseDxe-64_description"
 #: Resources/templates/Localizable.strings:84
 #, no-wrap
 msgid "USB mouse driver, 64bit"
-msgstr ""
+msgstr "USB fare sürücüsü, 64bit"
 
 #. type: "VBoxExt2-32_description"
 #: Resources/templates/Localizable.strings:85
 #, no-wrap
 msgid "ext2/3 filesystem driver from virtualbox, 32bit"
-msgstr ""
+msgstr "Virtualbox'tan ext2/3 dosya sistemi sürücüsü, 32bit"
 
 #. type: "VBoxExt2-64_description"
 #: Resources/templates/Localizable.strings:86
 #, no-wrap
 msgid "ext2/3 filesystem driver from virtualbox, 64bit"
-msgstr ""
+msgstr "Virtualbox'tan ext2/3 dosya sistemi sürücüsü, 64bit"
 
 #. type: "VBoxExt4-32_description"
 #: Resources/templates/Localizable.strings:87
 #, no-wrap
 msgid "ext4 filesystem driver from virtualbox, 32bit"
-msgstr ""
+msgstr "Virtualbox'tan ext4 dosya sistemi sürücüsü, 32bit"
 
 #. type: "VBoxExt4-64_description"
 #: Resources/templates/Localizable.strings:88
 #, no-wrap
 msgid "ext4 filesystem driver from virtualbox, 64bit"
-msgstr ""
+msgstr "Virtualbox'tan ext4 dosya sistemi sürücüsü, 64bit"
 
 #. type: "XhciDxe-32_description"
 #: Resources/templates/Localizable.strings:89
 #, no-wrap
 msgid "USB 3.0 driver, 32bit"
-msgstr ""
+msgstr "USB 3.0 sürücüsü, 32bit"
 
 #. type: "XhciDxe-64_description"
 #: Resources/templates/Localizable.strings:90
 #, no-wrap
 msgid "USB 3.0 driver, 64bit"
-msgstr ""
+msgstr "USB 3.0 sürücüsü, 64bit"
 
 #. type: "CsmVideoDxe-64_description"
 #: Resources/templates/Localizable.strings:91
@@ -470,6 +528,13 @@ msgid ""
 "Clover may not started with it and you may have wake problem in system.\n"
 "Use with precautions."
 msgstr ""
+"Clover GUI için daha fazla çözünürlük seçmeye izin veren 64bit görüntü "
+"sürücüsü.\n"
+"UEFI BIOS'taki CSM modülü üzerine temllendirlmiştir ve CSM'nin devrede "
+"olmasını gerektirir.\n"
+"Clover bununla birlikte çalışmayabilir ve sistem uyanma sorunu "
+"yaşayabilirsiniz.\n"
+"Dikkatli kullanın."
 
 #. type: "DataHubDxe-64_description"
 #: Resources/templates/Localizable.strings:95
@@ -478,6 +543,9 @@ msgid ""
 "This is DataHub protocol support mandatory for MacOSX.\n"
 "Usually it is already present but sometime it may be missed. In this case you should see warning on screen."
 msgstr ""
+"Bu MacOSX için zorunlu olan DataHub protokol desteğidir.\n"
+"Genelde halihazırda mevcuttur fakat bazen kayıp olabilir. Bu durumda ekranda "
+"uyarı görürsünüz."
 
 #. type: "EmuVariableUefi-64_description"
 #: Resources/templates/Localizable.strings:97
@@ -487,42 +555,51 @@ msgid ""
 "Mostly UEFI boot uses hardware NVRAM but in some rare cases this driver is needed.\n"
 "Use it only if you have a problem without it"
 msgstr ""
+"MacOSX tarafından ihtiyaç duyulan NVRAM değişkenleri için 64bit sürücü "
+"desteği.\n"
+"Çoğu UEFI önyükleme donanımsal NVRAM kullanır fakat bazı durumlarda bu "
+"sürücü gereklidir.\n"
+"Sadece yüklü olmadığında problem yaşıyorsanız kullanınız."
 
 #. type: "OsxAptioFixDrv-64_description"
 #: Resources/templates/Localizable.strings:100
 #, no-wrap
 msgid "64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio"
 msgstr ""
+"AMI Aptio gibi UEFI Firmware'lerdeki bellek sorunlarını çözen 64bit sürücü"
 
 #. type: "OsxLowMemFixDrv-64_description"
 #: Resources/templates/Localizable.strings:101
 #, no-wrap
 msgid "Simplified variant of OsxAptioFixDrv, 64bit (do not use both together)"
 msgstr ""
+"Sadeleştirilmiş OsxAptioFixDrv türevi, 64bit (ikisini birden kullanmayın)"
 
 #. type: "PartitionDxe-64_description"
 #: Resources/templates/Localizable.strings:102
 #, no-wrap
 msgid "64bit driver to support non-usual partition maps such as: hybrid GPT/MBR or Apple Partition Map."
 msgstr ""
+"Melez GPT/MBR veya Apple Partition Map gibi alışıldık olmayan bölümleri "
+"desteklemek için 64bit sürücü."
 
 #. type: "Themes_title"
 #: Resources/templates/Localizable.strings:108
 #, no-wrap
 msgid "Themes"
-msgstr ""
+msgstr "Temalar"
 
 #. type: "Themes_description"
 #: Resources/templates/Localizable.strings:109
 #, no-wrap
 msgid "Select to install themes."
-msgstr ""
+msgstr "Yükleme için tema seçin."
 
 #. type: "applestyle_title"
 #: Resources/templates/Localizable.strings:111
 #, no-wrap
 msgid "AppleStyle"
-msgstr ""
+msgstr "AppleStili"
 
 #. type: "applestyle_description"
 #: Resources/templates/Localizable.strings:112
@@ -531,12 +608,14 @@ msgid ""
 "AppleStyle theme from Eps,\n"
 "Install to /EFI/CLOVER/themes/applestyle"
 msgstr ""
+"Eps'ten AppleStili teması.\n"
+"/EFI/CLOVER/themes/applestyle konumuna yüklenir"
 
 #. type: "BGM_title"
 #: Resources/templates/Localizable.strings:115
 #, no-wrap
 msgid "Black_Green_Moody"
-msgstr ""
+msgstr "Siyah_Yeşil_Karamsar"
 
 #. type: "BGM_description"
 #: Resources/templates/Localizable.strings:116
@@ -545,12 +624,14 @@ msgid ""
 "Black Green and Moody theme from Blackosx,\n"
 "Install to /EFI/CLOVER/themes/BGM"
 msgstr ""
+"Black Green and Moody theme from Blackosx'ten Siyah Yeşil Karamsar teması,\n"
+"/EFI/CLOVER/themes/BGM konumuna yüklenir"
 
 #. type: "black_green_title"
 #: Resources/templates/Localizable.strings:119
 #, no-wrap
 msgid "Black_Green"
-msgstr ""
+msgstr "Siyah_Yeşil"
 
 #. type: "black_green_description"
 #: Resources/templates/Localizable.strings:120
@@ -559,12 +640,14 @@ msgid ""
 "Default black_green theme from Blackosx,\n"
 "Install to /EFI/CLOVER/themes/black_green"
 msgstr ""
+"Blackosx'ten varsayılan siyah_yeşil teması\n"
+"/EFI/CLOVER/themes/black_green konumuna yüklenir"
 
 #. type: "bluemac_title"
 #: Resources/templates/Localizable.strings:123
 #, no-wrap
 msgid "Bluemac"
-msgstr ""
+msgstr "Mavimac"
 
 #. type: "bluemac_description"
 #: Resources/templates/Localizable.strings:124
@@ -573,12 +656,14 @@ msgid ""
 "Bluemac theme from FowZiey,\n"
 "Install to /EFI/CLOVER/themes/bluemac"
 msgstr ""
+"FowZiey'den Mavimac teması\n"
+"/EFI/CLOVER/themes/bluemac konumuna yüklenir"
 
 #. type: "bootcamp_title"
 #: Resources/templates/Localizable.strings:127
 #, no-wrap
 msgid "BootCamp"
-msgstr ""
+msgstr "BootCamp"
 
 #. type: "bootcamp_description"
 #: Resources/templates/Localizable.strings:128
@@ -587,12 +672,14 @@ msgid ""
 "Bootcamp theme from Bijo,\n"
 "Install to /EFI/CLOVER/themes/bootcamp"
 msgstr ""
+"Bijo'dan Bootcamp  teması\n"
+"/EFI/CLOVER/themes/bootcamp konumuna yüklenir"
 
 #. type: "iclover_title"
 #: Resources/templates/Localizable.strings:131
 #, no-wrap
 msgid "iClover"
-msgstr ""
+msgstr "iClover"
 
 #. type: "iclover_description"
 #: Resources/templates/Localizable.strings:132
@@ -601,12 +688,14 @@ msgid ""
 "Grey style theme by winlog,\n"
 "Install to /EFI/CLOVER/themes/iclover"
 msgstr ""
+"winlog tarafından gri stili tema,\n"
+"/EFI/CLOVER/themes/iclover konumuna yüklenir"
 
 #. type: "magnifico_title"
 #: Resources/templates/Localizable.strings:135
 #, no-wrap
 msgid "Magnifico"
-msgstr ""
+msgstr "Magnifico"
 
 #. type: "magnifico_description"
 #: Resources/templates/Localizable.strings:136
@@ -615,12 +704,14 @@ msgid ""
 "Magnifico theme from Magnifico,\n"
 "Install to /EFI/CLOVER/themes/magnifico"
 msgstr ""
+"Magnifico tarafından yapılan Magnifico teması,\n"
+"/EFI/CLOVER/themes/magnifico konumuna yüklenir"
 
 #. type: "metal_title"
 #: Resources/templates/Localizable.strings:139
 #, no-wrap
 msgid "metal"
-msgstr ""
+msgstr "metal"
 
 #. type: "metal_description"
 #: Resources/templates/Localizable.strings:140
@@ -629,12 +720,14 @@ msgid ""
 "The original metal theme from Slice,\n"
 "Install to /EFI/CLOVER/themes/metal"
 msgstr ""
+"Slice'tan orijinal metal teması,\n"
+"/EFI/CLOVER/themes/metal konumuna yüklenir"
 
 #. type: "mrengles_title"
 #: Resources/templates/Localizable.strings:143
 #, no-wrap
 msgid "mrengles"
-msgstr ""
+msgstr "mrengles"
 
 #. type: "mrengles_description"
 #: Resources/templates/Localizable.strings:144
@@ -643,12 +736,14 @@ msgid ""
 "mrengles theme from mrengles,\n"
 "Install to /EFI/CLOVER/themes/mrengles"
 msgstr ""
+"mrengles'tan mrengles teması,\n"
+"/EFI/CLOVER/themes/mrengles konumuna yüklenir"
 
 #. type: "orange_title"
 #: Resources/templates/Localizable.strings:147
 #, no-wrap
 msgid "Orange"
-msgstr ""
+msgstr "Turuncu"
 
 #. type: "orange_description"
 #: Resources/templates/Localizable.strings:148
@@ -657,12 +752,14 @@ msgid ""
 "Orange theme from dwm,\n"
 "Install to /EFI/CLOVER/themes/orange"
 msgstr ""
+"dwm'den Turuncu teması,\n"
+"/EFI/CLOVER/themes/orange konumuna yüklenir"
 
 #. type: "os_box_title"
 #: Resources/templates/Localizable.strings:151
 #, no-wrap
 msgid "OS Box"
-msgstr ""
+msgstr "OS Box"
 
 #. type: "os_box_description"
 #: Resources/templates/Localizable.strings:152
@@ -671,12 +768,14 @@ msgid ""
 "OS Box theme from Kyndder,\n"
 "Install to /EFI/CLOVER/themes/os_box"
 msgstr ""
+"Kyndder'dan OS Box teması,\n"
+"/EFI/CLOVER/themes/os_box konumuna yüklenir"
 
 #. type: "os_one_title"
 #: Resources/templates/Localizable.strings:155
 #, no-wrap
 msgid "OS One"
-msgstr ""
+msgstr "OS One"
 
 #. type: "os_one_description"
 #: Resources/templates/Localizable.strings:156
@@ -685,12 +784,14 @@ msgid ""
 "OS One theme from Kyndder,\n"
 "Install to /EFI/CLOVER/themes/os_one"
 msgstr ""
+"Kyndder'dan OS One teması,\n"
+"/EFI/CLOVER/themes/os_one dizinine yüklenir"
 
 #. type: "thinkpad_title"
 #: Resources/templates/Localizable.strings:159
 #, no-wrap
 msgid "ThinkPad"
-msgstr ""
+msgstr "ThinkPad"
 
 #. type: "thinkpad_description"
 #: Resources/templates/Localizable.strings:160
@@ -699,12 +800,14 @@ msgid ""
 "ThinkPad theme from Kogen Mantis,\n"
 "Install to /EFI/CLOVER/themes/thinkpad"
 msgstr ""
+"Kogen Mantis'ten ThinkPad teması,\n"
+"/EFI/CLOVER/themes/thinkpad konumuna yüklenir"
 
 #. type: "buttons_title"
 #: Resources/templates/Localizable.strings:163
 #, no-wrap
 msgid "buttons"
-msgstr ""
+msgstr "düğmeler"
 
 #. type: "buttons_description"
 #: Resources/templates/Localizable.strings:164
@@ -713,12 +816,14 @@ msgid ""
 "Buttons theme from Trauma,\n"
 "Install to /EFI/CLOVER/themes/buttons."
 msgstr ""
+"Trauma'dan Düğmeler teması,\n"
+"/EFI/CLOVER/themes/buttons konumuna yüklenir"
 
 #. type: "hellfire_title"
 #: Resources/templates/Localizable.strings:167
 #, no-wrap
 msgid "hellfire"
-msgstr ""
+msgstr "hellfire"
 
 #. type: "hellfire_description"
 #: Resources/templates/Localizable.strings:168
@@ -727,12 +832,14 @@ msgid ""
 "Hellfire theme from lllevelll,\n"
 "Install to /EFI/CLOVER/themes/hellfire."
 msgstr ""
+"Hellfire theme from lllevelll'dan Hellfire teması,\n"
+"/EFI/CLOVER/themes/hellfire konumuna yüklenir"
 
 #. type: "simple_gray_title"
 #: Resources/templates/Localizable.strings:171
 #, no-wrap
 msgid "simple_gray"
-msgstr ""
+msgstr "simple_gray"
 
 #. type: "simple_gray_description"
 #: Resources/templates/Localizable.strings:172
@@ -741,12 +848,14 @@ msgid ""
 "Simple_gray theme from hijeane,\n"
 "Install to /EFI/CLOVER/themes/simple_gray."
 msgstr ""
+"hijeane'den Simple_gray teması,\n"
+"/EFI/CLOVER/themes/simple_gray konumuna yükle"
 
 #. type: "wooden_title"
 #: Resources/templates/Localizable.strings:175
 #, no-wrap
 msgid "wooden"
-msgstr ""
+msgstr "wooden"
 
 #. type: "wooden_description"
 #: Resources/templates/Localizable.strings:176
@@ -755,12 +864,14 @@ msgid ""
 "Wooden theme from iROOTa,\n"
 "Install to /EFI/CLOVER/themes/wooden."
 msgstr ""
+"iROOTa'dan Wooden teması ,\n"
+"/EFI/CLOVER/themes/wooden konumuna yüklenir"
 
 #. type: "rc.scripts.on.target_title"
 #: Resources/templates/Localizable.strings:182
 #, no-wrap
 msgid "Install RC scripts on target volume"
-msgstr ""
+msgstr "Hedef bölüme RC scriptlerini yükle"
 
 #. type: "rc.scripts.on.target_description"
 #: Resources/templates/Localizable.strings:183
@@ -769,36 +880,42 @@ msgid ""
 "Install all RC scripts on target volume.\n"
 "The target volume must be a bootable OSX system volume."
 msgstr ""
+"Hedef bölüme RC scriptlerini yükle.\n"
+"Hedef bölüm önyüklenebilir bir OS X sistem bölümü olmalıdır."
 
 #. type: "rc.scripts.on.all.volumes_title"
 #: Resources/templates/Localizable.strings:185
 #, no-wrap
 msgid "Install all RC scripts on all other bootable OSX volumes"
-msgstr ""
+msgstr "RC scriptlerini bütün diğer OS X bölümlerine yükle"
 
 #. type: "rc.scripts.on.all.volumes_description"
 #: Resources/templates/Localizable.strings:186
 #, no-wrap
 msgid "Install all RC scripts on all internal bootable OSX volumes other than the target volume."
 msgstr ""
+"RC scriptlerini hedef bölüm hariç diğer bütün dahili önyüklenebilir OS X "
+"bölümlerine yükle."
 
 #. type: "Optional RC Scripts"
 #: Resources/templates/Localizable.strings:187
 #, no-wrap
 msgid "Optional RC Scripts"
-msgstr ""
+msgstr "İsteğe bağlı RC scriptleri"
 
 #. type: "disable_sleep_proxy_client_description"
 #: Resources/templates/Localizable.strings:188
 #, no-wrap
 msgid "Disable the mDNSResponder sleep proxy client service. This will prevent the system waking from sleep every hours"
 msgstr ""
+"mDNSResponder vekil uyku istemcisi servisini devre dışı bırak. Bu, sistemin "
+"her saat uykudan uyanmasını engelleyecektir."
 
 #. type: "CloverPrefpane_title"
 #: Resources/templates/Localizable.strings:193
 #, no-wrap
 msgid "Install Clover Preference Pane"
-msgstr ""
+msgstr "Clover Tercih Panosunu yükle"
 
 #. type: "CloverPrefpane_description"
 #: Resources/templates/Localizable.strings:194
@@ -807,6 +924,8 @@ msgid ""
 "Install Clover Preference Pane on target volume.\n"
 "Include CloverUpdater that can notify you about Clover updates."
 msgstr ""
+"Clover Tercih Panosunu hedef bölüme yükle.\n"
+"Clover güncellemelerinden sizi haberdar eden CloverUpdater'ı yükle."
 
 #. type: "371.title"
 #: ../CloverUpdater/CloverUpdater.strings:1
@@ -814,337 +933,340 @@ msgstr ""
 #: ../CloverUpdater/CloverUpdater.strings:5
 #, no-wrap
 msgid "CloverUpdater"
-msgstr ""
+msgstr "CloverUpdater"
 
 #. type: "58.title"
 #: ../CloverUpdater/CloverUpdater.strings:3
 #, no-wrap
 msgid "About CloverUpdater"
-msgstr ""
+msgstr "CloverUpdater Hakkında"
 
 #. type: "136.title"
 #: ../CloverUpdater/CloverUpdater.strings:4
 #, no-wrap
 msgid "Quit CloverUpdater"
-msgstr ""
+msgstr "CloverUpdater'dan çık"
 
 #. type: "534.title"
 #: ../CloverUpdater/CloverUpdater.strings:6
 #, no-wrap
 msgid "Current local Clover revision:"
-msgstr ""
+msgstr "Mevcut yerel Clover sürümü:"
 
 #. type: "538.title"
 #: ../CloverUpdater/CloverUpdater.strings:7
 #, no-wrap
 msgid "Latest update revision:"
-msgstr ""
+msgstr "Son güncelleme revizyonu:"
 
 #. type: "542.title"
 #: ../CloverUpdater/CloverUpdater.strings:8
 #, no-wrap
 msgid "Do you want to update ?"
-msgstr ""
+msgstr "Güncellemek istiyor musunuz?"
 
 #. type: "546.title"
 #: ../CloverUpdater/CloverUpdater.strings:9
 #, no-wrap
 msgid "Not now"
-msgstr ""
+msgstr "Şimdi değil"
 
 #. type: "548.title"
 #: ../CloverUpdater/CloverUpdater.strings:10
 #, no-wrap
 msgid "Update"
-msgstr ""
+msgstr "Güncelle"
 
 #. type: "585.title"
 #: ../CloverUpdater/CloverUpdater.strings:11
 #, no-wrap
 msgid "No update available !"
-msgstr ""
+msgstr "Hiç güncelleme yok!"
 
 #. type: "586.title"
 #: ../CloverUpdater/CloverUpdater.strings:12
 #, no-wrap
 msgid "Ok"
-msgstr ""
+msgstr "Tamam"
 
 #. type: "12.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:1
 #, no-wrap
 msgid "Clover"
-msgstr ""
+msgstr "Clover"
 
 #. type: "Never"
 #: ../CloverPrefpane/CloverPrefpane.strings:2
 #: ../CloverPrefpane/Localizable.strings:5
 #, no-wrap
 msgid "Never"
-msgstr ""
+msgstr "Asla"
 
 #. type: "205.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:3
 #, no-wrap
 msgid "Daily"
-msgstr ""
+msgstr "Günde bir"
 
 #. type: "206.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:4
 #, no-wrap
 msgid "Weekly"
-msgstr ""
+msgstr "Haftada bir"
 
 #. type: "217.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:5
 #, no-wrap
 msgid "Hourly"
-msgstr ""
+msgstr "Saatte bir"
 
 #. type: "239.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:6
 #, no-wrap
 msgid "Monthly"
-msgstr ""
+msgstr "Her ay"
 
 #. type: "241.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:7
 #, no-wrap
 msgid "Check for Updates"
-msgstr ""
+msgstr "Güncellemeleri Kontrol Et"
 
 #. type: "243.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:8
 #, no-wrap
 msgid "Schedule Check Updates Every:"
-msgstr ""
+msgstr "Zamanlanmış Güncelleme Kontrolü Yap:"
 
 #. type: "248.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:9
 #, no-wrap
 msgid "Last check:"
-msgstr ""
+msgstr "Son kontrol:"
 
 #. type: "258.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:10
 #, no-wrap
 msgid "Check Now"
-msgstr ""
+msgstr "Şimdi kontrol et"
 
 #. type: "262.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:11
 #, no-wrap
 msgid "Copyright (c) 2013 JrCs, kozlek\\nAll Rights Reserved"
-msgstr ""
+msgstr "Telif hakkı (c) 2013 JrCs, kozlek\\nTüm hakkı saklıdır"
 
 #. type: "294.label"
 #: ../CloverPrefpane/CloverPrefpane.strings:12
 #, no-wrap
 msgid "NVRam Variables"
-msgstr ""
+msgstr "NVRam Değişkenleri"
 
 #. type: "295.label"
 #: ../CloverPrefpane/CloverPrefpane.strings:13
 #, no-wrap
 msgid "General"
-msgstr ""
+msgstr "Genel"
 
 #. type: "298.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:14
 #, no-wrap
 msgid "Revisions"
-msgstr ""
+msgstr "Revizyonlar"
 
 #. type: "300.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:15
 #, no-wrap
 msgid "Current booted revision:"
-msgstr ""
+msgstr "Mevcut önyüklenmiş sürüm:"
 
 #. type: "302.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:16
 #, no-wrap
 msgid "Last installed revision:"
-msgstr ""
+msgstr "Son yüklenen revizyon:"
 
 #. type: "309.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:17
 #, no-wrap
 msgid "Log Files"
-msgstr ""
+msgstr "Günlük dosyaları"
 
 #. type: "314.ibShadowedToolTip"
 #: ../CloverPrefpane/CloverPrefpane.strings:18
 #, no-wrap
 msgid "Number of lines of history to keep in CloverEFI/system.log file in addition to the current CloverEFI/boot.log contents"
 msgstr ""
+"Halihazırdaki CloverEFI/boot.log içeriğine ek olarak CloverEFI/system.log "
+"dosyasında tutulacak geçmiş kayıtların satır sayısı"
 
 #. type: "327.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:19
 #, no-wrap
 msgid "Advanced Configurations"
-msgstr ""
+msgstr "Gelişmiş Yapılandırmalar"
 
 #. type: "332.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:20
 #, no-wrap
 msgid "Force mount selected ESP at startup:"
-msgstr ""
+msgstr "Seçili ESP'yi açılışta zorla yerleştir:"
 
 #. type: "339.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:21
 #, no-wrap
 msgid "Save NVRAM contents to disk:"
-msgstr ""
+msgstr "NVRAM içeriğini diske kaydet:"
 
 #. type: "374.label"
 #: ../CloverPrefpane/CloverPrefpane.strings:22
 #, no-wrap
 msgid "Theme"
-msgstr ""
+msgstr "Tema"
 
 #. type: "392.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:23
 #, no-wrap
 msgid "Clover Theme"
-msgstr ""
+msgstr "Clover Teması"
 
 #. type: "399.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:24
 #, no-wrap
 msgid "Author:"
-msgstr ""
+msgstr "Yazar:"
 
 #. type: "401.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:25
 #, no-wrap
 msgid "Year:"
-msgstr ""
+msgstr "Yıl:"
 
 #. type: "423.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:26
 #, no-wrap
 msgid "To see previews of themes you must select the path to the EFI folder."
 msgstr ""
+"Temaların önizlemelerini görmek için EFI klasörünün yolunu seçmelisiniz."
 
 #. type: "426.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:27
 #, no-wrap
 msgid "Theme:"
-msgstr ""
+msgstr "Tema:"
 
 #. type: "429.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:28
 #, no-wrap
 msgid "No Preview Available"
-msgstr ""
+msgstr "Önizleme mevcut değil"
 
 #. type: "431.ibShadowedToolTip"
 #: ../CloverPrefpane/CloverPrefpane.strings:29
 #, no-wrap
 msgid "Mounting the ESP partition on boot"
-msgstr ""
+msgstr "ESP bölümü önyükleme esnasında yerleştiriliyor"
 
 #. type: "452.ibShadowedToolTip"
 #: ../CloverPrefpane/CloverPrefpane.strings:30
 #, no-wrap
 msgid "Where to save the nvram contents"
-msgstr ""
+msgstr "NVRAM içeriğini kaydetme konumu"
 
 #. type: "483.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:31
 #, no-wrap
 msgid "Number of history boot log lines to keep:"
-msgstr ""
+msgstr "Tutulacak önyükleme kaydı satırı sayısı:"
 
 #. type: "522.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:32
 #, no-wrap
 msgid "Create timestamp CloverEFI/boot.log file on every boot"
-msgstr ""
+msgstr "Her önyüklemede CloverEFI/boot.log zaman damgası dosyası oluştur"
 
 #. type: "525.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:33
 #, no-wrap
 msgid "Number of timestamp boot.log files to keep:"
-msgstr ""
+msgstr "Kaydı tutulacak boot.log zaman damgalarının miktarı:"
 
 #. type: "555.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:34
 #, no-wrap
 msgid "Backup"
-msgstr ""
+msgstr "Yedek"
 
 #. type: "557.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:35
 #, no-wrap
 msgid "On install backup EFI folder to destination volume"
-msgstr ""
+msgstr "Yüklerken EFI klasörünü hedef bölüme yedekle"
 
 #. type: "560.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:36
 #, no-wrap
 msgid "Number of backups to keep:"
-msgstr ""
+msgstr "Saklanacak yedek sayısı:"
 
 #. type: "567.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:37
 #, no-wrap
 msgid "EFI Folder path"
-msgstr ""
+msgstr "EFI klasörü yolu"
 
 #. type: "Auto"
 #: ../CloverPrefpane/CloverPrefpane.strings:38
 #: ../CloverPrefpane/Localizable.strings:2
 #, no-wrap
 msgid "Auto"
-msgstr ""
+msgstr "Otomatik"
 
 #. type: "No"
 #: ../CloverPrefpane/CloverPrefpane.strings:39
 #: ../CloverPrefpane/Localizable.strings:6
 #, no-wrap
 msgid "No"
-msgstr ""
+msgstr "Hayır"
 
 #. type: "Always"
 #: ../CloverPrefpane/Localizable.strings:1
 #, no-wrap
 msgid "Always"
-msgstr ""
+msgstr "Her zaman"
 
 #. type: "Boot Volume"
 #: ../CloverPrefpane/Localizable.strings:3
 #, no-wrap
 msgid "Boot Volume"
-msgstr ""
+msgstr "Önyükleme Bölümü"
 
 #. type: "ESP on [%@] %@"
 #: ../CloverPrefpane/Localizable.strings:4
 #, no-wrap
 msgid "ESP on [%1$@] %2$@"
-msgstr ""
+msgstr "ESP [%1$@] %2$@ üstünde"
 
 #. type: "No description available"
 #: ../CloverPrefpane/Localizable.strings:7
 #, no-wrap
 msgid "No description available"
-msgstr ""
+msgstr "Açıklama yok"
 
 #. type: "Select the EFI directory"
 #: ../CloverPrefpane/Localizable.strings:8
 #, no-wrap
 msgid "Select the EFI directory"
-msgstr ""
+msgstr "EFI dizinini seç"
 
 #. type: "Set EFI directory"
 #: ../CloverPrefpane/Localizable.strings:9
 #, no-wrap
 msgid "Set EFI directory"
-msgstr ""
+msgstr "EFI dizinini belirle"
 
 #. type: "Unknown"
 #: ../CloverPrefpane/Localizable.strings:10
 #, no-wrap
 msgid "Unknown"
-msgstr ""
+msgstr "Bilinmeyen"
