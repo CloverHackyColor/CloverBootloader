@@ -144,6 +144,7 @@
 #  GenericBdsLib
   MemLogLib
   VideoBiosPatchLib
+  BaseCryptLib
 
 [Guids]
   gEfiAcpiTableGuid
@@ -166,6 +167,12 @@
   gEfiSmbiosTableGuid
   gEfiSasDevicePathGuid
   gEfiImageSecurityDatabaseGuid
+  gEfiCertSha1Guid
+  gEfiCertSha256Guid
+  gEfiCertPkcs7Guid
+  gEfiCertRsa2048Guid
+  gEfiCertRsa2048Sha256Guid
+  gEfiCertTypeRsa2048Sha256Guid
 	
 
 [Ppis]
