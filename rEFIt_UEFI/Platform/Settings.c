@@ -1525,7 +1525,7 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
     if(prop) {
       UINTN j = 128;
       gSettings.CustomEDID = GetDataSetting(dictPointer, "CustomEDID", &j);
-      if (j != 128) {
+      if ((j % 128) != 0) {
         DBG("CustomEDID has wrong length=%d\n", j);
       } else {
         DBG("CustomEDID ok\n");

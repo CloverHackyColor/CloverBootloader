@@ -100,9 +100,9 @@ EFI_STATUS GetEdidDiscovered(VOID)
     }
     CopyMem(gEDID, EdidDiscovered->Edid, N);
     if (!GlobalConfig.DebugLog) {
-      for (i=0; i<N; i+=10) {
+      for (i=0; i<N; i+=16) {
         MsgLog("%02d | ", i);
-        for (j=0; j<10; j++) {
+        for (j=0; j<16; j++) {
           MsgLog("%02x ", EdidDiscovered->Edid[i+j]);
         }
         MsgLog("\n");
