@@ -35,7 +35,7 @@
 
 #include "entry_scan.h"
 
-#include <Library/BaseCryptLib.h>
+#include <openssl/sha.h>
 
 #include <Guid/ImageAuthentication.h>
 
@@ -56,46 +56,507 @@
 #define PKCS7_SIZE (sizeof(WIN_CERTIFICATE) - 1)
 #define EFIGUID_SIZE (sizeof(WIN_CERTIFICATE_UEFI_GUID) - 1)
 
-// TODO: Add image signature list
-EFI_STATUS AddImageSignatureList(IN VOID  *SignatureList,
-                                 IN UINTN  SignatureListSize)
+// Check database for signature
+STATIC EFI_STATUS CheckSignatureIsInDatabase(IN VOID     *Database,
+                                             IN UINTN     DatabaseSize,
+                                             IN EFI_GUID *SignatureType,
+                                             IN VOID     *Signature,
+                                             IN UINTN     SignatureSize)
 {
+  UINT8 *DatabasePtr;
+  UINT8 *DatabaseEnd;
   // Check parameters
-  if ((SignatureList == NULL) || (SignatureListSize == 0)) {
+  if ((SignatureType == NULL) || (Signature == NULL) || (SignatureSize == 0)) {
     return EFI_INVALID_PARAMETER;
   }
-  return EFI_ABORTED;
+  if ((Database == NULL) || (DatabaseSize <= sizeof(EFI_SIGNATURE_LIST))) {
+    return EFI_NOT_FOUND;
+  }
+  // Get the database start and end
+  DatabasePtr = (UINT8 *)Database;
+  DatabaseEnd = DatabasePtr + DatabaseSize;
+  // Traverse the database
+  while (DatabasePtr < DatabaseEnd) {
+    EFI_SIGNATURE_LIST *SignatureList = (EFI_SIGNATURE_LIST *)DatabasePtr;
+    UINT8              *Ptr, *End;
+    // Check the list is valid
+    if ((SignatureList->SignatureListSize <= sizeof(EFI_SIGNATURE_LIST)) || (SignatureList->SignatureSize <= sizeof(EFI_GUID))) {
+      return EFI_INVALID_PARAMETER;
+    }
+    // Check if this signature list can contain the signature
+    if (((SignatureSize + sizeof(EFI_GUID)) == SignatureList->SignatureSize) &&
+        (CompareMem(SignatureType, &(SignatureList->SignatureType), sizeof(EFI_GUID)))) {
+      // Get signature list data start
+      UINTN Offset = SignatureList->SignatureHeaderSize + sizeof(EFI_SIGNATURE_LIST);
+      Ptr = ((UINT8 *)SignatureList) + Offset;
+      End = Ptr + (SignatureList->SignatureListSize - Offset);
+      Ptr += sizeof(EFI_GUID);
+      // Check for the signature
+      while (Ptr < End) {
+        if (CompareMem(Ptr, Signature, SignatureSize) == 0) {
+          // The signature was found
+          return EFI_SUCCESS;
+        }
+        Ptr += SignatureList->SignatureSize;
+      }
+    }
+    // Get the next signature list
+    DatabasePtr += SignatureList->SignatureListSize;
+  }
+  return EFI_NOT_FOUND;
 }
 
-// TODO: Remove image signatures
-EFI_STATUS RemoveImageSignatureList(IN VOID  *SignatureList,
-                                    IN UINTN  SignatureListSize)
+// Append a signature to a signature list
+STATIC EFI_STATUS AppendSignatureToList(IN OUT EFI_SIGNATURE_LIST **SignatureList,
+                                        IN     EFI_GUID            *SignatureType,
+                                        IN     VOID                *Signature,
+                                        IN     UINTN                SignatureSize)
 {
+  EFI_SIGNATURE_LIST *OldSignatureList;
+  EFI_SIGNATURE_LIST *NewSignatureList;
+  UINT8              *Ptr, *End;
+  UINTN               Offset;
+  UINT32              DataSize = (UINT32)(SignatureSize + sizeof(EFI_GUID));
   // Check parameters
-  if ((SignatureList == NULL) || (SignatureListSize == 0)) {
+  if ((SignatureList == NULL) || (SignatureType == NULL) ||
+      (Signature == NULL) || (SignatureSize == 0)) {
     return EFI_INVALID_PARAMETER;
   }
-  return EFI_ABORTED;
+  // Check if there is an old signature list
+  OldSignatureList = *SignatureList;
+  if (OldSignatureList == NULL) {
+    // There is no list so create a new signature list
+    NewSignatureList = (EFI_SIGNATURE_LIST *)AllocateZeroPool(sizeof(EFI_SIGNATURE_LIST) + DataSize);
+    if (NewSignatureList == NULL) {
+      return EFI_OUT_OF_RESOURCES;
+    }
+    // Copy the signature to the list
+    CopyMem(&(NewSignatureList->SignatureType), SignatureType, sizeof(EFI_GUID));
+    NewSignatureList->SignatureListSize = (UINT32)(DataSize + sizeof(EFI_SIGNATURE_LIST));
+    NewSignatureList->SignatureSize = (UINT32)DataSize;
+    *SignatureList = NewSignatureList;
+    return EFI_SUCCESS;
+  }
+  // Check the signature type and size matches this list
+  if ((OldSignatureList->SignatureListSize <= sizeof(EFI_SIGNATURE_LIST)) ||
+      (OldSignatureList->SignatureSize <= sizeof(EFI_GUID)) ||
+      (DataSize != OldSignatureList->SignatureSize) ||
+      (CompareMem(SignatureType, &(OldSignatureList->SignatureType), sizeof(EFI_GUID)) != 0)) {
+    return EFI_INVALID_PARAMETER;
+  }
+  // Get the start of signatures data but offset by sizeof(EFI_GUID) so we can skip owner
+  Offset = sizeof(EFI_SIGNATURE_LIST) + OldSignatureList->SignatureHeaderSize;
+  Ptr = ((UINT8 *)OldSignatureList) + Offset;
+  End = Ptr + (OldSignatureList->SignatureListSize - Offset);
+  Ptr += sizeof(EFI_GUID);
+  // Check the signature doesn't already exist in list
+  while (Ptr < End) {
+    if (CompareMem(Ptr + sizeof(EFI_GUID), Signature, SignatureSize) == 0) {
+      // Just pretend like we added it if it exists already
+      return EFI_SUCCESS;
+    }
+    Ptr += OldSignatureList->SignatureSize;
+  }
+  // Create a new list for signatures
+  NewSignatureList = (EFI_SIGNATURE_LIST *)AllocateZeroPool(OldSignatureList->SignatureListSize + DataSize);
+  if (NewSignatureList == NULL) {
+    return EFI_OUT_OF_RESOURCES;
+  }
+  // Copy old list to new
+  CopyMem(NewSignatureList, OldSignatureList, OldSignatureList->SignatureListSize);
+  // Increase list size
+  NewSignatureList->SignatureListSize += DataSize;
+  // Copy new signature
+  CopyMem(((UINT8 *)NewSignatureList) + OldSignatureList->SignatureListSize + sizeof(EFI_GUID), Signature, SignatureSize);
+  // Update the list and free old
+  *SignatureList = NewSignatureList;
+  FreePool(OldSignatureList);
+  return EFI_SUCCESS;
 }
 
-// TODO: Clear signatures database
-EFI_STATUS ClearImageSignatureDatabase(VOID)
+// Append a signature list to a signature database
+STATIC EFI_STATUS AppendSignatureListToDatabase(IN OUT VOID               **Database,
+                                                IN OUT UINTN               *DatabaseSize,
+                                                IN     EFI_SIGNATURE_LIST  *SignatureList)
 {
-   return EFI_ABORTED;
+  EFI_SIGNATURE_LIST *List = NULL;
+  UINT8              *Ptr, *End;
+  UINT8              *OldDatabase;
+  UINT8              *NewDatabase;
+  UINTN               OldDatabaseSize;
+  UINTN               NewDatabaseSize;
+  UINTN               Size;
+  // Check parameters
+  if ((Database == NULL) || (DatabaseSize == NULL) || (SignatureList == NULL) ||
+      (SignatureList->SignatureListSize <= sizeof(EFI_SIGNATURE_LIST)) ||
+      (SignatureList->SignatureSize <= sizeof(EFI_GUID))) {
+    return EFI_INVALID_PARAMETER;
+  }
+  // Get old database
+  OldDatabase = (UINT8 *)*Database;
+  OldDatabaseSize = *DatabaseSize;
+  if ((OldDatabase == NULL) || (OldDatabaseSize <= sizeof(EFI_SIGNATURE_LIST))) {
+    // No database so just set it to the signature list
+    NewDatabaseSize = SignatureList->SignatureListSize;
+    NewDatabase = (UINT8 *)AllocatePool(NewDatabaseSize);
+    if (NewDatabase == NULL) {
+      return EFI_OUT_OF_RESOURCES;
+    }
+    // Free the old database if needed
+    if (OldDatabase != NULL) {
+      FreePool(OldDatabase);
+    }
+    // Copy the signature list to the database
+    CopyMem(*Database = NewDatabase, SignatureList, *DatabaseSize = NewDatabaseSize);
+    return EFI_SUCCESS;
+  }
+  // Rebuild the signature list with only signatures that aren't found in database
+  Ptr = ((UINT8 *)SignatureList) + SignatureList->SignatureHeaderSize + sizeof(EFI_SIGNATURE_LIST) + sizeof(EFI_GUID);
+  End = ((UINT8 *)SignatureList) + SignatureList->SignatureListSize;
+  Size = (SignatureList->SignatureSize - sizeof(EFI_GUID));
+  while (Ptr < End) {
+    // Check signature is already in database
+    EFI_STATUS Status = CheckSignatureIsInDatabase(OldDatabase, OldDatabaseSize, &(SignatureList->SignatureType), Ptr, Size);
+    if (Status == EFI_NOT_FOUND) {
+      // Add to new signature list if not found in database
+      Status = AppendSignatureToList(&List, &(SignatureList->SignatureType), Ptr, Size);
+    }
+    if (EFI_ERROR(Status)) {
+      if (List != NULL) {
+        FreePool(List);
+      }
+      return Status;
+    }
+    Ptr += SignatureList->SignatureSize;
+  }
+  // Check any signatures remain to be added
+  if (List == NULL) {
+    return EFI_SUCCESS;
+  }
+  // Check the list is valid
+  if ((List->SignatureListSize <= sizeof(EFI_SIGNATURE_LIST)) ||
+      (List->SignatureSize <= sizeof(EFI_GUID))) {
+    FreePool(List);
+    // Unsure if this should return an error or success
+    return EFI_SUCCESS;
+  }
+  // Create a new database
+  NewDatabaseSize = OldDatabaseSize + List->SignatureListSize;
+  NewDatabase = (UINT8 *)AllocatePool(NewDatabaseSize);
+  if (NewDatabase == NULL) {
+    FreePool(List);
+    return EFI_OUT_OF_RESOURCES;
+  }
+  // Copy original database and free it
+  CopyMem(*Database = NewDatabase, OldDatabase, OldDatabaseSize);
+  FreePool(OldDatabase);
+  // Append signature list to end of database
+  CopyMem(NewDatabase + OldDatabaseSize, SignatureList, List->SignatureListSize);
+  *DatabaseSize = NewDatabaseSize;
+  FreePool(List);
+  return EFI_SUCCESS;
+}
+
+// Append a signature to a signature database
+STATIC EFI_STATUS AppendSignatureToDatabase(IN OUT VOID     **Database,
+                                            IN OUT UINTN     *DatabaseSize,
+                                            IN     EFI_GUID  *SignatureType,
+                                            IN     VOID      *Signature,
+                                            IN     UINTN      SignatureSize)
+{
+  // Create a new signature list
+  EFI_SIGNATURE_LIST *List = NULL;
+  EFI_STATUS          Status = AppendSignatureToList(&List, SignatureType, Signature, SignatureSize);
+  if (EFI_ERROR(Status)) {
+    if (List != NULL) {
+      FreePool(List);
+    }
+    return Status;
+  }
+  // Add the signature list to database
+  Status = AppendSignatureListToDatabase(Database, DatabaseSize, List);
+  FreePool(List);
+  return Status;
+}
+
+// Append a signature database to another signature database
+STATIC EFI_STATUS AppendSignatureDatabaseToDatabase(IN OUT VOID  **Database,
+                                                    IN OUT UINTN  *DatabaseSize,
+                                                    IN     VOID   *SignatureDatabase,
+                                                    IN     UINTN   SignatureDatabaseSize)
+{
+  UINT8 *Ptr, *End;
+  // Check parameters
+  if ((Database == NULL) || (DatabaseSize == NULL) ||
+      (SignatureDatabase == NULL) || (SignatureDatabaseSize <= sizeof(EFI_SIGNATURE_LIST))) {
+    return EFI_INVALID_PARAMETER;
+  }
+  // Get the signature database start
+  Ptr = (UINT8 *)SignatureDatabase;
+  End = Ptr + SignatureDatabaseSize;
+  while (Ptr < End) {
+    // Get each signature list in signature database
+    EFI_SIGNATURE_LIST *List = (EFI_SIGNATURE_LIST *)Ptr;
+    EFI_STATUS          Status;
+    if ((List->SignatureListSize <= sizeof(EFI_SIGNATURE_LIST)) || (List->SignatureSize <= sizeof(EFI_GUID))) {
+      return EFI_INVALID_PARAMETER;
+    }
+    // Add the signature list to the database
+    Status = AppendSignatureListToDatabase(Database, DatabaseSize, List);
+    if (EFI_ERROR(Status)) {
+      return Status;
+    }
+    Ptr += List->SignatureListSize;
+  }
+  return EFI_SUCCESS;
+}
+
+// Add image signature database to authorized database
+EFI_STATUS AppendImageDatabaseToAuthorizedDatabase(IN VOID  *Database,
+                                                   IN UINTN  DatabaseSize)
+{
+  EFI_STATUS  Status;
+  VOID       *AuthDatabase;
+  UINTN       AuthDatabaseSize;
+  // Check parameters
+  if ((Database == NULL) || (DatabaseSize <= sizeof(EFI_SIGNATURE_LIST))) {
+    return EFI_INVALID_PARAMETER;
+  }
+  // Get the authorized database
+  AuthDatabase = GetAuthorizedDatabase(&AuthDatabaseSize);
+  // Add the signature database to the authorized database
+  Status = AppendSignatureDatabaseToDatabase(&AuthDatabase, &AuthDatabaseSize, Database, DatabaseSize);
+  if (EFI_ERROR(Status)) {
+    if (AuthDatabase != NULL) {
+      FreePool(AuthDatabase);
+    }
+    return Status;
+  }
+  // Check there is any to set
+  if (AuthDatabase == NULL) {
+    return ClearAuthorizedDatabase();
+  }
+  if (AuthDatabaseSize <= sizeof(EFI_SIGNATURE_LIST)) {
+    FreePool(AuthDatabase);
+    return ClearAuthorizedDatabase();
+  }
+  // Set the authorized database
+  Status = SetAuthorizedDatabase(AuthDatabase, AuthDatabaseSize);
+  FreePool(AuthDatabase);
+  return Status;
+}
+
+STATIC EFI_STATUS RemoveSignatureFromDatabase(IN OUT VOID     **Database,
+                                              IN OUT UINTN     *DatabaseSize,
+                                              IN     EFI_GUID  *SignatureType,
+                                              IN     VOID      *Signature,
+                                              IN     UINTN      SignatureSize)
+{
+  UINT8 *Ptr, *End;
+  VOID  *OldDatabase;
+  VOID  *NewDatabase = NULL;
+  UINTN  OldDatabaseSize;
+  UINTN  NewDatabaseSize = 0;
+  // Check parameters
+  if ((Database == NULL) || (DatabaseSize == NULL) || (SignatureType == NULL) || 
+      (Signature == NULL) || (SignatureSize <= sizeof(EFI_SIGNATURE_LIST))) {
+    return EFI_INVALID_PARAMETER;
+  }
+  OldDatabase = (UINT8 *)*Database;
+  OldDatabaseSize = *DatabaseSize;
+  if ((OldDatabase == NULL) || (OldDatabaseSize <= sizeof(EFI_SIGNATURE_LIST))) {
+    // Nothing to do if the database is empty
+    return EFI_SUCCESS;
+  }
+  // Get the signature database start
+  Ptr = (UINT8 *)OldDatabase;
+  End = Ptr + OldDatabaseSize;
+  while (Ptr < End) {
+    // Get each signature list in signature database
+    EFI_SIGNATURE_LIST *List = (EFI_SIGNATURE_LIST *)Ptr;
+    EFI_STATUS          Status = EFI_SUCCESS;
+    if ((List->SignatureListSize <= sizeof(EFI_SIGNATURE_LIST)) || (List->SignatureSize <= sizeof(EFI_GUID))) {
+      if (NewDatabase != NULL) {
+        FreePool(NewDatabase);
+      }
+      return EFI_INVALID_PARAMETER;
+    }
+    // Check this signature could be found in this list
+    if (((List->SignatureSize - sizeof(EFI_GUID)) == SignatureSize) &&
+        (CompareMem(SignatureType, &(List->SignatureType), sizeof(EFI_GUID)) == 0)) {
+      // Remove the signature list from the database
+      UINT8 *ListPtr = Ptr + List->SignatureHeaderSize + sizeof(EFI_SIGNATURE_LIST) + sizeof(EFI_GUID);
+      UINT8 *ListEnd = Ptr + List->SignatureListSize;
+      EFI_SIGNATURE_LIST *NewList = NULL;
+      while (ListPtr < ListEnd) {
+        // Compare the signatures
+        if (CompareMem(Ptr, Signature, SignatureSize) != 0) {
+          // Not a match so append it to new list
+          Status = AppendSignatureToList(&NewList, SignatureType, Ptr, SignatureSize);
+          if (EFI_ERROR(Status)) {
+            if (NewList != NULL) {
+              FreePool(NewList);
+            }
+            if (NewDatabase != NULL) {
+              FreePool(NewDatabase);
+            }
+            return Status;
+          }
+        }
+        ListPtr += List->SignatureSize;
+      }
+      // Append new list if any
+      if (NewList != NULL) {
+        Status = AppendSignatureListToDatabase(&NewDatabase, &NewDatabaseSize, NewList);
+        FreePool(NewList);
+      }
+    } else {
+      // Append this whole list as it can't hold the signature
+      Status = AppendSignatureListToDatabase(&NewDatabase, &NewDatabaseSize, List);
+    }
+    if (EFI_ERROR(Status)) {
+      if (NewDatabase != NULL) {
+        FreePool(NewDatabase);
+      }
+      return Status;
+    }
+    Ptr += List->SignatureListSize;
+  }
+  // Set new database
+  *Database = NewDatabase;
+  *DatabaseSize = NewDatabaseSize;
+  FreePool(OldDatabase);
+  return EFI_SUCCESS;
+}
+
+STATIC EFI_STATUS RemoveSignatureListFromDatabase(IN OUT VOID               **Database,
+                                                  IN OUT UINTN               *DatabaseSize,
+                                                  IN     EFI_SIGNATURE_LIST  *SignatureList)
+{
+  UINT8              *Ptr, *End;
+  UINT8              *OldDatabase;
+  UINTN               OldDatabaseSize;
+  UINTN               Size;
+  // Check parameters
+  if ((Database == NULL) || (DatabaseSize == NULL) || (SignatureList == NULL) ||
+      (SignatureList->SignatureListSize <= sizeof(EFI_SIGNATURE_LIST)) ||
+      (SignatureList->SignatureSize <= sizeof(EFI_GUID))) {
+    return EFI_INVALID_PARAMETER;
+  }
+  // Get old database
+  OldDatabase = (UINT8 *)*Database;
+  OldDatabaseSize = *DatabaseSize;
+  if ((OldDatabase == NULL) || (OldDatabaseSize == 0)) {
+    // Nothing to remove
+    return EFI_SUCCESS;
+  }
+  // Remove the signatures found in the list from the database
+  Ptr = ((UINT8 *)SignatureList) + SignatureList->SignatureHeaderSize + sizeof(EFI_SIGNATURE_LIST) + sizeof(EFI_GUID);
+  End = ((UINT8 *)SignatureList) + SignatureList->SignatureListSize;
+  Size = (SignatureList->SignatureSize - sizeof(EFI_GUID));
+  while (Ptr < End) {
+    // Remove signature from database
+    EFI_STATUS Status = RemoveSignatureFromDatabase(Database, DatabaseSize, &(SignatureList->SignatureType), Ptr, Size);
+    if (EFI_ERROR(Status)) {
+      return Status;
+    }
+    Ptr += SignatureList->SignatureSize;
+  }
+  return EFI_SUCCESS;
+}
+
+STATIC EFI_STATUS RemoveSignatureDatabaseFromDatabase(IN OUT VOID  **Database,
+                                                      IN OUT UINTN  *DatabaseSize,
+                                                      IN     VOID   *SignatureDatabase,
+                                                      IN     UINTN   SignatureDatabaseSize)
+{
+  UINT8 *Ptr, *End;
+  // Check parameters
+  if ((Database == NULL) || (DatabaseSize == NULL) ||
+      (SignatureDatabase == NULL) || (SignatureDatabaseSize <= sizeof(EFI_SIGNATURE_LIST))) {
+    return EFI_INVALID_PARAMETER;
+  }
+  // Get the signature database start
+  Ptr = (UINT8 *)SignatureDatabase;
+  End = Ptr + SignatureDatabaseSize;
+  while (Ptr < End) {
+    // Get each signature list in signature database
+    EFI_SIGNATURE_LIST *List = (EFI_SIGNATURE_LIST *)Ptr;
+    EFI_STATUS          Status;
+    if ((List->SignatureListSize <= sizeof(EFI_SIGNATURE_LIST)) || (List->SignatureSize <= sizeof(EFI_GUID))) {
+      return EFI_INVALID_PARAMETER;
+    }
+    // Remove the signature list from the database
+    Status = RemoveSignatureListFromDatabase(Database, DatabaseSize, List);
+    if (EFI_ERROR(Status)) {
+      return Status;
+    }
+    Ptr += List->SignatureListSize;
+  }
+  return EFI_SUCCESS;
+}
+
+// Remove image signature database from authorized database
+EFI_STATUS RemoveImageDatabaseFromAuthorizedDatabase(IN VOID  *Database,
+                                                     IN UINTN  DatabaseSize)
+{
+  EFI_STATUS  Status;
+  VOID       *AuthDatabase;
+  UINTN       AuthDatabaseSize;
+  // Check parameters
+  if ((Database == NULL) || (DatabaseSize <= sizeof(EFI_SIGNATURE_LIST))) {
+    return EFI_INVALID_PARAMETER;
+  }
+  // Get the authorized database
+  AuthDatabase = GetAuthorizedDatabase(&AuthDatabaseSize);
+  // Remove the signature database from the authorized database
+  Status = RemoveSignatureDatabaseFromDatabase(&AuthDatabase, &AuthDatabaseSize, Database, DatabaseSize);
+  if (EFI_ERROR(Status)) {
+    FreePool(AuthDatabase);
+    return Status;
+  }
+  // Check there is any to set
+  if (AuthDatabase == NULL) {
+    return ClearAuthorizedDatabase();
+  }
+  if (AuthDatabaseSize <= sizeof(EFI_SIGNATURE_LIST)) {
+    FreePool(AuthDatabase);
+    return ClearAuthorizedDatabase();
+  }
+  // Set the authorized database
+  Status = SetAuthorizedDatabase(AuthDatabase, AuthDatabaseSize);
+  FreePool(AuthDatabase);
+  return Status;
+}
+
+VOID *GetAuthorizedDatabase(UINTN *DatabaseSize)
+{
+   return GetSignatureDatabase(AUTHORIZED_DATABASE_NAME, &AUTHORIZED_DATABASE_GUID, DatabaseSize);
+}
+EFI_STATUS SetAuthorizedDatabase(IN VOID  *Database,
+                                 IN UINTN  DatabaseSize)
+{
+   return SetSignatureDatabase(AUTHORIZED_DATABASE_NAME, &AUTHORIZED_DATABASE_GUID, Database, DatabaseSize);
+}
+
+// Clear authorized signature database
+EFI_STATUS ClearAuthorizedDatabase(VOID)
+{
+   return SetAuthorizedDatabase(NULL, 0);
 }
 
 // Create a secure boot image signature
-STATIC VOID *CreateImageSignatureList(IN VOID   *FileBuffer,
-                                      IN UINT64  FileSize,
-                                      IN UINTN  *SignatureListSize)
+STATIC VOID *CreateImageSignatureDatabase(IN VOID   *FileBuffer,
+                                          IN UINT64  FileSize,
+                                          IN UINTN  *DatabaseSize)
 {
   UINTN                                Index, Size = 0;
   UINTN                                BytesHashed, HashSize;
-  VOID                                *SignatureList = NULL;
-  VOID                                *HashCtx;
+  UINT8                               *Database = NULL;
   UINT8                               *ImageBase = (UINT8 *)FileBuffer;
   UINT8                               *HashBase = ImageBase;
   UINT8                               *HashPtr;
+  SHA256_CTX                           HashCtx;
   EFI_SIGNATURE_LIST                  *SignatureListPtr;
   EFI_IMAGE_SECTION_HEADER            *Sections = NULL;
   EFI_IMAGE_SECTION_HEADER            *SectionPtr;
@@ -106,10 +567,10 @@ STATIC VOID *CreateImageSignatureList(IN VOID   *FileBuffer,
   UINT32                               CertSize = 0;
   UINT16                               Magic;
   // Check parameters
-  if (SignatureListSize == NULL) {
+  if (DatabaseSize == NULL) {
     return NULL;
   }
-  *SignatureListSize = 0;
+  *DatabaseSize = 0;
   if ((FileBuffer == NULL) || (FileSize == 0)) {
     return NULL;
   }
@@ -146,17 +607,12 @@ STATIC VOID *CreateImageSignatureList(IN VOID   *FileBuffer,
     return NULL;
   }
   HashSize = (UINTN)(HashPtr - HashBase);
-  // Allocate the hash context
-  HashCtx = AllocateZeroPool(Sha256GetContextSize());
-  if (HashCtx == NULL) {
-    return NULL;
-  }
   // Initialize the hash context
-  if (!Sha256Init(HashCtx)) {
+  if (SHA256_Init(&HashCtx) == 0) {
     goto Failed;
   }
   // Begin hashing the pe image
-  if (!Sha256Update(HashCtx, HashBase, HashSize)) {
+  if (SHA256_Update(&HashCtx, HashBase, HashSize) == 0) {
     goto Failed;
   }
   // Skip the checksum
@@ -169,7 +625,7 @@ STATIC VOID *CreateImageSignatureList(IN VOID   *FileBuffer,
       HashPtr = (UINT8 *)(&(PeHeader.Pe32->OptionalHeader.DataDirectory[EFI_IMAGE_DIRECTORY_ENTRY_SECURITY]));
       HashSize = (HashPtr - HashBase);
       if (HashSize != 0) {
-        if (!Sha256Update(HashCtx, HashBase, HashSize)) {
+        if (SHA256_Update(&HashCtx, HashBase, HashSize) == 0) {
           goto Failed;
         }
       }
@@ -185,7 +641,7 @@ STATIC VOID *CreateImageSignatureList(IN VOID   *FileBuffer,
       HashPtr = (UINT8 *)(&(PeHeader.Pe32Plus->OptionalHeader.DataDirectory[EFI_IMAGE_DIRECTORY_ENTRY_SECURITY]));
       HashSize = (HashPtr - HashBase);
       if (HashSize != 0) {
-        if (!Sha256Update(HashCtx, HashBase, HashSize)) {
+        if (SHA256_Update(&HashCtx, HashBase, HashSize) == 0) {
           goto Failed;
         }
       }
@@ -198,7 +654,7 @@ STATIC VOID *CreateImageSignatureList(IN VOID   *FileBuffer,
   // Hash the rest of the data directories if any
   HashSize = BytesHashed - (UINTN)(HashBase - ImageBase);
   if (HashSize != 0) {
-    if (!Sha256Update(HashCtx, HashBase, HashSize)) {
+    if (SHA256_Update(&HashCtx, HashBase, HashSize) == 0) {
       goto Failed;
     }
   }
@@ -231,7 +687,7 @@ STATIC VOID *CreateImageSignatureList(IN VOID   *FileBuffer,
     HashBase  = ImageBase + SectionPtr->PointerToRawData;
     HashSize  = (UINTN)SectionPtr->SizeOfRawData;
     // Hash the image section
-    if (!Sha256Update(HashCtx, HashBase, HashSize)) {
+    if (SHA256_Update(&HashCtx, HashBase, HashSize) == 0) {
       goto Failed;
     }
     BytesHashed += HashSize;
@@ -244,98 +700,51 @@ STATIC VOID *CreateImageSignatureList(IN VOID   *FileBuffer,
     }
     HashSize = (UINTN)(FileSize - (BytesHashed + CertSize));
     if (HashSize != 0) {
-      if (!Sha256Update(HashCtx, HashBase, HashSize)) {
+      if (SHA256_Update(&HashCtx, HashBase, HashSize) == 0) {
         goto Failed;
       }
     }
   }
   // Create the signature list
   Size = (sizeof(EFI_SIGNATURE_LIST) + sizeof(EFI_GUID) + 256);
-  SignatureList = AllocateZeroPool(Size);
-  if (SignatureList == NULL) {
+  Database = AllocateZeroPool(Size);
+  if (Database == NULL) {
     goto Failed;
   }
   // Copy the hash to the signature list
-  SignatureListPtr = (EFI_SIGNATURE_LIST *)SignatureList;
+  SignatureListPtr = (EFI_SIGNATURE_LIST *)Database;
   CopyMem(&(SignatureListPtr->SignatureType), &gEfiCertSha256Guid, sizeof(EFI_GUID));
   SignatureListPtr->SignatureListSize = (UINT32)Size;
   SignatureListPtr->SignatureSize = (UINT32)(Size - sizeof(EFI_SIGNATURE_LIST));
   // Finalize the hash by placing it in the signature list
-  HashPtr = ((UINT8 *)(SignatureList)) + sizeof(EFI_SIGNATURE_LIST) + sizeof(EFI_GUID);
-  if (!Sha256Final(HashCtx, HashPtr)) {
+  HashPtr = ((UINT8 *)(Database)) + sizeof(EFI_SIGNATURE_LIST) + sizeof(EFI_GUID);
+  if (SHA256_Final(HashPtr, &HashCtx) == 0) {
     goto Failed;
   }
   // Cleanup and return success
   FreePool(Sections);
-  FreePool(HashCtx);
-  *SignatureListSize = Size;
-  return SignatureList;
+  *DatabaseSize = Size;
+  return Database;
 
 Failed:
   // Hashing failed
-  if (SignatureList != NULL) {
-    FreePool(SignatureList);
+  if (Database != NULL) {
+    FreePool(Database);
   }
   if (Sections != NULL) {
     FreePool(Sections);
   }
-  FreePool(HashCtx);
   return NULL;
 }
 
-// Append a signature to list
-STATIC VOID AppendSignature(IN OUT VOID     **SignatureList,
-                            IN OUT UINTN     *SignatureListSize,
-                            IN     EFI_GUID  *SignatureType,
-                            IN     VOID      *Signature,
-                            IN     UINTN      SignatureSize)
-{
-  VOID  *NewSignatureList;
-  VOID  *OldSignatureList;
-  UINTN  NewSignatureListSize;
-  UINTN  OldSignatureListSize;
-  UINTN  NewSignatureSize;
-  UINTN  NewSignatureTotalSize;
-  // Check parameters
-  if ((SignatureList == NULL) || (SignatureListSize == NULL) ||
-      (SignatureType == NULL) || (Signature == NULL) || (SignatureSize == 0)) {
-    return;
-  }
-  // Get old signature list and size
-  OldSignatureList = *SignatureList;
-  OldSignatureListSize = (OldSignatureList == NULL) ? 0 : *SignatureListSize;
-  // Get new signature list
-  NewSignatureSize = sizeof(EFI_GUID) + SignatureSize;
-  NewSignatureTotalSize = NewSignatureSize + sizeof(EFI_SIGNATURE_LIST);
-  NewSignatureListSize = OldSignatureListSize + NewSignatureTotalSize;
-  NewSignatureList = AllocateZeroPool(NewSignatureListSize);
-  if (NewSignatureList != NULL) {
-    EFI_SIGNATURE_LIST *NewSignature;
-    // Copy old list if present
-    if (OldSignatureList != NULL) {
-      CopyMem(NewSignatureList, OldSignatureList, OldSignatureListSize);
-      FreePool(OldSignatureList);
-    }
-    // Copy new signature
-    NewSignature = (EFI_SIGNATURE_LIST *)(((UINT8 *)NewSignatureList) + OldSignatureListSize);
-    CopyMem(&(NewSignature->SignatureType), SignatureType, sizeof(EFI_GUID));
-    NewSignature->SignatureListSize = (UINT32)NewSignatureTotalSize;
-    NewSignature->SignatureSize = (UINT32)NewSignatureSize;
-    CopyMem((((UINT8 *)NewSignature) + sizeof(EFI_SIGNATURE_LIST) + sizeof(EFI_GUID)), Signature, SignatureSize);
-  }
-  // Update the list
-  *SignatureList = NewSignatureList;
-  *SignatureListSize = NewSignatureListSize;
-}
-
 // Get a secure boot image signature
-VOID *GetImageSignatureList(IN VOID    *FileBuffer,
-                            IN UINT64   FileSize,
-                            IN UINTN   *SignatureListSize,
-                            IN BOOLEAN  HashIfNoCertificate)
+VOID *GetImageSignatureDatabase(IN VOID    *FileBuffer,
+                                IN UINT64   FileSize,
+                                IN UINTN   *DatabaseSize,
+                                IN BOOLEAN  HashIfNoDatabase)
 {
   UINTN                                Size = 0;
-  VOID                                *SignatureList = NULL;
+  VOID                                *Database = NULL;
   UINT8                               *Ptr, *End;
   WIN_CERTIFICATE_UEFI_GUID           *GuidCert;
   EFI_IMAGE_DOS_HEADER                *DosHeader;
@@ -344,10 +753,10 @@ VOID *GetImageSignatureList(IN VOID    *FileBuffer,
   UINT32                               PeHeaderOffset;
   UINT16                               Magic;
   // Check parameters
-  if (SignatureListSize == 0) {
+  if (DatabaseSize == 0) {
     return NULL;
   }
-  *SignatureListSize = 0;
+  *DatabaseSize = 0;
   if ((FileBuffer == NULL) || (FileSize == 0)) {
     return NULL;
   }
@@ -381,12 +790,12 @@ VOID *GetImageSignatureList(IN VOID    *FileBuffer,
     // PE32+
     SecDataDir = (EFI_IMAGE_DATA_DIRECTORY *)&(PeHeader.Pe32Plus->OptionalHeader.DataDirectory[EFI_IMAGE_DIRECTORY_ENTRY_SECURITY]);
   }
-  DBG("Get image signature: 0x%X (0x%X)\n");
+  DBG("Get image database: 0x%X (0x%X)\n");
   // Check the security data directory is found and valid
   if ((SecDataDir == NULL) || (SecDataDir->Size == 0)) {
-    if (HashIfNoCertificate) {
+    if (HashIfNoDatabase) {
       // Try to hash the image instead
-      return CreateImageSignatureList(FileBuffer, FileSize, SignatureListSize);
+      return CreateImageSignatureDatabase(FileBuffer, FileSize, DatabaseSize);
     }
     // No certificate
     return NULL;
@@ -444,7 +853,9 @@ VOID *GetImageSignatureList(IN VOID    *FileBuffer,
     // Append the signature if valid
     if ((SigGuid != NULL) && (Signature != NULL) && (SigSize > 0)) {
       DBG("Found signature certificate: 0x%X (0x%X) %g\n", Signature, SigSize, SigGuid);
-      AppendSignature(&SignatureList, &Size, SigGuid, Signature, SigSize);
+      if (EFI_ERROR(AppendSignatureToDatabase(&Database, &Size, SigGuid, Signature, SigSize))) {
+        break;
+      }
     } else {
       DBG("Skipping non-signature certificate: 0x%X (0x%X) %d\n", Cert, Length, Cert->wCertificateType);
     }
@@ -453,17 +864,18 @@ VOID *GetImageSignatureList(IN VOID    *FileBuffer,
   }
   // Check if there is some sort of corruption
   if (Ptr != End) {
+    DBG("Failed to retrieve image database: 0x%X - 0x%X @ 0x%X\n", (((UINT8 *)FileBuffer) + SecDataDir->VirtualAddress), End, Ptr);
     // Don't return anything if not at end
-    if (SignatureList != NULL) {
-      FreePool(SignatureList);
-      SignatureList = NULL;
+    if (Database != NULL) {
+      FreePool(Database);
+      Database = NULL;
     }
   }
-  if (SignatureList != NULL) {
-    *SignatureListSize = Size;
-  } else if (HashIfNoCertificate) {
+  if (Database != NULL) {
+    *DatabaseSize = Size;
+  } else if (HashIfNoDatabase) {
     // Try to hash the image instead
-    return CreateImageSignatureList(FileBuffer, FileSize, SignatureListSize);
+    return CreateImageSignatureDatabase(FileBuffer, FileSize, DatabaseSize);
   }
-  return SignatureList;
+  return Database;
 }

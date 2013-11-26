@@ -79,7 +79,6 @@
   EblCmdLib|EmbeddedPkg/Library/EblCmdLibNull/EblCmdLibNull.inf  
   #FileHandleLib|ShellPkg/Library/BaseFileHandleLib/BaseFileHandleLib.inf
   UefiCpuLib|UefiCpuPkg/Library/BaseUefiCpuLib/BaseUefiCpuLib.inf
-  BaseCryptLib|Clover/Library/BaseCryptLib/BaseCryptLib.inf
   OpensslLib|Clover/Library/OpensslLib/OpensslLib.inf
   IntrinsicLib|Clover/Library/IntrinsicLib/IntrinsicLib.inf
   

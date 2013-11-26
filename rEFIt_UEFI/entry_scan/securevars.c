@@ -47,4 +47,59 @@
 #define DBG(...) DebugLog(DEBUG_SECURE_VARS, __VA_ARGS__)
 #endif
 
-// TODO: Check out linux efitools
+// TODO: Enroll the secure boot keys
+EFI_STATUS EnrollSecureBootKeys(VOID)
+{
+  return EFI_NOT_FOUND;
+}
+
+// Read signature database
+VOID *GetSignatureDatabase(IN  CHAR16   *DatabaseName,
+                           IN  EFI_GUID *DatabaseGuid,
+                           OUT UINTN    *DatabaseSize)
+{
+  UINTN  Size = 0;
+  VOID  *Database;
+  // Check parameters
+  if (DatabaseSize == NULL) {
+    return NULL;
+  }
+  *DatabaseSize = 0;
+  if ((DatabaseName == NULL) || (DatabaseGuid == NULL)) {
+    return NULL;
+  }
+  // Get database size
+  if (gRT->GetVariable(DatabaseName, DatabaseGuid, NULL, &Size, NULL) != EFI_BUFFER_TOO_SMALL) {
+    return NULL;
+  }
+  if (Size == 0) {
+    return NULL;
+  }
+  // Allocate a buffer large enough to hold the database
+  Database = AllocateZeroPool(Size);
+  if (Database == NULL) {
+    return NULL;
+  }
+  // Read database
+  if (EFI_ERROR(gRT->GetVariable(DatabaseName, DatabaseGuid, NULL, &Size, Database)) || (Size == 0)) {
+    FreePool(Database);
+    return NULL;
+  }
+  // Return database
+  *DatabaseSize = Size;
+  return Database;
+}
+
+// TODO: Write signature database
+EFI_STATUS SetSignatureDatabase(IN CHAR16   *DatabaseName,
+                                IN EFI_GUID *DatabaseGuid,
+                                IN VOID     *Database,
+                                IN UINTN     DatabaseSize)
+{
+  // Check parameters
+  if ((DatabaseName == NULL) || (DatabaseGuid == NULL) ||
+      (Database == NULL) || (DatabaseSize == 0)) {
+    return EFI_INVALID_PARAMETER;
+  }
+  return EFI_ABORTED;
+}

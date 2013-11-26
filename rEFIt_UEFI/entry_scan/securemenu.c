@@ -136,8 +136,8 @@ UINTN QuerySecureBootUser(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath)
 }
 
 // Find a device path's signature list
-STATIC VOID *FindImageSignatureList(IN  CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath,
-                                    OUT UINTN                          *SignatureListSize)
+STATIC VOID *FindImageSignatureDatabase(IN  CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath,
+                                        OUT UINTN                          *DatabaseSize)
 {
   EFI_IMAGE_EXECUTION_INFO_TABLE  *ImageExeInfoTable = NULL;
   EFI_IMAGE_EXECUTION_INFO        *ImageExeInfo;
@@ -145,10 +145,10 @@ STATIC VOID *FindImageSignatureList(IN  CONST EFI_DEVICE_PATH_PROTOCOL *DevicePa
   UINT8                           *Ptr;
   UINTN                            Index;
   // Check parameters
-  if (SignatureListSize == NULL) {
+  if (DatabaseSize == NULL) {
     return NULL;
   }
-  *SignatureListSize = 0;
+  *DatabaseSize = 0;
   if (DevicePath == NULL) {
     return NULL;
   }
@@ -186,7 +186,7 @@ STATIC VOID *FindImageSignatureList(IN  CONST EFI_DEVICE_PATH_PROTOCOL *DevicePa
       if (StrCmp(FDP, Name) == 0) {
         // Get the signature list and size
         Offset += GetDevicePathSize((EFI_DEVICE_PATH_PROTOCOL *)Offset);
-        *SignatureListSize = (ImageExeInfo->InfoSize - (Offset - Ptr));
+        *DatabaseSize = (ImageExeInfo->InfoSize - (Offset - Ptr));
         FreePool(Name);
         FreePool(FDP);
         return Offset;
@@ -200,23 +200,23 @@ STATIC VOID *FindImageSignatureList(IN  CONST EFI_DEVICE_PATH_PROTOCOL *DevicePa
 }
 
 // Insert secure boot image signature
-VOID InsertSecureBootImage(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath,
-                           IN VOID                           *FileBuffer,
-                           IN UINTN                           FileSize)
+EFI_STATUS AppendImageToAuthorizedDatabase(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath,
+                                           IN VOID                           *FileBuffer,
+                                           IN UINTN                           FileSize)
 {
-  CHAR16     *ErrorString = NULL;
   EFI_STATUS  Status = EFI_INVALID_PARAMETER;
-  VOID       *SignatureList = NULL;
-  UINTN       SignatureListSize = 0;
+  CHAR16     *ErrorString = NULL;
+  VOID       *Database = NULL;
+  UINTN       DatabaseSize = 0;
   // Check that either the device path or the file buffer is valid
   if ((DevicePath == NULL) && ((FileBuffer == NULL) || (FileSize == 0))) {
-    return;
+    return EFI_INVALID_PARAMETER;
   }
   // Get the image signature
-  SignatureList = FindImageSignatureList(DevicePath, &SignatureListSize);
-  if (SignatureList) {
+  Database = FindImageSignatureDatabase(DevicePath, &DatabaseSize);
+  if (Database) {
     // Add the image signature to database
-    Status = AddImageSignatureList(SignatureList, SignatureListSize);
+    Status = AppendImageDatabaseToAuthorizedDatabase(Database, DatabaseSize);
   } else if ((FileBuffer == NULL) || (FileSize == 0)) {
     // Load file by device path
     UINT32 AuthenticationStatus = 0;
@@ -224,18 +224,18 @@ VOID InsertSecureBootImage(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath,
     if (FileBuffer) {
       if (FileSize > 0) {
         // Create image signature
-        SignatureList = GetImageSignatureList(FileBuffer, FileSize, &SignatureListSize, TRUE);
-        if (SignatureList) {
+        Database = GetImageSignatureDatabase(FileBuffer, FileSize, &DatabaseSize, TRUE);
+        if (Database) {
           // Add the image signature to database
-          if (EFI_ERROR(AddImageSignatureList(SignatureList, SignatureListSize))) {
+          if (EFI_ERROR(Status = AppendImageDatabaseToAuthorizedDatabase(Database, DatabaseSize))) {
             ErrorString = L"Failed to insert image authentication";
           }
-          FreePool(SignatureList);
+          FreePool(Database);
         } else {
-          ErrorString = L"Image has no certificate or is not valid";
+          ErrorString = L"Image has no certificates or is not valid";
         }
       } else {
-        ErrorString = L"Image has no certificate or is not valid";
+        ErrorString = L"Image has no certificates or is not valid";
       }
       FreePool(FileBuffer);
     } else {
@@ -243,15 +243,15 @@ VOID InsertSecureBootImage(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath,
     }
   } else {
     // Create image signature
-    SignatureList = GetImageSignatureList(FileBuffer, FileSize, &SignatureListSize, TRUE);
-    if (SignatureList) {
+    Database = GetImageSignatureDatabase(FileBuffer, FileSize, &DatabaseSize, TRUE);
+    if (Database) {
       // Add the image signature to database
-      if (!EFI_ERROR(AddImageSignatureList(SignatureList, SignatureListSize))) {
+      if (EFI_ERROR(Status = AppendImageDatabaseToAuthorizedDatabase(Database, DatabaseSize))) {
         ErrorString = L"Failed to insert image authentication";
       }
-      FreePool(SignatureList);
+      FreePool(Database);
     } else {
-      ErrorString = L"Image has no certificate or is not valid";
+      ErrorString = L"Image has no certificates or is not valid";
     }
   }
   if (ErrorString != NULL) {
@@ -277,40 +277,63 @@ VOID InsertSecureBootImage(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath,
       AlertMessage(L"Insert Image Authentication", ErrorString);
     }
   }
+  return Status;
 }
 
 // Insert secure boot image signature
-STATIC VOID RemoveSecureBootImage(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath)
+EFI_STATUS RemoveImageFromAuthorizedDatabase(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath,
+                                             IN VOID                           *FileBuffer,
+                                             IN UINTN                           FileSize)
 {
+  EFI_STATUS  Status = EFI_INVALID_PARAMETER;
   CHAR16     *ErrorString = NULL;
-  VOID       *SignatureList = NULL;
-  VOID       *FileBuffer = NULL;
-  UINTN       SignatureListSize = 0;
-  UINTN       FileSize = 0;
-  UINT32      AuthenticationStatus = 0;
+  VOID       *Database;
+  UINTN       DatabaseSize = 0;
   // Check that either the device path or the file buffer is valid
   if (DevicePath == NULL) {
-    return;
+    return EFI_INVALID_PARAMETER;
   }
-  // Load file by device path
-  FileBuffer = GetFileBufferByFilePath(FALSE, DevicePath, &FileSize, &AuthenticationStatus);
-  if (FileBuffer) {
-    if (FileSize > 0) {
-      // Create image signature
-      SignatureList = GetImageSignatureList(FileBuffer, FileSize, &SignatureListSize, TRUE);
-      if (SignatureList) {
-        // Remove the image signature from database
-        if (EFI_ERROR(RemoveImageSignatureList(SignatureList, SignatureListSize))) {
-          ErrorString = L"Failed to remove image authentication";
+  // Get the image signature
+  Database = FindImageSignatureDatabase(DevicePath, &DatabaseSize);
+  if (Database) {
+    // Remove the image signature from database
+    Status = RemoveImageDatabaseFromAuthorizedDatabase(Database, DatabaseSize);
+  } else if ((FileBuffer == NULL) || (FileSize == 0)) {
+    // Load file by device path
+    UINT32 AuthenticationStatus = 0;
+    FileBuffer = GetFileBufferByFilePath(FALSE, DevicePath, &FileSize, &AuthenticationStatus);
+    if (FileBuffer) {
+      if (FileSize > 0) {
+        // Create image signature
+        Database = GetImageSignatureDatabase(FileBuffer, FileSize, &DatabaseSize, TRUE);
+        if (Database) {
+          // Remove the image signature from database
+          if (EFI_ERROR(Status = RemoveImageDatabaseFromAuthorizedDatabase(Database, DatabaseSize))) {
+            ErrorString = L"Failed to remove image authentication";
+          }
+          FreePool(Database);
+        } else {
+          ErrorString = L"Image has no certificates or is not valid";
         }
-        FreePool(SignatureList);
+      } else {
+        ErrorString = L"Image has no certificates or is not valid";
       }
+      FreePool(FileBuffer);
     } else {
-      ErrorString = L"Image has no certificate or is not valid";
+      ErrorString = L"Failed to load the image";
     }
-    FreePool(FileBuffer);
   } else {
-    ErrorString = L"Failed to load the image";
+    // Create image signature
+    Database = GetImageSignatureDatabase(FileBuffer, FileSize, &DatabaseSize, TRUE);
+    if (Database) {
+      // Remove the image signature from database
+      if (EFI_ERROR(Status = RemoveImageDatabaseFromAuthorizedDatabase(Database, DatabaseSize))) {
+        ErrorString = L"Failed to remove image authentication";
+      }
+      FreePool(Database);
+    }  else {
+      ErrorString = L"Image has no certificates or is not valid";
+    }
   }
   if (ErrorString != NULL) {
     CHAR16 *DevicePathStr = FileDevicePathToStr(DevicePath);
@@ -335,6 +358,7 @@ STATIC VOID RemoveSecureBootImage(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath)
       AlertMessage(L"Remove Image Authentication", ErrorString);
     }
   }
+  return Status;
 }
 
 extern REFIT_MENU_ENTRY MenuEntryReturn;
@@ -439,7 +463,7 @@ BOOLEAN ConfigureSecureBoot(VOID)
         // Insert authentication
          if (AskUserForFilePathFromVolumes(L"Select Image to Insert Authentication...", &DevicePath) &&
              (DevicePath != NULL)) {
-          InsertSecureBootImage(DevicePath, NULL, 0);
+          AppendImageToAuthorizedDatabase(DevicePath, NULL, 0);
         }
         break;
 
@@ -447,7 +471,7 @@ BOOLEAN ConfigureSecureBoot(VOID)
         // Remove authentication
         if (AskUserForFilePathFromVolumes(L"Select Image to Remove Authentication...", &DevicePath) &&
             (DevicePath != NULL)) {
-          RemoveSecureBootImage(DevicePath);
+          RemoveImageFromAuthorizedDatabase(DevicePath, NULL, 0);
         }
         break;
 
@@ -456,7 +480,7 @@ BOOLEAN ConfigureSecureBoot(VOID)
         if (YesNoMessage(L"Clear Authentication Database", L"Are you sure you want to clear\nthe image authentication database?")) {
           DBG("User cleared authentication database\n");
           AlertMessage(L"Clear Authentication Database",
-                       EFI_ERROR(ClearImageSignatureDatabase()) ?
+                       EFI_ERROR(ClearAuthorizedDatabase()) ?
                          L"Clearing the image authentication database failed!" :
                          L"Cleared image authentication database successfully");
         }

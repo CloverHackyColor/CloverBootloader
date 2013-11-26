@@ -38,6 +38,15 @@
 extern REFIT_MENU_ENTRY MenuEntryReturn;
 extern REFIT_MENU_SCREEN MainMenu;
 
+#define PLATFORM_DATABASE_NAME L"PK"
+#define PLATFORM_DATABASE_GUID gEfiGlobalVariableGuid
+#define EXCHANGE_DATABASE_NAME L"KEK"
+#define EXCHANGE_DATABASE_GUID gEfiGlobalVariableGuid
+#define AUTHORIZED_DATABASE_NAME EFI_IMAGE_SECURITY_DATABASE
+#define AUTHORIZED_DATABASE_GUID gEfiImageSecurityDatabaseGuid
+#define UNAUTHORIZED_DATABASE_NAME EFI_IMAGE_SECURITY_DATABASE1
+#define UNAUTHORIZED_DATABASE_GUID gEfiImageSecurityDatabaseGuid
+
 // common
 EG_IMAGE *LoadBuiltinIcon(IN CHAR16 *IconName);
 LOADER_ENTRY * DuplicateLoaderEntry(IN LOADER_ENTRY *Entry);
@@ -84,17 +93,34 @@ VOID DisableSecureBoot(VOID);
 BOOLEAN ConfigureSecureBoot(VOID);
 CONST CHAR16 *SecureBootPolicyToStr(IN UINTN Policy);
 EFI_STATUS VerifySecureBootImage(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath);
-EFI_STATUS ClearImageSignatureDatabase(VOID);
-EFI_STATUS AddImageSignatureList(IN VOID  *SignatureList,
-                                 IN UINTN  SignatureListSize);
-EFI_STATUS RemoveImageSignatureList(IN VOID  *SignatureList,
-                                    IN UINTN  SignatureListSize);
-VOID *GetImageSignatureList(IN VOID    *FileBuffer,
-                            IN UINT64   FileSize,
-                            IN UINTN   *SignatureListSize,
-                            IN BOOLEAN  HashIfNoCertificate);
 UINTN QuerySecureBootUser(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath);
-// Insert secure boot image signature
-VOID InsertSecureBootImage(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath,
-                           IN VOID                           *FileBuffer,
-                           IN UINTN                           FileSize);
+EFI_STATUS EnrollSecureBootKeys(VOID);
+
+// secure boot database
+VOID *GetSignatureDatabase(IN  CHAR16   *DatabaseName,
+                           IN  EFI_GUID *DatabaseGuid,
+                           OUT UINTN    *DatabaseSize);
+EFI_STATUS SetSignatureDatabase(IN CHAR16   *DatabaseName,
+                                IN EFI_GUID *DatabaseGuid,
+                                IN VOID     *Database,
+                                IN UINTN     DatabaseSize);
+
+// secure boot authorized database
+VOID *GetAuthorizedDatabase(UINTN *DatabaseSize);
+EFI_STATUS SetAuthorizedDatabase(IN VOID  *Database,
+                                 IN UINTN  DatabaseSize);
+EFI_STATUS ClearAuthorizedDatabase(VOID);
+VOID *GetImageSignatureDatabase(IN VOID    *FileBuffer,
+                                IN UINT64   FileSize,
+                                IN UINTN   *DatabaseSize,
+                                IN BOOLEAN  HashIfNoDatabase);
+EFI_STATUS AppendImageDatabaseToAuthorizedDatabase(IN VOID  *Database,
+                                                   IN UINTN  DatabaseSize);
+EFI_STATUS RemoveImageDatabaseFromAuthorizedDatabase(IN VOID  *Database,
+                                                     IN UINTN  DatabaseSize);
+EFI_STATUS AppendImageToAuthorizedDatabase(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath,
+                                           IN VOID                           *FileBuffer,
+                                           IN UINTN                           FileSize);
+EFI_STATUS RemoveImageFromAuthorizedDatabase(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath,
+                                             IN VOID                           *FileBuffer,
+                                             IN UINTN                           FileSize);

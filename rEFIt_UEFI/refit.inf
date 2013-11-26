@@ -144,7 +144,7 @@
 #  GenericBdsLib
   MemLogLib
   VideoBiosPatchLib
-  BaseCryptLib
+  OpensslLib
 
 [Guids]
   gEfiAcpiTableGuid

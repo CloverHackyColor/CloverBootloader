@@ -392,6 +392,8 @@ BOOLEAN AskUserForFilePathFromDir(IN CHAR16 *Title OPTIONAL, IN REFIT_VOLUME *Vo
                                   IN CHAR16 *ParentPath OPTIONAL, IN EFI_FILE *Dir,
                                   OUT EFI_DEVICE_PATH_PROTOCOL **Result)
 {
+  //REFIT_MENU_SCREEN   Menu = { 0, L"Please Select File...", NULL, 0, NULL, 0, NULL,
+  //                             0, NULL, FALSE, FALSE, 0, 0, 0, 0, { 0, 0, 0, 0 }, NULL};
   // Check parameters
   if ((Volume == NULL) || (Dir == NULL) || (Result == NULL)) {
     return FALSE;

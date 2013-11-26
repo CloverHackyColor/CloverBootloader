@@ -59,17 +59,15 @@ VOID EnableSecureBoot(VOID)
   if (gSettings.SecureBoot || !gSettings.SecureBootSetupMode) {
     return;
   }
-  // TODO: Load keys
-  // TODO: Enroll keys
   // Get this image's certificate
   if (!EFI_ERROR(Status)) {
     if (SelfLoadedImage != NULL) {
       UINTN  CloverSignatureSize = 0;
-      VOID  *CloverSignature = GetImageSignatureList(SelfLoadedImage->ImageBase, SelfLoadedImage->ImageSize, &CloverSignatureSize, FALSE);
+      VOID  *CloverSignature = GetImageSignatureDatabase(SelfLoadedImage->ImageBase, SelfLoadedImage->ImageSize, &CloverSignatureSize, FALSE);
       if (CloverSignature != NULL) {
         if (CloverSignatureSize > 0) {
           // Enroll this image's certificate
-          Status = AddImageSignatureList(CloverSignature, CloverSignatureSize);
+          Status = AppendImageDatabaseToAuthorizedDatabase(CloverSignature, CloverSignatureSize);
         } else {
           // No signature list found
           Status = EFI_NOT_FOUND;
@@ -85,6 +83,13 @@ VOID EnableSecureBoot(VOID)
     }
     if (EFI_ERROR(Status)) {
       ErrorString = L"Clover does not have a certificate";
+    }
+  }
+  // Enroll secure boot keys
+  if (!EFI_ERROR(Status)) {
+    Status = EnrollSecureBootKeys();
+    if (EFI_ERROR(Status)) {
+      ErrorString = L"failed to enroll secure boot keys";
     }
   }
   // Reinit secure boot now
@@ -137,18 +142,60 @@ STATIC VOID PrintSecureBootInfo(VOID)
   }
 }
 
+// Alert message for disable failure
+STATIC VOID DisableMessage(IN EFI_STATUS  Status,
+                           IN CHAR16     *String,
+                           IN CHAR16     *ErrorString)
+{
+  CHAR16 *Str = NULL;
+  if (ErrorString != NULL) {
+    Str = PoolPrint(L"%s\n%s\n%r", String, ErrorString, Status);
+  } else {
+    Str = PoolPrint(L"%s\n%r", String, Status);
+  }
+  if (Str != NULL) {
+    DBG("Secure Boot: %s", Str);
+    AlertMessage(L"Disable Secure Boot", Str);
+    FreePool(Str);
+  } else {
+    DBG("Secure Boot: %s", String);
+    AlertMessage(L"Disable Secure Boot", String);
+  }
+}
+
 // Disable secure boot
 VOID DisableSecureBoot(VOID)
 {
+  EFI_STATUS  Status;
+  CHAR16     *ErrorString = NULL;
   // Check in user mode
   if (gSettings.SecureBootSetupMode || !gSettings.SecureBoot) {
     return;
   }
   UninstallSecureBoot();
-  // TODO: Remove keys
-  // Reinit secure boot now
-  InitializeSecureBoot();
-  PrintSecureBootInfo();
+  // Clear the platform database
+  Status = SetSignatureDatabase(PLATFORM_DATABASE_NAME, &PLATFORM_DATABASE_GUID, NULL, 0);
+  if (EFI_ERROR(Status)) {
+    ErrorString = L"Failed to clear platform database!\nIs Clover platform database owner?";
+  } else if (YesNoMessage(L"Disable Secure Boot", L"Do you want to clear all databases (suggested)?")) {
+    // Clear all databases if wanted
+    Status = SetSignatureDatabase(EXCHANGE_DATABASE_NAME, &EXCHANGE_DATABASE_GUID, NULL, 0);
+    if (EFI_ERROR(Status)) {
+      DisableMessage(Status, L"Failed to disable secure boot!", L"Failed to clear exchange database!");
+    }
+    Status = ClearAuthorizedDatabase();
+    if (EFI_ERROR(Status)) {
+      ErrorString = L"Failed to clear authorized database!";
+    }
+  }
+  // Alert failure to user
+  if (EFI_ERROR(Status)) {
+    DisableMessage(Status, L"Failed to disable secure boot!", ErrorString);
+  } else {
+    // Reinit secure boot now
+    InitializeSecureBoot();
+    PrintSecureBootInfo();
+  }
 }
 
 // The previous protocol functions
@@ -264,7 +311,7 @@ CheckSecureBootPolicy(IN OUT EFI_STATUS                     *AuthenticationStatu
 
   case SECURE_BOOT_POLICY_INSERT:
     // Insert image signature
-    InsertSecureBootImage(DevicePath, FileBuffer, FileSize);
+    AppendImageToAuthorizedDatabase(DevicePath, FileBuffer, FileSize);
     *AuthenticationStatus = EFI_SUCCESS;
     return TRUE;
 
