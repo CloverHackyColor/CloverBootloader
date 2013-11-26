@@ -3477,11 +3477,19 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
       }
       prop = GetProperty(dictPointer,"KernelCpu");
       if(prop) {
-        gSettings.KPKernelCpu = FALSE; //as we said it is enabled by default why disabled here?
+        gSettings.KPKernelCpu = FALSE; // disabled here because user set false and enabled by default
         if ((prop->type == kTagTypeTrue) ||
             ((prop->type == kTagTypeString) &&
              ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))){
           gSettings.KPKernelCpu = TRUE;
+        }
+      }
+      prop = GetProperty(dictPointer,"KernelPm");
+      if(prop) {
+        if ((prop->type == kTagTypeTrue) ||
+            ((prop->type == kTagTypeString) &&
+             ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))){
+          gSettings.KPKernelPm = TRUE;
         }
       }
       prop = GetProperty(dictPointer,"KernelLapic");

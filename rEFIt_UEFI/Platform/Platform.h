@@ -861,7 +861,7 @@ typedef struct {
   BOOLEAN KPAsusAICPUPM;
   BOOLEAN KPAppleRTC;
   BOOLEAN KextPatchesAllowed;
-  UINT8   pad8[1];
+  BOOLEAN KPKernelPm;
   CHAR16  *KPATIConnectorsController;
   UINT8   *KPATIConnectorsData;
   UINTN   KPATIConnectorsDataLen;
