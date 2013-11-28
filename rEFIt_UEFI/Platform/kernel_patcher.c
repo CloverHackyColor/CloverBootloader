@@ -483,20 +483,24 @@ BOOLEAN KernelPatchPm(VOID *kernelData)
     return FALSE;
   }
   // Credits to RehabMan for the kernel patch information
+  DBG("Patching kernel power management...\n");
   while (Ptr < End) {
     if (KERNEL_PATCH_SIGNATURE == (*((UINT64 *)Ptr))) {
       if (CompareMem(Ptr + sizeof(UINT64), KernelPatchPmSrc + sizeof(UINT64), sizeof(KernelPatchPmSrc) - sizeof(UINT64)) == 0) {
         // Don't copy more than the source here!
         CopyMem(Ptr, KernelPatchPmRepl, sizeof(KernelPatchPmSrc));
+        DBG("Kernel power management patch region 1 found and patched\n");
         return TRUE;
       } else if (CompareMem(Ptr + sizeof(UINT64), KernelPatchPmSrc2 + sizeof(UINT64), sizeof(KernelPatchPmSrc2) - sizeof(UINT64)) == 0) {
         // Don't copy more than the source here!
         CopyMem(Ptr, KernelPatchPmRepl2, sizeof(KernelPatchPmSrc2));
+        DBG("Kernel power management patch region 2 found and patched\n");
         return TRUE;
       }
     }
     Ptr += 16;
   }
+  DBG("Kernel power management patch region not found!\n");
   return FALSE;
 }
 

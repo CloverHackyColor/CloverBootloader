@@ -25,6 +25,10 @@
 			<string>bg_block_192px.png</string>
 			<key>Type</key>
 			<string>Tile</string>
+			<key>Sharp</key>
+			<string>0x00</string>
+			<key>Dark</key>
+            <true/>
 		</dict>
 		<key>Banner</key>
 		<string>logo_trans.png</string>
@@ -45,6 +49,8 @@
 			<string>0x4E7F18FF</string>
 			<key>Small</key>
 			<string>Selection_small.png</string>
+			<key>OnTop</key>
+			<true/>
 		</dict>
 		<key>Anime</key>
 		<array>
