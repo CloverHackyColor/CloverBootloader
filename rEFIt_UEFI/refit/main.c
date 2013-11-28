@@ -1652,7 +1652,10 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
   // Load any extra SMBIOS information
   if (!EFI_ERROR(LoadUserSettings(SelfRootDir, L"smbios", &smbiosTags)) && (smbiosTags != NULL)) {
-    ParseSMBIOSSettings(smbiosTags);
+    TagPtr dictPointer = GetProperty(smbiosTags,"SMBIOS");
+    if (dictPointer) {
+      ParseSMBIOSSettings(dictPointer);
+    }
   }
   
   if (!gFirmwareClover && !gDriversFlags.EmuVariableLoaded &&
