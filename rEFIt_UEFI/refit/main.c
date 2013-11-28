@@ -1450,6 +1450,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 //  UINT64            TscRemainder = 0;
   LOADER_ENTRY      *LoaderEntry;
   CHAR16            *ConfName = NULL;
+  TagPtr            smbiosTags = NULL;
   TagPtr            UniteTag = NULL;
   BOOLEAN           UniteConfigs = FALSE;
   
@@ -1648,6 +1649,11 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     }
   }
  //       DBG("GetUserSettings OK\n");
+
+  // Load any extra SMBIOS information
+  if (!EFI_ERROR(LoadUserSettings(SelfRootDir, L"smbios", &smbiosTags)) && (smbiosTags != NULL)) {
+    ParseSMBIOSSettings(smbiosTags);
+  }
   
   if (!gFirmwareClover && !gDriversFlags.EmuVariableLoaded &&
       GlobalConfig.Timeout == 0 && !ReadAllKeyStrokes()) {

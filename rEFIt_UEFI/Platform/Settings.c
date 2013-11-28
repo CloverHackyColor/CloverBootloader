@@ -2073,6 +2073,128 @@ EFI_STATUS InitTheme(BOOLEAN useThemeDefinedInNVRam)
   return Status;
 }
 
+VOID ParseSMBIOSSettings(TagPtr dictPointer)
+{
+  CHAR16 UStr[64];
+  TagPtr prop = GetProperty(dictPointer,"ProductName");
+  if(prop) {
+   MACHINE_TYPES Model;
+   AsciiStrCpy(gSettings.ProductName, prop->string);
+   // let's fill all other fields based on this ProductName
+   // to serve as default
+   Model = GetModelFromString(gSettings.ProductName);
+   if (Model != MaxMachineType) {
+      SetDMISettingsForModel(Model);
+   }
+  }
+  prop = GetProperty(dictPointer,"BiosVendor");
+  if(prop) {
+    AsciiStrCpy(gSettings.VendorName, prop->string);
+  }
+  prop = GetProperty(dictPointer,"BiosVersion");
+  if(prop) {
+    AsciiStrCpy(gSettings.RomVersion, prop->string);
+  }
+  prop = GetProperty(dictPointer,"BiosReleaseDate");
+  if(prop) {
+    AsciiStrCpy(gSettings.ReleaseDate, prop->string);
+  }
+  prop = GetProperty(dictPointer,"Manufacturer");
+  if(prop) {
+    AsciiStrCpy(gSettings.ManufactureName, prop->string);
+  }
+  prop = GetProperty(dictPointer,"Version");
+  if(prop) {
+    AsciiStrCpy(gSettings.VersionNr, prop->string);
+  }
+  prop = GetProperty(dictPointer,"Family");
+  if(prop) {
+    AsciiStrCpy(gSettings.FamilyName, prop->string);
+  }
+  prop = GetProperty(dictPointer,"SerialNumber");
+  if(prop) {
+    ZeroMem(gSettings.SerialNr, 64);
+    AsciiStrCpy(gSettings.SerialNr, prop->string);
+  }
+  prop = GetProperty(dictPointer,"SmUUID");
+  if(prop) {
+    if (IsValidGuidAsciiString(prop->string)) {
+      AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
+      StrToGuidLE((CHAR16*)&UStr[0], &gSettings.SmUUID);
+    } else {
+      DBG("Error: invalid SmUUID '%a' - should be in the format XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX\n", prop->string);
+    }
+  }
+  prop = GetProperty(dictPointer,"BoardManufacturer");
+  if(prop) {
+    AsciiStrCpy(gSettings.BoardManufactureName, prop->string);
+  }
+  prop = GetProperty(dictPointer,"BoardSerialNumber");
+  if(prop) {
+    AsciiStrCpy(gSettings.BoardSerialNumber, prop->string);
+  }
+  prop = GetProperty(dictPointer,"Board-ID");
+  if(prop) {
+    AsciiStrCpy(gSettings.BoardNumber, prop->string);
+  }
+  prop = GetProperty(dictPointer,"BoardVersion");
+  if(prop) {
+    AsciiStrCpy(gSettings.BoardVersion, prop->string);
+  }
+  prop = GetProperty(dictPointer,"BoardType");
+  if(prop) {
+    if (prop->type == kTagTypeInteger) {
+      gSettings.BoardType = (UINT8)(UINTN)prop->string;
+    } else if (prop->type == kTagTypeString){
+      AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
+      gSettings.BoardType = (UINT8)StrDecimalToUintn((CHAR16*)&UStr[0]);
+    }
+  }
+  prop = GetProperty(dictPointer,"Mobile");
+  if(prop) {
+    if ((prop->type == kTagTypeFalse) ||
+        ((prop->type == kTagTypeString) &&
+         ((prop->string[0] == 'n') || (prop->string[0] == 'N'))))
+      gSettings.Mobile = FALSE;
+    else if ((prop->type == kTagTypeTrue) ||
+             ((prop->type == kTagTypeString) &&
+              ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))))
+      gSettings.Mobile = TRUE;
+  }
+  prop = GetProperty(dictPointer,"LocationInChassis");
+  if(prop) {
+    AsciiStrCpy(gSettings.LocationInChassis, prop->string);
+  }
+  prop = GetProperty(dictPointer,"ChassisManufacturer");
+  if(prop) {
+    AsciiStrCpy(gSettings.ChassisManufacturer, prop->string);
+  }
+  prop = GetProperty(dictPointer,"ChassisAssetTag");
+  if(prop) {
+    AsciiStrCpy(gSettings.ChassisAssetTag, prop->string);
+  }
+  prop = GetProperty(dictPointer,"ChassisType");
+  if(prop) {
+    if (prop->type == kTagTypeInteger) {
+      gSettings.ChassisType = (UINT8)(UINTN)prop->string;
+    } else if (prop->type == kTagTypeString){
+      AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
+      gSettings.ChassisType = (UINT8)StrHexToUint64((CHAR16*)&UStr[0]);
+    }
+    DBG("Config set ChassisType=0x%x\n", gSettings.ChassisType);
+  }
+  //gFwFeatures = 0xC0001403 - by default
+  prop = GetProperty(dictPointer, "FirmwareFeatures");
+  if(prop) {
+    if (prop->type == kTagTypeInteger) {
+      gFwFeatures = (UINT32)(UINTN)prop->string;
+    } else if (prop->type == kTagTypeString){
+      AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
+      gFwFeatures = (UINT32)StrHexToUint64((CHAR16*)&UStr[0]);
+    }
+  }
+}
+
 EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
 {
   EFI_STATUS	Status = EFI_NOT_FOUND;
@@ -3127,127 +3249,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
     //*** SMBIOS ***//
     dictPointer = GetProperty(dict,"SMBIOS");
     if (dictPointer) {
-      prop = GetProperty(dictPointer,"ProductName");
-      if(prop) {
-        MACHINE_TYPES Model;
-        AsciiStrCpy(gSettings.ProductName, prop->string);
-        // let's fill all other fields based on this ProductName
-        // to serve as default
-        Model = GetModelFromString(gSettings.ProductName);
-        if (Model != MaxMachineType) {
-          SetDMISettingsForModel(Model);
-        }
-      }
-      prop = GetProperty(dictPointer,"BiosVendor");
-      if(prop) {
-        AsciiStrCpy(gSettings.VendorName, prop->string);
-      }
-      prop = GetProperty(dictPointer,"BiosVersion");
-      if(prop) {
-        AsciiStrCpy(gSettings.RomVersion, prop->string);
-      }
-      prop = GetProperty(dictPointer,"BiosReleaseDate");
-      if(prop) {
-        AsciiStrCpy(gSettings.ReleaseDate, prop->string);
-      }
-      prop = GetProperty(dictPointer,"Manufacturer");
-      if(prop) {
-        AsciiStrCpy(gSettings.ManufactureName, prop->string);
-      }
-      prop = GetProperty(dictPointer,"Version");
-      if(prop) {
-        AsciiStrCpy(gSettings.VersionNr, prop->string);
-      }
-      prop = GetProperty(dictPointer,"Family");
-      if(prop) {
-        AsciiStrCpy(gSettings.FamilyName, prop->string);
-      }
-      prop = GetProperty(dictPointer,"SerialNumber");
-      if(prop) {
-        ZeroMem(gSettings.SerialNr, 64);
-        AsciiStrCpy(gSettings.SerialNr, prop->string);
-      }
-      prop = GetProperty(dictPointer,"SmUUID");
-      if(prop) {
-        if (IsValidGuidAsciiString(prop->string)) {
-          AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
-          Status = StrToGuidLE((CHAR16*)&UStr[0], &gSettings.SmUUID);
-        } else {
-          DBG("Error: invalid SmUUID '%a' - should be in the format XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX\n", prop->string);
-        }
-      }
-      
-      prop = GetProperty(dictPointer,"BoardManufacturer");
-      if(prop) {
-        AsciiStrCpy(gSettings.BoardManufactureName, prop->string);
-      }
-      prop = GetProperty(dictPointer,"BoardSerialNumber");
-      if(prop) {
-        AsciiStrCpy(gSettings.BoardSerialNumber, prop->string);
-      }
-      prop = GetProperty(dictPointer,"Board-ID");
-      if(prop) {
-        AsciiStrCpy(gSettings.BoardNumber, prop->string);
-      }
-      prop = GetProperty(dictPointer,"BoardVersion");
-      if(prop) {
-        AsciiStrCpy(gSettings.BoardVersion, prop->string);
-      }
-      prop = GetProperty(dictPointer,"BoardType");
-      if(prop) {
-        if (prop->type == kTagTypeInteger) {
-          gSettings.BoardType = (UINT8)(UINTN)prop->string;
-        } else if (prop->type == kTagTypeString){
-          AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
-          gSettings.BoardType = (UINT8)StrDecimalToUintn((CHAR16*)&UStr[0]);
-        }
-      }
-      
-      prop = GetProperty(dictPointer,"Mobile");
-      if(prop) {
-        if ((prop->type == kTagTypeFalse) ||
-            ((prop->type == kTagTypeString) &&
-             ((prop->string[0] == 'n') || (prop->string[0] == 'N'))))
-          gSettings.Mobile = FALSE;
-        else if ((prop->type == kTagTypeTrue) ||
-            ((prop->type == kTagTypeString) &&
-             ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))))
-          gSettings.Mobile = TRUE;
-      }
-      
-      prop = GetProperty(dictPointer,"LocationInChassis");
-      if(prop) {
-        AsciiStrCpy(gSettings.LocationInChassis, prop->string);
-      }
-      
-      prop = GetProperty(dictPointer,"ChassisManufacturer");
-      if(prop) {
-        AsciiStrCpy(gSettings.ChassisManufacturer, prop->string);
-      }
-      prop = GetProperty(dictPointer,"ChassisAssetTag");
-      if(prop) {
-        AsciiStrCpy(gSettings.ChassisAssetTag, prop->string);
-      }
-      prop = GetProperty(dictPointer,"ChassisType");
-      if(prop) {
-        if (prop->type == kTagTypeInteger) {
-          gSettings.ChassisType = (UINT8)(UINTN)prop->string;
-        } else if (prop->type == kTagTypeString){
-          AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
-          gSettings.ChassisType = (UINT8)StrHexToUint64((CHAR16*)&UStr[0]);
-        }
-        DBG("Config set ChassisType=0x%x\n", gSettings.ChassisType);
-      }
-     //gFwFeatures = 0xC0001403 - by default
-      prop = GetProperty(dictPointer, "FirmwareFeatures");
-      if(prop) {
-        if (prop->type == kTagTypeInteger) {
-          gFwFeatures = (UINT32)(UINTN)prop->string;
-        } else if (prop->type == kTagTypeString){
-          AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
-          gFwFeatures = (UINT32)StrHexToUint64((CHAR16*)&UStr[0]);
-        }
-      }
+      ParseSMBIOSSettings(dictPointer);
       prop = GetProperty(dictPointer, "Trust");
       if (prop) {
         if ((prop->type == kTagTypeFalse) ||

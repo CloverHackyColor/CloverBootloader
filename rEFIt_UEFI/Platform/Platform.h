@@ -1498,5 +1498,6 @@ DeleteBootOptionsContainingFile (
 VOID RegisterDriversToHighestPriority(IN EFI_HANDLE *PriorityDrivers);
 
 EFI_STATUS LoadUserSettings(IN EFI_FILE *RootDir, CHAR16 *ConfName, TagPtr * dict);
+VOID ParseSMBIOSSettings(TagPtr dictPointer);
 
 #endif
