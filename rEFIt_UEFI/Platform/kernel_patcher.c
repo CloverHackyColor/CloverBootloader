@@ -1054,7 +1054,7 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
   }
 
   // CPU power management patch for haswell with locked msr
-  if (gSettings.KPKernelPm && is64BitKernel) {
+  if (gSettings.KPKernelPm) {
     KernelAndKextPatcherInit();
     if (KernelData == NULL) {
       if (gSettings.KPDebug) {
@@ -1063,7 +1063,9 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
       }
       return;
     }
-    KernelPatchPm(KernelData);
+    if (is64BitKernel) {
+      KernelPatchPm(KernelData);
+    }
   }
   
   // Lapic Panic Kernel Patch
