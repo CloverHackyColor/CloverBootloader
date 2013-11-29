@@ -1221,9 +1221,9 @@ static VOID LoadDrivers(VOID)
     }
   }
   
-  if (VBiosPatchNeeded && !gDriversFlags.VideoLoaded) {
+  if ((gSettings.CustomEDID != NULL) || (VBiosPatchNeeded && !gDriversFlags.VideoLoaded)) {
     // we have video bios patch - force video driver reconnect
-    DBG("Video bios patch requested - forcing video reconnect\n");
+    DBG("Video bios patch requested or CustomEDID - forcing video reconnect\n");
     gDriversFlags.VideoLoaded = TRUE;
     DriversToConnectNum++;
   }
@@ -1638,8 +1638,17 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
                                          (gCPUStructure.MaxRatio == 0) ? 1 : gCPUStructure.MaxRatio);
   gCPUStructure.ExternalClock = (UINT32)DivU64x32(gCPUStructure.FSBFrequency, kilo);
   gCPUStructure.MaxSpeed = (UINT32)DivU64x32(gCPUStructure.TSCFrequency, Mega);
-  
-  //Second step. Load config.plist into gSettings	
+
+  //Load SMBIOS before config.plist
+  // Load any extra SMBIOS information
+  if (!EFI_ERROR(LoadUserSettings(SelfRootDir, L"smbios", &smbiosTags)) && (smbiosTags != NULL)) {
+    TagPtr dictPointer = GetProperty(smbiosTags,"SMBIOS");
+    if (dictPointer) {
+      ParseSMBIOSSettings(dictPointer);
+    }
+  }
+
+  //Second step. Load config.plist into gSettings
   for (i=0; i<2; i++) {
     if (gConfigDict[i]) {
       Status = GetUserSettings(SelfRootDir, gConfigDict[i]);
@@ -1650,14 +1659,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   }
  //       DBG("GetUserSettings OK\n");
 
-  // Load any extra SMBIOS information
-  if (!EFI_ERROR(LoadUserSettings(SelfRootDir, L"smbios", &smbiosTags)) && (smbiosTags != NULL)) {
-    TagPtr dictPointer = GetProperty(smbiosTags,"SMBIOS");
-    if (dictPointer) {
-      ParseSMBIOSSettings(dictPointer);
-    }
-  }
-  
   if (!gFirmwareClover && !gDriversFlags.EmuVariableLoaded &&
       GlobalConfig.Timeout == 0 && !ReadAllKeyStrokes()) {
 // UEFI boot: get gEfiBootDeviceGuid from NVRAM.

@@ -3473,100 +3473,104 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 
 	if (load_vbios){
 		UnicodeSPrint(FileName, 128, L"ROM\\10de_%04x.rom", nvda_dev->device_id);
-	if (FileExists(OEMDir, FileName)){
-		Status = egLoadFile(OEMDir, FileName, &buffer, &bufferLen);
-	}
-	if (EFI_ERROR(Status)) {
-		UnicodeSPrint(FileName, 128, L"\\EFI\\CLOVER\\ROM\\10de_%04x.rom", nvda_dev->device_id);
-		if (FileExists(SelfRootDir, FileName)){
-			Status = egLoadFile(SelfRootDir, FileName, &buffer, &bufferLen);
-		}
-	}
+    if (FileExists(OEMDir, FileName)){
+      Status = egLoadFile(OEMDir, FileName, &buffer, &bufferLen);
+    }
+    if (EFI_ERROR(Status)) {
+      UnicodeSPrint(FileName, 128, L"\\EFI\\CLOVER\\ROM\\10de_%04x.rom", nvda_dev->device_id);
+      if (FileExists(SelfRootDir, FileName)){
+        Status = egLoadFile(SelfRootDir, FileName, &buffer, &bufferLen);
+      }
+    }
   }
-  if (EFI_ERROR(Status)){
+  if (EFI_ERROR(Status)) {
     rom = AllocateZeroPool(NVIDIA_ROM_SIZE+1);
 		// PRAMIN first
     read_nVidia_PRAMIN(nvda_dev, rom, nvCardType);
 
     //DBG("got here\n");
-		
+
     //DBG("%x%x\n", rom[0], rom[1]);
     rom_pci_header = NULL;
 
-	if (rom[0] != 0x55 || rom[1] != 0xaa) {
-		read_nVidia_PROM(nvda_dev, rom);
-		if (rom[0] != 0x55 || rom[1] != 0xaa)
-			DBG("ERROR: Unable to locate nVidia Video BIOS\n");
+    if (rom[0] != 0x55 || rom[1] != 0xaa) {
+      read_nVidia_PROM(nvda_dev, rom);
+      if (rom[0] != 0x55 || rom[1] != 0xaa)
+        DBG("ERROR: Unable to locate nVidia Video BIOS\n");
     }
 
-	if (rom[0] == 0x55 && rom[1] == 0xaa) {
-		if ((nvPatch = patch_nvidia_rom(rom)) == PATCH_ROM_FAILED) {
-			DBG("ERROR: nVidia ROM Patching Failed!\n");
-		}
-	} else {
-		DBG("using loaded ROM image\n");
-	}
+    if (rom[0] == 0x55 && rom[1] == 0xaa) {
+      if ((nvPatch = patch_nvidia_rom(rom)) == PATCH_ROM_FAILED) {
+        DBG("ERROR: nVidia ROM Patching Failed!\n");
+      }
+    } else {
+      DBG("using loaded ROM image\n");
+    }
+  } else {
+    rom = buffer;
+  }
 
 
-	rom_pci_header = (option_rom_pci_header_t*)(rom + *(UINT16 *)&rom[24]);
+    rom_pci_header = (option_rom_pci_header_t*)(rom + *(UINT16 *)&rom[24]);
 
-	// check for 'PCIR' sig
-	if (rom_pci_header->signature == 0x52494350/*50434952*/) { //for some reason, the reverse byte order
-		if (rom_pci_header->device_id != nvda_dev->device_id) {
-			// Get Model from the OpROM
-			model = get_nvidia_model(((rom_pci_header->vendor_id << 16) | rom_pci_header->device_id), NV_SUB_IDS);
-//				DBG(model);
-		}
-	}
-	else
-	{
-		DBG("nVidia incorrect PCI ROM signature: 0x%x\n", rom_pci_header->signature);
-	}
+    // check for 'PCIR' sig
+    if (rom_pci_header->signature == 0x52494350/*50434952*/) { //for some reason, the reverse byte order
+      if (rom_pci_header->device_id != nvda_dev->device_id) {
+        // Get Model from the OpROM
+        model = get_nvidia_model(((rom_pci_header->vendor_id << 16) | rom_pci_header->device_id), NV_SUB_IDS);
+        //				DBG(model);
+      }
+    }
+    else
+    {
+      DBG("nVidia incorrect PCI ROM signature: 0x%x\n", rom_pci_header->signature);
+    }
 
-	// get bios version
+    // get bios version
 
-	//ZeroMem((VOID*)version_str, MAX_BIOS_VERSION_LENGTH);
+    //ZeroMem((VOID*)version_str, MAX_BIOS_VERSION_LENGTH);
 
-	// only search the first 384 bytes
-	for (i = 0; i < 0x180; i++)
-	{
-		if (rom[i] == 0x0D && rom[i+1] == 0x0A)
-		{
-			crlf_count++;
-			// second 0x0D0A was found, extract bios version
-			if (crlf_count == 2)
-			{
-				if (rom[i-1] == 0x20) i--; // strip last " "
+    // only search the first 384 bytes
+    for (i = 0; i < 0x180; i++)
+    {
+      if (rom[i] == 0x0D && rom[i+1] == 0x0A)
+      {
+        crlf_count++;
+        // second 0x0D0A was found, extract bios version
+        if (crlf_count == 2)
+        {
+          if (rom[i-1] == 0x20) i--; // strip last " "
 
-				for (version_start = i; version_start > (i-MAX_BIOS_VERSION_LENGTH); version_start--)
-				{
-					// find start
-					if (rom[version_start] == 0x00)
-					{
-						version_start++;
+          for (version_start = i; version_start > (i-MAX_BIOS_VERSION_LENGTH); version_start--)
+          {
+            // find start
+            if (rom[version_start] == 0x00)
+            {
+              version_start++;
 
-						// strip "Version "
-						if (AsciiStrnCmp((const CHAR8*)rom+version_start, "Version ", 8) == 0)
-						{
-							version_start += 8;
-						}
-						s = (CHAR8*)(rom + version_start);
-            s1 = version_str;
-            while ((*s > ' ') && (*s < 'z') && ((INTN)(s1 - version_str) < MAX_BIOS_VERSION_LENGTH)) {
-              *s1++ = *s++;
+              // strip "Version "
+              if (AsciiStrnCmp((const CHAR8*)rom+version_start, "Version ", 8) == 0)
+              {
+                version_start += 8;
+              }
+              s = (CHAR8*)(rom + version_start);
+              s1 = version_str;
+              while ((*s > ' ') && (*s < 'z') && ((INTN)(s1 - version_str) < MAX_BIOS_VERSION_LENGTH)) {
+                *s1++ = *s++;
+              }
+              *s1 = 0;
+              //				AsciiStrnCpy(version_str, (const CHAR8*)rom+version_start, i-version_start);
+              DBG(version_str);
+              DBG("\n");
+              break;
             }
-            *s1 = 0;
-		//				AsciiStrnCpy(version_str, (const CHAR8*)rom+version_start, i-version_start);
-            DBG(version_str);
-						break;
-					}
-				}
-				break;
-			}
-		}
-	}
-	}
-//#endif
+          }
+          break;
+        }
+      }
+    }
+
+  //#endif
 	
 	DBG(devicepath);
 	DBG("\n");
