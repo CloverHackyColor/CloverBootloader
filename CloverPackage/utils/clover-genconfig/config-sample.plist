@@ -82,25 +82,17 @@
 					<key>Comment</key>
 					<string>Remove battery device from desktop</string>
 					<key>Find</key>
-					<data>
-					W4IeQkFUMQhfSElEDEHQDAoIX1VJRAEUCF9T
-					VEEApAA=
-					</data>
+					<data>W4IeQkFUMQhfSElEDEHQDAoIX1VJRAEUCF9TVEEApAA=</data>
 					<key>Replace</key>
-					<data>
-					</data>
+					<data></data>
 				</dict>
 				<dict>
 					<key>Comment</key>
 					<string>Add _SUN property for GIGE</string>
 					<key>Find</key>
-					<data>
-					UFhTWAhfQURSAAhfUFJXEgYC
-					</data>
+					<data>UFhTWAhfQURSAAhfUFJXEgYC</data>
 					<key>Replace</key>
-					<data>
-					UFhTWAhfQURSAAhfU1VOCgQIX1BSVxIGAg==
-					</data>
+					<data>UFhTWAhfQURSAAhfU1VOCgQIX1BSVxIGAg==</data>
 				</dict>
 			</array>
 			<key>ReuseFFFF</key>
@@ -218,9 +210,7 @@
 				<key>Key</key>
 				<string>AAPL,HasPanel</string>
 				<key>Value</key>
-				<data>
-				AQAAAA==
-				</data>
+				<data>AQAAAA==</data>
 			</dict>
 			<dict>
 				<key>Device</key>
@@ -228,9 +218,7 @@
 				<key>Key</key>
 				<string>AAPL,Haslid</string>
 				<key>Value</key>
-				<data>
-				AQAAAA==
-				</data>
+				<data>AQAAAA==</data>
 			</dict>
 		</array>
 		<key>Audio</key>
@@ -296,7 +284,7 @@
 					<key>Hotkey</key>
 					<string>M</string>
 					<key>InjectKexts</key>
-					<true/>
+					<false/>
 					<key>NoCaches</key>
 					<false/>
 					<key>Path</key>
@@ -312,7 +300,7 @@
 					<key>Hidden</key>
 					<false/>
 					<key>InjectKexts</key>
-					<true/>
+					<false/>
 					<key>NoCaches</key>
 					<false/>
 					<key>SubEntries</key>
@@ -408,11 +396,7 @@
 	<key>Graphics</key>
 	<dict>
 		<key>CustomEDID</key>
-		<data>
-		AP///////wAyDADfAAAAAAASAQOAIRV4CunVmVlTjigmUFQAAAABAQEBAQEB
-		AQEBAQEBAQEB3iGgcFCEHzAgIFYAS88QAAAY3iGgcFCEHzAgIFYAS88QAAAA
-		AAAA/gBXNjU3RwAxNTRXUDEKAAAA/gAjMz1IZYSq/wIBCiAgAJo=
-		</data>
+		<data>AP///////wAyDADfAAAAAAASAQOAIRV4CunVmVlTjigmUFQAAAABAQEBAQEBAQEBAQEBAQEB3iGgcFCEHzAgIFYAS88QAAAY3iGgcFCEHzAgIFYAS88QAAAAAAAA/gBXNjU3RwAxNTRXUDEKAAAA/gAjMz1IZYSq/wIBCiAgAJo=</data>
 		<key>DualLink</key>
 		<integer>0</integer>
 		<key>FBName</key>
@@ -438,13 +422,9 @@
 		<array>
 			<dict>
 				<key>Find</key>
-				<data>
-				gAeoAqAF
-				</data>
+				<data>gAeoAqAF</data>
 				<key>Replace</key>
-				<data>
-				gAeoAjgE
-				</data>
+				<data>gAeoAjgE</data>
 			</dict>
 		</array>
 		<key>VRAM</key>
@@ -478,15 +458,11 @@
 		<array>
 			<dict>
 				<key>Find</key>
-				<data>
-				SGVhZHBob25lcwA=
-				</data>
+				<data>SGVhZHBob25lcwA=</data>
 				<key>Name</key>
 				<string>VoodooHDA</string>
 				<key>Replace</key>
-				<data>
-				VGVsZXBob25lcwA=
-				</data>
+				<data>VGVsZXBob25lcwA=</data>
 			</dict>
 			<dict>
 				<key>Comment</key>
@@ -502,27 +478,19 @@
 			</dict>
 			<dict>
 				<key>Find</key>
-				<data>
-				TA==
-				</data>
+				<data>TA==</data>
 				<key>Name</key>
 				<string>IOBlockStorage</string>
 				<key>Replace</key>
-				<data>
-				TA==
-				</data>
+				<data>TA==</data>
 			</dict>
 			<dict>
 				<key>Find</key>
-				<data>
-				RXh0ZXJuYWw=
-				</data>
+				<data>RXh0ZXJuYWw=</data>
 				<key>Name</key>
 				<string>AppleAHCIPort</string>
 				<key>Replace</key>
-				<data>
-				SW50ZXJuYWw=
-				</data>
+				<data>SW50ZXJuYWw=</data>
 			</dict>
 		</array>
 	</dict>
@@ -633,7 +601,7 @@
 		<key>CustomUUID</key>
 		<string>511CE200-1000-4000-9999-010203040506</string>
 		<key>InjectKexts</key>
-		<false/>
+		<string>Detect</string>
 		<key>InjectSystemID</key>
 		<false/>
 		<key>NoCaches</key>

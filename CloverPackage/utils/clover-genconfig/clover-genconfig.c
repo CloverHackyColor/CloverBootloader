@@ -301,12 +301,13 @@ void PrintConfig(CFTypeRef data)
   addUString(systemParametersDict, CFSTR("CustomUUID"), (const UniChar *)&s->CustomUuid);
   addBoolean(systemParametersDict, CFSTR("InjectSystemID"), s->InjectSystemID);
   addHex(systemParametersDict, CFSTR("BacklightLevel"),s->BacklightLevel);
-  addBoolean(systemParametersDict, CFSTR("InjectKexts"), 0);
+//  addBoolean(systemParametersDict, CFSTR("InjectKexts"), 0);
+  addString(systemParametersDict, CFSTR("InjectKexts"), "Detect");
 
   // GUI
   CFMutableDictionaryRef guiDict = addDict(dict, CFSTR("GUI"));
   addString(guiDict, CFSTR("Language"), s->Language);
-  addString(guiDict, CFSTR("Theme"), "xxx");
+  addString(guiDict, CFSTR("Theme"), "BGM");
   addBoolean(guiDict, CFSTR("TextOnly"), 0);
   addBoolean(guiDict, CFSTR("CustomIcons"), 0);
     
