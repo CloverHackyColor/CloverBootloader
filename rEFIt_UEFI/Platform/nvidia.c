@@ -3436,6 +3436,7 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 	CHAR8*				s;
 	CHAR8*				s1;
 	CHAR8*				version_str = (CHAR8*)AllocateZeroPool(MAX_BIOS_VERSION_LENGTH);
+  BOOLEAN   RomAssigned = FALSE;
 //	DBG("setup_nvidia_devprop\n");
 //	DBG("%x:%x\n",nvda_dev->vendor_id, nvda_dev->device_id);
 	devicepath = get_pci_dev_path(nvda_dev);
@@ -3467,10 +3468,6 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 		}
 	}
 
-	DBG("nVidia %a ", model);
-	DBG(" %dMB NV%02x [%04x:%04x] :: ", (UINT32)(RShiftU64(videoRam, 20)),
-      nvCardType, nvda_dev->vendor_id, nvda_dev->device_id);
-
 	if (load_vbios){
 		UnicodeSPrint(FileName, 128, L"ROM\\10de_%04x.rom", nvda_dev->device_id);
     if (FileExists(OEMDir, FileName)){
@@ -3488,8 +3485,6 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 		// PRAMIN first
     read_nVidia_PRAMIN(nvda_dev, rom, nvCardType);
 
-    //DBG("got here\n");
-
     //DBG("%x%x\n", rom[0], rom[1]);
     rom_pci_header = NULL;
 
@@ -3504,12 +3499,15 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
         DBG("ERROR: nVidia ROM Patching Failed!\n");
       }
     } else {
-      DBG("using loaded ROM image\n");
+      FreePool(rom);
+      rom = NULL;
     }
-  } else {
-    rom = buffer;
   }
-
+  if (!rom){
+    rom = buffer;
+    RomAssigned = TRUE;
+    DBG("using loaded ROM image\n");
+  }
 
     rom_pci_header = (option_rom_pci_header_t*)(rom + *(UINT16 *)&rom[24]);
 
@@ -3525,6 +3523,10 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
     {
       DBG("nVidia incorrect PCI ROM signature: 0x%x\n", rom_pci_header->signature);
     }
+
+	DBG("nVidia %a ", model);
+	DBG(" %dMB NV%02x [%04x:%04x] :: \n", (UINT32)(RShiftU64(videoRam, 20)),
+      nvCardType, nvda_dev->vendor_id, nvda_dev->device_id);
 
     // get bios version
 
@@ -3606,6 +3608,12 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
     
   if (gSettings.NoDefaultProperties) {
     DBG("NVidia: no default properties\n");
+    if (buffer) {
+      FreePool(buffer);
+    }
+    if (!RomAssigned) {
+      FreePool(rom);
+    }
     return TRUE;
   }
   
@@ -3669,5 +3677,11 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 //	gDeviceProperties = (VOID*)devprop_generate_string(string);
 //	gBS->Stall(2000000);
   FreePool(version_str);
+  if (buffer) {
+    FreePool(buffer);
+  }
+  if (!RomAssigned) {
+    FreePool(rom);
+  }
 	return TRUE;
 }

@@ -1878,6 +1878,7 @@ UINT32 FIXLPCB (UINT8 *dsdt, UINT32 len)
   AML_CHUNK* met;
   AML_CHUNK* pack;
   CHAR8 *lpcb;
+  CHAR8 NameCard[32];
 
   
   DBG("Start LPCB Fix\n");
@@ -1932,6 +1933,12 @@ UINT32 FIXLPCB (UINT8 *dsdt, UINT32 len)
   pack = aml_add_package(met);
   aml_add_string(pack, "device-id");
   aml_add_byte_buffer(pack, dataLPC, 4);
+  AsciiSPrint(NameCard, 32, "pci8086,3a18\0");
+  aml_add_string(pack, "name");
+  aml_add_string_buffer(pack, (CHAR8 *)&NameCard[0]);
+  aml_add_string(pack, "compatible");
+  aml_add_string_buffer(pack, (CHAR8 *)&NameCard[0]);
+
   AddProperties(pack, DEV_LPC);
   aml_add_local0(met);
   aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
