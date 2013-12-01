@@ -738,12 +738,12 @@ if [[ "$add_ia32" -eq 1 ]]; then
         fixperms "${PKG_BUILD_DIR}/${driverChoice}/Root/"
 
         packageRefId=$(getPackageRefId "${packagesidentity}" "${driverChoice}")
-        # Add postinstall script for VboxHfs driver to remove it if HFSPlus driver exists
-        [[ "$driver" == VboxHfs* ]] && \
+        # Add postinstall script for VBoxHfs driver to remove it if HFSPlus driver exists
+        [[ "$driver" == VBoxHfs* ]] && \
          addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${driverChoice}"  \
                             --subst="DRIVER_NAME=$driver"                     \
                             --subst="DRIVER_DIR=$(basename $driverDestDir)"   \
-                            "VboxHfs"
+                            "VBoxHfs"
         buildpackage "$packageRefId" "${driverChoice}" "${PKG_BUILD_DIR}/${driverChoice}" "${driverDestDir}"
         addChoice --start-visible="false" --selected="!choices['UEFI.only'].selected"  \
          --pkg-refs="$packageRefId"  "${driverChoice}"
@@ -794,12 +794,12 @@ if [[ "$add_ia32" -eq 1 ]]; then
         fixperms "${PKG_BUILD_DIR}/${driverChoice}/Root/"
 
         packageRefId=$(getPackageRefId "${packagesidentity}" "${driverChoice}")
-        # Add postinstall script for VboxHfs driver to remove it if HFSPlus driver exists
-        [[ "$driver" == VboxHfs* ]] && \
+        # Add postinstall script for VBoxHfs driver to remove it if HFSPlus driver exists
+        [[ "$driver" == VBoxHfs* ]] && \
          addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${driverChoice}"   \
                             --subst="DRIVER_NAME=$driver"                    \
                             --subst="DRIVER_DIR=$(basename $driverDestDir)"  \
-                            "VboxHfs"
+                            "VBoxHfs"
         buildpackage "$packageRefId" "${driverChoice}" "${PKG_BUILD_DIR}/${driverChoice}" "${driverDestDir}"
         addChoice --start-visible="false" --start-selected="true" --pkg-refs="$packageRefId"  "${driverChoice}"
         rm -R -f "${PKG_BUILD_DIR}/${driverChoice}"
@@ -821,12 +821,12 @@ fi
         fixperms "${PKG_BUILD_DIR}/${driverChoice}/Root/"
 
         packageRefId=$(getPackageRefId "${packagesidentity}" "${driverChoice}")
-        # Add postinstall script for VboxHfs driver to remove it if HFSPlus driver exists
-        [[ "$driver" == VboxHfs* ]] && \
+        # Add postinstall script for VBoxHfs driver to remove it if HFSPlus driver exists
+        [[ "$driver" == VBoxHfs* ]] && \
          addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${driverChoice}"  \
                             --subst="DRIVER_NAME=$driver"                     \
                             --subst="DRIVER_DIR=$(basename $driverDestDir)"   \
-                            "VboxHfs"
+                            "VBoxHfs"
         buildpackage "$packageRefId" "${driverChoice}" "${PKG_BUILD_DIR}/${driverChoice}" "${driverDestDir}"
         addChoice --start-visible="false" --selected="!choices['UEFI.only'].selected"  \
          --pkg-refs="$packageRefId"  "${driverChoice}"
@@ -877,12 +877,12 @@ fi
         fixperms "${PKG_BUILD_DIR}/${driverChoice}/Root/"
 
         packageRefId=$(getPackageRefId "${packagesidentity}" "${driverChoice}")
-        # Add postinstall script for VboxHfs driver to remove it if HFSPlus driver exists
-        [[ "$driver" == VboxHfs* ]] && \
+        # Add postinstall script for VBoxHfs driver to remove it if HFSPlus driver exists
+        [[ "$driver" == VBoxHfs* ]] && \
          addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${driverChoice}"  \
                             --subst="DRIVER_NAME=$driver"                     \
                             --subst="DRIVER_DIR=$(basename $driverDestDir)"   \
-                            "VboxHfs"
+                            "VBoxHfs"
         buildpackage "$packageRefId" "${driverChoice}" "${PKG_BUILD_DIR}/${driverChoice}" "${driverDestDir}"
         addChoice --start-visible="false" --start-selected="true" --pkg-refs="$packageRefId"  "${driverChoice}"
         rm -R -f "${PKG_BUILD_DIR}/${driverChoice}"

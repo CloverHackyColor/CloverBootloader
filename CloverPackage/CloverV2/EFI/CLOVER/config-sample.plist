@@ -58,6 +58,12 @@
 				<key>TableId</key>
 				<string>CpuPm</string>
 			</dict>
+			<dict>
+				<key>Signature</key>
+				<string>SSDT</string>
+				<key>TableId</key>
+				<string>Cpu0Ist</string>
+			</dict>
 		</array>
 		<key>HaltEnabler</key>
 		<false/>

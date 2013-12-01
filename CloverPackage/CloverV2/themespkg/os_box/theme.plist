@@ -40,9 +40,11 @@
 			<key>Big</key>
 			<string>Selection_big.png</string>
 			<key>Color</key>
-			<string>0x9D9FA200</string>
+			<string>0x9D9FA240</string>
 			<key>Small</key>
 			<string>Selection_small.png</string>
+			<key>OnTop</key>
+			<false/>
 		</dict>
 	</dict>
 	<key>Year</key>
