@@ -3504,9 +3504,15 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
     }
   }
   if (!rom){
-    rom = buffer;
-    RomAssigned = TRUE;
-    DBG("using loaded ROM image\n");
+    if (buffer) {
+      rom = buffer;
+      RomAssigned = TRUE;
+      DBG("using loaded ROM image\n");      
+    } else {
+      DBG("there are no ROM loaded and no VBIOS read from hardware, exiting\n");
+      return FALSE;
+    }
+
   }
 
     rom_pci_header = (option_rom_pci_header_t*)(rom + *(UINT16 *)&rom[24]);
