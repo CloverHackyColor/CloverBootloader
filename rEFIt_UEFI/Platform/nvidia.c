@@ -3427,7 +3427,7 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 	INT32				nvPatch = 0;
 	CHAR8				*model = NULL;
 	CHAR16				FileName[64];
-	UINT8				*buffer;
+	UINT8				*buffer = NULL;
 	UINTN				bufferLen;
 	UINTN				j, n_ports = 0;
 	INT32				i, version_start;
