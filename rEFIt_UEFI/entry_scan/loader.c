@@ -330,15 +330,22 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
   }
   
   // Ignore this loader if it's self path
-  FilePathAsString = FileDevicePathToStr(SelfLoadedImage->FilePath);
+  FilePathAsString = FileDevicePathFileToStr(SelfLoadedImage->FilePath);
   if (FilePathAsString) {
-    INTN Comparison = StriCmp(FilePathAsString, LoaderDevicePathString);
-    DBG("%s == %s", FilePathAsString, LoaderDevicePathString);
+    EFI_DEVICE_PATH *DevicePath = FileDevicePath(Volume->DeviceHandle, FilePathAsString);
     FreePool(FilePathAsString);
-    if (Comparison == 0) {
-      DBG("skipped because path `%s` is self path!\n", LoaderDevicePathString);
-      FreePool(LoaderDevicePathString);
-      return NULL;
+    if (DevicePath) {
+      CHAR16 *FilePathAsString2 = FileDevicePathToStr(DevicePath);
+      FreePool(DevicePath);
+      if (FilePathAsString2) {
+        INTN Comparison = StriCmp(FilePathAsString2, LoaderDevicePathString);
+        FreePool(FilePathAsString2);
+        if (Comparison == 0) {
+          DBG("skipped because path `%s` is self path!\n", LoaderDevicePathString);
+          FreePool(LoaderDevicePathString);
+          return NULL;
+        }
+      }
     }
   }
   
