@@ -54,43 +54,42 @@
 VOID EnableSecureBoot(VOID)
 {
   EFI_STATUS  Status = EFI_SUCCESS;
+  BOOLEAN     WantDefaultKeys;
   CHAR16     *ErrorString = NULL;
+  UINTN       CloverSignatureSize = 0;
+  VOID       *CloverSignature = NULL;
   // Check in setup mode
   if (gSettings.SecureBoot || !gSettings.SecureBootSetupMode) {
     return;
   }
+  // Ask user if they want to use default keys
+  WantDefaultKeys = YesNoMessage(L"Secure Boot", L"Enroll the default keys too?");
   // Get this image's certificate
-  if (!EFI_ERROR(Status)) {
-    if (SelfLoadedImage != NULL) {
-      UINTN  CloverSignatureSize = 0;
-      VOID  *CloverSignature = GetImageSignatureDatabase(SelfLoadedImage->ImageBase, SelfLoadedImage->ImageSize, &CloverSignatureSize, FALSE);
-      if (CloverSignature != NULL) {
-        if (CloverSignatureSize > 0) {
-          // Enroll this image's certificate
-          Status = AppendImageDatabaseToAuthorizedDatabase(CloverSignature, CloverSignatureSize);
-        } else {
-          // No signature list found
-          Status = EFI_NOT_FOUND;
-        }
-        FreePool(CloverSignature);
-      } else {
+  if (SelfLoadedImage != NULL) {
+    CloverSignature = GetImageSignatureDatabase(SelfLoadedImage->ImageBase, SelfLoadedImage->ImageSize, &CloverSignatureSize, FALSE);
+    if (CloverSignature != NULL) {
+      if (CloverSignatureSize == 0) {
         // No signature list found
         Status = EFI_NOT_FOUND;
+        FreePool(CloverSignature);
       }
     } else {
       // No signature list found
       Status = EFI_NOT_FOUND;
     }
-    if (EFI_ERROR(Status)) {
-      ErrorString = L"Clover does not have a certificate";
-    }
+  } else {
+    // No signature list found
+    Status = EFI_NOT_FOUND;
   }
-  // Enroll secure boot keys
-  if (!EFI_ERROR(Status)) {
-    Status = EnrollSecureBootKeys();
+  if (EFI_ERROR(Status) || (CloverSignature == NULL)) {
+    ErrorString = L"Clover does not have a certificate";
+  } else {
+    // Enroll secure boot keys
+    Status = EnrollSecureBootKeys(CloverSignature, CloverSignatureSize, WantDefaultKeys);
     if (EFI_ERROR(Status)) {
       ErrorString = L"failed to enroll secure boot keys";
     }
+    FreePool(CloverSignature);
   }
   // Reinit secure boot now
   InitializeSecureBoot();
@@ -174,7 +173,7 @@ VOID DisableSecureBoot(VOID)
   }
   UninstallSecureBoot();
   // Clear the platform database
-  Status = SetSignatureDatabase(PLATFORM_DATABASE_NAME, &PLATFORM_DATABASE_GUID, NULL, 0);
+  Status = ClearSecureBootKeys();
   if (EFI_ERROR(Status)) {
     ErrorString = L"Failed to clear platform database!\nIs Clover platform database owner?";
   } else if (YesNoMessage(L"Disable Secure Boot", L"Do you want to clear all databases (suggested)?")) {

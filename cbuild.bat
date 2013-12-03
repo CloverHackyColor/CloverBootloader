@@ -159,10 +159,20 @@ rem have edk2 prepare to build
 
 :postbuild
    echo Performing post build operations ...
+   set SIGNTOOL_BUILD_DIR=%WORKSPACE%\Clover\SignTool
+   set SIGNTOOL_BUILD=BuildSignTool.bat
+   set SIGNTOOL=%WORKSPACE%\Clover\SignTool\SignTool.exe
    set BUILD_DIR=%WORKSPACE%\Build\Clover\%TARGET%_%TOOL_CHAIN_TAG%
    set DEST_DIR=%WORKSPACE%\Clover\CloverPackage\CloverV2
    set BASETOOLS_DIR=%WORKSPACE_TOOLS_PATH%\Bin\Win32
    set BOOTSECTOR_BIN_DIR=%WORKSPACE%\Clover\BootSector\bin
+
+   echo Building signing tool ...
+   pushd .
+   cd %SIGNTOOL_BUILD_DIR%
+   call %SIGNTOOL_BUILD%
+   popd
+   if errorlevel 1 goto failscript
 
    if x"%BUILD_ARCH%" == x"X64" goto postbuild64
 
@@ -291,3 +301,4 @@ rem have edk2 prepare to build
 
 :failscript
    echo Build failed!
+   exit /b 1

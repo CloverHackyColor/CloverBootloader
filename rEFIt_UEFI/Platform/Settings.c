@@ -188,13 +188,13 @@ EFI_STATUS LoadUserSettings(IN EFI_FILE *RootDir, IN CHAR16 *ConfName, TagPtr * 
   
       // load config
     if ((ConfName == NULL) || (dict == NULL)) {
-        DBG("Can't load config in LoadUserSettings: NULL\n");
+        DBG("Can't load plist in LoadUserSettings: NULL\n");
         return EFI_NOT_FOUND;
     }
     
         ConfigPlistPath = PoolPrint(L"EFI\\CLOVER\\%s.plist", ConfName);
         ConfigOemPath = PoolPrint(L"%s\\%s.plist", OEMPath, ConfName);
-  DBG("ConfigPlistPath: %s\n", ConfigPlistPath);
+  DBG("PlistPath: %s\n", ConfigPlistPath);
   if (FileExists(SelfRootDir, ConfigOemPath)) {
     Status = egLoadFile(SelfRootDir, ConfigOemPath, (UINT8**)&gConfigPtr, &size);
   } else {
@@ -209,18 +209,18 @@ EFI_STATUS LoadUserSettings(IN EFI_FILE *RootDir, IN CHAR16 *ConfName, TagPtr * 
       Status = egLoadFile(SelfRootDir, ConfigPlistPath, (UINT8**)&gConfigPtr, &size);
     }
   }	else {
-    DBG("Using OEM config.plist at path: %s\n", ConfigOemPath);
+    DBG("Using OEM %s.plist at path: %s\n", ConfName, ConfigOemPath);
   }
   
   
   if(EFI_ERROR(Status) || gConfigPtr == NULL) {
-    DBG("Error loading config.plist! Status=%r\n", Status);
+    DBG("Error loading %s.plist! Status=%r\n", ConfName, Status);
     return Status;
   }
   
   if(ParseXML((const CHAR8*)gConfigPtr, dict, (UINT32)size) != EFI_SUCCESS) {
     dict = NULL;
-    DBG(" config parse error\n");
+    DBG(" plist parse error\n");
     return EFI_UNSUPPORTED;
   }
   

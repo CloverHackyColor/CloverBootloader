@@ -333,6 +333,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
   FilePathAsString = FileDevicePathToStr(SelfLoadedImage->FilePath);
   if (FilePathAsString) {
     INTN Comparison = StriCmp(FilePathAsString, LoaderDevicePathString);
+    DBG("%s == %s", FilePathAsString, LoaderDevicePathString);
     FreePool(FilePathAsString);
     if (Comparison == 0) {
       DBG("skipped because path `%s` is self path!\n", LoaderDevicePathString);
@@ -942,18 +943,20 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
   // DBG("    Added '%s': OSType='%d', OSVersion='%a'\n", Entry->me.Title, Entry->LoaderType, Entry->OSVersion);
 }
 
-STATIC VOID AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOptions, IN CHAR16 *LoaderTitle,
+STATIC BOOLEAN AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOptions, IN CHAR16 *LoaderTitle,
                            IN REFIT_VOLUME *Volume, IN EG_IMAGE *Image, IN UINT8 OSType, IN UINT8 Flags)
 {
   LOADER_ENTRY *Entry;
   if ((LoaderPath == NULL) || (Volume == NULL) || (Volume->RootDir == NULL) || !FileExists(Volume->RootDir, LoaderPath)) {
-    return;
+    return FALSE;
   }
   Entry = CreateLoaderEntry(LoaderPath, LoaderOptions, NULL, LoaderTitle, Volume, Image, NULL, OSType, Flags, 0, NULL, FALSE);
   if (Entry != NULL) {
     AddDefaultMenu(Entry);
     AddMenuEntry(&MainMenu, (REFIT_MENU_ENTRY *)Entry);
+    return TRUE;
   }
+  return FALSE;
 }
 
 VOID ScanLoader(VOID)

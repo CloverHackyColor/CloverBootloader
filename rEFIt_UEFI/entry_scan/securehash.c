@@ -258,11 +258,11 @@ STATIC EFI_STATUS AppendSignatureListToDatabase(IN OUT VOID               **Data
 }
 
 // Append a signature to a signature database
-STATIC EFI_STATUS AppendSignatureToDatabase(IN OUT VOID     **Database,
-                                            IN OUT UINTN     *DatabaseSize,
-                                            IN     EFI_GUID  *SignatureType,
-                                            IN     VOID      *Signature,
-                                            IN     UINTN      SignatureSize)
+EFI_STATUS AppendSignatureToDatabase(IN OUT VOID     **Database,
+                                     IN OUT UINTN     *DatabaseSize,
+                                     IN     EFI_GUID  *SignatureType,
+                                     IN     VOID      *Signature,
+                                     IN     UINTN      SignatureSize)
 {
   // Create a new signature list
   EFI_SIGNATURE_LIST *List = NULL;
@@ -280,10 +280,10 @@ STATIC EFI_STATUS AppendSignatureToDatabase(IN OUT VOID     **Database,
 }
 
 // Append a signature database to another signature database
-STATIC EFI_STATUS AppendSignatureDatabaseToDatabase(IN OUT VOID  **Database,
-                                                    IN OUT UINTN  *DatabaseSize,
-                                                    IN     VOID   *SignatureDatabase,
-                                                    IN     UINTN   SignatureDatabaseSize)
+EFI_STATUS AppendSignatureDatabaseToDatabase(IN OUT VOID  **Database,
+                                             IN OUT UINTN  *DatabaseSize,
+                                             IN     VOID   *SignatureDatabase,
+                                             IN     UINTN   SignatureDatabaseSize)
 {
   UINT8 *Ptr, *End;
   // Check parameters

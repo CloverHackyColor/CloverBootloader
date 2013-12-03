@@ -167,6 +167,7 @@
   gEfiSmbiosTableGuid
   gEfiSasDevicePathGuid
   gEfiImageSecurityDatabaseGuid
+  gEfiCertX509Guid
   gEfiCertSha1Guid
   gEfiCertSha256Guid
   gEfiCertPkcs7Guid

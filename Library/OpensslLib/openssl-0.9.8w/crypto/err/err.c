@@ -313,7 +313,12 @@ void ERR_set_error_data(char *data, int flags)
 	es->err_data_flags[i]=flags;
 	}
 
-void ERR_add_error_data(int num, ...)
+/* Add EFIAPI for UEFI version. */
+void
+#if defined(OPENSSL_SYS_UEFI)
+EFIAPI
+#endif
+ERR_add_error_data(int num, ...)
 	{
 	va_list args;
 	int i,n,s;

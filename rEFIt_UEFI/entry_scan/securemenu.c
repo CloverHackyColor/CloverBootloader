@@ -107,7 +107,7 @@ UINTN QuerySecureBootUser(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath)
         QueryUserMenu.InfoLines = Information;
         QueryUserMenu.EntryCount = gSettings.SecureBootSetupMode ? 2 : 3;
         // Debug message
-        DBG("VerifySecureBootImage: Query user for authentication action for %s\n", Information[0]);
+        DBG("VerifySecureBootImage: Query user for authentication action for %s\n", Information[1]);
         // Because we may
         if (!gGuiIsReady) {
           InitScreen(FALSE);

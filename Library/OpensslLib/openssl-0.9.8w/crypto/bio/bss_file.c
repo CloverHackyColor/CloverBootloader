@@ -428,6 +428,23 @@ static int MS_CALLBACK file_puts(BIO *bp, const char *str)
 	return(ret);
 	}
 
+#else
+
+BIO_METHOD *BIO_s_file(void)
+	{
+	return NULL;
+	}
+
+BIO *BIO_new_file(const char *filename, const char *mode)
+	{
+	return NULL;
+	}
+
+BIO *BIO_new_fp(FILE *stream, int close_flag)
+	{
+	return NULL;
+	}
+
 #endif /* OPENSSL_NO_STDIO */
 
 #endif /* HEADER_BSS_FILE_C */

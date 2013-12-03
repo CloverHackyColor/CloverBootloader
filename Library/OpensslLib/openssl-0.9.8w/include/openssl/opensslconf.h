@@ -162,11 +162,15 @@
 /* The prime number generation stuff may not work when
  * EIGHT_BIT but I don't care since I've only used this mode
  * for debuging the bignum libraries */
+
+/* Bypass following definition for UEFI version. */
+#if !defined(OPENSSL_SYS_UEFI)
 #undef SIXTY_FOUR_BIT_LONG
 #undef SIXTY_FOUR_BIT
 #define THIRTY_TWO_BIT
 #undef SIXTEEN_BIT
 #undef EIGHT_BIT
+#endif
 #endif
 
 #if defined(HEADER_RC4_LOCL_H) && !defined(CONFIG_HEADER_RC4_LOCL_H)

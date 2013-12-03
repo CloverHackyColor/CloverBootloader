@@ -88,7 +88,10 @@ PKCS7 *PKCS7_sign(X509 *signcert, EVP_PKEY *pkey, STACK_OF(X509) *certs,
 	if (!PKCS7_content_new(p7, NID_pkcs7_data))
 		goto err;
 
-	if (!(si = PKCS7_add_signature(p7,signcert,pkey,EVP_sha1()))) {
+	/*
+		NOTE: Update to SHA-256 digest algorithm for UEFI version.
+	*/
+	if (!(si = PKCS7_add_signature(p7,signcert,pkey,EVP_sha256()))) {
 		PKCS7err(PKCS7_F_PKCS7_SIGN,PKCS7_R_PKCS7_ADD_SIGNATURE_ERROR);
 		goto err;
 	}
@@ -173,7 +176,8 @@ int PKCS7_verify(PKCS7 *p7, STACK_OF(X509) *certs, X509_STORE *store,
 	STACK_OF(PKCS7_SIGNER_INFO) *sinfos;
 	PKCS7_SIGNER_INFO *si;
 	X509_STORE_CTX cert_ctx;
-	char buf[4096];
+	char *buf = NULL;
+	int bufsiz;
 	int i, j=0, k, ret = 0;
 	BIO *p7bio;
 	BIO *tmpin, *tmpout;
@@ -284,10 +288,16 @@ int PKCS7_verify(PKCS7 *p7, STACK_OF(X509) *certs, X509_STORE *store,
 		BIO_set_mem_eof_return(tmpout, 0);
 	} else tmpout = out;
 
+	bufsiz = 4096;
+	buf = OPENSSL_malloc (bufsiz);
+		if (buf == NULL) {
+			goto err;
+	}
+
 	/* We now have to 'read' from p7bio to calculate digests etc. */
 	for (;;)
 	{
-		i=BIO_read(p7bio,buf,sizeof(buf));
+		i=BIO_read(p7bio,buf,bufsiz);
 		if (i <= 0) break;
 		if (tmpout) BIO_write(tmpout, buf, i);
 	}
@@ -325,6 +335,10 @@ int PKCS7_verify(PKCS7 *p7, STACK_OF(X509) *certs, X509_STORE *store,
 	BIO_free_all(p7bio);
 
 	sk_X509_free(signers);
+
+	if (buf != NULL) {
+		OPENSSL_free (buf);
+	}
 
 	return ret;
 }

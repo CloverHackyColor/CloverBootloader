@@ -46,6 +46,14 @@ extern REFIT_MENU_SCREEN MainMenu;
 #define AUTHORIZED_DATABASE_GUID gEfiImageSecurityDatabaseGuid
 #define UNAUTHORIZED_DATABASE_NAME EFI_IMAGE_SECURITY_DATABASE1
 #define UNAUTHORIZED_DATABASE_GUID gEfiImageSecurityDatabaseGuid
+#define DEFAULT_PLATFORM_DATABASE_NAME L"PKDefault"
+#define DEFAULT_PLATFORM_DATABASE_GUID gEfiGlobalVariableGuid
+#define DEFAULT_EXCHANGE_DATABASE_NAME L"KEKDefault"
+#define DEFAULT_EXCHANGE_DATABASE_GUID gEfiGlobalVariableGuid
+#define DEFAULT_AUTHORIZED_DATABASE_NAME L"dbDefault"
+#define DEFAULT_AUTHORIZED_DATABASE_GUID gEfiGlobalVariableGuid
+#define DEFAULT_UNAUTHORIZED_DATABASE_NAME L"dbxDefault"
+#define DEFAULT_UNAUTHORIZED_DATABASE_GUID gEfiGlobalVariableGuid
 
 // common
 EG_IMAGE *LoadBuiltinIcon(IN CHAR16 *IconName);
@@ -94,7 +102,10 @@ BOOLEAN ConfigureSecureBoot(VOID);
 CONST CHAR16 *SecureBootPolicyToStr(IN UINTN Policy);
 EFI_STATUS VerifySecureBootImage(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath);
 UINTN QuerySecureBootUser(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath);
-EFI_STATUS EnrollSecureBootKeys(VOID);
+EFI_STATUS EnrollSecureBootKeys(IN VOID    *AuthorizedDatabase,
+                                IN UINTN    AuthorizedDatabaseSize,
+                                IN BOOLEAN  WantDefaultKeys);
+EFI_STATUS ClearSecureBootKeys(VOID);
 
 // secure boot database
 VOID *GetSignatureDatabase(IN  CHAR16   *DatabaseName,
@@ -124,3 +135,12 @@ EFI_STATUS AppendImageToAuthorizedDatabase(IN CONST EFI_DEVICE_PATH_PROTOCOL *De
 EFI_STATUS RemoveImageFromAuthorizedDatabase(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath,
                                              IN VOID                           *FileBuffer,
                                              IN UINTN                           FileSize);
+EFI_STATUS AppendSignatureDatabaseToDatabase(IN OUT VOID  **Database,
+                                             IN OUT UINTN  *DatabaseSize,
+                                             IN     VOID   *SignatureDatabase,
+                                             IN     UINTN   SignatureDatabaseSize);
+EFI_STATUS AppendSignatureToDatabase(IN OUT VOID     **Database,
+                                     IN OUT UINTN     *DatabaseSize,
+                                     IN     EFI_GUID  *SignatureType,
+                                     IN     VOID      *Signature,
+                                     IN     UINTN      SignatureSize);

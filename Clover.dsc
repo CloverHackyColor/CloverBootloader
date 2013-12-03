@@ -26,6 +26,11 @@
   SKUID_IDENTIFIER               = DEFAULT
   FLASH_DEFINITION               = Clover/Clover.fdf
 
+  !ifndef OPENSSL_VERSION
+#    DEFINE OPENSSL_VERSION       = 0.9.8w
+    DEFINE OPENSSL_VERSION       = 1.0.1e
+  !endif
+
 ################################################################################
 #
 # Library Class section - list of all Library Classes needed by this Platform.
@@ -79,7 +84,7 @@
   EblCmdLib|EmbeddedPkg/Library/EblCmdLibNull/EblCmdLibNull.inf  
   #FileHandleLib|ShellPkg/Library/BaseFileHandleLib/BaseFileHandleLib.inf
   UefiCpuLib|UefiCpuPkg/Library/BaseUefiCpuLib/BaseUefiCpuLib.inf
-  OpensslLib|Clover/Library/OpensslLib/OpensslLib.inf
+  OpensslLib|Clover/Library/OpensslLib/openssl-$(OPENSSL_VERSION)/OpensslLib.inf
   IntrinsicLib|Clover/Library/IntrinsicLib/IntrinsicLib.inf
   
   #

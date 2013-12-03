@@ -1659,6 +1659,18 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   }
  //       DBG("GetUserSettings OK\n");
 
+  // Load any extra SMBIOS information
+  if (!EFI_ERROR(LoadUserSettings(SelfRootDir, L"smbios", &smbiosTags)) && (smbiosTags != NULL)) {
+    TagPtr dictPointer = GetProperty(smbiosTags,"SMBIOS");
+    if (dictPointer) {
+      ParseSMBIOSSettings(dictPointer);
+    } else {
+      DBG("Invalid smbios.plist, not overriding config.plist!\n");
+    }
+  } else {
+    DBG("smbios.plist not found, not overriding config.plist\n");
+  }
+  
   if (!gFirmwareClover && !gDriversFlags.EmuVariableLoaded &&
       GlobalConfig.Timeout == 0 && !ReadAllKeyStrokes()) {
 // UEFI boot: get gEfiBootDeviceGuid from NVRAM.

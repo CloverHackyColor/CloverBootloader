@@ -899,6 +899,8 @@ static int check_policy(X509_STORE_CTX *ctx)
 
 static int check_cert_time(X509_STORE_CTX *ctx, X509 *x)
 	{
+/* Bypass Certificate Time Checking for UEFI version. */
+#if !defined(OPENSSL_SYS_UEFI)
 	time_t *ptime;
 	int i;
 
@@ -940,6 +942,7 @@ static int check_cert_time(X509_STORE_CTX *ctx, X509 *x)
 		if (!ctx->verify_cb(0, ctx))
 			return 0;
 		}
+#endif
 
 	return 1;
 	}
