@@ -833,7 +833,9 @@ VOID *GetImageSignatureDatabase(IN VOID    *FileBuffer,
       SigSize = Length - EFIGUID_SIZE;
       // Get the appropriate signature GUID
       GuidCert = (WIN_CERTIFICATE_UEFI_GUID *)Cert;
-      if (CompareMem(&(GuidCert->CertType), &gEfiCertTypeRsa2048Sha256Guid, sizeof(EFI_GUID)) == 0) {
+      if (CompareMem(&(GuidCert->CertType), &gEfiCertX509Guid, sizeof(EFI_GUID)) == 0) {
+        SigGuid = &gEfiCertX509Guid;
+      } else if (CompareMem(&(GuidCert->CertType), &gEfiCertTypeRsa2048Sha256Guid, sizeof(EFI_GUID)) == 0) {
         SigGuid = &gEfiCertRsa2048Sha256Guid;
       } else if (CompareMem(&(GuidCert->CertType), &gEfiCertPkcs7Guid, sizeof(EFI_GUID)) == 0) {
         SigGuid = &gEfiCertPkcs7Guid;
