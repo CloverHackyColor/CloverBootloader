@@ -178,11 +178,12 @@ VOID *GetSignatureDatabase(IN  CHAR16   *DatabaseName,
   return Database;
 }
 
-// Write signature database
-EFI_STATUS SetSignatureDatabase(IN CHAR16   *DatabaseName,
-                                IN EFI_GUID *DatabaseGuid,
-                                IN VOID     *Database,
-                                IN UINTN     DatabaseSize)
+// Write signed variable
+STATIC EFI_STATUS SetSignedVariable(IN CHAR16   *DatabaseName,
+                                    IN EFI_GUID *DatabaseGuid,
+                                    IN UINT32    Attributes,
+                                    IN VOID     *Database,
+                                    IN UINTN     DatabaseSize)
 {
   EFI_STATUS                     Status;
   EFI_VARIABLE_AUTHENTICATION_2 *Authentication;
@@ -196,21 +197,6 @@ EFI_STATUS SetSignatureDatabase(IN CHAR16   *DatabaseName,
   NameLen = StrLen(DatabaseName);
   if (NameLen == 0) {
     return EFI_INVALID_PARAMETER;
-  }
-  // Check is valid to set database
-  if ((gSettings.SecureBoot && gSettings.SecureBootSetupMode) ||
-      (!gSettings.SecureBoot && !gSettings.SecureBootSetupMode)) {
-    return EFI_NOT_FOUND;
-  }
-  // Erase database
-  if (gSettings.SecureBoot) {
-    Status = gRT->SetVariable(DatabaseName, DatabaseGuid, 0, sizeof(gSecureBootExchangeNullSignedKey), (VOID *)gSecureBootExchangeNullSignedKey);
-  } else {
-    Status = gRT->SetVariable(DatabaseName, DatabaseGuid, 0, 0, NULL);
-  }
-  // Return status if only erasing
-  if ((Database == NULL) || (DatabaseSize == 0)) {
-    return Status;
   }
   // Get the current time
   Status = gRT->GetTime(&Timestamp, NULL);
@@ -243,7 +229,7 @@ EFI_STATUS SetSignatureDatabase(IN CHAR16   *DatabaseName,
     CopyMem(Ptr, DatabaseGuid, sizeof(EFI_GUID));
     Ptr += sizeof(EFI_GUID);
     // 3. Database attributes
-    *((UINT32 *)Ptr) = SET_DATABASE_ATTRIBUTES;
+    CopyMem(Ptr, &Attributes, sizeof(UINT32));
     Ptr += sizeof(UINT32);
     // 4. Database authentication time stamp
     CopyMem(Ptr, &Timestamp, sizeof(EFI_TIME));
@@ -343,4 +329,25 @@ EFI_STATUS SetSignatureDatabase(IN CHAR16   *DatabaseName,
   // Cleanup the authentication buffer
   FreePool(Authentication);
   return Status;
+}
+
+// Write signature database
+EFI_STATUS SetSignatureDatabase(IN CHAR16   *DatabaseName,
+                                IN EFI_GUID *DatabaseGuid,
+                                IN VOID     *Database,
+                                IN UINTN     DatabaseSize)
+{
+  EFI_STATUS Status;
+  // Check is valid to set database
+  if ((gSettings.SecureBoot && gSettings.SecureBootSetupMode) ||
+      (!gSettings.SecureBoot && !gSettings.SecureBootSetupMode)) {
+    return EFI_NOT_FOUND;
+  }
+  // Erase database
+  Status = SetSignedVariable(DatabaseName, DatabaseGuid, 0, NULL, 0);
+  // Return status if only erasing
+  if (EFI_ERROR(Status) || (Database == NULL) || (DatabaseSize == 0)) {
+    return Status;
+  }
+  return SetSignedVariable(DatabaseName, DatabaseGuid, SET_DATABASE_ATTRIBUTES, Database, DatabaseSize);
 }

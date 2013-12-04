@@ -43,11 +43,6 @@ STATIC CONST UINT8 gSecureBootPlatformNullSignedKey[] = {
   0
 };
 
-// TODO: Secure boot private exchange key
-STATIC CONST UINT8 gSecureBootExchangeNullSignedKey[] = {
-  0
-};
-
 // TODO: Secure boot exchange key
 STATIC CONST UINT8 gSecureBootExchangeKey[] = {
   0
