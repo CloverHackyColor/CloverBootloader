@@ -1890,7 +1890,7 @@ UINT32 hex2bin(IN CHAR8 *hex, OUT UINT8 *bin, UINT32 len) //assume len = number 
 		bin[i] = hexstrtouint8(buf);
 		outlen++;
 	}
-	bin[outlen] = 0;
+	//bin[outlen] = 0;
 	return outlen;
 }
 

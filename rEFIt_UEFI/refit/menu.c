@@ -147,8 +147,6 @@ VOID RefillInputs(VOID)
 {
   UINTN i,j; //for loops
   CHAR8 tmp[41];  
-  CHAR8 *s = NULL;
-  UINT8 a;
   BOOLEAN bit;
   
   tmp[40] = 0;  //make it null-terminated
@@ -245,8 +243,7 @@ VOID RefillInputs(VOID)
       InputItems[InputItemsCount++].SValue = gSettings.InjectNVidia?L"[+]":L"[ ]";
       InputItems[InputItemsCount].ItemType = ASString; //22+6i
       for (j=0; j<8; j++) {
-        a = gSettings.Dcfg[j];
-        AsciiSPrint((CHAR8*)&tmp[2*j], 2, "%02x", a);
+        AsciiSPrint((CHAR8*)&tmp[2*j], 3, "%02x", gSettings.Dcfg[j]);
       }
       UnicodeSPrint(InputItems[InputItemsCount++].SValue, 40, L"%a", tmp);
       
@@ -264,16 +261,10 @@ VOID RefillInputs(VOID)
     } else {
       InputItems[InputItemsCount++].SValue = PoolPrint(L"%02d", gGraphics[i].Ports);
     }
-    s = AllocateZeroPool(4);
     InputItems[InputItemsCount].ItemType = ASString; //24+6i
     for (j=0; j<20; j++) {
-      a = gSettings.NVCAP[j];
-      AsciiSPrint(s, 4, "%02x", a);
-      tmp[2*j]   = s[0];
-      tmp[2*j+1] = s[1];
-//      AsciiSPrint((CHAR8*)&tmp[2*j], 2, "%02x", a);
+      AsciiSPrint((CHAR8*)&tmp[2*j], 3, "%02x", gSettings.NVCAP[j]);
     }
-    FreePool(s);
 //    InputItems[InputItemsCount++].SValue = PoolPrint(L"%a", tmp);
     UnicodeSPrint(InputItems[InputItemsCount++].SValue, 84, L"%a", tmp);
     
@@ -442,8 +433,6 @@ VOID FillInputs(VOID)
 {
   UINTN i,j; //for loops
   CHAR8 tmp[41];
-  CHAR8 *s = NULL;
-  UINT8 a;
   BOOLEAN bit;
   
   tmp[40] = 0;  //make it null-terminated
@@ -543,8 +532,7 @@ VOID FillInputs(VOID)
       InputItems[InputItemsCount++].SValue = gSettings.InjectNVidia?L"[+]":L"[ ]";
       InputItems[InputItemsCount].ItemType = ASString; //22+6i
       for (j=0; j<8; j++) {
-        a = gSettings.Dcfg[j];
-        AsciiSPrint((CHAR8*)&tmp[2*j], 2, "%02x", a);
+        AsciiSPrint((CHAR8*)&tmp[2*j], 3, "%02x", gSettings.Dcfg[j]);
       }
       InputItems[InputItemsCount].SValue = AllocateZeroPool(40);
       UnicodeSPrint(InputItems[InputItemsCount++].SValue, 40, L"%a", tmp);
@@ -564,16 +552,10 @@ VOID FillInputs(VOID)
     } else {
       InputItems[InputItemsCount++].SValue = PoolPrint(L"%02d", gGraphics[i].Ports);
     }
-    s = AllocateZeroPool(4);
     InputItems[InputItemsCount].ItemType = ASString; //24+6i
     for (j=0; j<20; j++) {
-      a = gSettings.NVCAP[j];
-      AsciiSPrint(s, 4, "%02x", a);
-      tmp[2*j]   = s[0];
-      tmp[2*j+1] = s[1];
-      //      AsciiSPrint((CHAR8*)&tmp[2*j], 2, "%02x", a);
+      AsciiSPrint((CHAR8*)&tmp[2*j], 3, "%02x", gSettings.NVCAP[j]);
     }
-    FreePool(s);
     InputItems[InputItemsCount].SValue = AllocateZeroPool(84);
     UnicodeSPrint(InputItems[InputItemsCount++].SValue, 84, L"%a", tmp);
     
