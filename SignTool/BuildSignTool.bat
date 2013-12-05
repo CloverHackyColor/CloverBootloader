@@ -37,7 +37,14 @@ if errorlevel 1 goto failscript
   nmake.exe /nologo nt.mak
   popd
   if errorlevel 1 goto failscript
-  cl.exe /nologo %BUILD_INCLUDE% /FeSignTool.exe SignTool.c %OPENSSL_DIR%\out32\libeay32.lib
+  copy /b /y %OPENSSL_DIR%\out32\libeay32.lib .\libeay32.lib
+  if errorlevel 1 goto failscript
+
+  if not exist libeay32.lib (
+    echo OpenSSL cryptography library [libeay32.lib] missing!
+    goto failscript
+  )
+  cl.exe /nologo %BUILD_INCLUDE% /FeSignTool.exe SignTool.c libeay32.lib
   if errorlevel 1 goto failscript
 
   goto:eof
