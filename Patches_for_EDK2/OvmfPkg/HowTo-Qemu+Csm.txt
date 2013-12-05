@@ -2,7 +2,7 @@
 
 - Build OvmfPkg using: ./ebuild.sh -D CSM_ENABLE
 
-- A patched Cirrus Vga Bios will be needed for Qemu (still not included in Qemu v1.6.0)
+- A patched Cirrus Vga Bios will be needed for Qemu (still not included in Qemu v1.7.0)
   Get it at: http://www.coreboot.org/images/0/0d/Vgabios-cirrus.zip
      (or at: http://www.kraxel.org/repos/jenkins/seabios/           - take seavgabios.git-*.x86_64.rpm)
   Extract it and put it in Qemu directory.
@@ -24,8 +24,8 @@ Note:
     - Under General Fetaures, add 'Support hardware found on emulators'
     - Save and exit.
   * Build seabios:            # ./seabiosmake.sh
-  * Copy bios.bin to OvmfPkg: # cp seabios/out/bios.bin ../Csm/Csm16/Csm16.bin
-    (resulting seabios/out/bios.bin should be placed at OvmfPkg/Csm/Csm16/Csm16.bin)
+  * Copy Csm16.bin to OvmfPkg: # cp seabios/out/Csm16.bin ../Csm/Csm16/Csm16.bin
+    (resulting seabios/out/Csm16.bin should be placed at OvmfPkg/Csm/Csm16/Csm16.bin)
 
 Patches are partially based on work by dwmw2 & lersek:
 - Csm patches for OvmfPkg (Csm/LegacyBiosDxe): http://git.infradead.org/users/dwmw2/edk2.git/
