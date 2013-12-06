@@ -202,6 +202,103 @@ VOID *GetSignatureDatabase(IN  CHAR16   *DatabaseName,
   return Database;
 }
 
+#define IsLeap(y)   (((y) % 4) == 0 && (((y) % 100) != 0 || ((y) % 400) == 0))
+#define SECSPERMIN  (60)
+#define SECSPERHOUR (60 * 60)
+#define SECSPERDAY  (24 * SECSPERHOUR)
+
+STATIC UINTN CumulativeDays[2][14] = {
+  {
+    0,
+    0,
+    31,
+    31 + 28,
+    31 + 28 + 31,
+    31 + 28 + 31 + 30,
+    31 + 28 + 31 + 30 + 31,
+    31 + 28 + 31 + 30 + 31 + 30,
+    31 + 28 + 31 + 30 + 31 + 30 + 31,
+    31 + 28 + 31 + 30 + 31 + 30 + 31 + 31,
+    31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30,
+    31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31,
+    31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31 + 30,
+    31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31 + 30 + 31
+  },
+  {
+    0,
+    0,
+    31,
+    31 + 29,
+    31 + 29 + 31,
+    31 + 29 + 31 + 30,
+    31 + 29 + 31 + 30 + 31,
+    31 + 29 + 31 + 30 + 31 + 30,
+    31 + 29 + 31 + 30 + 31 + 30 + 31,
+    31 + 29 + 31 + 30 + 31 + 30 + 31 + 31,
+    31 + 29 + 31 + 30 + 31 + 30 + 31 + 31 + 30,
+    31 + 29 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31,
+    31 + 29 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31 + 30,
+    31 + 29 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31 + 30 + 31 
+  }
+};
+
+STATIC EFI_STATUS GetUTCTime(OUT EFI_TIME *Timestamp)
+{
+  EFI_STATUS Status;
+  UINTN      Timer = 0;
+  UINTN      Year, YearNo, MonthNo;
+  UINTN      DayNo, DayRemainder;
+  if (Timestamp == NULL) {
+    return EFI_INVALID_PARAMETER;
+  }
+  // Get current time
+  Status = gRT->GetTime(Timestamp, NULL);
+  if (EFI_ERROR(Status)) {
+    return Status;
+  }
+  // Get the current offset of the year in seconds since epoch
+  for (Year = 1970; Year < Timestamp->Year; ++Year) {
+    Timer += (UINTN)((IsLeap (Year) ? 366 : 365) * SECSPERDAY);
+  }
+  // Get the current offset
+  Timer += (UINTN)((Timestamp->TimeZone != EFI_UNSPECIFIED_TIMEZONE) ? (Timestamp->TimeZone * 60) : 0) +
+           (UINTN)(CumulativeDays[IsLeap(Timestamp->Year)][Timestamp->Month] * SECSPERDAY) + 
+           (UINTN)(((Timestamp->Day > 0) ? Timestamp->Day - 1 : 0) * SECSPERDAY) + 
+           (UINTN)(Timestamp->Hour * SECSPERHOUR) + 
+           (UINTN)(Timestamp->Minute * 60) + 
+           (UINTN)Timestamp->Second;
+  // Convert back to time
+  ZeroMem(Timestamp, sizeof(EFI_TIME));
+  DayNo        = (UINTN)(Timer / SECSPERDAY);
+  DayRemainder = (UINTN)(Timer % SECSPERDAY);
+
+  Timestamp->Second = (UINT8)(DayRemainder % SECSPERMIN);
+  Timestamp->Minute = (UINT8)((DayRemainder % SECSPERHOUR) / SECSPERMIN);
+  Timestamp->Hour   = (UINT8)(DayRemainder / SECSPERHOUR);
+
+  for (Year = 1970, YearNo = 0; DayNo > 0; Year++) {
+    UINTN TotalDays = (IsLeap(Year) ? 366 : 365);
+    if (DayNo >= TotalDays) {
+      DayNo = (DayNo - TotalDays);
+      YearNo++;
+    } else {
+      break;
+    }
+  }
+  Timestamp->Year = (UINT16)(YearNo + (1970 - 1900));
+
+  for (MonthNo = 12; MonthNo > 1; MonthNo--) {
+    if (DayNo >= CumulativeDays[IsLeap(Year)][MonthNo]) {
+      DayNo = (UINT16) (DayNo - (UINT16) (CumulativeDays[IsLeap(Year)][MonthNo]));
+      break;
+    }
+  }
+
+  Timestamp->Month = (UINT8)(MonthNo - 1);
+  Timestamp->Day   = (UINT8)(DayNo + 1);
+  return EFI_SUCCESS;
+}
+
 // Write signed variable
 STATIC EFI_STATUS SetSignedVariable(IN CHAR16   *DatabaseName,
                                     IN EFI_GUID *DatabaseGuid,
@@ -211,28 +308,48 @@ STATIC EFI_STATUS SetSignedVariable(IN CHAR16   *DatabaseName,
 {
   EFI_STATUS                     Status;
   EFI_VARIABLE_AUTHENTICATION_2 *Authentication;
-  UINTN                          Size, NameLen, DataSize = 0;
+  UINTN                          Size, NameLen;
+  UINTN                          PayloadSize = 0, DataSize = 0;
   EFI_TIME                       Timestamp;
   VOID                          *Data = NULL;
+  UINT8                         *Ptr, *Payload;
   // Check parameters
   if ((DatabaseName == NULL) || (DatabaseGuid == NULL)) {
     return EFI_INVALID_PARAMETER;
   }
+  DBG("Setting secure variable: %g %s 0x%X (0x%X)", DatabaseGuid, DatabaseName, Database, DatabaseSize);
   NameLen = StrLen(DatabaseName);
   if (NameLen == 0) {
     return EFI_INVALID_PARAMETER;
   }
   // Get the current time
-  Status = gRT->GetTime(&Timestamp, NULL);
+  DBG("Getting timestamp ...\n");
+  Status = GetUTCTime(&Timestamp);
   if (EFI_ERROR(Status)) {
     return Status;
   }
-  // Set some time elements to zero
-  Timestamp.Pad1       = 0;
-  Timestamp.Nanosecond = 0;
-  Timestamp.TimeZone   = 0;
-  Timestamp.Daylight   = 0;
-  Timestamp.Pad2       = 0;
+  DBG("Timestamp: %t\n", Timestamp);
+  // Create payload
+  PayloadSize = (NameLen + sizeof(EFI_GUID) + sizeof(EFI_TIME) + sizeof(UINT32) + DatabaseSize);
+  DBG("Creating payload (0x%X) ...\n", PayloadSize);
+  Ptr = Payload = (UINT8 *)AllocateZeroPool(PayloadSize);
+  if (Payload == NULL) {
+    return EFI_OUT_OF_RESOURCES;
+  }
+  // 1. Database name without null terminator
+  CopyMem(Ptr, DatabaseName, NameLen);
+  Ptr += NameLen;
+  // 2. Database GUID
+  CopyMem(Ptr, DatabaseGuid, sizeof(EFI_GUID));
+  Ptr += sizeof(EFI_GUID);
+  // 3. Database attributes
+  CopyMem(Ptr, &Attributes, sizeof(UINT32));
+  Ptr += sizeof(UINT32);
+  // 4. Database authentication time stamp
+  CopyMem(Ptr, &Timestamp, sizeof(EFI_TIME));
+  Ptr += sizeof(EFI_TIME);
+  // 5. Database
+  CopyMem(Ptr, Database, DatabaseSize);
   // Get the required size of the buffer
   if (gSettings.SecureBoot) {
     // In user mode we need to sign the database with exchange key
@@ -240,26 +357,6 @@ STATIC EFI_STATUS SetSignedVariable(IN CHAR16   *DatabaseName,
     X509     *Certificate = NULL;
     EVP_PKEY *PrivateKey = NULL;
     BIO      *BioData = NULL;
-    UINT8    *Ptr, *Temp = (UINT8 *)AllocateZeroPool(DataSize = (NameLen + sizeof(EFI_GUID) + sizeof(EFI_TIME) + sizeof(UINT32) + DatabaseSize));
-    if (Temp == 0) {
-      return EFI_OUT_OF_RESOURCES;
-    }
-    // Create the signature data
-    Ptr = Temp;
-    // 1. Database name without null terminator
-    CopyMem(Ptr, DatabaseName, NameLen);
-    Ptr += NameLen;
-    // 2. Database GUID
-    CopyMem(Ptr, DatabaseGuid, sizeof(EFI_GUID));
-    Ptr += sizeof(EFI_GUID);
-    // 3. Database attributes
-    CopyMem(Ptr, &Attributes, sizeof(UINT32));
-    Ptr += sizeof(UINT32);
-    // 4. Database authentication time stamp
-    CopyMem(Ptr, &Timestamp, sizeof(EFI_TIME));
-    Ptr += sizeof(EFI_TIME);
-    // 5. Database
-    CopyMem(Ptr, Database, DatabaseSize);
     // Initialize the cyphers and digests
     ERR_load_crypto_strings();
     OpenSSL_add_all_digests();
@@ -267,46 +364,48 @@ STATIC EFI_STATUS SetSignedVariable(IN CHAR16   *DatabaseName,
     // Create signing certificate
     BioData = BIO_new_mem_buf((void *)gSecureBootExchangeKey, sizeof(gSecureBootExchangeKey));
     if (BioData == NULL) {
-      FreePool(Temp);
+      FreePool(Payload);
       return EFI_OUT_OF_RESOURCES;
     }
     Certificate = PEM_read_bio_X509(BioData, NULL, NULL, NULL);
     BIO_free(BioData);
     if (Certificate == NULL) {
-      FreePool(Temp);
+      FreePool(Payload);
       return EFI_OUT_OF_RESOURCES;
     }
     // Create signing private key
     BioData = BIO_new_mem_buf((void *)gSecureBootExchangePrivateKey, sizeof(gSecureBootExchangePrivateKey));
     if (BioData == NULL) {
-      FreePool(Temp);
+      FreePool(Payload);
       return EFI_OUT_OF_RESOURCES;
     }
     PrivateKey = PEM_read_bio_PrivateKey(BioData, NULL, NULL, NULL);
     BIO_free(BioData);
     if (PrivateKey == NULL) {
       X509_free(Certificate);
-      FreePool(Temp);
+      FreePool(Payload);
       return EFI_OUT_OF_RESOURCES;
     }
     // Create data reader
-    BioData = BIO_new_mem_buf((void *)Temp, (int)DataSize);
+    BioData = BIO_new_mem_buf((void *)Payload, (int)PayloadSize);
     if (BioData == NULL) {
       X509_free(Certificate);
       EVP_PKEY_free(PrivateKey);
-      FreePool(Temp);
+      FreePool(Payload);
       return EFI_OUT_OF_RESOURCES;
     }
     // Sign the data - sign it this way because we have modified openssl
     //  to default to SHA265 so we can support multiple versions
+    DBG("Signing secure variable payload ...\n");
     Pkcs7 = PKCS7_sign(Certificate, PrivateKey, NULL, BioData, PKCS7_BINARY | PKCS7_DETACHED);
     X509_free(Certificate);
     EVP_PKEY_free(PrivateKey);
     BIO_free(BioData);
-    FreePool(Temp);
+    FreePool(Payload);
     if (Pkcs7 == NULL) {
       return EFI_ABORTED;
     }
+    DBG("Create new payload ...\n");
     // Get the size of the signature
     DataSize = i2d_PKCS7(Pkcs7, NULL);
     if (DataSize == 0) {
@@ -322,32 +421,38 @@ STATIC EFI_STATUS SetSignedVariable(IN CHAR16   *DatabaseName,
     i2d_PKCS7(Pkcs7, (unsigned char **)&Data);
     PKCS7_free(Pkcs7);
     // Set the authentication buffer size
-    Size = sizeof(EFI_TIME) + sizeof(EFI_GUID) + sizeof(WIN_CERTIFICATE) + DataSize;
+    Size = sizeof(EFI_TIME) + sizeof(EFI_GUID) + sizeof(UINT32) + sizeof(UINT16) + sizeof(UINT16) + DataSize;
   } else {
     // In setup mode we don't need to sign, so just set the database
-    Size = sizeof(EFI_TIME) + sizeof(EFI_GUID) + sizeof(WIN_CERTIFICATE) + DatabaseSize;
+    DBG("In setup mode, not signing ...\n");
+    Size = sizeof(EFI_TIME) + sizeof(EFI_GUID) + sizeof(UINT32) + sizeof(UINT16) + sizeof(UINT16) + PayloadSize;
   }
   // Create the authentication buffer
+  DBG("Creating authentication ...\n");
   Authentication = (EFI_VARIABLE_AUTHENTICATION_2 *)AllocateZeroPool(Size);
   if (Authentication == NULL) {
     if (Data != NULL) {
       FreePool(Data);
+    } else {
+      FreePool(Payload);
     }
     return EFI_OUT_OF_RESOURCES;
   }
   // Set the certificate elements
-  Authentication->AuthInfo.Hdr.dwLength         = sizeof(EFI_GUID) + sizeof(WIN_CERTIFICATE);
+  CopyMem(&(Authentication->TimeStamp), &Timestamp, sizeof(EFI_TIME));
+  Authentication->AuthInfo.Hdr.dwLength         = (UINT32)(sizeof(EFI_GUID) + sizeof(UINT32) + sizeof(UINT16) + sizeof(UINT16) + DataSize);
   Authentication->AuthInfo.Hdr.wRevision        = 0x0200;
   Authentication->AuthInfo.Hdr.wCertificateType = WIN_CERT_TYPE_EFI_GUID;
-  CopyMem(&(Authentication->TimeStamp), &Timestamp, sizeof(EFI_TIME));
   CopyMem(&(Authentication->AuthInfo.CertType), &gEfiCertPkcs7Guid, sizeof(EFI_GUID));
   // Copy the data into the authentication
   if (Data != NULL) {
-    CopyMem(((UINT8 *)Authentication) + sizeof(EFI_TIME) + sizeof(EFI_GUID) + sizeof(WIN_CERTIFICATE), Data, DataSize);
+    CopyMem(((UINT8 *)Authentication) + sizeof(EFI_TIME) + sizeof(EFI_GUID) + sizeof(UINT32) + sizeof(UINT16) + sizeof(UINT16), Data, DataSize);
     FreePool(Data);
   } else {
-    CopyMem(((UINT8 *)Authentication) + sizeof(EFI_TIME) + sizeof(EFI_GUID) + sizeof(WIN_CERTIFICATE), Database, DatabaseSize);
+    CopyMem(((UINT8 *)Authentication) + sizeof(EFI_TIME) + sizeof(EFI_GUID) + sizeof(UINT32) + sizeof(UINT16) + sizeof(UINT16), Payload, PayloadSize);
+    FreePool(Payload);
   }
+  DBG("Writing secure variable 0x%X (0x%X) ...\n", Authentication, Size);
   // Write the database variable
   Status = gRT->SetVariable(DatabaseName, DatabaseGuid, SET_DATABASE_ATTRIBUTES, Size, Authentication);
   // Cleanup the authentication buffer
@@ -369,8 +474,13 @@ EFI_STATUS SetSignatureDatabase(IN CHAR16   *DatabaseName,
   }
   // Erase database
   Status = SetSignedVariable(DatabaseName, DatabaseGuid, 0, NULL, 0);
-  // Return status if only erasing
-  if (EFI_ERROR(Status) || (Database == NULL) || (DatabaseSize == 0)) {
+  // Check if database was not found which is cool cause we are removing it
+  if (Status == EFI_NOT_FOUND) {
+    if ((Database == NULL) || (DatabaseSize == 0)) {
+      return EFI_SUCCESS;
+    }
+  } else if (EFI_ERROR(Status) || (Database == NULL) || (DatabaseSize == 0)) {
+    // Return status if only erasing
     return Status;
   }
   return SetSignedVariable(DatabaseName, DatabaseGuid, SET_DATABASE_ATTRIBUTES, Database, DatabaseSize);
