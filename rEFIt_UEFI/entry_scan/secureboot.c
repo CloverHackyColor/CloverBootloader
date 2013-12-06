@@ -53,7 +53,7 @@
 // Enable secure boot
 VOID EnableSecureBoot(VOID)
 {
-  EFI_STATUS  Status = EFI_SUCCESS;
+  EFI_STATUS  Status = EFI_NOT_FOUND;
   BOOLEAN     WantDefaultKeys;
   CHAR16     *ErrorString = NULL;
   UINTN       CloverSignatureSize = 0;
@@ -64,22 +64,39 @@ VOID EnableSecureBoot(VOID)
   }
   // Ask user if they want to use default keys
   WantDefaultKeys = YesNoMessage(L"Secure Boot", L"Enroll the default keys too?");
+  DBG("Enabling secure boot with%a default keys\n", WantDefaultKeys ? "" : "out");
   // Get this image's certificate
-  if (SelfLoadedImage != NULL) {
-    CloverSignature = GetImageSignatureDatabase(SelfLoadedImage->ImageBase, SelfLoadedImage->ImageSize, &CloverSignatureSize, FALSE);
-    if (CloverSignature != NULL) {
-      if (CloverSignatureSize == 0) {
-        // No signature list found
-        Status = EFI_NOT_FOUND;
-        FreePool(CloverSignature);
+  if (SelfFullDevicePath != NULL) {
+    UINT32 AuthenticationStatus = 0;
+    UINTN  FileSize = 0;
+    // Open the file buffer
+    VOID  *FileBuffer = GetFileBufferByFilePath(FALSE, SelfFullDevicePath, &FileSize, &AuthenticationStatus);
+    if (FileBuffer != NULL) {
+      if (FileSize > 0) {
+        // Retrieve the certificates
+        CloverSignature = GetImageSignatureDatabase(FileBuffer, FileSize, &CloverSignatureSize, FALSE);
+        if (CloverSignature != NULL) {
+          if (CloverSignatureSize > 0) {
+            // Found signature
+            Status = EFI_SUCCESS;
+          } else {
+            FreePool(CloverSignature);
+            CloverSignature = NULL;
+          }
+        }
       }
-    } else {
-      // No signature list found
-      Status = EFI_NOT_FOUND;
+      FreePool(FileBuffer);
     }
-  } else {
-    // No signature list found
-    Status = EFI_NOT_FOUND;
+    // Check and alert about image not found
+    if ((FileBuffer == NULL) || (FileSize == 0)) {
+      CHAR16 *FilePath = FileDevicePathToStr(SelfFullDevicePath);
+      if (FilePath != NULL) {
+        DBG("Failed to load Clover image from %s\n", FilePath);
+        FreePool(FilePath);
+      } else {
+        DBG("Failed to load Clover image\n");
+      }
+    }
   }
   if (EFI_ERROR(Status) || (CloverSignature == NULL)) {
     ErrorString = L"Clover does not have a certificate";

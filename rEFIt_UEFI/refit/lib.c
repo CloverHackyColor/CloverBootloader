@@ -57,6 +57,7 @@ EFI_FILE         *SelfRootDir;
 EFI_FILE         *SelfDir;
 CHAR16           *SelfDirPath;
 EFI_DEVICE_PATH  *SelfDevicePath;
+EFI_DEVICE_PATH  *SelfFullDevicePath;
 EFI_FILE         *ThemeDir = NULL;
 CHAR16           *ThemePath;
 BOOLEAN          gThemeChanged = FALSE;
@@ -161,6 +162,7 @@ EFI_STATUS InitRefitLib(IN EFI_HANDLE ImageHandle)
   // find the current directory
     FilePathAsString = FileDevicePathToStr(SelfLoadedImage->FilePath);
     if (FilePathAsString != NULL) {
+        SelfFullDevicePath = FileDevicePath(SelfDeviceHandle, FilePathAsString);
         for (i = StrLen(FilePathAsString); i > 0 && FilePathAsString[i] != '\\'; i--) ;
         if (i > 0) {
             FilePathAsString[i] = 0;

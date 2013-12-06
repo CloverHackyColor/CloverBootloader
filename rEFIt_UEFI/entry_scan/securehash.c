@@ -52,9 +52,9 @@
 #endif
 
 #define SECDIR_ALIGNMENT_SIZE 8
-#define PKCS1_1_5_SIZE (sizeof(WIN_CERTIFICATE_EFI_PKCS1_15) - 1)
-#define PKCS7_SIZE (sizeof(WIN_CERTIFICATE) - 1)
-#define EFIGUID_SIZE (sizeof(WIN_CERTIFICATE_UEFI_GUID) - 1)
+#define CERT_SIZE (sizeof(UINT32) + sizeof(UINT16) + sizeof(UINT16))
+#define PKCS1_1_5_SIZE (CERT_SIZE + sizeof(EFI_GUID))
+#define EFIGUID_SIZE (CERT_SIZE + sizeof(EFI_GUID))
 
 // Check database for signature
 STATIC EFI_STATUS CheckSignatureIsInDatabase(IN VOID     *Database,
@@ -583,7 +583,7 @@ STATIC VOID *CreateImageSignatureDatabase(IN VOID   *FileBuffer,
   }
   // Check for PE header
   PeHeader.Pe32 = (EFI_IMAGE_NT_HEADERS32 *)(((UINT8 *)FileBuffer) + PeHeaderOffset);
-  if (PeHeader.Pe32->Signature == EFI_IMAGE_NT_SIGNATURE) {
+  if (PeHeader.Pe32->Signature != EFI_IMAGE_NT_SIGNATURE) {
     // Invalid PE image
     return NULL;
   }
@@ -753,7 +753,7 @@ VOID *GetImageSignatureDatabase(IN VOID    *FileBuffer,
   UINT32                               PeHeaderOffset;
   UINT16                               Magic;
   // Check parameters
-  if (DatabaseSize == 0) {
+  if (DatabaseSize == NULL) {
     return NULL;
   }
   *DatabaseSize = 0;
@@ -769,8 +769,9 @@ VOID *GetImageSignatureDatabase(IN VOID    *FileBuffer,
   }
   // Check for PE header
   PeHeader.Pe32 = (EFI_IMAGE_NT_HEADERS32 *)(((UINT8 *)FileBuffer) + PeHeaderOffset);
-  if (PeHeader.Pe32->Signature == EFI_IMAGE_NT_SIGNATURE) {
+  if (PeHeader.Pe32->Signature != EFI_IMAGE_NT_SIGNATURE) {
     // Invalid PE image
+    DBG("Invalid PE image for signature retrieval (no NT signature)\n");
     return NULL;
   }
   // Fix magic number if needed
@@ -790,43 +791,48 @@ VOID *GetImageSignatureDatabase(IN VOID    *FileBuffer,
     // PE32+
     SecDataDir = (EFI_IMAGE_DATA_DIRECTORY *)&(PeHeader.Pe32Plus->OptionalHeader.DataDirectory[EFI_IMAGE_DIRECTORY_ENTRY_SECURITY]);
   }
-  DBG("Get image database: 0x%X (0x%X)\n");
+  DBG("Get image database: 0x%X (0x%X) 0x%X 0x%X 0x%X (0x%X)\n", FileBuffer, FileSize, SecDataDir, SecDataDir->VirtualAddress, ((UINT8 *)FileBuffer) + SecDataDir->VirtualAddress, SecDataDir->Size);
   // Check the security data directory is found and valid
+  if ((SecDataDir->VirtualAddress >= FileSize) || ((SecDataDir->VirtualAddress + SecDataDir->Size) > FileSize)) {
+    DBG("Security directory exceeds the file limits\n");
+    SecDataDir = NULL;
+  }
   if ((SecDataDir == NULL) || (SecDataDir->Size == 0)) {
     if (HashIfNoDatabase) {
       // Try to hash the image instead
       return CreateImageSignatureDatabase(FileBuffer, FileSize, DatabaseSize);
     }
     // No certificate
+    DBG("Security directory not found in image!\n");
     return NULL;
   }
   // There may be multiple certificates so grab each and update signature list
   Ptr = (((UINT8 *)FileBuffer) + SecDataDir->VirtualAddress);
   End = Ptr + SecDataDir->Size;
-  while (Ptr < End) {
+  while ((Ptr + CERT_SIZE) < End) {
     WIN_CERTIFICATE *Cert = (WIN_CERTIFICATE *)Ptr;
     UINTN            Length = Cert->dwLength;
     UINTN            Alignment = (Length % SECDIR_ALIGNMENT_SIZE);
     UINTN            SigSize = 0;
     VOID            *Signature = NULL;
     EFI_GUID        *SigGuid = NULL;
-    // Check the signature length
-    if (Length <= PKCS7_SIZE) {
-      break;
-    }
     // Get the alignment length
     if (Alignment != 0) {
       Alignment = SECDIR_ALIGNMENT_SIZE - Alignment;
     }
+    DBG("Embedded certificate: 0x%X (0x%X) [0x%X]\n", Cert, Length, Cert->wCertificateType);
     // Get the certificate's type
     if (Cert->wCertificateType == WIN_CERT_TYPE_PKCS_SIGNED_DATA) {
       // PKCS#7
-      Signature = Ptr + PKCS7_SIZE;
-      SigSize = Length - PKCS7_SIZE;
+      if (Length < CERT_SIZE) {
+        break;
+      }
+      Signature = Ptr + CERT_SIZE;
+      SigSize = Length - CERT_SIZE;
       SigGuid = &gEfiCertPkcs7Guid;
     } else if (Cert->wCertificateType == WIN_CERT_TYPE_EFI_GUID) {
       // EFI GUID
-      if (Length <= EFIGUID_SIZE) {
+      if (Length < EFIGUID_SIZE) {
         break;
       }
       Signature = Ptr + EFIGUID_SIZE;
@@ -842,15 +848,13 @@ VOID *GetImageSignatureDatabase(IN VOID    *FileBuffer,
       }
     } else if (Cert->wCertificateType == WIN_CERT_TYPE_EFI_PKCS115) {
       // PKCS#1v1.5
-      if (Length <= PKCS1_1_5_SIZE) {
+      if (Length < PKCS1_1_5_SIZE) {
         break;
       }
       Signature = Ptr + PKCS1_1_5_SIZE;
       SigSize = (Length - PKCS1_1_5_SIZE);
-      if (SigSize == 256) {
-        // Only accept 2048 bit key as RSA
-        SigGuid = &gEfiCertRsa2048Guid;
-      }
+      GuidCert = (WIN_CERTIFICATE_UEFI_GUID *)Cert;
+      SigGuid = &(GuidCert->CertType);
     }
     // Append the signature if valid
     if ((SigGuid != NULL) && (Signature != NULL) && (SigSize > 0)) {
@@ -859,7 +863,7 @@ VOID *GetImageSignatureDatabase(IN VOID    *FileBuffer,
         break;
       }
     } else {
-      DBG("Skipping non-signature certificate: 0x%X (0x%X) %d\n", Cert, Length, Cert->wCertificateType);
+      DBG("Skipping non-signature certificate: 0x%X (0x%X) [0x%X]\n", Cert, Length, Cert->wCertificateType);
     }
     // Advance to next certificate
     Ptr += (Length + Alignment);

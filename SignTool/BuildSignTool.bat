@@ -3,20 +3,24 @@ rem windows batch script for building clover signing tool
 rem 2013-12-02 apianti
 
 if defined VCINSTALLDIR goto VisualStudioAvailable
-if defined VS100COMNTOOLS (
-  call "%VS100COMNTOOLS%\vsvars32.bat"
+if defined VS110COMNTOOLS (
+  call "%VS110COMNTOOLS%\vsvars32.bat"
 ) else (
-  if defined VS90COMNTOOLS (
-    call "%VS90COMNTOOLS%\vsvars32.bat"
+  if defined VS100COMNTOOLS (
+    call "%VS100COMNTOOLS%\vsvars32.bat"
   ) else (
-    if defined VS80COMNTOOLS (
-      call "%VS80COMNTOOLS%\vsvars32.bat"
+    if defined VS90COMNTOOLS (
+      call "%VS90COMNTOOLS%\vsvars32.bat"
     ) else (
-      if defined VS71COMNTOOLS (
-        call "%VS71COMNTOOLS%\vsvars32.bat"
+      if defined VS80COMNTOOLS (
+        call "%VS80COMNTOOLS%\vsvars32.bat"
       ) else (
-        echo Cannot find Visual Studio, required to build signing tool!
-        goto failscript
+        if defined VS71COMNTOOLS (
+          call "%VS71COMNTOOLS%\vsvars32.bat"
+        ) else (
+          echo Cannot find Visual Studio, required to build signing tool!
+          goto failscript
+        )
       )
     )
   )

@@ -450,6 +450,7 @@ extern EFI_FILE         *SelfRootDir;
 extern EFI_FILE         *SelfDir;
 extern CHAR16           *SelfDirPath;
 extern EFI_DEVICE_PATH  *SelfDevicePath;
+extern EFI_DEVICE_PATH  *SelfFullDevicePath;
 extern EFI_FILE         *ThemeDir;
 extern CHAR16           *ThemePath;
 extern EFI_FILE         *OEMDir;

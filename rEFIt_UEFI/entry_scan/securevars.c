@@ -75,6 +75,7 @@ EFI_STATUS EnrollSecureBootKeys(IN VOID    *AuthorizedDatabase,
   VOID  *Database = NULL;
   if (WantDefaultKeys) {
     // Get default authorized database
+    DBG("Retrieving default authorized database ...\n");
     Database = GetSignatureDatabase(DEFAULT_AUTHORIZED_DATABASE_NAME, &DEFAULT_AUTHORIZED_DATABASE_GUID, &DatabaseSize);
     if ((DatabaseSize == 0) && (Database != NULL)) {
       FreePool(Database);
@@ -83,23 +84,32 @@ EFI_STATUS EnrollSecureBootKeys(IN VOID    *AuthorizedDatabase,
   }
   // Set the authorized database
   if (Database != NULL) {
+    DBG("Appending default authorized database to authorized database ...\n");
     Status = AppendSignatureDatabaseToDatabase(&Database, &DatabaseSize, AuthorizedDatabase, AuthorizedDatabaseSize);
     if (EFI_ERROR(Status)) {
       FreePool(Database);
       return Status;
     }
+    DBG("Setting authorized database ...\n");
     Status = SetAuthorizedDatabase(Database, DatabaseSize);
     FreePool(Database);
   } else {
     // Set clover signature as only
+    if (WantDefaultKeys) {
+      DBG("%aetting authorized database ...\n", WantDefaultKeys ? "No default authorized database found, s" : "S");
+    } else {
+      DBG("Setting authorized database ...\n");
+    }
     Status = SetAuthorizedDatabase(AuthorizedDatabase, AuthorizedDatabaseSize);
   }
   if (EFI_ERROR(Status)) {
+    DBG("Failed to set the authorized database! %r\n", Status);
     return Status;
   }
   // We don't need the unauthorized database
   if (WantDefaultKeys) {
     // Get the default authorized database
+    DBG("Retrieving the default unauthorized database ...\n");
     DatabaseSize = 0;
     Database = GetSignatureDatabase(DEFAULT_UNAUTHORIZED_DATABASE_NAME, &DEFAULT_UNAUTHORIZED_DATABASE_GUID, &DatabaseSize);
     if ((DatabaseSize == 0) && (Database != NULL)) {
@@ -110,6 +120,12 @@ EFI_STATUS EnrollSecureBootKeys(IN VOID    *AuthorizedDatabase,
     if (Database != NULL) {
       Status = SetSignatureDatabase(DEFAULT_UNAUTHORIZED_DATABASE_NAME, &DEFAULT_UNAUTHORIZED_DATABASE_GUID, Database, DatabaseSize);
       FreePool(Database);
+      if (EFI_ERROR(Status)) {
+        DBG("Failed to set the unauthorized database! %r\n", Status);
+        return Status;
+      }
+    } else {
+      DBG("No default unauthorized database found!\n");
     }
   }
   // We need to enroll our own exchange database because we may update databases outside of setup mode
@@ -117,20 +133,27 @@ EFI_STATUS EnrollSecureBootKeys(IN VOID    *AuthorizedDatabase,
   Database = NULL;
   if (WantDefaultKeys) {
     // Get the default exchange database
+    DBG("Retrieving default exchange database ...\n");
     Database = GetSignatureDatabase(DEFAULT_EXCHANGE_DATABASE_NAME, &DEFAULT_EXCHANGE_DATABASE_GUID, &DatabaseSize);
     if ((DatabaseSize == 0) && (Database != NULL)) {
       FreePool(Database);
       Database = NULL;
     }
+    if (Database == NULL) {
+      DBG("No default exchange database found\n");
+    }
   }
   // Set the exchange database
+  DBG("Modifying exchange database ...\n");
   Status = AppendSignatureToDatabase(&Database, &DatabaseSize, &gEfiCertX509Guid, (VOID *)gSecureBootExchangeKey, sizeof(gSecureBootExchangeKey));
   if (EFI_ERROR(Status)) {
     if (Database != NULL) {
       FreePool(Database);
     }
+    DBG("Failed to modify exchange database! %r\n", Status);
     return Status;
   }
+  DBG("Setting the exchange database ...\n");
   Status = SetSignatureDatabase(EXCHANGE_DATABASE_NAME, &EXCHANGE_DATABASE_GUID, Database, DatabaseSize);
   FreePool(Database);
   if (EFI_ERROR(Status)) {
@@ -138,6 +161,7 @@ EFI_STATUS EnrollSecureBootKeys(IN VOID    *AuthorizedDatabase,
   }
   // Unsure if default platform database should be enrolled.....???
   // Set the platform database - NOT ENROLLING DEFAULT PLATFORM DATABASE, ONLY CLOVER SHOULD OWN PLATFORM(?)
+  DBG("Setting the platform database ...\n");
   return gRT->SetVariable(PLATFORM_DATABASE_NAME, &PLATFORM_DATABASE_GUID, SET_DATABASE_ATTRIBUTES, sizeof(gSecureBootPlatformSignedKey), (VOID *)gSecureBootPlatformSignedKey);
 }
 
