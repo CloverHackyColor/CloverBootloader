@@ -130,7 +130,7 @@ STATIC VOID AddCloverEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTitle, IN REF
   Entry->LoaderType      = OSTYPE_OTHER;
   
   //actions
-  Entry->me.AtClick = ActionSelect;
+  Entry->me.AtClick = ActionEnter;
   Entry->me.AtDoubleClick = ActionDetails;
   Entry->me.AtRightClick = ActionDetails;
   

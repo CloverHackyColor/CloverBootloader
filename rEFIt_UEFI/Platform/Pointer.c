@@ -421,9 +421,9 @@ EFI_STATUS WaitForInputEventPoll(REFIT_MENU_SCREEN *Screen, UINTN TimeoutDefault
       break;
     }
     UpdateAnime(Screen, &(Screen->FilmPlace));
-    if ((INTN)gItemID < Screen->EntryCount) {
+/*    if ((INTN)gItemID < Screen->EntryCount) {
       UpdateAnime(Screen->Entries[gItemID]->SubScreen, &(Screen->Entries[gItemID]->Place));
-    }
+    } */
     TimeoutRemain--;
     if (gPointer.SimplePointerProtocol) {
       UpdatePointer();

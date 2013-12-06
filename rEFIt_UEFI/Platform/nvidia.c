@@ -2687,6 +2687,7 @@ static nvidia_card_info_t nvidia_cards[] = {
 	{ 0x10DE0FDB,	NV_SUB_IDS,	"GK107-ESP-A1" },
 	// 0FE0 - 0FEF
 	{ 0x10DE0FE0,	NV_SUB_IDS,	"GeForce GTX 660M" },
+  { 0x10DE0FE4,	NV_SUB_IDS,	"GeForce GTX 750M" },
 	// 0FF0 - 0FFF
 	{ 0x10DE0FFB,	NV_SUB_IDS,	"Quadro K2000M" },
 	{ 0x10DE0FFC,	NV_SUB_IDS,	"Quadro K1000M" },

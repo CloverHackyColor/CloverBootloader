@@ -2,7 +2,7 @@
   This file implements ATA_PASSTHRU_PROCTOCOL and EXT_SCSI_PASSTHRU_PROTOCOL interfaces
   for managed ATA controllers.
     
-  Copyright (c) 2010 - 2012, Intel Corporation. All rights reserved.<BR>
+  Copyright (c) 2010 - 2013, Intel Corporation. All rights reserved.<BR>
   This program and the accompanying materials
   are licensed and made available under the terms and conditions of the BSD License
   which accompanies this distribution.  The full text of the license may be found at
@@ -886,52 +886,16 @@ AtaAtapiPassThruStop (
 
   Instance = ATA_PASS_THRU_PRIVATE_DATA_FROM_THIS (AtaPassThru);
 
-  //
-  // Close Non-Blocking timer and free Task list.
-  //
-  if (Instance->TimerEvent != NULL) {
-    gBS->CloseEvent (Instance->TimerEvent);
-    Instance->TimerEvent = NULL;
-  }
-  DestroyAsynTaskList (Instance, FALSE);
-
-  //
-  // Disable this ATA host controller.
-  //
-  PciIo  = Instance->PciIo;
-  Status = PciIo->Attributes (
-                    PciIo,
-                    EfiPciIoAttributeOperationSupported,
-                    0,
-                    &Supports
-                    );
-  if (!EFI_ERROR (Status)) {
-    Supports &= EFI_PCI_DEVICE_ENABLE;
-    PciIo->Attributes (
-             PciIo,
-             EfiPciIoAttributeOperationDisable,
-             Supports,
-             NULL
-             );
-  }
-
-  //
-  // Restore original PCI attributes
-  //
-  Status = PciIo->Attributes (
-                    PciIo,
-                    EfiPciIoAttributeOperationSet,
-                    Instance->OriginalPciAttributes,
-                    NULL
-                    );
-//  ASSERT_EFI_ERROR (Status);
-
-  gBS->UninstallMultipleProtocolInterfaces (
+  Status = gBS->UninstallMultipleProtocolInterfaces (
          Controller,
          &gEfiAtaPassThruProtocolGuid, &(Instance->AtaPassThru),
          &gEfiExtScsiPassThruProtocolGuid, &(Instance->ExtScsiPassThru),
          NULL
          );
+
+  if (EFI_ERROR (Status)) {
+    return EFI_DEVICE_ERROR;
+  }
 
   //
   // Close protocols opened by AtaAtapiPassThru controller driver
@@ -944,6 +908,14 @@ AtaAtapiPassThruStop (
          );
 
   //
+  // Close Non-Blocking timer and free Task list.
+  //
+  if (Instance->TimerEvent != NULL) {
+    gBS->CloseEvent (Instance->TimerEvent);
+    Instance->TimerEvent = NULL;
+  }
+  DestroyAsynTaskList (Instance, FALSE);
+  //
   // Free allocated resource
   //
   DestroyDeviceInfoList(Instance);
@@ -952,6 +924,8 @@ AtaAtapiPassThruStop (
   // If the current working mode is AHCI mode, then pre-allocated resource
   // for AHCI initialization should be released.
   //
+  PciIo = Instance->PciIo;
+
   if (Instance->Mode == EfiAtaAhciMode) {
     AhciRegisters = &Instance->AhciRegisters;
     PciIo->Unmap (
@@ -982,6 +956,37 @@ AtaAtapiPassThruStop (
              AhciRegisters->AhciRFis
              );
   }
+
+  //
+  // Disable this ATA host controller.
+  //
+  Status = PciIo->Attributes (
+                    PciIo,
+                    EfiPciIoAttributeOperationSupported,
+                    0,
+                    &Supports
+                    );
+  if (!EFI_ERROR (Status)) {
+    Supports &= EFI_PCI_DEVICE_ENABLE;
+    PciIo->Attributes (
+             PciIo,
+             EfiPciIoAttributeOperationDisable,
+             Supports,
+             NULL
+             );
+  }
+
+  //
+  // Restore original PCI attributes
+  //
+  Status = PciIo->Attributes (
+                    PciIo,
+                    EfiPciIoAttributeOperationSet,
+                    Instance->OriginalPciAttributes,
+                    NULL
+                    );
+  ASSERT_EFI_ERROR (Status);
+
   FreePool (Instance);
 
   return Status;
@@ -1290,6 +1295,15 @@ AtaPassThruPassThru (
     return EFI_INVALID_PARAMETER;
   }
 
+  Node = SearchDeviceInfoList (Instance, Port, PortMultiplierPort, EfiIdeHarddisk);
+
+  if (Node == NULL) {
+    Node = SearchDeviceInfoList(Instance, Port, PortMultiplierPort, EfiIdeCdrom);
+    if (Node == NULL) {
+      return EFI_INVALID_PARAMETER;
+    }
+  }
+
   //
   // convert the transfer length from sector count to byte.
   //
@@ -1304,12 +1318,6 @@ AtaPassThruPassThru (
   if (((Packet->Length & EFI_ATA_PASS_THRU_LENGTH_BYTES) == 0) &&
        (Packet->OutTransferLength != 0)) {
     Packet->OutTransferLength = Packet->OutTransferLength * 0x200;
-  }
-
-  Node = SearchDeviceInfoList (Instance, Port, PortMultiplierPort, EfiIdeHarddisk);
-
-  if (Node == NULL) {
-    return EFI_INVALID_PARAMETER;
   }
 
   //
@@ -1786,7 +1794,10 @@ AtaPassThruResetPort (
   IN UINT16                     Port
   )
 {
-  return EFI_UNSUPPORTED;
+  //
+  // Return success directly then upper layer driver could think reset port operation is done.
+  //
+  return EFI_SUCCESS;
 }
 
 /**
@@ -1828,7 +1839,21 @@ AtaPassThruResetDevice (
   IN UINT16                     PortMultiplierPort
   )
 {
-  return EFI_UNSUPPORTED;
+  ATA_ATAPI_PASS_THRU_INSTANCE    *Instance;
+  LIST_ENTRY                      *Node;
+
+  Instance = ATA_PASS_THRU_PRIVATE_DATA_FROM_THIS (This);
+
+  Node = SearchDeviceInfoList (Instance, Port, PortMultiplierPort, EfiIdeHarddisk);
+
+  if (Node == NULL) {
+    return EFI_INVALID_PARAMETER;
+  }
+
+  //
+  // Return success directly then upper layer driver could think reset device operation is done.
+  //
+  return EFI_SUCCESS;
 }
 
 /**
@@ -1907,17 +1932,17 @@ ExtScsiPassThruPassThru (
   }
   
   if ((This->Mode->IoAlign > 1) && !IS_ALIGNED(Packet->InDataBuffer, This->Mode->IoAlign)) {
-	  DBG(L"IN not aligned\n");
+//	  DBG(L"IN not aligned\n");
     return EFI_INVALID_PARAMETER;
   }
 
   if ((This->Mode->IoAlign > 1) && !IS_ALIGNED(Packet->OutDataBuffer, This->Mode->IoAlign)) {
-	  DBG(L"OUT not aligned\n");
+//	  DBG(L"OUT not aligned\n");
     return EFI_INVALID_PARAMETER;
   }
 
   if ((This->Mode->IoAlign > 1) && !IS_ALIGNED(Packet->SenseData, This->Mode->IoAlign)) {
-	  DBG(L"SenseData not aligned\n");
+//	  DBG(L"SenseData not aligned\n");
     return EFI_INVALID_PARAMETER;
   }
 
@@ -1925,7 +1950,7 @@ ExtScsiPassThruPassThru (
   // For ATAPI device, doesn't support multiple LUN device.
   //
   if (Lun != 0) {
-	  DBG(L"Lun=%d\n", Lun);
+//	  DBG(L"Lun=%d\n", Lun);
     return EFI_INVALID_PARAMETER;
   }
 
@@ -1945,7 +1970,7 @@ ExtScsiPassThruPassThru (
 
   Node = SearchDeviceInfoList(Instance, Port, PortMultiplier, EfiIdeCdrom);
   if (Node == NULL) {
-	  DBG(L"not EfiIdeCdrom \n");
+//	  DBG(L"not EfiIdeCdrom \n");
     return EFI_INVALID_PARAMETER;
   }
 
@@ -1975,11 +2000,11 @@ ExtScsiPassThruPassThru (
       }
 
       Status = AtaPacketCommandExecute (Instance->PciIo, &Instance->IdeRegisters[Port], Port, PortMultiplier, Packet);
- 	   DBG(L"AtaPacketCommandExecute Multiplier=%d Status=%r\n", PortMultiplier, Status);
+ //	   DBG(L"AtaPacketCommandExecute Multiplier=%d Status=%r\n", PortMultiplier, Status);
       break;
     case EfiAtaAhciMode:
       Status = AhciPacketCommandExecute (Instance->PciIo, &Instance->AhciRegisters, Port, PortMultiplier, Packet);
-      DBG(L"EfiAtaAhciMode on port %d\n", Port);
+//      DBG(L"EfiAtaAhciMode on port %d\n", Port);
       break;
     default :
       Status = EFI_DEVICE_ERROR;
@@ -2306,7 +2331,10 @@ ExtScsiPassThruResetChannel (
   IN  EFI_EXT_SCSI_PASS_THRU_PROTOCOL   *This
   )
 {
-  return EFI_UNSUPPORTED;
+  //
+  // Return success directly then upper layer driver could think reset channel operation is done.
+  //
+  return EFI_SUCCESS;
 }
 
 /**
@@ -2336,7 +2364,41 @@ ExtScsiPassThruResetTargetLun (
   IN UINT64                             Lun
   )
 {
-  return EFI_UNSUPPORTED;
+  ATA_ATAPI_PASS_THRU_INSTANCE    *Instance;
+  LIST_ENTRY                      *Node;
+  UINT8                           Port;
+  UINT8                           PortMultiplier;
+
+  Instance = EXT_SCSI_PASS_THRU_PRIVATE_DATA_FROM_THIS (This);
+  //
+  // For ATAPI device, doesn't support multiple LUN device.
+  //
+  if (Lun != 0) {
+    return EFI_INVALID_PARAMETER;
+  }
+  //
+  // The layout of Target array:
+  //  ________________________________________________________________________
+  // |       Byte 0        |       Byte 1        | ... | TARGET_MAX_BYTES - 1 |
+  // |_____________________|_____________________|_____|______________________|
+  // |                     | The port multiplier |     |                      |
+  // |   The port number   |    port number      | N/A |         N/A          |
+  // |_____________________|_____________________|_____|______________________|
+  //
+  // For ATAPI device, 2 bytes is enough to represent the location of SCSI device.
+  //
+  Port           = Target[0];
+  PortMultiplier = Target[1];
+
+  Node = SearchDeviceInfoList(Instance, Port, PortMultiplier, EfiIdeCdrom);
+  if (Node == NULL) {
+    return EFI_INVALID_PARAMETER;
+  }
+
+  //
+  // Return success directly then upper layer driver could think reset target LUN operation is done.
+  //
+  return EFI_SUCCESS;
 }
 
 /**

@@ -1221,7 +1221,7 @@ static VOID LoadDrivers(VOID)
     }
   }
   
-  if ((gSettings.CustomEDID != NULL) || (VBiosPatchNeeded && !gDriversFlags.VideoLoaded)) {
+  if (((gSettings.CustomEDID != NULL) && gFirmwareClover) || (VBiosPatchNeeded && !gDriversFlags.VideoLoaded)) {
     // we have video bios patch - force video driver reconnect
     DBG("Video bios patch requested or CustomEDID - forcing video reconnect\n");
     gDriversFlags.VideoLoaded = TRUE;
