@@ -406,6 +406,8 @@ typedef struct {
   BOOLEAN     BackgroundDark;
   BOOLEAN     CustomIcons;
   BOOLEAN     SelectionOnTop;
+  UINTN       BadgeOffsetX;
+  UINTN       BadgeOffsetY;
 } REFIT_CONFIG;
 
 // types

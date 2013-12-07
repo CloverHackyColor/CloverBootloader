@@ -58,7 +58,7 @@ extern INTN ScrollScrollDecorationsHeight;
 extern UINT8 GetOSTypeFromPath(IN CHAR16 *Path);
 
 // global configuration with default values
-REFIT_CONFIG   GlobalConfig = { FALSE, -1, 0, 0, 0, TRUE, FALSE, FALSE, FALSE, FALSE, FONT_ALFA, 7, 0xFFFFFF80, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, None, 0, FALSE, FALSE, FALSE };
+REFIT_CONFIG   GlobalConfig = { FALSE, -1, 0, 0, 0, TRUE, FALSE, FALSE, FALSE, FALSE, FONT_ALFA, 7, 0xFFFFFF80, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, None, 0, FALSE, FALSE, FALSE, 0, 0 };
 
 VOID __inline WaitForSts(VOID) {
 	UINT32 inline_timeout = 100000;
@@ -1607,13 +1607,13 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
   GlobalConfig.SelectionSmallFileName = L"selection_small.png";
   GlobalConfig.SelectionBigFileName = L"selection_big.png";
   GlobalConfig.Font = FONT_LOAD;
-  
+
   BigBack = NULL;
-  Banner  = NULL;  
+  Banner  = NULL;
   FontImage = NULL;
 
   dict = GetProperty(dictPointer, "Background");
-  if (dict) {    
+  if (dict) {
     dict2 = GetProperty(dict, "Type");
     if (dict2) {
       if ((dict2->type == kTagTypeString) && dict2->string) {
@@ -1643,9 +1643,9 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
     }
     dict2 = GetProperty(dict, "Dark");
     if (dict2) {
-       GlobalConfig.BackgroundDark = (dict2->type == kTagTypeTrue);
+      GlobalConfig.BackgroundDark = (dict2->type == kTagTypeTrue);
     }
-  } 
+  }
   dict = GetProperty(dictPointer, "Banner");
   if (dict) {
     if ((dict->type == kTagTypeString) && dict->string) {
@@ -1653,9 +1653,12 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
         FreePool(GlobalConfig.BannerFileName);
       }
       GlobalConfig.BannerFileName = PoolPrint(L"%a", dict->string);
-    } 
+    }
   }
   dict = GetProperty(dictPointer, "Badges");
+  //set defaults
+  GlobalConfig.BadgeOffsetX = 0;
+  GlobalConfig.BadgeOffsetY = 0;
   if (dict) {
     dict2 = GetProperty(dict, "Swap");
     if (dict2) {
@@ -1663,17 +1666,30 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
         GlobalConfig.HideBadges |= HDBADGES_SWAP;
         DBG("OS main and drive as badge\n");
       }
-    }    
+    }
     dict2 = GetProperty(dict, "Show");
     if (dict2) {
       if (dict2->type == kTagTypeTrue) {
         GlobalConfig.HideBadges |= HDBADGES_SHOW;
       }
-    }    
+    }
     dict2 = GetProperty(dict, "Inline");
     if (dict2) {
       if (dict2->type == kTagTypeTrue) {
         GlobalConfig.HideBadges |= HDBADGES_INLINE;
+      }
+    }
+    // blackosx added X and Y position for badge offset.
+    dict2 = GetProperty(dict, "OffsetX");
+    if (dict2) {
+      if (dict2->type == kTagTypeInteger) {
+        GlobalConfig.BadgeOffsetX = (UINTN)dict2->string;
+      }
+    }
+    dict2 = GetProperty(dict, "OffsetY");
+    if (dict2) {
+      if (dict2->type == kTagTypeInteger) {
+        GlobalConfig.BadgeOffsetY = (UINTN)dict2->string;
       }
     }
   }
@@ -1705,10 +1721,10 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
     dict2 = GetProperty(dict, "Color");
     if (dict2) {
       if (dict2->type == kTagTypeInteger) {
-         GlobalConfig.SelectionColor = (UINTN)dict2->string;
+        GlobalConfig.SelectionColor = (UINTN)dict2->string;
       } else if ((dict2->type == kTagTypeString) && dict2->string) {
         GlobalConfig.SelectionColor = AsciiStrHexToUintn(dict2->string);
-      } 
+      }
     }
     dict2 = GetProperty(dict, "Small");
     if (dict2) {
@@ -1718,7 +1734,7 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
         }
         GlobalConfig.SelectionSmallFileName = PoolPrint(L"%a", dict2->string);
       }
-    } 
+    }
     dict2 = GetProperty(dict, "Big");
     if (dict2) {
       if ((dict2->type == kTagTypeString) && dict2->string) {
@@ -1742,7 +1758,7 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
     dict2 = GetProperty(dict, "Width");
     if (dict2) {
       if (dict2->type == kTagTypeInteger) {
-         ScrollWidth = (UINTN)dict2->string;
+        ScrollWidth = (UINTN)dict2->string;
       } else if ((dict2->type == kTagTypeString) && dict2->string) {
         ScrollWidth = AsciiStrDecimalToUintn(dict2->string);
       }
@@ -1750,7 +1766,7 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
     dict2 = GetProperty(dict, "Height");
     if (dict2) {
       if (dict2->type == kTagTypeInteger) {
-         ScrollButtonsHeight = (UINTN)dict2->string;
+        ScrollButtonsHeight = (UINTN)dict2->string;
       } else if ((dict2->type == kTagTypeString) && dict2->string) {
         ScrollButtonsHeight = AsciiStrDecimalToUintn(dict2->string);
       }
@@ -1758,7 +1774,7 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
     dict2 = GetProperty(dict, "BarHeight");
     if (dict2) {
       if (dict2->type == kTagTypeInteger) {
-         ScrollBarDecorationsHeight = (UINTN)dict2->string;
+        ScrollBarDecorationsHeight = (UINTN)dict2->string;
       } else if ((dict2->type == kTagTypeString) && dict2->string) {
         ScrollBarDecorationsHeight = AsciiStrDecimalToUintn(dict2->string);
       }
@@ -1766,7 +1782,7 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
     dict2 = GetProperty(dict, "ScrollHeight");
     if (dict2) {
       if (dict2->type == kTagTypeInteger) {
-         ScrollScrollDecorationsHeight = (UINTN)dict2->string;
+        ScrollScrollDecorationsHeight = (UINTN)dict2->string;
       } else if ((dict2->type == kTagTypeString) && dict2->string) {
         ScrollScrollDecorationsHeight = AsciiStrDecimalToUintn(dict2->string);
       }
@@ -1776,15 +1792,15 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
   if (dict) {
     dict2 = GetProperty(dict, "Type");
     if (dict2) {
-       if ((dict2->type == kTagTypeString) && dict2->string) {
-          if ((dict2->string[0] == 'A') || (dict2->string[0] == 'a')) {
-            GlobalConfig.Font = FONT_ALFA;
-          } else if ((dict2->string[0] == 'G') || (dict2->string[0] == 'g')) {
-            GlobalConfig.Font = FONT_GRAY;
-          } else if ((dict2->string[0] == 'L') || (dict2->string[0] == 'l')) {
-            GlobalConfig.Font = FONT_LOAD;
-          }
-       }
+      if ((dict2->type == kTagTypeString) && dict2->string) {
+        if ((dict2->string[0] == 'A') || (dict2->string[0] == 'a')) {
+          GlobalConfig.Font = FONT_ALFA;
+        } else if ((dict2->string[0] == 'G') || (dict2->string[0] == 'g')) {
+          GlobalConfig.Font = FONT_GRAY;
+        } else if ((dict2->string[0] == 'L') || (dict2->string[0] == 'l')) {
+          GlobalConfig.Font = FONT_LOAD;
+        }
+      }
     }
     dict2 = GetProperty(dict, "Path");
     if (dict2) {
@@ -1798,7 +1814,7 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
     dict2 = GetProperty(dict, "CharWidth");
     if (dict2) {
       if (dict2->type == kTagTypeInteger) {
-         GlobalConfig.CharWidth = (UINTN)dict2->string;
+        GlobalConfig.CharWidth = (UINTN)dict2->string;
       } else if ((dict2->type == kTagTypeString) && dict2->string) {
         GlobalConfig.CharWidth = AsciiStrDecimalToUintn(dict2->string);
       }
@@ -1857,8 +1873,8 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
         if ((dict2->type == kTagTypeTrue) ||
             ((dict2->type == kTagTypeString) && dict2->string &&
              ((dict2->string[0] == 'Y') || (dict2->string[0] == 'y')))) {
-          Anime->Once = TRUE;
-        }
+              Anime->Once = TRUE;
+            }
       }
       // Add the anime to the list
       if (Anime) {
@@ -1884,7 +1900,7 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
             GuiAnime = Anime;
           }
         } else {
-           GuiAnime = Anime;
+          GuiAnime = Anime;
         }
       }
     }
