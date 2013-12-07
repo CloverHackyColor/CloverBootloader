@@ -70,7 +70,7 @@ VOID egMeasureText(IN CHAR16 *Text, OUT INTN *Width, OUT INTN *Height)
         *Height = FontHeight;
 }
 
-EG_IMAGE * egLoadFontImage(IN BOOLEAN WantAlpha)
+EG_IMAGE * egLoadFontImage(IN BOOLEAN FromTheme, IN INTN Rows, IN INTN Cols)
 {
   EG_IMAGE            *NewImage;
   EG_IMAGE            *NewFontImage;
@@ -80,15 +80,25 @@ EG_IMAGE * egLoadFontImage(IN BOOLEAN WantAlpha)
   INTN        x, y, Ypos, j;
   EG_PIXEL    *PixelPtr;
   EG_PIXEL    FirstPixel;
+  BOOLEAN     WantAlpha = TRUE;
   
   if (!ThemeDir) {
     GlobalConfig.Font = FONT_GRAY;
     return NULL;
   }
-  
-  NewImage = egLoadImage(ThemeDir, GlobalConfig.FontFileName, WantAlpha);
+
+  if (FromTheme) {
+    NewImage = egLoadImage(ThemeDir, GlobalConfig.FontFileName, WantAlpha);
+  } else {
+    NewImage = egLoadImage(ThemeDir, L"FontKorean.png", WantAlpha);
+  }
+
   if (NewImage) {
+    if (FromTheme) {
       DBG("font %s loaded from themedir\n", GlobalConfig.FontFileName);
+    } else {
+      DBG("Korean font loaded from themedir\n");
+    }
   } else {
     CHAR16 *commonFontDir = L"EFI\\CLOVER\\font";
     CHAR16 *fontFilePath = PoolPrint(L"%s\\%s", commonFontDir, GlobalConfig.FontFileName);
@@ -107,19 +117,21 @@ EG_IMAGE * egLoadFontImage(IN BOOLEAN WantAlpha)
   ImageHeight = NewImage->Height;
 //  DBG("ImageHeight=%d\n", ImageHeight);
   PixelPtr = NewImage->PixelData;
-  DBG("Font loaded: ImageWidth=%d ImageHeight=%d Ptr=%x\n", ImageWidth, ImageHeight, PixelPtr);
-  NewFontImage = egCreateImage(ImageWidth << 4, ImageHeight >> 4, WantAlpha);
-  if (NewFontImage == NULL)
+  DBG("Font loaded: ImageWidth=%d ImageHeight=%d\n", ImageWidth, ImageHeight);
+  NewFontImage = egCreateImage(ImageWidth * Rows, ImageHeight / Rows, WantAlpha);
+  if (NewFontImage == NULL) {
+    DBG("Can't create new font image!\n");
     return NULL;
+  }
   
-  FontWidth = ImageWidth >> 4;
-  FontHeight = ImageHeight >> 4;
+  FontWidth = ImageWidth / Cols;
+  FontHeight = ImageHeight / Rows;
   FirstPixel = *PixelPtr;
-  for (y=0; y<16; y++) {
-    for (j=0; j<FontHeight; j++) {
+  for (y = 0; y < Rows; y++) {
+    for (j = 0; j < FontHeight; j++) {
 //      Ypos = MultU64x64(LShiftU64(j, 4) + y, ImageWidth);
-      Ypos = ((j << 4) + y) * ImageWidth;
-      for (x=0; x<ImageWidth; x++) {
+      Ypos = ((j * Rows) + y) * ImageWidth;
+      for (x = 0; x < ImageWidth; x++) {
        if (WantAlpha && 
            (PixelPtr->b == FirstPixel.b) &&
            (PixelPtr->g == FirstPixel.g) &&
@@ -143,6 +155,22 @@ VOID PrepareFont(VOID)
   EG_PIXEL *p;
   INTN      Width;
   INTN      Height;
+  if (gLanguage == korean) {
+//    FontImage = egLoadImage(ThemeDir, L"FontKorean.png", TRUE);
+    FontImage = egLoadFontImage(FALSE, 10, 28);
+    if (FontImage) {
+      FontHeight = 16;
+ //     if (GlobalConfig.CharWidth == 0) {
+        GlobalConfig.CharWidth = 16;
+ //     }
+      FontWidth = GlobalConfig.CharWidth;
+      TextHeight = FontHeight + TEXT_YMARGIN * 2;
+      DBG("Using Korean font matrix\n");
+      return;
+    } else {
+      gLanguage = english;
+    }
+  }
 
   // load the font
   if (FontImage == NULL){
@@ -157,7 +185,7 @@ VOID PrepareFont(VOID)
         break;
       case FONT_LOAD:
   //      DBG("load font image\n");
-        FontImage = egLoadFontImage(TRUE);
+        FontImage = egLoadFontImage(TRUE, 16, 16);
         if (!FontImage) {
           ChangeFont = TRUE;
           GlobalConfig.Font = FONT_ALFA;
@@ -199,6 +227,7 @@ VOID egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage,
   INTN            i;
   UINT16          c, c1;
   UINTN           Shift = 0;
+  UINTN           Cho = 0, Jong = 0, Joong = 0;
   
   // clip the text
   TextLength = StrLen(Text);
@@ -226,31 +255,82 @@ VOID egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage,
   BufferPtr += PosX + PosY * BufferLineOffset;
   FontPixelData = FontImage->PixelData;
   FontLineOffset = FontImage->Width;
+  DBG("BufferLineOffset=%d  FontLineOffset=%d\n", BufferLineOffset, FontLineOffset);
   if (GlobalConfig.CharWidth < FontWidth) {
     Shift = (FontWidth - GlobalConfig.CharWidth) >> 1;
   }
   for (i = 0; i < TextLength; i++) {
     c = Text[i];
-    if (GlobalConfig.Font != FONT_LOAD) {
-      if (c < 0x20 || c >= 0x7F)
-        c = 0x5F;
-      else
-        c -= 0x20;        
-    } else {
-      c1 = (((c >=0x410) ? (c -= 0x350) : c) & 0xff); //Russian letters
-      c = c1;
-    }
-    
-    egRawCompose(BufferPtr, FontPixelData + c * FontWidth + Shift,
-                 GlobalConfig.CharWidth, FontHeight,
-                 BufferLineOffset, FontLineOffset);
-    if (i == Cursor) {
-      c = (GlobalConfig.Font == FONT_LOAD)?0x5F:0x3F;
+    if (gLanguage != korean) {
+      if (GlobalConfig.Font != FONT_LOAD) {
+        if (c < 0x20 || c >= 0x7F)
+          c = 0x5F;
+        else
+          c -= 0x20;
+      } else {
+        c1 = (((c >=0x410) ? (c -= 0x350) : c) & 0xff); //Russian letters
+        c = c1;
+      }
+
       egRawCompose(BufferPtr, FontPixelData + c * FontWidth + Shift,
                    GlobalConfig.CharWidth, FontHeight,
-                   BufferLineOffset, FontLineOffset);      
+                   BufferLineOffset, FontLineOffset);
+      if (i == Cursor) {
+        c = (GlobalConfig.Font == FONT_LOAD)?0x5F:0x3F;
+        egRawCompose(BufferPtr, FontPixelData + c * FontWidth + Shift,
+                     GlobalConfig.CharWidth, FontHeight,
+                     BufferLineOffset, FontLineOffset);
+      }
+      BufferPtr += GlobalConfig.CharWidth;
+    } else {
+      //
+      if ((c >= 0x20) && (c <= 0x7F)) {
+        c1 = ((c - 0x20) >> 4) * 28 + (c & 0x0F);
+        Cho = c1;
+        Shift = 12;
+      } else if ((c < 0x20) || ((c > 0x7F) && (c < 0xAC00))) {
+        Cho = 0x0E; //just a dot
+        Shift = 8;
+      } else if ((c >= 0xAC00) && (c <= 0xD638)) {
+        //korean
+        Shift = 18;
+        c -= 0xAC00;
+        c1 = c / 28;
+        Jong = c % 28;
+        Cho = c1 / 21;
+        Joong = c1 % 21;
+        Cho += 28 * 7;
+        Joong += 28 * 8;
+        Jong += 28 * 9;
+      }
+//        DBG("Cho=%d Joong=%d Jong=%d\n", Cho, Joong, Jong);
+      if (Shift == 18) {
+        egRawCompose(BufferPtr, FontPixelData + Cho * 28 + 4 + FontLineOffset,
+                     GlobalConfig.CharWidth, FontHeight,
+                     BufferLineOffset, FontLineOffset);
+      } else {
+        egRawCompose(BufferPtr + BufferLineOffset * 3, FontPixelData + Cho * 28 + 2,
+                     GlobalConfig.CharWidth, FontHeight,
+                     BufferLineOffset, FontLineOffset);
+      }
+      if (i == Cursor) {
+        c = 99;
+        egRawCompose(BufferPtr, FontPixelData + c * 28 + 2,
+                     GlobalConfig.CharWidth, FontHeight,
+                     BufferLineOffset, FontLineOffset);
+      }
+      if (Shift == 18) {
+        egRawCompose(BufferPtr + 8, FontPixelData + Joong * 28 + 6, //9 , 4 are tunable
+                     GlobalConfig.CharWidth - 8, FontHeight,
+                     BufferLineOffset, FontLineOffset);
+        egRawCompose(BufferPtr + BufferLineOffset * 10, FontPixelData + Jong * 28 + 5,
+                     GlobalConfig.CharWidth, FontHeight - 10,
+                     BufferLineOffset, FontLineOffset);
+
+      }
+
+      BufferPtr += Shift;
     }
-    BufferPtr += GlobalConfig.CharWidth;
   }
 }
 

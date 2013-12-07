@@ -691,9 +691,11 @@ VOID egRawCompose(IN OUT EG_PIXEL *CompBasePtr, IN EG_PIXEL *TopBasePtr,
   UINTN       Alpha;
   UINTN       RevAlpha;
   UINTN       Temp;
+  EG_PIXEL    *CompUp;
   if (!CompBasePtr || !TopBasePtr) {
     return;
   }
+  CompUp = CompBasePtr + Width * Height;
   //if TopAlpha=255 then draw Top
   //else if TopAlpha=0 then draw Comp
   //else draw mixture (don't used)
