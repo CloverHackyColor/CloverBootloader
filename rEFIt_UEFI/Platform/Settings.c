@@ -58,7 +58,7 @@ extern INTN ScrollScrollDecorationsHeight;
 extern UINT8 GetOSTypeFromPath(IN CHAR16 *Path);
 
 // global configuration with default values
-REFIT_CONFIG   GlobalConfig = { FALSE, -1, 0, 0, 0, TRUE, FALSE, FALSE, FALSE, FALSE, FONT_ALFA, 7, 0xFFFFFF80, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, None, 0, FALSE, FALSE, FALSE, 0, 0 };
+REFIT_CONFIG   GlobalConfig = { FALSE, -1, 0, 0, 0, TRUE, FALSE, FALSE, FALSE, FALSE, FONT_ALFA, 7, 0xFFFFFF80, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, None, 0, FALSE, FALSE, FALSE, 0, 0, 4 };
 
 VOID __inline WaitForSts(VOID) {
 	UINT32 inline_timeout = 100000;
@@ -1690,6 +1690,13 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
     if (dict2) {
       if (dict2->type == kTagTypeInteger) {
         GlobalConfig.BadgeOffsetY = (UINTN)dict2->string;
+      }
+    }
+    GlobalConfig.BadgeScale = 8; //default
+    dict2 = GetProperty(dict, "Scale");
+    if (dict2) {
+      if (dict2->type == kTagTypeInteger) {
+        GlobalConfig.BadgeScale = (UINTN)dict2->string;
       }
     }
   }

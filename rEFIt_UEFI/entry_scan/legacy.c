@@ -140,9 +140,9 @@ static LEGACY_ENTRY * AddLegacyEntry(IN CHAR16 *FullTitle, IN CHAR16 *LoaderTitl
   
   if (GlobalConfig.HideBadges & HDBADGES_SHOW) {
     if (GlobalConfig.HideBadges & HDBADGES_SWAP) {
-      Entry->me.BadgeImage = egCopyScaledImage(Entry->me.DriveImage, 4);
+      Entry->me.BadgeImage = egCopyScaledImage(Entry->me.DriveImage, GlobalConfig.BadgeScale);
     } else {
-      Entry->me.BadgeImage = egCopyScaledImage(Entry->me.Image, 8);
+      Entry->me.BadgeImage = egCopyScaledImage(Entry->me.Image, GlobalConfig.BadgeScale);
     }
   }
   

@@ -627,10 +627,10 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
   // DBG("HideBadges=%d Volume=%s ", GlobalConfig.HideBadges, Volume->VolName);
   if (GlobalConfig.HideBadges & HDBADGES_SHOW) {
     if (GlobalConfig.HideBadges & HDBADGES_SWAP) {
-      Entry->me.BadgeImage = egCopyScaledImage(Entry->me.DriveImage, 4);
+      Entry->me.BadgeImage = egCopyScaledImage(Entry->me.DriveImage, GlobalConfig.BadgeScale);
       // DBG(" Show badge as Drive.");
     } else {
-      Entry->me.BadgeImage = egCopyScaledImage(Entry->me.Image, 8);
+      Entry->me.BadgeImage = egCopyScaledImage(Entry->me.Image, GlobalConfig.BadgeScale);
       // DBG(" Show badge as OSImage.");
     }
   }

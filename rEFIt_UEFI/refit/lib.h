@@ -408,6 +408,7 @@ typedef struct {
   BOOLEAN     SelectionOnTop;
   UINTN       BadgeOffsetX;
   UINTN       BadgeOffsetY;
+  UINTN       BadgeScale;
 } REFIT_CONFIG;
 
 // types
