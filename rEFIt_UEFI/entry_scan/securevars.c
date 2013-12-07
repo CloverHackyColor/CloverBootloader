@@ -328,7 +328,7 @@ STATIC EFI_STATUS SetSignedVariable(IN CHAR16   *DatabaseName,
     return Status;
   }
   DBG("Timestamp: %t:%2.2d\n", &Timestamp, Timestamp.Second);
-  if (!gSettings.SecureBoot) {
+  if (gSettings.SecureBoot) {
     // In user mode we need to sign the database with exchange key
     PKCS7    *Pkcs7 = NULL;
     X509     *Certificate = NULL;
