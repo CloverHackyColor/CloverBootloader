@@ -69,7 +69,8 @@
 
 #define PIXEL_CLOCK_LO     (UINT32)block[ 0 ]
 #define PIXEL_CLOCK_HI     (UINT32)block[ 1 ]
-#define PIXEL_CLOCK	   (COMBINE_HI_8LO( PIXEL_CLOCK_HI,PIXEL_CLOCK_LO )*10000)
+//#define PIXEL_CLOCK	   (COMBINE_HI_8LO( PIXEL_CLOCK_HI,PIXEL_CLOCK_LO )*10)
+#define PIXEL_CLOCK	   COMBINE_HI_8LO( PIXEL_CLOCK_HI,PIXEL_CLOCK_LO )
 #define H_ACTIVE_LO        (UINT32)block[ 2 ]
 #define H_BLANKING_LO      (UINT32)block[ 3 ]
 #define H_ACTIVE_HI        UPPER_NIBBLE( (UINT32)block[ 4 ] )
