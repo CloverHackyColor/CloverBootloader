@@ -372,7 +372,7 @@ VOID RefillInputs(VOID)
   */
   
   InputItemsCount = 90;
-  InputItems[InputItemsCount].ItemType = ASString; //90
+  InputItems[InputItemsCount].ItemType = UNIString; //90
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%s", gSettings.ConfigName);
   
   InputItems[InputItemsCount].ItemType = ASString; //91
@@ -673,7 +673,7 @@ VOID FillInputs(VOID)
   InputItems[InputItemsCount++].SValue = gSettings.bDropBGRT?L"[+]":L"[ ]";
   */
   InputItemsCount = 90;
-  InputItems[InputItemsCount].ItemType = ASString; //90
+  InputItems[InputItemsCount].ItemType = UNIString; //90
   InputItems[InputItemsCount].SValue   = AllocateZeroPool(64);
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%s", gSettings.ConfigName);
 

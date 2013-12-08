@@ -1552,7 +1552,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   for (i=0; i<2; i++) {
     if (gConfigDict[i]) {
       Status = GetEarlyUserSettings(SelfRootDir, gConfigDict[i]);
-  if (EFI_ERROR(Status)) {
+      if (EFI_ERROR(Status)) {
         DBG("Error in Early settings%d: %r\n", i, Status);
       }
     }
