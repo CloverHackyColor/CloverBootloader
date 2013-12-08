@@ -1657,8 +1657,9 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
   }
   dict = GetProperty(dictPointer, "Badges");
   //set defaults
-  GlobalConfig.BadgeOffsetX = 0;
-  GlobalConfig.BadgeOffsetY = 0;
+  GlobalConfig.BadgeOffsetX = 0xFFFF;
+  GlobalConfig.BadgeOffsetY = 0xFFFF;
+  GlobalConfig.BadgeScale = 8; //default
   if (dict) {
     dict2 = GetProperty(dict, "Swap");
     if (dict2) {
@@ -1692,7 +1693,7 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
         GlobalConfig.BadgeOffsetY = (UINTN)dict2->string;
       }
     }
-    GlobalConfig.BadgeScale = 8; //default
+
     dict2 = GetProperty(dict, "Scale");
     if (dict2) {
       if (dict2->type == kTagTypeInteger) {
@@ -1701,6 +1702,7 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
     }
   }
   dict = GetProperty(dictPointer, "Components");
+  GlobalConfig.HideUIFlags = 0;
   if (dict) {
     dict2 = GetProperty(dict, "Banner");
     if (dict2 && dict2->type == kTagTypeFalse) {
