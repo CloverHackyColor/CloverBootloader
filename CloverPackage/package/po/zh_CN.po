@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-11-02 09:49+0100\n"
-"PO-Revision-Date: 2013-06-17 00:32+0000\n"
+"PO-Revision-Date: 2013-12-10 04:41+0000\n"
 "Last-Translator: crazybirdy <>\n"
 "Language-Team: zh_CN <zh_CN@li.org>\n"
 "Language: zh_CN\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1371429159.0\n"
+"X-POOTLE-MTIME: 1386650463.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -595,14 +595,14 @@ msgstr ""
 
 #. type: "BGM_title"
 #: Resources/templates/Localizable.strings:115
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Black_Green"
 msgid "Black_Green_Moody"
-msgstr "BlackGreen"
+msgstr "BlackGreenMoody"
 
 #. type: "BGM_description"
 #: Resources/templates/Localizable.strings:116
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "Default black_green theme from Blackosx,\n"
 #| "Install to /EFI/CLOVER/themes/black_green"
@@ -610,8 +610,8 @@ msgid ""
 "Black Green and Moody theme from Blackosx,\n"
 "Install to /EFI/CLOVER/themes/BGM"
 msgstr ""
-"选择安装来自 Blackosx 的 BlackGreen主题。\n"
-"安装位置 /EFI/CLOVER/themes/black_green。"
+"选择安装来自 Blackosx 的 BlackGreenMoody主题。\n"
+"安装位置 /EFI/CLOVER/themes/BGM。"
 
 #. type: "black_green_title"
 #: Resources/templates/Localizable.strings:119
@@ -1096,7 +1096,7 @@ msgstr "启动时 强制装载选定的 ESP 磁区:"
 
 #. type: "339.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:21
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Save NVRAM contents to partition:"
 msgid "Save NVRAM contents to disk:"
 msgstr "储存 NVRAM 内容到磁区:"
@@ -1202,7 +1202,7 @@ msgstr "EFI 文件夹路径："
 #: ../CloverPrefpane/Localizable.strings:2
 #, no-wrap
 msgid "Auto"
-msgstr ""
+msgstr "自动"
 
 #. type: "No"
 #: ../CloverPrefpane/CloverPrefpane.strings:39
@@ -1215,7 +1215,7 @@ msgstr "否"
 #: ../CloverPrefpane/Localizable.strings:1
 #, no-wrap
 msgid "Always"
-msgstr ""
+msgstr "总是"
 
 #. type: "Boot Volume"
 #: ../CloverPrefpane/Localizable.strings:3
