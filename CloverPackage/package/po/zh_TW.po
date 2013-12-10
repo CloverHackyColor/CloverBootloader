@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-11-02 09:49+0100\n"
-"PO-Revision-Date: 2013-06-17 00:32+0000\n"
+"PO-Revision-Date: 2013-12-10 04:41+0000\n"
 "Last-Translator: crazybirdy <>\n"
 "Language-Team: zh_TW <zh_TW@li.org>\n"
 "Language: zh_TW\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1371429139.0\n"
+"X-POOTLE-MTIME: 1386650460.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -594,14 +594,14 @@ msgstr ""
 
 #. type: "BGM_title"
 #: Resources/templates/Localizable.strings:115
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Black_Green"
 msgid "Black_Green_Moody"
-msgstr "BlackGreen"
+msgstr "BlackGreenMoody"
 
 #. type: "BGM_description"
 #: Resources/templates/Localizable.strings:116
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "Default black_green theme from Blackosx,\n"
 #| "Install to /EFI/CLOVER/themes/black_green"
@@ -609,8 +609,8 @@ msgid ""
 "Black Green and Moody theme from Blackosx,\n"
 "Install to /EFI/CLOVER/themes/BGM"
 msgstr ""
-"選擇安裝來自 Blackosx 的 BlackGreen 主題。\n"
-"安裝位置 /EFI/CLOVER/themes/black_green。"
+"選擇安裝來自 Blackosx 的 BlackGreenMoody 主題。\n"
+"安裝位置 /EFI/CLOVER/themes/BGM。"
 
 #. type: "black_green_title"
 #: Resources/templates/Localizable.strings:119
@@ -1093,7 +1093,7 @@ msgstr "啓動時 強制裝載選定的 ESP 磁區:"
 
 #. type: "339.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:21
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Save NVRAM contents to partition:"
 msgid "Save NVRAM contents to disk:"
 msgstr "儲存 NVRAM 內容到磁區:"
@@ -1199,7 +1199,7 @@ msgstr "EFI 資料夾路徑："
 #: ../CloverPrefpane/Localizable.strings:2
 #, no-wrap
 msgid "Auto"
-msgstr ""
+msgstr "自動"
 
 #. type: "No"
 #: ../CloverPrefpane/CloverPrefpane.strings:39
@@ -1212,7 +1212,7 @@ msgstr "否"
 #: ../CloverPrefpane/Localizable.strings:1
 #, no-wrap
 msgid "Always"
-msgstr ""
+msgstr "永遠"
 
 #. type: "Boot Volume"
 #: ../CloverPrefpane/Localizable.strings:3
