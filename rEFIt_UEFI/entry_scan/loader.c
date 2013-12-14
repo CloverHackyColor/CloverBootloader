@@ -320,7 +320,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
   }
   
   // Get the loader device path
-  LoaderDevicePath = FileDevicePath(Volume->DeviceHandle, (*LoaderPath == '\\') ? (LoaderPath + 1) : LoaderPath);
+  LoaderDevicePath = FileDevicePath(Volume->DeviceHandle, (*LoaderPath == L'\\') ? (LoaderPath + 1) : LoaderPath);
   if (LoaderDevicePath == NULL) {
     return NULL;
   }
@@ -330,7 +330,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
   }
   
   // Ignore this loader if it's self path
-  FilePathAsString = FileDevicePathFileToStr(SelfFullDevicePath);
+  FilePathAsString = FileDevicePathToStr(SelfFullDevicePath);
   if (FilePathAsString) {
     INTN Comparison = StriCmp(FilePathAsString, LoaderDevicePathString);
     FreePool(FilePathAsString);
