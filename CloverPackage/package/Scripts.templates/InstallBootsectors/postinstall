@@ -119,6 +119,14 @@ echo "/usr/local/bin/fdisk440 -u -f ${DEST_VOL}/usr/standalone/i386/${diskloader
 echo "" >> "$install_log"
 
 ### Stage 1 ###
+
+# Try to umount the partition first
+mnt_pt=$(LC_ALL=C mount | egrep "^$bootdev on" | sed 's/^.* on *//;s/ ([^(]*//')
+if [[ -n "$mnt_pt" ]]; then
+    umount $bootdev 2>/dev/null
+    [[ $? -ne 0 ]] && mnt_pt=''
+fi
+
 if [[ ${boot_volume_format} = "hfs" ]]; then
     echo "Stage 1 - Writting ${partitionloaderhfs} to ${bootrdev}" >> "$install_log"
     echo "File system is HFS." >> "$install_log"
@@ -143,12 +151,14 @@ elif [[ ${boot_volume_format} = "msdos" ]]; then
 
     # write newbs to the partition boot sector
     echo "dd if=/tmp/newbs of=${bootrdev}" >> "$install_log"
-    dd if=/tmp/newbs of=${bootrdev}
-
+    dd if=/tmp/newbs count=1 bs=512 of=${bootrdev}
 else
     echo "Unknown boot volume format: $boot_volume_format" >> "$install_log"
     echo "No Stage1 was written" >> "$install_log"
 fi
+
+# Now try to remount the partition
+[[ -n "$mnt_pt" ]] && mount -t "$boot_volume_format" "$bootdev" "$mnt_pt"
 
 echo "" >> "$install_log"
 
