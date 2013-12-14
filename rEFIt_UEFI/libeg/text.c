@@ -255,7 +255,7 @@ VOID egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage,
   BufferPtr += PosX + PosY * BufferLineOffset;
   FontPixelData = FontImage->PixelData;
   FontLineOffset = FontImage->Width;
-  DBG("BufferLineOffset=%d  FontLineOffset=%d\n", BufferLineOffset, FontLineOffset);
+//  DBG("BufferLineOffset=%d  FontLineOffset=%d\n", BufferLineOffset, FontLineOffset);
   if (GlobalConfig.CharWidth < FontWidth) {
     Shift = (FontWidth - GlobalConfig.CharWidth) >> 1;
   }

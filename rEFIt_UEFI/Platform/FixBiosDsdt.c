@@ -2865,8 +2865,17 @@ UINT32 AddIMEI (UINT8 *dsdt, UINT32 len)
   INT32 sizeoffset;
   AML_CHUNK* root;
   AML_CHUNK* device;
+  AML_CHUNK* met;
+  AML_CHUNK* pack;
   CHAR8 *imei;
-
+  UINT32 FakeID;
+  UINT32 FakeVen;
+  
+  if (gSettings.FakeIMEI) {
+    FakeID = gSettings.FakeIMEI >> 16;
+    FakeVen = gSettings.FakeIMEI & 0xFFFF;
+  }
+  
   PCIADR = GetPciDevice(dsdt, len);
   if (PCIADR) {
     PCISIZE = get_size(dsdt, PCIADR);
@@ -2902,6 +2911,21 @@ UINT32 AddIMEI (UINT8 *dsdt, UINT32 len)
   device = aml_add_device(root, "IMEI");
   aml_add_name(device, "_ADR");
   aml_add_dword(device, IMEIADR1);
+	// add Method(_DSM,4,NotSerialized)
+  if (gSettings.FakeIMEI) {
+    met = aml_add_method(device, "_DSM", 4);
+    met = aml_add_store(met);
+    pack = aml_add_package(met);
+  
+    aml_add_string(pack, "device-id");
+    aml_add_byte_buffer(pack, (CHAR8*)&FakeID, 4);
+    aml_add_string(pack, "vendor-id");
+    aml_add_byte_buffer(pack, (CHAR8*)&FakeVen, 4);
+  
+    aml_add_local0(met);
+    aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
+  // finish Method(_DSM,4,NotSerialized)
+  }
 
   aml_calculate_size(root);
   imei = AllocateZeroPool(root->Size);

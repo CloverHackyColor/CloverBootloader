@@ -177,7 +177,7 @@ radeon_card_info_t radeon_cards[] = {
   { 0x71CD, 0x00000000, CHIP_FAMILY_RV530, "ATI Radeon HD Desktop ",		kWormy		 },
   { 0x71CE, 0x00000000, CHIP_FAMILY_RV530, "ATI Radeon HD Desktop ",		kWormy		 },
   { 0x71D2, 0x00000000, CHIP_FAMILY_RV530, "ATI Radeon HD Desktop ",		kWormy		 },
-  { 0x71D4, 0x00000000, CHIP_FAMILY_RV530, "ATI Radeon HD Mobile ",			kWormy		 },
+  { 0x71D4, 0x00000000, CHIP_FAMILY_RV530, "ATI Mobility FireGL V5250",	kWormy		 },
   { 0x71D5, 0x00000000, CHIP_FAMILY_RV530, "ATI Radeon HD Mobile ",			kWormy		 },
   { 0x71D6, 0x00000000, CHIP_FAMILY_RV530, "ATI Radeon HD Mobile ",			kWormy		 },
   { 0x71DA, 0x00000000, CHIP_FAMILY_RV530, "ATI Radeon HD Desktop ",		kWormy		 },

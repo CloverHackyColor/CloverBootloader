@@ -2547,6 +2547,11 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
           AsciiStrToUnicodeStr(prop2->string, (CHAR16*)&UStr[0]);
           gSettings.FakeXHCI  = (UINT32)StrHexToUint64(UStr);
         }
+        prop2 = GetProperty(prop, "IMEI");
+        if (prop2 && (prop2->type == kTagTypeString)) {
+          AsciiStrToUnicodeStr(prop2->string, (CHAR16*)&UStr[0]);
+          gSettings.FakeIMEI  = (UINT32)StrHexToUint64(UStr);
+        }
       }
       //   }
       prop2 = GetProperty(dictPointer, "Audio");

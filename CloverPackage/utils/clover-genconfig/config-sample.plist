@@ -242,6 +242,8 @@
 			<string>0x431214e4</string>
 			<key>XHCI</key>
 			<string>0x0</string>
+			<key>IMEI</key>
+			<string>0x0</string>
 		</dict>
 		<key>Inject</key>
 		<false/>

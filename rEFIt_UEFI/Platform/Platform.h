@@ -788,8 +788,7 @@ typedef struct {
   BOOLEAN NoDefaultProperties;
   
   BOOLEAN	ReuseFFFF;
-  
-  
+    
   //PCI devices
   UINT32  FakeATI;    //97
   UINT32  FakeNVidia;
@@ -798,6 +797,7 @@ typedef struct {
   UINT32  FakeWIFI;
   UINT32  FakeSATA;
   UINT32  FakeXHCI;  //103
+  UINT32  FakeIMEI;  //106
   
   //Graphics
   UINT16  PCIRootUID;
@@ -1134,8 +1134,7 @@ typedef struct {
   BOOLEAN           Valid;
 } SLOT_DEVICE;
 
-typedef struct  
-{	
+typedef struct {	
   UINT32            Signature;
 	LIST_ENTRY        Link;
 	CHAR8             Model[64];

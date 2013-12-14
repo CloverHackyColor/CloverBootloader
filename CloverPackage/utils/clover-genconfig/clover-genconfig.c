@@ -465,6 +465,7 @@ void PrintConfig(CFTypeRef data)
   addHex(fakeIDDict, CFSTR("WIFI"), s->FakeWIFI);
   addHex(fakeIDDict, CFSTR("SATA"), s->FakeSATA);
   addHex(fakeIDDict, CFSTR("XHCI"), s->FakeXHCI);
+  addHex(fakeIDDict, CFSTR("IMEI"), s->FakeIMEI);
   
   CFMutableDictionaryRef audioDict = addDict(pciDict, CFSTR("Audio"));
   if (s->HDAInjection)

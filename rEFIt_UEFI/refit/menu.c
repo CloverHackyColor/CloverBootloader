@@ -416,6 +416,8 @@ VOID RefillInputs(VOID)
   InputItems[InputItemsCount].ItemType = BoolValue; //105
   InputItems[InputItemsCount].BValue   = gSettings.DebugDSDT;
   InputItems[InputItemsCount++].SValue = gSettings.DebugDSDT?L"[+]":L"[ ]";
+  InputItems[InputItemsCount].ItemType = Hex;  //106
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeIMEI);
   
   //menu for drop table
   if (gSettings.ACPIDropTables) {
@@ -729,6 +731,9 @@ VOID FillInputs(VOID)
   InputItems[InputItemsCount].ItemType = BoolValue; //105
   InputItems[InputItemsCount].BValue   = gSettings.DebugDSDT;
   InputItems[InputItemsCount++].SValue = gSettings.DebugDSDT?L"[+]":L"[ ]";
+  InputItems[InputItemsCount].ItemType = Hex;  //106
+  InputItems[InputItemsCount].SValue = AllocateZeroPool(26);
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeIMEI);
   
   //menu for drop table
   if (gSettings.ACPIDropTables) {
@@ -1152,6 +1157,10 @@ VOID ApplyInputs(VOID)
   i++; //105
   if (InputItems[i].Valid) {
     gSettings.DebugDSDT = InputItems[i].BValue;
+  }
+  i++; //106
+  if (InputItems[i].Valid) {
+    gSettings.FakeIMEI = (UINT32)StrHexToUint64(InputItems[i].SValue);
   }
   
   if (NeedSave) {
@@ -3665,6 +3674,15 @@ REFIT_MENU_ENTRY  *SubMenuPCI()
   InputBootArgs->Entry.Tag = TAG_INPUT;
   InputBootArgs->Entry.Row = StrLen(InputItems[103].SValue); //cursor
   InputBootArgs->Item = &InputItems[103];
+  InputBootArgs->Entry.AtClick = ActionSelect;
+  InputBootArgs->Entry.AtDoubleClick = ActionEnter;
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+  
+  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  InputBootArgs->Entry.Title = PoolPrint(L"FakeID IMEI:");
+  InputBootArgs->Entry.Tag = TAG_INPUT;
+  InputBootArgs->Entry.Row = StrLen(InputItems[106].SValue); //cursor
+  InputBootArgs->Item = &InputItems[106];
   InputBootArgs->Entry.AtClick = ActionSelect;
   InputBootArgs->Entry.AtDoubleClick = ActionEnter;
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
