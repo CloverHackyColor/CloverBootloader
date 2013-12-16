@@ -176,6 +176,10 @@ EFI_STATUS egSetMaxResolution()
   UINTN       SizeOfInfo;
   EFI_GRAPHICS_OUTPUT_MODE_INFORMATION *Info;
   
+  if (GraphicsOutput == NULL) {
+    return EFI_UNSUPPORTED;
+  }
+
   MsgLog("SetMaxResolution: ");
   MaxMode = GraphicsOutput->Mode->MaxMode;
   for (Mode = 0; Mode < MaxMode; Mode++) {
@@ -219,12 +223,18 @@ EFI_STATUS egSetMaxResolution()
 EFI_STATUS egSetMode(INT32 Next)
 {
   EFI_STATUS  Status = EFI_UNSUPPORTED;
-  UINT32      MaxMode = GraphicsOutput->Mode->MaxMode;
+  UINT32      MaxMode;
   UINTN       SizeOfInfo;
   EFI_GRAPHICS_OUTPUT_MODE_INFORMATION *Info;
-  INT32      Mode = GraphicsOutput->Mode->Mode;
+  INT32      Mode;
   UINT32     Index = 0;
   
+  if (GraphicsOutput == NULL) {
+    return EFI_UNSUPPORTED;
+  }
+
+  MaxMode = GraphicsOutput->Mode->MaxMode;
+  Mode = GraphicsOutput->Mode->Mode;
   while (EFI_ERROR(Status) && Index <= MaxMode) {
     Mode = Mode + Next;
     Mode = (Mode >= (INT32)MaxMode)?0:Mode;
@@ -254,7 +264,11 @@ EFI_STATUS egSetScreenResolution(IN CHAR16 *WidthHeight)
     UINT32      Mode;
     UINTN       SizeOfInfo;
     EFI_GRAPHICS_OUTPUT_MODE_INFORMATION *Info;
-    
+
+    if (GraphicsOutput == NULL) {
+        return EFI_UNSUPPORTED;
+    }
+
     if (WidthHeight == NULL) {
         return EFI_INVALID_PARAMETER;
     }
@@ -648,6 +662,10 @@ static EFI_STATUS GopSetModeAndReconnectTextOut(IN UINT32 ModeNumber)
     UINTN       Index;
     EFI_HANDLE  *HandleBuffer;
     EFI_STATUS  Status;
+
+    if (GraphicsOutput == NULL) {
+        return EFI_UNSUPPORTED;
+    }
 
     Status = GraphicsOutput->SetMode(GraphicsOutput, ModeNumber);
     MsgLog("Video mode change to mode #%d: %r\n", ModeNumber, Status);
