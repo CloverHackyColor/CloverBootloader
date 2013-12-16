@@ -570,6 +570,27 @@ static EFI_STATUS StartEFIImage(IN EFI_DEVICE_PATH *DevicePath,
 }
 
 
+static EFI_STATUS StartEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
+                                IN CHAR16 *LoadOptions, IN CHAR16 *LoadOptionsPrefix,
+                                IN CHAR16 *ImageTitle,
+                                OUT UINTN *ErrorInStep,
+                                OUT EFI_HANDLE *NewImageHandle)
+{
+  EFI_STATUS Status;
+  EFI_HANDLE ChildImageHandle = NULL;
+
+  Status = LoadEFIImageList(DevicePaths, ImageTitle, ErrorInStep, &ChildImageHandle);
+  if (!EFI_ERROR(Status)) {
+    Status = StartEFILoadedImage(ChildImageHandle, LoadOptions, LoadOptionsPrefix, ImageTitle, ErrorInStep);
+  }
+
+  if (NewImageHandle != NULL) {
+      *NewImageHandle = ChildImageHandle;
+  }
+  return Status;
+}
+
+
 static CHAR8 *SearchString (
   IN  CHAR8       *Source,
   IN  UINT64      SourceSize,
@@ -785,15 +806,69 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
 //  PauseForKey(L"System started?!");
 }
 
-//#define MAX_DISCOVERED_PATHS (16)
+// early 2006 Core Duo / Core Solo models
+static UINT8 LegacyLoaderDevicePath1Data[] = {
+    0x01, 0x03, 0x18, 0x00, 0x0B, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0xE0, 0xFF, 0x00, 0x00, 0x00, 0x00,
+    0xFF, 0xFF, 0xF9, 0xFF, 0x00, 0x00, 0x00, 0x00,
+    0x04, 0x06, 0x14, 0x00, 0xEB, 0x85, 0x05, 0x2B,
+    0xB8, 0xD8, 0xA9, 0x49, 0x8B, 0x8C, 0xE2, 0x1B,
+    0x01, 0xAE, 0xF2, 0xB7, 0x7F, 0xFF, 0x04, 0x00,
+};
+// mid-2006 Mac Pro (and probably other Core 2 models)
+static UINT8 LegacyLoaderDevicePath2Data[] = {
+    0x01, 0x03, 0x18, 0x00, 0x0B, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0xE0, 0xFF, 0x00, 0x00, 0x00, 0x00,
+    0xFF, 0xFF, 0xF7, 0xFF, 0x00, 0x00, 0x00, 0x00,
+    0x04, 0x06, 0x14, 0x00, 0xEB, 0x85, 0x05, 0x2B,
+    0xB8, 0xD8, 0xA9, 0x49, 0x8B, 0x8C, 0xE2, 0x1B,
+    0x01, 0xAE, 0xF2, 0xB7, 0x7F, 0xFF, 0x04, 0x00,
+};
+// mid-2007 MBP ("Santa Rosa" based models)
+static UINT8 LegacyLoaderDevicePath3Data[] = {
+    0x01, 0x03, 0x18, 0x00, 0x0B, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0xE0, 0xFF, 0x00, 0x00, 0x00, 0x00,
+    0xFF, 0xFF, 0xF8, 0xFF, 0x00, 0x00, 0x00, 0x00,
+    0x04, 0x06, 0x14, 0x00, 0xEB, 0x85, 0x05, 0x2B,
+    0xB8, 0xD8, 0xA9, 0x49, 0x8B, 0x8C, 0xE2, 0x1B,
+    0x01, 0xAE, 0xF2, 0xB7, 0x7F, 0xFF, 0x04, 0x00,
+};
+// early-2008 MBA
+static UINT8 LegacyLoaderDevicePath4Data[] = {
+    0x01, 0x03, 0x18, 0x00, 0x0B, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0xC0, 0xFF, 0x00, 0x00, 0x00, 0x00,
+    0xFF, 0xFF, 0xF8, 0xFF, 0x00, 0x00, 0x00, 0x00,
+    0x04, 0x06, 0x14, 0x00, 0xEB, 0x85, 0x05, 0x2B,
+    0xB8, 0xD8, 0xA9, 0x49, 0x8B, 0x8C, 0xE2, 0x1B,
+    0x01, 0xAE, 0xF2, 0xB7, 0x7F, 0xFF, 0x04, 0x00,
+};
+// late-2008 MB/MBP (NVidia chipset)
+static UINT8 LegacyLoaderDevicePath5Data[] = {
+    0x01, 0x03, 0x18, 0x00, 0x0B, 0x00, 0x00, 0x00,
+    0x00, 0x40, 0xCB, 0xFF, 0x00, 0x00, 0x00, 0x00,
+    0xFF, 0xBF, 0xFF, 0xFF, 0x00, 0x00, 0x00, 0x00,
+    0x04, 0x06, 0x14, 0x00, 0xEB, 0x85, 0x05, 0x2B,
+    0xB8, 0xD8, 0xA9, 0x49, 0x8B, 0x8C, 0xE2, 0x1B,
+    0x01, 0xAE, 0xF2, 0xB7, 0x7F, 0xFF, 0x04, 0x00,
+};
+static EFI_DEVICE_PATH *LegacyLoaderList[] = {
+    (EFI_DEVICE_PATH *)LegacyLoaderDevicePath1Data,
+    (EFI_DEVICE_PATH *)LegacyLoaderDevicePath2Data,
+    (EFI_DEVICE_PATH *)LegacyLoaderDevicePath3Data,
+    (EFI_DEVICE_PATH *)LegacyLoaderDevicePath4Data,
+    (EFI_DEVICE_PATH *)LegacyLoaderDevicePath5Data,
+    NULL
+};
+
+#define MAX_DISCOVERED_PATHS (16)
 //#define PREBOOT_LOG L"EFI\\CLOVER\\misc\\preboot.log"
 
 static VOID StartLegacy(IN LEGACY_ENTRY *Entry)
 {
     EFI_STATUS          Status = EFI_UNSUPPORTED;
     EG_IMAGE            *BootLogoImage;
-//    UINTN               ErrorInStep = 0;
-//    EFI_DEVICE_PATH     *DiscoveredPathList[MAX_DISCOVERED_PATHS];
+    UINTN               ErrorInStep = 0;
+    EFI_DEVICE_PATH     *DiscoveredPathList[MAX_DISCOVERED_PATHS];
 
     // Unload EmuVariable before booting legacy.
     // This is not needed in most cases, but it seems to interfere with legacy OS
@@ -814,11 +889,7 @@ static VOID StartLegacy(IN LEGACY_ENTRY *Entry)
                       (UGAHeight - BootLogoImage->Height) >> 1,
                       &StdBackgroundPixel, 16);
   
-/*    Status = ExtractLegacyLoaderPaths(DiscoveredPathList, MAX_DISCOVERED_PATHS, LegacyLoaderList);
-    if (!EFI_ERROR(Status)) {
-      Status = StartEFIImageList(DiscoveredPathList, Entry->LoadOptions, NULL, L"legacy loader", &ErrorInStep, NULL);
-    } */
- //   if (EFI_ERROR(Status)) {
+    if (StrCmp(gSettings.LegacyBoot, L"Apple") != 0) { // not Apple-style LegacyBoot
       //try my LegacyBoot
       switch (Entry->Volume->BootType) {
         case BOOTING_BY_CD:
@@ -841,16 +912,23 @@ static VOID StartLegacy(IN LEGACY_ENTRY *Entry)
           break;
       }
       CheckError(Status, L"while LegacyBoot");
+    } else { // Apple-style LegacyBoot
 //      if (0 && Entry->Volume->IsMbrPartition && !Entry->Volume->HasBootCode)
 //         ActivateMbrPartition(Entry->Volume->WholeDiskBlockIO, Entry->Volume->MbrPartitionIndex);
 
-/*        if (ErrorInStep == 1)
-            Print(L"\nPlease make sure that you have the latest firmware update installed.\n");
-        else if (ErrorInStep == 3)
-            Print(L"\nThe firmware refused to boot from the selected volume. Note that external\n"
-                  L"hard drives are not well-supported by Apple's firmware for legacy OS booting.\n");
- */
-//    }
+      Status = ExtractLegacyLoaderPaths(DiscoveredPathList, MAX_DISCOVERED_PATHS, LegacyLoaderList);
+      if (!EFI_ERROR(Status)) {
+        Status = StartEFIImageList(DiscoveredPathList, Entry->LoadOptions, NULL, L"legacy loader", &ErrorInStep, NULL);
+      } 
+      if (Status == EFI_NOT_FOUND) {
+        if (ErrorInStep == 1) {
+          Print(L"\nPlease make sure that you have the latest firmware update installed.\n");
+        } else if (ErrorInStep == 3) {
+          Print(L"\nThe firmware refused to boot from the selected volume. Note that external\n"
+                L"hard drives are not well-supported by Apple's firmware for legacy OS booting.\n");
+        }
+      }
+    }
     FinishExternalScreen();
 }
 
