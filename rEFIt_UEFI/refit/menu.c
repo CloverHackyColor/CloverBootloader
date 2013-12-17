@@ -419,6 +419,14 @@ VOID RefillInputs(VOID)
   InputItems[InputItemsCount].ItemType = Hex;  //106
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeIMEI);
   
+  InputItemsCount = 110;
+  for (j=0; j<16; j++) {
+    InputItems[InputItemsCount].ItemType = BoolValue; //110+j
+    bit = (gSettings.FixDsdt & (1<<(j+16))) != 0;
+    InputItems[InputItemsCount].BValue = bit;
+    InputItems[InputItemsCount++].SValue = bit?L"[+]":L"[ ]";     
+  }
+  
   //menu for drop table
   if (gSettings.ACPIDropTables) {
     ACPI_DROP_TABLE *DropTable = gSettings.ACPIDropTables;
@@ -428,7 +436,6 @@ VOID RefillInputs(VOID)
       DropTable = DropTable->Next;
     }
   }
-
 }
 
 VOID FillInputs(VOID)
@@ -735,6 +742,14 @@ VOID FillInputs(VOID)
   InputItems[InputItemsCount].SValue = AllocateZeroPool(26);
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeIMEI);
   
+  InputItemsCount = 110;
+  for (j=0; j<16; j++) {
+    InputItems[InputItemsCount].ItemType = BoolValue; //110+j
+    bit = (gSettings.FixDsdt & (1<<(j+16))) != 0;
+    InputItems[InputItemsCount].BValue = bit;
+    InputItems[InputItemsCount++].SValue = bit?L"[+]":L"[ ]";     
+  }
+  
   //menu for drop table
   if (gSettings.ACPIDropTables) {
     ACPI_DROP_TABLE *DropTable = gSettings.ACPIDropTables;
@@ -947,6 +962,13 @@ VOID ApplyInputs(VOID)
       k += (1<<j);
     }
   }
+  i=110;
+  for (j=16; j<32; j++) {
+    if (InputItems[i++].BValue) {
+      k += (1<<j);
+    }
+  }
+  
   if (gSettings.FixDsdt != k) {
     DBG("applied FixDsdt=%04x\n", k);
     gSettings.FixDsdt = k;
@@ -3342,7 +3364,7 @@ REFIT_MENU_ENTRY  *SubMenuDsdtFix()
   
   Entry = AllocateZeroPool(sizeof(REFIT_MENU_ENTRY));
   Entry->Title = AllocateZeroPool(255);
-  UnicodeSPrint(Entry->Title, 255, L"DSDT fix mask [0x%04x]->", gSettings.FixDsdt);
+  UnicodeSPrint(Entry->Title, 255, L"DSDT fix mask [0x%08x]->", gSettings.FixDsdt);
 //  Entry->Title = PoolPrint(L"DSDT fix mask [0x%04x]->", gSettings.FixDsdt);
   Entry->Image =  OptionMenu.TitleImage;
   Entry->Tag = TAG_OPTIONS;
@@ -3848,7 +3870,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
           if (SubMenuExit == MENU_EXIT_ESCAPE || TmpChosenEntry->Tag == TAG_RETURN){
             ApplyInputs();
             if ((*ChosenEntry)->SubScreen->ID == SCREEN_DSDT) {
-              UnicodeSPrint((*ChosenEntry)->Title, 255, L"DSDT fix mask [0x%04x]->", gSettings.FixDsdt);
+              UnicodeSPrint((*ChosenEntry)->Title, 255, L"DSDT fix mask [0x%08x]->", gSettings.FixDsdt);
               MsgLog("@ESC: %s\n", (*ChosenEntry)->Title);
             }
             break;
@@ -3859,8 +3881,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
             if ((*ChosenEntry)->SubScreen->ID == SCREEN_DSDT) {
               CHAR16 *TmpTitle;
               ApplyInputs();
-              TmpTitle = PoolPrint(L"DSDT fix mask [0x%04x]->", gSettings.FixDsdt);
-         //     UnicodeSPrint((*ChosenEntry)->Title, 255, L"DSDT fix mask [0x%04x]->", gSettings.FixDsdt);
+              TmpTitle = PoolPrint(L"DSDT fix mask [0x%08x]->", gSettings.FixDsdt);
               MsgLog("@ENTER: tmp=%s\n", TmpTitle);
               while (*TmpTitle) {
                 *(*ChosenEntry)->Title++ = *TmpTitle++;
