@@ -2902,6 +2902,102 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
                     gSettings.FixDsdt |= FIX_HDA;
                   }
             }
+            prop2 = GetProperty(prop, "FIX_DARWIN_10000");
+            if(prop2) {
+              if ((prop2->type == kTagTypeTrue) ||
+                  ((prop2->type == kTagTypeString) &&
+                   ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
+                    gSettings.FixDsdt |= FIX_DARWIN;
+                  }
+            }
+            prop2 = GetProperty(prop, "FIX_RTC_20000");
+            if(prop2) {
+              if ((prop2->type == kTagTypeTrue) ||
+                  ((prop2->type == kTagTypeString) &&
+                   ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
+                    gSettings.FixDsdt |= FIX_RTC;
+                  }
+            }
+            prop2 = GetProperty(prop, "FIX_TMR_40000");
+            if(prop2) {
+              if ((prop2->type == kTagTypeTrue) ||
+                  ((prop2->type == kTagTypeString) &&
+                   ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
+                    gSettings.FixDsdt |= FIX_TMR;
+                  }
+            }
+            prop2 = GetProperty(prop, "AddIMEI_80000");
+            if(prop2) {
+              if ((prop2->type == kTagTypeTrue) ||
+                  ((prop2->type == kTagTypeString) &&
+                   ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
+                    gSettings.FixDsdt |= FIX_IMEI;
+                  }
+            }
+            prop2 = GetProperty(prop, "FIX_INTELGFX_100000");
+            if(prop2) {
+              if ((prop2->type == kTagTypeTrue) ||
+                  ((prop2->type == kTagTypeString) &&
+                   ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
+                    gSettings.FixDsdt |= FIX_INTELGFX;
+                  }
+            }
+            prop2 = GetProperty(prop, "FIX_WAK_200000");
+            if(prop2) {
+              if ((prop2->type == kTagTypeTrue) ||
+                  ((prop2->type == kTagTypeString) &&
+                   ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
+                    gSettings.FixDsdt |= FIX_WAK;
+                  }
+            }
+            prop2 = GetProperty(prop, "DeleteUnused_400000");
+            if(prop2) {
+              if ((prop2->type == kTagTypeTrue) ||
+                  ((prop2->type == kTagTypeString) &&
+                   ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
+                    gSettings.FixDsdt |= FIX_UNUSED;
+                  }
+            }
+            prop2 = GetProperty(prop, "FIX_ADP1_800000");
+            if(prop2) {
+              if ((prop2->type == kTagTypeTrue) ||
+                  ((prop2->type == kTagTypeString) &&
+                   ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
+                    gSettings.FixDsdt |= FIX_ADP1;
+                  }
+            }
+            prop2 = GetProperty(prop, "AddPNLF_1000000");
+            if(prop2) {
+              if ((prop2->type == kTagTypeTrue) ||
+                  ((prop2->type == kTagTypeString) &&
+                   ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
+                    gSettings.FixDsdt |= FIX_PNLF;
+                  }
+            }
+            prop2 = GetProperty(prop, "FIX_S3D_2000000");
+            if(prop2) {
+              if ((prop2->type == kTagTypeTrue) ||
+                  ((prop2->type == kTagTypeString) &&
+                   ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
+                    gSettings.FixDsdt |= FIX_S3D;
+                  }
+            }
+            prop2 = GetProperty(prop, "FIX_ACST_4000000");
+            if(prop2) {
+              if ((prop2->type == kTagTypeTrue) ||
+                  ((prop2->type == kTagTypeString) &&
+                   ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
+                    gSettings.FixDsdt |= FIX_ACST;
+                  }
+            }
+            prop2 = GetProperty(prop, "NewWay_80000000");
+            if(prop2) {
+              if ((prop2->type == kTagTypeTrue) ||
+                  ((prop2->type == kTagTypeString) &&
+                   ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
+                    gSettings.FixDsdt |= FIX_NEW_WAY;
+                  }
+            }
 
           }
           DBG("   final mask=%08x\n", gSettings.FixDsdt);

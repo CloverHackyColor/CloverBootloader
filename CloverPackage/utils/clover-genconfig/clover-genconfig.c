@@ -539,8 +539,18 @@ void PrintConfig(CFTypeRef data)
   addBoolean(fixDict, CFSTR("FixLAN_2000"),        !!(s->FixDsdt & FIX_LAN));
   addBoolean(fixDict, CFSTR("FixAirport_4000"),    !!(s->FixDsdt & FIX_WIFI));
   addBoolean(fixDict, CFSTR("FixHDA_8000"),        !!(s->FixDsdt & FIX_HDA));
-
-
+  addBoolean(fixDict, CFSTR("FIX_DARWIN_10000"),   !!(s->FixDsdt & FIX_DARWIN));
+  addBoolean(fixDict, CFSTR("FIX_RTC_20000"),      !!(s->FixDsdt & FIX_RTC));
+  addBoolean(fixDict, CFSTR("FIX_TMR_40000"),      !!(s->FixDsdt & FIX_TMR));
+  addBoolean(fixDict, CFSTR("AddIMEI_80000"),      !!(s->FixDsdt & FIX_IMEI));
+  addBoolean(fixDict, CFSTR("FIX_INTELGFX_100000"), !!(s->FixDsdt & FIX_INTELGFX));
+  addBoolean(fixDict, CFSTR("FIX_WAK_200000"),      !!(s->FixDsdt & FIX_WAK));
+  addBoolean(fixDict, CFSTR("DeleteUnused_400000"), !!(s->FixDsdt & FIX_UNUSED));
+  addBoolean(fixDict, CFSTR("FIX_ADP1_800000"),     !!(s->FixDsdt & FIX_ADP1));
+  addBoolean(fixDict, CFSTR("AddPNLF_1000000"),    !!(s->FixDsdt & FIX_PNLF));
+  addBoolean(fixDict, CFSTR("FIX_S3D_2000000"),    !!(s->FixDsdt & FIX_S3D));
+  addBoolean(fixDict, CFSTR("FIX_ACST_4000000"),   !!(s->FixDsdt & FIX_ACST));
+  addBoolean(fixDict, CFSTR("NewWay_80000000"),    !!(s->FixDsdt & FIX_NEW_WAY));
 
   CFMutableArrayRef dsdtPatchArray = addArray(dsdtDict, CFSTR("Patches"));
     CFMutableDictionaryRef dsdtPatchDict = addDictToArray(dsdtPatchArray);

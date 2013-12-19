@@ -462,18 +462,18 @@ Headers collection for procedures
 #define FIX_WIFI      bit(14)
 #define FIX_HDA       bit(15)
 //new bits 16-31 0xFFFF0000
-#define FIX_NEW_WAY   bit(16)
+#define FIX_NEW_WAY   bit(31)
+#define FIX_DARWIN    bit(16)
 #define FIX_RTC       bit(17)
 #define FIX_TMR       bit(18)
 #define FIX_IMEI      bit(19)
 #define FIX_INTELGFX  bit(20)
 #define FIX_WAK       bit(21)
 #define FIX_UNUSED    bit(22)
-#define FIX_ACXX      bit(23)
+#define FIX_ADP1      bit(23)
 #define FIX_PNLF      bit(24)
-#define FIX_S3D       bit(24)
-#define FIX_ADP       bit(25)
-#define FIX_DARWIN    bit(26)
+#define FIX_S3D       bit(25)
+#define FIX_ACST      bit(26)
 
 //devices
 #define DEV_ATI       bit(0)
