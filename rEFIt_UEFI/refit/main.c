@@ -1531,6 +1531,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   TagPtr            smbiosTags = NULL;
   TagPtr            UniteTag = NULL;
   BOOLEAN           UniteConfigs = FALSE;
+  EFI_TIME          Now;
   
   // CHAR16            *InputBuffer; //, *Y;
   //  EFI_INPUT_KEY Key;
@@ -1546,11 +1547,15 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 	gRS				= SystemTable->RuntimeServices;
 	Status = EfiGetSystemConfigurationTable (&gEfiDxeServicesTableGuid, (VOID **) &gDS);
 
+  gRS->GetTime(&Now, NULL);
+
   // firmware detection
   gFirmwareClover = StrCmp(gST->FirmwareVendor, L"CLOVER") == 0;
   InitializeConsoleSim();
   InitBooterLog();
   DBG("\n");
+  DBG("Now is %d.%d.%d,  %d:%d:%d (GMT+%d)\n",
+      Now.Day, Now.Month, Now.Year, Now.Hour, Now.Minute, Now.Second, Now.TimeZone);
   DBG("Starting Clover rev %s on %s EFI\n", FIRMWARE_REVISION, gST->FirmwareVendor);
 
   Status = InitRefitLib(gImageHandle);
@@ -1779,7 +1784,12 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     if (!GlobalConfig.FastBoot) {
  //     GetListOfThemes();
       if (gThemeNeedInit) {
-        InitTheme(TRUE);
+        if ((Now.Month == 12) && (Now.Day == 25)) {
+          GlobalConfig.Theme = L"christmas";
+          InitTheme(FALSE);
+        } else {
+          InitTheme(TRUE);
+        }
         gThemeNeedInit = FALSE;
       } else if (gThemeChanged) {
         InitTheme(FALSE);
