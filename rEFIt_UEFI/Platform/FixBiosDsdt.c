@@ -4477,7 +4477,7 @@ VOID FixBiosDsdt (UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, 
     DsdtLen = FIXWAK(temp, DsdtLen, fadt);
   }
   if ((gSettings.FixDsdt & FIX_NEW_WAY) && (gSettings.FixDsdt & FIX_WAK)) {
-    DsdtLen = AddIMEI(temp, DsdtLen);
+    DsdtLen = FIXWAK(temp, DsdtLen, fadt);
   }
   
   
