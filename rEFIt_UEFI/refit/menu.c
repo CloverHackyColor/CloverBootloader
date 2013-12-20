@@ -770,7 +770,7 @@ VOID ApplyInputs(VOID)
   BOOLEAN NeedSave = TRUE;
   INTN i = 0;
   UINTN j;
-  UINT16 k;
+  UINT32 k;
   CHAR8  AString[256];
     TagPtr dict;
 //  DBG("ApplyInputs\n");
@@ -853,9 +853,9 @@ VOID ApplyInputs(VOID)
     gSettings.PatchVBios = InputItems[i].BValue;
   }
   i++; //17
-  if (InputItems[i].Valid) {
+/*  if (InputItems[i].Valid) {
     gSettings.FixDsdt = (UINT32)StrHexToUint64(InputItems[i].SValue);
-  }
+  } */
   i++; //18
   if (InputItems[i].Valid) {
     gSettings.BacklightLevel = (UINT16)StrHexToUint64(InputItems[i].SValue);
@@ -970,7 +970,7 @@ VOID ApplyInputs(VOID)
   }
   
   if (gSettings.FixDsdt != k) {
-    DBG("applied FixDsdt=%04x\n", k);
+    DBG("applied FixDsdt=%08x\n", k);
     gSettings.FixDsdt = k;
   }
     

@@ -2006,8 +2006,8 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
   
 //search DisplayADR1[0]
   for (j=0x20; j<len-10; j++) {
-    if (CmpAdr(dsdt, j, DisplayADR1[VCard])) { //for example 0x00010000=1,0
-      devadr = devFind(dsdt, j);  //PEG0@1,0
+    if (CmpAdr(dsdt, j, DisplayADR1[VCard])) { //for example 0x00020000=2,0
+      devadr = devFind(dsdt, j);  //PEG0@2,0
       if (!devadr) {
         continue;
       }
@@ -2022,7 +2022,7 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
   //what if PEG0 is not found?
   if (devadr) {
     for (j=devadr; j<devadr+devsize; j++) { //search card inside PEG0@0
-      if (CmpAdr(dsdt, j, DisplayADR2[VCard])) {
+      if (CmpAdr(dsdt, j, DisplayADR2[VCard])) { //else DISPLAYFIX==false
         devadr1 = devFind(dsdt, j); //found PEGP
         if (!devadr1) {
           continue;
@@ -2059,10 +2059,14 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
         }
       }
     }
-    if (DISPLAYFIX) { // device on bridge
+    
+    if (DISPLAYFIX) { // device on bridge found
       i = devadr1;
     } else if (DisplayADR2[VCard] == 0xFFFE) { //builtin
       i = devadr;
+      DISPLAYFIX = TRUE;
+      devadr1 = devadr;
+      DBG(" builtin display\n");
     } else i=0;
     if (i != 0) {
       Size = get_size(dsdt, i);
@@ -2089,11 +2093,13 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
       peg0 = aml_add_device(root, "PEG0");
       aml_add_name(peg0, "_ADR");
       aml_add_dword(peg0, DisplayADR1[VCard]);
+      DBG("add device PEG0\n");
     } else
       peg0 = root;
 
     if (!DISPLAYFIX) {   //bridge or builtin not found
       gfx0 = aml_add_device(peg0, "GFX0");
+      DBG("add device GFX0\n");
       aml_add_name(gfx0, "_ADR");
       if (DisplayADR2[VCard] > 0x3F)
         aml_add_dword(gfx0, DisplayADR2[VCard]);
@@ -4393,16 +4399,23 @@ VOID FixBiosDsdt (UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, 
   }
   
   // Fix Display
-  if (gSettings.FixDsdt & FIX_DISPLAY) {
+  if ((gSettings.FixDsdt & FIX_DISPLAY) || (gSettings.FixDsdt & FIX_INTELGFX)) {
     INTN i;
     for (i=0; i<2; i++) {
-      if (DisplayADR1[i] && ((gSettings.FixDsdt & FIX_NEW_WAY) &&
-                              (((gSettings.FixDsdt & FIX_INTELGFX) &&
-                              (DisplayVendor[i] == 0x8086)) ||
-                             (DisplayVendor[i] != 0x8086)))) {
-        DsdtLen = FIXDisplay(temp, DsdtLen, i);
+      if (DisplayADR1[i]) { 
+        if (gSettings.FixDsdt & FIX_NEW_WAY) {
+          if (((DisplayVendor[i] != 0x8086) && (gSettings.FixDsdt & FIX_DISPLAY)) ||
+              ((DisplayVendor[i] == 0x8086) && (gSettings.FixDsdt & FIX_INTELGFX))) {
+            DsdtLen = FIXDisplay(temp, DsdtLen, i);
+            DBG("patch Display #%d of Vendor=0x%4x in DSDT new way\n", i, DisplayVendor[i]);                      
+          }
+        } else {
+          if (gSettings.FixDsdt & FIX_DISPLAY) {
+            DsdtLen = FIXDisplay(temp, DsdtLen, i);
+            DBG("patch Display #%d of Vendor=0x%4x in DSDT old way\n", i, DisplayVendor[i]);                      
+          }
+        }                
       }
-      DBG("patch Display #%d of Vendor=0x%4x in DSDT \n", i, DisplayVendor[i]);
     }
   }
   
