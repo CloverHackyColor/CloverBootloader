@@ -50,7 +50,7 @@
 				<key>FixAirport_4000</key>
 				<true/>
 				<key>FixDarwin_0002</key>
-				<true/>
+				<false/>
 				<key>FixDisplay_0100</key>
 				<true/>
 				<key>FixFirewire_0800</key>
@@ -72,6 +72,30 @@
 				<key>FixShutdown_0004</key>
 				<true/>
 				<key>FixUSB_1000</key>
+				<true/>
+				<key>NewWay_80000000</key>
+				<true/>
+				<key>FIX_DARWIN_10000</key>
+				<true/>
+				<key>FIX_RTC_20000</key>
+				<true/>
+				<key>FIX_TMR_40000</key>
+				<true/>
+				<key>AddIMEI_80000</key>
+				<true/>
+				<key>FIX_INTELGFX_100000</key>
+				<false/>
+				<key>FIX_WAK_200000</key>
+				<true/>
+				<key>DeleteUnused_400000</key>
+				<true/>
+				<key>FIX_ADP1_800000</key>
+				<true/>
+				<key>AddPNLF_1000000</key>
+				<true/>
+				<key>FIX_S3D_2000000</key>
+				<true/>
+				<key>FIX_ACST_4000000</key>
 				<true/>
 			</dict>
 			<key>Name</key>

@@ -718,6 +718,7 @@ fi
 
         # local selectTheme="checkFileExists('${themeDestDir}/$themeName/icons/func_clover.png')"
         local selectTheme="choicePreviouslySelected('$packageRefId')"
+        [[ "$themeName" == "christmas" ]] && selectTheme='true'
         # Select the default theme
         [[ "$themeName" == "$defaultTheme" ]] && selectTheme='true'
         addChoice --group="Themes"  --start-selected="$selectTheme"  --pkg-refs="$packageRefId"  "${themeName}"
