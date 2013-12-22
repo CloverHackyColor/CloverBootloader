@@ -705,6 +705,7 @@ fi
     local defaultTheme=  # $(trim $(sed -n 's/^theme *//p' "${SRCROOT}"/CloverV2/EFI/CLOVER/refit.conf))
     for (( i = 0 ; i < ${#themes[@]} ; i++ )); do
         local themeName=${themes[$i]##*/}
+        [[ "$themeName" == christmas ]] && continue # Christmas is a special theme
         mkdir -p "${PKG_BUILD_DIR}/${themeName}/Root/"
         rsync -r --exclude=.svn --exclude="*~" "${themes[$i]}/" "${PKG_BUILD_DIR}/${themeName}/Root/${themeName}"
         packageRefId=$(getPackageRefId "${packagesidentity}" "${themeName}")
@@ -720,6 +721,27 @@ fi
         # Select the default theme
         [[ "$themeName" == "$defaultTheme" ]] && selectTheme='true'
         addChoice --group="Themes"  --start-selected="$selectTheme"  --pkg-refs="$packageRefId"  "${themeName}"
+    done
+
+	# Special themes
+	packagesidentity="${clover_package_identity}".special.themes
+    local artwork="${SRCROOT}/CloverV2/themespkg/"
+    local themes=('christmas')
+    local themeDestDir='/EFIROOTDIR/EFI/CLOVER/themes'
+    local currentMonth=$(date -j '+%m')
+    for (( i = 0 ; i < ${#themes[@]} ; i++ )); do
+        local themeName=${themes[$i]##*/}
+        [[ $currentMonth -lt 11 && "$themeName" == christmas ]] && continue # Don't add christmas theme if month < 11
+        mkdir -p "${PKG_BUILD_DIR}/${themeName}/Root/"
+        rsync -r --exclude=.svn --exclude="*~" "$artwork/${themes[$i]}/" "${PKG_BUILD_DIR}/${themeName}/Root/${themeName}"
+        packageRefId=$(getPackageRefId "${packagesidentity}" "${themeName}")
+        addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${themeName}" \
+                           --subst="themeName=$themeName"                \
+                           --subst="INSTALLER_CHOICE=$packageRefId"      \
+                           InstallTheme
+
+        buildpackage "$packageRefId" "${themeName}" "${PKG_BUILD_DIR}/${themeName}" "${themeDestDir}"
+        addChoice --start-visible="false"  --start-selected="true"  --pkg-refs="$packageRefId" "${themeName}"
     done
 # End build theme packages
  
