@@ -753,13 +753,19 @@ typedef struct {
   BOOLEAN InjectMemoryTables;
   INT8    XMPDetection;
   INT8    reserved;
-  
 	// OS parameters
 	CHAR8 	Language[16];
 	CHAR8   BootArgs[256];
 	CHAR16	CustomUuid[40];
   CHAR16  *DefaultVolume;
+#if defined(MDE_CPU_IA32)
+  UINT32  align10;
+#endif
+  
   CHAR16  *DefaultLoader;
+#if defined(MDE_CPU_IA32)
+  UINT32  align11;
+#endif
   UINT16  BacklightLevel;
   BOOLEAN MemoryFix;
   BOOLEAN WithKexts;
@@ -775,11 +781,11 @@ typedef struct {
 	UINT8 	ResetVal;
 	BOOLEAN	UseDSDTmini;  
 	BOOLEAN	DropSSDT;
-	BOOLEAN	GeneratePStates;
+	BOOLEAN	GeneratePStates;  
   BOOLEAN	GenerateCStates;
   UINT8   PLimitDict;
   UINT8   UnderVoltStep;
-  BOOLEAN DoubleFirstState;
+  BOOLEAN DoubleFirstState;  
   BOOLEAN SuspendOverride;
   BOOLEAN EnableC2;
   BOOLEAN EnableC4;
@@ -789,6 +795,8 @@ typedef struct {
   UINT16  C3Latency;
 	BOOLEAN	smartUPS;
   BOOLEAN PatchNMI;
+  UINT8   pad3[2];
+  
 	CHAR16	DsdtName[60];
   UINT32  FixDsdt;
 //  BOOLEAN RememberBIOS;
@@ -823,6 +831,10 @@ typedef struct {
   BOOLEAN LoadVBios;
   BOOLEAN PatchVBios;
   VBIOS_PATCH_BYTES   *PatchVBiosBytes;
+#if defined(MDE_CPU_IA32)
+  UINT32  align12;
+#endif
+  
   UINTN   PatchVBiosBytesCount;
 #if defined(MDE_CPU_IA32)
   UINT32  align1;
@@ -831,6 +843,10 @@ typedef struct {
   BOOLEAN  LpcTune;
   UINT16   DropOEM_DSM;
   UINT8   *CustomEDID;
+#if defined(MDE_CPU_IA32)
+  UINT32  align13;
+#endif
+  
   CHAR16  FBName[16];
   UINT16  VideoPorts;
   UINT64  VRAM;
@@ -843,8 +859,15 @@ typedef struct {
   UINT32   SecureBootWhiteListCount;
   UINT32   SecureBootBlackListCount;
   CHAR16 **SecureBootWhiteList;
+#if defined(MDE_CPU_IA32)
+  UINT32  align14;
+#endif
+  
   CHAR16 **SecureBootBlackList;
-
+#if defined(MDE_CPU_IA32)
+  UINT32  align15;
+#endif
+  
   // Secure boot
   UINT8 SecureBoot;
   UINT8 SecureBootSetupMode;
@@ -878,16 +901,36 @@ typedef struct {
   BOOLEAN KextPatchesAllowed;
   BOOLEAN KPKernelPm;
   CHAR16  *KPATIConnectorsController;
+#if defined(MDE_CPU_IA32)
+  UINT32  align16;
+#endif
+  
   UINT8   *KPATIConnectorsData;
+#if defined(MDE_CPU_IA32)
+  UINT32  align17;
+#endif
+  
   UINTN   KPATIConnectorsDataLen;
 #if defined(MDE_CPU_IA32)
   UINT32  align3;
 #endif
   UINT8   *KPATIConnectorsPatch;
+#if defined(MDE_CPU_IA32)
+  UINT32  align18;
+#endif
+  
   INT32   NrKexts;
   KEXT_PATCH *KextPatches;
+#if defined(MDE_CPU_IA32)
+  UINT32  align19;
+#endif
+  
   //Volumes hiding
   CHAR16 **HVHideStrings;
+#if defined(MDE_CPU_IA32)
+  UINT32  align19;
+#endif
+  
   INTN    HVCount;
 #if defined(MDE_CPU_IA32)
   UINT32  align4;
@@ -905,25 +948,49 @@ typedef struct {
   
   // RtVariables
   CHAR8   *RtMLB;
+#if defined(MDE_CPU_IA32)
+  UINT32  align20;
+#endif
+  
   UINT8   *RtROM;
+#if defined(MDE_CPU_IA32)
+  UINT32  align21;
+#endif
   UINTN   RtROMLen;
 #if defined(MDE_CPU_IA32)
   UINT32  align6;
 #endif
   CHAR8   *MountEFI;
+#if defined(MDE_CPU_IA32)
+  UINT32  align22;
+#endif
   UINT32  LogLineCount;
   CHAR8   *LogEveryBoot;
+#if defined(MDE_CPU_IA32)
+  UINT32  align23;
+#endif
   
   // Multi-config
   CHAR16  *ConfigName;
+#if defined(MDE_CPU_IA32)
+  UINT32  align24;
+#endif
+  
   CHAR16  *MainConfigName;
+#if defined(MDE_CPU_IA32)
+  UINT32  align25;
+#endif
+  
   //Drivers
   INTN    BlackListCount;
 #if defined(MDE_CPU_IA32)
   UINT32  align7;
 #endif
   CHAR16 **BlackList;
-
+#if defined(MDE_CPU_IA32)
+  UINT32  align26;
+#endif
+  
   //SMC keys
   CHAR8  RPlt[8];
   CHAR8  RBr[8];
@@ -933,9 +1000,25 @@ typedef struct {
   //Patch DSDT arbitrary
   UINT32 PatchDsdtNum;
   UINT8  **PatchDsdtFind;
+#if defined(MDE_CPU_IA32)
+  UINT32  align27;
+#endif
+  
   UINT32 *LenToFind;
+#if defined(MDE_CPU_IA32)
+  UINT32  align28;
+#endif
+  
   UINT8  **PatchDsdtReplace;
+#if defined(MDE_CPU_IA32)
+  UINT32  align29;
+#endif
+  
   UINT32 *LenToReplace;
+#if defined(MDE_CPU_IA32)
+  UINT32  align30;
+#endif
+  
   BOOLEAN DebugDSDT;
   BOOLEAN SlpWak;
 
@@ -958,8 +1041,11 @@ typedef struct {
 #if defined(MDE_CPU_IA32)
   UINT32  align8;
 #endif
-  DEV_PROPERTY   *AddProperties;
-
+//  DEV_PROPERTY   *AddProperties;
+#if defined(MDE_CPU_IA32)
+//  UINT32  align31;
+#endif
+  
 } SETTINGS_DATA;
 
 typedef struct {

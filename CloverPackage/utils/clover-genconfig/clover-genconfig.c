@@ -47,6 +47,11 @@ cc -o genconfig clover-genconfig.c -framework CoreFoundation -framework IOKit -W
 #include <err.h>
 #include <mach/mach_error.h>
 
+/*
+#define offsetof(st, m) \
+((UINTN) ( (UINT8 *)&((st *)(0))->m - (UINT8 *)0 ))
+*/
+
 // Prototypes
 static kern_return_t GetOFVariable(const char *name, CFTypeRef *valueRef);
 
@@ -172,7 +177,7 @@ void addUUID(CFMutableDictionaryRef dest, CFStringRef key, EFI_GUID *uuid)
 {
     assert(dest);
     CFStringRef strValue = CFStringCreateWithFormat(kCFAllocatorDefault, NULL,
-                                                    CFSTR("%08tx-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x"),
+                                                    CFSTR("%08tX-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X"),
                                                     uuid->Data1, uuid->Data2, uuid->Data3,
                                                     uuid->Data4[0], uuid->Data4[1],
                                                     uuid->Data4[2], uuid->Data4[3], uuid->Data4[4], uuid->Data4[5], uuid->Data4[6], uuid->Data4[7]);
@@ -266,7 +271,8 @@ void PrintConfig(CFTypeRef data)
   
   if (length != sizeof(SETTINGS_DATA)) {
 //    errx(1, "Error the version of clover-genconfig didn't match current booted clover version");
-    printf("Error the version of clover-genconfig didn't match current booted clover version");
+    printf("Error the version of clover-genconfig didn't match current booted clover version\n");
+    printf("len=%d sizeof=%d\n", length, sizeof(SETTINGS_DATA));
   }
   
   SETTINGS_DATA *s = (SETTINGS_DATA*)dataPtr;
@@ -627,6 +633,18 @@ void PrintConfig(CFTypeRef data)
   addStringToArray(disArray, "_NOT_SHOWN_");
   
   dump_plist(dict);
+  
+  printf("\nDsdtFix=%x\n", s->FixDsdt);
+  printf("DsdtFix offset=%d\n", offsetof(SETTINGS_DATA, FixDsdt));
+  printf("HDALayoutId offset=%d\n", offsetof(SETTINGS_DATA, HDALayoutId));
+#if defined(MDE_CPU_IA32)
+  printf("32 bit generator\n");
+#elif defined(MDE_CPU_X64)
+  printf("64 bit generator\n");
+#else
+  printf("xxx bit generator\n");
+#endif
+  
   
 }
 
