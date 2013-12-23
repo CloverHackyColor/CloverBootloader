@@ -1041,9 +1041,9 @@ typedef struct {
 #if defined(MDE_CPU_IA32)
   UINT32  align8;
 #endif
-//  DEV_PROPERTY   *AddProperties;
+  DEV_PROPERTY   *AddProperties;
 #if defined(MDE_CPU_IA32)
-//  UINT32  align31;
+  UINT32  align31;
 #endif
   
 } SETTINGS_DATA;
