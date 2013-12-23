@@ -29,7 +29,7 @@
  * @APPLE_LICENSE_HEADER_END@
  */
 /*
-cc -o genconfig genconfig.c -framework CoreFoundation -framework IOKit -Wall -Wno-unused-function
+cc -o genconfig clover-genconfig.c -framework CoreFoundation -framework IOKit -Wall -Wno-unused-function
 */
 
 // EDK2 includes

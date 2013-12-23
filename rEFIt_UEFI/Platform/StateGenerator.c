@@ -211,7 +211,7 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
           case CPU_MODEL_HASWELL_ULT:
           case CPU_MODEL_HASWELL_ULX:
 					{
-            if ((gCPUStructure.Model == CPU_MODEL_SANDY_BRIDGE) ||
+        /*    if ((gCPUStructure.Model == CPU_MODEL_SANDY_BRIDGE) ||
                 (gCPUStructure.Model == CPU_MODEL_IVY_BRIDGE) ||
                 (gCPUStructure.Model == CPU_MODEL_HASWELL) ||
                 (gCPUStructure.Model == CPU_MODEL_HASWELL_MB) ||
@@ -224,6 +224,8 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
             } else {
               maximum.Control.Control = AsmReadMsr64(MSR_PLATFORM_INFO) & 0xff;
             }
+            */
+            maximum.Control.Control = RShiftU64(AsmReadMsr64(MSR_PLATFORM_INFO), 8) & 0xff;
             if (gSettings.MaxMultiplier) {
               DBG("Using custom MaxMultiplier %d instead of automatic %d\n",
                   gSettings.MaxMultiplier, maximum.Control.Control);
