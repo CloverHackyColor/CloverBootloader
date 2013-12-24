@@ -70,6 +70,8 @@ extern REFIT_MENU_ENTRY MenuEntryReturn;
 extern UINTN            ThemesNum;
 extern CHAR16            *ThemesList[];
 
+INTN LayoutBannerOffset = 64;
+
 
 #define SCROLL_LINE_UP        (0)
 #define SCROLL_LINE_DOWN      (1)
@@ -2163,7 +2165,9 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
       egGetScreenSize(&UGAWidth, &UGAHeight);
       SwitchToGraphicsAndClear();
       
-      EntriesPosY = ((UGAHeight - LAYOUT_TOTAL_HEIGHT) >> 1) + LAYOUT_BANNER_YOFFSET + (TextHeight << 1);
+ //     EntriesPosY = ((UGAHeight - LAYOUT_TOTAL_HEIGHT) >> 1) + LAYOUT_BANNER_YOFFSET + (TextHeight << 1);
+      EntriesPosY = ((UGAHeight - LAYOUT_TOTAL_HEIGHT) >> 1) + LayoutBannerOffset + (TextHeight << 1);
+      
       VisibleHeight = (UGAHeight - EntriesPosY) / TextHeight - Screen->InfoLineCount - 1;
       //DBG("MENU_FUNCTION_INIT 1 EntriesPosY=%d VisibleHeight=%d\n", EntriesPosY, VisibleHeight);
       InitScroll(State, Screen->EntryCount, Screen->EntryCount, VisibleHeight);
@@ -2593,7 +2597,8 @@ static VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
       InitScroll(State, row0Count, Screen->EntryCount, MaxItemOnScreen);
       row0PosX = (UGAWidth + TILE_XSPACING - (ROW0_TILESIZE + TILE_XSPACING) *
                   ((MaxItemOnScreen < row0Count)?MaxItemOnScreen:row0Count)) >> 1;
-      row0PosY = ((UGAHeight - LAYOUT_TOTAL_HEIGHT) >> 1) + LAYOUT_BANNER_YOFFSET;
+      row0PosY = ((UGAHeight - LAYOUT_TOTAL_HEIGHT) >> 1) + LayoutBannerOffset; //LAYOUT_BANNER_YOFFSET; 
+      
       row1PosX = (UGAWidth + TILE_XSPACING - (ROW1_TILESIZE + TILE_XSPACING) * row1Count) >> 1;
       row1PosY = row0PosY + ROW0_TILESIZE + TILE_YSPACING;
       if (row1Count > 0)

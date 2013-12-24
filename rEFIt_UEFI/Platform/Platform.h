@@ -849,6 +849,7 @@ typedef struct {
   
   CHAR16  FBName[16];
   UINT16  VideoPorts;
+  UINT8   pad4[6];
   UINT64  VRAM;
   UINT8   Dcfg[8];
   UINT8   NVCAP[20];
@@ -900,6 +901,7 @@ typedef struct {
   BOOLEAN KPAppleRTC;
   BOOLEAN KextPatchesAllowed;
   BOOLEAN KPKernelPm;
+  UINT8   pad9[6];
   CHAR16  *KPATIConnectorsController;
 #if defined(MDE_CPU_IA32)
   UINT32  align16;
@@ -928,7 +930,7 @@ typedef struct {
   //Volumes hiding
   CHAR16 **HVHideStrings;
 #if defined(MDE_CPU_IA32)
-  UINT32  align19;
+  UINT32  align191;
 #endif
   
   INTN    HVCount;
@@ -945,6 +947,7 @@ typedef struct {
 #endif
   UINT64  DoubleClickTime;
   BOOLEAN PointerMirror;
+  UINT8   pad7[7];  //for 64bit align
   
   // RtVariables
   CHAR8   *RtMLB;
@@ -996,6 +999,8 @@ typedef struct {
   CHAR8  RBr[8];
   UINT8  EPCI[4];
   UINT8  REV[6];
+  
+  UINT8  pad8[6];
 
   //Patch DSDT arbitrary
   UINT32 PatchDsdtNum;
@@ -1026,6 +1031,10 @@ typedef struct {
 
   // Table dropping
   ACPI_DROP_TABLE *ACPIDropTables;
+#if defined(MDE_CPU_IA32)
+  UINT32  align32;
+#endif
+  
 
   // Custom entries
   BOOLEAN              DisableEntryScan;
@@ -1033,8 +1042,17 @@ typedef struct {
   BOOLEAN              ShowHiddenEntries;
   UINT8                KernelScan;
   CUSTOM_LOADER_ENTRY *CustomEntries;
+#if defined(MDE_CPU_IA32)
+  UINT32  align33;
+#endif
   CUSTOM_LEGACY_ENTRY *CustomLegacy;
+#if defined(MDE_CPU_IA32)
+  UINT32  align34;
+#endif
   CUSTOM_TOOL_ENTRY   *CustomTool;
+#if defined(MDE_CPU_IA32)
+  UINT32  align35;
+#endif
   
   //Add custom properties
   INTN          NrAddProperties;

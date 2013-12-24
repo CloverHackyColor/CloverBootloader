@@ -537,6 +537,8 @@ extern INTN FontWidth;
 extern INTN FontHeight;
 extern INTN TextHeight;
 
+extern INTN LayoutBannerOffset;
+
 
 extern UINTN ConWidth;
 extern UINTN ConHeight;

@@ -1701,6 +1701,17 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
       }
     }
   }
+  LayoutBannerOffset = 64; //default value if not set
+  dict = GetProperty(dictPointer, "Layout");
+  if (dict) {
+    dict2 = GetProperty(dict, "BannerOffset");
+    if (dict2) {
+      if (dict2->type == kTagTypeInteger) {
+        LayoutBannerOffset = (UINTN)dict2->string;
+      }
+    }
+    
+  }  
   dict = GetProperty(dictPointer, "Components");
   GlobalConfig.HideUIFlags = 0;
   if (dict) {

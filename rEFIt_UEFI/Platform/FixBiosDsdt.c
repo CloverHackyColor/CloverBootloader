@@ -1188,10 +1188,14 @@ UINT32 CorrectOuters (UINT8 *dsdt, UINT32 len, UINT32 adr,  INT32 shift)
       } //else wrong size field - not a device
     } //else not a device
 // check scope
+// a problem 45 43 4F 4E 08   10 84 10 05 5F 53 42 5F    
     SBSIZE = 0;
     if (dsdt[i] == '_' && dsdt[i+1] == 'S' && dsdt[i+2] == 'B' && dsdt[i+3] == '_') {
-      for (j=0; j<10; j++) {
-        if ((dsdt[i-j] == 0x10) && !CmpNum(dsdt, i-j, TRUE)) {
+      for (j=0; j<10; j--) {
+        if (dsdt[i-j] != 0x10) {
+          continue;
+        }
+        if (!CmpNum(dsdt, i-j, TRUE)) {
           SBADR = i-j+1;
           SBSIZE = get_size(dsdt, SBADR);
        //     DBG("found Scope(\\_SB) address = 0x%08x size = 0x%08x\n", SBADR, SBSIZE);
@@ -1203,8 +1207,8 @@ UINT32 CorrectOuters (UINT8 *dsdt, UINT32 len, UINT32 adr,  INT32 shift)
               offset = write_size(SBADR, dsdt, len, shift);
               shift += offset;
               len += offset;
-            }  //else not an outer scope
-            break;  //SB found
+              break;  //SB found
+            }  //else not an outer scope            
           }          
         }
       }
