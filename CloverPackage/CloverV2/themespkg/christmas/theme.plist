@@ -63,7 +63,7 @@
 		<key>Layout</key>
 		<dict>
 			<key>BannerOffset</key>
-			<integer>130</integer>
+			<integer>80</integer>
 		</dict>
 		<key>Selection</key>
 		<dict>
