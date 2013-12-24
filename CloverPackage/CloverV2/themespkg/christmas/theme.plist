@@ -60,6 +60,11 @@
 			<key>Type</key>
 			<string>Load</string>
 		</dict>
+		<key>Layout</key>
+		<dict>
+			<key>BannerOffset</key>
+			<integer>130</integer>
+		</dict>
 		<key>Selection</key>
 		<dict>
 			<key>Big</key>
