@@ -1167,6 +1167,7 @@ UINT32 CorrectOuters (UINT8 *dsdt, UINT32 len, UINT32 adr,  INT32 shift)
   UINT32   size = 0;
   INT32  offset = 0;
   UINT32   SBSIZE = 0, SBADR = 0;
+  BOOLEAN SBFound = FALSE;
 
   if (shift == 0) {
     return len;
@@ -1191,7 +1192,7 @@ UINT32 CorrectOuters (UINT8 *dsdt, UINT32 len, UINT32 adr,  INT32 shift)
 // a problem 45 43 4F 4E 08   10 84 10 05 5F 53 42 5F    
     SBSIZE = 0;
     if (dsdt[i] == '_' && dsdt[i+1] == 'S' && dsdt[i+2] == 'B' && dsdt[i+3] == '_') {
-      for (j=0; j<10; j--) {
+      for (j=0; j<10; j++) {
         if (dsdt[i-j] != 0x10) {
           continue;
         }
@@ -1207,12 +1208,16 @@ UINT32 CorrectOuters (UINT8 *dsdt, UINT32 len, UINT32 adr,  INT32 shift)
               offset = write_size(SBADR, dsdt, len, shift);
               shift += offset;
               len += offset;
+              SBFound = TRUE;
               break;  //SB found
             }  //else not an outer scope            
           }          
         }
       }
     } //else not a scope
+    if (SBFound) {
+      break;
+    }
     i = k - 3;    //if found then search again from found 
   }  
   return len;
