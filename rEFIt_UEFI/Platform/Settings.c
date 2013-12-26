@@ -2036,6 +2036,13 @@ EFI_STATUS InitTheme(BOOLEAN useThemeDefinedInNVRam)
 
           }
         }
+        else {
+          ThemePath = PoolPrint(L"EFI\\CLOVER\\themes\\%s", ThemesList[0]);
+          Status = SelfRootDir->Open(SelfRootDir, &ThemeDir, ThemePath, EFI_FILE_MODE_READ, 0);
+          if (!EFI_ERROR(Status)) {
+            Status = egLoadFile(ThemeDir, CONFIG_THEME_FILENAME, (UINT8**)&ThemePtr, &Size);
+          }          
+        }
       }
       if (EFI_ERROR(Status)) {
         DBG("default theme %s is absent, using embedded\n", GlobalConfig.Theme);

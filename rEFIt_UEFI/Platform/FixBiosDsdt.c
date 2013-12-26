@@ -3159,7 +3159,7 @@ UINT32 AddHDEF (UINT8 *dsdt, UINT32 len, CHAR8* OSVersion)
   pack = aml_add_package(met);
   //aml_add_string(pack, "codec-id");
   //aml_add_byte_buffer(pack, (CHAR8*)&HDAcodecId, 4);
-  if (!AddProperties(pack, DEV_HDMI)) {
+  if (GFXHDAFIX) {
     aml_add_string(pack, "hda-gfx");
     aml_add_string_buffer(pack, "onboard-2");
   }
