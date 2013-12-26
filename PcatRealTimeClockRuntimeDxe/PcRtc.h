@@ -77,7 +77,11 @@ typedef struct {
 //
 #define RTC_INIT_REGISTER_A 0x26
 #define RTC_INIT_REGISTER_B 0x02
+#ifdef AMD_SUPPORT
+#define RTC_INIT_REGISTER_D 0x80
+#else
 #define RTC_INIT_REGISTER_D 0x0
+#endif
 
 #pragma pack(1)
 //

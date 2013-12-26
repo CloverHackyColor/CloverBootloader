@@ -32,7 +32,7 @@ SystemHang (
   )
 {
 /*  PrintString (
-    "%s## FATAL ERROR ##: Fail to load DUET images! System hang!\n",
+    "%a## FATAL ERROR ##: Fail to load DUET images! System hang!\n",
     Message
     );
  */

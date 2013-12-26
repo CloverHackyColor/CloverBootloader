@@ -2077,6 +2077,7 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
       devadr1 = devadr;
       DBG(" builtin display\n");
     } else i=0;
+    
     if (i != 0) {
       Size = get_size(dsdt, i);
       k = FindMethod(dsdt + i, Size, "_DSM");
@@ -2206,7 +2207,7 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
         aml_add_string(pack, "layout-id");
         aml_add_byte_buffer(pack, (CHAR8*)&GfxlayoutId[VCard], 4);
         aml_add_string(pack, "hda-gfx");
-        aml_add_string_buffer(pack, "onboard-2\0");
+        aml_add_string_buffer(pack, "onboard-2");
         aml_add_string(pack, "PinConfigurations");
         aml_add_byte_buffer(pack, data2, sizeof(data2));        
       }
@@ -2228,7 +2229,9 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
         j = write_size(devadr, dsdt, len, sizeoffset2);
         sizeoffset2 += j;
         len += j;
-        devadr1 += j;
+        if (devadr1 != devadr) {
+          devadr1 += j;
+        }
         len = CorrectOuters(dsdt, len, devadr-3, sizeoffset2);
         FreePool(hdmi);
         hdmi = NULL;
@@ -2248,7 +2251,7 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
     if (DisplayName1) {   //bridge is present
       // move data to back for add Display
       DBG("... into existing bridge\n");
-      if (!DISPLAYFIX) {   //subdevice absent
+      if (!DISPLAYFIX || (DisplayADR2[VCard] == 0xFFFE)) {   //subdevice absent
         devsize = get_size(dsdt, devadr);
         if (!devsize) {
           DBG("BUG! Address of existing PEG0 is lost %x\n", devadr);
@@ -3156,6 +3159,11 @@ UINT32 AddHDEF (UINT8 *dsdt, UINT32 len, CHAR8* OSVersion)
   pack = aml_add_package(met);
   //aml_add_string(pack, "codec-id");
   //aml_add_byte_buffer(pack, (CHAR8*)&HDAcodecId, 4);
+  if (!AddProperties(pack, DEV_HDMI)) {
+    aml_add_string(pack, "hda-gfx");
+    aml_add_string_buffer(pack, "onboard-2");
+  }
+
   if (!AddProperties(pack, DEV_HDA)) {
     if ((OSVersion != NULL && AsciiStrnCmp(OSVersion, "10.", 3) == 0 && OSVersion[3] >= '0' && OSVersion[3] <= '7') || (gSettings.HDALayoutId > 0)) {
       aml_add_string(pack, "layout-id");
