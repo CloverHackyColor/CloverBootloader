@@ -2041,6 +2041,32 @@ EFI_STATUS InitTheme(BOOLEAN useThemeDefinedInNVRam)
           Status = SelfRootDir->Open(SelfRootDir, &ThemeDir, ThemePath, EFI_FILE_MODE_READ, 0);
           if (!EFI_ERROR(Status)) {
             Status = egLoadFile(ThemeDir, CONFIG_THEME_FILENAME, (UINT8**)&ThemePtr, &Size);
+            if (EFI_ERROR(Status) || (ThemePtr == NULL) || (Size == 0)) {
+              Status = EFI_NOT_FOUND;
+              DBG("GlobalConfig: %s not found, get first theme %s\n", CONFIG_THEME_FILENAME, ThemesList[0]);
+              if (ThemeDir) {
+                ThemeDir->Close(ThemeDir);
+                ThemeDir = NULL;
+              }
+              if (ThemePath) {
+                FreePool(ThemePath);
+              }
+              ThemePath = PoolPrint(L"EFI\\CLOVER\\themes\\%s", ThemesList[0]);
+              Status = SelfRootDir->Open(SelfRootDir, &ThemeDir, ThemePath, EFI_FILE_MODE_READ, 0);
+              if (!EFI_ERROR(Status)) {
+                Status = egLoadFile(ThemeDir, CONFIG_THEME_FILENAME, (UINT8**)&ThemePtr, &Size);
+              }
+            }
+            if (!EFI_ERROR(Status)) {
+              Status = ParseXML((const CHAR8*)ThemePtr, &ThemeDict, 0);
+              if (EFI_ERROR(Status) || (ThemeDict == NULL)) {
+                Status = EFI_UNSUPPORTED;
+                DBG("xml file %s not parsed\n", CONFIG_THEME_FILENAME);
+              } else {
+                dict = ThemeDict;
+              }
+              
+            }
           }          
         }
       }

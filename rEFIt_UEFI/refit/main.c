@@ -1799,6 +1799,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         FreeMenu(&OptionMenu);
       }
       gThemeChanged = FALSE;
+      DBG("Choosing theme %s\n", GlobalConfig.Theme); 
 
       //now it is a time to set RtVariables
       SetVariablesFromNvram();
