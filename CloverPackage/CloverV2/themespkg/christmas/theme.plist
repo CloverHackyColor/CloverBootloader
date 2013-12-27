@@ -51,7 +51,12 @@
 		</dict>
 		<key>Banner</key>
 		<string>logo.png</string>
-		<key>Font</key>
+		<key>Layout</key>
+        <dict>
+            <key>BannerOffset</key>
+            <integer>80</integer>
+        </dict>
+        <key>Font</key>
 		<dict>
 			<key>CharWidth</key>
 			<integer>9</integer>

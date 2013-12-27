@@ -85,6 +85,19 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
     Aplf++;
   }
 
+  switch (gCPUStructure.Model)
+  {
+    case CPU_MODEL_HASWELL:
+    case CPU_MODEL_IVY_BRIDGE_E5:
+    case CPU_MODEL_HASWELL_MB:
+    case CPU_MODEL_HASWELL_ULT:
+    case CPU_MODEL_HASWELL_ULX:
+    {
+      Aplf = 0;
+      break;
+    }
+  }
+
 	if (Number > 0)
 	{
 		// Retrieving P-States, ported from code by superhai (c)
