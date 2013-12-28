@@ -1427,7 +1427,7 @@ CHAR16         *GetOSIconName(IN CHAR8 *OSVersion);
 EFI_STATUS      GetRootUUID(IN REFIT_VOLUME *Volume);
 EFI_STATUS      GetEarlyUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict);
 EFI_STATUS      GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict);
-EFI_STATUS      InitTheme(BOOLEAN useThemeDefinedInNVRam);
+EFI_STATUS      InitTheme(BOOLEAN useThemeDefinedInNVRam, EFI_TIME *time);
 EFI_STATUS      SetFSInjection(IN LOADER_ENTRY *Entry);
 CHAR16*         GetExtraKextsDir(CHAR8 *OSVersion);
 EFI_STATUS      LoadKexts(IN LOADER_ENTRY *Entry);

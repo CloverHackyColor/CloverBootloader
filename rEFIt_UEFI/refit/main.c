@@ -1784,18 +1784,10 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     if (!GlobalConfig.FastBoot) {
  //     GetListOfThemes();
       if (gThemeNeedInit) {
-        if ((Now.Month == 12) && ((Now.Day >= 25) && (Now.Day <= 31))) {
-          GlobalConfig.Theme = L"christmas";
-          InitTheme(FALSE);
-        } else if ((Now.Month == 1) && ((Now.Day >= 1) && (Now.Day <= 7))) {
-          GlobalConfig.Theme = L"newyear";
-          InitTheme(FALSE);
-        } else {
-          InitTheme(TRUE);
-        }
+        InitTheme(TRUE,&Now);
         gThemeNeedInit = FALSE;
       } else if (gThemeChanged) {
-        InitTheme(FALSE);
+        InitTheme(FALSE,NULL);
         FreeMenu(&OptionMenu);
       }
       gThemeChanged = FALSE;

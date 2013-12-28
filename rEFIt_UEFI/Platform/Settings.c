@@ -1580,7 +1580,7 @@ VOID GetListOfThemes()
           DBG(" - no theme.plist");
         } else {
           //we found a theme
-          ThemesList[ThemesNum++] = (CHAR16*)AllocateCopyPool(128, DirEntry->FileName);
+          ThemesList[ThemesNum++] = (CHAR16*)AllocateCopyPool(StrSize(DirEntry->FileName), DirEntry->FileName);
           
         }
       }
@@ -1593,6 +1593,7 @@ VOID GetListOfThemes()
 
 STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
 {
+  DBG("GetThemeTagSettings\n");
   TagPtr dict, dict2;
   if (dictPointer == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -1928,22 +1929,59 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
   return EFI_SUCCESS;
 }
 
-EFI_STATUS InitTheme(BOOLEAN useThemeDefinedInNVRam)
+TagPtr LoadTheme(CHAR16 *testTheme) {
+  EFI_STATUS Status = EFI_UNSUPPORTED;
+  TagPtr     ThemeDict = NULL;
+  CHAR8      *ThemePtr = NULL;
+  UINTN      Size = 0;
+
+  if (testTheme) {
+    if (ThemePath) {
+      FreePool(ThemePath);
+    }
+    ThemePath = PoolPrint(L"EFI\\CLOVER\\themes\\%s", testTheme);
+    if (ThemePath) {
+      if (ThemeDir) {
+        ThemeDir->Close(ThemeDir);
+        ThemeDir = NULL;
+      }
+      Status = SelfRootDir->Open(SelfRootDir, &ThemeDir, ThemePath, EFI_FILE_MODE_READ, 0);
+      if (!EFI_ERROR(Status)) {
+        Status = egLoadFile(ThemeDir, CONFIG_THEME_FILENAME, (UINT8**)&ThemePtr, &Size);
+        if (!EFI_ERROR(Status) && (ThemePtr != NULL) && (Size != 0)) {
+          Status = ParseXML((const CHAR8*)ThemePtr, &ThemeDict, 0);
+          if (EFI_ERROR(Status)) {
+            ThemeDict = NULL;
+          }
+          if (!ThemeDict) {
+            DBG("xml file %s not parsed\n", CONFIG_THEME_FILENAME);
+          } else {
+            DBG("Using theme '%s' (%s)\n", testTheme, ThemePath);
+          }
+        }
+        if (ThemePtr) {
+          FreePool(ThemePtr);
+        }
+      }
+    }
+  }
+  return ThemeDict;
+}
+
+EFI_STATUS InitTheme(BOOLEAN useThemeDefinedInNVRam, EFI_TIME *time)
 {
   EFI_STATUS Status = EFI_NOT_FOUND;
-  //get theme from NVRAM in the case of UEFI boot
   UINTN   Size = 0;
   UINTN   Index;
   TagPtr  ThemeDict = NULL;
-  TagPtr  dict = NULL;
-  CHAR8  *ThemePtr = NULL;
-  CHAR8  *chosenTheme = NULL;
-
+  CHAR8   *chosenTheme = NULL;
+  CHAR16  *testTheme = NULL;
+  
   if (!ThemesNum) {
     DBG("No themes found!\n");
     return EFI_NOT_FOUND;
   }
-
+  
   // Invalidated BuiltinIcons
   DBG("Invalidating BuiltinIcons...\n");
   for (Index = 0; Index < BUILTIN_ICON_COUNT; Index++) {
@@ -1952,151 +1990,97 @@ EFI_STATUS InitTheme(BOOLEAN useThemeDefinedInNVRam)
       BuiltinIconTable[Index].Image = NULL;
     }    
   }
-  for (Index = 0; Index <= 3; Index++) {
+  for (Index = 0; Index < 4; Index++) {
     if (SelectionImages[Index]) {
       egFreeImage(SelectionImages[Index]);
       SelectionImages[Index] = NULL;
     }
   } 
-
+  
   KillMouse();
-
+  
   while (GuiAnime) {
     GUI_ANIME *NextAnime=GuiAnime->Next;
     FreeAnime(GuiAnime);
     GuiAnime=NextAnime;
   }
   
-  if (useThemeDefinedInNVRam) {
+  // Try special theme first
+  if (time!=NULL) {
+    if ((time->Month == 12) && ((time->Day >= 25) && (time->Day <= 31))) {
+       testTheme = PoolPrint(L"christmas");
+    } else if ((time->Month == 1) && ((time->Day >= 1) && (time->Day <= 7))) {
+       testTheme = PoolPrint(L"newyear");
+    }
+    if (testTheme) {
+      ThemeDict = LoadTheme(testTheme);
+      if (ThemeDict) {
+        DBG("special theme %s found and %s parsed\n", testTheme, CONFIG_THEME_FILENAME);
+        if (GlobalConfig.Theme) {
+          FreePool(GlobalConfig.Theme);
+        }
+        GlobalConfig.Theme = testTheme;
+      } else { // special theme not loaded
+        DBG("special theme %s not found, skipping\n", testTheme, CONFIG_THEME_FILENAME);
+        FreePool(testTheme);
+      }
+      testTheme = NULL;
+    }
+  }
+  
+  // Try theme from nvram  
+  if (!ThemeDict && useThemeDefinedInNVRam) {
     chosenTheme = GetNvramVariable(L"Clover.Theme", &gEfiAppleBootGuid, NULL, &Size);
-    if (chosenTheme){
-      ThemePath = PoolPrint(L"EFI\\CLOVER\\themes\\%a", chosenTheme);
-      if (ThemePath) {
-        Status = SelfRootDir->Open(SelfRootDir, &ThemeDir, ThemePath, EFI_FILE_MODE_READ, 0);
-        if (!EFI_ERROR(Status)) {
-          Status = egLoadFile(ThemeDir, CONFIG_THEME_FILENAME, (UINT8**)&ThemePtr, &Size);
-          if (EFI_ERROR(Status) || (ThemePtr == NULL) || (Size == 0)) {
-            Status = EFI_NOT_FOUND;
+    if (chosenTheme) {
+      testTheme = PoolPrint(L"%a", chosenTheme);
+      if (testTheme) {
+        ThemeDict = LoadTheme(testTheme);
+        if (ThemeDict) {
+           DBG("theme %a defined in NVRAM found and %s parsed\n", chosenTheme, CONFIG_THEME_FILENAME);
+           if (GlobalConfig.Theme) {
+             FreePool(GlobalConfig.Theme);
+           }
+           GlobalConfig.Theme = testTheme;
+        } else { // theme from nvram not loaded
+          if (GlobalConfig.Theme) {
+            DBG("theme %a chosen from nvram is absent, using theme defined in config: %s\n", chosenTheme, GlobalConfig.Theme);
           } else {
-            Status = ParseXML((const CHAR8*)ThemePtr, &ThemeDict, 0);
-            if (EFI_ERROR(Status) || (ThemeDict == NULL)) {
-              Status = EFI_UNSUPPORTED;
-            } else {
-              DBG("theme %a defined in NVRAM found and %s parsed\n", chosenTheme, CONFIG_THEME_FILENAME);
-            }
+            DBG("theme %a chosen from nvram is absent, get first theme\n", chosenTheme);
           }
+          FreePool(testTheme);
         }
+        testTheme = NULL;
       }
-    }
-  }
-
-  // Try to get theme from settings
-  if (EFI_ERROR(Status)) {
-    if (GlobalConfig.Theme) {
-      if (chosenTheme) {
-        DBG("theme %a chosen from nvram is absent, using theme defined in config: %s\n", chosenTheme, GlobalConfig.Theme);
-        chosenTheme = NULL;
-      }
-      if (ThemePath) {
-        FreePool(ThemePath);
-      }
-      ThemePath = PoolPrint(L"EFI\\CLOVER\\themes\\%s", GlobalConfig.Theme);
-      if (ThemePath) {
-        if (ThemeDir) {
-          ThemeDir->Close(ThemeDir);
-          ThemeDir = NULL;
-        }
-        Status = SelfRootDir->Open(SelfRootDir, &ThemeDir, ThemePath, EFI_FILE_MODE_READ, 0);
-        if (!EFI_ERROR(Status)) {
-          Status = egLoadFile(ThemeDir, CONFIG_THEME_FILENAME, (UINT8**)&ThemePtr, &Size);
-          if (EFI_ERROR(Status) || (ThemePtr == NULL) || (Size == 0)) {
-            Status = EFI_NOT_FOUND;
-            DBG("GlobalConfig: %s not found, get first theme %s\n", CONFIG_THEME_FILENAME, ThemesList[0]);
-            if (ThemeDir) {
-              ThemeDir->Close(ThemeDir);
-              ThemeDir = NULL;
-            }
-            if (ThemePath) {
-              FreePool(ThemePath);
-            }
-            ThemePath = PoolPrint(L"EFI\\CLOVER\\themes\\%s", ThemesList[0]);
-            Status = SelfRootDir->Open(SelfRootDir, &ThemeDir, ThemePath, EFI_FILE_MODE_READ, 0);
-            if (!EFI_ERROR(Status)) {
-              Status = egLoadFile(ThemeDir, CONFIG_THEME_FILENAME, (UINT8**)&ThemePtr, &Size);
-            }
-          }
-          if (!EFI_ERROR(Status)) {
-            Status = ParseXML((const CHAR8*)ThemePtr, &ThemeDict, 0);
-            if (EFI_ERROR(Status) || (ThemeDict == NULL)) {
-              Status = EFI_UNSUPPORTED;
-              DBG("xml file %s not parsed\n", CONFIG_THEME_FILENAME);
-            } else {
-              dict = ThemeDict;
-            }
-
-          }
-        }
-        else {
-          ThemePath = PoolPrint(L"EFI\\CLOVER\\themes\\%s", ThemesList[0]);
-          Status = SelfRootDir->Open(SelfRootDir, &ThemeDir, ThemePath, EFI_FILE_MODE_READ, 0);
-          if (!EFI_ERROR(Status)) {
-            Status = egLoadFile(ThemeDir, CONFIG_THEME_FILENAME, (UINT8**)&ThemePtr, &Size);
-            if (EFI_ERROR(Status) || (ThemePtr == NULL) || (Size == 0)) {
-              Status = EFI_NOT_FOUND;
-              DBG("GlobalConfig: %s not found, get first theme %s\n", CONFIG_THEME_FILENAME, ThemesList[0]);
-              if (ThemeDir) {
-                ThemeDir->Close(ThemeDir);
-                ThemeDir = NULL;
-              }
-              if (ThemePath) {
-                FreePool(ThemePath);
-              }
-              ThemePath = PoolPrint(L"EFI\\CLOVER\\themes\\%s", ThemesList[0]);
-              Status = SelfRootDir->Open(SelfRootDir, &ThemeDir, ThemePath, EFI_FILE_MODE_READ, 0);
-              if (!EFI_ERROR(Status)) {
-                Status = egLoadFile(ThemeDir, CONFIG_THEME_FILENAME, (UINT8**)&ThemePtr, &Size);
-              }
-            }
-            if (!EFI_ERROR(Status)) {
-              Status = ParseXML((const CHAR8*)ThemePtr, &ThemeDict, 0);
-              if (EFI_ERROR(Status) || (ThemeDict == NULL)) {
-                Status = EFI_UNSUPPORTED;
-                DBG("xml file %s not parsed\n", CONFIG_THEME_FILENAME);
-              } else {
-                dict = ThemeDict;
-              }
-              
-            }
-          }          
-        }
-      }
-      if (EFI_ERROR(Status)) {
-        DBG("default theme %s is absent, using embedded\n", GlobalConfig.Theme);
-      }
-    } else if (chosenTheme) {
-      DBG("theme %a chosen from nvram is absent, using embedded\n", chosenTheme);
+      FreePool(chosenTheme);
       chosenTheme = NULL;
-    } else {
-      DBG("no default theme, using embedded\n");
     }
   }
-
-  // Read defaults from config
-  if (dict && !chosenTheme) {
-    TagPtr dictPointer = GetProperty(dict, "Theme");
-    if (dictPointer) {
-      EFI_STATUS S = GetThemeTagSettings(dictPointer);
-      if (EFI_ERROR(S)) {
-         DBG("Config theme error: %r\n", S);
+  
+  // Try to get theme from settings
+  if (!ThemeDict) {
+    if (!GlobalConfig.Theme) {
+      DBG("no default theme, get first theme %s\n", CONFIG_THEME_FILENAME, ThemesList[0]);
+    } else {
+      ThemeDict = LoadTheme(GlobalConfig.Theme);
+      if (!ThemeDict) {
+        DBG("GlobalConfig: %s not found, get first theme %s\n", CONFIG_THEME_FILENAME, ThemesList[0]);
+        FreePool(GlobalConfig.Theme);
+        GlobalConfig.Theme = NULL; 
       }
     }
   }
-
-  // Check for fall back to embedded theme
-  if (EFI_ERROR(Status) || (ThemeDict == NULL)) {
-    if (GlobalConfig.Theme) {
-      FreePool(GlobalConfig.Theme);
+  
+  // Try to get first theme
+  if (!ThemeDict) {
+    ThemeDict = LoadTheme(ThemesList[0]);
+    if (ThemeDict) {
+      GlobalConfig.Theme = AllocateCopyPool(StrSize(ThemesList[0]),ThemesList[0]);
     }
+  }
+  
+  // No theme could be loaded, use embedded
+  if (!ThemeDict) {
+    DBG("no themes available, using embedded\n");
     GlobalConfig.Theme = NULL;
     if (ThemePath) {
       FreePool(ThemePath);
@@ -2112,33 +2096,20 @@ EFI_STATUS InitTheme(BOOLEAN useThemeDefinedInNVRam)
     FontImage = NULL;
     BigBack = NULL;
     Banner  = NULL;
-  } else {
-    TagPtr dictPointer = GetProperty(ThemeDict, "Theme");
-    if (chosenTheme) {
-      GlobalConfig.Theme = PoolPrint(L"%a", chosenTheme);
-      ThemePath = PoolPrint(L"EFI\\CLOVER\\themes\\%s", GlobalConfig.Theme);
-      if (ThemePath) {
-        if (ThemeDir) {
-          ThemeDir->Close(ThemeDir);
-        }
-        Status = SelfRootDir->Open(SelfRootDir, &ThemeDir, ThemePath, EFI_FILE_MODE_READ, 0);
-        if (!EFI_ERROR(Status)) {
-          DBG("theme reinitialized\n");
-        }
-      }
-    }
-    DBG("Using theme '%s' (%s)\n", GlobalConfig.Theme, ThemePath);
+  } else { // theme loaded successfully
     // read theme settings
+    TagPtr dictPointer = GetProperty(ThemeDict, "Theme");
     if (dictPointer) {
       Status = GetThemeTagSettings(dictPointer);
+      if (EFI_ERROR(Status)) {
+         DBG("Config theme error: %r\n", Status);
+      }
     }
-  }
-  if (ThemeDict) {
     FreeTag(ThemeDict);
   }
-
+  
   PrepareFont();
-
+  
   return Status;
 }
 
