@@ -9,21 +9,16 @@
 
 #include "kernel_patcher.h"
 
-#ifndef DEBUG_ALL
-#define KEXT_DEBUG 1
+#define KEXT_DEBUG 0
+
+#if KEXT_DEBUG
+#define DBG(...)	Print(__VA_ARGS__);
 #else
-#define KEXT_DEBUG DEBUG_ALL
+#define DBG(...)
 #endif
 
-#if KEXT_DEBUG == 0
-#define DBG(...)	
 // runtime debug
 #define DBG_RT(...)    if (gSettings.KPDebug) { AsciiPrint(__VA_ARGS__); }
-#else
-#define DBG(...)    DebugLog(KEXT_DEBUG, __VA_ARGS__);
-// runtime debug
-#define DBG_RT(...)    if (gSettings.KPDebug) { DBG(__VA_ARGS__); }
-#endif
 
 //
 // Searches Source for Search pattern of size SearchSize
@@ -34,7 +29,7 @@ UINTN SearchAndCount(UINT8 *Source, UINT32 SourceSize, UINT8 *Search, UINTN Sear
   UINTN     NumFounds = 0;
   UINT8     *End = Source + SourceSize;
   
-  while (Source < End) {   
+  while (Source < End) {
     if (CompareMem(Source, Search, SearchSize) == 0) {
       NumFounds++;
       Source += SearchSize;
@@ -49,7 +44,7 @@ UINTN SearchAndCount(UINT8 *Source, UINT32 SourceSize, UINT8 *Search, UINTN Sear
 // Searches Source for Search pattern of size SearchSize
 // and replaces it with Replace up to MaxReplaces times.
 // If MaxReplaces <= 0, then there is no restriction on number of replaces.
-// Replace should have the same size as Search. 
+// Replace should have the same size as Search.
 // Returns number of replaces done.
 //
 UINTN SearchAndReplace(UINT8 *Source, UINT32 SourceSize, UINT8 *Search, UINTN SearchSize, UINT8 *Replace, INTN MaxReplaces)
@@ -173,13 +168,13 @@ VOID ATIConnectorsPatchInit(VOID)
   
   ATIConnectorsPatchInited = TRUE;
   
-  //DBG("Boundle1: %a\n", ATIKextBoundleId[0]);
-  //DBG("Boundle2: %a\n", ATIKextBoundleId[1]);
+  //DBG(L"Boundle1: %a\n", ATIKextBoundleId[0]);
+  //DBG(L"Boundle2: %a\n", ATIKextBoundleId[1]);
   //gBS->Stall(10000000);
 }
 
 //
-// Registers kexts that need force-load during WithKexts boot. 
+// Registers kexts that need force-load during WithKexts boot.
 //
 VOID ATIConnectorsPatchRegisterKexts(FSINJECTION_PROTOCOL *FSInject, FSI_STRING_LIST *ForceLoadKexts)
 {
@@ -195,7 +190,7 @@ VOID ATIConnectorsPatchRegisterKexts(FSINJECTION_PROTOCOL *FSInject, FSI_STRING_
   // SnowLeo
   FSInject->AddStringToList(ForceLoadKexts, L"\\ATIFramebuffer.kext\\Contents\\Info.plist");
   FSInject->AddStringToList(ForceLoadKexts, L"\\AMDFramebuffer.kext\\Contents\\Info.plist");
-
+  
   // dependencies
   FSInject->AddStringToList(ForceLoadKexts, L"\\IOGraphicsFamily.kext\\Info.plist");
   FSInject->AddStringToList(ForceLoadKexts, L"\\ATISupport.kext\\Contents\\Info.plist");
@@ -253,7 +248,7 @@ VOID ATIConnectorsPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT
 // Credits: Samantha/RevoGirl/DHP
 // http://www.insanelymac.com/forum/topic/253642-dsdt-for-asus-p8p67-m-pro/page__st__200#entry1681099
 //
-// 
+//
 
 UINT8   MovlE2ToEcx[] = { 0xB9, 0xE2, 0x00, 0x00, 0x00 };
 UINT8   Wrmsr[]       = { 0x0F, 0x30 };
@@ -300,7 +295,7 @@ VOID AsusAICPUPMPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32
 //
 // http://www.insanelymac.com/forum/index.php?showtopic=253992
 // http://www.insanelymac.com/forum/index.php?showtopic=276066
-// 
+//
 
 UINT8   LionSearch_X64[]  = { 0x75, 0x30, 0x44, 0x89, 0xf8 };
 UINT8   LionReplace_X64[] = { 0xeb, 0x30, 0x44, 0x89, 0xf8 };
@@ -324,7 +319,7 @@ UINT8   MavReplace[] = { 0xeb, 0x2e, 0x0f, 0xb6};
 
 VOID AppleRTCPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize)
 {
-
+  
   UINTN   Num = 0;
   UINTN   NumLion_X64 = 0;
   UINTN   NumLion_i386 = 0;
@@ -349,7 +344,7 @@ VOID AppleRTCPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 In
     // more then one pattern found - we do not know what to do with it
     // and we'll skipp it
     Print(L"AppleRTCPatch: ERROR: multiple patterns found (LionX64: %d, Lioni386: %d, ML: %d, Mav: %d) - skipping patching!\n",
-        NumLion_X64, NumLion_i386, NumML, NumMav);
+          NumLion_X64, NumLion_i386, NumML, NumMav);
     gBS->Stall(5000000);
     return;
   }
@@ -423,7 +418,7 @@ VOID AnyKextPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 Inf
   UINTN   Num = 0;
   
   DBG_RT("\nAnyKextPatch %d: driverAddr = %x, driverSize = %x\nAnyKext = %a\n",
-      N, Driver, DriverSize, gSettings.KextPatches[N].Name);
+         N, Driver, DriverSize, gSettings.KextPatches[N].Name);
   if (gSettings.KPDebug) {
     ExtractKextBoundleIdentifier(InfoPlist);
   }
@@ -474,9 +469,9 @@ VOID KextPatcherRegisterKexts(FSINJECTION_PROTOCOL *FSInject, FSI_STRING_LIST *F
   for (i = 0; i < gSettings.NrKexts; i++) {
     FSInject->AddStringToList(ForceLoadKexts,
                               PoolPrint(L"\\%a.kext\\Contents\\Info.plist",
-                              gSettings.KextPatches[i].Name) );        
+                                        gSettings.KextPatches[i].Name) );
   }
-
+  
 }
 
 //
@@ -503,7 +498,7 @@ VOID PatchKext(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPl
       return;
     }
   }
-    
+  
   if (gSettings.KPAsusAICPUPM &&
       (AsciiStrStr(InfoPlist,
                    "<string>com.apple.driver.AppleIntelCPUPowerManagement</string>") != NULL)) {
@@ -527,7 +522,7 @@ VOID PatchKext(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPl
         DBG_RT("patch kext %a\n", gSettings.KextPatches[i].Name);
         AnyKextPatch(Driver, DriverSize, InfoPlist, InfoPlistSize, i);
       }
-    }    
+    }
   }
   
   //
@@ -550,7 +545,7 @@ VOID PatchKext(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPl
 //    and returns value from that referenced field
 //
 // Whole function is here since we should avoid ParseXML() and it's
-// memory allocations during ExitBootServices(). And it seems that 
+// memory allocations during ExitBootServices(). And it seems that
 // ParseXML() does not support IDREF.
 // This func is hard to read and debug and probably not reliable,
 // but it seems it works.
@@ -569,21 +564,21 @@ UINT64 GetPlistHexValue(CHAR8 *Plist, CHAR8 *Key, CHAR8 *WholePlist)
   // search for Key
   Value = AsciiStrStr(Plist, Key);
   if (Value == NULL) {
-    //DBG("\nNo key: %a\n", Key);
+    //DBG(L"\nNo key: %a\n", Key);
     return 0;
   }
   
   // search for <integer
   IntTag = AsciiStrStr(Value, "<integer");
   if (IntTag == NULL) {
-    DBG("\nNo integer\n");
+    DBG(L"\nNo integer\n");
     return 0;
   }
   
   // find <integer end
   Value = AsciiStrStr(IntTag, ">");
   if (Value == NULL) {
-    DBG("\nNo <integer end\n");
+    DBG(L"\nNo <integer end\n");
     return 0;
   }
   
@@ -598,7 +593,7 @@ UINT64 GetPlistHexValue(CHAR8 *Plist, CHAR8 *Key, CHAR8 *WholePlist)
   // it might be a reference: IDREF="173"/>
   Value = AsciiStrStr(IntTag, "<integer IDREF=\"");
   if (Value != IntTag) {
-    DBG("\nNo <integer IDREF=\"\n");
+    DBG(L"\nNo <integer IDREF=\"\n");
     return 0;
   }
   
@@ -607,45 +602,45 @@ UINT64 GetPlistHexValue(CHAR8 *Plist, CHAR8 *Key, CHAR8 *WholePlist)
   IDEnd = AsciiStrStr(IDStart, "\"");
   IDLen = IDEnd - IDStart;
   /*
-  if (DbgCount < 3) {
-    AsciiStrnCpy(Buffer, Value, sizeof(Buffer) - 1);
-    DBG("\nRef: '%a'\n", Buffer);
-  }
+   if (DbgCount < 3) {
+   AsciiStrnCpy(Buffer, Value, sizeof(Buffer) - 1);
+   DBG(L"\nRef: '%a'\n", Buffer);
+   }
    */
   if (IDLen > 8) {
-    DBG("\nIDLen too big\n");
+    DBG(L"\nIDLen too big\n");
     return 0;
   }
   AsciiStrCpy(Buffer, "<integer ID=\"");
   AsciiStrnCat(Buffer, IDStart, IDLen);
   AsciiStrCat(Buffer, "\"");
   /*
-  if (DbgCount < 3) {
-    DBG("Searching: '%a'\n", Buffer);
-  }
-  */
+   if (DbgCount < 3) {
+   DBG(L"Searching: '%a'\n", Buffer);
+   }
+   */
   
   // and search whole plist for ID
   IntTag = AsciiStrStr(WholePlist, Buffer);
   if (IntTag == NULL) {
-    DBG("\nNo %a\n", Buffer);
+    DBG(L"\nNo %a\n", Buffer);
     return 0;
   }
   
   // got it. find closing >
   /*
-  if (DbgCount < 3) {
-    AsciiStrnCpy(Buffer, IntTag, sizeof(Buffer) - 1);
-    DBG("Found: '%a'\n", Buffer);
-  }
-  */
+   if (DbgCount < 3) {
+   AsciiStrnCpy(Buffer, IntTag, sizeof(Buffer) - 1);
+   DBG(L"Found: '%a'\n", Buffer);
+   }
+   */
   Value = AsciiStrStr(IntTag, ">");
   if (Value == NULL) {
-    DBG("\nNo <integer end\n");
+    DBG(L"\nNo <integer end\n");
     return 0;
   }
   if (Value[-1] == '/') {
-    DBG("\nInvalid <integer IDREF end\n");
+    DBG(L"\nInvalid <integer IDREF end\n");
     return 0;
   }
   
@@ -653,13 +648,13 @@ UINT64 GetPlistHexValue(CHAR8 *Plist, CHAR8 *Key, CHAR8 *WholePlist)
   NumValue = AsciiStrHexToUint64(Value + 1);
   
   /*
-  if (DbgCount < 3) {
-    AsciiStrnCpy(Buffer, IntTag, sizeof(Buffer) - 1);
-    DBG("Found num: %x\n", NumValue);
-    gBS->Stall(10000000);
-  }
+   if (DbgCount < 3) {
+   AsciiStrnCpy(Buffer, IntTag, sizeof(Buffer) - 1);
+   DBG(L"Found num: %x\n", NumValue);
+   gBS->Stall(10000000);
+   }
    DbgCount++;
-  */
+   */
   
   return NumValue;
 }
@@ -752,12 +747,12 @@ VOID PatchPrelinkedKexts(VOID)
         KextSize = (UINT32)GetPlistHexValue(InfoPlistStart, kPrelinkExecutableSizeKey, WholePlist);
         
         /*if (DbgCount < 3
-            || DbgCount == 100 || DbgCount == 101 || DbgCount == 102
-            ) {
-          DBG("\n\nKext: St = %x, Size = %x\n", KextAddr, KextSize);
-          DBG("Info: St = %p, End = %p\n%a\n", InfoPlistStart, InfoPlistEnd, InfoPlistStart);
-          gBS->Stall(20000000);
-        }
+         || DbgCount == 100 || DbgCount == 101 || DbgCount == 102
+         ) {
+         DBG(L"\n\nKext: St = %x, Size = %x\n", KextAddr, KextSize);
+         DBG(L"Info: St = %p, End = %p\n%a\n", InfoPlistStart, InfoPlistEnd, InfoPlistStart);
+         gBS->Stall(20000000);
+         }
          */
         
         // patch it
@@ -795,9 +790,9 @@ VOID PatchLoadedKexts(VOID)
 	struct OpaqueDTPropertyIterator OPropIter;
 	DTPropertyIterator	PropIter = &OPropIter;
 	//UINTN               DbgCount = 0;
-
   
-  DBG("\nPatchLoadedKexts ... dtRoot = %p\n", dtRoot);
+  
+  DBG(L"\nPatchLoadedKexts ... dtRoot = %p\n", dtRoot);
   
   if (!dtRoot) {
     return;
@@ -808,15 +803,15 @@ VOID PatchLoadedKexts(VOID)
   if (DTLookupEntry(NULL,"/chosen/memory-map", &MMEntry) == kSuccess)
   {
     if (DTCreatePropertyIteratorNoAlloc(MMEntry, PropIter) == kSuccess)
-    {   
+    {
       while (DTIterateProperties(PropIter, &PropName) == kSuccess)
-      {	
-        //DBG("Prop: %a\n", PropName);
+      {
+        //DBG(L"Prop: %a\n", PropName);
         if (AsciiStrStr(PropName,"Driver-"))
         {
           // PropEntry _DeviceTreeBuffer is the value of Driver-XXXXXX property
           PropEntry = (_DeviceTreeBuffer*)(((UINT8*)PropIter->currentProperty) + sizeof(DeviceTreeNodeProperty));
-          //if (DbgCount < 3) DBG("%a: paddr = %x, length = %x\n", PropName, PropEntry->paddr, PropEntry->length);
+          //if (DbgCount < 3) DBG(L"%a: paddr = %x, length = %x\n", PropName, PropEntry->paddr, PropEntry->length);
           
           // PropEntry->paddr points to _BooterKextFileInfo
           KextFileInfo = (_BooterKextFileInfo *)(UINTN)PropEntry->paddr;
@@ -838,11 +833,11 @@ VOID PatchLoadedKexts(VOID)
         }
         //if(AsciiStrStr(PropName,"DriversPackage-")!=0)
         //{
-        //    DBG("Found %a\n", PropName);
+        //    DBG(L"Found %a\n", PropName);
         //    break;
         //}
       }
-    } 
+    }
   }
 }
 

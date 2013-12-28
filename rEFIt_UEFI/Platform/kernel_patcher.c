@@ -11,21 +11,16 @@
 #include "sse3_patcher.h"
 #include "sse3_5_patcher.h"
 
-#ifndef DEBUG_ALL
-#define KERNEL_DEBUG 1
+#define KERNEL_DEBUG 0
+
+#if KERNEL_DEBUG
+#define DBG(...)    AsciiPrint(__VA_ARGS__);
 #else
-#define KERNEL_DEBUG DEBUG_ALL
+#define DBG(...)
 #endif
 
-#if KERNEL_DEBUG == 0
-#define DBG(...)	
 // runtime debug
 #define DBG_RT(...)    if (gSettings.KPDebug) { AsciiPrint(__VA_ARGS__); }
-#else
-#define DBG(...)    DebugLog(KERNEL_DEBUG, __VA_ARGS__);
-// runtime debug
-#define DBG_RT(...)    if (gSettings.KPDebug) { DBG(__VA_ARGS__); }
-#endif
 
 
 EFI_PHYSICAL_ADDRESS    KernelRelocBase = 0;
