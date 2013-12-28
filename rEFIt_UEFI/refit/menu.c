@@ -2096,6 +2096,11 @@ INTN DrawTextXY(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
 
 VOID DrawMenuText(IN CHAR16 *Text, IN INTN SelectedWidth, IN INTN XPos, IN INTN YPos, IN INTN Cursor)
 {
+  if (TextBuffer && (TextBuffer->Height != TextHeight)) {
+    egFreeImage(TextBuffer);
+    TextBuffer = NULL;
+  }
+
   if (TextBuffer == NULL)
     TextBuffer = egCreateImage(LAYOUT_TEXT_WIDTH, TextHeight, TRUE);
   

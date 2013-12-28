@@ -1593,25 +1593,67 @@ VOID GetListOfThemes()
 
 STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
 {
-  DBG("GetThemeTagSettings\n");
   TagPtr dict, dict2;
+
+  //fill default to have an ability change theme
+  GlobalConfig.BackgroundScale = Crop;
+  if (GlobalConfig.BackgroundName) {
+    FreePool(GlobalConfig.BackgroundName);
+    GlobalConfig.BackgroundName = NULL;
+  }
+  GlobalConfig.BackgroundSharp = 0;
+  GlobalConfig.BackgroundDark = 0;
+  if (GlobalConfig.BannerFileName) {
+    FreePool(GlobalConfig.BannerFileName);
+    GlobalConfig.BannerFileName = NULL;
+  }
+  GlobalConfig.BadgeOffsetX = 0xFFFF;
+  GlobalConfig.BadgeOffsetY = 0xFFFF;
+  GlobalConfig.BadgeScale = 8; //default
+  GlobalConfig.HideBadges = 0;
+  GlobalConfig.BadgeOffsetX = 0;
+  GlobalConfig.BadgeOffsetY = 0;                   
+  GlobalConfig.BadgeScale = 0;
+  LayoutBannerOffset = 64; //default value if not set
+  GlobalConfig.HideUIFlags = 0;
+  GlobalConfig.SelectionColor = 0x80808080; 
+  if (GlobalConfig.SelectionSmallFileName) {
+    FreePool(GlobalConfig.SelectionSmallFileName);
+    GlobalConfig.SelectionSmallFileName = NULL;
+  }
+  if (GlobalConfig.SelectionBigFileName) {
+    FreePool(GlobalConfig.SelectionBigFileName);
+    GlobalConfig.SelectionBigFileName = NULL;
+  }
+  GlobalConfig.SelectionOnTop = FALSE;
+  ScrollWidth = 0;
+  ScrollButtonsHeight = 0;
+  ScrollBarDecorationsHeight = 0;
+  ScrollScrollDecorationsHeight = 0;
+  GlobalConfig.Font = FONT_LOAD;
+  if (GlobalConfig.FontFileName) {
+    FreePool(GlobalConfig.FontFileName);
+    GlobalConfig.FontFileName = NULL;
+  }
+  GlobalConfig.CharWidth = 0;
+  GuiAnime = NULL;
+  if (BigBack) {
+    egFreeImage(BigBack);
+    BigBack = NULL;
+  }
+  if (Banner) {
+    egFreeImage(Banner);
+    Banner  = NULL;
+  }
+  if (FontImage) {
+    egFreeImage(FontImage);
+    FontImage = NULL;
+  }
+
+  // if NULL parameter, quit after setting default values
   if (dictPointer == NULL) {
     return EFI_INVALID_PARAMETER;
   }
-  //fill default to have an ability change theme
-  GlobalConfig.BannerFileName = L"logo.png";
-  GlobalConfig.BackgroundName = L"background.png";
-  GlobalConfig.BackgroundScale = Crop;
-  GlobalConfig.HideBadges = 0;
-  GlobalConfig.HideUIFlags = 0;
-  GlobalConfig.SelectionColor = 0x80808080;
-  GlobalConfig.SelectionSmallFileName = L"selection_small.png";
-  GlobalConfig.SelectionBigFileName = L"selection_big.png";
-  GlobalConfig.Font = FONT_LOAD;
-
-  BigBack = NULL;
-  Banner  = NULL;
-  FontImage = NULL;
 
   dict = GetProperty(dictPointer, "Background");
   if (dict) {
@@ -1628,9 +1670,6 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
     dict2 = GetProperty(dict, "Path");
     if (dict2) {
       if ((dict2->type == kTagTypeString) && dict2->string) {
-        if (GlobalConfig.BackgroundName) {
-          FreePool(GlobalConfig.BackgroundName);
-        }
         GlobalConfig.BackgroundName = PoolPrint(L"%a", dict2->string);
       }
     }
@@ -1647,20 +1686,15 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
       GlobalConfig.BackgroundDark = (dict2->type == kTagTypeTrue);
     }
   }
+
   dict = GetProperty(dictPointer, "Banner");
   if (dict) {
     if ((dict->type == kTagTypeString) && dict->string) {
-      if (GlobalConfig.BannerFileName) {
-        FreePool(GlobalConfig.BannerFileName);
-      }
       GlobalConfig.BannerFileName = PoolPrint(L"%a", dict->string);
     }
   }
+
   dict = GetProperty(dictPointer, "Badges");
-  //set defaults
-  GlobalConfig.BadgeOffsetX = 0xFFFF;
-  GlobalConfig.BadgeOffsetY = 0xFFFF;
-  GlobalConfig.BadgeScale = 8; //default
   if (dict) {
     dict2 = GetProperty(dict, "Swap");
     if (dict2) {
@@ -1694,7 +1728,6 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
         GlobalConfig.BadgeOffsetY = (UINTN)dict2->string;
       }
     }
-
     dict2 = GetProperty(dict, "Scale");
     if (dict2) {
       if (dict2->type == kTagTypeInteger) {
@@ -1702,7 +1735,7 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
       }
     }
   }
-  LayoutBannerOffset = 64; //default value if not set
+
   dict = GetProperty(dictPointer, "Layout");
   if (dict) {
     dict2 = GetProperty(dict, "BannerOffset");
@@ -1710,11 +1743,10 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
       if (dict2->type == kTagTypeInteger) {
         LayoutBannerOffset = (UINTN)dict2->string;
       }
-    }
-    
+    }    
   }  
+
   dict = GetProperty(dictPointer, "Components");
-  GlobalConfig.HideUIFlags = 0;
   if (dict) {
     dict2 = GetProperty(dict, "Banner");
     if (dict2 && dict2->type == kTagTypeFalse) {
@@ -1737,6 +1769,7 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
       GlobalConfig.HideUIFlags |= HIDEUI_FLAG_REVISION;
     }
   }
+
   dict = GetProperty(dictPointer, "Selection");
   if (dict) {
     dict2 = GetProperty(dict, "Color");
@@ -1750,18 +1783,12 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
     dict2 = GetProperty(dict, "Small");
     if (dict2) {
       if ((dict2->type == kTagTypeString) && dict2->string) {
-        if (GlobalConfig.SelectionSmallFileName) {
-          FreePool(GlobalConfig.SelectionSmallFileName);
-        }
         GlobalConfig.SelectionSmallFileName = PoolPrint(L"%a", dict2->string);
       }
     }
     dict2 = GetProperty(dict, "Big");
     if (dict2) {
       if ((dict2->type == kTagTypeString) && dict2->string) {
-        if (GlobalConfig.SelectionBigFileName) {
-          FreePool(GlobalConfig.SelectionBigFileName);
-        }
         GlobalConfig.SelectionBigFileName = PoolPrint(L"%a", dict2->string);
       }
     }
@@ -1774,6 +1801,7 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
           }
     }
   }
+
   dict = GetProperty(dictPointer, "Scroll");
   if (dict) {
     dict2 = GetProperty(dict, "Width");
@@ -1809,6 +1837,7 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
       }
     }
   }
+
   dict = GetProperty(dictPointer, "Font");
   if (dict) {
     dict2 = GetProperty(dict, "Type");
@@ -1826,9 +1855,6 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
     dict2 = GetProperty(dict, "Path");
     if (dict2) {
       if ((dict2->type == kTagTypeString) && dict2->string) {
-        if (GlobalConfig.FontFileName) {
-          FreePool(GlobalConfig.FontFileName);
-        }
         GlobalConfig.FontFileName = PoolPrint(L"%a", dict2->string);
       }
     }
@@ -1841,6 +1867,7 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
       }
     }
   }
+
   dict = GetProperty(dictPointer, "Anime");
   if (dict) {
     INTN i, Count = GetTagCount(dict);
@@ -1867,9 +1894,6 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
       dict2 = GetProperty(dictPointer, "Path");
       if (dict2) {
         if ((dict2->type == kTagTypeString) && dict2->string) {
-          if (Anime->Path) {
-            FreePool(Anime->Path);
-          }
           Anime->Path = PoolPrint(L"%a", dict2->string);
         }
       }
@@ -1926,6 +1950,21 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
       }
     }
   }
+
+  // set file defaults in case they were not set
+  if (!GlobalConfig.BackgroundName) {
+    GlobalConfig.BackgroundName = PoolPrint(L"background.png");
+  }
+  if (!GlobalConfig.BannerFileName) {
+    GlobalConfig.BannerFileName = PoolPrint(L"logo.png");
+  }
+  if (!GlobalConfig.SelectionSmallFileName) {
+    GlobalConfig.SelectionSmallFileName = PoolPrint(L"selection_small.png");
+  }
+  if (!GlobalConfig.SelectionBigFileName) {
+    GlobalConfig.SelectionBigFileName = PoolPrint(L"selection_big.png");
+  }
+
   return EFI_SUCCESS;
 }
 
@@ -2090,12 +2129,11 @@ EFI_STATUS InitTheme(BOOLEAN useThemeDefinedInNVRam, EFI_TIME *time)
       ThemeDir->Close(ThemeDir);
     }
     ThemeDir = NULL;
+    // set default values
+    GetThemeTagSettings(NULL);
     //fill some fields
     GlobalConfig.SelectionColor = 0xA0A0A080;
     GlobalConfig.Font = FONT_ALFA; //to be inverted later
-    FontImage = NULL;
-    BigBack = NULL;
-    Banner  = NULL;
   } else { // theme loaded successfully
     // read theme settings
     TagPtr dictPointer = GetProperty(ThemeDict, "Theme");
