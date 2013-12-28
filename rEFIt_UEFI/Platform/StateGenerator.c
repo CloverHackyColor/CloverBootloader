@@ -351,6 +351,8 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
       }
       metPSS = aml_add_method(scop, "_PSS", 0);
       aml_add_return_name(metPSS, "PSS_");
+      metPSS = aml_add_method(scop, "APSS", 0);
+      aml_add_return_name(metPSS, "PSS_");
       metPPC = aml_add_method(scop, "_PPC", 0);
       aml_add_return_byte(metPPC, gSettings.PLimitDict);
       namePCT = aml_add_name(scop, "PCT_");
@@ -384,6 +386,8 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
 				scop = aml_add_scope(root, name);
         metPSS = aml_add_method(scop, "_PSS", 0);
         aml_add_return_name(metPSS, name1);
+        metPSS = aml_add_method(scop, "APSS", 0);
+        aml_add_return_name(metPSS, "PSS_");
         metPPC = aml_add_method(scop, "_PPC", 0);
         aml_add_return_byte(metPPC, gSettings.PLimitDict);
         metPCT = aml_add_method(scop, "_PCT", 0);
@@ -559,7 +563,9 @@ SSDT_TABLE *generate_cst_ssdt(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, U
   }
   met = aml_add_method(scop, "_CST", 0);
   ret = aml_add_return_name(met, "CST_");
-  
+  met = aml_add_method(scop, "ACST", 0);
+  ret = aml_add_return_name(met, "CST_");
+
   // Aliases
   for (i = 1; i < Number; i++)
   {
@@ -568,7 +574,9 @@ SSDT_TABLE *generate_cst_ssdt(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, U
     scop = aml_add_scope(root, name2);
     met = aml_add_method(scop, "_CST", 0);
     ret = aml_add_return_name(met, name1);
-    
+    met = aml_add_method(scop, "ACST", 0);
+    ret = aml_add_return_name(met, name1);
+
   }
   
   aml_calculate_size(root);
