@@ -60,7 +60,7 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
   UINT8 cpu_dynamic_fsb = 0;
   UINT8 cpu_noninteger_bus_ratio = 0;
   UINT32 i, j;
-  UINT16 realMax, realTurbo = 0, Apsn = 0, Aplf = 8;
+  UINT16 realMax, realMin = 6, realTurbo = 0, Apsn = 0, Aplf = 8;
   
 	if (gCPUStructure.Vendor != CPU_VENDOR_INTEL) {
 		MsgLog ("Not an Intel platform: P-States will not be generated !!!\n");
@@ -254,10 +254,11 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
               MsgLog("Turbo control=%x\n", realTurbo);
             }
             Apsn = (realTurbo > realMax)?(realTurbo - realMax):0;
+            realMin =  RShiftU64(AsmReadMsr64(MSR_PLATFORM_INFO), 40) & 0xff;
             if (gSettings.MinMultiplier) {
               minimum.Control.Control = gSettings.MinMultiplier;
             } else {
-              minimum.Control.Control = RShiftU64(AsmReadMsr64(MSR_PLATFORM_INFO), 40) & 0xff;
+              minimum.Control.Control = realMin;
             }
 
 						
@@ -346,7 +347,7 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
         AML_CHUNK* pstt = aml_add_package(pack);
         
         aml_add_dword(pstt, p_states[i].Frequency);
-        if ((gCPUStructure.Model >= CPU_MODEL_IVY_BRIDGE)) {
+        if (p_states[i].Control.Control < realMin) {
           aml_add_dword(pstt, 0); //zero for power
         } else {
           aml_add_dword(pstt, p_states[i].Frequency<<3); // Power
