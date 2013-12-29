@@ -314,6 +314,13 @@ typedef struct _refit_input_dialog {
   INPUT_ITEM        *Item;
 } REFIT_INPUT_DIALOG;
 
+//some unreal values
+#define FILM_CENTRE 40000
+#define FILM_LEFT   50000
+#define FILM_TOP    50000
+#define FILM_RIGHT  60000
+#define FILM_BOTTOM 60000
+
 struct _refit_menu_screen {
   UINTN             ID;
   CHAR16            *Title;
@@ -330,7 +337,7 @@ struct _refit_menu_screen {
   INTN              CurrentFrame;
   INTN              Frames;
   UINTN             FrameTime; //ms
-//  INTN              FilmX, FilmY;
+  INTN              FilmX, FilmY;  //relative
   EG_RECT           FilmPlace;
   EG_IMAGE          **Film;
 };
@@ -442,6 +449,7 @@ struct GUI_ANIME {
   CHAR16    *Path;
   UINTN      Frames;
   UINTN      FrameTime;
+  INTN       FilmX, FilmY;  //relative
   BOOLEAN    Once;
   GUI_ANIME *Next;
 };

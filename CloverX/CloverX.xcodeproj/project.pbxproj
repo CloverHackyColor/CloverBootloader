@@ -21,6 +21,10 @@
 		122489CE16A93FD300A0DB6B /* MouseHid.c in Sources */ = {isa = PBXBuildFile; fileRef = 122489C916A93FD300A0DB6B /* MouseHid.c */; };
 		122489CF16A93FD300A0DB6B /* UsbMouse.c in Sources */ = {isa = PBXBuildFile; fileRef = 122489CA16A93FD300A0DB6B /* UsbMouse.c */; };
 		12A82BA917CFCAE50019A5D3 /* card_vlist.c in Sources */ = {isa = PBXBuildFile; fileRef = 12A82BA817CFCAE50019A5D3 /* card_vlist.c */; };
+		12B2459218700F5F00A332C6 /* secureboot.c in Sources */ = {isa = PBXBuildFile; fileRef = 12B2458D18700F5F00A332C6 /* secureboot.c */; };
+		12B2459318700F5F00A332C6 /* securehash.c in Sources */ = {isa = PBXBuildFile; fileRef = 12B2458F18700F5F00A332C6 /* securehash.c */; };
+		12B2459418700F5F00A332C6 /* securemenu.c in Sources */ = {isa = PBXBuildFile; fileRef = 12B2459018700F5F00A332C6 /* securemenu.c */; };
+		12B2459518700F5F00A332C6 /* securevars.c in Sources */ = {isa = PBXBuildFile; fileRef = 12B2459118700F5F00A332C6 /* securevars.c */; };
 		12B3D27517B23032009D8170 /* Edid.c in Sources */ = {isa = PBXBuildFile; fileRef = 12B3D27417B23032009D8170 /* Edid.c */; };
 		12D7546E1657CDD700376797 /* BdsConnect.c in Sources */ = {isa = PBXBuildFile; fileRef = 12D7546D1657CDD700376797 /* BdsConnect.c */; };
 		12D754711657CDE800376797 /* DevicePath.c in Sources */ = {isa = PBXBuildFile; fileRef = 12D754701657CDE800376797 /* DevicePath.c */; };
@@ -392,6 +396,11 @@
 		12A82BB817CFD3600019A5D3 /* XhciReg.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XhciReg.h; sourceTree = "<group>"; };
 		12A82BB917CFD3600019A5D3 /* XhciSched.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = XhciSched.c; sourceTree = "<group>"; };
 		12A82BBA17CFD3600019A5D3 /* XhciSched.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XhciSched.h; sourceTree = "<group>"; };
+		12B2458D18700F5F00A332C6 /* secureboot.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = secureboot.c; sourceTree = "<group>"; };
+		12B2458E18700F5F00A332C6 /* securebootkeys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = securebootkeys.h; sourceTree = "<group>"; };
+		12B2458F18700F5F00A332C6 /* securehash.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = securehash.c; sourceTree = "<group>"; };
+		12B2459018700F5F00A332C6 /* securemenu.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = securemenu.c; sourceTree = "<group>"; };
+		12B2459118700F5F00A332C6 /* securevars.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = securevars.c; sourceTree = "<group>"; };
 		12B3D27417B23032009D8170 /* Edid.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Edid.c; sourceTree = "<group>"; };
 		12B8168C1644675800A433E7 /* egemb_back_selected_small.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = egemb_back_selected_small.h; sourceTree = "<group>"; };
 		12B8168D1644675800A433E7 /* egemb_refit_banner.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = egemb_refit_banner.h; sourceTree = "<group>"; };
@@ -1931,6 +1940,11 @@
 				DEDA972A180530BE003AD904 /* legacy.c */,
 				DEDA972B180530BE003AD904 /* loader.c */,
 				DEDA972C180530BE003AD904 /* entry_scan.h */,
+				12B2458D18700F5F00A332C6 /* secureboot.c */,
+				12B2458E18700F5F00A332C6 /* securebootkeys.h */,
+				12B2458F18700F5F00A332C6 /* securehash.c */,
+				12B2459018700F5F00A332C6 /* securemenu.c */,
+				12B2459118700F5F00A332C6 /* securevars.c */,
 				DEDA972D180530BE003AD904 /* tool.c */,
 				DEDA972E180530BE003AD904 /* uefibootoption.c */,
 			);
@@ -1988,9 +2002,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				12B2459318700F5F00A332C6 /* securehash.c in Sources */,
 				12DD321A16557F2E00108DFC /* BmLib.c in Sources */,
 				12D7546E1657CDD700376797 /* BdsConnect.c in Sources */,
 				12D754711657CDE800376797 /* DevicePath.c in Sources */,
+				12B2459518700F5F00A332C6 /* securevars.c in Sources */,
 				121E4B57165A0F1A000C2392 /* 915resolution.c in Sources */,
 				121E4B58165A0F1A000C2392 /* edid.c in Sources */,
 				121E4B59165A0F1A000C2392 /* VideoBiosPatchLib.c in Sources */,
@@ -2000,9 +2016,11 @@
 				122489C316A93FC400A0DB6B /* UsbDesc.c in Sources */,
 				122489C416A93FC400A0DB6B /* UsbEnumer.c in Sources */,
 				122489C516A93FC400A0DB6B /* UsbHub.c in Sources */,
+				12B2459418700F5F00A332C6 /* securemenu.c in Sources */,
 				122489C616A93FC400A0DB6B /* UsbUtility.c in Sources */,
 				122489CD16A93FD300A0DB6B /* ComponentName.c in Sources */,
 				122489CE16A93FD300A0DB6B /* MouseHid.c in Sources */,
+				12B2459218700F5F00A332C6 /* secureboot.c in Sources */,
 				122489CF16A93FD300A0DB6B /* UsbMouse.c in Sources */,
 				12B3D27517B23032009D8170 /* Edid.c in Sources */,
 				12A82BA917CFCAE50019A5D3 /* card_vlist.c in Sources */,

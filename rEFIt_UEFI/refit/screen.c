@@ -692,9 +692,26 @@ VOID UpdateAnime(REFIT_MENU_SCREEN *Screen, EG_RECT *Place)
       egFreeImage(CompImage);
     }
     CompImage = egCreateImage(Screen->Film[0]->Width, Screen->Film[0]->Height, TRUE);
-  }   
+  }
+
   x = Place->XPos + (Place->Width - CompImage->Width) / 2;
+  if (Screen->FilmX == FILM_LEFT) {
+    x = Place->XPos;
+  } else if (Screen->FilmX == FILM_RIGHT) {
+    x = Place->XPos + (Place->Width - CompImage->Width);
+  } else if (Screen->FilmX < FILM_CENTRE){
+    x = Place->XPos + Screen->FilmX;
+  }
   y = Place->YPos + (Place->Height - CompImage->Height) / 2;
+  if (Screen->FilmY == FILM_TOP) {
+    y = Place->YPos;
+  } else if (Screen->FilmY == FILM_BOTTOM) {
+    y = Place->YPos + (Place->Height - CompImage->Height);
+  } else if (Screen->FilmY < FILM_CENTRE) {
+    y = Place->YPos + Screen->FilmY;
+  }
+
+
   Now = AsmReadTsc();
   if (Screen->LastDraw == 0) {
     //first start, we should save background into last frame
@@ -770,6 +787,8 @@ BOOLEAN GetAnime(REFIT_MENU_SCREEN *Screen)
   Screen->Film[i] = egCreateImage(Screen->Film[0]->Width, Screen->Film[0]->Height, FALSE);
 
   Screen->FrameTime = Anime->FrameTime;
+  Screen->FilmX = Anime->FilmX;
+  Screen->FilmY = Anime->FilmY;
   DBG(" found %d frames of the anime\n", i);
   Screen->CurrentFrame = 0;
   Screen->LastDraw = 0;

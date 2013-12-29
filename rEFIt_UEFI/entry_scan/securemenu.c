@@ -85,7 +85,8 @@ STATIC REFIT_MENU_ENTRY   QueryEntry[] = {
 };
 STATIC REFIT_MENU_ENTRY  *QueryEntries[] = { QueryEntry, QueryEntry + 1, QueryEntry + 2 };
 STATIC REFIT_MENU_SCREEN  QueryUserMenu = { 0, L"Secure Boot Authentication", NULL, 3, NULL, 2, QueryEntries,
-                                            0, NULL, FALSE, FALSE, 0, 0, 0, 0, { 0, 0, 0, 0 }, NULL };
+                                            0, NULL, FALSE, FALSE, 0, 0, 0, 0,
+                                            FILM_CENTRE, FILM_CENTRE, { 0, 0, 0, 0 }, NULL };
 
 // Query the secure boot user what to do with image
 UINTN QuerySecureBootUser(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath)
@@ -376,7 +377,8 @@ STATIC REFIT_MENU_ENTRY   ClearImageSignatureEntry = { L"Clear image authenticat
 STATIC REFIT_MENU_ENTRY   DisableSecureBootEntry = { L"Disable secure boot", TAG_DISABLE, 0, 0, 0, NULL, NULL, NULL, {0, 0, 0, 0}, ActionEnter, ActionNone, ActionNone, NULL };
 STATIC REFIT_MENU_ENTRY  *SecureBootEntries[] = { NULL, NULL, NULL, NULL, NULL, NULL };
 STATIC REFIT_MENU_SCREEN  SecureBootMenu = { 0, L"Secure Boot Configuration", NULL, 0, NULL, 0, SecureBootEntries,
-                                             0, NULL, FALSE, FALSE, 0, 0, 0, 0, { 0, 0, 0, 0 }, NULL };
+                                             0, NULL, FALSE, FALSE, 0, 0, 0, 0,
+                                            FILM_CENTRE, FILM_CENTRE, { 0, 0, 0, 0 }, NULL };
 
 STATIC REFIT_MENU_ENTRY   SecureBootPolicyNameEntry[] = {
   { L"Deny", SECURE_BOOT_POLICY_DENY, 0, 0, 0, NULL, NULL, NULL, { 0, 0, 0, 0 }, ActionEnter, ActionNone, ActionNone, NULL },
@@ -399,7 +401,8 @@ STATIC REFIT_MENU_ENTRY  *SecureBootPolicyEntries[] = {
 };
 STATIC REFIT_MENU_SCREEN  SecureBootPolicyMenu = { 0, L"Secure Boot Policy", NULL, 0, NULL,
                                                    sizeof(SecureBootPolicyEntries) / sizeof(REFIT_MENU_ENTRY *), SecureBootPolicyEntries,
-                                                   0, NULL, FALSE, FALSE, 0, 0, 0, 0, { 0, 0, 0, 0 } , NULL };
+                                                   0, NULL, FALSE, FALSE, 0, 0, 0, 0,
+                                                  FILM_CENTRE, FILM_CENTRE, { 0, 0, 0, 0 } , NULL };
 
 // Configure secure boot
 BOOLEAN ConfigureSecureBoot(VOID)
