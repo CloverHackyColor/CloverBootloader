@@ -31,6 +31,7 @@ Re-Work by Slice 2011.
 #define ECDT_SIGN        SIGNATURE_32('E','C','D','T')
 #define DMAR_SIGN        SIGNATURE_32('D','M','A','R')
 #define BGRT_SIGN        SIGNATURE_32('B','G','R','T')
+#define SLIC_SIGN        SIGNATURE_32('S', 'L', 'I', 'C')
 #define APPLE_OEM_ID        { 'A', 'P', 'P', 'L', 'E', ' ' }
 #define APPLE_OEM_TABLE_ID  { 'A', 'p', 'p', 'l', 'e', '0', '0', ' ' }
 #define APPLE_CREATOR_ID    { 'L', 'o', 'k', 'i' }
@@ -2270,9 +2271,9 @@ EFI_STATUS LoadAndInjectDSDT(CHAR16 *AcpiOemPath, CHAR16 *PathPatched, EFI_ACPI_
  */
 EFI_STATUS LoadAndInjectAcpiTable(CHAR16 *AcpiOemPath, CHAR16 *PathPatched, CHAR16 *TableName)
 {
-	EFI_STATUS                    Status;
-	UINT8                         *Buffer = NULL;
-	UINTN                         BufferLen = 0;
+  EFI_STATUS                    Status;
+  UINT8                         *Buffer = NULL;
+  UINTN                         BufferLen = 0;
   EFI_ACPI_DESCRIPTION_HEADER   *TableHeader = NULL;
   
   
@@ -2286,6 +2287,13 @@ EFI_STATUS LoadAndInjectAcpiTable(CHAR16 *AcpiOemPath, CHAR16 *PathPatched, CHAR
       TableHeader = (EFI_ACPI_DESCRIPTION_HEADER*)Buffer;
       TableHeader->Checksum = 0;
       TableHeader->Checksum = (UINT8)(256-Checksum8((CHAR8*)Buffer, TableHeader->Length));
+      
+      // if this is SLIC, then remove previous SLIC if it is there
+      if (TableHeader->Signature == SLIC_SIGN)
+      {
+        DropTableFromXSDT(SLIC_SIGN, 0, 0);
+        DropTableFromRSDT(SLIC_SIGN, 0, 0);
+      }
     }
 
     // loaded - insert it into XSDT/RSDT
@@ -2297,7 +2305,7 @@ EFI_STATUS LoadAndInjectAcpiTable(CHAR16 *AcpiOemPath, CHAR16 *PathPatched, CHAR
       
       // if this was SLIC, then update IDs in XSDT/RSDT
       
-      if (TableHeader->Signature == SIGNATURE_32('S', 'L', 'I', 'C'))
+      if (TableHeader->Signature == SLIC_SIGN)
       {
         if (Rsdt)
         {
