@@ -286,10 +286,13 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
                     (gCPUStructure.Model == CPU_MODEL_JAKETOWN))
                 {
                   j = i << 8;
+                  p_states[p_states_count].Frequency = (UINT32)(100 * i);
+                } else {
+                  p_states[p_states_count].Frequency = (UINT32)(DivU64x32(MultU64x32(gCPUStructure.FSBFrequency, i), Mega));
                 }
 								p_states[p_states_count].Control.Control = (UINT16)j;
 								p_states[p_states_count].CID = j;
-								p_states[p_states_count].Frequency = (UINT32)(DivU64x32(MultU64x32(gCPUStructure.FSBFrequency, i), Mega));
+
                 if (!p_states_count && gSettings.DoubleFirstState) {
                   //double first state
                   p_states_count++;
@@ -343,7 +346,11 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
         AML_CHUNK* pstt = aml_add_package(pack);
         
         aml_add_dword(pstt, p_states[i].Frequency);
-        aml_add_dword(pstt, p_states[i].Frequency<<3); // Power
+        if ((gCPUStructure.Model >= CPU_MODEL_IVY_BRIDGE)) {
+          aml_add_dword(pstt, 0); //zero for power
+        } else {
+          aml_add_dword(pstt, p_states[i].Frequency<<3); // Power
+        }
         aml_add_dword(pstt, 0x0000000A); // Latency
         aml_add_dword(pstt, 0x0000000A); // Latency
         aml_add_dword(pstt, p_states[i].Control.Control);
