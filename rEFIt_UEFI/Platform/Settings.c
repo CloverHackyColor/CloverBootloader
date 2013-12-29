@@ -1607,13 +1607,10 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
     FreePool(GlobalConfig.BannerFileName);
     GlobalConfig.BannerFileName = NULL;
   }
+  GlobalConfig.HideBadges = 0;
   GlobalConfig.BadgeOffsetX = 0xFFFF;
   GlobalConfig.BadgeOffsetY = 0xFFFF;
   GlobalConfig.BadgeScale = 8; //default
-  GlobalConfig.HideBadges = 0;
-  GlobalConfig.BadgeOffsetX = 0;
-  GlobalConfig.BadgeOffsetY = 0;                   
-  GlobalConfig.BadgeScale = 0;
   LayoutBannerOffset = 64; //default value if not set
   GlobalConfig.HideUIFlags = 0;
   GlobalConfig.SelectionColor = 0x80808080; 
