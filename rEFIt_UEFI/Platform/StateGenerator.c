@@ -387,7 +387,7 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
         metPSS = aml_add_method(scop, "_PSS", 0);
         aml_add_return_name(metPSS, name1);
         metPSS = aml_add_method(scop, "APSS", 0);
-        aml_add_return_name(metPSS, "PSS_");
+        aml_add_return_name(metPSS, name1);
         metPPC = aml_add_method(scop, "_PPC", 0);
         aml_add_return_byte(metPPC, gSettings.PLimitDict);
         metPCT = aml_add_method(scop, "_PCT", 0);

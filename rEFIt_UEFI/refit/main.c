@@ -1653,7 +1653,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   LoadDrivers();
   DBG("LoadDrivers() end\n");
   
-  // for DUET
+  // for DUET or Ovmf
   if (StrCmp(gST->FirmwareVendor, L"EDK II") == 0) {
     gDriversFlags.EmuVariableLoaded = TRUE;
   }
