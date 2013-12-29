@@ -104,6 +104,18 @@ trim () {
     echo "${result%"${result##*[![:space:]]}"}" # remove trailing whitespace characters
 }
 
+# Check if an element is in an array
+# Arguments:
+#    $1: string to search
+#    $2+: array elements
+#
+# Return the string if found else return an empty string
+function inArray() {
+  local element
+  for element in "${@:2}"; do [[ "$element" == "$1" ]] && echo "$element" && return 0; done
+  return 1
+}
+
 function makeSubstitutions () {
     # Substition is like: Key=Value
     #
@@ -696,6 +708,7 @@ fi
 # build theme packages
     echo "======================== Themes ========================"
     addGroupChoices "Themes"
+    local specialThemes=('christmas' 'newyear')
 
     # Using themes section from Azi's/package branch.
     packagesidentity="${clover_package_identity}".themes
@@ -705,7 +718,7 @@ fi
     local defaultTheme=  # $(trim $(sed -n 's/^theme *//p' "${SRCROOT}"/CloverV2/EFI/CLOVER/refit.conf))
     for (( i = 0 ; i < ${#themes[@]} ; i++ )); do
         local themeName=${themes[$i]##*/}
-        [[ "$themeName" == christmas ]] && continue # Christmas is a special theme
+        [[ -n $(inArray "$themeName" ${specialThemes[@]}) ]] && continue # it is a special theme
         mkdir -p "${PKG_BUILD_DIR}/${themeName}/Root/"
         rsync -r --exclude=.svn --exclude="*~" "${themes[$i]}/" "${PKG_BUILD_DIR}/${themeName}/Root/${themeName}"
         packageRefId=$(getPackageRefId "${packagesidentity}" "${themeName}")
@@ -718,23 +731,22 @@ fi
 
         # local selectTheme="checkFileExists('${themeDestDir}/$themeName/icons/func_clover.png')"
         local selectTheme="choicePreviouslySelected('$packageRefId')"
-   #     [[ "$themeName" == "christmas" ]] && selectTheme='true'
         # Select the default theme
         [[ "$themeName" == "$defaultTheme" ]] && selectTheme='true'
         addChoice --group="Themes"  --start-selected="$selectTheme"  --pkg-refs="$packageRefId"  "${themeName}"
     done
 
-	# Special themes
-	packagesidentity="${clover_package_identity}".special.themes
+    # Special themes
+    packagesidentity="${clover_package_identity}".special.themes
     local artwork="${SRCROOT}/CloverV2/themespkg/"
-    local themes=('christmas')
     local themeDestDir='/EFIROOTDIR/EFI/CLOVER/themes'
     local currentMonth=$(date -j '+%m')
-    for (( i = 0 ; i < ${#themes[@]} ; i++ )); do
-        local themeName=${themes[$i]##*/}
-        [[ $currentMonth -lt 11 && "$themeName" == christmas ]] && continue # Don't add christmas theme if month < 11
+    for (( i = 0 ; i < ${#specialThemes[@]} ; i++ )); do
+        local themeName=${specialThemes[$i]##*/}
+        # Don't add christmas and newyear themes if month < 11
+        [[ $currentMonth -lt 11 ]] && [[ "$themeName" == christmas || "$themeName" == newyear ]] && continue
         mkdir -p "${PKG_BUILD_DIR}/${themeName}/Root/"
-        rsync -r --exclude=.svn --exclude="*~" "$artwork/${themes[$i]}/" "${PKG_BUILD_DIR}/${themeName}/Root/${themeName}"
+        rsync -r --exclude=.svn --exclude="*~" "$artwork/${specialThemes[$i]}/" "${PKG_BUILD_DIR}/${themeName}/Root/${themeName}"
         packageRefId=$(getPackageRefId "${packagesidentity}" "${themeName}")
         addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${themeName}" \
                            --subst="themeName=$themeName"                \
