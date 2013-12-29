@@ -1916,7 +1916,7 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
       dict2 = GetProperty(dictPointer, "RelativeXPos");
       if (dict2) {
         if (dict2->type == kTagTypeInteger) {
-          Anime->FilmX = (INTN)dict2->string;
+          Anime->FilmX = (INTN)(UINTN)dict2->string;
         } else if ((dict2->type == kTagTypeString) && dict2->string) {
           if (AsciiStrCmp(dict2->string, "centre") == 0) {
             Anime->FilmX = FILM_CENTRE;
@@ -1925,14 +1925,14 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
           } else if (AsciiStrCmp(dict2->string, "right") == 0) {
             Anime->FilmX = FILM_RIGHT;
           } else {
-            Anime->FilmX = AsciiStrDecimalToUintn(dict2->string);
+            Anime->FilmX = (INTN)AsciiStrDecimalToUintn(dict2->string);
           }
         }
       }
       dict2 = GetProperty(dictPointer, "RelativeYPos");
       if (dict2) {
         if (dict2->type == kTagTypeInteger) {
-          Anime->FilmY = (INTN)dict2->string;
+          Anime->FilmY = (INTN)(UINTN)dict2->string;
         } else if ((dict2->type == kTagTypeString) && dict2->string) {
           if (AsciiStrCmp(dict2->string, "centre") == 0) {
             Anime->FilmY = FILM_CENTRE;
@@ -1941,7 +1941,7 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
           } else if (AsciiStrCmp(dict2->string, "bottom") == 0) {
             Anime->FilmY = FILM_BOTTOM;
           } else {
-            Anime->FilmY = AsciiStrDecimalToUintn(dict2->string);
+            Anime->FilmY = (INTN)AsciiStrDecimalToUintn(dict2->string);
           }
         }
       }

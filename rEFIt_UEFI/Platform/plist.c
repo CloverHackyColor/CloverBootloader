@@ -880,7 +880,7 @@ void FreeTag( TagPtr tag )
     return;
   }
 
-	if (tag->string)  {
+	if (tag->type == kTagTypeString && tag->string)  {
     FreeSymbol(tag->string);
   }
 	if (tag->data) {
