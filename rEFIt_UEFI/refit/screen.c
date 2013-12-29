@@ -700,7 +700,11 @@ VOID UpdateAnime(REFIT_MENU_SCREEN *Screen, EG_RECT *Place)
   } else if (Screen->FilmX == FILM_RIGHT) {
     x = Place->XPos + (Place->Width - CompImage->Width);
   } else if (Screen->FilmX < FILM_CENTRE){
-    x = Place->XPos + Screen->FilmX;
+    if ((Screen->FilmX < Place->Width) && (Screen->FilmX > -Place->Width)) {
+      x = Place->XPos + Screen->FilmX;
+    } else {
+      x = Place->XPos;
+    }
   }
   y = Place->YPos + (Place->Height - CompImage->Height) / 2;
   if (Screen->FilmY == FILM_TOP) {
@@ -708,9 +712,12 @@ VOID UpdateAnime(REFIT_MENU_SCREEN *Screen, EG_RECT *Place)
   } else if (Screen->FilmY == FILM_BOTTOM) {
     y = Place->YPos + (Place->Height - CompImage->Height);
   } else if (Screen->FilmY < FILM_CENTRE) {
-    y = Place->YPos + Screen->FilmY;
+    if ((Screen->FilmY < Place->Height) && (Screen->FilmY > -Place->Height)) {
+      y = Place->YPos + Screen->FilmY;
+    } else {
+      y = Place->YPos;
+    }
   }
-
 
   Now = AsmReadTsc();
   if (Screen->LastDraw == 0) {

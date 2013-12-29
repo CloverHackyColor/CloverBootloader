@@ -574,7 +574,7 @@ EFI_STATUS ParseTagInteger(CHAR8* buffer, TagPtr * tag,UINT32* lenPtr)
 {
 	EFI_STATUS	Status;
 	UINT32		length = 0; 
-	UINTN     integer;
+	INTN     integer;
 	UINT32		size;
 	BOOLEAN		negative = FALSE;
 	CHAR8*		val = buffer;
@@ -641,7 +641,7 @@ EFI_STATUS ParseTagInteger(CHAR8* buffer, TagPtr * tag,UINT32* lenPtr)
 		}
 		
 		if (negative) {
-			integer = (UINTN)(-(INTN)integer);
+			integer = -integer;
 		}
 	}
   
