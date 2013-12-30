@@ -478,6 +478,7 @@ radeon_card_info_t radeon_cards[] = {
   { 0x6778,	0x00000000, CHIP_FAMILY_CAICOS,		"AMD Radeon HD 7000 Series",		kBulrushes	},
 	{ 0x6779,	0x00000000, CHIP_FAMILY_CAICOS,		"AMD Radeon HD 7450 Series",		kBulrushes	},
   { 0x677B,	0x00000000, CHIP_FAMILY_CAICOS,		"AMD Radeon HD 7400 Series",		kBulrushes	},
+  
 //Tahiti  
 //Framebuffers: Aji - 4 Desktop, Buri - 4 Mobile, Chutoro - 5 Mobile,  Dashimaki - 4, IkuraS - HMDI
 // Ebi - 5 Mobile, Gari - 5 M, Futomaki - 4 D, Hamachi - 4 D, OPM - 6 Server, Ikura - 6,   
@@ -488,6 +489,8 @@ radeon_card_info_t radeon_cards[] = {
   { 0x679A,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7950 Series",		kFutomaki	},
   { 0x679E,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7870",           kFutomaki	},
   { 0x679F,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7950 Series",		kFutomaki	},
+// Hawaii ?  
+  { 0x67B1,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon R9 290",            kFutomaki	},
   //Pitcairn
 	{ 0x6800,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7970m ",         kBuri	},
 	{ 0x6806,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7600 Series",		kFutomaki	},

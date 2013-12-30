@@ -555,7 +555,10 @@ VOID GetDefaultSettings(VOID)
     // gSettings.EnableC2        = TRUE;
     // gSettings.EnableC6        = TRUE;
     gSettings.PluginType      = 1;
-    gSettings.MinMultiplier   = 7;
+    
+    if (gCPUStructure.Model == CPU_MODEL_IVY_BRIDGE) {
+      gSettings.MinMultiplier   = 7;
+    } 
     // gSettings.DoubleFirstState = FALSE;
     gSettings.DropSSDT        = TRUE;
     gSettings.C3Latency       = 0x3E7;
