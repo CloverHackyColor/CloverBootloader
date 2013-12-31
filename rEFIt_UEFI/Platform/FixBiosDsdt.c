@@ -4417,7 +4417,7 @@ VOID FixBiosDsdt (UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, 
   
   // Fix Display
   if ((gSettings.FixDsdt & FIX_DISPLAY) || (gSettings.FixDsdt & FIX_INTELGFX)) {
-    INTN i;
+    INT32 i;
     for (i=0; i<2; i++) {
       if (DisplayADR1[i]) { 
         if (gSettings.FixDsdt & FIX_NEW_WAY) {

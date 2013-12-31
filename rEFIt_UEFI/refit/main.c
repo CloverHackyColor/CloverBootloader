@@ -1958,7 +1958,10 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
         case TAG_RESET:    // Restart
           TerminateScreen();
+          // Attempt warm reboot
           gRS->ResetSystem(EfiResetWarm, EFI_SUCCESS, 0, NULL);
+          // Warm reboot may not be supported attempt cold reboot
+          gRS->ResetSystem(EfiResetCold, EFI_SUCCESS, 0, NULL);
           MainLoopRunning = FALSE;   // just in case we get this far
           break;
 
