@@ -794,6 +794,8 @@ MACHINE_TYPES GetDefaultModel()
       case CPU_MODEL_IVY_BRIDGE_E5:  
         DefaultType = MacBookAir52;
 				break;
+      case CPU_MODEL_HASWELL:
+      case CPU_MODEL_HASWELL_MB:
       case CPU_MODEL_HASWELL_ULT:
       case CPU_MODEL_HASWELL_ULX:
         DefaultType = MacBookAir62;
