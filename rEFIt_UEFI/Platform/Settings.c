@@ -4563,8 +4563,8 @@ EFI_STATUS SetFSInjection(IN LOADER_ENTRY *Entry)
     BOOLEAN                     BlockCaches = FALSE;
     FSI_STRING_LIST             *Blacklist = 0;
     FSI_STRING_LIST             *ForceLoadKexts;
-    
-    MsgLog("FSInjection:");
+
+    MsgLog("FSInjection: ");
     
     Volume = Entry->Volume;
     
@@ -4582,26 +4582,27 @@ EFI_STATUS SetFSInjection(IN LOADER_ENTRY *Entry)
     // get FSINJECTION_PROTOCOL
     Status = gBS->LocateProtocol(&gFSInjectProtocolGuid, NULL, (void **)&FSInject);
     if (EFI_ERROR(Status)) {
-        //Print(L"- No FSINJECTION_PROTOCOL, Status = %r\n", Status);
-        MsgLog(" not started - gFSInjectProtocolGuid not found\n");
-        return EFI_NOT_STARTED;
+      //Print(L"- No FSINJECTION_PROTOCOL, Status = %r\n", Status);
+      MsgLog("not started - gFSInjectProtocolGuid not found\n");
+      return EFI_NOT_STARTED;
     }
-    
+
     // check if blocking of caches is needed
     if (OSFLAG_ISSET(Entry->Flags, OSFLAG_NOCACHES)) {
-        MsgLog(" blocking caches");
+        MsgLog("blocking caches");
         BlockCaches = TRUE;
         // add caches to blacklist
         Blacklist = FSInject->CreateStringList();
         if (Blacklist == NULL) {
-            MsgLog(" - not enough memory!\n");
-            return EFI_NOT_STARTED;
+          MsgLog(": Error not enough memory!\n");
+          return EFI_NOT_STARTED;
         }
         FSInject->AddStringToList(Blacklist, L"\\System\\Library\\Caches\\com.apple.kext.caches\\Startup\\kernelcache");
         FSInject->AddStringToList(Blacklist, L"\\System\\Library\\Caches\\com.apple.kext.caches\\Startup\\Extensions.mkext");
         FSInject->AddStringToList(Blacklist, L"\\System\\Library\\Extensions.mkext");
         FSInject->AddStringToList(Blacklist, L"\\com.apple.recovery.boot\\kernelcache");
         FSInject->AddStringToList(Blacklist, L"\\com.apple.recovery.boot\\Extensions.mkext");
+        MsgLog(", ");
     }
     
     // check if kext injection is needed
@@ -4611,19 +4612,19 @@ EFI_STATUS SetFSInjection(IN LOADER_ENTRY *Entry)
         SrcDir = GetExtraKextsDir(Entry->OSVersion);
         if (SrcDir != NULL) {
           // we have found it - injection will be done
-          MsgLog(", injecting kexts from: '%s'", SrcDir);
+          MsgLog("using kexts path: '%s'", SrcDir);
           InjectionNeeded = TRUE;
         } else {
-          MsgLog(", skipping kext injection (kexts folder not found)\n");
+          MsgLog("skipping kext injection (kexts folder not found)");
         }
     } else {
-        MsgLog(", skipping kext injection (not requested)\n");
+        MsgLog("skipping kext injection (not requested)");
     }
     
     // prepare list of kext that will be forced to load
     ForceLoadKexts = FSInject->CreateStringList();
     if (ForceLoadKexts == NULL) {
-        MsgLog(" - not enough memory!\n");
+        MsgLog(" - Error: not enough memory!\n");
         return EFI_NOT_STARTED;
     }
     KextPatcherRegisterKexts(FSInject, ForceLoadKexts);
@@ -4635,12 +4636,12 @@ EFI_STATUS SetFSInjection(IN LOADER_ENTRY *Entry)
     if (SrcDir != NULL) FreePool(SrcDir);
     
     if (EFI_ERROR(Status)) {
-        MsgLog(" - not done - could not install injection!\n");
+        MsgLog(" - Error: could not install injection!\n");
         return EFI_NOT_STARTED;
     }
     
     // reinit Volume->RootDir? it seems it's not needed.
     
-    MsgLog(" - done!\n");
+    MsgLog("\n");
 	return Status;
 }

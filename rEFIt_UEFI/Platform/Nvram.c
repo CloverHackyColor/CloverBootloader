@@ -880,7 +880,9 @@ EFI_STATUS SetStartupDiskVolume(IN REFIT_VOLUME *Volume, IN CHAR16 *LoaderPath)
   UINT32              Attributes;
   
   
-  DBG("SetStartupDiskVolume ...\n Volume: '%s', LoaderPath: '%s'\n\n", Volume->VolName, LoaderPath);
+  DBG("SetStartupDiskVolume:\n");
+  DBG("  * Volume: '%s'\n", Volume->VolName);
+  DBG("  * LoaderPath: '%s'\n", LoaderPath);
   
   //
   // construct dev path for Volume/LoaderPath
@@ -890,10 +892,10 @@ EFI_STATUS SetStartupDiskVolume(IN REFIT_VOLUME *Volume, IN CHAR16 *LoaderPath)
     FileDevPath = FileDevicePath(NULL, LoaderPath);
     DevPath = AppendDevicePathNode(DevPath, FileDevPath);
   }
-  DBG(" DevPath: %s\n", Volume->VolName, FileDevicePathToStr(DevPath));
+  DBG("  * DevPath: %s\n", Volume->VolName, FileDevicePathToStr(DevPath));
   
   Guid = FindGPTPartitionGuidInDevicePath(Volume->DevicePath);
-  DBG(" GUID = %g\n", Guid);
+  DBG("  * GUID = %g\n", Guid);
   
   //
   // let's save it without EFI_VARIABLE_NON_VOLATILE in CloverEFI like other vars so far
@@ -933,7 +935,7 @@ EFI_STATUS SetStartupDiskVolume(IN REFIT_VOLUME *Volume, IN CHAR16 *LoaderPath)
     EfiBootDevice = AllocateZeroPool(AsciiStrLen(EfiBootDeviceTmpl) + 36);
     AsciiSPrint(EfiBootDevice, Size, EfiBootDeviceTmpl, Guid);
     Size = AsciiStrLen(EfiBootDevice);
-    DBG(" efi-boot-device: %a\n", EfiBootDevice);
+    DBG("  * efi-boot-device: %a\n", EfiBootDevice);
     
     Status = SetNvramVariable(L"efi-boot-device",
                               &gEfiAppleBootGuid,

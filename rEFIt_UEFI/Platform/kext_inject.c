@@ -249,7 +249,7 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
 	Volume = Entry->Volume;
 	SrcDir = GetExtraKextsDir(Entry->OSVersion);
 	if (SrcDir != NULL) {
-		MsgLog("Injecting kexts for arch=%s from %s\n", (archCpuType==CPU_TYPE_X86_64)?L"x86_64":(archCpuType==CPU_TYPE_I386)?L"i386":L"", SrcDir);
+		MsgLog("Preparing kexts injection for arch=%s from %s\n", (archCpuType==CPU_TYPE_X86_64)?L"x86_64":(archCpuType==CPU_TYPE_I386)?L"i386":L"", SrcDir);
 		// look through contents of the directory
 		DirIterOpen(SelfVolume->RootDir, SrcDir, &KextIter);
 		while (DirIterNext(&KextIter, 1, L"*.kext", &KextFile)) {
@@ -257,7 +257,7 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
 				continue;   // skip this
 			
 			UnicodeSPrint(FileName, 512, L"%s\\%s", SrcDir, KextFile->FileName);
-			MsgLog("Extra kext: %s\n", FileName);
+			MsgLog("  Extra kext: %s\n", FileName);
 			AddKext(FileName, archCpuType);
 
 			UnicodeSPrint(PlugIns, 512, L"%s\\%s", FileName, L"Contents\\PlugIns");
@@ -267,7 +267,7 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
 					continue;   // skip this
 				
 				UnicodeSPrint(FileName, 512, L"%s\\%s", PlugIns, PlugInFile->FileName);
-				MsgLog("Extra PlugIn kext: %s\n", FileName);
+				MsgLog("  Extra PlugIn kext: %s\n", FileName);
 				AddKext(FileName, archCpuType);
 			}
 			DirIterClose(&PlugInIter);
@@ -279,14 +279,14 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
 	if (GetKextCount() > 0) {
 		mm_extra_size = GetKextCount() * (sizeof(DeviceTreeNodeProperty) + sizeof(_DeviceTreeBuffer));
 		mm_extra = AllocateZeroPool(mm_extra_size - sizeof(DeviceTreeNodeProperty));
-      Status =  LogDataHub(&gEfiMiscSubClassGuid, L"mm_extra", mm_extra, (UINT32)(mm_extra_size - sizeof(DeviceTreeNodeProperty)));
+		Status =  LogDataHub(&gEfiMiscSubClassGuid, L"mm_extra", mm_extra, (UINT32)(mm_extra_size - sizeof(DeviceTreeNodeProperty)));
 		extra_size = GetKextsSize();
 		extra = AllocateZeroPool(extra_size - sizeof(DeviceTreeNodeProperty) + EFI_PAGE_SIZE);
 		Status =  LogDataHub(&gEfiMiscSubClassGuid, L"extra", extra, (UINT32)(extra_size - sizeof(DeviceTreeNodeProperty) + EFI_PAGE_SIZE));
-		MsgLog("count: %d       \n", GetKextCount());
-		MsgLog("mm_extra_size: %d       \n", mm_extra_size);
-		MsgLog("extra_size: %d       \n", extra_size);
-		MsgLog("offset: %d           \n", extra_size - sizeof(DeviceTreeNodeProperty) + EFI_PAGE_SIZE);
+		// MsgLog("count: %d		\n", GetKextCount());
+		// MsgLog("mm_extra_size: %d		\n", mm_extra_size);
+		// MsgLog("extra_size: %d		 \n", extra_size);
+		// MsgLog("offset: %d			 \n", extra_size - sizeof(DeviceTreeNodeProperty) + EFI_PAGE_SIZE);
 	}
 
 	return EFI_SUCCESS;
