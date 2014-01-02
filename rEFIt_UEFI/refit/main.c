@@ -1969,12 +1969,15 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       switch (ChosenEntry->Tag) {
 
         case TAG_RESET:    // Restart
-          TerminateScreen();
           // Attempt warm reboot
           gRS->ResetSystem(EfiResetWarm, EFI_SUCCESS, 0, NULL);
           // Warm reboot may not be supported attempt cold reboot
           gRS->ResetSystem(EfiResetCold, EFI_SUCCESS, 0, NULL);
-          MainLoopRunning = FALSE;   // just in case we get this far
+          // Terminate the screen and just exit
+          TerminateScreen();
+          MainLoopRunning = FALSE;
+          ReinitDesktop = FALSE;
+          AfterTool = TRUE;
           break;
 
         case TAG_SHUTDOWN: // It is not Shut Down, it is Exit from Clover
@@ -2090,7 +2093,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       //  ReinitRefitLib();
       //    PauseForKey(L"After ReinitRefitLib");
     }
-    ReinitSelfLib();
+    if (ReinitDesktop) {
+      ReinitSelfLib();
+    }
     //    PauseForKey(L"After ReinitSelfLib");
   } while (ReinitDesktop);
   
