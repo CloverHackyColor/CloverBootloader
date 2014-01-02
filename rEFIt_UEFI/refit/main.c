@@ -539,6 +539,8 @@ static EFI_STATUS LoadEFIImage(IN EFI_DEVICE_PATH *DevicePath,
                                 OUT EFI_HANDLE *NewImageHandle)
 {
   EFI_DEVICE_PATH *DevicePaths[2];
+
+#ifdef ENABLE_SECURE_BOOT
   // Verify secure boot policy
   if (gSettings.SecureBoot && gSettings.SecureBootSetupMode) {
     // Only verify if in forced secure boot mode
@@ -547,6 +549,8 @@ static EFI_STATUS LoadEFIImage(IN EFI_DEVICE_PATH *DevicePath,
       return Status;
     }
   }
+#endif // ENABLE_SECURE_BOOT
+
   // Load the image now
   DevicePaths[0] = DevicePath;
   DevicePaths[1] = NULL;
@@ -1630,8 +1634,10 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   gSettings.PointerSpeed = 2;
   gSettings.DoubleClickTime = 500;
 
+#ifdef ENABLE_SECURE_BOOT
   // Initialize secure boot
   InitializeSecureBoot();
+#endif // ENABLE_SECURE_BOOT
 
   if (!GlobalConfig.FastBoot) {
     GetListOfThemes();
@@ -1646,11 +1652,13 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     }
   }
 
+#ifdef ENABLE_SECURE_BOOT
   // Install secure boot shim
   if (EFI_ERROR(Status = InstallSecureBoot())) {
     PauseForKey(L"Secure boot failure!\n");
     return Status;
   }
+#endif // ENABLE_SECURE_BOOT
 
   MainMenu.TimeoutSeconds = GlobalConfig.Timeout >= 0 ? GlobalConfig.Timeout : 0;
   
@@ -1688,7 +1696,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   if (EFI_ERROR(Status)){
     DebugLog(2, " %r", Status);
     PauseForKey(L"Error reinit refit\n");
+#ifdef ENABLE_SECURE_BOOT
     UninstallSecureBoot();
+#endif // ENABLE_SECURE_BOOT
     return Status;
   }
   
@@ -1840,8 +1850,10 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         AddCustomTool();
         if (!gSettings.DisableToolScan) {
           ScanTool();
+#ifdef ENABLE_SECURE_BOOT
           // Check for secure boot setup mode
           AddSecureBootTool();
+#endif // ENABLE_SECURE_BOOT
         }
         //      DBG("ScanTool()\n");
       }
@@ -2004,6 +2016,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
           AfterTool = TRUE;
           break;
 
+#ifdef ENABLE_SECURE_BOOT
         case TAG_SECURE_BOOT: // Try to enable secure boot
           EnableSecureBoot();
           MainLoopRunning = FALSE;
@@ -2014,6 +2027,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
           MainLoopRunning = !ConfigureSecureBoot();
           AfterTool = TRUE;
           break;
+#endif // ENABLE_SECURE_BOOT
 
         case TAG_CLOVER:     // Clover options
           LoaderEntry = (LOADER_ENTRY *)ChosenEntry;
@@ -2086,7 +2100,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   //   gRS->ResetSystem(EfiResetCold, EFI_SUCCESS, 0, NULL);
   //   EndlessIdleLoop();
 
+#ifdef ENABLE_SECURE_BOOT
   UninstallSecureBoot();
+#endif // ENABLE_SECURE_BOOT
 
   // Unload EmuVariable before returning to EFI GUI, as it should not be present when booting other Operating Systems.
   // This seems critical in some UEFI implementations, such as Phoenix UEFI 2.0

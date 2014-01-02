@@ -33,6 +33,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifdef ENABLE_SECURE_BOOT
+
 #include "entry_scan.h"
 
 #include "securebootkeys.h"
@@ -478,3 +480,5 @@ EFI_STATUS SetSignatureDatabase(IN CHAR16   *DatabaseName,
   }
   return SetSignedVariable(DatabaseName, DatabaseGuid, SET_DATABASE_ATTRIBUTES | EFI_VARIABLE_APPEND_WRITE, Database, DatabaseSize);
 }
+
+#endif // ENABLE_SECURE_BOOT

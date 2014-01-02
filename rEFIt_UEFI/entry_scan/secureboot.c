@@ -33,6 +33,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifdef ENABLE_SECURE_BOOT
+
 #include "entry_scan.h"
 
 #include <Protocol/Security.h>
@@ -490,3 +492,5 @@ VOID InitializeSecureBoot(VOID)
     gSettings.SecureBoot = 0;
   }
 }
+
+#endif // ENABLE_SECURE_BOOT

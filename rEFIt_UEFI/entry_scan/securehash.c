@@ -33,6 +33,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifdef ENABLE_SECURE_BOOT
+
 #include "entry_scan.h"
 
 #include <openssl/sha.h>
@@ -885,3 +887,5 @@ VOID *GetImageSignatureDatabase(IN VOID    *FileBuffer,
   }
   return Database;
 }
+
+#endif // ENABLE_SECURE_BOOT

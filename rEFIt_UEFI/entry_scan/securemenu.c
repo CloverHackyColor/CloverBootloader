@@ -33,6 +33,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifdef ENABLE_SECURE_BOOT
+
 #include "entry_scan.h"
 
 #include <Guid/ImageAuthentication.h>
@@ -512,3 +514,5 @@ BOOLEAN ConfigureSecureBoot(VOID)
   } while (StillConfiguring);
   return FALSE;
 }
+
+#endif // ENABLE_SECURE_BOOT

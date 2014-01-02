@@ -84,8 +84,12 @@
   EblCmdLib|EmbeddedPkg/Library/EblCmdLibNull/EblCmdLibNull.inf  
   #FileHandleLib|ShellPkg/Library/BaseFileHandleLib/BaseFileHandleLib.inf
   UefiCpuLib|UefiCpuPkg/Library/BaseUefiCpuLib/BaseUefiCpuLib.inf
+!ifdef ENABLE_SECURE_BOOT
   OpensslLib|Clover/Library/OpensslLib/openssl-$(OPENSSL_VERSION)/OpensslLib.inf
   IntrinsicLib|Clover/Library/IntrinsicLib/IntrinsicLib.inf
+!else
+  OpensslLib|Clover/Library/OpensslLib/OpensslLibNull.inf
+!endif
   
   #
   # Generic Modules
