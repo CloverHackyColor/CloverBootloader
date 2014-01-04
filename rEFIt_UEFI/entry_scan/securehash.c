@@ -253,7 +253,7 @@ STATIC EFI_STATUS AppendSignatureListToDatabase(IN OUT VOID               **Data
   CopyMem(*Database = NewDatabase, OldDatabase, OldDatabaseSize);
   FreePool(OldDatabase);
   // Append signature list to end of database
-  CopyMem(NewDatabase + OldDatabaseSize, SignatureList, List->SignatureListSize);
+  CopyMem(NewDatabase + OldDatabaseSize, List, List->SignatureListSize);
   *DatabaseSize = NewDatabaseSize;
   FreePool(List);
   return EFI_SUCCESS;
