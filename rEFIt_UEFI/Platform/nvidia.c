@@ -640,7 +640,7 @@ static nvidia_card_info_t nvidia_cards[] = {
 	{ 0x10DE06CD,	0x10DE079F,	"Point of View GeForce GTX 470" },
 	{ 0x10DE06CD,	0x10DE979F,	"nVidia GeForce GTX 470" },
 	{ 0x10DE06CD,	0x145834F5,	"GigaByte GeForce GTX 470" },
-  { 0x10DE06CD,	0x14622220,	"MSi GeForce GTX 470 Twin Frozr II" },
+	{ 0x10DE06CD,	0x14622220,	"MSi GeForce GTX 470 Twin Frozr II" },
 	{ 0x10DE06CD,	0x19DA0010,	"Zotac GTX 470" },
 	{ 0x10DE06CD,	0x19DA1153,	"Zotac GeForce GTX 470" },
 	{ 0x10DE06CD,	0x38421472,	"EVGA GeForce GTX 470" },
@@ -1291,7 +1291,7 @@ static nvidia_card_info_t nvidia_cards[] = {
 	{ 0x10DE0FD1,	0x10280578,	"Dell GeForce GT 650M" },
 	{ 0x10DE0FD1,	0x146210C7,	"MSi GeForce GT 650M" },
 	{ 0x10DE0FD1,	0x146210CD,	"MSi GeForce GT 650M" },
-
+	
 	{ 0x10DE0FD2,	0x1028055F,	"Dell GeForce GT 640M" },
 	{ 0x10DE0FD2,	0x144DC0D5,	"Samsung GeForce GT 640M" },
 
@@ -1304,7 +1304,7 @@ static nvidia_card_info_t nvidia_cards[] = {
 	{ 0x10DE0FD4,	0x1028057B,	"Dell GeForce GTX 660M" },
 	{ 0x10DE0FD4,	0x146210D7,	"MSi GeForce GTX 660M" },
   
-  { 0x10DE0FD5,	0x106b0010,	"Apple GeForce GTX 650M" },
+	{ 0x10DE0FD5,	0x106b0010,	"Apple GeForce GTX 650M" },
 
 	{ 0x10DE0FDB,	0x104310AC,	"Asus GK107-ESP-A1" },
 	{ 0x10DE0FDB,	0x10431447,	"Asus GK107-ESP-A1" },
@@ -1643,10 +1643,9 @@ static nvidia_card_info_t nvidia_cards[] = {
 	{ 0x10DE1189,	0x19DA1255,	"Zotac GTX 670 AMP! Edition" },
 	{ 0x10DE1189,	0x38422672,	"EVGA GTX 670" },
 	{ 0x10DE1189,	0x38422678,	"EVGA GTX 670" },
-  // 118A - 118F
 	// 1190 - 119F
 	// 11A0 - 11AF
-  { 0x10DE11A0,	0x10280550,	"Dell GeForce GTX 680M" },
+	{ 0x10DE11A0,	0x10280550,	"Dell GeForce GTX 680M" },
 	{ 0x10DE11A0,	0x10280551,	"Dell GeForce GTX 680M" },
 	{ 0x10DE11A0,	0x1028057B,	"Dell GeForce GTX 680M" },
 	{ 0x10DE11A0,	0x10280580,	"Dell GeForce GTX 680M" },
@@ -1681,7 +1680,7 @@ static nvidia_card_info_t nvidia_cards[] = {
 	{ 0x10DE11BE,	0x15585105,	"Clevo Quadro K3000M" },
 	{ 0x10DE11BE,	0x15587102,	"Clevo Quadro K3000M" },
 	// 11C0 - 11CF
-  { 0x10DE11C0,	0x10DE0995,	"Inno3D GeForce GTX660" },
+	{ 0x10DE11C0,	0x10DE0995,	"Inno3D GeForce GTX660" },
 
 	{ 0x10DE11C6,	0x1043842A,	"Asus GeForce GTX 650 Ti" },
 	{ 0x10DE11C6,	0x10DE1016,	"nVidia GeForce GTX 650 Ti" },
@@ -1704,7 +1703,7 @@ static nvidia_card_info_t nvidia_cards[] = {
 	{ 0x10DE1201,	0x104383B4,	"Asus GeForce GTX 560" },
 	{ 0x10DE1201,	0x10DE0895,	"nVidia GeForce GTX 560" },
 	{ 0x10DE1201,	0x14622383,	"MSi GeForce GTX 560" },
-  // 1202 - 1205
+	// 1202 - 1205
 	{ 0x10DE1206,	0x10DE0958,	"nVidia GeForce GTX 555" },
 
 	{ 0x10DE1207,	0x174B0645,	"PC Partner GeForce GT 645" },
@@ -2221,7 +2220,7 @@ static nvidia_card_info_t nvidia_cards[] = {
 	{ 0x10DE0614,	NV_SUB_IDS,	"GeForce 9800 GT" },
 	{ 0x10DE0615,	NV_SUB_IDS,	"GeForce GTS 250" },
 	{ 0x10DE0617,	NV_SUB_IDS,	"GeForce 9800M GTX" },
-	{ 0x10DE0618,	NV_SUB_IDS,	"GeForce GTX 170M" },
+	{ 0x10DE0618,	NV_SUB_IDS,	"GeForce GTX 170M / 260M" },
 	{ 0x10DE0619,	NV_SUB_IDS,	"Quadro FX 4700 X2" },
 	{ 0x10DE061A,	NV_SUB_IDS,	"Quadro FX 3700" },
 	{ 0x10DE061B,	NV_SUB_IDS,	"Quadro VX 200" },
@@ -2678,25 +2677,45 @@ static nvidia_card_info_t nvidia_cards[] = {
 	{ 0x10DE0FC1,	NV_SUB_IDS,	"GeForce GT 640" },
 	{ 0x10DE0FC2,	NV_SUB_IDS,	"GeForce GT 630" },
 	{ 0x10DE0FC6,	NV_SUB_IDS,	"GeForce GTX 650" },
+	{ 0x10DE0FCD,   NV_SUB_IDS,     "GeForce GT 755M" },
 	// 0FD0 - 0FDF
 	{ 0x10DE0FD1,	NV_SUB_IDS,	"GeForce GT 650M" },
 	{ 0x10DE0FD2,	NV_SUB_IDS,	"GeForce GT 640M" },
 	{ 0x10DE0FD3,	NV_SUB_IDS,	"GeForce GT 640M LE" },
 	{ 0x10DE0FD4,	NV_SUB_IDS,	"GeForce GTX 660M" },
 	{ 0x10DE0FD5,	NV_SUB_IDS,	"GeForce GT 650M" },  //GK100
+	{ 0x10DE0FD8,   NV_SUB_IDS,     "GeForce GT 640M" },
+	{ 0x10DE0FD9,   NV_SUB_IDS,     "GeForce GT 645M" },
 	{ 0x10DE0FDB,	NV_SUB_IDS,	"GK107-ESP-A1" },
+	{ 0x10DE0FDF,   NV_SUB_IDS,     "GeForce GT 740M" },
 	// 0FE0 - 0FEF
 	{ 0x10DE0FE0,	NV_SUB_IDS,	"GeForce GTX 660M" },
-  { 0x10DE0FE4,	NV_SUB_IDS,	"GeForce GTX 750M" },
+	{ 0x10DE0FE1,   NV_SUB_IDS,     "GeForce GT 730M" },
+	{ 0x10DE0FE3,   NV_SUB_IDS,     "GeForce GT 745M" },
+	{ 0x10DE0FE4,	NV_SUB_IDS,	"GeForce GTX 750M" },
 	// 0FF0 - 0FFF
+	{ 0x10DE0FF2,   NV_SUB_IDS,     "VGX K1" },
+	{ 0x10DE0FF8,   NV_SUB_IDS,     "Quadro K500M" },
+	{ 0x10DE0FF9,   NV_SUB_IDS,     "Quadro K2000D" },
+	{ 0x10DE0FFA,   NV_SUB_IDS,     "Quadro K600" },
 	{ 0x10DE0FFB,	NV_SUB_IDS,	"Quadro K2000M" },
 	{ 0x10DE0FFC,	NV_SUB_IDS,	"Quadro K1000M" },
 	{ 0x10DE0FFD,	NV_SUB_IDS,	"NVS 510" },
+	{ 0x10DE0FFE,   NV_SUB_IDS,     "Quadro K2000" },
 	{ 0x10DE0FFF,	NV_SUB_IDS,	"Quadro 410" },
 	// 1000 - 100F
-  { 0x10DE1004,	NV_SUB_IDS,	"GTX 780 TI" },
+	{ 0x10DE1003,   NV_SUB_IDS,     "GeForce GTX Titan LE" },
+	{ 0x10DE1004,	NV_SUB_IDS,	"GeForce GTX 780" },
+	{ 0x10DE1005,   NV_SUB_IDS,     "GeForce GTX Titan" },
+	{ 0x10DE100A,   NV_SUB_IDS,     "GeForce GTX 780 Ti" },
 	// 1010 - 101F
+	{ 0x10DE101F,   NV_SUB_IDS,     "Tesla K20" },
 	// 1020 - 102F
+	{ 0x10DE1020,   NV_SUB_IDS,     "Tesla K20X" },
+	{ 0x10DE1021,   NV_SUB_IDS,     "Tesla K20Xm" },
+	{ 0x10DE1022,   NV_SUB_IDS,     "Tesla K20c" },
+	{ 0x10DE1026,   NV_SUB_IDS,     "Tesla K20s" },
+	{ 0x10DE1028,   NV_SUB_IDS,     "Tesla K20m" },
 	// 1030 - 103F
 	// 1040 - 104F
 	{ 0x10DE1040,	NV_SUB_IDS,	"GeForce GT 520" },
@@ -2705,6 +2724,7 @@ static nvidia_card_info_t nvidia_cards[] = {
 	{ 0x10DE1048,	NV_SUB_IDS,	"GeForce 605" },
 	{ 0x10DE1049,	NV_SUB_IDS,	"GeForce GT 620" },
 	{ 0x10DE104A,	NV_SUB_IDS,	"GeForce GT 610" },
+	{ 0x10DE104B,   NV_SUB_IDS,     "GeForce GT 625" },
 	// 1050 - 105F
 	{ 0x10DE1050,	NV_SUB_IDS,	"GeForce GT 520M" },
 	{ 0x10DE1051,	NV_SUB_IDS,	"GeForce GT 520MX" },
@@ -2716,8 +2736,10 @@ static nvidia_card_info_t nvidia_cards[] = {
 	{ 0x10DE1058,	NV_SUB_IDS,	"GeForce 610M" },
 	{ 0x10DE1059,	NV_SUB_IDS,	"GeForce 610M" },
 	{ 0x10DE105A,	NV_SUB_IDS,	"GeForce 610M" },
+	{ 0x10DE105B,   NV_SUB_IDS,     "GeForce 705A" },
 	// 1060 - 106F
 	// 1070 - 107F
+	{ 0x10DE107C,   NV_SUB_IDS,     "Quadro NVS 315" },
 	{ 0x10DE107D,	NV_SUB_IDS,	"NVS 310" },
 	//  { 0x10DE107E,	NV_SUB_IDS,	"GF119-INT" },
 	//  { 0x10DE107F,	NV_SUB_IDS,	"GF119-ES" },
@@ -2774,33 +2796,43 @@ static nvidia_card_info_t nvidia_cards[] = {
 	// 1180 - 118F
 	{ 0x10DE1180,	NV_SUB_IDS,	"GeForce GTX 680" },
 	{ 0x10DE1183,	NV_SUB_IDS,	"GeForce GTX 660 Ti" },
-  { 0x10DE1184,	NV_SUB_IDS,	"GeForce GTX 770" },
+	{ 0x10DE1184,	NV_SUB_IDS,	"GeForce GTX 770" },
 	{ 0x10DE1185,	NV_SUB_IDS,	"GeForce GTX 660" },
-  { 0x10DE1187,	NV_SUB_IDS,	"GeForce GTX 760" },
+	{ 0x10DE1187,	NV_SUB_IDS,	"GeForce GTX 760" },
 	{ 0x10DE1188,	NV_SUB_IDS,	"GeForce GTX 690" },
 	{ 0x10DE1189,	NV_SUB_IDS,	"GeForce GTX 670" },
-  // 118A - 118E
-  { 0x10DE118F,	NV_SUB_IDS,	"Tesla K10" },
+	{ 0x10DE118E,   NV_SUB_IDS,     "GeForce GTX 760 (192-bit)" },
+	{ 0x10DE118F,	NV_SUB_IDS,	"Tesla K10" },
 	// 1190 - 119F
+	{ 0x10DE119F,   NV_SUB_IDS,     "GeForce GTX 780M" },
 	// 11A0 - 11AF
 	{ 0x10DE11A0,	NV_SUB_IDS,	"GeForce GTX 680M" }, //optimus
 	{ 0x10DE11A1,	NV_SUB_IDS,	"GeForce GTX 670MX" },
+	{ 0x10DE11A2,   NV_SUB_IDS,     "GeForce GTX 675MX" },
+	{ 0x10DE11A3,   NV_SUB_IDS,     "GeForce GTX 680MX" },
 	{ 0x10DE11A7,	NV_SUB_IDS,	"GeForce GTX 675MX" },
 	// 11B0 - 11BF
 	{ 0x10DE11BA,	NV_SUB_IDS,	"Quadro K5000" },
 	{ 0x10DE11BC,	NV_SUB_IDS,	"Quadro K5000M" },
 	{ 0x10DE11BD,	NV_SUB_IDS,	"Quadro K4000M" },
 	{ 0x10DE11BE,	NV_SUB_IDS,	"Quadro K3000M" },
+	{ 0x10DE11BF,   NV_SUB_IDS,     "VGX K2" },
 	// 11C0 - 11CF
-  { 0x10DE11C0,	NV_SUB_IDS,	"GeForce GTX 660" },
-  { 0x10DE11C2,	NV_SUB_IDS,	"GeForce GTX 650 TI BOOST" },
-	{ 0x10DE11C6,	NV_SUB_IDS,	"GeForce GTX 650 TI" },
-  { 0x10DE11D0, NV_SUB_IDS,	"GK106-INT353" },
+	{ 0x10DE11C0,	NV_SUB_IDS,	"GeForce GTX 660" },
+	{ 0x10DE11C2,	NV_SUB_IDS,	"GeForce GTX 650 Ti BOOST" },
+	{ 0x10DE11C3,	NV_SUB_IDS,	"GeForce GTX 650 Ti" },
+	{ 0x10DE11C4,   NV_SUB_IDS,     "GeForce GTX 645" },
+	{ 0x10DE11C6,	NV_SUB_IDS,	"GeForce GTX 650 Ti" },
+	{ 0x10DE11D0,	NV_SUB_IDS,	"GK106-INT353" },
 	// 11D0 - 11DF
 	// 11E0 - 11EF
-  { 0x10DE11E0, NV_SUB_IDS,	"GeForce GTX 770M" },
+	{ 0x10DE11E0,	NV_SUB_IDS,	"GeForce GTX 770M" },
+	{ 0x10DE11E1,   NV_SUB_IDS,     "N14E-GE-B-A1" },
+	{ 0x10DE11E2,   NV_SUB_IDS,     "GeForce GTX 765M" },
+	{ 0x10DE11E3,   NV_SUB_IDS,     "GeForce GTX 760M" },
 	// 11F0 - 11FF
 	{ 0x10DE11FA,	NV_SUB_IDS,	"Quadro K4000" },
+	{ 0x10DE11FC,   NV_SUB_IDS,     "Quadro 2100M" },
 	// 1200 - 120F
 	{ 0x10DE1200,	NV_SUB_IDS,	"GeForce GTX 560 Ti" },
 	{ 0x10DE1201,	NV_SUB_IDS,	"GeForce GTX 560" },
@@ -2830,12 +2862,22 @@ static nvidia_card_info_t nvidia_cards[] = {
 	// 1260 - 126F
 	// 1270 - 127F
 	// 1280 - 128F
-  { 0x10DE1280,	NV_SUB_IDS,	"GeForce GT 635" },
-  { 0x10DE1282,	NV_SUB_IDS,	"GeForce GT 640" },
-  { 0x10DE1284,	NV_SUB_IDS,	"GeForce GT 630" },
+	{ 0x10DE1280,	NV_SUB_IDS,	"GeForce GT 635" },
+	{ 0x10DE1282,	NV_SUB_IDS,	"GeForce GT 640" },
+	{ 0x10DE1284,	NV_SUB_IDS,	"GeForce GT 630" },
 	// 1290 - 129F
+	{ 0x10DE1290,   NV_SUB_IDS,     "GeForce GT 730M" },
+	{ 0x10DE1291,   NV_SUB_IDS,     "GeForce GT 735M" },
+	{ 0x10DE1292,   NV_SUB_IDS,     "GeForce GT 740M" },
+	{ 0x10DE1293,   NV_SUB_IDS,     "GeForce GT 730M" },
+	{ 0x10DE1294,   NV_SUB_IDS,     "GeForce GT 740M" },
+	{ 0x10DE1295,   NV_SUB_IDS,     "GeForce GT 710M" },
+	{ 0x10DE1298,   NV_SUB_IDS,     "GeForce GT 720M" },
 	// 12A0 - 12AF
+	{ 0x10DE12AF,   NV_SUB_IDS,     "GK208-INT" },
 	// 12B0 - 12BF
+	{ 0x10DE12B0,   NV_SUB_IDS,     "GK208-CS-Q" },
+	{ 0x10DE12BA,   NV_SUB_IDS,     "Quadro K510M" }
 	// 12C0 - 12CF
 	// 12D0 - 12DF
 	// 12E0 - 12EF
@@ -3309,6 +3351,7 @@ static INT32 devprop_add_nvidia_template(DevPropDevice *device)
 	{
 		return 0;
 	}
+#ifndef NVIDIA_INJECT_SINGLE
 	if (!DP_ADD_TEMP_VAL(device, nvidia_compatible_1))
 	{
 		return 0;
@@ -3321,6 +3364,9 @@ static INT32 devprop_add_nvidia_template(DevPropDevice *device)
 	{
 		return 0;
 	}
+#else
+	DBG("NVidia: Injecting only device 0\n");
+#endif // NVIDIA_INJECT_SINGLE
 	if (devices_number == 1)
 	{
 		if (!DP_ADD_TEMP_VAL(device, nvidia_device_type_parent))
@@ -3607,6 +3653,7 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
   }
   
   if (gSettings.FakeNVidia) {
+    DBG("NVidia: FakeID %x:%x\n",gSettings.FakeNVidia & 0xFFFF,gSettings.FakeNVidia >> 16);
     UINT32 FakeID = gSettings.FakeNVidia >> 16;
     devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
     FakeID = gSettings.FakeNVidia & 0xFFFF;
