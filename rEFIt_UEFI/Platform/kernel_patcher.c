@@ -486,9 +486,12 @@ BOOLEAN KernelPatchPm(VOID *kernelData)
   DBG("Patching kernel power management...\n");
   while (Ptr < End) {
     if (KERNEL_PATCH_SIGNATURE == (*((UINT64 *)Ptr))) {
-      if (CompareMem(Ptr + sizeof(UINT64), KernelPatchPmSrc + sizeof(UINT64), sizeof(KernelPatchPmSrc) - sizeof(UINT64)) == 0) {
+      // Bytes 19,20 of KernelPm patch for kernel 13.x change between kernel versions, so we skip them in search&replace
+      if ((CompareMem(Ptr + sizeof(UINT64),   KernelPatchPmSrc + sizeof(UINT64),   18*sizeof(UINT8) - sizeof(UINT64)) == 0) && 
+          (CompareMem(Ptr + 20*sizeof(UINT8), KernelPatchPmSrc + 20*sizeof(UINT8), sizeof(KernelPatchPmSrc) - 20*sizeof(UINT8)) == 0)) {
         // Don't copy more than the source here!
-        CopyMem(Ptr, KernelPatchPmRepl, sizeof(KernelPatchPmSrc));
+        CopyMem(Ptr, KernelPatchPmRepl, 18*sizeof(UINT8));
+        CopyMem(Ptr + 20*sizeof(UINT8), KernelPatchPmRepl + 20*sizeof(UINT8), sizeof(KernelPatchPmSrc) - 20*sizeof(UINT8));
         DBG("Kernel power management patch region 1 found and patched\n");
         return TRUE;
       } else if (CompareMem(Ptr + sizeof(UINT64), KernelPatchPmSrc2 + sizeof(UINT64), sizeof(KernelPatchPmSrc2) - sizeof(UINT64)) == 0) {
@@ -1054,7 +1057,9 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
   }
 
   // CPU power management patch for haswell with locked msr
+  DBG_RT("\nKernelPm patch: ");
   if (gSettings.KPKernelPm) {
+    DBG_RT("Enabled: ");
     KernelAndKextPatcherInit();
     if (KernelData == NULL) {
       if (gSettings.KPDebug) {
