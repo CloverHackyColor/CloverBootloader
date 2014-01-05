@@ -56,6 +56,13 @@ extern CHAR8* gDeviceProperties;
 	
 BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev);
 
+struct nvidia_pci_info_t;
+typedef struct {
+	UINT32    device; // VendorID + DeviceID
+	CHAR8        *name_model;
+} nvidia_pci_info_t;
+
+struct nvidia_card_info_t;
 typedef struct
 {
 	UINT32 device; // VendorID + DeviceID

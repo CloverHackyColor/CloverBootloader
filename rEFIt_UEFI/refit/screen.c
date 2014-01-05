@@ -700,10 +700,12 @@ VOID UpdateAnime(REFIT_MENU_SCREEN *Screen, EG_RECT *Place)
   } else if (Screen->FilmX == FILM_RIGHT) {
     x = Place->XPos + (Place->Width - CompImage->Width);
   } else if (Screen->FilmX < FILM_CENTRE){
-    if ((Screen->FilmX < Place->Width) && (Screen->FilmX > -Place->Width)) {
-      x = Place->XPos + Screen->FilmX;
-    } else {
-      x = Place->XPos;
+    x = Place->XPos + Screen->FilmX;
+    if (x < 0) {
+      x = 0;
+    }
+    if (x > (UGAWidth  - CompImage->Width)) {
+      x = UGAWidth - CompImage->Width;
     }
   }
   y = Place->YPos + (Place->Height - CompImage->Height) / 2;
@@ -712,10 +714,12 @@ VOID UpdateAnime(REFIT_MENU_SCREEN *Screen, EG_RECT *Place)
   } else if (Screen->FilmY == FILM_BOTTOM) {
     y = Place->YPos + (Place->Height - CompImage->Height);
   } else if (Screen->FilmY < FILM_CENTRE) {
-    if ((Screen->FilmY < Place->Height) && (Screen->FilmY > -Place->Height)) {
-      y = Place->YPos + Screen->FilmY;
-    } else {
-      y = Place->YPos;
+    y = Place->YPos + Screen->FilmY;
+    if (y < 0) {
+      y = 0;
+    }
+    if (y > (UGAHeight - CompImage->Height)) {
+      y = UGAHeight - CompImage->Height;
     }
   }
 

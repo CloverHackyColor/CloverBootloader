@@ -719,8 +719,7 @@ UINT16 GetAdvancedCpuType ()
               return 0x603;
             }
 						return 0x703;
-          case CPU_MODEL_IVY_BRIDGE:  
-          case CPU_MODEL_IVY_BRIDGE_E5:  
+          case CPU_MODEL_IVY_BRIDGE:             
             if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i3"))
 							return 0x903; // Core i3 - Apple doesn't use it
             if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i5"))
@@ -731,6 +730,8 @@ UINT16 GetAdvancedCpuType ()
               return 0x604;
             }
 						return 0x704;
+          case CPU_MODEL_IVY_BRIDGE_E5:
+            return 0xA01;
           case CPU_MODEL_HASWELL:
           case CPU_MODEL_HASWELL_MB:
           case CPU_MODEL_HASWELL_ULT:
