@@ -519,7 +519,7 @@ SSDT_TABLE *generate_cst_ssdt(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, U
       resource_template_register_systemio[12] = p_blk_hi; // C3
       aml_add_buffer(tmpl, resource_template_register_systemio, sizeof(resource_template_register_systemio));
       aml_add_byte(tmpl, 0x03);			// C3
-      aml_add_word(tmpl, 0x0043);			// Latency
+      aml_add_word(tmpl, gSettings.C3Latency);			// Latency
       aml_add_dword(tmpl, 0x000001F4);	// Power
     }
     if (c6_enabled) // C6
@@ -532,7 +532,7 @@ SSDT_TABLE *generate_cst_ssdt(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, U
       resource_template_register_systemio[12] = p_blk_hi; // C6
       aml_add_buffer(tmpl, resource_template_register_systemio, sizeof(resource_template_register_systemio));
       aml_add_byte(tmpl, 0x06);			// C6
-      aml_add_word(tmpl, 0x0046);			// Latency
+      aml_add_word(tmpl, gSettings.C3Latency + 3);			// Latency
       aml_add_dword(tmpl, 0x0000015E);	// Power
     }
 
@@ -578,7 +578,7 @@ SSDT_TABLE *generate_cst_ssdt(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, U
       resource_template_register_fixedhw[11] = 0x20; // C3
       aml_add_buffer(tmpl, resource_template_register_fixedhw, sizeof(resource_template_register_fixedhw));
       aml_add_byte(tmpl, 0x03);			// C3
-      aml_add_word(tmpl, 0x0043);			// Latency as in MacPro6,1
+      aml_add_word(tmpl, gSettings.C3Latency);			// Latency as in MacPro6,1 = 0x0043
       aml_add_dword(tmpl, 0x000001F4);	// Power
     }
     if (c6_enabled) // C6
@@ -587,7 +587,7 @@ SSDT_TABLE *generate_cst_ssdt(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, U
       resource_template_register_fixedhw[11] = 0x20; // C6
       aml_add_buffer(tmpl, resource_template_register_fixedhw, sizeof(resource_template_register_fixedhw));
       aml_add_byte(tmpl, 0x06);			// C6
-      aml_add_word(tmpl, 0x0046);			// Latency as in MacPro6,1
+      aml_add_word(tmpl, gSettings.C3Latency + 3);			// Latency as in MacPro6,1 = 0x0046
       aml_add_dword(tmpl, 0x0000015E);	// Power
     }
 

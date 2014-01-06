@@ -180,6 +180,14 @@
 			<integer>1</integer>
 			<key>UseSystemIO</key>
 			<false/>
+			<key>EnableC6</key>
+			<true/>
+			<key>EnableC4</key>
+			<false/>
+			<key>EnableC2</key>
+			<false/>
+			<key>C3Latency</key>
+			<string>0x03E7</string>
 		</dict>
 		<key>smartUPS</key>
 		<false/>

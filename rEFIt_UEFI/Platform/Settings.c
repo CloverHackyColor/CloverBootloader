@@ -3326,6 +3326,46 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
                 gSettings.EnableISS = FALSE;
               }
         }
+        prop = GetProperty(dict2, "EnableC6");
+        if(prop) {
+          if ((prop->type == kTagTypeTrue) ||
+              ((prop->type == kTagTypeString) &&
+               ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))) {
+                gSettings.EnableC6 = TRUE;
+              } else {
+                gSettings.EnableC6 = FALSE;
+              }
+        }
+        prop = GetProperty(dict2, "EnableC4");
+        if(prop) {
+          if ((prop->type == kTagTypeTrue) ||
+              ((prop->type == kTagTypeString) &&
+               ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))) {
+                gSettings.EnableC4 = TRUE;
+              } else {
+                gSettings.EnableC4 = FALSE;
+              }
+        }
+        prop = GetProperty(dict2, "EnableC2");
+        if(prop) {
+          if ((prop->type == kTagTypeTrue) ||
+              ((prop->type == kTagTypeString) &&
+               ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))) {
+                gSettings.EnableC2 = TRUE;
+              } else {
+                gSettings.EnableC2 = FALSE;
+              }
+        }
+        prop = GetProperty(dictPointer, "C3Latency");
+        if(prop) {
+          if (prop->type == kTagTypeInteger) {
+            gSettings.C3Latency = (UINT16)(UINTN)prop->string;
+          } else if (prop->type == kTagTypeString){
+            AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
+            gSettings.C3Latency = (UINT16)StrHexToUint64(UStr);
+          }
+        }
+
 
         prop = GetProperty(dict2, "PLimitDict");
         if(prop) {

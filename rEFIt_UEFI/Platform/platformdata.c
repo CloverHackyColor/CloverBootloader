@@ -553,7 +553,7 @@ VOID GetDefaultSettings(VOID)
     gSettings.GenerateCStates = TRUE;
     // gSettings.EnableISS       = FALSE;
     // gSettings.EnableC2        = TRUE;
-    // gSettings.EnableC6        = TRUE;
+    gSettings.EnableC6        = TRUE;
     gSettings.PluginType      = 1;
     
     if (gCPUStructure.Model == CPU_MODEL_IVY_BRIDGE) {
@@ -561,7 +561,7 @@ VOID GetDefaultSettings(VOID)
     } 
     // gSettings.DoubleFirstState = FALSE;
     gSettings.DropSSDT        = TRUE;
-    gSettings.C3Latency       = 0x3E7;
+    gSettings.C3Latency       = 0x00FA;
 
   }
 //  gSettings.EnableISS = FALSE; //((gCPUStructure.CPUID[CPUID_1][ECX] & (1<<7)) != 0);
