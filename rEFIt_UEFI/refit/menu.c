@@ -372,8 +372,11 @@ VOID RefillInputs(VOID)
   InputItems[InputItemsCount].BValue   = gSettings.bDropBGRT;
   InputItems[InputItemsCount++].SValue = gSettings.bDropBGRT?L"[+]":L"[ ]";
   */
-  
-  InputItemsCount = 90;
+  InputItems[InputItemsCount].ItemType = BoolValue; //89
+  InputItems[InputItemsCount].BValue = gSettings.KPKernelPm;
+  InputItems[InputItemsCount++].SValue = gSettings.KPKernelPm?L"[+]":L"[ ]";
+ 
+//  InputItemsCount = 90;
   InputItems[InputItemsCount].ItemType = UNIString; //90
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%s", gSettings.ConfigName);
   
@@ -683,7 +686,11 @@ VOID FillInputs(VOID)
   InputItems[InputItemsCount].BValue   = gSettings.bDropBGRT;
   InputItems[InputItemsCount++].SValue = gSettings.bDropBGRT?L"[+]":L"[ ]";
   */
-  InputItemsCount = 90;
+  InputItems[InputItemsCount].ItemType = BoolValue; //89
+  InputItems[InputItemsCount].BValue = gSettings.KPKernelPm;
+  InputItems[InputItemsCount++].SValue = gSettings.KPKernelPm?L"[+]":L"[ ]";
+
+//  InputItemsCount = 90;
   InputItems[InputItemsCount].ItemType = UNIString; //90
   InputItems[InputItemsCount].SValue   = AllocateZeroPool(64);
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%s", gSettings.ConfigName);
@@ -1076,6 +1083,11 @@ VOID ApplyInputs(VOID)
     gSettings.bDropBGRT = InputItems[i].BValue;
   }
   */
+  i++; //89
+  if (InputItems[i].Valid) {
+    gSettings.KPKernelPm = InputItems[i].BValue;
+  }
+
   i=90; //90
   if (InputItems[i].Valid) {
       if (StrCmp(InputItems[i].SValue, gSettings.ConfigName) != 0) {
@@ -3084,6 +3096,15 @@ REFIT_MENU_ENTRY  *SubMenuBinaries()
   InputBootArgs->Entry.AtRightClick = ActionDetails;
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
 
+  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  InputBootArgs->Entry.Title = PoolPrint(L"Kernel PM Patch:");
+  InputBootArgs->Entry.Tag = TAG_INPUT;
+  InputBootArgs->Entry.Row = 0xFFFF; //cursor
+  InputBootArgs->Item = &InputItems[89];
+  InputBootArgs->Entry.AtClick = ActionEnter;
+  InputBootArgs->Entry.AtRightClick = ActionDetails;
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+  
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
   InputBootArgs->Entry.Title = PoolPrint(L"AppleIntelCPUPM patch:");
   InputBootArgs->Entry.Tag = TAG_INPUT;
