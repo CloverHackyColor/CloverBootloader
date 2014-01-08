@@ -401,9 +401,16 @@ VOID BltClearScreen(IN BOOLEAN ShowBanner)
   
   // load banner on first call
   if (!Banner) {
-    if (!GlobalConfig.BannerFileName || !ThemeDir)
-      Banner = egPrepareEmbeddedImage(&egemb_refit_banner, FALSE);
-    else {
+    if (!GlobalConfig.BannerFileName || !ThemeDir) {
+      if (GlobalConfig.Theme) { // regular theme - this points to refit built in image. should be changed to clover image at some point.
+        Banner = egPrepareEmbeddedImage(&egemb_refit_banner, FALSE);
+      } else { // embedded theme - use text as banner
+        Banner = egCreateImage(7*StrLen(L"CLOVER"), 32, TRUE);
+        egFillImage(Banner, &MenuBackgroundPixel);
+        egRenderText(L"CLOVER", Banner, 0, 0, 0xFFFF);
+        DebugLog(1, "Text <%s> rendered\n", L"Clover");
+      }
+    } else {
       Banner = egLoadImage(ThemeDir, GlobalConfig.BannerFileName, FALSE);
       if (Banner) {
         CopyMem(&BlueBackgroundPixel, &Banner->PixelData[0], sizeof(EG_PIXEL));
@@ -420,7 +427,11 @@ VOID BltClearScreen(IN BOOLEAN ShowBanner)
   if (!BigBack && (GlobalConfig.BackgroundName != NULL)) {
     BigBack = egLoadImage(ThemeDir, GlobalConfig.BackgroundName, FALSE);
   }
-  BackgroundImage = egCreateFilledImage(UGAWidth, UGAHeight, FALSE, &BlueBackgroundPixel);
+  if (GlobalConfig.Theme) { // regular theme
+    BackgroundImage = egCreateFilledImage(UGAWidth, UGAHeight, FALSE, &BlueBackgroundPixel); 
+  } else { // embedded theme - use stdbackground color
+    BackgroundImage = egCreateFilledImage(UGAWidth, UGAHeight, FALSE, &StdBackgroundPixel); 
+  }
 
     if (BigBack != NULL) {
       switch (GlobalConfig.BackgroundScale) {
@@ -598,10 +609,18 @@ VOID BltImageCompositeBadge(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN EG
   //  DBG("BaseImage: Width=%d Height=%d Alfa=%d\n", TotalWidth, TotalHeight, CompImage->HasAlpha);
   CompWidth = TopImage->Width;
   CompHeight = TopImage->Height;
-  CompImage = egCreateFilledImage((CompWidth > TotalWidth)?CompWidth:TotalWidth,
-                                  (CompHeight > TotalHeight)?CompHeight:TotalHeight,
-                                  TRUE,
-                                  &MenuBackgroundPixel);
+  if (GlobalConfig.Theme) { // regular theme
+    CompImage = egCreateFilledImage((CompWidth > TotalWidth)?CompWidth:TotalWidth,
+                                    (CompHeight > TotalHeight)?CompHeight:TotalHeight,
+                                    TRUE,
+                                    &MenuBackgroundPixel);
+  } else { // embedded theme - draw box around icons
+    EG_PIXEL EmbeddedBackgroundPixel  = { 0xaa, 0xaa, 0xaa, 0xaa};
+    CompImage = egCreateFilledImage((CompWidth > TotalWidth)?CompWidth:TotalWidth,
+                                    (CompHeight > TotalHeight)?CompHeight:TotalHeight,
+                                    TRUE,
+                                    &EmbeddedBackgroundPixel);
+  }
   if (!CompImage) {
     DBG("Can't create CompImage\n");
     return;
@@ -659,8 +678,11 @@ VOID BltImageCompositeBadge(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN EG
   }
 
   // blit to screen and clean up
-  //    egDrawImageArea(CompImage, 0, 0, TotalWidth, TotalHeight, XPos, YPos);
-  BltImageAlpha(CompImage, XPos, YPos, &MenuBackgroundPixel, 16);
+  if (GlobalConfig.Theme) { // regular theme
+    BltImageAlpha(CompImage, XPos, YPos, &MenuBackgroundPixel, 16);
+  } else { // embedded theme - don't use BltImageAlpha as it can't handle refit's built in image
+    egDrawImageArea(CompImage, 0, 0, TotalWidth, TotalHeight, XPos, YPos);
+  }
   egFreeImage(CompImage);
   GraphicsScreenDirty = TRUE;
 }

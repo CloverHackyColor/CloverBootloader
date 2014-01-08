@@ -1071,6 +1071,8 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
     if (is64BitKernel) {
       KernelPatchPm(KernelData);
     }
+  } else {
+    DBG_RT("Not done - Disabled.\n");
   }
   
   // Lapic Panic Kernel Patch

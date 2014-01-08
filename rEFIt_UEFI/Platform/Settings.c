@@ -2048,11 +2048,6 @@ EFI_STATUS InitTheme(BOOLEAN useThemeDefinedInNVRam, EFI_TIME *time)
   CHAR8   *chosenTheme = NULL;
   CHAR16  *testTheme = NULL;
   
-  if (!ThemesNum) {
-    DBG("No themes found!\n");
-    return EFI_NOT_FOUND;
-  }
-  
   // Invalidated BuiltinIcons
   DBG("Invalidating BuiltinIcons...\n");
   for (Index = 0; Index < BUILTIN_ICON_COUNT; Index++) {
@@ -2076,78 +2071,82 @@ EFI_STATUS InitTheme(BOOLEAN useThemeDefinedInNVRam, EFI_TIME *time)
     GuiAnime=NextAnime;
   }
   
-  // Try special theme first
-  if (time!=NULL) {
-    if ((time->Month == 12) && ((time->Day >= 25) && (time->Day <= 31))) {
-       testTheme = PoolPrint(L"christmas");
-    } else if ((time->Month == 1) && ((time->Day >= 1) && (time->Day <= 7))) {
-       testTheme = PoolPrint(L"newyear");
-    }
-    if (testTheme) {
-      ThemeDict = LoadTheme(testTheme);
-      if (ThemeDict) {
-        DBG("special theme %s found and %s parsed\n", testTheme, CONFIG_THEME_FILENAME);
-        if (GlobalConfig.Theme) {
-          FreePool(GlobalConfig.Theme);
-        }
-        GlobalConfig.Theme = testTheme;
-      } else { // special theme not loaded
-        DBG("special theme %s not found, skipping\n", testTheme, CONFIG_THEME_FILENAME);
-        FreePool(testTheme);
+  if (ThemesNum > 0) {
+    
+    // Try special theme first
+    if (time!=NULL) {
+      if ((time->Month == 12) && ((time->Day >= 25) && (time->Day <= 31))) {
+         testTheme = PoolPrint(L"christmas");
+      } else if ((time->Month == 1) && ((time->Day >= 1) && (time->Day <= 7))) {
+         testTheme = PoolPrint(L"newyear");
       }
-      testTheme = NULL;
-    }
-  }
-  
-  // Try theme from nvram  
-  if (!ThemeDict && useThemeDefinedInNVRam) {
-    chosenTheme = GetNvramVariable(L"Clover.Theme", &gEfiAppleBootGuid, NULL, &Size);
-    if (chosenTheme) {
-      testTheme = PoolPrint(L"%a", chosenTheme);
       if (testTheme) {
         ThemeDict = LoadTheme(testTheme);
         if (ThemeDict) {
-           DBG("theme %a defined in NVRAM found and %s parsed\n", chosenTheme, CONFIG_THEME_FILENAME);
-           if (GlobalConfig.Theme) {
-             FreePool(GlobalConfig.Theme);
-           }
-           GlobalConfig.Theme = testTheme;
-        } else { // theme from nvram not loaded
+          DBG("special theme %s found and %s parsed\n", testTheme, CONFIG_THEME_FILENAME);
           if (GlobalConfig.Theme) {
-            DBG("theme %a chosen from nvram is absent, using theme defined in config: %s\n", chosenTheme, GlobalConfig.Theme);
-          } else {
-            DBG("theme %a chosen from nvram is absent, get first theme\n", chosenTheme);
+            FreePool(GlobalConfig.Theme);
           }
+          GlobalConfig.Theme = testTheme;
+        } else { // special theme not loaded
+          DBG("special theme %s not found, skipping\n", testTheme, CONFIG_THEME_FILENAME);
           FreePool(testTheme);
         }
         testTheme = NULL;
       }
-      FreePool(chosenTheme);
-      chosenTheme = NULL;
     }
-  }
-  
-  // Try to get theme from settings
-  if (!ThemeDict) {
-    if (!GlobalConfig.Theme) {
-      DBG("no default theme, get first theme %s\n", CONFIG_THEME_FILENAME, ThemesList[0]);
-    } else {
-      ThemeDict = LoadTheme(GlobalConfig.Theme);
-      if (!ThemeDict) {
-        DBG("GlobalConfig: %s not found, get first theme %s\n", CONFIG_THEME_FILENAME, ThemesList[0]);
-        FreePool(GlobalConfig.Theme);
-        GlobalConfig.Theme = NULL; 
+    
+    // Try theme from nvram  
+    if (!ThemeDict && useThemeDefinedInNVRam) {
+      chosenTheme = GetNvramVariable(L"Clover.Theme", &gEfiAppleBootGuid, NULL, &Size);
+      if (chosenTheme) {
+        testTheme = PoolPrint(L"%a", chosenTheme);
+        if (testTheme) {
+          ThemeDict = LoadTheme(testTheme);
+          if (ThemeDict) {
+             DBG("theme %a defined in NVRAM found and %s parsed\n", chosenTheme, CONFIG_THEME_FILENAME);
+             if (GlobalConfig.Theme) {
+               FreePool(GlobalConfig.Theme);
+             }
+             GlobalConfig.Theme = testTheme;
+          } else { // theme from nvram not loaded
+            if (GlobalConfig.Theme) {
+              DBG("theme %a chosen from nvram is absent, using theme defined in config: %s\n", chosenTheme, GlobalConfig.Theme);
+            } else {
+              DBG("theme %a chosen from nvram is absent, get first theme\n", chosenTheme);
+            }
+            FreePool(testTheme);
+          }
+          testTheme = NULL;
+        }
+        FreePool(chosenTheme);
+        chosenTheme = NULL;
       }
     }
-  }
-  
-  // Try to get first theme
-  if (!ThemeDict) {
-    ThemeDict = LoadTheme(ThemesList[0]);
-    if (ThemeDict) {
-      GlobalConfig.Theme = AllocateCopyPool(StrSize(ThemesList[0]),ThemesList[0]);
+    
+    // Try to get theme from settings
+    if (!ThemeDict) {
+      if (!GlobalConfig.Theme) {
+        DBG("no default theme, get first theme %s\n", CONFIG_THEME_FILENAME, ThemesList[0]);
+      } else {
+        ThemeDict = LoadTheme(GlobalConfig.Theme);
+        if (!ThemeDict) {
+          DBG("GlobalConfig: %s not found, get first theme %s\n", CONFIG_THEME_FILENAME, ThemesList[0]);
+          FreePool(GlobalConfig.Theme);
+          GlobalConfig.Theme = NULL; 
+        }
+      }
     }
-  }
+  
+    // Try to get first theme
+    if (!ThemeDict) {
+      ThemeDict = LoadTheme(ThemesList[0]);
+      if (ThemeDict) {
+        GlobalConfig.Theme = AllocateCopyPool(StrSize(ThemesList[0]),ThemesList[0]);
+      }
+    }
+
+  } // ThemesNum>0
   
   // No theme could be loaded, use embedded
   if (!ThemeDict) {
@@ -2166,6 +2165,8 @@ EFI_STATUS InitTheme(BOOLEAN useThemeDefinedInNVRam, EFI_TIME *time)
     //fill some fields
     GlobalConfig.SelectionColor = 0xA0A0A080;
     GlobalConfig.Font = FONT_ALFA; //to be inverted later
+    GlobalConfig.HideBadges |= HDBADGES_SHOW;
+    GlobalConfig.BadgeScale = 16;
   } else { // theme loaded successfully
     // read theme settings
     TagPtr dictPointer = GetProperty(ThemeDict, "Theme");

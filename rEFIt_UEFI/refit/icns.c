@@ -315,6 +315,10 @@ EG_IMAGE * BuiltinIcon(IN UINTN Id)
     /*       while ((*p != L".") && (p > t)) {
      *(--p) = L'\0';
      } */
+    if (StrCmp(Text, L"shutdown") == 0) {
+       // icon name is shutdown from historic reasons, but function is now exit
+       UnicodeSPrint(Text, 30, L"exit");
+    }
     egRenderText(Text, TextBuffer, 0, 0, 0xFFFF);
     BuiltinIconTable[Id].Image = TextBuffer;
     DebugLog(1, "Text <%s> rendered\n", Text);
@@ -331,14 +335,15 @@ EG_IMAGE * BuiltinIcon(IN UINTN Id)
 EG_IMAGE * LoadOSIcon(IN CHAR16 *OSIconName OPTIONAL, IN CHAR16 *FallbackIconName, IN UINTN PixelSize, IN BOOLEAN BootLogo, IN BOOLEAN WantDummy)
 {
   EG_IMAGE        *Image;
-  CHAR16          CutoutName[16];
+  CHAR16          CutoutName[16], FirstName[16];
   CHAR16          FileName[256];
   UINTN           StartIndex, Index, NextIndex;
   
   if (GlobalConfig.TextOnly)      // skip loading if it's not used anyway
     return NULL;
   Image = NULL;
-  
+  *FirstName = 0;  
+
   // try the names from OSIconName
   for (StartIndex = 0; OSIconName != NULL && OSIconName[StartIndex]; StartIndex = NextIndex) {
     // find the next name in the list
@@ -364,6 +369,13 @@ EG_IMAGE * LoadOSIcon(IN CHAR16 *OSIconName OPTIONAL, IN CHAR16 *FallbackIconNam
     Image = egLoadIcon(ThemeDir, FileName, PixelSize);
     if (Image != NULL)
       return Image;
+
+    if (*FirstName == '\0') {
+      CopyMem(FirstName, CutoutName, StrSize(CutoutName));
+      if ('a' <= FirstName[0] && FirstName[0] <= 'z') {
+        FirstName[0] = (CHAR16) (FirstName[0] - 0x20);
+      }
+    }
   }
   
   // try the fallback name
@@ -383,6 +395,15 @@ EG_IMAGE * LoadOSIcon(IN CHAR16 *OSIconName OPTIONAL, IN CHAR16 *FallbackIconNam
   if (!WantDummy) {
     return NULL;
   }
+
+  if (!GlobalConfig.Theme) { // embedded theme - return rendered icon name
+    EG_IMAGE  *TextBuffer = egCreateImage(PixelSize, PixelSize, TRUE);
+    egFillImage(TextBuffer, &MenuBackgroundPixel);
+    egRenderText(FirstName, TextBuffer, PixelSize/4, PixelSize/3, 0xFFFF);
+    DebugLog(1, "Text <%s> rendered\n", FirstName);
+    return TextBuffer;
+  }
+
   return DummyImage(PixelSize);
 }
 
