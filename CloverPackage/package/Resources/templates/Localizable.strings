@@ -1,7 +1,7 @@
 // ============================================================================
 // Installation
 // ----------------------------------------------------------------------------
-"UEFI.only_title" = "Install for UEFI motherboards";
+"UEFI.only_title" = "Install for UEFI booting only";
 "UEFI.only_description" = "Install Clover to be used with UEFI motherboards only.";
 
 // ============================================================================

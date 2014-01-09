@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-11-02 09:49+0100\n"
+"POT-Creation-Date: 2014-01-09 12:07+0100\n"
 "PO-Revision-Date: 2013-11-15 13:39+0000\n"
 "Last-Translator: Mill <ceruns@ymail.com>\n"
 "Language-Team: ko <ko@li.org>\n"
@@ -102,7 +102,9 @@ msgstr "- OSX 10.4 ~ 10.8, Windows EFI, 그리고 Linux EFI로 부팅"
 msgid ""
 "- It's EFI bootloader provides RuntimeServices for OS that impossible for "
 "Legacy Bootloaders"
-msgstr "- 이전 세대의 부트로더가 지원할 수 없는 런타임 서비스들을 지원하는 EFI 부트로더입니다"
+msgstr ""
+"- 이전 세대의 부트로더가 지원할 수 없는 런타임 서비스들을 지원하는 EFI 부트로"
+"더입니다"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:23
@@ -153,19 +155,25 @@ msgstr "- ACPI는 standard 4.0으로 정정될 것입니다"
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:29
 msgid "Custom DSDT will be loaded from booted partition or from EFI folder"
-msgstr "- 이전 세대의 부트로더가 지원할 수 없는 런타임 서비스들을 지원하는 EFI 부트로더입니다"
+msgstr ""
+"- 이전 세대의 부트로더가 지원할 수 없는 런타임 서비스들을 지원하는 EFI 부트로"
+"더입니다"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:30
 msgid "- customizable RestartFix and sleep/wake fixes and PCIRootUID value"
-msgstr "- 사용자 환경에 맞게 재부팅 오류, 잠자기/깨어나기 오류, PCIRootUID 값 등을 수정할 수 있습니다."
+msgstr ""
+"- 사용자 환경에 맞게 재부팅 오류, 잠자기/깨어나기 오류, PCIRootUID 값 등을 수"
+"정할 수 있습니다."
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:31
 msgid ""
 "- Graphics Properties Injector for ATI, NVidia and Intel for wide range of "
 "supported cards."
-msgstr "- ATI, NVidia, Intel 등 폭넓은 그래픽카드를 지원하도록 그래픽 속성을 입력할 수 있습니다."
+msgstr ""
+"- ATI, NVidia, Intel 등 폭넓은 그래픽카드를 지원하도록 그래픽 속성을 입력할 "
+"수 있습니다."
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:32
@@ -175,7 +183,8 @@ msgstr "이 역시 사용자 환경에 맞게 조절할 수 있습니다."
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:33
 msgid "- USB fix (LegacyOff, Ownership, Builtin, clock-id) up to USB 3.0"
-msgstr "- USB 3.0까지 지원되는 USB 속성 수정(LegacyOff, Ownership, BuiltIn, clock-id)"
+msgstr ""
+"- USB 3.0까지 지원되는 USB 속성 수정(LegacyOff, Ownership, BuiltIn, clock-id)"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:34
@@ -202,7 +211,9 @@ msgstr "- FireWire를 위한 추가 kext 로딩 및 보안 모드"
 msgid ""
 "- default boot after timeout, customizable GUI , and saving screenshots from "
 "GUI typing F10"
-msgstr "- 사용자가 설정한 대기시간 이후 기본 값으로 부팅, 수정 가능한 GUI, GUI 화면의 스크린샷 기능(F10키)"
+msgstr ""
+"- 사용자가 설정한 대기시간 이후 기본 값으로 부팅, 수정 가능한 GUI, GUI 화면"
+"의 스크린샷 기능(F10키)"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:39
@@ -216,8 +227,9 @@ msgstr "설치가 완료되었습니다!"
 
 #. type: "UEFI.only_title"
 #: Resources/templates/Localizable.strings:4
-#, no-wrap
-msgid "Install for UEFI motherboards"
+#, fuzzy, no-wrap
+#| msgid "Install for UEFI motherboards"
+msgid "Install for UEFI booting only"
 msgstr "UEFI 메인보드에 설치"
 
 #. type: "UEFI.only_description"
@@ -591,16 +603,12 @@ msgstr ""
 #. type: "BGM_title"
 #: Resources/templates/Localizable.strings:115
 #, no-wrap
-#| msgid "Black_Green"
 msgid "Black_Green_Moody"
 msgstr "흑녹색조"
 
 #. type: "BGM_description"
 #: Resources/templates/Localizable.strings:116
 #, no-wrap
-#| msgid ""
-#| "Default black_green theme from Blackosx,\n"
-#| "Install to /EFI/CLOVER/themes/black_green"
 msgid ""
 "Black Green and Moody theme from Blackosx,\n"
 "Install to /EFI/CLOVER/themes/BGM"

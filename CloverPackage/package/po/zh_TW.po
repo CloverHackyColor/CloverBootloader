@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-11-02 09:49+0100\n"
+"POT-Creation-Date: 2014-01-09 12:07+0100\n"
 "PO-Revision-Date: 2013-12-10 04:41+0000\n"
 "Last-Translator: crazybirdy <>\n"
 "Language-Team: zh_TW <zh_TW@li.org>\n"
@@ -211,8 +211,9 @@ msgstr "安  裝  完  成"
 
 #. type: "UEFI.only_title"
 #: Resources/templates/Localizable.strings:4
-#, no-wrap
-msgid "Install for UEFI motherboards"
+#, fuzzy, no-wrap
+#| msgid "Install for UEFI motherboards"
+msgid "Install for UEFI booting only"
 msgstr "僅安裝 UEFI 主機板專用版本"
 
 #. type: "UEFI.only_description"
@@ -595,16 +596,12 @@ msgstr ""
 #. type: "BGM_title"
 #: Resources/templates/Localizable.strings:115
 #, no-wrap
-#| msgid "Black_Green"
 msgid "Black_Green_Moody"
 msgstr "BlackGreenMoody"
 
 #. type: "BGM_description"
 #: Resources/templates/Localizable.strings:116
 #, no-wrap
-#| msgid ""
-#| "Default black_green theme from Blackosx,\n"
-#| "Install to /EFI/CLOVER/themes/black_green"
 msgid ""
 "Black Green and Moody theme from Blackosx,\n"
 "Install to /EFI/CLOVER/themes/BGM"
@@ -1094,7 +1091,6 @@ msgstr "啓動時 強制裝載選定的 ESP 磁區:"
 #. type: "339.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:21
 #, no-wrap
-#| msgid "Save NVRAM contents to partition:"
 msgid "Save NVRAM contents to disk:"
 msgstr "儲存 NVRAM 內容到磁區:"
 

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-11-02 09:49+0100\n"
+"POT-Creation-Date: 2014-01-09 12:07+0100\n"
 "PO-Revision-Date: 2013-11-02 23:56+0000\n"
 "Last-Translator: artur_pt <artursimoes.pt@gmail.com>\n"
 "Language-Team: pt <pt@li.org>\n"
@@ -246,8 +246,9 @@ msgstr "Instalação Completa!"
 
 #. type: "UEFI.only_title"
 #: Resources/templates/Localizable.strings:4
-#, no-wrap
-msgid "Install for UEFI motherboards"
+#, fuzzy, no-wrap
+#| msgid "Install for UEFI motherboards"
+msgid "Install for UEFI booting only"
 msgstr "Instalação para Placas Mãe UEFI"
 
 #. type: "UEFI.only_description"
@@ -315,13 +316,7 @@ msgid ""
 "Used for BIOS booting on BIOS motherboards.\n"
 "boot0af (boot0 Active First) bootloader try to boot the active partition defined in MBR. If there is no active partition, it will try to boot the first EFI/FAT32/HFS partition (defined in the MBR and then the GPT) with a valid PBR signature.\n"
 "This choice will setup selected HFS/Fat32 partition to be active."
-msgstr ""
-"Usado para o arranque em placas-mãe BIOS. \\ Nboot0af (boot0 ativo primeiro) "
-"bootloader tenta arrancar a partição ativa definida no MBR. Se não houver "
-"nenhuma partição ativa, ele vai tentar arrancar a primeira partição "
-"EFI/FAT32/HFS (definida no MBR e, em seguida, o GPT) com uma assinatura PBR "
-"válida. \\ NEsta escolha irá configurar partição HFS/Fat32 selecionada para "
-"ser ativa. "
+msgstr "Usado para o arranque em placas-mãe BIOS. \\ Nboot0af (boot0 ativo primeiro) bootloader tenta arrancar a partição ativa definida no MBR. Se não houver nenhuma partição ativa, ele vai tentar arrancar a primeira partição EFI/FAT32/HFS (definida no MBR e, em seguida, o GPT) com uma assinatura PBR válida. \\ NEsta escolha irá configurar partição HFS/Fat32 selecionada para ser ativa. "
 
 #. type: "boot0ss_title"
 #: Resources/templates/Localizable.strings:34
@@ -337,14 +332,7 @@ msgid ""
 "boot0ss (boot0 Signature Scanning) bootloader try to boot the first EFI/FAT32/HFS partition (defined in the MBR and then the GPT) with a valid PBR signature. If no partition is found it will try to boot the active partition defined in MBR.\n"
 "This bootloader is a good choice when you have Windows installed on the same disk because Windows wants to have its partition active.\n"
 "This choice will not activate any partition in MBR."
-msgstr ""
-"Usado para o arranque  em placas-mãe BIOS. \\ Nboot0ss (boot0 assinatura "
-"Scanning) bootloader tenta arrancar a primeira partição EFI/FAT32/HFS "
-"(definida no MBR e, em seguida, o GPT) com uma assinatura PBR válida. Se "
-"nenhuma partição for encontrada, ele tentará inicializar a partição ativa "
-"definida no MBR. \\ NEsse bootloader é uma boa opção quando você tiver o "
-"Windows instalado no mesmo disco, pois o Windows quer ter sua partição "
-"ativa. \\ NEsta opção não irá ativar qualquer partição no MBR. "
+msgstr "Usado para o arranque  em placas-mãe BIOS. \\ Nboot0ss (boot0 assinatura Scanning) bootloader tenta arrancar a primeira partição EFI/FAT32/HFS (definida no MBR e, em seguida, o GPT) com uma assinatura PBR válida. Se nenhuma partição for encontrada, ele tentará inicializar a partição ativa definida no MBR. \\ NEsse bootloader é uma boa opção quando você tiver o Windows instalado no mesmo disco, pois o Windows quer ter sua partição ativa. \\ NEsta opção não irá ativar qualquer partição no MBR. "
 
 #. type: "bootNo_title"
 #: Resources/templates/Localizable.strings:40
@@ -624,16 +612,12 @@ msgstr ""
 #. type: "BGM_title"
 #: Resources/templates/Localizable.strings:115
 #, no-wrap
-#| msgid "Black_Green"
 msgid "Black_Green_Moody"
 msgstr "Black_Green_Moody"
 
 #. type: "BGM_description"
 #: Resources/templates/Localizable.strings:116
 #, no-wrap
-#| msgid ""
-#| "Default black_green theme from Blackosx,\n"
-#| "Install to /EFI/CLOVER/themes/black_green"
 msgid ""
 "Black Green and Moody theme from Blackosx,\n"
 "Install to /EFI/CLOVER/themes/BGM"

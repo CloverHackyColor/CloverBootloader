@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-11-02 09:49+0100\n"
+"POT-Creation-Date: 2014-01-09 12:07+0100\n"
 "PO-Revision-Date: 2013-06-08 19:06+0000\n"
 "Last-Translator: kyndder <kyndder@icloud.com>\n"
 "Language-Team: pt <pt@li.org>\n"
@@ -246,8 +246,9 @@ msgstr "Instalação Completa!"
 
 #. type: "UEFI.only_title"
 #: Resources/templates/Localizable.strings:4
-#, no-wrap
-msgid "Install for UEFI motherboards"
+#, fuzzy, no-wrap
+#| msgid "Install for UEFI motherboards"
+msgid "Install for UEFI booting only"
 msgstr "Instalação para Placas Mãe UEFI"
 
 #. type: "UEFI.only_description"

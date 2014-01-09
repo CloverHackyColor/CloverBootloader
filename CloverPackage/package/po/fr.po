@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-11-02 09:49+0100\n"
+"POT-Creation-Date: 2014-01-09 12:07+0100\n"
 "PO-Revision-Date: 2013-11-02 08:55+0000\n"
 "Last-Translator: JrCs <d2t56xxptp@snkmail.com>\n"
 "Language-Team: fr <fr@li.org>\n"
@@ -230,8 +230,9 @@ msgstr "Installation Terminée!"
 
 #. type: "UEFI.only_title"
 #: Resources/templates/Localizable.strings:4
-#, no-wrap
-msgid "Install for UEFI motherboards"
+#, fuzzy, no-wrap
+#| msgid "Install for UEFI motherboards"
+msgid "Install for UEFI booting only"
 msgstr "Installation pour carte mère UEFI"
 
 #. type: "UEFI.only_description"
@@ -603,16 +604,12 @@ msgstr ""
 #. type: "BGM_title"
 #: Resources/templates/Localizable.strings:115
 #, no-wrap
-#| msgid "Black_Green"
 msgid "Black_Green_Moody"
 msgstr "Black_Green_Moody"
 
 #. type: "BGM_description"
 #: Resources/templates/Localizable.strings:116
 #, no-wrap
-#| msgid ""
-#| "Default black_green theme from Blackosx,\n"
-#| "Install to /EFI/CLOVER/themes/black_green"
 msgid ""
 "Black Green and Moody theme from Blackosx,\n"
 "Install to /EFI/CLOVER/themes/BGM"

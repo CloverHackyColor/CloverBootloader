@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-11-02 09:49+0100\n"
+"POT-Creation-Date: 2014-01-09 12:07+0100\n"
 "PO-Revision-Date: 2013-11-23 14:36+0000\n"
 "Last-Translator: cool_recep <rbaltas@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -195,7 +195,8 @@ msgstr "- CPU turbo ve P- ve C-states oluşturucu"
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:36
 msgid "- ACPI tables loading (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI...)"
-msgstr "- ACPI tablosu yükleme (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI...)"
+msgstr ""
+"- ACPI tablosu yükleme (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI...)"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:37
@@ -214,7 +215,8 @@ msgstr ""
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:39
 msgid "- saving boot.log in OS and preboot.log from GUI by typing F2"
-msgstr "- İşletim sistemine boot.log ve F2 ile arabirimden preboot.log kaydetme"
+msgstr ""
+"- İşletim sistemine boot.log ve F2 ile arabirimden preboot.log kaydetme"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Conclusion.html:22
@@ -223,8 +225,9 @@ msgstr "Kurulum Tamamlandı!"
 
 #. type: "UEFI.only_title"
 #: Resources/templates/Localizable.strings:4
-#, no-wrap
-msgid "Install for UEFI motherboards"
+#, fuzzy, no-wrap
+#| msgid "Install for UEFI motherboards"
+msgid "Install for UEFI booting only"
 msgstr "UEFI anakartlar için yükleme"
 
 #. type: "UEFI.only_description"
@@ -277,8 +280,7 @@ msgstr ""
 "Clover EFI üç ana dosyaya ihtiyaç duyar. (basitçe)\n"
 "boot0 (Sürücünün MBR'sinde) boot1'i yüklemekten sorumlu.\n"
 "boot1 (Bölümün önyükleme-sektöründe) boot2'yi bulmak için.\n"
-"boot2 (Bölümün kök dizininde) /EFI/CLOVER/CLOVERIA32.efi veya CLOVERX64.efi "
-"ve çekirdek vb. yüklemek için."
+"boot2 (Bölümün kök dizininde) /EFI/CLOVER/CLOVERIA32.efi veya CLOVERX64.efi ve çekirdek vb. yüklemek için."
 
 #. type: "boot0af_title"
 #: Resources/templates/Localizable.strings:29
@@ -295,10 +297,7 @@ msgid ""
 "This choice will setup selected HFS/Fat32 partition to be active."
 msgstr ""
 "BIOS anakartlarda BIOS önyükleme için kullanılır.\n"
-"boot0af (boot0 Active First/Aktif Öncelikli) önyükleyici tanımlanan MBR'deki "
-"aktif bölümden önyükleme yapmaya çalışır. Eğer aktif bölüm yoksa, geçerli "
-"bir PBR imzasına sahip ilk EFI/FAT32/HFS bölümünü (MBR'de  ve sonra da "
-"GPT'de tanımlanan) önyüklemeye çalışacaktır.\n"
+"boot0af (boot0 Active First/Aktif Öncelikli) önyükleyici tanımlanan MBR'deki aktif bölümden önyükleme yapmaya çalışır. Eğer aktif bölüm yoksa, geçerli bir PBR imzasına sahip ilk EFI/FAT32/HFS bölümünü (MBR'de  ve sonra da GPT'de tanımlanan) önyüklemeye çalışacaktır.\n"
 "Bu seçim işaretlenmiş HFS/Fat32  bölümünü aktif olarak ayarlayacaktır."
 
 #. type: "boot0ss_title"
@@ -317,12 +316,8 @@ msgid ""
 "This choice will not activate any partition in MBR."
 msgstr ""
 "BIOS anakartlarda BIOS önyükleme için kullanılır.\n"
-"boot0ss (boot0 Signature Scanning/İmza Tarama) önyükleyici geçerli bir PBR "
-"imzasına sahip ilk EFI/FAT32/HFS bölümünü (MBR'de ve sonra da GPT'de "
-"tanımlanan) önyüklemeye çalışacaktır. Eğer bölüm bulunamazsa MBR'de "
-"tanımlanan aktif bölümü önyüklemeye çalışacaktır.\n"
-"Eğer aynı diskke Windows yüklü ise bu önyükleyici iyi bir seimdir zira "
-"Windows, yüklü olduğu bölümün aktif olmasını ister.\n"
+"boot0ss (boot0 Signature Scanning/İmza Tarama) önyükleyici geçerli bir PBR imzasına sahip ilk EFI/FAT32/HFS bölümünü (MBR'de ve sonra da GPT'de tanımlanan) önyüklemeye çalışacaktır. Eğer bölüm bulunamazsa MBR'de tanımlanan aktif bölümü önyüklemeye çalışacaktır.\n"
+"Eğer aynı diskke Windows yüklü ise bu önyükleyici iyi bir seimdir zira Windows, yüklü olduğu bölümün aktif olmasını ister.\n"
 "Bu seçim MBR'deki hiçbir bölümü aktif yapmayacaktır."
 
 #. type: "bootNo_title"
@@ -356,8 +351,7 @@ msgid ""
 "Install alternative booting PBR with choice of boot with a key pressed.\n"
 "File to boot = boot{keypressed}"
 msgstr ""
-"Alternatif önyüklemeli PBR'yi bir tuşa basınca önyükleme yapma seçeneği ile "
-"yükle.\n"
+"Alternatif önyüklemeli PBR'yi bir tuşa basınca önyükleme yapma seçeneği ile yükle.\n"
 "Önyüklemesi yapılacak dosya = önyükleme{tuşabasıldı}"
 
 #. type: "boot32_title"
@@ -528,12 +522,9 @@ msgid ""
 "Clover may not started with it and you may have wake problem in system.\n"
 "Use with precautions."
 msgstr ""
-"Clover GUI için daha fazla çözünürlük seçmeye izin veren 64bit görüntü "
-"sürücüsü.\n"
-"UEFI BIOS'taki CSM modülü üzerine temllendirlmiştir ve CSM'nin devrede "
-"olmasını gerektirir.\n"
-"Clover bununla birlikte çalışmayabilir ve sistem uyanma sorunu "
-"yaşayabilirsiniz.\n"
+"Clover GUI için daha fazla çözünürlük seçmeye izin veren 64bit görüntü sürücüsü.\n"
+"UEFI BIOS'taki CSM modülü üzerine temllendirlmiştir ve CSM'nin devrede olmasını gerektirir.\n"
+"Clover bununla birlikte çalışmayabilir ve sistem uyanma sorunu yaşayabilirsiniz.\n"
 "Dikkatli kullanın."
 
 #. type: "DataHubDxe-64_description"
@@ -544,8 +535,7 @@ msgid ""
 "Usually it is already present but sometime it may be missed. In this case you should see warning on screen."
 msgstr ""
 "Bu MacOSX için zorunlu olan DataHub protokol desteğidir.\n"
-"Genelde halihazırda mevcuttur fakat bazen kayıp olabilir. Bu durumda ekranda "
-"uyarı görürsünüz."
+"Genelde halihazırda mevcuttur fakat bazen kayıp olabilir. Bu durumda ekranda uyarı görürsünüz."
 
 #. type: "EmuVariableUefi-64_description"
 #: Resources/templates/Localizable.strings:97
@@ -555,33 +545,27 @@ msgid ""
 "Mostly UEFI boot uses hardware NVRAM but in some rare cases this driver is needed.\n"
 "Use it only if you have a problem without it"
 msgstr ""
-"MacOSX tarafından ihtiyaç duyulan NVRAM değişkenleri için 64bit sürücü "
-"desteği.\n"
-"Çoğu UEFI önyükleme donanımsal NVRAM kullanır fakat bazı durumlarda bu "
-"sürücü gereklidir.\n"
+"MacOSX tarafından ihtiyaç duyulan NVRAM değişkenleri için 64bit sürücü desteği.\n"
+"Çoğu UEFI önyükleme donanımsal NVRAM kullanır fakat bazı durumlarda bu sürücü gereklidir.\n"
 "Sadece yüklü olmadığında problem yaşıyorsanız kullanınız."
 
 #. type: "OsxAptioFixDrv-64_description"
 #: Resources/templates/Localizable.strings:100
 #, no-wrap
 msgid "64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio"
-msgstr ""
-"AMI Aptio gibi UEFI Firmware'lerdeki bellek sorunlarını çözen 64bit sürücü"
+msgstr "AMI Aptio gibi UEFI Firmware'lerdeki bellek sorunlarını çözen 64bit sürücü"
 
 #. type: "OsxLowMemFixDrv-64_description"
 #: Resources/templates/Localizable.strings:101
 #, no-wrap
 msgid "Simplified variant of OsxAptioFixDrv, 64bit (do not use both together)"
-msgstr ""
-"Sadeleştirilmiş OsxAptioFixDrv türevi, 64bit (ikisini birden kullanmayın)"
+msgstr "Sadeleştirilmiş OsxAptioFixDrv türevi, 64bit (ikisini birden kullanmayın)"
 
 #. type: "PartitionDxe-64_description"
 #: Resources/templates/Localizable.strings:102
 #, no-wrap
 msgid "64bit driver to support non-usual partition maps such as: hybrid GPT/MBR or Apple Partition Map."
-msgstr ""
-"Melez GPT/MBR veya Apple Partition Map gibi alışıldık olmayan bölümleri "
-"desteklemek için 64bit sürücü."
+msgstr "Melez GPT/MBR veya Apple Partition Map gibi alışıldık olmayan bölümleri desteklemek için 64bit sürücü."
 
 #. type: "Themes_title"
 #: Resources/templates/Localizable.strings:108
@@ -893,9 +877,7 @@ msgstr "RC scriptlerini bütün diğer OS X bölümlerine yükle"
 #: Resources/templates/Localizable.strings:186
 #, no-wrap
 msgid "Install all RC scripts on all internal bootable OSX volumes other than the target volume."
-msgstr ""
-"RC scriptlerini hedef bölüm hariç diğer bütün dahili önyüklenebilir OS X "
-"bölümlerine yükle."
+msgstr "RC scriptlerini hedef bölüm hariç diğer bütün dahili önyüklenebilir OS X bölümlerine yükle."
 
 #. type: "Optional RC Scripts"
 #: Resources/templates/Localizable.strings:187
@@ -907,9 +889,7 @@ msgstr "İsteğe bağlı RC scriptleri"
 #: Resources/templates/Localizable.strings:188
 #, no-wrap
 msgid "Disable the mDNSResponder sleep proxy client service. This will prevent the system waking from sleep every hours"
-msgstr ""
-"mDNSResponder vekil uyku istemcisi servisini devre dışı bırak. Bu, sistemin "
-"her saat uykudan uyanmasını engelleyecektir."
+msgstr "mDNSResponder vekil uyku istemcisi servisini devre dışı bırak. Bu, sistemin her saat uykudan uyanmasını engelleyecektir."
 
 #. type: "CloverPrefpane_title"
 #: Resources/templates/Localizable.strings:193
@@ -1096,9 +1076,7 @@ msgstr "Günlük dosyaları"
 #: ../CloverPrefpane/CloverPrefpane.strings:18
 #, no-wrap
 msgid "Number of lines of history to keep in CloverEFI/system.log file in addition to the current CloverEFI/boot.log contents"
-msgstr ""
-"Halihazırdaki CloverEFI/boot.log içeriğine ek olarak CloverEFI/system.log "
-"dosyasında tutulacak geçmiş kayıtların satır sayısı"
+msgstr "Halihazırdaki CloverEFI/boot.log içeriğine ek olarak CloverEFI/system.log dosyasında tutulacak geçmiş kayıtların satır sayısı"
 
 #. type: "327.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:19
@@ -1146,8 +1124,7 @@ msgstr "Yıl:"
 #: ../CloverPrefpane/CloverPrefpane.strings:26
 #, no-wrap
 msgid "To see previews of themes you must select the path to the EFI folder."
-msgstr ""
-"Temaların önizlemelerini görmek için EFI klasörünün yolunu seçmelisiniz."
+msgstr "Temaların önizlemelerini görmek için EFI klasörünün yolunu seçmelisiniz."
 
 #. type: "426.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:27
