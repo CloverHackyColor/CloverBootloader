@@ -427,61 +427,63 @@ VOID BltClearScreen(IN BOOLEAN ShowBanner)
   if (!BigBack && (GlobalConfig.BackgroundName != NULL)) {
     BigBack = egLoadImage(ThemeDir, GlobalConfig.BackgroundName, FALSE);
   }
-  if (GlobalConfig.Theme) { // regular theme
-    BackgroundImage = egCreateFilledImage(UGAWidth, UGAHeight, FALSE, &BlueBackgroundPixel); 
-  } else { // embedded theme - use stdbackground color
-    BackgroundImage = egCreateFilledImage(UGAWidth, UGAHeight, FALSE, &StdBackgroundPixel); 
+
+  if (BackgroundImage == NULL) {
+    if (GlobalConfig.Theme) { // regular theme
+      BackgroundImage = egCreateFilledImage(UGAWidth, UGAHeight, FALSE, &BlueBackgroundPixel); 
+    } else { // embedded theme - use stdbackground color
+      BackgroundImage = egCreateFilledImage(UGAWidth, UGAHeight, FALSE, &StdBackgroundPixel); 
+    }
   }
 
-    if (BigBack != NULL) {
-      switch (GlobalConfig.BackgroundScale) {
-        case Scale:
-          ScaleImage(BackgroundImage, BigBack);
-          break;
-        case Crop:
-          x = UGAWidth - BigBack->Width;
-          if (x >= 0) {
-            x1 = x >> 1;
-            x2 = 0;
-            x = BigBack->Width;
-          } else {
-            x1 = 0;
-            x2 = (-x) >> 1;
-            x = UGAWidth;
+  if (BigBack != NULL) {
+    switch (GlobalConfig.BackgroundScale) {
+      case Scale:
+        ScaleImage(BackgroundImage, BigBack);
+        break;
+      case Crop:
+        x = UGAWidth - BigBack->Width;
+        if (x >= 0) {
+          x1 = x >> 1;
+          x2 = 0;
+          x = BigBack->Width;
+        } else {
+          x1 = 0;
+          x2 = (-x) >> 1;
+          x = UGAWidth;
+        }
+        y = UGAHeight - BigBack->Height;
+        if (y >= 0) {
+          y1 = y >> 1;
+          y2 = 0;
+          y = BigBack->Height;
+        } else {
+          y1 = 0;
+          y2 = (-y) >> 1;
+          y = UGAHeight;
+        }
+        egRawCopy(BackgroundImage->PixelData + y1 * UGAWidth + x1,
+                  BigBack->PixelData + y2 * BigBack->Width + x2,
+                  x, y, UGAWidth, BigBack->Width);
+        break;
+      case Tile:
+        x = (BigBack->Width * ((UGAWidth - 1) / BigBack->Width + 1) - UGAWidth) >> 1;
+        y = (BigBack->Height * ((UGAHeight - 1) / BigBack->Height + 1) - UGAHeight) >> 1;
+        p1 = BackgroundImage->PixelData;
+        for (j = 0; j < UGAHeight; j++) {
+          y2 = ((j + y) % BigBack->Height) * BigBack->Width;
+          for (i = 0; i < UGAWidth; i++) {
+            *p1++ = BigBack->PixelData[y2 + ((i + x) % BigBack->Width)];
           }
-          y = UGAHeight - BigBack->Height;
-          if (y >= 0) {
-            y1 = y >> 1;
-            y2 = 0;
-            y = BigBack->Height;
-          } else {
-            y1 = 0;
-            y2 = (-y) >> 1;
-            y = UGAHeight;
-          }
-          egRawCopy(BackgroundImage->PixelData + y1 * UGAWidth + x1,
-                    BigBack->PixelData + y2 * BigBack->Width + x2,
-                    x, y, UGAWidth, BigBack->Width);
-          break;
-        case Tile:
-          x = (BigBack->Width * ((UGAWidth - 1) / BigBack->Width + 1) - UGAWidth) >> 1;
-          y = (BigBack->Height * ((UGAHeight - 1) / BigBack->Height + 1) - UGAHeight) >> 1;
-          p1 = BackgroundImage->PixelData;
-          for (j = 0; j < UGAHeight; j++) {
-            y2 = ((j + y) % BigBack->Height) * BigBack->Width;
-            for (i = 0; i < UGAWidth; i++) {
-              *p1++ = BigBack->PixelData[y2 + ((i + x) % BigBack->Width)];
-            }
-          }
-          break;
-        case None:
-        default:
-          // already scaled
-          break;
-      }
+        }
+        break;
+      case None:
+      default:
+        // already scaled
+        break;
     }
-  
-    
+  }  
+
   if (ShowBanner && !(GlobalConfig.HideUIFlags & HIDEUI_FLAG_BANNER)) {
     // clear and draw banner    
     if (BackgroundImage) {

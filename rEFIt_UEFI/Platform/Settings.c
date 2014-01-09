@@ -1638,6 +1638,10 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
     egFreeImage(BigBack);
     BigBack = NULL;
   }
+  if (BackgroundImage) {
+    egFreeImage(BackgroundImage);
+    BackgroundImage = NULL;
+  }
   if (Banner) {
     egFreeImage(Banner);
     Banner  = NULL;
@@ -2071,7 +2075,7 @@ EFI_STATUS InitTheme(BOOLEAN useThemeDefinedInNVRam, EFI_TIME *time)
     GuiAnime=NextAnime;
   }
   
-  if (ThemesNum > 0) {
+  if (ThemesNum > 0 && (!GlobalConfig.Theme || StrCmp(GlobalConfig.Theme,L"embedded") != 0)) {
     
     // Try special theme first
     if (time!=NULL) {
