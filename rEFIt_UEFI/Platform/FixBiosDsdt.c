@@ -4489,8 +4489,8 @@ VOID FixBiosDsdt (UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, 
 //    DBG("patch MCHC in DSDT \n");
     DsdtLen = AddMCHC(temp, DsdtLen);
   }
-  if (((gSettings.FixDsdt & FIX_MCHC) && !(gSettings.FixDsdt & FIX_NEW_WAY) || 
-       (gSettings.FixDsdt & FIX_NEW_WAY) && (gSettings.FixDsdt & FIX_IMEI))) {
+  if (((gSettings.FixDsdt & FIX_MCHC) && !(gSettings.FixDsdt & FIX_NEW_WAY)) || 
+       ((gSettings.FixDsdt & FIX_NEW_WAY) && (gSettings.FixDsdt & FIX_IMEI))) {
     DsdtLen = AddIMEI(temp, DsdtLen);
   }
   
