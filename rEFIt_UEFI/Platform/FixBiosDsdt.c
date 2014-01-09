@@ -4488,25 +4488,20 @@ VOID FixBiosDsdt (UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, 
   if ((gCPUStructure.Family == 0x06)  && (gSettings.FixDsdt & FIX_MCHC)) {
 //    DBG("patch MCHC in DSDT \n");
     DsdtLen = AddMCHC(temp, DsdtLen);
-    if (!(gSettings.FixDsdt & FIX_NEW_WAY)) {
-      DsdtLen = AddIMEI(temp, DsdtLen);
-    }    
   }
-  if ((gSettings.FixDsdt & FIX_NEW_WAY) && (gSettings.FixDsdt & FIX_IMEI)) {
+  if (((gSettings.FixDsdt & FIX_MCHC) && !(gSettings.FixDsdt & FIX_NEW_WAY) || 
+       (gSettings.FixDsdt & FIX_NEW_WAY) && (gSettings.FixDsdt & FIX_IMEI))) {
     DsdtLen = AddIMEI(temp, DsdtLen);
   }
   
   // Always Fix USB
   if ((gSettings.FixDsdt & FIX_USB)) {
-//    DBG("patch USB in DSDT \n");
     DsdtLen = FIXUSB(temp, DsdtLen);
   }
 
-  if ((gSettings.SlpWak || (gSettings.FixDsdt & FIX_WARNING)) && !(gSettings.FixDsdt & FIX_NEW_WAY)) {
+  if (((gSettings.FixDsdt & FIX_WARNING) && !(gSettings.FixDsdt & FIX_NEW_WAY)) || 
+      ((gSettings.FixDsdt & FIX_NEW_WAY) && (gSettings.FixDsdt & FIX_WAK))){
     // Always Fix _WAK Return value
-    DsdtLen = FIXWAK(temp, DsdtLen, fadt);
-  }
-  if ((gSettings.FixDsdt & FIX_NEW_WAY) && (gSettings.FixDsdt & FIX_WAK)) {
     DsdtLen = FIXWAK(temp, DsdtLen, fadt);
   }
   
@@ -4542,7 +4537,7 @@ VOID FixBiosDsdt (UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, 
     }
     
   if (((gSettings.FixDsdt & FIX_WARNING) && !(gSettings.FixDsdt & FIX_NEW_WAY)) ||
-     (gMobile || ((gSettings.FixDsdt & FIX_NEW_WAY) && (gSettings.FixDsdt & FIX_PNLF)))) {
+      ((gSettings.FixDsdt & FIX_NEW_WAY) && (gSettings.FixDsdt & FIX_PNLF))) {
       DsdtLen = AddPNLF(temp, DsdtLen);
     }
   
@@ -4558,8 +4553,9 @@ VOID FixBiosDsdt (UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, 
     }
     // other compiler warning fix _T_X,  MUTE .... USB _PRW value form 0x04 => 0x01
 //     DsdtLen = FIXOTHER(temp, DsdtLen);
-  if (((gSettings.FixDsdt & FIX_WARNING) && !(gSettings.FixDsdt & FIX_NEW_WAY)) ||
-     ((gSettings.FixDsdt & FIX_NEW_WAY) && (gSettings.FixDsdt & FIX_DARWIN))) {
+  if (gSettings.FixDsdt & FIX_WARNING) {
+//  if (((gSettings.FixDsdt & FIX_WARNING) && !(gSettings.FixDsdt & FIX_NEW_WAY)) ||
+//     ((gSettings.FixDsdt & FIX_NEW_WAY) && (gSettings.FixDsdt & FIX_DARWIN))) {
     if (!FindMethod(temp, DsdtLen, "GET9") && 
         !FindMethod(temp, DsdtLen, "STR9") &&
         !FindMethod(temp, DsdtLen, "OOSI")) {
