@@ -254,14 +254,17 @@ MemLogVA (
   // Increase buffer if not.
   //
   if ((UINTN)(mMemLog->Cursor - mMemLog->Buffer) + MEM_LOG_MAX_LINE_SIZE > mMemLog->BufferSize) {
+      UINTN Offset;
       // not enough place for max line - make buffer bigger
       // but not too big (if something gets out of controll)
       if (mMemLog->BufferSize + MEM_LOG_INITIAL_SIZE > MEM_LOG_MAX_SIZE) {
       // Out of resources!
         return;
       }
+      Offset = mMemLog->Cursor - mMemLog->Buffer;
       mMemLog->Buffer = ReallocatePool(mMemLog->BufferSize, mMemLog->BufferSize + MEM_LOG_INITIAL_SIZE, mMemLog->Buffer);
       mMemLog->BufferSize += MEM_LOG_INITIAL_SIZE;
+      mMemLog->Cursor = mMemLog->Buffer + Offset;
     }
   
   //
