@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-01-09 12:07+0100\n"
-"PO-Revision-Date: 2013-11-02 10:31+0000\n"
-"Last-Translator: mackie100 <mackie.proj@yahoo.com>\n"
+"PO-Revision-Date: 2014-01-10 14:32+0000\n"
+"Last-Translator: mackie100 <mackie100_projects@yahoo.com>\n"
 "Language-Team: it <it@li.org>\n"
 "Language: it\n"
 "MIME-Version: 1.0\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1383388286.0\n"
+"X-POOTLE-MTIME: 1389364325.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -245,10 +245,10 @@ msgstr "Installazione Completata!"
 
 #. type: "UEFI.only_title"
 #: Resources/templates/Localizable.strings:4
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Install for UEFI motherboards"
 msgid "Install for UEFI booting only"
-msgstr "Installazione per schede madri UEFI"
+msgstr "Installazione solo per avvio in UEFI"
 
 #. type: "UEFI.only_description"
 #: Resources/templates/Localizable.strings:5
