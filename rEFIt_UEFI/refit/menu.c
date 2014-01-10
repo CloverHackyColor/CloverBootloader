@@ -160,13 +160,10 @@ VOID RefillInputs(VOID)
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, SVALUE_MAX_SIZE, L"%a ", gSettings.BootArgs);
   InputItems[InputItemsCount].ItemType = UNIString; //1
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 63, L"%s", gSettings.DsdtName);
-  InputItems[InputItemsCount].ItemType = BoolValue; //2
-  InputItems[InputItemsCount].BValue = gSettings.DropSSDT; //iCloudFix;
-  InputItems[InputItemsCount++].SValue = gSettings.DropSSDT?L"[+]":L"[ ]"; //iCloudFix?L"[+]":L"[ ]";
-//  InputItems[InputItemsCount].ItemType = BoolValue; //3 
-//  InputItems[InputItemsCount].BValue = gSettings.StringInjector;
-//  InputItems[InputItemsCount++].SValue = gSettings.StringInjector?L"[+]":L"[ ]";
-  //GlobalConfig.Theme
+//  InputItems[InputItemsCount].ItemType = BoolValue; //2
+//  InputItems[InputItemsCount].BValue = gSettings.DropSSDT; 
+//  InputItems[InputItemsCount++].SValue = gSettings.DropSSDT?L"[+]":L"[ ]"; 
+  //GlobalConfig.Theme  
   InputItemsCount = 3;
   InputItems[InputItemsCount].ItemType = UNIString; //3
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 53, L"%s",
@@ -182,7 +179,6 @@ VOID RefillInputs(VOID)
   InputItems[InputItemsCount].ItemType = BoolValue;  //6
   InputItems[InputItemsCount].BValue = gSettings.SlpSmiEnable;
   InputItems[InputItemsCount++].SValue = gSettings.SlpSmiEnable?L"[+]":L"[ ]";
-//  InputItemsCount = 7;
   InputItems[InputItemsCount].ItemType = Decimal;  //7
   InputItems[InputItemsCount++].SValue = PoolPrint(L"%02d", gSettings.PLimitDict);
   InputItems[InputItemsCount].ItemType = Decimal;  //8
@@ -287,14 +283,11 @@ VOID RefillInputs(VOID)
   InputItems[InputItemsCount++].SValue = gSettings.KPAsusAICPUPM?L"[+]":L"[ ]";
   InputItems[InputItemsCount].ItemType = BoolValue; //47
   InputItems[InputItemsCount].BValue = gSettings.KPAppleRTC;
-  InputItems[InputItemsCount++].SValue = gSettings.KPAppleRTC?L"[+]":L"[ ]";
-  
-  /*
+  InputItems[InputItemsCount++].SValue = gSettings.KPAppleRTC?L"[+]":L"[ ]";  
   InputItems[InputItemsCount].ItemType = BoolValue; //48
-  InputItems[InputItemsCount].BValue = gSettings.bDropAPIC;
-  InputItems[InputItemsCount++].SValue = gSettings.bDropAPIC?L"[+]":L"[ ]";
-   */
-  InputItemsCount = 49;
+  InputItems[InputItemsCount].BValue = gSettings.KPKernelPm; //KPKernelPm
+  InputItems[InputItemsCount++].SValue = gSettings.KPKernelPm?L"[+]":L"[ ]";
+  
   InputItems[InputItemsCount].ItemType = BoolValue; //49
   InputItems[InputItemsCount].BValue = gSettings.DropMCFG;
   InputItems[InputItemsCount++].SValue = gSettings.DropMCFG?L"[+]":L"[ ]";
@@ -367,16 +360,10 @@ VOID RefillInputs(VOID)
   InputItems[InputItemsCount].ItemType = BoolValue; //88
   InputItems[InputItemsCount].BValue   = gSettings.DoubleFirstState;
   InputItems[InputItemsCount++].SValue = gSettings.DoubleFirstState?L"[+]":L"[ ]";
-  /*
   InputItems[InputItemsCount].ItemType = BoolValue; //89
-  InputItems[InputItemsCount].BValue   = gSettings.bDropBGRT;
-  InputItems[InputItemsCount++].SValue = gSettings.bDropBGRT?L"[+]":L"[ ]";
-  */
-  InputItems[InputItemsCount].ItemType = BoolValue; //89
-  InputItems[InputItemsCount].BValue = gSettings.KPKernelPm;
-  InputItems[InputItemsCount++].SValue = gSettings.KPKernelPm?L"[+]":L"[ ]";
+  InputItems[InputItemsCount].BValue = gSettings.EnableC7;
+  InputItems[InputItemsCount++].SValue = gSettings.EnableC7?L"[+]":L"[ ]";
  
-//  InputItemsCount = 90;
   InputItems[InputItemsCount].ItemType = UNIString; //90
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%s", gSettings.ConfigName);
   
@@ -460,12 +447,8 @@ VOID FillInputs(VOID)
   InputItems[InputItemsCount].ItemType = UNIString; //1
   InputItems[InputItemsCount].SValue = AllocateZeroPool(63);
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 63, L"%s", gSettings.DsdtName); // 1-> 2
-  InputItems[InputItemsCount++].ItemType = BoolValue; //2->3
-//  InputItems[InputItemsCount].BValue = gSettings.iCloudFix; //2
-//  InputItems[InputItemsCount++].SValue = gSettings.iCloudFix?L"[+]":L"[ ]";
-//  InputItems[InputItemsCount].ItemType = BoolValue; //3
-//  InputItems[InputItemsCount].BValue = gSettings.StringInjector;
-//  InputItems[InputItemsCount++].SValue = gSettings.StringInjector?L"[+]":L"[ ]";
+  InputItems[InputItemsCount++].ItemType = BoolValue; 
+// 2 - reserved
   InputItemsCount = 3;
   InputItems[InputItemsCount].ItemType = UNIString; //3
   InputItems[InputItemsCount].SValue = AllocateZeroPool(53);
@@ -481,7 +464,6 @@ VOID FillInputs(VOID)
   InputItems[InputItemsCount].ItemType = BoolValue;  //6
   InputItems[InputItemsCount].BValue = gSettings.SlpSmiEnable;
   InputItems[InputItemsCount++].SValue = gSettings.SlpSmiEnable?L"[+]":L"[ ]";
-//  InputItemsCount = 7;
   InputItems[InputItemsCount].ItemType = Decimal;  //7
   InputItems[InputItemsCount++].SValue = PoolPrint(L"%02d", gSettings.PLimitDict);
   InputItems[InputItemsCount].ItemType = Decimal;  //8
@@ -592,13 +574,9 @@ VOID FillInputs(VOID)
   InputItems[InputItemsCount].ItemType = BoolValue; //47
   InputItems[InputItemsCount].BValue = gSettings.KPAppleRTC;
   InputItems[InputItemsCount++].SValue = gSettings.KPAppleRTC?L"[+]":L"[ ]";
-  
-  /*
   InputItems[InputItemsCount].ItemType = BoolValue; //48
-  InputItems[InputItemsCount].BValue = gSettings.bDropAPIC;
-  InputItems[InputItemsCount++].SValue = gSettings.bDropAPIC?L"[+]":L"[ ]";
-   */
-  InputItemsCount = 49;
+  InputItems[InputItemsCount].BValue = gSettings.KPKernelPm;
+  InputItems[InputItemsCount++].SValue = gSettings.KPKernelPm?L"[+]":L"[ ]";
   InputItems[InputItemsCount].ItemType = BoolValue; //49
   InputItems[InputItemsCount].BValue = gSettings.DropMCFG;
   InputItems[InputItemsCount++].SValue = gSettings.DropMCFG?L"[+]":L"[ ]";
@@ -681,16 +659,10 @@ VOID FillInputs(VOID)
   InputItems[InputItemsCount].ItemType = BoolValue; //88
   InputItems[InputItemsCount].BValue   = gSettings.DoubleFirstState;
   InputItems[InputItemsCount++].SValue = gSettings.DoubleFirstState?L"[+]":L"[ ]";
-  /*
   InputItems[InputItemsCount].ItemType = BoolValue; //89
-  InputItems[InputItemsCount].BValue   = gSettings.bDropBGRT;
-  InputItems[InputItemsCount++].SValue = gSettings.bDropBGRT?L"[+]":L"[ ]";
-  */
-  InputItems[InputItemsCount].ItemType = BoolValue; //89
-  InputItems[InputItemsCount].BValue = gSettings.KPKernelPm;
-  InputItems[InputItemsCount++].SValue = gSettings.KPKernelPm?L"[+]":L"[ ]";
+  InputItems[InputItemsCount].BValue = gSettings.EnableC7;
+  InputItems[InputItemsCount++].SValue = gSettings.EnableC7?L"[+]":L"[ ]";
 
-//  InputItemsCount = 90;
   InputItems[InputItemsCount].ItemType = UNIString; //90
   InputItems[InputItemsCount].SValue   = AllocateZeroPool(64);
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%s", gSettings.ConfigName);
@@ -940,13 +912,11 @@ VOID ApplyInputs(VOID)
   if (gSettings.KPAsusAICPUPM || gSettings.KPAppleRTC || (gSettings.KPATIConnectorsPatch != NULL)) {
     gSettings.KPKextPatchesNeeded = TRUE;
   }
-  /*
   i++; //48
   if (InputItems[i].Valid) {
-    gSettings.bDropAPIC = InputItems[i].BValue;
+    gSettings.KPKernelPm = InputItems[i].BValue;
   }
-   */
-  i = 49; //49
+  i++; //49
   if (InputItems[i].Valid) {
     gSettings.DropMCFG = InputItems[i].BValue;
   }
@@ -1077,15 +1047,9 @@ VOID ApplyInputs(VOID)
   if (InputItems[i].Valid) {
     gSettings.DoubleFirstState = InputItems[i].BValue;
   }
-  /*
   i++; //89
   if (InputItems[i].Valid) {
-    gSettings.bDropBGRT = InputItems[i].BValue;
-  }
-  */
-  i++; //89
-  if (InputItems[i].Valid) {
-    gSettings.KPKernelPm = InputItems[i].BValue;
+    gSettings.EnableC7 = InputItems[i].BValue;
   }
 
   i=90; //90
@@ -2833,18 +2797,20 @@ REFIT_MENU_ENTRY  *SubMenuGraphics()
     InputBootArgs->Entry.AtDoubleClick = ActionEnter;
     AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
 
-    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
     if (gGraphics[i].Vendor == Nvidia) {
+    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+//    if (gGraphics[i].Vendor == Nvidia) {
       InputBootArgs->Entry.Title = PoolPrint(L"NVCAP:");
-    } else {
-      InputBootArgs->Entry.Title = PoolPrint(L"Connectors:");
-    }
+//    } else {
+//      InputBootArgs->Entry.Title = PoolPrint(L"Connectors:");
+//    }
     InputBootArgs->Entry.Tag = TAG_INPUT;
     InputBootArgs->Entry.Row = StrLen(InputItems[N+4].SValue); //cursor
     InputBootArgs->Item = &InputItems[N+4];    
     InputBootArgs->Entry.AtClick = ActionSelect;
     InputBootArgs->Entry.AtDoubleClick = ActionEnter;
     AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+    }
     
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
     InputBootArgs->Entry.Title = PoolPrint(L"LoadVideoBios:");
@@ -2994,6 +2960,16 @@ REFIT_MENU_ENTRY  *SubMenuSpeedStep()
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
   
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  InputBootArgs->Entry.Title = PoolPrint(L"EnableC7:");
+  InputBootArgs->Entry.Tag = TAG_INPUT;
+  InputBootArgs->Entry.Row = 0xFFFF; //cursor
+  InputBootArgs->Entry.ShortcutLetter = '7';
+  InputBootArgs->Item = &InputItems[89];    
+  InputBootArgs->Entry.AtClick = ActionEnter;
+  InputBootArgs->Entry.AtRightClick = ActionDetails;
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+  
+  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
   InputBootArgs->Entry.Title = PoolPrint(L"Use SystemIO:");
   InputBootArgs->Entry.Tag = TAG_INPUT;
   InputBootArgs->Entry.Row = 0xFFFF; //cursor
@@ -3100,7 +3076,7 @@ REFIT_MENU_ENTRY  *SubMenuBinaries()
   InputBootArgs->Entry.Title = PoolPrint(L"Kernel PM Patch:");
   InputBootArgs->Entry.Tag = TAG_INPUT;
   InputBootArgs->Entry.Row = 0xFFFF; //cursor
-  InputBootArgs->Item = &InputItems[89];
+  InputBootArgs->Item = &InputItems[48];
   InputBootArgs->Entry.AtClick = ActionEnter;
   InputBootArgs->Entry.AtRightClick = ActionDetails;
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);

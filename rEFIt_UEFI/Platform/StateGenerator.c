@@ -435,7 +435,7 @@ SSDT_TABLE *generate_cst_ssdt(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, U
   BOOLEAN c2_enabled = gSettings.EnableC2;
   BOOLEAN c3_enabled;
   BOOLEAN c4_enabled = gSettings.EnableC4;
-  BOOLEAN c6_enabled = gSettings.EnableC6;
+//  BOOLEAN c6_enabled = gSettings.EnableC6;
   BOOLEAN cst_using_systemio = gSettings.EnableISS;
   UINT8   p_blk_lo, p_blk_hi;
   UINT8   cstates_count;
@@ -460,7 +460,8 @@ SSDT_TABLE *generate_cst_ssdt(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, U
   acpi_cpu_p_blk = fadt->Pm1aEvtBlk + 0x10;
   c2_enabled = c2_enabled || (fadt->PLvl2Lat < 100);
   c3_enabled = (fadt->PLvl3Lat < 1000);
-  cstates_count = 1 + (c2_enabled ? 1 : 0) + ((c3_enabled || c4_enabled)? 1 : 0) + (c6_enabled ? 1 : 0);
+  cstates_count = 1 + (c2_enabled ? 1 : 0) + ((c3_enabled || c4_enabled)? 1 : 0)
+                  + (gSettings.EnableC6 ? 1 : 0) + (gSettings.EnableC7 ? 1 : 0);
   
   root = aml_create_node(NULL);
   aml_add_buffer(root, cst_ssdt_header, sizeof(cst_ssdt_header)); // SSDT header
@@ -522,7 +523,7 @@ SSDT_TABLE *generate_cst_ssdt(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, U
       aml_add_word(tmpl, gSettings.C3Latency);			// Latency
       aml_add_dword(tmpl, 0x000001F4);	// Power
     }
-    if (c6_enabled) // C6
+    if (gSettings.EnableC6) // C6
     {
       p_blk_lo = (UINT8)(acpi_cpu_p_blk + 5);
       p_blk_hi = (UINT8)((acpi_cpu_p_blk + 5) >> 8);
@@ -534,22 +535,19 @@ SSDT_TABLE *generate_cst_ssdt(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, U
       aml_add_byte(tmpl, 0x06);			// C6
       aml_add_word(tmpl, gSettings.C3Latency + 3);			// Latency
       aml_add_dword(tmpl, 0x0000015E);	// Power
-      if (((gCPUStructure.Model >= CPU_MODEL_IVY_BRIDGE) && gMobile) ||
-          (gCPUStructure.Model  >= CPU_MODEL_HASWELL_MB)) {
-        p_blk_lo = (acpi_cpu_p_blk + 6) & 0xff;
-        p_blk_hi = (UINT8)((acpi_cpu_p_blk + 6) >> 8);
-        
-        tmpl = aml_add_package(pack);
-        resource_template_register_systemio[11] = p_blk_lo; // C4 or C7
-        resource_template_register_systemio[12] = p_blk_hi; 
-        aml_add_buffer(tmpl, resource_template_register_fixedhw, sizeof(resource_template_register_fixedhw));
-        aml_add_byte(tmpl, 0x07);			// C7
-        aml_add_word(tmpl, 0xF5);			// Latency as in iMac14,1
-        aml_add_dword(tmpl, 0xC8);	// Power
-        
-      }
     }
-
+    if (gSettings.EnableC7) {
+      p_blk_lo = (acpi_cpu_p_blk + 6) & 0xff;
+      p_blk_hi = (UINT8)((acpi_cpu_p_blk + 6) >> 8);
+      
+      tmpl = aml_add_package(pack);
+      resource_template_register_systemio[11] = p_blk_lo; // C4 or C7
+      resource_template_register_systemio[12] = p_blk_hi; 
+      aml_add_buffer(tmpl, resource_template_register_fixedhw, sizeof(resource_template_register_fixedhw));
+      aml_add_byte(tmpl, 0x07);			// C7
+      aml_add_word(tmpl, 0xF5);			// Latency as in iMac14,1
+      aml_add_dword(tmpl, 0xC8);	// Power
+    }
   } else {
     // C1
     resource_template_register_fixedhw[8] = 0x01;
@@ -595,7 +593,7 @@ SSDT_TABLE *generate_cst_ssdt(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, U
       aml_add_word(tmpl, gSettings.C3Latency);			// Latency as in MacPro6,1 = 0x0043
       aml_add_dword(tmpl, 0x000001F4);	// Power
     }
-    if (c6_enabled) // C6
+    if (gSettings.EnableC6) // C6
     {
       tmpl = aml_add_package(pack);
       resource_template_register_fixedhw[11] = 0x20; // C6
@@ -603,18 +601,16 @@ SSDT_TABLE *generate_cst_ssdt(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, U
       aml_add_byte(tmpl, 0x06);			// C6
       aml_add_word(tmpl, gSettings.C3Latency + 3);			// Latency as in MacPro6,1 = 0x0046
       aml_add_dword(tmpl, 0x0000015E);	// Power
-      if (((gCPUStructure.Model >= CPU_MODEL_IVY_BRIDGE) && gMobile) ||
-          (gCPUStructure.Model  >= CPU_MODEL_HASWELL_MB)) {
-        tmpl = aml_add_package(pack);
-        resource_template_register_fixedhw[11] = 0x30; // C4 or C7
-        aml_add_buffer(tmpl, resource_template_register_fixedhw, sizeof(resource_template_register_fixedhw));
-        aml_add_byte(tmpl, 0x07);			// C7
-        aml_add_word(tmpl, 0xF5);			// Latency as in iMac14,1 
-        aml_add_dword(tmpl, 0xC8);	// Power
-
-      }
     }
-
+    if (gSettings.EnableC7) {
+      tmpl = aml_add_package(pack);
+      resource_template_register_fixedhw[11] = 0x30; // C4 or C7
+      aml_add_buffer(tmpl, resource_template_register_fixedhw, sizeof(resource_template_register_fixedhw));
+      aml_add_byte(tmpl, 0x07);			// C7
+      aml_add_word(tmpl, 0xF5);			// Latency as in iMac14,1 
+      aml_add_dword(tmpl, 0xC8);	// Power
+      
+    }
   }
   met = aml_add_method(scop, "_CST", 0);
   ret = aml_add_return_name(met, "CST_");

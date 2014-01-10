@@ -795,7 +795,8 @@ typedef struct {
   UINT16  C3Latency;
 	BOOLEAN	smartUPS;
   BOOLEAN PatchNMI;
-  UINT8   pad3[2];
+  BOOLEAN EnableC7;
+  UINT8   pad3[1];
   
 	CHAR16	DsdtName[60];
   UINT32  FixDsdt;

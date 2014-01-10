@@ -283,7 +283,7 @@ CHAR8* SmcPlatform[] =
 	"NA",   //"MacBookPro5,1",
   "k90i", //"MacBookPro8,1",
   "k92i", //"MacBookPro8,3",
-  "j30",  //"MacBookPro9,2",
+  "j30",  //"MacBookPro9,2",  "d2" for 10,1
 	"k99",  //"MacBookAir3,1",
   "NA",  //"MacBookAir5,2",
   "NA",  //"MacBookAir6,2",
@@ -315,7 +315,7 @@ UINT8 SmcRevision[][6] = {
 	{0x01, 0x47, 0x0F, 0, 0, 0x02},  //"MacBookPro5,1",
   {0x01, 0x68, 0x0F, 0, 0, 0x99},  //"MacBookPro8,1",
   {0x01, 0x70, 0x0F, 0, 0, 0x05},  //"MacBookPro8,3",
-  {0x02, 0x02, 0x0F, 0, 0, 0x41},  //"MacBookPro9,2",
+  {0x02, 0x02, 0x0F, 0, 0, 0x41},  //"MacBookPro9,2",  2.03f36 for 10,1
 	{0x01, 0x67, 0x0F, 0, 0, 0x09},  //"MacBookAir3,1",
   {0x02, 0x05, 0x0F, 0, 0, 0x09},  //"MacBookAir5,2",
   {0x02, 0x13, 0x0F, 0, 0, 0x07},  //"MacBookAir6,2",
@@ -349,7 +349,7 @@ UINT32 SmcConfig[] =
 	0x7b002,  //"MacBookPro5,1",
   0x7b005,  //"MacBookPro8,1",
   0x7c005,  //"MacBookPro8,3",
-  0x76006,  //"MacBookPro9,2",
+  0x76006,  //"MacBookPro9,2",  //074006 for 10,1  073007 for 10,2
 	0x76005,  //"MacBookAir3,1",
   0x7b006,  //"MacBookAir5,2",
   0x7b007,  //"MacBookAir6,2",

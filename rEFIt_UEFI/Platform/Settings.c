@@ -3331,6 +3331,17 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
                 gSettings.EnableISS = FALSE;
               }
         }
+        prop = GetProperty(dict2, "EnableC7");
+        if(prop) {
+          if ((prop->type == kTagTypeTrue) ||
+              ((prop->type == kTagTypeString) &&
+               ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))) {
+                gSettings.EnableC7 = TRUE;
+              } else {
+                gSettings.EnableC7 = FALSE;
+              }
+          DBG("Config set EnableC7: %a\n", gSettings.EnableC7?"+":"-");
+        }
         prop = GetProperty(dict2, "EnableC6");
         if(prop) {
           if ((prop->type == kTagTypeTrue) ||
@@ -3340,6 +3351,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
               } else {
                 gSettings.EnableC6 = FALSE;
               }
+          DBG("Config set EnableC6: %a\n", gSettings.EnableC6?"+":"-");
         }
         prop = GetProperty(dict2, "EnableC4");
         if(prop) {
@@ -3350,6 +3362,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
               } else {
                 gSettings.EnableC4 = FALSE;
               }
+          DBG("Config set EnableC4: %a\n", gSettings.EnableC4?"+":"-");
         }
         prop = GetProperty(dict2, "EnableC2");
         if(prop) {
@@ -3360,6 +3373,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
               } else {
                 gSettings.EnableC2 = FALSE;
               }
+          DBG("Config set EnableC2: %a\n", gSettings.EnableC2?"+":"-");
         }
         prop = GetProperty(dictPointer, "C3Latency");
         if(prop) {
@@ -3370,7 +3384,6 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
             gSettings.C3Latency = (UINT16)StrHexToUint64(UStr);
           }
         }
-
 
         prop = GetProperty(dict2, "PLimitDict");
         if(prop) {
