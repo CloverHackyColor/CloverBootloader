@@ -2997,7 +2997,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
               if ((prop2->type == kTagTypeTrue) ||
                   ((prop2->type == kTagTypeString) &&
                    ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
-                    gSettings.FixDsdt |= FIX_DARWIN;
+                    gSettings.FixDsdt |= FIX_WARNING;
                   }
             }
             prop2 = GetProperty(prop, "FIX_RTC_20000");

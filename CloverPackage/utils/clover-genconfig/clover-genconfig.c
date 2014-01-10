@@ -545,7 +545,7 @@ void PrintConfig(CFTypeRef data)
   addBoolean(fixDict, CFSTR("FixLAN_2000"),        !!(s->FixDsdt & FIX_LAN));
   addBoolean(fixDict, CFSTR("FixAirport_4000"),    !!(s->FixDsdt & FIX_WIFI));
   addBoolean(fixDict, CFSTR("FixHDA_8000"),        !!(s->FixDsdt & FIX_HDA));
-  addBoolean(fixDict, CFSTR("FIX_DARWIN_10000"),   !!(s->FixDsdt & FIX_DARWIN));
+ // addBoolean(fixDict, CFSTR("FIX_DARWIN_10000"),   !!(s->FixDsdt & FIX_DARWIN));  //deprecated
   addBoolean(fixDict, CFSTR("FIX_RTC_20000"),      !!(s->FixDsdt & FIX_RTC));
   addBoolean(fixDict, CFSTR("FIX_TMR_40000"),      !!(s->FixDsdt & FIX_TMR));
   addBoolean(fixDict, CFSTR("AddIMEI_80000"),      !!(s->FixDsdt & FIX_IMEI));
@@ -591,6 +591,11 @@ void PrintConfig(CFTypeRef data)
   addInteger(ssdtDict, CFSTR("UnderVoltStep"), s->UnderVoltStep);
   addInteger(ssdtDict, CFSTR("PluginType"), s->PluginType);
   addBoolean(ssdtDict, CFSTR("UseSystemIO"), s->EnableISS);
+  addBoolean(ssdtDict, CFSTR("EnableC2"), s->EnableC2);
+  addBoolean(ssdtDict, CFSTR("EnableC4"), s->EnableC4);
+  addBoolean(ssdtDict, CFSTR("EnableC6"), s->EnableC6);
+  addBoolean(ssdtDict, CFSTR("EnableC7"), s->EnableC7);
+  addInteger(ssdtDict, CFSTR("C3Latency"), s->C3Latency);
 
   CFMutableArrayRef dropArray = addArray(acpiDict, CFSTR("DropTables"));
   CFMutableDictionaryRef drop1Dict = addDictToArray(dropArray);
