@@ -1988,6 +1988,7 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
   UINT32 devadr=0, devsize=0, devadr1=0, devsize1=0;
   BOOLEAN DISPLAYFIX = FALSE;
   BOOLEAN NonUsable = FALSE;
+  BOOLEAN DsmFound = FALSE;
   AML_CHUNK *root = NULL;
   AML_CHUNK *gfx0, *peg0;
   AML_CHUNK *met;
@@ -2069,6 +2070,7 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
       }
     }
     
+    i = 0;
     if (DISPLAYFIX) { // device on bridge found
       i = devadr1;
     } else if (DisplayADR2[VCard] == 0xFFFE) { //builtin
@@ -2076,7 +2078,7 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
       DISPLAYFIX = TRUE;
       devadr1 = devadr;
       DBG(" builtin display\n");
-    } else i=0;
+    }
     
     if (i != 0) {
       Size = get_size(dsdt, i);
@@ -2093,7 +2095,8 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
         } else {
           DBG("_DSM already exists, patch display will not be applied\n");
   //        return len;
-          DisplayADR1[VCard] = 0;
+          DisplayADR1[VCard] = 0;  //xxx
+          DsmFound = TRUE;
         }
       }
     }
@@ -2119,7 +2122,7 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
       gfx0 = peg0;
 
     // Intel GMA and HD
-    if (DisplayVendor[VCard] == 0x8086) {
+    if ((DisplayVendor[VCard] == 0x8086) && !DsmFound) {
       DBG("Creating DSM for Intel card\n");
       met = aml_add_method(gfx0, "_DSM", 4);
       met = aml_add_store(met);
@@ -2141,7 +2144,7 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
     }
     
     // NVIDIA
-    if (DisplayVendor[VCard] == 0x10DE) {
+    if ((DisplayVendor[VCard] == 0x10DE)  && !DsmFound) {
       DBG("Creating DSM for NVIDIA card\n");
       met = aml_add_method(gfx0, "_DSM", 4);
       met = aml_add_store(met);
@@ -2162,7 +2165,7 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
     }
   
     // ATI
-    if (DisplayVendor[VCard] == 0x1002) {
+    if ((DisplayVendor[VCard] == 0x1002) && !DsmFound) {
       DBG("Creating DSM for ATI card\n");
       met = aml_add_method(gfx0, "_DSM", 4);  //if no subdevice
       met = aml_add_store(met);
@@ -2268,7 +2271,7 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
       } else {
         devsize1 = get_size(dsdt, devadr1);
         if (!devsize1) {
-          DBG("BUG! Address of existing GFX0 is lost %x\n", devadr1);
+ //         DBG("BUG! Address of existing GFX0 is lost %x\n", devadr1);
           FreePool(display);
           return len;
         }
