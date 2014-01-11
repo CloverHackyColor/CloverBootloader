@@ -329,13 +329,16 @@ void PrintConfig(CFTypeRef data)
   addStringToArray(hideArray, "EntryPath_NOT_SHOWN");
   
   CFMutableDictionaryRef scanDict = addDict(guiDict, CFSTR("Scan"));
+  addString(scanDict, CFSTR("Comment"), "These values wrong, they present for sample");
   addBoolean(scanDict, CFSTR("Entries"), 1);
   addBoolean(scanDict, CFSTR("Tool"), 1);
   addBoolean(scanDict, CFSTR("Legacy"), 1);
   
   CFMutableDictionaryRef customDict = addDict(guiDict, CFSTR("Custom"));
+  addString(customDict, CFSTR("Comment"), "These values wrong, they present for sample");
     CFMutableArrayRef entriesArray = addArray(customDict, CFSTR("Entries"));
       CFMutableDictionaryRef entries1Dict = addDictToArray(entriesArray);
+      addString(entries1Dict, CFSTR("Comment"), "These values wrong, they present for sample");
       addString(entries1Dict, CFSTR("Volume"), "VolumeUUID_NOT_SHOWN");
       addString(entries1Dict, CFSTR("Path"), "_NOT_SHOWN_");
       addString(entries1Dict, CFSTR("Type"), "_NOT_SHOWN_");

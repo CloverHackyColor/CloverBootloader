@@ -3389,7 +3389,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
               }
           DBG("Config set EnableC2: %a\n", gSettings.EnableC2?"+":"-");
         }
-        prop = GetProperty(dictPointer, "C3Latency");
+        prop = GetProperty(dict2, "C3Latency");
         if(prop) {
           if (prop->type == kTagTypeInteger) {
             gSettings.C3Latency = (UINT16)(UINTN)prop->string;
@@ -3439,7 +3439,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
           }
           DBG("Config set MinMultiplier=%d\n", gSettings.MinMultiplier);
         }
-        prop = GetProperty(dict2,"MaxMultiplier");
+        prop = GetProperty(dict2, "MaxMultiplier");
         if(prop) {
           if (prop->type == kTagTypeInteger) {
             gSettings.MaxMultiplier = (UINT8)(UINTN)prop->string;
@@ -3449,7 +3449,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
           }
           DBG("Config set MaxMultiplier=%d\n", gSettings.MaxMultiplier);
         }
-        prop = GetProperty(dict2,"PluginType");
+        prop = GetProperty(dict2, "PluginType");
         if(prop) {
           if (prop->type == kTagTypeInteger) {
             gSettings.PluginType = (UINT8)(UINTN)prop->string;
