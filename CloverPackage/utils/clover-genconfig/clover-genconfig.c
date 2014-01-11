@@ -173,6 +173,7 @@ void addInteger(CFMutableDictionaryRef dest, CFStringRef key, UInt64 value) {
     CFRelease(valueRef);
 }
 
+/*
 void addUUID(CFMutableDictionaryRef dest, CFStringRef key, EFI_GUID *uuid)
 {
     assert(dest);
@@ -184,6 +185,24 @@ void addUUID(CFMutableDictionaryRef dest, CFStringRef key, EFI_GUID *uuid)
     assert(strValue);
     CFDictionaryAddValue( dest, key, strValue );
     CFRelease(strValue);
+}*/
+void addUUID(CFMutableDictionaryRef dest, CFStringRef key, UInt8 *uuid)
+{
+  SInt64 i = 0;
+  CFMutableStringRef strValue = CFStringCreateMutable (kCFAllocatorDefault, 0);
+  
+  for (i = 0; i < 4; i++) {
+    CFStringAppendFormat(strValue, NULL, CFSTR("%02x"), *uuid++);
+  }
+  for (i = 0; i < 3; i++) {
+    CFStringAppendFormat(strValue, NULL, CFSTR("-%02x%02x"), *uuid++, *uuid++);
+  }
+  CFStringAppendFormat(strValue, NULL, CFSTR("-"));
+  for (i = 0; i < 6; i++) {
+    CFStringAppendFormat(strValue, NULL, CFSTR("%02x"), *uuid++);
+  }
+  CFDictionaryAddValue( dest, key, strValue );
+  CFRelease(strValue);
 }
 
 void addIntArray(CFMutableDictionaryRef dest, CFStringRef key, UInt8 *Value, SInt64 num)
