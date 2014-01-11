@@ -85,6 +85,7 @@ LogPrint(CHAR8 *Format, ...)
 VOID
 LogOnExitBootServices(VOID)
 {
+	#if LOG_TO_FILE >= 1
 	EFI_STATUS	Status;
 		
 	Status = MemLogSave(&gMemLog);
@@ -92,4 +93,5 @@ LogOnExitBootServices(VOID)
 		Print(L"ERROR saving log to a file: %r\n", Status);
 		gBS->Stall(3000000);
 	}
+	#endif
 }	

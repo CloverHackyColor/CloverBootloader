@@ -320,7 +320,7 @@ FsSaveMemToFileToDefaultDir(
 EFI_STATUS
 FsAppendMemClose(VOID)
 {
-	EFI_STATUS		Status;
+	EFI_STATUS		Status = EFI_SUCCESS;
 	
 	if (gAppendFile != NULL) {
 		Status = gAppendFile->Close(gAppendFile);
