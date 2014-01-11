@@ -23,6 +23,8 @@
 
 /** Loaded image protocol from our image. */
 EFI_LOADED_IMAGE_PROTOCOL *gLoadedImage = NULL;
+EFI_FILE_PROTOCOL         *gAppendDir = NULL;
+EFI_FILE_PROTOCOL         *gAppendFile = NULL;
 
 
 /** Retrieves loaded image protocol from our image. */
@@ -314,40 +316,97 @@ FsSaveMemToFileToDefaultDir(
     return Status;
 }
 
-/** Appends memory block to a file. */
+/* Closes previously file/dir used for appending */
+EFI_STATUS
+FsAppendMemClose(VOID)
+{
+	EFI_STATUS		Status;
+	
+	if (gAppendFile != NULL) {
+		Status = gAppendFile->Close(gAppendFile);
+		gAppendFile = NULL;
+	}
+	
+	if (gAppendDir != NULL) {
+		gAppendDir->Close(gAppendDir);
+		gAppendDir = NULL;
+	}
+	
+	return Status;
+}
+
+/* Appends to file which was previously opened for appending
+ * On error, or if requested via Common.h, closes the file.
+ */
+EFI_STATUS
+FsAppendMemToOpenFile(
+	IN VOID			*Data,
+	IN UINTN		DataSize
+)
+{
+	EFI_STATUS Status;
+	
+	if (gAppendFile == NULL)
+		return EFI_NOT_FOUND;
+	
+	Status = gAppendFile->SetPosition(gAppendFile, (UINT64)-1);
+	if (EFI_ERROR(Status)) {
+		return Status;
+	}
+	Status = gAppendFile->Write(gAppendFile, &DataSize, Data);
+	
+	// flush the file if requested
+	# if LOG_TO_FILE == 3
+	Status = gAppendFile->Flush(gAppendFile);
+	# endif
+	
+	// if using append with close, or if there was error, close the file
+	# if LOG_TO_FILE == 4
+	FsAppendMemClose();
+	# else
+	if (EFI_ERROR(Status)) {
+		FsAppendMemClose();
+	}
+	# endif
+	
+	return Status;
+}
+
+/** Opens new file for appending, and appends memory block to it. */
 EFI_STATUS
 FsAppendMemToFile(
 	IN EFI_FILE_PROTOCOL	*Dir,
-	IN CHAR16				*FileName,
-	IN VOID					*Data,
-	IN UINTN				DataSize
+	IN CHAR16		*FileName,
+	IN VOID			*Data,
+	IN UINTN		DataSize
 )
 {
-   EFI_STATUS				Status;
-	EFI_FILE_PROTOCOL		*File;
-	
+	EFI_STATUS		Status;
+	EFI_FILE_PROTOCOL	*File;
 	
 	if (Dir == NULL || FileName == NULL) {
 		return EFI_NOT_FOUND;
 	}
 	
-	// open to create it
+	// close previously opened file (if such exists)
+	FsAppendMemClose();
+	
+	// open existing file for appending or create new file
 	Status = Dir->Open(Dir, &File, FileName, EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE | EFI_FILE_MODE_CREATE, 0);
-	if (EFI_ERROR(Status)) {
-		return Status;
+	if (!EFI_ERROR(Status)) {
+		// append to opened file
+		gAppendFile = File;
+		Status = FsAppendMemToOpenFile(Data, DataSize);
 	}
-	Status = File->SetPosition(File, 0xFFFFFFFFFFFFFFFF);
-	if (EFI_ERROR(Status)) {
-		return Status;
-	}
-	Status = File->Write(File, &DataSize, Data);
-	File->Close(File);
-    
-    return Status;
+	
+	return Status;
 }
 
-/** Appends memory block to a file. Tries to save in "self dir",
- *  and if this is not possible then to first ESP/EFI partition.
+/** Appends memory block to file
+ *  If a file for appending was previously opened, append to it.
+ *  If no file was opened previously, open given file name for appending:
+ *  - first try first to save in "self dir"
+ *  - if this is not possible then to first ESP/EFI partition
  */
 EFI_STATUS
 FsAppendMemToFileToDefaultDir(
@@ -356,9 +415,17 @@ FsAppendMemToFileToDefaultDir(
 	IN UINTN			DataSize
 )
 {
-   EFI_STATUS			Status;
-	EFI_FILE_PROTOCOL	*Dir;
+	EFI_STATUS			Status;
+	EFI_FILE_PROTOCOL		*Dir;
 	
+	// first try to append to open file
+	Status = FsAppendMemToOpenFile(Data, DataSize);
+	
+	if (!EFI_ERROR(Status)) {
+		return Status;
+	}
+	
+	// could not append to open file, or open file does not exist, so try to open given file
 	
 	if (FileName == NULL) {
 		return EFI_NOT_FOUND;
@@ -367,17 +434,15 @@ FsAppendMemToFileToDefaultDir(
 	// try saving to "self dir"
 	Dir = FsGetSelfDir();
 	Status = FsAppendMemToFile(Dir, FileName, Data, DataSize);
-	if (Dir != NULL) {
-		Dir->Close(Dir);
-	}
 	if (EFI_ERROR(Status)) {
 		// error - try saving to ESP root dir
 		Dir = FsGetEspRootDir();
 		Status = FsAppendMemToFile(Dir, FileName, Data, DataSize);
-		if (Dir != NULL) {
-			Dir->Close(Dir);
-		}
 	}
-    
-    return Status;
+	
+	if (!EFI_ERROR(Status)) {
+		gAppendDir = Dir;
+	}
+	
+	return Status;
 }

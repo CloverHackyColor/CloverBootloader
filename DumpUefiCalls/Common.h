@@ -10,12 +10,6 @@
 #define __DMP_COMMON_H__
 
 
-#include "Lib.h"
-#include "Log.h"
-#include "FileLib.h"
-#include "BootServices.h"
-#include "RuntimeServices.h"
-
 //
 // Enable/disable log outputs: 1 or 0
 //
@@ -25,14 +19,18 @@
 //  gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0xFFFFFFFF
 // in package DSC file
 //
-#define LOG_TO_SCREEN		1
-#define LOG_TO_SERIAL		0
+#define LOG_TO_SCREEN			1
+#define LOG_TO_SERIAL			0
 
 //
-// LOG_TO_FILE
-// Enable/disable output: 1 or 0, 2 for append
+// LOG_TO_FILE:
+// 4 - will enable file output with append, reopening dir/file with every write (this is how it was implemented before, not sure if needed)
+// 3 - will enable file output with append, keeping file open, and flush after every write (good for debugging if it hangs)
+// 2 - will enable file output with append, keeping file open, but without flush after every write (much faster than the above)
+// 1 - will enable file output, erasing old file (save is done only at the end)
+// 0 - will disable file output
 //
-#define LOG_TO_FILE			2
+#define LOG_TO_FILE			1
 
 //
 // LOG_TO_FILE_PATH
@@ -42,7 +40,9 @@
 //
 // PRINT calls our main logger.
 //
-#define PRINT(...) LogPrint(__VA_ARGS__);
+// the following ensures that we don't end up calling print from another print, which was observed in some cases and could cause reboot/hang
+extern BOOLEAN InPrint;
+#define PRINT(...) if (!InPrint) { InPrint=TRUE; LogPrint(__VA_ARGS__); InPrint=FALSE; }
 
 //
 // WORK_DURING_RUNTIME:
@@ -53,12 +53,39 @@
 #define WORK_DURING_RUNTIME		0
 
 //
+// PRINT_RT_VARS:
+// 1 - will print RT vars before exiting bootservices
+// 0 - will skip RT vars printing
+//
+#define PRINT_RT_VARS			1
+
+//
 // PRINT_SHELL_VARS:
-// 1 - will print shell vars in PrintRTVariables()
-// 0 - will skipp shell vars
+// 1 - will print shell vars in PrintRTVariables(), takes place only if above is enabled
+// 0 - will skip shell vars
 //
 #define PRINT_SHELL_VARS		1
 
+//
+// PRINT_MEMORY_MAP:
+// 1 - will print memmap when GetMemoryMap() is called
+// 0 - will skip printing memmap
+//
+#define PRINT_MEMORY_MAP		0
+
+//
+// CAPTURE_CONOUT
+// 1 - will capture conout and print it to file (if file debug is enabled)
+// 0 - will skip capturing conout
+//
+#define CAPTURE_CONSOLE_OUTPUT		1
+
+
+#include "Lib.h"
+#include "Log.h"
+#include "FileLib.h"
+#include "BootServices.h"
+#include "RuntimeServices.h"
 
 #endif // __DMP_COMMON_H__
 

@@ -13,6 +13,10 @@
 /** Flag is TRUE before ExitBootServices() is called. FALSE in runtime. */
 extern BOOLEAN InBootServices;
 
+#if CAPTURE_CONSOLE_OUTPUT == 1
+extern BOOLEAN InConOutOutputString;
+#endif
+
 /** Installs our boot services overrides. */
 EFI_STATUS EFIAPI
 OvrBootServices(EFI_BOOT_SERVICES	*BS);

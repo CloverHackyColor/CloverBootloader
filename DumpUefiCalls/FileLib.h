@@ -93,4 +93,7 @@ FsAppendMemToFileToDefaultDir(
 	IN UINTN			DataSize
 );
 
+EFI_STATUS
+FsAppendMemClose(VOID);
+
 #endif // __DMP_FILE_LIB_H__

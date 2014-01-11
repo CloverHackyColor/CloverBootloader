@@ -58,7 +58,11 @@ LogPrint(CHAR8 *Format, ...)
 	// Dispatch to various loggers
 	//
 	#if LOG_TO_SCREEN == 1
+	#if CAPTURE_CONSOLE_OUTPUT == 1
+	if (InBootServices && !InConOutOutputString) {
+	#else
 	if (InBootServices) {
+	#endif
 		AsciiPrint(gLogLineBuffer);
 	}
 	#endif
@@ -81,16 +85,11 @@ LogPrint(CHAR8 *Format, ...)
 VOID
 LogOnExitBootServices(VOID)
 {
-	
-	#if LOG_TO_FILE == 1
-	{
-		EFI_STATUS	Status;
+	EFI_STATUS	Status;
 		
-		Status = MemLogSave(&gMemLog);
-		if (EFI_ERROR(Status)) {
-			Print(L"ERROR saving log to a file: %r\n", Status);
-			gBS->Stall(3000000);
-		}
+	Status = MemLogSave(&gMemLog);
+	if (EFI_ERROR(Status)) {
+		Print(L"ERROR saving log to a file: %r\n", Status);
+		gBS->Stall(3000000);
 	}
-	#endif
 }	
