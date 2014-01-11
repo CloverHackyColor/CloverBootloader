@@ -1928,7 +1928,14 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
             Anime->FilmX = FILM_LEFT;
           } else if (AsciiStrCmp(dict2->string, "right") == 0) {
             Anime->FilmX = FILM_RIGHT;
-          } else {
+          } else if (AsciiStrStr(dict2->string, "%")) {
+            CHAR8 *p = dict2->string;
+            Anime->FilmX = 0;
+            while (IS_DIGIT(*p)) {
+               Anime->FilmX = (Anime->FilmX * 10) + (INTN)(*p++) - '0';
+            }
+            Anime->FilmX += FILM_PERCENT;
+          }  else {
             Anime->FilmX = (INTN)AsciiStrDecimalToUintn(dict2->string);
           }
         }
@@ -1944,7 +1951,14 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
             Anime->FilmY = FILM_TOP;
           } else if (AsciiStrCmp(dict2->string, "bottom") == 0) {
             Anime->FilmY = FILM_BOTTOM;
-          } else {
+          }  else if (AsciiStrStr(dict2->string, "%")) {
+            CHAR8 *p = dict2->string;
+            Anime->FilmY = 0;
+            while (IS_DIGIT(*p)) {
+              Anime->FilmY = (Anime->FilmY * 10) + (INTN)(*p++) - '0';
+            }
+            Anime->FilmX += FILM_PERCENT;
+          }else {
             Anime->FilmY = (INTN)AsciiStrDecimalToUintn(dict2->string);
           }
         }

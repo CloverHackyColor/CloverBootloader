@@ -315,11 +315,12 @@ typedef struct _refit_input_dialog {
 } REFIT_INPUT_DIALOG;
 
 //some unreal values
-#define FILM_CENTRE 40000
-#define FILM_LEFT   50000
-#define FILM_TOP    50000
-#define FILM_RIGHT  60000
-#define FILM_BOTTOM 60000
+#define FILM_CENTRE   40000
+#define FILM_LEFT     50000
+#define FILM_TOP      50000
+#define FILM_RIGHT    60000
+#define FILM_BOTTOM   60000
+#define FILM_PERCENT 100000
 
 struct _refit_menu_screen {
   UINTN             ID;
