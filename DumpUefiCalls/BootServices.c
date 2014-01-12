@@ -838,6 +838,7 @@ OvrCreateEventEx(
 // Other functions
 //
 
+#if CAPTURE_CONSOLE_OUTPUT == 1
 EFI_STATUS EFIAPI
 OvrConOutOutputString(IN EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL *This, IN CHAR16 *String) {
 	EFI_STATUS			Status;
@@ -850,7 +851,8 @@ OvrConOutOutputString(IN EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL *This, IN CHAR16 *Strin
 	InConOutOutputString = FALSE;
 
         return Status;
-}	
+}
+#endif
 
 /** Installs our boot services overrides. */
 EFI_STATUS EFIAPI

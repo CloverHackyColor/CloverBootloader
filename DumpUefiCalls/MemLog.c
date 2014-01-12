@@ -75,6 +75,6 @@ MemLogSave(IN MEM_LOG *MemLog)
 	# elif (LOG_TO_FILE == 2) || (LOG_TO_FILE == 3)
 	return FsAppendMemClose();
 	# else
-	reurn EFI_SUCCESS;
+	return EFI_SUCCESS;
 	# endif
 }	
