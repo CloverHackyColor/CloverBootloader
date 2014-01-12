@@ -367,6 +367,7 @@ typedef struct {
 #define HIDEUI_FLAG_FUNCS      (0x0200)
 #define HIDEUI_FLAG_LABEL      (0x0400)
 #define HIDEUI_FLAG_REVISION   (0x0800)
+#define HIDEUI_FLAG_MENU_TITLE (0x1000)
 #define HIDEUI_ALL             (0xffff & (~VOLTYPE_INTERNAL))
 /*
 #define HDBADGES_NONE   0
@@ -414,6 +415,7 @@ typedef struct {
   BOOLEAN     BackgroundDark;
   BOOLEAN     CustomIcons;
   BOOLEAN     SelectionOnTop;
+//  BOOLEAN     NoMenuTitle;
   UINTN       BadgeOffsetX;
   UINTN       BadgeOffsetY;
   UINTN       BadgeScale;

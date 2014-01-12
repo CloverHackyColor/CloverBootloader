@@ -58,7 +58,9 @@ extern INTN ScrollScrollDecorationsHeight;
 extern UINT8 GetOSTypeFromPath(IN CHAR16 *Path);
 
 // global configuration with default values
-REFIT_CONFIG   GlobalConfig = { FALSE, -1, 0, 0, 0, TRUE, FALSE, FALSE, FALSE, FALSE, FONT_ALFA, 7, 0xFFFFFF80, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, None, 0, FALSE, FALSE, FALSE, 0, 0, 4 };
+REFIT_CONFIG   GlobalConfig = { FALSE, -1, 0, 0, 0, TRUE, FALSE, FALSE, FALSE, FALSE,
+  FONT_ALFA, 7, 0xFFFFFF80, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, None, 0,
+  FALSE, FALSE, FALSE, 0, 0, 4 };
 
 VOID __inline WaitForSts(VOID) {
 	UINT32 inline_timeout = 100000;
@@ -1768,6 +1770,10 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
     dict2 = GetProperty(dict, "Revision");
     if (dict2 && dict2->type == kTagTypeFalse) {
       GlobalConfig.HideUIFlags |= HIDEUI_FLAG_REVISION;
+    }
+    dict2 = GetProperty(dict, "MenuTitle");
+    if (dict2 && dict2->type == kTagTypeFalse) {
+      GlobalConfig.HideUIFlags |= HIDEUI_FLAG_MENU_TITLE;
     }
   }
 
