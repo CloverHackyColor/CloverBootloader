@@ -39,6 +39,8 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 //CONST CHAR16* CloverRevision = FIRMWARE_REVISION;
 CONST CHAR8* CloverRevision = REVISION_STR;
 
+BOOLEAN gBiosVideoBlockSwitchMode = FALSE;
+
 
 //
 // EFI Driver Binding Protocol Instance
@@ -505,6 +507,7 @@ Done:
   // "BiosVideoBlockSwitchMode" must be deleted from Clover
   // to enable mode swithing again
   if (Status == EFI_SUCCESS) {
+    gBiosVideoBlockSwitchMode = TRUE;
     gRT->SetVariable(L"BiosVideoBlockSwitchMode", &gEfiGlobalVariableGuid, EFI_VARIABLE_BOOTSERVICE_ACCESS, 1, &Status);
   }
   
@@ -2293,12 +2296,17 @@ BiosVideoGraphicsOutputSetMode (
   // If yes, then do not swicth mode.
   //
   DataSize = 0;
-  Status = gRT->GetVariable (L"BiosVideoBlockSwitchMode", &gEfiGlobalVariableGuid, NULL, &DataSize, NULL);
-  //DBG("BiosVideoGraphicsOutputSetMode: GetVariable BiosVideoBlockSwitchMode: %r\n", Status);
-  if (Status == EFI_BUFFER_TOO_SMALL) {
-    // var exists - just exit
-    DBG(" - blocking that switch\n");
-    return EFI_SUCCESS;
+  if (gBiosVideoBlockSwitchMode) {
+    Status = gRT->GetVariable (L"BiosVideoBlockSwitchMode", &gEfiGlobalVariableGuid, NULL, &DataSize, NULL);
+    //DBG("BiosVideoGraphicsOutputSetMode: GetVariable BiosVideoBlockSwitchMode: %r\n", Status);
+    if (Status == EFI_BUFFER_TOO_SMALL) {
+      // var exists - just exit
+      DBG(" - blocking that switch\n");
+      return EFI_SUCCESS;
+    }
+    // var is cleared by Clover - clear our flag to avoid calling of
+    // gRT->GetVariable() all the time
+    gBiosVideoBlockSwitchMode = FALSE;
   }
   
   if (ModeNumber == This->Mode->Mode) {
@@ -2785,12 +2793,17 @@ BiosVideoGraphicsOutputVbeBlt (
   }
 
   DataSize = 0;
-  Status = gRT->GetVariable (L"BiosVideoBlockSwitchMode", &gEfiGlobalVariableGuid, NULL, &DataSize, NULL);
-  //DBG("BiosVideoGraphicsOutputSetMode: GetVariable BiosVideoBlockSwitchMode: %r\n", Status);
-  if (Status == EFI_BUFFER_TOO_SMALL) {
-    // var exists - just exit
-    //DBG("VbeBlt - block\n");
-    return EFI_SUCCESS;
+  if (gBiosVideoBlockSwitchMode) {
+    Status = gRT->GetVariable (L"BiosVideoBlockSwitchMode", &gEfiGlobalVariableGuid, NULL, &DataSize, NULL);
+    //DBG("BiosVideoGraphicsOutputSetMode: GetVariable BiosVideoBlockSwitchMode: %r\n", Status);
+    if (Status == EFI_BUFFER_TOO_SMALL) {
+      // var exists - just exit
+      //DBG("VbeBlt - block\n");
+      return EFI_SUCCESS;
+    }
+    // var is cleared by Clover - clear our flag to avoid calling of
+    // gRT->GetVariable() all the time
+    gBiosVideoBlockSwitchMode = FALSE;
   }
   
   BiosVideoPrivate  = BIOS_VIDEO_DEV_FROM_GRAPHICS_OUTPUT_THIS (This);
