@@ -56,8 +56,8 @@ MemLogPrint(IN MEM_LOG *MemLog, IN CHAR8 *Format, ...)
 		Marker);
 	VA_END (Marker);
 
-	#if LOG_TO_FILE >= 2
-	// append to file
+	#if LOG_TO_FILE >= 3
+	// append to file while logging
 	Status = FsAppendMemToFileToDefaultDir(LOG_TO_FILE_PATH, (VOID*)(MemLog->Buffer + MemLog->Size), DataWritten);
 	#endif
 	MemLog->Size += DataWritten;
@@ -70,10 +70,10 @@ MemLogPrint(IN MEM_LOG *MemLog, IN CHAR8 *Format, ...)
 EFI_STATUS
 MemLogSave(IN MEM_LOG *MemLog)
 {
-	# if LOG_TO_FILE == 1
+	# if (LOG_TO_FILE == 1) || (LOG_TO_FILE == 2)
 	return FsSaveMemToFileToDefaultDir(LOG_TO_FILE_PATH, (VOID*)MemLog->Buffer, MemLog->Size);
-	# elif (LOG_TO_FILE == 2) || (LOG_TO_FILE == 3)
-	return FsAppendMemClose();
+	# elif LOG_TO_FILE >= 3
+	return FsAppendMemClose(TRUE);
 	# else
 	return EFI_SUCCESS;
 	# endif

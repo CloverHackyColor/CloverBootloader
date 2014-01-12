@@ -264,9 +264,11 @@ FsSaveMemToFile(
 	if (Dir == NULL || FileName == NULL) {
 		return EFI_NOT_FOUND;
 	}
-	
+
+        # if LOG_TO_FILE == 1	
 	// delete previous one if exists
 	FsDeleteFile(Dir, FileName);
+	# endif
 	
 	// open to create it
 	Status = Dir->Open(Dir, &File, FileName, EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE | EFI_FILE_MODE_CREATE, 0);
@@ -316,9 +318,11 @@ FsSaveMemToFileToDefaultDir(
     return Status;
 }
 
-/* Closes previously file/dir used for appending */
+/* Closes previously opened file/dir used for appending */
 EFI_STATUS
-FsAppendMemClose(VOID)
+FsAppendMemClose(
+	IN BOOLEAN 		CloseDir
+)
 {
 	EFI_STATUS		Status = EFI_SUCCESS;
 	
@@ -326,12 +330,12 @@ FsAppendMemClose(VOID)
 		Status = gAppendFile->Close(gAppendFile);
 		gAppendFile = NULL;
 	}
-	
-	if (gAppendDir != NULL) {
-		gAppendDir->Close(gAppendDir);
+
+	if (CloseDir && gAppendDir != NULL) {
+		Status = gAppendDir->Close(gAppendDir);
 		gAppendDir = NULL;
 	}
-	
+
 	return Status;
 }
 
@@ -360,14 +364,15 @@ FsAppendMemToOpenFile(
 	Status = gAppendFile->Flush(gAppendFile);
 	# endif
 	
-	// if using append with close, or if there was error, close the file
+	// if using append with close, close the file (keep dir open)
 	# if LOG_TO_FILE == 4
-	FsAppendMemClose();
-	# else
-	if (EFI_ERROR(Status)) {
-		FsAppendMemClose();
-	}
+	FsAppendMemClose(FALSE);
 	# endif
+	
+	// on error, close dir
+	if (EFI_ERROR(Status)) {
+		FsAppendMemClose(TRUE);
+	}
 	
 	return Status;
 }
@@ -389,7 +394,7 @@ FsAppendMemToFile(
 	}
 	
 	// close previously opened file (if such exists)
-	FsAppendMemClose();
+	FsAppendMemClose(FALSE);
 	
 	// open existing file for appending or create new file
 	Status = Dir->Open(Dir, &File, FileName, EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE | EFI_FILE_MODE_CREATE, 0);
@@ -425,23 +430,26 @@ FsAppendMemToFileToDefaultDir(
 		return Status;
 	}
 	
-	// could not append to open file, or open file does not exist, so try to open given file
-	
+	// could not append to open file, or open file does not exist, so try to open given file	
 	if (FileName == NULL) {
 		return EFI_NOT_FOUND;
 	}
-	
-	// try saving to "self dir"
-	Dir = FsGetSelfDir();
-	Status = FsAppendMemToFile(Dir, FileName, Data, DataSize);
-	if (EFI_ERROR(Status)) {
-		// error - try saving to ESP root dir
-		Dir = FsGetEspRootDir();
+
+	// if we have an open dir, use it
+	if (gAppendDir != NULL) {
+		Status = FsAppendMemToFile(gAppendDir, FileName, Data, DataSize);
+	} else {
+		// try saving to "self dir"
+		Dir = FsGetSelfDir();
 		Status = FsAppendMemToFile(Dir, FileName, Data, DataSize);
-	}
-	
-	if (!EFI_ERROR(Status)) {
-		gAppendDir = Dir;
+		if (EFI_ERROR(Status)) {
+			// error - try saving to ESP root dir
+			Dir = FsGetEspRootDir();
+			Status = FsAppendMemToFile(Dir, FileName, Data, DataSize);
+		}
+		if (!EFI_ERROR(Status)) {
+			gAppendDir = Dir;
+		}	
 	}
 	
 	return Status;

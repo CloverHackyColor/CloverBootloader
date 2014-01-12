@@ -783,9 +783,9 @@ OvrCalculateCrc32(
 	EFI_STATUS			Status;
 	Status = gOrgBS.CalculateCrc32(Data, DataSize, Crc32);
 	
-	// Omit printing this when using append, as it can end up in calling a file operating inside another file operation
+	// Omit printing this when using append while logging, as it can end up in calling a file operating inside another file operation
 	// (some implementations of File functions use CalculateCrc32)
-	#if LOG_TO_FILE <= 1
+	#if LOG_TO_FILE <= 2
 	PRINT("->CalculateCrc32(%p, %d, 0x%x) = %r\n", Data, DataSize, Crc32, Status);
 	#endif
 	return Status;

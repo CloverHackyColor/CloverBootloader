@@ -28,6 +28,10 @@ BOOLEAN InPrint = FALSE;
 EFI_STATUS
 StartOverrides()
 {
+	EFI_TIME          Now;
+	gRT->GetTime(&Now, NULL);
+	PRINT("DumpUefiCalls overrides started on %04d.%02d.%02d (yyyy.mm.dd), at %02d:%02d:%02d.\n",
+	       Now.Year, Now.Month, Now.Day, Now.Hour, Now.Minute, Now.Second);
 	OvrBootServices(gBS);
 	OvrRuntimeServices(gRT);
 	return EFI_SUCCESS;

@@ -24,13 +24,14 @@
 
 //
 // LOG_TO_FILE:
-// 4 - will enable file output with append, reopening dir/file with every write (this is how it was implemented before, not sure if needed)
-// 3 - will enable file output with append, keeping file open, and flush after every write (good for debugging if it hangs)
-// 2 - will enable file output with append, keeping file open, but without flush after every write (much faster than the above)
-// 1 - will enable file output, erasing old file (save is done only at the end)
+// 4 - will enable file output with append while logging, reopening file with every write (this is how it was implemented before, not sure if needed)
+// 3 - will enable file output with append while logging, keeping file open, and flush after every write (good for debugging if it hangs)
+// 2 - will enable file output, appending to existing file (save is done only at the end)
+// 1 - will enable file output, overwriting old file (save is done only at the end)
 // 0 - will disable file output
+// Note: append while logging (options 3,4) works fine on CloverEFI, but varies between different UEFI firmwares, use only if needed for debugging.
 //
-#define LOG_TO_FILE			1
+#define LOG_TO_FILE			2
 
 //
 // LOG_TO_FILE_PATH

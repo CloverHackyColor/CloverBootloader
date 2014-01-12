@@ -93,7 +93,10 @@ FsAppendMemToFileToDefaultDir(
 	IN UINTN			DataSize
 );
 
+/* Closes previously opened file/dir used for appending */
 EFI_STATUS
-FsAppendMemClose(VOID);
+FsAppendMemClose(
+	IN BOOLEAN 			CloseDir
+);
 
 #endif // __DMP_FILE_LIB_H__
