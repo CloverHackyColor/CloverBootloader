@@ -264,8 +264,8 @@ FsSaveMemToFile(
 	if (Dir == NULL || FileName == NULL) {
 		return EFI_NOT_FOUND;
 	}
-
-        # if LOG_TO_FILE == 1	
+	
+	# if LOG_TO_FILE == 1
 	// delete previous one if exists
 	FsDeleteFile(Dir, FileName);
 	# endif
@@ -276,10 +276,15 @@ FsSaveMemToFile(
 		return Status;
 	}
 	
+	# if LOG_TO_FILE == 2
+	// go to end of file
+	gAppendFile->SetPosition(gAppendFile, (UINT64)-1);
+	# endif
+	
 	Status = File->Write(File, &DataSize, Data);
 	File->Close(File);
-    
-    return Status;
+	
+	return Status;
 }
 
 /** Saves memory block to a file. Tries to save in "self dir",
@@ -315,7 +320,7 @@ FsSaveMemToFileToDefaultDir(
 		}
 	}
     
-    return Status;
+	return Status;
 }
 
 /* Closes previously opened file/dir used for appending */
@@ -330,12 +335,12 @@ FsAppendMemClose(
 		Status = gAppendFile->Close(gAppendFile);
 		gAppendFile = NULL;
 	}
-
+	
 	if (CloseDir && gAppendDir != NULL) {
 		Status = gAppendDir->Close(gAppendDir);
 		gAppendDir = NULL;
 	}
-
+	
 	return Status;
 }
 
@@ -434,7 +439,7 @@ FsAppendMemToFileToDefaultDir(
 	if (FileName == NULL) {
 		return EFI_NOT_FOUND;
 	}
-
+	
 	// if we have an open dir, use it
 	if (gAppendDir != NULL) {
 		Status = FsAppendMemToFile(gAppendDir, FileName, Data, DataSize);
