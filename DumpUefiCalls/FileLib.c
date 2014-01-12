@@ -278,7 +278,7 @@ FsSaveMemToFile(
 	
 	# if LOG_TO_FILE == 2
 	// go to end of file
-	gAppendFile->SetPosition(gAppendFile, (UINT64)-1);
+	File->SetPosition(File, (UINT64)-1);
 	# endif
 	
 	Status = File->Write(File, &DataSize, Data);
