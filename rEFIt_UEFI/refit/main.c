@@ -1742,12 +1742,14 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
   //Load SMBIOS before config.plist
   // Load any extra SMBIOS information
+  /* Why is this here???? It has no effect if loaded before config.plist settings are parsed - apianti
   if (!EFI_ERROR(LoadUserSettings(SelfRootDir, L"smbios", &smbiosTags)) && (smbiosTags != NULL)) {
     TagPtr dictPointer = GetProperty(smbiosTags,"SMBIOS");
     if (dictPointer) {
       ParseSMBIOSSettings(dictPointer);
     }
   }
+  // */
 
   //Second step. Load config.plist into gSettings
   for (i=0; i<2; i++) {
