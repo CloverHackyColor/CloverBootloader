@@ -58,7 +58,7 @@ LogPrint(CHAR8 *Format, ...)
 	// Dispatch to various loggers
 	//
 	#if LOG_TO_SCREEN == 1
-	#if CAPTURE_CONSOLE_OUTPUT == 1
+	#if CAPTURE_CONSOLE_OUTPUT >= 1
 	if (InBootServices && !InConOutOutputString) {
 	#else
 	if (InBootServices) {

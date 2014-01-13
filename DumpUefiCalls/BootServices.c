@@ -21,7 +21,7 @@ BOOLEAN InBootServices = TRUE;
 /** Original boot services. */
 EFI_BOOT_SERVICES gOrgBS;
 
-#if CAPTURE_CONSOLE_OUTPUT == 1
+#if CAPTURE_CONSOLE_OUTPUT >= 1
 EFI_TEXT_STRING gOrgConOutOutputString = 0;
 BOOLEAN InConOutOutputString = FALSE;
 #endif
@@ -113,9 +113,9 @@ OvrGetMemoryMap(
 	// if print to console, then ExitBootServices will not work
 	PRINT("->GetMemoryMap(0x%x/0x%x, %p, 0x%x, 0x%x, 0x%x) = %r\n", inMemoryMapSize, *MemoryMapSize, MemoryMap, *MapKey, *DescriptorSize, *DescriptorVersion, Status);
 	if (Status == EFI_SUCCESS) {
-		# if PRINT_MEMORY_MAP == 1
+		#if PRINT_MEMORY_MAP == 1
 		PrintMemMap(*MemoryMapSize, MemoryMap, *DescriptorSize, *DescriptorVersion);
-		# endif
+		#endif
 	}
 	//Print(L"OvrGetMemoryMap\n");
 	return Status;
@@ -131,9 +131,12 @@ OvrAllocatePool(
 	EFI_STATUS			Status;
 	
 	Status = gOrgBS.AllocatePool(PoolType, Size, Buffer);
-	// do not print to console - requires AllocatePool - recursion
+	// printing to console requires AllocatePool - recursion, but this is solved by PRINT macro
 	// do not print to serial - too many calls from UEFI
 	//DebugPrint(1, "->AllocatePool(%s, 0x%x, %p) = %r\n", EfiMemoryTypeDesc[PoolType], Size, *Buffer, Status);
+	#if PRINT_ALLOCATE_POOL == 1
+	PRINT("->AllocatePool(%s, 0x%x, %p) = %r\n", EfiMemoryTypeDesc[PoolType], Size, *Buffer, Status);
+	#endif
 	return Status;
 }
 
@@ -433,7 +436,7 @@ OvrExitBootServices(
 	RestoreRuntimeServices(gRT);
 	#endif
 	
-	#if CAPTURE_CONSOLE_OUTPUT == 1
+	#if CAPTURE_CONSOLE_OUTPUT >= 1
 	gST->ConOut->OutputString = gOrgConOutOutputString;
 	#endif
 
@@ -831,26 +834,30 @@ OvrCreateEventEx(
 	PRINT("->CreateEventEx(0x%x, 0x%x, %p, %p, %g, %p) = %r\n", Type, NotifyTpl, NotifyFunction, NotifyContext, EventGroup, *Event, Status);
 	return Status;
 }
-	
+
 
 ////////////////////////////////////////////
-// 
+//
 // Other functions
 //
 
-#if CAPTURE_CONSOLE_OUTPUT == 1
+#if CAPTURE_CONSOLE_OUTPUT >= 1
 EFI_STATUS EFIAPI
 OvrConOutOutputString(IN EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL *This, IN CHAR16 *String) {
 	EFI_STATUS			Status;
-
+	
+	#if CAPTURE_CONSOLE_OUTPUT <= 1
 	Status = gOrgConOutOutputString(This,String);
-
-	// Set var to avoid printing to screen again when overriding OutputString, set var
+	#else
+	Status = EFI_SUCCESS;
+	#endif
+	
+	// Set var to avoid printing to screen again when overriding OutputString
 	InConOutOutputString = TRUE;
 	PRINT("%s",String);
 	InConOutOutputString = FALSE;
-
-        return Status;
+	
+	return Status;
 }
 #endif
 
@@ -923,7 +930,11 @@ OvrBootServices(EFI_BOOT_SERVICES	*BS)
 	gOrgBS.CalculateCrc32(BS, BS->Hdr.HeaderSize, &BS->Hdr.CRC32);
 	PRINT("Boot services overriden!\n");
 	
-	#if CAPTURE_CONSOLE_OUTPUT == 1
+	#if CAPTURE_CONSOLE_OUTPUT >= 1
+	PRINT("Overriding console output ...\n");
+	#if CAPTURE_CONSOLE_OUTPUT == 2
+	AsciiPrint("Preventing any further output, please wait until booting starts ...\n");
+	#endif
 	gOrgConOutOutputString = gST->ConOut->OutputString;
 	gST->ConOut->OutputString = OvrConOutOutputString;
 	PRINT("Console output overriden!\n");

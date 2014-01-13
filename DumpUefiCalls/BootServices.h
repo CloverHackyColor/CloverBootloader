@@ -13,7 +13,7 @@
 /** Flag is TRUE before ExitBootServices() is called. FALSE in runtime. */
 extern BOOLEAN InBootServices;
 
-#if CAPTURE_CONSOLE_OUTPUT == 1
+#if CAPTURE_CONSOLE_OUTPUT >= 1
 extern BOOLEAN InConOutOutputString;
 #endif
 

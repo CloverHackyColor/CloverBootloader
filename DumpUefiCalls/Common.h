@@ -75,8 +75,16 @@ extern BOOLEAN InPrint;
 #define PRINT_MEMORY_MAP		0
 
 //
-// CAPTURE_CONOUT
-// 1 - will capture conout and print it to file (if file debug is enabled)
+// PRINT_ALLOCATE_POOL:
+// 1 - will print AllocatePool() calls, note that there are a lot of them
+// 0 - will skip printing AllocatePool() calls.
+//
+#define PRINT_ALLOCATE_POOL		0
+
+//
+// CAPTURE_CONSOLE_OUTPUT
+// 2 - will capture conout, and prevent it from being displayed to screen (useful when saving to file)
+// 1 - will capture conout, allowing it to be displayed to screen also (useful when saving to file)
 // 0 - will skip capturing conout
 //
 #define CAPTURE_CONSOLE_OUTPUT		1
