@@ -1345,7 +1345,7 @@ static VOID LoadDrivers(VOID)
 
 INTN FindDefaultEntry(VOID)
 {
-  INTN                Index;
+  INTN                Index = -1;
   REFIT_VOLUME        *Volume;
   LOADER_ENTRY        *Entry;
   BOOLEAN             SearchForLoader;
@@ -1360,7 +1360,10 @@ INTN FindDefaultEntry(VOID)
     gEmuVariableControl->InstallEmulation(gEmuVariableControl);
   }
     
-  Index = FindStartupDiskVolume(&MainMenu);
+  if (!GlobalConfig.IgnoreNVRAMBoot) {
+    Index = FindStartupDiskVolume(&MainMenu);
+  }
+  
   if (Index >= 0) {
     DBG("Boot redirected to Entry %d. '%s'\n", Index, MainMenu.Entries[Index]->Title);
     // we got boot-device-data, no need to keep emulating anymore
@@ -1769,7 +1772,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     DBG("smbios.plist not found, not overriding config.plist\n");
   }
   
-  if (!gFirmwareClover && !gDriversFlags.EmuVariableLoaded &&
+  if (!gFirmwareClover && 
+      !gDriversFlags.EmuVariableLoaded &&
+      !GlobalConfig.IgnoreNVRAMBoot &&
       GlobalConfig.Timeout == 0 && !ReadAllKeyStrokes()) {
 // UEFI boot: get gEfiBootDeviceGuid from NVRAM.
 // if present, ScanVolumes() will skip scanning other volumes

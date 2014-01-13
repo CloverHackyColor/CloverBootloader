@@ -60,7 +60,7 @@ extern UINT8 GetOSTypeFromPath(IN CHAR16 *Path);
 // global configuration with default values
 REFIT_CONFIG   GlobalConfig = { FALSE, -1, 0, 0, 0, TRUE, FALSE, FALSE, FALSE, FALSE,
   FONT_ALFA, 7, 0xFFFFFF80, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, None, 0,
-  FALSE, FALSE, FALSE, 0, 0, 4 };
+  FALSE, FALSE, FALSE, FALSE, 0, 0, 4 };
 
 VOID __inline WaitForSts(VOID) {
 	UINT32 inline_timeout = 100000;
@@ -1034,6 +1034,15 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
           }
     }
 
+    prop = GetProperty(dictPointer, "IgnoreNVRAMBoot");
+    if (prop) {
+      if ((prop->type == kTagTypeTrue) ||
+          ((prop->type == kTagTypeString) && prop->string &&
+           ((prop->string[0] == 'Y') || (prop->string[0] == 'y')))) {
+            GlobalConfig.IgnoreNVRAMBoot = TRUE;
+          }
+    }
+    
     // Secure boot
     prop = GetProperty(dictPointer, "Secure");
     if (prop) {
