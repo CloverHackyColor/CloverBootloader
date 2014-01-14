@@ -447,10 +447,11 @@ typedef struct {
 } LEGACY_ENTRY;
 
 #define ANIME_INFINITE (UINTN)-1
-#define SCREEN_EDGE_LEFT    0
-#define SCREEN_EDGE_TOP     1
-#define SCREEN_EDGE_RIGHT   2
-#define SCREEN_EDGE_BOTTOM  3
+//some unreal values
+#define SCREEN_EDGE_LEFT    50000
+#define SCREEN_EDGE_TOP     50000
+#define SCREEN_EDGE_RIGHT   60000
+#define SCREEN_EDGE_BOTTOM  60000
 
 typedef struct GUI_ANIME GUI_ANIME;
 struct GUI_ANIME {

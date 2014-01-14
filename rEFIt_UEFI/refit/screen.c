@@ -850,6 +850,8 @@ BOOLEAN GetAnime(REFIT_MENU_SCREEN *Screen)
   Screen->FrameTime = Anime->FrameTime;
   Screen->FilmX = Anime->FilmX;
   Screen->FilmY = Anime->FilmY;
+  Screen->ScreenEdgeHorizontal = Anime->ScreenEdgeHorizontal;
+  Screen->ScreenEdgeVertical = Anime->ScreenEdgeVertical;
   DBG(" found %d frames of the anime\n", i);
   Screen->CurrentFrame = 0;
   Screen->LastDraw = 0;
