@@ -36,7 +36,7 @@
 //
 // LOG_TO_FILE_PATH
 //
-#define LOG_TO_FILE_PATH L"\\EFI\\CLOVER\\misc\\UefiCalls.log"
+#define LOG_TO_FILE_PATH L"\\EFI\\UefiCalls.log"
 
 //
 // PRINT calls our main logger.

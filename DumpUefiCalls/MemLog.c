@@ -19,7 +19,7 @@
 // Mem log sizes
 //
 #define MEM_LOG_INITIAL_SIZE	(32 * 1024)
-#define MEM_LOG_MAX_SIZE	(10 * 1024 * 1024)
+#define MEM_LOG_MAX_SIZE	(16 * 1024 * 1024)
 #define MEM_LOG_MAX_LINE_SIZE	1024
 
 /** Prints log messages to memory buffer. */

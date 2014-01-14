@@ -2,7 +2,7 @@
 
   Various helper functions.
 
-  By dmazar, 26/09/2012             
+  By dmazar, 26/09/2012
 
 **/
 
@@ -76,34 +76,43 @@ CHAR16 *EfiResetType[] = {
 //
 // Some known guids
 //
-EFI_GUID gEfiConsoleControlProtocolGuid         = {0xF42F7782, 0x012E, 0x4C12, {0x99, 0x56, 0x49, 0xF9, 0x43, 0x04, 0xF7, 0x21}};
-EFI_GUID gEfiAppleFirmwarePasswordProtocolGuid  = {0x8FFEEB3A, 0x4C98, 0x4630, {0x80, 0x3F, 0x74, 0x0F, 0x95, 0x67, 0x09, 0x1D}};
-EFI_GUID gEfiGlobalVarGuid                      = {0x8BE4DF61, 0x93CA, 0x11D2, {0xAA, 0x0D, 0x00, 0xE0, 0x98, 0x03, 0x2B, 0x8C}};
-EFI_GUID gDevicePropertiesGuid                  = {0x91BD12FE, 0xF6C3, 0x44FB, {0xA5, 0xB7, 0x51, 0x22, 0xAB, 0x30, 0x3A, 0xE0}};
-EFI_GUID gEfiAppleBootGuid                      = {0x7C436110, 0xAB2A, 0x4BBB, {0xA8, 0x80, 0xFE, 0x41, 0x99, 0x5C, 0x9F, 0x82}};
-EFI_GUID gEfiAppleNvramGuid                     = {0x4D1EDE05, 0x38C7, 0x4A6A, {0x9C, 0xC6, 0x4B, 0xCC, 0xA8, 0xB3, 0x8C, 0x14}};
-EFI_GUID gEfiAppleScreenInfoGuid                = {0xE316E100, 0x0751, 0x4C49, {0x90, 0x56, 0x48, 0x6C, 0x7E, 0x47, 0x29, 0x03}};
-EFI_GUID AppleBootKeyPressProtocolGuid          = {0x5B213447, 0x6E73, 0x4901, {0xA4, 0xF1, 0xB8, 0x64, 0xF3, 0xB7, 0xA1, 0x72}};
-EFI_GUID AppleNetBootProtocolGuid               = {0x78EE99FB, 0x6A5E, 0x4186, {0x97, 0xDE, 0xCD, 0x0A, 0xBA, 0x34, 0x5A, 0x74}};
-EFI_GUID AppleImageCodecProtocolGuid            = {0x0DFCE9F6, 0xC4E3, 0x45EE, {0xA0, 0x6A, 0xA8, 0x61, 0x3B, 0x98, 0xA5, 0x07}};
-EFI_GUID gEfiAppleVendorGuid                    = {0xAC39C713, 0x7E50, 0x423D, {0x88, 0x9D, 0x27, 0x8F, 0xCC, 0x34, 0x22, 0xB6}};
-EFI_GUID gAppleEFINVRAMTRBSecureGuid            = {0xF68DA75E, 0x1B55, 0x4E70, {0xB4, 0x1B, 0xA7, 0xB7, 0xA5, 0xB7, 0x58, 0xEA}};
-EFI_GUID gDataHubOptionsGuid                    = {0x0021001C, 0x3CE3, 0x41F8, {0x99, 0xC6, 0xEC, 0xF5, 0xDA, 0x75, 0x47, 0x31}};
-EFI_GUID gNotifyMouseActivity                   = {0xF913C2C2, 0x5351, 0x4FDB, {0x93, 0x44, 0x70, 0xFF, 0xED, 0xB8, 0x42, 0x25}};
-EFI_GUID gEfiDataHubProtocolGuid                = {0xae80d021, 0x618e, 0x11d4, {0xbc, 0xd7, 0x00, 0x80, 0xc7, 0x3c, 0x88, 0x81}};
-EFI_GUID gEfiMiscSubClassGuid                   = {0x772484B2, 0x7482, 0x4b91, {0x9F, 0x9A, 0xAD, 0x43, 0xF8, 0x1C, 0x58, 0x81}};
-EFI_GUID gEfiProcessorSubClassGuid              = {0x26fdeb7e, 0xb8af, 0x4ccf, {0xaa, 0x97, 0x02, 0x63, 0x3c, 0xe4, 0x8c, 0xa7}};
-EFI_GUID gEfiMemorySubClassGuid                 = {0x4E8F4EBB, 0x64B9, 0x4e05, {0x9B, 0x18, 0x4C, 0xFE, 0x49, 0x23, 0x50, 0x97}};
-EFI_GUID gMsgLogProtocolGuid                    = {0x511CE018, 0x0018, 0x4002, {0x20, 0x12, 0x17, 0x38, 0x05, 0x01, 0x02, 0x03}};
-EFI_GUID gEfiLegacy8259ProtocolGuid             = {0x38321dba, 0x4fe0, 0x4e17, {0x8a, 0xec, 0x41, 0x30, 0x55, 0xea, 0xed, 0xc1}};
-EFI_GUID gEfiMemoryTypeInformationGuid					= {0x4C19049F, 0x4137, 0x4DD3, {0x9C, 0x10, 0x8B, 0x97, 0xA8, 0x3F, 0xFD, 0xFA}};
+EFI_GUID gEfiConsoleControlProtocolGuid		= {0xF42F7782, 0x012E, 0x4C12, {0x99, 0x56, 0x49, 0xF9, 0x43, 0x04, 0xF7, 0x21}};
+EFI_GUID gAppleFirmwarePasswordProtocolGuid	= {0x8FFEEB3A, 0x4C98, 0x4630, {0x80, 0x3F, 0x74, 0x0F, 0x95, 0x67, 0x09, 0x1D}};
+EFI_GUID gEfiGlobalVarGuid			= {0x8BE4DF61, 0x93CA, 0x11D2, {0xAA, 0x0D, 0x00, 0xE0, 0x98, 0x03, 0x2B, 0x8C}};
+EFI_GUID gAppleDevicePropertyProtocolGuid	= {0x91BD12FE, 0xF6C3, 0x44FB, {0xA5, 0xB7, 0x51, 0x22, 0xAB, 0x30, 0x3A, 0xE0}};
+EFI_GUID gAppleNVRAMVariableGuid		= {0x7C436110, 0xAB2A, 0x4BBB, {0xA8, 0x80, 0xFE, 0x41, 0x99, 0x5C, 0x9F, 0x82}};
+EFI_GUID gAppleFirmwareVariableGuid		= {0x4D1EDE05, 0x38C7, 0x4A6A, {0x9C, 0xC6, 0x4B, 0xCC, 0xA8, 0xB3, 0x8C, 0x14}};
+EFI_GUID gAppleScreenInfoProtocolGuid		= {0xE316E100, 0x0751, 0x4C49, {0x90, 0x56, 0x48, 0x6C, 0x7E, 0x47, 0x29, 0x03}};
+EFI_GUID gAppleBootKeyPressProtocolGuid		= {0x5B213447, 0x6E73, 0x4901, {0xA4, 0xF1, 0xB8, 0x64, 0xF3, 0xB7, 0xA1, 0x72}};
+EFI_GUID gAppleNetBootProtocolGuid		= {0x78EE99FB, 0x6A5E, 0x4186, {0x97, 0xDE, 0xCD, 0x0A, 0xBA, 0x34, 0x5A, 0x74}};
+EFI_GUID gAppleImageCodecProtocolGuid		= {0x0DFCE9F6, 0xC4E3, 0x45EE, {0xA0, 0x6A, 0xA8, 0x61, 0x3B, 0x98, 0xA5, 0x07}};
+EFI_GUID gEfiAppleVendorGuid			= {0xAC39C713, 0x7E50, 0x423D, {0x88, 0x9D, 0x27, 0x8F, 0xCC, 0x34, 0x22, 0xB6}};
+EFI_GUID gAppleEFINVRAMTRBSecureGuid		= {0xF68DA75E, 0x1B55, 0x4E70, {0xB4, 0x1B, 0xA7, 0xB7, 0xA5, 0xB7, 0x58, 0xEA}};
+EFI_GUID gDataHubOptionsGuid			= {0x0021001C, 0x3CE3, 0x41F8, {0x99, 0xC6, 0xEC, 0xF5, 0xDA, 0x75, 0x47, 0x31}};
+EFI_GUID gNotifyMouseActivity			= {0xF913C2C2, 0x5351, 0x4FDB, {0x93, 0x44, 0x70, 0xFF, 0xED, 0xB8, 0x42, 0x25}};
+
+EFI_GUID gEfiDataHubProtocolGuid		= {0xAE80D021, 0x618E, 0x11D4, {0xBC, 0xD7, 0x00, 0x80, 0xC7, 0x3C, 0x88, 0x81}};
+EFI_GUID gEfiMiscSubClassGuid			= {0x772484B2, 0x7482, 0x4B91, {0x9F, 0x9A, 0xAD, 0x43, 0xF8, 0x1C, 0x58, 0x81}};
+EFI_GUID gEfiProcessorSubClassGuid		= {0x26FDEB7E, 0xB8AF, 0x4CCF, {0xAA, 0x97, 0x02, 0x63, 0x3C, 0xE4, 0x8C, 0xA7}};
+EFI_GUID gEfiMemorySubClassGuid			= {0x4E8F4EBB, 0x64B9, 0x4E05, {0x9B, 0x18, 0x4C, 0xFE, 0x49, 0x23, 0x50, 0x97}};
+EFI_GUID gMsgLogProtocolGuid			= {0x511CE018, 0x0018, 0x4002, {0x20, 0x12, 0x17, 0x38, 0x05, 0x01, 0x02, 0x03}};
+EFI_GUID gEfiLegacy8259ProtocolGuid		= {0x38321DBA, 0x4fE0, 0x4E17, {0x8A, 0xEC, 0x41, 0x30, 0x55, 0xEA, 0xED, 0xC1}};
+EFI_GUID gEfiMemoryTypeInformationGuid		= {0x4C19049F, 0x4137, 0x4DD3, {0x9C, 0x10, 0x8B, 0x97, 0xA8, 0x3F, 0xFD, 0xFA}};
+EFI_GUID gEfiSimplePointerProtocolGuid		= {0x31878C87, 0x0B75, 0x11D5, {0x9A, 0x4F, 0x00, 0x90, 0x27, 0x3F, 0xC1, 0x4D}};
+
+// From MacOsxBootloader source:
+EFI_GUID gAppleAcpiVariableGuid			= {0xAF9FFD67, 0xEC10, 0x488A, {0x9D, 0xFC, 0x6C, 0xBF, 0x5E, 0xE2, 0x2C, 0x2E}};
+EFI_GUID gAppleFileVaultVariableGuid		= {0x8D63D4FE, 0xBD3C, 0x4AAD, {0x88, 0x1D, 0x86, 0xFD, 0x97, 0x4B, 0xC1, 0xDF}};
+EFI_GUID gApplePasswordUIEfiFileNameGuid	= {0x9EBA2D25, 0xBBE3, 0x4AC2, {0xA2, 0xC6, 0xC8, 0x7F, 0x44, 0xA1, 0x27, 0x8C}};
+EFI_GUID gAppleRamDmgDevicePathGuid		= {0x040B07E8, 0x0B9C, 0x427E, {0xB0, 0xD4, 0xA4, 0x66, 0xE6, 0xE5, 0x7A, 0x62}};
+EFI_GUID gAppleSMCProtocolGuid			= {0x17407E5A, 0xAF6C, 0x4EE8, {0x98, 0xA8, 0x00, 0x21, 0x04, 0x53, 0xCD, 0xD9}};
 
 // Shell guids
-EFI_GUID ShellInt                               = {0x47c7b223, 0xc42a, 0x11d2, {0x8e, 0x57, 0x0, 0xa0, 0xc9, 0x69, 0x72, 0x3b}};
-EFI_GUID SEnv                                   = {0x47c7b224, 0xc42a, 0x11d2, {0x8e, 0x57, 0x0, 0xa0, 0xc9, 0x69, 0x72, 0x3b}};
-EFI_GUID ShellDevPathMap                        = {0x47c7b225, 0xc42a, 0x11d2, {0x8e, 0x57, 0x0, 0xa0, 0xc9, 0x69, 0x72, 0x3b}};
-EFI_GUID ShellProtId                            = {0x47c7b226, 0xc42a, 0x11d2, {0x8e, 0x57, 0x0, 0xa0, 0xc9, 0x69, 0x72, 0x3b}};
-EFI_GUID ShellAlias                             = {0x47c7b227, 0xc42a, 0x11d2, {0x8e, 0x57, 0x0, 0xa0, 0xc9, 0x69, 0x72, 0x3b}};
+EFI_GUID ShellInt				= {0x47C7B223, 0xC42A, 0x11D2, {0x8E, 0x57, 0x0, 0xA0, 0xC9, 0x69, 0x72, 0x3B}};
+EFI_GUID SEnv					= {0x47C7B224, 0xC42A, 0x11D2, {0x8E, 0x57, 0x0, 0xA0, 0xC9, 0x69, 0x72, 0x3B}};
+EFI_GUID ShellDevPathMap			= {0x47C7B225, 0xC42A, 0x11D2, {0x8E, 0x57, 0x0, 0xA0, 0xC9, 0x69, 0x72, 0x3B}};
+EFI_GUID ShellProtId				= {0x47C7B226, 0xC42A, 0x11D2, {0x8E, 0x57, 0x0, 0xA0, 0xC9, 0x69, 0x72, 0x3B}};
+EFI_GUID ShellAlias				= {0x47C7B227, 0xC42A, 0x11D2, {0x8E, 0x57, 0x0, 0xA0, 0xC9, 0x69, 0x72, 0x3B}};
 
 
 /** Map of known guids and friendly names. Searchable with GuidStr(). */
@@ -120,15 +129,15 @@ MAP_EFI_GUID_STR EfiGuidStrMap[] = {
 	{&gEfiGraphicsOutputProtocolGuid, L"gEfiGraphicsOutputProtocolGuid"},
 	
 	{&gEfiConsoleControlProtocolGuid, L"gEfiConsoleControlProtocolGuid"},
-	{&gEfiAppleFirmwarePasswordProtocolGuid, L"gEfiAppleFirmwarePasswordProtocolGuid"},
+	{&gAppleFirmwarePasswordProtocolGuid, L"gAppleFirmwarePasswordProtocolGuid"},
 	{&gEfiGlobalVarGuid, L"gEfiGlobalVarGuid"},
-	{&gDevicePropertiesGuid, L"gDevicePropertiesGuid"},
-	{&gEfiAppleBootGuid, L"gEfiAppleBootGuid"},
-	{&gEfiAppleNvramGuid, L"gEfiAppleNvramGuid"},
-	{&gEfiAppleScreenInfoGuid, L"gEfiAppleScreenInfoGuid"},
-	{&AppleBootKeyPressProtocolGuid, L"AppleBootKeyPressProtocolGuid"},
-	{&AppleNetBootProtocolGuid, L"AppleNetBootProtocolGuid"},
-	{&AppleImageCodecProtocolGuid, L"AppleImageCodecProtocolGuid"},
+	{&gAppleDevicePropertyProtocolGuid, L"gAppleDevicePropertyProtocolGuid"},
+	{&gAppleNVRAMVariableGuid, L"gAppleNVRAMVariableGuid"},
+	{&gAppleFirmwareVariableGuid, L"gAppleFirmwareVariableGuid"},
+	{&gAppleScreenInfoProtocolGuid, L"gAppleScreenInfoProtocolGuid"},
+	{&gAppleBootKeyPressProtocolGuid, L"gAppleBootKeyPressProtocolGuid"},
+	{&gAppleNetBootProtocolGuid, L"gAppleNetBootProtocolGuid"},
+	{&gAppleImageCodecProtocolGuid, L"gAppleImageCodecProtocolGuid"},
 	{&gEfiAppleVendorGuid, L"gEfiAppleVendorGuid"},
 	{&gAppleEFINVRAMTRBSecureGuid, L"gAppleEFINVRAMTRBSecureGuid"},
 	{&gDataHubOptionsGuid, L"gDataHubOptionsGuid"},
@@ -148,6 +157,13 @@ MAP_EFI_GUID_STR EfiGuidStrMap[] = {
 	{&gEfiMpsTableGuid, L"gEfiMpsTableGuid"},
 	{&gEfiSmbiosTableGuid, L"gEfiSmbiosTableGuid"},
 	{&gEfiMemoryTypeInformationGuid, L"gEfiMemoryTypeInformationGuid"},
+	{&gEfiSimplePointerProtocolGuid, L"gEfiSimplePointerProtocolGuid"},
+	
+	{&gAppleAcpiVariableGuid, L"gAppleAcpiVariableGuid"},
+	{&gAppleFileVaultVariableGuid, L"gAppleFileVaultVariableGuid"},
+	{&gApplePasswordUIEfiFileNameGuid, L"gApplePasswordUIEfiFileNameGuid"},
+	{&gAppleRamDmgDevicePathGuid, L"gAppleRamDmgDevicePathGuid"},
+	{&gAppleSMCProtocolGuid, L"gAppleSMCProtocolGuid"},
 	
 	{&ShellInt, L"ShellInt"},
 	{&SEnv, L"SEnv"},
@@ -162,7 +178,7 @@ MAP_EFI_GUID_STR EfiGuidStrMap[] = {
  *  and gets converted in RuntimeServices.c VirtualAddressChangeEvent().
  */
 CHAR16	*GuidPrintBuffer = NULL;
-#define GUID_PRINT_BUFFER_SIZE	((36+1) * sizeof(CHAR16))
+#define GUID_PRINT_BUFFER_SIZE		((36+1) * sizeof(CHAR16))
 
 /** Buffer for RT variable names. Allocated as RT mem
  *  and gets converted in RuntimeServices.c VirtualAddressChangeEvent().
@@ -182,8 +198,8 @@ CHAR16*
 EFIAPI
 GuidStr(IN EFI_GUID *Guid)
 {
-	UINTN		i;
-	CHAR16		*Str = NULL;
+	UINTN	i;
+	CHAR16	*Str = NULL;
 	
 	if (GuidPrintBuffer == NULL) {
 		GuidPrintBuffer = AllocateRuntimePool(GUID_PRINT_BUFFER_SIZE);
@@ -196,7 +212,7 @@ GuidStr(IN EFI_GUID *Guid)
 		}
 	}
 	if (Str == NULL) {
-		UnicodeSPrint(GuidPrintBuffer, GUID_PRINT_BUFFER_SIZE, L"%g", Guid); 
+		UnicodeSPrint(GuidPrintBuffer, GUID_PRINT_BUFFER_SIZE, L"%g", Guid);
 		Str = GuidPrintBuffer;
 	}
 	return Str;
@@ -251,7 +267,7 @@ CHAR16*
 EFIAPI
 GetStrLastChar(IN CHAR16 *String)
 {
-	CHAR16		*Pos;
+	CHAR16	*Pos;
 	
 	if (String == NULL || *String == L'\0') {
 		return NULL;
@@ -271,7 +287,7 @@ CHAR16*
 EFIAPI
 GetStrLastCharOccurence(IN CHAR16 *String, IN CHAR16 Char)
 {
-	CHAR16		*Pos;
+	CHAR16	*Pos;
 	
 	if (String == NULL || *String == L'\0') {
 		return NULL;
@@ -340,12 +356,12 @@ StrCmpiBasic(IN CHAR16 *String1, IN CHAR16 *String2)
 CHAR16*
 EFIAPI
 StrStriBasic(
-	IN CONST CHAR16		*String,
-	IN CONST CHAR16		*SearchString
+	IN CONST CHAR16			*String,
+	IN CONST CHAR16			*SearchString
 )
 {
-	CONST CHAR16	*FirstMatch;
-	CONST CHAR16	*SearchStringTmp;
+	CONST CHAR16			*FirstMatch;
+	CONST CHAR16			*SearchStringTmp;
 
 
 	if (*SearchString == L'\0') {
@@ -413,18 +429,18 @@ StriStartsWithBasic(IN CHAR16 *String1, IN CHAR16 *String2)
 
 VOID EFIAPI
 ShrinkMemMap(
-	IN UINTN					*MemoryMapSize,
+	IN UINTN			*MemoryMapSize,
 	IN EFI_MEMORY_DESCRIPTOR	*MemoryMap,
-	IN UINTN					DescriptorSize,
-	IN UINT32					DescriptorVersion
+	IN UINTN			DescriptorSize,
+	IN UINT32			DescriptorVersion
 )
 {
-	UINTN					SizeFromDescToEnd;
-	UINT64					Bytes;
-	EFI_MEMORY_DESCRIPTOR	*PrevDesc;
-	EFI_MEMORY_DESCRIPTOR	*Desc;
-	BOOLEAN					CanBeJoined;
-	BOOLEAN					HasEntriesToRemove;
+	UINTN				SizeFromDescToEnd;
+	UINT64				Bytes;
+	EFI_MEMORY_DESCRIPTOR		*PrevDesc;
+	EFI_MEMORY_DESCRIPTOR		*Desc;
+	BOOLEAN				CanBeJoined;
+	BOOLEAN				HasEntriesToRemove;
 	
 	PrevDesc = MemoryMap;
 	Desc = NEXT_MEMORY_DESCRIPTOR(PrevDesc, DescriptorSize);
@@ -475,16 +491,16 @@ ShrinkMemMap(
 
 VOID EFIAPI
 PrintMemMap(
-	IN UINTN					MemoryMapSize,
+	IN UINTN			MemoryMapSize,
 	IN EFI_MEMORY_DESCRIPTOR	*MemoryMap,
-	IN UINTN					DescriptorSize,
-	IN UINT32					DescriptorVersion
+	IN UINTN			DescriptorSize,
+	IN UINT32			DescriptorVersion
 )
 {
-	UINTN					NumEntries;
-	UINTN					Index;
-	UINT64					Bytes;
-	EFI_MEMORY_DESCRIPTOR	*Desc;
+	UINTN				NumEntries;
+	UINTN				Index;
+	UINT64				Bytes;
+	EFI_MEMORY_DESCRIPTOR		*Desc;
 	
 	Desc = MemoryMap;
 	NumEntries = MemoryMapSize / DescriptorSize;
@@ -562,9 +578,9 @@ PrintSystemTable(IN EFI_SYSTEM_TABLE  *ST)
 VOID
 WaitForKeyPress(CHAR16 *Message)
 {
-	EFI_STATUS		Status;
-	UINTN			index;
-	EFI_INPUT_KEY	key;
+	EFI_STATUS			Status;
+	UINTN				index;
+	EFI_INPUT_KEY			key;
 	
 	Print(Message);
 	do {
@@ -581,13 +597,13 @@ CHAR16 *
 EFIAPI
 FileDevicePathToText(EFI_DEVICE_PATH_PROTOCOL *FilePathProto)
 {
-	EFI_STATUS					Status;
-	FILEPATH_DEVICE_PATH 				*FilePath;
-	CHAR16								FilePathText[256]; // possible problem: if filepath is bigger
-	CHAR16								*OutFilePathText;
-	UINTN								Size;
-	UINTN								SizeAll;
-	UINTN								i;
+	EFI_STATUS			Status;
+	FILEPATH_DEVICE_PATH 		*FilePath;
+	CHAR16				FilePathText[256]; // possible problem: if filepath is bigger
+	CHAR16				*OutFilePathText;
+	UINTN				Size;
+	UINTN				SizeAll;
+	UINTN				i;
 	
 	FilePathText[0] = L'\0';
 	i = 4;
@@ -630,15 +646,15 @@ FileDevicePathToText(EFI_DEVICE_PATH_PROTOCOL *FilePathProto)
 EFI_STATUS
 EFIAPI
 GetMemoryMapAlloc (
-	IN EFI_GET_MEMORY_MAP				GetMemoryMapFunction,
-	OUT UINTN						*MemoryMapSize,
-	OUT EFI_MEMORY_DESCRIPTOR		**MemoryMap,
-	OUT UINTN						*MapKey,
-	OUT UINTN						*DescriptorSize,
-	OUT UINT32						*DescriptorVersion
+	IN EFI_GET_MEMORY_MAP		GetMemoryMapFunction,
+	OUT UINTN			*MemoryMapSize,
+	OUT EFI_MEMORY_DESCRIPTOR	**MemoryMap,
+	OUT UINTN			*MapKey,
+	OUT UINTN			*DescriptorSize,
+	OUT UINT32			*DescriptorVersion
 )
 {
-	EFI_STATUS					Status;
+	EFI_STATUS			Status;
 	
 	*MemoryMapSize = 0;
 	*MemoryMap = NULL;
@@ -661,19 +677,19 @@ GetMemoryMapAlloc (
 EFI_STATUS
 EFIAPI
 AllocatePagesFromTop(
-	IN EFI_MEMORY_TYPE				MemoryType,
-	IN UINTN						Pages,
-	IN OUT EFI_PHYSICAL_ADDRESS		*Memory
+	IN EFI_MEMORY_TYPE		MemoryType,
+	IN UINTN			Pages,
+	IN OUT EFI_PHYSICAL_ADDRESS	*Memory
 )
 {
-	EFI_STATUS				Status;
-	UINTN					MemoryMapSize;
-	EFI_MEMORY_DESCRIPTOR	*MemoryMap;
-	UINTN					 MapKey;
-	UINTN					DescriptorSize;
-	UINT32					DescriptorVersion;
-	EFI_MEMORY_DESCRIPTOR	*MemoryMapEnd;
-	EFI_MEMORY_DESCRIPTOR	*Desc;
+	EFI_STATUS			Status;
+	UINTN				MemoryMapSize;
+	EFI_MEMORY_DESCRIPTOR		*MemoryMap;
+	UINTN				MapKey;
+	UINTN				DescriptorSize;
+	UINT32				DescriptorVersion;
+	EFI_MEMORY_DESCRIPTOR		*MemoryMapEnd;
+	EFI_MEMORY_DESCRIPTOR		*Desc;
 	
 	
 	Status = GetMemoryMapAlloc(gBS->GetMemoryMap, &MemoryMapSize, &MemoryMap, &MapKey, &DescriptorSize, &DescriptorVersion);
