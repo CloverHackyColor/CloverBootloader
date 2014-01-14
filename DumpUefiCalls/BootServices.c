@@ -2,7 +2,7 @@
 
   BootServices overrides module.
 
-  By dmazar, 26/09/2012             
+  By dmazar, 26/09/2012
 
 **/
 
@@ -431,23 +431,25 @@ OvrExitBootServices(
 	PrintRTVariables(&gOrgRS);
 	#endif
 	
+	// Restore original OutputString
+	#if CAPTURE_CONSOLE_OUTPUT >= 1
+	gST->ConOut->OutputString = gOrgConOutOutputString;
+	#endif
+	
 	// Restore RT services if we should not log calls during runtime
 	#if WORK_DURING_RUNTIME == 0
 	RestoreRuntimeServices(gRT);
 	#endif
-	
-	#if CAPTURE_CONSOLE_OUTPUT >= 1
-	gST->ConOut->OutputString = gOrgConOutOutputString;
-	#endif
-
-	// Notify loggers that boot services are over
-	LogOnExitBootServices();
 	
 	PRINT("->ExitBootServices(%p, 0x%x) ...\n", ImageHandle, MapKey);
 	
 	// Set flag to FALSE to stop some loggers from messing with memory
 	InBootServices = FALSE;
 	
+	// Notify loggers that boot services are over
+	// Saving our log file can cause a vast amount of logging output on some firmwares, so do this after stopping loggers.
+	LogOnExitBootServices();
+		
 	// Call original
 	Status = gOrgBS.ExitBootServices(ImageHandle, MapKey);
 	
