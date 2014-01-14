@@ -1932,7 +1932,7 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
       //default value is centre
       Anime->FilmX = FILM_CENTRE;
       Anime->FilmY = FILM_CENTRE;
-      dict2 = GetProperty(dictPointer, "RelativeXPos");
+ /*     dict2 = GetProperty(dictPointer, "RelativeXPos");
       if (dict2) {
         if (dict2->type == kTagTypeInteger) {
           Anime->FilmX = (INTN)(UINTN)dict2->string;
@@ -1978,6 +1978,43 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
           }
         }
       }
+  */
+
+      dict2 = GetProperty(dictPointer, "ScreenEdgeX");
+      if (dict2) {
+        if ((dict2->type == kTagTypeString) && dict2->string) {
+          if (AsciiStrCmp(dict2->string, "left") == 0) {
+            Anime->ScreenEdgeHorizontal = SCREEN_EDGE_LEFT;
+          } else if (AsciiStrCmp(dict2->string, "right") == 0) {
+            Anime->ScreenEdgeHorizontal = SCREEN_EDGE_RIGHT;
+          }
+        }
+      }
+      dict2 = GetProperty(dictPointer, "ScreenEdgeY");
+      if (dict2) {
+        if ((dict2->type == kTagTypeString) && dict2->string) {
+          if (AsciiStrCmp(dict2->string, "top") == 0) {
+            Anime->ScreenEdgeVertical = SCREEN_EDGE_TOP;
+          } else if (AsciiStrCmp(dict2->string, "bottom") == 0) {
+            Anime->ScreenEdgeVertical = SCREEN_EDGE_BOTTOM;
+          }
+        }
+      }
+      
+      dict2 = GetProperty(dictPointer, "DistanceFromScreenEdgeX%");
+      if (dict2) {
+        if (dict2->type == kTagTypeInteger) {
+          Anime->FilmX = (INT32)(UINTN)dict2->string;
+        }
+      }
+      dict2 = GetProperty(dictPointer, "DistanceFromScreenEdgeY%");
+      if (dict2) {
+        if (dict2->type == kTagTypeInteger) {
+          Anime->FilmY = (INT32)(UINTN)dict2->string;
+        }
+      }
+      
+      
       dict2 = GetProperty(dictPointer, "Once");
       if (dict2) {
         if ((dict2->type == kTagTypeTrue) ||

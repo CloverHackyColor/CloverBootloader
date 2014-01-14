@@ -341,6 +341,8 @@ struct _refit_menu_screen {
   INTN              FilmX, FilmY;  //relative
   EG_RECT           FilmPlace;
   EG_IMAGE          **Film;
+  INTN              ScreenEdgeHorizontal;
+  INTN              ScreenEdgeVertical;
 };
 
 //this structure is used for refit.config
@@ -445,6 +447,10 @@ typedef struct {
 } LEGACY_ENTRY;
 
 #define ANIME_INFINITE (UINTN)-1
+#define SCREEN_EDGE_LEFT    0
+#define SCREEN_EDGE_TOP     1
+#define SCREEN_EDGE_RIGHT   2
+#define SCREEN_EDGE_BOTTOM  3
 
 typedef struct GUI_ANIME GUI_ANIME;
 struct GUI_ANIME {
@@ -453,6 +459,8 @@ struct GUI_ANIME {
   UINTN      Frames;
   UINTN      FrameTime;
   INTN       FilmX, FilmY;  //relative
+  INTN       ScreenEdgeHorizontal;
+  INTN       ScreenEdgeVertical;
   BOOLEAN    Once;
   GUI_ANIME *Next;
 };

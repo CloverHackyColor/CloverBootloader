@@ -708,6 +708,7 @@ VOID UpdateAnime(REFIT_MENU_SCREEN *Screen, EG_RECT *Place)
 {
   UINT64      Now;
   INTN   x, y;
+  
   if (!Screen || !Screen->AnimeRun || GlobalConfig.TextOnly) return;
   if (!CompImage ||
       (CompImage->Width != Screen->Film[0]->Width) ||
@@ -750,7 +751,28 @@ VOID UpdateAnime(REFIT_MENU_SCREEN *Screen, EG_RECT *Place)
       y = UGAHeight - CompImage->Height;
     }
   }
-
+ 
+  if (Screen->ScreenEdgeHorizontal == SCREEN_EDGE_LEFT ) {
+    x = (UGAWidth * Screen->FilmX) / 100;
+  } else if (Screen->ScreenEdgeHorizontal == SCREEN_EDGE_RIGHT ) {
+    x = UGAWidth-((UGAWidth * Screen->FilmX) / 100);
+    if ((x - Screen->Film[0]->Width) < 0) {
+      x = 0;
+    } else {
+      x -= Screen->Film[0]->Width;
+    }
+  }
+  if (Screen->ScreenEdgeVertical == SCREEN_EDGE_TOP ) {
+    y = (UGAHeight * Screen->FilmY) / 100;
+  } else if (Screen->ScreenEdgeVertical == SCREEN_EDGE_BOTTOM ) {
+    y = UGAHeight - ((UGAHeight * Screen->FilmY) / 100);
+    if ((y - Screen->Film[0]->Height) < 0) {
+      y = 0;
+    } else {
+      y -= Screen->Film[0]->Height;
+    }
+  }
+  
   Now = AsmReadTsc();
   if (Screen->LastDraw == 0) {
     //first start, we should save background into last frame
