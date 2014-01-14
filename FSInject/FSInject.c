@@ -616,6 +616,9 @@ FSI_FP_Read(
 	CHAR8					*String;
 	FSI_STRING_LIST			*StringList;
 	FSI_STRING_LIST_ENTRY	*StringEntry;
+	VOID					*TmpBuffer;
+	UINTN					OrigBufferSize = *BufferSize;
+	BOOLEAN					IsOddBuffer = ((UINTN)Buffer & 1) == 1;
 	
 	DBG("FSI_FP %p.Read(%d, %p) ", This, *BufferSize, Buffer);
 	
@@ -634,6 +637,18 @@ FSI_FP_Read(
 		// do it with target FP
 		Status = FSIThis->TgtFP->Read(FSIThis->TgtFP, BufferSize, Buffer);
 		StringList = FSIThis->FSI_FS->ForceLoadKexts;
+		if (Status == EFI_INVALID_PARAMETER && IsOddBuffer && *BufferSize == 0) {
+			// on some systems FS driver does not allow odd buffer addresses
+			// we'll try to overcome this by using new allocated buffer which is aligned
+			// to even address
+			TmpBuffer = AllocateZeroPool(OrigBufferSize);
+			*BufferSize = OrigBufferSize;
+			Status = FSIThis->TgtFP->Read(FSIThis->TgtFP, BufferSize, TmpBuffer);
+			if (Status == EFI_SUCCESS && *BufferSize > 0) {
+				CopyMem(Buffer, TmpBuffer, *BufferSize);
+			}
+			FreePool(TmpBuffer);
+		}
 		if (Status == EFI_SUCCESS && StringList != NULL && FSIThis->FName != NULL) {
 			// check ForceLoadKexts
 			for (StringEntry = (FSI_STRING_LIST_ENTRY *)GetFirstNode(&StringList->List);
@@ -662,6 +677,18 @@ FSI_FP_Read(
 	} else if (FSIThis->SrcFP != NULL) {
 		// do it with source FP
 		Status = FSIThis->SrcFP->Read(FSIThis->SrcFP, BufferSize, Buffer);
+		if (Status == EFI_INVALID_PARAMETER && IsOddBuffer && *BufferSize == 0) {
+			// on some systems FS driver does not allow odd buffer addresses
+			// we'll try to overcome this by using new allocated buffer which is aligned
+			// to even address
+			TmpBuffer = AllocateZeroPool(OrigBufferSize);
+			*BufferSize = OrigBufferSize;
+			Status = FSIThis->SrcFP->Read(FSIThis->SrcFP, BufferSize, TmpBuffer);
+			if (Status == EFI_SUCCESS && *BufferSize > 0) {
+				CopyMem(Buffer, TmpBuffer, *BufferSize);
+			}
+			FreePool(TmpBuffer);
+		}
 	}
 	
 	if (Status == EFI_SUCCESS && FSIThis->IsDir && *BufferSize > 0) {
