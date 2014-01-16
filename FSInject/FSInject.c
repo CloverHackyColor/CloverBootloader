@@ -226,7 +226,7 @@ GetNormalizedFName(IN CHAR16 *Parent, IN CHAR16 *FName)
 	CHAR16			*TmpStr2;
 	UINTN			Len;
 	
-	//DBG("('%s' + '%s')", Parent, FName);
+	DBG("NormFName('%s' + '%s')", Parent, FName);
 	// case: FName starts with \ "\System\Xx"
 	// we'll just use it as is, but we are wrong if "\System\Xx\..\Yy\.\Zz" or similar
 	if (FName[0] == L'\\') {
@@ -618,7 +618,6 @@ FSI_FP_Read(
 	FSI_STRING_LIST_ENTRY	*StringEntry;
 	VOID					*TmpBuffer;
 	UINTN					OrigBufferSize = *BufferSize;
-	BOOLEAN					IsOddBuffer = ((UINTN)Buffer & 1) == 1;
 	
 	DBG("FSI_FP %p.Read(%d, %p) ", This, *BufferSize, Buffer);
 	
@@ -637,10 +636,10 @@ FSI_FP_Read(
 		// do it with target FP
 		Status = FSIThis->TgtFP->Read(FSIThis->TgtFP, BufferSize, Buffer);
 		StringList = FSIThis->FSI_FS->ForceLoadKexts;
-		if (Status == EFI_INVALID_PARAMETER && IsOddBuffer && *BufferSize == 0) {
-			// on some systems FS driver does not allow odd buffer addresses
-			// we'll try to overcome this by using new allocated buffer which is aligned
-			// to even address
+		if (Status == EFI_INVALID_PARAMETER && *BufferSize == 0) {
+			// On some systems FS driver seems to have alignment restrictions on given buffer.
+			// UEFIs buffers allocated with standard AllocatePool seem to be aligned properly and reads
+			// to them always succeed, so we'll try to overcome this by using new allocated buffer.
 			TmpBuffer = AllocateZeroPool(OrigBufferSize);
 			*BufferSize = OrigBufferSize;
 			Status = FSIThis->TgtFP->Read(FSIThis->TgtFP, BufferSize, TmpBuffer);
@@ -677,10 +676,10 @@ FSI_FP_Read(
 	} else if (FSIThis->SrcFP != NULL) {
 		// do it with source FP
 		Status = FSIThis->SrcFP->Read(FSIThis->SrcFP, BufferSize, Buffer);
-		if (Status == EFI_INVALID_PARAMETER && IsOddBuffer && *BufferSize == 0) {
-			// on some systems FS driver does not allow odd buffer addresses
-			// we'll try to overcome this by using new allocated buffer which is aligned
-			// to even address
+		if (Status == EFI_INVALID_PARAMETER && *BufferSize == 0) {
+			// On some systems FS driver seems to have alignment restrictions on given buffer.
+			// UEFIs buffers allocated with standard AllocatePool seem to be aligned properly and reads
+			// to them always succeed, so we'll try to overcome this by using new allocated buffer.
 			TmpBuffer = AllocateZeroPool(OrigBufferSize);
 			*BufferSize = OrigBufferSize;
 			Status = FSIThis->SrcFP->Read(FSIThis->SrcFP, BufferSize, TmpBuffer);
