@@ -64,14 +64,13 @@ function mountESP {
     if [[ "$ESPDevice" =~ ^disk[0-9]+$ ]]; then
         local ESP="${ESPDevice}s1"
 
-        [[ ! -d "${ESPMountPoint}" ]] && mkdir -p "${ESPMountPoint}"
-
         # Umount previously mount partition
         /usr/sbin/diskutil umount "${ESPMountPoint}" &>/dev/null
         umount /dev/${ESP} &>/dev/null
         exitcode=1
         fstype=$(/sbin/fstyp /dev/$ESP)
         if [[ -n "$fstype" ]]; then
+            [[ ! -d "${ESPMountPoint}" ]] && mkdir -p "${ESPMountPoint}"
             mount -t "$fstype" /dev/$ESP "${ESPMountPoint}" &>/dev/null
             exitcode=$?
         fi
