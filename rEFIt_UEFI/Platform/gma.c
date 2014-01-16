@@ -99,6 +99,7 @@ static struct gma_gpu_t KnownGPUS[] = {
   { 0x0A16, "Intel HD Graphics 4400"  },  //Haswell
   { 0x0A1e, "Intel HD Graphics 4400"  },  //Haswell
   { 0x0A26, "Intel HD Graphics 5000"  },  //Haswell
+  // 0x0e08 - Xeon E5-1620 
 };
 
 CHAR8 *get_gma_model(UINT16 id) {

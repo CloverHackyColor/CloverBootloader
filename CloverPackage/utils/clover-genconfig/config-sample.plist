@@ -574,7 +574,7 @@
 		<key>FirmwareFeatures</key>
 		<string>0xC0001403</string>
 		<key>LocationInChassis</key>
-		<string>Part Component</string>
+		<string>MLB</string>
 		<key>Manufacturer</key>
 		<string>Apple Inc.</string>
 		<key>Memory</key>

@@ -855,7 +855,7 @@ CFormPkg::DeclarePendingQuestion (
       // Get VarStoreType
       //
       ReturnCode = lCVfrDataStorage.GetVarStoreId (FName, &Info.mVarStoreId);
-      if (ReturnCode == VFR_RETURN_UNDEFINED) {
+/*      if (ReturnCode == VFR_RETURN_UNDEFINED) {
         lCVfrDataStorage.DeclareBufferVarStore (
                            FName, 
                            LocalFormSetGuid, 
@@ -865,7 +865,7 @@ CFormPkg::DeclarePendingQuestion (
                            FALSE
                            );
         ReturnCode = lCVfrDataStorage.GetVarStoreId (FName, &Info.mVarStoreId, LocalFormSetGuid); 
-      }
+      } */
       if (ReturnCode != VFR_RETURN_SUCCESS) {
         gCVfrErrorHandle.PrintMsg (pNode->mLineNo, FName, "Error", "Var Store Type is not defined");
         return ReturnCode;
