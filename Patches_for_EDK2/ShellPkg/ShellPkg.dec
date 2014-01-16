@@ -2,6 +2,7 @@
 #
 # This Package provides all definitions for EFI and UEFI Shell
 #
+# Copyright (c) 2013, Hewlett-Packard Development Company, L.P.
 # Copyright (c) 2009 - 2011, Intel Corporation. All rights reserved.<BR>
 #
 # This program and the accompanying materials are licensed and made available under
@@ -120,3 +121,6 @@
   ## this flag determins the default number of screens kept for history log.
   #  the spec defines 3 as the minimum
   gEfiShellPkgTokenSpaceGuid.PcdShellScreenLogCount|3|UINT8|0x00000008
+
+  ## Unicode string of the shell supplier
+  gEfiShellPkgTokenSpaceGuid.PcdShellSupplier|L"EDK II"|VOID*|0x00000010

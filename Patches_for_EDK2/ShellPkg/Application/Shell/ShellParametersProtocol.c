@@ -3,7 +3,7 @@
   manipulation, and initialization of EFI_SHELL_PARAMETERS_PROTOCOL.
 
   Copyright (c) 2013 Hewlett-Packard Development Company, L.P.
-  Copyright (c) 2009 - 2013, Intel Corporation. All rights reserved.<BR>
+  Copyright (c) 2009 - 2014, Intel Corporation. All rights reserved.<BR>
   This program and the accompanying materials
   are licensed and made available under the terms and conditions of the BSD License
   which accompanies this distribution.  The full text of the license may be found at
@@ -557,6 +557,57 @@ FixFileName (
 }
 
 /**
+  Fix a string to only have the environment variable name, removing starting at the first space of whatever is quoted and removing the leading and trailing %.
+
+  @param[in]  FileName    The filename to start with.
+
+  @retval NULL  FileName was invalid.
+  @return       The modified FileName.
+**/
+CHAR16*
+EFIAPI
+FixVarName (
+  IN CHAR16 *FileName
+  )
+{
+  CHAR16  *Copy;
+  CHAR16  *TempLocation;
+
+  Copy = FileName;
+
+  if (FileName[0] == L'%') {
+    Copy = FileName+1;
+    if ((TempLocation = StrStr(Copy , L"%")) != NULL) {
+      TempLocation[0] = CHAR_NULL;
+    }    
+  }
+
+  return (FixFileName(Copy));
+}
+
+/**
+  Remove the unicode file tag from the begining of the file buffer since that will not be
+  used by StdIn.
+**/
+EFI_STATUS
+EFIAPI
+RemoveFileTag(
+  IN SHELL_FILE_HANDLE *Handle
+  )
+{
+  UINTN             CharSize;
+  CHAR16            CharBuffer;
+
+  CharSize    = sizeof(CHAR16);
+  CharBuffer  = 0;
+  gEfiShellProtocol->ReadFile(*Handle, &CharSize, &CharBuffer);
+  if (CharBuffer != gUnicodeFileTag) {
+    gEfiShellProtocol->SetFilePosition(*Handle, 0);
+  }
+  return (EFI_SUCCESS);
+}
+
+/**
   Funcion will replace the current StdIn and StdOut in the ShellParameters protocol
   structure by parsing NewCommandLine.  The current values are returned to the
   user.
@@ -932,17 +983,17 @@ UpdateStdInStdOutStdErr(
       }
     }
     if (StdErrVarName  != NULL) {
-      if ((StdErrVarName     = FixFileName(StdErrVarName)) == NULL) {
+      if ((StdErrVarName     = FixVarName(StdErrVarName)) == NULL) {
         Status = EFI_INVALID_PARAMETER;
       }
     }
     if (StdOutVarName  != NULL) {
-      if ((StdOutVarName     = FixFileName(StdOutVarName)) == NULL) {
+      if ((StdOutVarName     = FixVarName(StdOutVarName)) == NULL) {
         Status = EFI_INVALID_PARAMETER;
       }
     }
     if (StdInVarName   != NULL) {
-      if ((StdInVarName      = FixFileName(StdInVarName)) == NULL) {
+      if ((StdInVarName      = FixVarName(StdInVarName)) == NULL) {
         Status = EFI_INVALID_PARAMETER;
       }
     }
@@ -1149,7 +1200,15 @@ UpdateStdInStdOutStdErr(
           &TempHandle,
           EFI_FILE_MODE_READ,
           0);
-        if (!InUnicode && !EFI_ERROR(Status)) {
+        if (InUnicode) {
+          //
+          // Chop off the 0xFEFF if it's there...
+          //
+          RemoveFileTag(&TempHandle);
+        } else if (!EFI_ERROR(Status)) {
+          //
+          // Create the ASCII->Unicode conversion layer
+          //
           TempHandle = CreateFileInterfaceFile(TempHandle, FALSE);
         }
         if (!EFI_ERROR(Status)) {
@@ -1164,8 +1223,15 @@ UpdateStdInStdOutStdErr(
   CalculateEfiHdrCrc(&gST->Hdr);
 
   if (gST->ConIn == NULL ||gST->ConOut == NULL) {
-    return (EFI_OUT_OF_RESOURCES);
+    Status = EFI_OUT_OF_RESOURCES;
   }
+
+  if (Status == EFI_NOT_FOUND) {
+    ShellPrintHiiEx(-1, -1, NULL, STRING_TOKEN (STR_SHELL_REDUNDA_REDIR), ShellInfoObject.HiiHandle);
+  } else if (EFI_ERROR(Status)) {
+    ShellPrintHiiEx(-1, -1, NULL, STRING_TOKEN (STR_SHELL_INVALID_REDIR), ShellInfoObject.HiiHandle);
+  }
+
   return (Status);
 }
 

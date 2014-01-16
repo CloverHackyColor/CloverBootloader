@@ -1,7 +1,7 @@
 /** @file
   Provides interface to shell MAN file parser.
 
-  Copyright (c) 2009 - 2011, Intel Corporation. All rights reserved.<BR>
+  Copyright (c) 2009 - 2013, Intel Corporation. All rights reserved.<BR>
   This program and the accompanying materials
   are licensed and made available under the terms and conditions of the BSD License
   which accompanies this distribution.  The full text of the license may be found at
@@ -494,6 +494,7 @@ ManFileFindTitleSection(
   }
   StrCpy(TitleString, L".TH ");
   StrCat(TitleString, Command);
+
   TitleLen = StrLen(TitleString);
   for (;!ShellFileHandleEof(Handle);Size = 1024) {
    Status = ShellFileHandleReadLine(Handle, ReadLine, &Size, TRUE, Ascii);

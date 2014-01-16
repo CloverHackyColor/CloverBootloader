@@ -2,7 +2,7 @@
   Member functions of EFI_SHELL_PROTOCOL and functions for creation,
   manipulation, and initialization of EFI_SHELL_PROTOCOL.
 
-  Copyright (c) 2009 - 2013, Intel Corporation. All rights reserved.<BR>
+  Copyright (c) 2009 - 2014, Intel Corporation. All rights reserved.<BR>
   This program and the accompanying materials
   are licensed and made available under the terms and conditions of the BSD License
   which accompanies this distribution.  The full text of the license may be found at
@@ -1651,6 +1651,8 @@ EfiShellFreeFileList(
     RemoveEntryList(&ShellFileListItem->Link);
     InternalFreeShellFileInfoNode(ShellFileListItem);
   }
+  InternalFreeShellFileInfoNode(*FileList);
+  *FileList = NULL;
   return(EFI_SUCCESS);
 }
 
@@ -1746,7 +1748,6 @@ InternalDuplicateShellFileInfo(
 
   @param[in] BasePath         the Path to prepend onto filename for FullPath
   @param[in] Status           Status member initial value.
-  @param[in] FullName         FullName member initial value.
   @param[in] FileName         FileName member initial value.
   @param[in] Handle           Handle member initial value.
   @param[in] Info             Info struct to copy.
@@ -1759,7 +1760,6 @@ EFIAPI
 CreateAndPopulateShellFileInfo(
   IN CONST CHAR16 *BasePath,
   IN CONST EFI_STATUS Status,
-  IN CONST CHAR16 *FullName,
   IN CONST CHAR16 *FileName,
   IN CONST SHELL_FILE_HANDLE Handle,
   IN CONST EFI_FILE_INFO *Info
@@ -1868,6 +1868,7 @@ EfiShellFindFilesInDir(
     Size              = 0;
     TempString        = StrnCatGrow(&TempString, &Size, ShellFileHandleGetPath(FileDirHandle), 0);
     if (TempString == NULL) {
+      SHELL_FREE_NON_NULL(BasePath);
       return (EFI_OUT_OF_RESOURCES);
     }
     TempSpot          = StrStr(TempString, L";");
@@ -1878,8 +1879,10 @@ EfiShellFindFilesInDir(
 
     TempString        = StrnCatGrow(&TempString, &Size, BasePath, 0);
     if (TempString == NULL) {
+      SHELL_FREE_NON_NULL(BasePath);
       return (EFI_OUT_OF_RESOURCES);
     }
+    SHELL_FREE_NON_NULL(BasePath);
     BasePath          = TempString;
   }
 
@@ -1905,7 +1908,6 @@ EfiShellFindFilesInDir(
     ShellFileListItem = CreateAndPopulateShellFileInfo(
       BasePath,
       EFI_SUCCESS, // success since we didnt fail to open it...
-      TempString,
       FileInfo->FileName,
       NULL, // no handle since not open
       FileInfo);
@@ -2821,6 +2823,8 @@ EfiShellGetHelpText(
   )
 {
   CONST CHAR16  *ManFileName;
+  CHAR16        *FixCommand = NULL;
+  EFI_STATUS    Status;
 
 //  ASSERT(HelpText != NULL);
   if (!HelpText) {
@@ -2832,8 +2836,23 @@ EfiShellGetHelpText(
   if (ManFileName != NULL) {
     return (ProcessManFile(ManFileName, Command, Sections, NULL, HelpText));
   } else {
+    if ((StrLen(Command)> 4)
+    && (Command[StrLen(Command)-1] == L'i' || Command[StrLen(Command)-1] == L'I')
+    && (Command[StrLen(Command)-2] == L'f' || Command[StrLen(Command)-2] == L'F')
+    && (Command[StrLen(Command)-3] == L'e' || Command[StrLen(Command)-3] == L'E')
+    && (Command[StrLen(Command)-4] == L'.')
+    ) {
+      FixCommand = AllocateZeroPool(StrSize(Command) - 4 * sizeof (CHAR16));
+//      ASSERT(FixCommand != NULL);
+
+      StrnCpy(FixCommand, Command, StrLen(Command)-4);
+      Status = ProcessManFile(FixCommand, FixCommand, Sections, NULL, HelpText);
+      FreePool(FixCommand);
+      return Status;
+    } else {
     return (ProcessManFile(Command, Command, Sections, NULL, HelpText));
   }
+}
 }
 
 /**
@@ -3343,7 +3362,6 @@ NotificationFunction(
   IN EFI_KEY_DATA *KeyData
   )
 {
-  EFI_INPUT_KEY Key;
   if ( ((KeyData->Key.UnicodeChar == L'c') &&
         (KeyData->KeyState.KeyShiftState == (EFI_SHIFT_STATE_VALID|EFI_LEFT_CONTROL_PRESSED) || KeyData->KeyState.KeyShiftState  == (EFI_SHIFT_STATE_VALID|EFI_RIGHT_CONTROL_PRESSED))) ||
       (KeyData->Key.UnicodeChar == 3)
@@ -3356,12 +3374,12 @@ NotificationFunction(
               (KeyData->KeyState.KeyShiftState  == (EFI_SHIFT_STATE_VALID|EFI_LEFT_CONTROL_PRESSED) || KeyData->KeyState.KeyShiftState  == (EFI_SHIFT_STATE_VALID|EFI_RIGHT_CONTROL_PRESSED))
               ){ 
     ShellInfoObject.HaltOutput = TRUE;
-
+/*
     //
     // Make sure that there are no pending keystrokes to pervent the pause.
     //
     gST->ConIn->Reset(gST->ConIn, FALSE);
-    while (gST->ConIn->ReadKeyStroke (gST->ConIn, &Key)==EFI_SUCCESS);
+    while (gST->ConIn->ReadKeyStroke (gST->ConIn, &Key)==EFI_SUCCESS); */
   }
   return (EFI_SUCCESS);
 }
