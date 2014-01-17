@@ -47,18 +47,19 @@ extern BOOLEAN InPrint;
 
 //
 // WORK_DURING_RUNTIME:
-// 1 - will continue to print even after ExitBootServices()
+// 2 - will continue to print even after ExitBootServices() - using "new style" callback event
+// 1 - will continue to print even after ExitBootServices() - using "old style" callback event
 //        usefull only when printing to serial in VBox for example
 // 0 - will stop printing when ExitBootServices() are called
 //
 #define WORK_DURING_RUNTIME		0
 
 //
-// PRINT_RT_VARS:
-// 1 - will print RT vars before exiting bootservices
-// 0 - will skip RT vars printing
+// PRINT_DUMPS:
+// 1 - will print dumps (ST, RT vars) when ExitBootServices() is called
+// 0 - will skip printing dumps
 //
-#define PRINT_RT_VARS			1
+#define PRINT_DUMPS			1
 
 //
 // PRINT_SHELL_VARS:

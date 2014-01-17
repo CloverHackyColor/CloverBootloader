@@ -423,10 +423,10 @@ OvrExitBootServices(
 	
 	PRINT("ExitBootServices called. Doing some more dumps ...\n");
 	
+	#if PRINT_DUMPS == 1
 	// Print ST
 	PrintSystemTable(gST);
 	
-	#if PRINT_RT_VARS == 1
 	// Print RT vars
 	PrintRTVariables(&gOrgRS);
 	#endif

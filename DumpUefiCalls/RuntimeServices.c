@@ -2,7 +2,7 @@
 
   RuntimeServices overrides module.
 
-  By dmazar, 26/09/2012             
+  By dmazar, 26/09/2012
 
 **/
 
@@ -320,6 +320,7 @@ VirtualAddressChangeEvent(
 EFI_STATUS EFIAPI
 OvrRuntimeServices(EFI_RUNTIME_SERVICES	*RS)
 {
+	EFI_STATUS Status = EFI_SUCCESS;
 	
 	PRINT("Overriding runtime services ...\n");
 	
@@ -348,20 +349,21 @@ OvrRuntimeServices(EFI_RUNTIME_SERVICES	*RS)
 	RS->Hdr.CRC32 = 0;
 	gBS->CalculateCrc32(RS, RS->Hdr.HeaderSize, &RS->Hdr.CRC32);
 	
-	#if WORK_DURING_RUNTIME == 1
+	#if WORK_DURING_RUNTIME >= 1
 	//
 	// Register callback for EVT_SIGNAL_VIRTUAL_ADDRESS_CHANGE
 	//
-	/* new style - does not work on Phoenix UEFI
-	 Status = gBS->CreateEventEx (
-	 EVT_NOTIFY_SIGNAL,
-	 TPL_NOTIFY,
-	 VirtualAddressChangeEvent,
-	 NULL,
-	 &gEfiEventVirtualAddressChangeGuid,
-	 &gVirtualAddressChangeEvent
-	 );
-	 */
+	#if WORK_DURING_RUNTIME == 2
+	// new style - does not work on Phoenix UEFI
+	Status = gBS->CreateEventEx (
+	EVT_NOTIFY_SIGNAL,
+	TPL_NOTIFY,
+	VirtualAddressChangeEvent,
+	NULL,
+	&gEfiEventVirtualAddressChangeGuid,
+	&gVirtualAddressChangeEvent
+	);
+	#elif WORK_DURING_RUNTIME == 1
 	// old style
 	Status = gBS->CreateEvent (
 							   EVT_SIGNAL_VIRTUAL_ADDRESS_CHANGE,
@@ -370,12 +372,13 @@ OvrRuntimeServices(EFI_RUNTIME_SERVICES	*RS)
 							   NULL,
 							   &gVirtualAddressChangeEvent
 							   );
+	#endif
 	PRINT("Runtime services: setting VirtualAddressChangeEvent = %r\n", Status);
 	#endif
-
+	
 	PRINT("Runtime services overriden!\n");
 	
-	return EFI_SUCCESS;
+	return Status;
 }
 
 /** Restores original runtime services. */

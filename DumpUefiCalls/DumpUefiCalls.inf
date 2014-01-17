@@ -2,7 +2,7 @@
 #
 # Driver for dumping boot loader UEFI calls.
 #
-# By dmazar, 26/09/2012             
+# By dmazar, 26/09/2012
 #
 # Feel free to use it, debug it, extend it, but please report back changes/additions to
 # http://www.projectosx.com/
@@ -27,7 +27,7 @@
 #
 #  Logs to serial are interesting when used in VBox (VMWare?, QEmu?) because driver can continue to dump UEFI
 #  calls even during runtime phase, after ExitBootServices() and when OS is running.
-#  This requires WORK_DURING_RUNTIME to be set to 1 in Common.h. That is also a reason why is driver made as runtime driver.
+#  This requires WORK_DURING_RUNTIME to be enabled in Common.h. That is also a reason why is driver made as runtime driver.
 #
 #  Logs to screen and file work only up to ExitBootServices() because they depend on boot services to be running.
 #

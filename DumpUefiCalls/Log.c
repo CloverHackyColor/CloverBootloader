@@ -4,7 +4,7 @@
   Dispatches logs to defined loggers.
   Loggers can be enabled/disabled by PRINT_TO_* definitions in Common.h.
 
-  By dmazar, 26/09/2012             
+  By dmazar, 26/09/2012
 
 **/
 
@@ -25,8 +25,10 @@
 /** Buffer for one log line. */
 CHAR8	*gLogLineBuffer = NULL;
 
+#if LOG_TO_FILE >= 1
 /** Pool for log into memory. */
 static MEM_LOG gMemLog;
+#endif
 
 
 /** Prints log messages to outputs defined by PRINT_TO_* defs in Common.h. */
