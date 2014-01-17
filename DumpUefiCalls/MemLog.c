@@ -2,7 +2,7 @@
 
   Log to memory buffer.
 
-  By dmazar, 26/09/2012             
+  By dmazar, 26/09/2012
 
 **/
 
@@ -55,12 +55,15 @@ MemLogPrint(IN MEM_LOG *MemLog, IN CHAR8 *Format, ...)
 		Format,
 		Marker);
 	VA_END (Marker);
-
-	#if LOG_TO_FILE >= 3
-	// append to file while logging
-	Status = FsAppendMemToFileToDefaultDir(LOG_TO_FILE_PATH, (VOID*)(MemLog->Buffer + MemLog->Size), DataWritten);
-	#endif
 	MemLog->Size += DataWritten;
+	
+	#if LOG_TO_FILE >= 3
+	// append to file while logging (at end of line)
+	if (DataWritten >= 1 && *(MemLog->Buffer + MemLog->Size - 1) == '\n') {
+		Status = FsAppendMemToFileToDefaultDir(LOG_TO_FILE_PATH, (VOID*)MemLog->Buffer, MemLog->Size);
+		MemLog->Size = 0;
+	}
+	#endif
 	
 	return Status;
 }
@@ -73,6 +76,9 @@ MemLogSave(IN MEM_LOG *MemLog)
 	# if (LOG_TO_FILE == 1) || (LOG_TO_FILE == 2)
 	return FsSaveMemToFileToDefaultDir(LOG_TO_FILE_PATH, (VOID*)MemLog->Buffer, MemLog->Size);
 	# elif LOG_TO_FILE >= 3
+	if (MemLog->Size > 0) {
+		FsAppendMemToFileToDefaultDir(LOG_TO_FILE_PATH, (VOID*)MemLog->Buffer, MemLog->Size); 
+	}
 	return FsAppendMemClose(TRUE);
 	# else
 	return EFI_SUCCESS;
