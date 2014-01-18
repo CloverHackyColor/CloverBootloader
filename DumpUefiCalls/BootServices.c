@@ -131,7 +131,7 @@ OvrAllocatePool(
 	EFI_STATUS			Status;
 	
 	Status = gOrgBS.AllocatePool(PoolType, Size, Buffer);
-	// printing to console requires AllocatePool - recursion, but this is solved by PRINT macro
+	// printing to console requires AllocatePool - recursion, but this is solved by safety check in LogPrint
 	// do not print to serial - too many calls from UEFI
 	//DebugPrint(1, "->AllocatePool(%s, 0x%x, %p) = %r\n", EfiMemoryTypeDesc[PoolType], Size, *Buffer, Status);
 	#if PRINT_ALLOCATE_POOL == 1

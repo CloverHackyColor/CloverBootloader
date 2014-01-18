@@ -42,8 +42,15 @@ LogPrint(CHAR8 *Format, ...)
 		gLogLineBuffer = AllocateRuntimePool(LOG_LINE_BUFFER_SIZE);
 		if (gLogLineBuffer == NULL) {
 			return;
-		}		
+		}
+		*gLogLineBuffer='\0';
 	}
+	
+	// Safety check to avoid some cases where LogPrint may be run recursively
+	if (*gLogLineBuffer != '\0') {
+		return;
+	}
+	*gLogLineBuffer = '!'; // Make buffer "dirty" to indicate we are using it
 	
 	//
 	// Print log to buffer
@@ -56,28 +63,32 @@ LogPrint(CHAR8 *Format, ...)
 		Marker);
 	VA_END (Marker);
 	
-	//
-	// Dispatch to various loggers
-	//
-	#if LOG_TO_SCREEN == 1
-	#if CAPTURE_CONSOLE_OUTPUT >= 1
-	if (InBootServices && !InConOutOutputString) {
-	#else
-	if (InBootServices) {
-	#endif
-		AsciiPrint(gLogLineBuffer);
+	if (DataWritten > 0) {
+		//
+		// Dispatch to various loggers
+		//
+		#if LOG_TO_SCREEN == 1
+		#if CAPTURE_CONSOLE_OUTPUT >= 1
+		if (InBootServices && !InConOutOutputString) {
+		#else
+		if (InBootServices) {
+		#endif
+			AsciiPrint(gLogLineBuffer);
+		}
+		#endif
+		
+		#if LOG_TO_SERIAL == 1
+		DebugPrint(1, gLogLineBuffer);
+		#endif
+		
+		#if LOG_TO_FILE >= 1
+		if (InBootServices) {
+			MemLogPrint(&gMemLog, gLogLineBuffer);
+		}
+		#endif
 	}
-	#endif
 	
-	#if LOG_TO_SERIAL == 1
-	DebugPrint(1, gLogLineBuffer);
-	#endif
-	
-	#if LOG_TO_FILE >= 1
-	if (InBootServices) {
-		MemLogPrint(&gMemLog, gLogLineBuffer);
-	}
-	#endif
+	*gLogLineBuffer = '\0';
 }
 
 

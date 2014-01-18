@@ -2,7 +2,7 @@
 
   Common declarations and definitions.
 
-  By dmazar, 26/09/2012             
+  By dmazar, 26/09/2012
 
 **/
 
@@ -42,8 +42,7 @@
 // PRINT calls our main logger.
 //
 // the following ensures that we don't end up calling print from another print, which was observed in some cases and could cause reboot/hang
-extern BOOLEAN InPrint;
-#define PRINT(...) if (!InPrint) { InPrint=TRUE; LogPrint(__VA_ARGS__); InPrint=FALSE; }
+#define PRINT(...) LogPrint(__VA_ARGS__);
 
 //
 // WORK_DURING_RUNTIME:

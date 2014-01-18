@@ -2,7 +2,7 @@
 
   Driver for dumping boot loader UEFI calls.
 
-  By dmazar, 26/09/2012             
+  By dmazar, 26/09/2012
 
 **/
 
@@ -21,8 +21,6 @@
 
 /** Original StartImage UEFI method. */
 EFI_IMAGE_START OrgStartImage = NULL;
-
-BOOLEAN InPrint = FALSE;
 
 /** Installs our overrides of UEFI services.*/
 EFI_STATUS

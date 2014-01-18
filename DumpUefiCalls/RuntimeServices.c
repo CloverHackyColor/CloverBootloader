@@ -104,8 +104,11 @@ OvrSetVirtualAddressMap(
 	//PrintSystemTable(gST);
 	//PrintMemMap(MemoryMapSize, VirtualMap, DescriptorSize, DescriptorVersion);
 	Status = gOrgRS.SetVirtualAddressMap(MemoryMapSize, DescriptorSize, DescriptorVersion, VirtualMap);
-	PRINT("->SetVirtualAddressMap(%d, %d, 0x%x, %p) END = %r\n", MemoryMapSize, DescriptorSize, DescriptorVersion, VirtualMap, Status);
+	
+	// Prints beyond this point may cause hangs, so don't print anything
+	//PRINT("->SetVirtualAddressMap(%d, %d, 0x%x, %p) END = %r\n", MemoryMapSize, DescriptorSize, DescriptorVersion, VirtualMap, Status);
 	//PrintSystemTable(gST);
+	
 	return Status;
 }
 
