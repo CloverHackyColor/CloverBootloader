@@ -101,6 +101,8 @@
   gEfiBlockIoProtocolGuid
   gEfiDiskIoProtocolGuid
   gEfiGraphicsOutputProtocolGuid
+  gEfiSimpleTextInProtocolGuid
+  gEfiSimpleTextOutProtocolGuid
 
 [Depex]
   TRUE  

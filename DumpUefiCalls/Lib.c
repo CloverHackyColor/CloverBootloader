@@ -106,6 +106,8 @@ EFI_GUID gAppleFileVaultVariableGuid		= {0x8D63D4FE, 0xBD3C, 0x4AAD, {0x88, 0x1D
 EFI_GUID gApplePasswordUIEfiFileNameGuid	= {0x9EBA2D25, 0xBBE3, 0x4AC2, {0xA2, 0xC6, 0xC8, 0x7F, 0x44, 0xA1, 0x27, 0x8C}};
 EFI_GUID gAppleRamDmgDevicePathGuid		= {0x040B07E8, 0x0B9C, 0x427E, {0xB0, 0xD4, 0xA4, 0x66, 0xE6, 0xE5, 0x7A, 0x62}};
 EFI_GUID gAppleSMCProtocolGuid			= {0x17407E5A, 0xAF6C, 0x4EE8, {0x98, 0xA8, 0x00, 0x21, 0x04, 0x53, 0xCD, 0xD9}};
+EFI_GUID gAppleDeviceControlProtocolGuid	= {0x8ECE08D8, 0xA6D4, 0x430B, {0xA7, 0xB0, 0x2D, 0xF3, 0x18, 0xE7, 0x88, 0x4A}};
+EFI_GUID firewireProtocolGuid			= {0x67708AA8, 0x2079, 0x4E4F, {0xB1, 0x58, 0xB1, 0x5B, 0x1f, 0x6A, 0x6C, 0x92}};
 
 // Shell guids
 EFI_GUID ShellInt				= {0x47C7B223, 0xC42A, 0x11D2, {0x8E, 0x57, 0x0, 0xA0, 0xC9, 0x69, 0x72, 0x3B}};
@@ -127,6 +129,8 @@ MAP_EFI_GUID_STR EfiGuidStrMap[] = {
 	{&gEfiBlockIoProtocolGuid, L"gEfiBlockIoProtocolGuid"},
 	{&gEfiDiskIoProtocolGuid, L"gEfiDiskIoProtocolGuid"},
 	{&gEfiGraphicsOutputProtocolGuid, L"gEfiGraphicsOutputProtocolGuid"},
+	{&gEfiSimpleTextInProtocolGuid, L"gEfiSimpleTextInProtocolGuid"},
+	{&gEfiSimpleTextOutProtocolGuid, L"gEfiSimpleTextOutProtocolGuid"},
 	
 	{&gEfiConsoleControlProtocolGuid, L"gEfiConsoleControlProtocolGuid"},
 	{&gAppleFirmwarePasswordProtocolGuid, L"gAppleFirmwarePasswordProtocolGuid"},
@@ -142,12 +146,15 @@ MAP_EFI_GUID_STR EfiGuidStrMap[] = {
 	{&gAppleEFINVRAMTRBSecureGuid, L"gAppleEFINVRAMTRBSecureGuid"},
 	{&gDataHubOptionsGuid, L"gDataHubOptionsGuid"},
 	{&gNotifyMouseActivity, L"gNotifyMouseActivity"},
+	
 	{&gEfiDataHubProtocolGuid, L"gEfiDataHubProtocolGuid"},
 	{&gEfiMiscSubClassGuid, L"gEfiMiscSubClassGuid"},
 	{&gEfiProcessorSubClassGuid, L"gEfiProcessorSubClassGuid"},
 	{&gEfiMemorySubClassGuid, L"gEfiMemorySubClassGuid"},
 	{&gMsgLogProtocolGuid, L"gMsgLogProtocolGuid"},
 	{&gEfiLegacy8259ProtocolGuid, L"gEfiLegacy8259ProtocolGuid"},
+	{&gEfiMemoryTypeInformationGuid, L"gEfiMemoryTypeInformationGuid"},
+	{&gEfiSimplePointerProtocolGuid, L"gEfiSimplePointerProtocolGuid"},
 	
 	{&gEfiAcpi10TableGuid, L"gEfiAcpi10TableGuid"},
 	{&gEfiAcpi20TableGuid, L"gEfiAcpi20TableGuid"},
@@ -156,14 +163,14 @@ MAP_EFI_GUID_STR EfiGuidStrMap[] = {
 	{&gEfiHobListGuid, L"gEfiHobListGuid"},
 	{&gEfiMpsTableGuid, L"gEfiMpsTableGuid"},
 	{&gEfiSmbiosTableGuid, L"gEfiSmbiosTableGuid"},
-	{&gEfiMemoryTypeInformationGuid, L"gEfiMemoryTypeInformationGuid"},
-	{&gEfiSimplePointerProtocolGuid, L"gEfiSimplePointerProtocolGuid"},
 	
 	{&gAppleAcpiVariableGuid, L"gAppleAcpiVariableGuid"},
 	{&gAppleFileVaultVariableGuid, L"gAppleFileVaultVariableGuid"},
 	{&gApplePasswordUIEfiFileNameGuid, L"gApplePasswordUIEfiFileNameGuid"},
 	{&gAppleRamDmgDevicePathGuid, L"gAppleRamDmgDevicePathGuid"},
 	{&gAppleSMCProtocolGuid, L"gAppleSMCProtocolGuid"},
+	{&gAppleDeviceControlProtocolGuid, L"gAppleDeviceControlProtocolGuid"},
+	{&firewireProtocolGuid, L"firewireProtocolGuid"},
 	
 	{&ShellInt, L"ShellInt"},
 	{&SEnv, L"SEnv"},
