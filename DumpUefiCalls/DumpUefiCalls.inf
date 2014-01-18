@@ -10,7 +10,7 @@
 # How to use:
 #
 #  Users of Clover boot manager can just place the driver to appropriate drivers folder
-#  (for example /EFI/drivers64). Other users will probably know how to load it.
+#  (for example /EFI/CLOVER/drivers64). Other users will probably know how to load it.
 #
 # How it works:
 #

@@ -1942,7 +1942,7 @@ UINT32 FIXLPCB (UINT8 *dsdt, UINT32 len)
   pack = aml_add_package(met);
   aml_add_string(pack, "device-id");
   aml_add_byte_buffer(pack, dataLPC, 4);
-  AsciiSPrint(NameCard, 32, "pci8086,3a18\0");
+  AsciiSPrint(NameCard, 32, "pci8086,3a18");
   aml_add_string(pack, "name");
   aml_add_string_buffer(pack, (CHAR8 *)&NameCard[0]);
   aml_add_string(pack, "compatible");

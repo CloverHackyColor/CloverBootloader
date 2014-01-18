@@ -307,6 +307,21 @@
 		124D77E01657A5E1008B5407 /* SataController.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = SataController.c; sourceTree = "<group>"; };
 		124D77E11657A5E1008B5407 /* SataController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SataController.h; sourceTree = "<group>"; };
 		124D77E21657A5E2008B5407 /* SataControllerDxe.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = SataControllerDxe.inf; sourceTree = "<group>"; };
+		12561413188A888600424302 /* BootServices.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BootServices.c; sourceTree = "<group>"; };
+		12561414188A888600424302 /* BootServices.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BootServices.h; sourceTree = "<group>"; };
+		12561415188A888600424302 /* Common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Common.h; sourceTree = "<group>"; };
+		12561416188A888600424302 /* DumpUefiCalls.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = DumpUefiCalls.c; sourceTree = "<group>"; };
+		12561417188A888600424302 /* DumpUefiCalls.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = DumpUefiCalls.inf; sourceTree = "<group>"; };
+		12561418188A888600424302 /* FileLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = FileLib.c; sourceTree = "<group>"; };
+		12561419188A888600424302 /* FileLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FileLib.h; sourceTree = "<group>"; };
+		1256141A188A888600424302 /* Lib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Lib.c; sourceTree = "<group>"; };
+		1256141B188A888600424302 /* Lib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Lib.h; sourceTree = "<group>"; };
+		1256141C188A888600424302 /* Log.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Log.c; sourceTree = "<group>"; };
+		1256141D188A888600424302 /* Log.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Log.h; sourceTree = "<group>"; };
+		1256141E188A888600424302 /* MemLog.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = MemLog.c; sourceTree = "<group>"; };
+		1256141F188A888600424302 /* MemLog.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MemLog.h; sourceTree = "<group>"; };
+		12561420188A888600424302 /* RuntimeServices.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = RuntimeServices.c; sourceTree = "<group>"; };
+		12561421188A888600424302 /* RuntimeServices.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RuntimeServices.h; sourceTree = "<group>"; };
 		128160B916D60E720012840B /* AcpiAml.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AcpiAml.h; path = ../../MdePkg/Include/IndustryStandard/AcpiAml.h; sourceTree = SOURCE_ROOT; };
 		12896D8D16B3A10A00A2EC36 /* fsw_base.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fsw_base.h; sourceTree = "<group>"; };
 		12896D8E16B3A10A00A2EC36 /* fsw_core.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = fsw_core.c; sourceTree = "<group>"; };
@@ -1310,6 +1325,29 @@
 			path = ../SataControllerDxe;
 			sourceTree = "<group>";
 		};
+		12561412188A888600424302 /* DumpUefiCalls */ = {
+			isa = PBXGroup;
+			children = (
+				12561413188A888600424302 /* BootServices.c */,
+				12561414188A888600424302 /* BootServices.h */,
+				12561415188A888600424302 /* Common.h */,
+				12561416188A888600424302 /* DumpUefiCalls.c */,
+				12561417188A888600424302 /* DumpUefiCalls.inf */,
+				12561418188A888600424302 /* FileLib.c */,
+				12561419188A888600424302 /* FileLib.h */,
+				1256141A188A888600424302 /* Lib.c */,
+				1256141B188A888600424302 /* Lib.h */,
+				1256141C188A888600424302 /* Log.c */,
+				1256141D188A888600424302 /* Log.h */,
+				1256141E188A888600424302 /* MemLog.c */,
+				1256141F188A888600424302 /* MemLog.h */,
+				12561420188A888600424302 /* RuntimeServices.c */,
+				12561421188A888600424302 /* RuntimeServices.h */,
+			);
+			name = DumpUefiCalls;
+			path = ../DumpUefiCalls;
+			sourceTree = "<group>";
+		};
 		12896D8C16B3A10A00A2EC36 /* VBoxFsDxe */ = {
 			isa = PBXGroup;
 			children = (
@@ -1521,6 +1559,7 @@
 				12BAE0E217C8B9C600288BEB /* CloverPkg.dec */,
 				12BAE0DF17C8B9BA00288BEB /* Clover.dsc */,
 				12BAE0E017C8B9BA00288BEB /* Clover.fdf */,
+				12561412188A888600424302 /* DumpUefiCalls */,
 				1294B5C1165BF86600183BFD /* LegacyBios */,
 				123F0952164F96D0008C1C1C /* Library */,
 				123F0957164F96DB008C1C1C /* Include */,

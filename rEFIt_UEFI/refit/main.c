@@ -52,6 +52,9 @@
 #define DBG(...) DebugLog(DEBUG_MAIN, __VA_ARGS__)
 #endif
 
+#ifndef HIBERNATE
+#define HIBERNATE 1
+#endif
 
 // variables
 
@@ -1641,6 +1644,34 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   // Initialize secure boot
   InitializeSecureBoot();
 #endif // ENABLE_SECURE_BOOT
+
+#if HIBERNATE
+  {
+    UINT32                    machineSignature		= 0;
+    EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE		  *FadtPointer = NULL;
+    EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE	*Facs = NULL;
+//    EFI_DEVICE_PATH_PROTOCOL* bootImagePath       = NULL;
+    
+    DBG("---dump hibernations data---\n");
+    FadtPointer = GetFadt();
+    if (FadtPointer != NULL) {
+      Facs = (EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE*)(UINTN)(FadtPointer->FirmwareCtrl);
+      DBG("  Firmware wake address=%08lx\n", Facs->FirmwareWakingVector);
+      DBG("  Firmware wake 64 addr=%llx\n",  Facs->XFirmwareWakingVector);
+      DBG("  Hardware signature   =%08lx\n", Facs->HardwareSignature);
+      DBG("  GlobalLock           =%08lx\n", Facs->GlobalLock);
+      DBG("  Flags                =%08lx\n", Facs->Flags);
+      machineSignature = Facs->HardwareSignature;
+    }
+//------------------------------------------------------
+    DumpVariable(L"Boot0082",         &gEfiGlobalVariableGuid);
+    DumpVariable(L"boot-switch-vars", &gEfiAppleBootGuid);
+    DumpVariable(L"boot-signature",   &gEfiAppleBootGuid);
+    DumpVariable(L"boot-image-key",   &gEfiAppleBootGuid);
+    DumpVariable(L"boot-image",       &gEfiAppleBootGuid);
+//-----------------------------------------------------------
+  }
+#endif //
 
   if (!GlobalConfig.FastBoot) {
     GetListOfThemes();

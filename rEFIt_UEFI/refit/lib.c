@@ -1567,4 +1567,31 @@ CHAR16 *FileDevicePathFileToStr(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevPath)
   return NULL;
 }
 
+VOID DumpVariable(CHAR16* Name, EFI_GUID* Guid)
+{
+  UINTN                     dataSize            = 0;
+  UINT8                     *data               = NULL;
+  INTN i;
+	EFI_STATUS  Status;
+
+  Status = gRT->GetVariable (Name, Guid, NULL, &dataSize, data);
+  if (Status == EFI_BUFFER_TOO_SMALL) {
+    data = AllocateZeroPool(dataSize);
+    Status = gRT->GetVariable (Name, Guid, NULL, &dataSize, data);
+    if (EFI_ERROR(Status)) {
+      DBG("Can't get %s, size=%d\n", Name, dataSize);
+    } else {
+      DBG("%s var size=%d\n", Name, dataSize);
+      for (i = 0; i < dataSize; i++) {
+        DBG("%02x ", data[i]);
+      }
+      DBG(" \n");
+    }
+  }
+  if (data) {
+    FreePool(data);
+  }
+}
+
+
 // EOF

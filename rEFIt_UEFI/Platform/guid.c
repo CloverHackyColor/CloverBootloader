@@ -25,6 +25,7 @@ EFI_GUID gEfiProcessorSubClassGuid              = {0X26FDEB7E, 0XB8AF, 0X4CCF, {
 EFI_GUID gEfiMemorySubClassGuid                 = {0x4E8F4EBB, 0x64B9, 0x4e05, {0x9B, 0x18, 0x4C, 0xFE, 0x49, 0x23, 0x50, 0x97}};
 //EFI_GUID gMsgLogProtocolGuid                    = {0x511CE018, 0x0018, 0x4002, {0x20, 0x12, 0x17, 0x38, 0x05, 0x01, 0x02, 0x03}};
 //EFI_GUID gEfiLegacy8259ProtocolGuid             = {0X38321DBA, 0X4FE0, 0X4E17, {0X8A, 0XEC, 0X41, 0X30, 0X55, 0XEA, 0XED, 0XC1}};
+EFI_GUID gAppleDeviceControlProtocolGuid  = {0x8ECE08D8, 0xA6D4, 0x430B, {0xA7, 0xB0, 0x2D, 0xF3, 0x18, 0xE7, 0x88, 0x4A}};
 
              
 //all these codes are still under the question
@@ -40,7 +41,6 @@ EFI_GUID GPT_EMPTY_PARTITION = \
 //EFI_PART_TYPE_LEGACY_MBR_GUID {0x024DEE41, 0x33E7, 0x11D3, {0x9D, 0x69, 0x00, 0x08, 0xC7, 0x81, 0xF3, 0x9F }};
 
 //TODO - discover the follow guids
-//gBS->LocateProtocol(8ECE08D8-A6D4-430B-A7B0-2DF318E7884A)
 //efi/configuration-table/5751DA6E-1376-4E02-BA92-D294FDD30901
 //efi/configuration-table/F76761DC-FF89-44E4-9C0C-CD0ADA4EF983
 /*

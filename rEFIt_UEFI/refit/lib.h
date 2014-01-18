@@ -495,6 +495,7 @@ extern BOOLEAN          gThemeChanged;
 extern BOOLEAN          gBootArgsChanged;
 //extern POINTERS         gPointer;
 extern REFIT_MENU_SCREEN OptionMenu;
+//extern EFI_GUID gEfiAppleBootGuid;
 
 
 EFI_STATUS InitRefitLib(IN EFI_HANDLE ImageHandle);
@@ -740,12 +741,9 @@ TimeCompare (
 			 IN EFI_TIME               *FirstTime,
 			 IN EFI_TIME               *SecondTime
 			 );
-/*
-extern UINTN
-Atoi (
-	  CHAR16  *str
-	  );
-*/
+
+extern VOID DumpVariable(CHAR16* Name, EFI_GUID* Guid);
+
 
 #endif
 /* EOF */
