@@ -119,10 +119,20 @@ OvrConvertPointer(
 )
 {
 	EFI_STATUS			Status;
+	// We should call PRINT before actual convertion takes place, as otherwise we may call it with converted buffer
+	VOID				*AddressOut = *Address;
+	
+	Status = gOrgRS.ConvertPointer(DebugDisposition, &AddressOut);
+	PRINT("->ConvertPointer(%d, %p/%p) = %r\n", DebugDisposition, *Address, AddressOut, Status);
+	*Address = AddressOut;
+	
+	/*
 	VOID				*AddressIn = *Address;
 	
 	Status = gOrgRS.ConvertPointer(DebugDisposition, Address);
 	PRINT("->ConvertPointer(%d, %p/%p) = %r\n", DebugDisposition, AddressIn, *Address, Status);
+	*/
+	
 	return Status;
 }
 
@@ -303,14 +313,15 @@ VirtualAddressChangeEvent(
 	OvrConvertPointer(EFI_OPTIONAL_PTR, (VOID **) &gOrgRS.QueryCapsuleCapabilities);
 	
 	OvrConvertPointer(EFI_OPTIONAL_PTR, (VOID **) &gOrgRS.QueryVariableInfo);
-
+	
 	//
 	// Convert our pointers to allocated buffers.
 	//
 	OvrConvertPointer(EFI_OPTIONAL_PTR, (VOID **) &GuidPrintBuffer);
-	OvrConvertPointer(EFI_OPTIONAL_PTR, (VOID **) &gLogLineBuffer);
 	OvrConvertPointer(EFI_OPTIONAL_PTR, (VOID **) &gVariableNameBuffer);
 	OvrConvertPointer(EFI_OPTIONAL_PTR, (VOID **) &gVariableDataBuffer);
+	// LogPrint's buffer should be converted last, as otherwise LogPrint may be called with incorrect pointer
+	OvrConvertPointer(EFI_OPTIONAL_PTR, (VOID **) &gLogLineBuffer);
 }
 
 

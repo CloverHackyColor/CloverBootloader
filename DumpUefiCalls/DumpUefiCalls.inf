@@ -102,6 +102,7 @@
   gEfiDiskIoProtocolGuid
   gEfiGraphicsOutputProtocolGuid
   gEfiSimpleTextInProtocolGuid
+  gEfiSimpleTextInputExProtocolGuid
   gEfiSimpleTextOutProtocolGuid
 
 [Depex]
