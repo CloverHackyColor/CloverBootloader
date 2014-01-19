@@ -1567,7 +1567,7 @@ CHAR16 *FileDevicePathFileToStr(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevPath)
   return NULL;
 }
 
-VOID DumpVariable(CHAR16* Name, EFI_GUID* Guid)
+BOOLEAN DumpVariable(CHAR16* Name, EFI_GUID* Guid, INTN DevicePathAt)
 {
   UINTN                     dataSize            = 0;
   UINT8                     *data               = NULL;
@@ -1580,17 +1580,24 @@ VOID DumpVariable(CHAR16* Name, EFI_GUID* Guid)
     Status = gRT->GetVariable (Name, Guid, NULL, &dataSize, data);
     if (EFI_ERROR(Status)) {
       DBG("Can't get %s, size=%d\n", Name, dataSize);
+      FreePool(data);
+      data = FALSE;
     } else {
       DBG("%s var size=%d\n", Name, dataSize);
       for (i = 0; i < dataSize; i++) {
         DBG("%02x ", data[i]);
       }
-      DBG(" \n");
+      DBG("\n");
+      if (DevicePathAt >= 0) {
+        DBG("%s: %s\n", Name, FileDevicePathToStr((EFI_DEVICE_PATH_PROTOCOL*)&data[DevicePathAt]));
+      }
     }
   }
   if (data) {
     FreePool(data);
+    return TRUE;
   }
+  return FALSE;
 }
 
 

@@ -62,6 +62,7 @@
 
 BOOLEAN                 gGuiIsReady = FALSE;
 BOOLEAN                 gThemeNeedInit = TRUE;
+BOOLEAN                 DoHibernateWake = FALSE;
 EFI_HANDLE              gImageHandle;
 EFI_SYSTEM_TABLE*       gST;
 EFI_BOOT_SERVICES*		  gBS; 
@@ -796,6 +797,50 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
   if (OSTYPE_IS_OSX(Entry->LoaderType) ||
       OSTYPE_IS_OSX_RECOVERY(Entry->LoaderType) ||
       OSTYPE_IS_OSX_INSTALLER(Entry->LoaderType)) {
+    //dmazar
+    typedef struct _AppleRTCHibernateVars
+    {
+      UINT8     signature[4];
+      UINT32    revision;
+      UINT8	    booterSignature[20];
+      UINT8	    wiredCryptKey[16];
+    } AppleRTCHibernateVars;
+    AppleRTCHibernateVars rtcVars;
+    UINTN VarSize = 256;
+    UINT8 VarData[256];
+//disabled util it will work
+// to enable  comment this line off
+    DoHibernateWake = FALSE;
+//
+    if (DoHibernateWake) {
+      SetMem(&rtcVars, sizeof(AppleRTCHibernateVars), 0);
+      rtcVars.signature[0] = 'A';
+      rtcVars.signature[1] = 'A';
+      rtcVars.signature[2] = 'P';
+      rtcVars.signature[3] = 'L';
+      rtcVars.revision     = 1;
+      gRT->SetVariable(L"boot-switch-vars", &gEfiAppleBootGuid,
+                       EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                       sizeof(rtcVars) ,&rtcVars);
+
+      Status = gRT->GetVariable (
+                                 L"boot-image",
+                                 &gEfiAppleBootGuid,
+                                 NULL,
+                                 &VarSize,
+                                 VarData
+                                 );
+      if (Status == EFI_SUCCESS) {
+        DBG("boot-image before: %s\n", FileDevicePathToStr((EFI_DEVICE_PATH_PROTOCOL*)&VarData[0]));
+        VarData[6] = 8;
+        VarData[24] = 0xFF;
+        VarData[25] = 0xFF;
+        DBG("boot-image corrected: %s\n", FileDevicePathToStr((EFI_DEVICE_PATH_PROTOCOL*)&VarData[0]));
+      }
+      gRT->SetVariable(L"boot-image", &gEfiAppleBootGuid,
+       EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+       VarSize , VarData);
+    }
     DBG("Closing log\n");
     Status = SetupBooterLog();
   }
@@ -1657,18 +1702,18 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     if (FadtPointer != NULL) {
       Facs = (EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE*)(UINTN)(FadtPointer->FirmwareCtrl);
       DBG("  Firmware wake address=%08lx\n", Facs->FirmwareWakingVector);
-      DBG("  Firmware wake 64 addr=%llx\n",  Facs->XFirmwareWakingVector);
+      DBG("  Firmware wake 64 addr=%16llx\n",  Facs->XFirmwareWakingVector);
       DBG("  Hardware signature   =%08lx\n", Facs->HardwareSignature);
       DBG("  GlobalLock           =%08lx\n", Facs->GlobalLock);
       DBG("  Flags                =%08lx\n", Facs->Flags);
       machineSignature = Facs->HardwareSignature;
     }
 //------------------------------------------------------
-    DumpVariable(L"Boot0082",         &gEfiGlobalVariableGuid);
-    DumpVariable(L"boot-switch-vars", &gEfiAppleBootGuid);
-    DumpVariable(L"boot-signature",   &gEfiAppleBootGuid);
-    DumpVariable(L"boot-image-key",   &gEfiAppleBootGuid);
-    DumpVariable(L"boot-image",       &gEfiAppleBootGuid);
+    DoHibernateWake = DumpVariable(L"Boot0082", &gEfiGlobalVariableGuid, 8);
+    DumpVariable(L"boot-switch-vars", &gEfiAppleBootGuid, -1);
+    DumpVariable(L"boot-signature",   &gEfiAppleBootGuid, -1);
+    DumpVariable(L"boot-image-key",   &gEfiAppleBootGuid, -1);
+    DumpVariable(L"boot-image",       &gEfiAppleBootGuid, 0);
 //-----------------------------------------------------------
   }
 #endif //

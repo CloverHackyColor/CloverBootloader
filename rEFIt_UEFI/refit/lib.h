@@ -742,7 +742,7 @@ TimeCompare (
 			 IN EFI_TIME               *SecondTime
 			 );
 
-extern VOID DumpVariable(CHAR16* Name, EFI_GUID* Guid);
+extern BOOLEAN DumpVariable(CHAR16* Name, EFI_GUID* Guid, INTN DevicePathAt);
 
 
 #endif
