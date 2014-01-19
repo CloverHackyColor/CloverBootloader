@@ -411,6 +411,7 @@ typedef struct {
   CHAR16      *SelectionBigFileName;
   CHAR16      *DefaultSelection;
   CHAR16      *ScreenResolution;
+  INTN        ConsoleMode;
   CHAR16      *BackgroundName;
   SCALING     BackgroundScale;
   UINTN       BackgroundSharp;

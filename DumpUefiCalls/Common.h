@@ -89,6 +89,13 @@
 //
 #define CAPTURE_CONSOLE_OUTPUT		1
 
+// 
+// BOOT_LOADERS
+// specify here as shown below (in a CHAR16* array) all boot loaders for which overrides will start
+// array must be terminated by NULL
+//  
+#define BOOT_LOADERS { L"boot.efi", L"bootmgfw.efi", L"grub.efi", L"grubx64.efi", NULL }
+
 
 #include "Lib.h"
 #include "Log.h"

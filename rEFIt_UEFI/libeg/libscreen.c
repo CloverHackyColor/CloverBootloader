@@ -130,39 +130,50 @@ VOID egDumpGOPVideoModes(VOID)
     }
 }
 
-VOID egDumpConsoleVideoModes(VOID)
+VOID egDumpSetConsoleVideoModes(VOID)
 {
     UINTN i;
     UINTN Width, Height;
-    //UINTN BestMode = -1, BestWidth = 0, BestHeight = 0;
+    UINTN BestMode = 0, BestWidth = 0, BestHeight = 0;
     EFI_STATUS Status;
 
     if (gST->ConOut != NULL && gST->ConOut->Mode != NULL) {
         MsgLog("Console modes reported: %d, available modes:\n",gST->ConOut->Mode->MaxMode);
-        for (i=0; i < (UINTN)gST->ConOut->Mode->MaxMode; i++) {
-            Status = gST->ConOut->QueryMode(gST->ConOut, i, &Width, &Height);
+        for (i=1; i <= (UINTN)gST->ConOut->Mode->MaxMode; i++) {
+            Status = gST->ConOut->QueryMode(gST->ConOut, i-1, &Width, &Height);
             if (Status == EFI_SUCCESS) {
-                MsgLog("  Mode %d: %dx%d%s\n", i, Width, Height, (i==(UINTN)gST->ConOut->Mode->Mode)?L" (current mode)":L"");
-                /*
-                if (BestMode < 0 || Width > BestWidth || (Width == BestWidth && Height > BestHeight)) {
+                MsgLog("  Mode %d: %dx%d%s\n", i, Width, Height, (i-1==(UINTN)gST->ConOut->Mode->Mode)?L" (current mode)":L"");
+                // Select highest mode (-1) or lowest mode (-2) as/if requested
+                if ((GlobalConfig.ConsoleMode == -1 && (BestMode == 0 || Width > BestWidth || (Width == BestWidth && Height > BestHeight))) ||
+                    (GlobalConfig.ConsoleMode == -2 && (BestMode == 0 || Width < BestWidth || (Width == BestWidth && Height < BestHeight)))) {
                     BestMode = i;
                     BestWidth = Width;
                     BestHeight = Height;
                 }
-                */
             }
         }
     } else {
         MsgLog("Console modes are not available.\n");
+        return;
     }
-    /*
-    if (BestMode != -1 && BestMode != gST->ConOut->Mode->Mode) {
-        Status = gST->ConOut->SetMode(gST->ConOut, BestMode);
-        MsgLog("  Setting highest mode (%d): %r\n",BestMode, Status);
-    } else {
-        MsgLog("  Highest mode (%d) is already set\n",BestMode);
+
+    if (GlobalConfig.ConsoleMode > 0) {
+      // Specific mode chosen, try to set it
+      BestMode = GlobalConfig.ConsoleMode;
     }
-    */
+    
+    if (BestMode >= 1 && BestMode <= gST->ConOut->Mode->MaxMode) {
+        // Mode is valid
+        if (BestMode-1 != gST->ConOut->Mode->Mode) {
+            Status = gST->ConOut->SetMode(gST->ConOut, BestMode-1);
+            MsgLog("  Setting mode (%d): %r\n",BestMode, Status);
+        } else {
+            MsgLog("  Selected mode (%d) is already set\n",BestMode);
+        }
+    } else if (BestMode != 0) {
+        MsgLog("  Selected mode (%d) is not valid\n",BestMode);
+    }
+    
 }
 
 EFI_STATUS egSetMaxResolution()
@@ -383,7 +394,7 @@ VOID egInitScreen(IN BOOLEAN SetMaxResolution)
         }
     }
 
-    egDumpConsoleVideoModes();
+    egDumpSetConsoleVideoModes();
 }
 
 VOID egGetScreenSize(OUT INTN *ScreenWidth, OUT INTN *ScreenHeight)
@@ -432,17 +443,21 @@ VOID egSetGraphicsModeEnabled(IN BOOLEAN Enable)
 {
     EFI_CONSOLE_CONTROL_SCREEN_MODE CurrentMode;
     EFI_CONSOLE_CONTROL_SCREEN_MODE NewMode;
-    
-    if (ConsoleControl != NULL) {
 
-        if (GraphicsOutput != NULL) {
+    if (ConsoleControl != NULL) {
+    
+        // Some UEFI bioses may cause resolution switch when switching to Text Mode via the ConsoleControl->SetMode command
+        // EFI applications wishing to use text, call the ConsoleControl->GetMode() command, and depending on its result may call ConsoleControl->SetMode().
+        // To avoid the resolution switch, when we set text mode, we can make ConsoleControl->GetMode report that text mode is enabled.
+
+        // ConsoleControl->SetMode should not be needed on UEFI 2.x to switch to text, but some firmwares seem to block text out if it is not given.
+        // We know it blocks text out on HPQ UEFI (HP ProBook for example - reported by dmazar), Apple firmwares with UGA, and some VMs.
+        // So, it may be better considering to do this only with firmware vendors where the bug was observed (currently it is known to exist on some AMI firmwares).
+        //if (GraphicsOutput != NULL && StrCmp(gST->FirmwareVendor, L"American Megatrends") == 0) {
+        if (GraphicsOutput != NULL && StrCmp(gST->FirmwareVendor, L"HPQ") != 0 && StrCmp(gST->FirmwareVendor, L"VMware, Inc.") != 0) {
             if (!Enable) {
-                // Don't allow switching to text mode when GOP exists, as it may cause resolution switch
-                // But report that we are in text mode when queried, to avoid another set command
-                // dmazar: skip it on HPQ UEFI (HP ProBook for example) since it blocks any text out
-                if (!StrCmp(gST->FirmwareVendor, L"HPQ") == 0) {
-                  ConsoleControl->GetMode = NullConsoleControlGetModeText;
-                }
+                // Don't allow switching to text mode, but report that we are in text mode when queried
+                ConsoleControl->GetMode = NullConsoleControlGetModeText;
                 return;
             } else if (ConsoleControl->GetMode != ConsoleControlGetMode) {
                 // Allow switching to graphics mode, and use original GetMode function
@@ -690,7 +705,7 @@ static EFI_STATUS GopSetModeAndReconnectTextOut(IN UINT32 ModeNumber)
             if (HandleBuffer != NULL) {
                 FreePool (HandleBuffer);
             }
-            egDumpConsoleVideoModes();
+            egDumpSetConsoleVideoModes();
         }
         // return value is according to whether SetMode succeeded
         Status = EFI_SUCCESS;

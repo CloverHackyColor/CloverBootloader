@@ -59,7 +59,7 @@ extern UINT8 GetOSTypeFromPath(IN CHAR16 *Path);
 
 // global configuration with default values
 REFIT_CONFIG   GlobalConfig = { FALSE, -1, 0, 0, 0, TRUE, FALSE, FALSE, FALSE, FALSE,
-  FONT_ALFA, 7, 0xFFFFFF80, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, None, 0,
+  FONT_ALFA, 7, 0xFFFFFF80, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, None, 0,
   FALSE, FALSE, FALSE, FALSE, 0, 0, 4 };
 
 VOID __inline WaitForSts(VOID) {
@@ -1201,10 +1201,31 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
         GlobalConfig.TextOnly = TRUE;
       }
     }
+
     prop = GetProperty(dictPointer, "ScreenResolution");
     if (prop) {
       if ((prop->type == kTagTypeString) && prop->string) {
         GlobalConfig.ScreenResolution = PoolPrint(L"%a", prop->string);
+      }
+    }
+
+    prop = GetProperty(dictPointer, "ConsoleMode");
+    if (prop) {
+      if (prop->type == kTagTypeInteger) {
+        GlobalConfig.ConsoleMode = (INT32)(UINTN)prop->string;
+      } else if ((prop->type == kTagTypeString) && prop->string) {
+	if (AsciiStrStr(prop->string, "Max") != NULL) {
+          GlobalConfig.ConsoleMode = -1;
+          DBG("ConsoleMode will be set to highest mode\n");
+	} else if (AsciiStrStr(prop->string, "Min") != NULL) {
+          GlobalConfig.ConsoleMode = -2;
+          DBG("ConsoleMode will be set to lowest mode\n");
+        } else {
+          GlobalConfig.ConsoleMode = (INT32)AsciiStrDecimalToUintn(prop->string);
+        }
+      }
+      if (GlobalConfig.ConsoleMode > 0) {
+        DBG("ConsoleMode will be set to mode #%d\n", GlobalConfig.ConsoleMode);
       }
     }
 
