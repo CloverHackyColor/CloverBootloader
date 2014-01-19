@@ -1316,6 +1316,7 @@ extern SMBIOS_STRUCTURE_POINTER	SmbiosTable;
 extern GFX_PROPERTIES           gGraphics[];
 extern UINTN                    NGFX;
 extern BOOLEAN                  gMobile;
+extern BOOLEAN                  DoHibernateWake;
 //extern UINT32                   gCpuSpeed;  //kHz
 //extern UINT16                   gCPUtype;
 extern UINT64                   TurboMsr;
@@ -1359,7 +1360,7 @@ extern EFI_GUID	gEfiAppleBootGuid;
 extern EFI_GUID	gEfiAppleNvramGuid;
 extern EFI_GUID AppleSystemInfoProducerName;
 extern EFI_GUID AppleDevicePropertyProtocolGuid;
-extern EFI_GUID gEfiAppleScreenInfoGuid;
+extern EFI_GUID gAppleScreenInfoProtocolGuid;
 extern EFI_GUID gEfiAppleVendorGuid;
 extern EFI_GUID gEfiPartTypeSystemPartGuid;
 extern EFI_GUID gMsgLogProtocolGuid;
@@ -1593,6 +1594,11 @@ AddBootOptionForFile (
     IN  UINTN           BootIndex,
     OUT UINT16          *BootNum
     );
+
+/** Deletes boot option specified with BootNum (XXXX in BootXXXX var name). */
+EFI_STATUS
+DeleteBootOption (IN  UINT16  BootNum);
+
 
 /** Deletes boot option for file specified with FileDeviceHandle and FileName. */
 EFI_STATUS

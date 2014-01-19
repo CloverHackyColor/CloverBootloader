@@ -50,6 +50,7 @@
 #
 
 [Packages]
+  Clover/CloverPkg.dec
   MdePkg/MdePkg.dec
 
 [LibraryClasses]
@@ -104,6 +105,7 @@
   gEfiSimpleTextInProtocolGuid
   gEfiSimpleTextInputExProtocolGuid
   gEfiSimpleTextOutProtocolGuid
+  gEfiCpuArchProtocolGuid
 
 [Depex]
   TRUE  

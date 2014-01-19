@@ -810,7 +810,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     UINT8 VarData[256];
 //disabled util it will work
 // to enable  comment this line off
-    DoHibernateWake = FALSE;
+//    DoHibernateWake = FALSE;
 //
     if (DoHibernateWake) {
       SetMem(&rtcVars, sizeof(AppleRTCHibernateVars), 0);
@@ -832,14 +832,19 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
                                  );
       if (Status == EFI_SUCCESS) {
         DBG("boot-image before: %s\n", FileDevicePathToStr((EFI_DEVICE_PATH_PROTOCOL*)&VarData[0]));
-        VarData[6] = 8;
+  //      VarData[6] = 8;
         VarData[24] = 0xFF;
         VarData[25] = 0xFF;
         DBG("boot-image corrected: %s\n", FileDevicePathToStr((EFI_DEVICE_PATH_PROTOCOL*)&VarData[0]));
+        gRT->SetVariable(L"boot-image", &gEfiAppleBootGuid,
+                         EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                         VarSize , VarData);
+        // now we should delete boot0082 to do hibernate only once
+        Status = DeleteBootOption(0x82);
+        if (EFI_ERROR(Status)) {
+          DBG("Options 0082 was not deleted: %r\n", Status);
+        }
       }
-      gRT->SetVariable(L"boot-image", &gEfiAppleBootGuid,
-       EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-       VarSize , VarData);
     }
     DBG("Closing log\n");
     Status = SetupBooterLog();
@@ -1042,12 +1047,12 @@ static VOID ScanDriverDir(IN CHAR16 *Path, OUT EFI_HANDLE **DriversToConnect, OU
     }
     // either AptioFix or LowMemFix but not both
     if (StrStr(DirEntry->FileName, L"AptioFix") != NULL) {
-      if (gDriversFlags.MemFixLoaded) {
+      if (gDriversFlags.MemFixLoaded || DoHibernateWake) {
         continue; //if other driver loaded then skip new one
       }
       gDriversFlags.MemFixLoaded = TRUE;
     } else if (StrStr(DirEntry->FileName, L"LowMemFix") != NULL) {
-      if (gDriversFlags.MemFixLoaded) {
+      if (gDriversFlags.MemFixLoaded || DoHibernateWake) {
         continue; //if other driver loaded then skip new one
       }
       gDriversFlags.MemFixLoaded = TRUE;

@@ -90,6 +90,7 @@ EFI_GUID gEfiAppleVendorGuid			= {0xAC39C713, 0x7E50, 0x423D, {0x88, 0x9D, 0x27,
 EFI_GUID gAppleEFINVRAMTRBSecureGuid		= {0xF68DA75E, 0x1B55, 0x4E70, {0xB4, 0x1B, 0xA7, 0xB7, 0xA5, 0xB7, 0x58, 0xEA}};
 EFI_GUID gDataHubOptionsGuid			= {0x0021001C, 0x3CE3, 0x41F8, {0x99, 0xC6, 0xEC, 0xF5, 0xDA, 0x75, 0x47, 0x31}};
 EFI_GUID gNotifyMouseActivity			= {0xF913C2C2, 0x5351, 0x4FDB, {0x93, 0x44, 0x70, 0xFF, 0xED, 0xB8, 0x42, 0x25}};
+EFI_GUID gAppleDiskIoProtocolGuid = {0x5b27263b, 0x9083, 0x415e, {0x88, 0x9e, 0x64, 0x32, 0xca, 0xa9, 0xb8, 0x13}};
 
 // Include/Protocol/SimpleTextIn.h
 //EFI_GUID gEfiSimpleTextInProtocolGuid		= {0x387477C1, 0x69C7, 0x11D2, {0x8E, 0x39, 0x00, 0xA0, 0xC9, 0x69, 0x72, 0x3B}};
@@ -100,6 +101,9 @@ EFI_GUID gNotifyMouseActivity			= {0xF913C2C2, 0x5351, 0x4FDB, {0x93, 0x44, 0x70
 // Include/Protocol/SimpleTextOut.h
 //EFI_GUID gEfiSimpleTextOutProtocolGuid	= {0x387477C2, 0x69C7, 0x11D2, {0x8E, 0x39, 0x00, 0xA0, 0xC9, 0x69, 0x72, 0x3B}};
 
+//EFI_GUID gEfiCpuArchProtocolGuid  = { 0x26BACCB1, 0x6F42, 0x11D4, { 0xBC, 0xE7, 0x00, 0x80, 0xC7, 0x3C, 0x88, 0x81 }};
+
+extern EFI_GUID gEfiCpuArchProtocolGuid;
 
 EFI_GUID gEfiDataHubProtocolGuid		= {0xAE80D021, 0x618E, 0x11D4, {0xBC, 0xD7, 0x00, 0x80, 0xC7, 0x3C, 0x88, 0x81}};
 EFI_GUID gEfiMiscSubClassGuid			= {0x772484B2, 0x7482, 0x4B91, {0x9F, 0x9A, 0xAD, 0x43, 0xF8, 0x1C, 0x58, 0x81}};
@@ -142,7 +146,8 @@ MAP_EFI_GUID_STR EfiGuidStrMap[] = {
 	{&gEfiSimpleTextInProtocolGuid, L"gEfiSimpleTextInProtocolGuid"},
 	{&gEfiSimpleTextInputExProtocolGuid, L"gEfiSimpleTextInputExProtocolGuid"},
 	{&gEfiSimpleTextOutProtocolGuid, L"gEfiSimpleTextOutProtocolGuid"},
-	
+  {&gEfiCpuArchProtocolGuid, L"gEfiCpuArchProtocolGuid"},
+
 	{&gEfiConsoleControlProtocolGuid, L"gEfiConsoleControlProtocolGuid"},
 	{&gAppleFirmwarePasswordProtocolGuid, L"gAppleFirmwarePasswordProtocolGuid"},
 	{&gEfiGlobalVarGuid, L"gEfiGlobalVarGuid"},
@@ -182,6 +187,7 @@ MAP_EFI_GUID_STR EfiGuidStrMap[] = {
 	{&gAppleSMCProtocolGuid, L"gAppleSMCProtocolGuid"},
 	{&gAppleDeviceControlProtocolGuid, L"gAppleDeviceControlProtocolGuid"},
 	{&firewireProtocolGuid, L"firewireProtocolGuid"},
+  {&gAppleDiskIoProtocolGuid, L"gAppleDiskIoProtocolGuid"},
 	
 	{&ShellInt, L"ShellInt"},
 	{&SEnv, L"SEnv"},
