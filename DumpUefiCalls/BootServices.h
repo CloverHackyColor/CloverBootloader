@@ -14,7 +14,7 @@
 extern BOOLEAN InBootServices;
 
 #if CAPTURE_CONSOLE_OUTPUT >= 1
-extern BOOLEAN InConOutOutputString;
+extern BOOLEAN InConsolePrint;
 #endif
 
 /** Installs our boot services overrides. */

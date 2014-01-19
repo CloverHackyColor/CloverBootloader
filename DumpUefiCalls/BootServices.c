@@ -23,7 +23,7 @@ EFI_BOOT_SERVICES gOrgBS;
 
 #if CAPTURE_CONSOLE_OUTPUT >= 1
 EFI_TEXT_STRING gOrgConOutOutputString = 0;
-BOOLEAN InConOutOutputString = FALSE;
+BOOLEAN InConsolePrint = FALSE;
 #endif
 
 /** Helper function that calls GetMemoryMap() and returns new MapKey.
@@ -431,11 +431,6 @@ OvrExitBootServices(
 	PrintRTVariables(&gOrgRS);
 	#endif
 	
-	// Restore original OutputString
-	#if CAPTURE_CONSOLE_OUTPUT >= 1
-	gST->ConOut->OutputString = gOrgConOutOutputString;
-	#endif
-	
 	// Restore RT services if we should not log calls during runtime
 	#if WORK_DURING_RUNTIME == 0
 	RestoreRuntimeServices(gRT);
@@ -446,10 +441,15 @@ OvrExitBootServices(
 	// Set flag to FALSE to stop some loggers from messing with memory
 	InBootServices = FALSE;
 	
+	// Restore original OutputString
+	#if CAPTURE_CONSOLE_OUTPUT >= 1
+	gST->ConOut->OutputString = gOrgConOutOutputString;
+	#endif
+	
 	// Notify loggers that boot services are over
 	// Saving our log file can cause a vast amount of logging output on some firmwares, so do this after stopping loggers.
 	LogOnExitBootServices();
-		
+	
 	// Call original
 	Status = gOrgBS.ExitBootServices(ImageHandle, MapKey);
 	
@@ -854,10 +854,13 @@ OvrConOutOutputString(IN EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL *This, IN CHAR16 *Strin
 	Status = EFI_SUCCESS;
 	#endif
 	
-	// Set var to avoid printing to screen again when overriding OutputString
-	InConOutOutputString = TRUE;
-	PRINT("%s",String);
-	InConOutOutputString = FALSE;
+	// Print to file only if not invoked from our PRINT()
+	if (!InConsolePrint) {
+		// Set var to avoid printing to screen again when overriding OutputString
+		InConsolePrint = TRUE;
+		PRINT("%s",String);
+		InConsolePrint = FALSE;
+	}
 	
 	return Status;
 }
@@ -935,7 +938,7 @@ OvrBootServices(EFI_BOOT_SERVICES	*BS)
 	#if CAPTURE_CONSOLE_OUTPUT >= 1
 	PRINT("Overriding console output ...\n");
 	#if CAPTURE_CONSOLE_OUTPUT == 2
-	AsciiPrint("Preventing any further output, please wait until booting starts ...\n");
+	PRINT("Preventing any further console output, please wait until booting starts ...\n");
 	#endif
 	gOrgConOutOutputString = gST->ConOut->OutputString;
 	gST->ConOut->OutputString = OvrConOutOutputString;

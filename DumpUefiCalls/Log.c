@@ -69,16 +69,28 @@ LogPrint(CHAR8 *Format, ...)
 		//
 		#if LOG_TO_SCREEN == 1
 		#if CAPTURE_CONSOLE_OUTPUT >= 1
-		if (InBootServices && !InConOutOutputString) {
+		// Print to screen only if not invoked from our OutputString() override
+		if (InBootServices && !InConsolePrint) {
+			InConsolePrint = TRUE;
+			AsciiPrint(gLogLineBuffer);
+			InConsolePrint = FALSE;
+		}
 		#else
 		if (InBootServices) {
-		#endif
 			AsciiPrint(gLogLineBuffer);
 		}
 		#endif
+		#endif
 		
 		#if LOG_TO_SERIAL == 1
+		#if CAPTURE_CONSOLE_OUTPUT >= 1
+		// Print to serial only if not invoked from our OutputString() override
+		if (!InBootServices || !InConsolePrint) {
+			DebugPrint(1, gLogLineBuffer);
+		}
+		#else
 		DebugPrint(1, gLogLineBuffer);
+		#endif
 		#endif
 		
 		#if LOG_TO_FILE >= 1

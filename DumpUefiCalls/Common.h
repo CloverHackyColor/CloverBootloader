@@ -14,10 +14,15 @@
 // Enable/disable log outputs: 1 or 0
 //
 // LOG_TO_SERIAL=1 requires
-// [PcdsFixedAtBuild]
-//  gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x07
-//  gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0xFFFFFFFF
-// in package DSC file
+//  Clover/DumpUefiCalls/DumpUefiCalls.inf {
+//    <PcdsFixedAtBuild>
+//      gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x07
+//      gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0xFFFFFFFF
+//    <LibraryClasses>
+//      DebugLib|MdePkg/Library/BaseDebugLibSerialPort/BaseDebugLibSerialPort.inf
+//      SerialPortLib|MdeModulePkg/Library/BaseSerialPortLib16550/BaseSerialPortLib16550.inf
+//  }
+// in package DSC file (Clover.dsc)
 //
 #define LOG_TO_SCREEN			1
 #define LOG_TO_SERIAL			0
