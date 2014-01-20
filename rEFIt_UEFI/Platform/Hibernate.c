@@ -112,7 +112,7 @@ typedef struct _AppleRTCHibernateVars
 #define DAYSPERNYEAR    365
 #define DAYSPERLYEAR    366
 #define SECSPERHOUR     (SECSPERMIN * MINSPERHOUR)
-#define SECSPERDAY      ((UINT64) SECSPERHOUR * HOURSPERDAY)
+#define SECSPERDAY      ((INTN) SECSPERHOUR * HOURSPERDAY)
 #define MONSPERYEAR     12
 
 #define EPOCH_YEAR      1970
@@ -138,14 +138,14 @@ INT32 mac_to_posix(UINT32 mac_time)
 
 VOID fsw_efi_decode_time(OUT EFI_TIME *EfiTime, IN UINT32 UnixTime)
 {
-    INT64        days, rem;
+    INTN         days, rem;
     INT32        y, newy, yleap;
     INT32        *ip;
     
     ZeroMem(EfiTime, sizeof(EFI_TIME));
     
-    days = UnixTime / SECSPERDAY;
-    rem = UnixTime % SECSPERDAY;
+    days = ((INTN)UnixTime) / SECSPERDAY;
+    rem = ((INTN)UnixTime) % SECSPERDAY;
     
     EfiTime->Hour = (UINT8) (rem / SECSPERHOUR);
     rem = rem % SECSPERHOUR;
