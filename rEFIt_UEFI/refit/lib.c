@@ -836,6 +836,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
     if (EFI_ERROR(Status)) {
       DBG("Can't find WholeDevicePath: %r\n", Status);
     } else {
+      Volume->WholeDiskDeviceHandle = WholeDiskHandle;
       Volume->WholeDiskDevicePath = DuplicateDevicePath(RemainingDevicePath);
       // look at the BlockIO protocol
       Status = gBS->HandleProtocol(WholeDiskHandle, &gEfiBlockIoProtocolGuid, (VOID **) &Volume->WholeDiskBlockIO);
@@ -1002,6 +1003,7 @@ static VOID ScanExtendedPartition(REFIT_VOLUME *WholeDiskVolume, MBR_PARTITION_I
                 Volume->BlockIO = WholeDiskVolume->BlockIO;
                 Volume->BlockIOOffset = ExtCurrent + EMbrTable[i].StartLBA;
                 Volume->WholeDiskBlockIO = WholeDiskVolume->BlockIO;
+                Volume->WholeDiskDeviceHandle = WholeDiskVolume->DeviceHandle;
                 
                 Bootable = FALSE;
                 ScanVolumeBootcode(Volume, &Bootable);
@@ -1184,6 +1186,7 @@ static VOID UninitVolumes(VOID)
     Volume->DeviceHandle = NULL;
     Volume->BlockIO = NULL;
     Volume->WholeDiskBlockIO = NULL;
+    Volume->WholeDiskDeviceHandle = NULL;
     FreePool(Volume);
   }
 
@@ -1234,6 +1237,7 @@ VOID ReinitVolumes(VOID)
       Status = gBS->LocateDevicePath(&gEfiBlockIoProtocolGuid, &RemainingDevicePath, &WholeDiskHandle);
       
       if (!EFI_ERROR(Status)) {
+        Volume->WholeDiskBlockIO = WholeDiskHandle;
         // get the BlockIO protocol
         Status = gBS->HandleProtocol(WholeDiskHandle, &gEfiBlockIoProtocolGuid, (VOID **) &Volume->WholeDiskBlockIO);
         if (EFI_ERROR(Status)) {

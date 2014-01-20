@@ -573,6 +573,9 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
       if (gSettings.NoCaches) {
         Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_NOCACHES);
       }
+      if (OSType == OSTYPE_OSX && IsOsxHibernated(Volume)) {
+        Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_HIBERNATED);
+      }
       ShortcutLetter = 'M';
       GetOSXVolumeName(Entry);
       break;
@@ -608,6 +611,12 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
   } else {
     Entry->me.Title = PoolPrint(L"Boot %s from %s", (LoaderTitle != NULL) ? LoaderTitle : Basename(LoaderPath), Entry->VolName);
   }
+  // just an example that UI can show hibernated volume to the user
+  // shoould be better to show it on entry image
+  if (OSFLAG_ISSET(Entry->Flags, OSFLAG_HIBERNATED)) {
+    Entry->me.Title = PoolPrint(L"%s (hibernated)", Entry->me.Title);
+  }
+  
   Entry->me.ShortcutLetter = (Hotkey == 0) ? ShortcutLetter : Hotkey;
   
   // get custom volume icon if present

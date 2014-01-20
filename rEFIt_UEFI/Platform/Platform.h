@@ -1444,6 +1444,7 @@ EFI_GUID       *FindGPTPartitionGuidInDevicePath(IN EFI_DEVICE_PATH_PROTOCOL *De
 VOID            PutNvramPlistToRtVars(VOID);
 INTN            FindStartupDiskVolume(REFIT_MENU_SCREEN *MainMenu);
 EFI_STATUS      SetStartupDiskVolume(IN REFIT_VOLUME *Volume, IN CHAR16 *LoaderPath);
+UINT64          GetEfiTimeInMs(IN EFI_TIME *T);
 
 
 EFI_STATUS
@@ -1624,5 +1625,20 @@ VOID RegisterDriversToHighestPriority(IN EFI_HANDLE *PriorityDrivers);
 
 EFI_STATUS LoadUserSettings(IN EFI_FILE *RootDir, CHAR16 *ConfName, TagPtr * dict);
 VOID ParseSMBIOSSettings(TagPtr dictPointer);
+
+
+
+//
+// Hibernate.c
+//
+/** Returns TRUE if given OSX on given volume is hibernated
+ *  (/private/var/vm/sleepimage exists and it's modification time is close to volume modification time).
+ */
+BOOLEAN
+IsOsxHibernated (IN REFIT_VOLUME *Volume);
+
+/** Prepares nvram vars needed for boot.efi to wake from hibernation. */
+VOID
+PrepareHibernation (IN REFIT_VOLUME *Volume);
 
 #endif

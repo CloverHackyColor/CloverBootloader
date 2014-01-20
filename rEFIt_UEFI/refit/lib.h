@@ -144,6 +144,7 @@ typedef struct {
 #define OSFLAG_NODEFAULTMENU (1 << 5)
 #define OSFLAG_HIDDEN        (1 << 6)
 #define OSFLAG_DISABLED      (1 << 7)
+#define OSFLAG_HIBERNATED    (1 << 8)
 
 #define IS_EXTENDED_PART_TYPE(type) ((type) == 0x05 || (type) == 0x0f || (type) == 0x85)
 
@@ -171,6 +172,7 @@ typedef struct {
   UINT64              BlockIOOffset;
   EFI_BLOCK_IO        *WholeDiskBlockIO;
   EFI_DEVICE_PATH     *WholeDiskDevicePath;
+  EFI_HANDLE          WholeDiskDeviceHandle;
   MBR_PARTITION_INFO  *MbrPartitionTable;
   UINT32              DriveCRC32;
   EFI_GUID            RootUUID;
@@ -434,7 +436,7 @@ typedef struct {
   CHAR16           *LoaderPath;
   CHAR16           *VolName;
   EFI_DEVICE_PATH  *DevicePath;
-  UINT8             Flags;
+  UINT16             Flags;
   UINT8             LoaderType;
   CHAR8            *OSVersion;
   EG_PIXEL         *BootBgColor;

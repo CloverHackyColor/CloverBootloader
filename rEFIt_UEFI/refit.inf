@@ -117,6 +117,7 @@
 	Platform/Nvram.c
     Platform/card_vlist.c
     Platform/PlatformDriverOverride.c
+	Platform/Hibernate.c
 
 [Packages]
 	Clover/CloverPkg.dec

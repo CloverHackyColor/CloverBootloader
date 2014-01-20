@@ -53,7 +53,7 @@
 #endif
 
 #ifndef HIBERNATE
-#define HIBERNATE 1
+#define HIBERNATE 0
 #endif
 
 // variables
@@ -797,55 +797,11 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
   if (OSTYPE_IS_OSX(Entry->LoaderType) ||
       OSTYPE_IS_OSX_RECOVERY(Entry->LoaderType) ||
       OSTYPE_IS_OSX_INSTALLER(Entry->LoaderType)) {
-    //dmazar
-    typedef struct _AppleRTCHibernateVars
-    {
-      UINT8     signature[4];
-      UINT32    revision;
-      UINT8	    booterSignature[20];
-      UINT8	    wiredCryptKey[16];
-    } AppleRTCHibernateVars;
-    AppleRTCHibernateVars rtcVars;
-    UINTN VarSize = 256;
-    UINT8 VarData[256];
-//disabled util it will work
-// to enable  comment this line off
-//    DoHibernateWake = FALSE;
-//
-    if (DoHibernateWake) {
-      SetMem(&rtcVars, sizeof(AppleRTCHibernateVars), 0);
-      rtcVars.signature[0] = 'A';
-      rtcVars.signature[1] = 'A';
-      rtcVars.signature[2] = 'P';
-      rtcVars.signature[3] = 'L';
-      rtcVars.revision     = 1;
-      gRT->SetVariable(L"boot-switch-vars", &gEfiAppleBootGuid,
-                       EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-                       sizeof(rtcVars) ,&rtcVars);
-
-      Status = gRT->GetVariable (
-                                 L"boot-image",
-                                 &gEfiAppleBootGuid,
-                                 NULL,
-                                 &VarSize,
-                                 VarData
-                                 );
-      if (Status == EFI_SUCCESS) {
-        DBG("boot-image before: %s\n", FileDevicePathToStr((EFI_DEVICE_PATH_PROTOCOL*)&VarData[0]));
-  //      VarData[6] = 8;
-        VarData[24] = 0xFF;
-        VarData[25] = 0xFF;
-        DBG("boot-image corrected: %s\n", FileDevicePathToStr((EFI_DEVICE_PATH_PROTOCOL*)&VarData[0]));
-        gRT->SetVariable(L"boot-image", &gEfiAppleBootGuid,
-                         EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-                         VarSize , VarData);
-        // now we should delete boot0082 to do hibernate only once
-        Status = DeleteBootOption(0x82);
-        if (EFI_ERROR(Status)) {
-          DBG("Options 0082 was not deleted: %r\n", Status);
-        }
-      }
+      
+    if (OSFLAG_ISSET(Entry->Flags, OSFLAG_HIBERNATED)) {
+      PrepareHibernation(Entry->Volume);
     }
+      
     DBG("Closing log\n");
     Status = SetupBooterLog();
   }
@@ -1047,12 +1003,12 @@ static VOID ScanDriverDir(IN CHAR16 *Path, OUT EFI_HANDLE **DriversToConnect, OU
     }
     // either AptioFix or LowMemFix but not both
     if (StrStr(DirEntry->FileName, L"AptioFix") != NULL) {
-      if (gDriversFlags.MemFixLoaded || DoHibernateWake) {
+      if (gDriversFlags.MemFixLoaded) {
         continue; //if other driver loaded then skip new one
       }
       gDriversFlags.MemFixLoaded = TRUE;
     } else if (StrStr(DirEntry->FileName, L"LowMemFix") != NULL) {
-      if (gDriversFlags.MemFixLoaded || DoHibernateWake) {
+      if (gDriversFlags.MemFixLoaded) {
         continue; //if other driver loaded then skip new one
       }
       gDriversFlags.MemFixLoaded = TRUE;
@@ -1714,7 +1670,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       machineSignature = Facs->HardwareSignature;
     }
 //------------------------------------------------------
-    DoHibernateWake = DumpVariable(L"Boot0082", &gEfiGlobalVariableGuid, 8);
+    //DoHibernateWake = DumpVariable(L"Boot0082", &gEfiGlobalVariableGuid, 8);
     DumpVariable(L"boot-switch-vars", &gEfiAppleBootGuid, -1);
     DumpVariable(L"boot-signature",   &gEfiAppleBootGuid, -1);
     DumpVariable(L"boot-image-key",   &gEfiAppleBootGuid, -1);

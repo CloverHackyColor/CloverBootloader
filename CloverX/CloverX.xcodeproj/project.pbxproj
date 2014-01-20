@@ -29,6 +29,7 @@
 		12D7546E1657CDD700376797 /* BdsConnect.c in Sources */ = {isa = PBXBuildFile; fileRef = 12D7546D1657CDD700376797 /* BdsConnect.c */; };
 		12D754711657CDE800376797 /* DevicePath.c in Sources */ = {isa = PBXBuildFile; fileRef = 12D754701657CDE800376797 /* DevicePath.c */; };
 		12DD321A16557F2E00108DFC /* BmLib.c in Sources */ = {isa = PBXBuildFile; fileRef = 12DD321916557F2E00108DFC /* BmLib.c */; };
+		2C201369188C9ECB001CB26C /* Hibernate.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C201368188C9ECB001CB26C /* Hibernate.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -612,6 +613,7 @@
 		12FA1597173F4E7400F847F1 /* NVRAMDebug.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NVRAMDebug.h; sourceTree = "<group>"; };
 		12FA1598173F4E7400F847F1 /* OsxLowMemFixDrv.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = OsxLowMemFixDrv.c; sourceTree = "<group>"; };
 		12FA1599173F4E7400F847F1 /* OsxLowMemFixDrv.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = OsxLowMemFixDrv.inf; sourceTree = "<group>"; };
+		2C201368188C9ECB001CB26C /* Hibernate.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Hibernate.c; sourceTree = "<group>"; };
 		DEDA9729180530BE003AD904 /* common.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = common.c; sourceTree = "<group>"; };
 		DEDA972A180530BE003AD904 /* legacy.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = legacy.c; sourceTree = "<group>"; };
 		DEDA972B180530BE003AD904 /* loader.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = loader.c; sourceTree = "<group>"; };
@@ -1647,6 +1649,7 @@
 				12B816C01644675800A433E7 /* gma.c */,
 				12B816C11644675800A433E7 /* gma.h */,
 				12B816C21644675800A433E7 /* guid.c */,
+				2C201368188C9ECB001CB26C /* Hibernate.c */,
 				12B816C31644675800A433E7 /* Injectors.c */,
 				12B816C41644675800A433E7 /* kernel_patcher.c */,
 				12B816C51644675800A433E7 /* kernel_patcher.h */,
@@ -2041,6 +2044,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2C201369188C9ECB001CB26C /* Hibernate.c in Sources */,
 				12B2459318700F5F00A332C6 /* securehash.c in Sources */,
 				12DD321A16557F2E00108DFC /* BmLib.c in Sources */,
 				12D7546E1657CDD700376797 /* BdsConnect.c in Sources */,
