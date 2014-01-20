@@ -272,7 +272,7 @@ IsOsxHibernated (IN REFIT_VOLUME *Volume)
   //
   // Check for sleepimage and get it's info
   //
-  DBG("OsxIsHibernated:\n");
+  DBG("Check if Osx Is Hibernated:\n");
   Status = Volume->RootDir->Open(Volume->RootDir, &File, L"\\private\\var\\vm\\sleepimage", EFI_FILE_MODE_READ, 0);
   if (EFI_ERROR(Status)) {
     DBG(" sleepimage not found -> %r\n", Status);
@@ -328,8 +328,7 @@ IsOsxHibernated (IN REFIT_VOLUME *Volume)
   if (TimeDiffMs > 120000) {
     DBG(" image too old\n");
     // just test - always accepts sleepimage
- //   return TRUE;
-    return FALSE;
+ //   return FALSE;
   }
   
   DBG(" volume is hibernated\n");
@@ -517,16 +516,21 @@ PrepareHibernation (IN REFIT_VOLUME *Volume)
       return FALSE;
     }
   }
-  
-  // Set boot-switch-vars to dummy header without encription keys
-  // TODO: check for existance first, and if exists then leave it as is
-  // maybe somebody is lucky and kernel will set it properly
-  SetMem(&RtcVars, sizeof(AppleRTCHibernateVars), 0);
-  RtcVars.signature[0] = 'A';
-  RtcVars.signature[1] = 'A';
-  RtcVars.signature[2] = 'P';
-  RtcVars.signature[3] = 'L';
-  RtcVars.revision     = 1;
+
+  Status = gRT->GetVariable(L"IOHibernateRTCVariables", &gEfiAppleBootGuid,
+                            NULL, &Size, &RtcVars);
+  if (EFI_ERROR(Status)) {
+    // Set boot-switch-vars to dummy header without encryption keys
+    // TODO: check for existance first, and if exists then leave it as is
+    // maybe somebody is lucky and kernel will set it properly (Slice - I am)
+    SetMem(&RtcVars, sizeof(AppleRTCHibernateVars), 0);
+    RtcVars.signature[0] = 'A';
+    RtcVars.signature[1] = 'A';
+    RtcVars.signature[2] = 'P';
+    RtcVars.signature[3] = 'L';
+    RtcVars.revision     = 1;
+  }
+
   Status = gRT->SetVariable(L"boot-switch-vars", &gEfiAppleBootGuid,
                             EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                             sizeof(RtcVars) ,&RtcVars);
