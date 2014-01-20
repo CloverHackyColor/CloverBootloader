@@ -318,11 +318,12 @@ typedef struct _refit_input_dialog {
 
 //some unreal values
 #define FILM_CENTRE   40000
-#define FILM_LEFT     50000
-#define FILM_TOP      50000
-#define FILM_RIGHT    60000
-#define FILM_BOTTOM   60000
-#define FILM_PERCENT 100000
+//#define FILM_LEFT     50000
+//#define FILM_TOP      50000
+//#define FILM_RIGHT    60000
+//#define FILM_BOTTOM   60000
+//#define FILM_PERCENT 100000
+#define INITVALUE       40000
 
 struct _refit_menu_screen {
   UINTN             ID;
@@ -345,6 +346,7 @@ struct _refit_menu_screen {
   EG_IMAGE          **Film;
   INTN              ScreenEdgeHorizontal;
   INTN              ScreenEdgeVertical;
+  INTN              NudgeX, NudgeY;
 };
 
 //this structure is used for refit.config
@@ -372,6 +374,7 @@ typedef struct {
 #define HIDEUI_FLAG_LABEL      (0x0400)
 #define HIDEUI_FLAG_REVISION   (0x0800)
 #define HIDEUI_FLAG_MENU_TITLE (0x1000)
+#define HIDEUI_FLAG_MENU_TITLE_IMAGE (0x2000)
 #define HIDEUI_ALL             (0xffff & (~VOLTYPE_INTERNAL))
 /*
 #define HDBADGES_NONE   0
@@ -424,6 +427,8 @@ typedef struct {
   UINTN       BadgeOffsetX;
   UINTN       BadgeOffsetY;
   UINTN       BadgeScale;
+  INTN        ThemeDesignWidth;
+  INTN        ThemeDesignHeight;
 } REFIT_CONFIG;
 
 // types
@@ -465,6 +470,7 @@ struct GUI_ANIME {
   INTN       FilmX, FilmY;  //relative
   INTN       ScreenEdgeHorizontal;
   INTN       ScreenEdgeVertical;
+  INTN       NudgeX, NudgeY;
   BOOLEAN    Once;
   GUI_ANIME *Next;
 };
@@ -550,7 +556,7 @@ EFI_STATUS InitializeUnicodeCollationProtocol (VOID);
 #define ATTR_SCROLLARROW (EFI_LIGHTGREEN | EFI_BACKGROUND_BLACK)
 
 #define LAYOUT_TEXT_WIDTH (640)
-#define LAYOUT_TOTAL_HEIGHT (376)
+#define LAYOUT_TOTAL_HEIGHT (376) //376
 #define LAYOUT_BANNER_HEIGHT (32)
 #define LAYOUT_BANNER_YOFFSET (LAYOUT_BANNER_HEIGHT + 32)
 
@@ -562,7 +568,10 @@ extern INTN FontHeight;
 extern INTN TextHeight;
 
 extern INTN LayoutBannerOffset;
-
+extern INTN LayoutButtonOffset;
+extern INTN LayoutTextOffset;
+extern INTN LayoutAnimMoveForMenuX;
+extern INTN LayoutMainMenuHeight;
 
 extern UINTN ConWidth;
 extern UINTN ConHeight;

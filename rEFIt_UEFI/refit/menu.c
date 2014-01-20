@@ -71,7 +71,10 @@ extern UINTN            ThemesNum;
 extern CHAR16            *ThemesList[];
 
 INTN LayoutBannerOffset = 64;
-
+INTN LayoutButtonOffset = 0;
+INTN LayoutTextOffset = 0;
+INTN LayoutMainMenuHeight = 376;
+INTN LayoutAnimMoveForMenuX = 0;
 
 #define SCROLL_LINE_UP        (0)
 #define SCROLL_LINE_DOWN      (1)
@@ -2197,6 +2200,7 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
         Screen->FilmPlace.Height = Screen->TitleImage->Height;
         BltImageAlpha(Screen->TitleImage, Screen->FilmPlace.XPos, Screen->FilmPlace.YPos, &MenuBackgroundPixel, 16);
       }
+      
       if (Screen->InfoLineCount > 0) {
         for (i = 0; i < (INTN)Screen->InfoLineCount; i++) {
           DrawMenuText(Screen->InfoLines[i], 0, EntriesPosX, EntriesPosY, 0xFFFF);
@@ -2263,7 +2267,8 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
       
     case MENU_FUNCTION_PAINT_ALL:
       
-      UpButton.XPos = EntriesPosX + MenuWidth + 48; // what?
+      //UpButton.XPos = EntriesPosX + MenuWidth + 48; // what?
+      UpButton.XPos = EntriesPosX + MenuWidth + 16; // blackosx reduced this gap
       UpButton.YPos = EntriesPosY;
       UpButton.Width = ScrollWidth; // 16
       UpButton.Height = ScrollButtonsHeight; // 20
@@ -2311,31 +2316,7 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
       ScrollTotal.Width = UpButton.Width;
       ScrollTotal.Height = DownButton.YPos + DownButton.Height - UpButton.YPos;
       
-      if (State->MaxFirstVisible == 0)
-        ScrollEnabled = FALSE;
-      else
-        ScrollEnabled = TRUE;
-      if (ScrollEnabled) {
-        //VOID egComposeImage(IN OUT EG_IMAGE *CompImage, IN EG_IMAGE *TopImage, IN INTN PosX, IN INTN PosY)
-        Total = egCreateFilledImage(ScrollTotal.Width, ScrollTotal.Height, TRUE, &MenuBackgroundPixel);
-        for (i = 0; i < ScrollbarBackground.Height; i++)
-          egComposeImage(Total, ScrollbarBackgroundImage, ScrollbarBackground.XPos - ScrollTotal.XPos, ScrollbarBackground.YPos + i - ScrollTotal.YPos);
-        
-        egComposeImage(Total, BarStartImage, BarStart.XPos - ScrollTotal.XPos, BarStart.YPos - ScrollTotal.YPos);
-        egComposeImage(Total, BarEndImage, BarEnd.XPos - ScrollTotal.XPos, BarEnd.YPos - ScrollTotal.YPos);
-        
-        for (i = 0; i < Scrollbar.Height; i++)
-          egComposeImage(Total, ScrollbarImage, Scrollbar.XPos - ScrollTotal.XPos, Scrollbar.YPos + i - ScrollTotal.YPos);
-        
-        
-        egComposeImage(Total, UpButtonImage, UpButton.XPos - ScrollTotal.XPos, UpButton.YPos - ScrollTotal.YPos);
-        egComposeImage(Total, DownButtonImage, DownButton.XPos - ScrollTotal.XPos, DownButton.YPos - ScrollTotal.YPos);
-        egComposeImage(Total, ScrollStartImage, ScrollStart.XPos - ScrollTotal.XPos, ScrollStart.YPos - ScrollTotal.YPos);
-        egComposeImage(Total, ScrollEndImage, ScrollEnd.XPos - ScrollTotal.XPos, ScrollEnd.YPos - ScrollTotal.YPos);
-        
-        BltImageAlpha(Total, ScrollTotal.XPos, ScrollTotal.YPos, &MenuBackgroundPixel, 16);
-        egFreeImage(Total);
-      }
+      // blackosx swapped this around so drawing of selection comes before drawing scrollbar.
         
       for (i = State->FirstVisible, j = 0; i <= State->LastVisible; i++, j++) {
         INTN  TitleLen;
@@ -2364,14 +2345,7 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
                        EntriesPosX, Screen->Entries[i]->Place.YPos, 0xFFFF);
         }
       }
-      MouseBirth();
-      break;
       
-    case MENU_FUNCTION_PAINT_SELECTION:
-      HidePointer();
-      ScrollStart.YPos = ScrollbarBackground.YPos + ScrollbarBackground.Height * State->FirstVisible / (State->MaxIndex + 1);
-      Scrollbar.YPos = ScrollStart.YPos + ScrollStart.Height;
-      ScrollEnd.YPos = Scrollbar.YPos + Scrollbar.Height; // ScrollEnd.Height is already subtracted
       
       if (State->MaxFirstVisible == 0)
         ScrollEnabled = FALSE;
@@ -2398,6 +2372,16 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
         BltImageAlpha(Total, ScrollTotal.XPos, ScrollTotal.YPos, &MenuBackgroundPixel, 16);
         egFreeImage(Total);
       }
+      
+      
+      MouseBirth();
+      break;
+      
+    case MENU_FUNCTION_PAINT_SELECTION:
+      HidePointer();
+      
+      // blackosx swapped this around so drawing of selection comes before drawing scrollbar.
+      
       // redraw selection cursor
       //usr-sse2
       if (Screen->Entries[State->LastSelection]->Tag == TAG_INPUT) {
@@ -2427,6 +2411,39 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
         DrawMenuText(Screen->Entries[State->CurrentSelection]->Title, MenuWidth,
                      EntriesPosX, EntriesPosY + (State->CurrentSelection - State->FirstVisible) * TextHeight, 0xFFFF);
       }
+      
+      
+      ScrollStart.YPos = ScrollbarBackground.YPos + ScrollbarBackground.Height * State->FirstVisible / (State->MaxIndex + 1);
+      Scrollbar.YPos = ScrollStart.YPos + ScrollStart.Height;
+      ScrollEnd.YPos = Scrollbar.YPos + Scrollbar.Height; // ScrollEnd.Height is already subtracted
+      
+      if (State->MaxFirstVisible == 0)
+        ScrollEnabled = FALSE;
+      else
+        ScrollEnabled = TRUE;
+      if (ScrollEnabled) {
+        //VOID egComposeImage(IN OUT EG_IMAGE *CompImage, IN EG_IMAGE *TopImage, IN INTN PosX, IN INTN PosY)
+        Total = egCreateFilledImage(ScrollTotal.Width, ScrollTotal.Height, TRUE, &MenuBackgroundPixel);
+        for (i = 0; i < ScrollbarBackground.Height; i++)
+          egComposeImage(Total, ScrollbarBackgroundImage, ScrollbarBackground.XPos - ScrollTotal.XPos, ScrollbarBackground.YPos + i - ScrollTotal.YPos);
+        
+        egComposeImage(Total, BarStartImage, BarStart.XPos - ScrollTotal.XPos, BarStart.YPos - ScrollTotal.YPos);
+        egComposeImage(Total, BarEndImage, BarEnd.XPos - ScrollTotal.XPos, BarEnd.YPos - ScrollTotal.YPos);
+        
+        for (i = 0; i < Scrollbar.Height; i++)
+          egComposeImage(Total, ScrollbarImage, Scrollbar.XPos - ScrollTotal.XPos, Scrollbar.YPos + i - ScrollTotal.YPos);
+        
+        
+        egComposeImage(Total, UpButtonImage, UpButton.XPos - ScrollTotal.XPos, UpButton.YPos - ScrollTotal.YPos);
+        egComposeImage(Total, DownButtonImage, DownButton.XPos - ScrollTotal.XPos, DownButton.YPos - ScrollTotal.YPos);
+        egComposeImage(Total, ScrollStartImage, ScrollStart.XPos - ScrollTotal.XPos, ScrollStart.YPos - ScrollTotal.YPos);
+        egComposeImage(Total, ScrollEndImage, ScrollEnd.XPos - ScrollTotal.XPos, ScrollEnd.YPos - ScrollTotal.YPos);
+        
+        BltImageAlpha(Total, ScrollTotal.XPos, ScrollTotal.YPos, &MenuBackgroundPixel, 16);
+        egFreeImage(Total);
+      }
+      
+      
       MouseBirth();
       break;
       
@@ -2581,12 +2598,13 @@ static VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
       InitScroll(State, row0Count, Screen->EntryCount, MaxItemOnScreen);
       row0PosX = (UGAWidth + TILE_XSPACING - (ROW0_TILESIZE + TILE_XSPACING) *
                   ((MaxItemOnScreen < row0Count)?MaxItemOnScreen:row0Count)) >> 1;
-      row0PosY = ((UGAHeight - LAYOUT_TOTAL_HEIGHT) >> 1) + LayoutBannerOffset; //LAYOUT_BANNER_YOFFSET; 
+      //row0PosY = ((UGAHeight - LAYOUT_TOTAL_HEIGHT) >> 1) + LayoutBannerOffset; //LAYOUT_BANNER_YOFFSET; 
+      row0PosY = ((UGAHeight - LayoutMainMenuHeight) >> 1) + LayoutBannerOffset; //LAYOUT_BANNER_YOFFSET; 
       
       row1PosX = (UGAWidth + TILE_XSPACING - (ROW1_TILESIZE + TILE_XSPACING) * row1Count) >> 1;
-      row1PosY = row0PosY + ROW0_TILESIZE + TILE_YSPACING;
+      row1PosY = row0PosY + ROW0_TILESIZE + TILE_YSPACING + LayoutButtonOffset;
       if (row1Count > 0)
-        textPosY = row1PosY + ROW1_TILESIZE + TILE_YSPACING;
+        textPosY = row1PosY + ROW1_TILESIZE + TILE_YSPACING + LayoutTextOffset;
       else
         textPosY = row1PosY;
       
@@ -3888,7 +3906,9 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
   // FillInputs and ApplyInputs
   
   if (OptionMenu.EntryCount == 0) {
+    if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_MENU_TITLE_IMAGE)) {
     OptionMenu.TitleImage = BuiltinIcon(BUILTIN_ICON_FUNC_OPTIONS);
+    }
     OptionMenu.ID = SCREEN_OPTIONS;
     OptionMenu.AnimeRun = GetAnime(&OptionMenu); //FALSE;
     Flags = AllocateZeroPool(255);

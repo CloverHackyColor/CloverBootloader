@@ -80,10 +80,10 @@ static REFIT_MENU_ENTRY MenuEntryShutdown = { L"Exit Clover", TAG_SHUTDOWN, 1, 0
 REFIT_MENU_ENTRY MenuEntryReturn   = { L"Return", TAG_RETURN, 0, 0, 0, NULL, NULL, NULL,
   {0, 0, 0, 0}, ActionEnter, ActionEnter, ActionNone,  NULL };
 
-REFIT_MENU_SCREEN MainMenu    = {1, L"Main Menu", NULL, 0, NULL, 0, NULL, 0, L"Automatic boot", FALSE, FALSE, 0, 0, 0,
-  0, FILM_CENTRE, FILM_CENTRE, {0, 0, 0, 0}, NULL};
-static REFIT_MENU_SCREEN AboutMenu   = {2, L"About", NULL, 0, NULL, 0, NULL, 0, NULL, FALSE, FALSE, 0, 0, 0, 0, FILM_CENTRE, FILM_CENTRE, {0, 0, 0, 0}, NULL };
-static REFIT_MENU_SCREEN HelpMenu    = {3, L"Help",  NULL, 0, NULL, 0, NULL, 0, NULL, FALSE, FALSE, 0, 0, 0, 0, FILM_CENTRE, FILM_CENTRE, {0, 0, 0, 0}, NULL };
+REFIT_MENU_SCREEN MainMenu    = {1, L"Main Menu", NULL, 0, NULL, 0, NULL, 0, L"Automatic boot", FALSE, FALSE, 
+  0, 0, 0, 0, FILM_CENTRE, FILM_CENTRE, {0, 0, 0, 0}, NULL, 0, 0 ,0};
+static REFIT_MENU_SCREEN AboutMenu   = {2, L"About", NULL, 0, NULL, 0, NULL, 0, NULL, FALSE, FALSE, 0, 0, 0, 0, FILM_CENTRE, FILM_CENTRE, {0, 0, 0, 0}, NULL, 0, 0 ,0};
+static REFIT_MENU_SCREEN HelpMenu    = {3, L"Help",  NULL, 0, NULL, 0, NULL, 0, NULL, FALSE, FALSE, 0, 0, 0, 0, FILM_CENTRE, FILM_CENTRE, {0, 0, 0, 0}, NULL, 0, 0 ,0};
 
 DRIVERS_FLAGS gDriversFlags = {FALSE, FALSE, FALSE, FALSE};  //MemFixLoaded
 
@@ -93,7 +93,9 @@ static VOID AboutRefit(VOID)
 {
   //  CHAR8* Revision = NULL;
   if (AboutMenu.EntryCount == 0) {
+    if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_MENU_TITLE_IMAGE)) {
     AboutMenu.TitleImage = BuiltinIcon(BUILTIN_ICON_FUNC_ABOUT);
+    }
     AddMenuInfoLine(&AboutMenu, L"Clover Version 2k"); // by Slice, dmazar, apianti, JrCs, and others");
 #ifdef FIRMWARE_BUILDDATE
     AddMenuInfoLine(&AboutMenu, PoolPrint(L" Build: %a", FIRMWARE_BUILDDATE));
@@ -139,7 +141,9 @@ static VOID AboutRefit(VOID)
 static VOID HelpRefit(VOID)
 {
   if (HelpMenu.EntryCount == 0) {
+    if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_MENU_TITLE_IMAGE)) {
     HelpMenu.TitleImage = BuiltinIcon(BUILTIN_ICON_FUNC_HELP);
+    }
     switch (gLanguage)
     {
       case russian:

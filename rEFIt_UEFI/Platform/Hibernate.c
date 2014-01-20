@@ -370,6 +370,7 @@ EFIAPI OurBlockIoRead (
 
   if (Status == EFI_SUCCESS && BufferSize >= sizeof(IOHibernateImageHeaderMin)) {
     Header = (IOHibernateImageHeaderMin *) Buffer;
+    Header2 = (IOHibernateImageHeaderMinSnow *) Buffer;
     DBG(" sig lion: %x\n", Header->signature);
     DBG(" sig snow: %x\n", Header2->signature);
    // DBG(" sig swap: %x\n", SwapBytes32(Header->signature));

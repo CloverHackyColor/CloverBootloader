@@ -1643,7 +1643,12 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
   GlobalConfig.BadgeOffsetX = 0xFFFF;
   GlobalConfig.BadgeOffsetY = 0xFFFF;
   GlobalConfig.BadgeScale = 8; //default
+  GlobalConfig.ThemeDesignWidth = 0xFFFF;
+  GlobalConfig.ThemeDesignHeight = 0xFFFF;
   LayoutBannerOffset = 64; //default value if not set
+  LayoutButtonOffset = 0; //default value if not set
+  LayoutTextOffset = 0; //default value if not set
+  LayoutAnimMoveForMenuX = 0; //default value if not set
   GlobalConfig.HideUIFlags = 0;
   GlobalConfig.SelectionColor = 0x80808080; 
   if (GlobalConfig.SelectionSmallFileName) {
@@ -1769,6 +1774,22 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
     }
   }
 
+  dict = GetProperty(dictPointer, "Origination");
+  if (dict) {
+    dict2 = GetProperty(dict, "DesignWidth");
+    if (dict2) {
+      if (dict2->type == kTagTypeInteger) {
+        GlobalConfig.ThemeDesignWidth = (UINTN)dict2->string;
+      }
+    }
+    dict2 = GetProperty(dict, "DesignHeight");
+    if (dict2) {
+      if (dict2->type == kTagTypeInteger) {
+        GlobalConfig.ThemeDesignHeight = (UINTN)dict2->string;
+      }
+    }
+  }
+
   dict = GetProperty(dictPointer, "Layout");
   if (dict) {
     dict2 = GetProperty(dict, "BannerOffset");
@@ -1777,6 +1798,24 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
         LayoutBannerOffset = (UINTN)dict2->string;
       }
     }    
+    dict2 = GetProperty(dict, "ButtonOffset");
+    if (dict2) {
+      if (dict2->type == kTagTypeInteger) {
+        LayoutButtonOffset = (UINTN)dict2->string;
+      }
+    }  
+    dict2 = GetProperty(dict, "TextOffset");
+    if (dict2) {
+      if (dict2->type == kTagTypeInteger) {
+        LayoutTextOffset = (UINTN)dict2->string;
+      }
+    }
+    dict2 = GetProperty(dict, "AnimAdjustForMenuX");
+    if (dict2) {
+      if (dict2->type == kTagTypeInteger) {
+        LayoutAnimMoveForMenuX = (UINTN)dict2->string;
+      }
+    }
   }  
 
   dict = GetProperty(dictPointer, "Components");
@@ -1804,6 +1843,10 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
     dict2 = GetProperty(dict, "MenuTitle");
     if (dict2 && dict2->type == kTagTypeFalse) {
       GlobalConfig.HideUIFlags |= HIDEUI_FLAG_MENU_TITLE;
+    }
+    dict2 = GetProperty(dict, "MenuTitleImage");
+    if (dict2 && dict2->type == kTagTypeFalse) {
+      GlobalConfig.HideUIFlags |= HIDEUI_FLAG_MENU_TITLE_IMAGE;
     }
   }
 
@@ -1950,56 +1993,6 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
           Anime->FrameTime = AsciiStrDecimalToUintn(dict2->string);
         }
       }
-      //default value is centre
-      Anime->FilmX = FILM_CENTRE;
-      Anime->FilmY = FILM_CENTRE;
- /*     dict2 = GetProperty(dictPointer, "RelativeXPos");
-      if (dict2) {
-        if (dict2->type == kTagTypeInteger) {
-          Anime->FilmX = (INTN)(UINTN)dict2->string;
-        } else if ((dict2->type == kTagTypeString) && dict2->string) {
-          if (AsciiStrCmp(dict2->string, "centre") == 0) {
-            Anime->FilmX = FILM_CENTRE;
-          } else if (AsciiStrCmp(dict2->string, "left") == 0) {
-            Anime->FilmX = FILM_LEFT;
-          } else if (AsciiStrCmp(dict2->string, "right") == 0) {
-            Anime->FilmX = FILM_RIGHT;
-          } else if (AsciiStrStr(dict2->string, "%")) {
-            CHAR8 *p = dict2->string;
-            Anime->FilmX = 0;
-            while (IS_DIGIT(*p)) {
-               Anime->FilmX = (Anime->FilmX * 10) + (INTN)(*p++) - '0';
-            }
-            Anime->FilmX += FILM_PERCENT;
-          }  else {
-            Anime->FilmX = (INTN)AsciiStrDecimalToUintn(dict2->string);
-          }
-        }
-      }
-      dict2 = GetProperty(dictPointer, "RelativeYPos");
-      if (dict2) {
-        if (dict2->type == kTagTypeInteger) {
-          Anime->FilmY = (INTN)(UINTN)dict2->string;
-        } else if ((dict2->type == kTagTypeString) && dict2->string) {
-          if (AsciiStrCmp(dict2->string, "centre") == 0) {
-            Anime->FilmY = FILM_CENTRE;
-          } else if (AsciiStrCmp(dict2->string, "top") == 0) {
-            Anime->FilmY = FILM_TOP;
-          } else if (AsciiStrCmp(dict2->string, "bottom") == 0) {
-            Anime->FilmY = FILM_BOTTOM;
-          }  else if (AsciiStrStr(dict2->string, "%")) {
-            CHAR8 *p = dict2->string;
-            Anime->FilmY = 0;
-            while (IS_DIGIT(*p)) {
-              Anime->FilmY = (Anime->FilmY * 10) + (INTN)(*p++) - '0';
-            }
-            Anime->FilmX += FILM_PERCENT;
-          }else {
-            Anime->FilmY = (INTN)AsciiStrDecimalToUintn(dict2->string);
-          }
-        }
-      }
-  */
 
       dict2 = GetProperty(dictPointer, "ScreenEdgeX");
       if (dict2) {
@@ -2022,6 +2015,12 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
         }
       }
       
+      //default value is centre
+      Anime->FilmX = INITVALUE;
+      Anime->FilmY = INITVALUE;
+      Anime->NudgeX = INITVALUE;
+      Anime->NudgeY = INITVALUE;
+       
       dict2 = GetProperty(dictPointer, "DistanceFromScreenEdgeX%");
       if (dict2) {
         if (dict2->type == kTagTypeInteger) {
@@ -2035,6 +2034,18 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
         }
       }
       
+      dict2 = GetProperty(dictPointer, "NudgeX");
+      if (dict2) {
+        if (dict2->type == kTagTypeInteger) {
+          Anime->NudgeX = (INT32)(UINTN)dict2->string;
+        }
+      }
+      dict2 = GetProperty(dictPointer, "NudgeY");
+      if (dict2) {
+        if (dict2->type == kTagTypeInteger) {
+          Anime->NudgeY = (INT32)(UINTN)dict2->string;
+        }
+      }
       
       dict2 = GetProperty(dictPointer, "Once");
       if (dict2) {

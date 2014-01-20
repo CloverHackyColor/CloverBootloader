@@ -704,10 +704,54 @@ VOID FreeAnime(GUI_ANIME *Anime)
    }
 }
 
+INTN RecalculateAnimOffset(INTN AnimDimension, INTN ValueToScale, INTN ScreenDimensionToFit, INTN ThemeDesignDimension)
+{
+    INTN SuppliedGapDimensionPxDesigned=0;
+    INTN OppositeGapDimensionPxDesigned=0;
+    INTN OppositeGapPcDesigned=0;
+    INTN ScreenDimensionLessAnim=0;
+    INTN GapNumTimesLarger=0;
+    INTN GapNumFinal=0;
+    INTN NewSuppliedGapPx=0;
+    INTN NewOppositeGapPx=0;
+    INTN ReturnValue=0;
+    
+    SuppliedGapDimensionPxDesigned = (ThemeDesignDimension * ValueToScale) / 100;
+    OppositeGapDimensionPxDesigned = ThemeDesignDimension - (SuppliedGapDimensionPxDesigned + AnimDimension);
+    OppositeGapPcDesigned = (OppositeGapDimensionPxDesigned * 100)/ThemeDesignDimension;
+    ScreenDimensionLessAnim = (ScreenDimensionToFit - AnimDimension);
+    if (ValueToScale > OppositeGapPcDesigned) {
+      GapNumTimesLarger = (ValueToScale * 100)/OppositeGapPcDesigned;
+      GapNumFinal = GapNumTimesLarger + 100;
+      NewOppositeGapPx = (ScreenDimensionLessAnim * 100)/GapNumFinal;
+      NewSuppliedGapPx = (NewOppositeGapPx * GapNumTimesLarger)/100;
+    } else if (ValueToScale < OppositeGapPcDesigned) {
+      GapNumTimesLarger = (OppositeGapPcDesigned * 100)/ValueToScale;
+      GapNumFinal = (GapNumTimesLarger + 100);
+      NewSuppliedGapPx = (ScreenDimensionLessAnim * 100)/GapNumFinal;
+      NewOppositeGapPx = (NewSuppliedGapPx * GapNumTimesLarger)/100;
+    } else if (ValueToScale == OppositeGapPcDesigned) {
+      NewSuppliedGapPx = (ScreenDimensionLessAnim * 100)/200;
+      NewOppositeGapPx = (NewSuppliedGapPx * 100)/100;
+    }
+    ReturnValue = (NewSuppliedGapPx * 100)/ScreenDimensionToFit;
+    
+    if (ReturnValue>0 && ReturnValue<100) {
+      //DBG("Different screen size being used. Adjusted original anim gap to %d\n",ReturnValue);
+      return ReturnValue;
+    } else {
+      DBG("Different screen size being used. Adjusted value %d invalid. Returning original value %d\n",ReturnValue, ValueToScale);
+      return ValueToScale;
+    }
+}
+
 VOID UpdateAnime(REFIT_MENU_SCREEN *Screen, EG_RECT *Place)
 {
   UINT64      Now;
-  INTN   x, y;
+  INTN   x, y, animPosX, animPosY;
+  
+  //INTN LayoutAnimMoveForMenuX = 0;
+  INTN MenuWidth = 50;
   
   if (!Screen || !Screen->AnimeRun || GlobalConfig.TextOnly) return;
   if (!CompImage ||
@@ -719,57 +763,73 @@ VOID UpdateAnime(REFIT_MENU_SCREEN *Screen, EG_RECT *Place)
     CompImage = egCreateImage(Screen->Film[0]->Width, Screen->Film[0]->Height, TRUE);
   }
 
+  // Retained for legacy themes without new anim placement options.
   x = Place->XPos + (Place->Width - CompImage->Width) / 2;
-  if (Screen->FilmX == FILM_LEFT) {
-    x = Place->XPos;
-  } else if (Screen->FilmX == FILM_RIGHT) {
-    x = Place->XPos + (Place->Width - CompImage->Width);
-  } else if (Screen->FilmX > FILM_PERCENT) {
-    x = Place->XPos + (Place->Width * (Screen->FilmX - FILM_PERCENT) / 100);
-  } else if (Screen->FilmX < FILM_CENTRE){
-    x = Place->XPos + Screen->FilmX;
-    if (x < 0) {
-      x = 0;
-    }
-    if (x > (UGAWidth  - CompImage->Width)) {
-      x = UGAWidth - CompImage->Width;
-    }
-  }
   y = Place->YPos + (Place->Height - CompImage->Height) / 2;
-  if (Screen->FilmY == FILM_TOP) {
-    y = Place->YPos;
-  } else if (Screen->FilmY == FILM_BOTTOM) {
-    y = Place->YPos + (Place->Height - CompImage->Height);
-  } else if (Screen->FilmY > FILM_PERCENT) {
-    y = Place->YPos + (Place->Height * (Screen->FilmY - FILM_PERCENT) / 100);
-  } else if (Screen->FilmY < FILM_CENTRE) {
-    y = Place->YPos + Screen->FilmY;
-    if (y < 0) {
-      y = 0;
+  
+  // Work with new anim placement options that are in theme.plist
+  animPosX = Screen->FilmX;
+  animPosY = Screen->FilmY;
+  
+  // Check a placement value has been specified
+  if ((animPosX >=0 && animPosX <=100) && (animPosY >=0 && animPosY <=100)) {
+  
+    // Check if screen size being used is different from theme origination size.
+    // If yes, then recalculate the animation placement % value.
+    // This is necessary because screen can be a different size, but anim is not scaled.
+    // TO DO - Can this be run only once per anim run and not for every frame?
+    if ((GlobalConfig.ThemeDesignWidth != 0xFFFF) && (UGAWidth != GlobalConfig.ThemeDesignWidth)) {
+      animPosX = RecalculateAnimOffset(Screen->Film[0]->Width,Screen->FilmX,UGAWidth,GlobalConfig.ThemeDesignWidth);
     }
-    if (y > (UGAHeight - CompImage->Height)) {
-      y = UGAHeight - CompImage->Height;
-    }
+    if ((GlobalConfig.ThemeDesignHeight != 0xFFFF) && (UGAHeight != GlobalConfig.ThemeDesignHeight)) {
+      animPosY = RecalculateAnimOffset(Screen->Film[0]->Height,Screen->FilmY,UGAHeight,GlobalConfig.ThemeDesignHeight);
   }
  
+    // Calculate the horizontal pixel to place the top left corner of the animation.
   if (Screen->ScreenEdgeHorizontal == SCREEN_EDGE_LEFT ) {
-    x = (UGAWidth * Screen->FilmX) / 100;
+      x = (UGAWidth * animPosX) / 100;
   } else if (Screen->ScreenEdgeHorizontal == SCREEN_EDGE_RIGHT ) {
-    x = UGAWidth-((UGAWidth * Screen->FilmX) / 100);
+      x = UGAWidth-((UGAWidth * animPosX) / 100);
     if ((x - Screen->Film[0]->Width) < 0) {
       x = 0;
     } else {
       x -= Screen->Film[0]->Width;
     }
   }
+
+    // Calculate the vertical pixel to place the top left corner of the animation.
   if (Screen->ScreenEdgeVertical == SCREEN_EDGE_TOP ) {
-    y = (UGAHeight * Screen->FilmY) / 100;
+      y = (UGAHeight * animPosY) / 100;
   } else if (Screen->ScreenEdgeVertical == SCREEN_EDGE_BOTTOM ) {
-    y = UGAHeight - ((UGAHeight * Screen->FilmY) / 100);
+      y = UGAHeight - ((UGAHeight * animPosY) / 100);
     if ((y - Screen->Film[0]->Height) < 0) {
       y = 0;
     } else {
       y -= Screen->Film[0]->Height;
+    }
+  }
+  }
+
+  // Check if the theme.plist setting for allowing an anim to be moved horizontally in the quest 
+  // to avoid overlapping the menu text on menu pages at lower resolutions is set.
+  if ((Screen->ID > 1) && (LayoutAnimMoveForMenuX != 0)) { // these screens have text menus which the anim may interfere with.
+    MenuWidth = TEXT_XMARGIN * 2 + (50 * GlobalConfig.CharWidth); // taken from menu.c
+    if ((x + Screen->Film[0]->Width) > (UGAWidth - MenuWidth) >> 1) {
+      if ((x + LayoutAnimMoveForMenuX >= 0) || (UGAWidth-(x + LayoutAnimMoveForMenuX + Screen->Film[0]->Width)) <= 100) {
+        x += LayoutAnimMoveForMenuX;
+      }
+    }
+  }
+  
+  // Does the user want to fine tune the placement?
+  if ((Screen->NudgeX != INITVALUE) && (Screen->NudgeX != 0) && (Screen->NudgeX >= -32) && (Screen->NudgeX <= 32)) {
+    if ((x + Screen->NudgeX >=0) && (x + Screen->NudgeX <= UGAWidth - Screen->Film[0]->Width)) {
+     x += Screen->NudgeX;
+    }
+  }
+  if ((Screen->NudgeY != INITVALUE) && (Screen->NudgeY != 0) && (Screen->NudgeY >= -32) && (Screen->NudgeY <= 32)) {
+    if ((y + Screen->NudgeY >=0) && (y + Screen->NudgeY <= UGAHeight - Screen->Film[0]->Height)) {
+      y += Screen->NudgeY;
     }
   }
   
@@ -852,6 +912,8 @@ BOOLEAN GetAnime(REFIT_MENU_SCREEN *Screen)
   Screen->FilmY = Anime->FilmY;
   Screen->ScreenEdgeHorizontal = Anime->ScreenEdgeHorizontal;
   Screen->ScreenEdgeVertical = Anime->ScreenEdgeVertical;
+  Screen->NudgeX = Anime->NudgeX;
+  Screen->NudgeY = Anime->NudgeY;
   DBG(" found %d frames of the anime\n", i);
   Screen->CurrentFrame = 0;
   Screen->LastDraw = 0;
