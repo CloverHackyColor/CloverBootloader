@@ -86,6 +86,36 @@ typedef struct _IOHibernateImageHeaderMin
     UINT32	processorFlags;
 } IOHibernateImageHeaderMin;
 
+typedef struct _IOHibernateImageHeaderMinSnow
+{
+  UINT64	imageSize;
+  UINT64	image1Size;
+
+  UINT32	restore1CodePhysPage;
+  UINT32	restore1PageCount;
+  UINT32	restore1CodeOffset;
+  UINT32	restore1StackOffset;
+
+  UINT32	pageCount;
+  UINT32	bitmapSize;
+
+  UINT32	restore1Sum;
+  UINT32	image1Sum;
+  UINT32	image2Sum;
+
+  UINT32	actualRestore1Sum;
+  UINT32	actualImage1Sum;
+  UINT32	actualImage2Sum;
+
+  UINT32	actualUncompressedPages;
+  UINT32	conflictCount;
+  UINT32	nextFree;
+
+  UINT32	signature;
+  UINT32	processorFlags;
+} IOHibernateImageHeaderMinSnow;
+
+
 typedef struct _AppleRTCHibernateVars
 {
     UINT8     signature[4];
@@ -331,28 +361,31 @@ EFIAPI OurBlockIoRead (
                          OUT VOID                          *Buffer
                          )
 {
-    EFI_STATUS          Status;
-    IOHibernateImageHeaderMin *Header;
-    
-    DBG(" OurBlockIoRead: Lba=%lx, Offset=%lx\n", Lba, Lba * 512);
-    Status = OrigBlockIoRead(This, MediaId, Lba, BufferSize, Buffer);
-    
-    if (Status == EFI_SUCCESS && BufferSize >= sizeof(IOHibernateImageHeaderMin)) {
-        Header = (IOHibernateImageHeaderMin *) Buffer;
-        DBG(" sig: %x\n", Header->signature);
-        DBG(" sig swap: %x\n", SwapBytes32(Header->signature));
-        if (Header->signature == kIOHibernateHeaderSignature
-            // just for tests
-            //|| Header->signature == kIOHibernateHeaderInvalidSignature
-            )
-        {
-            gSleepImageOffset = Lba * 512;
-            DBG(" got sleep image offset\n");
-        }
-        
+  EFI_STATUS          Status;
+  IOHibernateImageHeaderMin *Header;
+  IOHibernateImageHeaderMinSnow *Header2;
+
+  DBG(" OurBlockIoRead: Lba=%lx, Offset=%lx\n", Lba, Lba * 512);
+  Status = OrigBlockIoRead(This, MediaId, Lba, BufferSize, Buffer);
+
+  if (Status == EFI_SUCCESS && BufferSize >= sizeof(IOHibernateImageHeaderMin)) {
+    Header = (IOHibernateImageHeaderMin *) Buffer;
+    DBG(" sig lion: %x\n", Header->signature);
+    DBG(" sig snow: %x\n", Header2->signature);
+   // DBG(" sig swap: %x\n", SwapBytes32(Header->signature));
+    if (Header->signature == kIOHibernateHeaderSignature
+        // just for tests
+        //|| Header->signature == kIOHibernateHeaderInvalidSignature
+        || Header2->signature == kIOHibernateHeaderSignature
+        )
+    {
+      gSleepImageOffset = Lba * 512;
+      DBG(" got sleep image offset\n");
     }
-    
-    return Status;
+
+  }
+
+  return Status;
 }
 
 /** Returns byte offset of sleepimage on the whole disk or 0 if not found or error.
