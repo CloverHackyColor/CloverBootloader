@@ -1638,7 +1638,7 @@ BOOLEAN
 IsOsxHibernated (IN REFIT_VOLUME *Volume);
 
 /** Prepares nvram vars needed for boot.efi to wake from hibernation. */
-VOID
+BOOLEAN
 PrepareHibernation (IN REFIT_VOLUME *Volume);
 
 #endif

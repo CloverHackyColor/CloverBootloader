@@ -225,83 +225,96 @@ PrintBytes(IN CHAR8 *Bytes, IN UINTN Number)
 BOOLEAN
 IsOsxHibernated (IN REFIT_VOLUME *Volume)
 {
-    EFI_STATUS          Status;
-    EFI_FILE            *File;
-    EFI_FILE_INFO       *FileInfo;
-    EFI_TIME            *TimePtr;
-    EFI_TIME            ImageModifyTime;
-    VOID                *Buffer;
-    EFI_BLOCK_IO_PROTOCOL   *BlockIo;
-    HFSPlusVolumeHeaderMin  *HFSHeader;
-    EFI_TIME            HFSVolumeModifyTime;
-    UINT32              HFSVolumeModifyDate;
-    INTN                TimeDiffMs;
+  EFI_STATUS          Status;
+  EFI_FILE            *File;
+  EFI_FILE_INFO       *FileInfo;
+  EFI_TIME            *TimePtr;
+  EFI_TIME            ImageModifyTime;
+  VOID                *Buffer;
+  EFI_BLOCK_IO_PROTOCOL   *BlockIo;
+  HFSPlusVolumeHeaderMin  *HFSHeader;
+  EFI_TIME            HFSVolumeModifyTime;
+  UINT32              HFSVolumeModifyDate;
+  INTN                TimeDiffMs;
+  UINTN                     dataSize            = 0;
+  UINT8                     *data               = NULL;
     
-    //
-    // Check for sleepimage and get it's info
-    //
-    DBG("OsxIsHibernated:\n");
-    Status = Volume->RootDir->Open(Volume->RootDir, &File, L"\\private\\var\\vm\\sleepimage", EFI_FILE_MODE_READ, 0);
-    if (EFI_ERROR(Status)) {
-        DBG(" sleepimage not found -> %r\n", Status);
-        return FALSE;
-    }
-    FileInfo = EfiLibFileInfo(File);
-    if (FileInfo == NULL) {
-        DBG(" sleepimage info error\n");
-        File->Close(File);
-        return FALSE;
-    }
-    //CopyMem(&ImageModifyTime, &FileInfo->ModificationTime, sizeof(EFI_TIME));
-    CopyMem(&ImageModifyTime, &FileInfo->LastAccessTime, sizeof(EFI_TIME));
-    TimePtr = &FileInfo->CreateTime;
-    DBG(" CreateTime: %d-%d-%d %d:%d:%d\n", TimePtr->Year, TimePtr->Month, TimePtr->Day, TimePtr->Hour, TimePtr->Minute, TimePtr->Second);
-    TimePtr = &FileInfo->LastAccessTime;
-    DBG(" LastAccessTime: %d-%d-%d %d:%d:%d\n", TimePtr->Year, TimePtr->Month, TimePtr->Day, TimePtr->Hour, TimePtr->Minute, TimePtr->Second);
-    TimePtr = &ImageModifyTime;
-    DBG(" ModificationTime: %d-%d-%d %d:%d:%d\n", TimePtr->Year, TimePtr->Month, TimePtr->Day, TimePtr->Hour, TimePtr->Minute, TimePtr->Second);
+  //
+  // Check for sleepimage and get it's info
+  //
+  DBG("OsxIsHibernated:\n");
+  Status = Volume->RootDir->Open(Volume->RootDir, &File, L"\\private\\var\\vm\\sleepimage", EFI_FILE_MODE_READ, 0);
+  if (EFI_ERROR(Status)) {
+    DBG(" sleepimage not found -> %r\n", Status);
+    return FALSE;
+  }
+  FileInfo = EfiLibFileInfo(File);
+  if (FileInfo == NULL) {
+    DBG(" sleepimage info error\n");
     File->Close(File);
-    FreePool(FileInfo);
-    
-    //
-    // Get HFS+ volume nodification time
-    //
-    // use 4KB aligned page to not have issues with BlockIo buffer alignment
-    Buffer = AllocatePages(1);
-    if (Buffer == NULL) {
-        return FALSE;
-    }
-    // Note: assuming 512K blocks
-    BlockIo = Volume->BlockIO;
-    Status = BlockIo->ReadBlocks(BlockIo, BlockIo->Media->MediaId, 2, 512, Buffer);
-    if (EFI_ERROR(Status)) {
-        DBG(" can not read HFS+ header -> %r\n", Status);
-        FreePages(Buffer, 1);
-        return FALSE;
-    }
-    HFSHeader = (HFSPlusVolumeHeaderMin *)Buffer;
-    HFSVolumeModifyDate = SwapBytes32(HFSHeader->modifyDate);
-    DBG(" HFS+ volume modifyDate: %x\n", HFSVolumeModifyDate);
-    fsw_efi_decode_time(&HFSVolumeModifyTime, mac_to_posix(HFSVolumeModifyDate));
-    TimePtr = &HFSVolumeModifyTime;
-    DBG(" in EFI: %d-%d-%d %d:%d:%d\n", TimePtr->Year, TimePtr->Month, TimePtr->Day, TimePtr->Hour, TimePtr->Minute, TimePtr->Second);
+    return FALSE;
+  }
+  //CopyMem(&ImageModifyTime, &FileInfo->ModificationTime, sizeof(EFI_TIME));
+  CopyMem(&ImageModifyTime, &FileInfo->LastAccessTime, sizeof(EFI_TIME));
+  TimePtr = &FileInfo->CreateTime;
+  DBG(" CreateTime: %d-%d-%d %d:%d:%d\n", TimePtr->Year, TimePtr->Month, TimePtr->Day, TimePtr->Hour, TimePtr->Minute, TimePtr->Second);
+  TimePtr = &FileInfo->LastAccessTime;
+  DBG(" LastAccessTime: %d-%d-%d %d:%d:%d\n", TimePtr->Year, TimePtr->Month, TimePtr->Day, TimePtr->Hour, TimePtr->Minute, TimePtr->Second);
+  TimePtr = &ImageModifyTime;
+  DBG(" ModificationTime: %d-%d-%d %d:%d:%d\n", TimePtr->Year, TimePtr->Month, TimePtr->Day, TimePtr->Hour, TimePtr->Minute, TimePtr->Second);
+  File->Close(File);
+  FreePool(FileInfo);
+  
+  //
+  // Get HFS+ volume nodification time
+  //
+  // use 4KB aligned page to not have issues with BlockIo buffer alignment
+  Buffer = AllocatePages(1);
+  if (Buffer == NULL) {
+    return FALSE;
+  }
+  // Note: assuming 512K blocks
+  BlockIo = Volume->BlockIO;
+  Status = BlockIo->ReadBlocks(BlockIo, BlockIo->Media->MediaId, 2, 512, Buffer);
+  if (EFI_ERROR(Status)) {
+    DBG(" can not read HFS+ header -> %r\n", Status);
     FreePages(Buffer, 1);
-    
-    //
-    // Check that sleepimage is not more then 2 mins older then volume modification date
-    // Idea is from Chameleon
-    //
-    TimeDiffMs = (INTN)(GetEfiTimeInMs(&HFSVolumeModifyTime) - GetEfiTimeInMs(&ImageModifyTime));
-    DBG(" image old: %d sec\n", TimeDiffMs / 1000);
-    if (TimeDiffMs > 120000) {
-        DBG(" image too old\n");
-        // just test - always accepts sleepimage
-        return TRUE;
-        //return FALSE;
+    return FALSE;
+  }
+  HFSHeader = (HFSPlusVolumeHeaderMin *)Buffer;
+  HFSVolumeModifyDate = SwapBytes32(HFSHeader->modifyDate);
+  DBG(" HFS+ volume modifyDate: %x\n", HFSVolumeModifyDate);
+  fsw_efi_decode_time(&HFSVolumeModifyTime, mac_to_posix(HFSVolumeModifyDate));
+  TimePtr = &HFSVolumeModifyTime;
+  DBG(" in EFI: %d-%d-%d %d:%d:%d\n", TimePtr->Year, TimePtr->Month, TimePtr->Day, TimePtr->Hour, TimePtr->Minute, TimePtr->Second);
+  FreePages(Buffer, 1);
+  
+  //
+  // Check that sleepimage is not more then 2 mins older then volume modification date
+  // Idea is from Chameleon
+  //
+  TimeDiffMs = (INTN)(GetEfiTimeInMs(&HFSVolumeModifyTime) - GetEfiTimeInMs(&ImageModifyTime));
+  DBG(" image old: %d sec\n", TimeDiffMs / 1000);
+  if (TimeDiffMs > 120000) {
+    DBG(" image too old\n");
+    // just test - always accepts sleepimage
+ //   return TRUE;
+    return FALSE;
+  }
+  
+  DBG(" volume is hibernated\n");
+  if (!gFirmwareClover && 
+      !gDriversFlags.EmuVariableLoaded &&
+      !GlobalConfig.IgnoreNVRAMBoot) {
+    Status = gRT->GetVariable (L"Boot0082", &gEfiGlobalVariableGuid, NULL, &dataSize, data);
+    if (!EFI_ERROR(Status)) {
+      return TRUE;
+    } else {
+      return FALSE;
     }
-    
-    DBG(" volume is hibernated\n");
-    return TRUE;
+  }
+
+  return TRUE;
 }
 
 
@@ -410,58 +423,84 @@ GetSleepImagePosition (IN REFIT_VOLUME *Volume)
  *
  * That's the only way for CloverEFI and should be OK for UEFI hack also.
  */
-VOID
+BOOLEAN
 PrepareHibernation (IN REFIT_VOLUME *Volume)
 {
-    EFI_STATUS          Status;
-    UINT64          SleepImageOffset;
-    CHAR16          OffsetHexStr[17];
-    EFI_DEVICE_PATH_PROTOCOL    *BootImageDevPath;
-    UINTN           Size;
-    AppleRTCHibernateVars RtcVars;
-    
-    DBG("PrepareHibernation:\n");
-    
-    // Find sleep image offset
-    SleepImageOffset = GetSleepImagePosition (Volume);
-    DBG(" SleepImageOffset: %lx\n", SleepImageOffset);
-    if (SleepImageOffset == 0) {
-        DBG(" sleepimage offset not found\n");
-        return;
+  EFI_STATUS                  Status;
+  UINT64                      SleepImageOffset;
+  CHAR16                      OffsetHexStr[17];
+  EFI_DEVICE_PATH_PROTOCOL    *BootImageDevPath;
+  UINT8                       VarData[256];
+  UINTN                       Size;
+  AppleRTCHibernateVars       RtcVars;
+  
+  DBG("PrepareHibernation:\n");
+  
+  // Find sleep image offset
+  SleepImageOffset = GetSleepImagePosition (Volume);
+  DBG(" SleepImageOffset: %lx\n", SleepImageOffset);
+  if (SleepImageOffset == 0) {
+    DBG(" sleepimage offset not found\n");
+    return FALSE;
+  }
+  
+  UnicodeSPrint(OffsetHexStr, sizeof(OffsetHexStr), L"%lx", SleepImageOffset);
+  BootImageDevPath = FileDevicePath(Volume->WholeDiskDeviceHandle, OffsetHexStr);
+  Size = GetDevicePathSize(BootImageDevPath);
+  PrintBytes((CHAR8*) BootImageDevPath, Size);
+  DBG(" boot-image device path: %s\n", FileDevicePathToStr(BootImageDevPath));
+
+  Status = gRT->GetVariable (
+                             L"boot-image",
+                             &gEfiAppleBootGuid,
+                             NULL,
+                             &Size,
+                             VarData
+                             );
+  if (Status == EFI_SUCCESS) {
+    DBG("boot-image before: %s\n", FileDevicePathToStr((EFI_DEVICE_PATH_PROTOCOL*)&VarData[0]));
+    //      VarData[6] = 8;
+    VarData[24] = 0xFF;
+    VarData[25] = 0xFF;
+    DBG("boot-image corrected: %s\n", FileDevicePathToStr((EFI_DEVICE_PATH_PROTOCOL*)&VarData[0]));
+    gRT->SetVariable(L"boot-image", &gEfiAppleBootGuid,
+                     EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                     Size , VarData);
+    // now we should delete boot0082 to do hibernate only once
+    Status = DeleteBootOption(0x82);
+    if (EFI_ERROR(Status)) {
+      DBG("Options 0082 was not deleted: %r\n", Status);
     }
-    
+  } else {
+    //we have no such variable so created new one
     // Set boot-image var
-    UnicodeSPrint(OffsetHexStr, sizeof(OffsetHexStr), L"%lx", SleepImageOffset);
-    BootImageDevPath = FileDevicePath(Volume->WholeDiskDeviceHandle, OffsetHexStr);
-    DBG(" boot-image device path:\n");
-    Size = GetDevicePathSize(BootImageDevPath);
-    PrintBytes((CHAR8*) BootImageDevPath, Size);
     
     Status = gRT->SetVariable(L"boot-image", &gEfiAppleBootGuid,
-                                    EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-                                    Size , BootImageDevPath);
+                              EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                              Size , BootImageDevPath);
     if (EFI_ERROR(Status)) {
-        DBG(" can not write boot-image -> %r\n", Status);
-        return;
+      DBG(" can not write boot-image var -> %r\n", Status);
+      return FALSE;
     }
-
-    // Set boot-switch-vars to dummy header without encription keys
-    // TODO: check for existance first, and if exists then leave it as is
-    // maybe somebody is lucky and kernel will set it properly
-    SetMem(&RtcVars, sizeof(AppleRTCHibernateVars), 0);
-    RtcVars.signature[0] = 'A';
-    RtcVars.signature[1] = 'A';
-    RtcVars.signature[2] = 'P';
-    RtcVars.signature[3] = 'L';
-    RtcVars.revision     = 1;
-    Status = gRT->SetVariable(L"boot-switch-vars", &gEfiAppleBootGuid,
-                     EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-                     sizeof(RtcVars) ,&RtcVars);
-    if (EFI_ERROR(Status)) {
-        DBG(" can not write boot-switch-vars -> %r\n", Status);
-        return;
-    }
-    
-    DoHibernateWake = TRUE;
+  }
+  
+  // Set boot-switch-vars to dummy header without encription keys
+  // TODO: check for existance first, and if exists then leave it as is
+  // maybe somebody is lucky and kernel will set it properly
+  SetMem(&RtcVars, sizeof(AppleRTCHibernateVars), 0);
+  RtcVars.signature[0] = 'A';
+  RtcVars.signature[1] = 'A';
+  RtcVars.signature[2] = 'P';
+  RtcVars.signature[3] = 'L';
+  RtcVars.revision     = 1;
+  Status = gRT->SetVariable(L"boot-switch-vars", &gEfiAppleBootGuid,
+                            EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                            sizeof(RtcVars) ,&RtcVars);
+  if (EFI_ERROR(Status)) {
+    DBG(" can not write boot-switch-vars -> %r\n", Status);
+    return FALSE;
+  }
+  return TRUE;
+//  DoHibernateWake = TRUE;
 }
 

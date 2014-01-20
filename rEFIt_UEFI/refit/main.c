@@ -799,7 +799,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
       OSTYPE_IS_OSX_INSTALLER(Entry->LoaderType)) {
       
     if (OSFLAG_ISSET(Entry->Flags, OSFLAG_HIBERNATED)) {
-      PrepareHibernation(Entry->Volume);
+      DoHibernateWake = PrepareHibernation(Entry->Volume);
     }
       
     DBG("Closing log\n");

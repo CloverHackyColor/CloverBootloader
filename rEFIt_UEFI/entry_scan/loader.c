@@ -612,7 +612,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
     Entry->me.Title = PoolPrint(L"Boot %s from %s", (LoaderTitle != NULL) ? LoaderTitle : Basename(LoaderPath), Entry->VolName);
   }
   // just an example that UI can show hibernated volume to the user
-  // shoould be better to show it on entry image
+  // should be better to show it on entry image
   if (OSFLAG_ISSET(Entry->Flags, OSFLAG_HIBERNATED)) {
     Entry->me.Title = PoolPrint(L"%s (hibernated)", Entry->me.Title);
   }
@@ -704,7 +704,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
     AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
   }
   // loader-specific submenu entries
-  if (Entry->LoaderType == OSTYPE_OSX || Entry->LoaderType == OSTYPE_OSX_INSTALLER || Entry->LoaderType == OSTYPE_RECOVERY) {          // entries for Mac OS X
+  if (Entry->LoaderType == OSTYPE_OSX || Entry->LoaderType == OSTYPE_OSX_INSTALLER || Entry->LoaderType == OSTYPE_RECOVERY) { // entries for Mac OS X
 #if defined(MDE_CPU_X64)
     if (!KernelIs64BitOnly) {
       SubEntry = DuplicateLoaderEntry(Entry);
@@ -722,6 +722,18 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
         SubEntry->LoadOptions     = AddLoadOption(SubEntry->LoadOptions, L"arch=i386");
         AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
       }
+    }
+    SubEntry = DuplicateLoaderEntry(Entry);
+    if (SubEntry) {
+      SubEntry->me.Title        = L"Force hibernate wake";
+      SubEntry->Flags           = OSFLAG_SET(Entry->Flags, OSFLAG_HIBERNATED);
+      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+    }
+    SubEntry = DuplicateLoaderEntry(Entry);
+    if (SubEntry) {
+      SubEntry->me.Title        = L"Cancel hibernate wake";
+      SubEntry->Flags           = OSFLAG_UNSET(Entry->Flags, OSFLAG_HIBERNATED);
+      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
     }
     
     if (!(GlobalConfig.DisableFlags & HIDEUI_FLAG_SINGLEUSER)) {
