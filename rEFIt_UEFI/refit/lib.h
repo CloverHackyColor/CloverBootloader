@@ -176,6 +176,7 @@ typedef struct {
   MBR_PARTITION_INFO  *MbrPartitionTable;
   UINT32              DriveCRC32;
   EFI_GUID            RootUUID;
+  UINT64              SleepImageOffset;
 } REFIT_VOLUME;
 
 typedef enum {

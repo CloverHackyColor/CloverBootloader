@@ -613,7 +613,7 @@
 		12FA1597173F4E7400F847F1 /* NVRAMDebug.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NVRAMDebug.h; sourceTree = "<group>"; };
 		12FA1598173F4E7400F847F1 /* OsxLowMemFixDrv.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = OsxLowMemFixDrv.c; sourceTree = "<group>"; };
 		12FA1599173F4E7400F847F1 /* OsxLowMemFixDrv.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = OsxLowMemFixDrv.inf; sourceTree = "<group>"; };
-		2C201368188C9ECB001CB26C /* Hibernate.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Hibernate.c; sourceTree = "<group>"; };
+		2C201368188C9ECB001CB26C /* Hibernate.c */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 2; lastKnownFileType = sourcecode.c.c; path = Hibernate.c; sourceTree = "<group>"; tabWidth = 2; };
 		DEDA9729180530BE003AD904 /* common.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = common.c; sourceTree = "<group>"; };
 		DEDA972A180530BE003AD904 /* legacy.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = legacy.c; sourceTree = "<group>"; };
 		DEDA972B180530BE003AD904 /* loader.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = loader.c; sourceTree = "<group>"; };

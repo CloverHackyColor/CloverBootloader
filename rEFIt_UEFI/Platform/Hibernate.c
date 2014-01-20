@@ -246,14 +246,57 @@ PrintBytes(IN CHAR8 *Bytes, IN UINTN Number)
 	}
 }
 
+EFI_BLOCK_READ OrigBlockIoRead = NULL;
+UINT64  gSleepImageOffset = 0;
+
+/** BlockIo->Read() override. */
+EFI_STATUS
+EFIAPI OurBlockIoRead (
+                       IN EFI_BLOCK_IO_PROTOCOL          *This,
+                       IN UINT32                         MediaId,
+                       IN EFI_LBA                        Lba,
+                       IN UINTN                          BufferSize,
+                       OUT VOID                          *Buffer
+                       )
+{
+  EFI_STATUS          Status;
+  IOHibernateImageHeaderMin *Header;
+  IOHibernateImageHeaderMinSnow *Header2;
+  
+  DBG(" OurBlockIoRead: Lba=%lx, Offset=%lx\n", Lba, Lba * 512);
+  Status = OrigBlockIoRead(This, MediaId, Lba, BufferSize, Buffer);
+  
+  if (Status == EFI_SUCCESS && BufferSize >= sizeof(IOHibernateImageHeaderMin)) {
+    Header = (IOHibernateImageHeaderMin *) Buffer;
+    Header2 = (IOHibernateImageHeaderMinSnow *) Buffer;
+    DBG(" sig lion: %x\n", Header->signature);
+    DBG(" sig snow: %x\n", Header2->signature);
+    // DBG(" sig swap: %x\n", SwapBytes32(Header->signature));
+    if (Header->signature == kIOHibernateHeaderSignature
+        // just for tests
+        //|| Header->signature == kIOHibernateHeaderInvalidSignature
+        || Header2->signature == kIOHibernateHeaderSignature
+        )
+    {
+      gSleepImageOffset = Lba * 512;
+      DBG(" got sleep image offset\n");
+    }
+    
+  }
+  
+  return Status;
+}
 
 
 
-/** Returns TRUE if given OSX on given volume is hibernated
- *  (/private/var/vm/sleepimage exists and it's modification time is close to volume modification time).
+/** Returns TRUE if /private/var/vm/sleepimage exists
+ *  and it's modification time is close to volume modification time).
+ *
+ *  This is not working properly because FS driver does not return correct file times
+ *  and this function will probably be removed.
  */
 BOOLEAN
-IsOsxHibernated (IN REFIT_VOLUME *Volume)
+IsSleepImageValidByTime (IN REFIT_VOLUME *Volume)
 {
   EFI_STATUS          Status;
   EFI_FILE            *File;
@@ -266,13 +309,11 @@ IsOsxHibernated (IN REFIT_VOLUME *Volume)
   EFI_TIME            HFSVolumeModifyTime;
   UINT32              HFSVolumeModifyDate;
   INTN                TimeDiffMs;
-  UINTN                     dataSize            = 0;
-  UINT8                     *data               = NULL;
-    
+  
   //
   // Check for sleepimage and get it's info
   //
-  DBG("Check if Osx Is Hibernated:\n");
+  DBG("Check sleep image 'by time':\n");
   Status = Volume->RootDir->Open(Volume->RootDir, &File, L"\\private\\var\\vm\\sleepimage", EFI_FILE_MODE_READ, 0);
   if (EFI_ERROR(Status)) {
     DBG(" sleepimage not found -> %r\n", Status);
@@ -320,73 +361,135 @@ IsOsxHibernated (IN REFIT_VOLUME *Volume)
   FreePages(Buffer, 1);
   
   //
-  // Check that sleepimage is not more then 2 mins older then volume modification date
+  // Check that sleepimage is not more then 5 secs older then volume modification date
   // Idea is from Chameleon
   //
   TimeDiffMs = (INTN)(GetEfiTimeInMs(&HFSVolumeModifyTime) - GetEfiTimeInMs(&ImageModifyTime));
   DBG(" image old: %d sec\n", TimeDiffMs / 1000);
-  if (TimeDiffMs > 120000) {
+  if (TimeDiffMs > 5000) {
     DBG(" image too old\n");
-    // just test - always accepts sleepimage
- //   return FALSE;
+    return FALSE;
   }
   
-  DBG(" volume is hibernated\n");
-  if (!gFirmwareClover && 
-      !gDriversFlags.EmuVariableLoaded &&
-      !GlobalConfig.IgnoreNVRAMBoot) {
-    Status = gRT->GetVariable (L"Boot0082", &gEfiGlobalVariableGuid, NULL, &dataSize, data);
-    if (!EFI_ERROR(Status)) {
-      return TRUE;
-    } else {
-      return FALSE;
-    }
-  }
-
   return TRUE;
 }
 
 
-EFI_BLOCK_READ OrigBlockIoRead = NULL;
-UINT64  gSleepImageOffset = 0;
 
-/** BlockIo->Read() override. */
-EFI_STATUS
-EFIAPI OurBlockIoRead (
-                         IN EFI_BLOCK_IO_PROTOCOL          *This,
-                         IN UINT32                         MediaId,
-                         IN EFI_LBA                        Lba,
-                         IN UINTN                          BufferSize,
-                         OUT VOID                          *Buffer
-                         )
+/** Returns TRUE if /private/var/vm/sleepimage exists
+ *  and it's signature is kIOHibernateHeaderSignature.
+ */
+BOOLEAN
+IsSleepImageValidBySignature (IN REFIT_VOLUME *Volume)
 {
   EFI_STATUS          Status;
-  IOHibernateImageHeaderMin *Header;
+  EFI_FILE            *File;
+  VOID                *Buffer;
+  UINTN               BufferSize;
+  IOHibernateImageHeaderMin     *Header;
   IOHibernateImageHeaderMinSnow *Header2;
-
-  DBG(" OurBlockIoRead: Lba=%lx, Offset=%lx\n", Lba, Lba * 512);
-  Status = OrigBlockIoRead(This, MediaId, Lba, BufferSize, Buffer);
-
-  if (Status == EFI_SUCCESS && BufferSize >= sizeof(IOHibernateImageHeaderMin)) {
-    Header = (IOHibernateImageHeaderMin *) Buffer;
-    Header2 = (IOHibernateImageHeaderMinSnow *) Buffer;
-    DBG(" sig lion: %x\n", Header->signature);
-    DBG(" sig snow: %x\n", Header2->signature);
-   // DBG(" sig swap: %x\n", SwapBytes32(Header->signature));
-    if (Header->signature == kIOHibernateHeaderSignature
-        // just for tests
-        //|| Header->signature == kIOHibernateHeaderInvalidSignature
-        || Header2->signature == kIOHibernateHeaderSignature
-        )
-    {
-      gSleepImageOffset = Lba * 512;
-      DBG(" got sleep image offset\n");
-    }
-
+  
+  // Open sleepimage
+  DBG("Check sleep image 'by signature':\n");
+  Status = Volume->RootDir->Open(Volume->RootDir, &File, L"\\private\\var\\vm\\sleepimage", EFI_FILE_MODE_READ, 0);
+  if (EFI_ERROR(Status)) {
+    DBG(" sleepimage not found -> %r\n", Status);
+    return FALSE;
   }
-
-  return Status;
+  
+  // We'll have to detect offset here also
+  // in case driver caches some data and stops us
+  // from detecting offset later in GetSleepImagePosition()
+  
+  // Override disk BlockIo
+  gSleepImageOffset = 0;
+  Volume->SleepImageOffset = 0;
+  OrigBlockIoRead = Volume->WholeDiskBlockIO->ReadBlocks;
+  Volume->WholeDiskBlockIO->ReadBlocks = OurBlockIoRead;
+  
+  // Read the first block from sleepimage
+  BufferSize = 512;
+  Buffer = AllocatePool(BufferSize);
+  if (Buffer == NULL) {
+    return FALSE;
+  }
+  Status = File->Read(File, &BufferSize, Buffer);
+  
+  // Return original disk BlockIo
+  Volume->WholeDiskBlockIO->ReadBlocks = OrigBlockIoRead;
+  
+  if (EFI_ERROR(Status)) {
+    DBG(" error reading sleepimage -> %r\n", Status);
+    FreePool(Buffer);
+    return FALSE;
+  }
+  File->Close(File);
+  
+  if (gSleepImageOffset == 0) {
+    DBG(" no sleepimage offset\n");
+    FreePool(Buffer);
+    return FALSE;
+  }
+  DBG(" sleepimage offset: %lx\n", gSleepImageOffset);
+  
+  // Check signature
+  Header = (IOHibernateImageHeaderMin *) Buffer;
+  Header2 = (IOHibernateImageHeaderMinSnow *) Buffer;
+  DBG(" sig lion: %8x\n", Header->signature);
+  DBG(" sig snow: %8x\n", Header2->signature);
+  if (Header->signature == kIOHibernateHeaderSignature
+      || Header2->signature == kIOHibernateHeaderSignature
+      )
+  {
+    DBG(" is valid sleep image\n");
+    Volume->SleepImageOffset = gSleepImageOffset;
+    FreePool(Buffer);
+    return TRUE;
+  }
+  
+  FreePool(Buffer);
+  return FALSE;
 }
+
+
+
+/** Returns TRUE if given OSX on given volume is hibernated. */
+BOOLEAN
+IsOsxHibernated (IN REFIT_VOLUME *Volume)
+{
+  EFI_STATUS          Status;
+  UINTN               Size                = 0;
+  UINT8               *Data               = NULL;
+  
+  DBG("Check if Osx Is Hibernated:\n");
+  if (!gFirmwareClover &&
+      !gDriversFlags.EmuVariableLoaded &&
+      !GlobalConfig.IgnoreNVRAMBoot)
+  {
+    DBG(" UEFI with NVRAM: ");
+    Status = gRT->GetVariable (L"IOHibernateRTCVariables", &gEfiGlobalVariableGuid, NULL, &Size, Data);
+    if (Status == EFI_BUFFER_TOO_SMALL) {
+      DBG("yes\n");
+      return TRUE;
+    } else {
+      DBG("no\n");
+      return FALSE;
+    }
+  }
+  
+  // CloverEFI or UEFI with EmuVariable
+  DBG(" no NVRAM\n");
+  if (IsSleepImageValidBySignature(Volume)) {
+    DBG(" hibernated: yes\n");
+    return TRUE;
+  } else {
+    DBG(" hibernated: no\n");
+    return FALSE;
+  }
+}
+
+
+
 
 /** Returns byte offset of sleepimage on the whole disk or 0 if not found or error.
  *
@@ -408,6 +511,11 @@ GetSleepImagePosition (IN REFIT_VOLUME *Volume)
         DBG(" no disk BlockIo\n");
         return 0;
     }
+  
+    // If IsSleepImageValidBySignature() was used, then we already have that offset
+    if (Volume->SleepImageOffset != 0) {
+        return Volume->SleepImageOffset;
+    }
     
     // Open sleepimage
     Status = Volume->RootDir->Open(Volume->RootDir, &File, L"\\private\\var\\vm\\sleepimage", EFI_FILE_MODE_READ, 0);
@@ -428,6 +536,7 @@ GetSleepImagePosition (IN REFIT_VOLUME *Volume)
         return 0;
     }
     Status = File->Read(File, &BufferSize, Buffer);
+    FreePool(Buffer);
     
     // Return original disk BlockIo
     Volume->WholeDiskBlockIO->ReadBlocks = OrigBlockIoRead;
@@ -456,8 +565,79 @@ GetSleepImagePosition (IN REFIT_VOLUME *Volume)
  *
  * That's the only way for CloverEFI and should be OK for UEFI hack also.
  */
+
 BOOLEAN
 PrepareHibernation (IN REFIT_VOLUME *Volume)
+{
+  EFI_STATUS          Status;
+  UINT64          SleepImageOffset;
+  CHAR16          OffsetHexStr[17];
+  EFI_DEVICE_PATH_PROTOCOL    *BootImageDevPath;
+  UINTN           Size;
+  VOID            *Value;
+  AppleRTCHibernateVars RtcVars;
+  
+  DBG("PrepareHibernation:\n");
+  
+  // Find sleep image offset
+  SleepImageOffset = GetSleepImagePosition (Volume);
+  DBG(" SleepImageOffset: %lx\n", SleepImageOffset);
+  if (SleepImageOffset == 0) {
+    DBG(" sleepimage offset not found\n");
+    return FALSE;
+  }
+  
+  // Set boot-image var
+  UnicodeSPrint(OffsetHexStr, sizeof(OffsetHexStr), L"%lx", SleepImageOffset);
+  BootImageDevPath = FileDevicePath(Volume->WholeDiskDeviceHandle, OffsetHexStr);
+  DBG(" boot-image device path:\n");
+  Size = GetDevicePathSize(BootImageDevPath);
+  PrintBytes((CHAR8*) BootImageDevPath, Size);
+  
+  Status = gRT->SetVariable(L"boot-image", &gEfiAppleBootGuid,
+                            EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                            Size , BootImageDevPath);
+  if (EFI_ERROR(Status)) {
+    DBG(" can not write boot-image -> %r\n", Status);
+    return FALSE;
+  }
+  
+  // if IOHibernateRTCVariables exists (NVRAM working), then copy it to boot-switch-vars
+  // else (no NVRAM) set boot-switch-vars to dummy one
+  Status = GetVariable2 (L"IOHibernateRTCVariables", &gEfiAppleBootGuid, &Value, &Size);
+  if (!EFI_ERROR(Status)) {
+    DBG(" IOHibernateRTCVariables found - will be used as boot-switch-vars\n");
+    // delete IOHibernateRTCVariables
+    Status = gRT->SetVariable(L"IOHibernateRTCVariables", &gEfiAppleBootGuid,
+                              EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                              0, NULL);
+  } else {
+    // no NVRAM
+    DBG(" setting dummy boot-switch-vars\n");
+    Size = sizeof(RtcVars);
+    Value = &RtcVars;
+    SetMem(&RtcVars, Size, 0);
+    RtcVars.signature[0] = 'A';
+    RtcVars.signature[1] = 'A';
+    RtcVars.signature[2] = 'P';
+    RtcVars.signature[3] = 'L';
+    RtcVars.revision     = 1;
+  }
+  
+  Status = gRT->SetVariable(L"boot-switch-vars", &gEfiAppleBootGuid,
+                            EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                            Size, Value);
+  if (EFI_ERROR(Status)) {
+    DBG(" can not write boot-switch-vars -> %r\n", Status);
+    return FALSE;
+  }
+  
+  return TRUE;
+}
+
+
+BOOLEAN
+PrepareHibernationSlice (IN REFIT_VOLUME *Volume)
 {
   EFI_STATUS                  Status;
   UINT64                      SleepImageOffset;
