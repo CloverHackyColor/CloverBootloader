@@ -94,7 +94,9 @@ static VOID AboutRefit(VOID)
   //  CHAR8* Revision = NULL;
   if (AboutMenu.EntryCount == 0) {
     if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_MENU_TITLE_IMAGE)) {
-    AboutMenu.TitleImage = BuiltinIcon(BUILTIN_ICON_FUNC_ABOUT);
+      AboutMenu.TitleImage = BuiltinIcon(BUILTIN_ICON_FUNC_ABOUT);
+    } else {
+      AboutMenu.TitleImage = NULL;
     }
     AddMenuInfoLine(&AboutMenu, L"Clover Version 2k"); // by Slice, dmazar, apianti, JrCs, and others");
 #ifdef FIRMWARE_BUILDDATE
@@ -142,7 +144,9 @@ static VOID HelpRefit(VOID)
 {
   if (HelpMenu.EntryCount == 0) {
     if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_MENU_TITLE_IMAGE)) {
-    HelpMenu.TitleImage = BuiltinIcon(BUILTIN_ICON_FUNC_HELP);
+      HelpMenu.TitleImage = BuiltinIcon(BUILTIN_ICON_FUNC_HELP);
+    } else {
+      HelpMenu.TitleImage = NULL;
     }
     switch (gLanguage)
     {
