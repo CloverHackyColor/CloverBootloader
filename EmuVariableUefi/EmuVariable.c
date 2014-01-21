@@ -110,7 +110,7 @@ AcquireLockOnlyAtBootTime (
   IN EFI_LOCK  *Lock
   )
 {
-  if (!EfiAtRuntime ()) {
+  if (!VariableClassAtRuntime ()) {
     EfiAcquireLock (Lock);
   }
 }
@@ -132,7 +132,7 @@ ReleaseLockOnlyAtBootTime (
   IN EFI_LOCK  *Lock
   )
 {
-  if (!EfiAtRuntime ()) {
+  if (!VariableClassAtRuntime ()) {
     EfiReleaseLock (Lock);
   }
 }
@@ -309,7 +309,7 @@ UpdateVariableInfo (
 
   if (FeaturePcdGet (PcdVariableCollectStatistics)) {
 
-    if (EfiAtRuntime ()) {
+    if (VariableClassAtRuntime ()) {
       // Don't collect statistics at runtime
       return;
     }
@@ -709,7 +709,7 @@ AutoUpdateLangVariable(
     //
     // PlatformLangCodes is a volatile variable, so it can not be updated at runtime.
     //
-    if (EfiAtRuntime ()) {
+    if (VariableClassAtRuntime ()) {
       return;
     }
 
@@ -739,7 +739,7 @@ AutoUpdateLangVariable(
     //
     // LangCodes is a volatile variable, so it can not be updated at runtime.
     //
-    if (EfiAtRuntime ()) {
+    if (VariableClassAtRuntime ()) {
       return;
     }
 
@@ -910,9 +910,9 @@ UpdateVariable (
     // Update/Delete existing variable
     //
 
-    if (EfiAtRuntime ()) {        
+    if (VariableClassAtRuntime ()) {        
       //
-      // If EfiAtRuntime and the variable is Volatile and Runtime Access,  
+      // If VariableClassAtRuntime and the variable is Volatile and Runtime Access,  
       // the volatile is ReadOnly, and SetVariable should be aborted and 
       // return EFI_WRITE_PROTECTED.
       //
@@ -973,7 +973,7 @@ UpdateVariable (
     //
     // Only variable have NV|RT attribute can be created in Runtime
     //
-    if (EfiAtRuntime () &&
+    if (VariableClassAtRuntime () &&
         (((Attributes & EFI_VARIABLE_RUNTIME_ACCESS) == 0) || ((Attributes & EFI_VARIABLE_NON_VOLATILE) == 0))) {
       Status = EFI_INVALID_PARAMETER;
       goto Done;
@@ -1121,7 +1121,7 @@ FindVariable (
 
     while ((Variable[Index] < GetEndPointer (VariableStoreHeader[Index])) && (Variable[Index] != NULL)) {
       if (Variable[Index]->StartId == VARIABLE_DATA && Variable[Index]->State == VAR_ADDED) {
-        if (!(EfiAtRuntime () && ((Variable[Index]->Attributes & EFI_VARIABLE_RUNTIME_ACCESS) == 0))) {
+        if (!(VariableClassAtRuntime () && ((Variable[Index]->Attributes & EFI_VARIABLE_RUNTIME_ACCESS) == 0))) {
           if (VariableName[0] == 0) {
             PtrTrack->CurrPtr   = Variable[Index];
             PtrTrack->Volatile  = (BOOLEAN) Index;
@@ -1301,7 +1301,7 @@ EmuGetNextVariableName (
     // Variable is found
     //
     if (Variable.CurrPtr->StartId == VARIABLE_DATA && Variable.CurrPtr->State == VAR_ADDED) {
-      if (!(EfiAtRuntime () && ((Variable.CurrPtr->Attributes & EFI_VARIABLE_RUNTIME_ACCESS) == 0))) {
+      if (!(VariableClassAtRuntime () && ((Variable.CurrPtr->Attributes & EFI_VARIABLE_RUNTIME_ACCESS) == 0))) {
         VarNameSize = Variable.CurrPtr->NameSize;
         if (VarNameSize <= *VariableNameSize) {
           CopyMem (
@@ -1501,7 +1501,7 @@ EmuQueryVariableInfo (
     // Make sure if runtime bit is set, boot service bit is set also.
     //
     return EFI_INVALID_PARAMETER;
-  } else if (EfiAtRuntime () && ((Attributes & EFI_VARIABLE_RUNTIME_ACCESS) == 0)) {
+  } else if (VariableClassAtRuntime () && ((Attributes & EFI_VARIABLE_RUNTIME_ACCESS) == 0)) {
     //
     //   Make sure RT Attribute is set if we are in Runtime phase.
     //

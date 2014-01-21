@@ -27,7 +27,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #include <Library/BaseMemoryLib.h>
 #include <Library/MemoryAllocationLib.h>
 #include <Library/DebugLib.h>
-#include <Library/UefiRuntimeLib.h>
+//#include <Library/UefiRuntimeLib.h>
 #include <Library/UefiDriverEntryPoint.h>
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/UefiLib.h>
@@ -147,6 +147,41 @@ EFIAPI
 VariableClassAddressChangeEvent (
   IN EFI_EVENT        Event,
   IN VOID             *Context
+  );
+
+/**
+  Notification function of EVT_SIGNAL_EXIT_BOOT_SERVICES.
+
+  This is a notification function registered on EVT_SIGNAL_VIRTUAL_ADDRESS_CHANGE event.
+  It sets AtRuntime flag as TRUE after ExitBootServices.
+
+  @param[in]  Event   The Event that is being processed.
+  @param[in]  Context The Event Context.
+
+**/
+VOID
+EFIAPI
+VariableClassExitBootServicesEvent (
+  IN EFI_EVENT        Event,
+  IN VOID             *Context
+  );
+
+/**
+  This function allows the caller to determine if UEFI ExitBootServices() has been called.
+
+  This function returns TRUE after all the EVT_SIGNAL_EXIT_BOOT_SERVICES functions have
+  executed as a result of the OS calling ExitBootServices().  Prior to this time FALSE
+  is returned. This function is used by runtime code to decide it is legal to access
+  services that go away after ExitBootServices().
+
+  @retval  TRUE  The system has finished executing the EVT_SIGNAL_EXIT_BOOT_SERVICES event.
+  @retval  FALSE The system has not finished executing the EVT_SIGNAL_EXIT_BOOT_SERVICES event.
+
+**/
+BOOLEAN
+EFIAPI
+VariableClassAtRuntime (
+  VOID
   );
 
 /**

@@ -48,7 +48,7 @@
   UefiLib
   UefiBootServicesTableLib
   UefiDriverEntryPoint
-  UefiRuntimeLib
+#  UefiRuntimeLib
   DebugLib
   MemoryAllocationLib
   BaseMemoryLib
@@ -63,6 +63,7 @@
 
 [Guids]
   gEfiEventVirtualAddressChangeGuid             ## PRODUCES ## Event
+  gEfiEventExitBootServicesGuid                 ## PRODUCES ## Event
   gEfiGlobalVariableGuid                        ## PRODUCES ## Variable Guid
   gEfiVariableGuid
   gEfiAppleBootGuid

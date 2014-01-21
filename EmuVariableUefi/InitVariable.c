@@ -17,6 +17,8 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #include "Variable.h"
 
 EFI_EVENT   mVirtualAddressChangeEvent = NULL;
+EFI_EVENT   mExitBootServicesEvent = NULL;
+BOOLEAN     mAtRuntime = FALSE;
 
 /** Original runtime services. */
 EFI_RUNTIME_SERVICES gOrgRT;
@@ -190,19 +192,61 @@ VariableClassAddressChangeEvent (
   IN VOID             *Context
   )
 {
-  EfiConvertPointer (0x0, (VOID **) &mVariableModuleGlobal->PlatformLangCodes);
-  EfiConvertPointer (0x0, (VOID **) &mVariableModuleGlobal->LangCodes);
-  EfiConvertPointer (0x0, (VOID **) &mVariableModuleGlobal->PlatformLang);
-  EfiConvertPointer (
+  gRT->ConvertPointer (0x0, (VOID **) &mVariableModuleGlobal->PlatformLangCodes);
+  gRT->ConvertPointer (0x0, (VOID **) &mVariableModuleGlobal->LangCodes);
+  gRT->ConvertPointer (0x0, (VOID **) &mVariableModuleGlobal->PlatformLang);
+  gRT->ConvertPointer (
     0x0,
     (VOID **) &mVariableModuleGlobal->VariableGlobal[Physical].NonVolatileVariableBase
     );
-  EfiConvertPointer (
+  gRT->ConvertPointer (
     0x0,
     (VOID **) &mVariableModuleGlobal->VariableGlobal[Physical].VolatileVariableBase
     );
-  EfiConvertPointer (0x0, (VOID **) &mVariableModuleGlobal);
+  gRT->ConvertPointer (0x0, (VOID **) &mVariableModuleGlobal);
 }
+
+/**
+  Notification function of EVT_SIGNAL_EXIT_BOOT_SERVICES.
+
+  This is a notification function registered on EVT_SIGNAL_VIRTUAL_ADDRESS_CHANGE event.
+  It sets AtRuntime flag as TRUE after ExitBootServices.
+
+  @param[in]  Event   The Event that is being processed.
+  @param[in]  Context The Event Context.
+
+**/
+VOID
+EFIAPI
+VariableClassExitBootServicesEvent (
+  IN EFI_EVENT        Event,
+  IN VOID             *Context
+  )
+{
+  mAtRuntime = TRUE;
+}
+
+/**
+  This function allows the caller to determine if UEFI ExitBootServices() has been called.
+
+  This function returns TRUE after all the EVT_SIGNAL_EXIT_BOOT_SERVICES functions have
+  executed as a result of the OS calling ExitBootServices().  Prior to this time FALSE
+  is returned. This function is used by runtime code to decide it is legal to access
+  services that go away after ExitBootServices().
+
+  @retval  TRUE  The system has finished executing the EVT_SIGNAL_EXIT_BOOT_SERVICES event.
+  @retval  FALSE The system has not finished executing the EVT_SIGNAL_EXIT_BOOT_SERVICES event.
+
+**/
+BOOLEAN
+EFIAPI
+VariableClassAtRuntime (
+  VOID
+  )
+{
+  return mAtRuntime;
+}
+
 
 ////////////////////////////////////////
 // Helper methods
@@ -347,20 +391,37 @@ EmuVariableControlProtocolInstallEmulation (
   DBG(", emu.var.services installed");
   
   
-  /* original, new style - fails on Phoenix UEFI
+  /* original, new style CreateEventEx - fails on Phoenix UEFI and hangs on Apple EFI
+   // Note: UefiRuntimeLib is also using CreateEventEx, so avoid using that lib as well
+   
    Status = gBS->CreateEventEx (
-   EVT_NOTIFY_SIGNAL,
-   TPL_NOTIFY,
-   VariableClassAddressChangeEvent,
-   NULL,
-   &gEfiEventVirtualAddressChangeGuid,
-   &mVirtualAddressChangeEvent
-   );
-   DBG(" CreateEventEx = %r\n", Status);
+                               EVT_NOTIFY_SIGNAL,
+                               TPL_NOTIFY,
+                               VariableClassAddressChangeEvent,
+                               NULL,
+                               &gEfiEventVirtualAddressChangeGuid,
+                               &mVirtualAddressChangeEvent
+                               );
+   DBG(", CreateEventEx VirtualAddressChange = %r\n", Status);
    ASSERT_EFI_ERROR (Status);
-   */
+   
+   Status = gBS->CreateEventEx (
+                              EVT_NOTIFY_SIGNAL,
+                              TPL_NOTIFY,
+                              VariableClassExitBootServicesEvent,
+                              NULL,
+                              &gEfiEventExitBootServicesGuid,
+                              &mExitBootServicesEvent
+                              );
+   DBG(", CreateEventEx ExitBootServices = %r\n", Status);
+   ASSERT_EFI_ERROR (Status); 
+  */
   
-  // old style
+  // old style CreateEvent
+  
+  //
+  // Create a Set Virtual Address Map event.
+  //
   Status = gBS->CreateEvent (
                              EVT_SIGNAL_VIRTUAL_ADDRESS_CHANGE,
                              TPL_NOTIFY,
@@ -369,7 +430,21 @@ EmuVariableControlProtocolInstallEmulation (
                              &mVirtualAddressChangeEvent
                              );
   
-  DBG(", CreateEvent = %r", Status);
+  DBG(", CreateEvent VirtualAddressChange = %r", Status);
+  ASSERT_EFI_ERROR (Status);
+  
+  //
+  // Create an Exit Boot Services event.
+  //
+  Status = gBS->CreateEvent (
+                             EVT_SIGNAL_EXIT_BOOT_SERVICES,
+                             TPL_NOTIFY,
+                             VariableClassExitBootServicesEvent,
+                             NULL,
+                             &mExitBootServicesEvent
+                             );
+  
+  DBG(", CreateEvent ExitBootServices = %r", Status);
   ASSERT_EFI_ERROR (Status);
   
   //
@@ -476,6 +551,9 @@ VariableServiceInitialize (
                                                    NULL
                                                    );
   DBG(", install gEmuVariableControlProtocolGuid = %r\n", Status);
+  
+  // For debugging purposes only - start immediately when loaded
+   // mEmuVariableControlProtocol.InstallEmulation(&mEmuVariableControlProtocol);
   
   return EFI_SUCCESS;
 }
