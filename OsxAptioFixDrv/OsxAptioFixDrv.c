@@ -14,6 +14,8 @@
 #include <Library/DebugLib.h>
 #include <Library/CpuLib.h>
 
+#include <Guid/GlobalVariable.h>
+
 #include <Protocol/LoadedImage.h>
 
 #include "BootFixes.h"
@@ -754,14 +756,16 @@ RunImageWithOverridesAndHighStack(IN EFI_HANDLE ImageHandle, OUT UINTN *ExitData
 EFI_STATUS
 EFIAPI
 MOStartImage (
-	IN EFI_HANDLE				ImageHandle,
+	IN EFI_HANDLE			ImageHandle,
 	OUT UINTN					*ExitDataSize,
-	OUT CHAR16					**ExitData  OPTIONAL
+	OUT CHAR16				**ExitData  OPTIONAL
 	)
 {
-	EFI_STATUS					Status;
+	EFI_STATUS				Status;
 	EFI_LOADED_IMAGE_PROTOCOL	*Image;
 	CHAR16						*FilePathText = NULL;
+  BOOLEAN           HibernateWake = FALSE;
+  UINTN             Size = 0;
 	
 	DBG("StartImage(%lx)\n", ImageHandle);
 
@@ -780,10 +784,15 @@ MOStartImage (
 	if (EFI_ERROR(Status)) {
 		DBG("CloseProtocol error: %r\n", Status);
 	}
+//the presence of the variable means UEFI HibernateWake
+//if the wake is canceled then the variable must be deleted
+  Status = gRT->GetVariable(L"Boot0082", &gEfiGlobalVariableGuid,
+                            NULL, &Size, NULL);
+  HibernateWake = (Status == EFI_BUFFER_TOO_SMALL);
 
 	//Print(L"OsxAptioFixDrv: Starting image %s\n", FilePathText);
 	// check if this is boot.efi
-	if (StrStriBasic(FilePathText, L"boot.efi")) {
+	if (StrStriBasic(FilePathText, L"boot.efi") && !HibernateWake) {
 		Print(L"OsxAptioFixDrv: Starting overrides for %s\n", FilePathText);
 
 		// run with our overrides

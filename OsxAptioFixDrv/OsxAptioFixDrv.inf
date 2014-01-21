@@ -16,9 +16,10 @@
   ENTRY_POINT                    = OsxAptioFixDrvEntrypoint
 
 [Packages]
+  Clover/CloverPkg.dec
   MdePkg/MdePkg.dec
   MdeModulePkg/MdeModulePkg.dec
-  DuetPkg/DuetPkg.dec
+#  DuetPkg/DuetPkg.dec
 
 [LibraryClasses]
   UefiLib
@@ -62,6 +63,7 @@
   gEfiFileInfoGuid								## CONSUMES
   gEfiFileSystemInfoGuid						## CONSUMES
   gEfiFileSystemVolumeLabelInfoIdGuid			## CONSUMES
+  gEfiGlobalVariableGuid
 
 [Protocols]
   gEfiLoadedImageProtocolGuid
@@ -70,6 +72,7 @@
   gEfiBlockIoProtocolGuid
   gEfiDiskIoProtocolGuid
   gEfiGraphicsOutputProtocolGuid
+
 
 # if built as runtime driver
 [Depex]

@@ -287,6 +287,63 @@ EFIAPI OurBlockIoRead (
   return Status;
 }
 
+/** Returns byte offset of sleepimage on the whole disk or 0 if not found or error.
+ *
+ * To avoid messing with HFS+ format, we'll use the trick with overriding
+ * BlockIo->Read() of the disk and then read first bytes of the sleepimage
+ * through file system driver. And then we'll detect block delivered by BlockIo
+ * and calculate position from there.
+ * It's for hack after all :)
+ */
+UINT64
+GetSleepImagePosition (IN REFIT_VOLUME *Volume)
+{
+  EFI_STATUS          Status;
+  EFI_FILE            *File;
+  VOID                *Buffer;
+  UINTN               BufferSize;
+
+  if (Volume->WholeDiskBlockIO == NULL) {
+    DBG(" no disk BlockIo\n");
+    return 0;
+  }
+
+  // If IsSleepImageValidBySignature() was used, then we already have that offset
+  if (Volume->SleepImageOffset != 0) {
+    return Volume->SleepImageOffset;
+  }
+
+  // Open sleepimage
+  Status = Volume->RootDir->Open(Volume->RootDir, &File, L"\\private\\var\\vm\\sleepimage", EFI_FILE_MODE_READ, 0);
+  if (EFI_ERROR(Status)) {
+    DBG(" sleepimage not found -> %r\n", Status);
+    return 0;
+  }
+
+  // Override disk BlockIo
+  gSleepImageOffset = 0;
+  OrigBlockIoRead = Volume->WholeDiskBlockIO->ReadBlocks;
+  Volume->WholeDiskBlockIO->ReadBlocks = OurBlockIoRead;
+
+  // Read the first block from sleepimage
+  BufferSize = 512;
+  Buffer = AllocatePool(BufferSize);
+  if (Buffer == NULL) {
+    return 0;
+  }
+  Status = File->Read(File, &BufferSize, Buffer);
+  FreePool(Buffer);
+
+  // Return original disk BlockIo
+  Volume->WholeDiskBlockIO->ReadBlocks = OrigBlockIoRead;
+
+  if (EFI_ERROR(Status)) {
+    DBG(" can not read sleepimage -> %r\n", Status);
+    return 0;
+  }
+
+  return gSleepImageOffset;
+}
 
 
 /** Returns TRUE if /private/var/vm/sleepimage exists
@@ -402,7 +459,8 @@ IsSleepImageValidBySignature (IN REFIT_VOLUME *Volume)
   // from detecting offset later in GetSleepImagePosition()
   
   // Override disk BlockIo
-  gSleepImageOffset = 0;
+  //Slice - this is a really strange hack.
+  gSleepImageOffset = GetSleepImagePosition (Volume);
   Volume->SleepImageOffset = 0;
   OrigBlockIoRead = Volume->WholeDiskBlockIO->ReadBlocks;
   Volume->WholeDiskBlockIO->ReadBlocks = OurBlockIoRead;
@@ -414,7 +472,7 @@ IsSleepImageValidBySignature (IN REFIT_VOLUME *Volume)
     return FALSE;
   }
   Status = File->Read(File, &BufferSize, Buffer);
-  
+
   // Return original disk BlockIo
   Volume->WholeDiskBlockIO->ReadBlocks = OrigBlockIoRead;
   
@@ -457,97 +515,42 @@ IsSleepImageValidBySignature (IN REFIT_VOLUME *Volume)
 BOOLEAN
 IsOsxHibernated (IN REFIT_VOLUME *Volume)
 {
+//  BOOLEAN IsHibernate = FALSE;
   EFI_STATUS          Status;
   UINTN               Size                = 0;
   UINT8               *Data               = NULL;
-  
+//no sense to check if OSX is hibernated if we check every volume separately
   DBG("Check if Osx Is Hibernated:\n");
+/*
+  DBG(" no NVRAM\n"); */
+  // CloverEFI or UEFI with EmuVariable
+  if (IsSleepImageValidBySignature(Volume)) {
+    DBG(" hibernated: yes\n");
+//    IsHibernate = TRUE;
+  } else {
+    DBG(" hibernated: no\n");
+    return FALSE;
+  }
+  //is sleep image is good but OSX was not hibernated.
+  //or we choose "cancel hibernate wake" then it must be canceled
   if (!gFirmwareClover &&
       !gDriversFlags.EmuVariableLoaded &&
       !GlobalConfig.IgnoreNVRAMBoot)
   {
     DBG(" UEFI with NVRAM: ");
-    Status = gRT->GetVariable (L"IOHibernateRTCVariables", &gEfiGlobalVariableGuid, NULL, &Size, Data);
+    Status = gRT->GetVariable (L"Boot0082", &gEfiGlobalVariableGuid, NULL, &Size, Data);
     if (Status == EFI_BUFFER_TOO_SMALL) {
       DBG("yes\n");
-      return TRUE;
+//      return TRUE;
     } else {
-      DBG("no\n");
+      DBG("Boot0082 no\n");
       return FALSE;
     }
   }
-  
-  // CloverEFI or UEFI with EmuVariable
-  DBG(" no NVRAM\n");
-  if (IsSleepImageValidBySignature(Volume)) {
-    DBG(" hibernated: yes\n");
-    return TRUE;
-  } else {
-    DBG(" hibernated: no\n");
-    return FALSE;
-  }
+  return TRUE;
 }
 
 
-
-
-/** Returns byte offset of sleepimage on the whole disk or 0 if not found or error.
- *
- * To avoid messing with HFS+ format, we'll use the trick with overriding
- * BlockIo->Read() of the disk and then read first bytes of the sleepimage
- * through file system driver. And then we'll detect block delivered by BlockIo
- * and calculate position from there.
- * It's for hack after all :)
- */
-UINT64
-GetSleepImagePosition (IN REFIT_VOLUME *Volume)
-{
-    EFI_STATUS          Status;
-    EFI_FILE            *File;
-    VOID                *Buffer;
-    UINTN               BufferSize;
-    
-    if (Volume->WholeDiskBlockIO == NULL) {
-        DBG(" no disk BlockIo\n");
-        return 0;
-    }
-  
-    // If IsSleepImageValidBySignature() was used, then we already have that offset
-    if (Volume->SleepImageOffset != 0) {
-        return Volume->SleepImageOffset;
-    }
-    
-    // Open sleepimage
-    Status = Volume->RootDir->Open(Volume->RootDir, &File, L"\\private\\var\\vm\\sleepimage", EFI_FILE_MODE_READ, 0);
-    if (EFI_ERROR(Status)) {
-        DBG(" sleepimage not found -> %r\n", Status);
-        return 0;
-    }
-    
-    // Override disk BlockIo
-    gSleepImageOffset = 0;
-    OrigBlockIoRead = Volume->WholeDiskBlockIO->ReadBlocks;
-    Volume->WholeDiskBlockIO->ReadBlocks = OurBlockIoRead;
-    
-    // Read the first block from sleepimage
-    BufferSize = 512;
-    Buffer = AllocatePool(BufferSize);
-    if (Buffer == NULL) {
-        return 0;
-    }
-    Status = File->Read(File, &BufferSize, Buffer);
-    FreePool(Buffer);
-    
-    // Return original disk BlockIo
-    Volume->WholeDiskBlockIO->ReadBlocks = OrigBlockIoRead;
-    
-    if (EFI_ERROR(Status)) {
-        DBG(" can not read sleepimage -> %r\n", Status);
-        return 0;
-    }
-    
-    return gSleepImageOffset;
-}
 
 /** Prepares nvram vars needed for boot.efi to wake from hibernation:
  *  boot-switch-vars and boot-image.
@@ -611,6 +614,12 @@ PrepareHibernation (IN REFIT_VOLUME *Volume)
     Status = gRT->SetVariable(L"IOHibernateRTCVariables", &gEfiAppleBootGuid,
                               EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                               0, NULL);
+    // now we should delete boot0082 to do hibernate only once
+    Status = DeleteBootOption(0x82);
+    if (EFI_ERROR(Status)) {
+      DBG("Options 0082 was not deleted: %r\n", Status);
+    }
+
   } else {
     // no NVRAM
     DBG(" setting dummy boot-switch-vars\n");
