@@ -756,7 +756,10 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
 //    DBG("SetupDataForOSX\n");
     SetupDataForOSX();
 //    DBG("LoadKexts\n");
-    LoadKexts(Entry);
+    // LoadKexts seems to prevent hibernate wake if there are several kexts present in Clover's kexts dir
+    if (!OSFLAG_ISSET(Entry->Flags, OSFLAG_HIBERNATED)) {
+      LoadKexts(Entry);
+    }
     
     // blocking boot.efi output if -v is not specified
     // note: this blocks output even if -v is specified in

@@ -263,7 +263,8 @@ EFIAPI OurBlockIoRead (
   IOHibernateImageHeaderMin *Header;
   IOHibernateImageHeaderMinSnow *Header2;
   
-  DBG(" OurBlockIoRead: Lba=%lx, Offset=%lx\n", Lba, Lba * 512);
+  //DBG(" OurBlockIoRead: Lba=%lx, Offset=%lx\n", Lba, Lba * 512);
+  DBG(" OurBlockIoRead: Lba=%lx, Offset=%lx (BlockSize=%d)\n", Lba, Lba * This->Media->BlockSize, This->Media->BlockSize);
   Status = OrigBlockIoRead(This, MediaId, Lba, BufferSize, Buffer);
   
   if (Status == EFI_SUCCESS && BufferSize >= sizeof(IOHibernateImageHeaderMin)) {
@@ -274,7 +275,8 @@ EFIAPI OurBlockIoRead (
     // DBG(" sig swap: %x\n", SwapBytes32(Header->signature));
     if (Header->signature == kIOHibernateHeaderSignature ||
         Header2->signature == kIOHibernateHeaderSignature) {
-      gSleepImageOffset = Lba * 512;
+      //gSleepImageOffset = Lba * 512;
+      gSleepImageOffset = Lba * This->Media->BlockSize;
       DBG(" got sleep image offset\n");
     }    
   }
@@ -304,6 +306,7 @@ GetSleepImagePosition (IN REFIT_VOLUME *Volume)
 
   // If IsSleepImageValidBySignature() was used, then we already have that offset
   if (Volume->SleepImageOffset != 0) {
+    DBG(" returning previously calculated offset: %d\n", Volume->SleepImageOffset);
     return Volume->SleepImageOffset;
   }
 
@@ -314,19 +317,23 @@ GetSleepImagePosition (IN REFIT_VOLUME *Volume)
     return 0;
   }
 
+  // We want to read the first block from sleepimage
+  //BufferSize = 512;
+  BufferSize = Volume->WholeDiskBlockIO->Media->BlockSize;
+  Buffer = AllocatePool(BufferSize);
+  if (Buffer == NULL) {
+    DBG(" could not allocate buffer for sleepimage\n");
+    return 0;
+  }
+
   // Override disk BlockIo
   gSleepImageOffset = 0;
   OrigBlockIoRead = Volume->WholeDiskBlockIO->ReadBlocks;
   Volume->WholeDiskBlockIO->ReadBlocks = OurBlockIoRead;
 
-  // Read the first block from sleepimage
-  BufferSize = 512;
-  Buffer = AllocatePool(BufferSize);
-  if (Buffer == NULL) {
-    return 0;
-  }
+  DBG("Reading first block of sleepimage (%d bytes)...\n", BufferSize);
   Status = File->Read(File, &BufferSize, Buffer);
-  FreePool(Buffer);
+  DBG("Reading completed\n");
 
   // Return original disk BlockIo
   Volume->WholeDiskBlockIO->ReadBlocks = OrigBlockIoRead;
@@ -334,8 +341,19 @@ GetSleepImagePosition (IN REFIT_VOLUME *Volume)
   if (EFI_ERROR(Status)) {
     DBG(" can not read sleepimage -> %r\n", Status);
     return 0;
+  } else {
+    // Close sleepimage
+    File->Close(File);
   }
 
+  // We don't need the buffer, as OurBlockIoRead already did all the necessary checks
+  FreePool(Buffer);
+
+  // We have to store SleepImageOffset, as our BlockIoRead will probably not execute again on next read due to caching.
+  if (gSleepImageOffset != 0) {
+     DBG(" sleepimage offset acquired successfully");
+     Volume->SleepImageOffset = gSleepImageOffset;
+  }
   return gSleepImageOffset;
 }
 
@@ -435,6 +453,14 @@ IsSleepImageValidByTime (IN REFIT_VOLUME *Volume)
 BOOLEAN
 IsSleepImageValidBySignature (IN REFIT_VOLUME *Volume)
 {
+  // We'll have to detect offset here also in case driver caches
+  // some data and stops us from detecting offset later.
+  // So, make first call to GetSleepImagePosition() now.
+  DBG("Check sleep image 'by signature':\n");
+  return (GetSleepImagePosition (Volume) != 0);
+
+/*
+  // This is all redundant code, why not use GetSleepImagePosition() instead?
   EFI_STATUS          Status;
   EFI_FILE            *File;
   VOID                *Buffer;
@@ -503,6 +529,7 @@ IsSleepImageValidBySignature (IN REFIT_VOLUME *Volume)
   
   FreePool(Buffer);
   return FALSE;
+*/
 }
 
 
