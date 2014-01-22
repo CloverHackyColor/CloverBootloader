@@ -272,18 +272,12 @@ EFIAPI OurBlockIoRead (
     DBG(" sig lion: %x\n", Header->signature);
     DBG(" sig snow: %x\n", Header2->signature);
     // DBG(" sig swap: %x\n", SwapBytes32(Header->signature));
-    if (Header->signature == kIOHibernateHeaderSignature
-        // just for tests
-        //|| Header->signature == kIOHibernateHeaderInvalidSignature
-        || Header2->signature == kIOHibernateHeaderSignature
-        )
-    {
+    if (Header->signature == kIOHibernateHeaderSignature ||
+        Header2->signature == kIOHibernateHeaderSignature) {
       gSleepImageOffset = Lba * 512;
       DBG(" got sleep image offset\n");
-    }
-    
+    }    
   }
-  
   return Status;
 }
 
@@ -366,6 +360,7 @@ IsSleepImageValidByTime (IN REFIT_VOLUME *Volume)
   EFI_TIME            HFSVolumeModifyTime;
   UINT32              HFSVolumeModifyDate;
   INTN                TimeDiffMs;
+  INTN                Pages = 1;
   
   //
   // Check for sleepimage and get it's info
@@ -397,16 +392,17 @@ IsSleepImageValidByTime (IN REFIT_VOLUME *Volume)
   // Get HFS+ volume nodification time
   //
   // use 4KB aligned page to not have issues with BlockIo buffer alignment
-  Buffer = AllocatePages(1);
+  BlockIo = Volume->BlockIO;
+  Pages = (2 * BlockIo->Media->BlockSize / EFI_PAGE_SIZE) + 1;
+  Buffer = AllocatePages(Pages);
   if (Buffer == NULL) {
     return FALSE;
   }
-  // Note: assuming 512K blocks
-  BlockIo = Volume->BlockIO;
-  Status = BlockIo->ReadBlocks(BlockIo, BlockIo->Media->MediaId, 2, 512, Buffer);
+  // Note: assuming 512K blocks ?  
+  Status = BlockIo->ReadBlocks(BlockIo, BlockIo->Media->MediaId, 2, BlockIo->Media->BlockSize, Buffer);
   if (EFI_ERROR(Status)) {
     DBG(" can not read HFS+ header -> %r\n", Status);
-    FreePages(Buffer, 1);
+    FreePages(Buffer, Pages);
     return FALSE;
   }
   HFSHeader = (HFSPlusVolumeHeaderMin *)Buffer;
@@ -466,7 +462,7 @@ IsSleepImageValidBySignature (IN REFIT_VOLUME *Volume)
   Volume->WholeDiskBlockIO->ReadBlocks = OurBlockIoRead;
   
   // Read the first block from sleepimage
-  BufferSize = 512;
+  BufferSize = Volume->WholeDiskBlockIO->Media->BlockSize;
   Buffer = AllocatePool(BufferSize);
   if (Buffer == NULL) {
     return FALSE;
@@ -579,6 +575,7 @@ PrepareHibernation (IN REFIT_VOLUME *Volume)
   UINTN           Size;
   VOID            *Value;
   AppleRTCHibernateVars RtcVars;
+  UINT8           *VarData = NULL;
   
   DBG("PrepareHibernation:\n");
   
@@ -593,9 +590,16 @@ PrepareHibernation (IN REFIT_VOLUME *Volume)
   // Set boot-image var
   UnicodeSPrint(OffsetHexStr, sizeof(OffsetHexStr), L"%lx", SleepImageOffset);
   BootImageDevPath = FileDevicePath(Volume->WholeDiskDeviceHandle, OffsetHexStr);
-  DBG(" boot-image device path:\n");
+//  DBG(" boot-image device path:\n");
   Size = GetDevicePathSize(BootImageDevPath);
-  PrintBytes((CHAR8*) BootImageDevPath, Size);
+  VarData = (UINT8*)BootImageDevPath;
+  PrintBytes((CHAR8*)VarData, Size);
+  DBG("boot-image before: %s\n", FileDevicePathToStr(BootImageDevPath));
+  //      VarData[6] = 8;
+  
+  VarData[24] = 0xFF;
+  VarData[25] = 0xFF;
+  DBG("boot-image corrected: %s\n", FileDevicePathToStr(BootImageDevPath));
   
   Status = gRT->SetVariable(L"boot-image", &gEfiAppleBootGuid,
                             EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
@@ -642,92 +646,5 @@ PrepareHibernation (IN REFIT_VOLUME *Volume)
   }
   
   return TRUE;
-}
-
-
-BOOLEAN
-PrepareHibernationSlice (IN REFIT_VOLUME *Volume)
-{
-  EFI_STATUS                  Status;
-  UINT64                      SleepImageOffset;
-  CHAR16                      OffsetHexStr[17];
-  EFI_DEVICE_PATH_PROTOCOL    *BootImageDevPath;
-  UINT8                       VarData[256];
-  UINTN                       Size;
-  AppleRTCHibernateVars       RtcVars;
-  
-  DBG("PrepareHibernation:\n");
-  
-  // Find sleep image offset
-  SleepImageOffset = GetSleepImagePosition (Volume);
-  DBG(" SleepImageOffset: %lx\n", SleepImageOffset);
-  if (SleepImageOffset == 0) {
-    DBG(" sleepimage offset not found\n");
-    return FALSE;
-  }
-  
-  UnicodeSPrint(OffsetHexStr, sizeof(OffsetHexStr), L"%lx", SleepImageOffset);
-  BootImageDevPath = FileDevicePath(Volume->WholeDiskDeviceHandle, OffsetHexStr);
-  Size = GetDevicePathSize(BootImageDevPath);
-  PrintBytes((CHAR8*) BootImageDevPath, Size);
-  DBG(" boot-image device path: %s\n", FileDevicePathToStr(BootImageDevPath));
-
-  Status = gRT->GetVariable (
-                             L"boot-image",
-                             &gEfiAppleBootGuid,
-                             NULL,
-                             &Size,
-                             VarData
-                             );
-  if (Status == EFI_SUCCESS) {
-    DBG("boot-image before: %s\n", FileDevicePathToStr((EFI_DEVICE_PATH_PROTOCOL*)&VarData[0]));
-    //      VarData[6] = 8;
-    VarData[24] = 0xFF;
-    VarData[25] = 0xFF;
-    DBG("boot-image corrected: %s\n", FileDevicePathToStr((EFI_DEVICE_PATH_PROTOCOL*)&VarData[0]));
-    gRT->SetVariable(L"boot-image", &gEfiAppleBootGuid,
-                     EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-                     Size , VarData);
-    // now we should delete boot0082 to do hibernate only once
-    Status = DeleteBootOption(0x82);
-    if (EFI_ERROR(Status)) {
-      DBG("Options 0082 was not deleted: %r\n", Status);
-    }
-  } else {
-    //we have no such variable so created new one
-    // Set boot-image var
-    
-    Status = gRT->SetVariable(L"boot-image", &gEfiAppleBootGuid,
-                              EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-                              Size , BootImageDevPath);
-    if (EFI_ERROR(Status)) {
-      DBG(" can not write boot-image var -> %r\n", Status);
-      return FALSE;
-    }
-  }
-
-  Status = gRT->GetVariable(L"IOHibernateRTCVariables", &gEfiAppleBootGuid,
-                            NULL, &Size, &RtcVars);
-  if (EFI_ERROR(Status)) {
-    // Set boot-switch-vars to dummy header without encryption keys
-    // TODO: check for existance first, and if exists then leave it as is
-    // maybe somebody is lucky and kernel will set it properly (Slice - I am)
-    SetMem(&RtcVars, sizeof(AppleRTCHibernateVars), 0);
-    RtcVars.signature[0] = 'A';
-    RtcVars.signature[1] = 'A';
-    RtcVars.signature[2] = 'P';
-    RtcVars.signature[3] = 'L';
-    RtcVars.revision     = 1;
-  }
-
-  Status = gRT->SetVariable(L"boot-switch-vars", &gEfiAppleBootGuid,
-                            EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-                            sizeof(RtcVars) ,&RtcVars);
-  if (EFI_ERROR(Status)) {
-    DBG(" can not write boot-switch-vars -> %r\n", Status);
-    return FALSE;
-  }
-  return TRUE;
-//  DoHibernateWake = TRUE;
 }
 

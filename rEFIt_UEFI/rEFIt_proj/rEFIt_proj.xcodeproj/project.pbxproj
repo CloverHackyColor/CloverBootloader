@@ -3090,6 +3090,8 @@
 		12CB917114276985009EDAF2 /* IO.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IO.c; sourceTree = "<group>"; };
 		12CB91AB14276D8E009EDAF2 /* IO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IO.h; sourceTree = "<group>"; };
 		12D5B1C914F0F35E0043569D /* ati.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ati.h; sourceTree = "<group>"; };
+		12D6129E188FAAD20067F619 /* Hibernate.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Hibernate.c; sourceTree = "<group>"; };
+		12D6129F188FAAEA0067F619 /* card_vlist.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = card_vlist.c; sourceTree = "<group>"; };
 		12D6305E14CEA05E00E5898F /* ati.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ati.c; sourceTree = "<group>"; };
 		12D6305F14CEA05E00E5898F /* ati_reg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ati_reg.h; sourceTree = "<group>"; };
 		12D6306214CEA05E00E5898F /* boot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = boot.h; sourceTree = "<group>"; };
@@ -10609,6 +10611,7 @@
 				12D6306214CEA05E00E5898F /* boot.h */,
 				12D6306314CEA05E00E5898F /* BootLog.c */,
 				125108C31627F4CE0004D9C9 /* BootOptions.c */,
+				12D6129F188FAAEA0067F619 /* card_vlist.c */,
 				12D6306414CEA05E00E5898F /* Console.c */,
 				12D6306514CEA05E00E5898F /* cpu.c */,
 				12D6306614CEA05E00E5898F /* DataHubCpu.c */,
@@ -10623,6 +10626,7 @@
 				12D6307114CEA05E00E5898F /* gma.c */,
 				12D6307214CEA05E00E5898F /* gma.h */,
 				12D6307314CEA05E00E5898F /* guid.c */,
+				12D6129E188FAAD20067F619 /* Hibernate.c */,
 				12D6307414CEA05E00E5898F /* Injectors.c */,
 				261A9E611599E0340006F036 /* kernel_patcher.c */,
 				122B621C157E814100D06F37 /* kernel_patcher.h */,

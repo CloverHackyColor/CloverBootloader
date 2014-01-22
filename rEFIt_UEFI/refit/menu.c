@@ -3447,7 +3447,7 @@ REFIT_MENU_ENTRY  *SubMenuDsdtFix()
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
   
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"Fix warnings:");
+  InputBootArgs->Entry.Title = PoolPrint(L"Fix Darwin  :");
   InputBootArgs->Entry.Tag = TAG_INPUT;
   InputBootArgs->Entry.Row = 0xFFFF; //cursor
   InputBootArgs->Item = &InputItems[54];    
@@ -3589,7 +3589,7 @@ REFIT_MENU_ENTRY  *SubMenuDsdtFix()
   InputBootArgs->Entry.AtClick = ActionEnter;
   InputBootArgs->Entry.AtRightClick = ActionDetails;
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-
+/*
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
   InputBootArgs->Entry.Title = PoolPrint(L"Fix Darwin  :");
   InputBootArgs->Entry.Tag = TAG_INPUT;
@@ -3598,7 +3598,7 @@ REFIT_MENU_ENTRY  *SubMenuDsdtFix()
   InputBootArgs->Entry.AtClick = ActionEnter;
   InputBootArgs->Entry.AtRightClick = ActionDetails;
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-
+*/
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
   InputBootArgs->Entry.Title = PoolPrint(L"Fix RTC     :");
   InputBootArgs->Entry.Tag = TAG_INPUT;

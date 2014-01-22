@@ -810,6 +810,12 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
       DoHibernateWake = PrepareHibernation(Entry->Volume);
     }
       
+    if (DoHibernateWake) {
+      gBS->CloseEvent (OnReadyToBootEvent);
+      gBS->CloseEvent (ExitBootServiceEvent);
+      gBS->CloseEvent (mSimpleFileSystemChangeEvent);
+//      gBS->CloseEvent (mVirtualAddressChangeEvent);
+    }
     DBG("Closing log\n");
     Status = SetupBooterLog();
   }
