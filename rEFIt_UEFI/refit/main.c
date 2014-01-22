@@ -811,10 +811,12 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     }
       
     if (DoHibernateWake) {
+      DBG("Closing events\n");
       gBS->CloseEvent (OnReadyToBootEvent);
       gBS->CloseEvent (ExitBootServiceEvent);
       gBS->CloseEvent (mSimpleFileSystemChangeEvent);
 //      gBS->CloseEvent (mVirtualAddressChangeEvent);
+
     }
     DBG("Closing log\n");
     Status = SetupBooterLog();

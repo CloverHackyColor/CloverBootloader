@@ -597,9 +597,9 @@ PrepareHibernation (IN REFIT_VOLUME *Volume)
   DBG("boot-image before: %s\n", FileDevicePathToStr(BootImageDevPath));
   //      VarData[6] = 8;
   
-  VarData[24] = 0xFF;
-  VarData[25] = 0xFF;
-  DBG("boot-image corrected: %s\n", FileDevicePathToStr(BootImageDevPath));
+//  VarData[24] = 0xFF;
+//  VarData[25] = 0xFF;
+//  DBG("boot-image corrected: %s\n", FileDevicePathToStr(BootImageDevPath));
   
   Status = gRT->SetVariable(L"boot-image", &gEfiAppleBootGuid,
                             EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
@@ -608,7 +608,13 @@ PrepareHibernation (IN REFIT_VOLUME *Volume)
     DBG(" can not write boot-image -> %r\n", Status);
     return FALSE;
   }
-  
+
+  // now we should delete boot0082 to do hibernate only once
+  Status = DeleteBootOption(0x82);
+  if (EFI_ERROR(Status)) {
+    DBG("Options 0082 was not deleted: %r\n", Status);
+  }
+
   // if IOHibernateRTCVariables exists (NVRAM working), then copy it to boot-switch-vars
   // else (no NVRAM) set boot-switch-vars to dummy one
   Status = GetVariable2 (L"IOHibernateRTCVariables", &gEfiAppleBootGuid, &Value, &Size);
@@ -618,12 +624,6 @@ PrepareHibernation (IN REFIT_VOLUME *Volume)
     Status = gRT->SetVariable(L"IOHibernateRTCVariables", &gEfiAppleBootGuid,
                               EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                               0, NULL);
-    // now we should delete boot0082 to do hibernate only once
-    Status = DeleteBootOption(0x82);
-    if (EFI_ERROR(Status)) {
-      DBG("Options 0082 was not deleted: %r\n", Status);
-    }
-
   } else {
     // no NVRAM
     DBG(" setting dummy boot-switch-vars\n");

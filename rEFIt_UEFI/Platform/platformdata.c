@@ -285,7 +285,7 @@ CHAR8* SmcPlatform[] =
   "k92i", //"MacBookPro8,3",
   "j30",  //"MacBookPro9,2",  "d2" for 10,1
 	"k99",  //"MacBookAir3,1",
-  "NA",  //"MacBookAir5,2",
+  "j13",  //"MacBookAir5,2",
   "NA",  //"MacBookAir6,2",
 	"NA",  //"Macmini2,1",  //31 -> m88
   "NA",  //"Macmini5,1",

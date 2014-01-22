@@ -186,11 +186,11 @@ VOID
 EFIAPI
 OnExitBootServices(IN EFI_EVENT Event, IN VOID *Context)
 {
-  if (DoHibernateWake) {
+/*  if (DoHibernateWake) {
     gST->ConOut->OutputString (gST->ConOut, L"wake!!!");
     gBS->Stall(5000000);     // 5 seconds delay
     return;
-  }
+  } */
 
 //	Print(L"OnExitBootServices.....+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n");
   gST->ConOut->OutputString (gST->ConOut, L"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n");
