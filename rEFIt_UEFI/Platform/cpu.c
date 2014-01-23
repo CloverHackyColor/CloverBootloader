@@ -797,9 +797,11 @@ MACHINE_TYPES GetDefaultModel()
 				break;
       case CPU_MODEL_HASWELL:
       case CPU_MODEL_HASWELL_MB:
+        DefaultType = MacBookAir62;
+				break;  
       case CPU_MODEL_HASWELL_ULT:
       case CPU_MODEL_HASWELL_ULX:
-        DefaultType = MacBookAir62;
+        DefaultType = MacBookPro111;
 				break;  
 			default:
 				if ((gGraphics[0].Vendor == Nvidia) ||

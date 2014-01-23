@@ -332,7 +332,7 @@ OvrLocateDevicePath(
 {
 	EFI_STATUS					Status;
 	EFI_DEVICE_PATH_PROTOCOL	*DevicePathIn = *DevicePath;
-	
+//	PRINT("... try to do LocateDevicePath\n");
 	Status = gOrgBS.LocateDevicePath(Protocol, DevicePath, Device);
 	// TODO: device path to str
 	PRINT("->LocateDevicePath(%s, %p/%p, %p) = %r\n", GuidStr(Protocol), DevicePathIn, DevicePath, Device, Status);
