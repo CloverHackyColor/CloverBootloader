@@ -262,6 +262,8 @@ EFIAPI OurBlockIoRead (
   EFI_STATUS          Status;
   IOHibernateImageHeaderMin *Header;
   IOHibernateImageHeaderMinSnow *Header2;
+
+  gSleepImageOffset = 0; //temporary variable
   
   //DBG(" OurBlockIoRead: Lba=%lx, Offset=%lx\n", Lba, Lba * 512);
   DBG(" OurBlockIoRead: Lba=%lx, Offset=%lx (BlockSize=%d)\n", Lba, Lba * This->Media->BlockSize, This->Media->BlockSize);
@@ -305,10 +307,11 @@ GetSleepImagePosition (IN REFIT_VOLUME *Volume)
   }
 
   // If IsSleepImageValidBySignature() was used, then we already have that offset
-  if (Volume->SleepImageOffset != 0) {
+  //do not cache, read again
+/*  if (Volume->SleepImageOffset != 0) {
     DBG(" returning previously calculated offset: %d\n", Volume->SleepImageOffset);
     return Volume->SleepImageOffset;
-  }
+  } */
 
   // Open sleepimage
   Status = Volume->RootDir->Open(Volume->RootDir, &File, L"\\private\\var\\vm\\sleepimage", EFI_FILE_MODE_READ, 0);
@@ -333,13 +336,13 @@ GetSleepImagePosition (IN REFIT_VOLUME *Volume)
 
   DBG("Reading first block of sleepimage (%d bytes)...\n", BufferSize);
   Status = File->Read(File, &BufferSize, Buffer);
-  DBG("Reading completed\n");
+  DBG("Reading completed-> %r\n", Status);
 
   // Return original disk BlockIo
   Volume->WholeDiskBlockIO->ReadBlocks = OrigBlockIoRead;
 
   if (EFI_ERROR(Status)) {
-    DBG(" can not read sleepimage -> %r\n", Status);
+    DBG(" can not read sleepimage \n");
     return 0;
   } else {
     // Close sleepimage
@@ -347,13 +350,16 @@ GetSleepImagePosition (IN REFIT_VOLUME *Volume)
   }
 
   // We don't need the buffer, as OurBlockIoRead already did all the necessary checks
-  FreePool(Buffer);
+  if (Buffer) {
+    FreePool(Buffer);
+  }
 
   // We have to store SleepImageOffset, as our BlockIoRead will probably not execute again on next read due to caching.
-  if (gSleepImageOffset != 0) {
-     DBG(" sleepimage offset acquired successfully");
+  // no cache
+//  if (gSleepImageOffset != 0) {
+     DBG(" sleepimage offset acquired successfully: %lx\n", gSleepImageOffset);
      Volume->SleepImageOffset = gSleepImageOffset;
-  }
+//  }
   return gSleepImageOffset;
 }
 
@@ -554,7 +560,7 @@ IsOsxHibernated (IN REFIT_VOLUME *Volume)
     DBG(" hibernated: no\n");
     return FALSE;
   }
-  //is sleep image is good but OSX was not hibernated.
+  //if sleep image is good but OSX was not hibernated.
   //or we choose "cancel hibernate wake" then it must be canceled
   if (!gFirmwareClover &&
       !gDriversFlags.EmuVariableLoaded &&
