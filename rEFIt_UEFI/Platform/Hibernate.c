@@ -260,38 +260,40 @@ EFIAPI OurBlockIoRead (
                        )
 {
   EFI_STATUS          Status;
-  IOHibernateImageHeaderMin *Header;
-  IOHibernateImageHeaderMinSnow *Header2;
-  UINT32 BlockSize = 0;
-  
-  gSleepImageOffset = 0; //used as temporary global variable to pass our value
-  
-  if (This->Media != NULL) {
-    BlockSize = This->Media->BlockSize;
-  } else {
-    BlockSize = 512;
-  }
-  
-  DBG(" OurBlockIoRead: Lba=%lx, Offset=%lx (BlockSize=%d)\n", Lba, Lba * BlockSize, BlockSize);
   Status = OrigBlockIoRead(This, MediaId, Lba, BufferSize, Buffer);
   
   if (Status == EFI_SUCCESS && BufferSize >= sizeof(IOHibernateImageHeaderMin)) {
+    // Note: sizeof(IOHibernateImageHeaderMin)==96, so make sure to keep DBGs below that to avoid recursion when Boot/Log=true, and don't add DBGs outside
+    IOHibernateImageHeaderMin *Header;
+    IOHibernateImageHeaderMinSnow *Header2;
+    UINT32 BlockSize = 0;
+    
+    if (This->Media != NULL) {
+      BlockSize = This->Media->BlockSize;
+    } else {
+      BlockSize = 512;
+    }
+    
+    DBG(" OurBlockIoRead: Lba=%lx, Offset=%lx (BlockSize=%d)\n", Lba, Lba * BlockSize, BlockSize);
+    
     Header = (IOHibernateImageHeaderMin *) Buffer;
     Header2 = (IOHibernateImageHeaderMinSnow *) Buffer;
     DBG(" sig lion: %x\n", Header->signature);
     DBG(" sig snow: %x\n", Header2->signature);
     // DBG(" sig swap: %x\n", SwapBytes32(Header->signature));
+    
     if (Header->signature == kIOHibernateHeaderSignature ||
         Header2->signature == kIOHibernateHeaderSignature) {
       gSleepImageOffset = Lba * BlockSize;
       DBG(" got sleep image offset\n");
+      // return invalid parameter in order to prevent driver from caching our buffer
+      return EFI_INVALID_PARAMETER;
     } else {
       DBG(" no valid sleep image offset was found\n");
     }
   }
-
-  // return invalid parameter in order to prevent driver from caching our buffer
-  return EFI_INVALID_PARAMETER;
+  
+  return Status;
 }
 
 /** Returns byte offset of sleepimage on the whole disk or 0 if not found or error.
@@ -341,11 +343,11 @@ GetSleepImagePosition (IN REFIT_VOLUME *Volume)
   }
 
   // Override disk BlockIo
-  gSleepImageOffset = 0;
   OrigBlockIoRead = Volume->WholeDiskBlockIO->ReadBlocks;
   Volume->WholeDiskBlockIO->ReadBlocks = OurBlockIoRead;
 
   DBG("Reading first block of sleepimage (%d bytes)...\n", BufferSize);
+  gSleepImageOffset = 0; //used as temporary global variable to pass our value
   Status = File->Read(File, &BufferSize, Buffer);
   DBG("Reading completed -> %r\n", Status);
 
@@ -361,10 +363,10 @@ GetSleepImagePosition (IN REFIT_VOLUME *Volume)
   if (EFI_ERROR(Status) && Status != EFI_INVALID_PARAMETER) {
     DBG(" can not read sleepimage -> %r\n", Status);
     return 0;
-  } else {
-    // Close sleepimage
-    File->Close(File);
-  }
+  } 
+
+  // Close sleepimage
+  File->Close(File);
 
   // We store SleepImageOffset, in case our BlockIoRead does not execute again on next read due to driver caching.
   if (gSleepImageOffset != 0) {
