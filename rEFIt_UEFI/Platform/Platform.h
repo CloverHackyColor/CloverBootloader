@@ -1401,7 +1401,7 @@ VOID        WaitForSts(VOID);
 //EFI_STATUS  ApplySettings();
 
 VOID        InitBooterLog(VOID);
-EFI_STATUS  SetupBooterLog(VOID);
+EFI_STATUS  SetupBooterLog(BOOLEAN AllowGrownSize);
 EFI_STATUS  SaveBooterLog(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CHAR16 *FileName);
 VOID        DebugLog(IN INTN DebugMode, IN CONST CHAR8 *FormatString, ...);
 VOID        SetDMISettingsForModel(MACHINE_TYPES Model);

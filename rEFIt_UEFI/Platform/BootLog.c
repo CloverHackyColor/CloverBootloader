@@ -156,9 +156,9 @@ VOID InitBooterLog(VOID)
   SetMemLogCallback(MemLogCallback);
 }
 
-EFI_STATUS SetupBooterLog(VOID)
+EFI_STATUS SetupBooterLog(BOOLEAN AllowGrownSize)
 {
-	EFI_STATUS              Status	= EFI_SUCCESS;
+  EFI_STATUS              Status = EFI_SUCCESS;
   CHAR8                   *MemLogBuffer;
   UINTN                   MemLogLen;
   
@@ -169,7 +169,11 @@ EFI_STATUS SetupBooterLog(VOID)
 		return EFI_NOT_FOUND;
   }
   
-	Status =  LogDataHub(&gEfiMiscSubClassGuid, L"boot-log", MemLogBuffer, (UINT32)MemLogLen);
+  if (MemLogLen > MEM_LOG_INITIAL_SIZE && AllowGrownSize) {
+    Status = LogDataHub(&gEfiMiscSubClassGuid, L"boot-log", MemLogBuffer, (UINT32)MemLogLen);
+  } else {
+    Status = LogDataHub(&gEfiMiscSubClassGuid, L"boot-log", MemLogBuffer, MEM_LOG_INITIAL_SIZE);
+  }
   
   // Save BOOT_LOG only once on successful boot
   /*

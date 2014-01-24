@@ -16,13 +16,6 @@
 #include "GenericIch.h"
 
 //
-// Mem log sizes
-//
-#define MEM_LOG_INITIAL_SIZE    (256 * 1024)
-#define MEM_LOG_MAX_SIZE        (2 * 1024 * 1024)
-#define MEM_LOG_MAX_LINE_SIZE   1024
-
-//
 // Struct for holding mem buffer.
 //
 typedef struct {

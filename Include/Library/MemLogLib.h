@@ -6,6 +6,13 @@
 #define __MEMLOG_LIB_H__
 
 
+//
+// Mem log sizes
+//
+#define MEM_LOG_INITIAL_SIZE    (128 * 1024)
+#define MEM_LOG_MAX_SIZE        (2 * 1024 * 1024)
+#define MEM_LOG_MAX_LINE_SIZE   1024
+
 
 /** Callback that can be installed to be called when some message is printed with MemLog() or MemLogVA(). **/
 typedef VOID (EFIAPI *MEM_LOG_CALLBACK) (IN INTN DebugMode, IN CHAR8 *LastMessage);

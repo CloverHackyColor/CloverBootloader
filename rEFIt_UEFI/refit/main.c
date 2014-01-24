@@ -756,7 +756,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
 //    DBG("SetupDataForOSX\n");
     SetupDataForOSX();
 //    DBG("LoadKexts\n");
-    // LoadKexts seems to prevent hibernate wake if there are several kexts present in Clover's kexts dir
+    // LoadKexts writes to DataHub, where large writes can prevent hibernate wake (happens when several kexts present in Clover's kexts dir)
     if (!OSFLAG_ISSET(Entry->Flags, OSFLAG_HIBERNATED)) {
       LoadKexts(Entry);
     }
@@ -822,7 +822,8 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
 
     }
     DBG("Closing log\n");
-    Status = SetupBooterLog();
+    // When doing hibernate wake, save to DataHub only up to initial size of log
+    Status = SetupBooterLog(!DoHibernateWake);
   }
 
 //  DBG("StartEFIImage\n");
