@@ -323,7 +323,7 @@ GetSleepImagePosition (IN REFIT_VOLUME *Volume)
 
   // If IsSleepImageValidBySignature() was used, then we already have that offset
   if (Volume->SleepImageOffset != 0) {
-    DBG(" returning previously calculated offset: %d\n", Volume->SleepImageOffset);
+    DBG(" returning previously calculated offset: %lx\n", Volume->SleepImageOffset);
     return Volume->SleepImageOffset;
   }
 
@@ -346,11 +346,10 @@ GetSleepImagePosition (IN REFIT_VOLUME *Volume)
     return 0;
   }
 
+  DBG("Reading first block of sleepimage (%d bytes)...\n", BufferSize);
   // Override disk BlockIo
   OrigBlockIoRead = Volume->WholeDiskBlockIO->ReadBlocks;
   Volume->WholeDiskBlockIO->ReadBlocks = OurBlockIoRead;
-
-  DBG("Reading first block of sleepimage (%d bytes)...\n", BufferSize);
   gSleepImageOffset = 0; //used as temporary global variable to pass our value
   Status = File->Read(File, &BufferSize, Buffer);
   // OurBlockIoRead always returns invalid parameter in order to avoid driver caching, so that is a good value
