@@ -262,11 +262,14 @@ EFIAPI OurBlockIoRead (
   EFI_STATUS          Status;
   Status = OrigBlockIoRead(This, MediaId, Lba, BufferSize, Buffer);
   
-  if (Status == EFI_SUCCESS && BufferSize >= sizeof(IOHibernateImageHeaderMin)) {
-    // Note: sizeof(IOHibernateImageHeaderMin)==96, so make sure to keep DBGs below that to avoid recursion when Boot/Log=true, and don't add DBGs outside
+  // Enter special processing only when gSleepImageOffset == 0, to avoid recursion when Boot/Log=true
+  if (gSleepImageOffset == 0 && Status == EFI_SUCCESS && BufferSize >= sizeof(IOHibernateImageHeaderMin)) { //sizeof(IOHibernateImageHeaderMin)==96
     IOHibernateImageHeaderMin *Header;
     IOHibernateImageHeaderMinSnow *Header2;
     UINT32 BlockSize = 0;
+    
+    // Mark that we are executing, to avoid entering above phrase again, and don't add DBGs outside this scope, to avoid recursion
+    gSleepImageOffset = (UINT64)-1;
     
     if (This->Media != NULL) {
       BlockSize = This->Media->BlockSize;
@@ -286,10 +289,11 @@ EFIAPI OurBlockIoRead (
         Header2->signature == kIOHibernateHeaderSignature) {
       gSleepImageOffset = Lba * BlockSize;
       DBG(" got sleep image offset\n");
-      // return invalid parameter in order to prevent driver from caching our buffer
+      // return invalid parameter in case of success in order to prevent driver from caching our buffer
       return EFI_INVALID_PARAMETER;
     } else {
       DBG(" no valid sleep image offset was found\n");
+      gSleepImageOffset = 0;
     }
   }
   
@@ -349,6 +353,10 @@ GetSleepImagePosition (IN REFIT_VOLUME *Volume)
   DBG("Reading first block of sleepimage (%d bytes)...\n", BufferSize);
   gSleepImageOffset = 0; //used as temporary global variable to pass our value
   Status = File->Read(File, &BufferSize, Buffer);
+  // OurBlockIoRead always returns invalid parameter in order to avoid driver caching, so that is a good value
+  if (Status == EFI_INVALID_PARAMETER) {
+    Status = EFI_SUCCESS;
+  }
   DBG("Reading completed -> %r\n", Status);
 
   // Return original disk BlockIo
@@ -359,8 +367,7 @@ GetSleepImagePosition (IN REFIT_VOLUME *Volume)
     FreePool(Buffer);
   }
 
-  // OurBlockIoRead always returns invalid parameter in order to avoid driver caching, so that is a good value
-  if (EFI_ERROR(Status) && Status != EFI_INVALID_PARAMETER) {
+  if (EFI_ERROR(Status)) {
     DBG(" can not read sleepimage -> %r\n", Status);
     return 0;
   } 
