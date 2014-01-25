@@ -171,6 +171,7 @@ EFI_STATUS SetupBooterLog(BOOLEAN AllowGrownSize)
   
   if (MemLogLen > MEM_LOG_INITIAL_SIZE && !AllowGrownSize) {
     CHAR8 PrevChar = MemLogBuffer[MEM_LOG_INITIAL_SIZE-1];
+    MemLogBuffer[MEM_LOG_INITIAL_SIZE-1] = '\0';
     Status = LogDataHub(&gEfiMiscSubClassGuid, L"boot-log", MemLogBuffer, MEM_LOG_INITIAL_SIZE);
     MemLogBuffer[MEM_LOG_INITIAL_SIZE-1] = PrevChar;
   } else {
@@ -203,7 +204,6 @@ EFI_STATUS SaveBooterLog(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CHAR16 *FileNam
 		return EFI_NOT_FOUND;
   }
   
-  //return egSaveFile(BaseDir, FileName, (UINT8*)MemLogBuffer, MemLogLen);
-  return egSaveFile(NULL, FileName, (UINT8*)MemLogBuffer, MemLogLen);
+  return egSaveFile(BaseDir, FileName, (UINT8*)MemLogBuffer, MemLogLen);
 }
 
