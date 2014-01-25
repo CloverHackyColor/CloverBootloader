@@ -790,7 +790,8 @@ OvrCalculateCrc32(
 	
 	// Omit printing this when using append while logging, as it can end up in calling a file operating inside another file operation
 	// (some implementations of File functions use CalculateCrc32)
-	#if LOG_TO_FILE <= 2
+	#if (LOG_TO_FILE <= 2) && (CLEANER_LOG != 1)
+	// Better not print this for cleaner logs - reported by XyZ
 	PRINT("->CalculateCrc32(%p, %d, 0x%x) = %r\n", Data, DataSize, Crc32, Status);
 	#endif
 	return Status;

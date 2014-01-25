@@ -82,8 +82,8 @@ LogPrint(CHAR8 *Format, ...)
 		#endif
 		#endif
 		
-		#if LOG_TO_SERIAL == 1
-		#if CAPTURE_CONSOLE_OUTPUT >= 1
+		#if LOG_TO_SERIAL >= 1
+		#if (CAPTURE_CONSOLE_OUTPUT >= 1) && (LOG_TO_SERIAL == 1)
 		// Print to serial only if not invoked from our OutputString() override
 		if (!InBootServices || !InConsolePrint) {
 			DebugPrint(1, gLogLineBuffer);

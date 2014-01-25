@@ -11,20 +11,35 @@
 
 
 //
-// Enable/disable log outputs: 1 or 0
+// LOG_TO_SCREEN:
+// 1 - will enable log output to screen
+// 0 - will disable log output to screen
 //
-// LOG_TO_SERIAL=1 requires
+#define LOG_TO_SCREEN			1
+
+//
+// LOG_TO_SERIAL:
+// 2 - will enable log output to serial, and allow sending console output to serial as well (when CAPTURE_CONSOLE_OUTPUT below is enabled)
+// 1 - will enable serial output, but prevent sending console output to serial
+// 0 - will disable log output to serial
+//
+// Options 1 and 2 differ only when CAPTURE_CONSOLE_OUTPUT is enabled:
+//  Some UEFI implementations always send console output to serial (even when we send nothing), while others don't do it.
+//  So, we may want to print console output to file, but prevent it from being printed to serial (on firmwares where it is already being printed there).
+//  Or, we may want to print console output to both file and serial (on firmwares where it is not being printed there).
+//
+// LOG_TO_SERIAL=1/2 requires
 //  Clover/DumpUefiCalls/DumpUefiCalls.inf {
-//    <PcdsFixedAtBuild>
-//      gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x07
-//      gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0xFFFFFFFF
 //    <LibraryClasses>
 //      DebugLib|MdePkg/Library/BaseDebugLibSerialPort/BaseDebugLibSerialPort.inf
 //      SerialPortLib|MdeModulePkg/Library/BaseSerialPortLib16550/BaseSerialPortLib16550.inf
+//    <PcdsFixedAtBuild>
+//      gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x07
+//      gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0xFFFFFFFF
 //  }
 // in package DSC file (Clover.dsc)
+// Alternatively, they can be defined directly in global [LibraryClasses] and [PcdsFixedAtBuild] of DSC file (as in DumpUefiCalls.dsc)
 //
-#define LOG_TO_SCREEN			1
 #define LOG_TO_SERIAL			0
 
 //
@@ -41,7 +56,8 @@
 //
 // LOG_TO_FILE_PATH
 //
-#define LOG_TO_FILE_PATH L"\\EFI\\UefiCalls.log"
+// Note: some firmwares don't support writing to long filenames, so it's better to keep names as 8.3.
+#define LOG_TO_FILE_PATH L"\\EFI\\EfiCalls.log"
 
 //
 // PRINT calls our main logger.
@@ -88,11 +104,18 @@
 
 //
 // CAPTURE_CONSOLE_OUTPUT
-// 2 - will capture conout, and prevent it from being displayed to screen (useful when saving to file)
+// 2 - will capture conout, and prevent it from being displayed to screen (useful when saving to file where there is a lot of screen output)
 // 1 - will capture conout, allowing it to be displayed to screen also (useful when saving to file)
 // 0 - will skip capturing conout
 //
 #define CAPTURE_CONSOLE_OUTPUT		1
+
+//
+// CLEANER_LOG
+// 1 - will prevent printing CalculateCrc32() and GetVariable("EfiTime",...), as they are called very often on some firmwares
+// 0 - will allow printing the above
+//
+#define CLEANER_LOG			0
 
 // 
 // BOOT_LOADERS

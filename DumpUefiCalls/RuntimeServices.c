@@ -161,9 +161,19 @@ OvrGetVariable(
 	if (Attributes != NULL) {
 		*Attributes = OurAttributes;
 	}
+	
+	#if CLEANER_LOG == 1
+	// Better not print this to avoid EfiTime "SPAM" on some AMI firmware - reported by XyZ
+	if (StrStr(VariableName, L"EfiTime") == 0) {
+		PRINT("->GetVariable(%s, %s, %x/%x, %x, %p) = %r\n",
+		        VariableName, GuidStr(VendorGuid), Attributes != NULL ? *Attributes : 0, OurAttributes, *DataSize, Data, Status);
+	}
+	#else
 	PRINT("->GetVariable(%s, %s, %x/%x, %x, %p) = %r\n",
 		VariableName, GuidStr(VendorGuid), Attributes != NULL ? *Attributes : 0, OurAttributes, *DataSize, Data, Status);
 	//PRINT("->GetVariable(%s)\n", VariableName);
+	#endif
+	
 	if (!EFI_ERROR(Status)) {
 		PrintBytes((CHAR8 *)Data, *DataSize);
 	}

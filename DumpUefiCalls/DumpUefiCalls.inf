@@ -46,11 +46,10 @@
 #
 # The following information is for reference only and not required by the build tools.
 #
-#  VALID_ARCHITECTURES           = X64 IA32
+#  VALID_ARCHITECTURES           = X64|IA32
 #
 
 [Packages]
-  Clover/CloverPkg.dec
   MdePkg/MdePkg.dec
 
 [LibraryClasses]
@@ -102,14 +101,17 @@
   gEfiBlockIoProtocolGuid
   gEfiDiskIoProtocolGuid
   gEfiGraphicsOutputProtocolGuid
-  gEfiSimpleTextInProtocolGuid
-  gEfiSimpleTextInputExProtocolGuid
-  gEfiSimpleTextOutProtocolGuid
-  gEfiCpuArchProtocolGuid
 
 [Depex]
   TRUE  
   
 [BuildOptions]
 #  MSFT:*_*_*_ASM_FLAGS = /Fl
-
+  INTEL:DEBUG_*_*_CC_FLAGS   =
+  INTEL:RELEASE_*_*_CC_FLAGS = /D MDEPKG_NDEBUG
+  GCC:DEBUG_*_*_CC_FLAGS     =
+  GCC:RELEASE_*_*_CC_FLAGS   = -DMDEPKG_NDEBUG
+  MSFT:DEBUG_*_*_CC_FLAGS    =
+  MSFT:RELEASE_*_*_CC_FLAGS  = /D MDEPKG_NDEBUG
+  XCODE:DEBUG_*_*_CC_FLAGS   =
+  XCODE:RELEASE_*_*_CC_FLAGS = -DMDEPKG_NDEBUG
