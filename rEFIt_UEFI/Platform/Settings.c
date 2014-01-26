@@ -59,8 +59,13 @@ extern UINT8 GetOSTypeFromPath(IN CHAR16 *Path);
 
 // global configuration with default values
 REFIT_CONFIG   GlobalConfig = { FALSE, -1, 0, 0, 0, TRUE, FALSE, FALSE, FALSE, FALSE,
+  //Font
   FONT_ALFA, 7, 0xFFFFFF80, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, None, 0,
-  FALSE, FALSE, FALSE, FALSE, 0, 0, 4 };
+  //BackgroundDark
+  FALSE, FALSE, FALSE, FALSE, 0, 0, 4, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF,
+  //BannerEdgeHorizontal
+  0, 0, 0, 0
+};
 
 VOID __inline WaitForSts(VOID) {
 	UINT32 inline_timeout = 100000;
@@ -3296,7 +3301,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
             gSettings.SuspendOverride = TRUE;
           }
         }
-
+/*
         prop = GetProperty(dict2, "SlpSmiAtWake");
         if(prop) {
           if ((prop->type == kTagTypeTrue) ||
@@ -3305,7 +3310,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
                 gSettings.SlpWak = TRUE;
               }
         }
-
+*/
         prop = GetProperty(dict2, "DropOEM_DSM"); 
         defDSM = FALSE;
         if(prop) {

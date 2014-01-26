@@ -380,6 +380,9 @@ CHAR8 wakslp1[] = { 0x5B, 0x80, 0x50, 0x4D, 0x33, 0x30, 0x01 };
 CHAR8 wakslp2[] = { 0x0A, 0x08, 0x5B, 0x81, 0x0D, 0x50, 0x4D, 0x33, 0x30, 0x01,
   0x00, 0x04, 0x53, 0x4C, 0x4D, 0x45, 0x01, 0x70, 0x00, 0x53, 0x4C, 0x4D, 0x45 };
 
+CHAR8 waksecur[] = {0xA0, 0x0D, 0x91, 0x95, 0x68, 0x01, 0x94, 0x68, 0x0A, 0x05,
+  0x70, 0x0A, 0x03, 0x68};
+
 CHAR8 pwrb[] = //? \_SB_PWRB, 0x02
 {
   0x86, 0x5C, 0x2E, 0x5F, 0x53, 0x42, 0x5F, 0x50, 0x57, 0x52, 0x42, 0x0A, 0x02
@@ -4010,7 +4013,7 @@ UINT32 FIXWAK (UINT8 *dsdt, UINT32 len, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABL
   UINT32 wakadr=0;
   UINT32 waksize=0;
   UINT32 sizeoffset = 0, sizeoffset2 = 0;
-  UINT16 PM30 = 0x430;  //default
+//  UINT16 PM30 = 0x430;  //default
   BOOLEAN ReturnFound = FALSE;
   
   DBG("Start _WAK Return Fix\n");
@@ -4039,8 +4042,8 @@ UINT32 FIXWAK (UINT8 *dsdt, UINT32 len, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABL
               ReturnFound = TRUE;
             }
           }
-
-          if (gSettings.SlpWak) {
+//Slice - this patch disabled as useless
+  /*        if (gSettings.SlpWak) {
             DBG(" add SLP_SMI_EN=0 into _WAK\n");
             PM30 = (UINT16)fadt->Pm1aEvtBlk + 0x30;
             sizeoffset = sizeof(wakslp1) + 3 + sizeof(wakslp2);
@@ -4054,7 +4057,14 @@ UINT32 FIXWAK (UINT8 *dsdt, UINT32 len, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABL
             k = write_size(wakadr, dsdt, len, sizeoffset);
             sizeoffset += k;
             len += k;
-          }
+          } */
+
+          sizeoffset = sizeof(waksecur);
+          len = move_data(i + 5, dsdt, len, sizeoffset);
+          CopyMem(dsdt + i + 5, waksecur, sizeof(waksecur));
+          k = write_size(wakadr, dsdt, len, sizeoffset);
+          sizeoffset += k;
+          len += k;
 
           if (!ReturnFound) {
             DBG( "_WAK Method need return data, will patch it.\n");

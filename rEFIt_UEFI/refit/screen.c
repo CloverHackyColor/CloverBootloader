@@ -518,16 +518,15 @@ VOID BltClearScreen(IN BOOLEAN ShowBanner)
             BannerPosY = RecalculateImageOffset(BannerPlace.Height,GlobalConfig.BannerPosY,UGAHeight,GlobalConfig.ThemeDesignHeight);
           }
           // Calculate the horizontal pixel to place the top left corner of the animation.
-          BannerPlace.XPos = ConvertEdgeAndPercentageToPixelPosition(GlobalConfig.BannerEdgeHorizontal,BannerPosX,BannerPlace.Width);
-          BannerPlace.YPos = ConvertEdgeAndPercentageToPixelPosition(GlobalConfig.BannerEdgeVertical,BannerPosY,BannerPlace.Height);
+          BannerPlace.XPos = ConvertEdgeAndPercentageToPixelPosition(GlobalConfig.BannerEdgeHorizontal, BannerPosX, BannerPlace.Width);
+          BannerPlace.YPos = ConvertEdgeAndPercentageToPixelPosition(GlobalConfig.BannerEdgeVertical, BannerPosY, BannerPlace.Height);
         }
       
         // Check if banner is required to be nudged.
         BannerPlace.XPos = CalculateNudgePosition(BannerPlace.XPos,GlobalConfig.BannerNudgeX,Banner->Width,UGAWidth);
         BannerPlace.YPos = CalculateNudgePosition(BannerPlace.YPos,GlobalConfig.BannerNudgeY,Banner->Height,UGAHeight);
-      
-        BltImageAlpha(Banner, BannerPlace.XPos, BannerPlace.YPos, &MenuBackgroundPixel, 16);
       }
+      BltImageAlpha(Banner, BannerPlace.XPos, BannerPlace.YPos, &MenuBackgroundPixel, 16);
     }
   } else {
       // clear to standard background color
