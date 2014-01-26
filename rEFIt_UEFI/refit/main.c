@@ -822,8 +822,15 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
 
     }
     DBG("Closing log\n");
-    // When doing hibernate wake, save to DataHub only up to initial size of log
-    Status = SetupBooterLog(!DoHibernateWake);
+    if (0 /* DoHibernateWake */) {
+      Status = SaveBooterLog(SelfRootDir, PREWAKE_LOG);
+      if (EFI_ERROR(Status)) {
+        Status = SaveBooterLog(NULL, PREWAKE_LOG);
+      }
+    } else {
+      // When doing hibernate wake, save to DataHub only up to initial size of log
+      Status = SetupBooterLog(!DoHibernateWake);
+    }
   }
 
 //  DBG("StartEFIImage\n");

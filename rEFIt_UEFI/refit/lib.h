@@ -430,6 +430,12 @@ typedef struct {
   UINTN       BadgeScale;
   INTN        ThemeDesignWidth;
   INTN        ThemeDesignHeight;
+  INTN        BannerPosX;
+  INTN        BannerPosY;
+  INTN        BannerEdgeHorizontal;
+  INTN        BannerEdgeVertical;
+  INTN        BannerNudgeX;
+  INTN        BannerNudgeY;
 } REFIT_CONFIG;
 
 // types
@@ -458,9 +464,9 @@ typedef struct {
 #define ANIME_INFINITE (UINTN)-1
 //some unreal values
 #define SCREEN_EDGE_LEFT    50000
-#define SCREEN_EDGE_TOP     50000
-#define SCREEN_EDGE_RIGHT   60000
-#define SCREEN_EDGE_BOTTOM  60000
+#define SCREEN_EDGE_TOP     60000
+#define SCREEN_EDGE_RIGHT   70000
+#define SCREEN_EDGE_BOTTOM  80000
 
 typedef struct GUI_ANIME GUI_ANIME;
 struct GUI_ANIME {

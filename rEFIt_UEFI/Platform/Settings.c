@@ -1645,6 +1645,12 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
   GlobalConfig.BadgeScale = 8; //default
   GlobalConfig.ThemeDesignWidth = 0xFFFF;
   GlobalConfig.ThemeDesignHeight = 0xFFFF;
+  GlobalConfig.BannerEdgeHorizontal = SCREEN_EDGE_LEFT;
+  GlobalConfig.BannerEdgeVertical = SCREEN_EDGE_TOP;
+  GlobalConfig.BannerPosX = 0xFFFF;
+  GlobalConfig.BannerPosY = 0xFFFF;
+  GlobalConfig.BannerNudgeX = 0;
+  GlobalConfig.BannerNudgeY = 0;
   LayoutBannerOffset = 64; //default value if not set
   LayoutButtonOffset = 0; //default value if not set
   LayoutTextOffset = 0; //default value if not set
@@ -1727,9 +1733,62 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
 
   dict = GetProperty(dictPointer, "Banner");
   if (dict) {
+    // retain for legacy themes.
     if ((dict->type == kTagTypeString) && dict->string) {
       GlobalConfig.BannerFileName = PoolPrint(L"%a", dict->string);
-    }
+    } else {
+      // for new placement settings
+      dict2 = GetProperty(dict, "Path");
+      if (dict2) {
+        if ((dict2->type == kTagTypeString) && dict2->string) {
+          GlobalConfig.BannerFileName = PoolPrint(L"%a", dict2->string);
+        }
+      }
+      dict2 = GetProperty(dict, "ScreenEdgeX");
+      if (dict2) {
+        if ((dict2->type == kTagTypeString) && dict2->string) {
+          if (AsciiStrCmp(dict2->string, "left") == 0) {
+            GlobalConfig.BannerEdgeHorizontal = SCREEN_EDGE_LEFT;
+          } else if (AsciiStrCmp(dict2->string, "right") == 0) {
+            GlobalConfig.BannerEdgeHorizontal = SCREEN_EDGE_RIGHT;
+          }
+        }
+      }
+      dict2 = GetProperty(dict, "ScreenEdgeY");
+      if (dict2) {
+        if ((dict2->type == kTagTypeString) && dict2->string) {
+          if (AsciiStrCmp(dict2->string, "top") == 0) {
+            GlobalConfig.BannerEdgeVertical = SCREEN_EDGE_TOP;
+          } else if (AsciiStrCmp(dict2->string, "bottom") == 0) {
+            GlobalConfig.BannerEdgeVertical = SCREEN_EDGE_BOTTOM;
+          }
+        }
+      }
+      dict2 = GetProperty(dict, "DistanceFromScreenEdgeX%");
+      if (dict2) {
+        if (dict2->type == kTagTypeInteger) {
+          GlobalConfig.BannerPosX = (INT32)(UINTN)dict2->string;
+        }
+      }
+      dict2 = GetProperty(dict, "DistanceFromScreenEdgeY%");
+      if (dict2) {
+        if (dict2->type == kTagTypeInteger) {
+          GlobalConfig.BannerPosY = (INT32)(UINTN)dict2->string;
+        }
+      }
+      dict2 = GetProperty(dict, "NudgeX");
+      if (dict2) {
+        if (dict2->type == kTagTypeInteger) {
+          GlobalConfig.BannerNudgeX = (INT32)(UINTN)dict2->string;
+        }
+      }
+      dict2 = GetProperty(dict, "NudgeY");
+      if (dict2) {
+        if (dict2->type == kTagTypeInteger) {
+          GlobalConfig.BannerNudgeY = (INT32)(UINTN)dict2->string;
+        }
+      }
+    } 
   }
 
   dict = GetProperty(dictPointer, "Badges");
@@ -2098,7 +2157,7 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
   if (!GlobalConfig.SelectionBigFileName) {
     GlobalConfig.SelectionBigFileName = PoolPrint(L"selection_big.png");
   }
-
+  
   return EFI_SUCCESS;
 }
 

@@ -61,6 +61,9 @@ static VOID SwitchToText(IN BOOLEAN CursorEnabled);
 static VOID SwitchToGraphics(VOID);
 static VOID DrawScreenHeader(IN CHAR16 *Title);
 static VOID UpdateConsoleVars(VOID);
+INTN ConvertEdgeAndPercentageToPixelPosition(INTN Edge, INTN DesiredPercentageFromEdge, INTN ImageDimension);
+INTN CalculateNudgePosition(INTN Position, INTN NudgeValue, INTN ImageDimension, INTN ScreenDimension);
+INTN RecalculateImageOffset(INTN AnimDimension, INTN ValueToScale, INTN ScreenDimensionToFit, INTN ThemeDesignDimension);
 
 // UGA defines and variables
 
@@ -396,7 +399,7 @@ VOID BltClearScreen(IN BOOLEAN ShowBanner)
 {
   
   INTN BanHeight = ((UGAHeight - LAYOUT_TOTAL_HEIGHT) >> 1) + LAYOUT_BANNER_HEIGHT;
-  INTN i, j, x, x1, x2, y, y1, y2;
+  INTN i, j, x, x1, x2, y, y1, y2, BannerPosX, BannerPosY;
   EG_PIXEL    *p1;
   
   // load banner on first call
@@ -493,19 +496,46 @@ VOID BltClearScreen(IN BOOLEAN ShowBanner)
     }
 
     if (Banner != NULL){
-      BannerPlace.XPos = (UGAWidth - Banner->Width) >> 1;
-      BannerPlace.YPos = (BanHeight >= Banner->Height) ? (BanHeight - Banner->Height) : 0;
       BannerPlace.Width = Banner->Width;
       BannerPlace.Height = (BanHeight >= Banner->Height) ? Banner->Height : BanHeight;
-      BltImageAlpha(Banner, BannerPlace.XPos, BannerPlace.YPos, &MenuBackgroundPixel, 16);
+
+      if ((GlobalConfig.BannerPosX == 0xFFFF) && (GlobalConfig.BannerPosY == 0xFFFF)) {
+        // Use rEFIt default
+        BannerPlace.XPos = (UGAWidth - Banner->Width) >> 1;
+        BannerPlace.YPos = (BanHeight >= Banner->Height) ? (BanHeight - Banner->Height) : 0;
+      } else {
+        // Has banner position been specified in the theme.plist?
+        if ((GlobalConfig.BannerPosX >=0 && GlobalConfig.BannerPosX <=100) && (GlobalConfig.BannerPosY >=0 && GlobalConfig.BannerPosY <=100)) {
+          BannerPosX = GlobalConfig.BannerPosX;
+          BannerPosY = GlobalConfig.BannerPosY;
+          // Check if screen size being used is different from theme origination size.
+          // If yes, then recalculate the placement % value.
+          // This is necessary because screen can be a different size, but banner is not scaled.
+          if ((GlobalConfig.ThemeDesignWidth != 0xFFFF) && (UGAWidth != GlobalConfig.ThemeDesignWidth)) {
+            BannerPosX = RecalculateImageOffset(BannerPlace.Width,GlobalConfig.BannerPosX,UGAWidth,GlobalConfig.ThemeDesignWidth);
+          }
+          if ((GlobalConfig.ThemeDesignHeight != 0xFFFF) && (UGAHeight != GlobalConfig.ThemeDesignHeight)) {
+            BannerPosY = RecalculateImageOffset(BannerPlace.Height,GlobalConfig.BannerPosY,UGAHeight,GlobalConfig.ThemeDesignHeight);
+          }
+          // Calculate the horizontal pixel to place the top left corner of the animation.
+          BannerPlace.XPos = ConvertEdgeAndPercentageToPixelPosition(GlobalConfig.BannerEdgeHorizontal,BannerPosX,BannerPlace.Width);
+          BannerPlace.YPos = ConvertEdgeAndPercentageToPixelPosition(GlobalConfig.BannerEdgeVertical,BannerPosY,BannerPlace.Height);
+        }
+      
+        // Check if banner is required to be nudged.
+        BannerPlace.XPos = CalculateNudgePosition(BannerPlace.XPos,GlobalConfig.BannerNudgeX,Banner->Width,UGAWidth);
+        BannerPlace.YPos = CalculateNudgePosition(BannerPlace.YPos,GlobalConfig.BannerNudgeY,Banner->Height,UGAHeight);
+      
+        BltImageAlpha(Banner, BannerPlace.XPos, BannerPlace.YPos, &MenuBackgroundPixel, 16);
+      }
     }
   } else {
-    // clear to standard background color
-    egClearScreen(&StdBackgroundPixel);
-    BannerPlace.XPos = 0;
-    BannerPlace.YPos = 0;
-    BannerPlace.Width = UGAWidth;
-    BannerPlace.Height = BanHeight;
+      // clear to standard background color
+      egClearScreen(&StdBackgroundPixel);
+      BannerPlace.XPos = 0;
+      BannerPlace.YPos = 0;
+      BannerPlace.Width = UGAWidth;
+      BannerPlace.Height = BanHeight;
   }
   InputBackgroundPixel.r = (MenuBackgroundPixel.r + 0) & 0xFF;
   InputBackgroundPixel.g = (MenuBackgroundPixel.g + 0) & 0xFF;
@@ -704,7 +734,7 @@ VOID FreeAnime(GUI_ANIME *Anime)
    }
 }
 
-INTN RecalculateAnimOffset(INTN AnimDimension, INTN ValueToScale, INTN ScreenDimensionToFit, INTN ThemeDesignDimension)
+INTN RecalculateImageOffset(INTN AnimDimension, INTN ValueToScale, INTN ScreenDimensionToFit, INTN ThemeDesignDimension)
 {
     INTN SuppliedGapDimensionPxDesigned=0;
     INTN OppositeGapDimensionPxDesigned=0;
@@ -745,6 +775,44 @@ INTN RecalculateAnimOffset(INTN AnimDimension, INTN ValueToScale, INTN ScreenDim
     }
 }
 
+INTN ConvertEdgeAndPercentageToPixelPosition(INTN Edge, INTN DesiredPercentageFromEdge, INTN ImageDimension)
+{
+  INTN value=0;
+
+  if (Edge == SCREEN_EDGE_LEFT) {
+      value = (UGAWidth * DesiredPercentageFromEdge) / 100;
+  } else if (Edge == SCREEN_EDGE_RIGHT) {
+      value = UGAWidth-((UGAWidth * DesiredPercentageFromEdge) / 100);
+    if ((value - ImageDimension) < 0) {
+      value = 0;
+    } else {
+      value -= ImageDimension;
+    }
+  } else if (Edge == SCREEN_EDGE_TOP) {
+      value = (UGAHeight * DesiredPercentageFromEdge) / 100;
+  } else if (Edge == SCREEN_EDGE_BOTTOM) {
+      value = UGAHeight - ((UGAHeight * DesiredPercentageFromEdge) / 100);
+    if ((value - ImageDimension) < 0) {
+      value = 0;
+    } else {
+      value -= ImageDimension;
+    }
+  }
+  return value;
+}
+
+INTN CalculateNudgePosition(INTN Position, INTN NudgeValue, INTN ImageDimension, INTN ScreenDimension)
+{
+  INTN value=Position;
+  
+  if ((NudgeValue != INITVALUE) && (NudgeValue != 0) && (NudgeValue >= -32) && (NudgeValue <= 32)) {
+    if ((value + NudgeValue >=0) && (value + NudgeValue <= ScreenDimension - ImageDimension)) {
+     value += NudgeValue;
+    }
+  }
+  return value;
+}
+
 VOID UpdateAnime(REFIT_MENU_SCREEN *Screen, EG_RECT *Place)
 {
   UINT64      Now;
@@ -779,35 +847,15 @@ VOID UpdateAnime(REFIT_MENU_SCREEN *Screen, EG_RECT *Place)
     // This is necessary because screen can be a different size, but anim is not scaled.
     // TO DO - Can this be run only once per anim run and not for every frame?
     if ((GlobalConfig.ThemeDesignWidth != 0xFFFF) && (UGAWidth != GlobalConfig.ThemeDesignWidth)) {
-      animPosX = RecalculateAnimOffset(Screen->Film[0]->Width,Screen->FilmX,UGAWidth,GlobalConfig.ThemeDesignWidth);
+      animPosX = RecalculateImageOffset(Screen->Film[0]->Width,Screen->FilmX,UGAWidth,GlobalConfig.ThemeDesignWidth);
     }
     if ((GlobalConfig.ThemeDesignHeight != 0xFFFF) && (UGAHeight != GlobalConfig.ThemeDesignHeight)) {
-      animPosY = RecalculateAnimOffset(Screen->Film[0]->Height,Screen->FilmY,UGAHeight,GlobalConfig.ThemeDesignHeight);
-  }
+      animPosY = RecalculateImageOffset(Screen->Film[0]->Height,Screen->FilmY,UGAHeight,GlobalConfig.ThemeDesignHeight);
+    }
  
     // Calculate the horizontal pixel to place the top left corner of the animation.
-  if (Screen->ScreenEdgeHorizontal == SCREEN_EDGE_LEFT ) {
-      x = (UGAWidth * animPosX) / 100;
-  } else if (Screen->ScreenEdgeHorizontal == SCREEN_EDGE_RIGHT ) {
-      x = UGAWidth-((UGAWidth * animPosX) / 100);
-    if ((x - Screen->Film[0]->Width) < 0) {
-      x = 0;
-    } else {
-      x -= Screen->Film[0]->Width;
-    }
-  }
-
-    // Calculate the vertical pixel to place the top left corner of the animation.
-  if (Screen->ScreenEdgeVertical == SCREEN_EDGE_TOP ) {
-      y = (UGAHeight * animPosY) / 100;
-  } else if (Screen->ScreenEdgeVertical == SCREEN_EDGE_BOTTOM ) {
-      y = UGAHeight - ((UGAHeight * animPosY) / 100);
-    if ((y - Screen->Film[0]->Height) < 0) {
-      y = 0;
-    } else {
-      y -= Screen->Film[0]->Height;
-    }
-  }
+    x = ConvertEdgeAndPercentageToPixelPosition(Screen->ScreenEdgeHorizontal,animPosX,Screen->Film[0]->Width);
+    y = ConvertEdgeAndPercentageToPixelPosition(Screen->ScreenEdgeVertical,animPosY,Screen->Film[0]->Height);
   }
 
   // Check if the theme.plist setting for allowing an anim to be moved horizontally in the quest 
@@ -822,16 +870,8 @@ VOID UpdateAnime(REFIT_MENU_SCREEN *Screen, EG_RECT *Place)
   }
   
   // Does the user want to fine tune the placement?
-  if ((Screen->NudgeX != INITVALUE) && (Screen->NudgeX != 0) && (Screen->NudgeX >= -32) && (Screen->NudgeX <= 32)) {
-    if ((x + Screen->NudgeX >=0) && (x + Screen->NudgeX <= UGAWidth - Screen->Film[0]->Width)) {
-     x += Screen->NudgeX;
-    }
-  }
-  if ((Screen->NudgeY != INITVALUE) && (Screen->NudgeY != 0) && (Screen->NudgeY >= -32) && (Screen->NudgeY <= 32)) {
-    if ((y + Screen->NudgeY >=0) && (y + Screen->NudgeY <= UGAHeight - Screen->Film[0]->Height)) {
-      y += Screen->NudgeY;
-    }
-  }
+  x = CalculateNudgePosition(x,Screen->NudgeX,Screen->Film[0]->Width,UGAWidth);
+  y = CalculateNudgePosition(y,Screen->NudgeY,Screen->Film[0]->Height,UGAHeight);
   
   Now = AsmReadTsc();
   if (Screen->LastDraw == 0) {
