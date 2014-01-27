@@ -50,7 +50,11 @@
 #
 
 [Packages]
-  MdePkg/MdePkg.dec
+	Clover/CloverPkg.dec
+    MdePkg/MdePkg.dec
+    MdeModulePkg/MdeModulePkg.dec
+  IntelFrameworkPkg/IntelFrameworkPkg.dec
+  IntelFrameworkModulePkg/IntelFrameworkModulePkg.dec
 
 [LibraryClasses]
   UefiLib
@@ -101,6 +105,7 @@
   gEfiBlockIoProtocolGuid
   gEfiDiskIoProtocolGuid
   gEfiGraphicsOutputProtocolGuid
+  gEfiDataHubProtocolGuid
 
 [Depex]
   TRUE  

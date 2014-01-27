@@ -480,13 +480,14 @@ IsSleepImageValidByTime (IN REFIT_VOLUME *Volume)
 BOOLEAN
 IsSleepImageValidBySignature (IN REFIT_VOLUME *Volume)
 {
+#if 1  
   // We'll have to detect offset here also in case driver caches
   // some data and stops us from detecting offset later.
   // So, make first call to GetSleepImagePosition() now.
   DBG("Check sleep image 'by signature':\n");
   return (GetSleepImagePosition (Volume) != 0);
 
-/*
+#else
   // This is all redundant code, why not use GetSleepImagePosition() instead?
   EFI_STATUS          Status;
   EFI_FILE            *File;
@@ -556,7 +557,7 @@ IsSleepImageValidBySignature (IN REFIT_VOLUME *Volume)
   
   FreePool(Buffer);
   return FALSE;
-*/
+#endif
 }
 
 
