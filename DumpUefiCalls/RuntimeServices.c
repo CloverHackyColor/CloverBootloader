@@ -245,7 +245,7 @@ OvrResetSystem(
 	
 	PRINT("->ResetSystem(%s, %r, %x, %p)\n", EfiResetType[ResetType], ResetStatus, DataSize, ResetData);
 	PrintBytes((CHAR8 *)ResetData, DataSize);
-	gOrgRS.ResetSystem(ResetType, ResetStatus, DataSize, ResetData);
+//	gOrgRS.ResetSystem(ResetType, ResetStatus, DataSize, ResetData);
 }
 
 

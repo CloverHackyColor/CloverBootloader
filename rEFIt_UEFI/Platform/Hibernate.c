@@ -24,6 +24,8 @@
 //#define DBG(...) AsciiPrint(__VA_ARGS__);
 #endif
 
+CHAR16 *PrefName = L"\\Library\\Preferences\\SystemConfiguration\\com.apple.PowerManagement.plist";
+
 
 //
 // Just the first part of HFS+ volume header from where we can take modification time
@@ -315,20 +317,73 @@ GetSleepImagePosition (IN REFIT_VOLUME *Volume)
   EFI_FILE            *File;
   VOID                *Buffer;
   UINTN               BufferSize;
+  CHAR16              *ImageName = NULL;
+  EFI_FILE            *RootDir;
+  UINT8               *PrefBuffer = NULL;
+	UINTN               PrefBufferLen = 0;
+  TagPtr   PrefDict, dict, dict2, prop;
+
+  
+  if (!Volume) {
+    DBG(" no volume to get sleepimage\n");
+    return 0;
+  }
 
   if (Volume->WholeDiskBlockIO == NULL) {
     DBG(" no disk BlockIo\n");
     return 0;
   }
+  
+  RootDir = Volume->RootDir; 
+  Status = egLoadFile(RootDir, PrefName, &PrefBuffer, &PrefBufferLen);
+  DBG("read prefs %s status=%r\n", PrefName, Status);
+  if (!EFI_ERROR(Status)) {
+    Status = ParseXML((const CHAR8*)PrefBuffer, &PrefDict, 0);
+    if (!EFI_ERROR(Status)) {
+      dict = GetProperty(PrefDict, "Custom Profile");
+      if (dict) {
+        dict2 = GetProperty(dict, "AC Power");
+        if (dict2) {
+          prop = GetProperty(dict2, "Hibernate File");
+          if (prop && prop->type == kTagTypeString ) {
+            CHAR16 *p; 
+            if (AsciiStrStr(prop->string, "/var") && !AsciiStrStr(prop->string, "private")) {
+              ImageName = PoolPrint(L"\\private%a", prop->string);
+            } else {
+              ImageName = PoolPrint(L"%a", prop->string);
+            }
+            p = ImageName;
+            while (*p) {
+              if (*p == L'/') {
+                *p = L'\\';
+              } 
+              p++;
+            }
+            DBG("SleepImage name from pref = %s\n", ImageName);
+          }
+        }
+      }
+    }
+  }  /* else {
+    DBG(" preferencies %s not found\n", PrefName);
+  } */
+
+  if (!ImageName) {
+    DBG("using default sleep image name\n");
+    ImageName = L"\\private\\var\\vm\\sleepimage";
+  }
+
+  
 
   // If IsSleepImageValidBySignature() was used, then we already have that offset
   if (Volume->SleepImageOffset != 0) {
     DBG(" returning previously calculated offset: %lx\n", Volume->SleepImageOffset);
     return Volume->SleepImageOffset;
   }
+  
 
   // Open sleepimage
-  Status = Volume->RootDir->Open(Volume->RootDir, &File, L"\\private\\var\\vm\\sleepimage", EFI_FILE_MODE_READ, 0);
+  Status = Volume->RootDir->Open(Volume->RootDir, &File, ImageName, EFI_FILE_MODE_READ, 0);
   if (EFI_ERROR(Status)) {
     DBG(" sleepimage not found -> %r\n", Status);
     return 0;

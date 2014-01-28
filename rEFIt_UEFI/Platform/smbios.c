@@ -1806,8 +1806,8 @@ EFI_STATUS PrepatchSmbios()
 	SmbiosEpsNew->TableAddress = (UINT32)(UINTN)Current;
 	SmbiosEpsNew->EntryPointLength = sizeof(SMBIOS_TABLE_ENTRY_POINT); // no matter on other versions
 	SmbiosEpsNew->MajorVersion = 2;
-	SmbiosEpsNew->MinorVersion = 6;	
-	SmbiosEpsNew->SmbiosBcdRevision = 0x26; //Slice - we want to have v2.6
+	SmbiosEpsNew->MinorVersion = 4;	
+	SmbiosEpsNew->SmbiosBcdRevision = 0x24; //Slice - we want to have v2.6 but Apple still uses 2.4
 	
 	//Create space for SPD
 	//gRAM = AllocateZeroPool(sizeof(MEM_STRUCTURE));
