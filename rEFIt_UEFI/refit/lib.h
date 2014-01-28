@@ -566,6 +566,9 @@ EFI_STATUS InitializeUnicodeCollationProtocol (VOID);
 #define LAYOUT_TOTAL_HEIGHT (376) //376
 #define LAYOUT_BANNER_HEIGHT (32)
 #define LAYOUT_BANNER_YOFFSET (LAYOUT_BANNER_HEIGHT + 32)
+#define LAYOUT_Y_EDGE    (20)
+#define LAYOUT_X_EDGE    (20)
+#define BAR_WIDTH         (16)
 
 //#define FONT_CELL_WIDTH (7)
 //#define FONT_CELL_HEIGHT (12)
