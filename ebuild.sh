@@ -303,7 +303,8 @@ MainBuildScript() {
         #  export EDK_TOOLS_PATH=`pwd`/../BaseTools
         # This version is for the tools source in edk2
         export EDK_TOOLS_PATH="${PWD}"/BaseTools
-        source edksetup.sh BaseTools
+        #source edksetup.sh BaseTools
+        source edksetup.sh
     else
         echo "Building from: $WORKSPACE"
     fi
