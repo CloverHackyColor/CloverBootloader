@@ -2637,7 +2637,7 @@ static VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
       row1PosX = (UGAWidth + EntriesGap - (ROW1_TILESIZE + EntriesGap) * row1Count) >> 1;
       row1PosY = row0PosY + EntriesHeight + TILE_YSPACING + LayoutButtonOffset;
       if (row1Count > 0)
-        textPosY = row1PosY + EntriesHeight + TILE_YSPACING + LayoutTextOffset;
+        textPosY = row1PosY + ROW1_TILESIZE + TILE_YSPACING + LayoutTextOffset;
       else
         textPosY = row1PosY;
       
