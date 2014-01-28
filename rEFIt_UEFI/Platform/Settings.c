@@ -64,7 +64,9 @@ REFIT_CONFIG   GlobalConfig = { FALSE, -1, 0, 0, 0, TRUE, FALSE, FALSE, FALSE, F
   //BackgroundDark
   FALSE, FALSE, FALSE, FALSE, 0, 0, 4, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF,
   //BannerEdgeHorizontal
-  0, 0, 0, 0
+  0, 0, 0, 0,
+  //VerticalLayout
+  FALSE,
 };
 
 VOID __inline WaitForSts(VOID) {
@@ -1656,6 +1658,7 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
   GlobalConfig.BannerPosY = 0xFFFF;
   GlobalConfig.BannerNudgeX = 0;
   GlobalConfig.BannerNudgeY = 0;
+  GlobalConfig.VerticalLayout = FALSE;
   LayoutBannerOffset = 64; //default value if not set
   LayoutButtonOffset = 0; //default value if not set
   LayoutTextOffset = 0; //default value if not set
@@ -1879,6 +1882,10 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
       if (dict2->type == kTagTypeInteger) {
         LayoutAnimMoveForMenuX = (UINTN)dict2->string;
       }
+    }
+    dict2 = GetProperty(dict, "Vertical");
+    if (dict2 && dict2->type == kTagTypeTrue) {
+      GlobalConfig.VerticalLayout = TRUE;
     }
   }  
 

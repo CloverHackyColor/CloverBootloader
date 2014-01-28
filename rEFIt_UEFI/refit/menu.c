@@ -139,7 +139,30 @@ EG_PIXEL SelectionBackgroundPixel = { 0xef, 0xef, 0xef, 0xff }; //non-trasparent
 static INTN row0Count, row0PosX, row0PosXRunning;
 static INTN row1Count, row1PosX, row1PosXRunning;
 static INTN *itemPosX = NULL;
+static INTN *itemPosY = NULL;
 static INTN row0PosY, row1PosY, textPosY;
+static   EG_IMAGE* MainImage;
+static   INTN OldX = 0, OldY = 0;
+static   INTN OldTextWidth = 0;
+static   UINTN OldRow = 0;
+static   INTN OldTimeoutTextWidth = 0;
+static INTN MenuWidth, EntriesPosX, EntriesPosY, TimeoutPosY;
+static INTN EntriesWidth, EntriesHeight, EntriesGap;
+static EG_IMAGE* ScrollbarImage = NULL;
+static EG_IMAGE* ScrollbarBackgroundImage = NULL;
+static EG_IMAGE* UpButtonImage = NULL;
+static EG_IMAGE* DownButtonImage = NULL;
+static EG_IMAGE* BarStartImage = NULL;
+static EG_IMAGE* BarEndImage = NULL;
+static EG_IMAGE* ScrollStartImage = NULL;
+static EG_IMAGE* ScrollEndImage = NULL;
+static EG_RECT BarStart;
+static EG_RECT BarEnd;
+static EG_RECT ScrollStart;
+static EG_RECT ScrollEnd;
+static EG_RECT ScrollTotal;
+
+
 
 INPUT_ITEM *InputItems = NULL;
 UINTN  InputItemsCount = 0;
@@ -2088,21 +2111,6 @@ VOID DrawMenuText(IN CHAR16 *Text, IN INTN SelectedWidth, IN INTN XPos, IN INTN 
   BltImageAlpha(TextBuffer, (INTN)XPos, (INTN)YPos, &MenuBackgroundPixel, 16);
 }
 
-static INTN MenuWidth, EntriesPosX, EntriesPosY, TimeoutPosY;
-static INTN EntriesWidth, EntriesHeight, EntriesGap;
-static EG_IMAGE* ScrollbarImage = NULL;
-static EG_IMAGE* ScrollbarBackgroundImage = NULL;
-static EG_IMAGE* UpButtonImage = NULL;
-static EG_IMAGE* DownButtonImage = NULL;
-static EG_IMAGE* BarStartImage = NULL;
-static EG_IMAGE* BarEndImage = NULL;
-static EG_IMAGE* ScrollStartImage = NULL;
-static EG_IMAGE* ScrollEndImage = NULL;
-static EG_RECT BarStart;
-static EG_RECT BarEnd;
-static EG_RECT ScrollStart;
-static EG_RECT ScrollEnd;
-static EG_RECT ScrollTotal;
 
 VOID InitBar(VOID)
 {
@@ -2241,73 +2249,6 @@ VOID ScrollingBar(IN SCROLL_STATE *State)
   }
 }
 
-
-#if NOT_READY
-VOID MainMenuVerticalStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINTN Function, IN CHAR16 *ParamText)
-{
-  INTN i;
-  INTN j;
-  INTN ItemWidth = 0;
-  INTN X;
-  INTN VisibleHeight = 0; //assume vertical layout
-  CHAR16 ResultString[256];
-  
-  switch (Function) {
-      
-    case MENU_FUNCTION_INIT:
-      egGetScreenSize(&UGAWidth, &UGAHeight);
-      SwitchToGraphicsAndClear();
-      //adjustable by theme.plist?
-      EntriesPosY = LAYOUT_Y_EDGE;
-      EntriesGap = LAYOUT_Y_EDGE;
-      EntriesWidth = ROW0_TILESIZE;
-      EntriesHeight = ROW0_TILESIZE;
-      //
-      VisibleHeight = (UGAHeight - EntriesPosY - LAYOUT_Y_EDGE + EntriesGap) / (EntriesHeight + EntriesGap);
-      InitScroll(State, Screen->EntryCount, Screen->EntryCount, VisibleHeight);
-      EntriesPosX = UGAWidth - EntriesWidth - BAR_WIDTH - LAYOUT_X_EDGE;
-      TimeoutPosY = UGAHeight - LAYOUT_Y_EDGE - TextHeight;
- 
-      InitBar();
-      InitAnime(Screen);
-      break;
-      
-    case MENU_FUNCTION_CLEANUP:
-      HidePointer();
-      break;
-      
-    case MENU_FUNCTION_PAINT_ALL:
-      SetBar(EntriesPosX + EntriesWidth + 10, EntriesPosY, UGAHeight - LAYOUT_Y_EDGE, State);
-      for (i = State->FirstVisible, j = 0; i <= State->LastVisible; i++, j++) {
-        
-      }
-      
-      ScrollingBar(State);
-      if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_REVISION)){
-#ifdef FIRMWARE_REVISION
-        DrawTextXY(FIRMWARE_REVISION, 5, UGAHeight - 5 - TextHeight, X_IS_LEFT);
-#else
-        DrawTextXY(gST->FirmwareRevision, 5, UGAHeight - 5 - TextHeight, X_IS_LEFT);
-#endif
-      }      
-      
-      MouseBirth();
-      break;
-      
-    case MENU_FUNCTION_PAINT_SELECTION:
-      HidePointer();
-      
-      ScrollingBar(State);
-      MouseBirth();
-      break;
-      
-    case MENU_FUNCTION_PAINT_TIMEOUT:
-      X = (EntriesPosX - StrLen(ParamText) * GlobalConfig.CharWidth) >> 1;
-      DrawMenuText(ParamText, 0, X, TimeoutPosY, 0xFFFF);
-      break;
-  }
-}
-#endif
 
 VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINTN Function, IN CHAR16 *ParamText)
 {
@@ -2486,7 +2427,6 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
 //
 // graphical main menu style
 //
-static   EG_IMAGE* MainImage;
 
 static VOID DrawMainMenuEntry(REFIT_MENU_ENTRY *Entry, BOOLEAN selected, INTN XPos, INTN YPos)
 {
@@ -2557,9 +2497,6 @@ static VOID FillRectAreaOfScreen(IN INTN XPos, IN INTN YPos, IN INTN Width, IN I
   egFreeImage(TmpBuffer);
 }
 
-static   INTN OldX = 0, OldY = 0;
-static   INTN OldTextWidth = 0;
-static   UINTN OldRow = 0;
 static VOID DrawMainMenuLabel(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State)
 {
   INTN TextWidth;
@@ -2570,7 +2507,8 @@ static VOID DrawMainMenuLabel(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN RE
     FillRectAreaOfScreen(OldX, OldY,
                          OldTextWidth, TextHeight, &MenuBackgroundPixel, X_IS_CENTER);
   }
-  if ((GlobalConfig.HideBadges & HDBADGES_INLINE) && (!OldRow) && (OldTextWidth) && (OldTextWidth != TextWidth)) {
+  if ((GlobalConfig.HideBadges & HDBADGES_INLINE) && 
+      (!OldRow) && (OldTextWidth) && (OldTextWidth != TextWidth)) {
     //Clear badge
     BltImageAlpha(NULL, (OldX - (OldTextWidth >> 1) - (BADGE_DIMENSION + 16)),
                   (OldY - ((BADGE_DIMENSION - TextHeight) >> 1)), &MenuBackgroundPixel, BADGE_DIMENSION >> 3);
@@ -2593,13 +2531,192 @@ static VOID DrawMainMenuLabel(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN RE
   OldRow = Screen->Entries[State->CurrentSelection]->Row;
 }
 
-static   INTN OldTimeoutTextWidth = 0;
-static VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINTN Function, IN CHAR16 *ParamText)
+VOID CountItems(IN REFIT_MENU_SCREEN *Screen)
+{
+  INTN i;
+  row0PosX = 0;
+  row1PosX = Screen->EntryCount;
+  // layout
+  row0Count = 0; //Nr items in row0
+  row1Count = 0;
+  for (i = 0; i < (INTN)Screen->EntryCount; i++) {
+    if (Screen->Entries[i]->Row == 0) {
+      row0Count++;
+      CONSTRAIN_MIN(row0PosX, i);
+    } else {
+      row1Count++;
+      CONSTRAIN_MAX(row1PosX, i);
+    }
+  }
+  if (row0PosX > row1PosX) { //9<10
+    MsgLog("BUG! (index_row0 > index_row1) Needed sorting\n");
+  }
+}
+
+#if 1 //NOT_READY
+VOID MainMenuVerticalStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINTN Function, IN CHAR16 *ParamText)
+{
+  INTN i;
+  INTN row0PosYRunning;
+//  INTN ItemWidth = 0;
+//  INTN X;
+  INTN VisibleHeight = 0; //assume vertical layout
+//  CHAR16 ResultString[256];
+  
+  switch (Function) {
+      
+    case MENU_FUNCTION_INIT:
+      egGetScreenSize(&UGAWidth, &UGAHeight);
+      SwitchToGraphicsAndClear();
+      //adjustable by theme.plist?
+      EntriesPosY = LAYOUT_Y_EDGE;
+      EntriesGap = LAYOUT_Y_EDGE;
+      EntriesWidth = ROW0_TILESIZE;
+      EntriesHeight = ROW0_TILESIZE;
+      //
+      VisibleHeight = (UGAHeight - EntriesPosY - LAYOUT_Y_EDGE + EntriesGap) / (EntriesHeight + EntriesGap);
+      EntriesPosX = UGAWidth - EntriesWidth - BAR_WIDTH - LAYOUT_X_EDGE;
+      TimeoutPosY = UGAHeight - LAYOUT_Y_EDGE - TextHeight;
+      
+      CountItems(Screen);
+      InitScroll(State, row0Count, Screen->EntryCount, VisibleHeight);
+      row0PosX = EntriesPosX;
+      row0PosY = EntriesPosY;
+      row1PosX = (UGAWidth + EntriesGap - (ROW1_TILESIZE + TILE_XSPACING) * row1Count) >> 1;
+      textPosY = TimeoutPosY - TILE_YSPACING - TextHeight;
+      row1PosY = textPosY - ROW1_TILESIZE - TILE_YSPACING - LayoutTextOffset;
+      if (!itemPosX) {
+        itemPosX = AllocatePool(sizeof(UINT64) * Screen->EntryCount);
+        itemPosY = AllocatePool(sizeof(UINT64) * Screen->EntryCount);
+      }      
+  //    row0PosXRunning = row0PosX;
+      row0PosYRunning = row0PosY;
+      row1PosXRunning = row1PosX;
+      //     DBG("EntryCount =%d\n", Screen->EntryCount);
+      for (i = 0; i < (INTN)Screen->EntryCount; i++) {
+        if (Screen->Entries[i]->Row == 0) {
+          itemPosX[i] = row0PosX;
+          itemPosY[i] = row0PosYRunning;
+          row0PosYRunning += EntriesHeight + EntriesGap;
+        } else {
+          itemPosX[i] = row1PosXRunning;
+          itemPosY[i] = row1PosY;
+          row1PosXRunning += ROW1_TILESIZE + TILE_XSPACING;
+          //         DBG("next item in row1 at x=%d\n", row1PosXRunning);
+        }
+      }
+      // initial painting
+      InitSelection();
+      CopyMem(&Screen->FilmPlace, &BannerPlace, sizeof(BannerPlace)); 
+    
+      InitBar();
+      InitAnime(Screen);
+      break;
+      
+    case MENU_FUNCTION_CLEANUP:
+      FreePool(itemPosX);
+      itemPosX = NULL;
+      FreePool(itemPosY);
+      itemPosY = NULL;
+      HidePointer();
+      break;
+      
+    case MENU_FUNCTION_PAINT_ALL:
+      SetBar(EntriesPosX + EntriesWidth + 10, EntriesPosY, UGAHeight - LAYOUT_Y_EDGE, State);
+      for (i = 0; i <= State->MaxIndex; i++) {
+        if (Screen->Entries[i]->Row == 0) {
+          if ((i >= State->FirstVisible) && (i <= State->LastVisible)) {
+            DrawMainMenuEntry(Screen->Entries[i], (i == State->CurrentSelection)?1:0,
+                              itemPosX[i - State->FirstVisible], itemPosY[i - State->FirstVisible]);
+          }
+        } else { //row1
+          DrawMainMenuEntry(Screen->Entries[i], (i == State->CurrentSelection)?1:0,
+                            itemPosX[i], itemPosY[i]);
+        }
+      }
+      if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)){
+        DrawMainMenuLabel(Screen->Entries[State->CurrentSelection]->Title,
+                          (UGAWidth >> 1), textPosY, Screen, State);
+      }
+  
+      ScrollingBar(State);
+      if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_REVISION)){
+#ifdef FIRMWARE_REVISION
+        DrawTextXY(FIRMWARE_REVISION, 5, UGAHeight - 5 - TextHeight, X_IS_LEFT);
+#else
+        DrawTextXY(gST->FirmwareRevision, 5, UGAHeight - 5 - TextHeight, X_IS_LEFT);
+#endif
+      }      
+      
+      MouseBirth();
+      break;
+      
+    case MENU_FUNCTION_PAINT_SELECTION:
+      HidePointer();
+      if (Screen->Entries[State->LastSelection]->Row == 0) {
+        DrawMainMenuEntry(Screen->Entries[State->LastSelection], FALSE,
+                          itemPosX[State->LastSelection - State->FirstVisible],
+                          itemPosY[State->LastSelection - State->FirstVisible]);
+      } else {
+        DrawMainMenuEntry(Screen->Entries[State->LastSelection], FALSE,
+                          itemPosX[State->LastSelection],
+                          itemPosY[State->LastSelection]);
+      }
+      
+      if (Screen->Entries[State->CurrentSelection]->Row == 0) {
+        DrawMainMenuEntry(Screen->Entries[State->CurrentSelection], TRUE,
+                          itemPosX[State->CurrentSelection - State->FirstVisible],
+                          itemPosY[State->CurrentSelection - State->FirstVisible]);
+      } else {
+        DrawMainMenuEntry(Screen->Entries[State->CurrentSelection], TRUE,
+                          itemPosX[State->CurrentSelection],
+                          itemPosY[State->CurrentSelection]);
+      }
+      if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)) {
+        DrawMainMenuLabel(Screen->Entries[State->CurrentSelection]->Title,
+                          (UGAWidth >> 1), textPosY, Screen, State);
+      }      
+      
+      ScrollingBar(State);
+      if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_REVISION)){
+#ifdef FIRMWARE_REVISION
+        DrawTextXY(FIRMWARE_REVISION, 5, UGAHeight - 5 - TextHeight, X_IS_LEFT);
+#else
+        DrawTextXY(gST->FirmwareRevision, 5, UGAHeight - 5 - TextHeight, X_IS_LEFT);
+#endif
+      }      
+      
+      MouseBirth();
+      break;
+      
+    case MENU_FUNCTION_PAINT_TIMEOUT:
+//      X = (EntriesPosX - StrLen(ParamText) * GlobalConfig.CharWidth) >> 1;
+//      DrawMenuText(ParamText, 0, X, TimeoutPosY, 0xFFFF);
+      i = (GlobalConfig.HideBadges & HDBADGES_INLINE)?3:1;
+      HidePointer();
+      if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)){
+        FillRectAreaOfScreen((UGAWidth >> 1), textPosY + TextHeight * i,
+                             OldTimeoutTextWidth, TextHeight, &MenuBackgroundPixel, X_IS_CENTER);
+        OldTimeoutTextWidth = DrawTextXY(ParamText, (UGAWidth >> 1), textPosY + TextHeight * i, X_IS_CENTER);
+      }
+      if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_REVISION)){
+#ifdef FIRMWARE_REVISION
+        DrawTextXY(FIRMWARE_REVISION, 5, UGAHeight - 5 - TextHeight, X_IS_LEFT);
+#else
+        DrawTextXY(gST->FirmwareRevision, 5, UGAHeight - 5 - TextHeight, X_IS_LEFT);
+#endif
+      }      
+      
+      break;
+  }
+}
+#endif
+
+
+//static 
+VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINTN Function, IN CHAR16 *ParamText)
 {
   INTN i; 
-//  CHAR16* p;
-//  UINTN X;
-
   
   switch (Function) {
       
@@ -2612,29 +2729,13 @@ static VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
       EntriesHeight = ROW0_TILESIZE;
       
       MaxItemOnScreen = (UGAWidth - ROW0_SCROLLSIZE * 2) / (EntriesWidth + EntriesGap); //8
-      row0PosX = 0;
-      row1PosX = Screen->EntryCount;
-      // layout
-      row0Count = 0; //Nr items in row0
-      row1Count = 0;
-      for (i = 0; i < (INTN)Screen->EntryCount; i++) {
-        if (Screen->Entries[i]->Row == 0) {
-          row0Count++;
-          CONSTRAIN_MIN(row0PosX, i);
-        } else {
-          row1Count++;
-          CONSTRAIN_MAX(row1PosX, i);
-        }
-      }
-      if (row0PosX > row1PosX) { //9<10
-        MsgLog("BUG! (index_row0 > index_row1) Needed sorting\n");
-      }
+      CountItems(Screen);
       InitScroll(State, row0Count, Screen->EntryCount, MaxItemOnScreen);
       row0PosX = (UGAWidth + EntriesGap - (EntriesWidth + EntriesGap) *
                   ((MaxItemOnScreen < row0Count)?MaxItemOnScreen:row0Count)) >> 1;
       row0PosY = ((UGAHeight - LayoutMainMenuHeight) >> 1) + LayoutBannerOffset; //LAYOUT_BANNER_YOFFSET; 
       
-      row1PosX = (UGAWidth + EntriesGap - (ROW1_TILESIZE + EntriesGap) * row1Count) >> 1;
+      row1PosX = (UGAWidth + EntriesGap - (ROW1_TILESIZE + TILE_XSPACING) * row1Count) >> 1;
       row1PosY = row0PosY + EntriesHeight + TILE_YSPACING + LayoutButtonOffset;
       if (row1Count > 0)
         textPosY = row1PosY + ROW1_TILESIZE + TILE_YSPACING + LayoutTextOffset;
@@ -2654,7 +2755,7 @@ static VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
           row0PosXRunning += EntriesWidth + EntriesGap;
         } else {
           itemPosX[i] = row1PosXRunning;
-          row1PosXRunning += ROW1_TILESIZE + EntriesGap;
+          row1PosXRunning += ROW1_TILESIZE + TILE_XSPACING;
  //         DBG("next item in row1 at x=%d\n", row1PosXRunning);
         }
       }
@@ -4105,7 +4206,11 @@ UINTN RunMainMenu(IN REFIT_MENU_SCREEN *Screen, IN INTN DefaultSelection, OUT RE
 
   if (AllowGraphicsMode) {
     Style = GraphicsMenuStyle;
-    MainStyle = MainMenuStyle;
+    if (GlobalConfig.VerticalLayout) {
+      MainStyle = MainMenuVerticalStyle;
+    } else {
+      MainStyle = MainMenuStyle;
+    }
   }
 
   while (!MenuExit) {

@@ -436,6 +436,7 @@ typedef struct {
   INTN        BannerEdgeVertical;
   INTN        BannerNudgeX;
   INTN        BannerNudgeY;
+  BOOLEAN     VerticalLayout;
 } REFIT_CONFIG;
 
 // types
