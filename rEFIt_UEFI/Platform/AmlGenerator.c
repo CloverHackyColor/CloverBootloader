@@ -401,7 +401,7 @@ AML_CHUNK* aml_add_string_buffer(AML_CHUNK* parent, /* CONST*/ CHAR8* StringBuf)
 	if (node)
 	{
 	    UINTN offset=0;
-	    UINTN len = AsciiStrLen(StringBuf)+1;
+	    UINTN len = AsciiStrLen(StringBuf);
 		node->Type = AML_CHUNK_BUFFER;
 		node->Length = (UINT8)(len + 3);
 		node->Buffer = AllocateZeroPool (node->Length);
