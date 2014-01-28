@@ -925,9 +925,9 @@ VOID UpdateAnime(REFIT_MENU_SCREEN *Screen, EG_RECT *Place)
 
 VOID InitAnime(REFIT_MENU_SCREEN *Screen)
 {
-  if (!Screen || !GuiAnime) return;
-
-  Screen->AnimeRun = Screen->Once;
+  if (!Screen || GlobalConfig.TextOnly || Screen->Film == NULL || Screen->Film[0] == NULL) return;
+  
+  Screen->AnimeRun = TRUE;
   Screen->CurrentFrame = 0;
   Screen->LastDraw = 0;
 }
@@ -941,7 +941,14 @@ BOOLEAN GetAnime(REFIT_MENU_SCREEN *Screen)
   EG_IMAGE    *Last = NULL;
   GUI_ANIME   *Anime;
   
-  if (!Screen || !GuiAnime) return FALSE;
+  if (!Screen) return FALSE;
+  
+  if (Screen->Film) {
+    FreePool(Screen->Film);
+    Screen->Film = NULL;
+  }
+  
+  if (!GuiAnime) return FALSE;
   
   for (Anime = GuiAnime; Anime != NULL; Anime = Anime->Next) {
     if (Anime->ID == Screen->ID) {
@@ -951,6 +958,7 @@ BOOLEAN GetAnime(REFIT_MENU_SCREEN *Screen)
   if (Anime == NULL) {
     return FALSE;
   }
+  
   // look through contents of the directory
   Path = Anime->Path;
   if (!Path) return FALSE;
