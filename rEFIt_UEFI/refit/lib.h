@@ -627,6 +627,7 @@ VOID BltImageCompositeBadge(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN EG
 
 VOID    FreeAnime(GUI_ANIME *Anime);
 VOID    UpdateAnime(REFIT_MENU_SCREEN *Screen, EG_RECT *Place);
+VOID    InitAnime(REFIT_MENU_SCREEN *Screen);
 BOOLEAN GetAnime(REFIT_MENU_SCREEN *Screen);
 //
 // icns loader module

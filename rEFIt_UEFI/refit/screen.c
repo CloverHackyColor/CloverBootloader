@@ -61,9 +61,13 @@ static VOID SwitchToText(IN BOOLEAN CursorEnabled);
 static VOID SwitchToGraphics(VOID);
 static VOID DrawScreenHeader(IN CHAR16 *Title);
 static VOID UpdateConsoleVars(VOID);
-INTN ConvertEdgeAndPercentageToPixelPosition(INTN Edge, INTN DesiredPercentageFromEdge, INTN ImageDimension);
-INTN CalculateNudgePosition(INTN Position, INTN NudgeValue, INTN ImageDimension, INTN ScreenDimension);
-INTN RecalculateImageOffset(INTN AnimDimension, INTN ValueToScale, INTN ScreenDimensionToFit, INTN ThemeDesignDimension);
+static INTN ConvertEdgeAndPercentageToPixelPosition(INTN Edge, INTN DesiredPercentageFromEdge, INTN ImageDimension, INTN ScreenDimension);
+static INTN CalculateNudgePosition(INTN Position, INTN NudgeValue, INTN ImageDimension, INTN ScreenDimension);
+//INTN RecalculateImageOffset(INTN AnimDimension, INTN ValueToScale, INTN ScreenDimensionToFit, INTN ThemeDesignDimension);
+static BOOLEAN IsImageWithinScreenLimits(INTN Value, INTN ImageDimension, INTN ScreenDimension);
+static INTN RepositionFixedByCenter(INTN Value, INTN ScreenDimension, INTN DesignScreenDimension);
+static INTN RepositionRelativeByGapsOnEdges(INTN Value, INTN ImageDimension, INTN ScreenDimension, INTN DesignScreenDimension);
+static INTN HybridRepositioning(INTN Edge, INTN Value, INTN ImageDimension, INTN ScreenDimension, INTN DesignScreenDimension);
 
 // UGA defines and variables
 
@@ -511,15 +515,15 @@ VOID BltClearScreen(IN BOOLEAN ShowBanner)
           // Check if screen size being used is different from theme origination size.
           // If yes, then recalculate the placement % value.
           // This is necessary because screen can be a different size, but banner is not scaled.
-          if ((GlobalConfig.ThemeDesignWidth != 0xFFFF) && (UGAWidth != GlobalConfig.ThemeDesignWidth)) {
-            BannerPosX = RecalculateImageOffset(BannerPlace.Width,GlobalConfig.BannerPosX,UGAWidth,GlobalConfig.ThemeDesignWidth);
+          BannerPosX = HybridRepositioning(GlobalConfig.BannerEdgeHorizontal, BannerPosX, BannerPlace.Width,  UGAWidth,  GlobalConfig.ThemeDesignWidth );
+          BannerPosY = HybridRepositioning(GlobalConfig.BannerEdgeVertical,   BannerPosY, BannerPlace.Height, UGAHeight, GlobalConfig.ThemeDesignHeight);
+
+          if (!IsImageWithinScreenLimits(BannerPosX, BannerPlace.Width, UGAWidth) || !IsImageWithinScreenLimits(BannerPosY, BannerPlace.Height, UGAHeight)) {
+            // This banner can't be displayed
+            return;
           }
-          if ((GlobalConfig.ThemeDesignHeight != 0xFFFF) && (UGAHeight != GlobalConfig.ThemeDesignHeight)) {
-            BannerPosY = RecalculateImageOffset(BannerPlace.Height,GlobalConfig.BannerPosY,UGAHeight,GlobalConfig.ThemeDesignHeight);
-          }
-          // Calculate the horizontal pixel to place the top left corner of the animation.
-          BannerPlace.XPos = ConvertEdgeAndPercentageToPixelPosition(GlobalConfig.BannerEdgeHorizontal, BannerPosX, BannerPlace.Width);
-          BannerPlace.YPos = ConvertEdgeAndPercentageToPixelPosition(GlobalConfig.BannerEdgeVertical, BannerPosY, BannerPlace.Height);
+          BannerPlace.XPos = BannerPosX;
+          BannerPlace.YPos = BannerPosY;
         }
       
         // Check if banner is required to be nudged.
@@ -733,6 +737,7 @@ VOID FreeAnime(GUI_ANIME *Anime)
    }
 }
 
+/* Replaced for now with Reposition* below
 INTN RecalculateImageOffset(INTN AnimDimension, INTN ValueToScale, INTN ScreenDimensionToFit, INTN ThemeDesignDimension)
 {
     INTN SuppliedGapDimensionPxDesigned=0;
@@ -773,34 +778,19 @@ INTN RecalculateImageOffset(INTN AnimDimension, INTN ValueToScale, INTN ScreenDi
       return ValueToScale;
     }
 }
+*/
 
-INTN ConvertEdgeAndPercentageToPixelPosition(INTN Edge, INTN DesiredPercentageFromEdge, INTN ImageDimension)
+static INTN ConvertEdgeAndPercentageToPixelPosition(INTN Edge, INTN DesiredPercentageFromEdge, INTN ImageDimension, INTN ScreenDimension)
 {
-  INTN value=0;
-
-  if (Edge == SCREEN_EDGE_LEFT) {
-      value = (UGAWidth * DesiredPercentageFromEdge) / 100;
-  } else if (Edge == SCREEN_EDGE_RIGHT) {
-      value = UGAWidth-((UGAWidth * DesiredPercentageFromEdge) / 100);
-    if ((value - ImageDimension) < 0) {
-      value = 0;
-    } else {
-      value -= ImageDimension;
-    }
-  } else if (Edge == SCREEN_EDGE_TOP) {
-      value = (UGAHeight * DesiredPercentageFromEdge) / 100;
-  } else if (Edge == SCREEN_EDGE_BOTTOM) {
-      value = UGAHeight - ((UGAHeight * DesiredPercentageFromEdge) / 100);
-    if ((value - ImageDimension) < 0) {
-      value = 0;
-    } else {
-      value -= ImageDimension;
-    }
+  if (Edge == SCREEN_EDGE_LEFT || Edge == SCREEN_EDGE_TOP) {
+      return ((ScreenDimension * DesiredPercentageFromEdge) / 100);
+  } else if (Edge == SCREEN_EDGE_RIGHT || Edge == SCREEN_EDGE_BOTTOM) {
+      return (ScreenDimension - ((ScreenDimension * DesiredPercentageFromEdge) / 100) - ImageDimension);
   }
-  return value;
+  return 0xFFFF; // to indicate that wrong edge was specified.
 }
 
-INTN CalculateNudgePosition(INTN Position, INTN NudgeValue, INTN ImageDimension, INTN ScreenDimension)
+static INTN CalculateNudgePosition(INTN Position, INTN NudgeValue, INTN ImageDimension, INTN ScreenDimension)
 {
   INTN value=Position;
   
@@ -811,6 +801,42 @@ INTN CalculateNudgePosition(INTN Position, INTN NudgeValue, INTN ImageDimension,
   }
   return value;
 }
+
+static BOOLEAN IsImageWithinScreenLimits(INTN Value, INTN ImageDimension, INTN ScreenDimension)
+{
+  return (Value >= 0 && Value + ImageDimension <= ScreenDimension);
+}
+
+static INTN RepositionFixedByCenter(INTN Value, INTN ScreenDimension, INTN DesignScreenDimension)
+{
+  return (Value + ((ScreenDimension - DesignScreenDimension) / 2));
+}
+
+static INTN RepositionRelativeByGapsOnEdges(INTN Value, INTN ImageDimension, INTN ScreenDimension, INTN DesignScreenDimension)
+{
+  return (Value * (ScreenDimension - ImageDimension) / (DesignScreenDimension - ImageDimension));
+}
+
+static INTN HybridRepositioning(INTN Edge, INTN Value, INTN ImageDimension, INTN ScreenDimension, INTN DesignScreenDimension)
+{
+  INTN pos, posThemeDesign;
+  
+  if (DesignScreenDimension == 0xFFFF || ScreenDimension == DesignScreenDimension) {
+    // Calculate the horizontal pixel to place the top left corner of the animation - by screen resolution
+    pos = ConvertEdgeAndPercentageToPixelPosition(Edge, Value, ImageDimension, ScreenDimension);
+  } else {
+    // Calculate the horizontal pixel to place the top left corner of the animation - by theme design resolution
+    posThemeDesign = ConvertEdgeAndPercentageToPixelPosition(Edge, Value, ImageDimension, DesignScreenDimension);
+    // Try repositioning by center first
+    pos = RepositionFixedByCenter(posThemeDesign, ScreenDimension, DesignScreenDimension);
+    // If out of edges, try repositioning by gaps on edges
+    if (!IsImageWithinScreenLimits(pos, ImageDimension, ScreenDimension)) {
+      pos = RepositionRelativeByGapsOnEdges(posThemeDesign, ImageDimension, ScreenDimension, DesignScreenDimension);
+    }
+  }
+  return pos;
+}
+
 
 VOID UpdateAnime(REFIT_MENU_SCREEN *Screen, EG_RECT *Place)
 {
@@ -829,7 +855,7 @@ VOID UpdateAnime(REFIT_MENU_SCREEN *Screen, EG_RECT *Place)
     }
     CompImage = egCreateImage(Screen->Film[0]->Width, Screen->Film[0]->Height, TRUE);
   }
-
+  
   // Retained for legacy themes without new anim placement options.
   x = Place->XPos + (Place->Width - CompImage->Width) / 2;
   y = Place->YPos + (Place->Height - CompImage->Height) / 2;
@@ -840,23 +866,20 @@ VOID UpdateAnime(REFIT_MENU_SCREEN *Screen, EG_RECT *Place)
   
   // Check a placement value has been specified
   if ((animPosX >=0 && animPosX <=100) && (animPosY >=0 && animPosY <=100)) {
-  
+
     // Check if screen size being used is different from theme origination size.
     // If yes, then recalculate the animation placement % value.
     // This is necessary because screen can be a different size, but anim is not scaled.
     // TO DO - Can this be run only once per anim run and not for every frame?
-    if ((GlobalConfig.ThemeDesignWidth != 0xFFFF) && (UGAWidth != GlobalConfig.ThemeDesignWidth)) {
-      animPosX = RecalculateImageOffset(Screen->Film[0]->Width,Screen->FilmX,UGAWidth,GlobalConfig.ThemeDesignWidth);
-    }
-    if ((GlobalConfig.ThemeDesignHeight != 0xFFFF) && (UGAHeight != GlobalConfig.ThemeDesignHeight)) {
-      animPosY = RecalculateImageOffset(Screen->Film[0]->Height,Screen->FilmY,UGAHeight,GlobalConfig.ThemeDesignHeight);
-    }
- 
-    // Calculate the horizontal pixel to place the top left corner of the animation.
-    x = ConvertEdgeAndPercentageToPixelPosition(Screen->ScreenEdgeHorizontal,animPosX,Screen->Film[0]->Width);
-    y = ConvertEdgeAndPercentageToPixelPosition(Screen->ScreenEdgeVertical,animPosY,Screen->Film[0]->Height);
+    x = HybridRepositioning(Screen->ScreenEdgeHorizontal, animPosX, Screen->Film[0]->Width,  UGAWidth,  GlobalConfig.ThemeDesignWidth );
+    y = HybridRepositioning(Screen->ScreenEdgeVertical,   animPosY, Screen->Film[0]->Height, UGAHeight, GlobalConfig.ThemeDesignHeight);
   }
-
+  
+  if (!IsImageWithinScreenLimits(x, Screen->Film[0]->Width, UGAWidth) || !IsImageWithinScreenLimits(y, Screen->Film[0]->Height, UGAHeight)) {
+    // This anime can't be displayed
+    return;
+  }
+  
   // Check if the theme.plist setting for allowing an anim to be moved horizontally in the quest 
   // to avoid overlapping the menu text on menu pages at lower resolutions is set.
   if ((Screen->ID > 1) && (LayoutAnimMoveForMenuX != 0)) { // these screens have text menus which the anim may interfere with.
@@ -897,6 +920,16 @@ VOID UpdateAnime(REFIT_MENU_SCREEN *Screen, EG_RECT *Place)
     Screen->CurrentFrame = 0;
   }
   Screen->LastDraw = Now;
+}
+
+
+VOID InitAnime(REFIT_MENU_SCREEN *Screen)
+{
+  if (!Screen || !GuiAnime) return;
+
+  Screen->AnimeRun = Screen->Once;
+  Screen->CurrentFrame = 0;
+  Screen->LastDraw = 0;
 }
 
 BOOLEAN GetAnime(REFIT_MENU_SCREEN *Screen)

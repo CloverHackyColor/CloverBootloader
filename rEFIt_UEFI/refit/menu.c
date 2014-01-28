@@ -2258,7 +2258,9 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
       if (!DownButtonImage) {
         DownButtonImage = egCreateFilledImage(16, 20, TRUE, &StdBackgroundPixel);
       }
-
+      
+      InitAnime(Screen);
+      
       break;
       
     case MENU_FUNCTION_CLEANUP:
@@ -2632,6 +2634,8 @@ static VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
 	  // structV1 = structV2 causes MS compiler to insert memcpy() RTL call -> replaced with CopyMem()
       //Screen->FilmPlace = BannerPlace;
 	  CopyMem(&Screen->FilmPlace, &BannerPlace, sizeof(BannerPlace)); 
+      
+      InitAnime(Screen);
       
  //     DBG("main menu inited\n");
       break;
