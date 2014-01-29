@@ -2109,6 +2109,42 @@ VOID DrawMenuText(IN CHAR16 *Text, IN INTN SelectedWidth, IN INTN XPos, IN INTN 
 }
 
 
+VOID FreeScrollBar(VOID)
+{
+  if (ScrollbarBackgroundImage) {
+    FreePool(ScrollbarBackgroundImage);
+    ScrollbarBackgroundImage = NULL;
+  }
+  if (BarStartImage) {
+    FreePool(BarStartImage);
+    BarStartImage = NULL;
+  }
+  if (BarEndImage) {
+    FreePool(BarEndImage);
+    BarEndImage = NULL;
+  }
+  if (ScrollbarImage) {
+    FreePool(ScrollbarImage);
+    ScrollbarImage = NULL;
+  }
+  if (ScrollStartImage) {
+    FreePool(ScrollStartImage);
+    ScrollStartImage = NULL;
+  }
+  if (ScrollEndImage) {
+    FreePool(ScrollEndImage);
+    ScrollEndImage = NULL;
+  }
+  if (UpButtonImage) {
+    FreePool(UpButtonImage);
+    UpButtonImage = NULL;
+  }
+  if (DownButtonImage) {
+    FreePool(DownButtonImage);
+    DownButtonImage = NULL;
+  }
+}
+
 VOID InitBar(VOID)
 {
   if (ThemeDir) {

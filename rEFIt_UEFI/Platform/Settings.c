@@ -1701,6 +1701,7 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
     egFreeImage(FontImage);
     FontImage = NULL;
   }
+  FreeScrollBar();
 
   // if NULL parameter, quit after setting default values
   if (dictPointer == NULL) {

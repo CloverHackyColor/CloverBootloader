@@ -689,7 +689,9 @@ UINTN RunMainMenu(IN REFIT_MENU_SCREEN *Screen, IN INTN DefaultSelection, OUT RE
 VOID DrawMenuText(IN CHAR16 *Text, IN INTN SelectedWidth, IN INTN XPos, IN INTN YPos, IN INTN Cursor);
 VOID ReinitVolumes(VOID);
 BOOLEAN ReadAllKeyStrokes(VOID);
-VOID  OptionsMenu(OUT REFIT_MENU_ENTRY  **ChosenEntry);
+VOID OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry);
+VOID FreeScrollBar(VOID);
+
 //
 // config module
 //

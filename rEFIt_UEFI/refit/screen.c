@@ -435,6 +435,12 @@ VOID BltClearScreen(IN BOOLEAN ShowBanner)
     BigBack = egLoadImage(ThemeDir, GlobalConfig.BackgroundName, FALSE);
   }
 
+  if (BackgroundImage != NULL && (BackgroundImage->Width != UGAWidth || BackgroundImage->Height != UGAHeight)) {
+    // Resolution changed
+    FreePool(BackgroundImage);
+    BackgroundImage = NULL;
+  }
+  
   if (BackgroundImage == NULL) {
     if (GlobalConfig.Theme) { // regular theme
       BackgroundImage = egCreateFilledImage(UGAWidth, UGAHeight, FALSE, &BlueBackgroundPixel); 
@@ -442,7 +448,7 @@ VOID BltClearScreen(IN BOOLEAN ShowBanner)
       BackgroundImage = egCreateFilledImage(UGAWidth, UGAHeight, FALSE, &StdBackgroundPixel); 
     }
   }
-
+  
   if (BigBack != NULL) {
     switch (GlobalConfig.BackgroundScale) {
       case Scale:
