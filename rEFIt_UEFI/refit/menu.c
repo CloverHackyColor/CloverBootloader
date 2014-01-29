@@ -2260,7 +2260,7 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
   switch (Function) {
       
     case MENU_FUNCTION_INIT:
-      
+      InitAnime(Screen);      
       egGetScreenSize(&UGAWidth, &UGAHeight);
       SwitchToGraphicsAndClear();
       
@@ -2324,7 +2324,6 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
         EntriesPosY += TextHeight;  // also add a blank line
       }
       InitBar();
-      InitAnime(Screen);
       
       break;
       
@@ -2560,6 +2559,7 @@ VOID MainMenuVerticalStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State,
   switch (Function) {
       
     case MENU_FUNCTION_INIT:
+      InitAnime(Screen);
       egGetScreenSize(&UGAWidth, &UGAHeight);
       SwitchToGraphicsAndClear();
       //adjustable by theme.plist?
@@ -2604,7 +2604,6 @@ VOID MainMenuVerticalStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State,
       CopyMem(&Screen->FilmPlace, &BannerPlace, sizeof(BannerPlace)); 
     
       InitBar();
-      InitAnime(Screen);
       break;
       
     case MENU_FUNCTION_CLEANUP:
@@ -2714,6 +2713,7 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
   switch (Function) {
       
     case MENU_FUNCTION_INIT:
+      InitAnime(Screen);      
       egGetScreenSize(&UGAWidth, &UGAHeight);
       SwitchToGraphicsAndClear();
       
@@ -2755,8 +2755,6 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
       // initial painting
       InitSelection();
       CopyMem(&Screen->FilmPlace, &BannerPlace, sizeof(BannerPlace)); 
-      
-      InitAnime(Screen);
       
  //     DBG("main menu inited\n");
       break;

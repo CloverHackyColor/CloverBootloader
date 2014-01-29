@@ -846,7 +846,7 @@ VOID UpdateAnime(REFIT_MENU_SCREEN *Screen, EG_RECT *Place)
   //INTN LayoutAnimMoveForMenuX = 0;
   INTN MenuWidth = 50;
   
-  if (!Screen || !Screen->AnimeRun || GlobalConfig.TextOnly) return;
+  if (!Screen || !Screen->AnimeRun || !Screen->Film || GlobalConfig.TextOnly) return;
   if (!CompImage ||
       (CompImage->Width != Screen->Film[0]->Width) ||
       (CompImage->Height != Screen->Film[0]->Height)){
@@ -925,7 +925,47 @@ VOID UpdateAnime(REFIT_MENU_SCREEN *Screen, EG_RECT *Place)
 
 VOID InitAnime(REFIT_MENU_SCREEN *Screen)
 {
-  if (!Screen || GlobalConfig.TextOnly || Screen->Film == NULL || Screen->Film[0] == NULL) return;
+  CHAR16      FileName[256];
+  CHAR16      *Path;
+  INTN        i;
+  EG_IMAGE    *p = NULL;
+  EG_IMAGE    *Last = NULL;
+  GUI_ANIME   *Anime;
+  
+  if (!Screen || GlobalConfig.TextOnly) return;
+  
+  // Check if anime was already loaded, and if it wasn't then load it
+  if (Screen->AnimeRun == TRUE && Screen->Film == NULL) {
+    for (Anime = GuiAnime; Anime != NULL && Anime->ID != Screen->ID; Anime = Anime->Next);
+    // Look through contents of the directory
+    if (Anime && (Path = Anime->Path) && (Screen->Film = (EG_IMAGE**)AllocateZeroPool(Anime->Frames * sizeof(VOID*)))) {
+      for (i=0; i<Anime->Frames; i++) {
+        UnicodeSPrint(FileName, 512, L"%s\\%s_%03d.png", Path, Path, i);
+        //DBG("Try to load file %s\n", FileName);
+        p = egLoadImage(ThemeDir, FileName, TRUE);
+        if (!p) {
+          p = Last;
+          if (!p) break;
+        } else {
+          Last = p;
+        }
+        Screen->Film[i] = p;
+      }
+      if (Screen->Film[0] != NULL) {
+        Screen->Frames = i;
+        DBG(" found %d frames of the anime\n", i);
+        // Create background frame
+        Screen->Film[i] = egCreateImage(Screen->Film[0]->Width, Screen->Film[0]->Height, FALSE);
+      } else {
+        DBG("Film[0] == NULL\n");
+      }
+    }
+  }
+  
+  if (Screen->Film == NULL || Screen->Film[0] == NULL) {
+    Screen->AnimeRun = FALSE;
+    return;
+  }
   
   Screen->AnimeRun = TRUE;
   Screen->CurrentFrame = 0;
@@ -934,11 +974,6 @@ VOID InitAnime(REFIT_MENU_SCREEN *Screen)
 
 BOOLEAN GetAnime(REFIT_MENU_SCREEN *Screen)
 {
-  CHAR16      FileName[256];
-  CHAR16      *Path;
-  INTN        i, N;
-  EG_IMAGE    *p = NULL;
-  EG_IMAGE    *Last = NULL;
   GUI_ANIME   *Anime;
   
   if (!Screen) return FALSE;
@@ -950,43 +985,13 @@ BOOLEAN GetAnime(REFIT_MENU_SCREEN *Screen)
   
   if (!GuiAnime) return FALSE;
   
-  for (Anime = GuiAnime; Anime != NULL; Anime = Anime->Next) {
-    if (Anime->ID == Screen->ID) {
-      break;
-    }
-  }
+  for (Anime = GuiAnime; Anime != NULL && Anime->ID != Screen->ID; Anime = Anime->Next);
   if (Anime == NULL) {
     return FALSE;
   }
   
-  // look through contents of the directory
-  Path = Anime->Path;
-  if (!Path) return FALSE;
-  N = Anime->Frames;
-  DBG("Use anime=%s frames=%d\n", Path, N);
-  Screen->Film = (EG_IMAGE**)AllocateZeroPool(N * sizeof(VOID*));
-  for (i=0; i<N; i++){
+  DBG("Use anime=%s frames=%d\n", Anime->Path, Anime->Frames);
   
-    UnicodeSPrint(FileName, 512, L"%s\\%s_%03d.png", Path, Path, i);
-//    DBG("Try to load file %s\n", FileName);
-    p = egLoadImage(ThemeDir, FileName, TRUE);
-    if (!p) {
-      p = Last;
-      if (!p) break;
-    } else {
-      Last = p;
-    }
-    Screen->Film[i] = p;    
-  }
-  if (Screen->Film[0] == NULL) {
-    DBG("Film[0] == NULL\n");
-    return FALSE;
-  }
-
-  Screen->Frames = i;
-    //Create background frame
-  Screen->Film[i] = egCreateImage(Screen->Film[0]->Width, Screen->Film[0]->Height, FALSE);
-
   Screen->FrameTime = Anime->FrameTime;
   Screen->FilmX = Anime->FilmX;
   Screen->FilmY = Anime->FilmY;
@@ -994,9 +999,6 @@ BOOLEAN GetAnime(REFIT_MENU_SCREEN *Screen)
   Screen->ScreenEdgeVertical = Anime->ScreenEdgeVertical;
   Screen->NudgeX = Anime->NudgeX;
   Screen->NudgeY = Anime->NudgeY;
-  DBG(" found %d frames of the anime\n", i);
-  Screen->CurrentFrame = 0;
-  Screen->LastDraw = 0;
   Screen->Once = Anime->Once;
   return TRUE;
 }
