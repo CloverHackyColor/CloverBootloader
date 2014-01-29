@@ -528,6 +528,11 @@ VOID egDrawImageArea(IN EG_IMAGE *Image,
 {
   if (!egHasGraphics || !Image) return;
   
+  if (ScreenPosX < 0 || ScreenPosX >= UGAHeight || ScreenPosY < 0 || ScreenPosY >= UGAHeight) {
+    // This is outside of screen area
+    return;
+  }
+  
   if (AreaWidth == 0) {
     AreaWidth = Image->Width;
   }

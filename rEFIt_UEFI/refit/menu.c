@@ -153,13 +153,12 @@ static EG_RECT BarEnd;
 static EG_RECT ScrollStart;
 static EG_RECT ScrollEnd;
 static EG_RECT ScrollTotal;
-static EG_RECT UpButton;
-static EG_RECT DownButton;
-static EG_RECT ScrollbarBackground;
-static EG_RECT Scrollbar;
-static EG_RECT ScrollbarOldPointerPlace;
-static EG_RECT ScrollbarNewPointerPlace;
-
+EG_RECT UpButton;
+EG_RECT DownButton;
+EG_RECT ScrollbarBackground;
+EG_RECT Scrollbar;
+EG_RECT ScrollbarOldPointerPlace;
+EG_RECT ScrollbarNewPointerPlace;
 
 
 INPUT_ITEM *InputItems = NULL;
@@ -2705,7 +2704,6 @@ VOID MainMenuVerticalStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State,
       break;
   }
 }
-#endif
 
 
 //static 
