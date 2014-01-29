@@ -105,19 +105,12 @@ static CHAR16 ArrowDown[2] = { ARROW_DOWN, 0 };
 BOOLEAN MainAnime = FALSE;
 
 BOOLEAN ScrollEnabled = FALSE;
-EG_RECT UpButton;
-EG_RECT DownButton;
-EG_RECT ScrollbarBackground;
-EG_RECT Scrollbar;
 BOOLEAN IsDragging = FALSE;
-EG_RECT ScrollbarOldPointerPlace;
-EG_RECT ScrollbarNewPointerPlace;
 
 INTN ScrollWidth = 16;
 INTN ScrollButtonsHeight = 20;
 INTN ScrollBarDecorationsHeight = 5;
 INTN ScrollScrollDecorationsHeight = 7;
-
 INTN ScrollbarYMovement;
 
 
@@ -134,18 +127,17 @@ EG_IMAGE *SelectionImages[4] = { NULL, NULL, NULL, NULL };
 static EG_IMAGE *TextBuffer = NULL;
 
 EG_PIXEL SelectionBackgroundPixel = { 0xef, 0xef, 0xef, 0xff }; //non-trasparent
-//EG_PIXEL TransBackgroundPixel = {0, 0, 0, 0};
 
 static INTN row0Count, row0PosX, row0PosXRunning;
 static INTN row1Count, row1PosX, row1PosXRunning;
 static INTN *itemPosX = NULL;
 static INTN *itemPosY = NULL;
 static INTN row0PosY, row1PosY, textPosY;
-static   EG_IMAGE* MainImage;
-static   INTN OldX = 0, OldY = 0;
-static   INTN OldTextWidth = 0;
-static   UINTN OldRow = 0;
-static   INTN OldTimeoutTextWidth = 0;
+static EG_IMAGE* MainImage;
+static INTN OldX = 0, OldY = 0;
+static INTN OldTextWidth = 0;
+static UINTN OldRow = 0;
+static INTN OldTimeoutTextWidth = 0;
 static INTN MenuWidth, EntriesPosX, EntriesPosY, TimeoutPosY;
 static INTN EntriesWidth, EntriesHeight, EntriesGap;
 static EG_IMAGE* ScrollbarImage = NULL;
@@ -161,6 +153,12 @@ static EG_RECT BarEnd;
 static EG_RECT ScrollStart;
 static EG_RECT ScrollEnd;
 static EG_RECT ScrollTotal;
+static EG_RECT UpButton;
+static EG_RECT DownButton;
+static EG_RECT ScrollbarBackground;
+static EG_RECT Scrollbar;
+static EG_RECT ScrollbarOldPointerPlace;
+static EG_RECT ScrollbarNewPointerPlace;
 
 
 
@@ -1290,7 +1288,7 @@ static VOID InitScroll(OUT SCROLL_STATE *State, IN INTN ItemCount, IN UINTN MaxC
 {
   State->LastSelection = State->CurrentSelection = 0;
   State->MaxIndex = (INTN)MaxCount - 1;
-  State->MaxScroll = (INTN)ItemCount - 1;
+  State->MaxScroll = ItemCount - 1;
   State->FirstVisible = 0;
   
   if (VisibleSpace == 0)
@@ -2142,28 +2140,28 @@ VOID InitBar(VOID)
   }
   
   if (!BarStartImage) {
-    BarStartImage = egCreateFilledImage(BAR_WIDTH, 5, TRUE, &StdBackgroundPixel);
+    BarStartImage = egCreateFilledImage(ScrollWidth, 5, TRUE, &StdBackgroundPixel);
   }
   if (!BarEndImage) {
-    BarEndImage = egCreateFilledImage(BAR_WIDTH, 5, TRUE, &StdBackgroundPixel);
+    BarEndImage = egCreateFilledImage(ScrollWidth, 5, TRUE, &StdBackgroundPixel);
   }
   if (!ScrollbarBackgroundImage) {
-    ScrollbarBackgroundImage = egCreateFilledImage(BAR_WIDTH, 1, TRUE, &DarkBackgroundPixel);
+    ScrollbarBackgroundImage = egCreateFilledImage(ScrollWidth, 1, TRUE, &DarkBackgroundPixel);
   }
   if (!ScrollbarImage) {
-    ScrollbarImage = egCreateFilledImage(BAR_WIDTH, 1, TRUE, &StdBackgroundPixel);
+    ScrollbarImage = egCreateFilledImage(ScrollWidth, 1, TRUE, &StdBackgroundPixel);
   }
   if (!ScrollStartImage) {
-    ScrollStartImage = egCreateFilledImage(BAR_WIDTH, 7, TRUE, &StdBackgroundPixel);
+    ScrollStartImage = egCreateFilledImage(ScrollWidth, 7, TRUE, &StdBackgroundPixel);
   }
   if (!ScrollEndImage) {
-    ScrollEndImage = egCreateFilledImage(BAR_WIDTH, 7, TRUE, &StdBackgroundPixel);
+    ScrollEndImage = egCreateFilledImage(ScrollWidth, 7, TRUE, &StdBackgroundPixel);
   }
   if (!UpButtonImage) {
-    UpButtonImage = egCreateFilledImage(BAR_WIDTH, 20, TRUE, &StdBackgroundPixel);
+    UpButtonImage = egCreateFilledImage(ScrollWidth, 20, TRUE, &StdBackgroundPixel);
   }
   if (!DownButtonImage) {
-    DownButtonImage = egCreateFilledImage(BAR_WIDTH, 20, TRUE, &StdBackgroundPixel);
+    DownButtonImage = egCreateFilledImage(ScrollWidth, 20, TRUE, &StdBackgroundPixel);
   }
 }
 
@@ -2224,7 +2222,8 @@ VOID ScrollingBar(IN SCROLL_STATE *State)
   EG_IMAGE* Total;
   INTN  i;
   
-  if (State->MaxFirstVisible != 0) {
+  ScrollEnabled = (State->MaxFirstVisible != 0);
+  if (ScrollEnabled) {
     //VOID egComposeImage(IN OUT EG_IMAGE *CompImage, IN EG_IMAGE *TopImage, IN INTN PosX, IN INTN PosY)
     Total = egCreateFilledImage(ScrollTotal.Width, ScrollTotal.Height, TRUE, &MenuBackgroundPixel);
     for (i = 0; i < ScrollbarBackground.Height; i++) {
@@ -2244,7 +2243,7 @@ VOID ScrollingBar(IN SCROLL_STATE *State)
     egComposeImage(Total, ScrollStartImage, ScrollStart.XPos - ScrollTotal.XPos, ScrollStart.YPos - ScrollTotal.YPos);
     egComposeImage(Total, ScrollEndImage, ScrollEnd.XPos - ScrollTotal.XPos, ScrollEnd.YPos - ScrollTotal.YPos);
     
-    BltImageAlpha(Total, ScrollTotal.XPos, ScrollTotal.YPos, &MenuBackgroundPixel, BAR_WIDTH);
+    BltImageAlpha(Total, ScrollTotal.XPos, ScrollTotal.YPos, &MenuBackgroundPixel, ScrollWidth);
     egFreeImage(Total);
   }
 }
@@ -2553,15 +2552,11 @@ VOID CountItems(IN REFIT_MENU_SCREEN *Screen)
   }
 }
 
-#if 1 //NOT_READY
 VOID MainMenuVerticalStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINTN Function, IN CHAR16 *ParamText)
 {
   INTN i;
   INTN row0PosYRunning;
-//  INTN ItemWidth = 0;
-//  INTN X;
   INTN VisibleHeight = 0; //assume vertical layout
-//  CHAR16 ResultString[256];
   
   switch (Function) {
       
