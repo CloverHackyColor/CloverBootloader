@@ -336,6 +336,7 @@ struct _refit_menu_screen {
   REFIT_MENU_ENTRY  **Entries;
   INTN              TimeoutSeconds;
   CHAR16            *TimeoutText;
+  CHAR16            *Theme;
   BOOLEAN           AnimeRun;
   BOOLEAN           Once;
   UINT64            LastDraw;

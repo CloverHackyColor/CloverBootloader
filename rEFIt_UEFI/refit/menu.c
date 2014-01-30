@@ -64,7 +64,7 @@
 
 // scrolling definitions
 static INTN MaxItemOnScreen = -1;
-REFIT_MENU_SCREEN OptionMenu  = {4, L"Options", NULL, 0, NULL, 0, NULL, 0, NULL, FALSE, FALSE, 0, 0, 0, 0, {0, 0, 0, 0}, NULL };
+REFIT_MENU_SCREEN OptionMenu  = {4, L"Options", NULL, 0, NULL, 0, NULL, 0, NULL, NULL, FALSE, FALSE, 0, 0, 0, 0, {0, 0, 0, 0}, NULL };
 extern REFIT_MENU_ENTRY MenuEntryReturn;
 extern UINTN            ThemesNum;
 extern CHAR16            *ThemesList[];
@@ -4086,12 +4086,12 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
   //remember, if you extended this menu then change procedures
   // FillInputs and ApplyInputs
   
+  if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_MENU_TITLE_IMAGE)) {
+    OptionMenu.TitleImage = BuiltinIcon(BUILTIN_ICON_FUNC_OPTIONS);
+  } else {
+    OptionMenu.TitleImage = NULL;
+  }
   if (OptionMenu.EntryCount == 0) {
-    if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_MENU_TITLE_IMAGE)) {
-      OptionMenu.TitleImage = BuiltinIcon(BUILTIN_ICON_FUNC_OPTIONS);
-    } else {
-      OptionMenu.TitleImage = NULL;
-    }
     OptionMenu.ID = SCREEN_OPTIONS;
     OptionMenu.AnimeRun = GetAnime(&OptionMenu); //FALSE;
     Flags = AllocateZeroPool(255);

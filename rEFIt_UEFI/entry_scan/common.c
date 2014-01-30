@@ -330,7 +330,7 @@ extern REFIT_MENU_ENTRY MenuEntryReturn;
 
 STATIC REFIT_MENU_ENTRY  *AlertMessageEntries[] = { &MenuEntryReturn };
 STATIC REFIT_MENU_SCREEN  AlertMessageMenu = {0, NULL, NULL, 0, NULL, 1, AlertMessageEntries,
-                                              0, NULL, FALSE, FALSE, 0, 0, 0, 0,
+                                              0, NULL, NULL, FALSE, FALSE, 0, 0, 0, 0,
                                               { 0, 0, 0, 0 } , NULL };
 
 // Display an alert message
@@ -361,7 +361,7 @@ STATIC REFIT_MENU_ENTRY   NoMessageEntry = { L"No", TAG_NO, 0, 0, 0, NULL, NULL,
   { 0, 0, 0, 0 }, ActionEnter, ActionNone, ActionNone, NULL };
 STATIC REFIT_MENU_ENTRY  *YesNoMessageEntries[] = { &YesMessageEntry, &NoMessageEntry };
 STATIC REFIT_MENU_SCREEN  YesNoMessageMenu = {0, NULL, NULL, 0, NULL, 2, YesNoMessageEntries,
-                                              0, NULL, FALSE, FALSE, 0, 0, 0, 0,
+                                              0, NULL, NULL, FALSE, FALSE, 0, 0, 0, 0,
                                               { 0, 0, 0, 0 } , NULL };
 
 // Display a yes/no prompt
@@ -412,7 +412,7 @@ BOOLEAN AskUserForFilePathFromDir(IN CHAR16 *Title OPTIONAL, IN REFIT_VOLUME *Vo
 BOOLEAN AskUserForFilePathFromVolumes(IN CHAR16 *Title OPTIONAL, OUT EFI_DEVICE_PATH_PROTOCOL **Result)
 {
   REFIT_MENU_SCREEN   Menu = {0, L"Please Select File...", NULL, 0, NULL, 0, NULL,
-                              0, NULL, FALSE, FALSE, 0, 0, 0, 0,
+                              0, NULL, NULL, FALSE, FALSE, 0, 0, 0, 0,
                               { 0, 0, 0, 0 }, NULL};
   REFIT_MENU_ENTRY  **Entries;
   REFIT_MENU_ENTRY   *EntryPtr;

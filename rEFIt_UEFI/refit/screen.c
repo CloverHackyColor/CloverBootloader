@@ -916,20 +916,32 @@ VOID InitAnime(REFIT_MENU_SCREEN *Screen)
   
   if (!Screen || GlobalConfig.TextOnly) return;
   
-  // Will be set later depending on newstyle/oldstyle positioning
-  // For newstyle, we will set these in this function
-  // For oldstyle, it will be set after banner/menutitle positions are known
-  Screen->FilmPlace.XPos = 0;
-  Screen->FilmPlace.YPos = 0;
-  Screen->FilmPlace.Width = 0;
-  Screen->FilmPlace.Height = 0;
+  // Find anime for current screen
+  for (Anime = GuiAnime; Anime != NULL && Anime->ID != Screen->ID; Anime = Anime->Next);
   
-  // Check if anime was already loaded, and if it wasn't then load it
-  if (Screen->AnimeRun == TRUE && Screen->Film == NULL) {
-    // Find anime for current screen
-    for (Anime = GuiAnime; Anime != NULL && Anime->ID != Screen->ID; Anime = Anime->Next);
+  // Check if we should clear old film vars (no anime or anime path changed)
+  if (!Anime || !Screen->Film || !GlobalConfig.Theme || !Screen->Theme || (!gThemeChanged && StrCmp(GlobalConfig.Theme, Screen->Theme) != 0)) {
+    if (Screen->Film) {
+      FreePool(Screen->Film);
+      Screen->Film = NULL;
+    }
+    if (Screen->Theme) {
+      FreePool(Screen->Theme);
+      Screen->Theme = NULL;
+    }
+    // FilmPlace will be set later, depending on newstyle/oldstyle positioning
+    // For newstyle, we will set these in this function
+    // For oldstyle, it will be set after banner/menutitle positions are known
+    Screen->FilmPlace.XPos = 0;
+    Screen->FilmPlace.YPos = 0;
+    Screen->FilmPlace.Width = 0;
+    Screen->FilmPlace.Height = 0;
+  }
+  
+  // Check if we should load anime files
+  if (Anime && Screen->Film == NULL) {
     // Look through contents of the directory
-    if (Anime && (Path = Anime->Path) && (Screen->Film = (EG_IMAGE**)AllocateZeroPool(Anime->Frames * sizeof(VOID*)))) {
+    if ((Path = Anime->Path) && (Screen->Film = (EG_IMAGE**)AllocateZeroPool(Anime->Frames * sizeof(VOID*)))) {
       for (i=0; i<Anime->Frames; i++) {
         UnicodeSPrint(FileName, 512, L"%s\\%s_%03d.png", Path, Path, i);
         //DBG("Try to load file %s\n", FileName);
@@ -967,32 +979,27 @@ VOID InitAnime(REFIT_MENU_SCREEN *Screen)
       Screen->FilmPlace.Width = Screen->Film[0]->Width;
       Screen->FilmPlace.Height = Screen->Film[0]->Height;
     }
+    
+    Screen->FrameTime = Anime->FrameTime;
+    Screen->Once = Anime->Once;
+    Screen->Theme = AllocateCopyPool(StrSize(GlobalConfig.Theme), GlobalConfig.Theme);
   }
   
-  if (Screen->Film == NULL || Screen->Film[0] == NULL) {
-    if (Screen->AnimeRun) {
-      Screen->AnimeRun = FALSE;
-    }
-    return;
-  }
-  
-  Screen->AnimeRun = TRUE;
-  Screen->CurrentFrame = 0;
-  Screen->LastDraw = 0;
+  if (Screen->Film != NULL && Screen->Film[0] != NULL) {
+    // Anime seems OK, init it
+    Screen->AnimeRun = TRUE;
+    Screen->CurrentFrame = 0;
+    Screen->LastDraw = 0;
+  } else {
+    Screen->AnimeRun = FALSE;
+  } 
 }
 
 BOOLEAN GetAnime(REFIT_MENU_SCREEN *Screen)
 {
   GUI_ANIME   *Anime;
   
-  if (!Screen) return FALSE;
-  
-  if (Screen->Film) {
-    FreePool(Screen->Film);
-    Screen->Film = NULL;
-  }
-  
-  if (!GuiAnime) return FALSE;
+  if (!Screen || !GuiAnime) return FALSE;
   
   for (Anime = GuiAnime; Anime != NULL && Anime->ID != Screen->ID; Anime = Anime->Next);
   if (Anime == NULL) {
@@ -1001,8 +1008,6 @@ BOOLEAN GetAnime(REFIT_MENU_SCREEN *Screen)
   
   DBG("Use anime=%s frames=%d\n", Anime->Path, Anime->Frames);
   
-  Screen->FrameTime = Anime->FrameTime;
-  Screen->Once = Anime->Once;
   return TRUE;
 }
 
