@@ -420,38 +420,38 @@ VOID BltClearScreen(IN BOOLEAN ShowBanner)
         CopyMem(&BlueBackgroundPixel, &Banner->PixelData[0], sizeof(EG_PIXEL));
       }
     }
+  }
     
-    // Init banner place
-    BanHeight = ((UGAHeight - LAYOUT_TOTAL_HEIGHT) >> 1) + LAYOUT_BANNER_HEIGHT;
-    if (ShowBanner && !(GlobalConfig.HideUIFlags & HIDEUI_FLAG_BANNER)) {
-      if (Banner != NULL){
-        BannerPlace.Width = Banner->Width;
-        BannerPlace.Height = (BanHeight >= Banner->Height) ? (INTN)Banner->Height : BanHeight;
-        
-        if ((GlobalConfig.BannerPosX == 0xFFFF) && (GlobalConfig.BannerPosY == 0xFFFF)) {
-          // Use rEFIt default
-          BannerPlace.XPos = (UGAWidth - Banner->Width) >> 1;
-          BannerPlace.YPos = (BanHeight >= Banner->Height) ? (BanHeight - Banner->Height) : 0;
-        } else {
-          // Has banner position been specified in the theme.plist?
-          if ((GlobalConfig.BannerPosX >=0 && GlobalConfig.BannerPosX <=100) && (GlobalConfig.BannerPosY >=0 && GlobalConfig.BannerPosY <=100)) {
-            // Check if screen size being used is different from theme origination size.
-            // If yes, then recalculate the placement % value.
-            // This is necessary because screen can be a different size, but banner is not scaled.
-            BannerPlace.XPos = HybridRepositioning(GlobalConfig.BannerEdgeHorizontal, GlobalConfig.BannerPosX, BannerPlace.Width,  UGAWidth,  GlobalConfig.ThemeDesignWidth );
-            BannerPlace.YPos = HybridRepositioning(GlobalConfig.BannerEdgeVertical,   GlobalConfig.BannerPosY, BannerPlace.Height, UGAHeight, GlobalConfig.ThemeDesignHeight);
-          }
-          // Check if banner is required to be nudged.
-          BannerPlace.XPos = CalculateNudgePosition(BannerPlace.XPos, GlobalConfig.BannerNudgeX, Banner->Width,  UGAWidth);
-          BannerPlace.YPos = CalculateNudgePosition(BannerPlace.YPos, GlobalConfig.BannerNudgeY, Banner->Height, UGAHeight);
+  // Init banner place
+  BanHeight = ((UGAHeight - LAYOUT_TOTAL_HEIGHT) >> 1) + LAYOUT_BANNER_HEIGHT;
+  if (ShowBanner && !(GlobalConfig.HideUIFlags & HIDEUI_FLAG_BANNER)) {
+    if (Banner != NULL){
+      BannerPlace.Width = Banner->Width;
+      BannerPlace.Height = (BanHeight >= Banner->Height) ? (INTN)Banner->Height : BanHeight;
+      
+      if ((GlobalConfig.BannerPosX == 0xFFFF) && (GlobalConfig.BannerPosY == 0xFFFF)) {
+        // Use rEFIt default
+        BannerPlace.XPos = (UGAWidth - Banner->Width) >> 1;
+        BannerPlace.YPos = (BanHeight >= Banner->Height) ? (BanHeight - Banner->Height) : 0;
+      } else {
+        // Has banner position been specified in the theme.plist?
+        if ((GlobalConfig.BannerPosX >=0 && GlobalConfig.BannerPosX <=100) && (GlobalConfig.BannerPosY >=0 && GlobalConfig.BannerPosY <=100)) {
+          // Check if screen size being used is different from theme origination size.
+          // If yes, then recalculate the placement % value.
+          // This is necessary because screen can be a different size, but banner is not scaled.
+          BannerPlace.XPos = HybridRepositioning(GlobalConfig.BannerEdgeHorizontal, GlobalConfig.BannerPosX, BannerPlace.Width,  UGAWidth,  GlobalConfig.ThemeDesignWidth );
+          BannerPlace.YPos = HybridRepositioning(GlobalConfig.BannerEdgeVertical,   GlobalConfig.BannerPosY, BannerPlace.Height, UGAHeight, GlobalConfig.ThemeDesignHeight);
         }
+        // Check if banner is required to be nudged.
+        BannerPlace.XPos = CalculateNudgePosition(BannerPlace.XPos, GlobalConfig.BannerNudgeX, Banner->Width,  UGAWidth);
+        BannerPlace.YPos = CalculateNudgePosition(BannerPlace.YPos, GlobalConfig.BannerNudgeY, Banner->Height, UGAHeight);
       }
-    } else {
-      BannerPlace.XPos = 0;
-      BannerPlace.YPos = 0;
-      BannerPlace.Width = UGAWidth;
-      BannerPlace.Height = BanHeight;
     }
+  } else {
+    BannerPlace.XPos = 0;
+    BannerPlace.YPos = 0;
+    BannerPlace.Width = UGAWidth;
+    BannerPlace.Height = BanHeight;
   }
   
   if (!Banner) {
@@ -964,25 +964,25 @@ VOID InitAnime(REFIT_MENU_SCREEN *Screen)
       }
     }
     
-    // Check if a new style placement value has been specified
-    if ((Anime->FilmX >=0 && Anime->FilmX <=100) && (Anime->FilmY >=0 && Anime->FilmY <=100)) {
-      // Check if screen size being used is different from theme origination size.
-      // If yes, then recalculate the animation placement % value.
-      // This is necessary because screen can be a different size, but anim is not scaled.
-      Screen->FilmPlace.XPos = HybridRepositioning(Anime->ScreenEdgeHorizontal, Anime->FilmX, Screen->Film[0]->Width,  UGAWidth,  GlobalConfig.ThemeDesignWidth );
-      Screen->FilmPlace.YPos = HybridRepositioning(Anime->ScreenEdgeVertical,   Anime->FilmY, Screen->Film[0]->Height, UGAHeight, GlobalConfig.ThemeDesignHeight);
-      
-      // Does the user want to fine tune the placement?
-      Screen->FilmPlace.XPos = CalculateNudgePosition(Screen->FilmPlace.XPos,Anime->NudgeX,Screen->Film[0]->Width,UGAWidth);
-      Screen->FilmPlace.YPos = CalculateNudgePosition(Screen->FilmPlace.YPos,Anime->NudgeY,Screen->Film[0]->Height,UGAHeight);
-      
-      Screen->FilmPlace.Width = Screen->Film[0]->Width;
-      Screen->FilmPlace.Height = Screen->Film[0]->Height;
-    }
-    
     Screen->FrameTime = Anime->FrameTime;
     Screen->Once = Anime->Once;
     Screen->Theme = AllocateCopyPool(StrSize(GlobalConfig.Theme), GlobalConfig.Theme);
+  }
+  
+  // Check if a new style placement value has been specified
+  if (Anime && (Anime->FilmX >=0 && Anime->FilmX <=100) && (Anime->FilmY >=0 && Anime->FilmY <=100)) {
+    // Check if screen size being used is different from theme origination size.
+    // If yes, then recalculate the animation placement % value.
+    // This is necessary because screen can be a different size, but anim is not scaled.
+    Screen->FilmPlace.XPos = HybridRepositioning(Anime->ScreenEdgeHorizontal, Anime->FilmX, Screen->Film[0]->Width,  UGAWidth,  GlobalConfig.ThemeDesignWidth );
+    Screen->FilmPlace.YPos = HybridRepositioning(Anime->ScreenEdgeVertical,   Anime->FilmY, Screen->Film[0]->Height, UGAHeight, GlobalConfig.ThemeDesignHeight);
+    
+    // Does the user want to fine tune the placement?
+    Screen->FilmPlace.XPos = CalculateNudgePosition(Screen->FilmPlace.XPos,Anime->NudgeX,Screen->Film[0]->Width,UGAWidth);
+    Screen->FilmPlace.YPos = CalculateNudgePosition(Screen->FilmPlace.YPos,Anime->NudgeY,Screen->Film[0]->Height,UGAHeight);
+    
+    Screen->FilmPlace.Width = Screen->Film[0]->Width;
+    Screen->FilmPlace.Height = Screen->Film[0]->Height;
   }
   
   if (Screen->Film != NULL && Screen->Film[0] != NULL) {
