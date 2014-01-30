@@ -32,7 +32,7 @@ then
 # This version is for the tools source in edk2
   export EDK_TOOLS_PATH=`pwd`/BaseTools
   echo $EDK_TOOLS_PATH
-  source edksetup.sh BaseTool
+  source edksetup.sh BaseTools
 else
   echo Building from: $WORKSPACE
 fi
