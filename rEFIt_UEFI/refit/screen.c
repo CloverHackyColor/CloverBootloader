@@ -401,12 +401,9 @@ EG_IMAGE *BigBack = NULL;
 
 VOID BltClearScreen(IN BOOLEAN ShowBanner)
 {
-  
-  INTN BanHeight = ((UGAHeight - LAYOUT_TOTAL_HEIGHT) >> 1) + LAYOUT_BANNER_HEIGHT;
-  INTN i, j, x, x1, x2, y, y1, y2, BannerPosX, BannerPosY;
+  INTN i, j, x, x1, x2, y, y1, y2, BanHeight;
   EG_PIXEL    *p1;
   
-  // load banner on first call
   if (!Banner) {
     if (!GlobalConfig.BannerFileName || !ThemeDir) {
       if (GlobalConfig.Theme) { // regular theme - this points to refit built in image. should be changed to clover image at some point.
@@ -423,18 +420,50 @@ VOID BltClearScreen(IN BOOLEAN ShowBanner)
         CopyMem(&BlueBackgroundPixel, &Banner->PixelData[0], sizeof(EG_PIXEL));
       }
     }
+    
+    // Init banner place
+    BanHeight = ((UGAHeight - LAYOUT_TOTAL_HEIGHT) >> 1) + LAYOUT_BANNER_HEIGHT;
+    if (ShowBanner && !(GlobalConfig.HideUIFlags & HIDEUI_FLAG_BANNER)) {
+      if (Banner != NULL){
+        BannerPlace.Width = Banner->Width;
+        BannerPlace.Height = (BanHeight >= Banner->Height) ? (INTN)Banner->Height : BanHeight;
+        
+        if ((GlobalConfig.BannerPosX == 0xFFFF) && (GlobalConfig.BannerPosY == 0xFFFF)) {
+          // Use rEFIt default
+          BannerPlace.XPos = (UGAWidth - Banner->Width) >> 1;
+          BannerPlace.YPos = (BanHeight >= Banner->Height) ? (BanHeight - Banner->Height) : 0;
+        } else {
+          // Has banner position been specified in the theme.plist?
+          if ((GlobalConfig.BannerPosX >=0 && GlobalConfig.BannerPosX <=100) && (GlobalConfig.BannerPosY >=0 && GlobalConfig.BannerPosY <=100)) {
+            // Check if screen size being used is different from theme origination size.
+            // If yes, then recalculate the placement % value.
+            // This is necessary because screen can be a different size, but banner is not scaled.
+            BannerPlace.XPos = HybridRepositioning(GlobalConfig.BannerEdgeHorizontal, GlobalConfig.BannerPosX, BannerPlace.Width,  UGAWidth,  GlobalConfig.ThemeDesignWidth );
+            BannerPlace.YPos = HybridRepositioning(GlobalConfig.BannerEdgeVertical,   GlobalConfig.BannerPosY, BannerPlace.Height, UGAHeight, GlobalConfig.ThemeDesignHeight);
+          }
+          // Check if banner is required to be nudged.
+          BannerPlace.XPos = CalculateNudgePosition(BannerPlace.XPos, GlobalConfig.BannerNudgeX, Banner->Width,  UGAWidth);
+          BannerPlace.YPos = CalculateNudgePosition(BannerPlace.YPos, GlobalConfig.BannerNudgeY, Banner->Height, UGAHeight);
+        }
+      }
+    } else {
+      BannerPlace.XPos = 0;
+      BannerPlace.YPos = 0;
+      BannerPlace.Width = UGAWidth;
+      BannerPlace.Height = BanHeight;
+    }
   }
+  
   if (!Banner) {
     DBG("banner file not read\n"); 
     //TODO create BigText "Clover"
   }
   
   //load Background and scale
-  //TODO - rescale image if UGAWidth changed
   if (!BigBack && (GlobalConfig.BackgroundName != NULL)) {
     BigBack = egLoadImage(ThemeDir, GlobalConfig.BackgroundName, FALSE);
   }
-
+  
   if (BackgroundImage != NULL && (BackgroundImage->Width != UGAWidth || BackgroundImage->Height != UGAHeight)) {
     // Resolution changed
     FreePool(BackgroundImage);
@@ -496,7 +525,7 @@ VOID BltClearScreen(IN BOOLEAN ShowBanner)
         break;
     }
   }  
-
+  
   if (ShowBanner && !(GlobalConfig.HideUIFlags & HIDEUI_FLAG_BANNER)) {
     // clear and draw banner    
     if (BackgroundImage) {
@@ -504,48 +533,14 @@ VOID BltClearScreen(IN BOOLEAN ShowBanner)
     } else {
       egClearScreen(&StdBackgroundPixel);
     }
-
-    if (Banner != NULL){
-      BannerPlace.Width = Banner->Width;
-      BannerPlace.Height = (BanHeight >= Banner->Height) ? Banner->Height : BanHeight;
-
-      if ((GlobalConfig.BannerPosX == 0xFFFF) && (GlobalConfig.BannerPosY == 0xFFFF)) {
-        // Use rEFIt default
-        BannerPlace.XPos = (UGAWidth - Banner->Width) >> 1;
-        BannerPlace.YPos = (BanHeight >= Banner->Height) ? (BanHeight - Banner->Height) : 0;
-      } else {
-        // Has banner position been specified in the theme.plist?
-        if ((GlobalConfig.BannerPosX >=0 && GlobalConfig.BannerPosX <=100) && (GlobalConfig.BannerPosY >=0 && GlobalConfig.BannerPosY <=100)) {
-          BannerPosX = GlobalConfig.BannerPosX;
-          BannerPosY = GlobalConfig.BannerPosY;
-          // Check if screen size being used is different from theme origination size.
-          // If yes, then recalculate the placement % value.
-          // This is necessary because screen can be a different size, but banner is not scaled.
-          BannerPosX = HybridRepositioning(GlobalConfig.BannerEdgeHorizontal, BannerPosX, BannerPlace.Width,  UGAWidth,  GlobalConfig.ThemeDesignWidth );
-          BannerPosY = HybridRepositioning(GlobalConfig.BannerEdgeVertical,   BannerPosY, BannerPlace.Height, UGAHeight, GlobalConfig.ThemeDesignHeight);
-
-          if (!IsImageWithinScreenLimits(BannerPosX, BannerPlace.Width, UGAWidth) || !IsImageWithinScreenLimits(BannerPosY, BannerPlace.Height, UGAHeight)) {
-            // This banner can't be displayed
-            return;
-          }
-          BannerPlace.XPos = BannerPosX;
-          BannerPlace.YPos = BannerPosY;
-        }
-      
-        // Check if banner is required to be nudged.
-        BannerPlace.XPos = CalculateNudgePosition(BannerPlace.XPos,GlobalConfig.BannerNudgeX,Banner->Width,UGAWidth);
-        BannerPlace.YPos = CalculateNudgePosition(BannerPlace.YPos,GlobalConfig.BannerNudgeY,Banner->Height,UGAHeight);
-      }
+    if (Banner != NULL && IsImageWithinScreenLimits(BannerPlace.XPos, BannerPlace.Width, UGAWidth) && IsImageWithinScreenLimits(BannerPlace.YPos, BannerPlace.Height, UGAHeight)) {
       BltImageAlpha(Banner, BannerPlace.XPos, BannerPlace.YPos, &MenuBackgroundPixel, 16);
     }
   } else {
       // clear to standard background color
       egClearScreen(&StdBackgroundPixel);
-      BannerPlace.XPos = 0;
-      BannerPlace.YPos = 0;
-      BannerPlace.Width = UGAWidth;
-      BannerPlace.Height = BanHeight;
   }
+  
   InputBackgroundPixel.r = (MenuBackgroundPixel.r + 0) & 0xFF;
   InputBackgroundPixel.g = (MenuBackgroundPixel.g + 0) & 0xFF;
   InputBackgroundPixel.b = (MenuBackgroundPixel.b + 0) & 0xFF;
@@ -847,7 +842,7 @@ static INTN HybridRepositioning(INTN Edge, INTN Value, INTN ImageDimension, INTN
 VOID UpdateAnime(REFIT_MENU_SCREEN *Screen, EG_RECT *Place)
 {
   UINT64      Now;
-  INTN   x, y, animPosX, animPosY;
+  INTN        x, y;
   
   //INTN LayoutAnimMoveForMenuX = 0;
   INTN MenuWidth = 50;
@@ -866,21 +861,6 @@ VOID UpdateAnime(REFIT_MENU_SCREEN *Screen, EG_RECT *Place)
   x = Place->XPos + (Place->Width - CompImage->Width) / 2;
   y = Place->YPos + (Place->Height - CompImage->Height) / 2;
   
-  // Work with new anim placement options that are in theme.plist
-  animPosX = Screen->FilmX;
-  animPosY = Screen->FilmY;
-  
-  // Check a placement value has been specified
-  if ((animPosX >=0 && animPosX <=100) && (animPosY >=0 && animPosY <=100)) {
-
-    // Check if screen size being used is different from theme origination size.
-    // If yes, then recalculate the animation placement % value.
-    // This is necessary because screen can be a different size, but anim is not scaled.
-    // TO DO - Can this be run only once per anim run and not for every frame?
-    x = HybridRepositioning(Screen->ScreenEdgeHorizontal, animPosX, Screen->Film[0]->Width,  UGAWidth,  GlobalConfig.ThemeDesignWidth );
-    y = HybridRepositioning(Screen->ScreenEdgeVertical,   animPosY, Screen->Film[0]->Height, UGAHeight, GlobalConfig.ThemeDesignHeight);
-  }
-  
   if (!IsImageWithinScreenLimits(x, Screen->Film[0]->Width, UGAWidth) || !IsImageWithinScreenLimits(y, Screen->Film[0]->Height, UGAHeight)) {
     // This anime can't be displayed
     return;
@@ -896,10 +876,6 @@ VOID UpdateAnime(REFIT_MENU_SCREEN *Screen, EG_RECT *Place)
       }
     }
   }
-  
-  // Does the user want to fine tune the placement?
-  x = CalculateNudgePosition(x,Screen->NudgeX,Screen->Film[0]->Width,UGAWidth);
-  y = CalculateNudgePosition(y,Screen->NudgeY,Screen->Film[0]->Height,UGAHeight);
   
   Now = AsmReadTsc();
   if (Screen->LastDraw == 0) {
@@ -940,8 +916,17 @@ VOID InitAnime(REFIT_MENU_SCREEN *Screen)
   
   if (!Screen || GlobalConfig.TextOnly) return;
   
+  // Will be set later depending on newstyle/oldstyle positioning
+  // For newstyle, we will set these in this function
+  // For oldstyle, it will be set after banner/menutitle positions are known
+  Screen->FilmPlace.XPos = 0;
+  Screen->FilmPlace.YPos = 0;
+  Screen->FilmPlace.Width = 0;
+  Screen->FilmPlace.Height = 0;
+  
   // Check if anime was already loaded, and if it wasn't then load it
   if (Screen->AnimeRun == TRUE && Screen->Film == NULL) {
+    // Find anime for current screen
     for (Anime = GuiAnime; Anime != NULL && Anime->ID != Screen->ID; Anime = Anime->Next);
     // Look through contents of the directory
     if (Anime && (Path = Anime->Path) && (Screen->Film = (EG_IMAGE**)AllocateZeroPool(Anime->Frames * sizeof(VOID*)))) {
@@ -966,10 +951,28 @@ VOID InitAnime(REFIT_MENU_SCREEN *Screen)
         DBG("Film[0] == NULL\n");
       }
     }
+    
+    // Check if a new style placement value has been specified
+    if ((Anime->FilmX >=0 && Anime->FilmX <=100) && (Anime->FilmY >=0 && Anime->FilmY <=100)) {
+      // Check if screen size being used is different from theme origination size.
+      // If yes, then recalculate the animation placement % value.
+      // This is necessary because screen can be a different size, but anim is not scaled.
+      Screen->FilmPlace.XPos = HybridRepositioning(Anime->ScreenEdgeHorizontal, Anime->FilmX, Screen->Film[0]->Width,  UGAWidth,  GlobalConfig.ThemeDesignWidth );
+      Screen->FilmPlace.YPos = HybridRepositioning(Anime->ScreenEdgeVertical,   Anime->FilmY, Screen->Film[0]->Height, UGAHeight, GlobalConfig.ThemeDesignHeight);
+      
+      // Does the user want to fine tune the placement?
+      Screen->FilmPlace.XPos = CalculateNudgePosition(Screen->FilmPlace.XPos,Anime->NudgeX,Screen->Film[0]->Width,UGAWidth);
+      Screen->FilmPlace.YPos = CalculateNudgePosition(Screen->FilmPlace.YPos,Anime->NudgeY,Screen->Film[0]->Height,UGAHeight);
+      
+      Screen->FilmPlace.Width = Screen->Film[0]->Width;
+      Screen->FilmPlace.Height = Screen->Film[0]->Height;
+    }
   }
   
   if (Screen->Film == NULL || Screen->Film[0] == NULL) {
-    Screen->AnimeRun = FALSE;
+    if (Screen->AnimeRun) {
+      Screen->AnimeRun = FALSE;
+    }
     return;
   }
   
@@ -999,12 +1002,6 @@ BOOLEAN GetAnime(REFIT_MENU_SCREEN *Screen)
   DBG("Use anime=%s frames=%d\n", Anime->Path, Anime->Frames);
   
   Screen->FrameTime = Anime->FrameTime;
-  Screen->FilmX = Anime->FilmX;
-  Screen->FilmY = Anime->FilmY;
-  Screen->ScreenEdgeHorizontal = Anime->ScreenEdgeHorizontal;
-  Screen->ScreenEdgeVertical = Anime->ScreenEdgeVertical;
-  Screen->NudgeX = Anime->NudgeX;
-  Screen->NudgeY = Anime->NudgeY;
   Screen->Once = Anime->Once;
   return TRUE;
 }

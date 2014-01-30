@@ -342,12 +342,8 @@ struct _refit_menu_screen {
   INTN              CurrentFrame;
   INTN              Frames;
   UINTN             FrameTime; //ms
-  INTN              FilmX, FilmY;  //relative
   EG_RECT           FilmPlace;
   EG_IMAGE          **Film;
-  INTN              ScreenEdgeHorizontal;
-  INTN              ScreenEdgeVertical;
-  INTN              NudgeX, NudgeY;
 };
 
 //this structure is used for refit.config
@@ -629,10 +625,11 @@ VOID BltImageAlpha(IN EG_IMAGE *Image, IN INTN XPos, IN INTN YPos, IN EG_PIXEL *
 VOID BltImageComposite(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN INTN XPos, IN INTN YPos);
 VOID BltImageCompositeBadge(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN EG_IMAGE *BadgeImage, IN INTN XPos, IN INTN YPos);
 
-VOID    FreeAnime(GUI_ANIME *Anime);
-VOID    UpdateAnime(REFIT_MENU_SCREEN *Screen, EG_RECT *Place);
-VOID    InitAnime(REFIT_MENU_SCREEN *Screen);
 BOOLEAN GetAnime(REFIT_MENU_SCREEN *Screen);
+VOID    InitAnime(REFIT_MENU_SCREEN *Screen);
+VOID    UpdateAnime(REFIT_MENU_SCREEN *Screen, EG_RECT *Place);
+VOID    FreeAnime(GUI_ANIME *Anime);
+
 //
 // icns loader module
 //

@@ -64,8 +64,7 @@
 
 // scrolling definitions
 static INTN MaxItemOnScreen = -1;
-REFIT_MENU_SCREEN OptionMenu  = {4, L"Options", NULL, 0, NULL, 0, NULL, 0, NULL, FALSE, FALSE, 0, 0, 0, 0,
-  FILM_CENTRE, FILM_CENTRE, {0, 0, 0, 0}, NULL };
+REFIT_MENU_SCREEN OptionMenu  = {4, L"Options", NULL, 0, NULL, 0, NULL, 0, NULL, FALSE, FALSE, 0, 0, 0, 0, {0, 0, 0, 0}, NULL };
 extern REFIT_MENU_ENTRY MenuEntryReturn;
 extern UINTN            ThemesNum;
 extern CHAR16            *ThemesList[];
@@ -2296,8 +2295,8 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
   switch (Function) {
       
     case MENU_FUNCTION_INIT:
-      InitAnime(Screen);      
       egGetScreenSize(&UGAWidth, &UGAHeight);
+      InitAnime(Screen);      
       SwitchToGraphicsAndClear();
       
  //     EntriesPosY = ((UGAHeight - LAYOUT_TOTAL_HEIGHT) >> 1) + LAYOUT_BANNER_YOFFSET + (TextHeight << 1);
@@ -2345,11 +2344,17 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
       }
       
       if (Screen->TitleImage) {
-        Screen->FilmPlace.XPos = (INTN)(EntriesPosX - (Screen->TitleImage->Width + TITLEICON_SPACING));
-        Screen->FilmPlace.YPos = (INTN)EntriesPosY;
-        Screen->FilmPlace.Width = Screen->TitleImage->Width;
-        Screen->FilmPlace.Height = Screen->TitleImage->Height;
-        BltImageAlpha(Screen->TitleImage, Screen->FilmPlace.XPos, Screen->FilmPlace.YPos, &MenuBackgroundPixel, 16);
+        INTN FilmXPos = (INTN)(EntriesPosX - (Screen->TitleImage->Width + TITLEICON_SPACING));
+        INTN FilmYPos = (INTN)EntriesPosY;
+        BltImageAlpha(Screen->TitleImage, FilmXPos, FilmYPos, &MenuBackgroundPixel, 16);
+        
+        // Update FilmPlace only if not set by InitAnime
+        if (Screen->FilmPlace.Width == 0 || Screen->FilmPlace.Height == 0) {
+          Screen->FilmPlace.XPos = FilmXPos;
+          Screen->FilmPlace.YPos = FilmYPos;
+          Screen->FilmPlace.Width = Screen->TitleImage->Width;
+          Screen->FilmPlace.Height = Screen->TitleImage->Height;
+        }
       }
       
       if (Screen->InfoLineCount > 0) {
@@ -2595,8 +2600,8 @@ VOID MainMenuVerticalStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State,
   switch (Function) {
       
     case MENU_FUNCTION_INIT:
-      InitAnime(Screen);
       egGetScreenSize(&UGAWidth, &UGAHeight);
+      InitAnime(Screen);
       SwitchToGraphicsAndClear();
       //adjustable by theme.plist?
       EntriesPosY = LAYOUT_Y_EDGE;
@@ -2637,8 +2642,12 @@ VOID MainMenuVerticalStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State,
       }
       // initial painting
       InitSelection();
-      CopyMem(&Screen->FilmPlace, &BannerPlace, sizeof(BannerPlace)); 
-    
+      
+      // Update FilmPlace only if not set by InitAnime
+      if (Screen->FilmPlace.Width == 0 || Screen->FilmPlace.Height == 0) {
+        CopyMem(&Screen->FilmPlace, &BannerPlace, sizeof(BannerPlace));
+      }
+      
       InitBar();
       break;
       
@@ -2749,8 +2758,8 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
   switch (Function) {
       
     case MENU_FUNCTION_INIT:
-      InitAnime(Screen);      
       egGetScreenSize(&UGAWidth, &UGAHeight);
+      InitAnime(Screen);      
       SwitchToGraphicsAndClear();
       
       EntriesGap = TILE_XSPACING;
@@ -2790,7 +2799,11 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
       }
       // initial painting
       InitSelection();
-      CopyMem(&Screen->FilmPlace, &BannerPlace, sizeof(BannerPlace)); 
+      
+      // Update FilmPlace only if not set by InitAnime
+      if (Screen->FilmPlace.Width == 0 || Screen->FilmPlace.Height == 0) {
+        CopyMem(&Screen->FilmPlace, &BannerPlace, sizeof(BannerPlace));
+      }
       
  //     DBG("main menu inited\n");
       break;
