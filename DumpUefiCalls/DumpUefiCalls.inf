@@ -50,11 +50,8 @@
 #
 
 [Packages]
-	Clover/CloverPkg.dec
-    MdePkg/MdePkg.dec
-    MdeModulePkg/MdeModulePkg.dec
+  MdePkg/MdePkg.dec
   IntelFrameworkPkg/IntelFrameworkPkg.dec
-  IntelFrameworkModulePkg/IntelFrameworkModulePkg.dec
 
 [LibraryClasses]
   UefiLib
@@ -81,6 +78,8 @@
   MemLog.c
   FileLib.h
   FileLib.c
+  DataHub.h
+  DataHub.c
 
 
 [Guids]

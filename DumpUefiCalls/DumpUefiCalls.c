@@ -32,6 +32,7 @@ StartOverrides()
 	       Now.Year, Now.Month, Now.Day, Now.Hour, Now.Minute, Now.Second);
 	OvrBootServices(gBS);
 	OvrRuntimeServices(gRT);
+    OvrDataHub();
 	return EFI_SUCCESS;
 }
 

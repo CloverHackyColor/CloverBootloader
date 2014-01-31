@@ -130,6 +130,7 @@
 #include "FileLib.h"
 #include "BootServices.h"
 #include "RuntimeServices.h"
+#include "DataHub.h"
 
 #endif // __DMP_COMMON_H__
 

@@ -30,6 +30,7 @@
 		12D754711657CDE800376797 /* DevicePath.c in Sources */ = {isa = PBXBuildFile; fileRef = 12D754701657CDE800376797 /* DevicePath.c */; };
 		12DD321A16557F2E00108DFC /* BmLib.c in Sources */ = {isa = PBXBuildFile; fileRef = 12DD321916557F2E00108DFC /* BmLib.c */; };
 		2C201369188C9ECB001CB26C /* Hibernate.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C201368188C9ECB001CB26C /* Hibernate.c */; };
+		2CA5D9A0189BA8B500074584 /* DataHub.c in Sources */ = {isa = PBXBuildFile; fileRef = 2CA5D99E189BA8B500074584 /* DataHub.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -614,6 +615,8 @@
 		12FA1598173F4E7400F847F1 /* OsxLowMemFixDrv.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = OsxLowMemFixDrv.c; sourceTree = "<group>"; };
 		12FA1599173F4E7400F847F1 /* OsxLowMemFixDrv.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = OsxLowMemFixDrv.inf; sourceTree = "<group>"; };
 		2C201368188C9ECB001CB26C /* Hibernate.c */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 2; lastKnownFileType = sourcecode.c.c; path = Hibernate.c; sourceTree = "<group>"; tabWidth = 2; };
+		2CA5D99E189BA8B500074584 /* DataHub.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = DataHub.c; sourceTree = "<group>"; };
+		2CA5D99F189BA8B500074584 /* DataHub.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataHub.h; sourceTree = "<group>"; };
 		DEDA9729180530BE003AD904 /* common.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = common.c; sourceTree = "<group>"; };
 		DEDA972A180530BE003AD904 /* legacy.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = legacy.c; sourceTree = "<group>"; };
 		DEDA972B180530BE003AD904 /* loader.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = loader.c; sourceTree = "<group>"; };
@@ -1333,6 +1336,8 @@
 				12561413188A888600424302 /* BootServices.c */,
 				12561414188A888600424302 /* BootServices.h */,
 				12561415188A888600424302 /* Common.h */,
+				2CA5D99E189BA8B500074584 /* DataHub.c */,
+				2CA5D99F189BA8B500074584 /* DataHub.h */,
 				12561416188A888600424302 /* DumpUefiCalls.c */,
 				12561417188A888600424302 /* DumpUefiCalls.inf */,
 				12561418188A888600424302 /* FileLib.c */,
@@ -2055,6 +2060,7 @@
 				121E4B59165A0F1A000C2392 /* VideoBiosPatchLib.c in Sources */,
 				120D825E16A2DE46000EDD83 /* LegacyBiosThunk.c in Sources */,
 				122489C116A93FC400A0DB6B /* ComponentName.c in Sources */,
+				2CA5D9A0189BA8B500074584 /* DataHub.c in Sources */,
 				122489C216A93FC400A0DB6B /* UsbBus.c in Sources */,
 				122489C316A93FC400A0DB6B /* UsbDesc.c in Sources */,
 				122489C416A93FC400A0DB6B /* UsbEnumer.c in Sources */,

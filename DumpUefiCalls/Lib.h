@@ -22,6 +22,9 @@ extern CHAR16 *EfiLocateSearchType[];
 /** Reset type to string conversion */
 extern CHAR16 *EfiResetType[];
 
+extern EFI_GUID mEfiApplePlatformInfoGuid;
+
+
 //
 // MemMap reversed scan
 //

@@ -11,7 +11,6 @@
 #include <Library/DebugLib.h>
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/UefiRuntimeServicesTableLib.h>
-#include <Protocol/DataHub.h>
 
 #include "Common.h"
 
@@ -21,8 +20,6 @@ BOOLEAN InBootServices = TRUE;
 
 /** Original boot services. */
 EFI_BOOT_SERVICES gOrgBS;
-EFI_DATA_HUB_PROTOCOL gOrgDH;
-EFI_DATA_HUB_PROTOCOL *gDHub;
 
 #if CAPTURE_CONSOLE_OUTPUT >= 1
 EFI_TEXT_STRING gOrgConOutOutputString = 0;
@@ -635,35 +632,6 @@ OvrLocateHandleBuffer(
 }
 
 EFI_STATUS EFIAPI
-OvrGetNextRecord (
-                  IN EFI_DATA_HUB_PROTOCOL    *This,
-                  IN OUT  UINT64              *MonotonicCount,
-                  IN  EFI_EVENT               *FilterDriver OPTIONAL,
-                  OUT EFI_DATA_RECORD_HEADER  **Record
-)
-{
-  EFI_STATUS			Status;
-  INTN  i;
-  UINT8 *p;
-  
-  Status = gOrgDH.GetNextRecord(This, MonotonicCount, FilterDriver, Record);
-  if (Record && *Record) {
-    PRINT(" DataHub->GetNextRecord(%d, %x, %s, %s, %d, %d\n",
-          (*Record)->Version, (*Record)->RecordSize, GuidStr(&(*Record)->DataRecordGuid), 
-          GuidStr(&(*Record)->ProducerName), (*Record)->LogMonotonicCount);
-    p = (UINT8 *)(*Record) + sizeof(EFI_DATA_RECORD_HEADER);
-    for(i=0; i<(*Record)->RecordSize; i++) {
-      PRINT("%x", p[i]);
-      if (!(i & 0x0F)) {
-        PRINT("\n");
-      }
-    }
-    PRINT("\n");
-  }
-  return Status;
-}
-
-EFI_STATUS EFIAPI
 OvrLocateProtocol(
 	IN EFI_GUID			*Protocol,
 	IN VOID				*Registration,
@@ -675,14 +643,6 @@ OvrLocateProtocol(
 	
 	Status = gOrgBS.LocateProtocol(Protocol, Registration, Interface);
 	PRINT("->LocateProtocol(%s, %p, %p/%p) = %r\n", GuidStr(Protocol), Registration, InterfaceIn, *Interface, Status);
-  if (CompareGuid(Protocol, &gEfiDataHubProtocolGuid)) {
-    PRINT("Override DataHubProtocol\n");
-    if (InterfaceIn) {
-      gDHub = (EFI_DATA_HUB_PROTOCOL *)InterfaceIn;
-      gOrgDH.GetNextRecord = gDHub->GetNextRecord;
-      gDHub->GetNextRecord = OvrGetNextRecord;
-    }
-  }
 	return Status;
 }
 

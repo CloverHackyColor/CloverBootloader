@@ -21,9 +21,6 @@
 /** Original runtime services. */
 EFI_RUNTIME_SERVICES gOrgRS;
 
-extern EFI_DATA_HUB_PROTOCOL gOrgDH;
-extern EFI_DATA_HUB_PROTOCOL *gDHub;
-
 
 /** Virtual address change event. */
 EFI_EVENT   gVirtualAddressChangeEvent = NULL;
@@ -438,9 +435,6 @@ RestoreRuntimeServices(EFI_RUNTIME_SERVICES	*RS)
 	
 	RS->Hdr.CRC32 = 0;
 	gBS->CalculateCrc32(RS, RS->Hdr.HeaderSize, &RS->Hdr.CRC32);
-  
-  PRINT("Restore original DataHub\n");
-  gDHub->GetNextRecord = gOrgDH.GetNextRecord;
 	
 	PRINT("Runtime services restored!\n");
 	
