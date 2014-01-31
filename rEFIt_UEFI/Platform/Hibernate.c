@@ -25,7 +25,8 @@
 #endif
 
 CHAR16 *PrefName = L"\\Library\\Preferences\\SystemConfiguration\\com.apple.PowerManagement.plist";
-
+CHAR16 *ImageName = NULL;
+UINT32 SleepTime = 0;
 
 //
 // Just the first part of HFS+ volume header from where we can take modification time
@@ -316,6 +317,11 @@ EFIAPI OurBlockIoRead (
         Header2->signature == kIOHibernateHeaderSignature) {
       gSleepImageOffset = Lba * BlockSize;
       DBG(" got sleep image offset\n");
+      //save sleep time as lvs1974 suggested
+      if (Header->signature == kIOHibernateHeaderSignature) {
+        SleepTime = Header->sleepTime;
+      } else
+        SleepTime = 0;
       // return invalid parameter in case of success in order to prevent driver from caching our buffer
       return EFI_INVALID_PARAMETER;
     } else {
@@ -342,7 +348,6 @@ GetSleepImagePosition (IN REFIT_VOLUME *Volume)
   EFI_FILE            *File;
   VOID                *Buffer;
   UINTN               BufferSize;
-  CHAR16              *ImageName = NULL;
   EFI_FILE            *RootDir;
   UINT8               *PrefBuffer = NULL;
 	UINTN               PrefBufferLen = 0;
@@ -472,6 +477,63 @@ GetSleepImagePosition (IN REFIT_VOLUME *Volume)
  *  and this function will probably be removed.
  */
 BOOLEAN
+IsSleepImageValidBySleepTime (IN REFIT_VOLUME *Volume)
+{
+  EFI_STATUS          Status;
+  EFI_TIME            ImageModifyTime;
+  EFI_TIME            *TimePtr;
+  VOID                *Buffer;
+  EFI_BLOCK_IO_PROTOCOL   *BlockIo;
+  HFSPlusVolumeHeaderMin  *HFSHeader;
+  EFI_TIME            HFSVolumeModifyTime;
+  UINT32              HFSVolumeModifyDate;
+  INTN                TimeDiffMs;
+  INTN                Pages = 1;
+
+  fsw_efi_decode_time(&ImageModifyTime, SleepTime);
+  TimePtr = &ImageModifyTime;
+  DBG(" in EFI: %d-%d-%d %d:%d:%d\n", TimePtr->Year, TimePtr->Month, TimePtr->Day, TimePtr->Hour, TimePtr->Minute, TimePtr->Second);
+
+  //
+  // Get HFS+ volume nodification time
+  //
+  // use 4KB aligned page to not have issues with BlockIo buffer alignment
+  BlockIo = Volume->BlockIO;
+  Pages = (2 * BlockIo->Media->BlockSize / EFI_PAGE_SIZE) + 1;
+  Buffer = AllocatePages(Pages);
+  if (Buffer == NULL) {
+    return FALSE;
+  }
+  // Note: assuming 512K blocks ?
+  Status = BlockIo->ReadBlocks(BlockIo, BlockIo->Media->MediaId, 2, BlockIo->Media->BlockSize, Buffer);
+  if (EFI_ERROR(Status)) {
+    DBG(" can not read HFS+ header -> %r\n", Status);
+    FreePages(Buffer, Pages);
+    return FALSE;
+  }
+  HFSHeader = (HFSPlusVolumeHeaderMin *)Buffer;
+  HFSVolumeModifyDate = SwapBytes32(HFSHeader->modifyDate);
+  DBG(" HFS+ volume modifyDate: %x\n", HFSVolumeModifyDate);
+  fsw_efi_decode_time(&HFSVolumeModifyTime, mac_to_posix(HFSVolumeModifyDate));
+  TimePtr = &HFSVolumeModifyTime;
+  DBG(" in EFI: %d-%d-%d %d:%d:%d\n", TimePtr->Year, TimePtr->Month, TimePtr->Day, TimePtr->Hour, TimePtr->Minute, TimePtr->Second);
+  FreePages(Buffer, 1);
+
+  //
+  // Check that sleepimage is not more then 5 secs older then volume modification date
+  // Idea is from Chameleon
+  //
+  TimeDiffMs = (INTN)(GetEfiTimeInMs(&HFSVolumeModifyTime) - GetEfiTimeInMs(&ImageModifyTime));
+  DBG(" image old: %d sec\n", TimeDiffMs / 1000);
+  if (TimeDiffMs > 5000) {
+    DBG(" image too old\n");
+    return FALSE;
+  }
+
+  return TRUE;
+}
+#if 0
+BOOLEAN
 IsSleepImageValidByTime (IN REFIT_VOLUME *Volume)
 {
   EFI_STATUS          Status;
@@ -491,7 +553,7 @@ IsSleepImageValidByTime (IN REFIT_VOLUME *Volume)
   // Check for sleepimage and get it's info
   //
   DBG("Check sleep image 'by time':\n");
-  Status = Volume->RootDir->Open(Volume->RootDir, &File, L"\\private\\var\\vm\\sleepimage", EFI_FILE_MODE_READ, 0);
+  Status = Volume->RootDir->Open(Volume->RootDir, &File, ImageName, EFI_FILE_MODE_READ, 0);
   if (EFI_ERROR(Status)) {
     DBG(" sleepimage not found -> %r\n", Status);
     return FALSE;
@@ -551,7 +613,7 @@ IsSleepImageValidByTime (IN REFIT_VOLUME *Volume)
   
   return TRUE;
 }
-
+#endif
 
 
 /** Returns TRUE if /private/var/vm/sleepimage exists
@@ -578,7 +640,7 @@ IsSleepImageValidBySignature (IN REFIT_VOLUME *Volume)
   
   // Open sleepimage
   DBG("Check sleep image 'by signature':\n");
-  Status = Volume->RootDir->Open(Volume->RootDir, &File, L"\\private\\var\\vm\\sleepimage", EFI_FILE_MODE_READ, 0);
+  Status = Volume->RootDir->Open(Volume->RootDir, &File, ImageName, EFI_FILE_MODE_READ, 0);
   if (EFI_ERROR(Status)) {
     DBG(" sleepimage not found -> %r\n", Status);
     return FALSE;
@@ -650,16 +712,20 @@ IsOsxHibernated (IN REFIT_VOLUME *Volume)
   EFI_STATUS          Status;
   UINTN               Size                = 0;
   UINT8               *Data               = NULL;
-//no sense to check if OSX is hibernated if we check every volume separately
-  DBG("Check if Osx Is Hibernated:\n");
-/*
-  DBG(" no NVRAM\n"); */
+
+  DBG("Check if volume Is Hibernated:\n");
+
   // CloverEFI or UEFI with EmuVariable
   if (IsSleepImageValidBySignature(Volume)) {
-    DBG(" hibernated: yes\n");
+    if ((SleepTime == 0) || IsSleepImageValidBySleepTime(Volume)) {
+      DBG(" hibernated: yes\n");
+    } else {
+      DBG(" hibernated: no - time\n");
+      return FALSE;
+    }
 //    IsHibernate = TRUE;
   } else {
-    DBG(" hibernated: no\n");
+    DBG(" hibernated: no - sign\n");
     return FALSE;
   }
   //if sleep image is good but OSX was not hibernated.
