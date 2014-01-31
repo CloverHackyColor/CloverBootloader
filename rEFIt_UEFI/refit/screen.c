@@ -929,48 +929,39 @@ VOID InitAnime(REFIT_MENU_SCREEN *Screen)
       FreePool(Screen->Theme);
       Screen->Theme = NULL;
     }
-    // FilmPlace will be set later, depending on newstyle/oldstyle positioning
-    // For newstyle, we will set these in this function
-    // For oldstyle, it will be set after banner/menutitle positions are known
-    Screen->FilmPlace.XPos = 0;
-    Screen->FilmPlace.YPos = 0;
-    Screen->FilmPlace.Width = 0;
-    Screen->FilmPlace.Height = 0;
   }
   
-  // Check if we should load anime files
-  if (Anime && Screen->Film == NULL) {
+  // Check if we should load anime files (first run or after theme change)
+  if (Anime && Screen->Film == NULL && (Path = Anime->Path) && (Screen->Film = (EG_IMAGE**)AllocateZeroPool(Anime->Frames * sizeof(VOID*)))) {
     // Look through contents of the directory
-    if ((Path = Anime->Path) && (Screen->Film = (EG_IMAGE**)AllocateZeroPool(Anime->Frames * sizeof(VOID*)))) {
-      for (i=0; i<Anime->Frames; i++) {
-        UnicodeSPrint(FileName, 512, L"%s\\%s_%03d.png", Path, Path, i);
-        //DBG("Try to load file %s\n", FileName);
-        p = egLoadImage(ThemeDir, FileName, TRUE);
-        if (!p) {
-          p = Last;
-          if (!p) break;
-        } else {
-          Last = p;
-        }
-        Screen->Film[i] = p;
-      }
-      if (Screen->Film[0] != NULL) {
-        Screen->Frames = i;
-        DBG(" found %d frames of the anime\n", i);
-        // Create background frame
-        Screen->Film[i] = egCreateImage(Screen->Film[0]->Width, Screen->Film[0]->Height, FALSE);
+    for (i=0; i<Anime->Frames; i++) {
+      UnicodeSPrint(FileName, 512, L"%s\\%s_%03d.png", Path, Path, i);
+      //DBG("Try to load file %s\n", FileName);
+      p = egLoadImage(ThemeDir, FileName, TRUE);
+      if (!p) {
+        p = Last;
+        if (!p) break;
       } else {
-        DBG("Film[0] == NULL\n");
+        Last = p;
       }
+      Screen->Film[i] = p;
     }
-    
-    Screen->FrameTime = Anime->FrameTime;
-    Screen->Once = Anime->Once;
-    Screen->Theme = AllocateCopyPool(StrSize(GlobalConfig.Theme), GlobalConfig.Theme);
+    if (Screen->Film[0] != NULL) {
+      Screen->Frames = i;
+      DBG(" found %d frames of the anime\n", i);
+      // Create background frame
+      Screen->Film[i] = egCreateImage(Screen->Film[0]->Width, Screen->Film[0]->Height, FALSE);
+      // Copy some settings from Anime into Screen
+      Screen->FrameTime = Anime->FrameTime;
+      Screen->Once = Anime->Once;
+      Screen->Theme = AllocateCopyPool(StrSize(GlobalConfig.Theme), GlobalConfig.Theme);
+    } else {
+      DBG("Film[0] == NULL\n");
+    }
   }
   
   // Check if a new style placement value has been specified
-  if (Anime && (Anime->FilmX >=0 && Anime->FilmX <=100) && (Anime->FilmY >=0 && Anime->FilmY <=100)) {
+  if (Anime && Anime->FilmX >=0 && Anime->FilmX <=100 && Anime->FilmY >=0 && Anime->FilmY <=100 && Screen->Film != NULL && Screen->Film[0] != NULL) {
     // Check if screen size being used is different from theme origination size.
     // If yes, then recalculate the animation placement % value.
     // This is necessary because screen can be a different size, but anim is not scaled.
@@ -983,6 +974,13 @@ VOID InitAnime(REFIT_MENU_SCREEN *Screen)
     
     Screen->FilmPlace.Width = Screen->Film[0]->Width;
     Screen->FilmPlace.Height = Screen->Film[0]->Height;
+  } else {
+    // We are here if there is no anime, or if we use oldstyle placement values
+    // For both these cases, FilmPlace will be set after banner/menutitle positions are known
+    Screen->FilmPlace.XPos = 0;
+    Screen->FilmPlace.YPos = 0;
+    Screen->FilmPlace.Width = 0;
+    Screen->FilmPlace.Height = 0;
   }
   
   if (Screen->Film != NULL && Screen->Film[0] != NULL) {
