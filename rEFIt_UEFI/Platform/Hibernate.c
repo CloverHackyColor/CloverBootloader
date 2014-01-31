@@ -86,6 +86,31 @@ typedef struct _IOHibernateImageHeaderMin
     
     UINT32	signature;
     UINT32	processorFlags;
+  UINT32    runtimePages;
+  UINT32    runtimePageCount;
+  UINT64    runtimeVirtualPages __attribute__ ((packed));
+
+  UINT32    performanceDataStart;
+  UINT32    performanceDataSize;
+
+  UINT64	encryptStart __attribute__ ((packed));
+  UINT64	machineSignature __attribute__ ((packed));
+
+  UINT32    previewSize;
+  UINT32    previewPageListSize;
+
+  UINT32	diag[4];
+
+  UINT32    handoffPages;
+  UINT32    handoffPageCount;
+
+  UINT32    systemTableOffset;
+
+  UINT32	debugFlags;
+  UINT32	options;
+  UINT32	sleepTime;
+  UINT32    compression;
+
 } IOHibernateImageHeaderMin;
 
 typedef struct _IOHibernateImageHeaderMinSnow

@@ -526,7 +526,7 @@ VOID BltClearScreen(IN BOOLEAN ShowBanner)
     }
   }  
   
-  if (ShowBanner && !(GlobalConfig.HideUIFlags & HIDEUI_FLAG_BANNER)) {
+//  if (ShowBanner && !(GlobalConfig.HideUIFlags & HIDEUI_FLAG_BANNER)) {
     // clear and draw banner    
     if (BackgroundImage) {
       BltImage(BackgroundImage, 0, 0); //if NULL then do nothing
@@ -536,10 +536,10 @@ VOID BltClearScreen(IN BOOLEAN ShowBanner)
     if (Banner != NULL && IsImageWithinScreenLimits(BannerPlace.XPos, BannerPlace.Width, UGAWidth) && IsImageWithinScreenLimits(BannerPlace.YPos, BannerPlace.Height, UGAHeight)) {
       BltImageAlpha(Banner, BannerPlace.XPos, BannerPlace.YPos, &MenuBackgroundPixel, 16);
     }
-  } else {
-      // clear to standard background color
-      egClearScreen(&StdBackgroundPixel);
-  }
+//  } else {
+//     //clear to standard background color
+//     egClearScreen(&StdBackgroundPixel);
+//  }
   
   InputBackgroundPixel.r = (MenuBackgroundPixel.r + 0) & 0xFF;
   InputBackgroundPixel.g = (MenuBackgroundPixel.g + 0) & 0xFF;
