@@ -630,7 +630,7 @@ VOID BltImageComposite(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN INTN XP
     GraphicsScreenDirty = TRUE;
 }
 
-VOID BltImageCompositeBadge(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN EG_IMAGE *BadgeImage, IN INTN XPos, IN INTN YPos)
+VOID BltImageCompositeBadge(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN EG_IMAGE *BadgeImage, IN INTN XPos, IN INTN YPos, INTN Scale)
 {
   INTN TotalWidth, TotalHeight, CompWidth, CompHeight, OffsetX, OffsetY;
   EG_IMAGE *CompImage;
@@ -715,7 +715,7 @@ VOID BltImageCompositeBadge(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN EG
 
   // blit to screen and clean up
   if (GlobalConfig.Theme) { // regular theme
-    BltImageAlpha(CompImage, XPos, YPos, &MenuBackgroundPixel, 16);
+    BltImageAlpha(CompImage, XPos, YPos, &MenuBackgroundPixel, Scale);
   } else { // embedded theme - don't use BltImageAlpha as it can't handle refit's built in image
     egDrawImageArea(CompImage, 0, 0, TotalWidth, TotalHeight, XPos, YPos);
   }

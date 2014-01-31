@@ -2468,10 +2468,11 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
 
 static VOID DrawMainMenuEntry(REFIT_MENU_ENTRY *Entry, BOOLEAN selected, INTN XPos, INTN YPos)
 {
-   EG_IMAGE *TmpBuffer = NULL;
+  EG_IMAGE *TmpBuffer = NULL;
+  INTN Scale = GlobalConfig.MainEntriesSize >> 3;
 
- if (((Entry->Tag == TAG_LOADER) || (Entry->Tag == TAG_LEGACY)) &&
-        !(GlobalConfig.HideBadges & HDBADGES_SWAP) &&
+  if (((Entry->Tag == TAG_LOADER) || (Entry->Tag == TAG_LEGACY)) &&
+      !(GlobalConfig.HideBadges & HDBADGES_SWAP) &&
       (Entry->Row == 0)) {
     MainImage = Entry->DriveImage;
   } else {
@@ -2480,32 +2481,34 @@ static VOID DrawMainMenuEntry(REFIT_MENU_ENTRY *Entry, BOOLEAN selected, INTN XP
 
   if (!MainImage) {
     if (ThemeDir) {
-      MainImage = egLoadIcon(ThemeDir, L"icons\\osx.icns", 128);
-    } 
+      MainImage = egLoadIcon(ThemeDir, L"icons\\osx.icns", Scale << 3);
+    }
     if (!MainImage) {
-      MainImage = DummyImage(128);
+      MainImage = DummyImage(Scale << 3);
     }
   }
-/*  if (!MainImage) {  //looks to be impossible, else fatal bug
-    Entry->Place.XPos = XPos;
-    Entry->Place.YPos = YPos;
-    Entry->Place.Width = 48;
-    Entry->Place.Height = 48;
-    return;
-  } */
-//  DBG("Entry title=%s; Width=%d\n", Entry->Title, MainImage->Width);
-//  egComposeImage();
+  /*  if (!MainImage) {  //looks to be impossible, else fatal bug
+   Entry->Place.XPos = XPos;
+   Entry->Place.YPos = YPos;
+   Entry->Place.Width = 48;
+   Entry->Place.Height = 48;
+   return;
+   } */
+  //  DBG("Entry title=%s; Width=%d\n", Entry->Title, MainImage->Width);
+  //  egComposeImage();
   if (GlobalConfig.SelectionOnTop) {
     SelectionImages[0]->HasAlpha = TRUE;
     SelectionImages[2]->HasAlpha = TRUE;
-//    MainImage->HasAlpha = TRUE;
-    BltImageCompositeBadge(MainImage, 
+    //    MainImage->HasAlpha = TRUE;
+    BltImageCompositeBadge(MainImage,
                            SelectionImages[((Entry->Row == 0) ? 0 : 2) + (selected ? 0 : 1)],
-                           (Entry->Row == 0) ? Entry->BadgeImage:NULL, XPos, YPos);
+                           (Entry->Row == 0) ? Entry->BadgeImage:NULL,
+                           XPos, YPos, Scale);
 
   } else {
     BltImageCompositeBadge(SelectionImages[((Entry->Row == 0) ? 0 : 2) + (selected ? 0 : 1)],
-                         MainImage, (Entry->Row == 0) ? Entry->BadgeImage:NULL, XPos, YPos);
+                           MainImage, (Entry->Row == 0) ? Entry->BadgeImage:NULL,
+                           XPos, YPos, Scale);
   }
   Entry->Place.XPos = XPos;
   Entry->Place.YPos = YPos;
@@ -2606,8 +2609,8 @@ VOID MainMenuVerticalStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State,
       //adjustable by theme.plist?
       EntriesPosY = LAYOUT_Y_EDGE;
       EntriesGap = LAYOUT_Y_EDGE;
-      EntriesWidth = ROW0_TILESIZE;
-      EntriesHeight = ROW0_TILESIZE;
+      EntriesWidth = GlobalConfig.MainEntriesSize;
+      EntriesHeight = GlobalConfig.MainEntriesSize;
       //
       VisibleHeight = (UGAHeight - EntriesPosY - LAYOUT_Y_EDGE + EntriesGap) / (EntriesHeight + EntriesGap);
       EntriesPosX = UGAWidth - EntriesWidth - BAR_WIDTH - LAYOUT_X_EDGE;
@@ -2763,8 +2766,8 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
       SwitchToGraphicsAndClear();
       
       EntriesGap = TILE_XSPACING;
-      EntriesWidth = ROW0_TILESIZE;
-      EntriesHeight = ROW0_TILESIZE;
+      EntriesWidth = GlobalConfig.MainEntriesSize;
+      EntriesHeight = GlobalConfig.MainEntriesSize;
       
       MaxItemOnScreen = (UGAWidth - ROW0_SCROLLSIZE * 2) / (EntriesWidth + EntriesGap); //8
       CountItems(Screen);
