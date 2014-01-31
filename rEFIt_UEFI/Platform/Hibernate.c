@@ -64,7 +64,7 @@ typedef struct _IOHibernateImageHeaderMin
     
     UINT32	restore1CodePhysPage;
     UINT32    reserved1;
-    UINT64	restore1CodeVirt;
+    UINT64	  restore1CodeVirt;
     UINT32	restore1PageCount;
     UINT32	restore1CodeOffset;
     UINT32	restore1StackOffset;

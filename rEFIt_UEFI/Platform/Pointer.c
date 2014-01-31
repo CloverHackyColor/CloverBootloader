@@ -324,7 +324,7 @@ EFI_STATUS CheckMouseEvent(REFIT_MENU_SCREEN *Screen)
   if (!IsDragging && gPointer.MouseEvent == MouseMove)
     gPointer.MouseEvent = NoEvents;
 
-  if (gPointer.MouseEvent != NoEvents){
+// if (gPointer.MouseEvent != NoEvents){
     if (ScrollEnabled && MouseInRect(&UpButton) && gPointer.MouseEvent == LeftClick)
       gAction = ActionScrollUp;
     else if (ScrollEnabled && MouseInRect(&DownButton) && gPointer.MouseEvent == LeftClick)
@@ -340,15 +340,14 @@ EFI_STATUS CheckMouseEvent(REFIT_MENU_SCREEN *Screen)
       gAction = ActionMoveScrollbar;
       ScrollbarNewPointerPlace.XPos = gPointer.newPlace.XPos;
       ScrollbarNewPointerPlace.YPos = gPointer.newPlace.YPos;
-    }
-    else if (ScrollEnabled && MouseInRect(&ScrollbarBackground) && gPointer.MouseEvent == LeftClick) {
+    } else if (ScrollEnabled && MouseInRect(&ScrollbarBackground) &&
+               gPointer.MouseEvent == LeftClick) {
       if (gPointer.newPlace.YPos < Scrollbar.YPos) // up
         gAction = ActionPageUp;
       else // down
         gAction = ActionPageDown;
       // page up/down, like in OS X
-    }
-    else
+    } else {
       for (EntryId = 0; EntryId < Screen->EntryCount; EntryId++) {
         if (MouseInRect(&(Screen->Entries[EntryId]->Place))) {
           switch (gPointer.MouseEvent) {
@@ -368,6 +367,10 @@ EFI_STATUS CheckMouseEvent(REFIT_MENU_SCREEN *Screen)
             case ScrollUp:
               gAction = ActionScrollUp;
               break;
+            case MouseMove:
+              gAction = Screen->Entries[EntryId]->AtMouseOver;
+              //how to do the action once?
+              break;
             default:
               gAction = ActionNone;
               break;
@@ -382,20 +385,21 @@ EFI_STATUS CheckMouseEvent(REFIT_MENU_SCREEN *Screen)
             case RightClick:
               gAction = ActionFinish;
               break;
-            default:
-              gAction = ActionNone;
-              break;
             case ScrollDown:
               gAction = ActionScrollDown;
               break;
             case ScrollUp:
               gAction = ActionScrollUp;
               break;
+            default:
+              gAction = ActionNone;
+              break;
           }
           gItemID = 0xFFFF;
         }
+      }
     }
-  }
+// }
   if (gAction != ActionNone) {
     Status = EFI_SUCCESS;
     gPointer.MouseEvent = NoEvents; //clear event as set action

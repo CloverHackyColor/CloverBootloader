@@ -356,9 +356,9 @@ VOID AlertMessage(IN CHAR16 *Title, IN CHAR16 *Message)
 #define TAG_NO  2
 
 STATIC REFIT_MENU_ENTRY   YesMessageEntry = { L"Yes", TAG_YES, 0, 0, 0, NULL, NULL, NULL,
-  { 0, 0, 0, 0 }, ActionEnter, ActionNone, ActionNone, NULL };
+  { 0, 0, 0, 0 }, ActionEnter, ActionNone, ActionNone, ActionNone, NULL };
 STATIC REFIT_MENU_ENTRY   NoMessageEntry = { L"No", TAG_NO, 0, 0, 0, NULL, NULL, NULL,
-  { 0, 0, 0, 0 }, ActionEnter, ActionNone, ActionNone, NULL };
+  { 0, 0, 0, 0 }, ActionEnter, ActionNone, ActionNone, ActionNone, NULL };
 STATIC REFIT_MENU_ENTRY  *YesNoMessageEntries[] = { &YesMessageEntry, &NoMessageEntry };
 STATIC REFIT_MENU_SCREEN  YesNoMessageMenu = {0, NULL, NULL, 0, NULL, 2, YesNoMessageEntries,
                                               0, NULL, NULL, FALSE, FALSE, 0, 0, 0, 0,

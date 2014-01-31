@@ -475,6 +475,7 @@ Headers collection for procedures
 #define FIX_PNLF      bit(24)
 #define FIX_S3D       bit(25)
 #define FIX_ACST      bit(26)
+#define FIX_HDMI      bit(27)
 
 //devices
 #define DEV_ATI       bit(0)

@@ -243,7 +243,7 @@ typedef struct {
 #define SVALUE_MAX_SIZE 255
 
 typedef enum {
-  ActionNone,
+  ActionNone = 0,
   ActionHelp,
   ActionSelect,
   ActionEnter,
@@ -256,7 +256,8 @@ typedef enum {
   ActionScrollUp,
   ActionMoveScrollbar,
   ActionPageDown,
-  ActionPageUp
+  ActionPageUp,
+  ActionLight
 } ACTION;
 
 typedef struct {
@@ -309,6 +310,7 @@ typedef struct _refit_menu_entry {
   ACTION             AtClick;
   ACTION             AtDoubleClick;
   ACTION             AtRightClick;
+  ACTION             AtMouseOver;
   REFIT_MENU_SCREEN *SubScreen;
 } REFIT_MENU_ENTRY;
 
