@@ -15,6 +15,49 @@
 extern  EFI_GUID  gEfiMiscSubClassGuid;
 
 
+/** Prints Number of bytes in a row (hex and ascii). Row size is MaxNumber. */
+VOID
+PrintBytesRow(IN UINT8 *Bytes, IN UINTN Number, IN UINTN MaxNumber)
+{
+	UINTN	Index;
+	
+	// print hex vals
+	for (Index = 0; Index < Number; Index++) {
+		DebugLog(1, "%02x ", Bytes[Index]);
+	}
+	
+	// pad to MaxNumber if needed
+	for (; Index < MaxNumber; Index++) {
+		DebugLog(1, "   ");
+	}
+	
+	DebugLog(1, "| ");
+	
+	// print ASCII
+	for (Index = 0; Index < Number; Index++) {
+		if (Bytes[Index] >= 0x20 && Bytes[Index] <= 0x7e) {
+			DebugLog(1, "%c", (CHAR16)Bytes[Index]);
+		} else {
+			DebugLog(1, "%c", L'.');
+		}
+	}
+	
+	DebugLog(1, "\n");
+}
+
+/** Prints series of bytes. */
+VOID
+PrintBytes(IN VOID *Bytes, IN UINTN Number)
+{
+	UINTN	Index;
+	
+	for (Index = 0; Index < Number; Index += 16) {
+		PrintBytesRow((UINT8*)Bytes + Index, (Index + 16 < Number ? 16 : Number - Index), 16);
+	}
+}
+
+
+
 EFI_FILE_PROTOCOL* GetDebugLogFile(BOOLEAN FirstTimeSave)
 {
   EFI_STATUS          Status;

@@ -1406,6 +1406,8 @@ VOID        InitBooterLog(VOID);
 EFI_STATUS  SetupBooterLog(BOOLEAN AllowGrownSize);
 EFI_STATUS  SaveBooterLog(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CHAR16 *FileName);
 VOID        DebugLog(IN INTN DebugMode, IN CONST CHAR8 *FormatString, ...);
+/** Prints series of bytes. */
+VOID        PrintBytes(IN VOID *Bytes, IN UINTN Number);
 VOID        SetDMISettingsForModel(MACHINE_TYPES Model);
 MACHINE_TYPES GetModelFromString(CHAR8 *ProductName);
 VOID        GetDefaultSettings(VOID);
