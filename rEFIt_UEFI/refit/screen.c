@@ -401,65 +401,73 @@ EG_IMAGE *BigBack = NULL;
 
 VOID BltClearScreen(IN BOOLEAN ShowBanner)
 {
-  INTN i, j, x, x1, x2, y, y1, y2, BanHeight;
-  EG_PIXEL    *p1;
+  EG_PIXEL *p1;
+  INTN i, j, x, x1, x2, y, y1, y2;
+  INTN BanHeight = ((UGAHeight - LAYOUT_TOTAL_HEIGHT) >> 1) + LAYOUT_BANNER_HEIGHT;
   
-  if (!Banner) {
-    if (!GlobalConfig.BannerFileName || !ThemeDir) {
-      if (GlobalConfig.Theme) { // regular theme - this points to refit built in image. should be changed to clover image at some point.
-        Banner = egPrepareEmbeddedImage(&egemb_refit_banner, FALSE);
-      } else { // embedded theme - use text as banner
+  if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_BANNER)) {
+    // Banner is used in this theme
+    if (!Banner) {
+      // Banner is not loaded yet
+      if (!GlobalConfig.Theme) {
+        // embedded theme - use text as banner
         Banner = egCreateImage(7*StrLen(L"CLOVER"), 32, TRUE);
         egFillImage(Banner, &MenuBackgroundPixel);
         egRenderText(L"CLOVER", Banner, 0, 0, 0xFFFF);
+        CopyMem(&BlueBackgroundPixel, &StdBackgroundPixel, sizeof(EG_PIXEL));
         DebugLog(1, "Text <%s> rendered\n", L"Clover");
-      }
-    } else {
-      Banner = egLoadImage(ThemeDir, GlobalConfig.BannerFileName, FALSE);
-      if (Banner) {
-        CopyMem(&BlueBackgroundPixel, &Banner->PixelData[0], sizeof(EG_PIXEL));
-      }
-    }
-  }
-    
-  // Init banner place
-  BanHeight = ((UGAHeight - LAYOUT_TOTAL_HEIGHT) >> 1) + LAYOUT_BANNER_HEIGHT;
-  if (ShowBanner && !(GlobalConfig.HideUIFlags & HIDEUI_FLAG_BANNER)) {
-    if (Banner != NULL){
-      BannerPlace.Width = Banner->Width;
-      BannerPlace.Height = (BanHeight >= Banner->Height) ? (INTN)Banner->Height : BanHeight;
-      
-      if ((GlobalConfig.BannerPosX == 0xFFFF) && (GlobalConfig.BannerPosY == 0xFFFF)) {
-        // Use rEFIt default
-        BannerPlace.XPos = (UGAWidth - Banner->Width) >> 1;
-        BannerPlace.YPos = (BanHeight >= Banner->Height) ? (BanHeight - Banner->Height) : 0;
+      } else if (!GlobalConfig.BannerFileName || !ThemeDir) {
+        // regular theme - but no banner specified
+        // Note: this currently points to refit built in image. should be changed to clover image at some point
+        Banner = egPrepareEmbeddedImage(&egemb_refit_banner, FALSE);
       } else {
-        // Has banner position been specified in the theme.plist?
-        if ((GlobalConfig.BannerPosX >=0 && GlobalConfig.BannerPosX <=100) && (GlobalConfig.BannerPosY >=0 && GlobalConfig.BannerPosY <=100)) {
-          // Check if screen size being used is different from theme origination size.
-          // If yes, then recalculate the placement % value.
-          // This is necessary because screen can be a different size, but banner is not scaled.
-          BannerPlace.XPos = HybridRepositioning(GlobalConfig.BannerEdgeHorizontal, GlobalConfig.BannerPosX, BannerPlace.Width,  UGAWidth,  GlobalConfig.ThemeDesignWidth );
-          BannerPlace.YPos = HybridRepositioning(GlobalConfig.BannerEdgeVertical,   GlobalConfig.BannerPosY, BannerPlace.Height, UGAHeight, GlobalConfig.ThemeDesignHeight);
+        // regular theme and banner was specified - load it
+        Banner = egLoadImage(ThemeDir, GlobalConfig.BannerFileName, FALSE);
+        if (Banner) {
+          // Banner was changed, so copy into BlueBackgroundBixel first pixel of banner
+          CopyMem(&BlueBackgroundPixel, &Banner->PixelData[0], sizeof(EG_PIXEL));
+        } else {
+          DBG("banner file not read\n");
         }
+      } 
+    }
+    if (Banner) {
+      // Banner was loaded, so calculate its size and position
+      BannerPlace.Width = Banner->Width;
+      BannerPlace.Height = (BanHeight >= Banner->Height) ? (INTN)Banner->Height : BanHeight; 
+      // Check if new style placement value was used for banner in theme.plist
+      if ((GlobalConfig.BannerPosX >=0 && GlobalConfig.BannerPosX <=100) && (GlobalConfig.BannerPosY >=0 && GlobalConfig.BannerPosY <=100)) {
+        // Check if screen size being used is different from theme origination size.
+        // If yes, then recalculate the placement % value.
+        // This is necessary because screen can be a different size, but banner is not scaled.
+        BannerPlace.XPos = HybridRepositioning(GlobalConfig.BannerEdgeHorizontal, GlobalConfig.BannerPosX, BannerPlace.Width,  UGAWidth,  GlobalConfig.ThemeDesignWidth );
+        BannerPlace.YPos = HybridRepositioning(GlobalConfig.BannerEdgeVertical,   GlobalConfig.BannerPosY, BannerPlace.Height, UGAHeight, GlobalConfig.ThemeDesignHeight);
         // Check if banner is required to be nudged.
         BannerPlace.XPos = CalculateNudgePosition(BannerPlace.XPos, GlobalConfig.BannerNudgeX, Banner->Width,  UGAWidth);
         BannerPlace.YPos = CalculateNudgePosition(BannerPlace.YPos, GlobalConfig.BannerNudgeY, Banner->Height, UGAHeight);
+      } else {
+        // Use rEFIt default (no placement values speicifed)
+        BannerPlace.XPos = (UGAWidth - Banner->Width) >> 1;
+        BannerPlace.YPos = (BanHeight >= Banner->Height) ? (BanHeight - Banner->Height) : 0;
       }
     }
-  } else {
+  }
+  
+  if (!Banner || (GlobalConfig.HideUIFlags & HIDEUI_FLAG_BANNER) || 
+      !IsImageWithinScreenLimits(BannerPlace.XPos, BannerPlace.Width, UGAWidth) || 
+      !IsImageWithinScreenLimits(BannerPlace.YPos, BannerPlace.Height, UGAHeight)) {
+    // Banner is disabled or it cannot be used, apply defaults for placement
+    if (Banner) {
+      FreePool(Banner);
+      Banner = NULL;
+    }
     BannerPlace.XPos = 0;
     BannerPlace.YPos = 0;
     BannerPlace.Width = UGAWidth;
     BannerPlace.Height = BanHeight;
   }
   
-  if (!Banner) {
-    DBG("banner file not read\n"); 
-    //TODO create BigText "Clover"
-  }
-  
-  //load Background and scale
+  // Load Background and scale
   if (!BigBack && (GlobalConfig.BackgroundName != NULL)) {
     BigBack = egLoadImage(ThemeDir, GlobalConfig.BackgroundName, FALSE);
   }
@@ -471,11 +479,7 @@ VOID BltClearScreen(IN BOOLEAN ShowBanner)
   }
   
   if (BackgroundImage == NULL) {
-    if (GlobalConfig.Theme) { // regular theme
-      BackgroundImage = egCreateFilledImage(UGAWidth, UGAHeight, FALSE, &BlueBackgroundPixel); 
-    } else { // embedded theme - use stdbackground color
-      BackgroundImage = egCreateFilledImage(UGAWidth, UGAHeight, FALSE, &StdBackgroundPixel); 
-    }
+      BackgroundImage = egCreateFilledImage(UGAWidth, UGAHeight, FALSE, &BlueBackgroundPixel);
   }
   
   if (BigBack != NULL) {
@@ -524,22 +528,19 @@ VOID BltClearScreen(IN BOOLEAN ShowBanner)
         // already scaled
         break;
     }
-  }  
+  }
   
-//  if (ShowBanner && !(GlobalConfig.HideUIFlags & HIDEUI_FLAG_BANNER)) {
-    // clear and draw banner    
-    if (BackgroundImage) {
-      BltImage(BackgroundImage, 0, 0); //if NULL then do nothing
-    } else {
-      egClearScreen(&StdBackgroundPixel);
-    }
-    if (Banner != NULL && IsImageWithinScreenLimits(BannerPlace.XPos, BannerPlace.Width, UGAWidth) && IsImageWithinScreenLimits(BannerPlace.YPos, BannerPlace.Height, UGAHeight)) {
-      BltImageAlpha(Banner, BannerPlace.XPos, BannerPlace.YPos, &MenuBackgroundPixel, 16);
-    }
-//  } else {
-//     //clear to standard background color
-//     egClearScreen(&StdBackgroundPixel);
-//  }
+  // Draw background
+  if (BackgroundImage) {
+    BltImage(BackgroundImage, 0, 0); //if NULL then do nothing
+  } else {
+    egClearScreen(&StdBackgroundPixel);
+  }
+  
+  // Draw banner
+  if (Banner && ShowBanner) {
+    BltImageAlpha(Banner, BannerPlace.XPos, BannerPlace.YPos, &MenuBackgroundPixel, 16);
+  }
   
   InputBackgroundPixel.r = (MenuBackgroundPixel.r + 0) & 0xFF;
   InputBackgroundPixel.g = (MenuBackgroundPixel.g + 0) & 0xFF;
