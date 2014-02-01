@@ -2613,8 +2613,8 @@ VOID MainMenuVerticalStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State,
       //adjustable by theme.plist?
       EntriesPosY = LAYOUT_Y_EDGE;
       EntriesGap = GlobalConfig.TileYSpace;
-      EntriesWidth = Row0TileSize;
-      EntriesHeight = Row0TileSize;
+      EntriesWidth = GlobalConfig.MainEntriesSize + 16;
+      EntriesHeight = GlobalConfig.MainEntriesSize + 16;
       //
       VisibleHeight = (UGAHeight - EntriesPosY - LAYOUT_Y_EDGE + EntriesGap) / (EntriesHeight + EntriesGap);
       EntriesPosX = UGAWidth - EntriesWidth - BAR_WIDTH - LAYOUT_X_EDGE;
