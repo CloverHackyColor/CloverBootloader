@@ -334,6 +334,9 @@ GetSleepImageName (IN REFIT_VOLUME *Volume)
     ImageName = PoolPrint(L"\\private\\var\\vm\\sleepimage");
     DBG("using default sleep image name = %s\n", ImageName);
   }
+  if (PrefBuffer) {
+    FreePool(PrefBuffer); //allocated by egLoadFile
+  }
   
   return ImageName;
 }
@@ -485,7 +488,8 @@ IsSleepImageValidBySleepTime (IN REFIT_VOLUME *Volume)
   //
   TimeDiff = HFSVolumeModifyDate - (INTN)gSleepTime;
   DBG(" image older then volume: %d sec\n", TimeDiff);
-  if (TimeDiff > 5 || TimeDiff < -5) {
+  if (TimeDiff > 5 /*|| TimeDiff < -5 */) {
+    //Slice - if image newer then volume it should be OK
     DBG(" image too old\n");
     return FALSE;
   }

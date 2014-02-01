@@ -37,7 +37,7 @@
 //#include "Platform.h"
 #include "libegint.h"
 
-#include "egemb_refit_banner.h"
+//#include "egemb_refit_banner.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_SCR 1
