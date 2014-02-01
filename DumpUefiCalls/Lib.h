@@ -41,7 +41,7 @@ typedef struct {
 /** Print buffer for unknown GUID printing. Allocated as RT mem
  *  and gets converted in RuntimeServices.c VirtualAddressChangeEvent().
  */
-extern CHAR16	*GuidPrintBuffer;
+//extern CHAR16	*GuidPrintBuffer;
 
 
 /** Buffer for RT variable names. Allocated as RT mem

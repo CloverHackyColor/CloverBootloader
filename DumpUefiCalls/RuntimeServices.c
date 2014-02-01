@@ -329,7 +329,7 @@ VirtualAddressChangeEvent(
 	//
 	// Convert our pointers to allocated buffers.
 	//
-	OvrConvertPointer(EFI_OPTIONAL_PTR, (VOID **) &GuidPrintBuffer);
+//	OvrConvertPointer(EFI_OPTIONAL_PTR, (VOID **) &GuidPrintBuffer);
 	OvrConvertPointer(EFI_OPTIONAL_PTR, (VOID **) &gVariableNameBuffer);
 	OvrConvertPointer(EFI_OPTIONAL_PTR, (VOID **) &gVariableDataBuffer);
 	// LogPrint's buffer should be converted last, as otherwise LogPrint may be called with incorrect pointer

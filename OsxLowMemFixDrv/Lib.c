@@ -134,6 +134,7 @@ MAP_EFI_GUID_STR EfiGuidStrMap[] = {
 	{NULL, NULL}
 };
 
+static CHAR16 TmpStrGuid[40];
 
 /** Returns GUID as string, with friendly name for known guids. */
 CHAR16*
@@ -150,8 +151,10 @@ GuidStr(IN EFI_GUID *Guid)
 		}
 	}
 	if (Str == NULL) {
-		UnicodeSPrint(EfiGuidStrMap[0].Str, 47 * 2, L"%g", Guid); 
-		Str = EfiGuidStrMap[0].Str;
+//		UnicodeSPrint(EfiGuidStrMap[0].Str, 47 * 2, L"%g", Guid);
+//		Str = EfiGuidStrMap[0].Str;
+    UnicodeSPrint(&TmpStrGuid[0], StrSize(TmpStrGuid), L"%g", Guid);
+    Str = &TmpStrGuid[0];
 	}
 	return Str;
 }

@@ -89,11 +89,17 @@ EFI_GUID mAppleImageCodecProtocolGuid			= {0x0DFCE9F6, 0xC4E3, 0x45EE, {0xA0, 0x
 EFI_GUID mAppleEfiVendorGuid				= {0xAC39C713, 0x7E50, 0x423D, {0x88, 0x9D, 0x27, 0x8F, 0xCC, 0x34, 0x22, 0xB6}};
 EFI_GUID mAppleEFINVRAMTRBSecureGuid			= {0xF68DA75E, 0x1B55, 0x4E70, {0xB4, 0x1B, 0xA7, 0xB7, 0xA5, 0xB7, 0x58, 0xEA}};
 EFI_GUID mDataHubOptionsGuid				= {0x0021001C, 0x3CE3, 0x41F8, {0x99, 0xC6, 0xEC, 0xF5, 0xDA, 0x75, 0x47, 0x31}};
+
 EFI_GUID mNotifyMouseActivity				= {0xF913C2C2, 0x5351, 0x4FDB, {0x93, 0x44, 0x70, 0xFF, 0xED, 0xB8, 0x42, 0x25}};
 EFI_GUID mEfiDataHubProtocolGuid			= {0xAE80D021, 0x618E, 0x11D4, {0xBC, 0xD7, 0x00, 0x80, 0xC7, 0x3C, 0x88, 0x81}};
 EFI_GUID mEfiMiscSubClassGuid				= {0x772484B2, 0x7482, 0x4B91, {0x9F, 0x9A, 0xAD, 0x43, 0xF8, 0x1C, 0x58, 0x81}};
 EFI_GUID mEfiProcessorSubClassGuid			= {0x26fdeb7e, 0xB8AF, 0x4CCF, {0xAA, 0x97, 0x02, 0x63, 0x3C, 0xE4, 0x8C, 0xA7}};
+EFI_GUID mEfiCacheSubClassGuid				= {0x7f0013a7, 0xdc79, 0x4b22, {0x80, 0x99, 0x11, 0xf7, 0x5f, 0xdc, 0x82, 0x9d}};
 EFI_GUID mEfiMemorySubClassGuid				= {0x4E8F4EBB, 0x64B9, 0x4E05, {0x9B, 0x18, 0x4C, 0xFE, 0x49, 0x23, 0x50, 0x97}};
+EFI_GUID mEfiDataHubStatusCodeRecordGuid = {0xd083e94c, 0x6560, 0x42e4, {0xb6, 0xd4, 0x2d, 0xf7, 0x5a, 0xdf, 0x6a, 0x2a}};
+EFI_GUID mEfiStatusCodeRuntimeProtocolGuid = {0xd2b2b828, 0x826, 0x48a7, {0xb3, 0xdf, 0x98, 0x3c, 0x0, 0x60, 0x24, 0xf0}};
+EFI_GUID mEfiStatusCodeGuid   = { 0xD083E94C, 0x6560, 0x42E4, { 0xB6, 0xD4, 0x2D, 0xF7, 0x5A, 0xDF, 0x6A, 0x2A}};
+
 EFI_GUID mMsgLogProtocolGuid				= {0x511CE018, 0x0018, 0x4002, {0x20, 0x12, 0x17, 0x38, 0x05, 0x01, 0x02, 0x03}};
 EFI_GUID mEfiLegacy8259ProtocolGuid			= {0x38321DBA, 0x4FE0, 0x4E17, {0x8A, 0xEC, 0x41, 0x30, 0x55, 0xEA, 0xED, 0xC1}};
 EFI_GUID mEfiMemoryTypeInformationGuid			= {0x4C19049F, 0x4137, 0x4DD3, {0x9C, 0x10, 0x8B, 0x97, 0xA8, 0x3F, 0xFD, 0xFA}};
@@ -226,8 +232,12 @@ MAP_EFI_GUID_STR EfiGuidStrMap[] = {
   {&mEfiMiscSubClassGuid, L"gEfiMiscSubClassGuid"},
   {&mEfiProcessorSubClassGuid, L"gEfiProcessorSubClassGuid"},
   {&mEfiMemorySubClassGuid, L"gEfiMemorySubClassGuid"},
+  {&mEfiCacheSubClassGuid, L"gEfiCacheSubClassGuid"},
   {&mMsgLogProtocolGuid, L"gMsgLogProtocolGuid"},
   {&mEfiLegacy8259ProtocolGuid, L"gEfiLegacy8259ProtocolGuid"},
+  {&mEfiDataHubStatusCodeRecordGuid, L"gEfiDataHubStatusCodeRecordGuid"},
+  {&mEfiStatusCodeRuntimeProtocolGuid, L"gEfiStatusCodeRuntimeProtocolGuid"},
+  {&mEfiStatusCodeGuid, L"gEfiStatusCodeGuid"},
 
   {&gEfiAcpi10TableGuid, L"gEfiAcpi10TableGuid"},
   {&gEfiAcpi20TableGuid, L"gEfiAcpi20TableGuid"},
@@ -341,8 +351,9 @@ MAP_EFI_GUID_STR EfiGuidStrMap[] = {
 /** Print buffer for unknown GUID printing. Allocated as RT mem
  *  and gets converted in RuntimeServices.c VirtualAddressChangeEvent().
  */
-CHAR16	*GuidPrintBuffer = NULL;
+//CHAR16	*GuidPrintBuffer = NULL;
 #define GUID_PRINT_BUFFER_SIZE		((36+1) * sizeof(CHAR16))
+CHAR16	GuidPrintBuffer[40];
 
 /** Buffer for RT variable names. Allocated as RT mem
  *  and gets converted in RuntimeServices.c VirtualAddressChangeEvent().
@@ -365,10 +376,10 @@ GuidStr(IN EFI_GUID *Guid)
 	UINTN	i;
 	CHAR16	*Str = NULL;
 	
-	if (GuidPrintBuffer == NULL) {
+/*	if (GuidPrintBuffer == NULL) {
 		GuidPrintBuffer = AllocateRuntimePool(GUID_PRINT_BUFFER_SIZE);
 	}
-	
+*/
 	for(i = 1; EfiGuidStrMap[i].Guid != NULL; i++) {
 		if (CompareGuid(EfiGuidStrMap[i].Guid, Guid)) {
 			Str = EfiGuidStrMap[i].Str;
@@ -376,8 +387,8 @@ GuidStr(IN EFI_GUID *Guid)
 		}
 	}
 	if (Str == NULL) {
-		UnicodeSPrint(GuidPrintBuffer, GUID_PRINT_BUFFER_SIZE, L"%g", Guid);
-		Str = GuidPrintBuffer;
+		UnicodeSPrint(&GuidPrintBuffer[0], GUID_PRINT_BUFFER_SIZE, L"%g", Guid);
+		Str = &GuidPrintBuffer[0];
 	}
 	return Str;
 }

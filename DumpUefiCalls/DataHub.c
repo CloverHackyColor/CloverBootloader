@@ -45,8 +45,11 @@ OvrGetNextRecord (
 	UINTN		DataSize;
 	
 	Status = gOrgDataHub.GetNextRecord(This, MonotonicCount, FilterDriver, Record);
+  if (Record && ((*Record)->DataRecordClass == EFI_DATA_RECORD_CLASS_PROGRESS_CODE)) {
+    return Status; //print nothing
+  }
 	PRINT("DataHub->GetNextRecord(%ld, %p, %p) = %r\n", *MonotonicCount, FilterDriver, Record != NULL ? *Record : NULL, Status);
-	
+
 	if (EFI_ERROR(Status) || !(Record && *Record)) {
 		return Status;
 	}
@@ -61,7 +64,7 @@ OvrGetNextRecord (
 	if (CompareGuid(&(*Record)->ProducerName, &mEfiApplePlatformInfoGuid)) {
 		//PrintBytes((CHAR8 *)(*Record), (*Record)->RecordSize);
 		
-		// We'll print apple speciffic record
+		// We'll print apple specific record
 		PRINT(" APPLE_SYSTEM_INFO_DATA_RECORD:\n");
 		
 		APPLE_SYSTEM_INFO_DATA_RECORD *AppleRec = (APPLE_SYSTEM_INFO_DATA_RECORD*) DataRec;
