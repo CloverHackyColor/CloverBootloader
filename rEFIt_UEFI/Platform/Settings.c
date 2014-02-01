@@ -66,7 +66,7 @@ REFIT_CONFIG   GlobalConfig = { FALSE, -1, 0, 0, 0, TRUE, FALSE, FALSE, FALSE, F
   //BannerEdgeHorizontal
   0, 0, 0, 0,
   //VerticalLayout
-  FALSE, 128,
+  FALSE, 128, 8, 24
 };
 
 VOID __inline WaitForSts(VOID) {
@@ -1660,6 +1660,8 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
   GlobalConfig.BannerNudgeY = 0;
   GlobalConfig.VerticalLayout = FALSE;
   GlobalConfig.MainEntriesSize = 128;
+  GlobalConfig.TileXSpace = 8;
+  GlobalConfig.TileYSpace = 24;
   LayoutBannerOffset = 64; //default value if not set
   LayoutButtonOffset = 0; //default value if not set
   LayoutTextOffset = 0; //default value if not set
@@ -1893,6 +1895,14 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
     dict2 = GetProperty(dict, "MainEntriesSize");
     if (dict2 && dict2->type == kTagTypeInteger) {
       GlobalConfig.MainEntriesSize = (INT32)(UINTN)dict2->string;
+    }
+    dict2 = GetProperty(dict, "TileXSpace");
+    if (dict2 && dict2->type == kTagTypeInteger) {
+      GlobalConfig.TileXSpace = (INT32)(UINTN)dict2->string;
+    }
+    dict2 = GetProperty(dict, "TileYSpace");
+    if (dict2 && dict2->type == kTagTypeInteger) {
+      GlobalConfig.TileYSpace = (INT32)(UINTN)dict2->string;
     }
 
   }  

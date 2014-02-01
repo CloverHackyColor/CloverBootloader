@@ -416,20 +416,12 @@ VOID BltClearScreen(IN BOOLEAN ShowBanner)
         egRenderText(L"CLOVER", Banner, 0, 0, 0xFFFF);
         CopyMem(&BlueBackgroundPixel, &StdBackgroundPixel, sizeof(EG_PIXEL));
         DebugLog(1, "Text <%s> rendered\n", L"Clover");
-      } else if (!GlobalConfig.BannerFileName || !ThemeDir) {
-        // regular theme - but no banner specified
-        // Note: this currently points to refit built in image. should be changed to clover image at some point
-        Banner = egPrepareEmbeddedImage(&egemb_refit_banner, FALSE);
-      } else {
-        // regular theme and banner was specified - load it
-        Banner = egLoadImage(ThemeDir, GlobalConfig.BannerFileName, FALSE);
-        if (Banner) {
-          // Banner was changed, so copy into BlueBackgroundBixel first pixel of banner
-          CopyMem(&BlueBackgroundPixel, &Banner->PixelData[0], sizeof(EG_PIXEL));
-        } else {
-          DBG("banner file not read\n");
-        }
-      } 
+      }
+    } else if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_BANNER)) {
+      Banner = egLoadImage(ThemeDir, GlobalConfig.BannerFileName, FALSE);
+      if (Banner) {
+        CopyMem(&BlueBackgroundPixel, &Banner->PixelData[0], sizeof(EG_PIXEL));
+      }
     }
     if (Banner) {
       // Banner was loaded, so calculate its size and position

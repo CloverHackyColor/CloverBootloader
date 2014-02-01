@@ -784,9 +784,9 @@ MOStartImage (
 	if (EFI_ERROR(Status)) {
 		DBG("CloseProtocol error: %r\n", Status);
 	}
-//the presence of the variable means UEFI HibernateWake
+//the presence of the variable means HibernateWake
 //if the wake is canceled then the variable must be deleted
-  Status = gRT->GetVariable(L"Boot0082", &gEfiGlobalVariableGuid,
+  Status = gRT->GetVariable(L"boot-switch-vars", &gEfiAppleBootGuid,
                             NULL, &Size, NULL);
   HibernateWake = (Status == EFI_BUFFER_TOO_SMALL);
 

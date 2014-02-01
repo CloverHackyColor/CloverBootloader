@@ -818,6 +818,11 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
       gBS->CloseEvent (ExitBootServiceEvent);
       gBS->CloseEvent (mSimpleFileSystemChangeEvent);
 //      gBS->CloseEvent (mVirtualAddressChangeEvent);
+    } else {
+      // delete boot-switch-vars if exists
+      Status = gRT->SetVariable(L"boot-switch-vars", &gEfiAppleBootGuid,
+                                EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                                0, NULL);
 
     }
     DBG("Closing log\n");

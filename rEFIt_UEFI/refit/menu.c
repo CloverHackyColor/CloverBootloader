@@ -2608,7 +2608,7 @@ VOID MainMenuVerticalStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State,
       SwitchToGraphicsAndClear();
       //adjustable by theme.plist?
       EntriesPosY = LAYOUT_Y_EDGE;
-      EntriesGap = LAYOUT_Y_EDGE;
+      EntriesGap = GlobalConfig.TileYSpace;
       EntriesWidth = GlobalConfig.MainEntriesSize;
       EntriesHeight = GlobalConfig.MainEntriesSize;
       //
@@ -2621,8 +2621,8 @@ VOID MainMenuVerticalStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State,
       row0PosX = EntriesPosX;
       row0PosY = EntriesPosY;
       row1PosX = (UGAWidth + EntriesGap - (ROW1_TILESIZE + TILE_XSPACING) * row1Count) >> 1;
-      textPosY = TimeoutPosY - TILE_YSPACING - TextHeight;
-      row1PosY = textPosY - ROW1_TILESIZE - TILE_YSPACING - LayoutTextOffset;
+      textPosY = TimeoutPosY - GlobalConfig.TileYSpace - TextHeight;
+      row1PosY = textPosY - ROW1_TILESIZE - GlobalConfig.TileYSpace - LayoutTextOffset;
       if (!itemPosX) {
         itemPosX = AllocatePool(sizeof(UINT64) * Screen->EntryCount);
         itemPosY = AllocatePool(sizeof(UINT64) * Screen->EntryCount);
@@ -2765,7 +2765,7 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
       InitAnime(Screen);      
       SwitchToGraphicsAndClear();
       
-      EntriesGap = TILE_XSPACING;
+      EntriesGap = GlobalConfig.TileXSpace;
       EntriesWidth = GlobalConfig.MainEntriesSize;
       EntriesHeight = GlobalConfig.MainEntriesSize;
       
@@ -2777,9 +2777,9 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
       row0PosY = ((UGAHeight - LayoutMainMenuHeight) >> 1) + LayoutBannerOffset; //LAYOUT_BANNER_YOFFSET; 
       
       row1PosX = (UGAWidth + EntriesGap - (ROW1_TILESIZE + TILE_XSPACING) * row1Count) >> 1;
-      row1PosY = row0PosY + EntriesHeight + TILE_YSPACING + LayoutButtonOffset;
+      row1PosY = row0PosY + EntriesHeight + GlobalConfig.TileYSpace + LayoutButtonOffset;
       if (row1Count > 0)
-        textPosY = row1PosY + ROW1_TILESIZE + TILE_YSPACING + LayoutTextOffset;
+        textPosY = row1PosY + ROW1_TILESIZE + GlobalConfig.TileYSpace + LayoutTextOffset;
       else
         textPosY = row1PosY;
       
