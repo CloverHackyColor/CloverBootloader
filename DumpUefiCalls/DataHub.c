@@ -57,7 +57,7 @@ OvrGetNextRecord (
 	PRINT(" DataHub Record: Version=0x%x, RecordSize=0x%x, LogMonotonicCount=%ld, ",
 		  (*Record)->Version, (*Record)->RecordSize, (*Record)->LogMonotonicCount);
 	PRINT(" ProducerName=%s\n", GuidStr(&(*Record)->ProducerName));
-  PRINT(" DataRecordGuid=%s, DataRecordClass=0x%lx\n",
+	PRINT(" DataRecordGuid=%s, DataRecordClass=0x%lx\n",
         GuidStr(&(*Record)->DataRecordGuid), (*Record)->DataRecordClass);
 	
 	DataRec = (UINT8 *)(*Record) + sizeof(EFI_DATA_RECORD_HEADER);

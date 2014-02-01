@@ -32,7 +32,7 @@ StartOverrides()
 	       Now.Year, Now.Month, Now.Day, Now.Hour, Now.Minute, Now.Second);
 	OvrBootServices(gBS);
 	OvrRuntimeServices(gRT);
-    OvrDataHub();
+	OvrDataHub();
 	return EFI_SUCCESS;
 }
 
@@ -128,4 +128,3 @@ DumpUefiCallsEntrypoint (
 	
 	return EFI_SUCCESS;
 }
-

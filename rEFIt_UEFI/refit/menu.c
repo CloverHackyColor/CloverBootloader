@@ -116,7 +116,7 @@ INTN ScrollbarYMovement;
 //#define TextHeight (FONT_CELL_HEIGHT + TEXT_YMARGIN * 2)
 #define TITLEICON_SPACING (16)
 
-#define ROW0_TILESIZE (144)
+//#define ROW0_TILESIZE (144)
 #define ROW1_TILESIZE (64)
 #define TILE_XSPACING (8)
 #define TILE_YSPACING (24)
@@ -2613,8 +2613,8 @@ VOID MainMenuVerticalStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State,
       //adjustable by theme.plist?
       EntriesPosY = LAYOUT_Y_EDGE;
       EntriesGap = GlobalConfig.TileYSpace;
-      EntriesWidth = GlobalConfig.MainEntriesSize + 16;
-      EntriesHeight = GlobalConfig.MainEntriesSize + 16;
+      EntriesWidth = Row0TileSize;
+      EntriesHeight = Row0TileSize;
       //
       VisibleHeight = (UGAHeight - EntriesPosY - LAYOUT_Y_EDGE + EntriesGap) / (EntriesHeight + EntriesGap);
       EntriesPosX = UGAWidth - EntriesWidth - BAR_WIDTH - LAYOUT_X_EDGE;
