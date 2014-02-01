@@ -1253,10 +1253,10 @@ static VOID InitSelection(VOID)
     DestPtr = SelectionImages[0]->PixelData;
     SrcPtr  = SelectionImages[2]->PixelData;
     for (y = 0; y < Row0TileSize; y++) {
-      if (y < (Row0TileSize >> 1))
+      if (y < (ROW1_TILESIZE >> 1))
         src_y = y;
       else if (y < (Row0TileSize - (ROW1_TILESIZE >> 1)))
-        src_y = (Row0TileSize >> 1);
+        src_y = (ROW1_TILESIZE >> 1);
       else
         src_y = y - (Row0TileSize - ROW1_TILESIZE);
       
