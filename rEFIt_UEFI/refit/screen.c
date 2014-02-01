@@ -418,10 +418,15 @@ VOID BltClearScreen(IN BOOLEAN ShowBanner) //ShowBanner always TRUE
         DebugLog(1, "Text <%s> rendered\n", L"Clover");
       } else  {
         Banner = egLoadImage(ThemeDir, GlobalConfig.BannerFileName, FALSE);
+        if (Banner) {
+          // Banner was changed, so copy into BlueBackgroundBixel first pixel of banner
+          CopyMem(&BlueBackgroundPixel, &Banner->PixelData[0], sizeof(EG_PIXEL));
+        } else {
+          DBG("banner file not read\n");
+        }
       }
     }
     if (Banner) {
-      CopyMem(&BlueBackgroundPixel, &Banner->PixelData[0], sizeof(EG_PIXEL));
       // Banner was loaded, so calculate its size and position
       BannerPlace.Width = Banner->Width;
       BannerPlace.Height = (BanHeight >= Banner->Height) ? (INTN)Banner->Height : BanHeight; 
