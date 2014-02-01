@@ -1210,6 +1210,7 @@ static VOID InitSelection(VOID)
 {
   UINTN       x, y, src_x, src_y;
   EG_PIXEL    *DestPtr, *SrcPtr;
+  INTN        Row0TileSize = GlobalConfig.MainEntriesSize + 16;
   
   if (!AllowGraphicsMode)
     return;
@@ -1234,11 +1235,12 @@ static VOID InitSelection(VOID)
   if (GlobalConfig.SelectionBigFileName != NULL) {
     SelectionImages[0] = egLoadImage(ThemeDir, GlobalConfig.SelectionBigFileName, FALSE);
     SelectionImages[0] = egEnsureImageSize(SelectionImages[0],
-                                           ROW0_TILESIZE, ROW0_TILESIZE, &MenuBackgroundPixel);
+                                           Row0TileSize, Row0TileSize,
+                                           &MenuBackgroundPixel);
   }
   if (SelectionImages[0] == NULL) {
 //    // calculate big selection image from small one
-    SelectionImages[0] = egCreateImage(ROW0_TILESIZE, ROW0_TILESIZE, FALSE);
+    SelectionImages[0] = egCreateImage(Row0TileSize, Row0TileSize, FALSE);
     if (SelectionImages[0] == NULL) {
       egFreeImage(SelectionImages[2]);
       SelectionImages[2] = NULL;
@@ -1250,21 +1252,21 @@ static VOID InitSelection(VOID)
     }
     DestPtr = SelectionImages[0]->PixelData;
     SrcPtr  = SelectionImages[2]->PixelData;
-    for (y = 0; y < ROW0_TILESIZE; y++) {
-      if (y < (ROW1_TILESIZE >> 1))
+    for (y = 0; y < Row0TileSize; y++) {
+      if (y < (Row0TileSize >> 1))
         src_y = y;
-      else if (y < (ROW0_TILESIZE - (ROW1_TILESIZE >> 1)))
-        src_y = (ROW1_TILESIZE >> 1);
+      else if (y < (Row0TileSize - (ROW1_TILESIZE >> 1)))
+        src_y = (Row0TileSize >> 1);
       else
-        src_y = y - (ROW0_TILESIZE - ROW1_TILESIZE);
+        src_y = y - (Row0TileSize - ROW1_TILESIZE);
       
-      for (x = 0; x < ROW0_TILESIZE; x++) {
+      for (x = 0; x < Row0TileSize; x++) {
         if (x < (ROW1_TILESIZE >> 1))
           src_x = x;
-        else if (x < (ROW0_TILESIZE - (ROW1_TILESIZE >> 1)))
+        else if (x < (Row0TileSize - (ROW1_TILESIZE >> 1)))
           src_x = (ROW1_TILESIZE >> 1);
         else
-          src_x = x - (ROW0_TILESIZE - ROW1_TILESIZE);
+          src_x = x - (Row0TileSize - ROW1_TILESIZE);
         
         *DestPtr++ = SrcPtr[src_y * ROW1_TILESIZE + src_x];
       }
@@ -1272,8 +1274,10 @@ static VOID InitSelection(VOID)
   }
   // non-selected background images
   //TODO FALSE -> TRUE
-  SelectionImages[1] = egCreateFilledImage(ROW0_TILESIZE, ROW0_TILESIZE, TRUE, &MenuBackgroundPixel);
-  SelectionImages[3] = egCreateFilledImage(ROW1_TILESIZE, ROW1_TILESIZE, TRUE, &MenuBackgroundPixel);
+  SelectionImages[1] = egCreateFilledImage(Row0TileSize, Row0TileSize,
+                                           TRUE, &MenuBackgroundPixel);
+  SelectionImages[3] = egCreateFilledImage(ROW1_TILESIZE, ROW1_TILESIZE,
+                                           TRUE, &MenuBackgroundPixel);
 }
 
 //
@@ -2609,8 +2613,8 @@ VOID MainMenuVerticalStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State,
       //adjustable by theme.plist?
       EntriesPosY = LAYOUT_Y_EDGE;
       EntriesGap = GlobalConfig.TileYSpace;
-      EntriesWidth = GlobalConfig.MainEntriesSize;
-      EntriesHeight = GlobalConfig.MainEntriesSize;
+      EntriesWidth = GlobalConfig.MainEntriesSize + 16;
+      EntriesHeight = GlobalConfig.MainEntriesSize + 16;
       //
       VisibleHeight = (UGAHeight - EntriesPosY - LAYOUT_Y_EDGE + EntriesGap) / (EntriesHeight + EntriesGap);
       EntriesPosX = UGAWidth - EntriesWidth - BAR_WIDTH - LAYOUT_X_EDGE;
@@ -2766,8 +2770,8 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
       SwitchToGraphicsAndClear();
       
       EntriesGap = GlobalConfig.TileXSpace;
-      EntriesWidth = GlobalConfig.MainEntriesSize;
-      EntriesHeight = GlobalConfig.MainEntriesSize;
+      EntriesWidth = GlobalConfig.MainEntriesSize + 16;
+      EntriesHeight = GlobalConfig.MainEntriesSize + 16;
       
       MaxItemOnScreen = (UGAWidth - ROW0_SCROLLSIZE * 2) / (EntriesWidth + EntriesGap); //8
       CountItems(Screen);

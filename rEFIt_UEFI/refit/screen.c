@@ -399,7 +399,7 @@ EG_IMAGE *Banner = NULL;
 EG_IMAGE *BigBack = NULL;
 
 
-VOID BltClearScreen(IN BOOLEAN ShowBanner)
+VOID BltClearScreen(IN BOOLEAN ShowBanner) //ShowBanner always TRUE
 {
   EG_PIXEL *p1;
   INTN i, j, x, x1, x2, y, y1, y2;
@@ -416,14 +416,12 @@ VOID BltClearScreen(IN BOOLEAN ShowBanner)
         egRenderText(L"CLOVER", Banner, 0, 0, 0xFFFF);
         CopyMem(&BlueBackgroundPixel, &StdBackgroundPixel, sizeof(EG_PIXEL));
         DebugLog(1, "Text <%s> rendered\n", L"Clover");
-      }
-    } else if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_BANNER)) {
-      Banner = egLoadImage(ThemeDir, GlobalConfig.BannerFileName, FALSE);
-      if (Banner) {
-        CopyMem(&BlueBackgroundPixel, &Banner->PixelData[0], sizeof(EG_PIXEL));
+      } else  {
+        Banner = egLoadImage(ThemeDir, GlobalConfig.BannerFileName, FALSE);
       }
     }
     if (Banner) {
+      CopyMem(&BlueBackgroundPixel, &Banner->PixelData[0], sizeof(EG_PIXEL));
       // Banner was loaded, so calculate its size and position
       BannerPlace.Width = Banner->Width;
       BannerPlace.Height = (BanHeight >= Banner->Height) ? (INTN)Banner->Height : BanHeight; 
