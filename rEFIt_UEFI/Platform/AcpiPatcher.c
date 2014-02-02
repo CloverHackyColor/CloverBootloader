@@ -1810,8 +1810,9 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
   bufferLen = TableHeader->Length;
 
   for (i=0x24; i<bufferLen-15; i++) {
-    if ((buffer[i] == 0x5B) && (buffer[i+1] == 0x80) && GetName(buffer, i+2, &Name[0])) {
-      //this is region. Write to bios regions tables
+    if ((buffer[i] == 0x5B) && (buffer[i+1] == 0x80) &&
+        (buffer[i+6] == 0) && GetName(buffer, i+2, &Name[0])) {
+      //this is SystemMemory region. Write to bios regions tables
       tmpRegion = gRegions;
       gRegions = AllocateZeroPool(sizeof(OPER_REGION));
       CopyMem(&gRegions->Name[0], &buffer[i+2], 4);
