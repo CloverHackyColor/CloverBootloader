@@ -30,6 +30,7 @@
 		12D754711657CDE800376797 /* DevicePath.c in Sources */ = {isa = PBXBuildFile; fileRef = 12D754701657CDE800376797 /* DevicePath.c */; };
 		12DD321A16557F2E00108DFC /* BmLib.c in Sources */ = {isa = PBXBuildFile; fileRef = 12DD321916557F2E00108DFC /* BmLib.c */; };
 		2C201369188C9ECB001CB26C /* Hibernate.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C201368188C9ECB001CB26C /* Hibernate.c */; };
+		2C73F749189D57B60068591A /* Fs.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C73F747189D57B60068591A /* Fs.c */; };
 		2CA5D9A0189BA8B500074584 /* DataHub.c in Sources */ = {isa = PBXBuildFile; fileRef = 2CA5D99E189BA8B500074584 /* DataHub.c */; };
 /* End PBXBuildFile section */
 
@@ -615,6 +616,8 @@
 		12FA1598173F4E7400F847F1 /* OsxLowMemFixDrv.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = OsxLowMemFixDrv.c; sourceTree = "<group>"; };
 		12FA1599173F4E7400F847F1 /* OsxLowMemFixDrv.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = OsxLowMemFixDrv.inf; sourceTree = "<group>"; };
 		2C201368188C9ECB001CB26C /* Hibernate.c */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 2; lastKnownFileType = sourcecode.c.c; path = Hibernate.c; sourceTree = "<group>"; tabWidth = 2; };
+		2C73F747189D57B60068591A /* Fs.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Fs.c; sourceTree = "<group>"; usesTabs = 1; };
+		2C73F748189D57B60068591A /* Fs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Fs.h; sourceTree = "<group>"; };
 		2CA5D99E189BA8B500074584 /* DataHub.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = DataHub.c; sourceTree = "<group>"; };
 		2CA5D99F189BA8B500074584 /* DataHub.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataHub.h; sourceTree = "<group>"; };
 		DEDA9729180530BE003AD904 /* common.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = common.c; sourceTree = "<group>"; };
@@ -1342,6 +1345,8 @@
 				12561417188A888600424302 /* DumpUefiCalls.inf */,
 				12561418188A888600424302 /* FileLib.c */,
 				12561419188A888600424302 /* FileLib.h */,
+				2C73F747189D57B60068591A /* Fs.c */,
+				2C73F748189D57B60068591A /* Fs.h */,
 				1256141A188A888600424302 /* Lib.c */,
 				1256141B188A888600424302 /* Lib.h */,
 				1256141C188A888600424302 /* Log.c */,
@@ -2061,6 +2066,7 @@
 				120D825E16A2DE46000EDD83 /* LegacyBiosThunk.c in Sources */,
 				122489C116A93FC400A0DB6B /* ComponentName.c in Sources */,
 				2CA5D9A0189BA8B500074584 /* DataHub.c in Sources */,
+				2C73F749189D57B60068591A /* Fs.c in Sources */,
 				122489C216A93FC400A0DB6B /* UsbBus.c in Sources */,
 				122489C316A93FC400A0DB6B /* UsbDesc.c in Sources */,
 				122489C416A93FC400A0DB6B /* UsbEnumer.c in Sources */,

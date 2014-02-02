@@ -80,6 +80,8 @@
   FileLib.c
   DataHub.h
   DataHub.c
+  Fs.h
+  Fs.c
 
 
 [Guids]
