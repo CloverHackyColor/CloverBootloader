@@ -578,6 +578,8 @@ void PrintConfig(CFTypeRef data)
   addBoolean(fixDict, CFSTR("AddPNLF_1000000"),    !!(s->FixDsdt & FIX_PNLF));
   addBoolean(fixDict, CFSTR("FIX_S3D_2000000"),    !!(s->FixDsdt & FIX_S3D));
   addBoolean(fixDict, CFSTR("FIX_ACST_4000000"),   !!(s->FixDsdt & FIX_ACST));
+  addBoolean(fixDict, CFSTR("AddHDMI_8000000"),    !!(s->FixDsdt & FIX_HDMI));
+  addBoolean(fixDict, CFSTR("FixRegions_10000000"),!!(s->FixDsdt & FIX_REGIONS));
   addBoolean(fixDict, CFSTR("NewWay_80000000"),    !!(s->FixDsdt & FIX_NEW_WAY));
 
   CFMutableArrayRef dsdtPatchArray = addArray(dsdtDict, CFSTR("Patches"));

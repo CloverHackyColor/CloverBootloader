@@ -46,10 +46,11 @@ RSDT_TABLE    *Rsdt = NULL;
 XSDT_TABLE    *Xsdt = NULL;
 
 //CHAR8*   orgBiosDsdt;
-UINT64    BiosDsdt;
-UINT32    BiosDsdtLen;
-UINT8     acpi_cpu_count;
-CHAR8*    acpi_cpu_name[32];
+UINT64      BiosDsdt;
+UINT32      BiosDsdtLen;
+UINT8       acpi_cpu_count;
+CHAR8*      acpi_cpu_name[32];
+OPER_REGION *gRegions;
 
 //-----------------------------------
 
@@ -1458,7 +1459,7 @@ VOID        SaveOemDsdt(BOOLEAN FullPatch)
 EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
 {
 	EFI_STATUS										Status = EFI_SUCCESS;
-	UINTN                         Index;
+	UINTN                         Index, i;
 	EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER	*RsdPointer = NULL;
 	EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE		*FadtPointer = NULL;	
 	EFI_ACPI_4_0_FIXED_ACPI_DESCRIPTION_TABLE		*newFadt	 = NULL;
@@ -1480,6 +1481,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
   UINT32                  eCntR; //, eCntX;
   UINT32                  *pEntryR;
   CHAR8                   *pEntry;
+  CHAR8                   Name[8];
   EFI_ACPI_DESCRIPTION_HEADER *TableHeader;
   // -===== APIC =====-
   EFI_ACPI_DESCRIPTION_HEADER                           *ApicTable;
@@ -1493,6 +1495,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
   BOOLEAN           DsdtLoaded = FALSE;
   INTN              ApicCPUBase = 0;
   CHAR16*     AcpiOemPath = PoolPrint(L"%s\\ACPI\\patched", OEMPath);
+  OPER_REGION *tmpRegion;
   PathDsdt = PoolPrint(L"\\%s", gSettings.DsdtName);
 /*	
   if (gFirmwareClover || gSettings.RememberBIOS) {
@@ -1797,6 +1800,25 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
       UINT32 Value = *SlpSmiEn;
       Value &= ~ bit(4);
       *SlpSmiEn = Value;
+    }
+  }
+
+  //Get regions from BIOS DSDT
+  gRegions = NULL;
+  buffer = (UINT8*)(UINTN)FadtPointer->Dsdt;
+  TableHeader = (EFI_ACPI_DESCRIPTION_HEADER*)buffer;
+  bufferLen = TableHeader->Length;
+
+  for (i=0x24; i<bufferLen-15; i++) {
+    if ((buffer[i] == 0x5B) && (buffer[i+1] == 0x80) && GetName(buffer, i+2, &Name[0])) {
+      //this is region. Write to bios regions tables
+      tmpRegion = gRegions;
+      gRegions = AllocateZeroPool(sizeof(OPER_REGION));
+      CopyMem(&gRegions->Name[0], &buffer[i+2], 4);
+      gRegions->Name[4] = 0;
+      CopyMem(&gRegions->Address, &buffer[i+8], 4);
+      gRegions->next = tmpRegion;
+      DBG("Found OperationRegion(%a, SystemMemory, %x, ...)\n", gRegions->Name, gRegions->Address);
     }
   }
   
@@ -2169,6 +2191,13 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
   if (Xsdt) {
     Xsdt->Header.Checksum = 0;
     Xsdt->Header.Checksum = (UINT8)(256-Checksum8((CHAR8*)Xsdt, Xsdt->Header.Length));
+  }
+
+  //free regions?
+  while (gRegions) {
+    tmpRegion = gRegions->next;
+    FreePool(gRegions);
+    gRegions = tmpRegion;
   }
   
   return EFI_SUCCESS;

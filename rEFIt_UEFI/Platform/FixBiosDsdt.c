@@ -27,6 +27,7 @@
 #define DBG(...) DebugLog(DEBUG_FIX, __VA_ARGS__)	
 #endif
 
+extern OPER_REGION *gRegions;
 
 CHAR8*  device_name[11];  // 0=>Display  1=>network  2=>firewire 3=>LPCB 4=>HDAAudio 5=>RTC 6=>TMR 7=>SBUS 8=>PIC 9=>Airport 10=>XHCI
 CHAR8*  UsbName[10];
@@ -155,7 +156,7 @@ static struct lpc_device_t lpc_chipset[] =
 
 struct net_chipsets_t {
 	UINT32 id;
-	char *name;
+	CHAR8  *name;
 };
 
 static struct net_chipsets_t NetChipsets[] = {
@@ -211,18 +212,18 @@ struct ide_chipsets_t {
 
 static struct ide_chipsets_t ide_chipset[] =
 {
-    // IDE
-    {0x00000000},
-    //
-    {0x8086269e},
-    {0x808627df},
-    {0x80862850},
+  // IDE
+  {0x00000000},
+  //
+  {0x8086269e},
+  {0x808627df},
+  {0x80862850},
 
-    //SATA
-    {0x80862680},
-    {0x808627c0},
-    {0x808627c4},
-    {0x80862828},
+  //SATA
+  {0x80862680},
+  {0x808627c0},
+  {0x808627c4},
+  {0x80862828},
 };
 //2820? 2825?
 struct ahci_chipsets_t {
@@ -231,22 +232,22 @@ struct ahci_chipsets_t {
 
 static struct ahci_chipsets_t ahci_chipset[] =
 {
-    // SATA AHCI
-    {0x00000000},
-    //
-    {0x80863a22},
-    {0x80862681},
+  // SATA AHCI
+  {0x00000000},
+  //
+  {0x80863a22},
+  {0x80862681},
   {0x80862682},
-    {0x808627c5},
+  {0x808627c5},
   {0x80862825},
-    {0x80862829},
-    {0x80863b29},
-    {0x80863b22},
-    {0x80863b2f},
-    {0x80861c02},
-    {0x80861c03},
-    {0x10de0ab9},
-    {0x10de0b88},
+  {0x80862829},
+  {0x80863b29},
+  {0x80863b22},
+  {0x80863b2f},
+  {0x80861c02},
+  {0x80861c03},
+  {0x10de0ab9},
+  {0x10de0b88},
 };
 
 UINT8 dtgp[] = // Method (DTGP, 5, NotSerialized) ......
@@ -1007,7 +1008,7 @@ BOOLEAN GetName(UINT8 *dsdt, INT32 adr, CHAR8* name)
     }
     name[i - adr - j] = dsdt[i];
   }
-  name[5] = 0;
+  name[4] = 0;
   return TRUE;
 }
 
@@ -1236,15 +1237,19 @@ UINT32 CorrectOuters (UINT8 *dsdt, UINT32 len, UINT32 adr,  INT32 shift)
 }
 
 //ReplaceName(dsdt, len, "AZAL", "HDEF");
-VOID ReplaceName(UINT8 *dsdt, UINT32 len, /* CONST*/ CHAR8 *OldName, /* CONST*/ CHAR8 *NewName)
+INTN ReplaceName(UINT8 *dsdt, UINT32 len, /* CONST*/ CHAR8 *OldName, /* CONST*/ CHAR8 *NewName)
 {
   UINTN i;
+  INTN  j = 0;
   for (i=10; i<len; i++) {
     if ((dsdt[i+0] == NewName[0]) && (dsdt[i+1] == NewName[1]) &&
         (dsdt[i+2] == NewName[2]) && (dsdt[i+3] == NewName[3])) {
       DBG("NewName %a already present, renaming impossibble\n", NewName);
-      return;
+      return -1;
     }
+  }
+  if (!OldName) {
+    return 0;
   }
   
   for (i=10; i<len; i++) {
@@ -1254,9 +1259,11 @@ VOID ReplaceName(UINT8 *dsdt, UINT32 len, /* CONST*/ CHAR8 *OldName, /* CONST*/ 
       dsdt[i+0] = NewName[0];
       dsdt[i+1] = NewName[1];
       dsdt[i+2] = NewName[2];
-      dsdt[i+3] = NewName[3];      
+      dsdt[i+3] = NewName[3];
+      j++;
     }       
   }
+  return j; //number of replacement
 }
 
 //the procedure search nearest "Device" code before given address
@@ -4365,6 +4372,38 @@ UINT32 FIXOTHER (UINT8 *dsdt, UINT32 len)
   
 }
 
+VOID FixRegions (UINT8 *dsdt, UINT32 len)
+{
+  INTN  i;
+  CHAR8 Name[8];
+  OPER_REGION *p;
+
+  //OperationRegion (GNVS, SystemMemory, 0xDE2E9E18, 0x01CD)
+  //5B 80 47 4E 56 53 00 0C 18 9E 2E DE 0B CD 01
+  if (!gRegions) {
+    return;
+  }
+  for (i = 0x20; i < len - 15; i++) {
+    if ((dsdt[i] == 0x5B) && (dsdt[i+1] == 0x80) && GetName(dsdt, i+2, &Name[0])) {
+      //this is region. Compare to bios tables
+      p = gRegions;
+      while (p)  {
+        if (AsciiStrCmp(p->Name, Name) == 0) {
+          //apply patch
+          if (dsdt[i+7] == 0x0C) {
+            CopyMem(&dsdt[i+8], &p->Address, 4);
+          } else if (dsdt[i+7] == 0x0B) {
+            CopyMem(&dsdt[i+8], &p->Address, 2);
+          }
+          break;
+        }
+        p = p->next;
+      }
+    }
+  }
+
+}
+
 VOID FixBiosDsdt (UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, CHAR8 *OSVersion)
 {    
   UINT32 DsdtLen;
@@ -4572,9 +4611,15 @@ VOID FixBiosDsdt (UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, 
   
   if (((gSettings.FixDsdt & FIX_WARNING) && !(gSettings.FixDsdt & FIX_NEW_WAY)) ||
       ((gSettings.FixDsdt & FIX_NEW_WAY) && (gSettings.FixDsdt & FIX_S3D))) {
-      FixS3D(temp, DsdtLen);
-    }
-  
+    FixS3D(temp, DsdtLen);
+  }
+  //Fix OperationRegions
+  if (((gSettings.FixDsdt & FIX_WARNING) && !(gSettings.FixDsdt & FIX_NEW_WAY)) ||
+      ((gSettings.FixDsdt & FIX_NEW_WAY) && (gSettings.FixDsdt & FIX_REGIONS))) {
+    FixRegions(temp, DsdtLen);
+  }
+
+
      // pwrb add _CID sleep button fix
   if (((gSettings.FixDsdt & FIX_WARNING) && !(gSettings.FixDsdt & FIX_NEW_WAY)) ||
       ((gSettings.FixDsdt & FIX_NEW_WAY) && (gSettings.FixDsdt & FIX_ADP1))) {

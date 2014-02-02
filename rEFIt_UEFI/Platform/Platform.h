@@ -476,6 +476,7 @@ Headers collection for procedures
 #define FIX_S3D       bit(25)
 #define FIX_ACST      bit(26)
 #define FIX_HDMI      bit(27)
+#define FIX_REGIONS   bit(28)
 
 //devices
 #define DEV_ATI       bit(0)
@@ -525,16 +526,18 @@ Headers collection for procedures
 struct aml_chunk 
 {
 	UINT8     Type;
+  UINT8     pad;
 	UINT16		Length;
+  UINT32    pad2;
 	CHAR8*		Buffer;
 	
 	UINT16		Size;
+  UINT16		pad3[3];
 	
 	struct aml_chunk*	Next;
 	struct aml_chunk*	First;
 	struct aml_chunk*	Last;
 };
-
 typedef struct aml_chunk AML_CHUNK;
 
 struct p_state_vid_fid
@@ -556,8 +559,15 @@ struct p_state
 	UINT32		CID;		// Compare ID
 	UINT32	Frequency;
 };
-
 typedef struct p_state P_STATE;
+
+struct _oper_region {
+  CHAR8 Name[8];
+  UINT32 Address;
+  struct _oper_region *next;
+};
+typedef struct _oper_region OPER_REGION;
+
 
 typedef enum {
 	kTagTypeNone,
@@ -1486,6 +1496,7 @@ VOID		    SaveOemTables(VOID);
 EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* GetFadt();
 UINT32      FixAny (UINT8* dsdt, UINT32 len, UINT8* ToFind, UINT32 LenTF, UINT8* ToReplace, UINT32 LenTR);
 VOID        GetAcpiTablesList();
+BOOLEAN     GetName(UINT8 *dsdt, INT32 adr, CHAR8* name);
 
 EFI_STATUS  EventsInitialize(IN LOADER_ENTRY *Entry);
 EFI_STATUS  EjectVolume(IN REFIT_VOLUME *Volume);

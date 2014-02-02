@@ -3267,6 +3267,22 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
                     gSettings.FixDsdt |= FIX_ACST;
                   }
             }
+            prop2 = GetProperty(prop, "AddHDMI_8000000");
+            if(prop2) {
+              if ((prop2->type == kTagTypeTrue) ||
+                  ((prop2->type == kTagTypeString) &&
+                   ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
+                    gSettings.FixDsdt |= FIX_HDMI;
+                  }
+            }
+            prop2 = GetProperty(prop, "FixRegions_10000000");
+            if(prop2) {
+              if ((prop2->type == kTagTypeTrue) ||
+                  ((prop2->type == kTagTypeString) &&
+                   ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
+                    gSettings.FixDsdt |= FIX_REGIONS;
+                  }
+            }
             prop2 = GetProperty(prop, "NewWay_80000000");
             if(prop2) {
               if ((prop2->type == kTagTypeTrue) ||

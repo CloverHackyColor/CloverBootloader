@@ -97,6 +97,10 @@
 				<true/>
 				<key>FIX_ACST_4000000</key>
 				<true/>
+				<key>AddHDMI_8000000</key>
+				<true/>
+				<key>FixRegions_10000000</key>
+				<true/>
 			</dict>
 			<key>Name</key>
 			<string>DSDT.aml</string>
