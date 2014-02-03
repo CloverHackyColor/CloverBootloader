@@ -38,7 +38,7 @@ else
 fi
 
 
-#PROCESSOR=IA32
+PROCESSOR=X64
 
 #
 # Pick a default tool type for a given OS
@@ -95,6 +95,6 @@ done
 # Build the edk2 ShellPkg
 #
 echo Running edk2 build for DumpUefiCalls
-build -p $WORKSPACE/Clover/DumpUefiCalls/DumpUefiCalls.dsc -a $PROCESSOR -t $TARGET_TOOLS -n 3 $*
+build -p $WORKSPACE/Clover/DumpUefiCalls/DumpUefiCalls.dsc -a $PROCESSOR -t $TARGET_TOOLS -n 3
 exit $?
 
