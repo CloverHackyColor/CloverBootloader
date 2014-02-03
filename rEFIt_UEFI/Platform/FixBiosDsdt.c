@@ -4421,6 +4421,7 @@ VOID FixRegions (UINT8 *dsdt, UINT32 len)
             if (GetName(dsdt, i+7+shift, &NameAdr[0], &shift2)) {
               j = FindName(dsdt, len, &NameAdr[0]);
               if (j > 0) {
+                DBG("  indirect name=%a\n", NameAdr);
                 if (dsdt[j+4] == 0x0C) {
                   CopyMem(&dsdt[j+5], &p->Address, 4);
                 } else if (dsdt[j+4] == 0x0B) {
@@ -4429,6 +4430,7 @@ VOID FixRegions (UINT8 *dsdt, UINT32 len)
               }
             }
           }
+          DBG("OperationRegion (%a...) corrected to addr=0x%x\n", Name, p->Address);
           break;
         }
         p = p->next;
@@ -4454,28 +4456,30 @@ VOID GetBiosRegions(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt)
   
   for (i=0x24; i<bufferLen-15; i++) {
     if ((buffer[i] == 0x5B) && (buffer[i+1] == 0x80) &&
-        (buffer[i+6] == 0) && GetName(buffer, i+2, &Name[0], &shift)) {
-      //this is SystemMemory region. Write to bios regions tables
-      tmpRegion = gRegions;
-      gRegions = AllocateZeroPool(sizeof(OPER_REGION));
-      CopyMem(&gRegions->Name[0], &buffer[i+2+shift], 4);
-      gRegions->Name[4] = 0;
-      if (buffer[i+7+shift] == 0x0C) {
-        CopyMem(&gRegions->Address, &buffer[i+8+shift], 4);
-      } else if (buffer[i+7+shift] == 0x0B) {
-        CopyMem(&gRegions->Address, &buffer[i+8+shift], 2);
-      } else if (GetName(buffer, i+7+shift, &NameAdr[0], &shift2)) {
-        j = FindName(buffer, bufferLen, &NameAdr[0]);
-        if (j > 0) {
-          if (buffer[j+4] == 0x0C) {
-            CopyMem(&gRegions->Address, &buffer[j+5], 4);
-          } else if (buffer[j+4] == 0x0B) {
-            CopyMem(&gRegions->Address, &buffer[j+5], 2);
-          }          
-        }
+        GetName(buffer, i+2, &Name[0], &shift)) {
+      if (buffer[i+6+shift] == 0) {
+        //this is SystemMemory region. Write to bios regions tables
+        tmpRegion = gRegions;
+        gRegions = AllocateZeroPool(sizeof(OPER_REGION));
+        CopyMem(&gRegions->Name[0], &buffer[i+2+shift], 4);
+        gRegions->Name[4] = 0;
+        if (buffer[i+7+shift] == 0x0C) {
+          CopyMem(&gRegions->Address, &buffer[i+8+shift], 4);
+        } else if (buffer[i+7+shift] == 0x0B) {
+          CopyMem(&gRegions->Address, &buffer[i+8+shift], 2);
+        } else if (GetName(buffer, i+7+shift, &NameAdr[0], &shift2)) {
+          j = FindName(buffer, bufferLen, &NameAdr[0]);
+          if (j > 0) {
+            if (buffer[j+4] == 0x0C) {
+              CopyMem(&gRegions->Address, &buffer[j+5], 4);
+            } else if (buffer[j+4] == 0x0B) {
+              CopyMem(&gRegions->Address, &buffer[j+5], 2);
+            }          
+          }
+        }      
+        DBG("Found OperationRegion(%a, SystemMemory, %x, ...)\n", gRegions->Name, gRegions->Address);
+        gRegions->next = tmpRegion;
       }      
-      gRegions->next = tmpRegion;
-      DBG("Found OperationRegion(%a, SystemMemory, %x, ...)\n", gRegions->Name, gRegions->Address);
     }
   }
 }
