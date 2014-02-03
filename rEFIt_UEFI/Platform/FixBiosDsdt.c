@@ -4575,6 +4575,8 @@ VOID FixRegions (UINT8 *dsdt, UINT32 len)
                   CopyMem(&dsdt[j+5], &p->Address, 4);
                 } else if (dsdt[j+4] == 0x0B) {
                   CopyMem(&dsdt[j+5], &p->Address, 2);
+                } else {
+                  DBG("... value not defined\n");
                 }
               }
             }
