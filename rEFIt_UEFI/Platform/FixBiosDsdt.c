@@ -29,7 +29,7 @@
 
 OPER_REGION *gRegions;
 
-CHAR8*  device_name[11];  // 0=>Display  1=>network  2=>firewire 3=>LPCB 4=>HDAAudio 5=>RTC 6=>TMR 7=>SBUS 8=>PIC 9=>Airport 10=>XHCI
+CHAR8*  device_name[12];  // 0=>Display  1=>network  2=>firewire 3=>LPCB 4=>HDAAudio 5=>RTC 6=>TMR 7=>SBUS 8=>PIC 9=>Airport 10=>XHCI 11=>HDMI
 CHAR8*  UsbName[10];
 CHAR8*  Netmodel;
 
@@ -82,6 +82,8 @@ UINT32 DisplaySubID[2];
 //UINT32 PWRBADR;
 
 UINT32 HDAADR1;
+UINT32 HDMIADR1;
+UINT32 HDMIADR2;
 UINT32 USBADR[12];
 UINT32 USBADR2[12];
 UINT32 USBADR3[12]; /*<-NFORCE_USB*/
@@ -92,8 +94,8 @@ UINT32 USB40[12];  /*<-NFORCE_USB*/
 
 UINT32 HDAcodecId=0;
 UINT32 HDAlayoutId=0;
-UINT32 GfxcodecId[2];
-UINT32 GfxlayoutId[2];
+UINT32 GfxcodecId[2] = {0, 1};
+UINT32 GfxlayoutId[2] = {0, 12};
 
 pci_dt_t   Displaydevice[2];
 
@@ -591,7 +593,7 @@ VOID CheckHardware()
 	UINTN               Device;
 	UINTN               Function;
 	UINTN               display=0;
-	UINTN               gfxid=0;
+//	UINTN               gfxid=0;
   
 	pci_dt_t            PCIdevice;
 	EFI_DEVICE_PATH_PROTOCOL *DevicePath = NULL;
@@ -752,34 +754,32 @@ VOID CheckHardware()
             usb++;
           }
           
-          // HDA Audio
+          // HDA and HDMI Audio
           if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_MEDIA) &&
               (Pci.Hdr.ClassCode[1] == PCI_CLASS_MEDIA_HDA)) {
             UINT32 codecId = 0, layoutId = 0;
-            GetPciADR(DevicePath, &HDAADR1, NULL, NULL);
-            codecId = HDA_getCodecVendorAndDeviceIds(PciIo);
-            if (codecId > 0) {
-              layoutId = getLayoutIdFromVendorAndDeviceId(codecId);
-              if (layoutId == 0) {
-                layoutId = 12;
+            if (Pci.Hdr.VendorId == 0x8086) {
+              GetPciADR(DevicePath, &HDAADR1, NULL, NULL);
+              codecId = HDA_getCodecVendorAndDeviceIds(PciIo);
+              if (codecId > 0) {
+                layoutId = getLayoutIdFromVendorAndDeviceId(codecId);
+                if (layoutId == 0) {
+                  layoutId = 12;
+                }
               }
-            }
-            if (gSettings.HDALayoutId > 0) {
-              // layoutId is specified - use it
-              layoutId = (UINT32)gSettings.HDALayoutId;
-              DBG("Audio HDA (addr:0x%x) setting specified layout-id=%d (0x%x)\n", HDAADR1, layoutId, layoutId);
-            }
-            if (Pci.Hdr.VendorId == 0x8086) { //this is HDA
+              if (gSettings.HDALayoutId > 0) {
+                // layoutId is specified - use it
+                layoutId = (UINT32)gSettings.HDALayoutId;
+                DBG("Audio HDA (addr:0x%x) setting specified layout-id=%d (0x%x)\n", HDAADR1, layoutId, layoutId);
+              }
+              
               HDAFIX = TRUE;
               HDAcodecId = codecId;
-              HDAlayoutId = layoutId;
-            }
-            if (Pci.Hdr.VendorId != 0x8086) { //this is HDMI
+              HDAlayoutId = layoutId;              
+            } else {
+              GetPciADR(DevicePath, &HDMIADR1, &HDMIADR2, NULL);
               GFXHDAFIX = TRUE;
-              GfxcodecId[gfxid] = codecId;
-              GfxlayoutId[gfxid] = layoutId;
-              gfxid++;
-            }                                   
+            }
           }
           
           // LPC
@@ -1009,10 +1009,13 @@ INT32 FindName(UINT8 *dsdt, INT32 len, CHAR8* name)
   return 0;
 }
 
-BOOLEAN GetName(UINT8 *dsdt, INT32 adr, CHAR8* name, INTN *shift)
+BOOLEAN GetName(UINT8 *dsdt, INT32 adr, CHAR8* name, OUT INTN *shift)
 {
   INT32 i;  
   INT32 j = (dsdt[adr] == 0x5C)?1:0; //now we accept \NAME
+  if (!name) {
+    return FALSE;
+  }
   for (i = adr + j; i < adr + j + 4; i++) {
     if ((dsdt[i] < 0x2F) ||
         ((dsdt[i] > 0x39) && (dsdt[i] < 0x41)) ||
@@ -1022,7 +1025,9 @@ BOOLEAN GetName(UINT8 *dsdt, INT32 adr, CHAR8* name, INTN *shift)
     name[i - adr - j] = dsdt[i];
   }
   name[4] = 0;
-  *shift = j;
+  if (shift) {
+    *shift = j;
+  }  
   return TRUE;
 }
 
@@ -1156,7 +1161,7 @@ UINT32 CorrectOuterMethod (UINT8 *dsdt, UINT32 len, UINT32 adr,  INT32 shift)
   INT32    i,  k;
   UINT32   size = 0;
   INT32  offset = 0;
-  INTN   NameShift;
+//  INTN   NameShift;
   CHAR8  Name[5];
 
   if (shift == 0) {
@@ -1170,9 +1175,9 @@ UINT32 CorrectOuterMethod (UINT8 *dsdt, UINT32 len, UINT32 adr,  INT32 shift)
       if (!size) {
         continue;
       }
-      if (((size <= 0x3F) && !GetName(dsdt, k+1, &Name[0], &NameShift)) ||
-          ((size > 0x3F) && (size <= 0xFFF) && !GetName(dsdt, k+2, &Name[0], &NameShift)) ||
-          ((size > 0xFFF) && !GetName(dsdt, k+3, &Name[0], &NameShift))) {
+      if (((size <= 0x3F) && !GetName(dsdt, k+1, &Name[0], NULL)) ||
+          ((size > 0x3F) && (size <= 0xFFF) && !GetName(dsdt, k+2, &Name[0], NULL)) ||
+          ((size > 0xFFF) && !GetName(dsdt, k+3, &Name[0], NULL))) {
         DBG("method found, size=0x%x but name is not\n", size);
         continue;
       }
@@ -2019,13 +2024,12 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
 {
   UINT32 i, j, k;
   INT32 sizeoffset = 0;
-  INT32 sizeoffset2 = 0;
+//  INT32 sizeoffset2 = 0;
   UINT32 PCIADR = 0, PCISIZE = 0, Size;
 //  CHAR8 *portname;
-  CHAR8 *CFGname = NULL;
-  CHAR8 *name = NULL;
+//  CHAR8 *name = NULL;
   CHAR8 *display;
-  CHAR8 *hdmi = NULL;
+//  CHAR8 *hdmi = NULL;
   UINT32 devadr=0, devsize=0, devadr1=0, devsize1=0;
   BOOLEAN DISPLAYFIX = FALSE;
   BOOLEAN NonUsable = FALSE;
@@ -2034,8 +2038,8 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
   AML_CHUNK *gfx0, *peg0;
   AML_CHUNK *met;
   AML_CHUNK *pack;
-  AML_CHUNK *hdaudev;
-  AML_CHUNK *device;
+//  AML_CHUNK *hdaudev;
+//  AML_CHUNK *device;
   UINT32 FakeID = 0;
   UINT32 FakeVen = 0;
   DisplayName1 = FALSE;
@@ -2232,7 +2236,7 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
       aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
       // finish Method(_DSM,4,NotSerialized)
     }
-    
+/*    
     // HDAU - separate device
     hdaudev = aml_create_node(NULL);
     if (GFXHDAFIX && (FindBin(dsdt, len, (UINT8*)"HDAU", 4) < 0)) {
@@ -2251,7 +2255,7 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
         aml_add_string(pack, "layout-id");
         aml_add_byte_buffer(pack, (CHAR8*)&GfxlayoutId[VCard], 4);
         aml_add_string(pack, "hda-gfx");
-        aml_add_string_buffer(pack, "onboard-2");
+        aml_add_string_buffer(pack, "onboard-1");
         aml_add_string(pack, "PinConfigurations");
         aml_add_byte_buffer(pack, data2, sizeof(data2));        
       }
@@ -2281,7 +2285,7 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
         hdmi = NULL;
       }
     }
-
+*/
   if (!NonUsable) {
     //now insert video
     DBG("now inserting Video device\n");
@@ -2346,7 +2350,7 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
       devadr += k - len;
       len = k;
     }
-
+/*
     if (hdmi) { //not inserted yet because PEG0 was absent
       DBG("insert HDAU into created bridge @0x%x\n", devadr);
       k = get_size(dsdt, devadr);
@@ -2359,22 +2363,167 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
         len += j;
         len = CorrectOuters(dsdt, len, devadr-3, sizeoffset2);
       }
-    }
+    } */
     FreePool(display);
   }
 
-  if (CFGname) {
-    FreePool(CFGname);
-  }
-  if (name) {
-    FreePool(name);
-  } 
-  if (hdmi) {
+/*  if (hdmi) {
     FreePool(hdmi);
   }
-
+*/
 
   return len;  
+}
+
+UINT32 AddHDMI (UINT8 *dsdt, UINT32 len)
+{
+  UINT32 i, j, k;
+  INT32 sizeoffset = 0;
+  UINT32 PCIADR = 0, PCISIZE = 0, Size;
+  CHAR8 *hdmi = NULL;
+  UINT32 devadr=0, BridgeSize=0, devadr1=0; //, devsize1=0;
+//  BOOLEAN DsmFound = FALSE;
+  BOOLEAN BridgeFound = FALSE;
+  BOOLEAN HdauFound = FALSE;
+  AML_CHUNK* brd = NULL;
+  AML_CHUNK *root = NULL;
+  AML_CHUNK *met;
+  AML_CHUNK *pack;
+  
+  if (!HDMIADR1) return len;
+  
+  PCIADR = GetPciDevice(dsdt, len);
+  if (PCIADR) {
+    PCISIZE = get_size(dsdt, PCIADR);
+  }
+  if (!PCISIZE) return len; //what is the bad DSDT ?!
+  
+  DBG("Start HDMI%d Fix\n");
+  // Device Address
+  for (i=0x20; i<len-10; i++) {
+    if (CmpAdr(dsdt, i, HDMIADR1)) {
+      devadr = devFind(dsdt, i);
+      if (!devadr) {
+        continue;
+      }      
+      BridgeSize = get_size(dsdt, devadr);
+      if (!BridgeSize) {
+        continue;
+      }
+      BridgeFound = TRUE;
+      if (HDMIADR2 != 0xFFFE){
+        for (k = devadr + 9; k < devadr + BridgeSize; k++) {
+          if (CmpAdr(dsdt, k, HDMIADR2))
+          {
+            devadr1 = devFind(dsdt, k);
+            if (!devadr1) {
+              continue;
+            }            
+            device_name[11] = AllocateZeroPool(5);
+            CopyMem(device_name[11], dsdt+k, 4);
+            DBG("found HDMI device [0x%08x:%x] at %x and Name is %a\n",
+                HDMIADR1, HDMIADR2, devadr1, device_name[11]);
+            ReplaceName(dsdt + devadr, BridgeSize, device_name[11], "HDAU");
+            HdauFound = TRUE;   
+            break;
+          }
+        }
+        if (!HdauFound) {
+          DBG("have no HDMI device while HDMIADR2=%x\n", HDMIADR2);
+          devadr1 = devadr;
+        }
+      } else {
+        devadr1 = devadr;
+      }
+      break;
+    } // End if devadr1 find
+  }
+  if (BridgeFound) { // bridge or device
+    i = devadr1;
+    Size = get_size(dsdt, i);
+    k = FindMethod(dsdt + i, Size, "_DSM");
+    if (k != 0) {
+      if ((dropDSM & DEV_HDMI) != 0) {
+        Size = get_size(dsdt, k);
+        sizeoffset = - 1 - Size;
+        len = move_data(k - 1, dsdt, len, sizeoffset);
+        len = CorrectOuters(dsdt, len, k - 2, sizeoffset);
+        DBG("_DSM in HDAU already exists, dropped\n");
+      } else {
+        DBG("_DSM already exists, patch HDAU will not be applied\n");
+        return len;
+      }
+    }
+    root = aml_create_node(NULL);
+  }  
+  //what to do if no HDMI bridge?
+  else {
+    brd = aml_create_node(NULL);
+    root = aml_add_device(brd, "HDM0");
+    aml_add_name(root, "_ADR");
+    aml_add_dword(root, HDMIADR1);
+    DBG("Created  bridge device with ADR=0x%x\n", HDMIADR1);
+  }
+  
+  DBG("HDMIADR1=%x HDMIADR2=%x\n", HDMIADR1, HDMIADR2);
+  if (!HdauFound && (HDMIADR2 != 0xFFFE)) //there is no HDMI device at dsdt, creating new one
+  {
+    AML_CHUNK* dev = aml_add_device(root, "HDAU");
+    aml_add_name(dev, "_ADR");
+    if (HDMIADR2) {
+      if (HDMIADR2 > 0x3F)
+        aml_add_dword(dev, HDMIADR2);
+      else
+        aml_add_byte(dev, (UINT8)HDMIADR2);
+    } else {
+      aml_add_byte(dev, 0x01);
+    }
+    met = aml_add_method(dev, "_DSM", 4);
+  } else {
+    met = aml_add_method(root, "_DSM", 4);
+  }  
+  
+  met = aml_add_store(met);
+  pack = aml_add_package(met);
+  if (!AddProperties(pack, DEV_HDMI)) {
+    DBG("  with default properties\n");
+    aml_add_string(pack, "layout-id");
+    aml_add_byte_buffer(pack, (CHAR8*)&GfxlayoutId[1], 4);
+    aml_add_string(pack, "hda-gfx");
+    aml_add_string_buffer(pack, "onboard-1");
+    aml_add_string(pack, "PinConfigurations");
+    aml_add_byte_buffer(pack, data2, sizeof(data2));        
+  }
+  aml_add_local0(met);
+  aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
+  // finish Method(_DSM,4,NotSerialized)
+  
+  aml_calculate_size(root);
+  hdmi = AllocateZeroPool(root->Size);
+  sizeoffset = root->Size;
+  aml_write_node(root, hdmi, 0);
+  aml_destroy_node(root);
+  //insert HDAU
+  if (BridgeFound) { // bridge or lan
+    k = devadr1;
+  } else { //this is impossible
+    k = PCIADR;
+  }  
+  Size = get_size(dsdt, k);
+  if (Size > 0) {
+    i = k + Size;
+    len = move_data(i, dsdt, len, sizeoffset);
+    CopyMem(dsdt + i, hdmi, sizeoffset);
+    j = write_size(devadr, dsdt, len, sizeoffset);
+    sizeoffset += j;
+    len += j;
+    len = CorrectOuters(dsdt, len, devadr-3, sizeoffset);
+  }
+  if (hdmi) {
+    FreePool(hdmi);
+  }    
+  
+  return len;
 }
 
 //Network -------------------------------------------------------------
@@ -3205,7 +3354,7 @@ UINT32 AddHDEF (UINT8 *dsdt, UINT32 len, CHAR8* OSVersion)
   //aml_add_byte_buffer(pack, (CHAR8*)&HDAcodecId, 4);
   if (GFXHDAFIX) {
     aml_add_string(pack, "hda-gfx");
-    aml_add_string_buffer(pack, "onboard-2");
+    aml_add_string_buffer(pack, "onboard-1");
   }
 
   if (!AddProperties(pack, DEV_HDA)) {
@@ -4389,7 +4538,7 @@ UINT32 FIXOTHER (UINT8 *dsdt, UINT32 len)
 
 VOID FixRegions (UINT8 *dsdt, UINT32 len)
 {
-  INTN  i, j, shift, shift2;
+  INTN  i, j, shift;
   CHAR8 Name[8];
   CHAR8 NameAdr[8];
   OPER_REGION *p;
@@ -4418,7 +4567,7 @@ VOID FixRegions (UINT8 *dsdt, UINT32 len)
             CopyMem(&dsdt[i+8+shift], &p->Address, 2);
           } else {
             //propose this is indirect name
-            if (GetName(dsdt, i+7+shift, &NameAdr[0], &shift2)) {
+            if (GetName(dsdt, i+7+shift, &NameAdr[0], NULL)) {
               j = FindName(dsdt, len, &NameAdr[0]);
               if (j > 0) {
                 DBG("  indirect name=%a\n", NameAdr);
@@ -4638,10 +4787,17 @@ VOID FixBiosDsdt (UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, 
 //    DBG("patch MCHC in DSDT \n");
     DsdtLen = AddMCHC(temp, DsdtLen);
   }
+  //add IMEI
   if (((gSettings.FixDsdt & FIX_MCHC) && !(gSettings.FixDsdt & FIX_NEW_WAY)) || 
        ((gSettings.FixDsdt & FIX_NEW_WAY) && (gSettings.FixDsdt & FIX_IMEI))) {
     DsdtLen = AddIMEI(temp, DsdtLen);
   }
+  //Add HDMI device
+  if (((gSettings.FixDsdt & FIX_DISPLAY) && !(gSettings.FixDsdt & FIX_NEW_WAY)) || 
+      ((gSettings.FixDsdt & FIX_NEW_WAY) && (gSettings.FixDsdt & FIX_HDMI))) {
+    DsdtLen = AddHDMI(temp, DsdtLen);
+  }
+  
   
   // Always Fix USB
   if ((gSettings.FixDsdt & FIX_USB)) {

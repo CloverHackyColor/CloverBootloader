@@ -406,9 +406,9 @@ AML_CHUNK* aml_add_string_buffer(AML_CHUNK* parent, /* CONST*/ CHAR8* StringBuf)
 		node->Length = (UINT8)(len + 3);
 		node->Buffer = AllocateZeroPool (node->Length);
 		node->Buffer[offset++] = AML_CHUNK_BYTE;
-		node->Buffer[offset++] = (CHAR8)len;
+		node->Buffer[offset++] = (CHAR8)(len + 1);
 		CopyMem(node->Buffer+offset, StringBuf, len);
-		node->Buffer[offset+len] = '\0';
+//		node->Buffer[offset+len] = '\0';  //already zero pool
 	}
 	
 	return node;
@@ -423,9 +423,9 @@ AML_CHUNK* aml_add_string(AML_CHUNK* parent, /* CONST*/ CHAR8* StringBuf)
 	    INTN len = AsciiStrLen(StringBuf);
 		node->Type = AML_CHUNK_STRING;
 		node->Length = (UINT8)(len + 1);
-		node->Buffer = AllocateZeroPool (len);
-		CopyMem(node->Buffer,StringBuf, len);
-		node->Buffer[len] = '\0';
+		node->Buffer = AllocateZeroPool (len + 1);
+		CopyMem(node->Buffer, StringBuf, len);
+//		node->Buffer[len] = '\0';
 	}
 	
 	return node;
