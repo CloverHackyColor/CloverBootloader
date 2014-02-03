@@ -1403,6 +1403,7 @@ extern TagPtr gConfigDict[];
 //-----------------------------------
 
 VOID        FixBiosDsdt (UINT8* Dsdt, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, CHAR8 *OSVersion);
+VOID        GetBiosRegions(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt);
 EFI_STATUS  MouseBirth();
 VOID        KillMouse();
 VOID        HidePointer();
@@ -1496,7 +1497,6 @@ VOID		    SaveOemTables(VOID);
 EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* GetFadt();
 UINT32      FixAny (UINT8* dsdt, UINT32 len, UINT8* ToFind, UINT32 LenTF, UINT8* ToReplace, UINT32 LenTR);
 VOID        GetAcpiTablesList();
-BOOLEAN     GetName(UINT8 *dsdt, INT32 adr, CHAR8* name);
 
 EFI_STATUS  EventsInitialize(IN LOADER_ENTRY *Entry);
 EFI_STATUS  EjectVolume(IN REFIT_VOLUME *Volume);

@@ -50,8 +50,8 @@ UINT64      BiosDsdt;
 UINT32      BiosDsdtLen;
 UINT8       acpi_cpu_count;
 CHAR8*      acpi_cpu_name[32];
-OPER_REGION *gRegions;
 
+extern OPER_REGION *gRegions;
 //-----------------------------------
 
 
@@ -1459,7 +1459,7 @@ VOID        SaveOemDsdt(BOOLEAN FullPatch)
 EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
 {
 	EFI_STATUS										Status = EFI_SUCCESS;
-	UINTN                         Index, i;
+	UINTN                         Index;
 	EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER	*RsdPointer = NULL;
 	EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE		*FadtPointer = NULL;	
 	EFI_ACPI_4_0_FIXED_ACPI_DESCRIPTION_TABLE		*newFadt	 = NULL;
@@ -1481,7 +1481,6 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
   UINT32                  eCntR; //, eCntX;
   UINT32                  *pEntryR;
   CHAR8                   *pEntry;
-  CHAR8                   Name[8];
   EFI_ACPI_DESCRIPTION_HEADER *TableHeader;
   // -===== APIC =====-
   EFI_ACPI_DESCRIPTION_HEADER                           *ApicTable;
@@ -1497,63 +1496,6 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
   CHAR16*     AcpiOemPath = PoolPrint(L"%s\\ACPI\\patched", OEMPath);
   OPER_REGION *tmpRegion;
   PathDsdt = PoolPrint(L"\\%s", gSettings.DsdtName);
-/*	
-  if (gFirmwareClover || gSettings.RememberBIOS) {
-    // although it work on Aptio, no need for the following on other UEFis
-    
-    //Slice - I want to begin from BIOS ACPI tables like with SMBIOS
-    RsdPointer = (EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER*)FindAcpiRsdPtr();
-    //	DBG("Found RsdPtr in BIOS: %p\n", RsdPointer);
-    
-    //Slice - some tricks to do with Bios Acpi Tables
-    Rsdt = (RSDT_TABLE*)(UINTN)(RsdPointer->RsdtAddress);
-    if (Rsdt == NULL || Rsdt->Header.Signature != EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_TABLE_SIGNATURE) {
-      Xsdt = (XSDT_TABLE *)(UINTN)(RsdPointer->XsdtAddress);
-    }
-    if (Rsdt) {
-      FadtPointer = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE*)(UINTN)(Rsdt->Entry);
-    } else if (Xsdt) {
-      FadtPointer = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE*)(UINTN)(Xsdt->Entry);
-    }
-    //  DBG("Found FADT in BIOS: %p\n", FadtPointer);
-    Facs = (EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE*)(UINTN)(FadtPointer->FirmwareCtrl);
-//    DBG("Found FACS in BIOS: %p\n", Facs);
-    BiosDsdt = FadtPointer->XDsdt;
-    if (BiosDsdt == 0) {
-      BiosDsdt = FadtPointer->Dsdt;
-      if (BiosDsdt == 0) {
-        DBG("Cannot found DSDT in Bios tables!\n");
-      }
-    }
-  }
-*/  
-#if 0	  //Slice - this codes reserved for a future
-	if (0) { //RsdPointer) {
-		if (((EFI_ACPI_1_0_ROOT_SYSTEM_DESCRIPTION_POINTER *)RsdPointer)->Reserved == 0x00){
-			
-			// If Acpi 1.0 Table, then RSDP structure doesn't contain Length field, use structure size
-			AcpiTableLen = sizeof (EFI_ACPI_1_0_ROOT_SYSTEM_DESCRIPTION_POINTER);
-		} else if (((EFI_ACPI_1_0_ROOT_SYSTEM_DESCRIPTION_POINTER *)RsdPointer)->Reserved >= 0x02){
-			
-			// If Acpi 2.0 or later, use RSDP Length field.
-			AcpiTableLen = RsdPointer->Length;
-		} else {
-			
-			// Invalid Acpi Version, return
-			return EFI_UNSUPPORTED;
-		}
-		Status = ConvertAcpiTable (AcpiTableLen, (VOID**)&RsdPointer);
-		//Now install the new table
-		gBS->InstallConfigurationTable (&gEfiAcpiTableGuid, (VOID*)RsdPointer);
-		DBG("Converted RsdPtr 0x%p\n", RsdPointer);
-		gST->Hdr.CRC32 = 0;
-		gBS->CalculateCrc32 ((UINT8 *) &gST->Hdr, 
-                         gST->Hdr.HeaderSize, &gST->Hdr.CRC32);	
-		DBG("AcpiTableLen %x\n", AcpiTableLen);
-	} else
-#else	
-  if (1) //!RsdPointer) //if we have RsdPointer from BIOS them nothing to do here
-	{
 		//try to find in SystemTable
 		for(Index = 0; Index < gST->NumberOfTableEntries; Index++)
 		{
@@ -1570,27 +1512,6 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
 				continue;
 			}
 		}
- /*   if (!Facs && RsdPointer) {
-      Rsdt = (RSDT_TABLE*)(UINTN)(RsdPointer->RsdtAddress);
-      if (Rsdt == NULL || Rsdt->Header.Signature != EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_TABLE_SIGNATURE) {
-        Xsdt = (XSDT_TABLE *)(UINTN)(RsdPointer->XsdtAddress);
-      }
-      if (Rsdt) {
-        FadtPointer = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE*)(UINTN)(Rsdt->Entry);
-        DBG("Take FADT from RSDT: %p\n", FadtPointer);
-      } else if (Xsdt) {
-        FadtPointer = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE*)(UINTN)(Xsdt->Entry);
-        DBG("Take FADT from XSDT: %p\n", FadtPointer);
-      } else {
-        DBG("No RSDT or XSDT, exiting\n");
-        return EFI_NOT_FOUND;
-      }
-
-      Facs = (EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE*)(UINTN)(FadtPointer->FirmwareCtrl);
-      DBG("Found FACS in System table: %p\n", Facs);
-    } */
-	}
-#endif	
   
 	if (!RsdPointer) {
 		return EFI_UNSUPPORTED;
@@ -1804,69 +1725,8 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
   }
 
   //Get regions from BIOS DSDT
-  gRegions = NULL;
-  buffer = (UINT8*)(UINTN)FadtPointer->Dsdt;
-  TableHeader = (EFI_ACPI_DESCRIPTION_HEADER*)buffer;
-  bufferLen = TableHeader->Length;
-
-  for (i=0x24; i<bufferLen-15; i++) {
-    if ((buffer[i] == 0x5B) && (buffer[i+1] == 0x80) &&
-        (buffer[i+6] == 0) && GetName(buffer, i+2, &Name[0])) {
-      //this is SystemMemory region. Write to bios regions tables
-      tmpRegion = gRegions;
-      gRegions = AllocateZeroPool(sizeof(OPER_REGION));
-      CopyMem(&gRegions->Name[0], &buffer[i+2], 4);
-      gRegions->Name[4] = 0;
-      CopyMem(&gRegions->Address, &buffer[i+8], 4);
-      gRegions->next = tmpRegion;
-      DBG("Found OperationRegion(%a, SystemMemory, %x, ...)\n", gRegions->Name, gRegions->Address);
-    }
-  }
+  GetBiosRegions(FadtPointer);
   
-/*
-  BufferPtr = EFI_SYSTEM_TABLE_MAX_ADDRESS;
-  Status=gBS->AllocatePages(AllocateMaxAddress, EfiACPIReclaimMemory, 1, &BufferPtr);
-  if(!EFI_ERROR(Status))
-  {
-    xf = ScanXSDT(HPET_SIGN);
-    if(!xf) { //we want to make the new table if OEM is not found
-      DBG("HPET creation\n");
-      Hpet = (EFI_ACPI_HIGH_PRECISION_EVENT_TIMER_TABLE_HEADER*)(UINTN)BufferPtr;
-      Hpet->Header.Signature = EFI_ACPI_3_0_HIGH_PRECISION_EVENT_TIMER_TABLE_SIGNATURE;
-      Hpet->Header.Length = sizeof(EFI_ACPI_HIGH_PRECISION_EVENT_TIMER_TABLE_HEADER);
-      Hpet->Header.Revision = EFI_ACPI_HIGH_PRECISION_EVENT_TIMER_TABLE_REVISION;
-      CopyMem(&Hpet->Header.OemId, oemID, 6);
-      CopyMem(&Hpet->Header.OemTableId, oemTableID, sizeof(oemTableID));
-      Hpet->Header.OemRevision = 0x00000001;
-      CopyMem(&Hpet->Header.CreatorId, creatorID, sizeof(creatorID));
-      Hpet->EventTimerBlockId = 0x8086A201; // we should remember LPC VendorID to place here
-      Hpet->BaseAddressLower32Bit.AddressSpaceId = EFI_ACPI_2_0_SYSTEM_IO;
-      Hpet->BaseAddressLower32Bit.RegisterBitWidth = 0x40; //64bit
-      Hpet->BaseAddressLower32Bit.RegisterBitOffset = 0x00;
-      Hpet->BaseAddressLower32Bit.Address = 0xFED00000; //Physical Addr.
-      Hpet->HpetNumber = 0;
-      Hpet->MainCounterMinimumClockTickInPeriodicMode = 0x0080;
-      Hpet->PageProtectionAndOemAttribute = EFI_ACPI_64KB_PAGE_PROTECTION; //Flags |= EFI_ACPI_4KB_PAGE_PROTECTION , EFI_ACPI_64KB_PAGE_PROTECTION
-      // verify checksum
-      Hpet->Header.Checksum = 0;
-      Hpet->Header.Checksum = (UINT8)(256-Checksum8((CHAR8*)Hpet,Hpet->Header.Length));
-
-      //then we have to install new table into Xsdt
-      if (Xsdt!=NULL) {
-        //we have no such table. Add a new entry into Xsdt
-        UINT64	EntryCount;
-
-        EntryCount = (Xsdt->Header.Length - sizeof (EFI_ACPI_DESCRIPTION_HEADER)) / sizeof(UINT64);
-        xf = (UINT64*)(&(Xsdt->Entry)) + EntryCount;
-        Xsdt->Header.Length += sizeof(UINT64);
-        *xf = (UINT64)(UINTN)Hpet;
-        DBG("HPET placed into XSDT: %lx\n", *xf);
-        Xsdt->Header.Checksum = 0;
-        Xsdt->Header.Checksum = (UINT8)(256-Checksum8((CHAR8*)Xsdt, Xsdt->Header.Length));
-      }
-    }
-  }
-*/
   //  DBG("DSDT finding\n");
   if (!Volume) {
     DBG("Volume not found!\n");

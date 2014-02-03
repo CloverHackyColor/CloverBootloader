@@ -27,7 +27,7 @@
 #define DBG(...) DebugLog(DEBUG_FIX, __VA_ARGS__)	
 #endif
 
-extern OPER_REGION *gRegions;
+OPER_REGION *gRegions;
 
 CHAR8*  device_name[11];  // 0=>Display  1=>network  2=>firewire 3=>LPCB 4=>HDAAudio 5=>RTC 6=>TMR 7=>SBUS 8=>PIC 9=>Airport 10=>XHCI
 CHAR8*  UsbName[10];
@@ -996,9 +996,22 @@ BOOLEAN CmpNum(UINT8 *dsdt, INT32 i, BOOLEAN Sure)
                      (dsdt[i-4] == 0x0C))));
 }
 
-BOOLEAN GetName(UINT8 *dsdt, INT32 adr, CHAR8* name)
+INT32 FindName(UINT8 *dsdt, INT32 len, CHAR8* name)
 {
   INT32 i;
+  for (i=0x24; i<len-5; i++) {
+    if ((dsdt[i] == 0x08) && (dsdt[i+1] == name[0]) &&
+        (dsdt[i+2] == name[1]) && (dsdt[i+3] == name[2]) &&
+        (dsdt[i+4] == name[3])) {
+      return i+1;
+    }
+  }
+  return 0;
+}
+
+BOOLEAN GetName(UINT8 *dsdt, INT32 adr, CHAR8* name, INTN *shift)
+{
+  INT32 i;  
   INT32 j = (dsdt[adr] == 0x5C)?1:0; //now we accept \NAME
   for (i = adr + j; i < adr + j + 4; i++) {
     if ((dsdt[i] < 0x2F) ||
@@ -1009,6 +1022,7 @@ BOOLEAN GetName(UINT8 *dsdt, INT32 adr, CHAR8* name)
     name[i - adr - j] = dsdt[i];
   }
   name[4] = 0;
+  *shift = j;
   return TRUE;
 }
 
@@ -1142,6 +1156,7 @@ UINT32 CorrectOuterMethod (UINT8 *dsdt, UINT32 len, UINT32 adr,  INT32 shift)
   INT32    i,  k;
   UINT32   size = 0;
   INT32  offset = 0;
+  INTN   NameShift;
   CHAR8  Name[5];
 
   if (shift == 0) {
@@ -1155,9 +1170,9 @@ UINT32 CorrectOuterMethod (UINT8 *dsdt, UINT32 len, UINT32 adr,  INT32 shift)
       if (!size) {
         continue;
       }
-      if (((size <= 0x3F) && !GetName(dsdt, k+1, &Name[0])) ||
-          ((size > 0x3F) && (size <= 0xFFF) && !GetName(dsdt, k+2, &Name[0])) ||
-          ((size > 0xFFF) && !GetName(dsdt, k+3, &Name[0]))) {
+      if (((size <= 0x3F) && !GetName(dsdt, k+1, &Name[0], &NameShift)) ||
+          ((size > 0x3F) && (size <= 0xFFF) && !GetName(dsdt, k+2, &Name[0], &NameShift)) ||
+          ((size > 0xFFF) && !GetName(dsdt, k+3, &Name[0], &NameShift))) {
         DBG("method found, size=0x%x but name is not\n", size);
         continue;
       }
@@ -1241,7 +1256,7 @@ INTN ReplaceName(UINT8 *dsdt, UINT32 len, /* CONST*/ CHAR8 *OldName, /* CONST*/ 
 {
   UINTN i;
   INTN  j = 0;
-  for (i=10; i<len; i++) {
+  for (i=0x24; i<len-4; i++) {
     if ((dsdt[i+0] == NewName[0]) && (dsdt[i+1] == NewName[1]) &&
         (dsdt[i+2] == NewName[2]) && (dsdt[i+3] == NewName[3])) {
       DBG("NewName %a already present, renaming impossibble\n", NewName);
@@ -1252,7 +1267,7 @@ INTN ReplaceName(UINT8 *dsdt, UINT32 len, /* CONST*/ CHAR8 *OldName, /* CONST*/ 
     return 0;
   }
   
-  for (i=10; i<len; i++) {
+  for (i=0x24; i<len-4; i++) {
     if ((dsdt[i+0] == OldName[0]) && (dsdt[i+1] == OldName[1]) &&
         (dsdt[i+2] == OldName[2]) && (dsdt[i+3] == OldName[3])) {
       DBG("Name %a present at 0x%x, renaming to %a\n", OldName, i, NewName);
@@ -4374,26 +4389,45 @@ UINT32 FIXOTHER (UINT8 *dsdt, UINT32 len)
 
 VOID FixRegions (UINT8 *dsdt, UINT32 len)
 {
-  INTN  i;
+  INTN  i, j, shift, shift2;
   CHAR8 Name[8];
+  CHAR8 NameAdr[8];
   OPER_REGION *p;
 
-  //OperationRegion (GNVS, SystemMemory, 0xDE2E9E18, 0x01CD)
-  //5B 80 47 4E 56 53 00 0C 18 9E 2E DE 0B CD 01
+  //  OperationRegion (GNVS, SystemMemory, 0xDE2E9E18, 0x01CD)
+  //  5B 80 47 4E 56 53 00  0C 18 9E 2E DE  0B CD 01
+  //or
+  //  Name (RAMB, 0xDD991188)
+  //  OperationRegion (\RAMW, SystemMemory, RAMB, 0x00010000)
+  //  08 52 41 4D 42   0C 88 11 99 DD 
+  //  5B 80 52 41 4D 57 00   52 41 4D 42   0C 00 00 01 00 
+  
   if (!gRegions) {
     return;
   }
   for (i = 0x20; i < len - 15; i++) {
-    if ((dsdt[i] == 0x5B) && (dsdt[i+1] == 0x80) && GetName(dsdt, i+2, &Name[0])) {
+    if ((dsdt[i] == 0x5B) && (dsdt[i+1] == 0x80) && GetName(dsdt, i+2, &Name[0], &shift)) {
       //this is region. Compare to bios tables
       p = gRegions;
       while (p)  {
-        if (AsciiStrCmp(p->Name, Name) == 0) {
+        if (AsciiStrStr(p->Name, Name)) {
           //apply patch
-          if (dsdt[i+7] == 0x0C) {
-            CopyMem(&dsdt[i+8], &p->Address, 4);
-          } else if (dsdt[i+7] == 0x0B) {
-            CopyMem(&dsdt[i+8], &p->Address, 2);
+          if (dsdt[i+7+shift] == 0x0C) {
+            CopyMem(&dsdt[i+8+shift], &p->Address, 4);
+          } else if (dsdt[i+7+shift] == 0x0B) {
+            CopyMem(&dsdt[i+8+shift], &p->Address, 2);
+          } else {
+            //propose this is indirect name
+            if (GetName(dsdt, i+7+shift, &NameAdr[0], &shift2)) {
+              j = FindName(dsdt, len, &NameAdr[0]);
+              if (j > 0) {
+                if (dsdt[j+4] == 0x0C) {
+                  CopyMem(&dsdt[j+5], &p->Address, 4);
+                } else if (dsdt[j+4] == 0x0B) {
+                  CopyMem(&dsdt[j+5], &p->Address, 2);
+                }
+              }
+            }
           }
           break;
         }
@@ -4401,8 +4435,51 @@ VOID FixRegions (UINT8 *dsdt, UINT32 len)
       }
     }
   }
-
 }
+
+VOID GetBiosRegions(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt)
+{
+  EFI_ACPI_DESCRIPTION_HEADER *TableHeader;
+  UINT8       *buffer = NULL;
+	UINT32       bufferLen = 0;
+  INTN        i, j, shift, shift2;
+  OPER_REGION *tmpRegion;
+  CHAR8       Name[8];
+  CHAR8       NameAdr[8];
+  
+  gRegions = NULL;
+  buffer = (UINT8*)(UINTN)fadt->Dsdt;
+  TableHeader = (EFI_ACPI_DESCRIPTION_HEADER*)buffer;
+  bufferLen = TableHeader->Length;
+  
+  for (i=0x24; i<bufferLen-15; i++) {
+    if ((buffer[i] == 0x5B) && (buffer[i+1] == 0x80) &&
+        (buffer[i+6] == 0) && GetName(buffer, i+2, &Name[0], &shift)) {
+      //this is SystemMemory region. Write to bios regions tables
+      tmpRegion = gRegions;
+      gRegions = AllocateZeroPool(sizeof(OPER_REGION));
+      CopyMem(&gRegions->Name[0], &buffer[i+2+shift], 4);
+      gRegions->Name[4] = 0;
+      if (buffer[i+7+shift] == 0x0C) {
+        CopyMem(&gRegions->Address, &buffer[i+8+shift], 4);
+      } else if (buffer[i+7+shift] == 0x0B) {
+        CopyMem(&gRegions->Address, &buffer[i+8+shift], 2);
+      } else if (GetName(buffer, i+7+shift, &NameAdr[0], &shift2)) {
+        j = FindName(buffer, bufferLen, &NameAdr[0]);
+        if (j > 0) {
+          if (buffer[j+4] == 0x0C) {
+            CopyMem(&gRegions->Address, &buffer[j+5], 4);
+          } else if (buffer[j+4] == 0x0B) {
+            CopyMem(&gRegions->Address, &buffer[j+5], 2);
+          }          
+        }
+      }      
+      gRegions->next = tmpRegion;
+      DBG("Found OperationRegion(%a, SystemMemory, %x, ...)\n", gRegions->Name, gRegions->Address);
+    }
+  }
+}
+
 
 VOID FixBiosDsdt (UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, CHAR8 *OSVersion)
 {    
