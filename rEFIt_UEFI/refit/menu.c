@@ -1207,7 +1207,7 @@ static VOID InitSelection(VOID)
 {
   UINTN       x, y, src_x, src_y;
   EG_PIXEL    *DestPtr, *SrcPtr;
-  INTN        Row0TileSize = GlobalConfig.MainEntriesSize + 16;
+  UINTN        Row0TileSize = GlobalConfig.MainEntriesSize + 16;
   
   if (!AllowGraphicsMode)
     return;

@@ -1644,6 +1644,11 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   DBG("Clover load options size = %d bytes\n", SelfLoadedImage->LoadOptionsSize);
     ParseLoadOptions(&ConfName, &gConfigDict[1]);
   if (ConfName) {
+    if (StrLen(ConfName) == 0) {
+      gConfigDict[1] = NULL;
+      FreePool(ConfName);
+      ConfName = NULL;
+    } else {
       SetOEMPath(ConfName);
       Status = LoadUserSettings(SelfRootDir, ConfName, &gConfigDict[1]);
       DBG("%s\\%s.plist%s loaded with name from LoadOptions: %r\n",
@@ -1651,7 +1656,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       if (EFI_ERROR(Status)) {
         gConfigDict[1] = NULL;
         FreePool(ConfName);
+        ConfName = NULL;
       }
+    }
   }
   if (gConfigDict[1]) {
     UniteTag = GetProperty(gConfigDict[1], "Unite");

@@ -4604,7 +4604,7 @@ UINT32 FIXOTHER (UINT8 *dsdt, UINT32 len)
 
 VOID FixRegions (UINT8 *dsdt, UINT32 len)
 {
-  INTN  i, j, shift;
+  UINTN i, j, shift;
   CHAR8 Name[8];
   CHAR8 NameAdr[8];
   OPER_REGION *p;
@@ -4660,8 +4660,8 @@ VOID GetBiosRegions(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt)
 {
   EFI_ACPI_DESCRIPTION_HEADER *TableHeader;
   UINT8       *buffer = NULL;
-	UINT32       bufferLen = 0;
-  INTN        i, j, shift, shift2;
+  UINT32      bufferLen = 0;
+  UINTN       i, j, shift, shift2;
   OPER_REGION *tmpRegion;
   CHAR8       Name[8];
   CHAR8       NameAdr[8];

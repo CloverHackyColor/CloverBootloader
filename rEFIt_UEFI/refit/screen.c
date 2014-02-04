@@ -905,7 +905,7 @@ VOID InitAnime(REFIT_MENU_SCREEN *Screen)
 {
   CHAR16      FileName[256];
   CHAR16      *Path;
-  INTN        i;
+  UINTN       i;
   EG_IMAGE    *p = NULL;
   EG_IMAGE    *Last = NULL;
   GUI_ANIME   *Anime;

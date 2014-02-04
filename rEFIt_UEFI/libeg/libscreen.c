@@ -162,9 +162,9 @@ VOID egDumpSetConsoleVideoModes(VOID)
       BestMode = GlobalConfig.ConsoleMode;
     }
     
-    if (BestMode >= 1 && BestMode <= gST->ConOut->Mode->MaxMode) {
+    if (BestMode >= 1 && BestMode <= (UINTN)gST->ConOut->Mode->MaxMode) {
         // Mode is valid
-        if (BestMode-1 != gST->ConOut->Mode->Mode) {
+        if (BestMode-1 != (UINTN)gST->ConOut->Mode->Mode) {
             Status = gST->ConOut->SetMode(gST->ConOut, BestMode-1);
             MsgLog("  Setting mode (%d): %r\n",BestMode, Status);
         } else {
