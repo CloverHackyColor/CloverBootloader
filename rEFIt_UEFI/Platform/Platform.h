@@ -587,6 +587,7 @@ typedef struct _DRIVERS_FLAGS {
   BOOLEAN   VideoLoaded;
   BOOLEAN   PartitionLoaded;
   BOOLEAN   MemFixLoaded;
+  BOOLEAN   AptioFixLoaded;
 } DRIVERS_FLAGS;
 
 #pragma pack(push)

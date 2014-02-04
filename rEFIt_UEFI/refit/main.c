@@ -84,7 +84,7 @@ REFIT_MENU_SCREEN        MainMenu    = {1, L"Main Menu", NULL, 0, NULL, 0, NULL,
 static REFIT_MENU_SCREEN AboutMenu   = {2, L"About",     NULL, 0, NULL, 0, NULL, 0, NULL,              NULL, FALSE, FALSE, 0, 0, 0, 0, {0, 0, 0, 0}, NULL};
 static REFIT_MENU_SCREEN HelpMenu    = {3, L"Help",      NULL, 0, NULL, 0, NULL, 0, NULL,              NULL, FALSE, FALSE, 0, 0, 0, 0, {0, 0, 0, 0}, NULL};
 
-DRIVERS_FLAGS gDriversFlags = {FALSE, FALSE, FALSE, FALSE};  //MemFixLoaded
+DRIVERS_FLAGS gDriversFlags = {FALSE, FALSE, FALSE, FALSE, FALSE};  //MemFixLoaded
 
 EMU_VARIABLE_CONTROL_PROTOCOL *gEmuVariableControl = NULL;
 
@@ -727,7 +727,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     // Prepare boot arguments
 //    if ((StrCmp(gST->FirmwareVendor, L"CLOVER") != 0) &&
 //        (StrCmp(gST->FirmwareVendor, L"EDKII") != 0)) {
-    if (StrCmp(gST->FirmwareVendor, L"CLOVER") != 0) {
+    if (gDriversFlags.AptioFixLoaded) {
       // Add slide=0 argument for ML and Mavericks if not present
       CHAR16 *TempOptions = AddLoadOption(Entry->LoadOptions, L"slide=0");
       FreePool(Entry->LoadOptions);
@@ -1038,6 +1038,7 @@ static VOID ScanDriverDir(IN CHAR16 *Path, OUT EFI_HANDLE **DriversToConnect, OU
         continue; //if other driver loaded then skip new one
       }
       gDriversFlags.MemFixLoaded = TRUE;
+      gDriversFlags.AptioFixLoaded = TRUE;
     } else if (StrStr(DirEntry->FileName, L"LowMemFix") != NULL) {
       if (gDriversFlags.MemFixLoaded) {
         continue; //if other driver loaded then skip new one
