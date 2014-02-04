@@ -1756,15 +1756,9 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
   //
   DsdtLoaded = FALSE;
   if (!EFI_ERROR(Status)) {
-    //custom DSDT is loaded so not need to drop _DSM
-    dropDSM = 0;
-    if (defDSM) {
-      dropDSM = gSettings.DropOEM_DSM;   //if set by user
-    }
+    //custom DSDT is loaded so not need to drop _DSM - NO! We need to drop them!
     // if we will apply fixes, allocate additional space
-//		if (gSettings.FixDsdt) { //unconditional
 		bufferLen = bufferLen + bufferLen / 8;
-//		}
     dsdt = EFI_SYSTEM_TABLE_MAX_ADDRESS;
     Status = gBS->AllocatePages (
                                  AllocateMaxAddress,
@@ -1788,13 +1782,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
     }
   } 
   
-  if (!DsdtLoaded) {
-    //using BIOS DSDT so we probably want to drop OEM _DSM
-    dropDSM = 0xFFFF;
-    if (defDSM) {
-      dropDSM = gSettings.DropOEM_DSM;   //if set by user
-    }
-    
+  if (!DsdtLoaded) {    
     // allocate space for fixes
     TableHeader = (EFI_ACPI_DESCRIPTION_HEADER*)(UINTN)FadtPointer->Dsdt;
     bufferLen = TableHeader->Length;
@@ -1819,6 +1807,10 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
       FadtPointer->Header.Checksum = (UINT8)(256 - Checksum8((CHAR8*)FadtPointer, FadtPointer->Header.Length));
     }
   }
+  dropDSM = 0xFFFF; //by default we drop all OEM _DSM. They have no sense for us.
+  if (defDSM) {
+    dropDSM = gSettings.DropOEM_DSM;   //if set by user
+  }  
   
   if (gSettings.DebugDSDT) {
     DBG("Output DSDT before patch to /EFI/CLOVER/ACPI/origin/DSDT-or.aml\n");

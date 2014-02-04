@@ -422,7 +422,7 @@ VOID RefillInputs(VOID)
   InputItems[InputItemsCount].ItemType = Hex;  //103
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeXHCI);
   InputItems[InputItemsCount].ItemType = Hex;  //104
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%04X", gSettings.DropOEM_DSM);
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%04X", dropDSM);
   
 /*  InputItems[InputItemsCount].ItemType = BoolValue; //104
   InputItems[InputItemsCount].BValue   = gSettings.DropOEM_DSM;
@@ -734,10 +734,7 @@ VOID FillInputs(VOID)
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeXHCI);
   InputItems[InputItemsCount].ItemType = Hex;  //104
   InputItems[InputItemsCount].SValue = AllocateZeroPool(26);
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%04X", gSettings.DropOEM_DSM);
-/*  InputItems[InputItemsCount].ItemType = BoolValue; //104
-  InputItems[InputItemsCount].BValue   = gSettings.DropOEM_DSM;
-  InputItems[InputItemsCount++].SValue = gSettings.DropOEM_DSM?L"[+]":L"[ ]";*/
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%04X", dropDSM);
   InputItems[InputItemsCount].ItemType = BoolValue; //105
   InputItems[InputItemsCount].BValue   = gSettings.DebugDSDT;
   InputItems[InputItemsCount++].SValue = gSettings.DebugDSDT?L"[+]":L"[ ]";
@@ -1172,9 +1169,9 @@ VOID ApplyInputs(VOID)
 
   i++; //104
   if (InputItems[i].Valid) {
-//    gSettings.DropOEM_DSM = InputItems[i].BValue;
     gSettings.DropOEM_DSM = (UINT16)StrHexToUint64(InputItems[i].SValue);
-    defDSM = TRUE;
+    dropDSM = gSettings.DropOEM_DSM;
+//    defDSM = TRUE;
   }
   i++; //105
   if (InputItems[i].Valid) {

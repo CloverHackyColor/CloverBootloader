@@ -58,7 +58,7 @@ extern INTN ScrollScrollDecorationsHeight;
 extern UINT8 GetOSTypeFromPath(IN CHAR16 *Path);
 
 // global configuration with default values
-REFIT_CONFIG   GlobalConfig = { FALSE, -1, 0, 0, 0, TRUE, FALSE, FALSE, FALSE, FALSE,
+REFIT_CONFIG   GlobalConfig = { FALSE, -1, 0, 0, 0, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE,
   //Font
   FONT_ALFA, 7, 0xFFFFFF80, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, None, 0,
   //BackgroundDark
@@ -1038,6 +1038,14 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
           ((prop->type == kTagTypeString) && prop->string &&
            ((prop->string[0] == 'Y') || (prop->string[0] == 'y')))) {
             GlobalConfig.FastBoot = TRUE;
+          }
+    } 
+    prop = GetProperty(dictPointer, "NeverHibernate");
+    if (prop) {
+      if ((prop->type == kTagTypeTrue) ||
+          ((prop->type == kTagTypeString) && prop->string &&
+           ((prop->string[0] == 'Y') || (prop->string[0] == 'y')))) {
+            GlobalConfig.NeverHibernate = TRUE;
           }
     }
 
@@ -3360,121 +3368,119 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
               ((prop->type == kTagTypeString) &&
                ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))) {
                 gSettings.DropOEM_DSM = 0xFFFF;          
-          } else if ((prop->type == kTagTypeFalse) ||
+              } else if ((prop->type == kTagTypeFalse) ||
                          ((prop->type == kTagTypeString) &&
                           ((prop->string[0] == 'n') || (prop->string[0] == 'N')))) {
-                           gSettings.DropOEM_DSM = 0;
-            } else if (prop->type == kTagTypeInteger) {
-              gSettings.DropOEM_DSM = (UINT16)(UINTN)prop->string;
-            } else if (prop->type == kTagTypeDict) {
-              prop2 = GetProperty(prop, "ATI");
-              if(prop2) {
-                if ((prop2->type == kTagTypeTrue) ||
-                    ((prop2->type == kTagTypeString) &&
-                     ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
-                      gSettings.DropOEM_DSM |= DEV_ATI;
-                    }
-              }
-              prop2 = GetProperty(prop, "NVidia");
-              if(prop2) {
-                if ((prop2->type == kTagTypeTrue) ||
-                    ((prop2->type == kTagTypeString) &&
-                     ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
-                      gSettings.DropOEM_DSM |= DEV_NVIDIA;
-                    }
-              }
-              prop2 = GetProperty(prop, "IntelGFX");
-              if(prop2) {
-                if ((prop2->type == kTagTypeTrue) ||
-                    ((prop2->type == kTagTypeString) &&
-                     ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
-                      gSettings.DropOEM_DSM |= DEV_INTEL;
-                    }
-              }
-              prop2 = GetProperty(prop, "HDA");
-              if(prop2) {
-                if ((prop2->type == kTagTypeTrue) ||
-                    ((prop2->type == kTagTypeString) &&
-                     ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
-                      gSettings.DropOEM_DSM |= DEV_HDA;
-                    }
-              }
-              prop2 = GetProperty(prop, "HDMI");
-              if(prop2) {
-                if ((prop2->type == kTagTypeTrue) ||
-                    ((prop2->type == kTagTypeString) &&
-                     ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
-                      gSettings.DropOEM_DSM |= DEV_HDMI;
-                    }
-              }
-              prop2 = GetProperty(prop, "SATA");
-              if(prop2) {
-                if ((prop2->type == kTagTypeTrue) ||
-                    ((prop2->type == kTagTypeString) &&
-                     ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
-                      gSettings.DropOEM_DSM |= DEV_SATA;
-                    }
-              }
-              prop2 = GetProperty(prop, "LAN");
-              if(prop2) {
-                if ((prop2->type == kTagTypeTrue) ||
-                    ((prop2->type == kTagTypeString) &&
-                     ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
-                      gSettings.DropOEM_DSM |= DEV_LAN;
-                    }
-              }
-              prop2 = GetProperty(prop, "WIFI");
-              if(prop2) {
-                if ((prop2->type == kTagTypeTrue) ||
-                    ((prop2->type == kTagTypeString) &&
-                     ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
-                      gSettings.DropOEM_DSM |= DEV_WIFI;
-                    }
-              }
-              prop2 = GetProperty(prop, "USB");
-              if(prop2) {
-                if ((prop2->type == kTagTypeTrue) ||
-                    ((prop2->type == kTagTypeString) &&
-                     ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
-                      gSettings.DropOEM_DSM |= DEV_USB;
-                    }
-              }          
-              prop2 = GetProperty(prop, "LPC");
-              if(prop2) {
-                if ((prop2->type == kTagTypeTrue) ||
-                    ((prop2->type == kTagTypeString) &&
-                     ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
-                      gSettings.DropOEM_DSM |= DEV_LPC;
-                    }
-              }          
-              prop2 = GetProperty(prop, "SmBUS");
-              if(prop2) {
-                if ((prop2->type == kTagTypeTrue) ||
-                    ((prop2->type == kTagTypeString) &&
-                     ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
-                      gSettings.DropOEM_DSM |= DEV_SMBUS;
-                    }
-              }          
-              prop2 = GetProperty(prop, "Firewire");
-              if(prop2) {
-                if ((prop2->type == kTagTypeTrue) ||
-                    ((prop2->type == kTagTypeString) &&
-                     ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
-                      gSettings.DropOEM_DSM |= DEV_FIREWIRE;
-                    }
-              }          
-              prop2 = GetProperty(prop, "IDE");
-              if(prop2) {
-                if ((prop2->type == kTagTypeTrue) ||
-                    ((prop2->type == kTagTypeString) &&
-                     ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
-                      gSettings.DropOEM_DSM |= DEV_IDE;
-                    }
-              }          
-            }
+                 gSettings.DropOEM_DSM = 0;
+               } else if (prop->type == kTagTypeInteger) {
+                 gSettings.DropOEM_DSM = (UINT16)(UINTN)prop->string;
+               } else if (prop->type == kTagTypeDict) {
+                 prop2 = GetProperty(prop, "ATI");
+                 if(prop2) {
+                   if ((prop2->type == kTagTypeTrue) ||
+                       ((prop2->type == kTagTypeString) &&
+                        ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
+                         gSettings.DropOEM_DSM |= DEV_ATI;
+                       }
+                 }
+                 prop2 = GetProperty(prop, "NVidia");
+                 if(prop2) {
+                   if ((prop2->type == kTagTypeTrue) ||
+                       ((prop2->type == kTagTypeString) &&
+                        ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
+                         gSettings.DropOEM_DSM |= DEV_NVIDIA;
+                       }
+                 }
+                 prop2 = GetProperty(prop, "IntelGFX");
+                 if(prop2) {
+                   if ((prop2->type == kTagTypeTrue) ||
+                       ((prop2->type == kTagTypeString) &&
+                        ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
+                         gSettings.DropOEM_DSM |= DEV_INTEL;
+                       }
+                 }
+                 prop2 = GetProperty(prop, "HDA");
+                 if(prop2) {
+                   if ((prop2->type == kTagTypeTrue) ||
+                       ((prop2->type == kTagTypeString) &&
+                        ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
+                         gSettings.DropOEM_DSM |= DEV_HDA;
+                       }
+                 }
+                 prop2 = GetProperty(prop, "HDMI");
+                 if(prop2) {
+                   if ((prop2->type == kTagTypeTrue) ||
+                       ((prop2->type == kTagTypeString) &&
+                        ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
+                         gSettings.DropOEM_DSM |= DEV_HDMI;
+                       }
+                 }
+                 prop2 = GetProperty(prop, "SATA");
+                 if(prop2) {
+                   if ((prop2->type == kTagTypeTrue) ||
+                       ((prop2->type == kTagTypeString) &&
+                        ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
+                         gSettings.DropOEM_DSM |= DEV_SATA;
+                       }
+                 }
+                 prop2 = GetProperty(prop, "LAN");
+                 if(prop2) {
+                   if ((prop2->type == kTagTypeTrue) ||
+                       ((prop2->type == kTagTypeString) &&
+                        ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
+                         gSettings.DropOEM_DSM |= DEV_LAN;
+                       }
+                 }
+                 prop2 = GetProperty(prop, "WIFI");
+                 if(prop2) {
+                   if ((prop2->type == kTagTypeTrue) ||
+                       ((prop2->type == kTagTypeString) &&
+                        ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
+                         gSettings.DropOEM_DSM |= DEV_WIFI;
+                       }
+                 }
+                 prop2 = GetProperty(prop, "USB");
+                 if(prop2) {
+                   if ((prop2->type == kTagTypeTrue) ||
+                       ((prop2->type == kTagTypeString) &&
+                        ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
+                         gSettings.DropOEM_DSM |= DEV_USB;
+                       }
+                 }          
+                 prop2 = GetProperty(prop, "LPC");
+                 if(prop2) {
+                   if ((prop2->type == kTagTypeTrue) ||
+                       ((prop2->type == kTagTypeString) &&
+                        ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
+                         gSettings.DropOEM_DSM |= DEV_LPC;
+                       }
+                 }          
+                 prop2 = GetProperty(prop, "SmBUS");
+                 if(prop2) {
+                   if ((prop2->type == kTagTypeTrue) ||
+                       ((prop2->type == kTagTypeString) &&
+                        ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
+                         gSettings.DropOEM_DSM |= DEV_SMBUS;
+                       }
+                 }          
+                 prop2 = GetProperty(prop, "Firewire");
+                 if(prop2) {
+                   if ((prop2->type == kTagTypeTrue) ||
+                       ((prop2->type == kTagTypeString) &&
+                        ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
+                         gSettings.DropOEM_DSM |= DEV_FIREWIRE;
+                       }
+                 }          
+                 prop2 = GetProperty(prop, "IDE");
+                 if(prop2) {
+                   if ((prop2->type == kTagTypeTrue) ||
+                       ((prop2->type == kTagTypeString) &&
+                        ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
+                         gSettings.DropOEM_DSM |= DEV_IDE;
+                       }
+                 }          
+               }
         }
-        
-        
       }
 
       dict2 = GetProperty(dictPointer, "SSDT");

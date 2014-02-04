@@ -406,6 +406,7 @@ typedef struct {
   BOOLEAN     NoLegacy;
   BOOLEAN     DebugLog;
   BOOLEAN     FastBoot;
+  BOOLEAN     NeverHibernate;
   FONT_TYPE   Font;
   INTN        CharWidth;
   UINTN       SelectionColor;

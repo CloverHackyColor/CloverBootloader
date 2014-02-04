@@ -208,6 +208,8 @@
 		<string>MacHDD</string>
 		<key>IgnoreNVRAMBoot</key>
 		<false/>
+		<key>NeverHibernate</key>
+		<false/>
 		<key>Fast</key>
 		<false/>
 		<key>Legacy</key>

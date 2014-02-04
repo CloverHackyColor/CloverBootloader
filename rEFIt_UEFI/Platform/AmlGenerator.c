@@ -267,7 +267,7 @@ AML_CHUNK* aml_add_method(AML_CHUNK* parent, /* CONST*/ CHAR8* name, UINT8 args)
 	
 	if (node)
 	{
-      UINTN offset = aml_fill_name(node, name);
+    UINTN offset = aml_fill_name(node, name);
 		node->Type = AML_CHUNK_METHOD;
     node->Length++;
     node->Buffer[offset] = args;

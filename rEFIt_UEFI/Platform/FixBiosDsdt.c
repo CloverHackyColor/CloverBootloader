@@ -2036,7 +2036,7 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
   BOOLEAN DsmFound = FALSE;
   AML_CHUNK *root = NULL;
   AML_CHUNK *gfx0, *peg0;
-  AML_CHUNK *met;
+  AML_CHUNK *met, *met2;
   AML_CHUNK *pack;
 //  AML_CHUNK *hdaudev;
 //  AML_CHUNK *device;
@@ -2056,8 +2056,8 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
 	//DBG("len = 0x%08x\n", len);
   // Display device_id
   root = aml_create_node(NULL);
-  gfx0 = aml_create_node(NULL);
-  met = aml_create_node(NULL);
+//  gfx0 = aml_create_node(NULL);
+//  met = aml_create_node(NULL);
   
 //search DisplayADR1[0]
   for (j=0x20; j<len-10; j++) {
@@ -2170,8 +2170,8 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
     if ((DisplayVendor[VCard] == 0x8086) && !DsmFound) {
       DBG("Creating DSM for Intel card\n");
       met = aml_add_method(gfx0, "_DSM", 4);
-      met = aml_add_store(met);
-      pack = aml_add_package(met);
+      met2 = aml_add_store(met);
+      pack = aml_add_package(met2);
       
       if (gSettings.FakeIntel) {
         FakeID = gSettings.FakeIntel >> 16;
@@ -2181,7 +2181,10 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
         aml_add_string(pack, "vendor-id");
         aml_add_byte_buffer(pack, (CHAR8*)&FakeVen, 4);
       }
-      AddProperties(pack, DEV_INTEL);
+      if(!AddProperties(pack, DEV_INTEL)) {
+        aml_add_string(pack, "empty");
+        aml_add_byte(pack, 0);
+      }
       
       aml_add_local0(met);
       aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
@@ -2192,8 +2195,8 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
     if ((DisplayVendor[VCard] == 0x10DE)  && !DsmFound) {
       DBG("Creating DSM for NVIDIA card\n");
       met = aml_add_method(gfx0, "_DSM", 4);
-      met = aml_add_store(met);
-      pack = aml_add_package(met);
+      met2 = aml_add_store(met);
+      pack = aml_add_package(met2);
       
       if (gSettings.FakeNVidia) {
         FakeID = gSettings.FakeNVidia >> 16;
@@ -2203,7 +2206,10 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
         aml_add_string(pack, "vendor-id");
         aml_add_byte_buffer(pack, (CHAR8*)&FakeVen, 4);
       }
-      AddProperties(pack, DEV_NVIDIA);
+      if(!AddProperties(pack, DEV_NVIDIA)) {
+        aml_add_string(pack, "empty");
+        aml_add_byte(pack, 0);
+      }
       aml_add_local0(met);
       aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
       // finish Method(_DSM,4,NotSerialized)
@@ -2213,8 +2219,8 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
     if ((DisplayVendor[VCard] == 0x1002) && !DsmFound) {
       DBG("Creating DSM for ATI card\n");
       met = aml_add_method(gfx0, "_DSM", 4);  //if no subdevice
-      met = aml_add_store(met);
-      pack = aml_add_package(met);
+      met2 = aml_add_store(met);
+      pack = aml_add_package(met2);
  
       if (gSettings.FakeATI) {
         FakeID = gSettings.FakeATI >> 16;
@@ -2231,7 +2237,10 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
         aml_add_string(pack, "ATY,VendorID");
         aml_add_byte_buffer(pack, VenATI, 2);
       }
-      AddProperties(pack, DEV_ATI);
+      if(!AddProperties(pack, DEV_ATI)) {
+        aml_add_string(pack, "empty");
+        aml_add_byte(pack, 0);
+      }
       aml_add_local0(met);
       aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
       // finish Method(_DSM,4,NotSerialized)
@@ -2387,7 +2396,7 @@ UINT32 AddHDMI (UINT8 *dsdt, UINT32 len)
   BOOLEAN HdauFound = FALSE;
   AML_CHUNK* brd = NULL;
   AML_CHUNK *root = NULL;
-  AML_CHUNK *met;
+  AML_CHUNK *met, *met2;
   AML_CHUNK *pack;
   
   if (!HDMIADR1) return len;
@@ -2483,8 +2492,8 @@ UINT32 AddHDMI (UINT8 *dsdt, UINT32 len)
     met = aml_add_method(root, "_DSM", 4);
   }  
   
-  met = aml_add_store(met);
-  pack = aml_add_package(met);
+  met2 = aml_add_store(met);
+  pack = aml_add_package(met2);
   if (!AddProperties(pack, DEV_HDMI)) {
     DBG("  with default properties\n");
     aml_add_string(pack, "layout-id");
@@ -2534,10 +2543,11 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
   UINT32 NetworkADR = 0, BridgeSize, Size, BrdADR = 0;
   UINT32 PCIADR, PCISIZE = 0;
   INT32 sizeoffset;
-  AML_CHUNK* met;
+  AML_CHUNK* met, *met2;
   AML_CHUNK* brd;
   AML_CHUNK* root;
   AML_CHUNK* pack;
+  AML_CHUNK* dev;
   CHAR8  *network;
   UINT32 FakeID = 0;
   UINT32 FakeVen = 0;
@@ -2585,7 +2595,8 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
             CopyMem(device_name[1], dsdt+k, 4);
             DBG("found NetWork device [0x%08x:%x] at %x and Name is %a\n",
                 NetworkADR1, NetworkADR2, NetworkADR, device_name[1]);
-            ReplaceName(dsdt + BrdADR, BridgeSize, device_name[1], "GIGE");
+            //renaming disabled until better way will found
+       //     ReplaceName(dsdt + BrdADR, BridgeSize, device_name[1], "GIGE");
             NetworkName = TRUE;   
             break;
           }
@@ -2611,9 +2622,9 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
         sizeoffset = - 1 - Size;
         len = move_data(k - 1, dsdt, len, sizeoffset);
         len = CorrectOuters(dsdt, len, k - 2, sizeoffset);
-        DBG("_DSM in LPC already exists, dropped\n");
+        DBG("_DSM in LAN already exists, dropped\n");
       } else {
-        DBG("_DSM already exists, patch LPC will not be applied\n");
+        DBG("_DSM already exists, patch LAN will not be applied\n");
         return len;
       }
     }
@@ -2622,16 +2633,16 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
   //what to do if no LAN bridge?
   else {
     brd = aml_create_node(NULL);
-    root = aml_add_device(brd, "NET0");
+    root = aml_add_device(brd, "LAN0");
     aml_add_name(root, "_ADR");
-    aml_add_dword(root, NetworkADR1);
+    aml_add_dword(root, NetworkADR1);    
     DBG("Created  bridge device with ADR=0x%x\n", NetworkADR1);
   }
 
   DBG("NetworkADR1=%x NetworkADR2=%x\n", NetworkADR1, NetworkADR2);
   if (!NetworkName && (NetworkADR2 != 0xFFFE)) //there is no network device at dsdt, creating new one
   {
-    AML_CHUNK* dev = aml_add_device(root, "GIGE");
+    dev = aml_add_device(root, "GIGE");
     aml_add_name(dev, "_ADR");
     if (NetworkADR2) {
       if (NetworkADR2> 0x3F)
@@ -2641,13 +2652,18 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
     } else {
       aml_add_byte(dev, 0x00);
     }
+    aml_add_name(dev, "_SUN");
+    aml_add_dword(dev, NetworkADR1);
     met = aml_add_method(dev, "_DSM", 4);
   } else {
+    aml_add_name(root, "_SUN");
+    aml_add_dword(root, NetworkADR1);
     met = aml_add_method(root, "_DSM", 4);
-  }  
+  } 
+
   // add Method(_DSM,4,NotSerialized) for network
-  met = aml_add_store(met);
-  pack = aml_add_package(met);
+  met2 = aml_add_store(met);
+  pack = aml_add_package(met2);
   if (!AddProperties(pack, DEV_LAN)) {
     aml_add_string(pack, "built-in");
     aml_add_byte_buffer(pack, dataBuiltin, sizeof(dataBuiltin));
@@ -2669,11 +2685,14 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
     aml_add_string_buffer(pack, &NameCard[0]);
   }
 
-  aml_add_local0(met);
+  aml_add_local0(met2);
   aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
   // finish Method(_DSM,4,NotSerialized)
   aml_calculate_size(root);  
   network = AllocateZeroPool(root->Size);
+  if (!network) {
+    return len;
+  }
   sizeoffset = root->Size;
   DBG("network DSM created, size=%x\n", sizeoffset);
   aml_write_node(root, network, 0);  
@@ -2684,19 +2703,15 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
     i = PCIADR;
   }  
   Size = get_size(dsdt, i);
-//  DBG("Will attach to %x size %x\n", i, Size);
   // move data to back for add patch 
   k = i + Size;
   len = move_data(k, dsdt, len, sizeoffset);
-//  DBG("data moved, len=%x\n", len);
   CopyMem(dsdt+k, network, sizeoffset);
   // Fix Device network size
   k = write_size(i, dsdt, len, sizeoffset);
   sizeoffset += k;
   len += k;
-//  DBG("size written, shift=%x\n", k);
   len = CorrectOuters(dsdt, len, i-3, sizeoffset);
-//  DBG("final len=%x\n", len);
   FreePool(network);
   return len;
 }
@@ -2811,10 +2826,15 @@ UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
     } else {
       aml_add_byte(dev, 0x00);
     }
+    aml_add_name(dev, "_SUN");
+    aml_add_dword(dev, ArptADR1);
     met = aml_add_method(dev, "_DSM", 4);
   } else {
-    met = aml_add_method(root, "_DSM", 4);
+    aml_add_name(root, "_SUN");
+    aml_add_dword(root, ArptADR1);
+   met = aml_add_method(root, "_DSM", 4);
   }  
+
   // add Method(_DSM,4,NotSerialized) for network
   met = aml_add_store(met);
   pack = aml_add_package(met);
@@ -2888,13 +2908,11 @@ UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
   // move data to back for add patch 
   k = i + Size;
   len = move_data(k, dsdt, len, sizeoffset);
-  DBG("move from %x size %x len=%x\n", k, sizeoffset);
   CopyMem(dsdt+k, network, sizeoffset);
   // Fix Device size
   k = write_size(i, dsdt, len, sizeoffset);
   sizeoffset += k;
   len += k;
-  DBG("adr %x shift %x so=%x len=%x\n", i, k, sizeoffset, len);
   len = CorrectOuters(dsdt, len, i-3, sizeoffset);
   FreePool(network);
   return len;
@@ -2982,7 +3000,6 @@ UINT32 FIXSBUS (UINT8 *dsdt, UINT32 len)
     k = write_size(PCIADR, dsdt, len, sizeoffset);
     sizeoffset += k;
     len += k;
-    DBG("shift=%x so=%x len=%x\n", k, sizeoffset, len);
     len = CorrectOuters(dsdt, len, PCIADR-3, sizeoffset);    
   }
   return len;
@@ -3160,7 +3177,7 @@ CHAR8 dataFW[] = {0x00,0x00,0x00,0x00};
 UINT32 FIXFirewire (UINT8 *dsdt, UINT32 len)
 {
   UINT32  i, k;
-  UINT32 FirewireADR = 0, BridgeSize,  Size;
+  UINT32 FirewireADR = 0, BrdADR = 0, BridgeSize,  Size;
   INT32 sizeoffset;
   UINT32 PCIADR, PCISIZE = 0;
   AML_CHUNK* met;
@@ -3179,17 +3196,17 @@ UINT32 FIXFirewire (UINT8 *dsdt, UINT32 len)
   }
 
   // Firewire Address
-  for (i=0x20; i<len-10; i++) {
+  for (i = 0x20; i < len - 10; i++) {
     if (FirewireADR1 != 0x00000000 && 
         CmpAdr(dsdt, i, FirewireADR1)) {
-      FirewireADR = devFind(dsdt, i);
-      if (!FirewireADR) {
+      BrdADR = devFind(dsdt, i);
+      if (!BrdADR) {
         continue;
       }
 
-      BridgeSize = get_size(dsdt, FirewireADR);
+      BridgeSize = get_size(dsdt, BrdADR);
       if (FirewireADR2 != 0xFFFE ){
-        for (k=FirewireADR+9; k<FirewireADR+BridgeSize; k++) {
+        for (k = BrdADR + 9; k < BrdADR + BridgeSize; k++) {
           if (CmpAdr(dsdt, k, FirewireADR2)) {
             FirewireADR = devFind(dsdt, k);
             if (!FirewireADR) {
@@ -3200,7 +3217,7 @@ UINT32 FIXFirewire (UINT8 *dsdt, UINT32 len)
             CopyMem(device_name[2], dsdt+k, 4);
             DBG("found Firewire device NAME(_ADR,0x%08x) at %x And Name is %a\n", 
                 FirewireADR2, k, device_name[2]);
-            ReplaceName(dsdt + FirewireADR, BridgeSize, device_name[2], "FRWR");
+            ReplaceName(dsdt + BrdADR, BridgeSize, device_name[2], "FRWR");
             FirewireName = TRUE;   
             break;
           }
@@ -3209,12 +3226,17 @@ UINT32 FIXFirewire (UINT8 *dsdt, UINT32 len)
       break;
     } // End Firewire
   }
+  if (!BrdADR) {
+    DBG("Bridge for FRWR is not found\n");
+    return len;
+  }
   //safe for twice fix: if _DSM already present then cancel fix
   if (FirewireADR) { // bridge or device
     i = FirewireADR;
   } else { 
-    i = PCIADR;
+    i = BrdADR;
   }  
+  
   Size = get_size(dsdt, i);
   k = FindMethod(dsdt + i, Size, "_DSM");
   if (k != 0) {
@@ -3266,6 +3288,11 @@ UINT32 FIXFirewire (UINT8 *dsdt, UINT32 len)
   aml_destroy_node(root);
   
   // move data to back for add patch 
+  Size = get_size(dsdt, i);
+  if (!Size) {
+    FreePool(firewire);
+    return len;
+  }
   k = i + Size;
   len = move_data(k, dsdt, len, sizeoffset);
   CopyMem(dsdt+k, firewire, sizeoffset);
@@ -3341,7 +3368,7 @@ UINT32 AddHDEF (UINT8 *dsdt, UINT32 len, CHAR8* OSVersion)
     DBG("Start Add Device HDEF\n");
     device = aml_add_device(root, "HDEF");
     aml_add_name(device, "_ADR");
-    aml_add_dword(device, 0x001B0000);  
+    aml_add_dword(device, HDAADR1);  
     
     // add Method(_DSM,4,NotSerialized) 
     met = aml_add_method(device, "_DSM", 4);
@@ -3607,21 +3634,22 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
             //here we want to check who is the master of the _DSM
             adr1 = devFind(dsdt, k);
             if (adr1 == adr) {
-            if ((dropDSM & DEV_USB) != 0) {
-              Size = get_size(dsdt, k);
-              if (!Size) {
+              if ((dropDSM & DEV_USB) != 0) {
+                Size = get_size(dsdt, k);
+                if (!Size) {
+                  continue;
+                }
+                sizeoffset = - 1 - Size;
+                len = move_data(k - 1, dsdt, len, sizeoffset);
+                len = CorrectOuters(dsdt, len, k - 2, sizeoffset);
+                DBG("_DSM in USB already exists, dropped by 0x%x\n", sizeoffset);
+              } else {
+                DBG("_DSM already exists, patch USB will not be applied\n");
                 continue;
               }
-              sizeoffset = - 1 - Size;
-              len = move_data(k - 1, dsdt, len, sizeoffset);
-              len = CorrectOuters(dsdt, len, k - 2, sizeoffset);
-              DBG("_DSM in USB already exists, dropped by 0x%x\n", sizeoffset);
             } else {
-              DBG("_DSM already exists, patch USB will not be applied\n");
+              DBG(" found slave _DSM, skip\n");
               continue;
-            }
-            } else {
-              DBG(" found slave _DSM, ignore\n");
             }
           }
           
@@ -3688,8 +3716,7 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
           break;
         }  
           //NFORCE_USB_START
-        else if (CmpAdr(dsdt, j, USBADR3[i]))
-        {
+        else if (CmpAdr(dsdt, j, USBADR3[i])) {
             UsbName[i] = AllocateZeroPool(5);
             CopyMem(UsbName[i], dsdt+j, 4);
             
@@ -3721,7 +3748,6 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
                 
                 CopyMem(USBDATA4+k, (VOID*)&USBID[i], 4);
                 sizeoffset = size4;
-                
                 
             } else {
                 if ((USBDATA1[25] == 0x0A) && (USBDATA1[26] == 0x04)) {
@@ -3776,6 +3802,11 @@ UINT32 FIXIDE (UINT8 *dsdt, UINT32 len)
   AML_CHUNK* device;
   CHAR8 *ide;
   BOOLEAN PATAFIX=TRUE;
+  AML_CHUNK* met;
+  AML_CHUNK* pack;
+  AML_CHUNK* device1;
+  AML_CHUNK* device2;
+  
 
   if (!IDEADR1) return len;
   
@@ -3824,12 +3855,7 @@ UINT32 FIXIDE (UINT8 *dsdt, UINT32 len)
   
 	root = aml_create_node(NULL);
 	device = root;
-	if (PATAFIX)
-	{
-    AML_CHUNK* met;
-    AML_CHUNK* pack;
-    AML_CHUNK* device1;
-    AML_CHUNK* device2;
+	if (PATAFIX) {
     device = aml_add_device(root, "ICHX");
     aml_add_name(device, "_ADR");
     if (IDEADR2 < 0x3F) {
@@ -3869,14 +3895,14 @@ UINT32 FIXIDE (UINT8 *dsdt, UINT32 len)
       //aml_add_byte(device4, 0x00);
       //device4 = aml_add_device(device3, "SLAV");
       //aml_add_name(device4, "_ADR");
-      //aml_add_byte(device4, 0x01);      
+      //aml_add_byte(device4, 0x01);  
+      aml_add_string(met, "empty");
+      aml_add_byte(met, 0);
+    }    else {
+      DBG(" IDE properties injected\n");
     }
-    
-  }
-  else
-  {
-    AML_CHUNK* pack;
-    AML_CHUNK* met = aml_add_method(root, "_DSM", 4);
+  } else {
+    met = aml_add_method(root, "_DSM", 4);
     met = aml_add_store(met);
     pack = aml_add_package(met);
     if (!AddProperties(pack, DEV_IDE)) {
@@ -3888,8 +3914,12 @@ UINT32 FIXIDE (UINT8 *dsdt, UINT32 len)
       aml_add_string(pack, "pci8086,269e");
       aml_add_string(pack, "IOName");
       aml_add_string(pack, "pci8086,269e");
+      aml_add_string(met, "empty");
+      aml_add_byte(met, 0);
       aml_add_local0(met);
       aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));      
+    }    else {
+      DBG(" IDE properties injected\n");
     }
   }
   // finish Method(_DSM,4,NotSerialized) 
@@ -3932,7 +3962,7 @@ UINT32 FIXSATAAHCI (UINT8 *dsdt, UINT32 len)
   UINT32 SATAAHCIADR = 0, BridgeSize = 0, Size;
   INT32 sizeoffset;
   AML_CHUNK* root;
-  AML_CHUNK* met;
+  AML_CHUNK* met, *met2;
   AML_CHUNK* pack;
   CHAR8 *sata;
   UINT32 FakeID;
@@ -3942,7 +3972,6 @@ UINT32 FIXSATAAHCI (UINT8 *dsdt, UINT32 len)
     FakeID = gSettings.FakeSATA >> 16;
     FakeVen = gSettings.FakeSATA & 0xFFFF;
   }
-
 
   if (!SATAAHCIADR1) return len;
   
@@ -3984,16 +4013,19 @@ UINT32 FIXSATAAHCI (UINT8 *dsdt, UINT32 len)
 	
 	// add Method(_DSM,4,NotSerialized) 
   met = aml_add_method(root, "_DSM", 4);
-  met = aml_add_store(met);
-  pack = aml_add_package(met);
+  met2 = aml_add_store(met);
+  pack = aml_add_package(met2);
   if (gSettings.FakeSATA) {
     aml_add_string(pack, "device-id");
     aml_add_byte_buffer(pack, (CHAR8*)&FakeID, 4);
     aml_add_string(pack, "vendor-id");
     aml_add_byte_buffer(pack, (CHAR8*)&FakeVen, 4);
   }
-  AddProperties(pack, DEV_SATA);
-  aml_add_local0(met);
+  if (!AddProperties(pack, DEV_SATA)) {
+    aml_add_string(pack, "empty");
+    aml_add_byte(pack, 0);
+  }
+  aml_add_local0(met2);
   aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
   // finish Method(_DSM,4,NotSerialized)
   
@@ -4023,7 +4055,7 @@ UINT32 FIXSATA (UINT8 *dsdt, UINT32 len)
   UINT32 SATAADR = 0, BridgeSize = 0, Size;
   INT32 sizeoffset;
   AML_CHUNK* root;
-  AML_CHUNK* met;
+  AML_CHUNK* met, *met2;
   AML_CHUNK* pack;
   CHAR8 *sata;
   UINT32 FakeID;
@@ -4042,8 +4074,7 @@ UINT32 FIXSATA (UINT8 *dsdt, UINT32 len)
       SATAADR = devFind(dsdt, i);
       if (!SATAADR) {
         continue;
-      }
-      
+      }      
       BridgeSize = get_size(dsdt, SATAADR);
       if (BridgeSize) break;
     } // End IDE
@@ -4072,16 +4103,19 @@ UINT32 FIXSATA (UINT8 *dsdt, UINT32 len)
 	root = aml_create_node(NULL);
 	// add Method(_DSM,4,NotSerialized)
   met = aml_add_method(root, "_DSM", 4);
-  met = aml_add_store(met);
-  pack = aml_add_package(met);
+  met2 = aml_add_store(met);
+  pack = aml_add_package(met2);
   if (gSettings.FakeSATA) {
     aml_add_string(pack, "device-id");
     aml_add_byte_buffer(pack, (CHAR8*)&FakeID, 4);
     aml_add_string(pack, "vendor-id");
     aml_add_byte_buffer(pack, (CHAR8*)&FakeVen, 4);
   }
-  AddProperties(pack, DEV_SATA);
-  aml_add_local0(met);
+  if (!AddProperties(pack, DEV_SATA)) {
+    aml_add_string(pack, "empty");
+    aml_add_byte(pack, 0);
+  }
+  aml_add_local0(met2);
   aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
   // finish Method(_DSM,4,NotSerialized)
   
@@ -4097,8 +4131,7 @@ UINT32 FIXSATA (UINT8 *dsdt, UINT32 len)
   // Fix Device SATA size
   k = write_size(SATAADR, dsdt, len, sizeoffset);
   sizeoffset += k;
-  len += k;
-  
+  len += k;  
   len = CorrectOuters(dsdt, len, SATAADR-3, sizeoffset);
   FreePool(sata);
   return len;
@@ -4188,7 +4221,6 @@ UINT32 FIXWAK (UINT8 *dsdt, UINT32 len, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABL
   BOOLEAN ReturnFound = FALSE;
   
   DBG("Start _WAK Return Fix\n");
-  DBG("len = 0x%08x\n", len);
 	
 	for (i=20; i<len-5; i++) 
 	{ 	
@@ -4799,8 +4831,7 @@ VOID FixBiosDsdt (UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, 
       ((gSettings.FixDsdt & FIX_NEW_WAY) && (gSettings.FixDsdt & FIX_HDMI))) {
     DsdtLen = AddHDMI(temp, DsdtLen);
   }
-  
-  
+    
   // Always Fix USB
   if ((gSettings.FixDsdt & FIX_USB)) {
     DsdtLen = FIXUSB(temp, DsdtLen);

@@ -1829,7 +1829,10 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     }
   }
  //       DBG("GetUserSettings OK\n");
-
+  dropDSM = 0xFFFF; //by default we drop all OEM _DSM. They have no sense for us.
+  if (defDSM) {
+    dropDSM = gSettings.DropOEM_DSM;   //if set by user
+  }  
   // Load any extra SMBIOS information
   if (!EFI_ERROR(LoadUserSettings(SelfRootDir, L"smbios", &smbiosTags)) && (smbiosTags != NULL)) {
     TagPtr dictPointer = GetProperty(smbiosTags,"SMBIOS");
