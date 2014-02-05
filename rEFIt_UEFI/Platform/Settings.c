@@ -3010,12 +3010,12 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
             //set to drop
             if (gSettings.ACPIDropTables) {
               ACPI_DROP_TABLE *DropTable = gSettings.ACPIDropTables;
-              DBG("set table: %08x, %16x to drop:", Signature, TableId);
+              DBG("set table: %08x, %16lx to drop:", Signature, TableId);
               while (DropTable) {
                 if (((Signature == DropTable->Signature) &&
-                    (!TableId || (DropTable->TableId == TableId)) &&
-                    (!TabLength || (DropTable->Length == TabLength))) ||
-                    (!Signature && (DropTable->TableId == TableId))) {
+                     (!TableId || (DropTable->TableId == TableId)) &&
+                     (!TabLength || (DropTable->Length == TabLength))) ||
+                     (!Signature && (DropTable->TableId == TableId))) {
                   DropTable->MenuItem.BValue = TRUE;
                   gSettings.DropSSDT = FALSE; //if one item=true then dropAll=false by default
                   DBG("  true\n");

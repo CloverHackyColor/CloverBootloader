@@ -301,7 +301,8 @@ VOID GetAcpiTablesList()
       DBG(" Found table: %a  %a len=%d\n", sign, OTID, (INT32)TableEntry->Length);
       DropTable = AllocateZeroPool(sizeof(ACPI_DROP_TABLE));
       DropTable->Signature = TableEntry->Signature;
-      DropTable->TableId = TableEntry->OemTableId;
+ //     DropTable->TableId = TableEntry->OemTableId;
+      CopyMem((CHAR8*)&DropTable->TableId, (CHAR8*)&TableEntry->OemTableId, 8);
       DropTable->Length = TableEntry->Length;
       DropTable->MenuItem.BValue = FALSE;
       DropTable->Next = gSettings.ACPIDropTables;
@@ -1576,7 +1577,8 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
       Xsdt->Header.Length = eCntR * sizeof(UINT64) + sizeof (EFI_ACPI_DESCRIPTION_HEADER);
       Xsdt->Header.Revision = 1;
       CopyMem((CHAR8 *)&Xsdt->Header.OemId, (CHAR8 *)&FadtPointer->Header.OemId, 6);
-      Xsdt->Header.OemTableId = Rsdt->Header.OemTableId;
+ //     Xsdt->Header.OemTableId = Rsdt->Header.OemTableId;
+      CopyMem((CHAR8 *)&Xsdt->Header.OemTableId, (CHAR8 *)&Rsdt->Header.OemTableId, 8);
       Xsdt->Header.OemRevision = Rsdt->Header.OemRevision;
       Xsdt->Header.CreatorId = Rsdt->Header.CreatorId;
       Xsdt->Header.CreatorRevision = Rsdt->Header.CreatorRevision;
