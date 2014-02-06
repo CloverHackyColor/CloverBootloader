@@ -646,6 +646,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
   
   if (BootBgColor != NULL) {
     Entry->BootBgColor = BootBgColor;
+    Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_USEGRAPHICS);
   }
   DBG("found %s\n", Entry->DevicePathString);
   return Entry;
