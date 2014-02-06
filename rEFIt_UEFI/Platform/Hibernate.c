@@ -287,18 +287,19 @@ EFIAPI OurBlockIoRead (
   return Status;
 }
 
-/** Returns slep image name. */
-CHAR16*
-GetSleepImageName (IN REFIT_VOLUME *Volume)
+/** Get slep image location (volume and name) */
+VOID
+GetSleepImageLocation(IN REFIT_VOLUME *Volume, REFIT_VOLUME **SleepImageVolume, CHAR16 **SleepImageName)
 {
   EFI_STATUS          Status;
   UINT8               *PrefBuffer = NULL;
-	UINTN               PrefBufferLen = 0;
+  UINTN               PrefBufferLen = 0;
   TagPtr              PrefDict, dict, dict2, prop;
   CHAR16              *PrefName = L"\\Library\\Preferences\\SystemConfiguration\\com.apple.PowerManagement.plist";
   CHAR16              *ImageName = NULL;
+  REFIT_VOLUME        *ImageVolume = Volume;
   
-  
+  // find sleep image entry from plist
   Status = egLoadFile(Volume->RootDir, PrefName, &PrefBuffer, &PrefBufferLen);
   DBG("read prefs %s status=%r\n", PrefName, Status);
   if (!EFI_ERROR(Status)) {
@@ -311,7 +312,32 @@ GetSleepImageName (IN REFIT_VOLUME *Volume)
           prop = GetProperty(dict2, "Hibernate File");
           if (prop && prop->type == kTagTypeString ) {
             CHAR16 *p;
-            if (AsciiStrStr(prop->string, "/var") && !AsciiStrStr(prop->string, "private")) {
+            if (AsciiStrStr(prop->string, "/Volumes/")) {
+              CHAR8 *VolNameStart = NULL, *VolNameEnd = NULL;
+              CHAR16 *VolName = NULL;
+              UINTN VolNameSize = 0;
+              // Extract Volumes Name
+              VolNameStart = AsciiStrStr(prop->string + 1, "/") + 1;
+              if (VolNameStart) {
+                VolNameEnd = AsciiStrStr(VolNameStart, "/");
+                if (VolNameEnd) {
+                  VolNameSize = (VolNameEnd - VolNameStart + 1) * sizeof(CHAR16);
+                  if (VolNameSize > 0) {
+                    VolName = AllocateZeroPool(VolNameSize);
+                  }
+                }
+              }
+              if (VolName) {
+                UnicodeSPrint(VolName, VolNameSize, L"%a", VolNameStart);
+                ImageVolume = FindVolumeByName(VolName);
+                if (ImageVolume) {
+                  ImageName = PoolPrint(L"%a", VolNameEnd);
+                } else {
+                  ImageVolume = Volume;
+                }
+                FreePool(VolName);
+              }
+            } else if (AsciiStrStr(prop->string, "/var") && !AsciiStrStr(prop->string, "private")) {
               ImageName = PoolPrint(L"\\private%a", prop->string);
             } else {
               ImageName = PoolPrint(L"%a", prop->string);
@@ -323,7 +349,7 @@ GetSleepImageName (IN REFIT_VOLUME *Volume)
               }
               p++;
             }
-            DBG("SleepImage name from pref = %s\n", ImageName);
+            DBG("SleepImage name from pref: ImageVolume = '%s', ImageName = '%s'\n", ImageVolume->VolName, ImageName);
           }
         }
       }
@@ -338,10 +364,9 @@ GetSleepImageName (IN REFIT_VOLUME *Volume)
     FreePool(PrefBuffer); //allocated by egLoadFile
   }
   
-  return ImageName;
+  *SleepImageVolume = ImageVolume;
+  *SleepImageName = ImageName;
 }
-
-
 
 
 /** Returns byte offset of sleepimage on the whole disk or 0 if not found or error.
@@ -353,14 +378,14 @@ GetSleepImageName (IN REFIT_VOLUME *Volume)
  * It's for hack after all :)
  */
 UINT64
-GetSleepImagePosition (IN REFIT_VOLUME *Volume)
+GetSleepImagePosition (IN REFIT_VOLUME *Volume, REFIT_VOLUME **SleepImageVolume)
 {
   EFI_STATUS          Status;
   EFI_FILE            *File;
   VOID                *Buffer;
   UINTN               BufferSize;
   CHAR16              *ImageName;
-
+  REFIT_VOLUME        *ImageVolume;
   
   if (!Volume) {
     DBG(" no volume to get sleepimage\n");
@@ -371,18 +396,22 @@ GetSleepImagePosition (IN REFIT_VOLUME *Volume)
     DBG(" no disk BlockIo\n");
     return 0;
   }
-  
+
   // If IsSleepImageValidBySignature() was used, then we already have that offset
   if (Volume->SleepImageOffset != 0) {
+    if (SleepImageVolume != NULL) {
+      // Update caller's SleepImageVolume when requested
+      GetSleepImageLocation(Volume,SleepImageVolume,&ImageName);
+    }
     DBG(" returning previously calculated offset: %lx\n", Volume->SleepImageOffset);
     return Volume->SleepImageOffset;
   }
   
-  // Get sleepimage name
-  ImageName = GetSleepImageName(Volume);
+  // Get sleepimage name and volume
+  GetSleepImageLocation(Volume,&ImageVolume,&ImageName);
 
   // Open sleepimage
-  Status = Volume->RootDir->Open(Volume->RootDir, &File, ImageName, EFI_FILE_MODE_READ, 0);
+  Status = ImageVolume->RootDir->Open(ImageVolume->RootDir, &File, ImageName, EFI_FILE_MODE_READ, 0);
   if (EFI_ERROR(Status)) {
     DBG(" sleepimage not found -> %r\n", Status);
     return 0;
@@ -398,8 +427,8 @@ GetSleepImagePosition (IN REFIT_VOLUME *Volume)
 
   DBG("Reading first %d bytes of sleepimage ...\n", BufferSize);
   // Override disk BlockIo
-  OrigBlockIoRead = Volume->WholeDiskBlockIO->ReadBlocks;
-  Volume->WholeDiskBlockIO->ReadBlocks = OurBlockIoRead;
+  OrigBlockIoRead = ImageVolume->WholeDiskBlockIO->ReadBlocks;
+  ImageVolume->WholeDiskBlockIO->ReadBlocks = OurBlockIoRead;
   gSleepImageOffset = 0; //used as temporary global variable to pass our value
   Status = File->Read(File, &BufferSize, Buffer);
   // OurBlockIoRead always returns invalid parameter in order to avoid driver caching, so that is a good value
@@ -412,7 +441,7 @@ GetSleepImagePosition (IN REFIT_VOLUME *Volume)
   File->Close(File);
   
   // Return original disk BlockIo
-  Volume->WholeDiskBlockIO->ReadBlocks = OrigBlockIoRead;
+  ImageVolume->WholeDiskBlockIO->ReadBlocks = OrigBlockIoRead;
 
   // We don't use the buffer, as actual signature checking is being done by OurBlockIoRead
   if (Buffer) {
@@ -427,9 +456,14 @@ GetSleepImagePosition (IN REFIT_VOLUME *Volume)
   // We store SleepImageOffset, in case our BlockIoRead does not execute again on next read due to driver caching.
   if (gSleepImageOffset != 0) {
     DBG(" sleepimage offset acquired successfully: %lx\n", gSleepImageOffset);
-    Volume->SleepImageOffset = gSleepImageOffset;
+    ImageVolume->SleepImageOffset = gSleepImageOffset;
   } else {
     DBG(" sleepimage offset could not be acquired\n");
+  }
+
+  if (SleepImageVolume != NULL) {
+    // Update caller's SleepImageVolume when requested
+    *SleepImageVolume = ImageVolume;
   }
   return gSleepImageOffset;
 }
@@ -507,7 +541,7 @@ IsSleepImageValidBySignature (IN REFIT_VOLUME *Volume)
   // some data and stops us from detecting offset later.
   // So, make first call to GetSleepImagePosition() now.
   DBG("Check sleep image 'by signature':\n");
-  return (GetSleepImagePosition (Volume) != 0);
+  return (GetSleepImagePosition (Volume, NULL) != 0);
 }
 
 
@@ -591,20 +625,21 @@ PrepareHibernation (IN REFIT_VOLUME *Volume)
   VOID            *Value;
   AppleRTCHibernateVars RtcVars;
   UINT8           *VarData = NULL;
+  REFIT_VOLUME    *SleepImageVolume;
   
   DBG("PrepareHibernation:\n");
   
   // Find sleep image offset
-  SleepImageOffset = GetSleepImagePosition (Volume);
+  SleepImageOffset = GetSleepImagePosition (Volume,&SleepImageVolume);
   DBG(" SleepImageOffset: %lx\n", SleepImageOffset);
-  if (SleepImageOffset == 0) {
+  if (SleepImageOffset == 0 || SleepImageVolume == NULL) {
     DBG(" sleepimage offset not found\n");
     return FALSE;
   }
   
   // Set boot-image var
   UnicodeSPrint(OffsetHexStr, sizeof(OffsetHexStr), L"%lx", SleepImageOffset);
-  BootImageDevPath = FileDevicePath(Volume->WholeDiskDeviceHandle, OffsetHexStr);
+  BootImageDevPath = FileDevicePath(SleepImageVolume->WholeDiskDeviceHandle, OffsetHexStr);
 //  DBG(" boot-image device path:\n");
   Size = GetDevicePathSize(BootImageDevPath);
   VarData = (UINT8*)BootImageDevPath;
