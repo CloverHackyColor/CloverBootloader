@@ -24,6 +24,8 @@
 //#define DBG(...) AsciiPrint(__VA_ARGS__);
 #endif
 
+#pragma pack(push, 1)
+
 //
 // Just the first part of HFS+ volume header from where we can take modification time
 //
@@ -85,13 +87,13 @@ typedef struct _IOHibernateImageHeaderMin
     UINT32	processorFlags;
   UINT32    runtimePages;
   UINT32    runtimePageCount;
-  UINT64    runtimeVirtualPages __attribute__ ((packed));
+  UINT64    runtimeVirtualPages;
 
   UINT32    performanceDataStart;
   UINT32    performanceDataSize;
 
-  UINT64	encryptStart __attribute__ ((packed));
-  UINT64	machineSignature __attribute__ ((packed));
+  UINT64	encryptStart;
+  UINT64	machineSignature;
 
   UINT32    previewSize;
   UINT32    previewPageListSize;
@@ -148,6 +150,7 @@ typedef struct _AppleRTCHibernateVars
     UINT8	  wiredCryptKey[16];
 } AppleRTCHibernateVars;
 
+#pragma pack(pop)
 
 //
 // Taken from VBoxFsDxe
