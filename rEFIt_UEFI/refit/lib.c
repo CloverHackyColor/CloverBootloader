@@ -1252,6 +1252,28 @@ VOID ReinitVolumes(VOID)
   VolumesCount = VolumesFound;
 }
 
+REFIT_VOLUME *FindVolumeByName(IN CHAR16 *VolName)
+{
+  REFIT_VOLUME            *Volume;
+  UINTN                   VolumeIndex;
+
+  if (!VolName) {
+    return NULL;
+  }
+
+  for (VolumeIndex = 0; VolumeIndex < VolumesCount; VolumeIndex++) {
+    Volume = Volumes[VolumeIndex];
+    if (!Volume) {
+      continue;
+    }
+    if (Volume->VolName && StrCmp(Volume->VolName,VolName) == 0) {
+      return Volume;
+    }
+  }
+
+  return NULL;
+}
+
 //
 // file and dir functions
 //

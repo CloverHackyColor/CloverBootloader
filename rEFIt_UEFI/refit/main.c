@@ -754,9 +754,14 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     FinalizeSmbios();
 //    DBG("SetupDataForOSX\n");
     SetupDataForOSX();
+    
+    if (OSFLAG_ISSET(Entry->Flags, OSFLAG_HIBERNATED)) {
+      DoHibernateWake = PrepareHibernation(Entry->Volume);
+    }
+    
 //    DBG("LoadKexts\n");
     // LoadKexts writes to DataHub, where large writes can prevent hibernate wake (happens when several kexts present in Clover's kexts dir)
-    if (!OSFLAG_ISSET(Entry->Flags, OSFLAG_HIBERNATED)) {
+    if (!DoHibernateWake) {
       LoadKexts(Entry);
     }
     
@@ -807,11 +812,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
   if (OSTYPE_IS_OSX(Entry->LoaderType) ||
       OSTYPE_IS_OSX_RECOVERY(Entry->LoaderType) ||
       OSTYPE_IS_OSX_INSTALLER(Entry->LoaderType)) {
-      
-    if (OSFLAG_ISSET(Entry->Flags, OSFLAG_HIBERNATED)) {
-      DoHibernateWake = PrepareHibernation(Entry->Volume);
-    }
-      
+    
     if (DoHibernateWake) {
       DBG("Closing events\n");
       gBS->CloseEvent (OnReadyToBootEvent);

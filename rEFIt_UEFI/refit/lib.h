@@ -536,6 +536,8 @@ EFI_STATUS ExtractLegacyLoaderPaths(EFI_DEVICE_PATH **PathList, UINTN MaxPaths, 
 
 VOID ScanVolumes(VOID);
 
+REFIT_VOLUME *FindVolumeByName(IN CHAR16 *VolName);
+
 BOOLEAN FileExists(IN EFI_FILE *BaseDir, IN CHAR16 *RelativePath);
 
 BOOLEAN DeleteFile(IN EFI_FILE *Root, IN CHAR16 *RelativePath);
