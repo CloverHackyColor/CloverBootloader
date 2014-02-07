@@ -587,8 +587,8 @@
 		12FA1576173F4E4900F847F1 /* Test.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Test.h; sourceTree = "<group>"; };
 		12FA1578173F4E6A00F847F1 /* AsmFuncs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AsmFuncs.h; sourceTree = "<group>"; };
 		12FA1579173F4E6A00F847F1 /* BootArgs.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BootArgs.c; sourceTree = "<group>"; };
-		12FA157A173F4E6A00F847F1 /* BootArgs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BootArgs.h; sourceTree = "<group>"; };
-		12FA157B173F4E6A00F847F1 /* BootFixes.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BootFixes.c; sourceTree = "<group>"; };
+		12FA157A173F4E6A00F847F1 /* BootArgs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BootArgs.h; sourceTree = "<group>"; usesTabs = 1; };
+		12FA157B173F4E6A00F847F1 /* BootFixes.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BootFixes.c; sourceTree = "<group>"; usesTabs = 1; };
 		12FA157C173F4E6A00F847F1 /* BootFixes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BootFixes.h; sourceTree = "<group>"; };
 		12FA157D173F4E6A00F847F1 /* DecodedKernelCheck.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = DecodedKernelCheck.c; sourceTree = "<group>"; };
 		12FA157E173F4E6A00F847F1 /* DecodedKernelCheck.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DecodedKernelCheck.h; sourceTree = "<group>"; };

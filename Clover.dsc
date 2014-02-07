@@ -444,6 +444,18 @@
 
 [Components.X64]
   Clover/OsxAptioFixDrv/OsxAptioFixDrv.inf
+  #Clover/OsxAptioFixDrv/OsxAptioFixDrv.inf {
+    #
+    # Enable debug output.
+    #
+   # <PcdsFixedAtBuild>
+   #   gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x07
+   #   gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0xFFFFFFFF
+   # <LibraryClasses>
+   #   SerialPortLib|MdeModulePkg/Library/BaseSerialPortLib16550/BaseSerialPortLib16550.inf
+   #   DebugLib|MdePkg/Library/BaseDebugLibSerialPort/BaseDebugLibSerialPort.inf
+   #   DebugPrintErrorLevelLib|MdePkg/Library/BaseDebugPrintErrorLevelLib/BaseDebugPrintErrorLevelLib.inf
+  #}
   Clover/OsxLowMemFixDrv/OsxLowMemFixDrv.inf
 
 ###################################################################################################

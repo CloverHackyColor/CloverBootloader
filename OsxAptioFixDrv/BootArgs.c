@@ -8,6 +8,7 @@
 
 #include <Library/UefiLib.h>
 #include <Library/DebugLib.h>
+#include <Library/BaseMemoryLib.h>
 
 #include "BootArgs.h"
 #include "Lib.h"
@@ -178,25 +179,64 @@ BootArgsPrint(VOID *bootArgs)
 #endif
 }
 
-VOID
+BootArgs gBootArgs;
+
+BootArgs*
 EFIAPI
-BootArgsFix(VOID *bootArgs, EFI_PHYSICAL_ADDRESS gRellocBase)
+GetBootArgs(VOID *bootArgs)
 {
 	BootArgs1		*BA1 = bootArgs;
 	BootArgs2		*BA2 = bootArgs;
 	
+    ZeroMem(&gBootArgs, sizeof(gBootArgs));
+    
 	if (BA1->Version == kBootArgsVersion1) {
 		// pre Lion
-		BA1->MemoryMap = BA1->MemoryMap - (UINT32)gRellocBase;
-		BA1->deviceTreeP = BA1->deviceTreeP - (UINT32)gRellocBase;
-		BA1->kaddr = BA1->kaddr - (UINT32)gRellocBase;
+        gBootArgs.MemoryMap = &BA1->MemoryMap;
+        gBootArgs.MemoryMapSize = &BA1->MemoryMapSize;
+        gBootArgs.MemoryMapDescriptorSize = &BA1->MemoryMapDescriptorSize;
+        gBootArgs.MemoryMapDescriptorVersion = &BA1->MemoryMapDescriptorVersion;
+        
+        gBootArgs.deviceTreeP = &BA1->deviceTreeP;
+        gBootArgs.deviceTreeLength = &BA1->deviceTreeLength;
+        
+        gBootArgs.kaddr = &BA1->kaddr;
+        gBootArgs.ksize = &BA1->ksize;
+        
+        gBootArgs.efiRuntimeServicesPageStart = &BA1->efiRuntimeServicesPageStart;
+        gBootArgs.efiRuntimeServicesPageCount = &BA1->efiRuntimeServicesPageCount;
+        gBootArgs.efiRuntimeServicesVirtualPageStart = &BA1->efiRuntimeServicesVirtualPageStart;
+        gBootArgs.efiSystemTable = &BA1->efiSystemTable;
 	} else {
 		// Lion and up
-		BA2->MemoryMap = BA2->MemoryMap - (UINT32)gRellocBase;
-		BA2->deviceTreeP = BA2->deviceTreeP - (UINT32)gRellocBase;
-		BA2->kaddr = BA2->kaddr - (UINT32)gRellocBase;
+        gBootArgs.MemoryMap = &BA2->MemoryMap;
+        gBootArgs.MemoryMapSize = &BA2->MemoryMapSize;
+        gBootArgs.MemoryMapDescriptorSize = &BA2->MemoryMapDescriptorSize;
+        gBootArgs.MemoryMapDescriptorVersion = &BA2->MemoryMapDescriptorVersion;
+        
+        gBootArgs.deviceTreeP = &BA2->deviceTreeP;
+        gBootArgs.deviceTreeLength = &BA2->deviceTreeLength;
+        
+        gBootArgs.kaddr = &BA2->kaddr;
+        gBootArgs.ksize = &BA2->ksize;
+        
+        gBootArgs.efiRuntimeServicesPageStart = &BA2->efiRuntimeServicesPageStart;
+        gBootArgs.efiRuntimeServicesPageCount = &BA2->efiRuntimeServicesPageCount;
+        gBootArgs.efiRuntimeServicesVirtualPageStart = &BA2->efiRuntimeServicesVirtualPageStart;
+        gBootArgs.efiSystemTable = &BA2->efiSystemTable;
 	}
-	
+    
+    return &gBootArgs;
+}
+
+
+VOID
+EFIAPI
+BootArgsFix(BootArgs *BA, EFI_PHYSICAL_ADDRESS gRellocBase)
+{
+    *BA->MemoryMap = *BA->MemoryMap - (UINT32)gRellocBase;
+    *BA->deviceTreeP = *BA->deviceTreeP - (UINT32)gRellocBase;
+    *BA->kaddr = *BA->kaddr - (UINT32)gRellocBase;
 }
 
 /** Searches for bootArgs from Start and returns pointer to bootArgs or ... does not return if can not be found.  **/

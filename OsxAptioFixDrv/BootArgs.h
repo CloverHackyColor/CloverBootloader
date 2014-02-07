@@ -134,8 +134,29 @@ typedef struct {
 } BootArgs2;
 
 
+/** Our internal structure to hold boot args params to make the code independent of the boot args version. */
+typedef struct _BootArgs {
+	UINT32		*MemoryMap;								/* We will change this value so we need pointer to original field. */
+	UINT32		*MemoryMapSize;
+	UINT32		*MemoryMapDescriptorSize;
+	UINT32		*MemoryMapDescriptorVersion;
+    
+	UINT32		*deviceTreeP;
+	UINT32		*deviceTreeLength;
+	
+	UINT32		*kaddr;
+	UINT32		*ksize;
+	
+	UINT32		*efiRuntimeServicesPageStart;
+	UINT32		*efiRuntimeServicesPageCount;
+	UINT64		*efiRuntimeServicesVirtualPageStart;
+	UINT32		*efiSystemTable;
+} BootArgs;
+
+
 VOID  EFIAPI BootArgsPrint(VOID *bootArgs);
-VOID  EFIAPI BootArgsFix(VOID *bootArgs, EFI_PHYSICAL_ADDRESS gRellocBase);
+BootArgs*  EFIAPI GetBootArgs(VOID *bootArgs);
+VOID  EFIAPI BootArgsFix(BootArgs *BA, EFI_PHYSICAL_ADDRESS gRellocBase);
 VOID* EFIAPI BootArgsFind(IN EFI_PHYSICAL_ADDRESS Start);
 
 

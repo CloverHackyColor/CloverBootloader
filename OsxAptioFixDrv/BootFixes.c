@@ -39,10 +39,6 @@
 #endif
 
 
-// kernel start and size - from boot args
-UINT32	kaddr;
-UINT32	ksize;
-
 // buffer for virtual address map - only for RT areas
 // note: DescriptorSize is usually > sizeof(EFI_MEMORY_DESCRIPTOR)
 // so this buffer can hold less then 64 descriptors
@@ -318,11 +314,8 @@ ExecSetVirtualAddressesToMemMap(
   * not visible there.
   */
 VOID
-AssignVirtualAddressesToMemMap(VOID *pBootArgs)
+AssignVirtualAddressesToMemMap(BootArgs *BA)
 {
-	BootArgs1		*BA1 = pBootArgs;
-	BootArgs2		*BA2 = pBootArgs;
-	
 	UINTN					MemoryMapSize;
 	EFI_MEMORY_DESCRIPTOR	*MemoryMap;
 	UINTN					DescriptorSize;
@@ -332,24 +325,15 @@ AssignVirtualAddressesToMemMap(VOID *pBootArgs)
 	UINTN					Index;
 	EFI_MEMORY_DESCRIPTOR	*Desc;
 	UINTN					BlockSize;
-  UINTN					PhysicalEnd;
+	UINTN					PhysicalEnd;
 	PAGE_MAP_AND_DIRECTORY_POINTER	*PageTable;
 	UINTN					Flags;
 	EFI_STATUS				Status;
 	
-	if (BA1->Version == kBootArgsVersion1) {
-		// pre Lion
-		MemoryMapSize = BA1->MemoryMapSize;
-		MemoryMap = (EFI_MEMORY_DESCRIPTOR*)(UINTN)BA1->MemoryMap;
-		DescriptorSize = BA1->MemoryMapDescriptorSize;
-		KernelRTBlock = EFI_PAGES_TO_SIZE(BA1->efiRuntimeServicesPageStart);
-	} else {
-		// Lion and up
-		MemoryMapSize = BA2->MemoryMapSize;
-		MemoryMap = (EFI_MEMORY_DESCRIPTOR*)(UINTN)BA2->MemoryMap;
-		DescriptorSize = BA2->MemoryMapDescriptorSize;
-		KernelRTBlock = EFI_PAGES_TO_SIZE(BA2->efiRuntimeServicesPageStart);
-	}
+	MemoryMapSize = *BA->MemoryMapSize;
+	MemoryMap = (EFI_MEMORY_DESCRIPTOR*)(UINTN)(*BA->MemoryMap);
+	DescriptorSize = *BA->MemoryMapDescriptorSize;
+	KernelRTBlock = EFI_PAGES_TO_SIZE(*BA->efiRuntimeServicesPageStart);
 	
 	Desc = MemoryMap;
 	NumEntries = MemoryMapSize / DescriptorSize;
@@ -360,13 +344,13 @@ AssignVirtualAddressesToMemMap(VOID *pBootArgs)
 	GetCurrentPageTable(&PageTable, &Flags);
 	
 	for (Index = 0; Index < NumEntries; Index++) {
-    BlockSize = EFI_PAGES_TO_SIZE((UINTN)Desc->NumberOfPages);
-    PhysicalEnd = Desc->PhysicalStart + BlockSize;
-//    if ((Desc->PhysicalStart >= 0x9e000) && (Desc->PhysicalStart < 0xa0000)) {
-    if ((Desc->PhysicalStart < 0xa0000) && (PhysicalEnd >= 0x9e000)) {
-      Desc->Type = EfiACPIMemoryNVS;
-      Desc->Attribute = 0;
-    }
+		BlockSize = EFI_PAGES_TO_SIZE((UINTN)Desc->NumberOfPages);
+		PhysicalEnd = Desc->PhysicalStart + BlockSize;
+		//    if ((Desc->PhysicalStart >= 0x9e000) && (Desc->PhysicalStart < 0xa0000)) {
+		if ((Desc->PhysicalStart < 0xa0000) && (PhysicalEnd >= 0x9e000)) {
+			Desc->Type = EfiACPIMemoryNVS;
+			Desc->Attribute = 0;
+		}
 		
 		// assign virtual addresses to all EFI_MEMORY_RUNTIME marked pages (including MMIO)
 		if ((Desc->Attribute & EFI_MEMORY_RUNTIME) != 0) {
@@ -406,34 +390,20 @@ AssignVirtualAddressesToMemMap(VOID *pBootArgs)
 
 /** Copies RT code and data blocks to reserved area inside kernel boot image. */
 VOID
-DefragmentRuntimeServices(VOID *pBootArgs)
+DefragmentRuntimeServices(BootArgs *BA)
 {
-	BootArgs1		*BA1 = pBootArgs;
-	BootArgs2		*BA2 = pBootArgs;
-	
 	UINTN					NumEntries;
 	UINTN					Index;
 	EFI_MEMORY_DESCRIPTOR	*Desc;
 	UINTN					DescriptorSize;
 	UINT8					*KernelRTBlock;
 	UINTN					BlockSize;
-	UINT32					*efiSystemTable;
 	
-	if (BA1->Version == kBootArgsVersion1) {
-		// pre Lion
-		efiSystemTable = &BA1->efiSystemTable;
-		Desc = (EFI_MEMORY_DESCRIPTOR*)(UINTN)BA1->MemoryMap;
-		DescriptorSize = BA1->MemoryMapDescriptorSize;
-		NumEntries = BA1->MemoryMapSize / BA1->MemoryMapDescriptorSize;
-	} else {
-		// Lion and up
-		efiSystemTable = &BA2->efiSystemTable;
-		Desc = (EFI_MEMORY_DESCRIPTOR*)(UINTN)BA2->MemoryMap;
-		DescriptorSize = BA2->MemoryMapDescriptorSize;
-		NumEntries = BA2->MemoryMapSize / BA2->MemoryMapDescriptorSize;
-	}
+	Desc = (EFI_MEMORY_DESCRIPTOR*)(UINTN)(*BA->MemoryMap);
+	DescriptorSize = *BA->MemoryMapDescriptorSize;
+	NumEntries = *BA->MemoryMapSize / *BA->MemoryMapDescriptorSize;
 	
-	DBG("DefragmentRuntimeServices: pBootArgs->efiSystemTable = %x\n", *efiSystemTable);
+	DBG("DefragmentRuntimeServices: pBootArgs->efiSystemTable = %x\n", *BA->efiSystemTable);
 	
 	for (Index = 0; Index < NumEntries; Index++) {
 		// defragment only RT blocks
@@ -447,10 +417,10 @@ DefragmentRuntimeServices(VOID *pBootArgs)
 			CopyMem(KernelRTBlock + gRelocBase, (VOID*)(UINTN)Desc->PhysicalStart, BlockSize);
 			//SetMem((VOID*)(UINTN)Desc->PhysicalStart, BlockSize, 0);
 						
-			if (Desc->PhysicalStart <= *efiSystemTable &&  *efiSystemTable < (Desc->PhysicalStart + BlockSize)) {
+			if (Desc->PhysicalStart <= *BA->efiSystemTable &&  *BA->efiSystemTable < (Desc->PhysicalStart + BlockSize)) {
 				// block contains sys table - update bootArgs with new address
-				*efiSystemTable = (UINT32)((UINTN)KernelRTBlock + (*efiSystemTable - Desc->PhysicalStart));
-				DBG("new pBootArgs->efiSystemTable = %x\n", *efiSystemTable);
+				*BA->efiSystemTable = (UINT32)((UINTN)KernelRTBlock + (*BA->efiSystemTable - Desc->PhysicalStart));
+				DBG("new pBootArgs->efiSystemTable = %x\n", *BA->efiSystemTable);
 			}
 			
 			// mark old RT block in MemMap as free mem
@@ -466,11 +436,8 @@ DefragmentRuntimeServices(VOID *pBootArgs)
 
 /** Fixes RT vars in bootArgs, virtualizes and defragments RT blocks. */
 VOID
-RuntimeServicesFix(VOID *pBootArgs)
+RuntimeServicesFix(BootArgs *BA)
 {
-	BootArgs1				*BA1 = pBootArgs;
-	BootArgs2				*BA2 = pBootArgs;
-	
 	EFI_STATUS				Status;
 	UINT32					gRelocBasePage = (UINT32)EFI_SIZE_TO_PAGES(gRelocBase);
 	
@@ -479,44 +446,24 @@ RuntimeServicesFix(VOID *pBootArgs)
 	UINTN					DescriptorSize;
 	UINT32					DescriptorVersion;
 	
-	UINT32					*efiRuntimeServicesPageStart;
-	UINT32					efiRuntimeServicesPageCount;
-	UINT64					*efiRuntimeServicesVirtualPageStart;
-	
-	if (BA1->Version == kBootArgsVersion1) {
-		// pre Lion
-		efiRuntimeServicesPageStart = &BA1->efiRuntimeServicesPageStart;
-		efiRuntimeServicesPageCount = BA1->efiRuntimeServicesPageCount;
-		efiRuntimeServicesVirtualPageStart = &BA1->efiRuntimeServicesVirtualPageStart;
-		
-		MemoryMapSize = BA1->MemoryMapSize;
-		MemoryMap = (EFI_MEMORY_DESCRIPTOR*)(UINTN)BA1->MemoryMap;
-		DescriptorSize = BA1->MemoryMapDescriptorSize;
-		DescriptorVersion = BA1->MemoryMapDescriptorVersion;
-	} else {
-		// Lion and up
-		efiRuntimeServicesPageStart = &BA2->efiRuntimeServicesPageStart;
-		efiRuntimeServicesPageCount = BA2->efiRuntimeServicesPageCount;
-		efiRuntimeServicesVirtualPageStart = &BA2->efiRuntimeServicesVirtualPageStart;
-		
-		MemoryMapSize = BA2->MemoryMapSize;
-		MemoryMap = (EFI_MEMORY_DESCRIPTOR*)(UINTN)BA2->MemoryMap;
-		DescriptorSize = BA2->MemoryMapDescriptorSize;
-		DescriptorVersion = BA2->MemoryMapDescriptorVersion;
-	}
+	MemoryMapSize = *BA->MemoryMapSize;
+	MemoryMap = (EFI_MEMORY_DESCRIPTOR*)(UINTN)(*BA->MemoryMap);
+	DescriptorSize = *BA->MemoryMapDescriptorSize;
+	DescriptorVersion = *BA->MemoryMapDescriptorVersion;
 	
 	DBGnvr("RuntimeServicesFix ...\n");
 	DBG("RuntimeServicesFix: efiRSPageStart=%x, efiRSPageCount=%x, efiRSVirtualPageStart=%lx\n",
-		*efiRuntimeServicesPageStart, efiRuntimeServicesPageCount, *efiRuntimeServicesVirtualPageStart);
+		*BA->efiRuntimeServicesPageStart, *BA->efiRuntimeServicesPageCount, *BA->efiRuntimeServicesVirtualPageStart);
+	
 	// fix runtime entries
-	*efiRuntimeServicesPageStart -= gRelocBasePage;
+	*BA->efiRuntimeServicesPageStart -= gRelocBasePage;
 	// VirtualPageStart is ok in boot args (a miracle!), but we'll do it anyway
-	*efiRuntimeServicesVirtualPageStart = 0x000ffffff8000000 + *efiRuntimeServicesPageStart;
+	*BA->efiRuntimeServicesVirtualPageStart = 0x000ffffff8000000 + *BA->efiRuntimeServicesPageStart;
 	DBG("RuntimeServicesFix: efiRSPageStart=%x, efiRSPageCount=%x, efiRSVirtualPageStart=%lx\n",
-		*efiRuntimeServicesPageStart, efiRuntimeServicesPageCount, *efiRuntimeServicesVirtualPageStart);
+		*BA->efiRuntimeServicesPageStart, *BA->efiRuntimeServicesPageCount, *BA->efiRuntimeServicesVirtualPageStart);
 	
 	// assign virtual addresses
-	AssignVirtualAddressesToMemMap(pBootArgs);
+	AssignVirtualAddressesToMemMap(BA);
 	
 	//PrintMemMap(MemoryMapSize, MemoryMap, DescriptorSize, DescriptorVersion);
 	//PrintSystemTable(gST);
@@ -537,7 +484,7 @@ RuntimeServicesFix(VOID *pBootArgs)
 	
 	// and defragment
 	DBGnvr("DefragmentRuntimeServices ...\n");
-	DefragmentRuntimeServices(pBootArgs);
+	DefragmentRuntimeServices(BA);
 }
 
 /** DevTree contains /chosen/memory-map with properties with 8 byte values
@@ -554,11 +501,8 @@ RuntimeServicesFix(VOID *pBootArgs)
  * and we are fixing it's pointers also.
 */
 VOID
-DevTreeFix(VOID *pBootArgs)
+DevTreeFix(BootArgs *BA)
 {
-	BootArgs1			*BA1 = pBootArgs;
-	BootArgs2			*BA2 = pBootArgs;
-	
 	DTEntry				DevTree;
 	DTEntry				MemMap;
 	struct OpaqueDTPropertyIterator OPropIter;
@@ -568,13 +512,8 @@ DevTreeFix(VOID *pBootArgs)
 	BooterKextFileInfo	*KextInfo;
 
 
-	if (BA1->Version == kBootArgsVersion1) {
-		// pre Lion
-		DevTree = (DTEntry)(UINTN)BA1->deviceTreeP;
-	} else {
-		// Lion and up
-		DevTree = (DTEntry)(UINTN)BA2->deviceTreeP;
-	}
+	DevTree = (DTEntry)(UINTN)(*BA->deviceTreeP);
+	
 	DBG("Fixing DevTree at %p\n", DevTree);
 	DBGnvr("Fixing DevTree at %p\n", DevTree);
 	DTInit(DevTree);
@@ -599,8 +538,9 @@ DevTreeFix(VOID *pBootArgs)
 				DBG("MM Addr = %x, Len = %x ", PropValue->Address, PropValue->Length);
 				
 				// second check - Address is in our reloc block
-				if ((PropValue->Address < gRelocBase + kaddr)
-					|| (PropValue->Address >= gRelocBase + kaddr + ksize))
+				// (note: *BA->kaddr is not fixed yet and points to reloc block)
+				if ((PropValue->Address < *BA->kaddr)
+					|| (PropValue->Address >= *BA->kaddr + *BA->ksize))
 				{
 					DBG("DTMemMapEntry->Address is not in reloc block, skipping\n");
 					continue;
@@ -631,10 +571,8 @@ UINTN
 EFIAPI
 KernelEntryPatchJumpBack(UINTN bootArgs, BOOLEAN ModeX64)
 {
-	VOID 				*pBootArgs = (VOID*)bootArgs;
-	BootArgs1			*BA1 = pBootArgs;
-	BootArgs2			*BA2 = pBootArgs;
-
+	VOID					*pBootArgs = (VOID*)bootArgs;
+	BootArgs				*BA;
 	UINTN					MemoryMapSize;
 	EFI_MEMORY_DESCRIPTOR	*MemoryMap;
 	UINTN					DescriptorSize;
@@ -645,60 +583,34 @@ KernelEntryPatchJumpBack(UINTN bootArgs, BOOLEAN ModeX64)
 	DBGnvr("\nBACK FROM KERNEL: BootArgs = %x, KernelEntry: %x, Kernel called in %s bit mode\n", bootArgs, AsmKernelEntry, (ModeX64 ? L"64" : L"32"));
 	BootArgsPrint(pBootArgs);
 	
+	BA = GetBootArgs(pBootArgs);
+	
 	if (gRelocBase > 0) {
 
-		if (BA1->Version == kBootArgsVersion1) {
-			// pre Lion
-			kaddr = BA1->kaddr - (UINT32)gRelocBase;
-			ksize = BA1->ksize;
-			
-			// make memmap smaller
-			MemoryMapSize = BA1->MemoryMapSize;
-			MemoryMap = (EFI_MEMORY_DESCRIPTOR*)(UINTN)BA1->MemoryMap;
-			DescriptorSize = BA1->MemoryMapDescriptorSize;
-			DescriptorVersion = BA1->MemoryMapDescriptorVersion;
-			
-			DBG("ShrinkMemMap: Size 0x%lx", MemoryMapSize);
-			DBGnvr("ShrinkMemMap: Size 0x%lx", MemoryMapSize);
-			ShrinkMemMap(&MemoryMapSize, MemoryMap, DescriptorSize, DescriptorVersion);
-			
-			BA1->MemoryMapSize = (UINT32)MemoryMapSize;
-			
-			DBG(" -> 0x%lx\n", MemoryMapSize);
-			DBGnvr(" -> 0x%lx\n", MemoryMapSize);
-			
-			
-		} else {
-			// Lion and up
-			kaddr = BA2->kaddr - (UINT32)gRelocBase;
-			ksize = BA2->ksize;
-			
-			// make memmap smaller
-			MemoryMapSize = BA2->MemoryMapSize;
-			MemoryMap = (EFI_MEMORY_DESCRIPTOR*)(UINTN)BA2->MemoryMap;
-			DescriptorSize = BA2->MemoryMapDescriptorSize;
-			DescriptorVersion = BA2->MemoryMapDescriptorVersion;
-			
-			DBG("ShrinkMemMap: Size 0x%lx", MemoryMapSize);
-			DBGnvr("ShrinkMemMap: Size 0x%lx", MemoryMapSize);
-			ShrinkMemMap(&MemoryMapSize, MemoryMap, DescriptorSize, DescriptorVersion);
-			
-			BA2->MemoryMapSize = (UINT32)MemoryMapSize;
-			
-			DBG(" -> 0x%lx\n", MemoryMapSize);
-			DBGnvr(" -> 0x%lx\n", MemoryMapSize);
-			
-		}
+		// make memmap smaller
+		MemoryMapSize = *BA->MemoryMapSize;
+		MemoryMap = (EFI_MEMORY_DESCRIPTOR*)(UINTN)(*BA->MemoryMap);
+		DescriptorSize = *BA->MemoryMapDescriptorSize;
+		DescriptorVersion = *BA->MemoryMapDescriptorVersion;
+		
+		DBG("ShrinkMemMap: Size 0x%lx", MemoryMapSize);
+		DBGnvr("ShrinkMemMap: Size 0x%lx", MemoryMapSize);
+		ShrinkMemMap(&MemoryMapSize, MemoryMap, DescriptorSize, DescriptorVersion);
+		
+		*BA->MemoryMapSize = (UINT32)MemoryMapSize;
+		
+		DBG(" -> 0x%lx\n", MemoryMapSize);
+		DBGnvr(" -> 0x%lx\n", MemoryMapSize);
 		
 		// fix runtime stuff
-		RuntimeServicesFix(pBootArgs);
+		RuntimeServicesFix(BA);
 		
 		// fix some values in dev tree
-		DevTreeFix(pBootArgs);
+		DevTreeFix(BA);
 		
 		// fix boot args
 		DBGnvr("BootArgsFix ...\n");
-		BootArgsFix(pBootArgs, gRelocBase);
+		BootArgsFix(BA, gRelocBase);
 		
 		BootArgsPrint(pBootArgs);
 	
@@ -706,9 +618,10 @@ KernelEntryPatchJumpBack(UINTN bootArgs, BOOLEAN ModeX64)
 		pBootArgs = (VOID*)bootArgs;
 		
 		// set vars for copying kernel
-		AsmKernelImageStartReloc = gRelocBase + kaddr;
-		AsmKernelImageStart = kaddr;
-		AsmKernelImageSize = ksize;
+		// note: *BA->kaddr is fixed in BootArgsFix() and points to real kaddr
+		AsmKernelImageStartReloc = *BA->kaddr + (UINT32)gRelocBase;
+		AsmKernelImageStart = *BA->kaddr;
+		AsmKernelImageSize = *BA->ksize;
 	}
 	
 	DBG("BACK TO KERNEL: BootArgs = %x, KImgStartReloc = %x, KImgStart = %x, KImgSize = %x\n",
