@@ -928,31 +928,35 @@ VOID InitAnime(REFIT_MENU_SCREEN *Screen)
   }
   
   // Check if we should load anime files (first run or after theme change)
-  if (Anime && Screen->Film == NULL && (Path = Anime->Path) && (Screen->Film = (EG_IMAGE**)AllocateZeroPool(Anime->Frames * sizeof(VOID*)))) {
-    // Look through contents of the directory
-    for (i=0; i<Anime->Frames; i++) {
-      UnicodeSPrint(FileName, 512, L"%s\\%s_%03d.png", Path, Path, i);
-      //DBG("Try to load file %s\n", FileName);
-      p = egLoadImage(ThemeDir, FileName, TRUE);
-      if (!p) {
-        p = Last;
-        if (!p) break;
-      } else {
-        Last = p;
+  if (Anime && Screen->Film == NULL) {
+    Path = Anime->Path;
+    Screen->Film = (EG_IMAGE**)AllocateZeroPool(Anime->Frames * sizeof(VOID*));
+    if (Path && Screen->Film) {
+      // Look through contents of the directory
+      for (i=0; i<Anime->Frames; i++) {
+        UnicodeSPrint(FileName, 512, L"%s\\%s_%03d.png", Path, Path, i);
+        //DBG("Try to load file %s\n", FileName);
+        p = egLoadImage(ThemeDir, FileName, TRUE);
+        if (!p) {
+          p = Last;
+          if (!p) break;
+        } else {
+          Last = p;
+        }
+        Screen->Film[i] = p;
       }
-      Screen->Film[i] = p;
-    }
-    if (Screen->Film[0] != NULL) {
-      Screen->Frames = i;
-      DBG(" found %d frames of the anime\n", i);
-      // Create background frame
-      Screen->Film[i] = egCreateImage(Screen->Film[0]->Width, Screen->Film[0]->Height, FALSE);
-      // Copy some settings from Anime into Screen
-      Screen->FrameTime = Anime->FrameTime;
-      Screen->Once = Anime->Once;
-      Screen->Theme = AllocateCopyPool(StrSize(GlobalConfig.Theme), GlobalConfig.Theme);
-    } else {
-      DBG("Film[0] == NULL\n");
+      if (Screen->Film[0] != NULL) {
+        Screen->Frames = i;
+        DBG(" found %d frames of the anime\n", i);
+        // Create background frame
+        Screen->Film[i] = egCreateImage(Screen->Film[0]->Width, Screen->Film[0]->Height, FALSE);
+        // Copy some settings from Anime into Screen
+        Screen->FrameTime = Anime->FrameTime;
+        Screen->Once = Anime->Once;
+        Screen->Theme = AllocateCopyPool(StrSize(GlobalConfig.Theme), GlobalConfig.Theme);
+      } else {
+        DBG("Film[0] == NULL\n");
+      }
     }
   }
   

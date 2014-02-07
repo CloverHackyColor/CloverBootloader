@@ -195,7 +195,7 @@ INT32 mac_to_posix(UINT32 mac_time)
 
 VOID fsw_efi_decode_time(OUT EFI_TIME *EfiTime, IN UINT32 UnixTime)
 {
-    INTN         days, rem;
+    INT32        days, rem;
     INT32        y, newy, yleap;
     INT32        *ip;
     
@@ -262,7 +262,7 @@ EFIAPI OurBlockIoRead (
       BlockSize = 512;
     }
     
-    DBG(" OurBlockIoRead: Lba=%lx, Offset=%lx (BlockSize=%d)\n", Lba, Lba * BlockSize, BlockSize);
+    DBG(" OurBlockIoRead: Lba=%lx, Offset=%lx (BlockSize=%d)\n", Lba, MultU64x32(Lba, BlockSize), BlockSize);
     
     Header = (IOHibernateImageHeaderMin *) Buffer;
     Header2 = (IOHibernateImageHeaderMinSnow *) Buffer;
@@ -272,7 +272,7 @@ EFIAPI OurBlockIoRead (
     
     if (Header->signature == kIOHibernateHeaderSignature ||
         Header2->signature == kIOHibernateHeaderSignature) {
-      gSleepImageOffset = Lba * BlockSize;
+      gSleepImageOffset = MultU64x32(Lba, BlockSize);
       DBG(" got sleep image offset\n");
       //save sleep time as lvs1974 suggested
       if (Header->signature == kIOHibernateHeaderSignature) {
@@ -482,7 +482,7 @@ IsSleepImageValidBySleepTime (IN REFIT_VOLUME *Volume)
   VOID                *Buffer;
   EFI_BLOCK_IO_PROTOCOL   *BlockIo;
   HFSPlusVolumeHeaderMin  *HFSHeader;
-  INTN                HFSVolumeModifyDate;
+  UINT32              HFSVolumeModifyDate;
   INTN                TimeDiff;
   INTN                Pages = 1;
   //EFI_TIME            ImageModifyTime;

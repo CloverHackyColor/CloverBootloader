@@ -2899,8 +2899,7 @@ UINT32 FIXSBUS (UINT8 *dsdt, UINT32 len)
       }
     }
     Size = get_size(dsdt, SBUSADR);
-    k = ReplaceName(dsdt + SBUSADR, Size, NULL, "BUS0");
-    if (k < 0) {
+    if (ReplaceName(dsdt + SBUSADR, Size, NULL, "BUS0") < 0) {
       DBG("BUS0 already exists, patch SBUS will not be applied\n");
       return len;
     }
@@ -4505,7 +4504,7 @@ VOID FixRegions (UINT8 *dsdt, UINT32 len)
     return;
   }
   for (i = 0x20; i < len - 15; i++) {
-    if ((dsdt[i] == 0x5B) && (dsdt[i+1] == 0x80) && GetName(dsdt, i+2, &Name[0], &shift)) {
+    if ((dsdt[i] == 0x5B) && (dsdt[i+1] == 0x80) && GetName(dsdt, (INT32)(i+2), &Name[0], &shift)) {
       //this is region. Compare to bios tables
       p = gRegions;
       while (p)  {
@@ -4517,7 +4516,7 @@ VOID FixRegions (UINT8 *dsdt, UINT32 len)
             CopyMem(&dsdt[i+8+shift], &p->Address, 2);
           } else {
             //propose this is indirect name
-            if (GetName(dsdt, i+7+shift, &NameAdr[0], NULL)) {
+            if (GetName(dsdt, (INT32)(i+7+shift), &NameAdr[0], NULL)) {
               j = FindName(dsdt, len, &NameAdr[0]);
               if (j > 0) {
                 DBG("  indirect name=%a\n", NameAdr);
@@ -4558,7 +4557,7 @@ VOID GetBiosRegions(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt)
   
   for (i=0x24; i<bufferLen-15; i++) {
     if ((buffer[i] == 0x5B) && (buffer[i+1] == 0x80) &&
-        GetName(buffer, i+2, &Name[0], &shift)) {
+        GetName(buffer, (INT32)(i+2), &Name[0], &shift)) {
       if (buffer[i+6+shift] == 0) {
         //this is SystemMemory region. Write to bios regions tables
         tmpRegion = gRegions;
@@ -4569,7 +4568,7 @@ VOID GetBiosRegions(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt)
           CopyMem(&gRegions->Address, &buffer[i+8+shift], 4);
         } else if (buffer[i+7+shift] == 0x0B) {
           CopyMem(&gRegions->Address, &buffer[i+8+shift], 2);
-        } else if (GetName(buffer, i+7+shift, &NameAdr[0], &shift2)) {
+        } else if (GetName(buffer, (INT32)(i+7+shift), &NameAdr[0], &shift2)) {
           j = FindName(buffer, bufferLen, &NameAdr[0]);
           if (j > 0) {
             if (buffer[j+4] == 0x0C) {
