@@ -1,7 +1,7 @@
 #!/bin/bash
 
 DEST_VOL="$1"
-ESPMountPoint="${2:-/Volumes/ESP}"
+EFI_ROOT_DIR="${2:-${DEST_VOL%*/}/EFIROOTDIR}"
 
 ESPDevice=$(LC_ALL=C diskutil info "$DEST_VOL" 2>/dev/null | \
  sed -n 's/.*Part of Whole: *//p')
@@ -13,16 +13,22 @@ fi
 # Get the name of the ESP device (aka disk3s1)
 ESPDevice=$(echo "$ESPDevice" | sed -E 's@^.*/?(disk[0-9]*).*@\1s1@')
 
-# Umount previously mount partition
-/usr/sbin/diskutil umount "${ESPMountPoint}" &>/dev/null
-umount /dev/${ESPDevice}  &>/dev/null
-umount "${ESPMountPoint}" &>/dev/null
-exitcode=1
-fstype=$(fstyp /dev/$ESPDevice)
-if [[ -n "$fstype" ]]; then
-    [[ ! -d "${ESPMountPoint}" ]] && mkdir -p "${ESPMountPoint}"
-    mount -t $fstype /dev/$ESPDevice "${ESPMountPoint}" 2>&1
-    exitcode=$?
+# Get the ESP mount point if the partition is currently mounted
+ESPMountPoint=$(LC_ALL=C diskutil info "$ESPDevice" 2>/dev/null | \
+ sed -n 's/.*Mount Point: *//p')
+
+if [[ "$ESPMountPoint" ]]; then
+    exitcode=0
+else
+    ESPMountPoint="/Volumes/ESP"
+    exitcode=1
+
+    fstype=$(fstyp /dev/$ESPDevice)
+    if [[ -n "$fstype" ]]; then
+        [[ ! -d "${ESPMountPoint}" ]] && mkdir -p "${ESPMountPoint}"
+        mount -t $fstype /dev/$ESPDevice "${ESPMountPoint}" 2>&1
+        exitcode=$?
+    fi
 fi
 
 if [[ $exitcode -ne 0 ]]; then
@@ -35,6 +41,8 @@ if [[ $exitcode -ne 0 ]]; then
     echo
     echo "For format as Fat32 use command like:"
     echo "sudo newfs_msdos -v EFI -F 32 /dev/r$ESPDevice"
+else
+    ln -sf "$ESPMountPoint" "$EFI_ROOT_DIR"
 fi
 
 exit $exitcode

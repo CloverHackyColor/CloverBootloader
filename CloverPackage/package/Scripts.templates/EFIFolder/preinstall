@@ -29,7 +29,6 @@ else
 fi
 
 EFI_ROOT_DIR="${DEST_VOL}"/EFIROOTDIR
-EFI_MOUNT_POINT="/Volumes/ESP"
 CLOVER_INSTALLER_PLIST_NEW="${DEST_VOL}@CLOVER_INSTALLER_PLIST_NEW@"
 install_log="${DEST_VOL}/Clover_Install_Log.txt"
 plistbuddy='/usr/libexec/PlistBuddy'
@@ -70,8 +69,8 @@ target_esp=$($plistbuddy -c "Print $installer_target_esp_refid" \
  "$CLOVER_INSTALLER_PLIST_NEW" 2>/dev/null)
 rm -f "$EFI_ROOT_DIR"
 if [[ "$target_esp" == true ]]; then
-    ./MountESP "$DEST_VOL" "$EFI_MOUNT_POINT" >> "$install_log" || exit 1
-    ln -sf "$EFI_MOUNT_POINT" "$EFI_ROOT_DIR"
+    # Mount and create the link EFI_ROOT_DIR -> ESP_MOUNT_POINT
+    ./MountESP "$DEST_VOL" "$EFI_ROOT_DIR" >> "$install_log" || exit 1
 else
     ln -sf "$DEST_VOL" "$EFI_ROOT_DIR"
 fi
