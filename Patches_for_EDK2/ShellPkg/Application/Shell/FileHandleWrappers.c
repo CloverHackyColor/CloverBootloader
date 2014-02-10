@@ -417,7 +417,7 @@ FileInterfaceStdInRead(
     gBS->WaitForEvent (1, &gST->ConIn->WaitForKey, &EventIndex);
     Status = gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
     if (EFI_ERROR (Status)) {
-      continue;
+      break;
     }
 
     //
@@ -855,7 +855,7 @@ FileInterfaceStdInRead(
     FreePool (FoundFileList);
   }
 
-  return EFI_SUCCESS;
+  return Status;
 }
 
 //

@@ -471,9 +471,20 @@ EfiShellGetFilePathFromDevicePath(
           if (!((PathForReturn == NULL && PathSize == 0) || (PathForReturn != NULL))) {
             return NULL;
           }
-          PathForReturn = StrnCatGrow(&PathForReturn, &PathSize, L"\\", 1);
 
           AlignedNode = AllocateCopyPool (DevicePathNodeLength(FilePath), FilePath);
+
+          // File Path Device Path Nodes 'can optionally add a "\" separator to
+          //  the beginning and/or the end of the Path Name string.'
+          // (UEFI Spec 2.4 section 9.3.6.4).
+          // If necessary, add a "\", but otherwise don't
+          // (This is specified in the above section, and also implied by the
+          //  UEFI Shell spec section 3.7)
+          if ((PathForReturn[PathSize - 1] != L'\\') &&
+              (AlignedNode->PathName[0]    != L'\\')) {
+            PathForReturn = StrnCatGrow (&PathForReturn, &PathSize, L"\\", 1);
+          }
+
           PathForReturn = StrnCatGrow(&PathForReturn, &PathSize, AlignedNode->PathName, 0);
           FreePool(AlignedNode);
         }
@@ -1378,7 +1389,9 @@ EfiShellEnablePageBreak (
                             variables with the format 'x=y', where x is the
                             environment variable name and y is the value. If this
                             is NULL, then the current shell environment is used.
-  @param StatusCode         Points to the status code returned by the command.
+
+  @param[out] ExitDataSize  ExitDataSize as returned from gBS->StartImage
+  @param[out] ExitData      ExitData as returned from gBS->StartImage
 
   @retval EFI_SUCCESS       The command executed successfully. The  status code
                             returned by the command is pointed to by StatusCode.
@@ -1393,14 +1406,26 @@ InternalShellExecuteDevicePath(
   IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath,
   IN CONST CHAR16                   *CommandLine OPTIONAL,
   IN CONST CHAR16                   **Environment OPTIONAL,
-  OUT EFI_STATUS                    *StatusCode OPTIONAL
+  OUT UINTN                         *ExitDataSize OPTIONAL,
+  OUT CHAR16                        **ExitData OPTIONAL
   )
 {
   EFI_STATUS                    Status;
+  EFI_STATUS                    CleanupStatus;
   EFI_HANDLE                    NewHandle;
   EFI_LOADED_IMAGE_PROTOCOL     *LoadedImage;
   LIST_ENTRY                    OrigEnvs;
   EFI_SHELL_PARAMETERS_PROTOCOL ShellParamsProtocol;
+  UINTN                         InternalExitDataSize;
+  UINTN                         *ExitDataSizePtr;
+
+  // ExitDataSize is not OPTIONAL for gBS->BootServices, provide somewhere for
+  // it to be dumped if the caller doesn't want it.
+  if (ExitData == NULL) {
+    ExitDataSizePtr = &InternalExitDataSize;
+  } else {
+    ExitDataSizePtr = ExitDataSize;
+  }
 
   if (ParentImageHandle == NULL) {
     return (EFI_INVALID_PARAMETER);
@@ -1474,35 +1499,55 @@ InternalShellExecuteDevicePath(
     ///@todo initialize and install ShellInterface protocol on the new image for compatibility if - PcdGetBool(PcdShellSupportOldProtocols)
 
     //
-    // now start the image and if the caller wanted the return code pass it to them...
+    // now start the image, passing up exit data if the caller requested it
     //
     if (!EFI_ERROR(Status)) {
-      if (StatusCode != NULL) {
-        *StatusCode = gBS->StartImage(NewHandle, NULL, NULL);
-      } else {
-        Status      = gBS->StartImage(NewHandle, NULL, NULL);
-      }
+      Status      = gBS->StartImage(
+                          NewHandle,
+                          ExitDataSizePtr,
+                          ExitData
+                          );
     }
 
     //
     // Cleanup (and dont overwrite errors)
     //
     if (EFI_ERROR(Status)) {
-      gBS->UninstallProtocolInterface(NewHandle, &gEfiShellParametersProtocolGuid, &ShellParamsProtocol);
+      CleanupStatus = gBS->UninstallProtocolInterface(
+                            NewHandle,
+                            &gEfiShellParametersProtocolGuid,
+                            &ShellParamsProtocol
+                            );
+//      ASSERT_EFI_ERROR(CleanupStatus);
+      if (EFI_ERROR(CleanupStatus)) {
+        return(CleanupStatus);
+      }
     } else {
-      Status = gBS->UninstallProtocolInterface(NewHandle, &gEfiShellParametersProtocolGuid, &ShellParamsProtocol);
-      //    ASSERT_EFI_ERROR(Status);
-      if (EFI_ERROR(Status)) {
-        return(Status);
+      CleanupStatus = gBS->UninstallProtocolInterface(
+                            NewHandle,
+                            &gEfiShellParametersProtocolGuid,
+                            &ShellParamsProtocol
+                            );
+//      ASSERT_EFI_ERROR(CleanupStatus);
+      if (EFI_ERROR(CleanupStatus)) {
+        return(CleanupStatus);
       }
     }
   }
 
   if (!IsListEmpty(&OrigEnvs)) {
     if (EFI_ERROR(Status)) {
-      SetEnvironmentVariableList(&OrigEnvs);
+      CleanupStatus = SetEnvironmentVariableList(&OrigEnvs);
+//      ASSERT_EFI_ERROR(CleanupStatus);
+      if (EFI_ERROR(CleanupStatus)) {
+        return(CleanupStatus);
+      }
     } else {
-      Status = SetEnvironmentVariableList(&OrigEnvs);
+      CleanupStatus = SetEnvironmentVariableList(&OrigEnvs);
+//      ASSERT_EFI_ERROR(CleanupStatus);
+      if (EFI_ERROR(CleanupStatus)) {
+        return(CleanupStatus);
+      }
     }
   }
 
@@ -1555,6 +1600,8 @@ EfiShellExecute(
   CHAR16                    *Temp;
   EFI_DEVICE_PATH_PROTOCOL  *DevPath;
   UINTN                     Size;
+  UINTN                     ExitDataSize;
+  CHAR16                    *ExitData;
 
   if ((PcdGet8(PcdShellSupportLevel) < 1)) {
     return (EFI_UNSUPPORTED);
@@ -1582,7 +1629,33 @@ EfiShellExecute(
     DevPath,
     Temp,
     (CONST CHAR16**)Environment,
-    StatusCode);
+    &ExitDataSize,
+    &ExitData);
+
+    if (Status == EFI_ABORTED) {
+      // If the command exited with an error, the shell should put the exit
+      // status in ExitData, preceded by a null-terminated string.
+      ASSERT (ExitDataSize == StrSize (ExitData) + sizeof (SHELL_STATUS));
+
+      if (StatusCode != NULL) {
+        // Skip the null-terminated string
+        ExitData += StrLen (ExitData) + 1;
+
+        // Use CopyMem to avoid alignment faults
+        CopyMem (StatusCode, ExitData, sizeof (SHELL_STATUS));
+
+        // Convert from SHELL_STATUS to EFI_STATUS
+        // EFI_STATUSes have top bit set when they are errors.
+        // (See UEFI Spec Appendix D)
+        if (*StatusCode != SHELL_SUCCESS) {
+          *StatusCode = (EFI_STATUS) *StatusCode | MAX_BIT;
+        }
+      }
+      FreePool (ExitData);
+      Status = EFI_SUCCESS;
+    } else if ((StatusCode != NULL) && !EFI_ERROR(Status)) {
+      *StatusCode = EFI_SUCCESS;
+    }
 
   //
   // de-allocate and return
@@ -1897,14 +1970,9 @@ EfiShellFindFilesInDir(
       ; !EFI_ERROR(Status) && !NoFile
       ; Status = FileHandleFindNextFile(FileDirHandle, FileInfo, &NoFile)
      ){
-    TempString  = NULL;
-    Size        = 0;
     //
     // allocate a new EFI_SHELL_FILE_INFO and populate it...
     //
-//    ASSERT((TempString == NULL && Size == 0) || (TempString != NULL));
-    TempString = StrnCatGrow(&TempString, &Size, BasePath, 0);
-    TempString = StrnCatGrow(&TempString, &Size, FileInfo->FileName, 0);
     ShellFileListItem = CreateAndPopulateShellFileInfo(
       BasePath,
       EFI_SUCCESS, // success since we didnt fail to open it...
@@ -3374,12 +3442,6 @@ NotificationFunction(
               (KeyData->KeyState.KeyShiftState  == (EFI_SHIFT_STATE_VALID|EFI_LEFT_CONTROL_PRESSED) || KeyData->KeyState.KeyShiftState  == (EFI_SHIFT_STATE_VALID|EFI_RIGHT_CONTROL_PRESSED))
               ){ 
     ShellInfoObject.HaltOutput = TRUE;
-/*
-    //
-    // Make sure that there are no pending keystrokes to pervent the pause.
-    //
-    gST->ConIn->Reset(gST->ConIn, FALSE);
-    while (gST->ConIn->ReadKeyStroke (gST->ConIn, &Key)==EFI_SUCCESS); */
   }
   return (EFI_SUCCESS);
 }
