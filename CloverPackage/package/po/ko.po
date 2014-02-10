@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-01-09 12:07+0100\n"
-"PO-Revision-Date: 2013-11-15 13:39+0000\n"
+"PO-Revision-Date: 2014-02-10 15:56+0000\n"
 "Last-Translator: Mill <ceruns@ymail.com>\n"
 "Language-Team: ko <ko@li.org>\n"
 "Language: ko\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1384522778.0\n"
+"X-POOTLE-MTIME: 1392047763.0\n"
 
 # //Don't need change
 #. type: Content of: <html><body><div><p>
@@ -128,7 +128,7 @@ msgstr " "
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:24
 msgid "But user can change them by config.plist"
-msgstr "그러나 사용자들은 config.plist를 수정할 수 있습니다"
+msgstr "물론 사용자가 직접 config.plist를 수정할 수도 있습니다"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:25
@@ -227,10 +227,10 @@ msgstr "설치가 완료되었습니다!"
 
 #. type: "UEFI.only_title"
 #: Resources/templates/Localizable.strings:4
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Install for UEFI motherboards"
 msgid "Install for UEFI booting only"
-msgstr "UEFI 메인보드에 설치"
+msgstr "UEFI 부팅 전용으로 설치"
 
 #. type: "UEFI.only_description"
 #: Resources/templates/Localizable.strings:5
