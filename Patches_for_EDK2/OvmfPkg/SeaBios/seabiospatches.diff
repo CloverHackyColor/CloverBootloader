@@ -1,41 +1,353 @@
+--- seabios/scripts/buildversion.sh
++++ seabios/scripts/buildversion.sh
+@@ -5,13 +5,13 @@ VAR16MODE="$2"
+ 
+ # Extract version info
+ if [ -d .git -o -f .git ]; then
+-    VERSION="`git describe --tags --long --dirty`"
++    VERSION="`git describe --tags --long`"
+ elif [ -f .version ]; then
+     VERSION="`cat .version`"
+ else
+     VERSION="?"
+ fi
+-VERSION="${VERSION}-`date +"%Y%m%d_%H%M%S"`-`hostname`"
++VERSION="${VERSION}-`date +"%Y%m%d_%H%M%S"`"
+ echo "Version: ${VERSION}"
+ 
+ # Build header file
+--- seabios/src/Kconfig
++++ seabios/src/Kconfig
+@@ -29,7 +29,7 @@ endchoice
+ 
+     config QEMU_HARDWARE
+         bool "Support hardware found on emulators (QEMU/Xen/KVM/Bochs)" if !QEMU
+-        default n
++        default y
+         help
+             Support virtual hardware when the code detects it is
+             running on an emulator.
+@@ -108,7 +108,6 @@ endchoice
+             0xffe00000 if CBFS ends 2Meg below the end of flash).
+ 
+     config FLASH_FLOPPY
+-        depends on COREBOOT_FLASH
+         bool "Floppy images in CBFS"
+         default y
+         help
+@@ -124,7 +123,7 @@ endchoice
+             the BIOS in 16bit protected mode.
+ 
+     config MALLOC_UPPERMEMORY
+-        bool "Allocate memory that needs to be in first Meg above 0xc0000"
++        bool "Allocate memory that needs to be in first Meg above 0xc0000" if !CSM
+         default y
+         help
+             Use the "Upper Memory Block" area (0xc0000-0xf0000) for
+@@ -488,8 +487,21 @@ menu "Debugging"
+         default n
+         help
+             Send debugging information to serial port.
+-    config DEBUG_SERIAL_PORT
++    config DEBUG_SERIAL_MMIO
+         depends on DEBUG_SERIAL
++        bool
++        default n
++        help
++            Send debugging information to PCI serial port.
++    config DEBUG_SERIAL_QUARK
++        bool "Intel Quark serial port debugging"
++	depends on DEBUG_SERIAL
++        select DEBUG_SERIAL_MMIO
++        default n
++        help
++            Use Quark UART1 (PCI device 0x14, function 5) for serial debug.
++    config DEBUG_SERIAL_PORT
++        depends on DEBUG_SERIAL && !DEBUG_SERIAL_MMIO
+         hex "Serial port base address"
+         default 0x3f8
+         help
 --- seabios/src/fw/csm.c
 +++ seabios/src/fw/csm.c
-@@ -34,6 +34,8 @@ EFI_COMPATIBILITY16_TABLE csm_compat_tab
+@@ -12,6 +12,7 @@
+ #include "malloc.h" // csm_malloc_preinit
+ #include "memmap.h"
+ #include "output.h" // dprintf
++#include "hw/serialio.h" // serial_debug_preinit
+ #include "stacks.h" // wait_threads
+ #include "std/acpi.h" // RSDP_SIGNATURE
+ #include "std/bda.h" // struct bios_data_area_s
+@@ -34,6 +35,8 @@ EFI_COMPATIBILITY16_TABLE csm_compat_tab
      .Compatibility16CallOffset = 0 /* Filled in by checkrom.py */,
      .OemIdStringPointer = (u32)"SeaBIOS",
      .AcpiRsdPtrPointer = (u32)&csm_rsdp,
-+    .UmbStart = 0xe0,
-+    .UmbEnd = 0xf0,
++    .UmaAddress = (u32)&zonelow_base,
++    .UmaSize = 0x10000,
  };
  
  EFI_TO_COMPATIBILITY16_INIT_TABLE *csm_init_table;
-@@ -46,7 +48,9 @@ extern void __csm_return(struct bregs *r
+@@ -46,9 +49,11 @@ extern void __csm_return(struct bregs *r
  static void
  csm_return(struct bregs *regs)
  {
 -    dprintf(3, "handle_csm returning AX=%04x\n", regs->ax);
 +    u32 top = rom_get_max();
-+    dprintf(3, "handle_csm returning AX=%04x, UmbStart %08x\n", regs->ax, top);
-+    csm_compat_table.UmbStart = top >> 12;
  
      PICMask = pic_irqmask_read();
++    csm_compat_table.UmaAddress = top;
++    csm_compat_table.UmaSize = 0xf0000 - top;
      __csm_return(regs);
+ }
+ 
+@@ -280,6 +285,8 @@ handle_csm(struct bregs *regs)
+     if (!CONFIG_CSM)
+         return;
+ 
++    serial_debug_preinit();
++
+     dprintf(3, "handle_csm regs %p AX=%04x\n", regs, regs->ax);
+ 
+     pic_irqmask_write(PICMask);
+--- seabios/src/hw/ramdisk.c
++++ seabios/src/hw/ramdisk.c
+@@ -22,19 +22,22 @@ ramdisk_setup(void)
+     if (!CONFIG_FLASH_FLOPPY)
+         return;
+ 
++#if 0
+     // Find image.
+     struct romfile_s *file = romfile_findprefix("floppyimg/", NULL);
+     if (!file)
+         return;
+     const char *filename = file->name;
+     u32 size = file->size;
+-    dprintf(3, "Found floppy file %s of size %d\n", filename, size);
++#endif
++    u32 size = 1474560;
++    dprintf(3, "Found floppy of size %d\n", size);
+     int ftype = find_floppy_type(size);
+     if (ftype < 0) {
+         dprintf(3, "No floppy type found for ramdisk size\n");
+         return;
+     }
+-
++#if 0
+     // Allocate ram for image.
+     void *pos = memalign_tmphigh(PAGE_SIZE, size);
+     if (!pos) {
+@@ -47,15 +50,15 @@ ramdisk_setup(void)
+     int ret = file->copy(file, pos, size);
+     if (ret < 0)
+         return;
+-
++#endif
++    void *pos = (void *)0xff800000;
+     // Setup driver.
+     struct drive_s *drive = init_floppy((u32)pos, ftype);
+     if (!drive)
+         return;
+     drive->type = DTYPE_RAMDISK;
+-    dprintf(1, "Mapping CBFS floppy %s to addr %p\n", filename, pos);
+-    char *desc = znprintf(MAXDESCSIZE, "Ramdisk [%s]", &filename[10]);
+-    boot_add_floppy(drive, desc, bootprio_find_named_rom(filename, 0));
++    dprintf(1, "Mapping SPI floppy at addr %p\n", pos);
++    boot_add_floppy(drive, "Ramdisk [SPI]", 0);
+ }
+ 
+ static int
+@@ -66,6 +69,7 @@ ramdisk_copy(struct disk_op_s *op, int i
+     u64 opd = GDT_DATA | GDT_LIMIT(0xfffff) | GDT_BASE((u32)op->buf_fl);
+     u64 ramd = GDT_DATA | GDT_LIMIT(0xfffff) | GDT_BASE(offset);
+ 
++    dprintf(1, "ramdisk_copy %d %d\n", iswrite, op->count);
+     u64 gdt[6];
+     if (iswrite) {
+         gdt[2] = opd;
+@@ -85,6 +89,7 @@ ramdisk_copy(struct disk_op_s *op, int i
+     br.cx = op->count * DISK_SECTOR_SIZE / 2;
+     call16_int(0x15, &br);
+ 
++    dprintf(1, "ramdisk_copy done %d\n", br.flags & F_CF);
+     if (br.flags & F_CF)
+         return DISK_RET_EBADTRACK;
+     return DISK_RET_SUCCESS;
+--- seabios/src/hw/serialio.c
++++ seabios/src/hw/serialio.c
+@@ -1,6 +1,6 @@
+ // Low-level serial (and serial-like) device access.
+ //
+-// Copyright (C) 2008-1013  Kevin O'Connor <kevin@koconnor.net>
++// Copyright (C) 2008-2013  Kevin O'Connor <kevin@koconnor.net>
+ //
+ // This file may be distributed under the terms of the GNU LGPLv3 license.
+ 
+@@ -9,6 +9,9 @@
+ #include "output.h" // dprintf
+ #include "serialio.h" // serial_debug_preinit
+ #include "x86.h" // outb
++#include "hw/pci_regs.h" // PCI_VENDOR_ID, PCI_BASE_ADDRESS_0
++#include "hw/pci.h" // pci_config_readl
++#include "stacks.h" // call32
+ 
+ 
+ /****************************************************************
+@@ -17,20 +20,72 @@
+ 
+ #define DEBUG_TIMEOUT 100000
+ 
++#if CONFIG_DEBUG_SERIAL_MMIO
++static u32 serial_addr;
++static u8 serial_stride;
++#define serial_out(d, ofs) writeb((void *)(serial_addr + (ofs)*serial_stride), (d))
++#define serial_in(ofs) readb((void *)(serial_addr + (ofs)*serial_stride))
++// Debug output only in 32-bit mode, or when MMIO address < 1MiB
++#define serial_valid() (serial_addr && (!MODE16 || serial_addr < 0x100000))
++#define set_serial_addr(adr, str) do { serial_addr = (adr); \
++                                       serial_stride = (str); } while (0)
++#else
++#define serial_out(d, reg) outb(d, CONFIG_DEBUG_SERIAL_PORT+(reg))
++#define serial_in(reg) inb(CONFIG_DEBUG_SERIAL_PORT+(reg))
++#define serial_valid() (1)
++#define set_serial_addr(adr, str) do { ; } while (0)
++#endif
++
++static int
++find_mmio_serial(void)
++{
++    if (CONFIG_DEBUG_SERIAL_QUARK) {
++        // debug port is bus 0, device 0x14, function 5.
++        u16 uart_bdf = pci_to_bdf(0, 0x14, 5);
++
++        // If it isn't a Quark UART...
++        if (pci_config_readl(uart_bdf, PCI_VENDOR_ID) != 0x09368086)
++            return -1;
++
++        u32 bar0 = pci_config_readl(uart_bdf, PCI_BASE_ADDRESS_0);
++        if (!(bar0 & 0xf)) {
++            set_serial_addr(bar0, 4);
++            return 0;
++        }
++    }
++
++    return -1;
++}
++
+ // Setup the debug serial port for output.
+ void
+ serial_debug_preinit(void)
+ {
+     if (!CONFIG_DEBUG_SERIAL)
+         return;
++
++    if (CONFIG_DEBUG_SERIAL_MMIO) {
++        // Need to discover serial port MMIO address
++        if (MODE16) {
++            // Needs to be done in 32-bit mode.
++            extern void _cfunc32flat_serial_debug_preinit(void);
++            call32(_cfunc32flat_serial_debug_preinit, 0, -1);
++            return;
++        }
++
++        // Find the PCI device or whatever provides the serial port
++        if (find_mmio_serial())
++            return;
++    }
++
+     // setup for serial logging: 8N1
+     u8 oldparam, newparam = 0x03;
+-    oldparam = inb(CONFIG_DEBUG_SERIAL_PORT+SEROFF_LCR);
+-    outb(newparam, CONFIG_DEBUG_SERIAL_PORT+SEROFF_LCR);
++    oldparam = serial_in(SEROFF_LCR);
++    serial_out(newparam, SEROFF_LCR);
+     // Disable irqs
+     u8 oldier, newier = 0;
+-    oldier = inb(CONFIG_DEBUG_SERIAL_PORT+SEROFF_IER);
+-    outb(newier, CONFIG_DEBUG_SERIAL_PORT+SEROFF_IER);
++    oldier = serial_in(SEROFF_IER);
++    serial_out(newier, SEROFF_IER);
+ 
+     if (oldparam != newparam || oldier != newier)
+         dprintf(1, "Changing serial settings was %x/%x now %x/%x\n"
+@@ -43,12 +98,19 @@ serial_debug(char c)
+ {
+     if (!CONFIG_DEBUG_SERIAL)
+         return;
++    if (MODE16) {
++           extern void _cfunc32flat_serial_debug(void);
++           call32(_cfunc32flat_serial_debug, c, -1);
++           return;
++    }
++    if (!serial_valid())
++        return;
+     int timeout = DEBUG_TIMEOUT;
+-    while ((inb(CONFIG_DEBUG_SERIAL_PORT+SEROFF_LSR) & 0x20) != 0x20)
++    while ((serial_in(SEROFF_LSR) & 0x20) != 0x20)
+         if (!timeout--)
+             // Ran out of time.
+             return;
+-    outb(c, CONFIG_DEBUG_SERIAL_PORT+SEROFF_DATA);
++    serial_out(c, SEROFF_DATA);
+ }
+ 
+ void
+@@ -65,8 +127,10 @@ serial_debug_flush(void)
+ {
+     if (!CONFIG_DEBUG_SERIAL)
+         return;
++    if (!serial_valid())
++        return;
+     int timeout = DEBUG_TIMEOUT;
+-    while ((inb(CONFIG_DEBUG_SERIAL_PORT+SEROFF_LSR) & 0x60) != 0x60)
++    while ((serial_in(SEROFF_LSR) & 0x60) != 0x60)
+         if (!timeout--)
+             // Ran out of time.
+             return;
 --- seabios/src/std/LegacyBios.h
 +++ seabios/src/std/LegacyBios.h
-@@ -228,6 +228,16 @@ typedef struct {
+@@ -228,6 +228,26 @@ typedef struct {
    /// Maximum PCI bus number assigned.
    ///
    UINT8                             LastPciBus;
 +
 +  ///
-+  /// Start address of UMB RAM (>> 12)
++  /// Start address of UMB RAM
 +  ///
-+  UINT8                             UmbStart;
++  UINT32                            UmaAddress;
 +
 +  ///
-+  /// End address of UMB RAM (>> 12)
++  /// Size of UMB RAM
 +  ///
-+  UINT8                             UmbEnd;
++  UINT32                            UmaSize;
++
++  ///
++  /// Start address of persistent allocation in high (>1MiB) memory
++  ///
++  UINT32                            HiPermanentMemoryAddress;
++
++  ///
++  /// Size of persistent allocation in high (>1MiB) memory
++  ///
++  UINT32                            HiPermanentMemorySize;
  } EFI_COMPATIBILITY16_TABLE;
  
  ///
+--- seabios/vgasrc/Kconfig
++++ seabios/vgasrc/Kconfig
+@@ -3,7 +3,7 @@
+ menu "VGA ROM"
+     choice
+         prompt "VGA Hardware Type"
+-        default NO_VGABIOS
++        default VGA_CIRRUS
+ 
+         config NO_VGABIOS
+             bool "None"
+@@ -71,7 +71,7 @@ menu "VGA ROM"
+     config VGA_ALLOCATE_EXTRA_STACK
+         depends on BUILD_VGABIOS
+         bool "Allocate an internal stack for 16bit interrupt entry point"
+-        default y
++        default n
+         help
+             Attempt to allocate (via BIOS PMM call) an internal stack
+             for the legacy 16bit 0x10 interrupt entry point.  This

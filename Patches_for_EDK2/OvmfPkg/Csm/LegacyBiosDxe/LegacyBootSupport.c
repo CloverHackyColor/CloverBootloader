@@ -1238,19 +1238,21 @@ GenericLegacyBoot (
                            0x40000,
                            &Granularity
                            );
-  if (Private->Legacy16Table->TableLength >= OFFSET_OF(EFI_COMPATIBILITY16_TABLE, UmbEnd) &&
-      Private->Legacy16Table->UmbStart != 0 && Private->Legacy16Table->UmbEnd != 0) {
+  if (Private->Legacy16Table->TableLength >= OFFSET_OF(EFI_COMPATIBILITY16_TABLE,
+						       HiPermanentMemoryAddress) &&
+      Private->Legacy16Table->UmaAddress != 0 && Private->Legacy16Table->UmaSize != 0) {
 
-    // Here we could reduce UmbStart down as far as Private->OptionRom, taking into
+    // Here we could reduce UmaAddress down as far as Private->OptionRom, taking into
     // account the granularity of the access control.
 
     DEBUG((EFI_D_INFO, "Unlocking UMB RAM region %x-%x\n",
-      Private->Legacy16Table->UmbStart << 12, Private->Legacy16Table->UmbEnd << 12));
+      Private->Legacy16Table->UmaAddress,
+      Private->Legacy16Table->UmaAddress + Private->Legacy16Table->UmaSize));
 
     Private->LegacyRegion->UnLock (
                              Private->LegacyRegion,
-                             Private->Legacy16Table->UmbStart << 12,
-                             (Private->Legacy16Table->UmbEnd - Private->Legacy16Table->UmbStart) << 12,
+                             Private->Legacy16Table->UmaAddress,
+                             Private->Legacy16Table->UmaSize,
                              &Granularity
                              );
   }

@@ -2301,10 +2301,11 @@ LegacyBiosInstallRom (
   PhysicalAddress = 0;
   MaxRomAddr      = PcdGet32 (PcdEndOpromShadowAddress);
 
-  if (Private->Legacy16Table->TableLength >= OFFSET_OF(EFI_COMPATIBILITY16_TABLE, UmbEnd) &&
-      Private->Legacy16Table->UmbStart != 0 && Private->Legacy16Table->UmbEnd != 0 &&
-      MaxRomAddr > (Private->Legacy16Table->UmbStart << 12)) {
-     MaxRomAddr = Private->Legacy16Table->UmbStart << 12;
+  if (Private->Legacy16Table->TableLength >= OFFSET_OF(EFI_COMPATIBILITY16_TABLE,
+						       HiPermanentMemoryAddress) &&
+      Private->Legacy16Table->UmaAddress != 0 && Private->Legacy16Table->UmaSize != 0 &&
+      MaxRomAddr > (Private->Legacy16Table->UmaAddress)) {
+    MaxRomAddr = Private->Legacy16Table->UmaAddress;
   }
   PciProgramAllInterruptLineRegisters (Private);
 

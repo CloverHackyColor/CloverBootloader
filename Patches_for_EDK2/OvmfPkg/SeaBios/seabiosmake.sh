@@ -12,6 +12,7 @@ make $1 \
   OBJCOPY=$TOOLCHAIN/$PREFIX-objcopy \
   OBJDUMP=$TOOLCHAIN/$PREFIX-objdump \
   STRIP=$TOOLCHAIN/$PREFIX-strip \
+  AS=$TOOLCHAIN/$PREFIX-as \
   #IASL=/usr/local/bin/iasl
 
 cd ..
