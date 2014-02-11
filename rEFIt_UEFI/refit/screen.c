@@ -86,11 +86,6 @@ EG_IMAGE *BackgroundImage = NULL;
 EG_IMAGE *Banner = NULL;
 EG_IMAGE *BigBack = NULL;
 
-
-static EG_IMAGE    *CompImage = NULL;
-
-
-
 static BOOLEAN GraphicsScreenDirty;
 
 // general defines and variables
@@ -414,7 +409,7 @@ VOID BltClearScreen(IN BOOLEAN ShowBanner) //ShowBanner always TRUE
       // Banner is not loaded yet
       if (!GlobalConfig.Theme) {
         // embedded theme - use text as banner
-        Banner = egCreateImage(7*StrLen(L"CLOVER"), 32, TRUE);
+        Banner = egCreateImage(7 * StrLen(L"CLOVER"), 32, TRUE);
         egFillImage(Banner, &MenuBackgroundPixel);
         egRenderText(L"CLOVER", Banner, 0, 0, 0xFFFF);
         CopyMem(&BlueBackgroundPixel, &StdBackgroundPixel, sizeof(EG_PIXEL));
@@ -599,38 +594,6 @@ VOID BltImageAlpha(IN EG_IMAGE *Image, IN INTN XPos, IN INTN YPos, IN EG_PIXEL *
 
 VOID BltImageComposite(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN INTN XPos, IN INTN YPos)
 {
-    INTN TotalWidth, TotalHeight, CompWidth, CompHeight, OffsetX, OffsetY;
-    EG_IMAGE *CompImage;
-  
-  if (!BaseImage || !TopImage) {
-    return;
-  }
-  
-    // initialize buffer with base image
-    CompImage = egCopyImage(BaseImage);
-    TotalWidth  = BaseImage->Width;
-    TotalHeight = BaseImage->Height;
-    
-    // place the top image
-    CompWidth = TopImage->Width;
-    if (CompWidth > TotalWidth)
-        CompWidth = TotalWidth;
-    OffsetX = (TotalWidth - CompWidth) >> 1;
-    CompHeight = TopImage->Height;
-    if (CompHeight > TotalHeight)
-        CompHeight = TotalHeight;
-    OffsetY = (TotalHeight - CompHeight) >> 1;
-    egComposeImage(CompImage, TopImage, OffsetX, OffsetY);
-    
-    // blit to screen and clean up
-//    egDrawImageArea(CompImage, 0, 0, TotalWidth, TotalHeight, XPos, YPos);
-  BltImageAlpha(CompImage, XPos, YPos, &MenuBackgroundPixel, 16);
-    egFreeImage(CompImage);
-    GraphicsScreenDirty = TRUE;
-}
-
-VOID BltImageCompositeBadge(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN EG_IMAGE *BadgeImage, IN INTN XPos, IN INTN YPos, INTN Scale)
-{
   INTN TotalWidth, TotalHeight, CompWidth, CompHeight, OffsetX, OffsetY;
   EG_IMAGE *CompImage;
 
@@ -638,13 +601,50 @@ VOID BltImageCompositeBadge(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN EG
     return;
   }
 
+  // initialize buffer with base image
+  CompImage = egCopyImage(BaseImage);
   TotalWidth  = BaseImage->Width;
   TotalHeight = BaseImage->Height;
-  
-//    DBG("BaseImage: Width=%d Height=%d Alfa=%d\n", TotalWidth, TotalHeight, CompImage->HasAlpha);
+
+  // place the top image
   CompWidth = TopImage->Width;
+  if (CompWidth > TotalWidth)
+    CompWidth = TotalWidth;
+  OffsetX = (TotalWidth - CompWidth) >> 1;
   CompHeight = TopImage->Height;
-//    DBG("TopImage: Width=%d Height=%d Alfa=%d\n", CompWidth, CompHeight, TopImage->HasAlpha);
+  if (CompHeight > TotalHeight)
+    CompHeight = TotalHeight;
+  OffsetY = (TotalHeight - CompHeight) >> 1;
+  egComposeImage(CompImage, TopImage, OffsetX, OffsetY);
+
+  // blit to screen and clean up
+  //    egDrawImageArea(CompImage, 0, 0, TotalWidth, TotalHeight, XPos, YPos);
+  BltImageAlpha(CompImage, XPos, YPos, &MenuBackgroundPixel, 16);
+  egFreeImage(CompImage);
+  GraphicsScreenDirty = TRUE;
+}
+
+VOID BltImageCompositeBadge(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN EG_IMAGE *BadgeImage, IN INTN XPos, IN INTN YPos, INTN Scale)
+{
+  INTN TotalWidth, TotalHeight, CompWidth, CompHeight, OffsetX, OffsetY;
+  EG_IMAGE *CompImage;
+  EG_IMAGE *NewBaseImage;
+  EG_IMAGE *NewTopImage;
+
+  if (!BaseImage || !TopImage) {
+    return;
+  }
+
+  NewBaseImage = egCopyScaledImage(BaseImage, Scale); //will be Scale/16
+  TotalWidth = NewBaseImage->Width;
+  TotalHeight = NewBaseImage->Height;
+//  DBG("BaseImage: Width=%d Height=%d Alfa=%d\n", TotalWidth, TotalHeight, NewBaseImage->HasAlpha);
+
+  NewTopImage = egCopyScaledImage(TopImage, Scale); //will be Scale/16
+  CompWidth = NewTopImage->Width;
+  CompHeight = NewTopImage->Height;
+// DBG("TopImage: Width=%d Height=%d Alfa=%d\n", CompWidth, CompHeight, NewTopImage->HasAlpha);
+
   if (GlobalConfig.Theme) { // regular theme
     CompImage = egCreateFilledImage((CompWidth > TotalWidth)?CompWidth:TotalWidth,
                                     (CompHeight > TotalHeight)?CompHeight:TotalHeight,
@@ -665,33 +665,32 @@ VOID BltImageCompositeBadge(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN EG
   if (CompWidth < TotalWidth) {
     OffsetX = (TotalWidth - CompWidth) >> 1;
     OffsetY = (TotalHeight - CompHeight) >> 1;
-    egComposeImage(CompImage, BaseImage, 0, 0);
-    egComposeImage(CompImage, TopImage, OffsetX, OffsetY);
+    egComposeImage(CompImage, NewBaseImage, 0, 0);
+    egComposeImage(CompImage, NewTopImage, OffsetX, OffsetY);
     CompWidth = TotalWidth;
     CompHeight = TotalHeight;
   } else {
     OffsetX = (CompWidth - TotalWidth) >> 1;
     OffsetY = (CompHeight - TotalHeight) >> 1;
-    egComposeImage(CompImage, BaseImage, OffsetX, OffsetY);
-    egComposeImage(CompImage, TopImage, 0, 0);
+    egComposeImage(CompImage, NewBaseImage, OffsetX, OffsetY);
+    egComposeImage(CompImage, NewTopImage, 0, 0);
   }
 
   // place the badge image
   if (BadgeImage != NULL &&
       (BadgeImage->Width + 8) < CompWidth &&
       (BadgeImage->Height + 8) < CompHeight) {
-    //    OffsetX += CompWidth  - 8 - BadgeImage->Width;
-    //    OffsetY += CompHeight - 8 - BadgeImage->Height;
+
     //blackosx
     // Check for user badge x offset from theme.plist
     if (GlobalConfig.BadgeOffsetX != 0xFFFF) {
       // Check if value is between 0 and ( width of the main icon - width of badge )
-      if (GlobalConfig.BadgeOffsetX >= 0 && GlobalConfig.BadgeOffsetX <= (UINTN)(CompWidth - BadgeImage->Width)) {
-        OffsetX += GlobalConfig.BadgeOffsetX;
-      } else {
-        DBG("User offset X %d is out of range\n",GlobalConfig.BadgeOffsetX);
-        OffsetX += CompWidth  - 8 - BadgeImage->Width;
+      if (GlobalConfig.BadgeOffsetX < 0 || GlobalConfig.BadgeOffsetX > (UINTN)(CompWidth - BadgeImage->Width)) {
+        DBG("User offset X %d is out of range\n", GlobalConfig.BadgeOffsetX);
+        GlobalConfig.BadgeOffsetX = CompWidth  - 8 - BadgeImage->Width;
+        DBG("   corrected to default %d\n", GlobalConfig.BadgeOffsetX);
       }
+      OffsetX += GlobalConfig.BadgeOffsetX;
     } else {
       // Set default position
       OffsetX += CompWidth  - 8 - BadgeImage->Width;
@@ -699,27 +698,28 @@ VOID BltImageCompositeBadge(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN EG
     // Check for user badge y offset from theme.plist
     if (GlobalConfig.BadgeOffsetY != 0xFFFF) {
       // Check if value is between 0 and ( height of the main icon - height of badge )
-      if (GlobalConfig.BadgeOffsetY >= 0 && GlobalConfig.BadgeOffsetY <= (UINTN)(CompHeight - BadgeImage->Height)) {
-        OffsetY += GlobalConfig.BadgeOffsetY;
-      } else {
+      if (GlobalConfig.BadgeOffsetY < 0 || GlobalConfig.BadgeOffsetY > (UINTN)(CompHeight - BadgeImage->Height)) {
         DBG("User offset Y %d is out of range\n",GlobalConfig.BadgeOffsetY);
-        OffsetY += CompHeight - 8 - BadgeImage->Height;
+        GlobalConfig.BadgeOffsetY = CompHeight - 8 - BadgeImage->Height;
+        DBG("   corrected to default %d\n", GlobalConfig.BadgeOffsetY);
       }
+      OffsetY += GlobalConfig.BadgeOffsetY;
     } else {
       // Set default position
       OffsetY += CompHeight - 8 - BadgeImage->Height;
     }
-
     egComposeImage(CompImage, BadgeImage, OffsetX, OffsetY);
   }
 
   // blit to screen and clean up
   if (GlobalConfig.Theme) { // regular theme
-    BltImageAlpha(CompImage, XPos, YPos, &MenuBackgroundPixel, Scale);
+    BltImageAlpha(CompImage, XPos, YPos, &MenuBackgroundPixel, 16);
   } else { // embedded theme - don't use BltImageAlpha as it can't handle refit's built in image
     egDrawImageArea(CompImage, 0, 0, TotalWidth, TotalHeight, XPos, YPos);
   }
   egFreeImage(CompImage);
+  egFreeImage(NewBaseImage);
+  egFreeImage(NewTopImage);
   GraphicsScreenDirty = TRUE;
 }
 
@@ -837,6 +837,7 @@ static INTN HybridRepositioning(INTN Edge, INTN Value, INTN ImageDimension, INTN
   return pos;
 }
 
+static EG_IMAGE *AnimeImage = NULL;
 
 VOID UpdateAnime(REFIT_MENU_SCREEN *Screen, EG_RECT *Place)
 {
@@ -847,18 +848,18 @@ VOID UpdateAnime(REFIT_MENU_SCREEN *Screen, EG_RECT *Place)
   INTN MenuWidth = 50;
   
   if (!Screen || !Screen->AnimeRun || !Screen->Film || GlobalConfig.TextOnly) return;
-  if (!CompImage ||
-      (CompImage->Width != Screen->Film[0]->Width) ||
-      (CompImage->Height != Screen->Film[0]->Height)){
-    if (CompImage) {
-      egFreeImage(CompImage);
+  if (!AnimeImage ||
+      (AnimeImage->Width != Screen->Film[0]->Width) ||
+      (AnimeImage->Height != Screen->Film[0]->Height)){
+    if (AnimeImage) {
+      egFreeImage(AnimeImage);
     }
-    CompImage = egCreateImage(Screen->Film[0]->Width, Screen->Film[0]->Height, TRUE);
+    AnimeImage = egCreateImage(Screen->Film[0]->Width, Screen->Film[0]->Height, TRUE);
   }
   
   // Retained for legacy themes without new anim placement options.
-  x = Place->XPos + (Place->Width - CompImage->Width) / 2;
-  y = Place->YPos + (Place->Height - CompImage->Height) / 2;
+  x = Place->XPos + (Place->Width - AnimeImage->Width) / 2;
+  y = Place->YPos + (Place->Height - AnimeImage->Height) / 2;
   
   if (!IsImageWithinScreenLimits(x, Screen->Film[0]->Width, UGAWidth) || !IsImageWithinScreenLimits(y, Screen->Film[0]->Height, UGAHeight)) {
     // This anime can't be displayed
@@ -879,7 +880,7 @@ VOID UpdateAnime(REFIT_MENU_SCREEN *Screen, EG_RECT *Place)
   Now = AsmReadTsc();
   if (Screen->LastDraw == 0) {
     //first start, we should save background into last frame
-    egFillImageArea(CompImage, 0, 0, CompImage->Width, CompImage->Height, &MenuBackgroundPixel);
+    egFillImageArea(AnimeImage, 0, 0, AnimeImage->Width, AnimeImage->Height, &MenuBackgroundPixel);
     egTakeImage(Screen->Film[Screen->Frames],
                 x, y,
                 Screen->Film[Screen->Frames]->Width,
@@ -887,13 +888,13 @@ VOID UpdateAnime(REFIT_MENU_SCREEN *Screen, EG_RECT *Place)
   }
   if (TimeDiff(Screen->LastDraw, Now) < Screen->FrameTime) return;
   if (Screen->Film[Screen->CurrentFrame]) {
-    egRawCopy(CompImage->PixelData, Screen->Film[Screen->Frames]->PixelData,
+    egRawCopy(AnimeImage->PixelData, Screen->Film[Screen->Frames]->PixelData,
               Screen->Film[Screen->Frames]->Width, 
               Screen->Film[Screen->Frames]->Height,
-              CompImage->Width,
+              AnimeImage->Width,
               Screen->Film[Screen->Frames]->Width);
-    egComposeImage(CompImage, Screen->Film[Screen->CurrentFrame], 0, 0);
-    BltImage(CompImage, x, y);
+    egComposeImage(AnimeImage, Screen->Film[Screen->CurrentFrame], 0, 0);
+    BltImage(AnimeImage, x, y);
   }
   Screen->CurrentFrame++;
   if (Screen->CurrentFrame >= Screen->Frames) {
@@ -957,9 +958,9 @@ VOID InitAnime(REFIT_MENU_SCREEN *Screen)
         Screen->FrameTime = Anime->FrameTime;
         Screen->Once = Anime->Once;
         Screen->Theme = AllocateCopyPool(StrSize(GlobalConfig.Theme), GlobalConfig.Theme);
-      } else {
+      } /*else {
         DBG("Film[0] == NULL\n");
-      }
+      } */
     }
   }
   

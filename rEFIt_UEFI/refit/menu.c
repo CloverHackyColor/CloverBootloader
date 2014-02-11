@@ -116,7 +116,7 @@ INTN ScrollbarYMovement;
 //#define TextHeight (FONT_CELL_HEIGHT + TEXT_YMARGIN * 2)
 #define TITLEICON_SPACING (16)
 
-//#define ROW0_TILESIZE (144)
+#define ROW0_TILESIZE (144)
 #define ROW1_TILESIZE (64)
 #define TILE_XSPACING (8)
 #define TILE_YSPACING (24)
@@ -1232,7 +1232,7 @@ static VOID InitSelection(VOID)
   if (GlobalConfig.SelectionBigFileName != NULL) {
     SelectionImages[0] = egLoadImage(ThemeDir, GlobalConfig.SelectionBigFileName, FALSE);
     SelectionImages[0] = egEnsureImageSize(SelectionImages[0],
-                                           Row0TileSize, Row0TileSize,
+                                           ROW0_TILESIZE, ROW0_TILESIZE,
                                            &MenuBackgroundPixel);
   }
   if (SelectionImages[0] == NULL) {
@@ -1271,7 +1271,7 @@ static VOID InitSelection(VOID)
   }
   // non-selected background images
   //TODO FALSE -> TRUE
-  SelectionImages[1] = egCreateFilledImage(Row0TileSize, Row0TileSize,
+  SelectionImages[1] = egCreateFilledImage(ROW0_TILESIZE, ROW0_TILESIZE,
                                            TRUE, &MenuBackgroundPixel);
   SelectionImages[3] = egCreateFilledImage(ROW1_TILESIZE, ROW1_TILESIZE,
                                            TRUE, &MenuBackgroundPixel);
@@ -2488,13 +2488,6 @@ static VOID DrawMainMenuEntry(REFIT_MENU_ENTRY *Entry, BOOLEAN selected, INTN XP
       MainImage = DummyImage(Scale << 3);
     }
   }
-  /*  if (!MainImage) {  //looks to be impossible, else fatal bug
-   Entry->Place.XPos = XPos;
-   Entry->Place.YPos = YPos;
-   Entry->Place.Width = 48;
-   Entry->Place.Height = 48;
-   return;
-   } */
   //  DBG("Entry title=%s; Width=%d\n", Entry->Title, MainImage->Width);
   //  egComposeImage();
   if (GlobalConfig.SelectionOnTop) {
@@ -2504,12 +2497,12 @@ static VOID DrawMainMenuEntry(REFIT_MENU_ENTRY *Entry, BOOLEAN selected, INTN XP
     BltImageCompositeBadge(MainImage,
                            SelectionImages[((Entry->Row == 0) ? 0 : 2) + (selected ? 0 : 1)],
                            (Entry->Row == 0) ? Entry->BadgeImage:NULL,
-                           XPos, YPos, Scale);
+                           XPos, YPos, (Entry->Row == 0) ? Scale: 16);
 
   } else {
     BltImageCompositeBadge(SelectionImages[((Entry->Row == 0) ? 0 : 2) + (selected ? 0 : 1)],
                            MainImage, (Entry->Row == 0) ? Entry->BadgeImage:NULL,
-                           XPos, YPos, Scale);
+                           XPos, YPos, (Entry->Row == 0) ? Scale: 16);
   }
   Entry->Place.XPos = XPos;
   Entry->Place.YPos = YPos;

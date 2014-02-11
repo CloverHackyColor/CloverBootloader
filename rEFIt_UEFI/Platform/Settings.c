@@ -203,7 +203,7 @@ EFI_STATUS LoadUserSettings(IN EFI_FILE *RootDir, IN CHAR16 *ConfName, TagPtr * 
   
   ConfigPlistPath = PoolPrint(L"EFI\\CLOVER\\%s.plist", ConfName);
   ConfigOemPath = PoolPrint(L"%s\\%s.plist", OEMPath, ConfName);
-  DBG("PlistPath: %s\n", ConfigPlistPath);
+ // DBG("PlistPath: %s\n", ConfigPlistPath);
   if (FileExists(SelfRootDir, ConfigOemPath)) {
     Status = egLoadFile(SelfRootDir, ConfigOemPath, (UINT8**)&gConfigPtr, &size);
   } else {
@@ -222,7 +222,7 @@ EFI_STATUS LoadUserSettings(IN EFI_FILE *RootDir, IN CHAR16 *ConfName, TagPtr * 
   }
   
   if(EFI_ERROR(Status) || gConfigPtr == NULL) {
-    DBG("Error loading %s.plist! Status=%r\n", ConfName, Status);
+//    DBG("Error loading %s.plist! Status=%r\n", ConfName, Status);
     return Status;
   }
   

@@ -662,7 +662,7 @@ INTN FindStartupDiskVolume(REFIT_MENU_SCREEN *MainMenu)
   CHAR16                          *EfiBootVolumeStr;
   
   
-  DBG("FindStartupDiskVolume ...\n");
+//  DBG("FindStartupDiskVolume ...\n");
   
   //
   // search RT vars for efi-boot-device-data
@@ -670,11 +670,11 @@ INTN FindStartupDiskVolume(REFIT_MENU_SCREEN *MainMenu)
   //
   GetEfiBootDeviceFromNvram();
   if (gEfiBootVolume == NULL) {
-    DBG(" not found\n");
+    DBG("EfiBootVolume not found\n");
     return -1;
   }
   
-  DBG("FindStartupDiskVolume searching ...\n");
+//  DBG("FindStartupDiskVolume searching ...\n");
   
   //
   // Check if gEfiBootVolume is disk or partition volume

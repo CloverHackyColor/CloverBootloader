@@ -1392,7 +1392,7 @@ INTN FindDefaultEntry(VOID)
   LOADER_ENTRY        *Entry;
   BOOLEAN             SearchForLoader;
   
-  DBG("FindDefaultEntry ...\n");
+//  DBG("FindDefaultEntry ...\n");
   
   //
   // try to detect volume set by Startup Disk or previous Clover selection
@@ -1816,17 +1816,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
                                          (gCPUStructure.MaxRatio == 0) ? 1 : gCPUStructure.MaxRatio);
   gCPUStructure.ExternalClock = (UINT32)DivU64x32(gCPUStructure.FSBFrequency, kilo);
   gCPUStructure.MaxSpeed = (UINT32)DivU64x32(gCPUStructure.TSCFrequency, Mega);
-
-  //Load SMBIOS before config.plist
-  // Load any extra SMBIOS information
-  /* Why is this here???? It has no effect if loaded before config.plist settings are parsed - apianti
-  if (!EFI_ERROR(LoadUserSettings(SelfRootDir, L"smbios", &smbiosTags)) && (smbiosTags != NULL)) {
-    TagPtr dictPointer = GetProperty(smbiosTags,"SMBIOS");
-    if (dictPointer) {
-      ParseSMBIOSSettings(dictPointer);
-    }
-  }
-  // */
 
   //Second step. Load config.plist into gSettings
   for (i=0; i<2; i++) {

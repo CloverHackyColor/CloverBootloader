@@ -962,9 +962,9 @@ VOID PatchTableType9()
 		DBG("insert table 9 for Airport\n");
 		UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type9->SlotDesignation, AirPort);
 		LogSmbiosTable(newSmbiosTable);
-	} else {
+	} /*else {
 		DBG("no airport for table 9\n");
-	}
+	} */
 	
 	return;
 }
