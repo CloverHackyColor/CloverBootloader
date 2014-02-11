@@ -282,11 +282,13 @@ VOID  ScaleImage(OUT EG_IMAGE *NewImage, IN EG_IMAGE *OldImage)
 
 VOID egFreeImage(IN EG_IMAGE *Image)
 {
-    if (Image != NULL) {
-        if (Image->PixelData != NULL)
-            FreePool(Image->PixelData);
-        FreePool(Image);
+  if (Image != NULL) {
+    if (Image->PixelData != NULL) {
+      FreePool(Image->PixelData);
+      Image->PixelData = NULL; //FreePool will not zero pointer
     }
+    FreePool(Image);
+  }
 }
 
 //

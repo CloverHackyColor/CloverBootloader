@@ -1685,16 +1685,16 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
     GlobalConfig.SelectionBigFileName = NULL;
   }
   GlobalConfig.SelectionOnTop = FALSE;
-  ScrollWidth = 0;
-  ScrollButtonsHeight = 0;
-  ScrollBarDecorationsHeight = 0;
-  ScrollScrollDecorationsHeight = 0;
+  ScrollWidth = 16;
+  ScrollButtonsHeight = 20;
+  ScrollBarDecorationsHeight = 5;
+  ScrollScrollDecorationsHeight = 7;
   GlobalConfig.Font = FONT_LOAD;
   if (GlobalConfig.FontFileName) {
     FreePool(GlobalConfig.FontFileName);
     GlobalConfig.FontFileName = NULL;
   }
-  GlobalConfig.CharWidth = 0;
+  GlobalConfig.CharWidth = 7;
   GuiAnime = NULL;
   if (BigBack) {
     egFreeImage(BigBack);

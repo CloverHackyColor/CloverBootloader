@@ -83,6 +83,12 @@ EG_PIXEL InputBackgroundPixel = { 0xcf, 0xcf, 0xcf, 0x80};
 EG_PIXEL BlueBackgroundPixel  = { 0x7f, 0x0f, 0x0f, 0xff};
 
 EG_IMAGE *BackgroundImage = NULL;
+EG_IMAGE *Banner = NULL;
+EG_IMAGE *BigBack = NULL;
+
+
+static EG_IMAGE    *CompImage = NULL;
+
 
 
 static BOOLEAN GraphicsScreenDirty;
@@ -395,9 +401,6 @@ typedef struct {
 } EG_RECT;
 */
 
-EG_IMAGE *Banner = NULL;
-EG_IMAGE *BigBack = NULL;
-
 
 VOID BltClearScreen(IN BOOLEAN ShowBanner) //ShowBanner always TRUE
 {
@@ -638,9 +641,10 @@ VOID BltImageCompositeBadge(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN EG
   TotalWidth  = BaseImage->Width;
   TotalHeight = BaseImage->Height;
   
-  //  DBG("BaseImage: Width=%d Height=%d Alfa=%d\n", TotalWidth, TotalHeight, CompImage->HasAlpha);
+//    DBG("BaseImage: Width=%d Height=%d Alfa=%d\n", TotalWidth, TotalHeight, CompImage->HasAlpha);
   CompWidth = TopImage->Width;
   CompHeight = TopImage->Height;
+//    DBG("TopImage: Width=%d Height=%d Alfa=%d\n", CompWidth, CompHeight, TopImage->HasAlpha);
   if (GlobalConfig.Theme) { // regular theme
     CompImage = egCreateFilledImage((CompWidth > TotalWidth)?CompWidth:TotalWidth,
                                     (CompHeight > TotalHeight)?CompHeight:TotalHeight,
@@ -719,7 +723,6 @@ VOID BltImageCompositeBadge(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN EG
   GraphicsScreenDirty = TRUE;
 }
 
-static EG_IMAGE    *CompImage = NULL;
 #define MAX_SIZE_ANIME 256
 
 VOID FreeAnime(GUI_ANIME *Anime)
