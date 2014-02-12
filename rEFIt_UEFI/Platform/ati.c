@@ -1498,7 +1498,12 @@ BOOLEAN setup_ati_devprop(pci_dt_t *ati_dev)
   
 	if (!gSettings.NoDefaultProperties) {
     devprop_add_list(ati_devprop_list);
-    devprop_add_value(card->device, "hda-gfx", (UINT8*)"onboard-1", 10);
+    if (gSettings.UseIntelHDMI) {
+      devprop_add_value(card->device, "hda-gfx", (UINT8*)"onboard-2", 10);
+    } else {
+      devprop_add_value(card->device, "hda-gfx", (UINT8*)"onboard-1", 10);
+    }
+
   } else {
     DBG("ATI: No default properties injected\n");
   }

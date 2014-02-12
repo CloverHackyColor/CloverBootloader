@@ -661,7 +661,7 @@ BOOLEAN set_hda_props(EFI_PCI_IO_PROTOCOL *PciIo, pci_dt_t *hda_dev, CHAR8 *OSVe
     if (Injected) {
       DBG("custom USB properties injected, continue\n");
       //    return TRUE;
-    } else {
+    } else if (gSettings.UseIntelHDMI) {
       DBG(" HDMI Audio, setting hda-gfx=onboard-1\n");
       devprop_add_value(device, "hda-gfx", (UINT8*)"onboard-1", 10);
     }    
@@ -702,6 +702,9 @@ BOOLEAN set_hda_props(EFI_PCI_IO_PROTOCOL *PciIo, pci_dt_t *hda_dev, CHAR8 *OSVe
         devprop_add_value(device, "layout-id", (UINT8*)&layoutId, 4);
       }
       layoutId = 0; // reuse variable
+      if (gSettings.UseIntelHDMI) {
+        devprop_add_value(device, "hda-gfx", (UINT8*)"onboard-1", 10);
+      }
       devprop_add_value(device, "MaximumBootBeepVolume", (UINT8*)&layoutId, 1);
       devprop_add_value(device, "PinConfigurations", (UINT8*)&layoutId, 1);
     }

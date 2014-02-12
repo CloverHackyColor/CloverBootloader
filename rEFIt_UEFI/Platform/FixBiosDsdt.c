@@ -2166,8 +2166,13 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
         aml_add_byte_buffer(pack, (CHAR8*)&FakeVen, 4);
       }
       if(!AddProperties(pack, DEV_INTEL)) {
-        aml_add_string(pack, "empty");
-        aml_add_byte(pack, 0);
+        if (gSettings.UseIntelHDMI) {
+          aml_add_string(pack, "hda-gfx");
+          aml_add_string_buffer(pack, "onboard-1");
+        } else {
+          aml_add_string(pack, "empty");
+          aml_add_byte(pack, 0);
+        }
       }
       
       aml_add_local0(met);
@@ -2296,11 +2301,6 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
     FreePool(display);
   }
 
-/*  if (hdmi) {
-    FreePool(hdmi);
-  }
-*/
-
   return len;  
 }
 
@@ -2419,7 +2419,12 @@ UINT32 AddHDMI (UINT8 *dsdt, UINT32 len)
     aml_add_string(pack, "layout-id");
     aml_add_byte_buffer(pack, (CHAR8*)&GfxlayoutId[1], 4);
     aml_add_string(pack, "hda-gfx");
-    aml_add_string_buffer(pack, "onboard-1");
+    if (gSettings.UseIntelHDMI) {
+      aml_add_string_buffer(pack, "onboard-2");
+    } else {
+      aml_add_string_buffer(pack, "onboard-1");
+    }
+
     aml_add_string(pack, "PinConfigurations");
     aml_add_byte_buffer(pack, data2, sizeof(data2));        
   }
@@ -3315,13 +3320,10 @@ UINT32 AddHDEF (UINT8 *dsdt, UINT32 len, CHAR8* OSVersion)
   
   met2 = aml_add_store(met);
   pack = aml_add_package(met2);
-  //aml_add_string(pack, "codec-id");
-  //aml_add_byte_buffer(pack, (CHAR8*)&HDAcodecId, 4);
-  if (GFXHDAFIX) {
+  if (gSettings.UseIntelHDMI) {
     aml_add_string(pack, "hda-gfx");
     aml_add_string_buffer(pack, "onboard-1");
   }
-
   if (!AddProperties(pack, DEV_HDA)) {
     if ((OSVersion != NULL && AsciiStrnCmp(OSVersion, "10.", 3) == 0 && OSVersion[3] >= '0' && OSVersion[3] <= '7') || (gSettings.HDALayoutId > 0)) {
       aml_add_string(pack, "layout-id");

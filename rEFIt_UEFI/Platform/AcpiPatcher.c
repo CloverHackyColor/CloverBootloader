@@ -1354,15 +1354,7 @@ VOID        SaveOemDsdt(BOOLEAN FullPatch)
   CHAR16*     AcpiOemPath = PoolPrint(L"%s\\ACPI\\patched", OEMPath);
   
   PathDsdt = PoolPrint(L"\\%s", gSettings.DsdtName);
-/*  
-  if (gSettings.UseDSDTmini) {
-    DBG("search DSDTmini\n"); 
-    if (FileExists(SelfRootDir, PathDsdtMini)) {
-      DBG(" DSDTmini found\n");
-      Status = egLoadFile(SelfRootDir, PathDsdtMini, &buffer, &bufferLen);
-    }
-  } */
-  
+
   if (FileExists(SelfRootDir, PoolPrint(L"%s%s", AcpiOemPath, PathDsdt))) {
     DBG("DSDT found in Clover volume OEM folder: %s%s\n", AcpiOemPath, PathDsdt);
     Status = egLoadFile(SelfRootDir, PoolPrint(L"%s%s", AcpiOemPath, PathDsdt), &buffer, &DsdtLen);
@@ -1374,39 +1366,6 @@ VOID        SaveOemDsdt(BOOLEAN FullPatch)
   }
   
   if (EFI_ERROR(Status)) {
-/*    if (gFirmwareClover) {
-      RsdPointer = (EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER*)FindAcpiRsdPtr();
-    } else {
-      Status = EfiGetSystemConfigurationTable (&gEfiAcpi20TableGuid, (VOID**)&RsdPointer);
-      if (EFI_ERROR(Status)) {
-        Status = EfiGetSystemConfigurationTable (&gEfiAcpi10TableGuid, (VOID**)&RsdPointer);
-      }
-    }
-    
-    if (RsdPointer == NULL) {
-      return;
-    }
-    
-    Rsdt = (RSDT_TABLE*)(UINTN)(RsdPointer->RsdtAddress);
-    if (RsdPointer->Revision > 0) {
-      if (Rsdt == NULL || Rsdt->Header.Signature != EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_TABLE_SIGNATURE) {
-        Xsdt = (XSDT_TABLE *)(UINTN)(RsdPointer->XsdtAddress);
-      }
-    }
-    if (Rsdt == NULL && Xsdt == NULL) {
-      return;
-    }
-    
-    if (Rsdt) {
-      FadtPointer = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE*)(UINTN)(Rsdt->Entry);
-    }
-    if (Xsdt) {
-      XFadtPointer = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE*)(UINTN)(Xsdt->Entry);
-    }
-    if (!FadtPointer) {
-      FadtPointer = XFadtPointer;
-    }
-*/    
     FadtPointer = GetFadt();
     if (FadtPointer == NULL) {
       DBG("Cannot found FADT in BIOS or in UEFI!\n");
@@ -1414,7 +1373,8 @@ VOID        SaveOemDsdt(BOOLEAN FullPatch)
     }
         
     BiosDsdt = FadtPointer->Dsdt;
-    if (FadtPointer->Header.Revision >= EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE_REVISION && FadtPointer->XDsdt != 0) {
+    if (FadtPointer->Header.Revision >= EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE_REVISION &&
+        FadtPointer->XDsdt != 0) {
       BiosDsdt = FadtPointer->XDsdt;
     }
     buffer = (UINT8*)(UINTN)BiosDsdt;
