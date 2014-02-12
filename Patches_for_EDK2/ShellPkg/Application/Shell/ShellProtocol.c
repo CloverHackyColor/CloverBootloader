@@ -480,7 +480,9 @@ EfiShellGetFilePathFromDevicePath(
           // If necessary, add a "\", but otherwise don't
           // (This is specified in the above section, and also implied by the
           //  UEFI Shell spec section 3.7)
-          if ((PathForReturn[PathSize - 1] != L'\\') &&
+          if ((PathSize != 0)                        &&
+              (PathForReturn != NULL)                &&
+              (PathForReturn[PathSize - 1] != L'\\') &&
               (AlignedNode->PathName[0]    != L'\\')) {
             PathForReturn = StrnCatGrow (&PathForReturn, &PathSize, L"\\", 1);
           }
@@ -1418,6 +1420,8 @@ InternalShellExecuteDevicePath(
   EFI_SHELL_PARAMETERS_PROTOCOL ShellParamsProtocol;
   UINTN                         InternalExitDataSize;
   UINTN                         *ExitDataSizePtr;
+  CHAR16                        *ImagePath;
+  UINTN                         Index;
 
   // ExitDataSize is not OPTIONAL for gBS->BootServices, provide somewhere for
   // it to be dumped if the caller doesn't want it.
@@ -1490,6 +1494,33 @@ InternalShellExecuteDevicePath(
     if (EFI_ERROR(Status)) {
       return(Status);
     }
+    //
+    // Replace Argv[0] with the full path of the binary we're executing:
+    // If the command line was "foo", the binary might be called "foo.efi".
+    // "The first entry in [Argv] is always the full file path of the
+    //  executable" - UEFI Shell Spec section 2.3
+    //
+    ImagePath = EfiShellGetFilePathFromDevicePath (DevicePath);
+    // The image we're executing isn't necessarily in a filesystem - it might
+    // be memory mapped. In this case EfiShellGetFilePathFromDevicePath will
+    // return NULL, and we'll leave Argv[0] as UpdateArgcArgv set it.
+    if (ImagePath != NULL) {
+      if (ShellParamsProtocol.Argv == NULL) {
+        // Command line was empty or null.
+        // (UpdateArgcArgv sets Argv to NULL when CommandLine is "" or NULL)
+        ShellParamsProtocol.Argv = AllocatePool (sizeof (CHAR16 *));
+        if (ShellParamsProtocol.Argv == NULL) {
+          Status = EFI_OUT_OF_RESOURCES;
+          goto UnloadImage;
+        }
+        ShellParamsProtocol.Argc = 1;
+      } else {
+        // Free the string UpdateArgcArgv put in Argv[0];
+        FreePool (ShellParamsProtocol.Argv[0]);
+      }
+      ShellParamsProtocol.Argv[0] = ImagePath;
+    }
+
     Status = gBS->InstallProtocolInterface(&NewHandle, &gEfiShellParametersProtocolGuid, EFI_NATIVE_INTERFACE, &ShellParamsProtocol);
     //    ASSERT_EFI_ERROR(Status);
     if (EFI_ERROR(Status)) {
@@ -1507,48 +1538,40 @@ InternalShellExecuteDevicePath(
                           ExitDataSizePtr,
                           ExitData
                           );
+
+      CleanupStatus = gBS->UninstallProtocolInterface(
+                            NewHandle,
+                            &gEfiShellParametersProtocolGuid,
+                            &ShellParamsProtocol
+                            );
+//      ASSERT_EFI_ERROR(CleanupStatus);
+
+      goto FreeAlloc;
     }
 
-    //
-    // Cleanup (and dont overwrite errors)
-    //
-    if (EFI_ERROR(Status)) {
-      CleanupStatus = gBS->UninstallProtocolInterface(
-                            NewHandle,
-                            &gEfiShellParametersProtocolGuid,
-                            &ShellParamsProtocol
-                            );
-//      ASSERT_EFI_ERROR(CleanupStatus);
-      if (EFI_ERROR(CleanupStatus)) {
-        return(CleanupStatus);
+UnloadImage:
+    // Unload image - We should only get here if we didn't call StartImage
+    gBS->UnloadImage (NewHandle);
+
+FreeAlloc:
+    // Free Argv (Allocated in UpdateArgcArgv)
+    if (ShellParamsProtocol.Argv != NULL) {
+      for (Index = 0; Index < ShellParamsProtocol.Argc; Index++) {
+        if (ShellParamsProtocol.Argv[Index] != NULL) {
+          FreePool (ShellParamsProtocol.Argv[Index]);
+        }
       }
-    } else {
-      CleanupStatus = gBS->UninstallProtocolInterface(
-                            NewHandle,
-                            &gEfiShellParametersProtocolGuid,
-                            &ShellParamsProtocol
-                            );
-//      ASSERT_EFI_ERROR(CleanupStatus);
-      if (EFI_ERROR(CleanupStatus)) {
-        return(CleanupStatus);
-      }
+      FreePool (ShellParamsProtocol.Argv);
     }
   }
 
+  // Restore environment variables
   if (!IsListEmpty(&OrigEnvs)) {
     if (EFI_ERROR(Status)) {
       CleanupStatus = SetEnvironmentVariableList(&OrigEnvs);
-//      ASSERT_EFI_ERROR(CleanupStatus);
       if (EFI_ERROR(CleanupStatus)) {
         return(CleanupStatus);
       }
-    } else {
-      CleanupStatus = SetEnvironmentVariableList(&OrigEnvs);
-//      ASSERT_EFI_ERROR(CleanupStatus);
-      if (EFI_ERROR(CleanupStatus)) {
-        return(CleanupStatus);
-      }
-    }
   }
 
   return(Status);
@@ -1747,6 +1770,7 @@ EfiShellRemoveDupInFileList(
 {
   EFI_SHELL_FILE_INFO *ShellFileListItem;
   EFI_SHELL_FILE_INFO *ShellFileListItem2;
+  EFI_SHELL_FILE_INFO *TempNode;
 
   if (FileList == NULL || *FileList == NULL) {
     return (EFI_INVALID_PARAMETER);
@@ -1764,8 +1788,15 @@ EfiShellRemoveDupInFileList(
             (CHAR16*)ShellFileListItem->FullName,
             (CHAR16*)ShellFileListItem2->FullName) == 0
          ){
+        TempNode = (EFI_SHELL_FILE_INFO *)GetPreviousNode(
+                                            &(*FileList)->Link,
+                                            &ShellFileListItem2->Link
+                                            );
         RemoveEntryList(&ShellFileListItem2->Link);
         InternalFreeShellFileInfoNode(ShellFileListItem2);
+        // Set ShellFileListItem2 to PreviousNode so we don't access Freed
+        // memory in GetNextNode in the loop expression above.
+        ShellFileListItem2 = TempNode;
       }
     }
   }

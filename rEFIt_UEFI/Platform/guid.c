@@ -341,15 +341,3 @@ StrToGuid (
 	return EFI_SUCCESS;
 }
 #endif
-
-
-#if TEST
-enum E { x = -1, y = 2, z = 10000 };
-void f9(__builtin_va_list args)
-{
-  (void)__builtin_va_arg(args, float); // expected-warning {{second argument to 'va_arg' is of promotable type 'float'}}
-  (void)__builtin_va_arg(args, enum E); // Don't warn here in C
-  (void)__builtin_va_arg(args, short); // expected-warning {{second argument to 'va_arg' is of promotable type 'short'}}
-  (void)__builtin_va_arg(args, char); // expected-warning {{second argument to 'va_arg' is of promotable type 'char'}}
-}
-#endif

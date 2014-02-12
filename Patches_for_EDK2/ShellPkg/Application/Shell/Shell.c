@@ -331,7 +331,8 @@ UefiMain (
         ///@todo Add our package into Framework HII
       }
       if (ShellInfoObject.HiiHandle == NULL) {
-        return (EFI_NOT_STARTED);
+        Status = EFI_NOT_STARTED;
+        goto FreeResources;
       }
     }
 
@@ -379,7 +380,10 @@ UefiMain (
     //
     // Check the command line
     //
-    Status = ProcessCommandLine();
+    Status = ProcessCommandLine ();
+    if (EFI_ERROR (Status)) {
+      goto FreeResources;
+    }
 
     //
     // If shell support level is >= 1 create the mappings and paths
@@ -440,7 +444,7 @@ UefiMain (
     // Display the mapping
     //
     if (PcdGet8(PcdShellSupportLevel) >= 2 && !ShellInfoObject.ShellInitSettings.BitUnion.Bits.NoMap) {
-      Status = RunCommand(L"map", &ExitStatus);
+      Status = RunCommand(L"map", NULL);
  //     ASSERT_EFI_ERROR(Status);
       if (EFI_ERROR(Status)) {
         return Status;
@@ -571,6 +575,7 @@ UefiMain (
     }
   }
 
+FreeResources:
   //
   // uninstall protocols / free memory / etc...
   //
@@ -632,6 +637,7 @@ UefiMain (
     DEBUG_CODE(ShellInfoObject.ConsoleInfo = NULL;);
   }
 
+  if (!EFI_ERROR (Status)) {
   // If the command exited with an error, we pass this error out in the ExitData
   // so that it can be retrieved by the EfiShellExecute function (which may
   // start the shell with gBS->StartImage)
@@ -649,9 +655,13 @@ UefiMain (
     CopyMem ((ExitData + 1), &ExitStatus, sizeof (ExitStatus));
 
     gBS->Exit (ImageHandle, EFI_ABORTED, ExitDataSize, ExitData);
+
+ //     ASSERT (FALSE);
+      return EFI_ABORTED;
   } else {
     return EFI_SUCCESS;
   }
+  } 
   return (Status);
 }
 
@@ -807,20 +817,6 @@ GetDevicePathsForImageAndFile (
   return (Status);
 }
 
-STATIC CONST SHELL_PARAM_ITEM mShellParamList[] = {
-  {L"-nostartup",     TypeFlag},
-  {L"-startup",       TypeFlag},
-  {L"-noconsoleout",  TypeFlag},
-  {L"-noconsolein",   TypeFlag},
-  {L"-nointerrupt",   TypeFlag},
-  {L"-nomap",         TypeFlag},
-  {L"-noversion",     TypeFlag},
-  {L"-startup",       TypeFlag},
-  {L"-delay",         TypeValue},
-  {L"-_exit",         TypeFlag},
-  {NULL, TypeMax}
-  };
-
 /**
   Process all Uefi Shell 2.0 command line options.
 
@@ -854,98 +850,171 @@ ProcessCommandLine(
   VOID
   )
 {
-  EFI_STATUS    Status;
-  LIST_ENTRY    *Package;
   UINTN         Size;
-  CONST CHAR16  *TempConst;
-  UINTN         Count;
   UINTN         LoopVar;
-  CHAR16        *ProblemParam;
-  UINT64        Intermediate;
+  CHAR16                          *CurrentArg;
+  CHAR16                          *DelayValueStr;
+  UINT64                          DelayValue;
+  EFI_STATUS                      Status;
+  EFI_UNICODE_COLLATION_PROTOCOL  *UnicodeCollation;
 
-  Package       = NULL;
-  ProblemParam  = NULL;
+  // `file-name-options` will contain arguments to `file-name` that we don't
+  // know about. This would cause ShellCommandLineParse to error, so we parse
+  // arguments manually, ignoring those after the first thing that doesn't look
+  // like a shell option (which is assumed to be `file-name`).
   
-  Status = ShellCommandLineParse (mShellParamList, &Package, NULL, FALSE);
+  Status = gBS->LocateProtocol (
+                  &gEfiUnicodeCollationProtocolGuid,
+                  NULL,
+                  (VOID **) &UnicodeCollation
+                  );
+  if (EFI_ERROR (Status)) {
+    return Status;
+  }
 
-  Count = 1;
-  Size = 0;
-  TempConst = ShellCommandLineGetRawValue(Package, Count++);
-  if (TempConst != NULL && StrLen(TempConst)) {
-    ShellInfoObject.ShellInitSettings.FileName = AllocateZeroPool(StrSize(TempConst));
-    if (ShellInfoObject.ShellInitSettings.FileName == NULL) {
-      return (EFI_OUT_OF_RESOURCES);
+  // Set default options
+  ShellInfoObject.ShellInitSettings.BitUnion.Bits.Startup      = FALSE;
+  ShellInfoObject.ShellInitSettings.BitUnion.Bits.NoStartup    = FALSE;
+  ShellInfoObject.ShellInitSettings.BitUnion.Bits.NoConsoleOut = FALSE;
+  ShellInfoObject.ShellInitSettings.BitUnion.Bits.NoConsoleIn  = FALSE;
+  ShellInfoObject.ShellInitSettings.BitUnion.Bits.NoInterrupt  = FALSE;
+  ShellInfoObject.ShellInitSettings.BitUnion.Bits.NoMap        = FALSE;
+  ShellInfoObject.ShellInitSettings.BitUnion.Bits.NoVersion    = FALSE;
+  ShellInfoObject.ShellInitSettings.BitUnion.Bits.Delay        = FALSE;
+  ShellInfoObject.ShellInitSettings.BitUnion.Bits.Exit         = FALSE;
+  ShellInfoObject.ShellInitSettings.Delay = 5;
+
+  // Start LoopVar at 1 to ignore Argv[0] which is the name of this binary
+  // (probably "Shell.efi")
+  for (LoopVar = 1 ; LoopVar < gEfiShellParametersProtocol->Argc ; LoopVar++) {
+    CurrentArg = gEfiShellParametersProtocol->Argv[LoopVar];
+    if (UnicodeCollation->StriColl (
+                            UnicodeCollation,
+                            L"-startup",
+                            CurrentArg
+                            ) == 0) {
+      ShellInfoObject.ShellInitSettings.BitUnion.Bits.Startup      = TRUE;
     }
-    StrCpy(ShellInfoObject.ShellInitSettings.FileName, TempConst);
-    ShellInfoObject.ShellInitSettings.BitUnion.Bits.NoStartup = 1;
-    for (LoopVar = 0 ; LoopVar < gEfiShellParametersProtocol->Argc ; LoopVar++) {
-      if (StrCmp(gEfiShellParametersProtocol->Argv[LoopVar], ShellInfoObject.ShellInitSettings.FileName)==0) {
-        LoopVar++;
-        //
-        // We found the file... add the rest of the params...
-        //
-        for ( ; LoopVar < gEfiShellParametersProtocol->Argc ; LoopVar++) {
- //         ASSERT((ShellInfoObject.ShellInitSettings.FileOptions == NULL && Size == 0) || (ShellInfoObject.ShellInitSettings.FileOptions != NULL));
-          if (!((ShellInfoObject.ShellInitSettings.FileOptions == NULL && Size == 0) || (ShellInfoObject.ShellInitSettings.FileOptions != NULL))) {
-            return (EFI_OUT_OF_RESOURCES);
+    else if (UnicodeCollation->StriColl (
+                                 UnicodeCollation,
+                                 L"-nostartup",
+                                 CurrentArg
+                                 ) == 0) {
+      ShellInfoObject.ShellInitSettings.BitUnion.Bits.NoStartup    = TRUE;
           }
-          StrnCatGrow(&ShellInfoObject.ShellInitSettings.FileOptions,
-                      &Size,
-                      L" ",
-                      0);
-          if (ShellInfoObject.ShellInitSettings.FileOptions == NULL) {
-            SHELL_FREE_NON_NULL(ShellInfoObject.ShellInitSettings.FileName);
-            return (EFI_OUT_OF_RESOURCES);
+    else if (UnicodeCollation->StriColl (
+                                 UnicodeCollation,
+                                 L"-noconsoleout",
+                                 CurrentArg
+                                 ) == 0) {
+      ShellInfoObject.ShellInitSettings.BitUnion.Bits.NoConsoleOut = TRUE;
           }
-          StrnCatGrow(&ShellInfoObject.ShellInitSettings.FileOptions,
-                      &Size,
-                      gEfiShellParametersProtocol->Argv[LoopVar],
-                      0);
-          if (ShellInfoObject.ShellInitSettings.FileOptions == NULL) {
-            SHELL_FREE_NON_NULL(ShellInfoObject.ShellInitSettings.FileName);
-            return (EFI_OUT_OF_RESOURCES);
+    else if (UnicodeCollation->StriColl (
+                                 UnicodeCollation,
+                                 L"-noconsolein",
+                                 CurrentArg
+                                 ) == 0) {
+      ShellInfoObject.ShellInitSettings.BitUnion.Bits.NoConsoleIn  = TRUE;
           }
+    else if (UnicodeCollation->StriColl (
+                                 UnicodeCollation,
+                                 L"-nointerrupt",
+                                 CurrentArg
+                                 ) == 0) {
+      ShellInfoObject.ShellInitSettings.BitUnion.Bits.NoInterrupt  = TRUE;
+    }
+    else if (UnicodeCollation->StriColl (
+                                 UnicodeCollation,
+                                 L"-nomap",
+                                 CurrentArg
+                                 ) == 0) {
+      ShellInfoObject.ShellInitSettings.BitUnion.Bits.NoMap        = TRUE;
+    }
+    else if (UnicodeCollation->StriColl (
+                                 UnicodeCollation,
+                                 L"-noversion",
+                                 CurrentArg
+                                 ) == 0) {
+      ShellInfoObject.ShellInitSettings.BitUnion.Bits.NoVersion    = TRUE;
+    }
+    else if (UnicodeCollation->StriColl (
+                                 UnicodeCollation,
+                                 L"-delay",
+                                 CurrentArg
+                                 ) == 0) {
+      ShellInfoObject.ShellInitSettings.BitUnion.Bits.Delay        = TRUE;
+      // Check for optional delay value following "-delay"
+      DelayValueStr = gEfiShellParametersProtocol->Argv[LoopVar + 1];
+      if (DelayValueStr != NULL){
+        if (*DelayValueStr == L':') {
+          DelayValueStr++;
+        }
+        if (!EFI_ERROR(ShellConvertStringToUint64 (
+                        DelayValueStr,
+                        &DelayValue,
+                        FALSE,
+                        FALSE
+                        ))) {
+          ShellInfoObject.ShellInitSettings.Delay = (UINTN)DelayValue;
+          LoopVar++;
+      }
+    }
+    } else if (UnicodeCollation->StriColl (
+                                   UnicodeCollation,
+                                   L"-_exit",
+                                   CurrentArg
+                                   ) == 0) {
+      ShellInfoObject.ShellInitSettings.BitUnion.Bits.Exit         = TRUE;
+    } else if (StrnCmp (L"-", CurrentArg, 1) == 0) {
+      // Unrecognised option
+      ShellPrintHiiEx(-1, -1, NULL,
+        STRING_TOKEN (STR_GEN_PROBLEM),
+        ShellInfoObject.HiiHandle,
+        CurrentArg
+        );
+      return EFI_INVALID_PARAMETER;
+  } else {
+      ShellInfoObject.ShellInitSettings.FileName = AllocateZeroPool(StrSize(CurrentArg));
+      if (ShellInfoObject.ShellInitSettings.FileName == NULL) {
+        return (EFI_OUT_OF_RESOURCES);
+  }
+      //
+      // We found `file-name`.
+      //
+      ShellInfoObject.ShellInitSettings.BitUnion.Bits.NoStartup = 1;
+
+      StrCpy (ShellInfoObject.ShellInitSettings.FileName, CurrentArg);
+      LoopVar++;
+
+      // Add `file-name-options`
+      for (Size = 0 ; LoopVar < gEfiShellParametersProtocol->Argc ; LoopVar++) {
+        ASSERT((ShellInfoObject.ShellInitSettings.FileOptions == NULL && Size == 0) || (ShellInfoObject.ShellInitSettings.FileOptions != NULL));
+        StrnCatGrow(&ShellInfoObject.ShellInitSettings.FileOptions,
+                    &Size,
+                    L" ",
+                    0);
+        if (ShellInfoObject.ShellInitSettings.FileOptions == NULL) {
+          SHELL_FREE_NON_NULL(ShellInfoObject.ShellInitSettings.FileName);
+          return (EFI_OUT_OF_RESOURCES);
+        }
+        StrnCatGrow(&ShellInfoObject.ShellInitSettings.FileOptions,
+                    &Size,
+                    gEfiShellParametersProtocol->Argv[LoopVar],
+                    0);
+        if (ShellInfoObject.ShellInitSettings.FileOptions == NULL) {
+          SHELL_FREE_NON_NULL(ShellInfoObject.ShellInitSettings.FileName);
+          return (EFI_OUT_OF_RESOURCES);
         }
       }
     }
-  } else {
-    ShellCommandLineFreeVarList(Package);
-    Package = NULL;
-    Status = ShellCommandLineParse (mShellParamList, &Package, &ProblemParam, FALSE);
-    if (EFI_ERROR(Status)) {
-      ShellPrintHiiEx(-1, -1, NULL, STRING_TOKEN (STR_GEN_PROBLEM), ShellInfoObject.HiiHandle, ProblemParam);
-      FreePool(ProblemParam);
-      ShellCommandLineFreeVarList(Package);
-      return (EFI_INVALID_PARAMETER);
-    }
   }
 
-  ShellInfoObject.ShellInitSettings.BitUnion.Bits.Startup      = ShellCommandLineGetFlag(Package, L"-startup");
-  ShellInfoObject.ShellInitSettings.BitUnion.Bits.NoStartup    = ShellCommandLineGetFlag(Package, L"-nostartup");
-  ShellInfoObject.ShellInitSettings.BitUnion.Bits.NoConsoleOut = ShellCommandLineGetFlag(Package, L"-noconsoleout");
-  ShellInfoObject.ShellInitSettings.BitUnion.Bits.NoConsoleIn  = ShellCommandLineGetFlag(Package, L"-noconsolein");
-  ShellInfoObject.ShellInitSettings.BitUnion.Bits.NoInterrupt  = ShellCommandLineGetFlag(Package, L"-nointerrupt");
-  ShellInfoObject.ShellInitSettings.BitUnion.Bits.NoMap        = ShellCommandLineGetFlag(Package, L"-nomap");
-  ShellInfoObject.ShellInitSettings.BitUnion.Bits.NoVersion    = ShellCommandLineGetFlag(Package, L"-noversion");
-  ShellInfoObject.ShellInitSettings.BitUnion.Bits.Delay        = ShellCommandLineGetFlag(Package, L"-delay");
-  ShellInfoObject.ShellInitSettings.BitUnion.Bits.Exit         = ShellCommandLineGetFlag(Package, L"-_exit");
-
-  ShellInfoObject.ShellInitSettings.Delay = 5;
-
+  // "-nointerrupt" overrides "-delay"
   if (ShellInfoObject.ShellInitSettings.BitUnion.Bits.NoInterrupt) {
     ShellInfoObject.ShellInitSettings.Delay = 0;
-  } else if (ShellInfoObject.ShellInitSettings.BitUnion.Bits.Delay) {
-    TempConst = ShellCommandLineGetValue(Package, L"-delay");
-    if (TempConst != NULL && *TempConst == L':') {
-      TempConst++;
-    }
-    if (TempConst != NULL && !EFI_ERROR(ShellConvertStringToUint64(TempConst, &Intermediate, FALSE, FALSE))) {
-      ShellInfoObject.ShellInitSettings.Delay = (UINTN)Intermediate;
-    }
   }
-  ShellCommandLineFreeVarList(Package);
 
-  return (Status);
+  return EFI_SUCCESS;
 }
 
 /**
@@ -1690,10 +1759,12 @@ GetOperationType(
   }
 
   //
-  // Test for file system change request.  anything ending with : and cant have spaces.
+  // Test for file system change request.  anything ending with first : and cant have spaces.
   //
   if (CmdName[(StrLen(CmdName)-1)] == L':') {
-    if (StrStr(CmdName, L" ") != NULL) {
+    if ( StrStr(CmdName, L" ") != NULL 
+      || StrLen(StrStr(CmdName, L":")) > 1
+      ) {
       return (Unknown_Invalid);
     }
     return (File_Sys_Change);

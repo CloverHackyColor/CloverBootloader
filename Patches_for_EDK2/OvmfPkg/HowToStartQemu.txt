@@ -1,6 +1,6 @@
 qemu-system-x86_64 -L ~/src/edk2/Build/OvmfX64/RELEASE_GCC47/QEMU -hda QEMU-Clover.img
 
-qemu -L ~/src/edk2/Build/OvmfX64/RELEASE_GCC47/QEMU -bios OVMF.fd -m 2048 -hda ~/Desktop/NewFolder/QEMU-Clover.img 
+qemu -L ~/src/edk2/Build/OvmfX64/RELEASE_GCC47/QEMU -bios OVMF.fd -m 2048 -hda ~/Desktop/NewFolder/QEMU-Clover-2586/QEMU-Clover.img 
 
 qemu-system-x86_64 -L ~/src/edk2/Build/OvmfX64/RELEASE_GCC47/QEMU -m 2048 -bios OVMF.fd -hda ~/Desktop/test/QEMU-Clover.img
 
