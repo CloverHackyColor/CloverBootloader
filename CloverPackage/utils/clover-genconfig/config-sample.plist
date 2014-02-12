@@ -75,8 +75,6 @@
 				<true/>
 				<key>NewWay_80000000</key>
 				<true/>
-				<key>FIX_DARWIN_10000</key>
-				<true/>
 				<key>FIX_RTC_20000</key>
 				<true/>
 				<key>FIX_TMR_40000</key>
@@ -288,6 +286,8 @@
 			<string>0x0</string>
 		</dict>
 		<key>Inject</key>
+		<false/>
+		<key>UseIntelHDMI</key>
 		<false/>
 		<key>NoDefaultProperties</key>
 		<false/>

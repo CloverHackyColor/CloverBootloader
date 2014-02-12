@@ -500,7 +500,8 @@ void PrintConfig(CFTypeRef data)
     addInteger(audioDict, CFSTR("Inject"), s->HDALayoutId);
   else
     addBoolean(audioDict, CFSTR("Inject"), s->HDAInjection);
-  
+  addBoolean(pciDict, CFSTR("UseIntelHDMI"), s->UseIntelHDMI);
+
   CFMutableDictionaryRef usbDict = addDict(pciDict, CFSTR("USB"));
   addBoolean(usbDict, CFSTR("Inject"), s->USBInjection);
   addBoolean(usbDict, CFSTR("FixOwnership"), s->USBFixOwnership);

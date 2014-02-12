@@ -12,14 +12,14 @@
 			<dict>
 				<key>AddDTGP_0001</key>
 				<true/>
-				<key>AddMCFG_0008</key>
+				<key>AddMCHC_0008</key>
 				<false/>
 				<key>FakeLPC_0020</key>
 				<false/>
 				<key>FixAirport_4000</key>
 				<true/>
 				<key>FixDarwin_0002</key>
-				<true/>
+				<false/>
 				<key>FixDisplay_0100</key>
 				<true/>
 				<key>FixFirewire_0800</key>
@@ -37,10 +37,36 @@
 				<key>FixSATA_0400</key>
 				<false/>
 				<key>FixSBUS_0080</key>
-				<true/>
+				<false/>
 				<key>FixShutdown_0004</key>
 				<true/>
 				<key>FixUSB_1000</key>
+				<false/>
+				<key>NewWay_80000000</key>
+				<true/>
+				<key>FIX_RTC_20000</key>
+				<true/>
+				<key>FIX_TMR_40000</key>
+				<true/>
+				<key>AddIMEI_80000</key>
+				<true/>
+				<key>FIX_INTELGFX_100000</key>
+				<false/>
+				<key>FIX_WAK_200000</key>
+				<true/>
+				<key>DeleteUnused_400000</key>
+				<true/>
+				<key>FIX_ADP1_800000</key>
+				<true/>
+				<key>AddPNLF_1000000</key>
+				<true/>
+				<key>FIX_S3D_2000000</key>
+				<true/>
+				<key>FIX_ACST_4000000</key>
+				<true/>
+				<key>AddHDMI_8000000</key>
+				<true/>
+				<key>FixRegions_10000000</key>
 				<true/>
 			</dict>
 			<key>Name</key>
@@ -66,7 +92,7 @@
 			</dict>
 		</array>
 		<key>HaltEnabler</key>
-		<false/>
+		<true/>
 		<key>SSDT</key>
 		<dict>
 			<key>Generate</key>
@@ -76,12 +102,14 @@
 				<key>PStates</key>
 				<true/>
 			</dict>
-			<key>MinMultiplier</key>
-			<integer>8</integer>
-			<key>PLimitDict</key>
-			<integer>0</integer>
-			<key>UnderVoltStep</key>
-			<integer>0</integer>
+			<key>EnableC7</key>
+			<false/>
+			<key>EnableC6</key>
+			<true/>
+			<key>EnableC4</key>
+			<false/>
+			<key>EnableC2</key>
+			<false/>
 		</dict>
 	</dict>
 	<key>Boot</key>
@@ -122,6 +150,8 @@
 			<string>0x0</string>
 			<key>XHCI</key>
 			<string>0x0</string>
+			<key>IMEI</key>
+			<string>0x0</string>
 		</dict>
 		<key>Inject</key>
 		<false/>
@@ -151,9 +181,9 @@
 		<key>Mouse</key>
 		<dict>
 			<key>Enabled</key>
-			<false/>
+			<true/>
 			<key>Speed</key>
-			<integer>0</integer>
+			<integer>8</integer>
 		</dict>
 		<key>Scan</key>
 		<dict>
