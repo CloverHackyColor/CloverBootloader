@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-01-09 12:07+0100\n"
+"POT-Creation-Date: 2014-02-13 12:33+0100\n"
 "PO-Revision-Date: 2014-01-09 16:34+0000\n"
 "Last-Translator: Slice <sergey.slice@gmail.com>\n"
 "Language-Team: ru <ru@li.org>\n"
@@ -14,8 +14,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%"
-"10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
 "X-POOTLE-MTIME: 1389285246.0\n"
 
@@ -254,7 +254,6 @@ msgstr "Установка завершена!"
 #. type: "UEFI.only_title"
 #: Resources/templates/Localizable.strings:4
 #, no-wrap
-#| msgid "Install for UEFI motherboards"
 msgid "Install for UEFI booting only"
 msgstr "Установить Кловер только для UEFI загрузки, нет легаси."
 
@@ -630,9 +629,12 @@ msgstr "Black_Green_Moody"
 
 #. type: "BGM_description"
 #: Resources/templates/Localizable.strings:116
-#, no-wrap
+#, fuzzy, no-wrap
+#| msgid ""
+#| "Black Green and Moody theme from Blackosx,\n"
+#| "Install to /EFI/CLOVER/themes/BGM"
 msgid ""
-"Black Green and Moody theme from Blackosx,\n"
+"BGM (Black Green and Moody) theme from Blackosx,\n"
 "Install to /EFI/CLOVER/themes/BGM"
 msgstr ""
 "Тоскливо-зеленая тема от Blackosx,\n"
@@ -862,14 +864,33 @@ msgstr ""
 "Просто серая тема от hijeane,\n"
 "Установить в /EFI/CLOVER/themes/simple_gray."
 
-#. type: "wooden_title"
+#. type: "Shield_title"
 #: Resources/templates/Localizable.strings:175
+#, no-wrap
+msgid "Shield"
+msgstr ""
+
+#. type: "Shield_description"
+#: Resources/templates/Localizable.strings:176
+#, fuzzy, no-wrap
+#| msgid ""
+#| "Black Green and Moody theme from Blackosx,\n"
+#| "Install to /EFI/CLOVER/themes/BGM"
+msgid ""
+"An animated, harmonious theme from Blackosx,\n"
+"Install to /EFI/CLOVER/themes/Shield."
+msgstr ""
+"Тоскливо-зеленая тема от Blackosx,\n"
+"Установить в /EFI/CLOVER/themes/BGM."
+
+#. type: "wooden_title"
+#: Resources/templates/Localizable.strings:179
 #, no-wrap
 msgid "wooden"
 msgstr "wooden"
 
 #. type: "wooden_description"
-#: Resources/templates/Localizable.strings:176
+#: Resources/templates/Localizable.strings:180
 #, no-wrap
 msgid ""
 "Wooden theme from iROOTa,\n"
@@ -879,13 +900,13 @@ msgstr ""
 "Установить в /EFI/CLOVER/themes/wooden."
 
 #. type: "rc.scripts.on.target_title"
-#: Resources/templates/Localizable.strings:182
+#: Resources/templates/Localizable.strings:186
 #, no-wrap
 msgid "Install RC scripts on target volume"
 msgstr "Установить системные RC скрипты на основной раздел"
 
 #. type: "rc.scripts.on.target_description"
-#: Resources/templates/Localizable.strings:183
+#: Resources/templates/Localizable.strings:187
 #, no-wrap
 msgid ""
 "Install all RC scripts on target volume.\n"
@@ -895,37 +916,37 @@ msgstr ""
 "Раздел должен быть загрузочный OSX."
 
 #. type: "rc.scripts.on.all.volumes_title"
-#: Resources/templates/Localizable.strings:185
+#: Resources/templates/Localizable.strings:189
 #, no-wrap
 msgid "Install all RC scripts on all other bootable OSX volumes"
 msgstr "Установить скрипты на все остальные разделы"
 
 #. type: "rc.scripts.on.all.volumes_description"
-#: Resources/templates/Localizable.strings:186
+#: Resources/templates/Localizable.strings:190
 #, no-wrap
 msgid "Install all RC scripts on all internal bootable OSX volumes other than the target volume."
 msgstr "Установить RC скрипты на все внутренние загрузочные разделы OSX кроме целевово раздела."
 
 #. type: "Optional RC Scripts"
-#: Resources/templates/Localizable.strings:187
+#: Resources/templates/Localizable.strings:191
 #, no-wrap
 msgid "Optional RC Scripts"
 msgstr "Добавочные RC скрипты"
 
 #. type: "disable_sleep_proxy_client_description"
-#: Resources/templates/Localizable.strings:188
+#: Resources/templates/Localizable.strings:192
 #, no-wrap
 msgid "Disable the mDNSResponder sleep proxy client service. This will prevent the system waking from sleep every hours"
 msgstr "Запретить mDNSResponder sleep proxy client service. Это предотвращает просыпание системы каждый час"
 
 #. type: "CloverPrefpane_title"
-#: Resources/templates/Localizable.strings:193
+#: Resources/templates/Localizable.strings:197
 #, no-wrap
 msgid "Install Clover Preference Pane"
 msgstr "Установить контрольную панель Clover "
 
 #. type: "CloverPrefpane_description"
-#: Resources/templates/Localizable.strings:194
+#: Resources/templates/Localizable.strings:198
 #, no-wrap
 msgid ""
 "Install Clover Preference Pane on target volume.\n"

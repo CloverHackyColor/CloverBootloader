@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-01-09 12:07+0100\n"
+"POT-Creation-Date: 2014-02-13 12:33+0100\n"
 "PO-Revision-Date: 2014-02-10 15:56+0000\n"
 "Last-Translator: Mill <ceruns@ymail.com>\n"
 "Language-Team: ko <ko@li.org>\n"
@@ -228,7 +228,6 @@ msgstr "설치가 완료되었습니다!"
 #. type: "UEFI.only_title"
 #: Resources/templates/Localizable.strings:4
 #, no-wrap
-#| msgid "Install for UEFI motherboards"
 msgid "Install for UEFI booting only"
 msgstr "UEFI 부팅 전용으로 설치"
 
@@ -608,9 +607,12 @@ msgstr "흑녹색조"
 
 #. type: "BGM_description"
 #: Resources/templates/Localizable.strings:116
-#, no-wrap
+#, fuzzy, no-wrap
+#| msgid ""
+#| "Black Green and Moody theme from Blackosx,\n"
+#| "Install to /EFI/CLOVER/themes/BGM"
 msgid ""
-"Black Green and Moody theme from Blackosx,\n"
+"BGM (Black Green and Moody) theme from Blackosx,\n"
 "Install to /EFI/CLOVER/themes/BGM"
 msgstr ""
 "Blackosx의 흑녹색조 기본 테마,\n"
@@ -840,14 +842,33 @@ msgstr ""
 "hijeane의 Simple_gray 테마,\n"
 "다음에 설치합니다: /EFI/CLOVER/themes/simple_gray."
 
-#. type: "wooden_title"
+#. type: "Shield_title"
 #: Resources/templates/Localizable.strings:175
+#, no-wrap
+msgid "Shield"
+msgstr ""
+
+#. type: "Shield_description"
+#: Resources/templates/Localizable.strings:176
+#, fuzzy, no-wrap
+#| msgid ""
+#| "Black Green and Moody theme from Blackosx,\n"
+#| "Install to /EFI/CLOVER/themes/BGM"
+msgid ""
+"An animated, harmonious theme from Blackosx,\n"
+"Install to /EFI/CLOVER/themes/Shield."
+msgstr ""
+"Blackosx의 흑녹색조 기본 테마,\n"
+"다음에 설치합니다: /EFI/CLOVER/themes/BGM"
+
+#. type: "wooden_title"
+#: Resources/templates/Localizable.strings:179
 #, no-wrap
 msgid "wooden"
 msgstr "나무 테마"
 
 #. type: "wooden_description"
-#: Resources/templates/Localizable.strings:176
+#: Resources/templates/Localizable.strings:180
 #, no-wrap
 msgid ""
 "Wooden theme from iROOTa,\n"
@@ -857,13 +878,13 @@ msgstr ""
 "다음에 설치합니다: /EFI/CLOVER/themes/wooden."
 
 #. type: "rc.scripts.on.target_title"
-#: Resources/templates/Localizable.strings:182
+#: Resources/templates/Localizable.strings:186
 #, no-wrap
 msgid "Install RC scripts on target volume"
 msgstr "타겟 볼륨에 RC scripts를 설치합니다."
 
 #. type: "rc.scripts.on.target_description"
-#: Resources/templates/Localizable.strings:183
+#: Resources/templates/Localizable.strings:187
 #, no-wrap
 msgid ""
 "Install all RC scripts on target volume.\n"
@@ -873,37 +894,37 @@ msgstr ""
 "타겟 볼륨은 반드시 OSX 시스템 볼륨이어야 합니다."
 
 #. type: "rc.scripts.on.all.volumes_title"
-#: Resources/templates/Localizable.strings:185
+#: Resources/templates/Localizable.strings:189
 #, no-wrap
 msgid "Install all RC scripts on all other bootable OSX volumes"
 msgstr "모든 부팅 가능한 OSX 볼륨에 모든 RC scripts를 설치합니다."
 
 #. type: "rc.scripts.on.all.volumes_description"
-#: Resources/templates/Localizable.strings:186
+#: Resources/templates/Localizable.strings:190
 #, no-wrap
 msgid "Install all RC scripts on all internal bootable OSX volumes other than the target volume."
 msgstr "타겟 볼륨을 제외한 모든 내장 OSX 볼륨에 모든 RC scripts를 설치합니다."
 
 #. type: "Optional RC Scripts"
-#: Resources/templates/Localizable.strings:187
+#: Resources/templates/Localizable.strings:191
 #, no-wrap
 msgid "Optional RC Scripts"
 msgstr "선택적 RC Scripts"
 
 #. type: "disable_sleep_proxy_client_description"
-#: Resources/templates/Localizable.strings:188
+#: Resources/templates/Localizable.strings:192
 #, no-wrap
 msgid "Disable the mDNSResponder sleep proxy client service. This will prevent the system waking from sleep every hours"
 msgstr "mDNSResponder 잠자기 프록시 클라이언트 서비스를 비활성화합니다. 매 시간 잠자기에서 깨어나는 문제를 방지할 수 있습니다"
 
 #. type: "CloverPrefpane_title"
-#: Resources/templates/Localizable.strings:193
+#: Resources/templates/Localizable.strings:197
 #, no-wrap
 msgid "Install Clover Preference Pane"
 msgstr "클로버 환경설정 패널 설치"
 
 #. type: "CloverPrefpane_description"
-#: Resources/templates/Localizable.strings:194
+#: Resources/templates/Localizable.strings:198
 #, no-wrap
 msgid ""
 "Install Clover Preference Pane on target volume.\n"

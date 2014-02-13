@@ -113,7 +113,7 @@ Use it only if you have a problem without it";
 Install to /EFI/CLOVER/themes/applestyle";
 
 "BGM_title" = "Black_Green_Moody";
-"BGM_description" = "Black Green and Moody theme from Blackosx,
+"BGM_description" = "BGM (Black Green and Moody) theme from Blackosx,
 Install to /EFI/CLOVER/themes/BGM";
 
 "black_green_title" = "Black_Green";
@@ -171,6 +171,10 @@ Install to /EFI/CLOVER/themes/hellfire.";
 "simple_gray_title" = "simple_gray";
 "simple_gray_description" = "Simple_gray theme from hijeane,
 Install to /EFI/CLOVER/themes/simple_gray.";
+
+"Shield_title" = "Shield";
+"Shield_description" = "An animated, harmonious theme from Blackosx,
+Install to /EFI/CLOVER/themes/Shield.";
 
 "wooden_title" = "wooden";
 "wooden_description" = "Wooden theme from iROOTa,

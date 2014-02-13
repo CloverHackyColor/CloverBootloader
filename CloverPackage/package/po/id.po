@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-01-09 12:07+0100\n"
+"POT-Creation-Date: 2014-02-13 12:33+0100\n"
 "PO-Revision-Date: 2014-01-10 00:20+0000\n"
 "Last-Translator: archintosh <ardr_1109@yahoo.com>\n"
 "Language-Team: id <id@li.org>\n"
@@ -244,7 +244,6 @@ msgstr "Instalasi Komplit!"
 #. type: "UEFI.only_title"
 #: Resources/templates/Localizable.strings:4
 #, no-wrap
-#| msgid "Install for UEFI motherboards"
 msgid "Install for UEFI booting only"
 msgstr "Instalasi untuk modus UEFI saja"
 
@@ -621,9 +620,12 @@ msgstr "Black_Green_Moody"
 
 #. type: "BGM_description"
 #: Resources/templates/Localizable.strings:116
-#, no-wrap
+#, fuzzy, no-wrap
+#| msgid ""
+#| "Black Green and Moody theme from Blackosx,\n"
+#| "Install to /EFI/CLOVER/themes/BGM"
 msgid ""
-"Black Green and Moody theme from Blackosx,\n"
+"BGM (Black Green and Moody) theme from Blackosx,\n"
 "Install to /EFI/CLOVER/themes/BGM"
 msgstr ""
 "Tema Black Green dan Moody kreasi Blackosx,\n"
@@ -853,14 +855,33 @@ msgstr ""
 "Tema Simple_gray kreasi hijeane,\n"
 "Pasang ke /EFI/CLOVER/themes/simple_gray."
 
-#. type: "wooden_title"
+#. type: "Shield_title"
 #: Resources/templates/Localizable.strings:175
+#, no-wrap
+msgid "Shield"
+msgstr ""
+
+#. type: "Shield_description"
+#: Resources/templates/Localizable.strings:176
+#, fuzzy, no-wrap
+#| msgid ""
+#| "Black Green and Moody theme from Blackosx,\n"
+#| "Install to /EFI/CLOVER/themes/BGM"
+msgid ""
+"An animated, harmonious theme from Blackosx,\n"
+"Install to /EFI/CLOVER/themes/Shield."
+msgstr ""
+"Tema Black Green dan Moody kreasi Blackosx,\n"
+"Pasang ke /EFI/CLOVER/themes/BGM"
+
+#. type: "wooden_title"
+#: Resources/templates/Localizable.strings:179
 #, no-wrap
 msgid "wooden"
 msgstr "wooden"
 
 #. type: "wooden_description"
-#: Resources/templates/Localizable.strings:176
+#: Resources/templates/Localizable.strings:180
 #, no-wrap
 msgid ""
 "Wooden theme from iROOTa,\n"
@@ -870,13 +891,13 @@ msgstr ""
 "Pasang ke /EFI/CLOVER/themes/wooden."
 
 #. type: "rc.scripts.on.target_title"
-#: Resources/templates/Localizable.strings:182
+#: Resources/templates/Localizable.strings:186
 #, no-wrap
 msgid "Install RC scripts on target volume"
 msgstr "Install RC skrip ke target volume"
 
 #. type: "rc.scripts.on.target_description"
-#: Resources/templates/Localizable.strings:183
+#: Resources/templates/Localizable.strings:187
 #, no-wrap
 msgid ""
 "Install all RC scripts on target volume.\n"
@@ -886,37 +907,37 @@ msgstr ""
 "Target harus merupakan OSX system volume yang bisa di boot."
 
 #. type: "rc.scripts.on.all.volumes_title"
-#: Resources/templates/Localizable.strings:185
+#: Resources/templates/Localizable.strings:189
 #, no-wrap
 msgid "Install all RC scripts on all other bootable OSX volumes"
 msgstr "Install semua RC skrip pada semua bootable OSX volume"
 
 #. type: "rc.scripts.on.all.volumes_description"
-#: Resources/templates/Localizable.strings:186
+#: Resources/templates/Localizable.strings:190
 #, no-wrap
 msgid "Install all RC scripts on all internal bootable OSX volumes other than the target volume."
 msgstr "Install semua RC skrip pada semua internal bootable OSX volume selain volume target."
 
 #. type: "Optional RC Scripts"
-#: Resources/templates/Localizable.strings:187
+#: Resources/templates/Localizable.strings:191
 #, no-wrap
 msgid "Optional RC Scripts"
 msgstr "Opsional RC Skrip"
 
 #. type: "disable_sleep_proxy_client_description"
-#: Resources/templates/Localizable.strings:188
+#: Resources/templates/Localizable.strings:192
 #, no-wrap
 msgid "Disable the mDNSResponder sleep proxy client service. This will prevent the system waking from sleep every hours"
 msgstr "Mendisable mDNSResponder sleep proxy client service. Supaya system tidak terbangun setiap jam apabila system dalam mode sleep"
 
 #. type: "CloverPrefpane_title"
-#: Resources/templates/Localizable.strings:193
+#: Resources/templates/Localizable.strings:197
 #, no-wrap
 msgid "Install Clover Preference Pane"
 msgstr "Install Clover Panel Preference"
 
 #. type: "CloverPrefpane_description"
-#: Resources/templates/Localizable.strings:194
+#: Resources/templates/Localizable.strings:198
 #, no-wrap
 msgid ""
 "Install Clover Preference Pane on target volume.\n"
