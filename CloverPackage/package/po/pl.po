@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-02-13 12:33+0100\n"
-"PO-Revision-Date: 2013-11-06 09:21+0000\n"
+"PO-Revision-Date: 2014-02-13 18:34+0000\n"
 "Last-Translator: oswaldini <oswaldinimtb@gmail.com>\n"
 "Language-Team: pl <pl@li.org>\n"
 "Language: pl\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
 "|| n%100>=20) ? 1 : 2);\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1383729715.0\n"
+"X-POOTLE-MTIME: 1392316454.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -252,7 +252,7 @@ msgstr "Instalacja zakończona !"
 
 #. type: "UEFI.only_title"
 #: Resources/templates/Localizable.strings:4
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Install for UEFI motherboards"
 msgid "Install for UEFI booting only"
 msgstr "Instalacja dla komputerów z UEFI"
@@ -635,7 +635,7 @@ msgstr "Black_Green_Moody"
 
 #. type: "BGM_description"
 #: Resources/templates/Localizable.strings:116
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "Black Green and Moody theme from Blackosx,\n"
 #| "Install to /EFI/CLOVER/themes/BGM"
@@ -643,7 +643,7 @@ msgid ""
 "BGM (Black Green and Moody) theme from Blackosx,\n"
 "Install to /EFI/CLOVER/themes/BGM"
 msgstr ""
-"Motyw Black Green i Moody od Blackosx,\n"
+"Motyw BGM (Black Green i Moody) od Blackosx,\n"
 "Lokalizacja motywu: /EFI/CLOVER/themes/BGM"
 
 #. type: "black_green_title"
@@ -874,11 +874,11 @@ msgstr ""
 #: Resources/templates/Localizable.strings:175
 #, no-wrap
 msgid "Shield"
-msgstr ""
+msgstr "Shield"
 
 #. type: "Shield_description"
 #: Resources/templates/Localizable.strings:176
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "Black Green and Moody theme from Blackosx,\n"
 #| "Install to /EFI/CLOVER/themes/BGM"
@@ -886,8 +886,8 @@ msgid ""
 "An animated, harmonious theme from Blackosx,\n"
 "Install to /EFI/CLOVER/themes/Shield."
 msgstr ""
-"Motyw Black Green i Moody od Blackosx,\n"
-"Lokalizacja motywu: /EFI/CLOVER/themes/BGM"
+"Animowany motyw Shield od Blackosx,\n"
+"Lokalizacja motywu: /EFI/CLOVER/themes/Shield"
 
 #. type: "wooden_title"
 #: Resources/templates/Localizable.strings:179
