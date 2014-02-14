@@ -1572,6 +1572,7 @@ FreeAlloc:
       if (EFI_ERROR(CleanupStatus)) {
         return(CleanupStatus);
       }
+    }
   }
 
   return(Status);

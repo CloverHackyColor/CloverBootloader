@@ -112,6 +112,7 @@ CFormPkg::CFormPkg (
   }
   BufferStart = new CHAR8[BufferSize];
   if (BufferStart == NULL) {
+    delete Node;
     return;
   }
   BufferEnd   = BufferStart + BufferSize;

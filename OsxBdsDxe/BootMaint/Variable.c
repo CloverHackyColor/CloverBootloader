@@ -602,7 +602,7 @@ Var_UpdateDriverOption (
   *((UINT32 *) Ptr) = LOAD_OPTION_ACTIVE | (ForceReconnect << 1);
   NewLoadContext->Attributes = *((UINT32 *) Ptr);
   NewLoadContext->IsActive = TRUE;
-  NewLoadContext->ForceReconnect = (BOOLEAN) (NewLoadContext->Attributes & LOAD_OPTION_FORCE_RECONNECT);
+  NewLoadContext->ForceReconnect = (BOOLEAN) ((NewLoadContext->Attributes & LOAD_OPTION_FORCE_RECONNECT)?1:0);
 
   Ptr += sizeof (UINT32);
   *((UINT16 *) Ptr) = (UINT16) GetDevicePathSize (CallbackData->LoadContext->FilePathList);
@@ -773,7 +773,7 @@ Var_UpdateBootOption (
   *((UINT32 *) Ptr) = LOAD_OPTION_ACTIVE;
   NewLoadContext->Attributes = *((UINT32 *) Ptr);
   NewLoadContext->IsActive = TRUE;
-  NewLoadContext->ForceReconnect = (BOOLEAN) (NewLoadContext->Attributes & LOAD_OPTION_FORCE_RECONNECT);
+  NewLoadContext->ForceReconnect = (BOOLEAN) ((NewLoadContext->Attributes & LOAD_OPTION_FORCE_RECONNECT)?1:0);
 
   Ptr += sizeof (UINT32);
   *((UINT16 *) Ptr) = (UINT16) GetDevicePathSize (CallbackData->LoadContext->FilePathList);

@@ -498,6 +498,8 @@
 		<false/>
 		<key>KernelCpu</key>
 		<false/>
+		<key>KernelPm</key>
+		<false/>
 		<key>KernelLapic</key>
 		<false/>
 		<key>KextsToPatch</key>

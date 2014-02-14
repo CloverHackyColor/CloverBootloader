@@ -1016,9 +1016,9 @@ BOpt_GetBootOptions (
     NewLoadContext->LoadOptionSize  = BootOptionSize;
 
     NewLoadContext->Attributes      = *(UINT32 *) LoadOptionPtr;
-    NewLoadContext->IsActive        = (BOOLEAN) (NewLoadContext->Attributes & LOAD_OPTION_ACTIVE);
+    NewLoadContext->IsActive        = (BOOLEAN) ((NewLoadContext->Attributes & LOAD_OPTION_ACTIVE)?1:0);
 
-    NewLoadContext->ForceReconnect  = (BOOLEAN) (NewLoadContext->Attributes & LOAD_OPTION_FORCE_RECONNECT);
+    NewLoadContext->ForceReconnect  = (BOOLEAN) ((NewLoadContext->Attributes & LOAD_OPTION_FORCE_RECONNECT)?1:0);
 
     LoadOptionPtr += sizeof (UINT32);
 
@@ -1564,9 +1564,9 @@ BOpt_GetDriverOptions (
     NewLoadContext->LoadOptionSize  = DriverOptionSize;
 
     NewLoadContext->Attributes      = *(UINT32 *) LoadOptionPtr;
-    NewLoadContext->IsActive        = (BOOLEAN) (NewLoadContext->Attributes & LOAD_OPTION_ACTIVE);
+    NewLoadContext->IsActive        = (BOOLEAN) ((NewLoadContext->Attributes & LOAD_OPTION_ACTIVE)?1:0);
 
-    NewLoadContext->ForceReconnect  = (BOOLEAN) (NewLoadContext->Attributes & LOAD_OPTION_FORCE_RECONNECT);
+    NewLoadContext->ForceReconnect  = (BOOLEAN) ((NewLoadContext->Attributes & LOAD_OPTION_FORCE_RECONNECT)?1:0);
 
     LoadOptionPtr += sizeof (UINT32);
 

@@ -633,6 +633,7 @@ void PrintConfig(CFTypeRef data)
   CFMutableDictionaryRef KernelAndKextPatchesDict = addDict(dict, CFSTR("KernelAndKextPatches"));
   addBoolean(KernelAndKextPatchesDict, CFSTR("Debug"), s->KPDebug);
   addBoolean(KernelAndKextPatchesDict, CFSTR("KernelCpu"), s->KPKernelCpu);
+  addBoolean(KernelAndKextPatchesDict, CFSTR("KernelPm"), s->KPKernelPm);
   addBoolean(KernelAndKextPatchesDict, CFSTR("KernelLapic"), s->KPLapicPanic);
   addBoolean(KernelAndKextPatchesDict, CFSTR("AppleRTC"), s->KPAppleRTC);
   addBoolean(KernelAndKextPatchesDict, CFSTR("AsusAICPUPM"), s->KPAsusAICPUPM);
