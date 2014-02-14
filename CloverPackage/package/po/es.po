@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-02-13 12:33+0100\n"
-"PO-Revision-Date: 2014-01-13 14:03+0000\n"
+"PO-Revision-Date: 2014-02-14 01:56+0000\n"
 "Last-Translator: Maniac <emafrias@gmail.com>\n"
 "Language-Team: es <es@li.org>\n"
 "Language: es\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1389621832.0\n"
+"X-POOTLE-MTIME: 1392343013.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -627,7 +627,7 @@ msgstr "Black Green Moody"
 
 #. type: "BGM_description"
 #: Resources/templates/Localizable.strings:116
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "Black Green and Moody theme from Blackosx,\n"
 #| "Install to /EFI/CLOVER/themes/BGM"
@@ -635,7 +635,7 @@ msgid ""
 "BGM (Black Green and Moody) theme from Blackosx,\n"
 "Install to /EFI/CLOVER/themes/BGM"
 msgstr ""
-"Tema Black Green Moody de Blackosx,\n"
+"Tema BGM (Black Green Moody) de Blackosx,\n"
 "Se instala en /EFI/CLOVER/themes/BGM"
 
 #. type: "black_green_title"
@@ -866,11 +866,11 @@ msgstr ""
 #: Resources/templates/Localizable.strings:175
 #, no-wrap
 msgid "Shield"
-msgstr ""
+msgstr "Shield"
 
 #. type: "Shield_description"
 #: Resources/templates/Localizable.strings:176
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "Black Green and Moody theme from Blackosx,\n"
 #| "Install to /EFI/CLOVER/themes/BGM"
@@ -878,8 +878,8 @@ msgid ""
 "An animated, harmonious theme from Blackosx,\n"
 "Install to /EFI/CLOVER/themes/Shield."
 msgstr ""
-"Tema Black Green Moody de Blackosx,\n"
-"Se instala en /EFI/CLOVER/themes/BGM"
+"Un tema animado y armonioso hecho por Blackosx,\n"
+"Se instala en /EFI/CLOVER/themes/Shield"
 
 #. type: "wooden_title"
 #: Resources/templates/Localizable.strings:179
