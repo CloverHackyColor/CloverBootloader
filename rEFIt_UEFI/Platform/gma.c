@@ -99,6 +99,7 @@ static struct gma_gpu_t KnownGPUS[] = {
   { 0x0A16, "Intel HD Graphics 4400"  },  //Haswell
   { 0x0A1e, "Intel HD Graphics 4400"  },  //Haswell
   { 0x0A26, "Intel HD Graphics 5000"  },  //Haswell
+  { 0x0D22, "Intel HD Graphics 5200"  },  //Haswell
   // 0x0e08 - Xeon E5-1620 
 };
 
@@ -216,6 +217,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
     case 0x0a16:
     case 0x0a1e:
     case 0x0a26:
+    case 0x0d22:
       if (!gSettings.IgPlatform) {
         if ((gma_dev->device_id == 0x162) ||
             (gma_dev->device_id == 0x16a)) {

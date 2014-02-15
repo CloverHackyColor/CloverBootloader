@@ -136,7 +136,8 @@ PrintSfoVolumeInfoTableEntry(
         EfiFpHandle,
         &gEfiFileSystemInfoGuid,
         &SysInfoSize,
-        SysInfo);
+      SysInfo
+      );
 
       if (Status == EFI_BUFFER_TOO_SMALL) {
         SysInfo = AllocateZeroPool(SysInfoSize);
@@ -144,7 +145,8 @@ PrintSfoVolumeInfoTableEntry(
           EfiFpHandle,
           &gEfiFileSystemInfoGuid,
           &SysInfoSize,
-          SysInfo);
+        SysInfo
+        );
       }
 
  //     ASSERT_EFI_ERROR(Status);
@@ -164,7 +166,8 @@ PrintSfoVolumeInfoTableEntry(
         EfiFpHandle,
         &gEfiFileSystemInfoGuid,
         &SysInfoSize,
-        SysInfo);
+      SysInfo
+      );
 
       if (Status == EFI_BUFFER_TOO_SMALL) {
         SysInfo = AllocateZeroPool(SysInfoSize);
@@ -172,7 +175,8 @@ PrintSfoVolumeInfoTableEntry(
           EfiFpHandle,
           &gEfiFileSystemInfoGuid,
           &SysInfoSize,
-          SysInfo);
+        SysInfo
+        );
       }
 
 //      ASSERT_EFI_ERROR(Status);
@@ -187,7 +191,8 @@ PrintSfoVolumeInfoTableEntry(
       NULL,
       STRING_TOKEN (STR_GEN_SFO_HEADER),
       gShellLevel2HiiHandle,
-      L"ls");
+    L"ls"
+    );
     //
     // print VolumeInfo table
     //
@@ -479,12 +484,18 @@ PrintLsOutput(
       ; !IsNull(&ListHead->Link, &Node->Link)
       ; Node = (EFI_SHELL_FILE_INFO *)GetNextNode(&ListHead->Link, &Node->Link)
       ){
-    ASSERT(Node != NULL);
+//    ASSERT(Node != NULL);
+    if (!Node) {
+      return (SHELL_SUCCESS);
+    }
     if (LongestPath < StrSize(Node->FullName)) {
       LongestPath = StrSize(Node->FullName);
     }
-    ASSERT(Node->Info != NULL);
-    ASSERT((Node->Info->Attribute & EFI_FILE_VALID_ATTR) == Node->Info->Attribute);
+//    ASSERT(Node->Info != NULL);
+//    ASSERT((Node->Info->Attribute & EFI_FILE_VALID_ATTR) == Node->Info->Attribute);
+    if (!Node->Info || !((Node->Info->Attribute & EFI_FILE_VALID_ATTR) == Node->Info->Attribute)) {
+      return (SHELL_SUCCESS);
+    }
     if (Attribs == 0) {
       //
       // NOT system & NOT hidden
