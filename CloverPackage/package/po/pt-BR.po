@@ -7,15 +7,15 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-02-13 12:33+0100\n"
-"PO-Revision-Date: 2013-06-08 19:06+0000\n"
-"Last-Translator: kyndder <kyndder@icloud.com>\n"
+"PO-Revision-Date: 2014-02-16 20:25-0300\n"
+"Last-Translator: kyndder <kyndder@me.com>\n"
 "Language-Team: pt <pt@li.org>\n"
-"Language: pt-BR\n"
+"Language: pt_BR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Pootle 2.5.0-rc1\n"
+"X-Generator: Poedit 1.6.4\n"
 "X-POOTLE-MTIME: 1370718364.0\n"
 
 #. type: Content of: <html><body><div><p>
@@ -121,7 +121,7 @@ msgstr ""
 "- Inicialmente Clover faz a detecção automática de hardware e configura "
 "todas as opções padrão."
 
-# Don't change this ! It must be one space only ! 
+# Don't change this ! It must be one space only !
 #. type: Content of: <html><body><p><span>
 #: Resources/templates/Description.html:23
 #: Resources/templates/Description.html:24
@@ -246,7 +246,7 @@ msgstr "Instalação Completa!"
 
 #. type: "UEFI.only_title"
 #: Resources/templates/Localizable.strings:4
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Install for UEFI motherboards"
 msgid "Install for UEFI booting only"
 msgstr "Instalação para Placas Mãe UEFI"
@@ -617,14 +617,14 @@ msgstr ""
 
 #. type: "BGM_title"
 #: Resources/templates/Localizable.strings:115
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Black_Green"
 msgid "Black_Green_Moody"
-msgstr "Black_Green"
+msgstr "Black_Green_Moody"
 
 #. type: "BGM_description"
 #: Resources/templates/Localizable.strings:116
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "Default black_green theme from Blackosx,\n"
 #| "Install to /EFI/CLOVER/themes/black_green"
@@ -632,8 +632,8 @@ msgid ""
 "BGM (Black Green and Moody) theme from Blackosx,\n"
 "Install to /EFI/CLOVER/themes/BGM"
 msgstr ""
-"Tema padrão black_green by Blackosx,\n"
-"Será instalado em /EFI/CLOVER/themes/black_green"
+"BGM (Black Green Moody) by Blackosx,\n"
+"Será instalado em /EFI/CLOVER/themes/BGM"
 
 #. type: "black_green_title"
 #: Resources/templates/Localizable.strings:119
@@ -863,11 +863,11 @@ msgstr ""
 #: Resources/templates/Localizable.strings:175
 #, no-wrap
 msgid "Shield"
-msgstr ""
+msgstr "Shield"
 
 #. type: "Shield_description"
 #: Resources/templates/Localizable.strings:176
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "Default black_green theme from Blackosx,\n"
 #| "Install to /EFI/CLOVER/themes/black_green"
@@ -875,8 +875,8 @@ msgid ""
 "An animated, harmonious theme from Blackosx,\n"
 "Install to /EFI/CLOVER/themes/Shield."
 msgstr ""
-"Tema padrão black_green by Blackosx,\n"
-"Será instalado em /EFI/CLOVER/themes/black_green"
+"Um tema com animações e harmonioso by Blackosx,\n"
+"Será instalado em /EFI/CLOVER/themes/Shield"
 
 #. type: "wooden_title"
 #: Resources/templates/Localizable.strings:179
@@ -1002,16 +1002,16 @@ msgstr "Atualizar"
 
 #. type: "585.title"
 #: ../CloverUpdater/CloverUpdater.strings:11
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "No description"
 msgid "No update available !"
-msgstr "Sem descrição"
+msgstr "Nenhuma atualização encontrada!"
 
 #. type: "586.title"
 #: ../CloverUpdater/CloverUpdater.strings:12
 #, no-wrap
 msgid "Ok"
-msgstr ""
+msgstr "Ok"
 
 #. type: "12.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:1
@@ -1136,10 +1136,10 @@ msgstr "Forçar a montagem da partição ESP selecionada na inicialização:"
 
 #. type: "339.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:21
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Save NVRAM contents to partition:"
 msgid "Save NVRAM contents to disk:"
-msgstr "Salvar o conteúdo da NVRAM para partição:"
+msgstr "Salvar o conteúdo da NVRAM no disco:"
 
 #. type: "374.label"
 #: ../CloverPrefpane/CloverPrefpane.strings:22
@@ -1243,7 +1243,7 @@ msgstr "Caminho para a pasta EFI"
 #: ../CloverPrefpane/Localizable.strings:2
 #, no-wrap
 msgid "Auto"
-msgstr ""
+msgstr "Automático"
 
 #. type: "No"
 #: ../CloverPrefpane/CloverPrefpane.strings:39
@@ -1256,7 +1256,7 @@ msgstr "Não"
 #: ../CloverPrefpane/Localizable.strings:1
 #, no-wrap
 msgid "Always"
-msgstr ""
+msgstr "Sempre"
 
 #. type: "Boot Volume"
 #: ../CloverPrefpane/Localizable.strings:3
@@ -1272,10 +1272,10 @@ msgstr "ESP no [%1$@] %2$@"
 
 #. type: "No description available"
 #: ../CloverPrefpane/Localizable.strings:7
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "No description"
 msgid "No description available"
-msgstr "Sem descrição"
+msgstr "Nenhuma des"
 
 #. type: "Select the EFI directory"
 #: ../CloverPrefpane/Localizable.strings:8
@@ -1297,170 +1297,3 @@ msgstr "Desconhecido"
 
 #~ msgid "Nowhere"
 #~ msgstr "Em nenhum lugar"
-
-#, fuzzy
-#~| msgid "OS Box"
-#~ msgid "Box"
-#~ msgstr "OS Box"
-
-#~ msgid "Default"
-#~ msgstr "Padrão"
-
-#~ msgid "Number of timestamp boot.log files to keep."
-#~ msgstr "Número de arquivos a serem mantidos em boot.log."
-
-#~ msgid "CLOVER"
-#~ msgstr "CLOVER"
-
-#~ msgid ""
-#~ "Create timestamp CloverEFI/boot.log file on every boot\\n\\nValue:\\n* "
-#~ "Yes: create a new timestamp boot.log file\\n* Number: where number is the "
-#~ "number of timestamp boot.log files to keep.\\n\\nA blank value result in "
-#~ "NO creation of timestamp boot.log file"
-#~ msgstr ""
-#~ "Cria uma linha do tempo no arquivo CloverEFI/boot.log a cada boot\\n"
-#~ "\\nValue:\\n* Sim: cria uma nova linha do tempo no arquivo boot.log\\n* "
-#~ "Número: onde o número é o número de linhas do tempo do arquivo boot.log a "
-#~ "serem mantidas.\\n\\nQuando sem valor o resultado é a NÃO criação de uma "
-#~ "linha do tempo no arquivo boot.log"
-
-#~ msgid "LogLineCount:"
-#~ msgstr "LogLineCount:"
-
-#~ msgid "LogEveryBoot:"
-#~ msgstr "LogEveryBoot:"
-
-#~ msgid "MountEFI:"
-#~ msgstr "MountEFI:"
-
-#~ msgid "NVRamDisk:"
-#~ msgstr "NVRamDisk:"
-
-#~ msgid ""
-#~ "Mounting the ESP partition on boot.\\n\\nValue:\\n* Yes: mount the ESP on "
-#~ "the same disk drive as the system partition\\n* diskX: disk device\\n* "
-#~ "GUID: GUID of the ESP\\n* VolumeName: Volume name of a volume that is on "
-#~ "the same disk drive that the ESP partition\\n\\nEmpty value result in not "
-#~ "mounting ESP partition on boot"
-#~ msgstr ""
-#~ "Montando a partição ESP ao iniciar.\\n\\nValor:\\n8 Sim: monta a ESP no "
-#~ "mesmo disco da partição do sistema\\n* diskX:disk device\\n8 GUID: GUID "
-#~ "da ESP\\n8 VolumeName: O nome de um volume que está no mesmo disco da "
-#~ "partição ESP\\n\\nQuando sem valor o resultado é a não montagem da "
-#~ "partição ESP durante a inicialização"
-
-#~ msgid ""
-#~ "Save the nvram contents to disk\\n\\nValue:\\n* No: don't save the nvram "
-#~ "contents to disk\\n* diskXsY: device node of the volume where the nvram "
-#~ "contents will be saved\\n\\nEmpty value save the nvram contents in the "
-#~ "nvram.plist file in the root folder of the system partition."
-#~ msgstr ""
-#~ "Salva o conteúdo da nvram no disco\\n\\nValor:\\n* Não: não salva o "
-#~ "conteúdo da nvram no disco\\n* diskXsY: definição do volume onde o "
-#~ "conteúdo da nvram será salvo\\n\\nQuando sem valor o conteúdo da nvram "
-#~ "será salvo no arquivo nvram.plist na raiz da partição do sistema."
-
-#~ msgid ""
-#~ "Theme to use in Clover GUI\\nIf the value is empty, Clover theme defined "
-#~ "in config.plist is use."
-#~ msgstr ""
-#~ "Tema a ser usado no GUI do Clover\\nlf valor vazio, o tema do Clover em "
-#~ "uso está definido no config.plist."
-
-#~ msgid "GUI Appearance"
-#~ msgstr "Aparência do GUI"
-
-#~ msgid "Informations"
-#~ msgstr "Informações"
-
-#~ msgid "Install CloverUpdater"
-#~ msgstr "Instalar Clover Updater"
-
-#~ msgid ""
-#~ "Used for BIOS booting on BIOS motherboards.\n"
-#~ "Use fdisk440 to install boot0 to the first 440 bits of MBR without "
-#~ "destroying any existing Windows installation if you have one, then boot0 "
-#~ "will search first active HFS partition for boot1h2, or search first "
-#~ "active Fat32 partition for boot1f32alt.\n"
-#~ "It will setup selected HFS + Fat32 partitions to be active.\n"
-#~ "Need to format as Fat32 on Win or on Mac as below.\n"
-#~ "  1. Erase as MS-DOS (FAT) with Disk Utility first.\n"
-#~ "  2. diskutil list\n"
-#~ "  3. diskutil unmount /dev/rdisk9s1\n"
-#~ "  4. newfs_msdos -v Fat32 -F 32 /dev/rdisk9s1\n"
-#~ "  5. diskutil mount /dev/rdisk9s1"
-#~ msgstr ""
-#~ "Usado para inicialização em placas mãe padrão BIOS.\n"
-#~ "Usa fdisk440 para instalar boot0 nos primeiros 440 bits do MBR sem "
-#~ "destruir nenhuma instalação do Windows caso tenha uma, então boot0 "
-#~ "buscará na primeira partição HFS ativa por boot1h2, ou buscará na "
-#~ "primeira partição Fat32 ativa por boot1f32alt.\n"
-#~ "Esta opção irá definir a partição HFS ou FAT32 selecionada como ativa.\n"
-#~ "É necessário formatar como Fat32 no Windows ou Mac da seguinte maneira.\n"
-#~ "  1. Primeiro apagar (formatar) como MS-DOS (FAT) com o Utilitário de "
-#~ "Disco.\n"
-#~ "  2. (pelo terminal) diskutil list\n"
-#~ "  3. (pelo terminal) diskutil unmount /dev/rdisk9s1\n"
-#~ "  4. (pelo terminal) newfs_msdos -v Fat32 -F 32 /dev/rdisk9s1\n"
-#~ "  5. (pelo terminal) diskutil mount /dev/rdisk9s1"
-
-#~ msgid ""
-#~ "Used for BIOS booting on BIOS motherboards.\n"
-#~ "Use fdisk440 to install boot0hfs to the first 440 bits of MBR without "
-#~ "destroying any existing Windows installation if you have one, then "
-#~ "boot0hfs will search first HFS partition for boot1h2, or search first "
-#~ "active Fat32 partition for boot1f32alt.\n"
-#~ "It will not setup selected HFS partition to be active, but will setup "
-#~ "selected Fat32 partition to be active.\n"
-#~ "Need to format as Fat32 on Win or on Mac as below.\n"
-#~ "  1. Erase as MS-DOS (FAT) with Disk Utility first.\n"
-#~ "  2. diskutil list\n"
-#~ "  3. diskutil unmount /dev/rdisk9s1\n"
-#~ "  4. newfs_msdos -v Fat32 -F 32 /dev/rdisk9s1\n"
-#~ "  5. diskutil mount /dev/rdisk9s1"
-#~ msgstr ""
-#~ "Usado para inicialização em placas mãe padrão BIOS.\n"
-#~ "Usa fdisk440 para instalar boot0hfs nos primeiros 440 bits do MBR sem "
-#~ "destruir nenhuma instalação do Windows caso tenha uma, então boot0hfs "
-#~ "buscará na primeira partição HFS ativa por boot1h2, ou buscará na "
-#~ "primeira partição Fat32 ativa por boot1f32alt.\n"
-#~ "Esta opção não irá definir uma partição HFS selecionada como ativa, mas "
-#~ "irá definir uma Fat32 como ativa.\n"
-#~ "É necessário formatar como Fat32 no Windows ou Mac da seguinte maneira.\n"
-#~ "  1. Primeiro apagar (formatar) como MS-DOS (FAT) com o Utilitário de "
-#~ "Disco.\n"
-#~ "  2. (pelo terminal) diskutil list\n"
-#~ "  3. (pelo terminal) diskutil unmount /dev/rdisk9s1\n"
-#~ "  4. (pelo terminal) newfs_msdos -v Fat32 -F 32 /dev/rdisk9s1\n"
-#~ "  5. (pelo terminal) diskutil mount /dev/rdisk9s1"
-
-#~ msgid "BIOS MBR boot0 (HFS+Fat32)"
-#~ msgstr "BIOS MBR boot0 (HFS+Fat32)"
-
-#~ msgid "BIOS MBR boot0hfs (HFS+Fat32)"
-#~ msgstr "BIOS MBR boot0hfs (HFS+Fat32)"
-
-#
-#~ msgid " "
-#~ msgstr " "
-
-#~ msgid "Ps2MouseAbsolutePointerDxe-32_description"
-#~ msgstr "Ps2MouseAbsolutePointerDxe-32_description"
-
-#~ msgid "XhciDxe-64_description"
-#~ msgstr "XhciDxe-64_description"
-
-#~ msgid "Video driver - provides a wide range of resolutions, 64bit"
-#~ msgstr "Driver de Vídeo - Oferece uma grande variedade de resoluções, 64bit"
-
-#~ msgid "DataHubDxe-64_description"
-#~ msgstr "DataHubDxe-64_description"
-
-#~ msgid "EmuVariableUefi-64_description"
-#~ msgstr "EmuVariableUefi-64_description"
-
-#~ msgid "Fix for Aptio AMI, 64bit"
-#~ msgstr "Fix para AMI Aptio BIOS, 64bit"
-
-#~ msgid "PartitionDxe-64_description"
-#~ msgstr "PartitionDxe-64_description"
