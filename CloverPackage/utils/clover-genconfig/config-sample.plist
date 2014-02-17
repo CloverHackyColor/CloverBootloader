@@ -123,8 +123,6 @@
 			</array>
 			<key>ReuseFFFF</key>
 			<false/>
-			<key>SlpSmiAtWake</key>
-			<false/>
 			<key>SuspendOverride</key>
 			<false/>
 		</dict>
@@ -231,8 +229,6 @@
 		<true/>
 		<key>C6</key>
 		<true/>
-		<key>FrequencyMHz</key>
-		<integer>3200</integer>
 		<key>Latency</key>
 		<integer>250</integer>
 		<key>QPI</key>
@@ -648,11 +644,7 @@
 		<string>0x0501</string>
 		<key>CustomUUID</key>
 		<string>511CE200-1000-4000-9999-010203040506</string>
-		<key>InjectKexts</key>
-		<string>Detect</string>
 		<key>InjectSystemID</key>
-		<false/>
-		<key>NoCaches</key>
 		<false/>
 	</dict>
 </dict>

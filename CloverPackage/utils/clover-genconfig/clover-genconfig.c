@@ -548,7 +548,7 @@ void PrintConfig(CFTypeRef data)
   addBoolean(dsdtDict, CFSTR("Debug"), s->DebugDSDT);
   addBoolean(dsdtDict, CFSTR("ReuseFFFF"), s->ReuseFFFF);
   addBoolean(dsdtDict, CFSTR("SuspendOverride"), s->SuspendOverride);
-  addBoolean(dsdtDict, CFSTR("SlpSmiAtWake"), s->SlpWak);
+//  addBoolean(dsdtDict, CFSTR("SlpSmiAtWake"), s->SlpWak);
   addInteger(dsdtDict, CFSTR("Patches count"), s->PatchDsdtNum);
 
   CFMutableDictionaryRef fixDict = addDict(dsdtDict, CFSTR("Fixes"));
