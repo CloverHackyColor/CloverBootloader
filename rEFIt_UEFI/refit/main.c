@@ -727,13 +727,13 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     // Prepare boot arguments
 //    if ((StrCmp(gST->FirmwareVendor, L"CLOVER") != 0) &&
 //        (StrCmp(gST->FirmwareVendor, L"EDKII") != 0)) {
-    if (gDriversFlags.AptioFixLoaded) {
+/*    if (gDriversFlags.AptioFixLoaded) {
       // Add slide=0 argument for ML and Mavericks if not present
       CHAR16 *TempOptions = AddLoadOption(Entry->LoadOptions, L"slide=0");
       FreePool(Entry->LoadOptions);
       Entry->LoadOptions = TempOptions;
     }
-
+*/
     // If KPDebug is true boot in verbose mode to see the debug messages
     if (gSettings.KPDebug) {
       CHAR16 *TempOptions = AddLoadOption(Entry->LoadOptions, L"-v");
@@ -758,7 +758,14 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     if (OSFLAG_ISSET(Entry->Flags, OSFLAG_HIBERNATED)) {
       DoHibernateWake = PrepareHibernation(Entry->Volume);
     }
-    
+    if (gDriversFlags.AptioFixLoaded && !DoHibernateWake) {
+      // Add slide=0 argument for ML and Mavericks if not present
+      CHAR16 *TempOptions = AddLoadOption(Entry->LoadOptions, L"slide=0");
+      FreePool(Entry->LoadOptions);
+      Entry->LoadOptions = TempOptions;
+    }
+
+
 //    DBG("LoadKexts\n");
     // LoadKexts writes to DataHub, where large writes can prevent hibernate wake (happens when several kexts present in Clover's kexts dir)
     if (!DoHibernateWake) {

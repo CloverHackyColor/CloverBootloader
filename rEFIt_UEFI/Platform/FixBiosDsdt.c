@@ -758,7 +758,8 @@ VOID CheckHardware()
           if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_MEDIA) &&
               (Pci.Hdr.ClassCode[1] == PCI_CLASS_MEDIA_HDA)) {
             UINT32 codecId = 0, layoutId = 0;
-            if (Pci.Hdr.VendorId == 0x8086) {
+            if ((Pci.Hdr.VendorId == 0x8086) &&
+                ((Pci.Hdr.DeviceId & 0xFF00) != 0x0C00)) { //0x0C0C is HDMI sound
               GetPciADR(DevicePath, &HDAADR1, NULL, NULL);
               codecId = HDA_getCodecVendorAndDeviceIds(PciIo);
               if (codecId > 0) {
@@ -2196,8 +2197,17 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
         aml_add_byte_buffer(pack, (CHAR8*)&FakeVen, 4);
       }
       if(!AddProperties(pack, DEV_NVIDIA)) {
-        aml_add_string(pack, "empty");
-        aml_add_byte(pack, 0);
+        if (GFXHDAFIX) {
+          aml_add_string(pack, "hda-gfx");
+          if (gSettings.UseIntelHDMI) {
+            aml_add_string_buffer(pack, "onboard-2");
+          } else {
+            aml_add_string_buffer(pack, "onboard-1");
+          }
+        } else {
+          aml_add_string(pack, "empty");
+          aml_add_byte(pack, 0);
+        }
       }
       aml_add_local0(met);
       aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
@@ -2227,8 +2237,17 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
         aml_add_byte_buffer(pack, VenATI, 2);
       }
       if(!AddProperties(pack, DEV_ATI)) {
-        aml_add_string(pack, "empty");
-        aml_add_byte(pack, 0);
+        if (GFXHDAFIX) {
+          aml_add_string(pack, "hda-gfx");
+          if (gSettings.UseIntelHDMI) {
+            aml_add_string_buffer(pack, "onboard-2");
+          } else {
+            aml_add_string_buffer(pack, "onboard-1");
+          }
+        } else {
+          aml_add_string(pack, "empty");
+          aml_add_byte(pack, 0);
+        }
       }
       aml_add_local0(met);
       aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
@@ -2367,26 +2386,27 @@ UINT32 AddHDMI (UINT8 *dsdt, UINT32 len)
     } // End if devadr1 find
   }
   if (BridgeFound) { // bridge or device
-    i = devadr1;
-    Size = get_size(dsdt, i);
-    k = FindMethod(dsdt + i, Size, "_DSM");
-    if (k != 0) {
-      k += i;
-      if ((dropDSM & DEV_HDMI) != 0) {
-        Size = get_size(dsdt, k);
-        sizeoffset = - 1 - Size;
-        len = move_data(k - 1, dsdt, len, sizeoffset);
-        len = CorrectOuters(dsdt, len, k - 2, sizeoffset);
-        DBG("_DSM in HDAU already exists, dropped\n");
-      } else {
-        DBG("_DSM already exists, patch HDAU will not be applied\n");
-        return len;
+    if (HdauFound) {
+      i = devadr1;
+      Size = get_size(dsdt, i);
+      k = FindMethod(dsdt + i, Size, "_DSM");
+      if (k != 0) {
+        k += i;
+        if ((dropDSM & DEV_HDMI) != 0) {
+          Size = get_size(dsdt, k);
+          sizeoffset = - 1 - Size;
+          len = move_data(k - 1, dsdt, len, sizeoffset);
+          len = CorrectOuters(dsdt, len, k - 2, sizeoffset);
+          DBG("_DSM in HDAU already exists, dropped\n");
+        } else {
+          DBG("_DSM already exists, patch HDAU will not be applied\n");
+          return len;
+        }
       }
     }
     root = aml_create_node(NULL);
-  }  
-  //what to do if no HDMI bridge?
-  else {
+    //what to do if no HDMI bridge?
+  } else {
     brd = aml_create_node(NULL);
     root = aml_add_device(brd, "HDM0");
     aml_add_name(root, "_ADR");

@@ -192,7 +192,7 @@ INT32 mac_to_posix(UINT32 mac_time)
     /* Mac time is 1904 year based */
     return mac_time ?  mac_time - 2082844800 : 0;
 }
-
+/* not used
 VOID fsw_efi_decode_time(OUT EFI_TIME *EfiTime, IN UINT32 UnixTime)
 {
     INT32        days, rem;
@@ -226,7 +226,7 @@ VOID fsw_efi_decode_time(OUT EFI_TIME *EfiTime, IN UINT32 UnixTime)
     EfiTime->Month++;  // adjust range to EFI conventions
     EfiTime->Day = (UINT8) (days + 1);
 }
-
+*/
 
 
 EFI_BLOCK_READ OrigBlockIoRead = NULL;
