@@ -59,6 +59,7 @@
 UINT8							gDefaultType; 
 CPU_STRUCTURE			gCPUStructure;
 UINT64            TurboMsr;
+BOOLEAN           NeedPMfix = FALSE;
 
 //this must not be defined at LegacyBios calls
 #define EAX 0
@@ -345,9 +346,13 @@ VOID GetCPUProperties (VOID)
             //----test C3 patch
             msr = AsmReadMsr64(MSR_PKG_CST_CONFIG_CONTROL); //0xE2
             MsgLog("MSR 0xE2 before patch %08x\n", msr);
-            AsmWriteMsr64(MSR_PKG_CST_CONFIG_CONTROL, (msr & 0x8000000ULL));
-            msr = AsmReadMsr64(MSR_PKG_CST_CONFIG_CONTROL);
-            MsgLog("MSR 0xE2 after  patch %08x\n", msr); 
+            if (msr & 0x8000) {
+              MsgLog("MSR 0xE2 is locked, PM patches will be turned on\n");
+              NeedPMfix = TRUE;
+            }
+    //        AsmWriteMsr64(MSR_PKG_CST_CONFIG_CONTROL, (msr & 0x8000000ULL));
+    //        msr = AsmReadMsr64(MSR_PKG_CST_CONFIG_CONTROL);
+    //        MsgLog("MSR 0xE2 after  patch %08x\n", msr);
             msr = AsmReadMsr64(MSR_PMG_IO_CAPTURE_BASE);
             MsgLog("MSR 0xE4              %08x\n", msr);
             //------------

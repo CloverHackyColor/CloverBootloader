@@ -788,12 +788,12 @@ BOOLEAN get_model_val(value_t *val, INTN index)
 
 static CONST UINT32 ctm[] = {0x02, 0x10, 0x800, 0x400}; //mobile
 static CONST UINT32 ctd[] = {0x04, 0x10, 0x800, 0x400}; //desktop
-static UINT32 cti = 0;
+//static UINT32 cti = 0;
 
 //TODO - get connectors from ATIConnectorsPatch
 BOOLEAN get_conntype_val(value_t *val, INTN index)
 {
-  UINT32* ct;
+  UINT8 *ct;
 //Connector types:
 //0x10:  VGA
 //0x04:  DL DVI-I
@@ -804,7 +804,7 @@ BOOLEAN get_conntype_val(value_t *val, INTN index)
   if (gSettings.KPATIConnectorsDataLen == 0) {
     return FALSE;
   }
-  ct = (UINT32*)gSettings.KPATIConnectorsPatch;
+  ct = gSettings.KPATIConnectorsPatch;
   
 /*  if (gMobile) {
     ct = (UINT32*)&ctm[0];
@@ -813,10 +813,10 @@ BOOLEAN get_conntype_val(value_t *val, INTN index)
   
   val->type = kCst;
 	val->size = 4;
-	val->data = (UINT8*)&ct[(index - 1) * 4];
+	val->data = (UINT8*)&ct[index * 16];
   
-  cti++;
-  if(cti > 3) cti = 0;
+//  cti++;
+//  if(cti > 3) cti = 0;
   
 	return TRUE;
 }
@@ -987,7 +987,7 @@ VOID devprop_add_list(AtiDevProp devprop_list[])
 	{
 		if ((devprop_list[i].flags == FLAGTRUE) || (devprop_list[i].flags & card->flags))
 		{
-			if (devprop_list[i].get_value && devprop_list[i].get_value(val))
+			if (devprop_list[i].get_value && devprop_list[i].get_value(val, 0))
 			{
 				devprop_add_value(card->device, devprop_list[i].name, val->data, val->size);
 				free_val(val);
@@ -996,7 +996,7 @@ VOID devprop_add_list(AtiDevProp devprop_list[])
 				{
 					for (pnum = 1; pnum < card->ports; pnum++)
 					{
-						if (devprop_list[i].get_value(val, i))
+						if (devprop_list[i].get_value(val, pnum))
 						{
 							devprop_list[i].name[1] = (CHAR8)(0x30 + pnum); // convert to ascii
 							devprop_add_value(card->device, devprop_list[i].name, val->data, val->size);

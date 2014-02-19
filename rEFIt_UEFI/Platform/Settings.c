@@ -47,6 +47,7 @@ BOOLEAN                         defDSM;
 UINT16                          dropDSM;
 
 extern MEM_STRUCTURE            gRAM;
+extern BOOLEAN                  NeedPMfix;
 
 GUI_ANIME *GuiAnime = NULL;
 
@@ -3966,6 +3967,10 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
 //xxx    gSettings.KPKernelCpu = TRUE; // enabled by default
     gSettings.KPKextPatchesNeeded = FALSE;
     gSettings.KPLapicPanic = FALSE; // disabled by default
+    if (NeedPMfix) {
+      gSettings.KPKernelPm = TRUE;
+      gSettings.KPAsusAICPUPM = TRUE;
+    }
     dictPointer = GetProperty(dict,"KernelAndKextPatches");
     if (dictPointer) {
       gSettings.KPDebug = FALSE;
