@@ -289,7 +289,8 @@ Headers collection for procedures
 //haswell
 //Low Frequency Mode. LFM is Pn in the P-state table. It can be read at MSR CEh [47:40].
 //Minimum Frequency Mode. MFM is the minimum ratio supported by the processor and can be read from MSR CEh [55:48].
-#define MSR_PKG_CST_CONFIG_CONTROL  0x00E2   /* sandy and ivy */
+#define MSR_PKG_CST_CONFIG_CONTROL  0x00E2   /* sandy and up */
+#define MSR_PMG_IO_CAPTURE_BASE     0x00E4  /* sandy and up */
 #define IA32_MPERF                  0x00E7   /* TSC in C0 only */
 #define IA32_APERF                  0x00E8   /* actual clocks in C0 */
 #define MSR_IA32_EXT_CONFIG         0x00EE	 /* limited use - not for i7						*/

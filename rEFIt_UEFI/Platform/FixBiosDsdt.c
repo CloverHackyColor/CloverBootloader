@@ -95,7 +95,7 @@ UINT32 USB40[12];  /*<-NFORCE_USB*/
 UINT32 HDAcodecId=0;
 UINT32 HDAlayoutId=0;
 UINT32 GfxcodecId[2] = {0, 1};
-UINT32 GfxlayoutId[2] = {0, 12};
+UINT32 GfxlayoutId[2] = {1, 12};
 
 pci_dt_t   Displaydevice[2];
 
@@ -2157,23 +2157,25 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
       met = aml_add_method(gfx0, "_DSM", 4);
       met2 = aml_add_store(met);
       pack = aml_add_package(met2);
-      
-      if (gSettings.FakeIntel) {
-        FakeID = gSettings.FakeIntel >> 16;
-        aml_add_string(pack, "device-id");
-        aml_add_byte_buffer(pack, (CHAR8*)&FakeID, 4);
-        FakeVen = gSettings.FakeIntel & 0xFFFF;
-        aml_add_string(pack, "vendor-id");
-        aml_add_byte_buffer(pack, (CHAR8*)&FakeVen, 4);
-      }
-      if(!AddProperties(pack, DEV_INTEL)) {
+      if (!gSettings.NoDefaultProperties) {
+        if (gSettings.FakeIntel) {
+          FakeID = gSettings.FakeIntel >> 16;
+          aml_add_string(pack, "device-id");
+          aml_add_byte_buffer(pack, (CHAR8*)&FakeID, 4);
+          FakeVen = gSettings.FakeIntel & 0xFFFF;
+          aml_add_string(pack, "vendor-id");
+          aml_add_byte_buffer(pack, (CHAR8*)&FakeVen, 4);
+        }
         if (gSettings.UseIntelHDMI) {
           aml_add_string(pack, "hda-gfx");
           aml_add_string_buffer(pack, "onboard-1");
-        } else {
-          aml_add_string(pack, "empty");
-          aml_add_byte(pack, 0);
-        }
+        } 
+      }
+      if(!AddProperties(pack, DEV_INTEL) &&
+         !gSettings.UseIntelHDMI &&
+         !gSettings.FakeIntel) {
+        aml_add_string(pack, "empty");
+        aml_add_byte(pack, 0);
       }
       
       aml_add_local0(met);
@@ -2187,16 +2189,15 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
       met = aml_add_method(gfx0, "_DSM", 4);
       met2 = aml_add_store(met);
       pack = aml_add_package(met2);
-      
-      if (gSettings.FakeNVidia) {
-        FakeID = gSettings.FakeNVidia >> 16;
-        aml_add_string(pack, "device-id");
-        aml_add_byte_buffer(pack, (CHAR8*)&FakeID, 4);
-        FakeVen = gSettings.FakeNVidia & 0xFFFF;
-        aml_add_string(pack, "vendor-id");
-        aml_add_byte_buffer(pack, (CHAR8*)&FakeVen, 4);
-      }
-      if(!AddProperties(pack, DEV_NVIDIA)) {
+      if (!gSettings.NoDefaultProperties) {
+        if (gSettings.FakeNVidia) {
+          FakeID = gSettings.FakeNVidia >> 16;
+          aml_add_string(pack, "device-id");
+          aml_add_byte_buffer(pack, (CHAR8*)&FakeID, 4);
+          FakeVen = gSettings.FakeNVidia & 0xFFFF;
+          aml_add_string(pack, "vendor-id");
+          aml_add_byte_buffer(pack, (CHAR8*)&FakeVen, 4);
+        }
         if (GFXHDAFIX) {
           aml_add_string(pack, "hda-gfx");
           if (gSettings.UseIntelHDMI) {
@@ -2204,10 +2205,13 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
           } else {
             aml_add_string_buffer(pack, "onboard-1");
           }
-        } else {
-          aml_add_string(pack, "empty");
-          aml_add_byte(pack, 0);
         }
+      }
+      if(!AddProperties(pack, DEV_NVIDIA) &&
+         !GFXHDAFIX &&
+         !gSettings.FakeNVidia) {
+        aml_add_string(pack, "empty");
+        aml_add_byte(pack, 0);
       }
       aml_add_local0(met);
       aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
@@ -2220,23 +2224,22 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
       met = aml_add_method(gfx0, "_DSM", 4);  //if no subdevice
       met2 = aml_add_store(met);
       pack = aml_add_package(met2);
- 
-      if (gSettings.FakeATI) {
-        FakeID = gSettings.FakeATI >> 16;
-        aml_add_string(pack, "device-id");
-        aml_add_byte_buffer(pack, (CHAR8*)&FakeID, 4);
-        aml_add_string(pack, "ATY,DeviceID");
-        aml_add_byte_buffer(pack, (CHAR8*)&FakeID, 2);
-        FakeVen = gSettings.FakeATI & 0xFFFF;
-        aml_add_string(pack, "vendor-id");
-        aml_add_byte_buffer(pack, (CHAR8*)&FakeVen, 4);
-        aml_add_string(pack, "ATY,VendorID");
-        aml_add_byte_buffer(pack, (CHAR8*)&FakeVen, 2);
-      } else {
-        aml_add_string(pack, "ATY,VendorID");
-        aml_add_byte_buffer(pack, VenATI, 2);
-      }
-      if(!AddProperties(pack, DEV_ATI)) {
+      if (!gSettings.NoDefaultProperties) {
+        if (gSettings.FakeATI) {
+          FakeID = gSettings.FakeATI >> 16;
+          aml_add_string(pack, "device-id");
+          aml_add_byte_buffer(pack, (CHAR8*)&FakeID, 4);
+          aml_add_string(pack, "ATY,DeviceID");
+          aml_add_byte_buffer(pack, (CHAR8*)&FakeID, 2);
+          FakeVen = gSettings.FakeATI & 0xFFFF;
+          aml_add_string(pack, "vendor-id");
+          aml_add_byte_buffer(pack, (CHAR8*)&FakeVen, 4);
+          aml_add_string(pack, "ATY,VendorID");
+          aml_add_byte_buffer(pack, (CHAR8*)&FakeVen, 2);
+        } else {
+          aml_add_string(pack, "ATY,VendorID");
+          aml_add_byte_buffer(pack, VenATI, 2);
+        }
         if (GFXHDAFIX) {
           aml_add_string(pack, "hda-gfx");
           if (gSettings.UseIntelHDMI) {
@@ -2244,10 +2247,13 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
           } else {
             aml_add_string_buffer(pack, "onboard-1");
           }
-        } else {
-          aml_add_string(pack, "empty");
-          aml_add_byte(pack, 0);
-        }
+        }  
+      }
+      if(!AddProperties(pack, DEV_ATI) &&
+         !GFXHDAFIX &&
+         !gSettings.FakeATI) {
+        aml_add_string(pack, "empty");
+        aml_add_byte(pack, 0);
       }
       aml_add_local0(met);
       aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
@@ -2434,16 +2440,18 @@ UINT32 AddHDMI (UINT8 *dsdt, UINT32 len)
   
   met2 = aml_add_store(met);
   pack = aml_add_package(met2);
-  if (!AddProperties(pack, DEV_HDMI)) {
-    DBG("  with default properties\n");
-    aml_add_string(pack, "layout-id");
-    aml_add_byte_buffer(pack, (CHAR8*)&GfxlayoutId[1], 4);
+  if (!gSettings.NoDefaultProperties) {
     aml_add_string(pack, "hda-gfx");
     if (gSettings.UseIntelHDMI) {
       aml_add_string_buffer(pack, "onboard-2");
     } else {
       aml_add_string_buffer(pack, "onboard-1");
-    }
+    }    
+  }
+  if (!AddProperties(pack, DEV_HDMI)) {
+    DBG("  with default properties\n");
+    aml_add_string(pack, "layout-id");
+    aml_add_byte_buffer(pack, (CHAR8*)&GfxlayoutId[0], 4);
 
     aml_add_string(pack, "PinConfigurations");
     aml_add_byte_buffer(pack, data2, sizeof(data2));        
@@ -2615,27 +2623,31 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
   // add Method(_DSM,4,NotSerialized) for network
   met2 = aml_add_store(met);
   pack = aml_add_package(met2);
-  if (!AddProperties(pack, DEV_LAN)) {
+  if (!gSettings.NoDefaultProperties) {
     aml_add_string(pack, "built-in");
     aml_add_byte_buffer(pack, dataBuiltin, sizeof(dataBuiltin));
     aml_add_string(pack, "model");
     aml_add_string_buffer(pack, Netmodel);
     aml_add_string(pack, "device_type");
-    aml_add_string_buffer(pack, "Ethernet");    
+    aml_add_string_buffer(pack, "Ethernet");        
+    if (gSettings.FakeLAN) {
+      //    aml_add_string(pack, "model");
+      //    aml_add_string_buffer(pack, "Apple LAN card");
+      aml_add_string(pack, "device-id");
+      aml_add_byte_buffer(pack, (CHAR8 *)&FakeID, 4);
+      aml_add_string(pack, "vendor-id");
+      aml_add_byte_buffer(pack, (CHAR8 *)&FakeVen, 4);
+      aml_add_string(pack, "name");
+      aml_add_string_buffer(pack, &NameCard[0]);
+      aml_add_string(pack, "compatible");
+      aml_add_string_buffer(pack, &NameCard[0]);
+    }
   }
-  if (gSettings.FakeLAN) {
-//    aml_add_string(pack, "model");
-//    aml_add_string_buffer(pack, "Apple LAN card");
-    aml_add_string(pack, "device-id");
-    aml_add_byte_buffer(pack, (CHAR8 *)&FakeID, 4);
-    aml_add_string(pack, "vendor-id");
-    aml_add_byte_buffer(pack, (CHAR8 *)&FakeVen, 4);
-    aml_add_string(pack, "name");
-    aml_add_string_buffer(pack, &NameCard[0]);
-    aml_add_string(pack, "compatible");
-    aml_add_string_buffer(pack, &NameCard[0]);
+  if (!AddProperties(pack, DEV_LAN) && gSettings.NoDefaultProperties) {
+    aml_add_string(pack, "empty");
+    aml_add_byte(pack, 0);
   }
-
+  
   aml_add_local0(met2);
   aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
   // finish Method(_DSM,4,NotSerialized)
@@ -2796,7 +2808,7 @@ UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
   // add Method(_DSM,4,NotSerialized) for network
   met2 = aml_add_store(met);
   pack = aml_add_package(met2);
-  if (!AddProperties(pack, DEV_WIFI)) {
+  if (!gSettings.NoDefaultProperties) {
     aml_add_string(pack, "built-in");  
     aml_add_byte_buffer(pack, dataBuiltin, sizeof(dataBuiltin));
     aml_add_string(pack, "model");
@@ -2844,6 +2856,13 @@ UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
     aml_add_string(pack, "compatible");
     aml_add_string_buffer(pack, (CHAR8 *)&NameCard[0]);
   }
+  if (!AddProperties(pack, DEV_WIFI) && 
+      gSettings.NoDefaultProperties &&
+      !gSettings.FakeWIFI) {
+    aml_add_string(pack, "empty");
+    aml_add_byte(pack, 0);
+  }
+  
   
   aml_add_local0(met);
   aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
@@ -4829,7 +4848,6 @@ VOID FixBiosDsdt (UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, 
     FixRegions(temp, DsdtLen);
   }
 
-
      // pwrb add _CID sleep button fix
   if (((gSettings.FixDsdt & FIX_WARNING) && !(gSettings.FixDsdt & FIX_NEW_WAY)) ||
       ((gSettings.FixDsdt & FIX_NEW_WAY) && (gSettings.FixDsdt & FIX_ADP1))) {
@@ -4838,8 +4856,6 @@ VOID FixBiosDsdt (UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, 
     // other compiler warning fix _T_X,  MUTE .... USB _PRW value form 0x04 => 0x01
 //     DsdtLen = FIXOTHER(temp, DsdtLen);
   if (gSettings.FixDsdt & FIX_WARNING) {
-//  if (((gSettings.FixDsdt & FIX_WARNING) && !(gSettings.FixDsdt & FIX_NEW_WAY)) ||
-//     ((gSettings.FixDsdt & FIX_NEW_WAY) && (gSettings.FixDsdt & FIX_DARWIN))) {
     if (!FindMethod(temp, DsdtLen, "GET9") && 
         !FindMethod(temp, DsdtLen, "STR9") &&
         !FindMethod(temp, DsdtLen, "OOSI")) {

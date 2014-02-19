@@ -342,7 +342,17 @@ VOID GetCPUProperties (VOID)
           case CPU_MODEL_HASWELL_ULX:
             gCPUStructure.TSCFrequency = MultU64x32(gCPUStructure.CurrentSpeed, Mega); //MHz -> Hz
             gCPUStructure.CPUFrequency = gCPUStructure.TSCFrequency;
-            msr = AsmReadMsr64(MSR_PLATFORM_INFO);       //0xCE     
+            //----test C3 patch
+            msr = AsmReadMsr64(MSR_PKG_CST_CONFIG_CONTROL); //0xE2
+            MsgLog("MSR 0xE2 before patch %08x\n", msr);
+            AsmWriteMsr64(MSR_PKG_CST_CONFIG_CONTROL, (msr & 0x8000000ULL));
+            msr = AsmReadMsr64(MSR_PKG_CST_CONFIG_CONTROL);
+            MsgLog("MSR 0xE2 after  patch %08x\n", msr); 
+            msr = AsmReadMsr64(MSR_PMG_IO_CAPTURE_BASE);
+            MsgLog("MSR 0xE4              %08x\n", msr);
+            //------------
+            msr = AsmReadMsr64(MSR_PLATFORM_INFO);       //0xCE  
+            MsgLog("MSR 0xCE              %08x\n", msr);
             gCPUStructure.MaxRatio = (UINT8)RShiftU64(msr, 8) & 0xff;
             gCPUStructure.MinRatio = (UINT8)MultU64x32(RShiftU64(msr, 40) & 0xff, 10);
             msr = AsmReadMsr64(MSR_FLEX_RATIO);   //0x194
