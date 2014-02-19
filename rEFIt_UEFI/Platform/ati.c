@@ -619,7 +619,7 @@ AtiDevProp ati_devprop_list[] = {
   //{FLAGTRUE,	TRUE,	"@0,AAPL,vram-memory",		get_vrammemory_val,		NULVAL				},
   {FLAGTRUE,	TRUE,	"AAPL00,override-no-connect",		get_edid_val,       NULVAL        },
   {FLAGTRUE,	TRUE,	"@0,compatible",              get_name_val,       NULVAL				},
-//  {FLAGTRUE,	TRUE,	"@0,connector-type",          get_conntype_val,		NULVAL        },
+  {FLAGTRUE,	TRUE,	"@0,connector-type",          get_conntype_val,		NULVAL        },
   {FLAGTRUE,	TRUE,	"@0,device_type",             NULL,					STRVAL("display")   },
 //	{FLAGTRUE,	FALSE,	"@0,display-connect-flags", NULL,				DWRVAL(0)   },
   
@@ -664,7 +664,7 @@ AtiDevProp ati_devprop_list[] = {
 	{FLAGTRUE,	FALSE,	NULL,	NULL,	NULVAL}
 };
 
-BOOLEAN get_bootdisplay_val(value_t *val)
+BOOLEAN get_bootdisplay_val(value_t *val, INTN index)
 {
 	static UINT32 v = 0;
 	
@@ -682,7 +682,7 @@ BOOLEAN get_bootdisplay_val(value_t *val)
 	return TRUE;
 }
 
-BOOLEAN get_dual_link_val(value_t *val)
+BOOLEAN get_dual_link_val(value_t *val, INTN index)
 {
   static UINT32 v = 0;
 	
@@ -698,12 +698,12 @@ BOOLEAN get_dual_link_val(value_t *val)
 }
 
 
-BOOLEAN get_vrammemory_val(value_t *val)
+BOOLEAN get_vrammemory_val(value_t *val, INTN index)
 {
 	return FALSE;
 }
 
-BOOLEAN get_edid_val(value_t *val)
+BOOLEAN get_edid_val(value_t *val, INTN index)
 {
   static UINT32 v = 0;
   if (!gSettings.InjectEDID) {
@@ -726,7 +726,7 @@ BOOLEAN get_edid_val(value_t *val)
 static CONST CHAR8* dtyp[] = {"LCD", "CRT", "DVI", "NONE"};
 static UINT32 dti = 0;
 
-BOOLEAN get_display_type(value_t *val)
+BOOLEAN get_display_type(value_t *val, INTN index)
 {
 
   dti++;
@@ -741,7 +741,7 @@ BOOLEAN get_display_type(value_t *val)
 }
 
 
-BOOLEAN get_name_val(value_t *val)
+BOOLEAN get_name_val(value_t *val, INTN index)
 {
 	val->type = aty_name.type;
 	val->size = aty_name.size;
@@ -750,7 +750,7 @@ BOOLEAN get_name_val(value_t *val)
 	return TRUE;
 }
 
-BOOLEAN get_nameparent_val(value_t *val)
+BOOLEAN get_nameparent_val(value_t *val, INTN index)
 {
 	val->type = aty_nameparent.type;
 	val->size = aty_nameparent.size;
@@ -760,7 +760,7 @@ BOOLEAN get_nameparent_val(value_t *val)
 }
 
 static CHAR8 pciName[15];
-BOOLEAN get_name_pci_val(value_t *val)
+BOOLEAN get_name_pci_val(value_t *val, INTN index)
 {  
 	if (!card->info->model_name || !gSettings.FakeATI)
 		return FALSE;
@@ -774,7 +774,7 @@ BOOLEAN get_name_pci_val(value_t *val)
 }
 
 
-BOOLEAN get_model_val(value_t *val)
+BOOLEAN get_model_val(value_t *val, INTN index)
 {
 	if (!card->info->model_name)
 		return FALSE;
@@ -790,8 +790,8 @@ static CONST UINT32 ctm[] = {0x02, 0x10, 0x800, 0x400}; //mobile
 static CONST UINT32 ctd[] = {0x04, 0x10, 0x800, 0x400}; //desktop
 static UINT32 cti = 0;
 
-//TODO - get connectors from ATIConnectorPatch
-BOOLEAN get_conntype_val(value_t *val)
+//TODO - get connectors from ATIConnectorsPatch
+BOOLEAN get_conntype_val(value_t *val, INTN index)
 {
   UINT32* ct;
 //Connector types:
@@ -801,14 +801,19 @@ BOOLEAN get_conntype_val(value_t *val)
 //0x400: DisplayPort
 //0x02:  LVDS  
   
-  if (gMobile) {
+  if (gSettings.KPATIConnectorsDataLen == 0) {
+    return FALSE;
+  }
+  ct = (UINT32*)gSettings.KPATIConnectorsPatch;
+  
+/*  if (gMobile) {
     ct = (UINT32*)&ctm[0];
   } else
-    ct = (UINT32*)&ctd[0];
+    ct = (UINT32*)&ctd[0]; */
   
   val->type = kCst;
 	val->size = 4;
-	val->data = (UINT8*)&ct[cti];
+	val->data = (UINT8*)&ct[(index - 1) * 4];
   
   cti++;
   if(cti > 3) cti = 0;
@@ -816,7 +821,7 @@ BOOLEAN get_conntype_val(value_t *val)
 	return TRUE;
 }
 
-BOOLEAN get_vrammemsize_val(value_t *val)
+BOOLEAN get_vrammemsize_val(value_t *val, INTN index)
 {
 	static INTN idx = -1;
 	static UINT64 memsize;
@@ -833,7 +838,7 @@ BOOLEAN get_vrammemsize_val(value_t *val)
 	return TRUE;
 }
 
-BOOLEAN get_binimage_val(value_t *val)
+BOOLEAN get_binimage_val(value_t *val, INTN index)
 {
 	if (!card->rom)
 		return FALSE;
@@ -845,7 +850,7 @@ BOOLEAN get_binimage_val(value_t *val)
 	return TRUE;
 }
 
-BOOLEAN get_binimage_owr(value_t *val)
+BOOLEAN get_binimage_owr(value_t *val, INTN index)
 {
 	static UINT32 v = 0;
   
@@ -863,7 +868,7 @@ BOOLEAN get_binimage_owr(value_t *val)
 
 
 
-BOOLEAN get_romrevision_val(value_t *val)
+BOOLEAN get_romrevision_val(value_t *val, INTN index)
 {
   CHAR8* cRev="109-B77101-00";
 	UINT8 *rev;
@@ -897,7 +902,7 @@ BOOLEAN get_romrevision_val(value_t *val)
 	return TRUE;
 }
 
-BOOLEAN get_deviceid_val(value_t *val)
+BOOLEAN get_deviceid_val(value_t *val, INTN index)
 {
 	val->type = kCst;
 	val->size = 2;
@@ -906,22 +911,31 @@ BOOLEAN get_deviceid_val(value_t *val)
 	return TRUE;
 }
 
-BOOLEAN get_mclk_val(value_t *val)
+BOOLEAN get_mclk_val(value_t *val, INTN index)
 {
 	return FALSE;
 }
 
-BOOLEAN get_sclk_val(value_t *val)
+BOOLEAN get_sclk_val(value_t *val, INTN index)
 {
 	return FALSE;
 }
 
-BOOLEAN get_refclk_val(value_t *val)
+BOOLEAN get_refclk_val(value_t *val, INTN index)
 {
-	return FALSE;
+  if (!gSettings.RefCLK) {
+    return FALSE;
+  }
+//	
+  val->type = kCst;
+	val->size = 4;
+	val->data = (UINT8 *)&gSettings.RefCLK;
+	
+	return TRUE;
+  
 }
 
-BOOLEAN get_platforminfo_val(value_t *val)
+BOOLEAN get_platforminfo_val(value_t *val, INTN index)
 {
 	val->data = AllocateZeroPool(0x80);
 	if (!val->data)
@@ -936,7 +950,7 @@ BOOLEAN get_platforminfo_val(value_t *val)
 	return TRUE;
 }
 
-BOOLEAN get_vramtotalsize_val(value_t *val)
+BOOLEAN get_vramtotalsize_val(value_t *val, INTN index)
 {
   
 	val->type = kCst;
@@ -946,7 +960,7 @@ BOOLEAN get_vramtotalsize_val(value_t *val)
 	return TRUE;
 }
 
-VOID free_val(value_t *val)
+VOID free_val(value_t *val )
 {
 	if (val->type == kPtr)
 		FreePool(val->data);
@@ -960,7 +974,7 @@ VOID free_val(value_t *val)
 	UINT32				flags;
 	BOOLEAN				all_ports;
 	CHAR8					*name;
-	BOOLEAN				(*get_value)(value_t *val);
+	BOOLEAN				(*get_value)(value_t *val, INTN index);
 	value_t				default_val;
 } AtiDevProp;
 */
@@ -982,7 +996,7 @@ VOID devprop_add_list(AtiDevProp devprop_list[])
 				{
 					for (pnum = 1; pnum < card->ports; pnum++)
 					{
-						if (devprop_list[i].get_value(val))
+						if (devprop_list[i].get_value(val, i))
 						{
 							devprop_list[i].name[1] = (CHAR8)(0x30 + pnum); // convert to ascii
 							devprop_add_value(card->device, devprop_list[i].name, val->data, val->size);

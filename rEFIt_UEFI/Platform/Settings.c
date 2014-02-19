@@ -2617,6 +2617,18 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
           gSettings.VRAM = LShiftU64(StrDecimalToUintn((CHAR16*)&UStr[0]), 20);  //Mb -> bytes
         }
       }
+      //
+      gSettings.RefCLK = 0;
+      prop = GetProperty(dictPointer, "RefCLK");
+      if(prop) {
+        if (prop->type == kTagTypeInteger) {
+          gSettings.RefCLK = LShiftU64((UINTN)prop->string, 20);
+        } else if (prop->type == kTagTypeString){
+          AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
+          gSettings.RefCLK = (UINT32)StrDecimalToUintn((CHAR16*)&UStr[0]);  
+        }
+      }
+      
       prop = GetProperty(dictPointer, "LoadVBios");
       gSettings.LoadVBios = FALSE;
       if(prop) {

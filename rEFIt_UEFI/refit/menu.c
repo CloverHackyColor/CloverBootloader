@@ -313,10 +313,11 @@ VOID RefillInputs(VOID)
   InputItems[InputItemsCount].ItemType = BoolValue; //49
   InputItems[InputItemsCount].BValue = gSettings.DropMCFG;
   InputItems[InputItemsCount++].SValue = gSettings.DropMCFG?L"[+]":L"[ ]";
+  
+  InputItems[InputItemsCount].ItemType = Decimal;  //50
+  InputItems[InputItemsCount++].SValue = PoolPrint(L"%d", gSettings.RefCLK);
+
   /*
-  InputItems[InputItemsCount].ItemType = BoolValue; //50
-  InputItems[InputItemsCount].BValue = gSettings.bDropHPET;
-  InputItems[InputItemsCount++].SValue = gSettings.bDropHPET?L"[+]":L"[ ]";
   InputItems[InputItemsCount].ItemType = BoolValue; //51
   InputItems[InputItemsCount].BValue = gSettings.bDropECDT;
   InputItems[InputItemsCount++].SValue = gSettings.bDropECDT?L"[+]":L"[ ]";
@@ -602,10 +603,11 @@ VOID FillInputs(VOID)
   InputItems[InputItemsCount].ItemType = BoolValue; //49
   InputItems[InputItemsCount].BValue = gSettings.DropMCFG;
   InputItems[InputItemsCount++].SValue = gSettings.DropMCFG?L"[+]":L"[ ]";
+  
+  InputItems[InputItemsCount].ItemType = Decimal;  //50
+  InputItems[InputItemsCount++].SValue = PoolPrint(L"%d", gSettings.RefCLK);
+
   /*
-  InputItems[InputItemsCount].ItemType = BoolValue; //50
-  InputItems[InputItemsCount].BValue = gSettings.bDropHPET;
-  InputItems[InputItemsCount++].SValue = gSettings.bDropHPET?L"[+]":L"[ ]";
   InputItems[InputItemsCount].ItemType = BoolValue; //51
   InputItems[InputItemsCount].BValue = gSettings.bDropECDT;
   InputItems[InputItemsCount++].SValue = gSettings.bDropECDT?L"[+]":L"[ ]";
@@ -939,11 +941,12 @@ VOID ApplyInputs(VOID)
   if (InputItems[i].Valid) {
     gSettings.DropMCFG = InputItems[i].BValue;
   }
-  /*
+  
   i++; //50
   if (InputItems[i].Valid) {
-    gSettings.bDropHPET = InputItems[i].BValue;
+    gSettings.RefCLK = (UINT32)StrDecimalToUintn(InputItems[i].SValue);
   }
+  /*
   i++; //51
   if (InputItems[i].Valid) {
     gSettings.bDropECDT = InputItems[i].BValue;
@@ -2988,18 +2991,23 @@ REFIT_MENU_ENTRY  *SubMenuGraphics()
     AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
 
     if (gGraphics[i].Vendor == Nvidia) {
-    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-//    if (gGraphics[i].Vendor == Nvidia) {
+      InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
       InputBootArgs->Entry.Title = PoolPrint(L"NVCAP:");
-//    } else {
-//      InputBootArgs->Entry.Title = PoolPrint(L"Connectors:");
-//    }
-    InputBootArgs->Entry.Tag = TAG_INPUT;
-    InputBootArgs->Entry.Row = StrLen(InputItems[N+4].SValue); //cursor
-    InputBootArgs->Item = &InputItems[N+4];    
-    InputBootArgs->Entry.AtClick = ActionSelect;
-    InputBootArgs->Entry.AtDoubleClick = ActionEnter;
-    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+      InputBootArgs->Entry.Tag = TAG_INPUT;
+      InputBootArgs->Entry.Row = StrLen(InputItems[N+4].SValue); //cursor
+      InputBootArgs->Item = &InputItems[N+4];    
+      InputBootArgs->Entry.AtClick = ActionSelect;
+      InputBootArgs->Entry.AtDoubleClick = ActionEnter;
+      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+    } else {
+      InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+      InputBootArgs->Entry.Title = PoolPrint(L"RefCLK:");
+      InputBootArgs->Entry.Tag = TAG_INPUT;
+      InputBootArgs->Entry.Row = StrLen(InputItems[50].SValue); //cursor
+      InputBootArgs->Item = &InputItems[50];    
+      InputBootArgs->Entry.AtClick = ActionSelect;
+      InputBootArgs->Entry.AtDoubleClick = ActionEnter;
+      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);      
     }
     
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
@@ -3012,6 +3020,8 @@ REFIT_MENU_ENTRY  *SubMenuGraphics()
     AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
     
   }
+  
+  
   AddMenuEntry(SubScreen, &MenuEntryReturn);
   Entry->SubScreen = SubScreen;                
   return Entry;  

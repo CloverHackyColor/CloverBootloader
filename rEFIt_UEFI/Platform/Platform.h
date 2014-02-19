@@ -962,7 +962,9 @@ typedef struct {
 #endif
   UINT64  DoubleClickTime;
   BOOLEAN PointerMirror;
-  UINT8   pad7[7];  //for 64bit align
+  UINT8   pad7[3];  //for 64bit align
+  
+  UINT32  RefCLK;
   
   // RtVariables
   CHAR8   *RtMLB;
