@@ -34,10 +34,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-//#include "Platform.h"
 #include "libegint.h"
-
-//#include "egemb_refit_banner.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_SCR 1
@@ -409,11 +406,13 @@ VOID BltClearScreen(IN BOOLEAN ShowBanner) //ShowBanner always TRUE
       // Banner is not loaded yet
       if (!GlobalConfig.Theme) {
         // embedded theme - use text as banner
-        Banner = egCreateImage(7 * StrLen(L"CLOVER"), 32, TRUE);
-        egFillImage(Banner, &MenuBackgroundPixel);
-        egRenderText(L"CLOVER", Banner, 0, 0, 0xFFFF);
+   //     Banner = egCreateImage(7 * StrLen(L"CLOVER"), 32, TRUE);
+   //     egFillImage(Banner, &MenuBackgroundPixel);
+   //     egRenderText(L"CLOVER", Banner, 0, 0, 0xFFFF);
+   //     CopyMem(&BlueBackgroundPixel, &StdBackgroundPixel, sizeof(EG_PIXEL));
+   //     DebugLog(1, "Text <%s> rendered\n", L"Clover");
+        Banner = BuiltinIcon(BUILTIN_ICON_BANNER);
         CopyMem(&BlueBackgroundPixel, &StdBackgroundPixel, sizeof(EG_PIXEL));
-        DebugLog(1, "Text <%s> rendered\n", L"Clover");
       } else  {
         Banner = egLoadImage(ThemeDir, GlobalConfig.BannerFileName, FALSE);
         if (Banner) {

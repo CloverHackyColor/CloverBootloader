@@ -38,8 +38,6 @@
 #include "libegint.h"   //this includes platform.h 
 #include "Version.h"
 
-#include "egemb_back_selected_small.h"
-
 #ifndef DEBUG_ALL
 #define DEBUG_MENU 1
 #else
@@ -1205,7 +1203,7 @@ VOID FreeItems(VOID)
 //
 // Graphics helper functions
 //
-
+/*
 static VOID InitSelection(VOID)
 {
   UINTN       x, y, src_x, src_y;
@@ -1278,6 +1276,66 @@ static VOID InitSelection(VOID)
                                            TRUE, &MenuBackgroundPixel);
   SelectionImages[3] = egCreateFilledImage(ROW1_TILESIZE, ROW1_TILESIZE,
                                            TRUE, &MenuBackgroundPixel);
+}
+ */
+static VOID InitSelection(VOID)
+{
+
+  if (!AllowGraphicsMode)
+    return;
+  SelectionBackgroundPixel.r = (GlobalConfig.SelectionColor >> 24) & 0xFF;
+  SelectionBackgroundPixel.g = (GlobalConfig.SelectionColor >> 16) & 0xFF;
+  SelectionBackgroundPixel.b = (GlobalConfig.SelectionColor >> 8) & 0xFF;
+  SelectionBackgroundPixel.a = (GlobalConfig.SelectionColor >> 0) & 0xFF;
+
+  if (SelectionImages[0] != NULL)
+    return;
+  // load small selection image
+  if (GlobalConfig.SelectionSmallFileName != NULL){
+    SelectionImages[2] = egLoadImage(ThemeDir, GlobalConfig.SelectionSmallFileName, FALSE);
+  }
+  if (SelectionImages[2] == NULL){
+    SelectionImages[2] = BuiltinIcon(BUILTIN_SELECTION_SMALL);
+    CopyMem(&BlueBackgroundPixel, &StdBackgroundPixel, sizeof(EG_PIXEL));
+  }
+  SelectionImages[2] = egEnsureImageSize(SelectionImages[2],
+                                         ROW1_TILESIZE, ROW1_TILESIZE, &MenuBackgroundPixel);
+  if (SelectionImages[2] == NULL)
+    return;
+  // load big selection image
+  if (GlobalConfig.SelectionBigFileName != NULL) {
+    SelectionImages[0] = egLoadImage(ThemeDir, GlobalConfig.SelectionBigFileName, FALSE);
+    SelectionImages[0] = egEnsureImageSize(SelectionImages[0],
+                                           ROW0_TILESIZE, ROW0_TILESIZE,
+                                           &MenuBackgroundPixel);
+  }
+  if (SelectionImages[0] == NULL) {
+    //    // calculate big selection image from small one
+    SelectionImages[0] = BuiltinIcon(BUILTIN_SELECTION_BIG);
+    CopyMem(&BlueBackgroundPixel, &StdBackgroundPixel, sizeof(EG_PIXEL));
+    if (SelectionImages[0] == NULL) {
+      egFreeImage(SelectionImages[2]);
+      SelectionImages[2] = NULL;
+      return;
+    }
+    if (GlobalConfig.SelectionOnTop) {
+      SelectionImages[0]->HasAlpha = TRUE;
+      SelectionImages[2]->HasAlpha = TRUE;
+    }
+  }
+  // non-selected background images
+  //TODO FALSE -> TRUE
+  if (GlobalConfig.SelectionBigFileName != NULL) {
+    SelectionImages[1] = egCreateFilledImage(ROW0_TILESIZE, ROW0_TILESIZE,
+                                             TRUE, &MenuBackgroundPixel);
+    SelectionImages[3] = egCreateFilledImage(ROW1_TILESIZE, ROW1_TILESIZE,
+                                             TRUE, &MenuBackgroundPixel);
+  } else { // using embedded theme (this is an assumption but a better check is required)
+    SelectionImages[1] = egCreateFilledImage(ROW0_TILESIZE, ROW0_TILESIZE,
+                                             TRUE, &StdBackgroundPixel);
+    SelectionImages[3] = egCreateFilledImage(ROW1_TILESIZE, ROW1_TILESIZE,
+                                             TRUE, &StdBackgroundPixel);
+  }
 }
 
 //

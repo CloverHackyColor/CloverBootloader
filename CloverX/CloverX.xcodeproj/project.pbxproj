@@ -420,8 +420,6 @@
 		12B2459018700F5F00A332C6 /* securemenu.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = securemenu.c; sourceTree = "<group>"; };
 		12B2459118700F5F00A332C6 /* securevars.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = securevars.c; sourceTree = "<group>"; };
 		12B3D27417B23032009D8170 /* Edid.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Edid.c; sourceTree = "<group>"; };
-		12B8168C1644675800A433E7 /* egemb_back_selected_small.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = egemb_back_selected_small.h; sourceTree = "<group>"; };
-		12B8168D1644675800A433E7 /* egemb_refit_banner.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = egemb_refit_banner.h; sourceTree = "<group>"; };
 		12B8168E1644675800A433E7 /* Handle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Handle.h; sourceTree = "<group>"; };
 		12B8168F1644675800A433E7 /* syslinux_mbr.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = syslinux_mbr.h; sourceTree = "<group>"; };
 		12B816951644675800A433E7 /* EfiFileLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EfiFileLib.h; sourceTree = "<group>"; };
@@ -496,6 +494,7 @@
 		12B816F41644675800A433E7 /* menu.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = menu.c; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.c; };
 		12B816F51644675800A433E7 /* screen.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = screen.c; sourceTree = "<group>"; };
 		12B816F71644675800A433E7 /* refit.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = refit.inf; sourceTree = "<group>"; };
+		12B9CB3218B68D3E00DE7A74 /* egemb_icons.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = egemb_icons.h; sourceTree = "<group>"; };
 		12BAE0DF17C8B9BA00288BEB /* Clover.dsc */ = {isa = PBXFileReference; lastKnownFileType = text; name = Clover.dsc; path = ../Clover.dsc; sourceTree = "<group>"; };
 		12BAE0E017C8B9BA00288BEB /* Clover.fdf */ = {isa = PBXFileReference; lastKnownFileType = text; name = Clover.fdf; path = ../Clover.fdf; sourceTree = "<group>"; };
 		12BAE0E217C8B9C600288BEB /* CloverPkg.dec */ = {isa = PBXFileReference; lastKnownFileType = text; name = CloverPkg.dec; path = ../CloverPkg.dec; sourceTree = "<group>"; };
@@ -1603,8 +1602,7 @@
 		12B8168A1644675800A433E7 /* include */ = {
 			isa = PBXGroup;
 			children = (
-				12B8168C1644675800A433E7 /* egemb_back_selected_small.h */,
-				12B8168D1644675800A433E7 /* egemb_refit_banner.h */,
+				12B9CB3218B68D3E00DE7A74 /* egemb_icons.h */,
 				12B8168E1644675800A433E7 /* Handle.h */,
 				12B8168F1644675800A433E7 /* syslinux_mbr.h */,
 			);
