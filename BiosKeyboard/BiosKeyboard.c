@@ -217,6 +217,7 @@ BiosKeyboardDriverBindingStart (
   EFI_STATUS_CODE_VALUE                     StatusCode;
 	EFI_DEVICE_PATH_PROTOCOL                  *ParentDevicePath;
 
+  ZeroMem (&Regs, sizeof (EFI_IA32_REGISTER_SET));
 
   BiosKeyboardPrivate = NULL;
   IsaIo = NULL;
@@ -1814,6 +1815,8 @@ BiosKeyboardTimerHandler (
   EFI_KEY_DATA                       KeyData;
   LIST_ENTRY                         *Link;
   BIOS_KEYBOARD_CONSOLE_IN_EX_NOTIFY *CurrentNotify;
+
+  ZeroMem (&Regs, sizeof (EFI_IA32_REGISTER_SET));
 
   BiosKeyboardPrivate = Context;
 
