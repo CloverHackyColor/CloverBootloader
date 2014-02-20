@@ -41,11 +41,32 @@ typedef struct DTMemMapEntry DTMemMapEntry;
 
 
 extern EFI_PHYSICAL_ADDRESS gRelocBase;
+extern BOOLEAN gHibernateWake;
+extern UINTN					gLastMemoryMapSize;
+extern EFI_MEMORY_DESCRIPTOR	*gLastMemoryMap;
+extern UINTN					gLastDescriptorSize;
+extern UINT32					gLastDescriptorVersion;
 
 EFI_STATUS PrepareJumpFromKernel(VOID);
 EFI_STATUS KernelEntryPatchJump(UINT32 KernelEntry);
-EFI_STATUS KernelEntryFromMachOPatchJump(VOID);
+EFI_STATUS KernelEntryFromMachOPatchJump(VOID *MachOImage, UINTN SlideAddr);
 //EFI_STATUS KernelEntryPatchJumpFill(VOID);
 EFI_STATUS KernelEntryPatchHalt(UINT32 KernelEntry);
 EFI_STATUS KernelEntryPatchZero(UINT32 KernelEntry);
+EFI_STATUS
+ExecSetVirtualAddressesToMemMap(
+                                IN UINTN			MemoryMapSize,
+                                IN UINTN			DescriptorSize,
+                                IN UINT32			DescriptorVersion,
+                                IN EFI_MEMORY_DESCRIPTOR	*MemoryMap
+                                );
+
+/** Fixes stuff for booting with relocation block. Called when boot.efi jumps to kernel. */
+UINTN FixBootingWithRelocBlock(UINTN bootArgs, BOOLEAN ModeX64);
+
+/** Fixes stuff for booting without relocation block. Called when boot.efi jumps to kernel. */
+UINTN FixBootingWithoutRelocBlock(UINTN bootArgs, BOOLEAN ModeX64);
+
+/** Fixes stuff for hibernate wake booting without relocation block. Called when boot.efi jumps to kernel. */
+UINTN FixHibernateWakeWithoutRelocBlock(UINTN imageHeaderPage, BOOLEAN ModeX64);
 

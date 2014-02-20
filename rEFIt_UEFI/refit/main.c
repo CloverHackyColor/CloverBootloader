@@ -1040,15 +1040,19 @@ static VOID ScanDriverDir(IN CHAR16 *Path, OUT EFI_HANDLE **DriversToConnect, OU
     if (Skip) {
       continue;
     }
-    // either AptioFix or LowMemFix but not both
-    if (StrStr(DirEntry->FileName, L"AptioFix") != NULL) {
-      if (gDriversFlags.MemFixLoaded) {
+    // either AptioFix, AptioFix2 or LowMemFix
+    if (StrStr(DirEntry->FileName, L"AptioFixDrv") != NULL) {
+      if (gDriversFlags.MemFixLoaded || gDriversFlags.AptioFix2Loaded) {
         continue; //if other driver loaded then skip new one
       }
-      gDriversFlags.MemFixLoaded = TRUE;
       gDriversFlags.AptioFixLoaded = TRUE;
+    } else if (StrStr(DirEntry->FileName, L"AptioFix2Drv") != NULL) {
+      if (gDriversFlags.MemFixLoaded || gDriversFlags.AptioFixLoaded) {
+        continue; //if other driver loaded then skip new one
+      }
+      gDriversFlags.AptioFix2Loaded = TRUE;
     } else if (StrStr(DirEntry->FileName, L"LowMemFix") != NULL) {
-      if (gDriversFlags.MemFixLoaded) {
+      if (gDriversFlags.AptioFixLoaded || gDriversFlags.AptioFix2Loaded) {
         continue; //if other driver loaded then skip new one
       }
       gDriversFlags.MemFixLoaded = TRUE;

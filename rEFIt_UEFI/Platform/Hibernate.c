@@ -668,6 +668,14 @@ PrepareHibernation (IN REFIT_VOLUME *Volume)
     DBG("Options 0082 was not deleted: %r\n", Status);
   }
 
+  // if boot-switch-vars exists (NVRAM working), then use it
+  Status = GetVariable2 (L"boot-switch-vars", &gEfiAppleBootGuid, &Value, &Size);
+  if (!EFI_ERROR(Status)) {
+    // leave it as is
+    DBG(" boot-switch-vars present\n");
+    return TRUE;
+  }
+  
   // if IOHibernateRTCVariables exists (NVRAM working), then copy it to boot-switch-vars
   // else (no NVRAM) set boot-switch-vars to dummy one
   Status = GetVariable2 (L"IOHibernateRTCVariables", &gEfiAppleBootGuid, &Value, &Size);

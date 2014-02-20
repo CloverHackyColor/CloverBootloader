@@ -19,6 +19,7 @@
 #include "Lib.h"
 #include "FlatDevTree/device_tree.h"
 #include "Mach-O/Mach-O.h"
+#include "Hibernate.h"
 #include "NVRAMDebug.h"
 
 
@@ -39,10 +40,17 @@
 #endif
 
 
+// buffer and size for original kernel entry code
+UINT8 gOrigKernelCode[32];
+UINTN gOrigKernelCodeSize = 0;
+
+
 // buffer for virtual address map - only for RT areas
 // note: DescriptorSize is usually > sizeof(EFI_MEMORY_DESCRIPTOR)
 // so this buffer can hold less then 64 descriptors
 EFI_MEMORY_DESCRIPTOR gVirtualMemoryMap[64];
+UINTN gVirtualMapSize = 0;
+UINTN gVirtualMapDescriptorSize = 0;
 
 
 void PrintSample2(unsigned char *sample, int size) {
@@ -53,6 +61,11 @@ void PrintSample2(unsigned char *sample, int size) {
 	}
 }
 
+
+
+//
+// Kernel entry patching
+//
 
 /** Saves current 64 bit state and copies MyAsmCopyAndJumpToKernel32 function to higher mem
   * (for copying kernel back to proper place and jumping back to it).
@@ -121,25 +134,33 @@ EFI_STATUS
 KernelEntryPatchJump(UINT32 KernelEntry)
 {
 	EFI_STATUS				Status;
-    UINTN                   Size;
 	
 	Status = EFI_SUCCESS;
 
 	DBG("KernelEntryPatchJump KernelEntry (reloc): %lx (%lx)\n", KernelEntry, KernelEntry + gRelocBase);
 	
     // Size of MyAsmEntryPatchCode code
-    Size = (UINT8*)&MyAsmEntryPatchCodeEnd - (UINT8*)&MyAsmEntryPatchCode;
+    gOrigKernelCodeSize = (UINT8*)&MyAsmEntryPatchCodeEnd - (UINT8*)&MyAsmEntryPatchCode;
+	if (gOrigKernelCodeSize > sizeof(gOrigKernelCode)) {
+		DBG("KernelEntryPatchJump: not enough space for orig. kernel entry code: size needed: %d\n", gOrigKernelCodeSize);
+		return EFI_NOT_FOUND;
+	}
     
-	DBG("MyAsmEntryPatchCode: %p, Size: %d, MyAsmJumpFromKernel: %p\n", &MyAsmEntryPatchCode, Size, &MyAsmJumpFromKernel);
+	DBG("MyAsmEntryPatchCode: %p, Size: %d, MyAsmJumpFromKernel: %p\n", &MyAsmEntryPatchCode, gOrigKernelCodeSize, &MyAsmJumpFromKernel);
     
+    // Save original kernel entry code
+    CopyMem((VOID *)gOrigKernelCode, (VOID *)(UINTN)KernelEntry, gOrigKernelCodeSize);
+	
     // Copy MyAsmEntryPatchCode code to kernel entry address
-    CopyMem((VOID *)(UINTN)KernelEntry, (VOID *)&MyAsmEntryPatchCode, Size);
-
-	DBG("Entry point %p is now: ", KernelEntry);
+    CopyMem((VOID *)(UINTN)KernelEntry, (VOID *)&MyAsmEntryPatchCode, gOrigKernelCodeSize);
+	
+	DBG("Entry point %x is now: ", KernelEntry);
 	PrintSample2((UINT8 *)(UINTN) KernelEntry, 12);
 	DBG("\n");
 	
 	// pass KernelEntry to assembler funcs
+	// this is not needed really, since asm code will determine
+	// kernel entry address from the stack
 	AsmKernelEntry = KernelEntry;
 	
 	return Status;
@@ -147,13 +168,11 @@ KernelEntryPatchJump(UINT32 KernelEntry)
 
 /** Reads kernel entry from Mach-O load command and patches it with jump to MyAsmJumpFromKernel. */
 EFI_STATUS
-KernelEntryFromMachOPatchJump(VOID)
+KernelEntryFromMachOPatchJump(VOID *MachOImage, UINTN SlideAddr)
 {
-	VOID					*MachOImage;
 	UINTN					KernelEntry;
 	
-	MachOImage = (VOID*)(UINTN)(gRelocBase + 0x200000);
-	DBG("KernelEntryFromMachOPatchJump: MachOImage = %p\n", MachOImage);
+	DBG("KernelEntryFromMachOPatchJump: MachOImage = %p, SlideAddr = %x\n", MachOImage, SlideAddr);
 	
 	KernelEntry = MachOGetEntryAddress(MachOImage);
 	DBG("KernelEntryFromMachOPatchJump: KernelEntry = %x\n", KernelEntry);
@@ -162,48 +181,15 @@ KernelEntryFromMachOPatchJump(VOID)
 		return EFI_NOT_FOUND;
 	}
 	
+	if (SlideAddr > 0) {
+		KernelEntry += SlideAddr;
+		DBG("KernelEntryFromMachOPatchJump: Slided KernelEntry = %x\n", KernelEntry);
+	}
+	
 	return KernelEntryPatchJump((UINT32)KernelEntry);
 }
 
-/** Fills every 8 bytes from 0x10.0000 - 0x40.0000 with jump to MyAsmJumpFromKernel (AsmFuncsX64).
-  * This will then call KernelEntryPatchJumpBack.
-  *
-  * Note: This is a trick that covers different OSXes, but may not work in general.
-  * We are assuming here that kernel entry is between 0x10.0000 - 0x40.0000 and
-  * that it is 8-byte aligned. Kernel sources ususally have this entry
-  * forced to be 4-byte aligned, but in practice it seems that they are 8-byte aligned.
-  */
-/* not working any more and not needed
-EFI_STATUS
-KernelEntryPatchJumpFill(VOID)
-{
-	EFI_STATUS				Status = EFI_SUCCESS;
-	UINT64					*Start = (UINT64*)(UINTN)0x100000;
-	UINT8					*p;
-	UINTN					Length =  0x300000;
-	UINT64					JumpCode;
-	UINTN					MyAsmJumpFromKernelAddr;
-	
-	DBG("KernelEntryPatchJumpFill: %p - %p\n", Start, Start + Length);
-	
-	// patch with 32 bit opcode for:
-	//   mov ecx, MyAsmJumpFromKernel
-	//   call ecx	
-	// = B9, <4 bytes address of MyAsmJumpFromKernel>, FF, D1
-	p = (UINT8*)Start;
-	p[0] = 0xB9;
-	MyAsmJumpFromKernelAddr = (UINTN)MyAsmJumpFromKernel;
-	CopyMem((VOID *) (p + 1), (VOID *)&MyAsmJumpFromKernelAddr, 4);
-	p[5] = 0xFF; p[6] = 0xD1;
-	
-	// pick up jump code in JumpCode and spread it around
-	JumpCode = *Start;
-	SetMem64(Start, Length, JumpCode); 
-	
-	return Status;
-}
-*/
-/** Patches kernel entry point HLT - used for testing to cause system halt. */
+/** Patches kernel entry point with HLT - used for testing to cause system halt. */
 EFI_STATUS
 KernelEntryPatchHalt(UINT32 KernelEntry)
 {
@@ -240,18 +226,32 @@ KernelEntryPatchZero (UINT32 KernelEntry)
 	return Status;
 }
 
+
 //
-// Some UEFIs are converting pointers to virtual addresses even if they do not
-// point to regions with RT flag. This means that those UEFIs are using
-// Desc->VirtualStart even for non-RT regions. Linux had issues with this:
-// http://git.kernel.org/?p=linux/kernel/git/torvalds/linux-2.6.git;a=commit;h=7cb00b72876ea2451eb79d468da0e8fb9134aa8a
-// They are doing it Windows way now - copying RT descriptors to separate
-// mem map and passing that stripped map to SetVirtualAddressMap().
-// We'll do the same, although it seems that just assigning
-// VirtualStart = PhysicalStart for non-RT areas also does the job.
+// Boot fixes
 //
 
-/** Copies RT flagged areas to separate memmap and calls SetVirtualAddressMap() only with tat partial memmap. */
+
+/** Copies RT flagged areas to separate memmap, defines virtual to phisycal address mapping
+ * and calls SetVirtualAddressMap() only with that partial memmap.
+ *
+ * About partial memmap:
+ * Some UEFIs are converting pointers to virtual addresses even if they do not
+ * point to regions with RT flag. This means that those UEFIs are using
+ * Desc->VirtualStart even for non-RT regions. Linux had issues with this:
+ * http://git.kernel.org/?p=linux/kernel/git/torvalds/linux-2.6.git;a=commit;h=7cb00b72876ea2451eb79d468da0e8fb9134aa8a
+ * They are doing it Windows way now - copying RT descriptors to separate
+ * mem map and passing that stripped map to SetVirtualAddressMap().
+ * We'll do the same, although it seems that just assigning
+ * VirtualStart = PhysicalStart for non-RT areas also does the job.
+ *
+ * About virtual to phisycal mappings:
+ * Also adds virtual to phisycal address mappings for RT areas. This is needed since
+ * SetVirtualAddressMap() does not work on my Aptio without that. Probably because some driver
+ * has a bug and is trying to access new virtual addresses during the change.
+ * Linux and Windows are doing the same thing and problem is
+ * not visible there.
+ */
 EFI_STATUS
 ExecSetVirtualAddressesToMemMap(
 	IN UINTN			MemoryMapSize,
@@ -264,21 +264,26 @@ ExecSetVirtualAddressesToMemMap(
 	UINTN					Index;
 	EFI_MEMORY_DESCRIPTOR	*Desc;
 	EFI_MEMORY_DESCRIPTOR	*VirtualDesc;
-	UINTN					VirtualMapSize;
 	EFI_STATUS				Status;
+	PAGE_MAP_AND_DIRECTORY_POINTER	*PageTable;
+	UINTN					Flags;
 	
 	Desc = MemoryMap;
 	NumEntries = MemoryMapSize / DescriptorSize;
 	VirtualDesc = gVirtualMemoryMap;
-	VirtualMapSize = 0;
+	gVirtualMapSize = 0;
+	gVirtualMapDescriptorSize = DescriptorSize;
 	DBG("ExecSetVirtualAddressesToMemMap: Size=%d, Addr=%p, DescSize=%d\n", MemoryMapSize, MemoryMap, DescriptorSize);
+	
+	// get current VM page table
+	GetCurrentPageTable(&PageTable, &Flags);
 	
 	for (Index = 0; Index < NumEntries; Index++) {
 		
 		if ((Desc->Attribute & EFI_MEMORY_RUNTIME) != 0) {
 			
 			// check if there is enough space in gVirtualMemoryMap
-			if (VirtualMapSize + DescriptorSize > sizeof(gVirtualMemoryMap)) {
+			if (gVirtualMapSize + DescriptorSize > sizeof(gVirtualMemoryMap)) {
 				DBGnvr("ERROR: too much mem map RT areas\n");
 				return EFI_OUT_OF_RESOURCES;
 			}
@@ -287,151 +292,135 @@ ExecSetVirtualAddressesToMemMap(
 			//DBGnvr(" %lx (%lx)\n", Desc->PhysicalStart, Desc->NumberOfPages);
 			CopyMem((VOID*)VirtualDesc, (VOID*)Desc, DescriptorSize);
 			
+			// define virtual to phisical mapping
+			DBG("Map pages: %lx (%x) -> %lx\n", Desc->VirtualStart, Desc->NumberOfPages, Desc->PhysicalStart);
+			DBGnvr("Map pages: %lx (%x) -> %lx\n", Desc->VirtualStart, Desc->NumberOfPages, Desc->PhysicalStart);
+			VmMapVirtualPages(PageTable, Desc->VirtualStart, Desc->NumberOfPages, Desc->PhysicalStart);
+			
 			// next gVirtualMemoryMap slot
 			VirtualDesc = NEXT_MEMORY_DESCRIPTOR(VirtualDesc, DescriptorSize);
-			VirtualMapSize += DescriptorSize;
+			gVirtualMapSize += DescriptorSize;
 		}
 		
 		Desc = NEXT_MEMORY_DESCRIPTOR(Desc, DescriptorSize);
 	}
 	
+	VmFlashCaches();
+	
 	DBGnvr("ExecSetVirtualAddressesToMemMap: Size=%d, Addr=%p, DescSize=%d\nSetVirtualAddressMap ... ",
-		   VirtualMapSize, MemoryMap, DescriptorSize);
-	Status = gRT->SetVirtualAddressMap(VirtualMapSize, DescriptorSize, DescriptorVersion, gVirtualMemoryMap);
+		   gVirtualMapSize, MemoryMap, DescriptorSize);
+	Status = gRT->SetVirtualAddressMap(gVirtualMapSize, DescriptorSize, DescriptorVersion, gVirtualMemoryMap);
 	DBGnvr("%r\n", Status);
 	
 	return Status;
 }
 
 
-/** Assignes virtual addresses to runtime areas in memory map
-  * and adds virtual to physical mapping to system's pagemap
-  * because calling of SetVirtualAddressMap() does not work
-  * on my Aptio without that. Probably because some driver
-  * has a bug and is trying to access new virtual addresses
-  * during the change.
-  * Linux and Windows are doing the same thing and problem is
-  * not visible there.
-  */
+/** Assignes OSX virtual addresses to runtime areas in memory map. */
 VOID
-AssignVirtualAddressesToMemMap(BootArgs *BA)
+AssignVirtualAddressesToMemMap(
+							   IN UINTN			MemoryMapSize,
+							   IN UINTN			DescriptorSize,
+							   IN UINT32		DescriptorVersion,
+							   IN EFI_MEMORY_DESCRIPTOR	*MemoryMap,
+							   IN EFI_PHYSICAL_ADDRESS	KernelRTAddress
+							   )
 {
-	UINTN					MemoryMapSize;
-	EFI_MEMORY_DESCRIPTOR	*MemoryMap;
-	UINTN					DescriptorSize;
-	EFI_PHYSICAL_ADDRESS	KernelRTBlock;
-	
 	UINTN					NumEntries;
 	UINTN					Index;
 	EFI_MEMORY_DESCRIPTOR	*Desc;
 	UINTN					BlockSize;
-	UINTN					PhysicalEnd;
-	PAGE_MAP_AND_DIRECTORY_POINTER	*PageTable;
-	UINTN					Flags;
-	EFI_STATUS				Status;
-	
-	MemoryMapSize = *BA->MemoryMapSize;
-	MemoryMap = (EFI_MEMORY_DESCRIPTOR*)(UINTN)(*BA->MemoryMap);
-	DescriptorSize = *BA->MemoryMapDescriptorSize;
-	KernelRTBlock = EFI_PAGES_TO_SIZE(*BA->efiRuntimeServicesPageStart);
 	
 	Desc = MemoryMap;
 	NumEntries = MemoryMapSize / DescriptorSize;
 	DBG("AssignVirtualAddressesToMemMap: Size=%d, Addr=%p, DescSize=%d\n", MemoryMapSize, MemoryMap, DescriptorSize);
 	DBGnvr("AssignVirtualAddressesToMemMap: Size=%d, Addr=%p, DescSize=%d\n", MemoryMapSize, MemoryMap, DescriptorSize);
 
-	// get current VM page table
-	GetCurrentPageTable(&PageTable, &Flags);
-	
 	for (Index = 0; Index < NumEntries; Index++) {
 		BlockSize = EFI_PAGES_TO_SIZE((UINTN)Desc->NumberOfPages);
-		PhysicalEnd = Desc->PhysicalStart + BlockSize;
-		//    if ((Desc->PhysicalStart >= 0x9e000) && (Desc->PhysicalStart < 0xa0000)) {
-		if ((Desc->PhysicalStart < 0xa0000) && (PhysicalEnd >= 0x9e000)) {
-			Desc->Type = EfiACPIMemoryNVS;
-			Desc->Attribute = 0;
-		}
 		
 		// assign virtual addresses to all EFI_MEMORY_RUNTIME marked pages (including MMIO)
 		if ((Desc->Attribute & EFI_MEMORY_RUNTIME) != 0) {
 //			BlockSize = EFI_PAGES_TO_SIZE((UINTN)Desc->NumberOfPages);
 			if (Desc->Type == EfiRuntimeServicesCode || Desc->Type == EfiRuntimeServicesData) {
 				// for RT block - assign from kernel block
-				Desc->VirtualStart = KernelRTBlock + 0xffffff8000000000;
-				DBG("Adding mapping 0x%x pages: VA %lx => PH %lx ", Desc->NumberOfPages, Desc->VirtualStart, Desc->PhysicalStart);
-				//DBGnvr(" %s %lx => %lx (0x%x)\n", EfiMemoryTypeDesc[Desc->Type], Desc->VirtualStart, Desc->PhysicalStart, Desc->NumberOfPages);
-				Status = VmMapVirtualPages(PageTable, Desc->VirtualStart, Desc->NumberOfPages, Desc->PhysicalStart);
-				DBG("%r\n", Status);
+				Desc->VirtualStart = KernelRTAddress + 0xffffff8000000000;
 				// next kernel block
-				KernelRTBlock += BlockSize;
+				KernelRTAddress += BlockSize;
 			} else if (Desc->Type == EfiMemoryMappedIO || Desc->Type == EfiMemoryMappedIOPortSpace) {
 				// for MMIO block - assign from kernel block
-				Desc->VirtualStart = KernelRTBlock + 0xffffff8000000000;
-				DBG("Adding mapping 0x%x pages: VA %lx => PH %lx ", Desc->NumberOfPages, Desc->VirtualStart, Desc->PhysicalStart);
-				//DBGnvr(" %s %lx => %lx (0x%x)\n", EfiMemoryTypeDesc[Desc->Type], Desc->VirtualStart, Desc->PhysicalStart, Desc->NumberOfPages);
-				Status = VmMapVirtualPages(PageTable, Desc->VirtualStart, Desc->NumberOfPages, Desc->PhysicalStart);
-				DBG("%r\n", Status);
+				Desc->VirtualStart = KernelRTAddress + 0xffffff8000000000;
 				// next kernel block
-				KernelRTBlock += BlockSize;
+				KernelRTAddress += BlockSize;
 			} else {
 				// runtime flag, but not RT and not MMIO - what now???
 				DBG(" %s with RT flag: %lx (0x%x) - ???\n", EfiMemoryTypeDesc[Desc->Type], Desc->PhysicalStart, Desc->NumberOfPages);
 				DBGnvr(" %s with RT flag: %lx (0x%x) - ???\n", EfiMemoryTypeDesc[Desc->Type], Desc->PhysicalStart, Desc->NumberOfPages);
 			}
-			DBG("=> 0x%lx -> 0x%lx\n", Desc->PhysicalStart, Desc->VirtualStart);
+			//DBGnvr("=> 0x%lx -> 0x%lx\n", Desc->PhysicalStart, Desc->VirtualStart);
 		}
 		
 		Desc = NEXT_MEMORY_DESCRIPTOR(Desc, DescriptorSize);
-		//WaitForKeyPress(L"End: press a key to continue\n");
 	}
-	VmFlashCaches();
-	//WaitForKeyPress(L"End: press a key to continue\n");
 }
 
 /** Copies RT code and data blocks to reserved area inside kernel boot image. */
 VOID
-DefragmentRuntimeServices(BootArgs *BA)
+DefragmentRuntimeServices(
+						  IN UINTN			MemoryMapSize,
+						  IN UINTN			DescriptorSize,
+						  IN UINT32			DescriptorVersion,
+						  IN EFI_MEMORY_DESCRIPTOR	*MemoryMap,
+						  IN OUT UINT32		*EfiSystemTable
+						  )
 {
 	UINTN					NumEntries;
 	UINTN					Index;
 	EFI_MEMORY_DESCRIPTOR	*Desc;
-	UINTN					DescriptorSize;
 	UINT8					*KernelRTBlock;
 	UINTN					BlockSize;
 	
-	Desc = (EFI_MEMORY_DESCRIPTOR*)(UINTN)(*BA->MemoryMap);
-	DescriptorSize = *BA->MemoryMapDescriptorSize;
-	NumEntries = *BA->MemoryMapSize / *BA->MemoryMapDescriptorSize;
+	Desc = MemoryMap;
+	NumEntries = MemoryMapSize / DescriptorSize;
 	
-	DBG("DefragmentRuntimeServices: pBootArgs->efiSystemTable = %x\n", *BA->efiSystemTable);
+	DBG("DefragmentRuntimeServices: pBootArgs->efiSystemTable = %x\n", *EfiSystemTable);
+	DBGnvr("DefragmentRuntimeServices: pBootArgs->efiSystemTable = %x\n", *EfiSystemTable);
 	
 	for (Index = 0; Index < NumEntries; Index++) {
 		// defragment only RT blocks
 		if (Desc->Type == EfiRuntimeServicesCode || Desc->Type == EfiRuntimeServicesData) {
-			// phisycal addr from virtual
+			// physical addr from virtual
 			KernelRTBlock = (UINT8*)(UINTN)(Desc->VirtualStart & 0x7FFFFFFFFF);
 
 			BlockSize = EFI_PAGES_TO_SIZE((UINTN)Desc->NumberOfPages);
 			
 			DBG("-Copy %p <- %p, size=0x%lx\n", KernelRTBlock + gRelocBase, (VOID*)(UINTN)Desc->PhysicalStart, BlockSize);
 			CopyMem(KernelRTBlock + gRelocBase, (VOID*)(UINTN)Desc->PhysicalStart, BlockSize);
+			
+			// boot.efi zeros old RT areas, but we must not do that because that brakes sleep
+			// on some UEFIs. why?
 			//SetMem((VOID*)(UINTN)Desc->PhysicalStart, BlockSize, 0);
 						
-			if (Desc->PhysicalStart <= *BA->efiSystemTable &&  *BA->efiSystemTable < (Desc->PhysicalStart + BlockSize)) {
+			if (Desc->PhysicalStart <= *EfiSystemTable &&  *EfiSystemTable < (Desc->PhysicalStart + BlockSize)) {
 				// block contains sys table - update bootArgs with new address
-				*BA->efiSystemTable = (UINT32)((UINTN)KernelRTBlock + (*BA->efiSystemTable - Desc->PhysicalStart));
-				DBG("new pBootArgs->efiSystemTable = %x\n", *BA->efiSystemTable);
+				*EfiSystemTable = (UINT32)((UINTN)KernelRTBlock + (*EfiSystemTable - Desc->PhysicalStart));
+				DBG("new pBootArgs->efiSystemTable = %x\n", *EfiSystemTable);
+				DBGnvr("new pBootArgs->efiSystemTable = %x\n", *EfiSystemTable);
 			}
 			
 			// mark old RT block in MemMap as free mem
-			Desc->Type = EfiConventionalMemory;
+			//Desc->Type = EfiConventionalMemory;
+			
+			// mark old RT block in MemMap as ACPI NVS
+			// if sleep is broken if if those areas are zeroed, maybe
+			// it's safer to mark it ACPI NVS then make it free
+			Desc->Type = EfiACPIMemoryNVS;
+			
+			// and remove RT attribute
 			Desc->Attribute = Desc->Attribute & (~EFI_MEMORY_RUNTIME);
 		}
 		Desc = NEXT_MEMORY_DESCRIPTOR(Desc, DescriptorSize);
 	}
-	//WaitForKeyPress(L"END press a key to continue\n");
-
-	// no need to further fix mem map - OSX is fine with RT stuff reported only in bootArgs
 }
 
 /** Fixes RT vars in bootArgs, virtualizes and defragments RT blocks. */
@@ -463,16 +452,12 @@ RuntimeServicesFix(BootArgs *BA)
 		*BA->efiRuntimeServicesPageStart, *BA->efiRuntimeServicesPageCount, *BA->efiRuntimeServicesVirtualPageStart);
 	
 	// assign virtual addresses
-	AssignVirtualAddressesToMemMap(BA);
+	AssignVirtualAddressesToMemMap(MemoryMapSize, DescriptorSize, DescriptorVersion, MemoryMap, EFI_PAGES_TO_SIZE(*BA->efiRuntimeServicesPageStart));
 	
 	//PrintMemMap(MemoryMapSize, MemoryMap, DescriptorSize, DescriptorVersion);
 	//PrintSystemTable(gST);
 	
-	// virtualize them
-	//DBGnvr("SetVirtualAddressMap ... ");
-	//Status = gRT->SetVirtualAddressMap(MemoryMapSize, DescriptorSize, DescriptorVersion, MemoryMap);
-	//DBGnvr("%r\n", Status);
-	
+	// virtualize RT services with all needed fixes
 	Status = ExecSetVirtualAddressesToMemMap(MemoryMapSize, DescriptorSize, DescriptorVersion, MemoryMap);
 	
 	//DBG("SetVirtualAddressMap() = Status: %r\n", Status);
@@ -483,8 +468,7 @@ RuntimeServicesFix(BootArgs *BA)
 	//PrintSystemTable(gST);
 	
 	// and defragment
-	DBGnvr("DefragmentRuntimeServices ...\n");
-	DefragmentRuntimeServices(BA);
+	DefragmentRuntimeServices(MemoryMapSize, DescriptorSize, DescriptorVersion, MemoryMap, BA->efiSystemTable);
 }
 
 /** DevTree contains /chosen/memory-map with properties with 8 byte values
@@ -566,10 +550,100 @@ DevTreeFix(BootArgs *BA)
 	
 }
 
-/** Callback called when boot.efi jumps to kernel. */
+/** boot.efi zerod original RT areas after they were relocated to new place.
+ *  This breaks sleep on some UEFIs and we'll return the content back.
+ *  We'll find previous RT areas by reusing gVirtualMemoryMap.
+ *
+ * If MemoryMap is passed also (it is in regular boot), then we'll
+ * mark original RT areas as ACPI NVS. Without that I can not do more
+ * then one hibernate/wake cycle.
+ * It seems that my UEFI contains something needed for sleep in those
+ * RT areas and system needs it to stay on that place. It would be good to know
+ * what is happening here.
+ */
+VOID
+ReturnPreviousRTAreasContent(
+							 IN UINTN		MemoryMapSize,
+							 IN EFI_MEMORY_DESCRIPTOR	*MemoryMap
+					 )
+{
+	UINTN					NumEntries;
+	UINTN					NumEntries2;
+	UINTN					Index;
+	UINTN					Index2;
+	UINTN					BlockSize;
+	EFI_MEMORY_DESCRIPTOR	*Desc;
+	EFI_MEMORY_DESCRIPTOR	*Desc2;
+	EFI_PHYSICAL_ADDRESS	NewPhysicalStart;
+	
+	Desc = gVirtualMemoryMap;
+	NumEntries = gVirtualMapSize / gVirtualMapDescriptorSize;
+	
+	NumEntries2 = MemoryMapSize / gVirtualMapDescriptorSize;
+    
+	for (Index = 0; Index < NumEntries; Index++) {
+		if ((Desc->Attribute & EFI_MEMORY_RUNTIME) != 0) {
+			if (Desc->Type == EfiRuntimeServicesCode || Desc->Type == EfiRuntimeServicesData) {
+				// Desc->VirtualStart contains virtual address of new area
+				// and physical address for new area can be find from it.
+				NewPhysicalStart = Desc->VirtualStart & 0x7FFFFFFFFF;
+				BlockSize = EFI_PAGES_TO_SIZE((UINTN)Desc->NumberOfPages);
+				DBG("-Copy %p <- %p, size=0x%lx\n", (VOID*)(UINTN)Desc->PhysicalStart, (VOID*)(UINTN)NewPhysicalStart, BlockSize);
+				CopyMem((VOID*)(UINTN)Desc->PhysicalStart, (VOID*)(UINTN)NewPhysicalStart, BlockSize);
+				
+				// if full memory map is passed then mark old RT block in OSX MemMap as ACPI NVS in it
+				if (MemoryMap) {
+					Desc2 = MemoryMap;
+					for (Index2 = 0; Index2 < NumEntries2; Index2++) {
+						if (Desc->PhysicalStart == Desc2->PhysicalStart) {
+							Desc2->Type = EfiACPIMemoryNVS;
+							//Desc2->Type = EfiReservedMemoryType;
+						}
+						Desc2 = NEXT_MEMORY_DESCRIPTOR(Desc2, gVirtualMapDescriptorSize);
+					}
+				}
+			}
+		}
+		Desc = NEXT_MEMORY_DESCRIPTOR(Desc, gVirtualMapDescriptorSize);
+	}
+}
+
+/** Marks RT_code and RT_data as normal memory.
+ *  Used to avoid OSX marking RT_code regions as non-writable.
+ *  Needed because some buggy UEFIs RT drivers uses static variables instead of
+ *  runtime pool memory and then writing to such variables causes GPT in OSX.
+ */
+VOID
+RemoveRTFlagMappings(
+					 IN UINTN		MemoryMapSize,
+					 IN UINTN		DescriptorSize,
+					 IN UINT32		DescriptorVersion,
+					 IN EFI_MEMORY_DESCRIPTOR	*MemoryMap
+					 )
+{
+	UINTN					NumEntries;
+	UINTN					Index;
+	EFI_MEMORY_DESCRIPTOR	*Desc;
+	
+	Desc = MemoryMap;
+	NumEntries = MemoryMapSize / DescriptorSize;
+    
+	for (Index = 0; Index < NumEntries; Index++) {
+		// assign virtual addresses to all EFI_MEMORY_RUNTIME marked pages (including MMIO)
+		if ((Desc->Attribute & EFI_MEMORY_RUNTIME) != 0) {
+			if (Desc->Type == EfiRuntimeServicesCode || Desc->Type == EfiRuntimeServicesData) {
+				DBG("RemoveRTFlagMappings: %lx (%x) -> %lx\n", Desc->VirtualStart, Desc->NumberOfPages, Desc->PhysicalStart);
+				Desc->Attribute = Desc->Attribute & (~EFI_MEMORY_RUNTIME);
+				Desc->Type = EfiConventionalMemory;
+			}
+		}
+		Desc = NEXT_MEMORY_DESCRIPTOR(Desc, DescriptorSize);
+	}
+}
+
+/** Fixes stuff when booting with relocation block. Called when boot.efi jumps to kernel. */
 UINTN
-EFIAPI
-KernelEntryPatchJumpBack(UINTN bootArgs, BOOLEAN ModeX64)
+FixBootingWithRelocBlock(UINTN bootArgs, BOOLEAN ModeX64)
 {
 	VOID					*pBootArgs = (VOID*)bootArgs;
 	BootArgs				*BA;
@@ -579,61 +653,116 @@ KernelEntryPatchJumpBack(UINTN bootArgs, BOOLEAN ModeX64)
 	UINT32					DescriptorVersion;
 	
 	
-	DBG("\nBACK FROM KERNEL: BootArgs = %x, KernelEntry: %x, Kernel called in %s bit mode\n", bootArgs, AsmKernelEntry, (ModeX64 ? L"64" : L"32"));
-	DBGnvr("\nBACK FROM KERNEL: BootArgs = %x, KernelEntry: %x, Kernel called in %s bit mode\n", bootArgs, AsmKernelEntry, (ModeX64 ? L"64" : L"32"));
 	BootArgsPrint(pBootArgs);
 	
 	BA = GetBootArgs(pBootArgs);
 	
-	if (gRelocBase > 0) {
-
-		// make memmap smaller
-		MemoryMapSize = *BA->MemoryMapSize;
-		MemoryMap = (EFI_MEMORY_DESCRIPTOR*)(UINTN)(*BA->MemoryMap);
-		DescriptorSize = *BA->MemoryMapDescriptorSize;
-		DescriptorVersion = *BA->MemoryMapDescriptorVersion;
-		
-		DBG("ShrinkMemMap: Size 0x%lx", MemoryMapSize);
-		DBGnvr("ShrinkMemMap: Size 0x%lx", MemoryMapSize);
-		ShrinkMemMap(&MemoryMapSize, MemoryMap, DescriptorSize, DescriptorVersion);
-		
-		*BA->MemoryMapSize = (UINT32)MemoryMapSize;
-		
-		DBG(" -> 0x%lx\n", MemoryMapSize);
-		DBGnvr(" -> 0x%lx\n", MemoryMapSize);
-		
-		// fix runtime stuff
-		RuntimeServicesFix(BA);
-		
-		// fix some values in dev tree
-		DevTreeFix(BA);
-		
-		// fix boot args
-		DBGnvr("BootArgsFix ...\n");
-		BootArgsFix(BA, gRelocBase);
-		
-		BootArgsPrint(pBootArgs);
+	MemoryMapSize = *BA->MemoryMapSize;
+	MemoryMap = (EFI_MEMORY_DESCRIPTOR*)(UINTN)(*BA->MemoryMap);
+	DescriptorSize = *BA->MemoryMapDescriptorSize;
+	DescriptorVersion = *BA->MemoryMapDescriptorVersion;
 	
-		bootArgs = bootArgs - gRelocBase;
-		pBootArgs = (VOID*)bootArgs;
-		
-		// set vars for copying kernel
-		// note: *BA->kaddr is fixed in BootArgsFix() and points to real kaddr
-		AsmKernelImageStartReloc = *BA->kaddr + (UINT32)gRelocBase;
-		AsmKernelImageStart = *BA->kaddr;
-		AsmKernelImageSize = *BA->ksize;
+	// make memmap smaller
+	DBGnvr("ShrinkMemMap: Size 0x%lx", MemoryMapSize);
+	ShrinkMemMap(&MemoryMapSize, MemoryMap, DescriptorSize, DescriptorVersion);
+	
+	*BA->MemoryMapSize = (UINT32)MemoryMapSize;
+	
+	DBGnvr(" -> 0x%lx\n", MemoryMapSize);
+	
+	// fix runtime stuff
+	RuntimeServicesFix(BA);
+	
+	// fix some values in dev tree
+	DevTreeFix(BA);
+	
+	// fix boot args
+	DBGnvr("BootArgsFix ...\n");
+	BootArgsFix(BA, gRelocBase);
+	
+	BootArgsPrint(pBootArgs);
+	
+	bootArgs = bootArgs - gRelocBase;
+	pBootArgs = (VOID*)bootArgs;
+	
+	// set vars for copying kernel
+	// note: *BA->kaddr is fixed in BootArgsFix() and points to real kaddr
+	AsmKernelImageStartReloc = *BA->kaddr + (UINT32)gRelocBase;
+	AsmKernelImageStart = *BA->kaddr;
+	AsmKernelImageSize = *BA->ksize;
+	
+	return bootArgs;
+}
+
+/** Fixes stuff when booting without relocation block. Called when boot.efi jumps to kernel. */
+UINTN
+FixBootingWithoutRelocBlock(UINTN bootArgs, BOOLEAN ModeX64)
+{
+	UINTN					MemoryMapSize;
+	EFI_MEMORY_DESCRIPTOR	*MemoryMap;
+	UINTN					DescriptorSize;
+	UINT32					DescriptorVersion;
+	
+	// instead of looking into boot args, we'll use
+	// last taken memmap with MOGetMemoryMap().
+	// this makes this kind of booting not dependent on boot args format.
+	MemoryMapSize = gLastMemoryMapSize;
+	MemoryMap = gLastMemoryMap;
+	DescriptorSize = gLastDescriptorSize;
+	DescriptorVersion = gLastDescriptorVersion;
+	
+	// boot.efi zeroed original RT areas, but we need to return them back
+	// to fix sleep on some UEFIs
+	ReturnPreviousRTAreasContent(MemoryMapSize, MemoryMap);
+	
+	// we need to remove RT_code and RT_data flags since they causes GPF on some UEFIs.
+	// OSX maps RT_code as Read+Exec only while faulty frivers writes to their
+	// static vars which are in RT_code
+	RemoveRTFlagMappings(MemoryMapSize, DescriptorSize, DescriptorVersion, MemoryMap);
+	
+	// Restore original kernel entry code
+	CopyMem((VOID *)(UINTN)AsmKernelEntry, (VOID *)gOrigKernelCode, gOrigKernelCodeSize);
+	
+	// no need to copy anything here
+	AsmKernelImageStartReloc = 0x100000;
+	AsmKernelImageStart = 0x100000;
+	AsmKernelImageSize = 0;
+	
+	return bootArgs;
+}
+
+/** Fixes stuff when waking from hibernate without relocation block. Called when boot.efi jumps to kernel. */
+UINTN
+FixHibernateWakeWithoutRelocBlock(UINTN imageHeaderPage, BOOLEAN ModeX64)
+{
+	
+	IOHibernateImageHeader *ImageHeader = (IOHibernateImageHeader *)(UINTN)(imageHeaderPage << EFI_PAGE_SHIFT);
+	
+	
+	// we need to remove memory map handoff. my system restarts if we leave it there
+	// if mem map handoff is not present, then kernel will not map those new rt pages
+	// and that is what we need on our faulty UEFIs.
+	// it's the equivalent to RemoveRTFlagMappings() in normal boot.
+	IOHibernateHandoff *Handoff = (IOHibernateHandoff *)(UINTN)(ImageHeader->handoffPages << EFI_PAGE_SHIFT);
+	while (Handoff->type != kIOHibernateHandoffTypeEnd) {
+		if (Handoff->type == kIOHibernateHandoffTypeMemoryMap) {
+			Handoff->type = kIOHibernateHandoffType;
+			break;
+		}
+		Handoff = (IOHibernateHandoff *)(UINTN)((UINTN)Handoff + sizeof(Handoff) + Handoff->bytecount);
 	}
 	
-	DBG("BACK TO KERNEL: BootArgs = %x, KImgStartReloc = %x, KImgStart = %x, KImgSize = %x\n",
-		bootArgs, AsmKernelImageStartReloc, AsmKernelImageStart, AsmKernelImageSize);
-	DBGnvr("BACK TO KERNEL: BootArgs = %x, KImgStartReloc = %x, KImgStart = %x, KImgSize = %x\n",
-		bootArgs, AsmKernelImageStartReloc, AsmKernelImageStart, AsmKernelImageSize);
+	// boot.efi zeroed original RT areas, but we need to return them back
+	// to fix sleep on some UEFIs
+	ReturnPreviousRTAreasContent(0, NULL);
 	
-	// debug for jumping back to kernel
-	// put HLT to kernel entry point to stop there
-	//SetMem((VOID*)(UINTN)(AsmKernelEntry + gRelocBase), 1, 0xF4);
-	// put 0 to kernel entry point to restart
-	//SetMem64((VOID*)(UINTN)(AsmKernelEntry + gRelocBase), 1, 0);
-		
-	return bootArgs;
+	// Restore original kernel entry code
+	CopyMem((VOID *)(UINTN)AsmKernelEntry, (VOID *)gOrigKernelCode, gOrigKernelCodeSize);
+	
+	// no need to copy anything here
+	AsmKernelImageStartReloc = 0x100000;
+	AsmKernelImageStart = 0x100000;
+	AsmKernelImageSize = 0;
+	
+	return imageHeaderPage;
 }

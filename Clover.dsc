@@ -445,6 +445,7 @@
 
 [Components.X64]
   Clover/OsxAptioFixDrv/OsxAptioFixDrv.inf
+  Clover/OsxAptioFixDrv/OsxAptioFix2Drv.inf
   #Clover/OsxAptioFixDrv/OsxAptioFixDrv.inf {
     #
     # Enable debug output.

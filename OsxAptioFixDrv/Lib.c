@@ -331,6 +331,8 @@ FixMemMap(
 	UINTN					NumEntries;
 	UINTN					Index;
 	EFI_MEMORY_DESCRIPTOR	*Desc;
+	UINTN					BlockSize;
+	UINTN					PhysicalEnd;
 
 	DBG("FixMemMap: Size=%d, Addr=%p, DescSize=%d\n", MemoryMapSize, MemoryMap, DescriptorSize);
 	DBGnvr("FixMemMap ...\n");
@@ -339,6 +341,8 @@ FixMemMap(
 	NumEntries = MemoryMapSize / DescriptorSize;
 	
 	for (Index = 0; Index < NumEntries; Index++) {
+		BlockSize = EFI_PAGES_TO_SIZE((UINTN)Desc->NumberOfPages);
+		PhysicalEnd = Desc->PhysicalStart + BlockSize;
 		
 		//
 		// Some UEFIs end up with "reserved" area with EFI_MEMORY_RUNTIME flag set
@@ -364,7 +368,17 @@ FixMemMap(
 			DBGnvr(" -> %s\n", EfiMemoryTypeDesc[Desc->Type]);
 			*/
 		}
-		
+        
+		//
+        // Fix by Slice - fixes sleep/wake on GB boards.
+        //
+		//    if ((Desc->PhysicalStart >= 0x9e000) && (Desc->PhysicalStart < 0xa0000)) {
+		if ((Desc->PhysicalStart < 0xa0000) && (PhysicalEnd >= 0x9e000)) {
+			Desc->Type = EfiACPIMemoryNVS;
+			Desc->Attribute = 0;
+		}
+        
+        
 		//
 		// Also do some checking
 		//
