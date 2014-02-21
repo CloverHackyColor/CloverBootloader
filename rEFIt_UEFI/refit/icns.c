@@ -104,6 +104,34 @@ EG_IMAGE * BuiltinIcon(IN UINTN Id)
     if (!BuiltinIconTable[Id].Image) {
       if (Id == BUILTIN_ICON_POINTER) {
         BuiltinIconTable[Id].Image = egDecodePNG(&emb_pointer[0], sizeof(emb_pointer), 32, TRUE);
+      } else if (Id == BUILTIN_ICON_FUNC_ABOUT) {
+        BuiltinIconTable[Id].Image = egDecodePNG(&emb_func_about[0], sizeof(emb_func_about), 32, TRUE);
+      } else if (Id == BUILTIN_ICON_FUNC_OPTIONS) {
+        BuiltinIconTable[Id].Image = egDecodePNG(&emb_func_options[0], sizeof(emb_func_options), 32, TRUE);
+      } else if (Id == BUILTIN_ICON_FUNC_CLOVER) {
+        BuiltinIconTable[Id].Image = egDecodePNG(&emb_func_clover[0], sizeof(emb_func_clover), 32, TRUE);
+      } else if (Id == BUILTIN_ICON_FUNC_SECURE_BOOT) {
+        BuiltinIconTable[Id].Image = egDecodePNG(&emb_func_secureboot[0], sizeof(emb_func_secureboot), 32, TRUE);
+      } else if (Id == BUILTIN_ICON_FUNC_SECURE_BOOT_CONFIG) {
+        BuiltinIconTable[Id].Image = egDecodePNG(&emb_func_secureboot_config[0], sizeof(emb_func_secureboot_config), 32, TRUE);
+      } else if (Id == BUILTIN_ICON_FUNC_RESET) {
+        BuiltinIconTable[Id].Image = egDecodePNG(&emb_func_reset[0], sizeof(emb_func_reset), 32, TRUE);
+      } else if (Id == BUILTIN_ICON_FUNC_SHUTDOWN) {
+        BuiltinIconTable[Id].Image = egDecodePNG(&emb_func_shutdown[0], sizeof(emb_func_shutdown), 32, TRUE);
+      } else if (Id == BUILTIN_ICON_TOOL_SHELL) {
+        BuiltinIconTable[Id].Image = egDecodePNG(&emb_func_shell[0], sizeof(emb_func_shell), 32, TRUE);
+      } else if (Id == BUILTIN_ICON_VOL_INTERNAL) {
+        BuiltinIconTable[Id].Image = egDecodePNG(&emb_vol_internal[0], sizeof(emb_vol_internal), 32, TRUE);
+      } else if (Id == BUILTIN_ICON_VOL_EXTERNAL) {
+        BuiltinIconTable[Id].Image = egDecodePNG(&emb_vol_internal[0], sizeof(emb_vol_internal), 32, TRUE);
+      } else if (Id == BUILTIN_ICON_VOL_BOOTER) {
+        BuiltinIconTable[Id].Image = egDecodePNG(&emb_vol_internal[0], sizeof(emb_vol_internal), 32, TRUE);
+      } else if (Id == BUILTIN_ICON_VOL_INTERNAL_HFS) {
+        BuiltinIconTable[Id].Image = egDecodePNG(&emb_vol_internal[0], sizeof(emb_vol_internal), 32, TRUE);
+      } else if (Id == BUILTIN_ICON_VOL_INTERNAL_NTFS) {
+        BuiltinIconTable[Id].Image = egDecodePNG(&emb_vol_internal[0], sizeof(emb_vol_internal), 32, TRUE);
+      } else if (Id == BUILTIN_ICON_VOL_INTERNAL_EXT3) {
+        BuiltinIconTable[Id].Image = egDecodePNG(&emb_vol_internal[0], sizeof(emb_vol_internal), 32, TRUE);
       } else if (Id == BUILTIN_ICON_VOL_INTERNAL_REC) {
         BuiltinIconTable[Id].Image = egDecodePNG(&emb_vol_internal[0], sizeof(emb_vol_internal), 32, TRUE);
       } else if (Id == BUILTIN_ICON_BANNER) {
@@ -206,8 +234,8 @@ EG_IMAGE * LoadOSIcon(IN CHAR16 *OSIconName OPTIONAL, IN CHAR16 *FallbackIconNam
   if (!GlobalConfig.Theme) { // embedded theme - return rendered icon name
     EG_IMAGE  *TextBuffer = egCreateImage(PixelSize, PixelSize, TRUE);
     egFillImage(TextBuffer, &MenuBackgroundPixel);
-    egRenderText(FirstName, TextBuffer, PixelSize/4, PixelSize/3, 0xFFFF);
-    DebugLog(1, "Text <%s> rendered\n", FirstName);
+//    egRenderText(FirstName, TextBuffer, PixelSize/4, PixelSize/3, 0xFFFF);
+//    DebugLog(1, "Text <%s> rendered\n", FirstName);
     return TextBuffer;
   }
 
