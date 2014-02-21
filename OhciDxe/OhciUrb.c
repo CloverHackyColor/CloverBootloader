@@ -234,22 +234,26 @@ OhciInitializeInterruptList (
 {
   static UINT32     Leaf[32] = {0, 16, 8, 24, 4, 20, 12, 28, 2, 18, 10, 26, 6, 22, 14, 30, 1, 17,
                                 9, 25, 5, 21, 13, 29, 3, 19, 11, 27, 7, 23, 15, 31};
-  ED_DESCRIPTOR     **HccaInterruptTable;
+  //ED_DESCRIPTOR     **HccaInterruptTable;
+  UINT32            *HccaInterruptTable;
   UINTN             Index;
   UINTN             Level;
   UINTN             Count;
 
-  HccaInterruptTable = (ED_DESCRIPTOR **)(UINTN *)(Ohc->HccaMemoryBlock->HccaInterruptTable);
+  HccaInterruptTable = Ohc->HccaMemoryBlock->HccaInterruptTable;
 
   for (Index = 0; Index < 32; Index++) {
-    HccaInterruptTable[Index] = OhciCreateED (Ohc);
-    if (HccaInterruptTable[Index] == NULL) {
+    //HccaInterruptTable[Index] = OhciCreateED (Ohc);
+    HccaInterruptTable[Index] = (UINT32)(UINTN)(OhciCreateED (Ohc));
+    //if (HccaInterruptTable[Index] == NULL) {
+    if (HccaInterruptTable[Index] == 0) {
       return EFI_OUT_OF_RESOURCES; 
     }
   }
 
   for (Index = 0; Index < 32; Index++) {
-    Ohc->IntervalList[0][Index] = HccaInterruptTable[Leaf[Index]];
+    //Ohc->IntervalList[0][Index] = HccaInterruptTable[Leaf[Index]];
+    Ohc->IntervalList[0][Index] = (ED_DESCRIPTOR *)(UINTN)(HccaInterruptTable[Leaf[Index]]);
   }
 
   Count = 32;
@@ -258,7 +262,8 @@ OhciInitializeInterruptList (
 
     for (Index = 0; Index < Count; Index++) {
       Ohc->IntervalList[Level][Index] = OhciCreateED (Ohc);
-      if (HccaInterruptTable[Index] == NULL) {
+      //if (HccaInterruptTable[Index] == NULL) {
+      if (HccaInterruptTable[Index] == 0) {
         return EFI_OUT_OF_RESOURCES; 
       }
       Ohc->IntervalList[Level - 1][Index * 2]->NextED =
@@ -457,6 +462,7 @@ OhciFreeInterruptEdByEd (
     return EFI_SUCCESS;
   
   for (Index = 0; Index < 32; Index++) {
+    //Ed = Ohc->HccaMemoryBlock->HccaInterruptTable[Index];
     Ed = (ED_DESCRIPTOR *)(UINTN)(Ohc->HccaMemoryBlock->HccaInterruptTable[Index]);
     if (Ed == NULL) {
       continue;
@@ -497,6 +503,7 @@ OhciFreeInterruptEdByAddr (
   UINTN                   Index;
   
   for (Index = 0; Index < 32; Index++) {
+    //Ed = Ohc->HccaMemoryBlock->HccaInterruptTable[Index];
     Ed = (ED_DESCRIPTOR *)(UINTN)(Ohc->HccaMemoryBlock->HccaInterruptTable[Index]);
     if (Ed == NULL) {
       continue;
