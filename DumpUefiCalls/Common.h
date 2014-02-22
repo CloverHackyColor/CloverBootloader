@@ -76,7 +76,7 @@
 
 //
 // PRINT_DUMPS:
-// 1 - will print dumps (ST, RT vars) when ExitBootServices() is called
+// 1 - will print dumps (ST, RT, DataHub vars) when ExitBootServices() is called
 // 0 - will skip printing dumps
 //
 #define PRINT_DUMPS			1
@@ -101,6 +101,13 @@
 // 0 - will skip printing AllocatePool() calls.
 //
 #define PRINT_ALLOCATE_POOL		0
+
+//
+// CAPTURE_FILESYSTEM_ACCESS		1
+// 1 - will capture and display all file system access
+// 0 - will skip capturing file system access
+//
+#define CAPTURE_FILESYSTEM_ACCESS	1
 
 //
 // CAPTURE_CONSOLE_OUTPUT

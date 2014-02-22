@@ -396,6 +396,14 @@
   Clover/FSInject/FSInject.inf
   Clover/MsgLog/MsgLog.inf
   Clover/DumpUefiCalls/DumpUefiCalls.inf
+  #Clover/DumpUefiCalls/DumpUefiCalls.inf {
+  #  <PcdsFixedAtBuild>
+  #    gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x07
+  #    gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0xFFFFFFFF
+  #  <LibraryClasses>
+  #    DebugLib|MdePkg/Library/BaseDebugLibSerialPort/BaseDebugLibSerialPort.inf
+  #    SerialPortLib|MdeModulePkg/Library/BaseSerialPortLib16550/BaseSerialPortLib16550.inf
+  #}
   
   # Drivers for Aptio loading - should go to Clover's /EFI/drivers64UEFI dir
   Clover/OsxFatBinaryDrv/OsxFatBinaryDrv.inf

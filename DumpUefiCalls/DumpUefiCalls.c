@@ -30,10 +30,14 @@ StartOverrides()
 	gRT->GetTime(&Now, NULL);
 	PRINT("DumpUefiCalls overrides started on %04d.%02d.%02d (yyyy.mm.dd), at %02d:%02d:%02d.\n",
 	       Now.Year, Now.Month, Now.Day, Now.Hour, Now.Minute, Now.Second);
+	#if CAPTURE_FILESYSTEM_ACCESS == 1
 	OvrFs();
+	#endif
 	OvrBootServices(gBS);
 	OvrRuntimeServices(gRT);
+	#if PRINT_DUMPS == 1
 	OvrDataHub();
+	#endif
 	return EFI_SUCCESS;
 }
 
