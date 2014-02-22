@@ -146,7 +146,6 @@ SmbiosTablePublishEntry (
 {
   EFI_STATUS                Status;
   EFI_SMBIOS_PROTOCOL       *Smbios;
-  SMBIOS_TABLE_ENTRY_POINT  *EntryPointStructure;
 
   //
   // Find the SMBIOS protocol
