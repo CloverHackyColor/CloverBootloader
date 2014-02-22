@@ -156,6 +156,9 @@ INF   Clover/LegacyBios/Region2Dxe/LegacyRegion2Dxe.inf
     # IDE/AHCI Support
 !ifdef USE_BIOS_BLOCKIO
   INF  Clover/LegacyBios/BlockIoDxe/BlockIoDxe.inf
+!ifdef DISABLE_USB_CONTROLLERS_WHEN_BLOCKIO
+  DEFINE DISABLE_USB_CONTROLLERS = 1
+!endif
 !else
   #INF  Clover/VBoxIdeControllerDxe/VBoxIdeControllerDxe.inf
   #INF  Clover/VBoxIdeBusDxe/VBoxIdeBusDxe.inf
@@ -173,17 +176,30 @@ INF   Clover/LegacyBios/Region2Dxe/LegacyRegion2Dxe.inf
 
     # Usb Support
 !ifndef DISABLE_USB_SUPPORT
+
+!ifndef DISABLE_USB_CONTROLLERS
   INF  MdeModulePkg/Bus/Pci/UhciDxe/UhciDxe.inf
-  #INF  Clover/OhciDxe/OhciDxe.inf
+!ifndef DISABLE_USB_MASS_STORAGE
+  INF  MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe.inf
+!endif
+!endif
+
+!ifdef ENABLE_USB_OHCI
+  INF  Clover/OhciDxe/OhciDxe.inf
+!endif
+!ifdef ENABLE_USB_XHCI
   #INF  MdeModulePkg/Bus/Pci/XhciDxe/XhciDxe.inf
+  INF  Clover/Patches_for_EDK2/XhciDxe/XhciDxe.inf
+!endif
+
   INF  MdeModulePkg/Bus/Usb/UsbBusDxe/UsbBusDxe.inf
   #INF  Clover/Patches_for_EDK2/UsbBusDxe/UsbBusDxe.inf
   INF  MdeModulePkg/Bus/Usb/UsbKbDxe/UsbKbDxe.inf
+  INF  MdeModulePkg/Bus/Usb/UsbMouseDxe/UsbMouseDxe.inf
 !ifndef DISABLE_USB_MASS_STORAGE  
   INF  MdeModulePkg/Bus/Usb/UsbMassStorageDxe/UsbMassStorageDxe.inf
-  INF  MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe.inf
 !endif  
-  INF  MdeModulePkg/Bus/Usb/UsbMouseDxe/UsbMouseDxe.inf
+
 !endif
 
     # ISA Support
