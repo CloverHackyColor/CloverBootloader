@@ -32,7 +32,6 @@
 [Sources]
   SmbiosPlatformDxe.h
   SmbiosPlatformDxe.c
-  Xen.c
   Qemu.c
   QemuType0.c
   QemuType1.c
@@ -54,9 +53,6 @@
 
 [Protocols]
   gEfiSmbiosProtocolGuid                      # PROTOCOL ALWAYS_CONSUMED
-
-[Guids]
-  gEfiXenInfoGuid
 
 [Depex]
   gEfiSmbiosProtocolGuid

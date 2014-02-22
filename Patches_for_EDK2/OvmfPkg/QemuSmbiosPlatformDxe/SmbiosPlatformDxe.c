@@ -161,14 +161,9 @@ SmbiosTablePublishEntry (
   }
 
   //
-  // Add Xen SMBIOS data if found
+  // Add Qemu SMBIOS data
   //
-  EntryPointStructure = GetXenSmbiosTables ();
-  if (EntryPointStructure != NULL) {
-    Status = InstallAllStructures (Smbios, EntryPointStructure);
-  } else {
-    Status = InstallQemuSmbiosTables (Smbios, ImageHandle);
-  }
+  Status = InstallQemuSmbiosTables (Smbios, ImageHandle);
 
   return Status;
 }
