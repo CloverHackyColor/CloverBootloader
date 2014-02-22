@@ -497,7 +497,7 @@
   # SMBIOS Support
   #
   MdeModulePkg/Universal/SmbiosDxe/SmbiosDxe.inf
-  OvmfPkg/SmbiosPlatformDxe/SmbiosPlatformDxe.inf
+  OvmfPkg/QemuSmbiosPlatformDxe/SmbiosPlatformDxe.inf
 
   #
   # ACPI Support
