@@ -457,7 +457,11 @@ OhciHouseKeeper (
     OhciCheckTDsResults(Ohc, Entry->DataTd, &Result );
     if (((Result & EFI_USB_ERR_STALL) == EFI_USB_ERR_STALL) ||
       ((Result & EFI_USB_ERR_NOTEXECUTE) == EFI_USB_ERR_NOTEXECUTE)) {
-      return ;
+      // Why return? We should continue to next entry in this case.
+      //return ;
+      PreEntry = Entry;
+      Entry = Entry->NextEntry;
+      continue;
     } 
 
     if (Entry->CallBackFunction != NULL) {   

@@ -2362,7 +2362,9 @@ OHCIDriverBindingStart (
     goto FREE_OHC;
   }
   
-  Status = gBS->SetTimer (Ohc->HouseKeeperTimer, TimerPeriodic, 100 * 1000 * 10);
+  // Polling at every 0.1s is too slow, use 0.05s like with UhciDxe
+  //Status = gBS->SetTimer (Ohc->HouseKeeperTimer, TimerPeriodic, 100 * 1000 * 10);
+  Status = gBS->SetTimer (Ohc->HouseKeeperTimer, TimerPeriodic, 50 * 1000 * 10); 
   if (EFI_ERROR (Status)) {
     goto FREE_OHC;
   }
