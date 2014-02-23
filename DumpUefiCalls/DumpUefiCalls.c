@@ -35,7 +35,7 @@ StartOverrides()
 	#endif
 	OvrBootServices(gBS);
 	OvrRuntimeServices(gRT);
-	#if PRINT_DUMPS == 1
+	#if PRINT_DUMPS >= 2
 	OvrDataHub();
 	#endif
 	return EFI_SUCCESS;
