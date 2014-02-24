@@ -316,6 +316,9 @@ LegacyBiosFarCall86 (
   EFI_TPL                 OriginalTpl;
   EFI_TIMER_ARCH_PROTOCOL *Timer;
   UINT64                  TimerPeriod = 0;
+#if ENABLE_PS2MOUSE_LEGACYBOOT == 1
+  UINT16                  LegacyMaskOld, LegacyMaskNew;
+#endif
 
   // Disconnect EFI VGA driver (and switch to Text VGA Mode)
   DisconnectVga();
@@ -390,12 +393,24 @@ LegacyBiosFarCall86 (
   gLegacy8259->SetVectorBase (gLegacy8259, LEGACY_MODE_BASE_VECTOR_MASTER, LEGACY_MODE_BASE_VECTOR_SLAVE);
 
   // Set Irq Mask according to Legacy mode
+#if ENABLE_PS2MOUSE_LEGACYBOOT == 1
+  // Update the Mask to allow also PS2 Mouse usage (which requires also Secondary PIC cascade)
+  gLegacy8259->GetMask (gLegacy8259, &LegacyMaskOld, NULL, NULL, NULL);
+  LegacyMaskNew = LegacyMaskOld & 0xEFFB;
+  gLegacy8259->SetMode (gLegacy8259, Efi8259LegacyMode, &LegacyMaskNew, NULL);
+#else
   gLegacy8259->SetMode (gLegacy8259, Efi8259LegacyMode, NULL, NULL);
+#endif
 
   // Thunk to 16-bit real mode to execute the farcall
   AsmThunk16 (mThunkContext);
 
   // EFI is probably overwritten here, but just in case we continue, try to restore EFI to previous state:
+
+#if ENABLE_PS2MOUSE_LEGACYBOOT == 1
+  // Restore original Legacy Mask, as it was changed by our call to SetMode with the new mask
+  gLegacy8259->SetMask (gLegacy8259, &LegacyMaskOld, NULL, NULL, NULL);
+#endif
 
   // Set Irq Mask according to Protected mode
   gLegacy8259->SetMode (gLegacy8259, Efi8259ProtectedMode, NULL, NULL);
