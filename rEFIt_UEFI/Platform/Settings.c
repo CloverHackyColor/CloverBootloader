@@ -69,11 +69,11 @@ REFIT_CONFIG   GlobalConfig = { FALSE, -1, 0, 0, 0, TRUE, FALSE, FALSE, FALSE, F
   //VerticalLayout
   FALSE, 128, 8, 24
 };
-
+/*
 VOID __inline WaitForSts(VOID) {
 	UINT32 inline_timeout = 100000;
 	while (AsmReadMsr64(MSR_IA32_PERF_STATUS) & (1 << 21)) { if (!inline_timeout--) break; }
-}
+} */
 
 UINT32 GetCrc32(UINT8 *Buffer, UINTN Size)
 {

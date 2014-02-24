@@ -172,7 +172,11 @@ VOID GetCPUProperties (VOID)
   if (gCPUStructure.Vendor == CPU_VENDOR_INTEL) {
     DoCpuid(4, gCPUStructure.CPUID[CPUID_4]);
     gCPUStructure.CoresPerPackage =  (UINT32)bitfield(gCPUStructure.CPUID[CPUID_4][EAX], 31, 26) + 1; //Atom330 = 2
+  } else (gCPUStructure.Vendor == CPU_VENDOR_AMD) {
+    DoCpuid(0x80000008, gCPUStructure.CPUID[CPUID_88]);
+    gCPUStructure.CoresPerPackage =  (gCPUStructure.CPUID[CPUID_4][ECX] & 0xFF) + 1;
   }
+  
 	if (gCPUStructure.CoresPerPackage == 0) {
 		gCPUStructure.CoresPerPackage = 1;
 	}
@@ -184,7 +188,7 @@ VOID GetCPUProperties (VOID)
     gCPUStructure.CPUID[CPUID_87][EDX] & (UINT32)CPUID_EXTFEATURE_TSCI;
 	}
   
-  if ((bit(9) & gCPUStructure.CPUID[CPUID_1][2]) != 0) {
+  if ((bit(9) & gCPUStructure.CPUID[CPUID_1][ECX]) != 0) {
 		SSSE3 = TRUE;
 	}
   gCPUStructure.Turbo = FALSE;

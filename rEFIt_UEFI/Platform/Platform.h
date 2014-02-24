@@ -285,6 +285,16 @@ Headers collection for procedures
 #define IA32_TSC_ADJUST             0x003B   
 #define MSR_IA32_BIOS_SIGN_ID       0x008B   /* microcode version */
 #define MSR_FSB_FREQ                0x00CD	 /* limited use - not for i7						*/
+/*
+•	101B: 100 MHz (FSB 400)
+•	001B: 133 MHz (FSB 533)
+•	011B: 167 MHz (FSB 667)
+•	010B: 200 MHz (FSB 800)
+•	000B: 267 MHz (FSB 1067)
+•	100B: 333 MHz (FSB 1333)
+•	110B: 400 MHz (FSB 1600)
+ */
+// T8300 -> 0x01A2 => 200MHz
 #define	MSR_PLATFORM_INFO           0x00CE   /* limited use - MinRatio for i7 but Max for Yonah	*/
                                              /* turbo for penryn */
 //haswell
@@ -361,9 +371,34 @@ Headers collection for procedures
 
 //AMD
 #define K8_FIDVID_STATUS        0xC0010042
-#define K10_COFVID_LIMIT        0xC0010061
+#define K10_COFVID_LIMIT        0xC0010061 /* max enabled p-state (msr >> 4) & 7 */
+#define K10_COFVID_CONTROL      0xC0010062 /* switch to p-state */
 #define K10_PSTATE_STATUS       0xC0010064
-#define K10_COFVID_STATUS       0xC0010071
+#define K10_COFVID_STATUS       0xC0010071 /* current p-state (msr >> 16) & 7 */
+/* specific settings 
+static void SavePState(unsigned int index, unsigned int lowMsr, unsigned int core)
+{
+  const unsigned int msrIndex = 0xC0010064u + index;
+  const DWORD_PTR affinityMask = (DWORD_PTR)1 << core;
+  
+  DWORD lower, higher;
+  RdmsrTx(msrIndex, &lower, &higher, affinityMask);
+  
+  const DWORD lowMsrMask = 0xFE40FFFFu;
+  lower = (lower & ~lowMsrMask) | (lowMsr & lowMsrMask);
+  
+  WrmsrTx(msrIndex, lower, higher, affinityMask);
+}
+
+MSR C0010064  8000-0185-0000-1418 [20.00x] [1.4250 V] [13.30 A] [PState Pb0]
+MSR C0010065  8000-0185-0000-1615 [18.50x] [1.4125 V] [13.30 A] [PState Pb1]
+MSR C0010066  8000-0173-0000-1A1A [21.00x] [1.3875 V] [11.50 A] [PState P0]
+MSR C0010067  0000-0173-0000-1A1A
+MSR C0010068  0000-0173-0000-181A
+MSR C0010069  0000-0173-0000-1A1A
+MSR C001006A  8000-0125-0000-604C [ 7.00x] [0.9500 V] [ 3.70 A] [PState P1]
+MSR C001006B  0000-0000-0000-0000
+*/
 
 
 #define DEFAULT_FSB             100000          /* for now, hardcoding 100MHz for old CPUs */
@@ -378,7 +413,8 @@ Headers collection for procedures
 #define CPUID_80	5 
 #define CPUID_81	6
 #define CPUID_87  7
-#define CPUID_MAX	8
+#define CPUID_88  8
+#define CPUID_MAX	16
 
 /* CPU Cache */
 #define MAX_CACHE_COUNT  4
@@ -1418,7 +1454,7 @@ VOID        HidePointer();
 //EFI_STATUS  WaitForInputEvent(REFIT_MENU_SCREEN *Screen, UINTN TimeoutDefault);
 EFI_STATUS  WaitForInputEventPoll(REFIT_MENU_SCREEN *Screen, UINTN TimeoutDefault);
 
-VOID        WaitForSts(VOID);
+//VOID        WaitForSts(VOID);
 //EFI_STATUS  ApplySettings();
 
 VOID        InitBooterLog(VOID);

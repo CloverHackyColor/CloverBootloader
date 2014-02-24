@@ -278,7 +278,7 @@ VOID KernelPatcher_64(VOID* kernelData, CHAR8 *OSVersion)
       bytes[patchLocation +  3] = 0x90;                
       bytes[patchLocation +  4] = 0x90;
     }
-    // patch sse3
+    // patch ssse3
     if (!SSSE3 && (AsciiStrnCmp(OSVersion,"10.6",4)==0)) {
       Patcher_SSE3_6((VOID*)bytes);
     }
