@@ -169,8 +169,10 @@ VOID GetCPUProperties (VOID)
 	} else {
 		gCPUStructure.LogicalPerPackage	= 1;
 	}
-  DoCpuid(4, gCPUStructure.CPUID[CPUID_4]);
-	gCPUStructure.CoresPerPackage =  (UINT32)bitfield(gCPUStructure.CPUID[CPUID_4][EAX], 31, 26) + 1; //Atom330 = 2
+  if (gCPUStructure.Vendor == CPU_VENDOR_INTEL) {
+    DoCpuid(4, gCPUStructure.CPUID[CPUID_4]);
+    gCPUStructure.CoresPerPackage =  (UINT32)bitfield(gCPUStructure.CPUID[CPUID_4][EAX], 31, 26) + 1; //Atom330 = 2
+  }
 	if (gCPUStructure.CoresPerPackage == 0) {
 		gCPUStructure.CoresPerPackage = 1;
 	}
@@ -490,28 +492,32 @@ VOID GetCPUProperties (VOID)
       gCPUStructure.MinRatio = (UINT32)(RShiftU64((RShiftU64(msr, 8) & 0x3f), 2) + 4);
 		}
 		else if(gCPUStructure.Extfamily >= 0x01 /* K10+ */) {
-			msr = AsmReadMsr64(K10_COFVID_STATUS);
+			msr = AsmReadMsr64(K10_COFVID_STATUS);  //30BA-0063-3C00-180D
 			if(gCPUStructure.Extfamily == 0x01 /* K10 */) {
 				gCPUStructure.MaxRatio = (UINT32)DivU64x32(((msr & 0x3f) + 0x10), (1 << ((RShiftU64(msr, 6) & 0x7))));
+        // = 0x1D , expected 14.5*2
       }
-			else {/* K11+ */
-				gCPUStructure.MaxRatio = (UINT32)DivU64x32(((msr & 0x3f) + 0x08), (1 << ((RShiftU64(msr, 6) & 0x7))));
+			else {/* K11+ */ //msr = 0280-0006-3602-1A1A
+				gCPUStructure.MaxRatio = (UINT32)DivU64x32(((msr & 0x3f) + 0x10), (1 << ((RShiftU64(msr, 6) & 0x7))));
+        // = 0x2A , expected 21*2
       }
          // Get min ratio
       msr = AsmReadMsr64(K10_COFVID_LIMIT);
       msr = AsmReadMsr64(K10_PSTATE_STATUS + ((RShiftU64(msr, 4) & 0x07)));
       if(gCPUStructure.Extfamily == 0x01) { /* K10 */
 				gCPUStructure.MinRatio = 5 * (UINT32)DivU64x32(((msr & 0x3f) + 0x10), (1 << ((RShiftU64(msr, 6) & 0x7))));
-      } else  {/* K11+ */
+        // bred
+      } else  {/* K11+ */ //msr = 0000-0000-0000-0040, 0000-0173-0000-181A
 				gCPUStructure.MinRatio = 5 * (UINT32)DivU64x32(((msr & 0x3f) + 0x08), (1 << ((RShiftU64(msr, 6) & 0x7))));
+        // bred
       }                                             
 		}
-    gCPUStructure.MaxRatio >>= 1;
+//    gCPUStructure.MaxRatio >>= 1;
     if (!gCPUStructure.MaxRatio) {
       gCPUStructure.MaxRatio = 1; //??? to avoid zero division
     }
-      gCPUStructure.FSBFrequency = DivU64x32(gCPUStructure.TSCFrequency, gCPUStructure.MaxRatio);
-      gCPUStructure.MaxRatio *= 10;
+    gCPUStructure.FSBFrequency = DivU64x32(LShiftU64(gCPUStructure.TSCFrequency, 1), gCPUStructure.MaxRatio);
+    gCPUStructure.MaxRatio *= 5;
 	}
   
  // DBG("take FSB\n");

@@ -280,6 +280,7 @@ Headers collection for procedures
 
 /* Known MSR registers */
 #define MSR_IA32_PLATFORM_ID        0x0017	 
+#define IA32_APIC_BASE              0x001B  /* used also for AMD */
 #define MSR_CORE_THREAD_COUNT       0x0035	 /* limited use - not for Penryn or older	*/
 #define IA32_TSC_ADJUST             0x003B   
 #define MSR_IA32_BIOS_SIGN_ID       0x008B   /* microcode version */
@@ -363,6 +364,8 @@ Headers collection for procedures
 #define K10_COFVID_LIMIT        0xC0010061
 #define K10_PSTATE_STATUS       0xC0010064
 #define K10_COFVID_STATUS       0xC0010071
+
+
 #define DEFAULT_FSB             100000          /* for now, hardcoding 100MHz for old CPUs */
 
 
