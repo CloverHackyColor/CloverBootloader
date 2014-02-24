@@ -415,7 +415,7 @@ radeon_card_info_t radeon_cards[] = {
   { 0x68C0,	0x00000000, CHIP_FAMILY_MANHATTAN,	"ATI Radeon HD 5730 Series",		kBaboon		},
   { 0x68C1,	0x00000000, CHIP_FAMILY_MANHATTAN,	"ATI Radeon HD 5650 Series",    kBaboon		},
   { 0x68C7,	0x00000000, CHIP_FAMILY_MANHATTAN,	"ATI Mobility Radeon HD 5570",    kEulemur	},
-  { 0x68C8,	0x00000000, CHIP_FAMILY_REDWOOD,	"ATI Radeon HD 5650 Series",    kBaboon		},	
+  { 0x68C8,	0x00000000, CHIP_FAMILY_REDWOOD,	"ATI FirePro v4800",    kBaboon		},	
   { 0x68C9,	0x00000000, CHIP_FAMILY_REDWOOD,	"FirePro 3D V3800",             kBaboon		},
   { 0x68D8,	0x00000000, CHIP_FAMILY_REDWOOD,	"ATI Radeon HD 5670 Series",		kBaboon		},
 	{ 0x68D9,	0x00000000, CHIP_FAMILY_REDWOOD,	"ATI Radeon HD 5570 Series",		kBaboon		},
