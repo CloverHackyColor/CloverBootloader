@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-02-13 12:33+0100\n"
+"POT-Creation-Date: 2014-03-12 19:57+0400\n"
 "PO-Revision-Date: 2013-08-04 06:37+0000\n"
 "Last-Translator: admin <admin@zetam.org>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -94,7 +94,9 @@ msgstr "Pamata īpašības:"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:21
-msgid "- boot into 10.4 - 10.8 OSX, Windows EFI and Linux EFI"
+#, fuzzy
+#| msgid "- boot into 10.4 - 10.8 OSX, Windows EFI and Linux EFI"
+msgid "- boot into 10.4 - 10.9 OSX, Windows EFI and Linux EFI"
 msgstr "- operētājsistēmu 10.4 - 10.8 OSX, Windows EFI и Linux EFI ielāde"
 
 #. type: Content of: <html><body><p>

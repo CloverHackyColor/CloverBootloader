@@ -1952,7 +1952,7 @@ UINT64 mem_detect(UINT16 nvCardType, pci_dt_t *nvda_dev)
 	return vram_size;
 }
 
-
+UINT8 connector_type_1[]= {0x00, 0x08, 0x00, 0x00};
 
 BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 {
@@ -2211,7 +2211,7 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 	//add HDMI Audio back to nvidia
 	//http://forge.voodooprojects.org/p/chameleon/issues/67/
 //	UINT8 connector_type_1[]= {0x00, 0x08, 0x00, 0x00};
-//	devprop_add_value(device, "@1,connector-type",connector_type_1, 4);
+	devprop_add_value(device, "@1,connector-type",connector_type_1, 4);
 	//end Nvidia HDMI Audio
 
 
