@@ -339,9 +339,7 @@
 
   # Usb Support
   MdeModulePkg/Bus/Pci/UhciDxe/UhciDxe.inf
-!ifdef ENABLE_USB_OHCI
   Clover/OhciDxe/OhciDxe.inf
-!endif
   MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe.inf
 #  MdeModulePkg/Bus/Pci/XhciDxe/XhciDxe.inf
   Clover/Patches_for_EDK2/XhciDxe/XhciDxe.inf

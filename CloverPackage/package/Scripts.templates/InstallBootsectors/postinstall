@@ -140,18 +140,23 @@ elif [[ ${boot_volume_format} = "msdos" ]]; then
     # copy partition boot sector to origbs
     echo "dd if=${bootrdev} count=1 bs=512 of=/tmp/origbs" >> "$install_log"
     dd if=${bootrdev} count=1 bs=512 of=/tmp/origbs
+    
+    if [[cat /tmp/origbs | grep FAT16]]; then
+      echo " boot volume format is FAT16" >> "$install_log"
+      echo "No Stage1 was written" >> "$install_log"
+    else
+      # copy boot1f32 to newbs
+      echo "cp ${DEST_VOL}/usr/standalone/i386/${partitionloaderfat} /tmp/newbs" >> "$install_log"
+      cp -f "${DEST_VOL}/usr/standalone/i386/${partitionloaderfat}" /tmp/newbs
 
-    # copy boot1f32 to newbs
-    echo "cp ${DEST_VOL}/usr/standalone/i386/${partitionloaderfat} /tmp/newbs" >> "$install_log"
-    cp -f "${DEST_VOL}/usr/standalone/i386/${partitionloaderfat}" /tmp/newbs
+      # "merge" origbs into newbs
+      echo "dd if=/tmp/origbs of=/tmp/newbs skip=3 seek=3 bs=1 count=87 conv=notrunc" >> "$install_log"
+      dd if=/tmp/origbs of=/tmp/newbs skip=3 seek=3 bs=1 count=87 conv=notrunc
 
-    # "merge" origbs into newbs
-    echo "dd if=/tmp/origbs of=/tmp/newbs skip=3 seek=3 bs=1 count=87 conv=notrunc" >> "$install_log"
-    dd if=/tmp/origbs of=/tmp/newbs skip=3 seek=3 bs=1 count=87 conv=notrunc
-
-    # write newbs to the partition boot sector
-    echo "dd if=/tmp/newbs of=${bootrdev}" >> "$install_log"
-    dd if=/tmp/newbs count=1 bs=512 of=${bootrdev}
+      # write newbs to the partition boot sector
+      echo "dd if=/tmp/newbs of=${bootrdev}" >> "$install_log"
+      dd if=/tmp/newbs count=1 bs=512 of=${bootrdev}
+    fi
 else
     echo "Unknown boot volume format: $boot_volume_format" >> "$install_log"
     echo "No Stage1 was written" >> "$install_log"

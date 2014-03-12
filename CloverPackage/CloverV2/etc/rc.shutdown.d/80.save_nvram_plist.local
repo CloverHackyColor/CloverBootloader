@@ -98,6 +98,9 @@ function mountAndSaveNVRAM {
         #
         # Write NVRAM and make sure it exists
         #
+        if [[ -f "${mntpt}/${NVRAMFilename}" ]]; then
+          rm -rf "${mntpt}/${NVRAMFilename}"
+        fi
         nvram -x -p > "${mntpt}/${NVRAMFilename}"
         if [[ -f "${mntpt}/${NVRAMFilename}" ]]; then
             chflags hidden "${mntpt}/${NVRAMFilename}"

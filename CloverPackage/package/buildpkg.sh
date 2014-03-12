@@ -556,6 +556,8 @@ main ()
                        --subst="INSTALLER_TARGET_ESP_REFID=$installer_target_esp_refid" \
                        ${choiceId}
     rsync -r --exclude=.svn --exclude="*~" --exclude='drivers*'   \
+     ${SRCROOT}/CloverV2/EFI/BOOT ${PKG_BUILD_DIR}/${choiceId}/Root/EFI/
+    rsync -r --exclude=.svn --exclude="*~" --exclude='drivers*'   \
      ${SRCROOT}/CloverV2/EFI/CLOVER ${PKG_BUILD_DIR}/${choiceId}/Root/EFI/
     [[ "$add_ia32" -ne 1 ]] && rm -rf ${PKG_BUILD_DIR}/${choiceId}/Root/EFI/drivers32
     # config.plist
