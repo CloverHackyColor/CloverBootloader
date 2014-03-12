@@ -120,6 +120,14 @@
 					<key>Replace</key>
 					<data>UFhTWAhfQURSAAhfU1VOCgQIX1BSVxIGAg==</data>
 				</dict>
+				<dict>
+					<key>Comment</key>
+					<string>Rename GFX0 to IGPU</string>
+					<key>Find</key>
+					<data>R0ZYMA==</data>
+					<key>Replace</key>
+					<data>SUdQVQ==</data>
+				</dict>
 			</array>
 			<key>ReuseFFFF</key>
 			<false/>
