@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-03-12 17:45+0400\n"
+"POT-Creation-Date: 2014-02-13 12:33+0100\n"
 "PO-Revision-Date: 2014-02-16 00:47+0000\n"
 "Last-Translator: artur_pt <artursimoes.pt@gmail.com>\n"
 "Language-Team: pt <pt@li.org>\n"
@@ -98,9 +98,7 @@ msgstr "Principais Características:"
 #
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:21
-#, fuzzy
-#| msgid "- boot into 10.4 - 10.8 OSX, Windows EFI and Linux EFI"
-msgid "- boot into 10.4 - 10.9 OSX, Windows EFI and Linux EFI"
+msgid "- boot into 10.4 - 10.8 OSX, Windows EFI and Linux EFI"
 msgstr "- Inicia OS X 10.4 - 10.8, Windows EFI e Linux EFI"
 
 #
@@ -249,6 +247,7 @@ msgstr "Instalação Completa!"
 #. type: "UEFI.only_title"
 #: Resources/templates/Localizable.strings:4
 #, no-wrap
+#| msgid "Install for UEFI motherboards"
 msgid "Install for UEFI booting only"
 msgstr "Instalação para Placas Mãe UEFI"
 
@@ -619,6 +618,9 @@ msgstr "Black_Green_Moody"
 #. type: "BGM_description"
 #: Resources/templates/Localizable.strings:116
 #, no-wrap
+#| msgid ""
+#| "Black Green and Moody theme from Blackosx,\n"
+#| "Install to /EFI/CLOVER/themes/BGM"
 msgid ""
 "BGM (Black Green and Moody) theme from Blackosx,\n"
 "Install to /EFI/CLOVER/themes/BGM"
@@ -859,6 +861,9 @@ msgstr "Escudo"
 #. type: "Shield_description"
 #: Resources/templates/Localizable.strings:176
 #, no-wrap
+#| msgid ""
+#| "Black Green and Moody theme from Blackosx,\n"
+#| "Install to /EFI/CLOVER/themes/BGM"
 msgid ""
 "An animated, harmonious theme from Blackosx,\n"
 "Install to /EFI/CLOVER/themes/Shield."
