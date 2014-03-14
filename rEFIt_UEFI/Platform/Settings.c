@@ -3067,6 +3067,15 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
             gSettings.DebugDSDT = TRUE;
           }
         }
+        prop = GetProperty(dict2, "Rtc8Allowed");
+        if(prop) {
+          if ((prop->type == kTagTypeTrue) ||
+              ((prop->type == kTagTypeString) &&
+               ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))) {
+                gSettings.Rtc8Allowed = TRUE;
+              }
+        }
+        
         prop = GetProperty(dict2, "FixMask");
         if(prop) {
           if (prop->type == kTagTypeInteger) {

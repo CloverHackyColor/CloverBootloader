@@ -1628,7 +1628,7 @@ UINT32 FixRTC (UINT8 *dsdt, UINT32 len)
 	for (i=adr+4; i<adr+rtcsize; i++) {
 	  // IO (Decode16, ((0x0070, 0x0070)) =>> find this
     if (dsdt[i] == 0x70 && dsdt[i+1] == 0x00 && dsdt[i+2] == 0x70 && dsdt[i+3] == 0x00) {   
-      if (dsdt[i+5] == 0x08) {
+      if (dsdt[i+5] == 0x08 && gSettings.Rtc8Allowed) {
 				DBG("CMOS reset not will be, patch length is not needed\n");
 			} else { 
         // First Fix RTC CMOS Reset Problem

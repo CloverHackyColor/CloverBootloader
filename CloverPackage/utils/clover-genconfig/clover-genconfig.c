@@ -548,6 +548,7 @@ void PrintConfig(CFTypeRef data)
   addBoolean(dsdtDict, CFSTR("Debug"), s->DebugDSDT);
   addBoolean(dsdtDict, CFSTR("ReuseFFFF"), s->ReuseFFFF);
   addBoolean(dsdtDict, CFSTR("SuspendOverride"), s->SuspendOverride);
+  addBoolean(dsdtDict, CFSTR("Rtc8Allowed"), s->Rtc8Allowed);
 //  addBoolean(dsdtDict, CFSTR("SlpSmiAtWake"), s->SlpWak);
   addInteger(dsdtDict, CFSTR("Patches count"), s->PatchDsdtNum);
 

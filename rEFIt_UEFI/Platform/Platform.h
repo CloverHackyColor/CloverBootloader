@@ -956,6 +956,7 @@ typedef struct {
   BOOLEAN KPAppleRTC;
   BOOLEAN KextPatchesAllowed;
   BOOLEAN KPKernelPm;
+  BOOLEAN Rtc8Allowed;
   UINT8   pad9[6];
   CHAR16  *KPATIConnectorsController;
 #if defined(MDE_CPU_IA32)

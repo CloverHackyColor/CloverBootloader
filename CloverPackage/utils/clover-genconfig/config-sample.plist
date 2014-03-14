@@ -128,8 +128,18 @@
 					<key>Replace</key>
 					<data>SUdQVQ==</data>
 				</dict>
+				<dict>
+					<key>Comment</key>
+					<string>Rename HDEF to AZAL</string>
+					<key>Find</key>
+					<data>SERFRg==</data>
+					<key>Replace</key>
+					<data>QVpBTA==</data>
+				</dict>
 			</array>
 			<key>ReuseFFFF</key>
+			<false/>
+			<key>Rtc8Allowed</key>
 			<false/>
 			<key>SuspendOverride</key>
 			<false/>
