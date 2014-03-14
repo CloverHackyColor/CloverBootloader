@@ -462,7 +462,7 @@
 					"\"$(SRCROOT)\"",
 				);
 				GCC_ENABLE_OBJC_GC = unsupported;
-				"GCC_ENABLE_OBJC_GC[arch=x86_64]" = supported;
+				"GCC_ENABLE_OBJC_GC[arch=x86_64]" = unsupported;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "src/CloverPrefpane-Prefix.pch";
 				INFOPLIST_FILE = "src/CloverPrefpane-Info.plist";
@@ -481,7 +481,7 @@
 					"\"$(SRCROOT)\"",
 				);
 				GCC_ENABLE_OBJC_GC = unsupported;
-				"GCC_ENABLE_OBJC_GC[arch=x86_64]" = supported;
+				"GCC_ENABLE_OBJC_GC[arch=x86_64]" = unsupported;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "src/CloverPrefpane-Prefix.pch";
 				INFOPLIST_FILE = "src/CloverPrefpane-Info.plist";
