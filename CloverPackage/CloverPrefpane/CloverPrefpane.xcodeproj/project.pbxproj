@@ -475,18 +475,25 @@
 		A38BDC711733968700DE7DA1 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = (
+					i386,
+					x86_64,
+				);
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)\"",
 				);
-				GCC_ENABLE_OBJC_GC = unsupported;
+				GCC_ENABLE_OBJC_GC = supported;
 				"GCC_ENABLE_OBJC_GC[arch=x86_64]" = unsupported;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_MODEL_TUNING = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "src/CloverPrefpane-Prefix.pch";
 				INFOPLIST_FILE = "src/CloverPrefpane-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = "";
+				VALID_ARCHS = "i386 x86_64";
 				WRAPPER_EXTENSION = prefPane;
 			};
 			name = Release;

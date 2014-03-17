@@ -24,6 +24,14 @@
     IBOutlet NSPathControl *_EFIPathControl;
     IBOutlet NSComboBox  *_cloverThemeComboBox;
     IBOutlet NSTextField *_themeWarning;
+  //----------------------
+  IBOutlet NSMutableDictionary *themeInfo;
+  IBOutlet NSMutableDictionary* nvram;
+  IBOutlet NSNumber* cloverLogEveryBootEnabled;
+  IBOutlet NSNumber* cloverLogEveryBootLimit;
+  IBOutlet NSDictionary* diskutilList;
+  IBOutlet NSArray* efiPartitions;
+  IBOutlet NSArray* nvRamPartitions;
 }
 
 @property (nonatomic,retain) IBOutlet NSMutableDictionary *themeInfo;
