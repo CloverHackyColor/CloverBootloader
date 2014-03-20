@@ -813,7 +813,7 @@ GetUsbDPFromFullDP (
   UsbDevicePathPtr = AllocateZeroPool (Size + sizeof (EFI_DEVICE_PATH_PROTOCOL));
 //  ASSERT (UsbDevicePathPtr != NULL);
   if (!UsbDevicePathPtr) {
-    eturn NULL;
+    return NULL;
   }
   CopyMem (UsbDevicePathPtr, UsbDevicePathBeginPtr, Size);
   //
@@ -1268,7 +1268,7 @@ UsbBusIsWantedUsbIO (
     return FALSE;
   }
   DBG("UsbBusIsWanted: DeviceClass = 0x%x\n", 
-      (USB_CLASS_DEVICE_PATH *)DevicePathPtr->DeviceClass);
+      ((USB_CLASS_DEVICE_PATH *)DevicePathPtr)->DeviceClass);
   
 
   DoConvert = FALSE;
