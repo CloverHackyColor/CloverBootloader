@@ -2,7 +2,7 @@
 
     Manage Usb Descriptor List
 
-Copyright (c) 2007, Intel Corporation. All rights reserved.<BR>
+Copyright (c) 2007 - 2013, Intel Corporation. All rights reserved.<BR>
 This program and the accompanying materials
 are licensed and made available under the terms and conditions of the BSD License
 which accompanies this distribution.  The full text of the license may be found at
@@ -142,15 +142,15 @@ UsbFreeDevDesc (
 VOID *
 UsbCreateDesc (
   IN  UINT8               *DescBuf,
-  IN  INTN                Len,
+  IN  UINTN               Len,
   IN  UINT8               Type,
-  OUT INTN                *Consumed
+  OUT UINTN               *Consumed
   )
 {
   USB_DESC_HEAD           *Head;
-  INTN                    DescLen;
-  INTN                    CtrlLen;
-  INTN                    Offset;
+  UINTN                   DescLen;
+  UINTN                   CtrlLen;
+  UINTN                   Offset;
   VOID                    *Desc;
 
   DescLen   = 0;
@@ -188,7 +188,15 @@ UsbCreateDesc (
 
   while ((Offset < Len) && (Head->Type != Type)) {
     Offset += Head->Len;
+    if (Len <= Offset) {
+      DEBUG (( EFI_D_ERROR, "UsbCreateDesc: met mal-format descriptor, Beyond boundary!\n"));
+      return NULL;
+    }
     Head    = (USB_DESC_HEAD*)(DescBuf + Offset);
+    if (Head->Len == 0) {
+      DEBUG (( EFI_D_ERROR, "UsbCreateDesc: met mal-format descriptor, Head->Len = 0!\n"));
+      return NULL;
+    }
   }
 
   if ((Len <= Offset)      || (Len < Offset + DescLen) ||
@@ -223,16 +231,16 @@ UsbCreateDesc (
 USB_INTERFACE_SETTING *
 UsbParseInterfaceDesc (
   IN  UINT8               *DescBuf,
-  IN  INTN                Len,
-  OUT INTN                *Consumed
+  IN  UINTN               Len,
+  OUT UINTN               *Consumed
   )
 {
   USB_INTERFACE_SETTING   *Setting;
   USB_ENDPOINT_DESC       *Ep;
   UINTN                   Index;
   UINTN                   NumEp;
-  INTN                    Used;
-  INTN                    Offset;
+  UINTN                   Used;
+  UINTN                   Offset;
 
   *Consumed = 0;
   Setting   = UsbCreateDesc (DescBuf, Len, USB_DESC_TYPE_INTERFACE, &Used);
@@ -265,7 +273,7 @@ UsbParseInterfaceDesc (
   //
   // Create the endpoints for this interface
   //
-  for (Index = 0; Index < NumEp; Index++) {
+  for (Index = 0; (Index < NumEp) && (Offset < Len); Index++) {
     Ep = UsbCreateDesc (DescBuf + Offset, Len - Offset, USB_DESC_TYPE_ENDPOINT, &Used);
 
     if (Ep == NULL) {
@@ -300,7 +308,7 @@ ON_ERROR:
 USB_CONFIG_DESC *
 UsbParseConfigDesc (
   IN UINT8                *DescBuf,
-  IN INTN                 Len
+  IN UINTN                Len
   )
 {
   USB_CONFIG_DESC         *Config;
@@ -308,7 +316,7 @@ UsbParseConfigDesc (
   USB_INTERFACE_DESC      *Interface;
   UINTN                   Index;
   UINTN                   NumIf;
-  INTN                    Consumed;
+  UINTN                   Consumed;
 
   ASSERT (DescBuf != NULL);
 
@@ -360,8 +368,8 @@ UsbParseConfigDesc (
     Setting = UsbParseInterfaceDesc (DescBuf, Len, &Consumed);
 
     if (Setting == NULL) {
-      DEBUG (( EFI_D_ERROR, "UsbParseConfigDesc: failed to parse interface setting\n"));
-      goto ON_ERROR;
+      DEBUG (( EFI_D_ERROR, "UsbParseConfigDesc: warning: failed to get interface setting, stop parsing now.\n"));
+      break;
 
     } else if (Setting->Desc.InterfaceNumber >= NumIf) {
       DEBUG (( EFI_D_ERROR, "UsbParseConfigDesc: mal-formated interface descriptor\n"));
@@ -432,7 +440,10 @@ UsbCtrlRequest (
   UINT32                  Result;
   UINTN                   Len;
 
-  ASSERT ((UsbDev != NULL) && (UsbDev->Bus != NULL));
+//  ASSERT ((UsbDev != NULL) && (UsbDev->Bus != NULL));
+  if (!UsbDev || !(UsbDev->Bus)) {
+    return EFI_DEVICE_ERROR;
+  }
 
   DevReq.RequestType  = USB_REQUEST_TYPE (Direction, Type, Target);
   DevReq.Request      = (UINT8) Request;
@@ -788,8 +799,11 @@ UsbBuildDescTable (
 
   DevDesc          = UsbDev->DevDesc;
   NumConfig        = DevDesc->Desc.NumConfigurations;
-  DevDesc->Configs = AllocateZeroPool (NumConfig * sizeof (USB_CONFIG_DESC *));
+  if (NumConfig == 0) {
+    return EFI_DEVICE_ERROR;
+  }
 
+  DevDesc->Configs = AllocateZeroPool (NumConfig * sizeof (USB_CONFIG_DESC *));
   if (DevDesc->Configs == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -844,7 +858,7 @@ UsbBuildDescTable (
   Status = UsbBuildLangTable (UsbDev);
 
   if (EFI_ERROR (Status)) {
-    DEBUG (( EFI_D_ERROR, "UsbBuildDescTable: get language ID table %r\n", Status));
+    DEBUG (( EFI_D_INFO, "UsbBuildDescTable: get language ID table %r\n", Status));
   }
 
   return EFI_SUCCESS;

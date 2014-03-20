@@ -99,8 +99,17 @@ typedef struct _USB_HUB_API    USB_HUB_API;
 // [USB20-7.1.7.5, it says 10ms for hub and 50ms for
 // root hub]
 //
-#define USB_SET_PORT_RESET_STALL       (10 * USB_BUS_1_MILLISECOND)
+// According to USB2.0, Chapter 11.5.1.5 Resetting,
+// the worst case for TDRST is 20ms
+//
+#define USB_SET_PORT_RESET_STALL       (20 * USB_BUS_1_MILLISECOND)
 #define USB_SET_ROOT_PORT_RESET_STALL  (50 * USB_BUS_1_MILLISECOND)
+
+//
+// Wait for port recovery to accept SetAddress, refers to specification
+// [USB20-7.1.7.5, it says 10 ms for TRSTRCY]
+//
+#define USB_SET_PORT_RECOVERY_STALL    (10 * USB_BUS_1_MILLISECOND)
 
 //
 // Wait for clear roothub port reset, set by experience
@@ -118,8 +127,8 @@ typedef struct _USB_HUB_API    USB_HUB_API;
 // The USB Specification 2.0, section 11.24.1 recommends a value of
 // 50 milliseconds.  We use a value of 500 milliseconds to work
 // around slower hubs and devices.
-//
-#define USB_GENERAL_DEVICE_REQUEST_TIMEOUT 500
+// Slice - too slow! I set 100ms
+#define USB_GENERAL_DEVICE_REQUEST_TIMEOUT 100
 
 //
 // Send clear feature request timeout, set by experience
@@ -156,7 +165,7 @@ typedef struct _EFI_USB_BUS_PROTOCOL {
 
 //
 // Stands for the real USB device. Each device may
-// has several seperately working interfaces.
+// has several separately working interfaces.
 //
 struct _USB_DEVICE {
   USB_BUS                   *Bus;
@@ -166,6 +175,7 @@ struct _USB_DEVICE {
   //
   UINT8                     Speed;
   UINT8                     Address;
+  UINT8                     pad1[2];
   UINT32                    MaxPacket0;
 
   //
@@ -178,17 +188,21 @@ struct _USB_DEVICE {
   UINT16                    TotalLangId;
 
   UINT8                     NumOfInterface;
+  UINT8                     pad2[3];
   USB_INTERFACE             *Interfaces [USB_MAX_INTERFACE];
 
   //
   // Parent child relationship
   //
-  EFI_USB2_HC_TRANSACTION_TRANSLATOR Translator;
+  EFI_USB2_HC_TRANSACTION_TRANSLATOR Translator; // 2 bytes
 
   UINT8                     ParentAddr;
+  UINT8                     pad3[5];
   USB_INTERFACE             *ParentIf;
   UINT8                     ParentPort;       // Start at 0
   UINT8                     Tier;
+  BOOLEAN                   DisconnectFail;
+  UINT8                     pad4[5];
 };
 
 //

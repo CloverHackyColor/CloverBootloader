@@ -15,6 +15,23 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 
 
 #include "UsbBus.h"
+#include <Library/MemLogLib.h>
+#include <Library/PrintLib.h>
+
+#ifndef DEBUG_ALL
+#define DEBUG_UU 1
+#else
+#define DEBUG_UU DEBUG_ALL
+#endif
+
+#if DEBUG_UU==0
+#define DBG(...)
+#elif DEBUG_UU == 1
+#define DBG(...) MemLog(TRUE, 1, __VA_ARGS__)
+#else
+#define DBG(...) MemLog(TRUE, 0, __VA_ARGS__)
+#endif
+
 
 //
 // if RemainingDevicePath== NULL, then all Usb child devices in this bus are wanted.
@@ -794,7 +811,10 @@ GetUsbDPFromFullDP (
   // Create a new device path which only contain the above Usb part
   //
   UsbDevicePathPtr = AllocateZeroPool (Size + sizeof (EFI_DEVICE_PATH_PROTOCOL));
-  ASSERT (UsbDevicePathPtr != NULL);
+//  ASSERT (UsbDevicePathPtr != NULL);
+  if (!UsbDevicePathPtr) {
+    eturn NULL;
+  }
   CopyMem (UsbDevicePathPtr, UsbDevicePathBeginPtr, Size);
   //
   // Append end device path node
@@ -840,7 +860,10 @@ SearchUsbDPInList (
     //
     // Compare DEVICE_PATH_LIST_ITEM.DevicePath[]
     //
-    ASSERT (ListItem->DevicePath != NULL);
+//    ASSERT (ListItem->DevicePath != NULL);
+    if (!ListItem->DevicePath) {
+      return FALSE;
+    }
 
     UsbDpDevicePathSize  = GetDevicePathSize (UsbDP);
     if (UsbDpDevicePathSize == GetDevicePathSize (ListItem->DevicePath)) {
@@ -889,7 +912,10 @@ AddUsbDPToList (
   // Prepare the usbio device path DEVICE_PATH_LIST_ITEM structure.
   //
   ListItem = AllocateZeroPool (sizeof (DEVICE_PATH_LIST_ITEM));
-  ASSERT (ListItem != NULL);
+//  ASSERT (ListItem != NULL);
+  if (!ListItem) {
+    return EFI_NOT_FOUND;
+  }
   ListItem->Signature = DEVICE_PATH_LIST_ITEM_SIGNATURE;
   ListItem->DevicePath = DuplicateDevicePath (UsbDP);
 
@@ -923,12 +949,15 @@ MatchUsbClass (
 
   if ((UsbClassDevicePathPtr->Header.Type != MESSAGING_DEVICE_PATH) ||
       (UsbClassDevicePathPtr->Header.SubType != MSG_USB_CLASS_DP)){
-    ASSERT (0);
+//    ASSERT (0);
     return FALSE;
   }
 
   IfDesc       = UsbIf->IfDesc;
-  ASSERT (IfDesc->ActiveIndex < USB_MAX_INTERFACE_SETTING);
+//  ASSERT (IfDesc->ActiveIndex < USB_MAX_INTERFACE_SETTING);
+  if (IfDesc->ActiveIndex >= USB_MAX_INTERFACE_SETTING) {
+    return FALSE;
+  }
   ActIfDesc    = &(IfDesc->Settings[IfDesc->ActiveIndex]->Desc);
   DevDesc      = &(UsbIf->Device->DevDesc->Desc);
 
@@ -1234,13 +1263,22 @@ UsbBusIsWantedUsbIO (
   // Create new Usb device path according to the usb part in UsbIo full device path
   //
   DevicePathPtr = GetUsbDPFromFullDP (UsbIf->DevicePath);
-  ASSERT (DevicePathPtr != NULL);
+//  ASSERT (DevicePathPtr != NULL);
+  if (!DevicePathPtr) {
+    return FALSE;
+  }
+  DBG("UsbBusIsWanted: DeviceClass = 0x%x\n", 
+      (USB_CLASS_DEVICE_PATH *)DevicePathPtr->DeviceClass);
+  
 
   DoConvert = FALSE;
   WantedListIndex = WantedUsbIoDPListPtr->ForwardLink;
   while (WantedListIndex != WantedUsbIoDPListPtr){
     WantedListItem = CR(WantedListIndex, DEVICE_PATH_LIST_ITEM, Link, DEVICE_PATH_LIST_ITEM_SIGNATURE);
-    ASSERT (WantedListItem->DevicePath->Type == MESSAGING_DEVICE_PATH);
+ //   ASSERT (WantedListItem->DevicePath->Type == MESSAGING_DEVICE_PATH);
+    if (WantedListItem->DevicePath->Type != MESSAGING_DEVICE_PATH) {
+      return FALSE;
+    }
     switch (WantedListItem->DevicePath->SubType) {
     case MSG_USB_DP:
       FirstDevicePathSize = GetDevicePathSize (WantedListItem->DevicePath);
@@ -1326,7 +1364,10 @@ UsbBusRecursivelyConnectWantedUsbIo (
   if (Status == EFI_NOT_FOUND || UsbIoHandleCount == 0) {
     return EFI_SUCCESS;
   }
-  ASSERT (!EFI_ERROR (Status));
+//  ASSERT (!EFI_ERROR (Status));
+  if (EFI_ERROR (Status)) {
+    return Status;
+  }
 
   for (Index = 0; Index < UsbIoHandleCount; Index++) {
     //
