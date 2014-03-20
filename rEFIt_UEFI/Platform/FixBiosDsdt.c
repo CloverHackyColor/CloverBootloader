@@ -821,18 +821,24 @@ VOID findCPU(UINT8* dsdt, UINT32 length)
 	UINT32 i;
 	
 	acpi_cpu_count = 0;
+//  5B 83 41 0C 5C 2E 5F 50 52 5F 43 50 55 30 01 10
+//  10 00 00 06 
 	
-	for (i=0; i<length-20; i++) {
-		if (dsdt[i] == 0x5B && dsdt[i+1] == 0x83) { // ProcessorOP
-			UINT32 offset = i + 3 + (dsdt[i+2] >> 6);			
+	for (i = 0; i < length - 20; i++) {
+		if (dsdt[i] == 0x5B && dsdt[i + 1] == 0x83) { // ProcessorOP
+			UINT32 offset = i + 3 + (dsdt[i + 2] >> 6);	// name
 			BOOLEAN add_name = TRUE;
 			UINT8 j;
 			
-			for (j=0; j<4; j++) {
-				char c = dsdt[offset+j];
-				if( c == '\\') {
-				    offset = i + 8 + (dsdt[i+7] >> 6);
-				    c = dsdt[offset+j];
+			for (j = 0; j < 4; j++) {
+				CHAR8 c = dsdt[offset + j];
+        CHAR8 c1 = dsdt[offset + j + 1];
+				if(c == '\\') {
+				  offset += 5;
+          if (c1 == 0x2E) {
+            offset++;
+          }
+				  c = dsdt[offset + j];
 				}
 		
 				if (!(IS_UPPER(c) || IS_DIGIT(c) || c == '_')) {
