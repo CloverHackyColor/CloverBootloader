@@ -19,7 +19,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #include <Library/PrintLib.h>
 
 #ifndef DEBUG_ALL
-#define DEBUG_UU 1
+#define DEBUG_UU 0
 #else
 #define DEBUG_UU DEBUG_ALL
 #endif

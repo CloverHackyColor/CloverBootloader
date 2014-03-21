@@ -48,6 +48,7 @@ CHAR8* AppleFirmwareVersion[] =
 	"MP31.88Z.006C.B05.0802291410",
 	"MP41.88Z.0081.B04.0903051113",
 	"MP51.88Z.007F.B03.1010071432", //007F.B00.1008031144"
+  "MP61.88Z.0116.B02.1311222014",
 };
 
 CHAR8* AppleBoardID[] = //Lion DR1 compatible
@@ -80,7 +81,8 @@ CHAR8* AppleBoardID[] = //Lion DR1 compatible
   "Mac-27ADBB7B4CEE8E61",  //IM142 - i5-4670/i7-4771
 	"Mac-F2268DC8",  //MP31 - xeon quad 02/09 conroe
 	"Mac-F4238CC8",  //MP41 - xeon wolfdale
-	"Mac-F221BEC8"   //MP51 - Xeon Nehalem 4 cores
+	"Mac-F221BEC8",   //MP51 - Xeon Nehalem 4 cores
+  "Mac-F60DEB81FF30ACF6", //MP61 - Intel(R) Xeon(R) CPU E5-1620 v2 @ 3.70GHz Model 0x3E
 };
 
 CHAR8* AppleReleaseDate[] = 
@@ -113,7 +115,8 @@ CHAR8* AppleReleaseDate[] =
   "09/03/2013", //IM142
 	"02/29/08",
 	"03/05/09",
-	"10/07/10"
+	"10/07/10",
+  "11/22/2013", //MacPro6,1
 };
 
 CHAR8* AppleProductName[] = 
@@ -146,7 +149,8 @@ CHAR8* AppleProductName[] =
   "iMac14,2",
 	"MacPro3,1",
 	"MacPro4,1",
-	"MacPro5,1"
+	"MacPro5,1",
+  "MacPro6,1"
 };
 
 CHAR8* AppleFamilies[] = 
@@ -179,6 +183,7 @@ CHAR8* AppleFamilies[] =
   "iMac",
 	"MacPro",
 	"MacPro",
+  "MacPro",
 	"MacPro"
 };
 
@@ -213,7 +218,8 @@ CHAR8* AppleSystemVersion[] =
   "1.0",
 	"1.3",
 	"1.4",
-	"1.2"
+	"1.2",
+  "1.0",
 };
 
 CHAR8* AppleSerialNumber[] = //random generated
@@ -246,7 +252,8 @@ CHAR8* AppleSerialNumber[] = //random generated
   "D25LHACKF8JC", //IM142 - i5-4670/i7-4771
 	"W88A77AA5J4",  //MP31 - xeon quad 02/09
 	"CT93051DK9Y",  //MP41
-	"C07J77F7F4MC"  //MP51 C07J50F7F4MC  CK04000AHFC  "CG154TB9WU3"
+	"C07J77F7F4MC",  //MP51 C07J50F7F4MC  CK04000AHFC  "CG154TB9WU3"
+  "F5KLA770F9VM",  //MP61 - 
 };
 //no! ChassisVersion == BoardID
 CHAR8* AppleChassisAsset[] = 
@@ -279,6 +286,7 @@ CHAR8* AppleChassisAsset[] =
   "iMac-Aluminum",
 	"Pro-Enclosure",
 	"Pro-Enclosure",
+  "Pro-Enclosure",
 	"Pro-Enclosure"
 };
 //TODO - find more information and correct all SMC arrays
@@ -313,6 +321,7 @@ CHAR8* SmcPlatform[] =
 	"m86", //"MacPro3,1",
 	"NA",  //"MacPro4,1",
 	"k5",  //"MacPro5,1"
+  "j90",  //"MacPro6,1"
 };
 
 
@@ -346,7 +355,7 @@ UINT8 SmcRevision[][6] = {
 	{0x01, 0x25, 0x0F, 0, 0, 0x04},  //"MacPro3,1",
 	{0x01, 0x39, 0x0F, 0, 0, 0x05},  //"MacPro4,1",
 	{0x01, 0x39, 0x0F, 0, 0, 0x11},  //"MacPro5,1"
-
+  {0x02, 0x02, 0x0F, 0, 0, 0x16},  //"MacPro6,1"
 };
 
 
@@ -381,6 +390,7 @@ UINT32 SmcConfig[] =
 	0x79001,  //"MacPro3,1",
 	0x7c002,  //"MacPro4,1",
 	0x7c002,  //"MacPro5,1"
+  0xf0f006, //MacPro6,1
 };
 
 
@@ -454,7 +464,11 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model)
     case MacPro51:
       gSettings.ChassisType = MiscChassisTypeMiniTower; //06; 
       gSettings.Mobile = FALSE;
-      break;
+      break; 
+    case MacPro61:
+      gSettings.ChassisType = MiscChassisTypeUnknown; //02; this is a joke but think different!
+      gSettings.Mobile = FALSE;
+      break; 
       
     default: //unknown - use oem SMBIOS value to be default
       gSettings.Mobile = gMobile;
@@ -496,6 +510,9 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model)
         break;
       case CPU_MODEL_IVY_BRIDGE:
         AsciiStrCpy(gSettings.RPlt, "j30");
+        break;
+      case CPU_MODEL_IVY_BRIDGE_E5:
+        AsciiStrCpy(gSettings.RPlt, "j90");
         break;
       case CPU_MODEL_HASWELL_ULT:
         AsciiStrCpy(gSettings.RPlt, "j44");
