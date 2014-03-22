@@ -446,14 +446,19 @@ VOID GetCPUProperties (VOID)
             gCPUStructure.SubDivider = (UINT32)(RShiftU64(msr, 14)) & 0x1;
             gCPUStructure.MinRatio = 60;
             if(!gCPUStructure.MaxRatio) gCPUStructure.MaxRatio = 6; // :(
+            msr = AsmReadMsr64(0xCD);
            // gCPUStructure.FSBFrequency = DivU64x32(gCPUStructure.TSCFrequency * 2,
            //                                     gCPUStructure.MaxRatio * 2 + gCPUStructure.SubDivider);
             gCPUStructure.FSBFrequency = DivU64x32(LShiftU64(gCPUStructure.TSCFrequency, 1),
                                 gCPUStructure.MaxRatio * 2 + gCPUStructure.SubDivider);
+            if ((msr & 3) == 2 && (gCPUStructure.FSBFrequency < 196 * Mega)) {
+              DBG("wrong MaxRatio = %d.%d, corrected\n", gCPUStructure.MaxRatio, gCPUStructure.SubDivider * 5);
+              gCPUStructure.MaxRatio = DivU64x32(gCPUStructure.TSCFrequency, 200 * Mega);
+            }
             gCPUStructure.MaxRatio = gCPUStructure.MaxRatio * 10 + gCPUStructure.SubDivider * 5; 
             gCPUStructure.Turbo4 = (UINT16)(gCPUStructure.MaxRatio + 10);
             DBG("MSR dumps:\n");
-            DBG("\t@0x00CD=%lx\n", AsmReadMsr64(0xCD));
+            DBG("\t@0x00CD=%lx\n", msr);
             DBG("\t@0x0198=%lx\n", AsmReadMsr64(MSR_IA32_PERF_STATUS));
             break;
           default:
