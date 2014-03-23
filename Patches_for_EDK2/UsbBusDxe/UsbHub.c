@@ -835,16 +835,18 @@ UsbHubInit (
                     );
 
   if (EFI_ERROR (Status)) {
-    DEBUG (( EFI_D_ERROR, "UsbHubInit: failed to queue interrupt transfer for hub %d - %r\n",
-                HubDev->Address, Status));
-
+//    DEBUG (( EFI_D_ERROR, "UsbHubInit: failed to queue interrupt transfer for hub %d - %r\n",
+//                HubDev->Address, Status));
+    DBG("UsbHubInit: failed to queue interrupt transfer for hub %d - %r\n",
+        HubDev->Address, Status);
     gBS->CloseEvent (HubIf->HubNotify);
     HubIf->HubNotify = NULL;
 
     return Status;
   }
 
-  DEBUG (( EFI_D_INFO, "UsbHubInit: hub %d initialized\n", HubDev->Address));
+//  DEBUG (( EFI_D_INFO, "UsbHubInit: hub %d initialized\n", HubDev->Address));
+  DBG("UsbHubInit: hub %d initialized\n", HubDev->Address);
   return Status;
 }
 

@@ -848,9 +848,10 @@ UsbIoPortReset (
   Status = HubIf->HubApi->ResetPort (HubIf, Dev->ParentPort);
 
   if (EFI_ERROR (Status)) {
-    DEBUG (( EFI_D_ERROR, "UsbIoPortReset: failed to reset hub port %d@hub  %d, %r \n",
-                Dev->ParentPort, Dev->ParentAddr, Status));
-
+//    DEBUG (( EFI_D_ERROR, "UsbIoPortReset: failed to reset hub port %d@hub  %d, %r \n",
+//                Dev->ParentPort, Dev->ParentAddr, Status));
+    DBG("UsbIoPortReset: failed to reset hub port %d@hub  %d, %r \n",
+        Dev->ParentPort, Dev->ParentAddr, Status);
     goto ON_EXIT;
   }
 
@@ -865,21 +866,22 @@ UsbIoPortReset (
   Dev->Address = 0;
   Status  = UsbSetAddress (Dev, DevAddress);
   Dev->Address = DevAddress;
-
+  DBG("USB_SET_DEVICE_ADDRESS_STALL\n");
   gBS->Stall (USB_SET_DEVICE_ADDRESS_STALL);
   
   if (EFI_ERROR (Status)) {
     //
     // It may fail due to device disconnection or other reasons.
     //
-    DEBUG (( EFI_D_ERROR, "UsbIoPortReset: failed to set address for device %d - %r\n",
-                Dev->Address, Status));
-
+  //  DEBUG (( EFI_D_ERROR, "UsbIoPortReset: failed to set address for device %d - %r\n",
+  //              Dev->Address, Status));
+    DBG("UsbIoPortReset: failed to set address for device %d - %r\n",
+                      Dev->Address, Status);
     goto ON_EXIT;
   }
 
-  DEBUG (( EFI_D_INFO, "UsbIoPortReset: device is now ADDRESSED at %d\n", Dev->Address));
-
+//  DEBUG (( EFI_D_INFO, "UsbIoPortReset: device is now ADDRESSED at %d\n", Dev->Address));
+  DBG("UsbIoPortReset: device is now ADDRESSED at %d\n", Dev->Address);
   //
   // Reset the current active configure, after this device
   // is in CONFIGURED state.
@@ -888,8 +890,10 @@ UsbIoPortReset (
     Status = UsbSetConfig (Dev, Dev->ActiveConfig->Desc.ConfigurationValue);
 
     if (EFI_ERROR (Status)) {
-      DEBUG (( EFI_D_ERROR, "UsbIoPortReset: failed to set configure for device %d - %r\n",
-                  Dev->Address, Status));
+//      DEBUG (( EFI_D_ERROR, "UsbIoPortReset: failed to set configure for device %d - %r\n",
+//                  Dev->Address, Status));
+      DBG( "UsbIoPortReset: failed to set configure for device %d - %r\n",
+          Dev->Address, Status);
     }
   }
 
@@ -946,7 +950,7 @@ UsbBusBuildProtocol (
 
   if (EFI_ERROR (Status)) {
  //   DEBUG ((EFI_D_ERROR, "UsbBusStart: Failed to open device path %r\n", Status));
-
+    DBG("UsbBusStart: Failed to open device path %r\n", Status);
     FreePool (UsbBus);
     return Status;
   }
@@ -979,7 +983,7 @@ UsbBusBuildProtocol (
 
   if (EFI_ERROR (Status) && EFI_ERROR (Status2)) {
  //   DEBUG ((EFI_D_ERROR, "UsbBusStart: Failed to open USB_HC/USB2_HC %r\n", Status));
-
+    DBG("UsbBusStart: Failed to open USB_HC/USB2_HC %r\n", Status);
     Status = EFI_DEVICE_ERROR;
     goto CLOSE_HC;
   }
@@ -993,8 +997,9 @@ UsbBusBuildProtocol (
       UsbBus->MaxDevices = 256;
     }
   }
-
+  DBG("UsbHcReset\n");
   UsbHcReset (UsbBus, EFI_USB_HC_RESET_GLOBAL);
+  DBG("UsbHcSetState\n");
   UsbHcSetState (UsbBus, EfiUsbHcStateOperational);
 
   //
@@ -1009,6 +1014,7 @@ UsbBusBuildProtocol (
 
   if (EFI_ERROR (Status)) {
  //   DEBUG ((EFI_D_ERROR, "UsbBusStart: Failed to install bus protocol %r\n", Status));
+    DBG("UsbBusStart: Failed to install bus protocol %r\n", Status);
     goto CLOSE_HC;
   }
 
@@ -1017,7 +1023,10 @@ UsbBusBuildProtocol (
   //
   InitializeListHead (&UsbBus->WantedUsbIoDPList);
   Status = UsbBusAddWantedUsbIoDP (&UsbBus->BusId, RemainingDevicePath);
-  ASSERT (!EFI_ERROR (Status));
+//  ASSERT (!EFI_ERROR (Status));
+  if (EFI_ERROR (Status)) {
+    goto UNINSTALL_USBBUS;
+  }
   //
   // Create a fake usb device for root hub
   //
@@ -1047,22 +1056,24 @@ UsbBusBuildProtocol (
   //
   // Report Status Code here since we will enumerate the USB devices
   //
-  REPORT_STATUS_CODE_WITH_DEVICE_PATH (
+/*  REPORT_STATUS_CODE_WITH_DEVICE_PATH (
     EFI_PROGRESS_CODE,
     (EFI_IO_BUS_USB | EFI_IOB_PC_DETECT),
     UsbBus->DevicePath
-    );
-  
+    ); */
+  DBG("Start init USB\n");
   Status                  = mUsbRootHubApi.Init (RootIf);
 
   if (EFI_ERROR (Status)) {
 //    DEBUG ((EFI_D_ERROR, "UsbBusStart: Failed to init root hub %r\n", Status));
+    DBG("UsbBusStart: Failed to init root hub %r\n", Status);
     goto FREE_ROOTHUB;
   }
 
   UsbBus->Devices[0] = RootHub;
 
 //  DEBUG ((EFI_D_INFO, "UsbBusStart: usb bus started on %p, root hub %p\n", Controller, RootIf));
+  DBG("UsbBusStart: usb bus started on %p, root hub %p\n", Controller, RootIf);
   return EFI_SUCCESS;
 
 FREE_ROOTHUB:
@@ -1179,7 +1190,7 @@ UsbBusControllerDriverSupported (
            DevicePathNode.DevPath->SubType != MSG_USB_CLASS_DP
            && DevicePathNode.DevPath->SubType != MSG_USB_WWID_DP
            )) {
-      
+            DBG("UsbBus not supported: \n");
         return EFI_UNSUPPORTED;
       }
     }
@@ -1199,7 +1210,7 @@ UsbBusControllerDriverSupported (
   if (Status == EFI_ALREADY_STARTED) {
     return EFI_SUCCESS;
   }
-
+//  DBG("1\n");
   if (EFI_ERROR (Status)) {
     //
     // If failed to open USB_HC2, fall back to USB_HC
@@ -1215,7 +1226,7 @@ UsbBusControllerDriverSupported (
     if (Status == EFI_ALREADY_STARTED) {
       return EFI_SUCCESS;
     }
-  
+//  DBG("2\n");
     if (EFI_ERROR (Status)) {
       return Status;
     }
@@ -1231,7 +1242,7 @@ UsbBusControllerDriverSupported (
           );
 
   } else {
-
+//    DBG("3\n");
     //
     // Close the USB_HC2 used to perform the supported test
     //
@@ -1242,7 +1253,7 @@ UsbBusControllerDriverSupported (
            Controller
            );
   }
- 
+//  DBG("4\n");
   //
   // Open the EFI Device Path protocol needed to perform the supported test
   //
@@ -1257,7 +1268,7 @@ UsbBusControllerDriverSupported (
   if (Status == EFI_ALREADY_STARTED) {
     return EFI_SUCCESS;
   }
-
+//  DBG("5\n");
   if (!EFI_ERROR (Status)) {
     //
     // Close protocol, don't use device path protocol in the Support() function
@@ -1271,7 +1282,7 @@ UsbBusControllerDriverSupported (
 
     return EFI_SUCCESS;
   }
-
+//  DBG("6\n");
   return Status;
 }
 
@@ -1318,11 +1329,12 @@ UsbBusControllerDriverStart (
   //
   // Report Status Code here since we will initialize the host controller
   //
-  REPORT_STATUS_CODE_WITH_DEVICE_PATH (
+//  DBG("Report ParentDevicePath\n");
+/*  REPORT_STATUS_CODE_WITH_DEVICE_PATH (
     EFI_PROGRESS_CODE,
     (EFI_IO_BUS_USB | EFI_IOB_PC_INIT),
     ParentDevicePath
-    );
+    ); */
 
   //
   // Locate the USB bus protocol, if it is found, USB bus
@@ -1341,7 +1353,8 @@ UsbBusControllerDriverStart (
     //
     // If first start, build the bus execute environment and install bus protocol
     //
-    REPORT_STATUS_CODE (EFI_PROGRESS_CODE, (EFI_IO_BUS_USB | EFI_P_PC_ENABLE));
+    DBG("Report build protocol\n");
+//    REPORT_STATUS_CODE (EFI_PROGRESS_CODE, (EFI_IO_BUS_USB | EFI_P_PC_ENABLE));
     Status = UsbBusBuildProtocol (This, Controller, RemainingDevicePath);
     if (EFI_ERROR (Status)) {
       return Status;
@@ -1383,10 +1396,12 @@ UsbBusControllerDriverStart (
 
     Status = UsbBusAddWantedUsbIoDP (UsbBusId, RemainingDevicePath);
  //   ASSERT (!EFI_ERROR (Status));
+//   DBG("AddWanted status=%r\n", Status);
     //
     // Ensure all wanted child usb devices are fully recursively connected
     //
     Status = UsbBusRecursivelyConnectWantedUsbIo (UsbBusId);
+//    DBG("RecursivelyConnect status=%r\n", Status);
 //    ASSERT (!EFI_ERROR (Status));
   }
 //  DBG("UsbBus started!\n");

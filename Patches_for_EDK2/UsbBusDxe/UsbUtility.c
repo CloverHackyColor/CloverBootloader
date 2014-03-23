@@ -1187,14 +1187,20 @@ UsbBusAddWantedUsbIoDP (
     // Here use a Usb class Device Path in WantedUsbIoDPList to indicate all Usb devices
     // are wanted Usb devices
     //
+//    DBG("UsbBusFreeUsbDPList\n");
     Status = UsbBusFreeUsbDPList (&Bus->WantedUsbIoDPList);
-    ASSERT (!EFI_ERROR (Status));
+//    ASSERT (!EFI_ERROR (Status));
+    if (EFI_ERROR (Status)) {
+      return EFI_NOT_FOUND;
+    }
+      
     DevicePathPtr = DuplicateDevicePath ((EFI_DEVICE_PATH_PROTOCOL *) &mAllUsbClassDevicePath);
   } else if (!IsDevicePathEnd (RemainingDevicePath)) {
     //
     // If RemainingDevicePath isn't the End of Device Path Node, 
     // Create new Usb device path according to the usb part in remaining device path
     //
+//    DBG("GetUsbDPFromFullDP\n");
     DevicePathPtr = GetUsbDPFromFullDP (RemainingDevicePath);
   } else {
     //
@@ -1204,10 +1210,17 @@ UsbBusAddWantedUsbIoDP (
     return EFI_SUCCESS;
   }
 
-  ASSERT (DevicePathPtr != NULL);
+//  ASSERT (DevicePathPtr != NULL);
+  if (!DevicePathPtr) {
+    return EFI_INVALID_PARAMETER;
+  }
   Status = AddUsbDPToList (DevicePathPtr, &Bus->WantedUsbIoDPList);
-  ASSERT (!EFI_ERROR (Status));
+//  ASSERT (!EFI_ERROR (Status));
   FreePool (DevicePathPtr);
+  if (EFI_ERROR (Status)) {
+    return EFI_NOT_FOUND;
+  }
+  
   return EFI_SUCCESS;
 }
 
@@ -1291,19 +1304,23 @@ UsbBusIsWantedUsbIO (
           DoConvert = TRUE;
         }
       }
+        DBG("Subtype = MSG_USB_DP\n");
       break;
     case MSG_USB_CLASS_DP:
       if (MatchUsbClass((USB_CLASS_DEVICE_PATH *)WantedListItem->DevicePath, UsbIf)) {
         DoConvert = TRUE;
       }
+        DBG("Subtype = MSG_USB_CLASS_DP\n");
       break;
    case MSG_USB_WWID_DP:
       if (MatchUsbWwid((USB_WWID_DEVICE_PATH *)WantedListItem->DevicePath, UsbIf)) {
         DoConvert = TRUE;
       }
+        DBG("Subtype = MSG_USB_WWID_DP\n");
       break;
     default:
-      ASSERT (0);
+//      ASSERT (0);
+        DBG("Subtype = %x\n", WantedListItem->DevicePath->SubType);
       break;
     }
 
