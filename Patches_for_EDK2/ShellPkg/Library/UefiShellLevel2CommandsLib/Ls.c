@@ -100,123 +100,123 @@ PrintSfoVolumeInfoTableEntry(
   SHELL_FILE_HANDLE     ShellFileHandle;
   EFI_FILE_PROTOCOL     *EfiFpHandle;
 
-    //
-    // Get the first valid handle (directories)
-    //
+  //
+  // Get the first valid handle (directories)
+  //
   for ( Node = (EFI_SHELL_FILE_INFO *)GetFirstNode(&TheList->Link)
       ; !IsNull(&TheList->Link, &Node->Link) && Node->Handle == NULL
       ; Node = (EFI_SHELL_FILE_INFO *)GetNextNode(&TheList->Link, &Node->Link)
-       );
+     );
 
-    if (Node->Handle == NULL) {
+  if (Node->Handle == NULL) {
     DirectoryName = GetFullyQualifiedPath(((EFI_SHELL_FILE_INFO *)GetFirstNode(&TheList->Link))->FullName);
 
-      //
-      // We need to open something up to get system information
-      //
-      Status = gEfiShellProtocol->OpenFileByName(
-        DirectoryName,
-        &ShellFileHandle,
-        EFI_FILE_MODE_READ);
+    //
+    // We need to open something up to get system information
+    //
+    Status = gEfiShellProtocol->OpenFileByName(
+      DirectoryName,
+      &ShellFileHandle,
+      EFI_FILE_MODE_READ
+      );
+
+ //     ASSERT_EFI_ERROR(Status);
+      if (EFI_ERROR(Status)) {
+        return (SHELL_SUCCESS);
+      }
+    FreePool(DirectoryName);
+
+    //
+    // Get the Volume Info from ShellFileHandle
+    //
+    SysInfo     = NULL;
+    SysInfoSize = 0;
+    EfiFpHandle = ConvertShellHandleToEfiFileProtocol(ShellFileHandle);
+    Status = EfiFpHandle->GetInfo(
+      EfiFpHandle,
+      &gEfiFileSystemInfoGuid,
+      &SysInfoSize,
+      SysInfo
+      );
+
+    if (Status == EFI_BUFFER_TOO_SMALL) {
+      SysInfo = AllocateZeroPool(SysInfoSize);
+      Status = EfiFpHandle->GetInfo(
+        EfiFpHandle,
+        &gEfiFileSystemInfoGuid,
+        &SysInfoSize,
+        SysInfo
+        );
+    }
 
  //     ASSERT_EFI_ERROR(Status);
       if (EFI_ERROR(Status)) {
         return (SHELL_SUCCESS);
       }
 
-      FreePool(DirectoryName);
+    gEfiShellProtocol->CloseFile(ShellFileHandle);
+  } else {
+    //
+    // Get the Volume Info from Node->Handle
+    //
+    SysInfo = NULL;
+    SysInfoSize = 0;
+    EfiFpHandle = ConvertShellHandleToEfiFileProtocol(Node->Handle);
+    Status = EfiFpHandle->GetInfo(
+      EfiFpHandle,
+      &gEfiFileSystemInfoGuid,
+      &SysInfoSize,
+      SysInfo
+      );
 
-      //
-      // Get the Volume Info from ShellFileHandle
-      //
-      SysInfo     = NULL;
-      SysInfoSize = 0;
-      EfiFpHandle = ConvertShellHandleToEfiFileProtocol(ShellFileHandle);
+    if (Status == EFI_BUFFER_TOO_SMALL) {
+      SysInfo = AllocateZeroPool(SysInfoSize);
       Status = EfiFpHandle->GetInfo(
         EfiFpHandle,
         &gEfiFileSystemInfoGuid,
         &SysInfoSize,
-      SysInfo
-      );
-
-      if (Status == EFI_BUFFER_TOO_SMALL) {
-        SysInfo = AllocateZeroPool(SysInfoSize);
-        Status = EfiFpHandle->GetInfo(
-          EfiFpHandle,
-          &gEfiFileSystemInfoGuid,
-          &SysInfoSize,
         SysInfo
         );
-      }
-
- //     ASSERT_EFI_ERROR(Status);
-      if (EFI_ERROR(Status)) {
-        return (SHELL_SUCCESS);
-      }
-
-      gEfiShellProtocol->CloseFile(ShellFileHandle);
-    } else {
-      //
-      // Get the Volume Info from Node->Handle
-      //
-      SysInfo = NULL;
-      SysInfoSize = 0;
-      EfiFpHandle = ConvertShellHandleToEfiFileProtocol(Node->Handle);
-      Status = EfiFpHandle->GetInfo(
-        EfiFpHandle,
-        &gEfiFileSystemInfoGuid,
-        &SysInfoSize,
-      SysInfo
-      );
-
-      if (Status == EFI_BUFFER_TOO_SMALL) {
-        SysInfo = AllocateZeroPool(SysInfoSize);
-        Status = EfiFpHandle->GetInfo(
-          EfiFpHandle,
-          &gEfiFileSystemInfoGuid,
-          &SysInfoSize,
-        SysInfo
-        );
-      }
+    }
 
 //      ASSERT_EFI_ERROR(Status);
       if (EFI_ERROR(Status)) {
         return (SHELL_SUCCESS);
       }
-    }
+  }
 
-    ShellPrintHiiEx (
-      -1,
-      -1,
-      NULL,
-      STRING_TOKEN (STR_GEN_SFO_HEADER),
-      gShellLevel2HiiHandle,
+  ShellPrintHiiEx (
+    -1,
+    -1,
+    NULL,
+    STRING_TOKEN (STR_GEN_SFO_HEADER),
+    gShellLevel2HiiHandle,
     L"ls"
     );
-    //
-    // print VolumeInfo table
-    //
+  //
+  // print VolumeInfo table
+  //
 //    ASSERT(SysInfo != NULL);
     if (!SysInfo) {
       return (SHELL_SUCCESS);
     }
-    ShellPrintHiiEx (
-      0,
-      gST->ConOut->Mode->CursorRow,
-      NULL,
-      STRING_TOKEN (STR_LS_SFO_VOLINFO),
-      gShellLevel2HiiHandle,
-      SysInfo->VolumeLabel,
-      SysInfo->VolumeSize,
-      SysInfo->ReadOnly?L"TRUE":L"FALSE",
-      SysInfo->FreeSpace,
-      SysInfo->BlockSize
-     );
+  ShellPrintHiiEx (
+    0,
+    gST->ConOut->Mode->CursorRow,
+    NULL,
+    STRING_TOKEN (STR_LS_SFO_VOLINFO),
+    gShellLevel2HiiHandle,
+    SysInfo->VolumeLabel,
+    SysInfo->VolumeSize,
+    SysInfo->ReadOnly?L"TRUE":L"FALSE",
+    SysInfo->FreeSpace,
+    SysInfo->BlockSize
+    );
 
   SHELL_FREE_NON_NULL(SysInfo);
 
   return (Status);
-  }
+}
 
 /**
   print out the info on a single file.
@@ -243,10 +243,10 @@ PrintFileInformation(
   ASSERT(Dirs     != NULL);
   ASSERT(TheNode  != NULL);
 
-    if (Sfo) {
-      //
-      // Print the FileInfo Table
-      //
+  if (Sfo) {
+    //
+    // Print the FileInfo Table
+    //
     ShellPrintHiiEx (
       0,
       gST->ConOut->Mode->CursorRow,
@@ -279,60 +279,60 @@ PrintFileInformation(
       TheNode->Info->ModificationTime.Day,
       TheNode->Info->ModificationTime.Month,
       TheNode->Info->ModificationTime.Year
-     );
-    } else {
-      //
-      // print this one out...
-      // first print the universal start, next print the type specific name format, last print the CRLF
-      //
-      ShellPrintHiiEx (
-        -1,
-        -1,
-        NULL,
-        STRING_TOKEN (STR_LS_LINE_START_ALL),
-        gShellLevel2HiiHandle,
+      );
+  } else {
+    //
+    // print this one out...
+    // first print the universal start, next print the type specific name format, last print the CRLF
+    //
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (STR_LS_LINE_START_ALL),
+      gShellLevel2HiiHandle,
       &TheNode->Info->ModificationTime,
       (TheNode->Info->Attribute & EFI_FILE_DIRECTORY) != 0?L"<DIR>":L"",
       (TheNode->Info->Attribute & EFI_FILE_READ_ONLY) != 0?L'r':L' ',
       TheNode->Info->FileSize
-       );
+      );
     if (TheNode->Info->Attribute & EFI_FILE_DIRECTORY) {
       (*Dirs)++;
-        ShellPrintHiiEx (
-          -1,
-          -1,
-          NULL,
-          STRING_TOKEN (STR_LS_LINE_END_DIR),
-          gShellLevel2HiiHandle,
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_LS_LINE_END_DIR),
+        gShellLevel2HiiHandle,
         TheNode->FileName
-         );
-      } else {
+        );
+    } else {
       (*Files)++;
       (*Size) += TheNode->Info->FileSize;
       if ( (gUnicodeCollation->StriColl(gUnicodeCollation, (CHAR16*)L".nsh", (CHAR16*)&(TheNode->FileName[StrLen (TheNode->FileName) - 4])) == 0)
         || (gUnicodeCollation->StriColl(gUnicodeCollation, (CHAR16*)L".efi", (CHAR16*)&(TheNode->FileName[StrLen (TheNode->FileName) - 4])) == 0)
-         ){
-          ShellPrintHiiEx (
-            -1,
-            -1,
-            NULL,
-            STRING_TOKEN (STR_LS_LINE_END_EXE),
-            gShellLevel2HiiHandle,
+       ){
+        ShellPrintHiiEx (
+          -1,
+          -1,
+          NULL,
+          STRING_TOKEN (STR_LS_LINE_END_EXE),
+          gShellLevel2HiiHandle,
           TheNode->FileName
-           );
-        } else {
-          ShellPrintHiiEx (
-            -1,
-            -1,
-            NULL,
-            STRING_TOKEN (STR_LS_LINE_END_FILE),
-            gShellLevel2HiiHandle,
+          );
+      } else {
+        ShellPrintHiiEx (
+          -1,
+          -1,
+          NULL,
+          STRING_TOKEN (STR_LS_LINE_END_FILE),
+          gShellLevel2HiiHandle,
           TheNode->FileName
-           );
-        }
+          );
       }
     }
   }
+}
 
 /**
   print out the header when not using standard format output.
@@ -384,20 +384,20 @@ PrintNonSfoFooter(
   IN UINT64                     Dirs
   )
 {
-    //
-    // print footer
-    //
-    ShellPrintHiiEx (
-      -1,
-      -1,
-      NULL,
-      STRING_TOKEN (STR_LS_FOOTER_LINE),
-      gShellLevel2HiiHandle,
+  //
+  // print footer
+  //
+  ShellPrintHiiEx (
+    -1,
+    -1,
+    NULL,
+    STRING_TOKEN (STR_LS_FOOTER_LINE),
+    gShellLevel2HiiHandle,
     Files,
     Size,
     Dirs
-     );
-  }
+   );
+}
 
 /**
   print out the list of files and directories from the LS command
@@ -456,6 +456,9 @@ PrintLsOutput(
   }
 
   CorrectedPath = StrnCatGrow(&CorrectedPath, &LongestPath, RootPath,     0);
+  if (CorrectedPath == NULL) {
+    return SHELL_OUT_OF_RESOURCES;
+  }
   if (CorrectedPath[StrLen(CorrectedPath)-1] != L'\\'
     &&CorrectedPath[StrLen(CorrectedPath)-1] != L'/') {
     CorrectedPath = StrnCatGrow(&CorrectedPath, &LongestPath, L"\\",     0);
@@ -469,65 +472,65 @@ PrintLsOutput(
 
   Status = ShellOpenFileMetaArg((CHAR16*)CorrectedPath, EFI_FILE_MODE_READ, &ListHead);
   if (!EFI_ERROR(Status)) {
-  if (ListHead == NULL || IsListEmpty(&ListHead->Link)) {
-    SHELL_FREE_NON_NULL(CorrectedPath);
-    return (SHELL_SUCCESS);
-  }
+    if (ListHead == NULL || IsListEmpty(&ListHead->Link)) {
+      SHELL_FREE_NON_NULL(CorrectedPath);
+      return (SHELL_SUCCESS);
+    }
 
     if (Sfo && Found == NULL) {
-    PrintSfoVolumeInfoTableEntry(ListHead);
-  }
+      PrintSfoVolumeInfoTableEntry(ListHead);
+    }
 
     for ( Node = (EFI_SHELL_FILE_INFO *)GetFirstNode(&ListHead->Link), LongestPath = 0
-      ; !IsNull(&ListHead->Link, &Node->Link)
-      ; Node = (EFI_SHELL_FILE_INFO *)GetNextNode(&ListHead->Link, &Node->Link)
-      ){
+        ; !IsNull(&ListHead->Link, &Node->Link)
+        ; Node = (EFI_SHELL_FILE_INFO *)GetNextNode(&ListHead->Link, &Node->Link)
+        ){
 //    ASSERT(Node != NULL);
     if (!Node) {
       return (SHELL_SUCCESS);
     }
-    if (LongestPath < StrSize(Node->FullName)) {
-      LongestPath = StrSize(Node->FullName);
-    }
+      if (LongestPath < StrSize(Node->FullName)) {
+        LongestPath = StrSize(Node->FullName);
+      }
 //    ASSERT(Node->Info != NULL);
 //    ASSERT((Node->Info->Attribute & EFI_FILE_VALID_ATTR) == Node->Info->Attribute);
     if (!Node->Info || !((Node->Info->Attribute & EFI_FILE_VALID_ATTR) == Node->Info->Attribute)) {
       return (SHELL_SUCCESS);
     }
-    if (Attribs == 0) {
-      //
-      // NOT system & NOT hidden
-      //
-      if ( (Node->Info->Attribute & EFI_FILE_SYSTEM)
-        || (Node->Info->Attribute & EFI_FILE_HIDDEN)
-       ){
-        continue;
+      if (Attribs == 0) {
+        //
+        // NOT system & NOT hidden
+        //
+        if ( (Node->Info->Attribute & EFI_FILE_SYSTEM)
+          || (Node->Info->Attribute & EFI_FILE_HIDDEN)
+         ){
+          continue;
+        }
+      } else if ((Attribs != EFI_FILE_VALID_ATTR) ||
+                 (Count == 5)) {
+        //
+        // Only matches the bits which "Attribs" contains, not
+        // all files/directories with any of the bits.
+        // Count == 5 is used to tell the difference between a user
+        // specifying all bits (EX: -arhsda) and just specifying
+        // -a (means display all files with any attribute).
+        //
+        if ( (Node->Info->Attribute & Attribs) != Attribs) {
+          continue;
+        }
       }
-    } else if ((Attribs != EFI_FILE_VALID_ATTR) ||
-               (Count == 5)) {
-      //
-      // Only matches the bits which "Attribs" contains, not
-      // all files/directories with any of the bits.
-      // Count == 5 is used to tell the difference between a user
-      // specifying all bits (EX: -arhsda) and just specifying
-      // -a (means display all files with any attribute).
-      //
-      if ( (Node->Info->Attribute & Attribs) != Attribs) {
-        continue;
-      }
-    }
 
-      if (!Sfo && HeaderPrinted == FALSE) {
+      if (!Sfo && !HeaderPrinted) {
         PrintNonSfoHeader(CorrectedPath);
       }
-    PrintFileInformation(Sfo, Node, &FileCount, &FileSize, &DirCount);
+      PrintFileInformation(Sfo, Node, &FileCount, &FileSize, &DirCount);
       FoundOne = TRUE;
       HeaderPrinted = TRUE;
-  }
+    }
 
-  if (!Sfo) {
-    PrintNonSfoFooter(FileCount, FileSize, DirCount);
-  }
+    if (!Sfo) {
+      PrintNonSfoFooter(FileCount, FileSize, DirCount);
+    }
   }
 
   if (Rec) {
@@ -537,6 +540,9 @@ PrintLsOutput(
     ShellCloseFileMetaArg(&ListHead);
     CorrectedPath[0] = CHAR_NULL;
     CorrectedPath = StrnCatGrow(&CorrectedPath, &LongestPath, RootPath, 0);
+    if (CorrectedPath == NULL) {
+      return SHELL_OUT_OF_RESOURCES;
+    }
     if (CorrectedPath[StrLen(CorrectedPath)-1] != L'\\'
       &&CorrectedPath[StrLen(CorrectedPath)-1] != L'/') {
       CorrectedPath = StrnCatGrow(&CorrectedPath, &LongestPath, L"\\",     0);
@@ -578,7 +584,7 @@ PrintLsOutput(
   SHELL_FREE_NON_NULL(CorrectedPath);
   ShellCloseFileMetaArg(&ListHead);
 
-  if (Found == NULL && FoundOne == FALSE) {
+  if (Found == NULL && !FoundOne) {
     return (SHELL_NOT_FOUND);
   }
 
@@ -669,7 +675,7 @@ ShellCommandRunLs (
     if (ShellCommandLineGetCount(Package) > 2) {
       ShellPrintHiiEx(-1, -1, NULL, STRING_TOKEN (STR_GEN_TOO_MANY), gShellLevel2HiiHandle);
       ShellStatus = SHELL_INVALID_PARAMETER;
-    } else {
+    } else { //675
       //
       // check for -a
       //
@@ -743,29 +749,39 @@ ShellCommandRunLs (
             ShellStatus = SHELL_NOT_FOUND;
             ShellPrintHiiEx(-1, -1, NULL, STRING_TOKEN (STR_GEN_NO_CWD), gShellLevel2HiiHandle);
           } else {
-                //
-            // We got a valid fully qualified path or we have a CWD
-                //
-  //          ASSERT((FullPath == NULL && Size == 0) || (FullPath != NULL));
+    //        ASSERT((FullPath == NULL && Size == 0) || (FullPath != NULL));
             if (StrStr(PathName, L":") == NULL) {
               StrnCatGrow(&FullPath, &Size, gEfiShellProtocol->GetCurDir(NULL), 0);
+              if (FullPath == NULL) {
+                ShellCommandLineFreeVarList (Package);
+                return SHELL_OUT_OF_RESOURCES;
+              }
             }
             StrnCatGrow(&FullPath, &Size, PathName, 0);
+            if (FullPath == NULL) {
+                ShellCommandLineFreeVarList (Package);
+                return SHELL_OUT_OF_RESOURCES;
+            }
+               
             if  (ShellIsDirectory(PathName) == EFI_SUCCESS) {
-                //
+              //
               // is listing ends with a directory, then we list all files in that directory
-                //
+              //
               StrnCatGrow(&SearchString, NULL, L"*", 0);
-              } else {
-                //
+            } else {
+              //
               // must split off the search part that applies to files from the end of the directory part
-                //
+              //
               for (StrnCatGrow(&SearchString, NULL, PathName, 0)
                 ; SearchString != NULL && StrStr(SearchString, L"\\") != NULL
                 ; CopyMem(SearchString, StrStr(SearchString, L"\\") + 1, 1 + StrSize(StrStr(SearchString, L"\\") + 1))) ;
               FullPath[StrLen(FullPath) - StrLen(SearchString)] = CHAR_NULL;
             }
           }
+        }
+      } else {
+  //        ASSERT(FullPath == NULL);
+          StrnCatGrow(&FullPath, NULL, L"*", 0);
         }
         Status = gRT->GetTime(&TheTime, NULL);
         if (EFI_ERROR(Status)) {
@@ -797,7 +813,6 @@ ShellCommandRunLs (
           }
         }
       }
-    }
   }
 
   //
