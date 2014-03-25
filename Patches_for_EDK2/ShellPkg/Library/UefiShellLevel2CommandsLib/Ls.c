@@ -291,7 +291,14 @@ PrintFileInformation(
       NULL,
       STRING_TOKEN (STR_LS_LINE_START_ALL),
       gShellLevel2HiiHandle,
-      &TheNode->Info->ModificationTime,
+//      &TheNode->Info->ModificationTime,
+                     TheNode->Info->ModificationTime.Hour,
+                     TheNode->Info->ModificationTime.Minute,
+                     TheNode->Info->ModificationTime.Second,
+                     TheNode->Info->ModificationTime.Day,
+                     TheNode->Info->ModificationTime.Month,
+                     TheNode->Info->ModificationTime.Year,
+
       (TheNode->Info->Attribute & EFI_FILE_DIRECTORY) != 0?L"<DIR>":L"",
       (TheNode->Info->Attribute & EFI_FILE_READ_ONLY) != 0?L'r':L' ',
       TheNode->Info->FileSize
@@ -749,6 +756,9 @@ ShellCommandRunLs (
             ShellStatus = SHELL_NOT_FOUND;
             ShellPrintHiiEx(-1, -1, NULL, STRING_TOKEN (STR_GEN_NO_CWD), gShellLevel2HiiHandle);
           } else {
+            //
+            // We got a valid fully qualified path or we have a CWD
+            //
     //        ASSERT((FullPath == NULL && Size == 0) || (FullPath != NULL));
             if (StrStr(PathName, L":") == NULL) {
               StrnCatGrow(&FullPath, &Size, gEfiShellProtocol->GetCurDir(NULL), 0);
@@ -779,10 +789,10 @@ ShellCommandRunLs (
             }
           }
         }
-      } else {
+  /*    } else {
   //        ASSERT(FullPath == NULL);
           StrnCatGrow(&FullPath, NULL, L"*", 0);
-        }
+        } */
         Status = gRT->GetTime(&TheTime, NULL);
         if (EFI_ERROR(Status)) {
           ShellPrintHiiEx(-1, -1, NULL, STRING_TOKEN (STR_GEN_UEFI_FUNC_WARN), gShellLevel2HiiHandle, L"gRT->GetTime", Status);
@@ -813,6 +823,7 @@ ShellCommandRunLs (
           }
         }
       }
+    }
   }
 
   //

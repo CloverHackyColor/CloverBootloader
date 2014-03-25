@@ -20,7 +20,7 @@
   FILE_GUID                      = 7C04A583-9E3E-4f1c-AD65-E05268D0B4D1
   EFI_SPECIFICATION_VERSION		= 0x00010000
   MODULE_TYPE                    = UEFI_APPLICATION
-  VERSION_STRING                 = 2.1
+  VERSION_STRING                 = 1.1
   ENTRY_POINT                    = UefiMain
 
 #
@@ -94,7 +94,8 @@
   gEfiSimpleFileSystemProtocolGuid                        # ALWAYS_CONSUMED
   gEfiLoadedImageProtocolGuid                             # ALWAYS_CONSUMED
   gEfiComponentName2ProtocolGuid                          # ALWAYS_CONSUMED
-  gEfiUnicodeCollation2ProtocolGuid                       # ALWAYS_CONSUMED
+  gEfiUnicodeCollationProtocolGuid                       # ALWAYS_CONSUMED
+  gEfiUnicodeCollation2ProtocolGuid
   gEfiDevicePathProtocolGuid                              # ALWAYS_CONSUMED
 
 [Pcd]

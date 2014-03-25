@@ -204,7 +204,6 @@ GetProtocolInfoString(
 
 //  ASSERT((RetVal == NULL && Size == 0) || (RetVal != NULL));
   StrnCatGrow(&RetVal, &Size, Seperator, 0);
-  
   return (RetVal);
 }
 

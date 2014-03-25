@@ -1631,7 +1631,8 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   gBS->SetWatchdogTimer(0x0000, 0x0000, 0x0000, NULL);
   ZeroMem((VOID*)&gSettings, sizeof(SETTINGS_DATA));
   
-  InitializeUnicodeCollationProtocol();
+  Status = InitializeUnicodeCollationProtocol();
+  DBG("UnicodeCollation Status=%r\n", Status);
   PrepatchSmbios();
   
 #ifdef REVISION_STR

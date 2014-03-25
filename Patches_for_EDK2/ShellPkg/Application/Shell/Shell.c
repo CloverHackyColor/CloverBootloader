@@ -348,7 +348,6 @@ UefiMain (
     if (!ShellInfoObject.NewShellParametersProtocol) {
       return (EFI_NOT_STARTED);
     }
-
     //
     // create and install the EfiShellProtocol
     //
@@ -361,7 +360,6 @@ UefiMain (
     if (!ShellInfoObject.NewEfiShellProtocol) {
       return (EFI_NOT_STARTED);
     }
-
     //
     // Now initialize the shell library (it requires Shell Parameters protocol)
     //
@@ -370,13 +368,11 @@ UefiMain (
     if (EFI_ERROR(Status)) {
       return Status;
     }
-
     Status = CommandInit();
  //   ASSERT_EFI_ERROR(Status);
     if (EFI_ERROR(Status)) {
       return Status;
     }
-
     //
     // Check the command line
     //
@@ -384,7 +380,6 @@ UefiMain (
     if (EFI_ERROR (Status)) {
       goto FreeResources;
     }
-
     //
     // If shell support level is >= 1 create the mappings and paths
     //
@@ -401,7 +396,6 @@ UefiMain (
     if (EFI_ERROR(Status)) {
       return Status;
     }
-
 
     //
     // Display the version
@@ -661,6 +655,8 @@ FreeResources:
   } else {
     return EFI_SUCCESS;
   }
+  } else {
+    return Status;
   } 
   return (Status);
 }
@@ -864,13 +860,22 @@ ProcessCommandLine(
   // like a shell option (which is assumed to be `file-name`).
   
   Status = gBS->LocateProtocol (
-                  &gEfiUnicodeCollationProtocolGuid,
-                  NULL,
-                  (VOID **) &UnicodeCollation
-                  );
+                                &gEfiUnicodeCollation2ProtocolGuid,
+                                NULL,
+                                (VOID **) &UnicodeCollation
+                                );
+  if (EFI_ERROR(Status)) {
+    Status = gBS->LocateProtocol (
+                                  &gEfiUnicodeCollationProtocolGuid,
+                                  NULL,
+                                  (VOID **) &UnicodeCollation
+                                  );
+    
+  }
   if (EFI_ERROR (Status)) {
     return Status;
   }
+
 
   // Set default options
   ShellInfoObject.ShellInitSettings.BitUnion.Bits.Startup      = FALSE;
@@ -2511,10 +2516,7 @@ RunCommand(
   SHELL_OPERATION_TYPES     Type;
 
 //  ASSERT(CmdLine != NULL);
-  if (!CmdLine) {
-    return EFI_INVALID_PARAMETER;
-  }
-  if (StrLen(CmdLine) == 0) {
+  if (!CmdLine || StrLen(CmdLine) == 0) {
     return (EFI_SUCCESS);
   }
 
@@ -2567,7 +2569,7 @@ RunCommand(
   //
   switch (Type = GetOperationType(FirstParameter)) {
     case   File_Sys_Change:
-      Status = ChangeMappedDrive(CleanOriginal);
+      Status = ChangeMappedDrive(FirstParameter); //ChangeMappedDrive(CleanOriginal)
       break;
     case   Internal_Command:
     case   Script_File_Name:
@@ -2661,10 +2663,12 @@ RunScriptFileHandle (
   SHELL_STATUS        CalleeExitStatus;
 
 //  ASSERT(!ShellCommandGetScriptExit());
-  if (!ShellCommandGetScriptExit()) {
-    return EFI_SUCCESS;
+  if (ShellCommandGetScriptExit()) {
+    return (EFI_NOT_STARTED);
   }
+  
 CalleeExitStatus = SHELL_SUCCESS;
+
   PreScriptEchoState = ShellCommandGetEchoState();
 
   NewScriptFile = (SCRIPT_FILE*)AllocateZeroPool(sizeof(SCRIPT_FILE));
@@ -2677,7 +2681,7 @@ CalleeExitStatus = SHELL_SUCCESS;
   //
 //  ASSERT(NewScriptFile->ScriptName == NULL);
   if (NewScriptFile->ScriptName) {
-    return (EFI_OUT_OF_RESOURCES);
+    return EFI_INVALID_PARAMETER;
   }
   NewScriptFile->ScriptName = StrnCatGrow(&NewScriptFile->ScriptName, NULL, Name, 0);
   if (NewScriptFile->ScriptName == NULL) {
@@ -2698,7 +2702,7 @@ CalleeExitStatus = SHELL_SUCCESS;
     for (LoopVar = 0 ; LoopVar < 10 && LoopVar < NewScriptFile->Argc; LoopVar++) {
   //    ASSERT(NewScriptFile->Argv[LoopVar] == NULL);
       if (NewScriptFile->Argv[LoopVar]) {
-        return (EFI_OUT_OF_RESOURCES);
+        break;
       }
       NewScriptFile->Argv[LoopVar] = StrnCatGrow(&NewScriptFile->Argv[LoopVar], NULL, ShellInfoObject.NewShellParametersProtocol->Argv[LoopVar], 0);
       if (NewScriptFile->Argv[LoopVar] == NULL) {
@@ -2764,7 +2768,7 @@ CalleeExitStatus = SHELL_SUCCESS;
   ){
 //    ASSERT(CommandLine2 != NULL);
     if (!CommandLine2) {
-      return (EFI_OUT_OF_RESOURCES);
+      return EFI_SUCCESS;
     }
     StrCpy(CommandLine2, NewScriptFile->CurrentCommand->Cl);
 
