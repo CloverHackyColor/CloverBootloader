@@ -40,8 +40,8 @@ ARCH_INCLUDE = -I $(MAKEROOT)/Include/Arm/
 endif
 
 INCLUDE = $(TOOL_INCLUDE) -I $(MAKEROOT) -I $(MAKEROOT)/Include/Common -I $(MAKEROOT)/Include/ -I $(MAKEROOT)/Include/IndustryStandard -I $(MAKEROOT)/Common/ -I .. -I . $(ARCH_INCLUDE) 
-CPPFLAGS = $(INCLUDE)  -Wno-unused-value -Wno-deprecated-writable-strings
-CFLAGS = -MD -fshort-wchar -fno-strict-aliasing -nostdlib -Wall -Wno-self-assign -Wno-unused-value -Wno-deprecated-writable-strings -Wno-parentheses-equality -Werror -c -g
+CPPFLAGS = $(INCLUDE)  -Wno-unused-value
+CFLAGS = -MD -fshort-wchar -fno-strict-aliasing -nostdlib -Wall -Wno-unused-value -Werror -c -g
 #-fno-merge-constants
 LFLAGS =
 
