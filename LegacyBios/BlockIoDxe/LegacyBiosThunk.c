@@ -43,7 +43,7 @@ InitializeBiosIntCaller (
                   EFI_SIZE_TO_PAGES(LegacyRegionSize),
                   &LegacyRegionBase
                   );
-  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR (Status);
   
   ThunkContext->RealModeBuffer     = (VOID*)(UINTN)LegacyRegionBase;
   ThunkContext->RealModeBufferSize = LegacyRegionSize;
@@ -96,7 +96,7 @@ InitializeInterruptRedirection (
                   EFI_SIZE_TO_PAGES(LegacyRegionLength),
                   &LegacyRegionBase
                   );
-  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR (Status);
 
   //
   // Copy code to legacy region

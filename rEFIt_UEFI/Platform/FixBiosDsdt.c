@@ -2904,7 +2904,7 @@ UINT32 FIXSBUS (UINT8 *dsdt, UINT32 len)
     PCISIZE = get_size(dsdt, PCIADR);
   }
   if (!PCISIZE) {
-    DBG("wrong PCI0 address, patch SBUS will not be applied\n");
+//    DBG("wrong PCI0 address, patch SBUS will not be applied\n");
     return len;
   }
   DBG("Start SBUS Fix PCI=%x len=%x\n", PCIADR, len);
@@ -2952,7 +2952,7 @@ UINT32 FIXSBUS (UINT8 *dsdt, UINT32 len)
   else
     sizeoffset = sizeof(sbus1); 
   
-  DBG("SBUS address %x code size = 0x%08x\n", SBUSADR, sizeoffset);
+//  DBG("SBUS address %x code size = 0x%08x\n", SBUSADR, sizeoffset);
     
   if (SBUSADR) {
     // move data to back for add sbus
@@ -2983,17 +2983,17 @@ UINT32 FIXSBUS (UINT8 *dsdt, UINT32 len)
   return len;
 }
 
-CHAR8 dataMCHC[] = {0x44,0x00,0x00,0x00};
+//CHAR8 dataMCHC[] = {0x44,0x00,0x00,0x00};
 
 UINT32 AddMCHC (UINT8 *dsdt, UINT32 len)
 {    
   UINT32    i, k = 0;
-  UINT32    PCIADR, PCISIZE = 0, Size;
+  UINT32    PCIADR, PCISIZE = 0; //, Size;
   INT32     sizeoffset;
   AML_CHUNK *root;
   AML_CHUNK *device;
-  AML_CHUNK *met, *met2;
-  AML_CHUNK *pack;
+//  AML_CHUNK *met, *met2;
+//  AML_CHUNK *pack;
   CHAR8     *mchc;
 
   PCIADR = GetPciDevice(dsdt, len);
@@ -3001,7 +3001,7 @@ UINT32 AddMCHC (UINT8 *dsdt, UINT32 len)
     PCISIZE = get_size(dsdt, PCIADR);
   }
   if (!PCISIZE) {
-    DBG("wrong PCI0 address, patch MCHC will not be applied\n");
+//    DBG("wrong PCI0 address, patch MCHC will not be applied\n");
     return len;
   }
   //Find Device MCHC by name
@@ -3009,14 +3009,16 @@ UINT32 AddMCHC (UINT8 *dsdt, UINT32 len)
     k = CmpDev(dsdt, i, (UINT8*)"MCHC");
     if (k != 0) {
       DBG("device name (MCHC) found at %x, don't add!\n", k);
-      break;
-      //return len;
+   //   break;
+      return len;
     }
   }
 
   DBG("Start Add MCHC\n");
   root = aml_create_node(NULL);
-  if (!k) {
+  //Slice - now I don\t want to add _DSM to MCHC
+  //as far as I understand it works only for native ID, not FakeID.
+/*  if (!k) {
     //device not found
     device = aml_add_device(root, "MCHC");
     aml_add_name(device, "_ADR");
@@ -3032,9 +3034,14 @@ UINT32 AddMCHC (UINT8 *dsdt, UINT32 len)
     }
     met = aml_add_method(root, "_DSM", 4);
   }
+ */
+  device = aml_add_device(root, "MCHC");
+  aml_add_name(device, "_ADR");
+  aml_add_byte(device, 0x00);
+
 
 	// add Method(_DSM,4,NotSerialized) for MCHC
-  
+/*
   met2 = aml_add_store(met);
   pack = aml_add_package(met2);
   aml_add_string(pack, "device-id");
@@ -3044,7 +3051,7 @@ UINT32 AddMCHC (UINT8 *dsdt, UINT32 len)
   aml_add_local0(met2);
   aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
   // finish Method(_DSM,4,NotSerialized) 
-  
+*/  
   aml_calculate_size(root);  
   mchc = AllocateZeroPool(root->Size);
   sizeoffset = root->Size;
@@ -3086,7 +3093,7 @@ UINT32 AddIMEI (UINT8 *dsdt, UINT32 len)
     PCISIZE = get_size(dsdt, PCIADR);
   }
   if (!PCISIZE) {
-    DBG("wrong PCI0 address, patch IMEI will not be applied\n");
+//    DBG("wrong PCI0 address, patch IMEI will not be applied\n");
     return len;
   }
   // Find Device IMEI

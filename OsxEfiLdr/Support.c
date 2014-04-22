@@ -169,7 +169,7 @@ GenMemoryMap (
   
   EBDAaddr = LShiftU64((UINT64)(*(UINT16 *)(UINTN)(0x40E)), 4);
   //fool proof
-  if (EBDAaddr < 0x9A000 || EBDAaddr > 0x9F800) {
+  if (EBDAaddr < 0x99000 || EBDAaddr > 0x9F800) {
     EBDAaddr = 0x9A000;
   }
 
@@ -205,7 +205,7 @@ GenMemoryMap (
       Length      = BiosMemoryMap->MemoryMapEntry[Index].Length;
       if (BaseAddress & EFI_PAGE_MASK) {
         Length      = Length + (BaseAddress & EFI_PAGE_MASK) - EFI_PAGE_SIZE;
-        BaseAddress = LShiftU64 (RShiftU64 (BaseAddress, EFI_PAGE_SHIFT) + 1, EFI_PAGE_SHIFT);
+        BaseAddress = LShiftU64 (RShiftU64 (BaseAddress + EFI_PAGE_MASK, EFI_PAGE_SHIFT), EFI_PAGE_SHIFT);
       }
     } else {
       BaseAddress = BiosMemoryMap->MemoryMapEntry[Index].BaseAddress;
@@ -232,19 +232,32 @@ GenMemoryMap (
         continue;
       }
     }
-    EfiAddMemoryDescriptor (
-      NumberOfMemoryMapEntries,
-      EfiMemoryDescriptor,
-      Type,
-      (EFI_PHYSICAL_ADDRESS)BaseAddress,
-      RShiftU64 (Length, EFI_PAGE_SHIFT),
-      Attr
-      );
+    //ugly patch
+/*    if (BaseAddress == 0x9b000) {
+      //EBDA2 protection
+      EfiAddMemoryDescriptor (
+                              NumberOfMemoryMapEntries,
+                              EfiMemoryDescriptor,
+                              EfiACPIMemoryNVS,
+                              (EFI_PHYSICAL_ADDRESS)BaseAddress,
+                              RShiftU64 (Length + EFI_PAGE_MASK, EFI_PAGE_SHIFT),
+                              EFI_MEMORY_UC
+                              );
+    } else {     */
+      EfiAddMemoryDescriptor (
+                              NumberOfMemoryMapEntries,
+                              EfiMemoryDescriptor,
+                              Type,
+                              (EFI_PHYSICAL_ADDRESS)BaseAddress,
+                              RShiftU64 (Length, EFI_PAGE_SHIFT),
+                              Attr
+                              );
+//    }
   }
   
   //Slice - Add two more descriptors?
   /* dmazar: does not have effect, so removed */
-  //Slice - or no! This is only thing that resolve memory KP in SnowLeopard
+  //Slice - or no! This is only thing that resolves memory KP in SnowLeopard
   //usr-sse2 http://www.projectosx.com/forum/index.php?showtopic=2008&view=findpost&p=13284
   //slice http://www.projectosx.com/forum/index.php?showtopic=2008&view=findpost&p=14702
   //dmazar http://www.projectosx.com/forum/index.php?showtopic=2008&view=findpost&p=16046
@@ -260,10 +273,21 @@ GenMemoryMap (
                           EfiMemoryDescriptor,
                           EfiReservedMemoryType,
                           (EFI_PHYSICAL_ADDRESS)EBDAaddr,
-                          RShiftU64 (EBDAsize, EFI_PAGE_SHIFT),
+                          RShiftU64 (EBDAsize + EFI_PAGE_MASK, EFI_PAGE_SHIFT),
                           EFI_MEMORY_UC
                           );
- // this is just BIOS rom protection. Seems to be not needed. 
+  //EBDA2 protection
+/*  EfiAddMemoryDescriptor (
+                          NumberOfMemoryMapEntries,
+                          EfiMemoryDescriptor,
+                          EfiACPIMemoryNVS,
+                          (EFI_PHYSICAL_ADDRESS)0x9b000,
+                          1,
+                          EFI_MEMORY_UC
+                          );
+*/
+  
+ // this is just BIOS rom protection. Seems to be not needed.
   /*
   EfiAddMemoryDescriptor (
                           NumberOfMemoryMapEntries,

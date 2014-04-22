@@ -1231,14 +1231,14 @@ CoreFreePages (
         break;
     }
   }
-  if (Link == &gMemoryMap) {
+  if ((Link == &gMemoryMap) || !Entry) {
     Status = EFI_NOT_FOUND;
     goto Done;
   }
 
   Alignment = EFI_DEFAULT_PAGE_ALLOCATION_ALIGNMENT;
 
-  ASSERT (Entry != NULL);
+//  ASSERT (Entry != NULL);
   if  (Entry->Type == EfiACPIReclaimMemory   ||
        Entry->Type == EfiACPIMemoryNVS       ||
        Entry->Type == EfiRuntimeServicesCode ||
@@ -1653,19 +1653,22 @@ CoreTerminateMemoryMap (
 
     for (Link = gMemoryMap.ForwardLink; Link != &gMemoryMap; Link = Link->ForwardLink) {
       Entry = CR(Link, MEMORY_MAP, Link, MEMORY_MAP_SIGNATURE);
+      if (!Entry) {
+        break;
+      }
       if ((Entry->Attribute & EFI_MEMORY_RUNTIME) != 0) {
         if (Entry->Type == EfiACPIReclaimMemory || Entry->Type == EfiACPIMemoryNVS) {
-          DEBUG((DEBUG_ERROR | DEBUG_PAGE, "ExitBootServices: ACPI memory entry has RUNTIME attribute set.\n"));
+//          DEBUG((DEBUG_ERROR | DEBUG_PAGE, "ExitBootServices: ACPI memory entry has RUNTIME attribute set.\n"));
           Status =  EFI_INVALID_PARAMETER;
           goto Done;
         }
         if ((Entry->Start & (EFI_ACPI_RUNTIME_PAGE_ALLOCATION_ALIGNMENT - 1)) != 0) {
-          DEBUG((DEBUG_ERROR | DEBUG_PAGE, "ExitBootServices: A RUNTIME memory entry is not on a proper alignment.\n"));
+//          DEBUG((DEBUG_ERROR | DEBUG_PAGE, "ExitBootServices: A RUNTIME memory entry is not on a proper alignment.\n"));
           Status =  EFI_INVALID_PARAMETER;
           goto Done;
         }
         if (((Entry->End + 1) & (EFI_ACPI_RUNTIME_PAGE_ALLOCATION_ALIGNMENT - 1)) != 0) {
-          DEBUG((DEBUG_ERROR | DEBUG_PAGE, "ExitBootServices: A RUNTIME memory entry is not on a proper alignment.\n"));
+//          DEBUG((DEBUG_ERROR | DEBUG_PAGE, "ExitBootServices: A RUNTIME memory entry is not on a proper alignment.\n"));
           Status =  EFI_INVALID_PARAMETER;
           goto Done;
         }

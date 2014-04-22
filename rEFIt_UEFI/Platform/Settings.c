@@ -4829,7 +4829,7 @@ CHAR16* GetExtraKextsDir(CHAR8 *OSVersion)
   
   // find source injection folder with kexts
   // note: we are just checking for existance of particular folder, not checking if it is empty or not
-  // check OEM subfolders: version speciffic or default to Other
+  // check OEM subfolders: version specific or default to Other
   SrcDir = PoolPrint(L"%s\\kexts\\%a", OEMPath, FixedVersion);
   if (!FileExists(SelfVolume->RootDir, SrcDir)) {
     FreePool(SrcDir);
@@ -4840,7 +4840,7 @@ CHAR16* GetExtraKextsDir(CHAR8 *OSVersion)
     }
   }
   if (SrcDir == NULL) {
-    // if not found, check EFI\kexts\...
+    // if not found, check EFI\CLOVER\kexts\...
     SrcDir = PoolPrint(L"\\EFI\\CLOVER\\kexts\\%a", FixedVersion);
     if (!FileExists(SelfVolume->RootDir, SrcDir)) {
       FreePool(SrcDir);

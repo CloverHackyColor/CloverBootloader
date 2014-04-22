@@ -442,6 +442,7 @@ static EFI_STATUS LoadEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
   if (CheckError(Status, ErrorInfo)) {
     if (ErrorInStep != NULL)
       *ErrorInStep = 1;
+    PauseForKey(L"press any key");
     goto bailout;
   }
   

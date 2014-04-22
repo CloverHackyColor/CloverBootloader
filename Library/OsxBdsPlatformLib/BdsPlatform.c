@@ -323,7 +323,7 @@ DisableUsbLegacySupport(
 /*++
 
 Routine Description:
-  Disabble the USB legacy Support in all Ehci and Uhci.
+  Disable the USB legacy Support in all Ehci and Uhci.
   This function assume all PciIo handles have been created in system.
   
 Arguments:
