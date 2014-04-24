@@ -1720,6 +1720,9 @@ VOID PatchTableType131()
 
 VOID PatchTableType132()
 {
+  if (gSettings.QPI == 0xFFFF) {
+    return;
+  }
 	// Get Table Type132
 	SmbiosTable = GetSmbiosTableFromType (EntryPoint, 132, 0);
 	if (SmbiosTable.Raw != NULL) {
@@ -1828,8 +1831,6 @@ EFI_STATUS PrepatchSmbios()
 
 VOID PatchSmbios(VOID) //continue
 {
-//	EFI_STATUS Status = EFI_UNSUPPORTED;
-//	newSmbiosTable = (SMBIOS_STRUCTURE_POINTER)(UINT8*)AllocateZeroPool(MAX_TABLE_SIZE);
   newSmbiosTable.Raw = (UINT8*)AllocateZeroPool(MAX_TABLE_SIZE);
 	//Slice - order of patching is significant
 	PatchTableType0();

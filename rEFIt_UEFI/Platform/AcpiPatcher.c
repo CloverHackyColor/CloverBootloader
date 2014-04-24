@@ -31,11 +31,10 @@ Re-Work by Slice 2011.
 #define ECDT_SIGN        SIGNATURE_32('E','C','D','T')
 #define DMAR_SIGN        SIGNATURE_32('D','M','A','R')
 #define BGRT_SIGN        SIGNATURE_32('B','G','R','T')
-#define SLIC_SIGN        SIGNATURE_32('S', 'L', 'I', 'C')
+#define SLIC_SIGN        SIGNATURE_32('S','L','I','C')
 #define APPLE_OEM_ID        { 'A', 'P', 'P', 'L', 'E', ' ' }
 #define APPLE_OEM_TABLE_ID  { 'A', 'p', 'p', 'l', 'e', '0', '0', ' ' }
 #define APPLE_CREATOR_ID    { 'L', 'o', 'k', 'i' }
-//#define EFI_ACPI_4_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE  SIGNATURE_32('S', 'S', 'D', 'T')
 
 CONST CHAR8	oemID[6]       = APPLE_OEM_ID;
 CONST CHAR8	oemTableID[8]  = APPLE_OEM_TABLE_ID;
@@ -45,7 +44,6 @@ CONST CHAR8	creatorID[4]   = APPLE_CREATOR_ID;
 RSDT_TABLE    *Rsdt = NULL;
 XSDT_TABLE    *Xsdt = NULL;
 
-//CHAR8*   orgBiosDsdt;
 UINT64      BiosDsdt;
 UINT32      BiosDsdtLen;
 UINT8       acpi_cpu_count;
@@ -90,7 +88,6 @@ CHAR16* ACPInames[NUM_TABLES] = {
     L"UEFI.aml"
 };
 
-//EFI_PHYSICAL_ADDRESS        *Table;
 
 UINT8 pmBlock[] = {
 	
@@ -172,6 +169,7 @@ Returns:
   Other       - Failed
 
 ##########################################################################################*/
+#if 0 //not used
 EFI_STATUS ConvertAcpiTable (IN UINTN TableLen,IN OUT VOID **TheTable)
 {
 	VOID                  *AcpiTableOri;
@@ -204,6 +202,7 @@ EFI_STATUS ConvertAcpiTable (IN UINTN TableLen,IN OUT VOID **TheTable)
   
 	return EFI_SUCCESS;
 }
+#endif
 
 UINT8 Checksum8(VOID * startPtr, UINT32 len)
 {
@@ -1619,7 +1618,11 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
     if (gSettings.C3Latency == 0) {
       gSettings.C3Latency = newFadt->PLvl3Lat;
     }
-    newFadt->IaPcBootArch = 0x3;
+ /*   if ((newFadt->IaPcBootArch & 0x10) != 0) {
+      newFadt->IaPcBootArch = 0x13;
+    } else { */
+      newFadt->IaPcBootArch = 0x3;
+//    }
     newFadt->Flags |= 0x400; //Reset Register Supported
     XDsdt = newFadt->XDsdt; //save values if present
     XFirmwareCtrl = newFadt->XFirmwareCtrl;

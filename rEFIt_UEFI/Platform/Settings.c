@@ -3892,7 +3892,12 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
           AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
           gSettings.QPI = (UINT16)StrDecimalToUintn((CHAR16*)&UStr[0]);
         }
-        DBG("Config set QPI=%dMHz\n", gSettings.QPI);
+        if (!gSettings.QPI) {
+          gSettings.QPI = 0xFFFF;
+          DBG("Config set QPI=0 disable table132\n");
+        } else {
+          DBG("Config set QPI=%dMHz\n", gSettings.QPI);
+        }
       }
       prop = GetProperty(dictPointer,"FrequencyMHz");
       if(prop) {
