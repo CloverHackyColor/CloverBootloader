@@ -941,7 +941,7 @@ BiosVideoChildHandleUninstall (
   BiosVideoPrivate = NULL;
   GraphicsOutput   = NULL;
   PciIo            = NULL;
-  Status           = EFI_UNSUPPORTED;
+//  Status           = EFI_UNSUPPORTED;
 
   Status = gBS->OpenProtocol (
                   Handle,

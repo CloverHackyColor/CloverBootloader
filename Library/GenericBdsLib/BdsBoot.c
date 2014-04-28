@@ -540,6 +540,15 @@ BdsDeleteAllInvalidLegacyBootOptions (
     return Status;
   }
 
+  BootOrder = BdsLibGetVariableAndSize (
+                L"BootOrder",
+                &gEfiGlobalVariableGuid,
+                &BootOrderSize
+                );
+  if (BootOrder == NULL) {
+    return EFI_NOT_FOUND;
+  }
+
   LegacyBios->GetBbsInfo (
                 LegacyBios,
                 &HddCount,
@@ -547,15 +556,6 @@ BdsDeleteAllInvalidLegacyBootOptions (
                 &BbsCount,
                 &LocalBbsTable
                 );
-
-  BootOrder = BdsLibGetVariableAndSize (
-                L"BootOrder",
-                &gEfiGlobalVariableGuid,
-                &BootOrderSize
-                );
-  if (BootOrder == NULL) {
-    BootOrderSize = 0;
-  }
 
   Index = 0;
   while (Index < BootOrderSize / sizeof (UINT16)) {
@@ -2509,13 +2509,15 @@ Done:
 
   //
   // Clear Boot Current
+  // Deleting variable with current implementation shouldn't fail.
   //
   gRT->SetVariable (
         L"BootCurrent",
         &gEfiGlobalVariableGuid,
         EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
         0,
-        &Option->BootCurrent
+//        &Option->BootCurrent
+        NULL
         );
 
   return Status;
@@ -2626,6 +2628,7 @@ BdsExpandPartitionPartialDevicePathToFull (
         FreePool (TempNewDevicePath);
         //
         // Save the matching Device Path so we don't need to do a connect all next time
+        // Failure to set the variable only impacts the performance when next time expanding the short-form device path.
         //
         Status = gRT->SetVariable (
                         HD_BOOT_DEVICE_PATH_VARIABLE_NAME,
@@ -3191,7 +3194,9 @@ BdsLibEnumerateAllBootOption (
         AsciiStrSize (PlatLang),
         PlatLang
         );
-    //  ASSERT_EFI_ERROR (Status);
+      //
+      // Failure to set the variable only impacts the performance next time enumerating the boot options.
+      //
 
       if (LastLang != NULL) {
         FreePool (LastLang);
@@ -3573,8 +3578,12 @@ BdsLibBootNext (
           &gEfiGlobalVariableGuid,
           EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_NON_VOLATILE,
           0,
-          BootNext
+          NULL  //BootNext
           );
+    //
+    // Deleting variable with current variable implementation shouldn't fail.
+    //
+ //   ASSERT_EFI_ERROR (Status);
 
     //
     // Start to build the boot option and try to boot
