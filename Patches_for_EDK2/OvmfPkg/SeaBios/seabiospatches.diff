@@ -27,7 +27,7 @@
          help
              Support virtual hardware when the code detects it is
              running on an emulator.
-@@ -108,7 +108,6 @@ endchoice
+@@ -97,7 +97,6 @@ endchoice
              0xffe00000 if CBFS ends 2Meg below the end of flash).
  
      config FLASH_FLOPPY
@@ -35,7 +35,7 @@
          bool "Floppy images in CBFS"
          default y
          help
-@@ -124,7 +123,7 @@ endchoice
+@@ -113,7 +112,7 @@ endchoice
              the BIOS in 16bit protected mode.
  
      config MALLOC_UPPERMEMORY
@@ -44,7 +44,7 @@
          default y
          help
              Use the "Upper Memory Block" area (0xc0000-0xf0000) for
-@@ -488,8 +487,21 @@ menu "Debugging"
+@@ -477,8 +476,21 @@ menu "Debugging"
          default n
          help
              Send debugging information to serial port.
@@ -342,7 +342,7 @@
  
          config NO_VGABIOS
              bool "None"
-@@ -71,7 +71,7 @@ menu "VGA ROM"
+@@ -87,7 +87,7 @@ menu "VGA ROM"
      config VGA_ALLOCATE_EXTRA_STACK
          depends on BUILD_VGABIOS
          bool "Allocate an internal stack for 16bit interrupt entry point"

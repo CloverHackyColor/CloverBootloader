@@ -130,22 +130,31 @@ FV = SECFV
 
 [FD.MEMFD]
 BaseAddress   = 0x800000
-Size          = 0x800000
+Size          = 0x900000
 ErasePolarity = 1
 BlockSize     = 0x10000
-NumBlocks     = 0x80
+NumBlocks     = 0x90
 
 0x000000|0x006000
 gUefiOvmfPkgTokenSpaceGuid.PcdOvmfSecPageTablesBase|gUefiOvmfPkgTokenSpaceGuid.PcdOvmfSecPageTablesSize
 
+0x006000|0x001000
+gUefiOvmfPkgTokenSpaceGuid.PcdOvmfLockBoxStorageBase|gUefiOvmfPkgTokenSpaceGuid.PcdOvmfLockBoxStorageSize
+
+0x007000|0x001000
+gEfiMdePkgTokenSpaceGuid.PcdGuidedExtractHandlerTableAddress|gUefiOvmfPkgTokenSpaceGuid.PcdGuidedExtractHandlerTableSize
+
 0x010000|0x008000
 gUefiOvmfPkgTokenSpaceGuid.PcdOvmfSecPeiTempRamBase|gUefiOvmfPkgTokenSpaceGuid.PcdOvmfSecPeiTempRamSize
+
+0x018000|0x008000
+gUefiOvmfPkgTokenSpaceGuid.PcdS3AcpiReservedMemoryBase|gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdS3AcpiReservedMemorySize
 
 0x020000|0x0E0000
 gUefiOvmfPkgTokenSpaceGuid.PcdOvmfPeiMemFvBase|gUefiOvmfPkgTokenSpaceGuid.PcdOvmfPeiMemFvSize
 FV = PEIFV
 
-0x100000|0x700000
+0x100000|0x800000
 gUefiOvmfPkgTokenSpaceGuid.PcdOvmfDxeMemFvBase|gUefiOvmfPkgTokenSpaceGuid.PcdOvmfDxeMemFvSize
 FV = DXEFV
 
@@ -212,6 +221,7 @@ INF  MdeModulePkg/Universal/PCD/Pei/Pcd.inf
 INF  IntelFrameworkModulePkg/Universal/StatusCode/Pei/StatusCodePei.inf
 INF  OvmfPkg/PlatformPei/PlatformPei.inf
 INF  MdeModulePkg/Core/DxeIplPeim/DxeIpl.inf
+INF  UefiCpuPkg/Universal/Acpi/S3Resume2Pei/S3Resume2Pei.inf
 
 ################################################################################
 
@@ -331,8 +341,11 @@ INF  OvmfPkg/QemuSmbiosPlatformDxe/SmbiosPlatformDxe.inf
 INF  MdeModulePkg/Universal/Acpi/AcpiTableDxe/AcpiTableDxe.inf
 INF  OvmfPkg/AcpiPlatformDxe/AcpiPlatformDxe.inf
 INF  RuleOverride=ACPITABLE OvmfPkg/AcpiTables/AcpiTables.inf
-#INF  RuleOverride=BINARY Clover/HFSPlus/HFSPlus.inf
+INF  OvmfPkg/AcpiS3SaveDxe/AcpiS3SaveDxe.inf
+INF  MdeModulePkg/Universal/Acpi/S3SaveStateDxe/S3SaveStateDxe.inf
+INF  MdeModulePkg/Universal/Acpi/BootScriptExecutorDxe/BootScriptExecutorDxe.inf
 
+#INF  RuleOverride=BINARY Clover/HFSPlus/HFSPlus.inf
 INF  RuleOverride = BINARY FatBinPkg/EnhancedFatDxe/Fat.inf
 
 !ifndef $(USE_OLD_SHELL)
@@ -392,6 +405,7 @@ INF  RuleOverride=CSM OvmfPkg/Csm/Csm16/Csm16.inf
 INF  OvmfPkg/QemuVideoDxe/QemuVideoDxe.inf
 !endif
 
+INF  OvmfPkg/PlatformDxe/Platform.inf
 
 
 ################################################################################
