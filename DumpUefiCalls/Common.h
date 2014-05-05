@@ -76,7 +76,8 @@
 
 //
 // PRINT_DUMPS:
-// 1 - will print dumps (ST, RT, DataHub vars) when ExitBootServices() is called
+// 2 - will print dumps for ST, RT, and DataHub vars when ExitBootServices() is called
+// 1 - will print dumps for ST, RT vars when ExitBootServices() is called
 // 0 - will skip printing dumps
 //
 #define PRINT_DUMPS			1
