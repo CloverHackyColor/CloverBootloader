@@ -1,7 +1,7 @@
 /** @file
   Header file for IDE mode of ATA host controller.
   
-  Copyright (c) 2010 - 2012, Intel Corporation. All rights reserved.<BR>
+  Copyright (c) 2010 - 2014, Intel Corporation. All rights reserved.<BR>
   This program and the accompanying materials                          
   are licensed and made available under the terms and conditions of the BSD License         
   which accompanies this distribution.  The full text of the license may be found at        
@@ -2171,56 +2171,6 @@ AtaPacketReadWrite (
 }
 
 /**
-  Sumbit ATAPI request sense command.
-
-  @param[in] PciIo           Pointer to the EFI_PCI_IO_PROTOCOL instance
-  @param[in] IdeRegisters    Pointer to EFI_IDE_REGISTERS which is used to
-                             store the IDE i/o port registers' base addresses
-  @param[in] Channel         The channel number of device.
-  @param[in] Device          The device number of device.
-  @param[in] SenseData       A pointer to store sense data.
-  @param[in] SenseDataLength The sense data length.
-  @param[in] Timeout         The timeout value to execute this cmd, uses 100ns as a unit.
-
-  @retval EFI_SUCCESS        Send out the ATAPI packet command successfully.
-  @retval EFI_DEVICE_ERROR   The device failed to send data.
-
-**/
-EFI_STATUS
-EFIAPI
-AtaPacketRequestSense (
-  IN  EFI_PCI_IO_PROTOCOL               *PciIo,
-  IN  EFI_IDE_REGISTERS                 *IdeRegisters,
-  IN  UINT8                             Channel,
-  IN  UINT8                             Device,
-  IN  VOID                              *SenseData,
-  IN  UINT8                             SenseDataLength,
-  IN  UINT64                            Timeout
-  )
-{
-  EFI_EXT_SCSI_PASS_THRU_SCSI_REQUEST_PACKET  Packet;
-  UINT8                                       Cdb[12];
-  EFI_STATUS                                  Status;
-
-  ZeroMem (&Packet, sizeof (EFI_EXT_SCSI_PASS_THRU_SCSI_REQUEST_PACKET));
-  ZeroMem (Cdb, 12);
-
-  Cdb[0] = ATA_CMD_REQUEST_SENSE;
-  Cdb[4] = SenseDataLength;
-
-  Packet.Timeout          = Timeout;
-  Packet.Cdb              = Cdb;
-  Packet.CdbLength        = 12;
-  Packet.DataDirection    = EFI_EXT_SCSI_DATA_DIRECTION_READ;
-  Packet.InDataBuffer     = SenseData;
-  Packet.InTransferLength = SenseDataLength;
-
-  Status = AtaPacketCommandExecute (PciIo, IdeRegisters, Channel, Device, &Packet);
-
-  return Status;
-}
-
-/**
   This function is used to send out ATAPI commands conforms to the Packet Command 
   with PIO Data In Protocol.
 
@@ -2246,7 +2196,6 @@ AtaPacketCommandExecute (
   IN  EFI_EXT_SCSI_PASS_THRU_SCSI_REQUEST_PACKET    *Packet
   )
 {
-  EFI_STATUS                  PacketCommandStatus;
   EFI_ATA_COMMAND_BLOCK       AtaCommandBlock;
   EFI_STATUS                  Status;
   UINT8                       Count;
@@ -2312,7 +2261,7 @@ AtaPacketCommandExecute (
   // Read/Write the data of ATAPI Command
   //
   if (Packet->DataDirection == EFI_EXT_SCSI_DATA_DIRECTION_READ) {
-    PacketCommandStatus = AtaPacketReadWrite (
+    Status = AtaPacketReadWrite (
                             PciIo,
                             IdeRegisters,
                             Packet->InDataBuffer,
@@ -2321,7 +2270,7 @@ AtaPacketCommandExecute (
                             Packet->Timeout
                             );
   } else {
-    PacketCommandStatus = AtaPacketReadWrite (
+    Status = AtaPacketReadWrite (
                             PciIo,
                             IdeRegisters,
                             Packet->OutDataBuffer,
@@ -2331,37 +2280,7 @@ AtaPacketCommandExecute (
                             );
   }
 
-  if (!EFI_ERROR (PacketCommandStatus)) {
-    return PacketCommandStatus;
-  }
-
-  //
-  // Return SenseData if PacketCommandStatus matches
-  // the following return codes.
-  //
-  if ((PacketCommandStatus == EFI_BAD_BUFFER_SIZE) ||
-      (PacketCommandStatus == EFI_DEVICE_ERROR) ||
-      (PacketCommandStatus == EFI_TIMEOUT)) {
-
-    //
-    // avoid submit request sense command continuously.
-    //
-    if ((Packet->SenseData == NULL) || (((UINT8 *)Packet->Cdb)[0] == ATA_CMD_REQUEST_SENSE)) {
-      return PacketCommandStatus;
-    }
-
-    AtaPacketRequestSense (
-      PciIo,
-      IdeRegisters,
-      Channel,
-      Device,
-      Packet->SenseData,
-      Packet->SenseDataLength,
-      Packet->Timeout
-      );
-  }
-
-  return PacketCommandStatus;
+  return Status;
 }
 
 
@@ -2458,7 +2377,7 @@ SetDriveParameters (
              ATA_ATAPI_TIMEOUT, 
              NULL
              );
-  DBG(L"Send Init DeviceHead=%x Status=%r\n", AtaCommandBlock.AtaDeviceHead, Status);
+//  DBG(L"Send Init DeviceHead=%x Status=%r\n", AtaCommandBlock.AtaDeviceHead, Status);
   //
   // Send Set Multiple parameters
   //
@@ -2474,7 +2393,7 @@ SetDriveParameters (
              ATA_ATAPI_TIMEOUT, 
              NULL
              );
-  DBG(L"Set Multiple DeviceHead=%x Status=%r\n", AtaCommandBlock.AtaDeviceHead, Status);
+//  DBG(L"Set Multiple DeviceHead=%x Status=%r\n", AtaCommandBlock.AtaDeviceHead, Status);
   return Status;
 }
 
@@ -2523,7 +2442,7 @@ IdeAtaSmartReturnStatusCheck (
              ATA_ATAPI_TIMEOUT,
              NULL
              );
-  DBG(L"Send S.M.A.R.T DeviceHead=%x Status=%r\n", AtaCommandBlock.AtaDeviceHead, Status);
+//  DBG(L"Send S.M.A.R.T DeviceHead=%x Status=%r\n", AtaCommandBlock.AtaDeviceHead, Status);
   if (EFI_ERROR (Status)) {
     return EFI_DEVICE_ERROR;
   }
