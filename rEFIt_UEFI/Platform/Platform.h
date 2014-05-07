@@ -1696,11 +1696,23 @@ VOID ParseSMBIOSSettings(TagPtr dictPointer);
 /** Returns TRUE if given OSX on given volume is hibernated
  *  (/private/var/vm/sleepimage exists and it's modification time is close to volume modification time).
  */
-BOOLEAN
-IsOsxHibernated (IN REFIT_VOLUME *Volume);
+BOOLEAN IsOsxHibernated (IN REFIT_VOLUME *Volume);
 
 /** Prepares nvram vars needed for boot.efi to wake from hibernation. */
-BOOLEAN
-PrepareHibernation (IN REFIT_VOLUME *Volume);
+BOOLEAN PrepareHibernation (IN REFIT_VOLUME *Volume);
+
+//
+// entry_scan
+//
+INTN StrniCmp(IN CHAR16 *Str1,
+              IN CHAR16 *Str2,
+              IN UINTN   Count);
+
+CHAR16 *StriStr(IN CHAR16 *Str,
+                IN CHAR16 *SearchFor);
+VOID StrToLower(IN CHAR16 *Str);
+VOID AlertMessage(IN CHAR16 *Title, IN CHAR16 *Message);
+BOOLEAN YesNoMessage(IN CHAR16 *Title, IN CHAR16 *Message);
+
 
 #endif

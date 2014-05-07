@@ -174,7 +174,7 @@
 		<key>Hide</key>
 		<array>
 			<string>Windows</string>
-			<string>\EFI\BOOT\BOOTX64.EFI</string>
+			<string>BOOTX64.EFI</string>
 		</array>
 		<key>Language</key>
 		<string>en:0</string>
@@ -229,15 +229,11 @@
 				<key>Comment</key>
 				<string>External icons patch</string>
 				<key>Find</key>
-				<data>
-				RXh0ZXJuYWw=
-				</data>
+				<data>RXh0ZXJuYWw=</data>
 				<key>Name</key>
 				<string>AppleAHCIPort</string>
 				<key>Replace</key>
-				<data>
-				SW50ZXJuYWw=
-				</data>
+				<data>SW50ZXJuYWw=</data>
 			</dict>
 		</array>
 	</dict>

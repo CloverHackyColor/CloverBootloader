@@ -2050,7 +2050,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
       // We don't allow exiting the main menu with the Escape key.
       if (MenuExit == MENU_EXIT_ESCAPE){
-        AfterTool = TRUE;
+  //      AfterTool = TRUE;
         break;   //refresh main menu
         //           continue;
       }

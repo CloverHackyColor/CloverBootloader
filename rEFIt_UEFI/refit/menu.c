@@ -1788,6 +1788,7 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
     if (gEvent) { //for now used at CD eject.
       MenuExit = MENU_EXIT_ESCAPE;
       State.PaintAll = TRUE;
+      gEvent = 0; //to prevent looping
       break;
     }
     key.UnicodeChar = 0;

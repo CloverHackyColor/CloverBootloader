@@ -495,9 +495,10 @@
   DEFINE NOUSB_FLAG = -DDISABLE_USB_SUPPORT
 !endif  
 
-!ifdef AMD_SUPPORT
+# Slice: I propose this flag always true
+#!ifdef AMD_SUPPORT
   DEFINE AMD_FLAG = -DAMD_SUPPORT
-!endif  
+#!endif  
 
 !ifdef ENABLE_SECURE_BOOT
   DEFINE SECURE_BOOT_FLAG = -DENABLE_SECURE_BOOT

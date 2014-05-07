@@ -1060,8 +1060,8 @@ VOID ScanVolumes(VOID)
 
       AddListElement((VOID ***) &Volumes, &VolumesCount, Volume);
       for (HVi = 0; HVi < gSettings.HVCount; HVi++) {
-        if (StrStr(Volume->DevicePathString, gSettings.HVHideStrings[HVi]) ||
-            (Volume->VolName != NULL && StrStr(Volume->VolName, gSettings.HVHideStrings[HVi]))) {
+        if (StrStriBasic(Volume->DevicePathString, gSettings.HVHideStrings[HVi]) ||
+            (Volume->VolName != NULL && StrStriBasic(Volume->VolName, gSettings.HVHideStrings[HVi]))) {
           Volume->Hidden = TRUE;
           DBG("  hiding this volume\n");
           break;
