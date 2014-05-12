@@ -1122,6 +1122,9 @@ typedef struct {
   UINT32  align31;
 #endif
   
+  //BalckListed kexts
+  CHAR16 BlockKexts[64];
+  
 } SETTINGS_DATA;
 
 typedef struct {

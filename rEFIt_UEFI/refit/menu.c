@@ -180,11 +180,10 @@ VOID RefillInputs(VOID)
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, SVALUE_MAX_SIZE, L"%a ", gSettings.BootArgs);
   InputItems[InputItemsCount].ItemType = UNIString; //1
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 63, L"%s", gSettings.DsdtName);
-//  InputItems[InputItemsCount].ItemType = BoolValue; //2
-//  InputItems[InputItemsCount].BValue = gSettings.DropSSDT; 
-//  InputItems[InputItemsCount++].SValue = gSettings.DropSSDT?L"[+]":L"[ ]"; 
-  //GlobalConfig.Theme  
-  InputItemsCount = 3;
+  InputItems[InputItemsCount].ItemType = UNIString; //2
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 63, L"%s", gSettings.BlockKexts);
+
+  //GlobalConfig.Theme
   InputItems[InputItemsCount].ItemType = UNIString; //3
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 53, L"%s",
                 (GlobalConfig.Theme == NULL)?L"embedded":GlobalConfig.Theme);
@@ -468,9 +467,10 @@ VOID FillInputs(VOID)
   InputItems[InputItemsCount].ItemType = UNIString; //1
   InputItems[InputItemsCount].SValue = AllocateZeroPool(63);
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 63, L"%s", gSettings.DsdtName); // 1-> 2
-  InputItems[InputItemsCount++].ItemType = BoolValue; 
-// 2 - reserved
-  InputItemsCount = 3;
+  InputItems[InputItemsCount].ItemType = UNIString; //2
+  InputItems[InputItemsCount].SValue = AllocateZeroPool(63);
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 63, L"%s", gSettings.BlockKexts);
+
   InputItems[InputItemsCount].ItemType = UNIString; //3
   InputItems[InputItemsCount].SValue = AllocateZeroPool(53);
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 53, L"%s",
@@ -784,11 +784,10 @@ VOID ApplyInputs(VOID)
   }
   i++; //2
   if (InputItems[i].Valid) {
-//    gSettings.iCloudFix = InputItems[i].BValue;
+    UnicodeSPrint(gSettings.BlockKexts, 120, L"%s", InputItems[i].SValue);
   }
   i++; //3
   if (InputItems[i].Valid) {
-//    gSettings.StringInjector = InputItems[i].BValue;
     if (GlobalConfig.Theme) {
       FreePool(GlobalConfig.Theme);
     }
@@ -3427,61 +3426,6 @@ REFIT_MENU_ENTRY  *SubMenuDropTables()
   InputBootArgs->Entry.AtClick = ActionEnter;
   InputBootArgs->Entry.AtRightClick = ActionDetails;
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-  /*
-   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-   InputBootArgs->Entry.Title = PoolPrint(L"Drop OEM APIC:");
-   InputBootArgs->Entry.Tag = TAG_INPUT;
-   InputBootArgs->Entry.Row = 0xFFFF; //cursor
-   InputBootArgs->Item = &InputItems[48];
-   InputBootArgs->Entry.AtClick = ActionEnter;
-   InputBootArgs->Entry.AtRightClick = ActionDetails;
-   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-
-   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-   InputBootArgs->Entry.Title = PoolPrint(L"Drop MCFG:");
-   InputBootArgs->Entry.Tag = TAG_INPUT;
-   InputBootArgs->Entry.Row = 0xFFFF; //cursor
-   InputBootArgs->Item = &InputItems[49];
-   InputBootArgs->Entry.AtClick = ActionEnter;
-   InputBootArgs->Entry.AtRightClick = ActionDetails;
-   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-
-   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-   InputBootArgs->Entry.Title = PoolPrint(L"Drop OEM HPET:");
-   InputBootArgs->Entry.Tag = TAG_INPUT;
-   InputBootArgs->Entry.Row = 0xFFFF; //cursor
-   InputBootArgs->Item = &InputItems[50];
-   InputBootArgs->Entry.AtClick = ActionEnter;
-   InputBootArgs->Entry.AtRightClick = ActionDetails;
-   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-
-   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-   InputBootArgs->Entry.Title = PoolPrint(L"Drop OEM ECDT:");
-   InputBootArgs->Entry.Tag = TAG_INPUT;
-   InputBootArgs->Entry.Row = 0xFFFF; //cursor
-   InputBootArgs->Item = &InputItems[51];
-   InputBootArgs->Entry.AtClick = ActionEnter;
-   InputBootArgs->Entry.AtRightClick = ActionDetails;
-   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-
-   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-   InputBootArgs->Entry.Title = PoolPrint(L"Drop OEM DMAR:");
-   InputBootArgs->Entry.Tag = TAG_INPUT;
-   InputBootArgs->Entry.Row = 0xFFFF; //cursor
-   InputBootArgs->Item = &InputItems[77];
-   InputBootArgs->Entry.AtClick = ActionEnter;
-   InputBootArgs->Entry.AtRightClick = ActionDetails;
-   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-   //bDropBGRT
-   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-   InputBootArgs->Entry.Title = PoolPrint(L"Drop OEM BGRT:");
-   InputBootArgs->Entry.Tag = TAG_INPUT;
-   InputBootArgs->Entry.Row = 0xFFFF; //cursor
-   InputBootArgs->Item = &InputItems[89];
-   InputBootArgs->Entry.AtClick = ActionEnter;
-   InputBootArgs->Entry.AtRightClick = ActionDetails;
-   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-   */
 
   AddMenuEntry(SubScreen, &MenuEntryReturn);
   Entry->SubScreen = SubScreen;
@@ -3631,7 +3575,6 @@ REFIT_MENU_ENTRY  *SubMenuDsdtFix()
   Entry = AllocateZeroPool(sizeof(REFIT_MENU_ENTRY));
   Entry->Title = AllocateZeroPool(255);
   UnicodeSPrint(Entry->Title, 255, L"DSDT fix mask [0x%08x]->", gSettings.FixDsdt);
-//  Entry->Title = PoolPrint(L"DSDT fix mask [0x%04x]->", gSettings.FixDsdt);
   Entry->Image =  OptionMenu.TitleImage;
   Entry->Tag = TAG_OPTIONS;
   Entry->AtClick = ActionEnter;
@@ -3827,16 +3770,7 @@ REFIT_MENU_ENTRY  *SubMenuDsdtFix()
   InputBootArgs->Entry.AtClick = ActionEnter;
   InputBootArgs->Entry.AtRightClick = ActionDetails;
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-/*
-  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"Fix Darwin  :");
-  InputBootArgs->Entry.Tag = TAG_INPUT;
-  InputBootArgs->Entry.Row = 0xFFFF; //cursor
-  InputBootArgs->Item = &InputItems[110];
-  InputBootArgs->Entry.AtClick = ActionEnter;
-  InputBootArgs->Entry.AtRightClick = ActionDetails;
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-*/
+
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
   InputBootArgs->Entry.Title = PoolPrint(L"Fix RTC     :");
   InputBootArgs->Entry.Tag = TAG_INPUT;
@@ -4161,7 +4095,6 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
   MENU_STYLE_FUNC   SubStyle;
   INTN              EntryIndex = 0;
   INTN              SubMenuIndex;
-//  INTN              DFIndex = 9;
   REFIT_INPUT_DIALOG* InputBootArgs;
   
   if (AllowGraphicsMode)
@@ -4180,8 +4113,8 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     OptionMenu.AnimeRun = GetAnime(&OptionMenu); //FALSE;
     Flags = AllocateZeroPool(255);
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-    *ChosenEntry = (REFIT_MENU_ENTRY*)InputBootArgs;   
-
+    *ChosenEntry = (REFIT_MENU_ENTRY*)InputBootArgs;
+    
     UnicodeSPrint(Flags, 255, L"Config:");
     InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
     InputBootArgs->Entry.Tag = TAG_INPUT;
@@ -4197,46 +4130,45 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
     InputBootArgs->Entry.Tag = TAG_INPUT;
     InputBootArgs->Entry.Row = StrLen(InputItems[0].SValue);
-    InputBootArgs->Item = &InputItems[0];    
+    InputBootArgs->Item = &InputItems[0];
     InputBootArgs->Entry.AtClick = ActionSelect;
     InputBootArgs->Entry.AtDoubleClick = ActionEnter;
     AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
-    //3
-	if (AllowGraphicsMode) {
-/*		InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-		UnicodeSPrint(Flags, 255, L"Theme:");
-		InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
-		InputBootArgs->Entry.Tag = TAG_INPUT;
-		InputBootArgs->Entry.Row = StrLen(InputItems[3].SValue);
-		InputBootArgs->Item = &InputItems[3];  
-		InputBootArgs->Entry.AtClick = ActionSelect;
-		InputBootArgs->Entry.AtRightClick = ActionEnter;
-		AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
-*/
-        
-		InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-		InputBootArgs->Entry.Title = PoolPrint(L"Pointer speed:");
-		InputBootArgs->Entry.Tag = TAG_INPUT;
-		InputBootArgs->Entry.Row = StrLen(InputItems[70].SValue); //cursor
-		InputBootArgs->Entry.ShortcutLetter = 'P';
-		InputBootArgs->Item = &InputItems[70];    
-		InputBootArgs->Entry.AtClick = ActionSelect;
-		InputBootArgs->Entry.AtDoubleClick = ActionEnter;
-		AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
-		
-		InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-		InputBootArgs->Entry.Title = PoolPrint(L"Mirror move:");
-		InputBootArgs->Entry.Tag = TAG_INPUT;
-		InputBootArgs->Entry.Row = 0xFFFF;
-		InputBootArgs->Item = &InputItems[72];
-		InputBootArgs->Entry.AtClick = ActionEnter;
-		InputBootArgs->Entry.AtRightClick = ActionDetails;
-		AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
-
-    AddMenuEntry(&OptionMenu, SubMenuThemes());
-	}
-
- //   DFIndex = OptionMenu.EntryCount;
+    
+    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+    UnicodeSPrint(Flags, 255, L"Block kext:");
+    InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
+    InputBootArgs->Entry.Tag = TAG_INPUT;
+    InputBootArgs->Entry.Row = StrLen(InputItems[2].SValue);
+    InputBootArgs->Item = &InputItems[2];
+    InputBootArgs->Entry.AtClick = ActionSelect;
+    InputBootArgs->Entry.AtDoubleClick = ActionEnter;
+    AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
+    
+    
+    if (AllowGraphicsMode) {
+      InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+      InputBootArgs->Entry.Title = PoolPrint(L"Pointer speed:");
+      InputBootArgs->Entry.Tag = TAG_INPUT;
+      InputBootArgs->Entry.Row = StrLen(InputItems[70].SValue); //cursor
+      InputBootArgs->Entry.ShortcutLetter = 'P';
+      InputBootArgs->Item = &InputItems[70];
+      InputBootArgs->Entry.AtClick = ActionSelect;
+      InputBootArgs->Entry.AtDoubleClick = ActionEnter;
+      AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
+      
+      InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+      InputBootArgs->Entry.Title = PoolPrint(L"Mirror move:");
+      InputBootArgs->Entry.Tag = TAG_INPUT;
+      InputBootArgs->Entry.Row = 0xFFFF;
+      InputBootArgs->Item = &InputItems[72];
+      InputBootArgs->Entry.AtClick = ActionEnter;
+      InputBootArgs->Entry.AtRightClick = ActionDetails;
+      AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
+      
+      AddMenuEntry(&OptionMenu, SubMenuThemes());
+    }
+    
     AddMenuEntry(&OptionMenu, SubMenuDropTables());
     AddMenuEntry(&OptionMenu, SubMenuDsdtFix());
     AddMenuEntry(&OptionMenu, SubMenuSmbios());
@@ -4249,8 +4181,8 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     FreePool(Flags);
     //    DBG("option menu created entries=%d\n", OptionMenu.EntryCount);
   }
-  //  StyleFunc(OptionMenu, &State, MENU_FUNCTION_INIT, NULL);
-  while (!MenuExit) {  
+
+  while (!MenuExit) {
     
     MenuExit = RunGenericMenu(&OptionMenu, Style, &EntryIndex, ChosenEntry);
     if (MenuExit == MENU_EXIT_ESCAPE || (*ChosenEntry)->Tag == TAG_RETURN)
@@ -4261,13 +4193,13 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
         SubMenuIndex = -1;
         SubMenuExit = 0;
         SubStyle = Style;
-        while (!SubMenuExit) {  
+        while (!SubMenuExit) {
           SubMenuExit = RunGenericMenu((*ChosenEntry)->SubScreen, SubStyle, &SubMenuIndex, &TmpChosenEntry);
           if (SubMenuExit == MENU_EXIT_ESCAPE || TmpChosenEntry->Tag == TAG_RETURN){
             ApplyInputs();
             if ((*ChosenEntry)->SubScreen->ID == SCREEN_DSDT) {
               UnicodeSPrint((*ChosenEntry)->Title, 255, L"DSDT fix mask [0x%08x]->", gSettings.FixDsdt);
-              MsgLog("@ESC: %s\n", (*ChosenEntry)->Title);
+       //       MsgLog("@ESC: %s\n", (*ChosenEntry)->Title);
             }
             break;
           }
@@ -4278,25 +4210,25 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
               CHAR16 *TmpTitle;
               ApplyInputs();
               TmpTitle = PoolPrint(L"DSDT fix mask [0x%08x]->", gSettings.FixDsdt);
-              MsgLog("@ENTER: tmp=%s\n", TmpTitle);
+      //        MsgLog("@ENTER: tmp=%s\n", TmpTitle);
               while (*TmpTitle) {
                 *(*ChosenEntry)->Title++ = *TmpTitle++;
               }
-              MsgLog("@ENTER: chosen=%s\n", (*ChosenEntry)->Title);
+      //        MsgLog("@ENTER: chosen=%s\n", (*ChosenEntry)->Title);
             }
             if (TmpChosenEntry->ShortcutDigit == 0xF1) {
               MenuExit = MENU_EXIT_ENTER;
-         //     DBG("Escape menu from input dialog\n");
+              //     DBG("Escape menu from input dialog\n");
               ApplyInputs();
               return;
-            } //if F1                  
+            } //if F1
           }
         } //while(!SubMenuExit)
       }
       MenuExit = 0;
       if ((*ChosenEntry)->ShortcutDigit == 0xF1) {
         MenuExit = MENU_EXIT_ENTER;
-   //     DBG("Escape options menu\n"); 
+        //     DBG("Escape options menu\n"); 
         break;
       } //if F1      
     } // if MENU_EXIT_ENTER
