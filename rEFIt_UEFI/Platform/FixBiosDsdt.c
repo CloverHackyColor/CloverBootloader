@@ -4570,7 +4570,7 @@ VOID FixRegions (UINT8 *dsdt, UINT32 len)
                 DBG("  indirect name=%a\n", NameAdr);
                 if (dsdt[j+4] == 0x0C) {
                   CopyMem(&dsdt[j+5], &p->Address, 4);
-                  Corrected = TRUE;
+ //                 Corrected = TRUE;
                 } else if (dsdt[j+4] == 0x0B) {
                   CopyMem(&dsdt[j+5], &p->Address, 2);
                 } else {
