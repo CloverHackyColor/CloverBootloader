@@ -101,8 +101,7 @@ MemLogInit (
   EFI_STATUS      Status;
   UINT32          TimerAddr = 0;
   UINT64          Tsc0, Tsc1;
-  UINT64          AcpiTick0, AcpiTick1, AcpiTicksDelta;
-  UINT32          AcpiTicksTarget;
+  UINT32          AcpiTick0, AcpiTick1, AcpiTicksDelta, AcpiTicksTarget;
   CHAR8           InitError[50];
   
   if (mMemLog != NULL) {
@@ -183,13 +182,14 @@ MemLogInit (
       }
     } while (AcpiTicksDelta < AcpiTicksTarget); // keep checking Acpi ticks until target is reached
     Tsc1 = AsmReadTsc(); // we're done, get another TSC
+    mMemLog->TscFreqSec = DivU64x32(MultU64x32((Tsc1 - Tsc0), V_ACPI_TMR_FREQUENCY), AcpiTicksDelta);
   } else { 
     // ACPI PM Timer is not working, fallback to old method
     Tsc0 = AsmReadTsc();
     gBS->Stall(100000); // 100ms
     Tsc1 = AsmReadTsc();
+    mMemLog->TscFreqSec = MultU64x32((Tsc1 - Tsc0), 10);
   }
-  mMemLog->TscFreqSec = MultU64x32((Tsc1 - Tsc0), 10);
   mMemLog->TscStart = Tsc0;
   mMemLog->TscLast = Tsc0;
 
