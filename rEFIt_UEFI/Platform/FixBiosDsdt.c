@@ -4538,6 +4538,7 @@ VOID FixRegions (UINT8 *dsdt, UINT32 len)
   CHAR8 Name[8];
   CHAR8 NameAdr[8];
   OPER_REGION *p;
+//  BOOLEAN Corrected = FALSE;
 
   //  OperationRegion (GNVS, SystemMemory, 0xDE2E9E18, 0x01CD)
   //  5B 80 47 4E 56 53 00  0C 18 9E 2E DE  0B CD 01
@@ -4569,6 +4570,7 @@ VOID FixRegions (UINT8 *dsdt, UINT32 len)
                 DBG("  indirect name=%a\n", NameAdr);
                 if (dsdt[j+4] == 0x0C) {
                   CopyMem(&dsdt[j+5], &p->Address, 4);
+                  Corrected = TRUE;
                 } else if (dsdt[j+4] == 0x0B) {
                   CopyMem(&dsdt[j+5], &p->Address, 2);
                 } else {
