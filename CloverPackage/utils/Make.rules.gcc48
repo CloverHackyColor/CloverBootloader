@@ -16,7 +16,7 @@ CONFIG_OPTIMIZATION_LEVEL = -Os
 
 CFLAGS	= $(CONFIG_OPTIMIZATION_LEVEL) -Wall -Werror
 CPPFLAGS = $(MORECPP) -g -Wall -Werror -fno-exceptions -fno-rtti
-DEFINES=
+DEFINES= -framework CoreFoundation -framework IOKit
 
 DIST_SUBDIRS += $(SUBDIRS)
 

@@ -10,7 +10,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "IOKit/IOKitLib.h"
+#include <IOKit/IOKitLib.h>
 
 int main(int argc, char *argv[])
 {

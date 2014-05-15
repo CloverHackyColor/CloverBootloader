@@ -291,7 +291,7 @@ void PrintConfig(CFTypeRef data)
   if (length != sizeof(SETTINGS_DATA)) {
 //    errx(1, "Error the version of clover-genconfig didn't match current booted clover version");
     printf("Error the version of clover-genconfig didn't match current booted clover version\n");
-    printf("len=%d sizeof=%d\n", length, sizeof(SETTINGS_DATA));
+    printf("len=%d sizeof=%d\n", length, (int)sizeof(SETTINGS_DATA));
   }
   
   SETTINGS_DATA *s = (SETTINGS_DATA*)dataPtr;
@@ -422,7 +422,7 @@ void PrintConfig(CFTypeRef data)
   addString(smbiosDict, CFSTR("Version"), s->VersionNr);
   addString(smbiosDict, CFSTR("SerialNumber"), s->SerialNr);
   
-  addUUID(smbiosDict,   CFSTR("SmUUID"), &s->SmUUID);
+  addUUID(smbiosDict,   CFSTR("SmUUID"), (UInt8 *)&s->SmUUID);
   addString(smbiosDict, CFSTR("Family"), s->FamilyName);
   // SMBIOS TYPE2
   addString(smbiosDict, CFSTR("BoardManufacturer"), s->BoardManufactureName);
@@ -667,8 +667,8 @@ void PrintConfig(CFTypeRef data)
   dump_plist(dict);
   
   printf("\nDsdtFix=%x\n", s->FixDsdt);
-  printf("DsdtFix offset=%d\n", offsetof(SETTINGS_DATA, FixDsdt));
-  printf("HDALayoutId offset=%d\n", offsetof(SETTINGS_DATA, HDALayoutId));
+  printf("DsdtFix offset=%d\n", (int)offsetof(SETTINGS_DATA, FixDsdt));
+  printf("HDALayoutId offset=%d\n", (int)offsetof(SETTINGS_DATA, HDALayoutId));
 #if defined(MDE_CPU_IA32)
   printf("32 bit generator\n");
 #elif defined(MDE_CPU_X64)

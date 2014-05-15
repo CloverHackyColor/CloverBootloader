@@ -6,7 +6,7 @@ endif
 
 AS = as
 LD = ld
-CC = cc
+CC = clang
 CPP = c++
 
 PAX = /bin/pax
