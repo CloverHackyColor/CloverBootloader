@@ -241,14 +241,6 @@
 	<dict>
 		<key>BusSpeedkHz</key>
 		<integer>133330</integer>
-		<key>C2</key>
-		<true/>
-		<key>C4</key>
-		<true/>
-		<key>C6</key>
-		<true/>
-		<key>Latency</key>
-		<integer>250</integer>
 		<key>QPI</key>
 		<integer>4800</integer>
 		<key>Type</key>
@@ -663,7 +655,7 @@
 		<key>BacklightLevel</key>
 		<string>0x0501</string>
 		<key>CustomUUID</key>
-		<string>511CE200-1000-4000-9999-010203040506</string>
+		<string>511CE201-1000-4000-9999-010203040506</string>
 		<key>InjectSystemID</key>
 		<false/>
 	</dict>
