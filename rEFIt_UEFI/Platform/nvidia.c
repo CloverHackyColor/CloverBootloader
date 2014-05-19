@@ -77,7 +77,7 @@ const CHAR8 *nvidia_device_type_parent[]  =	{ "device_type",    "NVDA,Parent"   
 const CHAR8 *nvidia_device_type_child[]   =	{ "device_type",    "NVDA,Child"    };
 const CHAR8 *nvidia_name_0[]              =	{ "@0,name",        "NVDA,Display-A"};
 const CHAR8 *nvidia_name_1[]              =	{ "@1,name",        "NVDA,Display-B"};
-const CHAR8 *nvidia_slot_name[]           =	{ "AAPL,slot-name", "Slot-1"        };
+//const CHAR8 *nvidia_slot_name[]           =	{ "AAPL,slot-name", "Slot-1"        };
 
 UINT8 default_NVCAP[]= {
 	0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x03, 0x00,
@@ -1851,7 +1851,7 @@ CHAR8 *get_nvidia_model(UINT32 device_id, UINT32 subsys_id)
 
 static INT32 devprop_add_nvidia_template(DevPropDevice *device)
 {
-	CHAR8 tmp[16];
+//	CHAR8 tmp[16];
 	DBG("devprop_add_nvidia_template\n");
 
 	if (!device) {
@@ -1887,8 +1887,8 @@ static INT32 devprop_add_nvidia_template(DevPropDevice *device)
 			return 0;
 	}
 
-	AsciiSPrint(tmp, 16, "Slot-%x",devices_number);
-	devprop_add_value(device, "AAPL,slot-name", (UINT8 *) tmp, (UINT32)AsciiStrLen(tmp));
+//	AsciiSPrint(tmp, 16, "Slot-%x",devices_number);
+//	devprop_add_value(device, "AAPL,slot-name", (UINT8 *) tmp, (UINT32)AsciiStrLen(tmp));
 	devices_number++;
 
 	return 1;
@@ -2049,10 +2049,12 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
       RomAssigned = TRUE;
       DBG("using loaded ROM image\n");      
     } else {
-      DBG("there are no ROM loaded and no VBIOS read from hardware, exiting\n");
-      return FALSE;
+      DBG("there are no ROM loaded and no VBIOS read from hardware\n");
+//      return FALSE;
     }
   }
+
+  if(rom) {
 
     rom_pci_header = (option_rom_pci_header_t*)(rom + *(UINT16 *)&rom[24]);
 
@@ -2067,9 +2069,6 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
       DBG("nVidia incorrect PCI ROM signature: 0x%x\n", rom_pci_header->signature);
     }
 
-	DBG("nVidia %a ", model);
-	DBG(" %dMB NV%02x [%04x:%04x] :: \n", (UINT32)(RShiftU64(videoRam, 20)),
-      nvCardType, nvda_dev->vendor_id, nvda_dev->device_id);
 
     // get bios version
 
@@ -2087,7 +2086,7 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
               version_start++;
 
               // strip "Version "
-              if (AsciiStrnCmp((const CHAR8*)rom+version_start, "Version ", 8) == 0) {
+              if (AsciiStrnCmp((const CHAR8*)rom + version_start, "Version ", 8) == 0) {
                 version_start += 8;
               }
               s = (CHAR8*)(rom + version_start);
@@ -2097,8 +2096,7 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
               }
               *s1 = 0;
               //				AsciiStrnCpy(version_str, (const CHAR8*)rom+version_start, i-version_start);
-              DBG(version_str);
-              DBG("\n");
+              DBG("version %a\n", version_str);
               break;
             }
           }
@@ -2106,9 +2104,15 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
         }
       }
     }
+  } else {
+    AsciiSPrint(version_str, sizeof(version_str), "1.0");
+  }
 
-  //#endif
-	
+  DBG("nVidia %a ", model);
+	DBG(" %dMB NV%02x [%04x:%04x] :: \n", (UINT32)(RShiftU64(videoRam, 20)),
+      nvCardType, nvda_dev->vendor_id, nvda_dev->device_id);
+
+
 	DBG(devicepath);
 	DBG("\n");
 
@@ -2147,7 +2151,7 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
     if (buffer) {
       FreePool(buffer);
     }
-    if (!RomAssigned) {
+    if (rom && !RomAssigned) {
       FreePool(rom);
     }
     return TRUE;

@@ -699,7 +699,7 @@ radeon_card_info_t radeon_cards[] = {
 //	{ 0x67A8,	0x00000000, CHIP_FAMILY_HAWAII,	"AMD Radeon",            kFutomaki	},
 //	{ 0x67A9,	0x00000000, CHIP_FAMILY_HAWAII,	"AMD Radeon",            kFutomaki	},
 //	{ 0x67AA,	0x00000000, CHIP_FAMILY_HAWAII,	"AMD Radeon",            kFutomaki	},
-	{ 0x67B0,	0x00000000, CHIP_FAMILY_HAWAII,	"AMD Radeon R9 290X",            kFutomaki	},
+	{ 0x67B0,	0x00000000, CHIP_FAMILY_HAWAII,	"AMD Radeon R9 290X",           kFutomaki	},
 	{ 0x67B1,	0x00000000, CHIP_FAMILY_TAHITI,	"AMD Radeon R9 290",            kFutomaki	}, // CHIP_FAMILY_HAWAII
 //	{ 0x67B8,	0x00000000, CHIP_FAMILY_HAWAII,	"AMD Radeon",            kFutomaki	},
 //	{ 0x67B9,	0x00000000, CHIP_FAMILY_HAWAII,	"AMD Radeon",            kFutomaki	},

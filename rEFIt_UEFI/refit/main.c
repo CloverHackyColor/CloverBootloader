@@ -1487,8 +1487,7 @@ VOID SetVariablesFromNvram()
   tmpString = GetNvramVariable(L"Clover.LogLineCount", &gEfiAppleBootGuid, NULL, &Size);
   ZeroMem(UStr, 10);
   if (tmpString) {
-    AsciiStrToUnicodeStr(tmpString, (CHAR16*)&UStr[0]);
-    gSettings.LogLineCount = (UINT32)StrDecimalToUintn((CHAR16*)&UStr[0]);
+    gSettings.LogLineCount = (UINT32)AsciiStrDecimalToUintn(tmpString);
   }
   
   tmpString = GetNvramVariable(L"Clover.MountEFI", &gEfiAppleBootGuid, NULL, &Size);

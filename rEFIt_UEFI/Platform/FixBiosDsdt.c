@@ -2225,15 +2225,9 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
         aml_add_name(gfx0, "_SUN");
         aml_add_dword(gfx0, SlotDevices[1].SlotID);
       } else {
-        //we have name sun, get the number
-        if (dsdt[k + 4] == 0) {
-          SlotDevices[1].SlotID = 0;
-        }
-        else if (dsdt[k + 4] == 1) {
-          SlotDevices[1].SlotID = 1;
-        }
-        else if (dsdt[k + 4] == 0x0A) {
-          SlotDevices[1].SlotID = dsdt[k + 5];
+        //we have name sun, set the number
+        if (dsdt[k + 4] == 0x0A) {
+          dsdt[k + 5] = SlotDevices[1].SlotID;
         }
       }
     } else {
@@ -2292,15 +2286,9 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
         aml_add_name(gfx0, "_SUN");
         aml_add_dword(gfx0, SlotDevices[0].SlotID);
       } else {
-        //we have name sun, get the number
-        if (dsdt[k + 4] == 0) {
-          SlotDevices[0].SlotID = 0;
-        }
-        else if (dsdt[k + 4] == 1) {
-          SlotDevices[0].SlotID = 1;
-        }
-        else if (dsdt[k + 4] == 0x0A) {
-          SlotDevices[0].SlotID = dsdt[k + 5];
+        //we have name sun, set the number
+        if (dsdt[k + 4] == 0x0A) {
+          dsdt[k + 5] = SlotDevices[0].SlotID;
         }
       }
     } else {
@@ -2666,15 +2654,9 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
       aml_add_name(dev, "_SUN");
       aml_add_dword(dev, SlotDevices[5].SlotID);
     } else {
-      //we have name sun, get the number
-      if (dsdt[k + 4] == 0) {
-        SlotDevices[5].SlotID = 0;
-      }
-      else if (dsdt[k + 4] == 1) {
-        SlotDevices[5].SlotID = 1;
-      }
-      else if (dsdt[k + 4] == 0x0A) {
-        SlotDevices[5].SlotID = dsdt[k + 5];
+      //we have name sun, set the number
+      if (dsdt[k + 4] == 0x0A) {
+        dsdt[k + 5] = SlotDevices[5].SlotID;
       }
     }
   }
@@ -2861,15 +2843,9 @@ UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
       aml_add_name(dev, "_SUN");
       aml_add_dword(dev, SlotDevices[6].SlotID);
     } else {
-      //we have name sun, get the number
-      if (dsdt[k + 4] == 0) {
-        SlotDevices[6].SlotID = 0;
-      } 
-      else if (dsdt[k + 4] == 1) {
-          SlotDevices[6].SlotID = 1;
-      }
-      else if (dsdt[k + 4] == 0x0A) {
-        SlotDevices[6].SlotID = dsdt[k + 5];
+      //we have name sun, set the number
+      if (dsdt[k + 4] == 0x0A) {
+        dsdt[k + 5] = SlotDevices[6].SlotID;
       }
     }
   } else {
@@ -2913,8 +2889,8 @@ UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
     }
     aml_add_string(pack, "device_type");
     aml_add_string_buffer(pack, "Airport");
-    aml_add_string(pack, "AAPL,slot-name");
-    aml_add_string_buffer(pack, "AirPort");    
+//    aml_add_string(pack, "AAPL,slot-name");
+//    aml_add_string_buffer(pack, "AirPort");
   }
     
   if (gSettings.FakeWIFI) {
@@ -3340,15 +3316,9 @@ UINT32 FIXFirewire (UINT8 *dsdt, UINT32 len)
       aml_add_name(device, "_SUN");
       aml_add_dword(device, SlotDevices[12].SlotID);
     } else {
-      //we have name sun, get the number
-      if (dsdt[k + 4] == 0) {
-        SlotDevices[12].SlotID = 0;
-      }
-      else if (dsdt[k + 4] == 1) {
-        SlotDevices[12].SlotID = 1;
-      }
-      else if (dsdt[k + 4] == 0x0A) {
-        SlotDevices[12].SlotID = dsdt[k + 5];
+      //we have name sun, set the number
+      if (dsdt[k + 4] == 0x0A) {
+         dsdt[k + 5] = SlotDevices[12].SlotID;
       }
     }
   } else {

@@ -2458,8 +2458,7 @@ VOID ParseSMBIOSSettings(TagPtr dictPointer)
     if (prop->type == kTagTypeInteger) {
       gSettings.BoardType = (UINT8)(UINTN)prop->string;
     } else if (prop->type == kTagTypeString){
-      AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
-      gSettings.BoardType = (UINT8)StrDecimalToUintn((CHAR16*)&UStr[0]);
+      gSettings.BoardType = (UINT8)AsciiStrDecimalToUintn(prop->string);
     }
   }
   prop = GetProperty(dictPointer,"Mobile");
@@ -2615,8 +2614,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
         if (prop->type == kTagTypeInteger) {
           gSettings.VRAM = LShiftU64((UINTN)prop->string, 20);
         } else if (prop->type == kTagTypeString){
-          AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
-          gSettings.VRAM = LShiftU64(StrDecimalToUintn((CHAR16*)&UStr[0]), 20);  //Mb -> bytes
+          gSettings.VRAM = LShiftU64(AsciiStrDecimalToUintn(prop->string), 20);  //Mb -> bytes
         }
       }
       //
@@ -2626,8 +2624,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
         if (prop->type == kTagTypeInteger) {
           gSettings.RefCLK = LShiftU64((UINTN)prop->string, 20);
         } else if (prop->type == kTagTypeString){
-          AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
-          gSettings.RefCLK = (UINT32)StrDecimalToUintn((CHAR16*)&UStr[0]);  
+          gSettings.RefCLK = (UINT32)AsciiStrDecimalToUintn(prop->string);
         }
       }
       
@@ -2647,8 +2644,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
         if (prop->type == kTagTypeInteger) {
           gSettings.VideoPorts = (UINT16)(UINTN)prop->string;
         } else if (prop->type == kTagTypeString){
-          AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
-          gSettings.VideoPorts = (UINT16)StrDecimalToUintn((CHAR16*)&UStr[0]);
+          gSettings.VideoPorts = (UINT16)AsciiStrDecimalToUintn(prop->string);
         }
       }
       prop = GetProperty(dictPointer, "FBName");
@@ -2675,8 +2671,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
         if (prop->type == kTagTypeInteger) {
           gSettings.DualLink = (UINT32)(UINTN)prop->string;
         } else if (prop->type == kTagTypeString){
-          AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
-          gSettings.DualLink = (UINT32)StrDecimalToUintn((CHAR16*)&UStr[0]);
+          gSettings.DualLink = (UINT32)AsciiStrDecimalToUintn(prop->string);
         }
       }
       //InjectEDID - already done in earlysettings
@@ -2686,8 +2681,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
         if (prop->type == kTagTypeInteger) {
           gSettings.IgPlatform = (UINT32)(UINTN)prop->string;
         } else if (prop->type == kTagTypeString){
-          AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
-          gSettings.IgPlatform = (UINT32)StrHexToUint64((CHAR16*)&UStr[0]);
+          gSettings.IgPlatform = (UINT32)AsciiStrHexToUint64(prop->string);
         }
       }
     }    
@@ -3622,8 +3616,8 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
           if (prop->type == kTagTypeInteger) {
             gSettings.C3Latency = (UINT16)(UINTN)prop->string;
           } else if (prop->type == kTagTypeString){
-            AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
-            gSettings.C3Latency = (UINT16)StrHexToUint64(UStr);
+    //        AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
+            gSettings.C3Latency = (UINT16)AsciiStrHexToUint64(prop->string);
           }
         }
 
@@ -3632,8 +3626,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
           if (prop->type == kTagTypeInteger) {
             gSettings.PLimitDict = (UINT8)(UINTN)prop->string;
           } else if (prop->type == kTagTypeString){
-            AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
-            gSettings.PLimitDict = (UINT8)StrDecimalToUintn((CHAR16*)&UStr[0]);	
+            gSettings.PLimitDict = (UINT8)AsciiStrDecimalToUintn(prop->string);
           }
         }
         prop = GetProperty(dict2, "UnderVoltStep");
@@ -3641,8 +3634,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
           if (prop->type == kTagTypeInteger) {
             gSettings.UnderVoltStep = (UINT8)(UINTN)prop->string;
           } else if (prop->type == kTagTypeString){
-            AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
-            gSettings.UnderVoltStep = (UINT8)StrDecimalToUintn((CHAR16*)&UStr[0]);
+            gSettings.UnderVoltStep = (UINT8)AsciiStrDecimalToUintn(prop->string);
           }
         }
         prop = GetProperty(dict2, "DoubleFirstState");
@@ -3662,8 +3654,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
           if (prop->type == kTagTypeInteger) {
             gSettings.MinMultiplier = (UINT8)(UINTN)prop->string;
           } else if (prop->type == kTagTypeString){
-            AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
-            gSettings.MinMultiplier = (UINT8)StrDecimalToUintn((CHAR16*)&UStr[0]);
+            gSettings.MinMultiplier = (UINT8)AsciiStrDecimalToUintn(prop->string);
           }
           DBG("Config set MinMultiplier=%d\n", gSettings.MinMultiplier);
         }
@@ -3672,8 +3663,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
           if (prop->type == kTagTypeInteger) {
             gSettings.MaxMultiplier = (UINT8)(UINTN)prop->string;
           } else if (prop->type == kTagTypeString){
-            AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
-            gSettings.MaxMultiplier = (UINT8)StrDecimalToUintn((CHAR16*)&UStr[0]);
+            gSettings.MaxMultiplier = (UINT8)AsciiStrDecimalToUintn(prop->string);
           }
           DBG("Config set MaxMultiplier=%d\n", gSettings.MaxMultiplier);
         }
@@ -3682,8 +3672,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
           if (prop->type == kTagTypeInteger) {
             gSettings.PluginType = (UINT8)(UINTN)prop->string;
           } else if (prop->type == kTagTypeString){
-            AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
-            gSettings.PluginType = (UINT8)StrDecimalToUintn((CHAR16*)&UStr[0]);
+            gSettings.PluginType = (UINT8)AsciiStrDecimalToUintn(prop->string);
           }
           DBG("Config set PluginType=%d\n", gSettings.PluginType);
         }
@@ -3704,8 +3693,8 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
         if (prop->type == kTagTypeInteger) {
           gSettings.ResetAddr = (UINT64)(UINTN)prop->string;
         } else if (prop->type == kTagTypeString){
-          AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
-          gSettings.ResetAddr  = StrHexToUint64(UStr);
+ //         AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
+          gSettings.ResetAddr  = AsciiStrHexToUint64(prop->string);
         }
         DBG("Config set ResetAddr=0x%x\n", gSettings.ResetAddr);
         if (gSettings.ResetAddr  == 0x64) {
@@ -3720,8 +3709,8 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
         if (prop->type == kTagTypeInteger) {
           gSettings.ResetVal = (UINT8)(UINTN)prop->string;
         } else if (prop->type == kTagTypeString){
-          AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
-          gSettings.ResetVal = (UINT8)StrHexToUint64((CHAR16*)&UStr[0]);
+ //         AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
+          gSettings.ResetVal = (UINT8)AsciiStrHexToUint64(prop->string);
         }
         DBG("Config set ResetVal=0x%x\n", gSettings.ResetVal);
       }
@@ -3917,7 +3906,8 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
             DBG(" no device  property for slot\n");
             continue;
           }
-          
+
+          SlotDevices[DeviceN].SlotID = DeviceN;
           prop2 = GetProperty(prop3, "ID");
           if (prop2) {
             if (prop2->type == kTagTypeInteger) {
@@ -3926,7 +3916,8 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
               SlotDevices[DeviceN].SlotID = (UINT8)AsciiStrDecimalToUintn(prop2->string);
             }            
           }
-          
+
+          SlotDevices[DeviceN].SlotType = SlotTypePci;
           prop2 = GetProperty(prop3, "Type");
           if (prop2) {
             UINT8 Code = 0;
@@ -3963,6 +3954,8 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
           prop2 = GetProperty(prop3, "Name");
           if (prop2 && (prop2->type == kTagTypeString) && prop2->string) {
             AsciiSPrint(SlotDevices[DeviceN].SlotName, 31, "%a", prop2->string);
+          } else {
+            AsciiSPrint(SlotDevices[DeviceN].SlotName, 31, "PCI Slot %d", DeviceN);
           }
         }
       }
@@ -4294,8 +4287,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
         if (prop->type == kTagTypeInteger) {
           gSettings.LogLineCount = (UINT32)(UINTN)prop->string;
         } else if (prop->type == kTagTypeString && AsciiStrLen(prop->string) > 0){
-          AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
-          gSettings.LogLineCount = (UINT32)StrDecimalToUintn((CHAR16*)&UStr[0]);
+          gSettings.LogLineCount = (UINT32)AsciiStrDecimalToUintn(prop->string);
         }
       }
       prop = GetProperty(dictPointer, "LogEveryBoot");
@@ -4340,8 +4332,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
         if (prop->type == kTagTypeInteger) {
           gSettings.BacklightLevel = (UINT16)(UINTN)prop->string;
         } else if (prop->type == kTagTypeString){
-          AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
-          gSettings.BacklightLevel = (UINT16)StrHexToUint64((CHAR16*)&UStr[0]);
+          gSettings.BacklightLevel = (UINT16)AsciiStrHexToUint64(prop->string);
         }
       }
 
