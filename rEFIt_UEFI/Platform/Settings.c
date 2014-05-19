@@ -29,7 +29,8 @@ TagPtr                          gConfigDict[NUM_OF_CONFIGS] = {NULL, NULL, NULL}
 SETTINGS_DATA                   gSettings;
 LANGUAGES                       gLanguage;
 GFX_PROPERTIES                  gGraphics[4]; //no more then 4 graphics cards
-SLOT_DEVICE                     Arpt;
+//SLOT_DEVICE                     Arpt;
+SLOT_DEVICE                     SlotDevices[16]; //assume DEV_XXX, Arpt=6
 EFI_EDID_DISCOVERED_PROTOCOL    *EdidDiscovered;
 UINT8                           *gEDID = NULL;
 //EFI_GRAPHICS_OUTPUT_PROTOCOL    *GraphicsOutput;
@@ -3878,6 +3879,93 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
         }
         gSettings.InjectMemoryTables = TRUE;
       }
+      prop = GetProperty(dictPointer, "Slots");
+      if (prop) {
+        INTN   Index, DeviceN, Count = GetTagCount(prop);
+        TagPtr prop3 = NULL;
+        for (Index = 0; Index < Count; ++Index) {
+          if (EFI_ERROR(GetElement(prop, Index, &prop3))) {
+            continue;
+          }
+          if (prop3 == NULL) {
+            break;
+          }
+          
+          prop2 = GetProperty(prop3, "Device");
+          if (prop2 && (prop2->type == kTagTypeString) && prop2->string) {
+            if (AsciiStriCmp(prop2->string,        "ATI") == 0) {
+              DeviceN = 0;
+            } else if (AsciiStriCmp(prop2->string, "NVidia") == 0) {
+              DeviceN = 1;
+            } else if (AsciiStriCmp(prop2->string, "IntelGFX") == 0) {
+              DeviceN = 2;
+            } else if (AsciiStriCmp(prop2->string, "LAN") == 0) {
+              DeviceN = 5;
+            } else if (AsciiStriCmp(prop2->string, "WIFI") == 0) {
+              DeviceN = 6;
+            } else if (AsciiStriCmp(prop2->string, "Firewire") == 0) {
+              DeviceN = 12;
+            } else if (AsciiStriCmp(prop2->string, "HDMI") == 0) {
+              DeviceN = 4;
+            } else if (AsciiStriCmp(prop2->string, "USB") == 0) {
+              DeviceN = 11;
+            } else {
+              DBG(" add properties to unknown device %a, ignored\n", prop2->string);
+              continue;
+            }
+          } else {
+            DBG(" no device  property for slot\n");
+            continue;
+          }
+          
+          prop2 = GetProperty(prop3, "ID");
+          if (prop2) {
+            if (prop2->type == kTagTypeInteger) {
+              SlotDevices[DeviceN].SlotID = (UINT8)((UINTN)prop2->string & 0xFF);
+            } else if (prop2->type == kTagTypeString){
+              SlotDevices[DeviceN].SlotID = (UINT8)AsciiStrDecimalToUintn(prop2->string);
+            }            
+          }
+          
+          prop2 = GetProperty(prop3, "Type");
+          if (prop2) {
+            UINT8 Code = 0;
+            if (prop2->type == kTagTypeInteger) {
+              Code = (UINT8)((UINTN)prop2->string & 0xFF);
+            } else if (prop2->type == kTagTypeString){
+              Code = (UINT8)AsciiStrDecimalToUintn(prop2->string);
+            }
+            switch (Code) {
+              case 0:
+                SlotDevices[DeviceN].SlotType = SlotTypePci;
+                break;
+              case 1:
+                SlotDevices[DeviceN].SlotType = SlotTypePciExpressX1;
+                break;
+              case 2:
+                SlotDevices[DeviceN].SlotType = SlotTypePciExpressX2;
+                break;
+              case 4:
+                SlotDevices[DeviceN].SlotType = SlotTypePciExpressX4;
+                break;
+              case 8:
+                SlotDevices[DeviceN].SlotType = SlotTypePciExpressX8;
+                break;
+              case 16:
+                SlotDevices[DeviceN].SlotType = SlotTypePciExpressX16;
+                break;
+                
+              default:
+                SlotDevices[DeviceN].SlotType = SlotTypePciExpress;
+                break;
+            }
+          }
+          prop2 = GetProperty(prop3, "Name");
+          if (prop2 && (prop2->type == kTagTypeString) && prop2->string) {
+            AsciiSPrint(SlotDevices[DeviceN].SlotName, 31, "%a", prop2->string);
+          }
+        }
+      }
     }
     
     //CPU
@@ -3889,8 +3977,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
         if (prop->type == kTagTypeInteger) {
           gSettings.QPI = (UINT16)(UINTN)prop->string;
         } else if (prop->type == kTagTypeString){
-          AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
-          gSettings.QPI = (UINT16)StrDecimalToUintn((CHAR16*)&UStr[0]);
+          gSettings.QPI = (UINT16)AsciiStrDecimalToUintn(prop->string);
         }
         if (!gSettings.QPI) {
           gSettings.QPI = 0xFFFF;
@@ -3904,8 +3991,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
         if (prop->type == kTagTypeInteger) {
           gSettings.CpuFreqMHz = (UINT32)(UINTN)prop->string;
         } else if (prop->type == kTagTypeString){
-          AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
-          gSettings.CpuFreqMHz = (UINT32)StrDecimalToUintn((CHAR16*)&UStr[0]);
+          gSettings.CpuFreqMHz = (UINT32)AsciiStrDecimalToUintn(prop->string);
         }
         DBG("Config set CpuFreq=%dMHz\n", gSettings.CpuFreqMHz);
       }
@@ -3915,8 +4001,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
         if (prop->type == kTagTypeInteger) {
           gSettings.CpuType = (UINT16)(UINTN)prop->string;
         } else if (prop->type == kTagTypeString){
-          AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
-          gSettings.CpuType = (UINT16)StrHexToUint64((CHAR16*)&UStr[0]);
+          gSettings.CpuType = (UINT16)AsciiStrDecimalToUintn(prop->string);
         }
         DBG("Config set CpuType=%x\n", gSettings.CpuType);
       }
@@ -3926,8 +4011,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
         if (prop->type == kTagTypeInteger) {
           gSettings.BusSpeed = (UINT32)(UINTN)prop->string;
         } else if (prop->type == kTagTypeString){
-          AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
-          gSettings.BusSpeed = (UINT32)StrDecimalToUintn((CHAR16*)&UStr[0]);
+          gSettings.BusSpeed = (UINT32)AsciiStrDecimalToUintn(prop->string);
         }
         DBG("Config set BusSpeed=%dkHz\n", gSettings.BusSpeed);
       }
@@ -3971,8 +4055,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
         if (prop->type == kTagTypeInteger) {
           gSettings.C3Latency = (UINT16)(UINTN)prop->string;
         } else if (prop->type == kTagTypeString){
-          AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
-          gSettings.C3Latency = (UINT16)StrHexToUint64(UStr);
+          gSettings.C3Latency = (UINT16)AsciiStrDecimalToUintn(prop->string);
         }
       }
     }
@@ -4484,7 +4567,7 @@ VOID GetDevices(VOID)
   radeon_card_info_t *info;
 
   NGFX = 0;
-  Arpt.Valid = FALSE;
+//  Arpt.Valid = FALSE; //global variables initialized by 0 - c-language
   
   // Scan PCI handles 
   Status = gBS->LocateHandleBuffer (
@@ -4539,12 +4622,26 @@ VOID GetDevices(VOID)
               AsciiSPrint(gGraphics[NGFX].Config, 64, "%a", card_configs[info->cfg_name].name);
               gGraphics[NGFX].Ports = card_configs[info->cfg_name].ports;
               DBG("Found Radeon model=%a\n", gGraphics[NGFX].Model);
+              SlotDevices[0].SegmentGroupNum = (UINT16)Segment;
+              SlotDevices[0].BusNum = (UINT8)Bus;
+              SlotDevices[0].DevFuncNum = (UINT8)((Device << 4) | (Function & 0x0F));
+              SlotDevices[0].Valid = TRUE;
+              AsciiSPrint(SlotDevices[0].SlotName, 31, "PCI Slot 0");
+              SlotDevices[0].SlotID = 1;
+              SlotDevices[0].SlotType = SlotTypePciExpressX16;
               break;
             case 0x8086:
               gGraphics[NGFX].Vendor = Intel;
               AsciiSPrint(gGraphics[NGFX].Model, 64, "%a", get_gma_model(Pci.Hdr.DeviceId));
               DBG("Found GFX model=%a\n", gGraphics[NGFX].Model);
               gGraphics[NGFX].Ports = 1;
+  /*            SlotDevices[2].SegmentGroupNum = (UINT16)Segment;
+              SlotDevices[2].BusNum = (UINT8)Bus;
+              SlotDevices[2].DevFuncNum = (UINT8)((Device << 4) | (Function & 0x0F));
+              SlotDevices[2].Valid = TRUE;
+              AsciiSPrint(SlotDevices[2].SlotName, 31, "PCI Slot 0");
+              SlotDevices[2].SlotID = 0;
+              SlotDevices[2].SlotType = SlotTypePciExpressX16; */
               break;
             case 0x10de:
               gGraphics[NGFX].Vendor = Nvidia;
@@ -4560,6 +4657,13 @@ VOID GetDevices(VOID)
                                            ((Pci.Device.SubsystemVendorID << 16) | Pci.Device.SubsystemID)));
               DBG("Found NVidia model=%a\n", gGraphics[NGFX].Model);
               gGraphics[NGFX].Ports = 2;
+              SlotDevices[1].SegmentGroupNum = (UINT16)Segment;
+              SlotDevices[1].BusNum = (UINT8)Bus;
+              SlotDevices[1].DevFuncNum = (UINT8)((Device << 4) | (Function & 0x0F));
+              SlotDevices[1].Valid = TRUE;
+              AsciiSPrint(SlotDevices[1].SlotName, 31, "PCI Slot 0");
+              SlotDevices[1].SlotID = 1;
+              SlotDevices[1].SlotType = SlotTypePciExpressX16;
               break;
             default:
               gGraphics[NGFX].Vendor = Unknown;
@@ -4573,11 +4677,35 @@ VOID GetDevices(VOID)
         else if((Pci.Hdr.ClassCode[2] == PCI_CLASS_NETWORK) &&
                 (Pci.Hdr.ClassCode[1] == PCI_CLASS_NETWORK_OTHER)) {
  //         DBG("Found AirPort. Landing enabled...\n");
-          Arpt.SegmentGroupNum = (UINT16)Segment;
-          Arpt.BusNum = (UINT8)Bus;
-          Arpt.DevFuncNum = (UINT8)((Device << 4) | (Function & 0x0F));
-          Arpt.Valid = TRUE;
+          SlotDevices[6].SegmentGroupNum = (UINT16)Segment;
+          SlotDevices[6].BusNum = (UINT8)Bus;
+          SlotDevices[6].DevFuncNum = (UINT8)((Device << 4) | (Function & 0x0F));
+          SlotDevices[6].Valid = TRUE;
+          AsciiSPrint(SlotDevices[6].SlotName, 31, "Airport");
+          SlotDevices[6].SlotID = 0;
+          SlotDevices[6].SlotType = SlotTypePciExpressX1;
         }
+        else if((Pci.Hdr.ClassCode[2] == PCI_CLASS_NETWORK) &&
+                (Pci.Hdr.ClassCode[1] == PCI_CLASS_NETWORK_ETHERNET)) {
+          SlotDevices[5].SegmentGroupNum = (UINT16)Segment;
+          SlotDevices[5].BusNum = (UINT8)Bus;
+          SlotDevices[5].DevFuncNum = (UINT8)((Device << 4) | (Function & 0x0F));
+          SlotDevices[5].Valid = TRUE;
+          AsciiSPrint(SlotDevices[5].SlotName, 31, "Ethernet");
+          SlotDevices[5].SlotID = 2;
+          SlotDevices[5].SlotType = SlotTypePciExpressX1;
+        }
+        else if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_SERIAL) &&
+                 (Pci.Hdr.ClassCode[1] == PCI_CLASS_SERIAL_FIREWIRE)) {
+          SlotDevices[12].SegmentGroupNum = (UINT16)Segment;
+          SlotDevices[12].BusNum = (UINT8)Bus;
+          SlotDevices[12].DevFuncNum = (UINT8)((Device << 4) | (Function & 0x0F));
+          SlotDevices[12].Valid = TRUE;
+          AsciiSPrint(SlotDevices[12].SlotName, 31, "Firewire");
+          SlotDevices[12].SlotID = 3;
+          SlotDevices[12].SlotType = SlotTypePciExpressX4;
+        }
+
       }
     }
   }

@@ -932,8 +932,15 @@ VOID PatchTableType9()
 	 Real Mac always contain Airport table 9 as
 	 09 0D xx xx 01 A5 08 03 03 00 00 04 06 "AirPort"
 	 */
-	CHAR8* AirPort = "AirPort";
-	
+  //usage in OSX:
+  // SlotID == value of Name(_SUN, SlotID) 8bit
+  // SlotDesignation == name to "AAPL,slot-name"
+  // SlotType = 32bit PCI/SlotTypePciExpressX1/x4/x16
+  // real PC -> PCI, real Mac -> PCIe
+
+//I think we should exclude OEM tables
+/*	CHAR8* AirPort = "AirPort";
+
 	for (Index = 0; Index < 64; Index++) { 
 		SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_SYSTEM_SLOTS,Index);
 		if (SmbiosTable.Raw == NULL) {
@@ -941,30 +948,53 @@ VOID PatchTableType9()
 		}
 		LogSmbiosTable(SmbiosTable);
 	}
-	if (Arpt.Valid) {
+	if (SlotDevices[6].Valid) {
 		ZeroMem((VOID*)newSmbiosTable.Type9, MAX_TABLE_SIZE);
 		newSmbiosTable.Type9->Hdr.Type = EFI_SMBIOS_TYPE_SYSTEM_SLOTS;
 		newSmbiosTable.Type9->Hdr.Length = sizeof(SMBIOS_TABLE_TYPE9);
 		newSmbiosTable.Type9->Hdr.Handle = (UINT16)(0x0900 + Index);
 		newSmbiosTable.Type9->SlotDesignation = 1;
-		newSmbiosTable.Type9->SlotType = SlotTypePciExpress;
+		newSmbiosTable.Type9->SlotType = SlotTypePciExpressX1;
 		newSmbiosTable.Type9->SlotDataBusWidth = SlotDataBusWidth1X;
 		newSmbiosTable.Type9->CurrentUsage = SlotUsageAvailable;
 		newSmbiosTable.Type9->SlotLength = SlotLengthShort;
-		newSmbiosTable.Type9->SlotID = 0;
+		newSmbiosTable.Type9->SlotID = SlotDevices[6].SlotID;
 		newSmbiosTable.Type9->SlotCharacteristics1.Provides33Volts = 1;
 		newSmbiosTable.Type9->SlotCharacteristics2.HotPlugDevicesSupported = 1;
 		// take this from PCI bus for WiFi card
-		newSmbiosTable.Type9->SegmentGroupNum = Arpt.SegmentGroupNum;
-		newSmbiosTable.Type9->BusNum = Arpt.BusNum;
-		newSmbiosTable.Type9->DevFuncNum = Arpt.DevFuncNum;
+		newSmbiosTable.Type9->SegmentGroupNum = SlotDevices[6].SegmentGroupNum;
+		newSmbiosTable.Type9->BusNum = SlotDevices[6].BusNum;
+		newSmbiosTable.Type9->DevFuncNum = SlotDevices[6].DevFuncNum;
 		//
 		DBG("insert table 9 for Airport\n");
 		UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type9->SlotDesignation, AirPort);
 		LogSmbiosTable(newSmbiosTable);
-	} /*else {
-		DBG("no airport for table 9\n");
-	} */
+	} 
+ */
+	for (Index = 0; Index < 15; Index++) {
+    if (SlotDevices[Index].Valid) {
+      ZeroMem((VOID*)newSmbiosTable.Type9, MAX_TABLE_SIZE);
+      newSmbiosTable.Type9->Hdr.Type = EFI_SMBIOS_TYPE_SYSTEM_SLOTS;
+      newSmbiosTable.Type9->Hdr.Length = sizeof(SMBIOS_TABLE_TYPE9);
+      newSmbiosTable.Type9->Hdr.Handle = (UINT16)(0x0900 + Index);
+      newSmbiosTable.Type9->SlotDesignation = 1;
+      newSmbiosTable.Type9->SlotType = SlotDevices[Index].SlotType;
+      newSmbiosTable.Type9->SlotDataBusWidth = SlotDataBusWidth1X;
+      newSmbiosTable.Type9->CurrentUsage = SlotUsageAvailable;
+      newSmbiosTable.Type9->SlotLength = SlotLengthShort;
+      newSmbiosTable.Type9->SlotID = SlotDevices[Index].SlotID;
+      newSmbiosTable.Type9->SlotCharacteristics1.Provides33Volts = 1;
+      newSmbiosTable.Type9->SlotCharacteristics2.HotPlugDevicesSupported = 1;
+      // take this from PCI bus for WiFi card
+      newSmbiosTable.Type9->SegmentGroupNum = SlotDevices[Index].SegmentGroupNum;
+      newSmbiosTable.Type9->BusNum = SlotDevices[Index].BusNum;
+      newSmbiosTable.Type9->DevFuncNum = SlotDevices[Index].DevFuncNum;
+      //
+      DBG("insert table 9 for dev 0x%x\n", SlotDevices[Index].DevFuncNum);
+      UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type9->SlotDesignation, SlotDevices[Index].SlotName);
+      LogSmbiosTable(newSmbiosTable);
+    }
+  }
 	
 	return;
 }

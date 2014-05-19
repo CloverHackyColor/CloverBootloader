@@ -2014,7 +2014,7 @@ CHAR8 VenATI[] = {0x02, 0x10};
 
 UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
 {
-  UINT32 i, j, k;
+  UINT32 i = 0, j, k;
   INT32 sizeoffset = 0;
   UINT32 PCIADR = 0, PCISIZE = 0, Size;
   CHAR8 *display;
@@ -2029,19 +2029,19 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
   UINT32 FakeID = 0;
   UINT32 FakeVen = 0;
   DisplayName1 = FALSE;
-
+  
   if (!DisplayADR1[VCard]) return len;
-
+  
   PCIADR = GetPciDevice(dsdt, len);
   if (PCIADR) {
     PCISIZE = get_size(dsdt, PCIADR);
   }
   if (!PCISIZE) return len; //what is the bad DSDT ?!
-    
+  
   DBG("Start Display%d Fix\n", VCard);
   root = aml_create_node(NULL);
   
-//search DisplayADR1[0]
+  //search DisplayADR1[0]
   for (j=0x20; j<len-10; j++) {
     if (CmpAdr(dsdt, j, DisplayADR1[VCard])) { //for example 0x00020000=2,0
       devadr = devFind(dsdt, j);  //PEG0@2,0
@@ -2055,7 +2055,7 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
       }
     } // End Display1
   }
-
+  
   //what if PEG0 is not found?
   if (devadr) {
     for (j=devadr; j<devadr+devsize; j++) { //search card inside PEG0@0
@@ -2072,7 +2072,7 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
         }
       }
     }
-
+    
     if (!DISPLAYFIX) {
       for (j=devadr; j<devadr+devsize; j++) { //search card inside PEGP@0
         if (CmpAdr(dsdt, j, 0xFFFF)) {  //Special case? want to change to 0
@@ -2091,7 +2091,7 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
               DBG("Found internal video device FFFF@%x, unusable\n", devadr1);
             }
             DISPLAYFIX = TRUE;
-            break;      
+            break;
           }
         }
       }
@@ -2122,142 +2122,193 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
           DBG("_DSM in display already exists, dropped\n");
         } else {
           DBG("_DSM already exists, patch display will not be applied\n");
-  //        return len;
+          //        return len;
           DisplayADR1[VCard] = 0;  //xxx
           DsmFound = TRUE;
         }
       }
     }
   }
-
-    if (!DisplayName1) {
-      peg0 = aml_add_device(root, "PEG0");
-      aml_add_name(peg0, "_ADR");
-      aml_add_dword(peg0, DisplayADR1[VCard]);
-      DBG("add device PEG0\n");
-    } else
-      peg0 = root;
-
-    if (!DISPLAYFIX) {   //bridge or builtin not found
-      gfx0 = aml_add_device(peg0, "GFX0");
-      DBG("add device GFX0\n");
-      aml_add_name(gfx0, "_ADR");
-      if (DisplayADR2[VCard] > 0x3F)
-        aml_add_dword(gfx0, DisplayADR2[VCard]);
-      else
-        aml_add_byte(gfx0, (UINT8)DisplayADR2[VCard]);
-    } else
-      gfx0 = peg0;
-
-    // Intel GMA and HD
-    if ((DisplayVendor[VCard] == 0x8086) && !DsmFound) {
-      DBG("Creating DSM for Intel card\n");
-      met = aml_add_method(gfx0, "_DSM", 4);
-      met2 = aml_add_store(met);
-      pack = aml_add_package(met2);
-      if (!gSettings.NoDefaultProperties) {
-        if (gSettings.FakeIntel) {
-          FakeID = gSettings.FakeIntel >> 16;
-          aml_add_string(pack, "device-id");
-          aml_add_byte_buffer(pack, (CHAR8*)&FakeID, 4);
-          FakeVen = gSettings.FakeIntel & 0xFFFF;
-          aml_add_string(pack, "vendor-id");
-          aml_add_byte_buffer(pack, (CHAR8*)&FakeVen, 4);
-        }
-        if (gSettings.UseIntelHDMI) {
-          aml_add_string(pack, "hda-gfx");
-          aml_add_string_buffer(pack, "onboard-1");
-        } 
+  
+  if (!DisplayName1) {
+    peg0 = aml_add_device(root, "PEG0");
+    aml_add_name(peg0, "_ADR");
+    aml_add_dword(peg0, DisplayADR1[VCard]);
+    DBG("add device PEG0\n");
+  } else
+    peg0 = root;
+  
+  if (!DISPLAYFIX) {   //bridge or builtin not found
+    gfx0 = aml_add_device(peg0, "GFX0");
+    DBG("add device GFX0\n");
+    aml_add_name(gfx0, "_ADR");
+    if (DisplayADR2[VCard] > 0x3F)
+      aml_add_dword(gfx0, DisplayADR2[VCard]);
+    else
+      aml_add_byte(gfx0, (UINT8)DisplayADR2[VCard]);
+  } else
+    gfx0 = peg0;
+  
+  // Intel GMA and HD
+  if ((DisplayVendor[VCard] == 0x8086) && !DsmFound) {
+    DBG("Creating DSM for Intel card\n");
+    met = aml_add_method(gfx0, "_DSM", 4);
+    met2 = aml_add_store(met);
+    pack = aml_add_package(met2);
+    if (!gSettings.NoDefaultProperties) {
+      if (gSettings.FakeIntel) {
+        FakeID = gSettings.FakeIntel >> 16;
+        aml_add_string(pack, "device-id");
+        aml_add_byte_buffer(pack, (CHAR8*)&FakeID, 4);
+        FakeVen = gSettings.FakeIntel & 0xFFFF;
+        aml_add_string(pack, "vendor-id");
+        aml_add_byte_buffer(pack, (CHAR8*)&FakeVen, 4);
       }
-      if(!AddProperties(pack, DEV_INTEL) &&
-         !gSettings.UseIntelHDMI &&
-         !gSettings.FakeIntel) {
-        aml_add_string(pack, "empty");
-        aml_add_byte(pack, 0);
+      if (gSettings.UseIntelHDMI) {
+        aml_add_string(pack, "hda-gfx");
+        aml_add_string_buffer(pack, "onboard-1");
       }
-      
-      aml_add_local0(met);
-      aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
-      // finish Method(_DSM,4,NotSerialized)
+    }
+    if(!AddProperties(pack, DEV_INTEL) &&
+       !gSettings.UseIntelHDMI &&
+       !gSettings.FakeIntel) {
+      aml_add_string(pack, "empty");
+      aml_add_byte(pack, 0);
     }
     
-    // NVIDIA
-    if ((DisplayVendor[VCard] == 0x10DE)  && !DsmFound) {
-      DBG("Creating DSM for NVIDIA card\n");
-      met = aml_add_method(gfx0, "_DSM", 4);
-      met2 = aml_add_store(met);
-      pack = aml_add_package(met2);
-      if (!gSettings.NoDefaultProperties) {
-        if (gSettings.FakeNVidia) {
-          FakeID = gSettings.FakeNVidia >> 16;
-          aml_add_string(pack, "device-id");
-          aml_add_byte_buffer(pack, (CHAR8*)&FakeID, 4);
-          FakeVen = gSettings.FakeNVidia & 0xFFFF;
-          aml_add_string(pack, "vendor-id");
-          aml_add_byte_buffer(pack, (CHAR8*)&FakeVen, 4);
-        }
-        if (GFXHDAFIX) {
-          aml_add_string(pack, "hda-gfx");
-          if (gSettings.UseIntelHDMI) {
-            aml_add_string_buffer(pack, "onboard-2");
-          } else {
-            aml_add_string_buffer(pack, "onboard-1");
-          }
-        }
-      }
-      if(!AddProperties(pack, DEV_NVIDIA) &&
-         !GFXHDAFIX &&
-         !gSettings.FakeNVidia) {
-        aml_add_string(pack, "empty");
-        aml_add_byte(pack, 0);
-      }
-      aml_add_local0(met);
-      aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
-      // finish Method(_DSM,4,NotSerialized)
-    }
+    aml_add_local0(met);
+    aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
+    // finish Method(_DSM,4,NotSerialized)
+  }
   
-    // ATI
-    if ((DisplayVendor[VCard] == 0x1002) && !DsmFound) {
-      DBG("Creating DSM for ATI card\n");
-      met = aml_add_method(gfx0, "_DSM", 4);  //if no subdevice
-      met2 = aml_add_store(met);
-      pack = aml_add_package(met2);
-      if (!gSettings.NoDefaultProperties) {
-        if (gSettings.FakeATI) {
-          FakeID = gSettings.FakeATI >> 16;
-          aml_add_string(pack, "device-id");
-          aml_add_byte_buffer(pack, (CHAR8*)&FakeID, 4);
-          aml_add_string(pack, "ATY,DeviceID");
-          aml_add_byte_buffer(pack, (CHAR8*)&FakeID, 2);
-          FakeVen = gSettings.FakeATI & 0xFFFF;
-          aml_add_string(pack, "vendor-id");
-          aml_add_byte_buffer(pack, (CHAR8*)&FakeVen, 4);
-          aml_add_string(pack, "ATY,VendorID");
-          aml_add_byte_buffer(pack, (CHAR8*)&FakeVen, 2);
+  // NVIDIA
+  if ((DisplayVendor[VCard] == 0x10DE)  && !DsmFound) {
+    DBG("Creating DSM for NVIDIA card\n");
+    met = aml_add_method(gfx0, "_DSM", 4);
+    met2 = aml_add_store(met);
+    pack = aml_add_package(met2);
+    if (!gSettings.NoDefaultProperties) {
+      if (gSettings.FakeNVidia) {
+        FakeID = gSettings.FakeNVidia >> 16;
+        aml_add_string(pack, "device-id");
+        aml_add_byte_buffer(pack, (CHAR8*)&FakeID, 4);
+        FakeVen = gSettings.FakeNVidia & 0xFFFF;
+        aml_add_string(pack, "vendor-id");
+        aml_add_byte_buffer(pack, (CHAR8*)&FakeVen, 4);
+      }
+      if (GFXHDAFIX) {
+        aml_add_string(pack, "hda-gfx");
+        if (gSettings.UseIntelHDMI) {
+          aml_add_string_buffer(pack, "onboard-2");
         } else {
-          aml_add_string(pack, "ATY,VendorID");
-          aml_add_byte_buffer(pack, VenATI, 2);
+          aml_add_string_buffer(pack, "onboard-1");
         }
-        if (GFXHDAFIX) {
-          aml_add_string(pack, "hda-gfx");
-          if (gSettings.UseIntelHDMI) {
-            aml_add_string_buffer(pack, "onboard-2");
-          } else {
-            aml_add_string_buffer(pack, "onboard-1");
-          }
-        }  
       }
-      if(!AddProperties(pack, DEV_ATI) &&
-         !GFXHDAFIX &&
-         !gSettings.FakeATI) {
-        aml_add_string(pack, "empty");
-        aml_add_byte(pack, 0);
-      }
-      aml_add_local0(met);
-      aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
-      // finish Method(_DSM,4,NotSerialized)
     }
-
+    if(!AddProperties(pack, DEV_NVIDIA) &&
+       !GFXHDAFIX &&
+       !gSettings.FakeNVidia) {
+      aml_add_string(pack, "empty");
+      aml_add_byte(pack, 0);
+    }
+    aml_add_local0(met);
+    aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
+    // finish Method(_DSM,4,NotSerialized)
+  }
+  if (DisplayVendor[VCard] == 0x10DE) {
+    //add _sun
+    Size = get_size(dsdt, i);
+    k = FindMethod(dsdt + i, Size, "_SUN");
+    if (k == 0) {
+      k = FindName(dsdt + i, Size, "_SUN");
+      if (k == 0) {
+        aml_add_name(gfx0, "_SUN");
+        aml_add_dword(gfx0, SlotDevices[1].SlotID);
+      } else {
+        //we have name sun, get the number
+        if (dsdt[k + 4] == 0) {
+          SlotDevices[1].SlotID = 0;
+        }
+        else if (dsdt[k + 4] == 1) {
+          SlotDevices[1].SlotID = 1;
+        }
+        else if (dsdt[k + 4] == 0x0A) {
+          SlotDevices[1].SlotID = dsdt[k + 5];
+        }
+      }
+    } else {
+      DBG("Warning: Method(_SUN) found for NVidia card\n");
+    }
+  }
+  
+  // ATI
+  if ((DisplayVendor[VCard] == 0x1002) && !DsmFound) {
+    DBG("Creating DSM for ATI card\n");
+    met = aml_add_method(gfx0, "_DSM", 4);  //if no subdevice
+    met2 = aml_add_store(met);
+    pack = aml_add_package(met2);
+    if (!gSettings.NoDefaultProperties) {
+      if (gSettings.FakeATI) {
+        FakeID = gSettings.FakeATI >> 16;
+        aml_add_string(pack, "device-id");
+        aml_add_byte_buffer(pack, (CHAR8*)&FakeID, 4);
+        aml_add_string(pack, "ATY,DeviceID");
+        aml_add_byte_buffer(pack, (CHAR8*)&FakeID, 2);
+        FakeVen = gSettings.FakeATI & 0xFFFF;
+        aml_add_string(pack, "vendor-id");
+        aml_add_byte_buffer(pack, (CHAR8*)&FakeVen, 4);
+        aml_add_string(pack, "ATY,VendorID");
+        aml_add_byte_buffer(pack, (CHAR8*)&FakeVen, 2);
+      } else {
+        aml_add_string(pack, "ATY,VendorID");
+        aml_add_byte_buffer(pack, VenATI, 2);
+      }
+      if (GFXHDAFIX) {
+        aml_add_string(pack, "hda-gfx");
+        if (gSettings.UseIntelHDMI) {
+          aml_add_string_buffer(pack, "onboard-2");
+        } else {
+          aml_add_string_buffer(pack, "onboard-1");
+        }
+      }
+    }
+    if(!AddProperties(pack, DEV_ATI) &&
+       !GFXHDAFIX &&
+       !gSettings.FakeATI) {
+      aml_add_string(pack, "empty");
+      aml_add_byte(pack, 0);
+    }
+    aml_add_local0(met);
+    aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
+    // finish Method(_DSM,4,NotSerialized)
+  }
+  if (DisplayVendor[VCard] == 0x1002) {
+    //add _sun
+    Size = get_size(dsdt, i);
+    k = FindMethod(dsdt + i, Size, "_SUN");
+    if (k == 0) {
+      k = FindName(dsdt + i, Size, "_SUN");
+      if (k == 0) {
+        aml_add_name(gfx0, "_SUN");
+        aml_add_dword(gfx0, SlotDevices[0].SlotID);
+      } else {
+        //we have name sun, get the number
+        if (dsdt[k + 4] == 0) {
+          SlotDevices[0].SlotID = 0;
+        }
+        else if (dsdt[k + 4] == 1) {
+          SlotDevices[0].SlotID = 1;
+        }
+        else if (dsdt[k + 4] == 0x0A) {
+          SlotDevices[0].SlotID = dsdt[k + 5];
+        }
+      }
+    } else {
+      DBG("Warning: Method(_SUN) found for ATI card\n");
+    }    
+  }
+  
+  
   if (!NonUsable) {
     //now insert video
     DBG("now inserting Video device\n");
@@ -2266,8 +2317,8 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
     sizeoffset = root->Size;
     aml_write_node(root, display, 0);
     aml_destroy_node(root);
-
-
+    
+    
     if (DisplayName1) {   //bridge is present
       // move data to back for add Display
       DBG("... into existing bridge\n");
@@ -2307,7 +2358,7 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
         PCISIZE = get_size(dsdt, PCIADR);
       }
       if (!PCISIZE) return len; //what is the bad DSDT ?!
-
+      
       i = PCIADR + PCISIZE;
       devadr = i + 2;  //skip 5B 82
       len = move_data(i, dsdt, len, sizeoffset);
@@ -2323,8 +2374,8 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
     }
     FreePool(display);
   }
-
-  return len;  
+  
+  return len;
 }
 
 UINT32 AddHDMI (UINT8 *dsdt, UINT32 len)
@@ -2591,6 +2642,7 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
   }
 
   DBG("NetworkADR1=%x NetworkADR2=%x\n", NetworkADR1, NetworkADR2);
+  dev = root;
   if (!NetworkName && (NetworkADR2 != 0xFFFE)) //there is no network device at dsdt, creating new one
   {
     dev = aml_add_device(root, "GIGE");
@@ -2603,18 +2655,27 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
     } else {
       aml_add_byte(dev, 0x00);
     }
-    met = aml_add_method(dev, "_DSM", 4);
-  } else {
-    met = aml_add_method(root, "_DSM", 4);
-    dev = root;
   }
+  met = aml_add_method(dev, "_DSM", 4);
+
   Size = get_size(dsdt, i);
   k = FindMethod(dsdt + i, Size, "_SUN");
   if (k == 0) {
     k = FindName(dsdt + i, Size, "_SUN");
     if (k == 0) {
       aml_add_name(dev, "_SUN");
-      aml_add_dword(dev, NetworkADR1);
+      aml_add_dword(dev, SlotDevices[5].SlotID);
+    } else {
+      //we have name sun, get the number
+      if (dsdt[k + 4] == 0) {
+        SlotDevices[5].SlotID = 0;
+      }
+      else if (dsdt[k + 4] == 1) {
+        SlotDevices[5].SlotID = 1;
+      }
+      else if (dsdt[k + 4] == 0x0A) {
+        SlotDevices[5].SlotID = dsdt[k + 5];
+      }
     }
   }
 
@@ -2777,6 +2838,7 @@ UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
     DBG("Created  bridge device with ADR=0x%x\n", ArptADR1);
   }
 
+  dev = root;
   if (!ArptName && (ArptADR2 != 0xFFFE)) {//there is no Airport device at dsdt, creating new one
     dev = aml_add_device(root, "ARPT");
     aml_add_name(dev, "_ADR");
@@ -2788,19 +2850,30 @@ UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
     } else {
       aml_add_byte(dev, 0x00);
     }
-    met = aml_add_method(dev, "_DSM", 4);
-  } else {
-    met = aml_add_method(root, "_DSM", 4);
-    dev = root;
   }
+  met = aml_add_method(dev, "_DSM", 4);
+
   Size = get_size(dsdt, i);
   k = FindMethod(dsdt + i, Size, "_SUN");
   if (k == 0) {
     k = FindName(dsdt + i, Size, "_SUN");
     if (k == 0) {
       aml_add_name(dev, "_SUN");
-      aml_add_dword(dev, ArptADR1);
+      aml_add_dword(dev, SlotDevices[6].SlotID);
+    } else {
+      //we have name sun, get the number
+      if (dsdt[k + 4] == 0) {
+        SlotDevices[6].SlotID = 0;
+      } 
+      else if (dsdt[k + 4] == 1) {
+          SlotDevices[6].SlotID = 1;
+      }
+      else if (dsdt[k + 4] == 0x0A) {
+        SlotDevices[6].SlotID = dsdt[k + 5];
+      }
     }
+  } else {
+    DBG("Warning: Method(_SUN) found for airport\n");
   }
 
   // add Method(_DSM,4,NotSerialized) for network
@@ -3169,6 +3242,7 @@ UINT32 FIXFirewire (UINT8 *dsdt, UINT32 len)
   AML_CHUNK *stro;
   AML_CHUNK *pack;
   CHAR8 *firewire;
+  AML_CHUNK* device;
   
   PCIADR = GetPciDevice(dsdt, len);
   if (PCIADR) {
@@ -3238,11 +3312,12 @@ UINT32 FIXFirewire (UINT8 *dsdt, UINT32 len)
   }
   
   root = aml_create_node(NULL);
+  device = root;
   
   DBG("Start Firewire Fix\n");
   
   if (!FirewireName) {
-    AML_CHUNK* device = aml_add_device(root, "FRWR");
+    device = aml_add_device(root, "FRWR");
     aml_add_name(device, "_ADR");
     if (FirewireADR2) {
       if (FirewireADR2 <= 0x3F) {
@@ -3253,10 +3328,34 @@ UINT32 FIXFirewire (UINT8 *dsdt, UINT32 len)
     } else aml_add_byte(device, 0);
     aml_add_name(device, "_GPE");
     aml_add_byte(device, 0x1A);
-    met = aml_add_method(device, "_DSM", 4);
-  } else {
-    met = aml_add_method(root, "_DSM", 4);
   }
+  
+  met = aml_add_method(device, "_DSM", 4);
+
+  Size = get_size(dsdt, i);
+  k = FindMethod(dsdt + i, Size, "_SUN");
+  if (k == 0) {
+    k = FindName(dsdt + i, Size, "_SUN");
+    if (k == 0) {
+      aml_add_name(device, "_SUN");
+      aml_add_dword(device, SlotDevices[12].SlotID);
+    } else {
+      //we have name sun, get the number
+      if (dsdt[k + 4] == 0) {
+        SlotDevices[12].SlotID = 0;
+      }
+      else if (dsdt[k + 4] == 1) {
+        SlotDevices[12].SlotID = 1;
+      }
+      else if (dsdt[k + 4] == 0x0A) {
+        SlotDevices[12].SlotID = dsdt[k + 5];
+      }
+    }
+  } else {
+    DBG("Warning: Method(_SUN) found for firewire\n");
+  }
+
+  
   stro = aml_add_store(met);
   pack = aml_add_package(stro);
   if (!AddProperties(pack, DEV_FIREWIRE)) {

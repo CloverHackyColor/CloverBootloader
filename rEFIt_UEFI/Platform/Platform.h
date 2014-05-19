@@ -1314,6 +1314,10 @@ typedef struct {
   UINT8             BusNum;
   UINT8             DevFuncNum;  
   BOOLEAN           Valid;
+//  UINT8             DeviceN;
+  UINT8             SlotID;
+  UINT8             SlotType;
+  CHAR8             SlotName[31];
 } SLOT_DEVICE;
 
 typedef struct {	
@@ -1406,7 +1410,7 @@ extern DRIVERS_FLAGS            gDriversFlags;
 extern UINT32                   gFwFeatures;
 extern CPU_STRUCTURE            gCPUStructure;
 extern EFI_GUID                 gUuid;
-extern SLOT_DEVICE              Arpt;
+extern SLOT_DEVICE              SlotDevices[];
 extern EFI_EDID_DISCOVERED_PROTOCOL*            EdidDiscovered;
 extern UINT8                                    *gEDID;
 extern UINT32                   mPropSize;

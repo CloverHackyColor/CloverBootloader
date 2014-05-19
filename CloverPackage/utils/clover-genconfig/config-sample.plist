@@ -649,6 +649,29 @@
 		<true/>
 		<key>Version</key>
 		<string>1.0</string>
+		<key>Slots</key>
+		<array>
+			<dict>
+				<key>Device</key>
+				<string>ATI</string>
+				<key>ID</key>
+				<integer>1</integer>
+				<key>Type</key>
+				<integer>16</integer>
+				<key>Name</key>
+				<string>PCIe Slot 0</string>
+			</dict>
+			<dict>
+				<key>Device</key>
+				<string>WIFI</string>
+				<key>ID</key>
+				<integer>0</integer>
+				<key>Type</key>
+				<integer>1</integer>
+				<key>Name</key>
+				<string>Airport</string>
+			</dict>
+		</array>
 	</dict>
 	<key>SystemParameters</key>
 	<dict>
