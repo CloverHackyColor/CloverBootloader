@@ -11,7 +11,8 @@ if [[ -z "$ESPDevice" ]]; then
 fi
 
 # Get the name of the ESP device (aka disk3s1)
-ESPDevice=$(echo "$ESPDevice" | sed -E 's@^.*/?(disk[0-9]*).*@\1s1@')
+#ESPDevice=$(echo "$ESPDevice" | sed -E 's@^.*/?(disk[0-9]*).*@\1s1@')
+ESPDevice=$(diskutil list "/dev/$ESPDevice"|grep '^\s*\d*\:.*EFI'|grep -o 'disk\d*s\d*')
 
 # Get the ESP mount point if the partition is currently mounted
 ESPMountPoint=$(LC_ALL=C diskutil info "$ESPDevice" 2>/dev/null | \

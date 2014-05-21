@@ -122,7 +122,8 @@ function saveNVRAM {
     local rootDevice=$(df -l / | sed -nE 's#^/dev/([^ ]*).*#\1#p')
 
     # If NVRAMDevice is not specify use rootDevice
-    NVRAMDevice=${NVRAMDevice:-$rootDevice}
+    #NVRAMDevice=${NVRAMDevice:-$rootDevice}
+    NVRAMDevice=${rootDevice}
 
     # Normalize NVRAMDevice (keep only the device name (remove /dev/)
     NVRAMDevice=${NVRAMDevice##*/}
