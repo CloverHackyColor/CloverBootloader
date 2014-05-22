@@ -2248,6 +2248,11 @@ EFI_STATUS InitTheme(BOOLEAN useThemeDefinedInNVRam, EFI_TIME *time)
   TagPtr  ThemeDict = NULL;
   CHAR8   *chosenTheme = NULL;
   CHAR16  *testTheme = NULL;
+  UINTN   rnd = 0;
+  
+  if (time && ThemesNum) {
+    rnd = time->Second % ThemesNum;
+  }
   
   // Invalidated BuiltinIcons
   DBG("Invalidating BuiltinIcons...\n");
@@ -2272,7 +2277,8 @@ EFI_STATUS InitTheme(BOOLEAN useThemeDefinedInNVRam, EFI_TIME *time)
     GuiAnime=NextAnime;
   }
   
-  if (ThemesNum > 0 && (!GlobalConfig.Theme || StrCmp(GlobalConfig.Theme,L"embedded") != 0)) {
+  if (ThemesNum > 0 && (!GlobalConfig.Theme ||
+                        StrCmp(GlobalConfig.Theme, L"embedded") != 0)) {
     
     // Try special theme first
     if (time!=NULL) {
@@ -2294,6 +2300,11 @@ EFI_STATUS InitTheme(BOOLEAN useThemeDefinedInNVRam, EFI_TIME *time)
           FreePool(testTheme);
         }
         testTheme = NULL;
+      } else {
+        //shuffle
+        if (StrCmp(GlobalConfig.Theme, L"random") == 0) {
+          ThemeDict = LoadTheme(ThemesList[rnd]);
+        }
       }
     }
     
@@ -2328,22 +2339,26 @@ EFI_STATUS InitTheme(BOOLEAN useThemeDefinedInNVRam, EFI_TIME *time)
     // Try to get theme from settings
     if (!ThemeDict) {
       if (!GlobalConfig.Theme) {
-        DBG("no default theme, get first theme %s\n", CONFIG_THEME_FILENAME, ThemesList[0]);
+        if (time) {
+          DBG("no default theme, get random theme %s\n", CONFIG_THEME_FILENAME, ThemesList[rnd]);
+        } else {
+          DBG("no default theme, get first theme %s\n", CONFIG_THEME_FILENAME, ThemesList[0]);
+        }
       } else {
         ThemeDict = LoadTheme(GlobalConfig.Theme);
         if (!ThemeDict) {
-          DBG("GlobalConfig: %s not found, get first theme %s\n", CONFIG_THEME_FILENAME, ThemesList[0]);
+          DBG("GlobalConfig: %s not found, get random theme %s\n", CONFIG_THEME_FILENAME, ThemesList[rnd]);
           FreePool(GlobalConfig.Theme);
           GlobalConfig.Theme = NULL; 
         }
       }
     }
   
-    // Try to get first theme
+    // Try to get a theme
     if (!ThemeDict) {
-      ThemeDict = LoadTheme(ThemesList[0]);
+      ThemeDict = LoadTheme(ThemesList[rnd]);
       if (ThemeDict) {
-        GlobalConfig.Theme = AllocateCopyPool(StrSize(ThemesList[0]),ThemesList[0]);
+        GlobalConfig.Theme = AllocateCopyPool(StrSize(ThemesList[rnd]),ThemesList[rnd]);
       }
     }
 
@@ -2489,8 +2504,7 @@ VOID ParseSMBIOSSettings(TagPtr dictPointer)
     if (prop->type == kTagTypeInteger) {
       gSettings.ChassisType = (UINT8)(UINTN)prop->string;
     } else if (prop->type == kTagTypeString){
-      AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
-      gSettings.ChassisType = (UINT8)StrHexToUint64((CHAR16*)&UStr[0]);
+      gSettings.ChassisType = (UINT8)AsciiStrHexToUint64(prop->string);
     }
     DBG("Config set ChassisType=0x%x\n", gSettings.ChassisType);
   }
@@ -2500,8 +2514,7 @@ VOID ParseSMBIOSSettings(TagPtr dictPointer)
     if (prop->type == kTagTypeInteger) {
       gFwFeatures = (UINT32)(UINTN)prop->string;
     } else if (prop->type == kTagTypeString){
-      AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
-      gFwFeatures = (UINT32)StrHexToUint64((CHAR16*)&UStr[0]);
+      gFwFeatures = (UINT32)AsciiStrHexToUint64(prop->string);
     }
   }
 }
@@ -2807,43 +2820,35 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
       if(prop) {
         prop2 = GetProperty(prop, "ATI");
         if (prop2 && (prop2->type == kTagTypeString)) {
-          AsciiStrToUnicodeStr(prop2->string, (CHAR16*)&UStr[0]);
-          gSettings.FakeATI  = (UINT32)StrHexToUint64(UStr);
+          gSettings.FakeATI  = (UINT32)AsciiStrHexToUint64(prop2->string);
         }
         prop2 = GetProperty(prop, "NVidia");
         if (prop2 && (prop2->type == kTagTypeString)) {
-          AsciiStrToUnicodeStr(prop2->string, (CHAR16*)&UStr[0]);
-          gSettings.FakeNVidia  = (UINT32)StrHexToUint64(UStr);
+          gSettings.FakeNVidia  = (UINT32)AsciiStrHexToUint64(prop2->string);
         }
         prop2 = GetProperty(prop, "IntelGFX");
         if (prop2 && (prop2->type == kTagTypeString)) {
-          AsciiStrToUnicodeStr(prop2->string, (CHAR16*)&UStr[0]);
-          gSettings.FakeIntel  = (UINT32)StrHexToUint64(UStr);
+          gSettings.FakeIntel  = (UINT32)AsciiStrHexToUint64(prop2->string);
         }
         prop2 = GetProperty(prop, "LAN");
         if (prop2 && (prop2->type == kTagTypeString)) {
-          AsciiStrToUnicodeStr(prop2->string, (CHAR16*)&UStr[0]);
-          gSettings.FakeLAN  = (UINT32)StrHexToUint64(UStr);
+          gSettings.FakeLAN  = (UINT32)AsciiStrHexToUint64(prop2->string);
         }
         prop2 = GetProperty(prop, "WIFI");
         if (prop2 && (prop2->type == kTagTypeString)) {
-          AsciiStrToUnicodeStr(prop2->string, (CHAR16*)&UStr[0]);
-          gSettings.FakeWIFI  = (UINT32)StrHexToUint64(UStr);
+          gSettings.FakeWIFI  = (UINT32)AsciiStrHexToUint64(prop2->string);
         }
         prop2 = GetProperty(prop, "SATA");
         if (prop2 && (prop2->type == kTagTypeString)) {
-          AsciiStrToUnicodeStr(prop2->string, (CHAR16*)&UStr[0]);
-          gSettings.FakeSATA  = (UINT32)StrHexToUint64(UStr);
+          gSettings.FakeSATA  = (UINT32)AsciiStrHexToUint64(prop2->string);
         }
         prop2 = GetProperty(prop, "XHCI");
         if (prop2 && (prop2->type == kTagTypeString)) {
-          AsciiStrToUnicodeStr(prop2->string, (CHAR16*)&UStr[0]);
-          gSettings.FakeXHCI  = (UINT32)StrHexToUint64(UStr);
+          gSettings.FakeXHCI  = (UINT32)AsciiStrHexToUint64(prop2->string);
         }
         prop2 = GetProperty(prop, "IMEI");
         if (prop2 && (prop2->type == kTagTypeString)) {
-          AsciiStrToUnicodeStr(prop2->string, (CHAR16*)&UStr[0]);
-          gSettings.FakeIMEI  = (UINT32)StrHexToUint64(UStr);
+          gSettings.FakeIMEI  = (UINT32)AsciiStrHexToUint64(prop2->string);
         }
       }
       prop = GetProperty(dictPointer, "UseIntelHDMI");
@@ -3076,8 +3081,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
           if (prop->type == kTagTypeInteger) {
             gSettings.FixDsdt  = (UINT32)(UINTN)prop->string;
           } else if (prop->type == kTagTypeString){
-            AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
-            gSettings.FixDsdt  = (UINT32)StrHexToUint64(UStr); 
+            gSettings.FixDsdt  = (UINT32)AsciiStrHexToUint64(prop->string); 
           }
           DBG("Config set Fix DSDT mask=%08x\n", gSettings.FixDsdt);
         }

@@ -687,7 +687,7 @@ radeon_card_info_t radeon_cards[] = {
 	{ 0x6792,	0x00000000, CHIP_FAMILY_TAHITI,	"AMD Radeon HD 7900 Series",	kFutomaki	},
 	{ 0x6798,	0x00000000, CHIP_FAMILY_TAHITI,	"AMD Radeon HD 7970 X-Edition",	kFutomaki	},
 	{ 0x6799,	0x00000000, CHIP_FAMILY_TAHITI,	"AMD Radeon HD 7990 Series",	kAji		},
-	{ 0x679A,	0x00000000, CHIP_FAMILY_TAHITI,	"AMD Radeon HD 7950 Series",	kFutomaki	},
+	{ 0x679A,	0x00000000, CHIP_FAMILY_TAHITI,	"AMD Radeon R9 280",	kFutomaki	},
 	{ 0x679B,	0x00000000, CHIP_FAMILY_TAHITI,	"AMD Radeon HD 7900 Series",	kFutomaki	},
 	{ 0x679E,	0x00000000, CHIP_FAMILY_TAHITI,	"AMD Radeon HD 7870 XT",	kFutomaki	},
 	{ 0x679F,	0x00000000, CHIP_FAMILY_TAHITI,	"AMD Radeon HD 7950 Series",	kFutomaki	},
@@ -700,7 +700,7 @@ radeon_card_info_t radeon_cards[] = {
 //	{ 0x67A9,	0x00000000, CHIP_FAMILY_HAWAII,	"AMD Radeon",            kFutomaki	},
 //	{ 0x67AA,	0x00000000, CHIP_FAMILY_HAWAII,	"AMD Radeon",            kFutomaki	},
 	{ 0x67B0,	0x00000000, CHIP_FAMILY_HAWAII,	"AMD Radeon R9 290X",           kFutomaki	},
-	{ 0x67B1,	0x00000000, CHIP_FAMILY_TAHITI,	"AMD Radeon R9 290",            kFutomaki	}, // CHIP_FAMILY_HAWAII
+	{ 0x67B1,	0x00000000, CHIP_FAMILY_HAWAII,	"AMD Radeon R9 290",            kFutomaki	}, // CHIP_FAMILY_HAWAII
 //	{ 0x67B8,	0x00000000, CHIP_FAMILY_HAWAII,	"AMD Radeon",            kFutomaki	},
 //	{ 0x67B9,	0x00000000, CHIP_FAMILY_HAWAII,	"AMD Radeon",            kFutomaki	},
 //	{ 0x67BA,	0x00000000, CHIP_FAMILY_HAWAII,	"AMD Radeon",            kFutomaki	},

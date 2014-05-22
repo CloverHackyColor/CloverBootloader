@@ -1887,10 +1887,10 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     if (!GlobalConfig.FastBoot) {
  //     GetListOfThemes();
       if (gThemeNeedInit) {
-        InitTheme(TRUE,&Now);
+        InitTheme(TRUE, &Now);
         gThemeNeedInit = FALSE;
       } else if (gThemeChanged) {
-        InitTheme(FALSE,NULL);
+        InitTheme(FALSE, NULL);
         FreeMenu(&OptionMenu);
       }
       gThemeChanged = FALSE;
