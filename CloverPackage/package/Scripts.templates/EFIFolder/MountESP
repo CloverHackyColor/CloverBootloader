@@ -3,47 +3,64 @@
 DEST_VOL="$1"
 EFI_ROOT_DIR="${2:-${DEST_VOL%*/}/EFIROOTDIR}"
 
-ESPDevice=$(LC_ALL=C diskutil info "$DEST_VOL" 2>/dev/null | \
+DiskDevice=$(LC_ALL=C diskutil info "$DEST_VOL" 2>/dev/null | \
  sed -n 's/.*Part of Whole: *//p')
-if [[ -z "$ESPDevice" ]]; then
+if [[ -z "$DiskDevice" ]]; then
     echo "Can't find volume with the name $DEST_VOL"
     exit 1
 fi
 
-# Get the name of the ESP device (aka disk3s1)
-#ESPDevice=$(echo "$ESPDevice" | sed -E 's@^.*/?(disk[0-9]*).*@\1s1@')
-ESPDevice=$(diskutil list "/dev/$ESPDevice"|grep '^\s*\d*\:.*EFI'|grep -o 'disk\d*s\d*')
+# Check if the disk is a GPT disk
+disk_partition_scheme=$(LC_ALL=C diskutil info "$DiskDevice" 2>/dev/null | \
+ sed -nE 's/.*(Partition Type|Content \(IOContent\)): *//p')
 
-# Get the ESP mount point if the partition is currently mounted
-ESPMountPoint=$(LC_ALL=C diskutil info "$ESPDevice" 2>/dev/null | \
- sed -n 's/.*Mount Point: *//p')
+if [[ "$disk_partition_scheme" = "GUID_partition_scheme" ]]; then
 
-if [[ "$ESPMountPoint" ]]; then
-    exitcode=0
-else
-    ESPMountPoint="/Volumes/ESP"
-    exitcode=1
+    # Get the index of the ESP device
+    index=$(LC_ALL=C /usr/sbin/gpt -r show "/dev/$DiskDevice" 2>/dev/null | \
+     awk 'toupper($7) == "C12A7328-F81F-11D2-BA4B-00A0C93EC93B" {print $3; exit}')
+    [[ -z "$index" ]] && index=1 # if not found use the index 1
 
-    fstype=$(fstyp /dev/$ESPDevice)
-    if [[ -n "$fstype" ]]; then
-        [[ ! -d "${ESPMountPoint}" ]] && mkdir -p "${ESPMountPoint}"
-        mount -t $fstype /dev/$ESPDevice "${ESPMountPoint}" 2>&1
-        exitcode=$?
+    # Define the ESPDevice
+    ESPDevice="${DiskDevice}s${index}"
+
+    # Get the ESP mount point if the partition is currently mounted
+    ESPMountPoint=$(LC_ALL=C diskutil info "$ESPDevice" 2>/dev/null | \
+     sed -n 's/.*Mount Point: *//p')
+
+    if [[ "$ESPMountPoint" ]]; then
+        # If already mounted it's okay
+        exitcode=0
+    else
+        # Else try to mount the ESP partition
+        ESPMountPoint="/Volumes/ESP"
+        exitcode=1
+
+        fstype=$(fstyp /dev/$ESPDevice)
+        if [[ -n "$fstype" ]]; then
+            [[ ! -d "${ESPMountPoint}" ]] && mkdir -p "${ESPMountPoint}"
+            mount -t $fstype /dev/$ESPDevice "${ESPMountPoint}" 2>&1
+            exitcode=$?
+        fi
     fi
-fi
 
-if [[ $exitcode -ne 0 ]]; then
-    echo
-    echo "ERROR: can't mount ESP partition ($ESPDevice) !"
-    echo "Check that the partition is well formated in HFS or Fat32."
-    echo
-    echo "To format as HFS use command like:"
-    echo "sudo newfs_hfs -v EFI /dev/r$ESPDevice"
-    echo
-    echo "For format as Fat32 use command like:"
-    echo "sudo newfs_msdos -v EFI -F 32 /dev/r$ESPDevice"
+    if [[ $exitcode -ne 0 ]]; then
+        echo
+        echo "ERROR: can't mount ESP partition ($ESPDevice) !"
+        echo "Check that the partition is well formated in HFS or Fat32."
+        echo
+        echo "To format as HFS use command like:"
+        echo "sudo newfs_hfs -v EFI /dev/r$ESPDevice"
+        echo
+        echo "For format as Fat32 use command like:"
+        echo "sudo newfs_msdos -v EFI -F 32 /dev/r$ESPDevice"
+    else
+        ln -sf "$ESPMountPoint" "$EFI_ROOT_DIR"
+    fi
 else
-    ln -sf "$ESPMountPoint" "$EFI_ROOT_DIR"
+    # Disk is not GPT use the DEST_VOL as EFI_ROOT_DIR
+    ln -sf "$DEST_VOL" "$EFI_ROOT_DIR"
+    exitcode=0
 fi
 
 exit $exitcode

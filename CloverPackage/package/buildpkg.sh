@@ -488,7 +488,6 @@ main ()
                        --subst="INSTALLER_CHOICE=$installer_target_esp_refid" MarkChoice
     buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/"
     addChoice --start-visible="true" --start-selected="choicePreviouslySelected('$packageRefId')"  \
-              --enabled="!choices['UEFI.only'].selected"                                           \
               --selected="choices['UEFI.only'].selected || choices['Target.ESP'].selected"         \
               --pkg-refs="$packageRefId" "${choiceId}"
 # End build EFI target
