@@ -120,50 +120,75 @@ echo "" >> "$install_log"
 
 ### Stage 1 ###
 
-# Try to umount the partition first
+# Use temporary files because the partition will be unmount
+tmp_log=/tmp/install.log
+partitionloaderfat_copy="/tmp/$partitionloaderfat"
+partitionloaderhfs_copy="/tmp/$partitionloaderhfs"
+cp -p "${DEST_VOL}/usr/standalone/i386/${partitionloaderfat}" "$partitionloaderfat_copy"
+cp -p "${DEST_VOL}/usr/standalone/i386/${partitionloaderhfs}" "$partitionloaderhfs_copy"
+
+# Try to unmount the partition first
 mnt_pt=$(LC_ALL=C mount | egrep "^$bootdev on" | sed 's/^.* on *//;s/ ([^(]*//')
 if [[ -n "$mnt_pt" ]]; then
+    # Try to umount the partition with umount
     umount $bootdev 2>/dev/null
-    [[ $? -ne 0 ]] && mnt_pt=''
+    if [[ $? -ne 0 ]]; then
+        # If it doesn't work try with diskutil
+        diskutil unmount $bootdev 2>/dev/null
+        [[ $? -ne 0 ]] && mnt_pt=''
+    fi
 fi
 
 if [[ ${boot_volume_format} = "hfs" ]]; then
-    echo "Stage 1 - Writting ${partitionloaderhfs} to ${bootrdev}" >> "$install_log"
-    echo "File system is HFS." >> "$install_log"
-    echo "dd if=${DEST_VOL}/usr/standalone/i386/${partitionloaderhfs} of=${bootrdev}" >> "$install_log"
-    dd if="${DEST_VOL}/usr/standalone/i386/${partitionloaderhfs}" of=${bootrdev}
+    echo "Stage 1 - Writting ${partitionloaderhfs} to ${bootrdev}" >> "$tmp_log"
+    echo "File system is HFS." >> "$tmp_log"
+    echo "dd if=${partitionloaderhfs_copy} of=${bootrdev}" >> "$tmp_log"
+    dd if="${partitionloaderhfs_copy}" of=${bootrdev}
 
 elif [[ ${boot_volume_format} = "msdos" ]]; then
-    echo "Stage 1 - Writting ${partitionloaderfat} to ${bootrdev}" >> "$install_log"
-    echo "File system is Fat32." >> "$install_log"
+    echo "Stage 1 - Writting ${partitionloaderfat} to ${bootrdev}" >> "$tmp_log"
+    echo "File system is Fat32." >> "$tmp_log"
 
     # copy partition boot sector to origbs
-    echo "dd if=${bootrdev} count=1 bs=512 of=/tmp/origbs" >> "$install_log"
+    echo "dd if=${bootrdev} count=1 bs=512 of=/tmp/origbs" >> "$tmp_log"
     dd if=${bootrdev} count=1 bs=512 of=/tmp/origbs
-    
+
     if [[cat /tmp/origbs | grep FAT16]]; then
-      echo " boot volume format is FAT16" >> "$install_log"
-      echo "No Stage1 was written" >> "$install_log"
+      echo " boot volume format is FAT16" >> "$tmp_log"
+      echo "No Stage1 was written" >> "$tmp_log"
     else
       # copy boot1f32 to newbs
-      echo "cp ${DEST_VOL}/usr/standalone/i386/${partitionloaderfat} /tmp/newbs" >> "$install_log"
-      cp -f "${DEST_VOL}/usr/standalone/i386/${partitionloaderfat}" /tmp/newbs
+      echo "cp ${partitionloaderfat_copy} /tmp/newbs" >> "$tmp_log"
+      cp -f "${partitionloaderfat_copy}" /tmp/newbs
 
       # "merge" origbs into newbs
-      echo "dd if=/tmp/origbs of=/tmp/newbs skip=3 seek=3 bs=1 count=87 conv=notrunc" >> "$install_log"
+      echo "dd if=/tmp/origbs of=/tmp/newbs skip=3 seek=3 bs=1 count=87 conv=notrunc" >> "$tmp_log"
       dd if=/tmp/origbs of=/tmp/newbs skip=3 seek=3 bs=1 count=87 conv=notrunc
 
       # write newbs to the partition boot sector
-      echo "dd if=/tmp/newbs of=${bootrdev}" >> "$install_log"
+      echo "dd if=/tmp/newbs of=${bootrdev}" >> "$tmp_log"
       dd if=/tmp/newbs count=1 bs=512 of=${bootrdev}
     fi
 else
-    echo "Unknown boot volume format: $boot_volume_format" >> "$install_log"
-    echo "No Stage1 was written" >> "$install_log"
+    echo "Unknown boot volume format: $boot_volume_format" >> "$tmp_log"
+    echo "No Stage1 was written" >> "$tmp_log"
 fi
 
 # Now try to remount the partition
-[[ -n "$mnt_pt" ]] && mount -t "$boot_volume_format" "$bootdev" "$mnt_pt"
+if [[ -n "$mnt_pt" ]]; then
+    [[ ! -d "$mnt_pt" ]] && mkdir -p "$mnt_pt"
+    # First try to mount with the mount command
+    mount -t "$boot_volume_format" "$bootdev" "$mnt_pt"
+    # If failed try with diskutil
+    [[ $? -ne 0 ]] && diskutil mount -mountPoint "$mnt_pt" "$bootdev"
+fi
+
+# Copy temporary log to install_log
+cat "$tmp_log" >> "$install_log"
+# Remove tempory files
+rm -f "$tmp_log"
+rm -f "$partitionloaderfat_copy"
+rm -f "$partitionloaderhfs_copy"
 
 echo "" >> "$install_log"
 
