@@ -95,6 +95,7 @@ static struct gma_gpu_t KnownGPUS[] = {
   { 0x016a, "Intel HD Graphics P4000" },  //Xeon E3-1245
   { 0x0412, "Intel HD Graphics 4600"  },  //Haswell
   { 0x0416, "Intel HD Graphics 4600"  },  //Haswell
+  { 0x041e, "Intel HD Graphics 4400"  },  //Haswell
   { 0x0A0e, "Intel HD Graphics 4400"  },  //Haswell
   { 0x0A16, "Intel HD Graphics 4400"  },  //Haswell
   { 0x0A1e, "Intel HD Graphics 4400"  },  //Haswell
@@ -213,32 +214,30 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
     case 0x016a:
     case 0x0412:
     case 0x0416:
+    case 0x041e:
     case 0x0a0e:
     case 0x0a16:
     case 0x0a1e:
     case 0x0a26:
     case 0x0d22:
       if (!gSettings.IgPlatform) {
-        if ((gma_dev->device_id == 0x162) ||
-            (gma_dev->device_id == 0x16a)) {
-          devprop_add_value(device, "AAPL,ig-platform-id", GMAX3100_vals[23], 4);
-          devprop_add_value(device, "class-code",	ClassFix, 4);
+        switch (gma_dev->device_id) {
+          case 0x162:
+          case 0x16a:
+            devprop_add_value(device, "AAPL,ig-platform-id", GMAX3100_vals[23], 4);
+            devprop_add_value(device, "class-code",	ClassFix, 4);
+            break;
+          case 0x152:
+            devprop_add_value(device, "AAPL,ig-platform-id", GMAX3100_vals[24], 4);
+            break;           
+          case 0x166:
+          case 0x156:
+            devprop_add_value(device, "AAPL,ig-platform-id", GMAX3100_vals[25], 4);
+            break;
+          default:
+            devprop_add_value(device, "AAPL,ig-platform-id", GMAX3100_vals[26], 4);
+            break;
         }
-        else if (gma_dev->device_id == 0x166)
-          devprop_add_value(device, "AAPL,ig-platform-id", GMAX3100_vals[25], 4);
-        else if (gma_dev->device_id == 0x152)
-          devprop_add_value(device, "AAPL,ig-platform-id", GMAX3100_vals[24], 4);
-        else if (gma_dev->device_id == 0x156)
-          devprop_add_value(device, "AAPL,ig-platform-id", GMAX3100_vals[25], 4);
-        else if (gma_dev->device_id == 0x412)
-          devprop_add_value(device, "AAPL,ig-platform-id", GMAX3100_vals[26], 4);
-        else if (gma_dev->device_id == 0x416)
-          devprop_add_value(device, "AAPL,ig-platform-id", GMAX3100_vals[26], 4);
-
-        /*    IG_ID[0] = gma_dev->revision;
-         IG_ID[2] |= gma_dev->device_id & 0x0f;
-
-         devprop_add_value(device, "AAPL,ig-platform-id", IG_ID, 4); */
       } else {
         devprop_add_value(device, "AAPL,ig-platform-id", (UINT8*)&gSettings.IgPlatform, 4);
       }

@@ -1431,19 +1431,23 @@ StripUnreplacedEnvironmentVariables(
       }
       continue;
     }
-    ASSERT(FirstPercent < FirstQuote);
+//    ASSERT(FirstPercent < FirstQuote);
     if (SecondPercent < FirstQuote) {
+      FirstPercent[0] = L'\"';
+      SecondPercent[0] = L'\"';
       //
       // We need to remove from FirstPercent to SecondPercent
       //
-      CopyMem(FirstPercent, SecondPercent + 1, StrSize(SecondPercent + 1));
+//      CopyMem(FirstPercent, SecondPercent + 1, StrSize(SecondPercent + 1));
 
-      //
-      // dont need to update the locator.  both % characters are gone.
-      //
+      CopyMem(FirstPercent + 1, SecondPercent, StrSize(SecondPercent));
+      CurrentLocator = FirstPercent + 2;
       continue;
     }
-    ASSERT(FirstQuote < SecondPercent);
+//    ASSERT(FirstQuote < SecondPercent);
+    if (FirstQuote >= SecondPercent) {
+      return EFI_INVALID_PARAMETER;
+    }
     CurrentLocator = FirstQuote;
   }
   return (EFI_SUCCESS);

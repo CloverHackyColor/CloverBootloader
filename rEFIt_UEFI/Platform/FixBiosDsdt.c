@@ -468,8 +468,17 @@ CHAR8 darwin[] =
   
 };
 
-CHAR8 ClassFix[] =	{ 0x00, 0x00, 0x03, 0x00 };   
+CHAR8 ClassFix[] =	{ 0x00, 0x00, 0x03, 0x00 };
 
+BOOLEAN CmpNum(UINT8 *dsdt, INT32 i, BOOLEAN Sure)
+{
+  return ((Sure && ((dsdt[i-1] == 0x0A) ||
+                    (dsdt[i-2] == 0x0B) ||
+                    (dsdt[i-4] == 0x0C))) ||
+          (!Sure && (((dsdt[i-1] >= 0x0A) && (dsdt[i-1] <= 0x0C)) ||
+                     ((dsdt[i-2] == 0x0B) || (dsdt[i-2] == 0x0C)) ||
+                     (dsdt[i-4] == 0x0C))));
+}
 
 // for HDA from device_inject.c and mark device_inject function
 extern UINT32 HDA_IC_sendVerb(EFI_PCI_IO_PROTOCOL *PciIo, UINT32 codecAdr, UINT32 nodeId, UINT32 verb);
@@ -816,10 +825,56 @@ VOID CheckHardware()
   }
 }
 
+UINT8 slash[] = {0x5c, 0};
+
+VOID InsertScore(UINT8* dsdt, UINT32 off2, INTN root)
+{
+  UINT8  NumNames = 0;
+  UINT32 ind = 0, i;
+  CHAR8  buf[31];
+    
+  if (dsdt[off2 + root] == 0x2E) {
+    NumNames = 2;
+    off2 += root + 1;
+  } else if (dsdt[off2 + root] == 0x2F) {
+    NumNames = dsdt[off2 + 2];
+    off2 += root + 2;
+  } else if (dsdt[off2 + root] != 0x00) {
+    NumNames = 1;
+    off2 += root;
+  }
+  
+  if (NumNames > 4) {
+    DBG(" strange NumNames=%d\n", NumNames);
+    NumNames = 1;
+  }
+  for (i = 0; i < NumNames * 4; i++) {
+    buf[ind++] = dsdt[off2 + i];
+  }
+
+  i = 0;
+  while (i < 127) {
+    buf[ind++] = acpi_cpu_score[i];
+    if (acpi_cpu_score[i] == 0) {
+      break;
+    }
+    i++;
+  }
+  CopyMem(acpi_cpu_score, buf, ind);
+  acpi_cpu_score[ind] = 0;
+}
+
 VOID findCPU(UINT8* dsdt, UINT32 length)
 {
-	UINT32 i;
+	UINT32  i, k, size;
+  UINT32  SBSIZE = 0, SBADR = 0;
+  BOOLEAN SBFound = FALSE;
+  UINT32  off2, j1;
 	
+  if (acpi_cpu_score) {
+    FreePool(acpi_cpu_score);
+  }
+  acpi_cpu_score = AllocateZeroPool(128);
 	acpi_cpu_count = 0;
 //  5B 83 41 0C 5C 2E 5F 50 52 5F 43 50 55 30 01 10
 //  10 00 00 06 
@@ -829,6 +884,78 @@ VOID findCPU(UINT8* dsdt, UINT32 length)
 			UINT32 offset = i + 3 + (dsdt[i + 2] >> 6);	// name
 			BOOLEAN add_name = TRUE;
 			UINT8 j;
+      if (acpi_cpu_count == 0) { //only first time in the cycle
+        // I want to determine a scope of PR
+        //1. if name begin with \\ this is with score
+        //2. else find outer device or scope until \\ is found
+        //3. add new prefix everytime is found
+        if (dsdt[offset] == '\\') {
+          // "\_PR.CPU0"
+          CopyMem(acpi_cpu_score, dsdt+offset, 5);
+        } else {
+//--------
+          j = i - 1; //usually adr = &5B - 1 = sizefield - 3
+          while (j > 0x24) {  //find devices that previous to adr
+            //check device
+            k = j + 2;
+            if ((dsdt[j] == 0x5B) && (dsdt[j + 1] == 0x82) &&
+                !CmpNum(dsdt, j, TRUE)) { //device candidate
+              size = get_size(dsdt, k);
+              if (size) {
+                if (k + size > i + 3) {  //Yes - it is outer
+                  off2 = j + 3 + (dsdt[j + 2] >> 6);
+                  if (dsdt[off2] == '\\') {
+                    // "\_SB.SCL0"
+                    InsertScore(dsdt, off2, 1);
+                    DBG("acpi_cpu_score calculated as %a\n", acpi_cpu_score);
+                    break;
+                  } else {
+                    InsertScore(dsdt, off2, 0);
+                  }
+                }  //else not an outer device
+              } //else wrong size field - not a device
+            } //else not a device
+            // check scope
+            // a problem 45 43 4F 4E 08   10 84 10 05 5F 53 42 5F
+            SBSIZE = 0;
+            if ((dsdt[j] == '_' && dsdt[j + 1] == 'S' &&
+                 dsdt[j + 2] == 'B' && dsdt[j + 3] == '_') ||
+                (dsdt[j] == '_' && dsdt[j + 1] == 'P' &&
+                 dsdt[j + 2] == 'R' && dsdt[j + 3] == '_')) {
+              for (j1=0; j1 < 10; j1++) {
+                if (dsdt[j - j1] != 0x10) {
+                  continue;
+                }
+                if (!CmpNum(dsdt, j - j1, TRUE)) {
+                  SBADR = j - j1 + 1;
+                  SBSIZE = get_size(dsdt, SBADR);
+                  //     DBG("found Scope(\\_SB) address = 0x%08x size = 0x%08x\n", SBADR, SBSIZE);
+                  if ((SBSIZE != 0) && (SBSIZE < length)) {  //if zero or too large then search more
+                    //if found
+                    k = SBADR - 6;
+                    if ((SBADR + SBSIZE) > j + 4) {  //Yes - it is outer
+                      SBFound = TRUE;
+                      break;  //SB found
+                    }  //else not an outer scope            
+                  }          
+                }
+              }
+            } //else not a scope
+            if (SBFound) {
+              if (dsdt[j - 1] == 0x5C) {
+                InsertScore(dsdt, j - 1, 1);
+              } else {
+                InsertScore(dsdt, j, 0);
+                InsertScore(slash, 0, 1); // add prefix if absent
+              }
+              break;
+            }
+            j = k - 3;    //if found then search again from found
+          } //while j
+//--------
+        }
+      }
+      
 			
 			for (j = 0; j < 4; j++) {
 				CHAR8 c = dsdt[offset + j];
@@ -860,14 +987,14 @@ VOID findCPU(UINT8* dsdt, UINT32 length)
 				    DBG("Found ACPI CPU: %a ", acpi_cpu_name[acpi_cpu_count]);
 				} else { 
 				    DBG("And %a ", acpi_cpu_name[acpi_cpu_count]);
-				}    
+				}
 				if (++acpi_cpu_count == 32)
 				    break;
 			}
 		}
 	}
-	DBG("\n");
-  
+  DBG("\n  within the score: %a\n", acpi_cpu_score);
+    
   if (!acpi_cpu_count) {
     for (i=0; i<15; i++) {
       acpi_cpu_name[i] = AllocateZeroPool(5);
@@ -983,16 +1110,6 @@ INT32 write_size(UINT32 adr, UINT8* buffer, UINT32 len, INT32 sizeoffset)
   size += offset;
   aml_write_size(size, (CHAR8 *)buffer, adr); //reuse existing codes  
 	return offset;
-}
-
-BOOLEAN CmpNum(UINT8 *dsdt, INT32 i, BOOLEAN Sure)
-{
-  return ((Sure && ((dsdt[i-1] == 0x0A) ||
-                   (dsdt[i-2] == 0x0B) ||
-                   (dsdt[i-4] == 0x0C))) ||
-          (!Sure && (((dsdt[i-1] >= 0x0A) && (dsdt[i-1] <= 0x0C)) ||
-                     ((dsdt[i-2] == 0x0B) || (dsdt[i-2] == 0x0C)) ||
-                     (dsdt[i-4] == 0x0C))));
 }
 
 INT32 FindName(UINT8 *dsdt, INT32 len, CHAR8* name)

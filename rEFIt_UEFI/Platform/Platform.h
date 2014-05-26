@@ -1440,19 +1440,20 @@ extern UINTN      gEvent;
 
 extern UINT16     gBacklightLevel;
 //mouse
-extern ACTION gAction;
-extern UINTN  gItemID;
+extern ACTION   gAction;
+extern UINTN    gItemID;
 
 //CHAR8*   orgBiosDsdt;
 extern UINT64   BiosDsdt;
 extern UINT32   BiosDsdtLen;
 extern UINT8	  acpi_cpu_count;
 extern CHAR8*   acpi_cpu_name[32];
+extern CHAR8*   acpi_cpu_score;
 extern BOOLEAN  SSSE3;
 extern BOOLEAN  defDSM;
-extern UINT16  dropDSM;
+extern UINT16   dropDSM;
 
-extern TagPtr gConfigDict[];
+extern TagPtr   gConfigDict[];
 //-----------------------------------
 
 VOID        FixBiosDsdt (UINT8* Dsdt, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, CHAR8 *OSVersion);
