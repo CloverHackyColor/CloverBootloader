@@ -837,7 +837,7 @@ VOID InsertScore(UINT8* dsdt, UINT32 off2, INTN root)
     NumNames = 2;
     off2 += root + 1;
   } else if (dsdt[off2 + root] == 0x2F) {
-    NumNames = dsdt[off2 + 2];
+    NumNames = dsdt[off2 + root + 1];
     off2 += root + 2;
   } else if (dsdt[off2 + root] != 0x00) {
     NumNames = 1;
@@ -876,25 +876,59 @@ VOID findCPU(UINT8* dsdt, UINT32 length)
   }
   acpi_cpu_score = AllocateZeroPool(128);
 	acpi_cpu_count = 0;
-//  5B 83 41 0C 5C 2E 5F 50 52 5F 43 50 55 30 01 10 10 00 00 06
-  //-------
-//10 4E 06 5F 50 52 5F  Scope (_PR)
-//5B 83 0B 43 50 55 30 01 10 18 00 00 06  Processor (CPU0, 0x01, 0x00001810, 0x06) {}
-//5B 83 0B 43 50 55 31 02 10 18 00 00 06 Processor (CPU1, 0x02, 0x00001810, 0x06) {}
-	
+//  5B 83 41 0C 5C 2E 5F 50 52 5F 43 50 55 30 01 10
+//  10 00 00 06
+
+//one another kind
+  /*
+   5B 82 4D 95 53 43 4B 30 08 5F 48 49 44 0D 41 43
+   50 49 30 30 30 34 00 08 5F 55 49 44 0D 43 50 55
+   53 43 4B 30 00 08 53 43 4B 4E 00 08 4C 53 54 41
+   0A FF 14 28 5F 53 54 41 00 70 0D 43 50 55 53 43
+   4B 30 00 43 55 55 30 70 50 53 54 41 00 60 7B 60
+   0A 03 61 70 61 4C 53 54 41 A4 60 
+   5B 83 4A 04 43 30 30 30 00 10 04 00 00 06 08 5F 48 49 44 0D 41
+   43 50 49 30 30 30 37 00 08 5F 55 49 44 0D 50 43
+   49 30 2D 43 50 30 30 30 00 08 5F 50 58 4D 00
+   //
+
+  Device (SCK0)
+  {
+    Name (_HID, "ACPI0004")  // _HID: Hardware ID
+    Name (_UID, "CPUSCK0")  // _UID: Unique ID
+    Name (SCKN, Zero)
+    Name (LSTA, 0xFF)
+    Method (_STA, 0, NotSerialized)  // _STA: Status
+    {
+      Store ("CPUSCK0", CUU0)
+      Store (PSTA (Zero), Local0)
+      And (Local0, 0x03, Local1)
+      Store (Local1, LSTA)
+      Return (Local0)
+    }
+
+    Processor (C000, 0x00, 0x00000410, 0x06)
+    {
+      Name (_HID, "ACPI0007")  // _HID: Hardware ID
+      Name (_UID, "PCI0-CP000")  // _UID: Unique ID
+      Name (_PXM, Zero)  // _PXM: Device Proximity
+*/
+
 	for (i = 0; i < length - 20; i++) {
 		if (dsdt[i] == 0x5B && dsdt[i + 1] == 0x83) { // ProcessorOP
+			UINT32 j;
 			UINT32 offset = i + 3 + (dsdt[i + 2] >> 6);	// name
 			BOOLEAN add_name = TRUE;
-			UINT8 j;
       if (acpi_cpu_count == 0) { //only first time in the cycle
         // I want to determine a scope of PR
         //1. if name begin with \\ this is with score
         //2. else find outer device or scope until \\ is found
         //3. add new name everytime is found
+        DBG("first CPU found at %x offset %x\n", i, offset);
         if (dsdt[offset] == '\\') {
           // "\_PR.CPU0"
           CopyMem(acpi_cpu_score, dsdt+offset+1, 4);
+          DBG("slash found\n");
         } else {
 //--------
           j = i - 1; //usually adr = &5B - 1 = sizefield - 3
@@ -903,6 +937,7 @@ VOID findCPU(UINT8* dsdt, UINT32 length)
             k = j + 2;
             if ((dsdt[j] == 0x5B) && (dsdt[j + 1] == 0x82) &&
                 !CmpNum(dsdt, j, TRUE)) { //device candidate
+              DBG("device candidate at %x\n", j);
               size = get_size(dsdt, k);
               if (size) {
                 if (k + size > i + 3) {  //Yes - it is outer
@@ -914,6 +949,7 @@ VOID findCPU(UINT8* dsdt, UINT32 length)
                     break;
                   } else {
                     InsertScore(dsdt, off2, 0);
+                    DBG("device inserted in acpi_cpu_score %a\n", acpi_cpu_score);
                   }
                 }  //else not an outer device
               } //else wrong size field - not a device
@@ -925,6 +961,7 @@ VOID findCPU(UINT8* dsdt, UINT32 length)
                  dsdt[j + 2] == 'B' && dsdt[j + 3] == '_') ||
                 (dsdt[j] == '_' && dsdt[j + 1] == 'P' &&
                  dsdt[j + 2] == 'R' && dsdt[j + 3] == '_')) {
+              DBG("score candidate at %x\n", j);    
               for (j1=0; j1 < 10; j1++) {
                 if (dsdt[j - j1] != 0x10) {
                   continue;
@@ -946,6 +983,7 @@ VOID findCPU(UINT8* dsdt, UINT32 length)
             } //else not a scope
             if (SBFound) {
               InsertScore(dsdt, j, 0);
+              DBG("score inserted in acpi_cpu_score %a\n", acpi_cpu_score);
               break;
             }
             j = k - 3;    //if found then search again from found
@@ -962,6 +1000,9 @@ VOID findCPU(UINT8* dsdt, UINT32 length)
 				  offset += 5;
           if (c1 == 0x2E) {
             offset++;
+          } else if (c1 == 0x2F) {
+            c1 = dsdt[offset + j + 2];
+            offset += 2 + (c1 - 2) * 4;
           }
 				  c = dsdt[offset + j];
 				}
