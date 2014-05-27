@@ -876,8 +876,11 @@ VOID findCPU(UINT8* dsdt, UINT32 length)
   }
   acpi_cpu_score = AllocateZeroPool(128);
 	acpi_cpu_count = 0;
-//  5B 83 41 0C 5C 2E 5F 50 52 5F 43 50 55 30 01 10
-//  10 00 00 06 
+//  5B 83 41 0C 5C 2E 5F 50 52 5F 43 50 55 30 01 10 10 00 00 06
+  //-------
+//10 4E 06 5F 50 52 5F  Scope (_PR)
+//5B 83 0B 43 50 55 30 01 10 18 00 00 06  Processor (CPU0, 0x01, 0x00001810, 0x06) {}
+//5B 83 0B 43 50 55 31 02 10 18 00 00 06 Processor (CPU1, 0x02, 0x00001810, 0x06) {}
 	
 	for (i = 0; i < length - 20; i++) {
 		if (dsdt[i] == 0x5B && dsdt[i + 1] == 0x83) { // ProcessorOP
@@ -888,10 +891,10 @@ VOID findCPU(UINT8* dsdt, UINT32 length)
         // I want to determine a scope of PR
         //1. if name begin with \\ this is with score
         //2. else find outer device or scope until \\ is found
-        //3. add new prefix everytime is found
+        //3. add new name everytime is found
         if (dsdt[offset] == '\\') {
           // "\_PR.CPU0"
-          CopyMem(acpi_cpu_score, dsdt+offset, 5);
+          CopyMem(acpi_cpu_score, dsdt+offset+1, 4);
         } else {
 //--------
           j = i - 1; //usually adr = &5B - 1 = sizefield - 3
@@ -933,7 +936,7 @@ VOID findCPU(UINT8* dsdt, UINT32 length)
                   if ((SBSIZE != 0) && (SBSIZE < length)) {  //if zero or too large then search more
                     //if found
                     k = SBADR - 6;
-                    if ((SBADR + SBSIZE) > j + 4) {  //Yes - it is outer
+                    if ((SBADR + SBSIZE) > i + 4) {  //Yes - it is outer
                       SBFound = TRUE;
                       break;  //SB found
                     }  //else not an outer scope            
