@@ -945,12 +945,7 @@ VOID findCPU(UINT8* dsdt, UINT32 length)
               }
             } //else not a scope
             if (SBFound) {
-              if (dsdt[j - 1] == 0x5C) {
-                InsertScore(dsdt, j - 1, 1);
-              } else {
-                InsertScore(dsdt, j, 0);
-                InsertScore(slash, 0, 1); // add prefix if absent
-              }
+              InsertScore(dsdt, j, 0);
               break;
             }
             j = k - 3;    //if found then search again from found
