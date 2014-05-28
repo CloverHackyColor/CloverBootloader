@@ -1284,7 +1284,7 @@ UpdateSetLegacyDeviceOrderPage (
   BbsType = BBS_FLOPPY;
   LegacyOrder = NULL;
   OldData = NULL;
-  DisMap = NULL;
+//  DisMap = NULL;
 
   CallbackData->BmmAskSaveOrNot = TRUE;
   UpdatePageStart (CallbackData);

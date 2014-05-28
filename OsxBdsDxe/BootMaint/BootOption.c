@@ -893,7 +893,7 @@ BOpt_GetBootOptions (
   MenuCount         = 0;
   BootOrderListSize = 0;
   BootNextSize      = 0;
-  BootOrderList     = NULL;
+//  BootOrderList     = NULL;
   BootNext          = NULL;
   LoadOptionFromVar = NULL;
   BOpt_FreeMenu (&BootOptionMenu);
@@ -1391,7 +1391,7 @@ BOpt_GetOptionNumber (
   UINTN         OptionSize;
 
   OrderListSize = 0;
-  OrderList     = NULL;
+//  OrderList     = NULL;
   OptionNumber  = 0;
   Index         = 0;
 
@@ -1498,7 +1498,7 @@ BOpt_GetDriverOptions (
   UINT8           *LoadOptionEnd;
 
   DriverOrderListSize = 0;
-  DriverOrderList     = NULL;
+//  DriverOrderList     = NULL;
   DriverOptionSize    = 0;
   LoadOptionFromVar   = NULL;
   BOpt_FreeMenu (&DriverOptionMenu);

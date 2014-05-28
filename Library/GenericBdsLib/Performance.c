@@ -89,7 +89,7 @@ GetNameFromHandle (
 {
   EFI_STATUS                  Status;
   EFI_LOADED_IMAGE_PROTOCOL   *Image;
-  CHAR8                       *PdbFileName;
+  CHAR8                       *PdbFileName = NULL;
   EFI_DRIVER_BINDING_PROTOCOL *DriverBinding;
 
   AsciiStrCpy (GaugeString, " ");
@@ -124,8 +124,9 @@ GetNameFromHandle (
                     (VOID **) &Image
                     );
   }
-
-  PdbFileName = PeCoffLoaderGetPdbPointer (Image->ImageBase);
+  if (Image != NULL) {
+    PdbFileName = PeCoffLoaderGetPdbPointer (Image->ImageBase);
+  }
 
   if (PdbFileName != NULL) {
     GetShortPdbFileName (PdbFileName, GaugeString);

@@ -431,7 +431,7 @@ EmuVariableControlProtocolInstallEmulation (
                              );
   
   DBG(", CreateEvent VirtualAddressChange = %r", Status);
-  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR (Status);
   
   //
   // Create an Exit Boot Services event.
@@ -445,7 +445,7 @@ EmuVariableControlProtocolInstallEmulation (
                              );
   
   DBG(", CreateEvent ExitBootServices = %r", Status);
-  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR (Status);
   
   //
   // Add EmuVariableUefiPresent variable to allow /ect/rc* scripts to detect
@@ -458,9 +458,9 @@ EmuVariableControlProtocolInstallEmulation (
                              "Yes"
                              );
   
-  DBG(", done\n");
+  DBG(", set Status=%r\n", Status);
   
-  return EFI_SUCCESS;
+  return Status; //EFI_SUCCESS;
 }
 
 /**

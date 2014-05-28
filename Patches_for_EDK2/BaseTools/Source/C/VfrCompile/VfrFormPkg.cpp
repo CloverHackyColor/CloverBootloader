@@ -105,6 +105,8 @@ CFormPkg::CFormPkg (
   mPkgLength           = 0;
   mBufferNodeQueueHead = NULL;
   mCurrBufferNode      = NULL;
+  mReadBufferNode      = NULL;
+  PendingAssignList    = NULL;
 
   Node = new SBufferNode;
   if (Node == NULL) {

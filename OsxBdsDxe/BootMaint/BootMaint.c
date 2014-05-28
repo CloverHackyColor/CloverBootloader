@@ -174,10 +174,10 @@ BootMaintExtractConfig (
   EFI_STATUS         Status;
   UINTN              BufferSize;
   BMM_CALLBACK_DATA  *Private;
-  EFI_STRING                       ConfigRequestHdr;
+//  EFI_STRING                       ConfigRequestHdr;
   EFI_STRING                       ConfigRequest;
   BOOLEAN                          AllocatedRequest;
-  UINTN                            Size;
+  
 
   if (Progress == NULL || Results == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -188,10 +188,10 @@ BootMaintExtractConfig (
     return EFI_NOT_FOUND;
   }
 
-  ConfigRequestHdr = NULL;
-  ConfigRequest    = NULL;
+//  ConfigRequestHdr = NULL;
+//  ConfigRequest    = NULL;
   AllocatedRequest = FALSE;
-  Size             = 0;
+//  Size             = 0;
 
   Private = BMM_CALLBACK_DATA_FROM_THIS (This);
   //
@@ -200,12 +200,13 @@ BootMaintExtractConfig (
   BufferSize = sizeof (BMM_FAKE_NV_DATA);
   ConfigRequest = Request;
   if ((Request == NULL) || (StrStr (Request, L"OFFSET") == NULL)) {
+    UINTN   Size;
     //
     // Request has no request element, construct full request string.
     // Allocate and fill a buffer large enough to hold the <ConfigHdr> template
     // followed by "&OFFSET=0&WIDTH=WWWWWWWWWWWWWWWW" followed by a Null-terminator
     //
-    ConfigRequestHdr = HiiConstructConfigHdr (&gBootMaintFormSetGuid, mBootMaintStorageName, Private->BmmDriverHandle);
+    EFI_STRING ConfigRequestHdr = HiiConstructConfigHdr (&gBootMaintFormSetGuid, mBootMaintStorageName, Private->BmmDriverHandle);
     Size = (StrLen (ConfigRequestHdr) + 32 + 1) * sizeof (CHAR16);
     ConfigRequest = AllocateZeroPool (Size);
   //  ASSERT (ConfigRequest != NULL);
@@ -297,7 +298,7 @@ BootMaintCallback (
     // All other action return unsupported.
     //
     return EFI_UNSUPPORTED;
-    }
+  }
 
     OldValue       = 0;
     NewValue       = 0;
@@ -306,6 +307,11 @@ BootMaintCallback (
     NewLegacyDev   = NULL;
     NewValuePos    = 0;
     DisMap         = NULL;
+    
+    if ((Value == NULL) || (ActionRequest == NULL)) {
+      return EFI_INVALID_PARAMETER;
+    }
+
     *ActionRequest = EFI_BROWSER_ACTION_REQUEST_NONE;
 
     Private        = BMM_CALLBACK_DATA_FROM_THIS (This);
@@ -317,9 +323,6 @@ BootMaintCallback (
     CurrentFakeNVMap = &Private->BmmFakeNvData;
     HiiGetBrowserData (&gBootMaintFormSetGuid, mBootMaintStorageName, sizeof (BMM_FAKE_NV_DATA), (UINT8 *) CurrentFakeNVMap);
   if (Action == EFI_BROWSER_ACTION_CHANGING) {
-    if (Value == NULL) {
-      return EFI_INVALID_PARAMETER;
-    }
     
     UpdatePageId (Private, QuestionId);
 
@@ -571,9 +574,6 @@ BootMaintCallback (
       }
     }
   } else if (Action == EFI_BROWSER_ACTION_CHANGED) {
-    if ((Value == NULL) || (ActionRequest == NULL)) {
-      return EFI_INVALID_PARAMETER;
-    }
     
     switch (QuestionId) {
     case KEY_VALUE_SAVE_AND_EXIT:

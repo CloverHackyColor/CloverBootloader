@@ -230,12 +230,11 @@ EFI_STATUS LoadUserSettings(IN EFI_FILE *RootDir, IN CHAR16 *ConfName, TagPtr * 
   
   Status = ParseXML((const CHAR8*)gConfigPtr, dict, (UINT32)size);
   if (EFI_ERROR(Status)) {
-    dict = NULL;
+//    dict = NULL;
     DBG(" plist parse error Status=%r\n", Status);
-    return Status;
   }
   
-  return EFI_SUCCESS;
+  return Status;
 }
 
 static BOOLEAN AddCustomEntry(IN CUSTOM_LOADER_ENTRY *Entry)
@@ -4581,7 +4580,7 @@ VOID GetDevices(VOID)
                                     );
       if (!EFI_ERROR (Status)) {
         // Read PCI BUS 
-        Status = PciIo->GetLocation (PciIo, &Segment, &Bus, &Device, &Function);
+        PciIo->GetLocation (PciIo, &Segment, &Bus, &Device, &Function);
         Status = PciIo->Pci.Read (
                                   PciIo,
                                   EfiPciIoWidthUint32,
@@ -4906,7 +4905,7 @@ VOID SetDevices(CHAR8 *OSVersion)
       gDeviceProperties[stringlength] = 0;
 //          DBG(gDeviceProperties);
 //          DBG("\n");
-      StringDirty = FALSE;
+//      StringDirty = FALSE;
       //-------
       mPropSize = (UINT32)AsciiStrLen(gDeviceProperties) / 2;
  //     DBG("Preliminary size of mProperties=%d\n", mPropSize);
@@ -4990,8 +4989,8 @@ EFI_STATUS SetFSInjection(IN LOADER_ENTRY *Entry)
     REFIT_VOLUME                *Volume;
     FSINJECTION_PROTOCOL        *FSInject;
     CHAR16                      *SrcDir = NULL;
-    BOOLEAN                     InjectionNeeded = FALSE;
-    BOOLEAN                     BlockCaches = FALSE;
+//    BOOLEAN                     InjectionNeeded = FALSE;
+//    BOOLEAN                     BlockCaches = FALSE;
     FSI_STRING_LIST             *Blacklist = 0;
     FSI_STRING_LIST             *ForceLoadKexts;
 
@@ -5021,7 +5020,7 @@ EFI_STATUS SetFSInjection(IN LOADER_ENTRY *Entry)
     // check if blocking of caches is needed
     if (OSFLAG_ISSET(Entry->Flags, OSFLAG_NOCACHES)) {
         MsgLog("blocking caches");
-        BlockCaches = TRUE;
+//        BlockCaches = TRUE;
         // add caches to blacklist
         Blacklist = FSInject->CreateStringList();
         if (Blacklist == NULL) {
@@ -5047,7 +5046,7 @@ EFI_STATUS SetFSInjection(IN LOADER_ENTRY *Entry)
         if (SrcDir != NULL) {
           // we have found it - injection will be done
           MsgLog("using kexts path: '%s'", SrcDir);
-          InjectionNeeded = TRUE;
+//          InjectionNeeded = TRUE;
         } else {
           MsgLog("skipping kext injection (kexts folder not found)");
         }

@@ -753,7 +753,7 @@ ScsiDiskDetectMedia (
   UINTN               Action;
   EFI_EVENT           TimeoutEvt;
 
-  Status              = EFI_SUCCESS;
+//  Status              = EFI_SUCCESS;
   SenseData           = NULL;
   NumberOfSenseKeys   = 0;
   Retry               = 0;
@@ -1700,7 +1700,6 @@ GetMediaInfo (
   IN     EFI_SCSI_DISK_CAPACITY_DATA16  *Capacity16
   )
 {
-  UINT8       *Ptr;
 
   if (!ScsiDiskDevice->Cdb16Byte) {
     ScsiDiskDevice->BlkIo.Media->LastBlock =  (Capacity10->LastLba3 << 24) |
@@ -1715,7 +1714,7 @@ GetMediaInfo (
     ScsiDiskDevice->BlkIo.Media->LowestAlignedLba               = 0;
     ScsiDiskDevice->BlkIo.Media->LogicalBlocksPerPhysicalBlock  = 0;
   } else {
-    Ptr = (UINT8*)&ScsiDiskDevice->BlkIo.Media->LastBlock;
+    UINT8 *Ptr = (UINT8*)&ScsiDiskDevice->BlkIo.Media->LastBlock;
     *Ptr++ = Capacity16->LastLba0;
     *Ptr++ = Capacity16->LastLba1;
     *Ptr++ = Capacity16->LastLba2;
@@ -2926,7 +2925,7 @@ ReleaseScsiDiskDeviceResources (
 
   FreePool (ScsiDiskDevice);
 
-  ScsiDiskDevice = NULL;
+//  ScsiDiskDevice = NULL;
 }
 
 /**

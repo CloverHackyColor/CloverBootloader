@@ -99,7 +99,6 @@ Add_ListElement(
   UINTN            Handle;
 
   
-  Handle = *CurrentHandle;
   
   //
   // Check for invalid input parameters
@@ -111,6 +110,8 @@ Add_ListElement(
   if (CurrentHandle == NULL) {
     return EFI_INVALID_PARAMETER;
   }
+  
+  Handle = *CurrentHandle;
     
   //
   // Initializes the element if the Constructor is not NULL
@@ -229,10 +230,10 @@ FindElementByHandle(
         }
         
       }			
-		}
 	}
+  }
   
-	return List;
+  return List;
 }
 
 EFI_STATUS
@@ -242,7 +243,7 @@ RemoveElementByHandle(
                       )
 {
   
-  LIST_ENTRY		             *Link;
+  LIST_ENTRY		         *Link;
   REFIT_LIST                 *Entry;
   EFI_STATUS                 Status;
   VOID                       *Element;

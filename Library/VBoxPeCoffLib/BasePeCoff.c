@@ -1144,13 +1144,13 @@ PeCoffLoaderLoadImage (
     }
 
     if (NumberOfRvaAndSizes > EFI_IMAGE_DIRECTORY_ENTRY_BASERELOC) {
-      ImageContext->FixupDataSize = DirectoryEntry->Size / sizeof (UINT16) * sizeof (UINTN);
+      ImageContext->FixupDataSize = (DirectoryEntry->Size / sizeof (UINT16)) * sizeof (UINTN);
     } else {
       ImageContext->FixupDataSize = 0;
     }
   } else {
     DirectoryEntry              = &Hdr.Te->DataDirectory[0];
-    ImageContext->FixupDataSize = DirectoryEntry->Size / sizeof (UINT16) * sizeof (UINTN);
+    ImageContext->FixupDataSize = (DirectoryEntry->Size / sizeof (UINT16)) * sizeof (UINTN);
   }
   //
   // Consumer must allocate a buffer for the relocation fixup log.

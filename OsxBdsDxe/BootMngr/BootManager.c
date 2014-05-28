@@ -246,10 +246,16 @@ CallBootManager (
   // Allocate space for creation of UpdateData Buffer
   //
   StartOpCodeHandle = HiiAllocateOpCodeHandle ();
-  ASSERT (StartOpCodeHandle != NULL);
+//  ASSERT (StartOpCodeHandle != NULL);
+  if (!StartOpCodeHandle) {
+    return;
+  }
 
   EndOpCodeHandle = HiiAllocateOpCodeHandle ();
-  ASSERT (EndOpCodeHandle != NULL);
+//  ASSERT (EndOpCodeHandle != NULL);
+  if (!EndOpCodeHandle) {
+    return;
+  }
 
   //
   // Create Hii Extend Label OpCode as the start opcode
@@ -313,14 +319,21 @@ CallBootManager (
       NeedEndOp = TRUE;
     }
 
-    ASSERT (Option->Description != NULL);
+//    ASSERT (Option->Description != NULL);
+   if (!Option->Description) {
+     return;
+   }
     
     Token = HiiSetString (HiiHandle, 0, Option->Description, NULL);
 
     TempStr = FileDevicePathToStr (Option->DevicePath);
     TempSize = StrSize (TempStr);
     HelpString = AllocateZeroPool (TempSize + StrSize (L"Device Path : "));
-    ASSERT (HelpString != NULL);
+ //   ASSERT (HelpString != NULL);
+   if (!HelpString) {
+     return;
+   }
+   
     StrCat (HelpString, L"Device Path : ");
     StrCat (HelpString, TempStr);
 

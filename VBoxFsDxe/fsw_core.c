@@ -594,7 +594,7 @@ fsw_status_t fsw_dnode_lookup_path(struct fsw_dnode *dno,
             // make sure we operate on a directory
             if (dno->type != FSW_DNODE_TYPE_DIR) {
                 return FSW_UNSUPPORTED;
-                goto errorexit;
+//                goto errorexit;
             }
 
             // check special paths

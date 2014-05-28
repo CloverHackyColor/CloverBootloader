@@ -60,55 +60,50 @@ VOID AddCard(CONST CHAR8* Model, UINT32 Id, UINT32 SubId, UINT64 VideoRam)
 {
 	CARDLIST* new_card;		
 	new_card = AllocateZeroPool(sizeof(CARDLIST));
-	if (new_card)
-	{	
-    new_card->Signature = CARDLIST_SIGNATURE;		
+	if (new_card) {	
+      new_card->Signature = CARDLIST_SIGNATURE;		
 		
-		new_card->Id = Id;
-		new_card->SubId = SubId;
-		new_card->VideoRam = VideoRam;
-		AsciiSPrint(new_card->Model, 64, "%a", Model);    
-    InsertTailList (&gCardList, (LIST_ENTRY *)(((UINT8 *)new_card) + OFFSET_OF(CARDLIST, Link)));
+	  new_card->Id = Id;
+	  new_card->SubId = SubId;
+	  new_card->VideoRam = VideoRam;
+	  AsciiSPrint(new_card->Model, 64, "%a", Model);    
+      InsertTailList (&gCardList, (LIST_ENTRY *)(((UINT8 *)new_card) + OFFSET_OF(CARDLIST, Link)));
 	}	
 }
 
 CARDLIST* FindCardWithIds(UINT32 Id, UINT32 SubId)
 {
   LIST_ENTRY		*Link;
-	CARDLIST      *entry;
+  CARDLIST      *entry;
   FillCardList();
   
   if(!IsListEmpty(&gCardList)) {
-		for (Link = gCardList.ForwardLink; Link != &gCardList; Link = Link->ForwardLink) {
-			entry = CR(Link, CARDLIST, Link, CARDLIST_SIGNATURE);
+	for (Link = gCardList.ForwardLink; Link != &gCardList; Link = Link->ForwardLink) {
+	entry = CR(Link, CARDLIST, Link, CARDLIST_SIGNATURE);
       
-      if(entry->Id == Id)
-      {
+      if(entry->Id == Id) {
         return entry;
-      }
-			
-		}
-	}
+      }	
+    }
+  }
   
-	return NULL;
+  return NULL;
 }
 
 VOID FillCardList(VOID) 
 {
-	TagPtr      dict;
-	TagPtr      prop;
-	TagPtr      dictPointer;
-	if (IsListEmpty(&gCardList)) 
-	{
-		INTN cfgN = NUM_OF_CONFIGS-1;
+  TagPtr      dict;
+  TagPtr      prop;
+  TagPtr      dictPointer;
+  if (IsListEmpty(&gCardList)) {
+	INTN cfgN = NUM_OF_CONFIGS-1;
     for (; cfgN > 0; cfgN--) {
       dict = gConfigDict[cfgN];
       if(dict != NULL) {
         dictPointer = GetProperty(dict, "Graphics");
         if (dictPointer) {
           prop = GetProperty(dictPointer, "NVIDIA");
-          if(prop && (prop->type == kTagTypeArray))
-          {
+          if(prop && (prop->type == kTagTypeArray)) {
             INTN		i;
             INTN		 count;
 
@@ -116,8 +111,7 @@ VOID FillCardList(VOID)
             TagPtr		prop2		= 0;
             count = GetTagCount(prop);
 
-            for (i=0; i<count; i++)
-            {
+            for (i=0; i<count; i++) {
               CHAR8		*model_name;
               CHAR8		*match_id;
               CHAR8		*sub_id;
@@ -127,10 +121,8 @@ VOID FillCardList(VOID)
               UINT64		VramSize	= 0;
               EFI_STATUS status = GetElement(prop, i, &element);
 
-              if (status == EFI_SUCCESS)
-              {
-                if (element)
-                {
+              if (status == EFI_SUCCESS) {
+                if (element) {
                   model_name	= NULL;
                   match_id	= NULL;
                   sub_id		= NULL;
@@ -177,18 +169,15 @@ VOID FillCardList(VOID)
                     } else {
                       VramSize = AsciiStrDecimalToUintn(vram_size);
                     }
-                  }		
-                  
-                  AddCard(model_name, dev_id, subdev_id, VramSize);
-                  
+                  }
+                  AddCard(model_name, dev_id, subdev_id, VramSize);                 
                 }
-              }
-              
+              }              
             }					
             return;
           } 
-				} 
-			}
-		}
+		} 
+      }
 	}
+  }
 }

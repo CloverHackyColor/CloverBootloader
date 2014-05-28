@@ -271,8 +271,8 @@ GetSelectedVgaDeviceInfo (
   //
   // Start to check all the pci io to find all possible VGA device
   //
-  HandleCount = 0;
-  HandleBuffer = NULL;
+//  HandleCount = 0;
+//  HandleBuffer = NULL;
   Status = gBS->LocateHandleBuffer (
                   ByProtocol,
                   &gEfiPciIoProtocolGuid,

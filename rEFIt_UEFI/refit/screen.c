@@ -586,9 +586,7 @@ VOID BltImageAlpha(IN EG_IMAGE *Image, IN INTN XPos, IN INTN YPos, IN EG_PIXEL *
 
   // blit to screen and clean up
   egDrawImageArea(NewImage, 0, 0, 0, 0, XPos, YPos);
-  if (NewImage) {
-    egFreeImage(NewImage);
-  }
+  egFreeImage(NewImage);
 }
 
 VOID BltImageComposite(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN INTN XPos, IN INTN YPos)
@@ -732,7 +730,7 @@ VOID FreeAnime(GUI_ANIME *Anime)
        Anime->Path = NULL;
      }
      FreePool(Anime);
-     Anime = NULL;
+//     Anime = NULL;
    }
 }
 

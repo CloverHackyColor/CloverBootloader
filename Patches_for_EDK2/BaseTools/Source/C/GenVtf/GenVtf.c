@@ -1401,9 +1401,7 @@ Returns:
   //assert ((FileSize % 16) == 0);
   if ((FileSize % 16) != 0) {
     Error (NULL, 0, 2000, "Invalid parameter", "Binary FileSize must be a multiple of 16.");
-    if (Buffer) {
-      free (Buffer);
-    }
+    free (Buffer);
     return EFI_INVALID_PARAMETER;
   }
 
@@ -1415,9 +1413,7 @@ Returns:
     PalFitPtr->CheckSum = CalculateChecksum8 (Buffer, (UINTN) FileSize);
   }
 
-  if (Buffer) {
-    free (Buffer);
-  }
+  free (Buffer);
 
   //
   // Update the SYM file for this component based on it's start address.
@@ -1798,9 +1794,7 @@ Returns:
   LocalVtfBuffer  = (UINT8 *) Vtf1EndBuffer - SIZE_IA32_RESET_VECT;
   memcpy (LocalVtfBuffer, Buffer, FileSize);
 
-  if (Buffer) {
-    free (Buffer);
-  }
+  free (Buffer);
 
   if (Fp != NULL) {
     fclose (Fp);
@@ -2141,9 +2135,7 @@ Returns:
 
   if (Fp == NULL) {
     Error (NULL, 0, 0001, "Error opening file", OutFileName1);
-    if (StartAddressPtr) {
-      free (StartAddressPtr);
-    }
+    free (StartAddressPtr);
     return EFI_ABORTED;
   }
 
@@ -2155,9 +2147,7 @@ Returns:
     fclose (Fp);
   }
 
-  if (StartAddressPtr) {
-    free (StartAddressPtr);
-  }
+  free (StartAddressPtr);
 
   Status = EFI_SUCCESS;
   return Status;

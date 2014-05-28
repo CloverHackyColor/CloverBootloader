@@ -1,6 +1,7 @@
-/*++
+/** @file
+  PCI Rom supporting funtions implementation for PCI Bus module.
 
-Copyright (c) 2005 - 2012, Intel Corporation. All rights reserved.<BR>
+Copyright (c) 2006 - 2012, Intel Corporation. All rights reserved.<BR>
 This program and the accompanying materials                          
 are licensed and made available under the terms and conditions of the BSD License         
 which accompanies this distribution.  The full text of the license may be found at        
@@ -447,7 +448,10 @@ Returns:
   if (RomBarOffset == NULL) {
     return retStatus;
   }
-  ASSERT (((EFI_PCI_EXPANSION_ROM_HEADER *) RomBarOffset)->Signature == PCI_EXPANSION_ROM_HEADER_SIGNATURE);
+//  ASSERT (((EFI_PCI_EXPANSION_ROM_HEADER *) RomBarOffset)->Signature == PCI_EXPANSION_ROM_HEADER_SIGNATURE);
+  if (((EFI_PCI_EXPANSION_ROM_HEADER *) RomBarOffset)->Signature != PCI_EXPANSION_ROM_HEADER_SIGNATURE) {
+    return retStatus;
+  }
 
   do {
     EfiRomHeader = (EFI_PCI_EXPANSION_ROM_HEADER *) RomBarOffset;
@@ -457,8 +461,10 @@ Returns:
       }
 
     Pcir        = (PCI_DATA_STRUCTURE *) (RomBarOffset + EfiRomHeader->PcirOffset);
-    ASSERT (Pcir->Signature == PCI_DATA_STRUCTURE_SIGNATURE);
-    ImageSize   = (UINT32) (Pcir->ImageLength * 512);
+//    ASSERT (Pcir->Signature == PCI_DATA_STRUCTURE_SIGNATURE);
+    if (Pcir->Signature != PCI_DATA_STRUCTURE_SIGNATURE) {
+      return retStatus;
+    }
     Indicator   = Pcir->Indicator;
 
     if ((Pcir->CodeType == PCI_CODE_TYPE_EFI_IMAGE) && 
@@ -467,6 +473,7 @@ Returns:
          (EfiRomHeader->EfiSubsystem == EFI_IMAGE_SUBSYSTEM_EFI_RUNTIME_DRIVER))) {
 
       ImageOffset             = EfiRomHeader->EfiImageHeaderOffset;
+      ImageSize = Pcir->ImageLength * 512;
       InitializationSize      = EfiRomHeader->InitializationSize * 512;
 
       if (InitializationSize <= ImageSize && ImageOffset < InitializationSize) {
@@ -497,7 +504,7 @@ Returns:
                                   &ScratchSize
                                   );
             if (!EFI_ERROR (Status)) {
-              DecompressedImageBuffer = NULL;
+              //DecompressedImageBuffer = NULL;
               DecompressedImageBuffer = AllocatePool (DestinationSize);
               if (DecompressedImageBuffer != NULL) {
                 Scratch = AllocatePool (ScratchSize);

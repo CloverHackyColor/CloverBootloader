@@ -1438,14 +1438,14 @@ EmuSetVariable (
   //
   
   Status = FindVariable (VariableName, VendorGuid, &Variable, Global);
-
+  if (!EFI_ERROR(Status)) {
   //
   // Hook the operation of setting PlatformLangCodes/PlatformLang and LangCodes/Lang
   //
   AutoUpdateLangVariable (VariableName, Data, DataSize);
 
   Status = UpdateVariable (VariableName, VendorGuid, Data, DataSize, Attributes, &Variable);
-
+}
   ReleaseLockOnlyAtBootTime (&Global->VariableServicesLock);
   return Status;
 }
@@ -1616,7 +1616,7 @@ InitializeVariableStore (
   IN  BOOLEAN               VolatileStore
   )
 {
-  EFI_STATUS            Status;
+  EFI_STATUS            Status = EFI_SUCCESS;
   VARIABLE_STORE_HEADER *VariableStore;
   BOOLEAN               FullyInitializeStore;
   EFI_PHYSICAL_ADDRESS  *VariableBase;
@@ -1642,7 +1642,10 @@ InitializeVariableStore (
   // ensure that the value of PcdHwErrStorageSize is less than or equal to the value of 
   // PcdVariableStoreSize.
   //
-  ASSERT (PcdGet32 (PcdHwErrStorageSize) <= PcdGet32 (PcdVariableStoreSize));
+//  ASSERT (PcdGet32 (PcdHwErrStorageSize) <= PcdGet32 (PcdVariableStoreSize));
+  if (PcdGet32 (PcdHwErrStorageSize) > PcdGet32 (PcdVariableStoreSize)) {
+    return EFI_OUT_OF_RESOURCES;
+  }
 
   //
   // Allocate memory for variable store.
@@ -1712,8 +1715,13 @@ InitializeVariableStore (
             ; (Variable < GetEndPointer (VariableStoreHeader) && (Variable != NULL))
             ; Variable = GetNextVariablePtr (Variable)
             ) {
-          ASSERT (Variable->State == VAR_ADDED);
-          ASSERT ((Variable->Attributes & EFI_VARIABLE_NON_VOLATILE) != 0);
+     //     ASSERT (Variable->State == VAR_ADDED);
+     //     ASSERT ((Variable->Attributes & EFI_VARIABLE_NON_VOLATILE) != 0);
+          if ((Variable->State != VAR_ADDED) || 
+          ((Variable->Attributes & EFI_VARIABLE_NON_VOLATILE) == 0)) {
+            return EFI_OUT_OF_RESOURCES;
+          }
+
           VariableData = GetVariableDataPtr (Variable);
           Status = EmuSetVariable (
                      GET_VARIABLE_NAME_PTR (Variable),
@@ -1725,13 +1733,13 @@ InitializeVariableStore (
                      &mVariableModuleGlobal->VolatileLastVariableOffset,
                      &mVariableModuleGlobal->NonVolatileLastVariableOffset
                      );
-          ASSERT_EFI_ERROR (Status);
+//          ASSERT_EFI_ERROR (Status);
         }
       }
     }
   }
 
-  return EFI_SUCCESS;
+  return Status; //EFI_SUCCESS;
 }
 
 /**

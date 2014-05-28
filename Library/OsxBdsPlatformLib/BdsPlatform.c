@@ -1607,7 +1607,7 @@ Returns:
   EFI_PHYSICAL_ADDRESS     BufferPtr;
   
   SmbiosTableNew  = NULL;
-  SmbiosTableOri  = NULL;
+//  SmbiosTableOri  = NULL;
   
   //
   // Get Smibos configuration Table 

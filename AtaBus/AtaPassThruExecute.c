@@ -822,7 +822,7 @@ AccessAtaDevice(
     // Create sub event for the sub ata task. Non-blocking mode.
     //
     if ((Token != NULL) && (Token->Event != NULL)) {
-      SubTask  = NULL;
+//      SubTask  = NULL;
       SubEvent = NULL;
 
       SubTask = AllocateZeroPool (sizeof (ATA_BUS_ASYN_SUB_TASK));

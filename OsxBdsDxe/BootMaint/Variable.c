@@ -106,7 +106,7 @@ Var_ChangeBootOrder (
   UINTN         BootOrderListSize;
   UINTN         Index;
 
-  BootOrderList     = NULL;
+//  BootOrderList     = NULL;
   BootOrderListSize = 0;
 
   //
@@ -139,7 +139,7 @@ Var_ChangeBootOrder (
 
   if (BootOrderListSize > 0) {
     BootOrderList = AllocateZeroPool (BootOrderListSize * sizeof (UINT16));
-    ASSERT (BootOrderList != NULL);
+//    ASSERT (BootOrderList != NULL);
     BootOrderListPtr = BootOrderList;
 
     //
@@ -252,7 +252,7 @@ Var_ChangeDriverOrder (
   UINTN         DriverOrderListSize;
   UINTN         Index;
 
-  DriverOrderList     = NULL;
+//  DriverOrderList     = NULL;
   DriverOrderListSize = 0;
 
   //
@@ -957,7 +957,7 @@ Var_UpdateBootOrder (
   UINTN       BootOrderListSize;
   UINT16      OptionNumber;
 
-  BootOrderList     = NULL;
+//  BootOrderList     = NULL;
   BootOrderListSize = 0;
 
   //
@@ -1025,7 +1025,7 @@ Var_UpdateDriverOrder (
   UINT16      *NewDriverOrderList;
   UINTN       DriverOrderListSize;
 
-  DriverOrderList     = NULL;
+//  DriverOrderList     = NULL;
   DriverOrderListSize = 0;
 
   //

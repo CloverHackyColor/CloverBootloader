@@ -1040,7 +1040,7 @@ PNG_INFO *PNG_decode(/* const*/ UINT8 *in, UINT32 size)
 {
 	UINT32 pos ;
 	VECTOR_8 *idat;
-	BOOLEAN IEND,known_type;
+	BOOLEAN IEND; //,known_type;
 	UINT32 bpp;
 	PNG_INFO *info;
 	VECTOR_8 *scanlines; // now the out buffer will be filled
@@ -1064,7 +1064,7 @@ PNG_INFO *PNG_decode(/* const*/ UINT8 *in, UINT32 size)
 	pos = 33; // first byte of the first chunk after the header
 	idat = NULL; // the data from idat chunks
 	IEND = FALSE;
-	known_type = TRUE;
+//	known_type = TRUE;
 	info->key_defined = FALSE;
 	// loop through the chunks, ignoring unknown chunks and stopping at IEND chunk. IDAT data is
 	// put at the start of the in buffer
@@ -1174,10 +1174,10 @@ PNG_INFO *PNG_decode(/* const*/ UINT8 *in, UINT32 size)
           return NULL;
         }
         pos += (chunkLength + 4); // skip 4 letters and uninterpreted data of unimplemented chunk
-        known_type = FALSE;
+//        known_type = FALSE;
         break;
-    }
-		pos += 4; // step over CRC (which is ignored)
+      }
+	  pos += 4; // step over CRC (which is ignored)
 	}
 	bpp = PNG_getBpp(info);
 	// now the out buffer will be filled
@@ -1272,7 +1272,7 @@ EG_IMAGE * egDecodePNG(IN UINT8 *FileData, IN UINTN FileDataLength, IN UINTN Ico
 {
   EG_IMAGE            *NewImage;
   PNG_INFO            *info;
-  UINT8               AlphaValue;
+//  UINT8               AlphaValue;
   EG_PIXEL            *Pixel;
   INTN                x, y;
   
@@ -1281,34 +1281,32 @@ EG_IMAGE * egDecodePNG(IN UINT8 *FileData, IN UINTN FileDataLength, IN UINTN Ico
     return NULL;
 
   PNG_error = -1;
-	info = PNG_decode(FileData, (UINT32)FileDataLength);
+  info = PNG_decode(FileData, (UINT32)FileDataLength);
 	
-	if(!PNG_error)
-	{
-		NewImage = egCreateImage((INTN)info->width, (INTN)info->height, WantAlpha);
-    if (NewImage == NULL)
-      return NULL;
-    AlphaValue = WantAlpha ? 255 : 0;
+	if(!PNG_error) {
+	  NewImage = egCreateImage((INTN)info->width, (INTN)info->height, WantAlpha);
+      if (NewImage == NULL)
+        return NULL;
+//    AlphaValue = WantAlpha ? 255 : 0;
 
-		CopyMem(NewImage->PixelData, info->image->data, info->image->size);
-		png_alloc_free_all();
-    Pixel = (EG_PIXEL*)NewImage->PixelData;
-		for (y = 0; y < NewImage->Height; y++) {
-      for (x = 0; x < NewImage->Width; x++) {
-        UINT8	Temp;
-        Temp = Pixel->b;
-        Pixel->b = Pixel->r;
-        Pixel->r = Temp;
-        Pixel++;        
+	  CopyMem(NewImage->PixelData, info->image->data, info->image->size);
+	  png_alloc_free_all();
+      Pixel = (EG_PIXEL*)NewImage->PixelData;
+	  for (y = 0; y < NewImage->Height; y++) {
+        for (x = 0; x < NewImage->Width; x++) {
+          UINT8	Temp;
+          Temp = Pixel->b;
+          Pixel->b = Pixel->r;
+          Pixel->r = Temp;
+          Pixel++;        
+        }
       }
-    }
 //    MsgLog("png decoded %dx%d datalenght=%d iconsize=%d\n",
 //           NewImage->Height, NewImage->Width, FileDataLength, IconSize);
-		return NewImage;
+	  return NewImage;
 	} else {
 		DBG("decode PNG_error=%d\n", PNG_error);
 	}
-
   
 	return NULL;  
 }

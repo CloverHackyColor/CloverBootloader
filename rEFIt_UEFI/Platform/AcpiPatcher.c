@@ -537,11 +537,8 @@ VOID PatchAllSSDT()
 
 EFI_STATUS InsertTable(VOID* TableEntry, UINTN Length)
 {
-  EFI_STATUS		Status = EFI_SUCCESS;
-  EFI_PHYSICAL_ADDRESS		BufferPtr  = EFI_SYSTEM_TABLE_MAX_ADDRESS;
-
-  UINT32*       Ptr;
-  UINT64*       XPtr;
+  EFI_STATUS		      Status; // = EFI_SUCCESS;
+  EFI_PHYSICAL_ADDRESS	  BufferPtr  = EFI_SYSTEM_TABLE_MAX_ADDRESS;
   
   if (!TableEntry) {
     return EFI_NOT_FOUND;
@@ -554,21 +551,20 @@ EFI_STATUS InsertTable(VOID* TableEntry, UINTN Length)
                                &BufferPtr
                                );
   //if success insert table pointer into ACPI tables
-  if(!EFI_ERROR(Status))
-  {
+  if(!EFI_ERROR(Status)) {
     //      DBG("page is allocated, write SSDT into\n");      
     CopyMem((VOID*)(UINTN)BufferPtr, (VOID*)TableEntry, Length);
     
     //insert into RSDT
     if (Rsdt) {
-      Ptr = (UINT32*)((UINTN)Rsdt + Rsdt->Header.Length);
+      UINT32*  Ptr = (UINT32*)((UINTN)Rsdt + Rsdt->Header.Length);
       *Ptr = (UINT32)(UINTN)BufferPtr;
       Rsdt->Header.Length += sizeof(UINT32);
       //       DBG("Rsdt->Length = %d\n", Rsdt->Header.Length);
     }
     //insert into XSDT
     if (Xsdt) {
-      XPtr = (UINT64*)((UINTN)Xsdt + Xsdt->Header.Length);
+      UINT64* XPtr = (UINT64*)((UINTN)Xsdt + Xsdt->Header.Length);
      // *XPtr = (UINT64)(UINTN)BufferPtr;
       WriteUnaligned64(XPtr, (UINT64)BufferPtr);
       Xsdt->Header.Length += sizeof(UINT64);
@@ -1327,7 +1323,7 @@ VOID SaveOemTables()
 		DBG("Found UEFI Acpi 1.0 RSDP at %p\n", RsdPtr);
 		// if tables already saved, then just print to log
 		DumpTables(RsdPtr, Saved ? NULL : AcpiOriginPath);
-		Saved = TRUE;
+//		Saved = TRUE;
 	}
 	
 	SaveBufferToDisk(MemLogStart, GetMemLogLen() - MemLogStartLen, AcpiOriginPath, L"DumpLog.txt");
@@ -1448,7 +1444,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
 //  EFI_ACPI_2_0_MULTIPLE_APIC_DESCRIPTION_TABLE_HEADER   *ApicHeader;
   EFI_ACPI_2_0_PROCESSOR_LOCAL_APIC_STRUCTURE           *ProcLocalApic;
   EFI_ACPI_2_0_LOCAL_APIC_NMI_STRUCTURE                 *LocalApicNMI;
-  UINTN             ApicLen;
+//  UINTN             ApicLen;
   UINT8             CPUBase;
   UINTN             ApicCPUNum;
   UINT8             *SubTable;
@@ -1868,7 +1864,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
     xf = ScanXSDT(APIC_SIGN, 0);
     if (xf) {
       ApicTable = (EFI_ACPI_DESCRIPTION_HEADER*)(UINTN)(*xf);
-      ApicLen = ApicTable->Length;
+//      ApicLen = ApicTable->Length;
       ProcLocalApic = (EFI_ACPI_2_0_PROCESSOR_LOCAL_APIC_STRUCTURE *)(UINTN)(*xf + sizeof(EFI_ACPI_2_0_MULTIPLE_APIC_DESCRIPTION_TABLE_HEADER));
       //determine first ID of CPU. This must be 0 for Mac and for good Hack
       // but = 1 for stupid ASUS
@@ -2193,7 +2189,7 @@ EFI_STATUS PatchACPI_OtherOS(CHAR16* OsSubdir, BOOLEAN DropSSDT)
 	EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER    *RsdPointer;
 	EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE       *FadtPointer;
 	
-	EFI_STATUS            Status = EFI_SUCCESS;
+	EFI_STATUS            Status; // = EFI_SUCCESS;
 	UINTN                 Index;
 	CHAR16*               PathPatched;
   CHAR16*               AcpiOemPath;
@@ -2292,7 +2288,8 @@ EFI_STATUS PatchACPI_OtherOS(CHAR16* OsSubdir, BOOLEAN DropSSDT)
   //
   for (Index = 0; Index < NUM_TABLES; Index++)
   {
-    Status = LoadAndInjectAcpiTable(AcpiOemPath, PathPatched, ACPInames[Index]);
+    //Status = 
+    LoadAndInjectAcpiTable(AcpiOemPath, PathPatched, ACPInames[Index]);
   }
   
   //

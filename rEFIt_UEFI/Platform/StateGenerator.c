@@ -404,7 +404,7 @@ SSDT_TABLE *generate_cst_ssdt(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, U
   AML_CHUNK* pack;
   AML_CHUNK* tmpl;
   AML_CHUNK* met;
-  AML_CHUNK* ret;
+//  AML_CHUNK* ret;
   UINTN i;
   SSDT_TABLE *ssdt;
   
@@ -558,7 +558,7 @@ SSDT_TABLE *generate_cst_ssdt(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, U
     }
   }
   met = aml_add_method(scop, "_CST", 0);
-  ret = aml_add_return_name(met, "CST_");
+  aml_add_return_name(met, "CST_");
 //  met = aml_add_method(scop, "ACST", 0);
 //  ret = aml_add_return_name(met, "CST_");
 
@@ -568,7 +568,7 @@ SSDT_TABLE *generate_cst_ssdt(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, U
     
     scop = aml_add_scope(root, name2);
     met = aml_add_method(scop, "_CST", 0);
-    ret = aml_add_return_name(met, name1);
+    aml_add_return_name(met, name1);
 //    met = aml_add_method(scop, "ACST", 0);
 //    ret = aml_add_return_name(met, name1);
 

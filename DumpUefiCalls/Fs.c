@@ -93,7 +93,7 @@ DUC_FP_Open(
 			IN UINT64                   Attributes
 			)
 {
-	EFI_STATUS				Status = EFI_DEVICE_ERROR;
+	EFI_STATUS				Status; // = EFI_DEVICE_ERROR;
 	DUC_FILE_PROTOCOL		*OurFp;
 	DUC_FILE_PROTOCOL		*NewFp;
 	
@@ -129,7 +129,7 @@ EFI_STATUS
 EFIAPI
 DUC_FP_Close(IN EFI_FILE_PROTOCOL  *This)
 {
-	EFI_STATUS				Status = EFI_SUCCESS;
+	EFI_STATUS				Status; // = EFI_SUCCESS;
 	DUC_FILE_PROTOCOL		*OurFp;
 	
 	OurFp = DUC_FROM_FILE_PROTOCOL(This);
@@ -152,7 +152,7 @@ EFI_STATUS
 EFIAPI
 DUC_FP_Delete(IN EFI_FILE_PROTOCOL  *This)
 {
-	EFI_STATUS				Status = EFI_WARN_DELETE_FAILURE;
+	EFI_STATUS				Status; // = EFI_WARN_DELETE_FAILURE;
 	DUC_FILE_PROTOCOL		*OurFp;
 	
 	OurFp = DUC_FROM_FILE_PROTOCOL(This);
@@ -178,7 +178,7 @@ DUC_FP_Read(
 			OUT VOID				*Buffer
 			)
 {
-	EFI_STATUS				Status = EFI_DEVICE_ERROR;
+	EFI_STATUS				Status; // = EFI_DEVICE_ERROR;
 	DUC_FILE_PROTOCOL		*OurFp;
 	
 	OurFp = DUC_FROM_FILE_PROTOCOL(This);
@@ -198,7 +198,7 @@ DUC_FP_Write(
 			 IN VOID				*Buffer
 			 )
 {
-	EFI_STATUS				Status = EFI_DEVICE_ERROR;
+	EFI_STATUS				Status; // = EFI_DEVICE_ERROR;
 	DUC_FILE_PROTOCOL		*OurFp;
 	UINTN					InBufferSize = *BufferSize;
 	
@@ -216,7 +216,7 @@ DUC_FP_SetPosition(
 				   IN UINT64			Position
 				   )
 {
-	EFI_STATUS				Status = EFI_DEVICE_ERROR;
+	EFI_STATUS				Status; // = EFI_DEVICE_ERROR;
 	DUC_FILE_PROTOCOL		*OurFp;
 	
 	OurFp = DUC_FROM_FILE_PROTOCOL(This);
@@ -233,7 +233,7 @@ DUC_FP_GetPosition(
 				   IN UINT64			*Position
 				   )
 {
-	EFI_STATUS				Status = EFI_DEVICE_ERROR;
+	EFI_STATUS				Status; // = EFI_DEVICE_ERROR;
 	DUC_FILE_PROTOCOL		*OurFp;
 	
 	OurFp = DUC_FROM_FILE_PROTOCOL(This);
@@ -252,7 +252,7 @@ DUC_FP_GetInfo(
 			   OUT VOID				*Buffer
 			   )
 {
-	EFI_STATUS				Status = EFI_DEVICE_ERROR;
+	EFI_STATUS				Status; // = EFI_DEVICE_ERROR;
 	DUC_FILE_PROTOCOL		*OurFp;
 	
 	OurFp = DUC_FROM_FILE_PROTOCOL(This);
@@ -271,7 +271,7 @@ DUC_FP_SetInfo(
 			   IN VOID				*Buffer
 			   )
 {
-	EFI_STATUS				Status = EFI_DEVICE_ERROR;
+	EFI_STATUS				Status; // = EFI_DEVICE_ERROR;
 	DUC_FILE_PROTOCOL		*OurFp;
 	
 	OurFp = DUC_FROM_FILE_PROTOCOL(This);
@@ -287,7 +287,7 @@ DUC_FP_Flush(
 			 IN EFI_FILE_PROTOCOL	*This
 			 )
 {
-	EFI_STATUS				Status = EFI_DEVICE_ERROR;
+	EFI_STATUS				Status; // = EFI_DEVICE_ERROR;
 	DUC_FILE_PROTOCOL		*OurFp;
 	
 	OurFp = DUC_FROM_FILE_PROTOCOL(This);

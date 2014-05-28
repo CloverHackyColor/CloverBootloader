@@ -161,7 +161,7 @@ GenMemoryMap (
   UINTN                 Index;
   UINTN                 Attr;
   UINT64                Ceiling;
-  UINT64                EBDAaddr = 0x9E000;
+  UINT64                EBDAaddr; // = 0x9E000;
   UINT64                EBDAmax = 0x100000;
   UINT64                EBDAsize = 2;
 

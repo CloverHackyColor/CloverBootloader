@@ -334,8 +334,8 @@ XhcCreateTransferTrb (
         TrbStart->TrbCtrData.Type      = TRB_TYPE_DATA_STAGE;
         if (Urb->Ep.Direction == EfiUsbDataIn) {
           TrbStart->TrbCtrData.DIR = 1;
-        } else if (Urb->Ep.Direction == EfiUsbDataOut) {
-          TrbStart->TrbCtrData.DIR = 0;
+//        } else if (Urb->Ep.Direction == EfiUsbDataOut) {
+//          TrbStart->TrbCtrData.DIR = 0;
         } else {
           TrbStart->TrbCtrData.DIR = 0;
         }

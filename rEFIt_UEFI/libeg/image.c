@@ -579,7 +579,7 @@ EG_IMAGE * egPrepareEmbeddedImage(IN EG_EMBEDDED_IMAGE *EmbeddedImage, IN BOOLEA
             egDecompressIcnsRLE(&CompData, &CompLen, PLPTR(NewImage, a), PixelCount);
         } else {
             egInsertPlane(CompData, PLPTR(NewImage, a), PixelCount);
-            CompData += PixelCount;
+//            CompData += PixelCount;
         }
         
     } else {
@@ -639,7 +639,7 @@ VOID egFillImageArea(IN OUT EG_IMAGE *CompImage,
 {
   INTN        x, y;
   EG_PIXEL    FillColor;
-  EG_PIXEL    *PixelPtr;
+//  EG_PIXEL    *PixelPtr;
   EG_PIXEL    *PixelBasePtr;
   if (!CompImage || !Color) {
     return;
@@ -654,7 +654,7 @@ VOID egFillImageArea(IN OUT EG_IMAGE *CompImage,
     
     PixelBasePtr = CompImage->PixelData + AreaPosY * CompImage->Width + AreaPosX;
     for (y = 0; y < AreaHeight; y++) {
-      PixelPtr = PixelBasePtr;
+      EG_PIXEL    *PixelPtr = PixelBasePtr;
       for (x = 0; x < AreaWidth; x++, PixelPtr++)
         *PixelPtr = FillColor;
       PixelBasePtr += CompImage->Width;
@@ -667,14 +667,14 @@ VOID egRawCopy(IN OUT EG_PIXEL *CompBasePtr, IN EG_PIXEL *TopBasePtr,
                IN INTN CompLineOffset, IN INTN TopLineOffset)
 {
   INTN       x, y;
-  EG_PIXEL    *TopPtr, *CompPtr;
+//  EG_PIXEL    *TopPtr, *CompPtr;
   if (!CompBasePtr || !TopBasePtr) {
     return;
   }
     
   for (y = 0; y < Height; y++) {
-    TopPtr = TopBasePtr;
-    CompPtr = CompBasePtr;
+    EG_PIXEL    *TopPtr = TopBasePtr;
+    EG_PIXEL    *CompPtr = CompBasePtr;
     for (x = 0; x < Width; x++) {
       *CompPtr = *TopPtr;
       TopPtr++, CompPtr++;
@@ -693,11 +693,11 @@ VOID egRawCompose(IN OUT EG_PIXEL *CompBasePtr, IN EG_PIXEL *TopBasePtr,
   UINTN       Alpha;
   UINTN       RevAlpha;
   UINTN       Temp;
-  EG_PIXEL    *CompUp;
+//  EG_PIXEL    *CompUp;
   if (!CompBasePtr || !TopBasePtr) {
     return;
   }
-  CompUp = CompBasePtr + Width * Height;
+//  CompUp = CompBasePtr + Width * Height;
   //if TopAlpha=255 then draw Top
   //else if TopAlpha=0 then draw Comp
   //else draw mixture (don't used)

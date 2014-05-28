@@ -601,7 +601,7 @@ ProcessManFile(
 
   HelpSize    = 0;
   BriefSize   = 0;
-  TempString  = NULL;
+//  TempString  = NULL;
   //
   // See if it's in HII first
   //

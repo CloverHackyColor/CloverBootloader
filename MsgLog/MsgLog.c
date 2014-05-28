@@ -68,10 +68,10 @@ EFI_STATUS
 EFIAPI
 MsgLogEntrypoint (
                     IN EFI_HANDLE           ImageHandle,
-                    IN EFI_SYSTEM_TABLE			*SystemTable
+                    IN EFI_SYSTEM_TABLE		*SystemTable
                     )
 {
-  EFI_STATUS					Status = EFI_SUCCESS;
+  EFI_STATUS					Status; // = EFI_SUCCESS;
   EFI_BOOT_SERVICES*			gBS; 
   CHAR8    *tmp;
   
@@ -88,7 +88,7 @@ MsgLogEntrypoint (
 //  Print(L"MsgLogProtocol installed!\n");
   gBS->SetMem (tmp, BOOTER_LOG_SIZE, 0);
   MsgLogProtocol.Log = tmp;	
-	MsgLogProtocol.Cursor = tmp;
+  MsgLogProtocol.Cursor = tmp;
   MsgLogProtocol.SizeOfLog = 0;
   MsgLogProtocol.Dirty = FALSE;
   

@@ -100,7 +100,7 @@ VOID RedrawPointer()
 EFI_STATUS MouseBirth()
 {
   EFI_STATUS Status = EFI_UNSUPPORTED;
-  EFI_SIMPLE_POINTER_MODE  *CurrentMode;
+//  EFI_SIMPLE_POINTER_MODE  *CurrentMode;
 //  EG_PIXEL pi;
   
   if (!gSettings.PointerEnabled) {
@@ -130,7 +130,7 @@ EFI_STATUS MouseBirth()
     MsgLog("No mouse!\n");
     return Status;
   }
-  CurrentMode = gPointer.SimplePointerProtocol->Mode;
+//  CurrentMode = gPointer.SimplePointerProtocol->Mode;
   DBG("Found Mouse device:\n");
 //  DBG(" - ResolutionX=%ld\n", CurrentMode->ResolutionX);
 //  DBG(" - ResolutionY=%ld\n", CurrentMode->ResolutionY);
@@ -229,11 +229,11 @@ VOID UpdatePointer()
 {
 //  EFI_TIME Now;
   UINT64                    Now;
-  EFI_STATUS                Status = EFI_SUCCESS;
+  EFI_STATUS                Status; // = EFI_SUCCESS;
   EFI_SIMPLE_POINTER_STATE	tmpState;
   EFI_SIMPLE_POINTER_MODE   *CurrentMode;
-  INTN                      XPosPrev;
-  INTN                      YPosPrev;
+//  INTN                      XPosPrev;
+//  INTN                      YPosPrev;
   INTN                      ScreenRelX;
   INTN                      ScreenRelY;
   
@@ -267,7 +267,7 @@ VOID UpdatePointer()
     CopyMem(&gPointer.State, &tmpState, sizeof(EFI_SIMPLE_POINTER_STATE));
     CurrentMode = gPointer.SimplePointerProtocol->Mode;
     
-    XPosPrev = gPointer.newPlace.XPos;
+//    XPosPrev = gPointer.newPlace.XPos;
     ScreenRelX = ((UGAWidth * gPointer.State.RelativeMovementX / (INTN)CurrentMode->ResolutionX) * gSettings.PointerSpeed) >> 10;
     if (gSettings.PointerMirror) {
       gPointer.newPlace.XPos -= ScreenRelX;
@@ -277,7 +277,7 @@ VOID UpdatePointer()
     if (gPointer.newPlace.XPos < 0) gPointer.newPlace.XPos = 0;
     if (gPointer.newPlace.XPos > UGAWidth - 1) gPointer.newPlace.XPos = UGAWidth - 1;
     
-    YPosPrev = gPointer.newPlace.YPos;
+//    YPosPrev = gPointer.newPlace.YPos;
     ScreenRelY = ((UGAHeight * gPointer.State.RelativeMovementY / (INTN)CurrentMode->ResolutionY) * gSettings.PointerSpeed) >> 10;
     gPointer.newPlace.YPos += ScreenRelY;
     if (gPointer.newPlace.YPos < 0) gPointer.newPlace.YPos = 0;

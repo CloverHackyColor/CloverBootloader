@@ -55,7 +55,7 @@ PciRomAddImageMapping (
 
     mMaxNumberOfPciRomImages += 0x20;
 
-    TempMapping = NULL;
+//    TempMapping = NULL;
     TempMapping = AllocatePool (mMaxNumberOfPciRomImages * sizeof (EFI_PCI_ROM_IMAGE_MAPPING));
     if (TempMapping == NULL) {
       return ;
@@ -216,7 +216,7 @@ Returns:
                                   &ScratchSize
                                   );
             if (!EFI_ERROR (Status)) {
-              DecompressedImageBuffer = NULL;
+//              DecompressedImageBuffer = NULL;
               DecompressedImageBuffer = AllocatePool (DestinationSize);
               if (DecompressedImageBuffer != NULL) {
                 Scratch = AllocatePool (ScratchSize);

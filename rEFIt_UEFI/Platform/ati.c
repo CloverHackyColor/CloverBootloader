@@ -1588,7 +1588,7 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
 	CHAR8		*name;
 	CHAR8		*name_parent;
     CHAR8 		*CfgName;
-    CHAR8 		*model;
+//    CHAR8 		*model;
     INTN  		NameLen = 0;
 	UINTN		i, j;
 	INTN		n_ports = 0;
@@ -1609,7 +1609,7 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
   for (j = 0; j < NGFX; j++) {    
     if ((gGraphics[j].Vendor == Ati) &&
         (gGraphics[j].DeviceID == pci_dev->device_id)) {
-      model = gGraphics[j].Model; 
+//      model = gGraphics[j].Model; 
       n_ports = gGraphics[j].Ports;
       add_vbios = gGraphics[j].LoadVBios;
       break;
@@ -1722,25 +1722,25 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
     DBG("Nr of ports set to min: %d\n", card->ports);
   }
 //		
-	name = AllocateZeroPool(24);
-	AsciiSPrint(name, 24, "ATY,%a", card->cfg_name);
-	aty_name.type = kStr;
-	aty_name.size = (UINT32)AsciiStrLen(name);
-	aty_name.data = (UINT8 *)name;
+  name = AllocateZeroPool(24);
+  AsciiSPrint(name, 24, "ATY,%a", card->cfg_name);
+  aty_name.type = kStr;
+  aty_name.size = (UINT32)AsciiStrLen(name);
+  aty_name.data = (UINT8 *)name;
 	
   name_parent = AllocateZeroPool(24);
-	AsciiSPrint(name_parent, 24, "ATY,%aParent", card->cfg_name);
-	aty_nameparent.type = kStr;
-	aty_nameparent.size = (UINT32)AsciiStrLen(name_parent);
-	aty_nameparent.data = (UINT8 *)name_parent;
+  AsciiSPrint(name_parent, 24, "ATY,%aParent", card->cfg_name);
+  aty_nameparent.type = kStr;
+  aty_nameparent.size = (UINT32)AsciiStrLen(name_parent);
+  aty_nameparent.data = (UINT8 *)name_parent;
 //how can we free pool when we leave the procedure? Make all pointers global?	
-	return TRUE;
+  return TRUE;
 }
 
 BOOLEAN setup_ati_devprop(pci_dt_t *ati_dev)
 {
   CHAR8 compatible[64];
-	CHAR8 *devicepath;
+  CHAR8 *devicepath;
   UINT32 FakeID = 0;
   INT32 i;
 

@@ -205,7 +205,7 @@ UINT32 GetKextsSize()
 EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
 {
 	EFI_STATUS              Status;
-	REFIT_VOLUME            *Volume;
+//	REFIT_VOLUME            *Volume;
 	CHAR16                  *SrcDir = NULL;
 	REFIT_DIR_ITER          KextIter;
 	EFI_FILE_INFO           *KextFile;
@@ -246,7 +246,7 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
 		}
 	}
 
-	Volume = Entry->Volume;
+//	Volume = Entry->Volume;
 	SrcDir = GetExtraKextsDir(Entry->OSVersion);
 	if (SrcDir != NULL) {
 		MsgLog("Preparing kexts injection for arch=%s from %s\n", (archCpuType==CPU_TYPE_X86_64)?L"x86_64":(archCpuType==CPU_TYPE_I386)?L"i386":L"", SrcDir);

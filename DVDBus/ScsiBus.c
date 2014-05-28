@@ -332,7 +332,7 @@ SCSIBusDriverBindingStart (
   EFI_EXT_SCSI_PASS_THRU_PROTOCOL       *ExtScsiInterface;
   EFI_SCSI_BUS_PROTOCOL                 *BusIdentify;
 
-  TargetId        = NULL;
+//  TargetId        = NULL;
   ScanOtherPuns   = TRUE;
   FromFirstTarget = FALSE;
   ExtScsiSupport  = FALSE;
@@ -417,7 +417,7 @@ SCSIBusDriverBindingStart (
     // Go through here means either ExtPassThru or PassThru Protocol is successfully opened
     // on this handle for this time. Then construct Host controller private data.
     //
-    ScsiBusDev = NULL;
+ //   ScsiBusDev = NULL;
     ScsiBusDev = AllocateZeroPool(sizeof(SCSI_BUS_DEVICE));
     if (ScsiBusDev == NULL) {
       Status = EFI_OUT_OF_RESOURCES;
@@ -956,7 +956,7 @@ ScsiExecuteSCSICommand (
   EFI_STATUS                                  Status;
   UINT8                                       Target[TARGET_MAX_BYTES];
   EFI_EVENT                                   PacketEvent;
-  EFI_EXT_SCSI_PASS_THRU_SCSI_REQUEST_PACKET  *ExtRequestPacket;
+//  EFI_EXT_SCSI_PASS_THRU_SCSI_REQUEST_PACKET  *ExtRequestPacket;
   SCSI_EVENT_DATA                             EventData;                                     
 
   PacketEvent = NULL;
@@ -985,9 +985,10 @@ ScsiExecuteSCSICommand (
                                           mWorkingBuffer,
                                           Event
                                           );
-	  DBG(L"ExtScsiPassThru->PassThru Status=%r\n", Status);
+	DBG(L"ExtScsiPassThru->PassThru Status=%r\n", Status);
 //	  CopyMem((VOID*)ExtRequestPacket, mWorkingBuffer, sizeof(EFI_EXT_SCSI_PASS_THRU_SCSI_REQUEST_PACKET));
-	  ExtRequestPacket = (EFI_EXT_SCSI_PASS_THRU_SCSI_REQUEST_PACKET *)mWorkingBuffer;
+//	  ExtRequestPacket = (EFI_EXT_SCSI_PASS_THRU_SCSI_REQUEST_PACKET *)mWorkingBuffer;
+    FreePool(mWorkingBuffer);
   } else {
 
     //

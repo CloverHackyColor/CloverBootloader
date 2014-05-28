@@ -484,7 +484,7 @@ IsSleepImageValidBySleepTime (IN REFIT_VOLUME *Volume)
   HFSPlusVolumeHeaderMin  *HFSHeader;
   UINT32              HFSVolumeModifyDate;
   INTN                TimeDiff;
-  INTN                Pages = 1;
+  INTN                Pages; // = 1;
   //EFI_TIME            ImageModifyTime;
   //EFI_TIME            *TimePtr;
   //EFI_TIME            HFSVolumeModifyTime;

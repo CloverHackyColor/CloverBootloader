@@ -332,7 +332,7 @@ VOID devprop_free_string(DevPropString *StringBuf)
 	}
 	FreePool(StringBuf->entries);
 	FreePool(StringBuf);
-	StringBuf = NULL;
+//	StringBuf = NULL;
 }
 
 // Ethernet built-in device injection

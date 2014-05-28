@@ -620,7 +620,7 @@ VOID CheckHardware()
       if (!EFI_ERROR (Status)) {
         UINT32 deviceid;
         /* Read PCI BUS */
-        Status = PciIo->GetLocation (PciIo, &Segment, &Bus, &Device, &Function);
+        PciIo->GetLocation (PciIo, &Segment, &Bus, &Device, &Function);
         Status = PciIo->Pci.Read (
                                   PciIo,
                                   EfiPciIoWidthUint32,
@@ -2504,16 +2504,16 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
       if (!PCISIZE) return len; //what is the bad DSDT ?!
       
       i = PCIADR + PCISIZE;
-      devadr = i + 2;  //skip 5B 82
+ //     devadr = i + 2;  //skip 5B 82
       len = move_data(i, dsdt, len, sizeoffset);
       CopyMem(dsdt + i, display, sizeoffset);
       // Fix PCI0 size
       k = write_size(PCIADR, dsdt, len, sizeoffset);
       sizeoffset += k;
       len += k;
-      devadr += k;
+//      devadr += k;
       k = CorrectOuters(dsdt, len, PCIADR-3, sizeoffset);
-      devadr += k - len;
+//      devadr += k - len;
       len = k;
     }
     FreePool(display);
@@ -3521,7 +3521,7 @@ UINT32 AddHDEF (UINT8 *dsdt, UINT32 len, CHAR8* OSVersion)
   UINT32  i, k;
   UINT32 PCIADR, PCISIZE = 0;
   INT32 sizeoffset;
-  UINT32 HDAADR = 0, BridgeSize = 0, Size;
+  UINT32 HDAADR = 0, Size;
   AML_CHUNK* root;
   AML_CHUNK* met, *met2;
   AML_CHUNK* device;
@@ -3545,7 +3545,7 @@ UINT32 AddHDEF (UINT8 *dsdt, UINT32 len, CHAR8* OSVersion)
         continue;
       }
 
-      BridgeSize = get_size(dsdt, HDAADR);
+ //     BridgeSize = get_size(dsdt, HDAADR);
       device_name[4] = AllocateZeroPool(5);
       CopyMem(device_name[4], dsdt+i, 4);
       DBG("found HDA device NAME(_ADR,0x%08x) And Name is %a\n", 
@@ -4501,7 +4501,7 @@ UINT32 FIXGPE (UINT8 *dsdt, UINT32 len)
 {    
   UINT32 i, j, k, l, m, n;
   UINT32 gpeadr=0;
-  UINT32 gpesize=0;
+//  UINT32 gpesize=0;
   UINT32 pwrbadr=0;
   UINT32 pwrbsize=0;
   UINT32 usbcount=0;
@@ -4510,7 +4510,7 @@ UINT32 FIXGPE (UINT8 *dsdt, UINT32 len)
   INT32  offset=0;
   INT32 sizeoffset;
 //  BOOLEAN pwrbfix = FALSE;
-  BOOLEAN usbpwrb = FALSE;
+//  BOOLEAN usbpwrb = FALSE;
 //  BOOLEAN foundpwrb = FALSE;
 
   sizeoffset = sizeof(pwrb);
@@ -4534,7 +4534,7 @@ UINT32 FIXGPE (UINT8 *dsdt, UINT32 len)
               if (dsdt[k] == UsbName[l][0] && dsdt[k+1] == UsbName[l][1] && 
                   dsdt[k+2] == UsbName[l][2] && dsdt[k+3] == UsbName[l][3]) {
                 //DBG( "found USB _GPE Method.\n");
-                usbpwrb = TRUE;
+       //         usbpwrb = TRUE;
                 
                 if (!usbcount) {
                   //DBG( "will to find Scope(\\_GPE).\n");
@@ -4543,7 +4543,7 @@ UINT32 FIXGPE (UINT8 *dsdt, UINT32 len)
                       for (n=0; n<15; n++) {
                         if (dsdt[i-m-n] == 0x10) {
                           gpeadr = i-m-n+1;
-                          gpesize = get_size(dsdt, i-m-n+1);
+                       //   gpesize = get_size(dsdt, i-m-n+1);
                           //DBG( "_GPE adr = 0x%08x, size = 0x%08x\n", gpeadr, gpesize);
                           break;
                         }
@@ -4618,11 +4618,11 @@ UINT32 FIXPWRB (UINT8* dsdt, UINT32 len)
 
 UINT32 FIXSHUTDOWN_ASUS (UINT8 *dsdt, UINT32 len)
 {
-	UINT32 i, j, sizeoffset = 0;
-	UINT32 adr, adr1 = 0, adr2, size, shift = 0;
+  UINT32 i, j, sizeoffset = 0;
+  UINT32 adr, adr1 = 0, adr2, size, shift = 0;
   CHAR8 *shutdown = NULL;
 	
-	DBG("Start SHUTDOWN Fix len=%x\n", len);
+  DBG("Start SHUTDOWN Fix len=%x\n", len);
   adr = FindMethod(dsdt, len, "_PTS");
   if (!adr) {
     DBG("no _PTS???\n");
@@ -4661,7 +4661,7 @@ UINT32 FIXSHUTDOWN_ASUS (UINT8 *dsdt, UINT32 len)
   len += shift;
   sizeoffset += shift;
   shift = write_size(adr, dsdt, len, sizeoffset);
-  sizeoffset += shift;
+//  sizeoffset += shift;
   len += shift;
   return len;  
 }

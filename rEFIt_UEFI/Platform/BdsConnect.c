@@ -227,7 +227,8 @@ BdsLibConnectAllEfi (
   }
 
   for (Index = 0; Index < HandleCount; Index++) {
-    Status = gBS->ConnectController (HandleBuffer[Index], NULL, NULL, TRUE);
+    //Status = 
+    gBS->ConnectController (HandleBuffer[Index], NULL, NULL, TRUE);
   }
 
   if (HandleBuffer != NULL) {
@@ -274,7 +275,8 @@ BdsLibDisconnectAllEfi (
   }
 
   for (Index = 0; Index < HandleCount; Index++) {
-    Status = gBS->DisconnectController (HandleBuffer[Index], NULL, NULL);
+    //Status = 
+    gBS->DisconnectController (HandleBuffer[Index], NULL, NULL);
   }
 
   if (HandleBuffer != NULL) {

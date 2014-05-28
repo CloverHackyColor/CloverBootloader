@@ -433,7 +433,7 @@ EfiLdrPeCoffLoadPeRelocate (
     return EFI_LOAD_ERROR;
   }
 
-  NoFixupPages = EFI_SIZE_TO_PAGES(RelocDir->Size / sizeof(UINT16) * sizeof(UINTN));
+  NoFixupPages = EFI_SIZE_TO_PAGES((RelocDir->Size / sizeof(UINT16)) * sizeof(UINTN));
   Image->FixupData = (UINT8*) FindSpace (NoFixupPages, NumberOfMemoryMapEntries, EfiMemoryDescriptor, EfiRuntimeServicesData, EFI_MEMORY_WB);
   if (Image->FixupData == 0) {
     return EFI_OUT_OF_RESOURCES;

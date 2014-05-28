@@ -415,7 +415,7 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
   CHAR16      volumeName[255];
   CHAR8         tmp[64];
   UINT32        VCrc32;
-  CHAR16      *kind = NULL;
+//  CHAR16      *kind = NULL;
   
   Volume->HasBootCode = FALSE;
   Volume->LegacyOS->IconName = NULL;
@@ -449,7 +449,7 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
     VCrc32 = GetCrc32(SectorBuffer, 512 * 2);
     Volume->DriveCRC32 = VCrc32;
     //gBS->CalculateCrc32 (SectorBuffer, 2 * 512, &Volume->DriveCRC32);
-    switch (Volume->DiskKind ) {
+/*    switch (Volume->DiskKind ) {
       case DISK_KIND_OPTICAL:
         kind = L"DVD";
         break;
@@ -462,7 +462,7 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
       default:
         break;
     }
-    //     DBG("Volume kind=%s CRC=0x%x\n", kind, VCrc32);
+    DBG("Volume kind=%s CRC=0x%x\n", kind, VCrc32); */
     if (Volume->DiskKind == DISK_KIND_OPTICAL) { //CDROM
       CHAR8* p = (CHAR8*)&SectorBuffer[8];
       while (*p == 0x20) {

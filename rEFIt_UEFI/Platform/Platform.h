@@ -645,14 +645,14 @@ typedef struct Symbol Symbol, *SymbolPtr;
 typedef struct {
   
   UINTN	  	type;
-  CHAR8			*string;
-  UINT8			*data;
-  UINTN			dataLen;
-  UINTN 		offset;
-  VOID			*tag;
-  VOID			*tagNext;
+  CHAR8		*string;
+  UINT8		*data;
+  UINTN		dataLen;
+  UINTN 	offset;
+  VOID		*tag;
+  VOID		*tagNext;
   
-}Tag, *TagPtr;
+} TagStruct, *TagPtr;
 
 typedef struct {
   

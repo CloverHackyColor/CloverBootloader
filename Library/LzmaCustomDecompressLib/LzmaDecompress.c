@@ -45,13 +45,13 @@ SzAlloc (
 
   Private = (ISzAllocWithData*) P;
 
-  if (Private->BufferSize >= Size) {
+  if (Private && Private->BufferSize >= Size) {
     Addr = Private->Buffer;
     Private->Buffer = (VOID*) ((UINT8*)Addr + Size);
     Private->BufferSize -= Size;
     return Addr;
   } else {
-    ASSERT (FALSE);
+//    ASSERT (FALSE);
     return NULL;
   }
 }
@@ -91,6 +91,10 @@ GetDecodedSizeOfBuf(
 {
   UINT64 DecodedSize;
   INTN   Index;
+  
+  if (!EncodedData) {
+    return 0;
+  }
 
   /* Parse header */
   DecodedSize = 0;
@@ -145,7 +149,10 @@ LzmaUefiDecompressGetInfo (
 {
   UInt64  DecodedSize;
 
-  ASSERT(SourceSize >= LZMA_HEADER_SIZE);
+//  ASSERT(SourceSize >= LZMA_HEADER_SIZE);
+  if (!Source || SourceSize < LZMA_HEADER_SIZE) {
+    return RETURN_INVALID_PARAMETER;
+  }
 
   DecodedSize = GetDecodedSizeOfBuf((UINT8*)Source);
 

@@ -450,7 +450,7 @@ VOID set_mode(vbios_map * map, /*UINT32 mode,*/ UINT32 x, UINT32 y, UINT32 bp, U
         break;
       }
 
-      NumReplaces = 0;
+//      NumReplaces = 0;
       NumReplaces = VideoBiosPatchSearchAndReplace (
                                                     (UINT8*)(UINTN)VBIOS_START,
                                                     VBIOS_SIZE,
@@ -459,8 +459,7 @@ VOID set_mode(vbios_map * map, /*UINT32 mode,*/ UINT32 x, UINT32 y, UINT32 bp, U
                                                     -1
                                                     );
       DBG (" patched %d time(s)\n", NumReplaces);
-      
-			return;
+	  return;
     }
 
 		case BT_1:
@@ -616,7 +615,7 @@ VOID set_mode(vbios_map * map, /*UINT32 mode,*/ UINT32 x, UINT32 y, UINT32 bp, U
 		{
 			edid_mode mode;
       UINTN             NumReplaces;
-      UINTN             NumReplacesTotal;
+//      UINTN             NumReplacesTotal;
       UINTN             Index = 0;
       
 	//		NV_MODELINE *mode_timing = (NV_MODELINE *) map->nv_mode_table;
@@ -638,16 +637,16 @@ VOID set_mode(vbios_map * map, /*UINT32 mode,*/ UINT32 x, UINT32 y, UINT32 bp, U
         break; // not found
       }
       
-      NumReplaces = 0;
-      NumReplacesTotal = 0;
-        NumReplaces = VideoBiosPatchSearchAndReplace (
+//      NumReplaces = 0;
+//      NumReplacesTotal = 0;
+      NumReplaces = VideoBiosPatchSearchAndReplace (
                                                       (UINT8*)(UINTN)VBIOS_START,
                                                       VBIOS_SIZE,
                                                       (UINT8*)&Sample0[0], 17,
                                                       (UINT8*)&nvda_key0[Index].Matrix[0],
                                                       -1
                                                       );
-        NumReplacesTotal += NumReplaces;
+//        NumReplacesTotal += NumReplaces;
         DBG (" patch 0: patched %d time(s)\n", NumReplaces);
       NumReplaces = VideoBiosPatchSearchAndReplace (
                                                     (UINT8*)(UINTN)VBIOS_START,
@@ -656,7 +655,7 @@ VOID set_mode(vbios_map * map, /*UINT32 mode,*/ UINT32 x, UINT32 y, UINT32 bp, U
                                                     (UINT8*)&nvda_key1[Index].Matrix[0],
                                                     -1
                                                     );
-      NumReplacesTotal += NumReplaces;
+//      NumReplacesTotal += NumReplaces;
       DBG (" patch 1: patched %d time(s)\n", NumReplaces);
       NumReplaces = VideoBiosPatchSearchAndReplace (
                                                     (UINT8*)(UINTN)VBIOS_START,
@@ -665,7 +664,7 @@ VOID set_mode(vbios_map * map, /*UINT32 mode,*/ UINT32 x, UINT32 y, UINT32 bp, U
                                                     (UINT8*)&nvda_key2[Index].Matrix[0],
                                                     -1
                                                     );
-      NumReplacesTotal += NumReplaces;
+//      NumReplacesTotal += NumReplaces;
       DBG (" patch 2: patched %d time(s)\n", NumReplaces);
       NumReplaces = VideoBiosPatchSearchAndReplace (
                                                     (UINT8*)(UINTN)VBIOS_START,
@@ -674,7 +673,7 @@ VOID set_mode(vbios_map * map, /*UINT32 mode,*/ UINT32 x, UINT32 y, UINT32 bp, U
                                                     (UINT8*)&nvda_key3[Index].Matrix[0],
                                                     -1
                                                     );
-      NumReplacesTotal += NumReplaces;
+//      NumReplacesTotal += NumReplaces;
       DBG (" patch 3: patched %d time(s)\n", NumReplaces);
       
       if ((*((UINT8*)(UINTN)(VBIOS_START + 0x34)) & 0x8F) == 0x80 ) {

@@ -692,7 +692,7 @@ CompileBootOption (
     // OptionalData
     if (BootOption->OptionalDataSize > 0) {
         CopyMem (Ptr8, BootOption->OptionalData, BootOption->OptionalDataSize);
-        Ptr8 += BootOption->OptionalDataSize;
+//        Ptr8 += BootOption->OptionalDataSize;
     }
     
     return EFI_SUCCESS;

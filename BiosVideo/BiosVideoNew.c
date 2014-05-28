@@ -670,7 +670,7 @@ BiosVideoChildHandleUninstall (
   BiosVideoPrivate = NULL;
   GraphicsOutput   = NULL;
   PciIo            = NULL;
-  Status           = EFI_UNSUPPORTED;
+//  Status           = EFI_UNSUPPORTED;
 
   Status = gBS->OpenProtocol (
                   Handle,
@@ -2289,7 +2289,7 @@ BiosVideoGraphicsOutputSetMode (
 	BIOS_VIDEO_DEV          *BiosVideoPrivate;
 	BIOS_VIDEO_MODE_DATA    *ModeData;
 //	EFI_GRAPHICS_OUTPUT_BLT_PIXEL Background;
-  UINTN                   DataSize;
+//  UINTN                   DataSize;
 	
 	if (This == NULL) {
 		return EFI_INVALID_PARAMETER;
@@ -2307,17 +2307,17 @@ BiosVideoGraphicsOutputSetMode (
   DBG("BV new mode: %d %dx%d\n", ModeNumber, ModeData->HorizontalResolution, ModeData->VerticalResolution);
   //
   // Boot speedup: Check if RT var "BiosVideoBlockSwitchMode" is set.
-  // If yes, then do not swicth mode.
+  // If yes, then do not switch mode.
   //
-  DataSize = 0;
+//  DataSize = 0;
 //  Status = gRT->GetVariable (L"BiosVideoBlockSwitchMode", &gEfiGlobalVariableGuid, NULL, &DataSize, NULL);
   //DBG("BiosVideoGraphicsOutputSetMode: GetVariable BiosVideoBlockSwitchMode: %r\n", Status);
-  if (Status == EFI_BUFFER_TOO_SMALL) {
+/*  if (Status == EFI_BUFFER_TOO_SMALL) {
     // var exists - just exit
     DBG(" blocking that switch\n");
     return EFI_SUCCESS;
   }
-  
+*/  
 
 	if (ModeNumber == This->Mode->Mode) {
 		//
@@ -2543,6 +2543,13 @@ BiosVideoGraphicsOutputVbeBlt (
   UINT32                         Pixel;
   UINTN                          TotalBytes;
 
+  if (This == NULL || ((UINTN) BltOperation) >= EfiGraphicsOutputBltOperationMax) {
+    return EFI_INVALID_PARAMETER;
+  }
+
+  if (Width == 0 || Height == 0) {
+    return EFI_INVALID_PARAMETER;
+  }
   BiosVideoPrivate  = BIOS_VIDEO_DEV_FROM_GRAPHICS_OUTPUT_THIS (This);
   Mode              = &BiosVideoPrivate->ModeData[This->Mode->Mode];
   PciIo             = BiosVideoPrivate->PciIo;
@@ -2554,13 +2561,6 @@ BiosVideoGraphicsOutputVbeBlt (
   BltUint8          = (UINT8 *) BltBuffer;
   TotalBytes        = Width * VbePixelWidth;
 
-  if (This == NULL || ((UINTN) BltOperation) >= EfiGraphicsOutputBltOperationMax) {
-    return EFI_INVALID_PARAMETER;
-  }
-
-  if (Width == 0 || Height == 0) {
-    return EFI_INVALID_PARAMETER;
-  }
   //
   // We need to fill the Virtual Screen buffer with the blt data.
   // The virtual screen is upside down, as the first row is the bootom row of
@@ -2980,6 +2980,13 @@ BiosVideoGraphicsOutputVgaBlt (
   UINTN               Y;
   UINTN               CurrentMode;
 
+  if (This == NULL || ((UINTN) BltOperation) >= EfiGraphicsOutputBltOperationMax) {
+    return EFI_INVALID_PARAMETER;
+  }
+
+  if (Width == 0 || Height == 0) {
+    return EFI_INVALID_PARAMETER;
+  }
   BiosVideoPrivate  = BIOS_VIDEO_DEV_FROM_GRAPHICS_OUTPUT_THIS (This);
 
   CurrentMode = This->Mode->Mode;
@@ -2989,13 +2996,6 @@ BiosVideoGraphicsOutputVgaBlt (
   //BytesPerBitPlane  = BytesPerScanLine * BiosVideoPrivate->ModeData[CurrentMode].VerticalResolution;
   VgaFrameBuffer    = BiosVideoPrivate->VgaFrameBuffer;
 
-  if (This == NULL || ((UINTN) BltOperation) >= EfiGraphicsOutputBltOperationMax) {
-    return EFI_INVALID_PARAMETER;
-  }
-
-  if (Width == 0 || Height == 0) {
-    return EFI_INVALID_PARAMETER;
-  }
   //
   // We need to fill the Virtual Screen buffer with the blt data.
   // The virtual screen is upside down, as the first row is the bootom row of

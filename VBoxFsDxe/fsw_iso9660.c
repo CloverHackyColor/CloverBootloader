@@ -283,7 +283,7 @@ static fsw_status_t fsw_iso9660_volume_mount(struct fsw_iso9660_volume *vol)
     struct iso9660_dirrec *rootdir_p;
     int sua_pos;
     char *sig;
-    int skip;
+//    int skip;
     struct fsw_rock_ridge_susp_entry *entry;
 
     // read through the Volume Descriptor Set
@@ -366,20 +366,18 @@ static fsw_status_t fsw_iso9660_volume_mount(struct fsw_iso9660_volume *vol)
 #if 1
     status = fsw_block_get(vol, ISOINT(rootdir_p->extent_location), 0, &buffer);
     sig = (char *)buffer + sua_pos;
-    skip = 0;
+//    skip = 0;
     entry = (struct fsw_rock_ridge_susp_entry *)sig;
     if (   entry->sig[0] == 'S'
-        && entry->sig[1] == 'P')
-    {
+        && entry->sig[1] == 'P') {
         struct fsw_rock_ridge_susp_sp *sp = (struct fsw_rock_ridge_susp_sp *)entry;
-        if (sp->magic[0] == 0xbe && sp->magic[1] == 0xef)
-        {
+        if (sp->magic[0] == 0xbe && sp->magic[1] == 0xef) {
             vol->fRockRidge = 1;
         } else {
  //           FSW_MSG_DEBUG((FSW_MSGSTR("fsw_iso9660_volume_mount: SP magic isn't valid\n")));
           DBG("fsw_iso9660_volume_mount: SP magic isn't valid\n");
         }
-        skip = sp->skip;
+//        skip = sp->skip;
     }
 #endif
     // release volume descriptors
@@ -649,13 +647,11 @@ static fsw_status_t fsw_iso9660_read_dirrec(struct fsw_iso9660_volume *vol, stru
         return FSW_VOLUME_CORRUPTED;
 
 //     dump_dirrec(dirrec);
-     if (vol->fRockRidge)
-     {
+     if (vol->fRockRidge) {
          sp_off = sizeof(*dirrec) + dirrec->file_identifier_length;
          rc = rr_find_sp(dirrec, &sp);
          if (   rc == FSW_SUCCESS
-             && sp != NULL)
-         {
+             && sp != NULL) {
             sp_off = (int)((fsw_u8 *)&sp[1] - (fsw_u8*)dirrec + sp->skip);
          }
          rc = rr_find_nm(vol, dirrec, sp_off,  &dirrec_buffer->name);

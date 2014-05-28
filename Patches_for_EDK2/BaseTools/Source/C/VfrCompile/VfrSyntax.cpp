@@ -193,11 +193,12 @@ EfiVfrParser::pragmaPackNumber(void)
   ANTLRTokenPtr N=NULL;
   
   UINT32 LineNum;
-  UINT32 PackNumber = DEFAULT_PACK_ALIGN;
+  UINT32 PackNumber; // = DEFAULT_PACK_ALIGN;
   zzmatch(Number);
   N = (ANTLRTokenPtr)LT(1);
 
-  LineNum = N->getLine(); PackNumber = _STOU32(N->getText());
+  LineNum = N->getLine();
+  PackNumber = _STOU32(N->getText());
  consume();
   gCVfrVarDataTypeDB.Pack (LineNum, VFR_PACK_ASSIGN, NULL, PackNumber);
   return;
@@ -1068,9 +1069,9 @@ EfiVfrParser::vfrFormSetDefinition(void)
     );
   }
   
-  if (FSObj != NULL) {
+//  if (FSObj != NULL) {
     delete FSObj;
-  }
+//  }
  consume();
   zzmatch(156); consume();
   return;

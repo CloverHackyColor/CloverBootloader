@@ -476,7 +476,7 @@ static EFI_STATUS StartEFILoadedImage(IN EFI_HANDLE ChildImageHandle,
   }
   ReturnStatus = Status = EFI_NOT_FOUND;  // in case no image handle was specified
   if (ChildImageHandle == NULL) {
-    *ErrorInStep = 1;
+    if (ErrorInStep != NULL) *ErrorInStep = 1;
     goto bailout;
   }
   

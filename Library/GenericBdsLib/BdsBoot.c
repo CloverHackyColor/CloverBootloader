@@ -526,7 +526,7 @@ BdsDeleteAllInvalidLegacyBootOptions (
   UINT16                    BootDesc[100];
   BOOLEAN                   DescStringMatch;
 
-  Status        = EFI_SUCCESS;
+//  Status        = EFI_SUCCESS;
   BootOrder     = NULL;
   BootOrderSize = 0;
   HddCount      = 0;
@@ -2863,7 +2863,7 @@ BdsLibDeleteOptionFromHandle (
   UINT8                     *TempPtr;
 
   Status        = EFI_SUCCESS;
-  BootOrder     = NULL;
+//  BootOrder     = NULL;
   BootOrderSize = 0;
 
   //
@@ -2976,7 +2976,7 @@ BdsDeleteAllInvalidEfiBootOption (
   BOOLEAN                   Corrupted;
 
   Status           = EFI_SUCCESS;
-  BootOrder        = NULL;
+//  BootOrder        = NULL;
   Description      = NULL;
   OptionDevicePath = NULL;
   BootOrderSize    = 0;

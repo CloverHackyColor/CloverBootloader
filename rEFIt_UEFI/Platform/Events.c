@@ -206,7 +206,7 @@ OnExitBootServices(IN EFI_EVENT Event, IN VOID *Context)
     BootArgs2*				bootArgs2v;
     UINT8*						ptr=(UINT8*)(UINTN)0x100000;
     //	DTEntry						efiPlatform;
-    CHAR8*						dtreeRoot;
+//    CHAR8*						dtreeRoot;
     UINTN						archMode = sizeof(UINTN) * 8;
     UINTN						Version = 0;
     
@@ -219,7 +219,7 @@ OnExitBootServices(IN EFI_EVENT Event, IN VOID *Context)
       if(((bootArgs2v->Revision == 0) || (bootArgs2v->Revision == 1)) && bootArgs2v->Version==2)
       {
         if (((UINTN)bootArgs2v->efiMode == 32) || ((UINTN)bootArgs2v->efiMode == 64)){
-          dtreeRoot = (CHAR8*)(UINTN)bootArgs2v->deviceTreeP;
+//          dtreeRoot = (CHAR8*)(UINTN)bootArgs2v->deviceTreeP;
           bootArgs2v->efiMode = (UINT8)archMode; //correct to EFI arch
           Version = 2;
      //     DBG(L"found bootarg v2");
@@ -235,7 +235,7 @@ OnExitBootServices(IN EFI_EVENT Event, IN VOID *Context)
         
         if (((UINTN)bootArgs1v->efiMode == 32) ||
             ((UINTN)bootArgs1v->efiMode == 64)){
-          dtreeRoot = (CHAR8*)(UINTN)bootArgs1v->deviceTreeP;
+//          dtreeRoot = (CHAR8*)(UINTN)bootArgs1v->deviceTreeP;
           bootArgs1v->efiMode = (UINT8)archMode;
           Version = 1;
    //       DBG(L"found bootarg v1");
@@ -402,7 +402,7 @@ EFI_STATUS EjectVolume(IN REFIT_VOLUME *Volume)
 	UINT64                          Lun = 0;
 	UINT8                           *Target;
 	UINT8                           TargetArray[EFI_SCSI_TARGET_MAX_BYTES];
-	EFI_STATUS                      Status = EFI_UNSUPPORTED;
+	EFI_STATUS                      Status; // = EFI_UNSUPPORTED;
 	UINT8                           Cdb[EFI_SCSI_OP_LENGTH_SIX];
 	USB_MASS_DEVICE                 *UsbMass = NULL;
 	EFI_BLOCK_IO_PROTOCOL           *BlkIo	= NULL;
@@ -414,7 +414,7 @@ EFI_STATUS EjectVolume(IN REFIT_VOLUME *Volume)
 	// Initialize SCSI REQUEST_PACKET and 6-byte Cdb
 	//
 	ZeroMem (&CommandPacket, sizeof (EFI_SCSI_IO_SCSI_REQUEST_PACKET));
-	ZeroMem (Cdb, sizeof (EFI_SCSI_OP_LENGTH_SIX));
+	ZeroMem (Cdb, EFI_SCSI_OP_LENGTH_SIX);
 	
 	Status = gBS->HandleProtocol(Volume->DeviceHandle, &gEfiScsiIoProtocolGuid, (VOID **) &ScsiIo);
 	if (ScsiIo) {
