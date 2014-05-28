@@ -465,15 +465,15 @@ Returns:
     if (Pcir->Signature != PCI_DATA_STRUCTURE_SIGNATURE) {
       return retStatus;
     }
-    Indicator   = Pcir->Indicator;
-
+    Indicator = Pcir->Indicator;
+    ImageSize = Pcir->ImageLength * 512;
     if ((Pcir->CodeType == PCI_CODE_TYPE_EFI_IMAGE) && 
         (EfiRomHeader->EfiSignature == EFI_PCI_EXPANSION_ROM_HEADER_EFISIGNATURE) &&
         ((EfiRomHeader->EfiSubsystem == EFI_IMAGE_SUBSYSTEM_EFI_BOOT_SERVICE_DRIVER) ||
          (EfiRomHeader->EfiSubsystem == EFI_IMAGE_SUBSYSTEM_EFI_RUNTIME_DRIVER))) {
 
       ImageOffset             = EfiRomHeader->EfiImageHeaderOffset;
-      ImageSize = Pcir->ImageLength * 512;
+
       InitializationSize      = EfiRomHeader->InitializationSize * 512;
 
       if (InitializationSize <= ImageSize && ImageOffset < InitializationSize) {
