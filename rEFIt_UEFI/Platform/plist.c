@@ -846,7 +846,7 @@ TagPtr NewTag( void )
 	TagPtr	tag;
 
 	if (gTagsFree == NULL) {
-		tag = (TagPtr)AllocateZeroPool(0x1000 * sizeof(tag));
+		tag = (TagPtr)AllocateZeroPool(0x1000 * sizeof(TagStruct));
 		if (tag == NULL) {
       return NULL;
     }
