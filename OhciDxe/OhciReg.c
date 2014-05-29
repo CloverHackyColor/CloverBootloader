@@ -1067,7 +1067,7 @@ OhciSetRootHubDescriptor (
   HcRH_DESC_B             DescriptorB;
 
 
-  if (Field & (RH_DEV_REMOVABLE || RH_PORT_PWR_CTRL_MASK)) {
+  if (Field & (RH_DEV_REMOVABLE | RH_PORT_PWR_CTRL_MASK)) {
     *(UINT32 *) &DescriptorB = OhciGetOperationalReg (Ohc->PciIo, HC_RH_DESC_B);
 
     if(Field & RH_DEV_REMOVABLE) {

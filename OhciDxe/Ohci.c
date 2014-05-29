@@ -394,7 +394,7 @@ OhciControlTransfer (
   //
   if(Request != NULL) {
     ReqMapLength = sizeof(EFI_USB_DEVICE_REQUEST);
-    MapOp = EfiPciOperationBusMasterRead;
+    MapOp = EfiPciIoOperationBusMasterRead;
     Status = Ohc->PciIo->Map (Ohc->PciIo, MapOp, (UINT8 *)Request, &ReqMapLength, &ReqMapPhyAddr, &ReqMapping);
     if (EFI_ERROR(Status)) {
       DEBUG ((EFI_D_INFO, "OhciControlTransfer: Fail to Map Request Buffer\r\n"));		
@@ -1000,7 +1000,7 @@ OhciInterruptTransfer (
   MapLength = DataLength;
   Status = Ohc->PciIo->Map(
                          Ohc->PciIo,
-                         EfiPciOperationBusMasterWrite,
+                         EfiPciIoOperationBusMasterWrite,
                          UCBuffer,
                          &MapLength,
                          &MapPyhAddr,
@@ -2364,7 +2364,8 @@ OHCIDriverBindingStart (
   
   // Polling at every 0.1s is too slow, use 0.05s like with UhciDxe
   //Status = gBS->SetTimer (Ohc->HouseKeeperTimer, TimerPeriodic, 100 * 1000 * 10);
-  Status = gBS->SetTimer (Ohc->HouseKeeperTimer, TimerPeriodic, 50 * 1000 * 10); 
+  Status = gBS->SetTimer (Ohc->HouseKeeperTimer, TimerPeriodic, 50 * 1000 * 10);
+ 
   if (EFI_ERROR (Status)) {
     goto FREE_OHC;
   }
