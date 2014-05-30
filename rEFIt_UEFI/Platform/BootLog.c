@@ -52,7 +52,7 @@ PrintBytes(IN VOID *Bytes, IN UINTN Number)
 	UINTN	Index;
 	
 	for (Index = 0; Index < Number; Index += 16) {
-		PrintBytesRow((UINT8*)Bytes + Index, (Index + 16 < Number ? 16 : Number - Index), 16);
+		PrintBytesRow((UINT8*)Bytes + Index, ((Index + 16 < Number) ? 16 : (Number - Index)), 16);
 	}
 }
 

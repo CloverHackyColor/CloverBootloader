@@ -52,8 +52,8 @@
 #  HobGeneration.h
 #  SerialStatusCode.c
 #  SerialStatusCode.h
-#  Debug.c
-#  Debug.h
+  Debug.c
+  Debug.h
   
 [Sources.x64]
   X64/EnterDxeCore.c
