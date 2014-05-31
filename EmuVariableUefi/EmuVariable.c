@@ -1433,15 +1433,14 @@ EmuSetVariable (
   // Check whether the input variable is already existed
   //
   
-  Status = FindVariable (VariableName, VendorGuid, &Variable, Global);
-  if (!EFI_ERROR(Status)) {
+  FindVariable (VariableName, VendorGuid, &Variable, Global);
+
   //
   // Hook the operation of setting PlatformLangCodes/PlatformLang and LangCodes/Lang
   //
-    AutoUpdateLangVariable (VariableName, Data, DataSize);
+  AutoUpdateLangVariable (VariableName, Data, DataSize);
 
-    Status = UpdateVariable (VariableName, VendorGuid, Data, DataSize, Attributes, &Variable);
-  }
+  Status = UpdateVariable (VariableName, VendorGuid, Data, DataSize, Attributes, &Variable);
 
   ReleaseLockOnlyAtBootTime (&Global->VariableServicesLock);
   return Status;
