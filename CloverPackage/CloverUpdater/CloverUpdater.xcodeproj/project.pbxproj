@@ -1,0 +1,152 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXFileReference section */
+		12F3E6E319398A29003EDD5B /* .DS_Store */ = {isa = PBXFileReference; lastKnownFileType = file; path = .DS_Store; sourceTree = "<group>"; };
+		12F3E6E419398A29003EDD5B /* build */ = {isa = PBXFileReference; lastKnownFileType = folder; path = build; sourceTree = "<group>"; };
+		12F3E6E519398A29003EDD5B /* CloverUpdater.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = CloverUpdater.strings; sourceTree = "<group>"; };
+		12F3E6E619398A29003EDD5B /* CloverUpdaterUtility */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = CloverUpdaterUtility; sourceTree = "<group>"; };
+		12F3E6E719398A29003EDD5B /* CloverUpdaterUtility.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = CloverUpdaterUtility.plist; sourceTree = "<group>"; };
+		12F3E6E819398A29003EDD5B /* install-updater.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "install-updater.sh"; sourceTree = "<group>"; };
+		12F3E6E919398A29003EDD5B /* makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = makefile; sourceTree = "<group>"; };
+		12F3E6EA19398A29003EDD5B /* src */ = {isa = PBXFileReference; lastKnownFileType = folder; path = src; sourceTree = "<group>"; };
+		12F3E6EB19398A29003EDD5B /* translate_xib.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = translate_xib.sh; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		12F3E6DD19398A29003EDD5B = {
+			isa = PBXGroup;
+			children = (
+				12F3E6E319398A29003EDD5B /* .DS_Store */,
+				12F3E6E419398A29003EDD5B /* build */,
+				12F3E6E519398A29003EDD5B /* CloverUpdater.strings */,
+				12F3E6E619398A29003EDD5B /* CloverUpdaterUtility */,
+				12F3E6E719398A29003EDD5B /* CloverUpdaterUtility.plist */,
+				12F3E6E819398A29003EDD5B /* install-updater.sh */,
+				12F3E6E919398A29003EDD5B /* makefile */,
+				12F3E6EA19398A29003EDD5B /* src */,
+				12F3E6EB19398A29003EDD5B /* translate_xib.sh */,
+			);
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXLegacyTarget section */
+		12F3E6E219398A29003EDD5B /* CloverUpdater */ = {
+			isa = PBXLegacyTarget;
+			buildArgumentsString = "$(ACTION)";
+			buildConfigurationList = 12F3E6EC19398A29003EDD5B /* Build configuration list for PBXLegacyTarget "CloverUpdater" */;
+			buildPhases = (
+			);
+			buildToolPath = /usr/bin/make;
+			buildWorkingDirectory = /Users/slice/src/edk2/Clover/CloverPackage/CloverUpdater;
+			dependencies = (
+			);
+			name = CloverUpdater;
+			passBuildSettingsInEnvironment = 1;
+			productName = CloverUpdater;
+		};
+/* End PBXLegacyTarget section */
+
+/* Begin PBXProject section */
+		12F3E6DE19398A29003EDD5B /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+			};
+			buildConfigurationList = 12F3E6E119398A29003EDD5B /* Build configuration list for PBXProject "CloverUpdater" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 12F3E6DD19398A29003EDD5B;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				12F3E6E219398A29003EDD5B /* CloverUpdater */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin XCBuildConfiguration section */
+		12F3E6DF19398A29003EDD5B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				COPY_PHASE_STRIP = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx10.6;
+			};
+			name = Debug;
+		};
+		12F3E6E019398A29003EDD5B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				COPY_PHASE_STRIP = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				SDKROOT = macosx10.6;
+			};
+			name = Release;
+		};
+		12F3E6ED19398A29003EDD5B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				DEBUGGING_SYMBOLS = YES;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = CloverUpdater;
+			};
+			name = Debug;
+		};
+		12F3E6EE19398A29003EDD5B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = CloverUpdater;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		12F3E6E119398A29003EDD5B /* Build configuration list for PBXProject "CloverUpdater" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				12F3E6DF19398A29003EDD5B /* Debug */,
+				12F3E6E019398A29003EDD5B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		12F3E6EC19398A29003EDD5B /* Build configuration list for PBXLegacyTarget "CloverUpdater" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				12F3E6ED19398A29003EDD5B /* Debug */,
+				12F3E6EE19398A29003EDD5B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 12F3E6DE19398A29003EDD5B /* Project object */;
+}

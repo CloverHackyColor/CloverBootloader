@@ -4,7 +4,7 @@ DEST_VOL="$1"
 EFI_ROOT_DIR="${2:-${DEST_VOL%*/}/EFIROOTDIR}"
 
 DiskDevice=$(LC_ALL=C diskutil info "$DEST_VOL" 2>/dev/null | \
- sed -n 's/.*Part of Whole: *//p')
+ sed -n 's/.*Part [oO]f Whole: *//p')
 if [[ -z "$DiskDevice" ]]; then
     echo "Can't find volume with the name $DEST_VOL"
     exit 1
