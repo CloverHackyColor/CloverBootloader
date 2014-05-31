@@ -429,11 +429,16 @@ GetSleepImagePosition (IN REFIT_VOLUME *Volume, REFIT_VOLUME **SleepImageVolume)
   }
 
   DBG("Reading first %d bytes of sleepimage ...\n", BufferSize);
+
   // Override disk BlockIo
   OrigBlockIoRead = ImageVolume->WholeDiskBlockIO->ReadBlocks;
   ImageVolume->WholeDiskBlockIO->ReadBlocks = OurBlockIoRead;
   gSleepImageOffset = 0; //used as temporary global variable to pass our value
   Status = File->Read(File, &BufferSize, Buffer);
+
+  // Restore original disk BlockIo
+  ImageVolume->WholeDiskBlockIO->ReadBlocks = OrigBlockIoRead;
+
   // OurBlockIoRead always returns invalid parameter in order to avoid driver caching, so that is a good value
   if (Status == EFI_INVALID_PARAMETER) {
     Status = EFI_SUCCESS;
@@ -443,9 +448,6 @@ GetSleepImagePosition (IN REFIT_VOLUME *Volume, REFIT_VOLUME **SleepImageVolume)
   // Close sleepimage
   File->Close(File);
   
-  // Return original disk BlockIo
-  ImageVolume->WholeDiskBlockIO->ReadBlocks = OrigBlockIoRead;
-
   // We don't use the buffer, as actual signature checking is being done by OurBlockIoRead
   if (Buffer) {
     FreePool(Buffer);
