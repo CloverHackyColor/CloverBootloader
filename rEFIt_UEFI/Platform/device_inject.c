@@ -32,7 +32,7 @@ UINT32 stringlength   = 0;
 
 //pci_dt_t* nvdevice;
 //SwapBytes16 or 32
-
+/*
 static UINT16 dp_swap16(UINT16 toswap)
 {
     return (((toswap & 0x00FF) << 8) | ((toswap & 0xFF00) >> 8));
@@ -45,7 +45,7 @@ static UINT32 dp_swap32(UINT32 toswap)
 	((toswap & 0x00FF0000) >> 8 ) |
 	((toswap & 0xFF000000) >> 24);
 }	
-
+*/
 
 DevPropString *devprop_create_string(VOID)
 {
@@ -224,8 +224,7 @@ BOOLEAN devprop_add_value(DevPropDevice *device, CHAR8 *nm, UINT8 *vl, UINTN len
   
   off += 4;
   
-  for(i = 0 ; i < l ; i++, off += 2)
-  {
+  for(i = 0 ; i < l ; i++, off += 2) {
     data[off] = *nm++;
   }
   
@@ -234,8 +233,7 @@ BOOLEAN devprop_add_value(DevPropDevice *device, CHAR8 *nm, UINT8 *vl, UINTN len
   datalength = (UINT32*)&data[off];
   *datalength = (UINT32)(l + 4);
   off += 4;
-  for(i = 0 ; i < l ; i++, off++)
-  {
+  for(i = 0 ; i < l ; i++, off++) {
     data[off] = *vl++;
   }
 	
@@ -244,7 +242,7 @@ BOOLEAN devprop_add_value(DevPropDevice *device, CHAR8 *nm, UINT8 *vl, UINTN len
 	newdata = (UINT8*)AllocateZeroPool((length + offset));
 	if(!newdata)
 		return FALSE;
-	if((device->data) && (offset > 1)){
+	if((device->data) && (offset > 1)) {
 			CopyMem((VOID*)newdata, (VOID*)device->data, offset);
   }
 
@@ -271,29 +269,27 @@ CHAR8 *devprop_generate_string(DevPropString *StringBuf)
 	if(!buffer)
 		return NULL;
 
-	AsciiSPrint(buffer, len, "%08x%08x%04x%04x", dp_swap32(StringBuf->length), StringBuf->WHAT2,
-              dp_swap16(StringBuf->numentries), StringBuf->WHAT3);
+	AsciiSPrint(buffer, len, "%08x%08x%04x%04x", SwapBytes32(StringBuf->length), StringBuf->WHAT2,
+              SwapBytes16(StringBuf->numentries), StringBuf->WHAT3);
 	buffer += 24;
 
-	while(i < StringBuf->numentries)
-	{
+	while(i < StringBuf->numentries) {
     UINT8 *dataptr = StringBuf->entries[i]->data;
-		AsciiSPrint(buffer, len, "%08x%04x%04x", dp_swap32(StringBuf->entries[i]->length),
-                dp_swap16(StringBuf->entries[i]->numentries), StringBuf->entries[i]->WHAT2); //FIXME: wrong buffer sizes!
+		AsciiSPrint(buffer, len, "%08x%04x%04x", SwapBytes32(StringBuf->entries[i]->length),
+                SwapBytes16(StringBuf->entries[i]->numentries), StringBuf->entries[i]->WHAT2); //FIXME: wrong buffer sizes!
 
 		buffer += 16;
 		AsciiSPrint(buffer, len, "%02x%02x%04x%08x%08x", StringBuf->entries[i]->acpi_dev_path.type,
                 StringBuf->entries[i]->acpi_dev_path.subtype,
-                dp_swap16(StringBuf->entries[i]->acpi_dev_path.length),
-                dp_swap32(StringBuf->entries[i]->acpi_dev_path._HID),
-                dp_swap32(StringBuf->entries[i]->acpi_dev_path._UID));
+                SwapBytes16(StringBuf->entries[i]->acpi_dev_path.length),
+                SwapBytes32(StringBuf->entries[i]->acpi_dev_path._HID),
+                SwapBytes32(StringBuf->entries[i]->acpi_dev_path._UID));
 
 		buffer += 24;
-		for(x = 0; x < StringBuf->entries[i]->num_pci_devpaths; x++)
-		{
+		for(x = 0; x < StringBuf->entries[i]->num_pci_devpaths; x++) {
 			AsciiSPrint(buffer, len, "%02x%02x%04x%02x%02x", StringBuf->entries[i]->pci_dev_path[x].type,
                   StringBuf->entries[i]->pci_dev_path[x].subtype,
-                  dp_swap16(StringBuf->entries[i]->pci_dev_path[x].length),
+                  SwapBytes16(StringBuf->entries[i]->pci_dev_path[x].length),
                   StringBuf->entries[i]->pci_dev_path[x].function,
                   StringBuf->entries[i]->pci_dev_path[x].device);
 			buffer += 12;
@@ -301,11 +297,10 @@ CHAR8 *devprop_generate_string(DevPropString *StringBuf)
 
 		AsciiSPrint(buffer, len, "%02x%02x%04x", StringBuf->entries[i]->path_end.type,
                 StringBuf->entries[i]->path_end.subtype,
-                dp_swap16(StringBuf->entries[i]->path_end.length));
+                SwapBytes16(StringBuf->entries[i]->path_end.length));
 
 		buffer += 8;
-		for(x = 0; x < (StringBuf->entries[i]->length) - (24 + (6 * StringBuf->entries[i]->num_pci_devpaths)); x++)
-		{
+		for(x = 0; x < (StringBuf->entries[i]->length) - (24 + (6 * StringBuf->entries[i]->num_pci_devpaths)); x++) {
 			AsciiSPrint(buffer, len, "%02x", *dataptr++);
 			buffer += 2;
 		}
@@ -320,12 +315,9 @@ VOID devprop_free_string(DevPropString *StringBuf)
 	if(!StringBuf)
 		return;
 	
-	for(i = 0; i < StringBuf->numentries; i++)
-	{
-		if(StringBuf->entries[i])
-		{
-			if(StringBuf->entries[i]->data)
-			{
+	for(i = 0; i < StringBuf->numentries; i++) {
+		if(StringBuf->entries[i]) {
+			if(StringBuf->entries[i]->data) {
 				FreePool(StringBuf->entries[i]->data);
 			}
 		}
@@ -346,8 +338,9 @@ BOOLEAN set_eth_props(pci_dt_t *eth_dev)
   CHAR8           compatible[64];
 
 
-	if (!string)
+	if (!string) {
     string = devprop_create_string();
+  }
     
   devicepath = get_pci_dev_path(eth_dev);
   //device = devprop_add_device(string, devicepath);
@@ -356,8 +349,7 @@ BOOLEAN set_eth_props(pci_dt_t *eth_dev)
     return FALSE;
 	// -------------------------------------------------
 	DBG("LAN Controller [%04x:%04x] :: %a\n", eth_dev->vendor_id, eth_dev->device_id, devicepath);
-	if (eth_dev->vendor_id != 0x168c && builtin_set == 0) 
-  {
+	if (eth_dev->vendor_id != 0x168c && builtin_set == 0) {
  		builtin_set = 1;
  		builtin = 0x01;
  	}
@@ -615,8 +607,7 @@ BOOLEAN IsHDMIAudio(EFI_HANDLE PciDevHandle)
     if (gGraphics[Index].Segment == Segment
         && gGraphics[Index].Bus == Bus
         && gGraphics[Index].Device == Device
-        )
-    {
+        ) {
       return TRUE;
     }
   }

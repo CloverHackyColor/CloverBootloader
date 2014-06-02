@@ -75,8 +75,7 @@ GetDeviceProps(IN     APPLE_GETVAR_PROTOCOL   *This,
 //  }
 
 
-  if(!gSettings.StringInjector && (mProperties != NULL) && (mPropSize > 1))
-	{
+  if(!gSettings.StringInjector && (mProperties != NULL) && (mPropSize > 1)) {
     if (*BufferSize < mPropSize) {
       *BufferSize = mPropSize;
       return EFI_BUFFER_TOO_SMALL;

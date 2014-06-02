@@ -450,7 +450,6 @@
 		12B816BA1644675800A433E7 /* device_inject.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = device_inject.h; sourceTree = "<group>"; };
 		12B816BB1644675800A433E7 /* device_tree.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = device_tree.c; sourceTree = "<group>"; };
 		12B816BC1644675800A433E7 /* device_tree.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = device_tree.h; sourceTree = "<group>"; };
-		12B816BD1644675800A433E7 /* Display.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Display.h; sourceTree = "<group>"; };
 		12B816BE1644675800A433E7 /* Events.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Events.c; sourceTree = "<group>"; };
 		12B816BF1644675800A433E7 /* FixBiosDsdt.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = FixBiosDsdt.c; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.c; };
 		12B816C01644675800A433E7 /* gma.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = gma.c; sourceTree = "<group>"; };
@@ -1755,7 +1754,6 @@
 				12B816BB1644675800A433E7 /* device_tree.c */,
 				12B816BC1644675800A433E7 /* device_tree.h */,
 				12D754701657CDE800376797 /* DevicePath.c */,
-				12B816BD1644675800A433E7 /* Display.h */,
 				12B3D27417B23032009D8170 /* Edid.c */,
 				12B816BE1644675800A433E7 /* Events.c */,
 				12B816BF1644675800A433E7 /* FixBiosDsdt.c */,

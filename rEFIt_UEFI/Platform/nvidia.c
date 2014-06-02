@@ -1904,7 +1904,7 @@ UINT64 mem_detect(UINT16 nvCardType, pci_dt_t *nvda_dev)
 		if (nvcard->VideoRam > 0) {
          // VideoRam * 1024 * 1024 == VideoRam << 20
 			vram_size = LShiftU64(nvcard->VideoRam, 20);
-			DBG("mem_detected %ld\n", vram_size);
+			DBG("mem assigned %ld\n", vram_size);
 			return vram_size;
 		}
 	}

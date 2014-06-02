@@ -17,7 +17,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		12F3E6C619398A12003EDD5B /* .DS_Store */ = {isa = PBXFileReference; lastKnownFileType = file; path = .DS_Store; sourceTree = "<group>"; };
+		12F3E6C619398A12003EDD5B /* .DS_Store */ = {isa = PBXFileReference; lastKnownFileType = text; path = .DS_Store; sourceTree = "<group>"; };
 		12F3E6C719398A12003EDD5B /* Build */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Build; sourceTree = "<group>"; };
 		12F3E6C819398A12003EDD5B /* CloverPrefpane.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = CloverPrefpane.strings; sourceTree = "<group>"; };
 		12F3E6C919398A12003EDD5B /* CloverPrefpane.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = CloverPrefpane.xcodeproj; sourceTree = "<group>"; };
@@ -78,8 +78,6 @@
 /* Begin PBXProject section */
 		12F3E6C119398A12003EDD5B /* Project object */ = {
 			isa = PBXProject;
-			attributes = {
-			};
 			buildConfigurationList = 12F3E6C419398A12003EDD5B /* Build configuration list for PBXProject "CloverPrefpane 2" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;

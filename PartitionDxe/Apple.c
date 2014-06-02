@@ -102,30 +102,26 @@ PartitionInstallAppleChildHandles (
                        BlockSize,
                        Block
                        );
-      if (EFI_ERROR (Status))
-      {
+      if (EFI_ERROR (Status)) {
           Found = Status;
           break;
       }
 
       Header = (APPLE_PT_HEADER *)Block;
-      if (SwapBytes16(Header->sbSig) != 0x4552)
-      {
+      if (SwapBytes16(Header->sbSig) != 0x4552) {
           break;
       }
       SubBlockSize = SwapBytes16(Header->sbBlkSize);
       BlkPerSec    = BlockSize / SubBlockSize;
 
       /* Fail if media block size isn't an exact multiple */
-      if (BlockSize != SubBlockSize * BlkPerSec)
-      {
+      if (BlockSize != SubBlockSize * BlkPerSec) {
           break;
       }
 
       /* Now iterate over PT entries and install child handles */
       PartitionEntries = 1;
-      for (Partition = 1; Partition <= PartitionEntries; Partition++)
-      {
+      for (Partition = 1; Partition <= PartitionEntries; Partition++) {
           APPLE_PT_ENTRY * Entry;
           UINT32 StartLba;
           UINT32 SizeLbs;
@@ -145,15 +141,13 @@ PartitionInstallAppleChildHandles (
 
           Entry = (APPLE_PT_ENTRY *)Block;
 
-          if (SwapBytes16(Entry->signature) != 0x504D)
-          {
+          if (SwapBytes16(Entry->signature) != 0x504D) {
               Print(L"Not a new PT entry: %x", Entry->signature);
               continue;
           }
 
           /* First partition contains partitions count */
-          if (Partition == 1)
-          {
+          if (Partition == 1) {
              PartitionEntries  = SwapBytes32(Entry->map_entries);
           }
 

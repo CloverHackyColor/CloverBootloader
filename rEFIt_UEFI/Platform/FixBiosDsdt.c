@@ -6,7 +6,6 @@
 // NForce additions by Oscar09, 2013
 
 #include "StateGenerator.h"
-#include "Display.h"
 #include <IndustryStandard/PciCommand.h>
 
 #ifdef DBG
