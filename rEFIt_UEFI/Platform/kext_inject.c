@@ -239,9 +239,9 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
 	} else if (Arch != NULL && StrnCmp(Arch,L"i386",StrLen(L"i386")) == 0) {
 		archCpuType = CPU_TYPE_I386;
 	} else if (Entry->OSVersion != NULL && AsciiStrnCmp(Entry->OSVersion,"10.",3) == 0) {
-		if (Entry->OSVersion[3] >= '8') {
+		if ((Entry->OSVersion[3] >= '8') || (Entry->OSVersion[3] == '1')) {  //assume 10.10 - 10.19
 			archCpuType = CPU_TYPE_X86_64; // For >= 10.8, only x86_64 exists
-		} else if (Entry->OSVersion[3] >= '0' && Entry->OSVersion[3] <= '6') {
+		} else if (Entry->OSVersion[3] >= '3' && Entry->OSVersion[3] <= '6') {
 			archCpuType = CPU_TYPE_I386; // For <= 10.6, use default of i386
 		}
 	}

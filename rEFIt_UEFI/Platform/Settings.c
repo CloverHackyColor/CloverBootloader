@@ -4426,6 +4426,9 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
           if (AsciiStrStr(prop->string, "Install%20OS%20X%20Mavericks.app")) {
             OSVersion = AllocateZeroPool(5);
             UnicodeStrToAsciiStr(L"10.9", OSVersion);
+          } else if (AsciiStrStr(prop->string, "Install%20OS%20X%20Yosemite.app")) { //xxx
+            OSVersion = AllocateZeroPool(6);
+            UnicodeStrToAsciiStr(L"10.10", OSVersion);
           } else if (AsciiStrStr(prop->string, "Install%20OS%20X%20Mountain%20Lion.app")) {
             OSVersion = AllocateZeroPool(5);
             UnicodeStrToAsciiStr(L"10.8", OSVersion);
@@ -4485,6 +4488,9 @@ CHAR16 *GetOSIconName(IN CHAR8 *OSVersion)
   } else if (AsciiStrStr(OSVersion, "10.9") != 0) {
     // Mavericks
     OSIconName = L"mav,mac";
+  } else if (AsciiStrStr(OSVersion, "10.10") != 0) {
+    // Yosemite
+    OSIconName = L"yos,mac";
   } else {
     OSIconName = L"mac";
   }
@@ -4948,8 +4954,8 @@ CHAR16* GetExtraKextsDir(CHAR8 *OSVersion)
   CHAR8   FixedVersion[6] = "Other";
 
   if (OSVersion != NULL) {
-    AsciiStrnCpy(FixedVersion, OSVersion, 4);
-    FixedVersion[4] = 0;
+    AsciiStrnCpy(FixedVersion, OSVersion, AsciiStrLen(OSVersion));
+    FixedVersion[AsciiStrLen(OSVersion)] = 0;
   }
   
   //MsgLog("OS=%s\n", OSTypeStr);

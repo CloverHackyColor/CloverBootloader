@@ -672,7 +672,9 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
   }
 
   // Only kernels up to 10.7 have 32-bit mode
-  KernelIs64BitOnly = (Entry->OSVersion == NULL || AsciiStrnCmp(Entry->OSVersion,"10.",3) != 0 || Entry->OSVersion[3] > '7');
+  KernelIs64BitOnly = (Entry->OSVersion == NULL ||
+                       (Entry->OSVersion[3] > '7') ||
+                       (Entry->OSVersion[3] == '1'));
   
   FileName = Basename(Entry->LoaderPath);
   

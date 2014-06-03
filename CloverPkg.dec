@@ -84,7 +84,7 @@
 #
 ################################################################################
 [PcdsFixedAtBuild]
-  gEfiMdeModulePkgTokenSpaceGuid.PcdSmbiosVersion|0x0206|UINT32|0x10010001
+  gEfiMdeModulePkgTokenSpaceGuid.PcdSmbiosVersion|0x0204|UINT32|0x10010001
   gEfiMdeModulePkgTokenSpaceGuid.PcdHelloWorldPrintString|L"UEFI Hello Clover!\n"|VOID*|0x10010002
   gEfiMdeModulePkgTokenSpaceGuid.PcdFirmwareVendor|L"CLOVER"|VOID*|0x10010003
   gEfiMdeModulePkgTokenSpaceGuid.PcdFirmwareRevision|0x00010010|UINT32|0x10010004

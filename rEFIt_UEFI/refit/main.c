@@ -691,15 +691,18 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
         InstallerVersion = SearchString(LoadedImage->ImageBase, LoadedImage->ImageSize, "Mac OS X ", 9);
         if (InstallerVersion != NULL) { // string was found
           InstallerVersion += 9; // advance to version location
-          if (AsciiStrnCmp(InstallerVersion, "10.7", 4) && AsciiStrnCmp(InstallerVersion, "10.8", 4) && AsciiStrnCmp(InstallerVersion, "10.9", 4)) {
+          if (AsciiStrnCmp(InstallerVersion, "10.7", 4) &&
+              AsciiStrnCmp(InstallerVersion, "10.8", 4) &&
+              AsciiStrnCmp(InstallerVersion, "10.9", 4) &&
+              AsciiStrnCmp(InstallerVersion, "10.10", 4)) {   //xxx
             InstallerVersion = NULL; // flag known version was not found
           }
           if (InstallerVersion != NULL) { // known version was found in image
             if (Entry->OSVersion != NULL) {
               FreePool(Entry->OSVersion);
             }
-            Entry->OSVersion = AllocateCopyPool(5, InstallerVersion);
-            Entry->OSVersion[4] = '\0';
+            Entry->OSVersion = AllocateCopyPool(AsciiStrLen(InstallerVersion)+1, InstallerVersion);
+            Entry->OSVersion[AsciiStrLen(InstallerVersion)] = '\0';
             DBG("Corrected OSVersion: %a\n", Entry->OSVersion);
           }
         }
