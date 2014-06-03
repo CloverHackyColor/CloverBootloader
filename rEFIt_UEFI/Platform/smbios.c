@@ -86,40 +86,40 @@ UINT8 gRAMCount = 0;
 
 
 /* Functions */
+
+// validate the SMBIOS entry point structure
+BOOLEAN IsEntryPointStructureValid (IN SMBIOS_TABLE_ENTRY_POINT *EntryPointStructure)
+{
+  UINTN                     Index;
+  UINT8                     Length;
+  UINT8                     Checksum = 0;
+  UINT8                     *BytePtr;
+
+  if (!EntryPointStructure)
+    return FALSE;
+
+  BytePtr = (UINT8*) EntryPointStructure;
+  Length = EntryPointStructure->EntryPointLength;
+
+  for (Index = 0; Index < Length; Index++) {
+    Checksum = Checksum + (UINT8) BytePtr[Index];
+  }
+
+  // a valid SMBIOS EPS must have checksum of 0
+  return (Checksum == 0);
+}
+
 VOID* FindOemSMBIOSPtr (VOID)
 {
 	UINTN      Address;	
 
 	// Search 0x0f0000 - 0x0fffff for SMBIOS Ptr
 	for (Address = 0xf0000; Address < 0xfffff; Address += 0x10) {
-		if (*(UINT32 *)(Address) == SMBIOS_PTR) {
+		if (*(UINT32 *)(Address) == SMBIOS_PTR && IsEntryPointStructureValid((SMBIOS_TABLE_ENTRY_POINT*)Address)) {
 			return (VOID *)Address;
 		}
 	}
 	return NULL;
-}
-// this function determine ascii string length ending by space. 
-// search restricted to MaxLen, for example
-// iStrLen("ABC    ", 20) == 3
-UINTN iStrLen(CHAR8* String, UINTN MaxLen)
-{
-	UINTN	Len = 0;
-	CHAR8*	BA;
-	if(MaxLen > 0){
-		for (Len=0; Len<MaxLen; Len++) {
-			if (String[Len] == 0) {
-				break;
-			}
-		}
-		BA = &String[Len - 1];
-		while ((Len != 0) && ((*BA == ' ') || (*BA == 0))) {
-			BA--; Len--;
-		}
-	} else {
-		BA = String;
-		while(*BA){BA++; Len++;}
-	}
-	return Len;
 }
 
 VOID* GetSmbiosTablesFromHob (VOID)
@@ -137,8 +137,7 @@ VOID* GetSmbiosTablesFromHob (VOID)
 	return NULL;
 }
 
-VOID *
-GetSmbiosTablesFromConfigTables (VOID)
+VOID* GetSmbiosTablesFromConfigTables (VOID)
 {
 	EFI_STATUS              Status;
 	EFI_PHYSICAL_ADDRESS    *Table;
@@ -149,6 +148,30 @@ GetSmbiosTablesFromConfigTables (VOID)
 	}
 	
 	return Table;
+}
+
+// This function determines ascii string length ending by space. 
+// search restricted to MaxLen, for example
+// iStrLen("ABC    ", 20) == 3
+UINTN iStrLen(CHAR8* String, UINTN MaxLen)
+{
+	UINTN	Len = 0;
+	CHAR8*	BA;
+	if(MaxLen > 0) {
+		for (Len=0; Len<MaxLen; Len++) {
+			if (String[Len] == 0) {
+				break;
+			}
+		}
+		BA = &String[Len - 1];
+		while ((Len != 0) && ((*BA == ' ') || (*BA == 0))) {
+			BA--; Len--;
+		}
+	} else {
+		BA = String;
+		while(*BA){BA++; Len++;}
+	}
+	return Len;
 }
 
 
@@ -1796,11 +1819,11 @@ EFI_STATUS PrepatchSmbios()
 			// this should work on any UEFI
 			Smbios = GetSmbiosTablesFromConfigTables();
 //			DBG("ConfigTables SMBIOS EPS=%p\n", Smbios);
-		if (!Smbios) {
+			if (!Smbios) {
 //				DBG("And here SMBIOS System Table not found! Exiting...\n");
-			return EFI_NOT_FOUND;
-		}		
-	}
+				return EFI_NOT_FOUND;
+			}		
+		}
 	}
 	
 	//original EPS and tables
