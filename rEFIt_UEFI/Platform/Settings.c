@@ -4952,10 +4952,17 @@ CHAR16* GetExtraKextsDir(CHAR8 *OSVersion)
 {
   CHAR16 *SrcDir = NULL;
   CHAR8   FixedVersion[6] = "Other";
+  CHAR8  *DotPtr;
 
   if (OSVersion != NULL) {
-    AsciiStrnCpy(FixedVersion, OSVersion, AsciiStrLen(OSVersion));
-    FixedVersion[AsciiStrLen(OSVersion)] = 0;
+    AsciiStrnCpy(FixedVersion, OSVersion, 5);
+    // OSVersion may contain minor version too (can be 10.x or 10.x.y)
+    if ((DotPtr = AsciiStrStr(FixedVersion, ".")) != NULL) {
+      DotPtr = AsciiStrStr(DotPtr+1, "."); // second dot
+    }
+    if (DotPtr != NULL) {
+      *DotPtr = 0;
+    }
   }
   
   //MsgLog("OS=%s\n", OSTypeStr);
