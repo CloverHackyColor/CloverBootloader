@@ -445,12 +445,14 @@ UINT8   KBELionReplace_X64[]   = { 0xE8, 0x0C, 0xFD, 0xFF, 0xFF, 0x90, 0x90, 0x4
 UINT8   KBEMLSearch[]  = { 0xC6, 0xE8, 0x30, 0x00, 0x00, 0x00, 0xEB, 0x08, 0x48, 0x89, 0xDF };
 UINT8   KBEMLReplace[] = { 0xC6, 0xE8, 0x30, 0x00, 0x00, 0x00, 0x90, 0x90, 0x48, 0x89, 0xDF };
 
-
+//0xE8, 0x27, 0x00, 0x00, 0x00, 0xEB, 0x08, 0x48, 0x89, 0xDF }; @1ecfa4
+UINT8   KBEYosSearch[]  = {0xE8, 0x27, 0x00, 0x00, 0x00, 0xEB, 0x08, 0x48, 0x89, 0xDF };
+UINT8   KBEYosReplace[]  = {0xE8, 0x27, 0x00, 0x00, 0x00, 0x90, 0x90, 0x48, 0x89, 0xDF };
 
 //
 // We can not rely on OSVersion global variable for OS version detection,
 // since in some cases it is not correct (install of ML from Lion, for example).
-// So, we'll use "brute-force" method - just try to pacth.
+// So, we'll use "brute-force" method - just try to patch.
 // Actually, we'll at least check that if we can find only one instance of code that
 // we are planning to patch.
 //
@@ -465,19 +467,21 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel)
   UINTN   NumLion_X64 = 0;
   UINTN   NumLion_i386 = 0;
   UINTN   NumML = 0;
+  UINTN   NumYos = 0;
 
   DBG_RT("\nPatching kernel for injected kexts\n");
 
   if (is64BitKernel) {
     NumLion_X64 = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBELionSearch_X64, sizeof(KBELionSearch_X64));
     NumSnow_X64 = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBESnowSearch_X64, sizeof(KBESnowSearch_X64));
-    NumML = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBEMLSearch, sizeof(KBEMLSearch));
+    NumML  = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBEMLSearch, sizeof(KBEMLSearch));
+    NumYos = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBEYosSearch, sizeof(KBEYosSearch));
   } else {
     NumLion_i386 = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBELionSearch_i386, sizeof(KBELionSearch_i386));
     NumSnow_i386 = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBESnowSearch_i386, sizeof(KBESnowSearch_i386));
   }
 
-  if (NumSnow_X64 + NumSnow_i386 + NumLion_X64 + NumLion_i386 + NumML > 1) {
+  if (NumSnow_X64 + NumSnow_i386 + NumLion_X64 + NumLion_i386 + NumML + NumYos > 1) {
     // more then one pattern found - we do not know what to do with it
     // and we'll skipp it
 	  AsciiPrint("\nERROR patching kernel for injected kexts:\nmultiple patterns found (LionX64: %d, Lioni386: %d, ML: %d) - skipping patching!\n",
@@ -489,6 +493,10 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel)
   if (NumML == 1) {
     Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEMLSearch, sizeof(KBEMLSearch), KBEMLReplace, 1);
     DBG_RT("==> kernel OS X64: %d replaces done.\n", Num);
+  }
+  else if (NumYos == 1) {
+	  Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEYosSearch, sizeof(KBEYosSearch), KBEYosReplace, 1);
+    DBG_RT("==> kernel Yosemite: %d replaces done.\n", Num);
   }
   else if (NumLion_i386 == 1) {
 	  Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBELionSearch_i386, sizeof(KBELionSearch_i386), KBELionReplace_i386, 1);
