@@ -4426,7 +4426,7 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
           if (AsciiStrStr(prop->string, "Install%20OS%20X%20Mavericks.app")) {
             OSVersion = AllocateZeroPool(5);
             UnicodeStrToAsciiStr(L"10.9", OSVersion);
-          } else if (AsciiStrStr(prop->string, "Install%20OS%20X%20Yosemite.app")) { //xxx
+          } else if (AsciiStrStr(prop->string, "Install%20OS%20X%20Yosemite") || AsciiStrStr(prop->string, "Install%20OS%20X%2010.10")) {
             OSVersion = AllocateZeroPool(6);
             UnicodeStrToAsciiStr(L"10.10", OSVersion);
           } else if (AsciiStrStr(prop->string, "Install%20OS%20X%20Mountain%20Lion.app")) {
