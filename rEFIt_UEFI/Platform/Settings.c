@@ -3997,7 +3997,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
         if (prop->type == kTagTypeInteger) {
           gSettings.CpuType = (UINT16)(UINTN)prop->string;
         } else if (prop->type == kTagTypeString){
-          gSettings.CpuType = (UINT16)AsciiStrDecimalToUintn(prop->string);
+          gSettings.CpuType = (UINT16)AsciiStrHexToUintn(prop->string);
         }
         DBG("Config set CpuType=%x\n", gSettings.CpuType);
       }
@@ -4051,7 +4051,11 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
         if (prop->type == kTagTypeInteger) {
           gSettings.C3Latency = (UINT16)(UINTN)prop->string;
         } else if (prop->type == kTagTypeString){
-          gSettings.C3Latency = (UINT16)AsciiStrDecimalToUintn(prop->string);
+          if ((prop->string[1] == 'x') || (prop->string[1] == 'X')) {
+            gSettings.C3Latency = (UINT16)AsciiStrHexToUintn(prop->string);
+          } else {
+            gSettings.C3Latency = (UINT16)AsciiStrDecimalToUintn(prop->string);
+          }
         }
       }
     }
@@ -4429,10 +4433,10 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
           } else if (AsciiStrStr(prop->string, "Install%20OS%20X%20Yosemite") || AsciiStrStr(prop->string, "Install%20OS%20X%2010.10")) {
             OSVersion = AllocateZeroPool(6);
             UnicodeStrToAsciiStr(L"10.10", OSVersion);
-          } else if (AsciiStrStr(prop->string, "Install%20OS%20X%20Mountain%20Lion.app")) {
+          } else if (AsciiStrStr(prop->string, "Install%20OS%20X%20Mountain%20Lion")) {
             OSVersion = AllocateZeroPool(5);
             UnicodeStrToAsciiStr(L"10.8", OSVersion);
-          } else if (AsciiStrStr(prop->string, "Install%20Mac%20OS%20X%20Lion.app")) {
+          } else if (AsciiStrStr(prop->string, "Install%20Mac%20OS%20X%20Lion")) {
             OSVersion = AllocateZeroPool(5);
             UnicodeStrToAsciiStr(L"10.7", OSVersion);
           }
