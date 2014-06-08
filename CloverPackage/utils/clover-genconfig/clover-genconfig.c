@@ -466,6 +466,7 @@ void PrintConfig(CFTypeRef data)
   addInteger(cpuDict, CFSTR("FrequencyMHz"), s->CpuFreqMHz);
   addInteger(cpuDict, CFSTR("BusSpeedkHz"), s->BusSpeed);
   addInteger(cpuDict, CFSTR("QPI"), s->QPI);
+  addInteger(cpuDict, CFSTR("SavingMode"), s->SavingMode);
   // these values read only
   addInteger(cpuDict, CFSTR("EnabledCores"), s->EnabledCores);
   addBoolean(cpuDict, CFSTR("C2"), s->EnableC2);  

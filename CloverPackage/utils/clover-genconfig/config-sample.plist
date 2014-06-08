@@ -245,6 +245,8 @@
 		<integer>4800</integer>
 		<key>Type</key>
 		<string>0x0201</string>
+		<key>SavingMode</key>
+		<integer>7</integer>
 	</dict>
 	<key>Devices</key>
 	<dict>

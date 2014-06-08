@@ -194,8 +194,8 @@ VOID GetCPUProperties (VOID)
   gCPUStructure.Turbo = FALSE;
   if (gCPUStructure.Vendor == CPU_VENDOR_INTEL) {
     // Determine turbo boost support
-    DoCpuid(6, reg);
-    gCPUStructure.Turbo = ((reg[EAX] & (1 << 1)) != 0);
+    DoCpuid(6, gCPUStructure.CPUID[CPUID_6]);
+    gCPUStructure.Turbo = ((gCPUStructure.CPUID[CPUID_6][EAX] & (1 << 1)) != 0);
     DBG("The CPU%a supported turbo\n", gCPUStructure.Turbo?"":" not"); 
     switch (gCPUStructure.Model)
     {
@@ -363,7 +363,7 @@ VOID GetCPUProperties (VOID)
             MsgLog("MSR 0xE4              %08x\n", msr);
             //------------
             msr = AsmReadMsr64(MSR_PLATFORM_INFO);       //0xCE  
-            MsgLog("MSR 0xCE              %08x\n", msr);
+            MsgLog("MSR 0xCE              %08x_%08x\n", (msr>>32), msr);
             gCPUStructure.MaxRatio = (UINT8)RShiftU64(msr, 8) & 0xff;
             gCPUStructure.MinRatio = (UINT8)MultU64x32(RShiftU64(msr, 40) & 0xff, 10);
             msr = AsmReadMsr64(MSR_FLEX_RATIO);   //0x194
@@ -381,6 +381,10 @@ VOID GetCPUProperties (VOID)
                 if(gCPUStructure.BusRatioMax > flex_ratio) 
                   gCPUStructure.BusRatioMax = (UINT8)flex_ratio;
               }*/
+            }
+            if ((gCPUStructure.CPUID[CPUID_6][ECX] & (1 << 3)) != 0) {
+              msr = AsmReadMsr64(IA32_ENERGY_PERF_BIAS); //0x1B0
+              MsgLog("MSR 0x1B0             %08x\n", msr);
             }
             
             if(gCPUStructure.MaxRatio) {
@@ -620,6 +624,21 @@ VOID GetCPUProperties (VOID)
 //#endif	
 
 //	return;
+}
+
+VOID SetCPUProperties (VOID)
+{
+	UINT64		msr = 0;
+
+  if ((gCPUStructure.CPUID[CPUID_6][ECX] & (1 << 3)) != 0) {
+    if (gSettings.SavingMode != 0xFF) {
+      msr = gSettings.SavingMode;
+      AsmWriteMsr64(IA32_ENERGY_PERF_BIAS, msr);
+      msr = AsmReadMsr64(IA32_ENERGY_PERF_BIAS); //0x1B0
+      MsgLog("MSR 0x1B0   set to        %08x\n", msr);
+    }
+  }
+
 }
 
 //PCI info

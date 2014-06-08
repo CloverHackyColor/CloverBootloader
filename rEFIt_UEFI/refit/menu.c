@@ -125,7 +125,7 @@ static EG_IMAGE *TextBuffer = NULL;
 
 EG_PIXEL SelectionBackgroundPixel = { 0xef, 0xef, 0xef, 0xff }; //non-trasparent
 
-static INTN row0TileSize = 144;
+INTN row0TileSize = 144;
 
 static INTN row0Count, row0PosX, row0PosXRunning;
 static INTN row1Count, row1PosX, row1PosXRunning;
@@ -352,12 +352,10 @@ VOID RefillInputs(VOID)
   InputItems[InputItemsCount++].SValue = PoolPrint(L"0x%04x", gSettings.C3Latency);
   InputItems[InputItemsCount].ItemType = Decimal;  //76
   InputItems[InputItemsCount++].SValue = PoolPrint(L"%d", gSettings.EnabledCores);
-  /*
-  InputItems[InputItemsCount].ItemType = BoolValue; //77
-  InputItems[InputItemsCount].BValue   = gSettings.bDropDMAR;
-  InputItems[InputItemsCount++].SValue = gSettings.bDropDMAR?L"[+]":L"[ ]";
-  */
-  InputItemsCount = 78;
+  InputItems[InputItemsCount].ItemType = Decimal;  //77
+  InputItems[InputItemsCount++].SValue = PoolPrint(L"%d", gSettings.SavingMode);
+
+//  InputItemsCount = 78;
   InputItems[InputItemsCount].ItemType = ASString;  //78
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%a", gSettings.ProductName);
   InputItems[InputItemsCount].ItemType = ASString;  //79
@@ -643,12 +641,10 @@ VOID FillInputs(VOID)
   InputItems[InputItemsCount++].SValue = PoolPrint(L"0x%04x", gSettings.C3Latency);
   InputItems[InputItemsCount].ItemType = Decimal;  //76
   InputItems[InputItemsCount++].SValue = PoolPrint(L"%02d", gSettings.EnabledCores);
-  /*
-  InputItems[InputItemsCount].ItemType = BoolValue; //77
-  InputItems[InputItemsCount].BValue   = gSettings.bDropDMAR;
-  InputItems[InputItemsCount++].SValue = gSettings.bDropDMAR?L"[+]":L"[ ]";
-  */
-  InputItemsCount = 78;
+  InputItems[InputItemsCount].ItemType = Decimal;  //77
+  InputItems[InputItemsCount++].SValue = PoolPrint(L"%d", gSettings.SavingMode);
+
+//  InputItemsCount = 78;
   InputItems[InputItemsCount].ItemType = ASString;  //78
   InputItems[InputItemsCount].SValue = AllocateZeroPool(64);
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%a", gSettings.ProductName);
@@ -1010,13 +1006,12 @@ VOID ApplyInputs(VOID)
   if (InputItems[i].Valid) {
     gSettings.EnabledCores = (UINT8)StrDecimalToUintn(InputItems[i].SValue);
   }
-  /*
   i++; //77
   if (InputItems[i].Valid) {
-    gSettings.bDropDMAR = InputItems[i].BValue;
+    gSettings.SavingMode = (UINT8)StrDecimalToUintn(InputItems[i].SValue);
   }
-  */
-  i=78; //78
+
+  i++; //78
   if (InputItems[i].Valid) {
     AsciiSPrint(gSettings.ProductName, 64, "%s", InputItems[i].SValue);
     // let's fill all other fields based on this ProductName
@@ -1204,81 +1199,7 @@ VOID FreeItems(VOID)
 //
 // Graphics helper functions
 //
-/*
-static VOID InitSelection(VOID)
-{
-  UINTN       x, y, src_x, src_y;
-  EG_PIXEL    *DestPtr, *SrcPtr;
-  UINTN        Row0TileSize = GlobalConfig.MainEntriesSize + 16;
-  
-  if (!AllowGraphicsMode)
-    return;
-  SelectionBackgroundPixel.r = (GlobalConfig.SelectionColor >> 24) & 0xFF;
-  SelectionBackgroundPixel.g = (GlobalConfig.SelectionColor >> 16) & 0xFF;
-  SelectionBackgroundPixel.b = (GlobalConfig.SelectionColor >> 8) & 0xFF;
-  SelectionBackgroundPixel.a = (GlobalConfig.SelectionColor >> 0) & 0xFF;
-  if (SelectionImages[0] != NULL)
-    return;
-  // load small selection image
-  if (GlobalConfig.SelectionSmallFileName != NULL){
-    SelectionImages[2] = egLoadImage(ThemeDir, GlobalConfig.SelectionSmallFileName, FALSE);
-  }
-  if (SelectionImages[2] == NULL){
-    SelectionImages[2] = egPrepareEmbeddedImage(&egemb_back_selected_small, FALSE);
-  }
-  SelectionImages[2] = egEnsureImageSize(SelectionImages[2],
-                                         ROW1_TILESIZE, ROW1_TILESIZE, &MenuBackgroundPixel);
-  if (SelectionImages[2] == NULL)
-    return;
-  // load big selection image
-  if (GlobalConfig.SelectionBigFileName != NULL) {
-    SelectionImages[0] = egLoadImage(ThemeDir, GlobalConfig.SelectionBigFileName, FALSE);
-    SelectionImages[0] = egEnsureImageSize(SelectionImages[0],
-                                           ROW0_TILESIZE, ROW0_TILESIZE,
-                                           &MenuBackgroundPixel);
-  }
-  if (SelectionImages[0] == NULL) {
-//    // calculate big selection image from small one
-    SelectionImages[0] = egCreateImage(Row0TileSize, Row0TileSize, FALSE);
-    if (SelectionImages[0] == NULL) {
-      egFreeImage(SelectionImages[2]);
-      SelectionImages[2] = NULL;
-      return;
-    }
-    if (GlobalConfig.SelectionOnTop) {
-      SelectionImages[0]->HasAlpha = TRUE;
-      SelectionImages[2]->HasAlpha = TRUE;
-    }
-    DestPtr = SelectionImages[0]->PixelData;
-    SrcPtr  = SelectionImages[2]->PixelData;
-    for (y = 0; y < Row0TileSize; y++) {
-      if (y < (ROW1_TILESIZE >> 1))
-        src_y = y;
-      else if (y < (Row0TileSize - (ROW1_TILESIZE >> 1)))
-        src_y = (ROW1_TILESIZE >> 1);
-      else
-        src_y = y - (Row0TileSize - ROW1_TILESIZE);
-      
-      for (x = 0; x < Row0TileSize; x++) {
-        if (x < (ROW1_TILESIZE >> 1))
-          src_x = x;
-        else if (x < (Row0TileSize - (ROW1_TILESIZE >> 1)))
-          src_x = (ROW1_TILESIZE >> 1);
-        else
-          src_x = x - (Row0TileSize - ROW1_TILESIZE);
-        
-        *DestPtr++ = SrcPtr[src_y * ROW1_TILESIZE + src_x];
-      }
-    }
-  }
-  // non-selected background images
-  //TODO FALSE -> TRUE
-  SelectionImages[1] = egCreateFilledImage(ROW0_TILESIZE, ROW0_TILESIZE,
-                                           TRUE, &MenuBackgroundPixel);
-  SelectionImages[3] = egCreateFilledImage(ROW1_TILESIZE, ROW1_TILESIZE,
-                                           TRUE, &MenuBackgroundPixel);
-}
- */
+
 static VOID InitSelection(VOID)
 {
 
@@ -3269,7 +3190,17 @@ REFIT_MENU_ENTRY  *SubMenuSpeedStep()
   InputBootArgs->Entry.AtDoubleClick = ActionEnter;
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
   
-  //15   
+  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  InputBootArgs->Entry.Title = PoolPrint(L"Saving Mode:");
+  InputBootArgs->Entry.Tag = TAG_INPUT;
+  InputBootArgs->Entry.Row = StrLen(InputItems[77].SValue); //cursor
+  InputBootArgs->Entry.ShortcutLetter = 'V';
+  InputBootArgs->Item = &InputItems[77];
+  InputBootArgs->Entry.AtClick = ActionSelect;
+  InputBootArgs->Entry.AtDoubleClick = ActionEnter;
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+
+  //15
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
   InputBootArgs->Entry.Title = PoolPrint(L"PatchAPIC:");
   InputBootArgs->Entry.Tag = TAG_INPUT;
@@ -3279,8 +3210,7 @@ REFIT_MENU_ENTRY  *SubMenuSpeedStep()
   InputBootArgs->Entry.AtClick = ActionEnter;
   InputBootArgs->Entry.AtRightClick = ActionDetails;
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-  
-  
+    
   AddMenuEntry(SubScreen, &MenuEntryReturn);
   Entry->SubScreen = SubScreen;                
   return Entry;

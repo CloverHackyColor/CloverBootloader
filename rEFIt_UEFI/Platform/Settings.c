@@ -49,7 +49,7 @@ UINT16                          dropDSM;
 
 extern MEM_STRUCTURE            gRAM;
 extern BOOLEAN                  NeedPMfix;
-extern INTN                     row0TileSize;
+
 
 GUI_ANIME *GuiAnime = NULL;
 
@@ -4066,6 +4066,21 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
           }
         }
       }
+
+      gSettings.SavingMode = 0xFF; //the default value means not set
+      prop = GetProperty(dictPointer, "SavingMode");
+      if(prop) {
+        if (prop->type == kTagTypeInteger) {
+          gSettings.SavingMode = (UINT8)(UINTN)prop->string;
+        } else if (prop->type == kTagTypeString){
+          if ((prop->string[1] == 'x') || (prop->string[1] == 'X')) {
+            gSettings.SavingMode = (UINT8)AsciiStrHexToUintn(prop->string);
+          } else {
+            gSettings.SavingMode = (UINT8)AsciiStrDecimalToUintn(prop->string);
+          }
+        }
+      }
+
     }
 
     // KernelAndKextPatches

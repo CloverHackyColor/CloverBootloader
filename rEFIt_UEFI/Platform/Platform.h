@@ -410,10 +410,12 @@ MSR C001006B  0000-0000-0000-0000
 #define CPUID_2		2 
 #define CPUID_3		3 
 #define CPUID_4		4 
-#define CPUID_80	5 
-#define CPUID_81	6
-#define CPUID_87  7
-#define CPUID_88  8
+#define CPUID_5		5
+#define CPUID_6		6
+#define CPUID_80	7
+#define CPUID_81	8
+#define CPUID_87  9
+#define CPUID_88  10
 #define CPUID_MAX	16
 
 /* CPU Cache */
@@ -850,7 +852,7 @@ typedef struct {
 	BOOLEAN	smartUPS;
   BOOLEAN PatchNMI;
   BOOLEAN EnableC7;
-  UINT8   pad3[1];
+  UINT8   SavingMode;
   
 	CHAR16	DsdtName[60];
   UINT32  FixDsdt;
@@ -1584,6 +1586,7 @@ EFI_STATUS  FixOwnership(VOID);
 UINT8		    *Base64Decode(IN CHAR8 *EncodedData, OUT UINTN *DecodedSize);
 
 UINT64      TimeDiff(UINT64 t0, UINT64 t1);
+VOID        SetCPUProperties (VOID);
 
 
 //

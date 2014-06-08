@@ -582,6 +582,7 @@ EFI_STATUS InitializeUnicodeCollationProtocol (VOID);
 extern INTN FontWidth;
 extern INTN FontHeight;
 extern INTN TextHeight;
+extern INTN row0TileSize;
 
 extern INTN LayoutBannerOffset;
 extern INTN LayoutButtonOffset;

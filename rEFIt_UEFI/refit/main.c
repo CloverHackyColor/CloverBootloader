@@ -759,6 +759,8 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     FinalizeSmbios();
 //    DBG("SetupDataForOSX\n");
     SetupDataForOSX();
+
+    SetCPUProperties();
     
     if (OSFLAG_ISSET(Entry->Flags, OSFLAG_HIBERNATED)) {
       DoHibernateWake = PrepareHibernation(Entry->Volume);
