@@ -157,12 +157,6 @@ EFI_STATUS SetVariablesForOSX()
   // some NVRAM variables
   //
   
-  //  gIOHibernateBoot0082Key = OSSymbol::withCString("8BE4DF61-93CA-11D2-AA0D-00E098032B8C:Boot0082");
-  //			uint16_t bits = 0x0082;
-  //  gIOHibernateBootNextData = OSData::withBytes(&bits, sizeof(bits));
-  //  gIOHibernateBoot0082Data <- "boot-device-path"  
-
-  
 	Status = gRS->SetVariable(L"BackgroundClear", &gEfiAppleNvramGuid,
                                          /*	EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                                          sizeof(BackgroundClear), &BackgroundClear);
@@ -174,19 +168,24 @@ EFI_STATUS SetVariablesForOSX()
                                          sizeof(FwFeaturesMask), &FwFeaturesMask);
 
 // should set anyway  
-    Status = gRS->SetVariable(L"MLB", &gEfiAppleNvramGuid,
-                              /*	EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-                              AsciiStrLen(gSettings.RtMLB), gSettings.RtMLB);
+  Status = gRS->SetVariable(L"MLB", &gEfiAppleNvramGuid,
+                            /*	EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                            AsciiStrLen(gSettings.RtMLB), gSettings.RtMLB);
  
-    Status = gRS->SetVariable(L"ROM", &gEfiAppleNvramGuid,
-                              /*	EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-                              gSettings.RtROMLen, gSettings.RtROM);
+  Status = gRS->SetVariable(L"ROM", &gEfiAppleNvramGuid,
+                            /*	EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                            gSettings.RtROMLen, gSettings.RtROM);
   
-    Status = gRS->SetVariable(L"system-id", &gEfiAppleNvramGuid,
+  Status = gRS->SetVariable(L"system-id", &gEfiAppleNvramGuid,
                             /*	EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                             sizeof(EFI_GUID), &gUuid);
-  
 
+// reserved for a future
+/*  Status = gRS->SetVariable(L"HW_BID", &gEfiAppleNvramGuid,
+                            EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                            AsciiStrLen(gSettings.BoardNumber), gSettings.BoardNumber);
+
+*/
     // options variables
     // note: some gEfiAppleBootGuid vars present in nvram.plist are already set by PutNvramPlistToRtVars()
     // we should think how to handle those vars from nvram.plist and ones set here from gSettings
