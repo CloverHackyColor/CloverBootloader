@@ -1672,6 +1672,7 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
   GlobalConfig.MainEntriesSize = 128;
   GlobalConfig.TileXSpace = 8;
   GlobalConfig.TileYSpace = 24;
+  row0TileSize = 144;
   LayoutBannerOffset = 64; //default value if not set
   LayoutButtonOffset = 0; //default value if not set
   LayoutTextOffset = 0; //default value if not set
@@ -1915,7 +1916,6 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
       GlobalConfig.TileYSpace = (INT32)(UINTN)dict2->string;
     }
     //
-    row0TileSize = 144;
     dict2 = GetProperty(dict, "SelectionBigWidth");
     if (dict2 && dict2->type == kTagTypeInteger) {
       row0TileSize = (INT32)(UINTN)dict2->string;
