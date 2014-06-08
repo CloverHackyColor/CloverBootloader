@@ -114,7 +114,7 @@ INTN ScrollbarYMovement;
 //#define TextHeight (FONT_CELL_HEIGHT + TEXT_YMARGIN * 2)
 #define TITLEICON_SPACING (16)
 
-#define ROW0_TILESIZE (144)
+//#define ROW0__TILESIZE (144)
 #define ROW1_TILESIZE (64)
 #define TILE_XSPACING (8)
 #define TILE_YSPACING (24)
@@ -124,6 +124,8 @@ EG_IMAGE *SelectionImages[4] = { NULL, NULL, NULL, NULL };
 static EG_IMAGE *TextBuffer = NULL;
 
 EG_PIXEL SelectionBackgroundPixel = { 0xef, 0xef, 0xef, 0xff }; //non-trasparent
+
+static INTN row0TileSize = 144;
 
 static INTN row0Count, row0PosX, row0PosXRunning;
 static INTN row1Count, row1PosX, row1PosXRunning;
@@ -1305,7 +1307,7 @@ static VOID InitSelection(VOID)
   if (GlobalConfig.SelectionBigFileName != NULL) {
     SelectionImages[0] = egLoadImage(ThemeDir, GlobalConfig.SelectionBigFileName, FALSE);
     SelectionImages[0] = egEnsureImageSize(SelectionImages[0],
-                                           ROW0_TILESIZE, ROW0_TILESIZE,
+                                           row0TileSize, row0TileSize,
                                            &MenuBackgroundPixel);
   }
   if (SelectionImages[0] == NULL) {
@@ -1325,12 +1327,12 @@ static VOID InitSelection(VOID)
   // non-selected background images
   //TODO FALSE -> TRUE
   if (GlobalConfig.SelectionBigFileName != NULL) {
-    SelectionImages[1] = egCreateFilledImage(ROW0_TILESIZE, ROW0_TILESIZE,
+    SelectionImages[1] = egCreateFilledImage(row0TileSize, row0TileSize,
                                              TRUE, &MenuBackgroundPixel);
     SelectionImages[3] = egCreateFilledImage(ROW1_TILESIZE, ROW1_TILESIZE,
                                              TRUE, &MenuBackgroundPixel);
   } else { // using embedded theme (this is an assumption but a better check is required)
-    SelectionImages[1] = egCreateFilledImage(ROW0_TILESIZE, ROW0_TILESIZE,
+    SelectionImages[1] = egCreateFilledImage(row0TileSize, row0TileSize,
                                              TRUE, &StdBackgroundPixel);
     SelectionImages[3] = egCreateFilledImage(ROW1_TILESIZE, ROW1_TILESIZE,
                                              TRUE, &StdBackgroundPixel);

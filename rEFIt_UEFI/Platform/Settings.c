@@ -49,6 +49,7 @@ UINT16                          dropDSM;
 
 extern MEM_STRUCTURE            gRAM;
 extern BOOLEAN                  NeedPMfix;
+extern INTN                     row0TileSize;
 
 GUI_ANIME *GuiAnime = NULL;
 
@@ -1913,6 +1914,13 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
     if (dict2 && dict2->type == kTagTypeInteger) {
       GlobalConfig.TileYSpace = (INT32)(UINTN)dict2->string;
     }
+    //
+    row0TileSize = 144;
+    dict2 = GetProperty(dict, "SelectionBigWidth");
+    if (dict2 && dict2->type == kTagTypeInteger) {
+      row0TileSize = (INT32)(UINTN)dict2->string;
+    }
+
 
   }  
 
