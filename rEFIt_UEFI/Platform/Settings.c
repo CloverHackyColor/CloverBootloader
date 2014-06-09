@@ -1889,7 +1889,10 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
     if (dict2 && dict2->type == kTagTypeInteger) {
       GlobalConfig.TileYSpace = (INT32)(UINTN)dict2->string;
     }
-    
+    dict2 = GetProperty(dict, "SelectionBigWidth");
+    if (dict2 && dict2->type == kTagTypeInteger) {
+      row0TileSize = (INT32)(UINTN)dict2->string;
+    }
   }
   
   dict = GetProperty(dictPointer, "Components");
