@@ -97,6 +97,20 @@ UINT32 GetCrc32(UINT8 *Buffer, UINTN Size)
   return x;
 }
 
+BOOLEAN IsPropertyTrue(TagPtr prop)
+{
+    return (prop->type == kTagTypeTrue) ||
+            ((prop->type == kTagTypeString) && prop->string &&
+                    ((prop->string[0] == 'y') || (prop->string[0] == 'Y')));
+}
+
+BOOLEAN IsPropertyFalse(TagPtr prop)
+{
+    return (prop->type == kTagTypeFalse) ||
+            ((prop->type == kTagTypeString) && prop->string &&
+                    ((prop->string[0] == 'N') || (prop->string[0] == 'n')));
+}
+
 VOID ParseLoadOptions(OUT CHAR16** conf, OUT TagPtr* dict)
 {
     CHAR8* start = (CHAR8*)SelfLoadedImage->LoadOptions;
@@ -491,9 +505,7 @@ static BOOLEAN FillinCustomEntry(IN OUT CUSTOM_LOADER_ENTRY *Entry, TagPtr dictP
   }
   prop = GetProperty(dictPointer, "Hidden");
   if (prop) {
-    if ((prop->type == kTagTypeTrue) ||
-        ((prop->type == kTagTypeString) && prop->string &&
-         ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))) {
+    if (IsPropertyTrue(prop)) {
       Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_HIDDEN);
     } else {
       Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_HIDDEN);
@@ -501,9 +513,7 @@ static BOOLEAN FillinCustomEntry(IN OUT CUSTOM_LOADER_ENTRY *Entry, TagPtr dictP
   }
   prop = GetProperty(dictPointer, "Disabled");
   if (prop) {
-    if ((prop->type == kTagTypeTrue) ||
-        ((prop->type == kTagTypeString) && prop->string &&
-         ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))) {
+    if (IsPropertyTrue(prop)) {
       Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_DISABLED);
     } else {
       Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_DISABLED);
@@ -597,9 +607,7 @@ static BOOLEAN FillinCustomEntry(IN OUT CUSTOM_LOADER_ENTRY *Entry, TagPtr dictP
   if (OSTYPE_IS_OSX(Entry->Type) || OSTYPE_IS_OSX_RECOVERY(Entry->Type) || OSTYPE_IS_OSX_INSTALLER(Entry->Type)) {
      prop = GetProperty(dictPointer, "InjectKexts");
      if (prop) {
-       if ((prop->type == kTagTypeTrue) ||
-           ((prop->type == kTagTypeString) && prop->string &&
-            ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))) {
+       if (IsPropertyTrue(prop)) {
          Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_WITHKEXTS);
        } else {
          Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_WITHKEXTS);
@@ -607,9 +615,7 @@ static BOOLEAN FillinCustomEntry(IN OUT CUSTOM_LOADER_ENTRY *Entry, TagPtr dictP
      }
      prop = GetProperty(dictPointer, "NoCaches");
      if (prop) {
-       if ((prop->type == kTagTypeTrue) ||
-           ((prop->type == kTagTypeString) && prop->string &&
-            ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))) {
+       if (IsPropertyTrue(prop)) {
          Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_NOCACHES);
        } else {
          Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_NOCACHES);
@@ -771,9 +777,7 @@ static BOOLEAN FillinCustomLegacy(IN OUT CUSTOM_LEGACY_ENTRY *Entry, TagPtr dict
   }
   prop = GetProperty(dictPointer, "Hidden");
   if (prop) {
-    if ((prop->type == kTagTypeTrue) ||
-        ((prop->type == kTagTypeString) && prop->string &&
-         ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))) {
+    if (IsPropertyTrue(prop)) {
       Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_HIDDEN);
     } else {
       Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_HIDDEN);
@@ -781,9 +785,7 @@ static BOOLEAN FillinCustomLegacy(IN OUT CUSTOM_LEGACY_ENTRY *Entry, TagPtr dict
   }
   prop = GetProperty(dictPointer, "Disabled");
   if (prop) {
-    if ((prop->type == kTagTypeTrue) ||
-        ((prop->type == kTagTypeString) && prop->string &&
-         ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))) {
+    if (IsPropertyTrue(prop)) {
       Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_DISABLED);
     } else {
       Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_DISABLED);
@@ -920,9 +922,7 @@ static BOOLEAN FillinCustomTool(IN OUT CUSTOM_TOOL_ENTRY *Entry, TagPtr dictPoin
   }
   prop = GetProperty(dictPointer, "Hidden");
   if (prop) {
-    if ((prop->type == kTagTypeTrue) ||
-        ((prop->type == kTagTypeString) && prop->string &&
-         ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))) {
+    if (IsPropertyTrue(prop)) {
       Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_HIDDEN);
     } else {
       Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_HIDDEN);
@@ -930,9 +930,7 @@ static BOOLEAN FillinCustomTool(IN OUT CUSTOM_TOOL_ENTRY *Entry, TagPtr dictPoin
   }
   prop = GetProperty(dictPointer, "Disabled");
   if (prop) {
-    if ((prop->type == kTagTypeTrue) ||
-        ((prop->type == kTagTypeString) && prop->string &&
-         ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))) {
+    if (IsPropertyTrue(prop)) {
       Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_DISABLED);
     } else {
       Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_DISABLED);
@@ -986,618 +984,594 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
   TagPtr      dict2;
   TagPtr      dictPointer;
   TagPtr      prop;
- // CHAR8       ANum[4];
- // UINTN       i = 0;
-
-    dict = CfgDict;
- if(dict != NULL) {
-  DBG("Loading early settings\n");
+  // CHAR8       ANum[4];
+  // UINTN       i = 0;
   
-  dictPointer = GetProperty(dict, "Boot");
-  if (dictPointer) {
-    prop = GetProperty(dictPointer, "Timeout");
-    if (prop) {
-      if (prop->type == kTagTypeInteger) {
-        GlobalConfig.Timeout = (INT32)(UINTN)prop->string;
-        DBG("timeout set to %d\n", GlobalConfig.Timeout);
-      } else if ((prop->type == kTagTypeString) && prop->string) {
-        if (prop->string[0] == '-') {
-          GlobalConfig.Timeout = -1;
-        } else {
-          GlobalConfig.Timeout = (INTN)AsciiStrDecimalToUintn(prop->string);
-        }
-      }
-    }
-    prop = GetProperty(dictPointer, "Arguments");
-    if (prop && (prop->type == kTagTypeString) && prop->string) {
-      AsciiStrnCpy(gSettings.BootArgs, prop->string, 255);
-    }
+  dict = CfgDict;
+  if(dict != NULL) {
+    DBG("Loading early settings\n");
     
-    prop = GetProperty(dictPointer, "DefaultVolume");
-    if(prop) {
-      gSettings.DefaultVolume = AllocateZeroPool(AsciiStrSize(prop->string) * sizeof(CHAR16));
-      AsciiStrToUnicodeStr(prop->string, gSettings.DefaultVolume);
-    }
-    
-    prop = GetProperty(dictPointer, "DefaultLoader");
-    if(prop) {
-      gSettings.DefaultLoader = AllocateZeroPool(AsciiStrSize(prop->string) * sizeof(CHAR16));
-      AsciiStrToUnicodeStr(prop->string, gSettings.DefaultLoader);
-    }
-
-    prop = GetProperty(dictPointer, "Log");
-    if (prop) {
-      if ((prop->type == kTagTypeTrue) ||
-          ((prop->type == kTagTypeString) && prop->string &&
-           ((prop->string[0] == 'Y') || (prop->string[0] == 'y')))) {
-        GlobalConfig.DebugLog = TRUE;
-      }
-    }
-
-    prop = GetProperty(dictPointer, "Fast");
-    if (prop) {
-      if ((prop->type == kTagTypeTrue) ||
-          ((prop->type == kTagTypeString) && prop->string &&
-           ((prop->string[0] == 'Y') || (prop->string[0] == 'y')))) {
-            GlobalConfig.FastBoot = TRUE;
-          }
-    } 
-    prop = GetProperty(dictPointer, "NeverHibernate");
-    if (prop) {
-      if ((prop->type == kTagTypeTrue) ||
-          ((prop->type == kTagTypeString) && prop->string &&
-           ((prop->string[0] == 'Y') || (prop->string[0] == 'y')))) {
-            GlobalConfig.NeverHibernate = TRUE;
-          }
-    }
-
-    prop = GetProperty(dictPointer, "IgnoreNVRAMBoot");
-    if (prop) {
-      if ((prop->type == kTagTypeTrue) ||
-          ((prop->type == kTagTypeString) && prop->string &&
-           ((prop->string[0] == 'Y') || (prop->string[0] == 'y')))) {
-            GlobalConfig.IgnoreNVRAMBoot = TRUE;
-          }
-    }
-    
-    // Secure boot
-    prop = GetProperty(dictPointer, "Secure");
-    if (prop) {
-      if (prop->type == kTagTypeFalse) {
-        // Only disable setup mode, we want always secure boot
-        gSettings.SecureBootSetupMode = 0;
-      } else if ((prop->type == kTagTypeTrue) && !gSettings.SecureBoot) {
-        // This mode will force boot policy even when no secure boot or it is disabled
-        gSettings.SecureBootSetupMode = 1;
-        gSettings.SecureBoot = 1;
-      }
-    }
-    // Secure boot policy
-    prop = GetProperty(dictPointer, "Policy");
-    if (prop && (prop->type == kTagTypeString) && prop->string) {
-      if ((prop->string[0] == 'D') || (prop->string[0] == 'd')) {
-        // Deny all images
-        gSettings.SecureBootPolicy = SECURE_BOOT_POLICY_DENY;
-      } else if ((prop->string[0] == 'A') || (prop->string[0] == 'a')) {
-        // Allow all images
-        gSettings.SecureBootPolicy = SECURE_BOOT_POLICY_ALLOW;
-      } else if ((prop->string[0] == 'Q') || (prop->string[0] == 'q')) {
-        // Query user
-        gSettings.SecureBootPolicy = SECURE_BOOT_POLICY_QUERY;
-      } else if ((prop->string[0] == 'I') || (prop->string[0] == 'i')) {
-        // Insert
-        gSettings.SecureBootPolicy = SECURE_BOOT_POLICY_INSERT;
-      } else if ((prop->string[0] == 'W') || (prop->string[0] == 'w')) {
-        // White list
-        gSettings.SecureBootPolicy = SECURE_BOOT_POLICY_WHITELIST;
-      } else if ((prop->string[0] == 'B') || (prop->string[0] == 'b')) {
-        // Black list
-        gSettings.SecureBootPolicy = SECURE_BOOT_POLICY_BLACKLIST;
-      } else if ((prop->string[0] == 'U') || (prop->string[0] == 'u')) {
-        // User policy
-        gSettings.SecureBootPolicy = SECURE_BOOT_POLICY_USER;
-      }
-    }
-    // Secure boot white list
-    prop = GetProperty(dictPointer, "WhiteList");
-    if (prop && (prop->type == kTagTypeArray)) {
-      INTN i, Count = GetTagCount(prop);
-      if (Count > 0) {
-        gSettings.SecureBootWhiteListCount = 0;
-        gSettings.SecureBootWhiteList = AllocateZeroPool(Count * sizeof(CHAR16 *));
-        if (gSettings.SecureBootWhiteList) {
-          for (i = 0; i < Count; ++i) {
-            if (EFI_ERROR(GetElement(prop, i, &dict2))) {
-              continue;
-            }
-            if (dict2 == NULL) {
-              break;
-            }
-            if ((dict2->type == kTagTypeString) && dict2->string) {
-              gSettings.SecureBootWhiteList[gSettings.SecureBootWhiteListCount++] = PoolPrint(L"%a", dict2->string);
-            }
-          }
-        }
-      }
-    }
-    // Secure boot black list
-    prop = GetProperty(dictPointer, "BlackList");
-    if (prop && (prop->type == kTagTypeArray)) {
-      INTN i, Count = GetTagCount(prop);
-      if (Count > 0) {
-        gSettings.SecureBootBlackListCount = 0;
-        gSettings.SecureBootBlackList = AllocateZeroPool(Count * sizeof(CHAR16 *));
-        if (gSettings.SecureBootBlackList) {
-          for (i = 0; i < Count; ++i) {
-            if (EFI_ERROR(GetElement(prop, i, &dict2))) {
-              continue;
-            }
-            if (dict2 == NULL) {
-              break;
-            }
-            if ((dict2->type == kTagTypeString) && dict2->string) {
-              gSettings.SecureBootBlackList[gSettings.SecureBootBlackListCount++] = PoolPrint(L"%a", dict2->string);
-            }
-          }
-        }
-      }
-    }
-
-    // XMP memory profiles
-    prop = GetProperty(dictPointer, "XMPDetection");
-    if (prop) {
-      gSettings.XMPDetection = 0;
-      if (prop->type == kTagTypeFalse) {
-        gSettings.XMPDetection = -1;
-      } else if (prop->type == kTagTypeString) {
-        if ((prop->string[0] == 'n') ||
-            (prop->string[0] == 'N') ||
-            (prop->string[0] == '-')) {
-          gSettings.XMPDetection = -1;
-        } else {
-          gSettings.XMPDetection = (INT8)AsciiStrDecimalToUintn(prop->string);
-        }
-      } else if (prop->type == kTagTypeInteger) {
-        gSettings.XMPDetection = (INT8)(UINTN)prop->string;
-      }
-      // Check that the setting value is sane
-      if ((gSettings.XMPDetection < -1) || (gSettings.XMPDetection > 2)) {
-        gSettings.XMPDetection = -1;
-      }
-    }
-
-    // Legacy bios protocol
-    prop = GetProperty(dictPointer, "Legacy");
-    if(prop)  {
-      AsciiStrToUnicodeStr(prop->string, gSettings.LegacyBoot);
-    } else if (gFirmwareClover) {
-      // default for CLOVER EFI boot
-      UnicodeSPrint(gSettings.LegacyBoot, sizeof(gSettings.LegacyBoot), L"PBR");
-    } else {
-      // default for UEFI boot
-      UnicodeSPrint(gSettings.LegacyBoot, sizeof(gSettings.LegacyBoot), L"LegacyBiosDefault");
-    }
-
-    // Entry for LegacyBiosDefault
-    prop = GetProperty(dictPointer, "LegacyBiosDefaultEntry");
-    if (prop) {
-      if (prop->type == kTagTypeInteger) {
-        gSettings.LegacyBiosDefaultEntry = (UINT16)(UINTN)prop->string;
-      } else if ((prop->type == kTagTypeString) && prop->string) {
-        gSettings.LegacyBiosDefaultEntry = (UINT16)AsciiStrDecimalToUintn(prop->string);
-      }
-    } else {
-	gSettings.LegacyBiosDefaultEntry = 0; // disabled by default
-    }
-  }
-
-  dictPointer = GetProperty(dict, "GUI");
-  if (dictPointer) {
-    prop = GetProperty(dictPointer, "Theme");
-    if (prop) {
-      if ((prop->type == kTagTypeString) && prop->string) {
-        GlobalConfig.Theme = PoolPrint(L"%a", prop->string);
-        DBG("Default theme: %s\n", GlobalConfig.Theme);
-      }
-    }
-    //CustomIcons
-    prop = GetProperty(dictPointer, "CustomIcons");
-    if (prop) {
-      if ((prop->type == kTagTypeTrue) ||
-          ((prop->type == kTagTypeString) && prop->string &&
-           ((prop->string[0] == 'Y') || (prop->string[0] == 'y')))) {
-        GlobalConfig.CustomIcons = TRUE;
-      }
-    }
-
-    prop = GetProperty(dictPointer, "TextOnly");
-    if (prop) {
-      if ((prop->type == kTagTypeTrue) ||
-          ((prop->type == kTagTypeString) && prop->string &&
-           ((prop->string[0] == 'Y') || (prop->string[0] == 'y')))) {
-        GlobalConfig.TextOnly = TRUE;
-      }
-    }
-
-    prop = GetProperty(dictPointer, "ScreenResolution");
-    if (prop) {
-      if ((prop->type == kTagTypeString) && prop->string) {
-        GlobalConfig.ScreenResolution = PoolPrint(L"%a", prop->string);
-      }
-    }
-
-    prop = GetProperty(dictPointer, "ConsoleMode");
-    if (prop) {
-      if (prop->type == kTagTypeInteger) {
-        GlobalConfig.ConsoleMode = (INT32)(UINTN)prop->string;
-      } else if ((prop->type == kTagTypeString) && prop->string) {
-	if (AsciiStrStr(prop->string, "Max") != NULL) {
-          GlobalConfig.ConsoleMode = -1;
-          DBG("ConsoleMode will be set to highest mode\n");
-	} else if (AsciiStrStr(prop->string, "Min") != NULL) {
-          GlobalConfig.ConsoleMode = -2;
-          DBG("ConsoleMode will be set to lowest mode\n");
-        } else {
-          GlobalConfig.ConsoleMode = (INT32)AsciiStrDecimalToUintn(prop->string);
-        }
-      }
-      if (GlobalConfig.ConsoleMode > 0) {
-        DBG("ConsoleMode will be set to mode #%d\n", GlobalConfig.ConsoleMode);
-      }
-    }
-
-    prop = GetProperty(dictPointer, "Language");
-    if(prop) {
-      //       AsciiStrToUnicodeStr(prop->string, gSettings.Language);
-      AsciiStrCpy(gSettings.Language,  prop->string);
-      if (AsciiStrStr(prop->string, "en")) {
-        gLanguage = english;
-      } else if (AsciiStrStr(prop->string, "ru")) {
-        gLanguage = russian;
-      } else if (AsciiStrStr(prop->string, "fr")) {
-        gLanguage = french;
-      } else if (AsciiStrStr(prop->string, "it")) {
-        gLanguage = italian;
-      } else if (AsciiStrStr(prop->string, "es")) {
-        gLanguage = spanish;
-      } else if (AsciiStrStr(prop->string, "pt")) {
-        gLanguage = portuguese;
-      } else if (AsciiStrStr(prop->string, "br")) {
-        gLanguage = brasil; 
-      } else if (AsciiStrStr(prop->string, "de")) {
-        gLanguage = german;
-      } else if (AsciiStrStr(prop->string, "nl")) {
-        gLanguage = dutch;
-      } else if (AsciiStrStr(prop->string, "pl")) {
-        gLanguage = polish; 
-      } else if (AsciiStrStr(prop->string, "ua")) {
-        gLanguage = ukrainian;
-      } else if (AsciiStrStr(prop->string, "cz")) {
-        gLanguage = czech;
-      } else if (AsciiStrStr(prop->string, "hr")) {
-        gLanguage = croatian;
-      } else if (AsciiStrStr(prop->string, "id")) {
-        gLanguage = indonesian; 
-      } else if (AsciiStrStr(prop->string, "ko")) {
-        gLanguage = korean;
-      }
-    }
-
-    prop = GetProperty(dictPointer, "Mouse");
-    if (prop) {
-      dict2 = GetProperty(prop, "Speed");
-      if (dict2) {
-        if (dict2->type == kTagTypeInteger) {
-          gSettings.PointerSpeed = (INT32)(UINTN)dict2->string;
-          if (gSettings.PointerSpeed < 0) {
-            gSettings.PointerSpeed = -gSettings.PointerSpeed;
-          }
-        } else if ((dict2->type == kTagTypeString) && dict2->string) {
-          gSettings.PointerSpeed = (UINT16)AsciiStrDecimalToUintn(dict2->string + ((dict2->string[0] == '-') ? 1 : 0));
-        }
-        gSettings.PointerEnabled = (gSettings.PointerSpeed != 0);
-      }
-      //but we can disable mouse even if there was positive speed
-      dict2 = GetProperty(prop, "Enabled");
-      if (dict2) {
-        if ((dict2->type == kTagTypeFalse) ||
-            ((dict2->type == kTagTypeString) && dict2->string &&
-             ((dict2->string[0] == 'N') || (dict2->string[0] == 'n')))) {
-              gSettings.PointerEnabled = FALSE;
-            }
-      }
-      dict2 = GetProperty(prop, "Mirror");
-      if (dict2) {
-        if ((dict2->type == kTagTypeTrue) ||
-            ((dict2->type == kTagTypeString) && dict2->string &&
-            ((dict2->string[0] == 'Y') || (dict2->string[0] == 'y')))) {
-          gSettings.PointerMirror = TRUE;
-        }
-      }
-      dict2 = GetProperty(prop, "DoubleClickTime");
-      if (dict2) {
-        if (dict2->type == kTagTypeInteger) {
-          gSettings.DoubleClickTime = (UINTN)dict2->string;
-        } else if (dict2->type == kTagTypeString) {
-          gSettings.DoubleClickTime = (UINT16)AsciiStrDecimalToUintn(dict2->string + ((dict2->string[0] == '-') ? 1 : 0));
-        }
-      }
-    }
-    // hide by name/uuid
-    prop = GetProperty(dictPointer, "Hide");
-    if (prop) {
-      INTN i, Count = GetTagCount(prop);
-      if (Count > 0) {
-        gSettings.HVCount = 0;
-        gSettings.HVHideStrings = AllocateZeroPool(Count * sizeof(CHAR16 *));
-        if (gSettings.HVHideStrings) {
-          for (i = 0; i < Count; ++i) {
-            if (EFI_ERROR(GetElement(prop, i, &dict2))) {
-              continue;
-            }
-            if (dict2 == NULL) {
-              break;
-            }
-            if ((dict2->type == kTagTypeString) && dict2->string) {
-              gSettings.HVHideStrings[gSettings.HVCount] = PoolPrint(L"%a", dict2->string);
-              if (gSettings.HVHideStrings[gSettings.HVCount]) {
-                DBG("Hiding entries with string %s\n", gSettings.HVHideStrings[gSettings.HVCount]);
-                gSettings.HVCount++;
-              }
-            }
-          }
-        }
-      }
-    }
-    // Disable loader scan
-    prop = GetProperty(dictPointer, "Scan");
-    if (prop) {
-      if ((prop->type == kTagTypeFalse) ||
-          ((prop->type == kTagTypeString) && prop->string &&
-           ((prop->string[0] == 'N') || (prop->string[0] == 'n')))) {
-        gSettings.DisableEntryScan = TRUE;
-        gSettings.DisableToolScan = TRUE;
-        GlobalConfig.NoLegacy = TRUE;
-      } else if (prop->type == kTagTypeDict) {
-        dict2 = GetProperty(prop, "Entries");
-        if (dict2) {
-          if ((dict2->type == kTagTypeFalse) ||
-              ((dict2->type == kTagTypeString) && dict2->string &&
-              ((dict2->string[0] == 'N') || (dict2->string[0] == 'n')))) {
-            gSettings.DisableEntryScan = TRUE;
-          }
-        }
-        dict2 = GetProperty(prop, "Tool");
-        if (dict2) {
-          if ((dict2->type == kTagTypeFalse) ||
-              ((dict2->type == kTagTypeString) && dict2->string &&
-              ((dict2->string[0] == 'N') || (dict2->string[0] == 'n')))) {
-            gSettings.DisableToolScan = TRUE;
-          }
-        }
-        dict2 = GetProperty(prop, "Legacy");
-        if (dict2) {
-          if (dict2->type == kTagTypeFalse) {
-            GlobalConfig.NoLegacy = TRUE;
-          }
-          else if ((dict2->type == kTagTypeString) && dict2->string) {
-            if ((dict2->string[0] == 'N') || (dict2->string[0] == 'n')) {
-              GlobalConfig.NoLegacy = TRUE;
-            } else if ((dict2->string[0] == 'F') || (dict2->string[0] == 'f')) {
-              GlobalConfig.LegacyFirst = TRUE;
-            }
-          }
-        }
-        dict2 = GetProperty(prop, "Kernel");
-        if (dict2) {
-          if (dict2->type == kTagTypeFalse) {
-            gSettings.KernelScan = KERNEL_SCAN_NONE;
-          } else if ((dict2->type == kTagTypeString) && dict2->string) {
-            if ((dict2->string[0] == 'N') || (dict2->string[0] == 'n')) {
-              gSettings.KernelScan = ((dict2->string[1] == 'E') || (dict2->string[1] == 'e')) ? KERNEL_SCAN_NEWEST : KERNEL_SCAN_NONE;
-            } else if ((dict2->string[0] == 'O') || (dict2->string[0] == 'o')) {
-              gSettings.KernelScan = KERNEL_SCAN_OLDEST;
-            } else if ((dict2->string[0] == 'F') || (dict2->string[0] == 'f')) {
-              gSettings.KernelScan = KERNEL_SCAN_FIRST;
-            } else if ((dict2->string[0] == 'L') || (dict2->string[0] == 'l')) {
-              gSettings.KernelScan = KERNEL_SCAN_LAST;
-            } else if ((dict2->string[0] == 'M') || (dict2->string[0] == 'm')) {
-              gSettings.KernelScan = KERNEL_SCAN_MOSTRECENT;
-            } else if ((dict2->string[0] == 'E') || (dict2->string[0] == 'e')) {
-              gSettings.KernelScan = KERNEL_SCAN_EARLIEST;
-            }
-          }
-        }
-      }
-    }
-    // Custom entries
-    dict2 = GetProperty(dictPointer, "Custom");
-    if (dict2) {
-      prop = GetProperty(dict2, "Entries");
+    dictPointer = GetProperty(dict, "Boot");
+    if (dictPointer) {
+      prop = GetProperty(dictPointer, "Timeout");
       if (prop) {
-        CUSTOM_LOADER_ENTRY *Entry;
-        INTN   i, Count = GetTagCount(prop);
-        TagPtr dict3;
-        if (Count > 0) {
-          for (i = 0; i < Count; ++i) {
-            if (EFI_ERROR(GetElement(prop, i, &dict3))) {
-              continue;
-            }
-            if (dict3 == NULL) {
-              break;
-            }
-            // Allocate an entry
-            Entry = (CUSTOM_LOADER_ENTRY *)AllocateZeroPool(sizeof(CUSTOM_LOADER_ENTRY));
-            if (Entry) {
-              // Fill it in
-              if (!FillinCustomEntry(Entry, dict3, FALSE) || !AddCustomEntry(Entry)) {
-                FreePool(Entry);
-              }
-            }
-          }
-        }
-      }
-      prop = GetProperty(dict2, "Legacy");
-      if (prop) {
-        CUSTOM_LEGACY_ENTRY *Entry;
-        INTN   i, Count = GetTagCount(prop);
-        TagPtr dict3;
-        if (Count > 0) {
-          for (i = 0; i < Count; ++i) {
-            if (EFI_ERROR(GetElement(prop, i, &dict3))) {
-              continue;
-            }
-            if (dict3 == NULL) {
-              break;
-            }
-            // Allocate an entry
-            Entry = (CUSTOM_LEGACY_ENTRY *)AllocateZeroPool(sizeof(CUSTOM_LEGACY_ENTRY));
-            if (Entry) {
-              // Fill it in
-              if (!FillinCustomLegacy(Entry, dict3) || !AddCustomLegacyEntry(Entry)) {
-                FreePool(Entry);
-              }
-            }
-          }
-        }
-      }
-      prop = GetProperty(dict2, "Tool");
-      if (prop) {
-        CUSTOM_TOOL_ENTRY *Entry;
-        INTN   i, Count = GetTagCount(prop);
-        TagPtr dict3;
-        if (Count > 0) {
-          for (i = 0; i < Count; ++i) {
-            if (EFI_ERROR(GetElement(prop, i, &dict3))) {
-              continue;
-            }
-            if (dict3 == NULL) {
-              break;
-            }
-            // Allocate an entry
-            Entry = (CUSTOM_TOOL_ENTRY *)AllocateZeroPool(sizeof(CUSTOM_TOOL_ENTRY));
-            if (Entry) {
-              // Fill it in
-              if (!FillinCustomTool(Entry, dict3) || !AddCustomToolEntry(Entry)) {
-                FreePool(Entry);
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-  dictPointer = GetProperty(dict, "Graphics");
-  if (dictPointer) {
-    
-    prop = GetProperty(dictPointer, "PatchVBios");
-    gSettings.PatchVBios = FALSE;
-    if(prop) {
-      if ((prop->type == kTagTypeTrue) ||
-          (prop->string[0] == 'y') || (prop->string[0] == 'Y'))
-        gSettings.PatchVBios = TRUE;
-    }
-    
-    gSettings.PatchVBiosBytesCount = 0;
-    dict2 = GetProperty(dictPointer,"PatchVBiosBytes");
-    if (dict2) {
-      UINTN Count = GetTagCount(dict2);
-      if (Count > 0) {
-        UINTN     Index = 0;
-        VBIOS_PATCH_BYTES *VBiosPatch;
-        UINTN     FindSize = 0;
-        UINTN     ReplaceSize = 0;
-        BOOLEAN   Valid;
-      
-        // alloc space for up to 16 entries
-        gSettings.PatchVBiosBytes = AllocateZeroPool(Count * sizeof(VBIOS_PATCH_BYTES));
-      
-        // get all entries
-        Index = 0;
-        for (Index = 0; Index < Count; Index++) {
-          // Get the next entry
-          if (EFI_ERROR(GetElement(dict2, Index, &prop))) {
-             continue;
-          }
-          if (prop == NULL) {
-            break;
-          }
-          Valid = TRUE;
-          // read entry
-          VBiosPatch = &gSettings.PatchVBiosBytes[gSettings.PatchVBiosBytesCount];
-          VBiosPatch->Find = GetDataSetting(prop, "Find", &FindSize);
-          VBiosPatch->Replace = GetDataSetting(prop, "Replace", &ReplaceSize);
-          if (VBiosPatch->Find == NULL || FindSize == 0) {
-            Valid = FALSE;
-            DBG("PatchVBiosBytes[%d]: missing Find data\n", Index);
-          }
-          if (VBiosPatch->Replace == NULL || ReplaceSize == 0) {
-            Valid = FALSE;
-            DBG("PatchVBiosBytes[%d]: missing Replace data\n", Index);
-          }
-          if (FindSize != ReplaceSize) {
-            Valid = FALSE;
-            DBG("PatchVBiosBytes[%d]: Find and Replace data are not the same size\n", Index);
-          }
-          if (Valid) {
-            VBiosPatch->NumberOfBytes = FindSize;
-            // go to next entry
-            ++gSettings.PatchVBiosBytesCount;
+        if (prop->type == kTagTypeInteger) {
+          GlobalConfig.Timeout = (INT32)(UINTN)prop->string;
+          DBG("timeout set to %d\n", GlobalConfig.Timeout);
+        } else if ((prop->type == kTagTypeString) && prop->string) {
+          if (prop->string[0] == '-') {
+            GlobalConfig.Timeout = -1;
           } else {
-            // error - release mem
-            if (VBiosPatch->Find != NULL) {
-              FreePool(VBiosPatch->Find);
-              VBiosPatch->Find = NULL;
-            }
-            if (VBiosPatch->Replace != NULL) {
-              FreePool(VBiosPatch->Replace);
-              VBiosPatch->Replace = NULL;
+            GlobalConfig.Timeout = (INTN)AsciiStrDecimalToUintn(prop->string);
+          }
+        }
+      }
+      prop = GetProperty(dictPointer, "Arguments");
+      if (prop && (prop->type == kTagTypeString) && prop->string) {
+        AsciiStrnCpy(gSettings.BootArgs, prop->string, 255);
+      }
+      
+      prop = GetProperty(dictPointer, "DefaultVolume");
+      if(prop) {
+        gSettings.DefaultVolume = AllocateZeroPool(AsciiStrSize(prop->string) * sizeof(CHAR16));
+        AsciiStrToUnicodeStr(prop->string, gSettings.DefaultVolume);
+      }
+      
+      prop = GetProperty(dictPointer, "DefaultLoader");
+      if(prop) {
+        gSettings.DefaultLoader = AllocateZeroPool(AsciiStrSize(prop->string) * sizeof(CHAR16));
+        AsciiStrToUnicodeStr(prop->string, gSettings.DefaultLoader);
+      }
+      
+      prop = GetProperty(dictPointer, "Log");
+      if (prop) {
+        if (IsPropertyTrue(prop)) {
+          GlobalConfig.DebugLog = TRUE;
+        }
+      }
+      
+      prop = GetProperty(dictPointer, "Fast");
+      if (prop) {
+        if (IsPropertyTrue(prop)) {
+          GlobalConfig.FastBoot = TRUE;
+        }
+      }
+      prop = GetProperty(dictPointer, "NeverHibernate");
+      if (prop) {
+        if (IsPropertyTrue(prop)) {
+          GlobalConfig.NeverHibernate = TRUE;
+        }
+      }
+      
+      prop = GetProperty(dictPointer, "IgnoreNVRAMBoot");
+      if (prop) {
+        if (IsPropertyTrue(prop)) {
+          GlobalConfig.IgnoreNVRAMBoot = TRUE;
+        }
+      }
+      
+      // Secure boot
+      prop = GetProperty(dictPointer, "Secure");
+      if (prop) {
+        if (prop->type == kTagTypeFalse) {
+          // Only disable setup mode, we want always secure boot
+          gSettings.SecureBootSetupMode = 0;
+        } else if ((prop->type == kTagTypeTrue) && !gSettings.SecureBoot) {
+          // This mode will force boot policy even when no secure boot or it is disabled
+          gSettings.SecureBootSetupMode = 1;
+          gSettings.SecureBoot = 1;
+        }
+      }
+      // Secure boot policy
+      prop = GetProperty(dictPointer, "Policy");
+      if (prop && (prop->type == kTagTypeString) && prop->string) {
+        if ((prop->string[0] == 'D') || (prop->string[0] == 'd')) {
+          // Deny all images
+          gSettings.SecureBootPolicy = SECURE_BOOT_POLICY_DENY;
+        } else if ((prop->string[0] == 'A') || (prop->string[0] == 'a')) {
+          // Allow all images
+          gSettings.SecureBootPolicy = SECURE_BOOT_POLICY_ALLOW;
+        } else if ((prop->string[0] == 'Q') || (prop->string[0] == 'q')) {
+          // Query user
+          gSettings.SecureBootPolicy = SECURE_BOOT_POLICY_QUERY;
+        } else if ((prop->string[0] == 'I') || (prop->string[0] == 'i')) {
+          // Insert
+          gSettings.SecureBootPolicy = SECURE_BOOT_POLICY_INSERT;
+        } else if ((prop->string[0] == 'W') || (prop->string[0] == 'w')) {
+          // White list
+          gSettings.SecureBootPolicy = SECURE_BOOT_POLICY_WHITELIST;
+        } else if ((prop->string[0] == 'B') || (prop->string[0] == 'b')) {
+          // Black list
+          gSettings.SecureBootPolicy = SECURE_BOOT_POLICY_BLACKLIST;
+        } else if ((prop->string[0] == 'U') || (prop->string[0] == 'u')) {
+          // User policy
+          gSettings.SecureBootPolicy = SECURE_BOOT_POLICY_USER;
+        }
+      }
+      // Secure boot white list
+      prop = GetProperty(dictPointer, "WhiteList");
+      if (prop && (prop->type == kTagTypeArray)) {
+        INTN i, Count = GetTagCount(prop);
+        if (Count > 0) {
+          gSettings.SecureBootWhiteListCount = 0;
+          gSettings.SecureBootWhiteList = AllocateZeroPool(Count * sizeof(CHAR16 *));
+          if (gSettings.SecureBootWhiteList) {
+            for (i = 0; i < Count; ++i) {
+              if (EFI_ERROR(GetElement(prop, i, &dict2))) {
+                continue;
+              }
+              if (dict2 == NULL) {
+                break;
+              }
+              if ((dict2->type == kTagTypeString) && dict2->string) {
+                gSettings.SecureBootWhiteList[gSettings.SecureBootWhiteListCount++] = PoolPrint(L"%a", dict2->string);
+              }
             }
           }
         }
-        if (gSettings.PatchVBiosBytesCount == 0) {
-          FreePool(gSettings.PatchVBiosBytes);
-          gSettings.PatchVBiosBytes = NULL;
+      }
+      // Secure boot black list
+      prop = GetProperty(dictPointer, "BlackList");
+      if (prop && (prop->type == kTagTypeArray)) {
+        INTN i, Count = GetTagCount(prop);
+        if (Count > 0) {
+          gSettings.SecureBootBlackListCount = 0;
+          gSettings.SecureBootBlackList = AllocateZeroPool(Count * sizeof(CHAR16 *));
+          if (gSettings.SecureBootBlackList) {
+            for (i = 0; i < Count; ++i) {
+              if (EFI_ERROR(GetElement(prop, i, &dict2))) {
+                continue;
+              }
+              if (dict2 == NULL) {
+                break;
+              }
+              if ((dict2->type == kTagTypeString) && dict2->string) {
+                gSettings.SecureBootBlackList[gSettings.SecureBootBlackListCount++] = PoolPrint(L"%a", dict2->string);
+              }
+            }
+          }
         }
       }
-    }
-    
-    //InjectEDID
-    prop = GetProperty(dictPointer, "InjectEDID");
-    gSettings.InjectEDID = FALSE;
-    if(prop) {
-      if ((prop->type == kTagTypeTrue) ||
-          (prop->string[0] == 'y') || (prop->string[0] == 'Y'))
-        gSettings.InjectEDID = TRUE;
-    }
-    prop = GetProperty(dictPointer, "CustomEDID");
-    if(prop) {
-      UINTN j = 128;
-      gSettings.CustomEDID = GetDataSetting(dictPointer, "CustomEDID", &j);
-      if ((j % 128) != 0) {
-        DBG("CustomEDID has wrong length=%d\n", j);
+      
+      // XMP memory profiles
+      prop = GetProperty(dictPointer, "XMPDetection");
+      if (prop) {
+        gSettings.XMPDetection = 0;
+        if (prop->type == kTagTypeFalse) {
+          gSettings.XMPDetection = -1;
+        } else if (prop->type == kTagTypeString) {
+          if ((prop->string[0] == 'n') ||
+              (prop->string[0] == 'N') ||
+              (prop->string[0] == '-')) {
+            gSettings.XMPDetection = -1;
+          } else {
+            gSettings.XMPDetection = (INT8)AsciiStrDecimalToUintn(prop->string);
+          }
+        } else if (prop->type == kTagTypeInteger) {
+          gSettings.XMPDetection = (INT8)(UINTN)prop->string;
+        }
+        // Check that the setting value is sane
+        if ((gSettings.XMPDetection < -1) || (gSettings.XMPDetection > 2)) {
+          gSettings.XMPDetection = -1;
+        }
+      }
+      
+      // Legacy bios protocol
+      prop = GetProperty(dictPointer, "Legacy");
+      if(prop)  {
+        AsciiStrToUnicodeStr(prop->string, gSettings.LegacyBoot);
+      } else if (gFirmwareClover) {
+        // default for CLOVER EFI boot
+        UnicodeSPrint(gSettings.LegacyBoot, sizeof(gSettings.LegacyBoot), L"PBR");
       } else {
-        DBG("CustomEDID ok\n");
-        InitializeEdidOverride();
+        // default for UEFI boot
+        UnicodeSPrint(gSettings.LegacyBoot, sizeof(gSettings.LegacyBoot), L"LegacyBiosDefault");
+      }
+      
+      // Entry for LegacyBiosDefault
+      prop = GetProperty(dictPointer, "LegacyBiosDefaultEntry");
+      if (prop) {
+        if (prop->type == kTagTypeInteger) {
+          gSettings.LegacyBiosDefaultEntry = (UINT16)(UINTN)prop->string;
+        } else if ((prop->type == kTagTypeString) && prop->string) {
+          gSettings.LegacyBiosDefaultEntry = (UINT16)AsciiStrDecimalToUintn(prop->string);
+        }
+      } else {
+        gSettings.LegacyBiosDefaultEntry = 0; // disabled by default
       }
     }
     
-  }
-  dictPointer = GetProperty(dict,"DisableDrivers");
-  if(dictPointer) {
-    INTN i, Count = GetTagCount(dictPointer);
-    if (Count > 0) {
-      gSettings.BlackListCount = 0;
-      gSettings.BlackList = AllocateZeroPool(Count * sizeof(CHAR16 *));
-      for (i = 0; i < Count; ++i) {
-        if (!EFI_ERROR(GetElement(dictPointer, i, &prop)) &&
-            prop && (prop->type == kTagTypeString)) {
-          gSettings.BlackList[gSettings.BlackListCount++] = PoolPrint(L"%a", prop->string);
+    dictPointer = GetProperty(dict, "GUI");
+    if (dictPointer) {
+      prop = GetProperty(dictPointer, "Theme");
+      if (prop) {
+        if ((prop->type == kTagTypeString) && prop->string) {
+          GlobalConfig.Theme = PoolPrint(L"%a", prop->string);
+          DBG("Default theme: %s\n", GlobalConfig.Theme);
+        }
+      }
+      //CustomIcons
+      prop = GetProperty(dictPointer, "CustomIcons");
+      if (prop) {
+        if (IsPropertyTrue(prop)) {
+          GlobalConfig.CustomIcons = TRUE;
+        }
+      }
+      
+      prop = GetProperty(dictPointer, "TextOnly");
+      if (prop) {
+        if (IsPropertyTrue(prop)) {
+          GlobalConfig.TextOnly = TRUE;
+        }
+      }
+      
+      prop = GetProperty(dictPointer, "ScreenResolution");
+      if (prop) {
+        if ((prop->type == kTagTypeString) && prop->string) {
+          GlobalConfig.ScreenResolution = PoolPrint(L"%a", prop->string);
+        }
+      }
+      
+      prop = GetProperty(dictPointer, "ConsoleMode");
+      if (prop) {
+        if (prop->type == kTagTypeInteger) {
+          GlobalConfig.ConsoleMode = (INT32)(UINTN)prop->string;
+        } else if ((prop->type == kTagTypeString) && prop->string) {
+          if (AsciiStrStr(prop->string, "Max") != NULL) {
+            GlobalConfig.ConsoleMode = -1;
+            DBG("ConsoleMode will be set to highest mode\n");
+          } else if (AsciiStrStr(prop->string, "Min") != NULL) {
+            GlobalConfig.ConsoleMode = -2;
+            DBG("ConsoleMode will be set to lowest mode\n");
+          } else {
+            GlobalConfig.ConsoleMode = (INT32)AsciiStrDecimalToUintn(prop->string);
+          }
+        }
+        if (GlobalConfig.ConsoleMode > 0) {
+          DBG("ConsoleMode will be set to mode #%d\n", GlobalConfig.ConsoleMode);
+        }
+      }
+      
+      prop = GetProperty(dictPointer, "Language");
+      if(prop) {
+        //       AsciiStrToUnicodeStr(prop->string, gSettings.Language);
+        AsciiStrCpy(gSettings.Language,  prop->string);
+        if (AsciiStrStr(prop->string, "en")) {
+          gLanguage = english;
+        } else if (AsciiStrStr(prop->string, "ru")) {
+          gLanguage = russian;
+        } else if (AsciiStrStr(prop->string, "fr")) {
+          gLanguage = french;
+        } else if (AsciiStrStr(prop->string, "it")) {
+          gLanguage = italian;
+        } else if (AsciiStrStr(prop->string, "es")) {
+          gLanguage = spanish;
+        } else if (AsciiStrStr(prop->string, "pt")) {
+          gLanguage = portuguese;
+        } else if (AsciiStrStr(prop->string, "br")) {
+          gLanguage = brasil;
+        } else if (AsciiStrStr(prop->string, "de")) {
+          gLanguage = german;
+        } else if (AsciiStrStr(prop->string, "nl")) {
+          gLanguage = dutch;
+        } else if (AsciiStrStr(prop->string, "pl")) {
+          gLanguage = polish;
+        } else if (AsciiStrStr(prop->string, "ua")) {
+          gLanguage = ukrainian;
+        } else if (AsciiStrStr(prop->string, "cz")) {
+          gLanguage = czech;
+        } else if (AsciiStrStr(prop->string, "hr")) {
+          gLanguage = croatian;
+        } else if (AsciiStrStr(prop->string, "id")) {
+          gLanguage = indonesian;
+        } else if (AsciiStrStr(prop->string, "ko")) {
+          gLanguage = korean;
+        }
+      }
+      
+      prop = GetProperty(dictPointer, "Mouse");
+      if (prop) {
+        dict2 = GetProperty(prop, "Speed");
+        if (dict2) {
+          if (dict2->type == kTagTypeInteger) {
+            gSettings.PointerSpeed = (INT32)(UINTN)dict2->string;
+            if (gSettings.PointerSpeed < 0) {
+              gSettings.PointerSpeed = -gSettings.PointerSpeed;
+            }
+          } else if ((dict2->type == kTagTypeString) && dict2->string) {
+            gSettings.PointerSpeed = (UINT16)AsciiStrDecimalToUintn(dict2->string + ((dict2->string[0] == '-') ? 1 : 0));
+          }
+          gSettings.PointerEnabled = (gSettings.PointerSpeed != 0);
+        }
+        //but we can disable mouse even if there was positive speed
+        dict2 = GetProperty(prop, "Enabled");
+        if (dict2) {
+          if (IsPropertyFalse(dict2)) {
+            gSettings.PointerEnabled = FALSE;
+          }
+        }
+        dict2 = GetProperty(prop, "Mirror");
+        if (dict2) {
+          if (IsPropertyTrue(dict2)) {
+            gSettings.PointerMirror = TRUE;
+          }
+        }
+        dict2 = GetProperty(prop, "DoubleClickTime");
+        if (dict2) {
+          if (dict2->type == kTagTypeInteger) {
+            gSettings.DoubleClickTime = (UINTN)dict2->string;
+          } else if (dict2->type == kTagTypeString) {
+            gSettings.DoubleClickTime = (UINT16)AsciiStrDecimalToUintn(dict2->string + ((dict2->string[0] == '-') ? 1 : 0));
+          }
+        }
+      }
+      // hide by name/uuid
+      prop = GetProperty(dictPointer, "Hide");
+      if (prop) {
+        INTN i, Count = GetTagCount(prop);
+        if (Count > 0) {
+          gSettings.HVCount = 0;
+          gSettings.HVHideStrings = AllocateZeroPool(Count * sizeof(CHAR16 *));
+          if (gSettings.HVHideStrings) {
+            for (i = 0; i < Count; ++i) {
+              if (EFI_ERROR(GetElement(prop, i, &dict2))) {
+                continue;
+              }
+              if (dict2 == NULL) {
+                break;
+              }
+              if ((dict2->type == kTagTypeString) && dict2->string) {
+                gSettings.HVHideStrings[gSettings.HVCount] = PoolPrint(L"%a", dict2->string);
+                if (gSettings.HVHideStrings[gSettings.HVCount]) {
+                  DBG("Hiding entries with string %s\n", gSettings.HVHideStrings[gSettings.HVCount]);
+                  gSettings.HVCount++;
+                }
+              }
+            }
+          }
+        }
+      }
+      // Disable loader scan
+      prop = GetProperty(dictPointer, "Scan");
+      if (prop) {
+        if (IsPropertyFalse(prop)) {
+          gSettings.DisableEntryScan = TRUE;
+          gSettings.DisableToolScan = TRUE;
+          GlobalConfig.NoLegacy = TRUE;
+        } else if (prop->type == kTagTypeDict) {
+          dict2 = GetProperty(prop, "Entries");
+          if (dict2) {
+            if (IsPropertyFalse(dict2)) {
+              gSettings.DisableEntryScan = TRUE;
+            }
+          }
+          dict2 = GetProperty(prop, "Tool");
+          if (dict2) {
+            if (IsPropertyFalse(dict2)) {
+              gSettings.DisableToolScan = TRUE;
+            }
+          }
+          dict2 = GetProperty(prop, "Legacy");
+          if (dict2) {
+            if (dict2->type == kTagTypeFalse) {
+              GlobalConfig.NoLegacy = TRUE;
+            }
+            else if ((dict2->type == kTagTypeString) && dict2->string) {
+              if ((dict2->string[0] == 'N') || (dict2->string[0] == 'n')) {
+                GlobalConfig.NoLegacy = TRUE;
+              } else if ((dict2->string[0] == 'F') || (dict2->string[0] == 'f')) {
+                GlobalConfig.LegacyFirst = TRUE;
+              }
+            }
+          }
+          dict2 = GetProperty(prop, "Kernel");
+          if (dict2) {
+            if (dict2->type == kTagTypeFalse) {
+              gSettings.KernelScan = KERNEL_SCAN_NONE;
+            } else if ((dict2->type == kTagTypeString) && dict2->string) {
+              if ((dict2->string[0] == 'N') || (dict2->string[0] == 'n')) {
+                gSettings.KernelScan = ((dict2->string[1] == 'E') || (dict2->string[1] == 'e')) ? KERNEL_SCAN_NEWEST : KERNEL_SCAN_NONE;
+              } else if ((dict2->string[0] == 'O') || (dict2->string[0] == 'o')) {
+                gSettings.KernelScan = KERNEL_SCAN_OLDEST;
+              } else if ((dict2->string[0] == 'F') || (dict2->string[0] == 'f')) {
+                gSettings.KernelScan = KERNEL_SCAN_FIRST;
+              } else if ((dict2->string[0] == 'L') || (dict2->string[0] == 'l')) {
+                gSettings.KernelScan = KERNEL_SCAN_LAST;
+              } else if ((dict2->string[0] == 'M') || (dict2->string[0] == 'm')) {
+                gSettings.KernelScan = KERNEL_SCAN_MOSTRECENT;
+              } else if ((dict2->string[0] == 'E') || (dict2->string[0] == 'e')) {
+                gSettings.KernelScan = KERNEL_SCAN_EARLIEST;
+              }
+            }
+          }
+        }
+      }
+      // Custom entries
+      dict2 = GetProperty(dictPointer, "Custom");
+      if (dict2) {
+        prop = GetProperty(dict2, "Entries");
+        if (prop) {
+          CUSTOM_LOADER_ENTRY *Entry;
+          INTN   i, Count = GetTagCount(prop);
+          TagPtr dict3;
+          if (Count > 0) {
+            for (i = 0; i < Count; ++i) {
+              if (EFI_ERROR(GetElement(prop, i, &dict3))) {
+                continue;
+              }
+              if (dict3 == NULL) {
+                break;
+              }
+              // Allocate an entry
+              Entry = (CUSTOM_LOADER_ENTRY *)AllocateZeroPool(sizeof(CUSTOM_LOADER_ENTRY));
+              if (Entry) {
+                // Fill it in
+                if (!FillinCustomEntry(Entry, dict3, FALSE) || !AddCustomEntry(Entry)) {
+                  FreePool(Entry);
+                }
+              }
+            }
+          }
+        }
+        prop = GetProperty(dict2, "Legacy");
+        if (prop) {
+          CUSTOM_LEGACY_ENTRY *Entry;
+          INTN   i, Count = GetTagCount(prop);
+          TagPtr dict3;
+          if (Count > 0) {
+            for (i = 0; i < Count; ++i) {
+              if (EFI_ERROR(GetElement(prop, i, &dict3))) {
+                continue;
+              }
+              if (dict3 == NULL) {
+                break;
+              }
+              // Allocate an entry
+              Entry = (CUSTOM_LEGACY_ENTRY *)AllocateZeroPool(sizeof(CUSTOM_LEGACY_ENTRY));
+              if (Entry) {
+                // Fill it in
+                if (!FillinCustomLegacy(Entry, dict3) || !AddCustomLegacyEntry(Entry)) {
+                  FreePool(Entry);
+                }
+              }
+            }
+          }
+        }
+        prop = GetProperty(dict2, "Tool");
+        if (prop) {
+          CUSTOM_TOOL_ENTRY *Entry;
+          INTN   i, Count = GetTagCount(prop);
+          TagPtr dict3;
+          if (Count > 0) {
+            for (i = 0; i < Count; ++i) {
+              if (EFI_ERROR(GetElement(prop, i, &dict3))) {
+                continue;
+              }
+              if (dict3 == NULL) {
+                break;
+              }
+              // Allocate an entry
+              Entry = (CUSTOM_TOOL_ENTRY *)AllocateZeroPool(sizeof(CUSTOM_TOOL_ENTRY));
+              if (Entry) {
+                // Fill it in
+                if (!FillinCustomTool(Entry, dict3) || !AddCustomToolEntry(Entry)) {
+                  FreePool(Entry);
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    dictPointer = GetProperty(dict, "Graphics");
+    if (dictPointer) {
+      
+      prop = GetProperty(dictPointer, "PatchVBios");
+      gSettings.PatchVBios = FALSE;
+      if(prop) {
+        if (IsPropertyTrue(prop))
+          gSettings.PatchVBios = TRUE;
+      }
+      
+      gSettings.PatchVBiosBytesCount = 0;
+      dict2 = GetProperty(dictPointer,"PatchVBiosBytes");
+      if (dict2) {
+        UINTN Count = GetTagCount(dict2);
+        if (Count > 0) {
+          UINTN     Index = 0;
+          VBIOS_PATCH_BYTES *VBiosPatch;
+          UINTN     FindSize = 0;
+          UINTN     ReplaceSize = 0;
+          BOOLEAN   Valid;
+          
+          // alloc space for up to 16 entries
+          gSettings.PatchVBiosBytes = AllocateZeroPool(Count * sizeof(VBIOS_PATCH_BYTES));
+          
+          // get all entries
+          Index = 0;
+          for (Index = 0; Index < Count; Index++) {
+            // Get the next entry
+            if (EFI_ERROR(GetElement(dict2, Index, &prop))) {
+              continue;
+            }
+            if (prop == NULL) {
+              break;
+            }
+            Valid = TRUE;
+            // read entry
+            VBiosPatch = &gSettings.PatchVBiosBytes[gSettings.PatchVBiosBytesCount];
+            VBiosPatch->Find = GetDataSetting(prop, "Find", &FindSize);
+            VBiosPatch->Replace = GetDataSetting(prop, "Replace", &ReplaceSize);
+            if (VBiosPatch->Find == NULL || FindSize == 0) {
+              Valid = FALSE;
+              DBG("PatchVBiosBytes[%d]: missing Find data\n", Index);
+            }
+            if (VBiosPatch->Replace == NULL || ReplaceSize == 0) {
+              Valid = FALSE;
+              DBG("PatchVBiosBytes[%d]: missing Replace data\n", Index);
+            }
+            if (FindSize != ReplaceSize) {
+              Valid = FALSE;
+              DBG("PatchVBiosBytes[%d]: Find and Replace data are not the same size\n", Index);
+            }
+            if (Valid) {
+              VBiosPatch->NumberOfBytes = FindSize;
+              // go to next entry
+              ++gSettings.PatchVBiosBytesCount;
+            } else {
+              // error - release mem
+              if (VBiosPatch->Find != NULL) {
+                FreePool(VBiosPatch->Find);
+                VBiosPatch->Find = NULL;
+              }
+              if (VBiosPatch->Replace != NULL) {
+                FreePool(VBiosPatch->Replace);
+                VBiosPatch->Replace = NULL;
+              }
+            }
+          }
+          if (gSettings.PatchVBiosBytesCount == 0) {
+            FreePool(gSettings.PatchVBiosBytes);
+            gSettings.PatchVBiosBytes = NULL;
+          }
+        }
+      }
+      
+      //InjectEDID
+      prop = GetProperty(dictPointer, "InjectEDID");
+      gSettings.InjectEDID = FALSE;
+      if(prop) {
+        if (IsPropertyTrue(prop))
+          gSettings.InjectEDID = TRUE;
+      }
+      prop = GetProperty(dictPointer, "CustomEDID");
+      if(prop) {
+        UINTN j = 128;
+        gSettings.CustomEDID = GetDataSetting(dictPointer, "CustomEDID", &j);
+        if ((j % 128) != 0) {
+          DBG("CustomEDID has wrong length=%d\n", j);
+        } else {
+          DBG("CustomEDID ok\n");
+          InitializeEdidOverride();
+        }
+      }
+      
+    }
+    dictPointer = GetProperty(dict,"DisableDrivers");
+    if(dictPointer) {
+      INTN i, Count = GetTagCount(dictPointer);
+      if (Count > 0) {
+        gSettings.BlackListCount = 0;
+        gSettings.BlackList = AllocateZeroPool(Count * sizeof(CHAR16 *));
+        for (i = 0; i < Count; ++i) {
+          if (!EFI_ERROR(GetElement(dictPointer, i, &prop)) &&
+              prop && (prop->type == kTagTypeString)) {
+            gSettings.BlackList[gSettings.BlackListCount++] = PoolPrint(L"%a", prop->string);
+          }
         }
       }
     }
   }
- }
   return Status;
 }
 #define CONFIG_THEME_FILENAME L"theme.plist"
@@ -1643,7 +1617,7 @@ VOID GetListOfThemes()
 STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
 {
   TagPtr dict, dict2;
-
+  
   //fill default to have an ability change theme
   GlobalConfig.BackgroundScale = Crop;
   if (GlobalConfig.BackgroundName) {
@@ -1678,7 +1652,7 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
   LayoutTextOffset = 0; //default value if not set
   LayoutAnimMoveForMenuX = 0; //default value if not set
   GlobalConfig.HideUIFlags = 0;
-  GlobalConfig.SelectionColor = 0x80808080; 
+  GlobalConfig.SelectionColor = 0x80808080;
   if (GlobalConfig.SelectionSmallFileName) {
     FreePool(GlobalConfig.SelectionSmallFileName);
     GlobalConfig.SelectionSmallFileName = NULL;
@@ -1716,12 +1690,12 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
     FontImage = NULL;
   }
   FreeScrollBar();
-
+  
   // if NULL parameter, quit after setting default values
   if (dictPointer == NULL) {
     return EFI_INVALID_PARAMETER;
   }
-
+  
   dict = GetProperty(dictPointer, "Background");
   if (dict) {
     dict2 = GetProperty(dict, "Type");
@@ -1753,7 +1727,7 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
       GlobalConfig.BackgroundDark = (dict2->type == kTagTypeTrue);
     }
   }
-
+  
   dict = GetProperty(dictPointer, "Banner");
   if (dict) {
     // retain for legacy themes.
@@ -1811,9 +1785,9 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
           GlobalConfig.BannerNudgeY = (INT32)(UINTN)dict2->string;
         }
       }
-    } 
+    }
   }
-
+  
   dict = GetProperty(dictPointer, "Badges");
   if (dict) {
     dict2 = GetProperty(dict, "Swap");
@@ -1855,7 +1829,7 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
       }
     }
   }
-
+  
   dict = GetProperty(dictPointer, "Origination");
   if (dict) {
     dict2 = GetProperty(dict, "DesignWidth");
@@ -1871,7 +1845,7 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
       }
     }
   }
-
+  
   dict = GetProperty(dictPointer, "Layout");
   if (dict) {
     dict2 = GetProperty(dict, "BannerOffset");
@@ -1879,13 +1853,13 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
       if (dict2->type == kTagTypeInteger) {
         LayoutBannerOffset = (UINTN)dict2->string;
       }
-    }    
+    }
     dict2 = GetProperty(dict, "ButtonOffset");
     if (dict2) {
       if (dict2->type == kTagTypeInteger) {
         LayoutButtonOffset = (UINTN)dict2->string;
       }
-    }  
+    }
     dict2 = GetProperty(dict, "TextOffset");
     if (dict2) {
       if (dict2->type == kTagTypeInteger) {
@@ -1915,15 +1889,9 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
     if (dict2 && dict2->type == kTagTypeInteger) {
       GlobalConfig.TileYSpace = (INT32)(UINTN)dict2->string;
     }
-    //
-    dict2 = GetProperty(dict, "SelectionBigWidth");
-    if (dict2 && dict2->type == kTagTypeInteger) {
-      row0TileSize = (INT32)(UINTN)dict2->string;
-    }
-
-
-  }  
-
+    
+  }
+  
   dict = GetProperty(dictPointer, "Components");
   if (dict) {
     dict2 = GetProperty(dict, "Banner");
@@ -1955,7 +1923,7 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
       GlobalConfig.HideUIFlags |= HIDEUI_FLAG_MENU_TITLE_IMAGE;
     }
   }
-
+  
   dict = GetProperty(dictPointer, "Selection");
   if (dict) {
     dict2 = GetProperty(dict, "Color");
@@ -1980,14 +1948,12 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
     }
     dict2 = GetProperty(dict, "OnTop");
     if (dict2) {
-      if ((dict2->type == kTagTypeTrue) ||
-          ((dict2->type == kTagTypeString) && dict2->string &&
-           ((dict2->string[0] == 'Y') || (dict2->string[0] == 'y')))) {
-            GlobalConfig.SelectionOnTop = TRUE;
-          }
+      if (IsPropertyTrue(dict2)) {
+        GlobalConfig.SelectionOnTop = TRUE;
+      }
     }
   }
-
+  
   dict = GetProperty(dictPointer, "Scroll");
   if (dict) {
     dict2 = GetProperty(dict, "Width");
@@ -2023,7 +1989,7 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
       }
     }
   }
-
+  
   dict = GetProperty(dictPointer, "Font");
   if (dict) {
     dict2 = GetProperty(dict, "Type");
@@ -2053,7 +2019,7 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
       }
     }
   }
-
+  
   dict = GetProperty(dictPointer, "Anime");
   if (dict) {
     INTN i, Count = GetTagCount(dict);
@@ -2099,7 +2065,7 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
           Anime->FrameTime = AsciiStrDecimalToUintn(dict2->string);
         }
       }
-
+      
       dict2 = GetProperty(dictPointer, "ScreenEdgeX");
       if (dict2) {
         if ((dict2->type == kTagTypeString) && dict2->string) {
@@ -2126,7 +2092,7 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
       Anime->FilmY = INITVALUE;
       Anime->NudgeX = INITVALUE;
       Anime->NudgeY = INITVALUE;
-       
+      
       dict2 = GetProperty(dictPointer, "DistanceFromScreenEdgeX%");
       if (dict2) {
         if (dict2->type == kTagTypeInteger) {
@@ -2155,11 +2121,9 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
       
       dict2 = GetProperty(dictPointer, "Once");
       if (dict2) {
-        if ((dict2->type == kTagTypeTrue) ||
-            ((dict2->type == kTagTypeString) && dict2->string &&
-             ((dict2->string[0] == 'Y') || (dict2->string[0] == 'y')))) {
-              Anime->Once = TRUE;
-            }
+        if (IsPropertyTrue(dict2)) {
+          Anime->Once = TRUE;
+        }
       }
       // Add the anime to the list
       if (Anime) {
@@ -2190,7 +2154,7 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
       }
     }
   }
-
+  
   // set file defaults in case they were not set
   if (!GlobalConfig.BackgroundName) {
     GlobalConfig.BackgroundName = PoolPrint(L"background.png");
@@ -2208,7 +2172,8 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
   return EFI_SUCCESS;
 }
 
-TagPtr LoadTheme(CHAR16 *testTheme) {
+TagPtr LoadTheme(CHAR16 *testTheme)
+{
   EFI_STATUS Status = EFI_UNSUPPORTED;
   TagPtr     ThemeDict = NULL;
   CHAR8      *ThemePtr = NULL;
@@ -2284,8 +2249,9 @@ EFI_STATUS InitTheme(BOOLEAN useThemeDefinedInNVRam, EFI_TIME *time)
     GuiAnime=NextAnime;
   }
   
-  if (ThemesNum > 0 && (!GlobalConfig.Theme ||
-                        StrCmp(GlobalConfig.Theme, L"embedded") != 0)) {
+  if (ThemesNum > 0 &&
+      (!GlobalConfig.Theme ||
+       StrCmp(GlobalConfig.Theme, L"embedded") != 0)) {
     
     // Try special theme first
     if (time!=NULL) {
@@ -2485,13 +2451,9 @@ VOID ParseSMBIOSSettings(TagPtr dictPointer)
   }
   prop = GetProperty(dictPointer,"Mobile");
   if(prop) {
-    if ((prop->type == kTagTypeFalse) ||
-        ((prop->type == kTagTypeString) &&
-         ((prop->string[0] == 'n') || (prop->string[0] == 'N'))))
+    if (IsPropertyFalse(prop))
       gSettings.Mobile = FALSE;
-    else if ((prop->type == kTagTypeTrue) ||
-             ((prop->type == kTagTypeString) &&
-              ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))))
+    else if (IsPropertyTrue(prop))
       gSettings.Mobile = TRUE;
   }
   prop = GetProperty(dictPointer,"LocationInChassis");
@@ -2536,7 +2498,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
   //CHAR8       ANum[4];
   CHAR16      UStr[64];
   
-    dict = CfgDict;
+  dict = CfgDict;
   if(dict != NULL) {
     
     DBG("Loading main settings\n");
@@ -2548,44 +2510,35 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
       // Inject kexts
       prop = GetProperty(dictPointer, "InjectKexts");
       if(prop) {
-        if ((prop->type == kTagTypeTrue) ||
-            ((prop->type == kTagTypeString) &&
-             ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))))
-        {
+        if (IsPropertyTrue(prop)) {
           gSettings.WithKexts = TRUE;
         } else if ((prop->type == kTagTypeString) &&
                    ((AsciiStrStr(prop->string, "IfNoFakeSMC") != NULL) ||
                     (AsciiStrStr(prop->string, "Automatic") != NULL) ||
                     (AsciiStrStr(prop->string, "Detect") != NULL))
-                   )
-        {
+                   ) {
           gSettings.WithKexts = TRUE;
           gSettings.WithKextsIfNoFakeSMC = TRUE;
         }
       }
-
+      
       // No caches
       prop = GetProperty(dictPointer, "NoCaches");
       if(prop) {
-        if ((prop->type == kTagTypeTrue) ||
-            ((prop->type == kTagTypeString) &&
-             ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))) {
+        if (IsPropertyTrue(prop)) {
           gSettings.NoCaches = TRUE;
         }
       }
-
     }
     
-
+    
     //Graphics
     
     dictPointer = GetProperty(dict, "Graphics");
     if (dictPointer) {
       dict2 = GetProperty(dictPointer, "Inject");
       if(dict2) {
-        if ((dict2->type == kTagTypeTrue) ||
-            ((dict2->type == kTagTypeString) &&
-             ((dict2->string[0] == 'y') || (dict2->string[0] == 'Y')))) {
+        if (IsPropertyTrue(dict2)) {
           gSettings.GraphicsInjector = TRUE;
           gSettings.InjectIntel = TRUE;
           gSettings.InjectATI = TRUE;
@@ -2593,9 +2546,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
         } else if (dict2->type == kTagTypeDict) {
           prop = GetProperty(dict2, "Intel");
           if(prop) {
-            if ((prop->type == kTagTypeTrue) ||
-                ((prop->type == kTagTypeString) &&
-                 ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))) {
+            if (IsPropertyTrue(prop)) {
               gSettings.InjectIntel = TRUE;
             } else {
               gSettings.InjectIntel = FALSE;
@@ -2603,9 +2554,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
           }
           prop = GetProperty(dict2, "ATI");
           if(prop) {
-            if ((prop->type == kTagTypeTrue) ||
-                ((prop->type == kTagTypeString) &&
-                 ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))) {
+            if (IsPropertyTrue(prop)) {
               gSettings.InjectATI = TRUE;
             } else {
               gSettings.InjectATI = FALSE;
@@ -2613,9 +2562,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
           }
           prop = GetProperty(dict2, "NVidia");
           if(prop) {
-            if ((prop->type == kTagTypeTrue) ||
-                ((prop->type == kTagTypeString) &&
-                 ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))) {
+            if (IsPropertyTrue(prop)) {
               gSettings.InjectNVidia = TRUE;
             } else {
               gSettings.InjectNVidia = FALSE;
@@ -2628,7 +2575,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
           gSettings.InjectNVidia = FALSE;
         }
       }
-
+      
       prop = GetProperty(dictPointer, "VRAM");
       if(prop) {
         if (prop->type == kTagTypeInteger) {
@@ -2651,9 +2598,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
       prop = GetProperty(dictPointer, "LoadVBios");
       gSettings.LoadVBios = FALSE;
       if(prop) {
-        if ((prop->type == kTagTypeTrue) ||
-            ((prop->type == kTagTypeString) &&
-             ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))))
+        if (IsPropertyTrue(prop))
           gSettings.LoadVBios = TRUE;
       }
       for (i=0; i<NGFX; i++) {
@@ -2672,7 +2617,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
         AsciiStrToUnicodeStr(prop->string, gSettings.FBName);
       }
       prop = GetProperty(dictPointer, "NVCAP");
-      if(prop) {     
+      if(prop) {
         hex2bin(prop->string, (UINT8*)&gSettings.NVCAP[0], 20);
         DBG("Read NVCAP:");
         for (i=0; i<20; i++) {
@@ -2680,11 +2625,11 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
         }
         DBG("\n");
         //thus confirmed this procedure is working
-      } 
+      }
       prop = GetProperty(dictPointer, "display-cfg");
-      if(prop) {      
+      if(prop) {
         hex2bin(prop->string, (UINT8*)&gSettings.Dcfg[0], 8);
-      } 
+      }
       //
       prop = GetProperty(dictPointer, "DualLink");
       if(prop) {
@@ -2695,7 +2640,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
         }
       }
       //InjectEDID - already done in earlysettings
-
+      
       prop = GetProperty(dictPointer, "ig-platform-id");
       if(prop) {
         if (prop->type == kTagTypeInteger) {
@@ -2704,17 +2649,15 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
           gSettings.IgPlatform = (UINT32)AsciiStrHexToUint64(prop->string);
         }
       }
-    }    
+    }
     
     dictPointer = GetProperty(dict, "Devices");
     if (dictPointer) {
-
+      
       prop = GetProperty(dictPointer, "Inject");
       gSettings.StringInjector = FALSE;
       if(prop) {
-        if ((prop->type == kTagTypeTrue) ||
-            ((prop->type == kTagTypeString) &&
-             ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))))
+        if (IsPropertyTrue(prop))
           gSettings.StringInjector = TRUE;
       }
       prop = GetProperty(dictPointer, "Properties");
@@ -2741,9 +2684,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
       prop = GetProperty(dictPointer, "NoDefaultProperties");
       gSettings.NoDefaultProperties = FALSE;
       if(prop) {
-        if ((prop->type == kTagTypeTrue) ||
-            ((prop->type == kTagTypeString) &&
-             ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))))
+        if (IsPropertyTrue(prop))
           gSettings.NoDefaultProperties = TRUE;
       }
       
@@ -2795,10 +2736,10 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
                 gSettings.AddProperties[Index].Device = DEV_USB;
               } else {
                 DBG(" add properties to unknown device, ignored\n");
-                continue; 
-              }              
+                continue;
+              }
             }
-
+            
             prop2 = GetProperty(dict2, "Key");
             if (prop2 && (prop2->type == kTagTypeString) && prop2->string) {
               gSettings.AddProperties[Index].Key = AllocateCopyPool(AsciiStrSize(prop2->string), prop2->string);
@@ -2862,13 +2803,11 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
       if(prop) {
         gSettings.UseIntelHDMI = FALSE;
         if(prop) {
-          if ((prop->type == kTagTypeTrue) ||
-              ((prop->type == kTagTypeString) &&
-               ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))))
+          if (IsPropertyTrue(prop))
             gSettings.UseIntelHDMI = TRUE;
         }
       }
-
+      
       prop2 = GetProperty(dictPointer, "Audio");
       if (prop2) {
         // HDA
@@ -2901,7 +2840,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
           }
         }
       }
-
+      
       prop2 = GetProperty(dictPointer, "USB");
       if (prop2) {
         // USB
@@ -2909,23 +2848,17 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
         if(prop) {
           // enabled by default
           // syntax: USBInjection=Yes/No
-          if ((prop->type == kTagTypeFalse) ||
-              ((prop->type == kTagTypeString) &&
-               ((prop->string[0] == 'n') || (prop->string[0] == 'N')))) {
-                gSettings.USBInjection = FALSE;
-              }
+          if (IsPropertyFalse(prop)) {
+            gSettings.USBInjection = FALSE;
+          }
         }
         prop = GetProperty(prop2, "AddClockID");
         if(prop) {
           // disabled by default
           // syntax: InjectClockID=Yes/No
-          if ((prop->type == kTagTypeFalse) ||
-              ((prop->type == kTagTypeString) &&
-               ((prop->string[0] == 'n') || (prop->string[0] == 'N'))))
+          if (IsPropertyFalse(prop))
             gSettings.InjectClockID = FALSE;
-          else if ((prop->type == kTagTypeTrue) ||
-                   ((prop->type == kTagTypeString) &&
-                    ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))))
+          else if (IsPropertyTrue(prop))
             gSettings.InjectClockID = TRUE;
         }
         // enabled by default for CloverEFI or Duet
@@ -2933,13 +2866,9 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
         gSettings.USBFixOwnership = gFirmwareClover || (StrCmp(gST->FirmwareVendor, L"EDK II") == 0);
         prop = GetProperty(prop2, "FixOwnership");
         if(prop) {
-          if ((prop->type == kTagTypeFalse) ||
-              ((prop->type == kTagTypeString) &&
-               ((prop->string[0] == 'n') || (prop->string[0] == 'N'))))
+          if (IsPropertyFalse(prop))
             gSettings.USBFixOwnership = FALSE;
-          else if ((prop->type == kTagTypeTrue) ||
-                   ((prop->type == kTagTypeString) &&
-                    ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))) {
+          else if (IsPropertyTrue(prop)) {
             gSettings.USBFixOwnership = TRUE;
             DBG("USB FixOwnership: true\n");
           }
@@ -2947,18 +2876,14 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
         prop = GetProperty(prop2, "HighCurrent");
         if(prop) {
           // disabled by default
-          if ((prop->type == kTagTypeFalse) ||
-              ((prop->type == kTagTypeString) &&
-               ((prop->string[0] == 'n') || (prop->string[0] == 'N'))))
+          if (IsPropertyFalse(prop))
             gSettings.HighCurrent = FALSE;
-          else if ((prop->type == kTagTypeTrue) ||
-                   ((prop->type == kTagTypeString) &&
-                    ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))))
+          else if (IsPropertyTrue(prop))
             gSettings.HighCurrent = TRUE;
         }
       }
     }
-
+    
     //*** ACPI ***//
     
     dictPointer = GetProperty(dict, "ACPI");
@@ -3034,7 +2959,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
                 TabLength  = (UINT32)StrHexToUint64(UStr);
               }
               DBG(" length=%d(0x%x)", TabLength);
-
+              
             }
             DBG("\n");
             //set to drop
@@ -3045,16 +2970,16 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
                 if (((Signature == DropTable->Signature) &&
                      (!TableId || (DropTable->TableId == TableId)) &&
                      (!TabLength || (DropTable->Length == TabLength))) ||
-                     (!Signature && (DropTable->TableId == TableId))) {
+                    (!Signature && (DropTable->TableId == TableId))) {
                   DropTable->MenuItem.BValue = TRUE;
                   gSettings.DropSSDT = FALSE; //if one item=true then dropAll=false by default
                   DBG("  true\n");
-                }                
+                }
                 DropTable = DropTable->Next;
               }
               DBG("\n");
             }
-
+            
           }
         }
       }
@@ -3068,19 +2993,15 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
         }
         prop = GetProperty(dict2, "Debug");
         if(prop) {
-          if ((prop->type == kTagTypeTrue) ||
-              ((prop->type == kTagTypeString) &&
-               ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))) {
+          if (IsPropertyTrue(prop)) {
             gSettings.DebugDSDT = TRUE;
           }
         }
         prop = GetProperty(dict2, "Rtc8Allowed");
         if(prop) {
-          if ((prop->type == kTagTypeTrue) ||
-              ((prop->type == kTagTypeString) &&
-               ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))) {
-                gSettings.Rtc8Allowed = TRUE;
-              }
+          if (IsPropertyTrue(prop)) {
+            gSettings.Rtc8Allowed = TRUE;
+          }
         }
         
         prop = GetProperty(dict2, "FixMask");
@@ -3088,7 +3009,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
           if (prop->type == kTagTypeInteger) {
             gSettings.FixDsdt  = (UINT32)(UINTN)prop->string;
           } else if (prop->type == kTagTypeString){
-            gSettings.FixDsdt  = (UINT32)AsciiStrHexToUint64(prop->string); 
+            gSettings.FixDsdt  = (UINT32)AsciiStrHexToUint64(prop->string);
           }
           DBG("Config set Fix DSDT mask=%08x\n", gSettings.FixDsdt);
         }
@@ -3099,249 +3020,189 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
             gSettings.FixDsdt = 0;
             prop2 = GetProperty(prop, "AddDTGP_0001");
             if(prop2) {
-              if ((prop2->type == kTagTypeTrue) ||
-                  ((prop2->type == kTagTypeString) &&
-                   ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
-                    gSettings.FixDsdt |= FIX_DTGP;
-                  }
+              if (IsPropertyTrue(prop2)) {
+                gSettings.FixDsdt |= FIX_DTGP;
+              }
             }
             prop2 = GetProperty(prop, "FixDarwin_0002");
             if(prop2) {
-              if ((prop2->type == kTagTypeTrue) ||
-                  ((prop2->type == kTagTypeString) &&
-                   ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
-                    gSettings.FixDsdt |= FIX_WARNING;
-                  }
+              if (IsPropertyTrue(prop2)) {
+                gSettings.FixDsdt |= FIX_WARNING;
+              }
             }
             prop2 = GetProperty(prop, "FixShutdown_0004");
             if(prop2) {
-              if ((prop2->type == kTagTypeTrue) ||
-                  ((prop2->type == kTagTypeString) &&
-                   ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
-                    gSettings.FixDsdt |= FIX_SHUTDOWN;
-                  }
+              if (IsPropertyTrue(prop2)) {
+                gSettings.FixDsdt |= FIX_SHUTDOWN;
+              }
             }
             prop2 = GetProperty(prop, "AddMCHC_0008");
             if(prop2) {
-              if ((prop2->type == kTagTypeTrue) ||
-                  ((prop2->type == kTagTypeString) &&
-                   ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
-                    gSettings.FixDsdt |= FIX_MCHC;
-                  }
+              if (IsPropertyTrue(prop2)) {
+                gSettings.FixDsdt |= FIX_MCHC;
+              }
             }
             prop2 = GetProperty(prop, "FixHPET_0010");
             if(prop2) {
-              if ((prop2->type == kTagTypeTrue) ||
-                  ((prop2->type == kTagTypeString) &&
-                   ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
-                    gSettings.FixDsdt |= FIX_HPET;
-                  }
+              if (IsPropertyTrue(prop2)) {
+                gSettings.FixDsdt |= FIX_HPET;
+              }
             }
             prop2 = GetProperty(prop, "FakeLPC_0020");
             if(prop2) {
-              if ((prop2->type == kTagTypeTrue) ||
-                  ((prop2->type == kTagTypeString) &&
-                   ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
-                    gSettings.FixDsdt |= FIX_LPC;
-                  }
+              if (IsPropertyTrue(prop2)) {
+                gSettings.FixDsdt |= FIX_LPC;
+              }
             }
             prop2 = GetProperty(prop, "FixIPIC_0040");
             if(prop2) {
-              if ((prop2->type == kTagTypeTrue) ||
-                  ((prop2->type == kTagTypeString) &&
-                   ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
-                    gSettings.FixDsdt |= FIX_IPIC;
-                  }
+              if (IsPropertyTrue(prop2)) {
+                gSettings.FixDsdt |= FIX_IPIC;
+              }
             }
             prop2 = GetProperty(prop, "FixSBUS_0080");
             if(prop2) {
-              if ((prop2->type == kTagTypeTrue) ||
-                  ((prop2->type == kTagTypeString) &&
-                   ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
-                    gSettings.FixDsdt |= FIX_SBUS;
-                  }
+              if (IsPropertyTrue(prop2)) {
+                gSettings.FixDsdt |= FIX_SBUS;
+              }
             }
             prop2 = GetProperty(prop, "FixDisplay_0100");
             if(prop2) {
-              if ((prop2->type == kTagTypeTrue) ||
-                  ((prop2->type == kTagTypeString) &&
-                   ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
-                    gSettings.FixDsdt |= FIX_DISPLAY;
-                  }
+              if (IsPropertyTrue(prop2)) {
+                gSettings.FixDsdt |= FIX_DISPLAY;
+              }
             }
             prop2 = GetProperty(prop, "FixIDE_0200");
             if(prop2) {
-              if ((prop2->type == kTagTypeTrue) ||
-                  ((prop2->type == kTagTypeString) &&
-                   ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
-                    gSettings.FixDsdt |= FIX_IDE;
-                  }
+              if (IsPropertyTrue(prop2)) {
+                gSettings.FixDsdt |= FIX_IDE;
+              }
             }
             prop2 = GetProperty(prop, "FixSATA_0400");
             if(prop2) {
-              if ((prop2->type == kTagTypeTrue) ||
-                  ((prop2->type == kTagTypeString) &&
-                   ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
-                    gSettings.FixDsdt |= FIX_SATA;
-                  }
+              if (IsPropertyTrue(prop2)) {
+                gSettings.FixDsdt |= FIX_SATA;
+              }
             }
             prop2 = GetProperty(prop, "FixFirewire_0800");
             if(prop2) {
-              if ((prop2->type == kTagTypeTrue) ||
-                  ((prop2->type == kTagTypeString) &&
-                   ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
-                    gSettings.FixDsdt |= FIX_FIREWIRE;
-                  }
+              if (IsPropertyTrue(prop2)) {
+                gSettings.FixDsdt |= FIX_FIREWIRE;
+              }
             }
             prop2 = GetProperty(prop, "FixUSB_1000");
             if(prop2) {
-              if ((prop2->type == kTagTypeTrue) ||
-                  ((prop2->type == kTagTypeString) &&
-                   ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
-                    gSettings.FixDsdt |= FIX_USB;
-                  }
+              if (IsPropertyTrue(prop2)) {
+                gSettings.FixDsdt |= FIX_USB;
+              }
             }
             prop2 = GetProperty(prop, "FixLAN_2000");
             if(prop2) {
-              if ((prop2->type == kTagTypeTrue) ||
-                  ((prop2->type == kTagTypeString) &&
-                   ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
-                    gSettings.FixDsdt |= FIX_LAN;
-                  }
+              if (IsPropertyTrue(prop2)) {
+                gSettings.FixDsdt |= FIX_LAN;
+              }
             }
             prop2 = GetProperty(prop, "FixAirport_4000");
             if(prop2) {
-              if ((prop2->type == kTagTypeTrue) ||
-                  ((prop2->type == kTagTypeString) &&
-                   ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
-                    gSettings.FixDsdt |= FIX_WIFI;
-                  }
+              if (IsPropertyTrue(prop2)) {
+                gSettings.FixDsdt |= FIX_WIFI;
+              }
             }
             prop2 = GetProperty(prop, "FixHDA_8000");
             if(prop2) {
-              if ((prop2->type == kTagTypeTrue) ||
-                  ((prop2->type == kTagTypeString) &&
-                   ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
-                    gSettings.FixDsdt |= FIX_HDA;
-                  }
+              if (IsPropertyTrue(prop2)) {
+                gSettings.FixDsdt |= FIX_HDA;
+              }
             }
             prop2 = GetProperty(prop, "FIX_DARWIN_10000");
             if(prop2) {
-              if ((prop2->type == kTagTypeTrue) ||
-                  ((prop2->type == kTagTypeString) &&
-                   ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
-                    gSettings.FixDsdt |= FIX_WARNING;
-                  }
+              if (IsPropertyTrue(prop2)) {
+                gSettings.FixDsdt |= FIX_WARNING;
+              }
             }
             prop2 = GetProperty(prop, "FIX_RTC_20000");
             if(prop2) {
-              if ((prop2->type == kTagTypeTrue) ||
-                  ((prop2->type == kTagTypeString) &&
-                   ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
-                    gSettings.FixDsdt |= FIX_RTC;
-                  }
+              if (IsPropertyTrue(prop2)) {
+                gSettings.FixDsdt |= FIX_RTC;
+              }
             }
             prop2 = GetProperty(prop, "FIX_TMR_40000");
             if(prop2) {
-              if ((prop2->type == kTagTypeTrue) ||
-                  ((prop2->type == kTagTypeString) &&
-                   ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
-                    gSettings.FixDsdt |= FIX_TMR;
-                  }
+              if (IsPropertyTrue(prop2)) {
+                gSettings.FixDsdt |= FIX_TMR;
+              }
             }
             prop2 = GetProperty(prop, "AddIMEI_80000");
             if(prop2) {
-              if ((prop2->type == kTagTypeTrue) ||
-                  ((prop2->type == kTagTypeString) &&
-                   ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
-                    gSettings.FixDsdt |= FIX_IMEI;
-                  }
+              if (IsPropertyTrue(prop2)) {
+                gSettings.FixDsdt |= FIX_IMEI;
+              }
             }
             prop2 = GetProperty(prop, "FIX_INTELGFX_100000");
             if(prop2) {
-              if ((prop2->type == kTagTypeTrue) ||
-                  ((prop2->type == kTagTypeString) &&
-                   ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
-                    gSettings.FixDsdt |= FIX_INTELGFX;
-                  }
+              if (IsPropertyTrue(prop2)) {
+                gSettings.FixDsdt |= FIX_INTELGFX;
+              }
             }
             prop2 = GetProperty(prop, "FIX_WAK_200000");
             if(prop2) {
-              if ((prop2->type == kTagTypeTrue) ||
-                  ((prop2->type == kTagTypeString) &&
-                   ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
-                    gSettings.FixDsdt |= FIX_WAK;
-                  }
+              if (IsPropertyTrue(prop2)) {
+                gSettings.FixDsdt |= FIX_WAK;
+              }
             }
             prop2 = GetProperty(prop, "DeleteUnused_400000");
             if(prop2) {
-              if ((prop2->type == kTagTypeTrue) ||
-                  ((prop2->type == kTagTypeString) &&
-                   ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
-                    gSettings.FixDsdt |= FIX_UNUSED;
-                  }
+              if (IsPropertyTrue(prop2)) {
+                gSettings.FixDsdt |= FIX_UNUSED;
+              }
             }
             prop2 = GetProperty(prop, "FIX_ADP1_800000");
             if(prop2) {
-              if ((prop2->type == kTagTypeTrue) ||
-                  ((prop2->type == kTagTypeString) &&
-                   ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
-                    gSettings.FixDsdt |= FIX_ADP1;
-                  }
+              if (IsPropertyTrue(prop2)) {
+                gSettings.FixDsdt |= FIX_ADP1;
+              }
             }
             prop2 = GetProperty(prop, "AddPNLF_1000000");
             if(prop2) {
-              if ((prop2->type == kTagTypeTrue) ||
-                  ((prop2->type == kTagTypeString) &&
-                   ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
-                    gSettings.FixDsdt |= FIX_PNLF;
-                  }
+              if (IsPropertyTrue(prop2)) {
+                gSettings.FixDsdt |= FIX_PNLF;
+              }
             }
             prop2 = GetProperty(prop, "FIX_S3D_2000000");
             if(prop2) {
-              if ((prop2->type == kTagTypeTrue) ||
-                  ((prop2->type == kTagTypeString) &&
-                   ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
-                    gSettings.FixDsdt |= FIX_S3D;
-                  }
+              if (IsPropertyTrue(prop2)) {
+                gSettings.FixDsdt |= FIX_S3D;
+              }
             }
             prop2 = GetProperty(prop, "FIX_ACST_4000000");
             if(prop2) {
-              if ((prop2->type == kTagTypeTrue) ||
-                  ((prop2->type == kTagTypeString) &&
-                   ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
-                    gSettings.FixDsdt |= FIX_ACST;
-                  }
+              if (IsPropertyTrue(prop2)) {
+                gSettings.FixDsdt |= FIX_ACST;
+              }
             }
             prop2 = GetProperty(prop, "AddHDMI_8000000");
             if(prop2) {
-              if ((prop2->type == kTagTypeTrue) ||
-                  ((prop2->type == kTagTypeString) &&
-                   ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
-                    gSettings.FixDsdt |= FIX_HDMI;
-                  }
+              if (IsPropertyTrue(prop2)) {
+                gSettings.FixDsdt |= FIX_HDMI;
+              }
             }
             prop2 = GetProperty(prop, "FixRegions_10000000");
             if(prop2) {
-              if ((prop2->type == kTagTypeTrue) ||
-                  ((prop2->type == kTagTypeString) &&
-                   ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
-                    gSettings.FixDsdt |= FIX_REGIONS;
-                  }
+              if (IsPropertyTrue(prop2)) {
+                gSettings.FixDsdt |= FIX_REGIONS;
+              }
             }
             prop2 = GetProperty(prop, "NewWay_80000000");
             if(prop2) {
-              if ((prop2->type == kTagTypeTrue) ||
-                  ((prop2->type == kTagTypeString) &&
-                   ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
-                    gSettings.FixDsdt |= FIX_NEW_WAY;
-                  }
+              if (IsPropertyTrue(prop2)) {
+                gSettings.FixDsdt |= FIX_NEW_WAY;
+              }
             }
-
+            
           }
           DBG("   final mask=%08x\n", gSettings.FixDsdt);
         }
-
+        
         prop = GetProperty(dict2,"Patches");
         if(prop) {
           UINTN Count = GetTagCount(prop);
@@ -3374,173 +3235,131 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
         } //if prop PatchesDSDT
         prop = GetProperty(dict2, "ReuseFFFF");
         if(prop) {
-          if ((prop->type == kTagTypeTrue) ||
-              ((prop->type == kTagTypeString) &&
-               ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))) {
-                gSettings.ReuseFFFF = TRUE;
-              }
+          if (IsPropertyTrue(prop)) {
+            gSettings.ReuseFFFF = TRUE;
+          }
         }
         prop = GetProperty(dict2, "SuspendOverride");
         if(prop) {
-          if ((prop->type == kTagTypeTrue) ||
-              ((prop->type == kTagTypeString) &&
-               ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))) {
+          if (IsPropertyTrue(prop)) {
             gSettings.SuspendOverride = TRUE;
           }
         }
-/*
-        prop = GetProperty(dict2, "SlpSmiAtWake");
-        if(prop) {
-          if ((prop->type == kTagTypeTrue) ||
-              ((prop->type == kTagTypeString) &&
-               ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))) {
-                gSettings.SlpWak = TRUE;
-              }
-        }
-*/
-        prop = GetProperty(dict2, "DropOEM_DSM"); 
+        /*
+         prop = GetProperty(dict2, "SlpSmiAtWake");
+         if(prop) {
+         if (IsPropertyTrue(prop)) {
+         gSettings.SlpWak = TRUE;
+         }
+         }
+         */
+        prop = GetProperty(dict2, "DropOEM_DSM");
         defDSM = FALSE;
         if(prop) {
           defDSM = TRUE;
-          if ((prop->type == kTagTypeTrue) ||
-              ((prop->type == kTagTypeString) &&
-               ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))) {
-                gSettings.DropOEM_DSM = 0xFFFF;          
-              } else if ((prop->type == kTagTypeFalse) ||
-                         ((prop->type == kTagTypeString) &&
-                          ((prop->string[0] == 'n') || (prop->string[0] == 'N')))) {
-                 gSettings.DropOEM_DSM = 0;
-               } else if (prop->type == kTagTypeInteger) {
-                 gSettings.DropOEM_DSM = (UINT16)(UINTN)prop->string;
-               } else if (prop->type == kTagTypeDict) {
-                 prop2 = GetProperty(prop, "ATI");
-                 if(prop2) {
-                   if ((prop2->type == kTagTypeTrue) ||
-                       ((prop2->type == kTagTypeString) &&
-                        ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
-                         gSettings.DropOEM_DSM |= DEV_ATI;
-                       }
-                 }
-                 prop2 = GetProperty(prop, "NVidia");
-                 if(prop2) {
-                   if ((prop2->type == kTagTypeTrue) ||
-                       ((prop2->type == kTagTypeString) &&
-                        ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
-                         gSettings.DropOEM_DSM |= DEV_NVIDIA;
-                       }
-                 }
-                 prop2 = GetProperty(prop, "IntelGFX");
-                 if(prop2) {
-                   if ((prop2->type == kTagTypeTrue) ||
-                       ((prop2->type == kTagTypeString) &&
-                        ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
-                         gSettings.DropOEM_DSM |= DEV_INTEL;
-                       }
-                 }
-                 prop2 = GetProperty(prop, "HDA");
-                 if(prop2) {
-                   if ((prop2->type == kTagTypeTrue) ||
-                       ((prop2->type == kTagTypeString) &&
-                        ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
-                         gSettings.DropOEM_DSM |= DEV_HDA;
-                       }
-                 }
-                 prop2 = GetProperty(prop, "HDMI");
-                 if(prop2) {
-                   if ((prop2->type == kTagTypeTrue) ||
-                       ((prop2->type == kTagTypeString) &&
-                        ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
-                         gSettings.DropOEM_DSM |= DEV_HDMI;
-                       }
-                 }
-                 prop2 = GetProperty(prop, "SATA");
-                 if(prop2) {
-                   if ((prop2->type == kTagTypeTrue) ||
-                       ((prop2->type == kTagTypeString) &&
-                        ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
-                         gSettings.DropOEM_DSM |= DEV_SATA;
-                       }
-                 }
-                 prop2 = GetProperty(prop, "LAN");
-                 if(prop2) {
-                   if ((prop2->type == kTagTypeTrue) ||
-                       ((prop2->type == kTagTypeString) &&
-                        ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
-                         gSettings.DropOEM_DSM |= DEV_LAN;
-                       }
-                 }
-                 prop2 = GetProperty(prop, "WIFI");
-                 if(prop2) {
-                   if ((prop2->type == kTagTypeTrue) ||
-                       ((prop2->type == kTagTypeString) &&
-                        ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
-                         gSettings.DropOEM_DSM |= DEV_WIFI;
-                       }
-                 }
-                 prop2 = GetProperty(prop, "USB");
-                 if(prop2) {
-                   if ((prop2->type == kTagTypeTrue) ||
-                       ((prop2->type == kTagTypeString) &&
-                        ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
-                         gSettings.DropOEM_DSM |= DEV_USB;
-                       }
-                 }          
-                 prop2 = GetProperty(prop, "LPC");
-                 if(prop2) {
-                   if ((prop2->type == kTagTypeTrue) ||
-                       ((prop2->type == kTagTypeString) &&
-                        ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
-                         gSettings.DropOEM_DSM |= DEV_LPC;
-                       }
-                 }          
-                 prop2 = GetProperty(prop, "SmBUS");
-                 if(prop2) {
-                   if ((prop2->type == kTagTypeTrue) ||
-                       ((prop2->type == kTagTypeString) &&
-                        ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
-                         gSettings.DropOEM_DSM |= DEV_SMBUS;
-                       }
-                 }          
-                 prop2 = GetProperty(prop, "Firewire");
-                 if(prop2) {
-                   if ((prop2->type == kTagTypeTrue) ||
-                       ((prop2->type == kTagTypeString) &&
-                        ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
-                         gSettings.DropOEM_DSM |= DEV_FIREWIRE;
-                       }
-                 }          
-                 prop2 = GetProperty(prop, "IDE");
-                 if(prop2) {
-                   if ((prop2->type == kTagTypeTrue) ||
-                       ((prop2->type == kTagTypeString) &&
-                        ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
-                         gSettings.DropOEM_DSM |= DEV_IDE;
-                       }
-                 }          
-               }
+          if (IsPropertyTrue(prop)) {
+            gSettings.DropOEM_DSM = 0xFFFF;
+          } else if (IsPropertyFalse(prop)) {
+            gSettings.DropOEM_DSM = 0;
+          } else if (prop->type == kTagTypeInteger) {
+            gSettings.DropOEM_DSM = (UINT16)(UINTN)prop->string;
+          } else if (prop->type == kTagTypeDict) {
+            prop2 = GetProperty(prop, "ATI");
+            if(prop2) {
+              if (IsPropertyTrue(prop2)) {
+                gSettings.DropOEM_DSM |= DEV_ATI;
+              }
+            }
+            prop2 = GetProperty(prop, "NVidia");
+            if(prop2) {
+              if (IsPropertyTrue(prop2)) {
+                gSettings.DropOEM_DSM |= DEV_NVIDIA;
+              }
+            }
+            prop2 = GetProperty(prop, "IntelGFX");
+            if(prop2) {
+              if (IsPropertyTrue(prop2)) {
+                gSettings.DropOEM_DSM |= DEV_INTEL;
+              }
+            }
+            prop2 = GetProperty(prop, "HDA");
+            if(prop2) {
+              if (IsPropertyTrue(prop2)) {
+                gSettings.DropOEM_DSM |= DEV_HDA;
+              }
+            }
+            prop2 = GetProperty(prop, "HDMI");
+            if(prop2) {
+              if (IsPropertyTrue(prop2)) {
+                gSettings.DropOEM_DSM |= DEV_HDMI;
+              }
+            }
+            prop2 = GetProperty(prop, "SATA");
+            if(prop2) {
+              if (IsPropertyTrue(prop2)) {
+                gSettings.DropOEM_DSM |= DEV_SATA;
+              }
+            }
+            prop2 = GetProperty(prop, "LAN");
+            if(prop2) {
+              if (IsPropertyTrue(prop2)) {
+                gSettings.DropOEM_DSM |= DEV_LAN;
+              }
+            }
+            prop2 = GetProperty(prop, "WIFI");
+            if(prop2) {
+              if (IsPropertyTrue(prop2)) {
+                gSettings.DropOEM_DSM |= DEV_WIFI;
+              }
+            }
+            prop2 = GetProperty(prop, "USB");
+            if(prop2) {
+              if (IsPropertyTrue(prop2)) {
+                gSettings.DropOEM_DSM |= DEV_USB;
+              }
+            }
+            prop2 = GetProperty(prop, "LPC");
+            if(prop2) {
+              if (IsPropertyTrue(prop2)) {
+                gSettings.DropOEM_DSM |= DEV_LPC;
+              }
+            }
+            prop2 = GetProperty(prop, "SmBUS");
+            if(prop2) {
+              if (IsPropertyTrue(prop2)) {
+                gSettings.DropOEM_DSM |= DEV_SMBUS;
+              }
+            }
+            prop2 = GetProperty(prop, "Firewire");
+            if(prop2) {
+              if (IsPropertyTrue(prop2)) {
+                gSettings.DropOEM_DSM |= DEV_FIREWIRE;
+              }
+            }
+            prop2 = GetProperty(prop, "IDE");
+            if(prop2) {
+              if (IsPropertyTrue(prop2)) {
+                gSettings.DropOEM_DSM |= DEV_IDE;
+              }
+            }
+          }
         }
       }
-
+      
       dict2 = GetProperty(dictPointer, "SSDT");
       if (dict2) {
         prop2 = GetProperty(dict2, "Generate");
         if (prop2) {
-          if ((prop2->type == kTagTypeTrue) ||
-              ((prop2->type == kTagTypeString) &&
-               ((prop2->string[0] == 'y') || (prop2->string[0] == 'Y')))) {
+          if (IsPropertyTrue(prop2)) {
             gSettings.GeneratePStates = TRUE;
             gSettings.GenerateCStates = TRUE;
-          } else if ((prop2->type == kTagTypeFalse) ||
-                     ((prop2->type == kTagTypeString) &&
-                     ((prop2->string[0] == 'n') || (prop2->string[0] == 'N')))) {
+          } else if (IsPropertyFalse(prop2)) {
             gSettings.GeneratePStates = FALSE;
             gSettings.GenerateCStates = FALSE;
-         } else if (prop2->type == kTagTypeDict) {
+          } else if (prop2->type == kTagTypeDict) {
             prop = GetProperty(prop2, "PStates");
             if(prop) {
-              if ((prop->type == kTagTypeTrue) ||
-                  ((prop->type == kTagTypeString) &&
-                   ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))) {
+              if (IsPropertyTrue(prop)) {
                 gSettings.GeneratePStates = TRUE;
               } else {
                 gSettings.GeneratePStates = FALSE;
@@ -3548,9 +3367,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
             }
             prop = GetProperty(prop2, "CStates");
             if(prop) {
-              if ((prop->type == kTagTypeTrue) ||
-                  ((prop->type == kTagTypeString) &&
-                   ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))) {
+              if (IsPropertyTrue(prop)) {
                 gSettings.GenerateCStates = TRUE;
               } else {
                 gSettings.GenerateCStates = FALSE;
@@ -3560,9 +3377,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
         }
         prop = GetProperty(dict2, "DropOem");
         if(prop) {
-          if ((prop->type == kTagTypeTrue) ||
-              ((prop->type == kTagTypeString) &&
-               ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))) {
+          if (IsPropertyTrue(prop)) {
             gSettings.DropSSDT = TRUE;
           } else {
             gSettings.DropSSDT = FALSE;
@@ -3570,56 +3385,46 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
         }
         prop = GetProperty(dict2, "UseSystemIO");
         if(prop) {
-          if ((prop->type == kTagTypeTrue) ||
-              ((prop->type == kTagTypeString) &&
-               ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))) {
-                gSettings.EnableISS = TRUE;
-              } else {
-                gSettings.EnableISS = FALSE;
-              }
+          if (IsPropertyTrue(prop)) {
+            gSettings.EnableISS = TRUE;
+          } else {
+            gSettings.EnableISS = FALSE;
+          }
         }
         prop = GetProperty(dict2, "EnableC7");
         if(prop) {
-          if ((prop->type == kTagTypeTrue) ||
-              ((prop->type == kTagTypeString) &&
-               ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))) {
-                gSettings.EnableC7 = TRUE;
-              } else {
-                gSettings.EnableC7 = FALSE;
-              }
+          if (IsPropertyTrue(prop)) {
+            gSettings.EnableC7 = TRUE;
+          } else {
+            gSettings.EnableC7 = FALSE;
+          }
           DBG("Config set EnableC7: %a\n", gSettings.EnableC7?"+":"-");
         }
         prop = GetProperty(dict2, "EnableC6");
         if(prop) {
-          if ((prop->type == kTagTypeTrue) ||
-              ((prop->type == kTagTypeString) &&
-               ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))) {
-                gSettings.EnableC6 = TRUE;
-              } else {
-                gSettings.EnableC6 = FALSE;
-              }
+          if (IsPropertyTrue(prop)) {
+            gSettings.EnableC6 = TRUE;
+          } else {
+            gSettings.EnableC6 = FALSE;
+          }
           DBG("Config set EnableC6: %a\n", gSettings.EnableC6?"+":"-");
         }
         prop = GetProperty(dict2, "EnableC4");
         if(prop) {
-          if ((prop->type == kTagTypeTrue) ||
-              ((prop->type == kTagTypeString) &&
-               ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))) {
-                gSettings.EnableC4 = TRUE;
-              } else {
-                gSettings.EnableC4 = FALSE;
-              }
+          if (IsPropertyTrue(prop)) {
+            gSettings.EnableC4 = TRUE;
+          } else {
+            gSettings.EnableC4 = FALSE;
+          }
           DBG("Config set EnableC4: %a\n", gSettings.EnableC4?"+":"-");
         }
         prop = GetProperty(dict2, "EnableC2");
         if(prop) {
-          if ((prop->type == kTagTypeTrue) ||
-              ((prop->type == kTagTypeString) &&
-               ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))) {
-                gSettings.EnableC2 = TRUE;
-              } else {
-                gSettings.EnableC2 = FALSE;
-              }
+          if (IsPropertyTrue(prop)) {
+            gSettings.EnableC2 = TRUE;
+          } else {
+            gSettings.EnableC2 = FALSE;
+          }
           DBG("Config set EnableC2: %a\n", gSettings.EnableC2?"+":"-");
         }
         prop = GetProperty(dict2, "C3Latency");
@@ -3627,11 +3432,11 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
           if (prop->type == kTagTypeInteger) {
             gSettings.C3Latency = (UINT16)(UINTN)prop->string;
           } else if (prop->type == kTagTypeString){
-    //        AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
+            //        AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
             gSettings.C3Latency = (UINT16)AsciiStrHexToUint64(prop->string);
           }
         }
-
+        
         prop = GetProperty(dict2, "PLimitDict");
         if(prop) {
           if (prop->type == kTagTypeInteger) {
@@ -3650,13 +3455,9 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
         }
         prop = GetProperty(dict2, "DoubleFirstState");
         if(prop) {
-          if ((prop->type == kTagTypeTrue) ||
-              ((prop->type == kTagTypeString) &&
-               ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))) {
+          if (IsPropertyTrue(prop)) {
             gSettings.DoubleFirstState = TRUE;
-          } else if ((prop->type == kTagTypeFalse) ||
-                     ((prop->type == kTagTypeString) &&
-                      ((prop->string[0] == 'n') || (prop->string[0] == 'N')))) {
+          } else if (IsPropertyFalse(prop)) {
             gSettings.DoubleFirstState = FALSE;
           }
         }
@@ -3690,21 +3491,19 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
       }
       prop = GetProperty(dictPointer, "DropMCFG");
       if(prop) {
-        if ((prop->type == kTagTypeTrue) ||
-            ((prop->type == kTagTypeString) &&
-             ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))) {
-              gSettings.DropMCFG = TRUE;
-            } else {
-              gSettings.DropMCFG = FALSE;
-            }
+        if (IsPropertyTrue(prop)) {
+          gSettings.DropMCFG = TRUE;
+        } else {
+          gSettings.DropMCFG = FALSE;
+        }
       }
-
+      
       prop = GetProperty(dictPointer, "ResetAddress");
       if(prop) {
         if (prop->type == kTagTypeInteger) {
           gSettings.ResetAddr = (UINT64)(UINTN)prop->string;
         } else if (prop->type == kTagTypeString){
- //         AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
+          //         AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
           gSettings.ResetAddr  = AsciiStrHexToUint64(prop->string);
         }
         DBG("Config set ResetAddr=0x%x\n", gSettings.ResetAddr);
@@ -3720,19 +3519,17 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
         if (prop->type == kTagTypeInteger) {
           gSettings.ResetVal = (UINT8)(UINTN)prop->string;
         } else if (prop->type == kTagTypeString){
- //         AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
+          //         AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
           gSettings.ResetVal = (UINT8)AsciiStrHexToUint64(prop->string);
         }
         DBG("Config set ResetVal=0x%x\n", gSettings.ResetVal);
       }
       //other known pair is 0x0CF9/0x06. What about 0x92/0x01 ?
-
-
+      
+      
       prop = GetProperty(dictPointer, "HaltEnabler");
       if(prop) {
-        if ((prop->type == kTagTypeTrue) ||
-            ((prop->type == kTagTypeString) &&
-             ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))) {
+        if (IsPropertyTrue(prop)) {
           gSettings.SlpSmiEnable = TRUE;
         }
       }
@@ -3740,20 +3537,17 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
       prop = GetProperty(dictPointer, "smartUPS");
       gSettings.smartUPS = FALSE;
       if(prop) {
-        if ((prop->type == kTagTypeTrue) ||
-            ((prop->type == kTagTypeString) &&
-             ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))) {
+        if (IsPropertyTrue(prop)) {
           gSettings.smartUPS = TRUE;
           DBG("Config set smartUPS present\n");
         }
       }
       prop = GetProperty(dictPointer, "PatchAPIC");
- //     gSettings.PatchNMI = FALSE;
+      //     gSettings.PatchNMI = FALSE;
       if(prop) {
-        if ((prop->type == kTagTypeTrue) ||
-            ((prop->type == kTagTypeString) &&
-             ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))))
+        if (IsPropertyTrue(prop)) {
           gSettings.PatchNMI = TRUE;
+        }
       }
     }
     
@@ -3763,15 +3557,11 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
       ParseSMBIOSSettings(dictPointer);
       prop = GetProperty(dictPointer, "Trust");
       if (prop) {
-        if ((prop->type == kTagTypeFalse) ||
-            ((prop->type == kTagTypeString) &&
-             ((prop->string[0] == 'n') || (prop->string[0] == 'N'))))
-            gSettings.TrustSMBIOS = FALSE;
-        else if ((prop->type == kTagTypeTrue) ||
-                 ((prop->type == kTagTypeString) &&
-                  ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))) {
-                   gSettings.TrustSMBIOS = TRUE;
-                 }
+        if (IsPropertyFalse(prop)) {
+          gSettings.TrustSMBIOS = FALSE;
+        } else if (IsPropertyTrue(prop)) {
+          gSettings.TrustSMBIOS = TRUE;
+        }
       }
       // Inject memory tables into SMBIOS
       prop = GetProperty(dictPointer, "Memory");
@@ -3835,11 +3625,11 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
             // Get memory frequency
             dict2 = GetProperty(prop3, "Frequency");
             if (dict2) {
-               if (dict2->type == kTagTypeString) {
-                  gRAM.User[Slot].Frequency = (UINT32)AsciiStrDecimalToUintn(dict2->string);
-               } else if (dict2->type == kTagTypeInteger) {
-                  gRAM.User[Slot].Frequency = (UINT32)(UINTN)dict2->string;
-               }
+              if (dict2->type == kTagTypeString) {
+                gRAM.User[Slot].Frequency = (UINT32)AsciiStrDecimalToUintn(dict2->string);
+              } else if (dict2->type == kTagTypeInteger) {
+                gRAM.User[Slot].Frequency = (UINT32)(UINTN)dict2->string;
+              }
             }
             // Get memory vendor
             dict2 = GetProperty(prop3, "Vendor");
@@ -3917,7 +3707,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
             DBG(" no device  property for slot\n");
             continue;
           }
-
+          
           SlotDevices[DeviceN].SlotID = DeviceN;
           prop2 = GetProperty(prop3, "ID");
           if (prop2) {
@@ -3925,9 +3715,9 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
               SlotDevices[DeviceN].SlotID = (UINT8)((UINTN)prop2->string & 0xFF);
             } else if (prop2->type == kTagTypeString){
               SlotDevices[DeviceN].SlotID = (UINT8)AsciiStrDecimalToUintn(prop2->string);
-            }            
+            }
           }
-
+          
           SlotDevices[DeviceN].SlotType = SlotTypePci;
           prop2 = GetProperty(prop3, "Type");
           if (prop2) {
@@ -4019,12 +3809,10 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
         }
         DBG("Config set BusSpeed=%dkHz\n", gSettings.BusSpeed);
       }
-
+      
       prop = GetProperty(dictPointer, "C6");
       if(prop) {
-        if ((prop->type == kTagTypeTrue) ||
-            ((prop->type == kTagTypeString) &&
-             ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))) {
+        if (IsPropertyTrue(prop)) {
           gSettings.EnableC6 = TRUE;
         } else {
           gSettings.EnableC6 = FALSE;
@@ -4033,9 +3821,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
       
       prop = GetProperty(dictPointer, "C4");
       if(prop) {
-        if ((prop->type == kTagTypeTrue) ||
-            ((prop->type == kTagTypeString) &&
-             ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))) {
+        if (IsPropertyTrue(prop)) {
           gSettings.EnableC4 = TRUE;
         } else {
           gSettings.EnableC4 = FALSE;
@@ -4044,9 +3830,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
       
       prop = GetProperty(dictPointer, "C2");
       if(prop) {
-        if ((prop->type == kTagTypeTrue) ||
-            ((prop->type == kTagTypeString) &&
-             ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))) {
+        if (IsPropertyTrue(prop)) {
           gSettings.EnableC2 = TRUE;
           DBG(" C2 enabled\n");
         } else {
@@ -4082,9 +3866,9 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
       }
 
     }
-
+    
     // KernelAndKextPatches
-//xxx    gSettings.KPKernelCpu = TRUE; // enabled by default
+    //xxx    gSettings.KPKernelCpu = TRUE; // enabled by default
     gSettings.KPKextPatchesNeeded = FALSE;
     gSettings.KPLapicPanic = FALSE; // disabled by default
     if (NeedPMfix) {
@@ -4096,36 +3880,28 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
       gSettings.KPDebug = FALSE;
       prop = GetProperty(dictPointer,"Debug");
       if(prop) {
-        if ((prop->type == kTagTypeTrue) ||
-            ((prop->type == kTagTypeString) &&
-             ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))){
+        if (IsPropertyTrue(prop)){
           gSettings.KPDebug = TRUE;
         }
       }
       prop = GetProperty(dictPointer,"KernelCpu");
       if(prop) {
         gSettings.KPKernelCpu = FALSE; // disabled here because user set false and enabled by default
-        if ((prop->type == kTagTypeTrue) ||
-            ((prop->type == kTagTypeString) &&
-             ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))){
+        if (IsPropertyTrue(prop)){
           gSettings.KPKernelCpu = TRUE;
         }
       }
       prop = GetProperty(dictPointer,"KernelPm");
       if(prop) {
-        if ((prop->type == kTagTypeTrue) ||
-            ((prop->type == kTagTypeString) &&
-             ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))){
+        if (IsPropertyTrue(prop)){
           gSettings.KPKernelPm = TRUE;
         }
       }
       prop = GetProperty(dictPointer,"KernelLapic");
       if(prop) {
-        if ((prop->type == kTagTypeTrue) ||
-            ((prop->type == kTagTypeString) &&
-             ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))){
-              gSettings.KPLapicPanic = TRUE;
-            }
+        if (IsPropertyTrue(prop)){
+          gSettings.KPLapicPanic = TRUE;
+        }
       }
       prop = GetProperty(dictPointer,"ATIConnectorsController");
       if(prop) {
@@ -4158,9 +3934,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
       }
       prop = GetProperty(dictPointer,"AsusAICPUPM");
       if(prop) {
-        if ((prop->type == kTagTypeTrue) ||
-            ((prop->type == kTagTypeString) &&
-             ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))){
+        if (IsPropertyTrue(prop)){
           gSettings.KPAsusAICPUPM = TRUE;
         }
       }
@@ -4169,13 +3943,9 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
       prop = GetProperty(dictPointer,"AppleRTC");
       gSettings.KPAppleRTC = TRUE;
       if(prop) {
-        if ((prop->type == kTagTypeTrue) ||
-            ((prop->type == kTagTypeString) &&
-             ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))) {
+        if (IsPropertyTrue(prop)) {
           gSettings.KPAppleRTC = TRUE;
-        } else if ((prop->type == kTagTypeFalse) ||
-                   ((prop->type == kTagTypeString) &&
-                    ((prop->string[0] == 'n') || (prop->string[0] == 'N')))){
+        } else if (IsPropertyFalse(prop)){
           gSettings.KPAppleRTC = FALSE;
         }
       }
@@ -4192,8 +3962,8 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
           for (i = 0; i < Count; ++i) {
             Status = GetElement(prop, i, &dictPointer);
             if (EFI_ERROR(Status)) {
-            DBG("error %r getting next element at index %d\n", Status, i);
-               continue;
+              DBG("error %r getting next element at index %d\n", Status, i);
+              continue;
             }
             if (!dictPointer) {
               break;
@@ -4204,7 +3974,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
             DBG("KextToPatch %d:", i);
             dict2 = GetProperty(dictPointer,"Name");
             if (!dict2) {
-               continue;
+              continue;
             }
             gSettings.KextPatches[gSettings.NrKexts].Name = AllocateCopyPool(AsciiStrSize(dict2->string), dict2->string);
             dict2 = GetProperty(dictPointer,"Comment");
@@ -4214,14 +3984,12 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
               DBG(" %a", gSettings.KextPatches[gSettings.NrKexts].Name);
             }
             gSettings.KPKextPatchesNeeded = TRUE;
-        
+            
             // check if this is Info.plist patch or kext binary patch
             gSettings.KextPatches[gSettings.NrKexts].IsPlistPatch = FALSE;
             dict2 = GetProperty(dictPointer, "InfoPlistPatch");
             if(dict2) {
-              if ((dict2->type == kTagTypeTrue) ||
-                  (dict2->string[0] == 'y') ||
-                  (dict2->string[0] == 'Y'))
+              if (IsPropertyTrue(dict2))
                 gSettings.KextPatches[gSettings.NrKexts].IsPlistPatch = TRUE;
             }
             
@@ -4249,7 +4017,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
               gSettings.KextPatches[gSettings.NrKexts].DataLen = j;
               gSettings.KextPatches[gSettings.NrKexts].Patch = GetDataSetting(dictPointer,"Replace", &j);
             }
-        
+            
             if ((gSettings.KextPatches[gSettings.NrKexts].DataLen != (INTN)j) || (j == 0)) {
               DBG(" - invalid Find/Replace data - skipping!\n");
               if (gSettings.KextPatches[gSettings.NrKexts].Name != NULL) {
@@ -4257,12 +4025,12 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
                 gSettings.KextPatches[gSettings.NrKexts].Name = NULL;
               }
               if (gSettings.KextPatches[gSettings.NrKexts].Data != NULL) {
-                 FreePool(gSettings.KextPatches[gSettings.NrKexts].Data); //just erase data
-                 gSettings.KextPatches[gSettings.NrKexts].Data = NULL;
+                FreePool(gSettings.KextPatches[gSettings.NrKexts].Data); //just erase data
+                gSettings.KextPatches[gSettings.NrKexts].Data = NULL;
               }
               if (gSettings.KextPatches[gSettings.NrKexts].Patch != NULL) {
-                 FreePool(gSettings.KextPatches[gSettings.NrKexts].Patch); //just erase patch
-                 gSettings.KextPatches[gSettings.NrKexts].Patch = NULL;
+                FreePool(gSettings.KextPatches[gSettings.NrKexts].Patch); //just erase patch
+                gSettings.KextPatches[gSettings.NrKexts].Patch = NULL;
               }
               continue; //same i
             }
@@ -4272,12 +4040,12 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
           }
         }
         //gSettings.NrKexts = (INT32)i;
-        //there is one moment. This data is allocated in BS memory but will be used 
+        //there is one moment. This data is allocated in BS memory but will be used
         // after OnExitBootServices. This is wrong and these arrays should be reallocated
         // but I am not sure
       }
     }
- 
+    
     
     // RtVariables
     dictPointer = GetProperty(dict, "RtVariables");
@@ -4341,7 +4109,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
       gSettings.RtROM = (UINT8*)&gSettings.SmUUID.Data4[2];
       gSettings.RtROMLen = 6;
     }
-
+    
     if (AsciiStrLen(gSettings.RtMLB) != 17) {
       DBG("Warning! Your MLB is not suitable for iMessage (must be 17 chars long) !\n");
     }
@@ -4355,7 +4123,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
     // SystemParameters again - values that can depend on previous params
     dictPointer = GetProperty(dict, "SystemParameters");
     if (dictPointer) {
-
+      
       //BacklightLevel
       prop = GetProperty(dictPointer, "BacklightLevel");
       if(prop) {
@@ -4365,7 +4133,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
           gSettings.BacklightLevel = (UINT16)AsciiStrHexToUint64(prop->string);
         }
       }
-
+      
       prop = GetProperty(dictPointer, "CustomUUID");
       if(prop) {
         if (IsValidGuidAsciiString(prop->string)) {
@@ -4382,32 +4150,28 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
       
       prop = GetProperty(dictPointer, "InjectSystemID");
       if(prop) {
-        if ((prop->type == kTagTypeFalse) ||
-            ((prop->type == kTagTypeString) &&
-             ((prop->string[0] == 'n') || (prop->string[0] == 'N'))))
+        if (IsPropertyFalse(prop))
           gSettings.InjectSystemID = FALSE;
-        else if ((prop->type == kTagTypeTrue) ||
-                 ((prop->type == kTagTypeString) &&
-                  ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))))
+        else if (IsPropertyTrue(prop))
           gSettings.InjectSystemID = TRUE;
       }
       
     }
     
     /*
-    {
-      EFI_GUID AppleGuid;
-      
-      CopyMem((VOID*)&AppleGuid, (VOID*)&gUuid, sizeof(EFI_GUID));
-      AppleGuid.Data1 = SwapBytes32(AppleGuid.Data1);
-      AppleGuid.Data2 = SwapBytes16(AppleGuid.Data2);
-      AppleGuid.Data3 = SwapBytes16(AppleGuid.Data3);
-      DBG("Platform Uuid: %g, InjectSystemID: %a\n", &AppleGuid, gSettings.InjectSystemID ? "Yes" : "No");
-    }
+     {
+     EFI_GUID AppleGuid;
+     
+     CopyMem((VOID*)&AppleGuid, (VOID*)&gUuid, sizeof(EFI_GUID));
+     AppleGuid.Data1 = SwapBytes32(AppleGuid.Data1);
+     AppleGuid.Data2 = SwapBytes16(AppleGuid.Data2);
+     AppleGuid.Data3 = SwapBytes16(AppleGuid.Data3);
+     DBG("Platform Uuid: %g, InjectSystemID: %a\n", &AppleGuid, gSettings.InjectSystemID ? "Yes" : "No");
+     }
      */
     
     SaveSettings();
-  }	
+  }
   //  DBG("config.plist read and return %r\n", Status);
   return Status;
 }
