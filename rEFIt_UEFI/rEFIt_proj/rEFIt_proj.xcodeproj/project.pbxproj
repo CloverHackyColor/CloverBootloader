@@ -129,7 +129,6 @@
 		122336C913377E150033F008 /* menu.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; lineEnding = 0; path = menu.c; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.c; };
 		122336CC13377E150033F008 /* screen.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = screen.c; sourceTree = "<group>"; };
 		122336CD13377E260033F008 /* refit.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = refit.inf; path = ../refit.inf; sourceTree = SOURCE_ROOT; };
-		122B6218157E811000D06F37 /* Display.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Display.h; sourceTree = "<group>"; };
 		122B621A157E813100D06F37 /* FixBiosDsdt.c */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 2; lastKnownFileType = sourcecode.c.c; lineEnding = 0; path = FixBiosDsdt.c; sourceTree = "<group>"; tabWidth = 2; usesTabs = 0; xcLanguageSpecificationIdentifier = xcode.lang.c; };
 		122B621C157E814100D06F37 /* kernel_patcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = kernel_patcher.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		122B621D157E814100D06F37 /* kext_patcher.c */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 2; lastKnownFileType = sourcecode.c.c; path = kext_patcher.c; sourceTree = "<group>"; tabWidth = 2; usesTabs = 0; };
@@ -10620,7 +10619,6 @@
 				12D6306A14CEA05E00E5898F /* device_tree.c */,
 				12D6306B14CEA05E00E5898F /* device_tree.h */,
 				2C105B831657084C00BABF61 /* DevicePath.c */,
-				122B6218157E811000D06F37 /* Display.h */,
 				12D6307014CEA05E00E5898F /* Events.c */,
 				122B621A157E813100D06F37 /* FixBiosDsdt.c */,
 				12D6307114CEA05E00E5898F /* gma.c */,

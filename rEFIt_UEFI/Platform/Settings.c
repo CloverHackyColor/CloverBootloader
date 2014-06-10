@@ -88,27 +88,49 @@ UINT32 GetCrc32(UINT8 *Buffer, UINTN Size)
     return 0;
   }
   len = Size >> 2;
-//  DBG("Buffer len=%d fake[]=\n", len);
   for (i=0; i<len; i++) {
-//    DBG("%X ", fake[i]);
     x += fake[i];
   }
-//  DBG("\n");
   return x;
 }
 
 BOOLEAN IsPropertyTrue(TagPtr prop)
 {
+  if (!prop) {
+    return FALSE;
+  }
     return (prop->type == kTagTypeTrue) ||
             ((prop->type == kTagTypeString) && prop->string &&
-                    ((prop->string[0] == 'y') || (prop->string[0] == 'Y')));
+             ((prop->string[0] == 'y') || (prop->string[0] == 'Y')));
 }
 
 BOOLEAN IsPropertyFalse(TagPtr prop)
 {
+  if (!prop) {
+    return FALSE;
+  }
     return (prop->type == kTagTypeFalse) ||
             ((prop->type == kTagTypeString) && prop->string &&
-                    ((prop->string[0] == 'N') || (prop->string[0] == 'n')));
+             ((prop->string[0] == 'N') || (prop->string[0] == 'n')));
+}
+
+INTN GetPropertyInteger(TagPtr prop, INTN Default)
+{
+  if (!prop) {
+    return Default;
+  }
+  if (prop->type == kTagTypeInteger) {
+    return (INTN)prop->string;    
+  } else if ((prop->type == kTagTypeString) && prop->string) {
+    if ((prop->string[1] == 'x') || (prop->string[1] == 'X')) {
+      return  (INTN)AsciiStrHexToUintn(prop->string);
+    }
+    if (prop->string[0] == '-') {
+      return  -(INTN)AsciiStrDecimalToUintn(prop->string + 1);
+    }
+    return  (INTN)AsciiStrDecimalToUintn(prop->string);
+  }
+  return Default;
 }
 
 VOID ParseLoadOptions(OUT CHAR16** conf, OUT TagPtr* dict)
@@ -995,7 +1017,9 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
     if (dictPointer) {
       prop = GetProperty(dictPointer, "Timeout");
       if (prop) {
-        if (prop->type == kTagTypeInteger) {
+        GlobalConfig.Timeout = (INT32)GetPropertyInteger(prop, GlobalConfig.Timeout);
+        DBG("timeout set to %d\n", GlobalConfig.Timeout);
+ /*       if (prop->type == kTagTypeInteger) {
           GlobalConfig.Timeout = (INT32)(UINTN)prop->string;
           DBG("timeout set to %d\n", GlobalConfig.Timeout);
         } else if ((prop->type == kTagTypeString) && prop->string) {
@@ -1004,7 +1028,7 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
           } else {
             GlobalConfig.Timeout = (INTN)AsciiStrDecimalToUintn(prop->string);
           }
-        }
+        } */
       }
       prop = GetProperty(dictPointer, "Arguments");
       if (prop && (prop->type == kTagTypeString) && prop->string) {
@@ -1171,13 +1195,7 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
       // Entry for LegacyBiosDefault
       prop = GetProperty(dictPointer, "LegacyBiosDefaultEntry");
       if (prop) {
-        if (prop->type == kTagTypeInteger) {
-          gSettings.LegacyBiosDefaultEntry = (UINT16)(UINTN)prop->string;
-        } else if ((prop->type == kTagTypeString) && prop->string) {
-          gSettings.LegacyBiosDefaultEntry = (UINT16)AsciiStrDecimalToUintn(prop->string);
-        }
-      } else {
-        gSettings.LegacyBiosDefaultEntry = 0; // disabled by default
+        gSettings.LegacyBiosDefaultEntry = (UINT16)GetPropertyInteger(prop, 0); // disabled by default
       }
     }
     
@@ -1273,14 +1291,7 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
       if (prop) {
         dict2 = GetProperty(prop, "Speed");
         if (dict2) {
-          if (dict2->type == kTagTypeInteger) {
-            gSettings.PointerSpeed = (INT32)(UINTN)dict2->string;
-            if (gSettings.PointerSpeed < 0) {
-              gSettings.PointerSpeed = -gSettings.PointerSpeed;
-            }
-          } else if ((dict2->type == kTagTypeString) && dict2->string) {
-            gSettings.PointerSpeed = (UINT16)AsciiStrDecimalToUintn(dict2->string + ((dict2->string[0] == '-') ? 1 : 0));
-          }
+          gSettings.PointerSpeed = (INT32)GetPropertyInteger(dict2, 0);
           gSettings.PointerEnabled = (gSettings.PointerSpeed != 0);
         }
         //but we can disable mouse even if there was positive speed
@@ -1298,11 +1309,7 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
         }
         dict2 = GetProperty(prop, "DoubleClickTime");
         if (dict2) {
-          if (dict2->type == kTagTypeInteger) {
-            gSettings.DoubleClickTime = (UINTN)dict2->string;
-          } else if (dict2->type == kTagTypeString) {
-            gSettings.DoubleClickTime = (UINT16)AsciiStrDecimalToUintn(dict2->string + ((dict2->string[0] == '-') ? 1 : 0));
-          }
+          gSettings.DoubleClickTime = (UINTN)GetPropertyInteger(dict2, 0);
         }
       }
       // hide by name/uuid
@@ -1716,11 +1723,7 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
     }
     dict2 = GetProperty(dict, "Sharp");
     if (dict2) {
-      if (dict2->type == kTagTypeInteger) {
-        GlobalConfig.BackgroundSharp = (UINTN)dict2->string;
-      } else if ((dict2->type == kTagTypeString) && dict2->string) {
-        GlobalConfig.BackgroundSharp = AsciiStrHexToUintn(dict2->string);
-      }
+      GlobalConfig.BackgroundSharp = (INT32)GetPropertyInteger(dict2, GlobalConfig.BackgroundSharp);
     }
     dict2 = GetProperty(dict, "Dark");
     if (dict2) {
@@ -1763,27 +1766,19 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
       }
       dict2 = GetProperty(dict, "DistanceFromScreenEdgeX%");
       if (dict2) {
-        if (dict2->type == kTagTypeInteger) {
-          GlobalConfig.BannerPosX = (INT32)(UINTN)dict2->string;
-        }
+        GlobalConfig.BannerPosX = (INT32)GetPropertyInteger(dict2, 0);
       }
       dict2 = GetProperty(dict, "DistanceFromScreenEdgeY%");
       if (dict2) {
-        if (dict2->type == kTagTypeInteger) {
-          GlobalConfig.BannerPosY = (INT32)(UINTN)dict2->string;
-        }
+        GlobalConfig.BannerPosY = (INT32)GetPropertyInteger(dict2, 0);
       }
       dict2 = GetProperty(dict, "NudgeX");
       if (dict2) {
-        if (dict2->type == kTagTypeInteger) {
-          GlobalConfig.BannerNudgeX = (INT32)(UINTN)dict2->string;
-        }
+        GlobalConfig.BannerNudgeX = (INT32)GetPropertyInteger(dict2, 0);
       }
       dict2 = GetProperty(dict, "NudgeY");
       if (dict2) {
-        if (dict2->type == kTagTypeInteger) {
-          GlobalConfig.BannerNudgeY = (INT32)(UINTN)dict2->string;
-        }
+        GlobalConfig.BannerNudgeY = (INT32)GetPropertyInteger(dict2, 0);
       }
     }
   }
@@ -1812,21 +1807,15 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
     // blackosx added X and Y position for badge offset.
     dict2 = GetProperty(dict, "OffsetX");
     if (dict2) {
-      if (dict2->type == kTagTypeInteger) {
-        GlobalConfig.BadgeOffsetX = (UINTN)dict2->string;
-      }
+      GlobalConfig.BadgeOffsetX = (INTN)GetPropertyInteger(dict2, GlobalConfig.BadgeOffsetX);
     }
     dict2 = GetProperty(dict, "OffsetY");
     if (dict2) {
-      if (dict2->type == kTagTypeInteger) {
-        GlobalConfig.BadgeOffsetY = (UINTN)dict2->string;
-      }
+      GlobalConfig.BadgeOffsetY = (INTN)GetPropertyInteger(dict2, GlobalConfig.BadgeOffsetY);
     }
     dict2 = GetProperty(dict, "Scale");
     if (dict2) {
-      if (dict2->type == kTagTypeInteger) {
-        GlobalConfig.BadgeScale = (UINTN)dict2->string;
-      }
+      GlobalConfig.BadgeScale = (UINTN)GetPropertyInteger(dict2, GlobalConfig.BadgeScale);
     }
   }
   
@@ -1834,15 +1823,11 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
   if (dict) {
     dict2 = GetProperty(dict, "DesignWidth");
     if (dict2) {
-      if (dict2->type == kTagTypeInteger) {
-        GlobalConfig.ThemeDesignWidth = (UINTN)dict2->string;
-      }
+      GlobalConfig.ThemeDesignWidth = (UINTN)GetPropertyInteger(dict2, GlobalConfig.ThemeDesignWidth);
     }
     dict2 = GetProperty(dict, "DesignHeight");
     if (dict2) {
-      if (dict2->type == kTagTypeInteger) {
-        GlobalConfig.ThemeDesignHeight = (UINTN)dict2->string;
-      }
+      GlobalConfig.ThemeDesignHeight = (UINTN)GetPropertyInteger(dict2, GlobalConfig.ThemeDesignHeight);
     }
   }
   
@@ -1850,27 +1835,19 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
   if (dict) {
     dict2 = GetProperty(dict, "BannerOffset");
     if (dict2) {
-      if (dict2->type == kTagTypeInteger) {
-        LayoutBannerOffset = (UINTN)dict2->string;
-      }
+      LayoutBannerOffset = (UINTN)GetPropertyInteger(dict2, LayoutBannerOffset);
     }
     dict2 = GetProperty(dict, "ButtonOffset");
     if (dict2) {
-      if (dict2->type == kTagTypeInteger) {
-        LayoutButtonOffset = (UINTN)dict2->string;
-      }
+      LayoutButtonOffset = (UINTN)GetPropertyInteger(dict2, LayoutButtonOffset);
     }
     dict2 = GetProperty(dict, "TextOffset");
     if (dict2) {
-      if (dict2->type == kTagTypeInteger) {
-        LayoutTextOffset = (UINTN)dict2->string;
-      }
+      LayoutTextOffset = (UINTN)GetPropertyInteger(dict2, LayoutTextOffset);
     }
     dict2 = GetProperty(dict, "AnimAdjustForMenuX");
     if (dict2) {
-      if (dict2->type == kTagTypeInteger) {
-        LayoutAnimMoveForMenuX = (UINTN)dict2->string;
-      }
+       LayoutAnimMoveForMenuX = (UINTN)GetPropertyInteger(dict2, LayoutAnimMoveForMenuX);
     }
     dict2 = GetProperty(dict, "Vertical");
     if (dict2 && dict2->type == kTagTypeTrue) {
@@ -1878,20 +1855,20 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
     }
     // GlobalConfig.MainEntriesSize
     dict2 = GetProperty(dict, "MainEntriesSize");
-    if (dict2 && dict2->type == kTagTypeInteger) {
-      GlobalConfig.MainEntriesSize = (INT32)(UINTN)dict2->string;
+    if (dict2) {
+      GlobalConfig.MainEntriesSize = (INT32)GetPropertyInteger(dict2, GlobalConfig.MainEntriesSize);
     }
     dict2 = GetProperty(dict, "TileXSpace");
-    if (dict2 && dict2->type == kTagTypeInteger) {
-      GlobalConfig.TileXSpace = (INT32)(UINTN)dict2->string;
+    if (dict2) {
+      GlobalConfig.TileXSpace = (INT32)GetPropertyInteger(dict2, GlobalConfig.TileXSpace);
     }
     dict2 = GetProperty(dict, "TileYSpace");
-    if (dict2 && dict2->type == kTagTypeInteger) {
-      GlobalConfig.TileYSpace = (INT32)(UINTN)dict2->string;
+    if (dict2) {
+      GlobalConfig.TileYSpace = (INT32)GetPropertyInteger(dict2, GlobalConfig.TileYSpace);
     }
     dict2 = GetProperty(dict, "SelectionBigWidth");
-    if (dict2 && dict2->type == kTagTypeInteger) {
-      row0TileSize = (INT32)(UINTN)dict2->string;
+    if (dict2) {
+      row0TileSize = (INT32)GetPropertyInteger(dict2, row0TileSize);
     }
   }
   
@@ -1931,11 +1908,7 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
   if (dict) {
     dict2 = GetProperty(dict, "Color");
     if (dict2) {
-      if (dict2->type == kTagTypeInteger) {
-        GlobalConfig.SelectionColor = (UINTN)dict2->string;
-      } else if ((dict2->type == kTagTypeString) && dict2->string) {
-        GlobalConfig.SelectionColor = AsciiStrHexToUintn(dict2->string);
-      }
+      GlobalConfig.SelectionColor = (UINTN)GetPropertyInteger(dict2, GlobalConfig.SelectionColor);
     }
     dict2 = GetProperty(dict, "Small");
     if (dict2) {
@@ -1961,35 +1934,19 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
   if (dict) {
     dict2 = GetProperty(dict, "Width");
     if (dict2) {
-      if (dict2->type == kTagTypeInteger) {
-        ScrollWidth = (UINTN)dict2->string;
-      } else if ((dict2->type == kTagTypeString) && dict2->string) {
-        ScrollWidth = AsciiStrDecimalToUintn(dict2->string);
-      }
+      ScrollWidth = (UINTN)GetPropertyInteger(dict2, ScrollWidth);
     }
     dict2 = GetProperty(dict, "Height");
     if (dict2) {
-      if (dict2->type == kTagTypeInteger) {
-        ScrollButtonsHeight = (UINTN)dict2->string;
-      } else if ((dict2->type == kTagTypeString) && dict2->string) {
-        ScrollButtonsHeight = AsciiStrDecimalToUintn(dict2->string);
-      }
+      ScrollButtonsHeight = (UINTN)GetPropertyInteger(dict2, ScrollButtonsHeight);
     }
     dict2 = GetProperty(dict, "BarHeight");
     if (dict2) {
-      if (dict2->type == kTagTypeInteger) {
-        ScrollBarDecorationsHeight = (UINTN)dict2->string;
-      } else if ((dict2->type == kTagTypeString) && dict2->string) {
-        ScrollBarDecorationsHeight = AsciiStrDecimalToUintn(dict2->string);
-      }
+      ScrollBarDecorationsHeight = (UINTN)GetPropertyInteger(dict2, ScrollBarDecorationsHeight);
     }
     dict2 = GetProperty(dict, "ScrollHeight");
     if (dict2) {
-      if (dict2->type == kTagTypeInteger) {
-        ScrollScrollDecorationsHeight = (UINTN)dict2->string;
-      } else if ((dict2->type == kTagTypeString) && dict2->string) {
-        ScrollScrollDecorationsHeight = AsciiStrDecimalToUintn(dict2->string);
-      }
+      ScrollScrollDecorationsHeight = (UINTN)GetPropertyInteger(dict2, ScrollScrollDecorationsHeight);
     }
   }
   
@@ -2015,11 +1972,7 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
     }
     dict2 = GetProperty(dict, "CharWidth");
     if (dict2) {
-      if (dict2->type == kTagTypeInteger) {
-        GlobalConfig.CharWidth = (UINTN)dict2->string;
-      } else if ((dict2->type == kTagTypeString) && dict2->string) {
-        GlobalConfig.CharWidth = AsciiStrDecimalToUintn(dict2->string);
-      }
+      GlobalConfig.CharWidth = (UINTN)GetPropertyInteger(dict2, GlobalConfig.CharWidth);
     }
   }
   
@@ -2040,11 +1993,7 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
       }
       dict2 = GetProperty(dictPointer, "ID");
       if (dict2) {
-        if (dict2->type == kTagTypeInteger) {
-          Anime->ID = (UINTN)dict2->string;
-        } else if ((dict2->type == kTagTypeString) && dict2->string) {
-          Anime->ID = AsciiStrDecimalToUintn(dict2->string);
-        }
+        Anime->ID = (UINTN)GetPropertyInteger(dict2, Anime->ID);
       }
       dict2 = GetProperty(dictPointer, "Path");
       if (dict2) {
@@ -2054,19 +2003,11 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
       }
       dict2 = GetProperty(dictPointer, "Frames");
       if (dict2) {
-        if (dict2->type == kTagTypeInteger) {
-          Anime->Frames = (UINTN)dict2->string;
-        } else if ((dict2->type == kTagTypeString) && dict2->string) {
-          Anime->Frames = AsciiStrDecimalToUintn(dict2->string);
-        }
+        Anime->Frames = (UINTN)GetPropertyInteger(dict2, Anime->Frames);
       }
       dict2 = GetProperty(dictPointer, "FrameTime");
       if (dict2) {
-        if (dict2->type == kTagTypeInteger) {
-          Anime->FrameTime = (UINTN)dict2->string;
-        } else if ((dict2->type == kTagTypeString) && dict2->string) {
-          Anime->FrameTime = AsciiStrDecimalToUintn(dict2->string);
-        }
+        Anime->FrameTime = (UINTN)GetPropertyInteger(dict2, Anime->FrameTime);
       }
       
       dict2 = GetProperty(dictPointer, "ScreenEdgeX");
@@ -2091,35 +2032,27 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
       }
       
       //default value is centre
-      Anime->FilmX = INITVALUE;
-      Anime->FilmY = INITVALUE;
+      Anime->FilmX  = INITVALUE;
+      Anime->FilmY  = INITVALUE;
       Anime->NudgeX = INITVALUE;
       Anime->NudgeY = INITVALUE;
       
       dict2 = GetProperty(dictPointer, "DistanceFromScreenEdgeX%");
       if (dict2) {
-        if (dict2->type == kTagTypeInteger) {
-          Anime->FilmX = (INT32)(UINTN)dict2->string;
-        }
+        Anime->FilmX = (INT32)GetPropertyInteger(dict2, Anime->FilmX);
       }
       dict2 = GetProperty(dictPointer, "DistanceFromScreenEdgeY%");
       if (dict2) {
-        if (dict2->type == kTagTypeInteger) {
-          Anime->FilmY = (INT32)(UINTN)dict2->string;
-        }
+        Anime->FilmY = (INT32)GetPropertyInteger(dict2, Anime->FilmY);
       }
       
       dict2 = GetProperty(dictPointer, "NudgeX");
       if (dict2) {
-        if (dict2->type == kTagTypeInteger) {
-          Anime->NudgeX = (INT32)(UINTN)dict2->string;
-        }
+        Anime->NudgeX = (INT32)GetPropertyInteger(dict2, Anime->NudgeX);
       }
       dict2 = GetProperty(dictPointer, "NudgeY");
       if (dict2) {
-        if (dict2->type == kTagTypeInteger) {
-          Anime->NudgeY = (INT32)(UINTN)dict2->string;
-        }
+        Anime->NudgeY = (INT32)GetPropertyInteger(dict2, Anime->NudgeY);
       }
       
       dict2 = GetProperty(dictPointer, "Once");
@@ -2446,11 +2379,7 @@ VOID ParseSMBIOSSettings(TagPtr dictPointer)
   }
   prop = GetProperty(dictPointer,"BoardType");
   if(prop) {
-    if (prop->type == kTagTypeInteger) {
-      gSettings.BoardType = (UINT8)(UINTN)prop->string;
-    } else if (prop->type == kTagTypeString){
-      gSettings.BoardType = (UINT8)AsciiStrDecimalToUintn(prop->string);
-    }
+    gSettings.BoardType = (UINT8)GetPropertyInteger(prop, gSettings.BoardType);
   }
   prop = GetProperty(dictPointer,"Mobile");
   if(prop) {
@@ -2473,21 +2402,13 @@ VOID ParseSMBIOSSettings(TagPtr dictPointer)
   }
   prop = GetProperty(dictPointer,"ChassisType");
   if(prop) {
-    if (prop->type == kTagTypeInteger) {
-      gSettings.ChassisType = (UINT8)(UINTN)prop->string;
-    } else if (prop->type == kTagTypeString){
-      gSettings.ChassisType = (UINT8)AsciiStrHexToUint64(prop->string);
-    }
+    gSettings.ChassisType = (UINT8)GetPropertyInteger(prop, gSettings.ChassisType);
     DBG("Config set ChassisType=0x%x\n", gSettings.ChassisType);
   }
   //gFwFeatures = 0xC0001403 - by default
   prop = GetProperty(dictPointer, "FirmwareFeatures");
   if(prop) {
-    if (prop->type == kTagTypeInteger) {
-      gFwFeatures = (UINT32)(UINTN)prop->string;
-    } else if (prop->type == kTagTypeString){
-      gFwFeatures = (UINT32)AsciiStrHexToUint64(prop->string);
-    }
+    gFwFeatures = (UINT32)GetPropertyInteger(prop, gFwFeatures);
   }
 }
 
@@ -2498,8 +2419,6 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
   TagPtr      prop, prop2;
   TagPtr      dictPointer;
   UINTN       i;
-  //CHAR8       ANum[4];
-  CHAR16      UStr[64];
   
   dict = CfgDict;
   if(dict != NULL) {
@@ -2581,21 +2500,13 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
       
       prop = GetProperty(dictPointer, "VRAM");
       if(prop) {
-        if (prop->type == kTagTypeInteger) {
-          gSettings.VRAM = LShiftU64((UINTN)prop->string, 20);
-        } else if (prop->type == kTagTypeString){
-          gSettings.VRAM = LShiftU64(AsciiStrDecimalToUintn(prop->string), 20);  //Mb -> bytes
-        }
+        gSettings.VRAM = LShiftU64((UINTN)GetPropertyInteger(prop, 0), 20); //Mb -> bytes
       }
       //
       gSettings.RefCLK = 0;
       prop = GetProperty(dictPointer, "RefCLK");
       if(prop) {
-        if (prop->type == kTagTypeInteger) {
-          gSettings.RefCLK = LShiftU64((UINTN)prop->string, 20);
-        } else if (prop->type == kTagTypeString){
-          gSettings.RefCLK = (UINT32)AsciiStrDecimalToUintn(prop->string);
-        }
+        gSettings.RefCLK = (UINT16)GetPropertyInteger(prop, 0);
       }
       
       prop = GetProperty(dictPointer, "LoadVBios");
@@ -2609,11 +2520,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
       }
       prop = GetProperty(dictPointer, "VideoPorts");
       if(prop) {
-        if (prop->type == kTagTypeInteger) {
-          gSettings.VideoPorts = (UINT16)(UINTN)prop->string;
-        } else if (prop->type == kTagTypeString){
-          gSettings.VideoPorts = (UINT16)AsciiStrDecimalToUintn(prop->string);
-        }
+        gSettings.VideoPorts = (UINT16)GetPropertyInteger(prop, 0);
       }
       prop = GetProperty(dictPointer, "FBName");
       if(prop) {
@@ -2636,21 +2543,13 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
       //
       prop = GetProperty(dictPointer, "DualLink");
       if(prop) {
-        if (prop->type == kTagTypeInteger) {
-          gSettings.DualLink = (UINT32)(UINTN)prop->string;
-        } else if (prop->type == kTagTypeString){
-          gSettings.DualLink = (UINT32)AsciiStrDecimalToUintn(prop->string);
-        }
+        gSettings.DualLink = (UINT32)GetPropertyInteger(prop, 0);
       }
       //InjectEDID - already done in earlysettings
       
       prop = GetProperty(dictPointer, "ig-platform-id");
       if(prop) {
-        if (prop->type == kTagTypeInteger) {
-          gSettings.IgPlatform = (UINT32)(UINTN)prop->string;
-        } else if (prop->type == kTagTypeString){
-          gSettings.IgPlatform = (UINT32)AsciiStrHexToUint64(prop->string);
-        }
+        gSettings.IgPlatform = (UINT32)GetPropertyInteger(prop, 0);
       }
     }
     
@@ -2955,14 +2854,8 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
             // Get the table len to drop
             prop2 = GetProperty(dict2, "Length");
             if (prop2) {
-              if (prop2->type == kTagTypeInteger) {
-                TabLength  = (UINT32)(UINTN)prop2->string;
-              } else if (prop2->type == kTagTypeString){
-                AsciiStrToUnicodeStr(prop2->string, (CHAR16*)&UStr[0]);
-                TabLength  = (UINT32)StrHexToUint64(UStr);
-              }
-              DBG(" length=%d(0x%x)", TabLength);
-              
+              TabLength = (UINT32)GetPropertyInteger(prop2, 0);
+              DBG(" length=%d(0x%x)", TabLength);              
             }
             DBG("\n");
             //set to drop
@@ -3009,11 +2902,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
         
         prop = GetProperty(dict2, "FixMask");
         if(prop) {
-          if (prop->type == kTagTypeInteger) {
-            gSettings.FixDsdt  = (UINT32)(UINTN)prop->string;
-          } else if (prop->type == kTagTypeString){
-            gSettings.FixDsdt  = (UINT32)AsciiStrHexToUint64(prop->string);
-          }
+          gSettings.FixDsdt = (UINT32)GetPropertyInteger(prop, gSettings.FixDsdt);
           DBG("Config set Fix DSDT mask=%08x\n", gSettings.FixDsdt);
         }
         prop = GetProperty(dict2, "Fixes");
@@ -3268,83 +3157,57 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
             gSettings.DropOEM_DSM = (UINT16)(UINTN)prop->string;
           } else if (prop->type == kTagTypeDict) {
             prop2 = GetProperty(prop, "ATI");
-            if(prop2) {
               if (IsPropertyTrue(prop2)) {
                 gSettings.DropOEM_DSM |= DEV_ATI;
               }
-            }
             prop2 = GetProperty(prop, "NVidia");
-            if(prop2) {
               if (IsPropertyTrue(prop2)) {
                 gSettings.DropOEM_DSM |= DEV_NVIDIA;
               }
-            }
             prop2 = GetProperty(prop, "IntelGFX");
-            if(prop2) {
               if (IsPropertyTrue(prop2)) {
                 gSettings.DropOEM_DSM |= DEV_INTEL;
               }
-            }
             prop2 = GetProperty(prop, "HDA");
-            if(prop2) {
               if (IsPropertyTrue(prop2)) {
                 gSettings.DropOEM_DSM |= DEV_HDA;
               }
-            }
             prop2 = GetProperty(prop, "HDMI");
-            if(prop2) {
               if (IsPropertyTrue(prop2)) {
                 gSettings.DropOEM_DSM |= DEV_HDMI;
               }
-            }
             prop2 = GetProperty(prop, "SATA");
-            if(prop2) {
               if (IsPropertyTrue(prop2)) {
                 gSettings.DropOEM_DSM |= DEV_SATA;
               }
-            }
             prop2 = GetProperty(prop, "LAN");
-            if(prop2) {
               if (IsPropertyTrue(prop2)) {
                 gSettings.DropOEM_DSM |= DEV_LAN;
               }
-            }
             prop2 = GetProperty(prop, "WIFI");
-            if(prop2) {
               if (IsPropertyTrue(prop2)) {
                 gSettings.DropOEM_DSM |= DEV_WIFI;
               }
-            }
             prop2 = GetProperty(prop, "USB");
-            if(prop2) {
               if (IsPropertyTrue(prop2)) {
                 gSettings.DropOEM_DSM |= DEV_USB;
               }
-            }
             prop2 = GetProperty(prop, "LPC");
-            if(prop2) {
               if (IsPropertyTrue(prop2)) {
                 gSettings.DropOEM_DSM |= DEV_LPC;
               }
-            }
             prop2 = GetProperty(prop, "SmBUS");
-            if(prop2) {
               if (IsPropertyTrue(prop2)) {
                 gSettings.DropOEM_DSM |= DEV_SMBUS;
               }
-            }
             prop2 = GetProperty(prop, "Firewire");
-            if(prop2) {
               if (IsPropertyTrue(prop2)) {
                 gSettings.DropOEM_DSM |= DEV_FIREWIRE;
               }
-            }
             prop2 = GetProperty(prop, "IDE");
-            if(prop2) {
               if (IsPropertyTrue(prop2)) {
                 gSettings.DropOEM_DSM |= DEV_IDE;
               }
-            }
           }
         }
       }
@@ -3361,154 +3224,69 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
             gSettings.GenerateCStates = FALSE;
           } else if (prop2->type == kTagTypeDict) {
             prop = GetProperty(prop2, "PStates");
-            if(prop) {
-              if (IsPropertyTrue(prop)) {
-                gSettings.GeneratePStates = TRUE;
-              } else {
-                gSettings.GeneratePStates = FALSE;
-              }
-            }
+              gSettings.GeneratePStates = IsPropertyTrue(prop);
             prop = GetProperty(prop2, "CStates");
-            if(prop) {
-              if (IsPropertyTrue(prop)) {
-                gSettings.GenerateCStates = TRUE;
-              } else {
-                gSettings.GenerateCStates = FALSE;
-              }
-            }
+              gSettings.GenerateCStates = IsPropertyTrue(prop);
           }
         }
         prop = GetProperty(dict2, "DropOem");
-        if(prop) {
-          if (IsPropertyTrue(prop)) {
-            gSettings.DropSSDT = TRUE;
-          } else {
-            gSettings.DropSSDT = FALSE;
-          }
-        }
+          gSettings.DropSSDT = IsPropertyTrue(prop);
         prop = GetProperty(dict2, "UseSystemIO");
-        if(prop) {
-          if (IsPropertyTrue(prop)) {
-            gSettings.EnableISS = TRUE;
-          } else {
-            gSettings.EnableISS = FALSE;
-          }
-        }
+          gSettings.EnableISS = IsPropertyTrue(prop);
         prop = GetProperty(dict2, "EnableC7");
         if(prop) {
-          if (IsPropertyTrue(prop)) {
-            gSettings.EnableC7 = TRUE;
-          } else {
-            gSettings.EnableC7 = FALSE;
-          }
+          gSettings.EnableC7 = IsPropertyTrue(prop);
           DBG("Config set EnableC7: %a\n", gSettings.EnableC7?"+":"-");
         }
         prop = GetProperty(dict2, "EnableC6");
         if(prop) {
-          if (IsPropertyTrue(prop)) {
-            gSettings.EnableC6 = TRUE;
-          } else {
-            gSettings.EnableC6 = FALSE;
-          }
+          gSettings.EnableC6 = IsPropertyTrue(prop);
           DBG("Config set EnableC6: %a\n", gSettings.EnableC6?"+":"-");
         }
         prop = GetProperty(dict2, "EnableC4");
         if(prop) {
-          if (IsPropertyTrue(prop)) {
-            gSettings.EnableC4 = TRUE;
-          } else {
-            gSettings.EnableC4 = FALSE;
-          }
+          gSettings.EnableC4 = IsPropertyTrue(prop);
           DBG("Config set EnableC4: %a\n", gSettings.EnableC4?"+":"-");
         }
         prop = GetProperty(dict2, "EnableC2");
         if(prop) {
-          if (IsPropertyTrue(prop)) {
-            gSettings.EnableC2 = TRUE;
-          } else {
-            gSettings.EnableC2 = FALSE;
-          }
+          gSettings.EnableC2 = IsPropertyTrue(prop);
           DBG("Config set EnableC2: %a\n", gSettings.EnableC2?"+":"-");
         }
         prop = GetProperty(dict2, "C3Latency");
         if(prop) {
-          if (prop->type == kTagTypeInteger) {
-            gSettings.C3Latency = (UINT16)(UINTN)prop->string;
-          } else if (prop->type == kTagTypeString){
-            //        AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
-            gSettings.C3Latency = (UINT16)AsciiStrHexToUint64(prop->string);
-          }
+          gSettings.C3Latency = (UINT16)GetPropertyInteger(prop, gSettings.C3Latency);
+          DBG("Config set C3Latency: %d\n", gSettings.C3Latency);
         }
         
         prop = GetProperty(dict2, "PLimitDict");
-        if(prop) {
-          if (prop->type == kTagTypeInteger) {
-            gSettings.PLimitDict = (UINT8)(UINTN)prop->string;
-          } else if (prop->type == kTagTypeString){
-            gSettings.PLimitDict = (UINT8)AsciiStrDecimalToUintn(prop->string);
-          }
-        }
+          gSettings.PLimitDict = (UINT8)GetPropertyInteger(prop, 0);
         prop = GetProperty(dict2, "UnderVoltStep");
-        if(prop) {
-          if (prop->type == kTagTypeInteger) {
-            gSettings.UnderVoltStep = (UINT8)(UINTN)prop->string;
-          } else if (prop->type == kTagTypeString){
-            gSettings.UnderVoltStep = (UINT8)AsciiStrDecimalToUintn(prop->string);
-          }
-        }
+          gSettings.UnderVoltStep = (UINT8)GetPropertyInteger(prop, 0);
         prop = GetProperty(dict2, "DoubleFirstState");
-        if(prop) {
-          if (IsPropertyTrue(prop)) {
-            gSettings.DoubleFirstState = TRUE;
-          } else if (IsPropertyFalse(prop)) {
-            gSettings.DoubleFirstState = FALSE;
-          }
-        }
+          gSettings.DoubleFirstState = IsPropertyTrue(prop);
         prop = GetProperty(dict2,"MinMultiplier");
         if(prop) {
-          if (prop->type == kTagTypeInteger) {
-            gSettings.MinMultiplier = (UINT8)(UINTN)prop->string;
-          } else if (prop->type == kTagTypeString){
-            gSettings.MinMultiplier = (UINT8)AsciiStrDecimalToUintn(prop->string);
-          }
+          gSettings.MinMultiplier = (UINT8)GetPropertyInteger(prop, gSettings.MinMultiplier);
           DBG("Config set MinMultiplier=%d\n", gSettings.MinMultiplier);
         }
         prop = GetProperty(dict2, "MaxMultiplier");
         if(prop) {
-          if (prop->type == kTagTypeInteger) {
-            gSettings.MaxMultiplier = (UINT8)(UINTN)prop->string;
-          } else if (prop->type == kTagTypeString){
-            gSettings.MaxMultiplier = (UINT8)AsciiStrDecimalToUintn(prop->string);
-          }
+          gSettings.MaxMultiplier = (UINT8)GetPropertyInteger(prop, gSettings.MaxMultiplier);
           DBG("Config set MaxMultiplier=%d\n", gSettings.MaxMultiplier);
         }
         prop = GetProperty(dict2, "PluginType");
         if(prop) {
-          if (prop->type == kTagTypeInteger) {
-            gSettings.PluginType = (UINT8)(UINTN)prop->string;
-          } else if (prop->type == kTagTypeString){
-            gSettings.PluginType = (UINT8)AsciiStrDecimalToUintn(prop->string);
-          }
+          gSettings.PluginType = (UINT8)GetPropertyInteger(prop, gSettings.PluginType);
           DBG("Config set PluginType=%d\n", gSettings.PluginType);
         }
       }
       prop = GetProperty(dictPointer, "DropMCFG");
-      if(prop) {
-        if (IsPropertyTrue(prop)) {
-          gSettings.DropMCFG = TRUE;
-        } else {
-          gSettings.DropMCFG = FALSE;
-        }
-      }
+        gSettings.DropMCFG = IsPropertyTrue(prop);
       
       prop = GetProperty(dictPointer, "ResetAddress");
       if(prop) {
-        if (prop->type == kTagTypeInteger) {
-          gSettings.ResetAddr = (UINT64)(UINTN)prop->string;
-        } else if (prop->type == kTagTypeString){
-          //         AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
-          gSettings.ResetAddr  = AsciiStrHexToUint64(prop->string);
-        }
+        gSettings.ResetAddr = (UINT8)GetPropertyInteger(prop, 0x64);
         DBG("Config set ResetAddr=0x%x\n", gSettings.ResetAddr);
         if (gSettings.ResetAddr  == 0x64) {
           gSettings.ResetVal = 0xFE;
@@ -3519,40 +3297,22 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
       }
       prop = GetProperty(dictPointer, "ResetValue");
       if(prop) {
-        if (prop->type == kTagTypeInteger) {
-          gSettings.ResetVal = (UINT8)(UINTN)prop->string;
-        } else if (prop->type == kTagTypeString){
-          //         AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
-          gSettings.ResetVal = (UINT8)AsciiStrHexToUint64(prop->string);
-        }
+        gSettings.ResetVal = (UINT8)GetPropertyInteger(prop, gSettings.ResetVal);
         DBG("Config set ResetVal=0x%x\n", gSettings.ResetVal);
       }
       //other known pair is 0x0CF9/0x06. What about 0x92/0x01 ?
-      
-      
+            
       prop = GetProperty(dictPointer, "HaltEnabler");
-      if(prop) {
-        if (IsPropertyTrue(prop)) {
-          gSettings.SlpSmiEnable = TRUE;
-        }
-      }
-      
+      gSettings.SlpSmiEnable = IsPropertyTrue(prop);
+       
       prop = GetProperty(dictPointer, "smartUPS");
-      gSettings.smartUPS = FALSE;
       if(prop) {
-        if (IsPropertyTrue(prop)) {
-          gSettings.smartUPS = TRUE;
-          DBG("Config set smartUPS present\n");
-        }
+        gSettings.smartUPS = IsPropertyTrue(prop);
+        DBG("Config set smartUPS present\n");
       }
       prop = GetProperty(dictPointer, "PatchAPIC");
-      //     gSettings.PatchNMI = FALSE;
-      if(prop) {
-        if (IsPropertyTrue(prop)) {
-          gSettings.PatchNMI = TRUE;
-        }
-      }
-    }
+      gSettings.PatchNMI = IsPropertyTrue(prop);
+     }
     
     //*** SMBIOS ***//
     dictPointer = GetProperty(dict,"SMBIOS");
@@ -3571,23 +3331,10 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
       if (prop){
         // Get memory table count
         TagPtr prop2 = GetProperty(prop, "SlotCount");
-        gRAM.UserInUse = MAX_RAM_SLOTS;
-        if (prop2) {
-          if (prop2->type == kTagTypeString) {
-            gRAM.UserInUse = (UINT8)AsciiStrDecimalToUintn(prop2->string);
-          } else if (prop2->type == kTagTypeInteger) {
-            gRAM.UserInUse = (UINT8)(UINTN)prop2->string;
-          }
-        }
+        gRAM.UserInUse = (UINT8)GetPropertyInteger(prop2, MAX_RAM_SLOTS);
         // Get memory channels
         prop2 = GetProperty(prop, "Channels");
-        if (prop2) {
-          if (prop2->type == kTagTypeString) {
-            gRAM.UserChannels = (UINT8)AsciiStrDecimalToUintn(prop2->string);
-          } else if (prop2->type == kTagTypeInteger) {
-            gRAM.UserChannels = (UINT8)(UINTN)prop2->string;
-          }
-        }
+        gRAM.UserChannels = (UINT8)GetPropertyInteger(prop2, 2);
         // Get memory tables
         prop2 = GetProperty(prop, "Modules");
         if (prop2) {
@@ -3606,7 +3353,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
             if (dict2 == NULL) {
               continue;
             }
-            if (dict2->type == kTagTypeString) {
+            if (dict2->type == kTagTypeString && dict2->string) {
               Slot = AsciiStrDecimalToUintn(dict2->string);
             } else if (dict2->type == kTagTypeInteger) {
               Slot = (UINTN)dict2->string;
@@ -3618,54 +3365,34 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
             }
             // Get memory size
             dict2 = GetProperty(prop3, "Size");
-            if (dict2) {
-              if (dict2->type == kTagTypeString) {
-                gRAM.User[Slot].ModuleSize = (UINT32)AsciiStrDecimalToUintn(dict2->string);
-              } else if (dict2->type == kTagTypeInteger) {
-                gRAM.User[Slot].ModuleSize = (UINT32)(UINTN)dict2->string;
-              }
-            }
+            gRAM.User[Slot].ModuleSize = (UINT32)GetPropertyInteger(dict2, gRAM.User[Slot].ModuleSize);
             // Get memory frequency
             dict2 = GetProperty(prop3, "Frequency");
-            if (dict2) {
-              if (dict2->type == kTagTypeString) {
-                gRAM.User[Slot].Frequency = (UINT32)AsciiStrDecimalToUintn(dict2->string);
-              } else if (dict2->type == kTagTypeInteger) {
-                gRAM.User[Slot].Frequency = (UINT32)(UINTN)dict2->string;
-              }
-            }
+            gRAM.User[Slot].Frequency = (UINT32)GetPropertyInteger(dict2, gRAM.User[Slot].Frequency);
             // Get memory vendor
             dict2 = GetProperty(prop3, "Vendor");
-            if (dict2) {
-              if (dict2->type == kTagTypeString) {
-                gRAM.User[Slot].Vendor = dict2->string;
-              }
+            if (dict2 && dict2->type == kTagTypeString && dict2->string) {
+              gRAM.User[Slot].Vendor = dict2->string;
             }
             // Get memory part number
             dict2 = GetProperty(prop3, "Part");
-            if (dict2) {
-              if (dict2->type == kTagTypeString) {
-                gRAM.User[Slot].PartNo = dict2->string;
-              }
+            if (dict2 && dict2->type == kTagTypeString && dict2->string) {
+              gRAM.User[Slot].PartNo = dict2->string;
             }
             // Get memory serial number
             dict2 = GetProperty(prop3, "Serial");
-            if (dict2) {
-              if (dict2->type == kTagTypeString) {
-                gRAM.User[Slot].SerialNo = dict2->string;
-              }
+            if (dict2 && dict2->type == kTagTypeString && dict2->string) {
+              gRAM.User[Slot].SerialNo = dict2->string;
             }
             // Get memory type
             gRAM.User[Slot].Type = MemoryTypeDdr3;
             dict2 = GetProperty(prop3, "Type");
-            if (dict2) {
-              if (dict2->type == kTagTypeString) {
+            if (dict2 && dict2->type == kTagTypeString && dict2->string) {
                 if (AsciiStriCmp(dict2->string, "DDR2") == 0) {
                   gRAM.User[Slot].Type = MemoryTypeDdr2;
                 } else if (AsciiStriCmp(dict2->string, "DDR") == 0) {
                   gRAM.User[Slot].Type = MemoryTypeDdr;
                 }
-              }
             }
             gRAM.User[Slot].InUse = (gRAM.User[Slot].ModuleSize > 0);
           }
@@ -3711,25 +3438,13 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
             continue;
           }
           
-          SlotDevices[DeviceN].SlotID = DeviceN;
           prop2 = GetProperty(prop3, "ID");
-          if (prop2) {
-            if (prop2->type == kTagTypeInteger) {
-              SlotDevices[DeviceN].SlotID = (UINT8)((UINTN)prop2->string & 0xFF);
-            } else if (prop2->type == kTagTypeString){
-              SlotDevices[DeviceN].SlotID = (UINT8)AsciiStrDecimalToUintn(prop2->string);
-            }
-          }
+          SlotDevices[DeviceN].SlotID = (UINT8)GetPropertyInteger(prop2, DeviceN);
           
           SlotDevices[DeviceN].SlotType = SlotTypePci;
           prop2 = GetProperty(prop3, "Type");
           if (prop2) {
-            UINT8 Code = 0;
-            if (prop2->type == kTagTypeInteger) {
-              Code = (UINT8)((UINTN)prop2->string & 0xFF);
-            } else if (prop2->type == kTagTypeString){
-              Code = (UINT8)AsciiStrDecimalToUintn(prop2->string);
-            }
+            UINT8 Code = (UINT8)GetPropertyInteger(prop2, 0);;
             switch (Code) {
               case 0:
                 SlotDevices[DeviceN].SlotType = SlotTypePci;
@@ -3769,104 +3484,53 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
     dictPointer = GetProperty(dict,"CPU");
     if (dictPointer) {
       prop = GetProperty(dictPointer,"QPI");
-      gSettings.QPI = (UINT16)gCPUStructure.ProcessorInterconnectSpeed; //MHz
       if(prop) {
-        if (prop->type == kTagTypeInteger) {
-          gSettings.QPI = (UINT16)(UINTN)prop->string;
-        } else if (prop->type == kTagTypeString){
-          gSettings.QPI = (UINT16)AsciiStrDecimalToUintn(prop->string);
-        }
-        if (!gSettings.QPI) {
+        gSettings.QPI = (UINT16)GetPropertyInteger(prop, gCPUStructure.ProcessorInterconnectSpeed);
+        if (gSettings.QPI == 0) { //this is not default, this is zero!
           gSettings.QPI = 0xFFFF;
           DBG("Config set QPI=0 disable table132\n");
         } else {
           DBG("Config set QPI=%dMHz\n", gSettings.QPI);
         }
       }
-      prop = GetProperty(dictPointer,"FrequencyMHz");
+      prop = GetProperty(dictPointer,"FrequencyMHz");      
       if(prop) {
-        if (prop->type == kTagTypeInteger) {
-          gSettings.CpuFreqMHz = (UINT32)(UINTN)prop->string;
-        } else if (prop->type == kTagTypeString){
-          gSettings.CpuFreqMHz = (UINT32)AsciiStrDecimalToUintn(prop->string);
-        }
+        gSettings.CpuFreqMHz = (UINT32)GetPropertyInteger(prop, gSettings.CpuFreqMHz);
         DBG("Config set CpuFreq=%dMHz\n", gSettings.CpuFreqMHz);
       }
       prop = GetProperty(dictPointer,"Type");
       gSettings.CpuType = GetAdvancedCpuType();
       if(prop) {
-        if (prop->type == kTagTypeInteger) {
-          gSettings.CpuType = (UINT16)(UINTN)prop->string;
-        } else if (prop->type == kTagTypeString){
-          gSettings.CpuType = (UINT16)AsciiStrHexToUintn(prop->string);
-        }
+        gSettings.CpuType = (UINT32)GetPropertyInteger(prop, gSettings.CpuType);
         DBG("Config set CpuType=%x\n", gSettings.CpuType);
       }
       
       prop = GetProperty(dictPointer,"BusSpeedkHz");
       if(prop) {
-        if (prop->type == kTagTypeInteger) {
-          gSettings.BusSpeed = (UINT32)(UINTN)prop->string;
-        } else if (prop->type == kTagTypeString){
-          gSettings.BusSpeed = (UINT32)AsciiStrDecimalToUintn(prop->string);
-        }
+        gSettings.BusSpeed = (UINT32)GetPropertyInteger(prop, gSettings.BusSpeed);
         DBG("Config set BusSpeed=%dkHz\n", gSettings.BusSpeed);
       }
       
       prop = GetProperty(dictPointer, "C6");
       if(prop) {
-        if (IsPropertyTrue(prop)) {
-          gSettings.EnableC6 = TRUE;
-        } else {
-          gSettings.EnableC6 = FALSE;
-        }
+        gSettings.EnableC6 = IsPropertyTrue(prop);
       }
       
       prop = GetProperty(dictPointer, "C4");
       if(prop) {
-        if (IsPropertyTrue(prop)) {
-          gSettings.EnableC4 = TRUE;
-        } else {
-          gSettings.EnableC4 = FALSE;
-        }
+        gSettings.EnableC4 = IsPropertyTrue(prop);
       }
       
       prop = GetProperty(dictPointer, "C2");
       if(prop) {
-        if (IsPropertyTrue(prop)) {
-          gSettings.EnableC2 = TRUE;
-          DBG(" C2 enabled\n");
-        } else {
-          gSettings.EnableC2 = FALSE;
-        }
+        gSettings.EnableC2 = IsPropertyTrue(prop);
       }
       //Usually it is 0x03e9, but if you want Turbo, you may set 0x00FA
       prop = GetProperty(dictPointer, "Latency");
-      if(prop) {
-        if (prop->type == kTagTypeInteger) {
-          gSettings.C3Latency = (UINT16)(UINTN)prop->string;
-        } else if (prop->type == kTagTypeString){
-          if ((prop->string[1] == 'x') || (prop->string[1] == 'X')) {
-            gSettings.C3Latency = (UINT16)AsciiStrHexToUintn(prop->string);
-          } else {
-            gSettings.C3Latency = (UINT16)AsciiStrDecimalToUintn(prop->string);
-          }
-        }
-      }
+      gSettings.C3Latency = (UINT32)GetPropertyInteger(prop, gSettings.C3Latency);
 
-      gSettings.SavingMode = 0xFF; //the default value means not set
       prop = GetProperty(dictPointer, "SavingMode");
-      if(prop) {
-        if (prop->type == kTagTypeInteger) {
-          gSettings.SavingMode = (UINT8)(UINTN)prop->string;
-        } else if (prop->type == kTagTypeString){
-          if ((prop->string[1] == 'x') || (prop->string[1] == 'X')) {
-            gSettings.SavingMode = (UINT8)AsciiStrHexToUintn(prop->string);
-          } else {
-            gSettings.SavingMode = (UINT8)AsciiStrDecimalToUintn(prop->string);
-          }
-        }
-      }
+      gSettings.SavingMode = (UINT32)GetPropertyInteger(prop, 0xFF); //the default value means not set
 
     }
     
@@ -3879,33 +3543,24 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
       gSettings.KPAsusAICPUPM = TRUE;
     }
     dictPointer = GetProperty(dict,"KernelAndKextPatches");
-    if (dictPointer) {
-      gSettings.KPDebug = FALSE;
+    if (dictPointer) {      
       prop = GetProperty(dictPointer,"Debug");
-      if(prop) {
-        if (IsPropertyTrue(prop)){
-          gSettings.KPDebug = TRUE;
-        }
-      }
+      gSettings.KPDebug = IsPropertyTrue(prop);
+
       prop = GetProperty(dictPointer,"KernelCpu");
+      gSettings.KPKernelCpu = IsPropertyTrue(prop);
+      
+      prop = GetProperty(dictPointer,"AsusAICPUPM");
       if(prop) {
-        gSettings.KPKernelCpu = FALSE; // disabled here because user set false and enabled by default
-        if (IsPropertyTrue(prop)){
-          gSettings.KPKernelCpu = TRUE;
-        }
+        gSettings.KPAsusAICPUPM = IsPropertyTrue(prop);
       }
       prop = GetProperty(dictPointer,"KernelPm");
-      if(prop) {
-        if (IsPropertyTrue(prop)){
-          gSettings.KPKernelPm = TRUE;
-        }
+      if (prop) {
+        gSettings.KPKernelPm = IsPropertyTrue(prop);
       }
       prop = GetProperty(dictPointer,"KernelLapic");
-      if(prop) {
-        if (IsPropertyTrue(prop)){
-          gSettings.KPLapicPanic = TRUE;
-        }
-      }
+      gSettings.KPLapicPanic = IsPropertyTrue(prop);
+
       prop = GetProperty(dictPointer,"ATIConnectorsController");
       if(prop) {
         UINTN len = 0;
@@ -3935,23 +3590,10 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
           gSettings.KPKextPatchesNeeded = TRUE;
         }
       }
-      prop = GetProperty(dictPointer,"AsusAICPUPM");
-      if(prop) {
-        if (IsPropertyTrue(prop)){
-          gSettings.KPAsusAICPUPM = TRUE;
-        }
-      }
       gSettings.KPKextPatchesNeeded |= gSettings.KPAsusAICPUPM;
       
       prop = GetProperty(dictPointer,"AppleRTC");
-      gSettings.KPAppleRTC = TRUE;
-      if(prop) {
-        if (IsPropertyTrue(prop)) {
-          gSettings.KPAppleRTC = TRUE;
-        } else if (IsPropertyFalse(prop)){
-          gSettings.KPAppleRTC = FALSE;
-        }
-      }
+      gSettings.KPAppleRTC = !IsPropertyFalse(prop);  //default = TRUE
       gSettings.KPKextPatchesNeeded |= gSettings.KPAppleRTC;
       
       prop = GetProperty(dictPointer,"KextsToPatch");
@@ -3989,12 +3631,8 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
             gSettings.KPKextPatchesNeeded = TRUE;
             
             // check if this is Info.plist patch or kext binary patch
-            gSettings.KextPatches[gSettings.NrKexts].IsPlistPatch = FALSE;
             dict2 = GetProperty(dictPointer, "InfoPlistPatch");
-            if(dict2) {
-              if (IsPropertyTrue(dict2))
-                gSettings.KextPatches[gSettings.NrKexts].IsPlistPatch = TRUE;
-            }
+            gSettings.KextPatches[gSettings.NrKexts].IsPlistPatch = IsPropertyTrue(dict2);
             
             if (gSettings.KextPatches[gSettings.NrKexts].IsPlistPatch) {
               // Info.plist
@@ -4084,13 +3722,8 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
         }
       }
       prop = GetProperty(dictPointer, "LogLineCount");
-      if(prop) {
-        if (prop->type == kTagTypeInteger) {
-          gSettings.LogLineCount = (UINT32)(UINTN)prop->string;
-        } else if (prop->type == kTagTypeString && AsciiStrLen(prop->string) > 0){
-          gSettings.LogLineCount = (UINT32)AsciiStrDecimalToUintn(prop->string);
-        }
-      }
+      gSettings.LogLineCount = (UINT32)GetPropertyInteger(prop, 0);
+
       prop = GetProperty(dictPointer, "LogEveryBoot");
       if(prop) {
         if (prop->type == kTagTypeTrue) {
@@ -4129,13 +3762,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
       
       //BacklightLevel
       prop = GetProperty(dictPointer, "BacklightLevel");
-      if(prop) {
-        if (prop->type == kTagTypeInteger) {
-          gSettings.BacklightLevel = (UINT16)(UINTN)prop->string;
-        } else if (prop->type == kTagTypeString){
-          gSettings.BacklightLevel = (UINT16)AsciiStrHexToUint64(prop->string);
-        }
-      }
+      gSettings.BacklightLevel = (UINT32)GetPropertyInteger(prop, 0);
       
       prop = GetProperty(dictPointer, "CustomUUID");
       if(prop) {
@@ -4152,12 +3779,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
       //else gUuid value from SMBIOS
       
       prop = GetProperty(dictPointer, "InjectSystemID");
-      if(prop) {
-        if (IsPropertyFalse(prop))
-          gSettings.InjectSystemID = FALSE;
-        else if (IsPropertyTrue(prop))
-          gSettings.InjectSystemID = TRUE;
-      }
+      gSettings.InjectSystemID = IsPropertyTrue(prop);
       
     }
     
@@ -4309,30 +3931,24 @@ EFI_STATUS GetRootUUID(IN REFIT_VOLUME *Volume)
         return EFI_NOT_FOUND;
     }
     
-	if(FileExists(Volume->RootDir, SystemPlistP))
-	{
+	if(FileExists(Volume->RootDir, SystemPlistP)) {
 		Status = egLoadFile(Volume->RootDir, SystemPlistP, (UINT8 **)&plistBuffer, &plistLen);
 	}
-	else if(FileExists(Volume->RootDir, SystemPlistR))
-	{
+	else if(FileExists(Volume->RootDir, SystemPlistR)) {
 		Status = egLoadFile(Volume->RootDir, SystemPlistR, (UINT8 **)&plistBuffer, &plistLen);
 	}
-	else if(FileExists(Volume->RootDir, SystemPlistS))
-	{
+	else if(FileExists(Volume->RootDir, SystemPlistS)) {
 		Status = egLoadFile(Volume->RootDir, SystemPlistS, (UINT8 **)&plistBuffer, &plistLen);
 	}
    
-	if(!EFI_ERROR(Status))
-	{
-		if(ParseXML(plistBuffer, &dict, 0) != EFI_SUCCESS)
-		{
+	if(!EFI_ERROR(Status)) {
+		if(ParseXML(plistBuffer, &dict, 0) != EFI_SUCCESS) {
 			FreePool(plistBuffer);
 			return EFI_NOT_FOUND;
 		}
         
 		prop = GetProperty(dict, "Root UUID");
-		if(prop != NULL)
-		{
+		if(prop != NULL) {
        AsciiStrToUnicodeStr(prop->string, Uuid);
        Status = StrToGuidLE(Uuid, &Volume->RootUUID);            
     }
