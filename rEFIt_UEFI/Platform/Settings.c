@@ -4034,7 +4034,7 @@ VOID GetDevices(VOID)
               DBG("Found Radeon model=%a\n", gGraphics[NGFX].Model);
               SlotDevices[0].SegmentGroupNum = (UINT16)Segment;
               SlotDevices[0].BusNum = (UINT8)Bus;
-              SlotDevices[0].DevFuncNum = (UINT8)((Device << 4) | (Function & 0x0F));
+              SlotDevices[0].DevFuncNum = (UINT8)((Device << 3) | (Function & 0x07));
               SlotDevices[0].Valid = TRUE;
               AsciiSPrint(SlotDevices[0].SlotName, 31, "PCI Slot 0");
               SlotDevices[0].SlotID = 1;
@@ -4069,7 +4069,7 @@ VOID GetDevices(VOID)
               gGraphics[NGFX].Ports = 2;
               SlotDevices[1].SegmentGroupNum = (UINT16)Segment;
               SlotDevices[1].BusNum = (UINT8)Bus;
-              SlotDevices[1].DevFuncNum = (UINT8)((Device << 4) | (Function & 0x0F));
+              SlotDevices[1].DevFuncNum = (UINT8)((Device << 3) | (Function & 0x07));
               SlotDevices[1].Valid = TRUE;
               AsciiSPrint(SlotDevices[1].SlotName, 31, "PCI Slot 0");
               SlotDevices[1].SlotID = 1;
@@ -4089,7 +4089,7 @@ VOID GetDevices(VOID)
  //         DBG("Found AirPort. Landing enabled...\n");
           SlotDevices[6].SegmentGroupNum = (UINT16)Segment;
           SlotDevices[6].BusNum = (UINT8)Bus;
-          SlotDevices[6].DevFuncNum = (UINT8)((Device << 4) | (Function & 0x0F));
+          SlotDevices[6].DevFuncNum = (UINT8)((Device << 3) | (Function & 0x07));
           SlotDevices[6].Valid = TRUE;
           AsciiSPrint(SlotDevices[6].SlotName, 31, "Airport");
           SlotDevices[6].SlotID = 0;
@@ -4099,7 +4099,7 @@ VOID GetDevices(VOID)
                 (Pci.Hdr.ClassCode[1] == PCI_CLASS_NETWORK_ETHERNET)) {
           SlotDevices[5].SegmentGroupNum = (UINT16)Segment;
           SlotDevices[5].BusNum = (UINT8)Bus;
-          SlotDevices[5].DevFuncNum = (UINT8)((Device << 4) | (Function & 0x0F));
+          SlotDevices[5].DevFuncNum = (UINT8)((Device << 3) | (Function & 0x07));
           SlotDevices[5].Valid = TRUE;
           AsciiSPrint(SlotDevices[5].SlotName, 31, "Ethernet");
           SlotDevices[5].SlotID = 2;
@@ -4109,7 +4109,7 @@ VOID GetDevices(VOID)
                  (Pci.Hdr.ClassCode[1] == PCI_CLASS_SERIAL_FIREWIRE)) {
           SlotDevices[12].SegmentGroupNum = (UINT16)Segment;
           SlotDevices[12].BusNum = (UINT8)Bus;
-          SlotDevices[12].DevFuncNum = (UINT8)((Device << 4) | (Function & 0x0F));
+          SlotDevices[12].DevFuncNum = (UINT8)((Device << 3) | (Function & 0x07));
           SlotDevices[12].Valid = TRUE;
           AsciiSPrint(SlotDevices[12].SlotName, 31, "Firewire");
           SlotDevices[12].SlotID = 3;

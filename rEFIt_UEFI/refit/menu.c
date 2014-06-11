@@ -2744,17 +2744,17 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
       SwitchToGraphicsAndClear();
       
       EntriesGap = GlobalConfig.TileXSpace;
-      EntriesWidth = GlobalConfig.MainEntriesSize + 16;
+      EntriesWidth = GlobalConfig.MainEntriesSize + (16 * row0TileSize) / 144;
       EntriesHeight = GlobalConfig.MainEntriesSize + 16;
       
       MaxItemOnScreen = (UGAWidth - ROW0_SCROLLSIZE * 2) / (EntriesWidth + EntriesGap); //8
       CountItems(Screen);
       InitScroll(State, row0Count, Screen->EntryCount, MaxItemOnScreen);
-      row0PosX = (UGAWidth + EntriesGap - (EntriesWidth + EntriesGap) *
+      row0PosX = (UGAWidth + 8 - (EntriesWidth + EntriesGap) *
                   ((MaxItemOnScreen < row0Count)?MaxItemOnScreen:row0Count)) >> 1;
       row0PosY = ((UGAHeight - LayoutMainMenuHeight) >> 1) + LayoutBannerOffset; //LAYOUT_BANNER_YOFFSET; 
       
-      row1PosX = (UGAWidth + EntriesGap - (ROW1_TILESIZE + TILE_XSPACING) * row1Count) >> 1;
+      row1PosX = (UGAWidth + 8 - (ROW1_TILESIZE + TILE_XSPACING) * row1Count) >> 1;
       row1PosY = row0PosY + EntriesHeight + GlobalConfig.TileYSpace + LayoutButtonOffset;
       if (row1Count > 0)
         textPosY = row1PosY + ROW1_TILESIZE + GlobalConfig.TileYSpace + LayoutTextOffset;

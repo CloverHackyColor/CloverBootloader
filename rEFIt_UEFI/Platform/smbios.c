@@ -679,7 +679,7 @@ VOID PatchTableType4()
 		if (SmbiosTable.Raw == NULL) {
 			break;
 		}
-		// we make SMBios v2.6 while it may be older so we have to increase size
+		// we make SMBios v2.4 while it may be older so we have to increase size
 		Size = SmbiosTable.Type4->Hdr.Length; //old size
 		TableSize = SmbiosTableLength(SmbiosTable); //including strings
 		AddBrand = 0;
@@ -722,71 +722,65 @@ VOID PatchTableType4()
 		}
 		if ((gCPUStructure.Model == CPU_MODEL_DOTHAN) ||
         (gCPUStructure.Model == CPU_MODEL_YONAH)) {
-			if (gCPUStructure.Mobile)
-			{
+			if (gCPUStructure.Mobile) {
+        newSmbiosTable.Type4->ProcessorUpgrade = ProcessorUpgradeSocket478;
 				newSmbiosTable.Type4->ProcessorFamily = ProcessorFamilyIntelCoreSoloMobile;
-				if (gCPUStructure.Cores == 2)
-				{
+				if (gCPUStructure.Cores == 2) {
 					newSmbiosTable.Type4->ProcessorFamily = ProcessorFamilyIntelCoreDuoMobile;
 				}
 			} else {
 				newSmbiosTable.Type4->ProcessorFamily = ProcessorFamilyIntelCoreSolo;
-				if (gCPUStructure.Cores == 2)
-				{
+				if (gCPUStructure.Cores == 2) {
 					newSmbiosTable.Type4->ProcessorFamily = ProcessorFamilyIntelCoreDuo;
 				}
 			}
 		}
-		if (gCPUStructure.Model == CPU_MODEL_MEROM) { //and Conroe
-			if (gCPUStructure.Mobile)
-			{
-				if (gCPUStructure.Cores==2)
-				{
+		if (gCPUStructure.Model == CPU_MODEL_MEROM) {
+			if (gCPUStructure.Mobile) {
+				if (gCPUStructure.Cores==2) {
 					newSmbiosTable.Type4->ProcessorFamily = ProcessorFamilyIntelCore2DuoMobile;
 				}
-				if (gCPUStructure.Cores==1)
-				{
+				if (gCPUStructure.Cores==1) {
 					newSmbiosTable.Type4->ProcessorFamily = ProcessorFamilyIntelCore2SoloMobile;
 				}
-			} else {
-				if (gCPUStructure.Cores>2)
-				{
+			} else {  // Conroe
+        newSmbiosTable.Type4->ProcessorUpgrade = ProcessorUpgradeSocketLGA775;
+				if (gCPUStructure.Cores>2) {
 					newSmbiosTable.Type4->ProcessorFamily = ProcessorFamilyIntelCore2Quad;
 				} else
-          if (gCPUStructure.Cores==2)
-				{
+          if (gCPUStructure.Cores==2) {
 					newSmbiosTable.Type4->ProcessorFamily = ProcessorFamilyIntelCore2Extreme;
 				}
-				if (gCPUStructure.Cores==1)
-				{
+				if (gCPUStructure.Cores==1) {
 					newSmbiosTable.Type4->ProcessorFamily = ProcessorFamilyIntelCore2Solo;
 				}
 			}
 		}
 		if (gCPUStructure.Model == CPU_MODEL_PENRYN) {
-			if (gCPUStructure.Mobile)
-			{
-				if (gCPUStructure.Cores>2)
-				{
+			if (gCPUStructure.Mobile) {
+				if (gCPUStructure.Cores>2) {
 					newSmbiosTable.Type4->ProcessorFamily = ProcessorFamilyIntelCore2ExtremeMobile;
 				}
-				if (gCPUStructure.Cores==2)
-				{
+				if (gCPUStructure.Cores==2) {
 					newSmbiosTable.Type4->ProcessorFamily = ProcessorFamilyIntelCore2DuoMobile;
 				}
 
 			} else {
-				if (gCPUStructure.Cores>2)
-				{
+        newSmbiosTable.Type4->ProcessorUpgrade = ProcessorUpgradeSocketLGA775;
+				if (gCPUStructure.Cores>2) {
 					newSmbiosTable.Type4->ProcessorFamily = ProcessorFamilyIntelCore2Quad;
-				} else
-				if (gCPUStructure.Cores==2)
-				{
-					newSmbiosTable.Type4->ProcessorFamily = ProcessorFamilyIntelCore2Extreme;
-				} else
+				} else if (gCPUStructure.Cores==2) {
+					newSmbiosTable.Type4->ProcessorFamily = ProcessorFamilyIntelCore2;
+				} else {
 					newSmbiosTable.Type4->ProcessorFamily = ProcessorFamilyIntelCore2Solo;
+        }
+        if (AsciiStrStr(gCPUStructure.BrandString, "Celeron")) {
+          newSmbiosTable.Type4->ProcessorFamily = ProcessorFamilyDualCoreIntelCeleron;
+        } else if (AsciiStrStr(gCPUStructure.BrandString, "Extreme")) {
+          newSmbiosTable.Type4->ProcessorFamily = ProcessorFamilyIntelCore2Extreme;
+        }
 			}
-  		 }
+    }
      if (gCPUStructure.Model >= CPU_MODEL_NEHALEM) {
        if (AsciiStrStr(gCPUStructure.BrandString, "i3"))
      	  newSmbiosTable.Type4->ProcessorFamily = ProcessorFamilyIntelCoreI3;
@@ -996,6 +990,7 @@ VOID PatchTableType9()
  */
 	for (Index = 0; Index < 15; Index++) {
     if (SlotDevices[Index].Valid) {
+      INTN Dev, Func;
       ZeroMem((VOID*)newSmbiosTable.Type9, MAX_TABLE_SIZE);
       newSmbiosTable.Type9->Hdr.Type = EFI_SMBIOS_TYPE_SYSTEM_SLOTS;
       newSmbiosTable.Type9->Hdr.Length = sizeof(SMBIOS_TABLE_TYPE9);
@@ -1013,7 +1008,9 @@ VOID PatchTableType9()
       newSmbiosTable.Type9->BusNum = SlotDevices[Index].BusNum;
       newSmbiosTable.Type9->DevFuncNum = SlotDevices[Index].DevFuncNum;
       //
-      DBG("insert table 9 for dev 0x%x\n", SlotDevices[Index].DevFuncNum);
+      Dev = SlotDevices[Index].DevFuncNum >> 3;
+      Func = SlotDevices[Index].DevFuncNum & 7;
+      DBG("insert table 9 for dev %x:%x\n", Dev, Func);
       UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type9->SlotDesignation, SlotDevices[Index].SlotName);
       LogSmbiosTable(newSmbiosTable);
     }
