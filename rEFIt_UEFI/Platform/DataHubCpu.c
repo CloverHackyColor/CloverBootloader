@@ -263,7 +263,7 @@ VOID SetupDataForOSX()
 #endif
 
   //fool proof
-  if ((FrontSideBus < (50 * Mega)) ||  (FrontSideBus > (500 * Mega))){
+  if ((FrontSideBus < (50 * Mega)) ||  (FrontSideBus > (1000 * Mega))){
     DBG("Wrong FrontSideBus=%d, set to 100MHz\n", FrontSideBus);
     FrontSideBus = 100 * Mega;
   }
