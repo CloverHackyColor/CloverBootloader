@@ -666,7 +666,7 @@ ConvertProcessorToString (
   StringBuffer = AllocateZeroPool (0x20);
 //  ASSERT (StringBuffer != NULL);
   if (!StringBuffer) {
-    StringBuffer = "   ";
+    StringBuffer = L"   ";
   }
   Index = UnicodeValueToString (StringBuffer, LEFT_JUSTIFY, FreqMhz / 1000, 3);
   StrCat (StringBuffer, L".");
@@ -695,7 +695,7 @@ ConvertMemorySizeToString (
   StringBuffer = AllocateZeroPool (0x20);
 //  ASSERT (StringBuffer != NULL);
   if (!StringBuffer) {
-    StringBuffer = "        ";
+    StringBuffer = L"        ";
   }
 
   UnicodeValueToString (StringBuffer, LEFT_JUSTIFY, MemorySize, 6);

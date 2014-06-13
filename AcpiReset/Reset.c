@@ -169,12 +169,13 @@ InitializeReset (
 {
   EFI_STATUS         Status;
   EFI_HOB_GUID_TYPE  *HobAcpiDescription;
+  VOID *Instance;
 
   //
   // Make sure the Reset Architectural Protocol is not already installed in the system
   //
-  ASSERT_PROTOCOL_ALREADY_INSTALLED (NULL, &gEfiResetArchProtocolGuid);
-  Status = gBS->LocateProtocol ((EFI_GUID *)&gEfiResetArchProtocolGuid, NULL, &Instance));
+//  ASSERT_PROTOCOL_ALREADY_INSTALLED (NULL, &gEfiResetArchProtocolGuid);
+  Status = gBS->LocateProtocol ((EFI_GUID *)&gEfiResetArchProtocolGuid, NULL, &Instance);
   if (!EFI_ERROR(Status)) {
     return Status;
   }
