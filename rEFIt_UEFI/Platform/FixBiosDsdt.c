@@ -3712,7 +3712,7 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
       }
       aml_add_string(pack1, "AAPL,current-extra");
       if (gSettings.HighCurrent) {
-        aml_add_word(pack1, 0x0A8C);
+        aml_add_word(pack1, 0x0C80);
       } else {
         aml_add_word(pack1, 0x03E8);
       }

@@ -555,7 +555,7 @@
 	<key>RtVariables</key>
 	<dict>
 		<key>LogEveryBoot</key>
-		<string>10</string>
+		<string>5</string>
 		<key>LogLineCount</key>
 		<integer>3000</integer>
 		<key>MLB</key>

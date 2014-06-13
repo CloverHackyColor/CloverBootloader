@@ -393,7 +393,7 @@ static UINT16  current_available = 1200; //mA
 static UINT16  current_extra     = 700;
 static UINT16  current_in_sleep  = 1000;
 static UINT16  current_available_high = 2100; //mA
-static UINT16  current_extra_high    = 2700;
+static UINT16  current_extra_high    = 3200;
 
 BOOLEAN set_usb_props(pci_dt_t *usb_dev)
 {
