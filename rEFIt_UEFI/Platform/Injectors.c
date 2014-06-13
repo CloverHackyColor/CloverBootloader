@@ -156,14 +156,19 @@ EFI_STATUS
 SetPrivateVarProto(VOID)
 {
   EFI_STATUS  Status;
-	
+  //This must be independent install
   Status = gBS->InstallMultipleProtocolInterfaces (
                                                    &gImageHandle,
-                                                   &gDevicePropertiesGuid,
-                                                   &mDeviceProperties,
                                                    &gAppleScreenInfoProtocolGuid,
                                                    &mScreenInfo,
                                                    NULL
                                                    );
+  Status = gBS->InstallMultipleProtocolInterfaces (
+                                                   &gImageHandle,
+                                                   &gDevicePropertiesGuid,
+                                                   &mDeviceProperties,
+                                                   NULL
+                                                   );
+	
   return Status;
 }

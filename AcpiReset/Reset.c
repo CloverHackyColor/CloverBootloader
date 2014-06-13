@@ -174,6 +174,11 @@ InitializeReset (
   // Make sure the Reset Architectural Protocol is not already installed in the system
   //
   ASSERT_PROTOCOL_ALREADY_INSTALLED (NULL, &gEfiResetArchProtocolGuid);
+  Status = gBS->LocateProtocol ((EFI_GUID *)&gEfiResetArchProtocolGuid, NULL, &Instance));
+  if (!EFI_ERROR(Status)) {
+    return Status;
+  }
+
 
   //
   // Get ACPI Description HOB
@@ -186,7 +191,7 @@ InitializeReset (
   //
   // Copy it to Runtime Memory
   //
-  ASSERT (sizeof (EFI_ACPI_DESCRIPTION) == GET_GUID_HOB_DATA_SIZE (HobAcpiDescription));
+//  ASSERT (sizeof (EFI_ACPI_DESCRIPTION) == GET_GUID_HOB_DATA_SIZE (HobAcpiDescription));
   CopyMem (&mAcpiDescription, GET_GUID_HOB_DATA (HobAcpiDescription), sizeof (EFI_ACPI_DESCRIPTION));
 
 //  DEBUG ((DEBUG_INFO, "ACPI Reset Base  - %lx\n", mAcpiDescription.RESET_REG.Address));
@@ -206,7 +211,7 @@ InitializeReset (
                   &gEfiResetArchProtocolGuid, NULL,
                   NULL
                   );
-  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR (Status);
 
   return Status;
 }

@@ -464,8 +464,8 @@ RegisterAtaDevice (
                   AtaDevice->DevicePath,
                   &gEfiBlockIoProtocolGuid,
                   &AtaDevice->BlockIo,
-                  &gEfiBlockIo2ProtocolGuid,
-                  &AtaDevice->BlockIo2,
+//                  &gEfiBlockIo2ProtocolGuid,
+//                  &AtaDevice->BlockIo2,
                   &gEfiDiskInfoProtocolGuid,
                   &AtaDevice->DiskInfo,
                   NULL
@@ -626,8 +626,8 @@ UnregisterAtaDevice (
                   AtaDevice->DevicePath,
                   &gEfiBlockIoProtocolGuid,
                   &AtaDevice->BlockIo,
-                  &gEfiBlockIo2ProtocolGuid,
-                  &AtaDevice->BlockIo2,
+//                  &gEfiBlockIo2ProtocolGuid,
+//                  &AtaDevice->BlockIo2,
                   &gEfiDiskInfoProtocolGuid,
                   &AtaDevice->DiskInfo,
                   NULL

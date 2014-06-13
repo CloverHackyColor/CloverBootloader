@@ -552,7 +552,8 @@ CoreInstallMultipleProtocolInterfaces (
   // Check for duplicate device path and install the protocol interfaces
   //
   VA_START (Args, Handle);
-  for (Index = 0, Status = EFI_SUCCESS; !EFI_ERROR (Status); Index++) {
+  //for (Index = 0, Status = EFI_SUCCESS; !EFI_ERROR (Status); Index++) {
+  for (Index = 0, Status = EFI_SUCCESS; (Status == EFI_SUCCESS || Status == EFI_ALREADY_STARTED); Index++) {
     //
     // If protocol is NULL, then it's the end of the list
     //
@@ -586,7 +587,7 @@ CoreInstallMultipleProtocolInterfaces (
   //
   // If there was an error, remove all the interfaces that were installed without any errors
   //
-  if (EFI_ERROR (Status)) {
+  if (Status != EFI_SUCCESS && Status != EFI_ALREADY_STARTED) {
     //
     // Reset the va_arg back to the first argument.
     //

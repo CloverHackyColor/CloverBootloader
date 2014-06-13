@@ -185,7 +185,10 @@ InitializeDeviceManager (
                   &gDeviceManagerPrivate.ConfigAccess,
                   NULL
                   );
-  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR (Status);
+  if (EFI_ERROR (Status)) {
+    return Status;
+  }
 
   Status = gBS->InstallMultipleProtocolInterfaces (
                   &gDeviceManagerPrivate.DriverHealthHandle,
@@ -195,7 +198,10 @@ InitializeDeviceManager (
                   &gDeviceManagerPrivate.DriverHealthConfigAccess,
                   NULL
                   );
-  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR (Status);
+  if (EFI_ERROR (Status)) {
+    return Status;
+  }
 
   mMacDeviceList.CurListLen = 0;
   mMacDeviceList.MaxListLen = 0;
@@ -235,10 +241,13 @@ ExtractDisplayedHiiFormFromHiiHandle (
   EFI_GUID                     *ClassGuid;
   UINT8                        ClassGuidNum;
 
-  ASSERT (Handle != NULL);
-  ASSERT (SetupClassGuid != NULL);  
-  ASSERT (FormSetTitle != NULL);
-  ASSERT (FormSetHelp != NULL);
+//  ASSERT (Handle != NULL);
+//  ASSERT (SetupClassGuid != NULL);
+//  ASSERT (FormSetTitle != NULL);
+//  ASSERT (FormSetHelp != NULL);
+  if (!Handle || !SetupClassGuid || !FormSetTitle || !FormSetHelp) {
+    return FALSE;
+  }
 
   *FormSetTitle = 0;
   *FormSetHelp  = 0;
@@ -254,14 +263,15 @@ ExtractDisplayedHiiFormFromHiiHandle (
   //
   // Handle is a invalid handle. Check if Handle is corrupted.
   //
-  ASSERT (Status != EFI_NOT_FOUND);
+//  ASSERT (Status != EFI_NOT_FOUND);
+
   //
   // The return status should always be EFI_BUFFER_TOO_SMALL as input buffer's size is 0.
   //
-  ASSERT (Status == EFI_BUFFER_TOO_SMALL);
+//  ASSERT (Status == EFI_BUFFER_TOO_SMALL);
   
   HiiPackageList = AllocatePool (BufferSize);
-  ASSERT (HiiPackageList != NULL);
+//  ASSERT (HiiPackageList != NULL);
 
   Status = gHiiDatabase->ExportPackageLists (gHiiDatabase, Handle, &BufferSize, HiiPackageList);
   if (EFI_ERROR (Status)) {
@@ -353,7 +363,10 @@ GetMacAddressString(
 
   VlanId = 0;
   String = NULL;
-  ASSERT(MacAddressNode != NULL);
+//  ASSERT(MacAddressNode != NULL);
+  if (!MacAddressNode) {
+    return FALSE;
+  }
 
   HwAddressSize = sizeof (EFI_MAC_ADDRESS);
   if (MacAddressNode->IfType == 0x01 || MacAddressNode->IfType == 0x00) {
@@ -503,7 +516,10 @@ IsMacAddressDevicePath (
   CHAR16                     *Buffer;
   BOOLEAN                    ReturnVal;
   
-  ASSERT (Node != NULL);
+//  ASSERT (Node != NULL);
+  if (!Node) {
+    return FALSE;
+  }
   *NeedAddItem = FALSE;
   ReturnVal    = FALSE;
   Buffer    = NULL;
@@ -797,10 +813,16 @@ CallDeviceManager (
   // Allocate space for creation of UpdateData Buffer
   //
   StartOpCodeHandle = HiiAllocateOpCodeHandle ();
-  ASSERT (StartOpCodeHandle != NULL);
+//  ASSERT (StartOpCodeHandle != NULL);
+  if (!StartOpCodeHandle) {
+    return EFI_OUT_OF_RESOURCES;
+  }
 
   EndOpCodeHandle = HiiAllocateOpCodeHandle ();
-  ASSERT (EndOpCodeHandle != NULL);
+//  ASSERT (EndOpCodeHandle != NULL);
+  if (!EndOpCodeHandle) {
+    return EFI_OUT_OF_RESOURCES;
+  }
 
   //
   // Create Hii Extend Label OpCode as the start opcode
@@ -823,7 +845,11 @@ CallDeviceManager (
   // Get all the Hii handles
   //
   HiiHandles = HiiGetHiiHandles (NULL);
-  ASSERT (HiiHandles != NULL);
+ // ASSERT (HiiHandles != NULL);
+  if (!HiiHandles) {
+    return EFI_OUT_OF_RESOURCES;
+  }
+
 
   //
   // Search for formset of each class type
@@ -834,7 +860,10 @@ CallDeviceManager (
     //  QuestionId = Handle Index + NETWORK_DEVICE_LIST_KEY_OFFSET;
     //  Different QuestionId at least has the section of NETWORK_DEVICE_LIST_KEY_OFFSET.
     //
-    ASSERT(Index < MAX_KEY_SECTION_LEN);
+//    ASSERT(Index < MAX_KEY_SECTION_LEN);
+    if (Index >= MAX_KEY_SECTION_LEN) {
+      break;
+    }
 
     if (!ExtractDisplayedHiiFormFromHiiHandle (HiiHandles[Index], &gEfiHiiPlatformSetupFormsetGuid, &FormSetTitle, &FormSetHelp)) {
       continue;
@@ -843,7 +872,10 @@ CallDeviceManager (
     String = HiiGetString (HiiHandles[Index], FormSetTitle, NULL);
     if (String == NULL) {
       String = HiiGetString (HiiHandle, STR_MISSING_STRING, NULL);
-      ASSERT (String != NULL);
+//      ASSERT (String != NULL);
+      if (!String) {
+        return EFI_OUT_OF_RESOURCES;
+      }
     }
     Token = HiiSetString (HiiHandle, 0, String, NULL);
     FreePool (String);
@@ -851,7 +883,10 @@ CallDeviceManager (
     String = HiiGetString (HiiHandles[Index], FormSetHelp, NULL);
     if (String == NULL) {
       String = HiiGetString (HiiHandle, STR_MISSING_STRING, NULL);
-      ASSERT (String != NULL);
+//      ASSERT (String != NULL);
+      if (!String) {
+        return EFI_OUT_OF_RESOURCES;
+      }
     }
     TokenHelp = HiiSetString (HiiHandle, 0, String, NULL);
     FreePool (String);
@@ -1180,16 +1215,28 @@ CallDriverHealth (
   // Allocate space for creation of UpdateData Buffer
   //
   StartOpCodeHandle = HiiAllocateOpCodeHandle ();
-  ASSERT (StartOpCodeHandle != NULL);
+//  ASSERT (StartOpCodeHandle != NULL);
+  if (!StartOpCodeHandle) {
+    return;
+  }
 
   EndOpCodeHandle = HiiAllocateOpCodeHandle ();
-  ASSERT (EndOpCodeHandle != NULL);
+//  ASSERT (EndOpCodeHandle != NULL);
+  if (!EndOpCodeHandle) {
+    return;
+  }
 
   StartOpCodeHandleRepair = HiiAllocateOpCodeHandle ();
-  ASSERT (StartOpCodeHandleRepair != NULL);
+//  ASSERT (StartOpCodeHandleRepair != NULL);
+  if (!StartOpCodeHandleRepair) {
+    return;
+  }
 
   EndOpCodeHandleRepair = HiiAllocateOpCodeHandle ();
-  ASSERT (EndOpCodeHandleRepair != NULL);
+//  ASSERT (EndOpCodeHandleRepair != NULL);
+  if (!EndOpCodeHandleRepair) {
+    return;
+  }
 
   //
   // Create Hii Extend Label OpCode as the start opcode
@@ -1222,7 +1269,11 @@ CallDriverHealth (
   HiiCreateSubTitleOpCode (StartOpCodeHandle, STRING_TOKEN (STR_DH_STATUS_LIST), 0, 0, 1);
 
   Status = GetAllControllersHealthStatus (&DriverHealthList);
-  ASSERT (Status != EFI_OUT_OF_RESOURCES);
+//  ASSERT (Status != EFI_OUT_OF_RESOURCES);
+  if (!EndOpCodeHandleRepair) {
+    return;
+  }
+
 
   Link = GetFirstNode (&DriverHealthList);
 
@@ -1233,7 +1284,10 @@ CallDriverHealth (
     // Assume no line strings is longer than 512 bytes.
     //
     String = (EFI_STRING) AllocateZeroPool (0x200);
-    ASSERT (String != NULL);
+//    ASSERT (String != NULL);
+    if (!String) {
+      break;
+    }
 
     Status = DriverHealthGetDriverName (DriverHealthInfo->DriverHandle, &DriverName);
     if (EFI_ERROR (Status)) {
@@ -1300,9 +1354,11 @@ CallDriverHealth (
       }
     }
 
-    ASSERT (TmpString != NULL);
-    StrCat (String, TmpString);
-    FreePool (TmpString);
+//    ASSERT (TmpString != NULL);
+    if (TmpString) {
+      StrCat (String, TmpString);
+      FreePool (TmpString);
+    }
 
     Token = HiiSetString (HiiHandle, 0, String, NULL);
     FreePool (String);
@@ -1366,18 +1422,21 @@ CallDriverHealth (
              StartOpCodeHandle,
              EndOpCodeHandle
              );
-  ASSERT (Status != EFI_NOT_FOUND);
-  ASSERT (Status != EFI_BUFFER_TOO_SMALL);
+//  ASSERT (Status != EFI_NOT_FOUND);
+//  ASSERT (Status != EFI_BUFFER_TOO_SMALL);
+  if ((Status != EFI_NOT_FOUND) && (Status != EFI_BUFFER_TOO_SMALL)) {
+    Status = HiiUpdateForm (
+                            HiiHandle,
+                            &gDriverHealthFormSetGuid,
+                            DRIVER_HEALTH_FORM_ID,
+                            StartOpCodeHandleRepair,
+                            EndOpCodeHandleRepair
+                            );
 
-  Status = HiiUpdateForm (
-            HiiHandle,
-            &gDriverHealthFormSetGuid,
-            DRIVER_HEALTH_FORM_ID,
-            StartOpCodeHandleRepair,
-            EndOpCodeHandleRepair
-    );
-  ASSERT (Status != EFI_NOT_FOUND);
-  ASSERT (Status != EFI_BUFFER_TOO_SMALL);
+  }
+
+//  ASSERT (Status != EFI_NOT_FOUND);
+//  ASSERT (Status != EFI_BUFFER_TOO_SMALL);
 
   ActionRequest = EFI_BROWSER_ACTION_REQUEST_NONE;
   Status = gFormBrowser2->SendForm (
@@ -1962,7 +2021,10 @@ ProcessSingleControllerHealth (
                                   NULL,
                                   NULL
                                   );
-        ASSERT( !EFI_ERROR (Status));
+//        ASSERT( !EFI_ERROR (Status));
+        if (EFI_ERROR (Status)) {
+          break;
+        }
       } else {
         //
         // Exit the loop in case no FormHiiHandle is supplied to prevent dead-loop
@@ -1979,7 +2041,10 @@ ProcessSingleControllerHealth (
                               NULL,
                               &FormHiiHandle
                               );
-    ASSERT_EFI_ERROR (Status);
+//    ASSERT_EFI_ERROR (Status);
+    if (EFI_ERROR (Status)) {
+      break;
+    }
 
     if (*MessageList != NULL) {
       ProcessMessages (*MessageList);
@@ -2105,7 +2170,10 @@ PlatformRepairAll (
   LIST_ENTRY                  *Link;
   BOOLEAN                     RebootRequired;
 
-  ASSERT (DriverHealthList != NULL);
+//  ASSERT (DriverHealthList != NULL);
+  if (!DriverHealthList) {
+    return;
+  }
 
   RebootRequired = FALSE;
 
@@ -2117,7 +2185,10 @@ PlatformRepairAll (
     //
     // Do driver health status operation by each link node
     //
-    ASSERT (DriverHealthInfo != NULL);
+//    ASSERT (DriverHealthInfo != NULL);
+    if (!DriverHealthInfo) {
+      continue;
+    }
 
     ProcessSingleControllerHealth ( 
       DriverHealthInfo->DriverHealth,

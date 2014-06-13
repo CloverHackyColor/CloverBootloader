@@ -377,7 +377,7 @@ InitializeFrontPage (
                     &gFrontPagePrivate.ConfigAccess,
                     NULL
                     );
-    ASSERT_EFI_ERROR (Status);
+ //   ASSERT_EFI_ERROR (Status);
 
     //
     // Publish our HII data
@@ -399,13 +399,22 @@ InitializeFrontPage (
   // Init OpCode Handle and Allocate space for creation of UpdateData Buffer
   //
   StartOpCodeHandle = HiiAllocateOpCodeHandle ();
-  ASSERT (StartOpCodeHandle != NULL);
+//  ASSERT (StartOpCodeHandle != NULL);
+  if (!StartOpCodeHandle) {
+    return EFI_OUT_OF_RESOURCES;
+  }
 
   EndOpCodeHandle = HiiAllocateOpCodeHandle ();
-  ASSERT (EndOpCodeHandle != NULL);
+//  ASSERT (EndOpCodeHandle != NULL);
+  if (!EndOpCodeHandle) {
+    return EFI_OUT_OF_RESOURCES;
+  }
 
   OptionsOpCodeHandle = HiiAllocateOpCodeHandle ();
-  ASSERT (OptionsOpCodeHandle != NULL);
+//  ASSERT (OptionsOpCodeHandle != NULL);
+  if (!OptionsOpCodeHandle) {
+    return EFI_OUT_OF_RESOURCES;
+  }
   //
   // Create Hii Extend Label OpCode as the start opcode
   //
@@ -425,12 +434,20 @@ InitializeFrontPage (
   //
   HiiHandle = gFrontPagePrivate.HiiHandle;
   LanguageString = HiiGetSupportedLanguages (HiiHandle);
-  ASSERT (LanguageString != NULL);
+//  ASSERT (LanguageString != NULL);
+  if (!LanguageString) {
+    return EFI_OUT_OF_RESOURCES;
+  }
+
   //
   // Allocate working buffer for RFC 4646 language in supported LanguageString.
   //
   Lang = AllocatePool (AsciiStrSize (LanguageString));
-  ASSERT (Lang != NULL);
+//  ASSERT (Lang != NULL);
+  if (!Lang) {
+    return EFI_OUT_OF_RESOURCES;
+  }
+
 
   GetEfiGlobalVariable2 (L"PlatformLang", (VOID**)&CurrentLang, NULL);
   //
@@ -447,7 +464,10 @@ InitializeFrontPage (
   //
   // BestLanguage must be selected as it is the first language in LanguageString by default
   //
-  ASSERT (BestLanguage != NULL);
+//  ASSERT (BestLanguage != NULL);
+  if (!BestLanguage) {
+    return EFI_OUT_OF_RESOURCES;
+  }
 
   OptionCount = 0;
   LangCode    = LanguageString;
@@ -459,7 +479,11 @@ InitializeFrontPage (
       OptionCount ++;
     }
     gFrontPagePrivate.LanguageToken = AllocatePool (OptionCount * sizeof (EFI_STRING_ID));
-    ASSERT (gFrontPagePrivate.LanguageToken != NULL);
+//    ASSERT (gFrontPagePrivate.LanguageToken != NULL);
+    if (!gFrontPagePrivate.LanguageToken) {
+      return EFI_OUT_OF_RESOURCES;
+    }
+
     FirstFlag = TRUE;
   }
 
@@ -470,7 +494,11 @@ InitializeFrontPage (
 
     if (FirstFlag) {
       StringBuffer = HiiGetString (HiiHandle, PRINTABLE_LANGUAGE_NAME_STRING_ID, Lang);
-      ASSERT (StringBuffer != NULL);
+//      ASSERT (StringBuffer != NULL);
+      if (!StringBuffer) {
+        return EFI_OUT_OF_RESOURCES;
+      }
+
 
       //
       // Save the string Id for each language
@@ -636,7 +664,10 @@ ConvertProcessorToString (
   }
 
   StringBuffer = AllocateZeroPool (0x20);
-  ASSERT (StringBuffer != NULL);
+//  ASSERT (StringBuffer != NULL);
+  if (!StringBuffer) {
+    StringBuffer = "   ";
+  }
   Index = UnicodeValueToString (StringBuffer, LEFT_JUSTIFY, FreqMhz / 1000, 3);
   StrCat (StringBuffer, L".");
   UnicodeValueToString (StringBuffer + Index + 1, PREFIX_ZERO, (FreqMhz % 1000) / 10, 2);
@@ -662,7 +693,11 @@ ConvertMemorySizeToString (
   CHAR16  *StringBuffer;
 
   StringBuffer = AllocateZeroPool (0x20);
-  ASSERT (StringBuffer != NULL);
+//  ASSERT (StringBuffer != NULL);
+  if (!StringBuffer) {
+    StringBuffer = "        ";
+  }
+
   UnicodeValueToString (StringBuffer, LEFT_JUSTIFY, MemorySize, 6);
   StrCat (StringBuffer, L" MB RAM");
 
@@ -751,7 +786,10 @@ UpdateFrontPageStrings (
                   NULL,
                   (VOID **) &Smbios
                   );
-  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR (Status);
+  if (EFI_ERROR (Status)) {
+    return;
+  }
 
   SmbiosHandle = SMBIOS_HANDLE_PI_RESERVED;  //Slice - was 0
   do {
@@ -871,8 +909,8 @@ WaitForSingleEvent (
     // No timeout... just wait on the event
     //
     Status = gBS->WaitForEvent (1, &Event, &Index);
-    ASSERT (!EFI_ERROR (Status));
-    ASSERT (Index == 0);
+//    ASSERT (!EFI_ERROR (Status));
+//    ASSERT (Index == 0);
   }
 
   return Status;
