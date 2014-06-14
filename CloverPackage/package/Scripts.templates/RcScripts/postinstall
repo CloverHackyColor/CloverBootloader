@@ -47,6 +47,11 @@ if [[ "$install_on_all_volumes" == true ]]; then
     for mountPoint in $(getInternalOSXSystemVolumes); do
         [[ "$mountPoint" == $destroot ]] && continue
         echo "Installing RC scripts in '$mountPoint' volume" >> "$install_log"
+        # Remove old rc.local and rc.shutdown.local scripts
+        [[ $(grep -ic Clover "${mountPoint}/etc/rc.local" 2>/dev/null) -gt 0 ]] && \
+         rm -f "${mountPoint}/etc/rc.local"
+        [[ $(grep -ic Clover "${mountPoint}/etc/rc.shutdown.local" 2>/dev/null) -gt 0 ]] && \
+         rm -f "${mountPoint}/etc/rc.shutdown.local"
         while read -r -u3 file; do
             srcfile=$(echo "${srcvolume}/$file"   | sed -E 's#[/]{2,}#/#g')
             destfile=$(echo "${mountPoint}/$file" | sed -E 's#[/]{2,}#/#g')
@@ -73,15 +78,24 @@ if [[ "$install_on_all_volumes" == true ]]; then
 
             echo "Copying $srcfile to $destfile"
             cp -pvf "$srcfile" "$destfile"
-            chown root:wheel "$destfile"; chmod 755 "$destfile"
-
+            chown root:wheel "$destfile"
+            case "$file" in
+                *.plist) chmod 600 "$destfile" ;;
+                      *) chmod 755 "$destfile" ;;
+            esac
         done 3< <(cat ./Tools/rc.files)
     done
 fi
 
 # Installing the RC scripts on target volume
-[[ "$install_on_target" == true ]] && \
- echo "Installing RC scripts on target volume '$destroot'" >> "$install_log"
+if [[ "$install_on_target" == true ]]; then
+    echo "Installing RC scripts on target volume '$destroot'" >> "$install_log"
+    # Remove old rc.local and rc.shutdown.local scripts
+    [[ $(grep -ic Clover "${destroot}/etc/rc.local" 2>/dev/null) -gt 0 ]] && \
+     rm -f "${destroot}/etc/rc.local"
+    [[ $(grep -ic Clover "${destroot}/etc/rc.shutdown.local" 2>/dev/null) -gt 0 ]] && \
+     rm -f "${destroot}/etc/rc.shutdown.local"
+fi
 
 while read -r -u3 file; do
     srcfile=$(echo "${srcvolume}/$file" | sed -E 's#[/]{2,}#/#g')
@@ -100,7 +114,11 @@ while read -r -u3 file; do
         # Cleanup: remove file and dir
         echo "Removing $srcfile"
         rm -f "$srcfile"
-        rmdir $(dirname "$srcfile") &>/dev/null
+        localdir=$(dirname "$srcfile")
+        while [[ "$localdir" != '/' ]]; do
+            rmdir "$localdir" &>/dev/null
+            localdir=$(dirname "$localdir")
+        done
     fi
 done 3< <(cat ./Tools/rc.files)
 

@@ -979,6 +979,8 @@ fi
 
     choiceIdRcScriptsCore="rc.scripts.core"
     choiceId=$choiceIdRcScriptsCore
+    mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root/Library/LaunchDaemons
+    mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root/Library/Application\ Support/Clover
     mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root/etc
     mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Scripts
     addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}"                            \
@@ -987,12 +989,13 @@ fi
                        RcScripts
     # Add the rc script library
     cp -f "$SCPT_LIB_DIR"/rc_scripts.lib "${PKG_BUILD_DIR}/${choiceId}"/Scripts
-    rsync -r --exclude=.svn --exclude="*~" ${SRCROOT}/CloverV2/etc/ ${PKG_BUILD_DIR}/${choiceId}/Root/etc/
+    rsync -r --exclude=.* --exclude="*~" ${SRCROOT}/CloverV2/rcScripts/ ${PKG_BUILD_DIR}/${choiceId}/Root/
     local toolsdir="${PKG_BUILD_DIR}/${choiceId}"/Scripts/Tools
     mkdir -p "$toolsdir"
-    (cd "${PKG_BUILD_DIR}/${choiceId}"/Root && find etc -type f > "$toolsdir"/rc.files)
+    (cd "${PKG_BUILD_DIR}/${choiceId}"/Root && find {etc,Library} -type f > "$toolsdir"/rc.files)
     fixperms "${PKG_BUILD_DIR}/${choiceId}/Root/"
-    chmod 755 "${PKG_BUILD_DIR}/${choiceId}/Root/etc"/rc*.local
+    chmod 644 "${PKG_BUILD_DIR}/${choiceId}/Root/Library/LaunchDaemons/com.projectosx.clover.daemon.plist"
+    chmod 744 "${PKG_BUILD_DIR}/${choiceId}/Root/Library/Application Support/Clover/CloverDaemon"
     chmod 755 "${PKG_BUILD_DIR}/${choiceId}/Root/etc"/rc.*.d/*.{local,local.disabled}
     chmod 755 "${PKG_BUILD_DIR}/${choiceId}/Scripts/postinstall"
     packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
@@ -1008,7 +1011,7 @@ fi
     addGroupChoices --title="Optional RC Scripts" --description="Optional RC Scripts" \
                     --enabled="choices['$choiceIdRcScriptsCore'].selected"            \
                     "OptionalRCScripts"
-    local scripts=($( find "${SRCROOT}/CloverV2/etc" -type f -name '*.disabled' -depth 2 ))
+    local scripts=($( find "${SRCROOT}/CloverV2/rcScripts/etc" -type f -name '*.disabled' -depth 2 ))
     for (( i = 0 ; i < ${#scripts[@]} ; i++ ))
     do
         local script_rel_path=etc/"${scripts[$i]##*/etc/}" # ie: etc/rc.boot.d/70.xx_yy_zz.local.disabled
