@@ -137,6 +137,5 @@ StartService # Launch @ boot
 
 trap StopService SIGTERM # SIGTERM @ shutdown
 while true; do
-	unset sleep
-	sleep 86400 & sleep=$!; wait
+    sleep 86400
 done
