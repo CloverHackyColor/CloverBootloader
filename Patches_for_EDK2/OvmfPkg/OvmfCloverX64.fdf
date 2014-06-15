@@ -293,10 +293,7 @@ INF  MdeModulePkg/Universal/MonotonicCounterRuntimeDxe/MonotonicCounterRuntimeDx
 INF  MdeModulePkg/Universal/CapsuleRuntimeDxe/CapsuleRuntimeDxe.inf
 INF  MdeModulePkg/Universal/Console/ConPlatformDxe/ConPlatformDxe.inf
 INF  MdeModulePkg/Universal/Console/ConSplitterDxe/ConSplitterDxe.inf
-#INF  Clover/ConSplitterDxe/ConSplitterDxe.inf
-INF  MdeModulePkg/Universal/DisplayEngineDxe/DisplayEngineDxe.inf
 INF  MdeModulePkg/Universal/Console/GraphicsConsoleDxe/GraphicsConsoleDxe.inf
-#INF  Clover/GraphicsConsoleDxe/GraphicsConsoleDxe.inf
 INF  MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe.inf
 INF  IntelFrameworkModulePkg/Universal/BdsDxe/BdsDxe.inf
 INF  MdeModulePkg/Universal/DevicePathDxe/DevicePathDxe.inf
@@ -309,10 +306,18 @@ INF  MdeModulePkg/Bus/Scsi/ScsiBusDxe/ScsiBusDxe.inf
 INF  MdeModulePkg/Bus/Scsi/ScsiDiskDxe/ScsiDiskDxe.inf
 INF  IntelFrameworkModulePkg/Bus/Pci/IdeBusDxe/IdeBusDxe.inf
 INF  PcAtChipsetPkg/Bus/Pci/IdeControllerDxe/IdeControllerDxe.inf
-#INF  Clover/Trash/VBoxIdeControllerDxe/VBoxIdeControllerDxe.inf
-#INF  Clover/Trash/VBoxIdeBusDxe/VBoxIdeBusDxe.inf
+
+#INF  RuleOverride=BINARY Clover/AhciDxe/AhciDxe.inf
+#INF  DuetPkg/SataControllerDxe/SataControllerDxe.inf
+#INF  MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru.inf
+#INF  MdeModulePkg/Bus/Ata/AtaBusDxe/AtaBusDxe.inf
+#INF  Clover/SataControllerDxe/SataControllerDxe.inf
+#INF  Clover/AtaAtapi/AtaAtapiPassThru.inf
+#INF  Clover/AtaBus/AtaBusDxe.inf
+
 INF  MdeModulePkg/Universal/HiiDatabaseDxe/HiiDatabaseDxe.inf
 INF  MdeModulePkg/Universal/SetupBrowserDxe/SetupBrowserDxe.inf
+INF  MdeModulePkg/Universal/DisplayEngineDxe/DisplayEngineDxe.inf
 INF  MdeModulePkg/Universal/MemoryTest/NullMemoryTestDxe/NullMemoryTestDxe.inf
 
 #
@@ -323,6 +328,7 @@ INF  Clover/VBoxFsDxe/VBoxHfs.inf
 #INF  Clover/VBoxFsDxe/VBoxIso9660.inf
 #INF  Clover/VBoxFsDxe/VBoxFsDxe.inf
 #INF  Clover/VBoxFsDxe/VBoxExt2.inf
+#INF  Clover/VBoxFsDxe/VBoxExt4.inf
 #INF  Clover/MsgLog/MsgLog.inf
 
 INF  PcAtChipsetPkg/IsaAcpiDxe/IsaAcpi.inf
@@ -336,7 +342,8 @@ INF  IntelFrameworkModulePkg/Bus/Isa/Ps2KeyboardDxe/Ps2keyboardDxe.inf
 INF  IntelFrameworkModulePkg/Bus/Isa/IsaFloppyDxe/IsaFloppyDxe.inf
 
 INF  MdeModulePkg/Universal/SmbiosDxe/SmbiosDxe.inf
-INF  OvmfPkg/QemuSmbiosPlatformDxe/SmbiosPlatformDxe.inf
+INF  OvmfPkg/SmbiosPlatformDxe/SmbiosPlatformDxe.inf       #Use for >= Qemu v2.1
+#INF  OvmfPkg/QemuSmbiosPlatformDxe/SmbiosPlatformDxe.inf  #Use for <= Qemu v2.0
 
 INF  MdeModulePkg/Universal/Acpi/AcpiTableDxe/AcpiTableDxe.inf
 INF  OvmfPkg/AcpiPlatformDxe/AcpiPlatformDxe.inf
@@ -356,7 +363,6 @@ INF  RuleOverride = BINARY EdkShellBinPkg/FullShell/FullShell.inf
 
 FILE FREEFORM = PCD(gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdLogoFile) {
 #  SECTION RAW = MdeModulePkg/Logo/Logo.bmp
-#  SECTION RAW = Clover/Logo/Logo.bmp
   SECTION RAW = OvmfPkg/Qemu/Logo/qemu-icon.bmp
 }
 
@@ -389,15 +395,14 @@ FILE FREEFORM = PCD(gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdLogoFile) {
 #
 INF  MdeModulePkg/Bus/Pci/UhciDxe/UhciDxe.inf
 INF  MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe.inf
-#INF  MdeModulePkg/Bus/Pci/XhciDxe/XhciDxe.inf
 INF  MdeModulePkg/Bus/Usb/UsbBusDxe/UsbBusDxe.inf
-#INF  Clover/Patches_for_EDK2/UsbBusDxe/UsbBusDxe.inf
 INF  MdeModulePkg/Bus/Usb/UsbKbDxe/UsbKbDxe.inf
+INF  MdeModulePkg/Bus/Usb/UsbMouseDxe/UsbMouseDxe.inf
 INF  MdeModulePkg/Bus/Usb/UsbMassStorageDxe/UsbMassStorageDxe.inf
-#INF  Clover/Patches_for_EDK2/UsbMouseDxe/UsbMouseDxe.inf
 
 !ifdef $(CSM_ENABLE)
-INF  IntelFrameworkModulePkg/Csm/BiosThunk/VideoDxe/VideoDxe.inf
+#INF  IntelFrameworkModulePkg/Csm/BiosThunk/VideoDxe/VideoDxe.inf
+INF  OvmfPkg/Csm/VideoDxe/VideoDxe.inf
 #INF  IntelFrameworkModulePkg/Csm/LegacyBiosDxe/LegacyBiosDxe.inf
 INF  OvmfPkg/Csm/LegacyBiosDxe/LegacyBiosDxe.inf
 INF  RuleOverride=CSM OvmfPkg/Csm/Csm16/Csm16.inf

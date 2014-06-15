@@ -73,8 +73,8 @@
   PeCoffLib|Clover/Library/VBoxPeCoffLib/VBoxPeCoffLib.inf
   CacheMaintenanceLib|MdePkg/Library/BaseCacheMaintenanceLib/BaseCacheMaintenanceLib.inf
   UefiDecompressLib|MdePkg/Library/BaseUefiDecompressLib/BaseUefiDecompressLib.inf
-  #UefiHiiServicesLib|MdeModulePkg/Library/UefiHiiServicesLib/UefiHiiServicesLib.inf
-  UefiHiiServicesLib|Clover/Library/UefiHiiServicesLib/UefiHiiServicesLib.inf
+  UefiHiiServicesLib|MdeModulePkg/Library/UefiHiiServicesLib/UefiHiiServicesLib.inf
+  #UefiHiiServicesLib|Clover/Library/UefiHiiServicesLib/UefiHiiServicesLib.inf
   HiiLib|MdeModulePkg/Library/UefiHiiLib/UefiHiiLib.inf
   #GenericBdsLib|IntelFrameworkModulePkg/Library/GenericBdsLib/GenericBdsLib.inf
   GenericBdsLib|Clover/Library/GenericBdsLib/GenericBdsLib.inf
@@ -282,6 +282,7 @@
   gEfiMdeModulePkgTokenSpaceGuid.PcdDxeIplSwitchToLongMode|FALSE
   gEfiMdeModulePkgTokenSpaceGuid.PcdConOutGopSupport|TRUE
   gEfiMdeModulePkgTokenSpaceGuid.PcdConOutUgaSupport|FALSE
+
 !if $(SECURE_BOOT_ENABLE) == TRUE
   gUefiOvmfPkgTokenSpaceGuid.PcdSecureBootEnable|TRUE
 !endif
@@ -336,11 +337,19 @@
   gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwWorkingBase|0
   gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwSpareBase|0
   gEfiMdeModulePkgTokenSpaceGuid.PcdPciDisableBusEnumeration|FALSE
-  #gEfiMdeModulePkgTokenSpaceGuid.PcdVideoHorizontalResolution|800
-  gEfiMdeModulePkgTokenSpaceGuid.PcdVideoHorizontalResolution|0
-  #gEfiMdeModulePkgTokenSpaceGuid.PcdVideoVerticalResolution|600
-  gEfiMdeModulePkgTokenSpaceGuid.PcdVideoVerticalResolution|0
 
+  ## The PCDs below are used to specify the video resolution and text mode of text output.
+  #  To make this work, they should be created as PcdsDynamic or PcdsDynamicEx in platform DSC file.
+  #  PcdLib should also be set to DxePcdLib for all modules using them.
+  #  Then we can update these PCDs and reconnect console drivers (GraphicsConsole, Consplitter).
+  gEfiMdeModulePkgTokenSpaceGuid.PcdVideoHorizontalResolution|800
+  gEfiMdeModulePkgTokenSpaceGuid.PcdVideoVerticalResolution|600
+  gEfiMdeModulePkgTokenSpaceGuid.PcdConOutRow|0
+  gEfiMdeModulePkgTokenSpaceGuid.PcdConOutColumn|0
+  gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdSetupVideoHorizontalResolution|0
+  gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdSetupVideoVerticalResolution|0
+  gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdSetupConOutRow|0
+  gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdSetupConOutColumn|0
 
 ################################################################################
 #
@@ -446,17 +455,11 @@
   MdeModulePkg/Universal/MonotonicCounterRuntimeDxe/MonotonicCounterRuntimeDxe.inf
   MdeModulePkg/Universal/CapsuleRuntimeDxe/CapsuleRuntimeDxe.inf
   MdeModulePkg/Universal/Console/ConPlatformDxe/ConPlatformDxe.inf
-  MdeModulePkg/Universal/Console/ConSplitterDxe/ConSplitterDxe.inf {
-    <PcdsPatchableInModule>
-      gEfiMdeModulePkgTokenSpaceGuid.PcdConOutRow|0
-      gEfiMdeModulePkgTokenSpaceGuid.PcdConOutColumn|0
-  }
-  #Clover/ConSplitterDxe/ConSplitterDxe.inf
+  MdeModulePkg/Universal/Console/ConSplitterDxe/ConSplitterDxe.inf
   MdeModulePkg/Universal/Console/GraphicsConsoleDxe/GraphicsConsoleDxe.inf {
     <LibraryClasses>
       PcdLib|MdePkg/Library/DxePcdLib/DxePcdLib.inf
   }
-  #Clover/GraphicsConsoleDxe/GraphicsConsoleDxe.inf
   MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe.inf
   MdeModulePkg/Universal/DevicePathDxe/DevicePathDxe.inf {
     <LibraryClasses>
@@ -472,8 +475,13 @@
   MdeModulePkg/Bus/Scsi/ScsiDiskDxe/ScsiDiskDxe.inf
   IntelFrameworkModulePkg/Bus/Pci/IdeBusDxe/IdeBusDxe.inf
   PcAtChipsetPkg/Bus/Pci/IdeControllerDxe/IdeControllerDxe.inf
-  #Clover/Trash/VBoxIdeControllerDxe/VBoxIdeControllerDxe.inf
-  #Clover/Trash/VBoxIdeBusDxe/VBoxIdeBusDxe.inf
+
+#  DuetPkg/SataControllerDxe/SataControllerDxe.inf
+#  MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru.inf
+#  MdeModulePkg/Bus/Ata/AtaBusDxe/AtaBusDxe.inf
+#  Clover/SataControllerDxe/SataControllerDxe.inf
+#  Clover/AtaAtapi/AtaAtapiPassThru.inf
+#  Clover/AtaBus/AtaBusDxe.inf
 
   MdeModulePkg/Universal/HiiDatabaseDxe/HiiDatabaseDxe.inf
   MdeModulePkg/Universal/SetupBrowserDxe/SetupBrowserDxe.inf
@@ -484,6 +492,7 @@
   OvmfPkg/QemuVideoDxe/QemuVideoDxe.inf {
     <LibraryClasses>
       BltLib|OptionRomPkg/Library/FrameBufferBltLib/FrameBufferBltLib.inf
+      PcdLib|MdePkg/Library/DxePcdLib/DxePcdLib.inf
   }
 !endif
 
@@ -495,8 +504,8 @@
   Clover/VBoxFsDxe/VBoxIso9660.inf
   #Clover/VBoxFsDxe/VBoxFsDxe.inf
   Clover/VBoxFsDxe/VBoxExt2.inf
+  Clover/VBoxFsDxe/VBoxExt4.inf
   Clover/MsgLog/MsgLog.inf
-  Clover/DumpUefiCalls/DumpUefiCalls.inf
   
   #
   # ISA Support
@@ -511,7 +520,8 @@
   # SMBIOS Support
   #
   MdeModulePkg/Universal/SmbiosDxe/SmbiosDxe.inf
-  OvmfPkg/QemuSmbiosPlatformDxe/SmbiosPlatformDxe.inf
+  OvmfPkg/SmbiosPlatformDxe/SmbiosPlatformDxe.inf       #Use for >= Qemu v2.1
+  #OvmfPkg/QemuSmbiosPlatformDxe/SmbiosPlatformDxe.inf  #Use for <= Qemu v2.0
 
   #
   # ACPI Support
@@ -548,16 +558,14 @@
   #
   MdeModulePkg/Bus/Pci/UhciDxe/UhciDxe.inf
   MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe.inf
-  #MdeModulePkg/Bus/Pci/XhciDxe/XhciDxe.inf
   MdeModulePkg/Bus/Usb/UsbBusDxe/UsbBusDxe.inf
-  #Clover/Patches_for_EDK2/UsbBusDxe/UsbBusDxe.inf 
   MdeModulePkg/Bus/Usb/UsbKbDxe/UsbKbDxe.inf
   MdeModulePkg/Bus/Usb/UsbMassStorageDxe/UsbMassStorageDxe.inf
   MdeModulePkg/Bus/Usb/UsbMouseDxe/UsbMouseDxe.inf
-  #Clover/Patches_for_EDK2/UsbMouseDxe/UsbMouseDxe.inf 
 
 !ifdef $(CSM_ENABLE)
-  IntelFrameworkModulePkg/Csm/BiosThunk/VideoDxe/VideoDxe.inf {
+  #IntelFrameworkModulePkg/Csm/BiosThunk/VideoDxe/VideoDxe.inf {
+  OvmfPkg/Csm/VideoDxe/VideoDxe.inf {
     <LibraryClasses>
       PcdLib|MdePkg/Library/DxePcdLib/DxePcdLib.inf
   }
