@@ -2753,7 +2753,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
         }
         // enabled by default for CloverEFI or Duet
         // disabled for others
-        gSettings.USBFixOwnership = gFirmwareClover || (StrCmp(gST->FirmwareVendor, L"EDK II") == 0);
+        gSettings.USBFixOwnership = gFirmwareClover;
         prop = GetProperty(prop2, "FixOwnership");
         if(prop) {
           if (IsPropertyFalse(prop))
@@ -3274,7 +3274,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
       
       prop = GetProperty(dictPointer, "ResetAddress");
       if(prop) {
-        gSettings.ResetAddr = (UINT8)GetPropertyInteger(prop, 0x64);
+        gSettings.ResetAddr = (UINT32)GetPropertyInteger(prop, 0x64);
         DBG("Config set ResetAddr=0x%x\n", gSettings.ResetAddr);
         if (gSettings.ResetAddr  == 0x64) {
           gSettings.ResetVal = 0xFE;
