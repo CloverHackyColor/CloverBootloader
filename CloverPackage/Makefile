@@ -1,7 +1,7 @@
 #	Makefile for kernel booter
 SRCROOT = $(CURDIR)
 
-image iso:
+image iso: utils
 	@${SRCROOT}/makeiso
 
 pkg installer:

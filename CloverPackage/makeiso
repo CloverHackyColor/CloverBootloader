@@ -1,5 +1,13 @@
 #!/bin/bash
 
+# Check that the caller is make
+caller=$(ps -p $PPID -o comm=)
+if [[ "$caller" != "make" ]]; then
+    echo "Error: don't call the '$0' script directly !" >&2
+    echo "Use the 'make iso' command instead" >&2
+    exit 1
+fi
+
 set -u
 
 # Go to the script directory to create the package
@@ -70,10 +78,12 @@ echo "[MKDIR] ${IMGROOT}/EFI/CLOVER/themes/"
 mkdir -p ${IMGROOT}/EFI/CLOVER/themes/
 echo "[MKDIR] ${IMGROOT}/usr/bin"
 mkdir -p ${IMGROOT}/usr/bin
-#if [ -e "${IMGSKELROOT}"/* ];then
-    echo "[CP] ${IMGSKELROOT} ${IMGROOT}"
-    cp -r -f "${IMGSKELROOT}"/* "${IMGROOT}"
-#fi
+echo "[MKDIR] ${IMGROOT}/usr/local/bin"
+mkdir -p "${IMGROOT}"/usr/local/bin
+cp -p "${SYMROOT}"/clover-genconfig/clover-genconfig "${IMGROOT}"/usr/local/bin
+cp -p "${SYMROOT}"/bdmesg/bdmesg "${IMGROOT}"/usr/local/bin
+cp -p "${SYMROOT}"/fdisk440/fdisk440 "${IMGROOT}"/usr/local/bin
+
 echo "[CP] cdboot"
 cp -f ${SYMROOT}/i386/cdboot ${CDBOOT}
 if [[ ${IMAGE_WITH_IA32} -eq 1 ]]; then
