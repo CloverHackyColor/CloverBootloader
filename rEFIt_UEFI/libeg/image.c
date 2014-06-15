@@ -160,7 +160,7 @@ EG_IMAGE * egCopyScaledImage(IN EG_IMAGE *OldImage, IN INTN Ratio) //will be N/1
     Dest = NewImage->PixelData;
     for (y = 0; y < NewH; y++) {
       for (x = 0; x < NewW; x++) {
-        Dest->b = (UINT8)(((UINTN)Dest->b + (UINTN)Dest->g + (UINTN)Dest->r) / 3);
+        Dest->b = (UINT8)((INTN)((UINTN)Dest->b + (UINTN)Dest->g + (UINTN)Dest->r) / 3);
         Dest->g = Dest->r = Dest->b;
         Dest++;
       }
