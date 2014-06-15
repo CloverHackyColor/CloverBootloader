@@ -34,16 +34,28 @@ Note:
       ! Under VGA ROM, set 'VGA Hardware Type' = 'QEMU/Bochs VBE SVGA'
       ! Under VGA ROM, disable 'Allocate an internal stack for 16bit interrupt entry point'
     - To use the compiled VGA bios, copy seabios/out/vgabios.bin to QEMU directory as vgabios-stdvga.bin (it needs to be renamed).
-    - If you wish to use also the compiled SeaBios BIOS copy seabios/out/bios.bin to QEMU directory.
+    - If you wish to use also the compiled SeaBios BIOS, copy seabios/out/bios.bin to QEMU directory.
 
-Patches are partially based on work by dwmw2 & lersek:
+Patches are partially based on work by dwmw2, lersek & somlo:
 - Csm patches for OvmfPkg (Csm/LegacyBiosDxe): http://git.infradead.org/users/dwmw2/edk2.git/
 - Csm patches for Seabios: http://git.infradead.org/users/dwmw2/seabios.git/ (these patches are now integrated in seabios git)
 - Smbios patches for Seabios: https://github.com/lersek/edk2/commits/smbios_v1 (these are disabled in dsc, and should be used only with Qemu <= v2.0)
+- Osx related information: http://www.contrib.andrew.cmu.edu/~somlo/OSXKVM/
 
 Command example for running Qemu:
-qemu-system-x86_64 -L . -cpu core2duo -m 2048 -vga cirrus -localtime \
--chardev stdio,id=qemudbg -device isa-debugcon,iobase=0x402,chardev=qemudbg \
--bios Ovmf.fd \
--hda freedos.img \
--hdb QEMU-Clover.img
+$ /usr/local/bin/qemu-system-x86_64 \
+        -bios Ovmf.fd \
+        -cpu core2duo -m 2048 -smbios type=2 -vga std \
+        -usb -device usb-ehci,id=usb-ehc \
+        -device ahci,id=ahc \
+        -chardev stdio,id=qemudbg -device isa-debugcon,iobase=0x402,chardev=qemudbg \
+        -serial file:serial.log \
+        -device usb-kbd,bus=usb-bus.0,port=1 \
+        -device usb-mouse,bus=usb-bus.0,port=2 \
+        -device ide-drive,bus=ide.0,unit=0,drive=hda -drive id=hda,if=none,file=QEMU-Clover.img \
+        -device ide-drive,bus=ide.0,unit=1,drive=hdb -drive id=hdb,if=none,file=freedos.img
+
+To specify additional drives:
+IDE:  -device ide-drive,bus=ide.1,unit=0,drive=hdc       (up to 4 drives: bus=ide.0/ide.1  , unit=0/1 )
+USB:  -device usb-storage,bus=usb-ehc.0,port=1,drive=hdc (up to 4 drives: bus=usb-ehc.0    , port=1..4)
+AHCI: -device ide-drive,bus=ahc.0,unit=0,drive=hdc       (up to 6 drives: bus=ahc.0...ahc.5, unit=0   )

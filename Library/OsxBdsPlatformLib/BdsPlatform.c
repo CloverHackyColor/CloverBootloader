@@ -1041,7 +1041,7 @@ Returns:
   // ConnectRootBridge() will create all the PciIo protocol, it's safe here now
   //
   //Slice - why disable here? We will do this before system start
-#ifndef USE_BIOS_BLOCKIO
+#if (!defined(USE_BIOS_BLOCKIO) && !defined(DISABLE_USB_SUPPORT))
   Status = DisableUsbLegacySupport();
 #endif
   
