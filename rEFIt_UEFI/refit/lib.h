@@ -437,6 +437,7 @@ typedef struct {
   INTN        BannerNudgeX;
   INTN        BannerNudgeY;
   BOOLEAN     VerticalLayout;
+  BOOLEAN     NonSelectedGrey;
   INTN        MainEntriesSize;
   INTN        TileXSpace;
   INTN        TileYSpace;
@@ -465,7 +466,7 @@ typedef struct {
   CHAR16           *LoadOptions;
 } LEGACY_ENTRY;
 
-#define ANIME_INFINITE (UINTN)-1
+#define ANIME_INFINITE ((UINTN)-1)
 //some unreal values
 #define SCREEN_EDGE_LEFT    50000
 #define SCREEN_EDGE_TOP     60000

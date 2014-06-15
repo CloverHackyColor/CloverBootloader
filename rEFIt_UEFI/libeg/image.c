@@ -105,6 +105,7 @@ EG_IMAGE * egCopyImage(IN EG_IMAGE *Image)
 EG_IMAGE * egCopyScaledImage(IN EG_IMAGE *OldImage, IN INTN Ratio) //will be N/16
 {
   //(c)Slice 2012
+  BOOLEAN Grey = FALSE;
   EG_IMAGE    *NewImage;
   INTN        x, x0, x1, x2, y, y0, y1, y2;
   INTN        NewH, NewW;
@@ -112,41 +113,57 @@ EG_IMAGE * egCopyScaledImage(IN EG_IMAGE *OldImage, IN INTN Ratio) //will be N/1
   EG_PIXEL    *Src; 
   INTN        OldW;
 
+  if (Ratio < 0) {
+    Ratio = -Ratio;
+    Grey = TRUE;
+  }
+
   if (!OldImage) {
     return NULL;
   }
   Src = OldImage->PixelData;
   OldW = OldImage->Width;
-  
-  if (Ratio == 16) {    
-    return egCopyImage(OldImage);
-  }
 
   NewW = (OldImage->Width * Ratio) >> 4;
   NewH = (OldImage->Height * Ratio) >> 4;
-  
-  NewImage = egCreateImage(NewW, NewH, OldImage->HasAlpha);
-  if (NewImage == NULL)
-    return NULL;
-  
-  Dest = NewImage->PixelData;
-  for (y = 0; y < NewH; y++) {
-    y1 = (y << 4) / Ratio;
-    y0 = ((y1 > 0)?(y1-1):y1) * OldW;
-    y2 = ((y1 < (OldImage->Height - 1))?(y1+1):y1) * OldW;
-    y1 *= OldW;
-    for (x = 0; x < NewW; x++) {
-      x1 = (x << 4) / Ratio;
-      x0 = (x1 > 0)?(x1-1):x1;
-      x2 = (x1 < (OldW - 1))?(x1+1):x1;
-      Dest->b = (UINT8)(((INTN)Src[x1+y1].b * 2 + Src[x0+y1].b + 
-                        Src[x2+y1].b + Src[x1+y0].b + Src[x1+y2].b) / 6);
-      Dest->g = (UINT8)(((INTN)Src[x1+y1].g * 2 + Src[x0+y1].g + 
-                        Src[x2+y1].g + Src[x1+y0].g + Src[x1+y2].g) / 6);
-      Dest->r = (UINT8)(((INTN)Src[x1+y1].r * 2 + Src[x0+y1].r +
-                        Src[x2+y1].r + Src[x1+y0].r + Src[x1+y2].r) / 6);
-      Dest->a = Src[x1+y1].a;
-      Dest++;
+
+
+  if (Ratio == 16) {
+    NewImage = egCopyImage(OldImage);
+  } else {
+    NewImage = egCreateImage(NewW, NewH, OldImage->HasAlpha);
+    if (NewImage == NULL)
+      return NULL;
+
+    Dest = NewImage->PixelData;
+    for (y = 0; y < NewH; y++) {
+      y1 = (y << 4) / Ratio;
+      y0 = ((y1 > 0)?(y1-1):y1) * OldW;
+      y2 = ((y1 < (OldImage->Height - 1))?(y1+1):y1) * OldW;
+      y1 *= OldW;
+      for (x = 0; x < NewW; x++) {
+        x1 = (x << 4) / Ratio;
+        x0 = (x1 > 0)?(x1-1):x1;
+        x2 = (x1 < (OldW - 1))?(x1+1):x1;
+        Dest->b = (UINT8)(((INTN)Src[x1+y1].b * 2 + Src[x0+y1].b +
+                           Src[x2+y1].b + Src[x1+y0].b + Src[x1+y2].b) / 6);
+        Dest->g = (UINT8)(((INTN)Src[x1+y1].g * 2 + Src[x0+y1].g +
+                           Src[x2+y1].g + Src[x1+y0].g + Src[x1+y2].g) / 6);
+        Dest->r = (UINT8)(((INTN)Src[x1+y1].r * 2 + Src[x0+y1].r +
+                           Src[x2+y1].r + Src[x1+y0].r + Src[x1+y2].r) / 6);
+        Dest->a = Src[x1+y1].a;
+        Dest++;
+      }
+    }
+  }
+  if (Grey) {
+    Dest = NewImage->PixelData;
+    for (y = 0; y < NewH; y++) {
+      for (x = 0; x < NewW; x++) {
+        Dest->b = (UINT8)(((UINTN)Dest->b + (UINTN)Dest->g + (UINTN)Dest->r) / 3);
+        Dest->g = Dest->r = Dest->b;
+        Dest++;
+      }
     }
   }
   

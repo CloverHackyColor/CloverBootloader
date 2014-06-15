@@ -69,7 +69,7 @@ REFIT_CONFIG   GlobalConfig = { FALSE, -1, 0, 0, 0, TRUE, FALSE, FALSE, FALSE, F
   //BannerEdgeHorizontal
   0, 0, 0, 0,
   //VerticalLayout
-  FALSE, 128, 8, 24
+  FALSE, FALSE, 128, 8, 24
 };
 /*
 VOID __inline WaitForSts(VOID) {
@@ -1907,47 +1907,35 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
   dict = GetProperty(dictPointer, "Selection");
   if (dict) {
     dict2 = GetProperty(dict, "Color");
-    if (dict2) {
-      GlobalConfig.SelectionColor = (UINTN)GetPropertyInteger(dict2, GlobalConfig.SelectionColor);
-    }
+    GlobalConfig.SelectionColor = (UINTN)GetPropertyInteger(dict2, GlobalConfig.SelectionColor);
     dict2 = GetProperty(dict, "Small");
-    if (dict2) {
-      if ((dict2->type == kTagTypeString) && dict2->string) {
-        GlobalConfig.SelectionSmallFileName = PoolPrint(L"%a", dict2->string);
-      }
+    if ((dict2->type == kTagTypeString) && dict2->string) {
+      GlobalConfig.SelectionSmallFileName = PoolPrint(L"%a", dict2->string);
     }
     dict2 = GetProperty(dict, "Big");
-    if (dict2) {
-      if ((dict2->type == kTagTypeString) && dict2->string) {
-        GlobalConfig.SelectionBigFileName = PoolPrint(L"%a", dict2->string);
-      }
+    if ((dict2->type == kTagTypeString) && dict2->string) {
+      GlobalConfig.SelectionBigFileName = PoolPrint(L"%a", dict2->string);
     }
     dict2 = GetProperty(dict, "OnTop");
-    if (dict2) {
-      if (IsPropertyTrue(dict2)) {
-        GlobalConfig.SelectionOnTop = TRUE;
-      }
+    if (IsPropertyTrue(dict2)) {
+      GlobalConfig.SelectionOnTop = TRUE;
+    }
+    dict2 = GetProperty(dict, "ChangeNonSelectedGrey");
+    if (IsPropertyTrue(dict2)) {
+      GlobalConfig.NonSelectedGrey = TRUE;
     }
   }
   
   dict = GetProperty(dictPointer, "Scroll");
   if (dict) {
     dict2 = GetProperty(dict, "Width");
-    if (dict2) {
-      ScrollWidth = (UINTN)GetPropertyInteger(dict2, ScrollWidth);
-    }
+    ScrollWidth = (UINTN)GetPropertyInteger(dict2, ScrollWidth);
     dict2 = GetProperty(dict, "Height");
-    if (dict2) {
-      ScrollButtonsHeight = (UINTN)GetPropertyInteger(dict2, ScrollButtonsHeight);
-    }
+    ScrollButtonsHeight = (UINTN)GetPropertyInteger(dict2, ScrollButtonsHeight);
     dict2 = GetProperty(dict, "BarHeight");
-    if (dict2) {
-      ScrollBarDecorationsHeight = (UINTN)GetPropertyInteger(dict2, ScrollBarDecorationsHeight);
-    }
+    ScrollBarDecorationsHeight = (UINTN)GetPropertyInteger(dict2, ScrollBarDecorationsHeight);
     dict2 = GetProperty(dict, "ScrollHeight");
-    if (dict2) {
-      ScrollScrollDecorationsHeight = (UINTN)GetPropertyInteger(dict2, ScrollScrollDecorationsHeight);
-    }
+    ScrollScrollDecorationsHeight = (UINTN)GetPropertyInteger(dict2, ScrollScrollDecorationsHeight);
   }
   
   dict = GetProperty(dictPointer, "Font");

@@ -28,7 +28,7 @@
 			<key>Sharp</key>
 			<string>0x00</string>
 			<key>Dark</key>
-            <true/>
+			<true/>
 		</dict>
 		<key>Banner</key>
 		<string>logo_trans.png</string>
@@ -49,6 +49,8 @@
 			<string>0x4E7F18FF</string>
 			<key>Small</key>
 			<string>Selection_small.png</string>
+			<key>ChangeNonSelectedGrey</key>
+			<true/>
 			<key>OnTop</key>
 			<true/>
 		</dict>

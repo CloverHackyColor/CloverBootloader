@@ -2474,6 +2474,7 @@ static VOID DrawMainMenuEntry(REFIT_MENU_ENTRY *Entry, BOOLEAN selected, INTN XP
   }
   //  DBG("Entry title=%s; Width=%d\n", Entry->Title, MainImage->Width);
   //  egComposeImage();
+  Scale = ((Entry->Row == 0) ? (Scale * (selected ? 1 : -1)): 16) ;
   if (GlobalConfig.SelectionOnTop) {
     SelectionImages[0]->HasAlpha = TRUE;
     SelectionImages[2]->HasAlpha = TRUE;
@@ -2481,12 +2482,12 @@ static VOID DrawMainMenuEntry(REFIT_MENU_ENTRY *Entry, BOOLEAN selected, INTN XP
     BltImageCompositeBadge(MainImage,
                            SelectionImages[((Entry->Row == 0) ? 0 : 2) + (selected ? 0 : 1)],
                            (Entry->Row == 0) ? Entry->BadgeImage:NULL,
-                           XPos, YPos, (Entry->Row == 0) ? Scale: 16);
+                           XPos, YPos, Scale);
 
   } else {
     BltImageCompositeBadge(SelectionImages[((Entry->Row == 0) ? 0 : 2) + (selected ? 0 : 1)],
                            MainImage, (Entry->Row == 0) ? Entry->BadgeImage:NULL,
-                           XPos, YPos, (Entry->Row == 0) ? Scale: 16);
+                           XPos, YPos, Scale);
   }
   Entry->Place.XPos = XPos;
   Entry->Place.YPos = YPos;
@@ -2536,8 +2537,7 @@ static VOID DrawMainMenuLabel(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN RE
   
   //show inline badge
    if ((GlobalConfig.HideBadges & HDBADGES_INLINE) &&
-      (Screen->Entries[State->CurrentSelection]->Row == 0))
-  {
+      (Screen->Entries[State->CurrentSelection]->Row == 0)) {
     // Display Inline Badge: small icon before the text
     BltImageAlpha(((LOADER_ENTRY*)Screen->Entries[State->CurrentSelection])->me.Image,
                   (XPos - (TextWidth >> 1) - (BADGE_DIMENSION + 16)),

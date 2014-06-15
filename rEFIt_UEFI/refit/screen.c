@@ -556,6 +556,7 @@ VOID BltImageAlpha(IN EG_IMAGE *Image, IN INTN XPos, IN INTN YPos, IN EG_PIXEL *
   EG_IMAGE *NewImage = NULL;
   INTN Width = Scale << 3;
   INTN Height = Width;
+
   GraphicsScreenDirty = TRUE;
   if (Image) {
     NewImage = egCopyScaledImage(Image, Scale); //will be Scale/16
@@ -624,12 +625,17 @@ VOID BltImageComposite(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN INTN XP
 VOID BltImageCompositeBadge(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN EG_IMAGE *BadgeImage, IN INTN XPos, IN INTN YPos, INTN Scale)
 {
   INTN TotalWidth, TotalHeight, CompWidth, CompHeight, OffsetX, OffsetY;
+  BOOLEAN Selected = TRUE;
   EG_IMAGE *CompImage;
   EG_IMAGE *NewBaseImage;
   EG_IMAGE *NewTopImage;
 
   if (!BaseImage || !TopImage) {
     return;
+  }
+  if (Scale < 0) {
+    Scale = -Scale;
+    Selected = FALSE;
   }
 
   NewBaseImage = egCopyScaledImage(BaseImage, Scale); //will be Scale/16
@@ -710,7 +716,11 @@ VOID BltImageCompositeBadge(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN EG
 
   // blit to screen and clean up
   if (GlobalConfig.Theme) { // regular theme
-    BltImageAlpha(CompImage, XPos, YPos, &MenuBackgroundPixel, 16);
+    if (GlobalConfig.NonSelectedGrey && !Selected) {
+      BltImageAlpha(CompImage, XPos, YPos, &MenuBackgroundPixel, -16);
+    } else {
+      BltImageAlpha(CompImage, XPos, YPos, &MenuBackgroundPixel, 16);
+    }
   } else { // embedded theme - don't use BltImageAlpha as it can't handle refit's built in image
     egDrawImageArea(CompImage, 0, 0, TotalWidth, TotalHeight, XPos, YPos);
   }
