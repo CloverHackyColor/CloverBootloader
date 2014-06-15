@@ -71,15 +71,22 @@ CheckXCode () {
     local OSXVER="`/usr/bin/sw_vers -productVersion | cut -d '.' -f1,2`"
     local OSXARCH="`/usr/bin/uname -m`"
     echo "  Running on Mac OS X ${OSXVER}, with ${OSXARCH} architecture."
-    if [[ ${#OSXVER} -gt 4 ]]; then
-        # Use 10.9 SDK for now
-        OSXVER=10.9
-    fi
     if [[ ! -x /usr/bin/xcodebuild ]]; then
         echo "ERROR: Install Xcode Tools from Apple before using this script." >&2
         exit 1
     else
-        export SDK="`/usr/bin/xcodebuild -version -sdk macosx${OSXVER} Path 2>/dev/null`"
+        if [[ ${#OSXVER} -gt 4 ]]; then
+            # Use 10.9 SDK for now
+            export SDK="`/usr/bin/xcodebuild -version -sdk macosx10.9 Path 2>/dev/null`"
+            if [ -z "${SDK}" ]; then
+                # Insist on this SDK
+                echo "ERROR: Xcode application is not selected correctly." >&2
+                echo "Please run Xcode and select an available \"Command Line Tools\" from Xcode->Preferences->Locations." >&2
+                exit 1
+            fi
+        else
+            export SDK="`/usr/bin/xcodebuild -version -sdk macosx${OSXVER} Path 2>/dev/null`"
+        fi
         [ -z "${SDK}" ] && export SDK="/"
         if [ ! -d "${SDK}/usr/include" ]; then
             echo "ERROR: Cannot find Xcode SDK." >&2
