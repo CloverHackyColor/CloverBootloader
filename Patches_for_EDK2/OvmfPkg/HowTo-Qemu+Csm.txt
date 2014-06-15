@@ -1,14 +1,13 @@
 - Copy Clover/Patches_for_EDK2/OvmfPkg/* to OvmfPkg/
 
-- Build OvmfPkg using: ./ebuild.sh -D CSM_ENABLE
+- Build OvmfPkg using: ./ebuild.sh -D CSM_ENABLE (for Qemu+Csm)
+                   or: ./ebuild.sh               (for Qemu without Csm)
 
-- An updated Cirrus Vga Bios is needed for Qemu (it is still not included in Qemu v2.0.0)
-  It can be built from SeaBios source, or we can use a precompiled one from one of these places:
-  * http://www.kraxel.org/repos/jenkins/seabios/            (recent version, take seavgabios.git-*.x86_64.rpm)
-  * http://david.woodhou.se/vgabios-cirrus.bin              (older version)
-  The updated vgabios-cirrus.bin needs to be in Qemu directory.
+- An updated QEMU VBE SVGA Bios is needed for Qemu. Instructions how to build it appear below.
+  A precompiled binary is also included at Patches_for_EDK2/OvmfPkg/SeaBios/vgabios-stdvga.bin
+  The updated file "vgabios-stdvga.bin" needs to be in Qemu directory.
 
-- Run Qemu, Csm will be working (you can legacy boot with LegacyBiosDefault)
+- With the Csm Build you can legacy boot with LegacyBiosDefault.
 
 Note:
 - A prebuilt Csm16.bin is provided in Csm/Csm16
@@ -28,19 +27,19 @@ Note:
     - Copy Csm16.bin to OvmfPkg: # cp seabios/out/Csm16.bin ../Csm/Csm16/Csm16.bin
       (resulting seabios/out/Csm16.bin should be placed at OvmfPkg/Csm/Csm16/Csm16.bin)
   
-  * To build bios.bin or vgabios.bin (for QEMU):
+  * To build bios.bin or vgabios-stdvga.bin (for QEMU):
     - Run config utility:       # ./seabiosmake.sh menuconfig
                            (or: # ./seabiosmake.sh config     - if you don't have ncurses)
       ! Under General Features, set 'Build Target' = 'Build for QEMU/Xen/KVM/Bochs'
-      ! Under VGA ROM, set 'VGA Hardware Type' = 'QEMU/Bochs Cirrus SVGA'
+      ! Under VGA ROM, set 'VGA Hardware Type' = 'QEMU/Bochs VBE SVGA'
       ! Under VGA ROM, disable 'Allocate an internal stack for 16bit interrupt entry point'
-    - Copy seabios/out/bios.bin and/or seabios/out/vgabios.bin to QEMU directory (vgabios.bin should be renamed to vgabios-cirrus.bin).
+    - To use the compiled VGA bios, copy seabios/out/vgabios.bin to QEMU directory as vgabios-stdvga.bin (it needs to be renamed).
+    - If you wish to use also the compiled SeaBios BIOS copy seabios/out/bios.bin to QEMU directory.
 
 Patches are partially based on work by dwmw2 & lersek:
 - Csm patches for OvmfPkg (Csm/LegacyBiosDxe): http://git.infradead.org/users/dwmw2/edk2.git/
 - Csm patches for Seabios: http://git.infradead.org/users/dwmw2/seabios.git/ (these patches are now integrated in seabios git)
-- Smbios patches for Seabios: https://github.com/lersek/edk2/commits/smbios_v1
-  Note: these Smbios patches will not be needed starting with Qemu v2.1.0, they will be removed once it is released.
+- Smbios patches for Seabios: https://github.com/lersek/edk2/commits/smbios_v1 (these are disabled in dsc, and should be used only with Qemu <= v2.0)
 
 Command example for running Qemu:
 qemu-system-x86_64 -L . -cpu core2duo -m 2048 -vga cirrus -localtime \
