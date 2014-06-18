@@ -3303,6 +3303,7 @@ BdsLibEnumerateAllBootOption (
         BdsLibBuildOptionFromHandle (BlockIoHandles[Index], BdsBootOptionList, Buffer);
         ScsiNumber++;
         break;
+          
        case BDS_EFI_MESSAGE_VIRTIO_BOOT:
           if (VirtioNumber != 0) {
               UnicodeSPrint (Buffer, sizeof (Buffer), L"%s %d", BdsLibGetStringById (STRING_TOKEN (STR_DESCRIPTION_VIRTIO)), VirtioNumber);
@@ -3313,8 +3314,8 @@ BdsLibEnumerateAllBootOption (
           VirtioNumber++;
           break;
           
-
       case BDS_EFI_MESSAGE_MISC_BOOT:
+      default:
         if (MiscNumber != 0) {
           UnicodeSPrint (Buffer, sizeof (Buffer), L"%s %d", BdsLibGetStringById (STRING_TOKEN (STR_DESCRIPTION_MISC)), MiscNumber);
         } else {
@@ -3322,9 +3323,6 @@ BdsLibEnumerateAllBootOption (
         }
         BdsLibBuildOptionFromHandle (BlockIoHandles[Index], BdsBootOptionList, Buffer);
         MiscNumber++;
-        break;
-
-      default:
         break;
       }
     }

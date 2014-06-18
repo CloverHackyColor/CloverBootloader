@@ -747,6 +747,7 @@ DetectChipset (
       mPamPciFunc = 6;
       break;
 
+    case 0x0a8210de:
     case 0x0a8610de: 
       DBG(" NForce MCP79 and similar (PAM 0xC0-0xC7)\n");
       mRegisterValues = mRegisterValuesNV;
