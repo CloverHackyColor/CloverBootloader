@@ -3767,7 +3767,11 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
       //else gUuid value from SMBIOS
       
       prop = GetProperty(dictPointer, "InjectSystemID");
-      gSettings.InjectSystemID = IsPropertyTrue(prop);
+      if (gSettings.InjectSystemID) {
+        gSettings.InjectSystemID = !IsPropertyFalse(prop);
+      } else {
+        gSettings.InjectSystemID = IsPropertyTrue(prop);
+      }
       
     }
     
