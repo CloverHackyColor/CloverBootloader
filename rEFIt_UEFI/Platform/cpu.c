@@ -196,7 +196,8 @@ VOID GetCPUProperties (VOID)
     // Determine turbo boost support
     DoCpuid(6, gCPUStructure.CPUID[CPUID_6]);
     gCPUStructure.Turbo = ((gCPUStructure.CPUID[CPUID_6][EAX] & (1 << 1)) != 0);
-    DBG("The CPU%a supported turbo\n", gCPUStructure.Turbo?"":" not"); 
+    DBG("The CPU%a supported turbo\n", gCPUStructure.Turbo?"":" not");
+//get cores and threads
     switch (gCPUStructure.Model)
     {
       case CPU_MODEL_NEHALEM: // Intel Core i7 LGA1366 (45nm)
@@ -227,11 +228,7 @@ VOID GetCPUProperties (VOID)
       default:		
         gCPUStructure.Cores   = (UINT8)(bitfield(gCPUStructure.CPUID[CPUID_1][EBX], 23, 16));
         gCPUStructure.Threads = (UINT8)(gCPUStructure.LogicalPerPackage & 0xff);
-        //workaround for N270. I don't know why it detected wrong
-        if ((gCPUStructure.Model == CPU_MODEL_ATOM) && 
-            (gCPUStructure.Stepping == 2)) {
-          gCPUStructure.Cores = 1;
-        }
+
         break;
     }    
   }
@@ -242,7 +239,7 @@ VOID GetCPUProperties (VOID)
 	}
 		
 	/* get BrandString (if supported) */
-	if(gCPUStructure.CPUID[CPUID_80][EAX] >= 0x80000004){
+	if (gCPUStructure.CPUID[CPUID_80][EAX] >= 0x80000004) {
  
 		ZeroMem(str, 128);
 		/* 
@@ -267,6 +264,14 @@ VOID GetCPUProperties (VOID)
 		gCPUStructure.BrandString[47] = '\0'; 
 		DBG("BrandString = %a\n", gCPUStructure.BrandString);
 	}
+
+  //workaround for N270. I don't know why it detected wrong
+  if ((gCPUStructure.Model == CPU_MODEL_ATOM) &&
+      (AsciiStrStr(gCPUStructure.BrandString, "270"))) {
+    gCPUStructure.Cores   = 1;
+    gCPUStructure.Threads = 2;
+  }
+
 
 	//get Min and Max Ratio Cpu/Bus
 	if(gCPUStructure.Vendor == CPU_VENDOR_INTEL && 
