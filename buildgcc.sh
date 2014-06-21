@@ -546,7 +546,7 @@ case "$(uname -m)" in
         export ARCH="x64"
         export ABI_VER="64"
         ;;
-    "i686")
+    "i386")
         export TARGET="i686-clover-linux-gnu"
         export ARCH="ia32"
         export ABI_VER="32"
