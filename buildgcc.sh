@@ -171,7 +171,7 @@ DownloadSource () {
 
     if [[ ! -f ${DIR_DOWNLOADS}/${BINUTILS_VERSION}.tar.bz2 ]]; then
         echo "Status: ${BINUTILS_VERSION} not found."
-        curl -f -o download.tmp --remote-name ftp://ftp.gnu.org/gnu/binutils/${BINUTILS_VERSION}.tar.bz2 || exit 1
+        curl -f -o download.tmp --remote-name ftp://ftp.gnu.org/gnu/binutils/${BINUTILS_VERSION}.tar.bz2 || exit 1
         mv download.tmp ${BINUTILS_VERSION}.tar.bz2
     fi
 
@@ -540,9 +540,23 @@ CompileCrossGCC () {
     echo
 }
 
-export TARGET="x86_64-clover-linux-gnu"
-export ARCH="x64"
-export ABI_VER="64"
+case "$(uname -m)" in
+    "x86_64")
+        export TARGET="x86_64-clover-linux-gnu"
+        export ARCH="x64"
+        export ABI_VER="64"
+        ;;
+    "i686")
+        export TARGET="i686-clover-linux-gnu"
+        export ARCH="ia32"
+        export ABI_VER="32"
+        ;;
+     *)
+        echo "Error: unknown arch '$arch'" >&2
+        exit 1
+        ;;
+esac
+
 echo "- Building GCC toolchain for $ARCH"
 
 CheckXCode      || exit 1
@@ -553,7 +567,7 @@ startBuildEpoch=$(date -u "+%s")
 
 CompileLibs     || exit 1
 GCC_native      || exit 1
-CompileBinutils || exit 1
+CompileBinutils || exit 1
 CompileCrossGCC || exit 1
 
 # Remove GCC source directory
