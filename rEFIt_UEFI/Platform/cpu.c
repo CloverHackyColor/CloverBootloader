@@ -121,9 +121,6 @@ VOID GetCPUProperties (VOID)
 	/* get CPUID Values */
   DoCpuid(0, gCPUStructure.CPUID[CPUID_0]);
   gCPUStructure.Vendor	= gCPUStructure.CPUID[CPUID_0][EBX];
-  DoCpuid(1, gCPUStructure.CPUID[CPUID_1]);
-  gCPUStructure.Signature = gCPUStructure.CPUID[CPUID_1][EAX];
-  DBG("CPU Vendor = %x Model=%x\n", gCPUStructure.Vendor, gCPUStructure.Signature);
   /*
 	 * Get processor signature and decode
 	 * and bracket this with the approved procedure for reading the
@@ -133,6 +130,8 @@ VOID GetCPUProperties (VOID)
     AsmWriteMsr64(MSR_IA32_BIOS_SIGN_ID, 0);
   }
   DoCpuid(1, gCPUStructure.CPUID[CPUID_1]);
+  gCPUStructure.Signature = gCPUStructure.CPUID[CPUID_1][EAX];
+  DBG("CPU Vendor = %x Model=%x\n", gCPUStructure.Vendor, gCPUStructure.Signature);
   if (gCPUStructure.Vendor == CPU_VENDOR_INTEL) {
     msr = AsmReadMsr64(MSR_IA32_BIOS_SIGN_ID);
     gCPUStructure.MicroCode = RShiftU64(msr, 32);
@@ -226,9 +225,9 @@ VOID GetCPUProperties (VOID)
         break;
         
       default:		
-        gCPUStructure.Cores   = (UINT8)(bitfield(gCPUStructure.CPUID[CPUID_1][EBX], 23, 16));
-        gCPUStructure.Threads = (UINT8)(gCPUStructure.LogicalPerPackage & 0xff);
-
+//        gCPUStructure.Cores   = (UINT8)(bitfield(gCPUStructure.CPUID[CPUID_1][EBX], 23, 16));
+//        gCPUStructure.Threads = (UINT8)(gCPUStructure.LogicalPerPackage & 0xff);
+        gCPUStructure.Cores = 0;
         break;
     }    
   }

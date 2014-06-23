@@ -142,26 +142,26 @@ Headers collection for procedures
 #define CPU_MODEL_PENRYN        0x17  /* Yorkfield, Harpertown, Penryn M */
 #define CPU_MODEL_WOLFDALE      0x17  /* kind of penryn but desktop */
 #define CPU_MODEL_NEHALEM       0x1A  /* Bloomfield. Nehalem-EP, Nehalem-WS, Gainestown */
-#define CPU_MODEL_ATOM          0x1C  /* Pineview */
-#define CPU_MODEL_XEON_MP       0x1D  /* MP 7400 */
+#define CPU_MODEL_ATOM          0x1C  /* Pineview UN */
+#define CPU_MODEL_XEON_MP       0x1D  /* MP 7400 UN */
 #define CPU_MODEL_FIELDS        0x1E  /* Lynnfield, Clarksfield, Jasper */
 #define CPU_MODEL_DALES         0x1F  /* Havendale, Auburndale */
 #define CPU_MODEL_CLARKDALE     0x25  /* Clarkdale, Arrandale */
-#define CPU_MODEL_ATOM_SAN      0x26
-#define CPU_MODEL_LINCROFT      0x27
+#define CPU_MODEL_ATOM_SAN      0x26  /* UN */
+#define CPU_MODEL_LINCROFT      0x27  /* UN */
 #define CPU_MODEL_SANDY_BRIDGE	0x2A
 #define CPU_MODEL_WESTMERE      0x2C  /* Gulftown LGA1366 */
 #define CPU_MODEL_JAKETOWN      0x2D  /* Sandy Bridge Xeon LGA2011 */
 #define CPU_MODEL_NEHALEM_EX    0x2E
 #define CPU_MODEL_WESTMERE_EX   0x2F
-#define CPU_MODEL_ATOM_2000     0x36
+#define CPU_MODEL_ATOM_2000     0x36  /* UN */
 #define CPU_MODEL_IVY_BRIDGE    0x3A
 #define CPU_MODEL_HASWELL       0x3C  /* Haswell DT */
-#define CPU_MODEL_IVY_BRIDGE_E5 0x3E  /* Ivy Bridge Xeon */
+#define CPU_MODEL_IVY_BRIDGE_E5 0x3E  /* Ivy Bridge Xeon UN */
 #define CPU_MODEL_HASWELL_MB		0x3F	/* Haswell MB */
 //#define CPU_MODEL_HASWELL_H		0x??	// Haswell H
 #define CPU_MODEL_HASWELL_ULT		0x45	/* Haswell ULT */
-#define CPU_MODEL_HASWELL_ULX		0x46	/* Haswell ULX */
+#define CPU_MODEL_HASWELL_ULX		0x46	/* Haswell ULX CPUID_MODEL_CRYSTALWELL */
 
 #define CPU_VENDOR_INTEL  0x756E6547
 #define CPU_VENDOR_AMD    0x68747541
