@@ -540,22 +540,17 @@ CompileCrossGCC () {
     echo
 }
 
-case "$(uname -m)" in
-    "x86_64")
-        export TARGET="x86_64-clover-linux-gnu"
-        export ARCH="x64"
-        export ABI_VER="64"
-        ;;
-    "i386")
-        export TARGET="i686-clover-linux-gnu"
-        export ARCH="ia32"
-        export ABI_VER="32"
-        ;;
-     *)
-        echo "Error: unknown arch '$arch'" >&2
-        exit 1
-        ;;
-esac
+if [[ "$(sysctl machdep.cpu.extfeatures | grep -c 'EM64T')" -eq 1 ]]; then
+    # It's a 64bit CPU
+    export TARGET="x86_64-clover-linux-gnu"
+    export ARCH="x64"
+    export ABI_VER="64"
+else
+    # It's a 32bit CPU
+    export TARGET="i686-clover-linux-gnu"
+    export ARCH="ia32"
+    export ABI_VER="32"
+fi
 
 echo "- Building GCC toolchain for $ARCH"
 
