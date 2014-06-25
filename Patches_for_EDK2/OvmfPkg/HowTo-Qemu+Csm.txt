@@ -59,3 +59,6 @@ To specify additional drives:
 IDE:  -device ide-drive,bus=ide.1,unit=0,drive=hdc       (up to 4 drives: bus=ide.0/ide.1  , unit=0/1 )
 USB:  -device usb-storage,bus=usb-ehc.0,port=1,drive=hdc (up to 4 drives: bus=usb-ehc.0    , port=1..4)
 AHCI: -device ide-drive,bus=ahc.0,unit=0,drive=hdc       (up to 6 drives: bus=ahc.0...ahc.5, unit=0   )
+
+To specify optical media (for example for AHCI):
+AHCI/CD: -device ide-drive,bus=ahc.0,unit=0,drive=hdc -drive id=hdc,if=none,media=cdrom,file=some.iso
