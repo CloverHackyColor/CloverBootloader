@@ -158,17 +158,16 @@ VOID KernelPatcher_64(VOID* kernelData, CHAR8 *OSVersion)
     // Determine location of _cpuid_set_info _panic call for reference
     // basically looking for info_p->cpuid_model = bitfield32(reg[eax],  7,  4);
     for (i=0; i<0x1000000; i++) {
-        if (bytes[i+ 0] == 0xC7 && bytes[i+ 1] == 0x05 && bytes[i+ 5] == 0x00 && bytes[i+ 6] == 0x07 && bytes[i+ 7] == 0x00 && bytes[i+ 8] == 0x00 && bytes[i+ 9] == 0x00 &&
-            bytes[i+10] == 0xC7 && bytes[i+11] == 0x05 && bytes[i+15] == 0x00 && bytes[i+16] == 0x04 && bytes[i+17] == 0x00 && bytes[i+18] == 0x00 && bytes[i+19] == 0x00) {
-            // matching bytes[i-5] == 0xE8 for _panic call doesn't seem to always work
-            // i made sure _panic call is only place wit this sequence in all the kernels i've looked at
+        if (bytes[i+ 0] == 0xC7 && bytes[i+ 1] == 0x05 && bytes[i+ 5] == 0x00 &&
+            bytes[i+ 6] == 0x07 && bytes[i+ 7] == 0x00 && bytes[i+ 8] == 0x00 && bytes[i+ 9] == 0x00 &&
+            bytes[i-5] == 0xE8) { // matching 0xE8 for _panic call start
             patchLocation = i-5;
             break;
         }
     }
     
     if (!patchLocation) {
-        DBG_RT("_cpuid_set_info Unsupported CPU _panic not fount \n");
+        DBG_RT("_cpuid_set_info Unsupported CPU _panic not found \n");
         return;
     }
 
@@ -202,42 +201,6 @@ VOID KernelPatcher_64(VOID* kernelData, CHAR8 *OSVersion)
         }
         else { // assume patching logic for OSX 10.6.2 to 10.7.3
             
-            // Determine cpuid_model address
-            
-            // 10.6.2 to 10.6.8 kernels
-            if (AsciiStrnCmp(OSVersion,"10.6",4)==0) {
-                // C1E004           shl        eax, 0x4
-                // 000575E44900     add        byte [ds:0xffffff80006c69cd], al
-                for (i=0; i<0x1000000; i++) {
-                    if(bytes[i+0] == 0xC0 && bytes[i+1] == 0xE0 && bytes[i+2] == 0x04 &&
-                       bytes[i+3] == 0x00 && bytes[i+4] == 0x5) {
-                        
-                        cpuid_model_addr =
-                        bytes[i + 5] <<  0 |
-                        bytes[i + 6] <<  8 |
-                        bytes[i + 7] << 16 |
-                        bytes[i + 8] << 24;
-                        cpuid_model_addr = cpuid_model_addr + i + 9;
-                    }
-                }
-            }
-            else { // 10.7.0 to 10.7.3 kernels
-                // C0E004           shl        al, 0x4
-                // 0005B82D5F00     add        byte [ds:0xffffff80008a216d], al
-                for (i=0; i<0x1000000; i++) {
-                    if(bytes[i+0] == 0xC0 && bytes[i+1] == 0xE0 && bytes[i+2] == 0x04 &&
-                       bytes[i+3] == 0x00 && bytes[i+4] == 0x5) {
-                
-                        cpuid_model_addr =
-                        bytes[i + 5] <<  0 |
-                        bytes[i + 6] <<  8 |
-                        bytes[i + 7] << 16 |
-                        bytes[i + 8] << 24;
-                        cpuid_model_addr = cpuid_model_addr + i + 9;
-                    }
-                }
-            }
-
             /*
              Here is our case from CPUID switch statement, it sets CPUFAMILY_UNKNOWN
              C7051C2C5F0000000000   mov     dword [ds:0xffffff80008a22c0], 0x0 (example from 10.7)
@@ -249,9 +212,32 @@ VOID KernelPatcher_64(VOID* kernelData, CHAR8 *OSVersion)
                 bytes[switchaddr+5] == 0x00 && bytes[switchaddr+6] == 0x00 &&
                 bytes[switchaddr+7] == 0x00 && bytes[switchaddr+8] == 0x00) {
 
-                if (cpuid_model_addr) {
+                // Determine cpuid_family address from above mov operation
+                cpuid_family_addr =
+                bytes[switchaddr + 2] <<  0 |
+                bytes[switchaddr + 3] <<  8 |
+                bytes[switchaddr + 4] << 16 |
+                bytes[switchaddr + 5] << 24;
+                cpuid_family_addr = cpuid_family_addr + (switchaddr+10);
                     
-                    DBG_RT("cpuid_model address is 0x%08x\n", cpuid_model_addr);
+                if (cpuid_family_addr) {
+                    
+                    // Determine cpuid_model address
+                    // for 10.6.2 kernels it's offset by 299 bytes from cpuid_family address
+                    if (AsciiStrnCmp(OSVersion,"10.6.2",6)==0) {
+                        cpuid_model_addr = cpuid_family_addr - 0X12B;
+                    }
+                    // for 10.6.3 to 10.6.7 it's offset by 303 bytes
+                    if (AsciiStrnCmp(OSVersion,"10.6.3",6)>=0 && AsciiStrnCmp(OSVersion,"10.6.7",6)<=0) {
+                        cpuid_model_addr = cpuid_family_addr - 0X12F;
+                    }
+                    // for 10.6.8+ kernels - by 339 bytes
+                    if (AsciiStrnCmp(OSVersion,"10.6.8",6)>=0 && AsciiStrnCmp(OSVersion,"10.7.3",6)<=0) {
+                        cpuid_model_addr = cpuid_family_addr - 0X153;
+                    }
+                    
+                    DBG_RT("cpuid_family address: 0x%08x\n", cpuid_family_addr);
+                    DBG_RT("cpuid_model address: 0x%08x\n",  cpuid_model_addr);
                 
                     switchaddr += 6; // offset 6 bytes in mov operation to write a dword instead of zero
                     
@@ -283,6 +269,10 @@ VOID KernelPatcher_64(VOID* kernelData, CHAR8 *OSVersion)
                     }
                 }
             }
+            else {
+                DBG_RT("Unable to determine cpuid_family address, patching aborted\n");
+                return;
+            }
         }
   
         // patch ssse3
@@ -296,7 +286,7 @@ VOID KernelPatcher_64(VOID* kernelData, CHAR8 *OSVersion)
     
     // all 10.7.4+ kernels share common CPUID switch statement logic,
     // it needs to be exploited in diff manner due to the lack of space
-    if (((AsciiStrnCmp(OSVersion,"10.7",4)==0) && (OSVersion[5] > '3')) || (OSVersion[3] > '7')) {
+    if (((AsciiStrnCmp(OSVersion,"10.7",4)==0) && (OSVersion[5] > '3')) || (OSVersion[3] > '7') || (AsciiStrnCmp(OSVersion,"10.1",4)==0)) {
         
         DBG_RT("will patch kernel for OSX 10.7.4+\n");
         
@@ -321,60 +311,28 @@ VOID KernelPatcher_64(VOID* kernelData, CHAR8 *OSVersion)
             bytes[switchaddr - 1] << 24;
             cpuid_family_addr = cpuid_family_addr + switchaddr;
 
+            if (cpuid_family_addr) {
             
             // Determine cpuid_model address
-            if (AsciiStrnCmp(OSVersion,"10.8",4)==0 || AsciiStrnCmp(OSVersion,"10.9",4)==0) {
-                // C0EB04       shr bl, 0x4
-                // 881D2B675E00 mov byte [ds:0xffffff80008b204d], bl
-                for (i=0; i<0x1000000; i++) {
-                    if(bytes[i+0] == 0xC0 && bytes[i+1] == 0xEB && bytes[i+2] == 0x04 &&
-                       bytes[i+3] == 0x88 && bytes[i+4] == 0x1D) {
-                    
-                        cpuid_model_addr =
-                        bytes[i + 5] <<  0 |
-                        bytes[i + 6] <<  8 |
-                        bytes[i + 7] << 16 |
-                        bytes[i + 8] << 24;
-                        cpuid_model_addr = cpuid_model_addr + i + 9;
-                    }
-                }
-            }
-            else { // special case for 10.7.4+ kernels
-                // C0E004           shl        al, 0x4
-                // 0005B82D5F00     add        byte [ds:0xffffff80008a216d], al
-                for (i=0; i<0x1000000; i++) {
-                    if(bytes[i+0] == 0xC0 && bytes[i+1] == 0xE0 && bytes[i+2] == 0x04 &&
-                       bytes[i+3] == 0x00 && bytes[i+4] == 0x5) {
-                    
-                        cpuid_model_addr =
-                        bytes[i + 5] <<  0 |
-                        bytes[i + 6] <<  8 |
-                        bytes[i + 7] << 16 |
-                        bytes[i + 8] << 24;
-                        cpuid_model_addr = cpuid_model_addr + i + 9;
-                    }
-                }
-            }
+                // for 10.6.8+ kernels it's 339 bytes apart from cpuid_family address
+                cpuid_model_addr = cpuid_family_addr - 0X153;
             
-            if (cpuid_family_addr && cpuid_model_addr) {
-                
-                DBG_RT("cpuid_family address is 0x%08x\n", cpuid_family_addr);
-                DBG_RT("cpuid_model address is 0x%08x\n",  cpuid_model_addr);
+                DBG_RT("cpuid_family address: 0x%08x\n", cpuid_family_addr);
+                DBG_RT("cpuid_model address: 0x%08x\n",  cpuid_model_addr);
                 
                 // Calculate masks for patching
                 mask_family  = cpuid_family_addr - (switchaddr +15);
                 mask_model   = cpuid_model_addr -  (switchaddr +25);
-                DBG_RT("family mask 0x%08x and model mask 0x%08x\n", mask_family, mask_model);
+                DBG_RT("\nfamily mask: 0x%08x \nmodel mask: 0x%08x\n", mask_family, mask_model);
                 
-                DBG_RT("overriding cpuid_family and cpuid_model as CPUID_INTEL_PENRYN\n");
                 // retain original
                 // test ebx, ebx
-                bytes[switchaddr+0] = 0x85;
-                bytes[switchaddr+1] = 0xDB;
-                // retain original
+                bytes[switchaddr+0] = bytes[patchLocation-13];
+                bytes[switchaddr+1] = bytes[patchLocation-12];
+                // retain original, but move jump offset by 20 bytes forward
                 // jne for above test
-                bytes[switchaddr+2] = 0x75;
-                bytes[switchaddr+3] = 0x2E;
+                bytes[switchaddr+2] = bytes[patchLocation-11];
+                bytes[switchaddr+3] = bytes[patchLocation-10]+0x20;
                 // mov ebx, 0x78ea4fbc
                 bytes[switchaddr+4] = 0xBB;
                 bytes[switchaddr+5] = (CPUFAMILY_INTEL_PENRYN & 0x000000FF) >>  0;
@@ -410,6 +368,10 @@ VOID KernelPatcher_64(VOID* kernelData, CHAR8 *OSVersion)
                     bytes[switchaddr+i] = 0x90;
                 }
             }
+        }
+        else {
+            DBG_RT("Unable to determine cpuid_family address, patching aborted\n");
+            return;
         }
     }
 }
@@ -1295,7 +1257,7 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
       patchedOk = KernelLapicPatch_32(KernelData);
     }
     if(patchedOk) {
-      DBG_RT(" \nOK\n");
+      DBG_RT("OK\n");
     } else {
       DBG_RT(" FAILED!\n");
     }

@@ -26,15 +26,15 @@ set -u # exit with error if unbound variables
 # GCC toolchain source version
 # here we can change source versions of tools
 #
-export BINUTILS_VERSION=${BINUTILS_VERSION:-binutils-2.23.2}
-export GCC_VERSION=${GCC_VERSION:-4.8.1}
+export BINUTILS_VERSION=${BINUTILS_VERSION:-binutils-2.24}
+export GCC_VERSION=${GCC_VERSION:-4.8.3}
 
 # Version of libraries are from ./contrib/download_prerequisites in gcc source directory
-export GMP_VERSION=${GMP_VERSION:-gmp-5.1.2}
+export GMP_VERSION=${GMP_VERSION:-gmp-6.0.0a}
 export MPFR_VERSION=${MPFR_VERSION:-mpfr-3.1.2}
-export MPC_VERSION=${MPC_VERSION:-mpc-1.0.1}
-export ISL_VERSION=${ISL_VERSION:-isl-0.11.1}
-export CLOOG_VERSION=${CLOOG_VERSION:-cloog-0.18.0}
+export MPC_VERSION=${MPC_VERSION:-mpc-1.0.2}
+export ISL_VERSION=${ISL_VERSION:-isl-0.12.2}
+export CLOOG_VERSION=${CLOOG_VERSION:-cloog-0.18.1}
 
 # Change PREFIX if you want gcc and binutils
 # installed on different place
@@ -171,7 +171,7 @@ DownloadSource () {
 
     if [[ ! -f ${DIR_DOWNLOADS}/${BINUTILS_VERSION}.tar.bz2 ]]; then
         echo "Status: ${BINUTILS_VERSION} not found."
-        curl -f -o download.tmp --remote-name ftp://ftp.gnu.org/gnu/binutils/${BINUTILS_VERSION}.tar.bz2 || exit 1
+        curl -f -o download.tmp --remote-name ftp://ftp.gnu.org/gnu/binutils/${BINUTILS_VERSION}.tar.bz2 || exit 1
         mv download.tmp ${BINUTILS_VERSION}.tar.bz2
     fi
 
@@ -562,7 +562,7 @@ startBuildEpoch=$(date -u "+%s")
 
 CompileLibs     || exit 1
 GCC_native      || exit 1
-CompileBinutils || exit 1
+CompileBinutils || exit 1
 CompileCrossGCC || exit 1
 
 # Remove GCC source directory
