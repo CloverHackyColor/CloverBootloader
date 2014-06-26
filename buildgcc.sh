@@ -171,7 +171,7 @@ DownloadSource () {
 
     if [[ ! -f ${DIR_DOWNLOADS}/${BINUTILS_VERSION}.tar.bz2 ]]; then
         echo "Status: ${BINUTILS_VERSION} not found."
-        curl -f -o download.tmp --remote-name ftp://ftp.gnu.org/gnu/binutils/${BINUTILS_VERSION}.tar.bz2 || exit 1
+        curl -f -o download.tmp --remote-name ftp://ftp.gnu.org/gnu/binutils/${BINUTILS_VERSION}.tar.bz2 || exit 1
         mv download.tmp ${BINUTILS_VERSION}.tar.bz2
     fi
 
@@ -562,7 +562,7 @@ startBuildEpoch=$(date -u "+%s")
 
 CompileLibs     || exit 1
 GCC_native      || exit 1
-CompileBinutils || exit 1
+CompileBinutils || exit 1
 CompileCrossGCC || exit 1
 
 # Remove GCC source directory
