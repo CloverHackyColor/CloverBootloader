@@ -1124,8 +1124,10 @@ typedef struct {
   UINT32  align31;
 #endif
   
-  //BalckListed kexts
+  //BlackListed kexts
   CHAR16 BlockKexts[64];
+  
+  UINT32 FakeCPUID;
   
 } SETTINGS_DATA;
 
@@ -1460,6 +1462,8 @@ extern TagPtr   gConfigDict[];
 
 VOID        FixBiosDsdt (UINT8* Dsdt, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, CHAR8 *OSVersion);
 VOID        GetBiosRegions(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt);
+INT32       FindBin(UINT8 *Array, UINT32 ArrayLen, UINT8 *Pattern, UINT32 PatternLen);
+
 EFI_STATUS  MouseBirth();
 VOID        KillMouse();
 VOID        HidePointer();

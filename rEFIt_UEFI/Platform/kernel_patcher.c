@@ -1215,6 +1215,12 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
   } else {
     DBG_RT("Not done - Disabled.\n");
   }
+  
+  //other method for KernelCPU patch is FakeCPUID
+  if (gSettings.FakeCPUID) {
+    DBG_RT("KernelCPUID patch to: 0x%08x\n", gSettings.FakeCPUID);
+    //KernelCPUIDPatch();
+  }
 
   // CPU power management patch for haswell with locked msr
   DBG_RT("\nKernelPm patch: ");

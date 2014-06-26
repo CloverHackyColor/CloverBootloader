@@ -1269,9 +1269,10 @@ INT32 CmpDev(UINT8 *dsdt, UINT32 i, UINT8 *Name)
 }
 
 //the procedure can find BIN array UNSIGNED CHAR8 sizeof N inside part of large array "dsdt" size of len
-INT32 FindBin (UINT8 *dsdt, UINT32 len, UINT8* bin, UINTN N)
+// return position or -1 if not found
+INT32 FindBin (UINT8 *dsdt, UINT32 len, UINT8* bin, UINT32 N)
 {
-  UINT32 i, j;
+  INT32 i, j;
   BOOLEAN eq;
   
   for (i=0; i<len-N; i++) {
@@ -1291,6 +1292,7 @@ INT32 FindBin (UINT8 *dsdt, UINT32 len, UINT8* bin, UINTN N)
                 
 //if (!FindMethod(dsdt, len, "DTGP")) 
 // return address of size field. Assume size not more then 0x0FFF = 4095 bytes
+//assuming only short methods
 UINT32 FindMethod (UINT8 *dsdt, UINT32 len, /* CONST*/ CHAR8* Name)
 {
   UINT32 i;
