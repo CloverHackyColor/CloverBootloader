@@ -171,15 +171,15 @@ VOID KernelPatcher_64(VOID* kernelData, CHAR8 *OSVersion)
         return;
     }
 
+    UINT64 os_version = AsciiOSVersionToUint64(OSVersion);
+
     // make sure only kernels for OSX 10.6.0 to 10.7.3 are being patched by this approach
-  if ((AsciiStrnCmp(OSVersion,"10.6",4)==0) ||
-      ((AsciiStrnCmp(OSVersion,"10.7",4)==0) && (OSVersion[5] < '4'))) {
- //   if (AsciiStrnCmp(OSVersion,"10.6",4)>=0 && AsciiStrnCmp(OSVersion,"10.7.3",6)<=0) {
+    if (os_version >= AsciiOSVersionToUint64("10.6") && os_version <= AsciiOSVersionToUint64("10.7.3")) {
 
         DBG_RT("will patch kernel for OSX 10.6.0 to 10.7.3\n");
         
         // remove tsc_init: unknown CPU family panic for kernels prior to 10.6.2 which still had Atom support
-        if (AsciiStrnCmp(OSVersion,"10.6.0",6)==0 || AsciiStrnCmp(OSVersion,"10.6.1",6)==0) {
+        if (os_version < AsciiOSVersionToUint64("10.6.2")) {
             for (i=0; i<0x1000000; i++) {
                 // find _tsc_init panic address by byte sequence 488d3df4632a00
                 if (bytes[i] == 0x48 && bytes[i+1] == 0x8D && bytes[i+2] == 0x3D && bytes[i+3] == 0xF4 &&
@@ -224,15 +224,15 @@ VOID KernelPatcher_64(VOID* kernelData, CHAR8 *OSVersion)
                     
                     // Determine cpuid_model address
                     // for 10.6.2 kernels it's offset by 299 bytes from cpuid_family address
-                    if (AsciiStrnCmp(OSVersion,"10.6.2",6)==0) {
+                    if (os_version ==  AsciiOSVersionToUint64("10.6.2")) {
                         cpuid_model_addr = cpuid_family_addr - 0X12B;
                     }
                     // for 10.6.3 to 10.6.7 it's offset by 303 bytes
-                    if (AsciiStrnCmp(OSVersion,"10.6.3",6)>=0 && AsciiStrnCmp(OSVersion,"10.6.7",6)<=0) {
+                    else if (os_version <= AsciiOSVersionToUint64("10.6.7")) {
                         cpuid_model_addr = cpuid_family_addr - 0X12F;
                     }
-                    // for 10.6.8+ kernels - by 339 bytes
-                    if (AsciiStrnCmp(OSVersion,"10.6.8",6)>=0 && AsciiStrnCmp(OSVersion,"10.7.3",6)<=0) {
+                    // for 10.6.8 to 10.7.3 kernels - by 339 bytes
+                    else {
                         cpuid_model_addr = cpuid_family_addr - 0X153;
                     }
                     
@@ -286,7 +286,7 @@ VOID KernelPatcher_64(VOID* kernelData, CHAR8 *OSVersion)
     
     // all 10.7.4+ kernels share common CPUID switch statement logic,
     // it needs to be exploited in diff manner due to the lack of space
-    if (((AsciiStrnCmp(OSVersion,"10.7",4)==0) && (OSVersion[5] > '3')) || (OSVersion[3] > '7') || (AsciiStrnCmp(OSVersion,"10.1",4)==0)) {
+    else if (os_version >= AsciiOSVersionToUint64("10.7.4")) {
         
         DBG_RT("will patch kernel for OSX 10.7.4+\n");
         
