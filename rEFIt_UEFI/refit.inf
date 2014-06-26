@@ -97,6 +97,8 @@
 #	Platform/SmBios.h
 	Platform/spd.c
 #	Platform/spd.h
+	Platform/string.c
+#	Platform/string.h
 	Platform/StateGenerator.c
 #	Platform/StateGenerator.h
 #	Platform/stringTable.c

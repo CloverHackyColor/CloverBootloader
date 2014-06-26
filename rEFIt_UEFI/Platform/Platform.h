@@ -63,6 +63,7 @@ Headers collection for procedures
 #include <Protocol/EmuVariableControl.h>
 
 #include "lib.h"
+#include "string.h"
 #include "boot.h"
 //#include "PiBootMode.h"
 #include "IO.h"
