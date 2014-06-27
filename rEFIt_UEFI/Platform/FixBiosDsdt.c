@@ -3595,7 +3595,7 @@ UINT32 AddHDEF (UINT8 *dsdt, UINT32 len, CHAR8* OSVersion)
     aml_add_string_buffer(pack, "onboard-1");
   }
   if (!AddProperties(pack, DEV_HDA)) {
-    if ((OSVersion != NULL && AsciiOSVersionToUint64(OSVersion) <= AsciiOSVersionToUint64("10.7")) || (gSettings.HDALayoutId > 0)) {
+    if ((OSVersion != NULL && AsciiOSVersionToUint64(OSVersion) < AsciiOSVersionToUint64("10.8")) || (gSettings.HDALayoutId > 0)) {
       aml_add_string(pack, "layout-id");
       aml_add_byte_buffer(pack, (CHAR8*)&HDAlayoutId, 4);
     }

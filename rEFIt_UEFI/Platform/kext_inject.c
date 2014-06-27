@@ -242,8 +242,8 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
 	  UINT16 os_version = AsciiOSVersionToUint64(Entry->OSVersion);
 	  if (os_version >= AsciiOSVersionToUint64("10.8")) {
 		archCpuType = CPU_TYPE_X86_64; // For OSVersion >= 10.8, only x86_64 exists
-	  } else if (os_version <= AsciiOSVersionToUint64("10.6")) {
-		archCpuType = CPU_TYPE_I386; // For OSVersion <= 10.6, use default of i386
+	  } else if (os_version < AsciiOSVersionToUint64("10.7")) {
+		archCpuType = CPU_TYPE_I386; // For OSVersion < 10.7, use default of i386
 	  }
 	}
 

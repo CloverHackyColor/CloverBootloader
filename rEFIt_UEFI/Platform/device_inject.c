@@ -689,7 +689,7 @@ BOOLEAN set_hda_props(EFI_PCI_IO_PROTOCOL *PciIo, pci_dt_t *hda_dev, CHAR8 *OSVe
                         gSettings.AddProperties[i].ValueLen);
     }
     if (!Injected) {
-      if ((OSVersion != NULL && AsciiOSVersionToUint64(OSVersion) <= AsciiOSVersionToUint64("10.7")) || (gSettings.HDALayoutId > 0)) {
+      if ((OSVersion != NULL && AsciiOSVersionToUint64(OSVersion) < AsciiOSVersionToUint64("10.8")) || (gSettings.HDALayoutId > 0)) {
         devprop_add_value(device, "layout-id", (UINT8*)&layoutId, 4);
       }
       layoutId = 0; // reuse variable
