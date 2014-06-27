@@ -772,7 +772,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
       Entry->LoadOptions = TempOptions;
     }
 
-
+//    DBG("Set FakeCPUID: 0x%x\n", gSettings.FakeCPUID);
 //    DBG("LoadKexts\n");
     // LoadKexts writes to DataHub, where large writes can prevent hibernate wake (happens when several kexts present in Clover's kexts dir)
     if (!DoHibernateWake) {

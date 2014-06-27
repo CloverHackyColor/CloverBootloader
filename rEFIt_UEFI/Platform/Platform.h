@@ -1125,10 +1125,9 @@ typedef struct {
   UINT32  align31;
 #endif
   
+  UINT32 FakeCPUID;
   //BlackListed kexts
   CHAR16 BlockKexts[64];
-  
-  UINT32 FakeCPUID;
   
 } SETTINGS_DATA;
 

@@ -484,6 +484,126 @@ VOID KernelPatcher_32(VOID* kernelData, CHAR8 *OSVersion)
   }
 }
 
+//procedure location
+STATIC UINT8 StrCpuid1[] = {
+  0xb8, 0x01, 0x00, 0x00, 0x00, 0x31, 0xdb, 0x89, 0xd9, 0x89, 0xda, 0x0f, 0xa2};
+
+STATIC UINT8 StrMsr8b[]       = {0xb9, 0x8b, 0x00, 0x00, 0x00, 0x0f, 0x32};
+/*
+ This patch searches
+  and eax, 0xf0   ||    and eax, 0x0f0000
+  shr eax, 0x04   ||    shr eax, 0x10
+ and replaces to
+  mov eax, FakeModel  | mov eax, FakeExt
+ */
+STATIC UINT8 SearchModel106[]  = {0x25, 0xf0, 0x00, 0x00, 0x00, 0xc1, 0xe8, 0x04};
+STATIC UINT8 SearchExt106[]    = {0x25, 0x00, 0x00, 0x0f, 0x00, 0xc1, 0xe8, 0x10};
+STATIC UINT8 ReplaceModel106[] = {0xb8, 0x07, 0x00, 0x00, 0x00, 0x90, 0x90, 0x90};
+
+/*
+ This patch searches
+  mov ecx, eax
+  shr ecx, 0x04   ||  shr ecx, 0x10
+ and replaces to
+  mov ecx, FakeModel  || mov ecx, FakeExt
+ */
+STATIC UINT8 SearchModel107[]  = {0x89, 0xc1, 0xc1, 0xe9, 0x04};
+STATIC UINT8 SearchExt107[]    = {0x89, 0xc1, 0xc1, 0xe9, 0x10};
+STATIC UINT8 ReplaceModel107[] = {0xb9, 0x07, 0x00, 0x00, 0x00};
+
+/*
+ This patch searches
+  mov bl, al     ||   shr eax, 0x10
+  shr bl, 0x04   ||   and al,0x0f
+ and replaces to
+  mov ebx, FakeModel || mov eax, FakeExt
+ */
+STATIC UINT8 SearchModel109[]   = {0x88, 0xc3, 0xc0, 0xeb, 0x04};
+STATIC UINT8 SearchExt109[]     = {0xc1, 0xe8, 0x10, 0x24, 0x0f};
+STATIC UINT8 ReplaceModel109[]  = {0xbb, 0x0a, 0x00, 0x00, 0x00};
+STATIC UINT8 ReplaceExt109[]    = {0xb8, 0x02, 0x00, 0x00, 0x00};
+
+/*
+ This patch searches
+  mov cl, al     ||   mov ecx, eax
+  shr cl, 0x04   ||   shr ecx, 0x10
+ and replaces to
+  mov ecx, FakeModel || mov ecx, FakeExt
+ */
+STATIC UINT8 SearchModel101[]   = {0x88, 0xc1, 0xc0, 0xe9, 0x04};
+STATIC UINT8 SearchExt101[]     = {0x89, 0xc1, 0xc1, 0xe9, 0x10};
+
+
+BOOLEAN PatchCPUID(UINT8* bytes, UINT8* Location, INT32 LenLoc,
+                   UINT8* Search4, UINT8* Search10, UINT8* ReplaceModel,
+                   UINT8* ReplaceExt, INT32 Len)
+{
+  INT32 patchLocation=0, patchLocation1=0;
+  INT32 Adr = 0, Num;
+  BOOLEAN Patched = FALSE;
+  UINT8 FakeModel = (gSettings.FakeCPUID >> 4) & 0x0f;
+  UINT8 FakeExt   = (gSettings.FakeCPUID >> 10) & 0x0f;
+  for (Num = 0; Num < 2; Num++) {
+    Adr = FindBin(bytes + (UINT32)Adr, 0x1000000 - Adr, Location, LenLoc);
+    if (Adr < 0) {
+      break;
+    }
+    DBG_RT("found location at %x\n", Adr);
+    patchLocation = FindBin(bytes + (UINT32)Adr, 0x100, Search4, Len);
+    if (patchLocation > 0 && patchLocation < 70) {
+      //found
+      DBG_RT("found Model location at %d\n", Adr + patchLocation);
+      CopyMem(bytes + Adr + patchLocation, ReplaceModel, Len);
+      bytes[Adr + patchLocation + 1] = FakeModel;
+      patchLocation1 = FindBin(bytes + Adr, 0x100, Search10, Len);
+      if (patchLocation1 > 0 && patchLocation1 < 100) {
+        DBG_RT("found ExtModel location at %d\n", Adr + patchLocation);
+        CopyMem(bytes + Adr + patchLocation1, ReplaceExt, Len);
+        bytes[Adr + patchLocation1 + 1] = FakeExt;
+      }
+      Patched = TRUE;
+    }
+  }
+  return Patched;
+}
+
+VOID KernelCPUIDPatch(VOID* KernelData)
+{
+//Snow patterns
+  DBG_RT("CPUID: try Snow patch...\n");
+  if (PatchCPUID((UINT8*)KernelData, &StrCpuid1[0], sizeof(StrCpuid1), &SearchModel106[0],
+                 &SearchExt106[0], &ReplaceModel106[0], &ReplaceModel106[0],
+                 sizeof(SearchModel106))) {
+    DBG_RT("...done!\n");
+    return;
+  }
+//Lion patterns
+  DBG_RT("CPUID: try Lion patch...\n");
+  if (PatchCPUID((UINT8*)KernelData, &StrMsr8b[0], sizeof(StrMsr8b), &SearchModel107[0],
+                 &SearchExt107[0], &ReplaceModel107[0], &ReplaceModel107[0],
+                 sizeof(SearchModel107))) {
+    DBG_RT("...done!\n");
+    return;
+  }
+//Mavericks
+  DBG_RT("CPUID: try Mavericks patch...\n");
+  if (PatchCPUID((UINT8*)KernelData, &StrMsr8b[0], sizeof(StrMsr8b), &SearchModel109[0],
+                 &SearchExt109[0], &ReplaceModel109[0], &ReplaceExt109[0],
+                 sizeof(SearchModel109))) {
+    DBG_RT("...done!\n");
+    return;
+  }
+//Yosemite
+  DBG_RT("CPUID: try Yosemite patch...\n");
+  if (PatchCPUID((UINT8*)KernelData, &StrMsr8b[0], sizeof(StrMsr8b), &SearchModel101[0],
+                 &SearchExt101[0], &ReplaceModel107[0], &ReplaceModel107[0],
+                 sizeof(SearchModel107))) {
+    DBG_RT("...done!\n");
+    return;
+  }
+}
+
+
 // Power management patch for kernel 13.0
 STATIC UINT8 KernelPatchPmSrc[] = {
   0x55, 0x48, 0x89, 0xe5, 0x41, 0x89, 0xd0, 0x85,
@@ -1218,8 +1338,10 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
   
   //other method for KernelCPU patch is FakeCPUID
   if (gSettings.FakeCPUID) {
-    DBG_RT("KernelCPUID patch to: 0x%08x\n", gSettings.FakeCPUID);
-    //KernelCPUIDPatch();
+    DBG_RT("KernelCPUID patch to: 0x%06x\n", gSettings.FakeCPUID);
+    KernelCPUIDPatch(KernelData);
+  } else {
+    DBG_RT("KernelCPUID patch not done\n");
   }
 
   // CPU power management patch for haswell with locked msr

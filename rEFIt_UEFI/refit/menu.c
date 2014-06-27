@@ -430,6 +430,8 @@ VOID RefillInputs(VOID)
   InputItems[InputItemsCount++].SValue = gSettings.DebugDSDT?L"[+]":L"[ ]";
   InputItems[InputItemsCount].ItemType = Hex;  //106
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeIMEI);
+  InputItems[InputItemsCount].ItemType = Hex;  //107
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeCPUID);
   
   InputItemsCount = 110;
   for (j=0; j<16; j++) {
@@ -739,6 +741,9 @@ VOID FillInputs(VOID)
   InputItems[InputItemsCount].ItemType = Hex;  //106
   InputItems[InputItemsCount].SValue = AllocateZeroPool(26);
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeIMEI);
+  InputItems[InputItemsCount].ItemType = Hex;  //107
+  InputItems[InputItemsCount].SValue = AllocateZeroPool(26);
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeCPUID);
   
   InputItemsCount = 110;
   for (j=0; j<16; j++) {
@@ -1142,10 +1147,7 @@ VOID ApplyInputs(VOID)
   i++; //99
   if (InputItems[i].Valid) {
     gSettings.FakeIntel = (UINT32)StrHexToUint64(InputItems[i].SValue);
-  }
-  i++; //99
-  if (InputItems[i].Valid) {
-    gSettings.FakeIntel = (UINT32)StrHexToUint64(InputItems[i].SValue);
+    DBG("applied FakeIntel=0x%x\n", gSettings.FakeIntel);
   }
   i++; //100
   if (InputItems[i].Valid) {
@@ -1177,6 +1179,12 @@ VOID ApplyInputs(VOID)
   i++; //106
   if (InputItems[i].Valid) {
     gSettings.FakeIMEI = (UINT32)StrHexToUint64(InputItems[i].SValue);
+  }
+//FakeCPUID
+  i++; //107
+  if (InputItems[i].Valid) {    
+    gSettings.FakeCPUID = (UINT32)StrHexToUint64(InputItems[i].SValue);
+    DBG("applied FakeCPUID=%06x\n", gSettings.FakeCPUID);
   }
   
   if (NeedSave) {
@@ -3234,7 +3242,19 @@ REFIT_MENU_ENTRY  *SubMenuBinaries()
   SubScreen->ID = SCREEN_BINARIES;
   SubScreen->AnimeRun = GetAnime(SubScreen);
   AddMenuInfoLine(SubScreen, PoolPrint(L"%a", gCPUStructure.BrandString));
+  AddMenuInfoLine(SubScreen, PoolPrint(L"Real CPUID: 0x%06x", gCPUStructure.Signature));
 
+
+  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  InputBootArgs->Entry.Title = PoolPrint(L"Fake CPUID:");
+  InputBootArgs->Entry.Tag = TAG_INPUT;
+  InputBootArgs->Entry.Row = StrLen(InputItems[107].SValue); //cursor
+//  InputBootArgs->Entry.ShortcutLetter = 'I';
+  InputBootArgs->Item = &InputItems[107];
+  InputBootArgs->Entry.AtClick = ActionSelect;
+  InputBootArgs->Entry.AtRightClick = ActionEnter;
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+  
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
   InputBootArgs->Entry.Title = PoolPrint(L"Kext patching allowed:");
   InputBootArgs->Entry.Tag = TAG_INPUT;

@@ -146,14 +146,12 @@ VOID GetCPUProperties (VOID)
 		DoCpuid(0x80000001, gCPUStructure.CPUID[CPUID_81]); 
 	}
 	
-//	gCPUStructure.Vendor	= gCPUStructure.CPUID[CPUID_0][EBX];
-	gCPUStructure.Signature = gCPUStructure.CPUID[CPUID_1][EAX];
-	gCPUStructure.Stepping	= (UINT8) bitfield(gCPUStructure.CPUID[CPUID_1][EAX], 3, 0);
-	gCPUStructure.Model		= (UINT8) bitfield(gCPUStructure.CPUID[CPUID_1][EAX], 7, 4);
-	gCPUStructure.Family	= (UINT8) bitfield(gCPUStructure.CPUID[CPUID_1][EAX], 11, 8);
-	gCPUStructure.Type		= (UINT8) bitfield(gCPUStructure.CPUID[CPUID_1][EAX], 13, 12);
-	gCPUStructure.Extmodel	= (UINT8) bitfield(gCPUStructure.CPUID[CPUID_1][EAX], 19, 16);
-	gCPUStructure.Extfamily = (UINT8) bitfield(gCPUStructure.CPUID[CPUID_1][EAX], 27, 20);
+	gCPUStructure.Stepping	= (UINT8) bitfield(gCPUStructure.Signature, 3, 0);
+	gCPUStructure.Model     = (UINT8) bitfield(gCPUStructure.Signature, 7, 4);
+	gCPUStructure.Family    = (UINT8) bitfield(gCPUStructure.Signature, 11, 8);
+	gCPUStructure.Type      = (UINT8) bitfield(gCPUStructure.Signature, 13, 12);
+	gCPUStructure.Extmodel	= (UINT8) bitfield(gCPUStructure.Signature, 19, 16);
+	gCPUStructure.Extfamily = (UINT8) bitfield(gCPUStructure.Signature, 27, 20);
 	gCPUStructure.Features  = quad(gCPUStructure.CPUID[CPUID_1][ECX], gCPUStructure.CPUID[CPUID_1][EDX]);
 	gCPUStructure.ExtFeatures  = quad(gCPUStructure.CPUID[CPUID_81][ECX], gCPUStructure.CPUID[CPUID_81][EDX]);
 	/* Pack CPU Family and Model */

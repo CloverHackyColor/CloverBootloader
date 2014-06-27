@@ -1284,7 +1284,7 @@ INT32 FindBin (UINT8 *dsdt, UINT32 len, UINT8* bin, UINT32 N)
       }
     }
     if (eq) {
-      return (INT32)i;
+      return i;
     }
   }
   return -1;

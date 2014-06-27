@@ -3520,8 +3520,6 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
       prop = GetProperty(dictPointer, "SavingMode");
       gSettings.SavingMode = (UINT32)GetPropertyInteger(prop, 0xFF); //the default value means not set
 
-      prop = GetProperty(dictPointer, "FakeCPUID");
-      gSettings.FakeCPUID = (UINT32)GetPropertyInteger(prop, 0);
     }
     
     // KernelAndKextPatches
@@ -3539,6 +3537,10 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
 
       prop = GetProperty(dictPointer,"KernelCpu");
       gSettings.KPKernelCpu = IsPropertyTrue(prop);
+        
+      prop = GetProperty(dictPointer, "FakeCPUID");
+      gSettings.FakeCPUID = (UINT32)GetPropertyInteger(prop, 0);
+      DBG("Config set FakeCPUID=%x\n", gSettings.FakeCPUID);
       
       prop = GetProperty(dictPointer,"AsusAICPUPM");
       if(prop) {
