@@ -239,7 +239,7 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
 	} else if (Arch != NULL && StrnCmp(Arch,L"i386",StrLen(L"i386")) == 0) {
 		archCpuType = CPU_TYPE_I386;
 	} else if (Entry->OSVersion != NULL) {
-	  UINT16 os_version = AsciiOSVersionToUint64(Entry->OSVersion);
+	  UINT64 os_version = AsciiOSVersionToUint64(Entry->OSVersion);
 	  if (os_version >= AsciiOSVersionToUint64("10.8")) {
 		archCpuType = CPU_TYPE_X86_64; // For OSVersion >= 10.8, only x86_64 exists
 	  } else if (os_version < AsciiOSVersionToUint64("10.7")) {
