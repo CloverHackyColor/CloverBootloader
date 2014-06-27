@@ -238,12 +238,13 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
 		archCpuType = CPU_TYPE_X86_64;
 	} else if (Arch != NULL && StrnCmp(Arch,L"i386",StrLen(L"i386")) == 0) {
 		archCpuType = CPU_TYPE_I386;
-	} else if (Entry->OSVersion != NULL && AsciiStrnCmp(Entry->OSVersion,"10.",3) == 0) {
-		if ((Entry->OSVersion[3] >= '8') || (Entry->OSVersion[3] == '1')) {  //assume 10.10 - 10.19
-			archCpuType = CPU_TYPE_X86_64; // For >= 10.8, only x86_64 exists
-		} else if (Entry->OSVersion[3] >= '3' && Entry->OSVersion[3] <= '6') {
-			archCpuType = CPU_TYPE_I386; // For <= 10.6, use default of i386
-		}
+	} else if (Entry->OSVersion != NULL) {
+	  UINT16 os_version = AsciiOSVersionToUint64(Entry->OSVersion);
+	  if (os_version >= AsciiOSVersionToUint64("10.8")) {
+		archCpuType = CPU_TYPE_X86_64; // For OSVersion >= 10.8, only x86_64 exists
+	  } else if (os_version <= AsciiOSVersionToUint64("10.6")) {
+		archCpuType = CPU_TYPE_I386; // For OSVersion <= 10.6, use default of i386
+	  }
 	}
 
 //	Volume = Entry->Volume;
