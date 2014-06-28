@@ -1272,7 +1272,7 @@ INT32 CmpDev(UINT8 *dsdt, UINT32 i, UINT8 *Name)
 // return position or -1 if not found
 INT32 FindBin (UINT8 *dsdt, UINT32 len, UINT8* bin, UINT32 N)
 {
-  INT32 i, j;
+  UINT32 i, j;
   BOOLEAN eq;
   
   for (i=0; i<len-N; i++) {
@@ -1284,7 +1284,7 @@ INT32 FindBin (UINT8 *dsdt, UINT32 len, UINT8* bin, UINT32 N)
       }
     }
     if (eq) {
-      return i;
+      return (INT32)i;
     }
   }
   return -1;

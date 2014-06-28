@@ -544,21 +544,21 @@ BOOLEAN PatchCPUID(UINT8* bytes, UINT8* Location, INT32 LenLoc,
   UINT8 FakeModel = (gSettings.FakeCPUID >> 4) & 0x0f;
   UINT8 FakeExt   = (gSettings.FakeCPUID >> 10) & 0x0f;
   for (Num = 0; Num < 2; Num++) {
-    Adr = FindBin(bytes + (UINT32)Adr, 0x1000000 - Adr, Location, LenLoc);
+    Adr = FindBin(&bytes[Adr], 0x800000 - Adr, Location, LenLoc);
     if (Adr < 0) {
       break;
     }
     DBG_RT("found location at %x\n", Adr);
-    patchLocation = FindBin(bytes + (UINT32)Adr, 0x100, Search4, Len);
+    patchLocation = FindBin(&bytes[Adr], 0x100, Search4, Len);
     if (patchLocation > 0 && patchLocation < 70) {
       //found
-      DBG_RT("found Model location at %d\n", Adr + patchLocation);
-      CopyMem(bytes + Adr + patchLocation, ReplaceModel, Len);
+      DBG_RT("found Model location at %x\n", Adr + patchLocation);
+      CopyMem(&bytes[Adr + patchLocation], ReplaceModel, Len);
       bytes[Adr + patchLocation + 1] = FakeModel;
-      patchLocation1 = FindBin(bytes + Adr, 0x100, Search10, Len);
+      patchLocation1 = FindBin(&bytes[Adr], 0x100, Search10, Len);
       if (patchLocation1 > 0 && patchLocation1 < 100) {
-        DBG_RT("found ExtModel location at %d\n", Adr + patchLocation);
-        CopyMem(bytes + Adr + patchLocation1, ReplaceExt, Len);
+        DBG_RT("found ExtModel location at %x\n", Adr + patchLocation1);
+        CopyMem(&bytes[Adr + patchLocation1], ReplaceExt, Len);
         bytes[Adr + patchLocation1 + 1] = FakeExt;
       }
       Patched = TRUE;
