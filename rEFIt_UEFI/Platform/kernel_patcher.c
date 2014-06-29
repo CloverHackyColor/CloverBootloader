@@ -1,4 +1,6 @@
 /*
+ * Original idea of patching kernel by Evan Lojewsky, 2009
+ *
  * Copyright (c) 2011-2012 Frank Peng. All rights reserved.
  *
  */
