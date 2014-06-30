@@ -3,6 +3,7 @@
  *
  * Copyright (c) 2011-2012 Frank Peng. All rights reserved.
  *
+ * Correction and improvements by Clover team
  */
 
 #include "Platform.h"
@@ -54,83 +55,6 @@ UINT32     PrelinkInfoAddr = 0;
 UINT32     PrelinkInfoSize = 0;
 
 
-/*
-typedef struct kernSymbols_t
-{
-    CHAR8* symbol;
-    UINT64 addr;
-    struct kernSymbols_t* next;
-} kernSymbols_t;
-
-kernSymbols_t* kernelSymbols = NULL;
-
-VOID register_kernel_symbol(CONST CHAR8* name)
-{
-    if(kernelSymbols == NULL)
-    {
-        kernelSymbols = AllocateZeroPool(sizeof(kernSymbols_t));
-        kernelSymbols->next = NULL;
-        kernelSymbols->symbol = (CHAR8*)name;
-        kernelSymbols->addr = 0;
-    }
-    else 
-    {
-        kernSymbols_t *symbol = kernelSymbols;
-        while(symbol->next != NULL)
-        {
-            symbol = symbol->next;
-        }
-        
-        symbol->next = AllocateZeroPool(sizeof(kernSymbols_t));
-        symbol = symbol->next;
-
-        symbol->next = NULL;
-        symbol->symbol = (CHAR8*)name;
-        symbol->addr = 0;
-    }
-}
-
-kernSymbols_t* lookup_kernel_symbol(CONST CHAR8* name)
-{
-    kernSymbols_t *symbol = kernelSymbols;
-
-    while(symbol && (AsciiStrCmp(symbol->symbol, name)!=0))
-    {
-        symbol = symbol->next;
-    }
-    
-    if(!symbol)
-    {
-        return NULL;
-    }
-    else
-    {
-        return symbol;
-    }
-
-}
-
-UINT64 symbol_handler(CHAR8* symbolName, UINT64 addr)
-{
-    // Locate the symbol in the list, if it exists, update it's address
-    kernSymbols_t *symbol = lookup_kernel_symbol(symbolName);
-    
-    if(symbol)
-    {
-        symbol->addr = addr;
-    }
-    
-    return 0x7FFFFFFF; // fixme
-}
-
-INTN locate_symbols(VOID* kernelData)
-{
-    //DecodeMachO(kernelData);
-    return 1;
-}
-
-*/
-
 VOID SetKernelRelocBase()
 {
   EFI_STATUS      Status;
@@ -143,7 +67,7 @@ VOID SetKernelRelocBase()
   return;
 }
 
-
+//TimeWalker - extended and corrected for systems up to Yosemite
 
 VOID KernelPatcher_64(VOID* kernelData, CHAR8 *OSVersion)
 {
@@ -207,20 +131,20 @@ VOID KernelPatcher_64(VOID* kernelData, CHAR8 *OSVersion)
              Here is our case from CPUID switch statement, it sets CPUFAMILY_UNKNOWN
              C7051C2C5F0000000000   mov     dword [ds:0xffffff80008a22c0], 0x0 (example from 10.7)
              */
-            switchaddr = patchLocation-19;
+            switchaddr = patchLocation - 19;
             DBG_RT("switch statement patch location is 0x%08x\n", (switchaddr+6));
         
-            if (bytes[switchaddr+0] == 0xC7 && bytes[switchaddr+1] == 0x05 &&
-                bytes[switchaddr+5] == 0x00 && bytes[switchaddr+6] == 0x00 &&
-                bytes[switchaddr+7] == 0x00 && bytes[switchaddr+8] == 0x00) {
+            if (bytes[switchaddr + 0] == 0xC7 && bytes[switchaddr + 1] == 0x05 &&
+                bytes[switchaddr + 5] == 0x00 && bytes[switchaddr + 6] == 0x00 &&
+                bytes[switchaddr + 7] == 0x00 && bytes[switchaddr + 8] == 0x00) {
 
                 // Determine cpuid_family address from above mov operation
                 cpuid_family_addr =
-                bytes[switchaddr + 2] <<  0 |
-                bytes[switchaddr + 3] <<  8 |
-                bytes[switchaddr + 4] << 16 |
-                bytes[switchaddr + 5] << 24;
-                cpuid_family_addr = cpuid_family_addr + (switchaddr+10);
+                  bytes[switchaddr + 2] <<  0 |
+                  bytes[switchaddr + 3] <<  8 |
+                  bytes[switchaddr + 4] << 16 |
+                  bytes[switchaddr + 5] << 24;
+                cpuid_family_addr = cpuid_family_addr + (switchaddr + 10);
                     
                 if (cpuid_family_addr) {
                     
@@ -300,17 +224,17 @@ VOID KernelPatcher_64(VOID* kernelData, CHAR8 *OSVersion)
         switchaddr = patchLocation-45;
         DBG_RT("switch statement patch location is 0x%08x\n", switchaddr);
         
-        if(bytes[switchaddr+0] == 0x83 && bytes[switchaddr+1] == 0x3D &&
-           bytes[switchaddr+5] == 0x00 && bytes[switchaddr+6] == 0x00 &&
-           bytes[switchaddr+7] == 0x74) {
+        if(bytes[switchaddr + 0] == 0x83 && bytes[switchaddr + 1] == 0x3D &&
+           bytes[switchaddr + 5] == 0x00 && bytes[switchaddr + 6] == 0x00 &&
+           bytes[switchaddr + 7] == 0x74) {
             
             // Determine cpuid_family address
             // 891D4F945F00    mov        dword [ds:0xffffff80008a21a0], ebx
             cpuid_family_addr =
-            bytes[switchaddr - 4] <<  0 |
-            bytes[switchaddr - 3] <<  8 |
-            bytes[switchaddr - 2] << 16 |
-            bytes[switchaddr - 1] << 24;
+              bytes[switchaddr - 4] <<  0 |
+              bytes[switchaddr - 3] <<  8 |
+              bytes[switchaddr - 2] << 16 |
+              bytes[switchaddr - 1] << 24;
             cpuid_family_addr = cpuid_family_addr + switchaddr;
 
             if (cpuid_family_addr) {
@@ -407,8 +331,9 @@ VOID KernelPatcher_32(VOID* kernelData, CHAR8 *OSVersion)
   // find _tsc_init panic address
   for (i=0; i<0x1000000; i++) {
     // _cpuid_set_info _panic address
-    if (bytes[i] == 0xC7 && bytes[i+1] == 0x04 && bytes[i+2] == 0x24 && bytes[i+3] == 0x54 &&
-        bytes[i+4] == 0x0E && bytes[i+5] == 0x59 && bytes[i+6] == 0x00) {
+    if (bytes[i] == 0xC7 && bytes[i+1] == 0x04 && bytes[i+2] == 0x24 &&
+        bytes[i+3] == 0x54 && bytes[i+4] == 0x0E && bytes[i+5] == 0x59 &&
+        bytes[i+6] == 0x00) {
       patchLocation1 = i+7;
       DBG("Found _tsc_init _panic address at 0x%08x\n",patchLocation1);
       break;
@@ -485,6 +410,8 @@ VOID KernelPatcher_32(VOID* kernelData, CHAR8 *OSVersion)
     }
   }
 }
+
+//Slice - FakeCPUID substitution, (c)2014
 
 //procedure location
 STATIC UINT8 StrCpuid1[] = {
