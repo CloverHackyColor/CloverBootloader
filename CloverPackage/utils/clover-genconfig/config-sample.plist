@@ -543,6 +543,16 @@
 				<data>TA==</data>
 			</dict>
 			<dict>
+				<key>Comment</key>
+				<string>Trim enabler</string>
+				<key>Name</key>
+				<string>AppleAHCIPort</string>
+				<key>Find</key>
+				<data>QVBQTEUgU1NE</data>
+				<key>Replace</key>
+				<data>AAAAAAAAAAAA</data>
+			</dict>
+			<dict>
 				<key>Find</key>
 				<data>RXh0ZXJuYWw=</data>
 				<key>Name</key>

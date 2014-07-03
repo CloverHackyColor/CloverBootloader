@@ -471,7 +471,7 @@ BOOLEAN PatchCPUID(UINT8* bytes, UINT8* Location, INT32 LenLoc,
   INT32 Adr = 0, Num;
   BOOLEAN Patched = FALSE;
   UINT8 FakeModel = (gSettings.FakeCPUID >> 4) & 0x0f;
-  UINT8 FakeExt   = (gSettings.FakeCPUID >> 10) & 0x0f;
+  UINT8 FakeExt   = (gSettings.FakeCPUID >> 0x10) & 0x0f;
   for (Num = 0; Num < 2; Num++) {
     Adr = FindBin(&bytes[Adr], 0x800000 - Adr, Location, LenLoc);
     if (Adr < 0) {
@@ -1235,12 +1235,6 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
     // Kernel patches
     //
     DBG_RT("Enabled: ");
- /*   if ((gCPUStructure.Family!=0x06 && AsciiStrStr(OSVersion,"10.7")!=0)||
-        (gCPUStructure.Model==CPU_MODEL_ATOM &&
-         ((AsciiStrStr(OSVersion,"10.7")!=0) || AsciiStrStr(OSVersion,"10.6")!=0)) ||
-        (gCPUStructure.Model==CPU_MODEL_IVY_BRIDGE && AsciiStrStr(OSVersion,"10.7")!=0) ||
-        (gCPUStructure.Model==CPU_MODEL_IVY_BRIDGE_E5 && AsciiStrStr(OSVersion,"10.7")!=0)
-        ) { */
       KernelAndKextPatcherInit();
       if (KernelData == NULL) {
         if (gSettings.KPDebug) {
@@ -1258,9 +1252,6 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
         KernelPatcher_32(KernelData, Entry->OSVersion);
       }
       DBG_RT(" OK\n");
- /*   } else {
-      DBG_RT(" Not executed!\n");
-    } */
   } else {
     DBG_RT("Not done - Disabled.\n");
   }
@@ -1268,6 +1259,14 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
   //other method for KernelCPU patch is FakeCPUID
   if (gSettings.FakeCPUID) {
     DBG_RT("KernelCPUID patch to: 0x%06x\n", gSettings.FakeCPUID);
+    KernelAndKextPatcherInit();
+    if (KernelData == NULL) {
+      if (gSettings.KPDebug) {
+        DBG_RT("ERROR: Kernel not found\n");
+        gBS->Stall(5000000);
+      }
+      return;
+    }
     KernelCPUIDPatch(KernelData);
   } else {
     DBG_RT("KernelCPUID patch not done\n");
