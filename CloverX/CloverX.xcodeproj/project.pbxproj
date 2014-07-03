@@ -364,6 +364,8 @@
 		12896DB116B3A10A00A2EC36 /* VBoxFswParam.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VBoxFswParam.h; sourceTree = "<group>"; };
 		12896DB216B3A10A00A2EC36 /* VBoxHfs.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = VBoxHfs.inf; sourceTree = "<group>"; };
 		12896DB316B3A10A00A2EC36 /* VBoxIso9660.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = VBoxIso9660.inf; sourceTree = "<group>"; };
+		129109A01965478600831759 /* string.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = string.c; sourceTree = "<group>"; };
+		129109A11965478600831759 /* string.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = string.h; sourceTree = "<group>"; };
 		1294B5C3165BF86600183BFD /* BiosBlkIo.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BiosBlkIo.c; sourceTree = "<group>"; };
 		1294B5C4165BF86600183BFD /* BiosBlkIo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BiosBlkIo.h; sourceTree = "<group>"; };
 		1294B5C5165BF86600183BFD /* BiosInt13.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BiosInt13.c; sourceTree = "<group>"; };
@@ -1790,6 +1792,8 @@
 				12B816E11644675800A433E7 /* sse3_patcher.h */,
 				12B816E21644675800A433E7 /* StateGenerator.c */,
 				12B816E31644675800A433E7 /* StateGenerator.h */,
+				129109A01965478600831759 /* string.c */,
+				129109A11965478600831759 /* string.h */,
 				12B816E51644675800A433E7 /* usbfix.c */,
 			);
 			path = Platform;

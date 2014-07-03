@@ -65,7 +65,8 @@ static INTN MaxItemOnScreen = -1;
 REFIT_MENU_SCREEN OptionMenu  = {4, L"Options", NULL, 0, NULL, 0, NULL, 0, NULL, NULL, FALSE, FALSE, 0, 0, 0, 0, {0, 0, 0, 0}, NULL };
 extern REFIT_MENU_ENTRY MenuEntryReturn;
 extern UINTN            ThemesNum;
-extern CHAR16            *ThemesList[];
+extern CHAR16           *ThemesList[];
+extern CHAR8            *NonDetected;
 
 INTN LayoutBannerOffset = 64;
 INTN LayoutButtonOffset = 0;
@@ -316,12 +317,10 @@ VOID RefillInputs(VOID)
   InputItems[InputItemsCount].ItemType = Decimal;  //50
   InputItems[InputItemsCount++].SValue = PoolPrint(L"%d", gSettings.RefCLK);
 
-  /*
-  InputItems[InputItemsCount].ItemType = BoolValue; //51
-  InputItems[InputItemsCount].BValue = gSettings.bDropECDT;
-  InputItems[InputItemsCount++].SValue = gSettings.bDropECDT?L"[+]":L"[ ]";
-  */
-  InputItemsCount = 52;
+  InputItems[InputItemsCount].ItemType = ASString;  //51
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, SVALUE_MAX_SIZE, L"%a ", NonDetected);
+
+//  InputItemsCount = 52;
   InputItems[InputItemsCount].ItemType = BoolValue; //52
   InputItems[InputItemsCount].BValue = gSettings.InjectEDID;
   InputItems[InputItemsCount++].SValue = gSettings.InjectEDID?L"[+]":L"[ ]"; 
@@ -422,9 +421,6 @@ VOID RefillInputs(VOID)
   InputItems[InputItemsCount].ItemType = Hex;  //104
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%04X", dropDSM);
   
-/*  InputItems[InputItemsCount].ItemType = BoolValue; //104
-  InputItems[InputItemsCount].BValue   = gSettings.DropOEM_DSM;
-  InputItems[InputItemsCount++].SValue = gSettings.DropOEM_DSM?L"[+]":L"[ ]"; */
   InputItems[InputItemsCount].ItemType = BoolValue; //105
   InputItems[InputItemsCount].BValue   = gSettings.DebugDSDT;
   InputItems[InputItemsCount++].SValue = gSettings.DebugDSDT?L"[+]":L"[ ]";
@@ -607,12 +603,10 @@ VOID FillInputs(VOID)
   InputItems[InputItemsCount].ItemType = Decimal;  //50
   InputItems[InputItemsCount++].SValue = PoolPrint(L"%d", gSettings.RefCLK);
 
-  /*
-  InputItems[InputItemsCount].ItemType = BoolValue; //51
-  InputItems[InputItemsCount].BValue = gSettings.bDropECDT;
-  InputItems[InputItemsCount++].SValue = gSettings.bDropECDT?L"[+]":L"[ ]";
-  */
-  InputItemsCount = 52;
+  InputItems[InputItemsCount].ItemType = ASString;  //51
+  InputItems[InputItemsCount].SValue = AllocateZeroPool(SVALUE_MAX_SIZE);
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, SVALUE_MAX_SIZE, L"%a ", NonDetected);
+//  InputItemsCount = 52;
   InputItems[InputItemsCount].ItemType = BoolValue; //52
   InputItems[InputItemsCount].BValue = gSettings.InjectEDID;
   InputItems[InputItemsCount++].SValue = gSettings.InjectEDID?L"[+]":L"[ ]";
@@ -946,13 +940,13 @@ VOID ApplyInputs(VOID)
   if (InputItems[i].Valid) {
     gSettings.RefCLK = (UINT32)StrDecimalToUintn(InputItems[i].SValue);
   }
-  /*
+  
   i++; //51
   if (InputItems[i].Valid) {
-    gSettings.bDropECDT = InputItems[i].BValue;
+    AsciiSPrint(NonDetected, 64, "%s", InputItems[i].SValue);
   }
-  */
-  i=52; //52
+  
+  i++; //52
   if (InputItems[i].Valid) {
     gSettings.InjectEDID = InputItems[i].BValue;
   }
@@ -4096,7 +4090,16 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     InputBootArgs->Entry.AtClick = ActionSelect;
     InputBootArgs->Entry.AtDoubleClick = ActionEnter;
     AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
-    
+
+    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+    UnicodeSPrint(Flags, 255, L"Set OS version if not:");
+    InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
+    InputBootArgs->Entry.Tag = TAG_INPUT;
+    InputBootArgs->Entry.Row = StrLen(InputItems[51].SValue);
+    InputBootArgs->Item = &InputItems[51];
+    InputBootArgs->Entry.AtClick = ActionSelect;
+    InputBootArgs->Entry.AtDoubleClick = ActionEnter;
+    AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
     
     if (AllowGraphicsMode) {
       InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));

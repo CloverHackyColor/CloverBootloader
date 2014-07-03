@@ -959,61 +959,61 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
 
 static VOID ScanExtendedPartition(REFIT_VOLUME *WholeDiskVolume, MBR_PARTITION_INFO *MbrEntry)
 {
-    EFI_STATUS              Status;
-    REFIT_VOLUME            *Volume;
-    UINT32                  ExtBase, ExtCurrent, NextExtCurrent;
-    UINTN                   i;
-    UINTN                   LogicalPartitionIndex = 4;
-    UINT8                   *SectorBuffer;
-    BOOLEAN                 Bootable;
-    MBR_PARTITION_INFO      *EMbrTable;
-    
-    ExtBase = MbrEntry->StartLBA;
-    SectorBuffer = AllocateAlignedPages (EFI_SIZE_TO_PAGES (512), WholeDiskVolume->BlockIO->Media->IoAlign);
+  EFI_STATUS              Status;
+  REFIT_VOLUME            *Volume;
+  UINT32                  ExtBase, ExtCurrent, NextExtCurrent;
+  UINTN                   i;
+  UINTN                   LogicalPartitionIndex = 4;
+  UINT8                   *SectorBuffer;
+  BOOLEAN                 Bootable;
+  MBR_PARTITION_INFO      *EMbrTable;
   
-    for (ExtCurrent = ExtBase; ExtCurrent; ExtCurrent = NextExtCurrent) {
-        // read current EMBR
-        Status = WholeDiskVolume->BlockIO->ReadBlocks(WholeDiskVolume->BlockIO,
-                                                      WholeDiskVolume->BlockIO->Media->MediaId,
-                                                      ExtCurrent, 512, SectorBuffer);
-        if (EFI_ERROR(Status))
-            break;
-        if (*((UINT16 *)(SectorBuffer + 510)) != 0xaa55)
-            break;
-        EMbrTable = (MBR_PARTITION_INFO *)(SectorBuffer + 446);
+  ExtBase = MbrEntry->StartLBA;
+  SectorBuffer = AllocateAlignedPages (EFI_SIZE_TO_PAGES (512), WholeDiskVolume->BlockIO->Media->IoAlign);
+  
+  for (ExtCurrent = ExtBase; ExtCurrent; ExtCurrent = NextExtCurrent) {
+    // read current EMBR
+    Status = WholeDiskVolume->BlockIO->ReadBlocks(WholeDiskVolume->BlockIO,
+                                                  WholeDiskVolume->BlockIO->Media->MediaId,
+                                                  ExtCurrent, 512, SectorBuffer);
+    if (EFI_ERROR(Status))
+      break;
+    if (*((UINT16 *)(SectorBuffer + 510)) != 0xaa55)
+      break;
+    EMbrTable = (MBR_PARTITION_INFO *)(SectorBuffer + 446);
+    
+    // scan logical partitions in this EMBR
+    NextExtCurrent = 0;
+    for (i = 0; i < 4; i++) {
+      if ((EMbrTable[i].Flags != 0x00 && EMbrTable[i].Flags != 0x80) ||
+          EMbrTable[i].StartLBA == 0 || EMbrTable[i].Size == 0)
+        break;
+      if (IS_EXTENDED_PART_TYPE(EMbrTable[i].Type)) {
+        // set next ExtCurrent
+        NextExtCurrent = ExtBase + EMbrTable[i].StartLBA;
+        break;
+      } else {
         
-        // scan logical partitions in this EMBR
-        NextExtCurrent = 0;
-        for (i = 0; i < 4; i++) {
-            if ((EMbrTable[i].Flags != 0x00 && EMbrTable[i].Flags != 0x80) ||
-                EMbrTable[i].StartLBA == 0 || EMbrTable[i].Size == 0)
-                break;
-            if (IS_EXTENDED_PART_TYPE(EMbrTable[i].Type)) {
-                // set next ExtCurrent
-                NextExtCurrent = ExtBase + EMbrTable[i].StartLBA;
-                break;
-            } else {
-                
-                // found a logical partition
-                Volume = AllocateZeroPool(sizeof(REFIT_VOLUME));
-                Volume->DiskKind = WholeDiskVolume->DiskKind;
-                Volume->IsMbrPartition = TRUE;
-                Volume->MbrPartitionIndex = LogicalPartitionIndex++;
-                Volume->VolName = PoolPrint(L"Partition %d", Volume->MbrPartitionIndex + 1);
-                Volume->BlockIO = WholeDiskVolume->BlockIO;
-                Volume->BlockIOOffset = ExtCurrent + EMbrTable[i].StartLBA;
-                Volume->WholeDiskBlockIO = WholeDiskVolume->BlockIO;
-                Volume->WholeDiskDeviceHandle = WholeDiskVolume->DeviceHandle;
-                
-                Bootable = FALSE;
-                ScanVolumeBootcode(Volume, &Bootable);
-                if (!Bootable)
-                    Volume->HasBootCode = FALSE;
-                
-                AddListElement((VOID ***) &Volumes, &VolumesCount, Volume);                
-            }
-        }
+        // found a logical partition
+        Volume = AllocateZeroPool(sizeof(REFIT_VOLUME));
+        Volume->DiskKind = WholeDiskVolume->DiskKind;
+        Volume->IsMbrPartition = TRUE;
+        Volume->MbrPartitionIndex = LogicalPartitionIndex++;
+        Volume->VolName = PoolPrint(L"Partition %d", Volume->MbrPartitionIndex + 1);
+        Volume->BlockIO = WholeDiskVolume->BlockIO;
+        Volume->BlockIOOffset = ExtCurrent + EMbrTable[i].StartLBA;
+        Volume->WholeDiskBlockIO = WholeDiskVolume->BlockIO;
+        Volume->WholeDiskDeviceHandle = WholeDiskVolume->DeviceHandle;
+        
+        Bootable = FALSE;
+        ScanVolumeBootcode(Volume, &Bootable);
+        if (!Bootable)
+          Volume->HasBootCode = FALSE;
+        
+        AddListElement((VOID ***) &Volumes, &VolumesCount, Volume);
+      }
     }
+  }
   gBS->FreePages((EFI_PHYSICAL_ADDRESS)(UINTN)SectorBuffer, 1);
 }
 
