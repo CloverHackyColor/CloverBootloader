@@ -1,7 +1,7 @@
 /** @file
 Dynamically update the pages.
 
-Copyright (c) 2004 - 2011, Intel Corporation. All rights reserved.<BR>
+Copyright (c) 2004 - 2014, Intel Corporation. All rights reserved.<BR>
 This program and the accompanying materials
 are licensed and made available under the terms and conditions of the BSD License
 which accompanies this distribution.  The full text of the license may be found at
@@ -255,7 +255,7 @@ UpdateBootDelPage (
   UpdatePageStart (CallbackData);
   CreateMenuStringToken (CallbackData, CallbackData->BmmHiiHandle, &BootOptionMenu);
 
-  ASSERT (BootOptionMenu.MenuNumber <= (sizeof (CallbackData->BmmFakeNvData.OptionDel) / sizeof (CallbackData->BmmFakeNvData.OptionDel[0])));
+  ASSERT (BootOptionMenu.MenuNumber <= (sizeof (CallbackData->BmmFakeNvData.BootOptionDel) / sizeof (CallbackData->BmmFakeNvData.BootOptionDel[0])));
   for (Index = 0; Index < BootOptionMenu.MenuNumber; Index++) {
     NewMenuEntry    = BOpt_GetMenuEntry (&BootOptionMenu, Index);
     NewLoadContext  = (BM_LOAD_CONTEXT *) NewMenuEntry->VariableContext;
@@ -264,16 +264,25 @@ UpdateBootDelPage (
     }
 
     NewLoadContext->Deleted = FALSE;
-    CallbackData->BmmFakeNvData.OptionDel[Index] = FALSE;
+
+    if (CallbackData->BmmFakeNvData.BootOptionDel[Index] && !CallbackData->BmmFakeNvData.BootOptionDelMark[Index]) {
+      //
+      // CallbackData->BmmFakeNvData.BootOptionDel[Index] == TRUE means browser knows this boot option is selected
+      // CallbackData->BmmFakeNvData.BootOptionDelMark[Index] = FALSE means BDS knows the selected boot option has
+      // deleted, browser maintains old useless info. So clear this info here, and later update this info to browser
+      // through HiiSetBrowserData function.
+      //
+      CallbackData->BmmFakeNvData.BootOptionDel[Index] = FALSE;
+    }
 
     HiiCreateCheckBoxOpCode (
       mStartOpCodeHandle,
-      (EFI_QUESTION_ID) (OPTION_DEL_QUESTION_ID + Index),
+      (EFI_QUESTION_ID) (BOOT_OPTION_DEL_QUESTION_ID + Index),
       VARSTORE_ID_BOOT_MAINT,
-      (UINT16) (OPTION_DEL_VAR_OFFSET + Index),
+      (UINT16) (BOOT_OPTION_DEL_VAR_OFFSET + Index),
       NewMenuEntry->DisplayStringToken,
       NewMenuEntry->HelpStringToken,
-      0,
+      EFI_IFR_FLAG_CALLBACK,
       0,
       NULL
       );
@@ -338,22 +347,31 @@ UpdateDrvDelPage (
 
   CreateMenuStringToken (CallbackData, CallbackData->BmmHiiHandle, &DriverOptionMenu);
   
-  ASSERT (DriverOptionMenu.MenuNumber <= (sizeof (CallbackData->BmmFakeNvData.OptionDel) / sizeof (CallbackData->BmmFakeNvData.OptionDel[0])));
+  ASSERT (DriverOptionMenu.MenuNumber <= (sizeof (CallbackData->BmmFakeNvData.DriverOptionDel) / sizeof (CallbackData->BmmFakeNvData.DriverOptionDel[0])));
   for (Index = 0; Index < DriverOptionMenu.MenuNumber; Index++) {
     NewMenuEntry            = BOpt_GetMenuEntry (&DriverOptionMenu, Index);
 
     NewLoadContext          = (BM_LOAD_CONTEXT *) NewMenuEntry->VariableContext;
     NewLoadContext->Deleted = FALSE;
-    CallbackData->BmmFakeNvData.OptionDel[Index] = FALSE;
+
+    if (CallbackData->BmmFakeNvData.DriverOptionDel[Index] && !CallbackData->BmmFakeNvData.DriverOptionDelMark[Index]) {
+      //
+      // CallbackData->BmmFakeNvData.BootOptionDel[Index] == TRUE means browser knows this boot option is selected
+      // CallbackData->BmmFakeNvData.BootOptionDelMark[Index] = FALSE means BDS knows the selected boot option has
+      // deleted, browser maintains old useless info. So clear this info here, and later update this info to browser
+      // through HiiSetBrowserData function.
+      //
+      CallbackData->BmmFakeNvData.DriverOptionDel[Index] = FALSE;
+    }
 
     HiiCreateCheckBoxOpCode (
       mStartOpCodeHandle,
-      (EFI_QUESTION_ID) (OPTION_DEL_QUESTION_ID + Index),
+      (EFI_QUESTION_ID) (DRIVER_OPTION_DEL_QUESTION_ID + Index),
       VARSTORE_ID_BOOT_MAINT,
-      (UINT16) (OPTION_DEL_VAR_OFFSET + Index),
+      (UINT16) (DRIVER_OPTION_DEL_VAR_OFFSET + Index),
       NewMenuEntry->DisplayStringToken,
       NewMenuEntry->HelpStringToken,
-      0,
+      EFI_IFR_FLAG_CALLBACK,
       0,
       NULL
       );
@@ -449,74 +467,60 @@ UpdateConsolePage (
   IN BMM_CALLBACK_DATA                *CallbackData
   )
 {
-/*  BM_MENU_ENTRY       *NewMenuEntry;
-  BM_CONSOLE_CONTEXT  *NewConsoleContext;
-  BM_TERMINAL_CONTEXT *NewTerminalContext;
+  BM_MENU_ENTRY       *NewMenuEntry;
   UINT16              Index;
-  UINT16              Index2;
-  UINT8               CheckFlags;*/
+  UINT8               CheckFlags;
+  UINT8               *ConsoleCheck;
+  EFI_QUESTION_ID     QuestionIdBase;
+  UINT16              VariableOffsetBase;
  
-  CallbackData->BmmAskSaveOrNot = TRUE;
-
   UpdatePageStart (CallbackData);
-/*
+
+  ConsoleCheck       = NULL;
+  QuestionIdBase     = 0;
+  VariableOffsetBase = 0;
+
+  switch (UpdatePageId) {
+  case FORM_CON_IN_ID:
+    ConsoleCheck       = &CallbackData->BmmFakeNvData.ConsoleInCheck[0];
+    QuestionIdBase     = CON_IN_DEVICE_QUESTION_ID;
+    VariableOffsetBase = CON_IN_DEVICE_VAR_OFFSET;
+    break;
+
+  case FORM_CON_OUT_ID:
+    ConsoleCheck       = &CallbackData->BmmFakeNvData.ConsoleOutCheck[0];
+    QuestionIdBase     = CON_OUT_DEVICE_QUESTION_ID;
+    VariableOffsetBase = CON_OUT_DEVICE_VAR_OFFSET;
+    break;
+
+  case FORM_CON_ERR_ID:
+    ConsoleCheck       = &CallbackData->BmmFakeNvData.ConsoleErrCheck[0];
+    QuestionIdBase     = CON_ERR_DEVICE_QUESTION_ID;
+    VariableOffsetBase = CON_ERR_DEVICE_VAR_OFFSET;
+    break;
+  }
+  ASSERT (ConsoleCheck != NULL);
+
   for (Index = 0; ((Index < ConsoleMenu->MenuNumber) && \
-       (Index < (sizeof (CallbackData->BmmFakeNvData.ConsoleCheck) / sizeof (UINT8)))) ; Index++) {
-    NewMenuEntry      = BOpt_GetMenuEntry (ConsoleMenu, Index);
-    NewConsoleContext = (BM_CONSOLE_CONTEXT *) NewMenuEntry->VariableContext;
-    CheckFlags        = 0;
-    if (NewConsoleContext->IsActive) {
-      CheckFlags |= EFI_IFR_CHECKBOX_DEFAULT;
-      CallbackData->BmmFakeNvData.ConsoleCheck[Index] = TRUE;
-    } else {
-      CallbackData->BmmFakeNvData.ConsoleCheck[Index] = FALSE;
-    }
-
-    HiiCreateCheckBoxOpCode (
-      mStartOpCodeHandle,
-      (EFI_QUESTION_ID) (CON_DEVICE_QUESTION_ID + Index),
-      VARSTORE_ID_BOOT_MAINT,
-      (UINT16) (CON_DEVICE_VAR_OFFSET + Index),
-      NewMenuEntry->DisplayStringToken,
-      NewMenuEntry->HelpStringToken,
-      0,
-      CheckFlags,
-      NULL
-      );
-  }
-
-  for (Index2 = 0; ((Index2 < TerminalMenu.MenuNumber) && \
-       (Index2 < (sizeof (CallbackData->BmmFakeNvData.ConsoleCheck) / sizeof (UINT8)))); Index2++) {
+       (Index < MAX_MENU_NUMBER)) ; Index++) {
     CheckFlags          = 0;
-    NewMenuEntry        = BOpt_GetMenuEntry (&TerminalMenu, Index2);
-    NewTerminalContext  = (BM_TERMINAL_CONTEXT *) NewMenuEntry->VariableContext;
-
-    ASSERT (Index < MAX_MENU_NUMBER);
-    if (((NewTerminalContext->IsConIn != 0) && (UpdatePageId == FORM_CON_IN_ID)) ||
-        ((NewTerminalContext->IsConOut != 0) && (UpdatePageId == FORM_CON_OUT_ID)) ||
-        ((NewTerminalContext->IsStdErr != 0) && (UpdatePageId == FORM_CON_ERR_ID))
-        ) {
+    if (UpdatePageId != FORM_CON_ERR_ID) {
       CheckFlags |= EFI_IFR_CHECKBOX_DEFAULT;
-      CallbackData->BmmFakeNvData.ConsoleCheck[Index] = TRUE;
-    } else {
-      CallbackData->BmmFakeNvData.ConsoleCheck[Index] = FALSE;
     }
-
+    NewMenuEntry = BOpt_GetMenuEntry (ConsoleMenu, Index);
     HiiCreateCheckBoxOpCode (
       mStartOpCodeHandle,
-      (EFI_QUESTION_ID) (CON_DEVICE_QUESTION_ID + Index),
+      (EFI_QUESTION_ID) (QuestionIdBase + Index),
       VARSTORE_ID_BOOT_MAINT,
-      (UINT16) (CON_DEVICE_VAR_OFFSET + Index),
+      (UINT16) (VariableOffsetBase + Index),
       NewMenuEntry->DisplayStringToken,
       NewMenuEntry->HelpStringToken,
       0,
       CheckFlags,
       NULL
       );
-
-    Index++;
   }
-*/
+
   UpdatePageEnd (CallbackData);
 }
 
@@ -538,66 +542,71 @@ UpdateOrderPage (
 {
   BM_MENU_ENTRY   *NewMenuEntry;
   UINT16          Index;
-  UINT16          OptionOrderIndex;
+  UINT16            OptionIndex;
   VOID            *OptionsOpCodeHandle;
-  UINTN           DeviceType;
   BM_LOAD_CONTEXT *NewLoadContext;
+  BOOLEAN           BootOptionFound;
+  UINT32            *OptionOrder;
+  EFI_QUESTION_ID   QuestionId;
+  UINT16            VarOffset;
 
-  DeviceType                    = (UINTN) -1;
-  CallbackData->BmmAskSaveOrNot = TRUE;
 
   UpdatePageStart (CallbackData);
 
   CreateMenuStringToken (CallbackData, CallbackData->BmmHiiHandle, OptionMenu);
 
-  ZeroMem (CallbackData->BmmFakeNvData.OptionOrder, sizeof (CallbackData->BmmFakeNvData.OptionOrder));
+  OptionOrder = NULL;
+  QuestionId = 0;
+  VarOffset = 0;
+  switch (UpdatePageId) { 
+
+  case FORM_BOOT_CHG_ID:
+    //GetBootOrder (CallbackData);
+    OptionOrder = CallbackData->BmmFakeNvData.BootOptionOrder;
+    QuestionId = BOOT_OPTION_ORDER_QUESTION_ID;
+    VarOffset = BOOT_OPTION_ORDER_VAR_OFFSET;
+    break;
+
+  case FORM_DRV_CHG_ID:
+    //GetDriverOrder (CallbackData);
+    OptionOrder = CallbackData->BmmFakeNvData.DriverOptionOrder;
+    QuestionId = DRIVER_OPTION_ORDER_QUESTION_ID;
+    VarOffset = DRIVER_OPTION_ORDER_VAR_OFFSET;
+    break;
+  }  
+  ASSERT (OptionOrder != NULL);
 
   OptionsOpCodeHandle = HiiAllocateOpCodeHandle ();
   ASSERT (OptionsOpCodeHandle != NULL);
   
-  for (
-        Index = 0, OptionOrderIndex = 0;
-        (
-          (Index < OptionMenu->MenuNumber) &&
-          (OptionOrderIndex <
-            (
-              sizeof (CallbackData->BmmFakeNvData.OptionOrder) /
-              sizeof (CallbackData->BmmFakeNvData.OptionOrder[0])
-            )
-          )
-        );
-        Index++
-      ) {
+  NewMenuEntry = NULL;
+  for (OptionIndex = 0; (OptionOrder[OptionIndex] != 0 && OptionIndex < MAX_MENU_NUMBER); OptionIndex++) {
+    BootOptionFound = FALSE;
+    for (Index = 0; Index < OptionMenu->MenuNumber; Index++) {
     NewMenuEntry   = BOpt_GetMenuEntry (OptionMenu, Index);
     NewLoadContext = (BM_LOAD_CONTEXT *) NewMenuEntry->VariableContext;
-
-    if (NewLoadContext->IsLegacy) {
-      if (((BBS_BBS_DEVICE_PATH *) NewLoadContext->FilePathList)->DeviceType != DeviceType) {
-        DeviceType = ((BBS_BBS_DEVICE_PATH *) NewLoadContext->FilePathList)->DeviceType;
-      } else {
-        //
-        // Only show one legacy boot option for the same device type
-        // assuming the boot options are grouped by the device type
-        //
-        continue;
+      if ((UINT32) (NewMenuEntry->OptionNumber + 1) == OptionOrder[OptionIndex]) {
+        BootOptionFound = TRUE;
+        break;
       }
     }
+    if (BootOptionFound) {
     HiiCreateOneOfOptionOpCode (
       OptionsOpCodeHandle,
       NewMenuEntry->DisplayStringToken,
       0,
       EFI_IFR_TYPE_NUM_SIZE_32,
-      (UINT32) (NewMenuEntry->OptionNumber + 1)
+        OptionOrder[OptionIndex]
       );
-    CallbackData->BmmFakeNvData.OptionOrder[OptionOrderIndex++] = (UINT32) (NewMenuEntry->OptionNumber + 1);
+    }
   }
 
   if (OptionMenu->MenuNumber > 0) {
     HiiCreateOrderedListOpCode (                   
       mStartOpCodeHandle,                          // Container for dynamic created opcodes     
-      (EFI_QUESTION_ID) OPTION_ORDER_QUESTION_ID,  // Question ID                               
+      QuestionId,                                  // Question ID                               
       VARSTORE_ID_BOOT_MAINT,                      // VarStore ID                               
-      OPTION_ORDER_VAR_OFFSET,                     // Offset in Buffer Storage                  
+      VarOffset,                                   // Offset in Buffer Storage                  
       STRING_TOKEN (STR_CHANGE_ORDER),             // Question prompt text                      
       STRING_TOKEN (STR_CHANGE_ORDER),             // Question help text                        
       0,                                           // Question flag                             
@@ -612,12 +621,6 @@ UpdateOrderPage (
   HiiFreeOpCodeHandle (OptionsOpCodeHandle);
 
   UpdatePageEnd (CallbackData);
-
-  CopyMem (
-    CallbackData->BmmOldFakeNVData.OptionOrder,
-    CallbackData->BmmFakeNvData.OptionOrder,
-    sizeof (CallbackData->BmmOldFakeNVData.OptionOrder)
-    );
 }
 
 /**
@@ -648,7 +651,7 @@ UpdateBootNextPage (
     OptionsOpCodeHandle = HiiAllocateOpCodeHandle ();
     ASSERT (OptionsOpCodeHandle != NULL);
 
-    CallbackData->BmmFakeNvData.BootNext = (UINT16) (BootOptionMenu.MenuNumber);
+    //CallbackData->BmmFakeNvData.BootNext = (UINT16) (BootOptionMenu.MenuNumber);
 
     for (Index = 0; Index < BootOptionMenu.MenuNumber; Index++) {
       NewMenuEntry    = BOpt_GetMenuEntry (&BootOptionMenu, Index);
@@ -662,7 +665,7 @@ UpdateBootNextPage (
           EFI_IFR_TYPE_NUM_SIZE_16,
           Index
           );
-        CallbackData->BmmFakeNvData.BootNext = Index;
+        //CallbackData->BmmFakeNvData.BootNext = Index;
       } else {
         HiiCreateOneOfOptionOpCode (
           OptionsOpCodeHandle,
@@ -752,7 +755,7 @@ UpdateTimeOutPage (
   
   HiiFreeOpCodeHandle (DefaultOpCodeHandle);
 
-  CallbackData->BmmFakeNvData.BootTimeOut = BootTimeOut;
+  //CallbackData->BmmFakeNvData.BootTimeOut = BootTimeOut;
 
   UpdatePageEnd (CallbackData);
 }
@@ -893,14 +896,14 @@ UpdateTerminalPage (
   BM_MENU_ENTRY       *NewMenuEntry;
   BM_TERMINAL_CONTEXT *NewTerminalContext;
   VOID                *OptionsOpCodeHandle;
-
-  CallbackData->BmmAskSaveOrNot = TRUE;
+  UINTN               CurrentTerminal;
 
   UpdatePageStart (CallbackData);
 
+  CurrentTerminal = CallbackData->CurrentTerminal;
   NewMenuEntry = BOpt_GetMenuEntry (
                   &TerminalMenu,
-                  CallbackData->CurrentTerminal
+                  CurrentTerminal
                   );
 
   if (NewMenuEntry == NULL) {
@@ -914,12 +917,9 @@ UpdateTerminalPage (
 
   for (Index = 0; Index < sizeof (BaudRateList) / sizeof (BaudRateList [0]); Index++) {
     CheckFlags = 0;
-    if (NewTerminalContext->BaudRate == (UINT64) (BaudRateList[Index].Value)) {
+    if (BaudRateList[Index].Value == 115200) {
       CheckFlags |= EFI_IFR_OPTION_DEFAULT;
-      NewTerminalContext->BaudRateIndex         = Index;
-      CallbackData->BmmFakeNvData.COMBaudRate  = NewTerminalContext->BaudRateIndex;
     }
-
     HiiCreateOneOfOptionOpCode (
       OptionsOpCodeHandle,
       BaudRateList[Index].StringToken,
@@ -931,9 +931,9 @@ UpdateTerminalPage (
 
   HiiCreateOneOfOpCode (
     mStartOpCodeHandle,
-    (EFI_QUESTION_ID) COM_BAUD_RATE_QUESTION_ID,
+    (EFI_QUESTION_ID) (COM_BAUD_RATE_QUESTION_ID + CurrentTerminal),
     VARSTORE_ID_BOOT_MAINT,
-    COM_BAUD_RATE_VAR_OFFSET,
+    (UINT16) (COM_BAUD_RATE_VAR_OFFSET + CurrentTerminal),
     STRING_TOKEN (STR_COM_BAUD_RATE),
     STRING_TOKEN (STR_COM_BAUD_RATE),
     0,
@@ -949,9 +949,7 @@ UpdateTerminalPage (
   for (Index = 0; Index < sizeof (DataBitsList) / sizeof (DataBitsList[0]); Index++) {
     CheckFlags = 0;
 
-    if (NewTerminalContext->DataBits == DataBitsList[Index].Value) {
-      NewTerminalContext->DataBitsIndex         = Index;
-      CallbackData->BmmFakeNvData.COMDataRate  = NewTerminalContext->DataBitsIndex;
+    if (DataBitsList[Index].Value == 8) {
       CheckFlags |= EFI_IFR_OPTION_DEFAULT;
     }
 
@@ -966,9 +964,9 @@ UpdateTerminalPage (
 
   HiiCreateOneOfOpCode (
     mStartOpCodeHandle,
-    (EFI_QUESTION_ID) COM_DATA_RATE_QUESTION_ID,
+    (EFI_QUESTION_ID) (COM_DATA_RATE_QUESTION_ID + CurrentTerminal),
     VARSTORE_ID_BOOT_MAINT,
-    COM_DATA_RATE_VAR_OFFSET,
+    (UINT16) (COM_DATA_RATE_VAR_OFFSET + CurrentTerminal),
     STRING_TOKEN (STR_COM_DATA_BITS),
     STRING_TOKEN (STR_COM_DATA_BITS),
     0,
@@ -983,10 +981,8 @@ UpdateTerminalPage (
 
   for (Index = 0; Index < sizeof (ParityList) / sizeof (ParityList[0]); Index++) {
     CheckFlags = 0;
-    if (NewTerminalContext->Parity == ParityList[Index].Value) {
+    if (ParityList[Index].Value ==  NoParity) {
       CheckFlags |= EFI_IFR_OPTION_DEFAULT;
-      NewTerminalContext->ParityIndex         = (UINT8) Index;
-      CallbackData->BmmFakeNvData.COMParity  = NewTerminalContext->ParityIndex;
     }
 
     HiiCreateOneOfOptionOpCode (
@@ -1000,9 +996,9 @@ UpdateTerminalPage (
 
   HiiCreateOneOfOpCode (
     mStartOpCodeHandle,
-    (EFI_QUESTION_ID) COM_PARITY_QUESTION_ID,
+    (EFI_QUESTION_ID) (COM_PARITY_QUESTION_ID + CurrentTerminal),
     VARSTORE_ID_BOOT_MAINT,
-    COM_PARITY_VAR_OFFSET,
+    (UINT16) (COM_PARITY_VAR_OFFSET + CurrentTerminal),
     STRING_TOKEN (STR_COM_PARITY),
     STRING_TOKEN (STR_COM_PARITY),
     0,
@@ -1017,10 +1013,8 @@ UpdateTerminalPage (
 
   for (Index = 0; Index < sizeof (StopBitsList) / sizeof (StopBitsList[0]); Index++) {
     CheckFlags = 0;
-    if (NewTerminalContext->StopBits == StopBitsList[Index].Value) {
+    if (StopBitsList[Index].Value == OneStopBit) {
       CheckFlags |= EFI_IFR_OPTION_DEFAULT;
-      NewTerminalContext->StopBitsIndex         = (UINT8) Index;
-      CallbackData->BmmFakeNvData.COMStopBits  = NewTerminalContext->StopBitsIndex;
     }
 
     HiiCreateOneOfOptionOpCode (
@@ -1034,9 +1028,9 @@ UpdateTerminalPage (
 
   HiiCreateOneOfOpCode (
     mStartOpCodeHandle,
-    (EFI_QUESTION_ID) COM_STOP_BITS_QUESTION_ID,
+    (EFI_QUESTION_ID) (COM_STOP_BITS_QUESTION_ID + CurrentTerminal),
     VARSTORE_ID_BOOT_MAINT,
-    COM_STOP_BITS_VAR_OFFSET,
+    (UINT16) (COM_STOP_BITS_VAR_OFFSET + CurrentTerminal),
     STRING_TOKEN (STR_COM_STOP_BITS),
     STRING_TOKEN (STR_COM_STOP_BITS),
     0,
@@ -1051,9 +1045,8 @@ UpdateTerminalPage (
 
   for (Index = 0; Index < 4; Index++) {
     CheckFlags = 0;
-    if (NewTerminalContext->TerminalType == Index) {
+    if (Index == 0) {
       CheckFlags |= EFI_IFR_OPTION_DEFAULT;
-      CallbackData->BmmFakeNvData.COMTerminalType = NewTerminalContext->TerminalType;
     }
 
     HiiCreateOneOfOptionOpCode (
@@ -1067,9 +1060,9 @@ UpdateTerminalPage (
 
   HiiCreateOneOfOpCode (
     mStartOpCodeHandle,
-    (EFI_QUESTION_ID) COM_TERMINAL_QUESTION_ID,
+    (EFI_QUESTION_ID) (COM_TERMINAL_QUESTION_ID + CurrentTerminal),
     VARSTORE_ID_BOOT_MAINT,
-    COM_TERMINAL_VAR_OFFSET,
+    (UINT16) (COM_TERMINAL_VAR_OFFSET + CurrentTerminal),
     STRING_TOKEN (STR_COM_TERMI_TYPE),
     STRING_TOKEN (STR_COM_TERMI_TYPE),
     0,
@@ -1082,12 +1075,15 @@ UpdateTerminalPage (
   OptionsOpCodeHandle = HiiAllocateOpCodeHandle ();
   ASSERT (OptionsOpCodeHandle != NULL);
 
-  CallbackData->BmmFakeNvData.COMFlowControl = NewTerminalContext->FlowControl;
   for (Index = 0; Index < sizeof (mFlowControlType) / sizeof (mFlowControlType[0]); Index++) {
+  CheckFlags = 0;
+    if (Index == 0) {
+      CheckFlags |= EFI_IFR_OPTION_DEFAULT;
+    }
     HiiCreateOneOfOptionOpCode (
       OptionsOpCodeHandle,
       (EFI_STRING_ID) mFlowControlType[Index],
-      0,
+      CheckFlags,
       EFI_IFR_TYPE_NUM_SIZE_8,
       mFlowControlValue[Index]
       );
@@ -1095,9 +1091,9 @@ UpdateTerminalPage (
 
   HiiCreateOneOfOpCode (
     mStartOpCodeHandle,
-    (EFI_QUESTION_ID) COM_FLOWCONTROL_QUESTION_ID,
+    (EFI_QUESTION_ID) (COM_FLOWCONTROL_QUESTION_ID + CurrentTerminal),
     VARSTORE_ID_BOOT_MAINT,
-    COM_FLOWCONTROL_VAR_OFFSET,
+    (UINT16) (COM_FLOWCONTROL_VAR_OFFSET + CurrentTerminal),
     STRING_TOKEN (STR_COM_FLOW_CONTROL),
     STRING_TOKEN (STR_COM_FLOW_CONTROL),
     0,
@@ -1127,7 +1123,7 @@ UpdatePageBody (
 {
   CleanUpPage (UpdatePageId, CallbackData);
   switch (UpdatePageId) {
-/*
+  /*
   case FORM_CON_IN_ID:
     UpdateConsolePage (UpdatePageId, &ConsoleInpMenu, CallbackData);
     break;
@@ -1459,6 +1455,14 @@ UpdatePageId (
   UINT16                         NewPageId
   )
 {
+  //
+  // For the question don't impact the page update, just ignore it.
+  //
+  if (((NewPageId >= BOOT_OPTION_DEL_QUESTION_ID) && (NewPageId < BOOT_OPTION_DEL_QUESTION_ID + MAX_MENU_NUMBER)) ||
+      ((NewPageId >= DRIVER_OPTION_DEL_QUESTION_ID) && (NewPageId < DRIVER_OPTION_DEL_QUESTION_ID + MAX_MENU_NUMBER))) {
+    return;
+  }
+
   if ((NewPageId < FILE_OPTION_OFFSET) && (NewPageId >= HANDLE_OPTION_OFFSET)) {
     //
     // If we select a handle to add driver option, advance to the add handle description page.

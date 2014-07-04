@@ -1,7 +1,7 @@
 /** @file
   Formset guids, form id and VarStore data structure for Boot Maintenance Manager.
 
-Copyright (c) 2004 - 2011, Intel Corporation. All rights reserved.<BR>
+Copyright (c) 2004 - 2014, Intel Corporation. All rights reserved.<BR>
 This program and the accompanying materials
 are licensed and made available under the terms and conditions of the BSD License
 which accompanies this distribution.  The full text of the license may be found at
@@ -66,6 +66,10 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #define KEY_VALUE_SAVE_AND_EXIT              0x110B
 #define KEY_VALUE_NO_SAVE_AND_EXIT           0x110C
 #define KEY_VALUE_BOOT_FROM_FILE             0x110D
+#define KEY_VALUE_BOOT_DESCRIPTION           0x110E
+#define KEY_VALUE_BOOT_OPTION                0x110F
+#define KEY_VALUE_DRIVER_DESCRIPTION         0x1110
+#define KEY_VALUE_DRIVER_OPTION              0x1111
 
 #define MAXIMUM_NORMAL_KEY_VALUE             0x11FF
 
@@ -137,28 +141,48 @@ typedef struct {
   // At most 100 input/output/errorout device for console storage
   //
   UINT8   ConsoleCheck[MAX_MENU_NUMBER];
+  //
+  // At most 100 input/output/errorout device for console storage
+  //
+  UINT8   ConsoleInCheck[MAX_MENU_NUMBER];
+  UINT8   ConsoleOutCheck[MAX_MENU_NUMBER];
+  UINT8   ConsoleErrCheck[MAX_MENU_NUMBER];
 
   //
-  // Boot or Driver Option Order storage
+  // Boot Option Order storage
   // The value is the OptionNumber+1 because the order list value cannot be 0
   // Use UINT32 to hold the potential value 0xFFFF+1=0x10000
   //
-  UINT32  OptionOrder[MAX_MENU_NUMBER];
+  UINT32  BootOptionOrder[MAX_MENU_NUMBER];
 
   //
-  // Boot or Driver Option Delete storage
+  // Driver Option Order storage
+  // The value is the OptionNumber+1 because the order list value cannot be 0
+  // Use UINT32 to hold the potential value 0xFFFF+1=0x10000
   //
-  BOOLEAN OptionDel[MAX_MENU_NUMBER];
+  UINT32  DriverOptionOrder[MAX_MENU_NUMBER];
+
+  //
+  // Boot Option Delete storage
+  //
+  BOOLEAN BootOptionDel[MAX_MENU_NUMBER];
+  BOOLEAN BootOptionDelMark[MAX_MENU_NUMBER];
+
+  //
+  // Driver Option Delete storage
+  //
+  BOOLEAN DriverOptionDel[MAX_MENU_NUMBER];
+  BOOLEAN DriverOptionDelMark[MAX_MENU_NUMBER];
 
   //
   // This is the Terminal Attributes value storage
   //
-  UINT8   COMBaudRate;
-  UINT8   COMDataRate;
-  UINT8   COMStopBits;
-  UINT8   COMParity;
-  UINT8   COMTerminalType;
-  UINT8   COMFlowControl;
+  UINT8   COMBaudRate[MAX_MENU_NUMBER];
+  UINT8   COMDataRate[MAX_MENU_NUMBER];
+  UINT8   COMStopBits[MAX_MENU_NUMBER];
+  UINT8   COMParity[MAX_MENU_NUMBER];
+  UINT8   COMTerminalType[MAX_MENU_NUMBER];
+  UINT8   COMFlowControl[MAX_MENU_NUMBER];
 
   //
   // Legacy Device Order Selection Storage
@@ -199,8 +223,12 @@ typedef struct {
 /// This is the data structure used by File Explorer formset
 ///
 typedef struct {
-  UINT16  DescriptionData[75];
-  UINT16  OptionalData[127];
+  UINT16  BootDescriptionData[75];
+  UINT16  BootOptionalData[127];
+  UINT16  DriverDescriptionData[75];
+  UINT16  DriverOptionalData[127];
+  BOOLEAN BootOptionChanged;
+  BOOLEAN DriverOptionChanged;
   UINT8   Active;
   UINT8   ForceReconnect;
 } FILE_EXPLORER_NV_DATA;

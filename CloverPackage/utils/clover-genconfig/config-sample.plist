@@ -560,7 +560,17 @@
 				<key>Replace</key>
 				<data>SW50ZXJuYWw=</data>
 			</dict>
-		</array>
+			<dict>
+				<key>Comment</key>
+				<string>TRIM function for non-Apple SSDs</string>
+				<key>Find</key>
+				<data>QVBQTEUgU1NEAA==</data>
+				<key>Name</key>
+				<string>IOAHCIBlockStorage</string>
+				<key>Replace</key>
+				<data>AAAAAAAAAAAAAA==</data>
+			</dict>
+			</array>
 	</dict>
 	<key>RtVariables</key>
 	<dict>

@@ -1,7 +1,7 @@
 /** @file
   Variable operation that will be used by bootmaint
 
-Copyright (c) 2004 - 2012, Intel Corporation. All rights reserved.<BR>
+Copyright (c) 2004 - 2014, Intel Corporation. All rights reserved.<BR>
 This program and the accompanying materials
 are licensed and made available under the terms and conditions of the BSD License
 which accompanies this distribution.  The full text of the license may be found at
@@ -671,7 +671,7 @@ Var_UpdateDriverOption (
                   BufferSize,
                   Buffer
                   );
-  ASSERT_EFI_ERROR (Status);
+  if (!EFI_ERROR (Status)) {
   DriverOrderList = BdsLibGetVariableAndSize (
                       L"DriverOrder",
                       &gEfiGlobalVariableGuid,
@@ -692,17 +692,29 @@ Var_UpdateDriverOption (
                   DriverOrderListSize + sizeof (UINT16),
                   NewDriverOrderList
                   );
-  ASSERT_EFI_ERROR (Status);
   if (DriverOrderList != NULL) {
     FreePool (DriverOrderList);
   }
   DriverOrderList = NULL;
   FreePool (NewDriverOrderList);
+    if (!EFI_ERROR (Status)) {
   InsertTailList (&DriverOptionMenu.Head, &NewMenuEntry->Link);
   DriverOptionMenu.MenuNumber++;
 
-  *DescriptionData  = 0x0000;
-  *OptionalData     = 0x0000;
+      //
+      // Update "change boot order" page used data, append the new add boot
+      // option at the end.
+      //
+      Index = 0;
+      while (CallbackData->BmmFakeNvData.DriverOptionOrder[Index] != 0) {
+        Index++;
+      }
+      CallbackData->BmmFakeNvData.DriverOptionOrder[Index] = (UINT32) (NewMenuEntry->OptionNumber + 1);
+
+      *DescriptionData  = 0x0000;
+      *OptionalData     = 0x0000;
+    }
+  }
   return EFI_SUCCESS;
 }
 
@@ -743,16 +755,16 @@ Var_UpdateBootOption (
   Index = BOpt_GetBootOptionNumber () ;
   UnicodeSPrint (BootString, sizeof (BootString), L"Boot%04x", Index);
 
-  if (NvRamMap->DescriptionData[0] == 0x0000) {
-    StrCpy (NvRamMap->DescriptionData, BootString);
+  if (NvRamMap->BootDescriptionData[0] == 0x0000) {
+    StrCpy (NvRamMap->BootDescriptionData, BootString);
   }
 
-  BufferSize = sizeof (UINT32) + sizeof (UINT16) + StrSize (NvRamMap->DescriptionData);
+  BufferSize = sizeof (UINT32) + sizeof (UINT16) + StrSize (NvRamMap->BootDescriptionData);
   BufferSize += GetDevicePathSize (CallbackData->LoadContext->FilePathList);
 
-  if (NvRamMap->OptionalData[0] != 0x0000) {
+  if (NvRamMap->BootOptionalData[0] != 0x0000) {
     OptionalDataExist = TRUE;
-    BufferSize += StrSize (NvRamMap->OptionalData);
+    BufferSize += StrSize (NvRamMap->BootOptionalData);
   }
 
   Buffer = AllocateZeroPool (BufferSize);
@@ -782,21 +794,21 @@ Var_UpdateBootOption (
 
   CopyMem (
     Ptr,
-    NvRamMap->DescriptionData,
-    StrSize (NvRamMap->DescriptionData)
+    NvRamMap->BootDescriptionData,
+    StrSize (NvRamMap->BootDescriptionData)
     );
 
-  NewLoadContext->Description = AllocateZeroPool (StrSize (NvRamMap->DescriptionData));
+  NewLoadContext->Description = AllocateZeroPool (StrSize (NvRamMap->BootDescriptionData));
   ASSERT (NewLoadContext->Description != NULL);
 
   NewMenuEntry->DisplayString = NewLoadContext->Description;
   CopyMem (
     NewLoadContext->Description,
     (VOID *) Ptr,
-    StrSize (NvRamMap->DescriptionData)
+    StrSize (NvRamMap->BootDescriptionData)
     );
 
-  Ptr += StrSize (NvRamMap->DescriptionData);
+  Ptr += StrSize (NvRamMap->BootDescriptionData);
   CopyMem (
     Ptr,
     CallbackData->LoadContext->FilePathList,
@@ -829,7 +841,7 @@ Var_UpdateBootOption (
   if (OptionalDataExist) {
     Ptr += (UINT8) GetDevicePathSize (CallbackData->LoadContext->FilePathList);
 
-    CopyMem (Ptr, NvRamMap->OptionalData, StrSize (NvRamMap->OptionalData));
+    CopyMem (Ptr, NvRamMap->BootOptionalData, StrSize (NvRamMap->BootOptionalData));
   }
 
   Status = gRT->SetVariable (
@@ -839,7 +851,7 @@ Var_UpdateBootOption (
                   BufferSize,
                   Buffer
                   );
-  ASSERT_EFI_ERROR (Status);
+  if (!EFI_ERROR (Status)) {
 
   BootOrderList = BdsLibGetVariableAndSize (
                     L"BootOrder",
@@ -863,15 +875,27 @@ Var_UpdateBootOption (
                   BootOrderListSize + sizeof (UINT16),
                   NewBootOrderList
                   );
-  ASSERT_EFI_ERROR (Status);
+    if (!EFI_ERROR (Status)) {
 
   FreePool (NewBootOrderList);
   NewBootOrderList = NULL;
   InsertTailList (&BootOptionMenu.Head, &NewMenuEntry->Link);
   BootOptionMenu.MenuNumber++;
 
-  NvRamMap->DescriptionData[0]  = 0x0000;
-  NvRamMap->OptionalData[0]     = 0x0000;
+      //
+      // Update "change driver order" page used data, append the new add driver
+      // option at the end.
+      //
+      Index = 0;
+      while (CallbackData->BmmFakeNvData.BootOptionOrder[Index] != 0) {
+        Index++;
+      }
+      CallbackData->BmmFakeNvData.BootOptionOrder[Index] = (UINT32) (NewMenuEntry->OptionNumber + 1);
+
+      NvRamMap->BootDescriptionData[0]  = 0x0000;
+      NvRamMap->BootOptionalData[0]     = 0x0000;
+    }
+  }
   return EFI_SUCCESS;
 }
 
@@ -972,11 +996,11 @@ Var_UpdateBootOrder (
     return EFI_OUT_OF_RESOURCES;
   }
 
-  ASSERT (BootOptionMenu.MenuNumber <= (sizeof (CallbackData->BmmFakeNvData.OptionOrder) / sizeof (CallbackData->BmmFakeNvData.OptionOrder[0])));
+  ASSERT (BootOptionMenu.MenuNumber <= (sizeof (CallbackData->BmmFakeNvData.BootOptionOrder) / sizeof (CallbackData->BmmFakeNvData.BootOptionOrder[0])));
 
-  for (OrderIndex = 0; (OrderIndex < BootOptionMenu.MenuNumber) && (CallbackData->BmmFakeNvData.OptionOrder[OrderIndex] != 0); OrderIndex++) {
+  for (OrderIndex = 0; (OrderIndex < BootOptionMenu.MenuNumber) && (CallbackData->BmmFakeNvData.BootOptionOrder[OrderIndex] != 0); OrderIndex++) {
     for (Index = OrderIndex; Index < BootOrderListSize / sizeof (UINT16); Index++) {
-      if ((BootOrderList[Index] == (UINT16) (CallbackData->BmmFakeNvData.OptionOrder[OrderIndex] - 1)) && (OrderIndex != Index)) {
+      if ((BootOrderList[Index] == (UINT16) (CallbackData->BmmFakeNvData.BootOptionOrder[OrderIndex] - 1)) && (OrderIndex != Index)) {
         OptionNumber = BootOrderList[Index];
         CopyMem (&BootOrderList[OrderIndex + 1], &BootOrderList[OrderIndex], (Index - OrderIndex) * sizeof (UINT16));
         BootOrderList[OrderIndex] = OptionNumber;
@@ -1050,9 +1074,9 @@ Var_UpdateDriverOrder (
     FreePool (DriverOrderList);
   }
 
-  ASSERT (DriverOptionMenu.MenuNumber <= (sizeof (CallbackData->BmmFakeNvData.OptionOrder) / sizeof (CallbackData->BmmFakeNvData.OptionOrder[0])));
+  ASSERT (DriverOptionMenu.MenuNumber <= (sizeof (CallbackData->BmmFakeNvData.DriverOptionOrder) / sizeof (CallbackData->BmmFakeNvData.DriverOptionOrder[0])));
   for (Index = 0; Index < DriverOptionMenu.MenuNumber; Index++) {
-    NewDriverOrderList[Index] = (UINT16) (CallbackData->BmmFakeNvData.OptionOrder[Index] - 1);
+    NewDriverOrderList[Index] = (UINT16) (CallbackData->BmmFakeNvData.DriverOptionOrder[Index] - 1);
   }
 
   Status = gRT->SetVariable (
@@ -1084,7 +1108,8 @@ Var_UpdateDriverOrder (
 **/
 EFI_STATUS
 Var_UpdateBBSOption (
-  IN BMM_CALLBACK_DATA            *CallbackData
+  IN BMM_CALLBACK_DATA            *CallbackData,
+  IN EFI_FORM_ID                  FormId
   )
 {
   UINTN                       Index;
@@ -1113,7 +1138,7 @@ Var_UpdateBBSOption (
   DisMap              = NULL;
   NewOrder            = NULL;
 
-  switch (CallbackData->BmmPreviousPageId) {
+  switch (FormId) {
     case FORM_SET_FD_ORDER_ID:
       OptionMenu            = (BM_MENU_OPTION *) &LegacyFDMenu;
       LegacyDev             = CallbackData->BmmFakeNvData.LegacyFD;
@@ -1219,7 +1244,7 @@ Var_UpdateBBSOption (
   Status = gRT->SetVariable (
                   VAR_LEGACY_DEV_ORDER,
                   &gEfiLegacyDevOrderVariableGuid,
-                  EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_NON_VOLATILE,
+                  EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_NON_VOLATILE,
                   VarSize,
                   OriginalPtr
                   );

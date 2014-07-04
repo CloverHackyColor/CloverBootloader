@@ -665,6 +665,10 @@ CoreWaitForEvent (
 {
   EFI_STATUS      Status;
   UINTN           Index;
+  
+  if (!NumberOfEvents || !UserEvents || !UserIndex) {
+    return EFI_INVALID_PARAMETER;
+  }
 
   //
   // Can only WaitForEvent at TPL_APPLICATION

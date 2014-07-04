@@ -1,7 +1,7 @@
 /** @file
   Header file for boot maintenance module.
 
-Copyright (c) 2004 - 2012, Intel Corporation. All rights reserved.<BR>
+Copyright (c) 2004 - 2014, Intel Corporation. All rights reserved.<BR>
 This program and the accompanying materials
 are licensed and made available under the terms and conditions of the BSD License
 which accompanies this distribution.  The full text of the license may be found at
@@ -72,7 +72,6 @@ extern UINT8    FEBin[];
 //
 // Enumeration type definition
 //
-
 typedef enum _TYPE_OF_TERMINAL {
   TerminalTypePcAnsi                             = 0,
   TerminalTypeVt100,
@@ -130,8 +129,9 @@ typedef enum _FILE_EXPLORER_DISPLAY_CONTEXT {
 #define FD_OPTION_OFFSET        0xC000
 #define HD_OPTION_OFFSET        0xB000
 #define CD_OPTION_OFFSET        0xA000
+#define FILE_OPTION_GOTO_OFFSET 0xC000
 #define FILE_OPTION_OFFSET      0x8000
-#define FILE_OPTION_MASK        0x7FFF
+#define FILE_OPTION_MASK        0x3FFF
 #define HANDLE_OPTION_OFFSET    0x7000
 #define CONSOLE_OPTION_OFFSET   0x6000
 #define TERMINAL_OPTION_OFFSET  0x5000
@@ -173,9 +173,13 @@ typedef enum _FILE_EXPLORER_DISPLAY_CONTEXT {
 #define CON_ERR_COM1_VAR_OFFSET         VAR_OFFSET (ConsoleErrorCOM1)
 #define CON_ERR_COM2_VAR_OFFSET         VAR_OFFSET (ConsoleErrorCOM2)
 #define CON_MODE_VAR_OFFSET             VAR_OFFSET (ConsoleOutMode)
-#define CON_DEVICE_VAR_OFFSET           VAR_OFFSET (ConsoleCheck)
-#define OPTION_ORDER_VAR_OFFSET         VAR_OFFSET (OptionOrder)
-#define OPTION_DEL_VAR_OFFSET           VAR_OFFSET (OptionDel)
+#define CON_IN_DEVICE_VAR_OFFSET        VAR_OFFSET (ConsoleInCheck)
+#define CON_OUT_DEVICE_VAR_OFFSET       VAR_OFFSET (ConsoleOutCheck)
+#define CON_ERR_DEVICE_VAR_OFFSET       VAR_OFFSET (ConsoleErrCheck)
+#define BOOT_OPTION_ORDER_VAR_OFFSET    VAR_OFFSET (BootOptionOrder)
+#define DRIVER_OPTION_ORDER_VAR_OFFSET  VAR_OFFSET (DriverOptionOrder)
+#define BOOT_OPTION_DEL_VAR_OFFSET      VAR_OFFSET (BootOptionDel)
+#define DRIVER_OPTION_DEL_VAR_OFFSET    VAR_OFFSET (DriverOptionDel)
 #define DRIVER_ADD_OPTION_VAR_OFFSET    VAR_OFFSET (DriverAddHandleOptionalData)
 #define COM_BAUD_RATE_VAR_OFFSET        VAR_OFFSET (COMBaudRate)
 #define COM_DATA_RATE_VAR_OFFSET        VAR_OFFSET (COMDataRate)
@@ -211,9 +215,13 @@ typedef enum _FILE_EXPLORER_DISPLAY_CONTEXT {
 #define CON_ERR_COM1_QUESTION_ID        QUESTION_ID (ConsoleErrorCOM1)
 #define CON_ERR_COM2_QUESTION_ID        QUESTION_ID (ConsoleErrorCOM2)
 #define CON_MODE_QUESTION_ID            QUESTION_ID (ConsoleOutMode)
-#define CON_DEVICE_QUESTION_ID          QUESTION_ID (ConsoleCheck)
-#define OPTION_ORDER_QUESTION_ID        QUESTION_ID (OptionOrder)
-#define OPTION_DEL_QUESTION_ID          QUESTION_ID (OptionDel)
+#define CON_IN_DEVICE_QUESTION_ID       QUESTION_ID (ConsoleInCheck)
+#define CON_OUT_DEVICE_QUESTION_ID      QUESTION_ID (ConsoleOutCheck)
+#define CON_ERR_DEVICE_QUESTION_ID      QUESTION_ID (ConsoleErrCheck)
+#define BOOT_OPTION_ORDER_QUESTION_ID   QUESTION_ID (BootOptionOrder)
+#define DRIVER_OPTION_ORDER_QUESTION_ID QUESTION_ID (DriverOptionOrder)
+#define BOOT_OPTION_DEL_QUESTION_ID     QUESTION_ID (BootOptionDel)
+#define DRIVER_OPTION_DEL_QUESTION_ID   QUESTION_ID (DriverOptionDel)
 #define DRIVER_ADD_OPTION_QUESTION_ID   QUESTION_ID (DriverAddHandleOptionalData)
 #define COM_BAUD_RATE_QUESTION_ID       QUESTION_ID (COMBaudRate)
 #define COM_DATA_RATE_QUESTION_ID       QUESTION_ID (COMDataRate)
@@ -971,7 +979,8 @@ Var_UpdateDriverOrder (
 **/
 EFI_STATUS
 Var_UpdateBBSOption (
-  IN BMM_CALLBACK_DATA            *CallbackData
+  IN BMM_CALLBACK_DATA            *CallbackData,
+  IN EFI_FORM_ID                  FormId
   );
 
 /**
@@ -1096,11 +1105,12 @@ UpdateTimeOutPage (
 
   @param CallbackData    The BMM context data.
 **/
+/*
 VOID
 UpdateTerminalPage (
   IN BMM_CALLBACK_DATA                *CallbackData
   );
-
+*/
 /**
   Refresh the text mode page
 
@@ -1508,6 +1518,14 @@ FileExplorerCallback (
   OUT EFI_BROWSER_ACTION_REQUEST             *ActionRequest
   );
 
+EFI_STATUS
+EFIAPI
+FileExplorerRouteConfig (
+  IN CONST EFI_HII_CONFIG_ACCESS_PROTOCOL *This,
+  IN CONST EFI_STRING                     Configuration,
+  OUT EFI_STRING                          *Progress
+  );
+
 /**
   Dispatch BMM formset and FileExplorer formset.
 
@@ -1539,6 +1557,129 @@ VOID *
 EfiLibGetVariable (
   IN CHAR16               *Name,
   IN EFI_GUID             *VendorGuid
+  );
+
+/**
+  Get option number according to Boot#### and BootOrder variable. 
+  The value is saved as #### + 1.
+
+  @param CallbackData    The BMM context data.
+**/
+VOID  
+GetBootOrder (
+  IN  BMM_CALLBACK_DATA    *CallbackData
+  );
+
+/**
+  Get driver option order from globalc DriverOptionMenu.
+
+  @param CallbackData    The BMM context data.
+  
+**/
+VOID  
+GetDriverOrder (
+  IN  BMM_CALLBACK_DATA    *CallbackData
+  );
+
+/**
+  Intall BootMaint and FileExplorer HiiPackages.
+
+**/
+EFI_STATUS
+InitBMPackage (
+  VOID
+  );
+
+/**
+  Remvoe the intalled BootMaint and FileExplorer HiiPackages.
+
+**/
+VOID
+FreeBMPackage (
+  VOID
+  );
+
+/**
+  According to LegacyDevOrder variable to get legacy FD\HD\CD\NET\BEV
+  devices list .
+
+  @param CallbackData    The BMM context data.
+**/
+VOID
+GetLegacyDeviceOrder (
+  IN  BMM_CALLBACK_DATA    *CallbackData
+  );
+  
+/**
+
+  Initialize console input device check box to ConsoleInCheck[MAX_MENU_NUMBER]
+  in BMM_FAKE_NV_DATA structure.
+
+  @param CallbackData    The BMM context data.
+
+**/  
+VOID  
+GetConsoleInCheck (
+  IN  BMM_CALLBACK_DATA    *CallbackData
+  );
+  
+/**
+
+  Initialize console output device check box to ConsoleOutCheck[MAX_MENU_NUMBER]
+  in BMM_FAKE_NV_DATA structure.
+
+  @param CallbackData    The BMM context data.
+
+**/      
+VOID    
+GetConsoleOutCheck (
+  IN  BMM_CALLBACK_DATA    *CallbackData
+  );
+
+/**
+
+  Initialize standard error output device check box to ConsoleErrCheck[MAX_MENU_NUMBER]
+  in BMM_FAKE_NV_DATA structure.
+
+  @param CallbackData    The BMM context data.
+
+**/        
+VOID  
+GetConsoleErrCheck (
+  IN  BMM_CALLBACK_DATA    *CallbackData
+  );
+
+/**
+
+  Initialize terminal attributes (baudrate, data rate, stop bits, parity and terminal type)
+  to BMM_FAKE_NV_DATA structure.
+
+  @param CallbackData    The BMM context data.
+
+**/        
+VOID  
+GetTerminalAttribute (
+  IN  BMM_CALLBACK_DATA    *CallbackData
+  );
+
+/**
+
+  Find the first instance of this Protocol
+  in the system and return it's interface.
+
+
+  @param ProtocolGuid    Provides the protocol to search for
+  @param Interface       On return, a pointer to the first interface
+                         that matches ProtocolGuid
+
+  @retval  EFI_SUCCESS      A protocol instance matching ProtocolGuid was found
+  @retval  EFI_NOT_FOUND    No protocol instances were found that match ProtocolGuid
+
+**/
+EFI_STATUS
+EfiLibLocateProtocol (
+  IN  EFI_GUID    *ProtocolGuid,
+  OUT VOID        **Interface
   );
 
 //

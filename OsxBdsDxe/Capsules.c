@@ -1,7 +1,7 @@
 /** @file
   BDS routines to handle capsules.
 
-Copyright (c) 2004 - 2011, Intel Corporation. All rights reserved.<BR>
+Copyright (c) 2004 - 2013, Intel Corporation. All rights reserved.<BR>
 This program and the accompanying materials
 are licensed and made available under the terms and conditions of the BSD License
 which accompanies this distribution.  The full text of the license may be found at
@@ -52,6 +52,7 @@ BdsProcessCapsules (
   VOID                        **CapsulePtr;
   VOID                        **CapsulePtrCache;
   EFI_GUID                    *CapsuleGuidCache; 
+  BOOLEAN                     NeedReset;
 
   CapsuleNumber = 0;
   CapsuleTotalNumber = 0;
@@ -60,6 +61,7 @@ BdsProcessCapsules (
   CapsulePtr        = NULL;
   CapsulePtrCache   = NULL;
   CapsuleGuidCache  = NULL;
+  NeedReset          = FALSE;
 
   //
   // We don't do anything else if the boot mode is not flash-update
@@ -186,10 +188,30 @@ BdsProcessCapsules (
     CapsuleHeader = (EFI_CAPSULE_HEADER*) CapsulePtr [Index];
     if ((CapsuleHeader->Flags & CAPSULE_FLAGS_POPULATE_SYSTEM_TABLE) == 0) {
       //
+      // Always reset system after all capsule processed if FMP capsule exist
+      //
+      if (CompareGuid (&gEfiFmpCapsuleGuid, &CapsuleHeader->CapsuleGuid)){
+        NeedReset = TRUE;
+      }
+
+      //
       // Call capsule library to process capsule image.
       //
       ProcessCapsuleImage (CapsuleHeader);
     }
+  }
+
+  if (NeedReset) {
+    Print(L"Capsule Request Cold Reboot.\n");
+
+    for (Index = 5; Index > 0; Index--) {
+      Print(L"\rResetting system in %d seconds ...", Index);
+      gBS->Stall (1000000);
+    }
+
+    gRT->ResetSystem (EfiResetCold, EFI_SUCCESS, 0, NULL);
+
+    CpuDeadLoop ();
   }
 
   PlatformBdsLockNonUpdatableFlash ();

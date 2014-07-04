@@ -3754,7 +3754,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
       
       //BacklightLevel
       prop = GetProperty(dictPointer, "BacklightLevel");
-      gSettings.BacklightLevel = (UINT32)GetPropertyInteger(prop, 0);
+      gSettings.BacklightLevel = (UINT32)GetPropertyInteger(prop, gSettings.BacklightLevel);
       
       prop = GetProperty(dictPointer, "CustomUUID");
       if(prop) {

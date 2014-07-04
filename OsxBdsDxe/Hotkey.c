@@ -2,7 +2,7 @@
   Provides a way for 3rd party applications to register themselves for launch by the
   Boot Manager based on hot key
 
-Copyright (c) 2007 - 2012, Intel Corporation. All rights reserved.<BR>
+Copyright (c) 2007 - 2014, Intel Corporation. All rights reserved.<BR>
 This program and the accompanying materials
 are licensed and made available under the terms and conditions of the BSD License
 which accompanies this distribution.  The full text of the license may be found at
@@ -639,6 +639,116 @@ HotkeyInsertList (
 }
 
 /**
+  Return TRUE when the variable pointed by Name and Guid is a Key#### variable.
+
+  @param Name         The name of the variable.
+  @param Guid         The GUID of the variable.
+  @param OptionNumber Return the option number parsed from the Name.
+
+  @retval TRUE  The variable pointed by Name and Guid is a Key#### variable.
+  @retval FALSE The variable pointed by Name and Guid isn't a Key#### variable.
+**/
+BOOLEAN
+IsKeyOptionVariable (
+  CHAR16        *Name,
+  EFI_GUID      *Guid,
+  UINT16        *OptionNumber
+  )
+{
+  UINTN         Index;
+  
+  if (!CompareGuid (Guid, &gEfiGlobalVariableGuid) ||
+      (StrSize (Name) != sizeof (L"Key####")) ||
+      (StrnCmp (Name, L"Key", 3) != 0)
+     ) {
+    return FALSE;
+  }
+
+  *OptionNumber = 0;
+  for (Index = 3; Index < 7; Index++) {
+    if ((Name[Index] >= L'0') && (Name[Index] <= L'9')) {
+      *OptionNumber = *OptionNumber * 10 + Name[Index] - L'0';
+    } else if ((Name[Index] >= L'A') && (Name[Index] <= L'F')) {
+      *OptionNumber = *OptionNumber * 10 + Name[Index] - L'A';
+    } else {
+      return FALSE;
+    }
+  }
+
+  return TRUE;
+}
+
+/**
+  Return an array of key option numbers.
+
+  @param Count       Return the count of key option numbers.
+
+  @return UINT16*    Pointer to an array of key option numbers;
+**/
+UINT16 *
+EFIAPI
+HotkeyGetOptionNumbers (
+  OUT UINTN     *Count
+  )
+{
+  EFI_STATUS                  Status;
+  UINTN                       Index;
+  CHAR16                      *Name;
+  EFI_GUID                    Guid;
+  UINTN                       NameSize;
+  UINTN                       NewNameSize;
+  UINT16                      *OptionNumbers;
+  UINT16                      OptionNumber;
+
+  if (Count == NULL) {
+    return NULL;
+  }
+
+  *Count        = 0;
+  OptionNumbers = NULL;
+
+  NameSize = sizeof (CHAR16);
+  Name     = AllocateZeroPool (NameSize);
+  ASSERT (Name != NULL);
+  while (TRUE) {
+    NewNameSize = NameSize;
+    Status = gRT->GetNextVariableName (&NewNameSize, Name, &Guid);
+    if (Status == EFI_BUFFER_TOO_SMALL) {
+      Name = ReallocatePool (NameSize, NewNameSize, Name);
+      ASSERT (Name != NULL);
+      Status = gRT->GetNextVariableName (&NewNameSize, Name, &Guid);
+      NameSize = NewNameSize;
+    }
+
+    if (Status == EFI_NOT_FOUND) {
+      break;
+    }
+    ASSERT_EFI_ERROR (Status);
+
+    if (IsKeyOptionVariable (Name ,&Guid, &OptionNumber)) {
+      OptionNumbers = ReallocatePool (
+                        *Count * sizeof (UINT16),
+                        (*Count + 1) * sizeof (UINT16),
+                        OptionNumbers
+                        );
+      ASSERT (OptionNumbers != NULL);
+      for (Index = 0; Index < *Count; Index++) {
+        if (OptionNumber < OptionNumbers[Index]) {
+          break;
+        }
+      }
+      CopyMem (&OptionNumbers[Index + 1], &OptionNumbers[Index], (*Count - Index) * sizeof (UINT16));
+      OptionNumbers[Index] = OptionNumber;
+      (*Count)++;
+    }
+  }
+
+  FreePool (Name);
+
+  return OptionNumbers;
+}
+
+/**
 
   Process all the "Key####" variables, associate Hotkeys with corresponding Boot Options.
 
@@ -652,11 +762,10 @@ InitializeHotkeyService (
 {
   EFI_STATUS      Status;
   UINT32          BootOptionSupport;
-  UINT16          *KeyOrder;
-  UINTN           KeyOrderSize;
+  UINT16          *KeyOptionNumbers;
+  UINTN           KeyOptionCount;
   UINTN           Index;
-  UINT16          KeyOptionName[8];
-  UINTN           KeyOptionSize;
+  CHAR16          KeyOptionName[8];
   EFI_KEY_OPTION  *KeyOption;
 
   //
@@ -677,33 +786,24 @@ InitializeHotkeyService (
                   sizeof (UINT32),
                   &BootOptionSupport
                   );
-
   //
-  // Get valid Key Option List from private EFI variable "KeyOrder"
+  // Platform needs to make sure setting volatile variable before calling 3rd party code shouldn't fail.
   //
-  KeyOrder = BdsLibGetVariableAndSize (
-               VAR_KEY_ORDER,
-               &gEfiGlobalVariableGuid,
-               &KeyOrderSize
-               );
+  ASSERT_EFI_ERROR (Status);
 
-  if (KeyOrder == NULL) {
-    return EFI_NOT_FOUND;
-  }
-
-  for (Index = 0; Index < KeyOrderSize / sizeof (UINT16); Index ++) {
-    UnicodeSPrint (KeyOptionName, sizeof (KeyOptionName), L"Key%04x", KeyOrder[Index]);
-    KeyOption = BdsLibGetVariableAndSize (
-                  KeyOptionName,
-                  &gEfiGlobalVariableGuid,
-                  &KeyOptionSize
-                  );
-
-    if (KeyOption == NULL || !IsKeyOptionValid (KeyOption)) {
-      UnregisterHotkey (KeyOrder[Index]);
-    } else {
+  KeyOptionNumbers = HotkeyGetOptionNumbers (&KeyOptionCount);
+  for (Index = 0; Index < KeyOptionCount; Index ++) {
+    UnicodeSPrint (KeyOptionName, sizeof (KeyOptionName), L"Key%04x", KeyOptionNumbers[Index]);
+    GetEfiGlobalVariable2 (KeyOptionName, (VOID **) &KeyOption, NULL);
+    ASSERT (KeyOption != NULL);
+    if (IsKeyOptionValid (KeyOption)) {
       HotkeyInsertList (KeyOption);
     }
+    FreePool (KeyOption);
+  }
+
+  if (KeyOptionNumbers != NULL) {
+    FreePool (KeyOptionNumbers);
   }
 
   //
