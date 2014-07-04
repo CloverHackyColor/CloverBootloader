@@ -696,6 +696,8 @@ BOOLEAN set_hda_props(EFI_PCI_IO_PROTOCOL *PciIo, pci_dt_t *hda_dev, CHAR8 *OSVe
       if (gSettings.UseIntelHDMI) {
         devprop_add_value(device, "hda-gfx", (UINT8*)"onboard-1", 10);
       }
+      codecId = 1; // reuse variable again
+      devprop_add_value(device, "AFGLowPowerState", (UINT8*)&codecId, 4);
       devprop_add_value(device, "MaximumBootBeepVolume", (UINT8*)&layoutId, 1);
       devprop_add_value(device, "PinConfigurations", (UINT8*)&layoutId, 1);
     }

@@ -3585,9 +3585,9 @@ UINT32 AddHDEF (UINT8 *dsdt, UINT32 len, CHAR8* OSVersion)
     
     // add Method(_DSM,4,NotSerialized) 
     met = aml_add_method(device, "_DSM", 4);
-  } else
+  } else {
     met = aml_add_method(root, "_DSM", 4);
-  
+  }
   met2 = aml_add_store(met);
   pack = aml_add_package(met2);
   if (gSettings.UseIntelHDMI) {
@@ -3600,8 +3600,10 @@ UINT32 AddHDEF (UINT8 *dsdt, UINT32 len, CHAR8* OSVersion)
       aml_add_byte_buffer(pack, (CHAR8*)&HDAlayoutId, 4);
     }
     aml_add_string(pack, "MaximumBootBeepVolume");
-//    aml_add_byte(pack, 0);
     aml_add_byte_buffer(pack, (CHAR8*)&dataBuiltin1[0], 1);
+    aml_add_string(pack, "AFGLowPowerState");
+    aml_add_byte_buffer(pack, Yes, 4);
+
     aml_add_string(pack, "PinConfigurations");
     aml_add_byte_buffer(pack, 0, 0);//data, sizeof(data));    
   }

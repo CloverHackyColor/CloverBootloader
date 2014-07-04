@@ -535,12 +535,14 @@
 				<string>0x44220000</string>
 			</dict>
 			<dict>
+				<key>Comment</key>
+				<string>TRIM function for non-Apple SSDs</string>
 				<key>Find</key>
-				<data>TA==</data>
+				<data>QVBQTEUgU1NEAA==</data>
 				<key>Name</key>
-				<string>IOBlockStorage</string>
+				<string>IOAHCIBlockStorage</string>
 				<key>Replace</key>
-				<data>TA==</data>
+				<data>AAAAAAAAAAAAAA==</data>
 			</dict>
 			<dict>
 				<key>Comment</key>
