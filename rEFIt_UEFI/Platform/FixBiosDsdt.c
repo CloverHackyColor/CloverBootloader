@@ -918,15 +918,24 @@ VOID findCPU(UINT8* dsdt, UINT32 length)
 			UINT32 j;
 			UINT32 offset = i + 3 + (dsdt[i + 2] >> 6);	// name
 			BOOLEAN add_name = TRUE;
-      if (acpi_cpu_count == 0) { //only first time in the cycle
+      if (acpi_cpu_count == 0) {         //only first time in the cycle
+        CHAR8 c1 = dsdt[offset + 1];
         // I want to determine a scope of PR
         //1. if name begin with \\ this is with score
         //2. else find outer device or scope until \\ is found
         //3. add new name everytime is found
         DBG("first CPU found at %x offset %x\n", i, offset);
+        
         if (dsdt[offset] == '\\') {
           // "\_PR.CPU0"
-          CopyMem(acpi_cpu_score, dsdt+offset+1, 4);
+          j = 1;
+          if (c1 == 0x2E) {
+            j = 2;
+          } else if (c1 == 0x2F) {
+            c1 = dsdt[offset + 2];
+            j = 2 + (c1 - 2) * 4;
+          }
+          CopyMem(acpi_cpu_score, dsdt + offset + j, 4);
           DBG("slash found\n");
         } else {
 //--------
@@ -2242,7 +2251,7 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
             if (gSettings.ReuseFFFF) {
               dsdt[j+10] = 0;
               dsdt[j+11] = 0;
-              DBG("Found internal video device FFFF@%x, set to 0\n", devadr1);
+              DBG("Found internal video device FFFF@%x, ReUse as 0\n", devadr1);
             } else {
               NonUsable = TRUE;
               DBG("Found internal video device FFFF@%x, unusable\n", devadr1);
@@ -4356,7 +4365,7 @@ UINT32 FIXSATA (UINT8 *dsdt, UINT32 len)
   return len;
 }
 
-
+/*
 UINT32 FIXCPU1 (UINT8 *dsdt, UINT32 len)
 {    
   UINT32 i, j;
@@ -4422,7 +4431,7 @@ UINT32 FIXCPU1 (UINT8 *dsdt, UINT32 len)
   DBG("return len=%x\n", len);
   return len;             
 }
-
+*/
 UINT32 FIXWAK (UINT8 *dsdt, UINT32 len, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt)
 {    
   UINT32 i, j, k;
