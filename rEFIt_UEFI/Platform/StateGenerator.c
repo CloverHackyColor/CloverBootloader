@@ -232,6 +232,7 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
             realMin =  RShiftU64(AsmReadMsr64(MSR_PLATFORM_INFO), 40) & 0xff;
             if (gSettings.MinMultiplier) {
               minimum.Control.Control = gSettings.MinMultiplier;
+              Aplf = (realMin > minimum.Control.Control)?(realMin - minimum.Control.Control):0;
             } else {
               minimum.Control.Control = realMin;
             }
