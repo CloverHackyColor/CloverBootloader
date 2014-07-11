@@ -1862,7 +1862,10 @@ InitiateTPerReset (
   EFI_STORAGE_SECURITY_COMMAND_PROTOCOL        *Ssp;
   SUPPORTED_SECURITY_PROTOCOLS_PARAMETER_DATA  *Data;
 
-  Buffer        = NULL;
+ // Buffer        = NULL;
+  if (!AtaDevice) {
+    return;
+  }
   TcgFlag       = FALSE;
   IeeeFlag      = FALSE;
   Ssp           = &AtaDevice->StorageSecurity;

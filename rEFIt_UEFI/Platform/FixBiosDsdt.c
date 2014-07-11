@@ -639,15 +639,19 @@ VOID CheckHardware()
           //Display ADR
           if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_DISPLAY) &&
               (Pci.Hdr.ClassCode[1] == PCI_CLASS_DISPLAY_VGA)) {
+#if DEBUG_FIX               
             UINT32 dadr1, dadr2;
+#endif             
             PCI_IO_DEVICE *PciIoDevice;
 
             GetPciADR(DevicePath, &DisplayADR1[display], &DisplayADR2[display], NULL);
             DBG("VideoCard devID=0x%x\n", ((Pci.Hdr.DeviceId << 16) | Pci.Hdr.VendorId));
+#if DEBUG_FIX            
             dadr1 = DisplayADR1[display];
             dadr2 = DisplayADR2[display];
             DBG("DisplayADR1[%d] = 0x%x, DisplayADR2[%d] = 0x%x\n", display, dadr1, display, dadr2);
-                 dadr2 = dadr1; //to avoid warning "unused variable" :(
+#endif            
+        //         dadr2 = dadr1; //to avoid warning "unused variable" :(
             DisplayVendor[display] = Pci.Hdr.VendorId;
             DisplayID[display] = Pci.Hdr.DeviceId;
             DisplaySubID[display] = (Pci.Device.SubsystemID << 16) | (Pci.Device.SubsystemVendorID << 0);
@@ -1587,7 +1591,7 @@ UINTN  findPciRoot (UINT8 *dsdt, UINT32 len)
    08 5F 55 49 44 00                    Name (_UID, Zero)
    14 16 5F 50 52 54 00                 Method (_PRT, 0, NotSerialized)
    */
-
+  if (PCISIZE > 0) {
   // find PCIRootUID
   for (j=PCIADR; j<PCIADR+64; j++) {
     if (dsdt[j] == '_' && dsdt[j+1] == 'U' && dsdt[j+2] == 'I' && dsdt[j+3] == 'D') {
@@ -1599,7 +1603,10 @@ UINTN  findPciRoot (UINT8 *dsdt, UINT32 len)
       DBG("Found PCIROOTUID = %d\n", root);
       break;
     }	
-  }  
+  } 
+  } else {
+    DBG("Warning! PCI root is not found!");
+  }
 	return root;
 }
 

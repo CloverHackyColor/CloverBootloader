@@ -574,13 +574,15 @@ UpdateOrderPage (
     VarOffset = DRIVER_OPTION_ORDER_VAR_OFFSET;
     break;
   }  
-  ASSERT (OptionOrder != NULL);
+//  ASSERT (OptionOrder != NULL);
+  if (!OptionOrder) return;
 
   OptionsOpCodeHandle = HiiAllocateOpCodeHandle ();
-  ASSERT (OptionsOpCodeHandle != NULL);
+//  ASSERT (OptionsOpCodeHandle != NULL);
+  if (!OptionsOpCodeHandle) return;
   
   NewMenuEntry = NULL;
-  for (OptionIndex = 0; (OptionOrder[OptionIndex] != 0 && OptionIndex < MAX_MENU_NUMBER); OptionIndex++) {
+  for (OptionIndex = 0; (OptionIndex < MAX_MENU_NUMBER && OptionOrder[OptionIndex] != 0); OptionIndex++) {
     BootOptionFound = FALSE;
     for (Index = 0; Index < OptionMenu->MenuNumber; Index++) {
     NewMenuEntry   = BOpt_GetMenuEntry (OptionMenu, Index);
@@ -591,7 +593,7 @@ UpdateOrderPage (
       }
     }
     if (BootOptionFound) {
-    HiiCreateOneOfOptionOpCode (
+      HiiCreateOneOfOptionOpCode (
       OptionsOpCodeHandle,
       NewMenuEntry->DisplayStringToken,
       0,
@@ -735,7 +737,8 @@ UpdateTimeOutPage (
   BootTimeOut = PcdGet16 (PcdPlatformBootTimeOut);
 
   DefaultOpCodeHandle = HiiAllocateOpCodeHandle ();
-  ASSERT (DefaultOpCodeHandle != NULL);
+//  ASSERT (DefaultOpCodeHandle != NULL);
+  if (!DefaultOpCodeHandle) return;
   HiiCreateDefaultOpCode (DefaultOpCodeHandle, EFI_HII_DEFAULT_CLASS_STANDARD, EFI_IFR_TYPE_NUM_SIZE_16, BootTimeOut);
 
   HiiCreateNumericOpCode (
@@ -809,10 +812,12 @@ UpdateConModePage (
   }
 
   OptionsOpCodeHandle = HiiAllocateOpCodeHandle ();
-  ASSERT (OptionsOpCodeHandle != NULL);
+//  ASSERT (OptionsOpCodeHandle != NULL);
+  if (!OptionsOpCodeHandle) return;
 
   ModeToken           = AllocateZeroPool (sizeof (EFI_STRING_ID) * ValidMode);
-  ASSERT(ModeToken != NULL);
+//  ASSERT(ModeToken != NULL);
+  if (!ModeToken) return;
 
   //
   // Determin which mode should be the first entry in menu

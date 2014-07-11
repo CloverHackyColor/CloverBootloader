@@ -96,7 +96,7 @@ VOID GetCPUProperties (VOID)
 	UINTN         Bus;
 	UINTN         Device;
 	UINTN         Function;
-  CHAR8         str[128], *s;
+  CHAR8         str[128];
 	
   //initial values 
 	gCPUStructure.MaxRatio = 10; //keep it as K*10
@@ -237,7 +237,7 @@ VOID GetCPUProperties (VOID)
 		
 	/* get BrandString (if supported) */
 	if (gCPUStructure.CPUID[CPUID_80][EAX] >= 0x80000004) {
- 
+       CHAR8         *s;
 		ZeroMem(str, 128);
 		/* 
 		 * The BrandString 48 bytes (max), guaranteed to 

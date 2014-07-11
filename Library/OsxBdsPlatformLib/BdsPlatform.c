@@ -347,22 +347,22 @@ Returns:
   UINT32                                TimeOut;
   
   //
-  // Find the usb host controller 
-  //   
+  // Find the usb host controller
+  //
   Status = gBS->LocateHandleBuffer (
-                  ByProtocol,
-                  &gEfiPciIoProtocolGuid,
-                  NULL,
-                  &HandleArrayCount,
-                  &HandleArray
-                  );
+                                    ByProtocol,
+                                    &gEfiPciIoProtocolGuid,
+                                    NULL,
+                                    &HandleArrayCount,
+                                    &HandleArray
+                                    );
   if (!EFI_ERROR (Status)) {
     for (Index = 0; Index < HandleArrayCount; Index++) {
       Status = gBS->HandleProtocol (
-                      HandleArray[Index],
-                      &gEfiPciIoProtocolGuid,
-                      (VOID **)&PciIo
-                      );
+                                    HandleArray[Index],
+                                    &gEfiPciIoProtocolGuid,
+                                    (VOID **)&PciIo
+                                    );
       if (!EFI_ERROR (Status)) {
         //
         // Find the USB host controller controller
@@ -377,21 +377,21 @@ Returns:
               //
               Command = 0;
               Status = PciIo->Pci.Write (PciIo, EfiPciIoWidthUint16, 0xC0, 1, &Command);
-   //         } else if ((PCI_IF_EHCI == Class[0]) ||
-   //                    (PCI_IF_XHCI == Class[0])) {
-              } else if (PCI_IF_EHCI == Class[0]) {
-
+              //         } else if ((PCI_IF_EHCI == Class[0]) ||
+              //                    (PCI_IF_XHCI == Class[0])) {
+            } else if (PCI_IF_EHCI == Class[0]) {
+              
               //
               // Found the EHCI, then disable the legacy support
               //
               Status = PciIo->Mem.Read (
-                                   PciIo,
-                                   EfiPciIoWidthUint32,
-                                   0,                   //EHC_BAR_INDEX
-                                   (UINT64) 0x08,       //EHC_HCCPARAMS_OFFSET
-                                   1,
-                                   &HcCapParams
-                                   );
+                                        PciIo,
+                                        EfiPciIoWidthUint32,
+                                        0,                   //EHC_BAR_INDEX
+                                        (UINT64) 0x08,       //EHC_HCCPARAMS_OFFSET
+                                        1,
+                                        &HcCapParams
+                                        );
               
               ExtendCap = (HcCapParams >> 8) & 0xFF;
               //
@@ -407,19 +407,23 @@ Returns:
               PciIo->Pci.Read (PciIo, EfiPciIoWidthUint32, ExtendCap, 1, &Value);
               Value |= (0x1 << 24);
               PciIo->Pci.Write (PciIo, EfiPciIoWidthUint32, ExtendCap, 1, &Value);
-
+              
               TimeOut = 40;
               while (TimeOut--) {
                 gBS->Stall (500);
-
+                
                 PciIo->Pci.Read (PciIo, EfiPciIoWidthUint32, ExtendCap, 1, &Value);
-
+                
                 if ((Value & 0x01010000) == 0x01000000) {
                   break;
                 }
               }
+              if (!TimeOut) {
+                //DBG("Cannot disable UsbLegacy, ExtCap=0x%x\n", Value);
                 //as Sunki suggested
-              PciIo->Pci.Write (PciIo, EfiPciIoWidthUint32, ExtendCap + 0x4, 1, &mSaveValue);  
+                PciIo->Pci.Write (PciIo, EfiPciIoWidthUint32, ExtendCap + 0x4, 1, &mSaveValue);
+                
+              }
             }
           } 
         }
@@ -1041,7 +1045,8 @@ Returns:
   // ConnectRootBridge() will create all the PciIo protocol, it's safe here now
   //
   //Slice - why disable here? We will do this before system start
-#if (!defined(USE_BIOS_BLOCKIO) && !defined(DISABLE_USB_SUPPORT))
+//#if (!defined(USE_BIOS_BLOCKIO) && !defined(DISABLE_USB_SUPPORT))
+#ifndef DISABLE_USB_SUPPORT
   Status = DisableUsbLegacySupport();
 #endif
   

@@ -159,6 +159,10 @@ INF   Clover/LegacyBios/Region2Dxe/LegacyRegion2Dxe.inf
 !ifdef DISABLE_USB_CONTROLLERS_WHEN_BLOCKIO
   DEFINE DISABLE_USB_CONTROLLERS = 1
 !endif
+
+!else
+!ifdef USE_ION
+	INF  RuleOverride=BINARY Clover/ION/ION.inf
 !else
   #INF  Clover/VBoxIdeControllerDxe/VBoxIdeControllerDxe.inf
   #INF  Clover/VBoxIdeBusDxe/VBoxIdeBusDxe.inf
@@ -172,6 +176,7 @@ INF   Clover/LegacyBios/Region2Dxe/LegacyRegion2Dxe.inf
   #INF  MdeModulePkg/Bus/Scsi/ScsiDiskDxe/ScsiDiskDxe.inf
   INF  Clover/DVDDisk/ScsiDiskDxe.inf
   #INF  IntelFrameworkModulePkg/Bus/Pci/IdeBusDxe/IdeBusDxe.inf
+!endif  
 !endif
 
     # Usb Support

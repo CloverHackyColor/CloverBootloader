@@ -128,6 +128,7 @@ VOID egDumpGOPVideoModes(VOID)
             MsgLog("- Mode %d: %r\n", Mode, Status);
         }
     }
+    
 }
 
 VOID egDumpSetConsoleVideoModes(VOID)
@@ -365,7 +366,7 @@ VOID egInitScreen(IN BOOLEAN SetMaxResolution)
     // get screen size
     egHasGraphics = FALSE;
     if (GraphicsOutput != NULL) {
-        egDumpGOPVideoModes();
+ //       egDumpGOPVideoModes();
         if (GlobalConfig.ScreenResolution != NULL) {
             if (EFI_ERROR(egSetScreenResolution(GlobalConfig.ScreenResolution))) {
                 if (SetMaxResolution) {

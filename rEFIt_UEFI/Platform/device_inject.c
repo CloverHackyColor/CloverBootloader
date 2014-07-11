@@ -330,7 +330,9 @@ VOID devprop_free_string(DevPropString *StringBuf)
 // Ethernet built-in device injection
 BOOLEAN set_eth_props(pci_dt_t *eth_dev)
 {
+#if DEBUG_INJECT 
 	CHAR8           *devicepath;
+#endif 	
   DevPropDevice   *device;
   UINT8           builtin = 0x0;
   BOOLEAN         Injected = FALSE;
@@ -338,11 +340,12 @@ BOOLEAN set_eth_props(pci_dt_t *eth_dev)
   CHAR8           compatible[64];
 
 
-	if (!string) {
+  if (!string) {
     string = devprop_create_string();
   }
-    
+#if DEBUG_INJECT    
   devicepath = get_pci_dev_path(eth_dev);
+#endif  
   //device = devprop_add_device(string, devicepath);
   device = devprop_add_device_pci(string, eth_dev);
   if (!device)
@@ -397,7 +400,9 @@ static UINT16  current_extra_high    = 3200;
 
 BOOLEAN set_usb_props(pci_dt_t *usb_dev)
 {
+#if DEBUG_INJECT 
 	CHAR8           *devicepath;
+#endif 	
   DevPropDevice   *device;
   UINT32          fake_devid;
   BOOLEAN         Injected = FALSE;
@@ -405,8 +410,9 @@ BOOLEAN set_usb_props(pci_dt_t *usb_dev)
 
 	if (!string)
     string = devprop_create_string();
-  
+#if DEBUG_INJECT  
   devicepath = get_pci_dev_path(usb_dev);
+#endif   
   //device = devprop_add_device(string, devicepath);
   device = devprop_add_device_pci(string, usb_dev);
   if (!device)
@@ -617,7 +623,9 @@ BOOLEAN IsHDMIAudio(EFI_HANDLE PciDevHandle)
 
 BOOLEAN set_hda_props(EFI_PCI_IO_PROTOCOL *PciIo, pci_dt_t *hda_dev, CHAR8 *OSVersion)
 {
+#if DEBUG_INJECT 
 	CHAR8           *devicepath;
+#endif 	
 	DevPropDevice   *device;
 	UINT32           layoutId = 0, codecId = 0;
   BOOLEAN         Injected = FALSE;
@@ -629,8 +637,9 @@ BOOLEAN set_hda_props(EFI_PCI_IO_PROTOCOL *PciIo, pci_dt_t *hda_dev, CHAR8 *OSVe
 	
   if (!string)
 		string = devprop_create_string();
-    
+#if DEBUG_INJECT     
   devicepath = get_pci_dev_path(hda_dev);
+#endif   
   //device = devprop_add_device(string, devicepath);
   device = devprop_add_device_pci(string, hda_dev);
   if (!device)

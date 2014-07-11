@@ -875,9 +875,6 @@ BootMaintCallback (
       }
     }
   } else if (Action == EFI_BROWSER_ACTION_CHANGED) {
-    if ((Value == NULL) || (ActionRequest == NULL)) {
-      return EFI_INVALID_PARAMETER;
-    }
     if ((QuestionId >= BOOT_OPTION_DEL_QUESTION_ID) && (QuestionId < BOOT_OPTION_DEL_QUESTION_ID + MAX_MENU_NUMBER)) {
       if (Value->b){
         //
@@ -1630,7 +1627,10 @@ InitBMPackage (
                   &BmmCallbackInfo->BmmConfigAccess,
                   NULL
                   );
-  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR (Status);
+  if (EFI_ERROR (Status)) {
+    return Status;
+  }
 
   //
   // Install Device Path Protocol and Config Access protocol to driver handle
@@ -1643,7 +1643,10 @@ InitBMPackage (
                   &BmmCallbackInfo->FeConfigAccess,
                   NULL
                   );
-  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR (Status);
+  if (EFI_ERROR (Status)) {
+    return Status;
+  }
 
   //
   // Post our Boot Maint VFR binary to the HII database.
@@ -1655,7 +1658,7 @@ InitBMPackage (
                                     BdsDxeStrings,
                                     NULL
                                     );
-  ASSERT (BmmCallbackInfo->BmmHiiHandle != NULL);
+//  ASSERT (BmmCallbackInfo->BmmHiiHandle != NULL);
   
   //
   // Post our File Explorer VFR binary to the HII database.
@@ -1667,15 +1670,15 @@ InitBMPackage (
                                    BdsDxeStrings,
                                    NULL
                                    );
-  ASSERT (BmmCallbackInfo->FeHiiHandle != NULL);
+//  ASSERT (BmmCallbackInfo->FeHiiHandle != NULL);
   
   mBmmCallbackInfo = BmmCallbackInfo;
   
   return EFI_SUCCESS; 
-    }
+}
 
 /**
-  Remvoe the intalled BootMaint and FileExplorer HiiPackages.
+  Remove the intalled BootMaint and FileExplorer HiiPackages.
 
 **/
 VOID
