@@ -1566,7 +1566,7 @@ UINTN  findPciRoot (UINT8 *dsdt, UINT32 len)
 {
 	UINTN    j;
 	UINTN    root = 0;
-  UINT32 PCIADR, PCISIZE;
+  UINT32 PCIADR, PCISIZE = 0;
 
   //initialising
   NetworkName   = FALSE;
@@ -1592,18 +1592,18 @@ UINTN  findPciRoot (UINT8 *dsdt, UINT32 len)
    14 16 5F 50 52 54 00                 Method (_PRT, 0, NotSerialized)
    */
   if (PCISIZE > 0) {
-  // find PCIRootUID
-  for (j=PCIADR; j<PCIADR+64; j++) {
-    if (dsdt[j] == '_' && dsdt[j+1] == 'U' && dsdt[j+2] == 'I' && dsdt[j+3] == 'D') {
-      // Slice - I want to set root to zero instead of keeping original value
-      if (dsdt[j+4] == 0x0A)
-        dsdt[j+5] = 0;  //AML_BYTE_PREFIX followed by a number
-      else
-        dsdt[j+4] = 0;  //any other will be considered as ONE or WRONG, replace to ZERO
-      DBG("Found PCIROOTUID = %d\n", root);
-      break;
-    }	
-  } 
+    // find PCIRootUID
+    for (j=PCIADR; j<PCIADR+64; j++) {
+      if (dsdt[j] == '_' && dsdt[j+1] == 'U' && dsdt[j+2] == 'I' && dsdt[j+3] == 'D') {
+        // Slice - I want to set root to zero instead of keeping original value
+        if (dsdt[j+4] == 0x0A)
+          dsdt[j+5] = 0;  //AML_BYTE_PREFIX followed by a number
+        else
+          dsdt[j+4] = 0;  //any other will be considered as ONE or WRONG, replace to ZERO
+        DBG("Found PCIROOTUID = %d\n", root);
+        break;
+      }
+    }
   } else {
     DBG("Warning! PCI root is not found!");
   }

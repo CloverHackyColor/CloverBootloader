@@ -666,7 +666,7 @@ CoreWaitForEvent (
   EFI_STATUS      Status;
   UINTN           Index;
   
-  if (!NumberOfEvents || !UserEvents || !UserIndex) {
+  if (!NumberOfEvents || !UserEvents) {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -687,7 +687,10 @@ CoreWaitForEvent (
       // provide index of event that caused problem
       //
       if (Status != EFI_NOT_READY) {
-        *UserIndex = Index;
+        if (UserIndex != NULL) {
+          *UserIndex = Index;
+        } //else we got only status not interesting with index
+
         return Status;
       }
     }
