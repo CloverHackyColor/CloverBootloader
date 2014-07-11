@@ -1006,7 +1006,9 @@ typedef struct {
 #endif
   UINT64  DoubleClickTime;
   BOOLEAN PointerMirror;
-  UINT8   pad7[3];  //for 64bit align
+  BOOLEAN DrawBootScreen;
+  BOOLEAN ThemeBootScreen;
+  BOOLEAN UseAlternateBootScreen;
   
   UINT32  RefCLK;
   
@@ -1488,6 +1490,8 @@ VOID        ApplyInputs(VOID);
 BOOLEAN     IsValidGuidAsciiString(IN CHAR8 *Str);
 EFI_STATUS  StrToGuid (IN  CHAR16   *Str, OUT EFI_GUID *Guid);
 EFI_STATUS  StrToGuidLE (IN  CHAR16   *Str, OUT EFI_GUID *Guid);
+
+VOID InitBootScreen(IN LOADER_ENTRY *Entry);
 
 EFI_STATUS  InitializeConsoleSim (VOID);
 EFI_STATUS  GuiEventsInitialize (VOID);

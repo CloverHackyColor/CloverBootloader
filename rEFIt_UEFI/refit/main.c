@@ -856,6 +856,9 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
 //  StartEFIImage(Entry->DevicePath, Entry->LoadOptions,
 //                Basename(Entry->LoaderPath), Basename(Entry->LoaderPath), NULL, NULL);
 
+  // Initialize the boot screen
+  InitBootScreen(Entry);
+
 //  DBG("StartEFILoadedImage\n");
   StartEFILoadedImage(ImageHandle, Entry->LoadOptions, 
                 Basename(Entry->LoaderPath), Basename(Entry->LoaderPath), NULL);

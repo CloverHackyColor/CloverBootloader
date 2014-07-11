@@ -169,7 +169,7 @@ rem have edk2 prepare to build
    set BASETOOLS_DIR=%WORKSPACE_TOOLS_PATH%\Bin\Win32
    set BOOTSECTOR_BIN_DIR=%WORKSPACE%\Clover\BootSector\bin
 
-   if x"%ENABLE_SECURE_BOOT" == x"1" (
+   if x"%ENABLE_SECURE_BOOT%" == x"1" (
       echo Building signing tool ...
       pushd .
       cd %SIGNTOOL_BUILD_DIR%

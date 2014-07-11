@@ -50,6 +50,7 @@
   entry_scan/securehash.c
   entry_scan/securemenu.c
   entry_scan/securevars.c
+  entry_scan/bootscreen.c
   libeg/BmLib.c
   libeg/image.c
   libeg/load_bmp.c

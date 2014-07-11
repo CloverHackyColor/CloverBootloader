@@ -1197,6 +1197,17 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
       if (prop) {
         gSettings.LegacyBiosDefaultEntry = (UINT16)GetPropertyInteger(prop, 0); // disabled by default
       }
+
+      // Whether or not to draw boot screen
+      prop = GetProperty(dictPointer, "UseCustomLogo");
+      if (prop) {
+        gSettings.DrawBootScreen = IsPropertyTrue(prop);
+      }
+      // Whether to use alternate colors
+      prop = GetProperty(dictPointer, "UseAlternateLogo");
+      if (prop) {
+         gSettings.UseAlternateBootScreen = IsPropertyTrue(prop);
+      }
     }
     
     dictPointer = GetProperty(dict, "GUI");
