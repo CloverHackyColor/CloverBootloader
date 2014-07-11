@@ -78,6 +78,7 @@ VOID KernelPatcher_64(VOID* kernelData, CHAR8 *OSVersion)
     UINT32      switchaddr=0;
     UINT32      mask_family=0, mask_model=0;
     UINT32      cpuid_family_addr=0, cpuid_model_addr=0;
+    UINT64      os_version;
   
     DBG_RT("\nLooking for _cpuid_set_info _panic ...\n");
     
@@ -97,7 +98,7 @@ VOID KernelPatcher_64(VOID* kernelData, CHAR8 *OSVersion)
         return;
     }
 
-    UINT64 os_version = AsciiOSVersionToUint64(OSVersion);
+    os_version = AsciiOSVersionToUint64(OSVersion);
 
     // make sure only kernels for OSX 10.6.0 to 10.7.3 are being patched by this approach
     if (os_version >= AsciiOSVersionToUint64("10.6") && os_version <= AsciiOSVersionToUint64("10.7.3")) {
@@ -180,10 +181,10 @@ VOID KernelPatcher_64(VOID* kernelData, CHAR8 *OSVersion)
                     // mov  dword [ds:0xffffff80008a216d], 0x2000117
                     bytes[switchaddr+4] = 0xC7;
                     bytes[switchaddr+5] = 0x05;
-                    bytes[switchaddr+6] = (mask_model & 0x000000FF) >> 0;
-                    bytes[switchaddr+7] = (mask_model & 0x0000FF00) >> 8;
-                    bytes[switchaddr+8] = (mask_model & 0x00FF0000) >> 16;
-                    bytes[switchaddr+9] = (mask_model & 0xFF000000) >> 24;
+                    bytes[switchaddr+6] = (UINT8)((mask_model & 0x000000FF) >> 0);
+                    bytes[switchaddr+7] = (UINT8)((mask_model & 0x0000FF00) >> 8);
+                    bytes[switchaddr+8] = (UINT8)((mask_model & 0x00FF0000) >> 16);
+                    bytes[switchaddr+9] = (UINT8)((mask_model & 0xFF000000) >> 24);
                     bytes[switchaddr+10] = 0x17; // cpuid_model (Penryn)
                     bytes[switchaddr+11] = 0x01; // cpuid_extmodel
                     bytes[switchaddr+12] = 0x00; // cpuid_extfamily
@@ -270,19 +271,19 @@ VOID KernelPatcher_64(VOID* kernelData, CHAR8 *OSVersion)
                 bytes[switchaddr+9]  = 0x89;
                 bytes[switchaddr+10] = 0x1D;
                 // cpuid_cpufamily address 0xffffff80008a21a0
-                bytes[switchaddr+11] = (mask_family & 0x000000FF) >> 0;
-                bytes[switchaddr+12] = (mask_family & 0x0000FF00) >> 8;
-                bytes[switchaddr+13] = (mask_family & 0x00FF0000) >> 16;
-                bytes[switchaddr+14] = (mask_family & 0xFF000000) >> 24;
+                bytes[switchaddr+11] = (UINT8)((mask_family & 0x000000FF) >> 0);
+                bytes[switchaddr+12] = (UINT8)((mask_family & 0x0000FF00) >> 8);
+                bytes[switchaddr+13] = (UINT8)((mask_family & 0x00FF0000) >> 16);
+                bytes[switchaddr+14] = (UINT8)((mask_family & 0xFF000000) >> 24);
                 
                 // mov dword
                 bytes[switchaddr+15] = 0xC7;
                 bytes[switchaddr+16] = 0x05;
                 // cpuid_model address 0xffffff80008b204d
-                bytes[switchaddr+17] = (mask_model & 0x000000FF) >> 0;
-                bytes[switchaddr+18] = (mask_model & 0x0000FF00) >> 8;
-                bytes[switchaddr+19] = (mask_model & 0x00FF0000) >> 16;
-                bytes[switchaddr+20] = (mask_model & 0xFF000000) >> 24;
+                bytes[switchaddr+17] = (UINT8)((mask_model & 0x000000FF) >> 0);
+                bytes[switchaddr+18] = (UINT8)((mask_model & 0x0000FF00) >> 8);
+                bytes[switchaddr+19] = (UINT8)((mask_model & 0x00FF0000) >> 16);
+                bytes[switchaddr+20] = (UINT8)((mask_model & 0xFF000000) >> 24);
                 
                 bytes[switchaddr+21] = 0x17; // cpuid_model
                 bytes[switchaddr+22] = 0x01; // cpuid_extmodel

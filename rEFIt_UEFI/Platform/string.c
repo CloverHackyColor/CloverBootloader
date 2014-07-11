@@ -3,6 +3,8 @@
   JrCs 2014
 */
 
+#include "Platform.h"
+
 CHAR8 *NonDetected = "10.10.10";  //longer string
 
 /**
@@ -43,7 +45,7 @@ UINT64 AsciiStrVersionToUint64(const CHAR8 *Version, UINT8 MaxDigitByPart, UINT8
         part_value = max_part_value;
     }
     else if (*Version == '.') {
-      result = result * part_mult + part_value;
+      result = MultU64x64(result, part_mult) + part_value;
       part_value = 0;
       MaxParts--;
     }
@@ -51,7 +53,7 @@ UINT64 AsciiStrVersionToUint64(const CHAR8 *Version, UINT8 MaxDigitByPart, UINT8
   }
 
   while (MaxParts--) {
-    result = result * part_mult + part_value;
+    result = MultU64x64(result, part_mult) + part_value;
     part_value = 0; // part_value is only used at first pass
   }
 

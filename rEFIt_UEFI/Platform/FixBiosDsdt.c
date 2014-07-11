@@ -838,22 +838,28 @@ VOID InsertScore(UINT8* dsdt, UINT32 off2, INTN root)
     
   if (dsdt[off2 + root] == 0x2E) {
     NumNames = 2;
-    off2 += root + 1;
+    off2 += (UINT32)(root + 1);
   } else if (dsdt[off2 + root] == 0x2F) {
     NumNames = dsdt[off2 + root + 1];
-    off2 += root + 2;
+    off2 += (UINT32)(root + 2);
   } else if (dsdt[off2 + root] != 0x00) {
     NumNames = 1;
-    off2 += root;
+    off2 += (UINT32)root;
   }
   
   if (NumNames > 4) {
     DBG(" strange NumNames=%d\n", NumNames);
     NumNames = 1;
   }
-  for (i = 0; i < NumNames * 4; i++) {
+  NumNames *= 4;
+  CopyMem(buf + ind, dsdt + off2, NumNames);
+  ind += NumNames;
+  // apianti - This generates a memcpy call
+  /*
+  for (i = 0; i < NumNames; i++) {
     buf[ind++] = dsdt[off2 + i];
   }
+  */
 
   i = 0;
   while (i < 127) {

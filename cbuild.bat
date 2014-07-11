@@ -2,6 +2,8 @@
 rem windows batch script for building clover
 rem 2012-09-06 apianti
 
+set ENABLE_SECURE_BOOT=0
+
 rem setup current dir and edk2 if needed
 pushd .
 set CURRENTDIR=%CD%
@@ -167,12 +169,14 @@ rem have edk2 prepare to build
    set BASETOOLS_DIR=%WORKSPACE_TOOLS_PATH%\Bin\Win32
    set BOOTSECTOR_BIN_DIR=%WORKSPACE%\Clover\BootSector\bin
 
-   echo Building signing tool ...
-   pushd .
-   cd %SIGNTOOL_BUILD_DIR%
-   call %SIGNTOOL_BUILD%
-   popd
-   if errorlevel 1 goto failscript
+   if x"%ENABLE_SECURE_BOOT" == x"1" (
+      echo Building signing tool ...
+      pushd .
+      cd %SIGNTOOL_BUILD_DIR%
+      call %SIGNTOOL_BUILD%
+      popd
+      if errorlevel 1 goto failscript
+   )
 
    if x"%BUILD_ARCH%" == x"X64" goto postbuild64
 
@@ -251,6 +255,11 @@ rem have edk2 prepare to build
 
 :parseArguments
    if x"%1" == x"" goto:eof
+   if x"%1" == x"-D" (
+      if x"%2" == x"ENABLE_SECURE_BOOT" (
+         set ENABLE_SECURE_BOOT=1
+      )
+   )
    if x"%1" == x"-t" (
       set TOOL_CHAIN_TAG=%2
    )

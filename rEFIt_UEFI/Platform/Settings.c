@@ -3473,7 +3473,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
     if (dictPointer) {
       prop = GetProperty(dictPointer,"QPI");
       if(prop) {
-        gSettings.QPI = (UINT16)GetPropertyInteger(prop, gCPUStructure.ProcessorInterconnectSpeed);
+        gSettings.QPI = (UINT16)GetPropertyInteger(prop, (INTN)gCPUStructure.ProcessorInterconnectSpeed);
         if (gSettings.QPI == 0) { //this is not default, this is zero!
           gSettings.QPI = 0xFFFF;
           DBG("Config set QPI=0 disable table132\n");
@@ -3489,7 +3489,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
       prop = GetProperty(dictPointer,"Type");
       gSettings.CpuType = GetAdvancedCpuType();
       if(prop) {
-        gSettings.CpuType = (UINT32)GetPropertyInteger(prop, gSettings.CpuType);
+        gSettings.CpuType = (UINT16)GetPropertyInteger(prop, gSettings.CpuType);
         DBG("Config set CpuType=%x\n", gSettings.CpuType);
       }
       
@@ -3515,10 +3515,10 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
       }
       //Usually it is 0x03e9, but if you want Turbo, you may set 0x00FA
       prop = GetProperty(dictPointer, "Latency");
-      gSettings.C3Latency = (UINT32)GetPropertyInteger(prop, gSettings.C3Latency);
+      gSettings.C3Latency = (UINT16)GetPropertyInteger(prop, gSettings.C3Latency);
 
       prop = GetProperty(dictPointer, "SavingMode");
-      gSettings.SavingMode = (UINT32)GetPropertyInteger(prop, 0xFF); //the default value means not set
+      gSettings.SavingMode = (UINT8)GetPropertyInteger(prop, 0xFF); //the default value means not set
 
     }
     
@@ -3754,7 +3754,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
       
       //BacklightLevel
       prop = GetProperty(dictPointer, "BacklightLevel");
-      gSettings.BacklightLevel = (UINT32)GetPropertyInteger(prop, gSettings.BacklightLevel);
+      gSettings.BacklightLevel = (UINT16)GetPropertyInteger(prop, gSettings.BacklightLevel);
       
       prop = GetProperty(dictPointer, "CustomUUID");
       if(prop) {

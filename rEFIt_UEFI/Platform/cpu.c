@@ -459,7 +459,7 @@ VOID GetCPUProperties (VOID)
                                 gCPUStructure.MaxRatio * 2 + gCPUStructure.SubDivider);
             if ((msr & 3) == 2 && (gCPUStructure.FSBFrequency < 196 * Mega)) {
               DBG("wrong MaxRatio = %d.%d, corrected\n", gCPUStructure.MaxRatio, gCPUStructure.SubDivider * 5);
-              gCPUStructure.MaxRatio = DivU64x32(gCPUStructure.TSCFrequency, 200 * Mega);
+              gCPUStructure.MaxRatio = (UINT32)DivU64x32(gCPUStructure.TSCFrequency, 200 * Mega);
             }
             gCPUStructure.MaxRatio = gCPUStructure.MaxRatio * 10 + gCPUStructure.SubDivider * 5; 
             gCPUStructure.Turbo4 = (UINT16)(gCPUStructure.MaxRatio + 10);
