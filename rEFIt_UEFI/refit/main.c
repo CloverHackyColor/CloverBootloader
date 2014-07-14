@@ -650,7 +650,6 @@ EG_PIXEL DarkBackgroundPixel  = { 0x0, 0x0, 0x0, 0xFF };
 static VOID StartLoader(IN LOADER_ENTRY *Entry)
 {
   EFI_STATUS              Status;
-  BOOLEAN                 BlockConOut = FALSE;
   EFI_TEXT_STRING         ConOutOutputString = 0;
   EFI_HANDLE              ImageHandle = NULL;
   EFI_LOADED_IMAGE        *LoadedImage;
@@ -783,12 +782,10 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     // note: this blocks output even if -v is specified in
     // /Library/Preferences/SystemConfiguration/com.apple.Boot.plist
     // which is wrong
-    if (Entry->LoadOptions == NULL || (StrStr(Entry->LoadOptions, L"-v") == NULL && StrStr(Entry->LoadOptions, L"-V") == NULL)) {
-      // OSX is not booting verbose, so block console output and set graphics mode
-      BlockConOut = TRUE;
-      Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_USEGRAPHICS);
-    } else {
-      // OSX is booting verbose, so set text mode
+    // apianti - only block console output if using graphics
+    //           but don't block custom boot logo
+    if (!IsCustomBootEntry(Entry) && (Entry->LoadOptions != NULL) &&
+        ((StrStr(Entry->LoadOptions, L"-v") != NULL) || (StrStr(Entry->LoadOptions, L"-V") != NULL))) {
       Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_USEGRAPHICS);
     }
   }
@@ -816,7 +813,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
 //    DBG("BeginExternalScreen\n");
   BeginExternalScreen(OSFLAG_ISSET(Entry->Flags, OSFLAG_USEGRAPHICS), L"Booting OS");
 
-  if (BlockConOut) {
+  if (OSFLAG_ISSET(Entry->Flags, OSFLAG_USEGRAPHICS)) {
     // save orig OutputString and replace it with
     // null implementation
     ConOutOutputString = gST->ConOut->OutputString;
@@ -863,7 +860,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
   StartEFILoadedImage(ImageHandle, Entry->LoadOptions, 
                 Basename(Entry->LoaderPath), Basename(Entry->LoaderPath), NULL);
   
-  if (BlockConOut) {
+  if (OSFLAG_ISSET(Entry->Flags, OSFLAG_USEGRAPHICS)) {
     // return back orig OutputString
     gST->ConOut->OutputString = ConOutOutputString;
   }

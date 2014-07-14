@@ -2,7 +2,7 @@
  Slice 2012
 */
 
-#include "Platform.h"
+#include "entry_scan.h"
 #include "kernel_patcher.h"
 #include "ati.h"
 
@@ -514,6 +514,55 @@ static BOOLEAN FillinCustomEntry(IN OUT CUSTOM_LOADER_ENTRY *Entry, TagPtr dictP
   prop = GetProperty(dictPointer, "Hotkey");
   if (prop && (prop->type == kTagTypeString) && prop->string) {
     Entry->Hotkey = *(prop->string);
+  }
+  // Whether or not to draw boot screen
+  prop = GetProperty(dictPointer, "CustomLogo");
+  if (prop) {
+     if (IsPropertyTrue(prop)) {
+        Entry->CustomBoot = CUSTOM_BOOT_APPLE;
+     }
+     else if ((prop->type == kTagTypeString) && prop->string) {
+        if (AsciiStriCmp(prop->string, "Apple") == 0) {
+           Entry->CustomBoot = CUSTOM_BOOT_APPLE;
+        }
+        else if ((AsciiStriCmp(prop->string, "AlternateApple") == 0) ||
+           (AsciiStriCmp(prop->string, "AltApple") == 0) ||
+           (AsciiStriCmp(prop->string, "Alternate") == 0) ||
+           (AsciiStriCmp(prop->string, "Alt") == 0)) {
+           Entry->CustomBoot = CUSTOM_BOOT_ALT_APPLE;
+        }
+        else if (AsciiStriCmp(prop->string, "Theme") == 0) {
+           Entry->CustomBoot = CUSTOM_BOOT_THEME;
+        }
+        else {
+           CHAR16 *customLogo = PoolPrint(L"%a", prop->string);
+           Entry->CustomBoot = CUSTOM_BOOT_USER;
+           if (Entry->CustomLogo != NULL) {
+              egFreeImage(Entry->CustomLogo);
+           }
+           Entry->CustomLogo = egLoadImage(SelfRootDir, customLogo, TRUE);
+           if (Entry->CustomLogo == NULL) {
+              DBG("Custom boot logo not found at path `%s`!\n", customLogo);
+           }
+           if (customLogo != NULL) {
+              FreePool(customLogo);
+           }
+        }
+     }
+     else if ((prop->type == kTagTypeData) &&
+        (prop->data != NULL) && (prop->dataLen > 0)) {
+        Entry->CustomBoot = CUSTOM_BOOT_USER;
+        if (Entry->CustomLogo != NULL) {
+           egFreeImage(Entry->CustomLogo);
+        }
+        Entry->CustomLogo = egDecodeImage(prop->data, prop->dataLen, NULL, TRUE);
+        if (Entry->CustomLogo == NULL) {
+           DBG("Custom boot logo not decoded from data!\n", prop->string);
+        }
+     }
+     else {
+        Entry->CustomBoot = CUSTOM_BOOT_USER_DISABLED;
+     }
   }
   prop = GetProperty(dictPointer, "BootBgColor");
   if (prop && prop->type == kTagTypeString) {
@@ -1199,14 +1248,49 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
       }
 
       // Whether or not to draw boot screen
-      prop = GetProperty(dictPointer, "UseCustomLogo");
+      prop = GetProperty(dictPointer, "CustomLogo");
       if (prop) {
-        gSettings.DrawBootScreen = IsPropertyTrue(prop);
-      }
-      // Whether to use alternate colors
-      prop = GetProperty(dictPointer, "UseAlternateLogo");
-      if (prop) {
-         gSettings.UseAlternateBootScreen = IsPropertyTrue(prop);
+        if (IsPropertyTrue(prop)) {
+          gSettings.CustomBoot = CUSTOM_BOOT_APPLE;
+        } else if ((prop->type == kTagTypeString) && prop->string) {
+          if (AsciiStriCmp(prop->string, "Apple") == 0) {
+            gSettings.CustomBoot = CUSTOM_BOOT_APPLE;
+          } else if ((AsciiStriCmp(prop->string, "AlternateApple") == 0) ||
+                     (AsciiStriCmp(prop->string, "AltApple") == 0) ||
+                     (AsciiStriCmp(prop->string, "Alternate") == 0) ||
+                     (AsciiStriCmp(prop->string, "Alt") == 0)) {
+            gSettings.CustomBoot = CUSTOM_BOOT_ALT_APPLE;
+          } else if (AsciiStriCmp(prop->string, "Theme") == 0) {
+            gSettings.CustomBoot = CUSTOM_BOOT_THEME;
+          } else {
+            CHAR16 *customLogo = PoolPrint(L"%a", prop->string);
+            gSettings.CustomBoot = CUSTOM_BOOT_USER;
+            if (gSettings.CustomLogo != NULL) {
+               egFreeImage(gSettings.CustomLogo);
+            }
+            gSettings.CustomLogo = egLoadImage(RootDir, customLogo, TRUE);
+            if (gSettings.CustomLogo == NULL) {
+              DBG("Custom boot logo not found at path `%s`!\n", customLogo);
+            }
+            if (customLogo != NULL) {
+              FreePool(customLogo);
+            }
+          }
+        } else if ((prop->type == kTagTypeData) &&
+                   (prop->data != NULL) && (prop->dataLen > 0)) {
+          gSettings.CustomBoot = CUSTOM_BOOT_USER;
+          if (gSettings.CustomLogo != NULL) {
+            egFreeImage(gSettings.CustomLogo);
+          }
+          gSettings.CustomLogo = egDecodeImage(prop->data, prop->dataLen, NULL, TRUE);
+          if (gSettings.CustomLogo == NULL) {
+             DBG("Custom boot logo not decoded from data!\n", prop->string);
+          }
+        } else {
+          gSettings.CustomBoot = CUSTOM_BOOT_USER_DISABLED;
+        }
+      } else {
+        gSettings.CustomBoot = CUSTOM_BOOT_DISABLED;
       }
     }
     

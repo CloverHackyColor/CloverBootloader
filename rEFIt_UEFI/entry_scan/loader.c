@@ -301,9 +301,23 @@ STATIC EFI_STATUS GetOSXVolumeName(LOADER_ENTRY *Entry)
   return Status;
 }
 
+BOOLEAN IsCustomBootEntry(IN LOADER_ENTRY *Entry)
+{
+  if (Entry == NULL) {
+    return FALSE;
+  }
+  if (Entry->CustomBoot == CUSTOM_BOOT_DISABLED) {
+    if (gSettings.CustomBoot == CUSTOM_BOOT_DISABLED) {
+      return FALSE; // (AsciiOSVersionToUint64(Entry->OSVersion) >= AsciiOSVersionToUint64("10.10"));
+    }
+    return (gSettings.CustomBoot != CUSTOM_BOOT_USER_DISABLED);
+  }
+  return (Entry->CustomBoot != CUSTOM_BOOT_USER_DISABLED);
+}
 
 STATIC LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOptions, IN CHAR16 *FullTitle, IN CHAR16 *LoaderTitle, IN REFIT_VOLUME *Volume,
-                                       IN EG_IMAGE *Image, IN EG_IMAGE *DriveImage, IN UINT8 OSType, IN UINT8 Flags, IN CHAR16 Hotkey, EG_PIXEL *BootBgColor, IN BOOLEAN CustomEntry)
+                                       IN EG_IMAGE *Image, IN EG_IMAGE *DriveImage, IN UINT8 OSType, IN UINT8 Flags, IN CHAR16 Hotkey, EG_PIXEL *BootBgColor,
+                                       IN UINT8 CustomBoot, IN EG_IMAGE *CustomLogo, IN BOOLEAN CustomEntry)
 {
   EFI_DEVICE_PATH *LoaderDevicePath;
   CHAR16          *LoaderDevicePathString;
@@ -533,7 +547,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
   Entry->VolName          = Volume->VolName;
   Entry->DevicePath       = LoaderDevicePath;
   Entry->DevicePathString = LoaderDevicePathString;
-  Entry->Flags            = Flags;
+  Entry->Flags            = OSFLAG_SET(Flags, OSFLAG_USEGRAPHICS);
   if (LoaderOptions) {
     if (OSFLAG_ISSET(Flags, OSFLAG_NODEFAULTARGS)) {
       Entry->LoadOptions  = EfiStrDuplicate(LoaderOptions);
@@ -550,7 +564,8 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
   Entry->me.AtClick = ActionSelect;
   Entry->me.AtDoubleClick = ActionEnter;
   Entry->me.AtRightClick = ActionDetails;
-  
+  Entry->CustomBoot = CustomBoot;
+  Entry->CustomLogo = CustomLogo;
   Entry->LoaderType = OSType;
   Entry->OSVersion = GetOSVersion(Entry);
   
@@ -563,9 +578,11 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
     case OSTYPE_RECOVERY:
     case OSTYPE_OSX_INSTALLER:
       OSIconName = GetOSIconName(Entry->OSVersion);// Sothor - Get OSIcon name using OSVersion
-      if (Entry->LoadOptions == NULL || (StrStr(Entry->LoadOptions, L"-v") == NULL && StrStr(Entry->LoadOptions, L"-V") == NULL)) {
+      // apianti - force custom logo even when verbose
+      if (!IsCustomBootEntry(Entry) && (Entry->LoadOptions != NULL) &&
+          ((StrStr(Entry->LoadOptions, L"-v") != NULL) || (StrStr(Entry->LoadOptions, L"-V") != NULL))) {
         // OSX is not booting verbose, so we can set console to graphics mode
-        Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_USEGRAPHICS);
+        Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_USEGRAPHICS);
       }
       if (gSettings.WithKexts) {
         Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_WITHKEXTS);
@@ -646,7 +663,6 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
   
   if (BootBgColor != NULL) {
     Entry->BootBgColor = BootBgColor;
-    Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_USEGRAPHICS);
   }
   DBG("found %s\n", Entry->DevicePathString);
   return Entry;
@@ -728,13 +744,13 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
     SubEntry = DuplicateLoaderEntry(Entry);
     if (SubEntry) {
       SubEntry->me.Title        = L"Force hibernate wake";
-      SubEntry->Flags           = OSFLAG_SET(Entry->Flags, OSFLAG_HIBERNATED);
+      SubEntry->Flags           = OSFLAG_SET(SubEntry->Flags, OSFLAG_HIBERNATED);
       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
     }
     SubEntry = DuplicateLoaderEntry(Entry);
     if (SubEntry) {
       SubEntry->me.Title        = L"Cancel hibernate wake";
-      SubEntry->Flags           = OSFLAG_UNSET(Entry->Flags, OSFLAG_HIBERNATED);
+      SubEntry->Flags           = OSFLAG_UNSET(SubEntry->Flags, OSFLAG_HIBERNATED);
       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
     }
     
@@ -983,7 +999,7 @@ STATIC BOOLEAN AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOptions,
     }
   }
 
-  Entry = CreateLoaderEntry(LoaderPath, LoaderOptions, NULL, LoaderTitle, Volume, Image, NULL, OSType, Flags, 0, NULL, FALSE);
+  Entry = CreateLoaderEntry(LoaderPath, LoaderOptions, NULL, LoaderTitle, Volume, Image, NULL, OSType, Flags, 0, NULL, CUSTOM_BOOT_DISABLED, NULL, FALSE);
   if (Entry != NULL) {
     AddDefaultMenu(Entry);
     AddMenuEntry(&MainMenu, (REFIT_MENU_ENTRY *)Entry);
@@ -1760,7 +1776,7 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
       }
       DBG("match!\n");
       // Create a entry for this volume
-      Entry = CreateLoaderEntry(CustomPath, CustomOptions, Custom->FullTitle, Custom->Title, Volume, Image, DriveImage, Custom->Type, Custom->Flags, Custom->Hotkey, Custom->BootBgColor, TRUE);
+      Entry = CreateLoaderEntry(CustomPath, CustomOptions, Custom->FullTitle, Custom->Title, Volume, Image, DriveImage, Custom->Type, Custom->Flags, Custom->Hotkey, Custom->BootBgColor, Custom->CustomBoot, Custom->CustomLogo, TRUE);
       if (Entry != NULL) {
         if (OSFLAG_ISUNSET(Custom->Flags, OSFLAG_NODEFAULTMENU)) {
           AddDefaultMenu(Entry);

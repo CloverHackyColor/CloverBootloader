@@ -88,6 +88,7 @@ VOID AddCustomLegacy(VOID);
 // loader
 VOID ScanLoader(VOID);
 VOID AddCustomEntries(VOID);
+BOOLEAN IsCustomBootEntry(IN LOADER_ENTRY *Entry);
 
 // tool
 VOID ScanTool(VOID);

@@ -414,7 +414,7 @@ STATIC UINT8 grayAppleLogo[] = {
    0x49, 0x45, 0x4E, 0x44, 0xAE, 0x42, 0x60, 0x82, 0x82,
 };
 
-STATIC EG_PIXEL blackBackgroundPixel = { 0x0, 0x0, 0x0, 0xFF };
+STATIC EG_PIXEL blackBackgroundPixel = { 0x00, 0x00, 0x00, 0xFF };
 STATIC UINT8 whiteAppleLogo[] = {
    0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0x00, 0x00, 0x00, 0x0D, 0x49, 0x48, 0x44, 0x52,
    0x00, 0x00, 0x00, 0x54, 0x00, 0x00, 0x00, 0x67, 0x08, 0x06, 0x00, 0x00, 0x00, 0x9E, 0x85, 0x65,
@@ -711,54 +711,77 @@ STATIC UINT8 whiteAppleLogo[] = {
 
 VOID InitBootScreen(IN LOADER_ENTRY *Entry)
 {
-  UINT64    version = AsciiOSVersionToUint64(Entry->OSVersion);
-  BOOLEAN   userWantsScreen = gSettings.DrawBootScreen;
-  UINT8    *logoData = grayAppleLogo;
-  UINTN     logoSize = sizeof(grayAppleLogo);
   EG_PIXEL *backgroundPixel = Entry->BootBgColor;
   EG_IMAGE *logo = NULL;
+  INTN      screenWidth, screenHeight;
+  UINT8     customBoot = Entry->CustomBoot;
 
-  // Check Yosemite users want boot
-  if (version >= AsciiOSVersionToUint64("10.10")) {
-    userWantsScreen = TRUE;
+  if (OSFLAG_ISUNSET(Entry->Flags, OSFLAG_USEGRAPHICS)) {
+    return;
+  }
+  // Check Yosemite users want custom boot by default
+  // and whatever the user might actually have selected
+  if (customBoot == CUSTOM_BOOT_USER) {
+    logo = Entry->CustomLogo;
+  } else if (customBoot == CUSTOM_BOOT_DISABLED) {
+    customBoot = gSettings.CustomBoot;
+    if (customBoot == CUSTOM_BOOT_DISABLED) {
+      if (AsciiOSVersionToUint64(Entry->OSVersion) < AsciiOSVersionToUint64("10.10")) {
+        return;
+      }
+      customBoot = CUSTOM_BOOT_APPLE;
+    } else if (customBoot == CUSTOM_BOOT_USER) {
+      logo = gSettings.CustomLogo;
+    }
+  }
+  switch (customBoot) {
+
+  case CUSTOM_BOOT_NONE:
+     // No logo
+     break;
+
+  case CUSTOM_BOOT_APPLE:
+     // Gray on gray apple
+     logo = egDecodeImage(grayAppleLogo, sizeof(grayAppleLogo), NULL, TRUE);
+     if (backgroundPixel == NULL) {
+       backgroundPixel = &grayBackgroundPixel;
+     }
+     break;
+
+  case CUSTOM_BOOT_ALT_APPLE:
+     // Alternate white on black apple
+     logo = egDecodeImage(whiteAppleLogo, sizeof(whiteAppleLogo), NULL, TRUE);
+     if (backgroundPixel == NULL) {
+        backgroundPixel = &blackBackgroundPixel;
+     }
+     break;
+
+  case CUSTOM_BOOT_THEME:
+     // TODO: Custom boot theme
+     return;
+
+  case CUSTOM_BOOT_USER:
+     // Custom user logo
+     if (logo != NULL) {
+        if (backgroundPixel == NULL) {
+          backgroundPixel = &grayBackgroundPixel;
+        }
+        break;
+     }
+
+  default:
+     return;
   }
 
-  // TODO: More rigorous testing of user wanting boot screen
-
-  // Check if user wants alternate boot screen colors
-  if (gSettings.UseAlternateBootScreen) {
-    logoData = whiteAppleLogo;
-    logoSize = sizeof(whiteAppleLogo);
-    if (backgroundPixel == NULL) {
-      backgroundPixel = &blackBackgroundPixel;
-    }
-  } else if (backgroundPixel == NULL) {
-     backgroundPixel = &grayBackgroundPixel;
-  }
-
-  // Test whether we should actually initialize screen
-  if (userWantsScreen &&
-      OSFLAG_ISSET(Entry->Flags, OSFLAG_USEGRAPHICS) &&
-      (OSTYPE_IS_OSX(Entry->LoaderType) ||
-       OSTYPE_IS_OSX_RECOVERY(Entry->LoaderType) ||
-       OSTYPE_IS_OSX_INSTALLER(Entry->LoaderType))) {
-
-    INTN screenWidth, screenHeight;
-    // Get the background logo if not present
-    if (logo == NULL) {
-      logo = egDecodeImage(logoData, logoSize, NULL, TRUE);
-    }
-    // Clear the screen
-    egGetScreenSize(&screenWidth, &screenHeight);
-    egClearScreen(backgroundPixel);
-    // Draw the background logo
-    if (logo != NULL) {
-      DBG("Blt custom boot logo %x %x %x\n", logo, logoData, logoSize);
-      BltImageAlpha(logo,
-                    (screenWidth - logo->Width) / 2,
-                    (screenHeight - logo->Height) / 2,
-                    backgroundPixel,
-                    16);
-    }
+  // Clear the screen
+  egGetScreenSize(&screenWidth, &screenHeight);
+  egClearScreen(backgroundPixel);
+  // Draw the background logo
+  if (logo != NULL) {
+    BltImageAlpha(logo,
+                  (screenWidth - logo->Width) / 2,
+                  (screenHeight - logo->Height) / 2,
+                  backgroundPixel,
+                  16);
   }
 }

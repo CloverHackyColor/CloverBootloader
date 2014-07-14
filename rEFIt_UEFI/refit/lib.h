@@ -132,8 +132,8 @@ typedef struct {
                                       OSTYPE_COMPARE_IMP(OSTYPE_IS_OSX_INSTALLER, type1, type2) || OSTYPE_COMPARE_IMP(OSTYPE_IS_WINDOWS, type1, type2) || \
                                       OSTYPE_COMPARE_IMP(OSTYPE_IS_LINUX, type1, type2) || OSTYPE_COMPARE_IMP(OSTYPE_IS_OTHER, type1, type2))
 
-#define OSFLAG_ISSET(flags, flag) ((flags & flag) != 0)
-#define OSFLAG_ISUNSET(flags, flag) ((flags & flag) == 0)
+#define OSFLAG_ISSET(flags, flag) ((flags & flag) == flag)
+#define OSFLAG_ISUNSET(flags, flag) ((flags & flag) != flag)
 #define OSFLAG_SET(flags, flag) (flags | flag)
 #define OSFLAG_UNSET(flags, flag) (flags & (~flag))
 #define OSFLAG_TOGGLE(flags, flag) (flags ^ flag)
@@ -145,6 +145,14 @@ typedef struct {
 #define OSFLAG_HIDDEN        (1 << 6)
 #define OSFLAG_DISABLED      (1 << 7)
 #define OSFLAG_HIBERNATED    (1 << 8)
+
+#define CUSTOM_BOOT_DISABLED       0
+#define CUSTOM_BOOT_USER_DISABLED  1
+#define CUSTOM_BOOT_NONE           2
+#define CUSTOM_BOOT_APPLE          3
+#define CUSTOM_BOOT_ALT_APPLE      4
+#define CUSTOM_BOOT_THEME          5
+#define CUSTOM_BOOT_USER           6
 
 #define IS_EXTENDED_PART_TYPE(type) ((type) == 0x05 || (type) == 0x0f || (type) == 0x85)
 
@@ -457,6 +465,8 @@ typedef struct {
   UINT8             LoaderType;
   CHAR8            *OSVersion;
   EG_PIXEL         *BootBgColor;
+  UINT8             CustomBoot;
+  EG_IMAGE         *CustomLogo;
 } LOADER_ENTRY;
 
 typedef struct {

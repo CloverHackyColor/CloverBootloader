@@ -716,6 +716,8 @@ struct CUSTOM_LOADER_ENTRY {
   UINT8                Type;
   UINT8                VolumeType;
   UINT8                KernelScan;
+  UINT8                CustomBoot;
+  EG_IMAGE            *CustomLogo;
   EG_PIXEL            *BootBgColor;
 };
 
@@ -1006,9 +1008,9 @@ typedef struct {
 #endif
   UINT64  DoubleClickTime;
   BOOLEAN PointerMirror;
-  BOOLEAN DrawBootScreen;
-  BOOLEAN ThemeBootScreen;
-  BOOLEAN UseAlternateBootScreen;
+  UINT8   pad7[2];
+  UINT8   CustomBoot;
+  EG_IMAGE *CustomLogo;
   
   UINT32  RefCLK;
   
