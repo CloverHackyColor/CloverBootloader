@@ -1092,7 +1092,7 @@ typedef struct {
   BOOLEAN DebugDSDT;
   BOOLEAN SlpWak;
   BOOLEAN UseIntelHDMI;
-  UINT8   pad6[1];
+  UINT8   AFGLowPowerState;
 
   // Table dropping
   ACPI_DROP_TABLE *ACPIDropTables;

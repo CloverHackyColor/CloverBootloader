@@ -20,6 +20,8 @@
 		122489CD16A93FD300A0DB6B /* ComponentName.c in Sources */ = {isa = PBXBuildFile; fileRef = 122489C816A93FD300A0DB6B /* ComponentName.c */; };
 		122489CE16A93FD300A0DB6B /* MouseHid.c in Sources */ = {isa = PBXBuildFile; fileRef = 122489C916A93FD300A0DB6B /* MouseHid.c */; };
 		122489CF16A93FD300A0DB6B /* UsbMouse.c in Sources */ = {isa = PBXBuildFile; fileRef = 122489CA16A93FD300A0DB6B /* UsbMouse.c */; };
+		1229C5A419750B78000A987B /* bootscreen.c in Sources */ = {isa = PBXBuildFile; fileRef = 1229C5A319750B78000A987B /* bootscreen.c */; };
+		1229C5AB19750BFE000A987B /* PlatformDriverOverride.c in Sources */ = {isa = PBXBuildFile; fileRef = 1229C5AA19750BFE000A987B /* PlatformDriverOverride.c */; };
 		12A82BA917CFCAE50019A5D3 /* card_vlist.c in Sources */ = {isa = PBXBuildFile; fileRef = 12A82BA817CFCAE50019A5D3 /* card_vlist.c */; };
 		12B2459218700F5F00A332C6 /* secureboot.c in Sources */ = {isa = PBXBuildFile; fileRef = 12B2458D18700F5F00A332C6 /* secureboot.c */; };
 		12B2459318700F5F00A332C6 /* securehash.c in Sources */ = {isa = PBXBuildFile; fileRef = 12B2458F18700F5F00A332C6 /* securehash.c */; };
@@ -77,6 +79,10 @@
 		122489CA16A93FD300A0DB6B /* UsbMouse.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = UsbMouse.c; sourceTree = "<group>"; };
 		122489CB16A93FD300A0DB6B /* UsbMouse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UsbMouse.h; sourceTree = "<group>"; };
 		122489CC16A93FD300A0DB6B /* UsbMouseDxe.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = UsbMouseDxe.inf; sourceTree = "<group>"; };
+		1229C5A319750B78000A987B /* bootscreen.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bootscreen.c; sourceTree = "<group>"; };
+		1229C5A819750BAD000A987B /* list.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = list.c; sourceTree = "<group>"; };
+		1229C5A919750BAD000A987B /* list.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = list.h; sourceTree = "<group>"; };
+		1229C5AA19750BFE000A987B /* PlatformDriverOverride.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = PlatformDriverOverride.c; sourceTree = "<group>"; };
 		123F0954164F96D0008C1C1C /* MemLogLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = MemLogLib.c; sourceTree = "<group>"; };
 		123F0955164F96D0008C1C1C /* MemLogLibDefault.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = MemLogLibDefault.inf; sourceTree = "<group>"; };
 		123F0958164F96DB008C1C1C /* EfiFlashMap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EfiFlashMap.h; sourceTree = "<group>"; };
@@ -1782,6 +1788,7 @@
 				12B816D41644675800A433E7 /* picopng.h */,
 				12B816D51644675800A433E7 /* Platform.h */,
 				12B816D61644675800A433E7 /* platformdata.c */,
+				1229C5AA19750BFE000A987B /* PlatformDriverOverride.c */,
 				12B816D71644675800A433E7 /* plist.c */,
 				12B816D81644675800A433E7 /* Pointer.c */,
 				12B816DB1644675800A433E7 /* Settings.c */,
@@ -1807,6 +1814,8 @@
 				12B816F01644675800A433E7 /* IO.h */,
 				12B816F11644675800A433E7 /* lib.c */,
 				12B816F21644675800A433E7 /* lib.h */,
+				1229C5A819750BAD000A987B /* list.c */,
+				1229C5A919750BAD000A987B /* list.h */,
 				12B816F31644675800A433E7 /* main.c */,
 				12B816F41644675800A433E7 /* menu.c */,
 				12B816F51644675800A433E7 /* screen.c */,
@@ -2529,6 +2538,7 @@
 		DEDA9728180530BE003AD904 /* entry_scan */ = {
 			isa = PBXGroup;
 			children = (
+				1229C5A319750B78000A987B /* bootscreen.c */,
 				DEDA9729180530BE003AD904 /* common.c */,
 				DEDA972A180530BE003AD904 /* legacy.c */,
 				DEDA972B180530BE003AD904 /* loader.c */,
@@ -2631,6 +2641,8 @@
 				122489CF16A93FD300A0DB6B /* UsbMouse.c in Sources */,
 				12B3D27517B23032009D8170 /* Edid.c in Sources */,
 				12A82BA917CFCAE50019A5D3 /* card_vlist.c in Sources */,
+				1229C5A419750B78000A987B /* bootscreen.c in Sources */,
+				1229C5AB19750BFE000A987B /* PlatformDriverOverride.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

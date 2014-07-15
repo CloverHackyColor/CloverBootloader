@@ -3623,9 +3623,10 @@ UINT32 AddHDEF (UINT8 *dsdt, UINT32 len, CHAR8* OSVersion)
     }
     aml_add_string(pack, "MaximumBootBeepVolume");
     aml_add_byte_buffer(pack, (CHAR8*)&dataBuiltin1[0], 1);
-    aml_add_string(pack, "AFGLowPowerState");
-    aml_add_byte_buffer(pack, Yes, 4);
-
+    if (gSettings.AFGLowPowerState) {
+      aml_add_string(pack, "AFGLowPowerState");
+      aml_add_byte_buffer(pack, Yes, 4);
+    }
     aml_add_string(pack, "PinConfigurations");
     aml_add_byte_buffer(pack, 0, 0);//data, sizeof(data));    
   }

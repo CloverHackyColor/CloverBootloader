@@ -2824,6 +2824,9 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
             }
           }
         }
+        
+        prop = GetProperty(prop2, "AFGLowPowerState");
+        gSettings.AFGLowPowerState = IsPropertyTrue(prop);
       }
       
       prop2 = GetProperty(dictPointer, "USB");
