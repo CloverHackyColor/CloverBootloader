@@ -74,7 +74,7 @@ static EFI_GRAPHICS_OUTPUT_PROTOCOL_MODE GraphicsOutputMode = {
 // Size of information in bytes
 sizeof(EFI_GRAPHICS_OUTPUT_MODE_INFORMATION),
 // Framebuffer
-(EFI_PHYSICAL_ADDRESS)0,
+(EFI_PHYSICAL_ADDRESS)(UINTN)NULL,
 // Framebuffer size in bytes
 0
 };
@@ -274,7 +274,7 @@ EFI_STATUS UnlockBootScreen(VOID)
     // Free locked framebuffer
     if (GraphicsOutputMode.FrameBufferBase != (EFI_PHYSICAL_ADDRESS)(UINTN)NULL) {
       FreePool((VOID *)(UINTN)GraphicsOutputMode.FrameBufferBase);
-      GraphicsOutputMode.FrameBufferBase = (EFI_PHYSICAL_ADDRESS)0;
+      GraphicsOutputMode.FrameBufferBase = (EFI_PHYSICAL_ADDRESS)(UINTN)NULL;
     }
     GraphicsOutputMode.FrameBufferSize = 0;
     CopyMem(GraphicsOutput, &OldGraphicsOutput, sizeof(EFI_GRAPHICS_OUTPUT_PROTOCOL));
