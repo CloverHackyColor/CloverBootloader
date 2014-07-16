@@ -611,7 +611,9 @@ FSI_FP_Read(
 {
 	EFI_STATUS				Status = EFI_DEVICE_ERROR;
 	FSI_FILE_PROTOCOL		*FSIThis;
+#if DBG_TO  
 	EFI_FILE_INFO			*FInfo;
+#endif
 	UINTN					BufferSizeOrig;
 	CHAR8					*String;
 	FSI_STRING_LIST			*StringList;
@@ -689,13 +691,14 @@ FSI_FP_Read(
 			FreePool(TmpBuffer);
 		}
 	}
-	
+#if DBG_TO 	
 	if (Status == EFI_SUCCESS && FSIThis->IsDir && *BufferSize > 0) {
 		FInfo = (EFI_FILE_INFO *)Buffer;
 		DBG("= %r, *BufferSize=%d, dir entry FileName='%s'\n", Status, *BufferSize, FInfo->FileName);
 	} else {
 		DBG("= %r, *BufferSize=%d\n", Status, *BufferSize);
 	}
+#endif	
 	return Status;
 }
 

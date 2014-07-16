@@ -191,11 +191,11 @@ MOAllocatePages (
 {
 	EFI_STATUS					Status;
 	EFI_PHYSICAL_ADDRESS		UpperAddr;
-	EFI_PHYSICAL_ADDRESS		MemoryIn;
-	BOOLEAN						FromRelocBlock = FALSE;
+//	EFI_PHYSICAL_ADDRESS		MemoryIn;
+//	BOOLEAN						FromRelocBlock = FALSE;
 	
 
-	MemoryIn = *Memory;
+//	MemoryIn = *Memory;
 	
 	if (Type == AllocateAddress && MemoryType == EfiLoaderData) {
 		// called from boot.efi
@@ -207,7 +207,7 @@ MOAllocatePages (
 		if (UpperAddr > gMaxAllocatedAddr) gMaxAllocatedAddr = UpperAddr;
 		
 		Status = gStoredAllocatePages(Type, MemoryType, NumberOfPages, Memory);
-		FromRelocBlock = FALSE;
+//		FromRelocBlock = FALSE;
 		
 	} else if (gHibernateWake && Type == AllocateAnyPages && MemoryType == EfiLoaderData) {
 		// called from boot.efi during hibernate wake
@@ -286,7 +286,7 @@ MOExitBootServices (
     }
     
 	// for  tests: we can just return EFI_SUCCESS and continue using Print for debug.
-	Status = EFI_SUCCESS;
+//	Status = EFI_SUCCESS;
 	//Print(L"ExitBootServices()\n");
 	Status = gStoredExitBootServices(ImageHandle, MapKey);
 	DBGnvr("ExitBootServices:  = %r\n", Status);

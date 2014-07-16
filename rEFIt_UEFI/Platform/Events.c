@@ -370,7 +370,7 @@ EventsInitialize (IN LOADER_ENTRY *Entry)
   
 	if(!EFI_ERROR(Status))
 	{
-		Status = gBS->RegisterProtocolNotify (
+		/*Status = */gBS->RegisterProtocolNotify (
                  &gEfiStatusCodeRuntimeProtocolGuid,
                  ExitBootServiceEvent,
                  &Registration);

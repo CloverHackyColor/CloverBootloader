@@ -252,11 +252,11 @@ USER_print_disk(disk, do_dump)
 	disk_t *disk;
 	int do_dump;
 {
-	int fd, offset, firstoff;
+	int fd /*, offset, firstoff*/;
 	mbr_t *mbr;
 
 	fd = DISK_open(disk->name, O_RDONLY);
-	offset = firstoff = 0;
+//	offset = firstoff = 0;
 
 	if (!do_dump)
 	  DISK_printmetrics(disk);

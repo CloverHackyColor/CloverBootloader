@@ -287,21 +287,21 @@ DisplayDriverModelHandle (
   // See if Handle is a device handle and display its details.
   //
   DriverBindingHandleBuffer = NULL;
-  Status = PARSE_HANDLE_DATABASE_UEFI_DRIVERS (
+  /*Status = */PARSE_HANDLE_DATABASE_UEFI_DRIVERS (
             Handle,
             &DriverBindingHandleCount,
             &DriverBindingHandleBuffer
             );
 
   ParentControllerHandleBuffer = NULL;
-  Status = PARSE_HANDLE_DATABASE_PARENTS (
+  /*Status = */PARSE_HANDLE_DATABASE_PARENTS (
             Handle,
             &ParentControllerHandleCount,
             &ParentControllerHandleBuffer
             );
 
   ChildControllerHandleBuffer = NULL;
-  Status = ParseHandleDatabaseForChildControllers (
+  /*Status = */ParseHandleDatabaseForChildControllers (
             Handle,
             &ChildControllerHandleCount,
             &ChildControllerHandleBuffer
@@ -331,7 +331,7 @@ DisplayDriverModelHandle (
 
     DevicePath          = NULL;
     TempStringPointer   = NULL;
-    Status              = gBS->HandleProtocol (Handle, &gEfiDevicePathProtocolGuid, (VOID**)&DevicePath);
+    /*Status              = */gBS->HandleProtocol (Handle, &gEfiDevicePathProtocolGuid, (VOID**)&DevicePath);
 
     Status = gEfiShellProtocol->GetDeviceName(Handle, EFI_DEVICE_NAME_USE_COMPONENT_NAME|EFI_DEVICE_NAME_USE_DEVICE_PATH, (CHAR8*)Language, &TempStringPointer);
     ShellPrintHiiEx(-1, -1, NULL, STRING_TOKEN (STR_DH_OUTPUT_DRIVER1), gShellDriver1HiiHandle, TempStringPointer!=NULL?TempStringPointer:L"<Unknown>");
@@ -585,7 +585,8 @@ DisplayDriverModelHandle (
       L""
       );
     for (HandleIndex = 0; HandleIndex < ControllerHandleCount; HandleIndex++) {
-      Status = gEfiShellProtocol->GetDeviceName(ControllerHandleBuffer[HandleIndex], EFI_DEVICE_NAME_USE_COMPONENT_NAME|EFI_DEVICE_NAME_USE_DEVICE_PATH, (CHAR8*)Language, &TempStringPointer);
+      /*Status = */
+      gEfiShellProtocol->GetDeviceName(ControllerHandleBuffer[HandleIndex], EFI_DEVICE_NAME_USE_COMPONENT_NAME|EFI_DEVICE_NAME_USE_DEVICE_PATH, (CHAR8*)Language, &TempStringPointer);
 
       ShellPrintHiiEx(
         -1, 
@@ -867,7 +868,7 @@ ShellCommandRunDh (
   UINT64              Intermediate;
 
   ShellStatus         = SHELL_SUCCESS;
-  Status              = EFI_SUCCESS;
+//  Status              = EFI_SUCCESS;
   Language            = NULL;
 
   //

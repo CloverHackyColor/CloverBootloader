@@ -812,7 +812,7 @@ Returns:
   //
   // Preserve the original value
   //
-  Status = PrivateData->Io.Pci.Read (
+  /*Status = */PrivateData->Io.Pci.Read (
                                  &PrivateData->Io, 
                                  EfiPciWidthUint32, 
                                  Address, 
@@ -827,7 +827,7 @@ Returns:
 
   AllOnes = 0xffffffff;
 
-  Status = PrivateData->Io.Pci.Write (
+  /*Status = */PrivateData->Io.Pci.Write (
                                  &PrivateData->Io, 
                                  EfiPciWidthUint32, 
                                  Address, 
@@ -845,14 +845,15 @@ Returns:
   //
   //Write back the original value
   //
-  Status = PrivateData->Io.Pci.Write (
+  if (!EFI_ERROR(Status)) {
+  /*Status = */PrivateData->Io.Pci.Write (
                                  &PrivateData->Io, 
                                  EfiPciWidthUint32, 
                                  Address, 
                                  1, 
                                  OriginalValue
                                  );
-
+}
   //
   // Restore TPL to its original level
   //

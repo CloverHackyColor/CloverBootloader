@@ -660,14 +660,14 @@ BiosBlockIoDriverBindingStop (
     return EFI_DEVICE_ERROR;
   }
 
-  Status = gBS->CloseProtocol (
+  /*Status = */gBS->CloseProtocol (
                   Controller,
                   &gEfiDevicePathProtocolGuid,
                   This->DriverBindingHandle,
                   Controller
                   );
 
-  Status = gBS->CloseProtocol (
+  /*Status = */gBS->CloseProtocol (
                   Controller,
                   &gEfiPciIoProtocolGuid,
                   This->DriverBindingHandle,

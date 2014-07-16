@@ -1394,13 +1394,13 @@ UsbBusControllerDriverStart (
       }
     }
 
-    Status = UsbBusAddWantedUsbIoDP (UsbBusId, RemainingDevicePath);
+ /*   Status = */UsbBusAddWantedUsbIoDP (UsbBusId, RemainingDevicePath);
  //   ASSERT (!EFI_ERROR (Status));
 //   DBG("AddWanted status=%r\n", Status);
     //
     // Ensure all wanted child usb devices are fully recursively connected
     //
-    Status = UsbBusRecursivelyConnectWantedUsbIo (UsbBusId);
+/*    Status = */UsbBusRecursivelyConnectWantedUsbIo (UsbBusId);
 //    DBG("RecursivelyConnect status=%r\n", Status);
 //    ASSERT (!EFI_ERROR (Status));
   }

@@ -517,7 +517,7 @@ BootMaintRouteConfig (
   }
 
   if (CompareMem (&NewBmmData->BootNext, &OldBmmData->BootNext, sizeof (NewBmmData->BootNext)) != 0) {
-    Status = Var_UpdateBootNext (Private);
+    /*Status = */Var_UpdateBootNext (Private);
   }
 
   if (CompareMem (&NewBmmData->ConsoleOutMode, &OldBmmData->ConsoleOutMode, sizeof (NewBmmData->ConsoleOutMode)) != 0) {  
@@ -752,7 +752,7 @@ BootMaintCallback (
     return EFI_UNSUPPORTED;
   }
 
-  Status       = EFI_SUCCESS;
+//  Status       = EFI_SUCCESS;
     OldValue       = 0;
     NewValue       = 0;
     Number         = 0;
@@ -1209,7 +1209,7 @@ InitializeBM (
   // Update String package for BM
   //
   CopyGuid (&PackageListHeader->PackageListGuid, &gBootMaintFormSetGuid);
-  Status = gHiiDatabase->UpdatePackageList (gHiiDatabase, BmmCallbackInfo->BmmHiiHandle, PackageListHeader);
+  /*Status = */gHiiDatabase->UpdatePackageList (gHiiDatabase, BmmCallbackInfo->BmmHiiHandle, PackageListHeader);
 
   //
   // Update String package for FE.

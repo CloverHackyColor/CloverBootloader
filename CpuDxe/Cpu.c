@@ -1151,6 +1151,9 @@ InitializeBiosIntCaller (
                   &LegacyRegionBase
                   );
 //  ASSERT_EFI_ERROR (Status);
+  if (EFI_ERROR (Status)) {
+    return;
+  }
   
   mThunkContext.RealModeBuffer     = (VOID*)(UINTN)LegacyRegionBase;
   mThunkContext.RealModeBufferSize = EFI_PAGES_TO_SIZE ((UINTN)RealModeBufferSize);

@@ -562,12 +562,14 @@ FileInterfaceStdInRead(
                 InternalFreeShellFileInfoNode(TabLinePos);
             }
           }
-          if (FoundFileList != NULL && !IsListEmpty(&FoundFileList->Link)) {
-            TabLinePos = (EFI_SHELL_FILE_INFO*)GetFirstNode(&FoundFileList->Link);
-            InTabScrolling = TRUE;
-          } else {
-            FreePool(FoundFileList);
-            FoundFileList = NULL;
+          if (FoundFileList != NULL) {
+            if (!IsListEmpty(&FoundFileList->Link)) {
+              TabLinePos = (EFI_SHELL_FILE_INFO*)GetFirstNode(&FoundFileList->Link);
+              InTabScrolling = TRUE;
+            } else {            
+              FreePool(FoundFileList);
+              FoundFileList = NULL;
+            }            
           }
         }
       }

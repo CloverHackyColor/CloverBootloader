@@ -364,7 +364,7 @@ static fsw_status_t fsw_iso9660_volume_mount(struct fsw_iso9660_volume *vol)
     //FSW_MSG_DEBUG((FSW_MSGSTR("fsw_iso9660_volume_mount: success (SUA(pos:%x, sz:%d)!!!)\n"), sua_pos, sua_size));
 
 #if 1
-    status = fsw_block_get(vol, ISOINT(rootdir_p->extent_location), 0, &buffer);
+    /*status = */fsw_block_get(vol, ISOINT(rootdir_p->extent_location), 0, &buffer);
     sig = (char *)buffer + sua_pos;
 //    skip = 0;
     entry = (struct fsw_rock_ridge_susp_entry *)sig;

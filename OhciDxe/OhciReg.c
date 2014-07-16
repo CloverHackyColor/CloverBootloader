@@ -50,10 +50,10 @@ OhciGetOperationalReg (
   IN UINT32               Offset
   )
 {
-  UINT32                  Value;
-  EFI_STATUS              Status;
+  UINT32                  Value = 0;
+//  EFI_STATUS              Status;
 
-  Status = PciIo->Mem.Read(PciIo, EfiPciIoWidthUint32, OHC_BAR_INDEX, Offset, 1, &Value);
+/*  Status = */PciIo->Mem.Read(PciIo, EfiPciIoWidthUint32, OHC_BAR_INDEX, Offset, 1, &Value);
 
   return Value;
 }
@@ -120,10 +120,10 @@ OhciSetHcReset (
   IN UINT32                     Value
   )
 {
-  EFI_STATUS                    Status;
+//  EFI_STATUS                    Status;
   HcRESET                       Reset;
 
-  Status = EFI_SUCCESS;
+//  Status = EFI_SUCCESS;
   *(UINT32 *) &Reset = OhciGetOperationalReg (Ohc->PciIo, USBHOST_OFFSET_UHCHR);
 
   if (Field & RESET_SYSTEM_BUS) {

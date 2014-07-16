@@ -221,7 +221,7 @@ GetBootOptionCrc(
   // Get the CRC computed
   //
   if (!EFI_ERROR(Status)) {
-    Status = gBS->CalculateCrc32 (Buffer, BufferSize, Crc);
+    /*Status = */gBS->CalculateCrc32 (Buffer, BufferSize, Crc);
   }
 
   SHELL_FREE_NON_NULL(Buffer);
@@ -368,12 +368,12 @@ BcfgAddInstall1(
         //
         //Make sure that the handle should point to a real controller
         //
-        Status = PARSE_HANDLE_DATABASE_UEFI_DRIVERS (
+        /*Status = */PARSE_HANDLE_DATABASE_UEFI_DRIVERS (
                    CurHandle,
                    &DriverBindingHandleCount,
                    NULL);
 
-        Status = PARSE_HANDLE_DATABASE_PARENTS (
+        /*Status = */PARSE_HANDLE_DATABASE_PARENTS (
                    CurHandle,
                    &ParentControllerHandleCount,
                    NULL);
@@ -400,17 +400,17 @@ BcfgAddInstall1(
         //
         //Make sure that the handle should point to driver, not a controller.
         //
-        Status = PARSE_HANDLE_DATABASE_UEFI_DRIVERS (
+        /*Status = */PARSE_HANDLE_DATABASE_UEFI_DRIVERS (
                    CurHandle,
                    &DriverBindingHandleCount,
                    NULL);
 
-        Status = PARSE_HANDLE_DATABASE_PARENTS (
+        /*Status =*/ PARSE_HANDLE_DATABASE_PARENTS (
                    CurHandle,
                    &ParentControllerHandleCount,
                    NULL);
 
-        Status = ParseHandleDatabaseForChildControllers (
+        /*Status = */ParseHandleDatabaseForChildControllers (
                    CurHandle,
                    &ChildControllerHandleCount,
                    NULL);
@@ -1376,7 +1376,7 @@ ShellCommandRunBcfgInstall (
               ShellPrintHiiEx(-1, -1, NULL, STRING_TOKEN (STR_GEN_PROBLEM), gShellInstall1HiiHandle, CurrentParam);
               ShellStatus = SHELL_INVALID_PARAMETER;
             } else {
-              Status = ShellConvertStringToUint64(CurrentParam, &Intermediate, TRUE, FALSE);
+              /*Status = */ShellConvertStringToUint64(CurrentParam, &Intermediate, TRUE, FALSE);
               CurrentOperation.Number2     = (UINT16)Intermediate;
             }
             if (CurrentOperation.Number2 == CurrentOperation.Number1
@@ -1442,7 +1442,8 @@ ShellCommandRunBcfgInstall (
             CurrentOperation.Target);
           break;
         default:
-          ASSERT(FALSE);
+//          ASSERT(FALSE);
+          break;
       }
     }
   }

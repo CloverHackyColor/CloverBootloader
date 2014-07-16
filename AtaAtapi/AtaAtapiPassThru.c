@@ -680,7 +680,7 @@ AtaAtapiPassThruStart (
   UINT64                            Supports;
   UINT64                            OriginalPciAttributes;
 
-  Status                = EFI_SUCCESS;
+//  Status                = EFI_SUCCESS;
   IdeControllerInit     = NULL;
   Instance              = NULL;
   OriginalPciAttributes = 0;

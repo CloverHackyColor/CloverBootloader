@@ -44,6 +44,9 @@ InitializeBiosIntCaller (
                   &LegacyRegionBase
                   );
 //  ASSERT_EFI_ERROR (Status);
+  if (EFI_ERROR (Status)) {
+    return;
+  }
   
   ThunkContext->RealModeBuffer     = (VOID*)(UINTN)LegacyRegionBase;
   ThunkContext->RealModeBufferSize = LegacyRegionSize;
@@ -97,7 +100,9 @@ InitializeInterruptRedirection (
                   &LegacyRegionBase
                   );
 //  ASSERT_EFI_ERROR (Status);
-
+  if (EFI_ERROR (Status)) {
+    return;
+  }
   //
   // Copy code to legacy region
   //
@@ -107,7 +112,11 @@ InitializeInterruptRedirection (
   // Get VectorBase, it should be 0x68
   //
   Status = Legacy8259->GetVector (Legacy8259, Efi8259Irq0, &ProtectedModeBaseVector);
-  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR (Status);
+  if (EFI_ERROR (Status)) {
+    return;
+  }
+
 
   //
   // Patch IVT 0x68 ~ 0x6f

@@ -484,6 +484,7 @@ PrintMemMap(
 	IN UINT32					DescriptorVersion
 )
 {
+#if DBG_TO
 	UINTN					NumEntries;
 	UINTN					Index;
 	UINT64					Bytes;
@@ -494,7 +495,9 @@ PrintMemMap(
 	DBG("MEMMAP: Size=%d, Addr=%p, DescSize=%d, DescVersion: 0x%x\n", MemoryMapSize, MemoryMap, DescriptorSize, DescriptorVersion);
 	DBG("Type       Start            End       VStart               # Pages          Attributes\n");
 	for (Index = 0; Index < NumEntries; Index++) {
+	
 		Bytes = (((UINTN) Desc->NumberOfPages) * EFI_PAGE_SIZE);
+		
 		DBG("%-12s %lX-%lX %lX  %lX %lX\n",
 			EfiMemoryTypeDesc[Desc->Type],
 			Desc->PhysicalStart,
@@ -509,6 +512,7 @@ PrintMemMap(
 		//}
 	}
 	//WaitForKeyPress(L"End: press a key to continue\n");
+#endif	
 }
 
 VOID EFIAPI

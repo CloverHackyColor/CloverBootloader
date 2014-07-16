@@ -76,12 +76,12 @@ InitializeConsoleSim ()
 	UINTN			dataSize = sizeof(BackgroundClear);
   
   
-  Status = gBS->InstallMultipleProtocolInterfaces (
+ /* Status = */gBS->InstallMultipleProtocolInterfaces (
                        &gImageHandle,
                        &gEfiConsoleControlProtocolGuid,
                        &gConsoleController,
                        NULL
-                                                   );
+                        );
   
   // get background clear
 	Status = gRS->GetVariable(bgc, &gEfiAppleNvramGuid, 0, &dataSize, &BackgroundClear);

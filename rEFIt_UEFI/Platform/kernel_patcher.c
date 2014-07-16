@@ -57,12 +57,12 @@ UINT32     PrelinkInfoSize = 0;
 
 VOID SetKernelRelocBase()
 {
-  EFI_STATUS      Status;
+//  EFI_STATUS      Status;
   UINTN           DataSize = sizeof(KernelRelocBase);
   
   KernelRelocBase = 0;
   // OsxAptioFixDrv will set this
-  Status = gRT->GetVariable(L"OsxAptioFixDrv-RelocBase", &gEfiAppleBootGuid, NULL, &DataSize, &KernelRelocBase);
+  /*Status = */gRT->GetVariable(L"OsxAptioFixDrv-RelocBase", &gEfiAppleBootGuid, NULL, &DataSize, &KernelRelocBase);
   // KernelRelocBase is now either read or 0
   return;
 }

@@ -339,8 +339,8 @@ CommonExceptionHandler (
     SystemContext.SystemContextX64->Dr6,
     SystemContext.SystemContextX64->Dr7
     ));
-#else
-#error CPU type not supported for exception information dump!
+//#else
+//#error CPU type not supported for exception information dump!
 #endif
 
   //

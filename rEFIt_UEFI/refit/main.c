@@ -841,11 +841,11 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     if (0 /* DoHibernateWake */) {
       Status = SaveBooterLog(SelfRootDir, PREWAKE_LOG);
       if (EFI_ERROR(Status)) {
-        Status = SaveBooterLog(NULL, PREWAKE_LOG);
+        /*Status = */SaveBooterLog(NULL, PREWAKE_LOG);
       }
     } else {
       // When doing hibernate wake, save to DataHub only up to initial size of log
-      Status = SetupBooterLog(!DoHibernateWake);
+      /*Status = */SetupBooterLog(!DoHibernateWake);
     }
   }
 
@@ -1616,7 +1616,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 	gImageHandle	= ImageHandle;
 	gBS				= SystemTable->BootServices;
 	gRS				= SystemTable->RuntimeServices;
-	Status = EfiGetSystemConfigurationTable (&gEfiDxeServicesTableGuid, (VOID **) &gDS);
+	/*Status = */EfiGetSystemConfigurationTable (&gEfiDxeServicesTableGuid, (VOID **) &gDS);
 
   gRS->GetTime(&Now, NULL);
 

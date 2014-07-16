@@ -227,10 +227,15 @@ fsw_status_t fsw_block_get(struct VOLSTRUCTNAME *vol, fsw_u32 phys_bno, fsw_u32 
         else
             new_bcache_size = vol->bcache_size << 1;
         status = fsw_alloc(new_bcache_size * sizeof(struct fsw_blockcache), &new_bcache);
-        if (status)
-            return status;
-        if (vol->bcache_size > 0)
+        if (status != FSW_SUCCESS) {
+          if (new_bcache) {
+            fsw_free(new_bcache);
+          }
+          return status;
+        }
+        if (vol->bcache_size > 0) {
             fsw_memcpy(new_bcache, vol->bcache, vol->bcache_size * sizeof(struct fsw_blockcache));
+        }
         for (i = vol->bcache_size; i < new_bcache_size; i++) {
             new_bcache[i].refcount = 0;
             new_bcache[i].cache_level = 0;

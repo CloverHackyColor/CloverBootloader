@@ -928,20 +928,20 @@ CoreUnloadAndCloseImage (
 
     CoreRemoveDebugImageInfoEntry (Image->Handle);
 
-    Status = CoreUninstallProtocolInterface (
+    /*Status = */CoreUninstallProtocolInterface (
                Image->Handle,
                &gEfiLoadedImageDevicePathProtocolGuid,
                Image->LoadedImageDevicePath
                );
 
-    Status = CoreUninstallProtocolInterface (
+    /*Status = */CoreUninstallProtocolInterface (
                Image->Handle,
                &gEfiLoadedImageProtocolGuid,
                &Image->Info
                );
 
     if (Image->ImageContext.HiiResourceData != 0) {
-      Status = CoreUninstallProtocolInterface (
+      /*Status = */CoreUninstallProtocolInterface (
                  Image->Handle,
                  &gEfiHiiPackageListProtocolGuid,
                  (VOID *) (UINTN) Image->ImageContext.HiiResourceData

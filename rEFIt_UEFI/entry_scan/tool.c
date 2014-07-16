@@ -52,8 +52,8 @@
 #elif defined (MDE_CPU_EBC)
 #elif defined (MDE_CPU_ARM)
 #define CLOVER_MEDIA_FILE_NAME   CLOVER_MEDIA_FILE_NAME_ARM
-#else
-#error Unknown Processor Type
+//#else
+//#error Unknown Processor Type
 #endif
 
 #ifndef DEBUG_ALL

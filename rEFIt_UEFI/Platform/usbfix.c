@@ -44,7 +44,7 @@ FixOwnership(VOID)
  EFI_NOT_FOUND
  --*/
 {
-	EFI_STATUS					Status = EFI_SUCCESS;
+	EFI_STATUS					Status;
 	EFI_HANDLE					*HandleArray = NULL;
 	UINTN             HandleArrayCount = 0;
 	UINTN             Index;

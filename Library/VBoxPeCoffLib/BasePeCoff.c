@@ -39,7 +39,8 @@
 #elif defined(MDE_CPU_X64)
 # define EFI_FAT_CPU_TYPE EFI_FAT_CPU_TYPE_X64
 #else
-# error "please define EFI_FAT_CPU_TYPE for your arch"
+//# error "please define EFI_FAT_CPU_TYPE for your arch"
+# define EFI_FAT_CPU_TYPE EFI_FAT_CPU_TYPE_X64
 #endif
 
 

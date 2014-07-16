@@ -1986,7 +1986,7 @@ XhcDriverBindingStart (
   // Open Device Path Protocol for on USB host controller
   //
   HcDevicePath = NULL;
-  Status = gBS->OpenProtocol (
+ /* Status =*/ gBS->OpenProtocol (
                   Controller,
                   &gEfiDevicePathProtocolGuid,
                   (VOID **) &HcDevicePath,

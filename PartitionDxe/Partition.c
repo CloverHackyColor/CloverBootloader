@@ -456,7 +456,7 @@ PartitionDriverBindingStop (
       //
       BlockIo->FlushBlocks (BlockIo);
 
-      Status = gBS->CloseProtocol (
+      /*Status = */gBS->CloseProtocol (
                       ControllerHandle,
                       &gEfiDiskIoProtocolGuid,
                       This->DriverBindingHandle,

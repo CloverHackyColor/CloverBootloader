@@ -2451,7 +2451,7 @@ CoreInitializeGcdServices (
     if (GET_HOB_TYPE (Hob) == EFI_HOB_TYPE_FV) {
       FirmwareVolumeHob = Hob.FirmwareVolume;
       BaseAddress = FirmwareVolumeHob->BaseAddress;
-      Status = CoreAllocateMemorySpace (
+      /*Status = */CoreAllocateMemorySpace (
                  EfiGcdAllocateAddress,
                  EfiGcdMemoryTypeMemoryMappedIo,
                  0,
@@ -2502,7 +2502,7 @@ CoreInitializeGcdServices (
           RShiftU64 (Length, EFI_PAGE_SHIFT),
           MemorySpaceMap[Index].Capabilities & (~EFI_MEMORY_RUNTIME)
           );
-        Status = CoreAllocateMemorySpace (
+        /*Status = */CoreAllocateMemorySpace (
                    EfiGcdAllocateAddress,
                    EfiGcdMemoryTypeSystemMemory,
                    0,

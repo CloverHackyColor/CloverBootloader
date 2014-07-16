@@ -160,10 +160,11 @@ RegisterHotkey (
     FreePool (TempOption);
   }
 
-  if (UpdateBootOption) {
+  if (UpdateBootOption && (KeyOrder != NULL)) {
     RegisterOptionNumber = KeyOrder[Index];
     FreePool (TempOption);
   } else {
+    Index = 0;
     RegisterOptionNumber = (UINT16) (MaxOptionNumber + 1);
   }
 
@@ -215,7 +216,9 @@ RegisterHotkey (
                   NewKeyOrder
                   );
 
-  FreePool (KeyOrder);
+  if (KeyOrder != NULL) {
+    FreePool (KeyOrder);
+  }
   FreePool (NewKeyOrder);
 
   return Status;

@@ -129,6 +129,10 @@ DevPropDevice *devprop_add_device_pci(DevPropString *StringBuf, pci_dt_t *PciDt)
 		return NULL;
 	
 	device = AllocateZeroPool(sizeof(DevPropDevice));
+      if (!device) {
+        return NULL;
+      }
+	  
 	
 	device->numentries = 0x00;
 	
@@ -146,7 +150,8 @@ DevPropDevice *devprop_add_device_pci(DevPropString *StringBuf, pci_dt_t *PciDt)
 //		DBG("ACPI HID=%x, UID=%x ", device->acpi_dev_path._HID, device->acpi_dev_path._UID);
 	} else {
 //		DBG("not ACPI\n");
-		return NULL;
+      FreePool(device);
+	  return NULL;
 	}
 	
 	//
@@ -166,6 +171,7 @@ DevPropDevice *devprop_add_device_pci(DevPropString *StringBuf, pci_dt_t *PciDt)
 	
 	if (NumPaths == 0) {
 		DBG("NumPaths == 0 \n");
+		FreePool(device);
 		return NULL;
 	}
 	
@@ -183,8 +189,10 @@ DevPropDevice *devprop_add_device_pci(DevPropString *StringBuf, pci_dt_t *PciDt)
 	
 	if(!StringBuf->entries) {
     StringBuf->entries = (DevPropDevice**)AllocateZeroPool(MAX_NUM_DEVICES * sizeof(device));
-		if(!StringBuf->entries)
-			return 0;
+		if(!StringBuf->entries) {
+		  FreePool(device);
+		  return NULL;
+		}
   }
 	
 	StringBuf->entries[StringBuf->numentries++] = device;

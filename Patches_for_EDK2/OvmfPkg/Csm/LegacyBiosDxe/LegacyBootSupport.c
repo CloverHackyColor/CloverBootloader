@@ -980,7 +980,7 @@ GenericLegacyBoot (
              &AcpiTable
              );
   if (EFI_ERROR (Status)) {
-    Status = EfiGetSystemConfigurationTable (
+    /*Status = */EfiGetSystemConfigurationTable (
                &gEfiAcpi10TableGuid,
                &AcpiTable
                );

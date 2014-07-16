@@ -62,8 +62,8 @@ struct _GDT_ENTRIES {
 #elif defined (MDE_CPU_X64)
 #define CPU_CODE_SEL LINEAR_CODE64_SEL
 #define CPU_DATA_SEL LINEAR_SEL
-#else
-#error CPU type not supported for CPU GDT initialization!
+//#else
+//#error CPU type not supported for CPU GDT initialization!
 #endif
 
 //

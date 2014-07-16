@@ -79,24 +79,24 @@ UefiHiiServicesLibConstructor (
   IN EFI_SYSTEM_TABLE  *SystemTable
   )
 {
-  EFI_STATUS Status;
+//  EFI_STATUS Status;
 
   //
   // Retrieve the pointer to the UEFI HII String Protocol 
   //
-  Status = gBS->LocateProtocol (&gEfiHiiStringProtocolGuid, NULL, (VOID **) &gHiiString);
+ /* Status = */gBS->LocateProtocol (&gEfiHiiStringProtocolGuid, NULL, (VOID **) &gHiiString);
 //  ASSERT_EFI_ERROR (Status);
 
   //
   // Retrieve the pointer to the UEFI HII Database Protocol 
   //
-  Status = gBS->LocateProtocol (&gEfiHiiDatabaseProtocolGuid, NULL, (VOID **) &gHiiDatabase);
+ /* Status = */gBS->LocateProtocol (&gEfiHiiDatabaseProtocolGuid, NULL, (VOID **) &gHiiDatabase);
 //  ASSERT_EFI_ERROR (Status);
 
   //
   // Retrieve the pointer to the UEFI HII Config Routing Protocol 
   //
-  Status = gBS->LocateProtocol (&gEfiHiiConfigRoutingProtocolGuid, NULL, (VOID **) &gHiiConfigRouting);
+/*  Status = */gBS->LocateProtocol (&gEfiHiiConfigRoutingProtocolGuid, NULL, (VOID **) &gHiiConfigRouting);
 //  ASSERT_EFI_ERROR (Status);
 
   //

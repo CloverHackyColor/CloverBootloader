@@ -650,13 +650,13 @@ ShellCommandRunLs (
   //
   // initialize the shell lib (we must be in non-auto-init...)
   //
-  Status = ShellInitialize();
+ /* Status = */ShellInitialize();
 //  ASSERT_EFI_ERROR(Status);
 
   //
   // Fix local copies of the protocol pointers
   //
-  Status = CommandInit();
+/*  Status = */CommandInit();
 //  ASSERT_EFI_ERROR(Status);
 
   //

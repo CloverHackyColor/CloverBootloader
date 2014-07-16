@@ -751,7 +751,7 @@ static fsw_status_t fsw_reiserfs_item_next(struct fsw_reiserfs_volume *vol,
 {
     fsw_status_t    status;
     fsw_u32         dir_id, objectid;
-    fsw_u64         offset;
+//    fsw_u64         offset;
     fsw_u32         tree_bno, next_tree_bno, tree_level, nr_item, nr_ptr_item;
     fsw_u8          *buffer;
     struct block_head *bhead;
@@ -763,9 +763,9 @@ static fsw_status_t fsw_reiserfs_item_next(struct fsw_reiserfs_volume *vol,
     
     dir_id = item->ih.ih_key.k_dir_id;
     objectid = item->ih.ih_key.k_objectid;
-    offset = item->item_offset;
+//    offset = item->item_offset;
     
-    FSW_MSG_DEBUG((FSW_MSGSTR("fsw_reiserfs_item_next: next for %d/%d/%lld\n"), dir_id, objectid, offset));
+    FSW_MSG_DEBUG((FSW_MSGSTR("fsw_reiserfs_item_next: next for %d/%d/%lld\n"), dir_id, objectid, item->item_offset));
     
     // find a node that has more items, moving up until we find one
     

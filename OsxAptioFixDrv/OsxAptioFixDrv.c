@@ -265,11 +265,11 @@ MOAllocatePages (
 {
 	EFI_STATUS					Status;
 	EFI_PHYSICAL_ADDRESS		UpperAddr;
-	EFI_PHYSICAL_ADDRESS		MemoryIn;
-	BOOLEAN						FromRelocBlock = FALSE;
+//	EFI_PHYSICAL_ADDRESS		MemoryIn;
+//	BOOLEAN						FromRelocBlock = FALSE;
 	
 
-	MemoryIn = *Memory;
+//	MemoryIn = *Memory;
 	
 	if (Type == AllocateAddress && MemoryType == EfiLoaderData) {
 		// called from boot.efi
@@ -304,7 +304,7 @@ MOAllocatePages (
 		// give it from our allocated block
 		*Memory += gRelocBase;
 		//Status = gStoredAllocatePages(Type, MemoryType, NumberOfPages, Memory);
-		FromRelocBlock = TRUE;
+//		FromRelocBlock = TRUE;
 		Status = EFI_SUCCESS;
 		
 	} else {
@@ -366,7 +366,7 @@ MOExitBootServices (
 	VOID						*MachOImage = NULL;
 	
 	// for  tests: we can just return EFI_SUCCESS and continue using Print for debug.
-	Status = EFI_SUCCESS;
+//	Status = EFI_SUCCESS;
 	//Print(L"ExitBootServices()\n");
 	Status = gStoredExitBootServices(ImageHandle, MapKey);
 	DBGnvr("ExitBootServices:  = %r\n", Status);

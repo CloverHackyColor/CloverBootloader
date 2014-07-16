@@ -276,7 +276,7 @@ InstallLegacyTables (
 		Signature.Sign = Table->Signature;
 		DBG(L"Install table: %c%c%c%c\n", 
 		Signature.ASign[0], Signature.ASign[1], Signature.ASign[2], Signature.ASign[3]);
-		Status = AcpiTable->InstallAcpiTable (
+		/*Status = */AcpiTable->InstallAcpiTable (
 											  AcpiTable,
 											  Table,
 											  TableSize,
@@ -364,8 +364,8 @@ AcpiPlatformEntryPoint (
 {
 	EFI_STATUS                      Status;
 	EFI_ACPI_TABLE_PROTOCOL         *AcpiTable;
-	INTN                            Instance;
-	EFI_ACPI_COMMON_HEADER          *CurrentTable;
+//	INTN                            Instance;
+//	EFI_ACPI_COMMON_HEADER          *CurrentTable;
 	EFI_ACPI_COMMON_HEADER			*oldDSDT;
 	UINTN                           TableHandle;
 	UINTN                           TableSize;
@@ -393,7 +393,7 @@ AcpiPlatformEntryPoint (
 //	EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE *Fadt;
 	EFI_ACPI_DESCRIPTION_HEADER		*Table;
 	SIGNAT							Signature;
-	EFI_ACPI_TABLE_INSTANCE			*AcpiInstance;
+//	EFI_ACPI_TABLE_INSTANCE			*AcpiInstance;
 
   Msg = NULL;
   Status = gBS->LocateProtocol(&gMsgLogProtocolGuid, NULL, (VOID **) &Msg);
@@ -409,7 +409,7 @@ AcpiPlatformEntryPoint (
 	if (EFI_ERROR (Status)) {
 		return EFI_ABORTED;
 	}
-
+#if DEBUG_ACPI
 	AcpiInstance = EFI_ACPI_TABLE_INSTANCE_FROM_THIS(AcpiTable);
 	DBG(L"Rsdp1 %x\n", AcpiInstance->Rsdp1);
 	DBG(L"Rsdp3 %x\n", AcpiInstance->Rsdp3);
@@ -418,9 +418,9 @@ AcpiPlatformEntryPoint (
 	DBG(L"Xsdt  %x\n", AcpiInstance->Xsdt);
 	DBG(L"Fadt1 %x\n", AcpiInstance->Fadt1);
 	DBG(L"Fadt3 %x\n", AcpiInstance->Fadt3);
-	
-	Instance     = 0;
-	CurrentTable = NULL;
+#endif	
+//	Instance     = 0;
+//	CurrentTable = NULL;
 	TableHandle  = 0;
 	
 	GuidHob.Raw = GetFirstGuidHob (&gEfiAcpiTableGuid);
@@ -642,7 +642,7 @@ AcpiPlatformEntryPoint (
 			//
 			// Increment the instance
 			//
-			Instance++;   //for a what?
+//			Instance++;   //for a what?
 			FileBuffer = NULL;
 			
 		} else if (oldDSDT && (Index==0)) {
@@ -674,7 +674,7 @@ AcpiPlatformEntryPoint (
 		DBG(L"Install legacy table: %c%c%c%c\n", 
 			Signature.ASign[0], Signature.ASign[1], Signature.ASign[2], Signature.ASign[3]);
 		
-		Status = AcpiTable->InstallAcpiTable (
+		/*Status = */AcpiTable->InstallAcpiTable (
 											  AcpiTable,
 											  Table,
 											  TableSize,

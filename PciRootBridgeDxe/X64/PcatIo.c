@@ -482,7 +482,7 @@ CheckForRom (
             //
             IoDev->Mem.Read (IoDev, EfiPciWidthUint32, RomBar, RomBarSize / sizeof(UINT32), (VOID *)(UINTN)RomBuffer);
 
-            Status = gBS->AllocatePool(
+            /*Status = */gBS->AllocatePool(
                             EfiBootServicesData,
                             ((UINT32)mPciOptionRomTable.PciOptionRomCount + 1) * sizeof(EFI_PCI_OPTION_ROM_DESCRIPTOR),
                             (VOID **) &TempPciOptionRomDescriptors

@@ -585,17 +585,27 @@ NotifyFwVolBlock (
     // Get the FirmwareVolumeBlock protocol on that handle
     //
     Status = CoreHandleProtocol (Handle, &gEfiFirmwareVolumeBlockProtocolGuid, (VOID **)&Fvb);
-    ASSERT_EFI_ERROR (Status);
-    ASSERT (Fvb != NULL);
+//    ASSERT_EFI_ERROR (Status);
+    if (EFI_ERROR (Status) || (Fvb == NULL)) {
+      if (FwVolHeader) {
+        FreePool(FwVolHeader);
+      }
+      return;
+    }
+
+//    ASSERT (Fvb != NULL);
 
     //
     // Make sure the Fv Header is O.K.
     //
     Status = GetFwVolHeader (Fvb, &FwVolHeader);
     if (EFI_ERROR (Status)) {
+      if (FwVolHeader) {
+        FreePool(FwVolHeader);
+      }
       return;
     }
-    ASSERT (FwVolHeader != NULL);
+//    ASSERT (FwVolHeader != NULL);
 
     if (!VerifyFvHeaderChecksum (FwVolHeader)) {
       CoreFreePool (FwVolHeader);

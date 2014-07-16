@@ -1271,10 +1271,10 @@ OhciAsyncInterruptTransfer (
              NULL,
              NULL
              );
-  if ( IsNewTransfer ) {
-    if (EFI_ERROR(Status)) {
+  if ( UCBuffer ) {
+//    if (EFI_ERROR(Status)) {
       gBS->FreePool (UCBuffer);
-    }
+//    }
   }
   return Status;
 }
@@ -1398,6 +1398,9 @@ OhciSyncInterruptTransfer (
              NULL,
              NULL
              );
+  if ( UCBuffer ) {
+      gBS->FreePool (UCBuffer);
+  }
   
   return Status;
 }

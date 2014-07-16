@@ -263,7 +263,7 @@ ExtractDisplayedHiiFormFromHiiHandle (
   //
   BufferSize = 0;
   HiiPackageList = NULL;
-  Status = gHiiDatabase->ExportPackageLists (gHiiDatabase, Handle, &BufferSize, HiiPackageList);
+  /*Status = */gHiiDatabase->ExportPackageLists (gHiiDatabase, Handle, &BufferSize, HiiPackageList);
   //
   // Handle is a invalid handle. Check if Handle is corrupted.
   //
@@ -1547,7 +1547,7 @@ CallDriverHealth (
 //  ASSERT (Status != EFI_BUFFER_TOO_SMALL);
 
   ActionRequest = EFI_BROWSER_ACTION_REQUEST_NONE;
-  Status = gFormBrowser2->SendForm (
+  /*Status = */gFormBrowser2->SendForm (
                            gFormBrowser2,
                            &HiiHandle,
                            1,
@@ -1613,7 +1613,7 @@ CallDriverHealth (
   // Repair the whole platform
   //
   if (gCallbackKey == DRIVER_HEALTH_REPAIR_ALL_KEY) {
-    ActionRequest = EFI_BROWSER_ACTION_REQUEST_NONE;
+//    ActionRequest = EFI_BROWSER_ACTION_REQUEST_NONE;
     
     PlatformRepairAll (&DriverHealthList);
 

@@ -450,7 +450,7 @@ InitializeLanguage (
   BOOLEAN LangCodesSettingRequired
   )
 {
-  EFI_STATUS  Status;
+//  EFI_STATUS  Status;
   CHAR8       *LangCodes;
   CHAR8       *PlatformLangCodes;
 
@@ -463,7 +463,7 @@ InitializeLanguage (
       //
       // UEFI 2.0 depricated this variable so we support turning it off
       //
-      Status = gRT->SetVariable (
+      /*Status = */gRT->SetVariable (
                       L"LangCodes",
                       &gEfiGlobalVariableGuid,
                       EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
@@ -472,7 +472,7 @@ InitializeLanguage (
                       );
     }
 
-    Status = gRT->SetVariable (
+    /*Status = */gRT->SetVariable (
                     L"PlatformLangCodes",
                     &gEfiGlobalVariableGuid,
                     EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,

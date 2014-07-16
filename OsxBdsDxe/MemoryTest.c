@@ -116,7 +116,7 @@ PlatformBdsShowProgress (
     SetMem (&Color, sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL), 0x0);
 
     if (GraphicsOutput != NULL) {
-      Status = GraphicsOutput->Blt (
+      /*Status = */GraphicsOutput->Blt (
                           GraphicsOutput,
                           &Color,
                           EfiBltVideoFill,
@@ -129,7 +129,7 @@ PlatformBdsShowProgress (
                           SizeOfX * sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL)
                           );
     } else if (FeaturePcdGet (PcdUgaConsumeSupport)) {
-      Status = UgaDraw->Blt (
+      /*Status = */UgaDraw->Blt (
                           UgaDraw,
                           (EFI_UGA_PIXEL *) &Color,
                           EfiUgaVideoFill,
@@ -151,7 +151,7 @@ PlatformBdsShowProgress (
   for (Index = PreviousValue; Index < BlockNum; Index++) {
     PosX = Index * BlockWidth;
     if (GraphicsOutput != NULL) {
-      Status = GraphicsOutput->Blt (
+      /*Status = */GraphicsOutput->Blt (
                           GraphicsOutput,
                           &ProgressColor,
                           EfiBltVideoFill,
@@ -164,7 +164,7 @@ PlatformBdsShowProgress (
                           (BlockWidth) * sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL)
                           );
     } else if (FeaturePcdGet (PcdUgaConsumeSupport)) {
-      Status = UgaDraw->Blt (
+      /*Status = */UgaDraw->Blt (
                           UgaDraw,
                           (EFI_UGA_PIXEL *) &ProgressColor,
                           EfiUgaVideoFill,

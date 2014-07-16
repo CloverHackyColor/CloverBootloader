@@ -167,7 +167,7 @@ Returns:
     // Read the entire config header for the device
     //
 
-    Status = PciRootBridgeIo->Pci.Read (
+    /*Status = */PciRootBridgeIo->Pci.Read (
                                     PciRootBridgeIo,
                                     EfiPciWidthUint32,
                                     Address,
@@ -1287,7 +1287,7 @@ Returns:
   //
   // Load all EFI Drivers from all PCI Option ROMs behind the PCI Root Bridge 
   //
-  Status = PciRomLoadEfiDriversFromOptionRomTable (&gPciBusDriverBinding, PciRootBridgeIo);
+  /*Status = */PciRomLoadEfiDriversFromOptionRomTable (&gPciBusDriverBinding, PciRootBridgeIo);
 
   Status = PciRootBridgeIo->Configuration (PciRootBridgeIo, (VOID **) &Descriptors);
 

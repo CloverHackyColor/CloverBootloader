@@ -322,7 +322,7 @@ static fsw_status_t fsw_hfs_volume_mount(struct fsw_hfs_volume *vol)
                 be64_to_cpu(vol->primary_voldesc->catalogFile.logicalSize);
 
         /* Setup extents overflow file */
-        status = fsw_dnode_create_root(vol, kHFSExtentsFileID, &vol->extents_tree.file);
+        /*status = */fsw_dnode_create_root(vol, kHFSExtentsFileID, &vol->extents_tree.file);
        fsw_memcpy (vol->extents_tree.file->extents,
                     vol->primary_voldesc->extentsFile.extents,
                     sizeof vol->extents_tree.file->extents); 
@@ -600,8 +600,10 @@ fsw_hfs_btree_search (struct fsw_hfs_btree * btree,
   
   currnode = btree->root_node;
   status = fsw_alloc(btree->node_size, &buffer);
-  if (status)
+  if (status != FSW_SUCCESS) {
+    fsw_free(buffer);
     return status;
+  }
   node = (BTNodeDescriptor*)buffer;
   
   status = FSW_NOT_FOUND;

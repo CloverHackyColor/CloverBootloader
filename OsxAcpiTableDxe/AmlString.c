@@ -117,9 +117,9 @@ AmlGetNameStringSize (
   UINTN                 SegCount;
   UINTN                 Length;
   UINTN                 Index;
-  UINT8                 *Name;
+//  UINT8                 *Name;
 
-  Name = Buffer;
+//  Name = Buffer;
   Length = 0;
 
   //
@@ -493,9 +493,9 @@ AmlPrintNameString (
 {
   UINT8                 SegCount;
   UINT8                 Index;
-  UINT8                 *Name;
+//  UINT8                 *Name;
  
-  Name = Buffer;
+//  Name = Buffer;
   if (*Buffer == AML_ROOT_CHAR) {
     //
     // RootChar

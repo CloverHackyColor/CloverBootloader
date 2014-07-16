@@ -4374,7 +4374,7 @@ VOID SetDevices(CHAR8 *OSVersion)
               DBG("SpeedStep disabled\n");
             }
             
-            Status = PciIo->Pci.Write (
+            /*Status = */PciIo->Pci.Write (
                                        PciIo, 
                                        EfiPciIoWidthUint16, 
                                        GEN_PMCON_1, 

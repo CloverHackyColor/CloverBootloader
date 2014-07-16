@@ -115,7 +115,7 @@ LogDataHub(
 
 EFI_STATUS SetVariablesForOSX()
 {
-  EFI_STATUS  Status;
+//  EFI_STATUS  Status;
   
 	UINT32      BackgroundClear = 0x00000000;
 	UINT32      FwFeatures      = gFwFeatures; //0x80001417; //Slice - get it from SMBIOS
@@ -157,26 +157,26 @@ EFI_STATUS SetVariablesForOSX()
   // some NVRAM variables
   //
   
-	Status = gRS->SetVariable(L"BackgroundClear", &gEfiAppleNvramGuid,
+	/*Status = */gRS->SetVariable(L"BackgroundClear", &gEfiAppleNvramGuid,
                                          /*	EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                                          sizeof(BackgroundClear), &BackgroundClear);
-	Status = gRS->SetVariable(L"FirmwareFeatures", &gEfiAppleNvramGuid,
+	/*Status = */gRS->SetVariable(L"FirmwareFeatures", &gEfiAppleNvramGuid,
                                          /*	EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                                          sizeof(FwFeatures), &FwFeatures);
-	Status = gRS->SetVariable(L"FirmwareFeaturesMask", &gEfiAppleNvramGuid,
+	/*Status = */gRS->SetVariable(L"FirmwareFeaturesMask", &gEfiAppleNvramGuid,
                                          /*	EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                                          sizeof(FwFeaturesMask), &FwFeaturesMask);
 
 // should set anyway  
-  Status = gRS->SetVariable(L"MLB", &gEfiAppleNvramGuid,
+  /*Status = */gRS->SetVariable(L"MLB", &gEfiAppleNvramGuid,
                             /*	EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                             AsciiStrLen(gSettings.RtMLB), gSettings.RtMLB);
  
-  Status = gRS->SetVariable(L"ROM", &gEfiAppleNvramGuid,
+  /*Status = */gRS->SetVariable(L"ROM", &gEfiAppleNvramGuid,
                             /*	EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                             gSettings.RtROMLen, gSettings.RtROM);
   
-  Status = gRS->SetVariable(L"system-id", &gEfiAppleNvramGuid,
+  /*Status = */gRS->SetVariable(L"system-id", &gEfiAppleNvramGuid,
                             /*	EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                             sizeof(EFI_GUID), &gUuid);
 
@@ -192,58 +192,58 @@ EFI_STATUS SetVariablesForOSX()
 
     // Don't overwrite boot-args var as it was already set by PutNvramPlistToRtVars()
     // boot-args nvram var contain ONLY parameters to be merged with the boot-args global variable
-  Status = gRS->SetVariable(L"boot-args", &gEfiAppleBootGuid,
+ /*Status = */gRS->SetVariable(L"boot-args", &gEfiAppleBootGuid,
                             /*   EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                             bootArgsLen , NULL); //&gSettings.BootArgs);
 
 
-	Status = gRS->SetVariable(L"security-mode", &gEfiAppleBootGuid,
+	/*Status = */gRS->SetVariable(L"security-mode", &gEfiAppleBootGuid,
                                          /*   EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                                          AsciiStrLen(None), (VOID*)None);
   
   // we should have two UUID: platform and system
   // NO! Only Platform is the best solution
   if (!gSettings.InjectSystemID) {
-    Status = gRS->SetVariable(L"platform-uuid", &gEfiAppleBootGuid,
+    /*Status = */gRS->SetVariable(L"platform-uuid", &gEfiAppleBootGuid,
                               /*   EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                               16, &gUuid);
   }
   
-  Status = gRS->SetVariable(L"prev-lang:kbd", &gEfiAppleBootGuid,
+  /*Status = */gRS->SetVariable(L"prev-lang:kbd", &gEfiAppleBootGuid,
                             /*   EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                                 LangLen, &gSettings.Language);
   
   
   if (gMobile && (gSettings.BacklightLevel != 0xFFFF)) {
-    Status = gRS->SetVariable(L"backlight-level", &gEfiAppleBootGuid, 
+    /*Status = */gRS->SetVariable(L"backlight-level", &gEfiAppleBootGuid, 
                               /*   EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                               sizeof(BacklightLevel), &gSettings.BacklightLevel);    
   }
   
   //Helper for rc.local script
   AsciiSPrint(Buffer, sizeof(Buffer), "%d", gSettings.LogLineCount);
-  Status = gRS->SetVariable(L"Clover.LogLineCount", &gEfiAppleBootGuid, 
+  /*Status = */gRS->SetVariable(L"Clover.LogLineCount", &gEfiAppleBootGuid, 
                             EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                             AsciiStrLen(Buffer), Buffer);
 
   if (gSettings.LogEveryBoot) { //not NULL
-    Status = gRS->SetVariable(L"Clover.LogEveryBoot", &gEfiAppleBootGuid, 
+    /*Status = */gRS->SetVariable(L"Clover.LogEveryBoot", &gEfiAppleBootGuid, 
                               EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                               AsciiStrLen(gSettings.LogEveryBoot), gSettings.LogEveryBoot);
   }
 
   if (gSettings.MountEFI) { //not NULL
-    Status = gRS->SetVariable(L"Clover.MountEFI", &gEfiAppleBootGuid, 
+    /*Status = */gRS->SetVariable(L"Clover.MountEFI", &gEfiAppleBootGuid, 
                               EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                               AsciiStrLen(gSettings.MountEFI), gSettings.MountEFI);
   }
 
-  return Status;
+  return EFI_SUCCESS;
 }
 
 VOID SetupDataForOSX()
 {
-	EFI_STATUS			Status;	
+  EFI_STATUS			Status;	
 //	CHAR16*				CloverVersion = L"2.1";
   
 	UINT32				devPathSupportedVal = 1;
@@ -275,39 +275,38 @@ VOID SetupDataForOSX()
   
 	// Locate DataHub Protocol
 	Status = gBS->LocateProtocol(&gEfiDataHubProtocolGuid, NULL, (VOID**)&gDataHub);
-	if (!EFI_ERROR (Status)) 
-	{
-    AsciiStrToUnicodeStr(gSettings.ProductName, productName);
+	if (!EFI_ERROR (Status)) {
+      AsciiStrToUnicodeStr(gSettings.ProductName, productName);
 		AsciiStrToUnicodeStr(gSettings.SerialNr, serialNumber);
     
 		
-		Status = LogDataHub(&gEfiProcessorSubClassGuid, L"FSBFrequency", &FrontSideBus, sizeof(UINT64));
-		Status = LogDataHub(&gEfiProcessorSubClassGuid, L"TSCFrequency", &TSCFrequency, sizeof(UINT64));
-		Status = LogDataHub(&gEfiProcessorSubClassGuid, L"CPUFrequency", &CpuSpeed, sizeof(UINT64));
+		/*Status = */LogDataHub(&gEfiProcessorSubClassGuid, L"FSBFrequency", &FrontSideBus, sizeof(UINT64));
+		/*Status = */LogDataHub(&gEfiProcessorSubClassGuid, L"TSCFrequency", &TSCFrequency, sizeof(UINT64));
+		/*Status = */LogDataHub(&gEfiProcessorSubClassGuid, L"CPUFrequency", &CpuSpeed, sizeof(UINT64));
 		
-		Status = LogDataHub(&gEfiMiscSubClassGuid, L"DevicePathsSupported", &devPathSupportedVal, sizeof(UINT32));
-		Status = LogDataHub(&gEfiMiscSubClassGuid, L"Model", productName, (UINT32)StrSize(productName));
-		Status = LogDataHub(&gEfiMiscSubClassGuid, L"SystemSerialNumber", serialNumber, (UINT32)StrSize(serialNumber));
+		/*Status = */LogDataHub(&gEfiMiscSubClassGuid, L"DevicePathsSupported", &devPathSupportedVal, sizeof(UINT32));
+		/*Status = */LogDataHub(&gEfiMiscSubClassGuid, L"Model", productName, (UINT32)StrSize(productName));
+		/*Status = */LogDataHub(&gEfiMiscSubClassGuid, L"SystemSerialNumber", serialNumber, (UINT32)StrSize(serialNumber));
 //    DBG("Custom UUID=%g\n", gUuid);
     if (gSettings.InjectSystemID) {
-      Status = LogDataHub(&gEfiMiscSubClassGuid, L"system-id", &gUuid, sizeof(EFI_GUID));
+      /*Status = */LogDataHub(&gEfiMiscSubClassGuid, L"system-id", &gUuid, sizeof(EFI_GUID));
     }    		
 //		Status = LogDataHub(&gEfiMiscSubClassGuid, L"Clover", CloverVersion, StrSize(CloverVersion));
 
-    Status = LogDataHub(&gEfiProcessorSubClassGuid, L"clovergui-revision", &revision, sizeof(UINT32));
+    /*Status = */LogDataHub(&gEfiProcessorSubClassGuid, L"clovergui-revision", &revision, sizeof(UINT32));
 
     //collect info about real hardware
-    Status = LogDataHub(&gEfiMiscSubClassGuid, L"OEMVendor",  &gSettings.OEMVendor,  (UINT32)iStrLen(gSettings.OEMVendor, 64) + 1);
-    Status = LogDataHub(&gEfiMiscSubClassGuid, L"OEMProduct", &gSettings.OEMProduct, (UINT32)iStrLen(gSettings.OEMProduct, 64) + 1);
-    Status = LogDataHub(&gEfiMiscSubClassGuid, L"OEMBoard",   &gSettings.OEMBoard,   (UINT32)iStrLen(gSettings.OEMBoard, 64) + 1);
+    /*Status = */LogDataHub(&gEfiMiscSubClassGuid, L"OEMVendor",  &gSettings.OEMVendor,  (UINT32)iStrLen(gSettings.OEMVendor, 64) + 1);
+    /*Status = */LogDataHub(&gEfiMiscSubClassGuid, L"OEMProduct", &gSettings.OEMProduct, (UINT32)iStrLen(gSettings.OEMProduct, 64) + 1);
+    /*Status = */LogDataHub(&gEfiMiscSubClassGuid, L"OEMBoard",   &gSettings.OEMBoard,   (UINT32)iStrLen(gSettings.OEMBoard, 64) + 1);
     //smc helper
-    Status = LogDataHub(&gEfiMiscSubClassGuid, L"RPlt", &gSettings.RPlt, 8);
-    Status = LogDataHub(&gEfiMiscSubClassGuid, L"RBr",  &gSettings.RBr,  8);
-    Status = LogDataHub(&gEfiMiscSubClassGuid, L"EPCI", &gSettings.EPCI, 4);
-    Status = LogDataHub(&gEfiMiscSubClassGuid, L"REV",  &gSettings.REV,  6);
-    Status = LogDataHub(&gEfiMiscSubClassGuid, L"BEMB", &gSettings.Mobile, 1);
+    /*Status = */LogDataHub(&gEfiMiscSubClassGuid, L"RPlt", &gSettings.RPlt, 8);
+    /*Status = */LogDataHub(&gEfiMiscSubClassGuid, L"RBr",  &gSettings.RBr,  8);
+    /*Status = */LogDataHub(&gEfiMiscSubClassGuid, L"EPCI", &gSettings.EPCI, 4);
+    /*Status = */LogDataHub(&gEfiMiscSubClassGuid, L"REV",  &gSettings.REV,  6);
+    /*Status = */LogDataHub(&gEfiMiscSubClassGuid, L"BEMB", &gSettings.Mobile, 1);
     //all current settings
-    Status = LogDataHub(&gEfiMiscSubClassGuid, L"Settings", &gSettings, sizeof(gSettings));
+    /*Status = */LogDataHub(&gEfiMiscSubClassGuid, L"Settings", &gSettings, sizeof(gSettings));
 
 	}
   else {

@@ -56,7 +56,7 @@ PS2MouseDriverSupported (
   EFI_STATUS                          Status;
   EFI_ISA_IO_PROTOCOL                 *IsaIo;
 
-  Status = EFI_SUCCESS;
+//  Status = EFI_SUCCESS;
 
   //
   // Open the IO Abstraction(s) needed to perform the supported test

@@ -2,13 +2,13 @@
  * Copyright (c) 2000 Apple Computer, Inc. All rights reserved.
  *
  * @APPLE_LICENSE_HEADER_START@
- * 
+ *
  * The contents of this file constitute Original Code as defined in and
  * are subject to the Apple Public Source License Version 1.1 (the
  * "License").  You may not use this file except in compliance with the
  * License.  Please obtain a copy of the License at
  * http://www.apple.com/publicsource and read it before using this file.
- * 
+ *
  * This Original Code and all software distributed under the License are
  * distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, EITHER
  * EXPRESS OR IMPLIED, AND APPLE HEREBY DISCLAIMS ALL SUCH WARRANTIES,
@@ -16,7 +16,7 @@
  * FITNESS FOR A PARTICULAR PURPOSE OR NON-INFRINGEMENT.  Please see the
  * License for the specific language governing rights and limitations
  * under the License.
- * 
+ *
  * @APPLE_LICENSE_HEADER_END@
  */
 /*
@@ -27,7 +27,7 @@
  *  DRI: Josh de Cesare
  *  code split out from drivers.c by Soren Spies, 2005
  */
-//Slice - rewrite for UEFI with more functions like Copyright (c) 2003 Apple Computer 
+//Slice - rewrite for UEFI with more functions like Copyright (c) 2003 Apple Computer
 #include "Platform.h"
 
 #ifndef DEBUG_ALL
@@ -67,73 +67,73 @@ SymbolPtr   FindSymbol( char * string, SymbolPtr * prevSymbol );
 
 /* Function for basic XML character entities parsing */
 typedef struct XMLEntity {
-    const CHAR8* name;
-    UINTN nameLen;
-    CHAR8 value;
+  const CHAR8* name;
+  UINTN nameLen;
+  CHAR8 value;
 } XMLEntity;
 
 /* This is ugly, but better than specifying the lengths by hand */
 #define _e(str,c) {str,sizeof(str)-1,c}
 CONST XMLEntity ents[] = {
-    _e("quot;",'"'), _e("apos;",'\''),
-    _e("lt;",  '<'), _e("gt;",  '>'),
-    _e("amp;", '&')
+  _e("quot;",'"'), _e("apos;",'\''),
+  _e("lt;",  '<'), _e("gt;",  '>'),
+  _e("amp;", '&')
 };
 
 CHAR8*
 XMLDecode(CHAR8* src)
 {
-    UINTN len;
-    CONST CHAR8 *s;
-    CHAR8 *out, *o;
-    
-    if (!src) {
-        return 0;
-    }
+  UINTN len;
+  CONST CHAR8 *s;
+  CHAR8 *out, *o;
+  
+  if (!src) {
+    return 0;
+  }
 	
-    len = AsciiStrLen(src);
-    
+  len = AsciiStrLen(src);
+  
 #if 0
-    out = AllocateZeroPool(len+1);
-    if (!out)
-        return 0;  
+  out = AllocateZeroPool(len+1);
+  if (!out)
+    return 0;
 #else // unsafe
 	// out is always <= src, let's overwrite src
 	out = src;
 #endif
   
-    
-    o = out;
-    s = src;
-    while (s <= src+len) /* Make sure the terminator is also copied */
+  
+  o = out;
+  s = src;
+  while (s <= src+len) /* Make sure the terminator is also copied */
+  {
+    if ( *s == '&' )
     {
-        if ( *s == '&' )
+      BOOLEAN entFound = FALSE;
+      UINTN i;
+      
+      s++;
+      for ( i = 0; i < sizeof(ents)/sizeof(ents[0]); i++)
+      {
+        if ( AsciiStrnCmp(s, ents[i].name, ents[i].nameLen) == 0 )
         {
-            BOOLEAN entFound = FALSE;
-            UINTN i;
-            
-            s++;
-            for ( i = 0; i < sizeof(ents)/sizeof(ents[0]); i++)
-            {
-                if ( AsciiStrnCmp(s, ents[i].name, ents[i].nameLen) == 0 )
-                {
-                    entFound = TRUE;
-                    break;
-                }
-            }
-            if ( entFound )
-            {
-                *o++ = ents[i].value;
-                s += ents[i].nameLen;
-                continue;
-            }
+          entFound = TRUE;
+          break;
         }
-        
-        *o++ = *s++;
+      }
+      if ( entFound )
+      {
+        *o++ = ents[i].value;
+        s += ents[i].nameLen;
+        continue;
+      }
     }
-
-    return out;
-}                    
+    
+    *o++ = *s++;
+  }
+  
+  return out;
+}
 
 INTN GetTagCount( TagPtr dict )
 {
@@ -154,7 +154,7 @@ INTN GetTagCount( TagPtr dict )
         && (dict->type != kTagTypeArray)	// If we are an array, any element is valid
         )
     {
-      continue;            
+      continue;
     }
 		
 		//if(tag->type == kTagTypeKey) printf("Located key %s\n", tag->string);
@@ -221,13 +221,13 @@ EFI_STATUS ParseXML(const CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
 		Status = XMLParseNextTag(configBuffer + pos, &tag, &length);
 		if (EFI_ERROR(Status)) {
       DBG("error parsing next tag\n");
-			break;            
+			break;
     }
     
 		pos += length;
     
 		if (tag == NULL) {
-			continue;            
+			continue;
     }
 		if (tag->type == kTagTypeDict) {
 			break;
@@ -239,7 +239,7 @@ EFI_STATUS ParseXML(const CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
 	FreePool(configBuffer);
   
 	if (EFI_ERROR(Status)) {
-		return Status;        
+		return Status;
   }
   
 	*dict = tag;
@@ -260,7 +260,7 @@ TagPtr GetProperty( TagPtr dict, const CHAR8* key )
 	TagPtr tagList, tag;
   
 	if (dict->type != kTagTypeDict) {
-		return NULL;        
+		return NULL;
   }
   
 	tag = 0;
@@ -276,7 +276,7 @@ TagPtr GetProperty( TagPtr dict, const CHAR8* key )
     }
     
 		if (!AsciiStriCmp(tag->string, key)) {
-			return tag->tag;            
+			return tag->tag;
     }
 	}
   
@@ -296,20 +296,20 @@ EFI_STATUS XMLParseNextTag(CHAR8* buffer, TagPtr * tag, UINT32* lenPtr)
 	CHAR8*		tagName=NULL;
 	
 	*lenPtr=0;
-
+  
 	Status = GetNextTag((UINT8*)buffer, &tagName, 0, &length);
 	if (EFI_ERROR(Status)) {
     DBG("NextTag error %r\n", Status);
     return Status;
   }
-
+  
 	pos = length;
 	if (!AsciiStrnCmp(tagName, kXMLTagPList, 6))
 	{
 		length=0;
 		Status=EFI_SUCCESS;
 	}
-		/***** dict ****/
+  /***** dict ****/
 	else if (!AsciiStrCmp(tagName, kXMLTagDict))
 	{
     DBG("begin dict len=%d\n", length);
@@ -356,7 +356,7 @@ EFI_STATUS XMLParseNextTag(CHAR8* buffer, TagPtr * tag, UINT32* lenPtr)
 	{
 		Status = ParseTagData(buffer + pos, tag, &length);
 	}
-		/***** date ****/
+  /***** date ****/
 	else if (!AsciiStrCmp(tagName, kXMLTagDate))
 	{
 		Status = ParseTagDate(buffer + pos, tag, &length);
@@ -366,7 +366,7 @@ EFI_STATUS XMLParseNextTag(CHAR8* buffer, TagPtr * tag, UINT32* lenPtr)
 	{
 		Status = ParseTagBoolean(buffer + pos, tag, kTagTypeFalse, &length);
 	}
-	/***** TRUE ****/	
+	/***** TRUE ****/
 	else if (!AsciiStrCmp(tagName, kXMLTagTrue))
 	{
 		Status = ParseTagBoolean(buffer + pos, tag, kTagTypeTrue, &length);
@@ -386,22 +386,22 @@ EFI_STATUS XMLParseNextTag(CHAR8* buffer, TagPtr * tag, UINT32* lenPtr)
     DBG("end array len=%d\n", length);
 		Status = ParseTagList(buffer + pos, tag, kTagTypeArray, 1, &length);
 	}
-		/***** unknown ****/
+  /***** unknown ****/
 	else
 	{
 		*tag = NULL;
 		length = 0;
 	}
-
+  
 	if (EFI_ERROR(Status)) {
     return Status;
   }
-    
+  
   if (length == -1) {
     DBG("(length == -1)\n");
     return EFI_UNSUPPORTED;
   }
-
+  
 	*lenPtr = pos + length;
   DBG("  len after success parse next tag %d\n", *lenPtr);
 	return EFI_SUCCESS;
@@ -422,7 +422,7 @@ EFI_STATUS ParseTagList( CHAR8* buffer, TagPtr * tag, UINT32 type, UINT32 empty,
   if (type == kTagTypeArray) {
     DBG("parsing array len=%d\n", *lenPtr);
   } else if (type == kTagTypeDict) {
-    DBG("parsing dict len=%d\n", *lenPtr); 
+    DBG("parsing dict len=%d\n", *lenPtr);
   }
   tagList = NULL;
   tagTail = NULL;
@@ -573,7 +573,7 @@ EFI_STATUS ParseTagString(CHAR8* buffer, TagPtr * tag,UINT32* lenPtr)
 EFI_STATUS ParseTagInteger(CHAR8* buffer, TagPtr * tag,UINT32* lenPtr)
 {
 	EFI_STATUS	Status;
-	UINT32		length = 0; 
+	UINT32		length = 0;
 	INTN     integer;
 	UINT32		size;
 	BOOLEAN		negative = FALSE;
@@ -618,6 +618,7 @@ EFI_STATUS ParseTagInteger(CHAR8* buffer, TagPtr * tag,UINT32* lenPtr)
 			else {
 				MsgLog("ParseTagInteger hex error (0x%x) in buffer %a\n", *val, buffer);
         //				getchar();
+        FreeTag(tmpTag);
 				return EFI_UNSUPPORTED;
 			}
 		}
@@ -634,8 +635,9 @@ EFI_STATUS ParseTagInteger(CHAR8* buffer, TagPtr * tag,UINT32* lenPtr)
 				if (*val < '0' || *val > '9') {
 					MsgLog("ParseTagInteger decimal error (0x%x) in buffer %a\n", *val, buffer);
           //					getchar();
+          FreeTag(tmpTag);
 					return EFI_UNSUPPORTED;
-				}				
+				}
 				integer = (integer * 10) + (*val++ - '0');
 			}
 		}
@@ -667,17 +669,17 @@ EFI_STATUS ParseTagData(CHAR8* buffer, TagPtr * tag,UINT32* lenPtr)
   UINTN     len = 0;
 	TagPtr		tmpTag;
 	CHAR8*		tmpString;
-
+  
 	Status = FixDataMatchingTag(buffer, kXMLTagData,&length);
 	if (EFI_ERROR(Status)) {
     return Status;
   }
-
+  
 	tmpTag = NewTag();
 	if (tmpTag == NULL) {
 		return EFI_OUT_OF_RESOURCES;
 	}
-//Slice - correction as Apple 2003
+  //Slice - correction as Apple 2003
 	tmpString = NewSymbol(buffer);
 	tmpTag->type = kTagTypeData;
 	tmpTag->string = tmpString;
@@ -687,10 +689,10 @@ EFI_STATUS ParseTagData(CHAR8* buffer, TagPtr * tag,UINT32* lenPtr)
 	tmpTag->tag = NULL;
 	tmpTag->offset = (UINT32)(buffer_start ? buffer - buffer_start: 0);
 	tmpTag->tagNext = NULL;
-
+  
 	*tag = tmpTag;
 	*lenPtr = length;
-
+  
 	return EFI_SUCCESS;
 }
 
@@ -707,22 +709,22 @@ EFI_STATUS ParseTagDate(CHAR8* buffer, TagPtr * tag,UINT32* lenPtr)
 	if (EFI_ERROR(Status)) {
     return Status;
   }
-
-
+  
+  
 	tmpTag = NewTag();
 	if (tmpTag == NULL) {
 		return EFI_OUT_OF_RESOURCES;
 	}
-
+  
 	tmpTag->type = kTagTypeDate;
 	tmpTag->string = NULL;
 	tmpTag->tag = NULL;
 	tmpTag->tagNext = NULL;
 	tmpTag->offset = (UINT32)(buffer_start ? buffer - buffer_start: 0);
-
+  
 	*tag = tmpTag;
 	*lenPtr = length;
-
+  
 	return EFI_SUCCESS;
 }
 
@@ -732,18 +734,18 @@ EFI_STATUS ParseTagDate(CHAR8* buffer, TagPtr * tag,UINT32* lenPtr)
 EFI_STATUS ParseTagBoolean(CHAR8* buffer, TagPtr * tag, UINT32 type,UINT32* lenPtr)
 {
 	TagPtr tmpTag;
-
+  
 	tmpTag = NewTag();
 	if (tmpTag == NULL) {
 		return EFI_OUT_OF_RESOURCES;
 	}
-
+  
 	tmpTag->type = type;
 	tmpTag->string = NULL;
 	tmpTag->tag = NULL;
 	tmpTag->tagNext = NULL;
 	tmpTag->offset = (UINT32)(buffer_start ? buffer - buffer_start: 0);
-
+  
 	*tag = tmpTag;
 	*lenPtr = 0;
 	return EFI_SUCCESS;
@@ -755,47 +757,47 @@ EFI_STATUS ParseTagBoolean(CHAR8* buffer, TagPtr * tag, UINT32 type,UINT32* lenP
 EFI_STATUS GetNextTag( UINT8* buffer, CHAR8** tag, UINT32* start, UINT32* length)
 {
 	UINT32 cnt, cnt2;
-
+  
 	if (tag == NULL) {
 		return EFI_INVALID_PARAMETER;
 	}
-
+  
 	// Find the start of the tag.
 	cnt = 0;
 	while ((buffer[cnt] != '\0') && (buffer[cnt] != '<')) {
 		cnt++;
 	}
-
+  
 	if (buffer[cnt] == '\0') {
     DBG("empty buffer at cnt=%d\n", cnt);
 		return EFI_UNSUPPORTED;
 	}
-
+  
 	// Find the end of the tag.
 	cnt2 = cnt + 1;
 	while ((buffer[cnt2] != '\0') && (buffer[cnt2] != '>')) {
 		cnt2++;
 	}
-
+  
 	if (buffer[cnt2] == '\0') {
     DBG("empty buffer at cnt2=%d\n", cnt2);
 		return EFI_UNSUPPORTED;
 	}
-
+  
 	// Fix the tag data.
 	*tag = (CHAR8*)(buffer + cnt + 1);
 	buffer[cnt2] = '\0';
 	if (start) {
 		*start = cnt;
 	}
-
+  
 	*length = cnt2 + 1;  //unreal to be -1. This is UINT32
-    
+  
   if (*length == -1) {
     DBG("GetNextTag with *length == -1\n");
     return EFI_UNSUPPORTED;
   }
-
+  
 	return EFI_SUCCESS;
 }
 
@@ -812,14 +814,14 @@ EFI_STATUS FixDataMatchingTag( CHAR8* buffer, CHAR8* tag,UINT32* lenPtr)
 	UINT32		start;
 	UINT32		stop;
 	CHAR8*		endTag;
-
+  
 	start = 0;
 	while (1) {
 		Status = GetNextTag(((UINT8 *)buffer) + start, &endTag, &stop,&length);
 		if (EFI_ERROR(Status)) {
       return Status;
     }
-
+    
 		if ((*endTag == '/') && !AsciiStrCmp(endTag + 1, tag)) {
       break;
     }
@@ -828,11 +830,11 @@ EFI_STATUS FixDataMatchingTag( CHAR8* buffer, CHAR8* tag,UINT32* lenPtr)
   DBG("fix buffer at pos=%d\n", start + stop);
 	buffer[start + stop] = '\0';
 	*lenPtr = start + length;
-    
+  
   if (*lenPtr == -1) {
     return EFI_UNSUPPORTED;
   }
-    
+  
 	return EFI_SUCCESS;
 }
 
@@ -844,13 +846,13 @@ TagPtr NewTag( void )
 {
 	UINT32	cnt;
 	TagPtr	tag;
-
+  
 	if (gTagsFree == NULL) {
 		tag = (TagPtr)AllocateZeroPool(0x1000 * sizeof(TagStruct));
 		if (tag == NULL) {
       return NULL;
     }
-
+    
 		// Initalize the new tags.
 		for (cnt = 0; cnt < 0x1000; cnt++) {
 			tag[cnt].type = kTagTypeNone;
@@ -861,13 +863,13 @@ TagPtr NewTag( void )
 			tag[cnt].tagNext = tag + cnt + 1;
 		}
 		tag[0x1000 - 1].tagNext = 0;
-
+    
 		gTagsFree = tag;
 	}
-
+  
 	tag = gTagsFree;
 	gTagsFree = tag->tagNext;
-
+  
 	return tag;
 }
 
@@ -879,17 +881,17 @@ void FreeTag( TagPtr tag )
 	if (tag == NULL) {
     return;
   }
-
+  
 	if (tag->type != kTagTypeInteger && tag->string)  {
     FreeSymbol(tag->string);
   }
 	if (tag->data) {
     FreePool(tag->data);
-  } 
-
+  }
+  
 	FreeTag(tag->tag);
 	FreeTag(tag->tagNext);
-
+  
 	// Clear and free the tag.
 	tag->type = kTagTypeNone;
 	tag->string = NULL;
@@ -908,10 +910,10 @@ CHAR8* NewSymbol(CHAR8* tmpString)
 	SymbolPtr	lastGuy = 0; // never used
 #endif
 	SymbolPtr	symbol;
-    UINTN      len;
+  UINTN      len;
 	// Look for string in the list of symbols.
 	symbol = FindSymbol(tmpString, 0);
-
+  
 	// Add the new symbol.
 	if (symbol == NULL) {
 		len = AsciiStrLen(tmpString);
@@ -919,26 +921,26 @@ CHAR8* NewSymbol(CHAR8* tmpString)
 		if (symbol == NULL)  {
       return NULL;
     }
-
+    
 		// Set the symbol's data.
-		symbol->refCount = 0;		
+		symbol->refCount = 0;
     
 		AsciiStrnCpy(symbol->string, tmpString, len);
-
+    
 		// Add the symbol to the list.
 		symbol->next = gSymbolsHead;
 		gSymbolsHead = symbol;
 	}
-
+  
 	// Update the refCount and return the string.
 	symbol->refCount++;
 	
 #if 0
-    if (lastGuy && lastGuy->next != 0) { // lastGuy is always 0, accessing to ((SymbolPtr)null)->next can be dangerous.
-        return NULL;
-    }
+  if (lastGuy && lastGuy->next != 0) { // lastGuy is always 0, accessing to ((SymbolPtr)null)->next can be dangerous.
+    return NULL;
+  }
 #endif
-
+  
 	return symbol->string;
 }
 
@@ -946,23 +948,23 @@ CHAR8* NewSymbol(CHAR8* tmpString)
 // FreeSymbol
 
 void FreeSymbol(CHAR8* tmpString)
-{ 
+{
 	SymbolPtr symbol, prev;
 	prev = NULL;
-
+  
 	// Look for string in the list of symbols.
 	symbol = FindSymbol(tmpString, &prev);
 	if (symbol == NULL) {
     return;
   }
-
+  
 	// Update the refCount.
 	symbol->refCount--;
-
+  
 	if (symbol->refCount != 0) {
     return;
   }
-
+  
 	// Remove the symbol from the list.
 	if (prev != NULL) {
     prev->next = symbol->next;
@@ -970,9 +972,9 @@ void FreeSymbol(CHAR8* tmpString)
 	else {
     gSymbolsHead = symbol->next;
   }
-
-	// Free the symbol's memory.	
-    FreePool(symbol);
+  
+	// Free the symbol's memory.
+  FreePool(symbol);
 }
 
 //==========================================================================
@@ -985,22 +987,22 @@ SymbolPtr FindSymbol(CHAR8 *tmpString, SymbolPtr *prevSymbol )
 	if (tmpString == NULL) {
 		return NULL;
 	}
-
+  
 	symbol = gSymbolsHead;
 	prev = NULL;
-
+  
 	while (symbol != NULL) {
 		if (!AsciiStrCmp(symbol->string, tmpString)) {
 			break;
 		}
-
+    
 		prev = symbol;
 		symbol = symbol->next;
 	}
-
+  
 	if ((symbol != NULL) && (prevSymbol != NULL)) {
 		*prevSymbol = prev;
 	}
-
+  
 	return symbol;
 }

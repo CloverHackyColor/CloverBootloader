@@ -1047,7 +1047,7 @@ KeyboardReadKeyStrokeWorker (
     return EFI_NOT_READY;
   }
 
-  Status = Dequeue (&BiosKeyboardPrivate->Queue, KeyData);
+  /*Status = */Dequeue (&BiosKeyboardPrivate->Queue, KeyData);
 
   gBS->RestoreTPL (OldTpl);
 

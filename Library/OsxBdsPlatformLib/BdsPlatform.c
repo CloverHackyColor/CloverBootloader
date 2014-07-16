@@ -257,14 +257,14 @@ UpdateMemoryMap (
                       );
       if (EFI_ERROR (Status)) {
 //        DEBUG ((EFI_D_ERROR, "AddMemorySpace fail - %r!\n", Status));
-        if ((MemoryDescHob.MemDesc[Index].Type == EfiACPIReclaimMemory) ||
+/*        if ((MemoryDescHob.MemDesc[Index].Type == EfiACPIReclaimMemory) ||
             (MemoryDescHob.MemDesc[Index].Type == EfiACPIMemoryNVS)) {
           //
           // For EfiACPIReclaimMemory and EfiACPIMemoryNVS, it must success.
           // For EfiReservedMemoryType, there maybe overlap. So skip check here.
           //
 //          ASSERT_EFI_ERROR (Status);
-        }
+        } */
         continue;
       }
 
@@ -306,7 +306,7 @@ UpdateMemoryMap (
       continue;
     }
     // this is our candidate - add it
-    Status = gDS->AddMemorySpace (
+    /*Status = */gDS->AddMemorySpace (
                                   EfiGcdMemoryTypeSystemMemory,
                                   MemoryDescHob.MemDesc[Index].PhysicalStart,
                                   LShiftU64 (MemoryDescHob.MemDesc[Index].NumberOfPages, EFI_PAGE_SHIFT),
@@ -622,7 +622,9 @@ Returns:
 {
   EFI_STATUS                Status;
   EFI_DEVICE_PATH_PROTOCOL  *DevicePath;
+#if NOSERIAL   
   EFI_DEVICE_PATH_PROTOCOL  *TempDevicePath;
+#endif  
 
   DevicePath = NULL;
   Status = gBS->HandleProtocol (
@@ -633,8 +635,9 @@ Returns:
   if (EFI_ERROR (Status)) {
     return Status;
   }
+#if NOSERIAL  
   TempDevicePath = DevicePath;
-
+#endif
   //
   // Register Keyboard
   //
@@ -1047,7 +1050,7 @@ Returns:
   //Slice - why disable here? We will do this before system start
 //#if (!defined(USE_BIOS_BLOCKIO) && !defined(DISABLE_USB_SUPPORT))
 #ifndef DISABLE_USB_SUPPORT
-  Status = DisableUsbLegacySupport();
+  /*Status = */DisableUsbLegacySupport();
 #endif
   
   //
@@ -1194,7 +1197,7 @@ Returns:
   //
   // Perform system diagnostic
   //
-  Status = BaseMemoryTest (MemoryTestLevel);
+  /*Status = */BaseMemoryTest (MemoryTestLevel);
 }
 
 VOID
@@ -1245,7 +1248,7 @@ Returns:
   //
   // Get current Boot Mode
   //
-  Status = BdsLibGetBootMode (&BootMode);
+  /*Status = */BdsLibGetBootMode (&BootMode);
 //  DEBUG ((EFI_D_ERROR, "Boot Mode:%x\n", BootMode));
 
   //
@@ -1274,7 +1277,10 @@ Returns:
                   &UserInputDurationTime
                   );
 //  ASSERT (Status == EFI_SUCCESS);
-  Status = gBS->SetTimer (UserInputDurationTime, TimerRelative, 3000000);
+  if (!EFI_ERROR (Status)) {
+     /*Status = */gBS->SetTimer (UserInputDurationTime, TimerRelative, 3000000);
+  }
+
 //  ASSERT (Status == EFI_SUCCESS);
   //
   // Memory test and Logo show

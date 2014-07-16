@@ -1482,7 +1482,7 @@ EFI_STATUS read_nVidia_PRAMIN(pci_dt_t *nvda_dev, VOID* rom, UINT16 arch)
   
   if (arch >= 0x50) {
     DBG("Using PRAMIN fixups\n");
-    Status = PciIo->Mem.Read(
+    /*Status = */PciIo->Mem.Read(
                              PciIo,
                              EfiPciIoWidthUint32,
                              0,
@@ -1492,7 +1492,7 @@ EFI_STATUS read_nVidia_PRAMIN(pci_dt_t *nvda_dev, VOID* rom, UINT16 arch)
                              );
     vbios_vram = (vbios_vram & ~0xff) << 8;
     
-    Status = PciIo->Mem.Read(
+    /*Status = */PciIo->Mem.Read(
                              PciIo,
                              EfiPciIoWidthUint32,
                              0,
@@ -1506,7 +1506,7 @@ EFI_STATUS read_nVidia_PRAMIN(pci_dt_t *nvda_dev, VOID* rom, UINT16 arch)
     
     vbios_vram >>= 16;
     
-    Status = PciIo->Mem.Write(
+    /*Status = */PciIo->Mem.Write(
                               PciIo,
                               EfiPciIoWidthUint32,
                               0,
@@ -1526,7 +1526,7 @@ EFI_STATUS read_nVidia_PRAMIN(pci_dt_t *nvda_dev, VOID* rom, UINT16 arch)
                            );
   
   if (arch >= 0x50) {
-    Status = PciIo->Mem.Write(
+    /*Status = */PciIo->Mem.Write(
                               PciIo,
                               EfiPciIoWidthUint32,
                               0,
@@ -1572,7 +1572,7 @@ EFI_STATUS read_nVidia_PROM(pci_dt_t *nvda_dev, VOID* rom)
   }
 
   value = NV_PBUS_PCI_NV_20_ROM_SHADOW_DISABLED;
-  Status = PciIo->Mem.Write(
+  /*Status = */PciIo->Mem.Write(
                             PciIo,
                             EfiPciIoWidthUint32,
                             0,
@@ -1591,7 +1591,7 @@ EFI_STATUS read_nVidia_PROM(pci_dt_t *nvda_dev, VOID* rom)
                            );
 
   value = NV_PBUS_PCI_NV_20_ROM_SHADOW_ENABLED;
-  Status = PciIo->Mem.Write(
+  /*Status = */PciIo->Mem.Write(
                             PciIo,
                             EfiPciIoWidthUint32,
                             0,

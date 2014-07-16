@@ -683,7 +683,7 @@ FixBootingWithRelocBlock(UINTN bootArgs, BOOLEAN ModeX64)
 	BootArgsPrint(pBootArgs);
 	
 	bootArgs = bootArgs - gRelocBase;
-	pBootArgs = (VOID*)bootArgs;
+//	pBootArgs = (VOID*)bootArgs;
 	
 	// set vars for copying kernel
 	// note: *BA->kaddr is fixed in BootArgsFix() and points to real kaddr

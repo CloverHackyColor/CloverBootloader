@@ -440,7 +440,7 @@ EfiShellGetFilePathFromDevicePath(
       return NULL;
     }
     ///@todo BlockIo?
-    Status = gBS->LocateDevicePath(&gEfiSimpleFileSystemProtocolGuid, &MapPathCopy, &MapHandle);
+    /*Status = */gBS->LocateDevicePath(&gEfiSimpleFileSystemProtocolGuid, &MapPathCopy, &MapHandle);
     if (MapHandle == PathHandle) {
 //      ASSERT((PathForReturn == NULL && PathSize == 0) || (PathForReturn != NULL));
       if (!((PathForReturn == NULL && PathSize == 0) || (PathForReturn != NULL))) {
@@ -796,9 +796,6 @@ EfiShellGetDeviceName(
     //
     if (DeviceNameToReturn != NULL){
  //     ASSERT(BestDeviceName != NULL);
-      if (!BestDeviceName) {
-        return EFI_NOT_FOUND;
-      }
       StrnCatGrow(BestDeviceName, NULL, DeviceNameToReturn, 0);
       return (EFI_SUCCESS);
     }
@@ -1831,6 +1828,7 @@ InternalDuplicateShellFileInfo(
     || NewNode->FileName == NULL
     || NewNode->Info == NULL
    ){
+     FreePool(NewNode);
     return(NULL);
   }
   NewNode->Status = Node->Status;
@@ -3460,7 +3458,7 @@ CleanUpShellProtocol (
          ; Node2 = (SHELL_PROTOCOL_HANDLE_LIST *)GetFirstNode(&ShellInfoObject.OldShellList.Link)
         ){
       RemoveEntryList(&Node2->Link);
-      Status = gBS->ReinstallProtocolInterface(Node2->Handle,
+      /*Status = */gBS->ReinstallProtocolInterface(Node2->Handle,
                                                &gEfiShellProtocolGuid,
                                                NewShell,
                                                Node2->Interface);
@@ -3470,11 +3468,11 @@ CleanUpShellProtocol (
     //
     // no need to restore
     //
-    Status = gBS->UninstallProtocolInterface(gImageHandle,
+    /*Status = */gBS->UninstallProtocolInterface(gImageHandle,
                                              &gEfiShellProtocolGuid,
                                              NewShell);
   }
-  Status = gBS->CloseEvent(NewShell->ExecutionBreak);
+  /*Status = */gBS->CloseEvent(NewShell->ExecutionBreak);
   NewShell->ExecutionBreak = NULL;
 
   Status = gBS->OpenProtocol(
@@ -3486,14 +3484,14 @@ CleanUpShellProtocol (
     EFI_OPEN_PROTOCOL_GET_PROTOCOL);
 
   if (!EFI_ERROR (Status)) {
-    Status = SimpleEx->UnregisterKeyNotify(SimpleEx, ShellInfoObject.CtrlCNotifyHandle1);
-    Status = SimpleEx->UnregisterKeyNotify(SimpleEx, ShellInfoObject.CtrlCNotifyHandle2);
-    Status = SimpleEx->UnregisterKeyNotify(SimpleEx, ShellInfoObject.CtrlCNotifyHandle3);
-    Status = SimpleEx->UnregisterKeyNotify(SimpleEx, ShellInfoObject.CtrlCNotifyHandle4);
-    Status = SimpleEx->UnregisterKeyNotify(SimpleEx, ShellInfoObject.CtrlSNotifyHandle1);
-    Status = SimpleEx->UnregisterKeyNotify(SimpleEx, ShellInfoObject.CtrlSNotifyHandle2);
-    Status = SimpleEx->UnregisterKeyNotify(SimpleEx, ShellInfoObject.CtrlSNotifyHandle3);
-    Status = SimpleEx->UnregisterKeyNotify(SimpleEx, ShellInfoObject.CtrlSNotifyHandle4);
+    /*Status = */SimpleEx->UnregisterKeyNotify(SimpleEx, ShellInfoObject.CtrlCNotifyHandle1);
+    /*Status = */SimpleEx->UnregisterKeyNotify(SimpleEx, ShellInfoObject.CtrlCNotifyHandle2);
+    /*Status = */SimpleEx->UnregisterKeyNotify(SimpleEx, ShellInfoObject.CtrlCNotifyHandle3);
+    /*Status = */SimpleEx->UnregisterKeyNotify(SimpleEx, ShellInfoObject.CtrlCNotifyHandle4);
+    /*Status = */SimpleEx->UnregisterKeyNotify(SimpleEx, ShellInfoObject.CtrlSNotifyHandle1);
+    /*Status = */SimpleEx->UnregisterKeyNotify(SimpleEx, ShellInfoObject.CtrlSNotifyHandle2);
+    /*Status = */SimpleEx->UnregisterKeyNotify(SimpleEx, ShellInfoObject.CtrlSNotifyHandle3);
+    /*Status = */SimpleEx->UnregisterKeyNotify(SimpleEx, ShellInfoObject.CtrlSNotifyHandle4);
   }
   return (Status);
 }

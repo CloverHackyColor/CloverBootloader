@@ -997,7 +997,7 @@ EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* GetFadt()
     // Search Acpi 2.0 or newer in UEFI Sys.Tables
     //
     RsdPtr = NULL;
-    Status = EfiGetSystemConfigurationTable (&gEfiAcpi20TableGuid, (VOID**)&RsdPtr);
+    /*Status = */EfiGetSystemConfigurationTable (&gEfiAcpi20TableGuid, (VOID**)&RsdPtr);
     if (RsdPtr != NULL) {
       DBG("Found UEFI Acpi 2.0 RSDP at %p\n", RsdPtr);
       Rsdt = (RSDT_TABLE*)(UINTN)(RsdPtr->RsdtAddress);
@@ -1318,7 +1318,7 @@ VOID SaveOemTables()
 	// Then search Acpi 1.0 UEFI Sys.Tables
 	//
 	RsdPtr = NULL;
-	Status = EfiGetSystemConfigurationTable (&gEfiAcpi10TableGuid, &RsdPtr);
+	/*Status = */EfiGetSystemConfigurationTable (&gEfiAcpi10TableGuid, &RsdPtr);
 	if (RsdPtr != NULL) {
 		DBG("Found UEFI Acpi 1.0 RSDP at %p\n", RsdPtr);
 		// if tables already saved, then just print to log
@@ -2263,8 +2263,7 @@ EFI_STATUS PatchACPI_OtherOS(CHAR16* OsSubdir, BOOLEAN DropSSDT)
   // prepare dirs that will be searched for custom ACPI tables
   AcpiOemPath = PoolPrint(L"%s\\ACPI\\%s", OEMPath, OsSubdir);
   PathPatched = PoolPrint(L"\\EFI\\CLOVER\\ACPI\\%s", OsSubdir);
-  if (!FileExists(SelfRootDir, AcpiOemPath) && !FileExists(SelfRootDir, PathPatched))
-  {
+  if (!FileExists(SelfRootDir, AcpiOemPath) && !FileExists(SelfRootDir, PathPatched)) {
     DBG("Dir %s not found. No patching will be done.\n", OsSubdir);
     return EFI_NOT_FOUND;
   }
@@ -2272,7 +2271,7 @@ EFI_STATUS PatchACPI_OtherOS(CHAR16* OsSubdir, BOOLEAN DropSSDT)
   //
   // Inject DSDT
   //
-  Status = LoadAndInjectDSDT(AcpiOemPath, PathPatched, FadtPointer);
+ /* Status = */LoadAndInjectDSDT(AcpiOemPath, PathPatched, FadtPointer);
   
   //
   // Drop SSDT if requested

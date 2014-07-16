@@ -737,8 +737,8 @@ Var_UpdateBootOption (
   IN  FILE_EXPLORER_NV_DATA               *NvRamMap
   )
 {
-  UINT16          *BootOrderList;
-  UINT16          *NewBootOrderList;
+  UINT16          *BootOrderList = NULL;
+  UINT16          *NewBootOrderList = NULL;
   UINTN           BootOrderListSize;
   UINT16          BootString[10];
   VOID            *Buffer;
@@ -774,6 +774,7 @@ Var_UpdateBootOption (
 
   NewMenuEntry = BOpt_CreateMenuEntry (BM_LOAD_CONTEXT_SELECT);
   if (NULL == NewMenuEntry) {
+    FreePool(Buffer);
     return EFI_OUT_OF_RESOURCES;
   }
 
@@ -858,13 +859,15 @@ Var_UpdateBootOption (
                     &gEfiGlobalVariableGuid,
                     &BootOrderListSize
                     );
-  ASSERT (BootOrderList != NULL);
+//  ASSERT (BootOrderList != NULL);
+if (BootOrderList != NULL) {
   NewBootOrderList = AllocateZeroPool (BootOrderListSize + sizeof (UINT16));
-  ASSERT (NewBootOrderList != NULL);
+//  ASSERT (NewBootOrderList != NULL);
+  if (NewBootOrderList != NULL) {
   CopyMem (NewBootOrderList, BootOrderList, BootOrderListSize);
   NewBootOrderList[BootOrderListSize / sizeof (UINT16)] = Index;
-
-  if (BootOrderList != NULL) {
+}
+  
     FreePool (BootOrderList);
   }
 

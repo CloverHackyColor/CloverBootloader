@@ -235,7 +235,7 @@ UsbHubCtrlGetSuperSpeedHubDesc (
 {
   EFI_STATUS              Status;
   
-  Status = EFI_INVALID_PARAMETER;
+//  Status = EFI_INVALID_PARAMETER;
   
   Status = UsbCtrlRequest (
              HubDev,

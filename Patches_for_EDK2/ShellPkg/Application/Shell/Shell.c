@@ -552,7 +552,7 @@ UefiMain (
           //
           // Reset the CTRL-C event (yes we ignore the return values)
           //
-          Status = gBS->CheckEvent (ShellInfoObject.NewEfiShellProtocol->ExecutionBreak);
+          /*Status = */gBS->CheckEvent (ShellInfoObject.NewEfiShellProtocol->ExecutionBreak);
 
           //
           // Display Prompt
@@ -1301,6 +1301,7 @@ AddLineToCommandHistory(
   Node->Buffer = AllocateZeroPool(StrSize(Buffer));
 //  ASSERT(Node->Buffer != NULL);
   if (!Node->Buffer) {
+    FreePool(Node);
     return;
   }
   StrCpy(Node->Buffer, Buffer);
@@ -1665,6 +1666,7 @@ RunSplitCommand(
   Split->SplitStdOut  = ConvertEfiFileProtocolToShellHandle(CreateFileInterfaceMem(Unicode), NULL);
 //  ASSERT(Split->SplitStdOut != NULL);
   if (!Split->SplitStdOut) {
+    FreePool(Split);
     return (EFI_OUT_OF_RESOURCES);
   }
 
@@ -2046,7 +2048,7 @@ ChangeMappedDrive(
   )
 {
   EFI_STATUS Status;
-  Status = EFI_SUCCESS;
+//  Status = EFI_SUCCESS;
 
   //
   // make sure we are the right operation
@@ -2183,7 +2185,7 @@ ProcessCommandLineToFinal(
     // This may do nothing if the ? does not indicate help.
     // Save all the details for in the API below.
     //
-    Status = DoHelpUpdate(CmdLine);
+    /*Status = */DoHelpUpdate(CmdLine);
   }
 
   TrimSpaces(CmdLine);
@@ -2685,6 +2687,7 @@ CalleeExitStatus = SHELL_SUCCESS;
   //
 //  ASSERT(NewScriptFile->ScriptName == NULL);
   if (NewScriptFile->ScriptName) {
+    FreePool(NewScriptFile);
     return EFI_INVALID_PARAMETER;
   }
   NewScriptFile->ScriptName = StrnCatGrow(&NewScriptFile->ScriptName, NULL, Name, 0);
@@ -2771,9 +2774,9 @@ CalleeExitStatus = SHELL_SUCCESS;
       ; // conditional increment in the body of the loop
   ){
 //    ASSERT(CommandLine2 != NULL);
-    if (!CommandLine2) {
-      return EFI_SUCCESS;
-    }
+//    if (!CommandLine2) {
+//      return EFI_SUCCESS;
+//    }
     StrCpy(CommandLine2, NewScriptFile->CurrentCommand->Cl);
 
     //
@@ -2865,15 +2868,15 @@ CalleeExitStatus = SHELL_SUCCESS;
             break;
         }
       }
-      Status = ShellCopySearchAndReplace(CommandLine2,  CommandLine, PcdGet16 (PcdShellPrintBufferSize), L"%1", L"\"\"", FALSE, FALSE);
-      Status = ShellCopySearchAndReplace(CommandLine,  CommandLine2, PcdGet16 (PcdShellPrintBufferSize), L"%2", L"\"\"", FALSE, FALSE);
-      Status = ShellCopySearchAndReplace(CommandLine2,  CommandLine, PcdGet16 (PcdShellPrintBufferSize), L"%3", L"\"\"", FALSE, FALSE);
-      Status = ShellCopySearchAndReplace(CommandLine,  CommandLine2, PcdGet16 (PcdShellPrintBufferSize), L"%4", L"\"\"", FALSE, FALSE);
-      Status = ShellCopySearchAndReplace(CommandLine2,  CommandLine, PcdGet16 (PcdShellPrintBufferSize), L"%5", L"\"\"", FALSE, FALSE);
-      Status = ShellCopySearchAndReplace(CommandLine,  CommandLine2, PcdGet16 (PcdShellPrintBufferSize), L"%6", L"\"\"", FALSE, FALSE);
-      Status = ShellCopySearchAndReplace(CommandLine2,  CommandLine, PcdGet16 (PcdShellPrintBufferSize), L"%7", L"\"\"", FALSE, FALSE);
-      Status = ShellCopySearchAndReplace(CommandLine,  CommandLine2, PcdGet16 (PcdShellPrintBufferSize), L"%8", L"\"\"", FALSE, FALSE);
-      Status = ShellCopySearchAndReplace(CommandLine2,  CommandLine, PcdGet16 (PcdShellPrintBufferSize), L"%9", L"\"\"", FALSE, FALSE);
+      /*Status = */ShellCopySearchAndReplace(CommandLine2,  CommandLine, PcdGet16 (PcdShellPrintBufferSize), L"%1", L"\"\"", FALSE, FALSE);
+      /*Status = */ShellCopySearchAndReplace(CommandLine,  CommandLine2, PcdGet16 (PcdShellPrintBufferSize), L"%2", L"\"\"", FALSE, FALSE);
+      /*Status = */ShellCopySearchAndReplace(CommandLine2,  CommandLine, PcdGet16 (PcdShellPrintBufferSize), L"%3", L"\"\"", FALSE, FALSE);
+      /*Status = */ShellCopySearchAndReplace(CommandLine,  CommandLine2, PcdGet16 (PcdShellPrintBufferSize), L"%4", L"\"\"", FALSE, FALSE);
+      /*Status = */ShellCopySearchAndReplace(CommandLine2,  CommandLine, PcdGet16 (PcdShellPrintBufferSize), L"%5", L"\"\"", FALSE, FALSE);
+      /*Status = */ShellCopySearchAndReplace(CommandLine,  CommandLine2, PcdGet16 (PcdShellPrintBufferSize), L"%6", L"\"\"", FALSE, FALSE);
+      /*Status = */ShellCopySearchAndReplace(CommandLine2,  CommandLine, PcdGet16 (PcdShellPrintBufferSize), L"%7", L"\"\"", FALSE, FALSE);
+      /*Status = */ShellCopySearchAndReplace(CommandLine,  CommandLine2, PcdGet16 (PcdShellPrintBufferSize), L"%8", L"\"\"", FALSE, FALSE);
+      /*Status = */ShellCopySearchAndReplace(CommandLine2,  CommandLine, PcdGet16 (PcdShellPrintBufferSize), L"%9", L"\"\"", FALSE, FALSE);
 
       StrCpy(CommandLine2, CommandLine);
 

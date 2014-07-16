@@ -767,7 +767,7 @@ UsbHcAllocateAlignedPages (
                     );
 
   if (EFI_ERROR (Status) || (Bytes != EFI_PAGES_TO_SIZE (Pages))) {
-    Status = PciIo->FreeBuffer (PciIo, Pages, (VOID *) AlignedMemory);
+    /*Status = */PciIo->FreeBuffer (PciIo, Pages, (VOID *) AlignedMemory);
     return EFI_OUT_OF_RESOURCES;
   }
   

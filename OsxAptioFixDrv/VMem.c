@@ -52,6 +52,7 @@ GetCurrentPageTable(PAGE_MAP_AND_DIRECTORY_POINTER **PageTable, UINTN *Flags)
 VOID
 PrintPageTablePTE(PAGE_TABLE_4K_ENTRY *PTE, VIRTUAL_ADDR VA)
 {
+#if DBG_TO
 	UINTN							Index;
 	UINT64							Start;
 	
@@ -65,11 +66,13 @@ PrintPageTablePTE(PAGE_TABLE_4K_ENTRY *PTE, VIRTUAL_ADDR VA)
 		PTE++;
 	}
 	//WaitForKeyPress(L"more ...");
+#endif	
 }
 
 VOID
 PrintPageTablePDE(PAGE_MAP_AND_DIRECTORY_POINTER *PDE, VIRTUAL_ADDR VA)
 {
+#if DBG_TO
 	UINTN							Index;
 	PAGE_TABLE_2M_ENTRY				*PT2M;
 	PAGE_TABLE_4K_ENTRY				*PTE;
@@ -92,11 +95,13 @@ PrintPageTablePDE(PAGE_MAP_AND_DIRECTORY_POINTER *PDE, VIRTUAL_ADDR VA)
 		PDE++;
 	}
 	//WaitForKeyPress(L"more ...");
+#endif	
 }
 
 VOID
 PrintPageTablePDPE(PAGE_MAP_AND_DIRECTORY_POINTER *PDPE, VIRTUAL_ADDR VA)
 {
+#if DBG_TO
 	UINTN							Index;
 	PAGE_TABLE_1G_ENTRY				*PT1G;
 	PAGE_MAP_AND_DIRECTORY_POINTER	*PDE;
@@ -119,6 +124,7 @@ PrintPageTablePDPE(PAGE_MAP_AND_DIRECTORY_POINTER *PDPE, VIRTUAL_ADDR VA)
 		PDPE++;
 	}
 	//WaitForKeyPress(L"more ...");
+#endif	
 }
 
 VOID

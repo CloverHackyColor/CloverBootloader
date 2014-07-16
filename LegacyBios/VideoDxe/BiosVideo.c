@@ -581,7 +581,7 @@ BiosVideoDriverBindingStop (
       //
       // Restore original PCI attributes
       //
-      Status = PciIo->Attributes (
+      /*Status = */PciIo->Attributes (
                         PciIo,
                         EfiPciIoAttributeOperationSet,
                         mOriginalPciAttributes,
@@ -1407,6 +1407,9 @@ HasChildHandle (
                   &OpenInfoBuffer,
                   &EntryCount
                   );
+  if (EFI_ERROR(Status)) {
+    return FALSE;
+  }
   for (Index = 0; Index < EntryCount; Index++) {
     if ((OpenInfoBuffer[Index].Attributes & EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER) != 0) {
       HasChild = TRUE;

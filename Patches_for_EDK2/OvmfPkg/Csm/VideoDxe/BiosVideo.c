@@ -854,7 +854,7 @@ BiosVideoChildHandleUninstall (
   BiosVideoPrivate = NULL;
   GraphicsOutput   = NULL;
   PciIo            = NULL;
-  Status           = EFI_UNSUPPORTED;
+//  Status           = EFI_UNSUPPORTED;
 
   Status = gBS->OpenProtocol (
                   Handle,
@@ -1267,12 +1267,13 @@ HasChildHandle (
                   &OpenInfoBuffer,
                   &EntryCount
                   );
+  if (!EFI_ERROR(Status) && (OpenInfoBuffer != NULL)) {
   for (Index = 0; Index < EntryCount; Index++) {
     if ((OpenInfoBuffer[Index].Attributes & EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER) != 0) {
       HasChild = TRUE;
     }
   }
-  
+  }
   return HasChild;
 }
 

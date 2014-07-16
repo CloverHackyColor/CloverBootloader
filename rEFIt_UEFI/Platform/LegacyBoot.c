@@ -317,6 +317,9 @@ EFI_STATUS bootElTorito(REFIT_VOLUME*	volume)
 	// No device, no game
 	if (!pBlockIO) {
 		DBG("CDROMBoot: No CDROM to boot from\n");
+		if (sectorBuffer) {
+		  FreePages(sectorBuffer, EFI_SIZE_TO_PAGES (2048));
+		}
 		return Status;
 	}
 	
@@ -451,7 +454,7 @@ EFI_STATUS bootElTorito(REFIT_VOLUME*	volume)
 
 EFI_STATUS bootMBR(REFIT_VOLUME* volume) 
 {
-	EFI_STATUS			Status			= EFI_NOT_FOUND;
+	EFI_STATUS			Status;
 	EFI_BLOCK_IO*		pDisk			= volume->BlockIO;
 	//UINT8*				pMBR			= (void*)0x600;
 	UINT8*				pMBR			= (UINT8*)(UINTN)0x7C00;
@@ -679,7 +682,7 @@ EFI_STATUS bootPBRtest(REFIT_VOLUME* volume)
 	if (BiosDriveNum == 0) {
 		// not found
 		DBG("HDBoot: BIOS drive number not found\n");
-    BiosDriveNum = 0x80;
+//    BiosDriveNum = 0x80;
 //		return EFI_NOT_FOUND;
 	}
   
@@ -713,7 +716,7 @@ EFI_STATUS bootPBRtest(REFIT_VOLUME* volume)
   Status = SaveBooterLog(SelfRootDir, LEGBOOT_LOG);
   if (EFI_ERROR(Status)) {
     DBG("can't save legacy-boot.log\n");
-    Status = SaveBooterLog(NULL, LEGBOOT_LOG);
+    /*Status = */SaveBooterLog(NULL, LEGBOOT_LOG);
   }
 
 	return EFI_SUCCESS;	
@@ -738,7 +741,7 @@ gRS->ResetSystem(EfiResetWarm, EFI_SUCCESS, 0, NULL);
  */
 EFI_STATUS bootPBR(REFIT_VOLUME* volume) 
 {
-	EFI_STATUS					Status			= EFI_NOT_FOUND;
+	EFI_STATUS					Status;
 	EFI_BLOCK_IO				*pDisk			= volume->BlockIO;
 	UINT8               *pBootSector	= (UINT8*)(UINTN)0x7C00;
 	UINT8               *mBootSector;
@@ -960,7 +963,7 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume)
   Status = SaveBooterLog(SelfRootDir, LEGBOOT_LOG);
   if (EFI_ERROR(Status)) {
     DBG("can't save legacy-boot.log\n");
-    Status = SaveBooterLog(NULL, LEGBOOT_LOG);
+    /*Status = */SaveBooterLog(NULL, LEGBOOT_LOG);
   }
 	
 	return EFI_SUCCESS;	
@@ -1086,7 +1089,7 @@ EFI_STATUS bootLegacyBiosDefault(IN UINT16 LegacyBiosDefaultEntry)
 
 VOID DumpBiosMemoryMap()
 {
-  EFI_STATUS                  Status		= EFI_NOT_FOUND;
+  EFI_STATUS                  Status;
   INT32                       i, Length;  //for debug dump
   UINT64                      Start, Size;
   IA32_REGISTER_SET           Regs;

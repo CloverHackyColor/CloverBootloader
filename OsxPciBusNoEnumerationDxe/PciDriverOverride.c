@@ -167,13 +167,13 @@ Returns:
   // Get information about the image 
   //
   Status = PeCoffLoaderGetImageInfo (&ImageContext);
-  if (EFI_ERROR (Status)) {
+/*  if (EFI_ERROR (Status)) {
     return EFI_SUCCESS;
   }
 
   if (ImageContext.Machine != EFI_IMAGE_MACHINE_EBC) {
     return EFI_SUCCESS;
-  }
+  } */
 
   return EFI_SUCCESS;
 }

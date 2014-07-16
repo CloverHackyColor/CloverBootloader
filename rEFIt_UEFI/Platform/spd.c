@@ -1,12 +1,12 @@
 /*
  * spd.c - serial presence detect memory information
  implementation for reading memory spd
-
+ 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
  the Free Software Foundation, either version 3 of the License, or
  (at your option) any later version.
-
+ 
  *
  * Originally restored from pcefi10.5 by netkas
  * Dynamic mem detection original impl. by Rekursor
@@ -110,16 +110,16 @@ UINT8 spd_indexes[] = {
 	SPD_NUM_BANKS_PER_SDRAM,
 	4,7,8,9,10,11,12,64, /* TODO: give names to these values */
 	95,96,97,98, 122,123,124,125, /* UIS */
-   /* XMP */
-   SPD_XMP_SIG1,
-   SPD_XMP_SIG2,
-   SPD_XMP_PROFILES,
-   SPD_XMP_PROF1_DIVISOR,
-   SPD_XMP_PROF1_DIVIDEND,
-   SPD_XMP_PROF2_DIVISOR,
-   SPD_XMP_PROF2_DIVIDEND,
-   SPD_XMP_PROF1_RATIO,
-   SPD_XMP_PROF2_RATIO
+  /* XMP */
+  SPD_XMP_SIG1,
+  SPD_XMP_SIG2,
+  SPD_XMP_PROFILES,
+  SPD_XMP_PROF1_DIVISOR,
+  SPD_XMP_PROF1_DIVIDEND,
+  SPD_XMP_PROF2_DIVISOR,
+  SPD_XMP_PROF2_DIVIDEND,
+  SPD_XMP_PROF1_RATIO,
+  SPD_XMP_PROF2_RATIO
 };
 #define SPD_INDEXES_SIZE (sizeof(spd_indexes) / sizeof(INT8))
 
@@ -127,35 +127,35 @@ UINT8 spd_indexes[] = {
 
 UINT8 smb_read_byte_intel(UINT32 base, UINT8 adr, UINT8 cmd)
 {
- //   INTN l1, h1, l2, h2;
-    UINT64 t, t1, t2;
+  //   INTN l1, h1, l2, h2;
+  UINT64 t, t1, t2;
 	
-    IoWrite8(base + SMBHSTSTS, 0x1f);					// reset SMBus Controller
-    IoWrite8(base + SMBHSTDAT, 0xff);
+  IoWrite8(base + SMBHSTSTS, 0x1f);					// reset SMBus Controller
+  IoWrite8(base + SMBHSTDAT, 0xff);
 	
-    t1 = AsmReadTsc(); //rdtsc(l1, h1);
-    while ( IoRead8(base + SMBHSTSTS) & 0x01)    // wait until read
-    {  
-     t2 = AsmReadTsc(); //rdtsc(l2, h2);
-     t = DivU64x64Remainder((t2 - t1), DivU64x32(gCPUStructure.TSCFrequency, 1000), 0);
-     if (t > 5)
+  t1 = AsmReadTsc(); //rdtsc(l1, h1);
+  while ( IoRead8(base + SMBHSTSTS) & 0x01)    // wait until read
+  {
+    t2 = AsmReadTsc(); //rdtsc(l2, h2);
+    t = DivU64x64Remainder((t2 - t1), DivU64x32(gCPUStructure.TSCFrequency, 1000), 0);
+    if (t > 5)
       return 0xFF;                  // break
-    }
+  }
 	
-    IoWrite8(base + SMBHSTCMD, cmd);
-    IoWrite8(base + SMBHSTADD, (adr << 1) | 0x01 );
-    IoWrite8(base + SMBHSTCNT, 0x48 );
+  IoWrite8(base + SMBHSTCMD, cmd);
+  IoWrite8(base + SMBHSTADD, (adr << 1) | 0x01 );
+  IoWrite8(base + SMBHSTCNT, 0x48 );
 	
-    t1 = AsmReadTsc();
+  t1 = AsmReadTsc();
 	
  	while (!( IoRead8(base + SMBHSTSTS) & 0x02))		// wait til command finished
-	{	
+	{
 		t2 = AsmReadTsc();
 		t = DivU64x64Remainder((t2 - t1), DivU64x32(gCPUStructure.TSCFrequency, 1000), 0);
 		if (t > 5)
 			break;									// break after 5ms
-    }
-    return IoRead8(base + SMBHSTDAT);
+  }
+  return IoRead8(base + SMBHSTDAT);
 }
 
 /* SPD i2c read optimization: prefetch only what we need, read non prefetcheable bytes on the fly */
@@ -166,47 +166,47 @@ UINT8 smb_read_byte_intel(UINT32 base, UINT8 adr, UINT8 cmd)
 VOID init_spd(UINT8* spd, UINT32 base, UINT8 slot)
 {
 	INTN i;
-	for (i=0; i< SPD_INDEXES_SIZE; i++) 
+	for (i=0; i< SPD_INDEXES_SIZE; i++)
 		READ_SPD(spd, base, slot, spd_indexes[i]);
 	
 }
 
-/** Get Vendor Name from spd, 2 cases handled DDR3 and DDR2, 
-    have different formats, always return a valid ptr.*/
+/** Get Vendor Name from spd, 2 cases handled DDR3 and DDR2,
+ have different formats, always return a valid ptr.*/
 CHAR8* getVendorName(RAM_SLOT_INFO* slot, UINT8 *spd, UINT32 base, UINT8 slot_num)
 {
-    UINT8 bank = 0;
-    UINT8 code = 0;
-    INTN  i = 0;
-    //UINT8 * spd = (UINT8 *) slot->spd;
-
-    if (spd[SPD_MEMORY_TYPE]==SPD_MEMORY_TYPE_SDRAM_DDR3) { // DDR3
-        bank = (spd[SPD_DDR3_MEMORY_BANK] & 0x07f); // constructors like Patriot use b7=1
-        code = spd[SPD_DDR3_MEMORY_CODE];
-        for (i=0; i < VEN_MAP_SIZE; i++)
-            if (bank==vendorMap[i].bank && code==vendorMap[i].code)
-                return vendorMap[i].name;
-    }
-    else if (spd[SPD_MEMORY_TYPE]==SPD_MEMORY_TYPE_SDRAM_DDR2 || spd[SPD_MEMORY_TYPE]==SPD_MEMORY_TYPE_SDRAM_DDR) {
-        if(spd[64]==0x7f) {
-            for (i=64; i<72 && spd[i]==0x7f;i++) {
+  UINT8 bank = 0;
+  UINT8 code = 0;
+  INTN  i = 0;
+  //UINT8 * spd = (UINT8 *) slot->spd;
+  
+  if (spd[SPD_MEMORY_TYPE]==SPD_MEMORY_TYPE_SDRAM_DDR3) { // DDR3
+    bank = (spd[SPD_DDR3_MEMORY_BANK] & 0x07f); // constructors like Patriot use b7=1
+    code = spd[SPD_DDR3_MEMORY_CODE];
+    for (i=0; i < VEN_MAP_SIZE; i++)
+      if (bank==vendorMap[i].bank && code==vendorMap[i].code)
+        return vendorMap[i].name;
+  }
+  else if (spd[SPD_MEMORY_TYPE]==SPD_MEMORY_TYPE_SDRAM_DDR2 || spd[SPD_MEMORY_TYPE]==SPD_MEMORY_TYPE_SDRAM_DDR) {
+    if(spd[64]==0x7f) {
+      for (i=64; i<72 && spd[i]==0x7f;i++) {
 			  bank++;
 			  READ_SPD(spd, base, slot_num, (UINT8)(i+1)); // prefetch next spd byte to read for next loop
 			}
 			READ_SPD(spd, base, slot_num, (UINT8)i);
-            code = spd[i];
-        } else {
-            code = spd[64]; 
-            bank = 0;
-        }
-        for (i=0; i < VEN_MAP_SIZE; i++)
-            if (bank==vendorMap[i].bank && code==vendorMap[i].code)
-                return vendorMap[i].name;
+      code = spd[i];
+    } else {
+      code = spd[64];
+      bank = 0;
     }
-    /* OK there is no vendor id here lets try to match the partnum if it exists */
-    if (AsciiStrStr(slot->PartNo,"GU332") == slot->PartNo) // Unifosa fingerprint
-        return "Unifosa";
-    return "NoName";
+    for (i=0; i < VEN_MAP_SIZE; i++)
+      if (bank==vendorMap[i].bank && code==vendorMap[i].code)
+        return vendorMap[i].name;
+  }
+  /* OK there is no vendor id here lets try to match the partnum if it exists */
+  if (AsciiStrStr(slot->PartNo,"GU332") == slot->PartNo) // Unifosa fingerprint
+    return "Unifosa";
+  return "NoName";
 }
 
 /** Get Default Memory Module Speed (no overclocking handled) */
@@ -227,7 +227,7 @@ UINT16 getDDRspeedMhz(UINT8 * spd)
       case 0x1E:
         return 1066;
     }
-  } else if (spd[SPD_MEMORY_TYPE] == SPD_MEMORY_TYPE_SDRAM_DDR3) { 
+  } else if (spd[SPD_MEMORY_TYPE] == SPD_MEMORY_TYPE_SDRAM_DDR3) {
     // This should be multiples of MTB converted to MHz- apianti
     UINT16 xmpFrequency1 = 0, xmpFrequency2 = 0;
     UINT16 divisor = spd[10];
@@ -241,80 +241,80 @@ UINT16 getDDRspeedMhz(UINT8 * spd)
         ((spd[SPD_XMP_PROFILES] & 3) != 0)) {
       // Check if an XMP profile is enabled
       switch (gSettings.XMPDetection) {
-      case 0:
-        // Detect the better XMP profile
-        if ((spd[SPD_XMP_PROFILES] & 1) == 1) {
-          // Check the first profile
-          divisor = spd[SPD_XMP_PROF1_DIVISOR];
-          dividend = spd[SPD_XMP_PROF1_DIVIDEND];
-          ratio = spd[SPD_XMP_PROF1_RATIO];
-          xmpFrequency1 = (((dividend != 0) && (divisor != 0) && (ratio != 0)) ?
-                           ((2000 * dividend) / (divisor * ratio)) : 0);
-        }
-        if ((spd[SPD_XMP_PROFILES] & 2) == 2) {
-          // Check the second profile
-          divisor = spd[SPD_XMP_PROF2_DIVISOR];
-          dividend = spd[SPD_XMP_PROF2_DIVIDEND];
-          ratio = spd[SPD_XMP_PROF2_RATIO];
-          xmpFrequency2 = (((dividend != 0) && (divisor != 0) && (ratio != 0)) ?
-                           ((2000 * dividend) / (divisor * ratio)) : 0);
-        }
-        if (xmpFrequency1 >= xmpFrequency2) {
-          if (xmpFrequency1 >= frequency) {
-            DBG("Using XMP Profile1 instead of standard frequency %dMHz\n", frequency);
-            frequency = xmpFrequency1;
+        case 0:
+          // Detect the better XMP profile
+          if ((spd[SPD_XMP_PROFILES] & 1) == 1) {
+            // Check the first profile
+            divisor = spd[SPD_XMP_PROF1_DIVISOR];
+            dividend = spd[SPD_XMP_PROF1_DIVIDEND];
+            ratio = spd[SPD_XMP_PROF1_RATIO];
+            xmpFrequency1 = (((dividend != 0) && (divisor != 0) && (ratio != 0)) ?
+                             ((2000 * dividend) / (divisor * ratio)) : 0);
           }
-        } else if (xmpFrequency2 >= frequency) {
-          DBG("Using XMP Profile2 instead of standard frequency %dMHz\n", frequency);
-          frequency = xmpFrequency2;
-        }
-        break;
-
-      case 1:
-         // Use first profile if present
-         if ((spd[SPD_XMP_PROFILES] & 1) == 1) {
-           DBG("Using XMP Profile1 instead of standard frequency %dMHz\n", frequency);
-           divisor = spd[SPD_XMP_PROF1_DIVISOR];
-           dividend = spd[SPD_XMP_PROF1_DIVIDEND];
-           ratio = spd[SPD_XMP_PROF1_RATIO];
-           frequency = (((dividend != 0) && (divisor != 0) && (ratio != 0)) ?
-                        ((2000 * dividend) / (divisor * ratio)) : 0);
-         } else {
-           DBG("Not using XMP Profile1 because it is not present\n");
-         }
-         break;
-
-      case 2:
-         // Use second profile
-         if ((spd[SPD_XMP_PROFILES] & 2) == 2) {
-           DBG("Using XMP Profile2 instead of standard frequency %dMHz\n", frequency);
-           divisor = spd[SPD_XMP_PROF2_DIVISOR];
-           dividend = spd[SPD_XMP_PROF2_DIVIDEND];
-           ratio = spd[SPD_XMP_PROF2_RATIO];
-           frequency = (((dividend != 0) && (divisor != 0) && (ratio != 0)) ?
-                        ((2000 * dividend) / (divisor * ratio)) : 0);
-         } else {
-           DBG("Not using XMP Profile2 because it is not present\n");
-         }
-         break;
-
-      default:
-        break;
+          if ((spd[SPD_XMP_PROFILES] & 2) == 2) {
+            // Check the second profile
+            divisor = spd[SPD_XMP_PROF2_DIVISOR];
+            dividend = spd[SPD_XMP_PROF2_DIVIDEND];
+            ratio = spd[SPD_XMP_PROF2_RATIO];
+            xmpFrequency2 = (((dividend != 0) && (divisor != 0) && (ratio != 0)) ?
+                             ((2000 * dividend) / (divisor * ratio)) : 0);
+          }
+          if (xmpFrequency1 >= xmpFrequency2) {
+            if (xmpFrequency1 >= frequency) {
+              DBG("Using XMP Profile1 instead of standard frequency %dMHz\n", frequency);
+              frequency = xmpFrequency1;
+            }
+          } else if (xmpFrequency2 >= frequency) {
+            DBG("Using XMP Profile2 instead of standard frequency %dMHz\n", frequency);
+            frequency = xmpFrequency2;
+          }
+          break;
+          
+        case 1:
+          // Use first profile if present
+          if ((spd[SPD_XMP_PROFILES] & 1) == 1) {
+            DBG("Using XMP Profile1 instead of standard frequency %dMHz\n", frequency);
+            divisor = spd[SPD_XMP_PROF1_DIVISOR];
+            dividend = spd[SPD_XMP_PROF1_DIVIDEND];
+            ratio = spd[SPD_XMP_PROF1_RATIO];
+            frequency = (((dividend != 0) && (divisor != 0) && (ratio != 0)) ?
+                         ((2000 * dividend) / (divisor * ratio)) : 0);
+          } else {
+            DBG("Not using XMP Profile1 because it is not present\n");
+          }
+          break;
+          
+        case 2:
+          // Use second profile
+          if ((spd[SPD_XMP_PROFILES] & 2) == 2) {
+            DBG("Using XMP Profile2 instead of standard frequency %dMHz\n", frequency);
+            divisor = spd[SPD_XMP_PROF2_DIVISOR];
+            dividend = spd[SPD_XMP_PROF2_DIVIDEND];
+            ratio = spd[SPD_XMP_PROF2_RATIO];
+            frequency = (((dividend != 0) && (divisor != 0) && (ratio != 0)) ?
+                         ((2000 * dividend) / (divisor * ratio)) : 0);
+          } else {
+            DBG("Not using XMP Profile2 because it is not present\n");
+          }
+          break;
+          
+        default:
+          break;
       }
     } else {
-       // Print out XMP not detected
+      // Print out XMP not detected
       switch (gSettings.XMPDetection) {
-      case 0:
-         DBG("Not using XMP because it is not present\n");
-         break;
-
-      case 1:
-      case 2:
-        DBG("Not using XMP Profile%d because it is not present\n", gSettings.XMPDetection);
-        break;
-
-      default:
-         break;
+        case 0:
+          DBG("Not using XMP because it is not present\n");
+          break;
+          
+        case 1:
+        case 2:
+          DBG("Not using XMP Profile%d because it is not present\n", gSettings.XMPDetection);
+          break;
+          
+        default:
+          break;
       }
     }
     return frequency;
@@ -328,19 +328,19 @@ UINT16 getDDRspeedMhz(UINT8 * spd)
 /** Get DDR3 or DDR2 serial number, 0 most of the times, always return a valid ptr */
 CHAR8* getDDRSerial(UINT8* spd)
 {
-    CHAR8* asciiSerial; //[16];
-    asciiSerial = AllocatePool(17);
-    if (spd[SPD_MEMORY_TYPE]==SPD_MEMORY_TYPE_SDRAM_DDR3) // DDR3
-    {
-	AsciiSPrint(asciiSerial, 17, "%2X%2X%2X%2X%2X%2X%2X%2X", SMST(122) /*& 0x7*/, SLST(122), SMST(123), SLST(123), SMST(124), SLST(124), SMST(125), SLST(125));
-    } else if (spd[SPD_MEMORY_TYPE]==SPD_MEMORY_TYPE_SDRAM_DDR2 || spd[SPD_MEMORY_TYPE]==SPD_MEMORY_TYPE_SDRAM_DDR) {// DDR2 or DDR
-
-	AsciiSPrint(asciiSerial, 17, "%2X%2X%2X%2X%2X%2X%2X%2X", SMST(95) /*& 0x7*/, SLST(95), SMST(96), SLST(96), SMST(97), SLST(97), SMST(98), SLST(98));
-    } else {
-       AsciiStrCpy(asciiSerial, "0000000000000000");
-    }
-
-    return asciiSerial;
+  CHAR8* asciiSerial; //[16];
+  asciiSerial = AllocatePool(17);
+  if (spd[SPD_MEMORY_TYPE]==SPD_MEMORY_TYPE_SDRAM_DDR3) // DDR3
+  {
+    AsciiSPrint(asciiSerial, 17, "%2X%2X%2X%2X%2X%2X%2X%2X", SMST(122) /*& 0x7*/, SLST(122), SMST(123), SLST(123), SMST(124), SLST(124), SMST(125), SLST(125));
+  } else if (spd[SPD_MEMORY_TYPE]==SPD_MEMORY_TYPE_SDRAM_DDR2 || spd[SPD_MEMORY_TYPE]==SPD_MEMORY_TYPE_SDRAM_DDR) {// DDR2 or DDR
+    
+    AsciiSPrint(asciiSerial, 17, "%2X%2X%2X%2X%2X%2X%2X%2X", SMST(95) /*& 0x7*/, SLST(95), SMST(96), SLST(96), SMST(97), SLST(97), SMST(98), SLST(98));
+  } else {
+    AsciiStrCpy(asciiSerial, "0000000000000000");
+  }
+  
+  return asciiSerial;
 }
 
 /** Get DDR3 or DDR2 Part Number, always return a valid ptr */
@@ -376,8 +376,8 @@ CHAR8* getDDRPartNum(UINT8* spd, UINT32 base, UINT8 slot)
 
 /** Read from smbus the SPD content and interpret it for detecting memory attributes */
 VOID read_smb_intel(EFI_PCI_IO_PROTOCOL *PciIo)
-{ 
-	EFI_STATUS	Status;
+{
+//	EFI_STATUS	Status;
   UINT16      speed;
   UINT8       i;// spd_size, spd_type;
   UINT32			base, mmio, hostc;
@@ -390,53 +390,53 @@ VOID read_smb_intel(EFI_PCI_IO_PROTOCOL *PciIo)
 	vid = gPci.Hdr.VendorId;
 	did = gPci.Hdr.DeviceId;
   
-	Status = PciIo->Pci.Read (
-                            PciIo, 
-                            EfiPciIoWidthUint16, 
-                            PCI_COMMAND_OFFSET, 
-                            1, 
-                            &Command
-                            );
+	/*Status = */PciIo->Pci.Read (
+                                PciIo,
+                                EfiPciIoWidthUint16,
+                                PCI_COMMAND_OFFSET,
+                                1,
+                                &Command
+                                );
 	
-	Command |= 1;	
-	Status = PciIo->Pci.Write (
-                             PciIo, 
-                             EfiPciIoWidthUint16, 
-                             PCI_COMMAND_OFFSET, 
-                             1, 
-                             &Command
-                             );
+	Command |= 1;
+	/*Status = */PciIo->Pci.Write (
+                                 PciIo,
+                                 EfiPciIoWidthUint16,
+                                 PCI_COMMAND_OFFSET,
+                                 1,
+                                 &Command
+                                 );
 	
 	DBG("SMBus CmdReg: 0x%x\n", Command);
   
-	Status = PciIo->Pci.Read (
-                            PciIo,
-                            EfiPciIoWidthUint32,
-                            0x10,
-                            1,
-                            &mmio
-                            );
+	/*Status = */PciIo->Pci.Read (
+                                PciIo,
+                                EfiPciIoWidthUint32,
+                                0x10,
+                                1,
+                                &mmio
+                                );
 	
-	Status = PciIo->Pci.Read (
-                            PciIo,
-                            EfiPciIoWidthUint32,
-                            0x20,
-                            1,
-                            &base
-                            );
+	/*Status = */PciIo->Pci.Read (
+                                PciIo,
+                                EfiPciIoWidthUint32,
+                                0x20,
+                                1,
+                                &base
+                                );
 	
   base &= 0xFFFE;
 	
-	Status = PciIo->Pci.Read (
-                            PciIo,
-                            EfiPciIoWidthUint32,
-                            0x40,
-                            1,
-                            &hostc
-                            );
+	/*Status = */PciIo->Pci.Read (
+                                PciIo,
+                                EfiPciIoWidthUint32,
+                                0x40,
+                                1,
+                                &hostc
+                                );
 	
   
-  MsgLog("Scanning SMBus [%04x:%04x], mmio: 0x%x, ioport: 0x%x, hostc: 0x%x\n", 
+  MsgLog("Scanning SMBus [%04x:%04x], mmio: 0x%x, ioport: 0x%x, hostc: 0x%x\n",
          vid, did, mmio, base, hostc);
   
 	// needed at least for laptops
@@ -450,88 +450,88 @@ VOID read_smb_intel(EFI_PCI_IO_PROTOCOL *PciIo)
     //spd_size = smb_read_byte_intel(base, 0x50 + i, 0);
     //DBG("SPD[%d]: size %d @0x%x \n", i, spd_size, 0x50 + i);
 		/*if (spd_size != 0xFF) {
-			DBG("SPD[0] (size): 0x%02x @0x%x \n", spd_size, 0x50 + i);
-		}
-		
-    // Check spd is present
-    if (spd_size && (spd_size != 0xff))
-    {
-			slot->spd = spdbuf;
-      */
-      ZeroMem(spdbuf, MAX_SPD_SIZE);
-      READ_SPD(spdbuf, base, i, SPD_MEMORY_TYPE);
-      if (spdbuf[SPD_MEMORY_TYPE] == 0xFF) continue;
-      // Copy spd data into buffer
-      init_spd(spdbuf, base, i);
-      DBG("SPD[%d]: Type %d @0x%x \n", i, spdbuf[SPD_MEMORY_TYPE], 0x50 + i);
-      switch (spdbuf[SPD_MEMORY_TYPE])  {
-        case SPD_MEMORY_TYPE_SDRAM_DDR:
-          
-          gRAM.SPD[i].Type = MemoryTypeDdr;
-          gRAM.SPD[i].ModuleSize = (((1 << ((spdbuf[SPD_NUM_ROWS] & 0x0f)
-                                      + (spdbuf[SPD_NUM_COLUMNS] & 0x0f) - 17)) * 
-                                    ((spdbuf[SPD_NUM_DIMM_BANKS] & 0x7) + 1) *
-                                       spdbuf[SPD_NUM_BANKS_PER_SDRAM])/3)*2;
-          break;
-          
-        case SPD_MEMORY_TYPE_SDRAM_DDR2:
-
-          gRAM.SPD[i].Type = MemoryTypeDdr2;
-          gRAM.SPD[i].ModuleSize = ((1 << ((spdbuf[SPD_NUM_ROWS] & 0x0f)
-                                     + (spdbuf[SPD_NUM_COLUMNS] & 0x0f) - 17)) * 
-                                    ((spdbuf[SPD_NUM_DIMM_BANKS] & 0x7) + 1) *
-                                       spdbuf[SPD_NUM_BANKS_PER_SDRAM]);
-          break;
-          
-        case SPD_MEMORY_TYPE_SDRAM_DDR3:
-
-          gRAM.SPD[i].Type = MemoryTypeDdr3;
-          gRAM.SPD[i].ModuleSize = ((spdbuf[4] & 0x0f) + 28 ) + ((spdbuf[8] & 0x7)  + 3 );
-          gRAM.SPD[i].ModuleSize -= (spdbuf[7] & 0x7) + 25;
-          gRAM.SPD[i].ModuleSize = ((1 << gRAM.SPD[i].ModuleSize) * (((spdbuf[7] >> 3) & 0x1f) + 1));
-          
-          break;
+     DBG("SPD[0] (size): 0x%02x @0x%x \n", spd_size, 0x50 + i);
+     }
+     
+     // Check spd is present
+     if (spd_size && (spd_size != 0xff))
+     {
+     slot->spd = spdbuf;
+     */
+    ZeroMem(spdbuf, MAX_SPD_SIZE);
+    READ_SPD(spdbuf, base, i, SPD_MEMORY_TYPE);
+    if (spdbuf[SPD_MEMORY_TYPE] == 0xFF) continue;
+    // Copy spd data into buffer
+    init_spd(spdbuf, base, i);
+    DBG("SPD[%d]: Type %d @0x%x \n", i, spdbuf[SPD_MEMORY_TYPE], 0x50 + i);
+    switch (spdbuf[SPD_MEMORY_TYPE])  {
+      case SPD_MEMORY_TYPE_SDRAM_DDR:
+        
+        gRAM.SPD[i].Type = MemoryTypeDdr;
+        gRAM.SPD[i].ModuleSize = (((1 << ((spdbuf[SPD_NUM_ROWS] & 0x0f)
+                                          + (spdbuf[SPD_NUM_COLUMNS] & 0x0f) - 17)) *
+                                   ((spdbuf[SPD_NUM_DIMM_BANKS] & 0x7) + 1) *
+                                   spdbuf[SPD_NUM_BANKS_PER_SDRAM])/3)*2;
+        break;
+        
+      case SPD_MEMORY_TYPE_SDRAM_DDR2:
+        
+        gRAM.SPD[i].Type = MemoryTypeDdr2;
+        gRAM.SPD[i].ModuleSize = ((1 << ((spdbuf[SPD_NUM_ROWS] & 0x0f)
+                                         + (spdbuf[SPD_NUM_COLUMNS] & 0x0f) - 17)) *
+                                  ((spdbuf[SPD_NUM_DIMM_BANKS] & 0x7) + 1) *
+                                  spdbuf[SPD_NUM_BANKS_PER_SDRAM]);
+        break;
+        
+      case SPD_MEMORY_TYPE_SDRAM_DDR3:
+        
+        gRAM.SPD[i].Type = MemoryTypeDdr3;
+        gRAM.SPD[i].ModuleSize = ((spdbuf[4] & 0x0f) + 28 ) + ((spdbuf[8] & 0x7)  + 3 );
+        gRAM.SPD[i].ModuleSize -= (spdbuf[7] & 0x7) + 25;
+        gRAM.SPD[i].ModuleSize = ((1 << gRAM.SPD[i].ModuleSize) * (((spdbuf[7] >> 3) & 0x1f) + 1));
+        
+        break;
+    }
+    
+    if (gRAM.SPD[i].ModuleSize == 0) continue;
+    //spd_type = (slot->spd[SPD_MEMORY_TYPE] < ((UINT8) 12) ? slot->spd[SPD_MEMORY_TYPE] : 0);
+    //gRAM Type = spd_mem_to_smbios[spd_type];
+    gRAM.SPD[i].PartNo = getDDRPartNum(spdbuf, base, i);
+    gRAM.SPD[i].Vendor = getVendorName(&(gRAM.SPD[i]), spdbuf, base, i);
+    gRAM.SPD[i].SerialNo = getDDRSerial(spdbuf);
+    //XXX - when we can FreePool allocated for these buffers?
+    // determine spd speed
+    speed = (UINT16)getDDRspeedMhz(spdbuf);
+    DBG("DDR speed %dMHz \n", speed);
+    if (gRAM.SPD[i].Frequency<speed) gRAM.SPD[i].Frequency = speed;
+    
+    // pci memory controller if available, is more reliable
+    if (gRAM.Frequency > 0) {
+      UINT32 freq = (UINT32)DivU64x32(gRAM.Frequency, 500000);
+      // now round off special cases
+      UINT32 fmod100 = freq %100;
+      switch(fmod100) {
+        case  1:	freq--;	break;
+        case 32:	freq++;	break;
+        case 65:	freq++; break;
+        case 98:	freq+=2;break;
+        case 99:	freq++; break;
       }
-
-      if (gRAM.SPD[i].ModuleSize == 0) continue;
-      //spd_type = (slot->spd[SPD_MEMORY_TYPE] < ((UINT8) 12) ? slot->spd[SPD_MEMORY_TYPE] : 0);
-      //gRAM Type = spd_mem_to_smbios[spd_type];
-      gRAM.SPD[i].PartNo = getDDRPartNum(spdbuf, base, i);
-      gRAM.SPD[i].Vendor = getVendorName(&(gRAM.SPD[i]), spdbuf, base, i);
-      gRAM.SPD[i].SerialNo = getDDRSerial(spdbuf);
-			//XXX - when we can FreePool allocated for these buffers?
-      // determine spd speed
-      speed = (UINT16)getDDRspeedMhz(spdbuf);
-			DBG("DDR speed %dMHz \n", speed);
-      if (gRAM.SPD[i].Frequency<speed) gRAM.SPD[i].Frequency = speed;
-			
-			// pci memory controller if available, is more reliable
-			if (gRAM.Frequency > 0) {
-				UINT32 freq = (UINT32)DivU64x32(gRAM.Frequency, 500000);
-				// now round off special cases
-				UINT32 fmod100 = freq %100;
-				switch(fmod100) {
-					case  1:	freq--;	break;
-					case 32:	freq++;	break;
-					case 65:	freq++; break;
-					case 98:	freq+=2;break;
-					case 99:	freq++; break;
-				}
-				gRAM.SPD[i].Frequency = freq;
-				DBG("RAM speed %dMHz \n", freq);
-			}
-      
-			MsgLog("Slot: %d Type %d %dMB %dMHz Vendor=%a PartNo=%a SerialNo=%a \n", 
-             i, 
-             (int)gRAM.SPD[i].Type,
-             gRAM.SPD[i].ModuleSize, 
-             gRAM.SPD[i].Frequency,
-             gRAM.SPD[i].Vendor,
-             gRAM.SPD[i].PartNo,
-             gRAM.SPD[i].SerialNo);
-      
-      gRAM.SPD[i].InUse = TRUE;
-      ++(gRAM.SPDInUse);
+      gRAM.SPD[i].Frequency = freq;
+      DBG("RAM speed %dMHz \n", freq);
+    }
+    
+    MsgLog("Slot: %d Type %d %dMB %dMHz Vendor=%a PartNo=%a SerialNo=%a \n",
+           i,
+           (int)gRAM.SPD[i].Type,
+           gRAM.SPD[i].ModuleSize,
+           gRAM.SPD[i].Frequency,
+           gRAM.SPD[i].Vendor,
+           gRAM.SPD[i].PartNo,
+           gRAM.SPD[i].SerialNo);
+    
+    gRAM.SPD[i].InUse = TRUE;
+    ++(gRAM.SPDInUse);
     //}
     
     // laptops sometimes show slot 0 and 2 with slot 1 empty when only 2 slots are presents so:
@@ -542,24 +542,24 @@ VOID read_smb_intel(EFI_PCI_IO_PROTOCOL *PciIo)
   } // for
 }
 /*
-static struct smbus_controllers_t smbus_controllers[] = {
-
-	{0x8086, 0x269B, "ESB2",		read_smb_intel },
-	{0x8086, 0x25A4, "6300ESB",		read_smb_intel },
-	{0x8086, 0x24C3, "ICH4",		read_smb_intel },
-	{0x8086, 0x24D3, "ICH5",		read_smb_intel },
-	{0x8086, 0x266A, "ICH6",		read_smb_intel },
-	{0x8086, 0x27DA, "ICH7",		read_smb_intel },
-	{0x8086, 0x283E, "ICH8",		read_smb_intel },
-	{0x8086, 0x2930, "ICH9",		read_smb_intel },	
-	{0x8086, 0x3A30, "ICH10R",		read_smb_intel },
-	{0x8086, 0x3A60, "ICH10B",		read_smb_intel },
-	{0x8086, 0x3B30, "5 Series",	read_smb_intel },
-	{0x8086, 0x1C22, "6 Series",	read_smb_intel },
-	{0x8086, 0x5032, "EP80579",		read_smb_intel }
-
-};
-*/
+ static struct smbus_controllers_t smbus_controllers[] = {
+ 
+ {0x8086, 0x269B, "ESB2",		read_smb_intel },
+ {0x8086, 0x25A4, "6300ESB",		read_smb_intel },
+ {0x8086, 0x24C3, "ICH4",		read_smb_intel },
+ {0x8086, 0x24D3, "ICH5",		read_smb_intel },
+ {0x8086, 0x266A, "ICH6",		read_smb_intel },
+ {0x8086, 0x27DA, "ICH7",		read_smb_intel },
+ {0x8086, 0x283E, "ICH8",		read_smb_intel },
+ {0x8086, 0x2930, "ICH9",		read_smb_intel },
+ {0x8086, 0x3A30, "ICH10R",		read_smb_intel },
+ {0x8086, 0x3A60, "ICH10B",		read_smb_intel },
+ {0x8086, 0x3B30, "5 Series",	read_smb_intel },
+ {0x8086, 0x1C22, "6 Series",	read_smb_intel },
+ {0x8086, 0x5032, "EP80579",		read_smb_intel }
+ 
+ };
+ */
 
 VOID ScanSPD()
 {
@@ -571,16 +571,16 @@ VOID ScanSPD()
 	UINTN				ArrayCount;
 	UINTN				HandleIndex;
 	UINTN				ProtocolIndex;
-
+  
 	/* Scan PCI BUS For SmBus controller */
 	Status = gBS->LocateHandleBuffer(AllHandles,NULL,NULL,&HandleCount,&HandleBuffer);
 	if (!EFI_ERROR(Status))
-	{	
+	{
 		for (HandleIndex = 0; HandleIndex < HandleCount; HandleIndex++)
 		{
 			Status = gBS->ProtocolsPerHandle(HandleBuffer[HandleIndex],&ProtocolGuidArray,&ArrayCount);
 			if (!EFI_ERROR(Status))
-			{			
+			{
 				for (ProtocolIndex = 0; ProtocolIndex < ArrayCount; ProtocolIndex++)
 				{
 					if (CompareGuid(&gEfiPciIoProtocolGuid, ProtocolGuidArray[ProtocolIndex]))
@@ -590,16 +590,16 @@ VOID ScanSPD()
 						{
 							/* Read PCI BUS */
 							Status = PciIo->Pci.Read (
-													  PciIo,
-													  EfiPciIoWidthUint32,
-													  0,
-													  sizeof (gPci) / sizeof (UINT32),
-													  &gPci
-													  );
+                                        PciIo,
+                                        EfiPciIoWidthUint32,
+                                        0,
+                                        sizeof (gPci) / sizeof (UINT32),
+                                        &gPci
+                                        );
 							
 							//SmBus controller has class = 0x0c0500
 							if ((gPci.Hdr.ClassCode[2] == 0x0c) && (gPci.Hdr.ClassCode[1] == 5) 
-								&& (gPci.Hdr.ClassCode[0] == 0) && (gPci.Hdr.VendorId == 0x8086))
+                  && (gPci.Hdr.ClassCode[0] == 0) && (gPci.Hdr.VendorId == 0x8086))
 							{
 								read_smb_intel(PciIo);
 							}

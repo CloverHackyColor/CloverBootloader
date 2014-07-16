@@ -128,6 +128,7 @@ UsbCreateInterface (
   UsbIf->IfDesc     = IfDesc;
 //  ASSERT (IfDesc->ActiveIndex < USB_MAX_INTERFACE_SETTING);
   if (IfDesc->ActiveIndex >= USB_MAX_INTERFACE_SETTING) {
+    FreePool(UsbIf);
     return NULL;
   }
   UsbIf->IfSetting  = IfDesc->Settings[IfDesc->ActiveIndex];

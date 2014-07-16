@@ -1006,6 +1006,9 @@ FindChildNode (
     //
     Status = CreateChildNode (SourceStream, 0, &CurrentChildNode);
     if (EFI_ERROR (Status)) {
+      if (CurrentChildNode != NULL) {
+        FreePool (CurrentChildNode);
+      }
       return Status;
     }
   }

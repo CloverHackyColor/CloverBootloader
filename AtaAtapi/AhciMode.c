@@ -1622,7 +1622,7 @@ AhciAtaSmartSupport (
                    );
 
         if (!EFI_ERROR (Status)) {
-          Status = AhciAtaSmartReturnStatusCheck (
+          /*Status = */AhciAtaSmartReturnStatusCheck (
                      PciIo,
                      AhciRegisters,
                      (UINT8)Port,
@@ -2172,7 +2172,7 @@ AhciModeInitialization (
   EFI_PCI_IO_PROTOCOL              *PciIo;
   EFI_IDE_CONTROLLER_INIT_PROTOCOL *IdeInit;
   UINT32                           Capability;
-  UINT8                            MaxPortNumber;
+//  UINT8                            MaxPortNumber;
   UINT32                           PortImplementBitMap;
 
   EFI_AHCI_REGISTERS               *AhciRegisters;
@@ -2216,19 +2216,19 @@ AhciModeInitialization (
 //  MaxPortNumber        = (UINT8) ((Capability & 0x1F) + 1);
 //  if (MaxPortNumber < 6) MaxPortNumber = 6; //Slice - Intel chipset always has 6 ports
   PortImplementBitMap  = AhciReadReg(PciIo, EFI_AHCI_PI_OFFSET);
-  Data = PortImplementBitMap;
+/*  Data = PortImplementBitMap;
   for (Port = 0; PortImplementBitMap != 0; PortImplementBitMap >>= 1) {
     MaxPortNumber = ++Port;
   }
-
+*/
   //
   // Get the bit map of those ports exposed by this HBA.
   // It indicates which ports that the HBA supports are available for software to use. 
   //
 #ifdef ONLY_SATA_0
   PortImplementBitMap  = 1;
-#else
-  PortImplementBitMap  = Data; //AhciReadReg(PciIo, EFI_AHCI_PI_OFFSET);
+//#else
+//  PortImplementBitMap  = Data; //AhciReadReg(PciIo, EFI_AHCI_PI_OFFSET);
 #endif  
   AhciRegisters = &Instance->AhciRegisters;
   Status = AhciCreateTransferDescriptor (PciIo, AhciRegisters);

@@ -75,7 +75,7 @@ NullConsoleControlGetModeText(IN EFI_CONSOLE_CONTROL_PROTOCOL *This, OUT EFI_CON
 //
 // Screen handling
 //
-
+/*
 VOID egDumpGOPVideoModes(VOID)
 {
     EFI_STATUS  Status;
@@ -122,15 +122,15 @@ VOID egDumpGOPVideoModes(VOID)
                     break;
             }
             
-//            MsgLog("- Mode %d: %dx%d PixFmt = %s, PixPerScanLine = %d\n",
-//                  Mode, Info->HorizontalResolution, Info->VerticalResolution, PixelFormatDesc, Info->PixelsPerScanLine);
+            MsgLog("- Mode %d: %dx%d PixFmt = %s, PixPerScanLine = %d\n",
+                  Mode, Info->HorizontalResolution, Info->VerticalResolution, PixelFormatDesc, Info->PixelsPerScanLine);
         } else {
             MsgLog("- Mode %d: %r\n", Mode, Status);
         }
     }
     
 }
-
+*/
 VOID egDumpSetConsoleVideoModes(VOID)
 {
     UINTN i;

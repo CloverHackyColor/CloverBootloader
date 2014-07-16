@@ -1950,8 +1950,8 @@ AtaUdmaInOut (
     //
     // Read Status Register of IDE device to clear interrupt
     //
-    RegisterValue  = IdeReadPortB(PciIo, IdeRegisters->CmdOrStatus);
-
+    /*RegisterValue  =*/ IdeReadPortB(PciIo, IdeRegisters->CmdOrStatus);
+	MicroSecondDelay (1000);
     //
     // Clear START bit of BMIC register
     //
@@ -2369,7 +2369,7 @@ SetDriveParameters (
   //
   // Send Init drive parameters
   //
-  Status = AtaNonDataCommandIn (
+  /*Status = */AtaNonDataCommandIn (
              Instance->PciIo,
              &Instance->IdeRegisters[Channel],
              &AtaCommandBlock,
@@ -2551,7 +2551,7 @@ IdeAtaSmartSupport (
                    );
         DBG(L"Send S.M.A.R.T autosave DeviceHead=%x Status=%r\n", AtaCommandBlock.AtaDeviceHead, Status);
         if (!EFI_ERROR (Status)) {
-          Status = IdeAtaSmartReturnStatusCheck (
+          /*Status = */IdeAtaSmartReturnStatusCheck (
                      Instance,
                      Channel,
                      Device,

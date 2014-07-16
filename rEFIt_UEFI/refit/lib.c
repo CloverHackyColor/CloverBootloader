@@ -84,17 +84,17 @@ static VOID UninitVolumes(VOID);
 
 
 BOOLEAN MetaiMatch (
-			IN CHAR16   *String,
-			IN CHAR16   *Pattern
-			);
+                    IN CHAR16   *String,
+                    IN CHAR16   *Pattern
+                    );
 
 /**
  This function converts an input device structure to a Unicode string.
-
+ 
  @param DevPath                  A pointer to the device path structure.
-
+ 
  @return A new allocated Unicode string that represents the device path.
-
+ 
  **/
 CHAR16 *
 EFIAPI
@@ -112,18 +112,18 @@ EFI_STATUS GetRootFromPath(IN EFI_DEVICE_PATH_PROTOCOL* DevicePath, OUT EFI_FILE
   EFI_STATUS  Status;
   EFI_HANDLE                NewHandle;
   EFI_DEVICE_PATH_PROTOCOL* TmpDevicePath;
-//  DBG("Try to duplicate DevicePath\n");
+  //  DBG("Try to duplicate DevicePath\n");
   TmpDevicePath = DuplicateDevicePath(DevicePath);
-//  DBG("TmpDevicePath found\n");
+  //  DBG("TmpDevicePath found\n");
   NewHandle = NULL;
 	Status = gBS->LocateDevicePath (&gEfiSimpleFileSystemProtocolGuid,
                                   &TmpDevicePath,
                                   &NewHandle);
-//   DBG("volume handle found =%x\n", NewHandle);
+  //   DBG("volume handle found =%x\n", NewHandle);
   CheckError(Status, L"while reopening volume handle");
-  *Root = EfiLibOpenRoot(NewHandle);  
+  *Root = EfiLibOpenRoot(NewHandle);
   if (*Root == NULL) {
-//    DBG("volume Root Dir can't be reopened\n");
+    //    DBG("volume Root Dir can't be reopened\n");
     return EFI_NOT_FOUND;
   }
   if (FileExists(*Root, L"mach_kernel")) {
@@ -131,7 +131,7 @@ EFI_STATUS GetRootFromPath(IN EFI_DEVICE_PATH_PROTOCOL* DevicePath, OUT EFI_FILE
   } else {
     DBG("mach_kernel not exists\n");
   }
-
+  
   return Status;
 }
 //
@@ -140,83 +140,83 @@ EFI_STATUS GetRootFromPath(IN EFI_DEVICE_PATH_PROTOCOL* DevicePath, OUT EFI_FILE
 
 EFI_STATUS InitRefitLib(IN EFI_HANDLE ImageHandle)
 {
-    EFI_STATUS  Status;
-    CHAR16      *FilePathAsString;
-    UINTN       i;
-    UINTN                     DevicePathSize;
-    EFI_DEVICE_PATH_PROTOCOL* TmpDevicePath;
-    
-    SelfImageHandle = ImageHandle;
-    Status = gBS->HandleProtocol(SelfImageHandle, &gEfiLoadedImageProtocolGuid, (VOID **) &SelfLoadedImage);
-    if (CheckFatalError(Status, L"while getting a LoadedImageProtocol handle"))
-        return Status;
-    
-    SelfDeviceHandle = SelfLoadedImage->DeviceHandle;
-    TmpDevicePath = DevicePathFromHandle (SelfDeviceHandle);
-    DevicePathSize = GetDevicePathSize (TmpDevicePath);
-    SelfDevicePath = AllocateAlignedPages(EFI_SIZE_TO_PAGES(DevicePathSize), 64);
-    CopyMem(SelfDevicePath, TmpDevicePath, DevicePathSize);
+  EFI_STATUS  Status;
+  CHAR16      *FilePathAsString;
+  UINTN       i;
+  UINTN                     DevicePathSize;
+  EFI_DEVICE_PATH_PROTOCOL* TmpDevicePath;
   
-    DBG("SelfDevicePath=%s @%x\n", FileDevicePathToStr(SelfDevicePath), SelfDeviceHandle);
+  SelfImageHandle = ImageHandle;
+  Status = gBS->HandleProtocol(SelfImageHandle, &gEfiLoadedImageProtocolGuid, (VOID **) &SelfLoadedImage);
+  if (CheckFatalError(Status, L"while getting a LoadedImageProtocol handle"))
+    return Status;
+  
+  SelfDeviceHandle = SelfLoadedImage->DeviceHandle;
+  TmpDevicePath = DevicePathFromHandle (SelfDeviceHandle);
+  DevicePathSize = GetDevicePathSize (TmpDevicePath);
+  SelfDevicePath = AllocateAlignedPages(EFI_SIZE_TO_PAGES(DevicePathSize), 64);
+  CopyMem(SelfDevicePath, TmpDevicePath, DevicePathSize);
+  
+  DBG("SelfDevicePath=%s @%x\n", FileDevicePathToStr(SelfDevicePath), SelfDeviceHandle);
   
   // find the current directory
-    FilePathAsString = FileDevicePathToStr(SelfLoadedImage->FilePath);
-    if (FilePathAsString != NULL) {
-        SelfFullDevicePath = FileDevicePath(SelfDeviceHandle, FilePathAsString);
-        for (i = StrLen(FilePathAsString); i > 0 && FilePathAsString[i] != '\\'; i--) ;
-        if (i > 0) {
-            FilePathAsString[i] = 0;
-        } else {
-            FilePathAsString[0] = L'\\';
-            FilePathAsString[1] = 0;
-        }
+  FilePathAsString = FileDevicePathToStr(SelfLoadedImage->FilePath);
+  if (FilePathAsString != NULL) {
+    SelfFullDevicePath = FileDevicePath(SelfDeviceHandle, FilePathAsString);
+    for (i = StrLen(FilePathAsString); i > 0 && FilePathAsString[i] != '\\'; i--) ;
+    if (i > 0) {
+      FilePathAsString[i] = 0;
     } else {
-        FilePathAsString = AllocateCopyPool(StrSize(L"\\"), L"\\");
+      FilePathAsString[0] = L'\\';
+      FilePathAsString[1] = 0;
     }
-    SelfDirPath = FilePathAsString;
-
-    DBG("SelfDirPath = %s\n", SelfDirPath);
+  } else {
+    FilePathAsString = AllocateCopyPool(StrSize(L"\\"), L"\\");
+  }
+  SelfDirPath = FilePathAsString;
   
-    return FinishInitRefitLib();
+  DBG("SelfDirPath = %s\n", SelfDirPath);
+  
+  return FinishInitRefitLib();
 }
 
 VOID UninitRefitLib(VOID)
 {
   // called before running external programs to close open file handles
-
+  
   if (SelfDir != NULL) {
     SelfDir->Close(SelfDir);
     SelfDir = NULL;
   }
-
+  
   if (OEMDir != NULL) {
     OEMDir->Close(OEMDir);
     OEMDir = NULL;
   }
-
+  
   if (ThemeDir != NULL) {
     ThemeDir->Close(ThemeDir);
     ThemeDir = NULL;
   }
-
+  
   if (SelfRootDir != NULL) {
     SelfRootDir->Close(SelfRootDir);
     SelfRootDir = NULL;
   }
-
+  
   UninitVolumes();
 }
 
 EFI_STATUS ReinitRefitLib(VOID)
 {
-    // called after running external programs to re-open file handles
-    //
-    ReinitVolumes();
-    
-    if (SelfVolume != NULL && SelfVolume->RootDir != NULL)
-        SelfRootDir = SelfVolume->RootDir;
-    
-    return FinishInitRefitLib();
+  // called after running external programs to re-open file handles
+  //
+  ReinitVolumes();
+  
+  if (SelfVolume != NULL && SelfVolume->RootDir != NULL)
+    SelfRootDir = SelfVolume->RootDir;
+  
+  return FinishInitRefitLib();
 }
 
 EFI_STATUS ReinitSelfLib(VOID)
@@ -226,31 +226,31 @@ EFI_STATUS ReinitSelfLib(VOID)
   EFI_STATUS  Status;
   EFI_HANDLE                NewSelfHandle;
 	EFI_DEVICE_PATH_PROTOCOL* TmpDevicePath;
-
+  
   if (!SelfDevicePath) {
     return EFI_NOT_FOUND;
   }
-
+  
   TmpDevicePath = DuplicateDevicePath(SelfDevicePath);
   DBG("reinit: self device path=%s\n", FileDevicePathToStr(TmpDevicePath));
   if(TmpDevicePath == NULL)
 		return EFI_NOT_FOUND;
-
+  
   NewSelfHandle = NULL;
 	Status = gBS->LocateDevicePath (&gEfiSimpleFileSystemProtocolGuid,
                                   &TmpDevicePath,
                                   &NewSelfHandle);
   CheckError(Status, L"while reopening our self handle");
   DBG("new SelfHandle=%x\n", NewSelfHandle);
-
-  SelfRootDir = EfiLibOpenRoot(NewSelfHandle);  
+  
+  SelfRootDir = EfiLibOpenRoot(NewSelfHandle);
   if (SelfRootDir == NULL) {
     DBG("SelfRootDir can't be reopened\n");
     return EFI_NOT_FOUND;
   }
   SelfDeviceHandle = NewSelfHandle;
-  Status = SelfRootDir->Open(SelfRootDir, &ThemeDir, ThemePath, EFI_FILE_MODE_READ, 0);
-  Status = SelfRootDir->Open(SelfRootDir, &OEMDir, OEMPath, EFI_FILE_MODE_READ, 0);
+  /*Status = */SelfRootDir->Open(SelfRootDir, &ThemeDir, ThemePath, EFI_FILE_MODE_READ, 0);
+  /*Status = */SelfRootDir->Open(SelfRootDir, &OEMDir, OEMPath, EFI_FILE_MODE_READ, 0);
   Status = SelfRootDir->Open(SelfRootDir, &SelfDir, SelfDirPath, EFI_FILE_MODE_READ, 0);
   CheckFatalError(Status, L"while reopening our installation directory");
   return Status;
@@ -259,19 +259,19 @@ EFI_STATUS ReinitSelfLib(VOID)
 
 static
 EFI_STATUS FinishInitRefitLib(VOID)
-{ 
+{
 	EFI_STATUS                Status;
-
+  
   if (SelfRootDir == NULL) {
-      SelfRootDir = EfiLibOpenRoot(SelfLoadedImage->DeviceHandle);
-     if (SelfRootDir != NULL) {
-       SelfDeviceHandle = SelfLoadedImage->DeviceHandle;
-     } else {
-       return EFI_LOAD_ERROR;
-     }
+    SelfRootDir = EfiLibOpenRoot(SelfLoadedImage->DeviceHandle);
+    if (SelfRootDir != NULL) {
+      SelfDeviceHandle = SelfLoadedImage->DeviceHandle;
+    } else {
+      return EFI_LOAD_ERROR;
+    }
   }
-  Status = SelfRootDir->Open(SelfRootDir, &ThemeDir, ThemePath, EFI_FILE_MODE_READ, 0);
-  Status = SelfRootDir->Open(SelfRootDir, &OEMDir, OEMPath, EFI_FILE_MODE_READ, 0);
+  /*Status = */SelfRootDir->Open(SelfRootDir, &ThemeDir, ThemePath, EFI_FILE_MODE_READ, 0);
+  /*Status = */SelfRootDir->Open(SelfRootDir, &OEMDir, OEMPath, EFI_FILE_MODE_READ, 0);
   Status = SelfRootDir->Open(SelfRootDir, &SelfDir, SelfDirPath, EFI_FILE_MODE_READ, 0);
   CheckFatalError(Status, L"while opening our installation directory");
   return Status;
@@ -283,43 +283,43 @@ EFI_STATUS FinishInitRefitLib(VOID)
 
 VOID CreateList(OUT VOID ***ListPtr, OUT UINTN *ElementCount, IN UINTN InitialElementCount)
 {
-    UINTN AllocateCount;
-    
-    *ElementCount = InitialElementCount;
-    if (*ElementCount > 0) {
-        AllocateCount = (*ElementCount + 7) & ~7;   // next multiple of 8
-        *ListPtr = AllocatePool(sizeof(VOID *) * AllocateCount);
-    } else {
-        *ListPtr = NULL;
-    }
+  UINTN AllocateCount;
+  
+  *ElementCount = InitialElementCount;
+  if (*ElementCount > 0) {
+    AllocateCount = (*ElementCount + 7) & ~7;   // next multiple of 8
+    *ListPtr = AllocatePool(sizeof(VOID *) * AllocateCount);
+  } else {
+    *ListPtr = NULL;
+  }
 }
 
 VOID AddListElement(IN OUT VOID ***ListPtr, IN OUT UINTN *ElementCount, IN VOID *NewElement)
 {
-    UINTN AllocateCount;
-    
-    if ((*ElementCount & 7) == 0) {
-        AllocateCount = *ElementCount + 8;
-        if (*ElementCount == 0)
-            *ListPtr = AllocatePool(sizeof(VOID *) * AllocateCount);
-        else
-            *ListPtr =  EfiReallocatePool((VOID *)*ListPtr, sizeof(VOID *) * (*ElementCount), sizeof(VOID *) * AllocateCount);
-    }
-    (*ListPtr)[*ElementCount] = NewElement;
-    (*ElementCount)++;
+  UINTN AllocateCount;
+  
+  if ((*ElementCount & 7) == 0) {
+    AllocateCount = *ElementCount + 8;
+    if (*ElementCount == 0)
+      *ListPtr = AllocatePool(sizeof(VOID *) * AllocateCount);
+    else
+      *ListPtr =  EfiReallocatePool((VOID *)*ListPtr, sizeof(VOID *) * (*ElementCount), sizeof(VOID *) * AllocateCount);
+  }
+  (*ListPtr)[*ElementCount] = NewElement;
+  (*ElementCount)++;
 }
 
 VOID FreeList(IN OUT VOID ***ListPtr, IN OUT UINTN *ElementCount)
 {
-    UINTN i;
-    
-    if (*ElementCount > 0) {
-        for (i = 0; i < *ElementCount; i++) {
-            // TODO: call a user-provided routine for each element here
-            FreePool((*ListPtr)[i]);
-        }
-        FreePool(*ListPtr);
+  UINTN i;
+  
+  if (*ElementCount > 0) {
+    for (i = 0; i < *ElementCount; i++) {
+      // TODO: call a user-provided routine for each element here
+      FreePool((*ListPtr)[i]);
     }
+    FreePool(*ListPtr);
+  }
 }
 
 //
@@ -327,76 +327,76 @@ VOID FreeList(IN OUT VOID ***ListPtr, IN OUT UINTN *ElementCount)
 //
 
 static UINT8 LegacyLoaderMediaPathData[] = {
-    0x04, 0x06, 0x14, 0x00, 0xEB, 0x85, 0x05, 0x2B,
-    0xB8, 0xD8, 0xA9, 0x49, 0x8B, 0x8C, 0xE2, 0x1B,
-    0x01, 0xAE, 0xF2, 0xB7, 0x7F, 0xFF, 0x04, 0x00,
+  0x04, 0x06, 0x14, 0x00, 0xEB, 0x85, 0x05, 0x2B,
+  0xB8, 0xD8, 0xA9, 0x49, 0x8B, 0x8C, 0xE2, 0x1B,
+  0x01, 0xAE, 0xF2, 0xB7, 0x7F, 0xFF, 0x04, 0x00,
 };
 static EFI_DEVICE_PATH *LegacyLoaderMediaPath = (EFI_DEVICE_PATH *)LegacyLoaderMediaPathData;
 
 EFI_STATUS ExtractLegacyLoaderPaths(EFI_DEVICE_PATH **PathList, UINTN MaxPaths, EFI_DEVICE_PATH **HardcodedPathList)
 {
-    EFI_STATUS          Status;
-    UINTN               HandleCount = 0;
-    UINTN               HandleIndex, HardcodedIndex;
-    EFI_HANDLE          *Handles = NULL;
-    EFI_HANDLE          Handle;
-    UINTN               PathCount = 0;
-    UINTN               PathIndex;
-    EFI_LOADED_IMAGE    *LoadedImage;
-    EFI_DEVICE_PATH     *DevicePath;
-    BOOLEAN             Seen;
-    
-    MaxPaths--;  // leave space for the terminating NULL pointer
-    
-    // get all LoadedImage handles
-    Status = gBS->LocateHandleBuffer(ByProtocol, &gEfiLoadedImageProtocolGuid, NULL,
-                             &HandleCount, &Handles);
-    if (CheckError(Status, L"while listing LoadedImage handles")) {
-        if (HardcodedPathList) {
-            for (HardcodedIndex = 0; HardcodedPathList[HardcodedIndex] && PathCount < MaxPaths; HardcodedIndex++)
-                PathList[PathCount++] = HardcodedPathList[HardcodedIndex];
-        }
-        PathList[PathCount] = NULL;
-        return Status;
-    }
-    for (HandleIndex = 0; HandleIndex < HandleCount && PathCount < MaxPaths; HandleIndex++) {
-        Handle = Handles[HandleIndex];
-        
-        Status = gBS->HandleProtocol(Handle, &gEfiLoadedImageProtocolGuid, (VOID **) &LoadedImage);
-        if (EFI_ERROR(Status))
-            continue;  // This can only happen if the firmware scewed up, ignore it.
-        
-        Status = gBS->HandleProtocol(LoadedImage->DeviceHandle, &gEfiDevicePathProtocolGuid, (VOID **) &DevicePath);
-        if (EFI_ERROR(Status))
-            continue;  // This happens, ignore it.
-        
-        // Only grab memory range nodes
-        if (DevicePathType(DevicePath) != HARDWARE_DEVICE_PATH || DevicePathSubType(DevicePath) != HW_MEMMAP_DP)
-            continue;
-        
-        // Check if we have this device path in the list already
-        // WARNING: This assumes the first node in the device path is unique!
-        Seen = FALSE;
-        for (PathIndex = 0; PathIndex < PathCount; PathIndex++) {
-            if (DevicePathNodeLength(DevicePath) != DevicePathNodeLength(PathList[PathIndex]))
-                continue;
-            if (CompareMem(DevicePath, PathList[PathIndex], DevicePathNodeLength(DevicePath)) == 0) {
-                Seen = TRUE;
-                break;
-            }
-        }
-        if (Seen)
-            continue;
-        
-        PathList[PathCount++] = AppendDevicePath(DevicePath, LegacyLoaderMediaPath);
-    }
-    FreePool(Handles);
-    
+  EFI_STATUS          Status;
+  UINTN               HandleCount = 0;
+  UINTN               HandleIndex, HardcodedIndex;
+  EFI_HANDLE          *Handles = NULL;
+  EFI_HANDLE          Handle;
+  UINTN               PathCount = 0;
+  UINTN               PathIndex;
+  EFI_LOADED_IMAGE    *LoadedImage;
+  EFI_DEVICE_PATH     *DevicePath;
+  BOOLEAN             Seen;
+  
+  MaxPaths--;  // leave space for the terminating NULL pointer
+  
+  // get all LoadedImage handles
+  Status = gBS->LocateHandleBuffer(ByProtocol, &gEfiLoadedImageProtocolGuid, NULL,
+                                   &HandleCount, &Handles);
+  if (CheckError(Status, L"while listing LoadedImage handles")) {
     if (HardcodedPathList) {
-        for (HardcodedIndex = 0; HardcodedPathList[HardcodedIndex] && PathCount < MaxPaths; HardcodedIndex++)
-            PathList[PathCount++] = HardcodedPathList[HardcodedIndex];
+      for (HardcodedIndex = 0; HardcodedPathList[HardcodedIndex] && PathCount < MaxPaths; HardcodedIndex++)
+        PathList[PathCount++] = HardcodedPathList[HardcodedIndex];
     }
     PathList[PathCount] = NULL;
+    return Status;
+  }
+  for (HandleIndex = 0; HandleIndex < HandleCount && PathCount < MaxPaths; HandleIndex++) {
+    Handle = Handles[HandleIndex];
+    
+    Status = gBS->HandleProtocol(Handle, &gEfiLoadedImageProtocolGuid, (VOID **) &LoadedImage);
+    if (EFI_ERROR(Status))
+      continue;  // This can only happen if the firmware scewed up, ignore it.
+    
+    Status = gBS->HandleProtocol(LoadedImage->DeviceHandle, &gEfiDevicePathProtocolGuid, (VOID **) &DevicePath);
+    if (EFI_ERROR(Status))
+      continue;  // This happens, ignore it.
+    
+    // Only grab memory range nodes
+    if (DevicePathType(DevicePath) != HARDWARE_DEVICE_PATH || DevicePathSubType(DevicePath) != HW_MEMMAP_DP)
+      continue;
+    
+    // Check if we have this device path in the list already
+    // WARNING: This assumes the first node in the device path is unique!
+    Seen = FALSE;
+    for (PathIndex = 0; PathIndex < PathCount; PathIndex++) {
+      if (DevicePathNodeLength(DevicePath) != DevicePathNodeLength(PathList[PathIndex]))
+        continue;
+      if (CompareMem(DevicePath, PathList[PathIndex], DevicePathNodeLength(DevicePath)) == 0) {
+        Seen = TRUE;
+        break;
+      }
+    }
+    if (Seen)
+      continue;
+    
+    PathList[PathCount++] = AppendDevicePath(DevicePath, LegacyLoaderMediaPath);
+  }
+  FreePool(Handles);
+  
+  if (HardcodedPathList) {
+    for (HardcodedIndex = 0; HardcodedPathList[HardcodedIndex] && PathCount < MaxPaths; HardcodedIndex++)
+      PathList[PathCount++] = HardcodedPathList[HardcodedIndex];
+  }
+  PathList[PathCount] = NULL;
   return (PathCount > 0)?EFI_SUCCESS:EFI_NOT_FOUND;
 }
 
@@ -411,19 +411,19 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
   UINTN                   i;
   //MBR_PARTITION_INFO      *MbrTable;
   //BOOLEAN                 MbrTableFound;
-  UINTN       BlockSize = 0;  
+  UINTN       BlockSize = 0;
   CHAR16      volumeName[255];
   CHAR8         tmp[64];
   UINT32        VCrc32;
-//  CHAR16      *kind = NULL;
+  //  CHAR16      *kind = NULL;
   
   Volume->HasBootCode = FALSE;
   Volume->LegacyOS->IconName = NULL;
   Volume->LegacyOS->Name = NULL;
-//  Volume->BootType = BOOTING_BY_MBR; //default value
+  //  Volume->BootType = BOOTING_BY_MBR; //default value
   Volume->BootType = BOOTING_BY_EFI;
   *Bootable = FALSE;
-
+  
   if ((Volume->BlockIO == NULL) || (!Volume->BlockIO->Media->MediaPresent))
     return;
   ZeroMem((CHAR8*)&tmp[0], 64);
@@ -449,20 +449,20 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
     VCrc32 = GetCrc32(SectorBuffer, 512 * 2);
     Volume->DriveCRC32 = VCrc32;
     //gBS->CalculateCrc32 (SectorBuffer, 2 * 512, &Volume->DriveCRC32);
-/*    switch (Volume->DiskKind ) {
-      case DISK_KIND_OPTICAL:
-        kind = L"DVD";
-        break;
-      case DISK_KIND_INTERNAL:
-        kind = L"HDD";
-        break;
-      case DISK_KIND_EXTERNAL:
-        kind = L"USB";
-        break;
-      default:
-        break;
-    }
-    DBG("Volume kind=%s CRC=0x%x\n", kind, VCrc32); */
+    /*    switch (Volume->DiskKind ) {
+     case DISK_KIND_OPTICAL:
+     kind = L"DVD";
+     break;
+     case DISK_KIND_INTERNAL:
+     kind = L"HDD";
+     break;
+     case DISK_KIND_EXTERNAL:
+     kind = L"USB";
+     break;
+     default:
+     break;
+     }
+     DBG("Volume kind=%s CRC=0x%x\n", kind, VCrc32); */
     if (Volume->DiskKind == DISK_KIND_OPTICAL) { //CDROM
       CHAR8* p = (CHAR8*)&SectorBuffer[8];
       while (*p == 0x20) {
@@ -509,25 +509,25 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
             Volume->BootType = BOOTING_BY_CD;
             Volume->LegacyOS->IconName = L"linux";
             break;
-          }						
+          }
         }
-      }				
+      }
       
     }
     //else HDD
     else { //HDD
       /*
-      // apianti - does this detect every partition as legacy?
-      if (*((UINT16 *)(SectorBuffer + 510)) == 0xaa55 && SectorBuffer[0] != 0) {
-        *Bootable = TRUE;
-        Volume->HasBootCode = TRUE;
-        //    DBG("The volume has bootcode\n");
-        Volume->LegacyOS->IconName = L"legacy";
-        Volume->LegacyOS->Name = L"Legacy";
-        Volume->LegacyOS->Type = OSTYPE_VAR;
-        Volume->BootType = BOOTING_BY_PBR;
-      }
-      // */
+       // apianti - does this detect every partition as legacy?
+       if (*((UINT16 *)(SectorBuffer + 510)) == 0xaa55 && SectorBuffer[0] != 0) {
+       *Bootable = TRUE;
+       Volume->HasBootCode = TRUE;
+       //    DBG("The volume has bootcode\n");
+       Volume->LegacyOS->IconName = L"legacy";
+       Volume->LegacyOS->Name = L"Legacy";
+       Volume->LegacyOS->Type = OSTYPE_VAR;
+       Volume->BootType = BOOTING_BY_PBR;
+       }
+       // */
       
       // detect specific boot codes
       if (CompareMem(SectorBuffer + 2, "LILO", 4) == 0 ||
@@ -539,7 +539,7 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
         Volume->LegacyOS->Name = L"Linux";
         Volume->LegacyOS->Type = OSTYPE_LIN;
         Volume->BootType = BOOTING_BY_PBR;
-
+        
       } else if (FindMem(SectorBuffer, 512, "Geom\0Hard Disk\0Read\0 Error", 26) >= 0) {   // GRUB
         Volume->HasBootCode = TRUE;
         Volume->LegacyOS->IconName = L"grub,linux";
@@ -634,7 +634,7 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
         Volume->LegacyOS->IconName = L"haiku";
         Volume->LegacyOS->Name = L"Haiku";
         Volume->LegacyOS->Type = OSTYPE_VAR;
-        Volume->BootType = BOOTING_BY_PBR;          
+        Volume->BootType = BOOTING_BY_PBR;
       }
     }
     
@@ -652,23 +652,23 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
     
     // check for MBR partition table
     /*
-    // apianti - this is littered with bugs and probably not needed lol
-    if (*((UINT16 *)(SectorBuffer + 510)) == 0xaa55) {
-      MbrTableFound = FALSE;
-      MbrTable = (MBR_PARTITION_INFO *)(SectorBuffer + 446);
-      for (i = 0; i < 4; i++)
-        if (MbrTable[i].StartLBA && MbrTable[i].Size)
-          MbrTableFound = TRUE;
-      for (i = 0; i < 4; i++)
-        if (MbrTable[i].Flags != 0x00 && MbrTable[i].Flags != 0x80)
-          MbrTableFound = FALSE;
-      if (MbrTableFound) {
-        Volume->MbrPartitionTable = AllocatePool(4 * 16);
-        CopyMem(Volume->MbrPartitionTable, MbrTable, 4 * 16);
-        Volume->BootType = BOOTING_BY_MBR;
-      }
-    }
-    // */
+     // apianti - this is littered with bugs and probably not needed lol
+     if (*((UINT16 *)(SectorBuffer + 510)) == 0xaa55) {
+     MbrTableFound = FALSE;
+     MbrTable = (MBR_PARTITION_INFO *)(SectorBuffer + 446);
+     for (i = 0; i < 4; i++)
+     if (MbrTable[i].StartLBA && MbrTable[i].Size)
+     MbrTableFound = TRUE;
+     for (i = 0; i < 4; i++)
+     if (MbrTable[i].Flags != 0x00 && MbrTable[i].Flags != 0x80)
+     MbrTableFound = FALSE;
+     if (MbrTableFound) {
+     Volume->MbrPartitionTable = AllocatePool(4 * 16);
+     CopyMem(Volume->MbrPartitionTable, MbrTable, 4 * 16);
+     Volume->BootType = BOOTING_BY_MBR;
+     }
+     }
+     // */
   }
   gBS->FreePages((EFI_PHYSICAL_ADDRESS)(UINTN)SectorBuffer, 1);
 }
@@ -676,10 +676,10 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
 //at start we have only Volume->DeviceHandle
 static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
 {
-  EFI_STATUS              Status = EFI_NOT_FOUND;
+  EFI_STATUS              Status;
   EFI_DEVICE_PATH         *DevicePath, *NextDevicePath;
   EFI_DEVICE_PATH         *DiskDevicePath, *RemainingDevicePath = NULL;
-  HARDDRIVE_DEVICE_PATH   *HdPath     = NULL; 
+  HARDDRIVE_DEVICE_PATH   *HdPath     = NULL;
   EFI_HANDLE              WholeDiskHandle;
   UINTN                   PartialLength = 0;
   UINTN                   DevicePathSize;
@@ -719,90 +719,90 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
     //     gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
     
     return Status;
-  } 
+  }
   
-    Bootable = FALSE;
-    if (Volume->BlockIO->Media->BlockSize == 2048){
-      DBG("  found optical drive\n");
-      Volume->DiskKind = DISK_KIND_OPTICAL;
-      Volume->BlockIOOffset = 0x10; // offset already applied for FS but not for blockio      
-      ScanVolumeBootcode(Volume, &Bootable);
-    } else {
-      //        DBG("found HD drive\n");
-      Volume->BlockIOOffset = 0;      
-      // scan for bootcode and MBR table
-      ScanVolumeBootcode(Volume, &Bootable);
-      //  DBG("ScanVolumeBootcode success\n");
-      // detect device type
-      DevicePath = DuplicateDevicePath(Volume->DevicePath);
-      while (DevicePath != NULL && !IsDevicePathEndType(DevicePath)) {
-        NextDevicePath = NextDevicePathNode(DevicePath);
-        
-        if ((DevicePathType (DevicePath) == MESSAGING_DEVICE_PATH) &&
-            ((DevicePathSubType (DevicePath) == MSG_SATA_DP) ||
-             (DevicePathSubType (DevicePath) == MSG_ATAPI_DP))) {
-          //        DBG("HDD volume\n");
-          Volume->DiskKind = DISK_KIND_INTERNAL; 
-          break;
-        }
-        if (DevicePathType(DevicePath) == MESSAGING_DEVICE_PATH && 
-            (DevicePathSubType(DevicePath) == MSG_USB_DP || DevicePathSubType(DevicePath) == MSG_USB_CLASS_DP)) {
-          DBG("  USB volume\n");
-          Volume->DiskKind = DISK_KIND_EXTERNAL; 
-          //     break;
-        }
-        // FIREWIRE Devices
-        if (DevicePathType(DevicePath) == MESSAGING_DEVICE_PATH && 
-            (DevicePathSubType(DevicePath) == MSG_1394_DP || DevicePathSubType(DevicePath) == MSG_FIBRECHANNEL_DP)) {
-          //        DBG("FireWire volume\n");
-          Volume->DiskKind = DISK_KIND_FIREWIRE; 
-          break;
-        }
-        // CD-ROM Devices
-        if (DevicePathType(DevicePath) == MEDIA_DEVICE_PATH && 
-            DevicePathSubType(DevicePath) == MEDIA_CDROM_DP) {
-          //        DBG("CD-ROM volume\n");
-          Volume->DiskKind = DISK_KIND_OPTICAL;    //it's impossible 
-          break;
-        }
-        // VENDOR Specific Path
-        if (DevicePathType(DevicePath) == MEDIA_DEVICE_PATH && 
-            DevicePathSubType(DevicePath) == MEDIA_VENDOR_DP) {
-          //        DBG("Vendor volume\n");
-          Volume->DiskKind = DISK_KIND_NODISK;
-          break;
-        }
-        // LEGACY CD-ROM
-        if (DevicePathType(DevicePath) == BBS_DEVICE_PATH && 
-            (DevicePathSubType(DevicePath) == BBS_BBS_DP || DevicePathSubType(DevicePath) == BBS_TYPE_CDROM)) {
-          //        DBG("Legacy CD-ROM volume\n");
-          Volume->DiskKind = DISK_KIND_OPTICAL;
-          break;
-        }
-        // LEGACY HARDDISK
-        if (DevicePathType(DevicePath) == BBS_DEVICE_PATH && 
-            (DevicePathSubType(DevicePath) == BBS_BBS_DP || DevicePathSubType(DevicePath) == BBS_TYPE_HARDDRIVE)) {
-          //        DBG("Legacy HDD volume\n");
-          Volume->DiskKind = DISK_KIND_INTERNAL;
-          break;
-        }
-        DevicePath = NextDevicePath;
-      }
+  Bootable = FALSE;
+  if (Volume->BlockIO->Media->BlockSize == 2048){
+    DBG("  found optical drive\n");
+    Volume->DiskKind = DISK_KIND_OPTICAL;
+    Volume->BlockIOOffset = 0x10; // offset already applied for FS but not for blockio
+    ScanVolumeBootcode(Volume, &Bootable);
+  } else {
+    //        DBG("found HD drive\n");
+    Volume->BlockIOOffset = 0;
+    // scan for bootcode and MBR table
+    ScanVolumeBootcode(Volume, &Bootable);
+    //  DBG("ScanVolumeBootcode success\n");
+    // detect device type
+    DevicePath = DuplicateDevicePath(Volume->DevicePath);
+    while (DevicePath != NULL && !IsDevicePathEndType(DevicePath)) {
+      NextDevicePath = NextDevicePathNode(DevicePath);
       
-      /*  what is the bread?
-       // Bootable = TRUE;
-       
-       if (DevicePathType(DevicePath) == MEDIA_DEVICE_PATH &&
-       DevicePathSubType(DevicePath) == MEDIA_VENDOR_DP) {
-       Volume->IsAppleLegacy = TRUE;             // legacy BIOS device entry
-       // TODO: also check for Boot Camp GUID
-       //gEfiPartTypeSystemPartGuid
-       Bootable = FALSE;   // this handle's BlockIO is just an alias for the whole device
-       Print(L"AppleLegacy device\n");
-       }
-       */   
+      if ((DevicePathType (DevicePath) == MESSAGING_DEVICE_PATH) &&
+          ((DevicePathSubType (DevicePath) == MSG_SATA_DP) ||
+           (DevicePathSubType (DevicePath) == MSG_ATAPI_DP))) {
+            //        DBG("HDD volume\n");
+            Volume->DiskKind = DISK_KIND_INTERNAL;
+            break;
+          }
+      if (DevicePathType(DevicePath) == MESSAGING_DEVICE_PATH &&
+          (DevicePathSubType(DevicePath) == MSG_USB_DP || DevicePathSubType(DevicePath) == MSG_USB_CLASS_DP)) {
+        DBG("  USB volume\n");
+        Volume->DiskKind = DISK_KIND_EXTERNAL;
+        //     break;
+      }
+      // FIREWIRE Devices
+      if (DevicePathType(DevicePath) == MESSAGING_DEVICE_PATH &&
+          (DevicePathSubType(DevicePath) == MSG_1394_DP || DevicePathSubType(DevicePath) == MSG_FIBRECHANNEL_DP)) {
+        //        DBG("FireWire volume\n");
+        Volume->DiskKind = DISK_KIND_FIREWIRE;
+        break;
+      }
+      // CD-ROM Devices
+      if (DevicePathType(DevicePath) == MEDIA_DEVICE_PATH &&
+          DevicePathSubType(DevicePath) == MEDIA_CDROM_DP) {
+        //        DBG("CD-ROM volume\n");
+        Volume->DiskKind = DISK_KIND_OPTICAL;    //it's impossible
+        break;
+      }
+      // VENDOR Specific Path
+      if (DevicePathType(DevicePath) == MEDIA_DEVICE_PATH &&
+          DevicePathSubType(DevicePath) == MEDIA_VENDOR_DP) {
+        //        DBG("Vendor volume\n");
+        Volume->DiskKind = DISK_KIND_NODISK;
+        break;
+      }
+      // LEGACY CD-ROM
+      if (DevicePathType(DevicePath) == BBS_DEVICE_PATH &&
+          (DevicePathSubType(DevicePath) == BBS_BBS_DP || DevicePathSubType(DevicePath) == BBS_TYPE_CDROM)) {
+        //        DBG("Legacy CD-ROM volume\n");
+        Volume->DiskKind = DISK_KIND_OPTICAL;
+        break;
+      }
+      // LEGACY HARDDISK
+      if (DevicePathType(DevicePath) == BBS_DEVICE_PATH &&
+          (DevicePathSubType(DevicePath) == BBS_BBS_DP || DevicePathSubType(DevicePath) == BBS_TYPE_HARDDRIVE)) {
+        //        DBG("Legacy HDD volume\n");
+        Volume->DiskKind = DISK_KIND_INTERNAL;
+        break;
+      }
+      DevicePath = NextDevicePath;
     }
-
+    
+    /*  what is the bread?
+     // Bootable = TRUE;
+     
+     if (DevicePathType(DevicePath) == MEDIA_DEVICE_PATH &&
+     DevicePathSubType(DevicePath) == MEDIA_VENDOR_DP) {
+     Volume->IsAppleLegacy = TRUE;             // legacy BIOS device entry
+     // TODO: also check for Boot Camp GUID
+     //gEfiPartTypeSystemPartGuid
+     Bootable = FALSE;   // this handle's BlockIO is just an alias for the whole device
+     Print(L"AppleLegacy device\n");
+     }
+     */
+  }
+  
   
   DevicePath = DuplicateDevicePath(Volume->DevicePath);
   RemainingDevicePath = DevicePath; //initial value
@@ -814,7 +814,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
         (DevicePathSubType (DevicePath) == MEDIA_HARDDRIVE_DP)) {
       HdPath = (HARDDRIVE_DEVICE_PATH *)DevicePath;
       //			break;
-		}		
+		}
 		DevicePath = NextDevicePathNode (DevicePath);
 	}
   //  DBG("DevicePath scanned\n");
@@ -822,7 +822,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
     //      Print(L"Partition found %s\n", DevicePathToStr((EFI_DEVICE_PATH *)HdPath));
     
     PartialLength = (UINTN)((UINT8 *)HdPath - (UINT8 *)(RemainingDevicePath));
-    if (PartialLength > 0x1000) {        
+    if (PartialLength > 0x1000) {
       PartialLength = sizeof(EFI_DEVICE_PATH); //something wrong here but I don't want to be freezed
       //       return EFI_SUCCESS;
     }
@@ -858,10 +858,10 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
   /*  else {
    DBG("HD path is not found\n"); //master volume!
    }*/
-
-//  if (GlobalConfig.FastBoot) {
-//    return EFI_SUCCESS;
-//  }
+  
+  //  if (GlobalConfig.FastBoot) {
+  //    return EFI_SUCCESS;
+  //  }
   
   if (!Bootable) {
 #if REFIT_DEBUG > 0
@@ -873,7 +873,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
 #endif
     Volume->HasBootCode = FALSE;
   }
-
+  
   // open the root directory of the volume
   Volume->RootDir = EfiLibOpenRoot(Volume->DeviceHandle);
   //  DBG("Volume->RootDir OK\n");
@@ -883,7 +883,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
     //Slice - there is LegacyBoot volume
     //properties are set before
     //    DBG("LegacyBoot volume\n");
-
+    
     if (HdPath) {
       tmpName = (CHAR16*)AllocateZeroPool(60);
       UnicodeSPrint(tmpName, 60, L"Legacy HD%d", HdPath->PartitionNumber);
@@ -894,10 +894,10 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
     }
     if (!Volume->LegacyOS->IconName)
       Volume->LegacyOS->IconName = L"legacy";
-
+    
     return EFI_SUCCESS;
   }
-
+  
   // get volume name
   if (!Volume->VolName) {
     FileSystemInfoPtr = EfiLibFileSystemInfo(Volume->RootDir);
@@ -908,13 +908,13 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
     }
   }
   if (!Volume->VolName) {
-     VolumeInfo = EfiLibFileSystemVolumeLabelInfo(Volume->RootDir);
-     if (VolumeInfo) {
-       //DBG("  Volume name from VolumeLabel: '%s'\n", VolumeInfo->VolumeLabel);
-       Volume->VolName = EfiStrDuplicate(VolumeInfo->VolumeLabel);
-       FreePool(VolumeInfo); 
-     }
-   }
+    VolumeInfo = EfiLibFileSystemVolumeLabelInfo(Volume->RootDir);
+    if (VolumeInfo) {
+      //DBG("  Volume name from VolumeLabel: '%s'\n", VolumeInfo->VolumeLabel);
+      Volume->VolName = EfiStrDuplicate(VolumeInfo->VolumeLabel);
+      FreePool(VolumeInfo);
+    }
+  }
   if (!Volume->VolName) {
     RootInfo = EfiLibFileInfo (Volume->RootDir);
     if (RootInfo) {
@@ -940,7 +940,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
     //        WaitForSingleEvent (gST->ConIn->WaitForKey, 0);
     //        gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
     
-    if (HdPath) {      
+    if (HdPath) {
       
       tmpName = (CHAR16*)AllocateZeroPool(128);
       UnicodeSPrint(tmpName, 128, L"Unknown HD%d", HdPath->PartitionNumber);
@@ -1029,7 +1029,7 @@ VOID ScanVolumes(VOID)
   UINTN                   PartitionIndex;
   UINT8                   *SectorBuffer1, *SectorBuffer2;
   UINTN                   SectorSum, i;
-//  EFI_DEVICE_PATH_PROTOCOL  *VolumeDevicePath;
+  //  EFI_DEVICE_PATH_PROTOCOL  *VolumeDevicePath;
   EFI_GUID                *Guid;
   //  EFI_INPUT_KEY Key;
   INT32                   HVi;
@@ -1039,25 +1039,25 @@ VOID ScanVolumes(VOID)
   // get all BlockIo handles
   Status = gBS->LocateHandleBuffer(ByProtocol, &gEfiBlockIoProtocolGuid, NULL, &HandleCount, &Handles);
   if (Status == EFI_NOT_FOUND)
-    return;  
+    return;
   DBG("found %d volumes with blockIO\n", HandleCount);
   // first pass: collect information about all handles
   for (HandleIndex = 0; HandleIndex < HandleCount; HandleIndex++) {
-        
+    
     Volume = AllocateZeroPool(sizeof(REFIT_VOLUME));
     Volume->LegacyOS = AllocateZeroPool(sizeof(LEGACY_OS));
     Volume->DeviceHandle = Handles[HandleIndex];
     if (Volume->DeviceHandle == SelfDeviceHandle) {
-      SelfVolume = Volume;  
+      SelfVolume = Volume;
     }
-
+    
     DBG("%2d. Volume:\n", HandleIndex);
     
     Volume->Hidden = FALSE; // default to not hidden
     
     Status = ScanVolume(Volume);
     if (!EFI_ERROR(Status)) {
-
+      
       AddListElement((VOID ***) &Volumes, &VolumesCount, Volume);
       for (HVi = 0; HVi < gSettings.HVCount; HVi++) {
         if (StrStriBasic(Volume->DevicePathString, gSettings.HVHideStrings[HVi]) ||
@@ -1067,7 +1067,7 @@ VOID ScanVolumes(VOID)
           break;
         }
       }
-
+      
       Guid = FindGPTPartitionGuidInDevicePath(Volume->DevicePath);
       DBG("  Volume '%s', LegacyOS '%s', LegacyIcon(s) '%s', GUID = %g\n",
           Volume->VolName, Volume->LegacyOS->Name ? Volume->LegacyOS->Name : L"", Volume->LegacyOS->IconName, Guid);
@@ -1096,11 +1096,11 @@ VOID ScanVolumes(VOID)
     //   AddListElement((VOID ***) &Volumes, &VolumesCount, SelfVolume);
     //    DBG("SelfVolume Nr %d created\n", VolumesCount);
   }
-
+  
   // second pass: relate partitions and whole disk devices
   for (VolumeIndex = 0; VolumeIndex < VolumesCount; VolumeIndex++) {
     Volume = Volumes[VolumeIndex];
-
+    
     // check MBR partition table for extended partitions
     if (Volume->BlockIO != NULL && Volume->WholeDiskBlockIO != NULL &&
         Volume->BlockIO == Volume->WholeDiskBlockIO && Volume->BlockIOOffset == 0 &&
@@ -1129,7 +1129,7 @@ VOID ScanVolumes(VOID)
       MbrTable = WholeDiskVolume->MbrPartitionTable;
       SectorBuffer1 = AllocateAlignedPages (EFI_SIZE_TO_PAGES (512), 16);
       SectorBuffer2 = AllocateAlignedPages (EFI_SIZE_TO_PAGES (512), 16);
-
+      
       for (PartitionIndex = 0; PartitionIndex < 4; PartitionIndex++) {
         // check size
         if ((UINT64)(MbrTable[PartitionIndex].Size) != Volume->BlockIO->Media->LastBlock + 1)
@@ -1189,12 +1189,12 @@ static VOID UninitVolumes(VOID)
     Volume->WholeDiskDeviceHandle = NULL;
     FreePool(Volume);
   }
-
+  
   if (Volumes != NULL) {
     FreePool(Volumes);
     Volumes = NULL;
   }
-  VolumesCount = 0; 
+  VolumesCount = 0;
   
 }
 
@@ -1256,11 +1256,11 @@ REFIT_VOLUME *FindVolumeByName(IN CHAR16 *VolName)
 {
   REFIT_VOLUME            *Volume;
   UINTN                   VolumeIndex;
-
+  
   if (!VolName) {
     return NULL;
   }
-
+  
   for (VolumeIndex = 0; VolumeIndex < VolumesCount; VolumeIndex++) {
     Volume = Volumes[VolumeIndex];
     if (!Volume) {
@@ -1270,7 +1270,7 @@ REFIT_VOLUME *FindVolumeByName(IN CHAR16 *VolName)
       return Volume;
     }
   }
-
+  
   return NULL;
 }
 
@@ -1280,15 +1280,15 @@ REFIT_VOLUME *FindVolumeByName(IN CHAR16 *VolName)
 
 BOOLEAN FileExists(IN EFI_FILE *Root, IN CHAR16 *RelativePath)
 {
-    EFI_STATUS  Status;
-    EFI_FILE    *TestFile;
-    
-    Status = Root->Open(Root, &TestFile, RelativePath, EFI_FILE_MODE_READ, 0);
-    if (Status == EFI_SUCCESS) {
-        TestFile->Close(TestFile);
-        return TRUE;
-    }
-    return FALSE;
+  EFI_STATUS  Status;
+  EFI_FILE    *TestFile;
+  
+  Status = Root->Open(Root, &TestFile, RelativePath, EFI_FILE_MODE_READ, 0);
+  if (Status == EFI_SUCCESS) {
+    TestFile->Close(TestFile);
+    return TRUE;
+  }
+  return FALSE;
 }
 
 BOOLEAN DeleteFile(IN EFI_FILE *Root, IN CHAR16 *RelativePath)
@@ -1331,128 +1331,128 @@ BOOLEAN DeleteFile(IN EFI_FILE *Root, IN CHAR16 *RelativePath)
 
 EFI_STATUS DirNextEntry(IN EFI_FILE *Directory, IN OUT EFI_FILE_INFO **DirEntry, IN UINTN FilterMode)
 {
-    EFI_STATUS Status;
-    VOID *Buffer;
-    UINTN LastBufferSize, BufferSize;
-    INTN IterCount;
+  EFI_STATUS Status;
+  VOID *Buffer;
+  UINTN LastBufferSize, BufferSize;
+  INTN IterCount;
+  
+  for (;;) {
     
-    for (;;) {
-        
-        // free pointer from last call
-        if (*DirEntry != NULL) {
-            FreePool(*DirEntry);
-            *DirEntry = NULL;
-        }
-        
-        // read next directory entry
-        LastBufferSize = BufferSize = 256;
-        Buffer = AllocateZeroPool (BufferSize);
-        for (IterCount = 0; ; IterCount++) {
-            Status = Directory->Read(Directory, &BufferSize, Buffer);
-            if (Status != EFI_BUFFER_TOO_SMALL || IterCount >= 4)
-                break;
-            if (BufferSize <= LastBufferSize) {
-                DBG("FS Driver requests bad buffer size %d (was %d), using %d instead\n", BufferSize, LastBufferSize, LastBufferSize * 2);
-                BufferSize = LastBufferSize * 2;
-#if REFIT_DEBUG > 0
-            } else {
-                DBG("Reallocating buffer from %d to %d\n", LastBufferSize, BufferSize);
-#endif
-            }
-            Buffer = EfiReallocatePool(Buffer, LastBufferSize, BufferSize);
-            LastBufferSize = BufferSize;
-        }
-        if (EFI_ERROR(Status)) {
-            FreePool(Buffer);
-            break;
-        }
-        
-        // check for end of listing
-        if (BufferSize == 0) {    // end of directory listing
-            FreePool(Buffer);
-            break;
-        }
-        
-        // entry is ready to be returned
-        *DirEntry = (EFI_FILE_INFO *)Buffer;
-      if (*DirEntry) {
-        // filter results
-        if (FilterMode == 1) {   // only return directories
-          if (((*DirEntry)->Attribute & EFI_FILE_DIRECTORY))
-            break;
-        } else if (FilterMode == 2) {   // only return files
-          if (((*DirEntry)->Attribute & EFI_FILE_DIRECTORY) == 0)
-            break;
-        } else                   // no filter or unknown filter -> return everything
-          break;
-      }
+    // free pointer from last call
+    if (*DirEntry != NULL) {
+      FreePool(*DirEntry);
+      *DirEntry = NULL;
     }
-    return Status;
+    
+    // read next directory entry
+    LastBufferSize = BufferSize = 256;
+    Buffer = AllocateZeroPool (BufferSize);
+    for (IterCount = 0; ; IterCount++) {
+      Status = Directory->Read(Directory, &BufferSize, Buffer);
+      if (Status != EFI_BUFFER_TOO_SMALL || IterCount >= 4)
+        break;
+      if (BufferSize <= LastBufferSize) {
+        DBG("FS Driver requests bad buffer size %d (was %d), using %d instead\n", BufferSize, LastBufferSize, LastBufferSize * 2);
+        BufferSize = LastBufferSize * 2;
+#if REFIT_DEBUG > 0
+      } else {
+        DBG("Reallocating buffer from %d to %d\n", LastBufferSize, BufferSize);
+#endif
+      }
+      Buffer = EfiReallocatePool(Buffer, LastBufferSize, BufferSize);
+      LastBufferSize = BufferSize;
+    }
+    if (EFI_ERROR(Status)) {
+      FreePool(Buffer);
+      break;
+    }
+    
+    // check for end of listing
+    if (BufferSize == 0) {    // end of directory listing
+      FreePool(Buffer);
+      break;
+    }
+    
+    // entry is ready to be returned
+    *DirEntry = (EFI_FILE_INFO *)Buffer;
+    if (*DirEntry) {
+      // filter results
+      if (FilterMode == 1) {   // only return directories
+        if (((*DirEntry)->Attribute & EFI_FILE_DIRECTORY))
+          break;
+      } else if (FilterMode == 2) {   // only return files
+        if (((*DirEntry)->Attribute & EFI_FILE_DIRECTORY) == 0)
+          break;
+      } else                   // no filter or unknown filter -> return everything
+        break;
+    }
+  }
+  return Status;
 }
 
 VOID DirIterOpen(IN EFI_FILE *BaseDir, IN CHAR16 *RelativePath OPTIONAL, OUT REFIT_DIR_ITER *DirIter)
 {
-    if (RelativePath == NULL) {
-        DirIter->LastStatus = EFI_SUCCESS;
-        DirIter->DirHandle = BaseDir;
-        DirIter->CloseDirHandle = FALSE;
-    } else {
-        DirIter->LastStatus = BaseDir->Open(BaseDir, &(DirIter->DirHandle), RelativePath, EFI_FILE_MODE_READ, 0);
-        DirIter->CloseDirHandle = EFI_ERROR(DirIter->LastStatus) ? FALSE : TRUE;
-    }
-    DirIter->LastFileInfo = NULL;
+  if (RelativePath == NULL) {
+    DirIter->LastStatus = EFI_SUCCESS;
+    DirIter->DirHandle = BaseDir;
+    DirIter->CloseDirHandle = FALSE;
+  } else {
+    DirIter->LastStatus = BaseDir->Open(BaseDir, &(DirIter->DirHandle), RelativePath, EFI_FILE_MODE_READ, 0);
+    DirIter->CloseDirHandle = EFI_ERROR(DirIter->LastStatus) ? FALSE : TRUE;
+  }
+  DirIter->LastFileInfo = NULL;
 }
 
 BOOLEAN DirIterNext(IN OUT REFIT_DIR_ITER *DirIter, IN UINTN FilterMode, IN CHAR16 *FilePattern OPTIONAL,
                     OUT EFI_FILE_INFO **DirEntry)
 {
-    if (DirIter->LastFileInfo != NULL) {
-        FreePool(DirIter->LastFileInfo);
-        DirIter->LastFileInfo = NULL;
-    }
-    
+  if (DirIter->LastFileInfo != NULL) {
+    FreePool(DirIter->LastFileInfo);
+    DirIter->LastFileInfo = NULL;
+  }
+  
+  if (EFI_ERROR(DirIter->LastStatus))
+    return FALSE;   // stop iteration
+  
+  for (;;) {
+    DirIter->LastStatus = DirNextEntry(DirIter->DirHandle, &(DirIter->LastFileInfo), FilterMode);
     if (EFI_ERROR(DirIter->LastStatus))
-        return FALSE;   // stop iteration
-    
-    for (;;) {
-        DirIter->LastStatus = DirNextEntry(DirIter->DirHandle, &(DirIter->LastFileInfo), FilterMode);
-        if (EFI_ERROR(DirIter->LastStatus))
-            return FALSE;
-        if (DirIter->LastFileInfo == NULL)  // end of listing
-            return FALSE;
-        if (FilePattern != NULL) {
-            if ((DirIter->LastFileInfo->Attribute & EFI_FILE_DIRECTORY))
-                break;
-            if (MetaiMatch(DirIter->LastFileInfo->FileName, FilePattern))
-                break;
-            // else continue loop
-        } else
-            break;
-    }
-    
-    *DirEntry = DirIter->LastFileInfo;
-    return TRUE;
+      return FALSE;
+    if (DirIter->LastFileInfo == NULL)  // end of listing
+      return FALSE;
+    if (FilePattern != NULL) {
+      if ((DirIter->LastFileInfo->Attribute & EFI_FILE_DIRECTORY))
+        break;
+      if (MetaiMatch(DirIter->LastFileInfo->FileName, FilePattern))
+        break;
+      // else continue loop
+    } else
+      break;
+  }
+  
+  *DirEntry = DirIter->LastFileInfo;
+  return TRUE;
 }
 
 EFI_STATUS DirIterClose(IN OUT REFIT_DIR_ITER *DirIter)
 {
-    if (DirIter->LastFileInfo != NULL) {
-        FreePool(DirIter->LastFileInfo);
-        DirIter->LastFileInfo = NULL;
-    }
-    if (DirIter->CloseDirHandle)
-        DirIter->DirHandle->Close(DirIter->DirHandle);
-    return DirIter->LastStatus;
+  if (DirIter->LastFileInfo != NULL) {
+    FreePool(DirIter->LastFileInfo);
+    DirIter->LastFileInfo = NULL;
+  }
+  if (DirIter->CloseDirHandle)
+    DirIter->DirHandle->Close(DirIter->DirHandle);
+  return DirIter->LastStatus;
 }
 
 //
 // file name manipulation
 //
-BOOLEAN 
+BOOLEAN
 MetaiMatch (
-			IN CHAR16   *String,
-			IN CHAR16   *Pattern
-			)
+            IN CHAR16   *String,
+            IN CHAR16   *Pattern
+            )
 {
 	if (!mUnicodeCollation) {
 		// quick fix for driver loading on UEFIs without UnicodeCollation
@@ -1478,16 +1478,16 @@ InitializeUnicodeCollationProtocol (VOID)
 	// Current implementation just pick the first instance.
 	//
 	Status = gBS->LocateProtocol (
-								  &gEfiUnicodeCollation2ProtocolGuid,
-								  NULL,
-								  (VOID **) &mUnicodeCollation
-								  );
+                                &gEfiUnicodeCollation2ProtocolGuid,
+                                NULL,
+                                (VOID **) &mUnicodeCollation
+                                );
   if (EFI_ERROR(Status)) {
     Status = gBS->LocateProtocol (
-                  &gEfiUnicodeCollationProtocolGuid,
-                  NULL,
-                  (VOID **) &mUnicodeCollation
-                  );
+                                  &gEfiUnicodeCollationProtocolGuid,
+                                  NULL,
+                                  (VOID **) &mUnicodeCollation
+                                  );
     
   }
 	return Status;
@@ -1497,36 +1497,36 @@ InitializeUnicodeCollationProtocol (VOID)
 
 CHAR16 * Basename(IN CHAR16 *Path)
 {
-    CHAR16  *FileName;
-    UINTN   i;
-    
-    FileName = Path;
-    
-    if (Path != NULL) {
-        for (i = StrLen(Path); i > 0; i--) {
-            if (Path[i-1] == '\\' || Path[i-1] == '/') {
-                FileName = Path + i;
-                break;
-            }
-        }
+  CHAR16  *FileName;
+  UINTN   i;
+  
+  FileName = Path;
+  
+  if (Path != NULL) {
+    for (i = StrLen(Path); i > 0; i--) {
+      if (Path[i-1] == '\\' || Path[i-1] == '/') {
+        FileName = Path + i;
+        break;
+      }
     }
-    
-    return FileName;
+  }
+  
+  return FileName;
 }
 
 VOID ReplaceExtension(IN OUT CHAR16 *Path, IN CHAR16 *Extension)
 {
-    INTN i;
-    
-    for (i = StrLen(Path); i >= 0; i--) {
-        if (Path[i] == '.') {
-            Path[i] = 0;
-            break;
-        }
-        if (Path[i] == '\\' || Path[i] == '/')
-            break;
+  INTN i;
+  
+  for (i = StrLen(Path); i >= 0; i--) {
+    if (Path[i] == '.') {
+      Path[i] = 0;
+      break;
     }
-    StrCat(Path, Extension);
+    if (Path[i] == '\\' || Path[i] == '/')
+      break;
+  }
+  StrCat(Path, Extension);
 }
 
 //
@@ -1535,17 +1535,17 @@ VOID ReplaceExtension(IN OUT CHAR16 *Path, IN CHAR16 *Extension)
 
 INTN FindMem(IN VOID *Buffer, IN UINTN BufferLength, IN VOID *SearchString, IN UINTN SearchStringLength)
 {
-    UINT8 *BufferPtr;
-    UINTN Offset;
-    
-    BufferPtr = Buffer;
-    BufferLength -= SearchStringLength;
-    for (Offset = 0; Offset < BufferLength; Offset++, BufferPtr++) {
-        if (CompareMem(BufferPtr, SearchString, SearchStringLength) == 0)
-            return (INTN)Offset;
-    }
-    
-    return -1;
+  UINT8 *BufferPtr;
+  UINTN Offset;
+  
+  BufferPtr = Buffer;
+  BufferLength -= SearchStringLength;
+  for (Offset = 0; Offset < BufferLength; Offset++, BufferPtr++) {
+    if (CompareMem(BufferPtr, SearchString, SearchStringLength) == 0)
+      return (INTN)Offset;
+  }
+  
+  return -1;
 }
 
 //
@@ -1553,35 +1553,35 @@ INTN FindMem(IN VOID *Buffer, IN UINTN BufferLength, IN VOID *SearchString, IN U
 // and DevicePathToStr connects them with /, but we need '\\'
 CHAR16 *FileDevicePathToStr(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevPath)
 {
-    CHAR16      *FilePath;
-    CHAR16      *Char;
-    
-    FilePath = DevicePathToStr(DevPath);
-    // fix / into '\\'
-    if (FilePath != NULL) {
-        for (Char = FilePath; *Char != L'\0'; Char++) {
-            if (*Char == L'/') {
-                *Char = L'\\';
-            }
-        }
+  CHAR16      *FilePath;
+  CHAR16      *Char;
+  
+  FilePath = DevicePathToStr(DevPath);
+  // fix / into '\\'
+  if (FilePath != NULL) {
+    for (Char = FilePath; *Char != L'\0'; Char++) {
+      if (*Char == L'/') {
+        *Char = L'\\';
+      }
     }
-    // "\\\\" into '\\'
+  }
+  // "\\\\" into '\\'
+  Char = StrStr(FilePath, L"\\\\");
+  while (Char != NULL) {
+    StrCpy(Char, Char + 1);
     Char = StrStr(FilePath, L"\\\\");
-    while (Char != NULL) {
-      StrCpy(Char, Char + 1);
-      Char = StrStr(FilePath, L"\\\\");
-    }
-    return FilePath;
+  }
+  return FilePath;
 }
 
 CHAR16 *FileDevicePathFileToStr(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevPath)
 {
   CONST EFI_DEVICE_PATH_PROTOCOL *Node;
-
+  
   if (DevPath == NULL) {
     return NULL;
   }
-
+  
   Node = (CONST EFI_DEVICE_PATH_PROTOCOL *)DevPath;
   while (!IsDevicePathEnd(Node)) {
     if ((Node->Type == MEDIA_DEVICE_PATH) &&
@@ -1599,7 +1599,7 @@ BOOLEAN DumpVariable(CHAR16* Name, EFI_GUID* Guid, INTN DevicePathAt)
   UINT8                     *data               = NULL;
   UINTN i;
   EFI_STATUS  Status;
-
+  
   Status = gRT->GetVariable (Name, Guid, NULL, &dataSize, data);
   if (Status == EFI_BUFFER_TOO_SMALL) {
     data = AllocateZeroPool(dataSize);
