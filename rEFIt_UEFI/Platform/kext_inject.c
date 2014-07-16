@@ -141,14 +141,13 @@ EFI_STATUS EFIAPI LoadKext(IN CHAR16 *FileName, IN cpu_type_t archCpuType, IN OU
   infoAddr->executableLength = (UINT32)executableBufferLength;
   infoAddr->bundlePathPhysAddr = (UINT32)(sizeof(_BooterKextFileInfo) + infoDictBufferLength + executableBufferLength);
   infoAddr->bundlePathLength = (UINT32)bundlePathBufferLength;
-  kext->paddr = (UINT32)(UINTN)infoAddr;
+  kext->paddr = (UINT32)(UINTN)infoAddr; // Note that we cannot free infoAddr because of this
   CopyMem((CHAR8 *)infoAddr + sizeof(_BooterKextFileInfo), infoDictBuffer, infoDictBufferLength);
   CopyMem((CHAR8 *)infoAddr + sizeof(_BooterKextFileInfo) + infoDictBufferLength, executableBuffer, executableBufferLength);
   CopyMem((CHAR8 *)infoAddr + sizeof(_BooterKextFileInfo) + infoDictBufferLength + executableBufferLength, bundlePathBuffer, bundlePathBufferLength);
   FreePool(infoDictBuffer);
   FreePool(executableFatBuffer);
   FreePool(bundlePathBuffer);
-  FreePool(infoAddr);
 	
   return EFI_SUCCESS;
 }
