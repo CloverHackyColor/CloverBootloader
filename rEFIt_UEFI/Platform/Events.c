@@ -10,7 +10,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 
 */
 
-#include "Platform.h"
+#include "entry_scan.h"
 #include "device_tree.h"
 #include "kernel_patcher.h"
 
@@ -186,6 +186,7 @@ VOID
 EFIAPI
 OnExitBootServices(IN EFI_EVENT Event, IN VOID *Context)
 {
+  EFI_STATUS Status;
 /*  if (DoHibernateWake) {
     gST->ConOut->OutputString (gST->ConOut, L"wake!!!");
     gBS->Stall(5000000);     // 5 seconds delay
@@ -272,6 +273,10 @@ OnExitBootServices(IN EFI_EVENT Event, IN VOID *Context)
 //		DisableUsbLegacySupport();
     FixOwnership();
 	}
+  // Unlock boot screen
+  if (EFI_ERROR(Status = UnlockBootScreen())) {
+    DBG("Failed to unlock boot screen!\n");
+  }
 }
 
 VOID

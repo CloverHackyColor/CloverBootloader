@@ -394,15 +394,22 @@
   # Misc
   Clover/FSInject/FSInject.inf
   Clover/MsgLog/MsgLog.inf
+!ifdef DEBUG_ON_SERIAL_PORT
+
+  Clover/DumpUefiCalls/DumpUefiCalls.inf {
+    <PcdsFixedAtBuild>
+      gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x07
+      gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0xFFFFFFFF
+    <LibraryClasses>
+      DebugLib|MdePkg/Library/BaseDebugLibSerialPort/BaseDebugLibSerialPort.inf
+      SerialPortLib|MdeModulePkg/Library/BaseSerialPortLib16550/BaseSerialPortLib16550.inf
+  }
+
+!else
+
   Clover/DumpUefiCalls/DumpUefiCalls.inf
-  #Clover/DumpUefiCalls/DumpUefiCalls.inf {
-  #  <PcdsFixedAtBuild>
-  #    gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x07
-  #    gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0xFFFFFFFF
-  #  <LibraryClasses>
-  #    DebugLib|MdePkg/Library/BaseDebugLibSerialPort/BaseDebugLibSerialPort.inf
-  #    SerialPortLib|MdeModulePkg/Library/BaseSerialPortLib16550/BaseSerialPortLib16550.inf
-  #}
+
+!endif
   
   # Drivers for Aptio loading - should go to Clover's /EFI/drivers64UEFI dir
   Clover/OsxFatBinaryDrv/OsxFatBinaryDrv.inf
@@ -509,7 +516,11 @@
   DEFINE PS2MOUSE_LEGACYBOOT_FLAG = -DENABLE_PS2MOUSE_LEGACYBOOT
 !endif
 
-  DEFINE BUILD_OPTIONS=-DMDEPKG_NDEBUG $(VBIOS_PATCH_CLOVEREFI_FLAG) $(ONLY_SATA_0_FLAG) $(BLOCKIO_FLAG) $(NOUSB_FLAG) $(AMD_FLAG) $(SECURE_BOOT_FLAG) $(PS2MOUSE_LEGACYBOOT_FLAG)
+!ifdef DEBUG_ON_SERIAL_PORT
+  DEFINE DEBUG_ON_SERIAL_PORT_FLAG = -DDEBUG_ON_SERIAL_PORT
+!endif
+
+  DEFINE BUILD_OPTIONS=-DMDEPKG_NDEBUG -DCLOVER_BUILD $(VBIOS_PATCH_CLOVEREFI_FLAG) $(ONLY_SATA_0_FLAG) $(BLOCKIO_FLAG) $(NOUSB_FLAG) $(AMD_FLAG) $(SECURE_BOOT_FLAG) $(PS2MOUSE_LEGACYBOOT_FLAG) $(DEBUG_ON_SERIAL_PORT_FLAG)
 
   MSFT:*_*_*_CC_FLAGS  = /FAcs /FR$(@R).SBR $(BUILD_OPTIONS)
   XCODE:*_*_*_CC_FLAGS = $(BUILD_OPTIONS)

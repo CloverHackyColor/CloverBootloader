@@ -40,7 +40,11 @@
 // in package DSC file (Clover.dsc)
 // Alternatively, they can be defined directly in global [LibraryClasses] and [PcdsFixedAtBuild] of DSC file (as in DumpUefiCalls.dsc)
 //
+#ifdef DEBUG_ON_SERIAL_PORT
+#define LOG_TO_SERIAL			2
+#else
 #define LOG_TO_SERIAL			0
+#endif
 
 //
 // LOG_TO_FILE:
@@ -51,13 +55,21 @@
 // 0 - will disable file output
 // Note: append while logging (options 3,4) works fine on CloverEFI, but varies between different UEFI firmwares, use only if needed for debugging.
 //
-#define LOG_TO_FILE			2
+#ifdef DEBUG_ON_SERIAL_PORT
+#define LOG_TO_FILE			0
+#else
+#define LOG_TO_FILE			4
+#endif
 
 //
 // LOG_TO_FILE_PATH
 //
 // Note: some firmwares don't support writing to long filenames, so it's better to keep names as 8.3.
+#ifdef CLOVER_BUILD
+#define LOG_TO_FILE_PATH L"\\EFI\\CLOVER\\misc\\EfiCalls.log"
+#else
 #define LOG_TO_FILE_PATH L"\\EFI\\EfiCalls.log"
+#endif
 
 //
 // PRINT calls our main logger.
@@ -72,7 +84,7 @@
 //        usefull only when printing to serial in VBox for example
 // 0 - will stop printing when ExitBootServices() are called
 //
-#define WORK_DURING_RUNTIME		0
+#define WORK_DURING_RUNTIME		1
 
 //
 // PRINT_DUMPS:
@@ -130,7 +142,7 @@
 // specify here as shown below (in a CHAR16* array) all boot loaders for which overrides will start
 // array must be terminated by NULL
 //  
-#define BOOT_LOADERS { L"boot.efi", L"bootmgfw.efi", L"grub.efi", L"grubx64.efi", NULL }
+#define BOOT_LOADERS { L"boot.efi", L"bootmgfw.efi", L"grub.efi", L"grubx64.efi", L"bootx64.efi", NULL }
 
 
 #include "Lib.h"

@@ -49,7 +49,7 @@ static EFI_GUID UgaDrawProtocolGuid = EFI_UGA_DRAW_PROTOCOL_GUID;
 static EFI_UGA_DRAW_PROTOCOL *UgaDraw = NULL;
 
 static EFI_GUID GraphicsOutputProtocolGuid = EFI_GRAPHICS_OUTPUT_PROTOCOL_GUID;
-EFI_GRAPHICS_OUTPUT_PROTOCOL *GraphicsOutput = NULL;
+static EFI_GRAPHICS_OUTPUT_PROTOCOL *GraphicsOutput = NULL;
 
 static BOOLEAN egHasGraphics = FALSE;
 static UINTN egScreenWidth  = 0; //1024;
@@ -718,6 +718,15 @@ static EFI_STATUS GopSetModeAndReconnectTextOut(IN UINT32 ModeNumber)
     } 
 
     return Status;
+}
+
+EFI_GRAPHICS_OUTPUT_PROTOCOL *egGetGOP(VOID)
+{
+   return GraphicsOutput;
+}
+EFI_UGA_DRAW_PROTOCOL *egGetUGA(VOID)
+{
+   return UgaDraw;
 }
 
 /* EOF */

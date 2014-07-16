@@ -263,6 +263,8 @@ VOID egTakeImage(IN EG_IMAGE *Image, INTN ScreenPosX, INTN ScreenPosY,
 
 EFI_STATUS egScreenShot(VOID);
 
+EFI_GRAPHICS_OUTPUT_PROTOCOL *egGetGOP(VOID);
+EFI_UGA_DRAW_PROTOCOL *egGetUGA(VOID);
 
 #endif /* __LIBEG_LIBEG_H__ */
 

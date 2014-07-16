@@ -518,51 +518,43 @@ static BOOLEAN FillinCustomEntry(IN OUT CUSTOM_LOADER_ENTRY *Entry, TagPtr dictP
   // Whether or not to draw boot screen
   prop = GetProperty(dictPointer, "CustomLogo");
   if (prop) {
-     if (IsPropertyTrue(prop)) {
+    if (IsPropertyTrue(prop)) {
+      Entry->CustomBoot = CUSTOM_BOOT_APPLE;
+    } else if ((prop->type == kTagTypeString) && prop->string) {
+      if (AsciiStriCmp(prop->string, "Apple") == 0) {
         Entry->CustomBoot = CUSTOM_BOOT_APPLE;
-     }
-     else if ((prop->type == kTagTypeString) && prop->string) {
-        if (AsciiStriCmp(prop->string, "Apple") == 0) {
-           Entry->CustomBoot = CUSTOM_BOOT_APPLE;
-        }
-        else if ((AsciiStriCmp(prop->string, "AlternateApple") == 0) ||
-           (AsciiStriCmp(prop->string, "AltApple") == 0) ||
-           (AsciiStriCmp(prop->string, "Alternate") == 0) ||
-           (AsciiStriCmp(prop->string, "Alt") == 0)) {
-           Entry->CustomBoot = CUSTOM_BOOT_ALT_APPLE;
-        }
-        else if (AsciiStriCmp(prop->string, "Theme") == 0) {
-           Entry->CustomBoot = CUSTOM_BOOT_THEME;
-        }
-        else {
-           CHAR16 *customLogo = PoolPrint(L"%a", prop->string);
-           Entry->CustomBoot = CUSTOM_BOOT_USER;
-           if (Entry->CustomLogo != NULL) {
-              egFreeImage(Entry->CustomLogo);
-           }
-           Entry->CustomLogo = egLoadImage(SelfRootDir, customLogo, TRUE);
-           if (Entry->CustomLogo == NULL) {
-              DBG("Custom boot logo not found at path `%s`!\n", customLogo);
-           }
-           if (customLogo != NULL) {
-              FreePool(customLogo);
-           }
-        }
-     }
-     else if ((prop->type == kTagTypeData) &&
-        (prop->data != NULL) && (prop->dataLen > 0)) {
+      } else if (AsciiStriCmp(prop->string, "Alternate") == 0) {
+        Entry->CustomBoot = CUSTOM_BOOT_ALT_APPLE;
+      } else if (AsciiStriCmp(prop->string, "Theme") == 0) {
+        Entry->CustomBoot = CUSTOM_BOOT_THEME;
+      } else {
+        CHAR16 *customLogo = PoolPrint(L"%a", prop->string);
         Entry->CustomBoot = CUSTOM_BOOT_USER;
         if (Entry->CustomLogo != NULL) {
-           egFreeImage(Entry->CustomLogo);
+          egFreeImage(Entry->CustomLogo);
         }
-        Entry->CustomLogo = egDecodeImage(prop->data, prop->dataLen, NULL, TRUE);
+        Entry->CustomLogo = egLoadImage(SelfRootDir, customLogo, TRUE);
         if (Entry->CustomLogo == NULL) {
-           DBG("Custom boot logo not decoded from data!\n", prop->string);
+          DBG("Custom boot logo not found at path `%s`!\n", customLogo);
         }
-     }
-     else {
-        Entry->CustomBoot = CUSTOM_BOOT_USER_DISABLED;
-     }
+        if (customLogo != NULL) {
+          FreePool(customLogo);
+        }
+      }
+    } else if ((prop->type == kTagTypeData) &&
+               (prop->data != NULL) && (prop->dataLen > 0)) {
+      Entry->CustomBoot = CUSTOM_BOOT_USER;
+      if (Entry->CustomLogo != NULL) {
+        egFreeImage(Entry->CustomLogo);
+      }
+      Entry->CustomLogo = egDecodeImage(prop->data, prop->dataLen, NULL, TRUE);
+      if (Entry->CustomLogo == NULL) {
+        DBG("Custom boot logo not decoded from data!\n", prop->string);
+      }
+    } else {
+      Entry->CustomBoot = CUSTOM_BOOT_USER_DISABLED;
+    }
+    DBG("Custom entry boot %s (0x%X)\n", CustomBootModeToStr(Entry->CustomBoot), Entry->CustomLogo);
   }
   prop = GetProperty(dictPointer, "BootBgColor");
   if (prop && prop->type == kTagTypeString) {
@@ -1255,10 +1247,7 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
         } else if ((prop->type == kTagTypeString) && prop->string) {
           if (AsciiStriCmp(prop->string, "Apple") == 0) {
             gSettings.CustomBoot = CUSTOM_BOOT_APPLE;
-          } else if ((AsciiStriCmp(prop->string, "AlternateApple") == 0) ||
-                     (AsciiStriCmp(prop->string, "AltApple") == 0) ||
-                     (AsciiStriCmp(prop->string, "Alternate") == 0) ||
-                     (AsciiStriCmp(prop->string, "Alt") == 0)) {
+          } else if (AsciiStriCmp(prop->string, "Alternate") == 0) {
             gSettings.CustomBoot = CUSTOM_BOOT_ALT_APPLE;
           } else if (AsciiStriCmp(prop->string, "Theme") == 0) {
             gSettings.CustomBoot = CUSTOM_BOOT_THEME;
@@ -1292,6 +1281,7 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
       } else {
         gSettings.CustomBoot = CUSTOM_BOOT_DISABLED;
       }
+      DBG("Custom boot %s (0x%X)\n", CustomBootModeToStr(gSettings.CustomBoot), gSettings.CustomLogo);
     }
     
     dictPointer = GetProperty(dict, "GUI");

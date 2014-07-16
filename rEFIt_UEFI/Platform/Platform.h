@@ -1428,7 +1428,7 @@ extern UINT32                   cPropSize;
 extern UINT8*                   cProperties;
 extern CHAR8*                   cDeviceProperties;
 extern INPUT_ITEM               *InputItems;
-extern EFI_GRAPHICS_OUTPUT_PROTOCOL *GraphicsOutput;
+//extern EFI_GRAPHICS_OUTPUT_PROTOCOL *GraphicsOutput;
 
 extern EFI_GUID	gEfiAppleBootGuid;
 extern EFI_GUID	gEfiAppleNvramGuid;
@@ -1493,7 +1493,7 @@ BOOLEAN     IsValidGuidAsciiString(IN CHAR8 *Str);
 EFI_STATUS  StrToGuid (IN  CHAR16   *Str, OUT EFI_GUID *Guid);
 EFI_STATUS  StrToGuidLE (IN  CHAR16   *Str, OUT EFI_GUID *Guid);
 
-VOID InitBootScreen(IN LOADER_ENTRY *Entry);
+EFI_STATUS InitBootScreen(IN LOADER_ENTRY *Entry);
 
 EFI_STATUS  InitializeConsoleSim (VOID);
 EFI_STATUS  GuiEventsInitialize (VOID);

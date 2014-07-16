@@ -94,6 +94,11 @@ BOOLEAN IsCustomBootEntry(IN LOADER_ENTRY *Entry);
 VOID ScanTool(VOID);
 VOID AddCustomTool(VOID);
 
+// locked graphics
+CHAR16 *CustomBootModeToStr(IN UINT8 Mode);
+EFI_STATUS LockBootScreen(VOID);
+EFI_STATUS UnlockBootScreen(VOID);
+
 // secure boot
 VOID AddSecureBootTool(VOID);
 VOID InitializeSecureBoot(VOID);

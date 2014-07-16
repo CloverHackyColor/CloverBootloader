@@ -709,7 +709,24 @@ STATIC UINT8 whiteAppleLogo[] = {
    0x00, 0x00, 0x00, 0x00, 0x49, 0x45, 0x4E, 0x44, 0xAE, 0x42, 0x60, 0x82, 0x82,
 };
 
-VOID InitBootScreen(IN LOADER_ENTRY *Entry)
+static CHAR16 *CustomBootModeStr[] = {
+   L"CUSTOM_BOOT_DISABLED",
+   L"CUSTOM_BOOT_DISABLED",
+   L"CUSTOM_BOOT_NONE",
+   L"CUSTOM_BOOT_APPLE",
+   L"CUSTOM_BOOT_ALT_APPLE",
+   L"CUSTOM_BOOT_THEME",
+   L"CUSTOM_BOOT_USER",
+};
+CHAR16 *CustomBootModeToStr(IN UINT8 Mode)
+{
+  if (Mode >= (sizeof(CustomBootModeStr) / sizeof(CHAR16 *))) {
+    return CustomBootModeStr[0];
+  }
+  return CustomBootModeStr[Mode];
+}
+
+EFI_STATUS InitBootScreen(IN LOADER_ENTRY *Entry)
 {
   EG_PIXEL *backgroundPixel = Entry->BootBgColor;
   EG_IMAGE *logo = NULL;
@@ -717,7 +734,8 @@ VOID InitBootScreen(IN LOADER_ENTRY *Entry)
   UINT8     customBoot = Entry->CustomBoot;
 
   if (OSFLAG_ISUNSET(Entry->Flags, OSFLAG_USEGRAPHICS)) {
-    return;
+    DBG("Custom boot screen not used because entry has unset use graphics\n");
+    return EFI_ABORTED;
   }
   // Check Yosemite users want custom boot by default
   // and whatever the user might actually have selected
@@ -727,7 +745,8 @@ VOID InitBootScreen(IN LOADER_ENTRY *Entry)
     customBoot = gSettings.CustomBoot;
     if (customBoot == CUSTOM_BOOT_DISABLED) {
       if (AsciiOSVersionToUint64(Entry->OSVersion) < AsciiOSVersionToUint64("10.10")) {
-        return;
+        DBG("Custom boot is disabled and OS version %a < 10.10\n", Entry->OSVersion);
+        return EFI_ABORTED;
       }
       customBoot = CUSTOM_BOOT_APPLE;
     } else if (customBoot == CUSTOM_BOOT_USER) {
@@ -738,6 +757,7 @@ VOID InitBootScreen(IN LOADER_ENTRY *Entry)
 
   case CUSTOM_BOOT_NONE:
      // No logo
+     DBG("Custom boot is using no logo\n");
      break;
 
   case CUSTOM_BOOT_APPLE:
@@ -746,6 +766,7 @@ VOID InitBootScreen(IN LOADER_ENTRY *Entry)
      if (backgroundPixel == NULL) {
        backgroundPixel = &grayBackgroundPixel;
      }
+     DBG("Custom boot is using apple logo\n");
      break;
 
   case CUSTOM_BOOT_ALT_APPLE:
@@ -754,11 +775,13 @@ VOID InitBootScreen(IN LOADER_ENTRY *Entry)
      if (backgroundPixel == NULL) {
         backgroundPixel = &blackBackgroundPixel;
      }
+     DBG("Custom boot is using alternate logo\n");
      break;
 
   case CUSTOM_BOOT_THEME:
      // TODO: Custom boot theme
-     return;
+     DBG("Custom boot is using theme logo\n");
+     return EFI_ABORTED;
 
   case CUSTOM_BOOT_USER:
      // Custom user logo
@@ -766,11 +789,13 @@ VOID InitBootScreen(IN LOADER_ENTRY *Entry)
         if (backgroundPixel == NULL) {
           backgroundPixel = &grayBackgroundPixel;
         }
+        DBG("Custom boot is using custom logo\n");
         break;
      }
 
   default:
-     return;
+     DBG("Custom boot is disabled\n");
+     return EFI_ABORTED;
   }
 
   // Clear the screen
@@ -784,4 +809,5 @@ VOID InitBootScreen(IN LOADER_ENTRY *Entry)
                   backgroundPixel,
                   16);
   }
+  return EFI_SUCCESS;
 }

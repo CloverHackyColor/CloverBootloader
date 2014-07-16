@@ -553,7 +553,7 @@ NotifyFwVolBlock (
   EFI_FIRMWARE_VOLUME_BLOCK_PROTOCOL    *Fvb;
   EFI_FIRMWARE_VOLUME2_PROTOCOL         *Fv;
   FV_DEVICE                             *FvDevice;
-  EFI_FIRMWARE_VOLUME_HEADER            *FwVolHeader;
+  EFI_FIRMWARE_VOLUME_HEADER            *FwVolHeader = NULL;
   //
   // Examine all new handles
   //
