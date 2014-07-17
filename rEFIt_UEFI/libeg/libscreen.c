@@ -720,13 +720,4 @@ static EFI_STATUS GopSetModeAndReconnectTextOut(IN UINT32 ModeNumber)
     return Status;
 }
 
-EFI_GRAPHICS_OUTPUT_PROTOCOL *egGetGOP(VOID)
-{
-   return GraphicsOutput;
-}
-EFI_UGA_DRAW_PROTOCOL *egGetUGA(VOID)
-{
-   return UgaDraw;
-}
-
 /* EOF */

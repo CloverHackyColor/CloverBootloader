@@ -46,122 +46,275 @@
 #define DBG(...) DebugLog(DEBUG_LOCK_BOOT_SCREEN, __VA_ARGS__)
 #endif
 
-static BOOLEAN                      ScreenIsLocked;
-static EFI_UGA_DRAW_PROTOCOL        OldUgaDraw;
-static EFI_GRAPHICS_OUTPUT_PROTOCOL OldGraphicsOutput;
-
-static EFI_GRAPHICS_OUTPUT_MODE_INFORMATION GraphicsOutputInfo = {
-   // Version == 0
-   0,
-   // Horizontal resolution in pixels
-   0,
-   // Vertical resolution in pixels
-   0,
-   // Pixel format
-   PixelBlueGreenRedReserved8BitPerColor,
-   // Pixel mask
-   { 0, 0, 0, 0 },
-   // Pixels per scan line
-   0,
-};
-static EFI_GRAPHICS_OUTPUT_PROTOCOL_MODE GraphicsOutputMode = {
-   // Max mode
-   1,
-// Current mode
-0,
-// Information
-&GraphicsOutputInfo,
-// Size of information in bytes
-sizeof(EFI_GRAPHICS_OUTPUT_MODE_INFORMATION),
-// Framebuffer
-(EFI_PHYSICAL_ADDRESS)(UINTN)NULL,
-// Framebuffer size in bytes
-0
+// Each time a new graphics protocol is opened,
+// lock it and save the information here
+typedef struct LOCKED_GRAPHICS LOCKED_GRAPHICS;
+struct LOCKED_GRAPHICS
+{
+  LOCKED_GRAPHICS                      *Next;
+  EFI_HANDLE                            Owner;
+  EFI_HANDLE                            Agent;
+  EFI_HANDLE                            Controller;
+  UINT16                                GOPCount;
+  UINT16                                UGACount;
+  EFI_GRAPHICS_OUTPUT_PROTOCOL         *GOPInterface;
+  EFI_GRAPHICS_OUTPUT_PROTOCOL          GOP;
+  EFI_GRAPHICS_OUTPUT_PROTOCOL_MODE     GOPMode;
+  EFI_GRAPHICS_OUTPUT_MODE_INFORMATION  GOPInfo;
+  EFI_UGA_DRAW_PROTOCOL                *UGAInterface;
+  EFI_UGA_DRAW_PROTOCOL                 UGA;
 };
 
-static EFI_STATUS EFIAPI LockedGraphicsOutputBlt(IN EFI_GRAPHICS_OUTPUT_PROTOCOL *This, IN EFI_GRAPHICS_OUTPUT_BLT_PIXEL *BltBuffer, OPTIONAL IN EFI_GRAPHICS_OUTPUT_BLT_OPERATION BltOperation, IN UINTN SourceX, IN UINTN SourceY, IN UINTN DestinationX, IN UINTN DestinationY, IN UINTN Width, IN UINTN Height, IN UINTN Delta OPTIONAL)
+// The old boot services saved to restore later
+static EFI_BOOT_SERVICES  OldBootServices;
+// The locked graphics collection
+static LOCKED_GRAPHICS   *LockedGraphics;
+// The screen lock
+static BOOLEAN            ScreenIsLocked;
+
+static EFI_STATUS EFIAPI LockedGOPBlt(IN EFI_GRAPHICS_OUTPUT_PROTOCOL *This, IN EFI_GRAPHICS_OUTPUT_BLT_PIXEL *BltBuffer, OPTIONAL IN EFI_GRAPHICS_OUTPUT_BLT_OPERATION BltOperation, IN UINTN SourceX, IN UINTN SourceY, IN UINTN DestinationX, IN UINTN DestinationY, IN UINTN Width, IN UINTN Height, IN UINTN Delta OPTIONAL)
 {
-   return EFI_SUCCESS;
+  return EFI_SUCCESS;
 }
-static EFI_STATUS EFIAPI LockedGraphicsOutputSetMode(IN EFI_GRAPHICS_OUTPUT_PROTOCOL *This, IN UINT32 ModeNumber)
+static EFI_STATUS EFIAPI LockedGOPSetMode(IN EFI_GRAPHICS_OUTPUT_PROTOCOL *This, IN UINT32 ModeNumber)
 {
-   if ((This == NULL) || (ModeNumber != 0)) {
-      return EFI_INVALID_PARAMETER;
-   }
-   return EFI_SUCCESS;
+  if ((This == NULL) || (ModeNumber != 0)) {
+    return EFI_INVALID_PARAMETER;
+  }
+  return EFI_SUCCESS;
 }
-static EFI_STATUS EFIAPI LockedGraphicsOutputQueryMode(IN EFI_GRAPHICS_OUTPUT_PROTOCOL *This, IN UINT32 ModeNumber, OUT UINTN *SizeOfInfo, OUT EFI_GRAPHICS_OUTPUT_MODE_INFORMATION **Info)
+static EFI_STATUS EFIAPI LockedGOPQueryMode(IN EFI_GRAPHICS_OUTPUT_PROTOCOL *This, IN UINT32 ModeNumber, OUT UINTN *SizeOfInfo, OUT EFI_GRAPHICS_OUTPUT_MODE_INFORMATION **Info)
 {
-   if ((This == NULL) ||
+  if ((This == NULL) ||
+      (This->Mode == NULL) ||
+      (This->Mode->Info == NULL) ||
       (SizeOfInfo == NULL) ||
       (Info == NULL) ||
       (ModeNumber != 0)) {
-      return EFI_INVALID_PARAMETER;
-   }
-   *Info = &GraphicsOutputInfo;
-   *SizeOfInfo = sizeof(EFI_GRAPHICS_OUTPUT_MODE_INFORMATION);
-   return EFI_SUCCESS;
+     return EFI_INVALID_PARAMETER;
+  }
+  *Info = This->Mode->Info;
+  *SizeOfInfo = This->Mode->SizeOfInfo;
+  return EFI_SUCCESS;
 }
 
-static UINT32 UgaDrawHorizontalResolution;
-static UINT32 UgaDrawVerticalResolution;
-static UINT32 UgaDrawColorDepth;
-static UINT32 UgaDrawRefreshRate;
-
-static EFI_STATUS EFIAPI LockedUgaDrawBlt(IN EFI_UGA_DRAW_PROTOCOL *This, IN EFI_UGA_PIXEL *BltBuffer, OPTIONAL IN EFI_UGA_BLT_OPERATION BltOperation, IN UINTN SourceX, IN UINTN SourceY, IN UINTN DestinationX, IN UINTN DestinationY, IN UINTN Width, IN UINTN Height, IN UINTN Delta OPTIONAL)
+static EFI_STATUS AddLockedGraphicsGOP(IN EFI_HANDLE Handle, IN EFI_HANDLE AgentHandle, IN EFI_HANDLE ControllerHandle, IN EFI_GRAPHICS_OUTPUT_PROTOCOL *GOPInterface)
 {
-   return EFI_SUCCESS;
-}
-static EFI_STATUS EFIAPI LockedUgaDrawSetMode(IN EFI_UGA_DRAW_PROTOCOL *This, IN UINT32 HorizontalResolution, IN UINT32 VerticalResolution, IN UINT32 ColorDepth, IN UINT32 RefreshRate)
-{
-   if (This == NULL){
-      return EFI_INVALID_PARAMETER;
-   }
-   if ((HorizontalResolution == UgaDrawHorizontalResolution) &&
-      (VerticalResolution == UgaDrawVerticalResolution) &&
-      (ColorDepth == UgaDrawColorDepth) &&
-      (RefreshRate == UgaDrawRefreshRate)) {
+  LOCKED_GRAPHICS *Ptr = LockedGraphics;
+  if ((Handle == NULL) ||
+      (AgentHandle == NULL) ||
+      (GOPInterface == NULL)) {
+    return EFI_INVALID_PARAMETER;
+  }
+  // Check if this is already been locked
+  while (Ptr != NULL) {
+    if ((Ptr->Owner == Handle) &&
+        (Ptr->Agent == AgentHandle) &&
+        (Ptr->Controller == ControllerHandle)) {
+      if (Ptr->GOPCount == 0) {
+        break;
+      }
+      ++(Ptr->GOPCount);
       return EFI_SUCCESS;
-   }
-   return EFI_UNSUPPORTED;
-}
-static EFI_STATUS EFIAPI LockedUgaDrawGetMode(IN EFI_UGA_DRAW_PROTOCOL *This, OUT UINT32 *HorizontalResolution, OUT UINT32 *VerticalResolution, OUT UINT32 *ColorDepth, OUT UINT32 *RefreshRate)
-{
-   if ((This == NULL) ||
-      (HorizontalResolution == NULL) ||
-      (VerticalResolution == NULL) ||
-      (ColorDepth == NULL) ||
-      (RefreshRate == NULL)) {
-      return EFI_INVALID_PARAMETER;
-   }
-   *HorizontalResolution = UgaDrawHorizontalResolution;
-   *VerticalResolution = UgaDrawVerticalResolution;
-   *ColorDepth = UgaDrawColorDepth;
-   *RefreshRate = UgaDrawRefreshRate;
-   return EFI_SUCCESS;
-}
-
-static EFI_BOOT_SERVICES OldBootServices;
-
-static EFI_STATUS LockedLocateHandle(IN EFI_LOCATE_SEARCH_TYPE SearchType, IN EFI_GUID *Protocol OPTIONAL, IN VOID *SearchKey OPTIONAL, IN OUT UINTN *BufferSize, OUT EFI_HANDLE *Buffer)
-{
-  if (SearchType == ByProtocol) {
-    if ((Protocol == NULL) || (BufferSize == NULL)) {
-      return EFI_INVALID_PARAMETER;
     }
-    if (CompareMem(Protocol, &gEfiGraphicsOutputProtocolGuid, sizeof(EFI_GUID)) == 0) {
-      if (*BufferSize < sizeof(SelfImageHandle)) {
-        *BufferSize = sizeof(SelfImageHandle);
-        return EFI_BUFFER_TOO_SMALL;
-      }
-      if (Buffer == NULL) {
-        return EFI_INVALID_PARAMETER;
-      }
-      *Buffer = SelfImageHandle;
-      return EFI_SUCCESS;
+    Ptr = Ptr->Next;
+  }
+  // Create a new locked graphics if needed
+  if (Ptr == NULL) {
+    Ptr = (LOCKED_GRAPHICS *)AllocateZeroPool(sizeof(LOCKED_GRAPHICS));
+    if (Ptr == NULL) {
+      return EFI_OUT_OF_RESOURCES;
+    }
+    // Add to list
+    Ptr->Next = LockedGraphics;
+    LockedGraphics = Ptr;
+  }
+  // Store these elements for later
+  CopyMem(&(Ptr->GOP), GOPInterface, sizeof(EFI_GRAPHICS_OUTPUT_PROTOCOL));
+  CopyMem(&(Ptr->GOPMode), GOPInterface->Mode, sizeof(EFI_GRAPHICS_OUTPUT_PROTOCOL_MODE));
+  CopyMem(&(Ptr->GOPInfo), GOPInterface->Mode->Info, GOPInterface->Mode->SizeOfInfo);
+  Ptr->GOPInterface = GOPInterface;
+  Ptr->GOPCount = 1;
+  // Alter the interface
+  GOPInterface->Blt = LockedGOPBlt;
+  GOPInterface->SetMode = LockedGOPSetMode;
+  GOPInterface->QueryMode = LockedGOPQueryMode;
+  if (GOPInterface->Mode != NULL) {
+    UINTN BufferSize = (GOPInterface->Mode->Info->HorizontalResolution * GOPInterface->Mode->Info->VerticalResolution * 4);
+    GOPInterface->Mode->MaxMode = 1;
+    GOPInterface->Mode->Mode = 0;
+    GOPInterface->Mode->SizeOfInfo = sizeof(EFI_GRAPHICS_OUTPUT_MODE_INFORMATION);
+    DBG("Custom boot framebuffer 0x%X 0x%X\n", GOPInterface->Mode->FrameBufferBase, BufferSize);
+    GOPInterface->Mode->FrameBufferBase = (EFI_PHYSICAL_ADDRESS)(UINTN)(GOPInterface->Mode->FrameBufferBase + BufferSize);
+    DBG("Custom boot GOP: 0x%X 0x%X", GOPInterface, GOPInterface->Mode->FrameBufferSize);
+    GOPInterface->Mode->FrameBufferSize -= BufferSize;
+    if (GOPInterface->Mode->Info != NULL) {
+      DBG(" %d(%d)x%d", GOPInterface->Mode->Info->HorizontalResolution, GOPInterface->Mode->Info->PixelsPerScanLine, GOPInterface->Mode->Info->VerticalResolution);
+    }
+    DBG("\n");
+  }
+  return EFI_SUCCESS;
+}
+static EFI_STATUS RestoreLockedGraphicsGOP(IN LOCKED_GRAPHICS *Graphics)
+{
+  if (Graphics == NULL) {
+    return EFI_INVALID_PARAMETER;
+  }
+  if (Graphics->GOPInterface == NULL) {
+    Graphics->GOPCount = 0;
+    return EFI_SUCCESS;
+  }
+  // Restore GOP
+  CopyMem(Graphics->GOPInterface, &(Graphics->GOP), sizeof(EFI_GRAPHICS_OUTPUT_PROTOCOL));
+  if (Graphics->GOPInterface->Mode != NULL) {
+    // Restore mode
+    CopyMem(Graphics->GOPInterface->Mode, &(Graphics->GOPMode), sizeof(EFI_GRAPHICS_OUTPUT_PROTOCOL_MODE));
+    if (Graphics->GOPInterface->Mode->Info != NULL) {
+      // Restore info
+      CopyMem(Graphics->GOPInterface->Mode->Info, &(Graphics->GOPInfo), sizeof(EFI_GRAPHICS_OUTPUT_MODE_INFORMATION));
     }
   }
-  return OldBootServices.LocateHandle(SearchType, Protocol, SearchKey, BufferSize, Buffer);
+  Graphics->GOPInterface = NULL;
+  Graphics->GOPCount = 0;
+  return EFI_SUCCESS;
+}
+static EFI_STATUS RemoveLockedGraphics(IN LOCKED_GRAPHICS *Graphics)
+{
+  if (Graphics == NULL) {
+    return EFI_INVALID_PARAMETER;
+  }
+  // Only remove if not in use
+  if ((Graphics->GOPInterface != NULL) ||
+      (Graphics->UGAInterface != NULL)) {
+    return EFI_SUCCESS;
+  }
+  // Check if first one
+  if (Graphics == LockedGraphics) {
+    LockedGraphics = Graphics->Next;
+    FreePool(Graphics);
+    return EFI_SUCCESS;
+  } else if (LockedGraphics != NULL) {
+    // Check the next ones
+    LOCKED_GRAPHICS *Ptr = LockedGraphics;
+    while (Ptr->Next != NULL) {
+      if (Ptr->Next == Graphics) {
+        Ptr->Next = Graphics->Next;
+        FreePool(Graphics);
+        return EFI_SUCCESS;
+      }
+      Ptr = Ptr->Next;
+    }
+  }
+  // Not found
+  return EFI_NOT_FOUND;
+}
+static EFI_STATUS RemoveLockedGraphicsGOP(IN EFI_HANDLE Handle, IN EFI_HANDLE AgentHandle, IN EFI_HANDLE ControllerHandle)
+{
+  LOCKED_GRAPHICS *Ptr = LockedGraphics;
+  while (Ptr != NULL) {
+    if ((Ptr->Owner == Handle) ||
+        (Ptr->Agent == AgentHandle) ||
+        (Ptr->Controller == ControllerHandle)) {
+      if (Ptr->GOPCount <= 1) {
+        EFI_STATUS Status = RestoreLockedGraphicsGOP(Ptr);
+        if (EFI_ERROR(Status)) {
+          return Status;
+        }
+        return RemoveLockedGraphics(Ptr);
+      }
+      --(Ptr->GOPCount);
+      return EFI_SUCCESS;
+    }
+    Ptr = Ptr->Next;
+  }
+  return EFI_NOT_FOUND;
+}
+
+static  EFI_STATUS EFIAPI LockedUGASetMode(IN EFI_UGA_DRAW_PROTOCOL *This, IN UINT32 HorizontalResolution, IN UINT32 VerticalResolution, IN UINT32 ColorDepth, IN UINT32 RefreshRate)
+{
+   return EFI_UNSUPPORTED;
+}
+static EFI_STATUS EFIAPI LockedUGABlt(IN EFI_UGA_DRAW_PROTOCOL *This, IN EFI_UGA_PIXEL *BltBuffer, OPTIONAL IN EFI_UGA_BLT_OPERATION BltOperation, IN UINTN SourceX, IN UINTN SourceY, IN UINTN DestinationX, IN UINTN DestinationY, IN UINTN Width, IN UINTN Height, IN UINTN Delta OPTIONAL)
+{
+   return EFI_SUCCESS;
+}
+
+static EFI_STATUS RestoreLockedGraphicsUGA(IN LOCKED_GRAPHICS *Graphics)
+{
+   if (Graphics == NULL) {
+      return EFI_INVALID_PARAMETER;
+   }
+   if (Graphics->UGAInterface == NULL) {
+      Graphics->UGACount = 0;
+      return EFI_SUCCESS;
+   }
+   // Restore UGA
+   CopyMem(Graphics->UGAInterface, &(Graphics->UGA), sizeof(EFI_UGA_DRAW_PROTOCOL));
+   Graphics->UGAInterface = NULL;
+   Graphics->UGACount = 0;
+   return EFI_SUCCESS;
+}
+static EFI_STATUS RemoveLockedGraphicsUGA(IN EFI_HANDLE Handle, IN EFI_HANDLE AgentHandle, IN EFI_HANDLE ControllerHandle)
+{
+  LOCKED_GRAPHICS *Ptr = LockedGraphics;
+  while (Ptr != NULL) {
+    if ((Ptr->Owner == Handle) ||
+        (Ptr->Agent == AgentHandle) ||
+        (Ptr->Controller == ControllerHandle)) {
+      if (Ptr->UGACount <= 1) {
+        EFI_STATUS Status = RestoreLockedGraphicsUGA(Ptr);
+        if (EFI_ERROR(Status)) {
+          return Status;
+        }
+        return RemoveLockedGraphics(Ptr);
+      }
+      --(Ptr->UGACount);
+      return EFI_SUCCESS;
+    }
+    Ptr = Ptr->Next;
+  }
+  return EFI_NOT_FOUND;
+}
+
+static EFI_STATUS AddLockedGraphicsUGA(IN EFI_HANDLE Handle, IN EFI_HANDLE AgentHandle, IN EFI_HANDLE ControllerHandle, IN EFI_UGA_DRAW_PROTOCOL *UGAInterface)
+{
+  LOCKED_GRAPHICS *Ptr = LockedGraphics;
+  if ((Handle == NULL) ||
+      (AgentHandle == NULL) ||
+      (UGAInterface == NULL)) {
+    return EFI_INVALID_PARAMETER;
+  }
+  // Check if this is already been locked
+  while (Ptr != NULL) {
+    if ((Ptr->Owner == Handle) &&
+        (Ptr->Agent == AgentHandle) &&
+        (Ptr->Controller == ControllerHandle)) {
+      if (Ptr->UGACount == 0) {
+        break;
+      }
+      ++(Ptr->UGACount);
+      return EFI_SUCCESS;
+    }
+    Ptr = Ptr->Next;
+  }
+  // Create a new locked graphics if needed
+  if (Ptr == NULL) {
+    Ptr = (LOCKED_GRAPHICS *)AllocateZeroPool(sizeof(LOCKED_GRAPHICS));
+    if (Ptr == NULL) {
+      return EFI_OUT_OF_RESOURCES;
+    }
+    // Add to list
+    Ptr->Next = LockedGraphics;
+    LockedGraphics = Ptr;
+  }
+  // Store these elements for later
+  CopyMem(&(Ptr->UGA), UGAInterface, sizeof(EFI_UGA_DRAW_PROTOCOL));
+  Ptr->UGAInterface = UGAInterface;
+  Ptr->UGACount = 1;
+  // Alter the interface
+  UGAInterface->Blt = LockedUGABlt;
+  UGAInterface->SetMode = LockedUGASetMode;
+  return EFI_SUCCESS;
 }
 
 static EFI_STATUS EFIAPI LockedOpenProtocol(IN EFI_HANDLE Handle, IN EFI_GUID *Protocol, OUT VOID **Interface OPTIONAL, IN EFI_HANDLE AgentHandle, IN EFI_HANDLE ControllerHandle, IN UINT32 Attributes)
@@ -171,16 +324,39 @@ static EFI_STATUS EFIAPI LockedOpenProtocol(IN EFI_HANDLE Handle, IN EFI_GUID *P
       return EFI_INVALID_PARAMETER;
     }
     if (CompareMem(Protocol, &gEfiGraphicsOutputProtocolGuid, sizeof(EFI_GUID)) == 0) {
-      if (Handle != SelfImageHandle) {
-         return EFI_UNSUPPORTED;
+      EFI_GRAPHICS_OUTPUT_PROTOCOL *GOPInterface = NULL;
+      // Open the actual protocol
+      EFI_STATUS Status = OldBootServices.OpenProtocol(Handle, Protocol, (VOID **)&GOPInterface, AgentHandle, ControllerHandle, Attributes);
+      if (EFI_ERROR(Status)) {
+        return Status;
       }
-      *Interface = egGetGOP();
+      if (GOPInterface == NULL) {
+        return EFI_NOT_FOUND;
+      }
+      // Save this protocol for later and alter it
+      if (EFI_ERROR(Status = AddLockedGraphicsGOP(Handle, AgentHandle, ControllerHandle, GOPInterface))) {
+        return Status;
+      }
+      // Return the altered protocol
+      *Interface = GOPInterface;
       return EFI_SUCCESS;
-    } else if (CompareMem(Protocol, &gEfiDevicePathProtocolGuid, sizeof(EFI_GUID)) == 0) {
-      if (Handle == SelfImageHandle) {
-        *Interface = SelfDevicePath;
-        return EFI_SUCCESS;
+    } else if (CompareMem(Protocol, &gEfiUgaDrawProtocolGuid, sizeof(EFI_GUID)) == 0) {
+      EFI_UGA_DRAW_PROTOCOL *UGAInterface = NULL;
+      // Open the actual protocol
+      EFI_STATUS Status = OldBootServices.OpenProtocol(Handle, Protocol, (VOID **)&UGAInterface, AgentHandle, ControllerHandle, Attributes);
+      if (EFI_ERROR(Status)) {
+        return Status;
       }
+      if (UGAInterface == NULL) {
+        return EFI_NOT_FOUND;
+      }
+      // Save this protocol for later and alter it
+      if (EFI_ERROR(Status = AddLockedGraphicsUGA(Handle, AgentHandle, ControllerHandle, UGAInterface))) {
+        return Status;
+      }
+      // Return the altered protocol
+      *Interface = UGAInterface;
+      return EFI_SUCCESS;
     }
   }
   return OldBootServices.OpenProtocol(Handle, Protocol, Interface, AgentHandle, ControllerHandle, Attributes);
@@ -192,100 +368,60 @@ static EFI_STATUS EFIAPI LockedCloseProtocol(IN EFI_HANDLE Handle, IN EFI_GUID *
     if (Protocol == NULL) {
       return EFI_INVALID_PARAMETER;
     }
-    if ((CompareMem(Protocol, &gEfiGraphicsOutputProtocolGuid, sizeof(EFI_GUID)) == 0) ||
-        (CompareMem(Protocol, &gEfiDevicePathProtocolGuid, sizeof(EFI_GUID)) == 0)) {
-      return EFI_SUCCESS;
+    if (CompareMem(Protocol, &gEfiGraphicsOutputProtocolGuid, sizeof(EFI_GUID)) == 0) {
+      // Remove a reference to locked graphics
+      EFI_STATUS Status = RemoveLockedGraphicsGOP(Handle, AgentHandle, ControllerHandle);
+      if (EFI_ERROR(Status)) {
+        return Status;
+      }
+    } else if (CompareMem(Protocol, &gEfiUgaDrawProtocolGuid, sizeof(EFI_GUID)) == 0) {
+      // Remove a reference to locked graphics
+      EFI_STATUS Status = RemoveLockedGraphicsUGA(Handle, AgentHandle, ControllerHandle);
+      if (EFI_ERROR(Status)) {
+        return Status;
+      }
     }
   }
   return OldBootServices.CloseProtocol(Handle, Protocol, AgentHandle, ControllerHandle);
 }
 
+// Lock the graphics
 EFI_STATUS LockBootScreen(VOID)
 {
-  INTN Width, Height;
-  EFI_GRAPHICS_OUTPUT_PROTOCOL *GraphicsOutput;
-  EFI_UGA_DRAW_PROTOCOL *UgaDraw;
   // Make sure we're not locked
   if (ScreenIsLocked) {
      DBG("Custom boot screen is already locked\n");
     return EFI_ACCESS_DENIED;
   }
-  DBG("Custom boot lock");
-  // Get screen size
-  egGetScreenSize(&Width, &Height);
-  // Lock GOP
-  GraphicsOutput = egGetGOP();
-  if (GraphicsOutput != NULL) {
-     DBG(" GOP");
-    // Remember old gop
-    CopyMem(&OldGraphicsOutput, GraphicsOutput, sizeof(EFI_GRAPHICS_OUTPUT_PROTOCOL));
-    // Setup locked gop
-    GraphicsOutput->Blt = LockedGraphicsOutputBlt;
-    GraphicsOutput->SetMode = LockedGraphicsOutputSetMode;
-    GraphicsOutput->QueryMode = LockedGraphicsOutputQueryMode;
-    // Setup mode
-    GraphicsOutputInfo.HorizontalResolution = (UINT32)Width;
-    GraphicsOutputInfo.PixelsPerScanLine = (UINT32)Width;
-    GraphicsOutputInfo.VerticalResolution = (UINT32)Height;
-    GraphicsOutputMode.FrameBufferSize = (UINT32)(Width * Height * 4);
-    GraphicsOutputMode.FrameBufferBase = (EFI_PHYSICAL_ADDRESS)(UINTN)AllocatePool(GraphicsOutputMode.FrameBufferSize);
-    // Set mode
-    GraphicsOutput->Mode = &GraphicsOutputMode;
-  }
-  // Lock UGA
-  UgaDraw = egGetUGA();
-  if (UgaDraw != NULL) {
-    DBG(" UGA");
-    // Remember old uga
-    CopyMem(&OldUgaDraw, UgaDraw, sizeof(EFI_UGA_DRAW_PROTOCOL));
-    UgaDraw->GetMode(UgaDraw, &UgaDrawHorizontalResolution, &UgaDrawVerticalResolution, &UgaDrawColorDepth, &UgaDrawRefreshRate);
-    // Setup locked uga
-    UgaDraw->Blt = LockedUgaDrawBlt;
-    UgaDraw->SetMode = LockedUgaDrawSetMode;
-    UgaDraw->GetMode = LockedUgaDrawGetMode;
-  }
-  DBG(" BS Screen\n");
-  // Lock locate handle, open and close protocol
+  DBG("Custom boot lock\n");
+  // Lock open and close protocol
   CopyMem(&OldBootServices, gBS, sizeof(EFI_BOOT_SERVICES));
-  gBS->LocateHandle = LockedLocateHandle;
   gBS->OpenProtocol = LockedOpenProtocol;
   gBS->CloseProtocol = LockedCloseProtocol;
   gBS->Hdr.CRC32 = 0;
   gBS->CalculateCrc32(gBS, gBS->Hdr.HeaderSize, &(gBS->Hdr.CRC32));
+  // Remove all locked graphics
+  while (LockedGraphics != NULL) {
+    LOCKED_GRAPHICS *Ptr = LockedGraphics;
+    LockedGraphics = Ptr->Next;
+    RestoreLockedGraphicsGOP(Ptr);
+    RestoreLockedGraphicsUGA(Ptr);
+    RemoveLockedGraphics(Ptr);
+  }
   // Lock screen
   ScreenIsLocked = TRUE;
   return EFI_SUCCESS;
 }
 
+// Unlock the graphics
 EFI_STATUS UnlockBootScreen(VOID)
 {
-  EFI_GRAPHICS_OUTPUT_PROTOCOL *GraphicsOutput;
-  EFI_UGA_DRAW_PROTOCOL *UgaDraw;
   // Make sure we're locked
   if (!ScreenIsLocked) {
     DBG("Custom boot screen is not locked\n");
     return EFI_NOT_READY;
   }
-  DBG("Custom boot unlock");
-  // Restore GOP
-  GraphicsOutput = egGetGOP();
-  if (GraphicsOutput != NULL) {
-    DBG(" GOP");
-    // Free locked framebuffer
-    if (GraphicsOutputMode.FrameBufferBase != (EFI_PHYSICAL_ADDRESS)(UINTN)NULL) {
-      FreePool((VOID *)(UINTN)GraphicsOutputMode.FrameBufferBase);
-      GraphicsOutputMode.FrameBufferBase = (EFI_PHYSICAL_ADDRESS)(UINTN)NULL;
-    }
-    GraphicsOutputMode.FrameBufferSize = 0;
-    CopyMem(GraphicsOutput, &OldGraphicsOutput, sizeof(EFI_GRAPHICS_OUTPUT_PROTOCOL));
-  }
-  // Restore UGA
-  UgaDraw = egGetUGA();
-  if (UgaDraw != NULL) {
-    DBG(" UGA");
-    CopyMem(UgaDraw, &OldUgaDraw, sizeof(EFI_UGA_DRAW_PROTOCOL));
-  }
-  DBG(" BS Screen\n");
+  DBG("Custom boot unlock\n");
   // Restore locate handle, open and close protocol
   CopyMem(gBS, &OldBootServices, sizeof(EFI_BOOT_SERVICES));
   // Unlock
