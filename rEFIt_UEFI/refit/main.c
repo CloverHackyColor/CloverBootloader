@@ -784,8 +784,9 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     // which is wrong
     // apianti - only block console output if using graphics
     //           but don't block custom boot logo
-    if (!IsCustomBootEntry(Entry) && (Entry->LoadOptions != NULL) &&
-        ((StrStr(Entry->LoadOptions, L"-v") != NULL) || (StrStr(Entry->LoadOptions, L"-V") != NULL))) {
+    if ((Entry->LoadOptions != NULL) &&
+        ((StrStr(Entry->LoadOptions, L"-v") != NULL) ||
+         (StrStr(Entry->LoadOptions, L"-V") != NULL))) {
       Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_USEGRAPHICS);
     }
   }

@@ -725,13 +725,14 @@ VOID egRawCompose(IN OUT EG_PIXEL *CompBasePtr, IN EG_PIXEL *TopBasePtr,
       Alpha = TopPtr->a;
       RevAlpha = 255 - Alpha;
       // apianti - Determine the alpha channel first and use associative compose
-      CompPtr->a = (CompPtr->a > Alpha) ? CompPtr->a : (UINT8)Alpha;
-      Temp = (UINTN)CompPtr->b * RevAlpha + (UINTN)TopPtr->b * Alpha;// +0x80;
-      CompPtr->b = (UINT8)(Temp / 255); //(UINT8)((Temp + (Temp >> 8)) >> 8);
-      Temp = (UINTN)CompPtr->g * RevAlpha + (UINTN)TopPtr->g * Alpha;// +0x80;
-      CompPtr->g = (UINT8)(Temp / 255); //(UINT8)((Temp + (Temp >> 8)) >> 8);
-      Temp = (UINTN)CompPtr->r * RevAlpha + (UINTN)TopPtr->r * Alpha;// +0x80;
-      CompPtr->r = (UINT8)(Temp / 255); //(UINT8)((Temp + (Temp >> 8)) >> 8);
+      Temp = (UINTN)CompPtr->a * RevAlpha + Alpha * Alpha;
+      CompPtr->a = (UINT8)(Temp / 255); // (CompPtr->a > Alpha) ? CompPtr->a : (UINT8)Alpha;
+      Temp = (UINTN)CompPtr->b * RevAlpha + (UINTN)TopPtr->b * Alpha; // +0x80;
+      CompPtr->b = (UINT8)(Temp / 255); // (UINT8)((Temp + (Temp >> 8)) >> 8);
+      Temp = (UINTN)CompPtr->g * RevAlpha + (UINTN)TopPtr->g * Alpha; // +0x80;
+      CompPtr->g = (UINT8)(Temp / 255); // (UINT8)((Temp + (Temp >> 8)) >> 8);
+      Temp = (UINTN)CompPtr->r * RevAlpha + (UINTN)TopPtr->r * Alpha; // +0x80;
+      CompPtr->r = (UINT8)(Temp / 255); // (UINT8)((Temp + (Temp >> 8)) >> 8);
       TopPtr++, CompPtr++;
     }
     TopBasePtr += TopLineOffset;

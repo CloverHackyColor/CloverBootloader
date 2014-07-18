@@ -301,20 +301,6 @@ STATIC EFI_STATUS GetOSXVolumeName(LOADER_ENTRY *Entry)
   return Status;
 }
 
-BOOLEAN IsCustomBootEntry(IN LOADER_ENTRY *Entry)
-{
-  if (Entry == NULL) {
-    return FALSE;
-  }
-  if (Entry->CustomBoot == CUSTOM_BOOT_DISABLED) {
-    if (gSettings.CustomBoot == CUSTOM_BOOT_DISABLED) {
-      return FALSE; // (AsciiOSVersionToUint64(Entry->OSVersion) >= AsciiOSVersionToUint64("10.10"));
-    }
-    return (gSettings.CustomBoot != CUSTOM_BOOT_USER_DISABLED);
-  }
-  return (Entry->CustomBoot != CUSTOM_BOOT_USER_DISABLED);
-}
-
 STATIC LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOptions, IN CHAR16 *FullTitle, IN CHAR16 *LoaderTitle, IN REFIT_VOLUME *Volume,
                                        IN EG_IMAGE *Image, IN EG_IMAGE *DriveImage, IN UINT8 OSType, IN UINT8 Flags, IN CHAR16 Hotkey, EG_PIXEL *BootBgColor,
                                        IN UINT8 CustomBoot, IN EG_IMAGE *CustomLogo, IN BOOLEAN CustomEntry)
@@ -579,8 +565,9 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
     case OSTYPE_OSX_INSTALLER:
       OSIconName = GetOSIconName(Entry->OSVersion);// Sothor - Get OSIcon name using OSVersion
       // apianti - force custom logo even when verbose
-      if (!IsCustomBootEntry(Entry) && (Entry->LoadOptions != NULL) &&
-          ((StrStr(Entry->LoadOptions, L"-v") != NULL) || (StrStr(Entry->LoadOptions, L"-V") != NULL))) {
+      if ((Entry->LoadOptions != NULL) &&
+          ((StrStr(Entry->LoadOptions, L"-v") != NULL) ||
+           (StrStr(Entry->LoadOptions, L"-V") != NULL))) {
         // OSX is not booting verbose, so we can set console to graphics mode
         Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_USEGRAPHICS);
       }
