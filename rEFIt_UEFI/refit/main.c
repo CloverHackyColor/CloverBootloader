@@ -821,6 +821,14 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     gST->ConOut->OutputString = NullConOutOutputString;
   }
 
+  // Initialize the boot screen
+  if (EFI_ERROR(Status = InitBootScreen(Entry))) {
+    DBG("Failed to initialize boot screen: %r!\n");
+  }
+  else if (EFI_ERROR(Status = LockBootScreen())) {
+    DBG("Failed to lock boot screen: %r!\n", Status);
+  }
+
   if (OSTYPE_IS_OSX(Entry->LoaderType) ||
       OSTYPE_IS_OSX_RECOVERY(Entry->LoaderType) ||
       OSTYPE_IS_OSX_INSTALLER(Entry->LoaderType)) {
@@ -853,13 +861,6 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
 //  DBG("StartEFIImage\n");
 //  StartEFIImage(Entry->DevicePath, Entry->LoadOptions,
 //                Basename(Entry->LoaderPath), Basename(Entry->LoaderPath), NULL, NULL);
-
-  // Initialize the boot screen
-  if (EFI_ERROR(Status = InitBootScreen(Entry))) {
-    DBG("Failed to initialize boot screen: %r!\n");
-  } else if (EFI_ERROR(Status = LockBootScreen())) {
-    DBG("Failed to lock boot screen: %r!\n", Status);
-  }
 
 //  DBG("StartEFILoadedImage\n");
   StartEFILoadedImage(ImageHandle, Entry->LoadOptions, 

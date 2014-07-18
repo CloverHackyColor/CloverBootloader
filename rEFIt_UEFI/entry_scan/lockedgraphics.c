@@ -100,6 +100,7 @@ static EFI_STATUS EFIAPI LockedGOPQueryMode(IN EFI_GRAPHICS_OUTPUT_PROTOCOL *Thi
 
 static EFI_STATUS AddLockedGraphicsGOP(IN EFI_HANDLE Handle, IN EFI_HANDLE AgentHandle, IN EFI_HANDLE ControllerHandle, IN EFI_GRAPHICS_OUTPUT_PROTOCOL *GOPInterface)
 {
+  BOOLEAN          Modify = TRUE;
   LOCKED_GRAPHICS *Ptr = LockedGraphics;
   if ((Handle == NULL) ||
       (AgentHandle == NULL) ||
@@ -117,6 +118,9 @@ static EFI_STATUS AddLockedGraphicsGOP(IN EFI_HANDLE Handle, IN EFI_HANDLE Agent
       ++(Ptr->GOPCount);
       return EFI_SUCCESS;
     }
+    if (Ptr->GOPInterface == GOPInterface) {
+      Modify = FALSE;
+    }
     Ptr = Ptr->Next;
   }
   // Create a new locked graphics if needed
@@ -130,28 +134,40 @@ static EFI_STATUS AddLockedGraphicsGOP(IN EFI_HANDLE Handle, IN EFI_HANDLE Agent
     LockedGraphics = Ptr;
   }
   // Store these elements for later
+  Ptr->Owner = Handle;
+  Ptr->Agent = AgentHandle;
+  Ptr->Controller = ControllerHandle;
   CopyMem(&(Ptr->GOP), GOPInterface, sizeof(EFI_GRAPHICS_OUTPUT_PROTOCOL));
   CopyMem(&(Ptr->GOPMode), GOPInterface->Mode, sizeof(EFI_GRAPHICS_OUTPUT_PROTOCOL_MODE));
   CopyMem(&(Ptr->GOPInfo), GOPInterface->Mode->Info, GOPInterface->Mode->SizeOfInfo);
   Ptr->GOPInterface = GOPInterface;
   Ptr->GOPCount = 1;
   // Alter the interface
-  GOPInterface->Blt = LockedGOPBlt;
-  GOPInterface->SetMode = LockedGOPSetMode;
-  GOPInterface->QueryMode = LockedGOPQueryMode;
-  if (GOPInterface->Mode != NULL) {
-    UINTN BufferSize = (GOPInterface->Mode->Info->HorizontalResolution * GOPInterface->Mode->Info->VerticalResolution * 4);
-    GOPInterface->Mode->MaxMode = 1;
-    GOPInterface->Mode->Mode = 0;
-    GOPInterface->Mode->SizeOfInfo = sizeof(EFI_GRAPHICS_OUTPUT_MODE_INFORMATION);
-    DBG("Custom boot framebuffer 0x%X 0x%X\n", GOPInterface->Mode->FrameBufferBase, BufferSize);
-    GOPInterface->Mode->FrameBufferBase = (EFI_PHYSICAL_ADDRESS)(UINTN)(GOPInterface->Mode->FrameBufferBase + BufferSize);
-    DBG("Custom boot GOP: 0x%X 0x%X", GOPInterface, GOPInterface->Mode->FrameBufferSize);
-    GOPInterface->Mode->FrameBufferSize -= BufferSize;
-    if (GOPInterface->Mode->Info != NULL) {
-      DBG(" %d(%d)x%d", GOPInterface->Mode->Info->HorizontalResolution, GOPInterface->Mode->Info->PixelsPerScanLine, GOPInterface->Mode->Info->VerticalResolution);
+  if (Modify) {
+    GOPInterface->Blt = LockedGOPBlt;
+    GOPInterface->SetMode = LockedGOPSetMode;
+    GOPInterface->QueryMode = LockedGOPQueryMode;
+    if (GOPInterface->Mode != NULL) {
+      UINTN BufferSize = (1024 * 768 * 4); // (GOPInterface->Mode->Info->HorizontalResolution * GOPInterface->Mode->Info->VerticalResolution * 4);
+      GOPInterface->Mode->MaxMode = 1;
+      GOPInterface->Mode->Mode = 0;
+      GOPInterface->Mode->SizeOfInfo = sizeof(EFI_GRAPHICS_OUTPUT_MODE_INFORMATION);
+      DBG("Custom boot framebuffer 0x%X 0x%X\n", GOPInterface->Mode->FrameBufferBase, GOPInterface->Mode->FrameBufferSize);
+      GOPInterface->Mode->FrameBufferBase = (EFI_PHYSICAL_ADDRESS)(UINTN)(GOPInterface->Mode->FrameBufferBase + GOPInterface->Mode->FrameBufferSize);
+      GOPInterface->Mode->FrameBufferSize = BufferSize;
+      DBG("Custom boot GOP: 0x%X @0x%X 0x%X", GOPInterface, GOPInterface->Mode->FrameBufferBase, BufferSize);
+      if (GOPInterface->Mode->Info != NULL) {
+        // /*
+        GOPInterface->Mode->Info->Version = 0;
+        GOPInterface->Mode->Info->HorizontalResolution = 1024;
+        GOPInterface->Mode->Info->PixelsPerScanLine = 1024;
+        GOPInterface->Mode->Info->VerticalResolution = 768;
+        GOPInterface->Mode->Info->PixelFormat = PixelBlueGreenRedReserved8BitPerColor;
+        // */
+        DBG(" %d(%d)x%d", GOPInterface->Mode->Info->HorizontalResolution, GOPInterface->Mode->Info->PixelsPerScanLine, GOPInterface->Mode->Info->VerticalResolution);
+      }
+      DBG("\n");
     }
-    DBG("\n");
   }
   return EFI_SUCCESS;
 }
@@ -278,6 +294,7 @@ static EFI_STATUS RemoveLockedGraphicsUGA(IN EFI_HANDLE Handle, IN EFI_HANDLE Ag
 
 static EFI_STATUS AddLockedGraphicsUGA(IN EFI_HANDLE Handle, IN EFI_HANDLE AgentHandle, IN EFI_HANDLE ControllerHandle, IN EFI_UGA_DRAW_PROTOCOL *UGAInterface)
 {
+  BOOLEAN          Modify = TRUE;
   LOCKED_GRAPHICS *Ptr = LockedGraphics;
   if ((Handle == NULL) ||
       (AgentHandle == NULL) ||
@@ -295,6 +312,9 @@ static EFI_STATUS AddLockedGraphicsUGA(IN EFI_HANDLE Handle, IN EFI_HANDLE Agent
       ++(Ptr->UGACount);
       return EFI_SUCCESS;
     }
+    if (Ptr->UGAInterface == UGAInterface) {
+       Modify = FALSE;
+    }
     Ptr = Ptr->Next;
   }
   // Create a new locked graphics if needed
@@ -308,12 +328,17 @@ static EFI_STATUS AddLockedGraphicsUGA(IN EFI_HANDLE Handle, IN EFI_HANDLE Agent
     LockedGraphics = Ptr;
   }
   // Store these elements for later
+  Ptr->Owner = Handle;
+  Ptr->Agent = AgentHandle;
+  Ptr->Controller = ControllerHandle;
   CopyMem(&(Ptr->UGA), UGAInterface, sizeof(EFI_UGA_DRAW_PROTOCOL));
   Ptr->UGAInterface = UGAInterface;
   Ptr->UGACount = 1;
   // Alter the interface
-  UGAInterface->Blt = LockedUGABlt;
-  UGAInterface->SetMode = LockedUGASetMode;
+  if (Modify) {
+    UGAInterface->Blt = LockedUGABlt;
+    UGAInterface->SetMode = LockedUGASetMode;
+  }
   return EFI_SUCCESS;
 }
 
@@ -385,6 +410,64 @@ static EFI_STATUS EFIAPI LockedCloseProtocol(IN EFI_HANDLE Handle, IN EFI_GUID *
   return OldBootServices.CloseProtocol(Handle, Protocol, AgentHandle, ControllerHandle);
 }
 
+// Lock the graphics GOP
+static EFI_STATUS LockGraphicsGOP(VOID)
+{
+  EFI_HANDLE *Buffer;
+  VOID       *Interface;
+  UINTN       i, Size = 0;
+  // Get needed buffer size
+  EFI_STATUS  Status = gBS->LocateHandle(ByProtocol, &gEfiGraphicsOutputProtocolGuid, NULL, &Size, NULL);
+  if ((Status != EFI_BUFFER_TOO_SMALL) || (Size == 0)) {
+    return Status;
+  }
+  // Allocate buffer
+  Buffer = (EFI_HANDLE *)AllocatePool(Size);
+  if (Buffer == NULL) {
+    return EFI_OUT_OF_RESOURCES;
+  }
+  // Locate handles for GOP
+  Status = gBS->LocateHandle(ByProtocol, &gEfiGraphicsOutputProtocolGuid, NULL, &Size, Buffer);
+  if (EFI_ERROR(Status)) {
+    return Status;
+  }
+  // Open GOP protocols, they will be modified by our modified boot services
+  Size /= sizeof(EFI_HANDLE *);
+  for (i = 0; i < Size; ++i) {
+     gBS->OpenProtocol(Buffer[i], &gEfiGraphicsOutputProtocolGuid, &Interface, SelfImageHandle, NULL, EFI_OPEN_PROTOCOL_GET_PROTOCOL);
+  }
+  return EFI_SUCCESS;
+}
+
+// Lock the graphics UGA
+static EFI_STATUS LockGraphicsUGA(VOID)
+{
+   EFI_HANDLE *Buffer;
+   VOID       *Interface;
+   UINTN       i, Size = 0;
+   // Get needed buffer size
+   EFI_STATUS  Status = gBS->LocateHandle(ByProtocol, &gEfiUgaDrawProtocolGuid, NULL, &Size, NULL);
+   if ((Status != EFI_BUFFER_TOO_SMALL) || (Size == 0)) {
+      return Status;
+   }
+   // Allocate buffer
+   Buffer = (EFI_HANDLE *)AllocatePool(Size);
+   if (Buffer == NULL) {
+      return EFI_OUT_OF_RESOURCES;
+   }
+   // Locate handles for UGA
+   Status = gBS->LocateHandle(ByProtocol, &gEfiUgaDrawProtocolGuid, NULL, &Size, Buffer);
+   if (EFI_ERROR(Status)) {
+      return Status;
+   }
+   // Open UGA protocols, they will be modified by our modified boot services
+   Size /= sizeof(EFI_HANDLE *);
+   for (i = 0; i < Size; ++i) {
+      gBS->OpenProtocol(Buffer[i], &gEfiUgaDrawProtocolGuid, &Interface, SelfImageHandle, NULL, EFI_OPEN_PROTOCOL_GET_PROTOCOL);
+   }
+   return EFI_SUCCESS;
+}
+
 // Lock the graphics
 EFI_STATUS LockBootScreen(VOID)
 {
@@ -400,6 +483,9 @@ EFI_STATUS LockBootScreen(VOID)
   gBS->CloseProtocol = LockedCloseProtocol;
   gBS->Hdr.CRC32 = 0;
   gBS->CalculateCrc32(gBS, gBS->Hdr.HeaderSize, &(gBS->Hdr.CRC32));
+  // Find graphics and modify them
+  LockGraphicsGOP();
+  LockGraphicsUGA();
   // Lock screen
   ScreenIsLocked = TRUE;
   return EFI_SUCCESS;
