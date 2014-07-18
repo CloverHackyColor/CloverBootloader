@@ -400,14 +400,6 @@ EFI_STATUS LockBootScreen(VOID)
   gBS->CloseProtocol = LockedCloseProtocol;
   gBS->Hdr.CRC32 = 0;
   gBS->CalculateCrc32(gBS, gBS->Hdr.HeaderSize, &(gBS->Hdr.CRC32));
-  // Remove all locked graphics
-  while (LockedGraphics != NULL) {
-    LOCKED_GRAPHICS *Ptr = LockedGraphics;
-    LockedGraphics = Ptr->Next;
-    RestoreLockedGraphicsGOP(Ptr);
-    RestoreLockedGraphicsUGA(Ptr);
-    RemoveLockedGraphics(Ptr);
-  }
   // Lock screen
   ScreenIsLocked = TRUE;
   return EFI_SUCCESS;
@@ -422,6 +414,14 @@ EFI_STATUS UnlockBootScreen(VOID)
     return EFI_NOT_READY;
   }
   DBG("Custom boot unlock\n");
+  // Remove all locked graphics
+  while (LockedGraphics != NULL) {
+     LOCKED_GRAPHICS *Ptr = LockedGraphics;
+     LockedGraphics = Ptr->Next;
+     RestoreLockedGraphicsGOP(Ptr);
+     RestoreLockedGraphicsUGA(Ptr);
+     RemoveLockedGraphics(Ptr);
+  }
   // Restore locate handle, open and close protocol
   CopyMem(gBS, &OldBootServices, sizeof(EFI_BOOT_SERVICES));
   // Unlock
