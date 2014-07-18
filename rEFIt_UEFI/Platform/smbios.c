@@ -1419,6 +1419,11 @@ VOID PatchTableType17()
               channels = 3;
             }
       }
+      else if ((gRAM.SPD[0].InUse != gRAM.SPD[2].InUse) ||
+               (gRAM.SPD[0].ModuleSize != gRAM.SPD[2].ModuleSize) ||
+               (gRAM.SPD[0].Frequency != gRAM.SPD[2].Frequency)) {
+         channels = 1;
+      }
     }
   } else if ((gRAM.SPDInUse % 4) == 0) {
     // Quadruple channel
@@ -1438,6 +1443,10 @@ VOID PatchTableType17()
         (gRAM.SPD[0].ModuleSize == gRAM.SPD[4].ModuleSize)) {
       channels = 3;
     }
+  } else if ((gRAM.SPD[0].InUse != gRAM.SPD[2].InUse) ||
+             (gRAM.SPD[0].ModuleSize != gRAM.SPD[2].ModuleSize) ||
+             (gRAM.SPD[0].Frequency != gRAM.SPD[2].Frequency)) {
+     channels = 1;
   }
   // Can't have less than the number of channels
   if (expectedCount < channels) {

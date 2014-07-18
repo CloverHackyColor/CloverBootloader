@@ -41,6 +41,7 @@ extern MEM_STRUCTURE		gRAM;
 //extern DMI*					gDMI;
 
 PCI_TYPE00          gPci;
+BOOLEAN             smbIntel;
 
 CHAR8 *spd_memory_types[] =
 {
@@ -80,12 +81,20 @@ UINT8 spd_mem_to_smbios[] =
 //define outb(port, val)   IoWrite8(port, val)
 //define val=inb(port) val=IoRead(port)
 
+// Intel SMB reg offsets
 #define SMBHSTSTS 0
 #define SMBHSTCNT 2
 #define SMBHSTCMD 3
 #define SMBHSTADD 4
 #define SMBHSTDAT 5
 #define SBMBLKDAT 7
+// MCP and nForce SMB reg offsets
+#define SMBHPRTCL_NV 0 /* protocol, PEC */
+#define SMBHSTSTS_NV 1 /* status */
+#define SMBHSTADD_NV 2 /* address */
+#define SMBHSTCMD_NV 3 /* command */
+#define SMBHSTDAT_NV 4 /* 32 data registers */
+//
 
 // XMP memory profile
 #define SPD_XMP_SIG1 176
@@ -123,43 +132,73 @@ UINT8 spd_indexes[] = {
 };
 #define SPD_INDEXES_SIZE (sizeof(spd_indexes) / sizeof(INT8))
 
-/** Read one byte from the intel i2c, used for reading SPD on intel chipsets only. */
+/** Read one byte from i2c, used for reading SPD */
 
-UINT8 smb_read_byte_intel(UINT32 base, UINT8 adr, UINT8 cmd)
+UINT8 smb_read_byte(UINT32 base, UINT8 adr, UINT8 cmd)
 {
   //   INTN l1, h1, l2, h2;
   UINT64 t, t1, t2;
+    
+  if (smbIntel) {
+      IoWrite8(base + SMBHSTSTS, 0x1f);				// reset SMBus Controller
+      IoWrite8(base + SMBHSTDAT, 0xff);
 	
-  IoWrite8(base + SMBHSTSTS, 0x1f);					// reset SMBus Controller
-  IoWrite8(base + SMBHSTDAT, 0xff);
+      t1 = AsmReadTsc(); //rdtsc(l1, h1);
+      while ( IoRead8(base + SMBHSTSTS) & 0x01)    // wait until read
+      {
+          t2 = AsmReadTsc(); //rdtsc(l2, h2);
+          t = DivU64x64Remainder((t2 - t1), DivU64x32(gCPUStructure.TSCFrequency, 1000), 0);
+          if (t > 5)
+              return 0xFF;                  // break
+      }
 	
-  t1 = AsmReadTsc(); //rdtsc(l1, h1);
-  while ( IoRead8(base + SMBHSTSTS) & 0x01)    // wait until read
-  {
-    t2 = AsmReadTsc(); //rdtsc(l2, h2);
-    t = DivU64x64Remainder((t2 - t1), DivU64x32(gCPUStructure.TSCFrequency, 1000), 0);
-    if (t > 5)
-      return 0xFF;                  // break
+      IoWrite8(base + SMBHSTCMD, cmd);
+      IoWrite8(base + SMBHSTADD, (adr << 1) | 0x01 );
+      IoWrite8(base + SMBHSTCNT, 0x48 );
+	
+      t1 = AsmReadTsc();
+	
+      while (!( IoRead8(base + SMBHSTSTS) & 0x02))		// wait til command finished
+      {
+          t2 = AsmReadTsc();
+          t = DivU64x64Remainder((t2 - t1), DivU64x32(gCPUStructure.TSCFrequency, 1000), 0);
+          if (t > 5)
+              break;									// break after 5ms
+      }
+      return IoRead8(base + SMBHSTDAT);
   }
-	
-  IoWrite8(base + SMBHSTCMD, cmd);
-  IoWrite8(base + SMBHSTADD, (adr << 1) | 0x01 );
-  IoWrite8(base + SMBHSTCNT, 0x48 );
-	
-  t1 = AsmReadTsc();
-	
- 	while (!( IoRead8(base + SMBHSTSTS) & 0x02))		// wait til command finished
-	{
-		t2 = AsmReadTsc();
-		t = DivU64x64Remainder((t2 - t1), DivU64x32(gCPUStructure.TSCFrequency, 1000), 0);
-		if (t > 5)
-			break;									// break after 5ms
-  }
-  return IoRead8(base + SMBHSTDAT);
+  else {
+      IoWrite8(base + SMBHSTSTS_NV, 0x1f);			// reset SMBus Controller
+      IoWrite8(base + SMBHSTDAT_NV, 0xff);
+    
+      t1 = AsmReadTsc(); //rdtsc(l1, h1);
+      while ( IoRead8(base + SMBHSTSTS_NV) & 0x01)    // wait until read
+      {
+          t2 = AsmReadTsc(); //rdtsc(l2, h2);
+          t = DivU64x64Remainder((t2 - t1), DivU64x32(gCPUStructure.TSCFrequency, 1000), 0);
+          if (t > 5)
+              return 0xFF;                  // break
+      }
+    
+      IoWrite8(base + SMBHSTSTS_NV, 0x00); // clear status register
+      IoWrite8(base + SMBHSTCMD_NV, cmd);
+      IoWrite8(base + SMBHSTADD_NV, (adr << 1) | 0x01 );
+      IoWrite8(base + SMBHPRTCL_NV, 0x07 );
+      t1 = AsmReadTsc();
+    
+      while (!( IoRead8(base + SMBHSTSTS_NV) & 0x9F))		// wait till command finished
+      {
+          t2 = AsmReadTsc();
+          t = DivU64x64Remainder((t2 - t1), DivU64x32(gCPUStructure.TSCFrequency, 1000), 0);
+          if (t > 5)
+              break; // break after 5ms
+      }
+      return IoRead8(base + SMBHSTDAT_NV);
+    }
 }
 
 /* SPD i2c read optimization: prefetch only what we need, read non prefetcheable bytes on the fly */
-#define READ_SPD(spd, base, slot, x) spd[x] = smb_read_byte_intel(base, 0x50 + slot, x)
+#define READ_SPD(spd, base, slot, x) spd[x] = smb_read_byte(base, 0x50 + slot, x)
 
 
 /** Read from spd *used* values only*/
@@ -375,7 +414,7 @@ CHAR8* getDDRPartNum(UINT8* spd, UINT32 base, UINT8 slot)
 #define PCI_COMMAND_OFFSET                          0x04
 
 /** Read from smbus the SPD content and interpret it for detecting memory attributes */
-VOID read_smb_intel(EFI_PCI_IO_PROTOCOL *PciIo)
+VOID read_smb(EFI_PCI_IO_PROTOCOL *PciIo)
 {
 //	EFI_STATUS	Status;
   UINT16      speed;
@@ -416,7 +455,7 @@ VOID read_smb_intel(EFI_PCI_IO_PROTOCOL *PciIo)
                                 1,
                                 &mmio
                                 );
-	
+	if (vid == 0x8086) {
 	/*Status = */PciIo->Pci.Read (
                                 PciIo,
                                 EfiPciIoWidthUint32,
@@ -425,8 +464,20 @@ VOID read_smb_intel(EFI_PCI_IO_PROTOCOL *PciIo)
                                 &base
                                 );
 	
-  base &= 0xFFFE;
-	
+        base &= 0xFFFE;
+        smbIntel = TRUE;
+    }
+    else {
+    /*Status = */PciIo->Pci.Read (
+                                PciIo,
+                                EfiPciIoWidthUint32,
+                                0x24, // iobase offset 0x24 on MCP
+                                1,
+                                &base
+                                );
+        base &= 0xFFFC;
+        smbIntel = FALSE;
+    }
 	/*Status = */PciIo->Pci.Read (
                                 PciIo,
                                 EfiPciIoWidthUint32,
@@ -447,7 +498,7 @@ VOID read_smb_intel(EFI_PCI_IO_PROTOCOL *PciIo)
   // Search MAX_RAM_SLOTS slots
   for (i = 0; i <  MAX_RAM_SLOTS; i++){
     //slot = &gRAM->DIMM[i];
-    //spd_size = smb_read_byte_intel(base, 0x50 + i, 0);
+    //spd_size = smb_read_byte(base, 0x50 + i, 0);
     //DBG("SPD[%d]: size %d @0x%x \n", i, spd_size, 0x50 + i);
 		/*if (spd_size != 0xFF) {
      DBG("SPD[0] (size): 0x%02x @0x%x \n", spd_size, 0x50 + i);
@@ -544,19 +595,19 @@ VOID read_smb_intel(EFI_PCI_IO_PROTOCOL *PciIo)
 /*
  static struct smbus_controllers_t smbus_controllers[] = {
  
- {0x8086, 0x269B, "ESB2",		read_smb_intel },
- {0x8086, 0x25A4, "6300ESB",		read_smb_intel },
- {0x8086, 0x24C3, "ICH4",		read_smb_intel },
- {0x8086, 0x24D3, "ICH5",		read_smb_intel },
- {0x8086, 0x266A, "ICH6",		read_smb_intel },
- {0x8086, 0x27DA, "ICH7",		read_smb_intel },
- {0x8086, 0x283E, "ICH8",		read_smb_intel },
- {0x8086, 0x2930, "ICH9",		read_smb_intel },
- {0x8086, 0x3A30, "ICH10R",		read_smb_intel },
- {0x8086, 0x3A60, "ICH10B",		read_smb_intel },
- {0x8086, 0x3B30, "5 Series",	read_smb_intel },
- {0x8086, 0x1C22, "6 Series",	read_smb_intel },
- {0x8086, 0x5032, "EP80579",		read_smb_intel }
+ {0x8086, 0x269B, "ESB2",		read_smb },
+ {0x8086, 0x25A4, "6300ESB",	read_smb },
+ {0x8086, 0x24C3, "ICH4",		read_smb },
+ {0x8086, 0x24D3, "ICH5",		read_smb },
+ {0x8086, 0x266A, "ICH6",		read_smb },
+ {0x8086, 0x27DA, "ICH7",		read_smb },
+ {0x8086, 0x283E, "ICH8",		read_smb },
+ {0x8086, 0x2930, "ICH9",		read_smb },
+ {0x8086, 0x3A30, "ICH10R",		read_smb },
+ {0x8086, 0x3A60, "ICH10B",		read_smb },
+ {0x8086, 0x3B30, "5 Series",	read_smb },
+ {0x8086, 0x1C22, "6 Series",	read_smb },
+ {0x8086, 0x5032, "EP80579",	read_smb }
  
  };
  */
@@ -599,9 +650,9 @@ VOID ScanSPD()
 							
 							//SmBus controller has class = 0x0c0500
 							if ((gPci.Hdr.ClassCode[2] == 0x0c) && (gPci.Hdr.ClassCode[1] == 5) 
-                  && (gPci.Hdr.ClassCode[0] == 0) && (gPci.Hdr.VendorId == 0x8086))
+                  && (gPci.Hdr.ClassCode[0] == 0) && (gPci.Hdr.VendorId == 0x8086 || gPci.Hdr.VendorId == 0x10DE))
 							{
-								read_smb_intel(PciIo);
+								read_smb(PciIo);
 							}
 						}
 					}
