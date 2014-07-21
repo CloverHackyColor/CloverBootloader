@@ -549,7 +549,7 @@ XhcInitSched (
       return;
     }
     Xhc->ScratchEntry = ScratchEntry;
-
+    ScratchPhy = 0;
     Status = UsbHcAllocateAlignedPages (
                Xhc->PciIo,
                EFI_SIZE_TO_PAGES (MaxScratchpadBufs * sizeof (UINT64)),
@@ -570,6 +570,7 @@ XhcInitSched (
     // Allocate each scratch buffer
     //
     for (Index = 0; Index < MaxScratchpadBufs; Index++) {
+      ScratchEntryPhy = 0;
       Status = UsbHcAllocateAlignedPages (
                  Xhc->PciIo,
                  EFI_SIZE_TO_PAGES (Xhc->PageSize),
