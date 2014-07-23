@@ -110,7 +110,7 @@
   LockBoxLib|OvmfPkg/Library/LockBoxLib/LockBoxBaseLib.inf
   CustomizedDisplayLib|MdeModulePkg/Library/CustomizedDisplayLib/CustomizedDisplayLib.inf
   MemLogLib|Clover/Library/MemLogLibDefault/MemLogLibDefault.inf
-  
+
 !ifdef $(SOURCE_DEBUG_ENABLE)
   PeCoffExtraActionLib|SourceLevelDebugPkg/Library/PeCoffExtraActionLibDebug/PeCoffExtraActionLibDebug.inf
   DebugCommunicationLib|SourceLevelDebugPkg/Library/DebugCommunicationLibSerialPort/DebugCommunicationLibSerialPort.inf
@@ -337,17 +337,9 @@
   gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwWorkingBase|0
   gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwSpareBase|0
   gEfiMdeModulePkgTokenSpaceGuid.PcdPciDisableBusEnumeration|FALSE
-
-  ## The PCDs below are used to specify the video resolution and text mode of text output.
-  #  To make this work, they should be created as PcdsDynamic or PcdsDynamicEx in platform DSC file.
-  #  PcdLib should also be set to DxePcdLib for all modules using them.
-  #  Then we can update these PCDs and reconnect console drivers (GraphicsConsole, Consplitter).
   gEfiMdeModulePkgTokenSpaceGuid.PcdVideoHorizontalResolution|800
   gEfiMdeModulePkgTokenSpaceGuid.PcdVideoVerticalResolution|600
-  gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdSetupVideoHorizontalResolution|0
-  gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdSetupVideoVerticalResolution|0
-  gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdSetupConOutRow|0
-  gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdSetupConOutColumn|0
+
 
 ################################################################################
 #
