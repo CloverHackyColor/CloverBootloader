@@ -104,8 +104,9 @@ static struct gma_gpu_t KnownGPUS[] = {
   // 0x0e08 - Xeon E5-1620 
 };
 
-CHAR8 *get_gma_model(UINT16 id) {
-	INT32 i = 0;
+CHAR8 *get_gma_model(UINT16 id)
+{
+	INT32 i;
 	
 	for (i = 0; i < (sizeof(KnownGPUS) / sizeof(KnownGPUS[0])); i++)
 	{

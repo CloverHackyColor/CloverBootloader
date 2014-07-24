@@ -449,7 +449,7 @@ VOID GetCPUProperties (VOID)
                   gCPUStructure.MaxRatio);
               gCPUStructure.MaxRatio = (UINT32)TurboMsr;
             }
-            gCPUStructure.SubDivider = (UINT32)(RShiftU64(msr, 14)) & 0x1;
+            gCPUStructure.SubDivider = (UINT32)(RShiftU64(msr, 46)) & 0x1;
             gCPUStructure.MinRatio = 60;
             if(!gCPUStructure.MaxRatio) gCPUStructure.MaxRatio = 6; // :(
             msr = AsmReadMsr64(0xCD);
