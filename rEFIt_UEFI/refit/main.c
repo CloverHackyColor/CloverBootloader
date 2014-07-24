@@ -823,7 +823,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
 
   // Initialize the boot screen
   if (EFI_ERROR(Status = InitBootScreen(Entry))) {
-    DBG("Failed to initialize boot screen: %r!\n");
+    DBG("Failed to initialize boot screen: %r!\n", Status);
   }
   else if (EFI_ERROR(Status = LockBootScreen())) {
     DBG("Failed to lock boot screen: %r!\n", Status);
