@@ -424,7 +424,9 @@
       gEfiMdeModulePkgTokenSpaceGuid.PcdVariableCollectStatistics|FALSE
       gEfiMdeModulePkgTokenSpaceGuid.PcdHwErrStorageSize|0x0000
   }
-  
+
+  Clover/AppleImageCodec/AppleImageCodec.inf
+
   #
   # Sample Application
   #

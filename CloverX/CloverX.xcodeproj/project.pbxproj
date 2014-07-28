@@ -35,6 +35,7 @@
 		2C73F749189D57B60068591A /* Fs.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C73F747189D57B60068591A /* Fs.c */; };
 		2CA5D9A0189BA8B500074584 /* DataHub.c in Sources */ = {isa = PBXBuildFile; fileRef = 2CA5D99E189BA8B500074584 /* DataHub.c */; };
 		2CAF5FD718B01E7C00BCC174 /* OsxAptioFix2Drv.c in Sources */ = {isa = PBXBuildFile; fileRef = 2CAF5FD518B01E7C00BCC174 /* OsxAptioFix2Drv.c */; };
+		2CDF425819854EC2000D1C9D /* picopng.c in Sources */ = {isa = PBXBuildFile; fileRef = 2CDF425619854EC2000D1C9D /* picopng.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -723,12 +724,17 @@
 		12FA1599173F4E7400F847F1 /* OsxLowMemFixDrv.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = OsxLowMemFixDrv.inf; sourceTree = "<group>"; };
 		2C201368188C9ECB001CB26C /* Hibernate.c */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 2; lastKnownFileType = sourcecode.c.c; path = Hibernate.c; sourceTree = "<group>"; tabWidth = 2; };
 		2C2C31DC18AFBF72001456A1 /* Hibernate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Hibernate.h; sourceTree = "<group>"; };
+		2C52548B1984503000967FF6 /* AppleImageCodec.c */ = {isa = PBXFileReference; indentWidth = 2; lastKnownFileType = sourcecode.c.c; path = AppleImageCodec.c; sourceTree = "<group>"; };
+		2C52548D1984503000967FF6 /* AppleImageCodec.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = AppleImageCodec.inf; sourceTree = "<group>"; };
+		2C52548E1984506500967FF6 /* AppleImageCodecProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleImageCodecProtocol.h; sourceTree = "<group>"; };
 		2C73F747189D57B60068591A /* Fs.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Fs.c; sourceTree = "<group>"; usesTabs = 1; };
 		2C73F748189D57B60068591A /* Fs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Fs.h; sourceTree = "<group>"; };
 		2CA5D99E189BA8B500074584 /* DataHub.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = DataHub.c; sourceTree = "<group>"; };
 		2CA5D99F189BA8B500074584 /* DataHub.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataHub.h; sourceTree = "<group>"; };
 		2CAF5FD518B01E7C00BCC174 /* OsxAptioFix2Drv.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = OsxAptioFix2Drv.c; sourceTree = "<group>"; };
 		2CAF5FD618B01E7C00BCC174 /* OsxAptioFix2Drv.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = OsxAptioFix2Drv.inf; sourceTree = "<group>"; };
+		2CDF425619854EC2000D1C9D /* picopng.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = picopng.c; sourceTree = "<group>"; };
+		2CDF425719854EC2000D1C9D /* picopng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = picopng.h; sourceTree = "<group>"; };
 		DEDA9729180530BE003AD904 /* common.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = common.c; sourceTree = "<group>"; };
 		DEDA972A180530BE003AD904 /* legacy.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = legacy.c; sourceTree = "<group>"; };
 		DEDA972B180530BE003AD904 /* loader.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = loader.c; sourceTree = "<group>"; };
@@ -877,6 +883,7 @@
 		123F0969164F96DB008C1C1C /* Protocol */ = {
 			isa = PBXGroup;
 			children = (
+				2C52548E1984506500967FF6 /* AppleImageCodecProtocol.h */,
 				12DD324A16557FC200108DFC /* efiConsoleControl.h */,
 				123F096A164F96DB008C1C1C /* FSInjectProtocol.h */,
 				123F096B164F96DB008C1C1C /* MsgLog.h */,
@@ -1674,6 +1681,7 @@
 			children = (
 				124D76E11657A4B9008B5407 /* CopiedFromEDK */,
 				124D76D71657A474008B5407 /* AcpiReset */,
+				2C52548A1984503000967FF6 /* AppleImageCodec */,
 				123F096F164F9C00008C1C1C /* BiosVideo */,
 				124D76DA1657A47E008B5407 /* BiosKeyboard */,
 				124D76F71657A4FD008B5407 /* CpuDxe */,
@@ -2535,6 +2543,18 @@
 			path = ../OsxLowMemFixDrv;
 			sourceTree = "<group>";
 		};
+		2C52548A1984503000967FF6 /* AppleImageCodec */ = {
+			isa = PBXGroup;
+			children = (
+				2C52548B1984503000967FF6 /* AppleImageCodec.c */,
+				2C52548D1984503000967FF6 /* AppleImageCodec.inf */,
+				2CDF425619854EC2000D1C9D /* picopng.c */,
+				2CDF425719854EC2000D1C9D /* picopng.h */,
+			);
+			name = AppleImageCodec;
+			path = ../AppleImageCodec;
+			sourceTree = "<group>";
+		};
 		DEDA9728180530BE003AD904 /* entry_scan */ = {
 			isa = PBXGroup;
 			children = (
@@ -2640,6 +2660,7 @@
 				2CAF5FD718B01E7C00BCC174 /* OsxAptioFix2Drv.c in Sources */,
 				122489CF16A93FD300A0DB6B /* UsbMouse.c in Sources */,
 				12B3D27517B23032009D8170 /* Edid.c in Sources */,
+				2CDF425819854EC2000D1C9D /* picopng.c in Sources */,
 				12A82BA917CFCAE50019A5D3 /* card_vlist.c in Sources */,
 				1229C5A419750B78000A987B /* bootscreen.c in Sources */,
 				1229C5AB19750BFE000A987B /* PlatformDriverOverride.c in Sources */,
