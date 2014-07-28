@@ -1662,7 +1662,7 @@ BdsRefreshBbsTableForBoot (
       break;
     }
   }
-
+  FreePool (DeviceType);
   if (BootOrder != NULL) {
     FreePool (BootOrder);
   }
