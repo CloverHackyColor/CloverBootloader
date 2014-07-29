@@ -97,7 +97,7 @@ extern UINT32       PrelinkInfoLoadCmdAddr;
 extern UINT32       PrelinkInfoAddr;
 extern UINT32       PrelinkInfoSize;
 
-extern UINT32 DisplayVendor[2];
+extern UINT32 DisplayVendor[];
 //VOID findCPUfamily();
 
 

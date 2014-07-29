@@ -221,12 +221,12 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
             }
 						
             realMax = maximum.Control.Control;
-            DBG("Maximum control=%x\n", realMax);
+            DBG("Maximum control=0x%x\n", realMax);
             if (gSettings.Turbo) {
               realTurbo = (gCPUStructure.Turbo4 > gCPUStructure.Turbo1) ?
                           (gCPUStructure.Turbo4 / 10) : (gCPUStructure.Turbo1 / 10);
               maximum.Control.Control = realTurbo;
-              MsgLog("Turbo control=%x\n", realTurbo);
+              MsgLog("Turbo control=0x%x\n", realTurbo);
             }
             Apsn = (realTurbo > realMax)?(realTurbo - realMax):0;
             realMin =  RShiftU64(AsmReadMsr64(MSR_PLATFORM_INFO), 40) & 0xff;

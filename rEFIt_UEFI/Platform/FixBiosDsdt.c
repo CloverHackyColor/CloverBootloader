@@ -48,13 +48,13 @@ BOOLEAN ASUSFIX;
 BOOLEAN USBIntel;
 BOOLEAN USBNForce;
 BOOLEAN USBIDFIX = TRUE;
-BOOLEAN Display1PCIE;
-BOOLEAN Display2PCIE;
+//BOOLEAN Display1PCIE;
+//BOOLEAN Display2PCIE;
 BOOLEAN FirewireName;
 
 // for read computer data
-UINT32 DisplayADR1[2];
-UINT32 DisplayADR2[2];
+UINT32 DisplayADR1[4];
+UINT32 DisplayADR2[4];
 UINT32 NetworkADR1;
 UINT32 NetworkADR2;
 UINT32 ArptADR1;
@@ -74,9 +74,9 @@ UINT32 SATAAHCIADR2;
 UINT32 IDEVENDOR;
 UINT32 SATAVENDOR;
 UINT32 SATAAHCIVENDOR;
-UINT32 DisplayVendor[2];
-UINT16 DisplayID[2];
-UINT32 DisplaySubID[2];
+UINT32 DisplayVendor[4];
+UINT16 DisplayID[4];
+UINT32 DisplaySubID[4];
 
 //UINT32 PWRBADR;
 
@@ -101,7 +101,7 @@ pci_dt_t   Displaydevice[2];
 
 UINTN usb;
 
-struct lpc_device_t 
+struct lpc_device_t
 {
 	UINT32		id;
 };
@@ -642,7 +642,7 @@ VOID CheckHardware()
 #if DEBUG_FIX               
             UINT32 dadr1, dadr2;
 #endif             
-            PCI_IO_DEVICE *PciIoDevice;
+//            PCI_IO_DEVICE *PciIoDevice;
 
             GetPciADR(DevicePath, &DisplayADR1[display], &DisplayADR2[display], NULL);
             DBG("VideoCard devID=0x%x\n", ((Pci.Hdr.DeviceId << 16) | Pci.Hdr.VendorId));
@@ -670,15 +670,15 @@ VOID CheckHardware()
             //
             //
             // Go through the Capability list
-            //
-            PciIoDevice = PCI_IO_DEVICE_FROM_PCI_IO_THIS (PciIo);
+            //unused
+ /*           PciIoDevice = PCI_IO_DEVICE_FROM_PCI_IO_THIS (PciIo);
             if (PciIoDevice->IsPciExp) {
               if (display==0)
                 Display1PCIE = TRUE;
               else
                 Display2PCIE = TRUE;
             }  
-            DBG("Display %d is %aPCIE\n", display, (PciIoDevice->IsPciExp) ? "" :" not");
+            DBG("Display %d is %aPCIE\n", display, (PciIoDevice->IsPciExp) ? "" :" not"); */
             display++;
           }
           
@@ -4968,7 +4968,7 @@ VOID FixBiosDsdt (UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, 
   // Fix Display
   if ((gSettings.FixDsdt & FIX_DISPLAY) || (gSettings.FixDsdt & FIX_INTELGFX)) {
     INT32 i;
-    for (i=0; i<2; i++) {
+    for (i=0; i<4; i++) {
       if (DisplayADR1[i]) { 
         if (gSettings.FixDsdt & FIX_NEW_WAY) {
           if (((DisplayVendor[i] != 0x8086) && (gSettings.FixDsdt & FIX_DISPLAY)) ||

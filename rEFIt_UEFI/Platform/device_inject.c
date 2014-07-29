@@ -72,7 +72,7 @@ CHAR8 *get_pci_dev_path(pci_dt_t *PciDt)
   if (!DevicePath)
     return NULL;
   devpathstr = FileDevicePathToStr(DevicePath);
-  tmp = AllocateZeroPool((StrLen(devpathstr)+1)*sizeof(CHAR8));
+  tmp = AllocateZeroPool((StrLen(devpathstr)+1)*sizeof(CHAR16));
   UnicodeStrToAsciiStr(devpathstr, tmp);		
   return tmp;
 	
@@ -124,33 +124,32 @@ DevPropDevice *devprop_add_device_pci(DevPropString *StringBuf, pci_dt_t *PciDt)
 	}
 	
 	DevicePath = DevicePathFromHandle(PciDt->DeviceHandle);
-// 	DBG("devprop_add_device_pci %s ", DevicePathToStr(DevicePath));
+  // 	DBG("devprop_add_device_pci %s ", DevicePathToStr(DevicePath));
 	if (!DevicePath)
 		return NULL;
 	
 	device = AllocateZeroPool(sizeof(DevPropDevice));
-      if (!device) {
-        return NULL;
-      }
-	  
-	
+  if (!device) {
+    return NULL;
+  }
+  	
 	device->numentries = 0x00;
 	
 	//
 	// check and copy ACPI_DEVICE_PATH
 	//
 	if (DevicePath->Type == ACPI_DEVICE_PATH && DevicePath->SubType == ACPI_DP) {
-//		CopyMem(&device->acpi_dev_path, DevicePath, sizeof(struct ACPIDevPath));
+    //		CopyMem(&device->acpi_dev_path, DevicePath, sizeof(struct ACPIDevPath));
 		device->acpi_dev_path.length = 0x0c;
 		device->acpi_dev_path.type = 0x02;
 		device->acpi_dev_path.subtype = 0x01;
 		device->acpi_dev_path._HID = 0x0a0341d0;
-		device->acpi_dev_path._UID = gSettings.PCIRootUID; 
-				
-//		DBG("ACPI HID=%x, UID=%x ", device->acpi_dev_path._HID, device->acpi_dev_path._UID);
+		device->acpi_dev_path._UID = gSettings.PCIRootUID;
+    
+    //		DBG("ACPI HID=%x, UID=%x ", device->acpi_dev_path._HID, device->acpi_dev_path._UID);
 	} else {
-//		DBG("not ACPI\n");
-      FreePool(device);
+    //		DBG("not ACPI\n");
+    FreePool(device);
 	  return NULL;
 	}
 	
@@ -161,10 +160,10 @@ DevPropDevice *devprop_add_device_pci(DevPropString *StringBuf, pci_dt_t *PciDt)
 		DevicePath = NextDevicePathNode(DevicePath);
 		if (DevicePath->Type == HARDWARE_DEVICE_PATH && DevicePath->SubType == HW_PCI_DP) {
 			CopyMem(&device->pci_dev_path[NumPaths], DevicePath, sizeof(struct PCIDevPath));
-//			DBG("PCI[%d] f=%x, d=%x ", NumPaths, device->pci_dev_path[NumPaths].function, device->pci_dev_path[NumPaths].device);
+      //			DBG("PCI[%d] f=%x, d=%x ", NumPaths, device->pci_dev_path[NumPaths].function, device->pci_dev_path[NumPaths].device);
 		} else {
 			// not PCI path - break the loop
-//			DBG("not PCI ");
+      //			DBG("not PCI ");
 			break;
 		}
 	}
@@ -175,7 +174,7 @@ DevPropDevice *devprop_add_device_pci(DevPropString *StringBuf, pci_dt_t *PciDt)
 		return NULL;
 	}
 	
-//	DBG("-> NumPaths=%d\n", NumPaths);
+  //	DBG("-> NumPaths=%d\n", NumPaths);
 	device->num_pci_devpaths = (UINT8)NumPaths;
 	device->length = (UINT32)(24U + (6U * NumPaths));
 	
@@ -620,8 +619,7 @@ BOOLEAN IsHDMIAudio(EFI_HANDLE PciDevHandle)
   for (Index = 0; Index < NGFX; Index++) {
     if (gGraphics[Index].Segment == Segment
         && gGraphics[Index].Bus == Bus
-        && gGraphics[Index].Device == Device
-        ) {
+        && gGraphics[Index].Device == Device) {
       return TRUE;
     }
   }

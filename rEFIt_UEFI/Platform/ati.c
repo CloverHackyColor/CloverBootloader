@@ -1587,12 +1587,12 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
 	BOOLEAN	add_vbios = gSettings.LoadVBios;
 	CHAR8		*name;
 	CHAR8		*name_parent;
-    CHAR8 		*CfgName;
-//    CHAR8 		*model;
-    INTN  		NameLen = 0;
+  CHAR8 		*CfgName;
+  //    CHAR8 		*model;
+  INTN  		NameLen = 0;
 	UINTN		i, j;
 	INTN		n_ports = 0;
-    UINTN 		ExpansionRom = 0;
+  UINTN 		ExpansionRom = 0;
 	
 	card = AllocateZeroPool(sizeof(card_t));
 	if (!card)
@@ -1600,58 +1600,53 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
 	
 	card->pci_dev = pci_dev;
 	
-	for (i = 0; radeon_cards[i].device_id ; i++)
-	{
+	for (i = 0; radeon_cards[i].device_id ; i++) {
     card->info = &radeon_cards[i];
 		if (radeon_cards[i].device_id == pci_dev->device_id) break;
 	}
   
-  for (j = 0; j < NGFX; j++) {    
+  for (j = 0; j < NGFX; j++) {
     if ((gGraphics[j].Vendor == Ati) &&
         (gGraphics[j].DeviceID == pci_dev->device_id)) {
-//      model = gGraphics[j].Model; 
+      //      model = gGraphics[j].Model;
       n_ports = gGraphics[j].Ports;
       add_vbios = gGraphics[j].LoadVBios;
       break;
     }
-  }  
+  }
 	
-	if (!card->info || !card->info->device_id || !card->info->cfg_name)
-	{
-		DBG("Unsupported ATI card! Device ID: [%04x:%04x] Subsystem ID: [%08x] \n", 
+	if (!card->info || !card->info->device_id || !card->info->cfg_name) {
+		DBG("Unsupported ATI card! Device ID: [%04x:%04x] Subsystem ID: [%08x] \n",
 				pci_dev->vendor_id, pci_dev->device_id, pci_dev->subsys_id);
-   		 DBG("search for brothers family\n");
-    	for (i = 0; radeon_cards[i].device_id ; i++)
-    	{
-      		if ((radeon_cards[i].device_id & ~0xf) == (pci_dev->device_id & ~0xf))
-      		{
-        		card->info = &radeon_cards[i];
-        		break;
-      		}
-    	}
-    	if (!card->info->cfg_name) {
-      		DBG("...compatible config is not found\n");
-      		return FALSE;
-    	}
+    DBG("search for brothers family\n");
+    for (i = 0; radeon_cards[i].device_id ; i++) {
+      if ((radeon_cards[i].device_id & ~0xf) == (pci_dev->device_id & ~0xf)) {
+        card->info = &radeon_cards[i];
+        break;
+      }
+    }
+    if (!card->info->cfg_name) {
+      DBG("...compatible config is not found\n");
+      return FALSE;
+    }
 	}
 	
-	card->fb		= (UINT8 *)(UINTN)(pci_config_read32(pci_dev, PCI_BASE_ADDRESS_0) & ~0x0f);
-	card->mmio		= (UINT8 *)(UINTN)(pci_config_read32(pci_dev, PCI_BASE_ADDRESS_2) & ~0x0f);
-	card->io		= (UINT8 *)(UINTN)(pci_config_read32(pci_dev, PCI_BASE_ADDRESS_4) & ~0x03);
+	card->fb    = (UINT8 *)(UINTN)(pci_config_read32(pci_dev, PCI_BASE_ADDRESS_0) & ~0x0f);
+	card->mmio	= (UINT8 *)(UINTN)(pci_config_read32(pci_dev, PCI_BASE_ADDRESS_2) & ~0x0f);
+	card->io    = (UINT8 *)(UINTN)(pci_config_read32(pci_dev, PCI_BASE_ADDRESS_4) & ~0x03);
   pci_dev->regs = card->mmio;
 	ExpansionRom = pci_config_read32(pci_dev, PCI_EXPANSION_ROM_BASE); //0x30 as Chimera
 	DBG("Framebuffer @0x%08X  MMIO @0x%08X	I/O Port @0x%08X ROM Addr @0x%08X\n",
-		card->fb, card->mmio, card->io, ExpansionRom);
+      card->fb, card->mmio, card->io, ExpansionRom);
 	
 	card->posted = radeon_card_posted();
 	DBG("ATI card %a, ", card->posted ? "POSTed" : "non-POSTed");
 	DBG("\n");
 	get_vram_size();
 	
-	if (add_vbios){
+	if (add_vbios) {
     load_vbios_file(pci_dev->vendor_id, pci_dev->device_id);
-		if (!card->rom)
-		{
+		if (!card->rom) {
 			DBG("reading VBIOS from %a", card->posted ? "legacy space" : "PCI ROM");
 			if (card->posted) // && ExpansionRom != 0)
 				read_vbios(FALSE);
@@ -1661,21 +1656,19 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
 		} else {
       DBG("VideoBIOS read from file\n");
     }
-
+    
   }
 	
-	if (card->info->chip_family >= CHIP_FAMILY_CEDAR)
-	{
+	if (card->info->chip_family >= CHIP_FAMILY_CEDAR) {
     DBG("ATI Radeon EVERGREEN family\n");
 		card->flags |= EVERGREEN;
 	}
-
-  if (card->info->chip_family <= CHIP_FAMILY_RV670)
-	{
+  
+  if (card->info->chip_family <= CHIP_FAMILY_RV670) {
     DBG("ATI Radeon OLD family\n");
 		card->flags |= FLAGOLD;
 	}
-
+  
   if (gMobile) {
     DBG("ATI Mobile Radeon\n");
     card->flags |= FLAGMOBILE;
@@ -1694,9 +1687,9 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
 		// which means one of the fb's or kNull
 		DBG("Framebuffer set to device's default: %a\n", card->cfg_name);
     DBG(" N ports defaults to %d\n", n_ports);
-  }	
-
-  if (gSettings.VideoPorts != 0) {    
+  }
+  
+  if (gSettings.VideoPorts != 0) {
     n_ports = gSettings.VideoPorts;
     DBG(" use N ports setting from config.plist: %d\n", n_ports);
   }
@@ -1706,7 +1699,7 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
 		DBG("(AtiPorts) Nr of ports set to: %d\n", card->ports);
   } else {
     // if (card->cfg_name > 0) // do we want 0 ports if fb is kNull or mistyped ?
-	
+    
 		// else, match cfg_name with card_configs list and retrive default nr of ports.
 		for (i = 0; i < kCfgEnd; i++) {
 			if (AsciiStrCmp(card->cfg_name, card_configs[i].name) == 0) {
@@ -1721,7 +1714,7 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
     card->ports = 2; //real minimum
     DBG("Nr of ports set to min: %d\n", card->ports);
   }
-//		
+  //
   name = AllocateZeroPool(24);
   AsciiSPrint(name, 24, "ATY,%a", card->cfg_name);
   aty_name.type = kStr;
@@ -1733,7 +1726,7 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
   aty_nameparent.type = kStr;
   aty_nameparent.size = (UINT32)AsciiStrLen(name_parent);
   aty_nameparent.data = (UINT8 *)name_parent;
-//how can we free pool when we leave the procedure? Make all pointers global?	
+  //how can we free pool when we leave the procedure? Make all pointers global?
   return TRUE;
 }
 
