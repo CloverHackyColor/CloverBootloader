@@ -737,24 +737,11 @@ EFI_STATUS InitBootScreen(IN LOADER_ENTRY *Entry)
     DBG("Custom boot screen not used because entry has unset use graphics\n");
     return EFI_ABORTED;
   }
-  // Check Yosemite users want custom boot by default
-  // and whatever the user might actually have selected
   if (customBoot == CUSTOM_BOOT_USER) {
     logo = Entry->CustomLogo;
   } else if (customBoot == CUSTOM_BOOT_DISABLED) {
     customBoot = gSettings.CustomBoot;
-    if (customBoot == CUSTOM_BOOT_DISABLED) {
-      if (!OSTYPE_IS_OSX(Entry->LoaderType) &&
-          !OSTYPE_IS_OSX_RECOVERY(Entry->LoaderType) &&
-          !OSTYPE_IS_OSX_INSTALLER(Entry->LoaderType)) {
-        DBG("Custom boot is disabled and not booting OS X\n");
-        return EFI_ABORTED;
-      } else if (AsciiOSVersionToUint64(Entry->OSVersion) < AsciiOSVersionToUint64("10.10")) {
-        DBG("Custom boot is disabled and OS version %a < 10.10\n", Entry->OSVersion);
-        return EFI_ABORTED;
-      }
-      customBoot = CUSTOM_BOOT_APPLE;
-    } else if (customBoot == CUSTOM_BOOT_USER) {
+    if (customBoot == CUSTOM_BOOT_USER) {
       logo = gSettings.CustomLogo;
     }
   }

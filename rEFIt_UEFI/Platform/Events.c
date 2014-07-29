@@ -274,9 +274,14 @@ OnExitBootServices(IN EFI_EVENT Event, IN VOID *Context)
     FixOwnership();
 	}
   // Unlock boot screen
+  // apianti - This may cause issues since it frees memory, there's
+  //  no need to free it at this point since it was all allocated as
+  //  boot memory so it will be gone anyway after exit boot services
+  /*
   if (EFI_ERROR(Status = UnlockBootScreen())) {
     DBG("Failed to unlock boot screen!\n");
   }
+  // */
 }
 
 VOID
