@@ -796,6 +796,9 @@ EfiShellGetDeviceName(
     //
     if (DeviceNameToReturn != NULL){
  //     ASSERT(BestDeviceName != NULL);
+      if (!BestDeviceName) {
+        return EFI_NOT_FOUND;
+      }
       StrnCatGrow(BestDeviceName, NULL, DeviceNameToReturn, 0);
       return (EFI_SUCCESS);
     }
@@ -1336,6 +1339,8 @@ EfiShellDeleteFileByName(
   SHELL_FILE_HANDLE FileHandle;
   EFI_STATUS        Status;
 
+  FileHandle = NULL;
+
   //
   // get a handle to the file
   //
@@ -1389,6 +1394,7 @@ EfiShellEnablePageBreak (
                             environment variable name and y is the value. If this
                             is NULL, then the current shell environment is used.
 
+  @param[out] StartImageStatus  Returned status from gBS->StartImage.
   @param[out] ExitDataSize  ExitDataSize as returned from gBS->StartImage
   @param[out] ExitData      ExitData as returned from gBS->StartImage
 
@@ -1405,11 +1411,13 @@ InternalShellExecuteDevicePath(
   IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath,
   IN CONST CHAR16                   *CommandLine OPTIONAL,
   IN CONST CHAR16                   **Environment OPTIONAL,
+  OUT EFI_STATUS                    *StartImageStatus OPTIONAL,
   OUT UINTN                         *ExitDataSize OPTIONAL,
   OUT CHAR16                        **ExitData OPTIONAL
   )
 {
   EFI_STATUS                    Status;
+  EFI_STATUS                    StartStatus;
   EFI_STATUS                    CleanupStatus;
   EFI_HANDLE                    NewHandle;
   EFI_LOADED_IMAGE_PROTOCOL     *LoadedImage;
@@ -1530,11 +1538,14 @@ InternalShellExecuteDevicePath(
     // now start the image, passing up exit data if the caller requested it
     //
     if (!EFI_ERROR(Status)) {
-      Status      = gBS->StartImage(
+      StartStatus      = gBS->StartImage(
                           NewHandle,
                           ExitDataSizePtr,
                           ExitData
                           );
+      if (StartImageStatus != NULL) {
+        *StartImageStatus = StartStatus;
+      }
 
       CleanupStatus = gBS->UninstallProtocolInterface(
                             NewHandle,
@@ -1648,6 +1659,7 @@ EfiShellExecute(
     DevPath,
     Temp,
     (CONST CHAR16**)Environment,
+    StatusCode,
     &ExitDataSize,
     &ExitData);
 
@@ -1672,8 +1684,6 @@ EfiShellExecute(
       }
       FreePool (ExitData);
       Status = EFI_SUCCESS;
-    } else if ((StatusCode != NULL) && !EFI_ERROR(Status)) {
-      *StatusCode = EFI_SUCCESS;
     }
 
   //
@@ -1798,6 +1808,19 @@ EfiShellRemoveDupInFileList(
   }
   return (EFI_SUCCESS);
 }
+
+//
+// This is the same structure as the external version, but it has no CONST qualifiers.
+//
+typedef struct {
+  LIST_ENTRY        Link;       ///< Linked list members.
+  EFI_STATUS        Status;     ///< Status of opening the file.  Valid only if Handle != NULL.
+        CHAR16      *FullName;  ///< Fully qualified filename.
+        CHAR16      *FileName;  ///< name of this file.
+  SHELL_FILE_HANDLE Handle;     ///< Handle for interacting with the opened file or NULL if closed.
+  EFI_FILE_INFO     *Info;      ///< Pointer to the FileInfo struct for this file or NULL.
+} EFI_SHELL_FILE_INFO_NO_CONST;
+
 /**
   Allocates and duplicates a EFI_SHELL_FILE_INFO node.
 
@@ -1814,7 +1837,12 @@ InternalDuplicateShellFileInfo(
   IN BOOLEAN                   Save
   )
 {
-  EFI_SHELL_FILE_INFO *NewNode;
+  EFI_SHELL_FILE_INFO_NO_CONST *NewNode;
+
+  //
+  // try to confirm that the objects are in sync
+  //
+  ASSERT(sizeof(EFI_SHELL_FILE_INFO_NO_CONST) == sizeof(EFI_SHELL_FILE_INFO));
 
   NewNode = AllocateZeroPool(sizeof(EFI_SHELL_FILE_INFO));
   if (NewNode == NULL) {
@@ -1828,7 +1856,10 @@ InternalDuplicateShellFileInfo(
     || NewNode->FileName == NULL
     || NewNode->Info == NULL
    ){
-     FreePool(NewNode);
+    SHELL_FREE_NON_NULL(NewNode->FullName);
+    SHELL_FREE_NON_NULL(NewNode->FileName);
+    SHELL_FREE_NON_NULL(NewNode->Info);
+    SHELL_FREE_NON_NULL(NewNode);
     return(NULL);
   }
   NewNode->Status = Node->Status;
@@ -1840,7 +1871,7 @@ InternalDuplicateShellFileInfo(
   StrCpy((CHAR16*)NewNode->FileName, Node->FileName);
   CopyMem(NewNode->Info, Node->Info, (UINTN)Node->Info->Size);
 
-  return(NewNode);
+  return((EFI_SHELL_FILE_INFO*)NewNode);
 }
 
 /**
@@ -1905,7 +1936,7 @@ CreateAndPopulateShellFileInfo(
     TempString = StrnCatGrow(&TempString, &Size, BasePath, 0);
     if (TempString == NULL) {
       FreePool((VOID*)ShellFileListItem->FileName);
-      FreePool(ShellFileListItem->Info);
+      SHELL_FREE_NON_NULL(ShellFileListItem->Info);
       FreePool(ShellFileListItem);
       return (NULL);
     }
@@ -1920,6 +1951,8 @@ CreateAndPopulateShellFileInfo(
       return (NULL);
     }
   }
+
+  TempString = PathCleanUpDirectories(TempString);
 
   ShellFileListItem->FullName = TempString;
   ShellFileListItem->Status   = Status;
@@ -1959,6 +1992,7 @@ EfiShellFindFilesInDir(
   UINTN                     Size;
   CHAR16                    *TempSpot;
 
+  BasePath = NULL;
   Status = FileHandleGetFileName(FileDirHandle, &BasePath);
   if (EFI_ERROR(Status)) {
     return (Status);
@@ -2117,6 +2151,7 @@ ShellSearchHandle(
   EFI_SHELL_FILE_INFO *ShellInfo;
   EFI_SHELL_FILE_INFO *ShellInfoNode;
   EFI_SHELL_FILE_INFO *NewShellNode;
+  EFI_FILE_INFO       *FileInfo;
   BOOLEAN             Directory;
   CHAR16              *NewFullName;
   UINTN               Size;
@@ -2149,12 +2184,27 @@ ShellSearchHandle(
     &&NextFilePatternStart[0] == CHAR_NULL
    ){
     //
-    // Add the current parameter FileHandle to the list, then end...
+    // we want the parent or root node (if no parent)
     //
     if (ParentNode == NULL) {
-      Status = EFI_INVALID_PARAMETER;
+      //
+      // We want the root node.  create the node.
+      //
+      FileInfo = FileHandleGetInfo(FileHandle);
+      NewShellNode = CreateAndPopulateShellFileInfo(
+        MapName,
+        EFI_SUCCESS,
+        L"\\",
+        FileHandle,
+        FileInfo
+        );
+      SHELL_FREE_NON_NULL(FileInfo);
     } else {
+      //
+      // Add the current parameter FileHandle to the list, then end...
+      //
       NewShellNode = InternalDuplicateShellFileInfo((EFI_SHELL_FILE_INFO*)ParentNode, TRUE);
+    }
       if (NewShellNode == NULL) {
         Status = EFI_OUT_OF_RESOURCES;
       } else {
@@ -2171,7 +2221,6 @@ ShellSearchHandle(
 
         Status = EFI_SUCCESS;
       }
-    }
   } else {
     Status = EfiShellFindFilesInDir(FileHandle, &ShellInfo);
 
