@@ -4088,6 +4088,7 @@ VOID GetDevices(VOID)
                                   sizeof (Pci) / sizeof (UINT32),
                                   &Pci
                                   );
+        
         DBG("PCI (%02x|%02x:%02x.%02x) : %04x %04x class=%02x%02x%02x\n",
             Segment, Bus, Device, Function,
             Pci.Hdr.VendorId, Pci.Hdr.DeviceId,

@@ -117,7 +117,6 @@ DevPropDevice *devprop_add_device_pci(DevPropString *StringBuf, pci_dt_t *PciDt)
 	EFI_DEVICE_PATH_PROTOCOL		*DevicePath;
 	DevPropDevice               *device;
 	UINT32                        NumPaths;
-  
 	
 	if (StringBuf == NULL || PciDt == NULL) {
 		return NULL;
@@ -144,7 +143,8 @@ DevPropDevice *devprop_add_device_pci(DevPropString *StringBuf, pci_dt_t *PciDt)
 		device->acpi_dev_path.type = 0x02;
 		device->acpi_dev_path.subtype = 0x01;
 		device->acpi_dev_path._HID = 0x0a0341d0;
-		device->acpi_dev_path._UID = gSettings.PCIRootUID;
+//		device->acpi_dev_path._UID = gSettings.PCIRootUID;
+    device->acpi_dev_path._UID = ((ACPI_HID_DEVICE_PATH*)DevicePath)->UID;
     
     //		DBG("ACPI HID=%x, UID=%x ", device->acpi_dev_path._HID, device->acpi_dev_path._UID);
 	} else {

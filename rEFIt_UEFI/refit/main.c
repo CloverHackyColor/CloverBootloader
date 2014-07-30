@@ -2109,7 +2109,18 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
           break;
 
         case TAG_LEGACY:   // Boot legacy OS
-          StartLegacy((LEGACY_ENTRY *)ChosenEntry);
+          if (StrCmp(gST->FirmwareVendor, L"Phoenix Technologies Ltd.") == 0 &&
+              gST->Hdr.Revision >> 16 == 2 && (gST->Hdr.Revision & ((1 << 16) - 1)) == 0){
+            // Phoenix SecureCore Tiano 2.0 can't properly initiate LegacyBios protocol when called externally
+            // which results in "Operating System not found" message coming from BIOS
+            // in this case just quit Clover to enter BIOS again
+            TerminateScreen();
+            MainLoopRunning = FALSE;
+            ReinitDesktop = FALSE;
+            AfterTool = TRUE;           
+          } else {
+            StartLegacy((LEGACY_ENTRY *)ChosenEntry);
+          }
           break;
 
         case TAG_TOOL:     // Start a EFI tool

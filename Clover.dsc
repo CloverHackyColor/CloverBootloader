@@ -433,6 +433,7 @@
   MdeModulePkg/Application/HelloWorld/HelloWorld.inf
   #MdeModulePkg/Application/VariableInfo/VariableInfo.inf
   #Clover/Sample/Application/Sample.inf
+  #Clover/gptsync/gptsync.inf
   
 !ifdef DEBUG_ON_SERIAL_PORT
 
