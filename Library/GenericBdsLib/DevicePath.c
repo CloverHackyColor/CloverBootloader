@@ -2,7 +2,7 @@
   BDS internal function define the default device path string, it can be
   replaced by platform device path.
 
-Copyright (c) 2004 - 2009, Intel Corporation. All rights reserved.<BR>
+Copyright (c) 2004 - 2013, Intel Corporation. All rights reserved.<BR>
 This program and the accompanying materials
 are licensed and made available under the terms and conditions of the BSD License
 which accompanies this distribution.  The full text of the license may be found at
@@ -27,7 +27,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 CHAR16 *
 EFIAPI
 DevicePathToStr (
-  IN CONST EFI_DEVICE_PATH_PROTOCOL     *DevPath
+  IN EFI_DEVICE_PATH_PROTOCOL     *DevPath
   )
 {
   return ConvertDevicePathToText (DevPath, TRUE, TRUE);
@@ -36,7 +36,7 @@ DevicePathToStr (
 //
 // Aptio UEFI returns File DevPath as 2 nodes (dir, file)
 // and DevicePathToStr connects them with /, but we need '\\'
-CHAR16 *FileDevicePathToStr(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevPath)
+CHAR16 *FileDevicePathToStr(IN EFI_DEVICE_PATH_PROTOCOL *DevPath)
 {
     CHAR16      *FilePath;
     CHAR16      *Char;

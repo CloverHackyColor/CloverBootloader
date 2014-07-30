@@ -65,11 +65,10 @@ BdsLibGenericConnectAll (
   BdsLibConnectAllConsoles ();
 }
 
-
 /**
   This function will create all handles associate with every device
   path node. If the handle associate with one device path node can not
-  be created success, then still give one chance to do the dispatch,
+  be created successfully, then still give chance to do the dispatch,
   which load the missing drivers if possible.
 
   @param  DevicePathToConnect   The device path which will be connected, it can be
@@ -202,7 +201,6 @@ BdsLibConnectDevicePath (
   //
   return Status;
 }
-
 
 /**
   This function will connect all current system handles recursively. 

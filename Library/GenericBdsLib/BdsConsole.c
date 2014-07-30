@@ -1,7 +1,7 @@
 /** @file
   BDS Lib functions which contain all the code to connect console device
 
-Copyright (c) 2004 - 2012, Intel Corporation. All rights reserved.<BR>
+Copyright (c) 2004 - 2014, Intel Corporation. All rights reserved.<BR>
 This program and the accompanying materials
 are licensed and made available under the terms and conditions of the BSD License
 which accompanies this distribution.  The full text of the license may be found at
@@ -91,6 +91,7 @@ UpdateSystemTableConsole (
   EFI_DEVICE_PATH_PROTOCOL  *Instance;
   VOID                      *Interface;
   EFI_HANDLE                NewHandle;
+//  EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL *TextOut;
 
 //  ASSERT (VarName != NULL);
 //  ASSERT (ConsoleHandle != NULL);
@@ -166,6 +167,15 @@ UpdateSystemTableConsole (
         //
         *ConsoleHandle     = NewHandle;
         *ProtocolInterface = Interface;
+/*        if (CompareGuid (ConsoleGuid, &gEfiSimpleTextOutProtocolGuid)) {
+          //
+          // If it is console out device, set console mode 80x25 if current mode is invalid.
+          //
+          TextOut = (EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL *) Interface;
+          if (TextOut->Mode->Mode == -1) {
+            TextOut->SetMode (TextOut, 0);
+          }
+        } */
         return TRUE;
       }
     }
@@ -282,7 +292,7 @@ BdsLibUpdateConsoleVariable (
   // Finally, Update the variable of the default console by NewDevicePath
   //
   DevicePathSize = GetDevicePathSize (NewDevicePath);
-  Status = gRT->SetVariable (
+  Status = SetVariableAndReportStatusCodeOnError (
                   ConVarName,
                   &gEfiGlobalVariableGuid,
                   Attributes,
@@ -317,9 +327,12 @@ BdsLibUpdateConsoleVariable (
 
 /**
   Connect the console device base on the variable ConVarName, if
-  device path of the ConVarName is multi-instance device path, if
+  device path of the ConVarName is multi-instance device path and
   anyone of the instances is connected success, then this function
   will return success.
+  If the handle associate with one device path node can not
+  be created successfully, then still give chance to do the dispatch,
+  which load the missing drivers if possible..
 
   @param  ConVarName               Console related variable name, ConIn, ConOut,
                                    ErrOut.
@@ -396,6 +409,7 @@ BdsLibConnectConsoleVariable (
       // Connect the instance device path
       //
       Status = BdsLibConnectDevicePath (Instance);
+
       if (EFI_ERROR (Status)) {
         //
         // Delete the instance from the console variable
@@ -416,7 +430,6 @@ BdsLibConnectConsoleVariable (
 
   return EFI_SUCCESS;
 }
-
 
 /**
   This function will search every simpletext device in current system,
@@ -548,6 +561,75 @@ BdsLibConnectAllDefaultConsoles (
   if (UpdateSystemTableConsole (L"ConIn", &gEfiSimpleTextInProtocolGuid, &gST->ConsoleInHandle, (VOID **) &gST->ConIn)) {
     SystemTableUpdated = TRUE;
   }
+  if (UpdateSystemTableConsole (L"ConOut", &gEfiSimpleTextOutProtocolGuid, &gST->ConsoleOutHandle, (VOID **) &gST->ConOut)) {
+    SystemTableUpdated = TRUE;
+  }
+  if (UpdateSystemTableConsole (L"ErrOut", &gEfiSimpleTextOutProtocolGuid, &gST->StandardErrorHandle, (VOID **) &gST->StdErr)) {
+    SystemTableUpdated = TRUE;
+  }
+
+  if (SystemTableUpdated) {
+    //
+    // Update the CRC32 in the EFI System Table header
+    //
+    gST->Hdr.CRC32 = 0;
+    gBS->CalculateCrc32 (
+          (UINT8 *) &gST->Hdr,
+          gST->Hdr.HeaderSize,
+          &gST->Hdr.CRC32
+          );
+  }
+
+  return EFI_SUCCESS;
+
+}
+
+/**
+  This function will connect console device except ConIn base on the console
+  device variable  ConOut and ErrOut.
+
+  @retval EFI_SUCCESS              At least one of the ConOut device have
+                                   been connected success.
+  @retval EFI_STATUS               Return the status of BdsLibConnectConsoleVariable ().
+
+**/
+EFI_STATUS
+EFIAPI
+BdsLibConnectAllDefaultConsolesWithOutConIn (
+  VOID
+  )
+{
+  EFI_STATUS                Status;
+  BOOLEAN                   SystemTableUpdated;
+
+  //
+  // Connect all default console variables except ConIn
+  //
+
+  //
+  // It seems impossible not to have any ConOut device on platform,
+  // so we check the status here.
+  //
+  Status = BdsLibConnectConsoleVariable (L"ConOut");
+  if (EFI_ERROR (Status)) {
+    return Status;
+  }
+
+  //
+  // Insert the performance probe for Console Out
+  //
+  PERF_START (NULL, "ConOut", "BDS", 1);
+  PERF_END (NULL, "ConOut", "BDS", 0);
+
+  //
+  // The _ModuleEntryPoint err out var is legal.
+  //
+  BdsLibConnectConsoleVariable (L"ErrOut");
+
+  SystemTableUpdated = FALSE;
+  //
+  // Fill console handles in System Table if no console device assignd.
+  //
   if (UpdateSystemTableConsole (L"ConOut", &gEfiSimpleTextOutProtocolGuid, &gST->ConsoleOutHandle, (VOID **) &gST->ConOut)) {
     SystemTableUpdated = TRUE;
   }

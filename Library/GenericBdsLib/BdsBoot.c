@@ -2259,10 +2259,6 @@ BdsLibBootViaBootOption (
   LIST_ENTRY                TempBootLists;
   EFI_BOOT_LOGO_PROTOCOL    *BootLogo;
 
-  PERF_CODE (
-    AllocateMemoryForPerformanceData ();
-  );
-
   *ExitDataSize = 0;
   *ExitData     = NULL;
 
@@ -2288,15 +2284,7 @@ BdsLibBootViaBootOption (
     if (WorkingDevicePath != NULL) {
       DevicePath = WorkingDevicePath;
     }
-  } /* else if ((DevicePathType (DevicePath) == HARDWARE_DEVICE_PATH) &&
-               (DevicePathSubType (DevicePath) == HW_VENDOR_DP)) {
-    WorkingDevicePath = BdsExpandPartitionPartialDevicePathToFull (
-                                                                   (HARDDRIVE_DEVICE_PATH *)DevicePath
-                                                                   );
-    if (WorkingDevicePath != NULL) {
-      DevicePath = WorkingDevicePath;
-    }
-  } */
+  }
 
   //
   // Set Boot Current
@@ -2307,7 +2295,7 @@ BdsLibBootViaBootOption (
     // In this case, "BootCurrent" is not created.
     // Only create the BootCurrent variable when it points to a valid Boot#### variable.
     //
-    gRT->SetVariable (
+    SetVariableAndReportStatusCodeOnError (
           L"BootCurrent",
           &gEfiGlobalVariableGuid,
           EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
@@ -2315,6 +2303,11 @@ BdsLibBootViaBootOption (
           &Option->BootCurrent
           );
   }
+
+  //
+  // Report Status Code to indicate ReadyToBoot event will be signalled
+  //
+  REPORT_STATUS_CODE (EFI_PROGRESS_CODE, (EFI_SOFTWARE_DXE_BS_DRIVER | EFI_SW_DXE_BS_PC_READY_TO_BOOT_EVENT));
 
   //
   // Signal the EVT_SIGNAL_READY_TO_BOOT event
@@ -2517,7 +2510,6 @@ Done:
         &gEfiGlobalVariableGuid,
         EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
         0,
-//        &Option->BootCurrent
         NULL
         );
 
@@ -2567,11 +2559,31 @@ BdsExpandPartitionPartialDevicePathToFull (
   // If exist, search the front path which point to partition node in the variable instants.
   // If fail to find or HD_BOOT_DEVICE_PATH_VARIABLE_NAME not exist, reconnect all and search in all system
   //
-  CachedDevicePath = BdsLibGetVariableAndSize (
-                      HD_BOOT_DEVICE_PATH_VARIABLE_NAME,
-                      &gHdBootDevicePathVariablGuid,
-                      &CachedDevicePathSize
-                      );
+  GetVariable2 (
+    HD_BOOT_DEVICE_PATH_VARIABLE_NAME,
+    &gHdBootDevicePathVariablGuid,
+    (VOID **) &CachedDevicePath,
+    &CachedDevicePathSize
+    );
+
+  //
+  // Delete the invalid HD_BOOT_DEVICE_PATH_VARIABLE_NAME variable.
+  //
+  if ((CachedDevicePath != NULL) && !IsDevicePathValid (CachedDevicePath, CachedDevicePathSize)) {
+    FreePool (CachedDevicePath);
+    CachedDevicePath = NULL;
+    Status = gRT->SetVariable (
+                    HD_BOOT_DEVICE_PATH_VARIABLE_NAME,
+                    &gHdBootDevicePathVariablGuid,
+                    0,
+                    0,
+                    NULL
+                    );
+ //   ASSERT_EFI_ERROR (Status);
+    if (EFI_ERROR (Status)) {
+      return NULL;
+    }
+  }
 
   if (CachedDevicePath != NULL) {
     TempNewDevicePath = CachedDevicePath;
@@ -2634,7 +2646,7 @@ BdsExpandPartitionPartialDevicePathToFull (
         Status = gRT->SetVariable (
                         HD_BOOT_DEVICE_PATH_VARIABLE_NAME,
                         &gHdBootDevicePathVariablGuid,
-                        EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_NON_VOLATILE,
+                        EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_NON_VOLATILE,
                         GetDevicePathSize (CachedDevicePath),
                         CachedDevicePath
                         );
@@ -2731,11 +2743,12 @@ BdsExpandPartitionPartialDevicePathToFull (
 
       //
       // Save the matching Device Path so we don't need to do a connect all next time
+      // Failure to set the variable only impacts the performance when next time expanding the short-form device path.
       //
       Status = gRT->SetVariable (
                       HD_BOOT_DEVICE_PATH_VARIABLE_NAME,
                       &gHdBootDevicePathVariablGuid,
-                      EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_NON_VOLATILE,
+                      EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_NON_VOLATILE,
                       GetDevicePathSize (CachedDevicePath),
                       CachedDevicePath
                       );
@@ -3039,6 +3052,14 @@ BdsDeleteAllInvalidEfiBootOption (
                       0,
                       NULL
                       );
+      //
+      // Deleting variable with current variable implementation shouldn't fail.
+      //
+ //     ASSERT_EFI_ERROR (Status);
+      if (EFI_ERROR (Status)) {
+        FreePool (BootOptionVar);
+        break;
+      }
       //
       // Mark this boot option in boot order as deleted
       //

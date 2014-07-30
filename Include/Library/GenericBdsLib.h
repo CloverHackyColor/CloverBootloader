@@ -570,13 +570,13 @@ BdsLibMatchDevicePaths (
 CHAR16 *
 EFIAPI
 DevicePathToStr (
-  IN CONST EFI_DEVICE_PATH_PROTOCOL     *DevPath
+  IN EFI_DEVICE_PATH_PROTOCOL     *DevPath
   );
 
 //
 // Aptio UEFI returns File DevPath as 2 nodes (dir, file)
 // and DevicePathToStr connects them with /, but we need '\\'
-CHAR16 *FileDevicePathToStr(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevPath);
+CHAR16 *FileDevicePathToStr(IN EFI_DEVICE_PATH_PROTOCOL *DevPath);
 
 //
 // Internal definitions

@@ -99,7 +99,7 @@ BOOLEAN MetaiMatch (
 CHAR16 *
 EFIAPI
 DevicePathToStr (
-                 IN CONST EFI_DEVICE_PATH_PROTOCOL     *DevPath
+                 IN EFI_DEVICE_PATH_PROTOCOL     *DevPath
                  )
 {
   return ConvertDevicePathToText (DevPath, TRUE, TRUE);
@@ -1551,7 +1551,7 @@ INTN FindMem(IN VOID *Buffer, IN UINTN BufferLength, IN VOID *SearchString, IN U
 //
 // Aptio UEFI returns File DevPath as 2 nodes (dir, file)
 // and DevicePathToStr connects them with /, but we need '\\'
-CHAR16 *FileDevicePathToStr(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevPath)
+CHAR16 *FileDevicePathToStr(IN EFI_DEVICE_PATH_PROTOCOL *DevPath)
 {
   CHAR16      *FilePath;
   CHAR16      *Char;
@@ -1574,15 +1574,15 @@ CHAR16 *FileDevicePathToStr(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevPath)
   return FilePath;
 }
 
-CHAR16 *FileDevicePathFileToStr(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevPath)
+CHAR16 *FileDevicePathFileToStr(IN EFI_DEVICE_PATH_PROTOCOL *DevPath)
 {
-  CONST EFI_DEVICE_PATH_PROTOCOL *Node;
+  EFI_DEVICE_PATH_PROTOCOL *Node;
   
   if (DevPath == NULL) {
     return NULL;
   }
   
-  Node = (CONST EFI_DEVICE_PATH_PROTOCOL *)DevPath;
+  Node = (EFI_DEVICE_PATH_PROTOCOL *)DevPath;
   while (!IsDevicePathEnd(Node)) {
     if ((Node->Type == MEDIA_DEVICE_PATH) &&
         (Node->SubType == MEDIA_FILEPATH_DP)) {

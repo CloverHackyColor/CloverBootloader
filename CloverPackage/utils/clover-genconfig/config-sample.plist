@@ -414,7 +414,7 @@
 		<key>Hide</key>
 		<array>
 			<string>Windows</string>
-			<string>\EFI\BOOT\BOOTX64.EFI</string>
+			<string>BOOTX64.EFI</string>
 		</array>
 		<key>Language</key>
 		<string>ru:0</string>
@@ -533,16 +533,6 @@
 				<string>AppleHDAController</string>
 				<key>Replace</key>
 				<string>0x44220000</string>
-			</dict>
-			<dict>
-				<key>Comment</key>
-				<string>TRIM function for non-Apple SSDs</string>
-				<key>Find</key>
-				<data>QVBQTEUgU1NEAA==</data>
-				<key>Name</key>
-				<string>IOAHCIBlockStorage</string>
-				<key>Replace</key>
-				<data>AAAAAAAAAAAAAA==</data>
 			</dict>
 			<dict>
 				<key>Comment</key>
