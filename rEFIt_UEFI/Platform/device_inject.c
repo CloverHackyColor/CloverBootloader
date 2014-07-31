@@ -144,7 +144,7 @@ DevPropDevice *devprop_add_device_pci(DevPropString *StringBuf, pci_dt_t *PciDt)
 		device->acpi_dev_path.subtype = 0x01;
 		device->acpi_dev_path._HID = 0x0a0341d0;
 //		device->acpi_dev_path._UID = gSettings.PCIRootUID;
-    device->acpi_dev_path._UID = ((ACPI_HID_DEVICE_PATH*)DevicePath)->UID;
+    device->acpi_dev_path._UID = (((ACPI_HID_DEVICE_PATH*)DevicePath)->UID)?0x80:0;
     
     //		DBG("ACPI HID=%x, UID=%x ", device->acpi_dev_path._HID, device->acpi_dev_path._UID);
 	} else {
