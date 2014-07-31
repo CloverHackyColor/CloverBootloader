@@ -2630,11 +2630,8 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
     if (dictPointer) {
       
       prop = GetProperty(dictPointer, "Inject");
-      gSettings.StringInjector = FALSE;
-      if(prop) {
-        if (IsPropertyTrue(prop))
-          gSettings.StringInjector = TRUE;
-      }
+      gSettings.StringInjector = IsPropertyTrue(prop);
+
       prop = GetProperty(dictPointer, "Properties");
       if(prop) {
         EFI_PHYSICAL_ADDRESS  BufferPtr = EFI_SYSTEM_TABLE_MAX_ADDRESS; //0xFE000000;
@@ -2657,11 +2654,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
         //---------
       }
       prop = GetProperty(dictPointer, "NoDefaultProperties");
-      gSettings.NoDefaultProperties = FALSE;
-      if(prop) {
-        if (IsPropertyTrue(prop))
-          gSettings.NoDefaultProperties = TRUE;
-      }
+      gSettings.NoDefaultProperties = IsPropertyTrue(prop);
       
       prop = GetProperty(dictPointer, "AddProperties");
       if(prop) {
@@ -2774,14 +2767,12 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
           gSettings.FakeIMEI  = (UINT32)AsciiStrHexToUint64(prop2->string);
         }
       }
+      
       prop = GetProperty(dictPointer, "UseIntelHDMI");
-      if(prop) {
-        gSettings.UseIntelHDMI = FALSE;
-        if(prop) {
-          if (IsPropertyTrue(prop))
-            gSettings.UseIntelHDMI = TRUE;
-        }
-      }
+      gSettings.UseIntelHDMI = IsPropertyTrue(prop);
+      
+      prop = GetProperty(dictPointer, "ForceHPET");
+      gSettings.ForceHPET = IsPropertyTrue(prop);
       
       prop2 = GetProperty(dictPointer, "Audio");
       if (prop2) {
@@ -4204,7 +4195,8 @@ VOID GetDevices(VOID)
       }
     }
   }
-}  
+}
+
 
 VOID SetDevices(CHAR8 *OSVersion)
 {
@@ -4223,6 +4215,8 @@ VOID SetDevices(CHAR8 *OSVersion)
   BOOLEAN       StringDirty = FALSE;
   BOOLEAN       TmpDirty = FALSE;
   UINT16        PmCon;
+  UINT32        Rcba;
+  UINT32        Hptc;
   
   GetEdidDiscovered();
   // Scan PCI handles 
@@ -4382,7 +4376,62 @@ VOID SetDevices(CHAR8 *OSVersion)
                                       );
             MsgLog("Set PmCon value=%x\n", PmCon);                   
             
-          } 
+          }
+          if (gSettings.ForceHPET) {
+            Rcba = 0;
+            /* Scan Port */
+            Status = PciIo->Pci.Read (
+                                      PciIo,
+                                      EfiPciIoWidthUint32,
+                                      0xF0,
+                                      1,
+                                      &Rcba
+                                      );
+            
+            if (EFI_ERROR(Status)) continue;
+            //Rcba &= 0xFFFFC000;
+            if ((Rcba & 0xFFFFC000) == 0) {
+              MsgLog(" RCBA disabled; cannot force enable HPET\n");
+            } else {
+              if ((Rcba & 1) == 0) {
+                MsgLog(" RCBA access disabled; trying to enable\n");
+                Rcba |= 1;
+                PciIo->Pci.Write (
+                                  PciIo,
+                                  EfiPciIoWidthUint32,
+                                  0xF0,
+                                  1,
+                                  &Rcba
+                                  );
+                
+
+              }
+ /*             Hptc = 0;
+              PciIo->Mem.Read (
+                               PciIo,
+                               EfiPciIoWidthUint32,
+                               EFI_PCI_IO_PASS_THROUGH_BAR,
+                               0x3404ULL,
+                               1,
+                               &Hptc
+                               ); */
+              Rcba &= 0xFFFFC000;
+              Hptc = REG32((UINTN)Rcba, 0x3404);
+              if ((Hptc & 0x80) != 0) {
+                DBG("HPET is already enabled\n");
+              } else {
+                DBG("HPET is disabled, trying to enable...\n");
+                REG32((UINTN)Rcba, 0x3404) = Hptc | 0x80;
+              }
+              // Re-Check if HPET is enabled.
+              Hptc = REG32((UINTN)Rcba, 0x3404);
+              if ((Hptc & 0x80) == 0) {
+                DBG("HPET is disabled in HPTC. Cannot enable!\n");
+              } else {
+                DBG("HPET is enabled\n");
+              }
+            }
+          }
         }
       }
     }
