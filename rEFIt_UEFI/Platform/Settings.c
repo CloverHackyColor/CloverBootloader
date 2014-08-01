@@ -2777,6 +2777,8 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
       prop2 = GetProperty(dictPointer, "Audio");
       if (prop2) {
         // HDA
+        prop = GetProperty(prop2, "ResetHDA");
+        gSettings.ResetHDA = IsPropertyTrue(prop);
         prop = GetProperty(prop2, "Inject");
         if(prop) {
           // enabled by default
@@ -4190,6 +4192,32 @@ VOID GetDevices(VOID)
           AsciiSPrint(SlotDevices[12].SlotName, 31, "Firewire");
           SlotDevices[12].SlotID = 3;
           SlotDevices[12].SlotType = SlotTypePciExpressX4;
+        }
+        else if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_MEDIA) &&
+                 (Pci.Hdr.ClassCode[1] == PCI_CLASS_MEDIA_HDA)) {
+          if (gSettings.ResetHDA) {
+            //Slice method from VoodooHDA
+            UINT8 Value = 0;
+            Status = PciIo->Pci.Read (
+                                      PciIo,
+                                      EfiPciIoWidthUint8,
+                                      0x44,
+                                      1,
+                                      &Value
+                                      );
+            if (EFI_ERROR(Status)) {
+              continue;
+            }
+            Value &= 0xf8;
+            PciIo->Pci.Write (
+                              PciIo,
+                              EfiPciIoWidthUint8,
+                              0x44,
+                              1,
+                              &Value
+                              );
+            //ResetControllerHDA();
+          }
         }
 
       }
