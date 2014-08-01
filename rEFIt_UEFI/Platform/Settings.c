@@ -1663,6 +1663,15 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
         }
       }
     }
+    dictPointer = GetProperty(dict,"Devices");
+    if(dictPointer) {
+      dict2 = GetProperty(dictPointer, "Audio");
+      if (dict2) {
+        // HDA
+        prop = GetProperty(dict2, "ResetHDA");
+        gSettings.ResetHDA = IsPropertyTrue(prop);
+      }
+    }
   }
   return Status;
 }
@@ -2777,8 +2786,8 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
       prop2 = GetProperty(dictPointer, "Audio");
       if (prop2) {
         // HDA
-        prop = GetProperty(prop2, "ResetHDA");
-        gSettings.ResetHDA = IsPropertyTrue(prop);
+ //       prop = GetProperty(prop2, "ResetHDA");
+ //       gSettings.ResetHDA = IsPropertyTrue(prop);
         prop = GetProperty(prop2, "Inject");
         if(prop) {
           // enabled by default

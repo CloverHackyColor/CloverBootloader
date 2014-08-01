@@ -1504,14 +1504,14 @@ GraphicsConsoleConOutSetAttribute (
   if ((Attribute | 0x7F) != 0x7F) {
     return EFI_UNSUPPORTED;
   }
-
+/* sync with edk2 rev 15720+
   if (This->Mode->Mode == -1) {
     //
     // If current mode is not valid, return error.
     //
     return EFI_UNSUPPORTED;
   }
-
+*/
   if ((INT32) Attribute == This->Mode->Attribute) {
     return EFI_SUCCESS;
   }
