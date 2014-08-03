@@ -38,7 +38,7 @@ if [[ ! -x "$GETTEXT_PREFIX/bin/msgmerge" ]]; then
     fi
 fi
 
-export PATH="${PATH}:${GETTEXT_PREFIX}/bin"
+export PATH="${GETTEXT_PREFIX}/bin:${PATH}"
 
 # ========== OPTIONS ===========
 UPDATE_PO=0
