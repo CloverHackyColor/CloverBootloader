@@ -741,7 +741,7 @@ fi
     packagesidentity="${clover_package_identity}".special.themes
     local artwork="${SRCROOT}/CloverV2/themespkg/"
     local themeDestDir='/EFIROOTDIR/EFI/CLOVER/themes'
-    local currentMonth=$(date -j '+%m')
+    local currentMonth=$(date -j +'%-m')
     for (( i = 0 ; i < ${#specialThemes[@]} ; i++ )); do
         local themeName=${specialThemes[$i]##*/}
         # Don't add christmas and newyear themes if month < 11
