@@ -823,10 +823,10 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
 
   // Initialize the boot screen
   if (EFI_ERROR(Status = InitBootScreen(Entry))) {
-    DBG("Failed to initialize boot screen: %r!\n", Status);
+    DBG("Failed to initialize custom boot screen: %r!\n", Status);
   }
   else if (EFI_ERROR(Status = LockBootScreen())) {
-    DBG("Failed to lock boot screen: %r!\n", Status);
+    DBG("Failed to lock custom boot screen: %r!\n", Status);
   }
 
   if (OSTYPE_IS_OSX(Entry->LoaderType) ||
@@ -867,7 +867,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
                 Basename(Entry->LoaderPath), Basename(Entry->LoaderPath), NULL);
   // Unlock boot screen
   if (EFI_ERROR(Status = UnlockBootScreen())) {
-    DBG("Failed to unlock boot screen: %r!\n", Status);
+    DBG("Failed to unlock custom boot screen: %r!\n", Status);
   }
   if (OSFLAG_ISSET(Entry->Flags, OSFLAG_USEGRAPHICS)) {
     // return back orig OutputString
