@@ -633,14 +633,14 @@ void PrintConfig(CFTypeRef data)
   
   // KernelAndKextPatches
   CFMutableDictionaryRef KernelAndKextPatchesDict = addDict(dict, CFSTR("KernelAndKextPatches"));
-  addBoolean(KernelAndKextPatchesDict, CFSTR("Debug"), s->KPDebug);
-  addBoolean(KernelAndKextPatchesDict, CFSTR("KernelCpu"), s->KPKernelCpu);
-  addBoolean(KernelAndKextPatchesDict, CFSTR("KernelPm"), s->KPKernelPm);
-  addBoolean(KernelAndKextPatchesDict, CFSTR("KernelLapic"), s->KPLapicPanic);
-  addBoolean(KernelAndKextPatchesDict, CFSTR("AppleRTC"), s->KPAppleRTC);
-  addBoolean(KernelAndKextPatchesDict, CFSTR("AsusAICPUPM"), s->KPAsusAICPUPM);
-  addBoolean(KernelAndKextPatchesDict, CFSTR("KextPatchesAllowed"), s->KextPatchesAllowed);
-  addInteger(KernelAndKextPatchesDict, CFSTR("Number_of_KextsToPatch"), s->NrKexts);
+  addBoolean(KernelAndKextPatchesDict, CFSTR("Debug"), s->KernelAndKextPatches.KPDebug);
+  addBoolean(KernelAndKextPatchesDict, CFSTR("KernelCpu"), s->KernelAndKextPatches.KPKernelCpu);
+  addBoolean(KernelAndKextPatchesDict, CFSTR("KernelPm"), s->KernelAndKextPatches.KPKernelPm);
+  addBoolean(KernelAndKextPatchesDict, CFSTR("KernelLapic"), s->KernelAndKextPatches.KPLapicPanic);
+  addBoolean(KernelAndKextPatchesDict, CFSTR("AppleRTC"), s->KernelAndKextPatches.KPAppleRTC);
+  addBoolean(KernelAndKextPatchesDict, CFSTR("AsusAICPUPM"), s->KernelAndKextPatches.KPAsusAICPUPM);
+  addBoolean(KernelAndKextPatchesDict, CFSTR("KextPatchesAllowed"), s->KernelAndKextPatches.KextPatchesAllowed);
+  addInteger(KernelAndKextPatchesDict, CFSTR("Number_of_KextsToPatch"), s->KernelAndKextPatches.NrKexts);
     
   CFMutableArrayRef KKPatchArray = addArray(KernelAndKextPatchesDict, CFSTR("KextsToPatch"));
   for (i = 0; i < s->NrKexts; i++) {
