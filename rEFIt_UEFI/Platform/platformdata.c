@@ -559,7 +559,7 @@ VOID GetDefaultSettings(VOID)
   
   SetDMISettingsForModel(Model);
  
-  gSettings.KextPatchesAllowed = TRUE;
+  gSettings.KernelAndKextPatches.KextPatchesAllowed = TRUE;
 
   //default values will be overritten by config.plist
   //use explicitly settings TRUE or FALSE (Yes or No)

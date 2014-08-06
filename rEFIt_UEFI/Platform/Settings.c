@@ -338,6 +338,50 @@ static BOOLEAN AddCustomSubEntry(IN OUT CUSTOM_LOADER_ENTRY *Entry, IN CUSTOM_LO
   }
   return TRUE;
 }
+static BOOLEAN CopyKernelAndKextPatches(IN OUT KERNEL_AND_KEXT_PATCHES *Dst, IN KERNEL_AND_KEXT_PATCHES *Src)
+{
+  if (Dst == NULL || Src == NULL) return FALSE;
+
+  Dst->KPDebug = Src->KPDebug;
+  Dst->KPKernelCpu = Src->KPKernelCpu;
+  Dst->KPLapicPanic = Src->KPLapicPanic;
+  Dst->KPAsusAICPUPM = Src->KPAsusAICPUPM;
+  Dst->KPAppleRTC = Src->KPAppleRTC;
+  Dst->KextPatchesAllowed = Src->KextPatchesAllowed;
+  Dst->KPKernelPm = Src->KPKernelPm;
+  Dst->FakeCPUID = Src->FakeCPUID;
+  if (Src->KPATIConnectorsController) {
+    Dst->KPATIConnectorsController = EfiStrDuplicate(Src->KPATIConnectorsController);
+  }
+  if ((Src->KPATIConnectorsDataLen > 0) &&
+      (Src->KPATIConnectorsData != NULL) &&
+      (Src->KPATIConnectorsPatch != NULL)) {
+    Dst->KPATIConnectorsDataLen = Src->KPATIConnectorsDataLen;
+    Dst->KPATIConnectorsData = AllocateCopyPool(Src->KPATIConnectorsDataLen, Src->KPATIConnectorsData);
+    Dst->KPATIConnectorsPatch = AllocateCopyPool(Src->KPATIConnectorsDataLen, Src->KPATIConnectorsPatch);
+  }
+  if ((Src->NrKexts > 0) && (Src->KextPatches != NULL)) {
+    INTN i = 0;
+    Dst->KextPatches = AllocatePool(Src->NrKexts * sizeof(KEXT_PATCH));
+    for (; i < Src->NrKexts; ++i)
+    {
+      if ((Src->KextPatches[i].DataLen <= 0) ||
+          (Src->KextPatches[i].Data == NULL) ||
+          (Src->KextPatches[i].Patch == NULL)) {
+        continue;
+      }
+      if (Src->KextPatches[i].Name) {
+        Dst->KextPatches[i].Name = (CHAR8 *)AllocateCopyPool(AsciiStrSize(Src->KextPatches[i].Name), Src->KextPatches[i].Name);
+      }
+      Dst->KextPatches[i].IsPlistPatch = Src->KextPatches[i].IsPlistPatch;
+      Dst->KextPatches[i].DataLen = Src->KextPatches[i].DataLen;
+      Dst->KextPatches[i].Data = AllocateCopyPool(Src->KextPatches[i].DataLen, Src->KextPatches[i].Data);
+      Dst->KextPatches[i].Patch = AllocateCopyPool(Src->KextPatches[i].DataLen, Src->KextPatches[i].Patch);
+      ++(Dst->NrKexts);
+    }
+  }
+  return TRUE;
+}
 static CUSTOM_LOADER_ENTRY *DuplicateCustomEntry(IN CUSTOM_LOADER_ENTRY *Entry)
 {
   CUSTOM_LOADER_ENTRY *DuplicateEntry;
@@ -376,8 +420,171 @@ static CUSTOM_LOADER_ENTRY *DuplicateCustomEntry(IN CUSTOM_LOADER_ENTRY *Entry)
     DuplicateEntry->Flags = Entry->Flags;
     DuplicateEntry->Type = Entry->Type;
     DuplicateEntry->VolumeType = Entry->VolumeType;
+    DuplicateEntry->KernelScan = Entry->KernelScan;
+    DuplicateEntry->CustomBoot = Entry->CustomBoot;
+    DuplicateEntry->CustomLogo = Entry->CustomLogo;
+    CopyKernelAndKextPatches((KERNEL_AND_KEXT_PATCHES *)(((UINTN)DuplicateEntry) + OFFSET_OF(CUSTOM_LOADER_ENTRY, KernelAndKextPatches)),
+                             (KERNEL_AND_KEXT_PATCHES *)(((UINTN)Entry) + OFFSET_OF(CUSTOM_LOADER_ENTRY, KernelAndKextPatches)));
   }
   return DuplicateEntry;
+}
+
+static BOOLEAN FillinKextPatches(IN OUT KERNEL_AND_KEXT_PATCHES *Patches, TagPtr dictPointer)
+{
+   TagPtr prop;
+   UINTN  i;
+   if (Patches == NULL || dictPointer == NULL) return FALSE;
+
+   //xxx    gSettings.KPKernelCpu = TRUE; // enabled by default
+   Patches->KPLapicPanic = FALSE; // disabled by default
+   if (NeedPMfix) {
+      Patches->KPKernelPm = TRUE;
+      Patches->KPAsusAICPUPM = TRUE;
+   }
+
+   prop = GetProperty(dictPointer, "Debug");
+   Patches->KPDebug = IsPropertyTrue(prop);
+
+   prop = GetProperty(dictPointer, "KernelCpu");
+   Patches->KPKernelCpu = IsPropertyTrue(prop);
+
+   prop = GetProperty(dictPointer, "FakeCPUID");
+   Patches->FakeCPUID = (UINT32)GetPropertyInteger(prop, 0);
+   DBG("Config set FakeCPUID=%x\n", Patches->FakeCPUID);
+
+   prop = GetProperty(dictPointer, "AsusAICPUPM");
+   if (prop) {
+      Patches->KPAsusAICPUPM = IsPropertyTrue(prop);
+   }
+   prop = GetProperty(dictPointer, "KernelPm");
+   if (prop) {
+      Patches->KPKernelPm = IsPropertyTrue(prop);
+   }
+   prop = GetProperty(dictPointer, "KernelLapic");
+   Patches->KPLapicPanic = IsPropertyTrue(prop);
+
+   prop = GetProperty(dictPointer, "ATIConnectorsController");
+   if (prop) {
+      UINTN len = 0;
+      // ATIConnectors patch
+      Patches->KPATIConnectorsController = AllocateZeroPool(AsciiStrSize(prop->string) * sizeof(CHAR16));
+      AsciiStrToUnicodeStr(prop->string, Patches->KPATIConnectorsController);
+
+      Patches->KPATIConnectorsData = GetDataSetting(dictPointer, "ATIConnectorsData", &len);
+      Patches->KPATIConnectorsDataLen = len;
+      Patches->KPATIConnectorsPatch = GetDataSetting(dictPointer, "ATIConnectorsPatch", &i);
+
+      if (Patches->KPATIConnectorsData == NULL
+         || Patches->KPATIConnectorsPatch == NULL
+         || Patches->KPATIConnectorsDataLen == 0
+         || Patches->KPATIConnectorsDataLen != i) {
+         // invalid params - no patching
+         DBG("ATIConnectors patch: invalid parameters!\n");
+         if (Patches->KPATIConnectorsController != NULL) FreePool(Patches->KPATIConnectorsController);
+         if (Patches->KPATIConnectorsData != NULL) FreePool(Patches->KPATIConnectorsData);
+         if (Patches->KPATIConnectorsPatch != NULL) FreePool(Patches->KPATIConnectorsPatch);
+         Patches->KPATIConnectorsController = NULL;
+         Patches->KPATIConnectorsData = NULL;
+         Patches->KPATIConnectorsPatch = NULL;
+         Patches->KPATIConnectorsDataLen = 0;
+      }
+   }
+
+   prop = GetProperty(dictPointer, "AppleRTC");
+   Patches->KPAppleRTC = !IsPropertyFalse(prop);  //default = TRUE
+
+   prop = GetProperty(dictPointer, "KextsToPatch");
+   if (prop) {
+      UINTN Count = GetTagCount(prop);
+      if (Count > 0) {
+         UINTN  j = 0;
+         TagPtr prop2, dict;
+         Patches->NrKexts = 0;
+         Patches->KextPatches = AllocateZeroPool(Count * sizeof(KEXT_PATCH));
+         DBG("KextsToPatch: %d requested\n", Count);
+         for (i = 0; i < Count; ++i) {
+            EFI_STATUS Status = GetElement(prop, i, &prop2);
+            if (EFI_ERROR(Status)) {
+               DBG("error %r getting next element at index %d\n", Status, i);
+               continue;
+            }
+            if (!dictPointer) {
+               break;
+            }
+            Patches->KextPatches[Patches->NrKexts].Name = NULL;
+            Patches->KextPatches[Patches->NrKexts].Data = NULL;
+            Patches->KextPatches[Patches->NrKexts].Patch = NULL;
+            DBG("KextToPatch %d:", i);
+            dict = GetProperty(prop2, "Name");
+            if (!dict) {
+               continue;
+            }
+            Patches->KextPatches[Patches->NrKexts].Name = AllocateCopyPool(AsciiStrSize(dict->string), dict->string);
+            dict = GetProperty(prop2, "Comment");
+            if (dict) {
+               DBG(" %a (%a)", Patches->KextPatches[Patches->NrKexts].Name, dict->string);
+            }
+            else {
+               DBG(" %a", Patches->KextPatches[Patches->NrKexts].Name);
+            }
+
+            // check if this is Info.plist patch or kext binary patch
+            dict = GetProperty(prop2, "InfoPlistPatch");
+            Patches->KextPatches[Patches->NrKexts].IsPlistPatch = IsPropertyTrue(dict);
+
+            if (Patches->KextPatches[Patches->NrKexts].IsPlistPatch) {
+               // Info.plist
+               // Find and Replace should be in <string>...</string>
+               DBG(" Info.plist patch");
+               dict = GetProperty(prop, "Find");
+               Patches->KextPatches[Patches->NrKexts].DataLen = 0;
+               if (dict && dict->string) {
+                  Patches->KextPatches[Patches->NrKexts].DataLen = AsciiStrLen(dict->string);
+                  Patches->KextPatches[Patches->NrKexts].Data = (UINT8*)AllocateCopyPool(Patches->KextPatches[Patches->NrKexts].DataLen + 1, dict->string);
+               }
+               dict = GetProperty(prop, "Replace");
+               j = 0;
+               if (dict && dict->string) {
+                  j = AsciiStrLen(dict->string);
+                  Patches->KextPatches[Patches->NrKexts].Patch = (UINT8*)AllocateCopyPool(j + 1, dict->string);
+               }
+            }
+            else {
+               // kext binary patch
+               // Find and Replace should be in <data>...</data> or <string>...</string>
+               DBG(" Kext bin patch");
+               Patches->KextPatches[Patches->NrKexts].Data = GetDataSetting(prop, "Find", &j);
+               Patches->KextPatches[Patches->NrKexts].DataLen = j;
+               Patches->KextPatches[Patches->NrKexts].Patch = GetDataSetting(prop, "Replace", &j);
+            }
+
+            if ((Patches->KextPatches[Patches->NrKexts].DataLen != (INTN)j) || (j == 0)) {
+               DBG(" - invalid Find/Replace data - skipping!\n");
+               if (Patches->KextPatches[Patches->NrKexts].Name != NULL) {
+                  FreePool(Patches->KextPatches[Patches->NrKexts].Name); //just erase name
+                  Patches->KextPatches[Patches->NrKexts].Name = NULL;
+               }
+               if (Patches->KextPatches[Patches->NrKexts].Data != NULL) {
+                  FreePool(Patches->KextPatches[Patches->NrKexts].Data); //just erase data
+                  Patches->KextPatches[Patches->NrKexts].Data = NULL;
+               }
+               if (Patches->KextPatches[Patches->NrKexts].Patch != NULL) {
+                  FreePool(Patches->KextPatches[Patches->NrKexts].Patch); //just erase patch
+                  Patches->KextPatches[Patches->NrKexts].Patch = NULL;
+               }
+               continue; //same i
+            }
+
+            DBG(", data len: %d\n", Patches->KextPatches[Patches->NrKexts].DataLen);
+            Patches->NrKexts++; //must be out of DBG because it may be empty compiled
+         }
+      }
+      //gSettings.NrKexts = (INT32)i;
+      //there is one moment. This data is allocated in BS memory but will be used
+      // after OnExitBootServices. This is wrong and these arrays should be reallocated
+      // but I am not sure
+   }
+   return TRUE;
 }
 static BOOLEAN FillinCustomEntry(IN OUT CUSTOM_LOADER_ENTRY *Entry, TagPtr dictPointer, IN BOOLEAN SubEntry)
 {
@@ -683,6 +890,13 @@ static BOOLEAN FillinCustomEntry(IN OUT CUSTOM_LOADER_ENTRY *Entry, TagPtr dictP
        } else {
          Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_NOCACHES);
        }
+     }
+     // KernelAndKextPatches
+     CopyKernelAndKextPatches((KERNEL_AND_KEXT_PATCHES *)(((UINTN)Entry) + OFFSET_OF(CUSTOM_LOADER_ENTRY, KernelAndKextPatches)),
+                              (KERNEL_AND_KEXT_PATCHES *)(((UINTN)&gSettings) + OFFSET_OF(SETTINGS_DATA, KernelAndKextPatches)));
+     prop = GetProperty(dictPointer, "KernelAndKextPatches");
+     if (dictPointer) {
+       FillinKextPatches((KERNEL_AND_KEXT_PATCHES *)(((UINTN)Entry) + OFFSET_OF(CUSTOM_LOADER_ENTRY, KernelAndKextPatches)), prop);
      }
   }
   if (Entry->Type == OSTYPE_LINEFI) {
@@ -1283,7 +1497,13 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
       }
       DBG("Custom boot %s (0x%X)\n", CustomBootModeToStr(gSettings.CustomBoot), gSettings.CustomLogo);
     }
-    
+
+    // KernelAndKextPatches
+    dictPointer = GetProperty(dict, "KernelAndKextPatches");
+    if (dictPointer) {
+      FillinKextPatches((KERNEL_AND_KEXT_PATCHES *)(((UINTN)&gSettings) + OFFSET_OF(CUSTOM_LOADER_ENTRY, KernelAndKextPatches)), dictPointer);
+    }
+
     dictPointer = GetProperty(dict, "GUI");
     if (dictPointer) {
       prop = GetProperty(dictPointer, "Theme");
@@ -3612,162 +3832,6 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
 
     }
     
-    // KernelAndKextPatches
-    //xxx    gSettings.KPKernelCpu = TRUE; // enabled by default
-    gSettings.KPKextPatchesNeeded = FALSE;
-    gSettings.KPLapicPanic = FALSE; // disabled by default
-    if (NeedPMfix) {
-      gSettings.KPKernelPm = TRUE;
-      gSettings.KPAsusAICPUPM = TRUE;
-    }
-    dictPointer = GetProperty(dict,"KernelAndKextPatches");
-    if (dictPointer) {      
-      prop = GetProperty(dictPointer,"Debug");
-      gSettings.KPDebug = IsPropertyTrue(prop);
-
-      prop = GetProperty(dictPointer,"KernelCpu");
-      gSettings.KPKernelCpu = IsPropertyTrue(prop);
-        
-      prop = GetProperty(dictPointer, "FakeCPUID");
-      gSettings.FakeCPUID = (UINT32)GetPropertyInteger(prop, 0);
-      DBG("Config set FakeCPUID=%x\n", gSettings.FakeCPUID);
-      
-      prop = GetProperty(dictPointer,"AsusAICPUPM");
-      if(prop) {
-        gSettings.KPAsusAICPUPM = IsPropertyTrue(prop);
-      }
-      prop = GetProperty(dictPointer,"KernelPm");
-      if (prop) {
-        gSettings.KPKernelPm = IsPropertyTrue(prop);
-      }
-      prop = GetProperty(dictPointer,"KernelLapic");
-      gSettings.KPLapicPanic = IsPropertyTrue(prop);
-
-      prop = GetProperty(dictPointer,"ATIConnectorsController");
-      if(prop) {
-        UINTN len = 0;
-        // ATIConnectors patch
-        gSettings.KPATIConnectorsController = AllocateZeroPool(AsciiStrSize(prop->string) * sizeof(CHAR16));
-        AsciiStrToUnicodeStr(prop->string, gSettings.KPATIConnectorsController);
-        
-        gSettings.KPATIConnectorsData = GetDataSetting(dictPointer, "ATIConnectorsData", &len);
-        gSettings.KPATIConnectorsDataLen = len;
-        gSettings.KPATIConnectorsPatch = GetDataSetting(dictPointer, "ATIConnectorsPatch", &i);
-        
-        if (gSettings.KPATIConnectorsData == NULL
-            || gSettings.KPATIConnectorsPatch == NULL
-            || gSettings.KPATIConnectorsDataLen == 0
-            || gSettings.KPATIConnectorsDataLen != i) {
-          // invalid params - no patching
-          DBG("ATIConnectors patch: invalid parameters!\n");
-          if (gSettings.KPATIConnectorsController != NULL) FreePool(gSettings.KPATIConnectorsController);
-          if (gSettings.KPATIConnectorsData != NULL) FreePool(gSettings.KPATIConnectorsData);
-          if (gSettings.KPATIConnectorsPatch != NULL) FreePool(gSettings.KPATIConnectorsPatch);
-          gSettings.KPATIConnectorsController = NULL;
-          gSettings.KPATIConnectorsData = NULL;
-          gSettings.KPATIConnectorsPatch = NULL;
-          gSettings.KPATIConnectorsDataLen = 0;
-        } else {
-          // ok
-          gSettings.KPKextPatchesNeeded = TRUE;
-        }
-      }
-      gSettings.KPKextPatchesNeeded |= gSettings.KPAsusAICPUPM;
-      
-      prop = GetProperty(dictPointer,"AppleRTC");
-      gSettings.KPAppleRTC = !IsPropertyFalse(prop);  //default = TRUE
-      gSettings.KPKextPatchesNeeded |= gSettings.KPAppleRTC;
-      
-      prop = GetProperty(dictPointer,"KextsToPatch");
-      if(prop) {
-        UINTN Count = GetTagCount(prop);
-        if (Count > 0) {
-          UINTN j = 0;
-          gSettings.NrKexts = 0;
-          gSettings.KextPatches = AllocateZeroPool(Count * sizeof(KEXT_PATCH));
-          DBG("KextsToPatch: %d requested\n", Count);
-          for (i = 0; i < Count; ++i) {
-            Status = GetElement(prop, i, &dictPointer);
-            if (EFI_ERROR(Status)) {
-              DBG("error %r getting next element at index %d\n", Status, i);
-              continue;
-            }
-            if (!dictPointer) {
-              break;
-            }
-            gSettings.KextPatches[gSettings.NrKexts].Name = NULL;
-            gSettings.KextPatches[gSettings.NrKexts].Data = NULL;
-            gSettings.KextPatches[gSettings.NrKexts].Patch = NULL;
-            DBG("KextToPatch %d:", i);
-            dict2 = GetProperty(dictPointer,"Name");
-            if (!dict2) {
-              continue;
-            }
-            gSettings.KextPatches[gSettings.NrKexts].Name = AllocateCopyPool(AsciiStrSize(dict2->string), dict2->string);
-            dict2 = GetProperty(dictPointer,"Comment");
-            if (dict2) {
-              DBG(" %a (%a)", gSettings.KextPatches[gSettings.NrKexts].Name, dict2->string);
-            } else {
-              DBG(" %a", gSettings.KextPatches[gSettings.NrKexts].Name);
-            }
-            gSettings.KPKextPatchesNeeded = TRUE;
-            
-            // check if this is Info.plist patch or kext binary patch
-            dict2 = GetProperty(dictPointer, "InfoPlistPatch");
-            gSettings.KextPatches[gSettings.NrKexts].IsPlistPatch = IsPropertyTrue(dict2);
-            
-            if (gSettings.KextPatches[gSettings.NrKexts].IsPlistPatch) {
-              // Info.plist
-              // Find and Replace should be in <string>...</string>
-              DBG(" Info.plist patch");
-              dict2 = GetProperty(dictPointer, "Find");
-              gSettings.KextPatches[gSettings.NrKexts].DataLen = 0;
-              if(dict2 && dict2->string) {
-                gSettings.KextPatches[gSettings.NrKexts].DataLen = AsciiStrLen(dict2->string);
-                gSettings.KextPatches[gSettings.NrKexts].Data = (UINT8*) AllocateCopyPool(gSettings.KextPatches[gSettings.NrKexts].DataLen + 1, dict2->string);
-              }
-              dict2 = GetProperty(dictPointer, "Replace");
-              j = 0;
-              if(dict2 && dict2->string) {
-                j = AsciiStrLen(dict2->string);
-                gSettings.KextPatches[gSettings.NrKexts].Patch = (UINT8*) AllocateCopyPool(j + 1, dict2->string);
-              }
-            } else {
-              // kext binary patch
-              // Find and Replace should be in <data>...</data> or <string>...</string>
-              DBG(" Kext bin patch");
-              gSettings.KextPatches[gSettings.NrKexts].Data = GetDataSetting(dictPointer,"Find", &j);
-              gSettings.KextPatches[gSettings.NrKexts].DataLen = j;
-              gSettings.KextPatches[gSettings.NrKexts].Patch = GetDataSetting(dictPointer,"Replace", &j);
-            }
-            
-            if ((gSettings.KextPatches[gSettings.NrKexts].DataLen != (INTN)j) || (j == 0)) {
-              DBG(" - invalid Find/Replace data - skipping!\n");
-              if (gSettings.KextPatches[gSettings.NrKexts].Name != NULL) {
-                FreePool(gSettings.KextPatches[gSettings.NrKexts].Name); //just erase name
-                gSettings.KextPatches[gSettings.NrKexts].Name = NULL;
-              }
-              if (gSettings.KextPatches[gSettings.NrKexts].Data != NULL) {
-                FreePool(gSettings.KextPatches[gSettings.NrKexts].Data); //just erase data
-                gSettings.KextPatches[gSettings.NrKexts].Data = NULL;
-              }
-              if (gSettings.KextPatches[gSettings.NrKexts].Patch != NULL) {
-                FreePool(gSettings.KextPatches[gSettings.NrKexts].Patch); //just erase patch
-                gSettings.KextPatches[gSettings.NrKexts].Patch = NULL;
-              }
-              continue; //same i
-            }
-            
-            DBG(", data len: %d\n", gSettings.KextPatches[gSettings.NrKexts].DataLen);
-            gSettings.NrKexts++; //must be out of DBG because it may be empty compiled
-          }
-        }
-        //gSettings.NrKexts = (INT32)i;
-        //there is one moment. This data is allocated in BS memory but will be used
-        // after OnExitBootServices. This is wrong and these arrays should be reallocated
-        // but I am not sure
-      }
-    }
     
     
     // RtVariables
@@ -4235,7 +4299,7 @@ VOID GetDevices(VOID)
 }
 
 
-VOID SetDevices(CHAR8 *OSVersion)
+VOID SetDevices(LOADER_ENTRY *Entry)
 {
   //	EFI_GRAPHICS_OUTPUT_MODE_INFORMATION  *modeInfo;
   EFI_STATUS						Status;
@@ -4294,7 +4358,7 @@ VOID SetDevices(CHAR8 *OSVersion)
             case 0x1002:
               if (gSettings.InjectATI) {
                 //can't do in one step because of C-conventions
-                TmpDirty = setup_ati_devprop(&PCIdevice);
+                TmpDirty = setup_ati_devprop(Entry, &PCIdevice);
                 StringDirty |=  TmpDirty;
               } else {
                 MsgLog("ATI injection not set\n");
@@ -4348,7 +4412,7 @@ VOID SetDevices(CHAR8 *OSVersion)
           //no HDMI injection
           if ((Pci.Hdr.VendorId != 0x1002) &&
               (Pci.Hdr.VendorId != 0x10de)) {
-            TmpDirty = set_hda_props(PciIo, &PCIdevice, OSVersion);
+            TmpDirty = set_hda_props(PciIo, &PCIdevice, Entry->OSVersion);
             StringDirty |=  TmpDirty;
           }
         }
@@ -4654,7 +4718,7 @@ EFI_STATUS SetFSInjection(IN LOADER_ENTRY *Entry)
         MsgLog(" - Error: not enough memory!\n");
         return EFI_NOT_STARTED;
     }
-    KextPatcherRegisterKexts(FSInject, ForceLoadKexts);
+    KextPatcherRegisterKexts(FSInject, ForceLoadKexts, Entry);
 
     Status = FSInject->Install(Volume->DeviceHandle, L"\\System\\Library\\Extensions",
                                SelfVolume->DeviceHandle, SrcDir,

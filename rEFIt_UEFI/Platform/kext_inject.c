@@ -9,7 +9,7 @@
 #endif
 
 // runtime debug
-#define DBG_RT(...)    if (gSettings.KPDebug) { AsciiPrint(__VA_ARGS__); }
+#define DBG_RT(entry, ...)    if ((entry != NULL) && entry->KernelAndKextPatches.KPDebug) { AsciiPrint(__VA_ARGS__); }
 
 
 ////////////////////
@@ -297,7 +297,7 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
 ////////////////////
 // OnExitBootServices
 ////////////////////
-EFI_STATUS InjectKexts(/*IN EFI_MEMORY_DESCRIPTOR *Desc*/ IN UINT32 deviceTreeP, IN UINT32* deviceTreeLength)
+EFI_STATUS InjectKexts(/*IN EFI_MEMORY_DESCRIPTOR *Desc*/ IN UINT32 deviceTreeP, IN UINT32* deviceTreeLength, LOADER_ENTRY *Entry)
 {
 	UINT8					*dtEntry = (UINT8*)(UINTN) deviceTreeP;
 	UINTN					dtLength = (UINTN) *deviceTreeLength;
@@ -324,16 +324,16 @@ EFI_STATUS InjectKexts(/*IN EFI_MEMORY_DESCRIPTOR *Desc*/ IN UINT32 deviceTreeP,
 	UINTN					Index;
 	
   
-	DBG_RT("\nInjectKexts: ");
+	DBG_RT(Entry, "\nInjectKexts: ");
 	KextCount = GetKextCount();
 	if (KextCount == 0) {
-		DBG_RT("no kexts to inject.\nPausing 5 secs ...\n");
-		if (gSettings.KPDebug) {
+		DBG_RT(Entry, "no kexts to inject.\nPausing 5 secs ...\n");
+      if (Entry->KernelAndKextPatches.KPDebug) {
 			gBS->Stall(5000000);
 		}
 		return EFI_NOT_FOUND;
 	}
-	DBG_RT("%d kexts ...\n", KextCount);
+	DBG_RT(Entry, "%d kexts ...\n", KextCount);
   
 	// kextsBase = Desc->PhysicalStart + (((UINTN) Desc->NumberOfPages) * EFI_PAGE_SIZE);
 	// kextsPages = EFI_SIZE_TO_PAGES(kext.length);
@@ -412,13 +412,13 @@ EFI_STATUS InjectKexts(/*IN EFI_MEMORY_DESCRIPTOR *Desc*/ IN UINT32 deviceTreeP,
       
 			drvPtr += sizeof(DeviceTreeNodeProperty) + sizeof(_DeviceTreeBuffer);
 			KextBase = RoundPage(KextBase + KextEntry->kext.length);
-			DBG_RT(" %d - %a\n", Index, (CHAR8 *)(UINTN)drvinfo->bundlePathPhysAddr);
+			DBG_RT(Entry, " %d - %a\n", Index, (CHAR8 *)(UINTN)drvinfo->bundlePathPhysAddr);
 			Index++;
 		}
 	}
   
-	if (gSettings.KPDebug) {
-		DBG_RT("Done.\n");
+   if (Entry->KernelAndKextPatches.KPDebug) {
+		DBG_RT(Entry, "Done.\n");
 		gBS->Stall(5000000);
 	}
 	return EFI_SUCCESS;
@@ -462,7 +462,7 @@ UINT8 KBEYosReplace[] = { 0xE8, 0x25, 0x00, 0x00, 0x00, 0x90, 0x90, 0xE8, 0xCE, 
 //
 
 #define KERNEL_MAX_SIZE 40000000
-VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel)
+VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
 {
   
   UINTN   Num = 0;
@@ -473,7 +473,7 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel)
   UINTN   NumML = 0;
   UINTN   NumYos = 0;
   
-  DBG_RT("\nPatching kernel for injected kexts\n");
+  DBG_RT(Entry, "\nPatching kernel for injected kexts\n");
   
   if (is64BitKernel) {
     NumLion_X64 = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBELionSearch_X64, sizeof(KBELionSearch_X64));
@@ -496,34 +496,34 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel)
   
   if (NumML == 1) {
     Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEMLSearch, sizeof(KBEMLSearch), KBEMLReplace, 1);
-    DBG_RT("==> kernel OS X64: %d replaces done.\n", Num);
+    DBG_RT(Entry, "==> kernel OS X64: %d replaces done.\n", Num);
   }
   else if (NumYos == 1) {
 	  Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEYosSearch, sizeof(KBEYosSearch), KBEYosReplace, 1);
-    DBG_RT("==> kernel Yosemite: %d replaces done.\n", Num);
+    DBG_RT(Entry, "==> kernel Yosemite: %d replaces done.\n", Num);
   }
   else if (NumLion_i386 == 1) {
 	  Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBELionSearch_i386, sizeof(KBELionSearch_i386), KBELionReplace_i386, 1);
-    DBG_RT("==> Lion i386: %d replaces done.\n", Num);
+    DBG_RT(Entry, "==> Lion i386: %d replaces done.\n", Num);
   }
   else if (NumLion_X64 == 1) {
 	  Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBELionSearch_X64, sizeof(KBELionSearch_X64), KBELionReplace_X64, 1);
-    DBG_RT("==> Lion X64: %d replaces done.\n", Num);
+    DBG_RT(Entry, "==> Lion X64: %d replaces done.\n", Num);
   }
   else if (NumSnow_X64 == 1) {
 	  Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBESnowSearch_X64, sizeof(KBESnowSearch_X64), KBESnowReplace_X64, 1);
-	  DBG_RT("==> Snow X64: %d replaces done.\n", Num);
+	  DBG_RT(Entry, "==> Snow X64: %d replaces done.\n", Num);
   }
   else if (NumSnow_i386 == 1) {
 	  Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBESnowSearch_i386, sizeof(KBESnowSearch_i386), KBESnowReplace_i386, 1);
-    DBG_RT("==> Snow i386: %d replaces done.\n", Num);
+    DBG_RT(Entry, "==> Snow i386: %d replaces done.\n", Num);
   }
   else {
-    DBG_RT("==> ERROR: NOT patched - unknown kernel.\n");
+    DBG_RT(Entry, "==> ERROR: NOT patched - unknown kernel.\n");
   }
   
-  if (gSettings.KPDebug) {
-    DBG_RT("Pausing 5 secs ...\n");
+  if (Entry->KernelAndKextPatches.KPDebug) {
+    DBG_RT(Entry, "Pausing 5 secs ...\n");
     gBS->Stall(5000000);
   }
 }

@@ -1039,6 +1039,8 @@ static CONST UINT32 ctm[] = {0x02, 0x10, 0x800, 0x400}; //mobile
 static CONST UINT32 ctd[] = {0x04, 0x10, 0x800, 0x400}; //desktop
 //static UINT32 cti = 0;
 
+KERNEL_AND_KEXT_PATCHES *CurrentPatches;
+
 //TODO - get connectors from ATIConnectorsPatch
 BOOLEAN get_conntype_val(value_t *val, INTN index)
 {
@@ -1050,10 +1052,10 @@ BOOLEAN get_conntype_val(value_t *val, INTN index)
 //0x400: DisplayPort
 //0x02:  LVDS  
   
-  if (gSettings.KPATIConnectorsDataLen == 0) {
+  if ((CurrentPatches == NULL) || (CurrentPatches->KPATIConnectorsDataLen == 0)) {
     return FALSE;
   }
-  ct = gSettings.KPATIConnectorsPatch;
+  ct = CurrentPatches->KPATIConnectorsPatch;
   
 /*  if (gMobile) {
     ct = (UINT32*)&ctm[0];
@@ -1730,7 +1732,7 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
   return TRUE;
 }
 
-BOOLEAN setup_ati_devprop(pci_dt_t *ati_dev)
+BOOLEAN setup_ati_devprop(LOADER_ENTRY *Entry, pci_dt_t *ati_dev)
 {
   CHAR8 compatible[64];
   CHAR8 *devicepath;
@@ -1739,6 +1741,8 @@ BOOLEAN setup_ati_devprop(pci_dt_t *ati_dev)
 
 	if (!init_card(ati_dev))
 		return FALSE;
+
+  CurrentPatches = &(Entry->KernelAndKextPatches);
 	
 	// -------------------------------------------------
 	// Find a better way to do this (in device_inject.c)

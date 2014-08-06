@@ -295,20 +295,20 @@ VOID RefillInputs(VOID)
   //and so on 
   InputItemsCount = 44; 
   InputItems[InputItemsCount].ItemType = BoolValue; //44
-  InputItems[InputItemsCount].BValue = gSettings.KextPatchesAllowed;
-  InputItems[InputItemsCount++].SValue = gSettings.KextPatchesAllowed?L"[+]":L"[ ]";
+  InputItems[InputItemsCount].BValue = gSettings.KernelAndKextPatches.KextPatchesAllowed;
+  InputItems[InputItemsCount++].SValue = gSettings.KernelAndKextPatches.KextPatchesAllowed ? L"[+]" : L"[ ]";
   InputItems[InputItemsCount].ItemType = BoolValue; //45
-  InputItems[InputItemsCount].BValue = gSettings.KPKernelCpu;
-  InputItems[InputItemsCount++].SValue = gSettings.KPKernelCpu?L"[+]":L"[ ]";
+  InputItems[InputItemsCount].BValue = gSettings.KernelAndKextPatches.KPKernelCpu;
+  InputItems[InputItemsCount++].SValue = gSettings.KernelAndKextPatches.KPKernelCpu ? L"[+]" : L"[ ]";
   InputItems[InputItemsCount].ItemType = BoolValue; //46
-  InputItems[InputItemsCount].BValue = gSettings.KPAsusAICPUPM;
-  InputItems[InputItemsCount++].SValue = gSettings.KPAsusAICPUPM?L"[+]":L"[ ]";
+  InputItems[InputItemsCount].BValue = gSettings.KernelAndKextPatches.KPAsusAICPUPM;
+  InputItems[InputItemsCount++].SValue = gSettings.KernelAndKextPatches.KPAsusAICPUPM ? L"[+]" : L"[ ]";
   InputItems[InputItemsCount].ItemType = BoolValue; //47
-  InputItems[InputItemsCount].BValue = gSettings.KPAppleRTC;
-  InputItems[InputItemsCount++].SValue = gSettings.KPAppleRTC?L"[+]":L"[ ]";  
+  InputItems[InputItemsCount].BValue = gSettings.KernelAndKextPatches.KPAppleRTC;
+  InputItems[InputItemsCount++].SValue = gSettings.KernelAndKextPatches.KPAppleRTC ? L"[+]" : L"[ ]";
   InputItems[InputItemsCount].ItemType = BoolValue; //48
-  InputItems[InputItemsCount].BValue = gSettings.KPKernelPm; //KPKernelPm
-  InputItems[InputItemsCount++].SValue = gSettings.KPKernelPm?L"[+]":L"[ ]";
+  InputItems[InputItemsCount].BValue = gSettings.KernelAndKextPatches.KPKernelPm; //KPKernelPm
+  InputItems[InputItemsCount++].SValue = gSettings.KernelAndKextPatches.KPKernelPm ? L"[+]" : L"[ ]";
   
   InputItems[InputItemsCount].ItemType = BoolValue; //49
   InputItems[InputItemsCount].BValue = gSettings.DropMCFG;
@@ -395,8 +395,8 @@ VOID RefillInputs(VOID)
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 76, L"%a",
                 gSettings.MountEFI ? gSettings.MountEFI : "");
   InputItems[InputItemsCount].ItemType = BoolValue; //94
-  InputItems[InputItemsCount].BValue = gSettings.KPLapicPanic;
-  InputItems[InputItemsCount++].SValue = gSettings.KPLapicPanic?L"[+]":L"[ ]";
+  InputItems[InputItemsCount].BValue = gSettings.KernelAndKextPatches.KPLapicPanic;
+  InputItems[InputItemsCount++].SValue = gSettings.KernelAndKextPatches.KPLapicPanic ? L"[+]" : L"[ ]";
 
   InputItems[InputItemsCount].ItemType = BoolValue; //95
   InputItems[InputItemsCount].BValue   = gSettings.USBInjection;
@@ -427,7 +427,7 @@ VOID RefillInputs(VOID)
   InputItems[InputItemsCount].ItemType = Hex;  //106
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeIMEI);
   InputItems[InputItemsCount].ItemType = Hex;  //107
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeCPUID);
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.KernelAndKextPatches.FakeCPUID);
   
   InputItemsCount = 110;
   for (j=0; j<16; j++) {
@@ -582,20 +582,20 @@ VOID FillInputs(VOID)
   
   InputItemsCount = 44;
   InputItems[InputItemsCount].ItemType = BoolValue; //44
-  InputItems[InputItemsCount].BValue = gSettings.KextPatchesAllowed;
-  InputItems[InputItemsCount++].SValue = gSettings.KextPatchesAllowed?L"[+]":L"[ ]";
+  InputItems[InputItemsCount].BValue = gSettings.KernelAndKextPatches.KextPatchesAllowed;
+  InputItems[InputItemsCount++].SValue = gSettings.KernelAndKextPatches.KextPatchesAllowed ? L"[+]" : L"[ ]";
   InputItems[InputItemsCount].ItemType = BoolValue; //45
-  InputItems[InputItemsCount].BValue = gSettings.KPKernelCpu;
-  InputItems[InputItemsCount++].SValue = gSettings.KPKernelCpu?L"[+]":L"[ ]";
+  InputItems[InputItemsCount].BValue = gSettings.KernelAndKextPatches.KPKernelCpu;
+  InputItems[InputItemsCount++].SValue = gSettings.KernelAndKextPatches.KPKernelCpu ? L"[+]" : L"[ ]";
   InputItems[InputItemsCount].ItemType = BoolValue; //46
-  InputItems[InputItemsCount].BValue = gSettings.KPAsusAICPUPM;
-  InputItems[InputItemsCount++].SValue = gSettings.KPAsusAICPUPM?L"[+]":L"[ ]";
+  InputItems[InputItemsCount].BValue = gSettings.KernelAndKextPatches.KPAsusAICPUPM;
+  InputItems[InputItemsCount++].SValue = gSettings.KernelAndKextPatches.KPAsusAICPUPM ? L"[+]" : L"[ ]";
   InputItems[InputItemsCount].ItemType = BoolValue; //47
-  InputItems[InputItemsCount].BValue = gSettings.KPAppleRTC;
-  InputItems[InputItemsCount++].SValue = gSettings.KPAppleRTC?L"[+]":L"[ ]";
+  InputItems[InputItemsCount].BValue = gSettings.KernelAndKextPatches.KPAppleRTC;
+  InputItems[InputItemsCount++].SValue = gSettings.KernelAndKextPatches.KPAppleRTC ? L"[+]" : L"[ ]";
   InputItems[InputItemsCount].ItemType = BoolValue; //48
-  InputItems[InputItemsCount].BValue = gSettings.KPKernelPm;
-  InputItems[InputItemsCount++].SValue = gSettings.KPKernelPm?L"[+]":L"[ ]";
+  InputItems[InputItemsCount].BValue = gSettings.KernelAndKextPatches.KPKernelPm;
+  InputItems[InputItemsCount++].SValue = gSettings.KernelAndKextPatches.KPKernelPm ? L"[+]" : L"[ ]";
   InputItems[InputItemsCount].ItemType = BoolValue; //49
   InputItems[InputItemsCount].BValue = gSettings.DropMCFG;
   InputItems[InputItemsCount++].SValue = gSettings.DropMCFG?L"[+]":L"[ ]";
@@ -694,8 +694,8 @@ VOID FillInputs(VOID)
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 76, L"%a",
                 gSettings.MountEFI ? gSettings.MountEFI : "");
   InputItems[InputItemsCount].ItemType = BoolValue; //94
-  InputItems[InputItemsCount].BValue = gSettings.KPLapicPanic;
-  InputItems[InputItemsCount++].SValue = gSettings.KPLapicPanic?L"[+]":L"[ ]";
+  InputItems[InputItemsCount].BValue = gSettings.KernelAndKextPatches.KPLapicPanic;
+  InputItems[InputItemsCount++].SValue = gSettings.KernelAndKextPatches.KPLapicPanic ? L"[+]" : L"[ ]";
 
   InputItems[InputItemsCount].ItemType = BoolValue; //95
   InputItems[InputItemsCount].BValue   = gSettings.USBInjection;
@@ -737,7 +737,7 @@ VOID FillInputs(VOID)
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeIMEI);
   InputItems[InputItemsCount].ItemType = Hex;  //107
   InputItems[InputItemsCount].SValue = AllocateZeroPool(26);
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeCPUID);
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.KernelAndKextPatches.FakeCPUID);
   
   InputItemsCount = 110;
   for (j=0; j<16; j++) {
@@ -910,26 +910,23 @@ VOID ApplyInputs(VOID)
   // next number == 42
   i = 44;
   if (InputItems[i].Valid) {
-    gSettings.KextPatchesAllowed = InputItems[i].BValue;
+    gSettings.KernelAndKextPatches.KextPatchesAllowed = InputItems[i].BValue;
   }  
   i++; //45
   if (InputItems[i].Valid) {
-    gSettings.KPKernelCpu = InputItems[i].BValue;
+    gSettings.KernelAndKextPatches.KPKernelCpu = InputItems[i].BValue;
   }
   i++; //46
   if (InputItems[i].Valid) {
-    gSettings.KPAsusAICPUPM = InputItems[i].BValue;
+    gSettings.KernelAndKextPatches.KPAsusAICPUPM = InputItems[i].BValue;
   }
   i++; //47
   if (InputItems[i].Valid) {
-    gSettings.KPAppleRTC = InputItems[i].BValue;
-  }
-  if (gSettings.KPAsusAICPUPM || gSettings.KPAppleRTC || (gSettings.KPATIConnectorsPatch != NULL)) {
-    gSettings.KPKextPatchesNeeded = TRUE;
+    gSettings.KernelAndKextPatches.KPAppleRTC = InputItems[i].BValue;
   }
   i++; //48
   if (InputItems[i].Valid) {
-    gSettings.KPKernelPm = InputItems[i].BValue;
+     gSettings.KernelAndKextPatches.KPKernelPm = InputItems[i].BValue;
   }
   i++; //49
   if (InputItems[i].Valid) {
@@ -1120,7 +1117,7 @@ VOID ApplyInputs(VOID)
   }    
   i++; //94
   if (InputItems[i].Valid) {
-    gSettings.KPLapicPanic = InputItems[i].BValue;
+    gSettings.KernelAndKextPatches.KPLapicPanic = InputItems[i].BValue;
   }
   i++; //95
   if (InputItems[i].Valid) {
@@ -1177,8 +1174,8 @@ VOID ApplyInputs(VOID)
 //FakeCPUID
   i++; //107
   if (InputItems[i].Valid) {    
-    gSettings.FakeCPUID = (UINT32)StrHexToUint64(InputItems[i].SValue);
-    DBG("applied FakeCPUID=%06x\n", gSettings.FakeCPUID);
+    gSettings.KernelAndKextPatches.FakeCPUID = (UINT32)StrHexToUint64(InputItems[i].SValue);
+    DBG("applied FakeCPUID=%06x\n", gSettings.KernelAndKextPatches.FakeCPUID);
   }
   
   if (NeedSave) {

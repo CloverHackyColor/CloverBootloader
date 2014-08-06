@@ -680,18 +680,6 @@ typedef struct {
 */
 
 typedef struct {
-  CHAR8   *Name;
-  BOOLEAN IsPlistPatch;
-  CHAR8   align[7];
-  INTN    DataLen;
-#if defined(MDE_CPU_IA32)
-  UINT32  align1;
-#endif  
-  UINT8   *Data;
-  UINT8   *Patch;
-} KEXT_PATCH;
-
-typedef struct {
   UINT32  Device;
   CHAR8   *Key;
   CHAR8   *Value;
@@ -719,6 +707,7 @@ struct CUSTOM_LOADER_ENTRY {
   UINT8                CustomBoot;
   EG_IMAGE            *CustomLogo;
   EG_PIXEL            *BootBgColor;
+  KERNEL_AND_KEXT_PATCHES KernelAndKextPatches;
 };
 
 typedef struct CUSTOM_LEGACY_ENTRY CUSTOM_LEGACY_ENTRY;
@@ -953,42 +942,7 @@ typedef struct {
   UINT16  LegacyBiosDefaultEntry;
   
   // KernelAndKextPatches
-  BOOLEAN KPDebug;
-  BOOLEAN KPKernelCpu;
-  BOOLEAN KPLapicPanic;
-  BOOLEAN KPKextPatchesNeeded;
-  BOOLEAN KPAsusAICPUPM;
-  BOOLEAN KPAppleRTC;
-  BOOLEAN KextPatchesAllowed;
-  BOOLEAN KPKernelPm;
-  BOOLEAN Rtc8Allowed;
-  BOOLEAN ForceHPET;
-  BOOLEAN ResetHDA;
-  UINT8   pad9[3];
-  CHAR16  *KPATIConnectorsController;
-#if defined(MDE_CPU_IA32)
-  UINT32  align16;
-#endif
-  
-  UINT8   *KPATIConnectorsData;
-#if defined(MDE_CPU_IA32)
-  UINT32  align17;
-#endif
-  
-  UINTN   KPATIConnectorsDataLen;
-#if defined(MDE_CPU_IA32)
-  UINT32  align3;
-#endif
-  UINT8   *KPATIConnectorsPatch;
-#if defined(MDE_CPU_IA32)
-  UINT32  align18;
-#endif
-  
-  INT32   NrKexts;
-  KEXT_PATCH *KextPatches;
-#if defined(MDE_CPU_IA32)
-  UINT32  align19;
-#endif
+  KERNEL_AND_KEXT_PATCHES KernelAndKextPatches;
   
   //Volumes hiding
   CHAR16 **HVHideStrings;
@@ -1067,7 +1021,10 @@ typedef struct {
   UINT8  EPCI[4];
   UINT8  REV[6];
   
-  UINT8  pad8[6];
+  BOOLEAN Rtc8Allowed;
+  BOOLEAN ForceHPET;
+  BOOLEAN ResetHDA;
+  UINT8  pad8[3];
 
   //Patch DSDT arbitrary
   UINT32 PatchDsdtNum;
@@ -1130,8 +1087,7 @@ typedef struct {
 #if defined(MDE_CPU_IA32)
   UINT32  align31;
 #endif
-  
-  UINT32 FakeCPUID;
+
   //BlackListed kexts
   CHAR16 BlockKexts[64];
   
@@ -1541,9 +1497,9 @@ LogDataHub(
 EFI_STATUS SetVariablesForOSX();
 VOID       SetupDataForOSX();
 EFI_STATUS SetPrivateVarProto(VOID);
-VOID       SetDevices(CHAR8 *OSVersion);
+VOID       SetDevices(LOADER_ENTRY *Entry);
 VOID       ScanSPD();
-BOOLEAN    setup_ati_devprop(pci_dt_t *ati_dev);
+BOOLEAN    setup_ati_devprop(LOADER_ENTRY *Entry, pci_dt_t *ati_dev);
 BOOLEAN    setup_gma_devprop(pci_dt_t *gma_dev);
 CHAR8      *get_gma_model(IN UINT16 DeviceID);
 BOOLEAN    setup_nvidia_devprop(pci_dt_t *nvda_dev);

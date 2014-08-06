@@ -65,8 +65,8 @@ PngGetImageDims (
     return EFI_UNSUPPORTED;
   }
   
-  *ImageWidth = Image->Width;
-  *ImageHeight = Image->Height;
+  *ImageWidth = (UINT32)Image->Width;
+  *ImageHeight = (UINT32)Image->Height;
   
   DBG("EFI_SUCCESS, Width=%d, Height=%d\n", *ImageWidth, *ImageHeight);
   DBG("ImageBuffer=%p, ImageSize=%d\n", ImageBuffer, ImageSize);

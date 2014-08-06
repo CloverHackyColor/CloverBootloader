@@ -123,14 +123,14 @@ VOID KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry);
 // Called from SetFSInjection(), before boot.efi is started,
 // to allow patchers to prepare FSInject to force load needed kexts.
 //
-VOID KextPatcherRegisterKexts(FSINJECTION_PROTOCOL *FSInject, FSI_STRING_LIST *ForceLoadKexts);
+VOID KextPatcherRegisterKexts(FSINJECTION_PROTOCOL *FSInject, FSI_STRING_LIST *ForceLoadKexts, LOADER_ENTRY *Entry);
 
 //
 // Entry for all kext patches.
 // Will iterate through kext in prelinked kernel (kernelcache)
 // or DevTree (drivers boot) and do patches.
 //
-VOID KextPatcherStart();
+VOID KextPatcherStart(LOADER_ENTRY *Entry);
 
 //
 // Searches Source for Search pattern of size SearchSize

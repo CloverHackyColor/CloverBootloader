@@ -454,6 +454,55 @@ typedef struct {
 // types
 
 typedef struct {
+   CHAR8   *Name;
+   BOOLEAN IsPlistPatch;
+   CHAR8   align[7];
+   INTN    DataLen;
+#if defined(MDE_CPU_IA32)
+   UINT32  align1;
+#endif  
+   UINT8   *Data;
+   UINT8   *Patch;
+} KEXT_PATCH;
+
+typedef struct KERNEL_AND_KEXT_PATCHES
+{
+   BOOLEAN KPDebug;
+   BOOLEAN KPKernelCpu;
+   BOOLEAN KPLapicPanic;
+   BOOLEAN KPAsusAICPUPM;
+   BOOLEAN KPAppleRTC;
+   BOOLEAN KextPatchesAllowed;
+   BOOLEAN KPKernelPm;
+   UINT8   pad[3];
+   UINT32  FakeCPUID;
+   CHAR16  *KPATIConnectorsController;
+#if defined(MDE_CPU_IA32)
+   UINT32  align1;
+#endif
+
+   UINT8   *KPATIConnectorsData;
+#if defined(MDE_CPU_IA32)
+   UINT32  align2;
+#endif
+
+   UINTN   KPATIConnectorsDataLen;
+#if defined(MDE_CPU_IA32)
+   UINT32  align3;
+#endif
+   UINT8   *KPATIConnectorsPatch;
+#if defined(MDE_CPU_IA32)
+   UINT32  align4;
+#endif
+
+   INT32   NrKexts;
+   KEXT_PATCH *KextPatches;
+#if defined(MDE_CPU_IA32)
+   UINT32  align5;
+#endif
+} KERNEL_AND_KEXT_PATCHES;
+
+typedef struct {
   REFIT_MENU_ENTRY  me;
   REFIT_VOLUME     *Volume;
   CHAR16           *DevicePathString;
@@ -467,6 +516,7 @@ typedef struct {
   EG_PIXEL         *BootBgColor;
   UINT8             CustomBoot;
   EG_IMAGE         *CustomLogo;
+  KERNEL_AND_KEXT_PATCHES KernelAndKextPatches;
 } LOADER_ENTRY;
 
 typedef struct {
