@@ -195,7 +195,8 @@ void addUUID(CFMutableDictionaryRef dest, CFStringRef key, UInt8 *uuid)
     CFStringAppendFormat(strValue, NULL, CFSTR("%02x"), *uuid++);
   }
   for (i = 0; i < 3; i++) {
-    CFStringAppendFormat(strValue, NULL, CFSTR("-%02x%02x"), *uuid++, *uuid++);
+    CFStringAppendFormat(strValue, NULL, CFSTR("-%02x"), *uuid++);
+    CFStringAppendFormat(strValue, NULL, CFSTR("%02x"), *uuid++);
   }
   CFStringAppendFormat(strValue, NULL, CFSTR("-"));
   for (i = 0; i < 6; i++) {
@@ -291,7 +292,7 @@ void PrintConfig(CFTypeRef data)
   if (length != sizeof(SETTINGS_DATA)) {
 //    errx(1, "Error the version of clover-genconfig didn't match current booted clover version");
     printf("Error the version of clover-genconfig didn't match current booted clover version\n");
-    printf("len=%d sizeof=%d\n", length, (int)sizeof(SETTINGS_DATA));
+    printf("len=%d sizeof=%d\n", (int)length, (int)sizeof(SETTINGS_DATA));
   }
   
   SETTINGS_DATA *s = (SETTINGS_DATA*)dataPtr;
@@ -643,7 +644,7 @@ void PrintConfig(CFTypeRef data)
   addInteger(KernelAndKextPatchesDict, CFSTR("Number_of_KextsToPatch"), s->KernelAndKextPatches.NrKexts);
     
   CFMutableArrayRef KKPatchArray = addArray(KernelAndKextPatchesDict, CFSTR("KextsToPatch"));
-  for (i = 0; i < s->NrKexts; i++) {
+  for (i = 0; i < s->KernelAndKextPatches.NrKexts; i++) {
     patchDict[i] = addDictToArray(KKPatchArray);
     addString(patchDict[i], CFSTR("Name"), "_NOT_SHOWN_");
     addString(patchDict[i], CFSTR("Find"), "_NOT_SHOWN_");
