@@ -1228,11 +1228,11 @@ KernelAndKextPatcherInit(VOID)
 VOID
 KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
 {
-  BOOLEAN Needed = (gSettings.KernelAndKextPatches.KPAsusAICPUPM ||
-                    gSettings.KernelAndKextPatches.KPAppleRTC ||
-                    (gSettings.KernelAndKextPatches.KPATIConnectorsPatch != NULL) ||
-                    ((gSettings.KernelAndKextPatches.NrKexts > 0) &&
-                     (gSettings.KernelAndKextPatches.KextPatches != NULL)));
+  BOOLEAN Needed = (Entry->KernelAndKextPatches.KPAsusAICPUPM ||
+                    Entry->KernelAndKextPatches.KPAppleRTC ||
+                    (Entry->KernelAndKextPatches.KPATIConnectorsPatch != NULL) ||
+                    ((Entry->KernelAndKextPatches.NrKexts > 0) &&
+                     (Entry->KernelAndKextPatches.KextPatches != NULL)));
   // we will call KernelAndKextPatcherInit() only if needed
   
   DBG_RT(Entry, "\nKernelCpu patch: ");

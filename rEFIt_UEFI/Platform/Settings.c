@@ -443,10 +443,14 @@ static BOOLEAN FillinKextPatches(IN OUT KERNEL_AND_KEXT_PATCHES *Patches, TagPtr
    }
 
    prop = GetProperty(dictPointer, "Debug");
-   Patches->KPDebug = IsPropertyTrue(prop);
+   if (prop) {
+      Patches->KPDebug = IsPropertyTrue(prop);
+   }
 
    prop = GetProperty(dictPointer, "KernelCpu");
-   Patches->KPKernelCpu = IsPropertyTrue(prop);
+   if (prop) {
+      Patches->KPKernelCpu = IsPropertyTrue(prop);
+   }
 
    prop = GetProperty(dictPointer, "FakeCPUID");
    Patches->FakeCPUID = (UINT32)GetPropertyInteger(prop, 0);
@@ -461,7 +465,9 @@ static BOOLEAN FillinKextPatches(IN OUT KERNEL_AND_KEXT_PATCHES *Patches, TagPtr
       Patches->KPKernelPm = IsPropertyTrue(prop);
    }
    prop = GetProperty(dictPointer, "KernelLapic");
-   Patches->KPLapicPanic = IsPropertyTrue(prop);
+   if (prop) {
+     Patches->KPLapicPanic = IsPropertyTrue(prop);
+   }
 
    prop = GetProperty(dictPointer, "ATIConnectorsController");
    if (prop) {
@@ -491,7 +497,9 @@ static BOOLEAN FillinKextPatches(IN OUT KERNEL_AND_KEXT_PATCHES *Patches, TagPtr
    }
 
    prop = GetProperty(dictPointer, "AppleRTC");
-   Patches->KPAppleRTC = !IsPropertyFalse(prop);  //default = TRUE
+   if (prop) {
+      Patches->KPAppleRTC = IsPropertyTrue(prop);  //default = TRUE
+   }
 
    prop = GetProperty(dictPointer, "KextsToPatch");
    if (prop) {
@@ -499,8 +507,11 @@ static BOOLEAN FillinKextPatches(IN OUT KERNEL_AND_KEXT_PATCHES *Patches, TagPtr
       if (Count > 0) {
          UINTN  j = 0;
          TagPtr prop2, dict;
-         Patches->NrKexts = 0;
-         Patches->KextPatches = AllocateZeroPool(Count * sizeof(KEXT_PATCH));
+         KEXT_PATCH *newPatches = AllocateZeroPool((Patches->NrKexts + Count) * sizeof(KEXT_PATCH));
+         // Patches->NrKexts = 0;
+         CopyMem(newPatches, Patches->KextPatches, (Patches->NrKexts * sizeof(KEXT_PATCH)));
+         FreePool(Patches->KextPatches);
+         Patches->KextPatches = newPatches;
          DBG("KextsToPatch: %d requested\n", Count);
          for (i = 0; i < Count; ++i) {
             EFI_STATUS Status = GetElement(prop, i, &prop2);
