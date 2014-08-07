@@ -67,11 +67,11 @@
   gEfiExtScsiPassThruProtocolGuid               # BY_START
   gEfiDevicePathProtocolGuid                    # TO_START
   gEfiPciIoProtocolGuid                         # TO_START
- 
- [Pcd]
+
+[Pcd]
   gEfiMdeModulePkgTokenSpaceGuid.PcdAtaSmartEnable
 
- [BuildOptions]
+[BuildOptions]
   XCODE:*_*_*_CC_FLAGS = -O3
   GCC:*_*_*_CC_FLAGS = -O3
  

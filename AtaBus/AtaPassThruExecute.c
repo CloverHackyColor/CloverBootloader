@@ -6,10 +6,10 @@
   through command and protocol.
 
   NOTE: This file also implements the StorageSecurityCommandProtocol(SSP). For input
-  parameter SecurityProtocolSpecificData, ATA spec has no explicitly definition 
-  for Security Protocol Specific layout. This implementation uses big endian for 
+  parameter SecurityProtocolSpecificData, ATA spec has no explicitly definition
+  for Security Protocol Specific layout. This implementation uses big endian for
   Cylinder register.
-    
+
   Copyright (c) 2009 - 2012, Intel Corporation. All rights reserved.<BR>
   This program and the accompanying materials
   are licensed and made available under the terms and conditions of the BSD License
@@ -87,7 +87,7 @@ UINT8 mAtaCommands[][2][2] = {
 //
 // Look up table (UdmaValid, IsTrustSend) for ATA_CMD
 //
-UINT8 mAtaTrustCommands[2][2] = {	
+UINT8 mAtaTrustCommands[2][2] = {
   {
     ATA_CMD_TRUST_RECEIVE,            // PIO read
     ATA_CMD_TRUST_SEND                // PIO write
@@ -116,7 +116,7 @@ UINTN mMaxTransferBlockNumber[] = {
   transaction.
 
   @param[in, out]  AtaDevice   The ATA child device involved for the operation.
-  @param[in, out]  TaskPacket  Pointer to a Pass Thru Command Packet. Optional, 
+  @param[in, out]  TaskPacket  Pointer to a Pass Thru Command Packet. Optional,
                                if it is NULL, blocking mode, and use the packet
                                in AtaDevice. If it is not NULL, non blocking mode,
                                and pass down this Packet.
@@ -141,7 +141,7 @@ AtaDevicePassThru (
   EFI_ATA_PASS_THRU_COMMAND_PACKET        *Packet;
 
   //
-  // Assemble packet. If it is non blocking mode, the Ata driver should keep each 
+  // Assemble packet. If it is non blocking mode, the Ata driver should keep each
   // subtask and clean them when the event is signaled.
   //
   if (TaskPacket != NULL) {
@@ -168,10 +168,10 @@ AtaDevicePassThru (
                           Packet,
                           Event
                           );
-	DBG(L"AtaPassThru->PassThru DeviceHead=%x Status=%r\n", Packet->Acb->AtaDeviceHead, Status);
+  DBG(L"AtaPassThru->PassThru DeviceHead=%x Status=%r\n", Packet->Acb->AtaDeviceHead, Status);
   //
   // Ensure ATA pass through caller and callee have the same
-  // interpretation of ATA pass through protocol. 
+  // interpretation of ATA pass through protocol.
   //
 //  ASSERT (Status != EFI_INVALID_PARAMETER);
 //  ASSERT (Status != EFI_BAD_BUFFER_SIZE);
@@ -184,7 +184,7 @@ AtaDevicePassThru (
   Wrapper for EFI_ATA_PASS_THRU_PROTOCOL.ResetDevice().
 
   This function wraps the ResetDevice() invocation for ATA pass through function
-  for an ATA device. 
+  for an ATA device.
 
   @param  AtaDevice         The ATA child device involved for the operation.
 
@@ -197,9 +197,9 @@ ResetAtaDevice (
   )
 {
   EFI_ATA_PASS_THRU_PROTOCOL              *AtaPassThru;
-  
+
   AtaPassThru = AtaDevice->AtaBusDriverData->AtaPassThru;
-  
+
   return AtaPassThru->ResetDevice (
                         AtaPassThru,
                         AtaDevice->Port,
@@ -211,7 +211,7 @@ ResetAtaDevice (
 /**
   Prints ATA model name to ATA device structure.
 
-  This function converts ATA device model name from ATA identify data 
+  This function converts ATA device model name from ATA identify data
   to a string in ATA device structure. It needs to change the character
   order in the original model name string.
 
@@ -290,7 +290,7 @@ GetAtapi6Capacity (
 /**
   Identifies ATA device via the Identify data.
 
-  This function identifies the ATA device and initializes the Media information in 
+  This function identifies the ATA device and initializes the Media information in
   Block IO protocol interface.
 
   @param  AtaDevice         The ATA child device involved for the operation.
@@ -335,6 +335,7 @@ IdentifyAtaDevice (
     }
   }
   AtaDevice->UdmaValid = FALSE; //Slice
+
   Capacity = GetAtapi6Capacity (AtaDevice);
   if (Capacity > MAX_28BIT_ADDRESSING_CAPACITY) {
     //
@@ -382,7 +383,7 @@ IdentifyAtaDevice (
     AtaDevice->BlockIo.Revision = EFI_BLOCK_IO_PROTOCOL_REVISION2;
   }
   //
-  // Get ATA model name from identify data structure. 
+  // Get ATA model name from identify data structure.
   //
   PrintAtaModelName (AtaDevice);
 
@@ -401,7 +402,7 @@ IdentifyAtaDevice (
 
   @retval EFI_SUCCESS       The device is successfully identified and Media information
                             is correctly initialized.
-  @return others            Some error occurs when discovering the ATA device. 
+  @return others            Some error occurs when discovering the ATA device.
 
 **/
 EFI_STATUS
@@ -439,7 +440,7 @@ DiscoverAtaDevice (
       // The command is issued successfully
       //
       Status = IdentifyAtaDevice (AtaDevice);
- //Slice - this change is appeared in rev 13908     
+      //Slice - this change is appeared in rev 13908     
 //      if (!EFI_ERROR (Status)) {
         return Status;
 //      }
@@ -457,7 +458,7 @@ DiscoverAtaDevice (
   interface of ATA pass through.
 
   @param[in, out]  AtaDevice       The ATA child device involved for the operation.
-  @param[in, out]  TaskPacket      Pointer to a Pass Thru Command Packet. Optional, 
+  @param[in, out]  TaskPacket      Pointer to a Pass Thru Command Packet. Optional,
                                    if it is NULL, blocking mode, and use the packet
                                    in AtaDevice. If it is not NULL, non blocking mode,
                                    and pass down this Packet.
@@ -472,7 +473,7 @@ DiscoverAtaDevice (
                                    request is completed.
 
   @retval EFI_SUCCESS       The data transfer is complete successfully.
-  @return others            Some error occurs when transferring data. 
+  @return others            Some error occurs when transferring data.
 
 **/
 EFI_STATUS
@@ -482,7 +483,7 @@ TransferAtaDevice (
   IN OUT VOID                             *Buffer,
   IN EFI_LBA                              StartLba,
   IN UINT32                               TransferLength,
-  IN BOOLEAN                              IsWrite, 
+  IN BOOLEAN                              IsWrite,
   IN EFI_EVENT                            Event OPTIONAL
   )
 {
@@ -490,7 +491,7 @@ TransferAtaDevice (
   EFI_ATA_PASS_THRU_COMMAND_PACKET  *Packet;
 
   //
-  // Ensure AtaDevice->UdmaValid, AtaDevice->Lba48Bit and IsWrite are valid boolean values 
+  // Ensure AtaDevice->UdmaValid, AtaDevice->Lba48Bit and IsWrite are valid boolean values
   //
 //  ASSERT ((UINTN) AtaDevice->UdmaValid < 2);
   AtaDevice->UdmaValid = (BOOLEAN)((AtaDevice->UdmaValid)?1:0);
@@ -520,6 +521,7 @@ TransferAtaDevice (
   }
   DBG(L"Transfer StartLba=%x AtaDeviceHead=%x\n", StartLba, Acb->AtaDeviceHead);
   //
+
   // Prepare for ATA pass through packet.
   //
   if (TaskPacket != NULL) {
@@ -573,13 +575,13 @@ TransferAtaDevice (
 }
 
 /**
-  Free SubTask. 
+  Free SubTask.
 
   @param[in, out]  Task      Pointer to task to be freed.
 
 **/
 VOID
-EFIAPI 
+EFIAPI
 FreeAtaSubTask (
   IN OUT ATA_BUS_ASYN_SUB_TASK  *Task
   )
@@ -603,7 +605,7 @@ FreeAtaSubTask (
 
 **/
 VOID
-EFIAPI 
+EFIAPI
 AtaNonBlockingCallBack (
   IN EFI_EVENT                Event,
   IN VOID                     *Context
@@ -635,6 +637,7 @@ AtaNonBlockingCallBack (
     Task->Token->TransactionStatus
     ));
 */
+
   //
   // Reduce the SubEventCount, till it comes to zero.
   //
@@ -654,7 +657,7 @@ AtaNonBlockingCallBack (
       gBS->SignalEvent (Task->Token->Event);
 //      DEBUG ((EFI_D_BLKIO, "Signal the upper layer event!\n"));
     }
-    
+
     FreePool (Task->UnsignalledEventCount);
     FreePool (Task->IsError);
 
@@ -678,7 +681,7 @@ AtaNonBlockingCallBack (
       if (EFI_ERROR (Status)) {
         AtaTask->Token->TransactionStatus = Status;
         gBS->SignalEvent (AtaTask->Token->Event);
-  }
+      }
       RemoveEntryList (Entry);
       FreePool (AtaTask);
     }
@@ -694,6 +697,7 @@ AtaNonBlockingCallBack (
     Task->Packet.Acb->AtaSectorCount
     ));
 */
+
   //
   // Free the buffer of SubTask.
   //
@@ -715,10 +719,10 @@ AtaNonBlockingCallBack (
   @param[in, out]  Token           A pointer to the token associated with the transaction.
 
   @retval EFI_SUCCESS       The data transfer is complete successfully.
-  @return others            Some error occurs when transferring data. 
+  @return others            Some error occurs when transferring data.
 
 **/
-EFI_STATUS 
+EFI_STATUS
 AccessAtaDevice(
   IN OUT ATA_DEVICE                 *AtaDevice,
   IN OUT UINT8                      *Buffer,
@@ -749,9 +753,9 @@ AccessAtaDevice(
   SubTask    = NULL;
   SubEvent   = NULL;
   AtaTask    = NULL;
-
+  
   //
-  // Ensure AtaDevice->Lba48Bit is a valid boolean value 
+  // Ensure AtaDevice->Lba48Bit is a valid boolean value
   //
 //  ASSERT ((UINTN) AtaDevice->Lba48Bit < 2);
   AtaDevice->Lba48Bit = (BOOLEAN)(AtaDevice->Lba48Bit?1:0);
@@ -788,7 +792,7 @@ AccessAtaDevice(
     if (EventCount == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }
-  
+
     IsError = AllocateZeroPool (sizeof (BOOLEAN));
     if (IsError == NULL) {
       FreePool (EventCount);
@@ -838,7 +842,7 @@ AccessAtaDevice(
       SubTask->Token                 = Token;
       SubTask->IsError               = IsError;
       InsertTailList (&AtaDevice->AtaSubTaskList, &SubTask->TaskEntry);
-      gBS->RestoreTPL (OldTpl); 
+      gBS->RestoreTPL (OldTpl);
 
       Status = gBS->CreateEvent (
                       EVT_NOTIFY_SIGNAL,
@@ -883,23 +887,23 @@ EXIT:
       Token->TransactionStatus = Status;
       *EventCount = (*EventCount) - (TempCount - Index);
       *IsError    = TRUE;
-      
+
       if (*EventCount == 0) {
         FreePool (EventCount);
         FreePool (IsError);
       }
-      
+
       if (SubTask != NULL) {
         RemoveEntryList (&SubTask->TaskEntry);
         FreeAtaSubTask (SubTask);
       }
 
       if (SubEvent != NULL) {
-        gBS->CloseEvent (SubEvent);  
+        gBS->CloseEvent (SubEvent);
       }
       gBS->RestoreTPL (OldTpl);
     }
-  } 
+  }
 
   return Status;
 }
@@ -930,7 +934,7 @@ EXIT:
                                        written to the buffer. Ignore it when IsTrustSend is TRUE.
 
   @retval EFI_SUCCESS       The data transfer is complete successfully.
-  @return others            Some error occurs when transferring data. 
+  @return others            Some error occurs when transferring data.
 
 **/
 EFI_STATUS
@@ -953,9 +957,9 @@ TrustTransferAtaDevice (
   EFI_ATA_PASS_THRU_PROTOCOL        *AtaPassThru;
 
   //
-  // Ensure AtaDevice->UdmaValid and IsTrustSend are valid boolean values 
+  // Ensure AtaDevice->UdmaValid and IsTrustSend are valid boolean values
   //
- // ASSERT ((UINTN) AtaDevice->UdmaValid < 2);
+//  ASSERT ((UINTN) AtaDevice->UdmaValid < 2);
   AtaDevice->UdmaValid = (BOOLEAN)((AtaDevice->UdmaValid)?1:0);
 
 //  ASSERT ((UINTN) IsTrustSend < 2);
@@ -974,12 +978,12 @@ TrustTransferAtaDevice (
   Acb->AtaSectorCount   = (UINT8) (TransferLength / 512);
   Acb->AtaSectorNumber  = (UINT8) ((TransferLength / 512) >> 8);
   //
-  // NOTE: ATA Spec has no explicitly definition for Security Protocol Specific layout. 
-  // Here use big endian for Cylinder register. 
+  // NOTE: ATA Spec has no explicitly definition for Security Protocol Specific layout.
+  // Here use big endian for Cylinder register.
   //
   Acb->AtaCylinderHigh  = (UINT8) SecurityProtocolSpecificData;
   Acb->AtaCylinderLow   = (UINT8) (SecurityProtocolSpecificData >> 8);
-  Acb->AtaDeviceHead    = (UINT8) (BIT7 | BIT6 | BIT5 | (AtaDevice->PortMultiplierPort << 4)); 
+  Acb->AtaDeviceHead    = (UINT8) (BIT7 | BIT6 | BIT5 | (AtaDevice->PortMultiplierPort << 4));
 
   //
   // Prepare for ATA pass through packet.
@@ -1003,7 +1007,7 @@ TrustTransferAtaDevice (
       CopyMem (NewBuffer, Buffer, TransferLength);
       FreePool (Buffer);
       Buffer = NewBuffer;
-    } 
+    }
     Packet->OutDataBuffer = Buffer;
     Packet->OutTransferLength = (UINT32) TransferLength;
     Packet->Protocol = mAtaPassThruCmdProtocols[AtaDevice->UdmaValid][IsTrustSend];
