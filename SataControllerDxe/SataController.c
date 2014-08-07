@@ -88,15 +88,16 @@ AhciWriteReg (
   )
 {
 //  ASSERT (PciIo != NULL);
+
   if (PciIo != NULL) {    
     PciIo->Mem.Write (
-                      PciIo,
-                      EfiPciIoWidthUint32,
-                      AHCI_BAR_INDEX,
-                      (UINT64) Offset,
-                      1,
-                      &Data
-                      );
+               PciIo,
+               EfiPciIoWidthUint32,
+               AHCI_BAR_INDEX,
+               (UINT64) Offset,
+               1,
+               &Data
+               );
   }
 
   return;
@@ -120,7 +121,7 @@ CalculateBestPioMode (
   OUT UINT16            *SelectedMode
   )
 {
-//	*SelectedMode = 3;
+//  *SelectedMode = 3;
 	
 #if 1
   UINT16    PioMode;
@@ -139,8 +140,9 @@ CalculateBestPioMode (
   if ((IdentifyData->AtaData.field_validity & 0x02) == 0x02) {
 
     AdvancedPioMode = IdentifyData->AtaData.advanced_pio_modes;
- //   DEBUG ((EFI_D_INFO, "CalculateBestPioMode: AdvancedPioMode = %x\n", AdvancedPioMode));
-	  DBG(L"CalculateBestPioMode: AdvancedPioMode = %x\n", AdvancedPioMode);
+//    DEBUG ((EFI_D_INFO, "CalculateBestPioMode: AdvancedPioMode = %x\n", AdvancedPioMode));
+    DBG(L"CalculateBestPioMode: AdvancedPioMode = %x\n", AdvancedPioMode);
+
     for (Index = 0; Index < 8; Index++) {
       if ((AdvancedPioMode & 0x01) != 0) {
         Temp = Index;
@@ -219,7 +221,8 @@ CalculateBestPioMode (
 
   }
 #endif
-	DBG(L"selected PIO mode = %d\n", *SelectedMode);
+  DBG(L"selected PIO mode = %d\n", *SelectedMode);
+
   return EFI_SUCCESS;
 }
 
@@ -254,7 +257,8 @@ CalculateBestUdmaMode (
   }
 
   DeviceUDmaMode = IdentifyData->AtaData.ultra_dma_mode;
- DBG(L"CalculateBestUdmaMode: DeviceUDmaMode = %x\n", DeviceUDmaMode);
+//  DEBUG ((EFI_D_INFO, "CalculateBestUdmaMode: DeviceUDmaMode = %x\n", DeviceUDmaMode));
+  DBG(L"CalculateBestUdmaMode: DeviceUDmaMode = %x\n", DeviceUDmaMode);
   DeviceUDmaMode &= 0x3f;
   TempMode = 0;                 // initialize it to UDMA-0
 
@@ -268,7 +272,7 @@ CalculateBestUdmaMode (
   if (DisUDmaMode != NULL) {
     if (*DisUDmaMode == 0) {
       *SelectedMode = 0;
-		DBG(L"DMA mode is none\n");
+      DBG(L"DMA mode is none\n");
       return EFI_UNSUPPORTED;   // no mode below ATA_UDMA_MODE_0
     }
 
@@ -281,7 +285,8 @@ CalculateBestUdmaMode (
   // Possible returned mode is between ATA_UDMA_MODE_0 and ATA_UDMA_MODE_5
   //
   *SelectedMode = TempMode;
-DBG(L"selected DMA mode = %d\n", *SelectedMode);
+  DBG(L"selected DMA mode = %d\n", *SelectedMode);
+
   return EFI_SUCCESS;
 }
 
@@ -414,7 +419,8 @@ SataControllerStart (
   UINT8                             Port;
 
 //  DEBUG ((EFI_D_INFO, "SataControllerStart START\n"));
-	DBG(L"SataControllerStart START\n");
+  DBG(L"SataControllerStart START\n");
+
   SataPrivateData = NULL;
 
   //
@@ -429,6 +435,7 @@ SataControllerStart (
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
   if (EFI_ERROR (Status)) {
+//    DEBUG ((EFI_D_ERROR, "SataControllerStart error return status = %r\n", Status));
     DBG(L"SataControllerStart error return status = %r\n", Status);
     return Status;
   }
@@ -471,7 +478,7 @@ SataControllerStart (
     SataPrivateData->IdeInit.ChannelCount = IDE_MAX_CHANNEL;
     SataPrivateData->DeviceCount = IDE_MAX_DEVICES;
     SataPrivateData->IPorts = (1 << IDE_MAX_CHANNEL) - 1; //mask for N channels
-	  DBG(L"IDE controller found\n");
+    DBG(L"IDE controller found\n");
   } else if (IS_PCI_SATADPA (&PciData) || IS_PCI_RAID(&PciData)) {
     //
     // Read Host Capability Register(CAP) to get Number of Ports(NPS) and Supports Port Multiplier(SPM)
@@ -482,7 +489,7 @@ SataControllerStart (
     //Slice - I read Intel spec and found that number of possible ports = 6
     // while NPS is a number of implemented ports. We must create a space for all
     // because of if (Channel < ChannelCount) {} :)
- //   SataPrivateData->IdeInit.ChannelCount = 6; //(UINT8) ((Data32 & B_AHCI_CAP_NPS) + 1);
+//    SataPrivateData->IdeInit.ChannelCount = 6; //(UINT8) ((Data32 & B_AHCI_CAP_NPS) + 1);
     SataPrivateData->DeviceCount = AHCI_MAX_DEVICES;
     if ((Data32 & B_AHCI_CAP_SPM) == B_AHCI_CAP_SPM) {
       SataPrivateData->DeviceCount = AHCI_MULTI_MAX_DEVICES;
@@ -500,8 +507,7 @@ SataControllerStart (
     }
     SataPrivateData->IdeInit.ChannelCount = Port;
     DBG(L"ChannelCount=%d DeviceCount=%d\n", SataPrivateData->IdeInit.ChannelCount,
-        SataPrivateData->DeviceCount);    //3,1,0 - 1525 //4,1,0 - H61M   
-   
+        SataPrivateData->DeviceCount);    //3,1,0 - 1525 //4,1,0 - H61M
   }
 
   ChannelDeviceCount = (UINTN) (SataPrivateData->IdeInit.ChannelCount) * (UINTN) (SataPrivateData->DeviceCount);
@@ -557,7 +563,8 @@ Done:
   }
 
 //  DEBUG ((EFI_D_INFO, "SataControllerStart END status = %r\n", Status));
-	DBG(L"SataControllerStart END status = %r\n", Status);
+  DBG(L"SataControllerStart END status = %r\n", Status);
+
   return Status;
 }
 
@@ -603,19 +610,21 @@ SataControllerStop (
 
   SataPrivateData = SATA_CONTROLLER_PRIVATE_DATA_FROM_THIS (IdeInit);
 //  ASSERT (SataPrivateData != NULL);
+
   if (SataPrivateData != NULL) {
     //
     // Uninstall the IDE Controller Init Protocol from this instance
     //
     Status = gBS->UninstallMultipleProtocolInterfaces (
-                                                       Controller,
-                                                       &gEfiIdeControllerInitProtocolGuid,
-                                                       &(SataPrivateData->IdeInit),
-                                                       NULL
-                                                       );
+                  Controller,
+                  &gEfiIdeControllerInitProtocolGuid,
+                  &(SataPrivateData->IdeInit),
+                  NULL
+                  );
     if (EFI_ERROR (Status)) {
       return Status;
     }
+
     if (SataPrivateData->DisqulifiedModes != NULL) {
       FreePool (SataPrivateData->DisqulifiedModes);
     }
@@ -650,7 +659,7 @@ SataControllerStop (
   
   If Enabled is set to FALSE, the driver entity will not scan the channel. Note 
   that it will not prevent an operating system driver from scanning the channel.
-
+  
   For most of today's controllers, MaxDevices will either be 1 or 2. For SATA 
   controllers, this value will always be 1. SATA configurations can contain SATA 
   port multipliers. SATA port multipliers behave like SATA bridges and can support
@@ -697,7 +706,7 @@ IdeInitGetChannelInfo (
     *Enabled = FALSE;
     return EFI_NOT_FOUND;
   }
-	  DBG(L"Channel %d DeviceCount=%d\n", (INTN)Channel, SataPrivateData->DeviceCount); //0,2
+  DBG(L"Channel %d DeviceCount=%d\n", (INTN)Channel, SataPrivateData->DeviceCount); //0,2
 
   if (Channel < This->ChannelCount) {
     *Enabled = (SataPrivateData->IPorts & (1<<Channel)) != 0;
@@ -712,7 +721,7 @@ IdeInitGetChannelInfo (
 /**
   The notifications from the driver entity that it is about to enter a certain
   phase of the IDE channel enumeration process.
-
+  
   This function can be used to notify the IDE controller driver to perform 
   specific actions, including any chipset-specific initialization, so that the 
   chipset is ready to enter the next phase. Seven notification points are defined 
@@ -802,7 +811,7 @@ IdeInitSubmitData (
   if (!SataPrivateData) {
     return EFI_NOT_FOUND;
   }
-  
+
   if ((Channel >= This->ChannelCount) || (Device >= SataPrivateData->DeviceCount)) {
     return EFI_INVALID_PARAMETER;
   }
@@ -857,9 +866,9 @@ IdeInitSubmitData (
   @param[in] Channel    The zero-based channel number.
   @param[in] Device     The zero-based device number on the Channel.
   @param[in] BadModes   The modes that the device does not support and that
-                    should be disqualified.
+                        should be disqualified.
 
-  @retval EFI_SUCCESS           The modes were accepted without any errors.
+  @retval EFI_SUCCESS             The modes were accepted without any errors.
   @retval EFI_INVALID_PARAMETER   Channel is invalid (Channel >= ChannelCount).
   @retval EFI_INVALID_PARAMETER   Device is invalid.
   @retval EFI_INVALID_PARAMETER   IdentifyData is NULL.
@@ -876,12 +885,11 @@ IdeInitDisqualifyMode (
 {
   EFI_SATA_CONTROLLER_PRIVATE_DATA  *SataPrivateData;
   SataPrivateData = SATA_CONTROLLER_PRIVATE_DATA_FROM_THIS (This);
-  //  ASSERT (SataPrivateData != NULL);
+//  ASSERT (SataPrivateData != NULL);
   if (!SataPrivateData) {
     return EFI_NOT_FOUND;
   }
-  
-  
+
   if ((Channel >= This->ChannelCount) || (BadModes == NULL) || (Device >= SataPrivateData->DeviceCount)) {
     return EFI_INVALID_PARAMETER;
   }
@@ -970,18 +978,18 @@ IdeInitCalculateMode (
   EFI_STATUS                        Status;
 
   SataPrivateData = SATA_CONTROLLER_PRIVATE_DATA_FROM_THIS (This);
-  //  ASSERT (SataPrivateData != NULL);
+//  ASSERT (SataPrivateData != NULL);
   if (!SataPrivateData) {
     return EFI_NOT_FOUND;
   }
-  
-  
+
   if ((Channel >= This->ChannelCount) || (SupportedModes == NULL) || (Device >= SataPrivateData->DeviceCount)) {
     return EFI_INVALID_PARAMETER;
   }
 
   *SupportedModes = AllocateZeroPool (sizeof (EFI_ATA_COLLECTIVE_MODE));
   if (*SupportedModes == NULL) {
+//    ASSERT (*SupportedModes != NULL);
     return EFI_OUT_OF_RESOURCES;
   }
 
@@ -1003,14 +1011,14 @@ IdeInitCalculateMode (
             &SelectedMode
             );
   if (!EFI_ERROR (Status)) {
-      (*SupportedModes)->PioMode.Valid = TRUE;
-	  (*SupportedModes)->PioMode.Mode = SelectedMode; //Slice -> 3
+    (*SupportedModes)->PioMode.Valid = TRUE;
+    (*SupportedModes)->PioMode.Mode = SelectedMode; //Slice -> 3
 
   } else {
     (*SupportedModes)->PioMode.Valid = FALSE;
   }
 //  DEBUG ((EFI_D_INFO, "IdeInitCalculateMode: PioMode = %x\n", (*SupportedModes)->PioMode.Mode));
-	DBG(L"IdeInitCalculateMode: PioMode = %x\n", (*SupportedModes)->PioMode.Mode);
+  DBG(L"IdeInitCalculateMode: PioMode = %x\n", (*SupportedModes)->PioMode.Mode);
 /*  Status =*/ CalculateBestUdmaMode (
             IdentifyData,
             (DisqulifiedModes->UdmaMode.Valid ? ((UINT16 *) &(DisqulifiedModes->UdmaMode.Mode)) : NULL),
@@ -1019,17 +1027,18 @@ IdeInitCalculateMode (
 //Slice - exclude UDMA
 /*  if (!EFI_ERROR (Status)) {
     (*SupportedModes)->UdmaMode.Valid = TRUE;
-    (*SupportedModes)->UdmaMode.Mode  = SelectedMode;
+    (*SupportedModes)->UdmaMode.Mode = SelectedMode;
 
   } else {*/
     (*SupportedModes)->UdmaMode.Valid = FALSE;
   (*SupportedModes)->UdmaMode.Mode  = SelectedMode;
 //  }
-//	(*SupportedModes)->UdmaMode.Valid = FALSE;
-	(*SupportedModes)->MultiWordDmaMode.Valid = FALSE;
+//  (*SupportedModes)->UdmaMode.Valid = FALSE;
+  (*SupportedModes)->MultiWordDmaMode.Valid = FALSE;
 	
 //  DEBUG ((EFI_D_INFO, "IdeInitCalculateMode: UdmaMode = %x\n", (*SupportedModes)->UdmaMode.Mode));
-	DBG(L"IdeInitCalculateMode: UdmaMode = %x\n", (*SupportedModes)->UdmaMode.Mode);
+  DBG(L"IdeInitCalculateMode: UdmaMode = %x\n", (*SupportedModes)->UdmaMode.Mode);
+
   //
   // The modes other than PIO and UDMA are not supported
   //
