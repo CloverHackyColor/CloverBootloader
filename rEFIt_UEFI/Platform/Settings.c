@@ -536,13 +536,13 @@ static BOOLEAN FillinKextPatches(IN OUT KERNEL_AND_KEXT_PATCHES *Patches, TagPtr
                // Info.plist
                // Find and Replace should be in <string>...</string>
                DBG(" Info.plist patch");
-               dict = GetProperty(prop, "Find");
+               dict = GetProperty(prop2, "Find");
                Patches->KextPatches[Patches->NrKexts].DataLen = 0;
                if (dict && dict->string) {
                   Patches->KextPatches[Patches->NrKexts].DataLen = AsciiStrLen(dict->string);
                   Patches->KextPatches[Patches->NrKexts].Data = (UINT8*)AllocateCopyPool(Patches->KextPatches[Patches->NrKexts].DataLen + 1, dict->string);
                }
-               dict = GetProperty(prop, "Replace");
+               dict = GetProperty(prop2, "Replace");
                j = 0;
                if (dict && dict->string) {
                   j = AsciiStrLen(dict->string);
@@ -553,9 +553,9 @@ static BOOLEAN FillinKextPatches(IN OUT KERNEL_AND_KEXT_PATCHES *Patches, TagPtr
                // kext binary patch
                // Find and Replace should be in <data>...</data> or <string>...</string>
                DBG(" Kext bin patch");
-               Patches->KextPatches[Patches->NrKexts].Data = GetDataSetting(prop, "Find", &j);
+               Patches->KextPatches[Patches->NrKexts].Data = GetDataSetting(prop2, "Find", &j);
                Patches->KextPatches[Patches->NrKexts].DataLen = j;
-               Patches->KextPatches[Patches->NrKexts].Patch = GetDataSetting(prop, "Replace", &j);
+               Patches->KextPatches[Patches->NrKexts].Patch = GetDataSetting(prop2, "Replace", &j);
             }
 
             if ((Patches->KextPatches[Patches->NrKexts].DataLen != (INTN)j) || (j == 0)) {
