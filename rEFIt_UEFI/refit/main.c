@@ -632,6 +632,30 @@ static CHAR8 *SearchString (
   return NULL;
 }
 
+static VOID DumpKernelAndKextPatches(KERNEL_AND_KEXT_PATCHES *Patches)
+{
+   DBG("Kernel and Kext Patches:\n");
+   DBG("\tAllowed: %c\n", Patches->KextPatchesAllowed ? 'y' : 'n');
+   DBG("\tDebug: %c\n", Patches->KPDebug ? 'y' : 'n');
+   DBG("\tKernelCpu: %c\n", Patches->KPKernelCpu ? 'y' : 'n');
+   DBG("\tLapic: %c\n", Patches->KPLapicPanic ? 'y' : 'n');
+   DBG("\tAICPUPM: %c\n", Patches->KPAsusAICPUPM ? 'y' : 'n');
+   DBG("\tAppleRTC: %c\n", Patches->KPAppleRTC ? 'y' : 'n');
+   DBG("\tKernelPm: %c\n", Patches->KPKernelPm ? 'y' : 'n');
+   DBG("\tFakeCPUID: 0x%x\n", Patches->FakeCPUID);
+   DBG("\tATIController: %s\n", Patches->KPATIConnectorsController);
+   DBG("\tATIDataLength: %d\n", Patches->KPATIConnectorsDataLen);
+   if (Patches->KextPatches) {
+      INT32 i = 0;
+      for (; i < Patches->NrKexts; ++i) {
+         if (Patches->KextPatches[i].IsPlistPatch) {
+            DBG("\tKextPatchPlist[%d]: %d bytes, %s\n", i, Patches->KextPatches[i].DataLen, Patches->KextPatches[i].Name);
+         } else {
+            DBG("\tKextPatch[%d]: %d bytes, %s\n", i, Patches->KextPatches[i].DataLen, Patches->KextPatches[i].Name);
+         }
+      }
+   }
+}
 
 //
 // Null ConOut OutputString() implementation - for blocking
@@ -659,6 +683,8 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
   MsgLog("Finally: Bus=%ldkHz CPU=%ldMHz\n",
          DivU64x32(gCPUStructure.FSBFrequency, kilo),
          gCPUStructure.MaxSpeed);
+
+  DumpKernelAndKextPatches((KERNEL_AND_KEXT_PATCHES *)(((UINTN)Entry) + OFFSET_OF(LOADER_ENTRY, KernelAndKextPatches)));
 
 //  MsgLog("Turbo=%c\n", gSettings.Turbo?'Y':'N');
 //  MsgLog("PatchAPIC=%c\n", gSettings.PatchNMI?'Y':'N');
@@ -739,7 +765,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     }
 */
     // If KPDebug is true boot in verbose mode to see the debug messages
-    if (gSettings.KernelAndKextPatches.KPDebug) {
+    if (Entry->KernelAndKextPatches.KPDebug) {
       CHAR16 *TempOptions = AddLoadOption(Entry->LoadOptions, L"-v");
       FreePool(Entry->LoadOptions);
       Entry->LoadOptions = TempOptions;

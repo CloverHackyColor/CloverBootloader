@@ -371,12 +371,12 @@ static BOOLEAN CopyKernelAndKextPatches(IN OUT KERNEL_AND_KEXT_PATCHES *Dst, IN 
         continue;
       }
       if (Src->KextPatches[i].Name) {
-        Dst->KextPatches[i].Name = (CHAR8 *)AllocateCopyPool(AsciiStrSize(Src->KextPatches[i].Name), Src->KextPatches[i].Name);
+        Dst->KextPatches[Dst->NrKexts].Name = (CHAR8 *)AllocateCopyPool(AsciiStrSize(Src->KextPatches[i].Name), Src->KextPatches[i].Name);
       }
-      Dst->KextPatches[i].IsPlistPatch = Src->KextPatches[i].IsPlistPatch;
-      Dst->KextPatches[i].DataLen = Src->KextPatches[i].DataLen;
-      Dst->KextPatches[i].Data = AllocateCopyPool(Src->KextPatches[i].DataLen, Src->KextPatches[i].Data);
-      Dst->KextPatches[i].Patch = AllocateCopyPool(Src->KextPatches[i].DataLen, Src->KextPatches[i].Patch);
+      Dst->KextPatches[Dst->NrKexts].IsPlistPatch = Src->KextPatches[i].IsPlistPatch;
+      Dst->KextPatches[Dst->NrKexts].DataLen = Src->KextPatches[i].DataLen;
+      Dst->KextPatches[Dst->NrKexts].Data = AllocateCopyPool(Src->KextPatches[i].DataLen, Src->KextPatches[i].Data);
+      Dst->KextPatches[Dst->NrKexts].Patch = AllocateCopyPool(Src->KextPatches[i].DataLen, Src->KextPatches[i].Patch);
       ++(Dst->NrKexts);
     }
   }
@@ -453,8 +453,10 @@ static BOOLEAN FillinKextPatches(IN OUT KERNEL_AND_KEXT_PATCHES *Patches, TagPtr
    }
 
    prop = GetProperty(dictPointer, "FakeCPUID");
-   Patches->FakeCPUID = (UINT32)GetPropertyInteger(prop, 0);
-   DBG("Config set FakeCPUID=%x\n", Patches->FakeCPUID);
+   if (prop) {
+      Patches->FakeCPUID = (UINT32)GetPropertyInteger(prop, 0);
+      DBG("Config set FakeCPUID=%x\n", Patches->FakeCPUID);
+   }
 
    prop = GetProperty(dictPointer, "AsusAICPUPM");
    if (prop) {
@@ -498,7 +500,7 @@ static BOOLEAN FillinKextPatches(IN OUT KERNEL_AND_KEXT_PATCHES *Patches, TagPtr
 
    prop = GetProperty(dictPointer, "AppleRTC");
    if (prop) {
-      Patches->KPAppleRTC = IsPropertyTrue(prop);  //default = TRUE
+      Patches->KPAppleRTC = !IsPropertyFalse(prop);  //default = TRUE
    }
 
    prop = GetProperty(dictPointer, "KextsToPatch");
