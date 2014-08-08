@@ -60,7 +60,7 @@
 [Guids]
   gEfiDiskInfoIdeInterfaceGuid                  # CONSUMES  ## GUID
   gEfiDiskInfoAhciInterfaceGuid                 # CONSUMES  ## GUID
-  gEfiEventExitBootServicesGuid
+  gEfiEventExitBootServicesGuid			# CONSUMES  ## GUID
   gEfiMemoryOverwriteControlDataGuid            # CONSUMES  ## GUID
 
 [Protocols]

@@ -20,6 +20,7 @@
 
 #include <Uefi.h>
 
+#include <Guid/EventGroup.h>
 #include <Guid/MemoryOverwriteControl.h>
 #include <Protocol/AtaPassThru.h>
 #include <Protocol/BlockIo.h>
