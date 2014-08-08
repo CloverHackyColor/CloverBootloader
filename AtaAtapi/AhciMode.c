@@ -1,5 +1,6 @@
 /** @file
   The file for AHCI mode of ATA host controller.
+
   Copyright (c) 2010 - 2012, Intel Corporation. All rights reserved.<BR>
   This program and the accompanying materials
   are licensed and made available under the terms and conditions of the BSD License
@@ -33,7 +34,7 @@ AhciReadReg (
 
 //  ASSERT (PciIo != NULL);
   if (!PciIo) return 0;
-  
+
   Data = 0;
 
   PciIo->Mem.Read (
@@ -96,7 +97,7 @@ AhciAndReg (
   )
 {
   UINT32 Data;
-  
+
 //  ASSERT (PciIo != NULL);
   if (!PciIo) return;
 
@@ -2423,8 +2424,8 @@ AhciModeInitialization (
                           &SupportedModes
                           );
       if (EFI_ERROR (Status)) {
-//       DEBUG ((EFI_D_ERROR, "Calculate Mode Fail, Status = %r\n", Status));
-//       Print(L"Calculate Mode Fail, Status = %r\n", Status);
+//        DEBUG ((EFI_D_ERROR, "Calculate Mode Fail, Status = %r\n", Status));
+//        Print(L"Calculate Mode Fail, Status = %r\n", Status);
         continue;
       }
 
@@ -2455,8 +2456,8 @@ AhciModeInitialization (
 //      DEBUG ((EFI_D_ERROR, "SetFeature for device at port [%d]\n", Port));
       Status = AhciDeviceSetFeature (PciIo, AhciRegisters, Port, 0, 0x03, (UINT32)(*(UINT8 *)&TransferMode));
       if (EFI_ERROR (Status)) {
-//      DEBUG ((EFI_D_ERROR, "Set transfer Mode Fail, Status = %r\n", Status));
-//      Print(L"Set transfer Mode Fail, Status = %r\n", Status);
+//        DEBUG ((EFI_D_ERROR, "Set transfer Mode Fail, Status = %r\n", Status));
+//        Print(L"Set transfer Mode Fail, Status = %r\n", Status);
         continue;
       }
 //      DEBUG ((EFI_D_ERROR, "create device info for device at port [%d]\n", Port));

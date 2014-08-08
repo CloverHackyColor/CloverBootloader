@@ -947,20 +947,20 @@ AtaDiskInfoWhichIde (
   return EFI_SUCCESS. If the security protocol command completes with an error, the
   function shall return EFI_DEVICE_ERROR.
 
-  @param  This		                     Indicates a pointer to the calling context.
-  @param  MediaId	                     ID of the medium to receive data from.
-  @param  Timeout		                   The timeout, in 100ns units, to use for the execution
+  @param  This                         Indicates a pointer to the calling context.
+  @param  MediaId                      ID of the medium to receive data from.
+  @param  Timeout                      The timeout, in 100ns units, to use for the execution
                                        of the security protocol command. A Timeout value of 0
                                        means that this function will wait indefinitely for the
                                        security protocol command to execute. If Timeout is greater
                                        than zero, then this function will return EFI_TIMEOUT
-				                               if the time required to execute the receive data command
-				                               is greater than Timeout.
+                                       if the time required to execute the receive data command
+                                       is greater than Timeout.
   @param  SecurityProtocolId           The value of the "Security Protocol" parameter of
                                        the security protocol command to be sent.
   @param  SecurityProtocolSpecificData The value of the "Security Protocol Specific" parameter
                                        of the security protocol command to be sent.
-  @param  PayloadBufferSize		         Size in bytes of the payload data buffer.
+  @param  PayloadBufferSize            Size in bytes of the payload data buffer.
   @param  PayloadBuffer                A pointer to a destination buffer to store the security
                                        protocol command specific payload data for the security
                                        protocol command. The caller is responsible for having
@@ -1027,20 +1027,20 @@ AtaStorageSecurityReceiveData (
   EFI_SUCCESS. If the security protocol command completes with an error, the function
   shall return EFI_DEVICE_ERROR.
 
-  @param  This		                     Indicates a pointer to the calling context.
-  @param  MediaId	                     ID of the medium to receive data from.
-  @param  Timeout		                   The timeout, in 100ns units, to use for the execution
+  @param  This                         Indicates a pointer to the calling context.
+  @param  MediaId                      ID of the medium to receive data from.
+  @param  Timeout                      The timeout, in 100ns units, to use for the execution
                                        of the security protocol command. A Timeout value of 0
                                        means that this function will wait indefinitely for the
                                        security protocol command to execute. If Timeout is greater
                                        than zero, then this function will return EFI_TIMEOUT
-				                               if the time required to execute the receive data command
-				                               is greater than Timeout.
+                                       if the time required to execute the receive data command
+                                       is greater than Timeout.
   @param  SecurityProtocolId           The value of the "Security Protocol" parameter of
                                        the security protocol command to be sent.
   @param  SecurityProtocolSpecificData The value of the "Security Protocol Specific" parameter
                                        of the security protocol command to be sent.
-  @param  PayloadBufferSize		         Size in bytes of the payload data buffer.
+  @param  PayloadBufferSize            Size in bytes of the payload data buffer.
   @param  PayloadBuffer                A pointer to a destination buffer to store the security
                                        protocol command specific payload data for the security
                                        protocol command.
