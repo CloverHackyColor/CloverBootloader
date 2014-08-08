@@ -1514,7 +1514,7 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
     // KernelAndKextPatches
     dictPointer = GetProperty(dict, "KernelAndKextPatches");
     if (dictPointer) {
-      FillinKextPatches((KERNEL_AND_KEXT_PATCHES *)(((UINTN)&gSettings) + OFFSET_OF(CUSTOM_LOADER_ENTRY, KernelAndKextPatches)), dictPointer);
+      FillinKextPatches((KERNEL_AND_KEXT_PATCHES *)(((UINTN)&gSettings) + OFFSET_OF(SETTINGS_DATA, KernelAndKextPatches)), dictPointer);
     }
 
     dictPointer = GetProperty(dict, "GUI");
