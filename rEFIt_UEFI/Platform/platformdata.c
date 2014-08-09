@@ -558,9 +558,6 @@ VOID GetDefaultSettings(VOID)
   gSettings.CpuType	= GetAdvancedCpuType();
   
   SetDMISettingsForModel(Model);
- 
-  gSettings.KernelAndKextPatches.KextPatchesAllowed = TRUE;
-  gSettings.KernelAndKextPatches.KPAppleRTC = TRUE;
 
   //default values will be overritten by config.plist
   //use explicitly settings TRUE or FALSE (Yes or No)

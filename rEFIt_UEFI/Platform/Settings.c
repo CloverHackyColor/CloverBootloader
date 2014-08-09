@@ -1282,6 +1282,9 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
   TagPtr      prop;
   // CHAR8       ANum[4];
   // UINTN       i = 0;
+
+  gSettings.KernelAndKextPatches.KextPatchesAllowed = TRUE;
+  gSettings.KernelAndKextPatches.KPAppleRTC = TRUE;
   
   dict = CfgDict;
   if(dict != NULL) {
