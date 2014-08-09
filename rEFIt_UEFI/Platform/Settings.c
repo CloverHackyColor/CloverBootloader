@@ -348,7 +348,6 @@ BOOLEAN CopyKernelAndKextPatches(IN OUT KERNEL_AND_KEXT_PATCHES *Dst, IN KERNEL_
   Dst->KPLapicPanic = Src->KPLapicPanic;
   Dst->KPAsusAICPUPM = Src->KPAsusAICPUPM;
   Dst->KPAppleRTC = Src->KPAppleRTC;
-  Dst->KextPatchesAllowed = Src->KextPatchesAllowed;
   Dst->KPKernelPm = Src->KPKernelPm;
   Dst->FakeCPUID = Src->FakeCPUID;
   if (Src->KPATIConnectorsController) {
@@ -436,9 +435,6 @@ static BOOLEAN FillinKextPatches(IN OUT KERNEL_AND_KEXT_PATCHES *Patches, TagPtr
    UINTN  i;
    if (Patches == NULL || dictPointer == NULL) return FALSE;
 
-   //xxx    gSettings.KPKernelCpu = TRUE; // enabled by default
-   Patches->KPLapicPanic = FALSE; // disabled by default
-   Patches->KextPatchesAllowed = gSettings.KernelAndKextPatches.KextPatchesAllowed;
    if (NeedPMfix) {
       Patches->KPKernelPm = TRUE;
       Patches->KPAsusAICPUPM = TRUE;
@@ -1283,7 +1279,7 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
   // CHAR8       ANum[4];
   // UINTN       i = 0;
 
-  gSettings.KernelAndKextPatches.KextPatchesAllowed = TRUE;
+  gSettings.KextPatchesAllowed = TRUE;
   gSettings.KernelAndKextPatches.KPAppleRTC = TRUE;
   
   dict = CfgDict;

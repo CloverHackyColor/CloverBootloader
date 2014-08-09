@@ -472,9 +472,8 @@ typedef struct KERNEL_AND_KEXT_PATCHES
    BOOLEAN KPLapicPanic;
    BOOLEAN KPAsusAICPUPM;
    BOOLEAN KPAppleRTC;
-   BOOLEAN KextPatchesAllowed;
    BOOLEAN KPKernelPm;
-   UINT8   pad[3];
+   UINT8   pad[2];
    UINT32  FakeCPUID;
    CHAR16  *KPATIConnectorsController;
 #if defined(MDE_CPU_IA32)

@@ -1339,15 +1339,15 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
   // we need to scan kexts if "InjectKexts if no FakeSMC"
   if (gSettings.WithKextsIfNoFakeSMC) {
     DBG_RT(Entry, "\nInjectKexts if no FakeSMC specified - we need kext patching to search for FakeSMC\n");
-    Entry->KernelAndKextPatches->KextPatchesAllowed = TRUE;
+    gSettings.KextPatchesAllowed = TRUE;
     Needed = TRUE;
   }
   
   DBG_RT(Entry, "\nKextPatches Needed: %c, Allowed: %c ... ",
          (Needed ? L'Y' : L'n'),
-         (Entry->KernelAndKextPatches->KextPatchesAllowed ? L'Y' : L'n')
+         (gSettings.KextPatchesAllowed ? L'Y' : L'n')
          );
-  if (Needed && Entry->KernelAndKextPatches->KextPatchesAllowed) {
+  if (Needed && gSettings.KextPatchesAllowed) {
     KernelAndKextPatcherInit();
     if (KernelData == NULL) {
       if (Entry->KernelAndKextPatches->KPDebug) {

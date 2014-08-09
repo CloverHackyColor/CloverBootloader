@@ -640,7 +640,7 @@ void PrintConfig(CFTypeRef data)
   addBoolean(KernelAndKextPatchesDict, CFSTR("KernelLapic"), s->KernelAndKextPatches.KPLapicPanic);
   addBoolean(KernelAndKextPatchesDict, CFSTR("AppleRTC"), s->KernelAndKextPatches.KPAppleRTC);
   addBoolean(KernelAndKextPatchesDict, CFSTR("AsusAICPUPM"), s->KernelAndKextPatches.KPAsusAICPUPM);
-  addBoolean(KernelAndKextPatchesDict, CFSTR("KextPatchesAllowed"), s->KernelAndKextPatches.KextPatchesAllowed);
+  //addBoolean(KernelAndKextPatchesDict, CFSTR("KextPatchesAllowed"), s->KextPatchesAllowed);
   addInteger(KernelAndKextPatchesDict, CFSTR("Number_of_KextsToPatch"), s->KernelAndKextPatches.NrKexts);
     
   CFMutableArrayRef KKPatchArray = addArray(KernelAndKextPatchesDict, CFSTR("KextsToPatch"));

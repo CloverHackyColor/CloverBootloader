@@ -941,9 +941,6 @@ typedef struct {
   CHAR16  LegacyBoot[32];
   UINT16  LegacyBiosDefaultEntry;
   
-  // KernelAndKextPatches
-  KERNEL_AND_KEXT_PATCHES KernelAndKextPatches;
-  
   //Volumes hiding
   CHAR16 **HVHideStrings;
 #if defined(MDE_CPU_IA32)
@@ -955,9 +952,13 @@ typedef struct {
   UINT32  align4;
 #endif
   
+  // KernelAndKextPatches
+  KERNEL_AND_KEXT_PATCHES KernelAndKextPatches;
+  BOOLEAN KextPatchesAllowed;
+
   //Pointer
   BOOLEAN PointerEnabled;
-  UINT8   pad82[3];
+  UINT8   pad82[2];
   INTN    PointerSpeed;
 #if defined(MDE_CPU_IA32)
   UINT32  align5;

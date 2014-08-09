@@ -295,8 +295,8 @@ VOID RefillInputs(VOID)
   //and so on 
   InputItemsCount = 44; 
   InputItems[InputItemsCount].ItemType = BoolValue; //44
-  InputItems[InputItemsCount].BValue = gSettings.KernelAndKextPatches.KextPatchesAllowed;
-  InputItems[InputItemsCount++].SValue = gSettings.KernelAndKextPatches.KextPatchesAllowed ? L"[+]" : L"[ ]";
+  InputItems[InputItemsCount].BValue = gSettings.KextPatchesAllowed;
+  InputItems[InputItemsCount++].SValue = gSettings.KextPatchesAllowed ? L"[+]" : L"[ ]";
   InputItems[InputItemsCount].ItemType = BoolValue; //45
   InputItems[InputItemsCount].BValue = gSettings.KernelAndKextPatches.KPKernelCpu;
   InputItems[InputItemsCount++].SValue = gSettings.KernelAndKextPatches.KPKernelCpu ? L"[+]" : L"[ ]";
@@ -582,8 +582,8 @@ VOID FillInputs(VOID)
   
   InputItemsCount = 44;
   InputItems[InputItemsCount].ItemType = BoolValue; //44
-  InputItems[InputItemsCount].BValue = gSettings.KernelAndKextPatches.KextPatchesAllowed;
-  InputItems[InputItemsCount++].SValue = gSettings.KernelAndKextPatches.KextPatchesAllowed ? L"[+]" : L"[ ]";
+  InputItems[InputItemsCount].BValue = gSettings.KextPatchesAllowed;
+  InputItems[InputItemsCount++].SValue = gSettings.KextPatchesAllowed ? L"[+]" : L"[ ]";
   InputItems[InputItemsCount].ItemType = BoolValue; //45
   InputItems[InputItemsCount].BValue = gSettings.KernelAndKextPatches.KPKernelCpu;
   InputItems[InputItemsCount++].SValue = gSettings.KernelAndKextPatches.KPKernelCpu ? L"[+]" : L"[ ]";
@@ -910,7 +910,8 @@ VOID ApplyInputs(VOID)
   // next number == 42
   i = 44;
   if (InputItems[i].Valid) {
-    gSettings.KernelAndKextPatches.KextPatchesAllowed = InputItems[i].BValue;
+    gSettings.KextPatchesAllowed = InputItems[i].BValue;
+    gBootArgsChanged = TRUE;
   }  
   i++; //45
   if (InputItems[i].Valid) {

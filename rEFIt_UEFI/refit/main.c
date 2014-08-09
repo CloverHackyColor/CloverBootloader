@@ -635,7 +635,7 @@ static CHAR8 *SearchString (
 VOID DumpKernelAndKextPatches(KERNEL_AND_KEXT_PATCHES *Patches)
 {
    DBG("Kernel and Kext Patches:\n");
-   DBG("\tAllowed: %c\n", Patches->KextPatchesAllowed ? 'y' : 'n');
+   DBG("\tAllowed: %c\n", gSettings.KextPatchesAllowed ? 'y' : 'n');
    DBG("\tDebug: %c\n", Patches->KPDebug ? 'y' : 'n');
    DBG("\tKernelCpu: %c\n", Patches->KPKernelCpu ? 'y' : 'n');
    DBG("\tLapic: %c\n", Patches->KPLapicPanic ? 'y' : 'n');
