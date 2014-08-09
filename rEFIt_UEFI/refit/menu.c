@@ -916,18 +916,22 @@ VOID ApplyInputs(VOID)
   i++; //45
   if (InputItems[i].Valid) {
     gSettings.KernelAndKextPatches.KPKernelCpu = InputItems[i].BValue;
+    gBootArgsChanged = TRUE;
   }
   i++; //46
   if (InputItems[i].Valid) {
     gSettings.KernelAndKextPatches.KPAsusAICPUPM = InputItems[i].BValue;
+    gBootArgsChanged = TRUE;
   }
   i++; //47
   if (InputItems[i].Valid) {
     gSettings.KernelAndKextPatches.KPAppleRTC = InputItems[i].BValue;
+    gBootArgsChanged = TRUE;
   }
   i++; //48
   if (InputItems[i].Valid) {
      gSettings.KernelAndKextPatches.KPKernelPm = InputItems[i].BValue;
+     gBootArgsChanged = TRUE;
   }
   i++; //49
   if (InputItems[i].Valid) {
