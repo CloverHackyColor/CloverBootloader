@@ -519,7 +519,7 @@ static BOOLEAN FillinKextPatches(IN OUT KERNEL_AND_KEXT_PATCHES *Patches, TagPtr
                DBG("error %r getting next element at index %d\n", Status, i);
                continue;
             }
-            if (!dictPointer) {
+            if (!prop2) {
                break;
             }
             Patches->KextPatches[Patches->NrKexts].Name = NULL;

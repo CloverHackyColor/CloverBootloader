@@ -645,13 +645,14 @@ VOID DumpKernelAndKextPatches(KERNEL_AND_KEXT_PATCHES *Patches)
    DBG("\tFakeCPUID: 0x%x\n", Patches->FakeCPUID);
    DBG("\tATIController: %s\n", Patches->KPATIConnectorsController);
    DBG("\tATIDataLength: %d\n", Patches->KPATIConnectorsDataLen);
+   DBG("\t%d Kexts to patch\n", Patches->NrKexts);
    if (Patches->KextPatches) {
-      INT32 i = 0;
+      INTN i = 0;
       for (; i < Patches->NrKexts; ++i) {
          if (Patches->KextPatches[i].IsPlistPatch) {
-            DBG("\tKextPatchPlist[%d]: %d bytes, %a\n", i, Patches->KextPatches[i].DataLen, Patches->KextPatches[i].Name);
+            DBG("\t\tKextPatchPlist[%d]: %d bytes, %a\n", i, Patches->KextPatches[i].DataLen, Patches->KextPatches[i].Name);
          } else {
-            DBG("\tKextPatch[%d]: %d bytes, %a\n", i, Patches->KextPatches[i].DataLen, Patches->KextPatches[i].Name);
+            DBG("\t\tKextPatch[%d]: %d bytes, %a\n", i, Patches->KextPatches[i].DataLen, Patches->KextPatches[i].Name);
          }
       }
    }
