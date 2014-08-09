@@ -516,7 +516,7 @@ typedef struct {
   EG_PIXEL         *BootBgColor;
   UINT8             CustomBoot;
   EG_IMAGE         *CustomLogo;
-  KERNEL_AND_KEXT_PATCHES KernelAndKextPatches;
+  KERNEL_AND_KEXT_PATCHES *KernelAndKextPatches;
 } LOADER_ENTRY;
 
 typedef struct {

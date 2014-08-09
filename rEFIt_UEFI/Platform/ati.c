@@ -1742,7 +1742,7 @@ BOOLEAN setup_ati_devprop(LOADER_ENTRY *Entry, pci_dt_t *ati_dev)
 	if (!init_card(ati_dev))
 		return FALSE;
 
-  CurrentPatches = &(Entry->KernelAndKextPatches);
+  CurrentPatches = Entry->KernelAndKextPatches;
 	
 	// -------------------------------------------------
 	// Find a better way to do this (in device_inject.c)

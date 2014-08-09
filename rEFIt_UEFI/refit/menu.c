@@ -4164,7 +4164,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
               TmpTitle = PoolPrint(L"DSDT fix mask [0x%08x]->", gSettings.FixDsdt);
       //        MsgLog("@ENTER: tmp=%s\n", TmpTitle);
               while (*TmpTitle) {
-                *(*ChosenEntry)->Title++ = *TmpTitle++;
+                *((*ChosenEntry)->Title)++ = *TmpTitle++;
               }
       //        MsgLog("@ENTER: chosen=%s\n", (*ChosenEntry)->Title);
             }

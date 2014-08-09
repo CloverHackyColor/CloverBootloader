@@ -338,7 +338,8 @@ static BOOLEAN AddCustomSubEntry(IN OUT CUSTOM_LOADER_ENTRY *Entry, IN CUSTOM_LO
   }
   return TRUE;
 }
-static BOOLEAN CopyKernelAndKextPatches(IN OUT KERNEL_AND_KEXT_PATCHES *Dst, IN KERNEL_AND_KEXT_PATCHES *Src)
+extern VOID DumpKernelAndKextPatches(KERNEL_AND_KEXT_PATCHES *Patches);
+BOOLEAN CopyKernelAndKextPatches(IN OUT KERNEL_AND_KEXT_PATCHES *Dst, IN KERNEL_AND_KEXT_PATCHES *Src)
 {
   if (Dst == NULL || Src == NULL) return FALSE;
 
@@ -437,6 +438,7 @@ static BOOLEAN FillinKextPatches(IN OUT KERNEL_AND_KEXT_PATCHES *Patches, TagPtr
 
    //xxx    gSettings.KPKernelCpu = TRUE; // enabled by default
    Patches->KPLapicPanic = FALSE; // disabled by default
+   Patches->KextPatchesAllowed = gSettings.KernelAndKextPatches.KextPatchesAllowed;
    if (NeedPMfix) {
       Patches->KPKernelPm = TRUE;
       Patches->KPAsusAICPUPM = TRUE;
@@ -905,11 +907,15 @@ static BOOLEAN FillinCustomEntry(IN OUT CUSTOM_LOADER_ENTRY *Entry, TagPtr dictP
        }
      }
      // KernelAndKextPatches
+     DBG("Copying global patch settings\n");
      CopyKernelAndKextPatches((KERNEL_AND_KEXT_PATCHES *)(((UINTN)Entry) + OFFSET_OF(CUSTOM_LOADER_ENTRY, KernelAndKextPatches)),
                               (KERNEL_AND_KEXT_PATCHES *)(((UINTN)&gSettings) + OFFSET_OF(SETTINGS_DATA, KernelAndKextPatches)));
+     DumpKernelAndKextPatches((KERNEL_AND_KEXT_PATCHES *)(((UINTN)Entry) + OFFSET_OF(CUSTOM_LOADER_ENTRY, KernelAndKextPatches)));
      prop = GetProperty(dictPointer, "KernelAndKextPatches");
      if (prop) {
        FillinKextPatches((KERNEL_AND_KEXT_PATCHES *)(((UINTN)Entry) + OFFSET_OF(CUSTOM_LOADER_ENTRY, KernelAndKextPatches)), prop);
+       DBG("Filled in patch settings\n");
+       DumpKernelAndKextPatches((KERNEL_AND_KEXT_PATCHES *)(((UINTN)Entry) + OFFSET_OF(CUSTOM_LOADER_ENTRY, KernelAndKextPatches)));
      }
   }
   if (Entry->Type == OSTYPE_LINEFI) {
@@ -1515,6 +1521,9 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
     dictPointer = GetProperty(dict, "KernelAndKextPatches");
     if (dictPointer) {
       FillinKextPatches((KERNEL_AND_KEXT_PATCHES *)(((UINTN)&gSettings) + OFFSET_OF(SETTINGS_DATA, KernelAndKextPatches)), dictPointer);
+      DBG("Fillin global patch settings\n");
+      DumpKernelAndKextPatches((KERNEL_AND_KEXT_PATCHES *)(((UINTN)&gSettings) + OFFSET_OF(SETTINGS_DATA, KernelAndKextPatches)));
+
     }
 
     dictPointer = GetProperty(dict, "GUI");

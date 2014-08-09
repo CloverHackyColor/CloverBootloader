@@ -23,7 +23,7 @@
 #endif
 
 // runtime debug
-#define DBG_RT(entry, ...)    if ((entry != NULL) && entry->KernelAndKextPatches.KPDebug) { AsciiPrint(__VA_ARGS__); }
+#define DBG_RT(entry, ...)    if ((entry != NULL) && (entry->KernelAndKextPatches != NULL) && entry->KernelAndKextPatches->KPDebug) { AsciiPrint(__VA_ARGS__); }
 
 
 EFI_PHYSICAL_ADDRESS    KernelRelocBase = 0;
@@ -471,8 +471,8 @@ BOOLEAN PatchCPUID(UINT8* bytes, UINT8* Location, INT32 LenLoc,
   INT32 patchLocation=0, patchLocation1=0;
   INT32 Adr = 0, Num;
   BOOLEAN Patched = FALSE;
-  UINT8 FakeModel = (Entry->KernelAndKextPatches.FakeCPUID >> 4) & 0x0f;
-  UINT8 FakeExt = (Entry->KernelAndKextPatches.FakeCPUID >> 0x10) & 0x0f;
+  UINT8 FakeModel = (Entry->KernelAndKextPatches->FakeCPUID >> 4) & 0x0f;
+  UINT8 FakeExt = (Entry->KernelAndKextPatches->FakeCPUID >> 0x10) & 0x0f;
   for (Num = 0; Num < 2; Num++) {
     Adr = FindBin(&bytes[Adr], 0x800000 - Adr, Location, LenLoc);
     if (Adr < 0) {
@@ -1228,22 +1228,23 @@ KernelAndKextPatcherInit(VOID)
 VOID
 KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
 {
-  BOOLEAN Needed = (Entry->KernelAndKextPatches.KPAsusAICPUPM ||
-                    Entry->KernelAndKextPatches.KPAppleRTC ||
-                    (Entry->KernelAndKextPatches.KPATIConnectorsPatch != NULL) ||
-                    ((Entry->KernelAndKextPatches.NrKexts > 0) &&
-                     (Entry->KernelAndKextPatches.KextPatches != NULL)));
+  BOOLEAN Needed;
   // we will call KernelAndKextPatcherInit() only if needed
-  
+  if ((Entry == NULL) || (Entry->KernelAndKextPatches == NULL)) return;
+  Needed = (Entry->KernelAndKextPatches->KPAsusAICPUPM ||
+            Entry->KernelAndKextPatches->KPAppleRTC ||
+            (Entry->KernelAndKextPatches->KPATIConnectorsPatch != NULL) ||
+            ((Entry->KernelAndKextPatches->NrKexts > 0) &&
+             (Entry->KernelAndKextPatches->KextPatches != NULL)));
   DBG_RT(Entry, "\nKernelCpu patch: ");
-  if (Entry->KernelAndKextPatches.KPKernelCpu) {    
+  if ((Entry != NULL) && Entry->KernelAndKextPatches->KPKernelCpu) {    
     //
     // Kernel patches
     //
     DBG_RT(Entry, "Enabled: ");
       KernelAndKextPatcherInit();
       if (KernelData == NULL) {
-        if (Entry->KernelAndKextPatches.KPDebug) {
+        if (Entry->KernelAndKextPatches->KPDebug) {
           DBG_RT(Entry, "ERROR: Kernel not found\n");
           gBS->Stall(5000000);
         }
@@ -1263,11 +1264,11 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
   }
   
   //other method for KernelCPU patch is FakeCPUID
-  if (Entry->KernelAndKextPatches.FakeCPUID) {
-    DBG_RT(Entry, "KernelCPUID patch to: 0x%06x\n", Entry->KernelAndKextPatches.FakeCPUID);
+  if (Entry->KernelAndKextPatches->FakeCPUID) {
+    DBG_RT(Entry, "KernelCPUID patch to: 0x%06x\n", Entry->KernelAndKextPatches->FakeCPUID);
     KernelAndKextPatcherInit();
     if (KernelData == NULL) {
-      if (Entry->KernelAndKextPatches.KPDebug) {
+      if (Entry->KernelAndKextPatches->KPDebug) {
         DBG_RT(Entry, "ERROR: Kernel not found\n");
         gBS->Stall(5000000);
       }
@@ -1280,11 +1281,11 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
 
   // CPU power management patch for haswell with locked msr
   DBG_RT(Entry, "\nKernelPm patch: ");
-  if (Entry->KernelAndKextPatches.KPKernelPm) {
+  if (Entry->KernelAndKextPatches->KPKernelPm) {
     DBG_RT(Entry, "Enabled: ");
     KernelAndKextPatcherInit();
     if (KernelData == NULL) {
-      if (Entry->KernelAndKextPatches.KPDebug) {
+      if (Entry->KernelAndKextPatches->KPDebug) {
         DBG_RT(Entry, "ERROR: Kernel not found\n");
         gBS->Stall(5000000);
       }
@@ -1300,11 +1301,11 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
   // Lapic Panic Kernel Patch
   
   DBG_RT(Entry, "\nKernelLapic patch: ");
-  if (Entry->KernelAndKextPatches.KPLapicPanic) {
+  if (Entry->KernelAndKextPatches->KPLapicPanic) {
     BOOLEAN patchedOk;
     KernelAndKextPatcherInit();
     if (KernelData == NULL) {
-      if (Entry->KernelAndKextPatches.KPDebug) {
+      if (Entry->KernelAndKextPatches->KPDebug) {
         DBG_RT(Entry, "ERROR: Kernel not found\n");
         gBS->Stall(5000000);
       }
@@ -1327,7 +1328,7 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
     DBG_RT(Entry, "Not done - Disabled.\n");
   }
   
-  if (Entry->KernelAndKextPatches.KPDebug) {
+  if (Entry->KernelAndKextPatches->KPDebug) {
     gBS->Stall(5000000);
   }
   
@@ -1338,18 +1339,18 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
   // we need to scan kexts if "InjectKexts if no FakeSMC"
   if (gSettings.WithKextsIfNoFakeSMC) {
     DBG_RT(Entry, "\nInjectKexts if no FakeSMC specified - we need kext patching to search for FakeSMC\n");
-    Entry->KernelAndKextPatches.KextPatchesAllowed = TRUE;
+    Entry->KernelAndKextPatches->KextPatchesAllowed = TRUE;
     Needed = TRUE;
   }
   
   DBG_RT(Entry, "\nKextPatches Needed: %c, Allowed: %c ... ",
          (Needed ? L'Y' : L'n'),
-         (Entry->KernelAndKextPatches.KextPatchesAllowed ? L'Y' : L'n')
+         (Entry->KernelAndKextPatches->KextPatchesAllowed ? L'Y' : L'n')
          );
-  if (Needed && Entry->KernelAndKextPatches.KextPatchesAllowed) {
+  if (Needed && Entry->KernelAndKextPatches->KextPatchesAllowed) {
     KernelAndKextPatcherInit();
     if (KernelData == NULL) {
-      if (Entry->KernelAndKextPatches.KPDebug) {
+      if (Entry->KernelAndKextPatches->KPDebug) {
         DBG_RT(Entry, "ERROR: Kernel not found\n");
         gBS->Stall(5000000);
       }
@@ -1363,7 +1364,7 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
   } else {
     DBG_RT(Entry, "Not needed or not allowed\n");
   }
-  if (Entry->KernelAndKextPatches.KPDebug) {
+  if (Entry->KernelAndKextPatches->KPDebug) {
     DBG_RT(Entry, "Pausing 10 secs ...\n\n");
     gBS->Stall(10000000);
   }
@@ -1374,7 +1375,7 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
   if (Entry != 0 && gSettings.WithKextsIfNoFakeSMC && gSettings.FakeSMCFound) {
     // disable kext injection if FakeSMC is already present
     Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_WITHKEXTS);
-    if (Entry->KernelAndKextPatches.KPDebug) {
+    if (Entry->KernelAndKextPatches->KPDebug) {
       DBG_RT(Entry, "\nInjectKexts if no FakeSMC is requested and FakeSMC is found - disabling kext injection\n");
       gBS->Stall(5000000);
     }
@@ -1391,7 +1392,7 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
     Status = gRT->GetVariable (L"FSInject.KextsInjected", &gEfiGlobalVariableGuid, NULL, &DataSize, NULL);
     if (Status == EFI_BUFFER_TOO_SMALL) {
       // var exists - just exit
-      if (Entry->KernelAndKextPatches.KPDebug) {
+      if (Entry->KernelAndKextPatches->KPDebug) {
         DBG_RT(Entry, "\nInjectKexts: skipping, FSInject already injected them\n");
         gBS->Stall(5000000);
       }

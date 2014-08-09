@@ -632,7 +632,7 @@ static CHAR8 *SearchString (
   return NULL;
 }
 
-static VOID DumpKernelAndKextPatches(KERNEL_AND_KEXT_PATCHES *Patches)
+VOID DumpKernelAndKextPatches(KERNEL_AND_KEXT_PATCHES *Patches)
 {
    DBG("Kernel and Kext Patches:\n");
    DBG("\tAllowed: %c\n", Patches->KextPatchesAllowed ? 'y' : 'n');
@@ -649,9 +649,9 @@ static VOID DumpKernelAndKextPatches(KERNEL_AND_KEXT_PATCHES *Patches)
       INT32 i = 0;
       for (; i < Patches->NrKexts; ++i) {
          if (Patches->KextPatches[i].IsPlistPatch) {
-            DBG("\tKextPatchPlist[%d]: %d bytes, %s\n", i, Patches->KextPatches[i].DataLen, Patches->KextPatches[i].Name);
+            DBG("\tKextPatchPlist[%d]: %d bytes, %a\n", i, Patches->KextPatches[i].DataLen, Patches->KextPatches[i].Name);
          } else {
-            DBG("\tKextPatch[%d]: %d bytes, %s\n", i, Patches->KextPatches[i].DataLen, Patches->KextPatches[i].Name);
+            DBG("\tKextPatch[%d]: %d bytes, %a\n", i, Patches->KextPatches[i].DataLen, Patches->KextPatches[i].Name);
          }
       }
    }
@@ -684,7 +684,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
          DivU64x32(gCPUStructure.FSBFrequency, kilo),
          gCPUStructure.MaxSpeed);
 
-  DumpKernelAndKextPatches((KERNEL_AND_KEXT_PATCHES *)(((UINTN)Entry) + OFFSET_OF(LOADER_ENTRY, KernelAndKextPatches)));
+  DumpKernelAndKextPatches(Entry->KernelAndKextPatches);
 
 //  MsgLog("Turbo=%c\n", gSettings.Turbo?'Y':'N');
 //  MsgLog("PatchAPIC=%c\n", gSettings.PatchNMI?'Y':'N');
@@ -765,7 +765,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     }
 */
     // If KPDebug is true boot in verbose mode to see the debug messages
-    if (Entry->KernelAndKextPatches.KPDebug) {
+    if ((Entry->KernelAndKextPatches != NULL) && Entry->KernelAndKextPatches->KPDebug) {
       CHAR16 *TempOptions = AddLoadOption(Entry->LoadOptions, L"-v");
       FreePool(Entry->LoadOptions);
       Entry->LoadOptions = TempOptions;

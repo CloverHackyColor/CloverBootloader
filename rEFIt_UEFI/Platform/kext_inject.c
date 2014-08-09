@@ -9,7 +9,7 @@
 #endif
 
 // runtime debug
-#define DBG_RT(entry, ...)    if ((entry != NULL) && entry->KernelAndKextPatches.KPDebug) { AsciiPrint(__VA_ARGS__); }
+#define DBG_RT(entry, ...)    if ((entry != NULL) && (entry->KernelAndKextPatches != NULL) && entry->KernelAndKextPatches->KPDebug) { AsciiPrint(__VA_ARGS__); }
 
 
 ////////////////////
@@ -328,7 +328,7 @@ EFI_STATUS InjectKexts(/*IN EFI_MEMORY_DESCRIPTOR *Desc*/ IN UINT32 deviceTreeP,
 	KextCount = GetKextCount();
 	if (KextCount == 0) {
 		DBG_RT(Entry, "no kexts to inject.\nPausing 5 secs ...\n");
-      if (Entry->KernelAndKextPatches.KPDebug) {
+      if (Entry->KernelAndKextPatches->KPDebug) {
 			gBS->Stall(5000000);
 		}
 		return EFI_NOT_FOUND;
@@ -417,7 +417,7 @@ EFI_STATUS InjectKexts(/*IN EFI_MEMORY_DESCRIPTOR *Desc*/ IN UINT32 deviceTreeP,
 		}
 	}
   
-   if (Entry->KernelAndKextPatches.KPDebug) {
+   if (Entry->KernelAndKextPatches->KPDebug) {
 		DBG_RT(Entry, "Done.\n");
 		gBS->Stall(5000000);
 	}
@@ -522,7 +522,7 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
     DBG_RT(Entry, "==> ERROR: NOT patched - unknown kernel.\n");
   }
   
-  if (Entry->KernelAndKextPatches.KPDebug) {
+  if (Entry->KernelAndKextPatches->KPDebug) {
     DBG_RT(Entry, "Pausing 5 secs ...\n");
     gBS->Stall(5000000);
   }
