@@ -512,7 +512,7 @@ static BOOLEAN FillinKextPatches(IN OUT KERNEL_AND_KEXT_PATCHES *Patches, TagPtr
             FreePool(Patches->ForceKexts);
          }
          Patches->ForceKexts = newForceKexts;
-         DBG("ForceKextsToLoad: %d requested", Count);
+         DBG("ForceKextsToLoad: %d requested\n", Count);
          for (i = 0; i < Count; ++i) {
             EFI_STATUS Status = GetElement(prop, i, &prop2);
             if (EFI_ERROR(Status)) {
@@ -522,9 +522,9 @@ static BOOLEAN FillinKextPatches(IN OUT KERNEL_AND_KEXT_PATCHES *Patches, TagPtr
             if (!prop2) {
                break;
             }
-            if ((prop2->type == kTagTypeString) && prop2->string) {
+            if (prop2->string) {
                Patches->ForceKexts[Patches->NrForceKexts] = AllocateZeroPool(AsciiStrSize(prop2->string) * sizeof(CHAR16));
-               AsciiStrToUnicodeStr(prop->string, Patches->ForceKexts[Patches->NrForceKexts]);
+               AsciiStrToUnicodeStr(prop2->string, Patches->ForceKexts[Patches->NrForceKexts]);
                DBG("ForceKextsToLoad %d: %s\n", i, Patches->ForceKexts[Patches->NrForceKexts]);
                Patches->NrForceKexts++;
             }
