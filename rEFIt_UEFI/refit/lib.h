@@ -499,6 +499,12 @@ typedef struct KERNEL_AND_KEXT_PATCHES
 #if defined(MDE_CPU_IA32)
    UINT32  align5;
 #endif
+
+   INT32    NrForceKexts;
+   CHAR16 **ForceKexts;
+#if defined(MDE_CPU_IA32)
+   UINT32 align6;
+#endif
 } KERNEL_AND_KEXT_PATCHES;
 
 typedef struct {

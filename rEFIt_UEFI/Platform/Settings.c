@@ -501,6 +501,37 @@ static BOOLEAN FillinKextPatches(IN OUT KERNEL_AND_KEXT_PATCHES *Patches, TagPtr
       Patches->KPAppleRTC = !IsPropertyFalse(prop);  //default = TRUE
    }
 
+   prop = GetProperty(dictPointer, "ForceKextsToLoad");
+   if (prop) {
+      UINTN Count = GetTagCount(prop);
+      if (Count > 0) {
+         TagPtr prop2;
+         CHAR16 **newForceKexts = AllocateZeroPool((Patches->NrForceKexts + Count) * sizeof(CHAR16 *));
+         if (Patches->ForceKexts != NULL) {
+            CopyMem(newForceKexts, Patches->ForceKexts, (Patches->NrForceKexts * sizeof(CHAR16 *)));
+            FreePool(Patches->ForceKexts);
+         }
+         Patches->ForceKexts = newForceKexts;
+         DBG("ForceKextsToLoad: %d requested", Count);
+         for (i = 0; i < Count; ++i) {
+            EFI_STATUS Status = GetElement(prop, i, &prop2);
+            if (EFI_ERROR(Status)) {
+               DBG("error %r getting next element at index %d\n", Status, i);
+               continue;
+            }
+            if (!prop2) {
+               break;
+            }
+            if ((prop2->type == kTagTypeString) && prop2->string) {
+               Patches->ForceKexts[Patches->NrForceKexts] = AllocateZeroPool(AsciiStrSize(prop2->string) * sizeof(CHAR16));
+               AsciiStrToUnicodeStr(prop->string, Patches->ForceKexts[Patches->NrForceKexts]);
+               DBG("ForceKextsToLoad %d: %s\n", i, Patches->ForceKexts[Patches->NrForceKexts]);
+               Patches->NrForceKexts++;
+            }
+         }
+      }
+   }
+
    prop = GetProperty(dictPointer, "KextsToPatch");
    if (prop) {
       UINTN Count = GetTagCount(prop);
@@ -509,8 +540,10 @@ static BOOLEAN FillinKextPatches(IN OUT KERNEL_AND_KEXT_PATCHES *Patches, TagPtr
          TagPtr prop2, dict;
          KEXT_PATCH *newPatches = AllocateZeroPool((Patches->NrKexts + Count) * sizeof(KEXT_PATCH));
          // Patches->NrKexts = 0;
-         CopyMem(newPatches, Patches->KextPatches, (Patches->NrKexts * sizeof(KEXT_PATCH)));
-         FreePool(Patches->KextPatches);
+         if (Patches->KextPatches != NULL) {
+            CopyMem(newPatches, Patches->KextPatches, (Patches->NrKexts * sizeof(KEXT_PATCH)));
+            FreePool(Patches->KextPatches);
+         }
          Patches->KextPatches = newPatches;
          DBG("KextsToPatch: %d requested\n", Count);
          for (i = 0; i < Count; ++i) {

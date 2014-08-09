@@ -73,7 +73,7 @@ EFI_STATUS EFIAPI ThinFatFile(IN OUT UINT8 **binary, IN OUT UINTN *length, IN cp
 	return EFI_SUCCESS;
 }
 
-EFI_STATUS EFIAPI LoadKext(IN CHAR16 *FileName, IN cpu_type_t archCpuType, IN OUT _DeviceTreeBuffer *kext)
+EFI_STATUS EFIAPI LoadKext(IN EFI_FILE *RootDir, IN CHAR16 *FileName, IN cpu_type_t archCpuType, IN OUT _DeviceTreeBuffer *kext)
 {
 	EFI_STATUS	Status;
 	UINT8*      infoDictBuffer = NULL;
@@ -91,11 +91,11 @@ EFI_STATUS EFIAPI LoadKext(IN CHAR16 *FileName, IN cpu_type_t archCpuType, IN OU
   _BooterKextFileInfo *infoAddr = NULL;
   
 	UnicodeSPrint(TempName, 512, L"%s\\%s", FileName, L"Contents\\Info.plist");
-	Status = egLoadFile(SelfVolume->RootDir, TempName, &infoDictBuffer, &infoDictBufferLength);
+	Status = egLoadFile(RootDir, TempName, &infoDictBuffer, &infoDictBufferLength);
 	if (EFI_ERROR(Status)) {
     //try to find a planar kext, without Contents
     UnicodeSPrint(TempName, 512, L"%s\\%s", FileName, L"Info.plist");
-    Status = egLoadFile(SelfVolume->RootDir, TempName, &infoDictBuffer, &infoDictBufferLength);
+    Status = egLoadFile(RootDir, TempName, &infoDictBuffer, &infoDictBufferLength);
     if (EFI_ERROR(Status)) {
       MsgLog("Failed to load extra kext: %s\n", FileName);
       return EFI_NOT_FOUND;
@@ -115,7 +115,7 @@ EFI_STATUS EFIAPI LoadKext(IN CHAR16 *FileName, IN cpu_type_t archCpuType, IN OU
     } else {
       UnicodeSPrint(TempName, 512, L"%s\\%s\\%s", FileName, L"Contents\\MacOS",Executable);
     }
-    Status = egLoadFile(SelfVolume->RootDir, TempName, &executableFatBuffer, &executableBufferLength);
+    Status = egLoadFile(RootDir, TempName, &executableFatBuffer, &executableBufferLength);
     if (EFI_ERROR(Status)) {
       FreePool(infoDictBuffer);
       MsgLog("Failed to load extra kext: %s\n", FileName);
@@ -152,14 +152,14 @@ EFI_STATUS EFIAPI LoadKext(IN CHAR16 *FileName, IN cpu_type_t archCpuType, IN OU
   return EFI_SUCCESS;
 }
 
-EFI_STATUS EFIAPI AddKext(IN CHAR16 *FileName, IN cpu_type_t archCpuType)
+EFI_STATUS EFIAPI AddKext(IN EFI_FILE *RootDir, IN CHAR16 *FileName, IN cpu_type_t archCpuType)
 {
 	EFI_STATUS	Status;
 	KEXT_ENTRY	*KextEntry;
   
 	KextEntry = AllocatePool (sizeof(KEXT_ENTRY));
 	KextEntry->Signature = KEXT_SIGNATURE;
-	Status = LoadKext(FileName, archCpuType, &KextEntry->kext);
+	Status = LoadKext(RootDir, FileName, archCpuType, &KextEntry->kext);
 	if(EFI_ERROR(Status)) {
 		FreePool(KextEntry);
 	} else {
@@ -246,7 +246,32 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
       archCpuType = CPU_TYPE_I386; // For OSVersion < 10.7, use default of i386
 	  }
 	}
-  
+
+   // Force kexts to load
+   if ((Entry->KernelAndKextPatches != NULL) &&
+      (Entry->KernelAndKextPatches->NrForceKexts > 0) &&
+      (Entry->KernelAndKextPatches->ForceKexts != NULL)) {
+      INT32 i = 0;
+      for (; i < Entry->KernelAndKextPatches->NrForceKexts; ++i) {
+         MsgLog("  Force kext: %s\n", Entry->KernelAndKextPatches->ForceKexts[i]);
+         if (Entry->Volume && Entry->Volume->RootDir) {
+            AddKext(Entry->Volume->RootDir, Entry->KernelAndKextPatches->ForceKexts[i], archCpuType);
+
+            UnicodeSPrint(PlugIns, 512, L"%s\\%s", Entry->KernelAndKextPatches->ForceKexts[i], L"Contents\\PlugIns");
+            DirIterOpen(Entry->Volume->RootDir, PlugIns, &PlugInIter);
+            while (DirIterNext(&PlugInIter, 1, L"*.kext", &PlugInFile)) {
+               if (PlugInFile->FileName[0] == '.' || StrStr(PlugInFile->FileName, L".kext") == NULL)
+                  continue;   // skip this
+
+               UnicodeSPrint(FileName, 512, L"%s\\%s", PlugIns, PlugInFile->FileName);
+               MsgLog("  Force PlugIn kext: %s\n", FileName);
+               AddKext(Entry->Volume->RootDir, FileName, archCpuType);
+            }
+            DirIterClose(&PlugInIter);
+         }
+      }
+   }
+
   //	Volume = Entry->Volume;
 	SrcDir = GetExtraKextsDir(Entry->OSVersion);
 	if (SrcDir != NULL) {
@@ -259,7 +284,7 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
 			
 			UnicodeSPrint(FileName, 512, L"%s\\%s", SrcDir, KextFile->FileName);
 			MsgLog("  Extra kext: %s\n", FileName);
-			AddKext(FileName, archCpuType);
+			AddKext(SelfVolume->RootDir, FileName, archCpuType);
       
 			UnicodeSPrint(PlugIns, 512, L"%s\\%s", FileName, L"Contents\\PlugIns");
 			DirIterOpen(SelfVolume->RootDir, PlugIns, &PlugInIter);
@@ -269,13 +294,13 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
 				
 				UnicodeSPrint(FileName, 512, L"%s\\%s", PlugIns, PlugInFile->FileName);
 				MsgLog("  Extra PlugIn kext: %s\n", FileName);
-				AddKext(FileName, archCpuType);
+				AddKext(SelfVolume->RootDir, FileName, archCpuType);
 			}
 			DirIterClose(&PlugInIter);
 		}
 		DirIterClose(&KextIter);
 	}
-  
+
 	// reserve space in the device tree
 	if (GetKextCount() > 0) {
 		mm_extra_size = GetKextCount() * (sizeof(DeviceTreeNodeProperty) + sizeof(_DeviceTreeBuffer));
