@@ -649,6 +649,10 @@ static BOOLEAN FillinCustomEntry(IN OUT CUSTOM_LOADER_ENTRY *Entry, TagPtr dictP
   if ((Entry == NULL) || (dictPointer == NULL)) {
     return FALSE;
   }
+  prop = GetProperty(dictPointer, "Ignore");
+  if (IsPropertyTrue(prop)) {
+    return FALSE;
+  }
   prop = GetProperty(dictPointer, "Volume");
   if (prop && (prop->type == kTagTypeString)) {
     if (Entry->Volume) {
@@ -1032,6 +1036,10 @@ static BOOLEAN FillinCustomLegacy(IN OUT CUSTOM_LEGACY_ENTRY *Entry, TagPtr dict
   if ((Entry == NULL) || (dictPointer == NULL)) {
     return FALSE;
   }
+  prop = GetProperty(dictPointer, "Ignore");
+  if (IsPropertyTrue(prop)) {
+    return FALSE;
+  }
   prop = GetProperty(dictPointer, "Volume");
   if (prop && (prop->type == kTagTypeString)) {
     if (Entry->Volume) {
@@ -1197,6 +1205,10 @@ static BOOLEAN FillinCustomTool(IN OUT CUSTOM_TOOL_ENTRY *Entry, TagPtr dictPoin
 {
   TagPtr prop;
   if ((Entry == NULL) || (dictPointer == NULL)) {
+    return FALSE;
+  }
+  prop = GetProperty(dictPointer, "Ignore");
+  if (IsPropertyTrue(prop)) {
     return FALSE;
   }
   prop = GetProperty(dictPointer, "Volume");
