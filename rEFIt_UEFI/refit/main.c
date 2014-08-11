@@ -645,6 +645,13 @@ VOID DumpKernelAndKextPatches(KERNEL_AND_KEXT_PATCHES *Patches)
    DBG("\tFakeCPUID: 0x%x\n", Patches->FakeCPUID);
    DBG("\tATIController: %s\n", Patches->KPATIConnectorsController);
    DBG("\tATIDataLength: %d\n", Patches->KPATIConnectorsDataLen);
+   DBG("\t%d Kexts to load\n", Patches->NrForceKexts);
+   if (Patches->ForceKexts) {
+      INTN i = 0;
+      for (; i < Patches->NrForceKexts; ++i) {
+         DBG("\t\tKextToLoad[%d]: %s\n", i, Patches->ForceKexts[i]);
+      }
+   }
    DBG("\t%d Kexts to patch\n", Patches->NrKexts);
    if (Patches->KextPatches) {
       INTN i = 0;
@@ -740,9 +747,12 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     // then user selected submenu entry and requested no injection.
     // we'll turn off global "InjectKexts if no FakeSMC" to avoid unnecessary
     // FakeSMC scanning.
+    // apianti - unneccessary
+    /*
     if (OSFLAG_ISUNSET(Entry->Flags, OSFLAG_WITHKEXTS)) {
       gSettings.WithKextsIfNoFakeSMC = FALSE;
     }
+    // */
 
     //we are booting OSX - restore emulation if it's not installed before starting boot.efi
     if (gEmuVariableControl != NULL) {

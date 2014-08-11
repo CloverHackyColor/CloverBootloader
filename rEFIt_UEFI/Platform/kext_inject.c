@@ -73,7 +73,10 @@ EFI_STATUS EFIAPI ThinFatFile(IN OUT UINT8 **binary, IN OUT UINTN *length, IN cp
 	return EFI_SUCCESS;
 }
 
-EFI_STATUS EFIAPI LoadKext(IN EFI_FILE *RootDir, IN CHAR16 *FileName, IN cpu_type_t archCpuType, IN OUT _DeviceTreeBuffer *kext)
+extern VOID KernelAndKextPatcherInit(VOID);
+extern VOID AnyKextPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize, INT32 N, LOADER_ENTRY *Entry);
+
+EFI_STATUS EFIAPI LoadKext(IN LOADER_ENTRY *Entry, IN EFI_FILE *RootDir, IN CHAR16 *FileName, IN cpu_type_t archCpuType, IN OUT _DeviceTreeBuffer *kext)
 {
 	EFI_STATUS	Status;
 	UINT8*      infoDictBuffer = NULL;
@@ -97,14 +100,14 @@ EFI_STATUS EFIAPI LoadKext(IN EFI_FILE *RootDir, IN CHAR16 *FileName, IN cpu_typ
     UnicodeSPrint(TempName, 512, L"%s\\%s", FileName, L"Info.plist");
     Status = egLoadFile(RootDir, TempName, &infoDictBuffer, &infoDictBufferLength);
     if (EFI_ERROR(Status)) {
-      MsgLog("Failed to load extra kext: %s\n", FileName);
+      MsgLog("Failed to load extra kext (Info.plist not found): %s\n", FileName);
       return EFI_NOT_FOUND;
     }
     NoContents = TRUE;
 	}
   if(ParseXML((CHAR8*)infoDictBuffer,&dict,0)!=0) {
     FreePool(infoDictBuffer);
-    MsgLog("Failed to load extra kext: %s\n", FileName);
+    MsgLog("Failed to load extra kext (failed to parse Info.plist): %s\n", FileName);
     return EFI_NOT_FOUND;
   }
   prop=GetProperty(dict,"CFBundleExecutable");
@@ -118,7 +121,7 @@ EFI_STATUS EFIAPI LoadKext(IN EFI_FILE *RootDir, IN CHAR16 *FileName, IN cpu_typ
     Status = egLoadFile(RootDir, TempName, &executableFatBuffer, &executableBufferLength);
     if (EFI_ERROR(Status)) {
       FreePool(infoDictBuffer);
-      MsgLog("Failed to load extra kext: %s\n", FileName);
+      MsgLog("Failed to load extra kext (executable not found): %s\n", FileName);
       return EFI_NOT_FOUND;
     }
     executableBuffer = executableFatBuffer;
@@ -152,14 +155,14 @@ EFI_STATUS EFIAPI LoadKext(IN EFI_FILE *RootDir, IN CHAR16 *FileName, IN cpu_typ
   return EFI_SUCCESS;
 }
 
-EFI_STATUS EFIAPI AddKext(IN EFI_FILE *RootDir, IN CHAR16 *FileName, IN cpu_type_t archCpuType)
+EFI_STATUS EFIAPI AddKext(IN LOADER_ENTRY *Entry, IN EFI_FILE *RootDir, IN CHAR16 *FileName, IN cpu_type_t archCpuType)
 {
 	EFI_STATUS	Status;
 	KEXT_ENTRY	*KextEntry;
   
 	KextEntry = AllocatePool (sizeof(KEXT_ENTRY));
 	KextEntry->Signature = KEXT_SIGNATURE;
-	Status = LoadKext(RootDir, FileName, archCpuType, &KextEntry->kext);
+	Status = LoadKext(Entry, RootDir, FileName, archCpuType, &KextEntry->kext);
 	if(EFI_ERROR(Status)) {
 		FreePool(KextEntry);
 	} else {
@@ -200,6 +203,27 @@ UINT32 GetKextsSize()
 		}
 	}
 	return kextsSize;
+}
+
+VOID LoadPlugInKexts(IN LOADER_ENTRY *Entry, IN EFI_FILE *RootDir, IN CHAR16 *DirName, IN cpu_type_t archCpuType)
+{
+   REFIT_DIR_ITER          PlugInIter;
+   EFI_FILE_INFO           *PlugInFile;
+   CHAR16                  FileName[256];
+   CHAR16                  PlugIns[256];
+   if ((Entry == NULL) || (RootDir == NULL) || (DirName == NULL)) {
+      return;
+   }
+   DirIterOpen(RootDir, DirName, &PlugInIter);
+   while (DirIterNext(&PlugInIter, 1, L"*.kext", &PlugInFile)) {
+      if (PlugInFile->FileName[0] == '.' || StrStr(PlugInFile->FileName, L".kext") == NULL)
+         continue;   // skip this
+
+      UnicodeSPrint(FileName, 512, L"%s\\%s", PlugIns, PlugInFile->FileName);
+      MsgLog("  Force PlugIn kext: %s\n", FileName);
+      AddKext(Entry, RootDir, FileName, archCpuType);
+   }
+   DirIterClose(&PlugInIter);
 }
 
 EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
@@ -255,19 +279,26 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
       for (; i < Entry->KernelAndKextPatches->NrForceKexts; ++i) {
          MsgLog("  Force kext: %s\n", Entry->KernelAndKextPatches->ForceKexts[i]);
          if (Entry->Volume && Entry->Volume->RootDir) {
-            AddKext(Entry->Volume->RootDir, Entry->KernelAndKextPatches->ForceKexts[i], archCpuType);
+            // Check if the entry is a directory
+            if (StrStr(Entry->KernelAndKextPatches->ForceKexts[i], L".kext") == NULL) {
+               DirIterOpen(Entry->Volume->RootDir, Entry->KernelAndKextPatches->ForceKexts[i], &PlugInIter);
+               while (DirIterNext(&PlugInIter, 1, L"*.kext", &PlugInFile)) {
+                  if (PlugInFile->FileName[0] == '.' || StrStr(PlugInFile->FileName, L".kext") == NULL)
+                     continue;   // skip this
 
-            UnicodeSPrint(PlugIns, 512, L"%s\\%s", Entry->KernelAndKextPatches->ForceKexts[i], L"Contents\\PlugIns");
-            DirIterOpen(Entry->Volume->RootDir, PlugIns, &PlugInIter);
-            while (DirIterNext(&PlugInIter, 1, L"*.kext", &PlugInFile)) {
-               if (PlugInFile->FileName[0] == '.' || StrStr(PlugInFile->FileName, L".kext") == NULL)
-                  continue;   // skip this
+                  UnicodeSPrint(FileName, 512, L"%s\\%s", Entry->KernelAndKextPatches->ForceKexts[i], PlugInFile->FileName);
+                  MsgLog("  Force kext: %s\n", FileName);
+                  AddKext(Entry, Entry->Volume->RootDir, FileName, archCpuType);
+                  UnicodeSPrint(PlugIns, 512, L"%s\\%s", FileName, L"Contents\\PlugIns");
+                  LoadPlugInKexts(Entry, Entry->Volume->RootDir, PlugIns, archCpuType);
+               }
+               DirIterClose(&PlugInIter);
+            } else {
+               AddKext(Entry, Entry->Volume->RootDir, Entry->KernelAndKextPatches->ForceKexts[i], archCpuType);
 
-               UnicodeSPrint(FileName, 512, L"%s\\%s", PlugIns, PlugInFile->FileName);
-               MsgLog("  Force PlugIn kext: %s\n", FileName);
-               AddKext(Entry->Volume->RootDir, FileName, archCpuType);
+               UnicodeSPrint(PlugIns, 512, L"%s\\%s", Entry->KernelAndKextPatches->ForceKexts[i], L"Contents\\PlugIns");
+               LoadPlugInKexts(Entry, Entry->Volume->RootDir, PlugIns, archCpuType);
             }
-            DirIterClose(&PlugInIter);
          }
       }
    }
@@ -284,19 +315,10 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
 			
 			UnicodeSPrint(FileName, 512, L"%s\\%s", SrcDir, KextFile->FileName);
 			MsgLog("  Extra kext: %s\n", FileName);
-			AddKext(SelfVolume->RootDir, FileName, archCpuType);
+			AddKext(Entry, SelfVolume->RootDir, FileName, archCpuType);
       
 			UnicodeSPrint(PlugIns, 512, L"%s\\%s", FileName, L"Contents\\PlugIns");
-			DirIterOpen(SelfVolume->RootDir, PlugIns, &PlugInIter);
-			while (DirIterNext(&PlugInIter, 1, L"*.kext", &PlugInFile)) {
-				if (PlugInFile->FileName[0] == '.' || StrStr(PlugInFile->FileName, L".kext") == NULL)
-					continue;   // skip this
-				
-				UnicodeSPrint(FileName, 512, L"%s\\%s", PlugIns, PlugInFile->FileName);
-				MsgLog("  Extra PlugIn kext: %s\n", FileName);
-				AddKext(SelfVolume->RootDir, FileName, archCpuType);
-			}
-			DirIterClose(&PlugInIter);
+         LoadPlugInKexts(Entry, SelfVolume->RootDir, PlugIns, archCpuType);
 		}
 		DirIterClose(&KextIter);
 	}
@@ -438,6 +460,28 @@ EFI_STATUS InjectKexts(/*IN EFI_MEMORY_DESCRIPTOR *Desc*/ IN UINT32 deviceTreeP,
 			drvPtr += sizeof(DeviceTreeNodeProperty) + sizeof(_DeviceTreeBuffer);
 			KextBase = RoundPage(KextBase + KextEntry->kext.length);
 			DBG_RT(Entry, " %d - %a\n", Index, (CHAR8 *)(UINTN)drvinfo->bundlePathPhysAddr);
+         if (gSettings.KextPatchesAllowed) {
+            INT32  i;
+            CHAR8  SavedValue;
+            CHAR8 *InfoPlist = (CHAR8*)(UINTN)drvinfo->infoDictPhysAddr;
+            SavedValue = InfoPlist[drvinfo->infoDictLength];
+            InfoPlist[drvinfo->infoDictLength] = '\0';
+            KernelAndKextPatcherInit();
+            for (i = 0; i < Entry->KernelAndKextPatches->NrKexts; i++) {
+               if ((Entry->KernelAndKextPatches->KextPatches[i].DataLen > 0) &&
+                  (AsciiStrStr(InfoPlist, Entry->KernelAndKextPatches->KextPatches[i].Name) != NULL)) {
+                  AnyKextPatch(
+                     (UINT8*)(UINTN)drvinfo->executablePhysAddr,
+                     drvinfo->executableLength,
+                     InfoPlist,
+                     drvinfo->infoDictLength,
+                     i,
+                     Entry
+                     );
+               }
+            }
+            InfoPlist[drvinfo->infoDictLength] = SavedValue;
+         }
 			Index++;
 		}
 	}

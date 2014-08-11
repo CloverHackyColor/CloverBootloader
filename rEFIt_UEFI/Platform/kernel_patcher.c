@@ -14,7 +14,7 @@
 #include "sse3_patcher.h"
 #include "sse3_5_patcher.h"
 
-#define KERNEL_DEBUG 0
+#define KERNEL_DEBUG 1
 
 #if KERNEL_DEBUG
 #define DBG(...)    AsciiPrint(__VA_ARGS__);
@@ -1337,7 +1337,8 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
   //
   
   // we need to scan kexts if "InjectKexts if no FakeSMC"
-  if (gSettings.WithKextsIfNoFakeSMC) {
+  if (OSFLAG_ISSET(Entry->Flags, OSFLAG_WITHKEXTS) &&
+      OSFLAG_ISSET(Entry->Flags, OSFLAG_CHECKFAKESMC)) {
     DBG_RT(Entry, "\nInjectKexts if no FakeSMC specified - we need kext patching to search for FakeSMC\n");
     gSettings.KextPatchesAllowed = TRUE;
     Needed = TRUE;
@@ -1372,7 +1373,7 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
   //
   // Kext add
   //
-  if (Entry != 0 && gSettings.WithKextsIfNoFakeSMC && gSettings.FakeSMCFound) {
+  if (Entry != 0 && OSFLAG_ISSET(Entry->Flags, OSFLAG_CHECKFAKESMC) && OSFLAG_ISUNSET(Entry->Flags, OSFLAG_WITHKEXTS)) {
     // disable kext injection if FakeSMC is already present
     Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_WITHKEXTS);
     if (Entry->KernelAndKextPatches->KPDebug) {

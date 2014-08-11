@@ -385,11 +385,12 @@ VOID AppleRTCPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 In
 
 VOID CheckForFakeSMC(CHAR8 *InfoPlist, LOADER_ENTRY *Entry)
 {
-  if (gSettings.WithKextsIfNoFakeSMC && !gSettings.FakeSMCFound) {
+  if (OSFLAG_ISSET(Entry->Flags, OSFLAG_CHECKFAKESMC) &&
+      OSFLAG_ISSET(Entry->Flags, OSFLAG_WITHKEXTS)) {
     if (AsciiStrStr(InfoPlist, "<string>org.netkas.driver.FakeSMC</string>") != NULL
         || AsciiStrStr(InfoPlist, "<string>org.netkas.FakeSMC</string>") != NULL)
     {
-      gSettings.FakeSMCFound = TRUE;
+      Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_WITHKEXTS);
       if (Entry->KernelAndKextPatches->KPDebug) {
         DBG_RT(Entry, "\nFakeSMC found\n");
         gBS->Stall(5000000);
@@ -530,7 +531,8 @@ VOID PatchKext(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPl
   //
   // Check for FakeSMC (InjectKexts if no FakeSMC)
   //
-  CheckForFakeSMC(InfoPlist, Entry);
+  // apianti - Why recheck individual info plist if we checked the whole prelinked
+  // CheckForFakeSMC(InfoPlist, Entry);
 }
 
 //
@@ -831,7 +833,10 @@ VOID PatchLoadedKexts(LOADER_ENTRY *Entry)
                     KextFileInfo->infoDictLength,
                     Entry
                     );
-          
+
+          // Check for FakeSMC here
+          CheckForFakeSMC(InfoPlist, Entry);
+
           InfoPlist[KextFileInfo->infoDictLength] = SavedValue;
           //DbgCount++;
         }

@@ -573,12 +573,6 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
         // OSX is not booting verbose, so we can set console to graphics mode
         Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_USEGRAPHICS);
       }
-      if (gSettings.WithKexts) {
-        Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_WITHKEXTS);
-      }
-      if (gSettings.NoCaches) {
-        Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_NOCACHES);
-      }
       if (OSType == OSTYPE_OSX && IsOsxHibernated(Volume)) {
         Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_HIBERNATED);
       }
@@ -994,6 +988,16 @@ STATIC BOOLEAN AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOptions,
 
   Entry = CreateLoaderEntry(LoaderPath, LoaderOptions, NULL, LoaderTitle, Volume, Image, NULL, OSType, Flags, 0, NULL, CUSTOM_BOOT_DISABLED, NULL, NULL, FALSE);
   if (Entry != NULL) {
+    if (gSettings.WithKexts) {
+      Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_WITHKEXTS);
+    }
+    if (gSettings.WithKextsIfNoFakeSMC) {
+      Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_CHECKFAKESMC);
+      Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_WITHKEXTS);
+    }
+    if (gSettings.NoCaches) {
+      Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_NOCACHES);
+    }
     AddDefaultMenu(Entry);
     AddMenuEntry(&MainMenu, (REFIT_MENU_ENTRY *)Entry);
     return TRUE;

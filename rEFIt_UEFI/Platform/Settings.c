@@ -360,6 +360,13 @@ BOOLEAN CopyKernelAndKextPatches(IN OUT KERNEL_AND_KEXT_PATCHES *Dst, IN KERNEL_
     Dst->KPATIConnectorsData = AllocateCopyPool(Src->KPATIConnectorsDataLen, Src->KPATIConnectorsData);
     Dst->KPATIConnectorsPatch = AllocateCopyPool(Src->KPATIConnectorsDataLen, Src->KPATIConnectorsPatch);
   }
+  if ((Src->NrForceKexts > 0) && (Src->ForceKexts != NULL)) {
+    INTN i = 0;
+    Dst->ForceKexts = AllocatePool(Src->NrForceKexts * sizeof(CHAR16 *));
+    for (; i < Src->NrForceKexts; ++i) {
+      Dst->ForceKexts[Dst->NrForceKexts++] = EfiStrDuplicate(Src->ForceKexts[i]);
+    }
+  }
   if ((Src->NrKexts > 0) && (Src->KextPatches != NULL)) {
     INTN i = 0;
     Dst->KextPatches = AllocatePool(Src->NrKexts * sizeof(KEXT_PATCH));
@@ -523,10 +530,15 @@ static BOOLEAN FillinKextPatches(IN OUT KERNEL_AND_KEXT_PATCHES *Patches, TagPtr
                break;
             }
             if (prop2->string) {
-               Patches->ForceKexts[Patches->NrForceKexts] = AllocateZeroPool(AsciiStrSize(prop2->string) * sizeof(CHAR16));
-               AsciiStrToUnicodeStr(prop2->string, Patches->ForceKexts[Patches->NrForceKexts]);
-               DBG("ForceKextsToLoad %d: %s\n", i, Patches->ForceKexts[Patches->NrForceKexts]);
-               Patches->NrForceKexts++;
+               if (*(prop2->string) == '\\') {
+                  prop2->string++;
+               }
+               if (AsciiStrLen(prop2->string) > 0) {
+                  Patches->ForceKexts[Patches->NrForceKexts] = AllocateZeroPool(AsciiStrSize(prop2->string) * sizeof(CHAR16));
+                  AsciiStrToUnicodeStr(prop2->string, Patches->ForceKexts[Patches->NrForceKexts]);
+                  DBG("ForceKextsToLoad %d: %s\n", Patches->NrForceKexts, Patches->ForceKexts[Patches->NrForceKexts]);
+                  Patches->NrForceKexts++;
+               }
             }
          }
       }
@@ -919,9 +931,24 @@ static BOOLEAN FillinCustomEntry(IN OUT CUSTOM_LOADER_ENTRY *Entry, TagPtr dictP
 
   // OS Specific flags
   if (OSTYPE_IS_OSX(Entry->Type) || OSTYPE_IS_OSX_RECOVERY(Entry->Type) || OSTYPE_IS_OSX_INSTALLER(Entry->Type)) {
+     if (gSettings.WithKexts) {
+       Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_WITHKEXTS);
+     }
+     if (gSettings.WithKextsIfNoFakeSMC) {
+       Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_CHECKFAKESMC);
+       Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_WITHKEXTS);
+     }
+     if (gSettings.NoCaches) {
+       Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_NOCACHES);
+     }
+     Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_WITHKEXTS);
      prop = GetProperty(dictPointer, "InjectKexts");
      if (prop) {
        if (IsPropertyTrue(prop)) {
+         Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_WITHKEXTS);
+       } else if ((prop->type == kTagTypeString) &&
+                  (AsciiStrStr(prop->string, "Detect") != NULL)) {
+         Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_CHECKFAKESMC);
          Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_WITHKEXTS);
        } else {
          Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_WITHKEXTS);
@@ -2791,10 +2818,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
         if (IsPropertyTrue(prop)) {
           gSettings.WithKexts = TRUE;
         } else if ((prop->type == kTagTypeString) &&
-                   ((AsciiStrStr(prop->string, "IfNoFakeSMC") != NULL) ||
-                    (AsciiStrStr(prop->string, "Automatic") != NULL) ||
-                    (AsciiStrStr(prop->string, "Detect") != NULL))
-                   ) {
+                   (AsciiStrStr(prop->string, "Detect") != NULL)) {
           gSettings.WithKexts = TRUE;
           gSettings.WithKextsIfNoFakeSMC = TRUE;
         }
