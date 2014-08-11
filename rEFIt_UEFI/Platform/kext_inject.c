@@ -205,12 +205,11 @@ UINT32 GetKextsSize()
 	return kextsSize;
 }
 
-VOID LoadPlugInKexts(IN LOADER_ENTRY *Entry, IN EFI_FILE *RootDir, IN CHAR16 *DirName, IN cpu_type_t archCpuType)
+VOID LoadPlugInKexts(IN LOADER_ENTRY *Entry, IN EFI_FILE *RootDir, IN CHAR16 *DirName, IN cpu_type_t archCpuType, IN BOOLEAN Force)
 {
    REFIT_DIR_ITER          PlugInIter;
    EFI_FILE_INFO           *PlugInFile;
    CHAR16                  FileName[256];
-   CHAR16                  PlugIns[256];
    if ((Entry == NULL) || (RootDir == NULL) || (DirName == NULL)) {
       return;
    }
@@ -219,8 +218,8 @@ VOID LoadPlugInKexts(IN LOADER_ENTRY *Entry, IN EFI_FILE *RootDir, IN CHAR16 *Di
       if (PlugInFile->FileName[0] == '.' || StrStr(PlugInFile->FileName, L".kext") == NULL)
          continue;   // skip this
 
-      UnicodeSPrint(FileName, 512, L"%s\\%s", PlugIns, PlugInFile->FileName);
-      MsgLog("  Force PlugIn kext: %s\n", FileName);
+      UnicodeSPrint(FileName, 512, L"%s\\%s", DirName, PlugInFile->FileName);
+      MsgLog("    %s PlugIn kext: %s\n", Force ? L"Force" : L"Extra", FileName);
       AddKext(Entry, RootDir, FileName, archCpuType);
    }
    DirIterClose(&PlugInIter);
@@ -290,14 +289,14 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
                   MsgLog("  Force kext: %s\n", FileName);
                   AddKext(Entry, Entry->Volume->RootDir, FileName, archCpuType);
                   UnicodeSPrint(PlugIns, 512, L"%s\\%s", FileName, L"Contents\\PlugIns");
-                  LoadPlugInKexts(Entry, Entry->Volume->RootDir, PlugIns, archCpuType);
+                  LoadPlugInKexts(Entry, Entry->Volume->RootDir, PlugIns, archCpuType, TRUE);
                }
                DirIterClose(&PlugInIter);
             } else {
                AddKext(Entry, Entry->Volume->RootDir, Entry->KernelAndKextPatches->ForceKexts[i], archCpuType);
 
                UnicodeSPrint(PlugIns, 512, L"%s\\%s", Entry->KernelAndKextPatches->ForceKexts[i], L"Contents\\PlugIns");
-               LoadPlugInKexts(Entry, Entry->Volume->RootDir, PlugIns, archCpuType);
+               LoadPlugInKexts(Entry, Entry->Volume->RootDir, PlugIns, archCpuType, TRUE);
             }
          }
       }
@@ -318,7 +317,7 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
 			AddKext(Entry, SelfVolume->RootDir, FileName, archCpuType);
       
 			UnicodeSPrint(PlugIns, 512, L"%s\\%s", FileName, L"Contents\\PlugIns");
-         LoadPlugInKexts(Entry, SelfVolume->RootDir, PlugIns, archCpuType);
+         LoadPlugInKexts(Entry, SelfVolume->RootDir, PlugIns, archCpuType, FALSE);
 		}
 		DirIterClose(&KextIter);
 	}
