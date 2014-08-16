@@ -17,7 +17,9 @@
 
 #include <Protocol/LoadedImage.h>
 #include <Protocol/BlockIo.h>
+#include <Protocol/BlockIo2.h>
 #include <Protocol/DiskIo.h>
+#include <Protocol/DiskIo2.h>
 #include <Protocol/SimpleFileSystem.h>
 
 #include <Include/Guid/FileInfo.h>
@@ -108,7 +110,9 @@ MAP_EFI_GUID_STR EfiGuidStrMap[] = {
 	{&gEfiDevicePathProtocolGuid, L"gEfiDevicePathProtocolGuid"},
 	{&gEfiSimpleFileSystemProtocolGuid, L"gEfiSimpleFileSystemProtocolGuid"},
 	{&gEfiBlockIoProtocolGuid, L"gEfiBlockIoProtocolGuid"},
+	{&gEfiBlockIo2ProtocolGuid, L"gEfiBlockIo2ProtocolGuid"},
 	{&gEfiDiskIoProtocolGuid, L"gEfiDiskIoProtocolGuid"},
+	{&gEfiDiskIo2ProtocolGuid, L"gEfiDiskIo2ProtocolGuid"},
 	{&gEfiGraphicsOutputProtocolGuid, L"gEfiGraphicsOutputProtocolGuid"},
 	
 	{&gEfiConsoleControlProtocolGuid, L"gEfiConsoleControlProtocolGuid"},

@@ -31,6 +31,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #include <Protocol/Smbios.h>
 #include <Protocol/UgaDraw.h>
 #include <Protocol/BlockIo.h>
+#include <Protocol/BlockIo2.h>
 #include <Guid/GlobalVariable.h>
 #include <Guid/CapsuleVendor.h>
 #include <Guid/StatusCodeDataTypeId.h>

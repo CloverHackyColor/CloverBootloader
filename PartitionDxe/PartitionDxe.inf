@@ -69,11 +69,15 @@
 
 [Protocols]
   gEfiBlockIoProtocolGuid                       ## BY_START
+  gEfiBlockIo2ProtocolGuid                      ## BY_START
   gEfiDevicePathProtocolGuid                    ## BY_START
   gEfiDiskIoProtocolGuid                        ## BY_START
+  gEfiDiskIo2ProtocolGuid                       ## BY_START
   gEfiBlockIoProtocolGuid                       ## TO_START
+  gEfiBlockIo2ProtocolGuid                      ## TO_START
   gEfiDevicePathProtocolGuid                    ## TO_START
   gEfiDiskIoProtocolGuid                        ## TO_START
+  gEfiDiskIo2ProtocolGuid                       ## TO_START
   gMsgLogProtocolGuid
   
 [BuildOptions]

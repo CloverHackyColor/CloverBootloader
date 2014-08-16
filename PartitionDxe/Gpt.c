@@ -46,7 +46,9 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 BOOLEAN
 PartitionValidGptTable (
   IN  EFI_BLOCK_IO_PROTOCOL       *BlockIo,
+  IN  EFI_BLOCK_IO2_PROTOCOL      *BlockIo2,
   IN  EFI_DISK_IO_PROTOCOL        *DiskIo,
+  IN  EFI_DISK_IO2_PROTOCOL       *DiskIo2,
   IN  EFI_LBA                     Lba,
   OUT EFI_PARTITION_TABLE_HEADER  *PartHeader
   );
@@ -66,7 +68,9 @@ PartitionValidGptTable (
 BOOLEAN
 PartitionCheckGptEntryArrayCRC (
   IN  EFI_BLOCK_IO_PROTOCOL       *BlockIo,
+  IN  EFI_BLOCK_IO2_PROTOCOL      *BlockIo2,
   IN  EFI_DISK_IO_PROTOCOL        *DiskIo,
+  IN  EFI_DISK_IO2_PROTOCOL       *DiskIo2,
   IN  EFI_PARTITION_TABLE_HEADER  *PartHeader
   );
 
@@ -86,7 +90,9 @@ PartitionCheckGptEntryArrayCRC (
 BOOLEAN
 PartitionRestoreGptTable (
   IN  EFI_BLOCK_IO_PROTOCOL       *BlockIo,
+  IN  EFI_BLOCK_IO2_PROTOCOL      *BlockIo2,
   IN  EFI_DISK_IO_PROTOCOL        *DiskIo,
+  IN  EFI_DISK_IO2_PROTOCOL       *DiskIo2,
   IN  EFI_PARTITION_TABLE_HEADER  *PartHeader
   );
 
@@ -197,7 +203,9 @@ PartitionInstallGptChildHandles (
   IN  EFI_DRIVER_BINDING_PROTOCOL  *This,
   IN  EFI_HANDLE                   Handle,
   IN  EFI_DISK_IO_PROTOCOL         *DiskIo,
+  IN  EFI_DISK_IO2_PROTOCOL        *DiskIo2,
   IN  EFI_BLOCK_IO_PROTOCOL        *BlockIo,
+  IN  EFI_BLOCK_IO2_PROTOCOL       *BlockIo2,
   IN  EFI_DEVICE_PATH_PROTOCOL     *DevicePath
   )
 {
@@ -214,6 +222,7 @@ PartitionInstallGptChildHandles (
   EFI_STATUS                  GptValidStatus;
   HARDDRIVE_DEVICE_PATH       HdDev;
   UINT32                      MediaId;
+  EFI_DISK_IO2_TOKEN          DiskIo2Token;
 
 //  ProtectiveMbr = NULL;
   PrimaryHeader = NULL;
@@ -221,9 +230,16 @@ PartitionInstallGptChildHandles (
   PartEntry     = NULL;
   PEntryStatus  = NULL;
 
-  BlockSize     = BlockIo->Media->BlockSize;
-  LastBlock     = BlockIo->Media->LastBlock;
-  MediaId       = BlockIo->Media->MediaId;
+  if (BlockIo2 != NULL)
+  {
+    BlockSize     = BlockIo2->Media->BlockSize;
+    LastBlock     = BlockIo2->Media->LastBlock;
+    MediaId       = BlockIo2->Media->MediaId;
+  } else {
+    BlockSize     = BlockIo->Media->BlockSize;
+    LastBlock     = BlockIo->Media->LastBlock;
+    MediaId       = BlockIo->Media->MediaId;
+  }
 
 //  DEBUG ((EFI_D_INFO, " BlockSize : %d \n", BlockSize));
 //  DEBUG ((EFI_D_INFO, " LastBlock : %lx \n", LastBlock));
@@ -241,13 +257,26 @@ PartitionInstallGptChildHandles (
   //
   // Read the Protective MBR from LBA #0
   //
-  Status = DiskIo->ReadDisk (
-                     DiskIo,
-                     MediaId,
-                     0,
-                     BlockSize,
-                     ProtectiveMbr
-                     );
+  if (DiskIo2 != NULL)
+  {
+    Status = DiskIo2->ReadDiskEx (
+                       DiskIo2,
+                       MediaId,
+                       0,
+                       &DiskIo2Token,
+                       BlockSize,
+                       ProtectiveMbr
+                       );
+  } else {
+    Status = DiskIo->ReadDisk (
+                       DiskIo,
+                       MediaId,
+                       0,
+                       BlockSize,
+                       ProtectiveMbr
+                       );
+  }
+
   if (EFI_ERROR (Status)) {
     GptValidStatus = Status;
     goto Done;
@@ -284,31 +313,31 @@ PartitionInstallGptChildHandles (
   //
   // Check primary and backup partition tables
   //
-  if (!PartitionValidGptTable (BlockIo, DiskIo, PRIMARY_PART_HEADER_LBA, PrimaryHeader)) {
+  if (!PartitionValidGptTable (BlockIo, BlockIo2, DiskIo, DiskIo2, PRIMARY_PART_HEADER_LBA, PrimaryHeader)) {
     DEBUG ((EFI_D_INFO, " Not Valid primary partition table\n"));
 
-    if (!PartitionValidGptTable (BlockIo, DiskIo, LastBlock, BackupHeader)) {
+    if (!PartitionValidGptTable (BlockIo, BlockIo2, DiskIo, DiskIo2, LastBlock, BackupHeader)) {
       DEBUG ((EFI_D_INFO, " Not Valid backup partition table\n"));
       goto Done;
     } else {
       DEBUG ((EFI_D_INFO, " Valid backup partition table\n"));
       DEBUG ((EFI_D_INFO, " Restore primary partition table by the backup\n"));
-      if (!PartitionRestoreGptTable (BlockIo, DiskIo, BackupHeader)) {
+      if (!PartitionRestoreGptTable (BlockIo, BlockIo2, DiskIo, DiskIo2, BackupHeader)) {
         DEBUG ((EFI_D_INFO, " Restore primary partition table error\n"));
       }
 
-      if (PartitionValidGptTable (BlockIo, DiskIo, BackupHeader->AlternateLBA, PrimaryHeader)) {
+      if (PartitionValidGptTable (BlockIo, BlockIo2, DiskIo, DiskIo2, BackupHeader->AlternateLBA, PrimaryHeader)) {
         DEBUG ((EFI_D_INFO, " Restore backup partition table success\n"));
       }
     }
-  } else if (!PartitionValidGptTable (BlockIo, DiskIo, PrimaryHeader->AlternateLBA, BackupHeader)) {
+  } else if (!PartitionValidGptTable (BlockIo, BlockIo2, DiskIo, DiskIo2, PrimaryHeader->AlternateLBA, BackupHeader)) {
     DEBUG ((EFI_D_INFO, " Valid primary and !Valid backup partition table\n"));
     DEBUG ((EFI_D_INFO, " Restore backup partition table by the primary\n"));
-    if (!PartitionRestoreGptTable (BlockIo, DiskIo, PrimaryHeader)) {
+    if (!PartitionRestoreGptTable (BlockIo, BlockIo2, DiskIo, DiskIo2, PrimaryHeader)) {
       DEBUG ((EFI_D_INFO, " Restore  backup partition table error\n"));
     }
 
-    if (PartitionValidGptTable (BlockIo, DiskIo, PrimaryHeader->AlternateLBA, BackupHeader)) {
+    if (PartitionValidGptTable (BlockIo, BlockIo2, DiskIo, DiskIo2, PrimaryHeader->AlternateLBA, BackupHeader)) {
       DEBUG ((EFI_D_INFO, " Restore backup partition table success\n"));
     }
 
@@ -325,13 +354,25 @@ PartitionInstallGptChildHandles (
     goto Done;
   }
 
-  Status = DiskIo->ReadDisk (
+  if (DiskIo2 != NULL)
+  {
+    Status = DiskIo2->ReadDiskEx (
+                     DiskIo2,
+                     MediaId,
+                     MultU64x32(PrimaryHeader->PartitionEntryLBA, BlockSize),
+                     &DiskIo2Token,
+                     PrimaryHeader->NumberOfPartitionEntries * (PrimaryHeader->SizeOfPartitionEntry),
+                     PartEntry
+                     );
+  } else {
+    Status = DiskIo->ReadDisk (
                      DiskIo,
                      MediaId,
                      MultU64x32(PrimaryHeader->PartitionEntryLBA, BlockSize),
                      PrimaryHeader->NumberOfPartitionEntries * (PrimaryHeader->SizeOfPartitionEntry),
                      PartEntry
                      );
+  }
   if (EFI_ERROR (Status)) {
     GptValidStatus = Status;
 //    DEBUG ((EFI_D_ERROR, " Partition Entry ReadDisk error\n"));
@@ -398,7 +439,9 @@ PartitionInstallGptChildHandles (
               This,
               Handle,
               DiskIo,
+              DiskIo2,
               BlockIo,
+              BlockIo2,
               DevicePath,
               (EFI_DEVICE_PATH_PROTOCOL *) &HdDev,
                Entry->StartingLBA,
@@ -449,7 +492,9 @@ Done:
 BOOLEAN
 PartitionValidGptTable (
   IN  EFI_BLOCK_IO_PROTOCOL       *BlockIo,
+  IN  EFI_BLOCK_IO2_PROTOCOL      *BlockIo2,
   IN  EFI_DISK_IO_PROTOCOL        *DiskIo,
+  IN  EFI_DISK_IO2_PROTOCOL       *DiskIo2,
   IN  EFI_LBA                     Lba,
   OUT EFI_PARTITION_TABLE_HEADER  *PartHeader
   )
@@ -458,9 +503,17 @@ PartitionValidGptTable (
   UINT32                      BlockSize;
   EFI_PARTITION_TABLE_HEADER  *PartHdr;
   UINT32                      MediaId;
+  EFI_DISK_IO2_TOKEN          DiskIo2Token;
 
-  BlockSize = BlockIo->Media->BlockSize;
-  MediaId   = BlockIo->Media->MediaId;
+  if (BlockIo2 != NULL)
+  {
+    BlockSize = BlockIo2->Media->BlockSize;
+    MediaId   = BlockIo2->Media->MediaId;
+  } else {
+    BlockSize = BlockIo->Media->BlockSize;
+    MediaId   = BlockIo->Media->MediaId;
+  }
+
   PartHdr   = AllocateZeroPool (BlockSize);
 
   if (PartHdr == NULL) {
@@ -470,13 +523,25 @@ PartitionValidGptTable (
   //
   // Read the EFI Partition Table Header
   //
-  Status = DiskIo->ReadDisk (
+  if (DiskIo2 != NULL)
+  {
+    Status = DiskIo2->ReadDiskEx (
+                     DiskIo2,
+                     MediaId,
+                     MultU64x32 (Lba, BlockSize),
+                     &DiskIo2Token,
+                     BlockSize,
+                     PartHdr
+                     );
+  } else {
+    Status = DiskIo->ReadDisk (
                      DiskIo,
                      MediaId,
                      MultU64x32 (Lba, BlockSize),
                      BlockSize,
                      PartHdr
                      );
+  }
   if (EFI_ERROR (Status)) {
     FreePool (PartHdr);
     return FALSE;
@@ -501,7 +566,7 @@ PartitionValidGptTable (
   }
 
   CopyMem (PartHeader, PartHdr, sizeof (EFI_PARTITION_TABLE_HEADER));
-  if (!PartitionCheckGptEntryArrayCRC (BlockIo, DiskIo, PartHeader)) {
+  if (!PartitionCheckGptEntryArrayCRC (BlockIo, BlockIo2, DiskIo, DiskIo2, PartHeader)) {
     FreePool (PartHdr);
     return FALSE;
   }
@@ -526,7 +591,9 @@ PartitionValidGptTable (
 BOOLEAN
 PartitionCheckGptEntryArrayCRC (
   IN  EFI_BLOCK_IO_PROTOCOL       *BlockIo,
+  IN  EFI_BLOCK_IO2_PROTOCOL      *BlockIo2,
   IN  EFI_DISK_IO_PROTOCOL        *DiskIo,
+  IN  EFI_DISK_IO2_PROTOCOL       *DiskIo2,
   IN  EFI_PARTITION_TABLE_HEADER  *PartHeader
   )
 {
@@ -534,6 +601,7 @@ PartitionCheckGptEntryArrayCRC (
   UINT8       *Ptr;
   UINT32      Crc;
   UINTN       Size;
+  EFI_DISK_IO2_TOKEN DiskIo2Token;
 
   //
   // Read the EFI Partition Entries
@@ -544,13 +612,26 @@ PartitionCheckGptEntryArrayCRC (
     return FALSE;
   }
 
-  Status = DiskIo->ReadDisk (
+  if (DiskIo2 != NULL)
+  {
+    Status = DiskIo2->ReadDiskEx (
+                    DiskIo2,
+                    BlockIo->Media->MediaId,
+                    MultU64x32(PartHeader->PartitionEntryLBA, 
+BlockIo->Media->BlockSize),
+                    &DiskIo2Token,
+                    PartHeader->NumberOfPartitionEntries * PartHeader->SizeOfPartitionEntry,
+                    Ptr
+                    );
+  } else {
+    Status = DiskIo->ReadDisk (
                     DiskIo,
                     BlockIo->Media->MediaId,
                     MultU64x32(PartHeader->PartitionEntryLBA, BlockIo->Media->BlockSize),
                     PartHeader->NumberOfPartitionEntries * PartHeader->SizeOfPartitionEntry,
                     Ptr
                     );
+  }
   if (EFI_ERROR (Status)) {
     FreePool (Ptr);
     return FALSE;
@@ -586,7 +667,9 @@ PartitionCheckGptEntryArrayCRC (
 BOOLEAN
 PartitionRestoreGptTable (
   IN  EFI_BLOCK_IO_PROTOCOL       *BlockIo,
+  IN  EFI_BLOCK_IO2_PROTOCOL      *BlockIo2,
   IN  EFI_DISK_IO_PROTOCOL        *DiskIo,
+  IN  EFI_DISK_IO2_PROTOCOL       *DiskIo2,
   IN  EFI_PARTITION_TABLE_HEADER  *PartHeader
   )
 {
@@ -596,12 +679,19 @@ PartitionRestoreGptTable (
   EFI_LBA                     PEntryLBA;
   UINT8                       *Ptr;
   UINT32                      MediaId;
+  EFI_DISK_IO2_TOKEN          DiskIo2Token;
 
 //  PartHdr   = NULL;
   Ptr       = NULL;
 
-  BlockSize = BlockIo->Media->BlockSize;
-  MediaId   = BlockIo->Media->MediaId;
+  if (BlockIo2 != NULL)
+  {
+    BlockSize = BlockIo2->Media->BlockSize;
+    MediaId   = BlockIo2->Media->MediaId;
+  } else {
+    BlockSize = BlockIo->Media->BlockSize;
+    MediaId   = BlockIo->Media->MediaId;
+  }
 
   PartHdr   = AllocateZeroPool (BlockSize);
 
@@ -621,13 +711,25 @@ PartitionRestoreGptTable (
   PartHdr->PartitionEntryLBA  = PEntryLBA;
   PartitionSetCrc ((EFI_TABLE_HEADER *) PartHdr);
 
-  Status = DiskIo->WriteDisk (
+  if (DiskIo2 != NULL)
+  {
+    Status = DiskIo2->WriteDiskEx (
+                     DiskIo2,
+                     MediaId,
+                     MultU64x32 (PartHdr->MyLBA, (UINT32) BlockSize),
+                     &DiskIo2Token,
+                     BlockSize,
+                     PartHdr
+                     );
+  } else {
+    Status = DiskIo->WriteDisk (
                      DiskIo,
                      MediaId,
                      MultU64x32 (PartHdr->MyLBA, (UINT32) BlockSize),
                      BlockSize,
                      PartHdr
                      );
+  }
   if (EFI_ERROR (Status)) {
     goto Done;
   }
@@ -639,24 +741,48 @@ PartitionRestoreGptTable (
     goto Done;
   }
 
-  Status = DiskIo->ReadDisk (
+  if (DiskIo2 != NULL)
+  {
+    Status = DiskIo2->ReadDiskEx (
+                    DiskIo2,
+                    MediaId,
+                    MultU64x32(PartHeader->PartitionEntryLBA, (UINT32) BlockSize),
+                    &DiskIo2Token,
+                    PartHeader->NumberOfPartitionEntries * PartHeader->SizeOfPartitionEntry,
+                    Ptr
+                    );
+  } else {
+    Status = DiskIo->ReadDisk (
                     DiskIo,
                     MediaId,
                     MultU64x32(PartHeader->PartitionEntryLBA, (UINT32) BlockSize),
                     PartHeader->NumberOfPartitionEntries * PartHeader->SizeOfPartitionEntry,
                     Ptr
                     );
+  }
   if (EFI_ERROR (Status)) {
     goto Done;
   }
 
-  Status = DiskIo->WriteDisk (
+  if (DiskIo2 != NULL)
+  {
+    Status = DiskIo2->WriteDiskEx (
+                    DiskIo2,
+                    MediaId,
+                    MultU64x32(PEntryLBA, (UINT32) BlockSize),
+                    &DiskIo2Token,
+                    PartHeader->NumberOfPartitionEntries * PartHeader->SizeOfPartitionEntry,
+                    Ptr
+                    );
+  } else {
+    Status = DiskIo->WriteDisk (
                     DiskIo,
                     MediaId,
                     MultU64x32(PEntryLBA, (UINT32) BlockSize),
                     PartHeader->NumberOfPartitionEntries * PartHeader->SizeOfPartitionEntry,
                     Ptr
                     );
+  }
 
 Done:
   FreePool (PartHdr);

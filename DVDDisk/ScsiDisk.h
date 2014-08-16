@@ -22,6 +22,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #include <Protocol/ScsiIo.h>
 #include <Protocol/ComponentName.h>
 #include <Protocol/BlockIo.h>
+#include <Protocol/BlockIo2.h>
 #include <Protocol/DriverBinding.h>
 #include <Protocol/ScsiPassThruExt.h>
 #include <Protocol/ScsiPassThru.h>
@@ -50,6 +51,7 @@ typedef struct {
   EFI_HANDLE                Handle;
 
   EFI_BLOCK_IO_PROTOCOL     BlkIo;
+  EFI_BLOCK_IO2_PROTOCOL    BlkIo2;
   EFI_BLOCK_IO_MEDIA        BlkIoMedia;
   EFI_SCSI_IO_PROTOCOL      *ScsiIo;
   UINT8                     DeviceType;
@@ -79,12 +81,15 @@ typedef struct {
 
 #define SCSI_DISK_DEV_FROM_THIS(a)  CR (a, SCSI_DISK_DEV, BlkIo, SCSI_DISK_DEV_SIGNATURE)
 
+#define SCSI_DISK_DEV_FROM_THIS2(a)  CR (a, SCSI_DISK_DEV, BlkIo2, SCSI_DISK_DEV_SIGNATURE)
+
 #define SCSI_DISK_DEV_FROM_DISKINFO(a) CR (a, SCSI_DISK_DEV, DiskInfo, SCSI_DISK_DEV_SIGNATURE)
 
 //
 // Global Variables
 //
 extern EFI_DRIVER_BINDING_PROTOCOL   gScsiDiskDriverBinding;
+extern EFI_DRIVER_BINDING_PROTOCOL   gScsiDiskDriverBinding2;
 extern EFI_COMPONENT_NAME_PROTOCOL   gScsiDiskComponentName;
 extern EFI_COMPONENT_NAME2_PROTOCOL  gScsiDiskComponentName2;
 //
@@ -335,6 +340,12 @@ ScsiDiskReset (
   IN  BOOLEAN                 ExtendedVerification
   );
 
+EFI_STATUS
+EFIAPI
+ScsiDiskResetEx (
+               IN  EFI_BLOCK_IO2_PROTOCOL  *This,
+               IN  BOOLEAN                 ExtendedVerification
+               );
 
 /**
   The function is to Read Block from SCSI Disk.
@@ -363,6 +374,16 @@ ScsiDiskReadBlocks (
   OUT VOID                    *Buffer
   );
 
+EFI_STATUS
+EFIAPI
+ScsiDiskReadBlocksEx (
+                    IN  EFI_BLOCK_IO2_PROTOCOL  *This,
+                    IN  UINT32                  MediaId,
+                    IN  EFI_LBA                 Lba,
+                    IN OUT EFI_BLOCK_IO2_TOKEN  *Token,
+                    IN  UINTN                   BufferSize,
+                    OUT VOID                    *Buffer
+                    );
 
 /**
   The function is to Write Block to SCSI Disk.
@@ -392,6 +413,16 @@ ScsiDiskWriteBlocks (
   IN  VOID                    *Buffer
   );
 
+EFI_STATUS
+EFIAPI
+ScsiDiskWriteBlocksEx (
+                     IN  EFI_BLOCK_IO2_PROTOCOL  *This,
+                     IN  UINT32                  MediaId,
+                     IN  EFI_LBA                 Lba,
+                     IN OUT EFI_BLOCK_IO2_TOKEN  *Token,
+                     IN  UINTN                   BufferSize,
+                     IN  VOID                    *Buffer
+                     );
 
 /**
   Flush Block to Disk.
@@ -409,6 +440,12 @@ ScsiDiskFlushBlocks (
   IN  EFI_BLOCK_IO_PROTOCOL   *This
   );
 
+EFI_STATUS
+EFIAPI
+ScsiDiskFlushBlocksEx (
+                       IN  EFI_BLOCK_IO2_PROTOCOL   *This,
+                       IN OUT EFI_BLOCK_IO2_TOKEN   *Token
+                       );
 
 /**
   Provides inquiry information for the controller type.

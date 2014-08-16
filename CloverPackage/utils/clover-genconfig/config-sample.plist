@@ -273,6 +273,8 @@
 		</array>
 		<key>Audio</key>
 		<dict>
+			<key>ResetHDA</key>
+			<true/>
 			<key>Inject</key>
 			<string>0x0887</string>
 		</dict>

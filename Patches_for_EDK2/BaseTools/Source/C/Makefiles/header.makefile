@@ -41,7 +41,7 @@ endif
 
 INCLUDE = $(TOOL_INCLUDE) -I $(MAKEROOT) -I $(MAKEROOT)/Include/Common -I $(MAKEROOT)/Include/ -I $(MAKEROOT)/Include/IndustryStandard -I $(MAKEROOT)/Common/ -I .. -I . $(ARCH_INCLUDE) 
 CPPFLAGS = $(INCLUDE)  -Wno-unused-value
-CFLAGS = -MD -fshort-wchar -fno-strict-aliasing -nostdlib -Wall -Wno-unused-value -Werror -c -g
+CFLAGS = -MD -fshort-wchar -fno-strict-aliasing -nostdlib -Wall -Wno-unused-value -Werror -Wno-self-assign -c -g
 #-fno-merge-constants
 LFLAGS =
 

@@ -157,6 +157,7 @@
   gEfiLegacyBiosProtocolGuid                    ## PROTOCOL CONSUMES
   gEfiUgaDrawProtocolGuid |gEfiMdePkgTokenSpaceGuid.PcdUgaConsumeSupport ## PROTOCOL SOMETIMES_CONSUMES
   gEfiBlockIoProtocolGuid                       ## PROTOCOL CONSUMES
+  gEfiBlockIo2ProtocolGuid                      ## PROTOCOL CONSUMES
   gEfiGraphicsOutputProtocolGuid                ## PROTOCOL SOMETIMES_CONSUMES
   gEfiSimpleTextInputExProtocolGuid             ## PROTOCOL CONSUMES
   gEfiHiiConfigAccessProtocolGuid               ## PROTOCOL CONSUMES

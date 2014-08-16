@@ -186,6 +186,7 @@ AtaBusComponentNameGetControllerName (
 {
   EFI_STATUS                Status;
   EFI_BLOCK_IO_PROTOCOL     *BlockIo;
+  EFI_BLOCK_IO2_PROTOCOL    *BlockIo2;
   ATA_DEVICE                *AtaDevice;
   EFI_UNICODE_STRING_TABLE  *ControllerNameTable;
 
@@ -215,6 +216,22 @@ AtaBusComponentNameGetControllerName (
     // Get the child context
     //
     Status = gBS->OpenProtocol (
+                                ChildHandle,
+                                &gEfiBlockIo2ProtocolGuid,
+                                (VOID **) &BlockIo2,
+                                gAtaBusDriverBinding.DriverBindingHandle,
+                                ChildHandle,
+                                EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                                );
+    if (!EFI_ERROR(Status))
+    {
+      AtaDevice = ATA_DEVICE_FROM_BLOCK_IO2 (BlockIo2);
+    }
+
+    if (EFI_ERROR(Status))
+    {
+      BlockIo2 = NULL;
+      Status = gBS->OpenProtocol (
                     ChildHandle,
                     &gEfiBlockIoProtocolGuid,
                     (VOID **) &BlockIo,
@@ -222,10 +239,11 @@ AtaBusComponentNameGetControllerName (
                     ChildHandle,
                     EFI_OPEN_PROTOCOL_GET_PROTOCOL
                     );
-    if (EFI_ERROR (Status)) {
-      return EFI_UNSUPPORTED;
+      if (EFI_ERROR (Status)) {
+        return EFI_UNSUPPORTED;
+      }
+      AtaDevice = ATA_DEVICE_FROM_BLOCK_IO (BlockIo);
     }
-    AtaDevice = ATA_DEVICE_FROM_BLOCK_IO (BlockIo);
     ControllerNameTable =AtaDevice->ControllerNameTable;
   }
   return LookupUnicodeString2 (

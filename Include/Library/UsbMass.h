@@ -20,6 +20,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #include <Uefi.h>
 #include <IndustryStandard/Scsi.h>
 #include <Protocol/BlockIo.h>
+#include <Protocol/BlockIo2.h>
 #include <Protocol/UsbIo.h>
 #include <Protocol/DevicePath.h>
 #include <Protocol/DiskInfo.h>
@@ -205,6 +206,7 @@ struct _USB_MASS_DEVICE {
   EFI_USB_IO_PROTOCOL       *UsbIo;
   EFI_DEVICE_PATH_PROTOCOL  *DevicePath;
   EFI_BLOCK_IO_PROTOCOL     BlockIo;
+  EFI_BLOCK_IO2_PROTOCOL    BlockIo2;
   EFI_BLOCK_IO_MEDIA        BlockIoMedia;
   BOOLEAN                   OpticalStorage;
   UINT8                     Lun;          ///< Logical Unit Number

@@ -2540,8 +2540,11 @@ BdsExpandPartitionPartialDevicePathToFull (
   EFI_STATUS                Status;
   UINTN                     BlockIoHandleCount;
   EFI_HANDLE                *BlockIoBuffer;
+  UINTN                     BlockIoHandleCount2;
+  EFI_HANDLE                *BlockIoBuffer2;
   EFI_DEVICE_PATH_PROTOCOL  *FullDevicePath;
   EFI_DEVICE_PATH_PROTOCOL  *BlockIoDevicePath;
+  EFI_DEVICE_PATH_PROTOCOL  *BlockIoDevicePath2;
   EFI_DEVICE_PATH_PROTOCOL  *DevicePath;
   UINTN                     Index;
   UINTN                     InstanceNum;
@@ -2663,14 +2666,108 @@ BdsExpandPartitionPartialDevicePathToFull (
   // to search all devices in the system for a matched partition
   //
   BdsLibConnectAllDriversToAllControllers ();
+
+  Status = gBS->LocateHandleBuffer (ByProtocol, &gEfiBlockIo2ProtocolGuid, NULL, &BlockIoHandleCount2, &BlockIoBuffer2);
+
   Status = gBS->LocateHandleBuffer (ByProtocol, &gEfiBlockIoProtocolGuid, NULL, &BlockIoHandleCount, &BlockIoBuffer);
-  if (EFI_ERROR (Status) || BlockIoHandleCount == 0 || BlockIoBuffer == NULL) {
+
+  if ((EFI_ERROR (Status) || (BlockIoHandleCount == 0) || (BlockIoBuffer == NULL)) && ((BlockIoHandleCount2 == 0) || (BlockIoBuffer2 == NULL))) {
     //
     // If there was an error or there are no device handles that support
     // the BLOCK_IO Protocol, then return.
     //
     return NULL;
   }
+  //
+  // Loop through all the device handles that support the BLOCK_IO 2 Protocol
+  //
+  for (Index = 0; Index < BlockIoHandleCount2; Index++) {
+        
+        Status = gBS->HandleProtocol (BlockIoBuffer2[Index], &gEfiDevicePathProtocolGuid, (VOID *) &BlockIoDevicePath2);
+        if (EFI_ERROR (Status) || (BlockIoDevicePath2 == NULL)) {
+            continue;
+        }
+        
+        if (MatchPartitionDevicePathNode (BlockIoDevicePath2, HardDriveDevicePath)) {
+            //
+            // Find the matched partition device path
+            //
+            DevicePath    = NextDevicePathNode ((EFI_DEVICE_PATH_PROTOCOL *) HardDriveDevicePath);
+            FullDevicePath = AppendDevicePath (BlockIoDevicePath2, DevicePath);
+            
+            //
+            // Save the matched partition device path in HD_BOOT_DEVICE_PATH_VARIABLE_NAME variable
+            //
+            if (CachedDevicePath != NULL) {
+                //
+                // Save the matched partition device path as first instance of HD_BOOT_DEVICE_PATH_VARIABLE_NAME variable
+                //
+                if (BdsLibMatchDevicePaths (CachedDevicePath, BlockIoDevicePath2)) {
+                    TempNewDevicePath = CachedDevicePath;
+                    CachedDevicePath = BdsLibDelPartMatchInstance (CachedDevicePath, BlockIoDevicePath2);
+                    FreePool(TempNewDevicePath);
+                }
+                
+                if (CachedDevicePath != NULL) {
+                    TempNewDevicePath = CachedDevicePath;
+                    CachedDevicePath = AppendDevicePathInstance (BlockIoDevicePath2, CachedDevicePath);
+                    FreePool(TempNewDevicePath);
+                } else {
+                    CachedDevicePath = DuplicateDevicePath (BlockIoDevicePath2);
+                }
+                
+                //
+                // Here limit the device path instance number to 12, which is max number for a system support 3 IDE controller
+                // If the user try to boot many OS in different HDs or partitions, in theory,
+                // the HD_BOOT_DEVICE_PATH_VARIABLE_NAME variable maybe become larger and larger.
+                //
+                InstanceNum = 0;
+                //      ASSERT (CachedDevicePath != NULL);
+                if (!CachedDevicePath) {
+                    return NULL;
+                }
+                TempNewDevicePath = CachedDevicePath;
+                while (!IsDevicePathEnd (TempNewDevicePath)) {
+                    TempNewDevicePath = NextDevicePathNode (TempNewDevicePath);
+                    //
+                    // Parse one instance
+                    //
+                    while (!IsDevicePathEndType (TempNewDevicePath)) {
+                        TempNewDevicePath = NextDevicePathNode (TempNewDevicePath);
+                    }
+                    InstanceNum++;
+                    //
+                    // If the CachedDevicePath variable contain too much instance, only remain 12 instances.
+                    //
+                    if (InstanceNum >= 12) {
+                        SetDevicePathEndNode (TempNewDevicePath);
+                        break;
+                    }
+                }
+            } else {
+                CachedDevicePath = DuplicateDevicePath (BlockIoDevicePath2);
+            }
+            
+            //
+            // Save the matching Device Path so we don't need to do a connect all next time
+            // Failure to set the variable only impacts the performance when next time expanding the short-form device path.
+            //
+            Status = gRT->SetVariable (
+                                       HD_BOOT_DEVICE_PATH_VARIABLE_NAME,
+                                       &gHdBootDevicePathVariablGuid,
+                                       EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_NON_VOLATILE,
+                                       GetDevicePathSize (CachedDevicePath),
+                                       CachedDevicePath
+                                       );
+            
+            break;
+     }
+  }
+
+  if (BlockIoBuffer2 != NULL) {
+    FreePool (BlockIoBuffer2);
+  }
+
   //
   // Loop through all the device handles that support the BLOCK_IO Protocol
   //
@@ -3157,6 +3254,9 @@ BdsLibEnumerateAllBootOption (
   UINTN                         NumberBlockIoHandles;
   EFI_HANDLE                    *BlockIoHandles;
   EFI_BLOCK_IO_PROTOCOL         *BlkIo;
+  UINTN                         NumberBlockIoHandles2;
+  EFI_HANDLE                    *BlockIoHandles2;
+  EFI_BLOCK_IO2_PROTOCOL        *BlkIo2;
   BOOLEAN                       Removable[2];
   UINTN                         RemovableIndex;
   UINTN                         Index;
@@ -3248,6 +3348,14 @@ BdsLibEnumerateAllBootOption (
   Removable[1]  = TRUE;
 
   gBS->LocateHandleBuffer (
+                           ByProtocol,
+                           &gEfiBlockIo2ProtocolGuid,
+                           NULL,
+                           &NumberBlockIoHandles2,
+                           &BlockIoHandles2
+                           );
+
+  gBS->LocateHandleBuffer (
         ByProtocol,
         &gEfiBlockIoProtocolGuid,
         NULL,
@@ -3256,6 +3364,98 @@ BdsLibEnumerateAllBootOption (
         );
 
   for (RemovableIndex = 0; RemovableIndex < 2; RemovableIndex++) {
+    for (Index = 0; Index < NumberBlockIoHandles2; Index++) {
+          Status = gBS->HandleProtocol (
+                                        BlockIoHandles2[Index],
+                                        &gEfiBlockIo2ProtocolGuid,
+                                        (VOID **) &BlkIo2
+                                        );
+          //
+          // skip the fixed block io then the removable block io
+          //
+          if (EFI_ERROR (Status) || (BlkIo2->Media->RemovableMedia == Removable[RemovableIndex])) {
+              continue;
+          }
+          DevicePath  = DevicePathFromHandle (BlockIoHandles2[Index]);
+          DevicePathType = BdsGetBootTypeFromDevicePath (DevicePath);
+          
+          switch (DevicePathType) {
+              case BDS_EFI_ACPI_FLOPPY_BOOT:
+                  if (FloppyNumber != 0) {
+                      UnicodeSPrint (Buffer, sizeof (Buffer), L"%s %d", BdsLibGetStringById (STRING_TOKEN (STR_DESCRIPTION_FLOPPY)), FloppyNumber);
+                  } else {
+                      UnicodeSPrint (Buffer, sizeof (Buffer), L"%s", BdsLibGetStringById (STRING_TOKEN (STR_DESCRIPTION_FLOPPY)));
+                  }
+                  BdsLibBuildOptionFromHandle (BlockIoHandles2[Index], BdsBootOptionList, Buffer);
+                  FloppyNumber++;
+                  break;
+                  
+                  //
+                  // Assume a removable SATA device should be the DVD/CD device, a fixed SATA device should be the Hard Drive device.
+                  //
+              case BDS_EFI_MESSAGE_ATAPI_BOOT:
+              case BDS_EFI_MESSAGE_SATA_BOOT:
+                  if (BlkIo->Media->RemovableMedia) {
+                      if (CdromNumber != 0) {
+                          UnicodeSPrint (Buffer, sizeof (Buffer), L"%s %d", BdsLibGetStringById (STRING_TOKEN (STR_DESCRIPTION_CD_DVD)), CdromNumber);
+                      } else {
+                          UnicodeSPrint (Buffer, sizeof (Buffer), L"%s", BdsLibGetStringById (STRING_TOKEN (STR_DESCRIPTION_CD_DVD)));
+                      }
+                      CdromNumber++;
+                  } else {
+                      if (HarddriveNumber != 0) {
+                          UnicodeSPrint (Buffer, sizeof (Buffer), L"%s %d", BdsLibGetStringById (STRING_TOKEN (STR_DESCRIPTION_HARDDRIVE)), HarddriveNumber);
+                      } else {
+                          UnicodeSPrint (Buffer, sizeof (Buffer), L"%s", BdsLibGetStringById (STRING_TOKEN (STR_DESCRIPTION_HARDDRIVE)));
+                      }
+                      HarddriveNumber++;
+                  }
+                  //        DEBUG ((DEBUG_INFO | DEBUG_LOAD, "Buffer: %S\n", Buffer));
+                  BdsLibBuildOptionFromHandle (BlockIoHandles2[Index], BdsBootOptionList, Buffer);
+                  break;
+                  
+              case BDS_EFI_MESSAGE_USB_DEVICE_BOOT:
+                  if (UsbNumber != 0) {
+                      UnicodeSPrint (Buffer, sizeof (Buffer), L"%s %d", BdsLibGetStringById (STRING_TOKEN (STR_DESCRIPTION_USB)), UsbNumber);
+                  } else {
+                      UnicodeSPrint (Buffer, sizeof (Buffer), L"%s", BdsLibGetStringById (STRING_TOKEN (STR_DESCRIPTION_USB)));
+                  }
+                  BdsLibBuildOptionFromHandle (BlockIoHandles2[Index], BdsBootOptionList, Buffer);
+                  UsbNumber++;
+                  break;
+                  
+              case BDS_EFI_MESSAGE_SCSI_BOOT:
+                  if (ScsiNumber != 0) {
+                      UnicodeSPrint (Buffer, sizeof (Buffer), L"%s %d", BdsLibGetStringById (STRING_TOKEN (STR_DESCRIPTION_SCSI)), ScsiNumber);
+                  } else {
+                      UnicodeSPrint (Buffer, sizeof (Buffer), L"%s", BdsLibGetStringById (STRING_TOKEN (STR_DESCRIPTION_SCSI)));
+                  }
+                  BdsLibBuildOptionFromHandle (BlockIoHandles2[Index], BdsBootOptionList, Buffer);
+                  ScsiNumber++;
+                  break;
+                  
+              case BDS_EFI_MESSAGE_VIRTIO_BOOT:
+                  if (VirtioNumber != 0) {
+                      UnicodeSPrint (Buffer, sizeof (Buffer), L"%s %d", BdsLibGetStringById (STRING_TOKEN (STR_DESCRIPTION_VIRTIO)), VirtioNumber);
+                  } else {
+                      UnicodeSPrint (Buffer, sizeof (Buffer), L"%s", BdsLibGetStringById (STRING_TOKEN (STR_DESCRIPTION_VIRTIO)));
+                  }
+                  BdsLibBuildOptionFromHandle (BlockIoHandles2[Index], BdsBootOptionList, Buffer);
+                  VirtioNumber++;
+                  break;
+                  
+              case BDS_EFI_MESSAGE_MISC_BOOT:
+              default:
+                  if (MiscNumber != 0) {
+                      UnicodeSPrint (Buffer, sizeof (Buffer), L"%s %d", BdsLibGetStringById (STRING_TOKEN (STR_DESCRIPTION_MISC)), MiscNumber);
+                  } else {
+                      UnicodeSPrint (Buffer, sizeof (Buffer), L"%s", BdsLibGetStringById (STRING_TOKEN (STR_DESCRIPTION_MISC)));
+                  }
+                  BdsLibBuildOptionFromHandle (BlockIoHandles2[Index], BdsBootOptionList, Buffer);
+                  MiscNumber++;
+                  break;
+          }
+    }
     for (Index = 0; Index < NumberBlockIoHandles; Index++) {
       Status = gBS->HandleProtocol (
                       BlockIoHandles[Index],
@@ -3350,12 +3550,16 @@ BdsLibEnumerateAllBootOption (
     }
   }
 
+  if (NumberBlockIoHandles2 != 0) {
+    FreePool (BlockIoHandles2);
+  }
+
   if (NumberBlockIoHandles != 0) {
     FreePool (BlockIoHandles);
   }
 
   //
-  // If there is simple file protocol which does not consume block Io protocol, create a boot option for it here.
+  // If there is simple file protocol which does not consume block Io 2 or block Io protocol, create a boot option for it here.
   //
   NonBlockNumber = 0;
   gBS->LocateHandleBuffer (
@@ -3366,6 +3570,21 @@ BdsLibEnumerateAllBootOption (
         &FileSystemHandles
         );
   for (Index = 0; Index < NumberFileSystemHandles; Index++) {
+    Status = gBS->HandleProtocol (
+                                  FileSystemHandles[Index],
+                                  &gEfiBlockIo2ProtocolGuid,
+                                  (VOID **) &BlkIo2
+                                  );
+    if (EFI_ERROR(Status))
+    {
+      BlkIo2 = NULL;
+    } else {
+      //
+      //  Skip if the file system handle supports a BlkIo2 protocol,
+      //
+      continue;
+    }
+
     Status = gBS->HandleProtocol (
                     FileSystemHandles[Index],
                     &gEfiBlockIoProtocolGuid,
@@ -3643,6 +3862,9 @@ BdsLibGetBootableHandle (
   EFI_DEVICE_PATH_PROTOCOL        *DupDevicePath;
   EFI_HANDLE                      Handle;
   EFI_BLOCK_IO_PROTOCOL           *BlockIo;
+  EFI_HANDLE                      Handle2;
+  EFI_BLOCK_IO2_PROTOCOL          *BlockIo2;
+  EFI_BLOCK_IO2_TOKEN             BlockIo2Token;
   VOID                            *Buffer;
   EFI_DEVICE_PATH_PROTOCOL        *TempDevicePath;
   UINTN                           Size;
@@ -3667,6 +3889,42 @@ BdsLibGetBootableHandle (
   //
   // Check whether the device is connected
   //
+  Status = gBS->LocateDevicePath (&gEfiBlockIo2ProtocolGuid, &UpdatedDevicePath, &Handle2);
+  if (!EFI_ERROR (Status)) {
+        //
+        // For removable device boot option, its contained device path only point to the removable device handle,
+        // should make sure all its children handles (its child partion or media handles) are created and connected.
+        //
+        gBS->ConnectController (Handle2, NULL, NULL, TRUE);
+        //
+        // Get BlockIo protocol and check removable attribute
+        //
+        Status = gBS->HandleProtocol (Handle2, &gEfiBlockIo2ProtocolGuid, (VOID **)&BlockIo2);
+        //   ASSERT_EFI_ERROR (Status);
+        if (EFI_ERROR (Status)) {
+            goto NextBlockIo;
+        }
+        //
+        // Issue a dummy read to the device to check for media change.
+        // When the removable media is changed, any Block IO read/write will
+        // cause the BlockIo protocol be reinstalled and EFI_MEDIA_CHANGED is
+        // returned. After the Block IO protocol is reinstalled, subsequent
+        // Block IO read/write will success.
+        //
+        Buffer = AllocatePool (BlockIo2->Media->BlockSize);
+        if (Buffer != NULL) {
+            BlockIo2->ReadBlocksEx (
+                                 BlockIo2,
+                                 BlockIo2->Media->MediaId,
+                                 0,
+                                 &BlockIo2Token,
+                                 BlockIo2->Media->BlockSize,
+                                 Buffer
+                                 );
+            FreePool(Buffer);
+        }
+  }
+NextBlockIo:
   Status = gBS->LocateDevicePath (&gEfiBlockIoProtocolGuid, &UpdatedDevicePath, &Handle);
   if (EFI_ERROR (Status)) {
     //
@@ -4087,9 +4345,11 @@ BdsLibIsValidEFIBootOptDevicePathExt (
 {
   EFI_STATUS                Status;
   EFI_HANDLE                Handle;
+  EFI_HANDLE                Handle2;
   EFI_DEVICE_PATH_PROTOCOL  *TempDevicePath;
   EFI_DEVICE_PATH_PROTOCOL  *LastDeviceNode;
   EFI_BLOCK_IO_PROTOCOL     *BlockIo;
+  EFI_BLOCK_IO2_PROTOCOL    *BlockIo2;
 
   TempDevicePath = DevPath;
   LastDeviceNode = DevPath;
@@ -4184,11 +4444,42 @@ BdsLibIsValidEFIBootOptDevicePathExt (
   }
 
   //
-  // If the boot option point to a blockIO device:
+  // If the boot option point to a blockIO/blockIO2 device:
   //    if it is a removable blockIo device, it is valid.
   //    if it is a fixed blockIo device, check its description confliction.
   //
   TempDevicePath = DevPath;
+  Status = gBS->LocateDevicePath (&gEfiBlockIo2ProtocolGuid, &TempDevicePath, &Handle2);
+  if (EFI_ERROR (Status)) {
+        //
+        // Device not present so see if we need to connect it
+        //
+        Status = BdsLibConnectDevicePath (DevPath);
+        if (!EFI_ERROR (Status)) {
+            //
+            // Try again to get the Block Io protocol after we did the connect
+            //
+            TempDevicePath = DevPath;
+            Status = gBS->LocateDevicePath (&gEfiBlockIo2ProtocolGuid, &TempDevicePath, &Handle2);
+        }
+  }
+
+  if (!EFI_ERROR (Status)) {
+    Status = gBS->HandleProtocol (Handle2, &gEfiBlockIo2ProtocolGuid, (VOID **)&BlockIo2);
+    if (!EFI_ERROR (Status)) {
+      if (CheckMedia) {
+        //
+        // Test if it is ready to boot now
+        //
+        if (BdsLibGetBootableHandle (DevPath) != NULL) {
+          return TRUE;
+        }
+      } else {
+        return TRUE;
+      }
+    }
+  }
+
   Status = gBS->LocateDevicePath (&gEfiBlockIoProtocolGuid, &TempDevicePath, &Handle);
   if (EFI_ERROR (Status)) {
     //

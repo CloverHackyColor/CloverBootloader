@@ -64,6 +64,12 @@
   Ia32/EnterDxeCore.c
   Ia32/Paging.c
   Ia32/VirtualMemory.h
-
+ 
 [Depex]
   TRUE
+
+[BuildOptions]
+  GCC:*_*_X64_CC_FLAGS                   = $(BUILD_OPTIONS) -march=core2 -mtune=core2 -m64 -Os $(INC)
+  GCC:*_*_X64_AS_FLAGS                   = $(BUILD_OPTIONS) -march=core2 -mtune=core2 --64 $(INC)
+  GCC:*_*_IA32_CC_FLAGS                  = $(BUILD_OPTIONS) -march=i386 -mtune=i386 -m32 -Os $(INC)
+  GCC:*_*_IA32_AS_FLAGS                  = $(BUILD_OPTIONS) -march=i386 -mtune=i386 --32 $(INC)

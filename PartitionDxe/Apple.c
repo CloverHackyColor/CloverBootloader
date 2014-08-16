@@ -53,7 +53,9 @@ PartitionInstallAppleChildHandles (
   IN  EFI_DRIVER_BINDING_PROTOCOL  *This,
   IN  EFI_HANDLE                   Handle,
   IN  EFI_DISK_IO_PROTOCOL         *DiskIo,
+  IN  EFI_DISK_IO2_PROTOCOL        *DiskIo2,
   IN  EFI_BLOCK_IO_PROTOCOL        *BlockIo,
+  IN  EFI_BLOCK_IO2_PROTOCOL       *BlockIo2,
   IN  EFI_DEVICE_PATH_PROTOCOL     *DevicePath
   )
 {
@@ -71,17 +73,26 @@ PartitionInstallAppleChildHandles (
   UINT32                    VolSpaceSize;
   UINT32                    SubBlockSize;
   UINT32                    BlkPerSec;
-  UINT32                      MediaId;
-	UINT32                      BlockSize;
-	EFI_LBA                     LastBlock;
-	
+  UINT32                    MediaId;
+  UINT32                    BlockSize;
+  EFI_LBA                   LastBlock;
+  EFI_DISK_IO2_TOKEN        DiskIo2Token;
 
   Found         = EFI_NOT_FOUND;
-  Media         = BlockIo->Media;
-    BlockSize     = BlockIo->Media->BlockSize;
-  LastBlock     = BlockIo->Media->LastBlock;
-  MediaId       = BlockIo->Media->MediaId;
   VolSpaceSize  = 0;
+
+  if (BlockIo2 != NULL)
+  {
+    Media         = BlockIo2->Media;
+    BlockSize     = BlockIo2->Media->BlockSize;
+    LastBlock     = BlockIo2->Media->LastBlock;
+    MediaId       = BlockIo2->Media->MediaId;
+  } else {
+    Media         = BlockIo->Media;
+    BlockSize     = BlockIo->Media->BlockSize;
+    LastBlock     = BlockIo->Media->LastBlock;
+    MediaId       = BlockIo->Media->MediaId;
+  }
 
   Block = AllocatePool ((UINTN)BlockSize);
 
@@ -95,13 +106,25 @@ PartitionInstallAppleChildHandles (
       /* read PT header first */
       Lba = 0;
 
-      Status = DiskIo->ReadDisk (
+      if (DiskIo2 != NULL)
+      {
+        Status = DiskIo2->ReadDiskEx (
+                       DiskIo2,
+                       MediaId,
+                       MultU64x32 (Lba, BlockSize),
+                       &DiskIo2Token,
+                       BlockSize,
+                       Block
+                       );
+      } else {
+        Status = DiskIo->ReadDisk (
                        DiskIo,
                        MediaId,
                        MultU64x32 (Lba, BlockSize),
                        BlockSize,
                        Block
                        );
+      }
       if (EFI_ERROR (Status)) {
           Found = Status;
           break;
@@ -126,13 +149,25 @@ PartitionInstallAppleChildHandles (
           UINT32 StartLba;
           UINT32 SizeLbs;
 
-          Status = DiskIo->ReadDisk (
+          if (DiskIo2 != NULL)
+          {
+            Status = DiskIo2->ReadDiskEx (
+                       DiskIo2,
+                       MediaId,
+                       MultU64x32 (Partition, SubBlockSize),
+                       &DiskIo2Token,
+                       SubBlockSize,
+                       Block
+                       );
+          } else {
+            Status = DiskIo->ReadDisk (
                        DiskIo,
                        MediaId,
                        MultU64x32 (Partition, SubBlockSize),
                        SubBlockSize,
                        Block
                        );
+          }
 
           if (EFI_ERROR (Status)) {
               Status = EFI_NOT_FOUND;
@@ -177,7 +212,9 @@ PartitionInstallAppleChildHandles (
               This,
               Handle,
               DiskIo,
+              DiskIo2,
               BlockIo,
+              BlockIo2,
               DevicePath,
               (EFI_DEVICE_PATH_PROTOCOL *) &CdDev,
               CdDev.PartitionStart,

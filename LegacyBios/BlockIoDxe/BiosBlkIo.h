@@ -19,6 +19,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #include <Uefi.h>
 
 #include <Protocol/BlockIo.h>
+#include <Protocol/BlockIo2.h>
 #include <Protocol/PciIo.h>
 #include <Protocol/LegacyBios.h>
 #include <Protocol/Legacy8259.h>
@@ -191,6 +192,17 @@ Edd30BiosReadBlocks (
   OUT VOID                  *Buffer
   );
 
+EFI_STATUS
+EFIAPI
+Edd30BiosReadBlocksEx (
+  IN  EFI_BLOCK_IO2_PROTOCOL *This,
+  IN  UINT32                MediaId,
+  IN  EFI_LBA               Lba,
+  IN OUT EFI_BLOCK_IO2_TOKEN *Token,
+  IN  UINTN                 BufferSize,
+  OUT VOID                  *Buffer
+  );
+
 /**
   Write BufferSize bytes from Lba into Buffer.
 
@@ -221,6 +233,17 @@ Edd30BiosWriteBlocks (
   OUT VOID                   *Buffer
   );
 
+EFI_STATUS
+EFIAPI
+Edd30BiosWriteBlocksEx (
+  IN  EFI_BLOCK_IO2_PROTOCOL *This,
+  IN  UINT32                MediaId,
+  IN  EFI_LBA               Lba,
+  IN OUT EFI_BLOCK_IO2_TOKEN *Token,
+  IN  UINTN                 BufferSize,
+  OUT VOID                  *Buffer
+  );
+
 /**
   Flush the Block Device.
 
@@ -235,6 +258,13 @@ EFI_STATUS
 EFIAPI
 BiosBlockIoFlushBlocks (
   IN  EFI_BLOCK_IO_PROTOCOL  *This
+  );
+
+EFI_STATUS
+EFIAPI
+BiosBlockIoFlushBlocksEx (
+  IN  EFI_BLOCK_IO2_PROTOCOL  *This,
+  IN OUT EFI_BLOCK_IO2_TOKEN  *Token
   );
 
 /**
@@ -253,6 +283,13 @@ EFIAPI
 BiosBlockIoReset (
   IN  EFI_BLOCK_IO_PROTOCOL  *This,
   IN  BOOLEAN                ExtendedVerification
+  );
+
+EFI_STATUS
+EFIAPI
+BiosBlockIoReset2 (
+  IN  EFI_BLOCK_IO2_PROTOCOL *This,
+  IN  BOOLEAN               ExtendedVerification
   );
 
 /**
@@ -280,6 +317,17 @@ Edd11BiosReadBlocks (
   IN  EFI_BLOCK_IO_PROTOCOL *This,
   IN  UINT32                MediaId,
   IN  EFI_LBA               Lba,
+  IN  UINTN                 BufferSize,
+  OUT VOID                  *Buffer
+  );
+
+EFI_STATUS
+EFIAPI
+Edd11BiosReadBlocksEx (
+  IN  EFI_BLOCK_IO2_PROTOCOL *This,
+  IN  UINT32                MediaId,
+  IN  EFI_LBA               Lba,
+  IN OUT EFI_BLOCK_IO2_TOKEN *Token,
   IN  UINTN                 BufferSize,
   OUT VOID                  *Buffer
   );
@@ -314,6 +362,17 @@ Edd11BiosWriteBlocks (
   OUT VOID                  *Buffer
   );
 
+EFI_STATUS
+EFIAPI
+Edd11BiosWriteBlocksEx (
+  IN  EFI_BLOCK_IO2_PROTOCOL *This,
+  IN  UINT32                MediaId,
+  IN  EFI_LBA               Lba,
+  IN OUT EFI_BLOCK_IO2_TOKEN *Token,
+  IN  UINTN                 BufferSize,
+  OUT VOID                  *Buffer
+  );
+
 /**
   Read BufferSize bytes from Lba into Buffer.
 
@@ -343,6 +402,17 @@ BiosReadLegacyDrive (
   OUT VOID                  *Buffer
   );
 
+EFI_STATUS
+EFIAPI
+BiosReadLegacyDriveEx (
+  IN  EFI_BLOCK_IO2_PROTOCOL *This,
+  IN  UINT32                 MediaId,
+  IN  EFI_LBA                Lba,
+  IN OUT EFI_BLOCK_IO2_TOKEN *Token,
+  IN  UINTN                  BufferSize,
+  OUT VOID                   *Buffer
+  );
+
 /**
   Write BufferSize bytes from Lba into Buffer.
 
@@ -369,6 +439,17 @@ BiosWriteLegacyDrive (
   IN  EFI_BLOCK_IO_PROTOCOL *This,
   IN  UINT32                MediaId,
   IN  EFI_LBA               Lba,
+  IN  UINTN                 BufferSize,
+  OUT VOID                  *Buffer
+  );
+
+EFI_STATUS
+EFIAPI
+BiosWriteLegacyDriveEx (
+  IN  EFI_BLOCK_IO2_PROTOCOL *This,
+  IN  UINT32                MediaId,
+  IN  EFI_LBA               Lba,
+  IN OUT EFI_BLOCK_IO2_TOKEN *Token,
   IN  UINTN                 BufferSize,
   OUT VOID                  *Buffer
   );

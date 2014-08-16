@@ -117,7 +117,9 @@ PartitionInstallMbrChildHandles (
   IN  EFI_DRIVER_BINDING_PROTOCOL  *This,
   IN  EFI_HANDLE                   Handle,
   IN  EFI_DISK_IO_PROTOCOL         *DiskIo,
+  IN  EFI_DISK_IO2_PROTOCOL        *DiskIo2,
   IN  EFI_BLOCK_IO_PROTOCOL        *BlockIo,
+  IN  EFI_BLOCK_IO2_PROTOCOL       *BlockIo2,
   IN  EFI_DEVICE_PATH_PROTOCOL     *DevicePath
   )
 {
@@ -131,27 +133,59 @@ PartitionInstallMbrChildHandles (
   UINT32                    PartitionNumber;
   EFI_DEVICE_PATH_PROTOCOL  *DevicePathNode;
   EFI_DEVICE_PATH_PROTOCOL  *LastDevicePathNode;
+  UINT32                    MBRMediaId;
+  UINT32                    MBRBlockSize;
+  EFI_DISK_IO2_TOKEN        DiskIo2Token;
 
   Found           = EFI_NOT_FOUND;
 
-  Mbr             = AllocatePool (BlockIo->Media->BlockSize);
+  if (BlockIo2 != NULL)
+  {
+    Mbr             = AllocatePool (BlockIo2->Media->BlockSize);
+    MBRMediaId      = BlockIo2->Media->MediaId;
+    MBRBlockSize    = BlockIo2->Media->BlockSize;
+  } else {
+    Mbr             = AllocatePool (BlockIo->Media->BlockSize);
+    MBRMediaId      = BlockIo->Media->MediaId;
+    MBRBlockSize    = BlockIo->Media->BlockSize;
+  }
+
   if (Mbr == NULL) {
     return Found;
   }
 
-  Status = DiskIo->ReadDisk (
-                     DiskIo,
-                     BlockIo->Media->MediaId,
+  if (DiskIo2 != NULL)
+  {
+    Status = DiskIo2->ReadDiskEx (
+                     DiskIo2,
+                     MBRMediaId,
                      0,
-                     BlockIo->Media->BlockSize,
+                     &DiskIo2Token,
+                     MBRBlockSize,
                      Mbr
                      );
+  } else {
+    Status = DiskIo->ReadDisk (
+                     DiskIo,
+                     MBRMediaId,
+                     0,
+                     MBRBlockSize,
+                     Mbr
+                     );
+  }
   if (EFI_ERROR (Status)) {
     Found = Status;
     goto Done;
   }
-  if (!PartitionValidMbr (Mbr, BlockIo->Media->LastBlock)) {
-    goto Done;
+  if (BlockIo2 != NULL)
+  {
+    if (!PartitionValidMbr (Mbr, BlockIo2->Media->LastBlock)) {
+      goto Done;
+    }
+  } else {
+    if (!PartitionValidMbr (Mbr, BlockIo->Media->LastBlock)) {
+      goto Done;
+    }
   }
   //
   // We have a valid mbr - add each partition
@@ -220,7 +254,9 @@ PartitionInstallMbrChildHandles (
                 This,
                 Handle,
                 DiskIo,
+                DiskIo2,
                 BlockIo,
+                BlockIo2,
                 DevicePath,
                 (EFI_DEVICE_PATH_PROTOCOL *) &HdDev,
                 HdDev.PartitionStart,
@@ -242,13 +278,26 @@ PartitionInstallMbrChildHandles (
 
     do {
 
-      Status = DiskIo->ReadDisk (
-                         DiskIo,
+      if (DiskIo2 != NULL)
+      {
+        Status = DiskIo2->ReadDiskEx (
+                         DiskIo2,
                          BlockIo->Media->MediaId,
-                         MultU64x32 (ExtMbrStartingLba, BlockIo->Media->BlockSize),
-                         BlockIo->Media->BlockSize,
+                         MultU64x32 (ExtMbrStartingLba, MBRBlockSize),
+                         &DiskIo2Token,
+                         MBRBlockSize,
                          Mbr
                          );
+      } else {
+        Status = DiskIo->ReadDisk (
+                         DiskIo,
+                         BlockIo->Media->MediaId,
+                         MultU64x32 (ExtMbrStartingLba, MBRBlockSize),
+                         MBRBlockSize,
+                         Mbr
+                         );
+      }
+
       if (EFI_ERROR (Status)) {
         Found = Status;
         goto Done;
@@ -280,7 +329,9 @@ PartitionInstallMbrChildHandles (
                 This,
                 Handle,
                 DiskIo,
+                DiskIo2,
                 BlockIo,
+                BlockIo2,
                 DevicePath,
                 (EFI_DEVICE_PATH_PROTOCOL *) &HdDev,
                 HdDev.PartitionStart - ParentHdDev.PartitionStart,

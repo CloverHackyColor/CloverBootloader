@@ -112,6 +112,7 @@
   gEfiTimerArchProtocolGuid                     # PROTOCOL ALWAYS_CONSUMED
   gEfiIsaIoProtocolGuid                         # PROTOCOL ALWAYS_CONSUMED
   gEfiBlockIoProtocolGuid                       # PROTOCOL ALWAYS_CONSUMED
+  gEfiBlockIo2ProtocolGuid                      # PROTOCOL ALWAYS_CONSUMED
   gEfiPciIoProtocolGuid                         # PROTOCOL ALWAYS_CONSUMED
   gEfiGenericMemTestProtocolGuid                # PROTOCOL ALWAYS_CONSUMED
   gEfiDiskInfoProtocolGuid                      # PROTOCOL ALWAYS_CONSUMED

@@ -65,11 +65,14 @@ BiosInitBlockIo (
   IN  BIOS_BLOCK_IO_DEV         *Dev
   )
 {
-  EFI_BLOCK_IO_PROTOCOL *BlockIo;
-  EFI_BLOCK_IO_MEDIA    *BlockMedia;
-  BIOS_LEGACY_DRIVE     *Bios;
+  EFI_BLOCK_IO_PROTOCOL  *BlockIo;
+  EFI_BLOCK_IO2_PROTOCOL *BlockIo2;
+  EFI_BLOCK_IO_MEDIA     *BlockMedia;
+  BIOS_LEGACY_DRIVE      *Bios;
 
   BlockIo         = &Dev->BlockIo;
+  BlockIo2        = &Dev->BlockIo2;
+  BlockIo2->Media = &Dev->BlockMedia;
   BlockIo->Media  = &Dev->BlockMedia;
   BlockMedia      = BlockIo->Media;
   Bios            = &Dev->Bios;
@@ -106,18 +109,27 @@ BiosInitBlockIo (
     BlockIo->Reset            = BiosBlockIoReset;
     BlockIo->FlushBlocks      = BiosBlockIoFlushBlocks;
 
+    BlockIo2->Reset           = BiosBlockIoReset2;
+    BlockIo2->FlushBlocksEx   = BiosBlockIoFlushBlocksEx;
+
     if (!Bios->ExtendedInt13) {
       //
       // Legacy interfaces
       //
       BlockIo->ReadBlocks   = BiosReadLegacyDrive;
       BlockIo->WriteBlocks  = BiosWriteLegacyDrive;
+
+      BlockIo2->ReadBlocksEx  = BiosReadLegacyDriveEx;
+      BlockIo2->WriteBlocksEx = BiosWriteLegacyDriveEx;
     } else if ((Bios->EddVersion == EDD_VERSION_30) && (Bios->Extensions64Bit)) {
       //
       // EDD 3.0 Required for Device path, but extended reads are not required.
       //
       BlockIo->ReadBlocks   = Edd30BiosReadBlocks;
       BlockIo->WriteBlocks  = Edd30BiosWriteBlocks;
+
+      BlockIo2->ReadBlocksEx  = Edd30BiosReadBlocksEx;
+      BlockIo2->WriteBlocksEx = Edd30BiosWriteBlocksEx;
     } else {
       //
       // Assume EDD 1.1 - Read and Write functions.
@@ -127,6 +139,9 @@ BiosInitBlockIo (
       //
       BlockIo->ReadBlocks   = Edd11BiosReadBlocks;
       BlockIo->WriteBlocks  = Edd11BiosWriteBlocks;
+
+      BlockIo2->ReadBlocksEx  = Edd11BiosReadBlocksEx;
+      BlockIo2->WriteBlocksEx = Edd11BiosWriteBlocksEx;
     }
 
     BlockMedia->LogicalPartition  = FALSE;
@@ -560,6 +575,137 @@ Edd30BiosReadBlocks (
   return EFI_SUCCESS;
 }
 
+EFI_STATUS
+EFIAPI
+Edd30BiosReadBlocksEx (
+  IN  EFI_BLOCK_IO2_PROTOCOL *This,
+  IN  UINT32                MediaId,
+  IN  EFI_LBA               Lba,
+  IN OUT EFI_BLOCK_IO2_TOKEN *Token,
+  IN  UINTN                 BufferSize,
+  OUT VOID                  *Buffer
+  )
+{
+  EFI_BLOCK_IO_MEDIA        *Media;
+  BIOS_BLOCK_IO_DEV         *BiosBlockIoDev;
+  EDD_DEVICE_ADDRESS_PACKET *AddressPacket;
+  //
+  // I exist only for readability
+  //
+  IA32_REGISTER_SET     Regs;
+  UINT64                    TransferBuffer;
+  UINTN                     NumberOfBlocks;
+  UINTN                     TransferByteSize;
+  UINTN                     BlockSize;
+  BIOS_LEGACY_DRIVE         *Bios;
+  UINTN                     CarryFlag;
+  UINTN                     MaxTransferBlocks;
+  EFI_BLOCK_IO2_PROTOCOL    *BlockIo2;
+
+  Media     = This->Media;
+  BlockSize = Media->BlockSize;
+
+  ZeroMem (&Regs, sizeof (IA32_REGISTER_SET));
+
+  if (MediaId != Media->MediaId) {
+    return EFI_MEDIA_CHANGED;
+  }
+
+  if (Lba > Media->LastBlock) {
+    return EFI_INVALID_PARAMETER;
+  }
+
+  if ((Lba + (BufferSize / BlockSize) - 1) > Media->LastBlock) {
+    return EFI_INVALID_PARAMETER;
+  }
+
+  if (BufferSize % BlockSize != 0) {
+    return EFI_BAD_BUFFER_SIZE;
+  }
+
+  if (Buffer == NULL) {
+    return EFI_INVALID_PARAMETER;
+  }
+
+  if (BufferSize == 0) {
+    return EFI_SUCCESS;
+  }
+
+  BiosBlockIoDev    = BIOS_BLOCK_IO2_FROM_THIS (This);
+  if (BiosBlockIoDev->Bios.ErrorCode == BIOS_SECTOR_NOT_FOUND || BiosBlockIoDev->Bios.ErrorCode == BIOS_DRIVE_DOES_NOT_EXIST) {
+    return EFI_DEVICE_ERROR;
+  }
+
+  AddressPacket     = mEddBufferUnder1Mb;
+
+  MaxTransferBlocks = MAX_EDD11_XFER / BlockSize;
+
+  TransferBuffer    = (UINT64)(UINTN) Buffer;
+  for (; BufferSize > 0;) {
+    NumberOfBlocks  = BufferSize / BlockSize;
+    NumberOfBlocks  = NumberOfBlocks > MaxTransferBlocks ? MaxTransferBlocks : NumberOfBlocks;
+    //
+    // Max transfer MaxTransferBlocks
+    //
+    AddressPacket->PacketSizeInBytes  = (UINT8) sizeof (EDD_DEVICE_ADDRESS_PACKET);
+    AddressPacket->Zero               = 0;
+    AddressPacket->NumberOfBlocks     = (UINT8) NumberOfBlocks;
+    AddressPacket->Zero2              = 0;
+    AddressPacket->SegOffset          = 0xffffffff;
+    AddressPacket->Lba                = (UINT64) Lba;
+    AddressPacket->TransferBuffer     = TransferBuffer;
+
+    Regs.H.AH                         = 0x42;
+    Regs.H.DL                         = BiosBlockIoDev->Bios.Number;
+    Regs.X.SI                         = EFI_OFFSET (AddressPacket);
+    Regs.E.DS                         = EFI_SEGMENT (AddressPacket);
+
+//    CarryFlag = BiosBlockIoDev->LegacyBios->Int86 (BiosBlockIoDev->LegacyBios, 0x13, &Regs);
+    CarryFlag = LegacyBiosInt86 (BiosBlockIoDev, 0x13, &Regs);
+//    DBG( "Edd30BiosReadBlocks: INT 13 42 DL=%02x : CF=%d AH=%02x\n",
+//        BiosBlockIoDev->Bios.Number, CarryFlag, Regs.H.AH);
+
+    Media->MediaPresent = TRUE;
+    if (CarryFlag != 0) {
+      //
+      // Return Error Status
+      //
+      BiosBlockIoDev->Bios.ErrorCode = Regs.H.AH;
+      if (BiosBlockIoDev->Bios.ErrorCode == BIOS_DISK_CHANGED) {
+        Media->MediaId++;
+        Bios = &BiosBlockIoDev->Bios;
+        if (Int13GetDeviceParameters (BiosBlockIoDev, Bios) != 0) {
+          if (Int13Extensions (BiosBlockIoDev, Bios) != 0) {
+            Media->LastBlock  = (EFI_LBA) Bios->Parameters.PhysicalSectors - 1;
+            Media->BlockSize  = (UINT32) Bios->Parameters.BytesPerSector;
+          }
+          /*else {
+            ASSERT (FALSE);
+          } */
+
+          Media->ReadOnly = FALSE;
+          gBS->HandleProtocol (BiosBlockIoDev->Handle, &gEfiBlockIo2ProtocolGuid, (VOID **) &BlockIo2);
+          gBS->ReinstallProtocolInterface (BiosBlockIoDev->Handle, &gEfiBlockIo2ProtocolGuid, BlockIo2, BlockIo2);
+          return EFI_MEDIA_CHANGED;
+        }
+      }
+
+      if (Media->RemovableMedia) {
+        Media->MediaPresent = FALSE;
+      }
+
+      return EFI_DEVICE_ERROR;
+    }
+
+    TransferByteSize  = NumberOfBlocks * BlockSize;
+    BufferSize        = BufferSize - TransferByteSize;
+    TransferBuffer += TransferByteSize;
+    Lba += NumberOfBlocks;
+  }
+
+  return EFI_SUCCESS;
+}
+
 /**
   Write BufferSize bytes from Lba into Buffer.
 
@@ -717,6 +863,144 @@ Edd30BiosWriteBlocks (
   return EFI_SUCCESS;
 }
 
+EFI_STATUS
+EFIAPI
+Edd30BiosWriteBlocksEx (
+  IN  EFI_BLOCK_IO2_PROTOCOL *This,
+  IN  UINT32                MediaId,
+  IN  EFI_LBA               Lba,
+  IN OUT EFI_BLOCK_IO2_TOKEN *Token,
+  IN  UINTN                 BufferSize,
+  OUT VOID                  *Buffer
+  )
+{
+  EFI_BLOCK_IO_MEDIA        *Media;
+  BIOS_BLOCK_IO_DEV         *BiosBlockIoDev;
+  EDD_DEVICE_ADDRESS_PACKET *AddressPacket;
+  //
+  // I exist only for readability
+  //
+  IA32_REGISTER_SET     Regs;
+  UINT64                    TransferBuffer;
+  UINTN                     NumberOfBlocks;
+  UINTN                     TransferByteSize;
+  UINTN                     BlockSize;
+  BIOS_LEGACY_DRIVE         *Bios;
+  UINTN                     CarryFlag;
+  UINTN                     MaxTransferBlocks;
+  EFI_BLOCK_IO2_PROTOCOL    *BlockIo2;
+
+  Media     = This->Media;
+  BlockSize = Media->BlockSize;
+
+  ZeroMem (&Regs, sizeof (IA32_REGISTER_SET));
+
+  if (MediaId != Media->MediaId) {
+    return EFI_MEDIA_CHANGED;
+  }
+
+  if (Lba > Media->LastBlock) {
+    return EFI_DEVICE_ERROR;
+  }
+
+  if ((Lba + (BufferSize / BlockSize) - 1) > Media->LastBlock) {
+    return EFI_INVALID_PARAMETER;
+  }
+
+  if (BufferSize % BlockSize != 0) {
+    return EFI_BAD_BUFFER_SIZE;
+  }
+
+  if (Buffer == NULL) {
+    return EFI_INVALID_PARAMETER;
+  }
+
+  if (BufferSize == 0) {
+    return EFI_SUCCESS;
+  }
+
+  BiosBlockIoDev    = BIOS_BLOCK_IO2_FROM_THIS (This);
+  if (BiosBlockIoDev->Bios.ErrorCode == BIOS_SECTOR_NOT_FOUND || BiosBlockIoDev->Bios.ErrorCode == BIOS_DRIVE_DOES_NOT_EXIST) {
+    return EFI_DEVICE_ERROR;
+  }
+
+  AddressPacket     = mEddBufferUnder1Mb;
+
+  MaxTransferBlocks = MAX_EDD11_XFER / BlockSize;
+
+  TransferBuffer    = (UINT64)(UINTN) Buffer;
+  for (; BufferSize > 0;) {
+    NumberOfBlocks  = BufferSize / BlockSize;
+    NumberOfBlocks  = NumberOfBlocks > MaxTransferBlocks ? MaxTransferBlocks : NumberOfBlocks;
+    //
+    // Max transfer MaxTransferBlocks
+    //
+    AddressPacket->PacketSizeInBytes  = (UINT8) sizeof (EDD_DEVICE_ADDRESS_PACKET);
+    AddressPacket->Zero               = 0;
+    AddressPacket->NumberOfBlocks     = (UINT8) NumberOfBlocks;
+    AddressPacket->Zero2              = 0;
+    AddressPacket->SegOffset          = 0xffffffff;
+    AddressPacket->Lba                = (UINT64) Lba;
+    AddressPacket->TransferBuffer     = TransferBuffer;
+
+    Regs.H.AH                         = 0x43;
+    Regs.H.AL                         = 0x00;
+    //
+    // Write Verify Off
+    //
+    Regs.H.DL = (UINT8) (BiosBlockIoDev->Bios.Number);
+    Regs.X.SI = EFI_OFFSET (AddressPacket);
+    Regs.E.DS = EFI_SEGMENT (AddressPacket);
+
+//    CarryFlag = BiosBlockIoDev->LegacyBios->Int86 (BiosBlockIoDev->LegacyBios, 0x13, &Regs);
+    CarryFlag = LegacyBiosInt86 (BiosBlockIoDev, 0x13, &Regs);
+//    DBG( "Edd30BiosWriteBlocks: INT 13 43 DL=%02x : CF=%d AH=%02x\n",
+//        BiosBlockIoDev->Bios.Number, CarryFlag, Regs.H.AH);
+
+    Media->MediaPresent = TRUE;
+    if (CarryFlag != 0) {
+      //
+      // Return Error Status
+      //
+      BiosBlockIoDev->Bios.ErrorCode = Regs.H.AH;
+      if (BiosBlockIoDev->Bios.ErrorCode == BIOS_DISK_CHANGED) {
+        Media->MediaId++;
+        Bios = &BiosBlockIoDev->Bios;
+        if (Int13GetDeviceParameters (BiosBlockIoDev, Bios) != 0) {
+          if (Int13Extensions (BiosBlockIoDev, Bios) != 0) {
+            Media->LastBlock  = (EFI_LBA) Bios->Parameters.PhysicalSectors - 1;
+            Media->BlockSize  = (UINT32) Bios->Parameters.BytesPerSector;
+          } /* else {
+            ASSERT (FALSE);
+          } */
+
+          Media->ReadOnly = FALSE;
+          gBS->HandleProtocol (BiosBlockIoDev->Handle, &gEfiBlockIo2ProtocolGuid, (VOID **) &BlockIo2);
+          gBS->ReinstallProtocolInterface (BiosBlockIoDev->Handle, &gEfiBlockIo2ProtocolGuid, BlockIo2, BlockIo2);
+          return EFI_MEDIA_CHANGED;
+        }
+      } else if (BiosBlockIoDev->Bios.ErrorCode == BIOS_WRITE_PROTECTED) {
+        Media->ReadOnly = TRUE;
+        return EFI_WRITE_PROTECTED;
+      }
+
+      if (Media->RemovableMedia) {
+        Media->MediaPresent = FALSE;
+      }
+
+      return EFI_DEVICE_ERROR;
+    }
+
+    Media->ReadOnly   = FALSE;
+    TransferByteSize  = NumberOfBlocks * BlockSize;
+    BufferSize        = BufferSize - TransferByteSize;
+    TransferBuffer += TransferByteSize;
+    Lba += NumberOfBlocks;
+  }
+
+  return EFI_SUCCESS;
+}
+
 /**
   Flush the Block Device.
 
@@ -736,6 +1020,16 @@ BiosBlockIoFlushBlocks (
   return EFI_SUCCESS;
 }
 
+EFI_STATUS
+EFIAPI
+BiosBlockIoFlushBlocksEx (
+  IN  EFI_BLOCK_IO2_PROTOCOL  *This,
+  IN OUT EFI_BLOCK_IO2_TOKEN  *Token
+  )
+{
+  return EFI_SUCCESS;
+}
+
 /**
   Reset the Block Device.
 
@@ -747,6 +1041,45 @@ BiosBlockIoFlushBlocks (
                                not be reset.
 
 **/
+
+EFI_STATUS
+EFIAPI
+BiosBlockIoReset2 (
+  IN  EFI_BLOCK_IO2_PROTOCOL *This,
+  IN  BOOLEAN               ExtendedVerification
+  )
+{
+  BIOS_BLOCK_IO_DEV     *BiosBlockIoDev;
+  IA32_REGISTER_SET Regs;
+  UINTN                 CarryFlag;
+
+  BiosBlockIoDev  = BIOS_BLOCK_IO2_FROM_THIS (This);
+
+  ZeroMem (&Regs, sizeof (IA32_REGISTER_SET));
+
+  Regs.H.AH       = 0x00;
+  Regs.H.DL       = BiosBlockIoDev->Bios.Number;
+//  CarryFlag       = BiosBlockIoDev->LegacyBios->Int86 (BiosBlockIoDev->LegacyBios, 0x13, &Regs);
+  CarryFlag = LegacyBiosInt86 (BiosBlockIoDev, 0x13, &Regs);
+//  DBG("BiosBlockIoReset: INT 13 00 DL=%02x : CF=%d AH=%02x\n",
+//      BiosBlockIoDev->Bios.Number, CarryFlag, Regs.H.AH );
+  if (CarryFlag != 0) {
+    if (Regs.H.AL == BIOS_RESET_FAILED) {
+      Regs.H.AH = 0x00;
+      Regs.H.DL = BiosBlockIoDev->Bios.Number;
+ //     CarryFlag = BiosBlockIoDev->LegacyBios->Int86 (BiosBlockIoDev->LegacyBios, 0x13, &Regs);
+      CarryFlag = LegacyBiosInt86 (BiosBlockIoDev, 0x13, &Regs);
+ //     DBG("BiosBlockIoReset: INT 13 00 DL=%02x : CF=%d AH=%02x\n", BiosBlockIoDev->Bios.Number, CarryFlag, Regs.H.AH );
+      if (CarryFlag != 0) {
+        BiosBlockIoDev->Bios.ErrorCode = Regs.H.AH;
+        return EFI_DEVICE_ERROR;
+      }
+    }
+  }
+
+  return EFI_SUCCESS;
+}
+
 EFI_STATUS
 EFIAPI
 BiosBlockIoReset (
@@ -944,6 +1277,142 @@ Edd11BiosReadBlocks (
   return EFI_SUCCESS;
 }
 
+EFI_STATUS
+EFIAPI
+Edd11BiosReadBlocksEx (
+  IN  EFI_BLOCK_IO2_PROTOCOL *This,
+  IN  UINT32                MediaId,
+  IN  EFI_LBA               Lba,
+  IN OUT EFI_BLOCK_IO2_TOKEN *Token,
+  IN  UINTN                 BufferSize,
+  OUT VOID                  *Buffer
+  )
+{
+  EFI_BLOCK_IO_MEDIA        *Media;
+  BIOS_BLOCK_IO_DEV         *BiosBlockIoDev;
+  EDD_DEVICE_ADDRESS_PACKET *AddressPacket;
+  //
+  // I exist only for readability
+  //
+  IA32_REGISTER_SET     Regs;
+  UINT64                    TransferBuffer;
+  UINTN                     NumberOfBlocks;
+  UINTN                     TransferByteSize;
+  UINTN                     BlockSize;
+  BIOS_LEGACY_DRIVE         *Bios;
+  UINTN                     CarryFlag;
+  UINTN                     MaxTransferBlocks;
+  EFI_BLOCK_IO2_PROTOCOL    *BlockIo2;
+
+  Media     = This->Media;
+  BlockSize = Media->BlockSize;
+
+  ZeroMem (&Regs, sizeof (IA32_REGISTER_SET));
+
+  if (MediaId != Media->MediaId) {
+    return EFI_MEDIA_CHANGED;
+  }
+
+  if (Lba > Media->LastBlock) {
+    return EFI_INVALID_PARAMETER;
+  }
+
+  if ((Lba + (BufferSize / BlockSize) - 1) > Media->LastBlock) {
+    return EFI_INVALID_PARAMETER;
+  }
+
+  if (BufferSize % BlockSize != 0) {
+    return EFI_BAD_BUFFER_SIZE;
+  }
+
+  if (Buffer == NULL) {
+    return EFI_INVALID_PARAMETER;
+  }
+
+  if (BufferSize == 0) {
+    return EFI_SUCCESS;
+  }
+
+  BiosBlockIoDev    = BIOS_BLOCK_IO2_FROM_THIS (This);
+  if (BiosBlockIoDev->Bios.ErrorCode == BIOS_SECTOR_NOT_FOUND || BiosBlockIoDev->Bios.ErrorCode == BIOS_DRIVE_DOES_NOT_EXIST) {
+    return EFI_DEVICE_ERROR;
+  }
+
+  AddressPacket     = mEddBufferUnder1Mb;
+
+  MaxTransferBlocks = MAX_EDD11_XFER / BlockSize;
+
+  TransferBuffer    = (UINT64)(UINTN) mEdd11Buffer;
+  for (; BufferSize > 0;) {
+    NumberOfBlocks  = BufferSize / BlockSize;
+    NumberOfBlocks  = NumberOfBlocks > MaxTransferBlocks ? MaxTransferBlocks : NumberOfBlocks;
+    //
+    // Max transfer MaxTransferBlocks
+    //
+    AddressPacket->PacketSizeInBytes  = (UINT8) sizeof (EDD_DEVICE_ADDRESS_PACKET);
+    AddressPacket->Zero               = 0;
+    AddressPacket->NumberOfBlocks     = (UINT8) NumberOfBlocks;
+    AddressPacket->Zero2              = 0;
+    //
+    // TransferBuffer has been 4KB alignment. Normalize TransferBuffer to make offset as 0 in seg:offset
+    // format to transfer maximum 127 blocks of data.
+    // Otherwise when offset adding data size exceeds 0xFFFF, if OpROM does not normalize TransferBuffer,
+    // INT13 function 42H will return data boundary error 09H.
+    //
+    AddressPacket->SegOffset = (UINT32) LShiftU64(RShiftU64(TransferBuffer, 4), 16);
+    AddressPacket->Lba  = (UINT64) Lba;
+
+    Regs.H.AH           = 0x42;
+    Regs.H.DL           = BiosBlockIoDev->Bios.Number;
+    Regs.X.SI           = EFI_OFFSET (AddressPacket);
+    Regs.E.DS           = EFI_SEGMENT (AddressPacket);
+
+ //   CarryFlag = BiosBlockIoDev->LegacyBios->Int86 (BiosBlockIoDev->LegacyBios, 0x13, &Regs);
+    CarryFlag = LegacyBiosInt86 (BiosBlockIoDev, 0x13, &Regs);
+ //   DBG("Edd11BiosReadBlocks: INT 13 42 DL=%02x : CF=%d AH=%02x : LBA 0x%lx  Block(s) %0d \n",
+ //     BiosBlockIoDev->Bios.Number, CarryFlag, Regs.H.AH, Lba, NumberOfBlocks);
+    Media->MediaPresent = TRUE;
+    if (CarryFlag != 0) {
+      //
+      // Return Error Status
+      //
+      BiosBlockIoDev->Bios.ErrorCode = Regs.H.AH;
+      if (BiosBlockIoDev->Bios.ErrorCode == BIOS_DISK_CHANGED) {
+        Media->MediaId++;
+        Bios = &BiosBlockIoDev->Bios;
+        if (Int13GetDeviceParameters (BiosBlockIoDev, Bios) != 0) {
+          if (Int13Extensions (BiosBlockIoDev, Bios) != 0) {
+            Media->LastBlock  = (EFI_LBA) Bios->Parameters.PhysicalSectors - 1;
+            Media->BlockSize  = (UINT32) Bios->Parameters.BytesPerSector;
+          }
+          /*else {
+            ASSERT (FALSE);
+          }*/
+
+          Media->ReadOnly = FALSE;
+          gBS->HandleProtocol (BiosBlockIoDev->Handle, &gEfiBlockIo2ProtocolGuid, (VOID **) &BlockIo2);
+          gBS->ReinstallProtocolInterface (BiosBlockIoDev->Handle, &gEfiBlockIo2ProtocolGuid, BlockIo2, BlockIo2);
+          return EFI_MEDIA_CHANGED;
+        }
+      }
+
+      if (Media->RemovableMedia) {
+        Media->MediaPresent = FALSE;
+      }
+
+      return EFI_DEVICE_ERROR;
+    }
+
+    TransferByteSize = NumberOfBlocks * BlockSize;
+    CopyMem (Buffer, (VOID *) (UINTN) TransferBuffer, TransferByteSize);
+    BufferSize  = BufferSize - TransferByteSize;
+    Buffer      = (VOID *) ((UINT8 *) Buffer + TransferByteSize);
+    Lba += NumberOfBlocks;
+  }
+
+  return EFI_SUCCESS;
+}
+
 /**
   Write BufferSize bytes from Lba into Buffer.
 
@@ -1085,6 +1554,151 @@ Edd11BiosWriteBlocks (
           Media->ReadOnly = FALSE;
           gBS->HandleProtocol (BiosBlockIoDev->Handle, &gEfiBlockIoProtocolGuid, (VOID **) &BlockIo);
           gBS->ReinstallProtocolInterface (BiosBlockIoDev->Handle, &gEfiBlockIoProtocolGuid, BlockIo, BlockIo);
+          return EFI_MEDIA_CHANGED;
+        }
+      } else if (BiosBlockIoDev->Bios.ErrorCode == BIOS_WRITE_PROTECTED) {
+        Media->ReadOnly = TRUE;
+        return EFI_WRITE_PROTECTED;
+      }
+
+      if (Media->RemovableMedia) {
+        Media->MediaPresent = FALSE;
+      }
+
+      return EFI_DEVICE_ERROR;
+    }
+
+    Media->ReadOnly = FALSE;
+    BufferSize      = BufferSize - TransferByteSize;
+    Buffer          = (VOID *) ((UINT8 *) Buffer + TransferByteSize);
+    Lba += NumberOfBlocks;
+  }
+
+  return EFI_SUCCESS;
+}
+
+EFI_STATUS
+EFIAPI
+Edd11BiosWriteBlocksEx (
+  IN  EFI_BLOCK_IO2_PROTOCOL *This,
+  IN  UINT32                MediaId,
+  IN  EFI_LBA               Lba,
+  IN OUT EFI_BLOCK_IO2_TOKEN *Token,
+  IN  UINTN                 BufferSize,
+  OUT VOID                  *Buffer
+  )
+{
+  EFI_BLOCK_IO_MEDIA        *Media;
+  BIOS_BLOCK_IO_DEV         *BiosBlockIoDev;
+  EDD_DEVICE_ADDRESS_PACKET *AddressPacket;
+  //
+  // I exist only for readability
+  //
+  IA32_REGISTER_SET     Regs;
+  UINT64                    TransferBuffer;
+  UINTN                     NumberOfBlocks;
+  UINTN                     TransferByteSize;
+  UINTN                     BlockSize;
+  BIOS_LEGACY_DRIVE         *Bios;
+  UINTN                     CarryFlag;
+  UINTN                     MaxTransferBlocks;
+  EFI_BLOCK_IO2_PROTOCOL    *BlockIo2;
+
+  Media     = This->Media;
+  BlockSize = Media->BlockSize;
+
+  ZeroMem (&Regs, sizeof (IA32_REGISTER_SET));
+
+  if (MediaId != Media->MediaId) {
+    return EFI_MEDIA_CHANGED;
+  }
+
+  if (Lba > Media->LastBlock) {
+    return EFI_INVALID_PARAMETER;
+  }
+
+  if ((Lba + (BufferSize / BlockSize) - 1) > Media->LastBlock) {
+    return EFI_INVALID_PARAMETER;
+  }
+
+  if (BufferSize % BlockSize != 0) {
+    return EFI_BAD_BUFFER_SIZE;
+  }
+
+  if (Buffer == NULL) {
+    return EFI_INVALID_PARAMETER;
+  }
+
+  if (BufferSize == 0) {
+    return EFI_SUCCESS;
+  }
+
+  BiosBlockIoDev    = BIOS_BLOCK_IO2_FROM_THIS (This);
+  if (BiosBlockIoDev->Bios.ErrorCode == BIOS_SECTOR_NOT_FOUND || BiosBlockIoDev->Bios.ErrorCode == BIOS_DRIVE_DOES_NOT_EXIST) {
+    return EFI_DEVICE_ERROR;
+  }
+
+  AddressPacket     = mEddBufferUnder1Mb;
+
+  MaxTransferBlocks = MAX_EDD11_XFER / BlockSize;
+
+  TransferBuffer    = (UINT64)(UINTN) mEdd11Buffer;
+  for (; BufferSize > 0;) {
+    NumberOfBlocks  = BufferSize / BlockSize;
+    NumberOfBlocks  = NumberOfBlocks > MaxTransferBlocks ? MaxTransferBlocks : NumberOfBlocks;
+    //
+    // Max transfer MaxTransferBlocks
+    //
+    AddressPacket->PacketSizeInBytes  = (UINT8) sizeof (EDD_DEVICE_ADDRESS_PACKET);
+    AddressPacket->Zero               = 0;
+    AddressPacket->NumberOfBlocks     = (UINT8) NumberOfBlocks;
+    AddressPacket->Zero2              = 0;
+    //
+    // TransferBuffer has been 4KB alignment. Normalize TransferBuffer to make offset as 0 in seg:offset
+    // format to transfer maximum 127 blocks of data.
+    // Otherwise when offset adding data size exceeds 0xFFFF, if OpROM does not normalize TransferBuffer,
+    // INT13 function 42H will return data boundary error 09H.
+    //
+    AddressPacket->SegOffset = (UINT32) LShiftU64(RShiftU64(TransferBuffer, 4), 16);
+    AddressPacket->Lba  = (UINT64) Lba;
+
+    Regs.H.AH           = 0x43;
+    Regs.H.AL           = 0x00;
+    //
+    // Write Verify disable
+    //
+    Regs.H.DL         = BiosBlockIoDev->Bios.Number;
+    Regs.X.SI         = EFI_OFFSET (AddressPacket);
+    Regs.E.DS         = EFI_SEGMENT (AddressPacket);
+
+    TransferByteSize  = NumberOfBlocks * BlockSize;
+    CopyMem ((VOID *) (UINTN) TransferBuffer, Buffer, TransferByteSize);
+
+//    CarryFlag = BiosBlockIoDev->LegacyBios->Int86 (BiosBlockIoDev->LegacyBios, 0x13, &Regs);
+    CarryFlag = LegacyBiosInt86 (BiosBlockIoDev, 0x13, &Regs);
+ //   DBG("Edd11BiosWriteBlocks: INT 13 43 DL=%02x : CF=%d AH=%02x\n: LBA 0x%lx  Block(s) %0d \n",
+ //     BiosBlockIoDev->Bios.Number, CarryFlag, Regs.H.AH, Lba, NumberOfBlocks);
+    Media->MediaPresent = TRUE;
+    if (CarryFlag != 0) {
+      //
+      // Return Error Status
+      //
+      BiosBlockIoDev->Bios.ErrorCode = Regs.H.AH;
+      if (BiosBlockIoDev->Bios.ErrorCode == BIOS_DISK_CHANGED) {
+        Media->MediaId++;
+        Bios = &BiosBlockIoDev->Bios;
+        if (Int13GetDeviceParameters (BiosBlockIoDev, Bios) != 0) {
+          if (Int13Extensions (BiosBlockIoDev, Bios) != 0) {
+            Media->LastBlock  = (EFI_LBA) Bios->Parameters.PhysicalSectors - 1;
+            Media->BlockSize  = (UINT32) Bios->Parameters.BytesPerSector;
+          }
+          /*else {
+            ASSERT (FALSE);
+          }*/
+
+          Media->ReadOnly = FALSE;
+          gBS->HandleProtocol (BiosBlockIoDev->Handle, &gEfiBlockIo2ProtocolGuid, (VOID **) &BlockIo2);
+          gBS->ReinstallProtocolInterface (BiosBlockIoDev->Handle, &gEfiBlockIo2ProtocolGuid, BlockIo2, BlockIo2);
           return EFI_MEDIA_CHANGED;
         }
       } else if (BiosBlockIoDev->Bios.ErrorCode == BIOS_WRITE_PROTECTED) {
@@ -1310,6 +1924,190 @@ BiosReadLegacyDrive (
   return EFI_SUCCESS;
 }
 
+EFI_STATUS
+EFIAPI
+BiosReadLegacyDriveEx (
+  IN  EFI_BLOCK_IO2_PROTOCOL *This,
+  IN  UINT32                 MediaId,
+  IN  EFI_LBA                Lba,
+  IN OUT EFI_BLOCK_IO2_TOKEN *Token,
+  IN  UINTN                  BufferSize,
+  OUT VOID                   *Buffer
+  )
+{
+  EFI_BLOCK_IO_MEDIA    *Media;
+  BIOS_BLOCK_IO_DEV     *BiosBlockIoDev;
+  IA32_REGISTER_SET Regs;
+  UINTN                 UpperCylinder;
+  UINTN                 Temp;
+  UINTN                 Cylinder;
+  UINTN                 Head;
+  UINTN                 Sector;
+  UINTN                 NumberOfBlocks;
+  UINTN                 TransferByteSize;
+  UINTN                 ShortLba;
+  UINTN                 CheckLba;
+  UINTN                 BlockSize;
+  BIOS_LEGACY_DRIVE     *Bios;
+  UINTN                 CarryFlag;
+  UINTN                 Retry;
+  EFI_BLOCK_IO2_PROTOCOL *BlockIo2;
+
+  Media     = This->Media;
+  BlockSize = Media->BlockSize;
+
+  ZeroMem (&Regs, sizeof (IA32_REGISTER_SET));
+
+  if (MediaId != Media->MediaId) {
+    return EFI_MEDIA_CHANGED;
+  }
+
+  if (Lba > Media->LastBlock) {
+    return EFI_INVALID_PARAMETER;
+  }
+
+  if ((Lba + (BufferSize / BlockSize) - 1) > Media->LastBlock) {
+    return EFI_INVALID_PARAMETER;
+  }
+
+  if (BufferSize % BlockSize != 0) {
+    return EFI_BAD_BUFFER_SIZE;
+  }
+
+  if (Buffer == NULL) {
+    return EFI_INVALID_PARAMETER;
+  }
+
+  if (BufferSize == 0) {
+    return EFI_SUCCESS;
+  }
+
+  BiosBlockIoDev  = BIOS_BLOCK_IO2_FROM_THIS (This);
+  if (BiosBlockIoDev->Bios.ErrorCode == BIOS_SECTOR_NOT_FOUND || BiosBlockIoDev->Bios.ErrorCode == BIOS_DRIVE_DOES_NOT_EXIST) {
+    return EFI_DEVICE_ERROR;
+  }
+
+  ShortLba        = (UINTN) Lba;
+
+  while (BufferSize != 0) {
+    //
+    // Compute I/O location in Sector, Head, Cylinder format
+    //
+    Sector    = (ShortLba % BiosBlockIoDev->Bios.MaxSector) + 1;
+    Temp      = ShortLba / BiosBlockIoDev->Bios.MaxSector;
+    Head      = Temp % (BiosBlockIoDev->Bios.MaxHead + 1);
+    Cylinder  = Temp / (BiosBlockIoDev->Bios.MaxHead + 1);
+
+    //
+    // Limit transfer to this Head & Cylinder
+    //
+    NumberOfBlocks  = BufferSize / BlockSize;
+    Temp            = BiosBlockIoDev->Bios.MaxSector - Sector + 1;
+    NumberOfBlocks  = NumberOfBlocks > Temp ? Temp : NumberOfBlocks;
+
+    Retry           = 3;
+    do {
+      //
+      // Perform the IO
+      //
+      Regs.H.AH     = 2;
+      Regs.H.AL     = (UINT8) NumberOfBlocks;
+      Regs.H.DL     = BiosBlockIoDev->Bios.Number;
+
+      UpperCylinder = (Cylinder & 0x0f00) >> 2;
+
+      CheckLba      = Cylinder * (BiosBlockIoDev->Bios.MaxHead + 1) + Head;
+      CheckLba      = CheckLba * BiosBlockIoDev->Bios.MaxSector + Sector - 1;
+
+   /*   DBG("RLD: LBA %x (%x), Sector %x (%x), Head %x (%x), Cyl %x, UCyl %x\n",
+        ShortLba,
+        CheckLba,
+        Sector,
+        BiosBlockIoDev->Bios.MaxSector,
+        Head,
+        BiosBlockIoDev->Bios.MaxHead,
+        Cylinder,
+        UpperCylinder
+        ); */
+     // ASSERT (CheckLba == ShortLba);
+      if (CheckLba != ShortLba) {
+        DBG("CheckLba != ShortLba");
+        return EFI_DEVICE_ERROR;
+      }
+
+      Regs.H.CL = (UINT8) ((Sector & 0x3f) + (UpperCylinder & 0xff));
+      Regs.H.DH = (UINT8) (Head & 0x3f);
+      Regs.H.CH = (UINT8) (Cylinder & 0xff);
+
+      Regs.X.BX = EFI_OFFSET (mEdd11Buffer);
+      Regs.E.ES = EFI_SEGMENT (mEdd11Buffer);
+
+ /*     DBG("INT 13h: AX:(02%02x) DX:(%02x%02x) CX:(%02x%02x) BX:(%04x) ES:(%04x)\n",
+        Regs.H.AL,
+        (UINT8) (Head & 0x3f),
+        Regs.H.DL,
+        (UINT8) (Cylinder & 0xff),
+        (UINT8) ((Sector & 0x3f) + (UpperCylinder & 0xff)),
+        EFI_OFFSET (mEdd11Buffer),
+        EFI_SEGMENT (mEdd11Buffer)
+        );
+*/
+//      CarryFlag = BiosBlockIoDev->LegacyBios->Int86 (BiosBlockIoDev->LegacyBios, 0x13, &Regs);
+      CarryFlag = LegacyBiosInt86 (BiosBlockIoDev, 0x13, &Regs);
+//      DBG("BiosReadLegacyDrive: INT 13 02 DL=%02x : CF=%d AH=%02x\n",
+ //         BiosBlockIoDev->Bios.Number, CarryFlag, Regs.H.AH);
+      Retry--;
+    } while (CarryFlag != 0 && Retry != 0 && Regs.H.AH != BIOS_DISK_CHANGED);
+
+    Media->MediaPresent = TRUE;
+    if (CarryFlag != 0) {
+      //
+      // Return Error Status
+      //
+      BiosBlockIoDev->Bios.ErrorCode = Regs.H.AH;
+      if (BiosBlockIoDev->Bios.ErrorCode == BIOS_DISK_CHANGED) {
+        Media->MediaId++;
+        Bios = &BiosBlockIoDev->Bios;
+        if (Int13GetDeviceParameters (BiosBlockIoDev, Bios) != 0) {
+          //
+          // If the size of the media changed we need to reset the disk geometry
+          //
+          if (Int13Extensions (BiosBlockIoDev, Bios) != 0) {
+            Media->LastBlock  = (EFI_LBA) Bios->Parameters.PhysicalSectors - 1;
+            Media->BlockSize  = (UINT32) Bios->Parameters.BytesPerSector;
+          } else {
+            //
+            // Legacy Interfaces
+            //
+            Media->LastBlock  = (Bios->MaxHead + 1) * Bios->MaxSector * (Bios->MaxCylinder + 1) - 1;
+            Media->BlockSize  = 512;
+          }
+
+          Media->ReadOnly = FALSE;
+          gBS->HandleProtocol (BiosBlockIoDev->Handle, &gEfiBlockIo2ProtocolGuid, (VOID **) &BlockIo2);
+          gBS->ReinstallProtocolInterface (BiosBlockIoDev->Handle, &gEfiBlockIo2ProtocolGuid, BlockIo2, BlockIo2);
+          return EFI_MEDIA_CHANGED;
+        }
+      }
+
+      if (Media->RemovableMedia) {
+        Media->MediaPresent = FALSE;
+      }
+
+      return EFI_DEVICE_ERROR;
+    }
+
+    TransferByteSize = NumberOfBlocks * BlockSize;
+    CopyMem (Buffer, mEdd11Buffer, TransferByteSize);
+
+    ShortLba    = ShortLba + NumberOfBlocks;
+    BufferSize  = BufferSize - TransferByteSize;
+    Buffer      = (VOID *) ((UINT8 *) Buffer + TransferByteSize);
+  }
+
+  return EFI_SUCCESS;
+}
+
 /**
   Write BufferSize bytes from Lba into Buffer.
 
@@ -1494,6 +2292,194 @@ BiosWriteLegacyDrive (
           Media->ReadOnly = FALSE;
           gBS->HandleProtocol (BiosBlockIoDev->Handle, &gEfiBlockIoProtocolGuid, (VOID **) &BlockIo);
           gBS->ReinstallProtocolInterface (BiosBlockIoDev->Handle, &gEfiBlockIoProtocolGuid, BlockIo, BlockIo);
+          return EFI_MEDIA_CHANGED;
+        }
+      } else if (BiosBlockIoDev->Bios.ErrorCode == BIOS_WRITE_PROTECTED) {
+        Media->ReadOnly = TRUE;
+        return EFI_WRITE_PROTECTED;
+      }
+
+      if (Media->RemovableMedia) {
+        Media->MediaPresent = FALSE;
+      }
+
+      return EFI_DEVICE_ERROR;
+    }
+
+    Media->ReadOnly = FALSE;
+    ShortLba        = ShortLba + NumberOfBlocks;
+    BufferSize      = BufferSize - TransferByteSize;
+    Buffer          = (VOID *) ((UINT8 *) Buffer + TransferByteSize);
+  }
+
+  return EFI_SUCCESS;
+}
+
+EFI_STATUS
+EFIAPI
+BiosWriteLegacyDriveEx (
+  IN  EFI_BLOCK_IO2_PROTOCOL *This,
+  IN  UINT32                MediaId,
+  IN  EFI_LBA               Lba,
+  IN OUT EFI_BLOCK_IO2_TOKEN *Token,
+  IN  UINTN                 BufferSize,
+  OUT VOID                  *Buffer
+  )
+{
+  EFI_BLOCK_IO_MEDIA    *Media;
+  BIOS_BLOCK_IO_DEV     *BiosBlockIoDev;
+  IA32_REGISTER_SET Regs;
+  UINTN                 UpperCylinder;
+  UINTN                 Temp;
+  UINTN                 Cylinder;
+  UINTN                 Head;
+  UINTN                 Sector;
+  UINTN                 NumberOfBlocks;
+  UINTN                 TransferByteSize;
+  UINTN                 ShortLba;
+  UINTN                 CheckLba;
+  UINTN                 BlockSize;
+  BIOS_LEGACY_DRIVE     *Bios;
+  UINTN                 CarryFlag;
+  UINTN                 Retry;
+  EFI_BLOCK_IO2_PROTOCOL *BlockIo2;
+
+  Media     = This->Media;
+  BlockSize = Media->BlockSize;
+
+  ZeroMem (&Regs, sizeof (IA32_REGISTER_SET));
+
+  if (MediaId != Media->MediaId) {
+    return EFI_MEDIA_CHANGED;
+  }
+
+  if (Lba > Media->LastBlock) {
+    return EFI_INVALID_PARAMETER;
+  }
+
+  if ((Lba + (BufferSize / BlockSize) - 1) > Media->LastBlock) {
+    return EFI_INVALID_PARAMETER;
+  }
+
+  if (BufferSize % BlockSize != 0) {
+    return EFI_BAD_BUFFER_SIZE;
+  }
+
+  if (Buffer == NULL) {
+    return EFI_INVALID_PARAMETER;
+  }
+
+  if (BufferSize == 0) {
+    return EFI_SUCCESS;
+  }
+
+  BiosBlockIoDev  = BIOS_BLOCK_IO2_FROM_THIS (This);
+  if (BiosBlockIoDev->Bios.ErrorCode == BIOS_SECTOR_NOT_FOUND || BiosBlockIoDev->Bios.ErrorCode == BIOS_DRIVE_DOES_NOT_EXIST) {
+    return EFI_DEVICE_ERROR;
+  }
+
+  ShortLba        = (UINTN) Lba;
+
+  while (BufferSize != 0) {
+    //
+    // Compute I/O location in Sector, Head, Cylinder format
+    //
+    Sector    = (ShortLba % BiosBlockIoDev->Bios.MaxSector) + 1;
+    Temp      = ShortLba / BiosBlockIoDev->Bios.MaxSector;
+    Head      = Temp % (BiosBlockIoDev->Bios.MaxHead + 1);
+    Cylinder  = Temp / (BiosBlockIoDev->Bios.MaxHead + 1);
+
+    //
+    // Limit transfer to this Head & Cylinder
+    //
+    NumberOfBlocks  = BufferSize / BlockSize;
+    Temp            = BiosBlockIoDev->Bios.MaxSector - Sector + 1;
+    NumberOfBlocks  = NumberOfBlocks > Temp ? Temp : NumberOfBlocks;
+
+    Retry           = 3;
+    do {
+      //
+      // Perform the IO
+      //
+      Regs.H.AH     = 3;
+      Regs.H.AL     = (UINT8) NumberOfBlocks;
+      Regs.H.DL     = BiosBlockIoDev->Bios.Number;
+
+      UpperCylinder = (Cylinder & 0x0f00) >> 2;
+
+      CheckLba      = Cylinder * (BiosBlockIoDev->Bios.MaxHead + 1) + Head;
+      CheckLba      = CheckLba * BiosBlockIoDev->Bios.MaxSector + Sector - 1;
+
+ /*     DBG("RLD: LBA %x (%x), Sector %x (%x), Head %x (%x), Cyl %x, UCyl %x\n",
+        ShortLba,
+        CheckLba,
+        Sector,
+        BiosBlockIoDev->Bios.MaxSector,
+        Head,
+        BiosBlockIoDev->Bios.MaxHead,
+        Cylinder,
+        UpperCylinder
+        );
+  */
+ //     ASSERT (CheckLba == ShortLba);
+      if (CheckLba != ShortLba) {
+        DBG("CheckLba != ShortLba");
+        return EFI_DEVICE_ERROR;
+      }
+
+      Regs.H.CL         = (UINT8) ((Sector & 0x3f) + (UpperCylinder & 0xff));
+      Regs.H.DH         = (UINT8) (Head & 0x3f);
+      Regs.H.CH         = (UINT8) (Cylinder & 0xff);
+
+      Regs.X.BX         = EFI_OFFSET (mEdd11Buffer);
+      Regs.E.ES         = EFI_SEGMENT (mEdd11Buffer);
+
+      TransferByteSize  = NumberOfBlocks * BlockSize;
+      CopyMem (mEdd11Buffer, Buffer, TransferByteSize);
+
+/*      DBG("INT 13h: AX:(03%02x) DX:(%02x%02x) CX:(%02x%02x) BX:(%04x) ES:(%04x)\n",
+        Regs.H.AL,
+        (UINT8) (Head & 0x3f),
+        Regs.H.DL,
+        (UINT8) (Cylinder & 0xff),
+        (UINT8) ((Sector & 0x3f) + (UpperCylinder & 0xff)),
+        EFI_OFFSET (mEdd11Buffer),
+        EFI_SEGMENT (mEdd11Buffer)
+        );
+*/
+//      CarryFlag = BiosBlockIoDev->LegacyBios->Int86 (BiosBlockIoDev->LegacyBios, 0x13, &Regs);
+      CarryFlag = LegacyBiosInt86 (BiosBlockIoDev, 0x13, &Regs);
+//      DBG("BiosWriteLegacyDrive: INT 13 03 DL=%02x : CF=%d AH=%02x\n",
+//          BiosBlockIoDev->Bios.Number, CarryFlag, Regs.H.AH);
+      Retry--;
+    } while (CarryFlag != 0 && Retry != 0 && Regs.H.AH != BIOS_DISK_CHANGED);
+
+    Media->MediaPresent = TRUE;
+    if (CarryFlag != 0) {
+      //
+      // Return Error Status
+      //
+      BiosBlockIoDev->Bios.ErrorCode = Regs.H.AH;
+      if (BiosBlockIoDev->Bios.ErrorCode == BIOS_DISK_CHANGED) {
+        Media->MediaId++;
+        Bios = &BiosBlockIoDev->Bios;
+        if (Int13GetDeviceParameters (BiosBlockIoDev, Bios) != 0) {
+          if (Int13Extensions (BiosBlockIoDev, Bios) != 0) {
+            Media->LastBlock  = (EFI_LBA) Bios->Parameters.PhysicalSectors - 1;
+            Media->BlockSize  = (UINT32) Bios->Parameters.BytesPerSector;
+          } else {
+            //
+            // Legacy Interfaces
+            //
+            Media->LastBlock  = (Bios->MaxHead + 1) * Bios->MaxSector * (Bios->MaxCylinder + 1) - 1;
+            Media->BlockSize  = 512;
+          }
+          //
+          // If the size of the media changed we need to reset the disk geometry
+          //
+          Media->ReadOnly = FALSE;
+          gBS->HandleProtocol (BiosBlockIoDev->Handle, &gEfiBlockIo2ProtocolGuid, (VOID **) &BlockIo2);
+          gBS->ReinstallProtocolInterface (BiosBlockIoDev->Handle, &gEfiBlockIo2ProtocolGuid, BlockIo2, BlockIo2);
           return EFI_MEDIA_CHANGED;
         }
       } else if (BiosBlockIoDev->Bios.ErrorCode == BIOS_WRITE_PROTECTED) {

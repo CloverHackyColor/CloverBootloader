@@ -109,11 +109,13 @@ INF IntelFrameworkModulePkg/Universal/DataHubDxe/DataHubDxe.inf
 #INF IntelFrameworkModulePkg/Universal/DataHubStdErrDxe/DataHubStdErrDxe.inf
 #INF EdkCompatibilityPkg/Compatibility/PiSmbiosRecordOnDataHubSmbiosRecordThunk/PiSmbiosRecordOnDataHubSmbiosRecordThunk.inf
 	# foreign file system support
-#INF  Clover/VBoxFsDxe/VBoxHfs.inf
 #INF  Clover/VBoxFsDxe/VBoxFsDxe.inf
-#INF  Clover/VBoxFsDxe/VBoxIso9660.inf
-#INF  Clover/VBoxFsDxe/VBoxExt2.inf
-INF  RuleOverride=BINARY Clover/HFSPlus/HFSPlus.inf
+INF  Clover/VBoxFsDxe/VBoxHfs.inf
+INF  Clover/VBoxFsDxe/VBoxIso9660.inf
+INF  Clover/VBoxFsDxe/VBoxExt2.inf
+INF  Clover/VBoxFsDxe/VBoxExt4.inf
+INF  Clover/VBoxFsDxe/VBoxReiserFS.inf
+#INF  RuleOverride=BINARY Clover/HFSPlus/HFSPlus.inf
 
 INF  PcAtChipsetPkg/8259InterruptControllerDxe/8259.inf
 #INF  DuetPkg/AcpiResetDxe/Reset.inf
@@ -238,7 +240,8 @@ INF  Clover/OsxAcpiTableDxe/AcpiTableDxe.inf
 INF  Clover/MsgLog/MsgLog.inf
 
     # Binary INF file to support toggle among different CPU architectures.
-INF  RuleOverride=BINARY FatBinPkg/EnhancedFatDxe/Fat.inf
+#INF  RuleOverride=BINARY FatBinPkg/EnhancedFatDxe/Fat.inf
+INF  Clover/FatPkg/EnhancedFatDxe/Fat.inf
 
 FILE FREEFORM = PCD(gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdLogoFile) {
 	SECTION RAW = Clover/Logo/Logo.bmp
@@ -271,40 +274,54 @@ FILE FREEFORM = PCD(gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdLogoFile) {
 [Rule.Common.DXE_CORE]
   FILE DXE_CORE = $(NAMED_GUID) {
       PE32     PE32           $(INF_OUTPUT)/$(MODULE_NAME).efi
+      UI       STRING ="$(MODULE_NAME)" Optional
+      VERSION  STRING ="$(INF_VERSION)" Optional BUILD_NUM=$(BUILD_NUMBER)
   }
 
 [Rule.Common.UEFI_DRIVER]
   FILE DRIVER = $(NAMED_GUID) {
     DXE_DEPEX    DXE_DEPEX Optional      $(INF_OUTPUT)/$(MODULE_NAME).depex
         PE32     PE32                    $(INF_OUTPUT)/$(MODULE_NAME).efi
+    UI       STRING ="$(MODULE_NAME)" Optional
+    VERSION  STRING ="$(INF_VERSION)" Optional BUILD_NUM=$(BUILD_NUMBER)
   }
 
 [Rule.Common.DXE_DRIVER]
   FILE DRIVER = $(NAMED_GUID) {
     DXE_DEPEX    DXE_DEPEX Optional      $(INF_OUTPUT)/$(MODULE_NAME).depex
         PE32     PE32                    $(INF_OUTPUT)/$(MODULE_NAME).efi
+    UI       STRING ="$(MODULE_NAME)" Optional
+    VERSION  STRING ="$(INF_VERSION)" Optional BUILD_NUM=$(BUILD_NUMBER)
   }
 
 [Rule.Common.DXE_RUNTIME_DRIVER]
   FILE DRIVER = $(NAMED_GUID) {
     DXE_DEPEX    DXE_DEPEX Optional      $(INF_OUTPUT)/$(MODULE_NAME).depex
         PE32     PE32                    $(INF_OUTPUT)/$(MODULE_NAME).efi
+    UI       STRING ="$(MODULE_NAME)" Optional
+    VERSION  STRING ="$(INF_VERSION)" Optional BUILD_NUM=$(BUILD_NUMBER)
   }
 
 [Rule.Common.UEFI_APPLICATION]
   FILE APPLICATION = $(NAMED_GUID) {
         PE32     PE32                    $(INF_OUTPUT)/$(MODULE_NAME).efi
+    UI       STRING ="$(MODULE_NAME)" Optional
+    VERSION  STRING ="$(INF_VERSION)" Optional BUILD_NUM=$(BUILD_NUMBER)
   }
 
 [Rule.Common.UEFI_APPLICATION.BINARY]
   FILE APPLICATION = $(NAMED_GUID) {
     DXE_DEPEX    DXE_DEPEX Optional      |.depex
         PE32     PE32                    |.efi
+    UI       STRING ="$(MODULE_NAME)" Optional
+    VERSION  STRING ="$(INF_VERSION)" Optional BUILD_NUM=$(BUILD_NUMBER)
   }
 
 [Rule.Common.UEFI_DRIVER.BINARY]
   FILE DRIVER = $(NAMED_GUID) {
     DXE_DEPEX    DXE_DEPEX Optional      |.depex
         PE32     PE32                    |.efi
+    UI       STRING ="$(MODULE_NAME)" Optional
+    VERSION  STRING ="$(INF_VERSION)" Optional BUILD_NUM=$(BUILD_NUMBER)
   }
 

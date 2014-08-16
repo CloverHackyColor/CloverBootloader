@@ -58,7 +58,9 @@
 
 [Protocols]
   gEfiDiskIoProtocolGuid
+  gEfiDiskIo2ProtocolGuid
   gEfiBlockIoProtocolGuid
+  gEfiBlockIo2ProtocolGuid
   gEfiSimpleFileSystemProtocolGuid
   gEfiUnicodeCollationProtocolGuid
   gEfiUnicodeCollation2ProtocolGuid

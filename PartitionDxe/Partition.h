@@ -20,11 +20,13 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 
 #include <Uefi.h>
 #include <Protocol/BlockIo.h>
+#include <Protocol/BlockIo2.h>
 #include <Guid/Gpt.h>
 #include <Protocol/ComponentName.h>
 #include <Protocol/DevicePath.h>
 #include <Protocol/DriverBinding.h>
 #include <Protocol/DiskIo.h>
+#include <Protocol/DiskIo2.h>
 #include <Library/DebugLib.h>
 #include <Library/UefiDriverEntryPoint.h>
 #include <Library/BaseLib.h>
@@ -54,10 +56,16 @@ typedef struct {
   EFI_HANDLE                Handle;
   EFI_DEVICE_PATH_PROTOCOL  *DevicePath;
   EFI_BLOCK_IO_PROTOCOL     BlockIo;
+  EFI_BLOCK_IO2_PROTOCOL    BlockIo2;
+  EFI_BLOCK_IO2_TOKEN       BlockIo2Token;
   EFI_BLOCK_IO_MEDIA        Media;
 
   EFI_DISK_IO_PROTOCOL      *DiskIo;
   EFI_BLOCK_IO_PROTOCOL     *ParentBlockIo;
+  EFI_DISK_IO2_PROTOCOL     *DiskIo2;
+  EFI_BLOCK_IO2_PROTOCOL    *ParentBlockIo2;
+  EFI_BLOCK_IO2_TOKEN       ParentBlockIo2Token;
+  EFI_DISK_IO2_TOKEN        DiskIo2Token;
   UINT64                    Start;
   UINT64                    End;
   UINT32                    BlockSize;
@@ -67,6 +75,7 @@ typedef struct {
 } PARTITION_PRIVATE_DATA;
 
 #define PARTITION_DEVICE_FROM_BLOCK_IO_THIS(a)  CR (a, PARTITION_PRIVATE_DATA, BlockIo, PARTITION_PRIVATE_DATA_SIGNATURE)
+#define PARTITION_DEVICE_FROM_BLOCK_IO2_THIS(a) CR (a, PARTITION_PRIVATE_DATA, BlockIo2, PARTITION_PRIVATE_DATA_SIGNATURE)
 
 //
 // Global Variables
@@ -326,7 +335,9 @@ PartitionInstallChildHandle (
   IN  EFI_DRIVER_BINDING_PROTOCOL  *This,
   IN  EFI_HANDLE                   ParentHandle,
   IN  EFI_DISK_IO_PROTOCOL         *ParentDiskIo,
+  IN  EFI_DISK_IO2_PROTOCOL        *ParentDiskIo2,
   IN  EFI_BLOCK_IO_PROTOCOL        *ParentBlockIo,
+  IN  EFI_BLOCK_IO2_PROTOCOL       *ParentBlockIo2,
   IN  EFI_DEVICE_PATH_PROTOCOL     *ParentDevicePath,
   IN  EFI_DEVICE_PATH_PROTOCOL     *DevicePathNode,
   IN  EFI_LBA                      Start,
@@ -354,7 +365,9 @@ PartitionInstallGptChildHandles (
   IN  EFI_DRIVER_BINDING_PROTOCOL  *This,
   IN  EFI_HANDLE                   Handle,
   IN  EFI_DISK_IO_PROTOCOL         *DiskIo,
+  IN  EFI_DISK_IO2_PROTOCOL        *DiskIo2,
   IN  EFI_BLOCK_IO_PROTOCOL        *BlockIo,
+  IN  EFI_BLOCK_IO2_PROTOCOL       *BlockIo2,
   IN  EFI_DEVICE_PATH_PROTOCOL     *DevicePath
   );
 
@@ -378,7 +391,9 @@ PartitionInstallElToritoChildHandles (
   IN  EFI_DRIVER_BINDING_PROTOCOL  *This,
   IN  EFI_HANDLE                   Handle,
   IN  EFI_DISK_IO_PROTOCOL         *DiskIo,
+  IN  EFI_DISK_IO2_PROTOCOL        *DiskIo2,
   IN  EFI_BLOCK_IO_PROTOCOL        *BlockIo,
+  IN  EFI_BLOCK_IO2_PROTOCOL       *BlockIo2,
   IN  EFI_DEVICE_PATH_PROTOCOL     *DevicePath
   );
 
@@ -401,7 +416,9 @@ PartitionInstallMbrChildHandles (
   IN  EFI_DRIVER_BINDING_PROTOCOL  *This,
   IN  EFI_HANDLE                   Handle,
   IN  EFI_DISK_IO_PROTOCOL         *DiskIo,
+  IN  EFI_DISK_IO2_PROTOCOL        *DiskIo2,
   IN  EFI_BLOCK_IO_PROTOCOL        *BlockIo,
+  IN  EFI_BLOCK_IO2_PROTOCOL       *BlockIo2,
   IN  EFI_DEVICE_PATH_PROTOCOL     *DevicePath
   );
 
@@ -424,7 +441,9 @@ PartitionInstallAppleChildHandles (
   IN  EFI_DRIVER_BINDING_PROTOCOL  *This,
   IN  EFI_HANDLE                   Handle,
   IN  EFI_DISK_IO_PROTOCOL         *DiskIo,
+  IN  EFI_DISK_IO2_PROTOCOL        *DiskIo2,
   IN  EFI_BLOCK_IO_PROTOCOL        *BlockIo,
+  IN  EFI_BLOCK_IO2_PROTOCOL       *BlockIo2,
   IN  EFI_DEVICE_PATH_PROTOCOL     *DevicePath
   );
 
@@ -435,7 +454,9 @@ EFI_STATUS
   IN  EFI_DRIVER_BINDING_PROTOCOL  *This,
   IN  EFI_HANDLE                   Handle,
   IN  EFI_DISK_IO_PROTOCOL         *DiskIo,
+  IN  EFI_DISK_IO2_PROTOCOL        *DiskIo2,
   IN  EFI_BLOCK_IO_PROTOCOL        *BlockIo,
+  IN  EFI_BLOCK_IO2_PROTOCOL       *BlockIo2,
   IN  EFI_DEVICE_PATH_PROTOCOL     *DevicePath
   );
 

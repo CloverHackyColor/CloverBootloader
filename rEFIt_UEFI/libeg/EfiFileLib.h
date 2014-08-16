@@ -42,6 +42,7 @@
 #include <Protocol/FirmwareVolume2.h>
 #include <Protocol/FirmwareVolumeBlock.h>
 #include <Protocol/BlockIo.h>
+#include <Protocol/BlockIo2.h>
 #include <Protocol/LoadFile.h>
 #include <Protocol/LoadFile.h>
 #include <Protocol/SimpleFileSystem.h>
@@ -58,7 +59,8 @@ typedef enum {
   EfiOpenFileSystem,
   EfiOpenBlockIo,
   EfiOpenTftp,
-  EfiOpenMaxValue
+  EfiOpenMaxValue,
+  EfiOpenBlockIo2
 } EFI_OPEN_FILE_TYPE;
 
 
@@ -95,6 +97,8 @@ typedef struct {
   EFI_FILE_INFO                 *FsFileInfo;
   EFI_BLOCK_IO_MEDIA            *FsBlockIoMedia;  // Information valid for Fs#: or B#:
   EFI_BLOCK_IO_PROTOCOL         *FsBlockIo;       // Information valid for Fs#: or B#:
+  EFI_BLOCK_IO2_PROTOCOL        *FsBlockIo2;       // Information valid for Fs#: or B#:
+  EFI_BLOCK_IO2_TOKEN           FsBlockIo2Token;
 
   UINTN                         DiskOffset;       // Information valid for B#:
 

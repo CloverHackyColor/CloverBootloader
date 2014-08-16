@@ -49,7 +49,9 @@ PartitionInstallElToritoChildHandles (
   IN  EFI_DRIVER_BINDING_PROTOCOL  *This,
   IN  EFI_HANDLE                   Handle,
   IN  EFI_DISK_IO_PROTOCOL         *DiskIo,
+  IN  EFI_DISK_IO2_PROTOCOL        *DiskIo2,
   IN  EFI_BLOCK_IO_PROTOCOL        *BlockIo,
+  IN  EFI_BLOCK_IO2_PROTOCOL       *BlockIo2,
   IN  EFI_DEVICE_PATH_PROTOCOL     *DevicePath
   )
 {
@@ -69,10 +71,17 @@ PartitionInstallElToritoChildHandles (
   UINT32                  SectorCount;
   EFI_STATUS              Found;
   UINT32                  VolSpaceSize;
+  EFI_DISK_IO2_TOKEN      DiskIo2Token;
 
   Found         = EFI_NOT_FOUND;
-  Media         = BlockIo->Media;
   VolSpaceSize  = 0;
+
+  if (BlockIo2 != NULL)
+  {
+    Media         = BlockIo2->Media;
+  } else {
+    Media         = BlockIo->Media;
+  }
 
   //
   // CD_ROM has the fixed block size as 2048 bytes
@@ -111,13 +120,26 @@ PartitionInstallElToritoChildHandles (
       break;
     }
 
-    Status = DiskIo->ReadDisk (
+    if (DiskIo2 != NULL)
+    {
+      Status = DiskIo2->ReadDiskEx (
+                       DiskIo2,
+                       Media->MediaId,
+                       MultU64x32 (VolDescriptorLba, Media->BlockSize),
+                       &DiskIo2Token,
+                       Media->BlockSize,
+                       VolDescriptor
+                       );
+    } else {
+      Status = DiskIo->ReadDisk (
                        DiskIo,
                        Media->MediaId,
                        MultU64x32 (VolDescriptorLba, Media->BlockSize),
                        Media->BlockSize,
                        VolDescriptor
                        );
+    }
+
     if (EFI_ERROR (Status)) {
       Found = Status;
       break;
@@ -157,13 +179,26 @@ PartitionInstallElToritoChildHandles (
       continue;
     }
 
-    Status = DiskIo->ReadDisk (
+    if (DiskIo2 != NULL)
+    {
+      Status = DiskIo2->ReadDiskEx (
+                       DiskIo2,
+                       Media->MediaId,
+                       MultU64x32 (Lba, Media->BlockSize),
+                       &DiskIo2Token,
+                       Media->BlockSize,
+                       Catalog
+                       );
+    } else {
+      Status = DiskIo->ReadDisk (
                        DiskIo,
                        Media->MediaId,
                        MultU64x32 (Lba, Media->BlockSize),
                        Media->BlockSize,
                        Catalog
                        );
+    }
+
     if (EFI_ERROR (Status)) {
       DBG ("EltCheckDevice: error reading catalog %r\n", Status);
       continue;
@@ -279,7 +314,9 @@ PartitionInstallElToritoChildHandles (
                 This,
                 Handle,
                 DiskIo,
-                BlockIo,
+                DiskIo2,
+                BlockIo, 
+                BlockIo2,
                 DevicePath,
                 (EFI_DEVICE_PATH_PROTOCOL *) &CdDev,
                 Catalog->Boot.Lba,

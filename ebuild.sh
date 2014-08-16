@@ -19,7 +19,7 @@ TARGETRULE=
 
 
 # Default values
-export TOOLCHAIN=GCC47
+export TOOLCHAIN=GCC49
 export TARGETARCH=X64
 export BUILDTARGET=RELEASE
 export BUILDTHREADS=$(( NUMBER_OF_CPUS + 1 ))
@@ -163,7 +163,8 @@ usage() {
     echo "Toolchain:"
     print_option_help "--clang"     "use XCode Clang toolchain"
     print_option_help "--gcc"       "use unix GCC toolchain"
-    print_option_help "--gcc47"     "use GCC 4.7 toolchain [Default]"
+    print_option_help "--gcc47"     "use GCC 4.7 toolchain"
+    print_option_help "--gcc49"     "use GCC 4.7 toolchain [Default]"
     print_option_help "--xcode"     "use XCode 3.2 toolchain"
     print_option_help "-t TOOLCHAIN, --tagname=TOOLCHAIN" "force to use a specific toolchain"
     echo
@@ -204,7 +205,10 @@ checkCmdlineArguments() {
         case "$option" in
             -clang  | --clang)   TOOLCHAIN=XCLANG  ;;
             -llvm   | --llvm)    TOOLCHAIN=LLVM  ;;
+            -GCC47  | --GCC47)   TOOLCHAIN=GCC47   ;;
             -gcc47  | --gcc47)   TOOLCHAIN=GCC47   ;;
+            -GCC49  | --GCC49)   TOOLCHAIN=GCC49   ;;
+            -gcc49  | --gcc49)   TOOLCHAIN=GCC49   ;;
             -unixgcc | --gcc)    TOOLCHAIN=UNIXGCC ;;
             -xcode  | --xcode )  TOOLCHAIN=XCODE32 ;;
             -ia32 | --ia32)      TARGETARCH=IA32   ;;

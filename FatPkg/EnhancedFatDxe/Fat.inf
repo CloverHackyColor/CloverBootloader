@@ -1,0 +1,117 @@
+## @file
+#  Component description file for FAT module.
+#
+#  This UEFI driver detects the FAT file system in the disk.
+#  It also produces the Simple File System protocol for the consumer to
+#  perform file and directory operations on the disk.
+#  Copyright (c) 2007 - 2010, Intel Corporation. All rights reserved.<BR>
+#
+#  Redistribution and use in source and binary forms, with or without
+#  modification, are permitted provided that the following conditions are
+#  met:
+#
+#    Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+#
+#    Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in
+#    the documentation and/or other materials provided with the
+#    distribution.
+#
+#    Neither the name of Intel nor the names of its contributors may
+#    be used to endorse or promote products derived from this software
+#    without specific prior written permission.
+#
+#  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+#  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+#  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+#  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+#  OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+#  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+#  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+#  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+#  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+#  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+#  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+#  Additional terms: In addition to the forgoing, redistribution and use
+#  of the code is conditioned upon the FAT 32 File System Driver and all
+#  derivative works thereof being used for and designed only to read
+#  and/or write to a file system that is directly managed by an
+#  Extensible Firmware Interface (EFI) implementation or by an emulator
+#  of an EFI implementation.
+#
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = Fat
+  FILE_GUID                      = 961578FE-B6B7-44c3-AF35-6BC705CD2B1F
+  MODULE_TYPE                    = UEFI_DRIVER
+  VERSION_STRING                 = 1.0
+
+  ENTRY_POINT                    = FatEntryPoint
+  UNLOAD_IMAGE                   = FatUnload
+
+#
+# The following information is for reference only and not required by the build tools.
+#
+#  VALID_ARCHITECTURES           = IA32 X64 IPF EBC
+#
+#  DRIVER_BINDING                =  gFatDriverBinding
+#  COMPONENT_NAME                =  gFatComponentName
+#  COMPONENT_NAME2               =  gFatComponentName2
+#
+
+[Sources]
+  DirectoryCache.c
+  DiskCache.c
+  FileName.c
+  Hash.c
+  DirectoryManage.c
+  ComponentName.c
+  FatFileSystem.h
+  Fat.h
+  ReadWrite.c
+  OpenVolume.c
+  Open.c
+  Misc.c
+  Init.c
+  Info.c
+  FileSpace.c
+  Flush.c
+  Fat.c
+  Delete.c
+  Data.c
+  UnicodeCollation.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+
+[LibraryClasses]
+  UefiRuntimeServicesTableLib
+  UefiBootServicesTableLib
+  MemoryAllocationLib
+  BaseMemoryLib
+  BaseLib
+  UefiLib
+  UefiDriverEntryPoint
+  DebugLib
+  PcdLib
+
+[Guids]
+  gEfiFileInfoGuid
+  gEfiFileSystemInfoGuid
+  gEfiFileSystemVolumeLabelInfoIdGuid
+
+[Protocols]
+  gEfiDiskIoProtocolGuid
+  gEfiBlockIoProtocolGuid
+  gEfiSimpleFileSystemProtocolGuid
+  gEfiUnicodeCollationProtocolGuid
+  gEfiUnicodeCollation2ProtocolGuid
+
+[Pcd]
+  gEfiMdePkgTokenSpaceGuid.PcdUefiVariableDefaultLang
+  gEfiMdePkgTokenSpaceGuid.PcdUefiVariableDefaultPlatformLang

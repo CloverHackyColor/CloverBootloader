@@ -195,6 +195,7 @@ typedef struct {
   EFI_HANDLE                Handle;
   EFI_HANDLE                ControllerHandle;
   EFI_BLOCK_IO_PROTOCOL     BlockIo;
+  EFI_BLOCK_IO2_PROTOCOL    BlockIo2;
   EFI_BLOCK_IO_MEDIA        BlockMedia;
   EFI_DEVICE_PATH_PROTOCOL  *DevicePath;
   EFI_PCI_IO_PROTOCOL       *PciIo;
@@ -206,5 +207,6 @@ typedef struct {
 } BIOS_BLOCK_IO_DEV;
 
 #define BIOS_BLOCK_IO_FROM_THIS(a)  CR (a, BIOS_BLOCK_IO_DEV, BlockIo, BIOS_CONSOLE_BLOCK_IO_DEV_SIGNATURE)
+#define BIOS_BLOCK_IO2_FROM_THIS(a) CR (a, BIOS_BLOCK_IO_DEV, BlockIo2,BIOS_CONSOLE_BLOCK_IO_DEV_SIGNATURE)
 
 #endif

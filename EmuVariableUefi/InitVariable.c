@@ -14,6 +14,8 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 
 **/
 
+#include <Protocol/EmuVariableControl.h>
+
 #include "Variable.h"
 
 EFI_EVENT   mVirtualAddressChangeEvent = NULL;
@@ -349,7 +351,7 @@ CopyRTVariables (
 }
 
 ////////////////////////////////////////
-//
+// 
 // EMU_VARIABLE_CONTROL_PROTOCOL
 //
 
@@ -500,8 +502,8 @@ EmuVariableControlProtocolUninstallEmulation (
 
 /** EMU_VARIABLE_CONTROL_PROTOCOL */
 EMU_VARIABLE_CONTROL_PROTOCOL mEmuVariableControlProtocol = {
-  EmuVariableControlProtocolInstallEmulation,
-  EmuVariableControlProtocolUninstallEmulation
+  (EMU_VARIABLE_CONTROL_INSTALL_EMULATION)EmuVariableControlProtocolInstallEmulation,
+  (EMU_VARIABLE_CONTROL_UNINSTALL_EMULATION)EmuVariableControlProtocolUninstallEmulation
 };
 
 

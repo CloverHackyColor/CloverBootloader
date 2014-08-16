@@ -66,8 +66,10 @@ typedef struct {
 
     EFI_FILE_IO_INTERFACE       FileSystem;     //!< Published EFI protocol interface structure
 
-    EFI_HANDLE                  Handle;         //!< The device handle the protocol is attached to
-    EFI_DISK_IO                 *DiskIo;        //!< The Disk I/O protocol we use for disk access
+    EFI_HANDLE                  Handle;         //!< The device handle the protocol is attached1 to
+    EFI_DISK_IO2_TOKEN          DiskIo2Token;   //!< The Disk I/O V2 protocol token
+    EFI_DISK_IO2_PROTOCOL      *DiskIo2;        //!< The Disk I/O protocol we use for disk access (V2)
+    EFI_DISK_IO_PROTOCOL       *DiskIo;         //!< The Disk I/O protocol we use for disk access (V1)
     UINT32                      MediaId;        //!< The media ID from the Block I/O protocol
     EFI_STATUS                  LastIOStatus;   //!< Last status from Disk I/O
 
@@ -87,9 +89,9 @@ typedef struct {
 typedef struct {
     UINT64                      Signature;      //!< Used to identify this structure
 
-    EFI_FILE                    FileHandle;     //!< Published EFI protocol interface structure
+    EFI_FILE_PROTOCOL           FileHandle;     //!< Published EFI protocol interface structure
 
-    UINT64                       Type;           //!< File type used for dispatching
+    UINT64                      Type;           //!< File type used for dispatching
     struct fsw_shandle          shand;          //!< FSW handle for this file
 
 } FSW_FILE_DATA;

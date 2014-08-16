@@ -69,7 +69,9 @@
   gEfiDevicePathProtocolGuid
   gEfiSimpleFileSystemProtocolGuid
   gEfiBlockIoProtocolGuid
+  gEfiBlockIo2ProtocolGuid
   gEfiDiskIoProtocolGuid
+  gEfiDiskIo2ProtocolGuid
   gEfiGraphicsOutputProtocolGuid
 
 

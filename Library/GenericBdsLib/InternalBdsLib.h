@@ -21,6 +21,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #include <IndustryStandard/PeImage.h>
 
 #include <Protocol/BlockIo.h>
+#include <Protocol/BlockIo2.h>
 #include <Protocol/LoadedImage.h>
 #include <Protocol/Cpu.h>
 #include <Protocol/SimpleFileSystem.h>

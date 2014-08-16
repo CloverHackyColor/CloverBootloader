@@ -305,8 +305,10 @@
   #Clover/VBoxFsDxe/VBoxFsDxe.inf
   Clover/VBoxFsDxe/VBoxExt2.inf
   Clover/VBoxFsDxe/VBoxExt4.inf
+  Clover/VBoxFsDxe/VBoxReiserFS.inf
   #EmbeddedPkg/Universal/MmcDxe/MmcDxe.inf
   #Clover/OsxMmcDxe/MmcDxe.inf
+  Clover/FatPkg/EnhancedFatDxe/Fat.inf
 
   #Video
   IntelFrameworkModulePkg/Bus/Pci/VgaMiniPortDxe/VgaMiniPortDxe.inf
@@ -319,6 +321,7 @@
   #Clover/BiosVideoAuto/BiosVideo.inf
   Clover/LegacyBios/VideoDxe/VideoDxe.inf
 
+  Clover/gptsync/gptsync.inf
 
   # IDE/AHCI Support
 !ifdef USE_BIOS_BLOCKIO

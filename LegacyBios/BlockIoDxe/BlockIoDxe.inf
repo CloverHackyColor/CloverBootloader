@@ -20,8 +20,13 @@
   FILE_GUID                      = 4495E47E-42A9-4007-8c17-B6664F909D04
   MODULE_TYPE                    = UEFI_DRIVER
   VERSION_STRING                 = 1.0
-
   ENTRY_POINT                    = BiosBlockIoDriverEntryPoint
+
+#
+# The following information is for reference only and not required by the build tools.
+#
+#  VALID_ARCHITECTURES           = IA32 X64
+#
 
 [Sources]
   BiosBlkIo.h
@@ -39,19 +44,20 @@
   UefiLib
   DevicePathLib
   MemoryAllocationLib
-    MemLogLib
+  MemLogLib
 
 
 [Protocols]
   gEfiBlockIoProtocolGuid
+  gEfiBlockIo2ProtocolGuid
   gEfiDevicePathProtocolGuid
   gEfiPciIoProtocolGuid
-//  gEfiLegacyBiosProtocolGuid
-     gEfiLegacy8259ProtocolGuid					 # PROTOCOL TO_START
+//gEfiLegacyBiosProtocolGuid
+  gEfiLegacy8259ProtocolGuid					 # PROTOCOL TO_START
 
 
 [Guids]
-//  gEfiLegacyBiosGuid
+//gEfiLegacyBiosGuid
   gBlockIoVendorGuid
 
 [Packages]
@@ -59,4 +65,3 @@
   MdePkg/MdePkg.dec
   IntelFrameworkPkg/IntelFrameworkPkg.dec
   IntelFrameworkModulePkg/IntelFrameworkModulePkg.dec
-

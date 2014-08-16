@@ -26,6 +26,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #include <Guid/StatusCodeDataTypeId.h>
 
 #include <Protocol/BlockIo.h>
+#include <Protocol/BlockIo2.h>
 #include <Protocol/LoadedImage.h>
 #include <Protocol/PciIo.h>
 #include <Protocol/Cpu.h>

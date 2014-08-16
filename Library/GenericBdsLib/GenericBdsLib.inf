@@ -106,6 +106,7 @@
   gEfiDebugPortProtocolGuid                     # PROTOCOL CONSUMES
   gEfiSimpleTextInProtocolGuid                  # PROTOCOL CONSUMES
   gEfiBlockIoProtocolGuid                       # PROTOCOL CONSUMES
+  gEfiBlockIo2ProtocolGuid                      # PROTOCOL CONSUMES
   gEfiFirmwareVolume2ProtocolGuid               # PROTOCOL CONSUMES
   gEfiLegacyBiosProtocolGuid                    # PROTOCOL SOMETIMES_CONSUMES
   gEfiCpuArchProtocolGuid                       # PROTOCOL CONSUMES

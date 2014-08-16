@@ -173,9 +173,10 @@ ScsiDiskComponentNameGetControllerName (
   OUT CHAR16                                          **ControllerName
   )
 {
-  EFI_STATUS            Status;
-  SCSI_DISK_DEV         *ScsiDiskDevice;
-  EFI_BLOCK_IO_PROTOCOL *BlockIo;
+  EFI_STATUS             Status;
+  SCSI_DISK_DEV          *ScsiDiskDevice;
+  EFI_BLOCK_IO_PROTOCOL  *BlockIo;
+  EFI_BLOCK_IO2_PROTOCOL *BlockIo2;
 
   //
   // This is a device driver, so ChildHandle must be NULL.
@@ -189,6 +190,12 @@ ScsiDiskComponentNameGetControllerName (
   //
   Status = EfiTestManagedDevice (
              ControllerHandle,
+             gScsiDiskDriverBinding2.DriverBindingHandle,
+             &gEfiScsiIoProtocolGuid    //gEfiIdeControllerInitProtocolGuid
+             );
+
+  Status = EfiTestManagedDevice (
+             ControllerHandle,
              gScsiDiskDriverBinding.DriverBindingHandle,
              &gEfiScsiIoProtocolGuid    //gEfiIdeControllerInitProtocolGuid
              );
@@ -196,7 +203,23 @@ ScsiDiskComponentNameGetControllerName (
     return Status;
   }
   //
-  // Get the device context
+  // Get the device context for BlockIo2
+  //
+  Status = gBS->OpenProtocol (
+                              ControllerHandle,
+                              &gEfiBlockIo2ProtocolGuid,
+                              (VOID **) &BlockIo2,
+                              gScsiDiskDriverBinding2.DriverBindingHandle,
+                              ControllerHandle,
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                              );
+  if (EFI_ERROR(Status))
+  {
+    BlockIo2 = NULL;
+  }
+
+  //
+  // Get the device context for BlockIo
   //
   Status = gBS->OpenProtocol (
                   ControllerHandle,

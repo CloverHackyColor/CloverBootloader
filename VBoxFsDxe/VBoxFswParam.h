@@ -22,28 +22,34 @@
  */
 # include <Base.h>
 # include <Uefi.h>
+
 # include <Library/DebugLib.h>
 # include <Library/BaseLib.h>
-# include <Protocol/DriverBinding.h>
 # include <Library/BaseMemoryLib.h>
 # include <Library/UefiRuntimeServicesTableLib.h>
 # include <Library/UefiDriverEntryPoint.h>
 # include <Library/UefiBootServicesTableLib.h>
 # include <Library/MemoryAllocationLib.h>
 # include <Library/DevicePathLib.h>
+# include <Library/PrintLib.h>
+# include <Library/UefiLib.h>
+
+# include <Protocol/DriverBinding.h>
 # include <Protocol/DevicePathFromText.h>
 # include <Protocol/DevicePathToText.h>
 # include <Protocol/DebugPort.h>
 # include <Protocol/DebugSupport.h>
-# include <Library/PrintLib.h>
-# include <Library/UefiLib.h>
 # include <Protocol/SimpleFileSystem.h>
 # include <Protocol/BlockIo.h>
+# include <Protocol/BlockIo2.h>
 # include <Protocol/DiskIo.h>
+# include <Protocol/DiskIo2.h>
+# include <Protocol/ComponentName.h>
+# include <Protocol/ComponentName2.h>
+
 # include <Guid/FileSystemInfo.h>
 # include <Guid/FileInfo.h>
 # include <Guid/FileSystemVolumeLabelInfo.h>
-# include <Protocol/ComponentName.h>
 
 # define BS gBS
 # define PROTO_NAME(x) gEfi ## x ## Guid

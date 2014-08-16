@@ -229,13 +229,17 @@ BOpt_FindFileSystem (
   )
 {
   UINTN                     NoBlkIoHandles;
+  UINTN                     NoBlkIoHandles2;
   UINTN                     NoSimpleFsHandles;
   UINTN                     NoLoadFileHandles;
   EFI_HANDLE                *BlkIoHandle;
+  EFI_HANDLE                *BlkIoHandle2;
   EFI_HANDLE                *SimpleFsHandle;
   EFI_HANDLE                *LoadFileHandle;
   UINT16                    *VolumeLabel;
   EFI_BLOCK_IO_PROTOCOL     *BlkIo;
+  EFI_BLOCK_IO2_PROTOCOL    *BlkIo2;
+  EFI_BLOCK_IO2_TOKEN       BlkIo2Token;
   UINTN                     Index;
   EFI_STATUS                Status;
   BM_MENU_ENTRY             *MenuEntry;
@@ -258,6 +262,54 @@ BOpt_FindFileSystem (
   InitializeListHead (&FsOptionMenu.Head);
 
   //
+  // Locate Handles that support BlockIo 2 protocol
+  //
+  Status = gBS->LocateHandleBuffer (
+                                    ByProtocol,
+                                    &gEfiBlockIo2ProtocolGuid,
+                                    NULL,
+                                    &NoBlkIoHandles2,
+                                    &BlkIoHandle2
+                                    );
+  if (!EFI_ERROR(Status))
+  {
+  for (Index = 0; Index < NoBlkIoHandles2; Index++) {
+        Status = gBS->HandleProtocol (
+                                      BlkIoHandle2[Index],
+                                      &gEfiBlockIo2ProtocolGuid,
+                                      (VOID **) &BlkIo2
+                                      );
+        if (EFI_ERROR(Status))
+        {
+            continue;
+        }
+        
+        //
+        // Issue a dummy read to trigger reinstall of BlockIo protocol for removable media0
+        //
+        if (BlkIo2->Media->RemovableMedia) {
+            Buffer = AllocateZeroPool (BlkIo2->Media->BlockSize);
+            if (NULL == Buffer) {
+                FreePool (BlkIoHandle2);
+                return EFI_OUT_OF_RESOURCES;
+            }
+
+             BlkIo2->ReadBlocksEx (
+                                      BlkIo2,
+                                      BlkIo2->Media->MediaId,
+                                      0,
+                                      &BlkIo2Token,
+                                      BlkIo2->Media->BlockSize,
+                                      Buffer
+                                      );
+            FreePool (Buffer);
+        }
+
+      FreePool (BlkIoHandle2);
+  }
+  }
+
+  //
   // Locate Handles that support BlockIo protocol
   //
   Status = gBS->LocateHandleBuffer (
@@ -268,7 +320,6 @@ BOpt_FindFileSystem (
                   &BlkIoHandle
                   );
   if (!EFI_ERROR (Status)) {
-
     for (Index = 0; Index < NoBlkIoHandles; Index++) {
       Status = gBS->HandleProtocol (
                       BlkIoHandle[Index],
@@ -281,7 +332,7 @@ BOpt_FindFileSystem (
       }
 
       //
-      // Issue a dummy read to trigger reinstall of BlockIo protocol for removable media
+      // Issue a dummy read to trigger reinstall of BlockIo protocol for removable media0
       //
       if (BlkIo->Media->RemovableMedia) {
         Buffer = AllocateZeroPool (BlkIo->Media->BlockSize);
@@ -297,10 +348,10 @@ BOpt_FindFileSystem (
                 BlkIo->Media->BlockSize,
                 Buffer
                 );
-        FreePool (Buffer);
-      }
+      FreePool (Buffer);
     }
     FreePool (BlkIoHandle);
+  }
   }
 
   //
@@ -320,6 +371,16 @@ BOpt_FindFileSystem (
     for (Index = 0; Index < NoSimpleFsHandles; Index++) {
       Status = gBS->HandleProtocol (
                       SimpleFsHandle[Index],
+                      &gEfiBlockIo2ProtocolGuid,
+                      (VOID **) &BlkIo2
+                      );
+      if (EFI_ERROR(Status))
+      {
+        BlkIo2 = NULL;
+      }
+
+      Status = gBS->HandleProtocol (
+                      SimpleFsHandle[Index],
                       &gEfiBlockIoProtocolGuid,
                       (VOID **) &BlkIo
                       );
@@ -332,7 +393,12 @@ BOpt_FindFileSystem (
         //
         // If block IO exists check to see if it's remobable media
         //
-        RemovableMedia = BlkIo->Media->RemovableMedia;
+        if (BlkIo2 != NULL)
+        {
+          RemovableMedia = BlkIo2->Media->RemovableMedia;
+        } else {
+          RemovableMedia = BlkIo->Media->RemovableMedia;
+        }
       }
 
       //

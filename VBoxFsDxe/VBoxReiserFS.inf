@@ -1,0 +1,77 @@
+# $Id: VBoxReiserFS.inf 29125 2010-05-06 09:43:05Z vboxsync $
+## @file
+# VBoxReiserFS - VBox ReiserFS driver.
+#
+
+#
+# Copyright (C) 2010 Oracle Corporation
+#
+# This file is part of VirtualBox Open Source Edition (OSE), as
+# available from http://www.virtualbox.org. This file is free software;
+# you can redistribute it and/or modify it under the terms of the GNU
+# General Public License (GPL) as published by the Free Software
+# Foundation, in version 2 as it comes in the "COPYING" file of the
+# VirtualBox OSE distribution. VirtualBox OSE is distributed in the
+# hope that it will be useful, but WITHOUT ANY WARRANTY of any kind.
+#
+
+[Defines]
+        INF_VERSION                = 0x00010005
+        BASE_NAME                  = VBoxReiserFS
+        FILE_GUID                  = 39E8ABE9-3A79-40F8-BACD-46E0f60ABEDF
+        MODULE_TYPE                = UEFI_DRIVER
+        VERSION_STRING             = 1.0
+        EDK_RELEASE_VERSION        = 0x00020000
+        EFI_SPECIFICATION_VERSION  = 0x00020000
+
+        ENTRY_POINT                = fsw_efi_main
+
+[Sources.common]
+        fsw_reiserfs.c
+        fsw_core.c
+        fsw_efi_lib.c
+        fsw_efi.c
+        fsw_lib.c
+
+[Packages]
+        MdePkg/MdePkg.dec
+        IntelFrameworkModulePkg/IntelFrameworkModulePkg.dec
+        Clover/CloverPkg.dec
+#        VBoxPkg/VBoxPkg.dec
+
+[LibraryClasses]
+   UefiRuntimeServicesTableLib
+   UefiBootServicesTableLib
+   MemoryAllocationLib
+   BaseMemoryLib
+   BaseLib
+   UefiLib
+   UefiDriverEntryPoint
+   DebugLib
+   PcdLib
+
+[Guids]
+  gEfiFileInfoGuid
+  gEfiFileSystemInfoGuid
+  gEfiFileSystemVolumeLabelInfoIdGuid
+
+[Protocols]
+  gEfiDiskIoProtocolGuid
+  gEfiDiskIo2ProtocolGuid
+  gEfiBlockIoProtocolGuid
+  gEfiBlockIo2ProtocolGuid
+  gEfiSimpleFileSystemProtocolGuid
+  gEfiUnicodeCollationProtocolGuid
+  gEfiUnicodeCollation2ProtocolGuid
+  gMsgLogProtocolGuid
+
+[Pcd]
+  gEfiMdePkgTokenSpaceGuid.PcdUefiVariableDefaultLang
+  gEfiMdePkgTokenSpaceGuid.PcdUefiVariableDefaultPlatformLang
+
+[BuildOptions.common]
+  GCC:*_*_*_CC_FLAGS =  -Os -DFSTYPE=reiserfs
+  XCODE:*_*_*_CC_FLAGS = -Os -DFSTYPE=reiserfs
+# -DFSW_DEBUG_LEVEL=3
+  INTEL:*_*_*_CC_FLAGS = -DFSTYPE=reiserfs
+  MSFT:*_*_*_CC_FLAGS = -DFSTYPE=reiserfs
