@@ -702,6 +702,7 @@ AhciPioTransfer (
   EFI_AHCI_COMMAND_LIST         CmdList;
   UINT32                        PortTfd;
   UINT32                        PrdCount;
+  UINT8                         D2HStatus;
 
   if (Read) {
     Flag = EfiPciIoOperationBusMasterWrite;
@@ -797,8 +798,17 @@ AhciPioTransfer (
       Offset = FisBaseAddr + EFI_AHCI_D2H_FIS_OFFSET;
       Status = AhciCheckMemSet (Offset, EFI_AHCI_FIS_TYPE_MASK, EFI_AHCI_FIS_REGISTER_D2H, 0);
       if (!EFI_ERROR (Status)) {
-        Status = EFI_DEVICE_ERROR;
-        break;
+        D2HStatus = *(volatile UINT8 *) (Offset + EFI_AHCI_D2H_FIS_STATUS_OFFSET);
+
+        if ((D2HStatus & EFI_AHCI_D2H_FIS_ERR) != 0) {
+          Status = EFI_DEVICE_ERROR;
+          break;
+        }
+
+        PrdCount = *(volatile UINT32 *) (&(AhciRegisters->AhciCmdList[0].AhciCmdPrdbc));
+        if (PrdCount == DataCount) {
+          break;
+        }
       }
 
       //
