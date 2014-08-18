@@ -15,8 +15,6 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 
 #include "ScsiDisk.h"
 
-EFI_BLOCK_IO2_PROTOCOL BlkIo2Null = { NULL, (EFI_BLOCK_RESET_EX)0, (EFI_BLOCK_READ_EX)0, (EFI_BLOCK_WRITE_EX)0, (EFI_BLOCK_FLUSH_EX)0 };
-
 EFI_DRIVER_BINDING_PROTOCOL gScsiDiskDriverBinding = {
   ScsiDiskDriverBindingSupported,
   ScsiDiskDriverBindingStart,
@@ -24,15 +22,6 @@ EFI_DRIVER_BINDING_PROTOCOL gScsiDiskDriverBinding = {
   0xa,
   NULL,
   NULL
-};
-
-EFI_DRIVER_BINDING_PROTOCOL gScsiDiskDriverBinding2 = {
-    ScsiDiskDriverBindingSupported,
-    ScsiDiskDriverBindingStart,
-    ScsiDiskDriverBindingStop,
-    0xa,
-    NULL,
-    NULL
 };
 
 EFI_DISK_INFO_PROTOCOL gScsiDiskInfoProtocolTemplate = {
@@ -109,15 +98,6 @@ InitializeScsiDisk(
   //
   // Install driver model protocol(s).
   //
-  Status = EfiLibInstallDriverBindingComponentName2 (
-             ImageHandle,
-             SystemTable,
-             &gScsiDiskDriverBinding2,
-             ImageHandle,
-             &gScsiDiskComponentName,
-             &gScsiDiskComponentName2
-             );
-
   Status = EfiLibInstallDriverBindingComponentName2 (
              ImageHandle,
              SystemTable,
@@ -252,11 +232,6 @@ ScsiDiskDriverBindingStart (
 
   ScsiDiskDevice->Signature            = SCSI_DISK_DEV_SIGNATURE;
   ScsiDiskDevice->ScsiIo               = ScsiIo;
-  ScsiDiskDevice->BlkIo2.Media         = &ScsiDiskDevice->BlkIoMedia;
-  ScsiDiskDevice->BlkIo2.Reset         = ScsiDiskResetEx;
-  ScsiDiskDevice->BlkIo2.ReadBlocksEx  = ScsiDiskReadBlocksEx;
-  ScsiDiskDevice->BlkIo2.WriteBlocksEx = ScsiDiskWriteBlocksEx;
-  ScsiDiskDevice->BlkIo2.FlushBlocksEx = ScsiDiskFlushBlocksEx;
   ScsiDiskDevice->BlkIo.Revision       = EFI_BLOCK_IO_PROTOCOL_REVISION3;
   ScsiDiskDevice->BlkIo.Media          = &ScsiDiskDevice->BlkIoMedia;
   ScsiDiskDevice->BlkIo.Reset          = ScsiDiskReset;
@@ -268,13 +243,11 @@ ScsiDiskDriverBindingStart (
   ScsiIo->GetDeviceType (ScsiIo, &(ScsiDiskDevice->DeviceType));
   switch (ScsiDiskDevice->DeviceType) {
   case EFI_SCSI_TYPE_DISK:
-    ScsiDiskDevice->BlkIo2.Media->BlockSize = 0x200;
     ScsiDiskDevice->BlkIo.Media->BlockSize = 0x200;
     MustReadCapacity = TRUE;
     break;
 
   case EFI_SCSI_TYPE_CDROM:
-    ScsiDiskDevice->BlkIo2.Media->BlockSize = 0x800;
     ScsiDiskDevice->BlkIo.Media->BlockSize = 0x800;
     MustReadCapacity = FALSE;
     break;
@@ -332,8 +305,6 @@ ScsiDiskDriverBindingStart (
       InitializeInstallDiskInfo(ScsiDiskDevice, Controller);
       Status = gBS->InstallMultipleProtocolInterfaces (
                       &Controller,
-                      &gEfiBlockIo2ProtocolGuid,
-                      &ScsiDiskDevice->BlkIo2,
                       &gEfiBlockIoProtocolGuid,
                       &ScsiDiskDevice->BlkIo,
                       &gEfiDiskInfoProtocolGuid,
@@ -403,22 +374,8 @@ ScsiDiskDriverBindingStop (
   )
 {
   EFI_BLOCK_IO_PROTOCOL  *BlkIo;
-  EFI_BLOCK_IO2_PROTOCOL *BlkIo2;
   SCSI_DISK_DEV          *ScsiDiskDevice;
   EFI_STATUS             Status;
-
-  Status = gBS->OpenProtocol (
-                              Controller,
-                              &gEfiBlockIo2ProtocolGuid,
-                              (VOID **) &BlkIo2,
-                              This->DriverBindingHandle,
-                              Controller,
-                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                              );
-  if (EFI_ERROR(Status))
-  {
-    BlkIo2 = NULL;
-  }
 
   Status = gBS->OpenProtocol (
                   Controller,
@@ -432,16 +389,9 @@ ScsiDiskDriverBindingStop (
     return Status;
   }
 
-  if (BlkIo2 != NULL)
-  {
-    ScsiDiskDevice = SCSI_DISK_DEV_FROM_THIS2 (BlkIo2);
-  } else {
     ScsiDiskDevice = SCSI_DISK_DEV_FROM_THIS (BlkIo);
-  }
   Status = gBS->UninstallMultipleProtocolInterfaces (
                   Controller,
-                  &gEfiBlockIo2ProtocolGuid,
-                  &ScsiDiskDevice->BlkIo2,
                   &gEfiBlockIoProtocolGuid,
                   &ScsiDiskDevice->BlkIo,
                   &gEfiDiskInfoProtocolGuid,
@@ -515,44 +465,6 @@ ScsiDiskReset (
 Done:
   gBS->RestoreTPL (OldTpl);
   return Status;
-}
-
-EFI_STATUS
-EFIAPI
-ScsiDiskResetEx (
-               IN  EFI_BLOCK_IO2_PROTOCOL  *This,
-               IN  BOOLEAN                 ExtendedVerification
-               )
-{
-    EFI_TPL       OldTpl;
-    SCSI_DISK_DEV *ScsiDiskDevice;
-    EFI_STATUS    Status;
-    
-    OldTpl = gBS->RaiseTPL (TPL_CALLBACK);
-    
-    ScsiDiskDevice  = SCSI_DISK_DEV_FROM_THIS2 (This);
-    
-    Status          = ScsiDiskDevice->ScsiIo->ResetDevice (ScsiDiskDevice->ScsiIo);
-    
-    if (EFI_ERROR (Status)) {
-        Status = EFI_DEVICE_ERROR;
-        goto Done;
-    }
-    
-    if (!ExtendedVerification) {
-        goto Done;
-    }
-    
-    Status = ScsiDiskDevice->ScsiIo->ResetBus (ScsiDiskDevice->ScsiIo);
-    
-    if (EFI_ERROR (Status)) {
-        Status = EFI_DEVICE_ERROR;
-        goto Done;
-    }
-    
-Done:
-    gBS->RestoreTPL (OldTpl);
-    return Status;
 }
 
 /**
@@ -672,107 +584,6 @@ Done:
   return Status;
 }
 
-EFI_STATUS
-EFIAPI
-ScsiDiskReadBlocksEx (
-                    IN  EFI_BLOCK_IO2_PROTOCOL  *This,
-                    IN  UINT32                  MediaId,
-                    IN  EFI_LBA                 Lba,
-                    IN OUT EFI_BLOCK_IO2_TOKEN  *Token,
-                    IN  UINTN                   BufferSize,
-                    OUT VOID                    *Buffer
-                    )
-{
-    SCSI_DISK_DEV       *ScsiDiskDevice;
-    EFI_BLOCK_IO_MEDIA  *Media;
-    EFI_STATUS          Status;
-    UINTN               BlockSize;
-    UINTN               NumberOfBlocks;
-    BOOLEAN             MediaChange;
-    EFI_TPL             OldTpl;
-    
-    MediaChange    = FALSE;
-    OldTpl         = gBS->RaiseTPL (TPL_CALLBACK);
-    ScsiDiskDevice = SCSI_DISK_DEV_FROM_THIS2 (This);
-    
-    if (!IS_DEVICE_FIXED(ScsiDiskDevice)) {
-        
-        Status = ScsiDiskDetectMedia (ScsiDiskDevice, FALSE, &MediaChange);
-        if (EFI_ERROR (Status)) {
-            Status = EFI_DEVICE_ERROR;
-            goto Done;
-        }
-        
-        if (MediaChange) {
-            gBS->ReinstallProtocolInterface (
-                                             ScsiDiskDevice->Handle,
-                                             &gEfiBlockIo2ProtocolGuid,
-                                             &ScsiDiskDevice->BlkIo2,
-                                             &ScsiDiskDevice->BlkIo2
-                                             );
-            Status = EFI_MEDIA_CHANGED;
-            goto Done;
-        }
-    }
-    //
-    // Get the intrinsic block size
-    //
-    Media           = ScsiDiskDevice->BlkIo2.Media;
-    BlockSize       = Media->BlockSize;
-    
-    NumberOfBlocks  = BufferSize / BlockSize;
-    
-    if (!(Media->MediaPresent)) {
-        Status = EFI_NO_MEDIA;
-        goto Done;
-    }
-    
-    if (MediaId != Media->MediaId) {
-        Status = EFI_MEDIA_CHANGED;
-        goto Done;
-    }
-    
-    if (Buffer == NULL) {
-        Status = EFI_INVALID_PARAMETER;
-        goto Done;
-    }
-    
-    if (BufferSize == 0) {
-        Status = EFI_SUCCESS;
-        goto Done;
-    }
-    
-    if (BufferSize % BlockSize != 0) {
-        Status = EFI_BAD_BUFFER_SIZE;
-        goto Done;
-    }
-    
-    if (Lba > Media->LastBlock) {
-        Status = EFI_INVALID_PARAMETER;
-        goto Done;
-    }
-    
-    if ((Lba + NumberOfBlocks - 1) > Media->LastBlock) {
-        Status = EFI_INVALID_PARAMETER;
-        goto Done;
-    }
-    
-    if ((Media->IoAlign > 1) && (((UINTN) Buffer & (Media->IoAlign - 1)) != 0)) {
-        Status = EFI_INVALID_PARAMETER;
-        goto Done;
-    }
-    
-    //
-    // If all the parameters are valid, then perform read sectors command
-    // to transfer data from device to host.
-    //
-    Status = ScsiDiskReadSectors (ScsiDiskDevice, Buffer, Lba, NumberOfBlocks);
-    
-Done:
-    gBS->RestoreTPL (OldTpl);
-    return Status;
-}
-
 /**
   The function is to Write Block to SCSI Disk.
 
@@ -890,106 +701,6 @@ Done:
   return Status;
 }
 
-EFI_STATUS
-EFIAPI
-ScsiDiskWriteBlocksEx (
-                     IN  EFI_BLOCK_IO2_PROTOCOL  *This,
-                     IN  UINT32                  MediaId,
-                     IN  EFI_LBA                 Lba,
-                     IN OUT EFI_BLOCK_IO2_TOKEN  *Token,
-                     IN  UINTN                   BufferSize,
-                     IN  VOID                    *Buffer
-                     )
-{
-    SCSI_DISK_DEV       *ScsiDiskDevice;
-    EFI_BLOCK_IO_MEDIA  *Media;
-    EFI_STATUS          Status;
-    UINTN               BlockSize;
-    UINTN               NumberOfBlocks;
-    BOOLEAN             MediaChange;
-    EFI_TPL             OldTpl;
-    
-    MediaChange    = FALSE;
-    OldTpl         = gBS->RaiseTPL (TPL_CALLBACK);
-    ScsiDiskDevice = SCSI_DISK_DEV_FROM_THIS2 (This);
-    
-    if (!IS_DEVICE_FIXED(ScsiDiskDevice)) {
-        
-        Status = ScsiDiskDetectMedia (ScsiDiskDevice, FALSE, &MediaChange);
-        if (EFI_ERROR (Status)) {
-            Status = EFI_DEVICE_ERROR;
-            goto Done;
-        }
-        
-        if (MediaChange) {
-            gBS->ReinstallProtocolInterface (
-                                             ScsiDiskDevice->Handle,
-                                             &gEfiBlockIo2ProtocolGuid,
-                                             &ScsiDiskDevice->BlkIo2,
-                                             &ScsiDiskDevice->BlkIo2
-                                             );
-            Status = EFI_MEDIA_CHANGED;
-            goto Done;
-        }
-    }
-    //
-    // Get the intrinsic block size
-    //
-    Media           = ScsiDiskDevice->BlkIo2.Media;
-    BlockSize       = Media->BlockSize;
-    
-    NumberOfBlocks  = BufferSize / BlockSize;
-    
-    if (!(Media->MediaPresent)) {
-        Status = EFI_NO_MEDIA;
-        goto Done;
-    }
-    
-    if (MediaId != Media->MediaId) {
-        Status = EFI_MEDIA_CHANGED;
-        goto Done;
-    }
-    
-    if (BufferSize == 0) {
-        Status = EFI_SUCCESS;
-        goto Done;
-    }
-    
-    if (Buffer == NULL) {
-        Status = EFI_INVALID_PARAMETER;
-        goto Done;
-    }
-    
-    if (BufferSize % BlockSize != 0) {
-        Status = EFI_BAD_BUFFER_SIZE;
-        goto Done;
-    }
-    
-    if (Lba > Media->LastBlock) {
-        Status = EFI_INVALID_PARAMETER;
-        goto Done;
-    }
-    
-    if ((Lba + NumberOfBlocks - 1) > Media->LastBlock) {
-        Status = EFI_INVALID_PARAMETER;
-        goto Done;
-    }
-    
-    if ((Media->IoAlign > 1) && (((UINTN) Buffer & (Media->IoAlign - 1)) != 0)) {
-        Status = EFI_INVALID_PARAMETER;
-        goto Done;
-    }
-    //
-    // if all the parameters are valid, then perform read sectors command
-    // to transfer data from device to host.
-    //
-    Status = ScsiDiskWriteSectors (ScsiDiskDevice, Buffer, Lba, NumberOfBlocks);
-    
-Done:
-    gBS->RestoreTPL (OldTpl);
-    return Status;
-}
-
 /**
   Flush Block to Disk.
 
@@ -1012,18 +723,6 @@ ScsiDiskFlushBlocks (
   return EFI_SUCCESS;
 }
 
-EFI_STATUS
-EFIAPI
-ScsiDiskFlushBlocksEx (
-                     IN  EFI_BLOCK_IO2_PROTOCOL   *This,
-                     IN OUT EFI_BLOCK_IO2_TOKEN   *Token
-                     )
-{
-    //
-    // return directly
-    //
-    return EFI_SUCCESS;
-}
 
 /**
   Detect Device and read out capacity ,if error occurs, parse the sense key.
@@ -1064,12 +763,7 @@ ScsiDiskDetectMedia (
   *MediaChange        = FALSE;
   TimeoutEvt          = NULL;
 
-  if (CompareMem(&(ScsiDiskDevice->BlkIo2), &BlkIo2Null, sizeof (EFI_BLOCK_IO2_PROTOCOL)))
-  {
-    CopyMem (&OldMedia, ScsiDiskDevice->BlkIo2.Media, sizeof (OldMedia));
-  } else {
     CopyMem (&OldMedia, ScsiDiskDevice->BlkIo.Media, sizeof (OldMedia));
-  }
 
   Status = gBS->CreateEvent (
                   EVT_TIMER,
@@ -1183,23 +877,11 @@ ScsiDiskDetectMedia (
     }
   }
 
-  if ((ScsiDiskDevice->BlkIo2.Media->MediaId != OldMedia.MediaId) && (CompareMem(&(ScsiDiskDevice->BlkIo2), &BlkIo2Null, sizeof (EFI_BLOCK_IO2_PROTOCOL)))) {
+  if (ScsiDiskDevice->BlkIo.Media->MediaId != OldMedia.MediaId) {
         //
         // Media change information got from the device
         //
         *MediaChange = TRUE;
-  }
-
-  if ((ScsiDiskDevice->BlkIo.Media->MediaId != OldMedia.MediaId) && (!CompareMem(&(ScsiDiskDevice->BlkIo2), &BlkIo2Null, sizeof (EFI_BLOCK_IO2_PROTOCOL)))) {
-    //
-    // Media change information got from the device
-    //
-    *MediaChange = TRUE;
-  }
-
-  if (ScsiDiskDevice->BlkIo2.Media->ReadOnly != OldMedia.ReadOnly) {
-    *MediaChange = TRUE;
-    ScsiDiskDevice->BlkIo2.Media->MediaId += 1;
   }
 
   if (ScsiDiskDevice->BlkIo.Media->ReadOnly != OldMedia.ReadOnly) {
@@ -1207,40 +889,14 @@ ScsiDiskDetectMedia (
     ScsiDiskDevice->BlkIo.Media->MediaId += 1;
   }
 
-  if (ScsiDiskDevice->BlkIo2.Media->BlockSize != OldMedia.BlockSize) {
-    *MediaChange = TRUE;
-    ScsiDiskDevice->BlkIo2.Media->MediaId += 1;
-  }
-
   if (ScsiDiskDevice->BlkIo.Media->BlockSize != OldMedia.BlockSize) {
     *MediaChange = TRUE;
     ScsiDiskDevice->BlkIo.Media->MediaId += 1;
   }
 
-  if (ScsiDiskDevice->BlkIo2.Media->LastBlock != OldMedia.LastBlock) {
-    *MediaChange = TRUE;
-    ScsiDiskDevice->BlkIo2.Media->MediaId += 1;
-  }
-
   if (ScsiDiskDevice->BlkIo.Media->LastBlock != OldMedia.LastBlock) {
     *MediaChange = TRUE;
     ScsiDiskDevice->BlkIo.Media->MediaId += 1;
-  }
-
-  if (ScsiDiskDevice->BlkIo2.Media->MediaPresent != OldMedia.MediaPresent) {
-    if (ScsiDiskDevice->BlkIo2.Media->MediaPresent) {
-      //
-      // when change from no media to media present, reset the MediaId to 1.
-      //
-      ScsiDiskDevice->BlkIo2.Media->MediaId = 1;
-    } else {
-      //
-      // when no media, reset the MediaId to zero.
-      //
-      ScsiDiskDevice->BlkIo2.Media->MediaId = 0;
-    }
-
-    *MediaChange = TRUE;
   }
 
   if (ScsiDiskDevice->BlkIo.Media->MediaPresent != OldMedia.MediaPresent) {
@@ -2044,20 +1700,9 @@ GetMediaInfo (
   IN     EFI_SCSI_DISK_CAPACITY_DATA16  *Capacity16
   )
 {
+  UINT8       *Ptr;
 
   if (!ScsiDiskDevice->Cdb16Byte) {
-    ScsiDiskDevice->BlkIo2.Media->LastBlock =  (Capacity10->LastLba3 << 24) |
-    (Capacity10->LastLba2 << 16) |
-    (Capacity10->LastLba1 << 8)  |
-    Capacity10->LastLba0;
-      
-    ScsiDiskDevice->BlkIo2.Media->BlockSize = (Capacity10->BlockSize3 << 24) |
-    (Capacity10->BlockSize2 << 16) |
-    (Capacity10->BlockSize1 << 8)  |
-    Capacity10->BlockSize0;
-    ScsiDiskDevice->BlkIo2.Media->LowestAlignedLba               = 0;
-    ScsiDiskDevice->BlkIo2.Media->LogicalBlocksPerPhysicalBlock  = 0;
-
     ScsiDiskDevice->BlkIo.Media->LastBlock =  (Capacity10->LastLba3 << 24) |
                                               (Capacity10->LastLba2 << 16) |
                                               (Capacity10->LastLba1 << 8)  |
@@ -2070,16 +1715,7 @@ GetMediaInfo (
     ScsiDiskDevice->BlkIo.Media->LowestAlignedLba               = 0;
     ScsiDiskDevice->BlkIo.Media->LogicalBlocksPerPhysicalBlock  = 0;
   } else {
-    UINT8 *Ptr = (UINT8*)&ScsiDiskDevice->BlkIo.Media->LastBlock;
-    UINT8 *Ptr2 = (UINT8*)&ScsiDiskDevice->BlkIo2.Media->LastBlock;
-    *Ptr2++ = Capacity16->LastLba0;
-    *Ptr2++ = Capacity16->LastLba1;
-    *Ptr2++ = Capacity16->LastLba2;
-    *Ptr2++ = Capacity16->LastLba3;
-    *Ptr2++ = Capacity16->LastLba4;
-    *Ptr2++ = Capacity16->LastLba5;
-    *Ptr2++ = Capacity16->LastLba6;
-    *Ptr2   = Capacity16->LastLba7;
+    Ptr = (UINT8*)&ScsiDiskDevice->BlkIo.Media->LastBlock;
     *Ptr++ = Capacity16->LastLba0;
     *Ptr++ = Capacity16->LastLba1;
     *Ptr++ = Capacity16->LastLba2;
@@ -2089,15 +1725,6 @@ GetMediaInfo (
     *Ptr++ = Capacity16->LastLba6;
     *Ptr   = Capacity16->LastLba7;
       
-    ScsiDiskDevice->BlkIo2.Media->BlockSize = (Capacity16->BlockSize3 << 24) |
-    (Capacity16->BlockSize2 << 16) |
-    (Capacity16->BlockSize1 << 8)  |
-    Capacity16->BlockSize0;
-      
-    ScsiDiskDevice->BlkIo2.Media->LowestAlignedLba = (Capacity16->LowestAlignLogic2 << 8) |
-    Capacity16->LowestAlignLogic1;
-    ScsiDiskDevice->BlkIo2.Media->LogicalBlocksPerPhysicalBlock  = (1 << Capacity16->LogicPerPhysical);
-
     ScsiDiskDevice->BlkIo.Media->BlockSize = (Capacity16->BlockSize3 << 24) |
                                              (Capacity16->BlockSize2 << 16) | 
                                              (Capacity16->BlockSize1 << 8)  |
@@ -2108,16 +1735,13 @@ GetMediaInfo (
     ScsiDiskDevice->BlkIo.Media->LogicalBlocksPerPhysicalBlock  = (1 << Capacity16->LogicPerPhysical);
   }
 
-  ScsiDiskDevice->BlkIo2.Media->MediaPresent = TRUE;
   ScsiDiskDevice->BlkIo.Media->MediaPresent = TRUE;
   
   if (ScsiDiskDevice->DeviceType == EFI_SCSI_TYPE_DISK) {
-    ScsiDiskDevice->BlkIo2.Media->BlockSize = 0x200;
     ScsiDiskDevice->BlkIo.Media->BlockSize = 0x200;
   }
 
   if (ScsiDiskDevice->DeviceType == EFI_SCSI_TYPE_CDROM) {
-    ScsiDiskDevice->BlkIo2.Media->BlockSize = 0x800;
     ScsiDiskDevice->BlkIo.Media->BlockSize = 0x800;
   }
 }
@@ -2172,12 +1796,7 @@ ScsiDiskReadSectors (
   Status            = EFI_SUCCESS;
 
   BlocksRemaining   = NumberOfBlocks;
-  if (CompareMem(&(ScsiDiskDevice->BlkIo2), &BlkIo2Null, sizeof (EFI_BLOCK_IO2_PROTOCOL)))
-  {
-    BlockSize         = ScsiDiskDevice->BlkIo2.Media->BlockSize;
-  } else {
     BlockSize         = ScsiDiskDevice->BlkIo.Media->BlockSize;
-  }
   
   //
   // limit the data bytes that can be transferred by one Read(10) or Read(16) Command
@@ -2322,12 +1941,7 @@ ScsiDiskWriteSectors (
   Status            = EFI_SUCCESS;
 
   BlocksRemaining   = NumberOfBlocks;
-  if (CompareMem(&(ScsiDiskDevice->BlkIo2), &BlkIo2Null, sizeof (EFI_BLOCK_IO2_PROTOCOL)))
-  {
-    BlockSize         = ScsiDiskDevice->BlkIo2.Media->BlockSize;
-  } else {
     BlockSize         = ScsiDiskDevice->BlkIo.Media->BlockSize;
-  }
 
   //
   // limit the data bytes that can be transferred by one Read(10) or Read(16) Command

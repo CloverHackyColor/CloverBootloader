@@ -21,7 +21,6 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #include <IndustryStandard/PeImage.h>
 
 #include <Protocol/BlockIo.h>
-#include <Protocol/BlockIo2.h>
 #include <Protocol/LoadedImage.h>
 #include <Protocol/Cpu.h>
 #include <Protocol/SimpleFileSystem.h>
@@ -32,7 +31,6 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #include <Protocol/LegacyBios.h>
 #include <Protocol/SimpleTextOut.h>
 #include <Protocol/SimpleNetwork.h>
-//#include <Protocol/DevicePathToText.h>
 #include <Protocol/FirmwareVolume2.h>
 #include <Protocol/PciIo.h>
 #include <Protocol/AcpiS3Save.h>

@@ -51,10 +51,10 @@
   DebugLib
   DevicePathLib
 
+
 [Protocols]
   gEfiDiskInfoProtocolGuid                      ## BY_START
   gEfiBlockIoProtocolGuid                       ## BY_START
-  gEfiBlockIo2ProtocolGuid                      ## BY_START
   gEfiScsiIoProtocolGuid                        ## TO_START
   gEfiScsiPassThruProtocolGuid                  ## TO_START
   gEfiExtScsiPassThruProtocolGuid               ## TO_START

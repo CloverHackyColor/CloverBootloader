@@ -168,6 +168,7 @@ BdsLibGetFreeOptionNumber (
     if (OptionBuffer == NULL) {
       break;
     }
+    FreePool(OptionBuffer);
     Index++;
   } while (TRUE);
 
@@ -268,6 +269,7 @@ BdsLibRegisterNewOption (
     // Validate the variable.
     //
     if (!ValidateOption(OptionPtr, OptionSize)) {
+      FreePool(OptionPtr);
       continue;
     }
 
@@ -644,6 +646,7 @@ BdsLibVariableToOption (
   // Validate Boot#### variable data.
   //
   if (!ValidateOption(Variable, VariableSize)) {
+    FreePool (Variable);
     return NULL;
   }
 
@@ -692,6 +695,7 @@ BdsLibVariableToOption (
   //
   Option = AllocateZeroPool (sizeof (BDS_COMMON_OPTION));
   if (Option == NULL) {
+    FreePool (Variable);
     return NULL;
   }
 

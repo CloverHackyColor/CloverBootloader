@@ -85,7 +85,6 @@
                                                 ## SOMETIMES_CONSUMES ## Variable:L"ErrOut" (The device path of error out device)
   gEfiGlobalVariableGuid                        ## SOMETIMES_PRODUCES ## Variable:L"BootCurrent" (The boot option of current boot)
   gEfiFileInfoGuid                              ## CONSUMES ## GUID
-#  gEfiPcAnsiGuid                                ## CONSUMES ## GUID (The type of terminal)
   gPerformanceProtocolGuid                      ## SOMETIMES_PRODUCES ## Variable:L"PerfDataMemAddr" (The ACPI address of performance data)
   gEfiUartDevicePathGuid                        ## CONSUMES ## GUID (Identify the device path for UARD device)
   gEfiSasDevicePathGuid                         ## CONSUMES ## GUID (Identify the device path for SAS device)
@@ -101,12 +100,10 @@
   gEfiSimpleTextOutProtocolGuid                 # PROTOCOL CONSUMES
   gEfiPciIoProtocolGuid                         # PROTOCOL CONSUMES
   gEfiLoadedImageProtocolGuid                   # PROTOCOL CONSUMES
-#  gEfiDevicePathToTextProtocolGuid              # PROTOCOL SOMETIMES_CONSUMES
   gEfiSimpleNetworkProtocolGuid                 # PROTOCOL CONSUMES
   gEfiDebugPortProtocolGuid                     # PROTOCOL CONSUMES
   gEfiSimpleTextInProtocolGuid                  # PROTOCOL CONSUMES
   gEfiBlockIoProtocolGuid                       # PROTOCOL CONSUMES
-  gEfiBlockIo2ProtocolGuid                      # PROTOCOL CONSUMES
   gEfiFirmwareVolume2ProtocolGuid               # PROTOCOL CONSUMES
   gEfiLegacyBiosProtocolGuid                    # PROTOCOL SOMETIMES_CONSUMES
   gEfiCpuArchProtocolGuid                       # PROTOCOL CONSUMES
