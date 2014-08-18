@@ -117,6 +117,9 @@ PartitionDriverBindingSupported (
         }      
       }
     }
+  }
+
+  
 
   //
   // Open the IO Abstraction(s) needed to perform the supported test
@@ -215,11 +218,11 @@ PartitionDriverBindingStart (
 {
   EFI_STATUS                Status;
   EFI_STATUS                OpenStatus;
-  EFI_BLOCK_IO_PROTOCOL     *BlockIo;
-  EFI_BLOCK_IO2_PROTOCOL    *BlockIo2;
-  EFI_DISK_IO_PROTOCOL      *DiskIo;
-  EFI_DISK_IO2_PROTOCOL     *DiskIo2;
-  EFI_DEVICE_PATH_PROTOCOL  *ParentDevicePath;
+  EFI_BLOCK_IO_PROTOCOL     *BlockIo = NULL;
+  EFI_BLOCK_IO2_PROTOCOL    *BlockIo2 = NULL;
+  EFI_DISK_IO_PROTOCOL      *DiskIo = NULL;
+  EFI_DISK_IO2_PROTOCOL     *DiskIo2 = NULL;
+  EFI_DEVICE_PATH_PROTOCOL  *ParentDevicePath = NULL;
   PARTITION_DETECT_ROUTINE  *Routine;
   BOOLEAN                   MediaPresent;
   EFI_TPL                   OldTpl;
@@ -335,7 +338,7 @@ PartitionDriverBindingStart (
   //
   Status       = EFI_UNSUPPORTED;
     MediaPresent = BlockIo->Media->MediaPresent;
-  if (BlockIo->Media->MediaPresent ||
+  if (MediaPresent ||
       (BlockIo->Media->RemovableMedia && !BlockIo->Media->LogicalPartition)) {
     //
     // Try for GPT, then El Torito, and then legacy MBR partition types. If the
