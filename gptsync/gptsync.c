@@ -52,13 +52,10 @@ static UINTN check_mbr(VOID)
     UINTN k = 0;
     
     // check each entry
-    for (i = 0; i < mbr_part_count; i++)
-    {
+    for (i = 0; i < mbr_part_count; i++) {
         // check for overlap
-        for (k = 0; k < mbr_part_count; k++)
-        {
-            if (k != i && !((mbr_parts[i].start_lba > mbr_parts[k].end_lba) || (mbr_parts[k].start_lba > mbr_parts[i].end_lba)))
-            {
+        for (k = 0; k < mbr_part_count; k++) {
+            if (k != i && !(mbr_parts[i].start_lba > mbr_parts[k].end_lba || mbr_parts[k].start_lba > mbr_parts[i].end_lba)) {
                 Print(L"Status: MBR partition table is invalid, partitions overlap.\n");
                 return 1;
             }
@@ -216,8 +213,7 @@ static UINTN check_gpt(VOID)
             found_data_parts = TRUE;
     }
     
-    if (!found_data_parts)
-    {
+    if (!found_data_parts) {
         Print(L"Status: GPT partition table has no data partitions, no need to sync.\n");
         return 1;
     }
@@ -351,23 +347,19 @@ static UINTN analyze(VOID)
         i = 1;
     } else {
         min_start_lba = gpt_parts[0].start_lba;
-        for (k = 0; k < gpt_part_count; k++)
-        {
-            if (min_start_lba > gpt_parts[k].start_lba)
-            {
+        for (k = 0; k < gpt_part_count; k++) {
+            if (min_start_lba > gpt_parts[k].start_lba) {
                 min_start_lba = gpt_parts[k].start_lba;
             }
         }
 
         new_mbr_parts[0].end_lba = min_start_lba - 1;
-
         i = 0;
     }
     
     // add other GPT partitions until the table is full
     // TODO: in the future, prioritize partitions by kind
-    for (; i < gpt_part_count && new_mbr_part_count < 4; i++)
-    {
+    for (; i < gpt_part_count && new_mbr_part_count < 4; i++) {
         new_mbr_parts[new_mbr_part_count].index = new_mbr_part_count;
         new_mbr_parts[new_mbr_part_count].start_lba = gpt_parts[i].start_lba;
         new_mbr_parts[new_mbr_part_count].end_lba = gpt_parts[i].end_lba;
@@ -375,25 +367,20 @@ static UINTN analyze(VOID)
         new_mbr_parts[new_mbr_part_count].active = FALSE;
         
         // find matching partition in the old MBR table
-        for (k = 0; k < mbr_part_count; k++)
-        {
-            if (mbr_parts[k].start_lba == gpt_parts[i].start_lba)
-            {
+        for (k = 0; k < mbr_part_count; k++) {
+            if (mbr_parts[k].start_lba == gpt_parts[i].start_lba) {
                 // keep type if not detected
-                if (new_mbr_parts[new_mbr_part_count].mbr_type == 0)
-                {
+                if (new_mbr_parts[new_mbr_part_count].mbr_type == 0) {
                     new_mbr_parts[new_mbr_part_count].mbr_type = mbr_parts[k].mbr_type;
                 }
 
                 // keep active flag
                 new_mbr_parts[new_mbr_part_count].active = mbr_parts[k].active;
-
                 break;
             }
         }
         
-        if (new_mbr_parts[new_mbr_part_count].mbr_type == 0)
-        {
+        if (new_mbr_parts[new_mbr_part_count].mbr_type == 0) {
             // final fallback: set to a (hopefully) unused type
             new_mbr_parts[new_mbr_part_count].mbr_type = 0xc0;
         }
@@ -402,65 +389,52 @@ static UINTN analyze(VOID)
     }
     
     // make sure there's exactly one active partition
-    for (iter = 0; iter < 3; iter++)
-    {
+    for (iter = 0; iter < 3; iter++) {
         // check
         count_active = 0;
-
-        for (i = 0; i < new_mbr_part_count; i++)
-        {
-            if (new_mbr_parts[i].active)
-            {
+        for (i = 0; i < new_mbr_part_count; i++) {
+            if (new_mbr_parts[i].active) {
                 count_active++;
             }
         }
 
-        if (count_active == 1)
-        {
+        if (count_active == 1) {
             break;
         }
 
         // set active on the first matching partition
-        if (count_active == 0)
-        {
-            for (i = 0; i < new_mbr_part_count; i++)
-            {
+        if (count_active == 0) {
+            for (i = 0; i < new_mbr_part_count; i++) {
                 if (((iter >= 0) &&
-                                  ((new_mbr_parts[i].mbr_type == 0xa8) ||    // Mac OS X UFS
-                                   (new_mbr_parts[i].mbr_type == 0xab) ||    // Mac OS X Boot
-                                   (new_mbr_parts[i].mbr_type == 0xac) ||    // Apple RAID
-                                   (new_mbr_parts[i].mbr_type == 0xaf) ||    // HFS+
-                                   (new_mbr_parts[i].mbr_type == 0x07) ||    // NTFS
-                                   (new_mbr_parts[i].mbr_type == 0x0b) ||    // FAT32
-                                   (new_mbr_parts[i].mbr_type == 0x0c))) ||  // FAT32 (LBA)
+                    ((new_mbr_parts[i].mbr_type == 0xa8) ||    // Mac OS X UFS
+                     (new_mbr_parts[i].mbr_type == 0xab) ||    // Mac OS X Boot
+                     (new_mbr_parts[i].mbr_type == 0xac) ||    // Apple RAID
+                     (new_mbr_parts[i].mbr_type == 0xaf) ||    // HFS+
+                     (new_mbr_parts[i].mbr_type == 0x07) ||    // NTFS
+                     (new_mbr_parts[i].mbr_type == 0x0b) ||    // FAT32
+                     (new_mbr_parts[i].mbr_type == 0x0c))) ||  // FAT32 (LBA)
                     ((iter >= 1) && (new_mbr_parts[i].mbr_type == 0x83)) ||   // Linux
-                    ((iter >= 2) && (i > 0)))
-                {
+                    ((iter >= 2) && (i > 0))) {
                     new_mbr_parts[i].active = TRUE;
-
                     break;
                 }
             }
         } else if ((count_active > 1) && (iter == 0)) {
             // too many active partitions, try deactivating the ESP / EFI Protective entry
 
-            if (((new_mbr_parts[0].mbr_type == 0xee) || (new_mbr_parts[0].mbr_type == 0xef)) &&
-                new_mbr_parts[0].active)
-            {
+            if (((new_mbr_parts[0].mbr_type == 0xee) || 
+                 (new_mbr_parts[0].mbr_type == 0xef)) &&
+                  new_mbr_parts[0].active) {
                 new_mbr_parts[0].active = FALSE;
             }
         } else if ((count_active > 1) && (iter > 0)) {
             // too many active partitions, deactivate all but the first one
             count_active = 0;
-            for (i = 0; i < new_mbr_part_count; i++)
-            {
-                if (new_mbr_parts[i].active)
-                {
-                    if (count_active > 0)
-                    {
+            for (i = 0; i < new_mbr_part_count; i++) {
+                if (new_mbr_parts[i].active) {
+                    if (count_active > 0) {
                         new_mbr_parts[i].active = FALSE;
                     }
-
                     count_active++;
                 }
             }
@@ -470,9 +444,7 @@ static UINTN analyze(VOID)
     // dump table
     Print(L"\nProposed new MBR partition table:\n");
     Print(L" # A    Start LBA      End LBA  Type\n");
-
-    for (i = 0; i < new_mbr_part_count; i++)
-    {
+    for (i = 0; i < new_mbr_part_count; i++) {
         Print(L" %d %s %12lld %12lld  %02x  %s\n",
               new_mbr_parts[i].index + 1,
               new_mbr_parts[i].active ? STR("*") : STR(" "),

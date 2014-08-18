@@ -65,8 +65,7 @@ typedef CHAR16 CHARN;
 // platform-independent types
 //
 
-typedef struct _MBR_PARTITION_INFO
-{
+typedef struct _MBR_PARTITION_INFO {
     UINT8   flags;
     UINT8   start_chs[3];
     UINT8   type;
@@ -75,14 +74,12 @@ typedef struct _MBR_PARTITION_INFO
     UINT32  size;
 } MBR_PARTITION_INFO;
 
-typedef struct _MBR_PARTTYPE
-{
+typedef struct _MBR_PARTTYPE {
     UINT8   type;
     CHARN   *name;
 } MBR_PARTTYPE;
 
-typedef struct _GPT_HEADER
-{
+typedef struct _GPT_HEADER {
     UINT64  signature;
     UINT32  spec_revision;
     UINT32  header_size;
@@ -99,8 +96,7 @@ typedef struct _GPT_HEADER
     UINT32  entry_crc32;
 } GPT_HEADER;
 
-typedef struct _GPT_ENTRY
-{
+typedef struct _GPT_ENTRY {
     UINT8   type_guid[16];
     UINT8   partition_guid[16];
     UINT64  start_lba;

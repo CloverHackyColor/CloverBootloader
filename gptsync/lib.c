@@ -50,8 +50,7 @@ UINTN           new_mbr_part_count = 0;
 
 UINT8           sector[512];
 
-MBR_PARTTYPE mbr_types[] =
-{
+MBR_PARTTYPE    mbr_types[] = {
     { 0x01, STR("FAT12 (CHS)") },
     { 0x04, STR("FAT16 <32M (CHS)") },
     { 0x05, STR("Extended (CHS)") },
@@ -91,8 +90,7 @@ MBR_PARTTYPE mbr_types[] =
     { 0, NULL },
 };
 
-GPT_PARTTYPE gpt_types[] =
-{
+GPT_PARTTYPE    gpt_types[] = {
     // Defined by EFI/UEFI specification
     { "\x28\x73\x2A\xC1\x1F\xF8\xD2\x11\xBA\x4B\x00\xA0\xC9\x3E\xC9\x3B", 0xef, STR("EFI System (FAT)"), GPT_KIND_SYSTEM },
     { "\x41\xEE\x4D\x02\xE7\x33\xD3\x11\x9D\x69\x00\x08\xC7\x81\xF3\x9F", 0x00, STR("MBR partition scheme"), GPT_KIND_FATAL },
@@ -163,10 +161,8 @@ CHARN * mbr_parttype_name(UINT8 type)
 {
     int i = 0;
     
-    for (i = 0; mbr_types[i].name; i++)
-    {
-        if (mbr_types[i].type == type)
-        {
+    for (i = 0; mbr_types[i].name; i++) {
+        if (mbr_types[i].type == type) {
             return mbr_types[i].name;
         }
     }
@@ -185,27 +181,21 @@ UINTN read_mbr(VOID)
     
     // read MBR data
     status = read_sector(0, sector);
-    if (status != 0)
-    {
+    if (status != 0) {
         return status;
     }
 
     // check for validity
-    if (*((UINT16 *)(sector + 510)) != 0xaa55)
-    {
+    if (*((UINT16 *)(sector + 510)) != 0xaa55) {
         Print(L" No MBR partition table present!\n");
-
         return 1;
     }
 
     table = (MBR_PARTITION_INFO *)(sector + 446);
 
-    for (i = 0; i < 4; i++)
-    {
-        if (table[i].flags != 0x00 && table[i].flags != 0x80)
-        {
+    for (i = 0; i < 4; i++) {
+        if (table[i].flags != 0x00 && table[i].flags != 0x80) {
             Print(L" MBR partition table is invalid!\n");
-
             return 1;
         }
     }
@@ -213,29 +203,22 @@ UINTN read_mbr(VOID)
     // check if used
     used = FALSE;
 
-    for (i = 0; i < 4; i++)
-    {
-        if ((table[i].start_lba > 0) && (table[i].size > 0))
-        {
+    for (i = 0; i < 4; i++) {
+        if ((table[i].start_lba > 0) && (table[i].size > 0)) {
             used = TRUE;
-
             break;
         }
     }
 
-    if (!used)
-    {
+    if (!used) {
         Print(L" No partitions defined\n");
-
         return 0;
     }
     
     // dump current state & fill internal structures
     Print(L" # A    Start LBA      End LBA  Type\n");
-    for (i = 0; i < 4; i++)
-    {
-        if ((table[i].start_lba == 0) || (table[i].size == 0))
-        {
+    for (i = 0; i < 4; i++) {
+        if ((table[i].start_lba == 0) || (table[i].size == 0)) {
             continue;
         }
 
@@ -267,10 +250,8 @@ GPT_PARTTYPE * gpt_parttype(UINT8 *type_guid)
 {
     int i = 0;
     
-    for (i = 0; gpt_types[i].name; i++)
-    {
-        if (guids_are_equal(gpt_types[i].guid, type_guid))
-        {
+    for (i = 0; gpt_types[i].name; i++) {
+        if (guids_are_equal(gpt_types[i].guid, type_guid)) {
             return &(gpt_types[i]);
         }
     }
@@ -293,28 +274,23 @@ UINTN read_gpt(VOID)
     // read GPT header
     status = read_sector(1, sector);
 
-    if (status != 0)
-    {
+    if (status != 0) {
         return status;
     }
     
     // check signature
     header = (GPT_HEADER *)sector;
 
-    if (header->signature != 0x5452415020494645ULL)
-    {
+    if (header->signature != 0x5452415020494645ULL) {
         Print(L" No GPT partition table present!\n");
-
         return 0;
     }
 
-    if (header->spec_revision != 0x00010000UL)
-    {
+    if (header->spec_revision != 0x00010000UL) {
         Print(L" Warning: Unknown GPT spec revision 0x%08x\n", header->spec_revision);
     }
 
-    if (((512 % header->entry_size) > 0) || (header->entry_size > 512))
-    {
+    if (((512 % header->entry_size) > 0) || (header->entry_size > 512)) {
         Print(L" Error: Invalid GPT entry size (misaligned or more than 512 bytes)\n");
         return 0;
     }
@@ -324,29 +300,22 @@ UINTN read_gpt(VOID)
     entry_size  = header->entry_size;
     entry_count = header->entry_count;
     
-    for (i = 0; i < entry_count; i++)
-    {
-        if (((i * entry_size) % 512) == 0)
-        {
+    for (i = 0; i < entry_count; i++) {
+        if (((i * entry_size) % 512) == 0) {
             status = read_sector(entry_lba, sector);
-
-            if (status != 0)
-            {
+            if (status != 0) {
                 return status;
             }
-
             entry_lba++;
         }
 
         entry = (GPT_ENTRY *)(sector + ((i * entry_size) % 512));
         
-        if (guids_are_equal(entry->type_guid, empty_guid))
-        {
+        if (guids_are_equal(entry->type_guid, empty_guid)) {
             continue;
         }
 
-        if (gpt_part_count == 0)
-        {
+        if (gpt_part_count == 0) {
             Print(L" #      Start LBA      End LBA  Type\n");
         }
         
@@ -367,10 +336,8 @@ UINTN read_gpt(VOID)
         gpt_part_count++;
     }
 
-    if (gpt_part_count == 0)
-    {
+    if (gpt_part_count == 0) {
         Print(L" No partitions defined\n");
-
         return 0;
     }
     
@@ -401,19 +368,16 @@ UINTN detect_mbrtype_fs(UINT64 partlba, UINTN *parttype, CHARN **fsname)
     // READ sector 0 / offset 0K
     status = read_sector(partlba, sector);
 
-    if (status != 0)
-    {
+    if (status != 0) {
         return status;
     }
 
     // detect XFS
     signature = *((UINT32 *)(sector));
 
-    if (signature == 0x42534658)
-    {
+    if (signature == 0x42534658) {
         *parttype = 0x83;
         *fsname = STR("XFS");
-
         return 0;
     }
     
@@ -422,15 +386,12 @@ UINTN detect_mbrtype_fs(UINT64 partlba, UINTN *parttype, CHARN **fsname)
     clustersize = sector[13];
 
     if ((sectsize >= 512) && ((sectsize & (sectsize - 1)) == 0) &&
-        (clustersize > 0) && ((clustersize & (clustersize - 1)) == 0))
-    {
+        (clustersize > 0) && ((clustersize & (clustersize - 1)) == 0)) {
         // preconditions for both FAT and NTFS are now met
         
-        if (CompareMem(sector + 3, "NTFS    ", 8) == 0)
-        {
+        if (CompareMem(sector + 3, "NTFS    ", 8) == 0) {
             *parttype = 0x07;
             *fsname = STR("NTFS");
-
             return 0;
         }
         
@@ -438,30 +399,26 @@ UINTN detect_mbrtype_fs(UINT64 partlba, UINTN *parttype, CHARN **fsname)
 
         // boot jump
         if (((sector[0] == 0xEB) && (sector[2] == 0x90)) || 
-            (sector[0] == 0xE9))
-        {
+            (sector[0] == 0xE9)) {
             score++;
         }
 
         // boot signature
-        if ((sector[510] == 0x55) && (sector[511] == 0xAA))
-        {
+        if ((sector[510] == 0x55) && (sector[511] == 0xAA)) {
             score++;
         }
 
         // reserved sectors
         reserved = *((UINT16 *)(sector + 14));
 
-        if ((reserved == 1) || (reserved == 32))
-        {
+        if ((reserved == 1) || (reserved == 32)) {
             score++;
         }
 
         // number of FATs
         fatcount = sector[16];
 
-        if (fatcount == 2)
-        {
+        if (fatcount == 2) {
             score++;
         }
 
@@ -471,22 +428,19 @@ UINTN detect_mbrtype_fs(UINT64 partlba, UINTN *parttype, CHARN **fsname)
         // sector count (16-bit and 32-bit versions)
         sectcount = *((UINT16 *)(sector + 19));
 
-        if (sectcount == 0)
-        {
+        if (sectcount == 0) {
             sectcount = *((UINT32 *)(sector + 32));
         }
 
         // media byte
-        if ((sector[21] == 0xF0) || (sector[21] >= 0xF8))
-        {
+        if ((sector[21] == 0xF0) || (sector[21] >= 0xF8)) {
             score++;
         }
 
         // FAT size in sectors
         fatsize = *((UINT16 *)(sector + 22));
 
-        if (fatsize == 0)
-        {
+        if (fatsize == 0) {
             fatsize = *((UINT32 *)(sector + 36));
         }
 
@@ -495,10 +449,8 @@ UINTN detect_mbrtype_fs(UINT64 partlba, UINTN *parttype, CHARN **fsname)
         clustercount = (sectcount - (reserved + (fatcount * fatsize) + dirsize));
         clustercount /= clustersize;
         
-        if (score >= 3)
-        {
-            if (clustercount < 4085)
-            {
+        if (score >= 3) {
+            if (clustercount < 4085) {
                 *parttype = 0x01;
                 *fsname = STR("FAT12");
             } else if (clustercount < 65525) {
@@ -518,19 +470,16 @@ UINTN detect_mbrtype_fs(UINT64 partlba, UINTN *parttype, CHARN **fsname)
     // READ sector 2 / offset 1K
     status = read_sector(partlba + 2, sector);
 
-    if (status != 0)
-    {
+    if (status != 0) {
         return status;
     }
    
     // detect HFS+
     signature = *((UINT16 *)(sector));
 
-    if (signature == 0x4442)
-    {
+    if (signature == 0x4442) {
         *parttype = 0xaf;
-        if (*((UINT16 *)(sector + 0x7c)) == 0x2B48)
-        {
+        if (*((UINT16 *)(sector + 0x7c)) == 0x2B48)  {
             *fsname = STR("HFS Extended (HFS+)");
         } else {
             *fsname = STR("HFS Standard");
@@ -540,19 +489,16 @@ UINTN detect_mbrtype_fs(UINT64 partlba, UINTN *parttype, CHARN **fsname)
     } else if (signature == 0x2B48) {
         *parttype = 0xaf;
         *fsname = STR("HFS Extended (HFS+)");
-
         return 0;
     }
     
     // detect ext2/ext3/ext4
     signature = *((UINT16 *)(sector + 56));
 
-    if (signature == 0xEF53)
-    {
+    if (signature == 0xEF53) {
         *parttype = 0x83;
         if ((*((UINT16 *)(sector + 96)) & 0x02C0) ||
-            (*((UINT16 *)(sector + 100)) & 0x0078))
-        {
+            (*((UINT16 *)(sector + 100)) & 0x0078)) {
             *fsname = STR("ext4");
         } else if (*((UINT16 *)(sector + 92)) & 0x0004) {
             *fsname = STR("ext3");
@@ -566,72 +512,59 @@ UINTN detect_mbrtype_fs(UINT64 partlba, UINTN *parttype, CHARN **fsname)
     // READ sector 128 / offset 64K
     status = read_sector(partlba + 128, sector);
 
-    if (status != 0)
-    {
+    if (status != 0) {
         return status;
     }
 
     // detect btrfs
-    if (CompareMem(sector + 64, "_BHRfS_M", 8) == 0)
-    {
+    if (CompareMem(sector + 64, "_BHRfS_M", 8) == 0) {
         *parttype = 0x83;
         *fsname = STR("btrfs");
-
         return 0;
     }
     
     // detect ReiserFS
     if ((CompareMem(sector + 52, "ReIsErFs", 8)  == 0) ||
         (CompareMem(sector + 52, "ReIsEr2Fs", 9) == 0) ||
-        (CompareMem(sector + 52, "ReIsEr3Fs", 9) == 0))
-    {
+        (CompareMem(sector + 52, "ReIsEr3Fs", 9) == 0)) {
         *parttype = 0x83;
         *fsname = STR("ReiserFS");
-
         return 0;
     }
     
     // detect Reiser4
-    if (CompareMem(sector, "ReIsEr4", 7) == 0)
-    {
+    if (CompareMem(sector, "ReIsEr4", 7) == 0) {
         *parttype = 0x83;
         *fsname = STR("Reiser4");
-
         return 0;
     }
     
     // READ sector 64 / offset 32K
     status = read_sector(partlba + 64, sector);
-    if (status != 0)
-    {
+    if (status != 0) {
         return status;
     }
 
     // detect JFS
-    if (CompareMem(sector, "JFS1", 4) == 0)
-    {
+    if (CompareMem(sector, "JFS1", 4) == 0) {
         *parttype = 0x83;
         *fsname = STR("JFS");
-
         return 0;
     }
     
     // READ sector 16 / offset 8K
     status = read_sector(partlba + 16, sector);
 
-    if (status != 0)
-    {
+    if (status != 0) {
         return status;
     }
 
     // detect ReiserFS
     if ((CompareMem(sector + 52, "ReIsErFs",  8) == 0) ||
         (CompareMem(sector + 52, "ReIsEr2Fs", 9) == 0) ||
-        (CompareMem(sector + 52, "ReIsEr3Fs", 9) == 0))
-    {
+        (CompareMem(sector + 52, "ReIsEr3Fs", 9) == 0)) {
         *parttype = 0x83;
         *fsname = STR("ReiserFS");
-
         return 0;
     }
     
