@@ -11,7 +11,7 @@
         always on the first sector of a media. The first sector also contains
         the legacy boot strap code.
 
-Copyright (c) 2006 - 2009, Intel Corporation. All rights reserved.<BR>
+Copyright (c) 2006 - 2013, Intel Corporation. All rights reserved.<BR>
 This program and the accompanying materials
 are licensed and made available under the terms and conditions of the BSD License
 which accompanies this distribution.  The full text of the license may be found at
@@ -101,11 +101,13 @@ PartitionValidMbr (
 /**
   Install child handles if the Handle supports MBR format.
 
-  @param  This              Calling context.
-  @param  Handle            Parent Handle.
-  @param  DiskIo            Parent DiskIo interface.
-  @param  BlockIo           Parent BlockIo interface.
-  @param  DevicePath        Parent Device Path.
+  @param[in]  This              Calling context.
+  @param[in]  Handle            Parent Handle.
+  @param[in]  DiskIo            Parent DiskIo interface.
+  @param[in]  DiskIo2           Parent DiskIo2 interface.
+  @param[in]  BlockIo           Parent BlockIo interface.
+  @param[in]  BlockIo2          Parent BlockIo2 interface.
+  @param[in]  DevicePath        Parent Device Path.
    
   @retval EFI_SUCCESS       A child handle was added.
   @retval EFI_MEDIA_CHANGED Media change was detected.
@@ -133,60 +135,35 @@ PartitionInstallMbrChildHandles (
   UINT32                    PartitionNumber;
   EFI_DEVICE_PATH_PROTOCOL  *DevicePathNode;
   EFI_DEVICE_PATH_PROTOCOL  *LastDevicePathNode;
-  UINT32                    MBRMediaId;
-  UINT32                    MBRBlockSize;
-  EFI_DISK_IO2_TOKEN        DiskIo2Token;
+  UINT32                    BlockSize;
+  UINT32                    MediaId;
+  EFI_LBA                   LastBlock;
 
   Found           = EFI_NOT_FOUND;
 
-  if (BlockIo2 != NULL)
-  {
-    Mbr             = AllocatePool (BlockIo2->Media->BlockSize);
-    MBRMediaId      = BlockIo2->Media->MediaId;
-    MBRBlockSize    = BlockIo2->Media->BlockSize;
-  } else {
-    Mbr             = AllocatePool (BlockIo->Media->BlockSize);
-    MBRMediaId      = BlockIo->Media->MediaId;
-    MBRBlockSize    = BlockIo->Media->BlockSize;
-  }
+  BlockSize = BlockIo->Media->BlockSize;
+  MediaId   = BlockIo->Media->MediaId;
+  LastBlock = BlockIo->Media->LastBlock;
 
+  Mbr = AllocatePool (BlockSize);
   if (Mbr == NULL) {
     return Found;
   }
 
-  if (DiskIo2 != NULL)
-  {
-    Status = DiskIo2->ReadDiskEx (
-                     DiskIo2,
-                     MBRMediaId,
-                     0,
-                     &DiskIo2Token,
-                     MBRBlockSize,
-                     Mbr
-                     );
-  } else {
     Status = DiskIo->ReadDisk (
                      DiskIo,
-                     MBRMediaId,
+                     MediaId,
                      0,
-                     MBRBlockSize,
+                     BlockSize,
                      Mbr
                      );
-  }
   if (EFI_ERROR (Status)) {
     Found = Status;
     goto Done;
   }
-  if (BlockIo2 != NULL)
-  {
-    if (!PartitionValidMbr (Mbr, BlockIo2->Media->LastBlock)) {
+  if (!PartitionValidMbr (Mbr, LastBlock)) {
       goto Done;
     }
-  } else {
-    if (!PartitionValidMbr (Mbr, BlockIo->Media->LastBlock)) {
-      goto Done;
-    }
-  }
   //
   // We have a valid mbr - add each partition
   //
@@ -278,26 +255,13 @@ PartitionInstallMbrChildHandles (
 
     do {
 
-      if (DiskIo2 != NULL)
-      {
-        Status = DiskIo2->ReadDiskEx (
-                         DiskIo2,
-                         BlockIo->Media->MediaId,
-                         MultU64x32 (ExtMbrStartingLba, MBRBlockSize),
-                         &DiskIo2Token,
-                         MBRBlockSize,
-                         Mbr
-                         );
-      } else {
         Status = DiskIo->ReadDisk (
                          DiskIo,
-                         BlockIo->Media->MediaId,
-                         MultU64x32 (ExtMbrStartingLba, MBRBlockSize),
-                         MBRBlockSize,
+                         MediaId,
+                         MultU64x32 (ExtMbrStartingLba, BlockSize),
+                         BlockSize,
                          Mbr
                          );
-      }
-
       if (EFI_ERROR (Status)) {
         Found = Status;
         goto Done;

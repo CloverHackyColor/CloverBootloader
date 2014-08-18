@@ -35,9 +35,7 @@ Fv2:         - EFI Firmware VOlume device 2
 
 #include <PiDxe.h>
 #include <Protocol/BlockIo.h>             
-#include <Protocol/BlockIo2.h>
 #include <Protocol/DiskIo.h>
-#include <Protocol/DiskIo2.h>
 #include <Protocol/SimpleFileSystem.h>
 #include <Protocol/FirmwareVolume2.h>        
 #include <Protocol/LoadFile.h>
@@ -77,8 +75,6 @@ typedef struct {
 // globals to store current open device info
 EFI_HANDLE            *mBlkIo = NULL;
 UINTN                 mBlkIoCount = 0;
-EFI_HANDLE            *mBlkIo2 = NULL;
-UINTN                 mBlkIoCount2 = 0;
 
 EFI_HANDLE            *mFs = NULL;
 UINTN                 mFsCount = 0;
@@ -155,10 +151,7 @@ EblUpdateDeviceLists (
   }
   gBS->LocateHandleBuffer (ByProtocol, &gEfiBlockIoProtocolGuid, NULL, &mBlkIoCount, &mBlkIo);
 
-  if (mBlkIo2 != NULL) {
-    FreePool (mBlkIo2);
-  }
-  gBS->LocateHandleBuffer (ByProtocol, &gEfiBlockIo2ProtocolGuid, NULL, &mBlkIoCount2, &mBlkIo2);
+
 
   if (mFv != NULL) {
     FreePool (mFv);
@@ -291,8 +284,6 @@ EfiGetDeviceCounts (
     return mFsCount;
   case EfiOpenBlockIo:
     return mBlkIoCount;
-  case EfiOpenBlockIo2:
-    return mBlkIoCount2;
   default:
     return 0;
   }
@@ -389,7 +380,6 @@ EblFileDevicePath (
   EFI_DEVICE_PATH_PROTOCOL          *FileDevicePath;
   CHAR16                            UnicodeFileName[MAX_PATHNAME];
   EFI_BLOCK_IO_PROTOCOL             *BlkIo;
-  EFI_BLOCK_IO2_PROTOCOL            *BlkIo2;
   EFI_SIMPLE_FILE_SYSTEM_PROTOCOL   *Fs;
   EFI_FILE_HANDLE                   Root;
 
@@ -418,31 +408,14 @@ EblFileDevicePath (
     FreePool (FileDevicePath);
   }
 
-  Status = gBS->HandleProtocol (File->EfiHandle, &gEfiBlockIo2ProtocolGuid, (VOID **)&BlkIo2);
-  if (EFI_ERROR(Status))
-  {
-    BlkIo2 = NULL;
-  }
-
   Status = gBS->HandleProtocol (File->EfiHandle, &gEfiBlockIoProtocolGuid, (VOID **)&BlkIo);
-  if (!EFI_ERROR (Status) || (BlkIo2 != NULL)) {
-    if (BlkIo2 != NULL)
-    {
-      File->FsBlockIoMedia = BlkIo2->Media;
-    } else {
+  if (!EFI_ERROR (Status)) {
       File->FsBlockIoMedia = BlkIo->Media;
-    }
-    File->FsBlockIo2 = BlkIo2;
     File->FsBlockIo = BlkIo;
 
     // If we are not opening the device this will get over written with file info
-    if (BlkIo2 != NULL)
-    {
-      File->MaxPosition = MultU64x32 (BlkIo2->Media->LastBlock + 1, BlkIo2->Media->BlockSize);
-    } else {
       File->MaxPosition = MultU64x32 (BlkIo->Media->LastBlock + 1, BlkIo->Media->BlockSize);
     }
-  }
 
   if (File->Type == EfiOpenFileSystem) {
     Status = gBS->HandleProtocol (File->EfiHandle, &gEfiSimpleFileSystemProtocolGuid, (VOID **)&Fs);
@@ -1063,9 +1036,6 @@ EfiDeviceOpenByType (
   case EfiOpenBlockIo:
     DevStr = "blk%d:";    
     break;
-   case EfiOpenBlockIo2:
-    DevStr = "blk%d:";
-    break;
   case EfiOpenMemoryBuffer:
     DevStr = "a%d:";    
     break;
@@ -1357,8 +1327,6 @@ EfiRead (
   EFI_STATUS            Status;
   UINT32                AuthenticationStatus;
   EFI_DISK_IO_PROTOCOL  *DiskIo;
-  EFI_DISK_IO2_PROTOCOL *DiskIo2;
-  EFI_DISK_IO2_TOKEN    DiskIo2Token;
 
   if (!FileHandleValid (File)) {
     return EFI_INVALID_PARAMETER;
@@ -1429,24 +1397,11 @@ EfiRead (
     File->CurrentPosition += *BufferSize;
     break;
 
-  case EfiOpenBlockIo2:
   case EfiOpenBlockIo:
-    Status = gBS->HandleProtocol(File->EfiHandle, &gEfiDiskIo2ProtocolGuid, (VOID **)&DiskIo2);
-    if (EFI_ERROR(Status))
-    {
-      DiskIo2 = NULL;
-    }
-
     Status = gBS->HandleProtocol(File->EfiHandle, &gEfiDiskIoProtocolGuid, (VOID **)&DiskIo);
-
-    if (!EFI_ERROR(Status) || (DiskIo2 != NULL)) {
-      if (DiskIo2 != NULL)
-      {
-        Status = DiskIo2->ReadDiskEx(DiskIo2, File->FsBlockIoMedia->MediaId, File->DiskOffset + File->CurrentPosition, &DiskIo2Token, *BufferSize, Buffer);
-      } else {
+    if (!EFI_ERROR(Status)) {
         Status = DiskIo->ReadDisk(DiskIo, File->FsBlockIoMedia->MediaId, File->DiskOffset + File->CurrentPosition, *BufferSize, Buffer);
       }
-    }
     File->CurrentPosition += *BufferSize;
     break;
 
@@ -1542,8 +1497,6 @@ EfiWrite (
   EFI_STATUS              Status;
   EFI_FV_WRITE_FILE_DATA  FileData;
   EFI_DISK_IO_PROTOCOL    *DiskIo;  
-  EFI_DISK_IO2_PROTOCOL   *DiskIo2;
-  EFI_DISK_IO2_TOKEN      DiskIo2Token;
 
   if (!FileHandleValid (File)) {
     return EFI_INVALID_PARAMETER;
@@ -1584,28 +1537,15 @@ EfiWrite (
     File->CurrentPosition += *BufferSize;
     break;
 
-  case EfiOpenBlockIo2:
   case EfiOpenBlockIo:
     if ((File->CurrentPosition + *BufferSize) > File->MaxPosition) {
       return EFI_END_OF_FILE;
     }
 
-    Status = gBS->HandleProtocol (File->EfiHandle, &gEfiDiskIo2ProtocolGuid, (VOID **)&DiskIo2);
-    if (EFI_ERROR(Status))
-    {
-        DiskIo2 = NULL;
-    }
-
     Status = gBS->HandleProtocol (File->EfiHandle, &gEfiDiskIoProtocolGuid, (VOID **)&DiskIo);
-
-    if (!EFI_ERROR(Status) || (DiskIo2 != NULL)) {
-      if (DiskIo2 != NULL)
-      {
-        Status = DiskIo2->WriteDiskEx (DiskIo2, File->FsBlockIoMedia->MediaId, File->DiskOffset + File->CurrentPosition, &DiskIo2Token, *BufferSize, Buffer);
-      } else {
+    if (!EFI_ERROR(Status)) {
         Status = DiskIo->WriteDisk (DiskIo, File->FsBlockIoMedia->MediaId, File->DiskOffset + File->CurrentPosition, *BufferSize, Buffer);
       }
-    }
     File->CurrentPosition += *BufferSize;
     break;
 

@@ -379,7 +379,7 @@ BiosBlockIoDriverBindingStart (
     //
     // Should only be here if there are no active instances
     //
-    ASSERT (mActiveInstances == 0);
+//    ASSERT (mActiveInstances == 0);
     if (mActiveInstances) {
       Status = EFI_OUT_OF_RESOURCES;
       goto Error;
@@ -476,8 +476,6 @@ BiosBlockIoDriverBindingStart (
                       &BiosBlockIoPrivate->Handle,
                       &gEfiBlockIoProtocolGuid,
                       &BiosBlockIoPrivate->BlockIo,
-                      &gEfiBlockIo2ProtocolGuid,
-                      &BiosBlockIoPrivate->BlockIo2,
                       &gEfiDevicePathProtocolGuid,
                       BiosBlockIoPrivate->DevicePath,
                       NULL
@@ -577,7 +575,6 @@ BiosBlockIoDriverBindingStop (
   EFI_STATUS            Status;
   BOOLEAN               AllChildrenStopped;
   EFI_BLOCK_IO_PROTOCOL *BlockIo;
-  EFI_BLOCK_IO2_PROTOCOL *BlockIo2;
   BIOS_BLOCK_IO_DEV     *BiosBlockIoPrivate;
   UINTN                 Index;
 
@@ -612,20 +609,6 @@ BiosBlockIoDriverBindingStop (
   for (Index = 0; Index < NumberOfChildren; Index++) {
     Status = gBS->OpenProtocol (
                     ChildHandleBuffer[Index],
-                    &gEfiBlockIo2ProtocolGuid,
-                    (VOID **) &BlockIo2,
-                    This->DriverBindingHandle,
-                    Controller,
-                    EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                    );
-    if (EFI_ERROR (Status)) {
-      BlockIo2 = NULL;
-    }
-
-    BiosBlockIoPrivate = BIOS_BLOCK_IO2_FROM_THIS (BlockIo2);
-
-    Status = gBS->OpenProtocol (
-                    ChildHandleBuffer[Index],
                     &gEfiBlockIoProtocolGuid,
                     (VOID **) &BlockIo,
                     This->DriverBindingHandle,
@@ -636,10 +619,7 @@ BiosBlockIoDriverBindingStop (
       return Status;
     }
 
-    if (BiosBlockIoPrivate == NULL)
-    {
       BiosBlockIoPrivate = BIOS_BLOCK_IO_FROM_THIS (BlockIo);
-    }
 
     //
     // Release PCI I/O and Block IO Protocols on the clild handle.
@@ -648,8 +628,6 @@ BiosBlockIoDriverBindingStop (
                     ChildHandleBuffer[Index],
                     &gEfiBlockIoProtocolGuid,
                     &BiosBlockIoPrivate->BlockIo,
-                    &gEfiBlockIo2ProtocolGuid,
-                    &BiosBlockIoPrivate->BlockIo2,
                     &gEfiDevicePathProtocolGuid,
                     BiosBlockIoPrivate->DevicePath,
                     NULL

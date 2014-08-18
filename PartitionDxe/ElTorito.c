@@ -33,9 +33,11 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
   Install child handles if the Handle supports El Torito format.
 
   @param[in]  This        Calling context.
-  @param[in]  Handle      Parent Handle
-  @param[in]  DiskIo      Parent DiskIo interface
-  @param[in]  BlockIo     Parent BlockIo interface
+  @param[in]  Handle      Parent Handle.
+  @param[in]  DiskIo      Parent DiskIo interface.
+  @param[in]  DiskIo2     Parent DiskIo2 interface.
+  @param[in]  BlockIo     Parent BlockIo interface.
+  @param[in]  BlockIo2    Parent BlockIo2 interface.
   @param[in]  DevicePath  Parent Device Path
 
 
@@ -71,17 +73,11 @@ PartitionInstallElToritoChildHandles (
   UINT32                  SectorCount;
   EFI_STATUS              Found;
   UINT32                  VolSpaceSize;
-  EFI_DISK_IO2_TOKEN      DiskIo2Token;
 
   Found         = EFI_NOT_FOUND;
-  VolSpaceSize  = 0;
+  Media         = BlockIo->Media;
 
-  if (BlockIo2 != NULL)
-  {
-    Media         = BlockIo2->Media;
-  } else {
-    Media         = BlockIo->Media;
-  }
+  VolSpaceSize  = 0;
 
   //
   // CD_ROM has the fixed block size as 2048 bytes
@@ -120,17 +116,6 @@ PartitionInstallElToritoChildHandles (
       break;
     }
 
-    if (DiskIo2 != NULL)
-    {
-      Status = DiskIo2->ReadDiskEx (
-                       DiskIo2,
-                       Media->MediaId,
-                       MultU64x32 (VolDescriptorLba, Media->BlockSize),
-                       &DiskIo2Token,
-                       Media->BlockSize,
-                       VolDescriptor
-                       );
-    } else {
       Status = DiskIo->ReadDisk (
                        DiskIo,
                        Media->MediaId,
@@ -138,8 +123,6 @@ PartitionInstallElToritoChildHandles (
                        Media->BlockSize,
                        VolDescriptor
                        );
-    }
-
     if (EFI_ERROR (Status)) {
       Found = Status;
       break;
@@ -179,17 +162,6 @@ PartitionInstallElToritoChildHandles (
       continue;
     }
 
-    if (DiskIo2 != NULL)
-    {
-      Status = DiskIo2->ReadDiskEx (
-                       DiskIo2,
-                       Media->MediaId,
-                       MultU64x32 (Lba, Media->BlockSize),
-                       &DiskIo2Token,
-                       Media->BlockSize,
-                       Catalog
-                       );
-    } else {
       Status = DiskIo->ReadDisk (
                        DiskIo,
                        Media->MediaId,
@@ -197,8 +169,6 @@ PartitionInstallElToritoChildHandles (
                        Media->BlockSize,
                        Catalog
                        );
-    }
-
     if (EFI_ERROR (Status)) {
       DBG ("EltCheckDevice: error reading catalog %r\n", Status);
       continue;
