@@ -14,7 +14,7 @@
 #include "sse3_patcher.h"
 #include "sse3_5_patcher.h"
 
-#define KERNEL_DEBUG 1
+#define KERNEL_DEBUG 0
 
 #if KERNEL_DEBUG
 #define DBG(...)    AsciiPrint(__VA_ARGS__);
