@@ -73,8 +73,8 @@
   PeCoffLib|Clover/Library/VBoxPeCoffLib/VBoxPeCoffLib.inf
   CacheMaintenanceLib|MdePkg/Library/BaseCacheMaintenanceLib/BaseCacheMaintenanceLib.inf
   UefiDecompressLib|MdePkg/Library/BaseUefiDecompressLib/BaseUefiDecompressLib.inf
-  UefiHiiServicesLib|MdeModulePkg/Library/UefiHiiServicesLib/UefiHiiServicesLib.inf
-  #UefiHiiServicesLib|Clover/Library/UefiHiiServicesLib/UefiHiiServicesLib.inf
+  #UefiHiiServicesLib|MdeModulePkg/Library/UefiHiiServicesLib/UefiHiiServicesLib.inf
+  UefiHiiServicesLib|Clover/Library/UefiHiiServicesLib/UefiHiiServicesLib.inf
   HiiLib|MdeModulePkg/Library/UefiHiiLib/UefiHiiLib.inf
   #GenericBdsLib|IntelFrameworkModulePkg/Library/GenericBdsLib/GenericBdsLib.inf
   GenericBdsLib|Clover/Library/GenericBdsLib/GenericBdsLib.inf
@@ -347,6 +347,8 @@
 #
 ################################################################################
 [Components]
+  OvmfPkg/ResetVector/ResetVector.inf
+
   #
   # SEC Phase modules
   #
@@ -445,7 +447,12 @@
   MdeModulePkg/Universal/MonotonicCounterRuntimeDxe/MonotonicCounterRuntimeDxe.inf
   MdeModulePkg/Universal/CapsuleRuntimeDxe/CapsuleRuntimeDxe.inf
   MdeModulePkg/Universal/Console/ConPlatformDxe/ConPlatformDxe.inf
-  MdeModulePkg/Universal/Console/ConSplitterDxe/ConSplitterDxe.inf
+  MdeModulePkg/Universal/Console/ConSplitterDxe/ConSplitterDxe.inf {
+    <PcdsPatchableInModule>
+      gEfiMdeModulePkgTokenSpaceGuid.PcdConOutRow|0
+      gEfiMdeModulePkgTokenSpaceGuid.PcdConOutColumn|0
+  }
+  #Clover/ConSplitterDxe/ConSplitterDxe.inf
   MdeModulePkg/Universal/Console/GraphicsConsoleDxe/GraphicsConsoleDxe.inf {
     <LibraryClasses>
       PcdLib|MdePkg/Library/DxePcdLib/DxePcdLib.inf

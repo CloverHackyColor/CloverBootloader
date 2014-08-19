@@ -65,7 +65,8 @@ case `uname` in
         exit 1
       else
 #        TARGET_TOOLS=XCODE32
-        TARGET_TOOLS=GCC47
+        TARGET_TOOLS=GCC49
+#		TARGET_TOOLS=XCLANG
       fi
       ;;
   Linux*)
