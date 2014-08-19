@@ -1398,10 +1398,7 @@ OhciSyncInterruptTransfer (
              NULL,
              NULL
              );
-  if ( UCBuffer ) {
-      gBS->FreePool (UCBuffer);
-  }
-  
+  gBS->FreePool (UCBuffer);  
   return Status;
 }
 /**

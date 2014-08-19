@@ -106,6 +106,9 @@ Returns:
 
   Size              = SIZE_OF_EFI_FILE_SYSTEM_INFO;
   Status            = FatGetVolumeEntry (Volume, Name);
+  if (EFI_ERROR(Status)) {
+    return Status;
+  }
   NameSize          = StrSize (Name);
   ResultSize        = Size + NameSize;
   ClusterAlignment  = Volume->ClusterAlignment;
@@ -170,6 +173,10 @@ Returns:
 
   Size        = SIZE_OF_EFI_FILE_SYSTEM_VOLUME_LABEL;
   Status      = FatGetVolumeEntry (Volume, Name);
+  if (EFI_ERROR(Status)) {
+    return Status;
+  }
+
   NameSize    = StrSize (Name);
   ResultSize  = Size + NameSize;
 

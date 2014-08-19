@@ -22,14 +22,17 @@
 # module statements.
 #
 ################################################################################
-
-!if ($(ARCH) == "X64")
+[Defines]
+!if ("$(ARCH)" == X64)
 
 [FV.DuetEfiMainFvX64]
 
-!elseif ($(ARCH) == "IA32")
+!elseif ("$(ARCH)" == "IA32")
 
 [FV.DuetEfiMainFvIA32]
+
+!else 
+[FV.DuetEfiMainFvX64]
 
 !endif
 

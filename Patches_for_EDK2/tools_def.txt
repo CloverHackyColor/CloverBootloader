@@ -5399,3 +5399,11 @@ RELEASE_ARMLINUXGCC_ARM_CC_FLAGS = $(ARCHCC_FLAGS) $(PLATFORM_FLAGS) DEF(GCC_ARM
 ##################
 *_*_*_VPDTOOL_PATH         = BPDG
 *_*_*_VPDTOOL_GUID         = 8C3D856A-9BE6-468E-850A-24F7A8D38E08
+
+##################
+# NASM tool definitions
+##################
+*_*_*_NASM_PATH                = ENV(NASM_PREFIX)nasm
+# NASMB uses NASM produce a .bin from a .nasmb NASM source file
+*_*_*_NASMB_FLAGS              = -f bin
+

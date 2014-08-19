@@ -2653,7 +2653,9 @@ BdsExpandPartitionPartialDevicePathToFull (
                         );
       }
 
-      FreePool (Instance);
+	  if (Instance) {  
+        FreePool (Instance);
+      }
       FreePool (CachedDevicePath);
       return FullDevicePath;
     }

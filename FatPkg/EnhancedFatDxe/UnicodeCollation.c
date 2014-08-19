@@ -125,8 +125,6 @@ InitializeUnicodeCollationSupport (
 
   EFI_STATUS       Status;
 
-  Status = EFI_UNSUPPORTED;
-
   //
   // First try to use RFC 4646 Unicode Collation 2 Protocol.
   //
