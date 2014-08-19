@@ -1698,7 +1698,7 @@ ShellFindFilePath (
     Walker = (CHAR16*)Path;
     do {
       CopyMem(TestPath, Walker, StrSize(Walker));
-      if (TestPath != NULL) {
+ //     if (TestPath != NULL) {
         TempChar = StrStr(TestPath, L";");
         if (TempChar != NULL) {
           *TempChar = CHAR_NULL;
@@ -1726,7 +1726,7 @@ ShellFindFilePath (
             ShellCloseFile(&Handle);
           }
         }
-      }
+//      }
     } while (Walker != NULL && Walker[0] != CHAR_NULL);
     FreePool(TestPath);
   }
@@ -2718,7 +2718,7 @@ InternalShellPrintWorker(
     return (EFI_OUT_OF_RESOURCES);
   }
 
-  Status            = EFI_SUCCESS;
+//  Status            = EFI_SUCCESS;
   OriginalAttribute = gST->ConOut->Mode->Attribute;
 
   //

@@ -230,7 +230,7 @@ FatReadDisk (
   UINT64      OverRunLba;
   UINTN       Amount;
 
-  Status    = EFI_SUCCESS;
+//  Status    = EFI_SUCCESS;
   BufferPtr = Buffer;
   BlockSize = PrivateData->BlockDevice[BlockDeviceNo].BlockSize;
 

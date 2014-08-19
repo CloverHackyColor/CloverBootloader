@@ -1244,7 +1244,7 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
             ((Entry->KernelAndKextPatches->NrKexts > 0) &&
              (Entry->KernelAndKextPatches->KextPatches != NULL)));
   DBG_RT(Entry, "\nKernelCpu patch: ");
-  if ((Entry != NULL) && Entry->KernelAndKextPatches->KPKernelCpu) {    
+  if (Entry->KernelAndKextPatches->KPKernelCpu) {    
     //
     // Kernel patches
     //

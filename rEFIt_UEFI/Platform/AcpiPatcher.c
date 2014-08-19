@@ -974,13 +974,13 @@ EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* GetFadt()
   EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER  *RsdPtr;
   EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE     *FadtPointer = NULL;	
 
-  EFI_STATUS      Status;
+//  EFI_STATUS      Status;
   
   RsdPtr = FindAcpiRsdPtr();
 	if (RsdPtr == NULL) {
-    Status = EfiGetSystemConfigurationTable (&gEfiAcpi20TableGuid, (VOID **)&RsdPtr);
+    /*Status = */EfiGetSystemConfigurationTable (&gEfiAcpi20TableGuid, (VOID **)&RsdPtr);
     if (RsdPtr == NULL) {
-      Status = EfiGetSystemConfigurationTable (&gEfiAcpi10TableGuid, (VOID **)&RsdPtr);
+      /*Status = */EfiGetSystemConfigurationTable (&gEfiAcpi10TableGuid, (VOID **)&RsdPtr);
       if (RsdPtr == NULL) {
         return NULL;
       }

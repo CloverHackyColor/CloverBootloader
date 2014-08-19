@@ -124,7 +124,7 @@ GetNameFromHandle (
                     (VOID **) &Image
                     );
   }
-  if (Image != NULL) {
+  if (!EFI_ERROR(Status) && Image != NULL) {
     PdbFileName = PeCoffLoaderGetPdbPointer (Image->ImageBase);
   }
 

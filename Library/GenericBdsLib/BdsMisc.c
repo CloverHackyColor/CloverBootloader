@@ -703,6 +703,7 @@ BdsLibVariableToOption (
   Option->DevicePath  = AllocateZeroPool (GetDevicePathSize (DevicePath));
 //  ASSERT(Option->DevicePath != NULL);
   if (!Option->DevicePath) {
+    FreePool (Option);
     return NULL;
   }
   CopyMem (Option->DevicePath, DevicePath, GetDevicePathSize (DevicePath));
@@ -711,6 +712,7 @@ BdsLibVariableToOption (
   Option->Description = AllocateZeroPool (StrSize (Description));
 //  ASSERT(Option->Description != NULL);
   if (!Option->Description) {
+    FreePool (Option);
     return NULL;
   }
   CopyMem (Option->Description, Description, StrSize (Description));
@@ -718,6 +720,7 @@ BdsLibVariableToOption (
   Option->LoadOptions = AllocateZeroPool (LoadOptionsSize);
 //  ASSERT(Option->LoadOptions != NULL);
   if (!Option->LoadOptions) {
+    FreePool (Option);
     return NULL;
   }
   CopyMem (Option->LoadOptions, LoadOptions, LoadOptionsSize);
@@ -1162,6 +1165,7 @@ SetupResetReminder (
       StringBuffer2 = AllocateZeroPool (MAX_STRING_LEN * sizeof (CHAR16));
  //     ASSERT (StringBuffer2 != NULL);
       if (!StringBuffer2) {
+        FreePool (StringBuffer1);
         return;
       }
       StrCpy (StringBuffer1, L"Configuration changed. Reset to apply it Now.");

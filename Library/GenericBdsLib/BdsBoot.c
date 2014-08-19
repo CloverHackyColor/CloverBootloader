@@ -1713,7 +1713,7 @@ BdsLibDoLegacyBoot (
     //
     // Create an event to be signalled when Legacy Boot occurs to write performance data.
     //
-    Status = EfiCreateEventLegacyBootEx(
+   /* Status = */EfiCreateEventLegacyBootEx(
                TPL_NOTIFY,
                WriteBootToOsPerformanceData,
                NULL, 
@@ -2613,6 +2613,7 @@ BdsExpandPartitionPartialDevicePathToFull (
       //
       NeedAdjust = TRUE;
       FreePool(Instance);
+      Instance = NULL;
     } while (TempNewDevicePath != NULL);
 
     if (DeviceExist) {
