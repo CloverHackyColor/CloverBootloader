@@ -78,7 +78,18 @@ CheckXCode () {
         echo "ERROR: Install Xcode Tools from Apple before using this script." >&2
         exit 1
     else
-        export SDK="`/usr/bin/xcodebuild -version -sdk macosx${OSXVER} Path 2>/dev/null`"
+        if [[ ${#OSXVER} -gt 4 ]]; then
+            # Use 10.9 SDK for now
+            export SDK="`/usr/bin/xcodebuild -version -sdk macosx10.9 Path 2>/dev/null`"
+            if [ -z "${SDK}" ]; then
+                # Insist on this SDK
+                echo "ERROR: Xcode application is not selected correctly." >&2
+                echo "Please run Xcode and select an available \"Command Line Tools\" from Xcode->Preferences->Locations." >&2
+                exit 1
+            fi
+        else
+            export SDK="`/usr/bin/xcodebuild -version -sdk macosx${OSXVER} Path 2>/dev/null`"
+        fi
         [ -z "${SDK}" ] && export SDK="/"
         if [ ! -d "${SDK}/usr/include" ]; then
             echo "ERROR: Cannot find Xcode SDK." >&2
@@ -390,12 +401,62 @@ CompileBinutils () {
 }
 
 
+GCC_patch () {
+read -r -d '' diffvar <<"EOF"
+--- gcc/config/darwin-c.c
++++ gcc/config/darwin-c.c
+@@ -577,16 +577,24 @@ find_subframework_header (cpp_reader *pf
+ static const char *
+ version_as_macro (void)
+ {
+-  static char result[] = "1000";
++  static char result[] = "10000";
+ 
+   if (strncmp (darwin_macosx_version_min, "10.", 3) != 0)
+     goto fail;
+   if (! ISDIGIT (darwin_macosx_version_min[3]))
+     goto fail;
+   result[2] = darwin_macosx_version_min[3];
+-  if (darwin_macosx_version_min[4] != '\0'
+-      && darwin_macosx_version_min[4] != '.')
++  if (darwin_macosx_version_min[3] != '1') {
++    if (darwin_macosx_version_min[4] != '\0'
++        && darwin_macosx_version_min[4] != '.')
++      goto fail;
++    result[4] = '\0';
++  } else {
++    if (darwin_macosx_version_min[5] != '\0'
++        && darwin_macosx_version_min[5] != '.')
+     goto fail;
++    result[3] = darwin_macosx_version_min[4];
++  }
+ 
+   return result;
+ 
+--- gcc/config/darwin-driver.c
++++ gcc/config/darwin-driver.c
+@@ -57,7 +57,7 @@ darwin_find_version_from_kernel (char *n
+   version_p = osversion + 1;
+   if (ISDIGIT (*version_p))
+     major_vers = major_vers * 10 + (*version_p++ - '0');
+-  if (major_vers > 4 + 9)
++  if (major_vers > 4 + 10)
+     goto parse_failed;
+   if (*version_p++ != '.')
+     goto parse_failed;
+EOF
+echo "${diffvar}" | patch -Np0 > /dev/null
+}
+
+
 GCC_native () {
     if [[ ! -x "$PREFIX"/bin/gcc ]]; then
         # Mount RamDisk
         mountRamDisk
 
         local GCC_DIR=$(ExtractTarball "gcc-${GCC_VERSION}.tar.bz2") || exit 1
+        cd ${GCC_DIR}
+        GCC_patch
 
         local BUILD_DIR="${DIR_BUILD}/$ARCH-gcc-native"
         rm -rf "$BUILD_DIR"
@@ -479,6 +540,8 @@ CompileCrossGCC () {
 
     # Extract the tarball
     local GCC_DIR=$(ExtractTarball "gcc-${GCC_VERSION}.tar.bz2")
+    cd ${GCC_DIR}
+    GCC_patch
 
     local BUILD_DIR="${DIR_BUILD}/$ARCH-gcc-cross"
     rm -rf "$BUILD_DIR"
