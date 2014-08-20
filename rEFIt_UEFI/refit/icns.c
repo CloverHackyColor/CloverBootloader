@@ -125,15 +125,15 @@ EG_IMAGE * BuiltinIcon(IN UINTN Id)
       } else if (Id == BUILTIN_ICON_VOL_EXTERNAL) {
         BuiltinIconTable[Id].Image = egDecodePNG(&emb_vol_internal[0], sizeof(emb_vol_internal), 32, TRUE);
       } else if (Id == BUILTIN_ICON_VOL_BOOTER) {
-        BuiltinIconTable[Id].Image = egDecodePNG(&emb_vol_internal[0], sizeof(emb_vol_internal), 32, TRUE);
+        BuiltinIconTable[Id].Image = egDecodePNG(&emb_vol_internal_booter[0], sizeof(emb_vol_internal_booter), 32, TRUE);
       } else if (Id == BUILTIN_ICON_VOL_INTERNAL_HFS) {
-        BuiltinIconTable[Id].Image = egDecodePNG(&emb_vol_internal[0], sizeof(emb_vol_internal), 32, TRUE);
+        BuiltinIconTable[Id].Image = egDecodePNG(&emb_vol_internal_hfs[0], sizeof(emb_vol_internal_hfs), 32, TRUE);
       } else if (Id == BUILTIN_ICON_VOL_INTERNAL_NTFS) {
-        BuiltinIconTable[Id].Image = egDecodePNG(&emb_vol_internal[0], sizeof(emb_vol_internal), 32, TRUE);
+        BuiltinIconTable[Id].Image = egDecodePNG(&emb_vol_internal_ntfs[0], sizeof(emb_vol_internal_ntfs), 32, TRUE);
       } else if (Id == BUILTIN_ICON_VOL_INTERNAL_EXT3) {
-        BuiltinIconTable[Id].Image = egDecodePNG(&emb_vol_internal[0], sizeof(emb_vol_internal), 32, TRUE);
+        BuiltinIconTable[Id].Image = egDecodePNG(&emb_vol_internal_ext[0], sizeof(emb_vol_internal_ext), 32, TRUE);
       } else if (Id == BUILTIN_ICON_VOL_INTERNAL_REC) {
-        BuiltinIconTable[Id].Image = egDecodePNG(&emb_vol_internal[0], sizeof(emb_vol_internal), 32, TRUE);
+        BuiltinIconTable[Id].Image = egDecodePNG(&emb_vol_internal_recovery[0], sizeof(emb_vol_internal_recovery), 32, TRUE);
       } else if (Id == BUILTIN_ICON_BANNER) {
         BuiltinIconTable[Id].Image = egDecodePNG(&emb_logo[0], sizeof(emb_logo), 32, TRUE);
       } else if (Id == BUILTIN_SELECTION_SMALL) {
