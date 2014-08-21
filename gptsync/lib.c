@@ -90,7 +90,9 @@ MBR_PARTTYPE    mbr_types[] = {
     { 0, NULL },
 };
 
+#ifdef _MSC_VER
 #pragma warning(disable : 4295)
+#endif
 
 GPT_PARTTYPE    gpt_types[] = {
     // Defined by EFI/UEFI specification
@@ -153,7 +155,9 @@ GPT_PARTTYPE    gpt_types[] = {
     { { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }, 0, NULL, 0 },
 };
 
+#ifdef _MSC_VER
 #pragma warning(default : 4295)
+#endif
 
 GPT_PARTTYPE gpt_dummy_type = { { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }, 0, STR("Unknown"), GPT_KIND_FATAL };
 
