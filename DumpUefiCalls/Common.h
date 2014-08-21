@@ -15,7 +15,7 @@
 // 1 - will enable log output to screen
 // 0 - will disable log output to screen
 //
-#define LOG_TO_SCREEN			1
+#define LOG_TO_SCREEN			0
 
 //
 // LOG_TO_SERIAL:
@@ -84,7 +84,7 @@
 //        usefull only when printing to serial in VBox for example
 // 0 - will stop printing when ExitBootServices() are called
 //
-#define WORK_DURING_RUNTIME		1
+#define WORK_DURING_RUNTIME		0
 
 //
 // PRINT_DUMPS:
@@ -99,7 +99,7 @@
 // 1 - will print shell vars in PrintRTVariables(), takes place only if above is enabled
 // 0 - will skip shell vars
 //
-#define PRINT_SHELL_VARS		1
+#define PRINT_SHELL_VARS		0
 
 //
 // PRINT_MEMORY_MAP:
@@ -135,7 +135,7 @@
 // 1 - will prevent printing CalculateCrc32() and GetVariable("EfiTime",...), as they are called very often on some firmwares
 // 0 - will allow printing the above
 //
-#define CLEANER_LOG			0
+#define CLEANER_LOG			1
 
 // 
 // BOOT_LOADERS

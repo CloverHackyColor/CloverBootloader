@@ -316,6 +316,54 @@ ExecSetVirtualAddressesToMemMap(
 }
 
 
+/** Protect RT data from relocation by marking them MemMapIO. Except area with EFI system table.
+ *  This one must be relocated into kernel boot image or kernel will crash (kernel accesses it
+ *  before RT areas are mapped into vm).
+ *  This fixes NVRAM issues on some boards where access to nvram after boot services is possible
+ *  only in SMM mode. RT driver passes data to SM handler through previously negotiated buffer
+ *  and this buffer must not be relocated.
+ *  Explained and examined in detail by CodeRush and night199uk:
+ *  http://www.projectosx.com/forum/index.php?showtopic=3298
+ *
+ *  It seems this does not do any harm to others where this is not needed,
+ *  so it's added as standard fix for all.
+ */
+VOID
+ProtectRtDataFromRelocation(
+				   IN UINTN			MemoryMapSize,
+				   IN UINTN			DescriptorSize,
+				   IN UINT32		DescriptorVersion,
+				   IN EFI_MEMORY_DESCRIPTOR	*MemoryMap,
+				   IN OUT UINT32	*EfiSystemTable
+				   )
+{
+	UINTN					NumEntries;
+	UINTN					Index;
+	EFI_MEMORY_DESCRIPTOR	*Desc;
+	UINTN					BlockSize;
+	
+	Desc = MemoryMap;
+	NumEntries = MemoryMapSize / DescriptorSize;
+	DBG("FixNvramRelocation\n");
+	DBGnvr("FixNvramRelocation\n");
+	
+	for (Index = 0; Index < NumEntries; Index++) {
+		BlockSize = EFI_PAGES_TO_SIZE((UINTN)Desc->NumberOfPages);
+		
+		if ((Desc->Attribute & EFI_MEMORY_RUNTIME) != 0) {
+			if (Desc->Type == EfiRuntimeServicesData
+				&& (Desc->PhysicalStart > *EfiSystemTable ||  *EfiSystemTable >= (Desc->PhysicalStart + BlockSize)))
+			{
+				DBG(" RT data %lx (0x%x) -> MemMapIO\n", Desc->PhysicalStart, Desc->NumberOfPages);
+				Desc->Type = EfiMemoryMappedIO;
+			}
+		}
+		
+		Desc = NEXT_MEMORY_DESCRIPTOR(Desc, DescriptorSize);
+	}
+}
+
+
 /** Assignes OSX virtual addresses to runtime areas in memory map. */
 VOID
 AssignVirtualAddressesToMemMap(
@@ -450,6 +498,9 @@ RuntimeServicesFix(BootArgs *BA)
 	*BA->efiRuntimeServicesVirtualPageStart = 0x000ffffff8000000 + *BA->efiRuntimeServicesPageStart;
 	DBG("RuntimeServicesFix: efiRSPageStart=%x, efiRSPageCount=%x, efiRSVirtualPageStart=%lx\n",
 		*BA->efiRuntimeServicesPageStart, *BA->efiRuntimeServicesPageCount, *BA->efiRuntimeServicesVirtualPageStart);
+	
+	// Protect RT data areas from relocation by marking then MemMapIO
+	ProtectRtDataFromRelocation(MemoryMapSize, DescriptorSize, DescriptorVersion, MemoryMap, BA->efiSystemTable);
 	
 	// assign virtual addresses
 	AssignVirtualAddressesToMemMap(MemoryMapSize, DescriptorSize, DescriptorVersion, MemoryMap, EFI_PAGES_TO_SIZE(*BA->efiRuntimeServicesPageStart));
