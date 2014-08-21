@@ -192,7 +192,7 @@ static UINTN analyze_part(UINT64 partlba)
         if (mbr_parts[i].start_lba == partlba) {
             Print(L" Listed in MBR as partition %d, type %02x  %s%s\n", i+1,
                   mbr_parts[i].mbr_type,
-                  mbr_parttype_name(mbr_parts[i].mbr_type),
+                  mbr_parttype_name((UINT8)mbr_parts[i].mbr_type),
                   mbr_parts[i].active ? STR(", active") : STR(""));
         }
     }

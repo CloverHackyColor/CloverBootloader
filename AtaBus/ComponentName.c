@@ -187,7 +187,7 @@ AtaBusComponentNameGetControllerName (
   EFI_STATUS                Status;
   EFI_BLOCK_IO_PROTOCOL     *BlockIo;
   EFI_BLOCK_IO2_PROTOCOL    *BlockIo2;
-  ATA_DEVICE                *AtaDevice;
+  ATA_DEVICE                *AtaDevice = NULL;
   EFI_UNICODE_STRING_TABLE  *ControllerNameTable;
 
   //
@@ -227,8 +227,7 @@ AtaBusComponentNameGetControllerName (
     {
       AtaDevice = ATA_DEVICE_FROM_BLOCK_IO2 (BlockIo2);
     }
-
-    if (EFI_ERROR(Status))
+    else
     {
       BlockIo2 = NULL;
       Status = gBS->OpenProtocol (

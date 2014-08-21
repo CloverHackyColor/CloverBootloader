@@ -120,7 +120,7 @@ static UINTN write_mbr(VOID)
             table[i].start_chs[0] = 0xfe;
             table[i].start_chs[1] = 0xff;
             table[i].start_chs[2] = 0xff;
-            table[i].type         = new_mbr_parts[k].mbr_type;
+            table[i].type         = (UINT8)new_mbr_parts[k].mbr_type;
             table[i].end_chs[0]   = 0xfe;
             table[i].end_chs[1]   = 0xff;
             table[i].end_chs[2]   = 0xff;
@@ -451,7 +451,7 @@ static UINTN analyze(VOID)
               new_mbr_parts[i].start_lba,
               new_mbr_parts[i].end_lba,
               new_mbr_parts[i].mbr_type,
-              mbr_parttype_name(new_mbr_parts[i].mbr_type));
+              mbr_parttype_name((UINT8)new_mbr_parts[i].mbr_type));
     }
     
     return 0;

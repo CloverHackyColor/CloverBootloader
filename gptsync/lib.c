@@ -90,6 +90,8 @@ MBR_PARTTYPE    mbr_types[] = {
     { 0, NULL },
 };
 
+#pragma warning(disable : 4295)
+
 GPT_PARTTYPE    gpt_types[] = {
     // Defined by EFI/UEFI specification
     { "\x28\x73\x2A\xC1\x1F\xF8\xD2\x11\xBA\x4B\x00\xA0\xC9\x3E\xC9\x3B", 0xef, STR("EFI System (FAT)"), GPT_KIND_SYSTEM },
@@ -150,6 +152,8 @@ GPT_PARTTYPE    gpt_types[] = {
     // List sentinel
     { { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }, 0, NULL, 0 },
 };
+
+#pragma warning(default : 4295)
 
 GPT_PARTTYPE gpt_dummy_type = { { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }, 0, STR("Unknown"), GPT_KIND_FATAL };
 
@@ -234,7 +238,7 @@ UINTN read_mbr(VOID)
               mbr_parts[mbr_part_count].start_lba,
               mbr_parts[mbr_part_count].end_lba,
               mbr_parts[mbr_part_count].mbr_type,
-              mbr_parttype_name(mbr_parts[mbr_part_count].mbr_type));
+              mbr_parttype_name((UINT8)mbr_parts[mbr_part_count].mbr_type));
         
         mbr_part_count++;
     }

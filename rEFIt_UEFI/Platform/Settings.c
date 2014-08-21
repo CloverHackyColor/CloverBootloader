@@ -1588,6 +1588,31 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
       DBG("Custom boot %s (0x%X)\n", CustomBootModeToStr(gSettings.CustomBoot), gSettings.CustomLogo);
     }
 
+    //*** SYSTEM ***
+    
+    dictPointer = GetProperty(dict, "SystemParameters");
+    if (dictPointer) {
+      // Inject kexts
+      prop = GetProperty(dictPointer, "InjectKexts");
+      if(prop) {
+        if (IsPropertyTrue(prop)) {
+          gSettings.WithKexts = TRUE;
+        } else if ((prop->type == kTagTypeString) &&
+                   (AsciiStrStr(prop->string, "Detect") != NULL)) {
+          gSettings.WithKexts = TRUE;
+          gSettings.WithKextsIfNoFakeSMC = TRUE;
+        }
+      }
+      
+      // No caches
+      prop = GetProperty(dictPointer, "NoCaches");
+      if(prop) {
+        if (IsPropertyTrue(prop)) {
+          gSettings.NoCaches = TRUE;
+        }
+      }
+    }
+
     // KernelAndKextPatches
     dictPointer = GetProperty(dict, "KernelAndKextPatches");
     if (dictPointer) {
@@ -2819,32 +2844,6 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
   if(dict != NULL) {
     
     DBG("Loading main settings\n");
-    
-    //*** SYSTEM ***
-    
-    dictPointer = GetProperty(dict, "SystemParameters");
-    if (dictPointer) {
-      // Inject kexts
-      prop = GetProperty(dictPointer, "InjectKexts");
-      if(prop) {
-        if (IsPropertyTrue(prop)) {
-          gSettings.WithKexts = TRUE;
-        } else if ((prop->type == kTagTypeString) &&
-                   (AsciiStrStr(prop->string, "Detect") != NULL)) {
-          gSettings.WithKexts = TRUE;
-          gSettings.WithKextsIfNoFakeSMC = TRUE;
-        }
-      }
-      
-      // No caches
-      prop = GetProperty(dictPointer, "NoCaches");
-      if(prop) {
-        if (IsPropertyTrue(prop)) {
-          gSettings.NoCaches = TRUE;
-        }
-      }
-    }
-    
     
     //Graphics
     
