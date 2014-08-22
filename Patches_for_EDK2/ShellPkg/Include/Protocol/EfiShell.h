@@ -1,7 +1,8 @@
 /** @file
   EFI Shell protocol as defined in the UEFI Shell 2.0 specification including errata.
 
-  Copyright (c) 2006 - 2010, Intel Corporation. All rights reserved.<BR>
+  (C) Copyright 2014, Hewlett-Packard Development Company, L.P.
+  Copyright (c) 2006 - 2014, Intel Corporation. All rights reserved.<BR>
   This program and the accompanying materials
   are licensed and made available under the terms and conditions of the BSD License
   which accompanies this distribution.  The full text of the license may be found at
@@ -414,6 +415,35 @@ CONST CHAR16 *
   );
 
 /**
+  Gets the environment variable and Attributes, or list of environment variables.  Can be 
+  used instead of GetEnv().
+
+  This function returns the current value of the specified environment variable and
+  the Attributes. If no variable name was specified, then all of the known
+  variables will be returned.
+
+  @param[in] Name               A pointer to the environment variable name. If Name is NULL,
+                                then the function will return all of the defined shell 
+                                environment variables. In the case where multiple environment
+                                variables are being returned, each variable will be terminated 
+                                by a NULL, and the list will be terminated by a double NULL.
+  @param[out] Attributes        If not NULL, a pointer to the returned attributes bitmask for
+                                the environment variable. In the case where Name is NULL, and
+                                multiple environment variables are being returned, Attributes
+                                is undefined.
+
+  @retval NULL                  The environment variable doesn't exist.  
+  @return                       The environment variable's value. The returned pointer does not 
+                                need to be freed by the caller.  
+**/
+typedef
+CONST CHAR16 *
+(EFIAPI *EFI_SHELL_GET_ENV_EX) (
+  IN  CONST CHAR16 *Name,
+  OUT       UINT32 *Attributes OPTIONAL
+  );
+
+/**
   Gets the file information from an open file handle.
 
   This function allocates a buffer to store the file's information. It's the caller's
@@ -484,6 +514,54 @@ EFI_STATUS
 (EFIAPI *EFI_SHELL_GET_FILE_SIZE)(
   IN SHELL_FILE_HANDLE FileHandle,
   OUT UINT64 *Size
+  );
+
+/**
+  Get the GUID value from a human readable name.
+
+  If GuidName is a known GUID name, then update Guid to have the correct value for
+  that GUID.
+
+  This function is only available when the major and minor versions in the
+  EfiShellProtocol are greater than or equal to 2 and 1, respectively.
+
+  @param[in]  GuidName   A pointer to the localized name for the GUID being queried.
+  @param[out] Guid       A pointer to the GUID structure to be filled in.
+
+  @retval EFI_SUCCESS             The operation was successful.
+  @retval EFI_INVALID_PARAMETER   Guid was NULL.
+  @retval EFI_INVALID_PARAMETER   GuidName was NULL.
+  @retval EFI_NOT_FOUND           GuidName is not a known GUID Name.
+**/
+typedef
+EFI_STATUS
+(EFIAPI *EFI_SHELL_GET_GUID_FROM_NAME)(
+  IN  CONST CHAR16   *GuidName,
+  OUT       EFI_GUID *Guid
+  );
+
+/**
+  Get the human readable name for a GUID from the value.
+
+  If Guid is assigned a name, then update *GuidName to point to the name. The callee
+  should not modify the value.
+
+  This function is only available when the major and minor versions in the
+  EfiShellProtocol are greater than or equal to 2 and 1, respectively.
+
+  @param[in]  Guid       A pointer to the GUID being queried.
+  @param[out] GuidName   A pointer to a pointer the localized to name for the GUID being requested
+
+  @retval EFI_SUCCESS             The operation was successful.
+  @retval EFI_INVALID_PARAMETER   Guid was NULL.
+  @retval EFI_INVALID_PARAMETER   GuidName was NULL.
+  @retval EFI_NOT_FOUND           Guid is not assigned a name.
+**/
+typedef
+EFI_STATUS
+(EFIAPI *EFI_SHELL_GET_GUID_NAME)(
+  IN  CONST EFI_GUID *Guid,
+  OUT CONST CHAR16   **GuidName
   );
 
 /**
@@ -729,6 +807,30 @@ EFI_STATUS
   );
 
 /**
+  Register a GUID and a localized human readable name for it.
+
+  If Guid is not assigned a name, then assign GuidName to Guid.  This list of GUID
+  names must be used whenever a shell command outputs GUID information.
+
+  This function is only available when the major and minor versions in the
+  EfiShellProtocol are greater than or equal to 2 and 1, respectively.
+
+  @param[in] Guid       A pointer to the GUID being registered.
+  @param[in] GuidName   A pointer to the localized name for the GUID being registered.
+
+  @retval EFI_SUCCESS             The operation was successful.
+  @retval EFI_INVALID_PARAMETER   Guid was NULL.
+  @retval EFI_INVALID_PARAMETER   GuidName was NULL.
+  @retval EFI_ACCESS_DENIED       Guid already is assigned a name.
+**/
+typedef
+EFI_STATUS
+(EFIAPI *EFI_SHELL_REGISTER_GUID_NAME)(
+  IN CONST EFI_GUID *Guid,
+  IN CONST CHAR16   *GuidName
+  );
+
+/**
   Deletes the duplicate file names files in the given file list.
 
   @param[in] FileList           A pointer to the first entry in the file list.
@@ -950,6 +1052,30 @@ EFI_STATUS
   IN VOID                       *Buffer
   );
 
+//
+// EFI_SHELL_PROTOCOL has been updated since UEFI Shell Spec 2.0
+// Usage of this protocol will require version checking before attempting
+// to use any new members.  There is no need to check the version for
+// members that existed in UEFI Shell Spec 2.0.
+//
+// Update below for any future UEFI Shell spec changes to this protocol.
+//
+// Check EFI_SHELL_PROTOCOL MajorVersion and MinorVersion:
+// if ((2 == gEfiShellProtocol->MajorVersion) &&
+//     (0 == gEfiShellProtocol->MinorVersion)) {
+//   //
+//   // Cannot call:
+//   // RegisterGuidName - UEFI Shell 2.1
+//   // GetGuidName      - UEFI Shell 2.1
+//   // GetGuidFromName  - UEFI Shell 2.1
+//   // GetEnvEx         - UEFI Shell 2.1
+//   //
+// } else {
+//   //
+//   // Can use all members
+//   //
+// }
+//
 typedef struct _EFI_SHELL_PROTOCOL {
   EFI_SHELL_EXECUTE                         Execute;
   EFI_SHELL_GET_ENV                         GetEnv;
@@ -993,6 +1119,11 @@ typedef struct _EFI_SHELL_PROTOCOL {
   EFI_EVENT                                 ExecutionBreak;
   UINT32                                    MajorVersion;
   UINT32                                    MinorVersion;
+  // Added for Shell 2.1
+  EFI_SHELL_REGISTER_GUID_NAME              RegisterGuidName;
+  EFI_SHELL_GET_GUID_NAME                   GetGuidName;
+  EFI_SHELL_GET_GUID_FROM_NAME              GetGuidFromName;
+  EFI_SHELL_GET_ENV_EX                      GetEnvEx;
 } EFI_SHELL_PROTOCOL;
 
 extern EFI_GUID gEfiShellProtocolGuid;

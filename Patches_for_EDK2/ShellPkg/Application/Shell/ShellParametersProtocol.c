@@ -2,6 +2,7 @@
   Member functions of EFI_SHELL_PARAMETERS_PROTOCOL and functions for creation,
   manipulation, and initialization of EFI_SHELL_PARAMETERS_PROTOCOL.
 
+  Copyright (C) 2014, Red Hat, Inc.
   Copyright (c) 2013 Hewlett-Packard Development Company, L.P.
   Copyright (c) 2009 - 2014, Intel Corporation. All rights reserved.<BR>
   This program and the accompanying materials
@@ -87,7 +88,11 @@ GetNextParameter(
       StrCpy(*TempParameter, L"");
       *Walker = NextDelim + 1;
     } else if (NextDelim != NULL) {
-      StrnCpy(*TempParameter, (*Walker)+1, NextDelim - ((*Walker)+1));
+
+      //
+      // Copy ensuring that both quotes are left in place.
+      //
+      StrnCpy(*TempParameter, (*Walker), NextDelim - *Walker + 1);
       *Walker = NextDelim + 1;
     } else {
       //
@@ -612,6 +617,36 @@ RemoveFileTag(
 }
 
 /**
+  Write the unicode file tag to the specified file.
+
+  It is the caller's responsibility to ensure that
+  ShellInfoObject.NewEfiShellProtocol has been initialized before calling this
+  function.
+
+  @param[in] FileHandle  The file to write the unicode file tag to.
+
+  @return  Status code from ShellInfoObject.NewEfiShellProtocol->WriteFile.
+**/
+STATIC
+EFI_STATUS
+WriteFileTag (
+  IN SHELL_FILE_HANDLE FileHandle
+  )
+{
+  CHAR16     FileTag;
+  UINTN      Size;
+  EFI_STATUS Status;
+
+  FileTag = gUnicodeFileTag;
+  Size = sizeof FileTag;
+  Status = ShellInfoObject.NewEfiShellProtocol->WriteFile (FileHandle, &Size,
+                                                  &FileTag);
+  ASSERT (EFI_ERROR (Status) || Size == sizeof FileTag);
+  return Status;
+}
+
+
+/**
   Funcion will replace the current StdIn and StdOut in the ShellParameters protocol
   structure by parsing NewCommandLine.  The current values are returned to the
   user.
@@ -656,7 +691,7 @@ UpdateStdInStdOutStdErr(
   BOOLEAN           OutAppend;
   BOOLEAN           ErrAppend;
   UINTN             Size;
-  CHAR16            TagBuffer[2];
+//  CHAR16            TagBuffer[2];
   SPLIT_LIST        *Split;
   CHAR16            *FirstLocation;
 
@@ -1068,13 +1103,7 @@ UpdateStdInStdOutStdErr(
         }
         Status = ShellOpenFileByName(StdErrFileName, &TempHandle, EFI_FILE_MODE_WRITE|EFI_FILE_MODE_READ|EFI_FILE_MODE_CREATE,0);
         if (!ErrAppend && ErrUnicode && !EFI_ERROR(Status)) {
-          //
-          // Write out the gUnicodeFileTag
-          //
-          Size = sizeof(CHAR16);
-          TagBuffer[0] = gUnicodeFileTag;
-          TagBuffer[1] = CHAR_NULL;
-          ShellInfoObject.NewEfiShellProtocol->WriteFile(TempHandle, &Size, TagBuffer);
+          Status = WriteFileTag (TempHandle);
         }
         if (!ErrUnicode && !EFI_ERROR(Status)) {
           TempHandle = CreateFileInterfaceFile(TempHandle, FALSE);
@@ -1106,20 +1135,23 @@ UpdateStdInStdOutStdErr(
           if (StrStr(StdOutFileName, L"NUL")==StdOutFileName) {
             //no-op
           } else if (!OutAppend && OutUnicode && !EFI_ERROR(Status)) {
-            //
-            // Write out the gUnicodeFileTag
-            //
-            Size = sizeof(CHAR16);
-            TagBuffer[0] = gUnicodeFileTag;
-            TagBuffer[1] = CHAR_NULL;
-            ShellInfoObject.NewEfiShellProtocol->WriteFile(TempHandle, &Size, TagBuffer);
+            Status = WriteFileTag (TempHandle);
           } else if (OutAppend) {
             //
             // Move to end of file
             //
             Status = ShellInfoObject.NewEfiShellProtocol->GetFileSize(TempHandle, &FileSize);
             if (!EFI_ERROR(Status)) {
-              Status = ShellInfoObject.NewEfiShellProtocol->SetFilePosition(TempHandle, FileSize);
+              //
+              // When appending to a new unicode file, write the file tag.
+              // Otherwise (ie. when appending to a new ASCII file, or an
+              // existent file with any encoding), just seek to the end.
+              //
+              Status = (FileSize == 0 && OutUnicode) ?
+                         WriteFileTag (TempHandle) :
+                         ShellInfoObject.NewEfiShellProtocol->SetFilePosition (
+                                                                TempHandle,
+                                                                FileSize);
             }
           }
           if (!OutUnicode && !EFI_ERROR(Status)) {
