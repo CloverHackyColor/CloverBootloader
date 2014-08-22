@@ -825,7 +825,11 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
         ((StrStr(Entry->LoadOptions, L"-v") != NULL) ||
          (StrStr(Entry->LoadOptions, L"-V") != NULL))) {
       Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_USEGRAPHICS);
-    }
+        } else if (!Entry->LoadOptions) {
+          CHAR16 *TempOptions = AddLoadOption(Entry->LoadOptions, L" ");
+          FreePool(Entry->LoadOptions);
+          Entry->LoadOptions = TempOptions;
+        }
   }
   else if (OSTYPE_IS_WINDOWS(Entry->LoaderType)) {
     

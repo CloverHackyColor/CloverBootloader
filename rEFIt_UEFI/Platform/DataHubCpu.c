@@ -149,8 +149,8 @@ EFI_STATUS SetVariablesForOSX()
   
   if (gSettings.RtROM == NULL) {
     // we can try to set it to MAC address from SMBIOS UUID - some boards have it there
-    gSettings.RtROMLen = 6;
-    gSettings.RtROM = AllocateCopyPool(gSettings.RtROMLen, ((UINT8*)&gSettings.SmUUID) + 10);
+    gSettings.RtROMLen = 8;
+    gSettings.RtROM = AllocateCopyPool(gSettings.RtROMLen, ((UINT8*)&gSettings.SmUUID) + 8);
   }
   
   //
@@ -180,7 +180,7 @@ EFI_STATUS SetVariablesForOSX()
                             /*	EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                             sizeof(EFI_GUID), &gUuid);
 
-// reserved for a future
+// reserved for a future. Should be tested on Yosemite
 /*  Status = gRS->SetVariable(L"HW_BID", &gEfiAppleNvramGuid,
                             EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                             AsciiStrLen(gSettings.BoardNumber), gSettings.BoardNumber);

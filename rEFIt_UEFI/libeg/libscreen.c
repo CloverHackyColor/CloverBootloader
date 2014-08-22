@@ -208,7 +208,7 @@ EFI_STATUS egSetMaxResolution()
       BestMode = Mode;
     }
   }
-  MsgLog("found best mode %d: %dx%d", BestMode, Width, Height);
+  MsgLog("found best mode %d: %dx%d\n", BestMode, Width, Height);
   // check if requested mode is equal to current mode
   if (BestMode == GraphicsOutput->Mode->Mode) {
     MsgLog(" - already set\n");
@@ -223,7 +223,7 @@ EFI_STATUS egSetMaxResolution()
       egScreenHeight = Height;
       MsgLog(" - set\n", Status);
     } else {
-      // we can not set BestMode - search for firts one that we can
+      // we can not set BestMode - search for first one that we can
       MsgLog(" - %r\n", Status);
       Status = egSetMode(1);
     }

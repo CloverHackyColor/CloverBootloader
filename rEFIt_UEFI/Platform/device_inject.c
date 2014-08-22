@@ -473,6 +473,15 @@ BOOLEAN set_usb_props(pci_dt_t *usb_dev)
       break;
     case PCI_IF_XHCI:
       devprop_add_value(device, "device_type", (UINT8*)"XHCI", 4);
+      if (gSettings.HighCurrent) {
+        devprop_add_value(device, "AAPL,current-available", (UINT8*)&current_available_high, 2);
+        devprop_add_value(device, "AAPL,current-extra",     (UINT8*)&current_extra_high, 2);
+      } else {
+        devprop_add_value(device, "AAPL,current-available", (UINT8*)&current_available, 2);
+        devprop_add_value(device, "AAPL,current-extra",     (UINT8*)&current_extra, 2);
+      }
+      devprop_add_value(device, "AAPL,current-in-sleep",  (UINT8*)&current_in_sleep, 2);
+
       break;
     default:
       break;
