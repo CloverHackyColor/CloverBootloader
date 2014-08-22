@@ -805,6 +805,16 @@ AhciPioTransfer (
           break;
         }
 
+        Offset = EFI_AHCI_PORT_START + Port * EFI_AHCI_PORT_REG_WIDTH + EFI_AHCI_PORT_TFD;
+        PortTfd = AhciReadReg (PciIo, (UINT32) Offset);
+        //
+        // PxTFD will be updated if there is a D2H or SetupFIS received. 
+        //
+        if ((PortTfd & EFI_AHCI_PORT_TFD_ERR) != 0) {
+          Status = EFI_DEVICE_ERROR;
+          break;
+        }
+
         PrdCount = *(volatile UINT32 *) (&(AhciRegisters->AhciCmdList[0].AhciCmdPrdbc));
         if (PrdCount == DataCount) {
           break;
