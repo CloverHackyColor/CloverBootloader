@@ -52,6 +52,7 @@ EFI_MEMORY_DESCRIPTOR gVirtualMemoryMap[64];
 UINTN gVirtualMapSize = 0;
 UINTN gVirtualMapDescriptorSize = 0;
 
+EFI_PHYSICAL_ADDRESS	gSysTableRtArea;
 
 void PrintSample2(unsigned char *sample, int size) {
 	int i;
@@ -125,6 +126,17 @@ PrepareJumpFromKernel(VOID)
 	
 	DBGnvr("PrepareJumpFromKernel(): MyAsmCopyAndJumpToKernel relocated from %p, to %x, size = %x\n",
 		&MyAsmCopyAndJumpToKernel, HigherMem, Size);
+	
+	
+	// Allocate 1 RT data page for copy of EFI system table for kernel
+	gSysTableRtArea = 0x100000000;
+	Status = AllocatePagesFromTop(EfiRuntimeServicesData, 1, &gSysTableRtArea);
+	if (Status != EFI_SUCCESS) {
+		Print(L"OsxAptioFixDrv: PrepareJumpFromKernel(): can not allocate mem for RT area for EFI system table: %r\n",
+			  1, Status);
+		return Status;
+	}
+	DBG("gSysTableRtArea = %lx\n", gSysTableRtArea);
 	
 	return Status;
 }
@@ -316,6 +328,24 @@ ExecSetVirtualAddressesToMemMap(
 }
 
 
+VOID
+CopyEfiSysTableToSeparateRtDataArea(
+									IN OUT UINT32	*EfiSystemTable
+									)
+{
+	EFI_SYSTEM_TABLE		*Src;
+	EFI_SYSTEM_TABLE		*Dest;
+	
+	Src = (EFI_SYSTEM_TABLE*)(UINTN)*EfiSystemTable;
+	Dest = (EFI_SYSTEM_TABLE*)(UINTN)gSysTableRtArea;
+	
+	DBG("-Copy %p <- %p, size=0x%lx\n", Dest, Src, Src->Hdr.HeaderSize);
+	CopyMem(Dest, Src, Src->Hdr.HeaderSize);
+	
+	*EfiSystemTable = (UINT32)(UINTN)Dest;
+}
+
+
 /** Protect RT data from relocation by marking them MemMapIO. Except area with EFI system table.
  *  This one must be relocated into kernel boot image or kernel will crash (kernel accesses it
  *  before RT areas are mapped into vm).
@@ -351,8 +381,7 @@ ProtectRtDataFromRelocation(
 		BlockSize = EFI_PAGES_TO_SIZE((UINTN)Desc->NumberOfPages);
 		
 		if ((Desc->Attribute & EFI_MEMORY_RUNTIME) != 0) {
-			if (Desc->Type == EfiRuntimeServicesData
-				&& (Desc->PhysicalStart > *EfiSystemTable ||  *EfiSystemTable >= (Desc->PhysicalStart + BlockSize)))
+			if (Desc->Type == EfiRuntimeServicesData && Desc->PhysicalStart != gSysTableRtArea)
 			{
 				DBG(" RT data %lx (0x%x) -> MemMapIO\n", Desc->PhysicalStart, Desc->NumberOfPages);
 				Desc->Type = EfiMemoryMappedIO;
@@ -515,6 +544,8 @@ RuntimeServicesFix(BootArgs *BA)
 	if (EFI_ERROR (Status)) {
 		CpuDeadLoop();
 	}
+	
+	CopyEfiSysTableToSeparateRtDataArea(BA->efiSystemTable);
 	
 	//PrintSystemTable(gST);
 	

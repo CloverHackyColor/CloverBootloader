@@ -760,6 +760,8 @@ radeon_card_info_t radeon_cards[] = {
 	{ 0x6850,	0x00000000, CHIP_FAMILY_TURKS,	"AMD Radeon HD 7600M Series",	kPondweed   },
 	{ 0x6858,	0x00000000, CHIP_FAMILY_TURKS,	"AMD Radeon HD 7400 Series",	kPondweed   },
 	{ 0x6859,	0x00000000, CHIP_FAMILY_TURKS,	"AMD Radeon HD 7600M Series",	kPondweed   },
+//new series
+  { 0x665D,	0x00000000, CHIP_FAMILY_PITCAIRN,	"AMD Radeon R9 260",	kFutomaki		},
 
 	{ 0x0000,	0x00000000, CHIP_FAMILY_UNKNOW,	"AMD Unknown",			kNull		}
 };
