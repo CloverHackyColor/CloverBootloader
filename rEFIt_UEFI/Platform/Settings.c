@@ -952,7 +952,7 @@ static BOOLEAN FillinCustomEntry(IN OUT CUSTOM_LOADER_ENTRY *Entry, TagPtr dictP
        if (IsPropertyTrue(prop)) {
          Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_WITHKEXTS);
        } else if ((prop->type == kTagTypeString) &&
-                  (AsciiStrStr(prop->string, "Detect") != NULL)) {
+                  (AsciiStriCmp(prop->string, "Detect") == 0)) {
          Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_CHECKFAKESMC);
          Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_WITHKEXTS);
        } else {
@@ -1601,7 +1601,7 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
         if (IsPropertyTrue(prop)) {
           gSettings.WithKexts = TRUE;
         } else if ((prop->type == kTagTypeString) &&
-                   (AsciiStrStr(prop->string, "Detect") != NULL)) {
+                   (AsciiStriCmp(prop->string, "Detect") == 0)) {
           gSettings.WithKexts = TRUE;
           gSettings.WithKextsIfNoFakeSMC = TRUE;
         }
