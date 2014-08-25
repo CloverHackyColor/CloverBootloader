@@ -936,49 +936,59 @@ static BOOLEAN FillinCustomEntry(IN OUT CUSTOM_LOADER_ENTRY *Entry, TagPtr dictP
 
   // OS Specific flags
   if (OSTYPE_IS_OSX(Entry->Type) || OSTYPE_IS_OSX_RECOVERY(Entry->Type) || OSTYPE_IS_OSX_INSTALLER(Entry->Type)) {
-     if (gSettings.WithKexts) {
-       Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_WITHKEXTS);
-     }
-     if (gSettings.WithKextsIfNoFakeSMC) {
-       Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_CHECKFAKESMC);
-       Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_WITHKEXTS);
-     }
-     if (gSettings.NoCaches) {
-       Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_NOCACHES);
-     }
-     Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_WITHKEXTS);
-     prop = GetProperty(dictPointer, "InjectKexts");
-     if (prop) {
-       if (IsPropertyTrue(prop)) {
-         Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_WITHKEXTS);
-       } else if ((prop->type == kTagTypeString) &&
-                  (AsciiStriCmp(prop->string, "Detect") == 0)) {
-         Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_CHECKFAKESMC);
-         Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_WITHKEXTS);
-       } else {
-         Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_WITHKEXTS);
-       }
-     }
-     prop = GetProperty(dictPointer, "NoCaches");
-     if (prop) {
-       if (IsPropertyTrue(prop)) {
-         Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_NOCACHES);
-       } else {
-         Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_NOCACHES);
-       }
-     }
-     // KernelAndKextPatches
-     DBG("Copying global patch settings\n");
-     CopyKernelAndKextPatches((KERNEL_AND_KEXT_PATCHES *)(((UINTN)Entry) + OFFSET_OF(CUSTOM_LOADER_ENTRY, KernelAndKextPatches)),
-                              (KERNEL_AND_KEXT_PATCHES *)(((UINTN)&gSettings) + OFFSET_OF(SETTINGS_DATA, KernelAndKextPatches)));
-     DumpKernelAndKextPatches((KERNEL_AND_KEXT_PATCHES *)(((UINTN)Entry) + OFFSET_OF(CUSTOM_LOADER_ENTRY, KernelAndKextPatches)));
-     prop = GetProperty(dictPointer, "KernelAndKextPatches");
-     if (prop) {
-       FillinKextPatches((KERNEL_AND_KEXT_PATCHES *)(((UINTN)Entry) + OFFSET_OF(CUSTOM_LOADER_ENTRY, KernelAndKextPatches)), prop);
-       DBG("Filled in patch settings\n");
-       DumpKernelAndKextPatches((KERNEL_AND_KEXT_PATCHES *)(((UINTN)Entry) + OFFSET_OF(CUSTOM_LOADER_ENTRY, KernelAndKextPatches)));
-     }
+
+    // InjectKexts default values
+    Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_CHECKFAKESMC);
+    Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_WITHKEXTS);
+
+    prop = GetProperty(dictPointer, "InjectKexts");
+    if (prop) {
+      if (IsPropertyTrue(prop)) {
+        Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_WITHKEXTS);
+      } else if ((prop->type == kTagTypeString) &&
+                 (AsciiStriCmp(prop->string, "Detect") == 0)) {
+        Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_CHECKFAKESMC);
+        Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_WITHKEXTS);
+      }
+    } else {
+      // Use global settings
+      if (gSettings.WithKexts) {
+        Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_WITHKEXTS);
+      }
+      if (gSettings.WithKextsIfNoFakeSMC) {
+        Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_CHECKFAKESMC);
+        Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_WITHKEXTS);
+      }
+    }
+
+    // NoCaches default value
+    Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_NOCACHES);
+
+    prop = GetProperty(dictPointer, "NoCaches");
+    if (prop) {
+      if (IsPropertyTrue(prop)) {
+        Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_NOCACHES);
+      } else {
+        // Use global settings
+        if (gSettings.NoCaches) {
+          Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_NOCACHES);
+        }
+      }
+    }
+
+    // KernelAndKextPatches
+    DBG("Copying global patch settings\n");
+    CopyKernelAndKextPatches((KERNEL_AND_KEXT_PATCHES *)(((UINTN)Entry) + OFFSET_OF(CUSTOM_LOADER_ENTRY, KernelAndKextPatches)),
+                             (KERNEL_AND_KEXT_PATCHES *)(((UINTN)&gSettings) + OFFSET_OF(SETTINGS_DATA, KernelAndKextPatches)));
+    DumpKernelAndKextPatches((KERNEL_AND_KEXT_PATCHES *)(((UINTN)Entry) + OFFSET_OF(CUSTOM_LOADER_ENTRY, KernelAndKextPatches)));
+    prop = GetProperty(dictPointer, "KernelAndKextPatches");
+    if (prop) {
+      FillinKextPatches((KERNEL_AND_KEXT_PATCHES *)(((UINTN)Entry) + OFFSET_OF(CUSTOM_LOADER_ENTRY, KernelAndKextPatches)), prop);
+      DBG("Filled in patch settings\n");
+      DumpKernelAndKextPatches((KERNEL_AND_KEXT_PATCHES *)(((UINTN)Entry) + OFFSET_OF(CUSTOM_LOADER_ENTRY, KernelAndKextPatches)));
+    }
   }
+
   if (Entry->Type == OSTYPE_LINEFI) {
     prop = GetProperty(dictPointer, "Kernel");
     if (prop) {
