@@ -1343,10 +1343,10 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
   // Kext patches
   //
   
-  // we need to scan kexts if "InjectKexts if no FakeSMC"
+  // we need to scan kexts if "InjectKexts true and CheckFakeSMC"
   if (OSFLAG_ISSET(Entry->Flags, OSFLAG_WITHKEXTS) &&
       OSFLAG_ISSET(Entry->Flags, OSFLAG_CHECKFAKESMC)) {
-    DBG_RT(Entry, "\nInjectKexts if no FakeSMC specified - we need kext patching to search for FakeSMC\n");
+    DBG_RT(Entry, "\nAllowing kext patching to check if FakeSMC is present\n");
     gSettings.KextPatchesAllowed = TRUE;
     Needed = TRUE;
   }
@@ -1384,7 +1384,7 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
     // disable kext injection if FakeSMC is already present
     Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_WITHKEXTS);
     if (Entry->KernelAndKextPatches->KPDebug) {
-      DBG_RT(Entry, "\nInjectKexts if no FakeSMC is requested and FakeSMC is found - disabling kext injection\n");
+      DBG_RT(Entry, "\nInjectKexts: disabled because FakeSMC is already present and InjectKexts option set to Detect\n");
       gBS->Stall(5000000);
     }
   }
@@ -1424,5 +1424,5 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
     
     if (!EFI_ERROR(Status)) KernelBooterExtensionsPatch(KernelData, Entry);
   }
-  
+
 }
