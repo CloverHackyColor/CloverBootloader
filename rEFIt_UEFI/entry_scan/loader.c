@@ -366,158 +366,73 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
     Custom = gSettings.CustomEntries;
     while (Custom) {
       // Check if the custom entry is hidden or disabled
-      if (OSFLAG_ISSET(Custom->Flags, OSFLAG_DISABLED) ||
-          (OSFLAG_ISSET(Custom->Flags, OSFLAG_HIDDEN) && !gSettings.ShowHiddenEntries)) {
-        // Check if there needs to be a volume match
+      if ((OSFLAG_ISSET(Custom->Flags, OSFLAG_DISABLED) ||
+           (OSFLAG_ISSET(Custom->Flags, OSFLAG_HIDDEN) && !gSettings.ShowHiddenEntries))) {
+
+        INTN volume_match=0;
+        INTN volume_type_match=0;
+        INTN path_match=0;
+        INTN type_match=0;
+
+        // Check if volume match
         if (Custom->Volume != NULL) {
           // Check if the string matches the volume
-          if ((StrStr(Volume->DevicePathString, Custom->Volume) != NULL) ||
-              ((Volume->VolName != NULL) && (StrStr(Volume->VolName, Custom->Volume) != NULL))) {
-            if (Custom->VolumeType != 0) {
-              if (((Volume->DiskKind == DISK_KIND_INTERNAL) && (Custom->VolumeType & VOLTYPE_INTERNAL)) ||
-                  ((Volume->DiskKind == DISK_KIND_EXTERNAL) && (Custom->VolumeType & VOLTYPE_EXTERNAL)) ||
-                  ((Volume->DiskKind == DISK_KIND_OPTICAL) && (Custom->VolumeType & VOLTYPE_OPTICAL)) ||
-                  ((Volume->DiskKind == DISK_KIND_FIREWIRE) && (Custom->VolumeType & VOLTYPE_FIREWIRE))) {
-                if (Custom->Path != NULL) {
-                  // Try to match the loader paths and types
-                  if (StriCmp(Custom->Path, LoaderPath) == 0) {
-                    if (Custom->Type != 0) {
-                      if (OSTYPE_COMPARE(Custom->Type, OSType)) {
-                        DBG("skipped path `%s` because it is a volume, volumetype, path and type match for custom entry %d!\n", LoaderDevicePathString, CustomIndex);
-                        FreePool(LoaderDevicePathString);
-                        return NULL;
-                      } else {
-                        DBG("partial volume, volumetype, and path match for path `%s` and custom entry %d, type did not match\n", LoaderDevicePathString, CustomIndex);
-                      }
-                    } else {
-                      DBG("skipped path `%s` because it is a volume, volumetype and path match for custom entry %d!\n", LoaderDevicePathString, CustomIndex);
-                      FreePool(LoaderDevicePathString);
-                      return NULL;
-                    }
-                  } else {
-                    DBG("partial volume, and volumetype match for path `%s` and custom entry %d, path did not match\n", LoaderDevicePathString, CustomIndex);
-                  }
-                } else if (Custom->Type != 0) {
-                  if (OSTYPE_COMPARE(Custom->Type, OSType)) {
-                    // Only match the loader type
-                    DBG("skipped path `%s` because it is a volume, volumetype and type match for custom entry %d!\n", LoaderDevicePathString, CustomIndex);
-                    FreePool(LoaderDevicePathString);
-                    return NULL;
-                  } else {
-                    DBG("partial volume, and volumetype match for path `%s` and custom entry %d, type did not match\n", LoaderDevicePathString, CustomIndex);
-                  }
-                } else {
-                  DBG("skipped path `%s` because it is a volume and volumetype match for custom entry %d!\n", LoaderDevicePathString, CustomIndex);
-                  FreePool(LoaderDevicePathString);
-                  return NULL;
-                }
-              } else {
-                DBG("partial volume match for path `%s` and custom entry %d, volumetype did not match\n", LoaderDevicePathString, CustomIndex);
-              }
-            } if (Custom->Path != NULL) {
-              // Check if there needs to be a path match also
-              if (StriCmp(Custom->Path, LoaderPath) == 0) {
-                if (Custom->Type != 0) {
-                  if (OSTYPE_COMPARE(Custom->Type, OSType)) {
-                    DBG("skipped path `%s` because it is a volume, path and type match for custom entry %d!\n", LoaderDevicePathString, CustomIndex);
-                    FreePool(LoaderDevicePathString);
-                    return NULL;
-                  } else {
-                    DBG("partial volume, and path match for path `%s` and custom entry %d, type did not match\n", LoaderDevicePathString, CustomIndex);
-                  }
-                } else {
-                  DBG("skipped path `%s` because it is a volume and path match for custom entry %d!\n", LoaderDevicePathString, CustomIndex);
-                  FreePool(LoaderDevicePathString);
-                  return NULL;
-                }
-              } else {
-                DBG("partial volume match for path `%s` and custom entry %d, path did not match\n", LoaderDevicePathString, CustomIndex);
-              }
-            } else if (Custom->Type != 0) {
-              if (OSTYPE_COMPARE(Custom->Type, OSType)) {
-                DBG("skipped path `%s` because it is a volume and type match for custom entry %d!\n", LoaderDevicePathString, CustomIndex);
-                FreePool(LoaderDevicePathString);
-                return NULL;
-              } else {
-                DBG("partial volume match for path `%s` and custom entry %d, type did not match\n", LoaderDevicePathString, CustomIndex);
-              }
-            } else {
-              DBG("skipped path `%s` because it is a volume match for custom entry %d!\n", LoaderDevicePathString, CustomIndex);
-              FreePool(LoaderDevicePathString);
-              return NULL;
-            }
-          } else {
-            DBG("volume did not match for path `%s` and custom entry %d\n", LoaderDevicePathString, CustomIndex);
+          volume_match =
+            ((StrStr(Volume->DevicePathString, Custom->Volume) != NULL) ||
+             ((Volume->VolName != NULL) && (StrStr(Volume->VolName, Custom->Volume) != NULL))) ? 1 : -1;
+        }
+
+        // Check if the volume_type match
+        if (Custom->VolumeType != 0) {
+          volume_type_match =
+            (((Volume->DiskKind == DISK_KIND_INTERNAL) && (Custom->VolumeType & VOLTYPE_INTERNAL)) ||
+             ((Volume->DiskKind == DISK_KIND_EXTERNAL) && (Custom->VolumeType & VOLTYPE_EXTERNAL)) ||
+             ((Volume->DiskKind == DISK_KIND_OPTICAL)  && (Custom->VolumeType & VOLTYPE_OPTICAL))  ||
+             ((Volume->DiskKind == DISK_KIND_FIREWIRE) && (Custom->VolumeType & VOLTYPE_FIREWIRE))) ? 1 : -1;
+        }
+
+        // Check if the path match
+        if (Custom->Path != NULL) {
+          // Check if the loader path match
+          path_match = (StriCmp(Custom->Path, LoaderPath) == 0) ? 1 : -1;
+        }
+
+        // Check if the type match
+        if (Custom->Type != 0) {
+          type_match = OSTYPE_COMPARE(Custom->Type, OSType) ? 1 : -1;
+        }
+
+        if (volume_match == -1 || volume_type_match == -1 || path_match == -1 || type_match == -1 ) {
+          UINTN add_comma = 0;
+
+          DBG ("\t  Not match custom entry %d: ", CustomIndex);
+          if (volume_match != 0) {
+            DBG("Volume: %s", volume_match == 1 ? L"match" : L"not match");
+            add_comma++;
           }
-        } else if (Custom->VolumeType != 0) {
-          if (((Volume->DiskKind == DISK_KIND_INTERNAL) && (Custom->VolumeType & VOLTYPE_INTERNAL)) ||
-              ((Volume->DiskKind == DISK_KIND_EXTERNAL) && (Custom->VolumeType & VOLTYPE_EXTERNAL)) ||
-              ((Volume->DiskKind == DISK_KIND_OPTICAL) && (Custom->VolumeType & VOLTYPE_OPTICAL)) ||
-              ((Volume->DiskKind == DISK_KIND_FIREWIRE) && (Custom->VolumeType & VOLTYPE_FIREWIRE))) {
-            if (Custom->Path != NULL) {
-              // Try to match the loader paths and types
-              if (StriCmp(Custom->Path, LoaderPath) == 0) {
-                if (Custom->Type != 0) {
-                  if (OSTYPE_COMPARE(Custom->Type, OSType)) {
-                    DBG("skipped path `%s` because it is a volumetype, path and type match for custom entry %d!\n", LoaderDevicePathString, CustomIndex);
-                    FreePool(LoaderDevicePathString);
-                    return NULL;
-                  } else {
-                    DBG("partial volumetype, and path match for path `%s` and custom entry %d, type did not match\n", LoaderDevicePathString, CustomIndex);
-                  }
-                } else {
-                  DBG("skipped path `%s` because it is a volumetype and path match for custom entry %d!\n", LoaderDevicePathString, CustomIndex);
-                  FreePool(LoaderDevicePathString);
-                  return NULL;
-                }
-              } else {
-                DBG("partial volumetype match for path `%s` and custom entry %d, path did not match\n", LoaderDevicePathString, CustomIndex);
-              }
-            } else if (Custom->Type != 0) {
-              if (OSTYPE_COMPARE(Custom->Type, OSType)) {
-                // Only match the loader type
-                DBG("skipped path `%s` because it is a volumetype and type match for custom entry %d!\n", LoaderDevicePathString, CustomIndex);
-                FreePool(LoaderDevicePathString);
-                return NULL;
-              } else {
-                DBG("partial volumetype match for path `%s` and custom entry %d, type did not match\n", LoaderDevicePathString, CustomIndex);
-              }
-            } else {
-              DBG("skipped path `%s` because it is a volumetype match for custom entry %d!\n", LoaderDevicePathString, CustomIndex);
-              FreePool(LoaderDevicePathString);
-              return NULL;
-            }
-          } else {
-            DBG("did not match volumetype for path `%s` and custom entry %d\n", LoaderDevicePathString, CustomIndex);
+          if (path_match != 0) {
+            DBG("%sPath: %s",
+                (add_comma ? L", " : L""),
+                path_match == 1 ? L"match" : L"not match");
+            add_comma++;
           }
-        } else if (Custom->Path != NULL) {
-          // Try to match the loader paths and types
-          if (StriCmp(Custom->Path, LoaderPath) == 0) {
-            if (Custom->Type != 0) {
-              if (OSTYPE_COMPARE(Custom->Type, OSType)) {
-                DBG("skipped path `%s` because it is a path and type match for custom entry %d!\n", LoaderDevicePathString, CustomIndex);
-                FreePool(LoaderDevicePathString);
-                return NULL;
-              } else {
-                DBG("partial path match for path `%s` and custom entry %d, type did not match\n", LoaderDevicePathString, CustomIndex);
-              }
-            } else {
-              DBG("skipped path `%s` because it is a path match for custom entry %d!\n", LoaderDevicePathString, CustomIndex);
-              FreePool(LoaderDevicePathString);
-              return NULL;
-            }
-          } else {
-            DBG("did not match path for path `%s` and custom entry %d\n", LoaderDevicePathString, CustomIndex);
+          if (volume_type_match != 0) {
+            DBG("%sVolumeType: %s",
+                (add_comma ? L", " : L""),
+                volume_type_match == 1 ? L"match" : L"not match");
+            add_comma++;
           }
-        } else if (Custom->Type != 0) {
-          if (OSTYPE_COMPARE(Custom->Type, OSType)) {
-            // Only match the loader type
-            DBG("skipped path `%s` because it is a type match for custom entry %d!\n", LoaderDevicePathString, CustomIndex);
-            FreePool(LoaderDevicePathString);
-            return NULL;
-          } else {
-            DBG("did not match type for path `%s` and custom entry %d!\n", LoaderDevicePathString, CustomIndex);
+          if (type_match != 0) {
+            DBG("%sType: %s",
+                (add_comma ? L", " : L""),
+                type_match == 1 ? L"match" : L"not match");
           }
+          DBG("\n");
+        } else {
+          // Custom entry match
+          DBG("\t  Skipped because matching custom entry %d!\n", CustomIndex);
+          FreePool(LoaderDevicePathString);
+          return NULL;
         }
       }
       Custom = Custom->Next;
@@ -1338,10 +1253,17 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
   if (Custom == NULL) {
     return;
   }
+
   if (FindCustomPath && (Custom->Type != OSTYPE_LINEFI)) {
-    DBG("Custom %sentry %d skipped because it didn't have a path.\n", IsSubEntry ? L"sub " : L"", CustomIndex);
+    DBG("Custom %sentry %d skipped because it didn't have a ", IsSubEntry ? L"sub " : L"", CustomIndex);
+    if (Custom->Type == 0) {
+      DBG("Type.\n");
+    } else {
+      DBG("Path.\n");
+    }
     return;
   }
+
   if (OSFLAG_ISSET(Custom->Flags, OSFLAG_DISABLED)) {
     DBG("Custom %sentry %d skipped because it is disabled.\n", IsSubEntry ? L"sub " : L"", CustomIndex);
     return;
@@ -1350,23 +1272,27 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
     DBG("Custom %sentry %d skipped because it is hidden.\n", IsSubEntry ? L"sub " : L"", CustomIndex);
     return;
   }
-  if (Custom->Volume) {
-    if (Custom->Title) {
-      if (CustomPath) {
-        DBG("Custom %sentry %d \"%s\" \"%s\" \"%s\" (%d) 0x%X matching \"%s\" ...\n", IsSubEntry ? L"sub " : L"", CustomIndex, Custom->Title, CustomPath, ((Custom->Options != NULL) ? Custom->Options : L""), Custom->Type, Custom->Flags, Custom->Volume);
-      } else {
-        DBG("Custom %sentry %d \"%s\" \"%s\" (%d) 0x%X matching \"%s\" ...\n", IsSubEntry ? L"sub " : L"", CustomIndex, Custom->Title, ((Custom->Options != NULL) ? Custom->Options : L""), Custom->Type, Custom->Flags, Custom->Volume);
-      }
-    } else if (CustomPath) {
-      DBG("Custom %sentry %d \"%s\" \"%s\" (%d) 0x%X matching \"%s\" ...\n", IsSubEntry ? L"sub " : L"", CustomIndex, CustomPath, ((Custom->Options != NULL) ? Custom->Options : L""), Custom->Type, Custom->Flags, Custom->Volume);
-    } else {
-      DBG("Custom %sentry %d \"%s\" (%d) 0x%X matching \"%s\" ...\n", IsSubEntry ? L"sub " : L"", CustomIndex, ((Custom->Options != NULL) ? Custom->Options : L""), Custom->Type, Custom->Flags, Custom->Volume);
-    }
-  } else if (CustomPath) {
-    DBG("Custom %sentry %d \"%s\" \"%s\" (%d) 0x%X matching all volumes ...\n", IsSubEntry ? L"sub " : L"", CustomIndex, CustomPath, ((Custom->Options != NULL) ? Custom->Options : L""), Custom->Type, Custom->Flags);
-  } else {
-    DBG("Custom %sentry %d \"%s\" (%d) 0x%X matching all volumes ...\n", IsSubEntry ? L"sub " : L"", CustomIndex, ((Custom->Options != NULL) ? Custom->Options : L""), Custom->Type, Custom->Flags);
+
+  DBG("Custom %sentry %d ", IsSubEntry ? L"sub " : L"", CustomIndex);
+  if (Custom->Title) {
+    DBG("Title:\"%s\" ", Custom->Title);
   }
+  if (Custom->FullTitle) {
+    DBG("FullTitle:\"%s\" ", Custom->FullTitle);
+  }
+  if (CustomPath) {
+    DBG("Path:\"%s\" ", CustomPath);
+  }
+  if (Custom->Options != NULL) {
+    DBG("Options:\"%s\" ", Custom->Options);
+  }
+  DBG("Type:%d Flags:0x%X matching ", Custom->Type, Custom->Flags);
+  if (Custom->Volume) {
+    DBG("Volume:\"%s\"\n", Custom->Volume);
+  } else {
+    DBG("all volumes\n");
+  }
+
   for (VolumeIndex = 0; VolumeIndex < VolumesCount; ++VolumeIndex) {
     CUSTOM_LOADER_ENTRY *CustomSubEntry;
     LOADER_ENTRY        *Entry = NULL;
@@ -1385,7 +1311,7 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
     DBG("   Checking volume \"%s\" (%s) ... ", Volume->VolName, Volume->DevicePathString);
     
     // skip volume if its kind is configured as disabled
-    if ((Volume->DiskKind == DISK_KIND_OPTICAL && (GlobalConfig.DisableFlags & VOLTYPE_OPTICAL)) ||
+    if ((Volume->DiskKind == DISK_KIND_OPTICAL  && (GlobalConfig.DisableFlags & VOLTYPE_OPTICAL))  ||
         (Volume->DiskKind == DISK_KIND_EXTERNAL && (GlobalConfig.DisableFlags & VOLTYPE_EXTERNAL)) ||
         (Volume->DiskKind == DISK_KIND_INTERNAL && (GlobalConfig.DisableFlags & VOLTYPE_INTERNAL)) ||
         (Volume->DiskKind == DISK_KIND_FIREWIRE && (GlobalConfig.DisableFlags & VOLTYPE_FIREWIRE)))
@@ -1395,7 +1321,7 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
     }
     
     if (Custom->VolumeType != 0) {
-      if ((Volume->DiskKind == DISK_KIND_OPTICAL && ((Custom->VolumeType & VOLTYPE_OPTICAL) == 0)) ||
+      if ((Volume->DiskKind == DISK_KIND_OPTICAL  && ((Custom->VolumeType & VOLTYPE_OPTICAL) == 0))  ||
           (Volume->DiskKind == DISK_KIND_EXTERNAL && ((Custom->VolumeType & VOLTYPE_EXTERNAL) == 0)) ||
           (Volume->DiskKind == DISK_KIND_INTERNAL && ((Custom->VolumeType & VOLTYPE_INTERNAL) == 0)) ||
           (Volume->DiskKind == DISK_KIND_FIREWIRE && ((Custom->VolumeType & VOLTYPE_FIREWIRE) == 0))) {
@@ -1408,6 +1334,7 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
       DBG("skipped because volume is hidden\n");
       continue;
     }
+
     // Check for exact volume matches
     if (Custom->Volume) {
       
