@@ -649,7 +649,7 @@ static BOOLEAN FillinCustomEntry(IN OUT CUSTOM_LOADER_ENTRY *Entry, TagPtr dictP
   if ((Entry == NULL) || (dictPointer == NULL)) {
     return FALSE;
   }
-  prop = GetProperty(dictPointer, "Ignore");
+  prop = GetProperty(dictPointer, "Disabled");
   if (IsPropertyTrue(prop)) {
     return FALSE;
   }
@@ -833,22 +833,23 @@ static BOOLEAN FillinCustomEntry(IN OUT CUSTOM_LOADER_ENTRY *Entry, TagPtr dictP
     Entry->BootBgColor->b = (Color >> 8) & 0xFF;
     Entry->BootBgColor->a = (Color >> 0) & 0xFF;
   }
+
+  // Hidden Property, Values:
+  // - No (show the entry)
+  // - Yes (hide the entry but can be show with F3)
+  // - Always (always hide the entry)
   prop = GetProperty(dictPointer, "Hidden");
   if (prop) {
-    if (IsPropertyTrue(prop)) {
+    if ((prop->type == kTagTypeString) &&
+        (AsciiStriCmp(prop->string, "Always") == 0)) {
+      Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_DISABLED);
+    } else if (IsPropertyTrue(prop)) {
       Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_HIDDEN);
     } else {
       Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_HIDDEN);
     }
   }
-  prop = GetProperty(dictPointer, "Disabled");
-  if (prop) {
-    if (IsPropertyTrue(prop)) {
-      Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_DISABLED);
-    } else {
-      Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_DISABLED);
-    }
-  }
+
   prop = GetProperty(dictPointer, "Type");
   if (prop && (prop->type == kTagTypeString)) {
     if (AsciiStriCmp(prop->string, "OSX") == 0) {
@@ -1036,7 +1037,7 @@ static BOOLEAN FillinCustomLegacy(IN OUT CUSTOM_LEGACY_ENTRY *Entry, TagPtr dict
   if ((Entry == NULL) || (dictPointer == NULL)) {
     return FALSE;
   }
-  prop = GetProperty(dictPointer, "Ignore");
+  prop = GetProperty(dictPointer, "Disabled");
   if (IsPropertyTrue(prop)) {
     return FALSE;
   }
@@ -1135,22 +1136,23 @@ static BOOLEAN FillinCustomLegacy(IN OUT CUSTOM_LEGACY_ENTRY *Entry, TagPtr dict
   if (prop && (prop->type == kTagTypeString) && prop->string) {
     Entry->Hotkey = *(prop->string);
   }
+
+  // Hidden Property, Values:
+  // - No (show the entry)
+  // - Yes (hide the entry but can be show with F3)
+  // - Always (always hide the entry)
   prop = GetProperty(dictPointer, "Hidden");
   if (prop) {
-    if (IsPropertyTrue(prop)) {
+    if ((prop->type == kTagTypeString) &&
+        (AsciiStriCmp(prop->string, "Always") == 0)) {
+      Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_DISABLED);
+    } else if (IsPropertyTrue(prop)) {
       Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_HIDDEN);
     } else {
       Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_HIDDEN);
     }
   }
-  prop = GetProperty(dictPointer, "Disabled");
-  if (prop) {
-    if (IsPropertyTrue(prop)) {
-      Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_DISABLED);
-    } else {
-      Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_DISABLED);
-    }
-  }
+
   prop = GetProperty(dictPointer, "Type");
   if (prop && (prop->type == kTagTypeString)) {
     if (AsciiStriCmp(prop->string, "Windows") == 0) {
@@ -1207,7 +1209,7 @@ static BOOLEAN FillinCustomTool(IN OUT CUSTOM_TOOL_ENTRY *Entry, TagPtr dictPoin
   if ((Entry == NULL) || (dictPointer == NULL)) {
     return FALSE;
   }
-  prop = GetProperty(dictPointer, "Ignore");
+  prop = GetProperty(dictPointer, "Disabled");
   if (IsPropertyTrue(prop)) {
     return FALSE;
   }
@@ -1284,22 +1286,23 @@ static BOOLEAN FillinCustomTool(IN OUT CUSTOM_TOOL_ENTRY *Entry, TagPtr dictPoin
   if (prop && (prop->type == kTagTypeString) && prop->string) {
     Entry->Hotkey = *(prop->string);
   }
+
+  // Hidden Property, Values:
+  // - No (show the entry)
+  // - Yes (hide the entry but can be show with F3)
+  // - Always (always hide the entry)
   prop = GetProperty(dictPointer, "Hidden");
   if (prop) {
-    if (IsPropertyTrue(prop)) {
+    if ((prop->type == kTagTypeString) &&
+        (AsciiStriCmp(prop->string, "Always") == 0)) {
+      Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_DISABLED);
+    } else if (IsPropertyTrue(prop)) {
       Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_HIDDEN);
     } else {
       Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_HIDDEN);
     }
   }
-  prop = GetProperty(dictPointer, "Disabled");
-  if (prop) {
-    if (IsPropertyTrue(prop)) {
-      Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_DISABLED);
-    } else {
-      Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_DISABLED);
-    }
-  }
+
   prop = GetProperty(dictPointer, "VolumeType");
   if (prop && (prop->type == kTagTypeString)) {
     if (AsciiStriCmp(prop->string, "Internal") == 0) {
