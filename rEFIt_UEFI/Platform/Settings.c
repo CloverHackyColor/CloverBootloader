@@ -645,7 +645,7 @@ static BOOLEAN FillinKextPatches(IN OUT KERNEL_AND_KEXT_PATCHES *Patches, TagPtr
 static BOOLEAN FillinCustomEntry(IN OUT CUSTOM_LOADER_ENTRY *Entry, TagPtr dictPointer, IN BOOLEAN SubEntry)
 {
   TagPtr prop;
-  UINT8  OSType;
+
   if ((Entry == NULL) || (dictPointer == NULL)) {
     return FALSE;
   }
@@ -868,11 +868,7 @@ static BOOLEAN FillinCustomEntry(IN OUT CUSTOM_LOADER_ENTRY *Entry, TagPtr dictP
       Entry->Type = OSTYPE_OTHER;
     }
   }
-  // fix the type if it's forgotten or incorrect
-  OSType = GetOSTypeFromPath(Entry->Path);
-  if ((Entry->Type != OSType) && ((OSType != OSTYPE_OTHER) || (Entry->Type == 0))) {
-    Entry->Type = OSType;
-  }
+
   prop = GetProperty(dictPointer, "VolumeType");
   if (prop && (prop->type == kTagTypeString)) {
     if (AsciiStriCmp(prop->string, "Internal") == 0) {
