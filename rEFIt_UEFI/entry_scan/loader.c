@@ -47,6 +47,8 @@
 #define DBG(...) DebugLog(DEBUG_SCAN_LOADER, __VA_ARGS__)
 #endif
 
+//#define DUMP_KERNEL_KEXT_PATCHES 1
+
 #define MACOSX_LOADER_PATH L"\\System\\Library\\CoreServices\\boot.efi"
 
 #define LINUX_ISSUE_PATH L"\\etc\\issue"
@@ -301,7 +303,6 @@ STATIC EFI_STATUS GetOSXVolumeName(LOADER_ENTRY *Entry)
   return Status;
 }
 
-extern VOID DumpKernelAndKextPatches(KERNEL_AND_KEXT_PATCHES *Patches);
 extern BOOLEAN CopyKernelAndKextPatches(IN OUT KERNEL_AND_KEXT_PATCHES *Dst, IN KERNEL_AND_KEXT_PATCHES *Src);
 STATIC LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOptions, IN CHAR16 *FullTitle, IN CHAR16 *LoaderTitle, IN REFIT_VOLUME *Volume,
                                        IN EG_IMAGE *Image, IN EG_IMAGE *DriveImage, IN UINT8 OSType, IN UINT8 Flags, IN CHAR16 Hotkey, EG_PIXEL *BootBgColor,
@@ -315,6 +316,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
   CHAR16           ShortcutLetter;
   LOADER_ENTRY    *Entry;
   INTN             i;
+  CHAR8           *indent = "    ";
   
   // Check parameters are valid
   if ((LoaderPath == NULL) || (*LoaderPath == 0) || (Volume == NULL)) {
@@ -337,7 +339,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
     INTN Comparison = StriCmp(FilePathAsString, LoaderDevicePathString);
     FreePool(FilePathAsString);
     if (Comparison == 0) {
-      DBG("skipped because path `%s` is self path!\n", LoaderDevicePathString);
+      DBG("%askipped because path `%s` is self path!\n", indent, LoaderDevicePathString);
       FreePool(LoaderDevicePathString);
       return NULL;
     }
@@ -355,7 +357,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
         if (MainEntry && (MainEntry->Tag == TAG_LOADER)) {
           LOADER_ENTRY *Loader = (LOADER_ENTRY *)MainEntry;
           if (StriCmp(Loader->DevicePathString, LoaderDevicePathString) == 0) {
-            DBG("skipped because path `%s` already exists for another entry!\n", LoaderDevicePathString);
+            DBG("%askipped because path `%s` already exists for another entry!\n", indent, LoaderDevicePathString);
             FreePool(LoaderDevicePathString);
             return NULL;
           }
@@ -405,7 +407,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
         if (volume_match == -1 || volume_type_match == -1 || path_match == -1 || type_match == -1 ) {
           UINTN add_comma = 0;
 
-          DBG ("\t  Not match custom entry %d: ", CustomIndex);
+          DBG ("%aNot match custom entry %d: ", indent, CustomIndex);
           if (volume_match != 0) {
             DBG("Volume: %s", volume_match == 1 ? L"match" : L"not match");
             add_comma++;
@@ -430,7 +432,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
           DBG("\n");
         } else {
           // Custom entry match
-          DBG("\t  Skipped because matching custom entry %d!\n", CustomIndex);
+          DBG("%aSkipped because matching custom entry %d!\n", indent, CustomIndex);
           FreePool(LoaderDevicePathString);
           return NULL;
         }
@@ -564,9 +566,10 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
   }
 
   Entry->KernelAndKextPatches = ((Patches == NULL) ? (KERNEL_AND_KEXT_PATCHES *)(((UINTN)&gSettings) + OFFSET_OF(SETTINGS_DATA, KernelAndKextPatches)) : Patches);
-  DBG("loader patch settings\n");
+#ifdef DUMP_KERNEL_KEXT_PATCHES
   DumpKernelAndKextPatches(Entry->KernelAndKextPatches);
-  DBG("found %s\n", Entry->DevicePathString);
+#endif
+  DBG("%aLoader entry created for '%s'\n", indent, Entry->DevicePathString);
   return Entry;
 }
 
@@ -1308,7 +1311,7 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
       Volume->VolName = L"Unknown";
     }
     
-    DBG("   Checking volume \"%s\" (%s) ... ", Volume->VolName, Volume->DevicePathString);
+    DBG("    Checking volume \"%s\" (%s) ... ", Volume->VolName, Volume->DevicePathString);
     
     // skip volume if its kind is configured as disabled
     if ((Volume->DiskKind == DISK_KIND_OPTICAL  && (GlobalConfig.DisableFlags & VOLTYPE_OPTICAL))  ||

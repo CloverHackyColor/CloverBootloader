@@ -649,7 +649,7 @@ VOID DumpKernelAndKextPatches(KERNEL_AND_KEXT_PATCHES *Patches)
    if (Patches->ForceKexts) {
       INTN i = 0;
       for (; i < Patches->NrForceKexts; ++i) {
-         DBG("\t\tKextToLoad[%d]: %s\n", i, Patches->ForceKexts[i]);
+         DBG("\t  KextToLoad[%d]: %s\n", i, Patches->ForceKexts[i]);
       }
    }
    DBG("\t%d Kexts to patch\n", Patches->NrKexts);
@@ -657,9 +657,9 @@ VOID DumpKernelAndKextPatches(KERNEL_AND_KEXT_PATCHES *Patches)
       INTN i = 0;
       for (; i < Patches->NrKexts; ++i) {
          if (Patches->KextPatches[i].IsPlistPatch) {
-            DBG("\t\tKextPatchPlist[%d]: %d bytes, %a\n", i, Patches->KextPatches[i].DataLen, Patches->KextPatches[i].Name);
+            DBG("\t  KextPatchPlist[%d]: %d bytes, %a\n", i, Patches->KextPatches[i].DataLen, Patches->KextPatches[i].Name);
          } else {
-            DBG("\t\tKextPatch[%d]: %d bytes, %a\n", i, Patches->KextPatches[i].DataLen, Patches->KextPatches[i].Name);
+            DBG("\t  KextPatch[%d]: %d bytes, %a\n", i, Patches->KextPatches[i].DataLen, Patches->KextPatches[i].Name);
          }
       }
    }

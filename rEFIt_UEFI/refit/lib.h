@@ -848,4 +848,8 @@ extern BOOLEAN DumpVariable(CHAR16* Name, EFI_GUID* Guid, INTN DevicePathAt);
 
 
 #endif
+
+// Utils functions
+VOID DumpKernelAndKextPatches(KERNEL_AND_KEXT_PATCHES *Patches);
+
 /* EOF */
