@@ -865,7 +865,13 @@ static BOOLEAN FillinCustomEntry(IN OUT CUSTOM_LOADER_ENTRY *Entry, TagPtr dictP
     } else if (AsciiStriCmp(prop->string, "LinuxKernel") == 0) {
       Entry->Type = OSTYPE_LINEFI;
     } else {
+      DBG("** Warning: unknown custom entry Type '%a'\n", prop->string);
       Entry->Type = OSTYPE_OTHER;
+    }
+  } else {
+    if (Entry->Type == 0 && Entry->Path) {
+      // Try to set Entry->type from Entry->Path
+      Entry->Type = GetOSTypeFromPath(Entry->Path);
     }
   }
 
@@ -945,6 +951,8 @@ static BOOLEAN FillinCustomEntry(IN OUT CUSTOM_LOADER_ENTRY *Entry, TagPtr dictP
                  (AsciiStriCmp(prop->string, "Detect") == 0)) {
         Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_CHECKFAKESMC);
         Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_WITHKEXTS);
+      } else {
+        DBG("** Warning: unknown custom entry InjectKexts value '%a'\n", prop->string);
       }
     } else {
       // Use global settings
