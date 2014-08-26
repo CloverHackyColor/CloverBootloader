@@ -27,7 +27,7 @@
 
 [FV.DuetEfiMainFvX64]
 
-!elseif ($(ARCH) == IA32)
+!elseif ("$(ARCH)" == IA32)
 
 [FV.DuetEfiMainFvIA32]
 
