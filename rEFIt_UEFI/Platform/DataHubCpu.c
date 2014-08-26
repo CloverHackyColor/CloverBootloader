@@ -149,8 +149,8 @@ EFI_STATUS SetVariablesForOSX()
   
   if (gSettings.RtROM == NULL) {
     // we can try to set it to MAC address from SMBIOS UUID - some boards have it there
-    gSettings.RtROMLen = 8;
-    gSettings.RtROM = AllocateCopyPool(gSettings.RtROMLen, ((UINT8*)&gSettings.SmUUID) + 8);
+    gSettings.RtROMLen = 6;
+    gSettings.RtROM = AllocateCopyPool(gSettings.RtROMLen, ((UINT8*)&gSettings.SmUUID) + 10);
   }
   
   //

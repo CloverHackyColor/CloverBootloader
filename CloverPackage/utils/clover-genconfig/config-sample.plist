@@ -512,6 +512,8 @@
 		<false/>
 		<key>KernelCpu</key>
 		<false/>
+        <key>FakeCPUID</key>
+		<string>0x010676</string>
 		<key>KernelPm</key>
 		<false/>
 		<key>KernelLapic</key>
