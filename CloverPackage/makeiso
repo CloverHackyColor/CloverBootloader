@@ -78,12 +78,10 @@ echo "[MKDIR] ${IMGROOT}/EFI/CLOVER/themes/"
 mkdir -p ${IMGROOT}/EFI/CLOVER/themes/
 echo "[MKDIR] ${IMGROOT}/usr/bin"
 mkdir -p ${IMGROOT}/usr/bin
-echo "[MKDIR] ${IMGROOT}/usr/local/bin"
-mkdir -p "${IMGROOT}"/usr/local/bin
-cp -p "${SYMROOT}"/clover-genconfig/clover-genconfig "${IMGROOT}"/usr/local/bin
-cp -p "${SYMROOT}"/bdmesg/bdmesg "${IMGROOT}"/usr/local/bin
-cp -p "${SYMROOT}"/fdisk440/fdisk440 "${IMGROOT}"/usr/local/bin
-
+#if [ -e "${IMGSKELROOT}"/* ];then
+    echo "[CP] ${IMGSKELROOT} ${IMGROOT}"
+    cp -R -f "${IMGSKELROOT}"/* "${IMGROOT}"
+#fi
 echo "[CP] cdboot"
 cp -f ${SYMROOT}/i386/cdboot ${CDBOOT}
 if [[ ${IMAGE_WITH_IA32} -eq 1 ]]; then

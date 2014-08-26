@@ -60,7 +60,7 @@ choice=$("$CLOVER_APP_SUPPORT"/CloverUpdater.app/Contents/MacOS/CloverUpdater \
 case "$choice" in
     -1) "$PLISTBUDDY" -c "Add AllowUpdate bool false" "$CLOVER_UPDATER_PLIST" &>/dev/null
         ;;
-     1) open http://sourceforge.net/projects/cloverefiboot/files/Installer/Clover_v2_r${last_revision}.zip/download
+     1) open http://sourceforge.net/projects/cloverefiboot/files/Installer/Clover_v2k_r${last_revision}.zip/download
         ;;
 esac
 
