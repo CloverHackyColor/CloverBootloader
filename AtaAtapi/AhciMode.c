@@ -798,6 +798,11 @@ AhciPioTransfer (
       Offset = FisBaseAddr + EFI_AHCI_D2H_FIS_OFFSET;
       Status = AhciCheckMemSet (Offset, EFI_AHCI_FIS_TYPE_MASK, EFI_AHCI_FIS_REGISTER_D2H, 0);
       if (!EFI_ERROR (Status)) {
+        //
+        // According to AHCI spec, for PIO IN transfer, D2H may mean a device error.
+        // However, some controllers (ex. Marvell) only send D2H FIS, and not PIO SETUP FIS.
+        // Therefore, it is better to check for an error using the D2H register FIS data.
+        //
         D2HStatus = *(volatile UINT8 *) (Offset + EFI_AHCI_D2H_FIS_STATUS_OFFSET);
 
         if ((D2HStatus & EFI_AHCI_D2H_FIS_ERR) != 0) {
