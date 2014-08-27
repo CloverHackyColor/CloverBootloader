@@ -114,6 +114,10 @@ Routine Description:
 
   Private = QEMU_VIDEO_PRIVATE_DATA_FROM_GRAPHICS_OUTPUT_THIS (This);
 
+  if (Private->HardwareNeedsStarting) {
+    return EFI_NOT_STARTED;
+  }
+
   if (Info == NULL || SizeOfInfo == NULL || ModeNumber >= This->Mode->MaxMode) {
     return EFI_INVALID_PARAMETER;
   }
