@@ -78,10 +78,18 @@ echo "[MKDIR] ${IMGROOT}/EFI/CLOVER/themes/"
 mkdir -p ${IMGROOT}/EFI/CLOVER/themes/
 echo "[MKDIR] ${IMGROOT}/usr/bin"
 mkdir -p ${IMGROOT}/usr/bin
-#if [ -e "${IMGSKELROOT}"/* ];then
-    echo "[CP] ${IMGSKELROOT} ${IMGROOT}"
-    cp -R -f "${IMGSKELROOT}"/* "${IMGROOT}"
-#fi
+echo "[MKDIR] ${IMGROOT}/usr/local/bin"
+mkdir -p "${IMGROOT}"/usr/local/bin
+cp -p "${SYMROOT}"/clover-genconfig/clover-genconfig "${IMGROOT}"/usr/local/bin
+cp -p "${SYMROOT}"/bdmesg/bdmesg "${IMGROOT}"/usr/local/bin
+cp -p "${SYMROOT}"/fdisk440/fdisk440 "${IMGROOT}"/usr/local/bin
+echo "[MKDIR] ${IMGROOT}/Library/Application Support/Clover"
+mkdir -p "${IMGROOT}/Library/Application Support/Clover"
+cp -p "${SRCROOT}"/CloverUpdater/CloverUpdaterUtility "${IMGROOT}/Library/Application Support/Clover/"
+cp -pr "${SRCROOT}"/CloverUpdater/build/CloverUpdater.app "${IMGROOT}/Library/Application Support/Clover/"
+echo "[MKDIR] ${IMGROOT}/Library/PreferencePanes"
+mkdir -p "${IMGROOT}/Library/PreferencePanes"
+cp -pr "${SRCROOT}"/CloverPrefpane/Build/Clover.prefPane "${IMGROOT}/Library/PreferencePanes/"
 echo "[CP] cdboot"
 cp -f ${SYMROOT}/i386/cdboot ${CDBOOT}
 if [[ ${IMAGE_WITH_IA32} -eq 1 ]]; then
