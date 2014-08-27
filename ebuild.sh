@@ -340,12 +340,10 @@ MainBuildScript() {
             find  "$CLOVER_PKG_DIR"/EFI/BOOT/ -name '*.efi' -mindepth 1 -not -path "**/.svn*" -delete
             rmdir "$CLOVER_PKG_DIR"/EFI/BOOT &>/dev/null
         fi
-        if [[ -d "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers* ]]; then
-            find  "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers* -mindepth 1 -not -path "**/.svn*" -delete
-            rmdir "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers* &>/dev/null
-        fi
-        find  "$CLOVER_PKG_DIR"/drivers-Off/drivers* -mindepth 1 -not -path "**/.svn*" -delete
+        find  "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers* -mindepth 1 -not -path "**/.svn*" -delete
+        rmdir "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers* &>/dev/null
         find  "$CLOVER_PKG_DIR"/EFI/CLOVER/ -name '*.efi' -maxdepth 1 -not -path "**/.svn*" -delete
+        find  "$CLOVER_PKG_DIR"/drivers-Off/drivers* -mindepth 1 -not -path "**/.svn*" -delete
 
         echo  "Done!"
         exit $?
