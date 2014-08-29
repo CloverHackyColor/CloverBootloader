@@ -58,11 +58,11 @@ SECTION .data
 ;
 ; These are global constant to convey information to C code.
 ;
-ASM_PFX(m16Size)         DW      InternalAsmThunk16 - m16Start
-ASM_PFX(mThunk16Attr)    DW      _BackFromUserCode.ThunkAttrEnd - 4 - m16Start
-ASM_PFX(m16Gdt)          DW      _NullSegDesc - m16Start
-ASM_PFX(m16GdtrBase)     DW      _16GdtrBase - m16Start
-ASM_PFX(mTransition)     DW      _EntryPoint - m16Start
+ASM_PFX(m16Size)         DW      ASM_PFX(InternalAsmThunk16) - ASM_PFX(m16Start)
+ASM_PFX(mThunk16Attr)    DW      _BackFromUserCode.ThunkAttrEnd - 4 - ASM_PFX(m16Start)
+ASM_PFX(m16Gdt)          DW      _NullSegDesc - ASM_PFX(m16Start)
+ASM_PFX(m16GdtrBase)     DW      _16GdtrBase - ASM_PFX(m16Start)
+ASM_PFX(mTransition)     DW      _EntryPoint - ASM_PFX(m16Start)
 
 SECTION .text
 
@@ -85,7 +85,7 @@ _BackFromUserCode:
 BITS    16
     push    ss
     push    cs
-a32 call    .Base                       ; push eip
+o32 call    dword .Base                       ; push eip
 .Base:
     pushfd
     cli                                 ; disable interrupts
@@ -131,7 +131,7 @@ o32 lgdt [cs:bx + (SavedGdt - .Base)]
 o32 retf                                ; return to protected mode
 
 _EntryPoint:
-        DD      _ToUserCode - m16Start
+        DD      _ToUserCode - ASM_PFX(m16Start)
         DW      8h
 _16Idtr:
         DW      (1 << 10) - 1
@@ -139,7 +139,7 @@ _16Idtr:
 _16Gdtr:
         DW      GdtEnd - _NullSegDesc - 1
 _16GdtrBase:
-        DD      _NullSegDesc
+        DD      0  ;_NullSegDesc
 
 ;------------------------------------------------------------------------------
 ; _ToUserCode() takes control in real mode before passing control to user code.
@@ -223,11 +223,11 @@ BITS    32
     rep     movsd                       ; copy RegSet
     mov     eax, [esp + 40]             ; eax <- address of transition code
     mov     esi, edx                    ; esi <- 16-bit stack segment
-    lea     edx, [eax + (_BackFromUserCode.SavedCr0End - m16Start)]
+    lea     edx, [eax + (_BackFromUserCode.SavedCr0End - ASM_PFX(m16Start))]
     mov     ecx, eax
     and     ecx, 0fh
     shl     eax, 12
-    lea     ecx, [ecx + (_BackFromUserCode - m16Start)]
+    lea     ecx, [ecx + (_BackFromUserCode - ASM_PFX(m16Start))]
     mov     ax, cx
     stosd                               ; [edi] <- return address of user code
     add     eax, _ToUserCode.RealAddrEnd - _BackFromUserCode

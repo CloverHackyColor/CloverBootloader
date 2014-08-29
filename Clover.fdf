@@ -105,6 +105,7 @@ INF  Clover/UefiCpuPkg/CpuIo2Dxe/CpuIo2Dxe.inf
 #INF  UefiCpuPkg/CpuDxe/CpuDxe.inf
 #INF  IntelFrameworkModulePkg/Universal/CpuIoDxe/CpuIoDxe.inf
 INF  Clover/CpuDxe/Cpu.inf
+#INF  RuleOverride=BINARY Clover/CpuDxeBin/CpuDxeBin.inf
 
     # DataHub
 #INF  Clover/VBoxAppleSim/VBoxAppleSim.inf

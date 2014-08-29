@@ -56,11 +56,11 @@ SECTION .data
 ;
 ; These are global constant to convey information to C code.
 ;
-ASM_PFX(m16Size)         DW      InternalAsmThunk16 - m16Start
-ASM_PFX(mThunk16Attr)    DW      _BackFromUserCode.ThunkAttrEnd - 4 - m16Start
-ASM_PFX(m16Gdt)          DW      _NullSeg - m16Start
-ASM_PFX(m16GdtrBase)     DW      _16GdtrBase - m16Start
-ASM_PFX(mTransition)     DW      _EntryPoint - m16Start
+ASM_PFX(m16Size)         DW      ASM_PFX(InternalAsmThunk16) - ASM_PFX(m16Start)
+ASM_PFX(mThunk16Attr)    DW      _BackFromUserCode.ThunkAttrEnd - 4 - ASM_PFX(m16Start)
+ASM_PFX(m16Gdt)          DW      _NullSeg - ASM_PFX(m16Start)
+ASM_PFX(m16GdtrBase)     DW      _16GdtrBase - ASM_PFX(m16Start)
+ASM_PFX(mTransition)     DW      _EntryPoint - ASM_PFX(m16Start)
 
 SECTION .text
 
@@ -140,12 +140,12 @@ BITS    64
     ret
 
 _EntryPoint:
-        DD      _ToUserCode - m16Start
+        DD      _ToUserCode - ASM_PFX(m16Start)
         DW      CODE16
 _16Gdtr:
         DW      GDT_SIZE - 1
 _16GdtrBase:
-        DQ      _NullSeg
+        DQ      0  ;_NullSeg
 _16Idtr:
         DW      (1 << 10) - 1
         DD      0
@@ -169,7 +169,7 @@ BITS    16
     mov     cr4, ebp
     mov     ss, si                      ; set up 16-bit stack segment
     mov     esp, ebx                    ; set up 16-bit stack pointer
-    call    dword .Base                 ; push eip
+o32 call    dword .Base                 ; push eip
 .Base:
     pop     ebp                         ; ebp <- address of .Base
     push    word [dword esp + IA32_REGS.size + 2]
@@ -256,16 +256,16 @@ BITS    64
     add     edi, eax                    ; edi <- linear address of 16-bit stack
     pop     rcx
     rep     movsd                       ; copy RegSet
-    lea     ecx, [rdx + (_BackFromUserCode.SavedCr4End - m16Start)]
+    lea     ecx, [rdx + (_BackFromUserCode.SavedCr4End - ASM_PFX(m16Start))]
     mov     eax, edx                    ; eax <- transition code address
     and     edx, 0fh
     shl     eax, 12                     ; segment address in high order 16 bits
-    lea     ax, [rdx + (_BackFromUserCode - m16Start)]  ; offset address
+    lea     ax, [rdx + (_BackFromUserCode - ASM_PFX(m16Start))]  ; offset address
     stosd                               ; [edi] <- return address of user code
   
     sgdt    [rsp + 60h]       ; save GDT stack in argument space
     movzx   r10, word [rsp + 60h]   ; r10 <- GDT limit 
-    lea     r11, [rcx + (InternalAsmThunk16 - _BackFromUserCode.SavedCr4End) + 0xf]
+    lea     r11, [rcx + (ASM_PFX(InternalAsmThunk16) - _BackFromUserCode.SavedCr4End) + 0xf]
     and     r11, ~0xf            ; r11 <- 16-byte aligned shadowed GDT table in real mode buffer
     
     mov     [rcx + (SavedGdt - _BackFromUserCode.SavedCr4End)], r10w      ; save the limit of shadowed GDT table
