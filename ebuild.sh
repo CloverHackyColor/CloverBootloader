@@ -334,17 +334,30 @@ MainBuildScript() {
         echo "Cleaning CloverPrefpane files..."
         make -C "$WORKSPACE"/Clover/CloverPackage/CloverPrefpane clean
 
-        echo "Cleaning packaging files..."
-        find  "$CLOVER_PKG_DIR"/Bootloaders/{ia32,x64}/ -mindepth 1 -not -path "**/.svn*" -delete
-        if [[ -d "$CLOVER_PKG_DIR"/EFI/BOOT ]]; then
-            find  "$CLOVER_PKG_DIR"/EFI/BOOT/ -name '*.efi' -mindepth 1 -not -path "**/.svn*" -delete
-            rmdir "$CLOVER_PKG_DIR"/EFI/BOOT &>/dev/null
-        fi
-        find  "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers* -mindepth 1 -not -path "**/.svn*" -delete
-        rmdir "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers* &>/dev/null
-        find  "$CLOVER_PKG_DIR"/EFI/CLOVER/ -name '*.efi' -maxdepth 1 -not -path "**/.svn*" -delete
-        find  "$CLOVER_PKG_DIR"/drivers-Off/drivers* -mindepth 1 -not -path "**/.svn*" -delete
+        echo "Cleaning bootsector files..."
+        local BOOTHFS="$WORKSPACE"/Clover/BootHFS
+        DESTDIR="$CLOVER_PKG_DIR"/BootSectors make -C $BOOTHFS clean
 
+        echo
+        # Use subshell to use shopt
+        (
+            echo "Cleaning packaging files..."
+            shopt -s nullglob
+            find  "$CLOVER_PKG_DIR"/Bootloaders/{ia32,x64}/ -mindepth 1 -not -path "**/.svn*" -delete
+            if [[ -d "$CLOVER_PKG_DIR"/EFI/BOOT ]]; then
+                find  "$CLOVER_PKG_DIR"/EFI/BOOT/ -name '*.efi' -mindepth 1 -not -path "**/.svn*" -delete
+                rmdir "$CLOVER_PKG_DIR"/EFI/BOOT &>/dev/null
+            fi
+            local dir
+            for dir in "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers*; do
+                find  "$dir" -mindepth 1 -not -path "**/.svn*" -delete
+                rmdir "$dir" &>/dev/null
+            done
+            find  "$CLOVER_PKG_DIR"/EFI/CLOVER/ -name '*.efi' -maxdepth 1 -not -path "**/.svn*" -delete
+            for dir in "$CLOVER_PKG_DIR"/drivers-Off/drivers*; do
+                find  "$dir" -mindepth 1 -not -path "**/.svn*" -delete
+            done
+        )
         echo  "Done!"
         exit $?
 

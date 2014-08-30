@@ -448,7 +448,7 @@ hang:
 setBootFile:
     mov		WORD [gMallocPtr], mallocStart	; set free space pointer
 	mov		cx, 2000						; loop counter = max 2000 miliseconds in total
-.loop
+.loop:
 	mov		ah, 0x01						; int 0x16, Func 0x01 - get keyboard status/preview key
 	int		0x16
     jz		.wait							; no keypress - wait and loop again
@@ -458,7 +458,7 @@ setBootFile:
 	mov		BYTE [searchCatKeyName + 8], al
     jmp		SHORT .bootFileSet				; try to boot
 
-.wait
+.wait:
     ; waith for 1 ms: int 0x15, Func 0x86 (wait for cx:dx microseconds)
 	push	cx								; save loop counter
 	xor		cx, cx
