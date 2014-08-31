@@ -41,6 +41,7 @@ StartOverrides()
 	return EFI_SUCCESS;
 }
 
+CHAR16					*BootLoaders[] = BOOT_LOADERS;
 /** Our implementation of StartImage. Used to detect boot loader start. */
 EFI_STATUS EFIAPI
 OStartImage(
@@ -52,7 +53,7 @@ OStartImage(
 	EFI_STATUS				Status;
 	EFI_LOADED_IMAGE_PROTOCOL		*Image;
 	CHAR16					*FilePathText = NULL;
-	CHAR16					*BootLoaders[] = BOOT_LOADERS;
+//	CHAR16					*BootLoaders[] = BOOT_LOADERS;
 	UINTN					Index;
 	
 	PRINT("->StartImage(0x%lx, , )\n", ImageHandle);
