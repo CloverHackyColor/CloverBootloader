@@ -1095,6 +1095,9 @@ Returns:
   //
   InstallInterruptHandler (mTimerVector, SystemTimerHandler);
 
+  // now we want to patch mTimerVector
+  CopyMem(((UINT8 *)&SystemTimerHandler) + 3, (UINT8 *)&mTimerVector, 4);
+
   //
   // BUGBUG: We add all other interrupt vector
   //
@@ -1121,11 +1124,7 @@ Returns:
                   NULL
                   );
 //  ASSERT_EFI_ERROR (Status);
-  if (EFI_ERROR (Status)) {
-    return Status;
-  }
-
-  return EFI_SUCCESS;
+  return Status;
 }
 
 VOID

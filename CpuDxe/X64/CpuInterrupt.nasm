@@ -1,4 +1,4 @@
-;      TITLE   CpuInterrupt.asm:
+;      TITLE   CpuInterrupt.nasm:
 ;------------------------------------------------------------------------------
 ;*
 ;*   Copyright 2006 - 2010, Intel Corporation                                                         
@@ -17,7 +17,9 @@
 ;------------------------------------------------------------------------------
 global InstallInterruptHandler
 global mExceptionCodeSize
-
+global InitDescriptor
+global SystemExceptionHandler
+global SystemTimerHandler
 
 SECTION .text
 
@@ -31,13 +33,13 @@ mExceptionCodeSize  dd  9
 InitDescriptor: 
         lea     rax, [REL GDT_BASE]             ; RAX=PHYSICAL address of gdt
         mov     qword  [gdtr + 2], rax   ; Put address of gdt into the gdtr
-        lgdt       [REL gdtr]
+        lgdt       [rax]
         mov     rax, 18h
         mov     gs, rax
         mov     fs, rax
         lea     rax, [REL IDT_BASE]             ; RAX=PHYSICAL address of idt
         mov     qword  [idtr + 2], rax   ; Put address of idt into the idtr
-        lidt      [REL idtr]
+        lidt      [rax]
         ret
 
 ; VOID
@@ -207,7 +209,7 @@ INTUnknown:
 
 SystemTimerHandler:
     push    0
-    push   QWORD mTimerVector
+    push   QWORD 0  ;mTimerVector ;to be patched in Cpu.c
     JmpCommonIdtEntry
 
 commonIdtEntry:

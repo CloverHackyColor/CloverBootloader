@@ -513,7 +513,7 @@
     <Command>
         @"$(PP)" $(PP_FLAGS) $(INC) ${src} > ${d_path}(+)${s_base}.i
         @Trim --source-code --convert-hex -o ${d_path}(+)${s_base}.iii ${d_path}(+)${s_base}.i
-        "$(NASM)" -I${s_path}(+) -l ${d_path}(+)${s_base}.lst $(NASMB_FLAGS) -o $dst ${d_path}(+)${s_base}.iii
+        @"$(NASM)" -I${s_path}(+) -l ${d_path}(+)${s_base}.lst $(NASMB_FLAGS) -o $dst ${d_path}(+)${s_base}.iii
 	@"echo" [NASMB] ${s_base}
 
 

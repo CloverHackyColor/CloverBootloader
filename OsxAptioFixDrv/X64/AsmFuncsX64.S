@@ -7,7 +7,7 @@
 #------------------------------------------------------------------------------
 
 # C callback method called on jump to kernel after boot.efi finishes 
-.extern	KernelEntryPatchJumpBack
+#.extern	KernelEntryPatchJumpBack
 
 # saved 64bit state
 ASM_GLOBAL ASM_PFX(SavedCR3)

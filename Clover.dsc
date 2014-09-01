@@ -269,8 +269,10 @@
   Clover/UefiCpuPkg/CpuIo2Dxe/CpuIo2Dxe.inf
   #UefiCpuPkg/CpuIo2Dxe/CpuIo2Dxe.inf
   #Clover/UefiCpuPkg/CpuDxe/CpuDxe.inf
-  #UefiCpuPkg/CpuDxe/CpuDxe.inf
+  UefiCpuPkg/CpuDxe/CpuDxe.inf
+!ifndef CLANG
   Clover/CpuDxe/Cpu.inf
+!endif  
   PcAtChipsetPkg/8259InterruptControllerDxe/8259.inf {
       <PcdsFixedAtBuild>
       gPcAtChipsetPkgTokenSpaceGuid.Pcd8259LegacyModeMask|0xFFFC
@@ -417,6 +419,7 @@
   # Drivers for Aptio loading - should go to Clover's /EFI/drivers64UEFI dir
   Clover/OsxFatBinaryDrv/OsxFatBinaryDrv.inf
 
+
   # Drivers for Phoenix UEFI loading - should go to Clover's /EFI/drivers64UEFI dir
   Clover/EmuVariableUefi/EmuVariableRuntimeDxe.inf {
     <PcdsFixedAtBuild>
@@ -466,8 +469,10 @@
 !endif
 
 [Components.X64]
+!ifndef CLANG
   Clover/OsxAptioFixDrv/OsxAptioFixDrv.inf
   Clover/OsxAptioFixDrv/OsxAptioFix2Drv.inf
+!endif  
   #Clover/OsxAptioFixDrv/OsxAptioFixDrv.inf {
     #
     # Enable debug output.

@@ -29,6 +29,7 @@ export TOOLCHAIN_DIR=${TOOLCHAIN_DIR:-~/src/opt/local}
 VBIOSPATCHCLOVEREFI=0
 ONLYSATA0PATCH=0
 USE_BIOS_BLOCKIO=0
+CLANG=0
 
 # Bash options
 set -e # errexit
@@ -203,8 +204,8 @@ checkCmdlineArguments() {
         local option=$1
         shift
         case "$option" in
-            -clang  | --clang)   TOOLCHAIN=XCLANG  ;;
-            -llvm   | --llvm)    TOOLCHAIN=LLVM  ;;
+            -clang  | --clang)   TOOLCHAIN=XCLANG ; CLANG=1 ;;
+            -llvm   | --llvm)    TOOLCHAIN=LLVM  ; CLANG=1 ;;
             -GCC47  | --GCC47)   TOOLCHAIN=GCC47   ;;
             -gcc47  | --gcc47)   TOOLCHAIN=GCC47   ;;
             -GCC49  | --GCC49)   TOOLCHAIN=GCC49   ;;
@@ -388,6 +389,7 @@ MainBuildScript() {
     [[ "$USE_BIOS_BLOCKIO" -ne 0 ]]    && addEdk2BuildMacro 'USE_BIOS_BLOCKIO'
     [[ "$VBIOSPATCHCLOVEREFI" -ne 0 ]] && addEdk2BuildMacro 'ENABLE_VBIOS_PATCH_CLOVEREFI'
     [[ "$ONLYSATA0PATCH" -ne 0 ]] && addEdk2BuildMacro 'ONLY_SATA_0'
+    [[ "$CLANG" -ne 0 ]] && addEdk2BuildMacro 'CLANG'
 
     local cmd="build ${EDK2_BUILD_OPTIONS[@]}"
     cmd="$cmd -p $PLATFORMFILE -a $TARGETARCH -b $BUILDTARGET"
