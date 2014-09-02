@@ -702,7 +702,8 @@ AhciPioTransfer (
   EFI_AHCI_COMMAND_LIST         CmdList;
   UINT32                        PortTfd;
   UINT32                        PrdCount;
-  UINT8                         D2HStatus;
+  BOOLEAN                       PioFisReceived;
+  BOOLEAN                       D2hFisReceived;
 
   if (Read) {
     Flag = EfiPciIoOperationBusMasterWrite;
@@ -774,46 +775,26 @@ AhciPioTransfer (
     Status = EFI_TIMEOUT;
     Delay  = (UINT32) (DivU64x32 (Timeout, 1000) + 1);
     do {
+      PioFisReceived = FALSE;
+      D2hFisReceived = FALSE;
       Offset = FisBaseAddr + EFI_AHCI_PIO_FIS_OFFSET;
-
       Status = AhciCheckMemSet (Offset, EFI_AHCI_FIS_TYPE_MASK, EFI_AHCI_FIS_PIO_SETUP, 0);
       if (!EFI_ERROR (Status)) {
-        Offset = EFI_AHCI_PORT_START + Port * EFI_AHCI_PORT_REG_WIDTH + EFI_AHCI_PORT_TFD;
-        PortTfd = AhciReadReg (PciIo, (UINT32) Offset);
-        //
-        // PxTFD will be updated if there is a D2H or SetupFIS received. 
-        // For PIO IN transfer, D2H means a device error. Therefore we only need to check the TFD after receiving a SetupFIS.
-        //
-        if ((PortTfd & EFI_AHCI_PORT_TFD_ERR) != 0) {
-          Status = EFI_DEVICE_ERROR;
-          break;
-        }
-
-        PrdCount = *(volatile UINT32 *) (&(AhciRegisters->AhciCmdList[0].AhciCmdPrdbc));
-        if (PrdCount == DataCount) {
-          break;
-        }
+        PioFisReceived = TRUE;
       }
 
       Offset = FisBaseAddr + EFI_AHCI_D2H_FIS_OFFSET;
-      Status = AhciCheckMemSet (Offset, EFI_AHCI_FIS_TYPE_MASK, EFI_AHCI_FIS_REGISTER_D2H, 0);
+      Status = AhciCheckMemSet (Offset, EFI_AHCI_FIS_TYPE_MASK, EFI_AHCI_FIS_REGISTER_D2H, NULL);
       if (!EFI_ERROR (Status)) {
-        //
-        // According to AHCI spec, for PIO IN transfer, D2H may mean a device error.
-        // However, some controllers (ex. Marvell) only send D2H FIS, and not PIO SETUP FIS.
-        // Therefore, it is better to check for an error using the D2H register FIS data.
-        //
-        D2HStatus = *(volatile UINT8 *) (Offset + EFI_AHCI_D2H_FIS_STATUS_OFFSET);
+        D2hFisReceived = TRUE;
+      }
 
-        if ((D2HStatus & EFI_AHCI_D2H_FIS_ERR) != 0) {
-          Status = EFI_DEVICE_ERROR;
-          break;
-        }
-
+      if (PioFisReceived || D2hFisReceived) {
         Offset = EFI_AHCI_PORT_START + Port * EFI_AHCI_PORT_REG_WIDTH + EFI_AHCI_PORT_TFD;
         PortTfd = AhciReadReg (PciIo, (UINT32) Offset);
         //
         // PxTFD will be updated if there is a D2H or SetupFIS received. 
+        // For PIO IN transfer, D2H may mean a device error. However, some controllers (Marvell) use D2H instead of SetupFIS, so check PxTFD for both cases.
         //
         if ((PortTfd & EFI_AHCI_PORT_TFD_ERR) != 0) {
           Status = EFI_DEVICE_ERROR;

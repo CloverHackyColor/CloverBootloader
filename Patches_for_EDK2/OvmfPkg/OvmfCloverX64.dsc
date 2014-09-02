@@ -452,7 +452,6 @@
       gEfiMdeModulePkgTokenSpaceGuid.PcdConOutRow|0
       gEfiMdeModulePkgTokenSpaceGuid.PcdConOutColumn|0
   }
-  #Clover/ConSplitterDxe/ConSplitterDxe.inf
   MdeModulePkg/Universal/Console/GraphicsConsoleDxe/GraphicsConsoleDxe.inf {
     <LibraryClasses>
       PcdLib|MdePkg/Library/DxePcdLib/DxePcdLib.inf
@@ -470,15 +469,15 @@
   MdeModulePkg/Universal/Disk/UnicodeCollation/EnglishDxe/EnglishDxe.inf
   MdeModulePkg/Bus/Scsi/ScsiBusDxe/ScsiBusDxe.inf
   MdeModulePkg/Bus/Scsi/ScsiDiskDxe/ScsiDiskDxe.inf
-  IntelFrameworkModulePkg/Bus/Pci/IdeBusDxe/IdeBusDxe.inf
-  PcAtChipsetPkg/Bus/Pci/IdeControllerDxe/IdeControllerDxe.inf
+  #IntelFrameworkModulePkg/Bus/Pci/IdeBusDxe/IdeBusDxe.inf
+  #PcAtChipsetPkg/Bus/Pci/IdeControllerDxe/IdeControllerDxe.inf
 
-#  DuetPkg/SataControllerDxe/SataControllerDxe.inf
-#  MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru.inf
-#  MdeModulePkg/Bus/Ata/AtaBusDxe/AtaBusDxe.inf
-#  Clover/SataControllerDxe/SataControllerDxe.inf
-#  Clover/AtaAtapi/AtaAtapiPassThru.inf
-#  Clover/AtaBus/AtaBusDxe.inf
+  #DuetPkg/SataControllerDxe/SataControllerDxe.inf
+  Clover/SataControllerDxe/SataControllerDxe.inf
+  #MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru.inf
+  Clover/AtaAtapi/AtaAtapiPassThru.inf
+  MdeModulePkg/Bus/Ata/AtaBusDxe/AtaBusDxe.inf
+  #Clover/AtaBus/AtaBusDxe.inf		#Note: Clover's AtaBus disables DMA and does not work with Qemu
 
   MdeModulePkg/Universal/HiiDatabaseDxe/HiiDatabaseDxe.inf
   MdeModulePkg/Universal/SetupBrowserDxe/SetupBrowserDxe.inf
@@ -498,10 +497,10 @@
   #
   IntelFrameworkModulePkg/Universal/DataHubDxe/DataHubDxe.inf
   Clover/VBoxFsDxe/VBoxHfs.inf
-  Clover/VBoxFsDxe/VBoxIso9660.inf
+  #Clover/VBoxFsDxe/VBoxIso9660.inf
   #Clover/VBoxFsDxe/VBoxFsDxe.inf
-  Clover/VBoxFsDxe/VBoxExt2.inf
-  Clover/VBoxFsDxe/VBoxExt4.inf
+  #Clover/VBoxFsDxe/VBoxExt2.inf
+  #Clover/VBoxFsDxe/VBoxExt4.inf
   Clover/MsgLog/MsgLog.inf
   
   #
@@ -512,10 +511,8 @@
   IntelFrameworkModulePkg/Bus/Isa/IsaSerialDxe/IsaSerialDxe.inf
   IntelFrameworkModulePkg/Bus/Isa/Ps2KeyboardDxe/Ps2keyboardDxe.inf
   IntelFrameworkModulePkg/Bus/Isa/IsaFloppyDxe/IsaFloppyDxe.inf
-  IntelFrameworkModulePkg/Bus/Isa/Ps2MouseAbsolutePointerDxe/Ps2MouseAbsolutePointerDxe.inf
   #IntelFrameworkModulePkg/Bus/Isa/Ps2MouseDxe/Ps2MouseDxe.inf
-  Clover/Ps2MouseDxe/Ps2MouseDxe.inf
-
+  #Clover/Ps2MouseDxe/Ps2MouseDxe.inf
 
   #
   # SMBIOS Support

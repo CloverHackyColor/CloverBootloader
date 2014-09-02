@@ -76,8 +76,6 @@ typedef union {
 #define   EFI_AHCI_FIS_SET_DEVICE_LENGTH       8
 
 #define EFI_AHCI_D2H_FIS_OFFSET                0x40
-#define EFI_AHCI_D2H_FIS_STATUS_OFFSET         0x02
-#define EFI_AHCI_D2H_FIS_ERR                   BIT0
 #define EFI_AHCI_DMA_FIS_OFFSET                0x00
 #define EFI_AHCI_PIO_FIS_OFFSET                0x20
 #define EFI_AHCI_SDB_FIS_OFFSET                0x58

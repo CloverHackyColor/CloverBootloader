@@ -52,6 +52,9 @@ LegacyBiosBuildIdeData (
   EFI_DEVICE_PATH_PROTOCOL  *DevicePathNode;
   EFI_DEVICE_PATH_PROTOCOL  *TempDevicePathNode;
   PCI_DEVICE_PATH           *PciDevicePath;
+  BOOLEAN                   PciDPFound = FALSE;
+  UINTN                     PciDPDevice = 0;
+  UINTN                     PciDPFunction = 0;
 
   //
   // Only build data once
@@ -126,7 +129,7 @@ LegacyBiosBuildIdeData (
                     );
     ASSERT_EFI_ERROR (Status);
 
-    if (CompareGuid (&DiskInfo->Interface, &gEfiDiskInfoIdeInterfaceGuid)) {
+    if (CompareGuid (&DiskInfo->Interface, &gEfiDiskInfoIdeInterfaceGuid) || CompareGuid (&DiskInfo->Interface, &gEfiDiskInfoAhciInterfaceGuid)) {
       //
       //  Locate which PCI device
       //
@@ -143,7 +146,7 @@ LegacyBiosBuildIdeData (
         if ((DevicePathType (DevicePathNode) == HARDWARE_DEVICE_PATH) &&
               ( DevicePathSubType (DevicePathNode) == HW_PCI_DP) &&
               ( DevicePathType(TempDevicePathNode) == MESSAGING_DEVICE_PATH) &&
-              ( DevicePathSubType(TempDevicePathNode) == MSG_ATAPI_DP) ) {
+              ( DevicePathSubType(TempDevicePathNode) == MSG_ATAPI_DP || DevicePathSubType (TempDevicePathNode) == MSG_SATA_DP) ) {
           PciDevicePath = (PCI_DEVICE_PATH *) DevicePathNode;
           break;
         }
@@ -165,7 +168,7 @@ LegacyBiosBuildIdeData (
       // @bug eventually need to pass in max number of entries
       // for end of for loop
       //
-      for (PciIndex = 0; PciIndex < 8; PciIndex++) {
+      /*for (PciIndex = 0; PciIndex < 8; PciIndex++) {
         if ((PciDevicePath->Device == LocalHddInfo[PciIndex].Device) &&
             (PciDevicePath->Function == LocalHddInfo[PciIndex].Function)
             ) {
@@ -175,10 +178,24 @@ LegacyBiosBuildIdeData (
 
       if (PciIndex == 8) {
         continue;
+      }*/
+
+      // Support single IDE or AHCI controller (each can contain multiple devices/channels).
+      if (PciDPFound && (PciDevicePath->Device =! PciDPDevice || PciDevicePath->Function != PciDPFunction)) {
+        continue;
       }
+      PciIndex = 0;
 
       Status = DiskInfo->WhichIde (DiskInfo, &IdeChannel, &IdeDevice);
       if (!EFI_ERROR (Status)) {
+        // There are 8 slots in HddInfo
+        if (PciIndex + IdeChannel >= 8) {
+          continue;
+        }
+        PciDPFound = TRUE;
+        PciDPDevice = PciDevicePath->Device;
+        PciDPFunction = PciDevicePath->Function;
+
         Size = sizeof (ATAPI_IDENTIFY);
         DiskInfo->Identify (
                     DiskInfo,

@@ -242,7 +242,6 @@ INF  MdeModulePkg/Universal/MonotonicCounterRuntimeDxe/MonotonicCounterRuntimeDx
 INF  MdeModulePkg/Universal/CapsuleRuntimeDxe/CapsuleRuntimeDxe.inf
 INF  MdeModulePkg/Universal/Console/ConPlatformDxe/ConPlatformDxe.inf
 INF  MdeModulePkg/Universal/Console/ConSplitterDxe/ConSplitterDxe.inf
-#INF  Clover/ConSplitterDxe/ConSplitterDxe.inf
 INF  MdeModulePkg/Universal/Console/GraphicsConsoleDxe/GraphicsConsoleDxe.inf
 INF  MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe.inf
 INF  IntelFrameworkModulePkg/Universal/BdsDxe/BdsDxe.inf
@@ -254,16 +253,15 @@ INF  Clover/PartitionDxe/PartitionDxe.inf
 INF  MdeModulePkg/Universal/Disk/UnicodeCollation/EnglishDxe/EnglishDxe.inf
 INF  MdeModulePkg/Bus/Scsi/ScsiBusDxe/ScsiBusDxe.inf
 INF  MdeModulePkg/Bus/Scsi/ScsiDiskDxe/ScsiDiskDxe.inf
-INF  IntelFrameworkModulePkg/Bus/Pci/IdeBusDxe/IdeBusDxe.inf
-INF  PcAtChipsetPkg/Bus/Pci/IdeControllerDxe/IdeControllerDxe.inf
+#INF  IntelFrameworkModulePkg/Bus/Pci/IdeBusDxe/IdeBusDxe.inf
+#INF  PcAtChipsetPkg/Bus/Pci/IdeControllerDxe/IdeControllerDxe.inf
 
-#INF  RuleOverride=BINARY Clover/AhciDxe/AhciDxe.inf
 #INF  DuetPkg/SataControllerDxe/SataControllerDxe.inf
+INF  Clover/SataControllerDxe/SataControllerDxe.inf
 #INF  MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru.inf
-#INF  MdeModulePkg/Bus/Ata/AtaBusDxe/AtaBusDxe.inf
-#INF  Clover/SataControllerDxe/SataControllerDxe.inf
-#INF  Clover/AtaAtapi/AtaAtapiPassThru.inf
-#INF  Clover/AtaBus/AtaBusDxe.inf
+INF  Clover/AtaAtapi/AtaAtapiPassThru.inf
+INF  MdeModulePkg/Bus/Ata/AtaBusDxe/AtaBusDxe.inf
+#INF  Clover/AtaBus/AtaBusDxe.inf	#Note: Clover's AtaBus disables DMA and does not work with Qemu
 
 INF  MdeModulePkg/Universal/HiiDatabaseDxe/HiiDatabaseDxe.inf
 INF  MdeModulePkg/Universal/SetupBrowserDxe/SetupBrowserDxe.inf
@@ -274,6 +272,7 @@ INF  MdeModulePkg/Universal/MemoryTest/NullMemoryTestDxe/NullMemoryTestDxe.inf
 # Clover
 #
 INF  IntelFrameworkModulePkg/Universal/DataHubDxe/DataHubDxe.inf
+#INF  RuleOverride=BINARY Clover/HFSPlus/HFSPlus.inf
 INF  Clover/VBoxFsDxe/VBoxHfs.inf
 #INF  Clover/VBoxFsDxe/VBoxIso9660.inf
 #INF  Clover/VBoxFsDxe/VBoxFsDxe.inf
@@ -291,11 +290,11 @@ INF  IntelFrameworkModulePkg/Bus/Isa/IsaSerialDxe/IsaSerialDxe.inf
 INF  IntelFrameworkModulePkg/Bus/Isa/Ps2KeyboardDxe/Ps2keyboardDxe.inf
 INF  IntelFrameworkModulePkg/Bus/Isa/IsaFloppyDxe/IsaFloppyDxe.inf
 #INF  IntelFrameworkModulePkg/Bus/Isa/Ps2MouseDxe/Ps2MouseDxe.inf
-INF  Clover/Ps2MouseDxe/Ps2MouseDxe.inf
+#INF  Clover/Ps2MouseDxe/Ps2MouseDxe.inf
 
 INF  MdeModulePkg/Universal/SmbiosDxe/SmbiosDxe.inf
-#INF  OvmfPkg/SmbiosPlatformDxe/SmbiosPlatformDxe.inf       #Use for >= Qemu v2.1
-INF  OvmfPkg/QemuSmbiosPlatformDxe/SmbiosPlatformDxe.inf  #Use for <= Qemu v2.0
+INF  OvmfPkg/SmbiosPlatformDxe/SmbiosPlatformDxe.inf		#Use for >= Qemu v2.1
+#INF  OvmfPkg/QemuSmbiosPlatformDxe/SmbiosPlatformDxe.inf	#Use for <= Qemu v2.0
 
 INF  MdeModulePkg/Universal/Acpi/AcpiTableDxe/AcpiTableDxe.inf
 INF  OvmfPkg/AcpiPlatformDxe/AcpiPlatformDxe.inf
@@ -350,7 +349,6 @@ INF  MdeModulePkg/Bus/Pci/UhciDxe/UhciDxe.inf
 INF  MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe.inf
 #INF  MdeModulePkg/Bus/Pci/XhciDxe/XhciDxe.inf
 INF  MdeModulePkg/Bus/Usb/UsbBusDxe/UsbBusDxe.inf
-#INF  Clover/Patches_for_EDK2/UsbBusDxe/UsbBusDxe.inf
 INF  MdeModulePkg/Bus/Usb/UsbKbDxe/UsbKbDxe.inf
 INF  MdeModulePkg/Bus/Usb/UsbMouseDxe/UsbMouseDxe.inf
 INF  MdeModulePkg/Bus/Usb/UsbMassStorageDxe/UsbMassStorageDxe.inf
