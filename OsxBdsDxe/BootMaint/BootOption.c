@@ -271,42 +271,39 @@ BOpt_FindFileSystem (
                                     &NoBlkIoHandles2,
                                     &BlkIoHandle2
                                     );
-  if (!EFI_ERROR(Status))
-  {
-  for (Index = 0; Index < NoBlkIoHandles2; Index++) {
-        Status = gBS->HandleProtocol (
-                                      BlkIoHandle2[Index],
-                                      &gEfiBlockIo2ProtocolGuid,
-                                      (VOID **) &BlkIo2
-                                      );
-        if (EFI_ERROR(Status))
-        {
-            continue;
-        }
-        
-        //
-        // Issue a dummy read to trigger reinstall of BlockIo protocol for removable media0
-        //
-        if (BlkIo2->Media->RemovableMedia) {
-            Buffer = AllocateZeroPool (BlkIo2->Media->BlockSize);
-            if (NULL == Buffer) {
-                FreePool (BlkIoHandle2);
-                return EFI_OUT_OF_RESOURCES;
-            }
+  if (!EFI_ERROR(Status)) {
+    for (Index = 0; Index < NoBlkIoHandles2; Index++) {
+      Status = gBS->HandleProtocol (
+                                    BlkIoHandle2[Index],
+                                    &gEfiBlockIo2ProtocolGuid,
+                                    (VOID **) &BlkIo2
+                                    );
+      if (EFI_ERROR(Status)) {
+        continue;
+      }
 
-             BlkIo2->ReadBlocksEx (
-                                      BlkIo2,
-                                      BlkIo2->Media->MediaId,
-                                      0,
-                                      &BlkIo2Token,
-                                      BlkIo2->Media->BlockSize,
-                                      Buffer
-                                      );
-            FreePool (Buffer);
+      //
+      // Issue a dummy read to trigger reinstall of BlockIo protocol for removable media
+      //
+      if (BlkIo2->Media->RemovableMedia) {
+        Buffer = AllocateZeroPool (BlkIo2->Media->BlockSize);
+        if (NULL == Buffer) {
+          FreePool (BlkIoHandle2);
+          return EFI_OUT_OF_RESOURCES;
         }
 
-      FreePool (BlkIoHandle2);
-  }
+        BlkIo2->ReadBlocksEx (
+                              BlkIo2,
+                              BlkIo2->Media->MediaId,
+                              0,
+                              &BlkIo2Token,
+                              BlkIo2->Media->BlockSize,
+                              Buffer
+                              );
+        FreePool (Buffer);
+      }
+    }
+    FreePool (BlkIoHandle2);
   }
 
   //
@@ -332,7 +329,7 @@ BOpt_FindFileSystem (
       }
 
       //
-      // Issue a dummy read to trigger reinstall of BlockIo protocol for removable media0
+      // Issue a dummy read to trigger reinstall of BlockIo protocol for removable media
       //
       if (BlkIo->Media->RemovableMedia) {
         Buffer = AllocateZeroPool (BlkIo->Media->BlockSize);
@@ -348,10 +345,10 @@ BOpt_FindFileSystem (
                 BlkIo->Media->BlockSize,
                 Buffer
                 );
-      FreePool (Buffer);
+        FreePool (Buffer);
+      }
     }
     FreePool (BlkIoHandle);
-  }
   }
 
   //
@@ -374,8 +371,7 @@ BOpt_FindFileSystem (
                       &gEfiBlockIo2ProtocolGuid,
                       (VOID **) &BlkIo2
                       );
-      if (EFI_ERROR(Status))
-      {
+      if (EFI_ERROR(Status)) {
         BlkIo2 = NULL;
       }
 
@@ -393,8 +389,7 @@ BOpt_FindFileSystem (
         //
         // If block IO exists check to see if it's remobable media
         //
-        if (BlkIo2 != NULL)
-        {
+        if (BlkIo2 != NULL) {
           RemovableMedia = BlkIo2->Media->RemovableMedia;
         } else {
           RemovableMedia = BlkIo->Media->RemovableMedia;

@@ -476,16 +476,17 @@ SataControllerStart (
     goto Done;
   }
 
-  // Some controllers (ex. Qemu Ahci) don't have enumeration data ready yet at this stage
-  // To solve this, the following code was moved to first NotifyPhase (EfiIdeBeforeChannelEnumeration)
-
   if (IS_PCI_IDE (&PciData)) {
     SataPrivateData->IdeInit.ChannelCount = IDE_MAX_CHANNEL;
     SataPrivateData->DeviceCount = IDE_MAX_DEVICES;
     SataPrivateData->IPorts = (1 << IDE_MAX_CHANNEL) - 1; //mask for N channels
     DBG(L"IDE controller found\n");
   } 
-/*  else if (IS_PCI_SATADPA (&PciData) || IS_PCI_RAID(&PciData)) {
+
+  // Some Sata controllers (ex. Qemu Ahci) don't have enumeration data ready yet at this stage
+  // To solve this, the following code was moved to first NotifyPhase (EfiIdeBeforeChannelEnumeration)
+/*  
+    else if (IS_PCI_SATADPA (&PciData) || IS_PCI_RAID(&PciData)) {
     //
     // Read Host Capability Register(CAP) to get Number of Ports(NPS) and Supports Port Multiplier(SPM)
     //   NPS is 0's based value indicating the maximum number of ports supported by the HBA silicon.
@@ -773,7 +774,7 @@ IdeInitNotifyPhase (
 
   if (Phase == EfiIdeBeforeChannelEnumeration) {
     // Initalize SATA mode Channels/Devices count and relevant structures before enumeration starts
-    // Notification comes from AtaAtapi by both AhciModeInitialization()
+    // Notification comes from AtaAtapi by AhciModeInitialization()
 
     SataPrivateData = SATA_CONTROLLER_PRIVATE_DATA_FROM_THIS (This);
     if (!SataPrivateData) {
