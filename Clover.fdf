@@ -27,7 +27,7 @@
 
 [FV.DuetEfiMainFvX64]
 
-!elseif ("$(ARCH)" == IA32)
+!elseif ($(ARCH) == IA32)
 
 [FV.DuetEfiMainFvIA32]
 
@@ -108,7 +108,7 @@ INF  Clover/UefiCpuPkg/CpuIo2Dxe/CpuIo2Dxe.inf
 INF  Clover/CpuDxe/Cpu.inf
 #INF  UefiCpuPkg/CpuDxe/CpuDxe.inf
 !else
-INF  RuleOverride=BINARY Clover/CpuDxeBin/CpuDxeBin.inf
+#INF  RuleOverride=BINARY Clover/CpuDxeBin/CpuDxeBin.inf
 !endif
 
     # DataHub
@@ -118,12 +118,15 @@ INF IntelFrameworkModulePkg/Universal/DataHubDxe/DataHubDxe.inf
 #INF EdkCompatibilityPkg/Compatibility/PiSmbiosRecordOnDataHubSmbiosRecordThunk/PiSmbiosRecordOnDataHubSmbiosRecordThunk.inf
 	# foreign file system support
 #INF  Clover/VBoxFsDxe/VBoxFsDxe.inf
-#INF  Clover/VBoxFsDxe/VBoxHfs.inf
 INF  Clover/VBoxFsDxe/VBoxIso9660.inf
 #INF  Clover/VBoxFsDxe/VBoxExt2.inf
 INF  Clover/VBoxFsDxe/VBoxExt4.inf
 #INF  Clover/VBoxFsDxe/VBoxReiserFS.inf
+!if ($(ARCH) == X64)
 INF  RuleOverride=BINARY Clover/HFSPlus/HFSPlus.inf
+!else
+INF  Clover/VBoxFsDxe/VBoxHfs.inf
+!endif
 
 INF  PcAtChipsetPkg/8259InterruptControllerDxe/8259.inf
 #INF  DuetPkg/AcpiResetDxe/Reset.inf

@@ -408,6 +408,92 @@
 		1294B5E9165BF86700183BFD /* VideoDxe.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = VideoDxe.inf; sourceTree = "<group>"; };
 		1294B5EB165BF86700183BFD /* InterruptTable.asm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm.asm; path = InterruptTable.asm; sourceTree = "<group>"; };
 		1294B5EC165BF86700183BFD /* InterruptTable.S */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm; path = InterruptTable.S; sourceTree = "<group>"; };
+		129F5FAF19B6EAE1008F1470 /* build.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = build.sh; sourceTree = "<group>"; };
+		129F5FB119B6EAE1008F1470 /* CpuDxe.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CpuDxe.c; sourceTree = "<group>"; };
+		129F5FB219B6EAE1008F1470 /* CpuDxe.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CpuDxe.h; sourceTree = "<group>"; };
+		129F5FB319B6EAE1008F1470 /* CpuDxe.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = CpuDxe.inf; sourceTree = "<group>"; };
+		129F5FB419B6EAE1008F1470 /* CpuGdt.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CpuGdt.c; sourceTree = "<group>"; };
+		129F5FB619B6EAE1008F1470 /* CpuAsm.asm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm.asm; path = CpuAsm.asm; sourceTree = "<group>"; };
+		129F5FB719B6EAE1008F1470 /* CpuAsm.S */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm; path = CpuAsm.S; sourceTree = "<group>"; };
+		129F5FB819B6EAE1008F1470 /* IvtAsm.asm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm.asm; path = IvtAsm.asm; sourceTree = "<group>"; };
+		129F5FB919B6EAE1008F1470 /* IvtAsm.S */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm; path = IvtAsm.S; sourceTree = "<group>"; };
+		129F5FBB19B6EAE1008F1470 /* CpuAsm.asm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm.asm; path = CpuAsm.asm; sourceTree = "<group>"; };
+		129F5FBC19B6EAE1008F1470 /* CpuAsm.S */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm; path = CpuAsm.S; sourceTree = "<group>"; };
+		129F5FBE19B6EAE1008F1470 /* CpuIo2Dxe.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CpuIo2Dxe.c; sourceTree = "<group>"; };
+		129F5FBF19B6EAE1008F1470 /* CpuIo2Dxe.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CpuIo2Dxe.h; sourceTree = "<group>"; };
+		129F5FC019B6EAE1008F1470 /* CpuIo2Dxe.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = CpuIo2Dxe.inf; sourceTree = "<group>"; };
+		129F5FC219B6EAE1008F1470 /* CpuIo2Smm.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CpuIo2Smm.c; sourceTree = "<group>"; };
+		129F5FC319B6EAE1008F1470 /* CpuIo2Smm.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CpuIo2Smm.h; sourceTree = "<group>"; };
+		129F5FC419B6EAE1008F1470 /* CpuIo2Smm.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = CpuIo2Smm.inf; sourceTree = "<group>"; };
+		129F5FC619B6EAE1008F1470 /* CpuIoPei.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CpuIoPei.c; sourceTree = "<group>"; };
+		129F5FC719B6EAE1008F1470 /* CpuIoPei.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CpuIoPei.h; sourceTree = "<group>"; };
+		129F5FC819B6EAE1008F1470 /* CpuIoPei.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = CpuIoPei.inf; sourceTree = "<group>"; };
+		129F5FC919B6EAE1008F1470 /* edk2.patch-idtgdt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "edk2.patch-idtgdt"; sourceTree = "<group>"; };
+		129F5FCC19B6EAE1008F1470 /* LocalApicLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LocalApicLib.h; sourceTree = "<group>"; };
+		129F5FCD19B6EAE1008F1470 /* MtrrLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MtrrLib.h; sourceTree = "<group>"; };
+		129F5FCE19B6EAE1008F1470 /* UefiCpuLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UefiCpuLib.h; sourceTree = "<group>"; };
+		129F5FD019B6EAE1008F1470 /* LocalApic.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LocalApic.h; sourceTree = "<group>"; };
+		129F5FD319B6EAE1008F1470 /* BaseUefiCpuLib.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = BaseUefiCpuLib.inf; sourceTree = "<group>"; };
+		129F5FD519B6EAE1008F1470 /* InitializeFpu.asm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm.asm; path = InitializeFpu.asm; sourceTree = "<group>"; };
+		129F5FD619B6EAE1008F1470 /* InitializeFpu.S */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm; path = InitializeFpu.S; sourceTree = "<group>"; };
+		129F5FD819B6EAE1008F1470 /* InitializeFpu.asm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm.asm; path = InitializeFpu.asm; sourceTree = "<group>"; };
+		129F5FD919B6EAE1008F1470 /* InitializeFpu.S */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm; path = InitializeFpu.S; sourceTree = "<group>"; };
+		129F5FDB19B6EAE1008F1470 /* BaseXApicLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BaseXApicLib.c; sourceTree = "<group>"; };
+		129F5FDC19B6EAE1008F1470 /* BaseXApicLib.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = BaseXApicLib.inf; sourceTree = "<group>"; };
+		129F5FDE19B6EAE1008F1470 /* BaseXApicX2ApicLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BaseXApicX2ApicLib.c; sourceTree = "<group>"; };
+		129F5FDF19B6EAE1008F1470 /* BaseXApicX2ApicLib.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = BaseXApicX2ApicLib.inf; sourceTree = "<group>"; };
+		129F5FE119B6EAE1008F1470 /* CpuExceptionCommon.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CpuExceptionCommon.c; sourceTree = "<group>"; };
+		129F5FE219B6EAE1008F1470 /* CpuExceptionCommon.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CpuExceptionCommon.h; sourceTree = "<group>"; };
+		129F5FE319B6EAE1008F1470 /* DxeCpuExceptionHandlerLib.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = DxeCpuExceptionHandlerLib.inf; sourceTree = "<group>"; };
+		129F5FE419B6EAE1008F1470 /* DxeCpuExceptionHandlerLib.uni */ = {isa = PBXFileReference; lastKnownFileType = text; path = DxeCpuExceptionHandlerLib.uni; sourceTree = "<group>"; };
+		129F5FE519B6EAE1008F1470 /* DxeException.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = DxeException.c; sourceTree = "<group>"; };
+		129F5FE619B6EAE1008F1470 /* DxeSmmCpuException.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = DxeSmmCpuException.c; sourceTree = "<group>"; };
+		129F5FE819B6EAE1008F1470 /* ArchExceptionHandler.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ArchExceptionHandler.c; sourceTree = "<group>"; };
+		129F5FE919B6EAE1008F1470 /* ArchInterruptDefs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ArchInterruptDefs.h; sourceTree = "<group>"; };
+		129F5FEA19B6EAE1008F1470 /* ExceptionHandlerAsm.asm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm.asm; path = ExceptionHandlerAsm.asm; sourceTree = "<group>"; };
+		129F5FEB19B6EAE1008F1470 /* ExceptionHandlerAsm.S */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm; path = ExceptionHandlerAsm.S; sourceTree = "<group>"; };
+		129F5FEC19B6EAE1008F1470 /* SecPeiCpuException.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = SecPeiCpuException.c; sourceTree = "<group>"; };
+		129F5FED19B6EAE1008F1470 /* SecPeiCpuExceptionHandlerLib.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = SecPeiCpuExceptionHandlerLib.inf; sourceTree = "<group>"; };
+		129F5FEE19B6EAE1008F1470 /* SecPeiCpuExceptionHandlerLib.uni */ = {isa = PBXFileReference; lastKnownFileType = text; path = SecPeiCpuExceptionHandlerLib.uni; sourceTree = "<group>"; };
+		129F5FEF19B6EAE1008F1470 /* SmmCpuExceptionHandlerLib.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = SmmCpuExceptionHandlerLib.inf; sourceTree = "<group>"; };
+		129F5FF019B6EAE1008F1470 /* SmmCpuExceptionHandlerLib.uni */ = {isa = PBXFileReference; lastKnownFileType = text; path = SmmCpuExceptionHandlerLib.uni; sourceTree = "<group>"; };
+		129F5FF119B6EAE1008F1470 /* SmmException.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = SmmException.c; sourceTree = "<group>"; };
+		129F5FF319B6EAE1008F1470 /* ArchExceptionHandler.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ArchExceptionHandler.c; sourceTree = "<group>"; };
+		129F5FF419B6EAE1008F1470 /* ArchInterruptDefs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ArchInterruptDefs.h; sourceTree = "<group>"; };
+		129F5FF519B6EAE1008F1470 /* ExceptionHandlerAsm.asm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm.asm; path = ExceptionHandlerAsm.asm; sourceTree = "<group>"; };
+		129F5FF619B6EAE1008F1470 /* ExceptionHandlerAsm.S */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm; path = ExceptionHandlerAsm.S; sourceTree = "<group>"; };
+		129F5FF819B6EAE1008F1470 /* MtrrLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = MtrrLib.c; sourceTree = "<group>"; };
+		129F5FF919B6EAE1008F1470 /* MtrrLib.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = MtrrLib.inf; sourceTree = "<group>"; };
+		129F5FFB19B6EAE1008F1470 /* IpfTimerLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = IpfTimerLib.c; sourceTree = "<group>"; };
+		129F5FFC19B6EAE1008F1470 /* SecPeiDxeTimerLibUefiCpu.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = SecPeiDxeTimerLibUefiCpu.inf; sourceTree = "<group>"; };
+		129F5FFD19B6EAE1008F1470 /* X86TimerLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = X86TimerLib.c; sourceTree = "<group>"; };
+		129F600119B6EAE1008F1470 /* ResetVector.ia32.port80.raw */ = {isa = PBXFileReference; lastKnownFileType = file; path = ResetVector.ia32.port80.raw; sourceTree = "<group>"; };
+		129F600219B6EAE1008F1470 /* ResetVector.ia32.raw */ = {isa = PBXFileReference; lastKnownFileType = file; path = ResetVector.ia32.raw; sourceTree = "<group>"; };
+		129F600319B6EAE1008F1470 /* ResetVector.ia32.serial.raw */ = {isa = PBXFileReference; lastKnownFileType = file; path = ResetVector.ia32.serial.raw; sourceTree = "<group>"; };
+		129F600419B6EAE1008F1470 /* ResetVector.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = ResetVector.inf; sourceTree = "<group>"; };
+		129F600519B6EAE1008F1470 /* ResetVector.x64.port80.raw */ = {isa = PBXFileReference; lastKnownFileType = file; path = ResetVector.x64.port80.raw; sourceTree = "<group>"; };
+		129F600619B6EAE1008F1470 /* ResetVector.x64.raw */ = {isa = PBXFileReference; lastKnownFileType = file; path = ResetVector.x64.raw; sourceTree = "<group>"; };
+		129F600719B6EAE1008F1470 /* ResetVector.x64.serial.raw */ = {isa = PBXFileReference; lastKnownFileType = file; path = ResetVector.x64.serial.raw; sourceTree = "<group>"; };
+		129F600819B6EAE1008F1470 /* Build.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = Build.py; sourceTree = "<group>"; };
+		129F600919B6EAE1008F1470 /* CommonMacros.inc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.pascal; path = CommonMacros.inc; sourceTree = "<group>"; };
+		129F600A19B6EAE1008F1470 /* DebugDisabled.asm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm.asm; path = DebugDisabled.asm; sourceTree = "<group>"; };
+		129F600C19B6EAE1008F1470 /* Init16.asm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm.asm; path = Init16.asm; sourceTree = "<group>"; };
+		129F600D19B6EAE1008F1470 /* Real16ToFlat32.asm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm.asm; path = Real16ToFlat32.asm; sourceTree = "<group>"; };
+		129F600E19B6EAE1008F1470 /* ResetVectorVtf0.asm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm.asm; path = ResetVectorVtf0.asm; sourceTree = "<group>"; };
+		129F601019B6EAE1008F1470 /* Flat32ToFlat64.asm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm.asm; path = Flat32ToFlat64.asm; sourceTree = "<group>"; };
+		129F601119B6EAE1008F1470 /* SearchForBfvBase.asm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm.asm; path = SearchForBfvBase.asm; sourceTree = "<group>"; };
+		129F601219B6EAE1008F1470 /* SearchForSecEntry.asm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm.asm; path = SearchForSecEntry.asm; sourceTree = "<group>"; };
+		129F601319B6EAE1008F1470 /* Main.asm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm.asm; path = Main.asm; sourceTree = "<group>"; };
+		129F601419B6EAE1008F1470 /* Port80Debug.asm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm.asm; path = Port80Debug.asm; sourceTree = "<group>"; };
+		129F601519B6EAE1008F1470 /* PostCodes.inc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.pascal; path = PostCodes.inc; sourceTree = "<group>"; };
+		129F601619B6EAE1008F1470 /* ReadMe.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = ReadMe.txt; sourceTree = "<group>"; };
+		129F601719B6EAE1008F1470 /* ResetVectorCode.asm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm.asm; path = ResetVectorCode.asm; sourceTree = "<group>"; };
+		129F601819B6EAE1008F1470 /* SerialDebug.asm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm.asm; path = SerialDebug.asm; sourceTree = "<group>"; };
+		129F601A19B6EAE1008F1470 /* FixupForRawSection.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = FixupForRawSection.py; sourceTree = "<group>"; };
+		129F601B19B6EAE1008F1470 /* UefiCpuPkg.dec */ = {isa = PBXFileReference; lastKnownFileType = text; path = UefiCpuPkg.dec; sourceTree = "<group>"; };
+		129F601C19B6EAE1008F1470 /* UefiCpuPkg.dsc */ = {isa = PBXFileReference; lastKnownFileType = text; path = UefiCpuPkg.dsc; sourceTree = "<group>"; };
+		129F602019B6EAE1008F1470 /* S3Resume.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = S3Resume.c; sourceTree = "<group>"; };
+		129F602119B6EAE1008F1470 /* S3Resume2Pei.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = S3Resume2Pei.inf; sourceTree = "<group>"; };
 		12A1790F166BCC15005B0D63 /* ComponentName.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ComponentName.c; sourceTree = "<group>"; };
 		12A17910166BCC15005B0D63 /* SataController.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = SataController.c; sourceTree = "<group>"; };
 		12A17911166BCC15005B0D63 /* SataController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SataController.h; sourceTree = "<group>"; };
@@ -1645,6 +1731,332 @@
 			path = X64;
 			sourceTree = "<group>";
 		};
+		129F5FAE19B6EAE1008F1470 /* UefiCpuPkg */ = {
+			isa = PBXGroup;
+			children = (
+				129F5FAF19B6EAE1008F1470 /* build.sh */,
+				129F5FB019B6EAE1008F1470 /* CpuDxe */,
+				129F5FBD19B6EAE1008F1470 /* CpuIo2Dxe */,
+				129F5FC119B6EAE1008F1470 /* CpuIo2Smm */,
+				129F5FC519B6EAE1008F1470 /* CpuIoPei */,
+				129F5FC919B6EAE1008F1470 /* edk2.patch-idtgdt */,
+				129F5FCA19B6EAE1008F1470 /* Include */,
+				129F5FD119B6EAE1008F1470 /* Library */,
+				129F5FFE19B6EAE1008F1470 /* ResetVector */,
+				129F601B19B6EAE1008F1470 /* UefiCpuPkg.dec */,
+				129F601C19B6EAE1008F1470 /* UefiCpuPkg.dsc */,
+				129F601D19B6EAE1008F1470 /* Universal */,
+			);
+			name = UefiCpuPkg;
+			path = ../UefiCpuPkg;
+			sourceTree = "<group>";
+		};
+		129F5FB019B6EAE1008F1470 /* CpuDxe */ = {
+			isa = PBXGroup;
+			children = (
+				129F5FB119B6EAE1008F1470 /* CpuDxe.c */,
+				129F5FB219B6EAE1008F1470 /* CpuDxe.h */,
+				129F5FB319B6EAE1008F1470 /* CpuDxe.inf */,
+				129F5FB419B6EAE1008F1470 /* CpuGdt.c */,
+				129F5FB519B6EAE1008F1470 /* Ia32 */,
+				129F5FBA19B6EAE1008F1470 /* X64 */,
+			);
+			path = CpuDxe;
+			sourceTree = "<group>";
+		};
+		129F5FB519B6EAE1008F1470 /* Ia32 */ = {
+			isa = PBXGroup;
+			children = (
+				129F5FB619B6EAE1008F1470 /* CpuAsm.asm */,
+				129F5FB719B6EAE1008F1470 /* CpuAsm.S */,
+				129F5FB819B6EAE1008F1470 /* IvtAsm.asm */,
+				129F5FB919B6EAE1008F1470 /* IvtAsm.S */,
+			);
+			path = Ia32;
+			sourceTree = "<group>";
+		};
+		129F5FBA19B6EAE1008F1470 /* X64 */ = {
+			isa = PBXGroup;
+			children = (
+				129F5FBB19B6EAE1008F1470 /* CpuAsm.asm */,
+				129F5FBC19B6EAE1008F1470 /* CpuAsm.S */,
+			);
+			path = X64;
+			sourceTree = "<group>";
+		};
+		129F5FBD19B6EAE1008F1470 /* CpuIo2Dxe */ = {
+			isa = PBXGroup;
+			children = (
+				129F5FBE19B6EAE1008F1470 /* CpuIo2Dxe.c */,
+				129F5FBF19B6EAE1008F1470 /* CpuIo2Dxe.h */,
+				129F5FC019B6EAE1008F1470 /* CpuIo2Dxe.inf */,
+			);
+			path = CpuIo2Dxe;
+			sourceTree = "<group>";
+		};
+		129F5FC119B6EAE1008F1470 /* CpuIo2Smm */ = {
+			isa = PBXGroup;
+			children = (
+				129F5FC219B6EAE1008F1470 /* CpuIo2Smm.c */,
+				129F5FC319B6EAE1008F1470 /* CpuIo2Smm.h */,
+				129F5FC419B6EAE1008F1470 /* CpuIo2Smm.inf */,
+			);
+			path = CpuIo2Smm;
+			sourceTree = "<group>";
+		};
+		129F5FC519B6EAE1008F1470 /* CpuIoPei */ = {
+			isa = PBXGroup;
+			children = (
+				129F5FC619B6EAE1008F1470 /* CpuIoPei.c */,
+				129F5FC719B6EAE1008F1470 /* CpuIoPei.h */,
+				129F5FC819B6EAE1008F1470 /* CpuIoPei.inf */,
+			);
+			path = CpuIoPei;
+			sourceTree = "<group>";
+		};
+		129F5FCA19B6EAE1008F1470 /* Include */ = {
+			isa = PBXGroup;
+			children = (
+				129F5FCB19B6EAE1008F1470 /* Library */,
+				129F5FCF19B6EAE1008F1470 /* Register */,
+			);
+			path = Include;
+			sourceTree = "<group>";
+		};
+		129F5FCB19B6EAE1008F1470 /* Library */ = {
+			isa = PBXGroup;
+			children = (
+				129F5FCC19B6EAE1008F1470 /* LocalApicLib.h */,
+				129F5FCD19B6EAE1008F1470 /* MtrrLib.h */,
+				129F5FCE19B6EAE1008F1470 /* UefiCpuLib.h */,
+			);
+			path = Library;
+			sourceTree = "<group>";
+		};
+		129F5FCF19B6EAE1008F1470 /* Register */ = {
+			isa = PBXGroup;
+			children = (
+				129F5FD019B6EAE1008F1470 /* LocalApic.h */,
+			);
+			path = Register;
+			sourceTree = "<group>";
+		};
+		129F5FD119B6EAE1008F1470 /* Library */ = {
+			isa = PBXGroup;
+			children = (
+				129F5FD219B6EAE1008F1470 /* BaseUefiCpuLib */,
+				129F5FDA19B6EAE1008F1470 /* BaseXApicLib */,
+				129F5FDD19B6EAE1008F1470 /* BaseXApicX2ApicLib */,
+				129F5FE019B6EAE1008F1470 /* CpuExceptionHandlerLib */,
+				129F5FF719B6EAE1008F1470 /* MtrrLib */,
+				129F5FFA19B6EAE1008F1470 /* SecPeiDxeTimerLibUefiCpu */,
+			);
+			path = Library;
+			sourceTree = "<group>";
+		};
+		129F5FD219B6EAE1008F1470 /* BaseUefiCpuLib */ = {
+			isa = PBXGroup;
+			children = (
+				129F5FD319B6EAE1008F1470 /* BaseUefiCpuLib.inf */,
+				129F5FD419B6EAE1008F1470 /* Ia32 */,
+				129F5FD719B6EAE1008F1470 /* X64 */,
+			);
+			path = BaseUefiCpuLib;
+			sourceTree = "<group>";
+		};
+		129F5FD419B6EAE1008F1470 /* Ia32 */ = {
+			isa = PBXGroup;
+			children = (
+				129F5FD519B6EAE1008F1470 /* InitializeFpu.asm */,
+				129F5FD619B6EAE1008F1470 /* InitializeFpu.S */,
+			);
+			path = Ia32;
+			sourceTree = "<group>";
+		};
+		129F5FD719B6EAE1008F1470 /* X64 */ = {
+			isa = PBXGroup;
+			children = (
+				129F5FD819B6EAE1008F1470 /* InitializeFpu.asm */,
+				129F5FD919B6EAE1008F1470 /* InitializeFpu.S */,
+			);
+			path = X64;
+			sourceTree = "<group>";
+		};
+		129F5FDA19B6EAE1008F1470 /* BaseXApicLib */ = {
+			isa = PBXGroup;
+			children = (
+				129F5FDB19B6EAE1008F1470 /* BaseXApicLib.c */,
+				129F5FDC19B6EAE1008F1470 /* BaseXApicLib.inf */,
+			);
+			path = BaseXApicLib;
+			sourceTree = "<group>";
+		};
+		129F5FDD19B6EAE1008F1470 /* BaseXApicX2ApicLib */ = {
+			isa = PBXGroup;
+			children = (
+				129F5FDE19B6EAE1008F1470 /* BaseXApicX2ApicLib.c */,
+				129F5FDF19B6EAE1008F1470 /* BaseXApicX2ApicLib.inf */,
+			);
+			path = BaseXApicX2ApicLib;
+			sourceTree = "<group>";
+		};
+		129F5FE019B6EAE1008F1470 /* CpuExceptionHandlerLib */ = {
+			isa = PBXGroup;
+			children = (
+				129F5FE119B6EAE1008F1470 /* CpuExceptionCommon.c */,
+				129F5FE219B6EAE1008F1470 /* CpuExceptionCommon.h */,
+				129F5FE319B6EAE1008F1470 /* DxeCpuExceptionHandlerLib.inf */,
+				129F5FE419B6EAE1008F1470 /* DxeCpuExceptionHandlerLib.uni */,
+				129F5FE519B6EAE1008F1470 /* DxeException.c */,
+				129F5FE619B6EAE1008F1470 /* DxeSmmCpuException.c */,
+				129F5FE719B6EAE1008F1470 /* Ia32 */,
+				129F5FEC19B6EAE1008F1470 /* SecPeiCpuException.c */,
+				129F5FED19B6EAE1008F1470 /* SecPeiCpuExceptionHandlerLib.inf */,
+				129F5FEE19B6EAE1008F1470 /* SecPeiCpuExceptionHandlerLib.uni */,
+				129F5FEF19B6EAE1008F1470 /* SmmCpuExceptionHandlerLib.inf */,
+				129F5FF019B6EAE1008F1470 /* SmmCpuExceptionHandlerLib.uni */,
+				129F5FF119B6EAE1008F1470 /* SmmException.c */,
+				129F5FF219B6EAE1008F1470 /* X64 */,
+			);
+			path = CpuExceptionHandlerLib;
+			sourceTree = "<group>";
+		};
+		129F5FE719B6EAE1008F1470 /* Ia32 */ = {
+			isa = PBXGroup;
+			children = (
+				129F5FE819B6EAE1008F1470 /* ArchExceptionHandler.c */,
+				129F5FE919B6EAE1008F1470 /* ArchInterruptDefs.h */,
+				129F5FEA19B6EAE1008F1470 /* ExceptionHandlerAsm.asm */,
+				129F5FEB19B6EAE1008F1470 /* ExceptionHandlerAsm.S */,
+			);
+			path = Ia32;
+			sourceTree = "<group>";
+		};
+		129F5FF219B6EAE1008F1470 /* X64 */ = {
+			isa = PBXGroup;
+			children = (
+				129F5FF319B6EAE1008F1470 /* ArchExceptionHandler.c */,
+				129F5FF419B6EAE1008F1470 /* ArchInterruptDefs.h */,
+				129F5FF519B6EAE1008F1470 /* ExceptionHandlerAsm.asm */,
+				129F5FF619B6EAE1008F1470 /* ExceptionHandlerAsm.S */,
+			);
+			path = X64;
+			sourceTree = "<group>";
+		};
+		129F5FF719B6EAE1008F1470 /* MtrrLib */ = {
+			isa = PBXGroup;
+			children = (
+				129F5FF819B6EAE1008F1470 /* MtrrLib.c */,
+				129F5FF919B6EAE1008F1470 /* MtrrLib.inf */,
+			);
+			path = MtrrLib;
+			sourceTree = "<group>";
+		};
+		129F5FFA19B6EAE1008F1470 /* SecPeiDxeTimerLibUefiCpu */ = {
+			isa = PBXGroup;
+			children = (
+				129F5FFB19B6EAE1008F1470 /* IpfTimerLib.c */,
+				129F5FFC19B6EAE1008F1470 /* SecPeiDxeTimerLibUefiCpu.inf */,
+				129F5FFD19B6EAE1008F1470 /* X86TimerLib.c */,
+			);
+			path = SecPeiDxeTimerLibUefiCpu;
+			sourceTree = "<group>";
+		};
+		129F5FFE19B6EAE1008F1470 /* ResetVector */ = {
+			isa = PBXGroup;
+			children = (
+				129F5FFF19B6EAE1008F1470 /* Vtf0 */,
+			);
+			path = ResetVector;
+			sourceTree = "<group>";
+		};
+		129F5FFF19B6EAE1008F1470 /* Vtf0 */ = {
+			isa = PBXGroup;
+			children = (
+				129F600019B6EAE1008F1470 /* Bin */,
+				129F600819B6EAE1008F1470 /* Build.py */,
+				129F600919B6EAE1008F1470 /* CommonMacros.inc */,
+				129F600A19B6EAE1008F1470 /* DebugDisabled.asm */,
+				129F600B19B6EAE1008F1470 /* Ia16 */,
+				129F600F19B6EAE1008F1470 /* Ia32 */,
+				129F601319B6EAE1008F1470 /* Main.asm */,
+				129F601419B6EAE1008F1470 /* Port80Debug.asm */,
+				129F601519B6EAE1008F1470 /* PostCodes.inc */,
+				129F601619B6EAE1008F1470 /* ReadMe.txt */,
+				129F601719B6EAE1008F1470 /* ResetVectorCode.asm */,
+				129F601819B6EAE1008F1470 /* SerialDebug.asm */,
+				129F601919B6EAE1008F1470 /* Tools */,
+			);
+			path = Vtf0;
+			sourceTree = "<group>";
+		};
+		129F600019B6EAE1008F1470 /* Bin */ = {
+			isa = PBXGroup;
+			children = (
+				129F600119B6EAE1008F1470 /* ResetVector.ia32.port80.raw */,
+				129F600219B6EAE1008F1470 /* ResetVector.ia32.raw */,
+				129F600319B6EAE1008F1470 /* ResetVector.ia32.serial.raw */,
+				129F600419B6EAE1008F1470 /* ResetVector.inf */,
+				129F600519B6EAE1008F1470 /* ResetVector.x64.port80.raw */,
+				129F600619B6EAE1008F1470 /* ResetVector.x64.raw */,
+				129F600719B6EAE1008F1470 /* ResetVector.x64.serial.raw */,
+			);
+			path = Bin;
+			sourceTree = "<group>";
+		};
+		129F600B19B6EAE1008F1470 /* Ia16 */ = {
+			isa = PBXGroup;
+			children = (
+				129F600C19B6EAE1008F1470 /* Init16.asm */,
+				129F600D19B6EAE1008F1470 /* Real16ToFlat32.asm */,
+				129F600E19B6EAE1008F1470 /* ResetVectorVtf0.asm */,
+			);
+			path = Ia16;
+			sourceTree = "<group>";
+		};
+		129F600F19B6EAE1008F1470 /* Ia32 */ = {
+			isa = PBXGroup;
+			children = (
+				129F601019B6EAE1008F1470 /* Flat32ToFlat64.asm */,
+				129F601119B6EAE1008F1470 /* SearchForBfvBase.asm */,
+				129F601219B6EAE1008F1470 /* SearchForSecEntry.asm */,
+			);
+			path = Ia32;
+			sourceTree = "<group>";
+		};
+		129F601919B6EAE1008F1470 /* Tools */ = {
+			isa = PBXGroup;
+			children = (
+				129F601A19B6EAE1008F1470 /* FixupForRawSection.py */,
+			);
+			path = Tools;
+			sourceTree = "<group>";
+		};
+		129F601D19B6EAE1008F1470 /* Universal */ = {
+			isa = PBXGroup;
+			children = (
+				129F601E19B6EAE1008F1470 /* Acpi */,
+			);
+			path = Universal;
+			sourceTree = "<group>";
+		};
+		129F601E19B6EAE1008F1470 /* Acpi */ = {
+			isa = PBXGroup;
+			children = (
+				129F601F19B6EAE1008F1470 /* S3Resume2Pei */,
+			);
+			path = Acpi;
+			sourceTree = "<group>";
+		};
+		129F601F19B6EAE1008F1470 /* S3Resume2Pei */ = {
+			isa = PBXGroup;
+			children = (
+				129F602019B6EAE1008F1470 /* S3Resume.c */,
+				129F602119B6EAE1008F1470 /* S3Resume2Pei.inf */,
+			);
+			path = S3Resume2Pei;
+			sourceTree = "<group>";
+		};
 		12A1790E166BCC15005B0D63 /* SataControllerDxe */ = {
 			isa = PBXGroup;
 			children = (
@@ -1700,6 +2112,7 @@
 				12896D8C16B3A10A00A2EC36 /* VBoxFsDxe */,
 				12F3E6BF193989F7003EDD5B /* Package */,
 				12DCF7B8177FE41400D2BE8F /* utils */,
+				129F5FAE19B6EAE1008F1470 /* UefiCpuPkg */,
 				12FA1567173F4E0200F847F1 /* UEFI */,
 				1247C23B178ADE2100A521A1 /* CloverX */,
 			);

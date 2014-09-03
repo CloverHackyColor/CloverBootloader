@@ -29,8 +29,13 @@ extern VOID BiosPutC(CHAR8 ch);
 // Global Variables
 //
 
-BOOLEAN                              mInterruptState = FALSE;
 extern UINT32                        mExceptionCodeSize;
+extern UINTN    mGdtPtr;
+extern UINTN    mIdtPtr;
+extern UINTN    GDT_BASE;
+extern UINTN    IDT_BASE;
+
+BOOLEAN                              mInterruptState = FALSE;
 UINTN                                mTimerVector = 0;
 volatile EFI_CPU_INTERRUPT_HANDLER   mTimerHandler = NULL;
 EFI_LEGACY_8259_PROTOCOL             *gLegacy8259 = NULL;
@@ -322,7 +327,7 @@ CpuSetMemoryAttributes (
 /*++
 
 Routine Description:
-  Set memory cacheability attributes for given range of memeory
+  Set memory cacheability attributes for given range of memory
 
 Arguments:
   This                - Protocol instance structure
@@ -1078,6 +1083,9 @@ Returns:
   //
   // Reload GDT, IDT
   //
+  //CopyMem(((UINT8 *)&mGdtPtr), (UINT8 *)&GDT_BASE, sizeof(UINTN));
+  mGdtPtr = (UINTN)&GDT_BASE;
+  mIdtPtr = (UINTN)&IDT_BASE;
   InitDescriptor ();
 
   //
@@ -1096,7 +1104,7 @@ Returns:
   InstallInterruptHandler (mTimerVector, SystemTimerHandler);
 
   // now we want to patch mTimerVector
-  CopyMem(((UINT8 *)&SystemTimerHandler) + 3, (UINT8 *)&mTimerVector, 4);
+  CopyMem(((UINT8 *)&SystemTimerHandler) + 3, (UINT8 *)&mTimerVector, 1);
 
   //
   // BUGBUG: We add all other interrupt vector

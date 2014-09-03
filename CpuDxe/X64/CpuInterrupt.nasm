@@ -16,10 +16,17 @@
 ;*
 ;------------------------------------------------------------------------------
 global InstallInterruptHandler
-global mExceptionCodeSize
 global InitDescriptor
 global SystemExceptionHandler
 global SystemTimerHandler
+
+SECTION .data
+global mExceptionCodeSize
+mExceptionCodeSize  dd  9
+
+global mGdtPtr
+global mIdtPtr
+
 
 SECTION .text
 
@@ -27,20 +34,45 @@ EXTERN TimerHandler
 EXTERN ExceptionHandler
 EXTERN mTimerVector
 
-mExceptionCodeSize  dd  9
 
 
 InitDescriptor: 
-        lea     rax, [REL GDT_BASE]             ; RAX=PHYSICAL address of gdt
-        mov     qword  [gdtr + 2], rax   ; Put address of gdt into the gdtr
+;        lea     rax, [REL GDT_BASE]             ; RAX=PHYSICAL address of gdt
+;        mov     qword  [gdtr + 2], rax   ; Put address of gdt into the gdtr
+        lea     rax, [REL gdtr]
         lgdt       [rax]
         mov     rax, 18h
         mov     gs, rax
         mov     fs, rax
-        lea     rax, [REL IDT_BASE]             ; RAX=PHYSICAL address of idt
-        mov     qword  [idtr + 2], rax   ; Put address of idt into the idtr
+;        lea     rax, [REL IDT_BASE]             ; RAX=PHYSICAL address of idt
+;        mov     qword  [idtr + 2], rax   ; Put address of idt into the idtr
+        lea     rax, [REL idtr]
         lidt      [rax]
         ret
+
+;lea     rax, [GDT_BASE]             ; RAX=PHYSICAL address of gdt
+;mov     qword  [gdtr + 2], rax   ; Put address of gdt into the gdtr
+;lgdt     [gdtr]
+;mov     rax, 18h
+;mov     gs, rax
+;mov     fs, rax
+;lea     rax, [IDT_BASE]             ; RAX=PHYSICAL address of idt
+;mov     qword  [idtr + 2], rax   ; Put address of idt into the idtr
+;lidt     [idtr]
+;ret
+
+;;        mov     rax,  qword gdtr
+;        lea     rax, [REL gdtr]
+;        lgdt       [rax]
+;        mov     rax, 18h
+;        mov     gs, rax
+;        mov     fs, rax
+;;        mov     rax, qword idtr
+;        lea     rax, [REL idtr]
+;        lidt      [rax]
+;        ret
+
+
 
 ; VOID
 ; InstallInterruptHandler (
@@ -209,7 +241,7 @@ INTUnknown:
 
 SystemTimerHandler:
     push    0
-    push   QWORD 0  ;mTimerVector ;to be patched in Cpu.c
+    push   strict DWORD 0  ;mTimerVector ;to be patched in Cpu.c
     JmpCommonIdtEntry
 
 commonIdtEntry:
@@ -446,10 +478,10 @@ ExceptionDone:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; data
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+SECTION .data
 
 gdtr    dw GDT_END - GDT_BASE - 1   ; GDT limit
-        dq 0                        ; (GDT base gets set above)
+mGdtPtr dq 0   ;GDT_BASE                        ; (GDT base gets set above)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;   global descriptor table (GDT)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -542,7 +574,7 @@ SPARE4_SEL  equ $-GDT_BASE            ; Selector [0x40]
 GDT_END:
 
 idtr    dw IDT_END - IDT_BASE - 1   ; IDT limit
-        dq 0                        ; (IDT base gets set above)
+mIdtPtr dq 0  ;IDT_BASE                        ; (IDT base gets set above)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;   interrupt descriptor table (IDT)

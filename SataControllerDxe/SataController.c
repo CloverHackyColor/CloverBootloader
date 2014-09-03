@@ -1136,9 +1136,9 @@ IdeInitCalculateMode (
     (*SupportedModes)->UdmaMode.Valid = TRUE;
     (*SupportedModes)->UdmaMode.Mode = SelectedMode;
 
-  } else {*/
+  } else { */
     (*SupportedModes)->UdmaMode.Valid = FALSE;
-  (*SupportedModes)->UdmaMode.Mode  = SelectedMode;
+    (*SupportedModes)->UdmaMode.Mode  = SelectedMode;
 //  }
 //  (*SupportedModes)->UdmaMode.Valid = FALSE;
   (*SupportedModes)->MultiWordDmaMode.Valid = FALSE;

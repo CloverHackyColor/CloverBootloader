@@ -14,6 +14,8 @@
 
 #include "CpuDxe.h"
 
+#define USE_MTRR 0
+
 //
 // Global Variables
 //
@@ -23,11 +25,13 @@ EFI_CPU_INTERRUPT_HANDLER ExternalVectorTable[0x100];
 BOOLEAN                   InterruptState = FALSE;
 EFI_HANDLE                mCpuHandle = NULL;
 BOOLEAN                   mIsFlushingGCD;
+#if USE_MTRR
 UINT64                    mValidMtrrAddressMask = MTRR_LIB_CACHE_VALID_ADDRESS;
 UINT64                    mValidMtrrBitsMask    = MTRR_LIB_MSR_VALID_MASK;
+#endif
 IA32_IDT_GATE_DESCRIPTOR  *mOrigIdtEntry        = NULL;
 UINT16                    mOrigIdtEntryCount    = 0;
-
+#if USE_MTRR
 FIXED_MTRR    mFixedMtrrTable[] = {
   {
     MTRR_LIB_IA32_MTRR_FIX64K_00000,
@@ -85,7 +89,7 @@ FIXED_MTRR    mFixedMtrrTable[] = {
     0x1000
   },
 };
-
+#endif
 
 EFI_CPU_ARCH_PROTOCOL  gCpu = {
   CpuFlushCpuDataCache,
@@ -111,6 +115,7 @@ EFI_CPU_ARCH_PROTOCOL  gCpu = {
 // etc.
 //
 UINT32 mErrorCodeFlag = 0x00027d00;
+EFI_EVENT   IdleLoopEvent;
 
 //
 // Local function prototypes
@@ -623,6 +628,9 @@ CpuSetMemoryAttributes (
   IN UINT64                    Attributes
   )
 {
+  return EFI_UNSUPPORTED;
+  
+#if USE_MTRR  /*this is extra bug, we need no it */
   RETURN_STATUS             Status;
   MTRR_MEMORY_CACHE_TYPE    CacheType;
 
@@ -681,6 +689,7 @@ CpuSetMemoryAttributes (
              );
 
   return (EFI_STATUS) Status;
+#endif
 }
 
 /**
@@ -689,6 +698,7 @@ CpuSetMemoryAttributes (
   This function initializes the valid bits mask and valid address mask for MTRRs.
 
 **/
+#if USE_MTRR
 VOID
 InitializeMtrrMask (
   VOID
@@ -711,7 +721,7 @@ InitializeMtrrMask (
     mValidMtrrAddressMask = MTRR_LIB_CACHE_VALID_ADDRESS;
   }
 }
-
+#endif
 /**
   Gets GCD Mem Space type from MTRR Type.
 
@@ -722,6 +732,7 @@ InitializeMtrrMask (
   @return GCD Mem Space type
 
 **/
+#if USE_MTRR
 UINT64
 GetMemorySpaceAttributeFromMtrrType (
   IN UINT8                MtrrAttributes
@@ -742,7 +753,7 @@ GetMemorySpaceAttributeFromMtrrType (
     return 0;
   }
 }
-
+#endif
 /**
   Searches memory descriptors covered by given memory range.
 
@@ -876,6 +887,7 @@ SetGcdMemorySpaceAttributes (
   This function refreshes the GCD Memory Space attributes according to MTRRs.
 
 **/
+#if USE_MTRR
 VOID
 RefreshGcdMemoryAttributes (
   VOID
@@ -1059,7 +1071,7 @@ RefreshGcdMemoryAttributes (
 
   mIsFlushingGCD = FALSE;
 }
-
+#endif
 /**
   Set Interrupt Descriptor Table Handler Address.
 
@@ -1148,7 +1160,7 @@ InitInterruptDescriptorTable (
     // Save original IDT entry and IDT entry count.
     //
     mOrigIdtEntry = AllocateCopyPool (OldIdtPtr.Limit + 1, (VOID *) OldIdtPtr.Base);
-    ASSERT (mOrigIdtEntry != NULL);
+//    ASSERT (mOrigIdtEntry != NULL);
     mOrigIdtEntryCount = (UINT16) OldIdtSize;
   } else {
     OldIdt = NULL;
@@ -1176,7 +1188,7 @@ InitInterruptDescriptorTable (
     } else {
       IntHandler = NULL;
     }
-#if 1  //patch by nms42
+#if 1  //patch by nms42 for AMD CPU
     if (Index == 0x6F) {
       IntHandler = NULL;
     }
@@ -1205,7 +1217,7 @@ InitInterruptDescriptorTable (
   //
   for (Index = OldIdtSize; Index < 32; Index++) {
     Status = CpuRegisterInterruptHandler (&gCpu, Index, CommonExceptionHandler);
-    ASSERT_EFI_ERROR (Status);
+//    ASSERT_EFI_ERROR (Status);
   }
 
   //
@@ -1254,9 +1266,9 @@ InitializeCpu (
   )
 {
   EFI_STATUS  Status;
-  EFI_EVENT   IdleLoopEvent;
 
-  InitializeFloatingPointUnits ();
+
+//  InitializeFloatingPointUnits ();  //nah
 
   //
   // Make sure interrupts are disabled
@@ -1286,12 +1298,15 @@ InitializeCpu (
                   &gEfiCpuArchProtocolGuid, &gCpu,
                   NULL
                   );
-  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR (Status);
+  if (EFI_ERROR (Status)) {
+    return Status;
+  }
 
   //
   // Refresh GCD memory space map according to MTRR value.
   //
-  RefreshGcdMemoryAttributes ();
+//  RefreshGcdMemoryAttributes ();
 
   //
   // Setup a callback for idle events
@@ -1304,7 +1319,7 @@ InitializeCpu (
                   &gIdleLoopEventGuid,
                   &IdleLoopEvent
                   );
-  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR (Status);
 
   return Status;
 }
