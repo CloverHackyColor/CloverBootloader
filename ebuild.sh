@@ -55,6 +55,12 @@ if [[ ! -x "$TOOLCHAIN_DIR"/cross/bin/x86_64-clover-linux-gnu-gcc && \
     exit 1
 fi
 
+if [[ ! -x "$TOOLCHAIN_DIR"/bin/nasm ]]; then
+    echo "No nasm binary found in toolchain directory !" >&2
+    echo "Build it with the buidnasm.sh script." >&2
+    exit 1
+fi
+
 # Go to the script directory to build
 cd "$(dirname $0)"
 

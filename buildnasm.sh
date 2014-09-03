@@ -12,7 +12,8 @@ export NASM_VERSION=${NASM_VERSION:-2.11.05}
 
 # Change PREFIX if you want nasm installed on different place
 #
-export PREFIX=${PREFIX:-~/src/opt/local}
+TOOLCHAIN_DIR=${TOOLCHAIN_DIR:-~/src/opt/local}
+export PREFIX=${PREFIX:-$TOOLCHAIN_DIR}
 
 # ./configure arguments for Nasm
 #
