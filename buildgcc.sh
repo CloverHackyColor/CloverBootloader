@@ -54,6 +54,9 @@ export DIR_BUILD=${DIR_BUILD:-$RAMDISK_MNT_PT}
 export DIR_DOWNLOADS=${DIR_DOWNLOADS:-$DIR_TOOLS/download}
 export DIR_LOGS=${DIR_LOGS:-$DIR_TOOLS/logs}
 
+# Set make to prevent problem during compilation when Xcode path has spaces
+export MAKE=make
+
 # Here we set MAKEFLAGS for GCC so it knows how many cores we can use
 # faster compile !
 export MAKEFLAGS="-j $(( $(sysctl -n hw.ncpu) * 2 ))"
