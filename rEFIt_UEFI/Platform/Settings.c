@@ -67,7 +67,7 @@ REFIT_CONFIG   GlobalConfig = { FALSE, -1, 0, 0, 0, TRUE, FALSE, FALSE, FALSE, F
   //Font
   FONT_ALFA, 7, 0xFFFFFF80, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, None, 0,
   //BackgroundDark
-  FALSE, FALSE, FALSE, FALSE, 0, 0, 4, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF,
+  FALSE, FALSE, FALSE, 0, 0, 4, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF,
   //BannerEdgeHorizontal
   0, 0, 0, 0,
   //VerticalLayout
@@ -1429,13 +1429,6 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
       if (prop) {
         if (IsPropertyTrue(prop)) {
           GlobalConfig.NeverHibernate = TRUE;
-        }
-      }
-      
-      prop = GetProperty(dictPointer, "IgnoreNVRAMBoot");
-      if (prop) {
-        if (IsPropertyTrue(prop)) {
-          GlobalConfig.IgnoreNVRAMBoot = TRUE;
         }
       }
       

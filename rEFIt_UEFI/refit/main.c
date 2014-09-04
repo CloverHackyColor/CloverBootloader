@@ -1459,6 +1459,7 @@ INTN FindDefaultEntry(VOID)
   REFIT_VOLUME        *Volume;
   LOADER_ENTRY        *Entry;
   BOOLEAN             SearchForLoader;
+  BOOLEAN             HaveDefaultVolume;
   
 //  DBG("FindDefaultEntry ...\n");
   
@@ -1470,7 +1471,9 @@ INTN FindDefaultEntry(VOID)
     gEmuVariableControl->InstallEmulation(gEmuVariableControl);
   }
     
-  if (!GlobalConfig.IgnoreNVRAMBoot) {
+  HaveDefaultVolume = gSettings.DefaultVolume != NULL && gSettings.DefaultVolume[0] != L'\0';
+  
+  if (!HaveDefaultVolume) {
     Index = FindStartupDiskVolume(&MainMenu);
   }
   
@@ -1487,7 +1490,7 @@ INTN FindDefaultEntry(VOID)
   // if not found, then try DefaultVolume from config.plist
   // if not null or empty, search volume that matches gSettings.DefaultVolume
   //
-  if (gSettings.DefaultVolume != NULL && gSettings.DefaultVolume[0] != L'\0') {
+  if (HaveDefaultVolume) {
     
     // if not null or empty, also search for loader that matches gSettings.DefaultLoader
     SearchForLoader = (gSettings.DefaultLoader != NULL && gSettings.DefaultLoader[0] != L'\0');
@@ -1653,6 +1656,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   TagPtr            UniteTag = NULL;
   BOOLEAN           UniteConfigs = FALSE;
   EFI_TIME          Now;
+  BOOLEAN           HaveDefaultVolume;
   
   // CHAR16            *InputBuffer; //, *Y;
   //  EFI_INPUT_KEY Key;
@@ -1911,9 +1915,10 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     DBG("smbios.plist not found, not overriding config.plist\n");
   }
   
-  if (!gFirmwareClover && 
+  HaveDefaultVolume = gSettings.DefaultVolume != NULL && gSettings.DefaultVolume[0] != L'\0';
+  if (!gFirmwareClover &&
       !gDriversFlags.EmuVariableLoaded &&
-      !GlobalConfig.IgnoreNVRAMBoot &&
+      !HaveDefaultVolume &&
       GlobalConfig.Timeout == 0 && !ReadAllKeyStrokes()) {
 // UEFI boot: get gEfiBootDeviceGuid from NVRAM.
 // if present, ScanVolumes() will skip scanning other volumes

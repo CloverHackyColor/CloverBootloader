@@ -433,7 +433,6 @@ typedef struct {
   BOOLEAN     BackgroundDark;
   BOOLEAN     CustomIcons;
   BOOLEAN     SelectionOnTop;
-  BOOLEAN     IgnoreNVRAMBoot;
   UINTN       BadgeOffsetX;
   UINTN       BadgeOffsetY;
   UINTN       BadgeScale;

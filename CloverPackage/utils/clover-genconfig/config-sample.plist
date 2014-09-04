@@ -220,8 +220,6 @@
 		<string>boot.efi</string>
 		<key>DefaultVolume</key>
 		<string>MacHDD</string>
-		<key>IgnoreNVRAMBoot</key>
-		<false/>
 		<key>NeverHibernate</key>
 		<false/>
 		<key>Fast</key>
@@ -512,7 +510,7 @@
 		<false/>
 		<key>KernelCpu</key>
 		<false/>
-        <key>FakeCPUID</key>
+		<key>FakeCPUID</key>
 		<string>0x010676</string>
 		<key>KernelPm</key>
 		<false/>
