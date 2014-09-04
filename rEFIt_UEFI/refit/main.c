@@ -850,7 +850,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     //PauseForKey(L"continue");
   }
   
-  SetStartupDiskVolume(Entry->Volume, Entry->LoaderType == OSTYPE_OSX ? NULL : Entry->LoaderPath);
+  //SetStartupDiskVolume(Entry->Volume, Entry->LoaderType == OSTYPE_OSX ? NULL : Entry->LoaderPath);
   
 //    DBG("BeginExternalScreen\n");
   BeginExternalScreen(OSFLAG_ISSET(Entry->Flags, OSFLAG_USEGRAPHICS), L"Booting OS");
@@ -991,7 +991,7 @@ static VOID StartLegacy(IN LEGACY_ENTRY *Entry)
       gEmuVariableControl->UninstallEmulation(gEmuVariableControl);
     }  
 
-    SetStartupDiskVolume(Entry->Volume, NULL);
+    //SetStartupDiskVolume(Entry->Volume, NULL);
   
     egClearScreen(&DarkBackgroundPixel);
     BeginExternalScreen(TRUE, L"Booting Legacy OS");
