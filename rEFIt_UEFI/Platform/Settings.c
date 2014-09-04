@@ -145,7 +145,7 @@ VOID ParseLoadOptions(OUT CHAR16** conf, OUT TagPtr* dict)
                             "<!DOCTYPE plist",
                             "<plist",
                             "<dict>",
-                            '\0'};
+                            "\0"};
     UINTN  PlistStringsLen;
     CHAR8*  AsciiConf = NULL;
     

@@ -1123,20 +1123,20 @@ IdeInitCalculateMode (
   }
 //  DEBUG ((EFI_D_INFO, "IdeInitCalculateMode: PioMode = %x\n", (*SupportedModes)->PioMode.Mode));
   DBG(L"IdeInitCalculateMode: PioMode = %x\n", (*SupportedModes)->PioMode.Mode);
-/*  Status =*/ CalculateBestUdmaMode (
+  Status = CalculateBestUdmaMode (
             IdentifyData,
             (DisqulifiedModes->UdmaMode.Valid ? ((UINT16 *) &(DisqulifiedModes->UdmaMode.Mode)) : NULL),
             &SelectedMode
             );
 //Slice - exclude UDMA
-/*  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR (Status)) {
     (*SupportedModes)->UdmaMode.Valid = TRUE;
     (*SupportedModes)->UdmaMode.Mode = SelectedMode;
 
-  } else { */
+  } else { 
     (*SupportedModes)->UdmaMode.Valid = FALSE;
     (*SupportedModes)->UdmaMode.Mode  = SelectedMode;
-//  }
+  }
 //  (*SupportedModes)->UdmaMode.Valid = FALSE;
   (*SupportedModes)->MultiWordDmaMode.Valid = FALSE;
 	

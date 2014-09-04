@@ -1607,7 +1607,7 @@ BOOLEAN DumpVariable(CHAR16* Name, EFI_GUID* Guid, INTN DevicePathAt)
     if (EFI_ERROR(Status)) {
       DBG("Can't get %s, size=%d\n", Name, dataSize);
       FreePool(data);
-      data = FALSE;
+      data = NULL;
     } else {
       DBG("%s var size=%d\n", Name, dataSize);
       for (i = 0; i < dataSize; i++) {

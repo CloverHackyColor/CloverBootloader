@@ -334,7 +334,7 @@ IdentifyAtaDevice (
       AtaDevice->UdmaValid = TRUE;
     }
   }
-  AtaDevice->UdmaValid = FALSE; //Slice
+ // AtaDevice->UdmaValid = FALSE; //Slice
 
   Capacity = GetAtapi6Capacity (AtaDevice);
   if (Capacity > MAX_28BIT_ADDRESSING_CAPACITY) {
