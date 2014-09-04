@@ -30,10 +30,12 @@ extern VOID BiosPutC(CHAR8 ch);
 //
 
 extern UINT32                        mExceptionCodeSize;
+#if defined(MDE_CPU_X64)
 extern UINTN    mGdtPtr;
 extern UINTN    mIdtPtr;
 extern UINTN    GDT_BASE;
 extern UINTN    IDT_BASE;
+#endif
 
 BOOLEAN                              mInterruptState = FALSE;
 UINTN                                mTimerVector = 0;
@@ -1084,8 +1086,10 @@ Returns:
   // Reload GDT, IDT
   //
   //CopyMem(((UINT8 *)&mGdtPtr), (UINT8 *)&GDT_BASE, sizeof(UINTN));
+#if defined(MDE_CPU_X64)
   mGdtPtr = (UINTN)&GDT_BASE;
   mIdtPtr = (UINTN)&IDT_BASE;
+#endif
   InitDescriptor ();
 
   //
@@ -1102,10 +1106,10 @@ Returns:
   // Install Timer Handler
   //
   InstallInterruptHandler (mTimerVector, SystemTimerHandler);
-
+#if defined(MDE_CPU_X64)
   // now we want to patch mTimerVector
   CopyMem(((UINT8 *)&SystemTimerHandler) + 3, (UINT8 *)&mTimerVector, 1);
-
+#endif
   //
   // BUGBUG: We add all other interrupt vector
   //
