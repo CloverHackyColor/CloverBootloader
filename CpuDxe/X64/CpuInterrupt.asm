@@ -16,27 +16,33 @@
 ;*
 ;------------------------------------------------------------------------------
 
+.data
 EXTERNDEF mExceptionCodeSize:DWORD
+mExceptionCodeSize  DD  9
+
+EXTERNDEF mGdtPtr:QWORD
+EXTERNDEF mIdtPtr:QWORD
 
 .code
 
 EXTERN TimerHandler: FAR
 EXTERN ExceptionHandler: NEAR
-EXTERN mTimerVector: QWORD
-
-mExceptionCodeSize  DD  9
+EXTERN mTimerVector:QWORD
 
 InitDescriptor PROC
-        lea     rax, [GDT_BASE]             ; RAX=PHYSICAL address of gdt
-        mov     qword ptr [gdtr + 2], rax   ; Put address of gdt into the gdtr
+;        lea     rax, [GDT_BASE]             ; RAX=PHYSICAL address of gdt
+;        mov     qword ptr [gdtr + 2], rax   ; Put address of gdt into the gdtr
+        lea     rax, [gdtr]
         lgdt    fword ptr [gdtr]
         mov     rax, 18h
         mov     gs, rax
         mov     fs, rax
-        lea     rax, [IDT_BASE]             ; RAX=PHYSICAL address of idt
-        mov     qword ptr [idtr + 2], rax   ; Put address of idt into the idtr
+;        lea     rax, [IDT_BASE]             ; RAX=PHYSICAL address of idt
+;        mov     qword ptr [idtr + 2], rax   ; Put address of idt into the idtr
+        lea     rax, [idtr]
         lidt    fword ptr [idtr]
         ret
+
 InitDescriptor ENDP
 
 ; VOID
@@ -446,10 +452,10 @@ ExceptionDone:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; data
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+.data
 
 gdtr    dw GDT_END - GDT_BASE - 1   ; GDT limit
-        dq 0                        ; (GDT base gets set above)
+mGdtPtr dq 0                        ; (GDT base gets set above)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;   global descriptor table (GDT)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -542,7 +548,7 @@ SPARE4_SEL  equ $-GDT_BASE            ; Selector [0x40]
 GDT_END:
 
 idtr    dw IDT_END - IDT_BASE - 1   ; IDT limit
-        dq 0                        ; (IDT base gets set above)
+mIdtPtr dq 0                        ; (IDT base gets set above)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;   interrupt descriptor table (IDT)
