@@ -55,6 +55,7 @@ export DIR_DOWNLOADS=${DIR_DOWNLOADS:-$DIR_TOOLS/download}
 export DIR_LOGS=${DIR_LOGS:-$DIR_TOOLS/logs}
 
 # Set MAKE and LD to prevent problem during compilation when Xcode path has spaces
+#
 export MAKE=make
 export LD=ld
 

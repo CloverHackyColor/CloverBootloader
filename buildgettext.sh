@@ -28,12 +28,10 @@ export DIR_BUILD=${DIR_BUILD:-$RAMDISK_MNT_PT}
 export DIR_DOWNLOADS=${DIR_DOWNLOADS:-$DIR_TOOLS/download}
 export DIR_LOGS=${DIR_LOGS:-$DIR_TOOLS/logs}
 
-## Paths for GCC (Xcode 4.1 fix) - works with Xcode 3.2 - Xcode 4.2
+# Set MAKE and LD to prevent problem during compilation when Xcode path has spaces
 #
-export CC="/usr/bin/gcc"
-export CXX="/usr/bin/g++"
-export CPP="/usr/bin/cpp"
-export LD="/usr/bin/ld"
+export MAKE=make
+export LD=ld
 
 # Here we set MAKEFLAGS for GCC so it knows how many cores can use
 # faster compile!
