@@ -15,6 +15,13 @@ export NASM_VERSION=${NASM_VERSION:-2.11.05}
 TOOLCHAIN_DIR=${TOOLCHAIN_DIR:-~/src/opt/local}
 export PREFIX=${PREFIX:-$TOOLCHAIN_DIR}
 
+if [[ ! -x "$TOOLCHAIN_DIR"/bin/gcc || \
+      ! -x "$TOOLCHAIN_DIR"/bin/g++ ]]; then
+    echo "No clover toolchain found !" >&2
+    echo "Build it with the buidgcc.sh script or defined the TOOLCHAIN_DIR variable." >&2
+    exit 1
+fi
+
 # ./configure arguments for Nasm
 #
 export NASM_CONFIG="--prefix=$PREFIX"
@@ -28,14 +35,6 @@ export DIR_TOOLS=${DIR_TOOLS:-$DIR_MAIN/tools}
 export DIR_BUILD=${DIR_BUILD:-$RAMDISK_MNT_PT}
 export DIR_DOWNLOADS=${DIR_DOWNLOADS:-$DIR_TOOLS/download}
 export DIR_LOGS=${DIR_LOGS:-$DIR_TOOLS/logs}
-
-## Paths for GCC (Xcode 4.1 fix) - works with Xcode 3.2 - Xcode 4.2
-#
-export CC="gcc"
-export CXX="g++"
-export CPP="cpp"
-export LD="ld"
-export MAKE="make"
 
 # Here we set MAKEFLAGS for GCC so it knows how many cores can use
 # faster compile!
@@ -64,6 +63,17 @@ fnCheckXcode () {
 [ ! -d ${DIR_LOGS} ]       && mkdir ${DIR_LOGS}
 [ ! -d ${PREFIX}/include ] && mkdir -p ${PREFIX}/include
 echo
+
+# Function: to manage PATH
+pathmunge () {
+    if [[ ! $PATH =~ (^|:)$1(:|$) ]]; then
+        if [[ "${2:-}" = "after" ]]; then
+            export PATH=$PATH:$1
+        else
+            export PATH=$1:$PATH
+        fi
+    fi
+}
 
 # RAMdisk
 function mountRamDisk() {
@@ -157,13 +167,35 @@ fnCompileNasm ()
     local NASM_DIR=$(fnExtract "nasm-${NASM_VERSION}.tar.bz2")
 
     # Nasm build
+    local cmd logfile
     cd "$NASM_DIR"
     echo "-  nasm-${NASM_VERSION} configure..."
-    "${NASM_DIR}"/configure $NASM_CONFIG >$DIR_LOGS/nasm.config.log.txt 2>&1 || exit 1
+    cmd="${NASM_DIR}/configure $NASM_CONFIG"
+    logfile="$DIR_LOGS/nasm.configure.log.txt"
+    echo "$cmd" > "$logfile"
+    eval "$cmd" >> "$logfile" 2>&1
+    if [[ $? -ne 0 ]]; then
+        echo "Error configuring nasm-${NASM_VERSION} ! Check the log $logfile"
+        exit 1
+    fi
     echo "-  nasm-${NASM_VERSION} make..."
-    make >$DIR_LOGS/nasm.make.log.txt 2>&1 || exit 1
+    cmd="make"
+    logfile="$DIR_LOGS/nasm.make.log.txt"
+    echo "$cmd" > "$logfile"
+    eval "$cmd" >> "$logfile" 2>&1
+    if [[ $? -ne 0 ]]; then
+        echo "Error compiling nasm-${NASM_VERSION} ! Check the log $logfile"
+        exit 1
+    fi
     echo "-  nasm-${NASM_VERSION} installing..."
-    make install >$DIR_LOGS/nasm.install.log.txt 2>&1 || exit 1
+    cmd="make install"
+    logfile="$DIR_LOGS/nasm.install.log.txt"
+    echo "$cmd" > "$logfile"
+    eval "$cmd" >> "$logfile" 2>&1
+    if [[ $? -ne 0 ]]; then
+        echo "Error installing nasm-${NASM_VERSION} ! Check the log $logfile"
+        exit 1
+    fi
     echo "-  nasm-${NASM_VERSION} installed in $PREFIX"
 }
 
@@ -179,5 +211,11 @@ fnNasm ()
 
 
 ### Main ###
+
+# Add XCode bin directory for the command line tools to the PATH
+pathmunge "$(xcode-select -p)"/usr/bin
+
+# Add toolchain bin directory to the PATH
+pathmunge "$TOOLCHAIN_DIR"/bin
 
 fnNasm
