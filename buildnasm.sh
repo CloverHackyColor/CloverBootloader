@@ -31,10 +31,11 @@ export DIR_LOGS=${DIR_LOGS:-$DIR_TOOLS/logs}
 
 ## Paths for GCC (Xcode 4.1 fix) - works with Xcode 3.2 - Xcode 4.2
 #
-export CC="/usr/bin/gcc"
-export CXX="/usr/bin/g++"
-export CPP="/usr/bin/cpp"
-export LD="/usr/bin/ld"
+export CC="gcc"
+export CXX="g++"
+export CPP="cpp"
+export LD="ld"
+export MAKE="make"
 
 # Here we set MAKEFLAGS for GCC so it knows how many cores can use
 # faster compile!
@@ -163,7 +164,7 @@ fnCompileNasm ()
     make >$DIR_LOGS/nasm.make.log.txt 2>&1 || exit 1
     echo "-  nasm-${NASM_VERSION} installing..."
     make install >$DIR_LOGS/nasm.install.log.txt 2>&1 || exit 1
-    echo "-  nasm-${NASM_VERSION} installed in $PREFIX  -"
+    echo "-  nasm-${NASM_VERSION} installed in $PREFIX"
 }
 
 
