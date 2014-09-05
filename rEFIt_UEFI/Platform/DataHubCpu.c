@@ -220,22 +220,24 @@ EFI_STATUS SetVariablesForOSX()
                               sizeof(BacklightLevel), &gSettings.BacklightLevel);    
   }
   
-  //Helper for rc.local script
-  AsciiSPrint(Buffer, sizeof(Buffer), "%d", gSettings.LogLineCount);
-  /*Status = */gRS->SetVariable(L"Clover.LogLineCount", &gEfiAppleBootGuid, 
-                            EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-                            AsciiStrLen(Buffer), Buffer);
+  if (gSettings.StoreCloverVariables) {
+	  //Helper for rc.local script
+	  AsciiSPrint(Buffer, sizeof(Buffer), "%d", gSettings.LogLineCount);
+	  /*Status = */gRS->SetVariable(L"Clover.LogLineCount", &gEfiAppleBootGuid, 
+								EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+								AsciiStrLen(Buffer), Buffer);
 
-  if (gSettings.LogEveryBoot) { //not NULL
-    /*Status = */gRS->SetVariable(L"Clover.LogEveryBoot", &gEfiAppleBootGuid, 
-                              EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-                              AsciiStrLen(gSettings.LogEveryBoot), gSettings.LogEveryBoot);
-  }
+	  if (gSettings.LogEveryBoot) { //not NULL
+		/*Status = */gRS->SetVariable(L"Clover.LogEveryBoot", &gEfiAppleBootGuid, 
+								  EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+								  AsciiStrLen(gSettings.LogEveryBoot), gSettings.LogEveryBoot);
+	  }
 
-  if (gSettings.MountEFI) { //not NULL
-    /*Status = */gRS->SetVariable(L"Clover.MountEFI", &gEfiAppleBootGuid, 
-                              EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-                              AsciiStrLen(gSettings.MountEFI), gSettings.MountEFI);
+	  if (gSettings.MountEFI) { //not NULL
+		/*Status = */gRS->SetVariable(L"Clover.MountEFI", &gEfiAppleBootGuid, 
+								  EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+								  AsciiStrLen(gSettings.MountEFI), gSettings.MountEFI);
+	  }
   }
 
   return EFI_SUCCESS;

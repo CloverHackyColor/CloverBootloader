@@ -3982,7 +3982,14 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
           gSettings.LogEveryBoot = AllocateCopyPool(AsciiStrSize(prop->string), prop->string);
         }
       }
-    }
+    
+	  prop = GetProperty(dictPointer, "StoreCloverVariables");
+	  gSettings.StoreCloverVariables = !IsPropertyFalse(prop);
+	}
+	else {
+		gSettings.StoreCloverVariables = TRUE; // default to TRUE if the section is not present in config
+	}
+
     if (!gSettings.RtMLB) {
       gSettings.RtMLB = &gSettings.BoardSerialNumber[0];
     }
