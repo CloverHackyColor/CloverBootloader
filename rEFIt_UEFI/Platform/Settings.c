@@ -1400,10 +1400,21 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
         AsciiStrnCpy(gSettings.BootArgs, prop->string, 255);
       }
       
+      // defaults if "DefaultVolume" is not present or is empty
+      gSettings.LastBootedVolume = FALSE;
+      gSettings.DefaultVolume = NULL;
       prop = GetProperty(dictPointer, "DefaultVolume");
       if(prop) {
-        gSettings.DefaultVolume = AllocateZeroPool(AsciiStrSize(prop->string) * sizeof(CHAR16));
-        AsciiStrToUnicodeStr(prop->string, gSettings.DefaultVolume);
+        UINTN Size = AsciiStrSize(prop->string);
+        if (Size > 0) {
+          // check for special value for remembering boot volume
+          if (AsciiStriCmp(prop->string, "LastBootedVolume") == 0) {
+            gSettings.LastBootedVolume = TRUE;
+          } else {
+            gSettings.DefaultVolume = AllocateZeroPool(Size * sizeof(CHAR16));
+            AsciiStrToUnicodeStr(prop->string, gSettings.DefaultVolume);
+          }
+        }
       }
       
       prop = GetProperty(dictPointer, "DefaultLoader");

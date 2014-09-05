@@ -806,6 +806,7 @@ typedef struct {
 	CHAR8   BootArgs[256];
 	CHAR16	CustomUuid[40];
   CHAR16  *DefaultVolume;
+  BOOLEAN LastBootedVolume;
 #if defined(MDE_CPU_IA32)
   UINT32  align10;
 #endif
