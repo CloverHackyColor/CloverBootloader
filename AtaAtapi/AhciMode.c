@@ -702,8 +702,6 @@ AhciPioTransfer (
   EFI_AHCI_COMMAND_LIST         CmdList;
   UINT32                        PortTfd;
   UINT32                        PrdCount;
-  BOOLEAN                       PioFisReceived;
-  BOOLEAN                       D2hFisReceived;
 
   if (Read) {
     Flag = EfiPciIoOperationBusMasterWrite;
@@ -775,26 +773,23 @@ AhciPioTransfer (
     Status = EFI_TIMEOUT;
     Delay  = (UINT32) (DivU64x32 (Timeout, 1000) + 1);
     do {
-      PioFisReceived = FALSE;
-      D2hFisReceived = FALSE;
+      // Check for PIO setup fis
       Offset = FisBaseAddr + EFI_AHCI_PIO_FIS_OFFSET;
       Status = AhciCheckMemSet (Offset, EFI_AHCI_FIS_TYPE_MASK, EFI_AHCI_FIS_PIO_SETUP, 0);
-      if (!EFI_ERROR (Status)) {
-        PioFisReceived = TRUE;
+
+      if (EFI_ERROR (Status)) {
+        // PIO setup fis not received, check for D2H fis
+        Offset = FisBaseAddr + EFI_AHCI_D2H_FIS_OFFSET;
+        Status = AhciCheckMemSet (Offset, EFI_AHCI_FIS_TYPE_MASK, EFI_AHCI_FIS_REGISTER_D2H, 0);
       }
 
-      Offset = FisBaseAddr + EFI_AHCI_D2H_FIS_OFFSET;
-      Status = AhciCheckMemSet (Offset, EFI_AHCI_FIS_TYPE_MASK, EFI_AHCI_FIS_REGISTER_D2H, NULL);
       if (!EFI_ERROR (Status)) {
-        D2hFisReceived = TRUE;
-      }
-
-      if (PioFisReceived || D2hFisReceived) {
+        // PIO setup fis or D2H fis received
+        // For PIO IN transfer, D2H may mean a device error. However, some controllers (Marvell) use D2H fis instead of PIO setup fis, so check PxTFD for both cases.
         Offset = EFI_AHCI_PORT_START + Port * EFI_AHCI_PORT_REG_WIDTH + EFI_AHCI_PORT_TFD;
         PortTfd = AhciReadReg (PciIo, (UINT32) Offset);
         //
         // PxTFD will be updated if there is a D2H or SetupFIS received. 
-        // For PIO IN transfer, D2H may mean a device error. However, some controllers (Marvell) use D2H instead of SetupFIS, so check PxTFD for both cases.
         //
         if ((PortTfd & EFI_AHCI_PORT_TFD_ERR) != 0) {
           Status = EFI_DEVICE_ERROR;
