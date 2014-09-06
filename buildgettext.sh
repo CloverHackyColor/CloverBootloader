@@ -5,6 +5,8 @@
 # Created by JrCs on 4/29/13.
 #
 
+set -u
+
 # Gettext source version
 # here we can change source versions of tools
 #
@@ -12,7 +14,8 @@ export GETTEXT_VERSION=${GETTEXT_VERSION:-gettext-0.19.2}
 
 # Change PREFIX if you want gettext installed on different place
 #
-export PREFIX=${PREFIX:-~/src/opt/local}
+TOOLCHAIN_DIR=${TOOLCHAIN_DIR:-~/src/opt/local}
+export PREFIX=${PREFIX:-$TOOLCHAIN_DIR}
 
 # ./configure arguments for Gettext
 #
@@ -28,17 +31,10 @@ export DIR_BUILD=${DIR_BUILD:-$RAMDISK_MNT_PT}
 export DIR_DOWNLOADS=${DIR_DOWNLOADS:-$DIR_TOOLS/download}
 export DIR_LOGS=${DIR_LOGS:-$DIR_TOOLS/logs}
 
-# Set MAKE and LD to prevent problem during compilation when Xcode path has spaces
-#
-export MAKE=make
-export LD=ld
-
 # Here we set MAKEFLAGS for GCC so it knows how many cores can use
 # faster compile!
 #
 export MAKEFLAGS="-j `sysctl -n hw.ncpu`"
-
-set -u
 
 ### Check Functions ###
 
@@ -61,6 +57,17 @@ exit
 [ ! -d ${DIR_LOGS} ]       && mkdir ${DIR_LOGS}
 [ ! -d ${PREFIX}/include ] && mkdir -p ${PREFIX}/include
 echo
+
+# Function: to manage PATH
+pathmunge () {
+    if [[ ! $PATH =~ (^|:)$1(:|$) ]]; then
+        if [[ "${2:-}" = "after" ]]; then
+            export PATH=$PATH:$1
+        else
+            export PATH=$1:$PATH
+        fi
+    fi
+}
 
 # RAMdisk
 function mountRamDisk() {
@@ -85,9 +92,11 @@ fnDownloadGettext ()
 # Function: Download gettext source
 {
     cd "$DIR_DOWNLOADS"
-    if [[ ! -f ${GETTEXT_VERSION}.tar.gz ]]; then
-        echo "Status: ${GETTEXT_VERSION} not found."
-        curl --remote-name http://ftp.gnu.org/pub/gnu/gettext/${GETTEXT_VERSION}.tar.gz
+    local tarball="${GETTEXT_VERSION}.tar.gz"
+    if [[ ! -f "$tarball" ]]; then
+        echo "Status: $tarball not found."
+        curl -f -o download.tmp --remote-name http://ftp.gnu.org/pub/gnu/gettext/$tarball || exit 1
+        mv download.tmp $tarball
     fi
 }
 
@@ -154,16 +163,38 @@ fnCompileGettext ()
     local GETTEXT_DIR=$(fnExtract "${GETTEXT_VERSION}.tar.gz")
 
     # Gettext build
+    local cmd logfile
     rm -rf "$BUILD_GETTEXT_DIR"
     mkdir -p "$BUILD_GETTEXT_DIR" && cd "$BUILD_GETTEXT_DIR"
     echo "-  ${GETTEXT_VERSION} configure..."
-    "${GETTEXT_DIR}"/configure $GETTEXT_CONFIG >$DIR_LOGS/gettext.config.log.txt 2>&1 || exit 1
+    cmd="'${GETTEXT_DIR}/configure' $GETTEXT_CONFIG"
+    logfile="$DIR_LOGS/gettext.configure.log.txt"
+    echo "$cmd" > "$logfile"
+    eval "$cmd" >> "$logfile" 2>&1
+    if [[ $? -ne 0 ]]; then
+        echo "Error configuring ${GETTEXT_VERSION}! Check the log $logfile"
+        exit 1
+    fi
     echo "-  ${GETTEXT_VERSION} make..."
-    make >$DIR_LOGS/gettext.make.log.txt 2>&1 || exit 1
+    cmd="make"
+    logfile="$DIR_LOGS/gettext.make.log.txt"
+    echo "$cmd" > "$logfile"
+    eval "$cmd" >> "$logfile" 2>&1
+    if [[ $? -ne 0 ]]; then
+        echo "Error compiling ${GETTEXT_VERSION} ! Check the log $logfile"
+        exit 1
+    fi
     echo "-  ${GETTEXT_VERSION} installing..."
-    make install-strip >$DIR_LOGS/gettext.install.log.txt 2>&1 || exit 1
+    cmd="make install-strip"
+    logfile="$DIR_LOGS/gettext.install.log.txt"
+    echo "$cmd" > "$logfile"
+    eval "$cmd" >> "$logfile" 2>&1
+    if [[ $? -ne 0 ]]; then
+        echo "Error installing ${GETTEXT_VERSION} ! Check the log $logfile"
+        exit 1
+    fi
     rm -rf "$BUILD_GETTEXT_DIR"
-    echo "-  ${GETTEXT_VERSION} installed in $PREFIX  -"
+    echo "-  ${GETTEXT_VERSION} installed in $PREFIX"
 }
 
 
@@ -178,5 +209,8 @@ fnGettext ()
 
 
 ### Main ###
+
+# Add XCode bin directory for the command line tools to the PATH
+pathmunge "$(xcode-select --print-path)"/usr/bin
 
 fnGettext

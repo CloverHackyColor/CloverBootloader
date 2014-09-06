@@ -196,6 +196,7 @@ fnCompileNasm ()
         echo "Error installing nasm-${NASM_VERSION} ! Check the log $logfile"
         exit 1
     fi
+    rm -rf "$NASM_DIR"
     echo "-  nasm-${NASM_VERSION} installed in $PREFIX"
 }
 
@@ -213,7 +214,7 @@ fnNasm ()
 ### Main ###
 
 # Add XCode bin directory for the command line tools to the PATH
-pathmunge "$(xcode-select -p)"/usr/bin
+pathmunge "$(xcode-select --print-path)"/usr/bin
 
 # Add toolchain bin directory to the PATH
 pathmunge "$TOOLCHAIN_DIR"/bin
