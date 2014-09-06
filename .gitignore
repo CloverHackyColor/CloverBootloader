@@ -46,6 +46,8 @@
 /rEFIt_UEFI/vers.txt
 rEFIt_UEFI/rEFIt_proj/rEFIt_proj.xcodeproj/project.xcworkspace/
 rEFIt_UEFI/rEFIt_proj/rEFIt_proj.xcodeproj/xcuserdata/
+CloverX/CloverX.xcodeproj/project.xcworkspace/
+CloverX/CloverX.xcodeproj/xcuserdata/
 
 # XCode files/directories
 *~.nib

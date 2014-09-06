@@ -852,6 +852,11 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
   
   if (gSettings.LastBootedVolume) {
     SetStartupDiskVolume(Entry->Volume, Entry->LoaderType == OSTYPE_OSX ? NULL : Entry->LoaderPath);
+  } else if (gSettings.DefaultVolume != NULL) {
+    // DefaultVolume specified in Config.plist:
+    // we'll remove OSX Startup Disk vars which may be present if it is used
+    // to reboot into another volume
+    RemoveStartupDiskVolume();
   }
   
 //    DBG("BeginExternalScreen\n");
@@ -995,6 +1000,11 @@ static VOID StartLegacy(IN LEGACY_ENTRY *Entry)
 
     if (gSettings.LastBootedVolume) {
       SetStartupDiskVolume(Entry->Volume, NULL);
+    } else if (gSettings.DefaultVolume != NULL) {
+      // DefaultVolume specified in Config.plist:
+      // we'll remove OSX Startup Disk vars which may be present if it is used
+      // to reboot into another volume
+      RemoveStartupDiskVolume();
     }
   
     egClearScreen(&DarkBackgroundPixel);
@@ -1463,23 +1473,18 @@ INTN FindDefaultEntry(VOID)
   REFIT_VOLUME        *Volume;
   LOADER_ENTRY        *Entry;
   BOOLEAN             SearchForLoader;
-  BOOLEAN             HaveDefaultVolume;
   
 //  DBG("FindDefaultEntry ...\n");
   
   //
   // try to detect volume set by Startup Disk or previous Clover selection
-  // with broken nvram this requires emulation to be installed
-  // enabled emulation to determin efi-boot-device-data
+  // with broken nvram this requires emulation to be installed.
+  // enable emulation to determin efi-boot-device-data
   if (gEmuVariableControl != NULL) {
     gEmuVariableControl->InstallEmulation(gEmuVariableControl);
   }
     
-  HaveDefaultVolume = gSettings.DefaultVolume != NULL && gSettings.DefaultVolume[0] != L'\0';
-  
-  if (!HaveDefaultVolume) {
-    Index = FindStartupDiskVolume(&MainMenu);
-  }
+  Index = FindStartupDiskVolume(&MainMenu);
   
   if (Index >= 0) {
     DBG("Boot redirected to Entry %d. '%s'\n", Index, MainMenu.Entries[Index]->Title);
@@ -1494,7 +1499,7 @@ INTN FindDefaultEntry(VOID)
   // if not found, then try DefaultVolume from config.plist
   // if not null or empty, search volume that matches gSettings.DefaultVolume
   //
-  if (HaveDefaultVolume) {
+  if (gSettings.DefaultVolume != NULL) {
     
     // if not null or empty, also search for loader that matches gSettings.DefaultLoader
     SearchForLoader = (gSettings.DefaultLoader != NULL && gSettings.DefaultLoader[0] != L'\0');
@@ -1919,7 +1924,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     DBG("smbios.plist not found, not overriding config.plist\n");
   }
   
-  HaveDefaultVolume = gSettings.DefaultVolume != NULL && gSettings.DefaultVolume[0] != L'\0';
+  HaveDefaultVolume = gSettings.DefaultVolume != NULL;
   if (!gFirmwareClover &&
       !gDriversFlags.EmuVariableLoaded &&
       !HaveDefaultVolume &&

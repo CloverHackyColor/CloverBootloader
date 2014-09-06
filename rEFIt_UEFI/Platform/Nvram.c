@@ -132,6 +132,19 @@ EFI_STATUS SetNvramVariable(IN CHAR16 *VariableName, IN EFI_GUID *VendorGuid, IN
 }
 
 
+/** Deletes NVRAM variable. */
+EFI_STATUS DeleteNvramVariable(IN CHAR16 *VariableName, IN EFI_GUID *VendorGuid)
+{
+    EFI_STATUS      Status;
+    
+    // Delete: attributes and data size = 0
+    Status = gRT->SetVariable(VariableName, VendorGuid, 0, 0, NULL);
+    //DBG("DeleteNvramVariable(%s, guid = %r\n):", VariableName, Status);
+    
+    return Status;
+}
+
+
 /** Searches for GPT HDD dev path node and return pointer to partition GUID or NULL. */
 EFI_GUID *FindGPTPartitionGuidInDevicePath(IN EFI_DEVICE_PATH_PROTOCOL *DevicePath)
 {
@@ -947,4 +960,23 @@ EFI_STATUS SetStartupDiskVolume(IN REFIT_VOLUME *Volume, IN CHAR16 *LoaderPath)
   }
   
   return Status;
+}
+
+
+/** Deletes Startup disk vars: efi-boot-device, efi-boot-device-data, BootCampHD. */
+VOID RemoveStartupDiskVolume(VOID)
+{
+    EFI_STATUS          Status;
+    
+    
+    DBG("RemoveStartupDiskVolume:\n");
+    
+    Status = DeleteNvramVariable(L"efi-boot-device", &gEfiAppleBootGuid);
+    DBG("  * efi-boot-device = %r\n", Status);
+    
+    Status = DeleteNvramVariable(L"efi-boot-device-data", &gEfiAppleBootGuid);
+    DBG("  * efi-boot-device-data = %r\n", Status);
+    
+    Status = DeleteNvramVariable(L"BootCampHD", &gEfiAppleBootGuid);
+    DBG("  * BootCampHD = %r\n", Status);
 }

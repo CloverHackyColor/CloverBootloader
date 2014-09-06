@@ -1482,11 +1482,13 @@ VOID            ParseLoadOptions(OUT CHAR16** conf, OUT TagPtr* dict);
 //
 VOID           *GetNvramVariable(IN CHAR16 *VariableName, IN EFI_GUID *VendorGuid, OUT UINT32 *Attributes OPTIONAL, OUT UINTN *DataSize OPTIONAL);
 EFI_STATUS      SetNvramVariable(IN CHAR16 *VariableName, IN EFI_GUID *VendorGuid, IN UINT32 Attributes, IN UINTN DataSize, IN VOID *Data);
+EFI_STATUS      DeleteNvramVariable(IN CHAR16 *VariableName, IN EFI_GUID *VendorGuid);
 EFI_STATUS      GetEfiBootDeviceFromNvram(VOID);
 EFI_GUID       *FindGPTPartitionGuidInDevicePath(IN EFI_DEVICE_PATH_PROTOCOL *DevicePath);
 VOID            PutNvramPlistToRtVars(VOID);
 INTN            FindStartupDiskVolume(REFIT_MENU_SCREEN *MainMenu);
 EFI_STATUS      SetStartupDiskVolume(IN REFIT_VOLUME *Volume, IN CHAR16 *LoaderPath);
+VOID            RemoveStartupDiskVolume(VOID);
 UINT64          GetEfiTimeInMs(IN EFI_TIME *T);
 
 
