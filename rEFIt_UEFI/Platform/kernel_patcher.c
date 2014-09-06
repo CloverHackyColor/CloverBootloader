@@ -63,6 +63,7 @@ VOID SetKernelRelocBase()
   KernelRelocBase = 0;
   // OsxAptioFixDrv will set this
   /*Status = */gRT->GetVariable(L"OsxAptioFixDrv-RelocBase", &gEfiAppleBootGuid, NULL, &DataSize, &KernelRelocBase);
+  DeleteNvramVariable(L"OsxAptioFixDrv-RelocBase", &gEfiAppleBootGuid); // clean up the temporary variable
   // KernelRelocBase is now either read or 0
   return;
 }

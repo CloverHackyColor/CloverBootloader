@@ -995,7 +995,6 @@ typedef struct {
 #if defined(MDE_CPU_IA32)
   UINT32  align23;
 #endif
-  BOOLEAN StoreCloverVariables;
   
   // Multi-config
   CHAR16  *ConfigName;

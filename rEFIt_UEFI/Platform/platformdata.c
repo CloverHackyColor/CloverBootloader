@@ -575,7 +575,7 @@ VOID GetDefaultSettings(VOID)
   gSettings.USBInjection = TRUE; // enabled by default to have the same behavior as before
   StrCpy(gSettings.DsdtName, L"DSDT.aml");
   gSettings.BacklightLevel = 0xFFFF; //0x0503; -- the value from MBA52
-  gSettings.LogLineCount = 500;
+  gSettings.LogLineCount = 0;
   gSettings.TrustSMBIOS = TRUE;
   
   if (gCPUStructure.Model >= CPU_MODEL_IVY_BRIDGE) {
