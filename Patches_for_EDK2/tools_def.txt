@@ -6353,6 +6353,7 @@ NOOPT_MYTOOLS_IPF_DLINK_FLAGS            = /NOLOGO /NODEFAULTLIB /LTCG /DLL /OPT
 *_XCODE32_*_ASL_PATH          = /usr/local/bin/iasl
 
 *_XCODE32_*_MAKE_PATH        = make
+
 *_XCODE32_*_DSYMUTIL_PATH    = /usr/bin/dsymutil
 
 # This tool needs to be installed separately from Xcode 3.2

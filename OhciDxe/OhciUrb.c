@@ -860,8 +860,8 @@ OhciFreeDynamicIntMemory(
     while (Ohc->InterruptContextList != NULL) {	  
       Entry = Ohc->InterruptContextList;
       OhciFreeInterruptEdByEd (Ohc, Entry->Ed);
-      OhciFreeInterruptContextEntry (Ohc, Entry);
       Ohc->InterruptContextList = Ohc->InterruptContextList->NextEntry;
+      OhciFreeInterruptContextEntry (Ohc, Entry);
     }
   }	
 }

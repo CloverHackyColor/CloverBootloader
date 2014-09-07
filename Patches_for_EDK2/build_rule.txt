@@ -1,5 +1,5 @@
 #
-#  Copyright (c) 2007 - 2011, Intel Corporation. All rights reserved.<BR>
+#  Copyright (c) 2007 - 2014, Intel Corporation. All rights reserved.<BR>
 #  Portions copyright (c) 2008 - 2010, Apple Inc. All rights reserved.<BR>
 #  This program and the accompanying materials
 #  are licensed and made available under the terms and conditions of the BSD License
@@ -134,7 +134,7 @@
         @"echo" [CC] ${s_base}
         #@"$(SYMRENAME)" $(SYMRENAME_FLAGS) ${dst}
 
-    <Command.ARMGCC, Command.ARMLINUXGCC>
+    <Command.ARMGCC, Command.ARMLINUXGCC, command.XCODE>
         "$(CC)" $(CC_FLAGS) -o ${dst} $(INC) ${src}
 
 
@@ -168,6 +168,7 @@
     <Command.GCC, Command.RVCT>
         @"$(PP)" $(PP_FLAGS) $(INC) ${src} > ${d_path}(+)${s_base}.i
         @Trim --source-code -o ${d_path}(+)${s_base}.iii ${d_path}(+)${s_base}.i
+        #--trim-long
         # For RVCTCYGWIN ASM_FLAGS must be first to work around pathing issues
         @"$(ASM)" $(ASM_FLAGS) -o ${dst} $(INC) ${d_path}(+)${s_base}.iii
 
@@ -327,7 +328,7 @@
         $(CP) ${dst} $(OUTPUT_DIR)
         $(CP) ${dst} $(BIN_DIR)
         -$(CP) $(DEBUG_DIR)(+)*.map $(OUTPUT_DIR)
-
+        -$(CP) $(DEBUG_DIR)(+)*.pdb $(OUTPUT_DIR) 
     <Command.GCC>
         #$(OBJCOPY) --only-keep-debug ${src} $(DEBUG_DIR)(+)$(MODULE_NAME).debug
 
@@ -469,7 +470,7 @@
       
 [Masm16-Code-File]
     <InputFile>
-        ?.asm16, ?.Asm16, ?.ASM16
+        ?.asm16, ?.Asm16, ?.ASM16, ?.s16, ?.S16
 
     <ExtraDependency>
         $(MAKE_FILE)
