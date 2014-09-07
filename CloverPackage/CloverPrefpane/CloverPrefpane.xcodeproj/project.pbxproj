@@ -227,7 +227,7 @@
 		A38BDC491733968700DE7DA1 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0500;
+				LastUpgradeCheck = 0510;
 				ORGANIZATIONNAME = ProjectOSX;
 			};
 			buildConfigurationList = A38BDC4C1733968700DE7DA1 /* Build configuration list for PBXProject "CloverPrefpane" */;
