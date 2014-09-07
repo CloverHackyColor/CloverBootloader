@@ -3966,34 +3966,22 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
 		    gSettings.RtMLB = AllocateCopyPool(AsciiStrSize(prop->string), prop->string);
       }
       
-      //a set of variables needed to rc.local
+      // Setting Clover Variables for RC Scripts in config.plist is now deprecated (r2889+)
       prop = GetProperty(dictPointer, "MountEFI");
       if (prop) {
-        if (prop->type == kTagTypeTrue) {
-          gSettings.MountEFI = "Yes";
-        } else if (prop->type == kTagTypeFalse) {
-          gSettings.MountEFI = "No";
-        } else if((prop->type ==  kTagTypeString)  && AsciiStrLen(prop->string) > 0) {
-          gSettings.MountEFI = AllocateCopyPool(AsciiStrSize(prop->string), prop->string);
-        }
+        DBG("** Warning: ignoring RtVariable MountEFI set in config.plist: deprecated !\n");
       }
+
       prop = GetProperty(dictPointer, "LogLineCount");
-      gSettings.LogLineCount = (UINT32)GetPropertyInteger(prop, 0);
+      if (prop) {
+        DBG("** Warning: ignoring RtVariable LogLineCount set in config.plist: deprecated !\n");
+      }
 
       prop = GetProperty(dictPointer, "LogEveryBoot");
       if(prop) {
-        if (prop->type == kTagTypeTrue) {
-          gSettings.LogEveryBoot = "Yes";
-        } else if (prop->type == kTagTypeFalse) {
-          gSettings.LogEveryBoot = "No";
-        } else if (prop->type == kTagTypeInteger) {
-          gSettings.LogEveryBoot = AllocateZeroPool(10); //ten digits will be enough :)
-          AsciiSPrint(gSettings.LogEveryBoot, 10, "%d", (UINTN)prop->string);
-        } else if ((prop->type ==  kTagTypeString) && AsciiStrLen(prop->string) > 0) {
-          gSettings.LogEveryBoot = AllocateCopyPool(AsciiStrSize(prop->string), prop->string);
-        }
+        DBG("** Warning: ignoring RtVariable LogEveryBoot set in config.plist: deprecated !\n");
       }
-	}
+    }
 
     if (!gSettings.RtMLB) {
       gSettings.RtMLB = &gSettings.BoardSerialNumber[0];
@@ -4004,7 +3992,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
     }
     
     if (AsciiStrLen(gSettings.RtMLB) != 17) {
-      DBG("Warning! Your MLB is not suitable for iMessage (must be 17 chars long) !\n");
+      DBG("** Warning: Your MLB is not suitable for iMessage (must be 17 chars long) !\n");
     }
     
     // if CustomUUID and InjectSystemID are not specified
