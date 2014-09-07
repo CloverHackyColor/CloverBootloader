@@ -225,7 +225,6 @@ EFI_STATUS SetVariablesForOSX()
   gRS->SetVariable(L"Clover.LogLineCount", &gEfiAppleBootGuid,
                    EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                    AsciiStrLen(Buffer), Buffer);
-  }
 
   if (gSettings.LogEveryBoot) { //not NULL
     gRS->SetVariable(L"Clover.LogEveryBoot", &gEfiAppleBootGuid,
