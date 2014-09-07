@@ -1546,27 +1546,10 @@ INTN FindDefaultEntry(VOID)
 
 VOID SetVariablesFromNvram()
 {
-  CHAR16  UStr[80];
   CHAR8  *tmpString;
   UINTN   Size = 0;
   UINTN   index = 0, index2, len, i;
   CHAR8  *arg = NULL;
-  
-  tmpString = GetNvramVariable(L"Clover.LogLineCount", &gEfiAppleBootGuid, NULL, &Size);
-  ZeroMem(UStr, 10);
-  if (tmpString) {
-    gSettings.LogLineCount = (UINT32)AsciiStrDecimalToUintn(tmpString);
-  }
-  
-  tmpString = GetNvramVariable(L"Clover.MountEFI", &gEfiAppleBootGuid, NULL, &Size);
-  if (tmpString) {
-    gSettings.MountEFI = AllocateCopyPool(AsciiStrSize(tmpString), tmpString);
-  }
-  
-  tmpString = GetNvramVariable(L"Clover.LogEveryBoot", &gEfiAppleBootGuid, NULL, &Size);
-  if (tmpString) {
-    gSettings.LogEveryBoot = AllocateCopyPool(AsciiStrSize(tmpString), tmpString);
-  }
 
   tmpString = GetNvramVariable(L"boot-args", &gEfiAppleBootGuid, NULL, &Size);
   if (tmpString && (Size <= 0x1000) && (Size > 0)) {

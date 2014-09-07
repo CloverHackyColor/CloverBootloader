@@ -117,13 +117,12 @@ EFI_STATUS SetVariablesForOSX()
 {
 //  EFI_STATUS  Status;
   
-	UINT32      BackgroundClear = 0x00000000;
-	UINT32      FwFeatures      = gFwFeatures; //0x80001417; //Slice - get it from SMBIOS
-	UINT32      FwFeaturesMask  = 0xC003ffff;
-	CHAR8*      None	= "none";
-	CHAR8       Buffer[32];
+  UINT32      BackgroundClear = 0x00000000;
+  UINT32      FwFeatures      = gFwFeatures; //0x80001417; //Slice - get it from SMBIOS
+  UINT32      FwFeaturesMask  = 0xC003ffff;
+  CHAR8*      None    = "none";
   UINTN       SNLen = 20;
-	UINTN       bootArgsLen = 256;
+  UINTN       bootArgsLen = 256;
   UINTN       LangLen = 16;
 
 //  CHAR8*      FmmName = &gSettings.FamilyName[0];
@@ -218,24 +217,6 @@ EFI_STATUS SetVariablesForOSX()
     /*Status = */gRS->SetVariable(L"backlight-level", &gEfiAppleBootGuid, 
                               /*   EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                               sizeof(BacklightLevel), &gSettings.BacklightLevel);
-  }
-  
-  // Variables used by RC scripts
-  AsciiSPrint(Buffer, sizeof(Buffer), "%d", gSettings.LogLineCount);
-  gRS->SetVariable(L"Clover.LogLineCount", &gEfiAppleBootGuid,
-                   EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-                   AsciiStrLen(Buffer), Buffer);
-
-  if (gSettings.LogEveryBoot) { //not NULL
-    gRS->SetVariable(L"Clover.LogEveryBoot", &gEfiAppleBootGuid,
-                     EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-                     AsciiStrLen(gSettings.LogEveryBoot), gSettings.LogEveryBoot);
-  }
-
-  if (gSettings.MountEFI) { //not NULL
-    gRS->SetVariable(L"Clover.MountEFI", &gEfiAppleBootGuid,
-                     EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-                     AsciiStrLen(gSettings.MountEFI), gSettings.MountEFI);
   }
 
   return EFI_SUCCESS;

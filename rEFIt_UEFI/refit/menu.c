@@ -386,47 +386,39 @@ VOID RefillInputs(VOID)
   InputItems[InputItemsCount].ItemType = UNIString; //90
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%s", gSettings.ConfigName);
   
-  InputItems[InputItemsCount].ItemType = ASString; //91
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%a",
-                gSettings.LogEveryBoot ? gSettings.LogEveryBoot : "");
-  InputItems[InputItemsCount].ItemType = Decimal;  //92
-  InputItems[InputItemsCount++].SValue = PoolPrint(L"%d", gSettings.LogLineCount);
-  InputItems[InputItemsCount].ItemType = ASString;  //93
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 76, L"%a",
-                gSettings.MountEFI ? gSettings.MountEFI : "");
-  InputItems[InputItemsCount].ItemType = BoolValue; //94
+  InputItems[InputItemsCount].ItemType = BoolValue; //91
   InputItems[InputItemsCount].BValue = gSettings.KernelAndKextPatches.KPLapicPanic;
   InputItems[InputItemsCount++].SValue = gSettings.KernelAndKextPatches.KPLapicPanic ? L"[+]" : L"[ ]";
 
-  InputItems[InputItemsCount].ItemType = BoolValue; //95
+  InputItems[InputItemsCount].ItemType = BoolValue; //92
   InputItems[InputItemsCount].BValue   = gSettings.USBInjection;
   InputItems[InputItemsCount++].SValue = gSettings.USBInjection?L"[+]":L"[ ]";
-  InputItems[InputItemsCount].ItemType = BoolValue; //96
+  InputItems[InputItemsCount].ItemType = BoolValue; //93
   InputItems[InputItemsCount].BValue   = gSettings.InjectClockID;
   InputItems[InputItemsCount++].SValue = gSettings.InjectClockID?L"[+]":L"[ ]";
-  InputItems[InputItemsCount].ItemType = Hex;  //97
+  InputItems[InputItemsCount].ItemType = Hex;  //94
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeATI);
-  InputItems[InputItemsCount].ItemType = Hex;  //98
+  InputItems[InputItemsCount].ItemType = Hex;  //95
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeNVidia);
-  InputItems[InputItemsCount].ItemType = Hex;  //99
+  InputItems[InputItemsCount].ItemType = Hex;  //96
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeIntel);
-  InputItems[InputItemsCount].ItemType = Hex;  //100
+  InputItems[InputItemsCount].ItemType = Hex;  //97
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeLAN);
-  InputItems[InputItemsCount].ItemType = Hex;  //101
+  InputItems[InputItemsCount].ItemType = Hex;  //98
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeWIFI);
-  InputItems[InputItemsCount].ItemType = Hex;  //102
+  InputItems[InputItemsCount].ItemType = Hex;  //99
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeSATA);
-  InputItems[InputItemsCount].ItemType = Hex;  //103
+  InputItems[InputItemsCount].ItemType = Hex;  //100
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeXHCI);
-  InputItems[InputItemsCount].ItemType = Hex;  //104
+  InputItems[InputItemsCount].ItemType = Hex;  //101
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%04X", dropDSM);
   
-  InputItems[InputItemsCount].ItemType = BoolValue; //105
+  InputItems[InputItemsCount].ItemType = BoolValue; //102
   InputItems[InputItemsCount].BValue   = gSettings.DebugDSDT;
   InputItems[InputItemsCount++].SValue = gSettings.DebugDSDT?L"[+]":L"[ ]";
-  InputItems[InputItemsCount].ItemType = Hex;  //106
+  InputItems[InputItemsCount].ItemType = Hex;  //103
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeIMEI);
-  InputItems[InputItemsCount].ItemType = Hex;  //107
+  InputItems[InputItemsCount].ItemType = Hex;  //104
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.KernelAndKextPatches.FakeCPUID);
   
   InputItemsCount = 110;
@@ -683,59 +675,49 @@ VOID FillInputs(VOID)
   InputItems[InputItemsCount].SValue   = AllocateZeroPool(64);
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%s", gSettings.ConfigName);
 
-  InputItems[InputItemsCount].ItemType = ASString; //91
-  InputItems[InputItemsCount].SValue   = AllocateZeroPool(64);
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%a",
-                gSettings.LogEveryBoot ? gSettings.LogEveryBoot : "");
-  InputItems[InputItemsCount].ItemType = Decimal;  //92
-  InputItems[InputItemsCount++].SValue = PoolPrint(L"%06d", gSettings.LogLineCount);
-  InputItems[InputItemsCount].ItemType = ASString;  //93
-  InputItems[InputItemsCount].SValue   = AllocateZeroPool(64);
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 76, L"%a",
-                gSettings.MountEFI ? gSettings.MountEFI : "");
-  InputItems[InputItemsCount].ItemType = BoolValue; //94
+  InputItems[InputItemsCount].ItemType = BoolValue; //91
   InputItems[InputItemsCount].BValue = gSettings.KernelAndKextPatches.KPLapicPanic;
   InputItems[InputItemsCount++].SValue = gSettings.KernelAndKextPatches.KPLapicPanic ? L"[+]" : L"[ ]";
 
-  InputItems[InputItemsCount].ItemType = BoolValue; //95
+  InputItems[InputItemsCount].ItemType = BoolValue; //92
   InputItems[InputItemsCount].BValue   = gSettings.USBInjection;
   InputItems[InputItemsCount++].SValue = gSettings.USBInjection?L"[+]":L"[ ]";
-  InputItems[InputItemsCount].ItemType = BoolValue; //96
+  InputItems[InputItemsCount].ItemType = BoolValue; //93
   InputItems[InputItemsCount].BValue   = gSettings.InjectClockID;
   InputItems[InputItemsCount++].SValue = gSettings.InjectClockID?L"[+]":L"[ ]";
   
-  InputItems[InputItemsCount].ItemType = Hex;  //97
+  InputItems[InputItemsCount].ItemType = Hex;  //94
   InputItems[InputItemsCount].SValue = AllocateZeroPool(26);
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeATI);
-  InputItems[InputItemsCount].ItemType = Hex;  //98
+  InputItems[InputItemsCount].ItemType = Hex;  //95
   InputItems[InputItemsCount].SValue = AllocateZeroPool(26);
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeNVidia);
-  InputItems[InputItemsCount].ItemType = Hex;  //99
+  InputItems[InputItemsCount].ItemType = Hex;  //96
   InputItems[InputItemsCount].SValue = AllocateZeroPool(26);
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeIntel);
   
-  InputItems[InputItemsCount].ItemType = Hex;  //100
+  InputItems[InputItemsCount].ItemType = Hex;  //97
   InputItems[InputItemsCount].SValue = AllocateZeroPool(26);
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeLAN);
-  InputItems[InputItemsCount].ItemType = Hex;  //101
+  InputItems[InputItemsCount].ItemType = Hex;  //98
   InputItems[InputItemsCount].SValue = AllocateZeroPool(26);
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeWIFI);
-  InputItems[InputItemsCount].ItemType = Hex;  //102
+  InputItems[InputItemsCount].ItemType = Hex;  //99
   InputItems[InputItemsCount].SValue = AllocateZeroPool(26);
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeSATA);
-  InputItems[InputItemsCount].ItemType = Hex;  //103
+  InputItems[InputItemsCount].ItemType = Hex;  //100
   InputItems[InputItemsCount].SValue = AllocateZeroPool(26);
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeXHCI);
-  InputItems[InputItemsCount].ItemType = Hex;  //104
+  InputItems[InputItemsCount].ItemType = Hex;  //101
   InputItems[InputItemsCount].SValue = AllocateZeroPool(26);
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%04X", dropDSM);
-  InputItems[InputItemsCount].ItemType = BoolValue; //105
+  InputItems[InputItemsCount].ItemType = BoolValue; //102
   InputItems[InputItemsCount].BValue   = gSettings.DebugDSDT;
   InputItems[InputItemsCount++].SValue = gSettings.DebugDSDT?L"[+]":L"[ ]";
-  InputItems[InputItemsCount].ItemType = Hex;  //106
+  InputItems[InputItemsCount].ItemType = Hex;  //103
   InputItems[InputItemsCount].SValue = AllocateZeroPool(26);
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeIMEI);
-  InputItems[InputItemsCount].ItemType = Hex;  //107
+  InputItems[InputItemsCount].ItemType = Hex;  //104
   InputItems[InputItemsCount].SValue = AllocateZeroPool(26);
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.KernelAndKextPatches.FakeCPUID);
   
@@ -1105,79 +1087,62 @@ VOID ApplyInputs(VOID)
   }
   i++; //91
   if (InputItems[i].Valid) {
-    AsciiSPrint(gSettings.LogEveryBoot, 64, "%s", InputItems[i].SValue);
+    gSettings.KernelAndKextPatches.KPLapicPanic = InputItems[i].BValue;
   }
   i++; //92
   if (InputItems[i].Valid) {
-    gSettings.LogLineCount = (UINT32)StrDecimalToUintn(InputItems[i].SValue);
-  }    
-  i++; //93
-  if (InputItems[i].Valid) {
-    //we must reallocate MountEFI
-    if (gSettings.MountEFI) {
-      FreePool(gSettings.MountEFI);
-    }
-    gSettings.MountEFI = AllocateZeroPool(38); // make the room for at least a UUID
-    AsciiSPrint(gSettings.MountEFI, 38, "%s", InputItems[i].SValue);
-  }    
-  i++; //94
-  if (InputItems[i].Valid) {
-    gSettings.KernelAndKextPatches.KPLapicPanic = InputItems[i].BValue;
-  }
-  i++; //95
-  if (InputItems[i].Valid) {
     gSettings.USBInjection = InputItems[i].BValue;
   }
-  i++; //96
+  i++; //93
   if (InputItems[i].Valid) {
     gSettings.InjectClockID = InputItems[i].BValue;
   }
-  i++; //97
+  i++; //94
   if (InputItems[i].Valid) {
     gSettings.FakeATI = (UINT32)StrHexToUint64(InputItems[i].SValue);
   }
-  i++; //98
+  i++; //95
   if (InputItems[i].Valid) {
     gSettings.FakeNVidia = (UINT32)StrHexToUint64(InputItems[i].SValue);
   }
-  i++; //99
+  i++; //96
   if (InputItems[i].Valid) {
     gSettings.FakeIntel = (UINT32)StrHexToUint64(InputItems[i].SValue);
     DBG("applied FakeIntel=0x%x\n", gSettings.FakeIntel);
   }
-  i++; //100
+  i++; //97
   if (InputItems[i].Valid) {
     gSettings.FakeLAN = (UINT32)StrHexToUint64(InputItems[i].SValue);
   }
-  i++; //101
+  i++; //98
   if (InputItems[i].Valid) {
     gSettings.FakeWIFI = (UINT32)StrHexToUint64(InputItems[i].SValue);
   }
-  i++; //102
+  i++; //99
   if (InputItems[i].Valid) {
     gSettings.FakeSATA = (UINT32)StrHexToUint64(InputItems[i].SValue);
   }
-  i++; //103
+  i++; //100
   if (InputItems[i].Valid) {
     gSettings.FakeXHCI = (UINT32)StrHexToUint64(InputItems[i].SValue);
   }
 
-  i++; //104
+  i++; //101
   if (InputItems[i].Valid) {
     gSettings.DropOEM_DSM = (UINT16)StrHexToUint64(InputItems[i].SValue);
     dropDSM = gSettings.DropOEM_DSM;
 //    defDSM = TRUE;
   }
-  i++; //105
+  i++; //102
   if (InputItems[i].Valid) {
     gSettings.DebugDSDT = InputItems[i].BValue;
   }
-  i++; //106
+  i++; //103
   if (InputItems[i].Valid) {
     gSettings.FakeIMEI = (UINT32)StrHexToUint64(InputItems[i].SValue);
   }
 //FakeCPUID
-  i++; //107
+  i++; //104
   if (InputItems[i].Valid) {    
     gSettings.KernelAndKextPatches.FakeCPUID = (UINT32)StrHexToUint64(InputItems[i].SValue);
     DBG("applied FakeCPUID=%06x\n", gSettings.KernelAndKextPatches.FakeCPUID);
@@ -3833,63 +3798,6 @@ REFIT_MENU_ENTRY  *SubMenuDsdtFix()
   return Entry;
 } 
 
-
-REFIT_MENU_ENTRY  *SubMenuRcScripts()
-{
-  REFIT_MENU_ENTRY   *Entry;
-  REFIT_MENU_SCREEN  *SubScreen;
-  REFIT_INPUT_DIALOG *InputBootArgs;
-  CHAR16*           Flags;
-  Flags = AllocateZeroPool(255);
-
-  Entry = AllocateZeroPool(sizeof(REFIT_MENU_ENTRY));
-  Entry->Title = PoolPrint(L"RC Scripts Variables ->");
-  Entry->Image =  OptionMenu.TitleImage;
-  Entry->Tag = TAG_OPTIONS;
-  Entry->AtClick = ActionEnter;
-
-  // create the submenu
-  SubScreen = AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
-  SubScreen->Title = Entry->Title;
-  SubScreen->TitleImage = Entry->Image;
-  SubScreen->ID = SCREEN_RC_SCRIPTS;
-  SubScreen->AnimeRun = GetAnime(SubScreen);
-
-  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"Mount EFI:");
-  InputBootArgs->Entry.Tag = TAG_INPUT;
-  InputBootArgs->Entry.Row = StrLen(InputItems[93].SValue);
-  InputBootArgs->Entry.ShortcutLetter = 'E';
-  InputBootArgs->Item = &InputItems[93];
-  InputBootArgs->Entry.AtClick = ActionSelect;
-  InputBootArgs->Entry.AtDoubleClick = ActionEnter;
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-
-  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"Log Line Count:");
-  InputBootArgs->Entry.Tag = TAG_INPUT;
-  InputBootArgs->Entry.Row = StrLen(InputItems[92].SValue);
-  InputBootArgs->Entry.ShortcutLetter = 'C';
-  InputBootArgs->Item = &InputItems[92];
-  InputBootArgs->Entry.AtClick = ActionSelect;
-  InputBootArgs->Entry.AtRightClick = ActionEnter;
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-
-  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"Log Every Boot:");
-  InputBootArgs->Entry.Tag = TAG_INPUT;
-  InputBootArgs->Entry.Row = StrLen(InputItems[91].SValue);
-  InputBootArgs->Item = &InputItems[91];
-  InputBootArgs->Entry.AtClick = ActionSelect;
-  InputBootArgs->Entry.AtDoubleClick = ActionEnter;
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-
-  AddMenuEntry(SubScreen, &MenuEntryReturn);
-  Entry->SubScreen = SubScreen;
-  FreePool(Flags);
-  return Entry;
-}
-
 REFIT_MENU_ENTRY  *SubMenuPCI()
 {
   REFIT_MENU_ENTRY   *Entry;
@@ -4133,7 +4041,6 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     AddMenuEntry(&OptionMenu, SubMenuSpeedStep());
     AddMenuEntry(&OptionMenu, SubMenuGraphics());
     AddMenuEntry(&OptionMenu, SubMenuBinaries());
-    AddMenuEntry(&OptionMenu, SubMenuRcScripts());
     AddMenuEntry(&OptionMenu, &MenuEntryReturn);
     FreePool(Flags);
     //    DBG("option menu created entries=%d\n", OptionMenu.EntryCount);

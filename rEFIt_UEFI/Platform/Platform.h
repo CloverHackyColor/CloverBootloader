@@ -986,15 +986,6 @@ typedef struct {
 #if defined(MDE_CPU_IA32)
   UINT32  align6;
 #endif
-  CHAR8   *MountEFI;
-#if defined(MDE_CPU_IA32)
-  UINT32  align22;
-#endif
-  UINT32  LogLineCount;
-  CHAR8   *LogEveryBoot;
-#if defined(MDE_CPU_IA32)
-  UINT32  align23;
-#endif
   
   // Multi-config
   CHAR16  *ConfigName;
