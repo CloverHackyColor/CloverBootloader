@@ -3209,9 +3209,9 @@ REFIT_MENU_ENTRY  *SubMenuBinaries()
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
   InputBootArgs->Entry.Title = PoolPrint(L"Fake CPUID:");
   InputBootArgs->Entry.Tag = TAG_INPUT;
-  InputBootArgs->Entry.Row = StrLen(InputItems[107].SValue); //cursor
+  InputBootArgs->Entry.Row = StrLen(InputItems[104].SValue); //cursor
 //  InputBootArgs->Entry.ShortcutLetter = 'I';
-  InputBootArgs->Item = &InputItems[107];
+  InputBootArgs->Item = &InputItems[104];
   InputBootArgs->Entry.AtClick = ActionSelect;
   InputBootArgs->Entry.AtRightClick = ActionEnter;
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
@@ -3220,7 +3220,7 @@ REFIT_MENU_ENTRY  *SubMenuBinaries()
   InputBootArgs->Entry.Title = PoolPrint(L"Kext patching allowed:");
   InputBootArgs->Entry.Tag = TAG_INPUT;
   InputBootArgs->Entry.Row = 0xFFFF; //cursor
-  InputBootArgs->Item = &InputItems[44];    
+  InputBootArgs->Item = &InputItems[44];
   InputBootArgs->Entry.AtClick = ActionEnter;
   InputBootArgs->Entry.AtRightClick = ActionDetails;
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
@@ -3229,7 +3229,7 @@ REFIT_MENU_ENTRY  *SubMenuBinaries()
   InputBootArgs->Entry.Title = PoolPrint(L"Kernel Support CPU:");
   InputBootArgs->Entry.Tag = TAG_INPUT;
   InputBootArgs->Entry.Row = 0xFFFF; //cursor
-  InputBootArgs->Item = &InputItems[45];    
+  InputBootArgs->Item = &InputItems[45];
   InputBootArgs->Entry.AtClick = ActionEnter;
   InputBootArgs->Entry.AtRightClick = ActionDetails;
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
@@ -3238,7 +3238,7 @@ REFIT_MENU_ENTRY  *SubMenuBinaries()
   InputBootArgs->Entry.Title = PoolPrint(L"Kernel Lapic Patch:");
   InputBootArgs->Entry.Tag = TAG_INPUT;
   InputBootArgs->Entry.Row = 0xFFFF; //cursor
-  InputBootArgs->Item = &InputItems[94];    
+  InputBootArgs->Item = &InputItems[91];
   InputBootArgs->Entry.AtClick = ActionEnter;
   InputBootArgs->Entry.AtRightClick = ActionDetails;
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
@@ -3256,7 +3256,7 @@ REFIT_MENU_ENTRY  *SubMenuBinaries()
   InputBootArgs->Entry.Title = PoolPrint(L"AppleIntelCPUPM patch:");
   InputBootArgs->Entry.Tag = TAG_INPUT;
   InputBootArgs->Entry.Row = 0xFFFF; //cursor
-  InputBootArgs->Item = &InputItems[46];    
+  InputBootArgs->Item = &InputItems[46];
   InputBootArgs->Entry.AtClick = ActionEnter;
   InputBootArgs->Entry.AtRightClick = ActionDetails;
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
@@ -3265,13 +3265,13 @@ REFIT_MENU_ENTRY  *SubMenuBinaries()
   InputBootArgs->Entry.Title = PoolPrint(L"AppleRTC patch:");
   InputBootArgs->Entry.Tag = TAG_INPUT;
   InputBootArgs->Entry.Row = 0xFFFF; //cursor
-  InputBootArgs->Item = &InputItems[47];    
+  InputBootArgs->Item = &InputItems[47];
   InputBootArgs->Entry.AtClick = ActionEnter;
   InputBootArgs->Entry.AtRightClick = ActionDetails;
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
     
   AddMenuEntry(SubScreen, &MenuEntryReturn);
-  Entry->SubScreen = SubScreen;                
+  Entry->SubScreen = SubScreen;
   return Entry;
 } 
 
@@ -3525,11 +3525,11 @@ REFIT_MENU_ENTRY  *SubMenuDsdtFix()
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
   InputBootArgs->Entry.Title = PoolPrint(L"Drop _DSM   :");
   InputBootArgs->Entry.Tag = TAG_INPUT;
-  InputBootArgs->Entry.Row = StrLen(InputItems[104].SValue);; //cursor
-  InputBootArgs->Item = &InputItems[104];    
+  InputBootArgs->Entry.Row = StrLen(InputItems[101].SValue);; //cursor
+  InputBootArgs->Item = &InputItems[101];
   InputBootArgs->Entry.AtClick = ActionEnter;
   InputBootArgs->Entry.AtRightClick = ActionDetails;
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);  
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
   
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
   InputBootArgs->Entry.Title = PoolPrint(L"Add DTGP    :");
@@ -3832,7 +3832,7 @@ REFIT_MENU_ENTRY  *SubMenuPCI()
   InputBootArgs->Entry.Title = PoolPrint(L"USB Injection:");
   InputBootArgs->Entry.Tag = TAG_INPUT;
   InputBootArgs->Entry.Row = 0xFFFF;
-  InputBootArgs->Item = &InputItems[95];
+  InputBootArgs->Item = &InputItems[92];
   InputBootArgs->Entry.AtClick = ActionEnter;
   InputBootArgs->Entry.AtRightClick = ActionDetails;
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
@@ -3841,7 +3841,7 @@ REFIT_MENU_ENTRY  *SubMenuPCI()
   InputBootArgs->Entry.Title = PoolPrint(L"Inject ClockID:");
   InputBootArgs->Entry.Tag = TAG_INPUT;
   InputBootArgs->Entry.Row = 0xFFFF;
-  InputBootArgs->Item = &InputItems[96];
+  InputBootArgs->Item = &InputItems[93];
   InputBootArgs->Entry.AtClick = ActionEnter;
   InputBootArgs->Entry.AtRightClick = ActionDetails;
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
@@ -3849,8 +3849,8 @@ REFIT_MENU_ENTRY  *SubMenuPCI()
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
   InputBootArgs->Entry.Title = PoolPrint(L"FakeID LAN:");
   InputBootArgs->Entry.Tag = TAG_INPUT;
-  InputBootArgs->Entry.Row = StrLen(InputItems[100].SValue); //cursor
-  InputBootArgs->Item = &InputItems[100];
+  InputBootArgs->Entry.Row = StrLen(InputItems[97].SValue); //cursor
+  InputBootArgs->Item = &InputItems[97];
   InputBootArgs->Entry.AtClick = ActionSelect;
   InputBootArgs->Entry.AtDoubleClick = ActionEnter;
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
@@ -3858,8 +3858,8 @@ REFIT_MENU_ENTRY  *SubMenuPCI()
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
   InputBootArgs->Entry.Title = PoolPrint(L"FakeID WIFI:");
   InputBootArgs->Entry.Tag = TAG_INPUT;
-  InputBootArgs->Entry.Row = StrLen(InputItems[101].SValue); //cursor
-  InputBootArgs->Item = &InputItems[101];
+  InputBootArgs->Entry.Row = StrLen(InputItems[98].SValue); //cursor
+  InputBootArgs->Item = &InputItems[98];
   InputBootArgs->Entry.AtClick = ActionSelect;
   InputBootArgs->Entry.AtDoubleClick = ActionEnter;
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
@@ -3867,8 +3867,8 @@ REFIT_MENU_ENTRY  *SubMenuPCI()
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
   InputBootArgs->Entry.Title = PoolPrint(L"FakeID SATA:");
   InputBootArgs->Entry.Tag = TAG_INPUT;
-  InputBootArgs->Entry.Row = StrLen(InputItems[102].SValue); //cursor
-  InputBootArgs->Item = &InputItems[102];
+  InputBootArgs->Entry.Row = StrLen(InputItems[99].SValue); //cursor
+  InputBootArgs->Item = &InputItems[99];
   InputBootArgs->Entry.AtClick = ActionSelect;
   InputBootArgs->Entry.AtDoubleClick = ActionEnter;
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
@@ -3876,8 +3876,8 @@ REFIT_MENU_ENTRY  *SubMenuPCI()
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
   InputBootArgs->Entry.Title = PoolPrint(L"FakeID XHCI:");
   InputBootArgs->Entry.Tag = TAG_INPUT;
-  InputBootArgs->Entry.Row = StrLen(InputItems[103].SValue); //cursor
-  InputBootArgs->Item = &InputItems[103];
+  InputBootArgs->Entry.Row = StrLen(InputItems[100].SValue); //cursor
+  InputBootArgs->Item = &InputItems[100];
   InputBootArgs->Entry.AtClick = ActionSelect;
   InputBootArgs->Entry.AtDoubleClick = ActionEnter;
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
@@ -3885,8 +3885,8 @@ REFIT_MENU_ENTRY  *SubMenuPCI()
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
   InputBootArgs->Entry.Title = PoolPrint(L"FakeID IMEI:");
   InputBootArgs->Entry.Tag = TAG_INPUT;
-  InputBootArgs->Entry.Row = StrLen(InputItems[106].SValue); //cursor
-  InputBootArgs->Item = &InputItems[106];
+  InputBootArgs->Entry.Row = StrLen(InputItems[103].SValue); //cursor
+  InputBootArgs->Item = &InputItems[103];
   InputBootArgs->Entry.AtClick = ActionSelect;
   InputBootArgs->Entry.AtDoubleClick = ActionEnter;
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
