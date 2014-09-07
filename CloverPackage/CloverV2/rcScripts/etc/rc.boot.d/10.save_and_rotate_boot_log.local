@@ -49,9 +49,9 @@ LC_ALL=C /usr/sbin/ioreg -l -pIODeviceTree | \
  sed -nE 's@.*boot-log.*<([0-9a-fA-F]*)>.*@\1@p' | xxd -r -p >> ${bootLogPath}
 echo "Clover boot messages saved in $bootLogPath"
 
-# Clover.LogLineCount=0/N [default 500]
+# Clover.LogLineCount=0/N [default 3000]
 logLineCount=$(GetNVRamKey 'Clover.LogLineCount')
-[[ "$logLineCount" =~ ^[0-9]+$ ]] || logLineCount=500
+[[ "$logLineCount" =~ ^[0-9]+$ ]] || logLineCount=3000
 # If the logLineCount > 0 trim the system log to line count before adding
 # boot.log content
 if [[ "$logLineCount" -gt 0 ]]; then
