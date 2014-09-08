@@ -570,14 +570,8 @@
 	</dict>
 	<key>RtVariables</key>
 	<dict>
-		<key>LogEveryBoot</key>
-		<string>5</string>
-		<key>LogLineCount</key>
-		<integer>3000</integer>
 		<key>MLB</key>
 		<string>C02032109R5DC771H</string>
-		<key>MountEFI</key>
-		<false/>
 		<key>ROM</key>
 		<string>0011223344556677</string>
 	</dict>

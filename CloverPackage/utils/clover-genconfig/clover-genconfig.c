@@ -651,17 +651,9 @@ void PrintConfig(CFTypeRef data)
     addString(patchDict[i], CFSTR("Replace"), "_NOT_SHOWN_");
   }
   
-  
-  //TODO
-  // here we can get LogEveryBoot and MountEFI from
-  //gPlatform = IORegistryEntryFromPath(masterPort, "IODeviceTree:/options");
-  //GetOFVariable("MountEFI" ... and so on
   CFMutableDictionaryRef rtVariablesDict = addDict(dict, CFSTR("RtVariables"));
   addString(rtVariablesDict, CFSTR("ROM"), "_NOT_SHOWN_" /*s->RtROM*/);
   addString(rtVariablesDict, CFSTR("MLB"), s->BoardSerialNumber);
-  addString(rtVariablesDict, CFSTR("MountEFI"), "_NOT_SHOWN_");
-  addInteger(rtVariablesDict, CFSTR("LogLineCount"), s->LogLineCount);
-  addString(rtVariablesDict, CFSTR("LogEveryBoot"), "_NOT_SHOWN_");
   
   CFMutableArrayRef disArray = addArray(dict, CFSTR("DisableDrivers"));
   addStringToArray(disArray, "_NOT_SHOWN_");
