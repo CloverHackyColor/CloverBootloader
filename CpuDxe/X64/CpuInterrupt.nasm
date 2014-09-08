@@ -20,13 +20,9 @@ global ASM_PFX(InitDescriptor)
 global ASM_PFX(SystemExceptionHandler)
 global ASM_PFX(SystemTimerHandler)
 
-global ASM_PFX(mExceptionCodeSize)
-global ASM_PFX(mGdtPtr)
-global ASM_PFX(mIdtPtr)
-
-SECTION .data
-ECS:
-ASM_PFX(mExceptionCodeSize):  dd  9
+;global ASM_PFX(mExceptionCodeSize)
+;global ASM_PFX(mGdtPtr)
+;global ASM_PFX(mIdtPtr)
 
 SECTION .text
 
@@ -37,15 +33,15 @@ EXTERN mTimerVector
 
 
 ASM_PFX(InitDescriptor):
-;        lea     rax, [REL ASM_PFX(GDT_BASE)]             ; RAX=PHYSICAL address of gdt
-;        mov     qword  [gdtr + 2], rax   ; Put address of gdt into the gdtr
+        lea     rax, [REL ASM_PFX(GDT_BASE)]             ; RAX=PHYSICAL address of gdt
+        mov     [REL gdtr + 2], rax   ; Put address of gdt into the gdtr+2
         lea     rax, [REL gdtr]
         lgdt       [rax]
         mov     rax, 18h
         mov     gs, rax
         mov     fs, rax
-;        lea     rax, [REL ASM_PFX(IDT_BASE)]             ; RAX=PHYSICAL address of idt
-;        mov     qword  [idtr + 2], rax   ; Put address of idt into the idtr
+        lea     rax, [REL ASM_PFX(IDT_BASE)]             ; RAX=PHYSICAL address of idt
+        mov     qword  [REL idtr + 2], rax   ; Put address of idt into the idtr
         lea     rax, [REL idtr]
         lidt      [rax]
         ret

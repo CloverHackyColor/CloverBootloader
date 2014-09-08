@@ -29,8 +29,9 @@ extern VOID BiosPutC(CHAR8 ch);
 // Global Variables
 //
 
-extern UINT32                        mExceptionCodeSize;
-#if defined(MDE_CPU_X64)
+//extern
+UINT32    mExceptionCodeSize = 9;
+#if 0 //defined(MDE_CPU_X64)
 extern UINTN    mGdtPtr;
 extern UINTN    mIdtPtr;
 extern UINTN    GDT_BASE;
@@ -1086,7 +1087,7 @@ Returns:
   // Reload GDT, IDT
   //
   //CopyMem(((UINT8 *)&mGdtPtr), (UINT8 *)&GDT_BASE, sizeof(UINTN));
-#if defined(MDE_CPU_X64)
+#if 0  //defined(MDE_CPU_X64)
   mGdtPtr = (UINTN)&GDT_BASE;
   mIdtPtr = (UINTN)&IDT_BASE;
 #endif
