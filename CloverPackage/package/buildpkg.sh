@@ -503,7 +503,6 @@ main ()
     ls "${SRCROOT}"/CloverV2/Bootloaders/x64/boot? &>/dev/null && \
      ditto --noextattr --noqtn ${SRCROOT}/CloverV2/Bootloaders/x64/boot?  ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/x64/
     ditto --noextattr --noqtn ${SRCROOT}/CloverV2/BootSectors/boot0af     ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/
-    ditto --noextattr --noqtn ${SRCROOT}/CloverV2/BootSectors/boot0md     ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/
     ditto --noextattr --noqtn ${SRCROOT}/CloverV2/BootSectors/boot0ss     ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/
     ditto --noextattr --noqtn ${SRCROOT}/CloverV2/BootSectors/boot1f32    ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/
     ditto --noextattr --noqtn ${SRCROOT}/CloverV2/BootSectors/boot1f32alt ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/
@@ -844,6 +843,7 @@ if [[ "$add_ia32" -eq 1 ]]; then
 fi
 
 # build mandatory drivers-x64 packages
+if [[ -d "${SRCROOT}/CloverV2/EFI/CLOVER/drivers64"  ]]; then
     echo "================= drivers64 mandatory =================="
     packagesidentity="${clover_package_identity}".drivers64.mandatory
     local drivers=($( find "${SRCROOT}/CloverV2/EFI/CLOVER/drivers64" -type f -name '*.efi' -depth 1 ))
@@ -868,9 +868,11 @@ fi
          --pkg-refs="$packageRefId"  "${driverChoice}"
         rm -R -f "${PKG_BUILD_DIR}/${driverChoice}"
     done
+fi
 # End mandatory drivers-x64 packages
 
 # build drivers-x64 packages
+if [[ -d "${SRCROOT}/CloverV2/drivers-Off/drivers64" ]]; then
     echo "===================== drivers64 ========================"
     addGroupChoices --title="Drivers64" --description="Drivers64"  \
                     --enabled="!choices['UEFI.only'].selected"     \
@@ -897,9 +899,11 @@ fi
                   "${driverName}"
         rm -R -f "${PKG_BUILD_DIR}/${driverName}"
     done
+fi
 # End build drivers-x64 packages
 
 # build mandatory drivers-x64UEFI packages
+if [[ -d "${SRCROOT}/CloverV2/EFI/CLOVER/drivers64UEFI" ]]; then
     echo "=============== drivers64 UEFI mandatory ==============="
     packagesidentity="${clover_package_identity}".drivers64UEFI.mandatory
     local drivers=($( find "${SRCROOT}/CloverV2/EFI/CLOVER/drivers64UEFI" -type f -name '*.efi' -depth 1 ))
@@ -923,9 +927,11 @@ fi
         addChoice --start-visible="false" --start-selected="true" --pkg-refs="$packageRefId"  "${driverChoice}"
         rm -R -f "${PKG_BUILD_DIR}/${driverChoice}"
     done
+fi
 # End mandatory drivers-x64UEFI packages
 
 # build drivers-x64UEFI packages 
+if [[ -d "${SRCROOT}/CloverV2/drivers-Off/drivers64UEFI" ]]; then
     echo "=================== drivers64 UEFI ====================="
     addGroupChoices --title="Drivers64UEFI" --description="Drivers64UEFI" "Drivers64UEFI"
     packagesidentity="${clover_package_identity}".drivers64UEFI
@@ -948,6 +954,7 @@ fi
                   --pkg-refs="$packageRefId"  "${driverName}"
         rm -R -f "${PKG_BUILD_DIR}/${driverName}"
     done
+fi
 # End build drivers-x64UEFI packages
 
 # build rc scripts package
