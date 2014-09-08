@@ -104,8 +104,8 @@ INF  Clover/UefiCpuPkg/CpuIo2Dxe/CpuIo2Dxe.inf
 #INF  Clover/UefiCpuPkg/CpuDxe/CpuDxe.inf
 
 #INF  IntelFrameworkModulePkg/Universal/CpuIoDxe/CpuIoDxe.inf
-!ifndef CLANG
 INF  Clover/CpuDxe/Cpu.inf
+!ifndef CLANG
 #INF  UefiCpuPkg/CpuDxe/CpuDxe.inf
 !else
 #INF  RuleOverride=BINARY Clover/CpuDxeBin/CpuDxeBin.inf

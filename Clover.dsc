@@ -270,9 +270,9 @@
   #UefiCpuPkg/CpuIo2Dxe/CpuIo2Dxe.inf
   #Clover/UefiCpuPkg/CpuDxe/CpuDxe.inf
   UefiCpuPkg/CpuDxe/CpuDxe.inf
-!ifndef CLANG
+#!ifndef CLANG
   Clover/CpuDxe/Cpu.inf
-!endif  
+#!endif  
   PcAtChipsetPkg/8259InterruptControllerDxe/8259.inf {
       <PcdsFixedAtBuild>
       gPcAtChipsetPkgTokenSpaceGuid.Pcd8259LegacyModeMask|0xFFFC
