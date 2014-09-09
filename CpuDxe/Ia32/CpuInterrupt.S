@@ -23,9 +23,9 @@
 #EXTERN ExceptionHandler: NEAR
 #EXTERN mTimerVector: DWORD
 
-  .data
-  ASM_GLOBAL ASM_PFX(mExceptionCodeSize)
-ASM_PFX(mExceptionCodeSize): .long  9
+#  .data
+#  ASM_GLOBAL ASM_PFX(mExceptionCodeSize)
+#ASM_PFX(mExceptionCodeSize): .long  9
 
   .text
   ASM_GLOBAL ASM_PFX(InitDescriptor)
