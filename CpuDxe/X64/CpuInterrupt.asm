@@ -18,7 +18,7 @@
 
 .data
 EXTERNDEF mExceptionCodeSize:DWORD
-mExceptionCodeSize  DD  9
+;mExceptionCodeSize  DD  9
 
 EXTERNDEF mGdtPtr:QWORD
 EXTERNDEF mIdtPtr:QWORD

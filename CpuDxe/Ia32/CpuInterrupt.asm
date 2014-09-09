@@ -32,7 +32,7 @@ EXTERN TimerHandler: NEAR
 EXTERN ExceptionHandler: NEAR
 EXTERN mTimerVector: DWORD
 
-mExceptionCodeSize  DD  9
+;mExceptionCodeSize  DD  9
 
 InitDescriptor PROC C
         lea     eax, [GDT_BASE]             ; EAX=PHYSICAL address of gdt

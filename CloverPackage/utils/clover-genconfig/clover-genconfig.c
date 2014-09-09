@@ -651,12 +651,12 @@ void PrintConfig(CFTypeRef data)
     addString(patchDict[i], CFSTR("Replace"), "_NOT_SHOWN_");
   }
   
-/*  CFMutableDictionaryRef rtVariablesDict = addDict(dict, CFSTR("RtVariables"));
-  addString(rtVariablesDict, CFSTR("ROM"), "_NOT_SHOWN_" /*s->RtROM*/);
-  addString(rtVariablesDict, CFSTR("MLB"), s->BoardSerialNumber);
-  addString(rtVariablesDict, CFSTR("MountEFI"), "_NOT_SHOWN_");
-  addInteger(rtVariablesDict, CFSTR("LogLineCount"), s->LogLineCount);
-  addString(rtVariablesDict, CFSTR("LogEveryBoot"), "_NOT_SHOWN_"); */
+//  CFMutableDictionaryRef rtVariablesDict = addDict(dict, CFSTR("RtVariables"));
+//  addString(rtVariablesDict, CFSTR("ROM"), "_NOT_SHOWN_" /*s->RtROM*/);
+//  addString(rtVariablesDict, CFSTR("MLB"), s->BoardSerialNumber);
+//  addString(rtVariablesDict, CFSTR("MountEFI"), "_NOT_SHOWN_");
+//  addInteger(rtVariablesDict, CFSTR("LogLineCount"), s->LogLineCount);
+//  addString(rtVariablesDict, CFSTR("LogEveryBoot"), "_NOT_SHOWN_");
   
   CFMutableArrayRef disArray = addArray(dict, CFSTR("DisableDrivers"));
   addStringToArray(disArray, "_NOT_SHOWN_");

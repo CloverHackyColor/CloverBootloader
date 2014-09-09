@@ -1109,7 +1109,7 @@ Returns:
   InstallInterruptHandler (mTimerVector, SystemTimerHandler);
 #if defined(MDE_CPU_X64)
   // now we want to patch mTimerVector
-  CopyMem(((UINT8 *)&SystemTimerHandler) + 3, (UINT8 *)&mTimerVector, 1);
+  CopyMem(((UINT8 *)(UINTN)&SystemTimerHandler) + 3, (UINT8 *)&mTimerVector, 1);
 #endif
   //
   // BUGBUG: We add all other interrupt vector
