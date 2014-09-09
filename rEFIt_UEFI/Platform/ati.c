@@ -1039,8 +1039,8 @@ BOOLEAN get_model_val(value_t *val, INTN index)
 	return TRUE;
 }
 
-static CONST UINT32 ctm[] = {0x02, 0x10, 0x800, 0x400}; //mobile
-static CONST UINT32 ctd[] = {0x04, 0x10, 0x800, 0x400}; //desktop
+//static CONST UINT32 ctm[] = {0x02, 0x10, 0x800, 0x400}; //mobile
+//static CONST UINT32 ctd[] = {0x04, 0x10, 0x800, 0x400}; //desktop
 //static UINT32 cti = 0;
 
 KERNEL_AND_KEXT_PATCHES *CurrentPatches;
