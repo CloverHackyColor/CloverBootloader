@@ -28,14 +28,14 @@
 #ASM_PFX(mExceptionCodeSize): .long  9
 
   .text
-  ASM_GLOBAL ASM_PFX(InitDescriptor)
+ASM_GLOBAL ASM_PFX(InitDescriptor)
 
 ASM_PFX(InitDescriptor):
-        movl    $GDT_BASE,%eax              # EAX=PHYSICAL address of gdt
-        movl    %eax, gdtr + 2              # Put address of gdt into the gdtr
+        movl    $GDT_BASE,%eax       # EAX=PHYSICAL address of gdt
+        movl    %eax, gdtr + 2       # Put address of gdt into the gdtr
         lgdt    gdtr
-        movl    $IDT_BASE,%eax              # EAX=PHYSICAL address of idt
-        movl    %eax, idtr + 2              # Put address of idt into the idtr
+        movl    $IDT_BASE,%eax       # EAX=PHYSICAL address of idt
+        movl    %eax, idtr + 2       # Put address of idt into the idtr
         lidt    idtr
         ret
 

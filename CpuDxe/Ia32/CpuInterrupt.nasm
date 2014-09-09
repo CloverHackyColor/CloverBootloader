@@ -33,17 +33,23 @@ EXTERN mTimerVector
 
 
 ASM_PFX(InitDescriptor):
-        lea     eax, [REL ASM_PFX(GDT_BASE)]             ; RAX=PHYSICAL address of gdt
-        mov     [REL gdtr + 2], eax   ; Put address of gdt into the gdtr+2
-        lea     eax, [REL gdtr]
-        lgdt       [eax]
-;        mov     rax, 18h
-;        mov     gs, rax
-;        mov     fs, rax
-        lea     eax, [REL ASM_PFX(IDT_BASE)]             ; RAX=PHYSICAL address of idt
-        mov     dword  [REL idtr + 2], eax   ; Put address of idt into the idtr
-        lea     eax, [REL idtr]
-        lidt      [eax]
+;        lea     eax, [REL ASM_PFX(GDT_BASE)]             ; RAX=PHYSICAL address of gdt
+;        mov     [REL gdtr + 2], eax   ; Put address of gdt into the gdtr+2
+;        lea     eax, [REL gdtr]
+;        lgdt       [eax]
+
+        mov     eax, ASM_PFX(GDT_BASE)
+        mov     [gdtr + 2], eax
+        lgdt    [gdtr]
+
+;        lea     eax, [REL IDT_BASE]             ; RAX=PHYSICAL address of idt
+;        mov     dword  [REL idtr + 2], eax   ; Put address of idt into the idtr
+;        lea     eax, [REL idtr]
+;        lidt      [eax]
+
+        mov     eax, IDT_BASE
+        mov     [idtr + 2], eax
+        lidt    [idtr]
         ret
 
 
@@ -58,16 +64,16 @@ ASM_PFX(InstallInterruptHandler):
       cli                                 ; turn off interrupts
       sub     esp, 6                      ; open some space on the stack
       mov     edi, esp
-      sidt    [es:edi]                    ; get fword address of IDT
-      mov     edi, [es:edi+2]             ; move offset of IDT into EDI
+      sidt    [edi]                    ; get fword address of IDT
+      mov     edi, [edi+2]             ; move offset of IDT into EDI
       add     esp, 6                      ; correct stack
       mov     eax, [esp+12]                 ; Get vector number
       shl     eax, 3                      ; multiply by 8 to get offset
       add     edi, eax                    ; add to IDT base to get entry
       mov     eax, [esp+16]                ; load new address into IDT entry
-      mov     word [es:edi], ax       ; write bits 15..0 of offset
+      mov     word [edi], ax       ; write bits 15..0 of offset
       shr     eax, 16                     ; use ax to copy 31..16 to descriptors
-      mov     word [es:edi+6], ax     ; write bits 31..16 of offset
+      mov     word [edi+6], ax     ; write bits 31..16 of offset
       popfd                               ; restore flags (possible enabling interrupts)
       pop     edi
       ret
@@ -216,23 +222,19 @@ ASM_PFX(SystemTimerHandler):
     JmpCommonIdtEntry
 
 commonIdtEntry:
-; +---------------------+ <-- 16-byte aligned ensured by processor
-; +    Old SS           +
 ; +---------------------+
-; +    Old RSP          +
-; +---------------------+
-; +    RFlags           +
+; +    EFlags           +
 ; +---------------------+
 ; +    CS               +
 ; +---------------------+
-; +    RIP              +
+; +    EIP              +
 ; +---------------------+
 ; +    Error Code       +
 ; +---------------------+
 ; +    Vector Number    +
 ; +---------------------+
-; +    RBP              +
-; +---------------------+ <-- RBP, 16-byte aligned
+; +    EBP              +
+; +---------------------+ <-- EBP
 
 cli
 push ebp
@@ -257,17 +259,17 @@ push    esi
 push    edi
 
 ;; UINT32  Gs, Fs, Es, Ds, Cs, Ss;
-mov  eax, ss
+mov  ax, ss
 push eax
-movzx eax, word  [ebp + 4 * 4]
+movzx eax, byte  [ebp + 4 * 4]
 push eax
-mov  eax, ds
+mov  ax, ds
 push eax
-mov  eax, es
+mov  ax, es
 push eax
-mov  eax, fs
+mov  ax, fs
 push eax
-mov  eax, gs
+mov  ax, gs
 push eax
 
 ;; UINT32  Eip;
@@ -283,7 +285,7 @@ sgdt  [esp]
 xor  eax, eax
 str  ax
 push eax
-sldt ax
+sldt eax
 push eax
 
 ;; UINT32  EFlags;
@@ -424,15 +426,16 @@ iretd
 ; data
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 SECTION .data
-GDT_BEGIN:
+;GDT_BEGIN:
+        ALIGN 04h
 
 gdtr    dw GDT_END - ASM_PFX(GDT_BASE) - 1   ; GDT limit
-        dq 0   ;GDT_BASE                        ; (GDT base gets set above)
+        dd 0   ;GDT_BASE                        ; (GDT base gets set above)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;   global descriptor table (GDT)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-         ALIGN 010h                      ; make GDT 16-byte align
+         ALIGN 04h                      ; make GDT 4-byte align
 
 global ASM_PFX(GDT_BASE)
 ASM_PFX(GDT_BASE):
@@ -490,37 +493,30 @@ SPARE3_SEL      equ $-ASM_PFX(GDT_BASE)          ; Selector [0x28]
         db 0
         db 0
 
-; system data segment descriptor
-SYS_DATA64_SEL    equ $-ASM_PFX(GDT_BASE)          ; Selector [0x30]
-        dw 0FFFFh       ; limit 0xFFFFF
-        dw 0            ; base 0
+; spare segment descriptor
+SPARE4_SEL  equ $-ASM_PFX(GDT_BASE)            ; Selector [0x30]
+        dw 0
+        dw 0
         db 0
-        db 092h         ; present, ring 0, data, expand-up, writable
-        db 0CFh         ; page-granular, 32-bit
         db 0
-
-; system code segment descriptor
-SYS_CODE64_SEL    equ $-ASM_PFX(GDT_BASE)          ; Selector [0x38]
-        dw 0FFFFh       ; limit 0xFFFFF
-        dw 0            ; base 0
         db 0
-        db 09Ah         ; present, ring 0, code, expand-up, writable
-        db 0AFh         ; page-granular, 64-bit
         db 0
 
 ; spare segment descriptor
-SPARE4_SEL  equ $-ASM_PFX(GDT_BASE)            ; Selector [0x40]
+SPARE5_SEL  equ $-ASM_PFX(GDT_BASE)            ; Selector [0x38]
         dw 0
         dw 0
         db 0
         db 0
         db 0
         db 0
+
 
 GDT_END:
+        ALIGN 04h
 
-idtr    dw IDT_END - ASM_PFX(IDT_BASE) - 1   ; IDT limit
-ASM_PFX(mIdtPtr) dq 0  ;IDT_BASE                        ; (IDT base gets set above)
+idtr    dw IDT_END - IDT_BASE - 1   ; IDT limit
+        dd 0  ;IDT_BASE                        ; (IDT base gets set above)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;   interrupt descriptor table (IDT)
@@ -531,312 +527,312 @@ ASM_PFX(mIdtPtr) dq 0  ;IDT_BASE                        ; (IDT base gets set abo
 ;       for convenience.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-         ALIGN 08h       ; make IDT 8-byte align
+         ALIGN 04h       ; make IDT 4-byte align
 
-global ASM_PFX(IDT_BASE)
-ASM_PFX(IDT_BASE):
+global IDT_BASE
+IDT_BASE:
 ; divide by zero (INT 0)
-DIV_ZERO_SEL        equ $-ASM_PFX(IDT_BASE)
+DIV_ZERO_SEL        equ $-IDT_BASE
         dw 0            ; offset 15:0
-        dw SYS_CODE64_SEL ; selector 15:0
+        dw  SYS_CODE_SEL ; selector 15:0
         db 0            ; 0 for interrupt gate
         db 8eh          ; type = 386 interrupt gate, present
         dw 0            ; offset 31:16
 
 ; debug exception (INT 1)
-DEBUG_EXCEPT_SEL    equ $-ASM_PFX(IDT_BASE)
+DEBUG_EXCEPT_SEL    equ $-IDT_BASE
         dw 0            ; offset 15:0
-        dw SYS_CODE64_SEL ; selector 15:0
+        dw  SYS_CODE_SEL ; selector 15:0
         db 0            ; 0 for interrupt gate
         db 8eh          ; type = 386 interrupt gate, present
         dw 0            ; offset 31:16
 
 ; NMI (INT 2)
-NMI_SEL             equ $-ASM_PFX(IDT_BASE)
+NMI_SEL             equ $-IDT_BASE
         dw 0            ; offset 15:0
-        dw SYS_CODE64_SEL ; selector 15:0
+        dw  SYS_CODE_SEL ; selector 15:0
         db 0            ; 0 for interrupt gate
         db 8eh          ; type = 386 interrupt gate, present
         dw 0            ; offset 31:16
 
 ; soft breakpoint (INT 3)
-BREAKPOINT_SEL      equ $-ASM_PFX(IDT_BASE)
+BREAKPOINT_SEL      equ $-IDT_BASE
         dw 0            ; offset 15:0
-        dw SYS_CODE64_SEL ; selector 15:0
+        dw  SYS_CODE_SEL ; selector 15:0
         db 0            ; 0 for interrupt gate
         db 8eh          ; type = 386 interrupt gate, present
         dw 0            ; offset 31:16
 
 ; overflow (INT 4)
-OVERFLOW_SEL        equ $-ASM_PFX(IDT_BASE)
+OVERFLOW_SEL        equ $-IDT_BASE
         dw 0            ; offset 15:0
-        dw SYS_CODE64_SEL ; selector 15:0
+        dw  SYS_CODE_SEL ; selector 15:0
         db 0            ; 0 for interrupt gate
         db 8eh          ; type = 386 interrupt gate, present
         dw 0            ; offset 31:16
 
 ; bounds check (INT 5)
-BOUNDS_CHECK_SEL    equ $-ASM_PFX(IDT_BASE)
+BOUNDS_CHECK_SEL    equ $-IDT_BASE
         dw 0            ; offset 15:0
-        dw SYS_CODE64_SEL ; selector 15:0
+        dw  SYS_CODE_SEL ; selector 15:0
         db 0            ; 0 for interrupt gate
         db 8eh          ; type = 386 interrupt gate, present
         dw 0            ; offset 31:16
 
 ; invalid opcode (INT 6)
-INVALID_OPCODE_SEL  equ $-ASM_PFX(IDT_BASE)
+INVALID_OPCODE_SEL  equ $-IDT_BASE
         dw 0            ; offset 15:0
-        dw SYS_CODE64_SEL ; selector 15:0
+        dw  SYS_CODE_SEL ; selector 15:0
         db 0            ; 0 for interrupt gate
         db 8eh          ; type = 386 interrupt gate, present
         dw 0            ; offset 31:16
 
 ; device not available (INT 7)
-DEV_NOT_AVAIL_SEL   equ $-ASM_PFX(IDT_BASE)
+DEV_NOT_AVAIL_SEL   equ $-IDT_BASE
         dw 0            ; offset 15:0
-        dw SYS_CODE64_SEL ; selector 15:0
+        dw  SYS_CODE_SEL ; selector 15:0
         db 0            ; 0 for interrupt gate
         db 8eh          ; type = 386 interrupt gate, present
         dw 0            ; offset 31:16
 
 ; double fault (INT 8)
-DOUBLE_FAULT_SEL    equ $-ASM_PFX(IDT_BASE)
+DOUBLE_FAULT_SEL    equ $-IDT_BASE
         dw 0            ; offset 15:0
-        dw SYS_CODE64_SEL ; selector 15:0
+        dw  SYS_CODE_SEL ; selector 15:0
         db 0            ; 0 for interrupt gate
         db 8eh          ; type = 386 interrupt gate, present
         dw 0            ; offset 31:16
 
 ; Coprocessor segment overrun - reserved (INT 9)
-RSVD_INTR_SEL1      equ $-ASM_PFX(IDT_BASE)
+RSVD_INTR_SEL1      equ $-IDT_BASE
         dw 0            ; offset 15:0
-        dw SYS_CODE64_SEL ; selector 15:0
+        dw  SYS_CODE_SEL ; selector 15:0
         db 0            ; 0 for interrupt gate
         db 8eh          ; type = 386 interrupt gate, present
         dw 0            ; offset 31:16
 
 ; invalid TSS (INT 0ah)
-INVALID_TSS_SEL     equ $-ASM_PFX(IDT_BASE)
+INVALID_TSS_SEL     equ $-IDT_BASE
         dw 0            ; offset 15:0
-        dw SYS_CODE64_SEL ; selector 15:0
+        dw  SYS_CODE_SEL ; selector 15:0
         db 0            ; 0 for interrupt gate
         db 8eh          ; type = 386 interrupt gate, present
         dw 0            ; offset 31:16
 
 ; segment not present (INT 0bh)
-SEG_NOT_PRESENT_SEL equ $-ASM_PFX(IDT_BASE)
+SEG_NOT_PRESENT_SEL equ $-IDT_BASE
         dw 0            ; offset 15:0
-        dw SYS_CODE64_SEL ; selector 15:0
+        dw  SYS_CODE_SEL ; selector 15:0
         db 0            ; 0 for interrupt gate
         db 8eh          ; type = 386 interrupt gate, present
         dw 0            ; offset 31:16
 
 ; stack fault (INT 0ch)
-STACK_FAULT_SEL     equ $-ASM_PFX(IDT_BASE)
+STACK_FAULT_SEL     equ $-IDT_BASE
         dw 0            ; offset 15:0
-        dw SYS_CODE64_SEL ; selector 15:0
+        dw  SYS_CODE_SEL ; selector 15:0
         db 0            ; 0 for interrupt gate
         db 8eh          ; type = 386 interrupt gate, present
         dw 0            ; offset 31:16
 
 ; general protection (INT 0dh)
-GP_FAULT_SEL        equ $-ASM_PFX(IDT_BASE)
+GP_FAULT_SEL        equ $-IDT_BASE
         dw 0            ; offset 15:0
-        dw SYS_CODE64_SEL ; selector 15:0
+        dw  SYS_CODE_SEL ; selector 15:0
         db 0            ; 0 for interrupt gate
         db 8eh          ; type = 386 interrupt gate, present
         dw 0            ; offset 31:16
 
 ; page fault (INT 0eh)
-PAGE_FAULT_SEL      equ $-ASM_PFX(IDT_BASE)
+PAGE_FAULT_SEL      equ $-IDT_BASE
         dw 0            ; offset 15:0
-        dw SYS_CODE64_SEL ; selector 15:0
+        dw  SYS_CODE_SEL ; selector 15:0
         db 0            ; 0 for interrupt gate
         db 8eh          ; type = 386 interrupt gate, present
         dw 0            ; offset 31:16
 
 ; Intel reserved - do not use (INT 0fh)
-RSVD_INTR_SEL2      equ $-ASM_PFX(IDT_BASE)
+RSVD_INTR_SEL2      equ $-IDT_BASE
         dw 0            ; offset 15:0
-        dw SYS_CODE64_SEL ; selector 15:0
+        dw  SYS_CODE_SEL ; selector 15:0
         db 0            ; 0 for interrupt gate
         db 8eh          ; type = 386 interrupt gate, present
         dw 0            ; offset 31:16
 
 ; floating point error (INT 10h)
-FLT_POINT_ERR_SEL   equ $-ASM_PFX(IDT_BASE)
+FLT_POINT_ERR_SEL   equ $-IDT_BASE
         dw 0            ; offset 15:0
-        dw SYS_CODE64_SEL ; selector 15:0
+        dw  SYS_CODE_SEL ; selector 15:0
         db 0            ; 0 for interrupt gate
         db 8eh          ; type = 386 interrupt gate, present
         dw 0            ; offset 31:16
 
 ; alignment check (INT 11h)
-ALIGNMENT_CHECK_SEL equ $-ASM_PFX(IDT_BASE)
+ALIGNMENT_CHECK_SEL equ $-IDT_BASE
         dw 0            ; offset 15:0
-        dw SYS_CODE64_SEL ; selector 15:0
+        dw  SYS_CODE_SEL ; selector 15:0
         db 0            ; 0 for interrupt gate
         db 8eh          ; (10001110)type = 386 interrupt gate, present
         dw 0            ; offset 31:16
 
 ; machine check (INT 12h)
-MACHINE_CHECK_SEL   equ $-ASM_PFX(IDT_BASE)
+MACHINE_CHECK_SEL   equ $-IDT_BASE
         dw 0            ; offset 15:0
-        dw SYS_CODE64_SEL ; selector 15:0
+        dw  SYS_CODE_SEL ; selector 15:0
         db 0            ; 0 for interrupt gate
         db 8eh          ; (10001110)type = 386 interrupt gate, present
         dw 0            ; offset 31:16
 
 ; SIMD floating-point exception (INT 13h)
-SIMD_EXCEPTION_SEL  equ $-ASM_PFX(IDT_BASE)
+SIMD_EXCEPTION_SEL  equ $-IDT_BASE
         dw 0            ; offset 15:0
-        dw SYS_CODE64_SEL ; selector 15:0
+        dw  SYS_CODE_SEL ; selector 15:0
         db 0            ; 0 for interrupt gate
         db 8eh          ; (10001110)type = 386 interrupt gate, present
         dw 0            ; offset 31:16
 
 %rep  (32 - 20)
         dw 0            ; offset 15:0
-        dw SYS_CODE64_SEL ; selector 15:0
+        dw  SYS_CODE_SEL ; selector 15:0
         db 0            ; 0 for interrupt gate
         db 8eh          ; (10001110)type = 386 interrupt gate, present
         dw 0            ; offset 31:16
 %endrep
 
 ; 72 unspecified descriptors
-;        db (72 * 16) dup(0)
-TIMES (72 * 16) db 0
+;        db (72 * 8) dup(0)
+TIMES (72 * 8) db 0
         
 ; IRQ 0 (System timer) - (INT 68h)
-IRQ0_SEL            equ $-ASM_PFX(IDT_BASE)
+IRQ0_SEL            equ $-IDT_BASE
         dw 0            ; offset 15:0
-        dw SYS_CODE64_SEL ; selector 15:0
+        dw  SYS_CODE_SEL ; selector 15:0
         db 0            ; 0 for interrupt gate
         db 8eh          ; (10001110)type = 386 interrupt gate, present
         dw 0            ; offset 31:16
 
 ; IRQ 1 (8042 Keyboard controller) - (INT 69h)
-IRQ1_SEL            equ $-ASM_PFX(IDT_BASE)
+IRQ1_SEL            equ $-IDT_BASE
         dw 0            ; offset 15:0
-        dw SYS_CODE64_SEL ; selector 15:0
+        dw  SYS_CODE_SEL ; selector 15:0
         db 0            ; 0 for interrupt gate
         db 8eh          ; (10001110)type = 386 interrupt gate, present
         dw 0            ; offset 31:16
 
 ; Reserved - IRQ 2 redirect (IRQ 2) - DO NOT USE!!! - (INT 6ah)
-IRQ2_SEL            equ $-ASM_PFX(IDT_BASE)
+IRQ2_SEL            equ $-IDT_BASE
         dw 0            ; offset 15:0
-        dw SYS_CODE64_SEL ; selector 15:0
+        dw  SYS_CODE_SEL ; selector 15:0
         db 0            ; 0 for interrupt gate
         db 8eh          ; (10001110)type = 386 interrupt gate, present
         dw 0            ; offset 31:16
 
 ; IRQ 3 (COM 2) - (INT 6bh)
-IRQ3_SEL            equ $-ASM_PFX(IDT_BASE)
+IRQ3_SEL            equ $-IDT_BASE
         dw 0            ; offset 15:0
-        dw SYS_CODE64_SEL ; selector 15:0
+        dw  SYS_CODE_SEL ; selector 15:0
         db 0            ; 0 for interrupt gate
         db 8eh          ; (10001110)type = 386 interrupt gate, present
         dw 0            ; offset 31:16
 
 ; IRQ 4 (COM 1) - (INT 6ch)
-IRQ4_SEL            equ $-ASM_PFX(IDT_BASE)
+IRQ4_SEL            equ $-IDT_BASE
         dw 0            ; offset 15:0
-        dw SYS_CODE64_SEL ; selector 15:0
+        dw  SYS_CODE_SEL ; selector 15:0
         db 0            ; 0 for interrupt gate
         db 8eh          ; (10001110)type = 386 interrupt gate, present
         dw 0            ; offset 31:16
 
 ; IRQ 5 (LPT 2) - (INT 6dh)
-IRQ5_SEL            equ $-ASM_PFX(IDT_BASE)
+IRQ5_SEL            equ $-IDT_BASE
         dw 0            ; offset 15:0
-        dw SYS_CODE64_SEL ; selector 15:0
+        dw  SYS_CODE_SEL ; selector 15:0
         db 0            ; 0 for interrupt gate
         db 8eh          ; (10001110)type = 386 interrupt gate, present
         dw 0            ; offset 31:16
 
 ; IRQ 6 (Floppy controller) - (INT 6eh)
-IRQ6_SEL            equ $-ASM_PFX(IDT_BASE)
+IRQ6_SEL            equ $-IDT_BASE
         dw 0            ; offset 15:0
-        dw SYS_CODE64_SEL ; selector 15:0
+        dw  SYS_CODE_SEL ; selector 15:0
         db 0            ; 0 for interrupt gate
         db 8eh          ; (10001110)type = 386 interrupt gate, present
         dw 0            ; offset 31:16
 
 ; IRQ 7 (LPT 1) - (INT 6fh)
-IRQ7_SEL            equ $-ASM_PFX(IDT_BASE)
+IRQ7_SEL            equ $-IDT_BASE
         dw 0            ; offset 15:0
-        dw SYS_CODE64_SEL ; selector 15:0
+        dw  SYS_CODE_SEL ; selector 15:0
         db 0            ; 0 for interrupt gate
         db 8eh          ; (10001110)type = 386 interrupt gate, present
         dw 0            ; offset 31:16
 
 ; IRQ 8 (RTC Alarm) - (INT 70h)
-IRQ8_SEL            equ $-ASM_PFX(IDT_BASE)
+IRQ8_SEL            equ $-IDT_BASE
         dw 0            ; offset 15:0
-        dw SYS_CODE64_SEL ; selector 15:0
+        dw  SYS_CODE_SEL ; selector 15:0
         db 0            ; 0 for interrupt gate
         db 8eh          ; (10001110)type = 386 interrupt gate, present
         dw 0            ; offset 31:16
 
 ; IRQ 9 - (INT 71h)
-IRQ9_SEL            equ $-ASM_PFX(IDT_BASE)
+IRQ9_SEL            equ $-IDT_BASE
         dw 0            ; offset 15:0
-        dw SYS_CODE64_SEL ; selector 15:0
+        dw  SYS_CODE_SEL ; selector 15:0
         db 0            ; 0 for interrupt gate
         db 8eh          ; (10001110)type = 386 interrupt gate, present
         dw 0            ; offset 31:16
 
 ; IRQ 10 - (INT 72h)
-IRQ10_SEL            equ $-ASM_PFX(IDT_BASE)
+IRQ10_SEL            equ $-IDT_BASE
         dw 0            ; offset 15:0
-        dw SYS_CODE64_SEL ; selector 15:0
+        dw  SYS_CODE_SEL ; selector 15:0
         db 0            ; 0 for interrupt gate
         db 8eh          ; (10001110)type = 386 interrupt gate, present
         dw 0            ; offset 31:16
 
 ; IRQ 11 - (INT 73h)
-IRQ11_SEL            equ $-ASM_PFX(IDT_BASE)
+IRQ11_SEL            equ $-IDT_BASE
         dw 0            ; offset 15:0
-        dw SYS_CODE64_SEL ; selector 15:0
+        dw  SYS_CODE_SEL ; selector 15:0
         db 0            ; 0 for interrupt gate
         db 8eh          ; (10001110)type = 386 interrupt gate, present
         dw 0            ; offset 31:16
 
 ; IRQ 12 (PS/2 mouse) - (INT 74h)
-IRQ12_SEL            equ $-ASM_PFX(IDT_BASE)
+IRQ12_SEL            equ $-IDT_BASE
         dw 0            ; offset 15:0
-        dw SYS_CODE64_SEL ; selector 15:0
+        dw  SYS_CODE_SEL ; selector 15:0
         db 0            ; 0 for interrupt gate
         db 8eh          ; (10001110)type = 386 interrupt gate, present
         dw 0            ; offset 31:16
 
 ; IRQ 13 (Floating point error) - (INT 75h)
-IRQ13_SEL            equ $-ASM_PFX(IDT_BASE)
+IRQ13_SEL            equ $-IDT_BASE
         dw 0            ; offset 15:0
-        dw SYS_CODE64_SEL ; selector 15:0
+        dw  SYS_CODE_SEL ; selector 15:0
         db 0            ; 0 for interrupt gate
         db 8eh          ; (10001110)type = 386 interrupt gate, present
         dw 0            ; offset 31:16
 
 ; IRQ 14 (Secondary IDE) - (INT 76h)
-IRQ14_SEL            equ $-ASM_PFX(IDT_BASE)
+IRQ14_SEL            equ $-IDT_BASE
         dw 0            ; offset 15:0
-        dw SYS_CODE64_SEL ; selector 15:0
+        dw  SYS_CODE_SEL ; selector 15:0
         db 0            ; 0 for interrupt gate
         db 8eh          ; (10001110)type = 386 interrupt gate, present
         dw 0            ; offset 31:16
 
 ; IRQ 15 (Primary IDE) - (INT 77h)
-IRQ15_SEL            equ $-ASM_PFX(IDT_BASE)
+IRQ15_SEL            equ $-IDT_BASE
         dw 0            ; offset 15:0
-        dw SYS_CODE64_SEL ; selector 15:0
+        dw  SYS_CODE_SEL ; selector 15:0
         db 0            ; 0 for interrupt gate
         db 8eh          ; (10001110)type = 386 interrupt gate, present
         dw 0            ; offset 31:16
 
 ;        db (1 * 8) dup(0)
-TIMES 8 db 0
+TIMES (1 * 8) db 0
 
 IDT_END:
 
