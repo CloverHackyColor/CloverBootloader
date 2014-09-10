@@ -170,7 +170,7 @@ EfiVfrParser::pragmaPackStackDef(void)
       zzmatch(Number);
       N = (ANTLRTokenPtr)LT(1);
 
-      PackAction |= VFR_PACK_ASSIGN; PackNumber = _STOU32(N->getText());
+      PackAction |= VFR_PACK_ASSIGN; PackNumber = _STOU32(N->getText(), N->getLine());
  consume();
     }
     else {
@@ -197,8 +197,7 @@ EfiVfrParser::pragmaPackNumber(void)
   zzmatch(Number);
   N = (ANTLRTokenPtr)LT(1);
 
-  LineNum = N->getLine();
-  PackNumber = _STOU32(N->getText());
+  LineNum = N->getLine(); PackNumber = _STOU32(N->getText(), N->getLine());
  consume();
   gCVfrVarDataTypeDB.Pack (LineNum, VFR_PACK_ASSIGN, NULL, PackNumber);
   return;
@@ -397,7 +396,7 @@ EfiVfrParser::dataStructField64(void)
       I = (ANTLRTokenPtr)LT(1);
  consume();
       zzmatch(CloseBracket);
-      ArrayNum = _STOU32(I->getText());
+      ArrayNum = _STOU32(I->getText(), I->getLine());
  consume();
     }
     else {
@@ -434,7 +433,7 @@ EfiVfrParser::dataStructField32(void)
       I = (ANTLRTokenPtr)LT(1);
  consume();
       zzmatch(CloseBracket);
-      ArrayNum = _STOU32(I->getText());
+      ArrayNum = _STOU32(I->getText(), I->getLine());
  consume();
     }
     else {
@@ -481,7 +480,7 @@ EfiVfrParser::dataStructField16(void)
       I = (ANTLRTokenPtr)LT(1);
  consume();
       zzmatch(CloseBracket);
-      ArrayNum = _STOU32(I->getText());
+      ArrayNum = _STOU32(I->getText(), I->getLine());
  consume();
     }
     else {
@@ -518,7 +517,7 @@ EfiVfrParser::dataStructField8(void)
       I = (ANTLRTokenPtr)LT(1);
  consume();
       zzmatch(CloseBracket);
-      ArrayNum = _STOU32(I->getText());
+      ArrayNum = _STOU32(I->getText(), I->getLine());
  consume();
     }
     else {
@@ -556,7 +555,7 @@ EfiVfrParser::dataStructFieldBool(void)
       I = (ANTLRTokenPtr)LT(1);
  consume();
       zzmatch(CloseBracket);
-      ArrayNum = _STOU32(I->getText());
+      ArrayNum = _STOU32(I->getText(), I->getLine());
  consume();
     }
     else {
@@ -593,7 +592,7 @@ EfiVfrParser::dataStructFieldString(void)
       I = (ANTLRTokenPtr)LT(1);
  consume();
       zzmatch(CloseBracket);
-      ArrayNum = _STOU32(I->getText());
+      ArrayNum = _STOU32(I->getText(), I->getLine());
  consume();
     }
     else {
@@ -630,7 +629,7 @@ EfiVfrParser::dataStructFieldDate(void)
       I = (ANTLRTokenPtr)LT(1);
  consume();
       zzmatch(CloseBracket);
-      ArrayNum = _STOU32(I->getText());
+      ArrayNum = _STOU32(I->getText(), I->getLine());
  consume();
     }
     else {
@@ -668,7 +667,7 @@ EfiVfrParser::dataStructFieldTime(void)
       I = (ANTLRTokenPtr)LT(1);
  consume();
       zzmatch(CloseBracket);
-      ArrayNum = _STOU32(I->getText());
+      ArrayNum = _STOU32(I->getText(), I->getLine());
  consume();
     }
     else {
@@ -705,7 +704,7 @@ EfiVfrParser::dataStructFieldRef(void)
       I = (ANTLRTokenPtr)LT(1);
  consume();
       zzmatch(CloseBracket);
-      ArrayNum = _STOU32(I->getText());
+      ArrayNum = _STOU32(I->getText(), I->getLine());
  consume();
     }
     else {
@@ -743,7 +742,7 @@ EfiVfrParser::dataStructFieldUser(void)
       I = (ANTLRTokenPtr)LT(1);
  consume();
       zzmatch(CloseBracket);
-      ArrayNum = _STOU32(I->getText());
+      ArrayNum = _STOU32(I->getText(), I->getLine());
  consume();
     }
     else {
@@ -798,14 +797,22 @@ EfiVfrParser::guidSubDefinition(EFI_GUID & Guid)
   G11 = (ANTLRTokenPtr)LT(1);
 
   
-  Guid.Data4[0] = _STOU8(G4->getText());
-  Guid.Data4[1] = _STOU8(G5->getText());
-  Guid.Data4[2] = _STOU8(G6->getText());
-  Guid.Data4[3] = _STOU8(G7->getText());
-  Guid.Data4[4] = _STOU8(G8->getText());
-  Guid.Data4[5] = _STOU8(G9->getText());
-  Guid.Data4[6] = _STOU8(G10->getText());
-  Guid.Data4[7] = _STOU8(G11->getText());
+
+  Guid.Data4[0] = _STOU8(G4->getText(), G4->getLine());
+
+  Guid.Data4[1] = _STOU8(G5->getText(), G5->getLine());
+
+  Guid.Data4[2] = _STOU8(G6->getText(), G6->getLine());
+
+  Guid.Data4[3] = _STOU8(G7->getText(), G7->getLine());
+
+  Guid.Data4[4] = _STOU8(G8->getText(), G8->getLine());
+
+  Guid.Data4[5] = _STOU8(G9->getText(), G9->getLine());
+
+  Guid.Data4[6] = _STOU8(G10->getText(), G10->getLine());
+
+  Guid.Data4[7] = _STOU8(G11->getText(), G11->getLine());
  consume();
   return;
 fail:
@@ -832,9 +839,11 @@ EfiVfrParser::guidDefinition(EFI_GUID & Guid)
  consume();
   zzmatch(151);
   
-  Guid.Data1 = _STOU32 (G1->getText());
-  Guid.Data2 = _STOU16 (G2->getText());
-  Guid.Data3 = _STOU16 (G3->getText());
+  Guid.Data1 = _STOU32 (G1->getText(), G1->getLine());
+
+  Guid.Data2 = _STOU16 (G2->getText(), G2->getLine());
+
+  Guid.Data3 = _STOU16 (G3->getText(), G3->getLine());
  consume();
   {
     if ( (LA(1)==OpenBrace) ) {

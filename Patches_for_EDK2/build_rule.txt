@@ -135,7 +135,8 @@
         #@"$(SYMRENAME)" $(SYMRENAME_FLAGS) ${dst}
 
     <Command.ARMGCC, Command.ARMLINUXGCC, command.XCODE>
-        "$(CC)" $(CC_FLAGS) -o ${dst} $(INC) ${src}
+        @"$(CC)" $(CC_FLAGS) -o ${dst} $(INC) ${src}
+        @"echo" [CC] ${s_base}
 
 
 [C-Header-File]

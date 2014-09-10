@@ -20,43 +20,37 @@ global ASM_PFX(InitDescriptor)
 global ASM_PFX(SystemExceptionHandler)
 global ASM_PFX(SystemTimerHandler)
 
-;global ASM_PFX(mExceptionCodeSize)
-;global ASM_PFX(mGdtPtr)
-;global ASM_PFX(mIdtPtr)
-
 SECTION .text
 
 EXTERN ASM_PFX(TimerHandler)
 EXTERN ASM_PFX(ExceptionHandler)
-EXTERN mTimerVector
-
 
 
 ASM_PFX(InitDescriptor):
-;        lea     eax, [REL ASM_PFX(GDT_BASE)]             ; RAX=PHYSICAL address of gdt
-;        mov     [REL gdtr + 2], eax   ; Put address of gdt into the gdtr+2
-;        lea     eax, [REL gdtr]
-;        lgdt       [eax]
+        lea     eax, [REL GDT_BASE]     ; RAX=PHYSICAL address of gdt
+        mov     [REL gdtr + 2], eax     ; Put address of gdt into the gdtr+2
+        lea     eax, [REL gdtr]
+        lgdt       [eax]
 
-        mov     eax, ASM_PFX(GDT_BASE)
-        mov     [gdtr + 2], eax
-        lgdt    [gdtr]
+;        mov     eax, GDT_BASE
+;        mov     [gdtr + 2], eax
+;        lgdt    [gdtr]
 
-;        lea     eax, [REL IDT_BASE]             ; RAX=PHYSICAL address of idt
-;        mov     dword  [REL idtr + 2], eax   ; Put address of idt into the idtr
-;        lea     eax, [REL idtr]
-;        lidt      [eax]
+        lea     eax, [REL IDT_BASE]     ; RAX=PHYSICAL address of idt
+        mov     [REL idtr + 2], eax     ; Put address of idt into the idtr+2
+        lea     eax, [REL idtr]
+        lidt      [eax]
 
-        mov     eax, IDT_BASE
-        mov     [idtr + 2], eax
-        lidt    [idtr]
+;        mov     eax, IDT_BASE
+;        mov     [idtr + 2], eax
+;        lidt    [idtr]
         ret
 
 
 ; VOID
 ; InstallInterruptHandler (
-;     UINTN Vector,           
-;     void  (*Handler)(void)  
+;     UINTN Vector,             //6(SP)
+;     void  (*Handler)(void)    //10(SP)
 ;     )
 ASM_PFX(InstallInterruptHandler):
       push    edi
@@ -64,17 +58,17 @@ ASM_PFX(InstallInterruptHandler):
       cli                                 ; turn off interrupts
       sub     esp, 6                      ; open some space on the stack
       mov     edi, esp
-      sidt    [edi]                    ; get fword address of IDT
-      mov     edi, [edi+2]             ; move offset of IDT into EDI
+      sidt    [edi]                       ; get fword address of IDT
+      mov     edi, [edi+2]                ; move offset of IDT into EDI
       add     esp, 6                      ; correct stack
-      mov     eax, [esp+12]                 ; Get vector number
+      mov     eax, [esp+12]               ; Get vector number
       shl     eax, 3                      ; multiply by 8 to get offset
       add     edi, eax                    ; add to IDT base to get entry
-      mov     eax, [esp+16]                ; load new address into IDT entry
-      mov     word [edi], ax       ; write bits 15..0 of offset
+      mov     eax, [esp+16]               ; load new address into IDT entry
+      mov     word [edi], ax              ; write bits 15..0 of offset
       shr     eax, 16                     ; use ax to copy 31..16 to descriptors
-      mov     word [edi+6], ax     ; write bits 31..16 of offset
-      popfd                               ; restore flags (possible enabling interrupts)
+      mov     word [edi+6], ax            ; write bits 31..16 of offset
+      popfd                       ; restore flags (possible enabling interrupts)
       pop     edi
       ret
 
@@ -236,211 +230,210 @@ commonIdtEntry:
 ; +    EBP              +
 ; +---------------------+ <-- EBP
 
-cli
-push ebp
-mov  ebp, esp
+  cli
+  push ebp
+  mov  ebp, esp
 
 ;
 ; Align stack to make sure that EFI_FX_SAVE_STATE_IA32 of EFI_SYSTEM_CONTEXT_IA32
 ; is 16-byte aligned
 ;
-and     esp, 0fffffff0h
-sub     esp, 12
+  and     esp, 0fffffff0h
+  sub     esp, 12
 
 ;; UINT32  Edi, Esi, Ebp, Esp, Ebx, Edx, Ecx, Eax;
-push    eax
-push    ecx
-push    edx
-push    ebx
-lea     ecx, [ebp + 6 * 4]
-push    ecx                          ; ESP
-push    dword  [ebp]              ; EBP
-push    esi
-push    edi
+  push    eax
+  push    ecx
+  push    edx
+  push    ebx
+  lea     ecx, [ebp + 6 * 4]
+  push    ecx                          ; ESP
+  push    dword  [ebp]              ; EBP
+  push    esi
+  push    edi
 
 ;; UINT32  Gs, Fs, Es, Ds, Cs, Ss;
-mov  ax, ss
-push eax
-movzx eax, byte  [ebp + 4 * 4]
-push eax
-mov  ax, ds
-push eax
-mov  ax, es
-push eax
-mov  ax, fs
-push eax
-mov  ax, gs
-push eax
+  mov  ax, ss
+  push eax
+  movzx eax, byte  [ebp + 4 * 4]
+  push eax
+  mov  ax, ds
+  push eax
+  mov  ax, es
+  push eax
+  mov  ax, fs
+  push eax
+  mov  ax, gs
+  push eax
 
 ;; UINT32  Eip;
-push    dword  [ebp + 3 * 4]
+  push    dword  [ebp + 3 * 4]
 
 ;; UINT32  Gdtr[2], Idtr[2];
-sub  esp, 8
-sidt  [esp]
-sub  esp, 8
-sgdt  [esp]
+  sub  esp, 8
+  sidt  [esp]
+  sub  esp, 8
+  sgdt  [esp]
 
 ;; UINT32  Ldtr, Tr;
-xor  eax, eax
-str  ax
-push eax
-sldt eax
-push eax
+  xor  eax, eax
+  str  ax
+  push eax
+  sldt eax
+  push eax
 
 ;; UINT32  EFlags;
-push    dword  [ebp + 5 * 4]
+  push    dword  [ebp + 5 * 4]
 
 ;; UINT32  Cr0, Cr1, Cr2, Cr3, Cr4;
-mov  eax, cr4
-or   eax, 208h
-mov  cr4, eax
-push eax
-mov  eax, cr3
-push eax
-mov  eax, cr2
-push eax
-xor  eax, eax
-push eax
-mov  eax, cr0
-push eax
+  mov  eax, cr4
+  or   eax, 208h
+  mov  cr4, eax
+  push eax
+  mov  eax, cr3
+  push eax
+  mov  eax, cr2
+  push eax
+  xor  eax, eax
+  push eax
+  mov  eax, cr0
+  push eax
 
 ;; UINT32  Dr0, Dr1, Dr2, Dr3, Dr6, Dr7;
-mov     eax, dr7
-push    eax
+  mov     eax, dr7
+  push    eax
+
 ;; clear Dr7 while executing debugger itself
-xor     eax, eax
-mov     dr7, eax
+  xor     eax, eax
+  mov     dr7, eax
+  mov     eax, dr6
+  push    eax
 
-mov     eax, dr6
-push    eax
 ;; insure all status bits in dr6 are clear...
-xor     eax, eax
-mov     dr6, eax
-
-mov     eax, dr3
-push    eax
-mov     eax, dr2
-push    eax
-mov     eax, dr1
-push    eax
-mov     eax, dr0
-push    eax
+  xor     eax, eax
+  mov     dr6, eax
+  mov     eax, dr3
+  push    eax
+  mov     eax, dr2
+  push    eax
+  mov     eax, dr1
+  push    eax
+  mov     eax, dr0
+  push    eax
 
 ;; FX_SAVE_STATE_IA32 FxSaveState;
-sub esp, 512
-mov edi, esp
-db 0fh, 0aeh, 00000111y ;fxsave [edi]
+  sub esp, 512
+  mov edi, esp
+  db 0fh, 0aeh, 00000111y       ;fxsave [edi]
 
 ;; UINT32  ExceptionData;
-push    dword  [ebp + 2 * 4]
+  push    dword  [ebp + 2 * 4]
 
 ;; Prepare parameter and call
-mov     edx, esp
-push    edx
-mov     eax, dword  [ebp + 1 * 4]
-push    eax
-cmp     eax, 32
-jb      CallException
-call    ASM_PFX(TimerHandler)
-jmp     ExceptionDone
+  mov     edx, esp
+  push    edx
+  mov     eax, dword  [ebp + 1 * 4]
+  push    eax
+  cmp     eax, 32
+  jb      CallException
+  call    ASM_PFX(TimerHandler)
+  jmp     ExceptionDone
 CallException:
-call    ASM_PFX(ExceptionHandler)
+  call    ASM_PFX(ExceptionHandler)
 ExceptionDone:
-add     esp, 8
+  add     esp, 8
 
-cli
+  cli
 ;; UINT32  ExceptionData;
-add esp, 4
+  add esp, 4
 
 ;; FX_SAVE_STATE_IA32 FxSaveState;
-mov esi, esp
-db 0fh, 0aeh, 00001110y ; fxrstor [esi]
-add esp, 512
+  mov esi, esp
+  db 0fh, 0aeh, 00001110y     ; fxrstor [esi]
+  add esp, 512
 
 ;; UINT32  Dr0, Dr1, Dr2, Dr3, Dr6, Dr7;
-pop     eax
-mov     dr0, eax
-pop     eax
-mov     dr1, eax
-pop     eax
-mov     dr2, eax
-pop     eax
-mov     dr3, eax
+  pop     eax
+  mov     dr0, eax
+  pop     eax
+  mov     dr1, eax
+  pop     eax
+  mov     dr2, eax
+  pop     eax
+  mov     dr3, eax
 ;; skip restore of dr6.  We cleared dr6 during the context save.
-add     esp, 4
-pop     eax
-mov     dr7, eax
+  add     esp, 4
+  pop     eax
+  mov     dr7, eax
 
 ;; UINT32  Cr0, Cr1, Cr2, Cr3, Cr4;
-pop     eax
-mov     cr0, eax
-add     esp, 4    ; not for Cr1
-pop     eax
-mov     cr2, eax
-pop     eax
-mov     cr3, eax
-pop     eax
-mov     cr4, eax
+  pop     eax
+  mov     cr0, eax
+  add     esp, 4    ; not for Cr1
+  pop     eax
+  mov     cr2, eax
+  pop     eax
+  mov     cr3, eax
+  pop     eax
+  mov     cr4, eax
 
 ;; UINT32  EFlags;
-pop     dword  [ebp + 5 * 4]
+  pop     dword  [ebp + 5 * 4]
 
 ;; UINT32  Ldtr, Tr;
 ;; UINT32  Gdtr[2], Idtr[2];
 ;; Best not let anyone mess with these particular registers...
-add     esp, 24
+  add     esp, 24
 
 ;; UINT32  Eip;
-pop     dword  [ebp + 3 * 4]
+  pop     dword  [ebp + 3 * 4]
 
 ;; UINT32  Gs, Fs, Es, Ds, Cs, Ss;
 ;; NOTE - modified segment registers could hang the debugger...  We
 ;;        could attempt to insulate ourselves against this possibility,
 ;;        but that poses risks as well.
 ;;
-pop     gs
-pop     fs
-pop     es
-pop     ds
-pop     dword  [ebp + 4 * 4]
-pop     ss
+  pop     gs
+  pop     fs
+  pop     es
+  pop     ds
+  pop     dword  [ebp + 4 * 4]
+  pop     ss
 
 ;; UINT32  Edi, Esi, Ebp, Esp, Ebx, Edx, Ecx, Eax;
-pop     edi
-pop     esi
-add     esp, 4   ; not for ebp
-add     esp, 4   ; not for esp
-pop     ebx
-pop     edx
-pop     ecx
-pop     eax
+  pop     edi
+  pop     esi
+  add     esp, 4   ; not for ebp
+  add     esp, 4   ; not for esp
+  pop     ebx
+  pop     edx
+  pop     ecx
+  pop     eax
 
-mov     esp, ebp
-pop     ebp
-add     esp, 8
-iretd
+  mov     esp, ebp
+  pop     ebp
+  add     esp, 8
+  iretd
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; data
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 SECTION .data
-;GDT_BEGIN:
-        ALIGN 04h
 
-gdtr    dw GDT_END - ASM_PFX(GDT_BASE) - 1   ; GDT limit
+ALIGN 04h
+
+gdtr    dw GDT_END - GDT_BASE - 1   ; GDT limit
         dd 0   ;GDT_BASE                        ; (GDT base gets set above)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;   global descriptor table (GDT)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-         ALIGN 04h                      ; make GDT 4-byte align
+ALIGN 04h                      ; make GDT 4-byte align
 
-global ASM_PFX(GDT_BASE)
-ASM_PFX(GDT_BASE):
+GDT_BASE:
 ; null descriptor
-NULL_SEL        equ $-ASM_PFX(GDT_BASE)          ; Selector [0x0]
+NULL_SEL        equ $-GDT_BASE          ; Selector [0x0]
         dw 0            ; limit 15:0
         dw 0            ; base 15:0
         db 0            ; base 23:16
@@ -449,7 +442,7 @@ NULL_SEL        equ $-ASM_PFX(GDT_BASE)          ; Selector [0x0]
         db 0            ; base 31:24
 
 ; linear data segment descriptor
-LINEAR_SEL      equ $-ASM_PFX(GDT_BASE)          ; Selector [0x8]
+LINEAR_SEL      equ $-GDT_BASE          ; Selector [0x8]
         dw 0FFFFh       ; limit 0xFFFFF
         dw 0            ; base 0
         db 0
@@ -458,7 +451,7 @@ LINEAR_SEL      equ $-ASM_PFX(GDT_BASE)          ; Selector [0x8]
         db 0
 
 ; linear code segment descriptor
-LINEAR_CODE_SEL equ $-ASM_PFX(GDT_BASE)          ; Selector [0x10]
+LINEAR_CODE_SEL equ $-GDT_BASE          ; Selector [0x10]
         dw 0FFFFh       ; limit 0xFFFFF
         dw 0            ; base 0
         db 0
@@ -467,7 +460,7 @@ LINEAR_CODE_SEL equ $-ASM_PFX(GDT_BASE)          ; Selector [0x10]
         db 0
 
 ; system data segment descriptor
-SYS_DATA_SEL    equ $-ASM_PFX(GDT_BASE)          ; Selector [0x18]
+SYS_DATA_SEL    equ $-GDT_BASE          ; Selector [0x18]
         dw 0FFFFh       ; limit 0xFFFFF
         dw 0            ; base 0
         db 0
@@ -476,7 +469,7 @@ SYS_DATA_SEL    equ $-ASM_PFX(GDT_BASE)          ; Selector [0x18]
         db 0
 
 ; system code segment descriptor
-SYS_CODE_SEL    equ $-ASM_PFX(GDT_BASE)          ; Selector [0x20]
+SYS_CODE_SEL    equ $-GDT_BASE          ; Selector [0x20]
         dw 0FFFFh       ; limit 0xFFFFF
         dw 0            ; base 0
         db 0
@@ -485,7 +478,7 @@ SYS_CODE_SEL    equ $-ASM_PFX(GDT_BASE)          ; Selector [0x20]
         db 0
 
 ; spare segment descriptor
-SPARE3_SEL      equ $-ASM_PFX(GDT_BASE)          ; Selector [0x28]
+SPARE3_SEL      equ $-GDT_BASE          ; Selector [0x28]
         dw 0
         dw 0
         db 0
@@ -494,7 +487,7 @@ SPARE3_SEL      equ $-ASM_PFX(GDT_BASE)          ; Selector [0x28]
         db 0
 
 ; spare segment descriptor
-SPARE4_SEL  equ $-ASM_PFX(GDT_BASE)            ; Selector [0x30]
+SPARE4_SEL  equ $-GDT_BASE            ; Selector [0x30]
         dw 0
         dw 0
         db 0
@@ -503,7 +496,7 @@ SPARE4_SEL  equ $-ASM_PFX(GDT_BASE)            ; Selector [0x30]
         db 0
 
 ; spare segment descriptor
-SPARE5_SEL  equ $-ASM_PFX(GDT_BASE)            ; Selector [0x38]
+SPARE5_SEL  equ $-GDT_BASE            ; Selector [0x38]
         dw 0
         dw 0
         db 0
