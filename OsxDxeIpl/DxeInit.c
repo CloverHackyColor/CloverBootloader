@@ -143,7 +143,7 @@ Returns:
   CopyMem ((VOID*) &HandoffCopy, (VOID*) Handoff, sizeof (EFILDRHANDOFF));
   Handoff = &HandoffCopy;
 
-  ClearScreen();
+//  ClearScreen();
 
 /*  PrintString (
     "Enter DxeIpl ...\n"
@@ -161,19 +161,19 @@ Returns:
   //   * Don't report FV as physical memory
   //   * MemoryAllocation Hob should only cover physical memory
   //   * Use ResourceDescriptor Hob to report physical memory or Firmware Device and they shouldn't be overlapped
-  PrintString("Prepare Cpu HOB information ...\n");
+//  PrintString("Prepare Cpu HOB information ...\n");
   PrepareHobCpu ();
 
   //
   // 1. BFV
   //
-  PrintString("Prepare BFV HOB information ...\n");
+//  PrintString("Prepare BFV HOB information ...\n");
   PrepareHobBfv (Handoff->BfvBase, Handoff->BfvSize);
 
   //
   // 2. Updates Memory information, and get the top free address under 4GB
   //
-  PrintString("Prepare Memory HOB information ...\n");
+//  PrintString("Prepare Memory HOB information ...\n");
   MemoryTopOnDescriptor = PrepareHobMemory (Handoff->MemDescCount, Handoff->MemDesc);
   
   //
@@ -181,13 +181,13 @@ Returns:
   //
   
   //   3.1 NV data
-  PrintString("Prepare NV Storage information ...\n");
+//  PrintString("Prepare NV Storage information ...\n");
   NvStorageBase = PrepareHobNvStorage (MemoryTopOnDescriptor);
   PrintString ("NV Storage Base = %p\n", NvStorageBase);
   //   3.2 Stack
   StackTop = NvStorageBase;
   StackBottom = PrepareHobStack (StackTop);
-  PrintString ("Stack Top=0x%x, Stack Bottom=0x%x\n", StackTop, StackBottom);
+//  PrintString ("Stack Top=0x%x, Stack Bottom=0x%x\n", StackTop, StackBottom);
   //   3.3 Page Table
   PageTableBase = PreparePageTable (StackBottom, gHob->Cpu.SizeOfMemorySpace);
   //   3.4 MemDesc (will be used in PlatformBds)
@@ -198,7 +198,7 @@ Returns:
   //
   // 4. Register the memory occupied by DxeCore and DxeIpl together as DxeCore
   //
-  PrintString("Prepare DxeCore memory Hob ...\n");
+//  PrintString("Prepare DxeCore memory Hob ...\n");
   PrepareHobDxeCore (
     Handoff->DxeCoreEntryPoint,
     (EFI_PHYSICAL_ADDRESS)(UINTN)Handoff->DxeCoreImageBase,
@@ -253,15 +253,15 @@ Returns:
     gHob->MemoryAllocation.AllocDescriptor.MemoryBaseAddress, gHob->MemoryAllocation.AllocDescriptor.MemoryLength
     );
 */
-  ClearScreen();
+/*  ClearScreen();
   PrintString (
     "\n\n\n\n\n\n\n\n\n\n"
     "                         WELCOME TO EFI WORLD!\n"
     );
-  
+ */ 
   EnterDxeMain (StackTop, Handoff->DxeCoreEntryPoint, gHob, PageTableBase);
  
-  PrintString("Fail to enter DXE main!\n");
+//  PrintString("Fail to enter DXE main!\n");
   //
   // Should never get here
   //
