@@ -848,7 +848,7 @@ SRes LzmaDec_DecodeToDic(CLzmaDec *p, SizeT dicLimit, const Byte *src, SizeT *sr
             return SZ_ERROR_DATA;
           }
         }
-        p->buf = p->tempBuf;
+        p->buf = &(p->tempBuf[0]);
         if (LzmaDec_DecodeReal2(p, dicLimit, p->buf) != 0)
           return SZ_ERROR_DATA;
         lookAhead -= (rem - (unsigned)(p->buf - p->tempBuf));
@@ -966,7 +966,8 @@ SRes LzmaDec_AllocateProbs(CLzmaDec *p, const Byte *props, unsigned propsSize, I
   CLzmaProps propNew;
   RINOK(LzmaProps_Decode(&propNew, props, propsSize));
   RINOK(LzmaDec_AllocateProbs2(p, &propNew, alloc));
-  p->prop = propNew;
+  //p->prop = propNew;
+  CopyMem(&(p->prop), &propNew, sizeof(CLzmaProps));
   return SZ_OK;
 }
 
@@ -988,7 +989,8 @@ SRes LzmaDec_Allocate(CLzmaDec *p, const Byte *props, unsigned propsSize, ISzAll
     }
   }
   p->dicBufSize = dicBufSize;
-  p->prop = propNew;
+//  p->prop = propNew;
+  CopyMem(&(p->prop), &propNew, sizeof(CLzmaProps));
   return SZ_OK;
 }
 

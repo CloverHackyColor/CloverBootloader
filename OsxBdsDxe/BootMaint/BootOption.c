@@ -444,14 +444,15 @@ BOpt_FindFileSystem (
           }
         }
       } else {
-        if (FileContext->Info->VolumeLabel == NULL) {
+        // clang said it always false
+/*        if (FileContext->Info->VolumeLabel == NULL) {
           VolumeLabel = L"NULL VOLUME LABEL";
-        } else {
+        } else { */
           VolumeLabel = FileContext->Info->VolumeLabel;
           if (*VolumeLabel == 0x0000) {
             VolumeLabel = L"NO VOLUME LABEL";
           }
-        }
+//        }
       }
 
       TempStr                   = MenuEntry->HelpString;

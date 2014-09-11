@@ -405,7 +405,7 @@ static UINTN analyze(VOID)
         // set active on the first matching partition
         if (count_active == 0) {
             for (i = 0; i < new_mbr_part_count; i++) {
-                if (((iter >= 0) &&
+                if (((iter == 0) &&
                     ((new_mbr_parts[i].mbr_type == 0xa8) ||    // Mac OS X UFS
                      (new_mbr_parts[i].mbr_type == 0xab) ||    // Mac OS X Boot
                      (new_mbr_parts[i].mbr_type == 0xac) ||    // Apple RAID
