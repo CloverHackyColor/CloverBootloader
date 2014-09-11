@@ -522,7 +522,7 @@ MainPostBuildScript() {
         cp -v "$BUILD_DIR_ARCH"/XhciDxe.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64/XhciDxe-64.efi        
         cp -v "$BUILD_DIR_ARCH"/NvmExpressDxe.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64/NvmExpressDxe-64.efi
         cp -v "$BUILD_DIR_ARCH"/OsxAptioFixDrv.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/OsxAptioFixDrv-64.efi
-        cp -v "$BUILD_DIR_ARCH"/OsxLowMemFixDrv.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/OsxLowMemFixDrv-64.efi
+        #cp -v "$BUILD_DIR_ARCH"/OsxLowMemFixDrv.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/OsxLowMemFixDrv-64.efi
         cp -v "$BUILD_DIR_ARCH"/CsmVideoDxe.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/CsmVideoDxe-64.efi
         cp -v "$BUILD_DIR_ARCH"/EmuVariableUefi.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/EmuVariableUefi-64.efi
         cp -v "$BUILD_DIR_ARCH"/CLOVER${TARGETARCH}.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/
