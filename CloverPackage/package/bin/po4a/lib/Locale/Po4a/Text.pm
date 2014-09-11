@@ -208,6 +208,8 @@ sub initialize {
     if (defined $options{'asciidoc'}) {
         $parse_func = \&parse_asciidoc;
         $asciidoc=1;
+        warn wrap_mod("po4a::text",
+             dgettext("po4a", "asciidoc option deprecated, use asciidoc format instead of text"));
     }
 
     if (defined $options{'control'}) {
@@ -318,7 +320,7 @@ sub parse_fortunes {
 sub parse_control {
     my ($self,$line,$ref,$paragraph,$wrapped_mode,$expect_header,$end_of_paragraph) = @_;
     if ($line =~ m/^([^ :]*): *(.*)$/) {
-        warn "Unrecognized section: '$paragraph'\n"
+        warn wrap_mod("po4a::text", dgettext("po4a", "Unrecognized section: %s"), $paragraph)
             unless $paragraph eq "";
         my $tag = $1;
         my $val = $2;

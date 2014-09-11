@@ -245,8 +245,12 @@ sub initialize {
 # BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
 
     # beginpage; does not contain text; v4, not in v5
+    # beginpage and indexterm are ubiquitous elements, they
+    # can be inlined or block elements.  It is better to
+    # make it inline, like indexterm.  A placeholder may
+    # be used too.
     $self->{options}{'_default_untranslated'} .= " <beginpage>";
-    $self->{options}{'_default_break'} .= " <beginpage>";
+    $self->{options}{'_default_inline'} .= " <beginpage>";
 
     # bibliocoverage; contains text; Formatted inline
     # NOTE: could be in the break class

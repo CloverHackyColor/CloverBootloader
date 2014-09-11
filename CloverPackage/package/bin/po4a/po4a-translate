@@ -177,27 +177,27 @@ my ($help,$help_fmt,@verbose,$debug,@addfiles,$format,@options);
 my ($master_filename,$po_filename);
 my ($mastchar,$locchar,$addchar);
 GetOptions(
-	'help|h'        => \$help,
-	'help-format'   => \$help_fmt,
+        'help|h'        => \$help,
+        'help-format'   => \$help_fmt,
 
-	'master|m=s'    => \$master_filename,
-	'localized|l=s' => \$outfile,
-	'po|p=s'        => \$po_filename,
-	'addendum|a=s'  => \@addfiles,
-	'format|f=s'    => \$format,
+        'master|m=s'    => \$master_filename,
+        'localized|l=s' => \$outfile,
+        'po|p=s'        => \$po_filename,
+        'addendum|a=s'  => \@addfiles,
+        'format|f=s'    => \$format,
 
-	'master-charset|M=s'    => \$mastchar,
-	'localized-charset|L=s' => \$locchar,
-	'addendum-charset|A=s' => \$addchar,
+        'master-charset|M=s'    => \$mastchar,
+        'localized-charset|L=s' => \$locchar,
+        'addendum-charset|A=s' => \$addchar,
 
-	'option|o=s'    => \@options,
+        'option|o=s'    => \@options,
 
-	'width|w=s'     => \$width,
-	'verbose|v'     => \@verbose,
-	'debug|d'       => \$debug,
-	'keep|k=s'      => \$threshold,
+        'width|w=s'     => \$width,
+        'verbose|v'     => \@verbose,
+        'debug|d'       => \$debug,
+        'keep|k=s'      => \$threshold,
 
-	'version|V'     => \&show_version
+        'version|V'     => \&show_version
 ) or pod2usage();
 
 $help && pod2usage(-verbose => 1, -exitval => 0);
@@ -218,9 +218,9 @@ my %options = (
 
 foreach (@options) {
     if (m/^([^=]*)=(.*)$/) {
-	$options{$1}="$2";
+        $options{$1}="$2";
     } else {
-	$options{$_}=1;
+        $options{$_}=1;
     }
 }
 # parser
@@ -229,10 +229,10 @@ my $doc=Locale::Po4a::Chooser::new($format,%options);
 
 # Prepare the document to be used as translator, but not parser
 $doc->process('po_in_name'       => \@pos,
-	      'file_in_name'     => \@masters,
-	      'file_in_charset'  => $mastchar,
-	      'file_out_charset' => $locchar,
-	      'addendum_charset' => $addchar);
+              'file_in_name'     => \@masters,
+              'file_in_charset'  => $mastchar,
+              'file_out_charset' => $locchar,
+              'addendum_charset' => $addchar);
 
 my ($percent,$hit,$queries) = $doc->stats();
 my $error=0;
@@ -244,46 +244,46 @@ print STDERR wrap_msg(gettext("%s is %s%% translated (%s of %s strings)."),
 
 if ($percent<$threshold)  {
     print STDERR wrap_msg(gettext("Discard the translation of %s (only %s%% translated; need %s%%)."),
-	$master_filename, $percent, $threshold);
+        $master_filename, $percent, $threshold);
     unlink($outfile) if (-e $outfile);
 } else {
     my %discarded = ();
     my @files = ();
     while (@addfiles) {
-	my $add = shift(@addfiles);
-	my $modifiers;
-	$add =~ s/^([@!?]+)// and $modifiers = $1;
-	next if defined($discarded{$add});
-	if (defined $modifiers) {
-	    if ($modifiers =~ m/!/) {
-		$discarded{$add} = 1;
-		next;
-	    }
-	    next if ($modifiers =~ m/\?/ and not -e $add);
-	    if ($modifiers =~ m/@/) {
-		open LIST,"<","$add" or die wrap_msg(gettext("Can't open %s: %s"), $add, $!);
-		my @new_list = ();
-		while(<LIST>) {
-		    chomp;
-		    s/\s+$//;
-		    next if length($_) == 0 or $_ =~ m/^\s*#/;
-		    push(@new_list, $_);
-		}
-		close LIST;
-		unshift(@addfiles, @new_list);
-	    } else {
-		push @files,$add;
-	    }
-	} else {
-	    push @files,$add;
-	}
+        my $add = shift(@addfiles);
+        my $modifiers;
+        $add =~ s/^([@!?]+)// and $modifiers = $1;
+        next if defined($discarded{$add});
+        if (defined $modifiers) {
+            if ($modifiers =~ m/!/) {
+                $discarded{$add} = 1;
+                next;
+            }
+            next if ($modifiers =~ m/\?/ and not -e $add);
+            if ($modifiers =~ m/@/) {
+                open LIST,"<","$add" or die wrap_msg(gettext("Can't open %s: %s"), $add, $!);
+                my @new_list = ();
+                while(<LIST>) {
+                    chomp;
+                    s/\s+$//;
+                    next if length($_) == 0 or $_ =~ m/^\s*#/;
+                    push(@new_list, $_);
+                }
+                close LIST;
+                unshift(@addfiles, @new_list);
+            } else {
+                push @files,$add;
+            }
+        } else {
+            push @files,$add;
+        }
     }
     for my $add (@files) {
-	unless ($doc->addendum($add)) {
-	    unlink($outfile) if (-e $outfile);
-	    die wrap_msg(gettext("Discard the translation of %s (addendum %s does not apply)."),
-		$master_filename, $add);
-	}
+        unless ($doc->addendum($add)) {
+            unlink($outfile) if (-e $outfile);
+            die wrap_msg(gettext("Discard the translation of %s (addendum %s does not apply)."),
+                $master_filename, $add);
+        }
     }
     $doc->write($outfile);
 }

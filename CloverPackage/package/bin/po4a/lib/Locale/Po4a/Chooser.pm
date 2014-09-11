@@ -37,6 +37,8 @@ sub new {
         $modname = 'BibTex';
     } elsif ($module eq 'tex') {
         $modname = 'TeX';
+    } elsif ($module eq 'asciidoc') {
+        $modname = 'AsciiDoc';
     } else {
         $modname = ucfirst($module);
     }
@@ -57,6 +59,7 @@ sub new {
 sub list {
     warn wrap_msg(gettext("List of valid formats:")
 #       ."\n  - ".gettext("bibtex: BibTex bibliography format.")
+        ."\n  - ".gettext("asciidoc: AsciiDoc format.")
         ."\n  - ".gettext("dia: uncompressed Dia diagrams.")
         ."\n  - ".gettext("docbook: DocBook XML.")
         ."\n  - ".gettext("guide: Gentoo Linux's XML documentation format.")

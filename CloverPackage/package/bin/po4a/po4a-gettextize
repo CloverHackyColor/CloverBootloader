@@ -186,30 +186,30 @@ my %opts = (
 
 my ($pofile)=('-');
 my (@masterfile,@locfile,$help_fmt,$help,$type,@options);
-my ($mastchar,$locchar)=('ascii');
+my ($mastchar,$locchar);
 Getopt::Long::config('bundling', 'no_getopt_compat', 'no_auto_abbrev');
 GetOptions(
-	'help|h'        => \$help,
-	'help-format'   => \$help_fmt,
+        'help|h'        => \$help,
+        'help-format'   => \$help_fmt,
 
-	'master|m=s'    => \@masterfile,
-	'localized|l=s' => \@locfile,
-	'po|p=s'        => \$pofile,
-	'format|f=s'    => \$type,
+        'master|m=s'    => \@masterfile,
+        'localized|l=s' => \@locfile,
+        'po|p=s'        => \$pofile,
+        'format|f=s'    => \$type,
 
-	'master-charset|M=s'    => \$mastchar,
-	'localized-charset|L=s' => \$locchar,
+        'master-charset|M=s'    => \$mastchar,
+        'localized-charset|L=s' => \$locchar,
 
-	'option|o=s'            => \@options,
+        'option|o=s'            => \@options,
 
-	'copyright-holder=s'    => \$opts{"copyright-holder"},
-	'msgid-bugs-address=s'  => \$opts{"msgid-bugs-address"},
-	'package-name=s'        => \$opts{"package-name"},
-	'package-version=s'     => \$opts{"package-version"},
+        'copyright-holder=s'    => \$opts{"copyright-holder"},
+        'msgid-bugs-address=s'  => \$opts{"msgid-bugs-address"},
+        'package-name=s'        => \$opts{"package-name"},
+        'package-version=s'     => \$opts{"package-version"},
 
-	'verbose|v'             => \$opts{"verbose"},
-	'debug|d'               => \$opts{"debug"},
-	'version|V'             => \&show_version
+        'verbose|v'             => \$opts{"verbose"},
+        'debug|d'               => \$opts{"debug"},
+        'version|V'             => \&show_version
 ) or pod2usage();
 
 # Argument check
@@ -219,9 +219,9 @@ pod2usage () if (scalar @ARGV > 1) || (scalar @masterfile < 1);
 
 foreach (@options) {
     if (m/^([^=]*)=(.*)$/) {
-	$opts{$1}="$2";
+        $opts{$1}="$2";
     } else {
-	$opts{$_}=1;
+        $opts{$_}=1;
     }
 }
 # Check file existence
@@ -231,16 +231,16 @@ foreach my $file (@masterfile, @locfile) {
 
 # Declare the TransTractor parsers
 my ($mastertt,$transtt)=(Locale::Po4a::Chooser::new($type,%opts),
-			 Locale::Po4a::Chooser::new($type,%opts));
+                         Locale::Po4a::Chooser::new($type,%opts));
 
 # Parse master file forcing conversion to utf if it's not in ascii
 foreach my $file (@masterfile) {
-  $mastertt->read($file);
+    $mastertt->read($file);
 }
 $mastertt->{TT}{utf_mode} = 1;
 if ($mastertt->{TT}{ascii_input}) {
     $mastertt->detected_charset('ascii');
-} else {
+} elsif (defined($mastchar)) {
     $mastertt->detected_charset($mastchar);
     $mastertt->{TT}{po_in}->set_charset($mastchar);
 }
@@ -254,7 +254,7 @@ unless (scalar @locfile >= 1) {
   # We have to merge two transtractor files
 
   foreach my $file (@locfile) {
-    $transtt->read($file);
+      $transtt->read($file);
   }
   # We force the conversion to utf if the master document wasn't in ascii
   $transtt->{TT}{utf_mode} = !$mastertt->{TT}{ascii_input};

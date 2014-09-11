@@ -1037,7 +1037,8 @@ sub tag_type {
     if (!$found) {
         #It should never enter here, unless you undefine the most
         #general tags (as <...>)
-        die "po4a::xml: Unknown tag type: ".$line."\n";
+        chomp $line;
+        die $ref.": Unknown tag type: ".$line."\n";
     } else {
         return $i;
     }

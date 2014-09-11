@@ -119,19 +119,19 @@ my ($blank,$help_fmt,$help,$type,$debug,$verbose,@options);
 my ($mastchar);
 Getopt::Long::Configure('no_auto_abbrev','no_ignore_case');
 GetOptions(
-	'help|h'       => \$help,
-	'help-format'  => \$help_fmt,
-	'format|f=s'   => \$type,
+        'help|h'       => \$help,
+        'help-format'  => \$help_fmt,
+        'format|f=s'   => \$type,
 
-	'blank|b'      => \$blank,
+        'blank|b'      => \$blank,
 
-	'master-charset|M=s'    => \$mastchar,
+        'master-charset|M=s'    => \$mastchar,
 
-	'option|o=s'   => \@options,
+        'option|o=s'   => \@options,
 
-	'verbose|v'    => \$verbose,
-	'debug|d'      => \$debug,
-	'version|V'    => \&show_version
+        'verbose|v'    => \$verbose,
+        'debug|d'      => \$debug,
+        'version|V'    => \&show_version
 ) or pod2usage();
 
 $help && pod2usage (-verbose => 1, -exitval => 0);
@@ -143,9 +143,9 @@ my %options = (
     "debug" => $debug);
 foreach (@options) {
     if (m/^([^=]*)=(.*)$/) {
-	$options{$1}="$2";
+        $options{$1}="$2";
     } else {
-	$options{$_}=1;
+        $options{$_}=1;
     }
 }
 
@@ -159,20 +159,20 @@ $parser->{TT}{utf_mode} = 1;
 $parser->{TT}{file_in_charset} = $mastchar;
 $parser->parse();
 if ($blank) {
-	foreach my $msgid (keys %{$parser->{TT}{po_out}{po}}) {
-		if ($msgid =~ m/\n$/s) {
-			$parser->{TT}{po_out}{po}{$msgid}{'msgstr'} = "\n";
-		} else {
-			$parser->{TT}{po_out}{po}{$msgid}{'msgstr'} = " ";
-		}
-	}
-	my $empty_po = $parser->{TT}{po_out};
-	$parser = Locale::Po4a::Chooser::new($type,%options);
-	$parser->{TT}{po_in} = $empty_po;
-	$parser->read($filename);
-	$parser->{TT}{utf_mode} = 1;
-	$parser->{TT}{file_in_charset} = $mastchar;
-	$parser->parse();
+    foreach my $msgid (keys %{$parser->{TT}{po_out}{po}}) {
+        if ($msgid =~ m/\n$/s) {
+            $parser->{TT}{po_out}{po}{$msgid}{'msgstr'} = "\n";
+        } else {
+            $parser->{TT}{po_out}{po}{$msgid}{'msgstr'} = " ";
+        }
+    }
+    my $empty_po = $parser->{TT}{po_out};
+    $parser = Locale::Po4a::Chooser::new($type,%options);
+    $parser->{TT}{po_in} = $empty_po;
+    $parser->read($filename);
+    $parser->{TT}{utf_mode} = 1;
+    $parser->{TT}{file_in_charset} = $mastchar;
+    $parser->parse();
 }
 $parser->write('po4a-normalize.output');
 $parser->writepo('po4a-normalize.po');

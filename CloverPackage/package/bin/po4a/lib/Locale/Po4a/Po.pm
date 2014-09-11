@@ -157,15 +157,14 @@ sub new {
 # '%s' is not supported on Solaris and '%z' indicates
 # "2006-10-25 19:36E. Europe Standard Time" on MS Windows.
 sub timezone {
-    my @g = gmtime();
-    my @l = localtime();
+    my ($time) = @_;
+    my @l = localtime($time);
 
-    my $diff;
-    $diff  = floor(timelocal(@l)/60 +0.5);
-    $diff -= floor(timelocal(@g)/60 +0.5);
+    my $diff = floor(timegm(@l)/60 +0.5) - floor($time/60 +0.5);
+    my $sign = ($diff >= 0 ? 1 : -1);
+    $diff = abs($diff);
 
-    my $h = floor($diff / 60) + $l[8]; # $l[8] indicates if we are currently
-                                       # in a daylight saving time zone
+    my $h = $sign * floor($diff / 60);
     my $m = $diff%60;
 
     return sprintf "%+03d%02d\n", $h, $m;
@@ -173,7 +172,8 @@ sub timezone {
 
 sub initialize {
     my ($self, $options) = (shift, shift);
-    my $date = strftime("%Y-%m-%d %H:%M", localtime).timezone();
+    my $time = time;
+    my $date = strftime("%Y-%m-%d %H:%M", localtime($time)) . timezone($time);
     chomp $date;
 #    $options = ref($options) || $options;
 
@@ -572,8 +572,9 @@ sub write_if_needed {
 
     if (-e $filename) {
         my ($tmp_filename);
-        (undef,$tmp_filename)=File::Temp->tempfile($filename."XXXX",
-                                                   DIR    => "/tmp",
+        my $basename = basename($filename);
+        (undef,$tmp_filename)=File::Temp::tempfile($basename."XXXX",
+                                                   DIR    => $ENV{TMPDIR} || "/tmp",
                                                    OPEN   => 0,
                                                    UNLINK => 0);
         $self->write($tmp_filename);

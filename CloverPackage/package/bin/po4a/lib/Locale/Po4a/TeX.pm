@@ -1262,7 +1262,7 @@ followed by an identifier of the parameter (like {#7} or [#2]).
 $commands{'begin'}= sub {
     my $self = shift;
     my ($command,$variant,$args,$env) = (shift,shift,shift,shift);
-    my $no_wrap = shift;
+    my $no_wrap = shift || 0;
     print "begin($command,$variant,@$args,@$env,$no_wrap)="
         if ($debug{'commands'} || $debug{'environments'});
     my ($t,@e) = ("",());
@@ -1291,7 +1291,7 @@ register_generic_command("*end,{}");
 $commands{'end'}= sub {
     my $self = shift;
     my ($command,$variant,$args,$env) = (shift,shift,shift,shift);
-    my $no_wrap = shift;
+    my $no_wrap = shift || 0;
     print "end($command,$variant,@$args,@$env,$no_wrap)="
         if ($debug{'commands'} || $debug{'environments'});
 
@@ -1317,7 +1317,7 @@ $separated_command{'begin'} = '*';
 sub generic_command {
     my $self = shift;
     my ($command,$variant,$args,$env) = (shift,shift,shift,shift);
-    my $no_wrap = shift;
+    my $no_wrap = shift || 0;
     print "generic_command($command,$variant,@$args,@$env,$no_wrap)="
         if ($debug{'commands'} || $debug{'environments'});
 

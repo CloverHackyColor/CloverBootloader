@@ -2,6 +2,39 @@ po4a NEWS
 
 =======================================================================
 
+* Major changes in release 0.45 (2013-08-21)
+
+po4a:
+ * Fix usage of File::Temp::tempfile to allow using Perl >= 5.18.
+
+Asciidoc:
+ * Make it a standalone format.
+
+Docbook:
+ * Make <beginpage> inline.
+
+Ini:
+ * Add key parameter as an automatic comment.  This allows using
+   po4a-gettextize on ini files.
+
+LaTeX:
+ * Fix handling of optional parameters in newtheorem command.
+
+Po:
+ * Fix computation of timezone written into PO files.
+
+Sgml:
+ * Fix failing tests with recent Docbook DTD.
+
+=======================================================================
+
+* Major changes in release 0.44 (2012-10-21)
+
+translations:
+ * Start of Portuguese translation
+
+=======================================================================
+
 * Major changes in release 0.43 (2012-10-17)
 
 po4a:

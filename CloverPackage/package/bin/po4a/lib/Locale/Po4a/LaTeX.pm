@@ -188,7 +188,7 @@ register_generic_command("*newenvironment,{}[]{_}{_}");
 register_generic_command("*newfont,{}{}");
 register_generic_command("*newlength,{}");
 register_generic_command("*newsavebox,{}");
-register_generic_command("*newtheorem,{}{_}");     # Two forms, the optionnal arg is not the first one
+register_generic_command("*newtheorem,{}[]{_}[]"); # Two forms, {}[]{_} or {}{_}[]
 register_generic_command("nocite,{}");
 register_generic_command("nolinebreak,[]");
 register_generic_command("*nopagebreak,[]");

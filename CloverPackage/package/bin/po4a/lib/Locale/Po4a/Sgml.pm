@@ -366,7 +366,7 @@ sub parse_file {
     #   - protect entities from expansion (ie "&release;")
     my $origfile="";
     my $i=0;
-    while (defined(@{$self->{TT}{doc_in}}) && $i < @{$self->{TT}{doc_in}}) {
+    while ($i < @{$self->{TT}{doc_in}}) {
         $origfile .= ${$self->{TT}{doc_in}}[$i];
         $i+=2;
     }
@@ -375,7 +375,7 @@ sub parse_file {
         # Detect if we can find the DTD
         my ($tmpfh,$tmpfile)=File::Temp::tempfile("po4a-XXXX",
                                                   SUFFIX => ".sgml",
-                                                  DIR    => "/tmp",
+                                                  DIR    => $ENV{TMPDIR} || "/tmp",
                                                   UNLINK => 0);
         print $tmpfh $origfile;
         close $tmpfh
@@ -800,7 +800,7 @@ sub parse_file {
 
     my ($tmpfh,$tmpfile)=File::Temp::tempfile("po4a-XXXX",
                                               SUFFIX => ".sgml",
-                                              DIR    => "/tmp",
+                                              DIR    => $ENV{TMPDIR} || "/tmp",
                                               UNLINK => 0);
     print $tmpfh $origfile;
     close $tmpfh or die wrap_mod("po4a::sgml", dgettext("po4a", "Can't close tempfile: %s"), $!);
