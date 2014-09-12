@@ -183,7 +183,7 @@ Returns:
   //   3.1 NV data
 //  PrintString("Prepare NV Storage information ...\n");
   NvStorageBase = PrepareHobNvStorage (MemoryTopOnDescriptor);
-  PrintString ("NV Storage Base = %p\n", NvStorageBase);
+//  PrintString ("NV Storage Base = %p\n", NvStorageBase);
   //   3.2 Stack
   StackTop = NvStorageBase;
   StackBottom = PrepareHobStack (StackTop);
