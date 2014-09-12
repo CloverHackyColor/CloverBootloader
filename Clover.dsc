@@ -472,6 +472,7 @@
 !ifndef CLANG
   Clover/OsxAptioFixDrv/OsxAptioFixDrv.inf
 #  Clover/OsxAptioFixDrv/OsxAptioFix2Drv.inf
+  Clover/OsxLowMemFixDrv/OsxLowMemFixDrv.inf
 !endif  
   #Clover/OsxAptioFixDrv/OsxAptioFixDrv.inf {
     #
@@ -485,7 +486,6 @@
    #   DebugLib|MdePkg/Library/BaseDebugLibSerialPort/BaseDebugLibSerialPort.inf
    #   DebugPrintErrorLevelLib|MdePkg/Library/BaseDebugPrintErrorLevelLib/BaseDebugPrintErrorLevelLib.inf
   #}
-  #Clover/OsxLowMemFixDrv/OsxLowMemFixDrv.inf
 
 ###################################################################################################
 #
