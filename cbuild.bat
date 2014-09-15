@@ -15,7 +15,7 @@ if not defined WORKSPACE (
 rem have edk2 prepare to build
 :foundedk
    echo Found EDK2. Generating %WORKSPACE%\Clover\Version.h
-   cd %WORKSPACE%\Clover
+   cd "%WORKSPACE%\Clover"
    rem get svn revision number
    svnversion -n > vers.txt
    set /p s= < vers.txt
@@ -85,7 +85,7 @@ rem have edk2 prepare to build
       echo #define FIRMWARE_BUILDDATE "%BUILDDATE%">> Version.h
       echo #define FIRMWARE_REVISION L"%SVNREVISION%">> Version.h
       echo #define REVISION_STR "Clover revision: %SVNREVISION%">> Version.h
-      cd %CURRENTDIR%
+      cd "%CURRENTDIR%"
 
       rem parse parameters for what we need
       set BUILD_ARCH=
@@ -98,7 +98,7 @@ rem have edk2 prepare to build
       if errorlevel 1 goto failscript
 
       rem fix any parameters not set
-      set CONFIG_FILE=%WORKSPACE%\Conf\target.txt
+      set CONFIG_FILE="%WORKSPACE%\Conf\target.txt"
       set DEFAULT_TOOL_CHAIN_TAG=MYTOOLS
       set DEFAULT_TARGET=DEBUG
       for /f "tokens=1*" %%i in ('type %CONFIG_FILE% ^| find "TOOL_CHAIN_TAG" ^| find /V "#"') do set DEFAULT_TOOL_CHAIN_TAG%%j
@@ -126,7 +126,7 @@ rem have edk2 prepare to build
          if x"%BUILD_ARCH%" == x"" set "ARCH_ARGUMENT=-a IA32"
 
          echo Building Clover (IA32) ...
-         build -p %WORKSPACE%\Clover\Clover.dsc %ARCH_ARGUMENT% %*
+         build -p "%WORKSPACE%\Clover\Clover.dsc" %ARCH_ARGUMENT% %*
          if errorlevel 1 goto failscript
 
          if x"%BUILD_ARCH%" == x"IA32" (
@@ -139,7 +139,7 @@ rem have edk2 prepare to build
          if x"%BUILD_ARCH%" == x"" set "ARCH_ARGUMENT=-a X64"
 
          echo Building Clover (X64) ...
-         build -p %WORKSPACE%\Clover\Clover.dsc %ARCH_ARGUMENT% %*
+         build -p "%WORKSPACE%\Clover\Clover.dsc" %ARCH_ARGUMENT% %*
          if errorlevel 1 goto failscript
 
          if not x"%CLEANING%" == x"" goto:eof
@@ -152,7 +152,7 @@ rem have edk2 prepare to build
       goto foundedk
    )
    if x"%CD%" == x"%~d0%\" (
-      cd %CURRENTDIR%
+      cd "%CURRENTDIR%"
       echo No EDK found!
       goto failscript
    )
@@ -172,8 +172,8 @@ rem have edk2 prepare to build
    if x"%ENABLE_SECURE_BOOT%" == x"1" (
       echo Building signing tool ...
       pushd .
-      cd %SIGNTOOL_BUILD_DIR%
-      call %SIGNTOOL_BUILD%
+      cd "%SIGNTOOL_BUILD_DIR%"
+      call "%SIGNTOOL_BUILD%"
       popd
       if errorlevel 1 goto failscript
    )
@@ -181,76 +181,76 @@ rem have edk2 prepare to build
    if x"%BUILD_ARCH%" == x"X64" goto postbuild64
 
    echo Compressing DUETEFIMainFv.FV (IA32) ...
-   %BASETOOLS_DIR%\LzmaCompress -e -o %BUILD_DIR%\FV\DUETEFIMAINFVIA32.z %BUILD_DIR%\FV\DUETEFIMAINFVIA32.Fv
+   "%BASETOOLS_DIR%\LzmaCompress" -e -o "%BUILD_DIR%\FV\DUETEFIMAINFVIA32.z" "%BUILD_DIR%\FV\DUETEFIMAINFVIA32.Fv"
 
    echo Compressing DxeMain.efi (IA32) ...
-   %BASETOOLS_DIR%\LzmaCompress -e -o %BUILD_DIR%\FV\DxeMainIA32.z %BUILD_DIR%\IA32\DxeCore.efi
+   "%BASETOOLS_DIR%\LzmaCompress" -e -o "%BUILD_DIR%\FV\DxeMainIA32.z" "%BUILD_DIR%\IA32\DxeCore.efi"
 
    echo Compressing DxeIpl.efi (IA32) ...
-   %BASETOOLS_DIR%\LzmaCompress -e -o %BUILD_DIR%\FV\DxeIplIA32.z %BUILD_DIR%\IA32\DxeIpl.efi
+   "%BASETOOLS_DIR%\LzmaCompress" -e -o "%BUILD_DIR%\FV\DxeIplIA32.z" "%BUILD_DIR%\IA32\DxeIpl.efi"
 
    echo Generating Loader Image (IA32) ...
-   %BASETOOLS_DIR%\EfiLdrImage.exe -o %BUILD_DIR%\FV\Efildr32 %BUILD_DIR%\IA32\EfiLoader.efi %BUILD_DIR%\FV\DxeIplIA32.z %BUILD_DIR%\FV\DxeMainIA32.z %BUILD_DIR%\FV\DUETEFIMAINFVIA32.z
-   rem copy /b %BOOTSECTOR_BIN_DIR%\Start.com+%BOOTSECTOR_BIN_DIR%\Efi32.com2+%BUILD_DIR%\FV\Efildr32 %BUILD_DIR%\FV\Efildr
-   rem copy /b %BOOTSECTOR_BIN_DIR%\Start16.com+%BOOTSECTOR_BIN_DIR%\Efi32.com2+%BUILD_DIR%\FV\Efildr32 %BUILD_DIR%\FV\Efildr16
-   rem copy /b %BOOTSECTOR_BIN_DIR%\Start32.com+%BOOTSECTOR_BIN_DIR%\Efi32.com3+%BUILD_DIR%\FV\Efildr32 %BUILD_DIR%\FV\Efildr20
-   copy /b %BOOTSECTOR_BIN_DIR%\start32H.com2+%BOOTSECTOR_BIN_DIR%\efi32.com3+%BUILD_DIR%\FV\Efildr32 %BUILD_DIR%\FV\boot32
+   "%BASETOOLS_DIR%\EfiLdrImage.exe" -o "%BUILD_DIR%\FV\Efildr32" "%BUILD_DIR%\IA32\EfiLoader.efi" "%BUILD_DIR%\FV\DxeIplIA32.z" "%BUILD_DIR%\FV\DxeMainIA32.z" "%BUILD_DIR%\FV\DUETEFIMAINFVIA32.z"
+   rem copy /b "%BOOTSECTOR_BIN_DIR%\Start.com"+"%BOOTSECTOR_BIN_DIR%\Efi32.com2"+"%BUILD_DIR%\FV\Efildr32" "%BUILD_DIR%\FV\Efildr"
+   rem copy /b "%BOOTSECTOR_BIN_DIR%\Start16.com"+"%BOOTSECTOR_BIN_DIR%\Efi32.com2"+"%BUILD_DIR%\FV\Efildr32" "%BUILD_DIR%\FV\Efildr16"
+   rem copy /b "%BOOTSECTOR_BIN_DIR%\Start32.com"+"%BOOTSECTOR_BIN_DIR%\Efi32.com3"+"%BUILD_DIR%\FV\Efildr32" "%BUILD_DIR%\FV\Efildr20"
+   copy /b "%BOOTSECTOR_BIN_DIR%\start32H.com2"+"%BOOTSECTOR_BIN_DIR%\efi32.com3"+"%BUILD_DIR%\FV\Efildr32" "%BUILD_DIR%\FV\boot32"
 
-   copy /b /y %BUILD_DIR%\FV\boot32 %DEST_DIR%\Bootloaders\ia32\boot
-   copy /b /y %BUILD_DIR%\IA32\FSInject.efi %DEST_DIR%\drivers-Off\drivers32\FSInject-32.efi
-   copy /b /y %BUILD_DIR%\IA32\VBoxIso9600.efi %DEST_DIR%\drivers-Off\drivers32\VBoxIso9600-32.efi
-   copy /b /y %BUILD_DIR%\IA32\VBoxExt2.efi %DEST_DIR%\drivers-Off\drivers32\VBoxExt2-32.efi
-   copy /b /y %BUILD_DIR%\IA32\Ps2KeyboardDxe.efi %DEST_DIR%\drivers-Off\drivers32\Ps2KeyboardDxe-32.efi
-   copy /b /y %BUILD_DIR%\IA32\Ps2MouseAbsolutePointerDxe.efi %DEST_DIR%\drivers-Off\drivers32\Ps2MouseAbsolutePointerDxe-32.efi
-   copy /b /y %BUILD_DIR%\IA32\Ps2MouseDxe.efi %DEST_DIR%\drivers-Off\drivers32\Ps2MouseDxe-32.efi
-   copy /b /y %BUILD_DIR%\IA32\UsbMouseDxe.efi %DEST_DIR%\drivers-Off\drivers32\UsbMouseDxe-32.efi
-   copy /b /y %BUILD_DIR%\IA32\XhciDxe.efi %DEST_DIR%\drivers-Off\drivers32\XhciDxe-32.efi
-   copy /b /y %BUILD_DIR%\IA32\OsxFatBinaryDrv.efi %DEST_DIR%\drivers-Off\drivers32UEFI\OsxFatBinaryDrv-32.efi
-   copy /b /y %BUILD_DIR%\IA32\CsmVideoDxe.efi %DEST_DIR%\drivers-Off\drivers32UEFI\CsmVideoDxe-32.efi
-   copy /b /y %WORKSPACE%\Build\Clover\%TARGET%_%TOOL_CHAIN_TAG%\IA32\CLOVERIA32.efi %DEST_DIR%\EFI\Clover\CLOVERIA32.efi
+   copy /b /y "%BUILD_DIR%\FV\boot32" "%DEST_DIR%\Bootloaders\ia32\boot"
+   copy /b /y "%BUILD_DIR%\IA32\FSInject.efi" "%DEST_DIR%\drivers-Off\drivers32\FSInject-32.efi"
+   copy /b /y "%BUILD_DIR%\IA32\VBoxIso9600.efi" "%DEST_DIR%\drivers-Off\drivers32\VBoxIso9600-32.efi"
+   copy /b /y "%BUILD_DIR%\IA32\VBoxExt2.efi" "%DEST_DIR%\drivers-Off\drivers32\VBoxExt2-32.efi"
+   copy /b /y "%BUILD_DIR%\IA32\Ps2KeyboardDxe.efi" "%DEST_DIR%\drivers-Off\drivers32\Ps2KeyboardDxe-32.efi"
+   copy /b /y "%BUILD_DIR%\IA32\Ps2MouseAbsolutePointerDxe.efi" "%DEST_DIR%\drivers-Off\drivers32\Ps2MouseAbsolutePointerDxe-32.efi"
+   copy /b /y "%BUILD_DIR%\IA32\Ps2MouseDxe.efi" "%DEST_DIR%\drivers-Off\drivers32\Ps2MouseDxe-32.efi"
+   copy /b /y "%BUILD_DIR%\IA32\UsbMouseDxe.efi" "%DEST_DIR%\drivers-Off\drivers32\UsbMouseDxe-32.efi"
+   copy /b /y "%BUILD_DIR%\IA32\XhciDxe.efi" "%DEST_DIR%\drivers-Off\drivers32\XhciDxe-32.efi"
+   copy /b /y "%BUILD_DIR%\IA32\OsxFatBinaryDrv.efi" "%DEST_DIR%\drivers-Off\drivers32UEFI\OsxFatBinaryDrv-32.efi"
+   copy /b /y "%BUILD_DIR%\IA32\CsmVideoDxe.efi" "%DEST_DIR%\drivers-Off\drivers32UEFI\CsmVideoDxe-32.efi"
+   copy /b /y "%WORKSPACE%\Build\Clover\%TARGET%_%TOOL_CHAIN_TAG%\IA32\CLOVERIA32.efi" "%DEST_DIR%\EFI\Clover\CLOVERIA32.efi"
 
    if x"%BUILD_ARCH%" == x"IA32" goto:eof
 
 :postbuild64
    echo Compressing DUETEFIMainFv.FV (X64) ...
-   %BASETOOLS_DIR%\LzmaCompress -e -o %BUILD_DIR%\FV\DUETEFIMAINFVX64.z %BUILD_DIR%\FV\DUETEFIMAINFVX64.Fv
+   "%BASETOOLS_DIR%\LzmaCompress" -e -o "%BUILD_DIR%\FV\DUETEFIMAINFVX64.z" "%BUILD_DIR%\FV\DUETEFIMAINFVX64.Fv"
 
    echo Compressing DxeMain.efi (X64) ...
-   %BASETOOLS_DIR%\LzmaCompress -e -o %BUILD_DIR%\FV\DxeMainX64.z %BUILD_DIR%\X64\DxeCore.efi
+   "%BASETOOLS_DIR%\LzmaCompress" -e -o "%BUILD_DIR%\FV\DxeMainX64.z" "%BUILD_DIR%\X64\DxeCore.efi"
 
    echo Compressing DxeIpl.efi (X64) ...
-   %BASETOOLS_DIR%\LzmaCompress -e -o %BUILD_DIR%\FV\DxeIplX64.z %BUILD_DIR%\X64\DxeIpl.efi
+   "%BASETOOLS_DIR%\LzmaCompress" -e -o "%BUILD_DIR%\FV\DxeIplX64.z" "%BUILD_DIR%\X64\DxeIpl.efi"
 
    echo Generating Loader Image (X64) ...
-   %BASETOOLS_DIR%\EfiLdrImage.exe -o %BUILD_DIR%\FV\Efildr64 %BUILD_DIR%\X64\EfiLoader.efi %BUILD_DIR%\FV\DxeIplX64.z %BUILD_DIR%\FV\DxeMainX64.z %BUILD_DIR%\FV\DUETEFIMAINFVX64.z
-   rem copy /b %BOOTSECTOR_BIN_DIR%\Start64.com+%BOOTSECTOR_BIN_DIR%\Efi64.com2+%BUILD_DIR%\FV\Efildr64 %BUILD_DIR%\FV\EfildrPure
-   rem %BASETOOLS_DIR%\GenPage.exe %BUILD_DIR%\FV\EfildrPure -o %BUILD_DIR%\FV\Efildr
-   rem copy /b %BOOTSECTOR_BIN_DIR%\St16_64.com+%BOOTSECTOR_BIN_DIR%\Efi64.com2+%BUILD_DIR%\FV\Efildr64 %BUILD_DIR%\FV\Efildr16Pure
-   rem %BASETOOLS_DIR%\GenPage.exe %BUILD_DIR%\FV\Efildr16Pure -o %BUILD_DIR%\FV\Efildr16
-   copy /b %BOOTSECTOR_BIN_DIR%\Start64H.com+%BOOTSECTOR_BIN_DIR%\efi64.com3+%BUILD_DIR%\FV\Efildr64 %BUILD_DIR%\FV\Efildr20Pure
-   %BASETOOLS_DIR%\GenPage.exe %BUILD_DIR%\FV\Efildr20Pure -o %BUILD_DIR%\FV\Efildr20
-   %BASETOOLS_DIR%\Split.exe -f %BUILD_DIR%\FV\Efildr20 -p %BUILD_DIR%\FV\ -o Efildr20.1 -t boot64 -s 512
-   del %BUILD_DIR%\FV\Efildr20.1
+   "%BASETOOLS_DIR%\EfiLdrImage.exe" -o "%BUILD_DIR%\FV\Efildr64" "%BUILD_DIR%\X64\EfiLoader.efi" "%BUILD_DIR%\FV\DxeIplX64.z" "%BUILD_DIR%\FV\DxeMainX64.z" "%BUILD_DIR%\FV\DUETEFIMAINFVX64.z"
+   rem copy /b "%BOOTSECTOR_BIN_DIR%\Start64.com"+"%BOOTSECTOR_BIN_DIR%\Efi64.com2"+"%BUILD_DIR%\FV\Efildr64" "%BUILD_DIR%\FV\EfildrPure"
+   rem "%BASETOOLS_DIR%\GenPage.exe" "%BUILD_DIR%\FV\EfildrPure" -o "%BUILD_DIR%\FV\Efildr"
+   rem copy /b "%BOOTSECTOR_BIN_DIR%\St16_64.com"+"%BOOTSECTOR_BIN_DIR%\Efi64.com2"+"%BUILD_DIR%\FV\Efildr64" "%BUILD_DIR%\FV\Efildr16Pure"
+   rem "%BASETOOLS_DIR%\GenPage.exe" "%BUILD_DIR%\FV\Efildr16Pure -o "%BUILD_DIR%\FV\Efildr16"
+   copy /b "%BOOTSECTOR_BIN_DIR%\Start64H.com"+"%BOOTSECTOR_BIN_DIR%\efi64.com3"+"%BUILD_DIR%\FV\Efildr64" "%BUILD_DIR%\FV\Efildr20Pure"
+   "%BASETOOLS_DIR%\GenPage.exe" "%BUILD_DIR%\FV\Efildr20Pure" -o "%BUILD_DIR%\FV\Efildr20"
+   "%BASETOOLS_DIR%\Split.exe" -f "%BUILD_DIR%\FV\Efildr20" -p %BUILD_DIR%\FV\ -o Efildr20.1 -t boot64 -s 512
+   del "%BUILD_DIR%\FV\Efildr20.1"
 
-   copy /b /y %BUILD_DIR%\FV\boot64 %DEST_DIR%\Bootloaders\X64\boot
-   copy /b /y %BUILD_DIR%\X64\FSInject.efi %DEST_DIR%\drivers-Off\drivers64\FSInject-64.efi
-   copy /b /y %BUILD_DIR%\X64\FSInject.efi %DEST_DIR%\drivers-Off\drivers64UEFI\FSInject-64.efi
-   rem copy /b /y %BUILD_DIR%\X64\VBoxIso9600.efi %DEST_DIR%\drivers-Off\drivers64\VBoxIso9600-64.efi
-   copy /b /y %BUILD_DIR%\X64\VBoxExt2.efi %DEST_DIR%\drivers-Off\drivers64\VBoxExt2-64.efi
-   copy /b /y %BUILD_DIR%\X64\PartitionDxe.efi %DEST_DIR%\drivers-Off\drivers64UEFI\PartitionDxe-64.efi
-   copy /b /y %BUILD_DIR%\X64\DataHubDxe.efi %DEST_DIR%\drivers-Off\drivers64UEFI\DataHubDxe-64.efi
+   copy /b /y "%BUILD_DIR%\FV\boot64" "%DEST_DIR%\Bootloaders\X64\boot"
+   copy /b /y "%BUILD_DIR%\X64\FSInject.efi" "%DEST_DIR%\drivers-Off\drivers64\FSInject-64.efi"
+   copy /b /y "%BUILD_DIR%\X64\FSInject.efi" "%DEST_DIR%\drivers-Off\drivers64UEFI\FSInject-64.efi"
+   rem copy /b /y "%BUILD_DIR%\X64\VBoxIso9600.efi" "%DEST_DIR%\drivers-Off\drivers64\VBoxIso9600-64.efi"
+   copy /b /y "%BUILD_DIR%\X64\VBoxExt2.efi" "%DEST_DIR%\drivers-Off\drivers64\VBoxExt2-64.efi"
+   copy /b /y "%BUILD_DIR%\X64\PartitionDxe.efi" "%DEST_DIR%\drivers-Off\drivers64UEFI\PartitionDxe-64.efi"
+   copy /b /y "%BUILD_DIR%\X64\DataHubDxe.efi" "%DEST_DIR%\drivers-Off\drivers64UEFI\DataHubDxe-64.efi"
 
-   rem copy /b /y %BUILD_DIR%\X64\Ps2KeyboardDxe.efi %DEST_DIR%\drivers-Off\drivers64\Ps2KeyboardDxe-64.efi
-   rem copy /b /y %BUILD_DIR%\X64\Ps2MouseAbsolutePointerDxe.efi %DEST_DIR%\drivers-Off\drivers64\Ps2MouseAbsolutePointerDxe-64.efi
-   copy /b /y %BUILD_DIR%\X64\Ps2MouseDxe.efi %DEST_DIR%\drivers-Off\drivers64\Ps2MouseDxe-64.efi
-   copy /b /y %BUILD_DIR%\X64\UsbMouseDxe.efi %DEST_DIR%\drivers-Off\drivers64\UsbMouseDxe-64.efi
-   copy /b /y %BUILD_DIR%\X64\XhciDxe.efi %DEST_DIR%\drivers-Off\drivers64\XhciDxe-64.efi
-   copy /b /y %BUILD_DIR%\X64\OsxFatBinaryDrv.efi %DEST_DIR%\drivers-Off\drivers64UEFI\OsxFatBinaryDrv-64.efi
-   copy /b /y %BUILD_DIR%\X64\OsxAptioFixDrv.efi %DEST_DIR%\drivers-Off\drivers64UEFI\OsxAptioFixDrv-64.efi
-   copy /b /y %BUILD_DIR%\X64\OsxLowMemFixDrv.efi %DEST_DIR%\drivers-Off\drivers64UEFI\OsxLowMemFixDrv-64.efi
-   copy /b /y %BUILD_DIR%\X64\CsmVideoDxe.efi %DEST_DIR%\drivers-Off\drivers64UEFI\CsmVideoDxe-64.efi
-   copy /b /y %BUILD_DIR%\X64\EmuVariableUefi.efi %DEST_DIR%\drivers-Off\drivers64UEFI\EmuVariableUefi-64.efi
-   copy /b /y %WORKSPACE%\Build\Clover\%TARGET%_%TOOL_CHAIN_TAG%\X64\CLOVERX64.efi %DEST_DIR%\EFI\Clover\CLOVERX64.efi
+   rem copy /b /y "%BUILD_DIR%\X64\Ps2KeyboardDxe.efi" "%DEST_DIR%\drivers-Off\drivers64\Ps2KeyboardDxe-64.efi"
+   rem copy /b /y "%BUILD_DIR%\X64\Ps2MouseAbsolutePointerDxe.efi" "%DEST_DIR%\drivers-Off\drivers64\Ps2MouseAbsolutePointerDxe-64.efi"
+   copy /b /y "%BUILD_DIR%\X64\Ps2MouseDxe.efi" "%DEST_DIR%\drivers-Off\drivers64\Ps2MouseDxe-64.efi"
+   copy /b /y "%BUILD_DIR%\X64\UsbMouseDxe.efi" "%DEST_DIR%\drivers-Off\drivers64\UsbMouseDxe-64.efi"
+   copy /b /y "%BUILD_DIR%\X64\XhciDxe.efi" "%DEST_DIR%\drivers-Off\drivers64\XhciDxe-64.efi"
+   copy /b /y "%BUILD_DIR%\X64\OsxFatBinaryDrv.efi" "%DEST_DIR%\drivers-Off\drivers64UEFI\OsxFatBinaryDrv-64.efi"
+   copy /b /y "%BUILD_DIR%\X64\OsxAptioFixDrv.efi" "%DEST_DIR%\drivers-Off\drivers64UEFI\OsxAptioFixDrv-64.efi"
+   copy /b /y "%BUILD_DIR%\X64\OsxLowMemFixDrv.efi" "%DEST_DIR%\drivers-Off\drivers64UEFI\OsxLowMemFixDrv-64.efi"
+   copy /b /y "%BUILD_DIR%\X64\CsmVideoDxe.efi" "%DEST_DIR%\drivers-Off\drivers64UEFI\CsmVideoDxe-64.efi"
+   copy /b /y "%BUILD_DIR%\X64\EmuVariableUefi.efi" "%DEST_DIR%\drivers-Off\drivers64UEFI\EmuVariableUefi-64.efi"
+   copy /b /y "%WORKSPACE%\Build\Clover\%TARGET%_%TOOL_CHAIN_TAG%\X64\CLOVERX64.efi" "%DEST_DIR%\EFI\Clover\CLOVERX64.efi"
    goto:eof
 
 :parseArguments

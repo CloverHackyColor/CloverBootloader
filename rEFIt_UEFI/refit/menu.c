@@ -231,7 +231,7 @@ VOID RefillInputs(VOID)
   InputItems[InputItemsCount].ItemType = Hex;  //17
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 36, L"0x%X", gSettings.FixDsdt);
   InputItems[InputItemsCount].ItemType = Hex;  //18
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 36, L"0x%X", gSettings.BacklightLevel);
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 36, L"0x%X", gSettings.BacklightLevel); // Download-Fritz: There is no GUI element for BacklightLevel; please revise
   InputItems[InputItemsCount].ItemType = Decimal;  //19
   if (gSettings.BusSpeed > 20000) {
     InputItems[InputItemsCount++].SValue = PoolPrint(L"%06d", gSettings.BusSpeed);
@@ -507,7 +507,7 @@ VOID FillInputs(VOID)
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 36, L"0x%X", gSettings.FixDsdt);
   InputItems[InputItemsCount].ItemType = Hex;  //18
   InputItems[InputItemsCount].SValue = AllocateZeroPool(36);
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 36, L"0x%X", gSettings.BacklightLevel);
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 36, L"0x%X", gSettings.BacklightLevel); // Download-Fritz: There is no GUI element for BacklightLevel; please revise
   InputItems[InputItemsCount].ItemType = Decimal;  //19
   if (gSettings.BusSpeed > 20000) {
     InputItems[InputItemsCount++].SValue = PoolPrint(L"%06d", gSettings.BusSpeed);
@@ -834,9 +834,10 @@ VOID ApplyInputs(VOID)
 /*  if (InputItems[i].Valid) {
     gSettings.FixDsdt = (UINT32)StrHexToUint64(InputItems[i].SValue);
   } */
-  i++; //18
+  i++; //18 | Download-Fritz: There is no GUI element for BacklightLevel; please revise
   if (InputItems[i].Valid) {
     gSettings.BacklightLevel = (UINT16)StrHexToUint64(InputItems[i].SValue);
+	gSettings.BacklightLevelConfig = TRUE;
   }  
   i++; //19
   if (InputItems[i].Valid) {

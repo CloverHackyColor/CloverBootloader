@@ -816,6 +816,7 @@ typedef struct {
   UINT32  align11;
 #endif
   UINT16  BacklightLevel;
+  BOOLEAN BacklightLevelConfig;
   BOOLEAN MemoryFix;
   BOOLEAN WithKexts;
   BOOLEAN WithKextsIfNoFakeSMC;
