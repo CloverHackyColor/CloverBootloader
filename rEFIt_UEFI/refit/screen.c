@@ -688,7 +688,7 @@ VOID BltImageCompositeBadge(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN EG
     // Check for user badge x offset from theme.plist
     if (GlobalConfig.BadgeOffsetX != 0xFFFF) {
       // Check if value is between 0 and ( width of the main icon - width of badge )
-      if (GlobalConfig.BadgeOffsetX < 0 || GlobalConfig.BadgeOffsetX > (UINTN)(CompWidth - BadgeImage->Width)) {
+      if (GlobalConfig.BadgeOffsetX < 0 || GlobalConfig.BadgeOffsetX > (CompWidth - BadgeImage->Width)) {
         DBG("User offset X %d is out of range\n", GlobalConfig.BadgeOffsetX);
         GlobalConfig.BadgeOffsetX = CompWidth  - 8 - BadgeImage->Width;
         DBG("   corrected to default %d\n", GlobalConfig.BadgeOffsetX);
@@ -701,7 +701,7 @@ VOID BltImageCompositeBadge(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN EG
     // Check for user badge y offset from theme.plist
     if (GlobalConfig.BadgeOffsetY != 0xFFFF) {
       // Check if value is between 0 and ( height of the main icon - height of badge )
-      if (GlobalConfig.BadgeOffsetY < 0 || GlobalConfig.BadgeOffsetY > (UINTN)(CompHeight - BadgeImage->Height)) {
+      if (GlobalConfig.BadgeOffsetY < 0 || GlobalConfig.BadgeOffsetY > (CompHeight - BadgeImage->Height)) {
         DBG("User offset Y %d is out of range\n",GlobalConfig.BadgeOffsetY);
         GlobalConfig.BadgeOffsetY = CompHeight - 8 - BadgeImage->Height;
         DBG("   corrected to default %d\n", GlobalConfig.BadgeOffsetY);
