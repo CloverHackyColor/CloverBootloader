@@ -27,6 +27,7 @@ CHAR8* AppleFirmwareVersion[] =
   "MBP81.88Z.0047.B27.1102071707",
   "MBP83.88Z.0047.B24.1110261426",
   "MBP91.88Z.00D3.B08.1205101904",
+  "MBP101.88Z.00EE.B00.1205101839",
   "MBP111.88Z.0138.B03.1310291227", //MacBookPro11,1 with Haswell
 	"MBA31.88Z.0061.B07.0712201139",
   "MBA51.88Z.00EF.B02.1205221442",
@@ -61,6 +62,7 @@ CHAR8* AppleBoardID[] = //Lion DR1 compatible
   "Mac-94245B3640C91C81",  //MBP81 - i5 SB IntelHD3000
   "Mac-942459F5819B171B",  //MBP83 - i7 SB  ATI
   "Mac-6F01561E16C75D06",  //MBP92 - i5-3210M IvyBridge HD4000
+  "Mac-C3EC7CD22292981F",  //MBP101
   "Mac-189A3D4F975D5FFC",  //MBP111 - i5-4258U CPU @ 2.40GHz
 	"Mac-942452F5819B1C1B",  //MBA31
   "Mac-2E6FAB96566FE58C",  //MBA52 - i5-3427U IVY BRIDGE IntelHD4000 did=166
@@ -95,6 +97,7 @@ CHAR8* AppleReleaseDate[] =
   "02/07/11",
   "10/26/11",
   "05/10/2012", //MBP92
+  "05/10/12", //MBP101
   "10/29/2013", //MBP111
 	"12/20/07",
   "05/22/2012", //mba52
@@ -129,6 +132,7 @@ CHAR8* AppleProductName[] =
   "MacBookPro8,1",
   "MacBookPro8,3",
   "MacBookPro9,2",
+  "MacBookPro10,1",
   "MacBookPro11,1",
 	"MacBookAir3,1",
   "MacBookAir5,2",
@@ -162,6 +166,7 @@ CHAR8* AppleFamilies[] =
 	"MacBookPro",
   "MacBookPro",
   "MacBookPro",
+  "MacBook Pro",
   "MacBook Pro",
   "Mac",
 	"MacBookAir",
@@ -198,6 +203,7 @@ CHAR8* AppleSystemVersion[] =
 	"1.0",
   "1.0",
   "1.0",
+  "1.0",
 	"1.0",
   "1.0",
   "1.0",
@@ -232,6 +238,7 @@ CHAR8* AppleSerialNumber[] = //random generated
   "W89F9196DH2G", //MBP81 - i5 SB IntelHD3000
   "W88F9CDEDF93", //MBP83 -i7 SB  ATI
   "C02HA041DTY3", //MBP92 - i5 IvyBridge HD4000
+  "C02K2IQNDKQ1", //MBP101
   "C02LSLIPFH00", //MBP111
 	"W8649476DQX",  //MBA31
   "C02HA041DRVC", //MBA52 - IvyBridge
@@ -268,6 +275,7 @@ CHAR8* AppleChassisAsset[] =
   "MacBook-Aluminum",
   "MacBook-Aluminum",
   "MacBook-Aluminum",
+  "MacBook-Aluminum",
 	"Air-Enclosure",
   "Air-Enclosure",
 	"Mini-Aluminum",
@@ -300,6 +308,7 @@ CHAR8* SmcPlatform[] =
   "k90i", //"MacBookPro8,1",
   "k92i", //"MacBookPro8,3",
   "j30",  //"MacBookPro9,2",  "d2" for 10,1
+  "d2",  //"MacBookPro10,1",
   "j44",  //"MacBookPro11,1
 	"k99",  //"MacBookAir3,1",
   "j13",  //"MacBookAir5,2",
@@ -334,6 +343,7 @@ UINT8 SmcRevision[][6] = {
   {0x01, 0x68, 0x0F, 0, 0, 0x99},  //"MacBookPro8,1",
   {0x01, 0x70, 0x0F, 0, 0, 0x05},  //"MacBookPro8,3",
   {0x02, 0x02, 0x0F, 0, 0, 0x44},  //"MacBookPro9,2",  2.03f36 for 10,1
+  { 0x02, 0x03, 0x0F, 0, 0, 0x36 },  //"MacBookPro10,1",
   {0x02, 0x16, 0x0F, 0, 0, 0x58},  //"MacBookPro11,1
 	{0x01, 0x67, 0x0F, 0, 0, 0x10},  //"MacBookAir3,1",
   {0x02, 0x05, 0x0F, 0, 0, 0x09},  //"MacBookAir5,2",
@@ -369,6 +379,7 @@ UINT32 SmcConfig[] =
   0x7b005,  //"MacBookPro8,1",
   0x7c005,  //"MacBookPro8,3",
   0x76006,  //"MacBookPro9,2",  //074006 for 10,1  073007 for 10,2
+  0x074006, //MacBookPro10,1
   0xf0b007, //MacBookPro11,1
 	0x76005,  //"MacBookAir3,1",
   0x7b006,  //"MacBookAir5,2",
@@ -436,6 +447,7 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model)
     case MacBookPro81:
     case MacBookPro83:
     case MacBookPro92:
+	case MacBookPro101:
       gSettings.ChassisType = MiscChassisTypePortable; //08;
       gSettings.Mobile = TRUE;
       break;
