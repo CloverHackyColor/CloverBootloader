@@ -53,6 +53,7 @@ UINTN gVirtualMapSize = 0;
 UINTN gVirtualMapDescriptorSize = 0;
 
 EFI_PHYSICAL_ADDRESS	gSysTableRtArea;
+EFI_PHYSICAL_ADDRESS	gRelocatedSysTableRtArea;
 
 void PrintSample2(unsigned char *sample, int size) {
 	int i;
@@ -279,6 +280,7 @@ ExecSetVirtualAddressesToMemMap(
 	EFI_STATUS				Status;
 	PAGE_MAP_AND_DIRECTORY_POINTER	*PageTable;
 	UINTN					Flags;
+	UINTN					BlockSize;
 	
 	Desc = MemoryMap;
 	NumEntries = MemoryMapSize / DescriptorSize;
@@ -312,6 +314,15 @@ ExecSetVirtualAddressesToMemMap(
 			// next gVirtualMemoryMap slot
 			VirtualDesc = NEXT_MEMORY_DESCRIPTOR(VirtualDesc, DescriptorSize);
 			gVirtualMapSize += DescriptorSize;
+			
+			// Remember future physical address for our special relocated
+			// efi system table
+			BlockSize = EFI_PAGES_TO_SIZE((UINTN)Desc->NumberOfPages);
+			if (Desc->PhysicalStart <= gSysTableRtArea &&  gSysTableRtArea < (Desc->PhysicalStart + BlockSize)) {
+				// block contains our future sys table - remember new address
+				// future physical = VirtualStart & 0x7FFFFFFFFF
+				gRelocatedSysTableRtArea = (Desc->VirtualStart & 0x7FFFFFFFFF) + (gSysTableRtArea - Desc->PhysicalStart);
+			}
 		}
 		
 		Desc = NEXT_MEMORY_DESCRIPTOR(Desc, DescriptorSize);
@@ -363,8 +374,7 @@ ProtectRtDataFromRelocation(
 				   IN UINTN			MemoryMapSize,
 				   IN UINTN			DescriptorSize,
 				   IN UINT32		DescriptorVersion,
-				   IN EFI_MEMORY_DESCRIPTOR	*MemoryMap,
-				   IN OUT UINT32	*EfiSystemTable
+				   IN EFI_MEMORY_DESCRIPTOR	*MemoryMap
 				   )
 {
 	UINTN					NumEntries;
@@ -529,7 +539,7 @@ RuntimeServicesFix(BootArgs *BA)
 		*BA->efiRuntimeServicesPageStart, *BA->efiRuntimeServicesPageCount, *BA->efiRuntimeServicesVirtualPageStart);
 	
 	// Protect RT data areas from relocation by marking then MemMapIO
-	ProtectRtDataFromRelocation(MemoryMapSize, DescriptorSize, DescriptorVersion, MemoryMap, BA->efiSystemTable);
+	ProtectRtDataFromRelocation(MemoryMapSize, DescriptorSize, DescriptorVersion, MemoryMap);
 	
 	// assign virtual addresses
 	AssignVirtualAddressesToMemMap(MemoryMapSize, DescriptorSize, DescriptorVersion, MemoryMap, EFI_PAGES_TO_SIZE(*BA->efiRuntimeServicesPageStart));
@@ -780,10 +790,23 @@ FixBootingWithRelocBlock(UINTN bootArgs, BOOLEAN ModeX64)
 UINTN
 FixBootingWithoutRelocBlock(UINTN bootArgs, BOOLEAN ModeX64)
 {
+	VOID					*pBootArgs = (VOID*)bootArgs;
+	BootArgs				*BA;
 	UINTN					MemoryMapSize;
 	EFI_MEMORY_DESCRIPTOR	*MemoryMap;
 	UINTN					DescriptorSize;
 	UINT32					DescriptorVersion;
+	
+	DBG("FixBootingWithoutRelocBlock:\n");
+	
+	BootArgsPrint(pBootArgs);
+	
+	BA = GetBootArgs(pBootArgs);
+	
+	// Set boot args efi system table to our copied system table
+	DBG(" old BA->efiSystemTable = %x:\n", *BA->efiSystemTable);
+	*BA->efiSystemTable = (UINT32)gRelocatedSysTableRtArea;
+	DBG(" new BA->efiSystemTable = %x:\n", *BA->efiSystemTable);
 	
 	// instead of looking into boot args, we'll use
 	// last taken memmap with MOGetMemoryMap().
@@ -817,15 +840,19 @@ FixBootingWithoutRelocBlock(UINTN bootArgs, BOOLEAN ModeX64)
 UINTN
 FixHibernateWakeWithoutRelocBlock(UINTN imageHeaderPage, BOOLEAN ModeX64)
 {
+	IOHibernateImageHeader		*ImageHeader;
+	IOHibernateHandoff			*Handoff;
 	
-	IOHibernateImageHeader *ImageHeader = (IOHibernateImageHeader *)(UINTN)(imageHeaderPage << EFI_PAGE_SHIFT);
+	ImageHeader = (IOHibernateImageHeader *)(UINTN)(imageHeaderPage << EFI_PAGE_SHIFT);
 	
+	// Pass our relocated copy of system table
+	ImageHeader->systemTableOffset = gRelocatedSysTableRtArea - ImageHeader->runtimePages;
 	
 	// we need to remove memory map handoff. my system restarts if we leave it there
 	// if mem map handoff is not present, then kernel will not map those new rt pages
 	// and that is what we need on our faulty UEFIs.
 	// it's the equivalent to RemoveRTFlagMappings() in normal boot.
-	IOHibernateHandoff *Handoff = (IOHibernateHandoff *)(UINTN)(ImageHeader->handoffPages << EFI_PAGE_SHIFT);
+	Handoff = (IOHibernateHandoff *)(UINTN)(ImageHeader->handoffPages << EFI_PAGE_SHIFT);
 	while (Handoff->type != kIOHibernateHandoffTypeEnd) {
 		if (Handoff->type == kIOHibernateHandoffTypeMemoryMap) {
 			Handoff->type = kIOHibernateHandoffType;

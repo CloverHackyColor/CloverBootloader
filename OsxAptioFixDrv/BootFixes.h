@@ -60,6 +60,15 @@ ExecSetVirtualAddressesToMemMap(
                                 IN UINT32			DescriptorVersion,
                                 IN EFI_MEMORY_DESCRIPTOR	*MemoryMap
                                 );
+VOID
+CopyEfiSysTableToSeparateRtDataArea(IN OUT UINT32	*EfiSystemTable);
+VOID
+ProtectRtDataFromRelocation(
+                            IN UINTN		MemoryMapSize,
+                            IN UINTN		DescriptorSize,
+                            IN UINT32		DescriptorVersion,
+                            IN EFI_MEMORY_DESCRIPTOR	*MemoryMap
+                            );
 
 /** Fixes stuff for booting with relocation block. Called when boot.efi jumps to kernel. */
 UINTN FixBootingWithRelocBlock(UINTN bootArgs, BOOLEAN ModeX64);

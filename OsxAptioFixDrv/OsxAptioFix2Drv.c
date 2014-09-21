@@ -356,6 +356,7 @@ OvrSetVirtualAddressMap(
 )
 {
 	EFI_STATUS			Status;
+    UINT32              EfiSystemTable;
 	
 	DBG("->SetVirtualAddressMap(%d, %d, 0x%x, %p) START ...\n", MemoryMapSize, DescriptorSize, DescriptorVersion, VirtualMap);
 	DBGnvr("->SetVirtualAddressMap(%d, %d, 0x%x, %p) START ...\n", MemoryMapSize, DescriptorSize, DescriptorVersion, VirtualMap);
@@ -364,8 +365,17 @@ OvrSetVirtualAddressMap(
 	gRT->Hdr.CRC32 = OrgRTCRC32;
 	gRT->SetVirtualAddressMap = gStoredSetVirtualAddressMap;
 	
+	// Protect RT data areas from relocation by marking then MemMapIO
+	ProtectRtDataFromRelocation(MemoryMapSize, DescriptorSize, DescriptorVersion, VirtualMap);
+	
+    // Remember physical sys table addr
+    EfiSystemTable = (UINT32)(UINTN)gST;
+    
+	// virtualize RT services with all needed fixes
 	Status = ExecSetVirtualAddressesToMemMap(MemoryMapSize, DescriptorSize, DescriptorVersion, VirtualMap);
 	
+    CopyEfiSysTableToSeparateRtDataArea(&EfiSystemTable);
+    
 	return Status;
 }
 
