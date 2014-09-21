@@ -78,6 +78,9 @@ PrepareJumpFromKernel(VOID)
 	EFI_STATUS				Status;
 	EFI_PHYSICAL_ADDRESS	HigherMem;
 	UINTN					Size;
+	EFI_SYSTEM_TABLE		*Src;
+	EFI_SYSTEM_TABLE		*Dest;
+	
 	
 	//
 	// chek if already prepared
@@ -138,6 +141,12 @@ PrepareJumpFromKernel(VOID)
 		return Status;
 	}
 	DBG("gSysTableRtArea = %lx\n", gSysTableRtArea);
+	
+	// Copy sys table to our location
+	Src = (EFI_SYSTEM_TABLE*)(UINTN)gST;
+	Dest = (EFI_SYSTEM_TABLE*)(UINTN)gSysTableRtArea;
+	DBG("-Copy %p <- %p, size=0x%lx\n", Dest, Src, Src->Hdr.HeaderSize);
+	CopyMem(Dest, Src, Src->Hdr.HeaderSize);
 	
 	return Status;
 }
@@ -458,7 +467,8 @@ DefragmentRuntimeServices(
 						  IN UINTN			DescriptorSize,
 						  IN UINT32			DescriptorVersion,
 						  IN EFI_MEMORY_DESCRIPTOR	*MemoryMap,
-						  IN OUT UINT32		*EfiSystemTable
+						  IN OUT UINT32		*EfiSystemTable,
+						  IN BOOLEAN		SkipOurSysTableRtArea
 						  )
 {
 	UINTN					NumEntries;
@@ -476,9 +486,16 @@ DefragmentRuntimeServices(
 	for (Index = 0; Index < NumEntries; Index++) {
 		// defragment only RT blocks
 		if (Desc->Type == EfiRuntimeServicesCode || Desc->Type == EfiRuntimeServicesData) {
+			
+			// skip our block with sys table copy if required
+			if (SkipOurSysTableRtArea && Desc->PhysicalStart == gSysTableRtArea) {
+				Desc = NEXT_MEMORY_DESCRIPTOR(Desc, DescriptorSize);
+				continue;
+			}
+			
 			// physical addr from virtual
 			KernelRTBlock = (UINT8*)(UINTN)(Desc->VirtualStart & 0x7FFFFFFFFF);
-
+			
 			BlockSize = EFI_PAGES_TO_SIZE((UINTN)Desc->NumberOfPages);
 			
 			DBG("-Copy %p <- %p, size=0x%lx\n", KernelRTBlock + gRelocBase, (VOID*)(UINTN)Desc->PhysicalStart, BlockSize);
@@ -487,7 +504,7 @@ DefragmentRuntimeServices(
 			// boot.efi zeros old RT areas, but we must not do that because that brakes sleep
 			// on some UEFIs. why?
 			//SetMem((VOID*)(UINTN)Desc->PhysicalStart, BlockSize, 0);
-						
+			
 			if (EfiSystemTable != NULL && Desc->PhysicalStart <= *EfiSystemTable &&  *EfiSystemTable < (Desc->PhysicalStart + BlockSize)) {
 				// block contains sys table - update bootArgs with new address
 				*EfiSystemTable = (UINT32)((UINTN)KernelRTBlock + (*EfiSystemTable - Desc->PhysicalStart));
@@ -505,6 +522,7 @@ DefragmentRuntimeServices(
 			
 			// and remove RT attribute
 			Desc->Attribute = Desc->Attribute & (~EFI_MEMORY_RUNTIME);
+			
 		}
 		Desc = NEXT_MEMORY_DESCRIPTOR(Desc, DescriptorSize);
 	}
@@ -560,7 +578,7 @@ RuntimeServicesFix(BootArgs *BA)
 	//PrintSystemTable(gST);
 	
 	// and defragment
-	DefragmentRuntimeServices(MemoryMapSize, DescriptorSize, DescriptorVersion, MemoryMap, BA->efiSystemTable);
+	DefragmentRuntimeServices(MemoryMapSize, DescriptorSize, DescriptorVersion, MemoryMap, BA->efiSystemTable, FALSE);
 }
 
 /** DevTree contains /chosen/memory-map with properties with 8 byte values
@@ -792,10 +810,12 @@ FixBootingWithoutRelocBlock(UINTN bootArgs, BOOLEAN ModeX64)
 {
 	VOID					*pBootArgs = (VOID*)bootArgs;
 	BootArgs				*BA;
+	/*
 	UINTN					MemoryMapSize;
 	EFI_MEMORY_DESCRIPTOR	*MemoryMap;
 	UINTN					DescriptorSize;
 	UINT32					DescriptorVersion;
+	*/
 	
 	DBG("FixBootingWithoutRelocBlock:\n");
 	
@@ -803,6 +823,8 @@ FixBootingWithoutRelocBlock(UINTN bootArgs, BOOLEAN ModeX64)
 	
 	BA = GetBootArgs(pBootArgs);
 	
+	/*
+	 
 	// Set boot args efi system table to our copied system table
 	DBG(" old BA->efiSystemTable = %x:\n", *BA->efiSystemTable);
 	*BA->efiSystemTable = (UINT32)gRelocatedSysTableRtArea;
@@ -824,6 +846,8 @@ FixBootingWithoutRelocBlock(UINTN bootArgs, BOOLEAN ModeX64)
 	// OSX maps RT_code as Read+Exec only while faulty frivers writes to their
 	// static vars which are in RT_code
 	RemoveRTFlagMappings(MemoryMapSize, DescriptorSize, DescriptorVersion, MemoryMap);
+	 
+	*/
 	
 	// Restore original kernel entry code
 	CopyMem((VOID *)(UINTN)AsmKernelEntry, (VOID *)gOrigKernelCode, gOrigKernelCodeSize);
@@ -863,7 +887,7 @@ FixHibernateWakeWithoutRelocBlock(UINTN imageHeaderPage, BOOLEAN ModeX64)
 	
 	// boot.efi zeroed original RT areas, but we need to return them back
 	// to fix sleep on some UEFIs
-	ReturnPreviousRTAreasContent(0, NULL);
+	//ReturnPreviousRTAreasContent(0, NULL);
 	
 	// Restore original kernel entry code
 	CopyMem((VOID *)(UINTN)AsmKernelEntry, (VOID *)gOrigKernelCode, gOrigKernelCodeSize);

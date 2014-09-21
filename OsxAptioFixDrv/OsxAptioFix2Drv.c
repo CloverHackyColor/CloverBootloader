@@ -273,8 +273,8 @@ MOExitBootServices (
 {
 	EFI_STATUS					Status;
 	UINTN					 	NewMapKey;
-	UINTN						SlideAddr = 0;
-	VOID						*MachOImage = NULL;
+	//UINTN						SlideAddr = 0;
+	//VOID						*MachOImage = NULL;
     IOHibernateImageHeader      *ImageHeader = NULL;
 	
     // we need hibernate image address for wake
@@ -327,9 +327,9 @@ MOExitBootServices (
         // normal boot
         DBG("ExitBootServices: gMinAllocatedAddr: %lx, gMaxAllocatedAddr: %lx\n", gMinAllocatedAddr, gMaxAllocatedAddr);
         
-        SlideAddr = gMinAllocatedAddr - 0x100000;
-        MachOImage = (VOID*)(UINTN)(SlideAddr + 0x200000);
-        KernelEntryFromMachOPatchJump(MachOImage, SlideAddr);
+        //SlideAddr = gMinAllocatedAddr - 0x100000;
+        //MachOImage = (VOID*)(UINTN)(SlideAddr + 0x200000);
+        //KernelEntryFromMachOPatchJump(MachOImage, SlideAddr);
         
     } else {
         // hibernate wake
@@ -379,7 +379,13 @@ OvrSetVirtualAddressMap(
 	// we will defragment RT data and code that is left unprotected.
     // this will also mark those as AcpiNVS and by this protect it
     // from boot.efi relocation and zeroing
-	DefragmentRuntimeServices(MemoryMapSize, DescriptorSize, DescriptorVersion, VirtualMap, NULL);
+	DefragmentRuntimeServices(MemoryMapSize,
+                              DescriptorSize,
+                              DescriptorVersion,
+                              VirtualMap,
+                              NULL,
+                              gHibernateWake ? FALSE : TRUE
+                              );
     
 	return Status;
 }
@@ -414,7 +420,12 @@ KernelEntryPatchJumpBack(UINTN bootArgs, BOOLEAN ModeX64)
   * If started with ImgContext->JumpBuffer, then it will return with LongJump().
   */
 EFI_STATUS
-RunImageWithOverrides(IN EFI_HANDLE ImageHandle, OUT UINTN *ExitDataSize, OUT CHAR16 **ExitData  OPTIONAL)
+RunImageWithOverrides(
+                      IN EFI_HANDLE ImageHandle,
+                      IN EFI_LOADED_IMAGE_PROTOCOL	*Image,
+                      OUT UINTN *ExitDataSize,
+                      OUT CHAR16 **ExitData  OPTIONAL
+                      )
 {
 	EFI_STATUS					Status;
 	
@@ -456,6 +467,11 @@ RunImageWithOverrides(IN EFI_HANDLE ImageHandle, OUT UINTN *ExitDataSize, OUT CH
     gRT->SetVirtualAddressMap = OvrSetVirtualAddressMap;
     gRT->Hdr.CRC32 = 0;
     gBS->CalculateCrc32(gRT, gRT->Hdr.HeaderSize, &gRT->Hdr.CRC32);
+    
+    // force boot.efi to use our copy od system table
+	DBG("StartImage: orig sys table: %p\n", Image->SystemTable);
+    Image->SystemTable = (EFI_SYSTEM_TABLE *)(UINTN)gSysTableRtArea;
+	DBG("StartImage: new sys table: %p\n", Image->SystemTable);
 	
 	// run image
 	Status = gStartImage(ImageHandle, ExitDataSize, ExitData);
@@ -526,7 +542,7 @@ MOStartImage (
 		//gBS->Stall(2000000);
 
 		// run with our overrides
-		Status = RunImageWithOverrides(ImageHandle, ExitDataSize, ExitData);
+		Status = RunImageWithOverrides(ImageHandle, Image, ExitDataSize, ExitData);
 		
 	} else {
 		// call original function to do the job

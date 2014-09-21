@@ -41,6 +41,7 @@ typedef struct DTMemMapEntry DTMemMapEntry;
 
 
 extern EFI_PHYSICAL_ADDRESS gRelocBase;
+extern EFI_PHYSICAL_ADDRESS	gSysTableRtArea;
 extern BOOLEAN gHibernateWake;
 extern UINTN					gLastMemoryMapSize;
 extern EFI_MEMORY_DESCRIPTOR	*gLastMemoryMap;
@@ -75,7 +76,8 @@ DefragmentRuntimeServices(
 						  IN UINTN			DescriptorSize,
 						  IN UINT32			DescriptorVersion,
 						  IN EFI_MEMORY_DESCRIPTOR	*MemoryMap,
-						  IN OUT UINT32		*EfiSystemTable
+						  IN OUT UINT32		*EfiSystemTable,
+						  IN BOOLEAN		SkipOurSysTableRtArea
 						  );
 /** Fixes stuff for booting with relocation block. Called when boot.efi jumps to kernel. */
 UINTN FixBootingWithRelocBlock(UINTN bootArgs, BOOLEAN ModeX64);
