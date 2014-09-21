@@ -488,7 +488,7 @@ DefragmentRuntimeServices(
 			// on some UEFIs. why?
 			//SetMem((VOID*)(UINTN)Desc->PhysicalStart, BlockSize, 0);
 						
-			if (Desc->PhysicalStart <= *EfiSystemTable &&  *EfiSystemTable < (Desc->PhysicalStart + BlockSize)) {
+			if (EfiSystemTable != NULL && Desc->PhysicalStart <= *EfiSystemTable &&  *EfiSystemTable < (Desc->PhysicalStart + BlockSize)) {
 				// block contains sys table - update bootArgs with new address
 				*EfiSystemTable = (UINT32)((UINTN)KernelRTBlock + (*EfiSystemTable - Desc->PhysicalStart));
 				DBG("new pBootArgs->efiSystemTable = %x\n", *EfiSystemTable);

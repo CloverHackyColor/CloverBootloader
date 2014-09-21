@@ -376,6 +376,11 @@ OvrSetVirtualAddressMap(
 	
     CopyEfiSysTableToSeparateRtDataArea(&EfiSystemTable);
     
+	// we will defragment RT data and code that is left unprotected.
+    // this will also mark those as AcpiNVS and by this protect it
+    // from boot.efi relocation and zeroing
+	DefragmentRuntimeServices(MemoryMapSize, DescriptorSize, DescriptorVersion, VirtualMap, NULL);
+    
 	return Status;
 }
 

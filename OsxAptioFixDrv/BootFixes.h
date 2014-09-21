@@ -69,7 +69,14 @@ ProtectRtDataFromRelocation(
                             IN UINT32		DescriptorVersion,
                             IN EFI_MEMORY_DESCRIPTOR	*MemoryMap
                             );
-
+VOID
+DefragmentRuntimeServices(
+						  IN UINTN			MemoryMapSize,
+						  IN UINTN			DescriptorSize,
+						  IN UINT32			DescriptorVersion,
+						  IN EFI_MEMORY_DESCRIPTOR	*MemoryMap,
+						  IN OUT UINT32		*EfiSystemTable
+						  );
 /** Fixes stuff for booting with relocation block. Called when boot.efi jumps to kernel. */
 UINTN FixBootingWithRelocBlock(UINTN bootArgs, BOOLEAN ModeX64);
 
