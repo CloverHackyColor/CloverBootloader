@@ -306,7 +306,8 @@ BdsMemoryTest (
         FreePool (TmpStr);
       }
 
-      ASSERT (0);
+//      ASSERT (0);
+      break;
     }
 
     if (!FeaturePcdGet(PcdBootlogoOnlyEnable)) {

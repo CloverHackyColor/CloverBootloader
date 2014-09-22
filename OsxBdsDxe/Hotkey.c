@@ -132,7 +132,10 @@ RegisterHotkey (
                    &gEfiGlobalVariableGuid,
                    &TempOptionSize
                    );
-    ASSERT (TempOption != NULL);
+ //   ASSERT (TempOption != NULL);
+    if (!TempOption) {
+      break;
+    }
 
     if (CompareMem (TempOption, KeyOption, TempOptionSize) == 0) {
       //
@@ -396,7 +399,10 @@ HotkeyCallback (
     //
     // Is this Key Stroke we are waiting for?
     //
-    ASSERT (Hotkey->WaitingKey < (sizeof (Hotkey->KeyData) / sizeof (Hotkey->KeyData[0])));
+//    ASSERT (Hotkey->WaitingKey < (sizeof (Hotkey->KeyData) / sizeof (Hotkey->KeyData[0])));
+    if (Hotkey->WaitingKey >= (sizeof (Hotkey->KeyData) / sizeof (Hotkey->KeyData[0]))) {
+      break;
+    }
     HotkeyData = &Hotkey->KeyData[Hotkey->WaitingKey];
     if ((KeyData->Key.ScanCode == HotkeyData->Key.ScanCode) &&
         (KeyData->Key.UnicodeChar == HotkeyData->Key.UnicodeChar) &&
@@ -531,7 +537,13 @@ HotkeyEvent (
                     &gEfiSimpleTextInputExProtocolGuid,
                     (VOID **) &SimpleTextInEx
                     );
-    ASSERT_EFI_ERROR (Status);
+//    ASSERT_EFI_ERROR (Status);
+    if (EFI_ERROR (Status)) {
+      //
+      // If no more notification events exist
+      //
+      return ;
+    }
 
     HotkeyRegisterNotify (SimpleTextInEx);
   }
@@ -670,9 +682,9 @@ IsKeyOptionVariable (
   *OptionNumber = 0;
   for (Index = 3; Index < 7; Index++) {
     if ((Name[Index] >= L'0') && (Name[Index] <= L'9')) {
-      *OptionNumber = *OptionNumber * 10 + Name[Index] - L'0';
+      *OptionNumber = *OptionNumber * 16 + Name[Index] - L'0';
     } else if ((Name[Index] >= L'A') && (Name[Index] <= L'F')) {
-      *OptionNumber = *OptionNumber * 10 + Name[Index] - L'A';
+      *OptionNumber = *OptionNumber * 16 + Name[Index] - L'A' + 10;
     } else {
       return FALSE;
     }
@@ -712,21 +724,31 @@ HotkeyGetOptionNumbers (
 
   NameSize = sizeof (CHAR16);
   Name     = AllocateZeroPool (NameSize);
-  ASSERT (Name != NULL);
+//  ASSERT (Name != NULL);
+  if (Name == NULL) {
+    return NULL;
+  }
   while (TRUE) {
     NewNameSize = NameSize;
     Status = gRT->GetNextVariableName (&NewNameSize, Name, &Guid);
     if (Status == EFI_BUFFER_TOO_SMALL) {
       Name = ReallocatePool (NameSize, NewNameSize, Name);
-      ASSERT (Name != NULL);
+//      ASSERT (Name != NULL);
+      if (Name == NULL) {
+        return NULL;
+      }
       Status = gRT->GetNextVariableName (&NewNameSize, Name, &Guid);
       NameSize = NewNameSize;
     }
 
-    if (Status == EFI_NOT_FOUND) {
+//    if (Status == EFI_NOT_FOUND) {
+//      break;
+//    }
+//    ASSERT_EFI_ERROR (Status);
+    if (EFI_ERROR (Status)) {
       break;
     }
-    ASSERT_EFI_ERROR (Status);
+    
 
     if (IsKeyOptionVariable (Name ,&Guid, &OptionNumber)) {
       OptionNumbers = ReallocatePool (
@@ -734,7 +756,10 @@ HotkeyGetOptionNumbers (
                         (*Count + 1) * sizeof (UINT16),
                         OptionNumbers
                         );
-      ASSERT (OptionNumbers != NULL);
+//      ASSERT (OptionNumbers != NULL);
+      if (OptionNumbers == NULL) {
+        return NULL;
+      }
       for (Index = 0; Index < *Count; Index++) {
         if (OptionNumber < OptionNumbers[Index]) {
           break;
@@ -792,13 +817,19 @@ InitializeHotkeyService (
   //
   // Platform needs to make sure setting volatile variable before calling 3rd party code shouldn't fail.
   //
-  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR (Status);
+  if (EFI_ERROR (Status)) {
+    return Status;
+  }
 
   KeyOptionNumbers = HotkeyGetOptionNumbers (&KeyOptionCount);
   for (Index = 0; Index < KeyOptionCount; Index ++) {
     UnicodeSPrint (KeyOptionName, sizeof (KeyOptionName), L"Key%04x", KeyOptionNumbers[Index]);
     GetEfiGlobalVariable2 (KeyOptionName, (VOID **) &KeyOption, NULL);
-    ASSERT (KeyOption != NULL);
+ //   ASSERT (KeyOption != NULL);
+    if (!KeyOption) {
+      break;
+    }
     if (IsKeyOptionValid (KeyOption)) {
       HotkeyInsertList (KeyOption);
     }
@@ -819,7 +850,10 @@ InitializeHotkeyService (
                   NULL,
                   &mHotkeyEvent
                   );
-  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR (Status);
+  if (EFI_ERROR (Status)) {
+    return Status;
+  }
 
   //
   // Register for protocol notifications on this event
@@ -829,7 +863,7 @@ InitializeHotkeyService (
                   mHotkeyEvent,
                   &mHotkeyRegistration
                   );
-  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR (Status);
 
   return Status;
 }
