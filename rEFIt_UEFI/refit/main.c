@@ -1951,7 +1951,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
       //now it is a time to set RtVariables
       SetVariablesFromNvram();
-      FillInputs();
+      FillInputs(TRUE);
       // scan for loaders and tools, add then to the menu
       if (GlobalConfig.LegacyFirst){
         //DBG("scan legacy first\n");

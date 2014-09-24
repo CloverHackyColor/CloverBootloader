@@ -168,279 +168,8 @@ BOOLEAN mGuiReady = FALSE;
 
 UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc, IN OUT INTN *DefaultEntryIndex, OUT REFIT_MENU_ENTRY **ChosenEntry);
 
-VOID RefillInputs(VOID)
-{
-  UINTN i,j; //for loops
-  CHAR8 tmp[41];  
-  BOOLEAN bit;
-  
-  tmp[40] = 0;  //make it null-terminated
-  // it's safe to remove type assigning, but there'are numbers in comments
-  
-  InputItemsCount = 0; 
-  InputItems[InputItemsCount].ItemType = ASString;  //0
-  //even though Ascii we will keep value as Unicode to convert later
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, SVALUE_MAX_SIZE, L"%a ", gSettings.BootArgs);
-  InputItems[InputItemsCount].ItemType = UNIString; //1
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 63, L"%s", gSettings.DsdtName);
-  InputItems[InputItemsCount].ItemType = UNIString; //2
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 63, L"%s", gSettings.BlockKexts);
 
-  //GlobalConfig.Theme
-  InputItems[InputItemsCount].ItemType = UNIString; //3
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 53, L"%s",
-                (GlobalConfig.Theme == NULL)?L"embedded":GlobalConfig.Theme);
-
-  InputItems[InputItemsCount].ItemType = BoolValue; //4 
-  InputItems[InputItemsCount].BValue = gSettings.DropSSDT;
-  InputItems[InputItemsCount++].SValue = gSettings.DropSSDT?L"[+]":L"[ ]";
-  InputItems[InputItemsCount].ItemType = BoolValue;  //5
-  InputItems[InputItemsCount].BValue = gSettings.GeneratePStates;
-  InputItems[InputItemsCount++].SValue = gSettings.GeneratePStates?L"[+]":L"[ ]";
-
-  InputItems[InputItemsCount].ItemType = BoolValue;  //6
-  InputItems[InputItemsCount].BValue = gSettings.SlpSmiEnable;
-  InputItems[InputItemsCount++].SValue = gSettings.SlpSmiEnable?L"[+]":L"[ ]";
-  InputItems[InputItemsCount].ItemType = Decimal;  //7
-  InputItems[InputItemsCount++].SValue = PoolPrint(L"%02d", gSettings.PLimitDict);
-  InputItems[InputItemsCount].ItemType = Decimal;  //8
-  InputItems[InputItemsCount++].SValue = PoolPrint(L"%02d", gSettings.UnderVoltStep);
-  InputItems[InputItemsCount].ItemType = BoolValue; //9
-  InputItems[InputItemsCount].BValue = gSettings.GenerateCStates;
-  InputItems[InputItemsCount++].SValue = gSettings.GenerateCStates?L"[+]":L"[ ]";
-  InputItems[InputItemsCount].ItemType = BoolValue; //10
-  InputItems[InputItemsCount].BValue = gSettings.EnableC2;
-  InputItems[InputItemsCount++].SValue = gSettings.EnableC2?L"[+]":L"[ ]";
-  InputItems[InputItemsCount].ItemType = BoolValue; //11
-  InputItems[InputItemsCount].BValue = gSettings.EnableC4;
-  InputItems[InputItemsCount++].SValue = gSettings.EnableC4?L"[+]":L"[ ]";
-  InputItems[InputItemsCount].ItemType = BoolValue; //12
-  InputItems[InputItemsCount].BValue = gSettings.EnableC6;
-  InputItems[InputItemsCount++].SValue = gSettings.EnableC6?L"[+]":L"[ ]";
-  InputItems[InputItemsCount].ItemType = BoolValue; //13
-  InputItems[InputItemsCount].BValue = gSettings.EnableISS;
-  InputItems[InputItemsCount++].SValue = gSettings.EnableISS?L"[+]":L"[ ]";
-  InputItems[InputItemsCount].ItemType = Decimal;  //14
-  InputItems[InputItemsCount++].SValue = PoolPrint(L"%d", gSettings.QPI);
-  InputItems[InputItemsCount].ItemType = BoolValue; //15
-  InputItems[InputItemsCount].BValue = gSettings.PatchNMI;
-  InputItems[InputItemsCount++].SValue = gSettings.PatchNMI?L"[+]":L"[ ]";
-  InputItems[InputItemsCount].ItemType = BoolValue; //16
-  InputItems[InputItemsCount].BValue = gSettings.PatchVBios;
-  InputItems[InputItemsCount++].SValue = gSettings.PatchVBios?L"[+]":L"[ ]";
-  InputItems[InputItemsCount].ItemType = Hex;  //17
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 36, L"0x%X", gSettings.FixDsdt);
-  InputItems[InputItemsCount].ItemType = Hex;  //18
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 36, L"0x%X", gSettings.BacklightLevel); // Download-Fritz: There is no GUI element for BacklightLevel; please revise
-  InputItems[InputItemsCount].ItemType = Decimal;  //19
-  if (gSettings.BusSpeed > 20000) {
-    InputItems[InputItemsCount++].SValue = PoolPrint(L"%06d", gSettings.BusSpeed);
-  } else {
-    InputItems[InputItemsCount++].SValue = PoolPrint(L"%06d", gCPUStructure.ExternalClock);
-  }
-  InputItemsCount = 20;
-//  InputItems[InputItemsCount].ItemType = BoolValue; //20
-//  InputItems[InputItemsCount].BValue = gSettings.GraphicsInjector;
-//  InputItems[InputItemsCount++].SValue = gSettings.GraphicsInjector?L"[+]":L"[ ]";
-  for (i=0; i<NGFX; i++) {
-    InputItems[InputItemsCount].ItemType = ASString;  //20+i*6
-    InputItems[InputItemsCount++].SValue = PoolPrint(L"%a", gGraphics[i].Model);
-
-    if (gGraphics[i].Vendor == Ati) {
-      InputItems[InputItemsCount].ItemType = BoolValue; //21+i*6
-      InputItems[InputItemsCount].BValue = gSettings.InjectATI;
-      InputItems[InputItemsCount++].SValue = gSettings.InjectATI?L"[+]":L"[ ]";
-      InputItems[InputItemsCount].ItemType = ASString; //22+6i
-//      InputItems[InputItemsCount].SValue = AllocateZeroPool(20);
-      if (StrLen(gSettings.FBName) > 2) { //fool proof: cfg_name is 3 character or more.
-        UnicodeSPrint(InputItems[InputItemsCount++].SValue, 20, L"%s", gSettings.FBName);
-      } else {
-        UnicodeSPrint(InputItems[InputItemsCount++].SValue, 20, L"%s", gGraphics[i].Config);
-      }
-    } else if (gGraphics[i].Vendor == Nvidia) {
-      InputItems[InputItemsCount].ItemType = BoolValue; //21+i*6
-      InputItems[InputItemsCount].BValue = gSettings.InjectNVidia;
-      InputItems[InputItemsCount++].SValue = gSettings.InjectNVidia?L"[+]":L"[ ]";
-      InputItems[InputItemsCount].ItemType = ASString; //22+6i
-      for (j=0; j<8; j++) {
-        AsciiSPrint((CHAR8*)&tmp[2*j], 3, "%02x", gSettings.Dcfg[j]);
-      }
-      UnicodeSPrint(InputItems[InputItemsCount++].SValue, 40, L"%a", tmp);
-      
-  //    InputItems[InputItemsCount++].SValue = PoolPrint(L"%08x",*(UINT64*)&gSettings.Dcfg[0]);
-    } else /*if (gGraphics[i].Vendor == Intel) */ {
-      InputItems[InputItemsCount].ItemType = BoolValue; //21+i*6
-      InputItems[InputItemsCount].BValue = gSettings.InjectIntel;
-      InputItems[InputItemsCount++].SValue = gSettings.InjectIntel?L"[+]":L"[ ]";
-      InputItems[InputItemsCount].ItemType = ASString; //22+6i
-      InputItems[InputItemsCount++].SValue = L"NA";
-    }
-    InputItems[InputItemsCount].ItemType = Decimal;  //23+6i
-    if (gSettings.VideoPorts > 0) {
-      InputItems[InputItemsCount++].SValue = PoolPrint(L"%02d", gSettings.VideoPorts);
-    } else {
-      InputItems[InputItemsCount++].SValue = PoolPrint(L"%02d", gGraphics[i].Ports);
-    }
-    InputItems[InputItemsCount].ItemType = ASString; //24+6i
-    for (j=0; j<20; j++) {
-      AsciiSPrint((CHAR8*)&tmp[2*j], 3, "%02x", gSettings.NVCAP[j]);
-    }
-//    InputItems[InputItemsCount++].SValue = PoolPrint(L"%a", tmp);
-    UnicodeSPrint(InputItems[InputItemsCount++].SValue, 84, L"%a", tmp);
-    
-    InputItems[InputItemsCount].ItemType = BoolValue; //25+6i
-    InputItems[InputItemsCount].BValue = gGraphics[i].LoadVBios;
-    InputItems[InputItemsCount++].SValue = gGraphics[i].LoadVBios?L"[+]":L"[ ]";
-  }
-  //and so on 
-  InputItemsCount = 44; 
-  InputItems[InputItemsCount].ItemType = BoolValue; //44
-  InputItems[InputItemsCount].BValue = gSettings.KextPatchesAllowed;
-  InputItems[InputItemsCount++].SValue = gSettings.KextPatchesAllowed ? L"[+]" : L"[ ]";
-  InputItems[InputItemsCount].ItemType = BoolValue; //45
-  InputItems[InputItemsCount].BValue = gSettings.KernelAndKextPatches.KPKernelCpu;
-  InputItems[InputItemsCount++].SValue = gSettings.KernelAndKextPatches.KPKernelCpu ? L"[+]" : L"[ ]";
-  InputItems[InputItemsCount].ItemType = BoolValue; //46
-  InputItems[InputItemsCount].BValue = gSettings.KernelAndKextPatches.KPAsusAICPUPM;
-  InputItems[InputItemsCount++].SValue = gSettings.KernelAndKextPatches.KPAsusAICPUPM ? L"[+]" : L"[ ]";
-  InputItems[InputItemsCount].ItemType = BoolValue; //47
-  InputItems[InputItemsCount].BValue = gSettings.KernelAndKextPatches.KPAppleRTC;
-  InputItems[InputItemsCount++].SValue = gSettings.KernelAndKextPatches.KPAppleRTC ? L"[+]" : L"[ ]";
-  InputItems[InputItemsCount].ItemType = BoolValue; //48
-  InputItems[InputItemsCount].BValue = gSettings.KernelAndKextPatches.KPKernelPm; //KPKernelPm
-  InputItems[InputItemsCount++].SValue = gSettings.KernelAndKextPatches.KPKernelPm ? L"[+]" : L"[ ]";
-  
-  InputItems[InputItemsCount].ItemType = BoolValue; //49
-  InputItems[InputItemsCount].BValue = gSettings.DropMCFG;
-  InputItems[InputItemsCount++].SValue = gSettings.DropMCFG?L"[+]":L"[ ]";
-  
-  InputItems[InputItemsCount].ItemType = Decimal;  //50
-  InputItems[InputItemsCount++].SValue = PoolPrint(L"%d", gSettings.RefCLK);
-
-  InputItems[InputItemsCount].ItemType = ASString;  //51
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, SVALUE_MAX_SIZE, L"%a ", NonDetected);
-
-//  InputItemsCount = 52;
-  InputItems[InputItemsCount].ItemType = BoolValue; //52
-  InputItems[InputItemsCount].BValue = gSettings.InjectEDID;
-  InputItems[InputItemsCount++].SValue = gSettings.InjectEDID?L"[+]":L"[ ]"; 
-  
-  for (j=0; j<16; j++) {
-    InputItems[InputItemsCount].ItemType = BoolValue; //53+j
-    bit = (gSettings.FixDsdt & (1<<j)) != 0;
-    InputItems[InputItemsCount].BValue = bit;
-    InputItems[InputItemsCount++].SValue = bit?L"[+]":L"[ ]";     
-  }
-  
-  InputItemsCount = 70;
-  InputItems[InputItemsCount].ItemType = Decimal;  //70
-  InputItems[InputItemsCount++].SValue = PoolPrint(L"%d", gSettings.PointerSpeed);
-  InputItems[InputItemsCount].ItemType = Decimal;  //71
-  InputItems[InputItemsCount++].SValue = PoolPrint(L"%d", gSettings.DoubleClickTime);
-  InputItems[InputItemsCount].ItemType = BoolValue; //72
-  InputItems[InputItemsCount].BValue   = gSettings.PointerMirror;
-  InputItems[InputItemsCount++].SValue = gSettings.PointerMirror?L"[+]":L"[ ]";
-  //reserve for mouse and continue 
-  
-  InputItemsCount = 74;
-  InputItems[InputItemsCount].ItemType = BoolValue; //74
-  InputItems[InputItemsCount].BValue   = gSettings.USBFixOwnership;
-  InputItems[InputItemsCount++].SValue = gSettings.USBFixOwnership?L"[+]":L"[ ]";
-
-  InputItems[InputItemsCount].ItemType = Hex;  //75
-  InputItems[InputItemsCount++].SValue = PoolPrint(L"0x%04x", gSettings.C3Latency);
-  InputItems[InputItemsCount].ItemType = Decimal;  //76
-  InputItems[InputItemsCount++].SValue = PoolPrint(L"%d", gSettings.EnabledCores);
-  InputItems[InputItemsCount].ItemType = Decimal;  //77
-  InputItems[InputItemsCount++].SValue = PoolPrint(L"%d", gSettings.SavingMode);
-
-//  InputItemsCount = 78;
-  InputItems[InputItemsCount].ItemType = ASString;  //78
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%a", gSettings.ProductName);
-  InputItems[InputItemsCount].ItemType = ASString;  //79
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%a", gSettings.VersionNr);
-  InputItems[InputItemsCount].ItemType = ASString;  //80
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%a", gSettings.SerialNr);
-  InputItems[InputItemsCount].ItemType = ASString;  //81
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%a", gSettings.BoardNumber);
-  InputItems[InputItemsCount].ItemType = ASString;  //82
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%a", gSettings.BoardSerialNumber);
-  InputItems[InputItemsCount].ItemType = Decimal;  //83
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%d", gSettings.BoardType);
-  InputItems[InputItemsCount].ItemType = ASString;  //84
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%a", gSettings.BoardVersion);
-  InputItems[InputItemsCount].ItemType = Decimal;  //85
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%d", gSettings.ChassisType);
-  InputItems[InputItemsCount].ItemType = ASString;  //86
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%a", gSettings.RomVersion);
-  InputItems[InputItemsCount].ItemType = ASString;  //87
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%a", gSettings.ReleaseDate);
-
-  InputItems[InputItemsCount].ItemType = BoolValue; //88
-  InputItems[InputItemsCount].BValue   = gSettings.DoubleFirstState;
-  InputItems[InputItemsCount++].SValue = gSettings.DoubleFirstState?L"[+]":L"[ ]";
-  InputItems[InputItemsCount].ItemType = BoolValue; //89
-  InputItems[InputItemsCount].BValue = gSettings.EnableC7;
-  InputItems[InputItemsCount++].SValue = gSettings.EnableC7?L"[+]":L"[ ]";
- 
-  InputItems[InputItemsCount].ItemType = UNIString; //90
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%s", gSettings.ConfigName);
-  
-  InputItems[InputItemsCount].ItemType = BoolValue; //91
-  InputItems[InputItemsCount].BValue = gSettings.KernelAndKextPatches.KPLapicPanic;
-  InputItems[InputItemsCount++].SValue = gSettings.KernelAndKextPatches.KPLapicPanic ? L"[+]" : L"[ ]";
-
-  InputItems[InputItemsCount].ItemType = BoolValue; //92
-  InputItems[InputItemsCount].BValue   = gSettings.USBInjection;
-  InputItems[InputItemsCount++].SValue = gSettings.USBInjection?L"[+]":L"[ ]";
-  InputItems[InputItemsCount].ItemType = BoolValue; //93
-  InputItems[InputItemsCount].BValue   = gSettings.InjectClockID;
-  InputItems[InputItemsCount++].SValue = gSettings.InjectClockID?L"[+]":L"[ ]";
-  InputItems[InputItemsCount].ItemType = Hex;  //94
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeATI);
-  InputItems[InputItemsCount].ItemType = Hex;  //95
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeNVidia);
-  InputItems[InputItemsCount].ItemType = Hex;  //96
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeIntel);
-  InputItems[InputItemsCount].ItemType = Hex;  //97
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeLAN);
-  InputItems[InputItemsCount].ItemType = Hex;  //98
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeWIFI);
-  InputItems[InputItemsCount].ItemType = Hex;  //99
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeSATA);
-  InputItems[InputItemsCount].ItemType = Hex;  //100
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeXHCI);
-  InputItems[InputItemsCount].ItemType = Hex;  //101
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%04X", dropDSM);
-  
-  InputItems[InputItemsCount].ItemType = BoolValue; //102
-  InputItems[InputItemsCount].BValue   = gSettings.DebugDSDT;
-  InputItems[InputItemsCount++].SValue = gSettings.DebugDSDT?L"[+]":L"[ ]";
-  InputItems[InputItemsCount].ItemType = Hex;  //103
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeIMEI);
-  InputItems[InputItemsCount].ItemType = Hex;  //104
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.KernelAndKextPatches.FakeCPUID);
-  
-  InputItemsCount = 110;
-  for (j=0; j<16; j++) {
-    InputItems[InputItemsCount].ItemType = BoolValue; //110+j
-    bit = (gSettings.FixDsdt & (1<<(j+16))) != 0;
-    InputItems[InputItemsCount].BValue = bit;
-    InputItems[InputItemsCount++].SValue = bit?L"[+]":L"[ ]";     
-  }
-  
-  //menu for drop table
-  if (gSettings.ACPIDropTables) {
-    ACPI_DROP_TABLE *DropTable = gSettings.ACPIDropTables;
-    while (DropTable) {
-      DropTable->MenuItem.ItemType = BoolValue;
-      DropTable->MenuItem.SValue = DropTable->MenuItem.BValue?L"[+]":L"[ ]";
-      DropTable = DropTable->Next;
-    }
-  }
-}
-
-VOID FillInputs(VOID)
+VOID FillInputs(BOOLEAN New)
 {
   UINTN i,j; //for loops
   CHAR8 tmp[41];
@@ -449,20 +178,31 @@ VOID FillInputs(VOID)
   tmp[40] = 0;  //make it null-terminated
   
   InputItemsCount = 0;
-  InputItems = AllocateZeroPool(128 * sizeof(INPUT_ITEM)); //XXX
+  if (New) {
+    InputItems = AllocateZeroPool(128 * sizeof(INPUT_ITEM)); //XXX
+  }
+
   InputItems[InputItemsCount].ItemType = ASString;  //0
   //even though Ascii we will keep value as Unicode to convert later
-  InputItems[InputItemsCount].SValue = AllocateZeroPool(SVALUE_MAX_SIZE);
+  if (New) {
+    InputItems[InputItemsCount].SValue = AllocateZeroPool(SVALUE_MAX_SIZE);
+  }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, SVALUE_MAX_SIZE, L"%a ", gSettings.BootArgs);
   InputItems[InputItemsCount].ItemType = UNIString; //1
-  InputItems[InputItemsCount].SValue = AllocateZeroPool(63);
+  if (New) {
+    InputItems[InputItemsCount].SValue = AllocateZeroPool(63);
+  }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 63, L"%s", gSettings.DsdtName); // 1-> 2
   InputItems[InputItemsCount].ItemType = UNIString; //2
-  InputItems[InputItemsCount].SValue = AllocateZeroPool(63);
+  if (New) {
+    InputItems[InputItemsCount].SValue = AllocateZeroPool(63);
+  }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 63, L"%s", gSettings.BlockKexts);
 
   InputItems[InputItemsCount].ItemType = UNIString; //3
-  InputItems[InputItemsCount].SValue = AllocateZeroPool(53);
+  if (New) {
+    InputItems[InputItemsCount].SValue = AllocateZeroPool(53);
+  }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 53, L"%s",
                 (GlobalConfig.Theme == NULL)?L"embedded":GlobalConfig.Theme);
 
@@ -503,10 +243,14 @@ VOID FillInputs(VOID)
   InputItems[InputItemsCount].BValue = gSettings.PatchVBios;
   InputItems[InputItemsCount++].SValue = gSettings.PatchVBios?L"[+]":L"[ ]";
   InputItems[InputItemsCount].ItemType = Hex;  //17
-  InputItems[InputItemsCount].SValue = AllocateZeroPool(36);
+  if (New) {
+    InputItems[InputItemsCount].SValue = AllocateZeroPool(36);
+  }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 36, L"0x%X", gSettings.FixDsdt);
   InputItems[InputItemsCount].ItemType = Hex;  //18
-  InputItems[InputItemsCount].SValue = AllocateZeroPool(36);
+  if (New) {
+    InputItems[InputItemsCount].SValue = AllocateZeroPool(36);
+  }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 36, L"0x%X", gSettings.BacklightLevel); // Download-Fritz: There is no GUI element for BacklightLevel; please revise
   InputItems[InputItemsCount].ItemType = Decimal;  //19
   if (gSettings.BusSpeed > 20000) {
@@ -515,9 +259,6 @@ VOID FillInputs(VOID)
     InputItems[InputItemsCount++].SValue = PoolPrint(L"%06d", gCPUStructure.ExternalClock);
   }
   InputItemsCount = 20;
-  //  InputItems[InputItemsCount].ItemType = BoolValue; //20
-  //  InputItems[InputItemsCount].BValue = gSettings.GraphicsInjector;
-  //  InputItems[InputItemsCount++].SValue = gSettings.GraphicsInjector?L"[+]":L"[ ]";
   for (i=0; i<NGFX; i++) {
     InputItems[InputItemsCount].ItemType = ASString;  //20+i*6
     InputItems[InputItemsCount++].SValue = PoolPrint(L"%a", gGraphics[i].Model);
@@ -527,7 +268,9 @@ VOID FillInputs(VOID)
       InputItems[InputItemsCount].BValue = gSettings.InjectATI;
       InputItems[InputItemsCount++].SValue = gSettings.InjectATI?L"[+]":L"[ ]";
       InputItems[InputItemsCount].ItemType = ASString; //22+6i
-      InputItems[InputItemsCount].SValue = AllocateZeroPool(20);
+      if (New) {
+        InputItems[InputItemsCount].SValue = AllocateZeroPool(20);
+      }
       if (StrLen(gSettings.FBName) > 2) { //fool proof: cfg_name is 3 character or more.
         UnicodeSPrint(InputItems[InputItemsCount++].SValue, 20, L"%s", gSettings.FBName);
       } else {
@@ -541,7 +284,9 @@ VOID FillInputs(VOID)
       for (j=0; j<8; j++) {
         AsciiSPrint((CHAR8*)&tmp[2*j], 3, "%02x", gSettings.Dcfg[j]);
       }
-      InputItems[InputItemsCount].SValue = AllocateZeroPool(40);
+      if (New) {
+        InputItems[InputItemsCount].SValue = AllocateZeroPool(40);
+      }
       UnicodeSPrint(InputItems[InputItemsCount++].SValue, 40, L"%a", tmp);
       
       //    InputItems[InputItemsCount++].SValue = PoolPrint(L"%08x",*(UINT64*)&gSettings.Dcfg[0]);
@@ -563,7 +308,9 @@ VOID FillInputs(VOID)
     for (j=0; j<20; j++) {
       AsciiSPrint((CHAR8*)&tmp[2*j], 3, "%02x", gSettings.NVCAP[j]);
     }
-    InputItems[InputItemsCount].SValue = AllocateZeroPool(84);
+    if (New) {
+      InputItems[InputItemsCount].SValue = AllocateZeroPool(84);
+    }
     UnicodeSPrint(InputItems[InputItemsCount++].SValue, 84, L"%a", tmp);
     
     InputItems[InputItemsCount].ItemType = BoolValue; //25+6i
@@ -596,9 +343,11 @@ VOID FillInputs(VOID)
   InputItems[InputItemsCount++].SValue = PoolPrint(L"%d", gSettings.RefCLK);
 
   InputItems[InputItemsCount].ItemType = ASString;  //51
-  InputItems[InputItemsCount].SValue = AllocateZeroPool(SVALUE_MAX_SIZE);
+  if (New) {
+    InputItems[InputItemsCount].SValue = AllocateZeroPool(SVALUE_MAX_SIZE);
+  }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, SVALUE_MAX_SIZE, L"%a ", NonDetected);
-//  InputItemsCount = 52;
+
   InputItems[InputItemsCount].ItemType = BoolValue; //52
   InputItems[InputItemsCount].BValue = gSettings.InjectEDID;
   InputItems[InputItemsCount++].SValue = gSettings.InjectEDID?L"[+]":L"[ ]";
@@ -632,36 +381,55 @@ VOID FillInputs(VOID)
   InputItems[InputItemsCount].ItemType = Decimal;  //77
   InputItems[InputItemsCount++].SValue = PoolPrint(L"%d", gSettings.SavingMode);
 
-//  InputItemsCount = 78;
   InputItems[InputItemsCount].ItemType = ASString;  //78
-  InputItems[InputItemsCount].SValue = AllocateZeroPool(64);
+  if (New) {
+    InputItems[InputItemsCount].SValue = AllocateZeroPool(64);
+  }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%a", gSettings.ProductName);
   InputItems[InputItemsCount].ItemType = ASString;  //79
-  InputItems[InputItemsCount].SValue = AllocateZeroPool(64);
+  if (New) {
+    InputItems[InputItemsCount].SValue = AllocateZeroPool(64);
+  }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%a", gSettings.VersionNr);
   InputItems[InputItemsCount].ItemType = ASString;  //80
-  InputItems[InputItemsCount].SValue = AllocateZeroPool(64);
+  if (New) {
+    InputItems[InputItemsCount].SValue = AllocateZeroPool(64);
+  }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%a", gSettings.SerialNr);
   InputItems[InputItemsCount].ItemType = ASString;  //81
-  InputItems[InputItemsCount].SValue = AllocateZeroPool(64);
+  if (New) {
+    InputItems[InputItemsCount].SValue = AllocateZeroPool(64);
+  }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%a", gSettings.BoardNumber);
   InputItems[InputItemsCount].ItemType = ASString;  //82
-  InputItems[InputItemsCount].SValue = AllocateZeroPool(64);
+  if (New) {
+    InputItems[InputItemsCount].SValue = AllocateZeroPool(64);
+  }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%a", gSettings.BoardSerialNumber);
   InputItems[InputItemsCount].ItemType = Decimal;  //83
-  InputItems[InputItemsCount].SValue = AllocateZeroPool(64);
+  if (New) {
+    InputItems[InputItemsCount].SValue = AllocateZeroPool(64);
+  }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%d", gSettings.BoardType);
   InputItems[InputItemsCount].ItemType = ASString;  //84
-  InputItems[InputItemsCount].SValue = AllocateZeroPool(64);
+  if (New) {
+    InputItems[InputItemsCount].SValue = AllocateZeroPool(64);
+  }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%a", gSettings.BoardVersion);
   InputItems[InputItemsCount].ItemType = Decimal;  //85
-  InputItems[InputItemsCount].SValue = AllocateZeroPool(64);
+  if (New) {
+    InputItems[InputItemsCount].SValue = AllocateZeroPool(64);
+  }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%d", gSettings.ChassisType);
   InputItems[InputItemsCount].ItemType = ASString;  //86
-  InputItems[InputItemsCount].SValue = AllocateZeroPool(64);
+  if (New) {
+    InputItems[InputItemsCount].SValue = AllocateZeroPool(64);
+  }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%a", gSettings.RomVersion);
   InputItems[InputItemsCount].ItemType = ASString;  //87
-  InputItems[InputItemsCount].SValue = AllocateZeroPool(64);
+  if (New) {
+    InputItems[InputItemsCount].SValue = AllocateZeroPool(64);
+  }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%a", gSettings.ReleaseDate);
   
   InputItems[InputItemsCount].ItemType = BoolValue; //88
@@ -672,7 +440,9 @@ VOID FillInputs(VOID)
   InputItems[InputItemsCount++].SValue = gSettings.EnableC7?L"[+]":L"[ ]";
 
   InputItems[InputItemsCount].ItemType = UNIString; //90
-  InputItems[InputItemsCount].SValue   = AllocateZeroPool(64);
+  if (New) {
+    InputItems[InputItemsCount].SValue   = AllocateZeroPool(64);
+  }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%s", gSettings.ConfigName);
 
   InputItems[InputItemsCount].ItemType = BoolValue; //91
@@ -687,38 +457,58 @@ VOID FillInputs(VOID)
   InputItems[InputItemsCount++].SValue = gSettings.InjectClockID?L"[+]":L"[ ]";
   
   InputItems[InputItemsCount].ItemType = Hex;  //94
-  InputItems[InputItemsCount].SValue = AllocateZeroPool(26);
+  if (New) {
+    InputItems[InputItemsCount].SValue = AllocateZeroPool(26);
+  }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeATI);
   InputItems[InputItemsCount].ItemType = Hex;  //95
-  InputItems[InputItemsCount].SValue = AllocateZeroPool(26);
+  if (New) {
+    InputItems[InputItemsCount].SValue = AllocateZeroPool(26);
+  }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeNVidia);
   InputItems[InputItemsCount].ItemType = Hex;  //96
-  InputItems[InputItemsCount].SValue = AllocateZeroPool(26);
+  if (New) {
+    InputItems[InputItemsCount].SValue = AllocateZeroPool(26);
+  }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeIntel);
   
   InputItems[InputItemsCount].ItemType = Hex;  //97
-  InputItems[InputItemsCount].SValue = AllocateZeroPool(26);
+  if (New) {
+    InputItems[InputItemsCount].SValue = AllocateZeroPool(26);
+  }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeLAN);
   InputItems[InputItemsCount].ItemType = Hex;  //98
-  InputItems[InputItemsCount].SValue = AllocateZeroPool(26);
+  if (New) {
+    InputItems[InputItemsCount].SValue = AllocateZeroPool(26);
+  }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeWIFI);
   InputItems[InputItemsCount].ItemType = Hex;  //99
-  InputItems[InputItemsCount].SValue = AllocateZeroPool(26);
+  if (New) {
+    InputItems[InputItemsCount].SValue = AllocateZeroPool(26);
+  }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeSATA);
   InputItems[InputItemsCount].ItemType = Hex;  //100
-  InputItems[InputItemsCount].SValue = AllocateZeroPool(26);
+  if (New) {
+    InputItems[InputItemsCount].SValue = AllocateZeroPool(26);
+  }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeXHCI);
   InputItems[InputItemsCount].ItemType = Hex;  //101
-  InputItems[InputItemsCount].SValue = AllocateZeroPool(26);
+  if (New) {
+    InputItems[InputItemsCount].SValue = AllocateZeroPool(26);
+  }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%04X", dropDSM);
   InputItems[InputItemsCount].ItemType = BoolValue; //102
   InputItems[InputItemsCount].BValue   = gSettings.DebugDSDT;
   InputItems[InputItemsCount++].SValue = gSettings.DebugDSDT?L"[+]":L"[ ]";
   InputItems[InputItemsCount].ItemType = Hex;  //103
-  InputItems[InputItemsCount].SValue = AllocateZeroPool(26);
+  if (New) {
+    InputItems[InputItemsCount].SValue = AllocateZeroPool(26);
+  }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeIMEI);
   InputItems[InputItemsCount].ItemType = Hex;  //104
-  InputItems[InputItemsCount].SValue = AllocateZeroPool(26);
+  if (New) {
+    InputItems[InputItemsCount].SValue = AllocateZeroPool(26);
+  }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.KernelAndKextPatches.FakeCPUID);
   
   InputItemsCount = 110;
@@ -1054,37 +844,36 @@ VOID ApplyInputs(VOID)
 
   i=90; //90
   if (InputItems[i].Valid) {
-      if (StrCmp(InputItems[i].SValue, gSettings.ConfigName) != 0) {
-          if ((StrLen(InputItems[i].SValue) == 0) ||
-              (StrCmp(InputItems[i].SValue, gSettings.MainConfigName) == 0)) {
-              for (i=0; i<2; i++) {
-                  if (gConfigDict[i]) {
-                      Status = GetUserSettings(SelfRootDir, gConfigDict[i]);
-                      if (!EFI_ERROR(Status)) {
-                          if (gSettings.ConfigName) FreePool(gSettings.ConfigName);
-                          gSettings.ConfigName = EfiStrDuplicate(gSettings.MainConfigName);
-                          if (gConfigDict[2]) FreeTag(gConfigDict[2]);
-                          gConfigDict[2] = NULL;
-                      }
-                      DBG("Main settings%d from menu: %r\n", i, Status);
-                  }
-              }
-          } else {
-              LoadUserSettings(SelfRootDir, InputItems[i].SValue, &dict);
-              Status = GetUserSettings(SelfRootDir, dict);
-              if (!EFI_ERROR(Status)) {
-                  if (gConfigDict[2]) FreeTag(gConfigDict[2]);
-                  gConfigDict[2] = dict;
-                  if (gSettings.ConfigName) FreePool(gSettings.ConfigName);
-                  gSettings.ConfigName = EfiStrDuplicate(InputItems[i].SValue);
-              }
-              DBG("Main settings3 from menu: %r\n", Status);
+    if (StrCmp(InputItems[i].SValue, gSettings.ConfigName) != 0) {
+      if ((StrLen(InputItems[i].SValue) == 0) ||
+          (StrCmp(InputItems[i].SValue, gSettings.MainConfigName) == 0)) {
+        for (i=0; i<2; i++) {
+          if (gConfigDict[i]) {
+            Status = GetUserSettings(SelfRootDir, gConfigDict[i]);
+            if (!EFI_ERROR(Status)) {
+              if (gSettings.ConfigName) FreePool(gSettings.ConfigName);
+              gSettings.ConfigName = EfiStrDuplicate(gSettings.MainConfigName);
+              if (gConfigDict[2]) FreeTag(gConfigDict[2]);
+              gConfigDict[2] = NULL;
+            }
+            DBG("Main settings%d from menu: %r\n", i, Status);
           }
-    //    if (!EFI_ERROR(Status)) {
-      RefillInputs();
+        }
+      } else {
+        LoadUserSettings(SelfRootDir, InputItems[i].SValue, &dict);
+        Status = GetUserSettings(SelfRootDir, dict);
+        if (!EFI_ERROR(Status)) {
+          if (gConfigDict[2]) FreeTag(gConfigDict[2]);
+          gConfigDict[2] = dict;
+          if (gSettings.ConfigName) FreePool(gSettings.ConfigName);
+          gSettings.ConfigName = EfiStrDuplicate(InputItems[i].SValue);
+        }
+        DBG("Main settings3 from menu: %r\n", Status);
+      }
+
+      FillInputs(FALSE);
       NeedSave = FALSE;
     }
-//    return; //do not double SaveSettings() as it done by GetUserSettings()
   }
   i++; //91
   if (InputItems[i].Valid) {

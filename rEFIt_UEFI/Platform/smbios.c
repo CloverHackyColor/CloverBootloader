@@ -153,6 +153,7 @@ VOID* GetSmbiosTablesFromConfigTables (VOID)
 // This function determines ascii string length ending by space. 
 // search restricted to MaxLen, for example
 // iStrLen("ABC    ", 20) == 3
+// if MaxLen=0 then as usual strlen but bugless
 UINTN iStrLen(CHAR8* String, UINTN MaxLen)
 {
 	UINTN	Len = 0;
@@ -215,17 +216,6 @@ EFI_STATUS UpdateSmbiosString (SMBIOS_STRUCTURE_POINTER SmbiosTableN, SMBIOS_TAB
 	if ((SmbiosTableN.Raw == NULL) || !Buffer || !Field) {
 		return EFI_NOT_FOUND;
 	}
-/*
-	if (Once) {
-		DBG("Raw table data:\n");
-		for (ALength=0; ALength<Length; ALength++){
-			if((ALength & 0xF) == 0) DBG("\n");
-			DBG("%02x ", SmbiosTable.Raw[ALength]);		
-		}
-		DBG("\n");
-		Once = FALSE;
-	}
-*/
 	AString = (CHAR8*)(SmbiosTableN.Raw + SmbiosTableN.Hdr->Length); //first string
 	while (IndexStr != *Field) {
 		if (*AString) {
@@ -269,24 +259,6 @@ EFI_STATUS UpdateSmbiosString (SMBIOS_STRUCTURE_POINTER SmbiosTableN, SMBIOS_TAB
 	}
 	CopyMem(AString, Buffer, BLength);
 	*(AString + BLength) = 0; // not sure there is 0	
-
-#if 0 // DEBUG_SMBIOS != 0
-	DBG("Old table length=%d, calculated new=%d\n", Length, Length+BLength-ALength);
-	Length = SmbiosTableLength(SmbiosTableN);
-	DBG("New table length=%d\n", Length);
-	C1 = (CHAR8*)(SmbiosTableN.Raw + SmbiosTableN.Hdr->Length);
-	while (*C1 != 0) {
-		while (*C1 != 0) {
-			DBG("%c", *C1++); 
-		}
-		DBG("\n");
-		C1++; //next string
-		if (*C1 == 0) { //end of table
-			break;
-		}
-	}
-	DBG("-----------------\n");
-#endif
 
 	return EFI_SUCCESS;
 }
@@ -930,8 +902,6 @@ VOID PatchTableType9()
 {
 	//
 	// System Slots (Type 9)
-	// Warning!!! Tables type9 are used by AppleSMBIOS!
-	// if we understand some patch needed we should apply it here 	
 	/*
 	 SlotDesignation: PCI1
 	 System Slot Type: PCI
@@ -955,40 +925,7 @@ VOID PatchTableType9()
   // SlotType = 32bit PCI/SlotTypePciExpressX1/x4/x16
   // real PC -> PCI, real Mac -> PCIe
 
-//I think we should exclude OEM tables
-/*	CHAR8* AirPort = "AirPort";
-
-	for (Index = 0; Index < 64; Index++) { 
-		SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_SYSTEM_SLOTS,Index);
-		if (SmbiosTable.Raw == NULL) {
-			break;
-		}
-		LogSmbiosTable(SmbiosTable);
-	}
-	if (SlotDevices[6].Valid) {
-		ZeroMem((VOID*)newSmbiosTable.Type9, MAX_TABLE_SIZE);
-		newSmbiosTable.Type9->Hdr.Type = EFI_SMBIOS_TYPE_SYSTEM_SLOTS;
-		newSmbiosTable.Type9->Hdr.Length = sizeof(SMBIOS_TABLE_TYPE9);
-		newSmbiosTable.Type9->Hdr.Handle = (UINT16)(0x0900 + Index);
-		newSmbiosTable.Type9->SlotDesignation = 1;
-		newSmbiosTable.Type9->SlotType = SlotTypePciExpressX1;
-		newSmbiosTable.Type9->SlotDataBusWidth = SlotDataBusWidth1X;
-		newSmbiosTable.Type9->CurrentUsage = SlotUsageAvailable;
-		newSmbiosTable.Type9->SlotLength = SlotLengthShort;
-		newSmbiosTable.Type9->SlotID = SlotDevices[6].SlotID;
-		newSmbiosTable.Type9->SlotCharacteristics1.Provides33Volts = 1;
-		newSmbiosTable.Type9->SlotCharacteristics2.HotPlugDevicesSupported = 1;
-		// take this from PCI bus for WiFi card
-		newSmbiosTable.Type9->SegmentGroupNum = SlotDevices[6].SegmentGroupNum;
-		newSmbiosTable.Type9->BusNum = SlotDevices[6].BusNum;
-		newSmbiosTable.Type9->DevFuncNum = SlotDevices[6].DevFuncNum;
-		//
-		DBG("insert table 9 for Airport\n");
-		UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type9->SlotDesignation, AirPort);
-		LogSmbiosTable(newSmbiosTable);
-	} 
- */
-	for (Index = 0; Index < 15; Index++) {
+  for (Index = 0; Index < 15; Index++) {
     if (SlotDevices[Index].Valid) {
       INTN Dev, Func;
       ZeroMem((VOID*)newSmbiosTable.Type9, MAX_TABLE_SIZE);
@@ -1230,7 +1167,7 @@ VOID PatchTableType17()
        gRAM.UserChannels = 1;
     }
     if (gRAM.UserInUse >= MAX_RAM_SLOTS) {
-      gRAM.UserInUse = MAX_RAM_SLOTS;
+      gRAM.UserInUse = TotalCount; //MAX_RAM_SLOTS;
     }
     DBG("Channels: %d\n", gRAM.UserChannels);
     // Setup interleaved channel map

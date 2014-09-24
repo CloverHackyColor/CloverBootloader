@@ -20,6 +20,8 @@ global ASM_PFX(InitDescriptor)
 global ASM_PFX(SystemExceptionHandler)
 global ASM_PFX(SystemTimerHandler)
 
+;global ASM_PFX(mExceptionCodeSize)
+
 SECTION .text
 
 EXTERN ASM_PFX(TimerHandler)
@@ -27,8 +29,8 @@ EXTERN ASM_PFX(ExceptionHandler)
 
 
 ASM_PFX(InitDescriptor):
-        lea     eax, [REL GDT_BASE]     ; RAX=PHYSICAL address of gdt
-        mov     [REL gdtr + 2], eax     ; Put address of gdt into the gdtr+2
+        lea     eax, [REL GDT_BASE]        ; RAX=PHYSICAL address of gdt;
+        mov     [REL gdtr + 2], eax        ; Put address of gdt into the gdtr+2
         lea     eax, [REL gdtr]
         lgdt       [eax]
 
@@ -36,8 +38,8 @@ ASM_PFX(InitDescriptor):
 ;        mov     [gdtr + 2], eax
 ;        lgdt    [gdtr]
 
-        lea     eax, [REL IDT_BASE]     ; RAX=PHYSICAL address of idt
-        mov     [REL idtr + 2], eax     ; Put address of idt into the idtr+2
+        lea     eax, [REL IDT_BASE]          ; RAX=PHYSICAL address of idt
+        mov     dword  [REL idtr + 2], eax   ; Put address of idt into the idtr
         lea     eax, [REL idtr]
         lidt      [eax]
 
@@ -212,7 +214,7 @@ INTUnknown:
 
 ASM_PFX(SystemTimerHandler):
     push    0
-    push   strict DWORD 0  ;mTimerVector ;to be patched in Cpu.c
+    push    0  ;mTimerVector ;to be patched in Cpu.c
     JmpCommonIdtEntry
 
 commonIdtEntry:
@@ -421,8 +423,6 @@ ExceptionDone:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 SECTION .data
 
-ALIGN 04h
-
 gdtr    dw GDT_END - GDT_BASE - 1   ; GDT limit
         dd 0   ;GDT_BASE                        ; (GDT base gets set above)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -431,6 +431,7 @@ gdtr    dw GDT_END - GDT_BASE - 1   ; GDT limit
 
 ALIGN 04h                      ; make GDT 4-byte align
 
+global GDT_BASE
 GDT_BASE:
 ; null descriptor
 NULL_SEL        equ $-GDT_BASE          ; Selector [0x0]

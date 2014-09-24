@@ -497,18 +497,6 @@ VOID read_smb(EFI_PCI_IO_PROTOCOL *PciIo)
 	
   // Search MAX_RAM_SLOTS slots
   for (i = 0; i <  MAX_RAM_SLOTS; i++){
-    //slot = &gRAM->DIMM[i];
-    //spd_size = smb_read_byte(base, 0x50 + i, 0);
-    //DBG("SPD[%d]: size %d @0x%x \n", i, spd_size, 0x50 + i);
-		/*if (spd_size != 0xFF) {
-     DBG("SPD[0] (size): 0x%02x @0x%x \n", spd_size, 0x50 + i);
-     }
-     
-     // Check spd is present
-     if (spd_size && (spd_size != 0xff))
-     {
-     slot->spd = spdbuf;
-     */
     ZeroMem(spdbuf, MAX_SPD_SIZE);
     READ_SPD(spdbuf, base, i, SPD_MEMORY_TYPE);
     if (spdbuf[SPD_MEMORY_TYPE] == 0xFF) continue;
@@ -592,25 +580,6 @@ VOID read_smb(EFI_PCI_IO_PROTOCOL *PciIo)
     
   } // for
 }
-/*
- static struct smbus_controllers_t smbus_controllers[] = {
- 
- {0x8086, 0x269B, "ESB2",		read_smb },
- {0x8086, 0x25A4, "6300ESB",	read_smb },
- {0x8086, 0x24C3, "ICH4",		read_smb },
- {0x8086, 0x24D3, "ICH5",		read_smb },
- {0x8086, 0x266A, "ICH6",		read_smb },
- {0x8086, 0x27DA, "ICH7",		read_smb },
- {0x8086, 0x283E, "ICH8",		read_smb },
- {0x8086, 0x2930, "ICH9",		read_smb },
- {0x8086, 0x3A30, "ICH10R",		read_smb },
- {0x8086, 0x3A60, "ICH10B",		read_smb },
- {0x8086, 0x3B30, "5 Series",	read_smb },
- {0x8086, 0x1C22, "6 Series",	read_smb },
- {0x8086, 0x5032, "EP80579",	read_smb }
- 
- };
- */
 
 VOID ScanSPD()
 {
@@ -625,20 +594,14 @@ VOID ScanSPD()
   
 	/* Scan PCI BUS For SmBus controller */
 	Status = gBS->LocateHandleBuffer(AllHandles,NULL,NULL,&HandleCount,&HandleBuffer);
-	if (!EFI_ERROR(Status))
-	{
-		for (HandleIndex = 0; HandleIndex < HandleCount; HandleIndex++)
-		{
+	if (!EFI_ERROR(Status)) {
+		for (HandleIndex = 0; HandleIndex < HandleCount; HandleIndex++) {
 			Status = gBS->ProtocolsPerHandle(HandleBuffer[HandleIndex],&ProtocolGuidArray,&ArrayCount);
-			if (!EFI_ERROR(Status))
-			{
-				for (ProtocolIndex = 0; ProtocolIndex < ArrayCount; ProtocolIndex++)
-				{
-					if (CompareGuid(&gEfiPciIoProtocolGuid, ProtocolGuidArray[ProtocolIndex]))
-					{
+			if (!EFI_ERROR(Status)) {
+				for (ProtocolIndex = 0; ProtocolIndex < ArrayCount; ProtocolIndex++) {
+					if (CompareGuid(&gEfiPciIoProtocolGuid, ProtocolGuidArray[ProtocolIndex])) {
 						Status = gBS->OpenProtocol(HandleBuffer[HandleIndex],&gEfiPciIoProtocolGuid,(VOID **)&PciIo,gImageHandle,NULL,EFI_OPEN_PROTOCOL_GET_PROTOCOL);
-						if (!EFI_ERROR(Status))
-						{
+						if (!EFI_ERROR(Status)) {
 							/* Read PCI BUS */
 							Status = PciIo->Pci.Read (
                                         PciIo,
@@ -650,8 +613,7 @@ VOID ScanSPD()
 							
 							//SmBus controller has class = 0x0c0500
 							if ((gPci.Hdr.ClassCode[2] == 0x0c) && (gPci.Hdr.ClassCode[1] == 5) 
-                  && (gPci.Hdr.ClassCode[0] == 0) && (gPci.Hdr.VendorId == 0x8086 || gPci.Hdr.VendorId == 0x10DE))
-							{
+                  && (gPci.Hdr.ClassCode[0] == 0) && (gPci.Hdr.VendorId == 0x8086 || gPci.Hdr.VendorId == 0x10DE)) {
 								read_smb(PciIo);
 							}
 						}

@@ -1439,7 +1439,7 @@ VOID        PrintBytes(IN VOID *Bytes, IN UINTN Number);
 VOID        SetDMISettingsForModel(MACHINE_TYPES Model);
 MACHINE_TYPES GetModelFromString(CHAR8 *ProductName);
 VOID        GetDefaultSettings(VOID);
-VOID        FillInputs(VOID);
+VOID        FillInputs(BOOLEAN New);
 VOID        ApplyInputs(VOID);
 
 BOOLEAN     IsValidGuidAsciiString(IN CHAR8 *Str);
