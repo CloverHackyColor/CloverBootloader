@@ -3739,10 +3739,10 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
       if (prop){
         // Get memory table count
         TagPtr prop2 = GetProperty(prop, "SlotCount");
-        gRAM.UserInUse = (UINT8)GetPropertyInteger(prop2, MAX_RAM_SLOTS);
+        gRAM.UserInUse = (UINT8)GetPropertyInteger(prop2, 0);
         // Get memory channels
         prop2 = GetProperty(prop, "Channels");
-        gRAM.UserChannels = (UINT8)GetPropertyInteger(prop2, 2);
+        gRAM.UserChannels = (UINT8)GetPropertyInteger(prop2, 0);
         // Get memory tables
         prop2 = GetProperty(prop, "Modules");
         if (prop2) {
