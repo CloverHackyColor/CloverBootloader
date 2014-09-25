@@ -3804,8 +3804,8 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
             }
             gRAM.User[Slot].InUse = (gRAM.User[Slot].ModuleSize > 0);
           }
+          gSettings.InjectMemoryTables = TRUE;
         }
-        gSettings.InjectMemoryTables = TRUE;
       }
       prop = GetProperty(dictPointer, "Slots");
       if (prop) {

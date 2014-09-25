@@ -1167,7 +1167,7 @@ VOID PatchTableType17()
        gRAM.UserChannels = 1;
     }
     if (gRAM.UserInUse >= MAX_RAM_SLOTS) {
-      gRAM.UserInUse = TotalCount; //MAX_RAM_SLOTS;
+      gRAM.UserInUse = MAX_RAM_SLOTS;
     }
     DBG("Channels: %d\n", gRAM.UserChannels);
     // Setup interleaved channel map
@@ -1293,7 +1293,7 @@ VOID PatchTableType17()
     DBG("Trusting SMBIOS...\n");
   }
   // Determine expected slot count
-  expectedCount = gRAM.SPDInUse;
+  expectedCount = (gRAM.UserInUse != 0) ? gRAM.UserInUse : gRAM.SPDInUse;
   if (trustSMBIOS) {
     // Use the smbios in use count
     if (expectedCount < gRAM.SMBIOSInUse) {
@@ -1323,7 +1323,9 @@ VOID PatchTableType17()
     DBG("Detected alternating SMBIOS channel banks\n");
   }
   // Determine if using triple or quadruple channel
-  if (gRAM.SPDInUse == 0) {
+  if (gRAM.UserChannels != 0) {
+    channels = gRAM.UserChannels;
+  } else if (gRAM.SPDInUse == 0) {
     if (trustSMBIOS) {
       if ((gRAM.SMBIOSInUse % 4) == 0) {
         // Quadruple channel
@@ -1355,10 +1357,7 @@ VOID PatchTableType17()
              (gRAM.SMBIOS[0].ModuleSize == gRAM.SMBIOS[4].ModuleSize))) {
               channels = 3;
             }
-      }
-      else if ((gRAM.SPD[0].InUse != gRAM.SPD[2].InUse) ||
-               (gRAM.SPD[0].ModuleSize != gRAM.SPD[2].ModuleSize) ||
-               (gRAM.SPD[0].Frequency != gRAM.SPD[2].Frequency)) {
+      } else if (!wrongSMBIOSBanks && ((gRAM.SMBIOSInUse % 2) != 0)) {
          channels = 1;
       }
     }
@@ -1381,8 +1380,7 @@ VOID PatchTableType17()
       channels = 3;
     }
   } else if ((gRAM.SPD[0].InUse != gRAM.SPD[2].InUse) ||
-             (gRAM.SPD[0].ModuleSize != gRAM.SPD[2].ModuleSize) ||
-             (gRAM.SPD[0].Frequency != gRAM.SPD[2].Frequency)) {
+             ((gRAM.SPDInUse % 2) != 0)) {
      channels = 1;
   }
   // Can't have less than the number of channels

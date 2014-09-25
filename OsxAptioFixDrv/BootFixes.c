@@ -870,7 +870,7 @@ FixHibernateWakeWithoutRelocBlock(UINTN imageHeaderPage, BOOLEAN ModeX64)
 	ImageHeader = (IOHibernateImageHeader *)(UINTN)(imageHeaderPage << EFI_PAGE_SHIFT);
 	
 	// Pass our relocated copy of system table
-	ImageHeader->systemTableOffset = gRelocatedSysTableRtArea - ImageHeader->runtimePages;
+	ImageHeader->systemTableOffset = (UINT32)(UINTN)(gRelocatedSysTableRtArea - ImageHeader->runtimePages);
 	
 	// we need to remove memory map handoff. my system restarts if we leave it there
 	// if mem map handoff is not present, then kernel will not map those new rt pages
