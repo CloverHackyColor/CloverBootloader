@@ -16,6 +16,7 @@
 #include "Sdk/C/Types.h"
 #include "Sdk/C/7zVersion.h"
 #include "Sdk/C/LzmaDec.h"
+#include "Debug.h"
 
 #define SCRATCH_BUFFER_REQUEST_SIZE SIZE_64KB
 
@@ -217,7 +218,7 @@ LzmaUefiDecompress (
     &Status,
     &(AllocFuncs.Functions)
     );
-
+  PrintString ("LzmaDecode OK\n");
   if (LzmaResult == SZ_OK) {
     return RETURN_SUCCESS;
   } else {

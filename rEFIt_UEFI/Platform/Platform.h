@@ -806,10 +806,11 @@ typedef struct {
 	CHAR8   BootArgs[256];
 	CHAR16	CustomUuid[40];
   CHAR16  *DefaultVolume;
-  BOOLEAN LastBootedVolume;
 #if defined(MDE_CPU_IA32)
   UINT32  align10;
 #endif
+  BOOLEAN LastBootedVolume;
+  UINT8   Pad21[7];
   
   CHAR16  *DefaultLoader;
 #if defined(MDE_CPU_IA32)
@@ -825,6 +826,7 @@ typedef struct {
 	
 	// GUI parameters
 	BOOLEAN	Debug;
+  UINT8   Pad22[7];
   
 	//ACPI
 	UINT64	ResetAddr;
@@ -927,10 +929,7 @@ typedef struct {
 
   // HDA
   BOOLEAN HDAInjection;
-  UINTN   HDALayoutId;
-#if defined(MDE_CPU_IA32)
-  UINT32  align2;
-#endif
+  INT32   HDALayoutId;
   
   // USB DeviceTree injection
   BOOLEAN USBInjection;
@@ -938,10 +937,12 @@ typedef struct {
   BOOLEAN USBFixOwnership;
   BOOLEAN InjectClockID;
   BOOLEAN HighCurrent;
+  UINT8   pad61[4];
   
   // LegacyBoot
   CHAR16  LegacyBoot[32];
   UINT16  LegacyBiosDefaultEntry;
+  UINT8   pad62[6];
   
   //Volumes hiding
   CHAR16 **HVHideStrings;

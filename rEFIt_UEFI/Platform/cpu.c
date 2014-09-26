@@ -160,7 +160,7 @@ VOID GetCPUProperties (VOID)
 	}
 	gCPUStructure.Model += (gCPUStructure.Extmodel << 4);  
   
-  //Calculate Nr or Cores
+  //Calculate Nr of Cores
 	if (gCPUStructure.Features & CPUID_FEATURE_HTT) {
 		gCPUStructure.LogicalPerPackage	= (UINT32)bitfield(gCPUStructure.CPUID[CPUID_1][EBX], 23, 16); //Atom330 = 4
 	} else {

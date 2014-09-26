@@ -761,9 +761,9 @@ radeon_card_info_t radeon_cards[] = {
 	{ 0x6858,	0x00000000, CHIP_FAMILY_TURKS,	"AMD Radeon HD 7400 Series",	kPondweed   },
 	{ 0x6859,	0x00000000, CHIP_FAMILY_TURKS,	"AMD Radeon HD 7600M Series",	kPondweed   },
 //new series
-  { 0x6613,	0x00000000, CHIP_FAMILY_HAWAII,	"AMD Radeon R7 240",	kFutomaki		},
-  { 0x665C,	0x00000000, CHIP_FAMILY_HAWAII,	"AMD Radeon HD 7790",	kFutomaki		},
-  { 0x665D,	0x00000000, CHIP_FAMILY_HAWAII,	"AMD Radeon R9 260",	kFutomaki		},
+  { 0x6613,	0x00000000, CHIP_FAMILY_BONAIRE,	"AMD Radeon R7 240",	kFutomaki		},
+  { 0x665C,	0x00000000, CHIP_FAMILY_BONAIRE,	"AMD Radeon HD 7790",	kFutomaki		},
+  { 0x665D,	0x00000000, CHIP_FAMILY_BONAIRE,	"AMD Radeon R9 260",	kFutomaki		},
 
 	{ 0x0000,	0x00000000, CHIP_FAMILY_UNKNOW,	"AMD Unknown",			kNull		}
 };
@@ -813,7 +813,25 @@ radeon_card_info_t radeon_cards[] = {
 
  Verde = R575A, R576
  0x68201002 0x68211002 0x68251002 0x68271002 0x682D1002 0x682F1002 0x68391002 0x683B1002 0x683D1002 0x683F1002
+Yosemite news
+ AMD8000Controller
  
+ 0x67B01002 - R9 290X
+ 0x665C1002 - HD 7790
+ 0x665D1002 - Radeon R7 200 (Bonaire)
+ 0x66511002
+ 0x66501002
+ 0x66461002
+ 0x66411002
+ 0x66401002
+ 0x46001002
+ 
+ AMD9000Controller
+ 
+ 0x69201002
+ 0x69211002
+ 0x69381002
+ 0x69391002
  
 */
 

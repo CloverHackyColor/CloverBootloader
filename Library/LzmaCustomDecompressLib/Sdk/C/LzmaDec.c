@@ -17,6 +17,7 @@
 **/
 
 #include "LzmaDec.h"
+#include "Debug.h"
 
 #ifndef EFIAPI
 
@@ -1017,7 +1018,7 @@ SRes LzmaDecode(Byte *dest, SizeT *destLen, const Byte *src, SizeT *srcLen,
   
   *srcLen = inSize;
   res = LzmaDec_DecodeToDic(&p, outSize, src, srcLen, finishMode, status);
-
+//PrintHeader('C');
   if (res == SZ_OK && *status == LZMA_STATUS_NEEDS_MORE_INPUT)
     res = SZ_ERROR_INPUT_EOF;
 

@@ -3130,7 +3130,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
           //   if hex device is cannot be converted to decimal, injects legacy value 12 decimal
           // - all other values are equal to HDAInjection=Detect
           if (prop->type == kTagTypeInteger) {
-            gSettings.HDALayoutId = (UINTN)prop->string;
+            gSettings.HDALayoutId = (INT32)(UINTN)prop->string; //must be signed
             gSettings.HDAInjection = (gSettings.HDALayoutId > 0);
           } else if (prop->type == kTagTypeString){
             if ((prop->string[0] == 'n') || (prop->string[0] == 'N')) {
@@ -3139,10 +3139,10 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
             } else if ((prop->string[0] == '0')  &&
                        (prop->string[1] == 'x' || prop->string[1] == 'X')) {
               // assume it's a hex layout id
-              gSettings.HDALayoutId = AsciiStrHexToUintn(prop->string);
+              gSettings.HDALayoutId = (INT32)AsciiStrHexToUintn(prop->string);
             } else {
               // assume it's a decimal layout id
-              gSettings.HDALayoutId = AsciiStrDecimalToUintn(prop->string);
+              gSettings.HDALayoutId = (INT32)AsciiStrDecimalToUintn(prop->string);
             }
           }
         }
@@ -3157,7 +3157,6 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
         prop = GetProperty(prop2, "Inject");
         if(prop) {
           // enabled by default
-          // syntax: USBInjection=Yes/No
           if (IsPropertyFalse(prop)) {
             gSettings.USBInjection = FALSE;
           }
@@ -3165,13 +3164,12 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, TagPtr CfgDict)
         prop = GetProperty(prop2, "AddClockID");
         if(prop) {
           // disabled by default
-          // syntax: InjectClockID=Yes/No
           if (IsPropertyFalse(prop))
             gSettings.InjectClockID = FALSE;
           else if (IsPropertyTrue(prop))
             gSettings.InjectClockID = TRUE;
         }
-        // enabled by default for CloverEFI or Duet
+        // enabled by default for CloverEFI
         // disabled for others
         gSettings.USBFixOwnership = gFirmwareClover;
         prop = GetProperty(prop2, "FixOwnership");
