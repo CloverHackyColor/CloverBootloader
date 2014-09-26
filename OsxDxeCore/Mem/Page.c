@@ -1,7 +1,7 @@
 /** @file
   UEFI Memory page management functions.
 
-Copyright (c) 2007 - 2013, Intel Corporation. All rights reserved.<BR>
+Copyright (c) 2007 - 2014, Intel Corporation. All rights reserved.<BR>
 This program and the accompanying materials
 are licensed and made available under the terms and conditions of the BSD License
 which accompanies this distribution.  The full text of the license may be found at
@@ -170,14 +170,17 @@ CoreAddRange (
 {
   LIST_ENTRY        *Link;
   MEMORY_MAP        *Entry;
+  if (((Start & EFI_PAGE_MASK) != 0) || (End <= Start)) {
+    return;
+  }
 
-  ASSERT ((Start & EFI_PAGE_MASK) == 0);
+/*  ASSERT ((Start & EFI_PAGE_MASK) == 0);
   ASSERT (End > Start) ;
 
   ASSERT_LOCKED (&gMemoryLock);
 
   DEBUG ((DEBUG_PAGE, "AddRange: %lx-%lx to %d\n", Start, End, Type));
-
+*/
   //
   // If memory of type EfiConventionalMemory is being added that includes the page 
   // starting at address 0, then zero the page starting at address 0.  This has 
@@ -254,7 +257,7 @@ CoreAddRange (
   InsertTailList (&gMemoryMap, &mMapStack[mMapDepth].Link);
 
   mMapDepth += 1;
-  ASSERT (mMapDepth < MAX_MAP_DEPTH);
+//  ASSERT (mMapDepth < MAX_MAP_DEPTH);
 
   return ;
 }
@@ -322,7 +325,7 @@ CoreFreeMemoryMapStack (
   MEMORY_MAP      *Entry2;
   LIST_ENTRY      *Link2;
 
-  ASSERT_LOCKED (&gMemoryLock);
+//  ASSERT_LOCKED (&gMemoryLock);
 
   //
   // If already freeing the map stack, then return
@@ -341,8 +344,11 @@ CoreFreeMemoryMapStack (
     // Deque an memory map entry from mFreeMemoryMapEntryList
     //
     Entry = AllocateMemoryMapEntry ();
+    if (!Entry) {
+      break;
+    }
 
-    ASSERT (Entry);
+//    ASSERT (Entry);
 
     //
     // Update to proper entry
@@ -397,7 +403,7 @@ PromoteMemoryResource (
   EFI_GCD_MAP_ENTRY  *Entry;
   BOOLEAN            Promoted;
 
-  DEBUG ((DEBUG_PAGE, "Promote the memory resource\n"));
+//  DEBUG ((DEBUG_PAGE, "Promote the memory resource\n"));
 
   CoreAcquireGcdMemoryLock ();
 
@@ -705,11 +711,11 @@ CoreConvertPages (
   NumberOfBytes = LShiftU64 (NumberOfPages, EFI_PAGE_SHIFT);
   End = Start + NumberOfBytes - 1;
 
-  ASSERT (NumberOfPages);
+/*  ASSERT (NumberOfPages);
   ASSERT ((Start & EFI_PAGE_MASK) == 0);
   ASSERT (End > Start) ;
   ASSERT_LOCKED (&gMemoryLock);
-
+*/
   if (NumberOfPages == 0 || ((Start & EFI_PAGE_MASK) != 0) || (Start > (Start + NumberOfBytes))) {
     return EFI_INVALID_PARAMETER;
   }
@@ -732,7 +738,7 @@ CoreConvertPages (
     }
 
     if (Link == &gMemoryMap) {
-      DEBUG ((DEBUG_ERROR | DEBUG_PAGE, "ConvertPages: failed to find range %lx - %lx\n", Start, End));
+//      DEBUG ((DEBUG_ERROR | DEBUG_PAGE, "ConvertPages: failed to find range %lx - %lx\n", Start, End));
       return EFI_NOT_FOUND;
     }
 
@@ -742,18 +748,18 @@ CoreConvertPages (
     //
     RangeEnd = End;
 
-    ASSERT (Entry != NULL);
+ //   ASSERT (Entry != NULL);
     if (Entry->End < End) {
       RangeEnd = Entry->End;
     }
 
-    DEBUG ((DEBUG_PAGE, "ConvertRange: %lx-%lx to %d\n", Start, RangeEnd, NewType));
+//    DEBUG ((DEBUG_PAGE, "ConvertRange: %lx-%lx to %d\n", Start, RangeEnd, NewType));
 
     //
     // Debug code - verify conversion is allowed
     //
     if (!(NewType == EfiConventionalMemory ? 1 : 0) ^ (Entry->Type == EfiConventionalMemory ? 1 : 0)) {
-      DEBUG ((DEBUG_ERROR | DEBUG_PAGE, "ConvertPages: Incompatible memory types\n"));
+//      DEBUG ((DEBUG_ERROR | DEBUG_PAGE, "ConvertPages: Incompatible memory types\n"));
       return EFI_NOT_FOUND;
     }
 
@@ -819,13 +825,13 @@ CoreConvertPages (
       mMapStack[mMapDepth].Attribute = Entry->Attribute;
 
       Entry->End = Start - 1;
-      ASSERT (Entry->Start < Entry->End);
+ //     ASSERT (Entry->Start < Entry->End);
 
       Entry = &mMapStack[mMapDepth];
       InsertTailList (&gMemoryMap, &Entry->Link);
 
       mMapDepth += 1;
-      ASSERT (mMapDepth < MAX_MAP_DEPTH);
+//      ASSERT (mMapDepth < MAX_MAP_DEPTH);
     }
 
     //
@@ -854,11 +860,11 @@ CoreConvertPages (
       //
       if (Start == 0) {
         if (RangeEnd > EFI_PAGE_SIZE) {
-          DEBUG_CLEAR_MEMORY ((VOID *)(UINTN) EFI_PAGE_SIZE, (UINTN) (RangeEnd - EFI_PAGE_SIZE + 1));
+//          DEBUG_CLEAR_MEMORY ((VOID *)(UINTN) EFI_PAGE_SIZE, (UINTN) (RangeEnd - EFI_PAGE_SIZE + 1));
         }
-      } else {
+      }/* else {
       DEBUG_CLEAR_MEMORY ((VOID *)(UINTN) Start, (UINTN) (RangeEnd - Start + 1));
-    }
+      }*/
     }
 
     //
@@ -930,7 +936,7 @@ CoreFindFreePagesI (
     //
     // Set MaxAddress to a page boundary
     //
-    MaxAddress &= ~EFI_PAGE_MASK;
+    MaxAddress &= ~(UINT64)EFI_PAGE_MASK;
 
     //
     // Set MaxAddress to end of the page
@@ -1231,7 +1237,7 @@ CoreFreePages (
         break;
     }
   }
-  if ((Link == &gMemoryMap) || !Entry) {
+  if (Link == &gMemoryMap) {
     Status = EFI_NOT_FOUND;
     goto Done;
   }
@@ -1465,7 +1471,7 @@ CoreGetMemoryMap (
   MemoryMapStart = MemoryMap;
   for (Link = gMemoryMap.ForwardLink; Link != &gMemoryMap; Link = Link->ForwardLink) {
     Entry = CR (Link, MEMORY_MAP, Link, MEMORY_MAP_SIGNATURE);
-    ASSERT (Entry->VirtualStart == 0);
+//    ASSERT (Entry->VirtualStart == 0);
 
     //
     // Convert internal map into an EFI_MEMORY_DESCRIPTOR
@@ -1592,7 +1598,7 @@ CoreAllocatePoolPages (
   // Convert it to boot services data
   //
   if (Start == 0) {
-    DEBUG ((DEBUG_ERROR | DEBUG_PAGE, "AllocatePoolPages: failed to allocate %d pages\n", (UINT32)NumberOfPages));
+ //   DEBUG ((DEBUG_ERROR | DEBUG_PAGE, "AllocatePoolPages: failed to allocate %d pages\n", (UINT32)NumberOfPages));
   } else {
     CoreConvertPages (Start, NumberOfPages, PoolType);
   }
@@ -1691,12 +1697,3 @@ Done:
 
   return Status;
 }
-
-
-
-
-
-
-
-
-

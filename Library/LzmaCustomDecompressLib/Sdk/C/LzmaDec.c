@@ -17,7 +17,7 @@
 **/
 
 #include "LzmaDec.h"
-#include "Debug.h"
+//#include "Debug.h"
 
 #ifndef EFIAPI
 

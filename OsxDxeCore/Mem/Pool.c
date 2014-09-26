@@ -1,7 +1,7 @@
 /** @file
   UEFI Memory pool management functions.
 
-Copyright (c) 2006 - 2013, Intel Corporation. All rights reserved.<BR>
+Copyright (c) 2006 - 2014, Intel Corporation. All rights reserved.<BR>
 This program and the accompanying materials
 are licensed and made available under the terms and conditions of the BSD License
 which accompanies this distribution.  The full text of the license may be found at
@@ -247,7 +247,7 @@ CoreAllocatePoolI (
   UINTN       Offset;
   UINTN       NoPages;
 
-  ASSERT_LOCKED (&gMemoryLock);
+//  ASSERT_LOCKED (&gMemoryLock);
 
   //
   // Adjust the size by the pool header & tail overhead
@@ -274,7 +274,7 @@ CoreAllocatePoolI (
   //
   if (Index >= MAX_POOL_LIST) {
     NoPages = EFI_SIZE_TO_PAGES(Size) + EFI_SIZE_TO_PAGES (DEFAULT_PAGE_ALLOCATION) - 1;
-    NoPages &= ~(EFI_SIZE_TO_PAGES (DEFAULT_PAGE_ALLOCATION) - 1);
+    NoPages &= ~(UINTN)(EFI_SIZE_TO_PAGES (DEFAULT_PAGE_ALLOCATION) - 1);
     Head = CoreAllocatePoolPages (PoolType, NoPages, DEFAULT_PAGE_ALLOCATION);
     goto Done;
   }
@@ -297,7 +297,7 @@ CoreAllocatePoolI (
     //
     Offset = 0;
     while (Offset < DEFAULT_PAGE_ALLOCATION) {
-      ASSERT (Index < MAX_POOL_LIST);
+//      ASSERT (Index < MAX_POOL_LIST);
       FSize = LIST_TO_SIZE(Index);
 
       while (Offset + FSize <= DEFAULT_PAGE_ALLOCATION) {
@@ -311,7 +311,7 @@ CoreAllocatePoolI (
       Index -= 1;
     }
 
-    ASSERT (Offset == DEFAULT_PAGE_ALLOCATION);
+//    ASSERT (Offset == DEFAULT_PAGE_ALLOCATION);
     Index = SIZE_TO_LIST(Size);
   }
 
@@ -418,34 +418,33 @@ CoreFreePoolI (
   UINTN       Offset;
   BOOLEAN     AllFree;
 
-  ASSERT(Buffer != NULL);
+//  ASSERT(Buffer != NULL);
+  if (!Buffer) {
+    return EFI_SUCCESS;
+  }
   //
   // Get the head & tail of the pool entry
   //
   Head = CR (Buffer, POOL_HEAD, Data, POOL_HEAD_SIGNATURE);
-  ASSERT(Head != NULL);
+//  ASSERT(Head != NULL);
 
-  if (Head->Signature != POOL_HEAD_SIGNATURE) {
+  if (!Head || (Head->Signature != POOL_HEAD_SIGNATURE)) {
     return EFI_INVALID_PARAMETER;
   }
 
   Tail = HEAD_TO_TAIL (Head);
-  ASSERT(Tail != NULL);
+//  ASSERT(Tail != NULL);
 
   //
   // Debug
   //
-  ASSERT (Tail->Signature == POOL_TAIL_SIGNATURE);
-  ASSERT (Head->Size == Tail->Size);
-  ASSERT_LOCKED (&gMemoryLock);
-
-  if (Tail->Signature != POOL_TAIL_SIGNATURE) {
+//  ASSERT (Tail->Signature == POOL_TAIL_SIGNATURE);
+//  ASSERT (Head->Size == Tail->Size);
+  if (!Tail || (Tail->Signature != POOL_TAIL_SIGNATURE) || (Head->Size != Tail->Size)) {
     return EFI_INVALID_PARAMETER;
   }
 
-  if (Head->Size != Tail->Size) {
-    return EFI_INVALID_PARAMETER;
-  }
+//  ASSERT_LOCKED (&gMemoryLock);
 
   //
   // Determine the pool type and account for it
@@ -456,13 +455,13 @@ CoreFreePoolI (
     return EFI_INVALID_PARAMETER;
   }
   Pool->Used -= Size;
-  DEBUG ((DEBUG_POOL, "FreePool: %p (len %lx) %,ld\n", Head->Data, (UINT64)(Head->Size - POOL_OVERHEAD), (UINT64) Pool->Used));
+//  DEBUG ((DEBUG_POOL, "FreePool: %p (len %lx) %,ld\n", Head->Data, (UINT64)(Head->Size - POOL_OVERHEAD), (UINT64) Pool->Used));
 
   //
   // Determine the pool list
   //
   Index = SIZE_TO_LIST(Size);
-  DEBUG_CLEAR_MEMORY (Head, Size);
+//  DEBUG_CLEAR_MEMORY (Head, Size);
 
   //
   // If it's not on the list, it must be pool pages
@@ -473,7 +472,7 @@ CoreFreePoolI (
     // Return the memory pages back to free memory
     //
     NoPages = EFI_SIZE_TO_PAGES(Size) + EFI_SIZE_TO_PAGES (DEFAULT_PAGE_ALLOCATION) - 1;
-    NoPages &= ~(EFI_SIZE_TO_PAGES (DEFAULT_PAGE_ALLOCATION) - 1);
+    NoPages &= ~(UINTN)(EFI_SIZE_TO_PAGES (DEFAULT_PAGE_ALLOCATION) - 1);
     CoreFreePoolPages ((EFI_PHYSICAL_ADDRESS) (UINTN) Head, NoPages);
 
   } else {
@@ -482,7 +481,7 @@ CoreFreePoolI (
     // Put the pool entry onto the free pool list
     //
     Free = (POOL_FREE *) Head;
-    ASSERT(Free != NULL);
+//    ASSERT(Free != NULL);
     Free->Signature = POOL_FREE_SIGNATURE;
     Free->Index     = (UINT32)Index;
     InsertHeadList (&Pool->FreeList[Index], &Free->Link);
@@ -493,7 +492,7 @@ CoreFreePoolI (
     //
     NewPage = (CHAR8 *)((UINTN)Free & ~((DEFAULT_PAGE_ALLOCATION) -1));
     Free = (POOL_FREE *) &NewPage[0];
-    ASSERT(Free != NULL);
+//    ASSERT(Free != NULL);
 
     if (Free->Signature == POOL_FREE_SIGNATURE) {
 
@@ -506,7 +505,7 @@ CoreFreePoolI (
         FSize = LIST_TO_SIZE(Index);
         while (Offset + FSize <= DEFAULT_PAGE_ALLOCATION) {
           Free = (POOL_FREE *) &NewPage[Offset];
-          ASSERT(Free != NULL);
+//          ASSERT(Free != NULL);
           if (Free->Signature != POOL_FREE_SIGNATURE) {
             AllFree = FALSE;
           }
@@ -523,7 +522,7 @@ CoreFreePoolI (
         // Remove all of these pool entries from the free loop lists.
         //
         Free = (POOL_FREE *) &NewPage[0];
-        ASSERT(Free != NULL);
+  //      ASSERT(Free != NULL);
         Index = Free->Index;
         Offset = 0;
 
@@ -531,7 +530,7 @@ CoreFreePoolI (
           FSize = LIST_TO_SIZE(Index);
           while (Offset + FSize <= DEFAULT_PAGE_ALLOCATION) {
             Free = (POOL_FREE *) &NewPage[Offset];
-            ASSERT(Free != NULL);
+ //           ASSERT(Free != NULL);
             RemoveEntryList (&Free->Link);
             Offset += FSize;
           }
