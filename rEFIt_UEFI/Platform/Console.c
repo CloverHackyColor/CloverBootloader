@@ -51,7 +51,7 @@ SetModeImpl(
 EFI_STATUS EFIAPI
 LockStdInImpl(
   IN  EFI_CONSOLE_CONTROL_PROTOCOL      *This,
-  IN CHAR16                             *Password
+  IN  CHAR16                            *Password
   )
 {
     return EFI_SUCCESS;
@@ -70,28 +70,34 @@ EFI_CONSOLE_CONTROL_PROTOCOL gConsoleController =
 EFI_STATUS
 InitializeConsoleSim ()
 {
-  EFI_STATUS              Status;
-  EG_PIXEL		BackgroundClear = {0, 0, 0, 0};
-	CHAR16*			bgc = L"BackgroundClear";
-	UINTN			dataSize = sizeof(BackgroundClear);
+  EFI_STATUS Status;
+//EG_PIXEL   BackgroundClear = { 0, 0, 0, 0 };
+//CHAR16*    bgc             = L"BackgroundClear";
+//UINTN      dataSize        = sizeof(BackgroundClear);
   
   
- /* Status = */gBS->InstallMultipleProtocolInterfaces (
-                       &gImageHandle,
-                       &gEfiConsoleControlProtocolGuid,
-                       &gConsoleController,
-                       NULL
-                        );
+  Status = gBS->InstallMultipleProtocolInterfaces (
+                  &gImageHandle,
+                  &gEfiConsoleControlProtocolGuid,
+                  &gConsoleController,
+                  NULL
+                  );
   
   // get background clear
-	Status = gRS->GetVariable(bgc, &gEfiAppleNvramGuid, 0, &dataSize, &BackgroundClear);
-	if(!EFI_ERROR(Status))
-		return Status;
-  
-	Status = gRS->SetVariable(bgc, &gEfiAppleNvramGuid,
-                            EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-                            sizeof(BackgroundClear), &BackgroundClear);
-  
+/*
+  Status = gRS->GetVariable(bgc, &gEfiAppleNvramGuid, 0, &dataSize, &BackgroundClear);
+  if(!EFI_ERROR(Status))
+    return Status;
+*/
+
+  // Download-Fritz: Done by DataHubCpu.c; SetVariablesForOSX ()
+/*
+  AddNvramVariable (bgc,
+    &gEfiAppleNvramGuid,
+    EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+    sizeof(BackgroundClear),
+    &BackgroundClear);
+*/
 //  ASSERT_EFI_ERROR (Status);
 
   return Status;

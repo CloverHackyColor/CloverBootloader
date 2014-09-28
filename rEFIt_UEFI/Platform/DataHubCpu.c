@@ -41,8 +41,8 @@
 #define EFI_CPU_DATA_MAXIMUM_LENGTH 0x100
 
 typedef union {
-    EFI_CPU_DATA_RECORD *DataRecord;
-    UINT8               *Raw;
+  EFI_CPU_DATA_RECORD *DataRecord;
+  UINT8               *Raw;
 } EFI_CPU_DATA_RECORD_BUFFER;
 
 EFI_SUBCLASS_TYPE1_HEADER mCpuDataRecordHeader = {
@@ -60,239 +60,275 @@ EFI_GUID gDataHubPlatformGuid = {
 extern EFI_GUID gDataHubPlatformGuid;
 #pragma pack(1)
 typedef struct {
-    EFI_SUBCLASS_TYPE1_HEADER   Hdr;			/* 0x48 */
-    UINT32						NameLen;         /* 0x58 , in bytes */
-    UINT32						ValLen;          /* 0x5c */
-    UINT8						Data[1];         /* 0x60 Name Value */
+    EFI_SUBCLASS_TYPE1_HEADER Hdr;      /* 0x48 */
+    UINT32                    NameLen;  /* 0x58 , in bytes */
+    UINT32                    ValLen;   /* 0x5c */
+    UINT8                     Data[1];  /* 0x60 Name Value */
 } PLATFORM_DATA;
 #pragma pack()
 
-EFI_DATA_HUB_PROTOCOL					*gDataHub;
+EFI_DATA_HUB_PROTOCOL         *gDataHub;
 
 
 UINT32
-CopyRecord(PLATFORM_DATA* Rec, const CHAR16* Name, VOID* Val, UINT32 ValLen)
+CopyRecord (
+  PLATFORM_DATA *Rec,
+  const CHAR16  *Name,
+  VOID          *Val,
+  UINT32        ValLen
+  )
 {
-	CopyMem(&Rec->Hdr, &mCpuDataRecordHeader, sizeof(EFI_SUBCLASS_TYPE1_HEADER));
-    Rec->NameLen = (UINT32)StrLen(Name) * sizeof(CHAR16);
-    Rec->ValLen = ValLen;
-    CopyMem(Rec->Data, Name, Rec->NameLen);
-    CopyMem(Rec->Data + Rec->NameLen, Val, ValLen);
+  CopyMem (&Rec->Hdr, &mCpuDataRecordHeader, sizeof(EFI_SUBCLASS_TYPE1_HEADER));
+  Rec->NameLen = (UINT32)StrLen (Name) * sizeof(CHAR16);
+  Rec->ValLen  = ValLen;
+  CopyMem (Rec->Data,                Name, Rec->NameLen);
+  CopyMem (Rec->Data + Rec->NameLen, Val,  ValLen);
 
-    return (sizeof(EFI_SUBCLASS_TYPE1_HEADER) + 8 + Rec->NameLen + Rec->ValLen);
+  return (sizeof(EFI_SUBCLASS_TYPE1_HEADER) + 8 + Rec->NameLen + Rec->ValLen);
 }
 
 EFI_STATUS
-LogDataHub(
-           EFI_GUID					  *TypeGuid,
-           CHAR16             *Name,
-           VOID               *Data,
-           UINT32             DataSize)
+LogDataHub(EFI_GUID *TypeGuid,
+  CHAR16  *Name,
+  VOID    *Data,
+  UINT32  DataSize
+  )
 {
-  UINT32                      RecordSize;
-  EFI_STATUS                  Status;
-	PLATFORM_DATA               *PlatformData;
-	
+  UINT32        RecordSize;
+  EFI_STATUS    Status;
+  PLATFORM_DATA *PlatformData;
+  
   PlatformData = (PLATFORM_DATA*)AllocatePool (sizeof(PLATFORM_DATA) + DataSize + EFI_CPU_DATA_MAXIMUM_LENGTH);
   if (PlatformData == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
-	
-  RecordSize = CopyRecord(PlatformData, Name, Data, DataSize);
+  
+  RecordSize = CopyRecord (PlatformData, Name, Data, DataSize);
   Status = gDataHub->LogData (
-                              gDataHub,
-                              TypeGuid,				/* DataRecordGuid */				
-                              &gDataHubPlatformGuid,   /* ProducerName */  //always						   
-                              EFI_DATA_RECORD_CLASS_DATA,
-                              PlatformData,
-                              RecordSize
-                              );
+                       gDataHub,
+                       TypeGuid,				            /* DataRecordGuid */				
+                       &gDataHubPlatformGuid,       /* ProducerName */  //always						   
+                       EFI_DATA_RECORD_CLASS_DATA,
+                       PlatformData,
+                       RecordSize
+                       );
+
  // ASSERT_EFI_ERROR (Status);
-	
+  
   FreePool (PlatformData);
   return Status;
 }
 
-EFI_STATUS SetVariablesForOSX()
+EFI_STATUS
+SetVariablesForOSX ()
 {
-//  EFI_STATUS  Status;
-  
-  UINT32      BackgroundClear = 0x00000000;
-  UINT32      FwFeatures      = gFwFeatures; //0x80001417; //Slice - get it from SMBIOS
-  UINT32      FwFeaturesMask  = 0xC003ffff;
-  CHAR8*      None    = "none";
-  UINTN       SNLen = 20;
-  UINTN       bootArgsLen = 256;
-  UINTN       LangLen = 16;
+  // The variable names used should be made glocal constants to prevent them being allocated multiple times
 
-//  CHAR8*      FmmName = &gSettings.FamilyName[0];
-//  UINTN       FmmLen  = AsciiStrLen(FmmName);
-  CHAR8*      BA = &gSettings.BootArgs[255];
+//EFI_STATUS Status;
+  
+  UINT32 BackgroundClear;
+  UINT32 FwFeaturesMask;
 
-	while (((*BA == ' ') || (*BA == 0)) && (bootArgsLen != 0)) {
-		BA--; bootArgsLen--;
-	}
-  BA = &gSettings.Language[15];
-  while (((*BA == ' ') || (*BA == 0)) && (LangLen != 0)) {
-		BA--; LangLen--;
-	}
-  BA = &gSettings.BoardSerialNumber[19];
-  while (((*BA == ' ') || (*BA == 0)) && (SNLen != 0)) {
-		BA--; SNLen--;
-	}
-  
-  if (gSettings.RtMLB == NULL && SNLen > 0) {
-    gSettings.RtMLB = AllocateCopyPool(SNLen + 1, gSettings.BoardSerialNumber);
+  CHAR8  *None;
+  CHAR16 *KbdPrevLang;
+
+//UINTN  BootArgsLen;
+  UINTN  LangLen;
+
+//CHAR8  *FmmName        = &gSettings.FamilyName[0];
+//UINTN  FmmLen          = AsciiStrLen (FmmName);
+  CHAR8  *variablePtr;
+  UINT32 Attributes;
+
+  VOID   *OldData;
+
+  if (!gFirmwareClover && !gDriversFlags.EmuVariableLoaded) {
+    Attributes = EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS;
+  } else {
+    Attributes = EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS;
   }
-  
-  if (gSettings.RtROM == NULL) {
-    // we can try to set it to MAC address from SMBIOS UUID - some boards have it there
-    gSettings.RtROMLen = 6;
-    gSettings.RtROM = AllocateCopyPool(gSettings.RtROMLen, ((UINT8*)&gSettings.SmUUID) + 10);
-  }
-  
+
   //
   // some NVRAM variables
   //
   
-	/*Status = */gRS->SetVariable(L"BackgroundClear", &gEfiAppleNvramGuid,
-                                         /*	EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-                                         sizeof(BackgroundClear), &BackgroundClear);
-	/*Status = */gRS->SetVariable(L"FirmwareFeatures", &gEfiAppleNvramGuid,
-                                         /*	EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-                                         sizeof(FwFeatures), &FwFeatures);
-	/*Status = */gRS->SetVariable(L"FirmwareFeaturesMask", &gEfiAppleNvramGuid,
-                                         /*	EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-                                         sizeof(FwFeaturesMask), &FwFeaturesMask);
+  if (gSettings.RtMLB != NULL) {
+    if (AsciiStrLen(gSettings.RtMLB) != 17) {
+      DBG ("** Warning: Your MLB is not suitable for iMessage (must be 17 chars long) !\n");
+    }
 
-// should set anyway  
-  /*Status = */gRS->SetVariable(L"MLB", &gEfiAppleNvramGuid,
-                            /*	EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-                            AsciiStrLen(gSettings.RtMLB), gSettings.RtMLB);
- 
-  /*Status = */gRS->SetVariable(L"ROM", &gEfiAppleNvramGuid,
-                            /*	EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-                            gSettings.RtROMLen, gSettings.RtROM);
-  
-  /*Status = */gRS->SetVariable(L"system-id", &gEfiAppleNvramGuid,
-                            /*	EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-                            sizeof(EFI_GUID), &gUuid);
-
-// reserved for a future. Should be tested on Yosemite
-/*  Status = gRS->SetVariable(L"HW_BID", &gEfiAppleNvramGuid,
-                            EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-                            AsciiStrLen(gSettings.BoardNumber), gSettings.BoardNumber);
-
-*/
-    // options variables
-    // note: some gEfiAppleBootGuid vars present in nvram.plist are already set by PutNvramPlistToRtVars()
-    // we should think how to handle those vars from nvram.plist and ones set here from gSettings
-
-    // Don't overwrite boot-args var as it was already set by PutNvramPlistToRtVars()
-    // boot-args nvram var contain ONLY parameters to be merged with the boot-args global variable
- /*Status = */gRS->SetVariable(L"boot-args", &gEfiAppleBootGuid,
-                            /*   EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-                            bootArgsLen , NULL); //&gSettings.BootArgs);
-
-
-	/*Status = */gRS->SetVariable(L"security-mode", &gEfiAppleBootGuid,
-                                         /*   EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-                                         AsciiStrLen(None), (VOID*)None);
-  
-  // we should have two UUID: platform and system
-  // NO! Only Platform is the best solution
-  if (!gSettings.InjectSystemID) {
-    /*Status = */gRS->SetVariable(L"platform-uuid", &gEfiAppleBootGuid,
-                              /*   EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-                              16, &gUuid);
+    if (gSettings.RtMLBConfig) {
+      SetNvramVariable (L"MLB", &gEfiAppleNvramGuid, Attributes, AsciiStrLen (gSettings.RtMLB), gSettings.RtMLB);
+    } else {
+      AddNvramVariable (L"MLB", &gEfiAppleNvramGuid, Attributes, AsciiStrLen (gSettings.RtMLB), gSettings.RtMLB);
+    }
   }
   
-  /*Status = */gRS->SetVariable(L"prev-lang:kbd", &gEfiAppleBootGuid,
-                            /*   EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-                                LangLen, &gSettings.Language);
+  if (gSettings.RtROM != NULL) {
+    if (gSettings.RtROMConfig) {
+      SetNvramVariable (L"ROM", &gEfiAppleNvramGuid, Attributes, gSettings.RtROMLen, gSettings.RtROM);
+    } else {
+      AddNvramVariable (L"ROM", &gEfiAppleNvramGuid, Attributes, gSettings.RtROMLen, gSettings.RtROM);
+    }
+  }
+
+  // Non-volatile BackgroundClear means less write attempts and greater performance
+  BackgroundClear = 0x00000000;
+  AddNvramVariable (L"BackgroundClear", &gEfiAppleNvramGuid, Attributes, sizeof(BackgroundClear), &BackgroundClear);
+
+  if (gFwFeaturesConfig) {
+    SetNvramVariable (L"FirmwareFeatures",   &gEfiAppleNvramGuid, Attributes, sizeof(gFwFeatures), &gFwFeatures);
+  } else {
+    AddNvramVariable (L"FirmwareFeatures",   &gEfiAppleNvramGuid, Attributes, sizeof(gFwFeatures), &gFwFeatures);
+  }
+
+  FwFeaturesMask  = 0xC003ffff;
+  AddNvramVariable (L"FirmwareFeaturesMask", &gEfiAppleNvramGuid, Attributes, sizeof(FwFeaturesMask), &FwFeaturesMask);
+
+// reserved for a future. Should be tested on Yosemite
+/*
+  AddNvramVariable (L"HW_BID", &gEfiAppleNvramGuid, Attributes, AsciiStrLen (gSettings.BoardNumber), gSettings.BoardNumber);
+*/
+
+  // options variables
+  // note: some gEfiAppleBootGuid vars present in nvram.plist are already set by PutNvramPlistToRtVars()
+  // we should think how to handle those vars from nvram.plist and ones set here from gSettings
+
+  // Don't overwrite boot-args var as it was already set by PutNvramPlistToRtVars()
+  // boot-args nvram var contains ONLY parameters to be merged with the boot-args global variable
+/*
+  BootArgsLen = 256;
+  variablePtr = &gSettings.BootArgs[255];
+  while (((*variablePtr == ' ') || (*variablePtr == 0)) && (BootArgsLen != 0)) {
+    --variablePtr;
+    --BootArgsLen;
+  }
+
+  AddNvramVariable (L"boot-args",            &gEfiAppleBootGuid,  Attributes, BootArgsLen, NULL);         //&gSettings.BootArgs);
+*/
+  None  = "none";
+  AddNvramVariable (L"security-mode",        &gEfiAppleBootGuid,  Attributes, 5,           (VOID*)None);  //AsciiStrLen (None) = 5
+
+  // we should have two UUID: platform and system
+  // NO! Only Platform is the best solution
+
+  if (gSettings.SmUUIDConfig) {
+    SetNvramVariable (L"system-id",          &gEfiAppleNvramGuid, Attributes, sizeof(gUuid), &gUuid);
+
+    if (!gSettings.InjectSystemID) {
+      SetNvramVariable (L"platform-uuid",    &gEfiAppleBootGuid,  Attributes, 16,            &gUuid);
+    }
+  } else {
+    AddNvramVariable   (L"system-id",        &gEfiAppleNvramGuid, Attributes, sizeof(gUuid), &gUuid);
+
+    if (!gSettings.InjectSystemID) {
+      AddNvramVariable (L"platform-uuid",    &gEfiAppleBootGuid,  Attributes, 16,            &gUuid);
+    }
+  }
   
-  
-  if (gMobile && gSettings.BacklightLevelConfig) {
-    /*Status = */gRS->SetVariable(L"backlight-level", &gEfiAppleBootGuid, 
-                              /*   EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-							  sizeof(gSettings.BacklightLevel), &gSettings.BacklightLevel);
+  // Download-Fritz: Do not mess with BacklightLevel; it's OS X's business
+  if (gMobile) {
+    if (gSettings.BacklightLevelConfig) {
+      SetNvramVariable (L"backlight-level",  &gEfiAppleBootGuid,  Attributes, sizeof(gSettings.BacklightLevel), &gSettings.BacklightLevel);
+    } else {
+      AddNvramVariable (L"backlight-level",  &gEfiAppleBootGuid,  Attributes, sizeof(gSettings.BacklightLevel), &gSettings.BacklightLevel);
+    }
+  }
+
+  // using AddNvramVariable content instead of calling the function to do LangLen calculation only when necessary
+  // Download-Fritz: Do not mess with prev-lang:kbd; it's OS X's business
+  KbdPrevLang     = L"prev-lang:kbd";
+  OldData = GetNvramVariable (KbdPrevLang, &gEfiAppleBootGuid, NULL, NULL);
+  if (OldData == NULL)
+  {
+    LangLen      = 16;
+    variablePtr  = &gSettings.Language[15];
+    while (((*variablePtr == ' ') || (*variablePtr == 0)) && (LangLen != 0))
+    {
+      --variablePtr;
+      --LangLen;
+    }
+
+    gRT->SetVariable (KbdPrevLang, &gEfiAppleBootGuid, Attributes, LangLen, &gSettings.Language);
+  } else {
+    FreePool(OldData);
   }
 
   return EFI_SUCCESS;
 }
 
-VOID SetupDataForOSX()
+VOID
+SetupDataForOSX ()
 {
-  EFI_STATUS			Status;	
-//	CHAR16*				CloverVersion = L"2.1";
+  EFI_STATUS Status;	
+//CHAR16*    CloverVersion = L"2.1";
   
-	UINT32				devPathSupportedVal = 1;
-	UINT64				FrontSideBus		= gCPUStructure.FSBFrequency;
-	UINT64				CpuSpeed        = gCPUStructure.CPUFrequency;
-	UINT64				TSCFrequency		= gCPUStructure.TSCFrequency;
-	CHAR16*				productName			= AllocateZeroPool(64);
-	CHAR16*				serialNumber		= AllocateZeroPool(64);
-//  UINT32        Size;
-  UINTN         revision;
+  UINT32     DevPathSupportedVal = 1;
+  UINT64     FrontSideBus        = gCPUStructure.FSBFrequency;
+  UINT64     CpuSpeed            = gCPUStructure.CPUFrequency;
+  UINT64     TSCFrequency        = gCPUStructure.TSCFrequency;
+  CHAR16*    ProductName         = AllocateZeroPool(64);
+  CHAR16*    SerialNumber        = AllocateZeroPool(64);
+//UINT32     Size;
+  UINTN      Revision;
 
- //revision = StrDecimalToUintn(
 #ifdef FIRMWARE_REVISION
-  revision = StrDecimalToUintn(FIRMWARE_REVISION);
+  Revision = StrDecimalToUintn (FIRMWARE_REVISION);
 #else
-  revision = StrDecimalToUintn(gST->FirmwareRevision);
+  Revision = StrDecimalToUintn (gST->FirmwareRevision);
 #endif
 
   //fool proof
-  if ((FrontSideBus < (50 * Mega)) ||  (FrontSideBus > (1000 * Mega))){
+  if ((FrontSideBus < (50 * Mega)) || (FrontSideBus > (1000 * Mega))){
     DBG("Wrong FrontSideBus=%d, set to 100MHz\n", FrontSideBus);
     FrontSideBus = 100 * Mega;
   }
 
   //Save values into gSettings for the genconfig aim
-  gSettings.BusSpeed = (UINT32)DivU64x32(FrontSideBus, kilo);
-  gSettings.CpuFreqMHz = (UINT32)DivU64x32(CpuSpeed, Mega);
+  gSettings.BusSpeed = (UINT32)DivU64x32 (FrontSideBus, kilo);
+  gSettings.CpuFreqMHz = (UINT32)DivU64x32 (CpuSpeed, Mega);
   
-  
-	// Locate DataHub Protocol
-	Status = gBS->LocateProtocol(&gEfiDataHubProtocolGuid, NULL, (VOID**)&gDataHub);
-	if (!EFI_ERROR (Status)) {
-      AsciiStrToUnicodeStr(gSettings.ProductName, productName);
-		AsciiStrToUnicodeStr(gSettings.SerialNr, serialNumber);
+  // Locate DataHub Protocol
+  Status = gBS->LocateProtocol (&gEfiDataHubProtocolGuid, NULL, (VOID**)&gDataHub);
+  if (!EFI_ERROR (Status)) {
+    AsciiStrToUnicodeStr (gSettings.ProductName, ProductName);
+    AsciiStrToUnicodeStr (gSettings.SerialNr,    SerialNumber);
     
-		
-		/*Status = */LogDataHub(&gEfiProcessorSubClassGuid, L"FSBFrequency", &FrontSideBus, sizeof(UINT64));
-		/*Status = */LogDataHub(&gEfiProcessorSubClassGuid, L"TSCFrequency", &TSCFrequency, sizeof(UINT64));
-		/*Status = */LogDataHub(&gEfiProcessorSubClassGuid, L"CPUFrequency", &CpuSpeed, sizeof(UINT64));
-		
-		/*Status = */LogDataHub(&gEfiMiscSubClassGuid, L"DevicePathsSupported", &devPathSupportedVal, sizeof(UINT32));
-		/*Status = */LogDataHub(&gEfiMiscSubClassGuid, L"Model", productName, (UINT32)StrSize(productName));
-		/*Status = */LogDataHub(&gEfiMiscSubClassGuid, L"SystemSerialNumber", serialNumber, (UINT32)StrSize(serialNumber));
+    
+    LogDataHub (&gEfiProcessorSubClassGuid, L"FSBFrequency",         &FrontSideBus,        sizeof(UINT64));
+    LogDataHub (&gEfiProcessorSubClassGuid, L"TSCFrequency",         &TSCFrequency,        sizeof(UINT64));
+    LogDataHub (&gEfiProcessorSubClassGuid, L"CPUFrequency",         &CpuSpeed,            sizeof(UINT64));
+    
+    LogDataHub (&gEfiMiscSubClassGuid,      L"DevicePathsSupported", &DevPathSupportedVal, sizeof(UINT32));
+    LogDataHub (&gEfiMiscSubClassGuid,      L"Model",                ProductName,          (UINT32)StrSize (ProductName));
+    LogDataHub (&gEfiMiscSubClassGuid,      L"SystemSerialNumber",   SerialNumber,         (UINT32)StrSize (SerialNumber));
 //    DBG("Custom UUID=%g\n", gUuid);
     if (gSettings.InjectSystemID) {
-      /*Status = */LogDataHub(&gEfiMiscSubClassGuid, L"system-id", &gUuid, sizeof(EFI_GUID));
+      LogDataHub (&gEfiMiscSubClassGuid, L"system-id", &gUuid, sizeof(EFI_GUID));
     }    		
-//		Status = LogDataHub(&gEfiMiscSubClassGuid, L"Clover", CloverVersion, StrSize(CloverVersion));
+//		Status = LogDataHub(&gEfiMiscSubClassGuid, L"Clover", CloverVersion, StrSize (CloverVersion));
 
-    /*Status = */LogDataHub(&gEfiProcessorSubClassGuid, L"clovergui-revision", &revision, sizeof(UINT32));
+    LogDataHub (&gEfiProcessorSubClassGuid, L"clovergui-revision", &Revision, sizeof(UINT32));
 
     //collect info about real hardware
-    /*Status = */LogDataHub(&gEfiMiscSubClassGuid, L"OEMVendor",  &gSettings.OEMVendor,  (UINT32)iStrLen(gSettings.OEMVendor, 64) + 1);
-    /*Status = */LogDataHub(&gEfiMiscSubClassGuid, L"OEMProduct", &gSettings.OEMProduct, (UINT32)iStrLen(gSettings.OEMProduct, 64) + 1);
-    /*Status = */LogDataHub(&gEfiMiscSubClassGuid, L"OEMBoard",   &gSettings.OEMBoard,   (UINT32)iStrLen(gSettings.OEMBoard, 64) + 1);
-    //smc helper
-    /*Status = */LogDataHub(&gEfiMiscSubClassGuid, L"RPlt", &gSettings.RPlt, 8);
-    /*Status = */LogDataHub(&gEfiMiscSubClassGuid, L"RBr",  &gSettings.RBr,  8);
-    /*Status = */LogDataHub(&gEfiMiscSubClassGuid, L"EPCI", &gSettings.EPCI, 4);
-    /*Status = */LogDataHub(&gEfiMiscSubClassGuid, L"REV",  &gSettings.REV,  6);
-    /*Status = */LogDataHub(&gEfiMiscSubClassGuid, L"BEMB", &gSettings.Mobile, 1);
-    //all current settings
-    /*Status = */LogDataHub(&gEfiMiscSubClassGuid, L"Settings", &gSettings, sizeof(gSettings));
-
-	}
+    LogDataHub (&gEfiMiscSubClassGuid, L"OEMVendor",  &gSettings.OEMVendor,  (UINT32)iStrLen (gSettings.OEMVendor, 64) + 1);
+    LogDataHub (&gEfiMiscSubClassGuid, L"OEMProduct", &gSettings.OEMProduct, (UINT32)iStrLen (gSettings.OEMProduct, 64) + 1);
+    LogDataHub (&gEfiMiscSubClassGuid, L"OEMBoard",   &gSettings.OEMBoard,   (UINT32)iStrLen (gSettings.OEMBoard, 64) + 1);
+    
+  //smc helper
+    LogDataHub (&gEfiMiscSubClassGuid, L"RPlt", &gSettings.RPlt,   8);
+    LogDataHub (&gEfiMiscSubClassGuid, L"RBr",  &gSettings.RBr,    8);
+    LogDataHub (&gEfiMiscSubClassGuid, L"EPCI", &gSettings.EPCI,   4);
+    LogDataHub (&gEfiMiscSubClassGuid, L"REV",  &gSettings.REV,    6);
+    LogDataHub (&gEfiMiscSubClassGuid, L"BEMB", &gSettings.Mobile, 1);
+    
+  //all current settings
+    LogDataHub (&gEfiMiscSubClassGuid, L"Settings", &gSettings, sizeof(gSettings));
+  }
   else {
     // this is the error message that we want user to see on the screen!
     Print(L"DataHubProtocol is not found! Load the module DataHubDxe manually!\n");
     DBG("DataHubProtocol is not found! Load the module DataHubDxe manually!\n");
-    gBS->Stall(5000000);
+    gBS->Stall (5000000);
   }  
 }
