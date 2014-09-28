@@ -2106,7 +2106,7 @@ GetEarlyUserSettings (
               // Allocate an entry
               Entry = (CUSTOM_LOADER_ENTRY *)AllocateZeroPool (sizeof(CUSTOM_LOADER_ENTRY));
               // Fill it in
-              if (Entry != NULL && !FillinCustomEntry (Entry, Dict3, FALSE) || !AddCustomEntry (Entry)) {
+              if (Entry != NULL && (!FillinCustomEntry (Entry, Dict3, FALSE) || !AddCustomEntry (Entry))) {
                 FreePool (Entry);
               }
             }
@@ -4388,7 +4388,7 @@ GetUserSettings(
       gRT->GetVariable (L"ROM", &gEfiAppleNvramGuid, NULL, &gSettings.RtROMLen, Variable);
 
       if (Variable != NULL) {
-        AsciiStrCpy (gSettings.RtROM, Variable);
+        CopyMem (gSettings.RtROM, Variable, &gSettings.RtROMLen);
       }
 
       if (gSettings.RtROM == NULL) {
