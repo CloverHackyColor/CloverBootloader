@@ -4388,7 +4388,7 @@ GetUserSettings(
       gRT->GetVariable (L"ROM", &gEfiAppleNvramGuid, NULL, &gSettings.RtROMLen, Variable);
 
       if (Variable != NULL) {
-        CopyMem (gSettings.RtROM, Variable, &gSettings.RtROMLen);
+        CopyMem (gSettings.RtROM, Variable, gSettings.RtROMLen);
       }
 
       if (gSettings.RtROM == NULL) {
