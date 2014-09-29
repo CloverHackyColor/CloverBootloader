@@ -66,7 +66,10 @@ OrderLegacyBootOption4SameType (
                 &gEfiGlobalVariableGuid,
                 &BootOrderSize
                 );
-  ASSERT (BootOrder != NULL);
+//  ASSERT (BootOrder != NULL);
+  if (!BootOrder) {
+    return;
+  }
   
   BbsIndexArray       = AllocatePool (BootOrderSize);
   DeviceTypeArray     = AllocatePool (BootOrderSize);
@@ -76,24 +79,27 @@ OrderLegacyBootOption4SameType (
   *EnBootOptionCount  = 0;
   Index               = 0;
 
-  ASSERT (BbsIndexArray != NULL);
+/*  ASSERT (BbsIndexArray != NULL);
   ASSERT (DeviceTypeArray != NULL);
   ASSERT (*EnBootOption != NULL);
-  ASSERT (*DisBootOption != NULL);
+  ASSERT (*DisBootOption != NULL); */
 
   for (Index = 0; Index < BootOrderSize / sizeof (UINT16); Index++) {
   
     UnicodeSPrint (OptionName, sizeof (OptionName), L"Boot%04x", BootOrder[Index]);
     InitializeListHead (&List);
     BootOption = BdsLibVariableToOption (&List, OptionName);
-    ASSERT (BootOption != NULL);
+//    ASSERT (BootOption != NULL);
+    if (!BootOption) {
+      break;
+    }
     
     if ((DevicePathType (BootOption->DevicePath) == BBS_DEVICE_PATH) &&
         (DevicePathSubType (BootOption->DevicePath) == BBS_BBS_DP)) {
       //
       // Legacy Boot Option
       //
-      ASSERT (BootOption->LoadOptionsSize == sizeof (LEGACY_BOOT_OPTION_BBS_DATA));
+//      ASSERT (BootOption->LoadOptionsSize == sizeof (LEGACY_BOOT_OPTION_BBS_DATA));
 
       DeviceTypeArray[Index] = ((BBS_BBS_DEVICE_PATH *) BootOption->DevicePath)->DeviceType;
       BbsIndexArray  [Index] = ((LEGACY_BOOT_OPTION_BBS_DATA *) BootOption->LoadOptions)->BbsIndex;
@@ -113,7 +119,7 @@ OrderLegacyBootOption4SameType (
   //
   StartPosition = BootOrderSize / sizeof (UINT16);
   NewBootOption = AllocatePool (DevOrderCount * sizeof (UINT16));
-  ASSERT (NewBootOption != NULL);
+//  ASSERT (NewBootOption != NULL);
   while (DevOrderCount-- != 0) {
     for (Index = 0; Index < BootOrderSize / sizeof (UINT16); Index++) {
       if (BbsIndexArray[Index] == (DevOrder[DevOrderCount] & 0xFF)) {
@@ -146,7 +152,7 @@ OrderLegacyBootOption4SameType (
   //
   // Changing content without increasing its size with current variable implementation shouldn't fail.
   //
-  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR (Status);
 
   FreePool (NewBootOption);
   FreePool (DeviceTypeArray);

@@ -276,8 +276,8 @@ VOID
 */
     } else {
       // assume data in hex encoded string property
-      Len = (UINT32)(AsciiStrLen (Prop->string) >> 1);
-      Data = AllocateZeroPool(Len); // 2 chars per byte
+      Len = AsciiStrLen (Prop->string); // number of hex digits
+      Data = AllocateZeroPool((UINT32)(Len >> 1) + 1); // 2 chars per byte, one more byte for odd number
       Len  = hex2bin (Prop->string, Data, Len);
 
       if (DataLen != NULL) {
@@ -672,7 +672,7 @@ FillinKextPatches (
       DBG ("ForceKextsToLoad: %d requested\n", Count);
 
       for (i = 0; i < Count; ++i) {
-        EFI_STATUS Status = GetElement (Prop, i, &Prop);
+        EFI_STATUS Status = GetElement (Prop, i, &Prop2);
         if (EFI_ERROR (Status)) {
            DBG ("error %r getting next element at index %d\n", Status, i);
            continue;
@@ -716,7 +716,7 @@ FillinKextPatches (
       Patches->KextPatches = newPatches;
       DBG ("KextsToPatch: %d requested\n", Count);
       for (i = 0; i < Count; ++i) {
-        EFI_STATUS Status = GetElement (Prop, i, &Prop);
+        EFI_STATUS Status = GetElement (Prop, i, &Prop2);
         if (EFI_ERROR (Status)) {
           DBG ("error %r getting next element at index %d\n", Status, i);
           continue;
@@ -1089,7 +1089,7 @@ FillinCustomEntry (
     if (Count > 0) {
       TagPtr Prop2 = NULL;
       for (i = 0; i < Count; ++i) {
-        if (EFI_ERROR (GetElement (Prop, i, &Prop))) {
+        if (EFI_ERROR (GetElement (Prop, i, &Prop2))) {
           continue;
         }
 
@@ -1418,7 +1418,7 @@ FillinCustomLegacy (
     {
       TagPtr Prop2 = NULL;
       for (i = 0; i < Count; ++i) {
-        if (EFI_ERROR (GetElement (Prop, i, &Prop))) {
+        if (EFI_ERROR (GetElement (Prop, i, &Prop2))) {
           continue;
         }
         if (Prop2 == NULL) {
@@ -1577,7 +1577,7 @@ FillinCustomTool (
     {
       TagPtr Prop2 = NULL;
       for (i = 0; i < Count; ++i) {
-        if (EFI_ERROR (GetElement (Prop, i, &Prop))) {
+        if (EFI_ERROR (GetElement (Prop, i, &Prop2))) {
           continue;
         }
 
@@ -3860,7 +3860,7 @@ GetUserSettings(
 
             for (i = 0; i < Count; ++i) {
               UINTN Size = 0;
-              Status     = GetElement (Prop, i, &Prop);
+              Status     = GetElement (Prop, i, &Prop2);
               if (EFI_ERROR (Status)) {
                 DBG ("error %r getting next element of PatchesDSDT at index %d\n", Status, i);
                 continue;
@@ -4386,7 +4386,8 @@ GetUserSettings(
 
     if (gSettings.RtROM == NULL) {
       UINT8 *Variable = NULL;
-      gRT->GetVariable (L"ROM", &gEfiAppleNvramGuid, NULL, &gSettings.RtROMLen, Variable);
+//      gRT->GetVariable (L"ROM", &gEfiAppleNvramGuid, NULL, &gSettings.RtROMLen, Variable);
+      Variable = BdsLibGetVariableAndSize(L"ROM", &gEfiAppleNvramGuid, &gSettings.RtROMLen);
 
       if (Variable != NULL) {
         CopyMem (gSettings.RtROM, Variable, gSettings.RtROMLen);
@@ -4401,15 +4402,21 @@ GetUserSettings(
     if (gSettings.RtMLB == NULL) {
       if (!gSettings.BoardSNConfig) {
         CHAR8 *Variable = NULL;
-        gRT->GetVariable (L"MLB", &gEfiAppleNvramGuid, NULL, NULL, Variable);
+        UINTN RtMLBLen = 0;
+//        gRT->GetVariable (L"MLB", &gEfiAppleNvramGuid, NULL, NULL, Variable);
+        Variable = BdsLibGetVariableAndSize(L"MLB", &gEfiAppleNvramGuid, &RtMLBLen);
+        if (RtMLBLen != 17) {
+          DBG ("** Warning: MLB len = %d, why not 17?\n", RtMLBLen);
+        }
 
         if (Variable != NULL) {
-          AsciiStrCpy (gSettings.RtMLB, Variable);
+          gSettings.RtMLB = AllocateZeroPool(RtMLBLen + 1);
+          CopyMem (gSettings.RtMLB, Variable, RtMLBLen); // and one extra byte is already zero
         }
       }
 
       if (gSettings.RtMLB == NULL) {
-        gSettings.RtMLB       = gSettings.BoardSerialNumber;
+        gSettings.RtMLB       = &gSettings.BoardSerialNumber[0];
         gSettings.RtMLBConfig = gSettings.BoardSNConfig;
       }
     }

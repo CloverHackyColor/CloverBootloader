@@ -1858,6 +1858,7 @@ BOOLEAN IsHexDigit (CHAR8 c) {
 	return (IS_DIGIT(c) || (IS_HEX(c)))?TRUE:FALSE;
 }
 
+//out value is a number of byte. If len is even then out = len/2
 
 UINT32 hex2bin(IN CHAR8 *hex, OUT UINT8 *bin, UINT32 len) //assume len = number of UINT8 values
 {

@@ -385,3 +385,64 @@ EfiLibStrFromDatahub (
 {
   return NULL;
 }*/
+
+/**
+ Read the EFI variable (VendorGuid/Name) and return a dynamically allocated
+ buffer, and the size of the buffer. If failure return NULL.
+ 
+ @param  Name                  String part of EFI variable name
+ @param  VendorGuid            GUID part of EFI variable name
+ @param  VariableSize          Returns the size of the EFI variable that was read
+ 
+ @return                       Dynamically allocated memory that contains a copy of the EFI variable
+ Caller is responsible freeing the buffer.
+ @retval NULL                  Variable was not read
+ 
+ **/
+VOID *
+EFIAPI
+BdsLibGetVariableAndSize (
+                          IN  CHAR16              *Name,
+                          IN  EFI_GUID            *VendorGuid,
+                          OUT UINTN               *VariableSize
+                          )
+{
+  EFI_STATUS  Status;
+  UINTN       BufferSize;
+  VOID        *Buffer;
+  
+  Buffer = NULL;
+  
+  //
+  // Pass in a zero size buffer to find the required buffer size.
+  //
+  BufferSize  = 0;
+  Status      = gRT->GetVariable (Name, VendorGuid, NULL, &BufferSize, Buffer);
+  if (Status == EFI_BUFFER_TOO_SMALL) {
+    //
+    // Allocate the buffer to return
+    //
+    Buffer = AllocateZeroPool (BufferSize);
+    if (Buffer == NULL) {
+      *VariableSize = 0;
+      return NULL;
+    }
+    //
+    // Read variable into the allocated buffer.
+    //
+    Status = gRT->GetVariable (Name, VendorGuid, NULL, &BufferSize, Buffer);
+    if (EFI_ERROR (Status)) {
+      FreePool (Buffer);
+      BufferSize = 0;
+      Buffer     = NULL;
+    }
+  }
+  
+  //  ASSERT (((Buffer == NULL) && (BufferSize == 0)) ||
+  //          ((Buffer != NULL) && (BufferSize != 0))
+  //          );
+  *VariableSize = BufferSize;
+  return Buffer;
+}
+
+
