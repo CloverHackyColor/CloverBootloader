@@ -276,7 +276,8 @@ VOID
 */
     } else {
       // assume data in hex encoded string property
-      Data = AllocateZeroPool((UINT32)(AsciiStrLen (Prop->string) >> 1)); // 2 chars per byte
+      Len = (UINT32)(AsciiStrLen (Prop->string) >> 1);
+      Data = AllocateZeroPool(Len); // 2 chars per byte
       Len  = hex2bin (Prop->string, Data, Len);
 
       if (DataLen != NULL) {
@@ -659,7 +660,7 @@ FillinKextPatches (
   if (Prop != NULL) {
     UINTN Count = GetTagCount (Prop);
     if (Count > 0) {
-      TagPtr Prop2;
+      TagPtr Prop2 = NULL;
       CHAR16 **newForceKexts = AllocateZeroPool ((Patches->NrForceKexts + Count) * sizeof(CHAR16 *));
 
       if (Patches->ForceKexts != NULL) {
@@ -701,8 +702,8 @@ FillinKextPatches (
   if (Prop != NULL) {
     UINTN Count = GetTagCount (Prop);
     if (Count > 0) {
-      UINTN      j           = 0;
-      TagPtr     Prop2;
+      UINTN      j = 0;
+      TagPtr     Prop2 = NULL;
       TagPtr     Dict;
       KEXT_PATCH *newPatches = AllocateZeroPool ((Patches->NrKexts + Count) * sizeof(KEXT_PATCH));
 
@@ -1086,7 +1087,7 @@ FillinCustomEntry (
     INTN i;
     INTN Count = GetTagCount (Prop);
     if (Count > 0) {
-      TagPtr Prop2;
+      TagPtr Prop2 = NULL;
       for (i = 0; i < Count; ++i) {
         if (EFI_ERROR (GetElement (Prop, i, &Prop))) {
           continue;
@@ -1415,7 +1416,7 @@ FillinCustomLegacy (
     INTN Count = GetTagCount (Prop);
     if (Count > 0)
     {
-      TagPtr Prop2;
+      TagPtr Prop2 = NULL;
       for (i = 0; i < Count; ++i) {
         if (EFI_ERROR (GetElement (Prop, i, &Prop))) {
           continue;
@@ -1574,7 +1575,7 @@ FillinCustomTool (
     INTN Count = GetTagCount (Prop);
     if (Count > 0)
     {
-      TagPtr Prop2;
+      TagPtr Prop2 = NULL;
       for (i = 0; i < Count; ++i) {
         if (EFI_ERROR (GetElement (Prop, i, &Prop))) {
           continue;
@@ -4384,7 +4385,7 @@ GetUserSettings(
     }
 
     if (gSettings.RtROM == NULL) {
-      UINT8 *Variable;
+      UINT8 *Variable = NULL;
       gRT->GetVariable (L"ROM", &gEfiAppleNvramGuid, NULL, &gSettings.RtROMLen, Variable);
 
       if (Variable != NULL) {
@@ -4408,7 +4409,7 @@ GetUserSettings(
       }
 
       if (gSettings.RtMLB == NULL) {
-        gSettings.RtMLB       = &gSettings.BoardSerialNumber[0];
+        gSettings.RtMLB       = gSettings.BoardSerialNumber;
         gSettings.RtMLBConfig = gSettings.BoardSNConfig;
       }
     }
