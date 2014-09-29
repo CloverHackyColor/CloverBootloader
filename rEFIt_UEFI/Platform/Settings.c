@@ -253,7 +253,7 @@ VOID
   )
 {
   TagPtr Prop;
-  UINT8  *Data;
+  UINT8  *Data = NULL;
   UINT32 Len;
   //UINTN   i;
     
