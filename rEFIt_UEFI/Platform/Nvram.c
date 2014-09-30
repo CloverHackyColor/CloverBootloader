@@ -78,6 +78,9 @@ VOID *GetNvramVariable (
 {
   EFI_STATUS Status;
   VOID       *Data       = NULL;
+  //
+  // Pass in a zero size buffer to find the required buffer size.
+  //
   UINTN      IntDataSize = 0;
   
   Status = gRT->GetVariable (VariableName,     VendorGuid, Attributes, &IntDataSize, NULL);
@@ -86,18 +89,25 @@ VOID *GetNvramVariable (
   }
 
   if (Status == EFI_BUFFER_TOO_SMALL) {
+    //
+    // Allocate the buffer to return
+    //
     Data = AllocateZeroPool (IntDataSize + 1);
     if (Data != NULL) {
+      //
+      // Read variable into the allocated buffer.
+      //
       Status = gRT->GetVariable (VariableName, VendorGuid, Attributes, &IntDataSize, Data);
       if (EFI_ERROR (Status)) {
         FreePool (Data);
+        IntDataSize = 0;
         Data = NULL;
-      } else if (DataSize != NULL) {
-        *DataSize = IntDataSize;
       }
     }
   }
-
+  if (DataSize != NULL) {
+    *DataSize = IntDataSize;
+  }
   return Data;
 }
 
@@ -114,15 +124,17 @@ SetNvramVariable (
 {
 //EFI_STATUS Status;
   VOID   *OldData;
-  UINTN  OldDataSize;
-  UINT32 OldAttributes;
+  UINTN  OldDataSize = 0;
+  UINT32 OldAttributes = 0;
   
   //DBG ("SetNvramVariable (%s, guid, 0x%x, %d):", VariableName, Attributes, DataSize);
   OldData = GetNvramVariable (VariableName, VendorGuid, &OldAttributes, &OldDataSize);
   if (OldData != NULL) {
     // var already exists - check if it equal to new value
     //DBG (" exists(0x%x, %d)", OldAttributes, OldDataSize);
-    if (OldAttributes == Attributes && OldDataSize == DataSize && CompareMem (OldData, Data, DataSize) == 0) {
+    if ((OldAttributes == Attributes) &&
+        (OldDataSize == DataSize) &&
+        (CompareMem (OldData, Data, DataSize) == 0)) {
       // it's the same - do nothing
       //DBG (", equal -> not writing again.\n");
       FreePool (OldData);
@@ -138,12 +150,11 @@ SetNvramVariable (
       //DBG (", diff. attr: deleting old (%r)", Status);
     }
   }
-  
-  // set new value
-/*  Status =*/ return gRT->SetVariable (VariableName, VendorGuid, Attributes, DataSize, Data);
 //  DBG (" -> writing new (%r)\n", Status);
+//  return Status;
+ 
+  return gRT->SetVariable (VariableName, VendorGuid, Attributes, DataSize, Data);
   
-//return Status;
 }
 
 /** Sets NVRAM variable. Does nothing if variable with the same name already exists. */

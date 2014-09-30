@@ -276,8 +276,8 @@ VOID
 */
     } else {
       // assume data in hex encoded string property
-      Len = AsciiStrLen (Prop->string); // number of hex digits
-      Data = AllocateZeroPool((UINT32)(Len >> 1) + 1); // 2 chars per byte, one more byte for odd number
+      Len = (UINT32)AsciiStrLen (Prop->string) >> 1; // number of hex digits
+      Data = AllocateZeroPool(Len); // 2 chars per byte, one more byte for odd number
       Len  = hex2bin (Prop->string, Data, Len);
 
       if (DataLen != NULL) {
@@ -4385,14 +4385,8 @@ GetUserSettings(
     }
 
     if (gSettings.RtROM == NULL) {
-      UINT8 *Variable = NULL;
-//      gRT->GetVariable (L"ROM", &gEfiAppleNvramGuid, NULL, &gSettings.RtROMLen, Variable);
-      Variable = BdsLibGetVariableAndSize(L"ROM", &gEfiAppleNvramGuid, &gSettings.RtROMLen);
-
-      if (Variable != NULL) {
-        CopyMem (gSettings.RtROM, Variable, gSettings.RtROMLen);
-      }
-
+      gSettings.RtROM = (UINT8*)GetNvramVariable(L"ROM", &gEfiAppleNvramGuid,
+                                                 NULL, &gSettings.RtROMLen);
       if (gSettings.RtROM == NULL) {
         gSettings.RtROM    = (UINT8*)&gSettings.SmUUID.Data4[2];
         gSettings.RtROMLen = 6;
@@ -4403,9 +4397,8 @@ GetUserSettings(
       if (!gSettings.BoardSNConfig) {
         CHAR8 *Variable = NULL;
         UINTN RtMLBLen = 0;
-//        gRT->GetVariable (L"MLB", &gEfiAppleNvramGuid, NULL, NULL, Variable);
-        Variable = BdsLibGetVariableAndSize(L"MLB", &gEfiAppleNvramGuid, &RtMLBLen);
-        if (RtMLBLen != 17) {
+        Variable = GetNvramVariable(L"MLB", &gEfiAppleNvramGuid, NULL, &RtMLBLen);
+        if ((Variable != NULL) && (RtMLBLen != 17)) {
           DBG ("** Warning: MLB len = %d, why not 17?\n", RtMLBLen);
         }
 

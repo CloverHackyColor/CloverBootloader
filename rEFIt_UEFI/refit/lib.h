@@ -845,13 +845,6 @@ TimeCompare (
 
 extern BOOLEAN DumpVariable(CHAR16* Name, EFI_GUID* Guid, INTN DevicePathAt);
 
-VOID *
-EFIAPI
-BdsLibGetVariableAndSize (
-                          IN  CHAR16              *Name,
-                          IN  EFI_GUID            *VendorGuid,
-                          OUT UINTN               *VariableSize
-                          );
 // Utils functions
 VOID DumpKernelAndKextPatches(KERNEL_AND_KEXT_PATCHES *Patches);
 #endif
