@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 **/
 
 #include "DxeMain.h"
-
+//#include "Debug.h"
 //
 // DXE Core Global Variables for Protocols from PEI
 //
@@ -246,7 +246,7 @@ DxeMain (
   EFI_HOB_GUID_TYPE             *GuidHob;
   EFI_VECTOR_HANDOFF_INFO       *VectorInfoList;
   EFI_VECTOR_HANDOFF_INFO       *VectorInfo;
-
+//ClearScreen();
   //
   // Setup the default exception handlers
   //

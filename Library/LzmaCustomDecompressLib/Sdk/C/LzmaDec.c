@@ -132,13 +132,13 @@
 #if Literal != LZMA_BASE_SIZE
 StopCompilingDueBUG
 #endif
-
+/*
 static const Byte kLiteralNextStates[kNumStates * 2] =
 {
   0, 0, 0, 0, 1, 2, 3,  4,  5,  6,  4,  5,
   7, 7, 7, 7, 7, 7, 7, 10, 10, 10, 10, 10
 };
-
+*/
 #define LZMA_DIC_MIN (1 << 12)
 
 /* First LZMA-symbol is always decoded.
@@ -195,6 +195,7 @@ static int MY_FAST_CALL LzmaDec_DecodeReal(CLzmaDec *p, SizeT limit, const Byte 
 
       if (state < kNumLitStates)
       {
+        state -= (state < 4) ? state : 3;
         symbol = 1;
         do { GET_BIT(prob + symbol, symbol) } while (symbol < 0x100);
       }
@@ -202,6 +203,7 @@ static int MY_FAST_CALL LzmaDec_DecodeReal(CLzmaDec *p, SizeT limit, const Byte 
       {
         unsigned matchByte = p->dic[(dicPos - rep0) + ((dicPos < rep0) ? dicBufSize : 0)];
         unsigned offs = 0x100;
+        state -= (state < 10) ? 3 : 6;
         symbol = 1;
         do
         {
@@ -217,7 +219,7 @@ static int MY_FAST_CALL LzmaDec_DecodeReal(CLzmaDec *p, SizeT limit, const Byte 
       dic[dicPos++] = (Byte)symbol;
       processedPos++;
 
-      state = kLiteralNextStates[state];
+ //     state = kLiteralNextStates[state];
       /* if (state < 4) state = 0; else if (state < 10) state -= 3; else state -= 6; */
       continue;
     }
@@ -736,8 +738,11 @@ static void LzmaDec_InitStateReal(CLzmaDec *p)
   UInt32 numProbs = Literal + ((UInt32)LZMA_LIT_SIZE << (p->prop.lc + p->prop.lp));
   UInt32 i;
   CLzmaProb *probs = p->probs;
-  for (i = 0; i < numProbs; i++)
-    probs[i] = kBitModelTotal >> 1;
+//  PrintString ("numProbs=%x p->numProbs=%x\n", numProbs, p->numProbs);
+  for (i = 0; i < numProbs; i++) {
+//    PrintHeader('.');
+    probs[i] = (CLzmaProb)(kBitModelTotal >> 1);
+  }
   p->reps[0] = p->reps[1] = p->reps[2] = p->reps[3] = 1;
   p->state = 0;
   p->needInitState = 0;
@@ -805,7 +810,9 @@ SRes LzmaDec_DecodeToDic(CLzmaDec *p, SizeT dicLimit, const Byte *src, SizeT *sr
           int dummyRes = LzmaDec_TryDummy(p, src, inSize);
           if (dummyRes == DUMMY_ERROR)
           {
-            memcpy(p->tempBuf, src, inSize);
+ //           PrintHeader('b');
+            CopyMem(p->tempBuf, src, inSize);
+//            PrintHeader('c');
             p->tempBufSize = (unsigned)inSize;
             (*srcLen) += inSize;
             *status = LZMA_STATUS_NEEDS_MORE_INPUT;

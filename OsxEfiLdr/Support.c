@@ -18,6 +18,7 @@ Revision History:
 
 --*/
 #include "EfiLdr.h"
+//#include "Debug.h"
 
 EFI_STATUS
 EfiAddMemoryDescriptor(
@@ -158,7 +159,7 @@ GenMemoryMap (
   UINT64                BaseAddress;
   UINT64                Length;
   EFI_MEMORY_TYPE       Type;
-  UINTN                 Index;
+  UINTN                 Index, NumMap;
   UINTN                 Attr;
   UINT64                Ceiling;
   UINT64                EBDAaddr; // = 0x9E000;
@@ -172,9 +173,10 @@ GenMemoryMap (
   if (EBDAaddr < 0x99000 || EBDAaddr > 0x9F800) {
     EBDAaddr = 0x9A000;
   }
-
+  NumMap =  BiosMemoryMap->MemoryMapSize / sizeof(BIOS_MEMORY_MAP_ENTRY);
+//  PrintString("Number of entries = %d\n", NumMap);
   Ceiling = 0xFFFFFFFF;
-  for (Index = 0; Index < BiosMemoryMap->MemoryMapSize / sizeof(BIOS_MEMORY_MAP_ENTRY); Index++) {
+  for (Index = 0; Index < NumMap; Index++) {
 
     switch (BiosMemoryMap->MemoryMapEntry[Index].Type) { 
     case (INT15_E820_AddressRangeMemory):  //1 kMemoryRangeUsable

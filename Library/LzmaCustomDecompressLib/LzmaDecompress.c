@@ -207,6 +207,7 @@ LzmaUefiDecompress (
   DecodedBufSize = (SizeT)GetDecodedSizeOfBuf((UINT8*)Source);
   EncodedDataSize = (SizeT) (SourceSize - LZMA_HEADER_SIZE);
 
+//  PrintString ("DecodedBufSize = %x EncodedDataSize = %x\n", DecodedBufSize, EncodedDataSize);
   LzmaResult = LzmaDecode(
     Destination,
     &DecodedBufSize,
