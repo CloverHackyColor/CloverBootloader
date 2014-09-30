@@ -1,7 +1,7 @@
 /** @file
   Main file for ls shell level 2 function.
 
-  Copyright (c) 2013 Hewlett-Packard Development Company, L.P.
+  Copyright (c) 2013 - 2014, Hewlett-Packard Development Company, L.P.<BR>
   Copyright (c) 2009 - 2014, Intel Corporation. All rights reserved.<BR>
   This program and the accompanying materials
   are licensed and made available under the terms and conditions of the BSD License
@@ -15,71 +15,6 @@
 
 #include "UefiShellLevel2CommandsLib.h"
 #include <Guid/FileSystemInfo.h>
-
-//
-// time conversion
-//
-// Adopted from public domain code in FreeBSD libc.
-//
-
-#define SECSPERMIN      60
-#define MINSPERHOUR     60
-#define HOURSPERDAY     24
-#define DAYSPERWEEK     7
-#define DAYSPERNYEAR    365
-#define DAYSPERLYEAR    366
-#define SECSPERHOUR     (SECSPERMIN * MINSPERHOUR)
-#define SECSPERDAY      ((long) SECSPERHOUR * HOURSPERDAY)
-#define MONSPERYEAR     12
-
-#define EPOCH_YEAR      1970
-#define EPOCH_WDAY      TM_THURSDAY
-
-#define isleap(y) (((y) % 4) == 0 && (((y) % 100) != 0 || ((y) % 400) == 0))
-#define LEAPS_THRU_END_OF(y)    ((y) / 4 - (y) / 100 + (y) / 400)
-
-static const int mon_lengths[2][MONSPERYEAR] = {
-  { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 },
-  { 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 }
-};
-static const int year_lengths[2] = {
-  DAYSPERNYEAR, DAYSPERLYEAR
-};
-
-VOID DecodeTime(OUT EFI_TIME *EfiTime, IN INT32 UnixTime)
-{
-  INT32       days, rem;
-  INT32       y, newy, yleap;
-  CONST INT32       *ip;
-
-  ZeroMem(EfiTime, sizeof(EFI_TIME));
-
-  days = UnixTime / SECSPERDAY;
-  rem = UnixTime % SECSPERDAY;
-
-  EfiTime->Hour = (UINT8) (rem / SECSPERHOUR);
-  rem = rem % SECSPERHOUR;
-  EfiTime->Minute = (UINT8) (rem / SECSPERMIN);
-  EfiTime->Second = (UINT8) (rem % SECSPERMIN);
-
-  y = EPOCH_YEAR;
-  while (days < 0 || days >= (long) year_lengths[yleap = isleap(y)]) {
-    newy = y + days / DAYSPERNYEAR;
-    if (days < 0)
-      --newy;
-    days -= (newy - y) * DAYSPERNYEAR +
-    LEAPS_THRU_END_OF(newy - 1) -
-    LEAPS_THRU_END_OF(y - 1);
-    y = newy;
-  }
-  EfiTime->Year = (UINT16)y;
-  ip = mon_lengths[yleap];
-  for (EfiTime->Month = 0; days >= (long) ip[EfiTime->Month]; ++(EfiTime->Month))
-    days = days - (long) ip[EfiTime->Month];
-  EfiTime->Month++;  // adjust range to EFI conventions
-  EfiTime->Day = (UINT8) (days + 1);
-}
-
 
 /**
   print out the standard format output volume entry.
@@ -492,9 +427,9 @@ PrintLsOutput(
         ; !IsNull(&ListHead->Link, &Node->Link)
         ; Node = (EFI_SHELL_FILE_INFO *)GetNextNode(&ListHead->Link, &Node->Link)
         ){
-//    ASSERT(Node != NULL);
-    if (!Node) {
-      return (SHELL_SUCCESS);
+      if (ShellGetExecutionBreakFlag ()) {
+        ShellStatus = SHELL_ABORTED;
+        break;
     }
       if (LongestPath < StrSize(Node->FullName)) {
         LongestPath = StrSize(Node->FullName);
@@ -535,12 +470,12 @@ PrintLsOutput(
       HeaderPrinted = TRUE;
     }
 
-    if (!Sfo) {
+    if (!Sfo && ShellStatus != SHELL_ABORTED) {
       PrintNonSfoFooter(FileCount, FileSize, DirCount);
     }
   }
 
-  if (Rec) {
+  if (Rec && ShellStatus != SHELL_ABORTED) {
     //
     // Re-Open all the files under the starting path for directories that didnt necessarily match our file filter
     //
@@ -583,6 +518,13 @@ PrintLsOutput(
             &FoundOne,
             Count,
             TimeZone);
+            
+          //
+          // Since it's running recursively, we have to break immediately when returned SHELL_ABORTED
+          //
+          if (ShellStatus == SHELL_ABORTED) {
+            break;
+          }
         }
       }
     }
@@ -682,7 +624,7 @@ ShellCommandRunLs (
     if (ShellCommandLineGetCount(Package) > 2) {
       ShellPrintHiiEx(-1, -1, NULL, STRING_TOKEN (STR_GEN_TOO_MANY), gShellLevel2HiiHandle);
       ShellStatus = SHELL_INVALID_PARAMETER;
-    } else { //675
+    } else {
       //
       // check for -a
       //
@@ -789,10 +731,6 @@ ShellCommandRunLs (
             }
           }
         }
-  /*    } else {
-  //        ASSERT(FullPath == NULL);
-          StrnCatGrow(&FullPath, NULL, L"*", 0);
-        } */
         Status = gRT->GetTime(&TheTime, NULL);
         if (EFI_ERROR(Status)) {
           ShellPrintHiiEx(-1, -1, NULL, STRING_TOKEN (STR_GEN_UEFI_FUNC_WARN), gShellLevel2HiiHandle, L"gRT->GetTime", Status);

@@ -2,6 +2,7 @@
   Main file for Help shell level 3 function.
 
   Copyright (c) 2009 - 2014, Intel Corporation. All rights reserved. <BR>
+  Copyright (c) 2014, ARM Limited. All rights reserved. <BR>
   This program and the accompanying materials
   are licensed and made available under the terms and conditions of the BSD License
   which accompanies this distribution.  The full text of the license may be found at
@@ -22,16 +23,22 @@
 /**
   Attempt to print help from a dynamically added command.
 
-  @param[in]  CommandToGetHelpOn  The unicode name of the command that help is requested on.
+  @param[in]  CommandToGetHelpOn  The unicode name of the command that help is
+                                  requested on.
+  @param[in]  SectionToGetHelpOn  Pointer to the section specifier(s).
+  @param[in]  PrintCommandText    Print the command followed by the help content
+                                  or just help.
 
   @retval EFI_SUCCESS             The help was displayed
-  @retval FI_NOT_FOUND            The command name could not be found
+  @retval EFI_NOT_FOUND           The command name could not be found
+  @retval EFI_DEVICE_ERROR        The help data format was incorrect.
 **/
-STATIC
 EFI_STATUS
 EFIAPI
 PrintDynamicCommandHelp(
-  IN  CHAR16 *CommandToGetHelpOn
+  IN CHAR16  *CommandToGetHelpOn,
+  IN CHAR16  *SectionToGetHelpOn,
+  IN BOOLEAN  PrintCommandText
   )
 {
   EFI_STATUS                          Status;
@@ -39,11 +46,10 @@ PrintDynamicCommandHelp(
   EFI_HANDLE                          *CommandHandleList;
   EFI_HANDLE                          *NextCommand;
   EFI_SHELL_DYNAMIC_COMMAND_PROTOCOL  *DynamicCommand;
-  CHAR16                              *OutText;
   
+  Status = EFI_NOT_FOUND;
   Found = FALSE;
   CommandHandleList = NULL;
-  OutText = NULL;
 
   CommandHandleList = GetHandleListByProtocol(&gEfiShellDynamicCommandProtocolGuid);
 
@@ -51,7 +57,7 @@ PrintDynamicCommandHelp(
     //
     // not found or out of resources
     //
-    return FALSE;
+    return Status;
   }
 
   for (NextCommand = CommandHandleList; *NextCommand != NULL; NextCommand++) {
@@ -65,49 +71,32 @@ PrintDynamicCommandHelp(
       continue;
     }
 
-    if ((gUnicodeCollation->MetaiMatch(gUnicodeCollation, (CHAR16 *)DynamicCommand->CommandName, CommandToGetHelpOn)) ||
-      (gEfiShellProtocol->GetAlias(CommandToGetHelpOn, NULL) != NULL && (gUnicodeCollation->MetaiMatch(gUnicodeCollation, (CHAR16 *)DynamicCommand->CommandName, (CHAR16*)(gEfiShellProtocol->GetAlias(CommandToGetHelpOn, NULL)))))) {
       //
-      // TODO: how to get proper language?
+    // Check execution break flag when printing multiple command help information.
       //
-      OutText = DynamicCommand->GetHelp(DynamicCommand, "en");
-
-      if (OutText == NULL) {
-        continue;
-      }
-
-      //
-      // Trim extra characters from the end the the string before printing
-      //
-      while (StrLen(OutText) > 0 
-        && (OutText[StrLen(OutText) - 1] == L'\r' || OutText[StrLen(OutText) - 1] == L'\n' || OutText[StrLen(OutText) - 1] == L' ')) {
-        OutText[StrLen(OutText) - 1] = CHAR_NULL;
-      }
-
-      //
-      // Make sure we have something to print still.
-      //
-      if (StrLen(OutText) == 0) {
-        FreePool(OutText);
-        OutText = NULL;
-        continue;
-      }
-
-      //
-      // Print and move on.
-      //
-      ShellPrintHiiEx(-1, -1, NULL, STRING_TOKEN(STR_HELP_COMMAND), gShellLevel3HiiHandle, DynamicCommand->CommandName, OutText);
-      FreePool(OutText);
-      OutText = NULL;
-      Found = TRUE;
+    if (ShellGetExecutionBreakFlag ()) {
       break;
-    }
+      }
 
+    if ((gUnicodeCollation->MetaiMatch (gUnicodeCollation, (CHAR16 *)DynamicCommand->CommandName, CommandToGetHelpOn)) ||
+      (gEfiShellProtocol->GetAlias (CommandToGetHelpOn, NULL) != NULL && (gUnicodeCollation->MetaiMatch (gUnicodeCollation, (CHAR16 *)DynamicCommand->CommandName, (CHAR16*)(gEfiShellProtocol->GetAlias(CommandToGetHelpOn, NULL)))))) {
+      // Print as Shell Help if in ManPage format.
+      Status = ShellPrintHelp (DynamicCommand->CommandName, SectionToGetHelpOn,
+                              PrintCommandText);
+      if (Status == EFI_DEVICE_ERROR) {
+        ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_HELP_INV),
+                        gShellLevel3HiiHandle, DynamicCommand->CommandName);
+      } else if (EFI_ERROR(Status)) {
+        ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_HELP_NF),
+                        gShellLevel3HiiHandle, DynamicCommand->CommandName);
+      } else {
+        Found = TRUE;
+      }
+      }
   }
 
-  FreePool(CommandHandleList);
+  return (Found ? EFI_SUCCESS : Status);
 
-  return Found ? EFI_SUCCESS : EFI_NOT_FOUND;
 }
 
 STATIC CONST SHELL_PARAM_ITEM ParamList[] = {
@@ -144,7 +133,6 @@ ShellCommandRunHelp (
   BOOLEAN             PrintCommandText;
 
   PrintCommandText    = TRUE;
-  Package             = NULL;
   ProblemParam        = NULL;
   ShellStatus         = SHELL_SUCCESS;
   CommandToGetHelpOn  = NULL;
@@ -268,6 +256,16 @@ ShellCommandRunHelp (
             }
           }
         }
+
+        //
+        // now try to match against the dynamic command list and print help
+        //
+        Status = PrintDynamicCommandHelp (CommandToGetHelpOn, SectionToGetHelpOn,
+                                          PrintCommandText);
+        if (!EFI_ERROR(Status)) {
+          Found = TRUE;
+        }
+
         //
         // Search the .man file for Shell applications (Shell external commands).
         //
@@ -281,15 +279,6 @@ ShellCommandRunHelp (
               Found = TRUE;
             }
         }
-
-        //
-        // now try to match against the dynamic command list and print help
-        //
-        Status = PrintDynamicCommandHelp(CommandToGetHelpOn);
-        if (Status == EFI_SUCCESS) {
-          Found = TRUE;
-        }
-        
       }
 
       if (!Found) {

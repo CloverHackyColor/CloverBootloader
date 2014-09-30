@@ -512,21 +512,20 @@ FileInterfaceStdInRead(
         if (StrStr(CurrentString + TabPos, L":") == NULL) {
           Cwd = ShellInfoObject.NewEfiShellProtocol->GetCurDir(NULL);
           if (Cwd != NULL) {
-            StrCpy(TabStr, Cwd);
+            StrnCpy(TabStr, Cwd, (*BufferSize)/sizeof(CHAR16) - 1);
             if (TabStr[StrLen(TabStr)-1] == L'\\' && *(CurrentString + TabPos) == L'\\' ) {
               TabStr[StrLen(TabStr)-1] = CHAR_NULL;
             }
             StrnCat(TabStr, CurrentString + TabPos, (StringLen - TabPos) * sizeof (CHAR16));
           } else {
-            StrCpy(TabStr, L"");
+            *TabStr = CHAR_NULL;
             StrnCat(TabStr, CurrentString + TabPos, (StringLen - TabPos) * sizeof (CHAR16));
           }
         } else {
-          StrCpy(TabStr, CurrentString + TabPos);
+          StrnCpy(TabStr, CurrentString + TabPos, (*BufferSize)/sizeof(CHAR16) - 1);
         }
-        StrCat(TabStr, L"*");
+        StrnCat(TabStr, L"*", (*BufferSize)/sizeof(CHAR16) - 1 - StrLen(TabStr));
         FoundFileList = NULL;
-//        TabStr = PathCleanUpDirectories(TabStr);
         Status  = ShellInfoObject.NewEfiShellProtocol->FindFiles(TabStr, &FoundFileList);
         for ( TempStr = CurrentString
             ; *TempStr == L' '
@@ -562,8 +561,7 @@ FileInterfaceStdInRead(
                 InternalFreeShellFileInfoNode(TabLinePos);
             }
           }
-          if (FoundFileList != NULL) {
-            if (!IsListEmpty(&FoundFileList->Link)) {
+          if (FoundFileList != NULL && !IsListEmpty(&FoundFileList->Link)) {
               TabLinePos = (EFI_SHELL_FILE_INFO*)GetFirstNode(&FoundFileList->Link);
               InTabScrolling = TRUE;
             } else {            
@@ -572,7 +570,6 @@ FileInterfaceStdInRead(
             }            
           }
         }
-      }
       break;
 
     default:
@@ -1149,6 +1146,7 @@ CreateFileInterfaceEnv(
   )
 {
   EFI_FILE_PROTOCOL_ENVIRONMENT  *EnvFileInterface;
+  UINTN                          EnvNameSize;
 
   if (EnvName == NULL) {
     return (NULL);
@@ -1157,7 +1155,8 @@ CreateFileInterfaceEnv(
   //
   // Get some memory
   //
-  EnvFileInterface = AllocateZeroPool(sizeof(EFI_FILE_PROTOCOL_ENVIRONMENT)+StrSize(EnvName));
+  EnvNameSize = StrSize(EnvName);
+  EnvFileInterface = AllocateZeroPool(sizeof(EFI_FILE_PROTOCOL_ENVIRONMENT)+EnvNameSize);
   if (EnvFileInterface == NULL){
     return (NULL);
   }
@@ -1176,7 +1175,7 @@ CreateFileInterfaceEnv(
   EnvFileInterface->Delete      = FileInterfaceEnvDelete;
   EnvFileInterface->Read        = FileInterfaceEnvRead;
 
-  StrCpy(EnvFileInterface->Name, EnvName);
+  CopyMem(EnvFileInterface->Name, EnvName, EnvNameSize);
 
   //
   // Assign the different members for Volatile and Non-Volatile variables
