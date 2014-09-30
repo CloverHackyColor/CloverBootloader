@@ -86,5 +86,6 @@
   gMsgLogProtocolGuid
   
 [BuildOptions]
-  XCODE:*_*_*_CC_FLAGS = -Os
-  GCC:*_*_*_CC_FLAGS = -Os
+[BuildOptions]
+  XCODE:*_*_*_CC_FLAGS = -Os  -DMDEPKG_NDEBUG
+  GCC:*_*_*_CC_FLAGS = -Os -DMDEPKG_NDEBUG
