@@ -277,10 +277,10 @@ DxeMain (
   // Use the templates to initialize the contents of the EFI System Table and EFI Runtime Services Table
   //
   gDxeCoreST = AllocateRuntimeCopyPool (sizeof (EFI_SYSTEM_TABLE), &mEfiSystemTableTemplate);
-  ASSERT (gDxeCoreST != NULL);
+//  ASSERT (gDxeCoreST != NULL);
 
   gDxeCoreRT = AllocateRuntimeCopyPool (sizeof (EFI_RUNTIME_SERVICES), &mEfiRuntimeServicesTableTemplate);
-  ASSERT (gDxeCoreRT != NULL);
+//  ASSERT (gDxeCoreRT != NULL);
 
   gDxeCoreST->RuntimeServices = gDxeCoreRT;
 
@@ -378,7 +378,7 @@ DxeMain (
     gDxeCoreLoadedImage,
     gDxeCoreImageHandle
     );
-
+/*
   DEBUG ((DEBUG_INFO | DEBUG_LOAD, "HOBLIST address in DXE = 0x%p\n", HobStart));
 
   DEBUG_CODE_BEGIN ();
@@ -400,7 +400,7 @@ DxeMain (
       }
     }
   DEBUG_CODE_END ();
-
+*/
   //
   // Initialize the Event Services
   //

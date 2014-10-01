@@ -539,9 +539,10 @@ VOID GetCPUProperties (VOID)
   tmpU = gCPUStructure.FSBFrequency;
 //  DBG("divide by 1000\n");
   BusSpeed = (UINT32)DivU64x32(tmpU, kilo); //Hz -> kHz
-  DBG("FSBFrequency=%dMHz\n", DivU64x32(tmpU, Mega));
+  DBG("FSBFrequency=%dMHz DMIvalue=%dkHz\n", DivU64x32(tmpU, Mega), gCPUStructure.ExternalClock);
      //now check if SMBIOS has ExternalClock = 4xBusSpeed
-  if ((BusSpeed > 50*kilo) && (gCPUStructure.ExternalClock > BusSpeed * 3)) { //khz
+  if ((BusSpeed > 50*kilo) &&
+      ((gCPUStructure.ExternalClock > BusSpeed * 3) || (gCPUStructure.ExternalClock < 50*kilo))) { //khz
     gCPUStructure.ExternalClock = BusSpeed;
   } else {
     tmpU = MultU64x32(gCPUStructure.ExternalClock, kilo); //kHz -> Hz
@@ -590,7 +591,7 @@ VOID GetCPUProperties (VOID)
                                       1,
                                       &qpimult
                                       );
-            DBG("qpi read from PCI %x\n", qpimult);
+            DBG("qpi read from PCI %x\n", qpimult & 0x1F);
             if (EFI_ERROR(Status)) continue;
             qpimult &= 0x1F; //bits 0:4
             break;
