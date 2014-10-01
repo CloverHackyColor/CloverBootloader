@@ -99,6 +99,10 @@ struct fsw_hfs_dnode
   fsw_u32                   ctime;
   fsw_u32                   mtime;
   fsw_u64                   used_bytes;
+  /* link file stuff */
+  fsw_u32 creator;
+  fsw_u32 crtype;
+  fsw_u32 ilink;
 };
 
 /**

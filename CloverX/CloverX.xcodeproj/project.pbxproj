@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		120D825E16A2DE46000EDD83 /* LegacyBiosThunk.c in Sources */ = {isa = PBXBuildFile; fileRef = 120D825D16A2DE46000EDD83 /* LegacyBiosThunk.c */; };
+		1216A53A19DC0E84004DC217 /* CpuInterrupt.nasm in Sources */ = {isa = PBXBuildFile; fileRef = 1216A53919DC0E84004DC217 /* CpuInterrupt.nasm */; };
 		121E4B57165A0F1A000C2392 /* 915resolution.c in Sources */ = {isa = PBXBuildFile; fileRef = 121E4B4F165A0F1A000C2392 /* 915resolution.c */; };
 		121E4B58165A0F1A000C2392 /* edid.c in Sources */ = {isa = PBXBuildFile; fileRef = 121E4B51165A0F1A000C2392 /* edid.c */; };
 		121E4B59165A0F1A000C2392 /* VideoBiosPatchLib.c in Sources */ = {isa = PBXBuildFile; fileRef = 121E4B54165A0F1A000C2392 /* VideoBiosPatchLib.c */; };
@@ -52,6 +53,8 @@
 
 /* Begin PBXFileReference section */
 		120D825D16A2DE46000EDD83 /* LegacyBiosThunk.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = LegacyBiosThunk.c; sourceTree = "<group>"; };
+		1216A53919DC0E84004DC217 /* CpuInterrupt.nasm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.nasm; path = CpuInterrupt.nasm; sourceTree = "<group>"; };
+		1216A53E19DC0E91004DC217 /* CpuInterrupt.nasm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.nasm; path = CpuInterrupt.nasm; sourceTree = "<group>"; };
 		121E49741654F525000C2392 /* UsbMass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UsbMass.h; sourceTree = "<group>"; };
 		121E49751654F528000C2392 /* UsbMassBoot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UsbMassBoot.h; sourceTree = "<group>"; };
 		121E49761654F52D000C2392 /* UsbMassImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UsbMassImpl.h; sourceTree = "<group>"; };
@@ -1108,6 +1111,7 @@
 			isa = PBXGroup;
 			children = (
 				124D76FC1657A4FD008B5407 /* CpuInterrupt.asm */,
+				1216A53919DC0E84004DC217 /* CpuInterrupt.nasm */,
 				124D76FD1657A4FD008B5407 /* CpuInterrupt.S */,
 			);
 			path = Ia32;
@@ -1117,6 +1121,7 @@
 			isa = PBXGroup;
 			children = (
 				124D76FF1657A4FD008B5407 /* CpuInterrupt.asm */,
+				1216A53E19DC0E91004DC217 /* CpuInterrupt.nasm */,
 				124D77001657A4FD008B5407 /* CpuInterrupt.S */,
 			);
 			path = X64;
@@ -3077,6 +3082,7 @@
 				12A82BA917CFCAE50019A5D3 /* card_vlist.c in Sources */,
 				1229C5A419750B78000A987B /* bootscreen.c in Sources */,
 				1229C5AB19750BFE000A987B /* PlatformDriverOverride.c in Sources */,
+				1216A53A19DC0E84004DC217 /* CpuInterrupt.nasm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -335,6 +335,9 @@ static fsw_status_t fsw_strcoerce_ISO88591_UTF8(void *srcdata, int srclen, struc
     dest->type = FSW_STRING_TYPE_UTF8;
     dest->len  = srclen;
     dest->size = destsize;
+    dest->data = NULL;
+    if (destsize < 1)
+        return FSW_SUCCESS;
     status = fsw_alloc(dest->size, &dest->data);
     if (status)
         return status;
@@ -389,6 +392,9 @@ static fsw_status_t fsw_strcoerce_UTF16_UTF8(void *srcdata, int srclen, struct f
     dest->type = FSW_STRING_TYPE_UTF8;
     dest->len  = srclen;
     dest->size = destsize;
+    dest->data = NULL;
+    if (destsize < 1)
+        return FSW_SUCCESS;
     status = fsw_alloc(dest->size, &dest->data);
     if (status)
         return status;
@@ -443,6 +449,9 @@ static fsw_status_t fsw_strcoerce_UTF16_SWAPPED_UTF8(void *srcdata, int srclen, 
     dest->type = FSW_STRING_TYPE_UTF8;
     dest->len  = srclen;
     dest->size = destsize;
+    dest->data = NULL;
+    if (destsize < 1)
+        return FSW_SUCCESS;
     status = fsw_alloc(dest->size, &dest->data);
     if (status)
         return status;
