@@ -157,8 +157,6 @@ mkdir -p ${SYMROOT}/CloverISO-${REVISION}
 hdiutil makehybrid -iso -joliet -hfs -hfs-volume-name ${CDLABEL}  \
  -eltorito-boot ${CDBOOT} -no-emul-boot -ov -o "${ISOIMAGE}"      \
  ${IMGROOT} -quiet
-# echo "[LZMA] ${ISOIMAGE}"
-# lzma e ${ISOIMAGE} ${ISOIMAGE}.lzma
 mv -f ${ISOIMAGE} ${SYMROOT}/CloverISO-${REVISION}/
 if [ ${IMAGE_WITH_IA32} -eq 1 ]; then
     echo "[HDIUTIL] ${ISOIMAGE32}"
@@ -167,6 +165,11 @@ if [ ${IMAGE_WITH_IA32} -eq 1 ]; then
      ${IMGROOT} -quiet
     mv -f ${ISOIMAGE32} ${SYMROOT}/CloverISO-${REVISION}/
 fi
+echo "[TAR] CloverISO-${REVISION}"
+tar -cv ${SYMROOT}/CloverISO-${REVISION} > ${SYMROOT}/CloverISO-${REVISION}.tar
+echo "[LZMA] CloverISO-${REVISION}"
+${CLOVERROOT}/BootSectors/lzma e ${SYMROOT}/CloverISO-${REVISION}.tar ${SYMROOT}/CloverISO-${REVISION}.tar.lzma
+rm -rf ${SYMROOT}/CloverISO-${REVISION}.tar
 
 # Open the final folder.
 if [[ "${1:-}" == "" ]]; then
