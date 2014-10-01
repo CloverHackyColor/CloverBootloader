@@ -693,14 +693,17 @@ fsw_hfs_btree_search (struct fsw_hfs_btree *btree,
 }
 
 typedef struct {
-    fsw_u32                 id;
-    fsw_u32                 type;
-    struct fsw_string     * name;
-    fsw_u64                 size;
-    fsw_u64                 used;
-    fsw_u32                 ctime;
-    fsw_u32                 mtime;
-    HFSPlusExtentRecord     extents;
+  fsw_u32             id;
+  fsw_u32             type;
+  fsw_u32             creator;
+  fsw_u32             crtype;
+  fsw_u32             ilink;
+  struct fsw_string   *name;
+  fsw_u64             size;
+  fsw_u64             used;
+  fsw_u32             ctime;
+  fsw_u32             mtime;
+  HFSPlusExtentRecord extents;
 } file_info_t;
 
 typedef struct {
@@ -1314,7 +1317,8 @@ static fsw_status_t fsw_hfs_readlink(struct fsw_hfs_volume *vol,
     link_target->type = FSW_STRING_TYPE_ISO88591;
     link_target->size = MPRFSIZE;
     fsw_memdup (&link_target->data, metaprefix, link_target->size);
-    sz = fsw_snprintf(inumstart, 10 + 1, "%d", dno->ilink);
+    //AsciiSPrint
+    sz = AsciiSPrint(inumstart, 10 + 1, "%d", dno->ilink);
     link_target->len = MPRFINUM + sz;
     return FSW_SUCCESS;
 #undef MPRFINUM
