@@ -3170,7 +3170,10 @@ ParseSMBIOSSettings(
 
   Prop = GetProperty (DictPointer, "Mobile");
   if (Prop != NULL) {
-      gSettings.Mobile = IsPropertyFalse(Prop);
+    if (IsPropertyFalse(Prop))
+      gSettings.Mobile = FALSE;
+    else if (IsPropertyTrue(Prop))
+      gSettings.Mobile = TRUE;
   }
 
   Prop = GetProperty (DictPointer, "LocationInChassis");
