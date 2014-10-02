@@ -703,7 +703,7 @@ PutNvramPlistToRtVars ()
       continue;
     }
     
-    if (Size == 0 || !Value == 0) {
+    if (Size == 0 || !Value) {
       continue;
     }
     
