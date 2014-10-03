@@ -2694,11 +2694,11 @@ REFIT_MENU_ENTRY  *SubMenuGraphics()
     
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
     if (gGraphics[i].Vendor == Nvidia) {
-      Ven = 98;
+      Ven = 95;
     } else if (gGraphics[i].Vendor == Ati) {
-      Ven = 97;
+      Ven = 94;
     } else /*if (gGraphics[i].Vendor == Intel)*/ {
-      Ven = 99;
+      Ven = 96;
     }
     InputBootArgs->Entry.Title = PoolPrint(L"FakeID:");
     InputBootArgs->Entry.Tag = TAG_INPUT;
