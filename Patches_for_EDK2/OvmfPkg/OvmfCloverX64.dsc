@@ -283,7 +283,6 @@
   gEfiMdeModulePkgTokenSpaceGuid.PcdDxeIplSwitchToLongMode|FALSE
   gEfiMdeModulePkgTokenSpaceGuid.PcdConOutGopSupport|TRUE
   gEfiMdeModulePkgTokenSpaceGuid.PcdConOutUgaSupport|FALSE
-
 !if $(SECURE_BOOT_ENABLE) == TRUE
   gUefiOvmfPkgTokenSpaceGuid.PcdSecureBootEnable|TRUE
 !endif
@@ -497,7 +496,7 @@
   # Clover
   #
   IntelFrameworkModulePkg/Universal/DataHubDxe/DataHubDxe.inf
-  Clover/VBoxFsDxe/VBoxHfs.inf
+  #Clover/VBoxFsDxe/VBoxHfs.inf
   #Clover/VBoxFsDxe/VBoxIso9660.inf
   #Clover/VBoxFsDxe/VBoxFsDxe.inf
   #Clover/VBoxFsDxe/VBoxExt2.inf

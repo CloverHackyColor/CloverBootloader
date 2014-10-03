@@ -273,7 +273,7 @@ INF  MdeModulePkg/Universal/MemoryTest/NullMemoryTestDxe/NullMemoryTestDxe.inf
 #
 INF  IntelFrameworkModulePkg/Universal/DataHubDxe/DataHubDxe.inf
 #INF  RuleOverride=BINARY Clover/HFSPlus/HFSPlus.inf
-INF  Clover/VBoxFsDxe/VBoxHfs.inf
+#INF  Clover/VBoxFsDxe/VBoxHfs.inf
 #INF  Clover/VBoxFsDxe/VBoxIso9660.inf
 #INF  Clover/VBoxFsDxe/VBoxFsDxe.inf
 #INF  Clover/VBoxFsDxe/VBoxExt2.inf
@@ -309,7 +309,8 @@ INF  RuleOverride = BINARY FatBinPkg/EnhancedFatDxe/Fat.inf
 !ifndef $(USE_OLD_SHELL)
 INF  ShellPkg/Application/Shell/Shell.inf
 !else
-INF  RuleOverride = BINARY EdkShellBinPkg/FullShell/FullShell.inf
+#INF  RuleOverride = BINARY EdkShellBinPkg/FullShell/FullShell.inf
+INF  RuleOverride = BINARY Clover/CloverPackage/CloverV2/EFI/CLOVER/tools/Shell.inf
 !endif
 
 FILE FREEFORM = PCD(gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdLogoFile) {
