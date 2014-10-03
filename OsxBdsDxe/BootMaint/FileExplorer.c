@@ -75,7 +75,7 @@ UpdateFileExplorePage (
         NewMenuEntry->DisplayStringToken,
         STRING_TOKEN (STR_NULL_STRING),
         EFI_IFR_FLAG_CALLBACK,
-        (UINT16) (FILE_OPTION_OFFSET + Index)
+        (UINT16) (FILE_OPTION_GOTO_OFFSET + Index)
         );
     }
   }

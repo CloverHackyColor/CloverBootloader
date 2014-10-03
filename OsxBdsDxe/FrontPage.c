@@ -405,11 +405,11 @@ InitializeFrontPage (
   // Collect the languages from what our current Language support is based on our VFR
   //
   HiiHandle = gFrontPagePrivate.HiiHandle;
-//  LanguageString = HiiGetSupportedLanguages (HiiHandle);
-//  ASSERT (LanguageString != NULL);
+
+  CurrentLang = GetEfiGlobalVariable (L"PlatformLang");
 
   //
-  // Allocate working buffer for RFC 4646 language in supported LanguageString.
+  // Get Support language list from variable.
   //
   if (mLanguageString == NULL){
     mLanguageString = GetEfiGlobalVariable (L"PlatformLangCodes");

@@ -544,7 +544,6 @@ UpdateOrderPage (
   UINT16          Index;
   UINT16            OptionIndex;
   VOID            *OptionsOpCodeHandle;
-  BM_LOAD_CONTEXT *NewLoadContext;
   BOOLEAN           BootOptionFound;
   UINT32            *OptionOrder;
   EFI_QUESTION_ID   QuestionId;
@@ -586,7 +585,6 @@ UpdateOrderPage (
     BootOptionFound = FALSE;
     for (Index = 0; Index < OptionMenu->MenuNumber; Index++) {
     NewMenuEntry   = BOpt_GetMenuEntry (OptionMenu, Index);
-    NewLoadContext = (BM_LOAD_CONTEXT *) NewMenuEntry->VariableContext;
       if ((UINT32) (NewMenuEntry->OptionNumber + 1) == OptionOrder[OptionIndex]) {
         BootOptionFound = TRUE;
         break;
@@ -1397,7 +1395,7 @@ UpdateSetLegacyDeviceOrderPage (
         break;
       }
 
-      VarData += sizeof (BBS_TYPE);
+      VarData  = (UINT8 *)((UINTN)VarData + sizeof (BBS_TYPE));
       VarData += *(UINT16 *) VarData;
       DevOrder = (LEGACY_DEV_ORDER_ENTRY *) VarData;
     }
@@ -1427,7 +1425,7 @@ UpdateSetLegacyDeviceOrderPage (
         NULL
         );
 
-      VarDevOrder = *(UINT16 *) ((UINT8 *) DevOrder + sizeof (BBS_TYPE) + sizeof (UINT16) + Index * sizeof (UINT16));
+      VarDevOrder = *(UINT16 *) ((UINTN) DevOrder + sizeof (BBS_TYPE) + sizeof (UINT16) + Index * sizeof (UINT16));
 
       if (0xFF00 == (VarDevOrder & 0xFF00)) {
         LegacyOrder[Index]  = 0xFF;
@@ -1446,6 +1444,7 @@ UpdateSetLegacyDeviceOrderPage (
 
   UpdatePageEnd (CallbackData);
 }
+
 
 /**
   Dispatch the display to the next page based on NewPageId.

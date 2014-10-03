@@ -229,17 +229,13 @@ BOpt_FindFileSystem (
   )
 {
   UINTN                     NoBlkIoHandles;
-  UINTN                     NoBlkIoHandles2;
   UINTN                     NoSimpleFsHandles;
   UINTN                     NoLoadFileHandles;
   EFI_HANDLE                *BlkIoHandle;
-  EFI_HANDLE                *BlkIoHandle2;
   EFI_HANDLE                *SimpleFsHandle;
   EFI_HANDLE                *LoadFileHandle;
   UINT16                    *VolumeLabel;
   EFI_BLOCK_IO_PROTOCOL     *BlkIo;
-  EFI_BLOCK_IO2_PROTOCOL    *BlkIo2;
-  EFI_BLOCK_IO2_TOKEN       BlkIo2Token;
   UINTN                     Index;
   EFI_STATUS                Status;
   BM_MENU_ENTRY             *MenuEntry;
@@ -260,51 +256,6 @@ BOpt_FindFileSystem (
   NoLoadFileHandles = 0;
   OptionNumber      = 0;
   InitializeListHead (&FsOptionMenu.Head);
-
-  //
-  // Locate Handles that support BlockIo 2 protocol
-  //
-  Status = gBS->LocateHandleBuffer (
-                                    ByProtocol,
-                                    &gEfiBlockIo2ProtocolGuid,
-                                    NULL,
-                                    &NoBlkIoHandles2,
-                                    &BlkIoHandle2
-                                    );
-  if (!EFI_ERROR(Status)) {
-    for (Index = 0; Index < NoBlkIoHandles2; Index++) {
-      Status = gBS->HandleProtocol (
-                                    BlkIoHandle2[Index],
-                                    &gEfiBlockIo2ProtocolGuid,
-                                    (VOID **) &BlkIo2
-                                    );
-      if (EFI_ERROR(Status)) {
-        continue;
-      }
-
-      //
-      // Issue a dummy read to trigger reinstall of BlockIo protocol for removable media
-      //
-      if (BlkIo2->Media->RemovableMedia) {
-        Buffer = AllocateZeroPool (BlkIo2->Media->BlockSize);
-        if (NULL == Buffer) {
-          FreePool (BlkIoHandle2);
-          return EFI_OUT_OF_RESOURCES;
-        }
-
-        BlkIo2->ReadBlocksEx (
-                              BlkIo2,
-                              BlkIo2->Media->MediaId,
-                              0,
-                              &BlkIo2Token,
-                              BlkIo2->Media->BlockSize,
-                              Buffer
-                              );
-        FreePool (Buffer);
-      }
-    }
-    FreePool (BlkIoHandle2);
-  }
 
   //
   // Locate Handles that support BlockIo protocol
@@ -368,15 +319,6 @@ BOpt_FindFileSystem (
     for (Index = 0; Index < NoSimpleFsHandles; Index++) {
       Status = gBS->HandleProtocol (
                       SimpleFsHandle[Index],
-                      &gEfiBlockIo2ProtocolGuid,
-                      (VOID **) &BlkIo2
-                      );
-      if (EFI_ERROR(Status)) {
-        BlkIo2 = NULL;
-      }
-
-      Status = gBS->HandleProtocol (
-                      SimpleFsHandle[Index],
                       &gEfiBlockIoProtocolGuid,
                       (VOID **) &BlkIo
                       );
@@ -389,12 +331,8 @@ BOpt_FindFileSystem (
         //
         // If block IO exists check to see if it's remobable media
         //
-        if (BlkIo2 != NULL) {
-          RemovableMedia = BlkIo2->Media->RemovableMedia;
-        } else {
           RemovableMedia = BlkIo->Media->RemovableMedia;
         }
-      }
 
       //
       // Allocate pool for this load option
@@ -444,15 +382,10 @@ BOpt_FindFileSystem (
           }
         }
       } else {
-        // clang said it always false
-/*        if (FileContext->Info->VolumeLabel == NULL) {
-          VolumeLabel = L"NULL VOLUME LABEL";
-        } else { */
           VolumeLabel = FileContext->Info->VolumeLabel;
           if (*VolumeLabel == 0x0000) {
             VolumeLabel = L"NO VOLUME LABEL";
           }
-//        }
       }
 
       TempStr                   = MenuEntry->HelpString;
@@ -1757,9 +1690,7 @@ GetLegacyDeviceOrder (
 {
   UINTN                     Index;
   UINTN                     OptionIndex;
-  UINT16                    PageIdList [] = {FORM_SET_FD_ORDER_ID, FORM_SET_HD_ORDER_ID,
-                                             FORM_SET_CD_ORDER_ID, FORM_SET_NET_ORDER_ID,
-                                             FORM_SET_BEV_ORDER_ID};
+  UINT16                    PageIdList[5];
   UINTN                     PageNum;  
   UINTN                     VarSize;
   UINT8                     *VarData;     
@@ -1780,6 +1711,11 @@ GetLegacyDeviceOrder (
   }
 
   
+  PageIdList[0] = FORM_SET_FD_ORDER_ID;
+  PageIdList[1] = FORM_SET_HD_ORDER_ID;
+  PageIdList[2] = FORM_SET_CD_ORDER_ID;
+  PageIdList[3] = FORM_SET_NET_ORDER_ID;
+  PageIdList[4] = FORM_SET_BEV_ORDER_ID;
   OptionMenu  = NULL;
   BbsType     = 0;
   LegacyOrder = NULL;
@@ -1840,12 +1776,12 @@ GetLegacyDeviceOrder (
           break;
         }
     
-        WorkingVarData += sizeof (BBS_TYPE);
+        WorkingVarData  = (UINT8 *)((UINTN)WorkingVarData + sizeof (BBS_TYPE));
         WorkingVarData += *(UINT16 *) WorkingVarData;
         DevOrder = (LEGACY_DEV_ORDER_ENTRY *) WorkingVarData;
       } 
       for (OptionIndex = 0; OptionIndex < OptionMenu->MenuNumber; OptionIndex++) {
-        VarDevOrder = *(UINT16 *) ((UINT8 *) DevOrder + sizeof (BBS_TYPE) + sizeof (UINT16) + OptionIndex * sizeof (UINT16));
+        VarDevOrder = *(UINT16 *) ((UINTN) DevOrder + sizeof (BBS_TYPE) + sizeof (UINT16) + OptionIndex * sizeof (UINT16));
          if (0xFF00 == (VarDevOrder & 0xFF00)) {
           LegacyOrder[OptionIndex]  = 0xFF;
           Pos                       = (VarDevOrder & 0xFF) / 8;
