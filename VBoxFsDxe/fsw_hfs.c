@@ -1318,7 +1318,7 @@ static fsw_status_t fsw_hfs_readlink(struct fsw_hfs_volume *vol,
     link_target->size = MPRFSIZE;
     fsw_memdup (&link_target->data, metaprefix, link_target->size);
     //AsciiSPrint
-    sz = AsciiSPrint(inumstart, 10 + 1, "%d", dno->ilink);
+    sz = (UINT32)AsciiSPrint(inumstart, 10 + 1, "%d", dno->ilink);
     link_target->len = MPRFINUM + sz;
     return FSW_SUCCESS;
 #undef MPRFINUM

@@ -4143,12 +4143,12 @@ GetUserSettings(
               continue;
             }
 
-            UINTN Slot = MAX_RAM_SLOTS;
+            UINT8 Slot = MAX_RAM_SLOTS;
 
             if (Dict2->type == kTagTypeString && Dict2->string) {
-              Slot = AsciiStrDecimalToUintn (Dict2->string);
+              Slot = (UINT8)AsciiStrDecimalToUintn (Dict2->string);
             } else if (Dict2->type == kTagTypeInteger) {
-              Slot = (UINTN)Dict2->string;
+              Slot = (UINT8)(UINTN)Dict2->string;
             } else {
               continue;
             }
@@ -4192,9 +4192,16 @@ GetUserSettings(
             }
 
             SlotPtr->InUse = (SlotPtr->ModuleSize > 0);
+            if (SlotPtr->InUse) {
+              if (gRAM.UserInUse <= Slot) {
+                gRAM.UserInUse = Slot + 1;
+              }
+            }
           }
 
-          gSettings.InjectMemoryTables = TRUE;
+          if (gRAM.UserInUse > 0) {
+            gSettings.InjectMemoryTables = TRUE;
+          }
         }
       }
 
