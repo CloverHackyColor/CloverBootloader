@@ -772,7 +772,6 @@ typedef struct {
   // SMBIOS TYPE2
   CHAR8	                  BoardManufactureName[64];
   CHAR8	                  BoardSerialNumber[64];
-  BOOLEAN                 BoardSNConfig;
   CHAR8                 	BoardNumber[64]; //Board-ID
   CHAR8                 	LocationInChassis[64];
   CHAR8                   BoardVersion[64];
@@ -981,13 +980,11 @@ typedef struct {
 #if defined(MDE_CPU_IA32)
   UINT32                  align20;
 #endif
-  BOOLEAN                 RtMLBConfig;
   
   UINT8                   *RtROM;
 #if defined(MDE_CPU_IA32)
   UINT32                  align21;
 #endif
-  BOOLEAN                 RtROMConfig;
   UINTN                   RtROMLen;
 #if defined(MDE_CPU_IA32)
   UINT32                  align6;

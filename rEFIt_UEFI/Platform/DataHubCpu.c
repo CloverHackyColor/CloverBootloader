@@ -142,48 +142,67 @@ SetVariablesForOSX ()
 
   VOID   *OldData;
 
-  if (!gFirmwareClover && !gDriversFlags.EmuVariableLoaded) {
-    Attributes = EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS;
-  } else {
-    Attributes = EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS;
-  }
-
   //
   // some NVRAM variables
   //
   
   if (gSettings.RtMLB != NULL) {
-    if (AsciiStrLen(gSettings.RtMLB) != 17) {
+    if (AsciiStrLen (gSettings.RtMLB) != 17) {
       DBG ("** Warning: Your MLB is not suitable for iMessage (must be 17 chars long) !\n");
     }
 
-    if (gSettings.RtMLBConfig) {
-      SetNvramVariable (L"MLB", &gEfiAppleNvramGuid, Attributes, AsciiStrLen (gSettings.RtMLB), gSettings.RtMLB);
-    } else {
-      AddNvramVariable (L"MLB", &gEfiAppleNvramGuid, Attributes, AsciiStrLen (gSettings.RtMLB), gSettings.RtMLB);
-    }
+	SetNvramVariable (L"MLB",
+      &gEfiAppleNvramGuid,
+      EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+      AsciiStrLen(gSettings.RtMLB),
+      gSettings.RtMLB
+	  );
   }
   
   if (gSettings.RtROM != NULL) {
-    if (gSettings.RtROMConfig) {
-      SetNvramVariable (L"ROM", &gEfiAppleNvramGuid, Attributes, gSettings.RtROMLen, gSettings.RtROM);
-    } else {
-      AddNvramVariable (L"ROM", &gEfiAppleNvramGuid, Attributes, gSettings.RtROMLen, gSettings.RtROM);
-    }
+    SetNvramVariable (L"ROM",
+      &gEfiAppleNvramGuid,
+      EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+      gSettings.RtROMLen,
+      gSettings.RtROM
+	  );
   }
 
-  // Non-volatile BackgroundClear means less write attempts and greater performance
   BackgroundClear = 0x00000000;
-  AddNvramVariable (L"BackgroundClear", &gEfiAppleNvramGuid, Attributes, sizeof(BackgroundClear), &BackgroundClear);
+  AddNvramVariable (
+    L"BackgroundClear",
+    &gEfiAppleNvramGuid,
+    EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+    sizeof(BackgroundClear),
+    &BackgroundClear
+	);
 
   if (gFwFeaturesConfig) {
-    SetNvramVariable (L"FirmwareFeatures",   &gEfiAppleNvramGuid, Attributes, sizeof(gFwFeatures), &gFwFeatures);
+	  SetNvramVariable (
+		  L"FirmwareFeatures",
+		  &gEfiAppleNvramGuid,
+		  EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+		  sizeof(gFwFeatures),
+		  &gFwFeatures
+		  );
   } else {
-    AddNvramVariable (L"FirmwareFeatures",   &gEfiAppleNvramGuid, Attributes, sizeof(gFwFeatures), &gFwFeatures);
+	AddNvramVariable (
+      L"FirmwareFeatures",
+      &gEfiAppleNvramGuid,
+      EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+      sizeof(gFwFeatures),
+      &gFwFeatures
+	  );
   }
 
   FwFeaturesMask  = 0xC003ffff;
-  AddNvramVariable (L"FirmwareFeaturesMask", &gEfiAppleNvramGuid, Attributes, sizeof(FwFeaturesMask), &FwFeaturesMask);
+  AddNvramVariable (
+    L"FirmwareFeaturesMask",
+    &gEfiAppleNvramGuid,
+    EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+    sizeof(FwFeaturesMask),
+    &FwFeaturesMask
+	);
 
 // reserved for a future. Should be tested on Yosemite
 /*
@@ -196,6 +215,13 @@ SetVariablesForOSX ()
 
   // Don't overwrite boot-args var as it was already set by PutNvramPlistToRtVars()
   // boot-args nvram var contains ONLY parameters to be merged with the boot-args global variable
+
+  if (!gFirmwareClover && !gDriversFlags.EmuVariableLoaded) {
+    Attributes = EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS;
+  } else {
+    Attributes = EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS;
+  }
+
 /*
   BootArgsLen = 256;
   variablePtr = &gSettings.BootArgs[255];
@@ -212,6 +238,7 @@ SetVariablesForOSX ()
   // we should have two UUID: platform and system
   // NO! Only Platform is the best solution
 
+  // Download-Fritz: Why is system-id needed to be set? DataLogHub should be enough
   if (gSettings.SmUUIDConfig) {
     SetNvramVariable (L"system-id",          &gEfiAppleNvramGuid, Attributes, sizeof(gUuid), &gUuid);
 

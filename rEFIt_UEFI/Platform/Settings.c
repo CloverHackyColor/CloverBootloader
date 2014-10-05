@@ -3150,7 +3150,6 @@ ParseSMBIOSSettings(
   Prop = GetProperty (DictPointer, "BoardSerialNumber");
   if (Prop != NULL && AsciiStrLen (Prop->string) > 0) {
     AsciiStrCpy (gSettings.BoardSerialNumber, Prop->string);
-    gSettings.BoardSNConfig = TRUE;
   }
 
   Prop = GetProperty (DictPointer, "Board-ID");
@@ -4365,8 +4364,6 @@ GetUserSettings(
         if (gSettings.RtROM == NULL || gSettings.RtROMLen == 0) {
           gSettings.RtROM       = NULL;
           gSettings.RtROMLen    = 0;
-        } else {
-          gSettings.RtROMConfig = TRUE;
         }
       }
       
@@ -4374,7 +4371,6 @@ GetUserSettings(
       Prop = GetProperty (DictPointer, "MLB");
       if (Prop != NULL && AsciiStrLen (Prop->string) > 0) {
         gSettings.RtMLB         = AllocateCopyPool (AsciiStrSize (Prop->string), Prop->string);
-        gSettings.RtMLBConfig   = TRUE;
       }
       
       // Setting Clover Variables for RC Scripts in config.plist is now deprecated (r2889+)
@@ -4395,33 +4391,12 @@ GetUserSettings(
     }
 
     if (gSettings.RtROM == NULL) {
-      gSettings.RtROM = (UINT8*)GetNvramVariable(L"ROM", &gEfiAppleNvramGuid,
-                                                 NULL, &gSettings.RtROMLen);
-      if (gSettings.RtROM == NULL) {
-        gSettings.RtROM    = (UINT8*)&gSettings.SmUUID.Data4[2];
-        gSettings.RtROMLen = 6;
-      }
+      gSettings.RtROM    = (UINT8*)&gSettings.SmUUID.Data4[2];
+      gSettings.RtROMLen = 6;
     }
 
     if (gSettings.RtMLB == NULL) {
-      if (!gSettings.BoardSNConfig) {
-        CHAR8 *Variable = NULL;
-        UINTN RtMLBLen = 0;
-        Variable = GetNvramVariable(L"MLB", &gEfiAppleNvramGuid, NULL, &RtMLBLen);
-        if ((Variable != NULL) && (RtMLBLen != 17)) {
-          DBG ("** Warning: MLB len = %d, why not 17?\n", RtMLBLen);
-        }
-
-        if (Variable != NULL) {
-          gSettings.RtMLB = AllocateZeroPool(RtMLBLen + 1);
-          CopyMem (gSettings.RtMLB, Variable, RtMLBLen); // and one extra byte is already zero
-        }
-      }
-
-      if (gSettings.RtMLB == NULL) {
-        gSettings.RtMLB       = &gSettings.BoardSerialNumber[0];
-        gSettings.RtMLBConfig = gSettings.BoardSNConfig;
-      }
+      gSettings.RtMLB       = &gSettings.BoardSerialNumber[0];
     }
     
     // if CustomUUID and InjectSystemID are not specified

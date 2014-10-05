@@ -621,12 +621,6 @@ GetDefaultSettings ()
 
   gSettings.RtROM                = NULL;
   gSettings.RtROMLen             = 0;
-  gSettings.RtROMConfig          = FALSE;
-
-  gSettings.RtMLB                = NULL;
-  gSettings.RtMLBConfig          = FALSE;
-
-  gSettings.BoardSNConfig        = FALSE;
   
   if (gCPUStructure.Model >= CPU_MODEL_IVY_BRIDGE) {
     gSettings.GeneratePStates    = TRUE;
