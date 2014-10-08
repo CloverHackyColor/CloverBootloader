@@ -1992,10 +1992,10 @@ GetBootOrder (
  */
 EFI_STATUS
 FindBootOptionForFile (
-    IN      EFI_HANDLE FileDeviceHandle,
-    IN      CHAR16     *FileName,
-       OUT  UINT16     *BootNum,
-       OUT  UINTN      *BootIndex
+       IN      EFI_HANDLE FileDeviceHandle,
+       IN      CHAR16     *FileName,
+       OUT     UINT16     *BootNum,
+       OUT     UINTN      *BootIndex
     );
 
 /** Adds new boot option for given file system device handle FileDeviceHandle, file path FileName
@@ -2009,13 +2009,15 @@ FindBootOptionForFile (
  */
 EFI_STATUS
 AddBootOptionForFile (
-  IN      EFI_HANDLE FileDeviceHandle,
-  IN      CHAR16     *FileName,
-  IN      BOOLEAN    UseShortForm,
-  IN      CHAR16     *Description,
-  IN      UINTN      BootIndex,
-     OUT  UINT16     *BootNum
-  );
+                      IN  EFI_HANDLE FileDeviceHandle,
+                      IN  CHAR16     *FileName,
+                      IN  BOOLEAN    UseShortForm,
+                      IN  CHAR16     *Description,
+                      IN  UINT8      *OptionalData,
+                      IN  UINTN      OptionalDataSize,
+                      IN  UINTN      BootIndex,
+                      OUT UINT16     *BootNum
+                      );
 
 /** Deletes boot option specified with BootNum (XXXX in BootXXXX var name). */
 EFI_STATUS

@@ -111,7 +111,7 @@ STATIC VOID AddCloverEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTitle, IN REF
 {
   LOADER_ENTRY      *Entry, *SubEntry;
   REFIT_MENU_SCREEN *SubScreen;
-  EFI_STATUS        Status;
+//  EFI_STATUS        Status;
   
   // prepare the menu entry
   Entry = AllocateZeroPool(sizeof(LOADER_ENTRY));
@@ -145,37 +145,33 @@ STATIC VOID AddCloverEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTitle, IN REF
   if (gEmuVariableControl != NULL) {
     gEmuVariableControl->UninstallEmulation(gEmuVariableControl);
   }
-  Status = FindBootOptionForFile (Entry->Volume->DeviceHandle,
+/*  Status = FindBootOptionForFile (Entry->Volume->DeviceHandle,
                                   Entry->LoaderPath,
                                   NULL,
                                   NULL
                                   );
-  /* don't need to restore emulation here
-   if (gEmuVariableControl != NULL) {
-   gEmuVariableControl->InstallEmulation(gEmuVariableControl);
-   }
-   */
-  
+
   if (Status == EFI_SUCCESS) {
     SubEntry = DuplicateLoaderEntry(Entry);
     if (SubEntry) {
-      SubEntry->me.Title        = L"Remove Clover as UEFI boot option";
+      SubEntry->me.Title        = L"Remove Clover's UEFI boot options";
       SubEntry->LoadOptions     = L"BO-REMOVE";
       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
     }
-  } else {
+  } else { */
+//always add and always remove menu entries
     SubEntry = DuplicateLoaderEntry(Entry);
     if (SubEntry) {
-      SubEntry->me.Title        = L"Add Clover as UEFI boot option";
+      SubEntry->me.Title        = L"Add Clover boot options for all entries";
       SubEntry->LoadOptions     = L"BO-ADD";
       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
     }
-  }
+//  }
   
   SubEntry = DuplicateLoaderEntry(Entry);
   if (SubEntry) {
     SubEntry->me.Title        = L"Remove all Clover boot options";
-    SubEntry->LoadOptions     = L"BO-REMOVE-ALL";
+    SubEntry->LoadOptions     = L"BO-REMOVE";
     AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
   }
   
@@ -218,7 +214,7 @@ VOID ScanTool(VOID)
 #endif
   }
   
-  if (!gFirmwareClover) {
+//  if (!gFirmwareClover) { //Slice: I wish to extend functionality on emulated nvram
     for (VolumeIndex = 0; VolumeIndex < VolumesCount; VolumeIndex++) {
       Volume = Volumes[VolumeIndex];
       if (!Volume->RootDir || !Volume->DeviceHandle) {
@@ -243,7 +239,7 @@ VOID ScanTool(VOID)
         }
       }
     }
-  }
+//  }
 }
 
 // Add custom tool entries

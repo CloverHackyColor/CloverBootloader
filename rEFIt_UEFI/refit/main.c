@@ -1503,13 +1503,13 @@ INTN FindDefaultEntry(VOID)
     
     // if not null or empty, also search for loader that matches gSettings.DefaultLoader
     SearchForLoader = (gSettings.DefaultLoader != NULL && gSettings.DefaultLoader[0] != L'\0');
-    
+/*
     if (SearchForLoader) {
       DBG("Searching for DefaultVolume '%s', DefaultLoader '%s' ...\n", gSettings.DefaultVolume, gSettings.DefaultLoader);
     } else {
       DBG("Searching for DefaultVolume '%s' ...\n", gSettings.DefaultVolume);
     }
-    
+*/
     for (Index = 0; ((Index < (INTN)MainMenu.EntryCount) && (MainMenu.Entries[Index]->Row == 0)); Index++) {
       
       Entry = (LOADER_ENTRY*)MainMenu.Entries[Index];
@@ -2187,28 +2187,62 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         case TAG_CLOVER:     // Clover options
           LoaderEntry = (LOADER_ENTRY *)ChosenEntry;
           if (LoaderEntry->LoadOptions != NULL) {
-
             // we are uninstalling in case user selected Clover Options and EmuVar is installed
             // because adding bios boot option requires access to real nvram
-            if (gEmuVariableControl != NULL) {
+            //Slice: sure?
+       /*     if (gEmuVariableControl != NULL) {
               gEmuVariableControl->UninstallEmulation(gEmuVariableControl);
             }
-
+        */
             if (StrStr(LoaderEntry->LoadOptions, L"BO-ADD") != NULL) {
+              CHAR16 *Description;
+              CHAR16 *VolName;
+              CHAR16 *LoaderName;
+              INTN EntryIndex, NameSize, Name2Size;
+              LOADER_ENTRY *Entry;
+              UINT8 *OptionalData;
+              UINTN OptionalDataSize;
+
               PrintBootOptions(FALSE);
-              Status = AddBootOptionForFile (LoaderEntry->Volume->DeviceHandle,
-                                             LoaderEntry->LoaderPath,
-                                             TRUE,
-                                             L"Clover OS X Boot",
-                                             0,
-                                             NULL
-                                             );
+
+              for (EntryIndex = 0; EntryIndex < (INTN)MainMenu.EntryCount; EntryIndex++) {
+                if (MainMenu.Entries[EntryIndex]->Row != 0) {
+                  continue;
+                }
+
+                Entry = (LOADER_ENTRY *)MainMenu.Entries[EntryIndex];
+                VolName = Entry->VolName;
+                NameSize = StrSize(VolName);
+                LoaderName = Basename(Entry->LoaderPath);
+                Name2Size = StrSize(LoaderName);
+                Description = PoolPrint(L"Clover start %s at %s", LoaderName, VolName);
+                OptionalDataSize = NameSize + StrSize(LoaderName) + 4 + 2; //signature & VolNameSize
+                OptionalData = AllocateZeroPool(OptionalDataSize);
+                CopyMem(OptionalData, "Clvr", 4); //signature
+                CopyMem(OptionalData + 4, &NameSize, 2);
+                CopyMem(OptionalData + 6, VolName, NameSize);
+                CopyMem(OptionalData + 6 + NameSize, LoaderName, Name2Size);
+
+                Status = AddBootOptionForFile (LoaderEntry->Volume->DeviceHandle,
+                                               LoaderEntry->LoaderPath,
+                                               TRUE,
+                                               Description,
+                                               OptionalData,
+                                               OptionalDataSize,
+                                               EntryIndex,
+                                               NULL
+                                               );
+                FreePool(OptionalData);
+                FreePool(Description);
+              }
+
+              
               PrintBootOptions(FALSE);
-            } else if (StrStr(LoaderEntry->LoadOptions, L"BO-REMOVE-ALL") != NULL) {
+   /*         } else if (StrStr(LoaderEntry->LoadOptions, L"BO-REMOVE-ALL") != NULL) {
               PrintBootOptions(FALSE);
               DeleteBootOptionsContainingFile (L"CLOVERX64.efi");
               DeleteBootOptionsContainingFile (L"CLOVERIA32.efi");
-              PrintBootOptions(FALSE);
+              PrintBootOptions(FALSE); */
             } else if (StrStr(LoaderEntry->LoadOptions, L"BO-REMOVE") != NULL) {
               PrintBootOptions(FALSE);
               Status = DeleteBootOptionForFile (LoaderEntry->Volume->DeviceHandle,
@@ -2219,11 +2253,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
               PrintBootOptions(TRUE);
             }
 
-/* we don't need to restore emulation after user has finished with this menu
-            if (gEmuVariableControl != NULL) {
-              gEmuVariableControl->InstallEmulation(gEmuVariableControl);
-            }
-*/
           }
           MainLoopRunning = FALSE;
           AfterTool = TRUE;
