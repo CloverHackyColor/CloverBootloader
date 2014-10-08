@@ -6353,6 +6353,7 @@ NOOPT_MYTOOLS_IPF_DLINK_FLAGS            = /NOLOGO /NODEFAULTLIB /LTCG /DLL /OPT
 
 # This tool needs to be installed separately from Xcode 3.2
 *_XCODE32_*_MTOC_PATH        = /usr/local/bin/mtoc
+*_XCODE32_*_STRIP_PATH       = strip
 
   DEBUG_XCODE32_*_MTOC_FLAGS = -align 0x20 -d $(DEBUG_DIR)/$(MODULE_NAME).dll
 RELEASE_XCODE32_*_MTOC_FLAGS = -align 0x20
@@ -6461,6 +6462,7 @@ RELEASE_XCODE32_ARM_CC_FLAGS   = $(ARCHCC_FLAGS) $(PLATFORM_FLAGS) -mthumb-inter
 *_XCLANG_*_DSYMUTIL_PATH    = /usr/bin/dsymutil
 
       *_*_*_MTOC_PATH  = /usr/local/bin/mtoc
+      *_*_*_STRIP_PATH = strip
 
   DEBUG_XCLANG_*_MTOC_FLAGS = -align 0x20 -d $(DEBUG_DIR)/$(MODULE_NAME).dll
 RELEASE_XCLANG_*_MTOC_FLAGS = -align 0x20
