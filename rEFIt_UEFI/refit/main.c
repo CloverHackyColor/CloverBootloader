@@ -1671,9 +1671,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   InitializeConsoleSim();
   InitBooterLog();
   DBG("\n");
-  DBG("Now is %d.%d.%d,  %d:%d:%d (GMT+%d)\n",
+  MsgLog("Now is %d.%d.%d,  %d:%d:%d (GMT+%d)\n",
       Now.Day, Now.Month, Now.Year, Now.Hour, Now.Minute, Now.Second, Now.TimeZone);
-  DBG("Starting Clover rev %s on %s EFI\n", FIRMWARE_REVISION, gST->FirmwareVendor);
+  MsgLog("Starting Clover rev %s on %s EFI\n", FIRMWARE_REVISION, gST->FirmwareVendor);
 
   Status = InitRefitLib(gImageHandle);
   if (EFI_ERROR(Status))
@@ -1684,11 +1684,14 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   ZeroMem((VOID*)&gSettings, sizeof(SETTINGS_DATA));
   
   Status = InitializeUnicodeCollationProtocol();
-  DBG("UnicodeCollation Status=%r\n", Status);
+  if (EFI_ERROR(Status)) {
+    DBG("UnicodeCollation Status=%r\n", Status);
+  }
+  
   PrepatchSmbios();
   
 #ifdef REVISION_STR
-  MsgLog(REVISION_STR); 
+  DBG(REVISION_STR);
 #endif
   //replace / with _
   Size = iStrLen(gSettings.OEMProduct, 64);
@@ -1708,23 +1711,30 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   
   // LoadOptions Parsing
   DBG("Clover load options size = %d bytes\n", SelfLoadedImage->LoadOptionsSize);
-    ParseLoadOptions(&ConfName, &gConfigDict[1]);
-  if (ConfName) {
-    if (StrLen(ConfName) == 0) {
-      gConfigDict[1] = NULL;
-      FreePool(ConfName);
-      ConfName = NULL;
+  if ((SelfLoadedImage->LoadOptions != NULL) &&
+      (SelfLoadedImage->LoadOptionsSize != 0)){
+    if (*(UINT32*)SelfLoadedImage->LoadOptions == CLOVER_SIGN) {
+      GetBootFromOption();
     } else {
-      SetOEMPath(ConfName);
-      Status = LoadUserSettings(SelfRootDir, ConfName, &gConfigDict[1]);
-      DBG("%s\\%s.plist%s loaded with name from LoadOptions: %r\n",
-                OEMPath, ConfName, EFI_ERROR(Status) ? L" not" : L"", Status);
-      if (EFI_ERROR(Status)) {
-        gConfigDict[1] = NULL;
-        FreePool(ConfName);
-        ConfName = NULL;
+      ParseLoadOptions(&ConfName, &gConfigDict[1]);
+      if (ConfName) {
+        if (StrLen(ConfName) == 0) {
+          gConfigDict[1] = NULL;
+          FreePool(ConfName);
+          ConfName = NULL;
+        } else {
+          SetOEMPath(ConfName);
+          Status = LoadUserSettings(SelfRootDir, ConfName, &gConfigDict[1]);
+          DBG("%s\\%s.plist%s loaded with name from LoadOptions: %r\n",
+              OEMPath, ConfName, EFI_ERROR(Status) ? L" not" : L"", Status);
+          if (EFI_ERROR(Status)) {
+            gConfigDict[1] = NULL;
+            FreePool(ConfName);
+            ConfName = NULL;
+          }
+        }
       }
-    }
+    }    
   }
   if (gConfigDict[1]) {
     UniteTag = GetProperty(gConfigDict[1], "Unite");
@@ -1748,7 +1758,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
   gSettings.PointerEnabled = TRUE;
   gSettings.PointerSpeed = 2;
-  gSettings.DoubleClickTime = 500;
+  gSettings.DoubleClickTime = 500; //TODO - make it constant as nobody change it 
 
 #ifdef ENABLE_SECURE_BOOT
   // Initialize secure boot
@@ -2030,7 +2040,11 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
     //    MainMenu.TimeoutSeconds = GlobalConfig.Timeout >= 0 ? GlobalConfig.Timeout : 0;
     if (GlobalConfig.FastBoot && DefaultEntry) {
-      StartLoader((LOADER_ENTRY *)DefaultEntry);
+      if (DefaultEntry->Tag == TAG_LOADER) {
+        StartLoader((LOADER_ENTRY *)DefaultEntry);
+      } else if (DefaultEntry->Tag == TAG_LEGACY){
+        StartLegacy((LEGACY_ENTRY *)DefaultEntry);
+      }
       MainLoopRunning = FALSE;
       GlobalConfig.FastBoot = FALSE; //Hmm... will never be here
     }
@@ -2143,6 +2157,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
           break;
 
         case TAG_LOADER:   // Boot OS via .EFI loader
+          SetBootCurrent(ChosenEntry);
           StartLoader((LOADER_ENTRY *)ChosenEntry);
           break;
 
@@ -2157,6 +2172,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
             ReinitDesktop = FALSE;
             AfterTool = TRUE;           
           } else {
+            SetBootCurrent(ChosenEntry);
             StartLegacy((LEGACY_ENTRY *)ChosenEntry);
           }
           break;
@@ -2202,6 +2218,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
               LOADER_ENTRY *Entry;
               UINT8 *OptionalData;
               UINTN OptionalDataSize;
+              UINTN BootNum;
 
               PrintBootOptions(FALSE);
 
@@ -2211,30 +2228,51 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
                 }
 
                 Entry = (LOADER_ENTRY *)MainMenu.Entries[EntryIndex];
-                VolName = Entry->VolName;
-                NameSize = StrSize(VolName);
-                LoaderName = Basename(Entry->LoaderPath);
-                Name2Size = StrSize(LoaderName);
+                VolName = Entry->Volume->VolName;
+                if (VolName == NULL) {
+                  VolName = L"";
+                }
+                NameSize = StrSize(VolName); //can't use StrSize with NULL! Stupid UEFI!!!
+                Name2Size = 0;
+                if (Entry->LoaderPath != NULL) {
+                  LoaderName = Basename(Entry->LoaderPath);
+                } else {
+                  LoaderName = NULL;  //legacy boot
+                }                
+                if (LoaderName != NULL) {
+                  Name2Size = StrSize(LoaderName); 
+                }                
+                
                 Description = PoolPrint(L"Clover start %s at %s", LoaderName, VolName);
-                OptionalDataSize = NameSize + StrSize(LoaderName) + 4 + 2; //signature & VolNameSize
+                OptionalDataSize = NameSize + Name2Size + 4 + 2; //signature + VolNameSize
                 OptionalData = AllocateZeroPool(OptionalDataSize);
-                CopyMem(OptionalData, "Clvr", 4); //signature
+                if (OptionalData == NULL) {
+                  break;
+                }
+                CopyMem(OptionalData, "Clvr", 4); //signature = 0x72766c43
                 CopyMem(OptionalData + 4, &NameSize, 2);
                 CopyMem(OptionalData + 6, VolName, NameSize);
-                CopyMem(OptionalData + 6 + NameSize, LoaderName, Name2Size);
+                if (Name2Size != 0) {
+                  CopyMem(OptionalData + 6 + NameSize, LoaderName, Name2Size);
+                }                
 
-                Status = AddBootOptionForFile (LoaderEntry->Volume->DeviceHandle,
-                                               LoaderEntry->LoaderPath,
-                                               TRUE,
-                                               Description,
-                                               OptionalData,
-                                               OptionalDataSize,
-                                               EntryIndex,
-                                               NULL
-                                               );
+                Status = AddBootOptionForFile (
+                                      LoaderEntry->Volume->DeviceHandle,
+                                      LoaderEntry->LoaderPath,
+                                      TRUE,
+                                      Description,
+                                      OptionalData,
+                                      OptionalDataSize,
+                                      EntryIndex,
+                                      (UINT16*)&BootNum
+                                      );
+                if (!EFI_ERROR(Status)) {
+                  DBG("Entry %d assigned option %04x\n", BootNum);
+                  Entry->BootNum = BootNum;
+                }
                 FreePool(OptionalData);
                 FreePool(Description);
-              }
+              } //for (EntryIndex
 
               
               PrintBootOptions(FALSE);

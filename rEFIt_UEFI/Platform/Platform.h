@@ -71,6 +71,8 @@ Headers collection for procedures
 #include "kext_inject.h"
 //#include "entry_scan.h"
 
+#define CLOVER_SIGN        SIGNATURE_32('C','l','v','r')
+
 /* XML Tags */
 #define kXMLTagPList     "plist"
 #define kXMLTagDict      "dict"
@@ -1962,6 +1964,10 @@ FindDevicePathNodeWithType (
   IN  UINT8                    SubType      OPTIONAL
   );
 
+//Parses BootXXXX (XXXX = BootNum) var (from BootOption->Variable) and returns it in BootOption.
+EFI_STATUS
+ParseBootOption (OUT BO_BOOT_OPTION  *BootOption);
+
 /** Prints BootXXXX vars found listed in BootOrder, plus print others if AllBootOptions == TRUE. */
 VOID
 PrintBootOptions (
@@ -2038,6 +2044,14 @@ EFI_STATUS
 DeleteBootOptionsContainingFile (
   IN  CHAR16 *FileName
   );
+
+//get default boot 
+VOID GetBootFromOption(VOID);
+//
+// check if this entry corresponds to Boot# variable and then set BootCurrent
+//
+VOID
+SetBootCurrent(REFIT_MENU_ENTRY *LoadedEntry);
 
 //
 // PlatformDriverOverride.c

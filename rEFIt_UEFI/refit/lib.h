@@ -512,10 +512,11 @@ typedef struct {
   REFIT_VOLUME     *Volume;
   CHAR16           *DevicePathString;
   CHAR16           *LoadOptions; //moved here for compatibility with legacy
+  UINTN             BootNum;
   CHAR16           *LoaderPath;
   CHAR16           *VolName;
   EFI_DEVICE_PATH  *DevicePath;
-  UINT16             Flags;
+  UINT16            Flags;
   UINT8             LoaderType;
   CHAR8            *OSVersion;
   EG_PIXEL         *BootBgColor;
@@ -529,6 +530,8 @@ typedef struct {
   REFIT_VOLUME     *Volume;
   CHAR16           *DevicePathString;
   CHAR16           *LoadOptions;
+  UINTN             BootNum;
+  CHAR16           *LoaderPath; //will be set to NULL
 } LEGACY_ENTRY;
 
 #define ANIME_INFINITE ((UINTN)-1)

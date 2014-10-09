@@ -339,7 +339,7 @@ PrintBootOrder (
     if (Index > 0) {
       DBG(", ");
     }
-    DBG("Boot%04X ", BootOrder[Index]);
+    DBG("Boot%04X", BootOrder[Index]);
   }
   DBG("\n");
   //WaitForKeyPress(L"press a key to continue\n");
@@ -449,6 +449,7 @@ AddToBootOrder (
                              BootOrderNew
                              );
   DBG("SetVariable: %s = %r\n", BOOT_ORDER_VAR, Status);
+  PrintBootOrder(BootOrderNew, BootOrderLen);
 
   FreePool (BootOrder);
   FreePool (BootOrderNew);
@@ -456,11 +457,7 @@ AddToBootOrder (
   // Debug: Get and print new BootOrder value
   //GetBootOrder (&BootOrder, &BootOrderLen);
 
-  if (EFI_ERROR(Status)) {
-    return Status;
-  }
-
-  return EFI_SUCCESS;
+  return Status;
 }
 
 
@@ -953,7 +950,7 @@ AddBootOption (
 
 
   DBG("AddBootOption: %s\n", BootOption->Description);
-  DBG(" FP: %s\n", FileDevicePathToStr(BootOption->FilePathList));
+  DBG(" FilePath: %s\n", FileDevicePathToStr(BootOption->FilePathList));
   DBG(" BootIndex: %d\n", BootIndex);
 
   //
@@ -1001,11 +998,8 @@ AddBootOption (
   // Update BootOrder - add our new boot option as BootIndex in the list
   //
   Status = AddToBootOrder (BootOption->BootNum, BootIndex);
-  if (EFI_ERROR(Status)) {
-    return Status;
-  }
 
-  return EFI_SUCCESS;
+  return Status;
 }
 
 

@@ -241,6 +241,101 @@ ParseLoadOptions (
 }
 
 //
+// analyze SelfLoadedImage->LoadOptions to extract Default Volume and Default Loader
+// input and output data are global
+//
+VOID
+GetBootFromOption(VOID)
+{
+  UINT8  *Data = SelfLoadedImage->LoadOptions;
+  UINTN  Len = SelfLoadedImage->LoadOptionsSize;
+  UINTN  NameSize, Name2Size;
+  
+  Data += 4; //skip signature as we already here
+  NameSize = *(UINT16*)Data;
+  
+  Data += 2; // pointer to Volume name
+  gSettings.DefaultVolume = AllocateCopyPool(NameSize, Data);
+  
+  Data += NameSize;
+  Name2Size = Len - NameSize;
+  if (Name2Size != 0) {
+    gSettings.DefaultLoader = AllocateCopyPool(Name2Size, Data);
+  }
+    
+  DBG("Clover started with option to boot %s from %s\n",
+      (gSettings.DefaultLoader != NULL)?gSettings.DefaultLoader:L"legacy",
+      gSettings.DefaultVolume);
+}
+
+//
+// check if this entry corresponds to Boot# variable and then set BootCurrent
+//
+VOID
+SetBootCurrent(REFIT_MENU_ENTRY *LoadedEntry)
+{
+  EFI_STATUS Status;
+  LOADER_ENTRY *Entry = (LOADER_ENTRY*)LoadedEntry;
+  BO_BOOT_OPTION      BootOption;
+  CHAR16 *VarName;
+  UINTN VarSize = 0;
+  UINT8 *BootVariable;
+  UINTN  NameSize;
+  UINT8 *Data;
+  
+  VarName = PoolPrint(L"Boot%04x", Entry->BootNum);
+  BootVariable = (UINT8*)GetNvramVariable (VarName, &gEfiGlobalVariableGuid, NULL, &VarSize);
+  if ((BootVariable == NULL) || (VarSize == 0)) {
+    DBG("Boot option %s not found\n", VarName);
+    return;
+  }
+  FreePool(VarName);
+  
+  //decode the variable
+  BootOption.Variable = BootVariable;
+  ParseBootOption (&BootOption);
+    
+  if ((BootOption.OptionalDataSize == 0) ||
+      (BootOption.OptionalData == NULL) ||
+      (*(UINT32*)BootOption.OptionalData != CLOVER_SIGN)) {
+    return;
+  }
+  
+  Data = BootOption.OptionalData + 4;
+  NameSize = *(UINT16*)Data;
+  Data += 2;
+  if (StrCmpiBasic((CHAR16*)Data, Entry->Volume->VolName) != 0) {
+    DBG("Boot option %d has other volume name %s\n", Entry->BootNum, (CHAR16*)Data);
+    FreePool(BootVariable);
+    return;
+  }
+  
+  if (VarSize > NameSize + 6) {
+    Data += NameSize;
+    if (StrCmpiBasic((CHAR16*)Data, Basename(Entry->LoaderPath)) != 0) {
+      DBG("Boot option %d has other loader name %s\n", Entry->BootNum, (CHAR16*)Data);
+      FreePool(BootVariable);
+      return;
+    }
+  }
+  
+  FreePool(BootVariable);
+  //all check passed, save the number
+  Status = gRT->SetVariable (L"BootCurrent",
+                             &gEfiGlobalVariableGuid,
+                             EFI_VARIABLE_NON_VOLATILE
+                             | EFI_VARIABLE_BOOTSERVICE_ACCESS
+                             | EFI_VARIABLE_RUNTIME_ACCESS,
+                             sizeof(UINT16),
+                             &Entry->BootNum
+                             );
+  if (EFI_ERROR(Status)) {
+    DBG("Can't save BootCurrent, status=%r\n", Status);
+  }
+  
+}
+
+//
 // returns binary setting in a new allocated buffer and data length in dataLen.
 // data can be specified in <data></data> base64 encoded
 // or in <string></string> hex encoded

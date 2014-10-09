@@ -129,6 +129,7 @@ EG_IMAGE* ScanVolumeDefaultIcon(REFIT_VOLUME *Volume, IN UINT8 OSType) //IN UINT
 }
 
 extern BOOLEAN CopyKernelAndKextPatches(IN OUT KERNEL_AND_KEXT_PATCHES *Dst, IN KERNEL_AND_KEXT_PATCHES *Src);
+
 LOADER_ENTRY * DuplicateLoaderEntry(IN LOADER_ENTRY *Entry)
 {
   LOADER_ENTRY *DuplicateEntry;
