@@ -1974,6 +1974,13 @@ PrintBootOptions (
   IN  BOOLEAN AllBootOptions
   );
 
+/** Prints BootOrder with DBG. */
+VOID
+PrintBootOrder (
+    IN  UINT16 BootOrder[],
+    IN  UINTN  BootOrderLen
+                );
+
 /** Reads BootXXXX (XXXX = BootNum) var, parses it and returns in BootOption.
  *  Caller is responsible for releasing BootOption->Variable with FreePool().
  */

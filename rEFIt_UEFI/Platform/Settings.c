@@ -274,14 +274,20 @@ GetBootFromOption(VOID)
 VOID
 SetBootCurrent(REFIT_MENU_ENTRY *LoadedEntry)
 {
-  EFI_STATUS Status;
-  LOADER_ENTRY *Entry = (LOADER_ENTRY*)LoadedEntry;
-  BO_BOOT_OPTION      BootOption;
-  CHAR16 *VarName;
-  UINTN VarSize = 0;
-  UINT8 *BootVariable;
-  UINTN  NameSize;
-  UINT8 *Data;
+  EFI_STATUS      Status;
+  LOADER_ENTRY    *Entry = (LOADER_ENTRY*)LoadedEntry;
+  BO_BOOT_OPTION  BootOption;
+  CHAR16          *VarName;
+  UINTN           VarSize = 0;
+  UINT8           *BootVariable;
+  UINTN           NameSize;
+  UINT8           *Data;
+  UINT16          *BootOrder;
+  UINT16          *BootOrderNew;
+  UINT16          *Ptr;
+  UINTN           BootOrderSize;
+  INTN            BootIndex = 0, Index;
+  
   
   VarName = PoolPrint(L"Boot%04x", Entry->BootNum);
   BootVariable = (UINT8*)GetNvramVariable (VarName, &gEfiGlobalVariableGuid, NULL, &VarSize);
@@ -332,6 +338,43 @@ SetBootCurrent(REFIT_MENU_ENTRY *LoadedEntry)
   if (EFI_ERROR(Status)) {
     DBG("Can't save BootCurrent, status=%r\n", Status);
   }
+  //Next step is rotate BootOrder to set BootNum to first place
+  BootOrder = GetNvramVariable (L"BootOrder", &gEfiGlobalVariableGuid, NULL, &BootOrderSize);
+  if (BootOrder == NULL) {
+    return;
+  }
+  VarSize = (INTN)BootOrderSize / sizeof(UINT16); //reuse variable
+  for (Index = 0; Index < (INTN)VarSize; Index++) {
+    if (BootOrder[Index] == Entry->BootNum) {
+      BootIndex = Index;
+      break;
+    }
+  }
+  if (BootIndex != 0) {
+    BootOrderNew = AllocatePool(BootOrderSize);
+    Ptr = BootOrderNew;
+    for (Index = 0; Index < (INTN)VarSize - BootIndex; Index++) {
+      *Ptr++ = BootOrder[Index + BootIndex];
+    }
+    for (Index = 0; Index < BootIndex; Index++) {
+      *Ptr++ = BootOrder[Index];
+    }
+    Status = gRT->SetVariable (L"BootOrder",
+                               &gEfiGlobalVariableGuid,
+                               EFI_VARIABLE_NON_VOLATILE
+                               | EFI_VARIABLE_BOOTSERVICE_ACCESS
+                               | EFI_VARIABLE_RUNTIME_ACCESS,
+                               BootOrderSize,
+                               BootOrderNew
+                               );
+    if (EFI_ERROR(Status)) {
+      DBG("Can't save BootOrder, status=%r\n", Status);
+    }
+    DBG("Set new BootOrder\n");
+    PrintBootOrder(BootOrderNew, VarSize);
+    FreePool(BootOrderNew);
+  }
+  FreePool(BootOrder);
   
 }
 
