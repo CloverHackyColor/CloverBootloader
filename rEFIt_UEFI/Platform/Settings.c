@@ -4724,30 +4724,62 @@ GetRootUUID (
   IN  REFIT_VOLUME *Volume
   )
 {
-  EFI_STATUS Status       = EFI_NOT_FOUND;
-  CHAR8      *PlistBuffer = 0;
+  EFI_STATUS Status;
+  CHAR8      *PlistBuffer;
   UINTN      PlistLen;
-  TagPtr     Dict         = NULL;
-  TagPtr     Prop         = NULL;
-  CHAR16	   Uuid[40];
+  TagPtr     Dict;
+  TagPtr     Prop;
+  CHAR16     Uuid[40];
+
+  CHAR16*    SystemPlistR;
+  CHAR16*    SystemPlistP;
+  CHAR16*    SystemPlistS;
+
+  BOOLEAN    HasRock;
+  BOOLEAN    HasPaper;
+  BOOLEAN    HasScissors;
     
-  CHAR16*    SystemPlistP = L"\\com.apple.boot.P\\Library\\Preferences\\SystemConfiguration\\com.apple.Boot.plist";
-  CHAR16*    SystemPlistR = L"\\com.apple.boot.R\\Library\\Preferences\\SystemConfiguration\\com.apple.Boot.plist"; //untested, found in chameleon
-  CHAR16*    SystemPlistS = L"\\com.apple.boot.S\\Library\\Preferences\\SystemConfiguration\\com.apple.Boot.plist"; //untested, found in chameleon
-    
+  Status = EFI_NOT_FOUND;
   if (Volume == NULL) {
-    return EFI_NOT_FOUND;
+    return Status;
   }
-    
-  if (FileExists (Volume->RootDir, SystemPlistP)) {
-    Status = egLoadFile (Volume->RootDir, SystemPlistP, (UINT8 **)&PlistBuffer, &PlistLen);
-  } else if (FileExists (Volume->RootDir, SystemPlistR)) {
+
+  SystemPlistR = L"\\com.apple.boot.R\\Library\\Preferences\\SystemConfiguration\\com.apple.Boot.plist";
+  HasRock      = FileExists (Volume->RootDir,     SystemPlistR);
+
+  SystemPlistP = L"\\com.apple.boot.P\\Library\\Preferences\\SystemConfiguration\\com.apple.Boot.plist";
+  HasPaper     = FileExists (Volume->RootDir,    SystemPlistP);
+
+  SystemPlistS = L"\\com.apple.boot.S\\Library\\Preferences\\SystemConfiguration\\com.apple.Boot.plist";
+  HasScissors  = FileExists (Volume->RootDir, SystemPlistS);
+
+  PlistBuffer = NULL;
+  // Playing Rock, Paper, Scissors to chose which settings to load.
+  if (HasRock && HasPaper && HasScissors) {
+    // Rock wins when all three are around
     Status = egLoadFile (Volume->RootDir, SystemPlistR, (UINT8 **)&PlistBuffer, &PlistLen);
-  } else if (FileExists (Volume->RootDir, SystemPlistS)) {
+  } else if (HasRock && HasPaper) {
+    // Paper beats rock
+    Status = egLoadFile (Volume->RootDir, SystemPlistP, (UINT8 **)&PlistBuffer, &PlistLen);
+  } else if (HasRock && HasScissors) {
+    // Rock beats scissors
+    Status = egLoadFile (Volume->RootDir, SystemPlistR, (UINT8 **)&PlistBuffer, &PlistLen);
+  } else if (HasPaper && HasScissors) {
+    // Scissors beat paper
     Status = egLoadFile (Volume->RootDir, SystemPlistS, (UINT8 **)&PlistBuffer, &PlistLen);
+  } else if (HasPaper) {
+    // No match
+    Status = egLoadFile (Volume->RootDir, SystemPlistP, (UINT8 **)&PlistBuffer, &PlistLen);
+  } else if (HasScissors) {
+    // No match
+    Status = egLoadFile (Volume->RootDir, SystemPlistS, (UINT8 **)&PlistBuffer, &PlistLen);
+  } else {
+    // Rock wins by default
+    Status = egLoadFile (Volume->RootDir, SystemPlistR, (UINT8 **)&PlistBuffer, &PlistLen);
   }
    
   if (!EFI_ERROR (Status)) {
+    Dict = NULL;
     if (ParseXML (PlistBuffer, &Dict, 0) != EFI_SUCCESS) {
       FreePool (PlistBuffer);
       return EFI_NOT_FOUND;
