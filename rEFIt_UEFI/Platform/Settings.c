@@ -304,6 +304,7 @@ SetBootCurrent(REFIT_MENU_ENTRY *LoadedEntry)
   if ((BootOption.OptionalDataSize == 0) ||
       (BootOption.OptionalData == NULL) ||
       (*(UINT32*)BootOption.OptionalData != CLOVER_SIGN)) {
+    DBG("BootOption of the entry is empty\n");
     return;
   }
   
@@ -1790,17 +1791,22 @@ GetEarlyUserSettings (
       
       // defaults if "DefaultVolume" is not present or is empty
       gSettings.LastBootedVolume = FALSE;
-      gSettings.DefaultVolume    = NULL;
+ //     gSettings.DefaultVolume    = NULL;
 
       Prop = GetProperty (DictPointer, "DefaultVolume");
       if (Prop != NULL) {
         UINTN Size = AsciiStrSize (Prop->string);
         if (Size > 0) {
+          if (gSettings.DefaultVolume  != NULL) { //override value from Boot Option
+            FreePool(gSettings.DefaultVolume);
+            gSettings.DefaultVolume = NULL;
+          }
+
           // check for special value for remembering boot volume
           if (AsciiStriCmp (Prop->string, "LastBootedVolume") == 0) {
             gSettings.LastBootedVolume = TRUE;
           } else {
-            gSettings.DefaultVolume    = AllocateZeroPool (Size * sizeof(CHAR16));
+            gSettings.DefaultVolume = AllocateZeroPool (Size * sizeof(CHAR16));
             AsciiStrToUnicodeStr (Prop->string, gSettings.DefaultVolume);
           }
         }

@@ -853,7 +853,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
   if (gSettings.LastBootedVolume) {
     SetStartupDiskVolume(Entry->Volume, Entry->LoaderType == OSTYPE_OSX ? NULL : Entry->LoaderPath);
   } else if (gSettings.DefaultVolume != NULL) {
-    // DefaultVolume specified in Config.plist:
+    // DefaultVolume specified in Config.plist or in Boot Option
     // we'll remove OSX Startup Disk vars which may be present if it is used
     // to reboot into another volume
     RemoveStartupDiskVolume();
@@ -2243,7 +2243,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
                   Name2Size = StrSize(LoaderName); 
                 }                
                 
-                Description = PoolPrint(L"Clover start %s at %s", LoaderName, VolName);
+                Description = PoolPrint(L"Clover start %s at %s", (LoaderName != NULL)?LoaderName:L"legacy", VolName);
                 OptionalDataSize = NameSize + Name2Size + 4 + 2; //signature + VolNameSize
                 OptionalData = AllocateZeroPool(OptionalDataSize);
                 if (OptionalData == NULL) {
@@ -2267,7 +2267,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
                                       (UINT16*)&BootNum
                                       );
                 if (!EFI_ERROR(Status)) {
-                  DBG("Entry %d assigned option %04x\n", BootNum);
+                  DBG("Entry %d assigned option %04x\n", EntryIndex, BootNum);
                   Entry->BootNum = BootNum;
                 }
                 FreePool(OptionalData);
