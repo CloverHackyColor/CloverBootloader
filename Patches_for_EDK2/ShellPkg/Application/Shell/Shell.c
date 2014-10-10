@@ -1261,7 +1261,6 @@ AddLineToCommandHistory(
     FreePool(Node);
     return;
   }
-
   InsertTailList(&ShellInfoObject.ViewingSettings.CommandHistory.Link, &Node->Link);
 }
 
@@ -2907,6 +2906,7 @@ CalleeExitStatus = SHELL_SUCCESS;
   if (ShellCommandGetCurrentScriptFile()==NULL) {
     ShellCommandSetEchoState(PreScriptEchoState);
   }
+
   return (EFI_SUCCESS);
 }
 

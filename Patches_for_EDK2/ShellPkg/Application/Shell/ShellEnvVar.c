@@ -303,7 +303,6 @@ SetEnvironmentVariables(
   UINTN         CurrentCount;
   ENV_VAR_LIST  *VarList;
   ENV_VAR_LIST  *Node;
-  UINTN         NewSize;
 
   VarList = NULL;
 

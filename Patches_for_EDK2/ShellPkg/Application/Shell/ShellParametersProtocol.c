@@ -173,7 +173,7 @@ ParseCommandLineToArgs(
     return (EFI_SUCCESS);
   }
 
-  if (!CommandLine || StrLen(CommandLine)==0) {
+  if (CommandLine == NULL || StrLen(CommandLine)==0) {
     (*Argc) = 0;
     (*Argv) = NULL;
     return (EFI_SUCCESS);
