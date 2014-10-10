@@ -15,7 +15,7 @@
 set -e
 shopt -s nocasematch
 
-
+export TOOLCHAIN_DIR=${TOOLCHAIN_DIR:-~/src/opt/local}
 #
 # Setup workspace if it is not set
 #
@@ -42,6 +42,7 @@ PROCESSOR=X64
 #
 # Pick a default tool type for a given OS
 #
+BUILDTARGET=RELEASE
 TARGET_TOOLS=MYTOOLS
 case `uname` in
   CYGWIN*) echo Cygwin not fully supported yet. ;;
@@ -61,7 +62,7 @@ case `uname` in
 
 esac
 
-BUILD_ROOT_ARCH=$WORKSPACE/Build/ShellPkg$PROCESSOR/DEBUG_"$TARGET_TOOLS"/$PROCESSOR
+BUILD_ROOT_ARCH=$WORKSPACE/Build/ShellPkg$PROCESSOR/"$BUILDTARGET"_"$TARGET_TOOLS"/$PROCESSOR
 FLOPPY_IMAGE=$WORKSPACE/Build/ShellPkg$PROCESSOR/floppy.img
 
 if  [[ ! -f `which build` || ! -f `which GenFv` ]];
@@ -104,6 +105,6 @@ done
 # Build the edk2 ShellPkg
 #
 echo Running edk2 build for ShellPkg$PROCESSOR
-build -p $WORKSPACE/ShellPkg/ShellPkg$PROCESSOR.dsc -a $PROCESSOR -t $TARGET_TOOLS -n 3 $*
+build -p $WORKSPACE/ShellPkg/ShellPkg$PROCESSOR.dsc -a $PROCESSOR -b $BUILDTARGET -t $TARGET_TOOLS -n 3 $*
 exit $?
 

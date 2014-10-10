@@ -15,6 +15,7 @@
 set -e
 shopt -s nocasematch
 
+export TOOLCHAIN_DIR=${TOOLCHAIN_DIR:-~/src/opt/local}
 
 #
 # Setup workspace if it is not set
@@ -65,8 +66,8 @@ case `uname` in
         exit 1
       else
 #        TARGET_TOOLS=XCODE32
-#        TARGET_TOOLS=GCC49
-        TARGET_TOOLS=XCLANG
+        TARGET_TOOLS=GCC49
+#        TARGET_TOOLS=XCLANG
       fi
       ;;
   Linux*)

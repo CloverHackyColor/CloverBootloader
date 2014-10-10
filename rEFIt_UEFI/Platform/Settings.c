@@ -4594,6 +4594,10 @@ GetUserSettings(
   return Status;
 }
 
+CHAR16* SystemPlists[] = { L"\\System\\Library\\CoreServices\\SystemVersion.plist", // OS X Regular
+  L"\\System\\Library\\CoreServices\\ServerVersion.plist", // OS X Server
+  NULL };
+
 CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
 {
   CHAR8      *OSVersion  = NULL;
@@ -4610,10 +4614,6 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
 
   if (OSTYPE_IS_OSX(Entry->LoaderType)) {
     // Detect exact version for Mac OS X Regular/Server
-    CHAR16* SystemPlists[] = { L"\\System\\Library\\CoreServices\\SystemVersion.plist", // OS X Regular
-      L"\\System\\Library\\CoreServices\\ServerVersion.plist", // OS X Server
-      NULL };
-
     i = 0;
     while (SystemPlists[i] != NULL && !FileExists(Entry->Volume->RootDir, SystemPlists[i])) {
       ++i;
