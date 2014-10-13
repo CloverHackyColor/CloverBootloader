@@ -191,7 +191,7 @@ fsw_status_t fsw_block_get(struct VOLSTRUCTNAME *vol, fsw_u32 phys_bno, fsw_u32 
 {
   fsw_status_t    status;
   fsw_u32         i, discard_level, new_bcache_size;
-  struct fsw_blockcache *new_bcache;
+  struct fsw_blockcache *new_bcache = NULL;
   
   // TODO: allow the host driver to do its own caching; just call through if
   //  the appropriate function pointers are set

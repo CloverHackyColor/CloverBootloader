@@ -102,6 +102,7 @@ struct fsw_hfs_dnode
   /* link file stuff */
   fsw_u32 creator;
   fsw_u32 crtype;
+  /* hardlinks stuff */
   fsw_u32 ilink;
 };
 
