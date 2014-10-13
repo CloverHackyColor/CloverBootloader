@@ -114,7 +114,7 @@ fsw_hfs_read_block (struct fsw_hfs_dnode    *dno,
 
     phys_bno = extent.phys_start;
   //Slice - increase cache level from 0 to 3
-    status = fsw_block_get(dno->g.vol, phys_bno, 3, (void **)&buffer);
+    status = fsw_block_get(dno->g.vol, phys_bno, 0, (void **)&buffer);
     if (status)
         return status;
 
@@ -294,7 +294,7 @@ static fsw_status_t fsw_hfs_volume_mount(struct fsw_hfs_volume *vol)
       
         s.type = FSW_STRING_TYPE_ISO88591;
         s.size = s.len = 0;
-      s.data = NULL; //&mdb->drVN; //"HFS+ volume";
+        s.data = NULL; //&mdb->drVN; //"HFS+ volume";
       
        //fsw_status_t fsw_strdup_coerce(struct fsw_string *dest, int type, struct fsw_string *src)
         status = fsw_strdup_coerce(&vol->g.label, vol->g.host_string_type, &s);
@@ -1179,31 +1179,31 @@ static fsw_status_t fsw_hfs_dir_lookup(struct fsw_hfs_volume * vol,
   fsw_u32                    ptr;
 //  fsw_u16                    rec_type;
   BTNodeDescriptor *         node = NULL;
-  struct fsw_string          rec_name;
-  int                        free_data = 0; //, i;
+//  struct fsw_string          rec_name;
+//  int                        free_data = 0; //, i;
   HFSPlusCatalogKey*         file_key;
   file_info_t                file_info;
 //  fsw_u8*                    base;
   
   
   fsw_memzero(&file_info, sizeof file_info);
-  file_info.name = &rec_name;
+  file_info.name = lookup_name; //&rec_name;
   
   catkey.parentID = dno->g.dnode_id;
   catkey.nodeName.length = (fsw_u16)lookup_name->len;
   
   // no need to allocate anything 
-  if (lookup_name->type == FSW_STRING_TYPE_UTF16) {
+//  if (lookup_name->type == FSW_STRING_TYPE_UTF16) {
     fsw_memcpy(catkey.nodeName.unicode, lookup_name->data, lookup_name->size);
-    rec_name = *lookup_name;
-  } else {
+//    rec_name = *lookup_name;
+/*  } else {
     status = fsw_strdup_coerce(&rec_name, FSW_STRING_TYPE_UTF16, lookup_name);
     // nothing allocated so far
     if (status)
       goto done;
     free_data = 1;
     fsw_memcpy(catkey.nodeName.unicode, rec_name.data, rec_name.size);
-  }
+  } */
   
   /* Dirty hack: blacklisting of certain files on FS driver level */
   /* 
@@ -1227,7 +1227,8 @@ static fsw_status_t fsw_hfs_dir_lookup(struct fsw_hfs_volume * vol,
   }
 #endif
   
-  catkey.keyLength = (fsw_u16)(6 + rec_name.size);
+//  catkey.keyLength = (fsw_u16)(6 + rec_name.size);
+  catkey.keyLength = (fsw_u16)(6 + lookup_name->size);
   status = fsw_hfs_btree_search (&vol->catalog_tree,
                                  (BTreeKey*)&catkey,
                                  vol->case_sensitive ?
@@ -1252,8 +1253,8 @@ done:
   if (node != NULL)
     fsw_free(node);
   
-  if (free_data)
-    fsw_strfree(&rec_name);
+//  if (free_data)
+//    fsw_strfree(&rec_name);
   
   return status;
 }

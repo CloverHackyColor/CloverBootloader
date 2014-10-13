@@ -636,6 +636,7 @@ static fsw_status_t fsw_ext4_dir_read(struct fsw_ext4_volume *vol, struct fsw_ex
     entry_name.len = entry_name.size = entry.name_len;
     entry_name.data = entry.name;
 
+
     // setup a dnode for the child item
     status = fsw_dnode_create(dno, entry.inode, FSW_DNODE_TYPE_UNKNOWN, &entry_name, child_dno_out);
 

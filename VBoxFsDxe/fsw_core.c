@@ -581,7 +581,8 @@ fsw_status_t fsw_dnode_lookup_path(struct fsw_dnode *dno,
   }
   vol = dno->vol;
   
-  remaining_path = *lookup_path;
+//  remaining_path = *lookup_path;
+  fsw_memcpy(&remaining_path, lookup_path, sizeof(struct fsw_string));
   fsw_dnode_retain(dno);
   
   // loop over the path
@@ -754,7 +755,7 @@ fsw_status_t fsw_dnode_readlink_data(struct fsw_dnode *dno, struct fsw_string *l
   s.type = FSW_STRING_TYPE_ISO88591;
   s.size = s.len = (int)dno->size;
   s.data = buffer;
-  
+
   // open shandle and read the data
   status = fsw_shandle_open(dno, &shand);
   if (status)
@@ -815,7 +816,8 @@ fsw_status_t fsw_dnode_resolve(struct fsw_dnode *dno, struct fsw_dnode **target_
       goto errorexit;
     
     // resolve it
-    status = fsw_dnode_lookup_path(dno->parent, &target_name, '/', &target_dno);
+//    status = fsw_dnode_lookup_path(dno->parent, &target_name, '/', &target_dno);
+    status = fsw_dnode_lookup_path(dno->parent, &target_name, '\\', &target_dno);
     fsw_strfree(&target_name);
     if (status)
       goto errorexit;

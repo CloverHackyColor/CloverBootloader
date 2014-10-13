@@ -483,7 +483,8 @@ void fsw_strsplit(struct fsw_string *element, struct fsw_string *buffer, char se
     }
 
     maxlen = buffer->len;
-    *element = *buffer;
+//    *element = *buffer;
+  fsw_memcpy(element, buffer, sizeof(struct fsw_string));
 
     if (buffer->type == FSW_STRING_TYPE_ISO88591) {
         fsw_u8 *p;
