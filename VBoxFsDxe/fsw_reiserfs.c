@@ -33,7 +33,7 @@ static fsw_status_t fsw_reiserfs_volume_stat(struct fsw_reiserfs_volume *vol, st
 static fsw_status_t fsw_reiserfs_dnode_fill(struct fsw_reiserfs_volume *vol, struct fsw_reiserfs_dnode *dno);
 static void         fsw_reiserfs_dnode_free(struct fsw_reiserfs_volume *vol, struct fsw_reiserfs_dnode *dno);
 static fsw_status_t fsw_reiserfs_dnode_stat(struct fsw_reiserfs_volume *vol, struct fsw_reiserfs_dnode *dno,
-                                        struct fsw_dnode_stat *sb);
+                                        struct fsw_dnode_stat_str *sb);
 static fsw_status_t fsw_reiserfs_get_extent(struct fsw_reiserfs_volume *vol, struct fsw_reiserfs_dnode *dno,
                                         struct fsw_extent *extent);
 
@@ -297,7 +297,7 @@ static void fsw_reiserfs_dnode_free(struct fsw_reiserfs_volume *vol, struct fsw_
  */
 
 static fsw_status_t fsw_reiserfs_dnode_stat(struct fsw_reiserfs_volume *vol, struct fsw_reiserfs_dnode *dno,
-                                            struct fsw_dnode_stat *sb)
+                                            struct fsw_dnode_stat_str *sb)
 {
     if (dno->sd_v1) {
         if (dno->g.type == FSW_DNODE_TYPE_SPECIAL)

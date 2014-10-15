@@ -333,10 +333,10 @@ struct fsw_volume_stat {
  * Core: Used in gathering detailed information on a dnode.
  */
 
-struct fsw_dnode_stat {
+struct fsw_dnode_stat_str {
     fsw_u64     used_bytes;         //!< Bytes actually used by the file on disk
-    void        (*store_time_posix)(struct fsw_dnode_stat *sb, int which, fsw_u32 posix_time);   //!< Callback for storing a Posix-style timestamp
-    void        (*store_attr_posix)(struct fsw_dnode_stat *sb, fsw_u16 posix_mode);   //!< Callback for storing a Posix-style file mode
+    void        (*store_time_posix)(struct fsw_dnode_stat_str *sb, int which, fsw_u32 posix_time);   //!< Callback for storing a Posix-style timestamp
+    void        (*store_attr_posix)(struct fsw_dnode_stat_str *sb, fsw_u16 posix_mode);   //!< Callback for storing a Posix-style file mode
     void        *host_data;         //!< Hook for a host-specific data structure
 };
 
@@ -380,7 +380,7 @@ struct fsw_fstype_table
     fsw_status_t (*dnode_fill)(struct VOLSTRUCTNAME *vol, struct DNODESTRUCTNAME *dno);
     void         (*dnode_free)(struct VOLSTRUCTNAME *vol, struct DNODESTRUCTNAME *dno);
     fsw_status_t (*dnode_stat)(struct VOLSTRUCTNAME *vol, struct DNODESTRUCTNAME *dno,
-                               struct fsw_dnode_stat *sb);
+                               struct fsw_dnode_stat_str *sb);
     fsw_status_t (*get_extent)(struct VOLSTRUCTNAME *vol, struct DNODESTRUCTNAME *dno,
                                struct fsw_extent *extent);
 
@@ -424,7 +424,7 @@ void         fsw_dnode_retain(struct fsw_dnode *dno);
 void         fsw_dnode_release(struct fsw_dnode *dno);
 
 fsw_status_t fsw_dnode_fill(struct fsw_dnode *dno);
-fsw_status_t fsw_dnode_stat(struct fsw_dnode *dno, struct fsw_dnode_stat *sb);
+fsw_status_t fsw_dnode_stat(struct fsw_dnode *dno, struct fsw_dnode_stat_str *sb);
 
 fsw_status_t fsw_dnode_lookup(struct fsw_dnode *dno,
                               struct fsw_string *lookup_name, struct fsw_dnode **child_dno_out);

@@ -511,7 +511,7 @@ void fsw_strsplit(struct fsw_string *element, struct fsw_string *buffer, char se
 
         p = (fsw_u16 *)element->data;
         for (i = 0; i < maxlen; i++, p++) {
-            if (*p == separator) {
+            if (*p == (fsw_u16)separator) {
                 buffer->data = p + 1;
                 buffer->len -= i + 1;
                 break;

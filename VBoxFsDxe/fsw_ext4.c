@@ -34,7 +34,7 @@ static fsw_status_t fsw_ext4_volume_stat(struct fsw_ext4_volume *vol, struct fsw
 static fsw_status_t fsw_ext4_dnode_fill(struct fsw_ext4_volume *vol, struct fsw_ext4_dnode *dno);
 static void         fsw_ext4_dnode_free(struct fsw_ext4_volume *vol, struct fsw_ext4_dnode *dno);
 static fsw_status_t fsw_ext4_dnode_stat(struct fsw_ext4_volume *vol, struct fsw_ext4_dnode *dno,
-                                        struct fsw_dnode_stat *sb);
+                                        struct fsw_dnode_stat_str *sb);
 static fsw_status_t fsw_ext4_get_extent(struct fsw_ext4_volume *vol, struct fsw_ext4_dnode *dno,
                                         struct fsw_extent *extent);
 static fsw_status_t fsw_ext4_get_by_blkaddr(struct fsw_ext4_volume *vol, struct fsw_ext4_dnode *dno,
@@ -332,7 +332,7 @@ static void fsw_ext4_dnode_free(struct fsw_ext4_volume *vol, struct fsw_ext4_dno
  */
 
 static fsw_status_t fsw_ext4_dnode_stat(struct fsw_ext4_volume *vol, struct fsw_ext4_dnode *dno,
-                                        struct fsw_dnode_stat *sb)
+                                        struct fsw_dnode_stat_str *sb)
 {
     sb->used_bytes = dno->raw->i_blocks_lo * EXT4_BLOCK_SIZE(vol->sb);   // very, very strange...
     sb->store_time_posix(sb, FSW_DNODE_STAT_CTIME, dno->raw->i_ctime);

@@ -390,7 +390,7 @@ fsw_status_t fsw_posix_read_block(struct fsw_volume *vol, fsw_u32 phys_bno, void
  */
 
 /*
-static void fsw_posix_store_time_posix(struct fsw_dnode_stat *sb, int which, fsw_u32 posix_time)
+static void fsw_posix_store_time_posix(struct fsw_dnode_stat_str *sb, int which, fsw_u32 posix_time)
 {
     EFI_FILE_INFO       *FileInfo = (EFI_FILE_INFO *)sb->host_data;
 
@@ -410,7 +410,7 @@ static void fsw_posix_store_time_posix(struct fsw_dnode_stat *sb, int which, fsw
  */
 
 /*
-static void fsw_posix_store_attr_posix(struct fsw_dnode_stat *sb, fsw_u16 posix_mode)
+static void fsw_posix_store_attr_posix(struct fsw_dnode_stat_str *sb, fsw_u16 posix_mode)
 {
     EFI_FILE_INFO       *FileInfo = (EFI_FILE_INFO *)sb->host_data;
 
@@ -432,7 +432,7 @@ EFI_STATUS fsw_posix_dnode_fill_FileInfo(IN FSW_VOLUME_DATA *Volume,
     EFI_STATUS          Status;
     EFI_FILE_INFO       *FileInfo;
     UINTN               RequiredSize;
-    struct fsw_dnode_stat sb;
+    struct fsw_dnode_stat_str sb;
 
     // make sure the dnode has complete info
     Status = fsw_posix_map_status(fsw_dnode_fill(dno), Volume);
@@ -461,7 +461,7 @@ EFI_STATUS fsw_posix_dnode_fill_FileInfo(IN FSW_VOLUME_DATA *Volume,
     fsw_posix_strcpy(FileInfo->FileName, &dno->name);
 
     // get the missing info from the fs driver
-    ZeroMem(&sb, sizeof(struct fsw_dnode_stat));
+    ZeroMem(&sb, sizeof(struct fsw_dnode_stat_str));
     sb.store_time_posix = fsw_posix_store_time_posix;
     sb.store_attr_posix = fsw_posix_store_attr_posix;
     sb.host_data = FileInfo;

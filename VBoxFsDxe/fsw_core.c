@@ -514,7 +514,7 @@ fsw_status_t fsw_dnode_fill(struct fsw_dnode *dno)
  * These callbacks must be filled in by the caller.
  */
 
-fsw_status_t fsw_dnode_stat(struct fsw_dnode *dno, struct fsw_dnode_stat *sb)
+fsw_status_t fsw_dnode_stat(struct fsw_dnode *dno, struct fsw_dnode_stat_str *sb)
 {
   fsw_status_t    status;
   

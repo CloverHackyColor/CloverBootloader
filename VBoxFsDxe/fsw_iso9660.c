@@ -87,7 +87,7 @@ static fsw_status_t fsw_iso9660_volume_stat(struct fsw_iso9660_volume *vol, stru
 static fsw_status_t fsw_iso9660_dnode_fill(struct fsw_iso9660_volume *vol, struct fsw_iso9660_dnode *dno);
 static void         fsw_iso9660_dnode_free(struct fsw_iso9660_volume *vol, struct fsw_iso9660_dnode *dno);
 static fsw_status_t fsw_iso9660_dnode_stat(struct fsw_iso9660_volume *vol, struct fsw_iso9660_dnode *dno,
-                                           struct fsw_dnode_stat *sb);
+                                           struct fsw_dnode_stat_str *sb);
 static fsw_status_t fsw_iso9660_get_extent(struct fsw_iso9660_volume *vol, struct fsw_iso9660_dnode *dno,
                                            struct fsw_extent *extent);
 
@@ -198,13 +198,13 @@ static fsw_status_t rr_find_nm(struct fsw_iso9660_volume *vol, struct iso9660_di
                 fsw_u8 *tmp = NULL;
                 if (nm->flags & RR_NM_CURR)
                 {
-                     fsw_memdup(str->data, ".", 1);
+                     fsw_memdup(&str->data, ".", 1);
                      str->len = 1;
                      goto done;
                 }
                 if (nm->flags & RR_NM_PARE)
                 {
-                     fsw_memdup(str->data, "..", 2);
+                     fsw_memdup(&str->data, "..", 2);
                      str->len = 2;
                      goto done;
                 }
@@ -452,7 +452,7 @@ static void fsw_iso9660_dnode_free(struct fsw_iso9660_volume *vol, struct fsw_is
  */
 
 static fsw_status_t fsw_iso9660_dnode_stat(struct fsw_iso9660_volume *vol, struct fsw_iso9660_dnode *dno,
-                                           struct fsw_dnode_stat *sb)
+                                           struct fsw_dnode_stat_str *sb)
 {
     sb->used_bytes = (dno->g.size + (ISO9660_BLOCKSIZE-1)) & ~(ISO9660_BLOCKSIZE-1);
     /*

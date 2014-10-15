@@ -1109,10 +1109,10 @@ BOpt_AppendFileName (
   Size1 = StrSize (Str1);
   Size2 = StrSize (Str2);
   Str   = AllocateZeroPool (Size1 + Size2 + sizeof (CHAR16));
-  ASSERT (Str != NULL);
+//  ASSERT (Str != NULL);
 
   TmpStr = AllocateZeroPool (Size1 + Size2 + sizeof (CHAR16)); 
-  ASSERT (TmpStr != NULL);
+//  ASSERT (TmpStr != NULL);
 
   StrCat (Str, Str1);
   if (!((*Str == '\\') && (*(Str + 1) == 0))) {

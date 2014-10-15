@@ -33,7 +33,7 @@ static fsw_status_t fsw_ext2_volume_stat(struct fsw_ext2_volume *vol, struct fsw
 static fsw_status_t fsw_ext2_dnode_fill(struct fsw_ext2_volume *vol, struct fsw_ext2_dnode *dno);
 static void         fsw_ext2_dnode_free(struct fsw_ext2_volume *vol, struct fsw_ext2_dnode *dno);
 static fsw_status_t fsw_ext2_dnode_stat(struct fsw_ext2_volume *vol, struct fsw_ext2_dnode *dno,
-                                        struct fsw_dnode_stat *sb);
+                                        struct fsw_dnode_stat_str *sb);
 static fsw_status_t fsw_ext2_get_extent(struct fsw_ext2_volume *vol, struct fsw_ext2_dnode *dno,
                                         struct fsw_extent *extent);
 
@@ -254,7 +254,7 @@ static void fsw_ext2_dnode_free(struct fsw_ext2_volume *vol, struct fsw_ext2_dno
  */
 
 static fsw_status_t fsw_ext2_dnode_stat(struct fsw_ext2_volume *vol, struct fsw_ext2_dnode *dno,
-                                        struct fsw_dnode_stat *sb)
+                                        struct fsw_dnode_stat_str *sb)
 {
     sb->used_bytes = dno->raw->i_blocks * 512;   // very, very strange...
     sb->store_time_posix(sb, FSW_DNODE_STAT_CTIME, dno->raw->i_ctime);

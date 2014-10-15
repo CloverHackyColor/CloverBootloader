@@ -60,7 +60,7 @@
 #define FSTYPE ext2
 #endif
 #endif
-#define DEBUG_VBFS 1
+#define DEBUG_VBFS 0
 CHAR8 *msgCursor;
 MESSAGE_LOG_PROTOCOL *Msg = NULL; 
 
@@ -205,7 +205,7 @@ EFI_STATUS EFIAPI fsw_efi_main(IN EFI_HANDLE         ImageHandle,
     Status = BS->InstallProtocolInterface(&fsw_efi_DriverBinding_table.DriverBindingHandle, 
 &PROTO_NAME(ComponentName2Protocol), EFI_NATIVE_INTERFACE, &fsw_efi_ComponentName_table);
   if (EFI_ERROR(Status)) {
-    Print(L"Failed to install Component Name 2 Protocol\n");
+//    Print(L"Failed to install Component Name 2 Protocol\n");
   }
 
     // install Component Name protocol
@@ -321,7 +321,7 @@ EFI_STATUS EFIAPI fsw_efi_DriverBinding_Start(IN EFI_DRIVER_BINDING_PROTOCOL  *T
     FSW_VOLUME_DATA     *Volume;
 
 #if DEBUG_LEVEL
-    Print(L"fsw_efi_DriverBinding_Start\n");
+//    Print(L"fsw_efi_DriverBinding_Start\n");
 #endif
 
     // open consumed protocols
@@ -363,7 +363,7 @@ EFI_STATUS EFIAPI fsw_efi_DriverBinding_Start(IN EFI_DRIVER_BINDING_PROTOCOL  *T
                               ControllerHandle,
                               EFI_OPEN_PROTOCOL_BY_DRIVER);
     if ((DiskIo2 == NULL) && EFI_ERROR(Status)) {
-        DBG("Fsw ERROR: OpenProtocol(DiskIo) returned %r\n", Status);
+ //       DBG("Fsw ERROR: OpenProtocol(DiskIo) returned %r\n", Status);
         return Status;
     }
 
@@ -375,8 +375,7 @@ EFI_STATUS EFIAPI fsw_efi_DriverBinding_Start(IN EFI_DRIVER_BINDING_PROTOCOL  *T
     Volume->DiskIo2         = DiskIo2;
     Volume->LastIOStatus    = EFI_SUCCESS;
 
-    if (BlockIo2 != NULL)
-    {
+    if (BlockIo2 != NULL) {
       Volume->MediaId         = BlockIo2->Media->MediaId;
     } else {
       Volume->MediaId         = BlockIo->Media->MediaId;
@@ -441,7 +440,7 @@ EFI_STATUS EFIAPI fsw_efi_DriverBinding_Stop(IN  EFI_DRIVER_BINDING_PROTOCOL  *T
     FSW_VOLUME_DATA     *Volume;
 
 #if DEBUG_LEVEL
-    Print(L"fsw_efi_DriverBinding_Stop\n");
+//    Print(L"fsw_efi_DriverBinding_Stop\n");
 #endif
 
     // get the installed SimpleFileSystem interface
@@ -466,7 +465,7 @@ EFI_STATUS EFIAPI fsw_efi_DriverBinding_Stop(IN  EFI_DRIVER_BINDING_PROTOCOL  *T
         return Status;
     }
 #if DEBUG_LEVEL
-    Print(L"fsw_efi_DriverBinding_Stop: protocol uninstalled successfully\n");
+//    Print(L"fsw_efi_DriverBinding_Stop: protocol uninstalled successfully\n");
 #endif
 
     // release private data structure
@@ -601,7 +600,7 @@ EFI_STATUS EFIAPI fsw_efi_FileSystem_OpenVolume(IN EFI_FILE_IO_INTERFACE *This,
     FSW_VOLUME_DATA     *Volume = FSW_VOLUME_FROM_FILE_SYSTEM(This);
 
 #if DEBUG_LEVEL
-    Print(L"fsw_efi_FileSystem_OpenVolume\n");
+//    Print(L"fsw_efi_FileSystem_OpenVolume\n");
 #endif
 
     Status = fsw_efi_dnode_to_FileHandle(Volume->vol->root, Root);
@@ -649,7 +648,7 @@ EFI_STATUS EFIAPI fsw_efi_FileHandle_Close(IN EFI_FILE_PROTOCOL *This)
     FSW_FILE_DATA      *File = FSW_FILE_FROM_FILE_HANDLE(This);
 
 #if DEBUG_LEVEL
-    Print(L"fsw_efi_FileHandle_Close\n");
+//    Print(L"fsw_efi_FileHandle_Close\n");
 #endif
 
     fsw_shandle_close(&File->shand);
@@ -938,7 +937,9 @@ EFI_STATUS fsw_efi_dir_open(IN FSW_FILE_DATA *File,
     lookup_path.data = FileName;
 
     // resolve the path (symlinks along the way are automatically resolved)
-    Status = fsw_efi_map_status(fsw_dnode_lookup_path(File->shand.dnode, &lookup_path, '\\', &dno),
+    Status = fsw_efi_map_status(fsw_dnode_lookup_path(File->shand.dnode,
+                                                      &lookup_path, '\\',
+                                                      &dno),
                                 Volume);
     if (EFI_ERROR(Status))
         return Status;
@@ -1099,7 +1100,7 @@ EFI_STATUS fsw_efi_dnode_getinfo(IN FSW_FILE_DATA *File,
  * appropriate member of the EFI_FILE_INFO structure that we're filling.
  */
 
-static void fsw_efi_store_time_posix(struct fsw_dnode_stat *sb, int which, fsw_u32 posix_time)
+static void fsw_efi_store_time_posix(struct fsw_dnode_stat_str *sb, int which, fsw_u32 posix_time)
 {
     EFI_FILE_INFO       *FileInfo = (EFI_FILE_INFO *)sb->host_data;
 
@@ -1117,7 +1118,7 @@ static void fsw_efi_store_time_posix(struct fsw_dnode_stat *sb, int which, fsw_u
  * adjustments to the EFI_FILE_INFO structure that we're filling.
  */
 
-static void fsw_efi_store_attr_posix(struct fsw_dnode_stat *sb, fsw_u16 posix_mode)
+static void fsw_efi_store_attr_posix(struct fsw_dnode_stat_str *sb, fsw_u16 posix_mode)
 {
     EFI_FILE_INFO       *FileInfo = (EFI_FILE_INFO *)sb->host_data;
 
@@ -1125,10 +1126,10 @@ static void fsw_efi_store_attr_posix(struct fsw_dnode_stat *sb, fsw_u16 posix_mo
         FileInfo->Attribute |= EFI_FILE_READ_ONLY;
 }
 
-/**
- * Common function to fill an EFI_FILE_INFO with information about a dnode.
- */
-
+//
+// Common function to fill an EFI_FILE_INFO with information about a dnode.
+// there is caller responsible to allocate buffer
+//
 EFI_STATUS fsw_efi_dnode_fill_FileInfo(IN FSW_VOLUME_DATA *Volume,
                                        IN struct fsw_dnode *dno,
                                        IN OUT UINTN *BufferSize,
@@ -1137,7 +1138,7 @@ EFI_STATUS fsw_efi_dnode_fill_FileInfo(IN FSW_VOLUME_DATA *Volume,
     EFI_STATUS          Status;
     EFI_FILE_INFO       *FileInfo;
     UINTN               RequiredSize;
-    struct fsw_dnode_stat sb;
+    struct fsw_dnode_stat_str sb;
 
     // make sure the dnode has complete info
     Status = fsw_efi_map_status(fsw_dnode_fill(dno), Volume);
@@ -1169,7 +1170,7 @@ EFI_STATUS fsw_efi_dnode_fill_FileInfo(IN FSW_VOLUME_DATA *Volume,
     fsw_efi_strcpy(FileInfo->FileName, &dno->name);
 
     // get the missing info from the fs driver
-    ZeroMem(&sb, sizeof(struct fsw_dnode_stat));
+    ZeroMem(&sb, sizeof(struct fsw_dnode_stat_str));
     sb.store_time_posix = fsw_efi_store_time_posix;
     sb.store_attr_posix = fsw_efi_store_attr_posix;
     sb.host_data = FileInfo;

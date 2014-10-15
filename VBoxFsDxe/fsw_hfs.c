@@ -58,7 +58,7 @@ static fsw_status_t fsw_hfs_volume_stat(struct fsw_hfs_volume *vol, struct fsw_v
 static fsw_status_t fsw_hfs_dnode_fill(struct fsw_hfs_volume *vol, struct fsw_hfs_dnode *dno);
 static void         fsw_hfs_dnode_free(struct fsw_hfs_volume *vol, struct fsw_hfs_dnode *dno);
 static fsw_status_t fsw_hfs_dnode_stat(struct fsw_hfs_volume *vol, struct fsw_hfs_dnode *dno,
-                                           struct fsw_dnode_stat *sb);
+                                           struct fsw_dnode_stat_str *sb);
 static fsw_status_t fsw_hfs_get_extent(struct fsw_hfs_volume *vol, struct fsw_hfs_dnode *dno,
                                            struct fsw_extent *extent);
 
@@ -477,6 +477,7 @@ static fsw_status_t fsw_hfs_volume_stat(struct fsw_hfs_volume *vol, struct fsw_v
 
 static fsw_status_t fsw_hfs_dnode_fill(struct fsw_hfs_volume *vol, struct fsw_hfs_dnode *dno)
 {
+//  Print(L"dnode_fill\n");
     return FSW_SUCCESS;
 }
 
@@ -505,7 +506,7 @@ static fsw_u32 mac_to_posix(fsw_u32 mac_time)
 
 static fsw_status_t fsw_hfs_dnode_stat(struct fsw_hfs_volume *vol,
                                        struct fsw_hfs_dnode  *dno,
-                                       struct fsw_dnode_stat *sb)
+                                       struct fsw_dnode_stat_str *sb)
 {
   sb->used_bytes = dno->used_bytes;
   sb->store_time_posix(sb, FSW_DNODE_STAT_CTIME, mac_to_posix(dno->ctime));
@@ -1179,31 +1180,32 @@ static fsw_status_t fsw_hfs_dir_lookup(struct fsw_hfs_volume * vol,
   fsw_u32                    ptr;
 //  fsw_u16                    rec_type;
   BTNodeDescriptor *         node = NULL;
-//  struct fsw_string          rec_name;
-//  int                        free_data = 0; //, i;
+  struct fsw_string          rec_name;
+  int                        free_data = 0; //, i;
   HFSPlusCatalogKey*         file_key;
   file_info_t                file_info;
 //  fsw_u8*                    base;
   
   
   fsw_memzero(&file_info, sizeof file_info);
-  file_info.name = lookup_name; //&rec_name;
+  file_info.name = &rec_name;
   
   catkey.parentID = dno->g.dnode_id;
   catkey.nodeName.length = (fsw_u16)lookup_name->len;
   
   // no need to allocate anything 
-//  if (lookup_name->type == FSW_STRING_TYPE_UTF16) {
+  if (lookup_name->type == FSW_STRING_TYPE_UTF16) {
     fsw_memcpy(catkey.nodeName.unicode, lookup_name->data, lookup_name->size);
 //    rec_name = *lookup_name;
-/*  } else {
+    fsw_memcpy(&rec_name, lookup_name, sizeof(struct fsw_string));
+  } else {
     status = fsw_strdup_coerce(&rec_name, FSW_STRING_TYPE_UTF16, lookup_name);
     // nothing allocated so far
     if (status)
       goto done;
     free_data = 1;
     fsw_memcpy(catkey.nodeName.unicode, rec_name.data, rec_name.size);
-  } */
+  }
   
   /* Dirty hack: blacklisting of certain files on FS driver level */
   /* 
@@ -1227,8 +1229,8 @@ static fsw_status_t fsw_hfs_dir_lookup(struct fsw_hfs_volume * vol,
   }
 #endif
   
-//  catkey.keyLength = (fsw_u16)(6 + rec_name.size);
-  catkey.keyLength = (fsw_u16)(6 + lookup_name->size);
+  catkey.keyLength = (fsw_u16)(6 + rec_name.size);
+//  catkey.keyLength = (fsw_u16)(6 + lookup_name->size);
   status = fsw_hfs_btree_search (&vol->catalog_tree,
                                  (BTreeKey*)&catkey,
                                  vol->case_sensitive ?
@@ -1253,8 +1255,8 @@ done:
   if (node != NULL)
     fsw_free(node);
   
-//  if (free_data)
-//    fsw_strfree(&rec_name);
+  if (free_data)
+    fsw_strfree(&rec_name);
   
   return status;
 }
