@@ -1678,6 +1678,34 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   Status = InitRefitLib(gImageHandle);
   if (EFI_ERROR(Status))
     return Status;
+  //dumping SETTING structure
+  // if you change something in Platform.h, please uncomment and test that all offsets
+  // are natural aligned i.e. pointers are 8 bytes aligned
+  /*
+  DBG("Settings offsets:\n");
+  DBG(" OEMProduct:     %x\n",    OFFSET_OF(SETTINGS_DATA, OEMProduct));
+  DBG(" DefaultVolume:  %x\n",    OFFSET_OF(SETTINGS_DATA, DefaultVolume));
+  DBG(" DefaultLoader:  %x\n",    OFFSET_OF(SETTINGS_DATA, DefaultLoader));
+  DBG(" ResetAddr:      %x\n",    OFFSET_OF(SETTINGS_DATA, ResetAddr));
+  DBG(" FixDsdt:        %x\n",    OFFSET_OF(SETTINGS_DATA, FixDsdt));
+  DBG(" FakeATI:        %x\n",    OFFSET_OF(SETTINGS_DATA, FakeATI));
+  DBG(" PatchVBiosBytes:%x\n",    OFFSET_OF(SETTINGS_DATA, PatchVBiosBytes));
+  DBG(" VRAM:           %x\n",    OFFSET_OF(SETTINGS_DATA, VRAM));
+  DBG(" SecureBootWhiteListCount: %x\n",    OFFSET_OF(SETTINGS_DATA, SecureBootWhiteListCount));
+  DBG(" LegacyBoot:     %x\n",    OFFSET_OF(SETTINGS_DATA, LegacyBoot));
+  DBG(" HVHideStrings:  %x\n",    OFFSET_OF(SETTINGS_DATA, HVHideStrings));
+  DBG(" PointerSpeed:   %x\n",    OFFSET_OF(SETTINGS_DATA, PointerSpeed));
+  DBG(" RtMLB:          %x\n",    OFFSET_OF(SETTINGS_DATA, RtMLB));
+  DBG(" ConfigName:     %x\n",    OFFSET_OF(SETTINGS_DATA, ConfigName));
+  DBG(" PointerSpeed:   %x\n",    OFFSET_OF(SETTINGS_DATA, PointerSpeed));
+  DBG(" PatchDsdtNum:   %x\n",    OFFSET_OF(SETTINGS_DATA, PatchDsdtNum));
+  DBG(" LenToReplace:   %x\n",    OFFSET_OF(SETTINGS_DATA, LenToReplace));
+  DBG(" ACPIDropTables: %x\n",    OFFSET_OF(SETTINGS_DATA, ACPIDropTables));
+  DBG(" CustomEntries:  %x\n",    OFFSET_OF(SETTINGS_DATA, CustomEntries));
+  DBG(" CustomTool:     %x\n",    OFFSET_OF(SETTINGS_DATA, CustomTool));
+  DBG(" AddProperties:  %x\n",    OFFSET_OF(SETTINGS_DATA, AddProperties));
+  DBG(" BlockKexts:     %x\n",    OFFSET_OF(SETTINGS_DATA, BlockKexts));
+   */
   
   // disable EFI watchdog timer
   gBS->SetWatchdogTimer(0x0000, 0x0000, 0x0000, NULL);

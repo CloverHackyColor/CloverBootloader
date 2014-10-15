@@ -766,6 +766,7 @@ typedef struct {
   CHAR8	                  SerialNr[64];
   EFI_GUID                SmUUID;
   BOOLEAN                 SmUUIDConfig;
+  CHAR8 pad0[7];
 //CHAR8	                  Uuid[64];
 //CHAR8	                  SKUNumber[64];
   CHAR8                 	FamilyName[64];
@@ -905,10 +906,11 @@ typedef struct {
   
   CHAR16                  FBName[16];
   UINT16                  VideoPorts;
-  UINT8                   pad4[6];
+  UINT8                   pad4[2];
   UINT64                  VRAM;
   UINT8                   Dcfg[8];
   UINT8                   NVCAP[20];
+  UINT8                   pad41[4];
   UINT32                  DualLink;
   UINT32                  IgPlatform;
   
@@ -964,7 +966,7 @@ typedef struct {
 
   //Pointer
   BOOLEAN                 PointerEnabled;
-  UINT8                   pad82[2];
+  UINT8                   pad82[6];
   INTN                    PointerSpeed;
 #if defined(MDE_CPU_IA32)
   UINT32                  align5;
@@ -1022,7 +1024,7 @@ typedef struct {
   BOOLEAN                 Rtc8Allowed;
   BOOLEAN                 ForceHPET;
   BOOLEAN                 ResetHDA;
-  UINT8                   pad8[3];
+  UINT8                   pad8[7];
 
   //Patch DSDT arbitrary
   UINT32                  PatchDsdtNum;
@@ -1050,6 +1052,7 @@ typedef struct {
   BOOLEAN                 SlpWak;
   BOOLEAN                 UseIntelHDMI;
   UINT8                   AFGLowPowerState;
+  UINT8                   pad83[4];
 
   // Table dropping
   ACPI_DROP_TABLE         *ACPIDropTables;
@@ -1063,6 +1066,7 @@ typedef struct {
   BOOLEAN                 DisableToolScan;
   BOOLEAN                 ShowHiddenEntries;
   UINT8                   KernelScan;
+  UINT8                   pad84[4];
   CUSTOM_LOADER_ENTRY     *CustomEntries;
 #if defined(MDE_CPU_IA32)
   UINT32                  align33;
