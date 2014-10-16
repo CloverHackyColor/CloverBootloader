@@ -776,7 +776,7 @@ fill_fileinfo (
 
       finfo->size = be64_to_cpu (info->dataFork.logicalSize);
       finfo->used =
-        LShiftU64 (be32_to_cpu (info->dataFork.totalBlocks),
+        LShiftU64 ((fsw_u64)be32_to_cpu (info->dataFork.totalBlocks),
                    vol->block_size_shift);
       finfo->ctime = be32_to_cpu (info->createDate);
       finfo->mtime = be32_to_cpu (info->contentModDate);
@@ -1185,6 +1185,7 @@ static fsw_status_t fsw_hfs_dir_lookup(struct fsw_hfs_volume * vol,
   HFSPlusCatalogKey*         file_key;
   file_info_t                file_info;
 //  fsw_u8*                    base;
+//  struct fsw_hfs_dnode    * tmp_dno_out = NULL;
   
   
   fsw_memzero(&file_info, sizeof file_info);
@@ -1246,9 +1247,17 @@ static fsw_status_t fsw_hfs_dir_lookup(struct fsw_hfs_volume * vol,
 #ifdef HFS_FILE_INJECTION
 create:
 #endif
-  status = create_hfs_dnode(dno, &file_info, child_dno_out);
+  status = create_hfs_dnode(dno, &file_info,  child_dno_out); //&tmp_dno_out); //
   if (status)
     goto done;
+  //if child is link then resolve it
+/*  if (tmp_dno_out->g.type == FSW_DNODE_TYPE_SYMLINK) {
+    status = fsw_dnode_resolve((struct fsw_dnode *)tmp_dno_out,
+                               (struct fsw_dnode **)child_dno_out);
+    if (status)
+      goto done;    
+   }
+*/  
   
 done:
   

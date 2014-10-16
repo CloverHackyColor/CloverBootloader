@@ -816,8 +816,8 @@ fsw_status_t fsw_dnode_resolve(struct fsw_dnode *dno, struct fsw_dnode **target_
       goto errorexit;
     
     // resolve it
-//    status = fsw_dnode_lookup_path(dno->parent, &target_name, '/', &target_dno);
-    status = fsw_dnode_lookup_path(dno->parent, &target_name, '\\', &target_dno);
+    status = fsw_dnode_lookup_path(dno->parent, &target_name, '/', &target_dno);
+//    status = fsw_dnode_lookup_path(dno->parent, &target_name, '\\', &target_dno);
     fsw_strfree(&target_name);
     if (status)
       goto errorexit;

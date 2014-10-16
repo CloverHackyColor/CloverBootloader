@@ -139,11 +139,16 @@ grub_disk_read(grub_disk_t disk, grub_disk_addr_t sector,
 {
 	EFI_STATUS Status;
 	EFI_FS* FileSystem = (EFI_FS *) disk->data;
-    EFI_BLOCK_IO_MEDIA *Media;
+  EFI_BLOCK_IO_MEDIA *Media;
 
-	ASSERT(FileSystem != NULL);
-	ASSERT(FileSystem->DiskIo != NULL);
-	ASSERT(FileSystem->BlockIo != NULL);
+//	ASSERT(FileSystem != NULL);
+//	ASSERT(FileSystem->DiskIo != NULL);
+//	ASSERT(FileSystem->BlockIo != NULL);
+  if ((FileSystem == NULL) ||
+      (FileSystem->DiskIo == NULL) ||
+      (FileSystem->BlockIo == NULL)) {
+    return GRUB_ERR_BAD_ARGUMENT;
+  }
 
     if (FileSystem->BlockIo2 != NULL)
     {
@@ -176,8 +181,13 @@ grub_disk_get_size (grub_disk_t disk)
 {
 	EFI_FS* FileSystem = (EFI_FS *) disk->data;
 
-	ASSERT(FileSystem != NULL);
-	ASSERT(FileSystem->BlockIo != NULL);
+//	ASSERT(FileSystem != NULL);
+//	ASSERT(FileSystem->BlockIo != NULL);
+  if ((FileSystem == NULL) ||
+      (FileSystem->BlockIo == NULL)) {
+    return GRUB_ERR_BAD_ARGUMENT;
+  }
+
 
     if (FileSystem->BlockIo2 != NULL)
     {
@@ -196,7 +206,7 @@ grub_device_open(const char *name)
 	struct grub_device* device;
 	EFI_FS *FileSystem;
 
-	ASSERT(name != NULL);
+//	ASSERT(name != NULL);
 
 	if (Name == NULL) {
 		if (LogLevel > FS_LOGLEVEL_ERROR)
@@ -239,10 +249,11 @@ grub_device_open(const char *name)
 grub_err_t
 grub_device_close(grub_device_t device)
 {
-	ASSERT(device != NULL);
-
-	grub_free(device->disk);
-	grub_free(device);
+//	ASSERT(device != NULL);
+  if (device != NULL) {
+    grub_free(device->disk);
+    grub_free(device);
+  }
 	return 0;
 }
 
