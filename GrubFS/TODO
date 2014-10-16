@@ -1,0 +1,13 @@
+
+Before working on improving GRUB, it's very important that you
+make contact with the core GRUB developers. Things herein might be
+slightly out of date or otherwise not easy to understand at first
+glance. So write to <grub-devel@gnu.org> first.
+
+For bug tracking, refer to:
+
+  http://savannah.gnu.org/bugs/?group=grub
+
+Our wiki also lists some areas that need work:
+
+  http://grub.enbug.org/

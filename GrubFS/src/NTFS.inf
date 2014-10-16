@@ -1,0 +1,80 @@
+# $Id: NTFS.inf 29125 2010-05-06 09:43:05Z efifs $
+## @file
+# NTFS - efifs NTFS driver.
+#
+
+[Defines]
+        INF_VERSION                = 0x00010005
+        BASE_NAME                  = GrubNTFS
+        FILE_GUID                  = 80FB68D4-7C52-4AFE-A91E-D3DDADB5C54F
+        MODULE_TYPE                = UEFI_DRIVER
+        VERSION_STRING             = 1.0
+        EDK_RELEASE_VERSION        = 0x00020000
+        EFI_SPECIFICATION_VERSION  = 0x00020000
+
+        ENTRY_POINT                = FSDriverInstall
+
+[Sources.common]
+        driver.c
+        file.c
+        grub_driver.c
+        grub_file.c
+        grub.c
+	logging.c
+	missing.c
+	path.c
+	utf8.c
+
+        ../grub/grub-core/kern/device.c
+	../grub/grub-core/kern/err.c
+	../grub/grub-core/kern/misc.c
+	../grub/grub-core/kern/list.c
+	../grub/grub-core/fs/fshelp.c
+	../grub/grub-core/fs/ntfscomp.c
+		../grub/grub-core/fs/ntfs.c
+
+[Packages]
+        MdePkg/MdePkg.dec
+        ShellPkg/ShellPkg.dec
+        IntelFrameworkModulePkg/IntelFrameworkModulePkg.dec
+        Clover/CloverPkg.dec
+	Clover/GrubFS/efifs.dec
+
+[LibraryClasses]
+   UefiRuntimeServicesTableLib
+   UefiBootServicesTableLib
+   MemoryAllocationLib
+   BaseMemoryLib
+   BaseLib
+   UefiLib
+   UefiDriverEntryPoint
+   DebugLib
+   PcdLib
+
+[Guids]
+  gEfiFileInfoGuid
+  gEfiFileSystemInfoGuid
+  gEfiFileSystemVolumeLabelInfoIdGuid
+
+[Protocols]
+  gEfiDiskIoProtocolGuid
+  gEfiDiskIo2ProtocolGuid
+  gEfiBlockIoProtocolGuid
+  gEfiBlockIo2ProtocolGuid
+  gEfiSimpleFileSystemProtocolGuid
+  gEfiUnicodeCollationProtocolGuid
+  gEfiUnicodeCollation2ProtocolGuid
+  gMsgLogProtocolGuid
+
+[Pcd]
+  gEfiMdePkgTokenSpaceGuid.PcdUefiVariableDefaultLang
+  gEfiMdePkgTokenSpaceGuid.PcdUefiVariableDefaultPlatformLang
+
+[BuildOptions.common]
+  *_*_IA32_CC_FLAGS = -DFORMAT=efi-app-ia32
+  *_*_X64_CC_FLAGS = -DFORMAT=efi-app-x64
+  GCC:*_*_*_CC_FLAGS = -DCPU_$(ARCH) -DMDEPKG_NDEBUG -DGRUB_MACHINE_EFI -DGRUB_KERNEL -DGRUB_UTIL -DGRUB_FILE=\"NTFS.efi\" -DDRIVERNAME=ntfs -Os
+  XCODE:*_*_*_CC_FLAGS = -DCPU_$(ARCH) -DMDEPKG_NDEBUG -DGRUB_MACHINE_EFI -DGRUB_KERNEL -DGRUB_UTIL -DGRUB_FILE=\"NTFS.efi\" -DDRIVERNAME=ntfs -Os
+  IBTEL:*_*_*_CC_FLAGS = -DCPU_$(ARCH) -DMDEPKG_NDEBUG -DGRUB_MACHINE_EFI -DGRUB_KERNEL -DGRUB_UTIL -DGRUB_FILE=\"NTFS.efi\" -DDRIVERNAME=ntfs -Os
+  MSFT:*_*_*_CC_FLAGS = -DCPU_$(ARCH) -DMDEPKG_NDEBUG -DGRUB_MACHINE_EFI -DGRUB_KERNEL -DGRUB_UTIL -DGRUB_FILE=\"NTFS.efi\" -DDRIVERNAME=ntfs -Os
+

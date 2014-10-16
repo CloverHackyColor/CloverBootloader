@@ -1181,9 +1181,10 @@ Returns:
   FAT_ODIR    *ODir;
   EFI_STATUS  Status;
 
-  ASSERT (OFile != NULL);
+  if ((OFile == NULL) || (OFile->ODir == NULL)) {
+    return EFI_NOT_FOUND;
+  }
   ODir = OFile->ODir;
-  ASSERT (ODir != NULL);
   DirEnt = AllocateZeroPool (sizeof (FAT_DIRENT));
   if (DirEnt == NULL) {
     return EFI_OUT_OF_RESOURCES;
@@ -1210,7 +1211,7 @@ Returns:
   FatAddDirEnt (ODir, DirEnt);
   DirEnt->Entry.Attributes = Attributes;
   *PtrDirEnt               = DirEnt;
-  DEBUG ((EFI_D_INFO, "FSOpen: Created new directory entry '%S'\n", DirEnt->FileString));
+//  DEBUG ((EFI_D_INFO, "FSOpen: Created new directory entry '%S'\n", DirEnt->FileString));
   return FatStoreDirEnt (OFile, DirEnt);
 
 Done:

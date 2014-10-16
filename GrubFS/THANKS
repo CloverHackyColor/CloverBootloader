@@ -1,0 +1,38 @@
+GRUB 2 would not be what it is today without the invaluable help of
+everybody who was kind enough to spend time testing it and reporting
+bugs.
+
+The following people made especially gracious contributions of their
+time and energy in helping to track down bugs, add new features, and
+generally assist in the GRUB 2 maintainership process:
+
+Andrey Shuvikov <mr_hyro@yahoo.com>
+Bibo Mao <bibo.mao@intel.com>
+David Miller <davem@davemloft.net>
+Guillem Jover <guillem@hadrons.org>
+Harley D. Eades III <hde@foobar-qux.org>
+Hitoshi Ozeki <h-ozeki@ck2.so-net.ne.jp>
+Hollis Blanchard <hollis@penguinppc.org>
+Jeroen Dekkers <jeroen@dekkers.cx>
+Johan Rydberg <jrydberg@gnu.org>
+Marco Gerards <marco@gnu.org>
+Michael Guntsche <mike@it-loops.com>
+NIIBE Yutaka <gniibe@m17n.org>
+Omniflux <omniflux@omniflux.com>
+Robert Bihlmeyer <robbe@orcus.priv.at>
+Roger Leigh <rleigh@whinlatter.ukfsn.org>
+Ruslan Nikolaev <nruslan@mail.com>
+Timothy Baldwin <T.E.Baldwin99@members.leeds.ac.uk>
+Tomas Ebenlendr <ebik@ucw.cz>
+Tristan Gingold  <tristan.gingold@bull.net>
+Tsuneyoshi Yasuo <tuneyoshi@naic.co.jp>
+Vesa Jaaskelainen  <chaac@nic.fi>
+Vincent Guffens <guffens@inma.ucl.ac.be>
+Vincent Pelletier <subdino2004@yahoo.fr>
+Vladimir Serbinenko <phcoder@gmail.com>
+
+Also, we thank the projects GNU Automake and LZMA. Some code
+was stolen from them.
+
+This project was supported by Information-technology Promotion Agency,
+Japan.
