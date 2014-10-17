@@ -163,6 +163,16 @@ EFI_COMPONENT_NAME_PROTOCOL fsw_efi_ComponentName_table = {
     "eng"
 };
 
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL
+  fsw_efi_ComponentName2_table = {
+  (EFI_COMPONENT_NAME2_GET_DRIVER_NAME) fsw_efi_ComponentName_GetDriverName,
+  (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME)
+    fsw_efi_ComponentName_GetControllerName,
+  "en"
+};
+
+EFI_LOCK fsw_efi_Lock = EFI_INITIALIZE_LOCK_VARIABLE (TPL_CALLBACK);
+
 /**
  * Dispatch table for our FSW host driver.
  */
@@ -174,9 +184,25 @@ struct fsw_host_table   fsw_efi_host_table = {
     fsw_efi_read_block
 };
 
-extern struct fsw_fstype_table   FSW_FSTYPE_TABLE_NAME(FSTYPE);
+extern struct fsw_fstype_table FSW_FSTYPE_TABLE_NAME (
+  FSTYPE
+);
 
-//#include "OverrideFunctions-kabyl.edk2.c.include"
+EFI_STATUS
+fsw_efi_AcquireLockOrFail (
+  VOID
+)
+{
+  return EfiAcquireLockOrFail (&fsw_efi_Lock);
+}
+
+VOID
+fsw_efi_ReleaseLock (
+  VOID
+)
+{
+  EfiReleaseLock (&fsw_efi_Lock);
+}
 
 /**
  * Image entry point. Installs the Driver Binding and Component Name protocols
@@ -1138,7 +1164,8 @@ EFI_STATUS fsw_efi_dnode_fill_FileInfo(IN FSW_VOLUME_DATA *Volume,
     EFI_STATUS          Status;
     EFI_FILE_INFO       *FileInfo;
     UINTN               RequiredSize;
-    struct fsw_dnode_stat_str sb;
+  struct fsw_dnode_stat_str sb;
+  struct fsw_dnode *target_dno;
 
     // make sure the dnode has complete info
     Status = fsw_efi_map_status(fsw_dnode_fill(dno), Volume);
@@ -1160,14 +1187,29 @@ EFI_STATUS fsw_efi_dnode_fill_FileInfo(IN FSW_VOLUME_DATA *Volume,
     }
 
     // fill structure
-    ZeroMem(Buffer, RequiredSize);
-    FileInfo = (EFI_FILE_INFO *)Buffer;
+  ZeroMem (Buffer, RequiredSize);
+  FileInfo = (EFI_FILE_INFO *) Buffer;
+
+  // Use original name (name of symlink if any)
+  fsw_efi_strcpy (FileInfo->FileName, &dno->name);
+
+  // if the node is a symlink, resolve it
+  Status = fsw_efi_map_status (fsw_dnode_resolve (dno, &target_dno), Volume);
+  fsw_dnode_release (dno);
+  if (EFI_ERROR (Status))
+    return Status;
+  dno = target_dno;
+
+  // make sure the dnode has complete info
+  Status = fsw_efi_map_status (fsw_dnode_fill (dno), Volume);
+  if (EFI_ERROR (Status))
+    return Status;
+
     FileInfo->Size = RequiredSize;
     FileInfo->FileSize          = dno->size;
     FileInfo->Attribute         = 0;
     if (dno->type == FSW_DNODE_TYPE_DIR)
         FileInfo->Attribute    |= EFI_FILE_DIRECTORY;
-    fsw_efi_strcpy(FileInfo->FileName, &dno->name);
 
     // get the missing info from the fs driver
     ZeroMem(&sb, sizeof(struct fsw_dnode_stat_str));
