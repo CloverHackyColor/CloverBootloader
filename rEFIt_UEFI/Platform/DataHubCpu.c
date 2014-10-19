@@ -238,18 +238,14 @@ SetVariablesForOSX ()
   // we should have two UUID: platform and system
   // NO! Only Platform is the best solution
 
-  // Download-Fritz: Why is system-id needed to be set? DataLogHub should be enough
-  if (gSettings.SmUUIDConfig) {
-    SetNvramVariable (L"system-id",          &gEfiAppleNvramGuid, Attributes, sizeof(gUuid), &gUuid);
+  // As found on a real Mac, the system-id variable solely has the BS flag
+  SetNvramVariable (L"system-id", &gEfiAppleNvramGuid, EFI_VARIABLE_BOOTSERVICE_ACCESS, sizeof(gUuid), &gUuid);
 
-    if (!gSettings.InjectSystemID) {
-      SetNvramVariable (L"platform-uuid",    &gEfiAppleBootGuid,  Attributes, 16,            &gUuid);
-    }
-  } else {
-    AddNvramVariable   (L"system-id",        &gEfiAppleNvramGuid, Attributes, sizeof(gUuid), &gUuid);
-
-    if (!gSettings.InjectSystemID) {
-      AddNvramVariable (L"platform-uuid",    &gEfiAppleBootGuid,  Attributes, 16,            &gUuid);
+  if (!gSettings.InjectSystemID) {
+    if (gSettings.SmUUIDConfig) {
+      SetNvramVariable (L"platform-uuid", &gEfiAppleBootGuid,  Attributes, 16, &gUuid);
+    } else {
+      AddNvramVariable (L"platform-uuid", &gEfiAppleBootGuid,  Attributes, 16, &gUuid);
     }
   }
   
@@ -264,6 +260,7 @@ SetVariablesForOSX ()
 
   // using AddNvramVariable content instead of calling the function to do LangLen calculation only when necessary
   // Download-Fritz: Do not mess with prev-lang:kbd; it's OS X's business
+/*
   KbdPrevLang     = L"prev-lang:kbd";
   OldData = GetNvramVariable (KbdPrevLang, &gEfiAppleBootGuid, NULL, NULL);
   if (OldData == NULL)
@@ -280,7 +277,7 @@ SetVariablesForOSX ()
   } else {
     FreePool(OldData);
   }
-
+*/
   return EFI_SUCCESS;
 }
 
