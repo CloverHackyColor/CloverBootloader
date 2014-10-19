@@ -545,4 +545,5 @@
 
   MSFT:*_*_*_CC_FLAGS  = /FAcs /FR$(@R).SBR /wd4701 /wd4703 $(BUILD_OPTIONS)
   XCODE:*_*_*_CC_FLAGS = $(BUILD_OPTIONS)
-  GCC:*_*_*_CC_FLAGS   = $(BUILD_OPTIONS)
+  GCC:*_*_*_CC_FLAGS   = $(BUILD_OPTIONS) 
+  #-Wunused-but-set-variable

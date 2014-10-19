@@ -77,16 +77,16 @@ extern "C" {
 
 /* Signatures used to differentiate between HFS and HFS Plus volumes */
 enum {
-	kHFSSigWord		= 0x4244,	/* 'BD' in ASCII */
-	kHFSPlusSigWord		= 0x482B,	/* 'H+' in ASCII */
-	kHFSXSigWord		= 0x4858,	/* 'HX' in ASCII */
+	kHFSSigWord           = 0x4244,	/* 'BD' in ASCII */
+	kHFSPlusSigWord       = 0x482B,	/* 'H+' in ASCII */
+	kHFSXSigWord          = 0x4858,	/* 'HX' in ASCII */
 
-	kHFSPlusVersion		= 0x0004,	/* 'H+' volumes are version 4 only */
-	kHFSXVersion		= 0x0005,	/* 'HX' volumes start with version 5 */
+	kHFSPlusVersion       = 0x0004,	/* 'H+' volumes are version 4 only */
+	kHFSXVersion          = 0x0005,	/* 'HX' volumes start with version 5 */
 
 	kHFSPlusMountVersion	= 0x31302E30,	/* '10.0' for Mac OS X */
-	kHFSJMountVersion	= 0x4846534a,	/* 'HFSJ' for journaled HFS+ on OS X */
-	kFSKMountVersion	= 0x46534b21	/* 'FSK!' for failed journal replay */
+	kHFSJMountVersion     = 0x4846534a,	/* 'HFSJ' for journaled HFS+ on OS X */
+	kFSKMountVersion      = 0x46534b21	/* 'FSK!' for failed journal replay */
 };
 
 
@@ -139,8 +139,8 @@ enum {
  * Indirect link files (hard links) have the following type/creator.
  */
 enum {
-	kHardLinkFileType = 0x686C6E6B,  /* 'hlnk' */
-	kHFSPlusCreator   = 0x6866732B   /* 'hfs+' */
+	kHardLinkFileType     = 0x686C6E6B,  /* 'hlnk' */
+	kHFSPlusCreator       = 0x6866732B   /* 'hfs+' */
 };
 
 
@@ -157,16 +157,16 @@ enum {
 #define _HFSUNISTR255_DEFINED_
 /* Unicode strings are used for HFS Plus file and folder names */
 struct HFSUniStr255 {
-	u_int16_t	length;		/* number of unicode characters */
-	u_int16_t	unicode[255];	/* unicode characters */
+	u_int16_t       length;		/* number of unicode characters */
+	u_int16_t       unicode[255];	/* unicode characters */
 } HFS_ALIGNMENT;
-typedef struct HFSUniStr255 HFSUniStr255;
-typedef const HFSUniStr255 *ConstHFSUniStr255Param;
+typedef struct HFSUniStr255   HFSUniStr255;
+typedef const HFSUniStr255    *ConstHFSUniStr255Param;
 #endif /* _HFSUNISTR255_DEFINED_ */
 
 enum {
 	kHFSMaxVolumeNameChars		= 27,
-	kHFSMaxFileNameChars		= 31,
+	kHFSMaxFileNameChars      = 31,
 	kHFSPlusMaxFileNameChars	= 255
 };
 
@@ -175,20 +175,20 @@ enum {
 
 /* HFS Extent key */
 struct HFSExtentKey {
-	u_int8_t	keyLength;	/* length of key, excluding this field */
-	u_int8_t	forkType;	/* 0 = data fork, FF = resource fork */
-	u_int32_t	fileID;		/* file ID */
-	u_int16_t	startBlock;	/* first file allocation block number in this extent */
+	u_int8_t          keyLength;	/* length of key, excluding this field */
+	u_int8_t          forkType;	/* 0 = data fork, FF = resource fork */
+	u_int32_t         fileID;		/* file ID */
+	u_int16_t         startBlock;	/* first file allocation block number in this extent */
 } HFS_ALIGNMENT;
 typedef struct HFSExtentKey HFSExtentKey;
 
 /* HFS Plus Extent key */
 struct HFSPlusExtentKey {
-	u_int16_t	keyLength;		/* length of key, excluding this field */
-	u_int8_t	forkType;		/* 0 = data fork, FF = resource fork */
-	u_int8_t	pad;			/* make the other fields align on 32-bit boundary */
-	u_int32_t	fileID;			/* file ID */
-	u_int32_t	startBlock;		/* first file allocation block number in this extent */
+	u_int16_t         keyLength;		/* length of key, excluding this field */
+	u_int8_t          forkType;		/* 0 = data fork, FF = resource fork */
+	u_int8_t          pad;			/* make the other fields align on 32-bit boundary */
+	u_int32_t         fileID;			/* file ID */
+	u_int32_t         startBlock;		/* first file allocation block number in this extent */
 } HFS_ALIGNMENT;
 typedef struct HFSPlusExtentKey HFSPlusExtentKey;
 
@@ -256,9 +256,9 @@ typedef struct FndrOpaqueInfo FndrOpaqueInfo;
 
 /* HFS Plus Fork data info - 80 bytes */
 struct HFSPlusForkData {
-	u_int64_t		logicalSize;	/* fork's logical size in bytes */
-	u_int32_t		clumpSize;	/* fork's clump size in bytes */
-	u_int32_t		totalBlocks;	/* total blocks used by this fork */
+	u_int64_t           logicalSize;	/* fork's logical size in bytes */
+	u_int32_t           clumpSize;	/* fork's clump size in bytes */
+	u_int32_t           totalBlocks;	/* total blocks used by this fork */
 	HFSPlusExtentRecord	extents;	/* initial set of extents */
 } HFS_ALIGNMENT;
 typedef struct HFSPlusForkData HFSPlusForkData;
@@ -306,17 +306,17 @@ typedef struct HFSPlusBSDInfo HFSPlusBSDInfo;
 /* Catalog file data structures */
 
 enum {
-	kHFSRootParentID		= 1,	/* Parent ID of the root folder */
-	kHFSRootFolderID		= 2,	/* Folder ID of the root folder */
-	kHFSExtentsFileID		= 3,	/* File ID of the extents file */
-	kHFSCatalogFileID		= 4,	/* File ID of the catalog file */
-	kHFSBadBlockFileID		= 5,	/* File ID of the bad allocation block file */
+	kHFSRootParentID        = 1,	/* Parent ID of the root folder */
+	kHFSRootFolderID        = 2,	/* Folder ID of the root folder */
+	kHFSExtentsFileID       = 3,	/* File ID of the extents file */
+	kHFSCatalogFileID       = 4,	/* File ID of the catalog file */
+	kHFSBadBlockFileID      = 5,	/* File ID of the bad allocation block file */
 	kHFSAllocationFileID		= 6,	/* File ID of the allocation file (HFS Plus only) */
-	kHFSStartupFileID		= 7,	/* File ID of the startup file (HFS Plus only) */
+	kHFSStartupFileID       = 7,	/* File ID of the startup file (HFS Plus only) */
 	kHFSAttributesFileID		= 8,	/* File ID of the attribute file (HFS Plus only) */
-	kHFSAttributeDataFileID         = 13,	/* Used in Mac OS X runtime for extent based attributes */
+	kHFSAttributeDataFileID = 13,	/* Used in Mac OS X runtime for extent based attributes */
 	                                        /* kHFSAttributeDataFileID is never stored on disk. */
-	kHFSRepairCatalogFileID		= 14,	/* Used when rebuilding Catalog B-tree */
+	kHFSRepairCatalogFileID	= 14,	/* Used when rebuilding Catalog B-tree */
 	kHFSBogusExtentFileID		= 15,	/* Used for exchanging extents in extents file */
 	kHFSFirstUserCatalogNodeID	= 16
 };
@@ -332,50 +332,50 @@ typedef struct HFSCatalogKey HFSCatalogKey;
 
 /* HFS Plus catalog key */
 struct HFSPlusCatalogKey {
-	u_int16_t		keyLength;	/* key length (in bytes) */
-	u_int32_t		parentID;	/* parent folder ID */
-	HFSUniStr255		nodeName;	/* catalog node name */
+	u_int16_t         keyLength;	/* key length (in bytes) */
+	u_int32_t         parentID;	/* parent folder ID */
+	HFSUniStr255      nodeName;	/* catalog node name */
 } HFS_ALIGNMENT;
 typedef struct HFSPlusCatalogKey HFSPlusCatalogKey;
 
 /* Catalog record types */
 enum {
 	/* HFS Catalog Records */
-	kHFSFolderRecord		= 0x0100,	/* Folder record */
-	kHFSFileRecord			= 0x0200,	/* File record */
+	kHFSFolderRecord          = 0x0100,	/* Folder record */
+	kHFSFileRecord            = 0x0200,	/* File record */
 	kHFSFolderThreadRecord		= 0x0300,	/* Folder thread record */
-	kHFSFileThreadRecord		= 0x0400,	/* File thread record */
+	kHFSFileThreadRecord      = 0x0400,	/* File thread record */
 
 	/* HFS Plus Catalog Records */
-	kHFSPlusFolderRecord		= 1,		/* Folder record */
-	kHFSPlusFileRecord		= 2,		/* File record */
+	kHFSPlusFolderRecord        = 1,		/* Folder record */
+	kHFSPlusFileRecord          = 2,		/* File record */
 	kHFSPlusFolderThreadRecord	= 3,		/* Folder thread record */
-	kHFSPlusFileThreadRecord	= 4		/* File thread record */
+	kHFSPlusFileThreadRecord    = 4		/* File thread record */
 };
 
 
 /* Catalog file record flags */
 enum {
-	kHFSFileLockedBit	= 0x0000,	/* file is locked and cannot be written to */
-	kHFSFileLockedMask	= 0x0001,
+	kHFSFileLockedBit       = 0x0000,	/* file is locked and cannot be written to */
+	kHFSFileLockedMask      = 0x0001,
 
-	kHFSThreadExistsBit	= 0x0001,	/* a file thread record exists for this file */
-	kHFSThreadExistsMask	= 0x0002,
+	kHFSThreadExistsBit     = 0x0001,	/* a file thread record exists for this file */
+	kHFSThreadExistsMask    = 0x0002,
 
-	kHFSHasAttributesBit	= 0x0002,	/* object has extended attributes */
-	kHFSHasAttributesMask	= 0x0004,
+	kHFSHasAttributesBit    = 0x0002,	/* object has extended attributes */
+	kHFSHasAttributesMask   = 0x0004,
 
-	kHFSHasSecurityBit	= 0x0003,	/* object has security data (ACLs) */
-	kHFSHasSecurityMask	= 0x0008,
+	kHFSHasSecurityBit      = 0x0003,	/* object has security data (ACLs) */
+	kHFSHasSecurityMask     = 0x0008,
 
-	kHFSHasFolderCountBit	= 0x0004,	/* only for HFSX, folder maintains a separate sub-folder count */
+	kHFSHasFolderCountBit   = 0x0004,	/* only for HFSX, folder maintains a separate sub-folder count */
 	kHFSHasFolderCountMask	= 0x0010,	/* (sum of folder records and directory hard links) */
 
-	kHFSHasLinkChainBit	= 0x0005,	/* has hardlink chain (inode or link) */
-	kHFSHasLinkChainMask	= 0x0020,
+	kHFSHasLinkChainBit     = 0x0005,	/* has hardlink chain (inode or link) */
+	kHFSHasLinkChainMask    = 0x0020,
 
-	kHFSHasChildLinkBit	= 0x0006,	/* folder has a child that's a dir link */
-	kHFSHasChildLinkMask	= 0x0040
+	kHFSHasChildLinkBit     = 0x0006,	/* folder has a child that's a dir link */
+	kHFSHasChildLinkMask    = 0x0040
 };
 
 
@@ -439,20 +439,20 @@ typedef struct HFSCatalogFile HFSCatalogFile;
 
 /* HFS Plus catalog file record - 248 bytes */
 struct HFSPlusCatalogFile {
-	int16_t		recordType;		/* == kHFSPlusFileRecord */
-	u_int16_t		flags;			/* file flags */
-	u_int32_t		reserved1;		/* reserved - initialized as zero */
-	u_int32_t		fileID;			/* file ID */
-	u_int32_t		createDate;		/* date and time of creation */
-	u_int32_t		contentModDate;		/* date and time of last content modification */
-	u_int32_t		attributeModDate;	/* date and time of last attribute modification */
-	u_int32_t		accessDate;		/* date and time of last access (MacOS X only) */
-	u_int32_t		backupDate;		/* date and time of last backup */
-	HFSPlusBSDInfo		bsdInfo;		/* permissions (for MacOS X) */
+	int16_t         recordType;		/* == kHFSPlusFileRecord */
+	u_int16_t       flags;			/* file flags */
+	u_int32_t       reserved1;		/* reserved - initialized as zero */
+	u_int32_t       fileID;			/* file ID */
+	u_int32_t       createDate;		/* date and time of creation */
+	u_int32_t       contentModDate;		/* date and time of last content modification */
+	u_int32_t       attributeModDate;	/* date and time of last attribute modification */
+	u_int32_t       accessDate;		/* date and time of last access (MacOS X only) */
+	u_int32_t       backupDate;		/* date and time of last backup */
+	HFSPlusBSDInfo	bsdInfo;		/* permissions (for MacOS X) */
 	FndrFileInfo		userInfo;		/* Finder information */
-	FndrOpaqueInfo		finderInfo;		/* additional Finder information */
-	u_int32_t		textEncoding;		/* hint for name conversions */
-	u_int32_t		reserved2;		/* reserved - initialized as zero */
+	FndrOpaqueInfo	finderInfo;		/* additional Finder information */
+	u_int32_t       textEncoding;		/* hint for name conversions */
+	u_int32_t       reserved2;		/* reserved - initialized as zero */
 
 	/* Note: these start on double long (64 bit) boundary */
 	HFSPlusForkData	dataFork;		/* size and block data for data fork */
@@ -462,10 +462,10 @@ typedef struct HFSPlusCatalogFile HFSPlusCatalogFile;
 
 /* HFS catalog thread record - 46 bytes */
 struct HFSCatalogThread {
-	int16_t	recordType;		/* == kHFSFolderThreadRecord or kHFSFileThreadRecord */
-	int32_t	reserved[2];		/* reserved - initialized as zero */
-	u_int32_t	parentID;		/* parent ID for this catalog node */
-	u_int8_t	nodeName[kHFSMaxFileNameChars + 1]; /* name of this catalog node */
+	int16_t         recordType;		/* == kHFSFolderThreadRecord or kHFSFileThreadRecord */
+	int32_t         reserved[2];		/* reserved - initialized as zero */
+	u_int32_t       parentID;		/* parent ID for this catalog node */
+	u_int8_t        nodeName[kHFSMaxFileNameChars + 1]; /* name of this catalog node */
 } HFS_ALIGNMENT;
 typedef struct HFSCatalogThread HFSCatalogThread;
 
@@ -485,8 +485,8 @@ typedef struct HFSPlusCatalogThread HFSPlusCatalogThread;
 */
 enum {
 	kHFSPlusAttrInlineData	= 0x10,   /* attributes whose data fits in a b-tree node */
-	kHFSPlusAttrForkData	= 0x20,   /* extent based attributes (data lives in extents) */
-	kHFSPlusAttrExtents	= 0x30    /* overflow extents for large attributes */
+	kHFSPlusAttrForkData    = 0x20,   /* extent based attributes (data lives in extents) */
+	kHFSPlusAttrExtents     = 0x30    /* overflow extents for large attributes */
 };
 
 
@@ -497,9 +497,9 @@ enum {
 	records (of type HFSPlusAttrExtents) for this attribute.
 */
 struct HFSPlusAttrForkData {
-	u_int32_t	recordType;		/* == kHFSPlusAttrForkData*/
-	u_int32_t	reserved;
-	HFSPlusForkData theFork;		/* size and first extents of value*/
+	u_int32_t         recordType;		/* == kHFSPlusAttrForkData*/
+	u_int32_t         reserved;
+	HFSPlusForkData   theFork;		/* size and first extents of value*/
 } HFS_ALIGNMENT;
 typedef struct HFSPlusAttrForkData HFSPlusAttrForkData;
 
@@ -762,13 +762,19 @@ struct BTHeaderRec {
 	u_int32_t	totalNodes;		/* total number of nodes in tree */
 	u_int32_t	freeNodes;		/* number of unused (free) nodes in tree */
 	u_int16_t	reserved1;		/* unused */
-	u_int32_t	clumpSize;		/* reserved */
-	u_int8_t	btreeType;		/* reserved */
+	u_int32_t	clumpSize;		/* reserved HFSPlusForkData->clumpSize */
+	u_int8_t	btreeType;		/* enum from BTreeTypes */
 	u_int8_t	keyCompareType;		/* Key string Comparison Type */
 	u_int32_t	attributes;		/* persistent attributes about the tree */
 	u_int32_t	reserved3[16];		/* reserved */
 } HFS_ALIGNMENT;
 typedef struct BTHeaderRec BTHeaderRec;
+
+  enum BTreeTypes{
+    kHFSBTreeType           =   0,      // control file
+    kUserBTreeType          = 128,      // user btree type starts from 128
+    kReservedBTreeType      = 255
+  };
 
 /* Constants for BTHeaderRec attributes */
 enum {
@@ -799,6 +805,40 @@ enum {
     kJIJournalOnOtherDeviceMask = 0x00000002,
     kJIJournalNeedInitMask      = 0x00000004
 };
+
+
+#define HFC_MAGIC   0xFF28FF26
+#define HFC_VERSION 1
+#define HFC_DEFAULT_DURATION     (3600 * 60)
+#define HFC_MINIMUM_TEMPERATURE  16
+#define HFC_MAXIMUM_FILESIZE     (10 * 1024 * 1024)
+  char hfc_tag[] = "CLUSTERED HOT FILES B-TREE     ";
+
+  struct HotFilesInfo {
+    UInt32  magic;
+    UInt32  version;
+    UInt32  duration;    /* duration of sample period */
+    UInt32  timebase;    /* recording period start time */
+    UInt32  timeleft;    /* recording period stop time */
+    UInt32  threshold;
+    UInt32  maxfileblks;
+    UInt32  maxfilecnt;
+    UInt8   tag[32];
+  };
+  typedef struct HotFilesInfo HotFilesInfo;
+
+  struct HotFileKey {
+    UInt16   keyLength;
+    UInt8    forkType;
+    UInt8    pad;
+    UInt32   temperature;
+    UInt32   fileID;
+  };
+  typedef struct HotFileKey HotFileKey;
+
+#define HFC_LOOKUPTAG   0xFFFFFFFF
+#define HFC_KEYLENGTH   (sizeof(HotFileKey) - sizeof(UInt32))
+
 
 
 #ifdef __cplusplus

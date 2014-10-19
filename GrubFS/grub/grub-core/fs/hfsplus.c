@@ -489,39 +489,39 @@ grub_hfsplus_btree_iterate_node (struct grub_hfsplus_btree *btree,
   grub_uint64_t node_count = 0;
 
   for (;;)
+  {
+    char *cnode = (char *) first_node;
+
+    /* Iterate over all records in this node.  */
+    for (rec = first_rec; rec < grub_be_to_cpu16 (first_node->count); rec++)
     {
-      char *cnode = (char *) first_node;
-
-      /* Iterate over all records in this node.  */
-      for (rec = first_rec; rec < grub_be_to_cpu16 (first_node->count); rec++)
-	{
-	  if (hook (grub_hfsplus_btree_recptr (btree, first_node, rec), hook_arg))
-	    return 1;
-	}
-
-      if (! first_node->next)
-	break;
-
-      if (node_count && first_node->next == saved_node)
-	{
-	  grub_error (GRUB_ERR_BAD_FS, "HFS+ btree loop");
-	  return 0;
-	}
-      if (!(node_count & (node_count - 1)))
-	saved_node = first_node->next;
-      node_count++;
-
-      if (grub_hfsplus_read_file (&btree->file, 0, 0,
-				  (((grub_disk_addr_t)
-				    grub_be_to_cpu32 (first_node->next))
-				   * btree->nodesize),
-				  btree->nodesize, cnode) <= 0)
-	return 1;
-
-      /* Don't skip any record in the next iteration.  */
-      first_rec = 0;
+      if (hook (grub_hfsplus_btree_recptr (btree, first_node, rec), hook_arg))
+        return 1;
     }
 
+    if (! first_node->next)
+      break;
+
+    if (node_count && first_node->next == saved_node)
+    {
+      grub_error (GRUB_ERR_BAD_FS, "HFS+ btree loop");
+      return 0;
+    }
+    if (!(node_count & (node_count - 1)))
+      saved_node = first_node->next;
+    node_count++;
+
+    if (grub_hfsplus_read_file (&btree->file, 0, 0,
+                                (((grub_disk_addr_t)
+                                  grub_be_to_cpu32 (first_node->next))
+                                 * btree->nodesize),
+                                btree->nodesize, cnode) <= 0)
+      return 1;
+    
+    /* Don't skip any record in the next iteration.  */
+    first_rec = 0;
+  }
+  
   return 0;
 }
 
@@ -545,10 +545,10 @@ grub_hfsplus_btree_search (struct grub_hfsplus_btree *btree,
   grub_uint64_t node_count = 0;
 
   if (!btree->nodesize)
-    {
-      *matchnode = 0;
-      return 0;
-    }
+  {
+    *matchnode = 0;
+    return 0;
+  }
 
   node = grub_malloc (btree->nodesize);
   if (! node)
@@ -557,79 +557,79 @@ grub_hfsplus_btree_search (struct grub_hfsplus_btree *btree,
   currnode = btree->root;
   save_node = currnode - 1;
   while (1)
+  {
+    int match = 0;
+
+    if (save_node == currnode)
     {
-      int match = 0;
-
-      if (save_node == currnode)
-	{
-	  grub_free (node);
-	  return grub_error (GRUB_ERR_BAD_FS, "HFS+ btree loop");
-	}
-      if (!(node_count & (node_count - 1)))
-	save_node = currnode;
-      node_count++;
-
-      /* Read a node.  */
-      if (grub_hfsplus_read_file (&btree->file, 0, 0,
-				  (grub_disk_addr_t) currnode
-				  * (grub_disk_addr_t) btree->nodesize,
-				  btree->nodesize, (char *) node) <= 0)
-	{
-	  grub_free (node);
-	  return grub_error (GRUB_ERR_BAD_FS, "couldn't read i-node");
-	}
-
-      nodedesc = (struct grub_hfsplus_btnode *) node;
-
-      /* Find the record in this tree.  */
-      for (rec = 0; rec < grub_be_to_cpu16 (nodedesc->count); rec++)
-	{
-	  struct grub_hfsplus_key *currkey;
-	  currkey = grub_hfsplus_btree_recptr (btree, nodedesc, rec);
-
-	  /* The action that has to be taken depend on the type of
-	     record.  */
-	  if (nodedesc->type == GRUB_HFSPLUS_BTNODE_TYPE_LEAF
-	      && compare_keys (currkey, key) == 0)
-	    {
-	      /* An exact match was found!  */
-
-	      *matchnode = nodedesc;
-	      *keyoffset = rec;
-
-	      return 0;
-	    }
-	  else if (nodedesc->type == GRUB_HFSPLUS_BTNODE_TYPE_INDEX)
-	    {
-	      void *pointer;
-
-	      /* The place where the key could have been found didn't
-		 contain the key.  This means that the previous match
-		 is the one that should be followed.  */
-	      if (compare_keys (currkey, key) > 0)
-		break;
-
-	      /* Mark the last key which is lower or equal to the key
-		 that we are looking for.  The last match that is
-		 found will be used to locate the child which can
-		 contain the record.  */
-	      pointer = ((char *) currkey
-			 + grub_be_to_cpu16 (currkey->keylen)
-			 + 2);
-	      currnode = grub_be_to_cpu32 (grub_get_unaligned32 (pointer));
-	      match = 1;
-	    }
-	}
-
-      /* No match is found, no record with this key exists in the
-	 tree.  */
-      if (! match)
-	{
-	  *matchnode = 0;
-	  grub_free (node);
-	  return 0;
-	}
+      grub_free (node);
+      return grub_error (GRUB_ERR_BAD_FS, "HFS+ btree loop");
     }
+    if (!(node_count & (node_count - 1)))
+      save_node = currnode;
+    node_count++;
+
+    /* Read a node.  */
+    if (grub_hfsplus_read_file (&btree->file, 0, 0,
+                                (grub_disk_addr_t) currnode
+                                * (grub_disk_addr_t) btree->nodesize,
+                                btree->nodesize, (char *) node) <= 0)
+    {
+      grub_free (node);
+      return grub_error (GRUB_ERR_BAD_FS, "couldn't read i-node");
+    }
+
+    nodedesc = (struct grub_hfsplus_btnode *) node;
+
+    /* Find the record in this tree.  */
+    for (rec = 0; rec < grub_be_to_cpu16 (nodedesc->count); rec++)
+    {
+      struct grub_hfsplus_key *currkey;
+      currkey = grub_hfsplus_btree_recptr (btree, nodedesc, rec);
+
+      /* The action that has to be taken depend on the type of
+       record.  */
+      if (nodedesc->type == GRUB_HFSPLUS_BTNODE_TYPE_LEAF
+          && compare_keys (currkey, key) == 0)
+      {
+        /* An exact match was found!  */
+
+        *matchnode = nodedesc;
+        *keyoffset = rec;
+
+        return 0;
+      }
+      else if (nodedesc->type == GRUB_HFSPLUS_BTNODE_TYPE_INDEX)
+      {
+        void *pointer;
+
+        /* The place where the key could have been found didn't
+         contain the key.  This means that the previous match
+         is the one that should be followed.  */
+        if (compare_keys (currkey, key) > 0)
+          break;
+
+        /* Mark the last key which is lower or equal to the key
+         that we are looking for.  The last match that is
+         found will be used to locate the child which can
+         contain the record.  */
+        pointer = ((char *) currkey
+                   + grub_be_to_cpu16 (currkey->keylen)
+                   + 2);
+        currnode = grub_be_to_cpu32 (grub_get_unaligned32 (pointer));
+        match = 1;
+      }
+    }
+    
+    /* No match is found, no record with this key exists in the
+     tree.  */
+    if (! match)
+    {
+      *matchnode = 0;
+      grub_free (node);
+      return 0;
+    }
+  }
 }
 
 struct list_nodes_ctx
