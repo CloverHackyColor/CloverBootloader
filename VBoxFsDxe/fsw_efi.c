@@ -4,7 +4,7 @@
  */
 
 /*
- * Copyright (C) 2010 Oracle Corporation
+ * Copyright (C) 2010-2012 Oracle Corporation
  *
  * This file is part of VirtualBox Open Source Edition (OSE), as
  * available from http://www.virtualbox.org. This file is free software;
@@ -1161,72 +1161,72 @@ EFI_STATUS fsw_efi_dnode_fill_FileInfo(IN FSW_VOLUME_DATA *Volume,
                                        IN OUT UINTN *BufferSize,
                                        OUT VOID *Buffer)
 {
-    EFI_STATUS          Status;
-    EFI_FILE_INFO       *FileInfo;
-    UINTN               RequiredSize;
+  EFI_STATUS          Status;
+  EFI_FILE_INFO       *FileInfo;
+  UINTN               RequiredSize;
   struct fsw_dnode_stat_str sb;
   struct fsw_dnode *target_dno;
-
-    // make sure the dnode has complete info
-    Status = fsw_efi_map_status(fsw_dnode_fill(dno), Volume);
-    if (EFI_ERROR(Status))
-        return Status;
-
-    // TODO: check/assert that the dno's name is in UTF16
-
-    // check buffer size
-    RequiredSize = SIZE_OF_EFI_FILE_INFO + fsw_efi_strsize(&dno->name);
-    if (*BufferSize < RequiredSize) {
-        // TODO: wind back the directory in this case
-
+  
+  // make sure the dnode has complete info
+  Status = fsw_efi_map_status(fsw_dnode_fill(dno), Volume);
+  if (EFI_ERROR(Status))
+    return Status;
+  
+  // TODO: check/assert that the dno's name is in UTF16
+  
+  // check buffer size
+  RequiredSize = SIZE_OF_EFI_FILE_INFO + fsw_efi_strsize(&dno->name);
+  if (*BufferSize < RequiredSize) {
+    // TODO: wind back the directory in this case
+    
 #if DEBUG_LEVEL
-        Print(L"...BUFFER TOO SMALL\n");
+    Print(L"...BUFFER TOO SMALL\n");
 #endif
-        *BufferSize = RequiredSize;
-        return EFI_BUFFER_TOO_SMALL;
-    }
-
-    // fill structure
+    *BufferSize = RequiredSize;
+    return EFI_BUFFER_TOO_SMALL;
+  }
+  
+  // fill structure
   ZeroMem (Buffer, RequiredSize);
   FileInfo = (EFI_FILE_INFO *) Buffer;
-
+  
   // Use original name (name of symlink if any)
   fsw_efi_strcpy (FileInfo->FileName, &dno->name);
-
+  
   // if the node is a symlink, resolve it
   Status = fsw_efi_map_status (fsw_dnode_resolve (dno, &target_dno), Volume);
   fsw_dnode_release (dno);
   if (EFI_ERROR (Status))
     return Status;
   dno = target_dno;
-
+  
   // make sure the dnode has complete info
   Status = fsw_efi_map_status (fsw_dnode_fill (dno), Volume);
   if (EFI_ERROR (Status))
     return Status;
-
-    FileInfo->Size = RequiredSize;
-    FileInfo->FileSize          = dno->size;
-    FileInfo->Attribute         = 0;
-    if (dno->type == FSW_DNODE_TYPE_DIR)
-        FileInfo->Attribute    |= EFI_FILE_DIRECTORY;
-
-    // get the missing info from the fs driver
-    ZeroMem(&sb, sizeof(struct fsw_dnode_stat_str));
-    sb.store_time_posix = fsw_efi_store_time_posix;
-    sb.store_attr_posix = fsw_efi_store_attr_posix;
-    sb.host_data = FileInfo;
-    Status = fsw_efi_map_status(fsw_dnode_stat(dno, &sb), Volume);
-    if (EFI_ERROR(Status))
-        return Status;
-    FileInfo->PhysicalSize      = sb.used_bytes;
-
-    // prepare for return
-    *BufferSize = RequiredSize;
+  
+  FileInfo->Size = RequiredSize;
+  FileInfo->FileSize          = dno->size;
+  FileInfo->Attribute         = 0;
+  if (dno->type == FSW_DNODE_TYPE_DIR)
+    FileInfo->Attribute    |= EFI_FILE_DIRECTORY;
+  
+  // get the missing info from the fs driver
+  ZeroMem(&sb, sizeof(struct fsw_dnode_stat_str));
+  sb.store_time_posix = fsw_efi_store_time_posix;
+  sb.store_attr_posix = fsw_efi_store_attr_posix;
+  sb.host_data = FileInfo;
+  Status = fsw_efi_map_status(fsw_dnode_stat(dno, &sb), Volume);
+  if (EFI_ERROR(Status))
+    return Status;
+  FileInfo->PhysicalSize      = sb.used_bytes;
+  
+  // prepare for return
+  *BufferSize = RequiredSize;
 #if DEBUG_LEVEL
-    Print(L"...returning '%s'\n", FileInfo->FileName);
+  Print(L"...returning '%s'\n", FileInfo->FileName);
 #endif
-    return EFI_SUCCESS;
+  return EFI_SUCCESS;
 }
 
 // EOF

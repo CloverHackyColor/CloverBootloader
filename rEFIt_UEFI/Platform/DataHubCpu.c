@@ -131,15 +131,15 @@ SetVariablesForOSX ()
   UINT32 FwFeaturesMask;
 
   CHAR8  *None;
-  CHAR16 *KbdPrevLang;
+//  CHAR16 *KbdPrevLang;
 
-  UINTN  LangLen;
+//  UINTN  LangLen;
 
 //CHAR8  *VariablePtr;
   UINT32 Attributes;
   UINT32 FwAttributes;
 
-  VOID   *OldData;
+//  VOID   *OldData;
 
   //
   // firmware Runtime Variables

@@ -4,7 +4,7 @@
  */
 
 /*
- * Copyright (C) 2010 Oracle Corporation
+ * Copyright (C) 2010-2012 Oracle Corporation
  *
  * This file is part of VirtualBox Open Source Edition (OSE), as
  * available from http://www.virtualbox.org. This file is free software;
@@ -56,6 +56,9 @@
 
 #include "fsw_base.h"
 
+#ifndef FSW_DNODE_CACHE_SIZE
+//#define FSW_DNODE_CACHE_SIZE (5)
+#endif
 
 /** Maximum size for a path, specifically symlink target paths. */
 #ifndef VBOX
@@ -282,6 +285,10 @@ struct fsw_dnode {
 
     struct fsw_dnode *next;         //!< Doubly-linked list of all dnodes: previous dnode
     struct fsw_dnode *prev;         //!< Doubly-linked list of all dnodes: next dnode
+
+#if defined(FSW_DNODE_CACHE_SIZE) && FSW_DNODE_CACHE_SIZE > 0
+    struct fsw_dnode *cache[FSW_DNODE_CACHE_SIZE];         //!< Rudimentary cache for directory lookups
+#endif
 };
 
 /**
@@ -437,6 +444,8 @@ void         fsw_dnode_release(struct fsw_dnode *dno);
 fsw_status_t fsw_dnode_fill(struct fsw_dnode *dno);
 fsw_status_t fsw_dnode_stat(struct fsw_dnode *dno, struct fsw_dnode_stat_str *sb);
 
+fsw_status_t fsw_dnode_lookup_cache(struct fsw_dnode *dno,
+                              struct fsw_string *lookup_name, struct fsw_dnode **child_dno_out);
 fsw_status_t fsw_dnode_lookup(struct fsw_dnode *dno,
                               struct fsw_string *lookup_name, struct fsw_dnode **child_dno_out);
 fsw_status_t fsw_dnode_lookup_path(struct fsw_dnode *dno,

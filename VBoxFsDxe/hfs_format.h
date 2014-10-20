@@ -333,8 +333,8 @@ typedef struct HFSCatalogKey HFSCatalogKey;
 /* HFS Plus catalog key */
 struct HFSPlusCatalogKey {
 	u_int16_t         keyLength;	/* key length (in bytes) */
-	u_int32_t         parentID;	/* parent folder ID */
-	HFSUniStr255      nodeName;	/* catalog node name */
+	u_int32_t         parentID;   /* parent folder ID */
+	HFSUniStr255      nodeName;   /* catalog node name */
 } HFS_ALIGNMENT;
 typedef struct HFSPlusCatalogKey HFSPlusCatalogKey;
 
@@ -415,43 +415,43 @@ typedef struct HFSPlusCatalogFolder HFSPlusCatalogFolder;
 
 /* HFS catalog file record - 102 bytes */
 struct HFSCatalogFile {
-	int16_t		recordType;		/* == kHFSFileRecord */
-	u_int8_t		flags;			/* file flags */
-	int8_t			fileType;		/* file type (unused ?) */
+	int16_t         recordType;		/* == kHFSFileRecord */
+	u_int8_t        flags;			/* file flags */
+	int8_t          fileType;		/* file type (unused ?) */
 	FndrFileInfo		userInfo;		/* Finder information */
-	u_int32_t		fileID;			/* file ID */
-	u_int16_t		dataStartBlock;		/* not used - set to zero */
-	int32_t		dataLogicalSize;	/* logical EOF of data fork */
-	int32_t		dataPhysicalSize;	/* physical EOF of data fork */
-	u_int16_t		rsrcStartBlock;		/* not used - set to zero */
-	int32_t			rsrcLogicalSize;	/* logical EOF of resource fork */
-	int32_t			rsrcPhysicalSize;	/* physical EOF of resource fork */
-	u_int32_t		createDate;		/* date and time of creation */
-	u_int32_t		modifyDate;		/* date and time of last modification */
-	u_int32_t		backupDate;		/* date and time of last backup */
-	FndrOpaqueInfo		finderInfo;		/* additional Finder information */
-	u_int16_t		clumpSize;		/* file clump size (not used) */
-	HFSExtentRecord		dataExtents;		/* first data fork extent record */
-	HFSExtentRecord		rsrcExtents;		/* first resource fork extent record */
-	u_int32_t		reserved;		/* reserved - initialized as zero */
+	u_int32_t       fileID;			/* file ID */
+	u_int16_t       dataStartBlock;		/* not used - set to zero */
+	int32_t         dataLogicalSize;	/* logical EOF of data fork */
+	int32_t         dataPhysicalSize;	/* physical EOF of data fork */
+	u_int16_t       rsrcStartBlock;		/* not used - set to zero */
+	int32_t         rsrcLogicalSize;	/* logical EOF of resource fork */
+	int32_t         rsrcPhysicalSize;	/* physical EOF of resource fork */
+	u_int32_t       createDate;		/* date and time of creation */
+	u_int32_t       modifyDate;		/* date and time of last modification */
+	u_int32_t       backupDate;		/* date and time of last backup */
+	FndrOpaqueInfo	finderInfo;		/* additional Finder information */
+	u_int16_t       clumpSize;		/* file clump size (not used) */
+	HFSExtentRecord	dataExtents;		/* first data fork extent record */
+	HFSExtentRecord	rsrcExtents;		/* first resource fork extent record */
+	u_int32_t       reserved;		/* reserved - initialized as zero */
 } HFS_ALIGNMENT;
 typedef struct HFSCatalogFile HFSCatalogFile;
 
 /* HFS Plus catalog file record - 248 bytes */
 struct HFSPlusCatalogFile {
 	int16_t         recordType;		/* == kHFSPlusFileRecord */
-	u_int16_t       flags;			/* file flags */
+	u_int16_t       flags;        /* file flags */
 	u_int32_t       reserved1;		/* reserved - initialized as zero */
-	u_int32_t       fileID;			/* file ID */
+	u_int32_t       fileID;       /* file ID */
 	u_int32_t       createDate;		/* date and time of creation */
 	u_int32_t       contentModDate;		/* date and time of last content modification */
 	u_int32_t       attributeModDate;	/* date and time of last attribute modification */
 	u_int32_t       accessDate;		/* date and time of last access (MacOS X only) */
 	u_int32_t       backupDate;		/* date and time of last backup */
-	HFSPlusBSDInfo	bsdInfo;		/* permissions (for MacOS X) */
-	FndrFileInfo		userInfo;		/* Finder information */
+	HFSPlusBSDInfo	bsdInfo;      /* permissions (for MacOS X) */
+	FndrFileInfo		userInfo;     /* Finder information */
 	FndrOpaqueInfo	finderInfo;		/* additional Finder information */
-	u_int32_t       textEncoding;		/* hint for name conversions */
+	u_int32_t       textEncoding;	/* hint for name conversions */
 	u_int32_t       reserved2;		/* reserved - initialized as zero */
 
 	/* Note: these start on double long (64 bit) boundary */
@@ -462,19 +462,19 @@ typedef struct HFSPlusCatalogFile HFSPlusCatalogFile;
 
 /* HFS catalog thread record - 46 bytes */
 struct HFSCatalogThread {
-	int16_t         recordType;		/* == kHFSFolderThreadRecord or kHFSFileThreadRecord */
-	int32_t         reserved[2];		/* reserved - initialized as zero */
-	u_int32_t       parentID;		/* parent ID for this catalog node */
-	u_int8_t        nodeName[kHFSMaxFileNameChars + 1]; /* name of this catalog node */
+	int16_t               recordType;		/* == kHFSFolderThreadRecord or kHFSFileThreadRecord */
+	int32_t               reserved[2];		/* reserved - initialized as zero */
+	u_int32_t             parentID;		/* parent ID for this catalog node */
+	u_int8_t              nodeName[kHFSMaxFileNameChars + 1]; /* name of this catalog node */
 } HFS_ALIGNMENT;
 typedef struct HFSCatalogThread HFSCatalogThread;
 
 /* HFS Plus catalog thread record -- 264 bytes */
 struct HFSPlusCatalogThread {
-	int16_t	recordType;		/* == kHFSPlusFolderThreadRecord or kHFSPlusFileThreadRecord */
-	int16_t	reserved;		/* reserved - initialized as zero */
-	u_int32_t	parentID;		/* parent ID for this catalog node */
-	HFSUniStr255	nodeName;		/* name of this catalog node (variable length) */
+	int16_t               recordType;		/* == kHFSPlusFolderThreadRecord or kHFSPlusFileThreadRecord */
+	int16_t               reserved;		/* reserved - initialized as zero */
+	u_int32_t             parentID;		/* parent ID for this catalog node */
+	HFSUniStr255          nodeName;		/* name of this catalog node (variable length) */
 } HFS_ALIGNMENT;
 typedef struct HFSPlusCatalogThread HFSPlusCatalogThread;
 
@@ -497,9 +497,9 @@ enum {
 	records (of type HFSPlusAttrExtents) for this attribute.
 */
 struct HFSPlusAttrForkData {
-	u_int32_t         recordType;		/* == kHFSPlusAttrForkData*/
-	u_int32_t         reserved;
-	HFSPlusForkData   theFork;		/* size and first extents of value*/
+	u_int32_t             recordType;		/* == kHFSPlusAttrForkData*/
+	u_int32_t             reserved;
+	HFSPlusForkData       theFork;		/* size and first extents of value*/
 } HFS_ALIGNMENT;
 typedef struct HFSPlusAttrForkData HFSPlusAttrForkData;
 
@@ -509,9 +509,9 @@ typedef struct HFSPlusAttrForkData HFSPlusAttrForkData;
 	fragmented attributes.
 */
 struct HFSPlusAttrExtents {
-	u_int32_t		recordType;	/* == kHFSPlusAttrExtents*/
-	u_int32_t		reserved;
-	HFSPlusExtentRecord	extents;	/* additional extents*/
+	u_int32_t             recordType;	/* == kHFSPlusAttrExtents*/
+	u_int32_t             reserved;
+	HFSPlusExtentRecord   extents;	/* additional extents*/
 } HFS_ALIGNMENT;
 typedef struct HFSPlusAttrExtents HFSPlusAttrExtents;
 
@@ -522,43 +522,43 @@ typedef struct HFSPlusAttrExtents HFSPlusAttrExtents;
  * within a single B-tree record.
  */
 struct HFSPlusAttrData {
-	u_int32_t    recordType;   /* == kHFSPlusAttrInlineData */
-	u_int32_t    reserved[2];
-	u_int32_t    attrSize;     /* size of attribute data in bytes */
-	u_int8_t     attrData[2];  /* variable length */
+	u_int32_t             recordType;   /* == kHFSPlusAttrInlineData */
+	u_int32_t             reserved[2];
+	u_int32_t             attrSize;     /* size of attribute data in bytes */
+	u_int8_t              attrData[2];  /* variable length */
 } HFS_ALIGNMENT;
 typedef struct HFSPlusAttrData HFSPlusAttrData;
 
 
 /* HFSPlusAttrInlineData is obsolete use HFSPlusAttrData instead */
 struct HFSPlusAttrInlineData {
-	u_int32_t	recordType;
-	u_int32_t	reserved;
-	u_int32_t	logicalSize;
-	u_int8_t	userData[2];
+	u_int32_t             recordType;
+	u_int32_t             reserved;
+	u_int32_t             logicalSize;
+	u_int8_t              userData[2];
 } HFS_ALIGNMENT;
 typedef struct HFSPlusAttrInlineData HFSPlusAttrInlineData;
 
 
 /*	A generic Attribute Record*/
 union HFSPlusAttrRecord {
-	u_int32_t		recordType;
+	u_int32_t             recordType;
 	HFSPlusAttrInlineData	inlineData;   /* NOT USED */
-	HFSPlusAttrData	attrData;
-	HFSPlusAttrForkData	forkData;
-	HFSPlusAttrExtents	overflowExtents;
+	HFSPlusAttrData       attrData;
+	HFSPlusAttrForkData   forkData;
+	HFSPlusAttrExtents    overflowExtents;
 };
 typedef union HFSPlusAttrRecord HFSPlusAttrRecord;
 
 /* Attribute key */
 enum { kHFSMaxAttrNameLen = 127 };
 struct HFSPlusAttrKey {
-	u_int16_t     keyLength;       /* key length (in bytes) */
-	u_int16_t     pad;	       /* set to zero */
-	u_int32_t     fileID;          /* file associated with attribute */
-	u_int32_t     startBlock;      /* first allocation block number for extents */
-	u_int16_t     attrNameLen;     /* number of unicode characters */
-	u_int16_t     attrName[kHFSMaxAttrNameLen];   /* attribute name (Unicode) */
+	u_int16_t         keyLength;       /* key length (in bytes) */
+	u_int16_t         pad;             /* set to zero */
+	u_int32_t         fileID;          /* file associated with attribute */
+	u_int32_t         startBlock;      /* first allocation block number for extents */
+	u_int16_t         attrNameLen;     /* number of unicode characters */
+	u_int16_t         attrName[kHFSMaxAttrNameLen];   /* attribute name (Unicode) */
 } HFS_ALIGNMENT;
 typedef struct HFSPlusAttrKey HFSPlusAttrKey;
 
@@ -570,74 +570,74 @@ typedef struct HFSPlusAttrKey HFSPlusAttrKey;
 
 /* Key and node lengths */
 enum {
-	kHFSPlusExtentKeyMaximumLength = sizeof(HFSPlusExtentKey) - sizeof(u_int16_t),
-	kHFSExtentKeyMaximumLength	= sizeof(HFSExtentKey) - sizeof(u_int8_t),
+	kHFSPlusExtentKeyMaximumLength  = sizeof(HFSPlusExtentKey) - sizeof(u_int16_t),
+	kHFSExtentKeyMaximumLength      = sizeof(HFSExtentKey) - sizeof(u_int8_t),
 	kHFSPlusCatalogKeyMaximumLength = sizeof(HFSPlusCatalogKey) - sizeof(u_int16_t),
 	kHFSPlusCatalogKeyMinimumLength = kHFSPlusCatalogKeyMaximumLength - sizeof(HFSUniStr255) + sizeof(u_int16_t),
-	kHFSCatalogKeyMaximumLength	= sizeof(HFSCatalogKey) - sizeof(u_int8_t),
-	kHFSCatalogKeyMinimumLength	= kHFSCatalogKeyMaximumLength - (kHFSMaxFileNameChars + 1) + sizeof(u_int8_t),
-	kHFSPlusCatalogMinNodeSize	= 4096,
-	kHFSPlusExtentMinNodeSize	= 512,
-	kHFSPlusAttrMinNodeSize		= 4096
+	kHFSCatalogKeyMaximumLength     = sizeof(HFSCatalogKey) - sizeof(u_int8_t),
+	kHFSCatalogKeyMinimumLength     = kHFSCatalogKeyMaximumLength - (kHFSMaxFileNameChars + 1) + sizeof(u_int8_t),
+	kHFSPlusCatalogMinNodeSize      = 4096,
+	kHFSPlusExtentMinNodeSize       = 512,
+	kHFSPlusAttrMinNodeSize         = 4096
 };
 
 /* HFS and HFS Plus volume attribute bits */
 enum {
 							/* Bits 0-6 are reserved (always cleared by MountVol call) */
-	kHFSVolumeHardwareLockBit	= 7,		/* volume is locked by hardware */
-	kHFSVolumeUnmountedBit		= 8,		/* volume was successfully unmounted */
-	kHFSVolumeSparedBlocksBit	= 9,		/* volume has bad blocks spared */
-	kHFSVolumeNoCacheRequiredBit = 10,		/* don't cache volume blocks (i.e. RAM or ROM disk) */
-	kHFSBootVolumeInconsistentBit = 11,		/* boot volume is inconsistent (System 7.6 and later) */
-	kHFSCatalogNodeIDsReusedBit = 12,
-	kHFSVolumeJournaledBit = 13,			/* this volume has a journal on it */
-	kHFSVolumeInconsistentBit = 14,			/* serious inconsistencies detected at runtime */
-	kHFSVolumeSoftwareLockBit	= 15,		/* volume is locked by software */
+	kHFSVolumeHardwareLockBit       = 7,		/* volume is locked by hardware */
+	kHFSVolumeUnmountedBit          = 8,		/* volume was successfully unmounted */
+	kHFSVolumeSparedBlocksBit       = 9,		/* volume has bad blocks spared */
+	kHFSVolumeNoCacheRequiredBit    = 10,		/* don't cache volume blocks (i.e. RAM or ROM disk) */
+	kHFSBootVolumeInconsistentBit   = 11,		/* boot volume is inconsistent (System 7.6 and later) */
+	kHFSCatalogNodeIDsReusedBit     = 12,
+	kHFSVolumeJournaledBit          = 13,			/* this volume has a journal on it */
+	kHFSVolumeInconsistentBit       = 14,			/* serious inconsistencies detected at runtime */
+	kHFSVolumeSoftwareLockBit       = 15,		/* volume is locked by software */
 
-	kHFSVolumeHardwareLockMask	= 1 << kHFSVolumeHardwareLockBit,
-	kHFSVolumeUnmountedMask		= 1 << kHFSVolumeUnmountedBit,
-	kHFSVolumeSparedBlocksMask	= 1 << kHFSVolumeSparedBlocksBit,
-	kHFSVolumeNoCacheRequiredMask = 1 << kHFSVolumeNoCacheRequiredBit,
-	kHFSBootVolumeInconsistentMask = 1 << kHFSBootVolumeInconsistentBit,
-	kHFSCatalogNodeIDsReusedMask = 1 << kHFSCatalogNodeIDsReusedBit,
-	kHFSVolumeJournaledMask	= 1 << kHFSVolumeJournaledBit,
-	kHFSVolumeInconsistentMask = 1 << kHFSVolumeInconsistentBit,
-	kHFSVolumeSoftwareLockMask	= 1 << kHFSVolumeSoftwareLockBit,
+	kHFSVolumeHardwareLockMask      = 1 << kHFSVolumeHardwareLockBit,
+	kHFSVolumeUnmountedMask         = 1 << kHFSVolumeUnmountedBit,
+	kHFSVolumeSparedBlocksMask      = 1 << kHFSVolumeSparedBlocksBit,
+	kHFSVolumeNoCacheRequiredMask   = 1 << kHFSVolumeNoCacheRequiredBit,
+	kHFSBootVolumeInconsistentMask  = 1 << kHFSBootVolumeInconsistentBit,
+	kHFSCatalogNodeIDsReusedMask    = 1 << kHFSCatalogNodeIDsReusedBit,
+	kHFSVolumeJournaledMask         = 1 << kHFSVolumeJournaledBit,
+	kHFSVolumeInconsistentMask      = 1 << kHFSVolumeInconsistentBit,
+	kHFSVolumeSoftwareLockMask      = 1 << kHFSVolumeSoftwareLockBit,
 	kHFSMDBAttributesMask		= 0x8380
 };
 
 /* HFS Master Directory Block - 162 bytes */
 /* Stored at sector #2 (3rd sector) and second-to-last sector. */
 struct HFSMasterDirectoryBlock {
-	u_int16_t		drSigWord;	/* == kHFSSigWord = 0x4244 = 'BD' or 'H+' or 'HX'*/
-	u_int32_t		drCrDate;	/* date and time of volume creation */
-	u_int32_t		drLsMod;	/* date and time of last modification */
-	u_int16_t		drAtrb;		/* volume attributes */
-	u_int16_t		drNmFls;	/* number of files in root folder */
-	u_int16_t		drVBMSt;	/* first block of volume bitmap */
-	u_int16_t		drAllocPtr;	/* start of next allocation search */
-	u_int16_t		drNmAlBlks;	/* number of allocation blocks in volume */
-	u_int32_t		drAlBlkSiz;	/* size (in bytes) of allocation blocks */
-	u_int32_t		drClpSiz;	/* default clump size */
-	u_int16_t		drAlBlSt;	/* first allocation block in volume */
-	u_int32_t		drNxtCNID;	/* next unused catalog node ID */
-	u_int16_t		drFreeBks;	/* number of unused allocation blocks */
-	u_int8_t		drVN[kHFSMaxVolumeNameChars + 1];  /* volume name */
-	u_int32_t		drVolBkUp;	/* date and time of last backup */
-	u_int16_t		drVSeqNum;	/* volume backup sequence number */
-	u_int32_t		drWrCnt;	/* volume write count */
-	u_int32_t		drXTClpSiz;	/* clump size for extents overflow file */
-	u_int32_t		drCTClpSiz;	/* clump size for catalog file */
-	u_int16_t		drNmRtDirs;	/* number of directories in root folder */
-	u_int32_t		drFilCnt;	/* number of files in volume */
-	u_int32_t		drDirCnt;	/* number of directories in volume */
-	u_int32_t		drFndrInfo[8];	/* information used by the Finder */
-	u_int16_t		drEmbedSigWord;	/* embedded volume signature (formerly drVCSize) */
+	u_int16_t           drSigWord;	/* == kHFSSigWord = 0x4244 = 'BD' or 'H+' or 'HX'*/
+	u_int32_t           drCrDate;	/* date and time of volume creation */
+	u_int32_t           drLsMod;	/* date and time of last modification */
+	u_int16_t           drAtrb;		/* volume attributes */
+	u_int16_t           drNmFls;	/* number of files in root folder */
+	u_int16_t           drVBMSt;	/* first block of volume bitmap */
+	u_int16_t           drAllocPtr;	/* start of next allocation search */
+	u_int16_t           drNmAlBlks;	/* number of allocation blocks in volume */
+	u_int32_t           drAlBlkSiz;	/* size (in bytes) of allocation blocks */
+	u_int32_t           drClpSiz;	/* default clump size */
+	u_int16_t           drAlBlSt;	/* first allocation block in volume */
+	u_int32_t           drNxtCNID;	/* next unused catalog node ID */
+	u_int16_t           drFreeBks;	/* number of unused allocation blocks */
+	u_int8_t            drVN[kHFSMaxVolumeNameChars + 1];  /* volume name */
+	u_int32_t           drVolBkUp;	/* date and time of last backup */
+	u_int16_t           drVSeqNum;	/* volume backup sequence number */
+	u_int32_t           drWrCnt;	/* volume write count */
+	u_int32_t           drXTClpSiz;	/* clump size for extents overflow file */
+	u_int32_t           drCTClpSiz;	/* clump size for catalog file */
+	u_int16_t           drNmRtDirs;	/* number of directories in root folder */
+	u_int32_t           drFilCnt;	/* number of files in volume */
+	u_int32_t           drDirCnt;	/* number of directories in volume */
+	u_int32_t           drFndrInfo[8];	/* information used by the Finder */
+	u_int16_t           drEmbedSigWord;	/* embedded volume signature (formerly drVCSize) */
 	HFSExtentDescriptor	drEmbedExtent;	/* embedded volume location and size (formerly drVBMCSize and drCtlCSize) */
-	u_int32_t		drXTFlSize;	/* size of extents overflow file */
-	HFSExtentRecord		drXTExtRec;	/* extent record for extents overflow file */
-	u_int32_t		drCTFlSize;	/* size of catalog file */
-	HFSExtentRecord	drCTExtRec;	/* extent record for catalog file */
+	u_int32_t           drXTFlSize;	/* size of extents overflow file */
+	HFSExtentRecord     drXTExtRec;	/* extent record for extents overflow file */
+	u_int32_t           drCTFlSize;	/* size of catalog file */
+	HFSExtentRecord     drCTExtRec;	/* extent record for catalog file */
 } HFS_ALIGNMENT;
 typedef struct HFSMasterDirectoryBlock	HFSMasterDirectoryBlock;
 
@@ -681,39 +681,39 @@ typedef struct HFSMasterDirectoryBlock	HFSMasterDirectoryBlock;
 /* HFS Plus Volume Header - 512 bytes */
 /* Stored at sector #2 (3rd sector) and second-to-last sector. */
 struct HFSPlusVolumeHeader {
-	u_int16_t	signature;		/* == kHFSPlusSigWord */
-	u_int16_t	version;		/* == kHFSPlusVersion */
-	u_int32_t	attributes;		/* volume attributes */
-	u_int32_t	lastMountedVersion;	/* implementation version which last mounted volume */
-	u_int32_t	journalInfoBlock;	/* block addr of journal info (if volume is journaled, zero otherwise) */
+	u_int16_t         signature;		/* == kHFSPlusSigWord */
+	u_int16_t         version;		/* == kHFSPlusVersion */
+	u_int32_t         attributes;		/* volume attributes */
+	u_int32_t         lastMountedVersion;	/* implementation version which last mounted volume */
+	u_int32_t         journalInfoBlock;	/* block addr of journal info (if volume is journaled, zero otherwise) */
 
-	u_int32_t	createDate;		/* date and time of volume creation */
-	u_int32_t	modifyDate;		/* date and time of last modification */
-	u_int32_t	backupDate;		/* date and time of last backup */
-	u_int32_t	checkedDate;		/* date and time of last disk check */
+	u_int32_t         createDate;		/* date and time of volume creation */
+	u_int32_t         modifyDate;		/* date and time of last modification */
+	u_int32_t         backupDate;		/* date and time of last backup */
+	u_int32_t         checkedDate;		/* date and time of last disk check */
 
-	u_int32_t	fileCount;		/* number of files in volume */
-	u_int32_t	folderCount;		/* number of directories in volume */
+	u_int32_t         fileCount;		/* number of files in volume */
+	u_int32_t         folderCount;		/* number of directories in volume */
 
-	u_int32_t	blockSize;		/* size (in bytes) of allocation blocks */
-	u_int32_t	totalBlocks;		/* number of allocation blocks in volume (includes this header and VBM*/
-	u_int32_t	freeBlocks;		/* number of unused allocation blocks */
+	u_int32_t         blockSize;		/* size (in bytes) of allocation blocks */
+	u_int32_t         totalBlocks;		/* number of allocation blocks in volume (includes this header and VBM*/
+	u_int32_t         freeBlocks;		/* number of unused allocation blocks */
 
-	u_int32_t	nextAllocation;		/* start of next allocation search */
-	u_int32_t	rsrcClumpSize;		/* default resource fork clump size */
-	u_int32_t	dataClumpSize;		/* default data fork clump size */
-	u_int32_t	nextCatalogID;		/* next unused catalog node ID */
+	u_int32_t         nextAllocation;		/* start of next allocation search */
+	u_int32_t         rsrcClumpSize;		/* default resource fork clump size */
+	u_int32_t         dataClumpSize;		/* default data fork clump size */
+	u_int32_t         nextCatalogID;		/* next unused catalog node ID */
 
-	u_int32_t	writeCount;		/* volume write count */
-	u_int64_t	encodingsBitmap;	/* which encodings have been use  on this volume */
+	u_int32_t         writeCount;		/* volume write count */
+	u_int64_t         encodingsBitmap;	/* which encodings have been use  on this volume */
 
-	u_int8_t	finderInfo[32];		/* information used by the Finder */
+	u_int8_t          finderInfo[32];		/* information used by the Finder */
 
-	HFSPlusForkData	 allocationFile;	/* allocation bitmap file */
-	HFSPlusForkData  extentsFile;		/* extents B-tree file */
-	HFSPlusForkData  catalogFile;		/* catalog B-tree file */
-	HFSPlusForkData  attributesFile;	/* extended attributes B-tree file */
-	HFSPlusForkData	 startupFile;		/* boot file (secondary loader) */
+	HFSPlusForkData   allocationFile;	/* allocation bitmap file */
+	HFSPlusForkData   extentsFile;		/* extents B-tree file */
+	HFSPlusForkData   catalogFile;		/* catalog B-tree file */
+	HFSPlusForkData   attributesFile;	/* extended attributes B-tree file */
+	HFSPlusForkData   startupFile;		/* boot file (secondary loader) */
 } HFS_ALIGNMENT;
 typedef struct HFSPlusVolumeHeader HFSPlusVolumeHeader;
 
@@ -725,48 +725,48 @@ enum BTreeKeyLimits{
 };
 
 union BTreeKey{
-	u_int8_t	length8;
-	u_int16_t	length16;
-	u_int8_t	rawData [kMaxKeyLength+2];
+	u_int8_t      length8;
+	u_int16_t     length16;
+	u_int8_t      rawData[kMaxKeyLength + 2];
 };
 typedef union BTreeKey BTreeKey;
 
 /* BTNodeDescriptor -- Every B-tree node starts with these fields. */
 struct BTNodeDescriptor {
-	u_int32_t	fLink;			/* next node at this level*/
-	u_int32_t	bLink;			/* previous node at this level*/
-	int8_t		kind;			/* kind of node (leaf, index, header, map)*/
-	u_int8_t	height;			/* zero for header, map; child is one more than parent*/
-	u_int16_t	numRecords;		/* number of records in this node*/
-	u_int16_t	reserved;		/* reserved - initialized as zero */
+	u_int32_t     fLink;			/* next node at this level*/
+	u_int32_t     bLink;			/* previous node at this level*/
+	int8_t        kind;       /* kind of node (leaf, index, header, map)*/
+	u_int8_t      height;			/* zero for header, map; child is one more than parent*/
+	u_int16_t     numRecords;	/* number of records in this node*/
+	u_int16_t     reserved;		/* reserved - initialized as zero */
 } HFS_ALIGNMENT;
 typedef struct BTNodeDescriptor BTNodeDescriptor;
 
 /* Constants for BTNodeDescriptor kind */
 enum {
-	kBTLeafNode	= -1,
+	kBTLeafNode   = -1,
 	kBTIndexNode	= 0,
 	kBTHeaderNode	= 1,
-	kBTMapNode	= 2
+	kBTMapNode    = 2
 };
 
 /* BTHeaderRec -- The first record of a B-tree header node */
 struct BTHeaderRec {
-	u_int16_t	treeDepth;		/* maximum height (usually leaf nodes) */
-	u_int32_t	rootNode;		/* node number of root node */
-	u_int32_t	leafRecords;		/* number of leaf records in all leaf nodes */
-	u_int32_t	firstLeafNode;		/* node number of first leaf node */
-	u_int32_t	lastLeafNode;		/* node number of last leaf node */
-	u_int16_t	nodeSize;		/* size of a node, in bytes */
-	u_int16_t	maxKeyLength;		/* reserved */
-	u_int32_t	totalNodes;		/* total number of nodes in tree */
-	u_int32_t	freeNodes;		/* number of unused (free) nodes in tree */
-	u_int16_t	reserved1;		/* unused */
-	u_int32_t	clumpSize;		/* reserved HFSPlusForkData->clumpSize */
-	u_int8_t	btreeType;		/* enum from BTreeTypes */
-	u_int8_t	keyCompareType;		/* Key string Comparison Type */
-	u_int32_t	attributes;		/* persistent attributes about the tree */
-	u_int32_t	reserved3[16];		/* reserved */
+	u_int16_t     treeDepth;		/* maximum height (usually leaf nodes) */
+	u_int32_t     rootNode;		/* node number of root node */
+	u_int32_t     leafRecords;		/* number of leaf records in all leaf nodes */
+	u_int32_t     firstLeafNode;		/* node number of first leaf node */
+	u_int32_t     lastLeafNode;		/* node number of last leaf node */
+	u_int16_t     nodeSize;		/* size of a node, in bytes */
+	u_int16_t     maxKeyLength;		/* reserved */
+	u_int32_t     totalNodes;		/* total number of nodes in tree */
+	u_int32_t     freeNodes;		/* number of unused (free) nodes in tree */
+	u_int16_t     reserved1;		/* unused */
+	u_int32_t     clumpSize;		/* reserved HFSPlusForkData->clumpSize */
+	u_int8_t      btreeType;		/* enum from BTreeTypes */
+	u_int8_t      keyCompareType;		/* Key string Comparison Type */
+	u_int32_t     attributes;		/* persistent attributes about the tree */
+	u_int32_t     reserved3[16];		/* reserved */
 } HFS_ALIGNMENT;
 typedef struct BTHeaderRec BTHeaderRec;
 
@@ -778,9 +778,9 @@ typedef struct BTHeaderRec BTHeaderRec;
 
 /* Constants for BTHeaderRec attributes */
 enum {
-	kBTBadCloseMask		 = 0x00000001,	/* reserved */
-	kBTBigKeysMask		 = 0x00000002,	/* key length field is 16 bits */
-	kBTVariableIndexKeysMask = 0x00000004	/* keys in index nodes are variable length */
+	kBTBadCloseMask           = 0x00000001,	/* reserved */
+	kBTBigKeysMask            = 0x00000002,	/* key length field is 16 bits */
+	kBTVariableIndexKeysMask  = 0x00000004	/* keys in index nodes are variable length */
 };
 
 
@@ -792,11 +792,11 @@ enum {
 
 /* JournalInfoBlock - Structure that describes where our journal lives */
 struct JournalInfoBlock {
-	u_int32_t	flags;
-	u_int32_t       device_signature[8];  // signature used to locate our device.
-	u_int64_t       offset;               // byte offset to the journal on the device
-	u_int64_t       size;                 // size in bytes of the journal
-	u_int32_t	reserved[32];
+	u_int32_t         flags;
+	u_int32_t         device_signature[8];  // signature used to locate our device.
+	u_int64_t         offset;               // byte offset to the journal on the device
+	u_int64_t         size;                 // size in bytes of the journal
+	u_int32_t         reserved[32];
 } HFS_ALIGNMENT;
 typedef struct JournalInfoBlock JournalInfoBlock;
 
@@ -815,29 +815,29 @@ enum {
   char hfc_tag[] = "CLUSTERED HOT FILES B-TREE     ";
 
   struct HotFilesInfo {
-    UInt32  magic;
-    UInt32  version;
-    UInt32  duration;    /* duration of sample period */
-    UInt32  timebase;    /* recording period start time */
-    UInt32  timeleft;    /* recording period stop time */
-    UInt32  threshold;
-    UInt32  maxfileblks;
-    UInt32  maxfilecnt;
-    UInt8   tag[32];
+    u_int32_t  magic;
+    u_int32_t  version;
+    u_int32_t  duration;    /* duration of sample period */
+    u_int32_t  timebase;    /* recording period start time */
+    u_int32_t  timeleft;    /* recording period stop time */
+    u_int32_t  threshold;
+    u_int32_t  maxfileblks;
+    u_int32_t  maxfilecnt;
+    u_int8_t   tag[32];
   };
   typedef struct HotFilesInfo HotFilesInfo;
 
   struct HotFileKey {
-    UInt16   keyLength;
-    UInt8    forkType;
-    UInt8    pad;
-    UInt32   temperature;
-    UInt32   fileID;
+    u_int16_t   keyLength;
+    u_int8_t    forkType;
+    u_int8_t    pad;
+    u_int32_t   temperature;
+    u_int32_t   fileID;
   };
   typedef struct HotFileKey HotFileKey;
 
 #define HFC_LOOKUPTAG   0xFFFFFFFF
-#define HFC_KEYLENGTH   (sizeof(HotFileKey) - sizeof(UInt32))
+#define HFC_KEYLENGTH   (sizeof(HotFileKey) - sizeof(u_int32_t))
 
 
 
