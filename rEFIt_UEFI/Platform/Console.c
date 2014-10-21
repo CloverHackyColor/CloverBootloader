@@ -15,66 +15,70 @@
  * hope that it will be useful, but WITHOUT ANY WARRANTY of any kind.
  */
 
+/*
+  Removed commented out code in rev 2965
+*/
+
 #include "Platform.h"
 
-static EFI_CONSOLE_CONTROL_SCREEN_MODE CurrentMode = EfiConsoleControlScreenText;
+STATIC EFI_CONSOLE_CONTROL_SCREEN_MODE CurrentMode = EfiConsoleControlScreenText;
 
-EFI_STATUS EFIAPI
-GetModeImpl(
-  IN  EFI_CONSOLE_CONTROL_PROTOCOL      *This,
-  OUT EFI_CONSOLE_CONTROL_SCREEN_MODE   *Mode,
-  OUT BOOLEAN                           *GopUgaExists,  OPTIONAL
-  OUT BOOLEAN                           *StdInLocked    OPTIONAL
+EFI_STATUS
+EFIAPI
+GetModeImpl (
+  IN      EFI_CONSOLE_CONTROL_PROTOCOL    *This,
+     OUT  EFI_CONSOLE_CONTROL_SCREEN_MODE *Mode,
+     OUT  BOOLEAN                         *GopUgaExists,  OPTIONAL
+     OUT  BOOLEAN                         *StdInLocked    OPTIONAL
   )
 {
-  *Mode = CurrentMode; 
-  // EfiConsoleControlScreenText;
-  // EfiConsoleControlScreenGraphics;
+  *Mode = CurrentMode;
 
-    if (GopUgaExists)
-        *GopUgaExists = TRUE;
-    if (StdInLocked)
-        *StdInLocked = FALSE;
-    return EFI_SUCCESS;
+  if (GopUgaExists) {
+    *GopUgaExists = TRUE;
+  }
+
+  if (StdInLocked) {
+    *StdInLocked  = FALSE;
+  }
+
+  return EFI_SUCCESS;
 }
 
-EFI_STATUS EFIAPI
-SetModeImpl(
-  IN  EFI_CONSOLE_CONTROL_PROTOCOL      *This,
-  IN  EFI_CONSOLE_CONTROL_SCREEN_MODE   Mode
+EFI_STATUS
+EFIAPI
+SetModeImpl (
+  IN  EFI_CONSOLE_CONTROL_PROTOCOL    *This,
+  IN  EFI_CONSOLE_CONTROL_SCREEN_MODE Mode
   )
 {
   CurrentMode = Mode;
-    return EFI_SUCCESS;
+
+  return EFI_SUCCESS;
 }
 
-EFI_STATUS EFIAPI
-LockStdInImpl(
-  IN  EFI_CONSOLE_CONTROL_PROTOCOL      *This,
-  IN  CHAR16                            *Password
+EFI_STATUS
+EFIAPI
+LockStdInImpl (
+  IN  EFI_CONSOLE_CONTROL_PROTOCOL *This,
+  IN  CHAR16                       *Password
   )
 {
-    return EFI_SUCCESS;
+  return EFI_SUCCESS;
 }
 
 
 EFI_CONSOLE_CONTROL_PROTOCOL gConsoleController =
 {
-    GetModeImpl,
-    SetModeImpl,
-    LockStdInImpl
+  GetModeImpl,
+  SetModeImpl,
+  LockStdInImpl
 };
-
-//EFI_GUID gEfiConsoleControlProtocolGuid = EFI_CONSOLE_CONTROL_PROTOCOL_GUID;
 
 EFI_STATUS
 InitializeConsoleSim ()
 {
   EFI_STATUS Status;
-//EG_PIXEL   BackgroundClear = { 0, 0, 0, 0 };
-//CHAR16*    bgc             = L"BackgroundClear";
-//UINTN      dataSize        = sizeof(BackgroundClear);
-  
   
   Status = gBS->InstallMultipleProtocolInterfaces (
                   &gImageHandle,
@@ -82,23 +86,6 @@ InitializeConsoleSim ()
                   &gConsoleController,
                   NULL
                   );
-  
-  // get background clear
-/*
-  Status = gRS->GetVariable(bgc, &gEfiAppleNvramGuid, 0, &dataSize, &BackgroundClear);
-  if(!EFI_ERROR(Status))
-    return Status;
-*/
-
-  // Download-Fritz: Done by DataHubCpu.c; SetVariablesForOSX ()
-/*
-  AddNvramVariable (bgc,
-    &gEfiAppleNvramGuid,
-    EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-    sizeof(BackgroundClear),
-    &BackgroundClear);
-*/
-//  ASSERT_EFI_ERROR (Status);
 
   return Status;
 }
