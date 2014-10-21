@@ -1377,7 +1377,6 @@ extern LANGUAGES                      gLanguage;
 extern BOOLEAN                        gFirmwareClover;
 extern DRIVERS_FLAGS                  gDriversFlags;
 extern UINT32                         gFwFeatures;
-extern BOOLEAN                        gFwFeaturesConfig;
 extern CPU_STRUCTURE                  gCPUStructure;
 extern EFI_GUID                       gUuid;
 extern SLOT_DEVICE                    SlotDevices[];

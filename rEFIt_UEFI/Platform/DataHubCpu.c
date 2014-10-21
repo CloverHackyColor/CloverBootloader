@@ -126,9 +126,8 @@ SetVariablesForOSX ()
 {
   // The variable names used should be made global constants to prevent them being allocated multiple times
 
-  UINT32 BackgroundClear;
+  UINT32 Attributes;
   UINT32 FwFeaturesMask;
-
   CHAR8  *None;
 
   //
@@ -170,33 +169,15 @@ SetVariablesForOSX ()
       );
   }
 
-  BackgroundClear = 0x00000000;
-  AddNvramVariable (
-    L"BackgroundClear",
+  SetNvramVariable (
+    L"FirmwareFeatures",
     &gEfiAppleNvramGuid,
     Attributes,
-    sizeof (BackgroundClear),
-    &BackgroundClear
+    sizeof (gFwFeatures),
+    &gFwFeatures
     );
 
-  if (gFwFeaturesConfig) {
-      SetNvramVariable (
-        L"FirmwareFeatures",
-        &gEfiAppleNvramGuid,
-        Attributes,
-        sizeof (gFwFeatures),
-        &gFwFeatures
-        );
-  } else {
-    AddNvramVariable (
-      L"FirmwareFeatures",
-      &gEfiAppleNvramGuid,
-      Attributes,
-      sizeof (gFwFeatures),
-      &gFwFeatures
-      );
-  }
-
+  // Download-Fritz: Should be added to SMBIOS or at least to some other config section
   FwFeaturesMask  = 0xC003ffff;
   AddNvramVariable (
     L"FirmwareFeaturesMask",

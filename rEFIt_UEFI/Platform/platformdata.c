@@ -17,8 +17,6 @@ CHAR8   *AppleManufacturer      = "Apple Computer, Inc."; //Old name, before 200
 
 UINT32  gFwFeatures             = 0xE001f537;             //default values for iMac13,1
 
-BOOLEAN gFwFeaturesConfig       = FALSE;
-
 CHAR8   *AppleFirmwareVersion[] = 
 {
 	"MB11.88Z.0061.B03.0809221748",

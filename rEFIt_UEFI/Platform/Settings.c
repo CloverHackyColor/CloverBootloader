@@ -3343,7 +3343,6 @@ ParseSMBIOSSettings(
   Prop = GetProperty (DictPointer, "FirmwareFeatures");
   if (Prop != NULL) {
     gFwFeatures       = (UINT32)GetPropertyInteger (Prop, gFwFeatures);
-    gFwFeaturesConfig = TRUE;
   }
 }
 
