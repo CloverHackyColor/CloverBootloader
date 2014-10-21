@@ -76,7 +76,7 @@
 /** Indicates that the block cache entry is empty. */
 #define FSW_INVALID_BNO (~0UL)
 
-
+#define USE_FULL_LOWERCASE 0
 //
 // Byte-swapping macros
 //
@@ -177,26 +177,28 @@ typedef int fsw_status_t;
  * Possible status codes.
  */
 enum {
-    FSW_SUCCESS,
-    FSW_OUT_OF_MEMORY,
-    FSW_IO_ERROR,
-    FSW_UNSUPPORTED,
-    FSW_NOT_FOUND,
-    FSW_VOLUME_CORRUPTED,
-    FSW_UNKNOWN_ERROR
+    FSW_SUCCESS = 0,
+    FSW_UNSUPPORTED = 3,
+    FSW_IO_ERROR = 7,
+    FSW_OUT_OF_MEMORY = 9,
+    FSW_VOLUME_CORRUPTED = 10,
+    FSW_NOT_FOUND = 14,    
+    FSW_UNKNOWN_ERROR = 15
 };
-/*
-#define GRUB_EFI_SUCCESS		0
-
-#define GRUB_EFI_LOAD_ERROR		GRUB_EFI_ERROR_CODE (1)
-#define GRUB_EFI_INVALID_PARAMETER	GRUB_EFI_ERROR_CODE (2)
-#define GRUB_EFI_UNSUPPORTED		GRUB_EFI_ERROR_CODE (3)
-#define GRUB_EFI_BAD_BUFFER_SIZE	GRUB_EFI_ERROR_CODE (4)
-#define GRUB_EFI_BUFFER_TOO_SMALL	GRUB_EFI_ERROR_CODE (5)
-#define GRUB_EFI_NOT_READY		GRUB_EFI_ERROR_CODE (6)
-#define GRUB_EFI_DEVICE_ERROR		GRUB_EFI_ERROR_CODE (7)
-*/
-
+//#define RETURN_SUCCESS               0
+//#define RETURN_LOAD_ERROR            ENCODE_ERROR (1)
+//#define RETURN_INVALID_PARAMETER     ENCODE_ERROR (2)
+//#define RETURN_UNSUPPORTED           ENCODE_ERROR (3)
+//#define RETURN_BAD_BUFFER_SIZE       ENCODE_ERROR (4)
+//#define RETURN_BUFFER_TOO_SMALL      ENCODE_ERROR (5)
+//#define RETURN_NOT_READY             ENCODE_ERROR (6)
+//#define RETURN_DEVICE_ERROR          ENCODE_ERROR (7)
+//#define RETURN_WRITE_PROTECTED       ENCODE_ERROR (8)
+//#define RETURN_OUT_OF_RESOURCES      ENCODE_ERROR (9)
+//#define RETURN_VOLUME_CORRUPTED      ENCODE_ERROR (10)
+//#define RETURN_END_OF_FILE           ENCODE_ERROR (31)
+//#define RETURN_NOT_FOUND             ENCODE_ERROR (14)
+//#define RETURN_ACCESS_DENIED         ENCODE_ERROR (15)
 
 /**
  * Core: A string with explicit length and encoding information.

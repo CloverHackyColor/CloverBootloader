@@ -104,6 +104,7 @@ struct fsw_hfs_dnode
   fsw_u32 crtype;
   /* hardlinks stuff */
   fsw_u32 ilink;
+  fsw_u32 isDirLink;
 };
 
 /**

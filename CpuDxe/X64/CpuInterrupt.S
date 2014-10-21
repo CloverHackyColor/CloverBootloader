@@ -39,6 +39,10 @@ ASM_PFX(InitDescriptor):
         movq    $0x18, %rax
         movl    %eax, %gs
         movl    %eax, %fs
+#or?
+#        movw    %eax, %gs
+#        movw    %eax, %fs
+
 #        movq    IDT_BASE(%rip),%rax              # EAX=PHYSICAL address of idt
 #        movq    %rax, (idtr + 2)(%rip)              # Put address of idt into the idtr
 #        lidt    idtr(%rip)

@@ -152,6 +152,16 @@ enum {
       kSymLinkCreator   = 0x72686170  /* 'rhap' */
 };
 
+/* Finder Info's file type and creator for directory hard link alias */
+  enum {
+    kHFSAliasType    = 0x66647270,  /* 'fdrp' */
+    kHFSAliasCreator = 0x4D414353   /* 'MACS' */
+  };
+
+#define HFS_LOOKUP_SYSFILE	0x1	/* If set, allow lookup of system files */
+#define HFS_LOOKUP_HARDLINK	0x2	/* If set, allow lookup of hard link records and not resolve the hard links */
+#define HFS_LOOKUP_CASESENSITIVE	0x4	/* If set, verify results of a file/directory record match input case */
+
 
 #ifndef _HFSUNISTR255_DEFINED_
 #define _HFSUNISTR255_DEFINED_
@@ -321,6 +331,16 @@ enum {
 	kHFSFirstUserCatalogNodeID	= 16
 };
 
+  //.journal   16
+  //.journal_info_block  17
+  //empty       18
+  //.HFS+ Private Directory Data  19
+  //.Trashes    20
+  //.fseventsd  21
+  //
+  //System      23
+
+
 /* HFS catalog key */
 struct HFSCatalogKey {
 	u_int8_t	keyLength;		/* key length (in bytes) */
@@ -375,7 +395,10 @@ enum {
 	kHFSHasLinkChainMask    = 0x0020,
 
 	kHFSHasChildLinkBit     = 0x0006,	/* folder has a child that's a dir link */
-	kHFSHasChildLinkMask    = 0x0040
+	kHFSHasChildLinkMask    = 0x0040,
+
+  kHFSHasDateAddedBit     = 0x0007,	/* File/Folder has the date-added stored in the finder info. */
+  kHFSHasDateAddedMask    = 0x0080
 };
 
 
@@ -593,6 +616,12 @@ enum {
 	kHFSVolumeJournaledBit          = 13,			/* this volume has a journal on it */
 	kHFSVolumeInconsistentBit       = 14,			/* serious inconsistencies detected at runtime */
 	kHFSVolumeSoftwareLockBit       = 15,		/* volume is locked by software */
+  /*
+   * HFS only has 16 bits of attributes in the MDB, but HFS Plus has 32 bits.
+   * Therefore, bits 16-31 can only be used on HFS Plus.
+   */
+  kHFSUnusedNodeFixBit = 31,				/* Unused nodes in the Catalog B-tree have been zero-filled.  See Radar #6947811. */
+  kHFSContentProtectionBit = 30,			/* Volume has per-file content protection */
 
 	kHFSVolumeHardwareLockMask      = 1 << kHFSVolumeHardwareLockBit,
 	kHFSVolumeUnmountedMask         = 1 << kHFSVolumeUnmountedBit,
@@ -603,8 +632,19 @@ enum {
 	kHFSVolumeJournaledMask         = 1 << kHFSVolumeJournaledBit,
 	kHFSVolumeInconsistentMask      = 1 << kHFSVolumeInconsistentBit,
 	kHFSVolumeSoftwareLockMask      = 1 << kHFSVolumeSoftwareLockBit,
+
+  /* Bits 16-31 are allocated from high to low */
+
+  kHFSContentProtectionMask 		= 0x40000000,
+  kHFSUnusedNodeFixMask 			= 0x80000000,
+
 	kHFSMDBAttributesMask		= 0x8380
 };
+
+  enum {
+    kHFSUnusedNodesFixDate = 0xc5ef2480		/* March 25, 2009 */
+  };
+
 
 /* HFS Master Directory Block - 162 bytes */
 /* Stored at sector #2 (3rd sector) and second-to-last sector. */
@@ -791,12 +831,25 @@ enum {
 };
 
 /* JournalInfoBlock - Structure that describes where our journal lives */
+  // the original size of the reserved field in the JournalInfoBlock was
+  // 32*sizeof(u_int32_t).  To keep the total size of the structure the
+  // same we subtract the size of new fields (currently: ext_jnl_uuid and
+  // machine_uuid).  If you add additional fields, place them before the
+  // reserved field and subtract their size in this macro.
+  //
+  typedef EFI_GUID uuid_string_t;
+
+#define JIB_RESERVED_SIZE  ((32*sizeof(u_int32_t)) - sizeof(uuid_string_t) - 48)
+
+
 struct JournalInfoBlock {
 	u_int32_t         flags;
 	u_int32_t         device_signature[8];  // signature used to locate our device.
 	u_int64_t         offset;               // byte offset to the journal on the device
 	u_int64_t         size;                 // size in bytes of the journal
-	u_int32_t         reserved[32];
+  uuid_string_t   ext_jnl_uuid;
+  char            machine_serial_num[48];
+  char    	reserved[JIB_RESERVED_SIZE];
 } HFS_ALIGNMENT;
 typedef struct JournalInfoBlock JournalInfoBlock;
 
@@ -805,6 +858,13 @@ enum {
     kJIJournalOnOtherDeviceMask = 0x00000002,
     kJIJournalNeedInitMask      = 0x00000004
 };
+
+  //
+  // This the content type uuid for "external journal" GPT
+  // partitions.  Each instance of a partition also has a
+  // uuid that uniquely identifies that instance.
+  //
+#define EXTJNL_CONTENT_TYPE_UUID "4A6F7572-6E61-11AA-AA11-00306543ECAC"
 
 
 #define HFC_MAGIC   0xFF28FF26

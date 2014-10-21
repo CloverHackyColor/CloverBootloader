@@ -96,7 +96,7 @@ int fsw_strlen(struct fsw_string *s)
     return s->len;
 }
 
-#if 0
+#if USE_FULL_LOWERCASE
 static const fsw_u16
 fsw_lower_case_table[] =
 {
@@ -316,13 +316,13 @@ static const fsw_u16 fsw_latin_case_fold[] =
 
 fsw_u16 fsw_to_lower(fsw_u16 ch)
 {
-#if 0
+#if USE_FULL_LOWERCASE
     fsw_u16 temp = temp;
 #endif
 
     if (ch < 0x0100)
         return fsw_latin_case_fold[ch];
-#if 0
+#if USE_FULL_LOWERCASE
     /*
      * Uncomment this along with above huge table (fsw_lower_case_table)
      * for full UTF-16 case insensitivity
