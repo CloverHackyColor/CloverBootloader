@@ -85,6 +85,7 @@ CHAR8* AppleBoardID[] =    //Lion DR1 compatible
 	"Mac-F4238CC8",          // MP41   - xeon wolfdale
 	"Mac-F221BEC8",          // MP51   - Xeon Nehalem 4 cores
   "Mac-F60DEB81FF30ACF6",  // MP61   - Intel(R) Xeon(R) CPU E5-1620 v2 @ 3.70GHz Model 0x3E
+  "Mac-42FD25EABCABB274",  // IM151
 };
 
 CHAR8* AppleReleaseDate[] = 
@@ -120,6 +121,7 @@ CHAR8* AppleReleaseDate[] =
 	"03/05/09",
 	"10/07/10",
   "11/22/2013",  // MacPro6,1
+  "06/23/2014",  // IM151
 };
 
 CHAR8* AppleProductName[] = 
@@ -151,10 +153,11 @@ CHAR8* AppleProductName[] =
   "iMac13,2",
   "iMac14,1",
   "iMac14,2",
+  "iMac15,1",
 	"MacPro3,1",
 	"MacPro4,1",
 	"MacPro5,1",
-  "MacPro6,1"
+  "MacPro6,1",
 };
 
 CHAR8* AppleFamilies[] = 
@@ -261,6 +264,7 @@ CHAR8* AppleSerialNumber[] = //random generated
 	"CT93051DK9Y",  // MP41
 	"C07J77F7F4MC", // MP51 C07J50F7F4MC  CK04000AHFC  "CG154TB9WU3"
   "F5KLA770F9VM", // MP61
+  "C02ND2VTFY11", // IM151 - New 5k iMac
 };
 
 //no! ChassisVersion == BoardID
@@ -329,6 +333,7 @@ CHAR8* SmcPlatform[] =
   "d8",   // iMac13,2
   "NA",   // iMac14,1
   "NA",   // iMac14,2
+  "NA",   // iMac15,1
 	"m86",  // MacPro3,1,
 	"NA",   // MacPro4,1,
 	"k5",   // MacPro5,1
@@ -469,7 +474,8 @@ SetDMISettingsForModel (
     case iMac131:
     case iMac132:
     case iMac141:
-    case iMac142:  
+    case iMac142:
+    case iMac151:
       gSettings.ChassisType = MiscChassisTypeAllInOne; //13; 
       gSettings.Mobile      = FALSE;
       break;
