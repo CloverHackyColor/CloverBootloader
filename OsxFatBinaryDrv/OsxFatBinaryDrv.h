@@ -17,9 +17,6 @@
 #ifndef _FAT_BINARY_DRV_H_
 #define _FAT_BINARY_DRV_H_
 
-#include <Uefi/UefiSpec.h>
-#include <Uefi/UefiBaseType.h>
-
 // FAT_BINARY_MAGIC
 /// The common "Fat Binary Magic" number used to identify a Fat binary
 #define FAT_BINARY_MAGIC     0x0ef1fab9
@@ -77,7 +74,7 @@ UefiMain(IN  EFI_HANDLE       ImageHandle,
 /// and saves a pointer to the old.
 ///
 /// @retval EFI_SUCCESS  The override is executed successfully.
-VOID
+EFI_STATUS
 EFIAPI
 OverrideFunctions();
 

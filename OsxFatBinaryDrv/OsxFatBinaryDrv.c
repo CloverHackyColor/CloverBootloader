@@ -48,15 +48,17 @@ UefiMain(IN  EFI_HANDLE       ImageHandle,
 /// and saves a pointer to the old.
 ///
 /// @retval EFI_SUCCESS  The override is executed successfully.
-VOID
+EFI_STATUS
 EFIAPI
-OverrideFunctions ()
+OverrideFunctions()
 {
   OrigLoadImage  = gBS->LoadImage;
   gBS->LoadImage = OvrLoadImage;
 
   gBS->Hdr.CRC32 = 0;
   gBS->CalculateCrc32(gBS, sizeof(EFI_BOOT_SERVICES), &gBS->Hdr.CRC32);
+
+  return EFI_SUCCESS;
 }
 
 // OvrLoadImage
