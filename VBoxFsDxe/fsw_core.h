@@ -56,8 +56,10 @@
 
 #include "fsw_base.h"
 
+extern const char* fsw_errors[];
+
 #ifndef FSW_DNODE_CACHE_SIZE
-//#define FSW_DNODE_CACHE_SIZE (5)
+#define FSW_DNODE_CACHE_SIZE (5)
 #endif
 
 /** Maximum size for a path, specifically symlink target paths. */
@@ -76,7 +78,7 @@
 /** Indicates that the block cache entry is empty. */
 #define FSW_INVALID_BNO (~0UL)
 
-#define USE_FULL_LOWERCASE 0
+#define USE_FULL_LOWERCASE 1
 //
 // Byte-swapping macros
 //
@@ -177,14 +179,22 @@ typedef int fsw_status_t;
  * Possible status codes.
  */
 enum {
-    FSW_SUCCESS = 0,
-    FSW_UNSUPPORTED = 3,
-    FSW_IO_ERROR = 7,
-    FSW_OUT_OF_MEMORY = 9,
-    FSW_VOLUME_CORRUPTED = 10,
-    FSW_NOT_FOUND = 14,    
-    FSW_UNKNOWN_ERROR = 15
+  FSW_SUCCESS,
+  FSW_OUT_OF_MEMORY = 1,
+  FSW_IO_ERROR = 2,
+  FSW_UNSUPPORTED = 3,
+  FSW_NOT_FOUND = 4,
+  FSW_VOLUME_CORRUPTED = 5,
+  FSW_UNKNOWN_ERROR
 };
+
+
+//#define RETURN_WARN_UNKNOWN_GLYPH    ENCODE_WARNING (1)
+//#define RETURN_WARN_DELETE_FAILURE   ENCODE_WARNING (2)
+//#define RETURN_WARN_WRITE_FAILURE    ENCODE_WARNING (3)
+//#define RETURN_WARN_BUFFER_TOO_SMALL ENCODE_WARNING (4)
+//#define RETURN_WARN_STALE_DATA       ENCODE_WARNING (5)
+
 //#define RETURN_SUCCESS               0
 //#define RETURN_LOAD_ERROR            ENCODE_ERROR (1)
 //#define RETURN_INVALID_PARAMETER     ENCODE_ERROR (2)
@@ -310,7 +320,7 @@ enum {
  */
 
 struct fsw_extent {
-    fsw_u32     type;               //!< Type of extent specification
+    int         type;               //!< Type of extent specification
     fsw_u32     log_start;          //!< Starting logical block number
     fsw_u32     log_count;          //!< Logical block count
     fsw_u32     phys_start;         //!< Starting physical block number (for FSW_EXTENT_TYPE_PHYSBLOCK only)
@@ -510,18 +520,18 @@ fsw_u16      fsw_to_lower(fsw_u16 ch);
  */
 /*@{*/
 #ifndef S_IRWXU
-
+// this is octal data!!!!
 #define	S_ISUID	0004000			/* set user id on execution */
 #define	S_ISGID	0002000			/* set group id on execution */
 #define	S_ISTXT	0001000			/* sticky bit */
 
 #define	S_IRWXU	0000700			/* RWX mask for owner */
-#define	S_IRUSR	0000400			/* R for owner */
+#define	S_IRUSR	0000400			/* R for owner 0x0100 */
 #define	S_IWUSR	0000200			/* W for owner */
 #define	S_IXUSR	0000100			/* X for owner */
 
 #define	S_IRWXG	0000070			/* RWX mask for group */
-#define	S_IRGRP	0000040			/* R for group */
+#define	S_IRGRP	0000040			/* R for group 0x0020 */
 #define	S_IWGRP	0000020			/* W for group */
 #define	S_IXGRP	0000010			/* X for group */
 
@@ -535,8 +545,8 @@ fsw_u16      fsw_to_lower(fsw_u16 ch);
 #define	S_IFCHR	 0020000		/* character special */
 #define	S_IFDIR	 0040000		/* directory */
 #define	S_IFBLK	 0060000		/* block special */
-#define	S_IFREG	 0100000		/* regular */
-#define	S_IFLNK	 0120000		/* symbolic link */
+#define	S_IFREG	 0100000		/* regular        0x8000 */
+#define	S_IFLNK	 0120000		/* symbolic link  0xA000 */ 
 #define	S_IFSOCK 0140000		/* socket */
 #define	S_ISVTX	 0001000		/* save swapped text even after use */
 #define	S_IFWHT  0160000		/* whiteout */

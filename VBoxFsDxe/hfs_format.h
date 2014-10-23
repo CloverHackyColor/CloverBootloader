@@ -333,7 +333,7 @@ enum {
 
   //.journal   16
   //.journal_info_block  17
-  //empty       18
+  //\0\0\0\0HFS+ Private Data     18  ascii name
   //.HFS+ Private Directory Data  19
   //.Trashes    20
   //.fseventsd  21

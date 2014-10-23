@@ -26,7 +26,7 @@
 
 #include "fsw_hfs.h"
 
-//#define VBOXHFS_BTREE_BINSEARCH 1
+#define VBOXHFS_BTREE_BINSEARCH 1
 #define DEBUG_HFS 0
 
 #if DEBUG_HFS==2
@@ -48,7 +48,12 @@
 #define DPRINT2(x,y)
 #define BP(msg)
 #endif
-
+/*
+const char* fsw_errors[] = {
+  "SUCCESS", "OUT_OF_MEMORY", "IO_ERROR", "UNSUPPORTED", "NOT_FOUND",
+  "VOLUME_CORRUPTED", "UNKNOWN_ERROR"
+};
+*/
 
 static fsw_status_t fsw_hfs_volume_mount(struct fsw_hfs_volume *vol);
 static void         fsw_hfs_volume_free(struct fsw_hfs_volume *vol);
@@ -63,6 +68,9 @@ static fsw_status_t fsw_hfs_get_extent(struct fsw_hfs_volume *vol, struct fsw_hf
 
 static fsw_status_t fsw_hfs_dir_lookup(struct fsw_hfs_volume *vol, struct fsw_hfs_dnode *dno,
                                            struct fsw_string *lookup_name, struct fsw_hfs_dnode **child_dno);
+static fsw_status_t fsw_hfs_dir_lookup_id(struct fsw_hfs_volume *vol,
+                                          fsw_u32               lookup_id,
+                                          file_info_t           *file_info);
 static fsw_status_t fsw_hfs_dir_read(struct fsw_hfs_volume *vol, struct fsw_hfs_dnode *dno,
                                          struct fsw_shandle *shand, struct fsw_hfs_dnode **child_dno);
 #if 0
@@ -136,9 +144,8 @@ fsw_hfs_read_file (struct fsw_hfs_dnode    * dno,
   fsw_u32               block_size_mask = block_size - 1;
   fsw_s32               read = 0;
   
-  while (len > 0)
-  {
-    fsw_u32 off = (fsw_u32)(pos & block_size_mask);
+  while (len > 0) {
+    fsw_u32 off = (fsw_u32) (pos & block_size_mask);
     fsw_s32 next_len = len;
     
     log_bno = (fsw_u32)RShiftU64(pos, block_size_bits);
@@ -158,11 +165,10 @@ fsw_hfs_read_file (struct fsw_hfs_dnode    * dno,
   return read;
 }
 
-
 static fsw_s32
 fsw_hfs_compute_shift(fsw_u32 size)
 {
-  fsw_u32 i;
+  fsw_s32 i;
   
   for (i = 0; i < 32; i++) {
     if ((size >> i) == 0)
@@ -273,7 +279,7 @@ static fsw_status_t fsw_hfs_volume_mount(struct fsw_hfs_volume *vol)
                 sizeof vol->catalog_tree.file->extents);
     
     vol->catalog_tree.file->g.size =
-    be64_to_cpu(vol->primary_voldesc->catalogFile.logicalSize);
+    be64_to_cpu_ua(&vol->primary_voldesc->catalogFile.logicalSize);
     
     /* Setup extents overflow file */
     /*status = */fsw_dnode_create_root(vol, kHFSExtentsFileID, &vol->extents_tree.file);
@@ -281,7 +287,7 @@ static fsw_status_t fsw_hfs_volume_mount(struct fsw_hfs_volume *vol)
                 vol->primary_voldesc->extentsFile.extents,
                 sizeof vol->extents_tree.file->extents);
     vol->extents_tree.file->g.size =
-    be64_to_cpu(vol->primary_voldesc->extentsFile.logicalSize);
+    be64_to_cpu_ua(&vol->primary_voldesc->extentsFile.logicalSize);
     
     /* Setup the root dnode */
     status = fsw_dnode_create_root(vol, kHFSRootFolderID, &vol->g.root);
@@ -503,16 +509,14 @@ fsw_hfs_btree_rec (struct fsw_hfs_btree   *btree,
   return (BTreeKey *)(cnode + offset);
 }
 
-//#ifndef VBOXHFS_BTREE_BINSEARCH
 static fsw_u32
 fsw_hfs_btree_next_node (BTreeKey *currkey)
 { //+
   fsw_u32 *pointer;
   
-  pointer = (fsw_u32 *) ((char *) currkey + be16_to_cpu (currkey->length16) + 2);
-  return be32_to_cpu (*pointer);
+  pointer = (fsw_u32 *)((char *) currkey + be16_to_cpu (currkey->length16) + 2);
+  return be32_to_cpu_ua(pointer);
 }
-//#endif
 
 static fsw_status_t
 fsw_hfs_btree_search (struct fsw_hfs_btree *btree,
@@ -530,7 +534,7 @@ fsw_hfs_btree_search (struct fsw_hfs_btree *btree,
   fsw_u32 lower, upper;
 #endif
 
-  currnode = btree->root_node;
+  currnode = btree->root_node; //always from root?
   status = fsw_alloc(btree->node_size, &buffer);
   if (status != FSW_SUCCESS) {
     fsw_free(buffer);
@@ -554,7 +558,7 @@ fsw_hfs_btree_search (struct fsw_hfs_btree *btree,
           DBG("differ node size while read file\n");
           break;
         }
-
+//check record0 pointing to end of descriptor
     if (be16_to_cpu (*(fsw_u16 *) (buffer + btree->node_size - 2)) !=
         sizeof (BTNodeDescriptor)) {
       status = FSW_VOLUME_CORRUPTED;
@@ -565,12 +569,12 @@ fsw_hfs_btree_search (struct fsw_hfs_btree *btree,
 
 #ifndef VBOXHFS_BTREE_BINSEARCH
     for (recnum = 0; recnum < count; recnum++) {
-
+//Pointer to the key inside node
       currkey = fsw_hfs_btree_rec (btree, node, recnum);
       cmp = compare_keys (currkey, key);  //fsw_hfs_cmpi_catkey
       //fprintf(stderr, "rec=%d cmp=%d kind=%d \n", rec, cmp, node->kind);
-      DBG(": currnode %d rec=%d count %d cmp=%d kind=%d\n",
-          currnode, recnum, count, cmp, node->kind);
+ //     DBG(": currnode %d rec=%d count %d cmp=%d kind=%d\n",
+ //         currnode, recnum, count, cmp, node->kind);
 
       /* Leaf node. */
       if (node->kind == kBTLeafNode) {
@@ -614,23 +618,29 @@ fsw_hfs_btree_search (struct fsw_hfs_btree *btree,
       currkey = fsw_hfs_btree_rec (btree, node, recnum);
 
       cmp = 0 - compare_keys (currkey, key);  //fsw_hfs_cmpi_catkey
-      DBG(": currnode %d lower/recnum/upper %d/%d/%d (%d) cmp=%d kind=%d\n",
-          currnode, lower, recnum, upper, count, cmp, node->kind);
-      if (cmp < 0)
+ //     DBG(": currnode %d lower/recnum/upper %d/%d/%d (%d) cmp=%d kind=%d\n",
+ //         currnode, lower, recnum, upper, count, cmp, node->kind);
+      if (cmp < 0) {
         upper = recnum - 1;
-      if (cmp > 0)
+      } else if (cmp > 0) {
         lower = recnum + 1;
-      if (cmp == 0) {
-        // Found!
-        *result = node;
-        *key_offset = recnum;
+      } else if (cmp == 0) {
+        if (node->kind == kBTLeafNode) {
+          // Found!
+          *result = node;
+          *key_offset = recnum;
+          return FSW_SUCCESS;
 
-        return FSW_SUCCESS;
+        } else if (node->kind == kBTIndexNode) {
+          currnode = fsw_hfs_btree_next_node (currkey);
+          break;
+        }
       }
     }
 
-    if (cmp < 0)
+    if (cmp < 0) {
       currkey = fsw_hfs_btree_rec (btree, node, upper);
+    }
 
     if (node->kind == kBTIndexNode && currkey != NULL) {
       currnode = fsw_hfs_btree_next_node (currkey);
@@ -651,23 +661,6 @@ done:
   
   return status;
 }
-
-typedef struct {
-  fsw_u32             id;
-  fsw_u32             type;
-  fsw_u32             creator;
-  fsw_u32             crtype;
-  fsw_u32             ilink;
-  fsw_u32             isdirlink;
-  fsw_u32             isfilelink;
-  struct fsw_string   *name;
-  fsw_u64             size;
-  fsw_u64             used;
-  fsw_u32             ctime;
-  fsw_u32             mtime;
-  fsw_u32             fileMode;
-  HFSPlusExtentRecord extents;
-} file_info_t;
 
 static void
 fill_fileinfo (
@@ -690,7 +683,7 @@ fill_fileinfo (
     {
       HFSPlusCatalogFolder *info = (HFSPlusCatalogFolder *) base;
 
-      finfo->id = be32_to_cpu (info->folderID);
+      finfo->id = be32_to_cpu_ua (&info->folderID);
       finfo->type = FSW_DNODE_TYPE_DIR;
       /* @todo: return number of elements, maybe use smth else */
       finfo->size = be32_to_cpu (info->valence); //this is wrong because of deleted entries
@@ -700,21 +693,23 @@ fill_fileinfo (
       DBG("number of folder entries=%d\n", finfo->size);
       DBG("  fileMode=%x\n", finfo->fileMode);
       DBG("  flags=%x\n", be16_to_cpu(info->flags));
-      DBG("  folderID=%d\n", finfo->id);
+      DBG("  folderID=%d\n\n", finfo->id);
       break;
     }
   case kHFSPlusFileThreadRecord:
-    {
+    {  //never happen
       HFSPlusCatalogThread *info = (HFSPlusCatalogThread *) base;
-      finfo->id = be32_to_cpu(info->parentID);
+      finfo->id = be32_to_cpu_ua(&info->parentID);
       finfo->type = FSW_DNODE_TYPE_SPECIAL;
       DBG("  CatalogThread\n");
-      DBG("  folderID=%d\n", finfo->id);
+      DBG("  folderID=%d\n\n", finfo->id);
       
     }
   case kHFSPlusFileRecord:
     {
       HFSPlusCatalogFile *info = (HFSPlusCatalogFile *) base;
+      file_info_t  tmp_finfo;
+      fsw_status_t status;
 
       finfo->id = be32_to_cpu (info->fileID);
       flags = be16_to_cpu(info->flags);
@@ -734,31 +729,50 @@ fill_fileinfo (
                  (finfo->creator == kHFSAliasCreator)) {
         finfo->isdirlink = 1;
       }
-      if ((finfo->isfilelink || finfo->isdirlink) && !(flags & HFS_LOOKUP_HARDLINK)) {
-        finfo->ilink = be32_to_cpu (info->bsdInfo.special.iNodeNum);
+      if ((finfo->isfilelink || finfo->isdirlink)/* && !(flags & HFS_LOOKUP_HARDLINK)*/) {
+        finfo->ilink = be32_to_cpu_ua (&info->bsdInfo.special.iNodeNum);
+        status = fsw_hfs_dir_lookup_id(vol, finfo->ilink, &tmp_finfo);
+        if (!status) {
+          DBG("hardlink resolved to fileID=%d\n", finfo->ilink);
+          finfo->id = finfo->ilink;
+          finfo->ilink = 0;
+          finfo->size = tmp_finfo.size;
+          finfo->used = tmp_finfo.used;
+          finfo->ctime = be32_to_cpu (info->createDate);
+          finfo->mtime = be32_to_cpu (info->contentModDate);
+          fsw_memcpy (&finfo->extents, &tmp_finfo.extents,
+                      sizeof(HFSPlusExtentRecord));
+          break;
+        }
       }
       DBG("file type=");
-      switch (finfo->type) {
+      if (finfo->isfilelink && finfo->crtype == kHardLinkFileType) {
+        DBG("hardlink to fileID=%d\n", finfo->ilink);
+      } else if (finfo->isdirlink) {
+        DBG("dirlink\n");
+      } else {
+        switch (finfo->type) {
         case FSW_DNODE_TYPE_SYMLINK:
           DBG("symlink\n");
           break;
         case FSW_DNODE_TYPE_FILE:
-          DBG("file\n");
+            DBG("file\n");
           break;
 
         default:
           DBG("xxx\n");
           break;
+        }
       }
       finfo->fileMode = be16_to_cpu(info->bsdInfo.fileMode);
       DBG("  fileMode=%x\n", finfo->fileMode);
       DBG("  flags=%x\n", flags);
       DBG("  fileID=%d\n", finfo->id);
-      finfo->size = be64_to_cpu(info->dataFork.logicalSize);
+      finfo->size = be64_to_cpu_ua(&info->dataFork.logicalSize);
       finfo->used =
-        LShiftU64 ((fsw_u64)be32_to_cpu (info->dataFork.totalBlocks),
+        LShiftU64 ((fsw_u64)be32_to_cpu_ua (&info->dataFork.totalBlocks),
                    vol->block_size_shift);
-      DBG("file size=%ld, used=%ld\n", finfo->size, finfo->used);
+      DBG("file size=%ld, used=%ld\n\n", finfo->size, finfo->used);
       if (finfo->size == 0) {
         //TODO - how to find the real file?
  //       DBG("file info:\n");
@@ -789,8 +803,9 @@ typedef struct {
 } visitor_parameter_t;
 
 ///
-//  at input record = fsw_hfs_btree_rec (btree, node, i)
-//      param contains file name and folder ID
+//  at input: record = fsw_hfs_btree_rec (btree, node, i) - having
+//      param contains file name and folder ID            - wishing
+//      for directory list name=0
 //
 static int
 fsw_hfs_btree_visit_node(BTreeKey *record, void *param)
@@ -805,7 +820,7 @@ fsw_hfs_btree_visit_node(BTreeKey *record, void *param)
   struct fsw_string *file_name;
   
   i = be32_to_cpu(cat_key->parentID);
-  if (i != vp->parent) {
+  if (vp->parent != 0 && i != vp->parent) { //in some cases we wish no check parentID
     DBG("cat ID=%x while parentID=%x\n", i, vp->parent);
 //    vp->shandle->pos++;
     return -1;
@@ -821,6 +836,7 @@ fsw_hfs_btree_visit_node(BTreeKey *record, void *param)
     case kHFSPlusFolderThreadRecord:
     case kHFSPlusFileThreadRecord:
     {
+      DBG("skip thread\n");
       vp->shandle->pos++;
       return 0;
     }
@@ -885,29 +901,13 @@ fsw_hfs_btree_iterate_node (struct fsw_hfs_btree *btree,
         goto done;
       } else if (rv == -1) {
         DBG("tested record %d, status=%d\n", i, rv);
-        status = FSW_NOT_FOUND;
-//        break;
+        status = FSW_NOT_FOUND; //it means the node has other owner
         goto done; //no need to test more
       }
-/*      switch (rv) {
-        case 1:
-          status = FSW_SUCCESS;
-          goto done;
-        case -1:
-          status = FSW_NOT_FOUND;
-          DBG("FSW_NOT_FOUND at callback, node count = %d\n", count);
-          goto done;
-   //       break;
-      } */
       /* if callback returned 0 - continue */
 //      status = FSW_SUCCESS;
       i++;
     }
-/*    if (i >= count) {
-      status = FSW_NOT_FOUND;
-      DBG("FSW_NOT_FOUND at callback, node count = %d\n", count);
-      goto done;
-    } */
     
     next_node = be32_to_cpu(node->fLink);
     DBG("next_node=%d\n", next_node);
@@ -1015,7 +1015,7 @@ fsw_hfs_cmpi_catkey (BTreeKey *key1, BTreeKey *key2)
   fsw_u16 *p1;
   fsw_u16 *p2;
 
-  parentId1 = be32_to_cpu(ckey1->parentID);
+  parentId1 = be32_to_cpu_ua(&ckey1->parentID);
 
   if (parentId1 > ckey2->parentID) {
     return 1;
@@ -1062,6 +1062,28 @@ fsw_hfs_cmpi_catkey (BTreeKey *key1, BTreeKey *key2)
     return -1;
   else
     return 1;
+}
+
+//
+// helper function to compare fileID with node
+// key1 is catalog key, param contains FileID to find in "parent" field
+//
+static int
+fsw_hfs_cmp_id (BTreeKey *key1, void *param)
+{
+  visitor_parameter_t *vp   = (visitor_parameter_t*)param;
+  HFSPlusCatalogFile *crec1 = (HFSPlusCatalogFile*)((char*)key1 + be16_to_cpu (key1->length16));
+  fsw_u32       fileID    = be32_to_cpu(crec1->fileID);
+  fsw_u32       rec_type  = be16_to_cpu(crec1->recordType);
+  if ((rec_type != kHFSPlusFileRecord) &&
+      (rec_type != kHFSPlusFolderRecord)){
+    DBG("bad record type? =%d fileID=%d\n", rec_type, fileID);
+    return 2;
+  }
+  if (fileID != vp->parent) {
+    return 0;
+  }
+  return 1;
 }
 
 /**
@@ -1154,7 +1176,7 @@ create_hfs_dnode(struct fsw_hfs_dnode  *dno,
   }
   
   // Fill-in link file info 
-  if (file_info->type == FSW_DNODE_TYPE_SYMLINK) {
+  if (file_info->isfilelink) {
     baby->creator = file_info->creator;
     baby->crtype = file_info->crtype;
     baby->ilink = file_info->ilink;
@@ -1214,7 +1236,7 @@ static fsw_status_t fsw_hfs_dir_lookup(struct fsw_hfs_volume * vol,
                                  fsw_hfs_cmp_catkey : fsw_hfs_cmpi_catkey,
                                  &node, &ptr);
   if (status) {
-    DBG("fsw_hfs_btree_search dir lookup  status %r\n", status);
+    DBG("fsw_hfs_btree_search dir lookup  status %a\n", fsw_errors[status]);
     goto done;
   }
   
@@ -1222,10 +1244,10 @@ static fsw_status_t fsw_hfs_dir_lookup(struct fsw_hfs_volume * vol,
   
   fill_fileinfo (vol, file_key, &file_info);
   status = create_hfs_dnode(dno, &file_info,  child_dno_out); //&tmp_dno_out); //
-  if (status) {
-    DBG("create_hfs_dnode  status %r\n", status);
+//  if (status) {
+//    DBG("create_hfs_dnode  status %a\n", fsw_errors[status]);
 //    goto done;
-  }
+//  }
 done:
   
   if (node != NULL)
@@ -1234,6 +1256,65 @@ done:
   if (free_data)
     fsw_strfree(&rec_name);
   
+  return status;
+}
+
+/**
+ * Lookup a directory's child dnode by ID. This function is called on a directory
+ * to retrieve the directory entry with the fileID. A dnode is constructed for
+ * this entry and returned.
+ */
+
+static fsw_status_t fsw_hfs_dir_lookup_id(struct fsw_hfs_volume *vol,
+                                          fsw_u32               lookup_id,
+                                          file_info_t           *file_info)
+{
+  fsw_status_t            status;
+  fsw_u8                  *buffer = NULL;
+  fsw_u32                 ptr = 0;
+  visitor_parameter_t     param;
+  BTNodeDescriptor *      node = NULL; //root
+  fsw_u32                 currnode = vol->catalog_tree.root_node;
+  fsw_u32                 nodeSize = vol->catalog_tree.node_size;
+  DBG("...lookup for fileID=%d\n", lookup_id);
+  status = fsw_alloc(nodeSize, &buffer);
+  if (status != FSW_SUCCESS) {
+    fsw_free(buffer);
+    goto done;
+  }
+  node = (BTNodeDescriptor *) buffer;
+  /* Read a node */
+  if ((fsw_u32)fsw_hfs_read_file(vol->catalog_tree.file,
+                                 MultU64x32(currnode, nodeSize),
+                                 nodeSize, buffer) != nodeSize) {
+    status = FSW_VOLUME_CORRUPTED;
+    DBG("differ node size while read file\n");
+    return status;
+  }
+  
+  fsw_memzero(&param, sizeof(visitor_parameter_t));
+  param.parent = lookup_id;
+
+  status = fsw_hfs_btree_iterate_node (&vol->catalog_tree,
+                                       node,
+                                       ptr,
+                                       fsw_hfs_cmp_id,
+                                       &param);
+
+  if (status) {    
+    goto done;
+  }
+  fsw_memcpy(file_info, &param.file_info, sizeof(file_info_t));
+//  status = create_hfs_dnode(dno, &param.file_info,  child_dno_out); //&tmp_dno_out); //
+//  if (status) {
+//    DBG("create_hfs_dnode  status %a\n", fsw_errors[status]);
+    //    goto done;
+//  }
+done:
+
+  if (node != NULL)
+    fsw_free(node);
+  DBG("fsw_hfs_dir_lookup_id return status %a\n", fsw_errors[status]);
   return status;
 }
 
@@ -1273,7 +1354,7 @@ static fsw_status_t fsw_hfs_dir_read(struct fsw_hfs_volume *vol,
                                  fsw_hfs_cmp_catkey : fsw_hfs_cmpi_catkey,
                                  &node, &ptr);
   if (status) {
-    DBG("fsw_hfs_btree_search dir read  status %r\n", status);
+    DBG("fsw_hfs_btree_search dir read  status %a\n", fsw_errors[status]);
     goto done;
   }
   
@@ -1281,6 +1362,9 @@ static fsw_status_t fsw_hfs_dir_read(struct fsw_hfs_volume *vol,
   param.vol = vol;
   param.shandle = shand;
   param.parent = dno->g.dnode_id;
+  if (dno->ilink != 0) {
+    param.parent = 0;
+  }
   param.cur_pos = 0;
   status = fsw_hfs_btree_iterate_node (&vol->catalog_tree,
                                        node,
@@ -1289,12 +1373,11 @@ static fsw_status_t fsw_hfs_dir_read(struct fsw_hfs_volume *vol,
                                        &param);
   if (!status) {  
     status = create_hfs_dnode(dno, &param.file_info, child_dno_out);
-    if (status) {
-      DBG("create_hfs_dnode  status %r\n", status);
-    }
-  }
-  else {
-    DBG("fsw_hfs_btree_iterate_node  status %r\n", status); //why BUFFER_TOO_SMALL?
+//    if (status) {
+//never      DBG("create_hfs_dnode  status %a\n", fsw_errors[status]);
+//    }
+  } else {
+    DBG("fsw_hfs_btree_iterate_node  status %a\n", fsw_errors[status]);
   }
 
 
@@ -1306,6 +1389,7 @@ done:
   return status;
 }
 
+static const char metaprefix[] = "/\0\0\0\0HFS+ Private Data/iNode0123456789";
 /**
  * Get the target path of a symbolic link. This function is called when a symbolic
  * link needs to be resolved. The core makes sure that the fsw_hfs_dnode_fill has been
@@ -1319,25 +1403,28 @@ static fsw_status_t fsw_hfs_readlink(struct fsw_hfs_volume *vol,
   /*
    * XXX: Hardlinks for directories -- not yet.
    * Hex dump visual inspection of Apple hfsplus{32,64}.efi
-   * revealed no signs of directory hardlinks support. Manana ;-)
+   * revealed no signs of directory hardlinks support.
    kHFSAliasType    = 0x66647270,  // 'fdrp'
    kHFSAliasCreator = 0x4D414353   // 'MACS'
    */
+  fsw_u32 sz = 0;
 
   if(dno->creator == kHFSPlusCreator && dno->crtype == kHardLinkFileType) {
 #define MPRFSIZE (sizeof (metaprefix))
 #define MPRFINUM (MPRFSIZE - 1 - 10)
-    static fsw_u8 metaprefix[] = "/\0\0\0\0HFS+ Private Data/iNode0123456789";
-    fsw_u32 sz = 0;
+    
 
     link_target->type = FSW_STRING_TYPE_ISO88591;
-    link_target->size = MPRFSIZE;
-    fsw_memdup (&link_target->data, metaprefix, link_target->size);
-    //AsciiSPrint
-//    sz = (UINT32)AsciiSPrint(inumstart, 10 + 1, "%d", dno->ilink);
-    sz = (UINT32)AsciiSPrint(((char *) link_target->data) + MPRFINUM, 10, "%d", dno->ilink);
-
-    link_target->len = MPRFINUM + sz;
+//    link_target->size = MPRFSIZE;
+    link_target->size = sizeof(HFSPLUSMETADATAFOLDER) + 16;
+    DBG(" hfs readlink: size=%d, iLink=%d\n", link_target->size, dno->ilink);
+//    fsw_memdup (&link_target->data, metaprefix, link_target->size);
+    fsw_memdup (&link_target->data, HFSPLUSMETADATAFOLDER, link_target->size);
+//    sz = AsciiSPrint(((char *) link_target->data) + MPRFINUM, 10, "%d", dno->ilink);
+    sz = (UINT32)AsciiSPrint(((char *) link_target->data) + link_target->size - 17, 16,
+                             "/iNode%d", dno->ilink);
+    link_target->len = link_target->size - 17 + sz;
+//    link_target->len = MPRFINUM + sz;
     return FSW_SUCCESS;
 #undef MPRFINUM
 #undef MPRFSIZE
@@ -1345,10 +1432,10 @@ static fsw_status_t fsw_hfs_readlink(struct fsw_hfs_volume *vol,
     return fsw_dnode_readlink_data(dno, link_target);
   } else if (dno->creator == kHFSAliasCreator && dno->crtype == kHFSAliasType) {
     char inodename[32];
-    AsciiSPrint(inodename, 32, "/\0\0\0\0HFS+ Private Data/dir_%d", dno->ilink);
+    sz = AsciiSPrint(inodename, 32, ".HFS+ Private Directory Data/dir_%d", dno->ilink);
     link_target->type = FSW_STRING_TYPE_ISO88591;
     link_target->size = 32;
-    link_target->len = 32;
+    link_target->len = sz;
     fsw_memdup (&link_target->data, &inodename[0], link_target->size);
     return FSW_SUCCESS;
   }

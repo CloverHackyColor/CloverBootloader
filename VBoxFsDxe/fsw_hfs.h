@@ -136,6 +136,25 @@ struct fsw_hfs_volume
     fsw_u32                       emb_block_off;
 };
 
+
+typedef struct {
+  fsw_u32             id;
+  fsw_u32             type;
+  fsw_u32             creator;
+  fsw_u32             crtype;
+  fsw_u32             ilink;
+  fsw_u32             isdirlink;
+  fsw_u32             isfilelink;
+  struct fsw_string   *name;
+  fsw_u64             size;
+  fsw_u64             used;
+  fsw_u32             ctime;
+  fsw_u32             mtime;
+  fsw_u32             fileMode;
+  HFSPlusExtentRecord extents;
+} file_info_t;
+
+
 /* Endianess swappers */
 static __inline fsw_u16
 swab16(fsw_u16 x)
@@ -186,5 +205,18 @@ be64_to_cpu(fsw_u64 x)
 {
     return swab64(x);
 }
+//Unaligned access
+static __inline fsw_u32
+be32_to_cpu_ua(fsw_u32 *x)
+{
+  return swab32(ReadUnaligned32(x));
+}
+
+static __inline fsw_u64
+be64_to_cpu_ua(fsw_u64 *x)
+{
+  return swab64(ReadUnaligned64(x));
+}
+
 
 #endif

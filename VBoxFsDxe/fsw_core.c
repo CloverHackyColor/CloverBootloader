@@ -42,6 +42,21 @@
 #include "Version.h"
 CONST CHAR8* CloverRevision = REVISION_STR;
 
+#define DEBUG_CR 0
+
+#if DEBUG_CR==2
+#define DBG(...)  AsciiPrint(__VA_ARGS__)
+#elif DEBUG_CR==1
+#define DBG(...)  BootLog(__VA_ARGS__)
+#else
+#define DBG(...)
+#endif
+
+const char* fsw_errors[] = {
+  "SUCCESS", "OUT_OF_MEMORY", "IO_ERROR", "UNSUPPORTED", "NOT_FOUND",
+  "VOLUME_CORRUPTED", "UNKNOWN_ERROR"
+};
+
 
 // functions
 
@@ -598,11 +613,10 @@ fsw_status_t fsw_dnode_lookup_cache(struct fsw_dnode *dno,
   }
   dno->cache[0] = cache_dno;
   fsw_dnode_retain(cache_dno);
-#endif
-
-#if defined(FSW_DNODE_CACHE_SIZE) && FSW_DNODE_CACHE_SIZE > 0
-goodexit:
+ 
+ goodexit:
 #endif  
+
   fsw_dnode_release(dno);
   *child_dno_out = cache_dno;
   return FSW_SUCCESS;
@@ -628,13 +642,14 @@ errorexit:
  */
 
 fsw_status_t fsw_dnode_lookup(struct fsw_dnode *dno,
-                              struct fsw_string *lookup_name, struct fsw_dnode **child_dno_out)
+                              struct fsw_string *lookup_name,
+                              struct fsw_dnode **child_dno_out)
 {
   fsw_status_t    status;
   struct fsw_dnode *child_dno = NULL;
   
   fsw_dnode_retain(dno);
-  
+  DBG(" lookup name at dnode type=%d\n", dno->type);
   // ensure we have full information
   status = fsw_dnode_fill(dno);
   if (status)
@@ -642,6 +657,7 @@ fsw_status_t fsw_dnode_lookup(struct fsw_dnode *dno,
   
   // resolve symlink if necessary
   if (dno->type == FSW_DNODE_TYPE_SYMLINK) {
+    DBG("resolve link at core\n");
     status = fsw_dnode_resolve(dno, &child_dno);
     if (status)
       goto errorexit;
@@ -673,6 +689,7 @@ fsw_status_t fsw_dnode_lookup(struct fsw_dnode *dno,
       // We cannot go up from the root directory. Caution: Certain apps like the EFI shell
       // rely on this behaviour!
       status = FSW_NOT_FOUND;
+      DBG("go up root\n");
       goto errorexit;
     }
     child_dno = dno->parent;
@@ -680,6 +697,7 @@ fsw_status_t fsw_dnode_lookup(struct fsw_dnode *dno,
     
   } else {
     // do an cached actual lookup
+    DBG(" dnode_lookup_cache\n");
     status = fsw_dnode_lookup_cache(dno, lookup_name, &child_dno);
     if (status)
       goto errorexit;
@@ -690,6 +708,7 @@ fsw_status_t fsw_dnode_lookup(struct fsw_dnode *dno,
   return FSW_SUCCESS;
   
 errorexit:
+  DBG(" lookup failed status=%a\n", fsw_errors[status]);
   fsw_dnode_release(dno);
   if (child_dno != NULL)
     fsw_dnode_release(child_dno);
@@ -722,7 +741,11 @@ fsw_status_t fsw_dnode_lookup_path(struct fsw_dnode *dno,
     return FSW_UNSUPPORTED;
   }
   vol = dno->vol;
-  
+  if (lookup_path->type == FSW_STRING_TYPE_ISO88591) {
+    DBG("dnode %a lookup ASCII\n", lookup_path->data);
+  } else if (lookup_path->type == FSW_STRING_TYPE_ISO88591) {
+    DBG("dnode %s lookup UNI\n", lookup_path->data);
+  }
   //  remaining_path = *lookup_path;
   fsw_memcpy(&remaining_path, lookup_path, sizeof(struct fsw_string));
   fsw_dnode_retain(dno);
@@ -731,11 +754,7 @@ fsw_status_t fsw_dnode_lookup_path(struct fsw_dnode *dno,
   for (root_if_empty = 1; fsw_strlen(&remaining_path) > 0; root_if_empty = 0) {
     // parse next path component
     fsw_strsplit(&lookup_name, &remaining_path, separator);
-    
-    /*    FSW_MSG_DEBUG((FSW_MSGSTR("fsw_dnode_lookup_path: split into %d '%s' and %d '%s'\n"),
-     lookup_name.len, lookup_name.data,
-     remaining_path.len, remaining_path.data));
-     */
+    DBG(" len of lookup_name=%d\n", fsw_strlen(&lookup_name));
     if (fsw_strlen(&lookup_name) == 0) {        // empty path component
       if (root_if_empty)
         child_dno = vol->root;
@@ -746,23 +765,22 @@ fsw_status_t fsw_dnode_lookup_path(struct fsw_dnode *dno,
     } else {
       // do an actual directory lookup
       status = fsw_dnode_lookup(dno, &lookup_name, &child_dno);
-      if (status)
+      if (status) {
+        DBG("dnode lookup failed %a\n", fsw_errors[status]);
         goto errorexit;
+      }
     }
     
     // child_dno becomes the new dno
     fsw_dnode_release(dno);
     dno = child_dno;   // is already retained
     child_dno = NULL;
-    
-    //    FSW_MSG_DEBUG((FSW_MSGSTR("fsw_dnode_lookup_path: now at inode %d\n"), dno->dnode_id));
   }
   
   *child_dno_out = dno;
   return FSW_SUCCESS;
   
 errorexit:
-  //  FSW_MSG_DEBUG((FSW_MSGSTR("fsw_dnode_lookup_path: leaving with error %d\n"), status));
   fsw_dnode_release(dno);
   if (child_dno != NULL)
     fsw_dnode_release(child_dno);
@@ -794,6 +812,7 @@ fsw_status_t fsw_dnode_dir_read(struct fsw_shandle *shand, struct fsw_dnode **ch
     return FSW_UNSUPPORTED;
   
   saved_pos = shand->pos;
+  DBG("core dir_read at id=%d\n", dno->dnode_id);
   status = dno->vol->fstype_table->dir_read(dno->vol, dno, shand, child_dno_out);
   if (status)
     shand->pos = saved_pos;
@@ -819,7 +838,7 @@ fsw_status_t fsw_dnode_readlink(struct fsw_dnode *dno, struct fsw_string *target
     return status;
   if (dno->type != FSW_DNODE_TYPE_SYMLINK)
     return FSW_UNSUPPORTED;
-  
+  DBG("core readlink at id=%d\n", dno->dnode_id);
   return dno->vol->fstype_table->readlink(dno->vol, dno, target_name);
 }
 

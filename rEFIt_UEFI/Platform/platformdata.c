@@ -46,6 +46,7 @@ CHAR8   *AppleFirmwareVersion[] =
   "IM131.88Z.010A.B05.1211151146",
   "IM141.88Z.0118.B00.1309031248",
   "IM142.88Z.0118.B00.1309031249",
+  "IM151.88Z.0118.B00.1309031249", // - please correct!
 	"MP31.88Z.006C.B05.0802291410",
 	"MP41.88Z.0081.B07.0903051113",
 	"MP51.88Z.007F.B03.1010071432",   //007F.B00.1008031144"
@@ -81,11 +82,12 @@ CHAR8* AppleBoardID[] =    //Lion DR1 compatible
   "Mac-FC02E91DDD3FA6A4",  // IM132  - i5-3470 CPU @ 3.20GHz
   "Mac-031B6874CF7F642A",  // IM141  - i5-4570S/i7-4770S
   "Mac-27ADBB7B4CEE8E61",  // IM142  - i5-4670/i7-4771
+  "Mac-42FD25EABCABB274",  // IM151  
 	"Mac-F2268DC8",          // MP31   - xeon quad 02/09 conroe
 	"Mac-F4238CC8",          // MP41   - xeon wolfdale
 	"Mac-F221BEC8",          // MP51   - Xeon Nehalem 4 cores
   "Mac-F60DEB81FF30ACF6",  // MP61   - Intel(R) Xeon(R) CPU E5-1620 v2 @ 3.70GHz Model 0x3E
-  "Mac-42FD25EABCABB274",  // IM151
+
 };
 
 CHAR8* AppleReleaseDate[] = 
@@ -117,6 +119,7 @@ CHAR8* AppleReleaseDate[] =
   "11/15/2012",  // IM132
   "09/03/2013",
   "09/03/2013",  // IM142
+  "09/03/2014",  // IM151  - please correct!
 	"02/29/08",
 	"03/05/09",
 	"10/07/10",
@@ -189,6 +192,7 @@ CHAR8* AppleFamilies[] =
   "iMac",
   "iMac",
   "iMac",
+  "iMac",
 	"MacPro",
 	"MacPro",
   "MacPro",
@@ -221,6 +225,7 @@ CHAR8* AppleSystemVersion[] =
   "1.0",
 	"1.9",
   "1.9",
+  "1.0",
   "1.0",
   "1.0",
   "1.0",
@@ -260,11 +265,11 @@ CHAR8* AppleSerialNumber[] = //random generated
   "C02JB041DNCW", // IM132
   "D25LHACKF8J3", // IM141 - i5-4570S/i7-4770S
   "D25LHACKF8JC", // IM142 - i5-4670/i7-4771
+  "C02ND2VTFY11", // IM151 - New 5k iMac
 	"W88A77AA5J4",  // MP31  - xeon quad 02/09
 	"CT93051DK9Y",  // MP41
 	"C07J77F7F4MC", // MP51 C07J50F7F4MC  CK04000AHFC  "CG154TB9WU3"
   "F5KLA770F9VM", // MP61
-  "C02ND2VTFY11", // IM151 - New 5k iMac
 };
 
 //no! ChassisVersion == BoardID
@@ -297,6 +302,7 @@ CHAR8* AppleChassisAsset[] =
   "iMac-Aluminum",
   "iMac-Aluminum",
   "iMac-Aluminum",
+  "iMac-Aluminum", //iMac15,1
 	"Pro-Enclosure",
 	"Pro-Enclosure",
   "Pro-Enclosure",
@@ -319,7 +325,7 @@ CHAR8* SmcPlatform[] =
 	"k99",  // MacBookAir3,1,
   "j13",  // MacBookAir5,2,
   "NA",   // MacBookAir6,2,
-	"NA",   // Macmini2,1,  ´  //31 -> m88
+	"NA",   // Macmini2,1,    //31 -> m88
   "NA",   // Macmini5,1,
   "j50s", // Macmini6,2,
 	"k3",   // iMac8,1,
@@ -369,6 +375,7 @@ UINT8 SmcRevision[][6] = {
   { 0x02, 0x11, 0x0F, 0, 0, 0x14 },   // iMac13,2
   { 0x02, 0x14, 0x0F, 0, 0, 0x19 },   // iMac14,1
   { 0x02, 0x15, 0x0F, 0, 0, 0x02 },   // iMac14,2
+  { 0x02, 0x15, 0x0F, 0, 0, 0x02 },   // iMac15,1
 	{ 0x01, 0x25, 0x0F, 0, 0, 0x04 },   // MacPro3,1,
 	{ 0x01, 0x39, 0x0F, 0, 0, 0x05 },   // MacPro4,1,
 	{ 0x01, 0x39, 0x0F, 0, 0, 0x11 },   // MacPro5,1
@@ -405,6 +412,7 @@ UINT32 SmcConfig[] =
   0x79006,  //iMac13,2
   0x79007,  //iMac14,1
   0x7a007,  //iMac14,2
+  0x7b007,  //iMac15,1
 	0x79001,  //"MacPro3,1",
 	0x7c002,  //"MacPro4,1",
 	0x7c002,  //"MacPro5,1"
