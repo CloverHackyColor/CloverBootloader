@@ -333,7 +333,7 @@ enum {
 
   //.journal   16
   //.journal_info_block  17
-  //\0\0\0\0HFS+ Private Data     18  ascii name
+  //\0\0\0\0HFS+ Private Data     18  (ascii name???) NO! Unicode
   //.HFS+ Private Directory Data  19
   //.Trashes    20
   //.fseventsd  21
@@ -462,16 +462,16 @@ typedef struct HFSCatalogFile HFSCatalogFile;
 
 /* HFS Plus catalog file record - 248 bytes */
 struct HFSPlusCatalogFile {
-	int16_t         recordType;		/* == kHFSPlusFileRecord */
-	u_int16_t       flags;        /* file flags */
-	u_int32_t       reserved1;		/* reserved - initialized as zero */
-	u_int32_t       fileID;       /* file ID */
-	u_int32_t       createDate;		/* date and time of creation */
-	u_int32_t       contentModDate;		/* date and time of last content modification */
-	u_int32_t       attributeModDate;	/* date and time of last attribute modification */
-	u_int32_t       accessDate;		/* date and time of last access (MacOS X only) */
-	u_int32_t       backupDate;		/* date and time of last backup */
-	HFSPlusBSDInfo	bsdInfo;      /* permissions (for MacOS X) */
+	int16_t         recordType;		/* 0: kHFSPlusFileRecord == 2*/
+	u_int16_t       flags;        /* 2 file flags */
+	u_int32_t       reserved1;		/* 4 reserved - initialized as zero */
+	u_int32_t       fileID;       /* 8 file ID */
+	u_int32_t       createDate;		/* c date and time of creation */
+	u_int32_t       contentModDate;		/* 10 date and time of last content modification */
+	u_int32_t       attributeModDate;	/* 14 date and time of last attribute modification */
+	u_int32_t       accessDate;		/* 18 date and time of last access (MacOS X only) */
+	u_int32_t       backupDate;		/* 1c date and time of last backup */
+	HFSPlusBSDInfo	bsdInfo;      /* 20 permissions (for MacOS X) */
 	FndrFileInfo		userInfo;     /* Finder information */
 	FndrOpaqueInfo	finderInfo;		/* additional Finder information */
 	u_int32_t       textEncoding;	/* hint for name conversions */

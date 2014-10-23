@@ -59,7 +59,7 @@
 extern const char* fsw_errors[];
 
 #ifndef FSW_DNODE_CACHE_SIZE
-#define FSW_DNODE_CACHE_SIZE (5)
+//#define FSW_DNODE_CACHE_SIZE (5)
 #endif
 
 /** Maximum size for a path, specifically symlink target paths. */
@@ -78,7 +78,7 @@ extern const char* fsw_errors[];
 /** Indicates that the block cache entry is empty. */
 #define FSW_INVALID_BNO (~0UL)
 
-#define USE_FULL_LOWERCASE 1
+#define USE_FULL_LOWERCASE 0
 //
 // Byte-swapping macros
 //

@@ -62,7 +62,7 @@ const char* fsw_errors[] = {
 
 static void fsw_blockcache_free(struct fsw_volume *vol);
 
-#define MAX_CACHE_LEVEL (5)
+#define MAX_CACHE_LEVEL (0)
 
 
 /**
@@ -743,23 +743,26 @@ fsw_status_t fsw_dnode_lookup_path(struct fsw_dnode *dno,
   vol = dno->vol;
   if (lookup_path->type == FSW_STRING_TYPE_ISO88591) {
     DBG("dnode %a lookup ASCII\n", lookup_path->data);
-  } else if (lookup_path->type == FSW_STRING_TYPE_ISO88591) {
+  } else if (lookup_path->type == FSW_STRING_TYPE_UTF16) {
     DBG("dnode %s lookup UNI\n", lookup_path->data);
   }
   //  remaining_path = *lookup_path;
   fsw_memcpy(&remaining_path, lookup_path, sizeof(struct fsw_string));
   fsw_dnode_retain(dno);
-  
+  DBG("len of remaining_path=%d\n", fsw_strlen(&remaining_path));
   // loop over the path
   for (root_if_empty = 1; fsw_strlen(&remaining_path) > 0; root_if_empty = 0) {
     // parse next path component
     fsw_strsplit(&lookup_name, &remaining_path, separator);
     DBG(" len of lookup_name=%d\n", fsw_strlen(&lookup_name));
     if (fsw_strlen(&lookup_name) == 0) {        // empty path component
-      if (root_if_empty)
+      if (root_if_empty) {
         child_dno = vol->root;
-      else
+        DBG("set lookup root\n");
+      } else {
         child_dno = dno;
+        DBG("set lookup current\n");
+      }
       fsw_dnode_retain(child_dno);
       
     } else {

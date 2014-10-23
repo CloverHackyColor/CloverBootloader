@@ -26,7 +26,7 @@
 
 #include "fsw_hfs.h"
 
-#define VBOXHFS_BTREE_BINSEARCH 1
+#define VBOXHFS_BTREE_BINSEARCH 0
 #define DEBUG_HFS 0
 
 #if DEBUG_HFS==2
@@ -48,12 +48,8 @@
 #define DPRINT2(x,y)
 #define BP(msg)
 #endif
-/*
-const char* fsw_errors[] = {
-  "SUCCESS", "OUT_OF_MEMORY", "IO_ERROR", "UNSUPPORTED", "NOT_FOUND",
-  "VOLUME_CORRUPTED", "UNKNOWN_ERROR"
-};
-*/
+
+static int hardlink = 0;
 
 static fsw_status_t fsw_hfs_volume_mount(struct fsw_hfs_volume *vol);
 static void         fsw_hfs_volume_free(struct fsw_hfs_volume *vol);
@@ -582,7 +578,7 @@ fsw_hfs_btree_search (struct fsw_hfs_btree *btree,
           /* Found!  */
           *result = node;
           *key_offset = recnum;
-
+          hardlink = 0;
           return FSW_SUCCESS;
         }
       } else if (node->kind == kBTIndexNode) {
@@ -720,9 +716,9 @@ fill_fileinfo (
       /* Is the file any kind of link? */
       if ((finfo->creator == kSymLinkCreator && finfo->crtype == kSymLinkFileType) ||
           (finfo->creator == kHFSPlusCreator && finfo->crtype == kHardLinkFileType)) {
-        if (finfo->crtype == kSymLinkFileType) {
+     //   if (finfo->crtype == kSymLinkFileType) {
           finfo->type = FSW_DNODE_TYPE_SYMLINK;
-        }
+     //   }
         finfo->isfilelink = 1;
       } else if ((flags & kHFSHasLinkChainMask) &&
                  (finfo->crtype == kHFSAliasType) &&
@@ -731,18 +727,20 @@ fill_fileinfo (
       }
       if ((finfo->isfilelink || finfo->isdirlink)/* && !(flags & HFS_LOOKUP_HARDLINK)*/) {
         finfo->ilink = be32_to_cpu_ua (&info->bsdInfo.special.iNodeNum);
-        status = fsw_hfs_dir_lookup_id(vol, finfo->ilink, &tmp_finfo);
-        if (!status) {
-          DBG("hardlink resolved to fileID=%d\n", finfo->ilink);
-          finfo->id = finfo->ilink;
-          finfo->ilink = 0;
-          finfo->size = tmp_finfo.size;
-          finfo->used = tmp_finfo.used;
-          finfo->ctime = be32_to_cpu (info->createDate);
-          finfo->mtime = be32_to_cpu (info->contentModDate);
-          fsw_memcpy (&finfo->extents, &tmp_finfo.extents,
-                      sizeof(HFSPlusExtentRecord));
-          break;
+        if (finfo->type != FSW_DNODE_TYPE_SYMLINK) {
+          status = fsw_hfs_dir_lookup_id(vol, finfo->ilink, &tmp_finfo);
+          if (!status) {
+            DBG("hardlink resolved to fileID=%d\n", finfo->ilink);
+            finfo->id = finfo->ilink;
+            finfo->ilink = 0;
+            finfo->size = tmp_finfo.size;
+            finfo->used = tmp_finfo.used;
+            finfo->ctime = be32_to_cpu (info->createDate);
+            finfo->mtime = be32_to_cpu (info->contentModDate);
+            fsw_memcpy (&finfo->extents, &tmp_finfo.extents,
+                        sizeof(HFSPlusExtentRecord));
+            break;
+          }
         }
       }
       DBG("file type=");
@@ -856,7 +854,11 @@ fsw_hfs_btree_visit_node(BTreeKey *record, void *param)
     name_ptr[i] = be16_to_cpu(name_ptr[i]);
   }
   vp->shandle->pos++;
-  DBG("   visited file=%s\n", name_ptr);
+  DBG("   visited file=", name_ptr);
+  for (i=0; i<name_len; i++) {
+    DBG("%c", name_ptr[i]?name_ptr[i]:L'@');
+  }
+  DBG("\n");
   return 1;
 }
 
@@ -1016,7 +1018,9 @@ fsw_hfs_cmpi_catkey (BTreeKey *key1, BTreeKey *key2)
   fsw_u16 *p2;
 
   parentId1 = be32_to_cpu_ua(&ckey1->parentID);
-
+  if (hardlink) {
+    DBG("parents: %d <-> %d\n", parentId1, ckey2->parentID);
+  }
   if (parentId1 > ckey2->parentID) {
     return 1;
   } else if (parentId1 < ckey2->parentID) {
@@ -1025,13 +1029,32 @@ fsw_hfs_cmpi_catkey (BTreeKey *key1, BTreeKey *key2)
 
     key1Len = be16_to_cpu (ckey1->nodeName.length);
     key2Len = ckey2->nodeName.length; //it is constructed so CPU endiness
+    if (hardlink) {
+      DBG("keylen: %d <-> %d\n", key1Len, key2Len);
+    }
 
     if (key1Len == 0 || key2Len == 0) {
       return key1Len - key2Len;
     }
-
     p1 = &ckey1->nodeName.unicode[0];
     p2 = &ckey2->nodeName.unicode[0];
+
+    if (hardlink) {
+      DBG("name:");
+      for (apos = 0; apos < key2Len; apos++) {
+        ac = p2[apos];
+        DBG("%c", ac?ac:L'@');
+      }
+      DBG(":");
+      for (apos = 0; apos < key1Len; apos++) {
+        ac = be16_to_cpu(p1[apos]);
+        DBG("%c", ac?ac:L'@');
+      }
+      DBG(":\n");
+      if (p1[0] == 0) {
+        return 0;
+      }
+    }
 
     apos = bpos = 0;
 
@@ -1408,35 +1431,36 @@ static fsw_status_t fsw_hfs_readlink(struct fsw_hfs_volume *vol,
    kHFSAliasCreator = 0x4D414353   // 'MACS'
    */
   fsw_u32 sz = 0;
+  fsw_status_t status = FSW_UNSUPPORTED;
 
   if(dno->creator == kHFSPlusCreator && dno->crtype == kHardLinkFileType) {
 #define MPRFSIZE (sizeof (metaprefix))
 #define MPRFINUM (MPRFSIZE - 1 - 10)
-    
+    struct fsw_string tmp_target;
 
-    link_target->type = FSW_STRING_TYPE_ISO88591;
-//    link_target->size = MPRFSIZE;
-    link_target->size = sizeof(HFSPLUSMETADATAFOLDER) + 16;
-    DBG(" hfs readlink: size=%d, iLink=%d\n", link_target->size, dno->ilink);
-//    fsw_memdup (&link_target->data, metaprefix, link_target->size);
-    fsw_memdup (&link_target->data, HFSPLUSMETADATAFOLDER, link_target->size);
-//    sz = AsciiSPrint(((char *) link_target->data) + MPRFINUM, 10, "%d", dno->ilink);
-    sz = (UINT32)AsciiSPrint(((char *) link_target->data) + link_target->size - 17, 16,
-                             "/iNode%d", dno->ilink);
-    link_target->len = link_target->size - 17 + sz;
-//    link_target->len = MPRFINUM + sz;
-    return FSW_SUCCESS;
+    tmp_target.type = FSW_STRING_TYPE_ISO88591;
+    tmp_target.size = MPRFSIZE;
+    DBG(" hfs readlink: size=%d, iLink=%d\n", tmp_target.size, dno->ilink);
+    fsw_memdup ((void**)&tmp_target.data, (void*)&metaprefix[0], tmp_target.size);
+    sz = AsciiSPrint(((char *) &tmp_target.data) + MPRFINUM, 10, "%d", dno->ilink);
+    tmp_target.len = MPRFINUM + sz;
+    DBG(" iNode name len=%d\n", tmp_target.len);
+    status = fsw_strdup_coerce(link_target, vol->g.host_string_type, &tmp_target);
+    hardlink = 1;
+    return status;
 #undef MPRFINUM
 #undef MPRFSIZE
   } else if (dno->creator == kSymLinkCreator && dno->crtype == kSymLinkFileType) {
+    hardlink = 1;
     return fsw_dnode_readlink_data(dno, link_target);
   } else if (dno->creator == kHFSAliasCreator && dno->crtype == kHFSAliasType) {
-    char inodename[32];
-    sz = AsciiSPrint(inodename, 32, ".HFS+ Private Directory Data/dir_%d", dno->ilink);
-    link_target->type = FSW_STRING_TYPE_ISO88591;
-    link_target->size = 32;
+    CHAR16 inodename[48];
+    sz = UnicodeSPrint(inodename, 48, L".HFS+ Private Directory Data/dir_%d", dno->ilink);
+    link_target->type = FSW_STRING_TYPE_UTF16;
+    link_target->size = 96;
     link_target->len = sz;
     fsw_memdup (&link_target->data, &inodename[0], link_target->size);
+    hardlink = 1;
     return FSW_SUCCESS;
   }
 
