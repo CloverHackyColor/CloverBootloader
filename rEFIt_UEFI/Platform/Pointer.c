@@ -179,6 +179,7 @@ VOID KillMouse()
 //  pi = gPointer.oldImage->PixelData[0];
 //  DBG("Mouse death\n");
 //  DBG(" Blue=%x Green=%x Red=%x Alfa=%x\n\n", pi.b, pi.g, pi.r, pi.a);
+
   
   egFreeImage(gPointer.newImage); gPointer.newImage = NULL;
   egFreeImage(gPointer.oldImage); gPointer.oldImage = NULL;

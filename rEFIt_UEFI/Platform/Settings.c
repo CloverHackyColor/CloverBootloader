@@ -3079,7 +3079,7 @@ InitTheme(
     }
   } 
   
-  KillMouse();  
+//  KillMouse();
   
   while (GuiAnime != NULL) {
     GUI_ANIME *NextAnime = GuiAnime->Next;
