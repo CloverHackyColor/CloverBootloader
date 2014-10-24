@@ -707,8 +707,9 @@ VOID egRawCompose(IN OUT EG_PIXEL *CompBasePtr, IN EG_PIXEL *TopBasePtr,
 {
   INT64       x, y;
   EG_PIXEL    *TopPtr, *CompPtr;
+  UINT32      TopAlpha;
   UINTN       Alpha;
-  UINTN       RevAlpha;
+  UINT32      RevAlpha;
   UINTN       Temp;
 //  EG_PIXEL    *CompUp;
   if (!CompBasePtr || !TopBasePtr) {
@@ -722,17 +723,78 @@ VOID egRawCompose(IN OUT EG_PIXEL *CompBasePtr, IN EG_PIXEL *TopBasePtr,
     TopPtr = TopBasePtr;
     CompPtr = CompBasePtr;
     for (x = 0; x < Width; x++) {
-      Alpha = TopPtr->a;
-      RevAlpha = 255 - Alpha;
+      TopAlpha = TopPtr->a;
+      RevAlpha = 255 - TopAlpha;
+      Alpha = 255 * (UINT8)TopAlpha + (UINT8)CompPtr->a * (UINT8)RevAlpha;
+      
+      if (Alpha == 0) {
+        TopPtr++, CompPtr++;
+        continue;
+      }
+      
+      TopAlpha = (UINT8)TopAlpha * 255;
+      RevAlpha = (UINT8)CompPtr->a * (UINT8)RevAlpha;
+      
+      Temp = ((UINT8)TopPtr->b * TopAlpha) + ((UINT8)CompPtr->b * RevAlpha);
+      CompPtr->b = (UINT8)(Temp / Alpha);
+      
+      Temp = ((UINT8)TopPtr->g * TopAlpha) + ((UINT8)CompPtr->g  * RevAlpha);
+      CompPtr->g = (UINT8)(Temp / Alpha);
+      
+      Temp = ((UINT8)TopPtr->r * TopAlpha) + ((UINT8)CompPtr->r * RevAlpha);
+      CompPtr->r = (UINT8)(Temp / Alpha);
+      
+      CompPtr->a = (UINT8)(Alpha / 255);
+      
       // apianti - Determine the alpha channel first and use associative compose
       //Temp = (UINTN)CompPtr->a * RevAlpha + Alpha * Alpha;
-      CompPtr->a = (CompPtr->a > Alpha) ? CompPtr->a : (UINT8)Alpha; // (UINT8)(Temp / 255);
+/*      CompPtr->a = (CompPtr->a > Alpha) ? CompPtr->a : (UINT8)Alpha; // (UINT8)(Temp / 255);
       Temp = (UINTN)CompPtr->b * RevAlpha + (UINTN)TopPtr->b * Alpha; // +0x80;
       CompPtr->b = (UINT8)(Temp / 255); // (UINT8)((Temp + (Temp >> 8)) >> 8);
       Temp = (UINTN)CompPtr->g * RevAlpha + (UINTN)TopPtr->g * Alpha; // +0x80;
       CompPtr->g = (UINT8)(Temp / 255); // (UINT8)((Temp + (Temp >> 8)) >> 8);
       Temp = (UINTN)CompPtr->r * RevAlpha + (UINTN)TopPtr->r * Alpha; // +0x80;
-      CompPtr->r = (UINT8)(Temp / 255); // (UINT8)((Temp + (Temp >> 8)) >> 8);
+      CompPtr->r = (UINT8)(Temp / 255); // (UINT8)((Temp + (Temp >> 8)) >> 8);*/
+      TopPtr++, CompPtr++;
+    }
+    TopBasePtr += TopLineOffset;
+    CompBasePtr += CompLineOffset;
+  }
+}
+
+// This is simplified image composing on solid background. egComposeImage will decide which method to use
+VOID egRawComposeOnFlat(IN OUT EG_PIXEL *CompBasePtr, IN EG_PIXEL *TopBasePtr,
+                  IN INTN Width, IN INTN Height,
+                  IN INTN CompLineOffset, IN INTN TopLineOffset)
+{
+  INT64       x, y;
+  EG_PIXEL    *TopPtr, *CompPtr;
+  UINT32      TopAlpha;
+  UINT32      RevAlpha;
+  UINTN       Temp;
+
+  if (!CompBasePtr || !TopBasePtr) {
+    return;
+  }
+
+  for (y = 0; y < Height; y++) {
+    TopPtr = TopBasePtr;
+    CompPtr = CompBasePtr;
+    for (x = 0; x < Width; x++) {
+      TopAlpha = TopPtr->a;
+      RevAlpha = 255 - TopAlpha;
+
+      Temp = ((UINT8)CompPtr->b * RevAlpha) + ((UINT8)TopPtr->b * TopAlpha);
+      CompPtr->b = (UINT8)(Temp / 255);
+      
+      Temp = ((UINT8)CompPtr->g * RevAlpha) + ((UINT8)TopPtr->g * TopAlpha);
+      CompPtr->g = (UINT8)(Temp / 255);
+      
+      Temp = ((UINT8)CompPtr->r * RevAlpha) + ((UINT8)TopPtr->r * TopAlpha);
+      CompPtr->r = (UINT8)(Temp / 255);
+      
+      CompPtr->a = (UINT8)(255);
+
       TopPtr++, CompPtr++;
     }
     TopBasePtr += TopLineOffset;
@@ -755,12 +817,23 @@ VOID egComposeImage(IN OUT EG_IMAGE *CompImage, IN EG_IMAGE *TopImage, IN INTN P
   if (CompWidth > 0) {
     if (CompImage->HasAlpha && !BackgroundImage) {
       CompImage->HasAlpha = FALSE;
-      egSetPlane(PLPTR(CompImage, a), 0, CompImage->Width * CompImage->Height);
+//      egSetPlane(PLPTR(CompImage, a), 255, CompImage->Width * CompImage->Height);
     }
     
-    if (TopImage->HasAlpha)
+/*    if (!CompImage->HasAlpha) {
+      egSetPlane(PLPTR(CompImage, a), 255, CompImage->Width * CompImage->Height);
+    }*/
+    
+    if (TopImage->HasAlpha) {
+      if (CompImage->HasAlpha) {
       egRawCompose(CompImage->PixelData + PosY * CompImage->Width + PosX, TopImage->PixelData,
                    CompWidth, CompHeight, CompImage->Width, TopImage->Width);
+      }
+      else {
+        egRawComposeOnFlat(CompImage->PixelData + PosY * CompImage->Width + PosX, TopImage->PixelData,
+                   CompWidth, CompHeight, CompImage->Width, TopImage->Width);
+      }
+    }
     else
       egRawCopy(CompImage->PixelData + PosY * CompImage->Width + PosX, TopImage->PixelData,
                 CompWidth, CompHeight, CompImage->Width, TopImage->Width);

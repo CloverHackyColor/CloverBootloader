@@ -62,7 +62,7 @@ const char* fsw_errors[] = {
 
 static void fsw_blockcache_free(struct fsw_volume *vol);
 
-#define MAX_CACHE_LEVEL (0)
+#define MAX_CACHE_LEVEL (5)
 
 
 /**
@@ -736,7 +736,8 @@ fsw_status_t fsw_dnode_lookup_path(struct fsw_dnode *dno,
   struct fsw_dnode  *child_dno = NULL;
   struct fsw_string lookup_name;
   struct fsw_string remaining_path;
-  int               root_if_empty;
+  int               root_if_empty, i;
+  fsw_u16  ch;
   if (!dno) {
     return FSW_UNSUPPORTED;
   }
@@ -744,7 +745,12 @@ fsw_status_t fsw_dnode_lookup_path(struct fsw_dnode *dno,
   if (lookup_path->type == FSW_STRING_TYPE_ISO88591) {
     DBG("dnode %a lookup ASCII\n", lookup_path->data);
   } else if (lookup_path->type == FSW_STRING_TYPE_UTF16) {
-    DBG("dnode %s lookup UNI\n", lookup_path->data);
+    DBG("dnode lookup UNI:");
+    for (i = 0; i < lookup_path->len; i++) {
+      ch = ((fsw_u16 *) lookup_path->data)[i];
+      DBG("%c", ch?ch:L'@');
+    }
+    DBG("\n");
   }
   //  remaining_path = *lookup_path;
   fsw_memcpy(&remaining_path, lookup_path, sizeof(struct fsw_string));

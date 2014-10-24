@@ -110,7 +110,7 @@ static VOID AboutRefit(VOID)
     AddMenuInfoLine(&AboutMenu, L"  Slice, dmazar, apianti, JrCs, pene, usrsse2, SoThOr, DF");
     AddMenuInfoLine(&AboutMenu, L"Credits also:");
     AddMenuInfoLine(&AboutMenu, L"  Kabyl, pcj, jadran, Blackosx, STLVNUB, ycr.ru");
-    AddMenuInfoLine(&AboutMenu, L"  FrodoKenny, skoczy, crazybirdy, Oscar09, xsmile");
+    AddMenuInfoLine(&AboutMenu, L"  FrodoKenny, skoczi, crazybirdy, Oscar09, xsmile");
     AddMenuInfoLine(&AboutMenu, L"  cparm, rehabman, nms42, sherlocks");
     AddMenuInfoLine(&AboutMenu, L"  projectosx.com, applelife.ru");
     AddMenuInfoLine(&AboutMenu, L"");

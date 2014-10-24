@@ -548,10 +548,10 @@ VOID egDrawImageArea(IN EG_IMAGE *Image,
       return;
   }
   
-  if (Image->HasAlpha) {
-    Image->HasAlpha = FALSE;
-    egSetPlane(PLPTR(Image, a), 0, Image->Width * Image->Height);
-  }
+//   if (Image->HasAlpha) { // It shouldn't harm Blt
+//     //Image->HasAlpha = FALSE;
+//     egSetPlane(PLPTR(Image, a), 255, Image->Width * Image->Height);
+//   }
   
   if (ScreenPosX + AreaWidth > UGAWidth)
   {

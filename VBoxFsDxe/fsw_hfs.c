@@ -471,7 +471,9 @@ fsw_hfs_find_block(HFSPlusExtentRecord *exts,
   return 0;
 }
 
-/* Find record offset, numbering starts from the end */
+//
+// Find record offset, numbering starts from the end
+//
 static fsw_u32
 fsw_hfs_btree_recoffset (struct fsw_hfs_btree *btree,
                          BTNodeDescriptor     *node,
@@ -489,7 +491,9 @@ fsw_hfs_btree_recoffset (struct fsw_hfs_btree *btree,
   return offset;
 }
 
-/* Pointer to the key inside node */
+//
+// Pointer to the key record by index inside the node
+//
 static BTreeKey *
 fsw_hfs_btree_rec (struct fsw_hfs_btree   *btree,
                    BTNodeDescriptor       *node,
@@ -505,6 +509,9 @@ fsw_hfs_btree_rec (struct fsw_hfs_btree   *btree,
   return (BTreeKey *)(cnode + offset);
 }
 
+//
+//  returns pointer to data of the index record
+//
 static fsw_u32
 fsw_hfs_btree_next_node (BTreeKey *currkey)
 { //+
@@ -538,7 +545,7 @@ fsw_hfs_btree_search (struct fsw_hfs_btree *btree,
   }
   node = (BTNodeDescriptor *) buffer;
 
-  for (;;) {
+  for (;;) { //node cycle
     fsw_s32 cmp = 0;
     int match;
     fsw_u32 count;
@@ -584,18 +591,16 @@ fsw_hfs_btree_search (struct fsw_hfs_btree *btree,
       } else if (node->kind == kBTIndexNode) {
         if (cmp > 0)
           break;
-        currnode = fsw_hfs_btree_next_node (currkey);
-        match = 1;
+        currnode = fsw_hfs_btree_next_node (currkey); //largest that <= search
       }
     }
-
-    if (node->kind == kBTLeafNode && cmp < 0 && node->fLink) {
-      currnode = be32_to_cpu (node->fLink);
-      continue;
-    }
-    else if (!match) {
+    if (node->kind == kBTLeafNode) {
       status = FSW_NOT_FOUND;
       break;
+    }
+
+    if (cmp <= 0 && node->fLink) {
+      currnode = be32_to_cpu (node->fLink);
     }
 #else
     /* Perform binary search */
@@ -613,12 +618,12 @@ fsw_hfs_btree_search (struct fsw_hfs_btree *btree,
 
       currkey = fsw_hfs_btree_rec (btree, node, recnum);
 
-      cmp = 0 - compare_keys (currkey, key);  //fsw_hfs_cmpi_catkey
+      cmp = compare_keys (currkey, key);  //fsw_hfs_cmpi_catkey
  //     DBG(": currnode %d lower/recnum/upper %d/%d/%d (%d) cmp=%d kind=%d\n",
  //         currnode, lower, recnum, upper, count, cmp, node->kind);
-      if (cmp < 0) {
+      if (cmp > 0) {
         upper = recnum - 1;
-      } else if (cmp > 0) {
+      } else if (cmp < 0) {
         lower = recnum + 1;
       } else if (cmp == 0) {
         if (node->kind == kBTLeafNode) {
@@ -634,7 +639,7 @@ fsw_hfs_btree_search (struct fsw_hfs_btree *btree,
       }
     }
 
-    if (cmp < 0) {
+    if (cmp > 0) {
       currkey = fsw_hfs_btree_rec (btree, node, upper);
     }
 
@@ -713,6 +718,7 @@ fill_fileinfo (
       finfo->crtype = be32_to_cpu (info->userInfo.fdType);
       finfo->type = FSW_DNODE_TYPE_FILE;
       finfo->ilink = 0;
+      DBG("file creator=%x crtype=%x\n", finfo->creator, finfo->crtype);
       /* Is the file any kind of link? */
       if ((finfo->creator == kSymLinkCreator && finfo->crtype == kSymLinkFileType) ||
           (finfo->creator == kHFSPlusCreator && finfo->crtype == kHardLinkFileType)) {
@@ -1041,19 +1047,16 @@ fsw_hfs_cmpi_catkey (BTreeKey *key1, BTreeKey *key2)
 
     if (hardlink) {
       DBG("name:");
-      for (apos = 0; apos < key2Len; apos++) {
-        ac = p2[apos];
-        DBG("%c", ac?ac:L'@');
-      }
-      DBG(":");
       for (apos = 0; apos < key1Len; apos++) {
         ac = be16_to_cpu(p1[apos]);
         DBG("%c", ac?ac:L'@');
       }
-      DBG(":\n");
-      if (p1[0] == 0) {
-        return 0;
+      DBG(":");
+      for (apos = 0; apos < key2Len; apos++) {
+        ac = p2[apos];
+        DBG("%c", ac?ac:L'@');
       }
+      DBG(":\n");
     }
 
     apos = bpos = 0;
@@ -1061,30 +1064,37 @@ fsw_hfs_cmpi_catkey (BTreeKey *key1, BTreeKey *key2)
     while(1) {
       /* get next valid character from ckey1 */
       for (lc = 0; lc == 0 && apos < key1Len; apos++) {
+//      for (lc = 0; apos < key1Len; apos++) {
         ac = be16_to_cpu(p1[apos]);
-        lc = ac ? fsw_to_lower(ac) : 0;
+        lc = ac ? fsw_to_lower(ac) : 0xFFFF;
       }
       ac = (fsw_u16)lc;
 
       /* get next valid character from ckey2 */
       for (lc = 0; lc == 0 && bpos < key2Len; bpos++) {
+//      for (lc = 0; bpos < key2Len; bpos++) {
         bc = p2[bpos];
-        lc = bc ? fsw_to_lower(bc) : 0;
+        lc = bc ? fsw_to_lower(bc) : 0xFFFF;;
       }
       bc = (fsw_u16)lc;
+      if (hardlink) {
+        DBG("compare: %c:%c\n", ac?ac:L'@', bc?bc:L'@');
+      }
 
       if (ac != bc) {
         break;
       }
-      if (ac == 0) {
+      if (bpos == key1Len) {
         return 0;
       }
     }
+    if (ac == bc)
+      return 0;
+    else if (ac < bc)
+      return -1;
+    else
+      return 1;
   }
-  if (ac < bc)
-    return -1;
-  else
-    return 1;
 }
 
 //
@@ -1427,26 +1437,42 @@ static fsw_status_t fsw_hfs_readlink(struct fsw_hfs_volume *vol,
    * XXX: Hardlinks for directories -- not yet.
    * Hex dump visual inspection of Apple hfsplus{32,64}.efi
    * revealed no signs of directory hardlinks support.
-   kHFSAliasType    = 0x66647270,  // 'fdrp'
+   kHFSAliasType    = 0x66647270,  // 'fdrp' - finder alias for folder
    kHFSAliasCreator = 0x4D414353   // 'MACS'
+   kHFSAliasFile    = 0x616C6973   // 'alis' - finder alias for file
    */
   fsw_u32 sz = 0;
+  int     i;
+  fsw_u16    ch;
   fsw_status_t status = FSW_UNSUPPORTED;
 
   if(dno->creator == kHFSPlusCreator && dno->crtype == kHardLinkFileType) {
 #define MPRFSIZE (sizeof (metaprefix))
 #define MPRFINUM (MPRFSIZE - 1 - 10)
-    struct fsw_string tmp_target;
+    struct fsw_string *tmp_target;
+    status = fsw_alloc(sizeof(struct fsw_string), &tmp_target);
+    if (status) {
+      DBG("can't alloc tmp_target\n");
+    }
 
-    tmp_target.type = FSW_STRING_TYPE_ISO88591;
-    tmp_target.size = MPRFSIZE;
-    DBG(" hfs readlink: size=%d, iLink=%d\n", tmp_target.size, dno->ilink);
-    fsw_memdup ((void**)&tmp_target.data, (void*)&metaprefix[0], tmp_target.size);
-    sz = AsciiSPrint(((char *) &tmp_target.data) + MPRFINUM, 10, "%d", dno->ilink);
-    tmp_target.len = MPRFINUM + sz;
-    DBG(" iNode name len=%d\n", tmp_target.len);
-    status = fsw_strdup_coerce(link_target, vol->g.host_string_type, &tmp_target);
+    tmp_target->type = FSW_STRING_TYPE_ISO88591;
+    tmp_target->size = MPRFSIZE;
+    DBG(" hfs readlink: size=%d, iLink=%d\n", tmp_target->size, dno->ilink);
+    fsw_memdup ((void**)&tmp_target->data, (void*)&metaprefix[0], tmp_target->size);
+    sz = AsciiSPrint(((char *)tmp_target->data) + MPRFINUM, 10, "%d", dno->ilink);
+    tmp_target->len = MPRFINUM + sz;
+      DBG(" iNode name len=%d\n", tmp_target->len);
+    status = fsw_strdup_coerce(link_target, vol->g.host_string_type, tmp_target);
     hardlink = 1;
+  
+    for (i = 0; i < tmp_target->len; i++) {
+      ch = ((fsw_u16 *) link_target->data)[i];
+      DBG("%c", ch?ch:L'@');
+    }
+    DBG("\n");
+
+    fsw_strfree(tmp_target);
+    fsw_free(tmp_target);
     return status;
 #undef MPRFINUM
 #undef MPRFSIZE

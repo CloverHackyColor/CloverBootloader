@@ -76,10 +76,11 @@ VOID DrawPointer()
   egTakeImage(gPointer.oldImage, gPointer.newPlace.XPos, gPointer.newPlace.YPos,
               POINTER_WIDTH, POINTER_HEIGHT);
   CopyMem(&gPointer.oldPlace, &gPointer.newPlace, sizeof(EG_RECT));
-  egRawCopy(gPointer.newImage->PixelData, gPointer.oldImage->PixelData,
+  /*egRawCopy(gPointer.newImage->PixelData, gPointer.oldImage->PixelData,
             POINTER_WIDTH, POINTER_HEIGHT,
             gPointer.newImage->Width,
-            gPointer.oldImage->Width);
+            gPointer.oldImage->Width);*/
+  CopyMem(gPointer.newImage->PixelData, gPointer.oldImage->PixelData, (UINTN)(POINTER_WIDTH * POINTER_HEIGHT * sizeof(EG_PIXEL))); // Should be faster
   egComposeImage(gPointer.newImage, gPointer.Pointer, 0, 0);
   egDrawImageArea(gPointer.newImage, 0, 0,
                   POINTER_WIDTH, POINTER_HEIGHT,
@@ -162,8 +163,8 @@ EFI_STATUS MouseBirth()
   
   gPointer.oldImage = egCreateImage(POINTER_WIDTH, POINTER_HEIGHT, FALSE);
   gPointer.newImage = egCreateFilledImage(POINTER_WIDTH, POINTER_HEIGHT, FALSE, &MenuBackgroundPixel);
-  egTakeImage(gPointer.oldImage, gPointer.oldPlace.XPos, gPointer.oldPlace.YPos,
-              POINTER_WIDTH, POINTER_HEIGHT);
+//  egTakeImage(gPointer.oldImage, gPointer.oldPlace.XPos, gPointer.oldPlace.YPos,
+//              POINTER_WIDTH, POINTER_HEIGHT); // DrawPointer repeats it
   DrawPointer();
   gPointer.MouseEvent = NoEvents;
   return Status;
