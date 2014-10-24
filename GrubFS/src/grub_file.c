@@ -38,6 +38,10 @@ grub_file_filter_t grub_file_filters_enabled[GRUB_FILE_FILTER_MAX];
 
 extern EFI_STATUS GrubErrToEFIStatus(grub_err_t err);
 
+grub_err_t
+grub_device_close_2(grub_device_t device);
+
+
 /* Don't care about refcounts for a standalone EFI FS driver */
 int
 grub_dl_ref(grub_dl_t mod) {
@@ -100,7 +104,7 @@ grub_file_close(grub_file_t file)
 		(file->fs->close) (file);
 
 	if (file->device)
-		grub_device_close (file->device);
+		grub_device_close_2 (file->device);
 	grub_free (file->name);
 	grub_free (file);
 	return grub_errno;
@@ -200,7 +204,7 @@ grub_disk_get_size (grub_disk_t disk)
 }
 
 grub_device_t 
-grub_device_open(const char *name)
+grub_device_open_2(const char *name)
 {
 	CHAR16 *Name = Utf8ToUtf16Alloc((CHAR8 *) name);
 	struct grub_device* device;
@@ -247,7 +251,7 @@ grub_device_open(const char *name)
 }
 
 grub_err_t
-grub_device_close(grub_device_t device)
+grub_device_close_2(grub_device_t device)
 {
 //	ASSERT(device != NULL);
   if (device != NULL) {
@@ -268,7 +272,7 @@ GrubDeviceInit(EFI_FS *FileSystem)
 	/* Insert this filesystem in our list */
 	InsertTailList(&FsListHead, (LIST_ENTRY *) FileSystem);
 
-	FileSystem->GrubDevice = (VOID *) grub_device_open((const char *) name);
+	FileSystem->GrubDevice = (VOID *) grub_device_open_2((const char *) name);
 
 	if (name != NULL)
     {
@@ -287,7 +291,7 @@ GrubDeviceInit(EFI_FS *FileSystem)
 EFI_STATUS
 GrubDeviceExit(EFI_FS *FileSystem)
 {
-	grub_device_close((grub_device_t) FileSystem->GrubDevice);
+	grub_device_close_2((grub_device_t) FileSystem->GrubDevice);
 	RemoveEntryList((LIST_ENTRY *)FileSystem);
 
 	return EFI_SUCCESS;

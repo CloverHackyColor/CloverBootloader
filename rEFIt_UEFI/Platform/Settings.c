@@ -100,7 +100,7 @@ GetCrc32 (
 
   x = 0;
   Len = Size >> 2;
-  for (i = 0; i < Len; ++i) {
+  for (i = 0; i < Len; i++) {
     x += Fake[i];
   }
 
@@ -195,7 +195,7 @@ ParseLoadOptions (
       return;
     }
 
-    for (i = 0; PlistStrings[i] != '\0'; ++i) {
+    for (i = 0; PlistStrings[i] != '\0'; i++) {
       PlistStringsLen = AsciiStrLen (PlistStrings[i]);
 //    DBG ("PlistStrings[%d] = %a\n", i, PlistStrings[i]);
       if (PlistStringsLen < TailSize) {
@@ -408,7 +408,7 @@ VOID
       }
 /*
       DBG ("Data: %p, Len: %d = ", Data, Prop->dataLen);
-      for (i = 0; i < Prop->dataLen; ++i) {
+      for (i = 0; i < Prop->dataLen; i++) {
          DBG ("%02x ", Data[i]);
       }
        DBG ("\n");
@@ -424,7 +424,7 @@ VOID
       }
 /*
       DBG ("Data(str): %p, Len: %d = ", data, len);
-      for (i = 0; i < Len; ++i) {
+      for (i = 0; i < Len; i++) {
         DBG ("%02x ", data[i]);
       }
 
@@ -607,7 +607,7 @@ CopyKernelAndKextPatches (
     INTN i;
     Dst->ForceKexts = AllocatePool (Src->NrForceKexts * sizeof(CHAR16 *));
 
-    for (i = 0; i < Src->NrForceKexts; ++i) {
+    for (i = 0; i < Src->NrForceKexts; i++) {
       Dst->ForceKexts[Dst->NrForceKexts++] = EfiStrDuplicate (Src->ForceKexts[i]);
     }
   }
@@ -616,7 +616,7 @@ CopyKernelAndKextPatches (
     INTN i;
     Dst->KextPatches = AllocatePool (Src->NrKexts * sizeof(KEXT_PATCH));
 
-    for (i = 0; i < Src->NrKexts; ++i)
+    for (i = 0; i < Src->NrKexts; i++)
     {
       if ((Src->KextPatches[i].DataLen <= 0) ||
           (Src->KextPatches[i].Data == NULL) ||
@@ -810,7 +810,7 @@ FillinKextPatches (
       Patches->ForceKexts = newForceKexts;
       DBG ("ForceKextsToLoad: %d requested\n", Count);
 
-      for (i = 0; i < Count; ++i) {
+      for (i = 0; i < Count; i++) {
         EFI_STATUS Status = GetElement (Prop, i, &Prop2);
         if (EFI_ERROR (Status)) {
            DBG ("error %r getting next element at index %d\n", Status, i);
@@ -854,7 +854,7 @@ FillinKextPatches (
 
       Patches->KextPatches = newPatches;
       DBG ("KextsToPatch: %d requested\n", Count);
-      for (i = 0; i < Count; ++i) {
+      for (i = 0; i < Count; i++) {
         EFI_STATUS Status = GetElement (Prop, i, &Prop2);
         if (EFI_ERROR (Status)) {
           DBG ("error %r getting next element at index %d\n", Status, i);
@@ -1227,7 +1227,7 @@ FillinCustomEntry (
     INTN Count = GetTagCount (Prop);
     if (Count > 0) {
       TagPtr Prop2 = NULL;
-      for (i = 0; i < Count; ++i) {
+      for (i = 0; i < Count; i++) {
         if (EFI_ERROR (GetElement (Prop, i, &Prop2))) {
           continue;
         }
@@ -1365,7 +1365,7 @@ FillinCustomEntry (
       TagPtr Dict = NULL;
       Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_NODEFAULTMENU);
       if (Count > 0) {
-        for (i = 0; i < Count; ++i) {
+        for (i = 0; i < Count; i++) {
           if (EFI_ERROR (GetElement (Prop, i, &Dict))) {
             continue;
           }
@@ -1556,7 +1556,7 @@ FillinCustomLegacy (
     if (Count > 0)
     {
       TagPtr Prop2 = NULL;
-      for (i = 0; i < Count; ++i) {
+      for (i = 0; i < Count; i++) {
         if (EFI_ERROR (GetElement (Prop, i, &Prop2))) {
           continue;
         }
@@ -1715,7 +1715,7 @@ FillinCustomTool (
     if (Count > 0)
     {
       TagPtr Prop2 = NULL;
-      for (i = 0; i < Count; ++i) {
+      for (i = 0; i < Count; i++) {
         if (EFI_ERROR (GetElement (Prop, i, &Prop2))) {
           continue;
         }
@@ -1880,7 +1880,7 @@ GetEarlyUserSettings (
           gSettings.SecureBootWhiteListCount = 0;
           gSettings.SecureBootWhiteList = AllocateZeroPool (Count * sizeof(CHAR16 *));
           if (gSettings.SecureBootWhiteList) {
-            for (i = 0; i < Count; ++i) {
+            for (i = 0; i < Count; i++) {
               if (EFI_ERROR (GetElement (Prop, i, &Dict2))) {
                 continue;
               }
@@ -1905,7 +1905,7 @@ GetEarlyUserSettings (
           gSettings.SecureBootBlackListCount = 0;
           gSettings.SecureBootBlackList      = AllocateZeroPool (Count * sizeof(CHAR16 *));
           if (gSettings.SecureBootBlackList) {
-            for (i = 0; i < Count; ++i) {
+            for (i = 0; i < Count; i++) {
               if (EFI_ERROR (GetElement (Prop, i, &Dict2))) {
                 continue;
               }
@@ -2157,7 +2157,7 @@ GetEarlyUserSettings (
           gSettings.HVCount = 0;
           gSettings.HVHideStrings = AllocateZeroPool (Count * sizeof(CHAR16 *));
           if (gSettings.HVHideStrings) {
-            for (i = 0; i < Count; ++i) {
+            for (i = 0; i < Count; i++) {
               if (EFI_ERROR (GetElement (Prop, i, &Dict2))) {
                 continue;
               }
@@ -2240,7 +2240,7 @@ GetEarlyUserSettings (
           TagPtr Dict3;
 
           if (Count > 0) {
-            for (i = 0; i < Count; ++i) {
+            for (i = 0; i < Count; i++) {
               if (EFI_ERROR (GetElement (Prop, i, &Dict3))) {
                 continue;
               }
@@ -2265,7 +2265,7 @@ GetEarlyUserSettings (
           TagPtr Dict3;
 
           if (Count > 0) {
-            for (i = 0; i < Count; ++i) {
+            for (i = 0; i < Count; i++) {
               if (EFI_ERROR (GetElement (Prop, i, &Dict3))) {
                 continue;
               }
@@ -2291,7 +2291,7 @@ GetEarlyUserSettings (
           INTN   i, Count = GetTagCount (Prop);
           TagPtr Dict3;
           if (Count > 0) {
-            for (i = 0; i < Count; ++i) {
+            for (i = 0; i < Count; i++) {
               if (EFI_ERROR (GetElement (Prop, i, &Dict3))) {
                 continue;
               }
@@ -2336,7 +2336,7 @@ GetEarlyUserSettings (
           gSettings.PatchVBiosBytes = AllocateZeroPool (Count * sizeof(VBIOS_PATCH_BYTES));
           
           // get all entries
-          for (i = 0; i < Count; ++i) {
+          for (i = 0; i < Count; i++) {
             // Get the next entry
             if (EFI_ERROR (GetElement (Dict2, i, &Prop))) {
               continue;
@@ -2417,7 +2417,7 @@ GetEarlyUserSettings (
         gSettings.BlackListCount = 0;
         gSettings.BlackList = AllocateZeroPool (Count * sizeof(CHAR16 *));
 
-        for (i = 0; i < Count; ++i) {
+        for (i = 0; i < Count; i++) {
           if (!EFI_ERROR (GetElement (DictPointer, i, &Prop)) &&
               Prop != NULL && (Prop->type == kTagTypeString)) {
             gSettings.BlackList[gSettings.BlackListCount++] = PoolPrint (L"%a", Prop->string);
@@ -2862,7 +2862,7 @@ GetThemeTagSettings (
   if (Dict != NULL) {
     INTN i;
     INTN Count = GetTagCount (Dict);
-    for (i = 0; i < Count; ++i) {
+    for (i = 0; i < Count; i++) {
       GUI_ANIME *Anime;
       if (EFI_ERROR (GetElement (Dict, i, &DictPointer))) {
         continue;
@@ -3060,37 +3060,37 @@ InitTheme(
   CHAR16     *TestTheme   = NULL;
   UINTN      Rnd;
   
-  Rnd = Time != NULL && ThemesNum != 0 ? Time->Second % ThemesNum : 0;
+  Rnd = ((Time != NULL) && (ThemesNum != 0)) ? Time->Second % ThemesNum : 0;
   
   // Invalidated BuiltinIcons
   DBG ("Invalidating BuiltinIcons...\n");
 
-  for (i = 0; i < BUILTIN_ICON_COUNT; ++i) {
+  for (i = 0; i < BUILTIN_ICON_COUNT; i++) {
     if (BuiltinIconTable[i].Image != NULL) {
       egFreeImage (BuiltinIconTable[i].Image);
       BuiltinIconTable[i].Image = NULL;
     }    
   }
 
-  for (i = 0; i < 4; ++i) {
+  for (i = 0; i < 4; i++) {
     if (SelectionImages[i] != NULL) {
       egFreeImage (SelectionImages[i]);
       SelectionImages[i] = NULL;
     }
   } 
   
-  KillMouse();
+  KillMouse();  
   
   while (GuiAnime != NULL) {
     GUI_ANIME *NextAnime = GuiAnime->Next;
-    FreeAnime (GuiAnime);
+    FreeAnime (GuiAnime); 
     GuiAnime             = NextAnime;
   }
-  
+ 
   if (ThemesNum > 0 &&
       (!GlobalConfig.Theme ||
        StrCmp (GlobalConfig.Theme, L"embedded") != 0)) {
-    
+
     // Try special theme first
     if (Time != NULL) {
       if ((Time->Month == 12) && ((Time->Day >= 25) && (Time->Day <= 31))) {
@@ -3106,13 +3106,11 @@ InitTheme(
           if (GlobalConfig.Theme) {
             FreePool (GlobalConfig.Theme);
           }
-
           GlobalConfig.Theme = TestTheme;
         } else { // special theme not loaded
           DBG ("special theme %s not found, skipping\n", TestTheme, CONFIG_THEME_FILENAME);
           FreePool (TestTheme);
         }
-
         TestTheme = NULL;
       } else {
         //shuffle
@@ -3121,7 +3119,7 @@ InitTheme(
         }
       }
     }
-    
+
     // Try theme from nvram  
     if (ThemeDict == NULL && UseThemeDefinedInNVRam) {
       ChosenTheme   = GetNvramVariable(L"Clover.Theme", &gEfiAppleBootGuid, NULL, &Size);
@@ -3134,7 +3132,6 @@ InitTheme(
              if (GlobalConfig.Theme != NULL) {
                FreePool (GlobalConfig.Theme);
              }
-
              GlobalConfig.Theme = TestTheme;
           } else { // theme from nvram not loaded
             if (GlobalConfig.Theme != NULL) {
@@ -3142,18 +3139,14 @@ InitTheme(
             } else {
               DBG ("theme %a chosen from nvram is absent, get first theme\n", ChosenTheme);
             }
-
             FreePool (TestTheme);
           }
-
           TestTheme = NULL;
         }
-
         FreePool (ChosenTheme);
         ChosenTheme = NULL;
       }
     }
-    
     // Try to get theme from settings
     if (ThemeDict == NULL) {
       if (GlobalConfig.Theme == NULL) {
@@ -3163,7 +3156,7 @@ InitTheme(
           DBG ("no default theme, get first theme %s\n",  CONFIG_THEME_FILENAME, ThemesList[0]);
         }
       } else {
-        ThemeDict = LoadTheme (GlobalConfig.Theme);
+         ThemeDict = LoadTheme (GlobalConfig.Theme);
         if (ThemeDict == NULL) {
           DBG ("GlobalConfig: %s not found, get random theme %s\n", CONFIG_THEME_FILENAME, ThemesList[Rnd]);
           FreePool (GlobalConfig.Theme);
@@ -3171,17 +3164,14 @@ InitTheme(
         }
       }
     }
-  
-    // Try to get a theme
+     // Try to get a theme
     if (ThemeDict == NULL) {
       ThemeDict = LoadTheme (ThemesList[Rnd]);
       if (ThemeDict != NULL) {
         GlobalConfig.Theme = AllocateCopyPool (StrSize (ThemesList[Rnd]), ThemesList[Rnd]);
       }
     }
-
   } // ThemesNum>0
-  
   // No theme could be loaded, use embedded
   if (!ThemeDict) {
     DBG ("no themes available, using embedded\n");
@@ -3190,12 +3180,10 @@ InitTheme(
       FreePool (ThemePath);
       ThemePath = NULL;
     }
-
     if (ThemeDir != NULL) {
       ThemeDir->Close (ThemeDir);
       ThemeDir = NULL;
     }
-
     // set default values
     GetThemeTagSettings(NULL);
     //fill some fields
@@ -3205,19 +3193,16 @@ InitTheme(
     GlobalConfig.BadgeScale = 16;
   } else { // theme loaded successfully
     // read theme settings
-    TagPtr DictPointer = GetProperty (ThemeDict, "Theme");
+     TagPtr DictPointer = GetProperty (ThemeDict, "Theme");
     if (DictPointer != NULL) {
       Status = GetThemeTagSettings(DictPointer);
       if (EFI_ERROR (Status)) {
          DBG ("Config theme error: %r\n", Status);
       }
     }
-
     FreeTag(ThemeDict);
-  }
-  
-  PrepareFont();
-  
+  }  
+  PrepareFont();  
   return Status;
 }
 
@@ -3416,7 +3401,7 @@ GetUserSettings(
         gSettings.LoadVBios    = TRUE;
       }
 
-      for (i = 0; i < NGFX; ++i) {
+      for (i = 0; i < NGFX; i++) {
         gGraphics[i].LoadVBios = gSettings.LoadVBios; //default
       }
 
@@ -3435,7 +3420,7 @@ GetUserSettings(
         hex2bin (Prop->string, (UINT8*)&gSettings.NVCAP[0], 20);
         DBG ("Read NVCAP:");
 
-        for (i = 0; i<20; ++i) {
+        for (i = 0; i<20; i++) {
           DBG ("%02x", gSettings.NVCAP[i]);
         }
 
@@ -3502,7 +3487,7 @@ GetUserSettings(
           DBG ("Add %d properties\n", Count);
           gSettings.AddProperties = AllocateZeroPool (Count * sizeof(DEV_PROPERTY));
           
-          for (i = 0; i < Count; ++i) {
+          for (i = 0; i < Count; i++) {
             UINTN Size = 0;
             if (EFI_ERROR (GetElement (Prop, i, &Dict2))) {
               DBG ("AddProperties continue at %d\n", i);
@@ -3717,7 +3702,7 @@ GetUserSettings(
         if (Count > 0) {
           DBG ("Dropping %d tables\n", Count);
 
-          for (i = 0; i < Count; ++i) {
+          for (i = 0; i < Count; i++) {
             UINT32 Signature = 0;
             UINT32 TabLength = 0;
             UINT64 TableId = 0;
@@ -4003,7 +3988,7 @@ GetUserSettings(
             gSettings.LenToReplace     = AllocateZeroPool (Count * sizeof(UINT32));
             DBG ("PatchesDSDT: %d requested\n", Count);
 
-            for (i = 0; i < Count; ++i) {
+            for (i = 0; i < Count; i++) {
               UINTN Size = 0;
               Status     = GetElement (Prop, i, &Prop2);
               if (EFI_ERROR (Status)) {
@@ -4271,7 +4256,7 @@ GetUserSettings(
           INTN   Count = GetTagCount (Prop2);
           TagPtr Prop3 = NULL;
 
-          for (i = 0; i < Count; ++i) {
+          for (i = 0; i < Count; i++) {
             if (EFI_ERROR (GetElement (Prop2, i, &Prop3))) {
               continue;
             }
@@ -4615,7 +4600,7 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
     // Detect exact version for Mac OS X Regular/Server
     i = 0;
     while (SystemPlists[i] != NULL && !FileExists(Entry->Volume->RootDir, SystemPlists[i])) {
-      ++i;
+      i++;
     }
 
     if (SystemPlists[i] != NULL) { // found OSX System
@@ -4871,7 +4856,7 @@ GetDevices ()
               info        = NULL;
               gfx->Vendor = Ati;
 
-              for (i = 0; radeon_cards[i].device_id; ++i) {
+              for (i = 0; radeon_cards[i].device_id; i++) {
                 info      = &radeon_cards[i];
 
                 if (info->device_id == Pci.Hdr.DeviceId) {
@@ -5043,7 +5028,7 @@ SetDevices (
                   );
 
   if (!EFI_ERROR (Status)) {
-    for (i = 0; i < HandleCount; ++i) {
+    for (i = 0; i < HandleCount; i++) {
       Status = gBS->HandleProtocol (HandleBuffer[i], &gEfiPciIoProtocolGuid, (VOID **)&PciIo);
       if (!EFI_ERROR (Status)) {
         // Read PCI BUS 

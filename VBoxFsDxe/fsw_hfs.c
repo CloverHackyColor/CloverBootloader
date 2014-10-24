@@ -1437,13 +1437,14 @@ static fsw_status_t fsw_hfs_readlink(struct fsw_hfs_volume *vol,
    * XXX: Hardlinks for directories -- not yet.
    * Hex dump visual inspection of Apple hfsplus{32,64}.efi
    * revealed no signs of directory hardlinks support.
+   finder links, not properly documented
    kHFSAliasType    = 0x66647270,  // 'fdrp' - finder alias for folder
    kHFSAliasCreator = 0x4D414353   // 'MACS'
    kHFSAliasFile    = 0x616C6973   // 'alis' - finder alias for file
    */
   fsw_u32 sz = 0;
-  int     i;
-  fsw_u16    ch;
+//  int     i;
+//  fsw_u16    ch;
   fsw_status_t status = FSW_UNSUPPORTED;
 
   if(dno->creator == kHFSPlusCreator && dno->crtype == kHardLinkFileType) {
@@ -1464,13 +1465,13 @@ static fsw_status_t fsw_hfs_readlink(struct fsw_hfs_volume *vol,
       DBG(" iNode name len=%d\n", tmp_target->len);
     status = fsw_strdup_coerce(link_target, vol->g.host_string_type, tmp_target);
     hardlink = 1;
-  
+/*
     for (i = 0; i < tmp_target->len; i++) {
       ch = ((fsw_u16 *) link_target->data)[i];
       DBG("%c", ch?ch:L'@');
     }
     DBG("\n");
-
+*/
     fsw_strfree(tmp_target);
     fsw_free(tmp_target);
     return status;

@@ -644,7 +644,8 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
 #if REFIT_DEBUG > 0
     DBG("  Result of bootcode detection: %s %s (%s)\n",
         Volume->HasBootCode ? L"bootable" : L"non-bootable",
-        Volume->LegacyOS->Name, Volume->LegacyOS->IconName);
+        Volume->LegacyOS->Name ? Volume->LegacyOS->Name: L"unknown",
+        Volume->LegacyOS->IconName ? Volume->LegacyOS->IconName: L"legacy");
 #endif
     
     if (FindMem(SectorBuffer, 512, "Non-system disk", 15) >= 0)   // dummy FAT boot sector
@@ -1069,6 +1070,9 @@ VOID ScanVolumes(VOID)
       }
       
       Guid = FindGPTPartitionGuidInDevicePath(Volume->DevicePath);
+      if (!Volume->LegacyOS->IconName) {
+        Volume->LegacyOS->IconName = L"legacy";
+      }
       DBG("  Volume '%s', LegacyOS '%s', LegacyIcon(s) '%s', GUID = %g\n",
           Volume->VolName, Volume->LegacyOS->Name ? Volume->LegacyOS->Name : L"", Volume->LegacyOS->IconName, Guid);
       if (SelfVolume == Volume) {

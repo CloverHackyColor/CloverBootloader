@@ -173,17 +173,16 @@ EFI_STATUS MouseBirth()
 VOID KillMouse()
 {
 //  EG_PIXEL pi;
-  
   if (!gPointer.SimplePointerProtocol) {
     return;
   }
 //  pi = gPointer.oldImage->PixelData[0];
 //  DBG("Mouse death\n");
 //  DBG(" Blue=%x Green=%x Red=%x Alfa=%x\n\n", pi.b, pi.g, pi.r, pi.a);
-
-  egFreeImage(gPointer.newImage);
-  egFreeImage(gPointer.oldImage);
-  egFreeImage(gPointer.Pointer);
+  
+  egFreeImage(gPointer.newImage); gPointer.newImage = NULL;
+  egFreeImage(gPointer.oldImage); gPointer.oldImage = NULL;
+  egFreeImage(gPointer.Pointer); gPointer.Pointer = NULL;
   gPointer.MouseEvent = NoEvents;
   gPointer.SimplePointerProtocol = NULL;
 }
