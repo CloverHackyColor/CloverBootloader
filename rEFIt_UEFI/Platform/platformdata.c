@@ -46,7 +46,7 @@ CHAR8   *AppleFirmwareVersion[] =
   "IM131.88Z.010A.B05.1211151146",
   "IM141.88Z.0118.B00.1309031248",
   "IM142.88Z.0118.B00.1309031249",
-  "IM151.88Z.0207.B00.1409291931", //
+  "IM151.88Z.0207.B00.1409291931", //correct data
 	"MP31.88Z.006C.B05.0802291410",
 	"MP41.88Z.0081.B07.0903051113",
 	"MP51.88Z.007F.B03.1010071432",   //007F.B00.1008031144"
@@ -82,7 +82,7 @@ CHAR8* AppleBoardID[] =    //Lion DR1 compatible
   "Mac-FC02E91DDD3FA6A4",  // IM132  - i5-3470 CPU @ 3.20GHz
   "Mac-031B6874CF7F642A",  // IM141  - i5-4570S/i7-4770S
   "Mac-27ADBB7B4CEE8E61",  // IM142  - i5-4670/i7-4771
-  "Mac-42FD25EABCABB274",  // IM151  
+  "Mac-42FD25EABCABB274",  // IM151  - i5-4690 CPU @ 3.50GHz
 	"Mac-F2268DC8",          // MP31   - xeon quad 02/09 conroe
 	"Mac-F4238CC8",          // MP41   - xeon wolfdale
 	"Mac-F221BEC8",          // MP51   - Xeon Nehalem 4 cores
@@ -119,12 +119,11 @@ CHAR8* AppleReleaseDate[] =
   "11/15/2012",  // IM132
   "09/03/2013",
   "09/03/2013",  // IM142
-  "09/03/2014",  // IM151  - please correct!
+  "09/29/2014",  // IM151  - correct date
 	"02/29/08",
 	"03/05/09",
 	"10/07/10",
   "11/22/2013",  // MacPro6,1
-  "06/23/2014",  // IM151
 };
 
 CHAR8* AppleProductName[] = 
