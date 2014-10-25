@@ -1023,7 +1023,7 @@ fsw_hfs_cmpi_catkey (BTreeKey *key1, BTreeKey *key2)
   fsw_u16 *p1;
   fsw_u16 *p2;
 
-  parentId1 = be32_to_cpu_ua(&ckey1->parentID);
+  parentId1 = be32_to_cpu_ua(&ckey1->parentID); // MSC warns about a possibly unaligned result of '&' (C4366)
   if (hardlink) {
     DBG("parents: %d <-> %d\n", parentId1, ckey2->parentID);
   }
@@ -1460,7 +1460,7 @@ static fsw_status_t fsw_hfs_readlink(struct fsw_hfs_volume *vol,
     tmp_target->size = MPRFSIZE;
     DBG(" hfs readlink: size=%d, iLink=%d\n", tmp_target->size, dno->ilink);
     fsw_memdup ((void**)&tmp_target->data, (void*)&metaprefix[0], tmp_target->size);
-    sz = AsciiSPrint(((char *)tmp_target->data) + MPRFINUM, 10, "%d", dno->ilink);
+    sz = (fsw_u32)AsciiSPrint(((char *)tmp_target->data) + MPRFINUM, 10, "%d", dno->ilink);
     tmp_target->len = MPRFINUM + sz;
       DBG(" iNode name len=%d\n", tmp_target->len);
     status = fsw_strdup_coerce(link_target, vol->g.host_string_type, tmp_target);
@@ -1482,7 +1482,7 @@ static fsw_status_t fsw_hfs_readlink(struct fsw_hfs_volume *vol,
     return fsw_dnode_readlink_data(dno, link_target);
   } else if (dno->creator == kHFSAliasCreator && dno->crtype == kHFSAliasType) {
     CHAR16 inodename[48];
-    sz = UnicodeSPrint(inodename, 48, L".HFS+ Private Directory Data/dir_%d", dno->ilink);
+    sz = (fsw_u32)UnicodeSPrint(inodename, 48, L".HFS+ Private Directory Data/dir_%d", dno->ilink);
     link_target->type = FSW_STRING_TYPE_UTF16;
     link_target->size = 96;
     link_target->len = sz;

@@ -125,8 +125,9 @@ OvrLoadImage(IN      BOOLEAN                  BootPolicy,
 
   EFI_LOADED_IMAGE_PROTOCOL       *Image;
 
-  FreeSourceBuffer     = FALSE;
-  DeviceHandle         = 0;
+  FreeSourceBuffer    = FALSE;
+  RemainingDevicePath = NULL;
+  DeviceHandle        = 0;
 
   Status = EFI_INVALID_PARAMETER;
   while (SourceBuffer == NULL) {
@@ -138,6 +139,7 @@ OvrLoadImage(IN      BOOLEAN                  BootPolicy,
     FilePathNode = (FILEPATH_DEVICE_PATH *)FilePath;
     Status       = gBS->LocateDevicePath(&gEfiSimpleFileSystemProtocolGuid, (EFI_DEVICE_PATH_PROTOCOL **)&FilePathNode, &DeviceHandle);
     if (!EFI_ERROR(Status)) {
+      RemainingDevicePath = (EFI_DEVICE_PATH_PROTOCOL *)FilePathNode;
       Status              = gBS->HandleProtocol(DeviceHandle, &gEfiSimpleFileSystemProtocolGuid, (VOID**)&Volume);
 
       if (!EFI_ERROR(Status)) {
