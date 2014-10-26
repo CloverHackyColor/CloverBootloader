@@ -1214,7 +1214,7 @@ EnumerateAttachedDevice (
       }
       break;
     case PCI_CLASS_MASS_STORAGE_SATADPA :
-//    case PCI_CLASS_MASS_STORAGE_RAID:
+    case PCI_CLASS_MASS_STORAGE_RAID:
       //
       // The ATA controller is working at AHCI mode
       //

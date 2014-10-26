@@ -338,7 +338,7 @@ CHAR8* SmcPlatform[] =
   "d8",   // iMac13,2
   "NA",   // iMac14,1
   "NA",   // iMac14,2
-  "NA",   // iMac15,1
+  "j78",  // iMac15,1
 	"m86",  // MacPro3,1,
 	"NA",   // MacPro4,1,
 	"k5",   // MacPro5,1
@@ -374,7 +374,7 @@ UINT8 SmcRevision[][6] = {
   { 0x02, 0x11, 0x0F, 0, 0, 0x14 },   // iMac13,2
   { 0x02, 0x14, 0x0F, 0, 0, 0x19 },   // iMac14,1
   { 0x02, 0x15, 0x0F, 0, 0, 0x02 },   // iMac14,2
-  { 0x02, 0x15, 0x0F, 0, 0, 0x02 },   // iMac15,1
+  { 0x02, 0x22, 0x0F, 0, 0, 0x16 },   // iMac15,1
 	{ 0x01, 0x25, 0x0F, 0, 0, 0x04 },   // MacPro3,1,
 	{ 0x01, 0x39, 0x0F, 0, 0, 0x05 },   // MacPro4,1,
 	{ 0x01, 0x39, 0x0F, 0, 0, 0x11 },   // MacPro5,1
@@ -411,7 +411,7 @@ UINT32 SmcConfig[] =
   0x79006,  //iMac13,2
   0x79007,  //iMac14,1
   0x7a007,  //iMac14,2
-  0x7b007,  //iMac15,1
+  0xf00008,  //iMac15,1
 	0x79001,  //"MacPro3,1",
 	0x7c002,  //"MacPro4,1",
 	0x7c002,  //"MacPro5,1"

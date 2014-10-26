@@ -234,7 +234,7 @@
 		12377E1F19B48E750069D523 /* Main.asm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm.asm; path = Main.asm; sourceTree = "<group>"; };
 		12377E2019B48E750069D523 /* Port80Debug.asm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm.asm; path = Port80Debug.asm; sourceTree = "<group>"; };
 		12377E2119B48E750069D523 /* PostCodes.inc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.pascal; path = PostCodes.inc; sourceTree = "<group>"; };
-		12377E2219B48E750069D523 /* rbc */ = {isa = PBXFileReference; lastKnownFileType = file; path = rbc; sourceTree = "<group>"; };
+		12377E2219B48E750069D523 /* rbc */ = {isa = PBXFileReference; lastKnownFileType = text; path = rbc; sourceTree = "<group>"; };
 		12377E2319B48E750069D523 /* ReadMe.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = ReadMe.txt; sourceTree = "<group>"; };
 		12377E2419B48E750069D523 /* ResetVector.uni */ = {isa = PBXFileReference; lastKnownFileType = text; path = ResetVector.uni; sourceTree = "<group>"; };
 		12377E2519B48E750069D523 /* ResetVectorExtra.uni */ = {isa = PBXFileReference; lastKnownFileType = text; path = ResetVectorExtra.uni; sourceTree = "<group>"; };
@@ -795,24 +795,13 @@
 		129F031C16ABC1A400EC5CC5 /* UsbMouse.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = UsbMouse.c; sourceTree = "<group>"; };
 		129F031D16ABC1A400EC5CC5 /* UsbMouse.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UsbMouse.h; sourceTree = "<group>"; };
 		129F031E16ABC1A400EC5CC5 /* UsbMouseDxe.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = UsbMouseDxe.inf; sourceTree = "<group>"; };
-		12A55F0E16B5A7E100E89768 /* Thunk16-best.S */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm; path = "Thunk16-best.S"; sourceTree = "<group>"; };
-		12A55F0F16B5A7E100E89768 /* Thunk16-orig.S */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm; path = "Thunk16-orig.S"; sourceTree = "<group>"; };
-		12A55F1016B5A7E100E89768 /* Readme.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = Readme.txt; sourceTree = "<group>"; };
-		12A55F1216B5A7E100E89768 /* Thunk16-best.S */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm; path = "Thunk16-best.S"; sourceTree = "<group>"; };
-		12A55F1316B5A7E100E89768 /* Thunk16-orig.S */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm; path = "Thunk16-orig.S"; sourceTree = "<group>"; };
-		12A55F1416B5A7E100E89768 /* X86FxSave.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = X86FxSave.c; sourceTree = "<group>"; };
 		12A55F1516B5A7E100E89768 /* build_rule.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = build_rule.txt; sourceTree = "<group>"; };
 		12A55F1616B5A7E100E89768 /* clover.log */ = {isa = PBXFileReference; lastKnownFileType = text; path = clover.log; sourceTree = "<group>"; };
-		12A55F1716B5A7E100E89768 /* EmuVariable.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = EmuVariable.c; sourceTree = "<group>"; };
-		12A55F1816B5A7E100E89768 /* IsaAcpi.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = IsaAcpi.c; sourceTree = "<group>"; };
-		12A55F1916B5A7E100E89768 /* MdeModulePkgSample.dec */ = {isa = PBXFileReference; lastKnownFileType = text; path = MdeModulePkgSample.dec; sourceTree = "<group>"; };
 		12A55F1B16B5A7E100E89768 /* ebuild.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = ebuild.sh; sourceTree = "<group>"; };
 		12A55F1C16B5A7E100E89768 /* HowToStartQemu.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = HowToStartQemu.txt; sourceTree = "<group>"; };
 		12A55F1D16B5A7E100E89768 /* OvmfCloverX64.dsc */ = {isa = PBXFileReference; lastKnownFileType = text; path = OvmfCloverX64.dsc; sourceTree = "<group>"; };
 		12A55F1E16B5A7E100E89768 /* OvmfCloverX64.fdf */ = {isa = PBXFileReference; lastKnownFileType = text; path = OvmfCloverX64.fdf; sourceTree = "<group>"; };
 		12A55F1F16B5A7E100E89768 /* tools_def.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = tools_def.txt; sourceTree = "<group>"; };
-		12A55F2016B5A7E100E89768 /* UefiBaseType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UefiBaseType.h; sourceTree = "<group>"; };
-		12A55F2116B5A7E100E89768 /* UefiHiiServicesLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = UefiHiiServicesLib.c; sourceTree = "<group>"; };
 		12A55F2316B5A7E100E89768 /* ComponentName.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ComponentName.c; sourceTree = "<group>"; };
 		12A55F2416B5A7E100E89768 /* UsbBus.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = UsbBus.c; sourceTree = "<group>"; };
 		12A55F2516B5A7E100E89768 /* UsbBus.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UsbBus.h; sourceTree = "<group>"; };
@@ -825,7 +814,6 @@
 		12A55F2C16B5A7E100E89768 /* UsbHub.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UsbHub.h; sourceTree = "<group>"; };
 		12A55F2D16B5A7E100E89768 /* UsbUtility.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = UsbUtility.c; sourceTree = "<group>"; };
 		12A55F2E16B5A7E100E89768 /* UsbUtility.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UsbUtility.h; sourceTree = "<group>"; };
-		12A55F2F16B5A7E100E89768 /* UsbHcMem.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = UsbHcMem.c; sourceTree = "<group>"; };
 		12A55F3116B5A7E100E89768 /* ComponentName.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ComponentName.c; sourceTree = "<group>"; };
 		12A55F3216B5A7E100E89768 /* MouseHid.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = MouseHid.c; sourceTree = "<group>"; };
 		12A55F3316B5A7E100E89768 /* UsbMouse.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = UsbMouse.c; sourceTree = "<group>"; };
@@ -5758,51 +5746,15 @@
 		12A55F0B16B5A7E100E89768 /* Patches_for_EDK2 */ = {
 			isa = PBXGroup;
 			children = (
-				12A55F0C16B5A7E100E89768 /* BaseLib */,
 				12A55F1516B5A7E100E89768 /* build_rule.txt */,
 				12A55F1616B5A7E100E89768 /* clover.log */,
-				12A55F1716B5A7E100E89768 /* EmuVariable.c */,
-				12A55F1816B5A7E100E89768 /* IsaAcpi.c */,
-				12A55F1916B5A7E100E89768 /* MdeModulePkgSample.dec */,
 				12A55F1A16B5A7E100E89768 /* OvmfPkg */,
 				12A55F1F16B5A7E100E89768 /* tools_def.txt */,
-				12A55F2016B5A7E100E89768 /* UefiBaseType.h */,
-				12A55F2116B5A7E100E89768 /* UefiHiiServicesLib.c */,
 				12A55F2216B5A7E100E89768 /* UsbBusDxe */,
-				12A55F2F16B5A7E100E89768 /* UsbHcMem.c */,
 				12A55F3016B5A7E100E89768 /* UsbMouseDxe */,
 			);
 			name = Patches_for_EDK2;
 			path = ../../Patches_for_EDK2;
-			sourceTree = "<group>";
-		};
-		12A55F0C16B5A7E100E89768 /* BaseLib */ = {
-			isa = PBXGroup;
-			children = (
-				12A55F0D16B5A7E100E89768 /* IA32 */,
-				12A55F1016B5A7E100E89768 /* Readme.txt */,
-				12A55F1116B5A7E100E89768 /* X64 */,
-				12A55F1416B5A7E100E89768 /* X86FxSave.c */,
-			);
-			path = BaseLib;
-			sourceTree = "<group>";
-		};
-		12A55F0D16B5A7E100E89768 /* IA32 */ = {
-			isa = PBXGroup;
-			children = (
-				12A55F0E16B5A7E100E89768 /* Thunk16-best.S */,
-				12A55F0F16B5A7E100E89768 /* Thunk16-orig.S */,
-			);
-			path = IA32;
-			sourceTree = "<group>";
-		};
-		12A55F1116B5A7E100E89768 /* X64 */ = {
-			isa = PBXGroup;
-			children = (
-				12A55F1216B5A7E100E89768 /* Thunk16-best.S */,
-				12A55F1316B5A7E100E89768 /* Thunk16-orig.S */,
-			);
-			path = X64;
 			sourceTree = "<group>";
 		};
 		12A55F1A16B5A7E100E89768 /* OvmfPkg */ = {
@@ -11600,14 +11552,11 @@
 				12D6129E188FAAD20067F619 /* Hibernate.c */,
 				12D6307414CEA05E00E5898F /* Injectors.c */,
 				261A9E611599E0340006F036 /* kernel_patcher.c */,
-				122B621C157E814100D06F37 /* kernel_patcher.h */,
 				12E06DFA15CBC24D0069E011 /* kext_inject.c */,
 				12E06DFB15CBC24D0069E011 /* kext_inject.h */,
-				122B621D157E814100D06F37 /* kext_patcher.c */,
 				12D6307514CEA05E00E5898F /* LegacyBiosThunk.c */,
 				12D6307614CEA05E00E5898F /* LegacyBiosThunk.h */,
 				12D6307714CEA05E00E5898F /* LegacyBoot.c */,
-				122B621E157E815100D06F37 /* loader.h */,
 				2CE5F615163A86BC00AB5A3A /* LoaderUefi.h */,
 				12D6307814CEA05E00E5898F /* memvendors.h */,
 				12D6307B14CEA05E00E5898F /* nvidia.c */,

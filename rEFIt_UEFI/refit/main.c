@@ -706,7 +706,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
   }
 
   egClearScreen(Entry->BootBgColor ? Entry->BootBgColor : &DarkBackgroundPixel);
-  KillMouse();
+//  KillMouse();
 
 //  if (Entry->LoaderType == OSTYPE_OSX) {
   if (OSTYPE_IS_OSX(Entry->LoaderType) ||
