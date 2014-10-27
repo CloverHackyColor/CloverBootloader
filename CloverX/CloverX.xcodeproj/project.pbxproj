@@ -513,11 +513,7 @@
 		12A82BB817CFD3600019A5D3 /* XhciReg.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XhciReg.h; sourceTree = "<group>"; };
 		12A82BB917CFD3600019A5D3 /* XhciSched.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = XhciSched.c; sourceTree = "<group>"; };
 		12A82BBA17CFD3600019A5D3 /* XhciSched.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XhciSched.h; sourceTree = "<group>"; };
-		12AFB13B19EFAC1600D1836F /* .gitattributes */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitattributes; sourceTree = "<group>"; };
-		12AFB13C19EFAC1600D1836F /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
-		12AFB13D19EFAC1600D1836F /* .gitmodules */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitmodules; sourceTree = "<group>"; };
 		12AFB13E19EFAC1600D1836F /* efifs.dec */ = {isa = PBXFileReference; lastKnownFileType = text; path = efifs.dec; sourceTree = "<group>"; };
-		12AFB14019EFAC1600D1836F /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		12AFB14119EFAC1600D1836F /* config-util.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "config-util.h"; sourceTree = "<group>"; };
 		12AFB14219EFAC1600D1836F /* config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
 		12AFB14619EFAC1700D1836F /* coredetect.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = coredetect.c; sourceTree = "<group>"; };
@@ -2959,9 +2955,6 @@
 		12AFB13A19EFAC1600D1836F /* GrubFS */ = {
 			isa = PBXGroup;
 			children = (
-				12AFB13B19EFAC1600D1836F /* .gitattributes */,
-				12AFB13C19EFAC1600D1836F /* .gitignore */,
-				12AFB13D19EFAC1600D1836F /* .gitmodules */,
 				12AFB13E19EFAC1600D1836F /* efifs.dec */,
 				12AFB13F19EFAC1600D1836F /* grub */,
 				12AFB54519EFAC1800D1836F /* src */,
@@ -2973,7 +2966,6 @@
 		12AFB13F19EFAC1600D1836F /* grub */ = {
 			isa = PBXGroup;
 			children = (
-				12AFB14019EFAC1600D1836F /* .gitignore */,
 				12AFB14119EFAC1600D1836F /* config-util.h */,
 				12AFB14219EFAC1600D1836F /* config.h */,
 				12AFB14319EFAC1600D1836F /* grub-core */,

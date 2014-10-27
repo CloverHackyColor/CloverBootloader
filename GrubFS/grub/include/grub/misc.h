@@ -312,7 +312,7 @@ grub_strtol (const char *str, char **end, int base)
 
 static inline char *grub_strdup (const char *s)
 {
-    unsigned int ssz = (unsigned int)AsciiStrLen(s);
+    unsigned int ssz = (unsigned int)AsciiStrLen(s) + 1;
     char *copy = (char *)AllocateZeroPool(ssz);
 
     if (copy)

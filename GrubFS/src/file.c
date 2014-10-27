@@ -286,11 +286,7 @@ DirHook(const CHAR8 *name, const GRUB_DIRHOOK_INFO *DirInfo, VOID *Data)
 	EFI_STATUS Status;
 	EFI_FILE_INFO *Info = (EFI_FILE_INFO *) Data;
 	INT64 *Index = (INT64 *) &Info->FileSize;
-#if defined(MDE_CPU_IA32)
-	CHAR8 *filename = (CHAR8 *) ((UINT32)Info->PhysicalSize);
-#else
-	CHAR8 *filename = (CHAR8 *) Info->PhysicalSize;
-#endif
+	CHAR8 *filename = (CHAR8 *) ((UINTN)Info->PhysicalSize);
 	EFI_TIME Time = { 1970, 01, 01, 00, 00, 00, 0, 0, 0, 0, 0};
 
 	// Eliminate '.' or '..'
