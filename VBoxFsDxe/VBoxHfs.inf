@@ -49,6 +49,7 @@
    UefiDriverEntryPoint
    DebugLib
    PcdLib
+       MemLogLib
 
 [Guids]
   gEfiFileInfoGuid

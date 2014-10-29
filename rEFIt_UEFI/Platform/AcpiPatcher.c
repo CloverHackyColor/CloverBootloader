@@ -1806,7 +1806,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
     ACPI_DROP_TABLE *DropTable = gSettings.ACPIDropTables;
     while (DropTable) {
       if (DropTable->MenuItem.BValue) {
-        DBG("Attempting to drop \"%4.4a\" (%8.8X) \"%8.8a\" (%16.16lX) L=%d\n", &(DropTable->Signature), DropTable->Signature, &(DropTable->TableId), DropTable->TableId, DropTable->Length);
+ //       DBG("Attempting to drop \"%4.4a\" (%8.8X) \"%8.8a\" (%16.16lX) L=%d\n", &(DropTable->Signature), DropTable->Signature, &(DropTable->TableId), DropTable->TableId, DropTable->Length);
         DropTableFromXSDT(DropTable->Signature, DropTable->TableId, DropTable->Length);
         DropTableFromRSDT(DropTable->Signature, DropTable->TableId, DropTable->Length);
       }

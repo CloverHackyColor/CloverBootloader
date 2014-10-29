@@ -707,44 +707,50 @@ VOID egRawCompose(IN OUT EG_PIXEL *CompBasePtr, IN EG_PIXEL *TopBasePtr,
 {
   INT64       x, y;
   EG_PIXEL    *TopPtr, *CompPtr;
-  UINT32      TopAlpha;
-  UINTN       Alpha;
-  UINT32      RevAlpha;
-  UINTN       Temp;
+    //To make native division we need INTN types
+  INTN      TopAlpha;
+  INTN      Alpha;
+  INTN      CompAlpha;
+  INTN      RevAlpha;
+  INTN       Temp;
 //  EG_PIXEL    *CompUp;
   if (!CompBasePtr || !TopBasePtr) {
     return;
   }
 //  CompUp = CompBasePtr + Width * Height;
-  //if TopAlpha=255 then draw Top
-  //else if TopAlpha=0 then draw Comp
-  //else draw mixture (don't used)
+  //Slice - my opinion
+//if TopAlpha=255 then draw Top - non transparent
+//else if TopAlpha=0 then draw Comp - full transparent
+//else draw mixture |-----comp---|--top--| 
+//final alpha =(1-(1-x)*(1-y)) =(255*255-(255-topA)*(255-compA))/255
+
   for (y = 0; y < Height; y++) {
     TopPtr = TopBasePtr;
     CompPtr = CompBasePtr;
     for (x = 0; x < Width; x++) {
-      TopAlpha = TopPtr->a;
+      TopAlpha = TopPtr->a & 0xFF; //exclude sign
+      CompAlpha = CompPtr->a & 0xFF;
       RevAlpha = 255 - TopAlpha;
-      Alpha = 255 * (UINT8)TopAlpha + (UINT8)CompPtr->a * (UINT8)RevAlpha;
+//      Alpha = 255 * (UINT8)TopAlpha + (UINT8)CompPtr->a * (UINT8)RevAlpha;
+      Alpha = (255*255 - (255 - TopAlpha) * (255 - CompAlpha)) / 255;
       
-      if (Alpha == 0) {
-        TopPtr++, CompPtr++;
+      if (TopAlpha == 0) {
+        TopPtr++, CompPtr++; // no need to bother
         continue;
       }
       
-      TopAlpha = (UINT8)TopAlpha * 255;
-      RevAlpha = (UINT8)CompPtr->a * (UINT8)RevAlpha;
       
-      Temp = ((UINT8)TopPtr->b * TopAlpha) + ((UINT8)CompPtr->b * RevAlpha);
-      CompPtr->b = (UINT8)(Temp / Alpha);
       
-      Temp = ((UINT8)TopPtr->g * TopAlpha) + ((UINT8)CompPtr->g  * RevAlpha);
-      CompPtr->g = (UINT8)(Temp / Alpha);
+      Temp = (TopPtr->b * TopAlpha) + (CompPtr->b * RevAlpha);
+      CompPtr->b = (UINT8)(Temp / 255);
       
-      Temp = ((UINT8)TopPtr->r * TopAlpha) + ((UINT8)CompPtr->r * RevAlpha);
-      CompPtr->r = (UINT8)(Temp / Alpha);
+      Temp = (TopPtr->g * TopAlpha) + (CompPtr->g  * RevAlpha);
+      CompPtr->g = (UINT8)(Temp / 255);
       
-      CompPtr->a = (UINT8)(Alpha / 255);
+      Temp = (TopPtr->r * TopAlpha) + (CompPtr->r * RevAlpha);
+      CompPtr->r = (UINT8)(Temp / 255);
+      
+      CompPtr->a = (UINT8)Alpha;
       
       // apianti - Determine the alpha channel first and use associative compose
       //Temp = (UINTN)CompPtr->a * RevAlpha + Alpha * Alpha;
@@ -826,17 +832,19 @@ VOID egComposeImage(IN OUT EG_IMAGE *CompImage, IN EG_IMAGE *TopImage, IN INTN P
     
     if (TopImage->HasAlpha) {
       if (CompImage->HasAlpha) {
-      egRawCompose(CompImage->PixelData + PosY * CompImage->Width + PosX, TopImage->PixelData,
-                   CompWidth, CompHeight, CompImage->Width, TopImage->Width);
+        egRawCompose(CompImage->PixelData + PosY * CompImage->Width + PosX,
+                     TopImage->PixelData,
+                     CompWidth, CompHeight, CompImage->Width, TopImage->Width);
+      } else {
+        egRawComposeOnFlat(CompImage->PixelData + PosY * CompImage->Width + PosX,
+                           TopImage->PixelData,
+                           CompWidth, CompHeight, CompImage->Width, TopImage->Width);
       }
-      else {
-        egRawComposeOnFlat(CompImage->PixelData + PosY * CompImage->Width + PosX, TopImage->PixelData,
-                   CompWidth, CompHeight, CompImage->Width, TopImage->Width);
-      }
-    }
-    else
-      egRawCopy(CompImage->PixelData + PosY * CompImage->Width + PosX, TopImage->PixelData,
+    } else {
+      egRawCopy(CompImage->PixelData + PosY * CompImage->Width + PosX,
+                TopImage->PixelData,
                 CompWidth, CompHeight, CompImage->Width, TopImage->Width);
+    }
   }
 }
 

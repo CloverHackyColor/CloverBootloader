@@ -26,13 +26,17 @@
 
 #include "fsw_hfs.h"
 
+#include <Library/MemLogLib.h>
+#include <Library/PrintLib.h>
+
+
 #define VBOXHFS_BTREE_BINSEARCH 0
 #define DEBUG_HFS 0
 
 #if DEBUG_HFS==2
 #define DBG(...)  AsciiPrint(__VA_ARGS__)
 #elif DEBUG_HFS==1
-#define DBG(...)  BootLog(__VA_ARGS__)
+#define DBG(...) MemLog(TRUE, 1, __VA_ARGS__)
 #else
 #define DBG(...)
 #endif
@@ -117,7 +121,7 @@ fsw_hfs_read_block (struct fsw_hfs_dnode    *dno,
   
   phys_bno = extent.phys_start;
   //Slice - increase cache level from 0 to 3
-  status = fsw_block_get(dno->g.vol, phys_bno, 3, (void **)&buffer);
+  status = fsw_block_get(dno->g.vol, phys_bno, 0, (void **)&buffer);
   if (status)
     return status;
   
@@ -216,14 +220,14 @@ static fsw_status_t fsw_hfs_volume_mount(struct fsw_hfs_volume *vol)
     
     if ((signature == kHFSPlusSigWord) || (signature == kHFSXSigWord)) { //H+ or HX
       if (vol->hfs_kind == 0) {
-        //            DPRINT("found HFS+\n");
+//        DBG("found HFS+\n");
         vol->hfs_kind = FSW_HFS_PLUS;
       }
     } else if (signature == kHFSSigWord) {// 'BD'
       //            HFSMasterDirectoryBlock* mdb = (HFSMasterDirectoryBlock*)buffer;
       //VolumeName = mdb->drVN 28bytes
       if (be16_to_cpu(mdb->drEmbedSigWord) == kHFSPlusSigWord) {
-        //                DPRINT("found HFS+ inside HFS, untested\n");
+        DBG("found HFS+ inside HFS, untested\n");
         vol->hfs_kind = FSW_HFS_PLUS_EMB;
         vol->emb_block_off = be32_to_cpu(mdb->drEmbedExtent.startBlock);
         fsw_block_release (vol, blockno, buffer);
@@ -231,7 +235,7 @@ static fsw_status_t fsw_hfs_volume_mount(struct fsw_hfs_volume *vol)
         /* retry */
         continue;
       } else {
-        //                DPRINT("found plain HFS, unsupported\n");
+        DBG("found plain HFS, unsupported\n");
         vol->hfs_kind = FSW_HFS_PLAIN;
       }
       rv = FSW_UNSUPPORTED;
@@ -247,7 +251,7 @@ static fsw_status_t fsw_hfs_volume_mount(struct fsw_hfs_volume *vol)
     
     block_size = be32_to_cpu(voldesc->blockSize);
     vol->block_size_shift = fsw_hfs_compute_shift(block_size);
-    
+//    DBG("vol block_size=%d\n", block_size);
     fsw_block_release(vol, blockno, buffer);
     buffer = NULL;
     voldesc = NULL;
@@ -259,12 +263,18 @@ static fsw_status_t fsw_hfs_volume_mount(struct fsw_hfs_volume *vol)
         break;
     
     s.type = FSW_STRING_TYPE_ISO88591;
-    s.size = s.len = 0;
-    s.data = NULL; //&mdb->drVN; //"HFS+ volume";
+    s.size = s.len = i;
+    s.data = &mdb->drVN; //"HFS+ volume";
     
     //fsw_status_t fsw_strdup_coerce(struct fsw_string *dest, int type, struct fsw_string *src)
     status = fsw_strdup_coerce(&vol->g.label, vol->g.host_string_type, &s);
     CHECK(status);
+    DBG("HW Volume label:");
+    for (i=0; i<s.len; i++) {
+      DBG("%02x ", ((fsw_u16*)vol->g.label.data)[i]);
+    }
+    DBG("\n");
+
     
     /* Setup catalog dnode */
     status = fsw_dnode_create_root(vol, kHFSCatalogFileID, &vol->catalog_tree.file);
@@ -324,8 +334,10 @@ static fsw_status_t fsw_hfs_volume_mount(struct fsw_hfs_volume *vol)
         
         btnd = (BTNodeDescriptor*) cbuff;
         ck = (HFSPlusCatalogKey*) (cbuff + sizeof(BTNodeDescriptor));
+   //     DBG(" btnd->kind ==%d expected -1\n", btnd->kind);
+  //      DBG(" ck->parentID ==%d expected 1\n", be32_to_cpu (ck->parentID));
         if (btnd->kind == kBTLeafNode &&
-            be32_to_cpu (ck->parentID) == kHFSRootParentID) {
+            be32_to_cpu_ua (&ck->parentID) == kHFSRootParentID) {
           struct fsw_string vn;
           
           vn.type = FSW_STRING_TYPE_UTF16_BE;
@@ -333,7 +345,12 @@ static fsw_status_t fsw_hfs_volume_mount(struct fsw_hfs_volume *vol)
           vn.size = vn.len * sizeof (fsw_u16);
           vn.data = ck->nodeName.unicode;
           fsw_strfree (&vol->g.label);
-          status = fsw_strdup_coerce(&vol->g.label, vol->g.host_string_type, &vn);
+          status = fsw_strdup_coerce(&vol->g.label, FSW_STRING_TYPE_UTF16, &vn);
+          DBG("Volume label:");
+          for (i=0; i<vn.len; i++) {
+            DBG("%02x ", ((fsw_u16*)vol->g.label.data)[i]);
+          }
+          DBG("\n");
           CHECK(status);
         }
       }
@@ -645,7 +662,7 @@ fsw_hfs_btree_search (struct fsw_hfs_btree *btree,
 
     if (node->kind == kBTIndexNode && currkey != NULL) {
       currnode = fsw_hfs_btree_next_node (currkey);
-      DBG(": candidate for the next currnode is %d\n", currnode);
+ //     DBG(": candidate for the next currnode is %d\n", currnode);
     }
     else {
       status = FSW_NOT_FOUND;
@@ -691,10 +708,10 @@ fill_fileinfo (
       finfo->used = be32_to_cpu (info->valence);
       finfo->ctime = be32_to_cpu (info->createDate);
       finfo->mtime = be32_to_cpu (info->contentModDate);
-      DBG("number of folder entries=%d\n", finfo->size);
-      DBG("  fileMode=%x\n", finfo->fileMode);
-      DBG("  flags=%x\n", be16_to_cpu(info->flags));
-      DBG("  folderID=%d\n\n", finfo->id);
+//      DBG("number of folder entries=%d\n", finfo->size);
+//      DBG("  fileMode=%x\n", finfo->fileMode);
+//      DBG("  flags=%x\n", be16_to_cpu(info->flags));
+//      DBG("  folderID=%d\n\n", finfo->id);
       break;
     }
   case kHFSPlusFileThreadRecord:
@@ -702,8 +719,8 @@ fill_fileinfo (
       HFSPlusCatalogThread *info = (HFSPlusCatalogThread *) base;
       finfo->id = be32_to_cpu_ua(&info->parentID);
       finfo->type = FSW_DNODE_TYPE_SPECIAL;
-      DBG("  CatalogThread\n");
-      DBG("  folderID=%d\n\n", finfo->id);
+//      DBG("  CatalogThread\n");
+//      DBG("  folderID=%d\n\n", finfo->id);
       
     }
   case kHFSPlusFileRecord:
@@ -729,14 +746,15 @@ fill_fileinfo (
       } else if ((flags & kHFSHasLinkChainMask) &&
                  (finfo->crtype == kHFSAliasType) &&
                  (finfo->creator == kHFSAliasCreator)) {
-        finfo->isdirlink = 1;
+        DBG("found dirlink, fileID=%d\n", finfo->id);
+        finfo->isdirlink = 0; //do nothing for now
       }
       if ((finfo->isfilelink || finfo->isdirlink)/* && !(flags & HFS_LOOKUP_HARDLINK)*/) {
         finfo->ilink = be32_to_cpu_ua (&info->bsdInfo.special.iNodeNum);
         if (finfo->type != FSW_DNODE_TYPE_SYMLINK) {
           status = fsw_hfs_dir_lookup_id(vol, finfo->ilink, &tmp_finfo);
           if (!status) {
-            DBG("hardlink resolved to fileID=%d\n", finfo->ilink);
+ //           DBG("hardlink resolved to fileID=%d\n", finfo->ilink);
             finfo->id = finfo->ilink;
             finfo->ilink = 0;
             finfo->size = tmp_finfo.size;
@@ -749,7 +767,7 @@ fill_fileinfo (
           }
         }
       }
-      DBG("file type=");
+/*      DBG("file type=");
       if (finfo->isfilelink && finfo->crtype == kHardLinkFileType) {
         DBG("hardlink to fileID=%d\n", finfo->ilink);
       } else if (finfo->isdirlink) {
@@ -767,17 +785,17 @@ fill_fileinfo (
           DBG("xxx\n");
           break;
         }
-      }
+      } */
       finfo->fileMode = be16_to_cpu(info->bsdInfo.fileMode);
-      DBG("  fileMode=%x\n", finfo->fileMode);
-      DBG("  flags=%x\n", flags);
-      DBG("  fileID=%d\n", finfo->id);
+//      DBG("  fileMode=%x\n", finfo->fileMode);
+//      DBG("  flags=%x\n", flags);
+//      DBG("  fileID=%d\n", finfo->id);
       finfo->size = be64_to_cpu_ua(&info->dataFork.logicalSize);
       finfo->used =
         LShiftU64 ((fsw_u64)be32_to_cpu_ua (&info->dataFork.totalBlocks),
                    vol->block_size_shift);
-      DBG("file size=%ld, used=%ld\n\n", finfo->size, finfo->used);
-      if (finfo->size == 0) {
+//      DBG("file size=%ld, used=%ld\n\n", finfo->size, finfo->used);
+//      if (finfo->size == 0) {
         //TODO - how to find the real file?
  //       DBG("file info:\n");
  //       DBG("\tdataFork.logicalSize=%d\n", info->dataFork.logicalSize);
@@ -785,7 +803,7 @@ fill_fileinfo (
 //        DBG("\tresourceFork.logicalSize=%d\n", info->resourceFork.logicalSize);
 //        DBG("\tresourceFork.totalBlocks=%d\n", info->resourceFork.totalBlocks);
 
-      }
+//      }
       finfo->ctime = be32_to_cpu (info->createDate);
       finfo->mtime = be32_to_cpu (info->contentModDate);
       fsw_memcpy (&finfo->extents, &info->dataFork.extents,
@@ -825,7 +843,7 @@ fsw_hfs_btree_visit_node(BTreeKey *record, void *param)
   
   i = be32_to_cpu(cat_key->parentID);
   if (vp->parent != 0 && i != vp->parent) { //in some cases we wish no check parentID
-    DBG("cat ID=%x while parentID=%x\n", i, vp->parent);
+//    DBG("cat ID=%x while parentID=%x\n", i, vp->parent);
 //    vp->shandle->pos++;
     return -1;
   }
@@ -840,7 +858,7 @@ fsw_hfs_btree_visit_node(BTreeKey *record, void *param)
     case kHFSPlusFolderThreadRecord:
     case kHFSPlusFileThreadRecord:
     {
-      DBG("skip thread\n");
+//      DBG("skip thread\n");
       vp->shandle->pos++;
       return 0;
     }
@@ -860,11 +878,11 @@ fsw_hfs_btree_visit_node(BTreeKey *record, void *param)
     name_ptr[i] = be16_to_cpu(name_ptr[i]);
   }
   vp->shandle->pos++;
-  DBG("   visited file=", name_ptr);
+/*  DBG("   visited file=", name_ptr);
   for (i=0; i<name_len; i++) {
     DBG("%c", name_ptr[i]?name_ptr[i]:L'@');
   }
-  DBG("\n");
+  DBG("\n"); */
   return 1;
 }
 
@@ -897,7 +915,7 @@ fsw_hfs_btree_iterate_node (struct fsw_hfs_btree *btree,
     fsw_u32 count = be16_to_cpu (node->numRecords);
     fsw_u32 next_node;
     
-    DBG("first_rec=%d, count=%d, kind=%d\n", first_rec, count, node->kind);
+//    DBG("first_rec=%d, count=%d, kind=%d\n", first_rec, count, node->kind);
     status = FSW_NOT_FOUND;
     // Iterate over all records in this node.
     i = first_rec;
@@ -908,7 +926,7 @@ fsw_hfs_btree_iterate_node (struct fsw_hfs_btree *btree,
         status = FSW_SUCCESS;
         goto done;
       } else if (rv == -1) {
-        DBG("tested record %d, status=%d\n", i, rv);
+//        DBG("tested record %d, status=%d\n", i, rv);
         status = FSW_NOT_FOUND; //it means the node has other owner
         goto done; //no need to test more
       }
@@ -918,18 +936,18 @@ fsw_hfs_btree_iterate_node (struct fsw_hfs_btree *btree,
     }
     
     next_node = be32_to_cpu(node->fLink);
-    DBG("next_node=%d\n", next_node);
+//    DBG("next_node=%d\n", next_node);
     
     if (!next_node) {
       status = FSW_NOT_FOUND;
-      DBG("FSW_NOT_FOUND at next_node\n");
+//      DBG("FSW_NOT_FOUND at next_node\n");
       break;
     }
 
     if ((fsw_u32) fsw_hfs_read_file(btree->file, next_node * btree->node_size,
                                     btree->node_size, buffer) != btree->node_size) {
       status = FSW_VOLUME_CORRUPTED;
-      DBG("differ node size btree->node_size=%d\n", btree->node_size);
+//      DBG("differ node size btree->node_size=%d\n", btree->node_size);
       break;
     }
     node = (BTNodeDescriptor *) buffer;
@@ -1024,9 +1042,9 @@ fsw_hfs_cmpi_catkey (BTreeKey *key1, BTreeKey *key2)
   fsw_u16 *p2;
 
   parentId1 = be32_to_cpu_ua(&ckey1->parentID); // MSC warns about a possibly unaligned result of '&' (C4366)
-  if (hardlink) {
-    DBG("parents: %d <-> %d\n", parentId1, ckey2->parentID);
-  }
+//  if (hardlink) {
+//    DBG("parents: %d <-> %d\n", parentId1, ckey2->parentID);
+//  }
   if (parentId1 > ckey2->parentID) {
     return 1;
   } else if (parentId1 < ckey2->parentID) {
@@ -1035,9 +1053,9 @@ fsw_hfs_cmpi_catkey (BTreeKey *key1, BTreeKey *key2)
 
     key1Len = be16_to_cpu (ckey1->nodeName.length);
     key2Len = ckey2->nodeName.length; //it is constructed so CPU endiness
-    if (hardlink) {
-      DBG("keylen: %d <-> %d\n", key1Len, key2Len);
-    }
+//    if (hardlink) {
+//      DBG("keylen: %d <-> %d\n", key1Len, key2Len);
+//    }
 
     if (key1Len == 0 || key2Len == 0) {
       return key1Len - key2Len;
@@ -1045,7 +1063,7 @@ fsw_hfs_cmpi_catkey (BTreeKey *key1, BTreeKey *key2)
     p1 = &ckey1->nodeName.unicode[0];
     p2 = &ckey2->nodeName.unicode[0];
 
-    if (hardlink) {
+/*    if (hardlink) {
       DBG("name:");
       for (apos = 0; apos < key1Len; apos++) {
         ac = be16_to_cpu(p1[apos]);
@@ -1058,7 +1076,7 @@ fsw_hfs_cmpi_catkey (BTreeKey *key1, BTreeKey *key2)
       }
       DBG(":\n");
     }
-
+*/
     apos = bpos = 0;
 
     while(1) {
@@ -1077,9 +1095,9 @@ fsw_hfs_cmpi_catkey (BTreeKey *key1, BTreeKey *key2)
         lc = bc ? fsw_to_lower(bc) : 0xFFFF;;
       }
       bc = (fsw_u16)lc;
-      if (hardlink) {
-        DBG("compare: %c:%c\n", ac?ac:L'@', bc?bc:L'@');
-      }
+//      if (hardlink) {
+//        DBG("compare: %c:%c\n", ac?ac:L'@', bc?bc:L'@');
+//      }
 
       if (ac != bc) {
         break;
@@ -1269,7 +1287,7 @@ static fsw_status_t fsw_hfs_dir_lookup(struct fsw_hfs_volume * vol,
                                  fsw_hfs_cmp_catkey : fsw_hfs_cmpi_catkey,
                                  &node, &ptr);
   if (status) {
-    DBG("fsw_hfs_btree_search dir lookup  status %a\n", fsw_errors[status]);
+//    DBG("fsw_hfs_btree_search dir lookup  status %a\n", fsw_errors[status]);
     goto done;
   }
   
@@ -1309,7 +1327,7 @@ static fsw_status_t fsw_hfs_dir_lookup_id(struct fsw_hfs_volume *vol,
   BTNodeDescriptor *      node = NULL; //root
   fsw_u32                 currnode = vol->catalog_tree.root_node;
   fsw_u32                 nodeSize = vol->catalog_tree.node_size;
-  DBG("...lookup for fileID=%d\n", lookup_id);
+//  DBG("...lookup for fileID=%d\n", lookup_id);
   status = fsw_alloc(nodeSize, &buffer);
   if (status != FSW_SUCCESS) {
     fsw_free(buffer);
@@ -1321,7 +1339,7 @@ static fsw_status_t fsw_hfs_dir_lookup_id(struct fsw_hfs_volume *vol,
                                  MultU64x32(currnode, nodeSize),
                                  nodeSize, buffer) != nodeSize) {
     status = FSW_VOLUME_CORRUPTED;
-    DBG("differ node size while read file\n");
+//    DBG("differ node size while read file\n");
     return status;
   }
   
@@ -1347,7 +1365,7 @@ done:
 
   if (node != NULL)
     fsw_free(node);
-  DBG("fsw_hfs_dir_lookup_id return status %a\n", fsw_errors[status]);
+//  DBG("fsw_hfs_dir_lookup_id return status %a\n", fsw_errors[status]);
   return status;
 }
 
@@ -1387,7 +1405,7 @@ static fsw_status_t fsw_hfs_dir_read(struct fsw_hfs_volume *vol,
                                  fsw_hfs_cmp_catkey : fsw_hfs_cmpi_catkey,
                                  &node, &ptr);
   if (status) {
-    DBG("fsw_hfs_btree_search dir read  status %a\n", fsw_errors[status]);
+//    DBG("fsw_hfs_btree_search dir read  status %a\n", fsw_errors[status]);
     goto done;
   }
   
@@ -1410,7 +1428,7 @@ static fsw_status_t fsw_hfs_dir_read(struct fsw_hfs_volume *vol,
 //never      DBG("create_hfs_dnode  status %a\n", fsw_errors[status]);
 //    }
   } else {
-    DBG("fsw_hfs_btree_iterate_node  status %a\n", fsw_errors[status]);
+//    DBG("fsw_hfs_btree_iterate_node  status %a\n", fsw_errors[status]);
   }
 
 
@@ -1462,7 +1480,7 @@ static fsw_status_t fsw_hfs_readlink(struct fsw_hfs_volume *vol,
     fsw_memdup ((void**)&tmp_target->data, (void*)&metaprefix[0], tmp_target->size);
     sz = (fsw_u32)AsciiSPrint(((char *)tmp_target->data) + MPRFINUM, 10, "%d", dno->ilink);
     tmp_target->len = MPRFINUM + sz;
-      DBG(" iNode name len=%d\n", tmp_target->len);
+//      DBG(" iNode name len=%d\n", tmp_target->len);
     status = fsw_strdup_coerce(link_target, vol->g.host_string_type, tmp_target);
     hardlink = 1;
 /*

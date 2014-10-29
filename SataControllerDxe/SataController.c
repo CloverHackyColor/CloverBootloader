@@ -222,7 +222,6 @@ CalculateBestPioMode (
   }
 #endif
   DBG(L"selected PIO mode = %d\n", *SelectedMode);
-
   return EFI_SUCCESS;
 }
 
@@ -257,7 +256,6 @@ CalculateBestUdmaMode (
   }
 
   DeviceUDmaMode = IdentifyData->AtaData.ultra_dma_mode;
-//  DEBUG ((EFI_D_INFO, "CalculateBestUdmaMode: DeviceUDmaMode = %x\n", DeviceUDmaMode));
   DBG(L"CalculateBestUdmaMode: DeviceUDmaMode = %x\n", DeviceUDmaMode);
   DeviceUDmaMode &= 0x3f;
   TempMode = 0;                 // initialize it to UDMA-0
@@ -286,7 +284,6 @@ CalculateBestUdmaMode (
   //
   *SelectedMode = TempMode;
   DBG(L"selected DMA mode = %d\n", *SelectedMode);
-
   return EFI_SUCCESS;
 }
 
@@ -414,15 +411,12 @@ SataControllerStart (
   EFI_PCI_IO_PROTOCOL               *PciIo;
   PCI_TYPE00                        PciData;
   EFI_SATA_CONTROLLER_PRIVATE_DATA  *SataPrivateData;
-/*
-  UINT32                            Data32;
-  UINTN                             ChannelDeviceCount;
-  UINT8                             Port;
-*/
+//  UINT32                            Data32;
+//  UINTN                             ChannelDeviceCount;
+//  UINT8                             Port;
 
 //  DEBUG ((EFI_D_INFO, "SataControllerStart START\n"));
   DBG(L"SataControllerStart START\n");
-
   SataPrivateData = NULL;
 
   //
@@ -437,7 +431,6 @@ SataControllerStart (
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
   if (EFI_ERROR (Status)) {
-//    DEBUG ((EFI_D_ERROR, "SataControllerStart error return status = %r\n", Status));
     DBG(L"SataControllerStart error return status = %r\n", Status);
     return Status;
   }
@@ -574,7 +567,6 @@ Done:
 
 //  DEBUG ((EFI_D_INFO, "SataControllerStart END status = %r\n", Status));
   DBG(L"SataControllerStart END status = %r\n", Status);
-
   return Status;
 }
 
@@ -1093,7 +1085,6 @@ IdeInitCalculateMode (
 
   *SupportedModes = AllocateZeroPool (sizeof (EFI_ATA_COLLECTIVE_MODE));
   if (*SupportedModes == NULL) {
-//    ASSERT (*SupportedModes != NULL);
     return EFI_OUT_OF_RESOURCES;
   }
 
@@ -1123,26 +1114,29 @@ IdeInitCalculateMode (
   }
 //  DEBUG ((EFI_D_INFO, "IdeInitCalculateMode: PioMode = %x\n", (*SupportedModes)->PioMode.Mode));
   DBG(L"IdeInitCalculateMode: PioMode = %x\n", (*SupportedModes)->PioMode.Mode);
+//Slice - exclude UDMA
+#ifndef DISABLE_UDMA_SUPPORT
   Status = CalculateBestUdmaMode (
             IdentifyData,
             (DisqulifiedModes->UdmaMode.Valid ? ((UINT16 *) &(DisqulifiedModes->UdmaMode.Mode)) : NULL),
             &SelectedMode
             );
-//Slice - exclude UDMA
   if (!EFI_ERROR (Status)) {
     (*SupportedModes)->UdmaMode.Valid = TRUE;
     (*SupportedModes)->UdmaMode.Mode = SelectedMode;
 
-  } else { 
+  } else  
+#else  
+  {
     (*SupportedModes)->UdmaMode.Valid = FALSE;
     (*SupportedModes)->UdmaMode.Mode  = SelectedMode;
   }
+#endif
 //  (*SupportedModes)->UdmaMode.Valid = FALSE;
   (*SupportedModes)->MultiWordDmaMode.Valid = FALSE;
 	
 //  DEBUG ((EFI_D_INFO, "IdeInitCalculateMode: UdmaMode = %x\n", (*SupportedModes)->UdmaMode.Mode));
   DBG(L"IdeInitCalculateMode: UdmaMode = %x\n", (*SupportedModes)->UdmaMode.Mode);
-
   //
   // The modes other than PIO and UDMA are not supported
   //

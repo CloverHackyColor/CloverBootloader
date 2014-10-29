@@ -1924,7 +1924,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     if (gConfigDict[i]) {
       Status = GetUserSettings(SelfRootDir, gConfigDict[i]);
       if (EFI_ERROR(Status)) {
-        DBG("Error in Second part of settings%d: %r\n", i, Status);
+ //       DBG("Error in Second part of settings%d: %r\n", i, Status);
       }
     }
   }
@@ -1942,7 +1942,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       DBG("Invalid smbios.plist, not overriding config.plist!\n");
     }
   } else {
-    DBG("smbios.plist not found, not overriding config.plist\n");
+//    DBG("smbios.plist not found, not overriding config.plist\n");
   }
   
   HaveDefaultVolume = gSettings.DefaultVolume != NULL;
@@ -2341,6 +2341,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       //    PauseForKey(L"After ReinitRefitLib");
     }
     if (ReinitDesktop) {
+      DBG("ReinitSelfLib after theme change\n");
       ReinitSelfLib();
     }
     //    PauseForKey(L"After ReinitSelfLib");

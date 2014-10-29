@@ -361,8 +361,8 @@
   MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe.inf
 #  MdeModulePkg/Bus/Pci/XhciDxe/XhciDxe.inf
   Clover/Patches_for_EDK2/XhciDxe/XhciDxe.inf
-#  MdeModulePkg/Bus/Usb/UsbBusDxe/UsbBusDxe.inf
-  Clover/Patches_for_EDK2/UsbBusDxe/UsbBusDxe.inf
+  MdeModulePkg/Bus/Usb/UsbBusDxe/UsbBusDxe.inf
+#  Clover/Patches_for_EDK2/UsbBusDxe/UsbBusDxe.inf
   MdeModulePkg/Bus/Usb/UsbKbDxe/UsbKbDxe.inf
   MdeModulePkg/Bus/Usb/UsbMassStorageDxe/UsbMassStorageDxe.inf
   MdeModulePkg/Bus/Usb/UsbMouseDxe/UsbMouseDxe.inf
@@ -526,6 +526,11 @@
   DEFINE NOUSB_FLAG = -DDISABLE_USB_SUPPORT
 !endif  
 
+!ifdef DISABLE_UDMA_SUPPORT
+  DEFINE NOUDMA_FLAG = -DDISABLE_UDMA_SUPPORT
+!endif  
+
+
 # Slice: I propose this flag always true
 #!ifdef AMD_SUPPORT
   DEFINE AMD_FLAG = -DAMD_SUPPORT
@@ -543,7 +548,7 @@
   DEFINE DEBUG_ON_SERIAL_PORT_FLAG = -DDEBUG_ON_SERIAL_PORT
 !endif
 
-  DEFINE BUILD_OPTIONS=-DMDEPKG_NDEBUG -DCLOVER_BUILD $(VBIOS_PATCH_CLOVEREFI_FLAG) $(ONLY_SATA_0_FLAG) $(BLOCKIO_FLAG) $(NOUSB_FLAG) $(AMD_FLAG) $(SECURE_BOOT_FLAG) $(PS2MOUSE_LEGACYBOOT_FLAG) $(DEBUG_ON_SERIAL_PORT_FLAG)
+  DEFINE BUILD_OPTIONS=-DMDEPKG_NDEBUG -DCLOVER_BUILD $(VBIOS_PATCH_CLOVEREFI_FLAG) $(ONLY_SATA_0_FLAG) $(BLOCKIO_FLAG) $(NOUSB_FLAG) $(AMD_FLAG) $(SECURE_BOOT_FLAG) $(PS2MOUSE_LEGACYBOOT_FLAG) $(DEBUG_ON_SERIAL_PORT_FLAG) $(NOUDMA_FLAG)
 
   MSFT:*_*_*_CC_FLAGS  = /FAcs /FR$(@R).SBR /wd4701 /wd4703 $(BUILD_OPTIONS)
   XCODE:*_*_*_CC_FLAGS = $(BUILD_OPTIONS)

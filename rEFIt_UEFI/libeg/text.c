@@ -117,7 +117,7 @@ EG_IMAGE * egLoadFontImage(IN BOOLEAN FromTheme, IN INTN Rows, IN INTN Cols)
   ImageHeight = NewImage->Height;
 //  DBG("ImageHeight=%d\n", ImageHeight);
   PixelPtr = NewImage->PixelData;
-  DBG("Font loaded: ImageWidth=%d ImageHeight=%d\n", ImageWidth, ImageHeight);
+//  DBG("Font loaded: ImageWidth=%d ImageHeight=%d\n", ImageWidth, ImageHeight);
   NewFontImage = egCreateImage(ImageWidth * Rows, ImageHeight / Rows, WantAlpha);
   if (NewFontImage == NULL) {
     DBG("Can't create new font image!\n");
@@ -214,7 +214,7 @@ VOID PrepareFont(VOID)
     FontHeight = 12;
   }
   TextHeight = FontHeight + TEXT_YMARGIN * 2;
-  DBG("Font %d prepared WxH=%dx%d CharWidth=%d\n", GlobalConfig.Font, FontWidth, FontHeight, GlobalConfig.CharWidth);
+//  DBG("Font %d prepared WxH=%dx%d CharWidth=%d\n", GlobalConfig.Font, FontWidth, FontHeight, GlobalConfig.CharWidth);
 }
 
 VOID egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage,

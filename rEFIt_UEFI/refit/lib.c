@@ -241,7 +241,7 @@ EFI_STATUS ReinitSelfLib(VOID)
                                   &TmpDevicePath,
                                   &NewSelfHandle);
   CheckError(Status, L"while reopening our self handle");
-  DBG("new SelfHandle=%x\n", NewSelfHandle);
+ // DBG("new SelfHandle=%x\n", NewSelfHandle);
   
   SelfRootDir = EfiLibOpenRoot(NewSelfHandle);
   if (SelfRootDir == NULL) {
@@ -1073,8 +1073,8 @@ VOID ScanVolumes(VOID)
       if (!Volume->LegacyOS->IconName) {
         Volume->LegacyOS->IconName = L"legacy";
       }
-      DBG("  Volume '%s', LegacyOS '%s', LegacyIcon(s) '%s', GUID = %g\n",
-          Volume->VolName, Volume->LegacyOS->Name ? Volume->LegacyOS->Name : L"", Volume->LegacyOS->IconName, Guid);
+//      DBG("  Volume '%s', LegacyOS '%s', LegacyIcon(s) '%s', GUID = %g\n",
+//          Volume->VolName, Volume->LegacyOS->Name ? Volume->LegacyOS->Name : L"", Volume->LegacyOS->IconName, Guid);
       if (SelfVolume == Volume) {
         DBG("  This is SelfVolume !!\n");
       }

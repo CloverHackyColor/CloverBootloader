@@ -450,7 +450,7 @@ LoadUserSettings (
   
   // load config
   if ((ConfName == NULL) || (Dict == NULL)) {
-    DBG ("Can't load plist in LoadUserSettings: NULL\n");
+ //   DBG ("Can't load plist in LoadUserSettings: NULL\n");
     return EFI_NOT_FOUND;
   }
   
@@ -460,7 +460,7 @@ LoadUserSettings (
   if (FileExists (SelfRootDir, ConfigOemPath)) {
     Status = egLoadFile (SelfRootDir, ConfigOemPath, (UINT8**)&gConfigPtr, &Size);
   } else {
-    DBG ("Oem %s.plist not found at path: %s\n", ConfName, ConfigOemPath);
+//    DBG ("Oem %s.plist not found at path: %s\n", ConfName, ConfigOemPath);
   }
   
   if (EFI_ERROR (Status)) {
@@ -3063,7 +3063,7 @@ InitTheme(
   Rnd = ((Time != NULL) && (ThemesNum != 0)) ? Time->Second % ThemesNum : 0;
   
   // Invalidated BuiltinIcons
-  DBG ("Invalidating BuiltinIcons...\n");
+//  DBG ("Invalidating BuiltinIcons...\n");
 
   for (i = 0; i < BUILTIN_ICON_COUNT; i++) {
     if (BuiltinIconTable[i].Image != NULL) {
@@ -3102,13 +3102,13 @@ InitTheme(
       if (TestTheme != NULL) {
         ThemeDict = LoadTheme (TestTheme);
         if (ThemeDict != NULL) {
-          DBG ("special theme %s found and %s parsed\n", TestTheme, CONFIG_THEME_FILENAME);
+  //        DBG ("special theme %s found and %s parsed\n", TestTheme, CONFIG_THEME_FILENAME);
           if (GlobalConfig.Theme) {
             FreePool (GlobalConfig.Theme);
           }
           GlobalConfig.Theme = TestTheme;
         } else { // special theme not loaded
-          DBG ("special theme %s not found, skipping\n", TestTheme, CONFIG_THEME_FILENAME);
+ //         DBG ("special theme %s not found, skipping\n", TestTheme, CONFIG_THEME_FILENAME);
           FreePool (TestTheme);
         }
         TestTheme = NULL;

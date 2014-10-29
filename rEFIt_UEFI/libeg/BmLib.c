@@ -155,7 +155,7 @@ EfiStrDuplicate (
   UINTN   Size;
 
   Size  = StrSize (Src); //at least 2bytes
-  Dest  = AllocateZeroPool (Size);
+  Dest  = AllocatePool (Size);
 //  ASSERT (Dest != NULL);
   if (Dest != NULL) {
     CopyMem (Dest, Src, Size);

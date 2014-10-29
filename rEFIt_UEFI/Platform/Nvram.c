@@ -1036,14 +1036,14 @@ RemoveStartupDiskVolume ()
 {
     EFI_STATUS Status;
     
-    DBG ("RemoveStartupDiskVolume:\n");
+//    DBG ("RemoveStartupDiskVolume:\n");
     
     Status = DeleteNvramVariable (L"efi-boot-device", &gEfiAppleBootGuid);
-    DBG ("  * efi-boot-device = %r\n", Status);
+//    DBG ("  * efi-boot-device = %r\n", Status);
     
     Status = DeleteNvramVariable (L"efi-boot-device-data", &gEfiAppleBootGuid);
-    DBG ("  * efi-boot-device-data = %r\n", Status);
+//    DBG ("  * efi-boot-device-data = %r\n", Status);
     
     Status = DeleteNvramVariable (L"BootCampHD", &gEfiAppleBootGuid);
-    DBG ("  * BootCampHD = %r\n", Status);
+//    DBG ("  * BootCampHD = %r\n", Status);
 }

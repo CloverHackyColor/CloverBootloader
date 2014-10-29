@@ -59,7 +59,7 @@
 extern const char* fsw_errors[];
 
 #ifndef FSW_DNODE_CACHE_SIZE
-//#define FSW_DNODE_CACHE_SIZE (5)
+#define FSW_DNODE_CACHE_SIZE (0)
 #endif
 
 /** Maximum size for a path, specifically symlink target paths. */
@@ -298,7 +298,8 @@ struct fsw_dnode {
     struct fsw_dnode *next;         //!< Doubly-linked list of all dnodes: previous dnode
     struct fsw_dnode *prev;         //!< Doubly-linked list of all dnodes: next dnode
 
-#if defined(FSW_DNODE_CACHE_SIZE) && FSW_DNODE_CACHE_SIZE > 0
+#if defined(FSW_DNODE_CACHE_SIZE)
+    fsw_u32    numcslots;                          //!< Number of slots occupied
     struct fsw_dnode *cache[FSW_DNODE_CACHE_SIZE];         //!< Rudimentary cache for directory lookups
 #endif
 };

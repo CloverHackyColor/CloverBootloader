@@ -1017,6 +1017,7 @@ static VOID InitSelection(VOID)
     SelectionImages[3] = egCreateFilledImage(ROW1_TILESIZE, ROW1_TILESIZE,
                                              TRUE, &StdBackgroundPixel);
   }
+//  DBG("selections inited\n");
 }
 
 //
@@ -2545,7 +2546,7 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
         CopyMem(&Screen->FilmPlace, &BannerPlace, sizeof(BannerPlace));
       }
       
- //     DBG("main menu inited\n");
+//      DBG("main menu inited\n");
       break;
       
     case MENU_FUNCTION_CLEANUP:

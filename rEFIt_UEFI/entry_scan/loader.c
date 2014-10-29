@@ -264,7 +264,7 @@ STATIC BOOLEAN isFirstRootUUID(REFIT_VOLUME *Volume)
 STATIC EFI_STATUS GetOSXVolumeName(LOADER_ENTRY *Entry)
 {
   EFI_STATUS	Status = EFI_NOT_FOUND;
-  CHAR16* targetNameFile = L"System\\Library\\CoreServices\\.disk_label.contentDetails";
+  CHAR16* targetNameFile = L"\\System\\Library\\CoreServices\\.disk_label.contentDetails";
   CHAR8* 	fileBuffer;
   CHAR8*  targetString;
   UINTN   fileLen = 0;
@@ -275,6 +275,7 @@ STATIC EFI_STATUS GetOSXVolumeName(LOADER_ENTRY *Entry)
       //Create null terminated string
       targetString = (CHAR8*) AllocateZeroPool(fileLen+1);
       CopyMem( (VOID*)targetString, (VOID*)fileBuffer, fileLen);
+      DBG("found disk_label with contents:%a\n", targetString);
       
       //      NOTE: Sothor - This was never run. If we need this correct it and uncomment it.
       //      if (Entry->LoaderType == OSTYPE_OSX) {
@@ -291,9 +292,10 @@ STATIC EFI_STATUS GetOSXVolumeName(LOADER_ENTRY *Entry)
       
       //Convert to Unicode
       tmpName = (CHAR16*)AllocateZeroPool((fileLen+1)*2);
-      tmpName = AsciiStrToUnicodeStr(targetString, tmpName);
+      AsciiStrToUnicodeStr(targetString, tmpName);
       
       Entry->VolName = EfiStrDuplicate(tmpName);
+      DBG("Created name:%s\n", Entry->VolName);
       
       FreePool(tmpName);
       FreePool(fileBuffer);
@@ -304,9 +306,22 @@ STATIC EFI_STATUS GetOSXVolumeName(LOADER_ENTRY *Entry)
 }
 
 extern BOOLEAN CopyKernelAndKextPatches(IN OUT KERNEL_AND_KEXT_PATCHES *Dst, IN KERNEL_AND_KEXT_PATCHES *Src);
-STATIC LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOptions, IN CHAR16 *FullTitle, IN CHAR16 *LoaderTitle, IN REFIT_VOLUME *Volume,
-                                       IN EG_IMAGE *Image, IN EG_IMAGE *DriveImage, IN UINT8 OSType, IN UINT8 Flags, IN CHAR16 Hotkey, EG_PIXEL *BootBgColor,
-                                       IN UINT8 CustomBoot, IN EG_IMAGE *CustomLogo, IN KERNEL_AND_KEXT_PATCHES *Patches, IN BOOLEAN CustomEntry)
+
+STATIC LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath,
+                                       IN CHAR16 *LoaderOptions,
+                                       IN CHAR16 *FullTitle,
+                                       IN CHAR16 *LoaderTitle,
+                                       IN REFIT_VOLUME *Volume,
+                                       IN EG_IMAGE *Image,
+                                       IN EG_IMAGE *DriveImage,
+                                       IN UINT8 OSType,
+                                       IN UINT8 Flags,
+                                       IN CHAR16 Hotkey,
+                                       EG_PIXEL *BootBgColor,
+                                       IN UINT8 CustomBoot,
+                                       IN EG_IMAGE *CustomLogo,
+                                       IN KERNEL_AND_KEXT_PATCHES *Patches,
+                                       IN BOOLEAN CustomEntry)
 {
   EFI_DEVICE_PATH *LoaderDevicePath;
   CHAR16          *LoaderDevicePathString;
@@ -339,7 +354,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
     INTN Comparison = StriCmp(FilePathAsString, LoaderDevicePathString);
     FreePool(FilePathAsString);
     if (Comparison == 0) {
-      DBG("%askipped because path `%s` is self path!\n", indent, LoaderDevicePathString);
+      DBG("%a skipped because path `%s` is self path!\n", indent, LoaderDevicePathString);
       FreePool(LoaderDevicePathString);
       return NULL;
     }
@@ -357,7 +372,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
         if (MainEntry && (MainEntry->Tag == TAG_LOADER)) {
           LOADER_ENTRY *Loader = (LOADER_ENTRY *)MainEntry;
           if (StriCmp(Loader->DevicePathString, LoaderDevicePathString) == 0) {
-            DBG("%askipped because path `%s` already exists for another entry!\n", indent, LoaderDevicePathString);
+            DBG("%a skipped because path `%s` already exists for another entry!\n", indent, LoaderDevicePathString);
             FreePool(LoaderDevicePathString);
             return NULL;
           }
@@ -494,7 +509,10 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
         Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_HIBERNATED);
       }
       ShortcutLetter = 'M';
-      GetOSXVolumeName(Entry);
+      if ((Entry->VolName == NULL) || (StrLen(Entry->VolName) == 0)) {
+        // else no sense to override it with dubious name
+        GetOSXVolumeName(Entry);
+      }
       break;
     case OSTYPE_WIN:
       OSIconName = L"win";
@@ -524,10 +542,13 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
   if (FullTitle) {
     Entry->me.Title = EfiStrDuplicate(FullTitle);
   } else if ((Entry->VolName == NULL) || (StrLen(Entry->VolName) == 0)) {
+ //   DBG("encounter Entry->VolName ==%s and StrLen(Entry->VolName) ==%d\n",Entry->VolName, StrLen(Entry->VolName));
     Entry->me.Title = PoolPrint(L"Boot %s from %s", (LoaderTitle != NULL) ? LoaderTitle : Basename(LoaderPath), Basename(Volume->DevicePathString));
   } else {
+//    DBG("encounter LoaderTitle ==%s and Entry->VolName ==%s\n", LoaderTitle, Entry->VolName);
     Entry->me.Title = PoolPrint(L"Boot %s from %s", (LoaderTitle != NULL) ? LoaderTitle : Basename(LoaderPath), Entry->VolName);
   }
+//  DBG("Entry->me.Title =%s\n", Entry->me.Title);
   // just an example that UI can show hibernated volume to the user
   // should be better to show it on entry image
   if (OSFLAG_ISSET(Entry->Flags, OSFLAG_HIBERNATED)) {
@@ -569,7 +590,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderO
 #ifdef DUMP_KERNEL_KEXT_PATCHES
   DumpKernelAndKextPatches(Entry->KernelAndKextPatches);
 #endif
-  DBG("%aLoader entry created for '%s'\n", indent, Entry->DevicePathString);
+//  DBG("%aLoader entry created for '%s'\n", indent, Entry->DevicePathString);
   return Entry;
 }
 
@@ -896,6 +917,7 @@ STATIC BOOLEAN AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOptions,
   if ((LoaderPath == NULL) || (Volume == NULL) || (Volume->RootDir == NULL) || !FileExists(Volume->RootDir, LoaderPath)) {
     return FALSE;
   }
+  DBG("AddLoaderEntry for Volume Name=%s\n", Volume->VolName);
   //don't add hided entries
   for (HVi = 0; HVi < gSettings.HVCount; HVi++) {
     if (StrStriBasic(LoaderPath, gSettings.HVHideStrings[HVi])) {

@@ -36,6 +36,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+// nms42 - caching support
 
 #include "fsw_core.h"
 
@@ -478,7 +479,10 @@ void fsw_dnode_release(struct fsw_dnode *dno)
   
   dno->refcount--;
   
-  if (dno->refcount == 0) {
+    // numcslots always zero for non dir dnodes
+    if (dno->refcount != dno->numcslots)
+        return;
+
     parent_dno = dno->parent;
     
     // de-register from volume's list
@@ -489,6 +493,21 @@ void fsw_dnode_release(struct fsw_dnode *dno)
     if (vol->dnode_head == dno)
       vol->dnode_head = dno->next;
     
+#if defined(FSW_DNODE_CACHE_SIZE) && FSW_DNODE_CACHE_SIZE > 0
+    if (dno->type == FSW_DNODE_TYPE_DIR) {
+        int i;
+
+        for (i = 0; i < FSW_DNODE_CACHE_SIZE; i++) {
+            struct fsw_dnode *cache_entry = dno->cache[i];
+
+            if (cache_entry == NULL)
+                continue;
+            // numcslots not decremented on purpose
+            fsw_dnode_release(cache_entry);
+        }
+    }
+#endif
+
     // run fstype-specific cleanup
     vol->fstype_table->dnode_free(vol, dno);
     
@@ -499,7 +518,6 @@ void fsw_dnode_release(struct fsw_dnode *dno)
     if (parent_dno)
       fsw_dnode_release(parent_dno);
   }
-}
 
 /**
  * Get full information about a dnode from disk. This function is called by the host
@@ -607,11 +625,19 @@ fsw_status_t fsw_dnode_lookup_cache(struct fsw_dnode *dno,
     goto errorexit;
   
 #if defined(FSW_DNODE_CACHE_SIZE) && FSW_DNODE_CACHE_SIZE > 0
+    // release dnode pushed out of cache
+    i = FSW_DNODE_CACHE_SIZE - 1;
+    if (dno->cache[i] != NULL) {
+        dno->numcslots--;
+        fsw_dnode_release(dno->cache[i]);
+    }
   // cache found entry at first slot
-  for (i = FSW_DNODE_CACHE_SIZE - 1; i > 0; i--) {
+    while (i > 0) {
     dno->cache[i] = dno->cache[i - 1];
+        i--;
   }
   dno->cache[0] = cache_dno;
+    dno->numcslots++;
   fsw_dnode_retain(cache_dno);
  
  goodexit:
@@ -736,22 +762,29 @@ fsw_status_t fsw_dnode_lookup_path(struct fsw_dnode *dno,
   struct fsw_dnode  *child_dno = NULL;
   struct fsw_string lookup_name;
   struct fsw_string remaining_path;
-  int               root_if_empty, i;
-  fsw_u16  ch;
+  int               root_if_empty;
+  
   if (!dno) {
     return FSW_UNSUPPORTED;
   }
   vol = dno->vol;
-  if (lookup_path->type == FSW_STRING_TYPE_ISO88591) {
-    DBG("dnode %a lookup ASCII\n", lookup_path->data);
-  } else if (lookup_path->type == FSW_STRING_TYPE_UTF16) {
-    DBG("dnode lookup UNI:");
-    for (i = 0; i < lookup_path->len; i++) {
-      ch = ((fsw_u16 *) lookup_path->data)[i];
-      DBG("%c", ch?ch:L'@');
+#if DEBUG_CR
+  {
+    int i;
+    fsw_u16  ch;
+    
+    if (lookup_path->type == FSW_STRING_TYPE_ISO88591) {
+      DBG("dnode %a lookup ASCII\n", lookup_path->data);
+    } else if (lookup_path->type == FSW_STRING_TYPE_UTF16) {
+      DBG("dnode lookup UNI:");
+      for (i = 0; i < lookup_path->len; i++) {
+        ch = ((fsw_u16 *) lookup_path->data)[i];
+        DBG("%c", ch?ch:L'@');
+      }
+      DBG("\n");
     }
-    DBG("\n");
   }
+#endif
   //  remaining_path = *lookup_path;
   fsw_memcpy(&remaining_path, lookup_path, sizeof(struct fsw_string));
   fsw_dnode_retain(dno);
@@ -770,7 +803,6 @@ fsw_status_t fsw_dnode_lookup_path(struct fsw_dnode *dno,
         DBG("set lookup current\n");
       }
       fsw_dnode_retain(child_dno);
-      
     } else {
       // do an actual directory lookup
       status = fsw_dnode_lookup(dno, &lookup_name, &child_dno);

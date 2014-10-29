@@ -202,13 +202,14 @@ VOID ScanTool(VOID)
   // look for the EFI shell
   if (!(GlobalConfig.DisableFlags & HIDEUI_FLAG_SHELL)) {
 #if defined(MDE_CPU_X64)
-    if (gFirmwareClover) {
-      AddToolEntry(L"\\EFI\\CLOVER\\tools\\Shell64.efi", NULL, L"EFI Shell 64", SelfVolume, BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S');
-    } else {
+//    if (gFirmwareClover) {
+//      AddToolEntry(L"\\EFI\\CLOVER\\tools\\Shell64U.efi", NULL, L"EFI Shell 64", SelfVolume, BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S');
+//    } else
+    //there seems to be the best version
       if (!AddToolEntry(L"\\EFI\\CLOVER\\tools\\Shell64U.efi", NULL, L"UEFI Shell 64", SelfVolume, BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S')) {
         AddToolEntry(L"\\EFI\\CLOVER\\tools\\Shell64.efi", NULL, L"EFI Shell 64", SelfVolume, BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S');
       }
-    }
+//  }
 #else
     AddToolEntry(L"\\EFI\\CLOVER\\tools\\Shell32.efi", NULL, L"EFI Shell 32", SelfVolume, BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S');
 #endif

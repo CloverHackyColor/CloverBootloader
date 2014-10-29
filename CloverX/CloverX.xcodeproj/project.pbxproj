@@ -2452,7 +2452,6 @@
 				12896DA116B3A10A00A2EC36 /* fsw_reiserfs_disk.h */,
 				12896DA216B3A10A00A2EC36 /* fsw_strfunc.h */,
 				12896DA316B3A10A00A2EC36 /* hfs_format.h */,
-				12896DA416B3A10A00A2EC36 /* IA32 */,
 				12896DA516B3A10A00A2EC36 /* OverrideFunctions-kabyl.edk2.c.include */,
 				12896DA616B3A10A00A2EC36 /* test */,
 				12896DAD16B3A10A00A2EC36 /* VBoxExt2.inf */,
@@ -2465,13 +2464,6 @@
 			);
 			name = VBoxFsDxe;
 			path = ../VBoxFsDxe;
-			sourceTree = "<group>";
-		};
-		12896DA416B3A10A00A2EC36 /* IA32 */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = IA32;
 			sourceTree = "<group>";
 		};
 		12896DA616B3A10A00A2EC36 /* test */ = {

@@ -120,13 +120,15 @@ INF IntelFrameworkModulePkg/Universal/DataHubDxe/DataHubDxe.inf
 #INF  Clover/VBoxFsDxe/VBoxFsDxe.inf
 INF  Clover/VBoxFsDxe/VBoxIso9660.inf
 #INF  Clover/VBoxFsDxe/VBoxExt2.inf
-INF  Clover/VBoxFsDxe/VBoxExt4.inf
+#INF  Clover/VBoxFsDxe/VBoxExt4.inf
 #INF  Clover/VBoxFsDxe/VBoxReiserFS.inf
 !if ($(ARCH) == X64)
 INF  RuleOverride=BINARY Clover/HFSPlus/HFSPlus.inf
 !else
 INF  Clover/VBoxFsDxe/VBoxHfs.inf
 !endif
+   ## always include this driver
+#INF  Clover/VBoxFsDxe/VBoxHfs.inf
 
 INF  PcAtChipsetPkg/8259InterruptControllerDxe/8259.inf
 #INF  DuetPkg/AcpiResetDxe/Reset.inf
@@ -210,8 +212,8 @@ INF   Clover/LegacyBios/Region2Dxe/LegacyRegion2Dxe.inf
   INF  Clover/Patches_for_EDK2/XhciDxe/XhciDxe.inf
 !endif
 
-  #INF  MdeModulePkg/Bus/Usb/UsbBusDxe/UsbBusDxe.inf
-  INF  Clover/Patches_for_EDK2/UsbBusDxe/UsbBusDxe.inf
+  INF  MdeModulePkg/Bus/Usb/UsbBusDxe/UsbBusDxe.inf
+  #INF  Clover/Patches_for_EDK2/UsbBusDxe/UsbBusDxe.inf
   INF  MdeModulePkg/Bus/Usb/UsbKbDxe/UsbKbDxe.inf
   INF  MdeModulePkg/Bus/Usb/UsbMouseDxe/UsbMouseDxe.inf
 !ifndef DISABLE_USB_MASS_STORAGE  

@@ -972,7 +972,9 @@ VOID InitAnime(REFIT_MENU_SCREEN *Screen)
   }
   
   // Check if a new style placement value has been specified
-  if (Anime && Anime->FilmX >=0 && Anime->FilmX <=100 && Anime->FilmY >=0 && Anime->FilmY <=100 && Screen->Film != NULL && Screen->Film[0] != NULL) {
+  if (Anime && (Anime->FilmX >=0) && (Anime->FilmX <=100) &&
+      (Anime->FilmY >=0) && (Anime->FilmY <=100) &&
+      (Screen->Film != NULL) && (Screen->Film[0] != NULL)) {
     // Check if screen size being used is different from theme origination size.
     // If yes, then recalculate the animation placement % value.
     // This is necessary because screen can be a different size, but anim is not scaled.
@@ -980,8 +982,8 @@ VOID InitAnime(REFIT_MENU_SCREEN *Screen)
     Screen->FilmPlace.YPos = HybridRepositioning(Anime->ScreenEdgeVertical,   Anime->FilmY, Screen->Film[0]->Height, UGAHeight, GlobalConfig.ThemeDesignHeight);
     
     // Does the user want to fine tune the placement?
-    Screen->FilmPlace.XPos = CalculateNudgePosition(Screen->FilmPlace.XPos,Anime->NudgeX,Screen->Film[0]->Width,UGAWidth);
-    Screen->FilmPlace.YPos = CalculateNudgePosition(Screen->FilmPlace.YPos,Anime->NudgeY,Screen->Film[0]->Height,UGAHeight);
+    Screen->FilmPlace.XPos = CalculateNudgePosition(Screen->FilmPlace.XPos, Anime->NudgeX, Screen->Film[0]->Width, UGAWidth);
+    Screen->FilmPlace.YPos = CalculateNudgePosition(Screen->FilmPlace.YPos, Anime->NudgeY, Screen->Film[0]->Height, UGAHeight);
     
     Screen->FilmPlace.Width = Screen->Film[0]->Width;
     Screen->FilmPlace.Height = Screen->Film[0]->Height;
@@ -1001,7 +1003,8 @@ VOID InitAnime(REFIT_MENU_SCREEN *Screen)
     Screen->LastDraw = 0;
   } else {
     Screen->AnimeRun = FALSE;
-  } 
+  }
+//  DBG("anime inited\n");
 }
 
 BOOLEAN GetAnime(REFIT_MENU_SCREEN *Screen)
