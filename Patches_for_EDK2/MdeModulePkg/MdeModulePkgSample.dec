@@ -901,41 +901,27 @@
   # @Prompt 64-bit Base address of flash FTW working block range.
   gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwWorkingBase64|0x0|UINT64|0x80000010
 
-  ## This PCD defines the print string.
-  #  This PCD is a sample to explain String typed PCD usage.
-  gEfiMdeModulePkgTokenSpaceGuid.PcdHelloWorldPrintString|L"UEFI Hello Clover!\n"|VOID*|0x40000004
-
-  ## This PCD defines a reserved memory range for the EMU Variable driver's NV Variable Store
+  ## This PCD defines a reserved memory range for the EMU Variable driver's NV Variable Store.
   #  The range is valid if non-zero.  The memory range size must be PcdVariableStoreSize.
   # @Prompt Reserved memory range for EMU variable NV storage.
   gEfiMdeModulePkgTokenSpaceGuid.PcdEmuVariableNvStoreReserved|0|UINT64|0x40000008
-
-  ## This PCD specifies whether the Single Root I/O virtualization support.
-  gEfiMdeModulePkgTokenSpaceGuid.PcdSrIovSupport|TRUE|BOOLEAN|0x10000044
-
-  ## This PCD specifies whether the Alternative Routing-ID support.
-  gEfiMdeModulePkgTokenSpaceGuid.PcdAriSupport|TRUE|BOOLEAN|0x10000045
-
-  ## This PCD specifies whether the Multi Root I/O virtualization support.
-  gEfiMdeModulePkgTokenSpaceGuid.PcdMrIovSupport|FALSE|BOOLEAN|0x10000046
-
-[PcdsFixedAtBuild, PcdsPatchableInModule, PcdsDynamic, PcdsDynamicEx]
-  ## Single root I/O virtualization virtual function memory BAR alignment
-  #  BITN set indicates 2 of n+12 power
-  #  BIT0 set indicates 4KB alignment
-  #  BIT1 set indicates 8KB alignment
-  gEfiMdeModulePkgTokenSpaceGuid.PcdSrIovSystemPageSize|0x1|UINT32|0x10000047
 
   ## This PCD defines the times to print hello world string.
   #  This PCD is a sample to explain UINT32 PCD usage.
   # @Prompt HellowWorld print times.
   gEfiMdeModulePkgTokenSpaceGuid.PcdHelloWorldPrintTimes|1|UINT32|0x40000005
 
-  ## Indicate the max size of the capsule image with reset flag that the platform can support.
+  ## This PCD defines the HelloWorld print string.
+  #  This PCD is a sample to explain String typed PCD usage.
+  # @Prompt HelloWorld print string.
+  gEfiMdeModulePkgTokenSpaceGuid.PcdHelloWorldPrintString|L"UEFI Hello Clover!\n"|VOID*|0x40000004
+
+  ## Indicates the maximum size of the capsule image with a reset flag that the platform can support.
   #  The default max size is 100MB (0x6400000) for more than one large capsule images.
+  # @Prompt Max size of populated capsule.
   gEfiMdeModulePkgTokenSpaceGuid.PcdMaxSizePopulateCapsule|0x6400000|UINT32|0x0001001e
 
-  ## Indicate the max size of the capsule image without reset flag that the platform can support.
+  ## Indicates the maximum size of the capsule image without a reset flag that the platform can support.
   #  The default max size is 10MB (0xa00000) for the casule image without reset flag setting.
   # @Prompt Max size of non-populated capsule.
   gEfiMdeModulePkgTokenSpaceGuid.PcdMaxSizeNonPopulateCapsule|0xa00000|UINT32|0x0001001f

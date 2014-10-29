@@ -424,14 +424,30 @@ DRQClear (
   IN  UINT64                    Timeout
   )
 {
-  UINT32  Delay;
+  UINT64  Delay;
   UINT8   StatusRegister;
-	UINT8   ErrorRegister;
+  UINT8   ErrorRegister;
+  BOOLEAN InfiniteWait;
 
-  ASSERT (PciIo != NULL);
-  ASSERT (IdeRegisters != NULL);
+//  ASSERT (PciIo != NULL);
+//  ASSERT (IdeRegisters != NULL);
+  if (!PciIo || !IdeRegisters) {
+    return EFI_NOT_READY;
+  }
 
-  Delay = (UINT32) (DivU64x32(Timeout, 300) + 1); //30001
+  if (Timeout == 0) {
+    InfiniteWait = TRUE;
+  } else {
+    InfiniteWait = FALSE;
+  }
+
+  if (Timeout == 0) {
+    InfiniteWait = TRUE;
+  } else {
+    InfiniteWait = FALSE;
+  }
+
+  Delay = DivU64x32(Timeout, 1000) + 1;
   do {
     StatusRegister = IdeReadPortB (PciIo, IdeRegisters->CmdOrStatus);
 
@@ -470,7 +486,7 @@ DRQClear (
 
     Delay--;
 
-  } while (Delay > 0);
+  } while (InfiniteWait || (Delay > 0));
 
   if (Delay == 0) {
     return EFI_TIMEOUT;
@@ -502,14 +518,25 @@ DRQClear2 (
   IN  UINT64               Timeout
   )
 {
-  UINT32  Delay;
+  UINT64  Delay;
   UINT8   AltRegister;
-	UINT8   ErrorRegister;
+  UINT8   ErrorRegister;
+  BOOLEAN InfiniteWait;
 
-  ASSERT (PciIo != NULL);
-  ASSERT (IdeRegisters != NULL);
 
-  Delay = (UINT32) (DivU64x32(Timeout, 300) + 1);
+//  ASSERT (PciIo != NULL);
+//  ASSERT (IdeRegisters != NULL);
+  if (!PciIo || !IdeRegisters) {
+    return EFI_NOT_READY;
+  }
+
+  if (Timeout == 0) {
+    InfiniteWait = TRUE;
+  } else {
+    InfiniteWait = FALSE;
+  }
+
+  Delay = DivU64x32(Timeout, 1000) + 1;
   do {
     AltRegister = IdeReadPortB (PciIo, IdeRegisters->AltOrDev);
 
@@ -545,7 +572,7 @@ DRQClear2 (
 
     Delay--;
 
-  } while (Delay > 0);
+  } while (InfiniteWait || (Delay > 0));
 
   if (Delay == 0) {
     return EFI_TIMEOUT;
@@ -580,14 +607,24 @@ DRQReady (
   IN  UINT64               Timeout
   )
 {
-  UINT32  Delay;
+  UINT64  Delay;
   UINT8   StatusRegister;
   UINT8   ErrorRegister;
+  BOOLEAN InfiniteWait;
 
-  ASSERT (PciIo != NULL);
-  ASSERT (IdeRegisters != NULL);
+//  ASSERT (PciIo != NULL);
+//  ASSERT (IdeRegisters != NULL);
+  if (!PciIo || !IdeRegisters) {
+    return EFI_NOT_READY;
+  }
 
-  Delay = (UINT32) (DivU64x32(Timeout, 300) + 1);
+  if (Timeout == 0) {
+    InfiniteWait = TRUE;
+  } else {
+    InfiniteWait = FALSE;
+  }
+
+  Delay = DivU64x32(Timeout, 1000) + 1;
   do {
     //
     // Read Status Register will clear interrupt
@@ -637,7 +674,7 @@ DRQReady (
     MicroSecondDelay (30);
 
     Delay--;
-  } while (Delay > 0);
+  } while (InfiniteWait || (Delay > 0));
 
   if (Delay == 0) {
     return EFI_TIMEOUT;
@@ -668,14 +705,24 @@ DRQReady2 (
   IN  UINT64               Timeout
   )
 {
-  UINT32  Delay;
+  UINT64  Delay;
   UINT8   AltRegister;
   UINT8   ErrorRegister;
+  BOOLEAN InfiniteWait;
 
-  ASSERT (PciIo != NULL);
-  ASSERT (IdeRegisters != NULL);
+//  ASSERT (PciIo != NULL);
+//  ASSERT (IdeRegisters != NULL);
+  if (!PciIo || !IdeRegisters) {
+    return EFI_NOT_READY;
+  }
 
-  Delay = (UINT32) (DivU64x32(Timeout, 300) + 1);
+  if (Timeout == 0) {
+    InfiniteWait = TRUE;
+  } else {
+    InfiniteWait = FALSE;
+  }
+
+  Delay = DivU64x32(Timeout, 1000) + 1;
 
   do {
     //
@@ -725,7 +772,7 @@ DRQReady2 (
     MicroSecondDelay (30);
 
     Delay--;
-  } while (Delay > 0);
+  } while (InfiniteWait || (Delay > 0));
 
   if (Delay == 0) {
     return EFI_TIMEOUT;
@@ -756,14 +803,24 @@ DRDYReady (
   IN  UINT64               Timeout
   )
 {
-  UINT32  Delay;
+  UINT64  Delay;
   UINT8   StatusRegister;
   UINT8   ErrorRegister;
+  BOOLEAN InfiniteWait;
 
-  ASSERT (PciIo != NULL);
-  ASSERT (IdeRegisters != NULL);
+//  ASSERT (PciIo != NULL);
+//  ASSERT (IdeRegisters != NULL);
+  if (!PciIo || !IdeRegisters) {
+    return EFI_NOT_READY;
+  }
 
-  Delay = (UINT32) (DivU64x32(Timeout, 300) + 1);
+  if (Timeout == 0) {
+    InfiniteWait = TRUE;
+  } else {
+    InfiniteWait = FALSE;
+  }
+
+  Delay = DivU64x32(Timeout, 1000) + 1;
   do {
     StatusRegister = IdeReadPortB (PciIo, IdeRegisters->CmdOrStatus);
 #if 0    
@@ -809,7 +866,7 @@ DRDYReady (
     MicroSecondDelay (30);
 
     Delay--;
-  } while (Delay > 0);
+  } while (InfiniteWait || (Delay > 0));
 
   if (Delay == 0) {
     return EFI_TIMEOUT;
@@ -841,14 +898,24 @@ DRDYReady2 (
   IN  UINT64               Timeout
   )
 {
-  UINT32  Delay;
+  UINT64  Delay;
   UINT8   AltRegister;
   UINT8   ErrorRegister;
+  BOOLEAN InfiniteWait;
 
-  ASSERT (PciIo != NULL);
-  ASSERT (IdeRegisters != NULL);
+//  ASSERT (PciIo != NULL);
+//  ASSERT (IdeRegisters != NULL);
+  if (!PciIo || !IdeRegisters) {
+    return EFI_NOT_READY;
+  }
 
-  Delay = (UINT32) (DivU64x32(Timeout, 300) + 1);
+  if (Timeout == 0) {
+    InfiniteWait = TRUE;
+  } else {
+    InfiniteWait = FALSE;
+  }
+
+  Delay = DivU64x32(Timeout, 1000) + 1;
   do {
     AltRegister = IdeReadPortB (PciIo, IdeRegisters->AltOrDev);
 #if 0
@@ -894,7 +961,7 @@ DRDYReady2 (
     MicroSecondDelay (30);
 
     Delay--;
-  } while (Delay > 0);
+  } while (InfiniteWait || (Delay > 0));
 
   if (Delay == 0) {
     return EFI_TIMEOUT;
@@ -924,13 +991,23 @@ WaitForBSYClear (
   IN  UINT64               Timeout
   )
 {
-  UINT32  Delay;
+  UINT64  Delay;
   UINT8   StatusRegister;
+  BOOLEAN InfiniteWait;
 
-  ASSERT (PciIo != NULL);
-  ASSERT (IdeRegisters != NULL);
+//  ASSERT (PciIo != NULL);
+//  ASSERT (IdeRegisters != NULL);
+  if (!PciIo || !IdeRegisters) {
+    return EFI_NOT_READY;
+  }
 
-  Delay = (UINT32) (DivU64x32(Timeout, 300) + 1);
+  if (Timeout == 0) {
+    InfiniteWait = TRUE;
+  } else {
+    InfiniteWait = FALSE;
+  }
+
+  Delay = DivU64x32(Timeout, 1000) + 1;
   do {
     StatusRegister = IdeReadPortB (PciIo, IdeRegisters->CmdOrStatus);
 
@@ -945,7 +1022,7 @@ WaitForBSYClear (
 
     Delay--;
 
-  } while (Delay > 0);
+  } while (InfiniteWait || (Delay > 0));
 
   return EFI_TIMEOUT;
 }
@@ -971,13 +1048,23 @@ WaitForBSYClear2 (
   IN  UINT64               Timeout
   )
 {
-  UINT32  Delay;
+  UINT64  Delay;
   UINT8   AltStatusRegister;
+  BOOLEAN InfiniteWait;
 
-  ASSERT (PciIo != NULL);
-  ASSERT (IdeRegisters != NULL);
+//  ASSERT (PciIo != NULL);
+//  ASSERT (IdeRegisters != NULL);
+  if (!PciIo || !IdeRegisters) {
+    return EFI_NOT_READY;
+  }
 
-  Delay = (UINT32) (DivU64x32(Timeout, 300) + 1);
+  if (Timeout == 0) {
+    InfiniteWait = TRUE;
+  } else {
+    InfiniteWait = FALSE;
+  }
+
+  Delay = DivU64x32(Timeout, 1000) + 1;
   do {
     AltStatusRegister = IdeReadPortB (PciIo, IdeRegisters->AltOrDev);
 
@@ -992,7 +1079,7 @@ WaitForBSYClear2 (
 
     Delay--;
 
-  } while (Delay > 0);
+  } while (InfiniteWait || (Delay > 0));
 
   return EFI_TIMEOUT;
 }
@@ -1231,9 +1318,12 @@ AtaIssueCommand (
   UINT8       AtaCommand;
   UINT8       LBAMidReg;
 
-  ASSERT (PciIo != NULL);
-  ASSERT (IdeRegisters != NULL);
-  ASSERT (AtaCommandBlock != NULL);
+//  ASSERT (PciIo != NULL);
+//  ASSERT (IdeRegisters != NULL);
+  if (!PciIo || !IdeRegisters || !AtaCommandBlock) {
+    return EFI_NOT_READY;
+  }
+//  ASSERT (AtaCommandBlock != NULL);
 
   DeviceHead = AtaCommandBlock->AtaDeviceHead;
   AtaCommand = AtaCommandBlock->AtaCommand;
@@ -1530,6 +1620,7 @@ Exit:
 
   @param[in]  PciIo           The PCI IO protocol instance.
   @param[in]  IdeRegisters    A pointer to EFI_IDE_REGISTERS data structure.
+  @param[in]  Timeout         The time to complete the command, uses 100ns as a unit.
 
   @retval EFI_DEVICE_ERROR  The memory is not set.
   @retval EFI_TIMEOUT       The memory setting is time out.
@@ -1539,17 +1630,25 @@ Exit:
 EFI_STATUS
 AtaUdmStatusWait (
   IN     EFI_PCI_IO_PROTOCOL       *PciIo,
-  IN     EFI_IDE_REGISTERS         *IdeRegisters
+  IN  EFI_IDE_REGISTERS         *IdeRegisters,
+  IN  UINT64                    Timeout
  )
 {
   UINT8                         RegisterValue;
   EFI_STATUS                    Status;
   UINT16                        IoPortForBmis;
-  UINT64                        Timeout;
+  UINT64                        Delay;
+  BOOLEAN                       InfiniteWait;
 
-  Timeout = 2000;
+  if (Timeout == 0) {
+    InfiniteWait = TRUE;
+  } else {
+    InfiniteWait = FALSE;
+  }
 
-  while (TRUE) {
+  Delay = DivU64x32 (Timeout, 1000) + 1;
+
+  do {
     Status = CheckStatusRegister (PciIo, IdeRegisters);
     if (EFI_ERROR (Status)) {
       Status = EFI_DEVICE_ERROR;
@@ -1572,13 +1671,9 @@ AtaUdmStatusWait (
     //
     // Stall for 1 milliseconds.
     //
-    MicroSecondDelay (1000);
-    Timeout--;
-  }
-
-  if (Timeout == 0) {
-    Status = EFI_TIMEOUT;
-  }
+    MicroSecondDelay (100);
+    Delay--;
+  } while (InfiniteWait || (Delay > 0));
 
   return Status;
 }
@@ -1628,7 +1723,7 @@ AtaUdmStatusCheck (
     return EFI_SUCCESS;
   }
 
-  if (Task->RetryTimes == 0) {
+  if (!Task->InfiniteWait && (Task->RetryTimes == 0)) {
     return EFI_TIMEOUT;
   } else {
     //
@@ -1934,7 +2029,7 @@ AtaUdmaInOut (
   if (Task != NULL) {
     Status = AtaUdmStatusCheck (PciIo, Task, IdeRegisters);
   } else {
-    Status = AtaUdmStatusWait (PciIo, IdeRegisters);
+    Status = AtaUdmStatusWait (PciIo, IdeRegisters, Timeout);
   }
 
   //

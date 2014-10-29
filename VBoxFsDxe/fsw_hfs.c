@@ -121,7 +121,7 @@ fsw_hfs_read_block (struct fsw_hfs_dnode    *dno,
   
   phys_bno = extent.phys_start;
   //Slice - increase cache level from 0 to 3
-  status = fsw_block_get(dno->g.vol, phys_bno, 0, (void **)&buffer);
+  status = fsw_block_get(dno->g.vol, phys_bno, 3, (void **)&buffer);
   if (status)
     return status;
   

@@ -59,7 +59,7 @@
 extern const char* fsw_errors[];
 
 #ifndef FSW_DNODE_CACHE_SIZE
-#define FSW_DNODE_CACHE_SIZE (0)
+#define FSW_DNODE_CACHE_SIZE (8)
 #endif
 
 /** Maximum size for a path, specifically symlink target paths. */

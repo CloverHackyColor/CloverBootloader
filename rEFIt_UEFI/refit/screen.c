@@ -984,7 +984,7 @@ VOID InitAnime(REFIT_MENU_SCREEN *Screen)
     
     Screen->FilmPlace.Width = Screen->Film[0]->Width;
     Screen->FilmPlace.Height = Screen->Film[0]->Height;
-    DBG("recalculated Screen->Film position\n");
+//    DBG("recalculated Screen->Film position\n");
   } else {
     // We are here if there is no anime, or if we use oldstyle placement values
     // For both these cases, FilmPlace will be set after banner/menutitle positions are known

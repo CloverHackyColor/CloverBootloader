@@ -3087,7 +3087,7 @@ InitTheme(
   if (ThemesNum > 0 &&
       (!GlobalConfig.Theme ||
        StrCmp (GlobalConfig.Theme, L"embedded") != 0)) {
-DBG("1\n");
+//DBG("1\n");
     // Try special theme first
     if (Time != NULL) {
       if ((Time->Month == 12) && ((Time->Day >= 25) && (Time->Day <= 31))) {
@@ -3116,7 +3116,7 @@ DBG("1\n");
         }
       }
     }
-        DBG("2\n");
+ //       DBG("2\n");
     // Try theme from nvram  
     if (ThemeDict == NULL && UseThemeDefinedInNVRam) {
       ChosenTheme   = GetNvramVariable(L"Clover.Theme", &gEfiAppleBootGuid, NULL, &Size);
@@ -3124,7 +3124,7 @@ DBG("1\n");
         TestTheme   = PoolPrint (L"%a", ChosenTheme);
         if (TestTheme != NULL) {
           ThemeDict = LoadTheme (TestTheme);
-          DBG("3\n");
+ //         DBG("3\n");
           if (ThemeDict != NULL) {
              DBG ("theme %a defined in NVRAM found and %s parsed\n", ChosenTheme, CONFIG_THEME_FILENAME);
              if (GlobalConfig.Theme != NULL) {
@@ -3200,7 +3200,7 @@ DBG("1\n");
     }
     FreeTag(ThemeDict);
   }
-  DBG("8\n");
+//  DBG("8\n");
   PrepareFont();  
   return Status;
 }

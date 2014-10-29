@@ -36,7 +36,8 @@ PrintValue64 (
   UINT64 Value
   );
 
-VOID 
+VOID
+EFIAPI
 PrintString (
   IN CONST CHAR8  *FormatString,
   ...
