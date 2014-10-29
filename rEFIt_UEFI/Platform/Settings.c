@@ -2965,13 +2965,10 @@ GetThemeTagSettings (
                 FreeAnime (Next);
                 break;
               }
-
               Ptr       = Ptr->Next;
             }
-
             Anime->Next = GuiAnime;
           }
-
           GuiAnime      = Anime;
         } else {
           GuiAnime      = Anime;
@@ -3090,7 +3087,7 @@ InitTheme(
   if (ThemesNum > 0 &&
       (!GlobalConfig.Theme ||
        StrCmp (GlobalConfig.Theme, L"embedded") != 0)) {
-
+DBG("1\n");
     // Try special theme first
     if (Time != NULL) {
       if ((Time->Month == 12) && ((Time->Day >= 25) && (Time->Day <= 31))) {
@@ -3119,7 +3116,7 @@ InitTheme(
         }
       }
     }
-
+        DBG("2\n");
     // Try theme from nvram  
     if (ThemeDict == NULL && UseThemeDefinedInNVRam) {
       ChosenTheme   = GetNvramVariable(L"Clover.Theme", &gEfiAppleBootGuid, NULL, &Size);
@@ -3127,6 +3124,7 @@ InitTheme(
         TestTheme   = PoolPrint (L"%a", ChosenTheme);
         if (TestTheme != NULL) {
           ThemeDict = LoadTheme (TestTheme);
+          DBG("3\n");
           if (ThemeDict != NULL) {
              DBG ("theme %a defined in NVRAM found and %s parsed\n", ChosenTheme, CONFIG_THEME_FILENAME);
              if (GlobalConfig.Theme != NULL) {
@@ -3193,7 +3191,7 @@ InitTheme(
     GlobalConfig.BadgeScale = 16;
   } else { // theme loaded successfully
     // read theme settings
-     TagPtr DictPointer = GetProperty (ThemeDict, "Theme");
+    TagPtr DictPointer = GetProperty (ThemeDict, "Theme");
     if (DictPointer != NULL) {
       Status = GetThemeTagSettings(DictPointer);
       if (EFI_ERROR (Status)) {
@@ -3201,7 +3199,8 @@ InitTheme(
       }
     }
     FreeTag(ThemeDict);
-  }  
+  }
+  DBG("8\n");
   PrepareFont();  
   return Status;
 }

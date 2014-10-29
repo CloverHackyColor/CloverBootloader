@@ -920,14 +920,13 @@ VOID InitAnime(REFIT_MENU_SCREEN *Screen)
   EG_IMAGE    *p = NULL;
   EG_IMAGE    *Last = NULL;
   GUI_ANIME   *Anime;
-  
+
   if (!Screen || GlobalConfig.TextOnly) return;
-  
   // Find anime for current screen
   for (Anime = GuiAnime; Anime != NULL && Anime->ID != Screen->ID; Anime = Anime->Next);
-  
   // Check if we should clear old film vars (no anime or anime path changed)
-  if (!Anime || !Screen->Film || !GlobalConfig.Theme || !Screen->Theme || (!gThemeChanged && StrCmp(GlobalConfig.Theme, Screen->Theme) != 0)) {
+  if (!Anime || !Screen->Film || !GlobalConfig.Theme || !Screen->Theme ||
+      (gThemeChanged && StrCmp(GlobalConfig.Theme, Screen->Theme) != 0)) {
     if (Screen->Film) {
       FreePool(Screen->Film);
       Screen->Film = NULL;
@@ -937,14 +936,13 @@ VOID InitAnime(REFIT_MENU_SCREEN *Screen)
       Screen->Theme = NULL;
     }
   }
-  
   // Check if we should load anime files (first run or after theme change)
   if (Anime && Screen->Film == NULL) {
     Path = Anime->Path;
-    Screen->Film = (EG_IMAGE**)AllocateZeroPool(Anime->Frames * sizeof(VOID*));
+    Screen->Film = (EG_IMAGE**)AllocateZeroPool((Anime->Frames + 1) * sizeof(VOID*));
     if (Path && Screen->Film) {
       // Look through contents of the directory
-      for (i=0; i<Anime->Frames; i++) {
+      for (i = 0; i < Anime->Frames; i++) {
         UnicodeSPrint(FileName, 512, L"%s\\%s_%03d.png", Path, Path, i);
         //DBG("Try to load file %s\n", FileName);
         p = egLoadImage(ThemeDir, FileName, TRUE);
@@ -970,7 +968,6 @@ VOID InitAnime(REFIT_MENU_SCREEN *Screen)
       } */
     }
   }
-  
   // Check if a new style placement value has been specified
   if (Anime && (Anime->FilmX >=0) && (Anime->FilmX <=100) &&
       (Anime->FilmY >=0) && (Anime->FilmY <=100) &&
@@ -987,6 +984,7 @@ VOID InitAnime(REFIT_MENU_SCREEN *Screen)
     
     Screen->FilmPlace.Width = Screen->Film[0]->Width;
     Screen->FilmPlace.Height = Screen->Film[0]->Height;
+    DBG("recalculated Screen->Film position\n");
   } else {
     // We are here if there is no anime, or if we use oldstyle placement values
     // For both these cases, FilmPlace will be set after banner/menutitle positions are known
@@ -995,7 +993,6 @@ VOID InitAnime(REFIT_MENU_SCREEN *Screen)
     Screen->FilmPlace.Width = 0;
     Screen->FilmPlace.Height = 0;
   }
-  
   if (Screen->Film != NULL && Screen->Film[0] != NULL) {
     // Anime seems OK, init it
     Screen->AnimeRun = TRUE;
