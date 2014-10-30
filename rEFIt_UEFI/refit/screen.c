@@ -471,7 +471,7 @@ VOID BltClearScreen(IN BOOLEAN ShowBanner) //ShowBanner always TRUE
   }
   
   if (BackgroundImage == NULL) {
-      BackgroundImage = egCreateFilledImage(UGAWidth, UGAHeight, FALSE, &BlueBackgroundPixel);
+    BackgroundImage = egCreateFilledImage(UGAWidth, UGAHeight, FALSE, &BlueBackgroundPixel);
   }
   
   if (BigBack != NULL) {
@@ -922,12 +922,21 @@ VOID InitAnime(REFIT_MENU_SCREEN *Screen)
   GUI_ANIME   *Anime;
 
   if (!Screen || GlobalConfig.TextOnly) return;
-  // Find anime for current screen
+  // 
   for (Anime = GuiAnime; Anime != NULL && Anime->ID != Screen->ID; Anime = Anime->Next);
+
   // Check if we should clear old film vars (no anime or anime path changed)
+  //
   if (!Anime || !Screen->Film || !GlobalConfig.Theme || !Screen->Theme ||
-      (gThemeChanged && StrCmp(GlobalConfig.Theme, Screen->Theme) != 0)) {
+      (/*gThemeChanged && */StrCmp(GlobalConfig.Theme, Screen->Theme) != 0)) {
+//    DBG(" free screen\n");
     if (Screen->Film) {
+      //free images in the film
+      for (i = 0; i <= Screen->Frames; i++) { //really there are N+1 frames
+        if (Screen->Film[i] != NULL) {
+          FreePool(Screen->Film[i]);
+        }
+      }
       FreePool(Screen->Film);
       Screen->Film = NULL;
     }
@@ -944,7 +953,7 @@ VOID InitAnime(REFIT_MENU_SCREEN *Screen)
       // Look through contents of the directory
       for (i = 0; i < Anime->Frames; i++) {
         UnicodeSPrint(FileName, 512, L"%s\\%s_%03d.png", Path, Path, i);
-        //DBG("Try to load file %s\n", FileName);
+ //       DBG("Try to load file %s\n", FileName);
         p = egLoadImage(ThemeDir, FileName, TRUE);
         if (!p) {
           p = Last;
@@ -956,7 +965,7 @@ VOID InitAnime(REFIT_MENU_SCREEN *Screen)
       }
       if (Screen->Film[0] != NULL) {
         Screen->Frames = i;
-        DBG(" found %d frames of the anime\n", i);
+ //       DBG(" found %d frames of the anime\n", i);
         // Create background frame
         Screen->Film[i] = egCreateImage(Screen->Film[0]->Width, Screen->Film[0]->Height, FALSE);
         // Copy some settings from Anime into Screen

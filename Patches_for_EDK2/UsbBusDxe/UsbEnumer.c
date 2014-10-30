@@ -348,7 +348,7 @@ UsbSelectSetting (
   )
 {
   USB_INTERFACE_SETTING   *Setting;
-  UINT8                   Index;
+  UINTN                   Index;
 
   //
   // Locate the active alternate setting
@@ -454,6 +454,7 @@ UsbSelectConfig (
     UsbIf = UsbCreateInterface (Device, ConfigDesc->Interfaces[Index]);
 
     if (UsbIf == NULL) {
+      Device->NumOfInterface = Index;
       return EFI_OUT_OF_RESOURCES;
     }
 
@@ -898,7 +899,7 @@ ON_ERROR:
   //
   // EDKII UHCI/EHCI doesn't get impacted as it's make sense to reserve s/w resource till it gets unplugged.
   //
-
+/*
   if (Address != Bus->MaxDevices) {
     Bus->Devices[Address] = NULL;
   }
@@ -906,7 +907,7 @@ ON_ERROR:
   if (Child != NULL) {
     UsbFreeDevice (Child);
   }
-
+*/
   return Status;
 }
 

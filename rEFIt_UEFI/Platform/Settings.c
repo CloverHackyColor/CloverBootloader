@@ -2591,21 +2591,18 @@ GetThemeTagSettings (
         GlobalConfig.BackgroundScale = Tile;
       }
     }
-  }
-
-  Dict2 = GetProperty (Dict, "Path");
-  if (Dict2 != NULL && (Dict2->type == kTagTypeString) && Dict2->string) {
-    GlobalConfig.BackgroundName = PoolPrint (L"%a", Dict2->string);
-  }
-
-  Dict2 = GetProperty (Dict, "Sharp");
-  if (Dict2 != NULL) {
+    //  }
+    
+    Dict2 = GetProperty (Dict, "Path");
+    if (Dict2 != NULL && (Dict2->type == kTagTypeString) && Dict2->string) {
+      GlobalConfig.BackgroundName = PoolPrint (L"%a", Dict2->string);
+    }
+    
+    Dict2 = GetProperty (Dict, "Sharp");
     GlobalConfig.BackgroundSharp  = (INT32)GetPropertyInteger (Dict2, GlobalConfig.BackgroundSharp);
-  }
-
-  Dict2 = GetProperty (Dict, "Dark");
-  if (Dict2 != NULL) {
-    GlobalConfig.BackgroundDark   = (Dict2->type == kTagTypeTrue);
+    
+    Dict2 = GetProperty (Dict, "Dark");
+    GlobalConfig.BackgroundDark   = IsPropertyTrue(Dict2);
   }
   
   Dict = GetProperty (DictPointer, "Banner");
@@ -2641,24 +2638,16 @@ GetThemeTagSettings (
       }
 
       Dict2 = GetProperty (Dict, "DistanceFromScreenEdgeX%");
-      if (Dict2 != NULL) {
-        GlobalConfig.BannerPosX   = (INT32)GetPropertyInteger (Dict2, 0);
-      }
+      GlobalConfig.BannerPosX   = (INT32)GetPropertyInteger (Dict2, 0);
 
       Dict2 = GetProperty (Dict, "DistanceFromScreenEdgeY%");
-      if (Dict2 != NULL) {
-        GlobalConfig.BannerPosY   = (INT32)GetPropertyInteger (Dict2, 0);
-      }
+      GlobalConfig.BannerPosY   = (INT32)GetPropertyInteger (Dict2, 0);
 
       Dict2 = GetProperty (Dict, "NudgeX");
-      if (Dict2 != NULL) {
-        GlobalConfig.BannerNudgeX = (INT32)GetPropertyInteger (Dict2, 0);
-      }
+      GlobalConfig.BannerNudgeX = (INT32)GetPropertyInteger (Dict2, 0);
 
       Dict2 = GetProperty (Dict, "NudgeY");
-      if (Dict2 != NULL) {
-        GlobalConfig.BannerNudgeY = (INT32)GetPropertyInteger (Dict2, 0);
-      }
+      GlobalConfig.BannerNudgeY = (INT32)GetPropertyInteger (Dict2, 0);
     }
   }
   
@@ -2682,55 +2671,37 @@ GetThemeTagSettings (
 
     // blackosx added X and Y position for badge offset.
     Dict2 = GetProperty (Dict, "OffsetX");
-    if (Dict2 != NULL) {
-      GlobalConfig.BadgeOffsetX = (INTN)GetPropertyInteger (Dict2, GlobalConfig.BadgeOffsetX);
-    }
+    GlobalConfig.BadgeOffsetX = (INTN)GetPropertyInteger (Dict2, GlobalConfig.BadgeOffsetX);
 
     Dict2 = GetProperty (Dict, "OffsetY");
-    if (Dict2 != NULL) {
-      GlobalConfig.BadgeOffsetY = (INTN)GetPropertyInteger (Dict2, GlobalConfig.BadgeOffsetY);
-    }
+    GlobalConfig.BadgeOffsetY = (INTN)GetPropertyInteger (Dict2, GlobalConfig.BadgeOffsetY);
 
     Dict2 = GetProperty (Dict, "Scale");
-    if (Dict2 != NULL) {
-      GlobalConfig.BadgeScale = (UINTN)GetPropertyInteger (Dict2, GlobalConfig.BadgeScale);
-    }
+    GlobalConfig.BadgeScale = (UINTN)GetPropertyInteger (Dict2, GlobalConfig.BadgeScale);
   }
   
   Dict = GetProperty (DictPointer, "Origination");
   if (Dict != NULL) {
     Dict2 = GetProperty (Dict, "DesignWidth");
-    if (Dict2 != NULL) {
-      GlobalConfig.ThemeDesignWidth = (UINTN)GetPropertyInteger (Dict2, GlobalConfig.ThemeDesignWidth);
-    }
+    GlobalConfig.ThemeDesignWidth = (UINTN)GetPropertyInteger (Dict2, GlobalConfig.ThemeDesignWidth);
 
     Dict2 = GetProperty (Dict, "DesignHeight");
-    if (Dict2 != NULL) {
-      GlobalConfig.ThemeDesignHeight = (UINTN)GetPropertyInteger (Dict2, GlobalConfig.ThemeDesignHeight);
-    }
+    GlobalConfig.ThemeDesignHeight = (UINTN)GetPropertyInteger (Dict2, GlobalConfig.ThemeDesignHeight);
   }
   
   Dict = GetProperty (DictPointer, "Layout");
   if (Dict != NULL) {
     Dict2 = GetProperty (Dict, "BannerOffset");
-    if (Dict2 != NULL) {
-      LayoutBannerOffset = (UINTN)GetPropertyInteger (Dict2, LayoutBannerOffset);
-    }
+    LayoutBannerOffset = (UINTN)GetPropertyInteger (Dict2, LayoutBannerOffset);
 
     Dict2 = GetProperty (Dict, "ButtonOffset");
-    if (Dict2 != NULL) {
-      LayoutButtonOffset = (UINTN)GetPropertyInteger (Dict2, LayoutButtonOffset);
-    }
+    LayoutButtonOffset = (UINTN)GetPropertyInteger (Dict2, LayoutButtonOffset);
 
     Dict2 = GetProperty (Dict, "TextOffset");
-    if (Dict2 != NULL) {
-      LayoutTextOffset = (UINTN)GetPropertyInteger (Dict2, LayoutTextOffset);
-    }
+    LayoutTextOffset = (UINTN)GetPropertyInteger (Dict2, LayoutTextOffset);
 
     Dict2 = GetProperty (Dict, "AnimAdjustForMenuX");
-    if (Dict2 != NULL) {
-       LayoutAnimMoveForMenuX = (UINTN)GetPropertyInteger (Dict2, LayoutAnimMoveForMenuX);
-    }
+    LayoutAnimMoveForMenuX = (UINTN)GetPropertyInteger (Dict2, LayoutAnimMoveForMenuX);
 
     Dict2 = GetProperty (Dict, "Vertical");
     if (Dict2 && Dict2->type == kTagTypeTrue) {
@@ -2739,24 +2710,16 @@ GetThemeTagSettings (
 
     // GlobalConfig.MainEntriesSize
     Dict2 = GetProperty (Dict, "MainEntriesSize");
-    if (Dict2 != NULL) {
-      GlobalConfig.MainEntriesSize = (INT32)GetPropertyInteger (Dict2, GlobalConfig.MainEntriesSize);
-    }
+    GlobalConfig.MainEntriesSize = (INT32)GetPropertyInteger (Dict2, GlobalConfig.MainEntriesSize);
 
     Dict2 = GetProperty (Dict, "TileXSpace");
-    if (Dict2 != NULL) {
-      GlobalConfig.TileXSpace = (INT32)GetPropertyInteger (Dict2, GlobalConfig.TileXSpace);
-    }
+    GlobalConfig.TileXSpace = (INT32)GetPropertyInteger (Dict2, GlobalConfig.TileXSpace);
 
     Dict2 = GetProperty (Dict, "TileYSpace");
-    if (Dict2 != NULL) {
-      GlobalConfig.TileYSpace = (INT32)GetPropertyInteger (Dict2, GlobalConfig.TileYSpace);
-    }
+    GlobalConfig.TileYSpace = (INT32)GetPropertyInteger (Dict2, GlobalConfig.TileYSpace);
 
     Dict2 = GetProperty (Dict, "SelectionBigWidth");
-    if (Dict2 != NULL) {
-      row0TileSize = (INT32)GetPropertyInteger (Dict2, row0TileSize);
-    }
+    row0TileSize = (INT32)GetPropertyInteger (Dict2, row0TileSize);
   }
   
   Dict = GetProperty (DictPointer, "Components");
@@ -2813,26 +2776,25 @@ GetThemeTagSettings (
     }
 
     Dict2 = GetProperty (Dict, "OnTop");
-    if (IsPropertyTrue (Dict2)) {
-      GlobalConfig.SelectionOnTop = TRUE;
-    }
+    GlobalConfig.SelectionOnTop = IsPropertyTrue (Dict2);
 
     Dict2 = GetProperty (Dict, "ChangeNonSelectedGrey");
-    if (IsPropertyTrue (Dict2)) {
-      GlobalConfig.NonSelectedGrey = TRUE;
-    }
+    GlobalConfig.NonSelectedGrey = IsPropertyTrue (Dict2);
   }
   
   Dict = GetProperty (DictPointer, "Scroll");
   if (Dict != NULL) {
     Dict2 = GetProperty (Dict, "Width");
-    ScrollWidth = (UINTN)GetPropertyInteger (Dict2,                   ScrollWidth);
+    ScrollWidth = (UINTN)GetPropertyInteger (Dict2, ScrollWidth);
+    
     Dict2 = GetProperty (Dict, "Height");
-    ScrollButtonsHeight = (UINTN)GetPropertyInteger (Dict2,           ScrollButtonsHeight);
+    ScrollButtonsHeight = (UINTN)GetPropertyInteger (Dict2, ScrollButtonsHeight);
+    
     Dict2 = GetProperty (Dict, "BarHeight");
-    ScrollBarDecorationsHeight = (UINTN)GetPropertyInteger (Dict2,    ScrollBarDecorationsHeight);
+    ScrollBarDecorationsHeight = (UINTN)GetPropertyInteger (Dict2, ScrollBarDecorationsHeight);
+    
     Dict2 = GetProperty (Dict, "ScrollHeight");
-    ScrollScrollDecorationsHeight = (UINTN)GetPropertyInteger (Dict2, ScrollScrollDecorationsHeight);
+    ScrollScrollDecorationsHeight = (UINTN)GetPropertyInteger (Dict2,ScrollScrollDecorationsHeight);
   }
   
   Dict = GetProperty (DictPointer, "Font");
@@ -2853,9 +2815,7 @@ GetThemeTagSettings (
     }
 
     Dict2 = GetProperty (Dict, "CharWidth");
-    if (Dict2 != NULL) {
-      GlobalConfig.CharWidth = (UINTN)GetPropertyInteger (Dict2, GlobalConfig.CharWidth);
-    }
+    GlobalConfig.CharWidth = (UINTN)GetPropertyInteger (Dict2, GlobalConfig.CharWidth);
   }
   
   Dict = GetProperty (DictPointer, "Anime");
@@ -2878,9 +2838,7 @@ GetThemeTagSettings (
       }
 
       Dict2 = GetProperty (DictPointer, "ID");
-      if (Dict2 != NULL) {
-        Anime->ID = (UINTN)GetPropertyInteger (Dict2, Anime->ID);
-      }
+      Anime->ID = (UINTN)GetPropertyInteger (Dict2, 1); //default=main screen
 
       Dict2 = GetProperty (DictPointer, "Path");
       if (Dict2 != NULL && (Dict2->type == kTagTypeString) && Dict2->string) {
@@ -2888,14 +2846,10 @@ GetThemeTagSettings (
       }
 
       Dict2 = GetProperty (DictPointer, "Frames");
-      if (Dict2 != NULL) {
-        Anime->Frames = (UINTN)GetPropertyInteger (Dict2, Anime->Frames);
-      }
+      Anime->Frames = (UINTN)GetPropertyInteger (Dict2, Anime->Frames);
 
       Dict2 = GetProperty (DictPointer, "FrameTime");
-      if (Dict2 != NULL) {
-        Anime->FrameTime = (UINTN)GetPropertyInteger (Dict2, Anime->FrameTime);
-      }
+      Anime->FrameTime = (UINTN)GetPropertyInteger (Dict2, Anime->FrameTime);
       
       Dict2 = GetProperty (DictPointer, "ScreenEdgeX");
       if (Dict2 != NULL && (Dict2->type == kTagTypeString) && Dict2->string) {
@@ -2915,64 +2869,47 @@ GetThemeTagSettings (
         }
       }
       
-      //default value is centre
-      Anime->FilmX  = INITVALUE;
-      Anime->FilmY  = INITVALUE;
-      Anime->NudgeX = INITVALUE;
-      Anime->NudgeY = INITVALUE;
+      //default values are centre
       
       Dict2 = GetProperty (DictPointer, "DistanceFromScreenEdgeX%");
-      if (Dict2 != NULL) {
-        Anime->FilmX = (INT32)GetPropertyInteger (Dict2, Anime->FilmX);
-      }
+      Anime->FilmX = (INT32)GetPropertyInteger (Dict2, INITVALUE);
 
       Dict2 = GetProperty (DictPointer, "DistanceFromScreenEdgeY%");
-      if (Dict2 != NULL) {
-        Anime->FilmY = (INT32)GetPropertyInteger (Dict2, Anime->FilmY);
-      }
+      Anime->FilmY = (INT32)GetPropertyInteger (Dict2, INITVALUE);
       
       Dict2 = GetProperty (DictPointer, "NudgeX");
-      if (Dict2 != NULL) {
-        Anime->NudgeX = (INT32)GetPropertyInteger (Dict2, Anime->NudgeX);
-      }
+      Anime->NudgeX = (INT32)GetPropertyInteger (Dict2, INITVALUE);
 
       Dict2 = GetProperty (DictPointer, "NudgeY");
-      if (Dict2 != NULL) {
-        Anime->NudgeY = (INT32)GetPropertyInteger (Dict2, Anime->NudgeY);
-      }
+      Anime->NudgeY = (INT32)GetPropertyInteger (Dict2, INITVALUE);
       
       Dict2 = GetProperty (DictPointer, "Once");
-      if (Dict2 != NULL) {
-        if (IsPropertyTrue (Dict2)) {
-          Anime->Once = TRUE;
-        }
-      }
+      Anime->Once = IsPropertyTrue (Dict2);
 
       // Add the anime to the list
-      if (Anime != NULL) {
-        if ((Anime->ID == 0) || (Anime->Path == NULL)) {
-          FreePool (Anime);
-        } else if (GuiAnime != NULL) {
-          if (GuiAnime->ID == Anime->ID) {
-            Anime->Next = GuiAnime->Next;
-            FreeAnime (GuiAnime);
-          } else {
-            GUI_ANIME *Ptr = GuiAnime;
-            while (Ptr->Next) {
-              if (Ptr->Next->ID == Anime->ID) {
-                GUI_ANIME *Next = Ptr->Next;
-                Ptr->Next = Next->Next;
-                FreeAnime (Next);
-                break;
-              }
-              Ptr       = Ptr->Next;
-            }
-            Anime->Next = GuiAnime;
-          }
-          GuiAnime      = Anime;
+      if ((Anime->ID == 0) || (Anime->Path == NULL)) {
+        FreePool (Anime);
+      } else if (GuiAnime != NULL) { //second anime or further
+        if (GuiAnime->ID == Anime->ID) { //why the same anime here?
+          Anime->Next = GuiAnime->Next;
+          FreeAnime (GuiAnime); //free double
         } else {
-          GuiAnime      = Anime;
+          GUI_ANIME *Ptr = GuiAnime;
+          while (Ptr->Next) {
+            if (Ptr->Next->ID == Anime->ID) { //delete double from list
+              GUI_ANIME *Next = Ptr->Next;
+              Ptr->Next = Next->Next;
+              FreeAnime (Next);
+              break;
+            }
+            Ptr       = Ptr->Next;
+          }
+          Anime->Next = GuiAnime;
         }
+        GuiAnime      = Anime;
+        
+      } else {
+        GuiAnime      = Anime; //first anime
       }
     }
   }
@@ -3201,7 +3138,7 @@ InitTheme(
     FreeTag(ThemeDict);
   }
 //  DBG("8\n");
-  PrepareFont();  
+  PrepareFont();
   return Status;
 }
 

@@ -530,17 +530,17 @@ LoadLatestNvramPlist ()
   UINT64          ModifTimeMs;
   REFIT_VOLUME    *VolumeWithLatestNvramPlist;
   
-  
-  DBG ("Searching volumes for latest nvram.plist ...");
+//there are debug messages not neede for users
+//  DBG ("Searching volumes for latest nvram.plist ...");
   
   //
   // skip loading if already loaded
   //
   if (gNvramDict != NULL) {
-    DBG (" already loaded\n");
+ //   DBG (" already loaded\n");
     return EFI_SUCCESS;
   }
-  DBG ("\n");
+//  DBG ("\n");
   
   //
   // find latest nvram.plist
@@ -559,16 +559,16 @@ LoadLatestNvramPlist ()
     
     Guid = FindGPTPartitionGuidInDevicePath (Volume->DevicePath);
     
-    DBG (" %2d. Volume '%s', GUID = %g", Index, Volume->VolName, Guid);
+/*    DBG (" %2d. Volume '%s', GUID = %g", Index, Volume->VolName, Guid);
     if (Guid == NULL) {
       // not a GUID partition
       DBG (" - not GPT");
-    }
+    } */
     
     // check if nvram.plist exists
     Status = Volume->RootDir->Open (Volume->RootDir, &FileHandle, L"nvram.plist", EFI_FILE_MODE_READ, 0);
     if (EFI_ERROR(Status)) {
-      DBG (" - no nvram.plist - skipping!\n");
+//      DBG (" - no nvram.plist - skipping!\n");
       continue;
     }
     
@@ -580,27 +580,27 @@ LoadLatestNvramPlist ()
     // get nvram.plist modification date
     FileInfo = EfiLibFileInfo(FileHandle);
     if (FileInfo == NULL) {
-      DBG (" - no nvram.plist file info - skipping!\n");
+//      DBG (" - no nvram.plist file info - skipping!\n");
       FileHandle->Close(FileHandle);
       continue;
     }
     
-    DBG (" Modified = ");
+//    DBG (" Modified = ");
     ModifTimeMs = GetEfiTimeInMs (&FileInfo->ModificationTime);
-    DBG ("%d-%d-%d %d:%d:%d (%ld ms)",
+/*    DBG ("%d-%d-%d %d:%d:%d (%ld ms)",
         FileInfo->ModificationTime.Year, FileInfo->ModificationTime.Month, FileInfo->ModificationTime.Day,
         FileInfo->ModificationTime.Hour, FileInfo->ModificationTime.Minute, FileInfo->ModificationTime.Second,
-        ModifTimeMs);
+        ModifTimeMs); */
     FreePool (FileInfo);
     FileHandle->Close(FileHandle);
     
     // check if newer
     if (LastModifTimeMs < ModifTimeMs) {
-      DBG (" - newer - will use this one\n");
+//      DBG (" - newer - will use this one\n");
       VolumeWithLatestNvramPlist = Volume;
       LastModifTimeMs = ModifTimeMs;
     } else {
-      DBG (" - older - skipping!\n");
+//      DBG (" - older - skipping!\n");
     }
   }
   
@@ -614,7 +614,7 @@ LoadLatestNvramPlist ()
     Status = LoadNvramPlist (VolumeWithLatestNvramPlist->RootDir, L"nvram.plist");
     
   } else {
-    DBG (" nvram.plist not found!\n");
+ //   DBG (" nvram.plist not found!\n");
   }
   
   return Status;
