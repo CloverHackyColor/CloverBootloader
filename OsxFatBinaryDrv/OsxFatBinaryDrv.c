@@ -267,8 +267,8 @@ OvrLoadImage(IN      BOOLEAN                  BootPolicy,
   if (SourceBuffer != NULL) {
     FatHeader = (FAT_HEADER *)SourceBuffer;
     if (FatHeader->Magic == FAT_BINARY_MAGIC) {
-      FatArch = (FAT_ARCH *)(FatHeader + sizeof(FAT_HEADER));
-      for (Index = 0; Index < FatHeader->NumFatArch; ++Index, ++FatArch) {
+      FatArch = (FAT_ARCH *)((UINT8 *)SourceBuffer + sizeof(FAT_HEADER));
+      for (Index = 0; Index < FatHeader->NumFatArch; Index++, FatArch++) {
 #if defined(EFI32) || defined(MDE_CPU_IA32)
         if (FatArch->CpuType == CPU_TYPE_X86 && FatArch->CpuSubtype == CPU_SUBTYPE_I386_ALL)
 #elif defined(EFIX64) || defined(MDE_CPU_X64)
@@ -284,7 +284,7 @@ OvrLoadImage(IN      BOOLEAN                  BootPolicy,
       SourceSize     = FatArch->Size;
       gBS->AllocatePool(EfiBootServicesData, SourceSize, &SrcBuffer);   
       ASSERT(SrcBuffer != NULL);
-      gBS->CopyMem(SrcBuffer, FatHeader + FatArch->Offset, SourceSize);
+      gBS->CopyMem(SrcBuffer, (UINT8 *)SourceBuffer + FatArch->Offset, SourceSize);
 
       FreeSrcBuffer = TRUE;
     } else {
@@ -294,11 +294,11 @@ OvrLoadImage(IN      BOOLEAN                  BootPolicy,
 
   Status = OrigLoadImage(BootPolicy, ParentImageHandle, FilePath, SrcBuffer, SourceSize, ImageHandle);
 
-  if (FreeSrcBuffer && SrcBuffer != NULL) {
+  if (FreeSrcBuffer && SrcBuffer) {
     gBS->FreePool(SrcBuffer);
   }
 
-  if (FreeSourceBuffer && SourceBuffer != NULL) {
+  if (FreeSourceBuffer && SourceBuffer) {
     gBS->FreePool(SourceBuffer);
   }
 

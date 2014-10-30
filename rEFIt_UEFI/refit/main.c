@@ -436,6 +436,7 @@ static EFI_STATUS LoadEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
   ReturnStatus = Status = EFI_NOT_FOUND;  // in case the list is empty
   for (DevicePathIndex = 0; DevicePaths[DevicePathIndex] != NULL; DevicePathIndex++) {
     ReturnStatus = Status = gBS->LoadImage(FALSE, SelfImageHandle, DevicePaths[DevicePathIndex], NULL, 0, &ChildImageHandle);
+    DBG("load image status=%r\n", Status);
     if (ReturnStatus != EFI_NOT_FOUND)
       break;
   }
@@ -702,6 +703,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
   // Load image into memory (will be started later) 
   Status = LoadEFIImage(Entry->DevicePath, Basename(Entry->LoaderPath), NULL, &ImageHandle);
   if (EFI_ERROR(Status)) {
+    DBG("Image is not loaded, status=%r\n", Status);
     return; // no reason to continue if loading image failed
   }
 
@@ -713,7 +715,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
       OSTYPE_IS_OSX_RECOVERY(Entry->LoaderType) ||
       OSTYPE_IS_OSX_INSTALLER(Entry->LoaderType)) {
 
-//DBG("GetOSVersion\n");
+DBG("GetOSVersion\n");
 
     // Correct OSVersion if it was not found
     // This should happen only for 10.7-10.9 OSTYPE_OSX_INSTALLER 
