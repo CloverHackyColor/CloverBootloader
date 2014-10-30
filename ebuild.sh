@@ -457,6 +457,7 @@ MainPostBuildScript() {
         cp -v "$BUILD_DIR_ARCH"/FSInject.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers32UEFI/FSInject-32.efi
         cp -v "$BUILD_DIR_ARCH"/OsxFatBinaryDrv.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers32UEFI/OsxFatBinaryDrv-32.efi
         cp -v "$BUILD_DIR_ARCH"/VBoxHfs.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers32UEFI/VBoxHfs-32.efi
+        cp -v "$BUILD_DIR_ARCH"/VBoxHfs.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers32/VBoxHfs-32.efi
 
         # Optional drivers
         #cp -v "${BUILD_DIR}"/${TARGETARCH}/VBoxIso9600.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers32/VBoxIso9600-32.efi
@@ -508,12 +509,14 @@ MainPostBuildScript() {
 
         # Mandatory drivers
         cp -v "$BUILD_DIR_ARCH"/FSInject.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers64/FSInject-64.efi
+        cp -v "$BUILD_DIR_ARCH"/VBoxHfs.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers64/VBoxHfs-64.efi
+
         cp -v "$BUILD_DIR_ARCH"/FSInject.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers64UEFI/FSInject-64.efi
         cp -v "$BUILD_DIR_ARCH"/OsxFatBinaryDrv.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers64UEFI/OsxFatBinaryDrv-64.efi
         cp -v "$BUILD_DIR_ARCH"/VBoxHfs.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers64UEFI/VBoxHfs-64.efi
 
         # Optional drivers
-        #cp -v "$BUILD_DIR_ARCH"/VBoxIso9600.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64/VBoxIso9600-64.efi
+        cp -v "$BUILD_DIR_ARCH"/VBoxIso9600.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64/VBoxIso9600-64.efi
         cp -v "$BUILD_DIR_ARCH"/VBoxExt2.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64/VBoxExt2-64.efi
         cp -v "$BUILD_DIR_ARCH"/VBoxExt4.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64/VBoxExt4-64.efi
         cp -v "$BUILD_DIR_ARCH"/PartitionDxe.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/PartitionDxe-64.efi
