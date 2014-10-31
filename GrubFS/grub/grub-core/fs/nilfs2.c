@@ -318,8 +318,8 @@ grub_nilfs2_palloc_log_groups_per_desc_block (struct grub_nilfs2_data *data)
 {
   return LOG2_BLOCK_SIZE (data) - LOG_SIZE_GROUP_DESC;
 
-  COMPILE_TIME_ASSERT (sizeof (struct grub_nilfs2_palloc_group_desc)
-		       == (1 << LOG_SIZE_GROUP_DESC));
+//  COMPILE_TIME_ASSERT (sizeof (struct grub_nilfs2_palloc_group_desc)
+//		       == (1 << LOG_SIZE_GROUP_DESC));
 }
 
 static inline grub_uint32_t

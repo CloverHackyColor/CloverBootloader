@@ -1540,17 +1540,18 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
       Xsdt->Header.CreatorRevision = Rsdt->Header.CreatorRevision;
       pEntryR = (UINT32*)(&(Rsdt->Entry));
       pEntry = (CHAR8*)(&(Xsdt->Entry));
+      DBG("RSDT entries = %d\n", eCntR);
       for (Index = 0; Index < eCntR; Index ++) 
       {
         UINT64  *pEntryX = (UINT64 *)pEntry;
-        DBG("RSDT entry = 0x%x\n", *pEntryR);
+//        DBG("RSDT entry = 0x%x\n", *pEntryR);
         if (*pEntryR != 0) {
           *pEntryX = 0;
           CopyMem ((VOID*)pEntryX, (VOID*)pEntryR, sizeof(UINT32));
           pEntryR++;
           pEntry += sizeof(UINT64);
         } else {
-          DBG("... skip it\n");
+          DBG("RSDT entry %d = 0 ... skip it\n", Index);
           Xsdt->Header.Length -= sizeof(UINT64);
           pEntryR++;
         }

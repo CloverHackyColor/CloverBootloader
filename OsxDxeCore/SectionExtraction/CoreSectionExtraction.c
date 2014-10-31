@@ -1007,7 +1007,7 @@ FindChildNode (
     Status = CreateChildNode (SourceStream, 0, &CurrentChildNode);
     if (EFI_ERROR (Status)) {
       if (CurrentChildNode != NULL) {
-        FreePool (CurrentChildNode);
+        CoreFreePool (CurrentChildNode);
       }
       return Status;
     }
@@ -1099,10 +1099,13 @@ FindChildNode (
         //
         Status = CreateChildNode (SourceStream, NextChildOffset, &CurrentChildNode);
         if (EFI_ERROR (Status)) {
+          if (CurrentChildNode != NULL) {
+    	    CoreFreePool (CurrentChildNode);
+	      }
           return Status;
         }
       } else {
-        ASSERT (EFI_ERROR (ErrorStatus));
+//        ASSERT (EFI_ERROR (ErrorStatus));
         return ErrorStatus;
       }
     }

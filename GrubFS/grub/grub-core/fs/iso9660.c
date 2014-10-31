@@ -558,7 +558,7 @@ susp_iterate_dir (struct grub_iso9660_susp_entry *entry,
 	ctx->filename = (char *) "..";
       else if (entry->len >= 5)
 	{
-	  grub_size_t off = 0, csize = 1;
+	  grub_size_t off = 0, csize;
 	  char *old;
 	  csize = entry->len - 5;
 	  old = ctx->filename;

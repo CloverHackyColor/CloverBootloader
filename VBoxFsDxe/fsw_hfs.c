@@ -7,7 +7,7 @@
  * Current limitations:
  *  - Doesn't support permissions
  *  - Complete Unicode case-insensitiveness disabled (large tables)
- *  - No links
+ *  - links -> now supported symlinks and hardlinks. No aliasis.
  *  - Only supports pure HFS+ (i.e. no HFS, or HFS+ embedded to HFS)
  */
 
@@ -22,7 +22,8 @@
  * VirtualBox OSE distribution. VirtualBox OSE is distributed in the
  * hope that it will be useful, but WITHOUT ANY WARRANTY of any kind.
  */
-// improved by nms42: VolumeName, links
+// improved by nms42: VolumeName, links. 2014
+// Cleanup, tested and corrected by Slice
 
 #include "fsw_hfs.h"
 
@@ -588,11 +589,30 @@ fsw_hfs_btree_search (struct fsw_hfs_btree *btree,
     count = be16_to_cpu (node->numRecords);
 
 #ifndef VBOXHFS_BTREE_BINSEARCH
+    //preliminary test for last record. May be not needed look all for this node
+    currkey = fsw_hfs_btree_rec (btree, node, count - 1);
+    cmp = compare_keys (currkey, key);
+    if ((cmp == 0) && (node->kind == kBTLeafNode)) {
+      /* Found!  */
+      *result = node;
+      *key_offset = recnum;
+      hardlink = 0;
+      return FSW_SUCCESS;
+    } else if (cmp < 0) { //all records has key less than searched
+      if (node->kind == kBTIndexNode) {
+        currnode = fsw_hfs_btree_next_node (currkey);
+      } else if (node->fLink) {
+        currnode = be32_to_cpu (node->fLink);
+      } else {
+        status = FSW_NOT_FOUND;
+        break;
+      }
+      continue;
+    } //else search for all records
+    
     for (recnum = 0; recnum < count; recnum++) {
-//Pointer to the key inside node
       currkey = fsw_hfs_btree_rec (btree, node, recnum);
       cmp = compare_keys (currkey, key);  //fsw_hfs_cmpi_catkey
-      //fprintf(stderr, "rec=%d cmp=%d kind=%d \n", rec, cmp, node->kind);
  //     DBG(": currnode %d rec=%d count %d cmp=%d kind=%d\n",
  //         currnode, recnum, count, cmp, node->kind);
 

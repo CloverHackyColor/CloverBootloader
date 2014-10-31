@@ -198,7 +198,7 @@ Returns:
 
   RomPcir = AllocatePool (sizeof (PCI_DATA_STRUCTURE));
   if (RomPcir == NULL) {
-    gBS->FreePool (RomHeader);
+    FreePool (RomHeader);
     return EFI_OUT_OF_RESOURCES;
   }
 

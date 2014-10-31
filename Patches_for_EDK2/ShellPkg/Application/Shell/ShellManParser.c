@@ -206,6 +206,10 @@ ManBufferFindSections(
         // copy and save the current line.
         //
   //      ASSERT((*HelpText == NULL && *HelpSize == 0) || (*HelpText != NULL));
+        if (HelpText == NULL) {
+          Status = EFI_OUT_OF_RESOURCES;
+          break;
+        }
         if (!((*HelpText == NULL && *HelpSize == 0) || (*HelpText != NULL))) {
           return EFI_OUT_OF_RESOURCES;
         }

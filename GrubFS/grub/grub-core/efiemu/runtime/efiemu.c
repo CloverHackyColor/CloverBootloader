@@ -160,7 +160,7 @@ efiemu_memequal (const void *a, const void *b, grub_size_t n)
   grub_uint8_t *ptr1, *ptr2;
   for (ptr1 = (grub_uint8_t *) a, ptr2 = (grub_uint8_t *)b;
        ptr1 < (grub_uint8_t *)a + n && *ptr2 == *ptr1; ptr1++, ptr2++);
-  return ptr1 == a + n;
+  return ptr1 == (grub_uint8_t *)a + n;
 }
 
 static void

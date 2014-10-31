@@ -53,7 +53,7 @@ read_number (const char *str, grub_size_t size)
 	dig -= 'a' - 10;
       else
 	dig -= 'A' - 10;
-      ret = (ret << 4) | (dig);
+      ret = (ret << 4) | (dig & 0xf);
     }
   return ret;
 }

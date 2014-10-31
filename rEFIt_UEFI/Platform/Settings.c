@@ -328,14 +328,11 @@ SetBootCurrent(REFIT_MENU_ENTRY *LoadedEntry)
   
   FreePool(BootVariable);
   //all check passed, save the number
-  Status = gRT->SetVariable (L"BootCurrent",
+  Status = SetNvramVariable (L"BootCurrent",
                              &gEfiGlobalVariableGuid,
-                             EFI_VARIABLE_NON_VOLATILE
-                             | EFI_VARIABLE_BOOTSERVICE_ACCESS
-                             | EFI_VARIABLE_RUNTIME_ACCESS,
+                             EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                              sizeof(UINT16),
-                             &Entry->BootNum
-                             );
+                             &Entry->BootNum);
   if (EFI_ERROR(Status)) {
     DBG("Can't save BootCurrent, status=%r\n", Status);
   }

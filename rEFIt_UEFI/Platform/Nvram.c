@@ -523,14 +523,14 @@ LoadLatestNvramPlist ()
   EFI_STATUS      Status;
   UINTN           Index;
   REFIT_VOLUME    *Volume;
-  EFI_GUID        *Guid;
+//  EFI_GUID        *Guid;
   EFI_FILE_HANDLE FileHandle;
   EFI_FILE_INFO   *FileInfo;
   UINT64          LastModifTimeMs;
   UINT64          ModifTimeMs;
   REFIT_VOLUME    *VolumeWithLatestNvramPlist;
   
-//there are debug messages not neede for users
+//there are debug messages not needed for users
 //  DBG ("Searching volumes for latest nvram.plist ...");
   
   //
@@ -557,9 +557,9 @@ LoadLatestNvramPlist ()
       continue;
     }
     
-    Guid = FindGPTPartitionGuidInDevicePath (Volume->DevicePath);
+/*    Guid = FindGPTPartitionGuidInDevicePath (Volume->DevicePath);
     
-/*    DBG (" %2d. Volume '%s', GUID = %g", Index, Volume->VolName, Guid);
+    DBG (" %2d. Volume '%s', GUID = %g", Index, Volume->VolName, Guid);
     if (Guid == NULL) {
       // not a GUID partition
       DBG (" - not GPT");
@@ -1038,12 +1038,13 @@ RemoveStartupDiskVolume ()
     
 //    DBG ("RemoveStartupDiskVolume:\n");
     
-    Status = DeleteNvramVariable (L"efi-boot-device", &gEfiAppleBootGuid);
+    /*Status =*/ DeleteNvramVariable (L"efi-boot-device", &gEfiAppleBootGuid);
 //    DBG ("  * efi-boot-device = %r\n", Status);
     
     Status = DeleteNvramVariable (L"efi-boot-device-data", &gEfiAppleBootGuid);
 //    DBG ("  * efi-boot-device-data = %r\n", Status);
     
-    Status = DeleteNvramVariable (L"BootCampHD", &gEfiAppleBootGuid);
+    /*Status =*/ DeleteNvramVariable (L"BootCampHD", &gEfiAppleBootGuid);
 //    DBG ("  * BootCampHD = %r\n", Status);
+    DBG ("Removed efi-boot-device-data variable: %r\n", Status);
 }

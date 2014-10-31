@@ -1031,7 +1031,7 @@ VOID ScanVolumes(VOID)
   UINT8                   *SectorBuffer1, *SectorBuffer2;
   UINTN                   SectorSum, i;
   //  EFI_DEVICE_PATH_PROTOCOL  *VolumeDevicePath;
-  EFI_GUID                *Guid;
+  //  EFI_GUID                *Guid; //for debug only
   //  EFI_INPUT_KEY Key;
   INT32                   HVi;
   
@@ -1069,7 +1069,7 @@ VOID ScanVolumes(VOID)
         }
       }
       
-      Guid = FindGPTPartitionGuidInDevicePath(Volume->DevicePath);
+//      Guid = FindGPTPartitionGuidInDevicePath(Volume->DevicePath);
       if (!Volume->LegacyOS->IconName) {
         Volume->LegacyOS->IconName = L"legacy";
       }

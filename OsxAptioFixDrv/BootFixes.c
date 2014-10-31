@@ -389,7 +389,7 @@ ProtectRtDataFromRelocation(
 	UINTN					NumEntries;
 	UINTN					Index;
 	EFI_MEMORY_DESCRIPTOR	*Desc;
-	UINTN					BlockSize;
+//	UINTN					BlockSize;
 	
 	Desc = MemoryMap;
 	NumEntries = MemoryMapSize / DescriptorSize;
@@ -397,7 +397,7 @@ ProtectRtDataFromRelocation(
 	DBGnvr("FixNvramRelocation\n");
 	
 	for (Index = 0; Index < NumEntries; Index++) {
-		BlockSize = EFI_PAGES_TO_SIZE((UINTN)Desc->NumberOfPages);
+//		BlockSize = EFI_PAGES_TO_SIZE((UINTN)Desc->NumberOfPages);
 		
 		if ((Desc->Attribute & EFI_MEMORY_RUNTIME) != 0) {
 			if (Desc->Type == EfiRuntimeServicesData && Desc->PhysicalStart != gSysTableRtArea)

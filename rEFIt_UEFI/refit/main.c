@@ -512,9 +512,9 @@ static EFI_STATUS StartEFILoadedImage(IN EFI_HANDLE ChildImageHandle,
   // turn control over to the image
   //
   // Before calling the image, enable the Watchdog Timer for
-  // the 5 Minute period - Slice - NO! 60seconds is enough
+  // the 5 Minute period - Slice - NO! For slow driver and slow disk we need more
   //  
-  gBS->SetWatchdogTimer (180, 0x0000, 0x00, NULL);
+  gBS->SetWatchdogTimer (600, 0x0000, 0x00, NULL);
   
   ReturnStatus = Status = gBS->StartImage(ChildImageHandle, NULL, NULL);
   //
@@ -715,7 +715,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
       OSTYPE_IS_OSX_RECOVERY(Entry->LoaderType) ||
       OSTYPE_IS_OSX_INSTALLER(Entry->LoaderType)) {
 
-DBG("GetOSVersion\n");
+    DBG("GetOSVersion: ");
 
     // Correct OSVersion if it was not found
     // This should happen only for 10.7-10.9 OSTYPE_OSX_INSTALLER 
@@ -739,12 +739,12 @@ DBG("GetOSVersion\n");
             }
             Entry->OSVersion = AllocateCopyPool(AsciiStrLen(InstallerVersion)+1, InstallerVersion);
             Entry->OSVersion[AsciiStrLen(InstallerVersion)] = '\0';
-            DBG("Corrected OSVersion: %a\n", Entry->OSVersion);
+//            DBG("Corrected OSVersion: %a\n", Entry->OSVersion);
           }
         }
       }
     }
-    
+    DBG(": %a\n", Entry->OSVersion);
     // if "InjectKexts if no FakeSMC" and OSFLAG_WITHKEXTS is not set
     // then user selected submenu entry and requested no injection.
     // we'll turn off global "InjectKexts if no FakeSMC" to avoid unnecessary

@@ -1717,7 +1717,7 @@ ShellFindFilePath (
     Walker = (CHAR16*)Path;
     do {
       CopyMem(TestPath, Walker, StrSize(Walker));
-      if (TestPath != NULL) {
+//      if (TestPath != NULL) {
         TempChar = StrStr(TestPath, L";");
         if (TempChar != NULL) {
           *TempChar = CHAR_NULL;
@@ -1745,7 +1745,7 @@ ShellFindFilePath (
             ShellCloseFile(&Handle);
           }
         }
-      }
+//      }
     } while (Walker != NULL && Walker[0] != CHAR_NULL);
     FreePool(TestPath);
   }

@@ -917,11 +917,11 @@ STATIC BOOLEAN AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOptions,
   if ((LoaderPath == NULL) || (Volume == NULL) || (Volume->RootDir == NULL) || !FileExists(Volume->RootDir, LoaderPath)) {
     return FALSE;
   }
-  DBG("AddLoaderEntry for Volume Name=%s\n", Volume->VolName);
+  DBG("    AddLoaderEntry for Volume Name=%s\n", Volume->VolName);
   //don't add hided entries
   for (HVi = 0; HVi < gSettings.HVCount; HVi++) {
     if (StrStriBasic(LoaderPath, gSettings.HVHideStrings[HVi])) {
-      DBG("  hiding entry: %s\n", LoaderPath);
+      DBG("   hiding entry: %s\n", LoaderPath);
       return FALSE;
     }
   }

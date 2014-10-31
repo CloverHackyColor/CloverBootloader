@@ -194,7 +194,7 @@ OvrWaitForEvent(
 	EFI_STATUS			Status;
 	
 	Status = gOrgBS.WaitForEvent(NumberOfEvents, Event, Index);
-	//PRINT("->WaitForEvent(%d, %p, %d) = %r\n", NumberOfEvents, *Event, Index, Status);
+	PRINT("->WaitForEvent(%d, %p, %d) = %r\n", NumberOfEvents, *Event, Index, Status);
 	return Status;
 }
 

@@ -208,7 +208,11 @@ OvrLoadImage(IN      BOOLEAN                  BootPolicy,
             }
 
             if (!EFI_ERROR(Status)) {
-              ASSERT(FileInfo != NULL);
+ //             ASSERT(FileInfo != NULL);
+              if (FileInfo == NULL) {
+                return EFI_OUT_OF_RESOURCES;
+              }
+
               gBS->AllocatePool(EfiBootServicesData, (UINTN)FileInfo->FileSize, &SourceBuffer);
 
               if (SourceBuffer != NULL) {
@@ -218,6 +222,7 @@ OvrLoadImage(IN      BOOLEAN                  BootPolicy,
 
                 FileHandle->Close(FileHandle);
                 gBS->FreePool(FileInfo);
+                FileInfo = NULL; //FreePoll will not zero pointer
               } else {
                 Status = EFI_OUT_OF_RESOURCES;
               }
@@ -238,15 +243,14 @@ OvrLoadImage(IN      BOOLEAN                  BootPolicy,
       Status = gBS->HandleProtocol(DeviceHandle, &gEfiLoadFileProtocolGuid, (VOID**)&LoadFile);
 
       if (!EFI_ERROR(Status)) {
-        ASSERT(SourceSize == 0);
-        ASSERT(SourceBuffer == NULL);
+//        ASSERT(SourceSize == 0);
+//        ASSERT(SourceBuffer == NULL);
 
         // Call LoadFile with the correct buffer size
         Status = LoadFile->LoadFile(LoadFile, RemainingDevicePath, BootPolicy, &SourceSize, SourceBuffer);
-        if (Status == EFI_BUFFER_TOO_SMALL)
-        {
+        if (Status == EFI_BUFFER_TOO_SMALL) {
           gBS->AllocatePool(EfiBootServicesData, SourceSize, &SourceBuffer);   
-          Status = SourceBuffer == NULL ?
+          Status = (SourceBuffer == NULL) ?
             EFI_OUT_OF_RESOURCES :
             LoadFile->LoadFile(LoadFile, RemainingDevicePath, BootPolicy, &SourceSize, SourceBuffer);
         }
@@ -267,7 +271,7 @@ OvrLoadImage(IN      BOOLEAN                  BootPolicy,
   if (SourceBuffer != NULL) {
     FatHeader = (FAT_HEADER *)SourceBuffer;
     if (FatHeader->Magic == FAT_BINARY_MAGIC) {
-      FatArch = (FAT_ARCH *)((UINT8 *)SourceBuffer + sizeof(FAT_HEADER));
+      FatArch = (FAT_ARCH *)(FatHeader + 1);
       for (Index = 0; Index < FatHeader->NumFatArch; Index++, FatArch++) {
 #if defined(EFI32) || defined(MDE_CPU_IA32)
         if (FatArch->CpuType == CPU_TYPE_X86 && FatArch->CpuSubtype == CPU_SUBTYPE_I386_ALL)
@@ -283,7 +287,10 @@ OvrLoadImage(IN      BOOLEAN                  BootPolicy,
 
       SourceSize     = FatArch->Size;
       gBS->AllocatePool(EfiBootServicesData, SourceSize, &SrcBuffer);   
-      ASSERT(SrcBuffer != NULL);
+//      ASSERT(SrcBuffer != NULL);
+      if (SrcBuffer == NULL) {
+        return EFI_OUT_OF_RESOURCES;
+      }
       gBS->CopyMem(SrcBuffer, (UINT8 *)SourceBuffer + FatArch->Offset, SourceSize);
 
       FreeSrcBuffer = TRUE;
