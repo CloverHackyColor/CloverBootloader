@@ -441,12 +441,6 @@ DRQClear (
     InfiniteWait = FALSE;
   }
 
-  if (Timeout == 0) {
-    InfiniteWait = TRUE;
-  } else {
-    InfiniteWait = FALSE;
-  }
-
   Delay = DivU64x32(Timeout, 1000) + 1;
   do {
     StatusRegister = IdeReadPortB (PciIo, IdeRegisters->CmdOrStatus);
