@@ -102,6 +102,7 @@ UINT8 spd_mem_to_smbios[] =
 #define SPD_XMP_SIG2 177
 #define SPD_XMP_SIG2_VALUE 0x4A
 #define SPD_XMP_PROFILES 178
+#define SPD_XMP_VERSION 179
 #define SPD_XMP_PROF1_DIVISOR 180
 #define SPD_XMP_PROF1_DIVIDEND 181
 #define SPD_XMP_PROF2_DIVISOR 182
@@ -123,6 +124,7 @@ UINT8 spd_indexes[] = {
   SPD_XMP_SIG1,
   SPD_XMP_SIG2,
   SPD_XMP_PROFILES,
+  SPD_XMP_VERSION,
   SPD_XMP_PROF1_DIVISOR,
   SPD_XMP_PROF1_DIVIDEND,
   SPD_XMP_PROF2_DIVISOR,
@@ -278,6 +280,7 @@ UINT16 getDDRspeedMhz(UINT8 * spd)
     if ((spd[SPD_XMP_SIG1] == SPD_XMP_SIG1_VALUE) &&
         (spd[SPD_XMP_SIG2] == SPD_XMP_SIG2_VALUE) &&
         ((spd[SPD_XMP_PROFILES] & 3) != 0)) {
+      DBG("Found module with XMP version %d.%d", (spd[SPD_XMP_VERSION] >> 4) & 0xF, spd[SPD_XMP_VERSION] & 0xF);
       // Check if an XMP profile is enabled
       switch (gSettings.XMPDetection) {
         case 0:
@@ -287,6 +290,7 @@ UINT16 getDDRspeedMhz(UINT8 * spd)
             divisor = spd[SPD_XMP_PROF1_DIVISOR];
             dividend = spd[SPD_XMP_PROF1_DIVIDEND];
             ratio = spd[SPD_XMP_PROF1_RATIO];
+            DBG("XMP Profile1: %d*%d/%dns\n", ratio, dividend, divisor);
             xmpFrequency1 = (((dividend != 0) && (divisor != 0) && (ratio != 0)) ?
                              ((2000 * dividend) / (divisor * ratio)) : 0);
           }
@@ -295,6 +299,7 @@ UINT16 getDDRspeedMhz(UINT8 * spd)
             divisor = spd[SPD_XMP_PROF2_DIVISOR];
             dividend = spd[SPD_XMP_PROF2_DIVIDEND];
             ratio = spd[SPD_XMP_PROF2_RATIO];
+            DBG("XMP Profile2: %d*%d/%dns\n", ratio, dividend, divisor);
             xmpFrequency2 = (((dividend != 0) && (divisor != 0) && (ratio != 0)) ?
                              ((2000 * dividend) / (divisor * ratio)) : 0);
           }
@@ -312,12 +317,13 @@ UINT16 getDDRspeedMhz(UINT8 * spd)
         case 1:
           // Use first profile if present
           if ((spd[SPD_XMP_PROFILES] & 1) == 1) {
-            DBG("Using XMP Profile1 instead of standard frequency %dMHz\n", frequency);
             divisor = spd[SPD_XMP_PROF1_DIVISOR];
             dividend = spd[SPD_XMP_PROF1_DIVIDEND];
             ratio = spd[SPD_XMP_PROF1_RATIO];
+            DBG("XMP Profile1: %d*%d/%dns\n", ratio, dividend, divisor);
             frequency = (((dividend != 0) && (divisor != 0) && (ratio != 0)) ?
                          ((2000 * dividend) / (divisor * ratio)) : 0);
+            DBG("Using XMP Profile1 instead of standard frequency %dMHz\n", frequency);
           } else {
             DBG("Not using XMP Profile1 because it is not present\n");
           }
@@ -326,12 +332,13 @@ UINT16 getDDRspeedMhz(UINT8 * spd)
         case 2:
           // Use second profile
           if ((spd[SPD_XMP_PROFILES] & 2) == 2) {
-            DBG("Using XMP Profile2 instead of standard frequency %dMHz\n", frequency);
             divisor = spd[SPD_XMP_PROF2_DIVISOR];
             dividend = spd[SPD_XMP_PROF2_DIVIDEND];
             ratio = spd[SPD_XMP_PROF2_RATIO];
+            DBG("XMP Profile2: %d*%d/%dns\n", ratio, dividend, divisor);
             frequency = (((dividend != 0) && (divisor != 0) && (ratio != 0)) ?
                          ((2000 * dividend) / (divisor * ratio)) : 0);
+            DBG("Using XMP Profile2 instead of standard frequency %dMHz\n", frequency);
           } else {
             DBG("Not using XMP Profile2 because it is not present\n");
           }
