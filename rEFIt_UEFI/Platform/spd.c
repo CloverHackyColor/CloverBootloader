@@ -290,7 +290,7 @@ UINT16 getDDRspeedMhz(UINT8 * spd)
             divisor = spd[SPD_XMP_PROF1_DIVISOR];
             dividend = spd[SPD_XMP_PROF1_DIVIDEND];
             ratio = spd[SPD_XMP_PROF1_RATIO];
-            DBG("XMP Profile1: %d*%d/%dns\n", ratio, dividend, divisor);
+            DBG("XMP Profile1: %d*%d/%dns\n", ratio, divisor, dividend);
             xmpFrequency1 = (((dividend != 0) && (divisor != 0) && (ratio != 0)) ?
                              ((2000 * dividend) / (divisor * ratio)) : 0);
           }
@@ -299,7 +299,7 @@ UINT16 getDDRspeedMhz(UINT8 * spd)
             divisor = spd[SPD_XMP_PROF2_DIVISOR];
             dividend = spd[SPD_XMP_PROF2_DIVIDEND];
             ratio = spd[SPD_XMP_PROF2_RATIO];
-            DBG("XMP Profile2: %d*%d/%dns\n", ratio, dividend, divisor);
+            DBG("XMP Profile2: %d*%d/%dns\n", ratio, divisor, dividend);
             xmpFrequency2 = (((dividend != 0) && (divisor != 0) && (ratio != 0)) ?
                              ((2000 * dividend) / (divisor * ratio)) : 0);
           }
@@ -320,7 +320,7 @@ UINT16 getDDRspeedMhz(UINT8 * spd)
             divisor = spd[SPD_XMP_PROF1_DIVISOR];
             dividend = spd[SPD_XMP_PROF1_DIVIDEND];
             ratio = spd[SPD_XMP_PROF1_RATIO];
-            DBG("XMP Profile1: %d*%d/%dns\n", ratio, dividend, divisor);
+            DBG("XMP Profile1: %d*%d/%dns\n", ratio, divisor, dividend);
             frequency = (((dividend != 0) && (divisor != 0) && (ratio != 0)) ?
                          ((2000 * dividend) / (divisor * ratio)) : 0);
             DBG("Using XMP Profile1 instead of standard frequency %dMHz\n", frequency);
@@ -335,7 +335,7 @@ UINT16 getDDRspeedMhz(UINT8 * spd)
             divisor = spd[SPD_XMP_PROF2_DIVISOR];
             dividend = spd[SPD_XMP_PROF2_DIVIDEND];
             ratio = spd[SPD_XMP_PROF2_RATIO];
-            DBG("XMP Profile2: %d*%d/%dns\n", ratio, dividend, divisor);
+            DBG("XMP Profile2: %d*%d/%dns\n", ratio, divisor, dividend);
             frequency = (((dividend != 0) && (divisor != 0) && (ratio != 0)) ?
                          ((2000 * dividend) / (divisor * ratio)) : 0);
             DBG("Using XMP Profile2 instead of standard frequency %dMHz\n", frequency);
