@@ -1259,9 +1259,11 @@ VOID PatchTableType17()
         if (gRAM.SPDInUse != gRAM.SMBIOSInUse) {
           // Prefer the SPD information
           if (gRAM.SPDInUse > gRAM.SMBIOSInUse) {
+            DBG("Not trusting SMBIOS because SPD reports more modules...\n");
             trustSMBIOS = FALSE;
           } else if (gRAM.SPD[0].InUse || !gRAM.SMBIOS[0].InUse) {
             if (gRAM.SPDInUse > 1) {
+              DBG("Not trusting SMBIOS because SPD reports different modules...\n");
               trustSMBIOS = FALSE;
             } else if (gRAM.SMBIOSInUse == 1) {
               channels = 1;
@@ -1275,13 +1277,16 @@ VOID PatchTableType17()
                 channels = 1;
               }
             } else {
+              DBG("Not trusting SMBIOS because SPD reports only one module...\n");
               trustSMBIOS = FALSE;
             }
           } else {
+            DBG("Not trusting SMBIOS because SPD reports less modules...\n");
             trustSMBIOS = FALSE;
           }
         } else if (gRAM.SPD[0].InUse != gRAM.SMBIOS[0].InUse) {
           // Never trust a sneaky SMBIOS!
+          DBG("Not trusting SMBIOS because it's being sneaky...\n");
           trustSMBIOS = FALSE;
         }
       } else if (gRAM.SMBIOSInUse == 1) {
