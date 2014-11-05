@@ -301,7 +301,7 @@ SetupDataForOSX()
     LogDataHub(&gEfiProcessorSubClassGuid, L"FSBFrequency",         &FrontSideBus,        sizeof(UINT64));
 
     TscFrequency        = gCPUStructure.TSCFrequency;
-    LogDataHub(&gEfiProcessorSubClassGuid, L"TSCFrequency",         &TscFrequency,        sizeof(UINT64));
+    LogDataHub(&gEfiProcessorSubClassGuid, L"InitialTSC",         &TscFrequency,        sizeof(UINT64));
     LogDataHub(&gEfiProcessorSubClassGuid, L"CPUFrequency",         &CpuSpeed,            sizeof(UINT64));
     
     DevPathSupportedVal = 1;

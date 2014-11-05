@@ -261,13 +261,13 @@ VOID AsusAICPUPMPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32
   UINTN   Index1;
   UINTN   Index2;
   UINTN   Count = 0;
-  
+
   DBG_RT(Entry, "\nAsusAICPUPMPatch: driverAddr = %x, driverSize = %x\n", Driver, DriverSize);
   if (Entry->KernelAndKextPatches->KPDebug) {
     ExtractKextBoundleIdentifier(InfoPlist);
   }
   DBG_RT(Entry, "Kext: %a\n", gKextBoundleIdentifier);
-  
+
   //TODO: we should scan only __text __TEXT
   for (Index1 = 0; Index1 < DriverSize; Index1++) {
     // search for MovlE2ToEcx
@@ -280,18 +280,32 @@ VOID AsusAICPUPMPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32
           Driver[Index2] = 0x90;
           Driver[Index2 + 1] = 0x90;
           DBG_RT(Entry, " %d. patched at 0x%x\n", Count, Index2);
+          break;
+        } else if ((Driver[Index2] == 0xC9 && Driver[Index2 + 1] == 0xC3) ||
+                   (Driver[Index2] == 0xB9 && Driver[Index2 + 3] == 0 && Driver[Index2 + 4] == 0) ||
+                   (Driver[Index2] == 0x66 && Driver[Index2 + 1] == 0xB9 && Driver[Index2 + 3] == 0)) {
+          // a leave/ret will cancel the search
+          // so will an intervening "mov[l] $xx, [e]cx"
+          break;
         }
       }
     } else if (CompareMem(Driver + Index1, MovE2ToCx, sizeof(MovE2ToCx)) == 0) {
-     // search for wrmsr in next few bytes
-       for (Index2 = Index1 + sizeof(MovE2ToCx); Index2 < Index1 + sizeof(MovE2ToCx) + 16; Index2++) {
+      // search for wrmsr in next few bytes
+      for (Index2 = Index1 + sizeof(MovE2ToCx); Index2 < Index1 + sizeof(MovE2ToCx) + 16; Index2++) {
         if (Driver[Index2] == Wrmsr[0] && Driver[Index2 + 1] == Wrmsr[1]) {
-        // found it - patch it with nops
-            Count++;
-            Driver[Index2] = 0x90;
-            Driver[Index2 + 1] = 0x90;
-            DBG_RT(Entry, " %d. patched at 0x%x\n", Count, Index2);
-          }
+          // found it - patch it with nops
+          Count++;
+          Driver[Index2] = 0x90;
+          Driver[Index2 + 1] = 0x90;
+          DBG_RT(Entry, " %d. patched at 0x%x\n", Count, Index2);
+          break;
+        } else if ((Driver[Index2] == 0xC9 && Driver[Index2 + 1] == 0xC3) ||
+                   (Driver[Index2] == 0xB9 && Driver[Index2 + 3] == 0 && Driver[Index2 + 4] == 0) ||
+                   (Driver[Index2] == 0x66 && Driver[Index2 + 1] == 0xB9 && Driver[Index2 + 3] == 0)) {
+          // a leave/ret will cancel the search
+          // so will an intervening "mov[l] $xx, [e]cx"
+          break;
+        }
       }
     }
   }

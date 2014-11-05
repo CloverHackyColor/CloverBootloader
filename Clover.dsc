@@ -554,3 +554,4 @@
   XCODE:*_*_*_CC_FLAGS = $(BUILD_OPTIONS)
   GCC:*_*_*_CC_FLAGS   = $(BUILD_OPTIONS) 
   #-Wunused-but-set-variable
+  # -Os -fno-omit-frame-pointer -maccumulate-outgoing-args

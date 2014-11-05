@@ -50,6 +50,6 @@
 [BuildOptions]
 #  MSFT:*_*_*_ASM_FLAGS = /Fl
   XCODE:*_*_*_CC_FLAGS = -Os
-  GCC:*_*_*_CC_FLAGS = -Os
+  GCC:*_*_*_CC_FLAGS = -O0
 
 
