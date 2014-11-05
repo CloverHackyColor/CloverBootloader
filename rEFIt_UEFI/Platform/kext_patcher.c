@@ -249,10 +249,11 @@ VOID ATIConnectorsPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT
 //
 // Credits: Samantha/RevoGirl/DHP
 // http://www.insanelymac.com/forum/topic/253642-dsdt-for-asus-p8p67-m-pro/page__st__200#entry1681099
-//
+// Rehabman corrections 2014
 //
 
 UINT8   MovlE2ToEcx[] = { 0xB9, 0xE2, 0x00, 0x00, 0x00 };
+UINT8   MovE2ToCx[]   = { 0x66, 0xB9, 0xE2, 0x00 };
 UINT8   Wrmsr[]       = { 0x0F, 0x30 };
 
 VOID AsusAICPUPMPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize, LOADER_ENTRY *Entry)
@@ -280,6 +281,17 @@ VOID AsusAICPUPMPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32
           Driver[Index2 + 1] = 0x90;
           DBG_RT(Entry, " %d. patched at 0x%x\n", Count, Index2);
         }
+      }
+    } else if (CompareMem(Driver + Index1, MovE2ToCx, sizeof(MovE2ToCx)) == 0) {
+     // search for wrmsr in next few bytes
+       for (Index2 = Index1 + sizeof(MovE2ToCx); Index2 < Index1 + sizeof(MovE2ToCx) + 16; Index2++) {
+        if (Driver[Index2] == Wrmsr[0] && Driver[Index2 + 1] == Wrmsr[1]) {
+        // found it - patch it with nops
+            Count++;
+            Driver[Index2] = 0x90;
+            Driver[Index2 + 1] = 0x90;
+            DBG_RT(Entry, " %d. patched at 0x%x\n", Count, Index2);
+          }
       }
     }
   }
