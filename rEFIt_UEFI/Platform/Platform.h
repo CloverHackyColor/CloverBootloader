@@ -62,11 +62,11 @@ Headers collection for procedures
 #include <Protocol/efiConsoleControl.h>
 #include <Protocol/EmuVariableControl.h>
 
-#include "lib.h"
+#include "../refit/lib.h"
 #include "string.h"
 #include "boot.h"
 //#include "PiBootMode.h"
-#include "IO.h"
+#include "../refit/IO.h"
 #include "device_inject.h"
 #include "kext_inject.h"
 //#include "entry_scan.h"

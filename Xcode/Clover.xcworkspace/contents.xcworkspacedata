@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workspace
+   version = "1.0">
+   <FileRef
+      location = "group:EDK2/EDK2.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:rEFIt_UEFI/rEFIt_UEFI.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:Clover/Clover.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:GrubFS/GrubFS.xcodeproj">
+   </FileRef>
+</Workspace>

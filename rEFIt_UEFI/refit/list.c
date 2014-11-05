@@ -35,6 +35,7 @@
  */
 
 #include "Platform.h"
+#include "list.h"
 
 
 #ifndef DEBUG_ALL
