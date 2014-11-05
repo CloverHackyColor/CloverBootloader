@@ -15,6 +15,7 @@ declare -a EDK2_BUILD_OPTIONS=
 print_option_help_wc=
 have_fmt=
 PLATFORMFILE=
+MODULEFILE=
 TARGETRULE=
 
 
@@ -24,7 +25,15 @@ export TARGETARCH=X64
 export BUILDTARGET=RELEASE
 export BUILDTHREADS=$(( NUMBER_OF_CPUS + 1 ))
 export WORKSPACE=${WORKSPACE:-}
-export TOOLCHAIN_DIR=${TOOLCHAIN_DIR:-~/src/opt/local}
+
+# if building through Xcode, then TOOLCHAIN_DIR is not defined
+# checking if it is where CloverGrowerPro put it
+TOOLCHAIN_DIR=${TOOLCHAIN_DIR:-$(dirname "$0")/../../toolchain}
+if [[ ! -d $TOOLCHAIN_DIR ]]; then
+    TOOLCHAIN_DIR=~/src/opt/local
+fi
+export TOOLCHAIN_DIR
+echo "TOOLCHAIN_DIR: $TOOLCHAIN_DIR"
 
 VBIOSPATCHCLOVEREFI=0
 ONLYSATA0PATCH=0
@@ -181,6 +190,7 @@ usage() {
     print_option_help "--x64-mcp"   "build Clover in 64-bit [boot7] using BiosBlockIO (compatible with MCP chipset)"
     print_option_help "-a TARGETARCH, --arch=TARGETARCH" "overrides target.txt's TARGET_ARCH definition"
     print_option_help "-p PLATFORMFILE, --platform=PLATFORMFILE" "Build the platform specified by the DSC filename argument"
+    print_option_help "-m MODULEFILE, --module=MODULEFILE" "Build only the module specified by the INF filename argument"
     print_option_help "-b BUILDTARGET, --buildtarget=BUILDTARGET" "using the BUILDTARGET to build the platform"
     echo
     echo "Options:"
@@ -235,6 +245,11 @@ checkCmdlineArguments() {
             --platform=*)
                 PLATFORMFILE=$(echo "$option" | sed 's/--platform=//')
                 ;;
+            -m) MODULEFILE=$(argument $option "$@"); shift
+                ;;
+            --module=*)
+                MODULEFILE=$(echo "$option" | sed 's/--module=//')
+                ;;
             -b) BUILDTARGET=$(argument $option "$@"); shift
                 ;;
             --buildtarget=*)
@@ -278,6 +293,9 @@ checkCmdlineArguments() {
 
     # Update variables
     PLATFORMFILE="${PLATFORMFILE:-Clover/Clover.dsc}"
+    if [ ! -z "${MODULEFILE}" ]; then
+        MODULEFILE=" -m Clover/$MODULEFILE"
+    fi
 }
 
 ## Check tools for the toolchain
@@ -398,7 +416,7 @@ MainBuildScript() {
     [[ "$CLANG" -ne 0 ]] && addEdk2BuildMacro 'CLANG'
 
     local cmd="build ${EDK2_BUILD_OPTIONS[@]}"
-    cmd="$cmd -p $PLATFORMFILE -a $TARGETARCH -b $BUILDTARGET"
+    cmd="$cmd -p $PLATFORMFILE $MODULEFILE -a $TARGETARCH -b $BUILDTARGET"
     cmd="$cmd -t $TOOLCHAIN -n $BUILDTHREADS $TARGETRULE"
 
     echo
@@ -561,7 +579,9 @@ export LC_ALL=POSIX
 pathmunge "$TOOLCHAIN_DIR/bin"
 
 MainBuildScript $@
-MainPostBuildScript
+if [[ -z $MODULEFILE  ]]; then
+    MainPostBuildScript
+fi
 
 # Local Variables:      #
 # mode: ksh             #
