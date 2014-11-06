@@ -273,7 +273,7 @@ VOID AsusAICPUPMPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32
     // search for MovlE2ToEcx
     if (CompareMem(Driver + Index1, MovlE2ToEcx, sizeof(MovlE2ToEcx)) == 0) {
       // search for wrmsr in next few bytes
-      for (Index2 = Index1 + sizeof(MovlE2ToEcx); Index2 < Index1 + sizeof(MovlE2ToEcx) + 16; Index2++) {
+      for (Index2 = Index1 + sizeof(MovlE2ToEcx); Index2 < Index1 + sizeof(MovlE2ToEcx) + 32; Index2++) {
         if (Driver[Index2] == Wrmsr[0] && Driver[Index2 + 1] == Wrmsr[1]) {
           // found it - patch it with nops
           Count++;
@@ -282,6 +282,7 @@ VOID AsusAICPUPMPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32
           DBG_RT(Entry, " %d. patched at 0x%x\n", Count, Index2);
           break;
         } else if ((Driver[Index2] == 0xC9 && Driver[Index2 + 1] == 0xC3) ||
+                   (Driver[Index2] == 0x5D && Driver[Index2 + 1] == 0xC3) ||
                    (Driver[Index2] == 0xB9 && Driver[Index2 + 3] == 0 && Driver[Index2 + 4] == 0) ||
                    (Driver[Index2] == 0x66 && Driver[Index2 + 1] == 0xB9 && Driver[Index2 + 3] == 0)) {
           // a leave/ret will cancel the search
@@ -291,7 +292,7 @@ VOID AsusAICPUPMPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32
       }
     } else if (CompareMem(Driver + Index1, MovE2ToCx, sizeof(MovE2ToCx)) == 0) {
       // search for wrmsr in next few bytes
-      for (Index2 = Index1 + sizeof(MovE2ToCx); Index2 < Index1 + sizeof(MovE2ToCx) + 16; Index2++) {
+      for (Index2 = Index1 + sizeof(MovE2ToCx); Index2 < Index1 + sizeof(MovE2ToCx) + 32; Index2++) {
         if (Driver[Index2] == Wrmsr[0] && Driver[Index2 + 1] == Wrmsr[1]) {
           // found it - patch it with nops
           Count++;
@@ -300,6 +301,7 @@ VOID AsusAICPUPMPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32
           DBG_RT(Entry, " %d. patched at 0x%x\n", Count, Index2);
           break;
         } else if ((Driver[Index2] == 0xC9 && Driver[Index2 + 1] == 0xC3) ||
+                   (Driver[Index2] == 0x5D && Driver[Index2 + 1] == 0xC3) ||
                    (Driver[Index2] == 0xB9 && Driver[Index2 + 3] == 0 && Driver[Index2 + 4] == 0) ||
                    (Driver[Index2] == 0x66 && Driver[Index2 + 1] == 0xB9 && Driver[Index2 + 3] == 0)) {
           // a leave/ret will cancel the search
