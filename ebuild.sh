@@ -574,6 +574,7 @@ trap 'exitTrap' EXIT
 
 # Default locale
 export LC_ALL=POSIX
+export LTO_PREFIX=gcc-
 
 # Add toolchain bin directory to the PATH
 pathmunge "$TOOLCHAIN_DIR/bin"
