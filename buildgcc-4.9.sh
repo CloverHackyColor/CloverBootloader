@@ -127,6 +127,7 @@ function mountRamDisk() {
         [ -n "$dev_ramdisk" ] && newfs_hfs -v "BuildGCC RamDisk" "$dev_ramdisk"
         [ ! -d "$RAMDISK_MNT_PT" ] && mkdir "$RAMDISK_MNT_PT"
         mount -t hfs "$dev_ramdisk" "$RAMDISK_MNT_PT"
+        touch "$RAMDISK_MNT_PT/.metadata_never_index"
         echo
     fi
     # Automatically remove RAMDISK on exit
@@ -319,7 +320,7 @@ CompileLibs () {
         mkdir -p "${DIR_BUILD}/$ARCH-cloog" && cd "${DIR_BUILD}/$ARCH-cloog"
         echo "- ${CLOOG_VERSION} configure..."
         "${CLOOG_DIR}"/configure --prefix=$PREFIX --with-gettext=$PREFIX --with-gmp-prefix=$PREFIX --with-mpfr=$PREFIX --with-mpc=$PREFIX --with-isl-prefix=$PREFIX --with-gcc-arch=$ARCH --with-isl=system --with-bits=gmp > $DIR_LOGS/cloog.$ARCH.configure.log.txt 2> /dev/null
-        cd isl
+#cd isl
         make 1> /dev/null 2> $DIR_LOGS/cloog.$ARCH.make.log.txt
         make install 1> $DIR_LOGS/cloog.$ARCH.install.log.txt 2> /dev/null
         "${CLOOG_DIR}"/isl/configure --prefix=$PREFIX --with-gettext=$PREFIX --with-gmp-prefix=$PREFIX --with-mpfr=$PREFIX --with-mpc=$PREFIX --with-isl-prefix=$PREFIX --with-gcc-arch=$ARCH --with-isl=system --with-bits=gmp > $DIR_LOGS/cloog.$ARCH.configure.log.txt 2> /dev/null
@@ -368,7 +369,7 @@ CompileBinutils () {
     rm -rf "$BUILD_BINUTILS_DIR"
     mkdir -p "$BUILD_BINUTILS_DIR" && cd "$BUILD_BINUTILS_DIR"
     echo "- ${BINUTILS_VERSION} configure..."
-    local cmd="${BINUTILS_DIR}/configure --host=${BUILDARCH}-apple-darwin${BUILDREV} --build=${BUILDARCH}-apple-darwin${BUILDREV} --target=$TARGET --prefix=$PREFIX/cross --with-gettext=$PREFIX --with-sysroot=$PREFIX --disable-werror --with-gmp=$PREFIX --with-mpfr=$PREFIX --with-mpc=$PREFIX --with-isl=$PREFIX --with-cloog=$PREFIX --disable-isl-version-check"
+    local cmd="${BINUTILS_DIR}/configure --host=${BUILDARCH}-apple-darwin${BUILDREV} --enable-plugins --build=${BUILDARCH}-apple-darwin${BUILDREV} --target=$TARGET --prefix=$PREFIX/cross --with-gettext=$PREFIX --with-sysroot=$PREFIX --disable-werror --with-gmp=$PREFIX --with-mpfr=$PREFIX --with-mpc=$PREFIX --with-isl=$PREFIX --with-cloog=$PREFIX --disable-isl-version-check"
     local logfile="$DIR_LOGS/binutils.$ARCH.configure.log.txt"
     echo "$cmd" > "$logfile"
     eval "$cmd" >> "$logfile" 2>&1
@@ -420,7 +421,7 @@ GCC_native () {
         export LDFLAGS="-L$PREFIX/lib -L$PREFIX/sdk/lib"
 
 
-        local cmd="${GCC_DIR}/configure --prefix='$PREFIX' --with-sysroot='$TOOLCHAIN_SDK_DIR' --enable-languages=c,c++ --libdir='$PREFIX/lib/gcc$GCC_MAJOR_VERSION' --includedir='$PREFIX/include/gcc$GCC_MAJOR_VERSION' --datarootdir='$PREFIX/share/gcc$GCC_MAJOR_VERSION' --with-gettext=$PREFIX --with-system-zlib --disable-nls --with-gxx-include-dir='$PREFIX/include/gcc$GCC_MAJOR_VERSION/c++/' --with-gmp='$PREFIX' --with-mpfr='$PREFIX' --with-mpc='$PREFIX' --with-isl='$PREFIX' --with-cloog='$PREFIX' --enable-cloog-backend=isl --disable-bootstrap  --disable-isl-version-check"
+        local cmd="${GCC_DIR}/configure --prefix='$PREFIX' --with-sysroot='$TOOLCHAIN_SDK_DIR' --enable-languages=c,c++ --libdir='$PREFIX/lib/gcc$GCC_MAJOR_VERSION' --includedir='$PREFIX/include/gcc$GCC_MAJOR_VERSION' --datarootdir='$PREFIX/share/gcc$GCC_MAJOR_VERSION' --with-gettext=$PREFIX --with-system-zlib --disable-nls --enable-plugin --with-gxx-include-dir='$PREFIX/include/gcc$GCC_MAJOR_VERSION/c++/' --with-gmp='$PREFIX' --with-mpfr='$PREFIX' --with-mpc='$PREFIX' --with-isl='$PREFIX' --with-cloog='$PREFIX' --enable-cloog-backend=isl --disable-bootstrap  --disable-isl-version-check"
         local logfile="$DIR_LOGS/gcc-native.$ARCH.configure.log.txt"
         echo "$cmd" > "$logfile"
         echo "- gcc-${GCC_VERSION} (native) configure..."
@@ -499,7 +500,7 @@ CompileCrossGCC () {
     export BOOT_CPPFLAGS="-Os -I$PREFIX/include -I$PREFIX/sdk/include"
 
     echo "- gcc-${GCC_VERSION} configure..."
-    "${GCC_DIR}"/configure --host=${BUILDARCH}-apple-darwin${BUILDREV} --build=${BUILDARCH}-apple-darwin${BUILDREV} --target=$TARGET --prefix="$PREFIX/cross" --with-sysroot="$PREFIX" --with-gmp="$PREFIX" --with-mpfr="$PREFIX" --with-mpc="$PREFIX" --with-isl="$PREFIX" --with-cloog="$PREFIX" --with-system-zlib --with-gnu-as --with-gnu-ld --with-newlib --disable-libssp --disable-nls --disable-werror --enable-languages=c,c++ --enable-cloog-backend=isl --disable-isl-version-check  > "$DIR_LOGS"/gcc.$ARCH.configure.log.txt 2> /dev/null
+    "${GCC_DIR}"/configure --host=${BUILDARCH}-apple-darwin${BUILDREV} --build=${BUILDARCH}-apple-darwin${BUILDREV} --target=$TARGET --prefix="$PREFIX/cross" --with-sysroot="$PREFIX" --with-gmp="$PREFIX" --with-mpfr="$PREFIX" --with-mpc="$PREFIX" --with-isl="$PREFIX" --with-cloog="$PREFIX" --with-system-zlib --with-gnu-as --with-gnu-ld --with-newlib --disable-libssp --disable-nls --disable-werror --enable-languages=c,c++ --enable-cloog-backend=isl --enable-plugin --disable-isl-version-check  > "$DIR_LOGS"/gcc.$ARCH.configure.log.txt 2> /dev/null
 
     echo "- gcc-${GCC_VERSION} make..."
     make all-gcc 1> /dev/null 2> $DIR_LOGS/gcc.$ARCH.make.log.txt

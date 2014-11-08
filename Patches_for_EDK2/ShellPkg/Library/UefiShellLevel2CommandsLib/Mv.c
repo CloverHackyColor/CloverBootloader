@@ -156,6 +156,8 @@ IsValidMove(
   @param[in] DestParameter               The original path to the destination.
   @param[in, out] DestPathPointer  A pointer to the callee allocated final path.
   @param[in] Cwd                   A pointer to the current working directory.
+  @param[in] SingleSource          TRUE to have only one source file.
+  @param[in, out] DestAttr         A pointer to the destination information attribute.
 
   @retval SHELL_INVALID_PARAMETER  The DestParameter could not be resolved to a location.
   @retval SHELL_INVALID_PARAMETER  The DestParameter could be resolved to more than 1 location.
@@ -282,6 +284,15 @@ GetDestinationLocation(
   return (SHELL_SUCCESS);
 }
 
+/**
+  Function to do a move across file systems.
+
+  @param[in] Node               A pointer to the file to be removed.
+  @param[in] DestPath           A pointer to the destination file path.
+  @param[out] Resp              A pointer to response from question.  Pass back on looped calling
+
+  @retval SHELL_SUCCESS     The source file was moved to the destination.
+**/
 EFI_STATUS
 EFIAPI
 MoveBetweenFileSystems(
@@ -311,6 +322,17 @@ MoveBetweenFileSystems(
   return (Status);
 }
 
+/**
+  Function to take the destination path and target file name to generate the full destination path.
+
+  @param[in] DestPath           A pointer to the destination file path string.
+  @param[out] FullDestPath      A pointer to the full destination path string.
+  @param[in] FileName           Name string of  the targe file.
+
+  @retval SHELL_SUCCESS             the files were all moved.
+  @retval SHELL_INVALID_PARAMETER   a parameter was invalid
+  @retval SHELL_OUT_OF_RESOURCES    a memory allocation failed
+**/
 EFI_STATUS
 EFIAPI
 CreateFullDestPath(
@@ -340,6 +362,16 @@ CreateFullDestPath(
   return (EFI_SUCCESS);
 }
 
+/**
+  Function to do a move within a file system.
+
+  @param[in] Node               A pointer to the file to be removed.
+  @param[in] DestPath           A pointer to the destination file path.
+  @param[out] Resp              A pointer to response from question.  Pass back on looped calling.
+
+  @retval SHELL_SUCCESS           The source file was moved to the destination.
+  @retval SHELL_OUT_OF_RESOURCES  A memory allocation failed.
+**/
 EFI_STATUS
 EFIAPI
 MoveWithinFileSystems(
