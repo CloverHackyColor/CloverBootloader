@@ -4,7 +4,7 @@
 ;
 ; by dmazar
 ;
-; converted to nasm by Slice
+; converted to nasm by Slice, finished by dmazar
 ;------------------------------------------------------------------------------
 
 struc XDTR 
@@ -13,12 +13,12 @@ struc XDTR
 endstruc
 
 ; C callback method called on jump to kernel after boot.efi finishes 
-EXTERN	ASM_PFX(KernelEntryPatchJumpBack)
+extern	ASM_PFX(KernelEntryPatchJumpBack)
 
 ; saved 64bit state
-
-
-
+global ASM_PFX(SavedGDTR)
+global ASM_PFX(SavedIDTR)
+global ASM_PFX(SavedCR3)
 
 ; addresses of relocated MyAsmCopyAndJumpToKernel code - filled by PrepareJumpFromKernel()
 global ASM_PFX(MyAsmCopyAndJumpToKernel32Addr)
@@ -41,27 +41,34 @@ global ASM_PFX(MyAsmCopyAndJumpToKernel32)
 global ASM_PFX(MyAsmCopyAndJumpToKernel64)
 global ASM_PFX(MyAsmCopyAndJumpToKernelEnd)
 
-SECTION	.data
+
+;SECTION	.data
+SECTION .text
+
+;
+; Adding data to code segment to avoid some error:
+; Undefined symbols for architecture x86_64:
+;  "_SavedGDTR", referenced from:
+;      _MyAsmPrepareJumpFromKernel in OsxAptioFixDrv.lib(AsmFuncsX64.obj)
+;
+
 ; variables accessed from both 32 and 64 bit code
 ; need to have this exactly in this order
 DataBase:
 
 ; 64 bit state
 SavedGDTROff	EQU $-DataBase
-global ASM_PFX(SavedGDTR)
 ASM_PFX(SavedGDTR):
     dw 0
     dq 0
 
 SavedIDTROff	EQU $-DataBase
-global ASM_PFX(SavedIDTR)
 ASM_PFX(SavedIDTR):
     dw 0
     dq 0
 
 		align 08h, db 0
 SavedCR3Off		EQU $-DataBase
-global ASM_PFX(SavedCR3)
 ASM_PFX(SavedCR3):     DQ		0
 
 SavedCSOff		EQU $-DataBase
@@ -174,7 +181,10 @@ CODE32_SEL		equ $-GDT_BASE			; 0x18
 GDT_END:
 
 
-SECTION .text
+;SECTION .text
+
+BITS    64
+
 
 ;------------------------------------------------------------------------------
 ; UINT64
@@ -190,7 +200,6 @@ ASM_PFX(MyAsmReadSp):
 	ret
 
 
-
 ;------------------------------------------------------------------------------
 ; VOID
 ; EFIAPI
@@ -200,24 +209,22 @@ ASM_PFX(MyAsmReadSp):
 GLOBAL ASM_PFX(MyAsmPrepareJumpFromKernel)
 ASM_PFX(MyAsmPrepareJumpFromKernel):
 	; save 64 bit state
-  lea  rax, [REL ASM_PFX(SavedGDTR)]
-  sgdt	[rax]
-  lea  rax, [REL ASM_PFX(SavedIDTR)]
-	sidt	[rax]
-	mov		rax, cr3
-  mov		[REL ASM_PFX(SavedCR3)], rax
-	mov		[REL SavedCS], cs
-	mov		[REL SavedDS], ds
-	
+	sgdt	[REL ASM_PFX(SavedGDTR)]
+	sidt	[REL ASM_PFX(SavedIDTR)]
+	mov     rax, cr3
+	mov     [REL ASM_PFX(SavedCR3)], rax
+	mov		word [REL SavedCS], cs
+	mov		word [REL SavedDS], ds
+
 	; pass DataBase to 32 bit code
 	lea		rax, [REL DataBase]
-	mov		[REL DataBaseAdr], eax;
+	mov		dword [REL DataBaseAdr], eax;
 	
 	; prepare MyAsmEntryPatchCode:
 	; patch MyAsmEntryPatchCode with address of MyAsmJumpFromKernel
 	lea		rax, [REL ASM_PFX(MyAsmJumpFromKernel)]
-	mov	[REL MyAsmEntryPatchCodeJumpFromKernelPlaceholder], eax
-	
+	mov	dword [REL MyAsmEntryPatchCodeJumpFromKernelPlaceholder], eax
+
 	ret
 
 
@@ -241,22 +248,22 @@ ASM_PFX(MyAsmPrepareJumpFromKernel):
 ;------------------------------------------------------------------------------
 GLOBAL ASM_PFX(MyAsmEntryPatchCode)
 ASM_PFX(MyAsmEntryPatchCode):
-;	.code32
-;	dec		%eax								# -> 48
-;	xor		%ecx, %ecx							# -> 31 C9
-;	.byte	0xb9								# movl	$0x11223344, %ecx -> B9 44 33 22 11
-;MyAsmEntryPatchCodeJumpFromKernelPlaceholder:
-;	.long	0x11223344
-;	call	*%ecx								# -> FF D1
-;	jmp		*%ecx									# -> FF E1
 
-	xor		rcx, rcx							; -> 48 31 (33) C9
-	db		0B9h								; mov DWORD PTR ecx, $0x11223344 -> B9 44 33 22 11
+BITS    32
+	dec		eax                                 ; -> 48
+	xor		ecx, ecx							; -> 31 C9
+	db	0b9h                                    ; movl	$0x11223344, %ecx -> B9 44 33 22 11
 MyAsmEntryPatchCodeJumpFromKernelPlaceholder	dd	011223344h
-	call	rcx									; -> FF D1
-;	;jmp	*%rcx								; -> FF E1
+	call	ecx                                 ; -> FF D1
+;	jmp		ecx									; -> FF E1
 
+;BITS    64
+;	xor		rcx, rcx							; -> 48 31 C9
+;	mov     dword ecx, 011223344h				; -> B9 44 33 22 11
+;	call	rcx                                 ; -> FF D1
+;	jmp	rcx                                     ; -> FF E1
 ASM_PFX(MyAsmEntryPatchCodeEnd):
+
 
 ;------------------------------------------------------------------------------
 ; MyAsmJumpFromKernel
@@ -270,32 +277,28 @@ ASM_PFX(MyAsmEntryPatchCodeEnd):
 GLOBAL ASM_PFX(MyAsmJumpFromKernel)
 ASM_PFX(MyAsmJumpFromKernel):
 
-;	# writing in 32 bit, but code must run in 64 bit also
-;	.code32
-;	push	%eax					# save bootArgs pointer to stack
-;	movl 	$0xc0000080, %ecx		# EFER MSR number.
-;	rdmsr							# Read EFER.
-;	bt		$8, %eax				# Check if LME==1 -> CF=1.
-;	pop		%eax
-;	jc		MyAsmJumpFromKernel64	# LME==1 -> jump to 64 bit code
-;	# otherwise, continue with MyAsmJumpFromKernel32
-;	# but first add 1 to it since it was decremented in 32 bit
-;	# in MyAsmEntryPatchCode
-;	inc		%eax
-
-	; above code in 32 bit gives opcode
-	; that is equivalent to following in 64 bit
-	push	rax						; save bootArgs pointer to stack
-	mov 	ecx, 0c0000080h			; EFER MSR number.
+; writing in 32 bit, but code must run in 64 bit also
+BITS    32
+	push	eax                     ; save bootArgs pointer to stack
+	mov 	dword ecx, 0c0000080h	; EFER MSR number.
 	rdmsr							; Read EFER.
-	bt		eax, 8					; Check if LME==1 -> CF=1.
-	pop		rax
+	bt		eax, 8                 ; Check if LME==1 -> CF=1.
+	pop		eax
 	jc		MyAsmJumpFromKernel64	; LME==1 -> jump to 64 bit code
 	; otherwise, continue with MyAsmJumpFromKernel32
 	; but first add 1 to it since it was decremented in 32 bit
 	; in MyAsmEntryPatchCode
-	db		040h					; inc eax
-;MyAsmJumpFromKernel   ENDP
+	inc		eax
+
+	; test the above code in 64 bit - above 32 bit code gives opcode
+	; that is equivalent to following in 64 bit
+;BITS    64
+;	push	rax                     ; save bootArgs pointer to stack
+;	movl 	ecx, 0c0000080h         ; EFER MSR number.
+;	rdmsr							; Read EFER.
+;	bt		eax, 8                  ; Check if LME==1 -> CF=1.
+;	pop		rax
+;	jnc		MyAsmJumpFromKernel64	; LME==1 -> jump to 64 bit code
 
 
 ;------------------------------------------------------------------------------
@@ -319,6 +322,7 @@ ASM_PFX(MyAsmJumpFromKernel):
 ;------------------------------------------------------------------------------
 MyAsmJumpFromKernel32:
 	
+BITS    32
 	;hlt	; uncomment to stop here for test
 	; save bootArgs pointer to edi
 	mov		edi, eax
@@ -331,24 +335,23 @@ DataBaseAdr	dd	0
 	; we are called with
 	;   dec		eax
 	;   xor		ecx, ecx
-	;   mov 	011223344h, ecx
+	;   mov 	ecx, 011223344h
 	;   call ecx
 	; and that left return addr on stack. those instructions
 	; are 10 bytes long, and if we take address from stack and
 	; substitute 10 from it, we will get kernel entry point.
-	pop		rcx							; 32 bit: pop ecx
+	pop		ecx							; 32 bit: pop ecx
 	sub		ecx, 10
 	; and save it
-	mov		DWORD [rbx + AsmKernelEntryOff], ecx
+	mov		dword [ebx + AsmKernelEntryOff], ecx
 
 	; lets save 32 bit state to be able to recover it later
-	; rbx is ebx in 32 bit
-	sgdt	[rbx + SavedGDTR32Off]
-	sidt	[rbx + SavedIDTR32Off]
-	mov		WORD  [rbx + SavedCS32Off], cs
-	mov		WORD  [rbx + SavedDS32Off], ds
-	mov		DWORD [rbx + SavedESP32Off], esp
-	
+	sgdt	[ebx + SavedGDTR32Off]
+	sidt	[ebx + SavedIDTR32Off]
+	mov		word [ebx + SavedCS32Off], cs
+	mov		word [ebx + SavedDS32Off], ds
+	mov		dword [ebx + SavedESP32Off], esp
+
 	;
 	; move to 64 bit mode ...
 	;
@@ -356,17 +359,17 @@ DataBaseAdr	dd	0
 	; load saved UEFI GDT, IDT
 	; will become active after code segment is changed in long jump
 	; rbx is ebx in 32 bit
-	lgdt	[rbx + SavedGDTROff]
-	lidt	[rbx + SavedIDTROff]
+	lgdt	[ebx + SavedGDTROff]
+	lidt	[ebx + SavedIDTROff]
 
 	; enable the 64-bit page-translation-table entries by setting CR4.PAE=1
-	mov		rax, cr4
+	mov		eax, cr4
 	bts		eax, 5
-	mov		cr4, rax
+	mov		cr4, eax
 	
 	; set the long-mode page tables - reuse saved UEFI tables
-	mov		eax, DWORD [rbx +SavedCR3Off]
-	mov		cr3, rax
+	mov		eax, dword [ebx +SavedCR3Off]
+	mov		cr3, eax
 	
 	; enable long mode (set EFER.LME=1).
 	mov 	ecx, 0c0000080h			; EFER MSR number.
@@ -375,30 +378,31 @@ DataBaseAdr	dd	0
 	wrmsr							; Write EFER.
 
 	; enable paging to activate long mode (set CR0.PG=1)
-	mov		rax, cr0				; Read CR0.
+	mov		eax, cr0				; Read CR0.
 	bts		eax, 31					; Set PG=1.
-	mov		cr0, rax				; Write CR0.
+	mov		cr0, eax				; Write CR0.
 	
 	; jump to the 64-bit code segment
-	mov		ax, WORD [rbx + SavedCSOff]
-	push 	rax
-	call	[REL _RETF32]
+	mov		ax, word [ebx + SavedCSOff]
+	push 	eax
+	call	_RETF32
 	
 	;
 	; aloha!
 	; if there is any luck, we are in 64 bit mode now
 	;
 	;hlt	; uncomment to stop here for test
-	
+BITS 64
+
 	; set segmens
-	mov		ax, WORD [rbx + SavedDSOff]
+	mov		ax, word [rbx + SavedDSOff]
 	mov		ds, ax
 	; set up stack ...
 	; not sure if needed, but lets set ss to ds
 	mov		ss, ax
 	; lets align the stack
 	mov		rax, rsp
-	and		rax, 0xfffffffffffffff8
+	and		rax, 0fffffffffffffff8h
 	mov		rsp, rax
 	
 	; call our C code
@@ -413,13 +417,13 @@ DataBaseAdr	dd	0
 
 ; TEST 64 bit jump
 ;	mov		rax, rdi
-;	mov		rdx, QWORD PTR AsmKernelEntry
+;	mov		rdx, qword [AsmKernelEntry]
 ;	jmp		rdx
 ; TEST end
 
 	; KernelEntryPatchJumpBack should be EFIAPI
 	; and rbx should not be changed by EFIAPI calling convention
-	call	[REL ASM_PFX(KernelEntryPatchJumpBack)]
+	call	ASM_PFX(KernelEntryPatchJumpBack)
 	;hlt	; uncomment to stop here for test
 	; return value in rax is bootArgs pointer
 	mov		rdi, rax
@@ -433,16 +437,17 @@ DataBaseAdr	dd	0
 	; push saved cs and rip (with call) to stack and do retf
 	mov		ax, WORD [rbx + SavedCS32Off]
 	push 	rax
-	call	[REL _RETF64]
+	call	_RETF64
 
 	;
 	; ok, 32 bit opcode again from here
 	;
+BITS    32
 
 	; disable paging (set CR0.PG=0)
-	mov		rax, cr0				; Read CR0.
+	mov		eax, cr0				; Read CR0.
 	btr		eax, 31					; Set PG=0.
-	mov		cr0, rax				; Write CR0.
+	mov		cr0, eax				; Write CR0.
 	
 	; disable long mode (set EFER.LME=0).
 	mov 	ecx, 0c0000080h			; EFER MSR number.
@@ -456,14 +461,14 @@ toNext:
 	;
 
 	; now reload saved 32 bit state data
-	lidt	[rbx + SavedIDTR32Off]
-	mov		ax, WORD [rbx + SavedDS32Off]
+	lidt	[ebx + SavedIDTR32Off]
+	mov		ax, word [ebx + SavedDS32Off]
 	mov		ss, ax
 	mov		ds, ax
 	mov		es, ax
 	mov		fs, ax
 	mov		gs, ax
-	mov		esp, DWORD [rbx + SavedESP32Off]
+	mov		esp, dword [ebx + SavedESP32Off]
 	
 	;
 	; prepare vars for copying kernel to proper mem
@@ -474,40 +479,27 @@ toNext:
 	; boot args back from edi
 	mov		eax, edi
 	; kernel entry point
-	mov		edx, DWORD [rbx + AsmKernelEntryOff]
+	mov		edx, dword [ebx + AsmKernelEntryOff]
 	
 	; source, destination and size for kernel copy
-	mov		esi, DWORD [rbx + AsmKernelImageStartRelocOff]
-	mov		edi, DWORD [rbx + AsmKernelImageStartOff]
-	mov		ecx, DWORD [rbx + AsmKernelImageSizeOff]
+	mov		esi, dword [ebx + AsmKernelImageStartRelocOff]
+	mov		edi, dword [ebx + AsmKernelImageStartOff]
+	mov		ecx, dword [ebx + AsmKernelImageSizeOff]
 	
 	; address of relocated MyAsmCopyAndJumpToKernel32
-	mov		ebx, DWORD [rbx + MyAsmCopyAndJumpToKernel32AddrOff]
+	mov		ebx, dword [ebx + MyAsmCopyAndJumpToKernel32AddrOff]
 	; note: ebx not valid as a pointer to DataBase any more
 	
 	;
 	; jump to MyAsmCopyAndJumpToKernel32
 	;
-	jmp		QWORD [rbx]			; jmp DWORD PTR ebx in 32 bit
+	jmp		ebx
 	
 
 _RETF64:
 	DB	048h
 _RETF32:
 	retf
-
-; the following is not used - it's here just for a reference
-	; jump to the 64-bit code segment
-	; as xnu kernel does it
-	; example:
-	; 07f8437a4: 68 28 00 00 cb = push 0cb000008h - last word on stack is segment 0x0008, 07f8437a8h contains CB opcode which is retf
-	; 07f8437a9: e8 fa ff ff ff = call 07f8437a8h - push EIP on stack and continue with 07f8437a8h which is retf
-	; retf does far return to next instr after 'call $-1'
-	push	strict QWORD ((0cbh << 24) | CODE64_SEL)
-	call	$-1
-
-	
-;MyAsmJumpFromKernel32   ENDP
 
 
 ;------------------------------------------------------------------------------
@@ -517,11 +509,13 @@ _RETF32:
 ; State is prepared for kernel: 64 bit, pointer to bootArgs in rax.
 ;------------------------------------------------------------------------------
 MyAsmJumpFromKernel64:
+
+BITS    64
 	; let's find out kernel entry point - we'll need it to jump back.
 	pop		rcx
 	sub		rcx, 10
 	; and save it
-	mov		[REL ASM_PFX(AsmKernelEntry)], rcx
+	mov		qword [REL ASM_PFX(AsmKernelEntry)], rcx
 
 	; call our C code
 	; (calling conv.: always reserve place for 4 args on stack)
@@ -534,14 +528,14 @@ MyAsmJumpFromKernel64:
 	push	rdx
 	push	rcx
 	; KernelEntryPatchJumpBack should be EFIAPI
-	call	[REL ASM_PFX(KernelEntryPatchJumpBack)]
+	call	ASM_PFX(KernelEntryPatchJumpBack)
 	;hlt	; uncomment to stop here for test
 	; return value in rax is bootArgs pointer
 
 	;
 	; prepare vars for copying kernel to proper mem
 	; and jump to kernel: set registers as needed
-	; by MyAsmCopyAndJumpToKernel32
+	; by MyAsmCopyAndJumpToKernel64
 	;
 
 	; kernel entry point
@@ -587,14 +581,16 @@ ASM_PFX(MyAsmCopyAndJumpToKernel):
 ;------------------------------------------------------------------------------
 GLOBAL ASM_PFX(MyAsmCopyAndJumpToKernel32)
 ASM_PFX(MyAsmCopyAndJumpToKernel32):
+
+BITS    32
 	;
 	; we will move double words (4 bytes)
 	; so ajust ECX to number of double words.
 	; just in case ECX is not multiple of 4 - inc by 1
 	;
 	shr		ecx, 2
-	db		041h					; inc		ecx
-	
+    inc     ecx
+
 	;
 	; copy kernel image from reloc block to proper mem place.
 	; all params should be already set:
@@ -611,7 +607,7 @@ ASM_PFX(MyAsmCopyAndJumpToKernel32):
 	; and EDX contains kernel entry point
 	;
 	;hlt
-	jmp		[rdx]			; jmp DWORD PTR edx in 32 bit
+	jmp		edx
 ;MyAsmCopyAndJumpToKernel32   ENDP
 MyAsmCopyAndJumpToKernel32End:
 
@@ -629,6 +625,8 @@ MyAsmCopyAndJumpToKernel32End:
 		align 08h
 GLOBAL ASM_PFX(MyAsmCopyAndJumpToKernel64)
 ASM_PFX(MyAsmCopyAndJumpToKernel64):
+
+BITS    64
 	;
 	; we will move quad words (8 bytes)
 	; so ajust RCX to number of double words.
@@ -653,7 +651,7 @@ ASM_PFX(MyAsmCopyAndJumpToKernel64):
 	; and RDX contains kernel entry point
 	;
 	; hlt
-	jmp		QWORD [rdx]
+	jmp		rdx
 
 ;MyAsmCopyAndJumpToKernel64	ENDP
 MyAsmCopyAndJumpToKernel64End:

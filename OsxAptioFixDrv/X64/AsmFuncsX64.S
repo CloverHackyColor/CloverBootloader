@@ -412,7 +412,8 @@ DataBaseAdr:	.long 0
 	btr		$8, %eax				# Set LME=0.
 	wrmsr							# Write EFER.
 	jmp		toNext
-	toNext:	
+	toNext:
+
 	#
 	# we are in 32 bit protected mode, no paging
 	#
@@ -457,6 +458,7 @@ _RETF64:
 	.byte	0x48
 _RETF32:
 	lret
+
 
 #------------------------------------------------------------------------------
 # MyAsmJumpFromKernel64

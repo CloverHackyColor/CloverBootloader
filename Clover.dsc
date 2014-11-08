@@ -483,7 +483,7 @@
 [Components.X64]
 !ifndef CLANG
   Clover/OsxAptioFixDrv/OsxAptioFixDrv.inf
-#  Clover/OsxAptioFixDrv/OsxAptioFix2Drv.inf
+  Clover/OsxAptioFixDrv/OsxAptioFix2Drv.inf
   Clover/OsxLowMemFixDrv/OsxLowMemFixDrv.inf
 !endif  
   #Clover/OsxAptioFixDrv/OsxAptioFixDrv.inf {

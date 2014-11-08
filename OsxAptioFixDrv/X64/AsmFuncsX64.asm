@@ -520,7 +520,7 @@ MyAsmJumpFromKernel64   PROC
 	;
 	; prepare vars for copying kernel to proper mem
 	; and jump to kernel: set registers as needed
-	; by MyAsmCopyAndJumpToKernel32
+	; by MyAsmCopyAndJumpToKernel64
 	;
 
 	; kernel entry point
