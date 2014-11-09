@@ -243,7 +243,7 @@
 
 [BuildOptions]
   XCODE:*_*_*_CC_FLAGS = -Os 
-  GCC:*_*_*_CC_FLAGS = -Os -flto
+  GCC:*_*_*_CC_FLAGS = -Os
   #-flto 
   #-fno-omit-frame-pointer -maccumulate-outgoing-args
   MSFT:*_*_*_CC_FLAGS = /Os

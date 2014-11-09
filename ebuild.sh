@@ -39,6 +39,7 @@ VBIOSPATCHCLOVEREFI=0
 ONLYSATA0PATCH=0
 USE_BIOS_BLOCKIO=0
 CLANG=0
+LTO=0
 
 # Bash options
 set -e # errexit
@@ -177,17 +178,17 @@ usage() {
     print_option_help "-v, --version" "print the version information and exit"
     echo
     echo "Toolchain:"
-    print_option_help "--clang"     "use XCode Clang toolchain"
-    print_option_help "--gcc"       "use unix GCC toolchain"
-    print_option_help "--gcc47"     "use GCC 4.7 toolchain"
-    print_option_help "--gcc49"     "use GCC 4.7 toolchain [Default]"
-    print_option_help "--xcode"     "use XCode 3.2 toolchain"
+    print_option_help "-clang"     "use XCode Clang toolchain"
+    print_option_help "-gcc47"     "use GCC 4.7 toolchain"
+    print_option_help "-gcc49"     "use GCC 4.9 toolchain [Default]"
+    print_option_help "-xcode"     "use XCode 3.2 toolchain"
+    print_option_help "-lto"       "use LinkTImeOptimization"
     print_option_help "-t TOOLCHAIN, --tagname=TOOLCHAIN" "force to use a specific toolchain"
     echo
     echo "Target:"
-    print_option_help "--ia32"      "build Clover in 32-bit [boot3]"
-    print_option_help "--x64"       "build Clover in 64-bit [boot6] [Default]"
-    print_option_help "--x64-mcp"   "build Clover in 64-bit [boot7] using BiosBlockIO (compatible with MCP chipset)"
+    print_option_help "-ia32"      "build Clover in 32-bit [boot3]"
+    print_option_help "-x64"       "build Clover in 64-bit [boot6] [Default]"
+    print_option_help "-x64-mcp"   "build Clover in 64-bit [boot7] using BiosBlockIO (compatible with MCP chipset)"
     print_option_help "-a TARGETARCH, --arch=TARGETARCH" "overrides target.txt's TARGET_ARCH definition"
     print_option_help "-p PLATFORMFILE, --platform=PLATFORMFILE" "Build the platform specified by the DSC filename argument"
     print_option_help "-m MODULEFILE, --module=MODULEFILE" "Build only the module specified by the INF filename argument"
@@ -231,6 +232,7 @@ checkCmdlineArguments() {
             -ia32 | --ia32)      TARGETARCH=IA32   ;;
             -x64 | --x64)        TARGETARCH=X64    ;;
             -mc | --x64-mcp)     TARGETARCH=X64 ; USE_BIOS_BLOCKIO=1 ;;
+            -lto)		LTO=1;;
             -clean)    TARGETRULE=clean ;;
             -cleanall) TARGETRULE=cleanall ;;
             -d | -debug | --debug)  BUILDTARGET=DEBUG ;;
@@ -398,6 +400,11 @@ MainBuildScript() {
         echo "Building tools as they are not found"
         make -C "$WORKSPACE"/BaseTools CC="gcc -Wno-deprecated-declarations"
     fi
+    
+    if [[ "$LTO" -ne 0 ]]; then
+        export LTO_PREFIX=gcc-
+    fi
+
 
     # Build Clover
     #rm $WORKSPACE/Clover/Version.h
@@ -414,6 +421,7 @@ MainBuildScript() {
     [[ "$VBIOSPATCHCLOVEREFI" -ne 0 ]] && addEdk2BuildMacro 'ENABLE_VBIOS_PATCH_CLOVEREFI'
     [[ "$ONLYSATA0PATCH" -ne 0 ]] && addEdk2BuildMacro 'ONLY_SATA_0'
     [[ "$CLANG" -ne 0 ]] && addEdk2BuildMacro 'CLANG'
+    [[ "$LTO" -ne 0 ]] && addEdk2BuildMacro 'LTO'
 
     local cmd="build ${EDK2_BUILD_OPTIONS[@]}"
     cmd="$cmd -p $PLATFORMFILE $MODULEFILE -a $TARGETARCH -b $BUILDTARGET"
@@ -575,7 +583,7 @@ trap 'exitTrap' EXIT
 
 # Default locale
 export LC_ALL=POSIX
-export LTO_PREFIX=gcc-
+
 
 # Add toolchain bin directory to the PATH
 pathmunge "$TOOLCHAIN_DIR/bin"
