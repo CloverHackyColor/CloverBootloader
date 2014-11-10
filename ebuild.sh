@@ -223,6 +223,8 @@ checkCmdlineArguments() {
             -llvm   | --llvm)    TOOLCHAIN=LLVM  ; CLANG=1 ;;
             -GCC47  | --GCC47)   TOOLCHAIN=GCC47   ;;
             -gcc47  | --gcc47)   TOOLCHAIN=GCC47   ;;
+            -GCC48  | --GCC48)   TOOLCHAIN=GCC48   ;;
+            -gcc48  | --gcc48)   TOOLCHAIN=GCC48   ;;
             -GCC49  | --GCC49)   TOOLCHAIN=GCC49   ;;
             -gcc49  | --gcc49)   TOOLCHAIN=GCC49   ;;
             -unixgcc | --gcc)    TOOLCHAIN=UNIXGCC ;;
