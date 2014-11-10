@@ -54,6 +54,7 @@ case `uname` in
         exit 1
       else
         TARGET_TOOLS=GCC49
+        export LTO_PREFIX=gcc-
       fi
       ;;
   Linux*)

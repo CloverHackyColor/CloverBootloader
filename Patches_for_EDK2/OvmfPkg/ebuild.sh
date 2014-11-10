@@ -67,6 +67,7 @@ case `uname` in
       else
 #        TARGET_TOOLS=XCODE32
         TARGET_TOOLS=GCC49
+        export LTO_PREFIX=gcc-
 #        TARGET_TOOLS=XCLANG
       fi
       ;;

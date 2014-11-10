@@ -108,4 +108,4 @@
   }
 
 [BuildOptions]
-GCC:*_*_*_CC_FLAGS   = -Os -DMDEPKG_NDEBUG 
+GCC:*_*_*_CC_FLAGS   = -Os -flto -DMDEPKG_NDEBUG 

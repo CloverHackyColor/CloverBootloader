@@ -37,7 +37,7 @@
 
 [BuildOptions]
   GCC:*_UNIXGCC_*_CC_FLAGS             = -DMDEPKG_NDEBUG
-  GCC:RELEASE_*_*_CC_FLAGS             = -DMDEPKG_NDEBUG
+  GCC:RELEASE_*_*_CC_FLAGS             = -Os -flto -DMDEPKG_NDEBUG
   INTEL:RELEASE_*_*_CC_FLAGS           = /D MDEPKG_NDEBUG
   MSFT:RELEASE_*_*_CC_FLAGS            = /D MDEPKG_NDEBUG
   GCC:*_*_*_CC_FLAGS                   = -mno-mmx -mno-sse
@@ -340,6 +340,11 @@
   gEfiMdeModulePkgTokenSpaceGuid.PcdVideoHorizontalResolution|800
   gEfiMdeModulePkgTokenSpaceGuid.PcdVideoVerticalResolution|600
 
+  gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdPlatformBootTimeOut|0
+
+  # Set video resolution for text setup.
+  gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdSetupVideoHorizontalResolution|800
+  gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdSetupVideoVerticalResolution|600
 
 ################################################################################
 #
