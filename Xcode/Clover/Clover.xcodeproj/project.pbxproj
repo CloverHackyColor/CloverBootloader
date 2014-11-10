@@ -3247,6 +3247,7 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -3256,6 +3257,7 @@
 		2C2A112F1A0ADBA200E9E558 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -3404,6 +3406,7 @@
 				2C2A112F1A0ADBA200E9E558 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		2C7949DE1A0AA7F700D845B0 /* Build configuration list for PBXProject "Clover" */ = {
 			isa = XCConfigurationList;
