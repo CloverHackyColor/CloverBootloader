@@ -500,7 +500,7 @@ MainPostBuildScript() {
         cloverEFIFile=boot6
         [[ "$USE_BIOS_BLOCKIO" -ne 0 ]] && cloverEFIFile=boot7
 
-        #"$BASETOOLS_DIR"/GenFw --rebase 0x10000 -o "$BUILD_DIR_ARCH/EfiLoader.efi" "$BUILD_DIR_ARCH/EfiLoader.efi"
+        "$BASETOOLS_DIR"/GenFw --rebase 0x10000 -o "$BUILD_DIR_ARCH/EfiLoader.efi" "$BUILD_DIR_ARCH/EfiLoader.efi"
         "$BASETOOLS_DIR"/EfiLdrImage -o "${BUILD_DIR}"/FV/Efildr64 \
          "$BUILD_DIR_ARCH"/EfiLoader.efi                \
          "${BUILD_DIR}"/FV/DxeIpl${TARGETARCH}.z                   \
