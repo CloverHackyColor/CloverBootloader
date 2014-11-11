@@ -8,8 +8,12 @@
 #  Created by Jadran Puharic on 1/6/12.
 #  Modified by JrCs on 3/9/13.
 
+# Go to the Clover root directory
+cd "$(dirname $0)"
+
 # Global variables
 declare -r SELF="${0##*/}"
+declare -r CLOVERROOT="$PWD"
 declare -r NUMBER_OF_CPUS=$(sysctl -n hw.ncpu)
 declare -a EDK2_BUILD_OPTIONS=
 print_option_help_wc=
@@ -28,7 +32,7 @@ export WORKSPACE=${WORKSPACE:-}
 
 # if building through Xcode, then TOOLCHAIN_DIR is not defined
 # checking if it is where CloverGrowerPro put it
-TOOLCHAIN_DIR=${TOOLCHAIN_DIR:-$(dirname "$0")/../../toolchain}
+TOOLCHAIN_DIR=${TOOLCHAIN_DIR:-"$CLOVERROOT"/../../toolchain}
 if [[ ! -d $TOOLCHAIN_DIR ]]; then
     TOOLCHAIN_DIR=~/src/opt/local
 fi
@@ -70,16 +74,13 @@ if [[ ! -x "$TOOLCHAIN_DIR"/bin/nasm ]]; then
     exit 1
 fi
 
-# Go to the script directory to build
-cd "$(dirname $0)"
-
 ## FUNCTIONS ##
 
 function exitTrap() {
 
     if [[ -n "$PATCH_FILE" && -n "$WORKSPACE" ]]; then
         echo -n "Unpatching edk2..."
-        ( cd "$WORKSPACE" && cat Clover/Patches_for_EDK2/$PATCH_FILE | eval "$PATCH_CMD -p0 -R" &>/dev/null )
+        ( cd "$WORKSPACE" && cat "$CLOVERROOT"/Patches_for_EDK2/$PATCH_FILE | eval "$PATCH_CMD -p0 -R" &>/dev/null )
         if [[ $? -eq 0 ]]; then
             echo " done"
         else
@@ -324,16 +325,20 @@ MainBuildScript() {
     #
     if [[ -z "$WORKSPACE" ]]; then
         echo "Initializing workspace"
-        if [[ ! -x "${PWD}"/edksetup.sh ]]; then
-            cd ..
+        local EDK2DIR=$(cd "$CLOVERROOT"/.. && echo "$PWD")
+        if [[ ! -x "${EDK2DIR}"/edksetup.sh ]]; then
+            echo "Error: Can't find edksetup.sh script !" >&2
+            exit 1
         fi
 
         # This version is for the tools in the BaseTools project.
         # this assumes svn pulls have the same root dir
         #  export EDK_TOOLS_PATH=`pwd`/../BaseTools
         # This version is for the tools source in edk2
+        cd "$EDK2DIR"
         export EDK_TOOLS_PATH="${PWD}"/BaseTools
-        source edksetup.sh BaseTools
+        source ./edksetup.sh BaseTools
+        cd "$CLOVERROOT"
     else
         echo "Building from: $WORKSPACE"
     fi
@@ -341,7 +346,7 @@ MainBuildScript() {
     # Trying to patch edk2
     if [[ -n "$PATCH_FILE" ]]; then
         echo -n "Patching edk2..."
-        ( cd "$WORKSPACE" && cat Clover/Patches_for_EDK2/$PATCH_FILE | eval "$PATCH_CMD -p0" &>/dev/null )
+        ( cd "$WORKSPACE" && cat "$CLOVERROOT"/Patches_for_EDK2/$PATCH_FILE | eval "$PATCH_CMD -p0" &>/dev/null )
         if [[ $? -eq 0 ]]; then
             echo " done"
         else
@@ -349,19 +354,19 @@ MainBuildScript() {
         fi
     fi
 
-    export CLOVER_PKG_DIR="$WORKSPACE"/Clover/CloverPackage/CloverV2
+    export CLOVER_PKG_DIR="$CLOVERROOT"/CloverPackage/CloverV2
 
     # Cleaning part of the script if we have told to do it
     if [[ "$TARGETRULE" == cleanpkg ]]; then
         # Make some house cleaning
         echo "Cleaning CloverUpdater files..."
-        make -C "$WORKSPACE"/Clover/CloverPackage/CloverUpdater clean
+        make -C "$CLOVERROOT"/CloverPackage/CloverUpdater clean
 
         echo "Cleaning CloverPrefpane files..."
-        make -C "$WORKSPACE"/Clover/CloverPackage/CloverPrefpane clean
+        make -C "$CLOVERROOT"/CloverPackage/CloverPrefpane clean
 
         echo "Cleaning bootsector files..."
-        local BOOTHFS="$WORKSPACE"/Clover/BootHFS
+        local BOOTHFS="$CLOVERROOT"/BootHFS
         DESTDIR="$CLOVER_PKG_DIR"/BootSectors make -C $BOOTHFS clean
 
         echo
@@ -401,14 +406,13 @@ MainBuildScript() {
     fi
     
     # Build Clover
-    #rm $WORKSPACE/Clover/Version.h
-    local clover_revision=$(cat Clover/vers.txt)
+    local clover_revision=$(cat "$CLOVERROOT"/vers.txt)
     local clover_build_date=$(date '+%Y-%m-%d %H:%M:%S')
-    echo "#define FIRMWARE_VERSION \"2.31\"" > $WORKSPACE/Clover/Version.h
-    echo "#define FIRMWARE_BUILDDATE \"${clover_build_date}\"" >> $WORKSPACE/Clover/Version.h
-    echo "#define FIRMWARE_REVISION L\"${clover_revision}\""   >> $WORKSPACE/Clover/Version.h
-    echo "#define REVISION_STR \"Clover revision: ${clover_revision}\"" >> $WORKSPACE/Clover/Version.h
-    cp $WORKSPACE/Clover/Version.h $WORKSPACE/Clover/rEFIt_UEFI/
+    echo "#define FIRMWARE_VERSION \"2.31\"" > "$CLOVERROOT"/Version.h
+    echo "#define FIRMWARE_BUILDDATE \"${clover_build_date}\"" >> "$CLOVERROOT"/Version.h
+    echo "#define FIRMWARE_REVISION L\"${clover_revision}\""   >> "$CLOVERROOT"/Version.h
+    echo "#define REVISION_STR \"Clover revision: ${clover_revision}\"" >> "$CLOVERROOT"/Version.h
+    cp "$CLOVERROOT"/Version.h "$CLOVERROOT"/rEFIt_UEFI/
 
     # Apply options
     [[ "$USE_BIOS_BLOCKIO" -ne 0 ]]    && addEdk2BuildMacro 'USE_BIOS_BLOCKIO'
@@ -435,7 +439,7 @@ MainPostBuildScript() {
     else
         export BASETOOLS_DIR="$EDK_TOOLS_PATH"/Source/C/bin
     fi
-    export BOOTSECTOR_BIN_DIR="$WORKSPACE"/Clover/BootSector/bin
+    export BOOTSECTOR_BIN_DIR="$CLOVERROOT"/BootSector/bin
     export BUILD_DIR="${WORKSPACE}/Build/Clover/${BUILDTARGET}_${TOOLCHAIN}"
     export BUILD_DIR_ARCH="${BUILD_DIR}/$TARGETARCH"
 
@@ -566,7 +570,7 @@ MainPostBuildScript() {
     # Build and install Bootsectors
     echo
     echo "Generating BootSectors"
-    local BOOTHFS="$WORKSPACE"/Clover/BootHFS
+    local BOOTHFS="$CLOVERROOT"/BootHFS
     DESTDIR="$CLOVER_PKG_DIR"/BootSectors make -C $BOOTHFS
     echo "Done!"
 } 
