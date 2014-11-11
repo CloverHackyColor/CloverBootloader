@@ -398,7 +398,7 @@ CoreCreateEventInternal (
   // Check to make sure no reserved flags are set
   //
   Status = EFI_INVALID_PARAMETER;
-  for (Index = 0; Index < (sizeof (mEventTable) / sizeof (UINT32)); Index++) {
+  for (Index = 0; Index < ((INTN)sizeof (mEventTable) / (INTN)sizeof (UINT32)); Index++) {
      if (Type == mEventTable[Index]) {
        Status = EFI_SUCCESS;
        break;
