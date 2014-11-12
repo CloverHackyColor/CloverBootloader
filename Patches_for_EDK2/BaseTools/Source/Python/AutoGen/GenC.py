@@ -1072,7 +1072,7 @@ def CreateLibraryPcdCode(Info, AutoGenC, AutoGenH, Pcd):
         key = ".".join((Pcd.TokenSpaceGuidCName,Pcd.TokenCName))
         
         if DatumType == 'VOID*' and Array == '[]':
-          if TokenCName == 'PcdShellSupplier':
+          if TokenCName == 'PcdShellSupplier' or TokenCName == 'PcdFdtDevicePath':
             AutoGenH.Append('extern const %s _gPcd_FixedAtBuild_%s%s;\n' %('UINT16', TokenCName, Array))
           else:
             AutoGenH.Append('extern const %s _gPcd_FixedAtBuild_%s%s;\n' %('UINT8', TokenCName, Array))

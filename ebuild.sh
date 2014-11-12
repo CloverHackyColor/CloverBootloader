@@ -182,6 +182,7 @@ usage() {
     print_option_help "-gcc47"     "use GCC 4.7 toolchain"
     print_option_help "-gcc49"     "use GCC 4.9 toolchain [Default]"
     print_option_help "-xcode"     "use XCode 3.2 toolchain"
+    print_option_help "-xcode5"     "use XCode 5+ toolchain"
     print_option_help "-t TOOLCHAIN, --tagname=TOOLCHAIN" "force to use a specific toolchain"
     echo
     echo "Target:"
@@ -229,6 +230,7 @@ checkCmdlineArguments() {
             -GCC49  | --GCC49)   TOOLCHAIN=GCC49   ;;
             -gcc49  | --gcc49)   TOOLCHAIN=GCC49   ;;
             -unixgcc | --gcc)    TOOLCHAIN=UNIXGCC ;;
+            -xcode5  | --xcode5 )  TOOLCHAIN=XCODE5 ; CLANG=1 ;;
             -xcode  | --xcode )  TOOLCHAIN=XCODE32 ;;
             -ia32 | --ia32)      TARGETARCH=IA32   ;;
             -x64 | --x64)        TARGETARCH=X64    ;;
