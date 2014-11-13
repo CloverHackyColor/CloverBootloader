@@ -223,6 +223,7 @@ checkCmdlineArguments() {
         case "$option" in
             -clang  | --clang)   TOOLCHAIN=XCLANG ; CLANG=1 ;;
             -llvm   | --llvm)    TOOLCHAIN=LLVM  ; CLANG=1 ;;
+            -xcode5  | --xcode5 )  TOOLCHAIN=XCODE5 ; CLANG=1 ;;
             -GCC47  | --GCC47)   TOOLCHAIN=GCC47   ;;
             -gcc47  | --gcc47)   TOOLCHAIN=GCC47   ;;
             -GCC48  | --GCC48)   TOOLCHAIN=GCC48   ;;
