@@ -780,7 +780,8 @@ grub_hfsplus_iterate_dir (grub_fshelp_node_t dir,
     fsnode = grub_malloc (sizeof (*fsnode));
     if (!fsnode)
       return 1;
-    *fsnode = *dir;
+    //*fsnode = *dir;
+    grub_memcpy (fsnode, dir, sizeof(struct grub_fshelp_node));
     if (hook (".", GRUB_FSHELP_DIR, fsnode, hook_data))
       return 1;
   }
@@ -830,7 +831,8 @@ grub_hfsplus_open (struct grub_file *file, const char *name)
     goto fail;
 
   file->size = fdiro->size;
-  data->opened_file = *fdiro;
+//  data->opened_file = *fdiro;
+  grub_memcpy(&data->opened_file, fdiro, sizeof(struct grub_fshelp_node));
   grub_free (fdiro);
 
   file->data = data;
@@ -839,7 +841,7 @@ grub_hfsplus_open (struct grub_file *file, const char *name)
   return 0;
 
  fail:
-  if (data && fdiro != &data->dirroot)
+  if (data && (fdiro != &data->dirroot))
     grub_free (fdiro);
   grub_free (data);
 

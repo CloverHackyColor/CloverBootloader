@@ -408,7 +408,8 @@ set_rockridge (struct grub_iso9660_data *data)
       rootnode.alloc_dirents = ARRAY_SIZE (rootnode.dirents);
       rootnode.have_dirents = 1;
       rootnode.have_symlink = 0;
-      rootnode.dirents[0] = data->voldesc.rootdir;
+ //     rootnode.dirents[0] = data->voldesc.rootdir;
+      grub_memcpy(&rootnode.dirents[0], &data->voldesc.rootdir, sizeof(data->voldesc.rootdir));
 
       /* The 2nd data byte stored how many bytes are skipped every time
 	 to get to the SUA (System Usage Area).  */
@@ -661,182 +662,184 @@ grub_iso9660_iterate_dir (grub_fshelp_node_t dir,
   grub_off_t offset = 0;
   grub_off_t len;
   struct iterate_dir_ctx ctx;
-
+  
   len = get_node_size (dir);
-
+  
   for (; offset < len; offset += dirent.len)
+  {
+    ctx.symlink = 0;
+    ctx.was_continue = 0;
+    
+    if (read_node (dir, offset, sizeof (dirent), (char *) &dirent))
+      return 0;
+    
+    /* The end of the block, skip to the next one.  */
+    if (!dirent.len)
     {
-      ctx.symlink = 0;
-      ctx.was_continue = 0;
-
-      if (read_node (dir, offset, sizeof (dirent), (char *) &dirent))
-	return 0;
-
-      /* The end of the block, skip to the next one.  */
-      if (!dirent.len)
-	{
-	  offset = (offset / GRUB_ISO9660_BLKSZ + 1) * GRUB_ISO9660_BLKSZ;
-	  continue;
-	}
-
-      {
-	char name[MAX_NAMELEN + 1];
-	int nameoffset = offset + sizeof (dirent);
-	struct grub_fshelp_node *node;
-	int sua_off = (sizeof (dirent) + dirent.namelen + 1
-		       - (dirent.namelen % 2));
-	int sua_size = dirent.len - sua_off;
-
-	sua_off += offset + dir->data->susp_skip;
-
-	ctx.filename = 0;
-	ctx.filename_alloc = 0;
-	ctx.type = GRUB_FSHELP_UNKNOWN;
-
-	if (dir->data->rockridge
-	    && grub_iso9660_susp_iterate (dir, sua_off, sua_size,
-					  susp_iterate_dir, &ctx))
-	  return 0;
-
-	/* Read the name.  */
-	if (read_node (dir, nameoffset, dirent.namelen, (char *) name))
-	  return 0;
-
-	node = grub_malloc (sizeof (struct grub_fshelp_node));
-	if (!node)
-	  return 0;
-
-	node->alloc_dirents = ARRAY_SIZE (node->dirents);
-	node->have_dirents = 1;
-
-	/* Setup a new node.  */
-	node->data = dir->data;
-	node->have_symlink = 0;
-
-	/* If the filetype was not stored using rockridge, use
-	   whatever is stored in the iso9660 filesystem.  */
-	if (ctx.type == GRUB_FSHELP_UNKNOWN)
-	  {
-	    if ((dirent.flags & FLAG_TYPE) == FLAG_TYPE_DIR)
-	      ctx.type = GRUB_FSHELP_DIR;
-	    else
-	      ctx.type = GRUB_FSHELP_REG;
-	  }
-
-	/* . and .. */
-	if (!ctx.filename && dirent.namelen == 1 && name[0] == 0)
-	  ctx.filename = (char *) ".";
-
-	if (!ctx.filename && dirent.namelen == 1 && name[0] == 1)
-	  ctx.filename = (char *) "..";
-
-	/* The filename was not stored in a rock ridge entry.  Read it
-	   from the iso9660 filesystem.  */
-	if (!dir->data->joliet && !ctx.filename)
-	  {
-	    char *ptr;
-	    name[dirent.namelen] = '\0';
-	    ctx.filename = grub_strrchr (name, ';');
-	    if (ctx.filename)
-	      *ctx.filename = '\0';
-	    /* ISO9660 names are not case-preserving.  */
-	    ctx.type |= GRUB_FSHELP_CASE_INSENSITIVE;
-	    for (ptr = name; *ptr; ptr++)
-	      *ptr = grub_tolower (*ptr);
-	    if (ptr != name && *(ptr - 1) == '.')
-	      *(ptr - 1) = 0;
-	    ctx.filename = name;
-	  }
-
-        if (dir->data->joliet && !ctx.filename)
-          {
-            char *oldname, *semicolon;
-
-            oldname = name;
-            ctx.filename = grub_iso9660_convert_string
-                  ((grub_uint8_t *) oldname, dirent.namelen >> 1);
-
-	    semicolon = grub_strrchr (ctx.filename, ';');
-	    if (semicolon)
-	      *semicolon = '\0';
-
-            if (ctx.filename_alloc)
-              grub_free (oldname);
-
-            ctx.filename_alloc = 1;
-          }
-
-	node->dirents[0] = dirent;
-	while (dirent.flags & FLAG_MORE_EXTENTS)
-	  {
-	    offset += dirent.len;
-	    if (read_node (dir, offset, sizeof (dirent), (char *) &dirent))
-	      {
-		if (ctx.filename_alloc)
-		  grub_free (ctx.filename);
-		grub_free (node);
-		return 0;
-	      }
-	    if (node->have_dirents >= node->alloc_dirents)
-	      {
-		struct grub_fshelp_node *new_node;
-		node->alloc_dirents *= 2;
-		new_node = grub_realloc (node, 
-					 sizeof (struct grub_fshelp_node)
-					 + ((node->alloc_dirents
-					     - ARRAY_SIZE (node->dirents))
-					    * sizeof (node->dirents[0])));
-		if (!new_node)
-		  {
-		    if (ctx.filename_alloc)
-		      grub_free (ctx.filename);
-		    grub_free (node);
-		    return 0;
-		  }
-		node = new_node;
-	      }
-	    node->dirents[node->have_dirents++] = dirent;
-	  }
-	if (ctx.symlink)
-	  {
-	    if ((node->alloc_dirents - node->have_dirents)
-		* sizeof (node->dirents[0]) < grub_strlen (ctx.symlink) + 1)
-	      {
-		struct grub_fshelp_node *new_node;
-		new_node = grub_realloc (node,
-					 sizeof (struct grub_fshelp_node)
-					 + ((node->alloc_dirents
-					     - ARRAY_SIZE (node->dirents))
-					    * sizeof (node->dirents[0]))
-					 + grub_strlen (ctx.symlink) + 1);
-		if (!new_node)
-		  {
-		    if (ctx.filename_alloc)
-		      grub_free (ctx.filename);
-		    grub_free (node);
-		    return 0;
-		  }
-		node = new_node;
-	      }
-	    node->have_symlink = 1;
-	    grub_strcpy (node->symlink
-			 + node->have_dirents * sizeof (node->dirents[0])
-			 - sizeof (node->dirents), ctx.symlink);
-	    grub_free (ctx.symlink);
-	    ctx.symlink = 0;
-	    ctx.was_continue = 0;
-	  }
-	if (hook (ctx.filename, ctx.type, node, hook_data))
-	  {
-	    if (ctx.filename_alloc)
-	      grub_free (ctx.filename);
-	    return 1;
-	  }
-	if (ctx.filename_alloc)
-	  grub_free (ctx.filename);
-      }
+      offset = (offset / GRUB_ISO9660_BLKSZ + 1) * GRUB_ISO9660_BLKSZ;
+      continue;
     }
-
+    
+    {
+      char name[MAX_NAMELEN + 1];
+      int nameoffset = offset + sizeof (dirent);
+      struct grub_fshelp_node *node;
+      int sua_off = (sizeof (dirent) + dirent.namelen + 1
+                     - (dirent.namelen % 2));
+      int sua_size = dirent.len - sua_off;
+      
+      sua_off += offset + dir->data->susp_skip;
+      
+      ctx.filename = 0;
+      ctx.filename_alloc = 0;
+      ctx.type = GRUB_FSHELP_UNKNOWN;
+      
+      if (dir->data->rockridge
+          && grub_iso9660_susp_iterate (dir, sua_off, sua_size,
+                                        susp_iterate_dir, &ctx))
+        return 0;
+      
+      /* Read the name.  */
+      if (read_node (dir, nameoffset, dirent.namelen, (char *) name))
+        return 0;
+      
+      node = grub_malloc (sizeof (struct grub_fshelp_node));
+      if (!node)
+        return 0;
+      
+      node->alloc_dirents = ARRAY_SIZE (node->dirents);
+      node->have_dirents = 1;
+      
+      /* Setup a new node.  */
+      node->data = dir->data;
+      node->have_symlink = 0;
+      
+      /* If the filetype was not stored using rockridge, use
+       whatever is stored in the iso9660 filesystem.  */
+      if (ctx.type == GRUB_FSHELP_UNKNOWN)
+      {
+        if ((dirent.flags & FLAG_TYPE) == FLAG_TYPE_DIR)
+          ctx.type = GRUB_FSHELP_DIR;
+        else
+          ctx.type = GRUB_FSHELP_REG;
+      }
+      
+      /* . and .. */
+      if (!ctx.filename && dirent.namelen == 1 && name[0] == 0)
+        ctx.filename = (char *) ".";
+      
+      if (!ctx.filename && dirent.namelen == 1 && name[0] == 1)
+        ctx.filename = (char *) "..";
+      
+      /* The filename was not stored in a rock ridge entry.  Read it
+       from the iso9660 filesystem.  */
+      if (!dir->data->joliet && !ctx.filename)
+      {
+        char *ptr;
+        name[dirent.namelen] = '\0';
+        ctx.filename = grub_strrchr (name, ';');
+        if (ctx.filename)
+          *ctx.filename = '\0';
+        /* ISO9660 names are not case-preserving.  */
+        ctx.type |= GRUB_FSHELP_CASE_INSENSITIVE;
+        for (ptr = name; *ptr; ptr++)
+          *ptr = grub_tolower (*ptr);
+        if (ptr != name && *(ptr - 1) == '.')
+          *(ptr - 1) = 0;
+        ctx.filename = name;
+      }
+      
+      if (dir->data->joliet && !ctx.filename)
+      {
+        char *oldname, *semicolon;
+        
+        oldname = name;
+        ctx.filename = grub_iso9660_convert_string
+        ((grub_uint8_t *) oldname, dirent.namelen >> 1);
+        
+        semicolon = grub_strrchr (ctx.filename, ';');
+        if (semicolon)
+          *semicolon = '\0';
+        
+        if (ctx.filename_alloc)
+          grub_free (oldname);
+        
+        ctx.filename_alloc = 1;
+      }
+      
+//      node->dirents[0] = dirent;
+      grub_memcpy(&node->dirents[0], &dirent, sizeof(dirent));
+      while (dirent.flags & FLAG_MORE_EXTENTS)
+      {
+        offset += dirent.len;
+        if (read_node (dir, offset, sizeof (dirent), (char *) &dirent))
+        {
+          if (ctx.filename_alloc)
+            grub_free (ctx.filename);
+          grub_free (node);
+          return 0;
+        }
+        if (node->have_dirents >= node->alloc_dirents)
+        {
+          struct grub_fshelp_node *new_node;
+          node->alloc_dirents *= 2;
+          new_node = grub_realloc (node,
+                                   sizeof (struct grub_fshelp_node)
+                                   + ((node->alloc_dirents
+                                       - ARRAY_SIZE (node->dirents))
+                                      * sizeof (node->dirents[0])));
+          if (!new_node)
+          {
+            if (ctx.filename_alloc)
+              grub_free (ctx.filename);
+            grub_free (node);
+            return 0;
+          }
+          node = new_node;
+        }
+        //    node->dirents[node->have_dirents++] = dirent;
+        grub_memcpy(&node->dirents[node->have_dirents++], &dirent, sizeof(dirent));
+      }
+      if (ctx.symlink)
+      {
+        if ((node->alloc_dirents - node->have_dirents)
+            * sizeof (node->dirents[0]) < grub_strlen (ctx.symlink) + 1)
+        {
+          struct grub_fshelp_node *new_node;
+          new_node = grub_realloc (node,
+                                   sizeof (struct grub_fshelp_node)
+                                   + ((node->alloc_dirents
+                                       - ARRAY_SIZE (node->dirents))
+                                      * sizeof (node->dirents[0]))
+                                   + grub_strlen (ctx.symlink) + 1);
+          if (!new_node)
+          {
+            if (ctx.filename_alloc)
+              grub_free (ctx.filename);
+            grub_free (node);
+            return 0;
+          }
+          node = new_node;
+        }
+        node->have_symlink = 1;
+        grub_strcpy (node->symlink
+                     + node->have_dirents * sizeof (node->dirents[0])
+                     - sizeof (node->dirents), ctx.symlink);
+        grub_free (ctx.symlink);
+        ctx.symlink = 0;
+        ctx.was_continue = 0;
+      }
+      if (hook (ctx.filename, ctx.type, node, hook_data))
+      {
+        if (ctx.filename_alloc)
+          grub_free (ctx.filename);
+        return 1;
+      }
+      if (ctx.filename_alloc)
+        grub_free (ctx.filename);
+    }
+  }
+  
   return 0;
 }
 
@@ -870,11 +873,13 @@ static grub_err_t
 grub_iso9660_dir (grub_device_t device, const char *path,
 		  grub_fs_dir_hook_t hook, void *hook_data)
 {
-  struct grub_iso9660_dir_ctx ctx = { hook, hook_data };
+  struct grub_iso9660_dir_ctx ctx; // = { hook, hook_data };
   struct grub_iso9660_data *data = 0;
   struct grub_fshelp_node rootnode;
   struct grub_fshelp_node *foundnode;
 
+  ctx.hook = hook;
+  ctx.hook_data = hook_data;
   grub_dl_ref (my_mod);
 
   data = grub_iso9660_mount (device->disk);
@@ -885,7 +890,8 @@ grub_iso9660_dir (grub_device_t device, const char *path,
   rootnode.alloc_dirents = 0;
   rootnode.have_dirents = 1;
   rootnode.have_symlink = 0;
-  rootnode.dirents[0] = data->voldesc.rootdir;
+//  rootnode.dirents[0] = data->voldesc.rootdir;
+  grub_memcpy (&rootnode.dirents[0], &(data->voldesc.rootdir), sizeof(data->voldesc.rootdir));
 
   /* Use the fshelp function to traverse the path.  */
   if (grub_fshelp_find_file (path, &rootnode,
@@ -928,7 +934,8 @@ grub_iso9660_open (struct grub_file *file, const char *name)
   rootnode.alloc_dirents = 0;
   rootnode.have_dirents = 1;
   rootnode.have_symlink = 0;
-  rootnode.dirents[0] = data->voldesc.rootdir;
+//  rootnode.dirents[0] = data->voldesc.rootdir;
+  grub_memcpy(&rootnode.dirents[0], &data->voldesc.rootdir, sizeof(data->voldesc.rootdir));
 
   /* Use the fshelp function to traverse the path.  */
   if (grub_fshelp_find_file (name, &rootnode,

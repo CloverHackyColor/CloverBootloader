@@ -481,11 +481,11 @@
 !endif
 
 [Components.X64]
-!ifndef CLANG
+#!ifndef CLANG
   Clover/OsxAptioFixDrv/OsxAptioFixDrv.inf
   Clover/OsxAptioFixDrv/OsxAptioFix2Drv.inf
   Clover/OsxLowMemFixDrv/OsxLowMemFixDrv.inf
-!endif  
+#!endif  
   #Clover/OsxAptioFixDrv/OsxAptioFixDrv.inf {
     #
     # Enable debug output.

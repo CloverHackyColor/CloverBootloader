@@ -118,8 +118,10 @@ grub_mod_fini (void)
 #else
 #define ATTRIBUTE_USED __unused__
 #endif
-#define GRUB_MOD_LICENSE(license)	\
+#define GRUB_MOD_LICENSE(license) 
+/*#define GRUB_MOD_LICENSE(license)	\
   static char grub_module_license[] __attribute__ ((section (GRUB_MOD_SECTION (module_license)), ATTRIBUTE_USED)) = "LICENSE=" license;
+ */
 #define GRUB_MOD_DEP(name)	\
 static const char grub_module_depend_##name[] \
  __attribute__((section(GRUB_MOD_SECTION(moddeps)), ATTRIBUTE_USED)) = #name
@@ -127,7 +129,7 @@ static const char grub_module_depend_##name[] \
 static const char grub_module_name_##name[] \
  __attribute__((section(GRUB_MOD_SECTION(modname)), __used__)) = #name
 #else
-#ifdef __APPLE__
+/*#ifdef __APPLE__
 .macro GRUB_MOD_LICENSE
   .section GRUB_MOD_SECTION(module_license)
   .ascii "LICENSE="
@@ -141,7 +143,7 @@ static const char grub_module_name_##name[] \
   .ascii "\license"
   .byte 0
 .endm
-#endif
+#endif */
 #endif
 
 /* Under GPL license obligations you have to distribute your module
