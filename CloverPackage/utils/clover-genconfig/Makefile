@@ -21,11 +21,19 @@ PROG := $(addprefix $(OBJROOT)/, $(PROGRAMS))
 all: $(PROG)
 
 $(PROG):
-	@/usr/bin/xcodebuild $(XCODEBUILD_OPTIONS) $(BUILD_ACTION)
+	@/usr/bin/xcodebuild $(XCODEBUILD_OPTIONS) $(BUILD_ACTION) >/dev/null
+	@echo [XCODE] $(PROGRAMS)
 
 install-local: $(PROG)
 	@sudo install -d -g 0 -o 0 /usr/local/bin
 	@sudo install -psv -g 0 -o 0 $(PROG) /usr/local/bin
 
 clean-local:
-	@/usr/bin/xcodebuild $(XCODEBUILD_OPTIONS) clean
+	@/usr/bin/xcodebuild $(XCODEBUILD_OPTIONS) clean  >/dev/null
+	@rm -rf build *~
+	@echo [CLEAN-LOCAL] $(PROGRAMS)
+
+clean:
+	@/usr/bin/xcodebuild $(XCODEBUILD_OPTIONS) clean  >/dev/null
+	@rm -rf build *~
+	@echo [CLEAN] $(PROGRAMS)

@@ -1,6 +1,6 @@
 
 include $(CURDIR)/Make.rules
 
-SUBDIRS = bdmesg fdisk440 clover-genconfig
+SUBDIRS =fdisk440  bdmesg clover-genconfig
 
 all: all-recursive

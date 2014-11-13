@@ -12,13 +12,15 @@ endif
 
 CloverUpdater:
 	@echo "Building CloverUpdater application..."
-	@/usr/bin/xcodebuild $(XCODEBUILD_OPTIONS) $(BUILD_ACTION)
+	@/usr/bin/xcodebuild $(XCODEBUILD_OPTIONS) $(BUILD_ACTION)  >/dev/null
+	@echo [XCODE] $(PROGRAMS)
 
 install:
 	@$(CURDIR)/install-updater.sh
 
 clean:
-	@/usr/bin/xcodebuild $(XCODEBUILD_OPTIONS) clean
+	@/usr/bin/xcodebuild $(XCODEBUILD_OPTIONS) clean  >/dev/null
 	@rm -rf build *~
+	@echo [CLEAN] $(PROGRAMS)
 
 .PHONY: CloverUpdater install clean
