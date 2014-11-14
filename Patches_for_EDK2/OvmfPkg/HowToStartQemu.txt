@@ -1,3 +1,8 @@
+Compilation
+./ebuild.sh -t XCLANG
+or
+./ebuild.sh -t GCC49
+
 qemu-system-x86_64 -L ~/src/edk2/Build/OvmfX64/RELEASE_GCC47/QEMU -hda QEMU-Clover.img
 
 qemu -L ~/src/edk2/Build/OvmfX64/RELEASE_GCC47/QEMU -bios OVMF.fd -m 2048 -hda ~/Desktop/NewFolder/QEMU-Clover-2586/QEMU-Clover.img --hdb ~/Desktop/NewFolder/QEMU-Clover-2586/freedos.img
@@ -16,9 +21,6 @@ qemu-system-x86_64 -L . -bios OVMF.fd -hda ./QEMU-Clover-OVMF.img -m 2048 -cpu c
 Legacy Qemu
 qemu-system-x86_64 -L ~/Desktop/QemuTest/QEMU -m 2048 -cpu core2duo -bios bios-256k.bin  -machine q35 -device ahci,id=ahc -device ide-drive,bus=ahc.0,drive=hda -drive id=hda,file=/Users/slice/Desktop/QemuTest/QEMU-test2.img
 
-If compile Ovmf with option
-./ebuild.sh -D Q35
-then
 
 qemu-system-x86_64 -L ~/Desktop/QemuTest/QEMU -m 2048 -cpu core2duo -bios OVMF.fd  -machine q35 -usb -device usb-mouse,bus=usb-bus.0,port=2 -device usb-kbd,bus=usb-bus.0,port=1 -device ahci,id=ahc -device ide-drive,bus=ahc.0,drive=hda -drive id=hda,file=/Users/slice/Desktop/QemuTest/QEMU-test2.img
 

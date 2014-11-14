@@ -269,11 +269,9 @@
   MdeModulePkg/Universal/EbcDxe/EbcDxe.inf
   Clover/UefiCpuPkg/CpuIo2Dxe/CpuIo2Dxe.inf
   #UefiCpuPkg/CpuIo2Dxe/CpuIo2Dxe.inf
-  #Clover/UefiCpuPkg/CpuDxe/CpuDxe.inf
-  UefiCpuPkg/CpuDxe/CpuDxe.inf
-#!ifndef CLANG
+  Clover/UefiCpuPkg/CpuDxe/CpuDxe.inf
+  #UefiCpuPkg/CpuDxe/CpuDxe.inf
   Clover/CpuDxe/Cpu.inf
-#!endif  
   PcAtChipsetPkg/8259InterruptControllerDxe/8259.inf {
       <PcdsFixedAtBuild>
       gPcAtChipsetPkgTokenSpaceGuid.Pcd8259LegacyModeMask|0xFFFC

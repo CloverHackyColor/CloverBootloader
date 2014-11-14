@@ -15,7 +15,7 @@
 
 [Defines]
   INF_VERSION                    = 0x00010005
-  BASE_NAME                      = CpuDxe
+  BASE_NAME                      = CpuDxeClover
   FILE_GUID                      = 1A1E4886-9517-440e-9FDE-3BE44CEE2136
   MODULE_TYPE                    = DXE_DRIVER
   VERSION_STRING                 = 1.0
