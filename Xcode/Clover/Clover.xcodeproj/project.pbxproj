@@ -329,6 +329,105 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		1261513A1A15BBB000903E7B /* bootscreen.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = bootscreen.c; sourceTree = "<group>"; };
+		1261513B1A15BBB000903E7B /* common.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = common.c; sourceTree = "<group>"; };
+		1261513C1A15BBB000903E7B /* entry_scan.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = entry_scan.h; sourceTree = "<group>"; };
+		1261513D1A15BBB000903E7B /* legacy.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = legacy.c; sourceTree = "<group>"; };
+		1261513E1A15BBB000903E7B /* loader.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = loader.c; sourceTree = "<group>"; };
+		1261513F1A15BBB000903E7B /* lockedgraphics.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = lockedgraphics.c; sourceTree = "<group>"; };
+		126151401A15BBB000903E7B /* secureboot.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = secureboot.c; sourceTree = "<group>"; };
+		126151411A15BBB000903E7B /* securebootkeys.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = securebootkeys.h; sourceTree = "<group>"; };
+		126151421A15BBB000903E7B /* securehash.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = securehash.c; sourceTree = "<group>"; };
+		126151431A15BBB000903E7B /* securemenu.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = securemenu.c; sourceTree = "<group>"; };
+		126151441A15BBB000903E7B /* securevars.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = securevars.c; sourceTree = "<group>"; };
+		126151451A15BBB000903E7B /* tool.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = tool.c; sourceTree = "<group>"; };
+		126151461A15BBB000903E7B /* uefibootoption.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = uefibootoption.c; sourceTree = "<group>"; };
+		126151481A15BBB000903E7B /* egemb_icons.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = egemb_icons.h; sourceTree = "<group>"; };
+		126151491A15BBB000903E7B /* Handle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Handle.h; sourceTree = "<group>"; };
+		1261514A1A15BBB000903E7B /* syslinux_mbr.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = syslinux_mbr.h; sourceTree = "<group>"; };
+		1261514C1A15BBB000903E7B /* BmLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BmLib.c; sourceTree = "<group>"; };
+		1261514D1A15BBB000903E7B /* EfiFileLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EfiFileLib.h; sourceTree = "<group>"; };
+		1261514E1A15BBB000903E7B /* egemb_font.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = egemb_font.h; sourceTree = "<group>"; };
+		1261514F1A15BBB000903E7B /* image.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = image.c; sourceTree = "<group>"; };
+		126151501A15BBB000903E7B /* libeg.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = libeg.h; sourceTree = "<group>"; };
+		126151511A15BBB000903E7B /* libegint.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = libegint.h; sourceTree = "<group>"; };
+		126151521A15BBB000903E7B /* libscreen.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = libscreen.c; sourceTree = "<group>"; };
+		126151531A15BBB000903E7B /* load_bmp.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = load_bmp.c; sourceTree = "<group>"; };
+		126151541A15BBB000903E7B /* load_icns.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = load_icns.c; sourceTree = "<group>"; };
+		126151551A15BBB000903E7B /* text.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = text.c; sourceTree = "<group>"; };
+		126151571A15BBB000903E7B /* AcpiPatcher.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = AcpiPatcher.c; sourceTree = "<group>"; };
+		126151581A15BBB000903E7B /* AmlGenerator.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = AmlGenerator.c; sourceTree = "<group>"; };
+		126151591A15BBB000903E7B /* AmlGenerator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AmlGenerator.h; sourceTree = "<group>"; };
+		1261515A1A15BBB000903E7B /* ati.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ati.c; sourceTree = "<group>"; };
+		1261515B1A15BBB000903E7B /* ati.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ati.h; sourceTree = "<group>"; };
+		1261515C1A15BBB000903E7B /* ati_reg.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ati_reg.h; sourceTree = "<group>"; };
+		1261515D1A15BBB000903E7B /* b64cdecode.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = b64cdecode.c; sourceTree = "<group>"; };
+		1261515E1A15BBB000903E7B /* b64cdecode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = b64cdecode.h; sourceTree = "<group>"; };
+		1261515F1A15BBB000903E7B /* BdsConnect.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BdsConnect.c; sourceTree = "<group>"; };
+		126151601A15BBB000903E7B /* boot.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = boot.h; sourceTree = "<group>"; };
+		126151611A15BBB000903E7B /* BootLog.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BootLog.c; sourceTree = "<group>"; };
+		126151621A15BBB000903E7B /* BootOptions.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BootOptions.c; sourceTree = "<group>"; };
+		126151631A15BBB000903E7B /* card_vlist.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = card_vlist.c; sourceTree = "<group>"; };
+		126151641A15BBB000903E7B /* Console.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Console.c; sourceTree = "<group>"; };
+		126151651A15BBB000903E7B /* cpu.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = cpu.c; sourceTree = "<group>"; };
+		126151661A15BBB000903E7B /* DataHubCpu.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = DataHubCpu.c; sourceTree = "<group>"; };
+		126151671A15BBB000903E7B /* device_inject.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = device_inject.c; sourceTree = "<group>"; };
+		126151681A15BBB000903E7B /* device_inject.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = device_inject.h; sourceTree = "<group>"; };
+		126151691A15BBB000903E7B /* device_tree.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = device_tree.c; sourceTree = "<group>"; };
+		1261516A1A15BBB000903E7B /* device_tree.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = device_tree.h; sourceTree = "<group>"; };
+		1261516B1A15BBB000903E7B /* DevicePath.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = DevicePath.c; sourceTree = "<group>"; };
+		1261516C1A15BBB000903E7B /* Edid.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Edid.c; sourceTree = "<group>"; };
+		1261516D1A15BBB000903E7B /* Events.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Events.c; sourceTree = "<group>"; };
+		1261516E1A15BBB000903E7B /* FixBiosDsdt.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = FixBiosDsdt.c; sourceTree = "<group>"; };
+		1261516F1A15BBB000903E7B /* gma.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = gma.c; sourceTree = "<group>"; };
+		126151701A15BBB000903E7B /* gma.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gma.h; sourceTree = "<group>"; };
+		126151711A15BBB000903E7B /* guid.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = guid.c; sourceTree = "<group>"; };
+		126151721A15BBB000903E7B /* Hibernate.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Hibernate.c; sourceTree = "<group>"; };
+		126151731A15BBB000903E7B /* Injectors.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Injectors.c; sourceTree = "<group>"; };
+		126151741A15BBB000903E7B /* kernel_patcher.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = kernel_patcher.c; sourceTree = "<group>"; };
+		126151751A15BBB000903E7B /* kernel_patcher.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = kernel_patcher.h; sourceTree = "<group>"; };
+		126151761A15BBB000903E7B /* kext_inject.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = kext_inject.c; sourceTree = "<group>"; };
+		126151771A15BBB000903E7B /* kext_inject.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = kext_inject.h; sourceTree = "<group>"; };
+		126151781A15BBB000903E7B /* kext_patcher.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = kext_patcher.c; sourceTree = "<group>"; };
+		126151791A15BBB000903E7B /* LegacyBiosThunk.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = LegacyBiosThunk.c; sourceTree = "<group>"; };
+		1261517A1A15BBB000903E7B /* LegacyBiosThunk.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LegacyBiosThunk.h; sourceTree = "<group>"; };
+		1261517B1A15BBB000903E7B /* LegacyBoot.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = LegacyBoot.c; sourceTree = "<group>"; };
+		1261517C1A15BBB000903E7B /* loader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = loader.h; sourceTree = "<group>"; };
+		1261517D1A15BBB000903E7B /* LoaderUefi.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LoaderUefi.h; sourceTree = "<group>"; };
+		1261517E1A15BBB000903E7B /* memvendors.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = memvendors.h; sourceTree = "<group>"; };
+		1261517F1A15BBB000903E7B /* nvidia.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = nvidia.c; sourceTree = "<group>"; };
+		126151801A15BBB000903E7B /* nvidia.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = nvidia.h; sourceTree = "<group>"; };
+		126151811A15BBB000903E7B /* Nvram.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Nvram.c; sourceTree = "<group>"; };
+		126151821A15BBB000903E7B /* picopng.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = picopng.c; sourceTree = "<group>"; };
+		126151831A15BBB000903E7B /* picopng.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = picopng.h; sourceTree = "<group>"; };
+		126151841A15BBB000903E7B /* Platform.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Platform.h; sourceTree = "<group>"; };
+		126151851A15BBB000903E7B /* platformdata.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = platformdata.c; sourceTree = "<group>"; };
+		126151861A15BBB000903E7B /* PlatformDriverOverride.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = PlatformDriverOverride.c; sourceTree = "<group>"; };
+		126151871A15BBB000903E7B /* plist.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = plist.c; sourceTree = "<group>"; };
+		126151881A15BBB000903E7B /* Pointer.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Pointer.c; sourceTree = "<group>"; };
+		126151891A15BBB000903E7B /* Settings.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Settings.c; sourceTree = "<group>"; };
+		1261518A1A15BBB000903E7B /* smbios.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = smbios.c; sourceTree = "<group>"; };
+		1261518B1A15BBB000903E7B /* spd.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = spd.c; sourceTree = "<group>"; };
+		1261518C1A15BBB000903E7B /* spd.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = spd.h; sourceTree = "<group>"; };
+		1261518D1A15BBB000903E7B /* sse3_5_patcher.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = sse3_5_patcher.h; sourceTree = "<group>"; };
+		1261518E1A15BBB000903E7B /* sse3_patcher.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = sse3_patcher.h; sourceTree = "<group>"; };
+		1261518F1A15BBB000903E7B /* StateGenerator.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = StateGenerator.c; sourceTree = "<group>"; };
+		126151901A15BBB000903E7B /* StateGenerator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StateGenerator.h; sourceTree = "<group>"; };
+		126151911A15BBB000903E7B /* string.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = string.c; sourceTree = "<group>"; };
+		126151921A15BBB000903E7B /* string.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = string.h; sourceTree = "<group>"; };
+		126151931A15BBB000903E7B /* usbfix.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = usbfix.c; sourceTree = "<group>"; };
+		126151951A15BBB000903E7B /* icns.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = icns.c; sourceTree = "<group>"; };
+		126151961A15BBB000903E7B /* IO.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = IO.c; sourceTree = "<group>"; };
+		126151971A15BBB000903E7B /* IO.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IO.h; sourceTree = "<group>"; };
+		126151981A15BBB000903E7B /* lib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = lib.c; sourceTree = "<group>"; };
+		126151991A15BBB000903E7B /* lib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = lib.h; sourceTree = "<group>"; };
+		1261519A1A15BBB000903E7B /* list.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = list.c; sourceTree = "<group>"; };
+		1261519B1A15BBB000903E7B /* list.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = list.h; sourceTree = "<group>"; };
+		1261519C1A15BBB000903E7B /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
+		1261519D1A15BBB000903E7B /* menu.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = menu.c; sourceTree = "<group>"; };
+		1261519E1A15BBB000903E7B /* screen.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = screen.c; sourceTree = "<group>"; };
+		1261519F1A15BBB000903E7B /* refit.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = refit.inf; sourceTree = "<group>"; };
+		126151A01A15BBB000903E7B /* Version.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Version.h; sourceTree = "<group>"; };
 		2C7949E31A0AA7F700D845B0 /* Clover */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Clover; sourceTree = BUILT_PRODUCTS_DIR; };
 		2C7949ED1A0AA85900D845B0 /* Reset.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Reset.c; sourceTree = "<group>"; };
 		2C7949EE1A0AA85900D845B0 /* Reset.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Reset.inf; sourceTree = "<group>"; };
@@ -1028,9 +1127,165 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		126151371A15BB7700903E7B /* CloverGUI */ = {
+			isa = PBXGroup;
+			children = (
+				126151381A15BBAF00903E7B /* rEFIt_UEFI */,
+			);
+			name = CloverGUI;
+			sourceTree = "<group>";
+		};
+		126151381A15BBAF00903E7B /* rEFIt_UEFI */ = {
+			isa = PBXGroup;
+			children = (
+				126151391A15BBAF00903E7B /* entry_scan */,
+				126151471A15BBB000903E7B /* include */,
+				1261514B1A15BBB000903E7B /* libeg */,
+				126151561A15BBB000903E7B /* Platform */,
+				126151941A15BBB000903E7B /* refit */,
+				1261519F1A15BBB000903E7B /* refit.inf */,
+				126151A01A15BBB000903E7B /* Version.h */,
+			);
+			name = rEFIt_UEFI;
+			path = ../../rEFIt_UEFI;
+			sourceTree = "<group>";
+		};
+		126151391A15BBAF00903E7B /* entry_scan */ = {
+			isa = PBXGroup;
+			children = (
+				1261513A1A15BBB000903E7B /* bootscreen.c */,
+				1261513B1A15BBB000903E7B /* common.c */,
+				1261513C1A15BBB000903E7B /* entry_scan.h */,
+				1261513D1A15BBB000903E7B /* legacy.c */,
+				1261513E1A15BBB000903E7B /* loader.c */,
+				1261513F1A15BBB000903E7B /* lockedgraphics.c */,
+				126151401A15BBB000903E7B /* secureboot.c */,
+				126151411A15BBB000903E7B /* securebootkeys.h */,
+				126151421A15BBB000903E7B /* securehash.c */,
+				126151431A15BBB000903E7B /* securemenu.c */,
+				126151441A15BBB000903E7B /* securevars.c */,
+				126151451A15BBB000903E7B /* tool.c */,
+				126151461A15BBB000903E7B /* uefibootoption.c */,
+			);
+			path = entry_scan;
+			sourceTree = "<group>";
+		};
+		126151471A15BBB000903E7B /* include */ = {
+			isa = PBXGroup;
+			children = (
+				126151481A15BBB000903E7B /* egemb_icons.h */,
+				126151491A15BBB000903E7B /* Handle.h */,
+				1261514A1A15BBB000903E7B /* syslinux_mbr.h */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+		1261514B1A15BBB000903E7B /* libeg */ = {
+			isa = PBXGroup;
+			children = (
+				1261514C1A15BBB000903E7B /* BmLib.c */,
+				1261514D1A15BBB000903E7B /* EfiFileLib.h */,
+				1261514E1A15BBB000903E7B /* egemb_font.h */,
+				1261514F1A15BBB000903E7B /* image.c */,
+				126151501A15BBB000903E7B /* libeg.h */,
+				126151511A15BBB000903E7B /* libegint.h */,
+				126151521A15BBB000903E7B /* libscreen.c */,
+				126151531A15BBB000903E7B /* load_bmp.c */,
+				126151541A15BBB000903E7B /* load_icns.c */,
+				126151551A15BBB000903E7B /* text.c */,
+			);
+			path = libeg;
+			sourceTree = "<group>";
+		};
+		126151561A15BBB000903E7B /* Platform */ = {
+			isa = PBXGroup;
+			children = (
+				126151571A15BBB000903E7B /* AcpiPatcher.c */,
+				126151581A15BBB000903E7B /* AmlGenerator.c */,
+				126151591A15BBB000903E7B /* AmlGenerator.h */,
+				1261515A1A15BBB000903E7B /* ati.c */,
+				1261515B1A15BBB000903E7B /* ati.h */,
+				1261515C1A15BBB000903E7B /* ati_reg.h */,
+				1261515D1A15BBB000903E7B /* b64cdecode.c */,
+				1261515E1A15BBB000903E7B /* b64cdecode.h */,
+				1261515F1A15BBB000903E7B /* BdsConnect.c */,
+				126151601A15BBB000903E7B /* boot.h */,
+				126151611A15BBB000903E7B /* BootLog.c */,
+				126151621A15BBB000903E7B /* BootOptions.c */,
+				126151631A15BBB000903E7B /* card_vlist.c */,
+				126151641A15BBB000903E7B /* Console.c */,
+				126151651A15BBB000903E7B /* cpu.c */,
+				126151661A15BBB000903E7B /* DataHubCpu.c */,
+				126151671A15BBB000903E7B /* device_inject.c */,
+				126151681A15BBB000903E7B /* device_inject.h */,
+				126151691A15BBB000903E7B /* device_tree.c */,
+				1261516A1A15BBB000903E7B /* device_tree.h */,
+				1261516B1A15BBB000903E7B /* DevicePath.c */,
+				1261516C1A15BBB000903E7B /* Edid.c */,
+				1261516D1A15BBB000903E7B /* Events.c */,
+				1261516E1A15BBB000903E7B /* FixBiosDsdt.c */,
+				1261516F1A15BBB000903E7B /* gma.c */,
+				126151701A15BBB000903E7B /* gma.h */,
+				126151711A15BBB000903E7B /* guid.c */,
+				126151721A15BBB000903E7B /* Hibernate.c */,
+				126151731A15BBB000903E7B /* Injectors.c */,
+				126151741A15BBB000903E7B /* kernel_patcher.c */,
+				126151751A15BBB000903E7B /* kernel_patcher.h */,
+				126151761A15BBB000903E7B /* kext_inject.c */,
+				126151771A15BBB000903E7B /* kext_inject.h */,
+				126151781A15BBB000903E7B /* kext_patcher.c */,
+				126151791A15BBB000903E7B /* LegacyBiosThunk.c */,
+				1261517A1A15BBB000903E7B /* LegacyBiosThunk.h */,
+				1261517B1A15BBB000903E7B /* LegacyBoot.c */,
+				1261517C1A15BBB000903E7B /* loader.h */,
+				1261517D1A15BBB000903E7B /* LoaderUefi.h */,
+				1261517E1A15BBB000903E7B /* memvendors.h */,
+				1261517F1A15BBB000903E7B /* nvidia.c */,
+				126151801A15BBB000903E7B /* nvidia.h */,
+				126151811A15BBB000903E7B /* Nvram.c */,
+				126151821A15BBB000903E7B /* picopng.c */,
+				126151831A15BBB000903E7B /* picopng.h */,
+				126151841A15BBB000903E7B /* Platform.h */,
+				126151851A15BBB000903E7B /* platformdata.c */,
+				126151861A15BBB000903E7B /* PlatformDriverOverride.c */,
+				126151871A15BBB000903E7B /* plist.c */,
+				126151881A15BBB000903E7B /* Pointer.c */,
+				126151891A15BBB000903E7B /* Settings.c */,
+				1261518A1A15BBB000903E7B /* smbios.c */,
+				1261518B1A15BBB000903E7B /* spd.c */,
+				1261518C1A15BBB000903E7B /* spd.h */,
+				1261518D1A15BBB000903E7B /* sse3_5_patcher.h */,
+				1261518E1A15BBB000903E7B /* sse3_patcher.h */,
+				1261518F1A15BBB000903E7B /* StateGenerator.c */,
+				126151901A15BBB000903E7B /* StateGenerator.h */,
+				126151911A15BBB000903E7B /* string.c */,
+				126151921A15BBB000903E7B /* string.h */,
+				126151931A15BBB000903E7B /* usbfix.c */,
+			);
+			path = Platform;
+			sourceTree = "<group>";
+		};
+		126151941A15BBB000903E7B /* refit */ = {
+			isa = PBXGroup;
+			children = (
+				126151951A15BBB000903E7B /* icns.c */,
+				126151961A15BBB000903E7B /* IO.c */,
+				126151971A15BBB000903E7B /* IO.h */,
+				126151981A15BBB000903E7B /* lib.c */,
+				126151991A15BBB000903E7B /* lib.h */,
+				1261519A1A15BBB000903E7B /* list.c */,
+				1261519B1A15BBB000903E7B /* list.h */,
+				1261519C1A15BBB000903E7B /* main.c */,
+				1261519D1A15BBB000903E7B /* menu.c */,
+				1261519E1A15BBB000903E7B /* screen.c */,
+			);
+			path = refit;
+			sourceTree = "<group>";
+		};
 		2C7949DA1A0AA7F700D845B0 = {
 			isa = PBXGroup;
 			children = (
+				126151371A15BB7700903E7B /* CloverGUI */,
 				2C794CDF1A0AA85900D845B0 /* CloverEFI */,
 				2C794D1F1A0AA85900D845B0 /* CloverUEFI */,
 				2C7949E41A0AA7F700D845B0 /* Products */,
