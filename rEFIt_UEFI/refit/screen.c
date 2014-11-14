@@ -181,7 +181,7 @@ VOID BeginExternalScreen(IN BOOLEAN UseGraphicsMode, IN CHAR16 *Title)
     }
     
     // show the header
-    DrawScreenHeader(Title);
+//    DrawScreenHeader(Title);
     
     if (!UseGraphicsMode)
         SwitchToText(TRUE);
