@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-03-12 19:57+0400\n"
-"PO-Revision-Date: 2014-02-10 15:56+0000\n"
+"PO-Revision-Date: 2014-11-18 08:17+0000\n"
 "Last-Translator: Mill <ceruns@ymail.com>\n"
 "Language-Team: ko <ko@li.org>\n"
 "Language: ko\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1392047763.0\n"
+"X-POOTLE-MTIME: 1416298625.0\n"
 
 # //Don't need change
 #. type: Content of: <html><body><div><p>
@@ -94,10 +94,9 @@ msgstr "주요 기능:"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:21
-#, fuzzy
 #| msgid "- boot into 10.4 - 10.8 OSX, Windows EFI and Linux EFI"
 msgid "- boot into 10.4 - 10.9 OSX, Windows EFI and Linux EFI"
-msgstr "- OSX 10.4 ~ 10.8, Windows EFI, 그리고 Linux EFI로 부팅"
+msgstr "- OSX 10.4 ~ 10.9, Windows EFI, 그리고 Linux EFI로 부팅"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:22
@@ -609,7 +608,7 @@ msgstr "흑녹색조"
 
 #. type: "BGM_description"
 #: Resources/templates/Localizable.strings:116
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "Black Green and Moody theme from Blackosx,\n"
 #| "Install to /EFI/CLOVER/themes/BGM"
@@ -617,7 +616,7 @@ msgid ""
 "BGM (Black Green and Moody) theme from Blackosx,\n"
 "Install to /EFI/CLOVER/themes/BGM"
 msgstr ""
-"Blackosx의 흑녹색조 기본 테마,\n"
+"Blackosx의 BGM(흑녹색조) 테마,\n"
 "다음에 설치합니다: /EFI/CLOVER/themes/BGM"
 
 #. type: "black_green_title"
@@ -848,11 +847,11 @@ msgstr ""
 #: Resources/templates/Localizable.strings:175
 #, no-wrap
 msgid "Shield"
-msgstr ""
+msgstr "Shield"
 
 #. type: "Shield_description"
 #: Resources/templates/Localizable.strings:176
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "Black Green and Moody theme from Blackosx,\n"
 #| "Install to /EFI/CLOVER/themes/BGM"
@@ -860,8 +859,8 @@ msgid ""
 "An animated, harmonious theme from Blackosx,\n"
 "Install to /EFI/CLOVER/themes/Shield."
 msgstr ""
-"Blackosx의 흑녹색조 기본 테마,\n"
-"다음에 설치합니다: /EFI/CLOVER/themes/BGM"
+"Blackosx의 활기차고 조화로운 테마,\n"
+"다음에 설치합니다: /EFI/CLOVER/themes/Shield."
 
 #. type: "wooden_title"
 #: Resources/templates/Localizable.strings:179
