@@ -428,6 +428,7 @@
 		1261519E1A15BBB000903E7B /* screen.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = screen.c; sourceTree = "<group>"; };
 		1261519F1A15BBB000903E7B /* refit.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = refit.inf; sourceTree = "<group>"; };
 		126151A01A15BBB000903E7B /* Version.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Version.h; sourceTree = "<group>"; };
+		1294CC311A231CA80056FF03 /* scroll_images.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = scroll_images.h; sourceTree = "<group>"; };
 		2C7949E31A0AA7F700D845B0 /* Clover */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Clover; sourceTree = BUILT_PRODUCTS_DIR; };
 		2C7949ED1A0AA85900D845B0 /* Reset.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Reset.c; sourceTree = "<group>"; };
 		2C7949EE1A0AA85900D845B0 /* Reset.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Reset.inf; sourceTree = "<group>"; };
@@ -1175,6 +1176,7 @@
 			children = (
 				126151481A15BBB000903E7B /* egemb_icons.h */,
 				126151491A15BBB000903E7B /* Handle.h */,
+				1294CC311A231CA80056FF03 /* scroll_images.h */,
 				1261514A1A15BBB000903E7B /* syslinux_mbr.h */,
 			);
 			path = include;

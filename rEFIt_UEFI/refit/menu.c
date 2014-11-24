@@ -36,6 +36,7 @@
 
 //#include "Platform.h"
 #include "libegint.h"   //this includes platform.h 
+#include "../include/scroll_images.h"
 #include "Version.h"
 
 #ifndef DEBUG_ALL
@@ -1904,6 +1905,7 @@ VOID FreeScrollBar(VOID)
   }
 }
 
+
 VOID InitBar(VOID)
 {
   if (ThemeDir) {
@@ -1934,28 +1936,36 @@ VOID InitBar(VOID)
   }
   
   if (!BarStartImage) {
-    BarStartImage = egCreateFilledImage(ScrollWidth, 5, TRUE, &StdBackgroundPixel);
+//    BarStartImage = egCreateFilledImage(ScrollWidth, 5, TRUE, &StdBackgroundPixel);
+    BarStartImage = egDecodePNG(&emb_scroll_bar_start[0], sizeof(emb_scroll_bar_start), 5, TRUE);
   }
   if (!BarEndImage) {
-    BarEndImage = egCreateFilledImage(ScrollWidth, 5, TRUE, &StdBackgroundPixel);
+//    BarEndImage = egCreateFilledImage(ScrollWidth, 5, TRUE, &StdBackgroundPixel);
+    BarEndImage = egDecodePNG(&emb_scroll_bar_end[0], sizeof(emb_scroll_bar_end), 5, TRUE);
   }
   if (!ScrollbarBackgroundImage) {
-    ScrollbarBackgroundImage = egCreateFilledImage(ScrollWidth, 1, TRUE, &DarkBackgroundPixel);
+//    ScrollbarBackgroundImage = egCreateFilledImage(ScrollWidth, 1, TRUE, &DarkBackgroundPixel);
+    ScrollbarBackgroundImage = egDecodePNG(&emb_scroll_bar_fill[0], sizeof(emb_scroll_bar_fill), 1, TRUE);
   }
   if (!ScrollbarImage) {
-    ScrollbarImage = egCreateFilledImage(ScrollWidth, 1, TRUE, &StdBackgroundPixel);
+//    ScrollbarImage = egCreateFilledImage(ScrollWidth, 1, TRUE, &StdBackgroundPixel);
+    ScrollbarImage = egDecodePNG(&emb_scroll_scroll_fill[0], sizeof(emb_scroll_scroll_fill), 5, TRUE);
   }
   if (!ScrollStartImage) {
-    ScrollStartImage = egCreateFilledImage(ScrollWidth, 7, TRUE, &StdBackgroundPixel);
+//    ScrollStartImage = egCreateFilledImage(ScrollWidth, 7, TRUE, &StdBackgroundPixel);
+    ScrollStartImage = egDecodePNG(&emb_scroll_scroll_start[0], sizeof(emb_scroll_scroll_start), 7, TRUE);
   }
   if (!ScrollEndImage) {
-    ScrollEndImage = egCreateFilledImage(ScrollWidth, 7, TRUE, &StdBackgroundPixel);
+//    ScrollEndImage = egCreateFilledImage(ScrollWidth, 7, TRUE, &StdBackgroundPixel);
+    ScrollEndImage = egDecodePNG(&emb_scroll_scroll_end[0], sizeof(emb_scroll_scroll_end), 7, TRUE);
   }
   if (!UpButtonImage) {
-    UpButtonImage = egCreateFilledImage(ScrollWidth, 20, TRUE, &StdBackgroundPixel);
+//    UpButtonImage = egCreateFilledImage(ScrollWidth, 20, TRUE, &StdBackgroundPixel);
+    UpButtonImage = egDecodePNG(&emb_scroll_up_button[0], sizeof(emb_scroll_up_button), 20, TRUE);
   }
   if (!DownButtonImage) {
-    DownButtonImage = egCreateFilledImage(ScrollWidth, 20, TRUE, &StdBackgroundPixel);
+//    DownButtonImage = egCreateFilledImage(ScrollWidth, 20, TRUE, &StdBackgroundPixel);
+    DownButtonImage = egDecodePNG(&emb_scroll_down_button[0], sizeof(emb_scroll_down_button), 20, TRUE);
   }
 }
 
