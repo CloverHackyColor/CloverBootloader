@@ -1983,6 +1983,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         InitTheme(TRUE, &Now);
         gThemeNeedInit = FALSE;
       } else if (gThemeChanged) {
+        DBG("change theme\n");
         InitTheme(FALSE, NULL);
         FreeMenu(&OptionMenu);
       }

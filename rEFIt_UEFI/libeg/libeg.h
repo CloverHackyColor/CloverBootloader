@@ -161,8 +161,8 @@ typedef union {
 typedef struct {
     INTN      Width;
     INTN      Height;
-    BOOLEAN     HasAlpha;
     EG_PIXEL    *PixelData;
+    BOOLEAN     HasAlpha;   //moved here to avoid alignment issue
 } EG_IMAGE;
 
 typedef struct {

@@ -2238,7 +2238,7 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
 
 static VOID DrawMainMenuEntry(REFIT_MENU_ENTRY *Entry, BOOLEAN selected, INTN XPos, INTN YPos)
 {
-  EG_IMAGE *TmpBuffer = NULL;
+//  EG_IMAGE *TmpBuffer = NULL;
   INTN Scale = GlobalConfig.MainEntriesSize >> 3;
 
   if (((Entry->Tag == TAG_LOADER) || (Entry->Tag == TAG_LEGACY)) &&
@@ -2278,7 +2278,7 @@ static VOID DrawMainMenuEntry(REFIT_MENU_ENTRY *Entry, BOOLEAN selected, INTN XP
   Entry->Place.YPos = YPos;
   Entry->Place.Width = MainImage->Width;
   Entry->Place.Height = MainImage->Height;
-  egFreeImage(TmpBuffer);
+//  egFreeImage(TmpBuffer);
 }
 
 static VOID FillRectAreaOfScreen(IN INTN XPos, IN INTN YPos, IN INTN Width, IN INTN Height, IN EG_PIXEL *Color, IN UINT8 XAlign)

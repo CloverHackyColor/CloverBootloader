@@ -646,8 +646,9 @@ VOID egFillImage(IN OUT EG_IMAGE *CompImage, IN EG_PIXEL *Color)
     FillColor.a = 0;
   
   PixelPtr = CompImage->PixelData;
-  for (i = 0; i < CompImage->Width * CompImage->Height; i++, PixelPtr++)
-    *PixelPtr = FillColor;
+  for (i = 0; i < CompImage->Width * CompImage->Height; i++) {
+    *PixelPtr++ = FillColor;
+  }
 }
 
 VOID egFillImageArea(IN OUT EG_IMAGE *CompImage,
@@ -656,25 +657,27 @@ VOID egFillImageArea(IN OUT EG_IMAGE *CompImage,
                      IN EG_PIXEL *Color)
 {
   INTN        x, y;
+  INTN    xAreaWidth = AreaWidth;
+  INTN    xAreaHeight = AreaHeight;
   EG_PIXEL    FillColor;
-//  EG_PIXEL    *PixelPtr;
   EG_PIXEL    *PixelBasePtr;
   if (!CompImage || !Color) {
     return;
   }
   
-  egRestrictImageArea(CompImage, AreaPosX, AreaPosY, &AreaWidth, &AreaHeight);
+  egRestrictImageArea(CompImage, AreaPosX, AreaPosY, &xAreaWidth, &xAreaHeight);
   
-  if (AreaWidth > 0) {
+  if (xAreaWidth > 0) {
     FillColor = *Color;
     if (!CompImage->HasAlpha)
       FillColor.a = 0;
     
     PixelBasePtr = CompImage->PixelData + AreaPosY * CompImage->Width + AreaPosX;
-    for (y = 0; y < AreaHeight; y++) {
+    for (y = 0; y < xAreaHeight; y++) {
       EG_PIXEL    *PixelPtr = PixelBasePtr;
-      for (x = 0; x < AreaWidth; x++, PixelPtr++)
-        *PixelPtr = FillColor;
+      for (x = 0; x < xAreaWidth; x++) {
+        *PixelPtr++ = FillColor;
+      }
       PixelBasePtr += CompImage->Width;
     }
   }
@@ -824,12 +827,7 @@ VOID egComposeImage(IN OUT EG_IMAGE *CompImage, IN EG_IMAGE *TopImage, IN INTN P
   if (CompWidth > 0) {
     if (CompImage->HasAlpha && !BackgroundImage) {
       CompImage->HasAlpha = FALSE;
-//      egSetPlane(PLPTR(CompImage, a), 255, CompImage->Width * CompImage->Height);
     }
-    
-/*    if (!CompImage->HasAlpha) {
-      egSetPlane(PLPTR(CompImage, a), 255, CompImage->Width * CompImage->Height);
-    }*/
     
     if (TopImage->HasAlpha) {
       if (CompImage->HasAlpha) {

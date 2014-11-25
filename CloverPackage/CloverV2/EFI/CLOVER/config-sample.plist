@@ -238,14 +238,7 @@
 		</array>
 	</dict>
 	<key>RtVariables</key>
-	<dict>
-		<key>LogEveryBoot</key>
-		<string>10</string>
-		<key>LogLineCount</key>
-		<integer>3000</integer>
-		<key>MountEFI</key>
-		<true/>
-	</dict>
+	<dict/>
 	<key>SystemParameters</key>
 	<dict>
 		<key>InjectKexts</key>

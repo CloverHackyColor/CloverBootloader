@@ -34,16 +34,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-//#include "efi.h"
-//#include "efilib.h"
-//#include "EfiApi.h"
 #ifndef __REFITLIB_STANDARD_H__
 #define __REFITLIB_STANDARD_H__
 
 
 #include "libeg.h"
-//#include <Library/EfiShellLib.h>
-//#include "IO.h"
+
 #define REFIT_DEBUG (2)
 #define Print if ((!GlobalConfig.Quiet) || (GlobalConfig.TextOnly)) Print
 //#include "GenericBdsLib.h"
@@ -358,17 +354,6 @@ struct _refit_menu_screen {
   EG_IMAGE          **Film;
 };
 
-//this structure is used for refit.config
-typedef struct {
-  UINT8   *Buffer;
-  UINTN   BufferSize;
-  UINTN   Encoding;
-  CHAR8   *Current8Ptr;
-  CHAR8   *End8Ptr;
-  CHAR16  *Current16Ptr;
-  CHAR16  *End16Ptr;
-} REFIT_FILE;
-
 #define VOLTYPE_OPTICAL    (0x0001)
 #define VOLTYPE_EXTERNAL   (0x0002)
 #define VOLTYPE_INTERNAL   (0x0004)
@@ -671,7 +656,6 @@ extern EG_PIXEL StdBackgroundPixel;
 extern EG_PIXEL MenuBackgroundPixel;
 extern EG_PIXEL InputBackgroundPixel;
 extern EG_PIXEL BlueBackgroundPixel;
-//extern EG_PIXEL TransBackgroundPixel;
 extern EG_PIXEL DarkBackgroundPixel;
 
 extern EG_RECT  BannerPlace;

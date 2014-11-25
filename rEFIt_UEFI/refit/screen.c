@@ -466,7 +466,7 @@ VOID BltClearScreen(IN BOOLEAN ShowBanner) //ShowBanner always TRUE
   
   if (BackgroundImage != NULL && (BackgroundImage->Width != UGAWidth || BackgroundImage->Height != UGAHeight)) {
     // Resolution changed
-    FreePool(BackgroundImage);
+    egFreeImage(BackgroundImage);
     BackgroundImage = NULL;
   }
   

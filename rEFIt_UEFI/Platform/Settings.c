@@ -2568,9 +2568,9 @@ GetThemeTagSettings (
   }
   FreeScrollBar();
   
-  // if NULL parameter, quit after setting default values
+  // if NULL parameter, quit after setting default values, this is embedded theme
   if (DictPointer == NULL) {
-    return EFI_INVALID_PARAMETER;
+    return EFI_SUCCESS;
   }
   
   Dict    = GetProperty (DictPointer, "Background");
@@ -3118,16 +3118,14 @@ InitTheme(
       FreePool (ThemePath);
       ThemePath = NULL;
     }
-    if (ThemeDir != NULL) {
-      ThemeDir->Close (ThemeDir);
-      ThemeDir = NULL;
-    }
-    // set default values
+
     GetThemeTagSettings(NULL);
     //fill some fields
+    GlobalConfig.Timeout = -1;
     GlobalConfig.SelectionColor = 0xA0A0A080;
     GlobalConfig.Font = FONT_ALFA; //to be inverted later
-    GlobalConfig.HideBadges |= HDBADGES_SHOW;
+    GlobalConfig.CharWidth = 7;
+    GlobalConfig.HideBadges = HDBADGES_SHOW;
     GlobalConfig.BadgeScale = 16;
   } else { // theme loaded successfully
     // read theme settings

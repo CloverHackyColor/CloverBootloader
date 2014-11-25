@@ -409,9 +409,9 @@ EFI_STATUS EjectVolume(IN REFIT_VOLUME *Volume)
 {
 	EFI_SCSI_IO_PROTOCOL            *ScsiIo = NULL;
 	EFI_SCSI_IO_SCSI_REQUEST_PACKET CommandPacket;
-	UINT64                          Lun = 0;
-	UINT8                           *Target;
-	UINT8                           TargetArray[EFI_SCSI_TARGET_MAX_BYTES];
+//	UINT64                          Lun = 0;
+//	UINT8                           *Target;
+//	UINT8                           TargetArray[EFI_SCSI_TARGET_MAX_BYTES];
 	EFI_STATUS                      Status; // = EFI_UNSUPPORTED;
 	UINT8                           Cdb[EFI_SCSI_OP_LENGTH_SIX];
 	USB_MASS_DEVICE                 *UsbMass = NULL;
@@ -428,13 +428,14 @@ EFI_STATUS EjectVolume(IN REFIT_VOLUME *Volume)
 	
 	Status = gBS->HandleProtocol(Volume->DeviceHandle, &gEfiScsiIoProtocolGuid, (VOID **) &ScsiIo);
 	if (ScsiIo) {
-		Target = &TargetArray[0];
-		ScsiIo->GetDeviceLocation (ScsiIo, &Target, &Lun);
+//		Target = &TargetArray[0];
+//		ScsiIo->GetDeviceLocation (ScsiIo, &Target, &Lun);
 		
 		
 		Cdb[0]  = EFI_SCSI_OP_START_STOP_UNIT;
-		Cdb[1]  = (UINT8) (LShiftU64 (Lun, 5) & EFI_SCSI_LOGICAL_UNIT_NUMBER_MASK);
-		Cdb[1] |= 0x01;
+//		Cdb[1]  = (UINT8) (LShiftU64 (Lun, 5) & EFI_SCSI_LOGICAL_UNIT_NUMBER_MASK);
+//		Cdb[1] |= 0x01;
+    Cdb[1]  = 0x01;
 		Cdb[4]  = ATA_CMD_SUBOP_EJECT_DISC;  
 		CommandPacket.Timeout = EFI_TIMER_PERIOD_SECONDS (3);
 		CommandPacket.Cdb = Cdb;

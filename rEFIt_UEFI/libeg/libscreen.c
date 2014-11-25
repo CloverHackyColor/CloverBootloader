@@ -502,26 +502,7 @@ VOID egClearScreen(IN EG_PIXEL *Color)
                      0, 0, 0, 0, egScreenWidth, egScreenHeight, 0);
     }
 }
-/*
-VOID egDrawImage(IN EG_IMAGE *Image, IN INTN ScreenPosX, IN INTN ScreenPosY)
-{
-    if (!egHasGraphics || !Image)
-        return;
     
-    if (Image->HasAlpha) {
-        Image->HasAlpha = FALSE;
-        egSetPlane(PLPTR(Image, a), 0, Image->Width * Image->Height); //fill image->alfa by 0
-    }
-    
-    if (GraphicsOutput != NULL) {
-        GraphicsOutput->Blt(GraphicsOutput, (EFI_GRAPHICS_OUTPUT_BLT_PIXEL *)Image->PixelData, EfiBltBufferToVideo,
-                            0, 0, (UINTN)ScreenPosX, (UINTN)ScreenPosY, (UINTN)Image->Width, (UINTN)Image->Height, 0);
-    } else if (UgaDraw != NULL) {
-        UgaDraw->Blt(UgaDraw, (EFI_UGA_PIXEL *)Image->PixelData, EfiUgaBltBufferToVideo,
-                     0, 0, (UINTN)ScreenPosX, (UINTN)ScreenPosY, (UINTN)Image->Width, (UINTN)Image->Height, 0);
-    }
-}
-*/
 VOID egDrawImageArea(IN EG_IMAGE *Image,
                      IN INTN AreaPosX, IN INTN AreaPosY,
                      IN INTN AreaWidth, IN INTN AreaHeight,
