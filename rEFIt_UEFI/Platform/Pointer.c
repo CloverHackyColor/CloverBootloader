@@ -183,7 +183,13 @@ VOID KillMouse()
   
   egFreeImage(gPointer.newImage); gPointer.newImage = NULL;
   egFreeImage(gPointer.oldImage); gPointer.oldImage = NULL;
-  egFreeImage(gPointer.Pointer); gPointer.Pointer = NULL;
+
+  // Free Pointer only if it is not builtin icon
+  if (gPointer.Pointer != BuiltinIcon(BUILTIN_ICON_POINTER)) {
+    egFreeImage(gPointer.Pointer);
+  }
+
+  gPointer.Pointer = NULL;
   gPointer.MouseEvent = NoEvents;
   gPointer.SimplePointerProtocol = NULL;
 }

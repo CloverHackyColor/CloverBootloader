@@ -2562,11 +2562,6 @@ GetThemeTagSettings (
     BackgroundImage = NULL;
   }
 
-  if (Banner != NULL) {
-    egFreeImage (Banner);
-    Banner  = NULL;
-  }
-
   if (FontImage != NULL) {
     egFreeImage (FontImage);
     FontImage = NULL;
@@ -2993,9 +2988,29 @@ InitTheme(
   
   Rnd = ((Time != NULL) && (ThemesNum != 0)) ? Time->Second % ThemesNum : 0;
   
-  // Invalidated BuiltinIcons
-//  DBG ("Invalidating BuiltinIcons...\n");
+  // Free selection images which are not builtin icons
+  for (i = 0; i < 4; i++) {
+    if (SelectionImages[i] != NULL) {
+      if (SelectionImages[i] != BuiltinIcon(BUILTIN_SELECTION_SMALL) && SelectionImages[i] != BuiltinIcon(BUILTIN_SELECTION_BIG)) {
+        egFreeImage (SelectionImages[i]);
+      }
+      SelectionImages[i] = NULL;
+    }
+  }
 
+  // Free banner which is not builtin icon
+  if (Banner != NULL) {
+    if (Banner != BuiltinIcon(BUILTIN_ICON_BANNER)) {
+      egFreeImage (Banner);
+    }
+    Banner  = NULL;
+  }
+
+  // Kill mouse before we invalidate builtin pointer image
+  KillMouse();
+
+  // Invalidate BuiltinIcons
+//  DBG ("Invalidating BuiltinIcons...\n");
   for (i = 0; i < BUILTIN_ICON_COUNT; i++) {
     if (BuiltinIconTable[i].Image != NULL) {
       egFreeImage (BuiltinIconTable[i].Image);
@@ -3003,15 +3018,6 @@ InitTheme(
     }    
   }
 
-  for (i = 0; i < 4; i++) {
-    if (SelectionImages[i] != NULL) {
-      egFreeImage (SelectionImages[i]);
-      SelectionImages[i] = NULL;
-    }
-  } 
-  
-//  KillMouse();
-  
   while (GuiAnime != NULL) {
     GUI_ANIME *NextAnime = GuiAnime->Next;
     FreeAnime (GuiAnime); 
