@@ -77,6 +77,7 @@ UINT32 SATAAHCIVENDOR;
 UINT32 DisplayVendor[4];
 UINT16 DisplayID[4];
 UINT32 DisplaySubID[4];
+UINT16 ArptDID;
 
 //UINT32 PWRBADR;
 
@@ -587,13 +588,12 @@ VOID CheckHardware()
 	UINTN               HandleCount = 0;
 	UINTN               HandleIndex;
   
-  //	UINT16		  did, vid;
 	UINTN               Segment;
 	UINTN               Bus;
 	UINTN               Device;
 	UINTN               Function;
 	UINTN               display=0;
-//	UINTN               gfxid=0;
+
   
 	pci_dt_t            PCIdevice;
 	EFI_DEVICE_PATH_PROTOCOL *DevicePath = NULL;
@@ -701,8 +701,9 @@ VOID CheckHardware()
               DBG("Found Airport BCM at 0x%x, 0x%x\n", ArptADR1, ArptADR2);
             }
             ArptAtheros = (Pci.Hdr.VendorId == 0x168c);
+            ArptDID = Pci.Hdr.DeviceId;
             if (ArptAtheros) {
-              DBG("Found Airport Atheros at 0x%x, 0x%x\n", ArptADR1, ArptADR2);
+              DBG("Found Airport Atheros at 0x%x, 0x%x, DeviceID=0x%04x\n", ArptADR1, ArptADR2, ArptDID);
             }
           }
           
@@ -3055,7 +3056,7 @@ UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
     } else if (ArptAtheros) {
       aml_add_string(pack, "model");
       aml_add_string_buffer(pack, "Atheros AR9285 WiFi card");
-      if (!gSettings.FakeWIFI) {
+      if (!gSettings.FakeWIFI && ArptDID != 0x30) {
         aml_add_string(pack, "name");
         aml_add_string_buffer(pack, "pci168c,2a");
         aml_add_string(pack, "device-id");
