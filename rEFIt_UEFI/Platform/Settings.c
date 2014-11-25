@@ -3119,6 +3119,11 @@ InitTheme(
       ThemePath = NULL;
     }
 
+    if (ThemeDir != NULL) {
+      ThemeDir->Close (ThemeDir);
+      ThemeDir = NULL;
+    }
+
     GetThemeTagSettings(NULL);
     //fill some fields
     GlobalConfig.Timeout = -1;

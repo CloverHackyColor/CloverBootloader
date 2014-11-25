@@ -933,7 +933,8 @@ VOID InitAnime(REFIT_MENU_SCREEN *Screen)
     if (Screen->Film) {
       //free images in the film
       for (i = 0; i <= Screen->Frames; i++) { //really there are N+1 frames
-        if (Screen->Film[i] != NULL) {
+        // free only last occurrence of repeated frames
+        if (Screen->Film[i] != NULL && (i == Screen->Frames || Screen->Film[i] != Screen->Film[i+1])) {
           FreePool(Screen->Film[i]);
         }
       }
