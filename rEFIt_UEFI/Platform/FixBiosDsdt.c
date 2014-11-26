@@ -3661,7 +3661,7 @@ UINT32 AddHDEF (UINT8 *dsdt, UINT32 len, CHAR8* OSVersion)
 UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
 {
   UINT32 i, j, k;
-  UINT32 Size, size1, size2, size3, size4;
+  UINT32 Size, size1, size2, size3; //, size4;
   UINT32 adr=0, adr1=0;
   INT32 sizeoffset;
   AML_CHUNK* root;
@@ -3982,7 +3982,7 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
                 }
                 
                 CopyMem(USBDATA2+k, (VOID*)&USBID[i], 4);
-                sizeoffset = size4;
+                sizeoffset = size2;
                 
             } else {
                 if ((USBDATA1[25] == 0x0A) && (USBDATA1[26] == 0x04)) {
