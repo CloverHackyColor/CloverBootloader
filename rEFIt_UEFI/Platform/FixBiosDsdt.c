@@ -755,7 +755,7 @@ VOID CheckHardware()
             USBID[usb] = DID;
             USB20[usb] = (Pci.Hdr.ClassCode[0] == 0x20)?1:0;
             USB30[usb] = (Pci.Hdr.ClassCode[0] == 0x30)?1:0;
-            USB40[usb] = (Pci.Hdr.ClassCode[0] == 0x20)?1:0;
+            USB40[usb] = ((Pci.Hdr.ClassCode[0] == 0x20) && USBNForce)?1:0;
             usb++;
           }
           
@@ -2799,9 +2799,9 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
       }
     }
     root = aml_create_node(NULL);
-  }  
+  } else {
   //what to do if no LAN bridge?
-  else {
+    i = PCIADR;
     brd = aml_create_node(NULL);
     root = aml_add_device(brd, "LAN0");
     aml_add_name(root, "_ADR");
@@ -2825,7 +2825,6 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
     }
   }
   met = aml_add_method(dev, "_DSM", 4);
-
   Size = get_size(dsdt, i);
   k = FindMethod(dsdt + i, Size, "_SUN");
   if (k == 0) {
@@ -2840,7 +2839,6 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
       }
     }
   }
-
   // add Method(_DSM,4,NotSerialized) for network
   met2 = aml_add_store(met);
   pack = aml_add_package(met2);
@@ -2868,11 +2866,10 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
     aml_add_string(pack, "empty");
     aml_add_byte(pack, 0);
   }
-  
   aml_add_local0(met2);
   aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
   // finish Method(_DSM,4,NotSerialized)
-  aml_calculate_size(root);  
+  aml_calculate_size(root);
   network = AllocateZeroPool(root->Size);
   if (!network) {
     return len;
@@ -3676,7 +3673,7 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
   CHAR8 *USBDATA1;
   CHAR8 *USBDATA2;
   CHAR8 *USBDATA3;
-  CHAR8 *USBDATA4;
+//  CHAR8 *USBDATA4;
   
   DBG("Start USB Fix\n");
 	//DBG("len = 0x%08x\n", len);
@@ -3712,7 +3709,7 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
   
   USBDATA1 = AllocateZeroPool(root->Size);
   size1 = root->Size;
-  //DBG("USB code size = 0x%08x\n", sizeoffset);
+//  DBG("USB1 code size = 0x%08x\n", size1);
   aml_write_node(root, USBDATA1, 0);
   aml_destroy_node(root);
   
@@ -3765,17 +3762,17 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
   aml_calculate_size(root1);
   USBDATA2 = AllocateZeroPool(root1->Size);
   size2 = root1->Size;
-  //DBG("USB code size = 0x%08x\n", sizeoffset);
+//  DBG("USB2 code size = 0x%08x\n", size2);
   aml_write_node(root1, USBDATA2, 0);
   aml_destroy_node(root1);
  
-  //NFORCE_USB_START
-  aml_calculate_size(root1);
+  //NFORCE_USB_START -- already done Intel or NForce same USBDATA2
+/*  aml_calculate_size(root1);
   USBDATA4 = AllocateZeroPool(root1->Size);
   size4 = root1->Size;
-  //DBG("USB code size = 0x%08x\n", sizeoffset);
+  DBG("USB OHCI code size = 0x%08x\n", size4);
   aml_write_node(root1, USBDATA4, 0);
-  aml_destroy_node(root1);
+  aml_destroy_node(root1); */
   //NFORCE_USB_END
     
   // add Method(_DSM,4,NotSerialized) for USB3
@@ -3814,7 +3811,7 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
   aml_calculate_size(root1);
   USBDATA3 = AllocateZeroPool(root1->Size);
   size3 = root1->Size;
-  //DBG("USB code size = 0x%08x\n", sizeoffset);
+//  DBG("USB3 code size = 0x%08x\n", size3);
   aml_write_node(root1, USBDATA3, 0);
   aml_destroy_node(root1);
   
@@ -3824,11 +3821,11 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
       INTN XhciCount = 1;
       INTN EhciCount = 0;
       // find USB adr
-      for (j = 0; j < len - 4; j++) {
+      for (j = 0x20; j < len - 4; j++) {
         if (CmpAdr(dsdt, j, USBADR[i])) {   //j+4 -> _ADR
           XhciName = FALSE;
           UsbName[i] = AllocateZeroPool(5);
-           
+  //        DBG("found USB at 0x%x\n", j);
           adr1 = devFind(dsdt, j + 2);
           if (!adr1) {
             continue;
@@ -3976,15 +3973,15 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
              */
             
             if (USB40[i]) {
-                if ((USBDATA4[25] == 0x0A) && (USBDATA4[26] == 0x04)) {
+                if ((USBDATA2[25] == 0x0A) && (USBDATA2[26] == 0x04)) {
                     k = 27;
-                } else if ((USBDATA4[26] == 0x0A) && (USBDATA4[27] == 0x04)) {
+                } else if ((USBDATA2[26] == 0x0A) && (USBDATA2[27] == 0x04)) {
                     k = 28;
                 } else {
                     continue;
                 }
                 
-                CopyMem(USBDATA4+k, (VOID*)&USBID[i], 4);
+                CopyMem(USBDATA2+k, (VOID*)&USBID[i], 4);
                 sizeoffset = size4;
                 
             } else {
@@ -4003,7 +4000,7 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
             len = move_data(adr1+adr, dsdt, len, sizeoffset);
             
             if (USB40[i]) {
-                CopyMem(dsdt+adr1+adr, USBDATA4, sizeoffset);
+                CopyMem(dsdt+adr1+adr, USBDATA2, sizeoffset);
                 
             } else {
                 CopyMem(dsdt+adr1+adr, USBDATA1, sizeoffset);
@@ -4022,7 +4019,7 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
   FreePool(USBDATA1);
   FreePool(USBDATA2);
   FreePool(USBDATA3);
-  FreePool(USBDATA4);
+//  FreePool(USBDATA4);
   return len;  
 }
 

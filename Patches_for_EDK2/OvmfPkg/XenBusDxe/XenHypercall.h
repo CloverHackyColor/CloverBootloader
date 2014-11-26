@@ -61,7 +61,7 @@ XenHyperpageInit (
 UINT64
 XenHypercallHvmGetParam (
   XENBUS_DEVICE *Dev,
-  INTN Index
+  UINT32 Index
   );
 
 /**

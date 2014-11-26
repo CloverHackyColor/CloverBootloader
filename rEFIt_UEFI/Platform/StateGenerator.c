@@ -143,7 +143,7 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
 						
 						// Sanity check
 						if (maximum.CID < minimum.CID) {
-							DBG("Insane FID values!");
+							DBG("Insane FID values!\n");
 							p_states_count = 0;
 						} else {
               UINT8 vidstep;

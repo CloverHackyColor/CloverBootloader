@@ -37,8 +37,8 @@
 
 [BuildOptions]
   GCC:*_UNIXGCC_*_CC_FLAGS             = -DMDEPKG_NDEBUG
-  GCC:RELEASE_*_*_CC_FLAGS             = -DMDEPKG_NDEBUG
-  XCODE:RELEASE_*_*_CC_FLAGS             = -mno-mmx -mno-sse -DMDEPKG_NDEBUG
+  GCC:RELEASE_*_*_CC_FLAGS             = -Os -DMDEPKG_NDEBUG
+  XCODE:RELEASE_*_*_CC_FLAGS             = -Os -mno-mmx -mno-sse -DMDEPKG_NDEBUG
   INTEL:RELEASE_*_*_CC_FLAGS           = /D MDEPKG_NDEBUG
   MSFT:RELEASE_*_*_CC_FLAGS            = /D MDEPKG_NDEBUG
   GCC:*_*_*_CC_FLAGS                   = -mno-mmx -mno-sse

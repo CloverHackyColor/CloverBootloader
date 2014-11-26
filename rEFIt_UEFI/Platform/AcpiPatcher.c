@@ -1985,7 +1985,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
       Status = InsertTable((VOID*)Ssdt, Ssdt->Length);      
     }
     if(EFI_ERROR(Status)){
-      DBG("GeneratePStates failed Status=%r\n", Status);
+      DBG("GeneratePStates failed: Status=%r\n", Status);
     }
   }
   
