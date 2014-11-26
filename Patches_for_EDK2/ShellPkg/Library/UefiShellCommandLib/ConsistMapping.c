@@ -14,6 +14,8 @@
 #include "UefiShellCommandLib.h"
 #include <Library/DevicePathLib.h>
 #include <Library/SortLib.h>
+#include <Library/UefiLib.h>
+#include <Protocol/UsbIo.h>
 
 typedef enum {
   MTDTypeUnknown,
@@ -40,10 +42,12 @@ typedef struct {
   CHAR16    *Name;
 } MTD_NAME;
 
+typedef VOID (EFIAPI *SerialDecodeFucntion) (EFI_DEVICE_PATH_PROTOCOL *DevPath, DEVICE_CONSIST_MAPPING_INFO *MapInfo,EFI_DEVICE_PATH_PROTOCOL *);
+
 typedef struct {
   UINT8 Type;
   UINT8 SubType;
-  VOID (EFIAPI *SerialFun) (EFI_DEVICE_PATH_PROTOCOL *DevPath, DEVICE_CONSIST_MAPPING_INFO *MapInfo);
+  SerialDecodeFucntion SerialFun;
   INTN (EFIAPI *CompareFun) (EFI_DEVICE_PATH_PROTOCOL *DevPath, EFI_DEVICE_PATH_PROTOCOL *DevPath2);
 } DEV_PATH_CONSIST_MAPPING_TABLE;
 
@@ -427,7 +431,8 @@ VOID
 EFIAPI
 DevPathSerialHardDrive (
   IN EFI_DEVICE_PATH_PROTOCOL     *DevicePathNode,
-  IN DEVICE_CONSIST_MAPPING_INFO  *MappingItem
+  IN DEVICE_CONSIST_MAPPING_INFO  *MappingItem,
+  IN EFI_DEVICE_PATH_PROTOCOL     *DevicePath
   )
 {
   HARDDRIVE_DEVICE_PATH *Hd;
@@ -453,7 +458,8 @@ VOID
 EFIAPI
 DevPathSerialAtapi (
   IN EFI_DEVICE_PATH_PROTOCOL     *DevicePathNode,
-  IN DEVICE_CONSIST_MAPPING_INFO  *MappingItem
+  IN DEVICE_CONSIST_MAPPING_INFO  *MappingItem,
+  IN EFI_DEVICE_PATH_PROTOCOL     *DevicePath
   )
 {
   ATAPI_DEVICE_PATH *Atapi;
@@ -475,7 +481,8 @@ VOID
 EFIAPI
 DevPathSerialCdRom (
   IN EFI_DEVICE_PATH_PROTOCOL     *DevicePathNode,
-  IN DEVICE_CONSIST_MAPPING_INFO  *MappingItem
+  IN DEVICE_CONSIST_MAPPING_INFO  *MappingItem,
+  IN EFI_DEVICE_PATH_PROTOCOL     *DevicePath
   )
 {
   CDROM_DEVICE_PATH *Cd;
@@ -498,7 +505,8 @@ VOID
 EFIAPI
 DevPathSerialFibre (
   IN EFI_DEVICE_PATH_PROTOCOL     *DevicePathNode,
-  IN DEVICE_CONSIST_MAPPING_INFO  *MappingItem
+  IN DEVICE_CONSIST_MAPPING_INFO  *MappingItem,
+  IN EFI_DEVICE_PATH_PROTOCOL     *DevicePath
   )
 {
   FIBRECHANNEL_DEVICE_PATH  *Fibre;
@@ -521,7 +529,8 @@ VOID
 EFIAPI
 DevPathSerialUart (
   IN EFI_DEVICE_PATH_PROTOCOL     *DevicePathNode,
-  IN DEVICE_CONSIST_MAPPING_INFO  *MappingItem
+  IN DEVICE_CONSIST_MAPPING_INFO  *MappingItem,
+  IN EFI_DEVICE_PATH_PROTOCOL     *DevicePath
   )
 {
   UART_DEVICE_PATH  *Uart;
@@ -546,17 +555,53 @@ VOID
 EFIAPI
 DevPathSerialUsb (
   IN EFI_DEVICE_PATH_PROTOCOL     *DevicePathNode,
-  IN DEVICE_CONSIST_MAPPING_INFO  *MappingItem
+  IN DEVICE_CONSIST_MAPPING_INFO  *MappingItem,
+  IN EFI_DEVICE_PATH_PROTOCOL     *DevicePath
   )
 {
-  USB_DEVICE_PATH *Usb;
+  USB_DEVICE_PATH           *Usb;
+  EFI_USB_IO_PROTOCOL       *UsbIo;
+  EFI_HANDLE                TempHandle;
+  EFI_STATUS                Status;
+  USB_INTERFACE_DESCRIPTOR  InterfaceDesc;
 
-  ASSERT(DevicePathNode != NULL);
-  ASSERT(MappingItem != NULL);
+
+//  ASSERT(DevicePathNode != NULL);
+//  ASSERT(MappingItem != NULL);
+  if (!DevicePathNode || !MappingItem) return;
 
   Usb = (USB_DEVICE_PATH *) DevicePathNode;
   AppendCSDNum (MappingItem, Usb->ParentPortNumber);
   AppendCSDNum (MappingItem, Usb->InterfaceNumber);
+
+  if (PcdGetBool(PcdUsbExtendedDecode)) {
+    Status = gBS->LocateDevicePath( &gEfiUsbIoProtocolGuid, &DevicePath, &TempHandle );
+    UsbIo = NULL;
+    if (!EFI_ERROR(Status)) {
+      Status = gBS->OpenProtocol(TempHandle, &gEfiUsbIoProtocolGuid, (VOID**)&UsbIo, gImageHandle, NULL, EFI_OPEN_PROTOCOL_GET_PROTOCOL);
+    } 
+
+    if (!EFI_ERROR(Status)) {
+      ASSERT(UsbIo != NULL);
+      Status = UsbIo->UsbGetInterfaceDescriptor(UsbIo, &InterfaceDesc);
+      if (!EFI_ERROR(Status)) {
+        if (InterfaceDesc.InterfaceClass == USB_MASS_STORE_CLASS && MappingItem->Mtd == MTDTypeUnknown) {
+          switch (InterfaceDesc.InterfaceSubClass){
+            case USB_MASS_STORE_SCSI:
+              MappingItem->Mtd = MTDTypeHardDisk;
+              break;
+            case USB_MASS_STORE_8070I:
+            case USB_MASS_STORE_UFI:
+              MappingItem->Mtd = MTDTypeFloppy;
+              break;
+            case USB_MASS_STORE_8020I:
+              MappingItem->Mtd  = MTDTypeCDRom;
+              break;
+          }
+        }
+      }
+    } 
+  }
 }
 
 /**
@@ -570,11 +615,15 @@ VOID
 EFIAPI
 DevPathSerialVendor (
   IN EFI_DEVICE_PATH_PROTOCOL     *DevicePathNode,
-  IN DEVICE_CONSIST_MAPPING_INFO  *MappingItem
+  IN DEVICE_CONSIST_MAPPING_INFO  *MappingItem,
+  IN EFI_DEVICE_PATH_PROTOCOL     *DevicePath
   )
 {
   VENDOR_DEVICE_PATH  *Vendor;
   SAS_DEVICE_PATH     *Sas;
+  UINTN               TargetNameLength;
+  UINTN               Index;
+  CHAR16              *Buffer;
 
   if (DevicePathNode == NULL || MappingItem == NULL) {
     return;
@@ -589,6 +638,32 @@ DevPathSerialVendor (
     AppendCSDNum (MappingItem, Sas->Lun);
     AppendCSDNum (MappingItem, Sas->DeviceTopology);
     AppendCSDNum (MappingItem, Sas->RelativeTargetPort);
+  } else {
+    TargetNameLength = MIN(DevicePathNodeLength (DevicePathNode) - sizeof (VENDOR_DEVICE_PATH), PcdGet32(PcdShellVendorExtendedDecode));
+    if (TargetNameLength != 0) {
+      //
+      // String is 2 chars per data byte, plus NULL terminator
+      //
+      Buffer = AllocateZeroPool (((TargetNameLength * 2) + 1) * sizeof(CHAR16));
+      ASSERT(Buffer != NULL);
+      if (Buffer == NULL) {
+        return;
+  }
+
+      //
+      // Build the string data
+      //
+      for (Index = 0; Index < TargetNameLength; Index++) {
+        Buffer = CatSPrint (Buffer, L"%02x", *((UINT8*)Vendor + sizeof (VENDOR_DEVICE_PATH) + Index));
+}
+
+      //
+      // Append the new data block
+      //
+      AppendCSDStr (MappingItem, Buffer);
+
+      FreePool(Buffer);
+    }
   }
 }
 
@@ -602,7 +677,8 @@ VOID
 EFIAPI
 DevPathSerialLun (
   IN EFI_DEVICE_PATH_PROTOCOL     *DevicePathNode,
-  IN DEVICE_CONSIST_MAPPING_INFO  *MappingItem
+  IN DEVICE_CONSIST_MAPPING_INFO  *MappingItem,
+  IN EFI_DEVICE_PATH_PROTOCOL     *DevicePath
   )
 {
   DEVICE_LOGICAL_UNIT_DEVICE_PATH *Lun;
@@ -624,7 +700,8 @@ VOID
 EFIAPI
 DevPathSerialSata (
   IN EFI_DEVICE_PATH_PROTOCOL     *DevicePathNode,
-  IN DEVICE_CONSIST_MAPPING_INFO  *MappingItem
+  IN DEVICE_CONSIST_MAPPING_INFO  *MappingItem,
+  IN EFI_DEVICE_PATH_PROTOCOL     *DevicePath
   )
 {
   SATA_DEVICE_PATH  *Sata;
@@ -648,7 +725,8 @@ VOID
 EFIAPI
 DevPathSerialIScsi (
   IN EFI_DEVICE_PATH_PROTOCOL     *DevicePathNode,
-  IN DEVICE_CONSIST_MAPPING_INFO  *MappingItem
+  IN DEVICE_CONSIST_MAPPING_INFO  *MappingItem,
+  IN EFI_DEVICE_PATH_PROTOCOL     *DevicePath
   )
 {
   ISCSI_DEVICE_PATH  *IScsi;
@@ -691,7 +769,8 @@ VOID
 EFIAPI
 DevPathSerialI2O (
   IN EFI_DEVICE_PATH_PROTOCOL     *DevicePathNode,
-  IN DEVICE_CONSIST_MAPPING_INFO  *MappingItem
+  IN DEVICE_CONSIST_MAPPING_INFO  *MappingItem,
+  IN EFI_DEVICE_PATH_PROTOCOL     *DevicePath
   )
 {
   I2O_DEVICE_PATH *DevicePath_I20;
@@ -713,7 +792,8 @@ VOID
 EFIAPI
 DevPathSerialMacAddr (
   IN EFI_DEVICE_PATH_PROTOCOL     *DevicePathNode,
-  IN DEVICE_CONSIST_MAPPING_INFO  *MappingItem
+  IN DEVICE_CONSIST_MAPPING_INFO  *MappingItem,
+  IN EFI_DEVICE_PATH_PROTOCOL     *DevicePath
   )
 {
   MAC_ADDR_DEVICE_PATH  *Mac;
@@ -749,7 +829,8 @@ VOID
 EFIAPI
 DevPathSerialInfiniBand (
   IN EFI_DEVICE_PATH_PROTOCOL     *DevicePathNode,
-  IN DEVICE_CONSIST_MAPPING_INFO  *MappingItem
+  IN DEVICE_CONSIST_MAPPING_INFO  *MappingItem,
+  IN EFI_DEVICE_PATH_PROTOCOL     *DevicePath
   )
 {
   INFINIBAND_DEVICE_PATH  *InfiniBand;
@@ -781,14 +862,16 @@ VOID
 EFIAPI
 DevPathSerialIPv4 (
   IN EFI_DEVICE_PATH_PROTOCOL     *DevicePathNode,
-  IN DEVICE_CONSIST_MAPPING_INFO  *MappingItem
+  IN DEVICE_CONSIST_MAPPING_INFO  *MappingItem,
+  IN EFI_DEVICE_PATH_PROTOCOL     *DevicePath
   )
 {
   IPv4_DEVICE_PATH  *Ip;
   CHAR16            Buffer[10];
 
-  ASSERT(DevicePathNode != NULL);
-  ASSERT(MappingItem != NULL);
+//  ASSERT(DevicePathNode != NULL);
+//  ASSERT(MappingItem != NULL);
+  if (!DevicePathNode || !MappingItem) return;
 
   Ip = (IPv4_DEVICE_PATH *) DevicePathNode;
   UnicodeSPrint (
@@ -825,7 +908,8 @@ VOID
 EFIAPI
 DevPathSerialIPv6 (
   IN EFI_DEVICE_PATH_PROTOCOL     *DevicePathNode,
-  IN DEVICE_CONSIST_MAPPING_INFO  *MappingItem
+  IN DEVICE_CONSIST_MAPPING_INFO  *MappingItem,
+  IN EFI_DEVICE_PATH_PROTOCOL     *DevicePath
   )
 {
   IPv6_DEVICE_PATH  *Ip;
@@ -833,8 +917,9 @@ DevPathSerialIPv6 (
   CHAR16            Buffer[64];
   CHAR16            *PBuffer;
 
-  ASSERT(DevicePathNode != NULL);
-  ASSERT(MappingItem != NULL);
+//  ASSERT(DevicePathNode != NULL);
+//  ASSERT(MappingItem != NULL);
+  if (!DevicePathNode || !MappingItem) return;
 
   Ip = (IPv6_DEVICE_PATH *) DevicePathNode;
   for (Index = 0, PBuffer = Buffer; Index < 16; Index++, PBuffer += 2) {
@@ -861,13 +946,15 @@ VOID
 EFIAPI
 DevPathSerialScsi (
   IN EFI_DEVICE_PATH_PROTOCOL     *DevicePathNode,
-  IN DEVICE_CONSIST_MAPPING_INFO  *MappingItem
+  IN DEVICE_CONSIST_MAPPING_INFO  *MappingItem,
+  IN EFI_DEVICE_PATH_PROTOCOL     *DevicePath
   )
 {
   SCSI_DEVICE_PATH  *Scsi;
 
-  ASSERT(DevicePathNode != NULL);
-  ASSERT(MappingItem != NULL);
+//  ASSERT(DevicePathNode != NULL);
+//  ASSERT(MappingItem != NULL);
+  if (!DevicePathNode || !MappingItem) return;
 
   Scsi = (SCSI_DEVICE_PATH *) DevicePathNode;
   AppendCSDNum (MappingItem, Scsi->Pun);
@@ -884,14 +971,16 @@ VOID
 EFIAPI
 DevPathSerial1394 (
   IN EFI_DEVICE_PATH_PROTOCOL     *DevicePathNode,
-  IN DEVICE_CONSIST_MAPPING_INFO  *MappingItem
+  IN DEVICE_CONSIST_MAPPING_INFO  *MappingItem,
+  IN EFI_DEVICE_PATH_PROTOCOL     *DevicePath
   )
 {
   F1394_DEVICE_PATH *DevicePath_F1394;
   CHAR16            Buffer[20];
 
-  ASSERT(DevicePathNode != NULL);
-  ASSERT(MappingItem != NULL);
+//  ASSERT(DevicePathNode != NULL);
+//  ASSERT(MappingItem != NULL);
+  if (!DevicePathNode || !MappingItem) return;
 
   DevicePath_F1394 = (F1394_DEVICE_PATH *) DevicePathNode;
   UnicodeSPrint (Buffer, 0, L"%lx", DevicePath_F1394->Guid);
@@ -908,13 +997,15 @@ VOID
 EFIAPI
 DevPathSerialAcpi (
   IN EFI_DEVICE_PATH_PROTOCOL     *DevicePathNode,
-  IN DEVICE_CONSIST_MAPPING_INFO  *MappingItem
+  IN DEVICE_CONSIST_MAPPING_INFO  *MappingItem,
+  IN EFI_DEVICE_PATH_PROTOCOL     *DevicePath
   )
 {
   ACPI_HID_DEVICE_PATH  *Acpi;
 
-  ASSERT(DevicePathNode != NULL);
-  ASSERT(MappingItem != NULL);
+//  ASSERT(DevicePathNode != NULL);
+//  ASSERT(MappingItem != NULL);
+  if (!DevicePathNode || !MappingItem) return;
 
   Acpi = (ACPI_HID_DEVICE_PATH *) DevicePathNode;
   if ((Acpi->HID & PNP_EISA_ID_MASK) == PNP_EISA_ID_CONST) {
@@ -937,7 +1028,8 @@ VOID
 EFIAPI
 DevPathSerialDefault (
   IN EFI_DEVICE_PATH_PROTOCOL     *DevicePathNode,
-  IN DEVICE_CONSIST_MAPPING_INFO  *MappingItem
+  IN DEVICE_CONSIST_MAPPING_INFO  *MappingItem,
+  IN EFI_DEVICE_PATH_PROTOCOL     *DevicePath
   )
 {
   return;
@@ -1129,7 +1221,10 @@ GetHIDevicePath (
   EFI_DEVICE_PATH_PROTOCOL  *HIDevicePath;
   EFI_DEVICE_PATH_PROTOCOL  *TempDevicePath;
 
-  ASSERT(DevicePath != NULL);
+//  ASSERT(DevicePath != NULL);
+  if (!DevicePath) {
+    return NULL;
+  }
 
   NonHIDevicePathNodeCount  = 0;
 
@@ -1179,21 +1274,23 @@ GetDeviceConsistMappingInfo (
   IN EFI_DEVICE_PATH_PROTOCOL       *DevicePath
   )
 {
-  VOID (EFIAPI *SerialFun) (EFI_DEVICE_PATH_PROTOCOL *, DEVICE_CONSIST_MAPPING_INFO *);
+  SerialDecodeFucntion      SerialFun;
+  UINTN                     Index;
+  EFI_DEVICE_PATH_PROTOCOL  *OriginalDevicePath;
 
-  UINTN Index;
-
-  ASSERT(DevicePath != NULL);
-  ASSERT(MappingItem != NULL);
+//  ASSERT(DevicePathNode != NULL);
+//  ASSERT(MappingItem != NULL);
+  if (!DevicePath || !MappingItem) return EFI_SUCCESS;
 
   SetMem (&MappingItem->Csd, sizeof (POOL_PRINT), 0);
+  OriginalDevicePath = DevicePath;
 
   while (!IsDevicePathEnd (DevicePath)) {
     //
-    // Find the handler to dump this device path node
+    // Find the handler to dump this device path node and
+    // initialize with generic function in case nothing is found
     //
-    SerialFun = NULL;
-    for (Index = 0; DevPathConsistMappingTable[Index].SerialFun != NULL; Index += 1) {
+    for (SerialFun = DevPathSerialDefault, Index = 0; DevPathConsistMappingTable[Index].SerialFun != NULL; Index += 1) {
 
       if (DevicePathType (DevicePath) == DevPathConsistMappingTable[Index].Type &&
           DevicePathSubType (DevicePath) == DevPathConsistMappingTable[Index].SubType
@@ -1202,14 +1299,8 @@ GetDeviceConsistMappingInfo (
         break;
       }
     }
-    //
-    // If not found, use a generic function
-    //
-    if (!SerialFun) {
-      SerialFun = DevPathSerialDefault;
-    }
 
-    SerialFun (DevicePath, MappingItem);
+    SerialFun (DevicePath, MappingItem, OriginalDevicePath);
 
     //
     // Next device path node

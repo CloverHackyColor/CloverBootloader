@@ -25,7 +25,6 @@
   @retval TRUE            The move is across file system.
   @retval FALSE           The move is within a file system.
 **/
-STATIC
 BOOLEAN
 EFIAPI
 IsBetweenFileSystem(
@@ -69,17 +68,16 @@ IsBetweenFileSystem(
 
   if the move is invalid this function will report the error to StdOut.
 
-  @param FullName [in]    The name of the file to move.
+  @param SourcePath [in]    The name of the file to move.
   @param Cwd      [in]    The current working directory
   @param DestPath [in]    The target location to move to
-  @param Attribute[in]    The Attribute of the file
+  @param Attribute  [in]    The Attribute of the file
   @param DestAttr [in]    The Attribute of the destination
-  @param FileStatus[in]   The Status of the file when opened
+  @param FileStatus [in]    The Status of the file when opened
 
   @retval TRUE        The move is valid
   @retval FALSE       The move is not
 **/
-STATIC
 BOOLEAN
 EFIAPI
 IsValidMove(
@@ -164,7 +162,6 @@ IsValidMove(
   @retval SHELL_INVALID_PARAMETER  Cwd is required and is NULL.
   @retval SHELL_SUCCESS            The operation was sucessful.
 **/
-STATIC
 SHELL_STATUS
 EFIAPI
 GetDestinationLocation(
@@ -453,7 +450,6 @@ MoveWithinFileSystems(
   @retval SHELL_WRITE_PROTECTED     the destination was write protected
   @retval SHELL_OUT_OF_RESOURCES    a memory allocation failed
 **/
-STATIC
 SHELL_STATUS
 EFIAPI
 ValidateAndMoveFiles(
@@ -558,17 +554,17 @@ ValidateAndMoveFiles(
     //
     // Validate that the move is valid
     //
-    if (!IsValidMove(Node->FullName, Cwd, FullDestPath?FullDestPath:DestPath, Node->Info->Attribute, Attr, Node->Status)) {
+    if (!IsValidMove(Node->FullName, Cwd, FullDestPath!=NULL? FullDestPath:DestPath, Node->Info->Attribute, Attr, Node->Status)) {
       ShellStatus = SHELL_INVALID_PARAMETER;
       continue;
     }
 
-    ShellPrintEx(-1, -1, HiiOutput, Node->FullName, FullDestPath?FullDestPath:DestPath);
+    ShellPrintEx(-1, -1, HiiOutput, Node->FullName, FullDestPath!=NULL? FullDestPath:DestPath);
 
     //
     // See if destination exists
     //
-    if (!EFI_ERROR(ShellFileExists(FullDestPath?FullDestPath:DestPath))) {
+    if (!EFI_ERROR(ShellFileExists(FullDestPath!=NULL? FullDestPath:DestPath))) {
       if (Response == NULL) {
         ShellPromptForResponseHii(ShellPromptResponseTypeYesNoAllCancel, STRING_TOKEN (STR_GEN_DEST_EXIST_OVR), gShellLevel2HiiHandle, &Response);
       }
@@ -594,14 +590,14 @@ ValidateAndMoveFiles(
           FreePool(Response);
           return SHELL_ABORTED;
       }
-      Status = ShellDeleteFileByName(FullDestPath?FullDestPath:DestPath);
+      Status = ShellDeleteFileByName(FullDestPath!=NULL? FullDestPath:DestPath);
     }
 
     if (IsBetweenFileSystem(Node->FullName, Cwd, DestPath)) {
       while (FullDestPath == NULL && DestPath != NULL && DestPath[0] != CHAR_NULL && DestPath[StrLen(DestPath) - 1] == L'\\') {
         DestPath[StrLen(DestPath) - 1] = CHAR_NULL;
       }
-      Status = MoveBetweenFileSystems(Node, FullDestPath?FullDestPath:DestPath, &Response);
+      Status = MoveBetweenFileSystems(Node, FullDestPath!=NULL? FullDestPath:DestPath, &Response);
     } else {
       Status = MoveWithinFileSystems(Node, DestPath, &Response);
     }

@@ -796,6 +796,9 @@ EfiShellGetDeviceName(
     //
     if (DeviceNameToReturn != NULL){
  //     ASSERT(BestDeviceName != NULL);
+      if (!BestDeviceName) {
+        return EFI_NOT_FOUND;
+      }
       StrnCatGrow(BestDeviceName, NULL, DeviceNameToReturn, 0);
       return (EFI_SUCCESS);
     }
