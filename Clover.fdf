@@ -122,6 +122,7 @@ INF IntelFrameworkModulePkg/Universal/DataHubDxe/DataHubDxe.inf
 #INF  Clover/VBoxFsDxe/VBoxExt2.inf
 #INF  Clover/VBoxFsDxe/VBoxExt4.inf
 #INF  Clover/VBoxFsDxe/VBoxReiserFS.inf
+INF  Clover/GrubFS/src/EXFAT.inf
 !if ($(ARCH) == X64)
 #INF  RuleOverride=BINARY Clover/HFSPlus/HFSPlus.inf
 !else

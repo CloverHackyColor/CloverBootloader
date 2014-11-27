@@ -50,6 +50,7 @@
   BaseLib|MdePkg/Library/BaseLib/BaseLib.inf
   SynchronizationLib|MdePkg/Library/BaseSynchronizationLib/BaseSynchronizationLib.inf
   BaseMemoryLib|MdePkg/Library/BaseMemoryLib/BaseMemoryLib.inf
+  #BaseMemoryLib|MdePkg/Library/UefiMemoryLib/UefiMemoryLib.inf
   #BaseMemoryLib|MdePkg/Library/BaseMemoryLibSse2/BaseMemoryLibSse2.inf
   PrintLib|MdePkg/Library/BasePrintLib/BasePrintLib.inf
   CpuLib|MdePkg/Library/BaseCpuLib/BaseCpuLib.inf
@@ -148,6 +149,7 @@
 
 [LibraryClasses.common.DXE_CORE]
   HobLib|MdePkg/Library/DxeCoreHobLib/DxeCoreHobLib.inf
+  BaseMemoryLib|MdePkg/Library/BaseMemoryLib/BaseMemoryLib.inf
   MemoryAllocationLib|MdeModulePkg/Library/DxeCoreMemoryAllocationLib/DxeCoreMemoryAllocationLib.inf
 
 [LibraryClasses.common.PEIM]
@@ -213,6 +215,7 @@
       gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x80000042
       #0x80000042
     <LibraryClasses>
+      BaseMemoryLib|MdePkg/Library/BaseMemoryLib/BaseMemoryLib.inf
       MemoryAllocationLib|MdeModulePkg/Library/DxeCoreMemoryAllocationLib/DxeCoreMemoryAllocationLib.inf
      # DebugLib|IntelFrameworkModulePkg/Library/PeiDxeDebugLibReportStatusCode/PeiDxeDebugLibReportStatusCode.inf
      # ReportStatusCodeLib|DuetPkg/Library/DxeCoreReportStatusCodeLibFromHob/DxeCoreReportStatusCodeLibFromHob.inf
@@ -258,6 +261,8 @@
   Clover/OsxEfiLdr/EfiLdr.inf {
     <LibraryClasses>
       DebugLib|MdePkg/Library/BaseDebugLibNull/BaseDebugLibNull.inf
+      BaseMemoryLib|MdePkg/Library/BaseMemoryLib/BaseMemoryLib.inf
+      
       #NULL|IntelFrameworkModulePkg/Library/LzmaCustomDecompressLib/LzmaCustomDecompressLib.inf
       NULL|Clover/Library/LzmaCustomDecompressLib/LzmaCustomDecompressLib.inf
   }
@@ -332,8 +337,6 @@
   Clover/BiosVideo/BiosVideo.inf
   #Clover/BiosVideoAuto/BiosVideo.inf
   Clover/LegacyBios/VideoDxe/VideoDxe.inf
-
-  Clover/gptsync/gptsync.inf
 
   # IDE/AHCI Support
 !ifdef USE_BIOS_BLOCKIO
@@ -446,10 +449,10 @@
   #
   # Sample Application
   #
-  MdeModulePkg/Application/HelloWorld/HelloWorld.inf
+  #MdeModulePkg/Application/HelloWorld/HelloWorld.inf
   #MdeModulePkg/Application/VariableInfo/VariableInfo.inf
   #Clover/Sample/Application/Sample.inf
-  #Clover/gptsync/gptsync.inf
+  Clover/gptsync/gptsync.inf
   
 !ifdef DEBUG_ON_SERIAL_PORT
 
@@ -475,7 +478,10 @@
 	}
 !else
 
-	Clover/rEFIt_UEFI/refit.inf
+	Clover/rEFIt_UEFI/refit.inf {
+    <LibraryClasses>
+      BaseMemoryLib|MdePkg/Library/UefiMemoryLib/UefiMemoryLib.inf      
+  }
 !endif
 
 [Components.X64]

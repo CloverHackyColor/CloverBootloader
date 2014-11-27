@@ -148,7 +148,7 @@ EFI_DRIVER_BINDING_PROTOCOL fsw_efi_DriverBinding_table = {
     fsw_efi_DriverBinding_Supported,
     fsw_efi_DriverBinding_Start,
     fsw_efi_DriverBinding_Stop,
-    0x10,
+    0x00,
     NULL,
     NULL
 };
