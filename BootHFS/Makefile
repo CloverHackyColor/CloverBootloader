@@ -1,4 +1,4 @@
-BOOTSECTORS = boot0af boot0ss boot0ab boot0md boot1h boot1h2 boot1f32 boot1f32alt
+BOOTSECTORS = boot0af boot0ss boot0ab boot0md boot0xg boot1h boot1h2 boot1f32 boot1f32alt boot1x
 TEXTFILES   = Description.txt Installation.txt
 
 BOOTSECTOR_BINS = $(addprefix $(DESTDIR)/, $(BOOTSECTORS))
