@@ -117,12 +117,12 @@ INF IntelFrameworkModulePkg/Universal/DataHubDxe/DataHubDxe.inf
 #INF IntelFrameworkModulePkg/Universal/DataHubStdErrDxe/DataHubStdErrDxe.inf
 #INF EdkCompatibilityPkg/Compatibility/PiSmbiosRecordOnDataHubSmbiosRecordThunk/PiSmbiosRecordOnDataHubSmbiosRecordThunk.inf
 	# foreign file system support
+INF  Clover/GrubFS/src/EXFAT.inf	
 #INF  Clover/VBoxFsDxe/VBoxFsDxe.inf
 #INF  Clover/VBoxFsDxe/VBoxIso9660.inf
 #INF  Clover/VBoxFsDxe/VBoxExt2.inf
 #INF  Clover/VBoxFsDxe/VBoxExt4.inf
 #INF  Clover/VBoxFsDxe/VBoxReiserFS.inf
-INF  Clover/GrubFS/src/EXFAT.inf
 !if ($(ARCH) == X64)
 #INF  RuleOverride=BINARY Clover/HFSPlus/HFSPlus.inf
 !else
