@@ -38,6 +38,9 @@ bootslice=${bootdev#*disk*s}
 # Get the options for alternative booting
 altBoot=$($plistbuddy -c "Print $installer_altboot_refid" \
  "$CLOVER_INSTALLER_PLIST_NEW" 2>/dev/null)
+
+partitionloaderexfat="boot1x"
+
 if [[ "$altBoot" == true ]]; then
     partitionloaderhfs="boot1h2"
     partitionloaderfat="boot1f32alt"
@@ -58,14 +61,15 @@ echo "bootrdisk: Disk raw device is ${bootrdisk}"
 echo "diskloader: Disk loader is ${diskloader}"
 echo "partitionloaderhfs: Partition loader is ${partitionloaderhfs}"
 echo "partitionloaderfat: Partition loader is ${partitionloaderfat}"
+echo "partitionloaderexfat: Partition loader is ${partitionloaderexfat}"
 echo "-----------------------------------------------"
 echo ""
 echo ""
 
-# Installing fdisk440 in /usr/local/bin if not exists
-if [ ! -e "/usr/local/bin/fdisk440" ]; then
+# Installing fdisk440 and boot1-install in /usr/local/bin if not exists
+if [[ ! -e "/usr/local/bin/fdisk440" || ! -e "/usr/local/bin/boot1-install" ]]; then
     mkdir -p /usr/local/bin
-    cp -f "${DEST_VOL}/usr/local/bin/fdisk440" /usr/local/bin/fdisk440
+    cp -f "${DEST_VOL}/usr/local/bin"/{fdisk440,boot1-install} /usr/local/bin/
 fi
 
 echo "==============================================="
@@ -94,10 +98,15 @@ echo "==============================================="
 echo "Check the format of the selected partition"
 echo "==============================================="
 
-boot_volume_format="$(fstyp $bootdev)"
+tmpfile=$(mktemp -t fstyp)
+LC_ALL=C diskutil info -plist $bootdev > "$tmpfile"
+boot_volume_format=$($plistbuddy -c "Print FilesystemType" \
+ "$tmpfile" 2>/dev/null)
+rm -f "$tmpfile"
 case "$boot_volume_format" in
       hfs) echo "${bootdev} is currently formatted as HFS"   ;;
     msdos) echo "${bootdev} is currently formatted as msdos" ;;
+    exfat) echo "${bootdev} is currently formatted as ExFAT" ;;
 esac
 echo ""
 
@@ -123,8 +132,10 @@ echo "" >> "$install_log"
 # Use temporary files because the partition will be unmount
 tmp_log=/tmp/install.log
 partitionloaderfat_copy="/tmp/$partitionloaderfat"
+partitionloaderexfat_copy="/tmp/$partitionloaderexfat"
 partitionloaderhfs_copy="/tmp/$partitionloaderhfs"
 cp -p "${DEST_VOL}/usr/standalone/i386/${partitionloaderfat}" "$partitionloaderfat_copy"
+cp -p "${DEST_VOL}/usr/standalone/i386/${partitionloaderexfat}" "$partitionloaderexfat_copy"
 cp -p "${DEST_VOL}/usr/standalone/i386/${partitionloaderhfs}" "$partitionloaderhfs_copy"
 
 # Try to unmount the partition first
@@ -169,6 +180,11 @@ elif [[ ${boot_volume_format} = "msdos" ]]; then
       echo "dd if=/tmp/newbs of=${bootrdev}" >> "$tmp_log"
       dd if=/tmp/newbs count=1 bs=512 of=${bootrdev}
     fi
+elif [[ ${boot_volume_format} = "exfat" ]]; then
+    echo "Stage 1 - Writting ${partitionloaderexfat} to ${bootrdev}" >> "$tmp_log"
+    echo "File system is ExFat." >> "$tmp_log"
+    echo "/usr/local/bin/boot1-install -yM -f ${partitionloaderexfat_copy} ${bootrdev}" >> "$tmp_log"
+    /usr/local/bin/boot1-install -yM -f "${partitionloaderexfat_copy}" ${bootrdev}
 else
     echo "Unknown boot volume format: $boot_volume_format" >> "$tmp_log"
     echo "No Stage1 was written" >> "$tmp_log"
@@ -188,6 +204,7 @@ cat "$tmp_log" >> "$install_log"
 # Remove tempory files
 rm -f "$tmp_log"
 rm -f "$partitionloaderfat_copy"
+rm -f "$partitionloaderexfat_copy"
 rm -f "$partitionloaderhfs_copy"
 
 echo "" >> "$install_log"
