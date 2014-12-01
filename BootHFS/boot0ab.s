@@ -101,7 +101,7 @@ kPartTypePMBR		EQU  0xee			; On all GUID Partition Table disks a Protective MBR 
 kPartActive	        EQU  0x80			; active flag enabled
 kPartInactive	    EQU  0x00			; active flag disabled
 kHFSGUID	        EQU  0x48465300		; first 4 bytes of Apple HFS Partition Type GUID.
-kAppleGUID			EQU  0xACEC4365		; last 4 bytes of Apple type GUIDs. 
+kAppleGUID			EQU  0xACEC4365		; last 4 bytes of Apple type GUIDs. 426F6F74-0000-11AA-AA11-00306543ECAC
 kEFISystemGUID		EQU  0x3BC93EC9		; last 4 bytes of EFI System Partition Type GUID:
 										; C12A7328-F81F-11D2-BA4B-00A0C93EC93B
 
