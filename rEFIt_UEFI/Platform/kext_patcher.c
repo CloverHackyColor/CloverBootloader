@@ -91,7 +91,7 @@ VOID ExtractKextBoundleIdentifier(CHAR8 *Plist)
   Tag += 6;
   DictLevel++;
   
-  while (Tag != '\0') {
+  while (*Tag != '\0') {
     
     if (AsciiStrnCmp(Tag, "<dict>", 6) == 0) {
       // opening dict

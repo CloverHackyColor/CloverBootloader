@@ -634,6 +634,7 @@ typedef struct _DRIVERS_FLAGS {
   BOOLEAN MemFixLoaded;
   BOOLEAN AptioFixLoaded;
   BOOLEAN AptioFix2Loaded;
+  BOOLEAN HFSLoaded;
 } DRIVERS_FLAGS;
 
 #pragma pack(push)
@@ -1945,13 +1946,13 @@ SetCPUProperties ();
 //
 
 /** Returns the first occurrence of a Null-terminated Unicode SearchString in a Null-terminated Unicode String. Compares just first 8 bits of chars (valid for ASCII), case insensitive. */
-CHAR16 *
+/*CHAR16 *
 EFIAPI
 StrStriBasic (
   IN CONST  CHAR16 *String,
   IN CONST  CHAR16 *SearchString
   );
-
+*/
 /** Returns 0 if two strings are equal, !=0 otherwise. Compares just first 8 bits of chars (valid for ASCII), case insensitive. */
 UINTN
 EFIAPI

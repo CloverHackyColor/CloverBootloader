@@ -584,8 +584,7 @@ IsOsxHibernated (IN REFIT_VOLUME *Volume)
   }
   
   if (!gFirmwareClover &&
-      !gDriversFlags.EmuVariableLoaded)
-  {
+      !gDriversFlags.EmuVariableLoaded) {
     DBG("     UEFI with NVRAM: ");
     Status = gRT->GetVariable (L"Boot0082", &gEfiGlobalVariableGuid, NULL, &Size, Data);
     if (Status == EFI_BUFFER_TOO_SMALL) {

@@ -607,6 +607,22 @@ CoreConnectSingleController (
       SortedDriverBindingProtocols[HighestIndex] = DriverBinding;
     }
   }
+/*
+  if (PlatformDriverOverride) {
+    for (Index = 0; Index < NumberOfSortedDriverBindingProtocols; Index++) {
+      DriverBinding = SortedDriverBindingProtocols[Index];
+      if (DriverBinding) {
+        Status = PlatformDriverOverride->DriverLoaded (
+                                                       PlatformDriverOverride,
+                                                       ControllerHandle,
+                                                       RemainingDevicePath,
+                                                       DriverBinding->ImageHandle
+                                                       );
+
+      }
+    }
+  }
+*/  
 
   //
   // Loop until no more drivers can be started on ControllerHandle
@@ -624,33 +640,48 @@ CoreConnectSingleController (
     for (Index = 0; (Index < NumberOfSortedDriverBindingProtocols) && !DriverFound; Index++) {
       if (SortedDriverBindingProtocols[Index] != NULL) {
         DriverBinding = SortedDriverBindingProtocols[Index];
-        PERF_START (DriverBinding->DriverBindingHandle, "DB:Support:", NULL, 0);
+ //       PERF_START (DriverBinding->DriverBindingHandle, "DB:Support:", NULL, 0);
         Status = DriverBinding->Supported(
                                   DriverBinding,
                                   ControllerHandle,
                                   RemainingDevicePath
                                   );
-        PERF_END (DriverBinding->DriverBindingHandle, "DB:Support:", NULL, 0);
+//        PERF_END (DriverBinding->DriverBindingHandle, "DB:Support:", NULL, 0);
         if (!EFI_ERROR (Status)) {
           SortedDriverBindingProtocols[Index] = NULL;
           DriverFound = TRUE;
+          if (PlatformDriverOverride) {
+            PlatformDriverOverride->DriverLoaded (
+                                                  PlatformDriverOverride,
+                                                  ControllerHandle,
+                                                  RemainingDevicePath,
+                                                  DriverBinding->ImageHandle
+                                                  );
+          }
 
           //
           // A driver was found that supports ControllerHandle, so attempt to start the driver
           // on ControllerHandle.
           //
-          PERF_START (DriverBinding->DriverBindingHandle, "DB:Start:", NULL, 0);
+ //         PERF_START (DriverBinding->DriverBindingHandle, "DB:Start:", NULL, 0);
           Status = DriverBinding->Start (
                                     DriverBinding,
                                     ControllerHandle,
                                     RemainingDevicePath
                                     );
-          PERF_END (DriverBinding->DriverBindingHandle, "DB:Start:", NULL, 0);
+ //         PERF_END (DriverBinding->DriverBindingHandle, "DB:Start:", NULL, 0);
 
           if (!EFI_ERROR (Status)) {
             //
             // The driver was successfully started on ControllerHandle, so set a flag
             //
+            Status = PlatformDriverOverride->DriverLoaded (
+                         PlatformDriverOverride,
+                         ControllerHandle,
+                         RemainingDevicePath,
+                         DriverBinding->DriverBindingHandle
+                                                        ); 
+
             OneStarted = TRUE;
           }
         }

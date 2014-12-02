@@ -84,7 +84,7 @@ REFIT_MENU_SCREEN        MainMenu    = {1, L"Main Menu", NULL, 0, NULL, 0, NULL,
 static REFIT_MENU_SCREEN AboutMenu   = {2, L"About",     NULL, 0, NULL, 0, NULL, 0, NULL,              NULL, FALSE, FALSE, 0, 0, 0, 0, {0, 0, 0, 0}, NULL};
 static REFIT_MENU_SCREEN HelpMenu    = {3, L"Help",      NULL, 0, NULL, 0, NULL, 0, NULL,              NULL, FALSE, FALSE, 0, 0, 0, 0, {0, 0, 0, 0}, NULL};
 
-DRIVERS_FLAGS gDriversFlags = {FALSE, FALSE, FALSE, FALSE, FALSE};  //MemFixLoaded
+DRIVERS_FLAGS gDriversFlags = {FALSE, FALSE, FALSE, FALSE, FALSE, FALSE};  //the initializer is not needed for global variables
 
 EMU_VARIABLE_CONTROL_PROTOCOL *gEmuVariableControl = NULL;
 
@@ -767,16 +767,6 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
 //    DBG("PatchACPI\n");
     PatchACPI(Entry->Volume, Entry->OSVersion);
 
-    // Prepare boot arguments
-//    if ((StrCmp(gST->FirmwareVendor, L"CLOVER") != 0) &&
-//        (StrCmp(gST->FirmwareVendor, L"EDKII") != 0)) {
-/*    if (gDriversFlags.AptioFixLoaded) {
-      // Add slide=0 argument for ML and Mavericks if not present
-      CHAR16 *TempOptions = AddLoadOption(Entry->LoadOptions, L"slide=0");
-      FreePool(Entry->LoadOptions);
-      Entry->LoadOptions = TempOptions;
-    }
-*/
     // If KPDebug is true boot in verbose mode to see the debug messages
     if ((Entry->KernelAndKextPatches != NULL) && Entry->KernelAndKextPatches->KPDebug) {
       CHAR16 *TempOptions = AddLoadOption(Entry->LoadOptions, L"-v");
@@ -1143,6 +1133,8 @@ static VOID ScanDriverDir(IN CHAR16 *Path, OUT EFI_HANDLE **DriversToConnect, OU
       gDriversFlags.VideoLoaded = TRUE;
     } else if (StrStr(FileName, L"Partition") != NULL) {
       gDriversFlags.PartitionLoaded = TRUE;
+    } else if (StrStr(FileName, L"HFS") != NULL) {
+      gDriversFlags.HFSLoaded = TRUE;
     }
     if (DriverHandle != NULL && DriversToConnectNum != NULL && DriversToConnect != NULL) {
       // driver loaded - check for EFI_DRIVER_BINDING_PROTOCOL
@@ -1160,6 +1152,7 @@ static VOID ScanDriverDir(IN CHAR16 *Path, OUT EFI_HANDLE **DriversToConnect, OU
           DriversArrSize += 16;
         }
         DriversArr[DriversArrNum] = DriverHandle;
+        DBG(" driver %s included with Binding=%x\n", FileName, DriverBinding);
         DriversArrNum++;
         // we'll make array terminated
         DriversArr[DriversArrNum] = NULL;
@@ -1305,11 +1298,17 @@ VOID DisconnectSomeDevices(VOID)
 {
   EFI_STATUS              Status;
   UINTN                   HandleCount = 0;
-  UINTN                   Index;
+  UINTN                   Index, Index2;
   EFI_HANDLE              *Handles = NULL;
+  EFI_HANDLE              *ControllerHandles = NULL;
+  UINTN                   ControllerHandleCount = 0;
 	EFI_BLOCK_IO_PROTOCOL   *BlockIo	= NULL;
 	EFI_PCI_IO_PROTOCOL     *PciIo	= NULL;
+//  EFI_FILE_PROTOCOL				*RootFP = NULL;
+//  EFI_SIMPLE_FILE_SYSTEM_PROTOCOL	*VolumeFS = NULL;
 	PCI_TYPE00              Pci;
+  CHAR16                           *DriverName;
+  EFI_COMPONENT_NAME2_PROTOCOL      *CompName;
   
   if (gDriversFlags.PartitionLoaded) {
     DBG("Partition driver loaded: ");
@@ -1331,6 +1330,43 @@ VOID DisconnectSomeDevices(VOID)
     }
     DBG("\n");
   }
+  
+  if (gDriversFlags.HFSLoaded) {
+    DBG("HFS+ driver loaded \n");
+    // get all FileSystem handles
+    Status = gBS->LocateHandleBuffer(ByProtocol, &gEfiSimpleFileSystemProtocolGuid, NULL, &ControllerHandleCount, &ControllerHandles);
+    Status = gBS->LocateHandleBuffer(ByProtocol, &gEfiComponentName2ProtocolGuid, NULL, &HandleCount, &Handles);
+    if (Status == EFI_SUCCESS) {
+      for (Index = 0; Index < HandleCount; Index++) {
+        Status = gBS->OpenProtocol(
+                                   Handles[Index],
+                                   &gEfiComponentName2ProtocolGuid,
+                                   (VOID**)&CompName,
+                                   gImageHandle,
+                                   NULL,
+                                   EFI_OPEN_PROTOCOL_GET_PROTOCOL);
+
+        if (EFI_ERROR(Status)) {
+//          DBG("CompName %r\n", Status);
+          continue;
+        }
+        Status = CompName->GetDriverName(CompName, "en", &DriverName);
+        if (EFI_ERROR(Status)) {
+          continue;
+        }        
+        if (StriStr(DriverName, L"HFS")) {
+          for (Index2 = 0; Index2 < ControllerHandleCount; Index2++) {          
+            Status = gBS->DisconnectController(ControllerHandles[Index2],
+                                               Handles[Index], NULL);
+            DBG("Driver [%s] disconnect %r\n", DriverName, Status);
+          }
+        }
+      }
+      FreePool(Handles);
+    }
+//    DBG("\n");
+  }
+
   
   if (gDriversFlags.VideoLoaded) {
     DBG("Video driver loaded: ");
@@ -1524,7 +1560,7 @@ INTN FindDefaultEntry(VOID)
         continue;
       }
       
-      if (SearchForLoader && (Entry->me.Tag != TAG_LOADER || !StrStriBasic(Entry->LoaderPath, gSettings.DefaultLoader))) {
+      if (SearchForLoader && (Entry->me.Tag != TAG_LOADER || !StriStr(Entry->LoaderPath, gSettings.DefaultLoader))) {
         continue;
       }
       

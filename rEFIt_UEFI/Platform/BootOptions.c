@@ -104,7 +104,7 @@ StrCmpiBasic(
  *
  * Copied and modified from BaseLib/String.c
  */
-
+/*
 CHAR16 *
 EFIAPI
 StrStriBasic (
@@ -146,7 +146,7 @@ StrStriBasic (
     
     return NULL;
 }
-
+*/
 /** Finds and returns pointer to specified DevPath node in DevicePath or NULL.
  *  If SubType == 0 then it is ignored.
  */
@@ -1193,7 +1193,7 @@ DeleteBootOptionsContainingFile (
     FilePathDP = (FILEPATH_DEVICE_PATH*) FindDevicePathNodeWithType (BootOption.FilePathList, MEDIA_DEVICE_PATH, MEDIA_FILEPATH_DP);
 
     if ((FilePathDP != NULL) &&
-        (StrStriBasic (FilePathDP->PathName, FileName) != NULL)) {
+        (StriStr (FilePathDP->PathName, FileName) != NULL)) {
       DBG("DeleteBootOptionContainingFile: Found Boot%04X, at index %d\n", BootOrder[Index], Index);
       Status = DeleteBootOption (BootOrder[Index]);
       if (!EFI_ERROR(Status)) {

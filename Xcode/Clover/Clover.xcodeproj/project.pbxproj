@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		12E38DDA1A2DB6EB0093F748 /* DriverOverride.c in Sources */ = {isa = PBXBuildFile; fileRef = 12E38DD81A2DB6EB0093F748 /* DriverOverride.c */; };
 		2C794D201A0AA85900D845B0 /* Reset.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C7949ED1A0AA85900D845B0 /* Reset.c */; };
 		2C794D211A0AA85900D845B0 /* AhciMode.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C7949F01A0AA85900D845B0 /* AhciMode.c */; };
 		2C794D221A0AA85900D845B0 /* AtaAtapiPassThru.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C7949F21A0AA85900D845B0 /* AtaAtapiPassThru.c */; };
@@ -429,6 +430,8 @@
 		1261519F1A15BBB000903E7B /* refit.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = refit.inf; sourceTree = "<group>"; };
 		126151A01A15BBB000903E7B /* Version.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Version.h; sourceTree = "<group>"; };
 		1294CC311A231CA80056FF03 /* scroll_images.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = scroll_images.h; sourceTree = "<group>"; };
+		12E38DD81A2DB6EB0093F748 /* DriverOverride.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = DriverOverride.c; sourceTree = "<group>"; };
+		12E38DD91A2DB6EB0093F748 /* DriverOverride.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DriverOverride.inf; sourceTree = "<group>"; };
 		2C7949E31A0AA7F700D845B0 /* Clover */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Clover; sourceTree = BUILT_PRODUCTS_DIR; };
 		2C7949ED1A0AA85900D845B0 /* Reset.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Reset.c; sourceTree = "<group>"; };
 		2C7949EE1A0AA85900D845B0 /* Reset.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Reset.inf; sourceTree = "<group>"; };
@@ -1282,6 +1285,16 @@
 				1261519E1A15BBB000903E7B /* screen.c */,
 			);
 			path = refit;
+			sourceTree = "<group>";
+		};
+		12E38DD71A2DB6EB0093F748 /* DriverOverride */ = {
+			isa = PBXGroup;
+			children = (
+				12E38DD81A2DB6EB0093F748 /* DriverOverride.c */,
+				12E38DD91A2DB6EB0093F748 /* DriverOverride.inf */,
+			);
+			name = DriverOverride;
+			path = ../../DriverOverride;
 			sourceTree = "<group>";
 		};
 		2C7949DA1A0AA7F700D845B0 = {
@@ -2483,14 +2496,6 @@
 			path = ../../Ps2MouseDxe;
 			sourceTree = "<group>";
 		};
-		2C794C3A1A0AA85900D845B0 /* ReplaceDriversDrv */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = ReplaceDriversDrv;
-			path = ../../ReplaceDriversDrv;
-			sourceTree = "<group>";
-		};
 		2C794C3F1A0AA85900D845B0 /* SataControllerDxe */ = {
 			isa = PBXGroup;
 			children = (
@@ -2912,6 +2917,7 @@
 				2C794A4A1A0AA85900D845B0 /* Clover.fdf */,
 				2C794A4B1A0AA85900D845B0 /* CloverPkg.dec */,
 				2C794A571A0AA85900D845B0 /* CpuDxe */,
+				12E38DD71A2DB6EB0093F748 /* DriverOverride */,
 				2C794A5C1A0AA85900D845B0 /* DVDBus */,
 				2C794A611A0AA85900D845B0 /* DVDDisk */,
 				2C794A621A0AA85900D845B0 /* ebuild.sh */,
@@ -2938,7 +2944,6 @@
 				2C794C311A0AA85900D845B0 /* PciRootBridgeDxe */,
 				2C794C381A0AA85900D845B0 /* Ps2MouseDxe */,
 				2C794C391A0AA85900D845B0 /* Readme.rtf */,
-				2C794C3A1A0AA85900D845B0 /* ReplaceDriversDrv */,
 				2C794C3F1A0AA85900D845B0 /* SataControllerDxe */,
 				2C794CB31A0AA85900D845B0 /* UefiCpuPkg */,
 				2C794CB41A0AA85900D845B0 /* UsbMouseDxe */,
@@ -3488,6 +3493,7 @@
 				2C794E1E1A0AA85900D845B0 /* IpfTimerLib.c in Sources */,
 				2C794D431A0AA85900D845B0 /* CpuInterrupt.nasm in Sources */,
 				2C794DB61A0AA85900D845B0 /* Dependency.c in Sources */,
+				12E38DDA1A2DB6EB0093F748 /* DriverOverride.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
