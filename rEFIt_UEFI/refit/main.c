@@ -424,7 +424,7 @@ static EFI_STATUS LoadEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
   UINTN                   DevicePathIndex;
   CHAR16                  ErrorInfo[256];
   
-  DBG("Loading %s\n", ImageTitle);
+  DBG("Loading %s", ImageTitle);
   if (ErrorInStep != NULL) {
     *ErrorInStep = 0;
   }
@@ -436,7 +436,7 @@ static EFI_STATUS LoadEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
   ReturnStatus = Status = EFI_NOT_FOUND;  // in case the list is empty
   for (DevicePathIndex = 0; DevicePaths[DevicePathIndex] != NULL; DevicePathIndex++) {
     ReturnStatus = Status = gBS->LoadImage(FALSE, SelfImageHandle, DevicePaths[DevicePathIndex], NULL, 0, &ChildImageHandle);
-    DBG("load image status=%r\n", Status);
+    DBG("  status=%r", Status);
     if (ReturnStatus != EFI_NOT_FOUND)
       break;
   }
@@ -458,6 +458,7 @@ static EFI_STATUS LoadEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
   // unload the image, we don't care if it works or not...
   Status = gBS->UnloadImage(ChildImageHandle);
 bailout:
+  DBG("\n");
   return ReturnStatus;
 }
 
@@ -1152,7 +1153,7 @@ static VOID ScanDriverDir(IN CHAR16 *Path, OUT EFI_HANDLE **DriversToConnect, OU
           DriversArrSize += 16;
         }
         DriversArr[DriversArrNum] = DriverHandle;
-        DBG(" driver %s included with Binding=%x\n", FileName, DriverBinding);
+ //       DBG(" driver %s included with Binding=%x\n", FileName, DriverBinding);
         DriversArrNum++;
         // we'll make array terminated
         DriversArr[DriversArrNum] = NULL;
@@ -1297,22 +1298,26 @@ VOID DisconnectInvalidDiskIoChildDrivers(VOID)
 VOID DisconnectSomeDevices(VOID)
 {
   EFI_STATUS              Status;
-  UINTN                   HandleCount = 0;
+  UINTN                   HandleCount;
   UINTN                   Index, Index2;
-  EFI_HANDLE              *Handles = NULL;
-  EFI_HANDLE              *ControllerHandles = NULL;
-  UINTN                   ControllerHandleCount = 0;
+  EFI_HANDLE              *Handles ;
+  EFI_HANDLE              *ControllerHandles;
+  UINTN                   ControllerHandleCount;
 	EFI_BLOCK_IO_PROTOCOL   *BlockIo	= NULL;
+//  EFI_DISK_IO_PROTOCOL    *DiskIo	= NULL;
 	EFI_PCI_IO_PROTOCOL     *PciIo	= NULL;
 //  EFI_FILE_PROTOCOL				*RootFP = NULL;
 //  EFI_SIMPLE_FILE_SYSTEM_PROTOCOL	*VolumeFS = NULL;
 	PCI_TYPE00              Pci;
   CHAR16                           *DriverName;
-  EFI_COMPONENT_NAME2_PROTOCOL      *CompName;
+  EFI_COMPONENT_NAME_PROTOCOL      *CompName;
   
   if (gDriversFlags.PartitionLoaded) {
     DBG("Partition driver loaded: ");
     // get all BlockIo handles
+    HandleCount = 0;
+    Handles = NULL;
+
     Status = gBS->LocateHandleBuffer(ByProtocol, &gEfiBlockIoProtocolGuid, NULL, &HandleCount, &Handles);
     if (Status == EFI_SUCCESS) {
       for (Index = 0; Index < HandleCount; Index++) {
@@ -1321,11 +1326,14 @@ VOID DisconnectSomeDevices(VOID)
           continue;
         }
         if (BlockIo->Media->BlockSize == 2048) {
-          // disconnect CD driver
+          // disconnect CD controller
           Status = gBS->DisconnectController(Handles[Index], NULL, NULL);
           DBG("CD disconnect %r", Status);
         }
       }
+/*      for (Index = 0; Index < HandleCount; Index++) {
+        Status = gBS->DisconnectController(Handles[Index], NULL, NULL);
+      } */
       FreePool(Handles);
     }
     DBG("\n");
@@ -1334,13 +1342,27 @@ VOID DisconnectSomeDevices(VOID)
   if (gDriversFlags.HFSLoaded) {
     DBG("HFS+ driver loaded \n");
     // get all FileSystem handles
+    ControllerHandleCount = 0;
+    ControllerHandles = NULL;
+
     Status = gBS->LocateHandleBuffer(ByProtocol, &gEfiSimpleFileSystemProtocolGuid, NULL, &ControllerHandleCount, &ControllerHandles);
-    Status = gBS->LocateHandleBuffer(ByProtocol, &gEfiComponentName2ProtocolGuid, NULL, &HandleCount, &Handles);
-    if (Status == EFI_SUCCESS) {
+ /*   if (!EFI_ERROR (Status)) {
+      for (Index2 = 0; Index2 < ControllerHandleCount; Index2++) {
+        Status = gBS->DisconnectController(ControllerHandles[Index2],
+                                           NULL, NULL);
+        DBG("Driver [%d] disconnect %r\n", Index2, Status);
+      }
+    } */
+
+    HandleCount = 0;
+    Handles = NULL;
+
+    Status = gBS->LocateHandleBuffer(ByProtocol, &gEfiComponentNameProtocolGuid, NULL, &HandleCount, &Handles);
+    if (!EFI_ERROR (Status)) {
       for (Index = 0; Index < HandleCount; Index++) {
         Status = gBS->OpenProtocol(
                                    Handles[Index],
-                                   &gEfiComponentName2ProtocolGuid,
+                                   &gEfiComponentNameProtocolGuid,
                                    (VOID**)&CompName,
                                    gImageHandle,
                                    NULL,
@@ -1350,7 +1372,7 @@ VOID DisconnectSomeDevices(VOID)
 //          DBG("CompName %r\n", Status);
           continue;
         }
-        Status = CompName->GetDriverName(CompName, "en", &DriverName);
+        Status = CompName->GetDriverName(CompName, "eng", &DriverName);
         if (EFI_ERROR(Status)) {
           continue;
         }        
@@ -1358,19 +1380,22 @@ VOID DisconnectSomeDevices(VOID)
           for (Index2 = 0; Index2 < ControllerHandleCount; Index2++) {          
             Status = gBS->DisconnectController(ControllerHandles[Index2],
                                                Handles[Index], NULL);
-            DBG("Driver [%s] disconnect %r\n", DriverName, Status);
+//            DBG("Disconnect [%s] from %x: %r\n", DriverName, ControllerHandles[Index2], Status);
           }
         }
       }
       FreePool(Handles);
     }
 //    DBG("\n");
+    FreePool(ControllerHandles);
   }
 
   
   if (gDriversFlags.VideoLoaded) {
     DBG("Video driver loaded: ");
     // get all PciIo handles
+    HandleCount = 0;
+    Handles = NULL;
     Status = gBS->LocateHandleBuffer(ByProtocol, &gEfiPciIoProtocolGuid, NULL, &HandleCount, &Handles);
     if (Status == EFI_SUCCESS) {
       for (Index = 0; Index < HandleCount; Index++) {
@@ -1379,10 +1404,8 @@ VOID DisconnectSomeDevices(VOID)
           continue;
         }
         Status = PciIo->Pci.Read (PciIo, EfiPciIoWidthUint32, 0, sizeof (Pci) / sizeof (UINT32), &Pci);
-        if (!EFI_ERROR (Status))
-        {
-          if(IS_PCI_VGA(&Pci) == TRUE)
-          {
+        if (!EFI_ERROR (Status)) {
+          if(IS_PCI_VGA(&Pci) == TRUE) {
             // disconnect VGA
             Status = gBS->DisconnectController(Handles[Index], NULL, NULL);
             DBG("disconnect %r", Status);

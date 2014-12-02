@@ -567,7 +567,7 @@ BdsEntry (
 #endif
   
   //
-  // Fixup Tasble CRC after we updated Firmware Vendor and Revision
+  // Fixup Table CRC after we updated Firmware Vendor and Revision
   //
   gST->Hdr.CRC32 = 0;
   gBS->CalculateCrc32 ((VOID *)gST, sizeof(EFI_SYSTEM_TABLE), &gST->Hdr.CRC32);

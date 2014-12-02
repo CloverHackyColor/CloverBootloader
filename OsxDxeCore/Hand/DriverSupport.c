@@ -90,8 +90,8 @@ CoreConnectController (
       if (RemainingDevicePath != NULL && !Recursive) {
         HandleFilePathSize      = GetDevicePathSize (HandleFilePath) - sizeof (EFI_DEVICE_PATH_PROTOCOL);
         RemainingDevicePathSize = GetDevicePathSize (RemainingDevicePath);
-        TempFilePath = AllocateZeroPool (HandleFilePathSize + RemainingDevicePathSize);
-        ASSERT (TempFilePath != NULL);
+        TempFilePath = AllocatePool (HandleFilePathSize + RemainingDevicePathSize);
+ //       ASSERT (TempFilePath != NULL);
         CopyMem (TempFilePath, HandleFilePath, HandleFilePathSize);
         CopyMem ((UINT8 *) TempFilePath + HandleFilePathSize, RemainingDevicePath, RemainingDevicePathSize);
         FilePath = TempFilePath;
@@ -398,10 +398,12 @@ CoreConnectSingleController (
   UINTN                                      NewDriverBindingHandleCount;
   EFI_HANDLE                                 *NewDriverBindingHandleBuffer;
   EFI_DRIVER_BINDING_PROTOCOL                *DriverBinding;
-  EFI_DRIVER_FAMILY_OVERRIDE_PROTOCOL        *DriverFamilyOverride;
   UINTN                                      NumberOfSortedDriverBindingProtocols;
   EFI_DRIVER_BINDING_PROTOCOL                **SortedDriverBindingProtocols;
+#if FAMILY_OVERRIDE
+  EFI_DRIVER_FAMILY_OVERRIDE_PROTOCOL        *DriverFamilyOverride;
   UINT32                                     DriverFamilyOverrideVersion;
+#endif
   UINT32                                     HighestVersion;
   UINTN                                      HighestIndex;
   UINTN                                      SortIndex;
@@ -483,7 +485,7 @@ CoreConnectSingleController (
       }
     } while (!EFI_ERROR (Status));
   }
-
+#if FAMILY_OVERRIDE
   //
   // Add the Driver Family Override Protocol drivers for ControllerHandle
   //
@@ -518,7 +520,7 @@ CoreConnectSingleController (
       FALSE
       );
   }
-
+#endif
   //
   // Get the Bus Specific Driver Override Protocol instance on the Controller Handle
   //
@@ -675,13 +677,13 @@ CoreConnectSingleController (
             //
             // The driver was successfully started on ControllerHandle, so set a flag
             //
-            Status = PlatformDriverOverride->DriverLoaded (
+  /*          Status = PlatformDriverOverride->DriverLoaded (
                          PlatformDriverOverride,
                          ControllerHandle,
                          RemainingDevicePath,
                          DriverBinding->DriverBindingHandle
                                                         ); 
-
+*/
             OneStarted = TRUE;
           }
         }

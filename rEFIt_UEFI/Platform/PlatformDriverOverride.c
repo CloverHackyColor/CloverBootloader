@@ -76,8 +76,9 @@ OurPlatformGetDriver (
   
   return EFI_INVALID_PARAMETER;
 }
-
-/** Our EFI_PLATFORM_DRIVER_OVERRIDE_PROTOCOL.GetDriverPath implementation. */
+///
+// Our EFI_PLATFORM_DRIVER_OVERRIDE_PROTOCOL.GetDriverPath implementation.
+///
 EFI_STATUS
 EFIAPI
 OurPlatformGetDriverPath (
@@ -89,16 +90,9 @@ OurPlatformGetDriverPath (
   return EFI_UNSUPPORTED;
 }
 
-/** Our EFI_PLATFORM_DRIVER_OVERRIDE_PROTOCOL.DriverLoaded implementation. */
-/*EFI_STATUS
-(EFIAPI *EFI_PLATFORM_DRIVER_OVERRIDE_DRIVER_LOADED)(
-           IN EFI_PLATFORM_DRIVER_OVERRIDE_PROTOCOL          *This,
-           IN EFI_HANDLE                                     ControllerHandle,
-           IN EFI_DEVICE_PATH_PROTOCOL                       *DriverImagePath,
-           IN EFI_HANDLE                                     DriverImageHandle
-           );
- */
-
+///
+// Our EFI_PLATFORM_DRIVER_OVERRIDE_PROTOCOL.DriverLoaded implementation.
+///
 EFI_STATUS
 EFIAPI
 OurPlatformDriverLoaded (
@@ -108,6 +102,7 @@ OurPlatformDriverLoaded (
   IN EFI_HANDLE                                     DriverImageHandle
   )
 {
+#if DEBUG_DRIVER_OVERRIDE
   EFI_STATUS              Status;
   CHAR16                           *DriverName;
   EFI_COMPONENT_NAME_PROTOCOL      *CompName;
@@ -139,9 +134,10 @@ OurPlatformDriverLoaded (
     DBG(" DriverName=%s at Controller=%x\n", DriverName, ControllerHandle);
   }
 
-  
-//  DBG(" DriverBinding=%x at Controller=%x\n", DriverImageHandle, ControllerHandle);
-
+#endif
+  if (mOrigPlatformDriverLoaded) {
+    return mOrigPlatformDriverLoaded(This, ControllerHandle, DriverImagePath, DriverImageHandle);
+  }
   return EFI_UNSUPPORTED;
 }
 
@@ -160,7 +156,6 @@ EFI_PLATFORM_DRIVER_OVERRIDE_PROTOCOL mOurPlatformDriverOverrideProtocol = {
 // EFI_PLATFORM_DRIVER_OVERRIDE_PROTOCOL.GetDriver override.
 //
 //////////
-//STATIC INTN DriverIndex;
 
 EFI_STATUS
 EFIAPI
@@ -171,20 +166,14 @@ OvrPlatformGetDriver(
 )
 {
   EFI_HANDLE     *HandlePtr;
-  
-  
-  
+
   if (mPriorityDrivers == NULL) {
     return mOrigPlatformGetDriver(This, ControllerHandle, DriverImageHandle);
   }
-  
-//  DBG("Get drivers for Controller %x\n", ControllerHandle);
-  
+
   // if first call - return first
   if (*DriverImageHandle == NULL) {
     *DriverImageHandle = mPriorityDrivers[0];
-//    DBG("  first call - return first\n");
-//    DriverIndex = 0;
     return EFI_SUCCESS;
   }
   
@@ -196,14 +185,13 @@ OvrPlatformGetDriver(
       if (*HandlePtr == NULL) {
         // our list is exhausted - we'll pass call to original
         *DriverImageHandle = NULL;
-  //      DBG(" our list is exhausted\n");
         break;
       }
       *DriverImageHandle = *HandlePtr;
       return EFI_SUCCESS;
     }
   }
-  
+
   // not found in our list, or was last in our list - call original
   return mOrigPlatformGetDriver(This, ControllerHandle, DriverImageHandle);
 }
