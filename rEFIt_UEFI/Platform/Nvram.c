@@ -630,7 +630,7 @@ PutNvramPlistToRtVars ()
   EFI_STATUS Status;
   TagPtr     Tag;
   TagPtr     ValTag;
-  INTN       Size;
+  INTN       Size, i;
   CHAR16     KeyBuf[128];
   VOID       *Value;
   
@@ -696,7 +696,10 @@ PutNvramPlistToRtVars ()
       Size  = ValTag->dataLen;
       Value = ValTag->data;
       if (!GlobalConfig.DebugLog) {
-        DBG ("Data: Size = %d", Size);
+        DBG ("Size = %d, Data: ", Size);
+        for (i = 0; i < Size; i++) {
+          DBG("%02x ", *((UINT8*)Value + i));
+        }
       }
     } else {
       DBG ("ERROR: Unsupported tag type: %d\n", ValTag->type);
@@ -708,16 +711,23 @@ PutNvramPlistToRtVars ()
     }
     
     // set RT var: all vars visible in nvram.plist are gEfiAppleBootGuid
-    Status = gRS->SetVariable (
+/*   Status = gRS->SetVariable (
                     KeyBuf,
                     &gEfiAppleBootGuid,
-                    /*    EFI_VARIABLE_NON_VOLATILE | */EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                    EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                     Size,
                     Value
-                    );
+                    ); */
 
+    SetNvramVariable (
+                      KeyBuf,
+                      &gEfiAppleBootGuid,
+                      EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                      Size,
+                      Value
+                      );
     if (!GlobalConfig.DebugLog) {
-      DBG (": %r\n", Status);
+      DBG ("\n");
     }
   }
 }
