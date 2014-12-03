@@ -17,11 +17,11 @@
 	<key>CFBundlePackageType</key>
 	<string>KEXT</string>
 	<key>CFBundleShortVersionString</key>
-	<string>3.3.1</string>
+	<string>3.4.0</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>3.3.1</string>
+	<string>3.4.0</string>
 	<key>DTCompiler</key>
 	<string>com.apple.compilers.llvmgcc42</string>
 	<key>DTPlatformBuild</key>
@@ -102,11 +102,25 @@
 						AQE=
 						</data>
 					</array>
+					<key>LsNM</key>
+					<array>
+						<string>ui8</string>
+						<data>
+						AQ==
+						</data>
+					</array>
 					<key>MOST</key>
 					<array>
 						<string>ui16</string>
 						<data>
 						gAM=
+						</data>
+					</array>
+					<key>MSDW</key>
+					<array>
+						<string>ui8</string>
+						<data>
+						AQ==
 						</data>
 					</array>
 					<key>MSPS</key>

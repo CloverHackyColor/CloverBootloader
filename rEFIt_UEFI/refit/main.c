@@ -1850,7 +1850,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   gSettings.DoubleClickTime = 500; //TODO - make it constant as nobody change it 
 
 #ifdef ENABLE_SECURE_BOOT
-  // Initialize secure boot
   InitializeSecureBoot();
 #endif // ENABLE_SECURE_BOOT
 
@@ -1859,8 +1858,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     UINT32                    machineSignature		= 0;
     EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE		  *FadtPointer = NULL;
     EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE	*Facs = NULL;
-//    EFI_DEVICE_PATH_PROTOCOL* bootImagePath       = NULL;
-    
+
     DBG("---dump hibernations data---\n");
     FadtPointer = GetFadt();
     if (FadtPointer != NULL) {
@@ -1909,11 +1907,11 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   LoadDrivers();
   DBG("LoadDrivers() end\n");
   
-  // for DUET or Ovmf
-/*  if (StrCmp(gST->FirmwareVendor, L"EDK II") == 0) {
-    gDriversFlags.EmuVariableLoaded = TRUE;
-  }*/
-  
+  if (!gFirmwareClover &&
+      !gDriversFlags.EmuVariableLoaded) {
+    GetSmcKeys ();  // later we can get here SMC information
+  }
+
   Status = gBS->LocateProtocol (&gEmuVariableControlProtocolGuid, NULL, (VOID**)&gEmuVariableControl);
   if (EFI_ERROR(Status)) {
     gEmuVariableControl = NULL;
@@ -1930,7 +1928,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       InitScreen(!gFirmwareClover); // ? FALSE : TRUE);
     }
     SetupScreen();
-    //  DBG("InitScreen\n");
   } else {
     InitScreen(FALSE);
   }
@@ -1945,8 +1942,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     return Status;
   }
   
-//        DBG("reinit OK\n");
-//  ZeroMem((VOID*)&gSettings, sizeof(SETTINGS_DATA));
   ZeroMem((VOID*)&gGraphics[0], sizeof(GFX_PROPERTIES) * 4);
   
 //  DumpBiosMemoryMap();
@@ -1957,17 +1952,12 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   if (!gSettings.EnabledCores) {
     gSettings.EnabledCores = gCPUStructure.Cores;
   }
-//  DBG("GetCPUProperties OK\n");
   GetDevices();
- //     DBG("GetDevices OK\n");
- // if (!GlobalConfig.FastBoot) {
   DBG("ScanSPD() start\n");
   ScanSPD();
   DBG("ScanSPD() end\n");
- // }
- //       DBG("ScanSPD OK\n");
+
   SetPrivateVarProto();
-//        DBG("SetPrivateVarProto OK\n");
   GetDefaultSettings();
   DBG("Calibrated TSC frequency =%ld =%ldMHz\n", gCPUStructure.TSCCalibr, DivU64x32(gCPUStructure.TSCCalibr, Mega));
   if (gCPUStructure.TSCCalibr > 200000000ULL) {  //200MHz
@@ -1989,7 +1979,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       }
     }
   }
- //       DBG("GetUserSettings OK\n");
+
   dropDSM = 0xFFFF; //by default we drop all OEM _DSM. They have no sense for us.
   if (defDSM) {
     dropDSM = gSettings.DropOEM_DSM;   //if set by user
@@ -2002,8 +1992,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     } else {
       DBG("Invalid smbios.plist, not overriding config.plist!\n");
     }
-  } else {
-//    DBG("smbios.plist not found, not overriding config.plist\n");
   }
   
   HaveDefaultVolume = gSettings.DefaultVolume != NULL;
@@ -2016,18 +2004,13 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 // in the first run.
 // this speeds up loading of default OSX volume.
      GetEfiBootDeviceFromNvram();
-//    DBG("GetEfiBootDeviceFromNvram()\n");
   }
   AfterTool = FALSE;
   gGuiIsReady = TRUE;
   do {
-    //     PauseForKey(L"Enter main cycle");
-    //    DBG("Enter main cycle\n");
-
     MainMenu.EntryCount = 0;
     OptionMenu.EntryCount = 0;
     ScanVolumes();
-    //   DBG("ScanVolumes()\n");
 
     // as soon as we have Volumes, find latest nvram.plist and copy it to RT vars
     if (!AfterTool) {
@@ -2037,7 +2020,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     }
 
     if (!GlobalConfig.FastBoot) {
- //     GetListOfThemes();
       if (gThemeNeedInit) {
         InitTheme(TRUE, &Now);
         gThemeNeedInit = FALSE;
@@ -2054,7 +2036,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       FillInputs(TRUE);
       // scan for loaders and tools, add then to the menu
       if (GlobalConfig.LegacyFirst){
-        //DBG("scan legacy first\n");
         AddCustomLegacy();
         if (!GlobalConfig.NoLegacy) {
           ScanLegacy();
@@ -2068,25 +2049,19 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     if (gSettings.DisableEntryScan) {
       DBG("Entry scan disabled\n");
     } else {
-      //ScanUEFIBootOptions(FALSE);
       ScanLoader();
-      //        DBG("ScanLoader OK\n");
     }
 
     if (!GlobalConfig.FastBoot) {
 
       if (!GlobalConfig.LegacyFirst) {
-        //      DBG("scan legacy second\n");
         AddCustomLegacy();
         if (!GlobalConfig.NoLegacy) {
           ScanLegacy();
         }
-        //      DBG("ScanLegacy()\n");
       }
 
       // fixed other menu entries
-      //               DBG("FillInputs OK\n");
-
       if (!(GlobalConfig.DisableFlags & HIDEUI_FLAG_TOOLS)) {
         AddCustomTool();
         if (!gSettings.DisableToolScan) {
@@ -2096,7 +2071,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
           AddSecureBootTool();
 #endif // ENABLE_SECURE_BOOT
         }
-        //      DBG("ScanTool()\n");
       }
 
       if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_FUNCS)) {
@@ -2108,19 +2082,15 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
       if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_FUNCS) || MainMenu.EntryCount == 0) {
         MenuEntryReset.Image = BuiltinIcon(BUILTIN_ICON_FUNC_RESET);
-        //    DBG("Reset.Image->Width=%d\n", MenuEntryReset.Image->Width);
         AddMenuEntry(&MainMenu, &MenuEntryReset);
         MenuEntryShutdown.Image = BuiltinIcon(BUILTIN_ICON_FUNC_SHUTDOWN);
-        //    DBG("Shutdown.Image->Width=%d\n", MenuEntryShutdown.Image->Width);
         AddMenuEntry(&MainMenu, &MenuEntryShutdown);
       }
     }
     // wait for user ACK when there were errors
     FinishTextScreen(FALSE);
-    //   DBG("FinishTextScreen()\n");
 
     DefaultIndex = FindDefaultEntry();
-    //    DBG("FindDefaultEntry()\n");
       DBG("DefaultIndex=%d and MainMenu.EntryCount=%d\n", DefaultIndex, MainMenu.EntryCount);
     if ((DefaultIndex >= 0) && (DefaultIndex < (INTN)MainMenu.EntryCount)) {
       DefaultEntry = MainMenu.Entries[DefaultIndex];
@@ -2141,8 +2111,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     MainAnime = GetAnime(&MainMenu);
     MainLoopRunning = TRUE;
 
-    // PauseForKey(L"Enter main loop");
-
     AfterTool = FALSE;
     gEvent = 0; //clear to cancel loop
     while (MainLoopRunning) {
@@ -2157,9 +2125,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       // disable default boot - have sense only in the first run
       GlobalConfig.Timeout = -1;
 
-      //    DBG("out from menu\n");
       if ((DefaultEntry != NULL) && (MenuExit == MENU_EXIT_TIMEOUT)) {
-        //      DBG("boot by timeout\n");
         if (DefaultEntry->Tag == TAG_LOADER) {
           StartLoader((LOADER_ENTRY *)DefaultEntry);
         } else if (DefaultEntry->Tag == TAG_LEGACY){
@@ -2206,7 +2172,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
       // We don't allow exiting the main menu with the Escape key.
       if (MenuExit == MENU_EXIT_ESCAPE){
-  //      AfterTool = TRUE;
         break;   //refresh main menu
         //           continue;
       }

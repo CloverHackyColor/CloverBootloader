@@ -429,6 +429,28 @@
 		1261519E1A15BBB000903E7B /* screen.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = screen.c; sourceTree = "<group>"; };
 		1261519F1A15BBB000903E7B /* refit.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = refit.inf; sourceTree = "<group>"; };
 		126151A01A15BBB000903E7B /* Version.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Version.h; sourceTree = "<group>"; };
+		129017371A2F8EA50069691F /* BootServices.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BootServices.c; sourceTree = "<group>"; };
+		129017381A2F8EA50069691F /* BootServices.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BootServices.h; sourceTree = "<group>"; };
+		129017391A2F8EA50069691F /* build.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = build.sh; sourceTree = "<group>"; };
+		1290173A1A2F8EA50069691F /* Common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Common.h; sourceTree = "<group>"; };
+		1290173B1A2F8EA50069691F /* DataHub.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = DataHub.c; sourceTree = "<group>"; };
+		1290173C1A2F8EA50069691F /* DataHub.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DataHub.h; sourceTree = "<group>"; };
+		1290173D1A2F8EA50069691F /* DumpUefiCalls.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = DumpUefiCalls.c; sourceTree = "<group>"; };
+		1290173E1A2F8EA50069691F /* DumpUefiCalls.dsc */ = {isa = PBXFileReference; lastKnownFileType = text; path = DumpUefiCalls.dsc; sourceTree = "<group>"; };
+		1290173F1A2F8EA50069691F /* DumpUefiCalls.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = DumpUefiCalls.inf; sourceTree = "<group>"; };
+		129017401A2F8EA50069691F /* FileLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = FileLib.c; sourceTree = "<group>"; };
+		129017411A2F8EA50069691F /* FileLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FileLib.h; sourceTree = "<group>"; };
+		129017421A2F8EA50069691F /* Fs.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Fs.c; sourceTree = "<group>"; };
+		129017431A2F8EA50069691F /* Fs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Fs.h; sourceTree = "<group>"; };
+		129017441A2F8EA50069691F /* Lib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Lib.c; sourceTree = "<group>"; };
+		129017451A2F8EA50069691F /* Lib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Lib.h; sourceTree = "<group>"; };
+		129017461A2F8EA50069691F /* Log.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Log.c; sourceTree = "<group>"; };
+		129017471A2F8EA50069691F /* Log.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Log.h; sourceTree = "<group>"; };
+		129017481A2F8EA50069691F /* MemLog.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = MemLog.c; sourceTree = "<group>"; };
+		129017491A2F8EA50069691F /* MemLog.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MemLog.h; sourceTree = "<group>"; };
+		1290174A1A2F8EA50069691F /* RuntimeServices.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = RuntimeServices.c; sourceTree = "<group>"; };
+		1290174B1A2F8EA50069691F /* RuntimeServices.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RuntimeServices.h; sourceTree = "<group>"; };
+		1290174C1A2F8EA50069691F /* StandaloneCompilation.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = StandaloneCompilation.txt; sourceTree = "<group>"; };
 		1294CC311A231CA80056FF03 /* scroll_images.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = scroll_images.h; sourceTree = "<group>"; };
 		12E38DD81A2DB6EB0093F748 /* DriverOverride.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = DriverOverride.c; sourceTree = "<group>"; };
 		12E38DD91A2DB6EB0093F748 /* DriverOverride.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DriverOverride.inf; sourceTree = "<group>"; };
@@ -1285,6 +1307,36 @@
 				1261519E1A15BBB000903E7B /* screen.c */,
 			);
 			path = refit;
+			sourceTree = "<group>";
+		};
+		129017361A2F8EA50069691F /* DumpUefiCalls */ = {
+			isa = PBXGroup;
+			children = (
+				129017371A2F8EA50069691F /* BootServices.c */,
+				129017381A2F8EA50069691F /* BootServices.h */,
+				129017391A2F8EA50069691F /* build.sh */,
+				1290173A1A2F8EA50069691F /* Common.h */,
+				1290173B1A2F8EA50069691F /* DataHub.c */,
+				1290173C1A2F8EA50069691F /* DataHub.h */,
+				1290173D1A2F8EA50069691F /* DumpUefiCalls.c */,
+				1290173E1A2F8EA50069691F /* DumpUefiCalls.dsc */,
+				1290173F1A2F8EA50069691F /* DumpUefiCalls.inf */,
+				129017401A2F8EA50069691F /* FileLib.c */,
+				129017411A2F8EA50069691F /* FileLib.h */,
+				129017421A2F8EA50069691F /* Fs.c */,
+				129017431A2F8EA50069691F /* Fs.h */,
+				129017441A2F8EA50069691F /* Lib.c */,
+				129017451A2F8EA50069691F /* Lib.h */,
+				129017461A2F8EA50069691F /* Log.c */,
+				129017471A2F8EA50069691F /* Log.h */,
+				129017481A2F8EA50069691F /* MemLog.c */,
+				129017491A2F8EA50069691F /* MemLog.h */,
+				1290174A1A2F8EA50069691F /* RuntimeServices.c */,
+				1290174B1A2F8EA50069691F /* RuntimeServices.h */,
+				1290174C1A2F8EA50069691F /* StandaloneCompilation.txt */,
+			);
+			name = DumpUefiCalls;
+			path = ../../DumpUefiCalls;
 			sourceTree = "<group>";
 		};
 		12E38DD71A2DB6EB0093F748 /* DriverOverride */ = {
@@ -3099,6 +3151,7 @@
 			isa = PBXGroup;
 			children = (
 				2C794CE41A0AA85900D845B0 /* AppleImageCodec */,
+				129017361A2F8EA50069691F /* DumpUefiCalls */,
 				2C794CE91A0AA85900D845B0 /* EmuVariableUefi */,
 				2C794CF31A0AA85900D845B0 /* FSInject */,
 				2C794D131A0AA85900D845B0 /* OsxAptioFixDrv */,

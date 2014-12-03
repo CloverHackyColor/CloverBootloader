@@ -1678,6 +1678,9 @@ EFI_GUID
 VOID
 PutNvramPlistToRtVars ();
 
+VOID
+GetSmcKeys ();
+
 INTN
 FindStartupDiskVolume (
   REFIT_MENU_SCREEN *MainMenu

@@ -199,6 +199,63 @@ DeleteNvramVariable (
   return Status;
 }
 
+///
+//  Print all fakesmc variables, i.e. SMC keys
+///
+
+VOID
+GetSmcKeys ()
+{
+  EFI_STATUS                  Status;
+  UINTN                       Index;
+  CHAR16                      *Name;
+  EFI_GUID                    Guid;
+  UINTN                       NameSize;
+  UINTN                       NewNameSize;
+  UINT8                       *Data;
+  UINTN                       DataSize;
+
+  NameSize = sizeof (CHAR16);
+  Name     = AllocateZeroPool (NameSize);
+  if (Name == NULL) {
+    return;
+  }
+  DBG("Dump SMC keys from NVRAM:\n");
+  while (TRUE) {
+    NewNameSize = NameSize;
+    Status = gRT->GetNextVariableName (&NewNameSize, Name, &Guid);
+    if (Status == EFI_BUFFER_TOO_SMALL) {
+      Name = ReallocatePool (NameSize, NewNameSize, Name);
+      if (Name == NULL) {
+        return; //if something wrong then just do nothing
+      }
+
+      Status = gRT->GetNextVariableName (&NewNameSize, Name, &Guid);
+      NameSize = NewNameSize;
+    }
+
+    if (EFI_ERROR (Status)) {
+      break;  //no more variables
+    }
+
+    if (!StrStr(Name, L"fakesmc")) {
+      continue; //the variable is not interesting for us
+    }
+
+    Data = GetNvramVariable (Name, &Guid, NULL, &DataSize);
+    if (Data) {
+      DBG("   %s:", Name);
+      for (Index = 0; Index < DataSize; Index++) {
+        DBG("%02x ", *((UINT8*)Data + Index));
+      }
+      DBG("\n");
+      FreePool (Data);
+    }
+  }
+  
+  FreePool (Name);
+}
+
 
 /** Searches for GPT HDD dev path node and return pointer to partition GUID or NULL. */
 EFI_GUID
