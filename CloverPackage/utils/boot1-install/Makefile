@@ -5,44 +5,40 @@ DIR = boot1-install
 
 include ${SRCROOT}/Make.rules
 
+XCODE_VERSION_GE_4 := $(shell expr `xcodebuild -version | sed -nE 's/^Xcode ([0-9]).*/\1/p'` \>= 4)
 
-LDFLAGS := $(LDFALGS) -mmacosx-version-min=10.5 \
--framework CoreFoundation \
--framework DiskArbitration \
--Wl,-no_source_version \
--Wl,-no_function_starts \
--Wl,-no_data_in_code_info \
--Wl,-no_version_load_command \
--Wl,-no_uuid \
--Wl,-no_dependent_dr_info
+XCODEBUILD_OPTIONS = OBJROOT=$(OBJROOT) CONFIGURATION_BUILD_DIR=$(OBJROOT) DEPLOYMENT_LOCATION=NO
 
+ifeq "$(XCODE_VERSION_GE_4)" "1"
+	XCODEBUILD_OPTIONS += -scheme 'boot1-install'
+	BUILD_ACTION=archive
+else
+	XCODEBUILD_OPTIONS += -configuration 'Release'
+endif
 
+DIRS_NEEDED := $(OBJROOT)
+PROGRAMS := boot1-install
+PROG := $(addprefix $(OBJROOT)/, $(PROGRAMS))
 
-OBJS =  boot1-install.o32 boot1-install.o64
+all: $(PROG)
 
-OBJS := $(addprefix $(OBJROOT)/, $(OBJS))
+$(PROG):
+	@/usr/bin/xcodebuild $(XCODEBUILD_OPTIONS) $(BUILD_ACTION) >/dev/null
 
-PROGRAM = boot1-install
-PROGRAM:= $(addprefix $(OBJROOT)/, $(PROGRAM))
+	@echo [XCODE] $(PROGRAMS)
 
-DIRS_NEEDED = $(OBJROOT)
-
-all: $(PROGRAM)
-
-$(PROGRAM): $(DIRS_NEEDED) $(OBJS)
-	@echo "\t[LD32] $(@F)_32"
-	@$(CC) $(CFLAGS) $(LDFLAGS) $(DEFINES) -arch i386 -o $@_32 $(filter %.o32,$^)
-	@echo "\t[LD64] $(@F)_64"
-	@$(CC) $(CFLAGS) $(LDFLAGS) $(DEFINES) -arch x86_64 -o $@_64 $(filter %.o64,$^)
-	@echo "\t[LIPO] $@"
-	@lipo -create -arch i386 $@_32 -arch x86_64 $@_64 -output $@
-	@strip $@
-	@rm $@_32 $@_64
-
-install-local: $(PROGRAM)
+install-local: $(PROG)
 	@sudo install -d -g 0 -o 0 /usr/local/bin /usr/local/man/man8
 	@sudo install -psv -g 0 -o 0 $(PROGRAM) /usr/local/bin
 	@sudo install -pv  -g 0 -o 0 boot1-install.8 /usr/local/man/man8
 
 clean-local:
-	@$(RM) -f $(PROGRAM) $(OBJS)
+	@/usr/bin/xcodebuild $(XCODEBUILD_OPTIONS) clean  >/dev/null
+	@rm -rf build *~
+	@echo [CLEAN-LOCAL] $(PROGRAMS)
+
+clean:
+	@/usr/bin/xcodebuild $(XCODEBUILD_OPTIONS) clean  >/dev/null
+	@rm -rf build *~
+	@echo [CLEAN] $(PROGRAMS)
+
