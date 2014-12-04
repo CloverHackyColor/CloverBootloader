@@ -183,8 +183,8 @@ elif [[ ${boot_volume_format} = "msdos" ]]; then
 elif [[ ${boot_volume_format} = "exfat" ]]; then
     echo "Stage 1 - Writting ${partitionloaderexfat} to ${bootrdev}" >> "$tmp_log"
     echo "File system is ExFat." >> "$tmp_log"
-    echo "/usr/local/bin/boot1-install -yM -f ${partitionloaderexfat_copy} ${bootrdev}" >> "$tmp_log"
-    /usr/local/bin/boot1-install -yM -f "${partitionloaderexfat_copy}" ${bootrdev}
+    echo "/usr/local/bin/boot1-install -y -f ${partitionloaderexfat_copy} ${bootrdev}" >> "$tmp_log"
+    /usr/local/bin/boot1-install -y -f "${partitionloaderexfat_copy}" ${bootrdev}
 else
     echo "Unknown boot volume format: $boot_volume_format" >> "$tmp_log"
     echo "No Stage1 was written" >> "$tmp_log"
