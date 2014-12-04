@@ -1681,6 +1681,9 @@ PutNvramPlistToRtVars ();
 VOID
 GetSmcKeys ();
 
+VOID
+GetMacAddress();
+
 INTN
 FindStartupDiskVolume (
   REFIT_MENU_SCREEN *MainMenu

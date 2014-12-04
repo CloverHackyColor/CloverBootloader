@@ -119,9 +119,10 @@
 	Platform/kext_patcher.c
 	Platform/kext_inject.c
 	Platform/Nvram.c
-    Platform/card_vlist.c
-    Platform/PlatformDriverOverride.c
+  Platform/card_vlist.c
+  Platform/PlatformDriverOverride.c
 	Platform/Hibernate.c
+  Platform/Net.c
 
 [Packages]
 	Clover/CloverPkg.dec
@@ -150,6 +151,7 @@
   MemLogLib
   VideoBiosPatchLib
   OpensslLib
+  NetLib
 
 [Guids]
   gEfiAcpiTableGuid
@@ -212,6 +214,7 @@
   gEfiSimpleNetworkProtocolGuid                 # PROTOCOL CONSUMES
   gEfiStatusCodeRuntimeProtocolGuid				# PROTOCOL CONSUMES
   gEfiUgaDrawProtocolGuid |PcdUgaConsumeSupport # PROTOCOL SOMETIMES_CONSUMES
+  gEfiManagedNetworkServiceBindingProtocolGuid
   
   gEfiAbsolutePointerProtocolGuid
   gEfiAcpiTableProtocolGuid

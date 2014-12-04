@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1288B5211A30CEFB007CBCEF /* Net.c in Sources */ = {isa = PBXBuildFile; fileRef = 1288B5201A30CEFB007CBCEF /* Net.c */; };
 		12E38DDA1A2DB6EB0093F748 /* DriverOverride.c in Sources */ = {isa = PBXBuildFile; fileRef = 12E38DD81A2DB6EB0093F748 /* DriverOverride.c */; };
 		2C794D201A0AA85900D845B0 /* Reset.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C7949ED1A0AA85900D845B0 /* Reset.c */; };
 		2C794D211A0AA85900D845B0 /* AhciMode.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C7949F01A0AA85900D845B0 /* AhciMode.c */; };
@@ -429,6 +430,7 @@
 		1261519E1A15BBB000903E7B /* screen.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = screen.c; sourceTree = "<group>"; };
 		1261519F1A15BBB000903E7B /* refit.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = refit.inf; sourceTree = "<group>"; };
 		126151A01A15BBB000903E7B /* Version.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Version.h; sourceTree = "<group>"; };
+		1288B5201A30CEFB007CBCEF /* Net.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Net.c; sourceTree = "<group>"; };
 		129017371A2F8EA50069691F /* BootServices.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BootServices.c; sourceTree = "<group>"; };
 		129017381A2F8EA50069691F /* BootServices.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BootServices.h; sourceTree = "<group>"; };
 		129017391A2F8EA50069691F /* build.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = build.sh; sourceTree = "<group>"; };
@@ -1267,6 +1269,7 @@
 				1261517C1A15BBB000903E7B /* loader.h */,
 				1261517D1A15BBB000903E7B /* LoaderUefi.h */,
 				1261517E1A15BBB000903E7B /* memvendors.h */,
+				1288B5201A30CEFB007CBCEF /* Net.c */,
 				1261517F1A15BBB000903E7B /* nvidia.c */,
 				126151801A15BBB000903E7B /* nvidia.h */,
 				126151811A15BBB000903E7B /* Nvram.c */,
@@ -3539,6 +3542,7 @@
 				2C794E441A0AA85900D845B0 /* device_tree.c in Sources */,
 				2C794DAF1A0AA85900D845B0 /* DeviceManager.c in Sources */,
 				2C794D831A0AA85900D845B0 /* CopyMem.c in Sources */,
+				1288B5211A30CEFB007CBCEF /* Net.c in Sources */,
 				2C794DB21A0AA85900D845B0 /* HwErrRecSupport.c in Sources */,
 				2C794D631A0AA85900D845B0 /* os_efi.c in Sources */,
 				2C794DCC1A0AA85900D845B0 /* Pool.c in Sources */,

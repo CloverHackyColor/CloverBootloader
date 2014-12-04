@@ -4372,7 +4372,7 @@ GetUserSettings(
         gSettings.QPI = (UINT16)GetPropertyInteger (Prop, (INTN)gCPUStructure.ProcessorInterconnectSpeed);
         if (gSettings.QPI == 0) { //this is not default, this is zero!
           gSettings.QPI = 0xFFFF;
-          DBG ("Config set QPi = 0 disable table132\n");
+          DBG ("Config set QPI = 0 disable table132\n");
         } else {
           DBG ("Config set QPI=%dMHz\n", gSettings.QPI);
         }
