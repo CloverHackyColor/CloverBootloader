@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		129263AE1A31CD23005F1426 /* DiskArbitration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 129263AD1A31CD23005F1426 /* DiskArbitration.framework */; };
+		129263B11A31CD2B005F1426 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 129263B01A31CD2B005F1426 /* CoreFoundation.framework */; };
+		129263B31A31CD34005F1426 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 129263B21A31CD34005F1426 /* IOKit.framework */; };
 		12F2E5541A3102E80058A333 /* boot1-install.c in Sources */ = {isa = PBXBuildFile; fileRef = 12F2E5531A3102E80058A333 /* boot1-install.c */; };
 /* End PBXBuildFile section */
 
@@ -23,7 +26,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		12F2E5471A30F7E70058A333 /* boot1-inst */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = "boot1-inst"; path = "boot1-install"; sourceTree = BUILT_PRODUCTS_DIR; };
+		129263AD1A31CD23005F1426 /* DiskArbitration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DiskArbitration.framework; path = System/Library/Frameworks/DiskArbitration.framework; sourceTree = SDKROOT; };
+		129263B01A31CD2B005F1426 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
+		129263B21A31CD34005F1426 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
+		12F2E5471A30F7E70058A333 /* boot1-install */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "boot1-install"; sourceTree = BUILT_PRODUCTS_DIR; };
 		12F2E5531A3102E80058A333 /* boot1-install.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "boot1-install.c"; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
@@ -32,6 +38,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				129263B31A31CD34005F1426 /* IOKit.framework in Frameworks */,
+				129263B11A31CD2B005F1426 /* CoreFoundation.framework in Frameworks */,
+				129263AE1A31CD23005F1426 /* DiskArbitration.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -41,6 +50,9 @@
 		12F2E53E1A30F7E70058A333 = {
 			isa = PBXGroup;
 			children = (
+				129263B21A31CD34005F1426 /* IOKit.framework */,
+				129263B01A31CD2B005F1426 /* CoreFoundation.framework */,
+				129263AD1A31CD23005F1426 /* DiskArbitration.framework */,
 				12F2E5491A30F7E70058A333 /* boot1-inst */,
 				12F2E5481A30F7E70058A333 /* Products */,
 			);
@@ -49,7 +61,7 @@
 		12F2E5481A30F7E70058A333 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				12F2E5471A30F7E70058A333 /* boot1-inst */,
+				12F2E5471A30F7E70058A333 /* boot1-install */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -79,7 +91,7 @@
 			);
 			name = "boot1-install";
 			productName = "boot1-inst";
-			productReference = 12F2E5471A30F7E70058A333 /* boot1-inst */;
+			productReference = 12F2E5471A30F7E70058A333 /* boot1-install */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -202,6 +214,7 @@
 		12F2E54F1A30F7E70058A333 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -209,7 +222,8 @@
 		12F2E5501A30F7E70058A333 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_OPTIMIZATION_LEVEL = fast;
+				GCC_OPTIMIZATION_LEVEL = s;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

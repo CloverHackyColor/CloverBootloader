@@ -28,7 +28,8 @@ $(PROG):
 install-local: $(PROG)
 	@sudo install -d -g 0 -o 0 /usr/local/bin
 	@sudo install -psv -g 0 -o 0 $(PROG) /usr/local/bin
-
+	@echo [INSTALL] $(PROGRAMS)
+  
 clean-local:
 	@/usr/bin/xcodebuild $(XCODEBUILD_OPTIONS) clean  >/dev/null
 	@rm -rf build *~

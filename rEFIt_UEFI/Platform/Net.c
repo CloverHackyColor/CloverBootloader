@@ -3,18 +3,18 @@
 #include "Platform.h"
 #include <Library/NetLib.h>
 
-#ifndef DEBUG_NET
+#ifndef DEBUG_MAC
 #ifndef DEBUG_ALL
-#define DEBUG_NET 1
+#define DEBUG_MAC 1
 #else
-#define DEBUG_NET DEBUG_ALL
+#define DEBUG_MAC DEBUG_ALL
 #endif
 #endif
 
-#if DEBUG_NET == 0
+#if DEBUG_MAC == 0
 #define DBG(...)
 #else
-#define DBG(...) DebugLog(DEBUG_NET, __VA_ARGS__)
+#define DBG(...) DebugLog(DEBUG_MAC, __VA_ARGS__)
 #endif
 
 

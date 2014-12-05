@@ -1590,6 +1590,7 @@
 				129260CA1A305A3E005F1426 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
