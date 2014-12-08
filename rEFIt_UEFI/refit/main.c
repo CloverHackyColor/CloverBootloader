@@ -1912,8 +1912,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     GetSmcKeys ();  // later we can get here SMC information
   }
 
-  GetMacAddress();
-
   Status = gBS->LocateProtocol (&gEmuVariableControlProtocolGuid, NULL, (VOID**)&gEmuVariableControl);
   if (EFI_ERROR(Status)) {
     gEmuVariableControl = NULL;
@@ -1955,6 +1953,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     gSettings.EnabledCores = gCPUStructure.Cores;
   }
   GetDevices();
+  GetMacAddress();
   DBG("ScanSPD() start\n");
   ScanSPD();
   DBG("ScanSPD() end\n");

@@ -39,6 +39,12 @@ UINT8                           *gEDID = NULL;
 //UINT16                          gCPUtype;
 UINTN                           NGFX                        = 0; // number of GFX
 
+INTN                            nLanCards;        // number of LAN cards
+UINT16                          gLanVendor[4];    // their vendors
+UINT8                           *gLanMmio[4];     // their MMIO regions
+UINT8                           gLanMac[4][6];    // their MAC addresses
+INTN                            nLanPaths;        // number of LAN pathes
+
 UINTN                           ThemesNum                   = 0;
 CHAR16                          *ThemesList[50]; //no more then 50 themes?
 
@@ -48,6 +54,8 @@ UINTN                           gEvent;
 UINT16                          gBacklightLevel;
 BOOLEAN                         defDSM;
 UINT16                          dropDSM;
+
+BOOLEAN                         GetLegacyLanAddress;
 
 extern MEM_STRUCTURE            gRAM;
 extern BOOLEAN                  NeedPMfix;
@@ -1829,6 +1837,9 @@ GetEarlyUserSettings (
       if (IsPropertyTrue (Prop)) {
         GlobalConfig.NeverHibernate = TRUE;
       }
+            
+//      Prop = GetProperty (DictPointer, "GetLegacyLanAddress");
+//      GetLegacyLanAddress = IsPropertyTrue (Prop);
       
       // Secure boot
       Prop = GetProperty (DictPointer, "Secure");
@@ -2432,6 +2443,18 @@ GetEarlyUserSettings (
         gSettings.ResetHDA = IsPropertyTrue (Prop);
       }
     }
+    
+    DictPointer = GetProperty (Dict, "RtVariables");
+    if (DictPointer != NULL) {
+      Prop = GetProperty (DictPointer, "ROM");
+      if (Prop != NULL) {
+        if ((AsciiStriCmp (Prop->string, "UseMacAddr0") == 0) ||
+            (AsciiStriCmp (Prop->string, "UseMacAddr1") == 0)) {
+          GetLegacyLanAddress = TRUE;
+        }
+      }
+    }
+
   }
 
   return Status;
@@ -4427,9 +4450,17 @@ GetUserSettings(
       // ROM: <data>bin data</data> or <string>base 64 encoded bin data</string>
       Prop = GetProperty (DictPointer, "ROM");
       if (Prop != NULL) {
-        UINTN ROMLength         = 0;
-        gSettings.RtROM         = GetDataSetting (DictPointer, "ROM", &ROMLength);
-        gSettings.RtROMLen      = ROMLength;
+        if (AsciiStriCmp (Prop->string, "UseMacAddr0") == 0) {
+          gSettings.RtROM         = &gLanMac[0][0];
+          gSettings.RtROMLen      = 6;
+        } else if (AsciiStriCmp (Prop->string, "UseMacAddr1") == 0) {
+          gSettings.RtROM         = &gLanMac[1][0];
+          gSettings.RtROMLen      = 6;
+        } else {
+          UINTN ROMLength         = 0;
+          gSettings.RtROM         = GetDataSetting (DictPointer, "ROM", &ROMLength);
+          gSettings.RtROMLen      = ROMLength;
+        }
 
         if (gSettings.RtROM == NULL || gSettings.RtROMLen == 0) {
           gSettings.RtROM       = NULL;
@@ -4841,8 +4872,8 @@ GetDevices ()
             case 0x10de:
               gfx->Vendor = Nvidia;
               Bar0        = Pci.Device.Bar[0];
-              Mmio        = (UINT8 *)(UINTN)(Bar0 & ~0x0f);
-              //	DBG ("BAR: 0x%p\n", Mmio);
+              Mmio        = (UINT8*)(UINTN)(Bar0 & ~0x0f);
+              //DBG ("BAR: 0x%p\n", Mmio);
               // get card type
               gfx->Family = (REG32 (Mmio, 0) >> 20) & 0x1ff;
               
@@ -4901,6 +4932,14 @@ GetDevices ()
           AsciiSPrint (SlotDevice->SlotName, 31, "Ethernet");
           SlotDevice->SlotID          = 2;
           SlotDevice->SlotType        = SlotTypePciExpressX1;
+          gLanVendor[nLanCards]       = Pci.Hdr.VendorId;
+          Bar0                        = Pci.Device.Bar[0];
+          gLanMmio[nLanCards++]       = (UINT8*)(UINTN)(Bar0 & ~0x0f);
+          if (nLanCards >= 4) {
+            DBG("too many LAN card in the system\n");
+            nLanCards = 3; // last one will be rewritten
+          }
+          DBG("LAN %d, Vendor=%x, MMIO=%p\n", nLanCards-1, Pci.Hdr.VendorId, gLanMmio[nLanCards - 1]);
         }
 
         else if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_SERIAL) &&

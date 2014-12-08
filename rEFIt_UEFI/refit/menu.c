@@ -68,6 +68,7 @@ extern REFIT_MENU_ENTRY MenuEntryReturn;
 extern UINTN            ThemesNum;
 extern CHAR16           *ThemesList[];
 extern CHAR8            *NonDetected;
+extern BOOLEAN          GetLegacyLanAddress;
 
 INTN LayoutBannerOffset = 64;
 INTN LayoutButtonOffset = 0;
