@@ -154,6 +154,7 @@ GetMacAddress()
       if (!gLanMmio[Index]) {  //security
         continue;
       }
+      Offset = 0;
       switch (gLanVendor[Index]) {
         case 0x11ab:   //Marvell Yukon
           if (PreviousVendor == gLanVendor[Index]) {
@@ -189,6 +190,9 @@ GetMacAddress()
           
         default:
           break;
+      }
+      if (!Offset) {
+        continue;
       }
       Mac0 = *(UINT32*)(gLanMmio[Index] + Offset);
       Mac4 = *(UINT32*)(gLanMmio[Index] + Offset + 4);
