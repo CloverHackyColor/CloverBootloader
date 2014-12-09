@@ -276,7 +276,7 @@ VOID FillInputs(BOOLEAN New)
       if (StrLen(gSettings.FBName) > 2) { //fool proof: cfg_name is 3 character or more.
         UnicodeSPrint(InputItems[InputItemsCount++].SValue, 20, L"%s", gSettings.FBName);
       } else {
-        UnicodeSPrint(InputItems[InputItemsCount++].SValue, 20, L"%s", gGraphics[i].Config);
+        UnicodeSPrint(InputItems[InputItemsCount++].SValue, 20, L"%a", gGraphics[i].Config);
       }
     } else if (gGraphics[i].Vendor == Nvidia) {
       InputItems[InputItemsCount].ItemType = BoolValue; //21+i*6
