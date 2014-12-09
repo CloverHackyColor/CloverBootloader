@@ -1334,9 +1334,7 @@ VOID SaveOemTables()
 VOID        SaveOemDsdt(BOOLEAN FullPatch)
 {
   EFI_STATUS                                    Status = EFI_NOT_FOUND;
-//  EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER	*RsdPointer = NULL;
   EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE     *FadtPointer = NULL;	
-//  EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE     *XFadtPointer = NULL;	
   EFI_PHYSICAL_ADDRESS                          dsdt = EFI_SYSTEM_TABLE_MAX_ADDRESS; 
 
 	UINTN				Pages;
@@ -1364,7 +1362,7 @@ VOID        SaveOemDsdt(BOOLEAN FullPatch)
   if (EFI_ERROR(Status)) {
     FadtPointer = GetFadt();
     if (FadtPointer == NULL) {
-      DBG("Cannot found FADT in BIOS or in UEFI!\n");
+      DBG("Cannot found FADT in BIOS or in UEFI!\n"); //really?!
       return;
     }
         
@@ -1500,7 +1498,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
   }
 	
 	if(!xf && Rsdt){
-	 	DBG("Error! Xsdt is not found!!! Creating new one\n");
+	 	DBG("Xsdt is not found! Creating new one\n");
 	 	//We should make here ACPI20 RSDP with all needed subtables based on ACPI10
     BufferPtr = EFI_SYSTEM_TABLE_MAX_ADDRESS;
     Status = gBS->AllocatePages(AllocateMaxAddress, EfiACPIReclaimMemory, 1, &BufferPtr);		
@@ -1731,9 +1729,8 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
                                  );
     
     //if success insert dsdt pointer into ACPI tables
-    if(!EFI_ERROR(Status))
-    {
-      DBG("page is allocated, write DSDT into\n");
+    if(!EFI_ERROR(Status)) {
+//      DBG("page is allocated, write DSDT into\n");
       CopyMem((VOID*)(UINTN)dsdt, buffer, bufferLen);
       
       FadtPointer->Dsdt  = (UINT32)dsdt;
@@ -1749,9 +1746,9 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
     // allocate space for fixes
     TableHeader = (EFI_ACPI_DESCRIPTION_HEADER*)(UINTN)FadtPointer->Dsdt;
     bufferLen = TableHeader->Length;
-    DBG("DSDT len = 0x%x", bufferLen);
+//    DBG("DSDT len = 0x%x", bufferLen);
     bufferLen = bufferLen + bufferLen / 8;
-    DBG(" new len = 0x%x\n", bufferLen);
+//    DBG(" new len = 0x%x\n", bufferLen);
     
     dsdt = EFI_SYSTEM_TABLE_MAX_ADDRESS;
     Status = gBS->AllocatePages(AllocateMaxAddress,
@@ -1860,6 +1857,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
     DBG("Abnormal CPUBase=%x will set to 0\n", CPUBase);
     CPUBase = 0;
   }
+  
   ApicCPUNum = 0;  
   // 2. For absent NMI subtable
     xf = ScanXSDT(APIC_SIGN, 0);
@@ -1951,7 +1949,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
             Status = egSaveFile(NULL, PatchedAPIC,  (UINT8 *)ApicTable, ApicTable->Length);
           }          
           if (!EFI_ERROR(Status)) {
-            DBG("Patched APIC table saved into efi/acpi/patched \n");
+            DBG("Patched APIC table saved into efi/clover/acpi/origin/APIC-p.aml \n");
           }
        }
       } 

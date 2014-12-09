@@ -41,7 +41,7 @@ CHAR8	*DebugLogBufferPtr = NULL;
 
 
 /** Appends given data to the log and writes it to NVRAM variable. */
-EFI_STATUS
+EFI_STATUS EFIAPI 
 NVRAMDebugLog(CHAR8 *Format, ...)
 {
 	EFI_STATUS	Status;

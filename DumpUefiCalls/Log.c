@@ -33,6 +33,7 @@ static MEM_LOG gMemLog;
 
 /** Prints log messages to outputs defined by PRINT_TO_* defs in Common.h. */
 VOID
+EFIAPI 
 LogPrint(CHAR8 *Format, ...)
 {
 	VA_LIST		Marker;

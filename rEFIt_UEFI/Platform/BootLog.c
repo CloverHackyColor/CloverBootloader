@@ -177,7 +177,7 @@ VOID EFIAPI MemLogCallback(IN INTN DebugMode, IN CHAR8 *LastMessage)
 // DebugMode==0 Prints to msg log, only output to log on SaveBooterLog
 // DebugMode==1 Prints to msg log and DEBUG_LOG
 // DebugMode==2 Prints to msg log, DEBUG_LOG and display console
-VOID DebugLog(IN INTN DebugMode, IN CONST CHAR8 *FormatString, ...)
+VOID EFIAPI DebugLog(IN INTN DebugMode, IN CONST CHAR8 *FormatString, ...)
 {
    VA_LIST Marker;
    //UINTN offset = 0;
