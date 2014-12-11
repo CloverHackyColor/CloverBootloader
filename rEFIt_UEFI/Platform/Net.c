@@ -80,6 +80,7 @@ GetMacAddress()
   EFI_DEVICE_PATH_PROTOCOL    *DevicePath;
   MAC_ADDR_DEVICE_PATH        *MacAddressNode;
   BOOLEAN                     Found;
+  BOOLEAN                     Swab;
   UINT16                      PreviousVendor = 0;
   UINT32                      Mac0, Mac4;
   UINTN                       Offset;
@@ -155,6 +156,7 @@ GetMacAddress()
         continue;
       }
       Offset = 0;
+      Swab = FALSE;
       switch (gLanVendor[Index]) {
         case 0x11ab:   //Marvell Yukon
           if (PreviousVendor == gLanVendor[Index]) {
@@ -179,6 +181,7 @@ GetMacAddress()
           break;
         case 0x1969:   //Atheros
           Offset = L1C_STAD0;
+          Swab = TRUE;
           break;
         case 0x8086:   //Intel
           if (PreviousVendor == gLanVendor[Index]) {
@@ -196,13 +199,16 @@ GetMacAddress()
       }
       Mac0 = *(UINT32*)(gLanMmio[Index] + Offset);
       Mac4 = *(UINT32*)(gLanMmio[Index] + Offset + 4);
+      if (Swab) {
+        gLanMac[Index][0] = (Mac4 & 0xFF00) >> 8;
+        gLanMac[Index][1] = (Mac4 & 0xFF);
+        gLanMac[Index][2] = (Mac0 & 0xFF000000) >> 24;
+        gLanMac[Index][3] = (Mac0 & 0x00FF0000) >> 16;
+        gLanMac[Index][4] = (Mac0 & 0x0000FF00) >> 8;
+        gLanMac[Index][5] = (Mac0 & 0x000000FF);
+        goto done;
+      }
     copy:
-/*      gLanMac[Index][5] = (Mac4 & 0xFF00) >> 8;
-      gLanMac[Index][4] = (Mac4 & 0xFF);
-      gLanMac[Index][3] = (Mac0 & 0xFF000000) >> 24;
-      gLanMac[Index][2] = (Mac0 & 0x00FF0000) >> 16;
-      gLanMac[Index][1] = (Mac0 & 0x0000FF00) >> 8;
-      gLanMac[Index][0] = (Mac0 & 0x000000FF); */
       CopyMem(&gLanMac[Index][0], &Mac0, 4);
       CopyMem(&gLanMac[Index][4], &Mac4, 2);
       
