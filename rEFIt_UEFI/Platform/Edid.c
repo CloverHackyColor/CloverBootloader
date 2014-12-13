@@ -87,11 +87,12 @@ EFI_STATUS GetEdidDiscovered(VOID)
 
 	Status = gBS->LocateProtocol (&gEfiEdidDiscoveredProtocolGuid, NULL, (VOID **)&EdidDiscovered);
 
-	if (!EFI_ERROR (Status))
-	{
-		N = EdidDiscovered->SizeOfEdid;
-    MsgLog("EdidDiscovered size=%d\n", N);
-		if (N == 0) {
+	if (!EFI_ERROR (Status)) {
+    N = EdidDiscovered->SizeOfEdid;
+    if (!GlobalConfig.DebugLog) {
+      MsgLog("EdidDiscovered size=%d\n", N);
+    }
+    if (N == 0) {
 			return EFI_NOT_FOUND;
 		}
     gEDID = AllocateAlignedPages(EFI_SIZE_TO_PAGES(N), 128);
