@@ -511,21 +511,24 @@ MainPostBuildScript() {
 
     if [[ "$TARGETARCH" = X64 ]]; then
         cloverEFIFile=boot6
-        [[ "$USE_BIOS_BLOCKIO" -ne 0 ]] && cloverEFIFile=boot7
 
         "$BASETOOLS_DIR"/GenFw --rebase 0x10000 -o "$BUILD_DIR_ARCH/EfiLoader.efi" "$BUILD_DIR_ARCH/EfiLoader.efi"
         "$BASETOOLS_DIR"/EfiLdrImage -o "${BUILD_DIR}"/FV/Efildr64 \
-         "$BUILD_DIR_ARCH"/EfiLoader.efi                \
-         "${BUILD_DIR}"/FV/DxeIpl${TARGETARCH}.z                   \
-         "${BUILD_DIR}"/FV/DxeMain${TARGETARCH}.z                  \
-         "${BUILD_DIR}"/FV/DUETEFIMAINFV${TARGETARCH}.z
-	if [[ "$USE_BIOS_BLOCKIO" -ne 0 ]]; then
-        cat $BOOTSECTOR_BIN_DIR/Start64H2.com $BOOTSECTOR_BIN_DIR/efi64.com3 "${BUILD_DIR}"/FV/Efildr64 > "${BUILD_DIR}"/FV/Efildr20Pure
-    elif [[ "$USE_LOW_EBDA" -ne 0 ]]; then
-        cat $BOOTSECTOR_BIN_DIR/Start64H3.com $BOOTSECTOR_BIN_DIR/efi64.com3 "${BUILD_DIR}"/FV/Efildr64 > "${BUILD_DIR}"/FV/Efildr20Pure
-    else
-        cat $BOOTSECTOR_BIN_DIR/Start64H.com $BOOTSECTOR_BIN_DIR/efi64.com3 "${BUILD_DIR}"/FV/Efildr64 > "${BUILD_DIR}"/FV/Efildr20Pure    
-    fi
+        "$BUILD_DIR_ARCH"/EfiLoader.efi                \
+        "${BUILD_DIR}"/FV/DxeIpl${TARGETARCH}.z        \
+        "${BUILD_DIR}"/FV/DxeMain${TARGETARCH}.z       \
+        "${BUILD_DIR}"/FV/DUETEFIMAINFV${TARGETARCH}.z
+        startBlock=Start64H.com
+		if [[ "$USE_BIOS_BLOCKIO" -ne 0 ]]; then
+			cloverEFIFile=boot7
+			startBlock=Start64H2.com
+		fi
+		if [[ "$USE_LOW_EBDA" -ne 0 ]]; then
+			cloverEFIFile=boot5
+			startBlock=Start64H3.com
+		fi
+        cat $BOOTSECTOR_BIN_DIR/$startBlock $BOOTSECTOR_BIN_DIR/efi64.com3 "${BUILD_DIR}"/FV/Efildr64 > "${BUILD_DIR}"/FV/Efildr20Pure    
+
         if [[ "$USE_LOW_EBDA" -ne 0 ]]; then
            "$BASETOOLS_DIR"/GenPage "${BUILD_DIR}"/FV/Efildr20Pure -b 0x88000 -f 0x68000 -o "${BUILD_DIR}"/FV/Efildr20
         else   
@@ -543,11 +546,7 @@ MainPostBuildScript() {
         mkdir -p "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI
 
         # Install CloverEFI file
-        if [[ "$USE_LOW_EBDA" -ne 0 ]]; then
-          cp -v "${BUILD_DIR}"/FV/boot "$CLOVER_PKG_DIR"/Bootloaders/x64/boot5
-        else
-          cp -v "${BUILD_DIR}"/FV/boot "$CLOVER_PKG_DIR"/Bootloaders/x64/$cloverEFIFile
-        fi  
+        cp -v "${BUILD_DIR}"/FV/boot "$CLOVER_PKG_DIR"/Bootloaders/x64/$cloverEFIFile
 
         # Mandatory drivers
         cp -v "$BUILD_DIR_ARCH"/FSInject.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers64/FSInject-64.efi
