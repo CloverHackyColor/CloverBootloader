@@ -42,6 +42,7 @@ echo "TOOLCHAIN_DIR: $TOOLCHAIN_DIR"
 VBIOSPATCHCLOVEREFI=0
 ONLYSATA0PATCH=0
 USE_BIOS_BLOCKIO=0
+USE_LOW_EBDA=0
 CLANG=0
 
 # Bash options
@@ -198,6 +199,7 @@ usage() {
     print_option_help "-D MACRO, --define=MACRO" "Macro: \"Name[=Value]\"."
     print_option_help "--vbios-patch-cloverefi" "activate vbios patch in CloverEFI"
     print_option_help "--only-sata0" "activate only SATA0 patch"
+    print_option_help "--low-ebda" "ebda offset shift to 0x88000"
     echo
     echo "Report bugs to http://www.projectosx.com/forum/index.php?showtopic=2490"
 }
@@ -279,6 +281,9 @@ checkCmdlineArguments() {
                 ;;
             --only-sata0)
                 ONLYSATA0PATCH=1
+                ;;
+            --low-ebda)
+                USE_LOW_EBDA=1
                 ;;
             -h | -\? | -help | --help)
                 usage && exit 0
@@ -421,6 +426,7 @@ MainBuildScript() {
     [[ "$USE_BIOS_BLOCKIO" -ne 0 ]]    && addEdk2BuildMacro 'USE_BIOS_BLOCKIO'
     [[ "$VBIOSPATCHCLOVEREFI" -ne 0 ]] && addEdk2BuildMacro 'ENABLE_VBIOS_PATCH_CLOVEREFI'
     [[ "$ONLYSATA0PATCH" -ne 0 ]] && addEdk2BuildMacro 'ONLY_SATA_0'
+    [[ "$USE_LOW_EBDA" -ne 0 ]] && addEdk2BuildMacro 'USE_LOW_EBDA'
     [[ "$CLANG" -ne 0 ]] && addEdk2BuildMacro 'CLANG'
 
     local cmd="build ${EDK2_BUILD_OPTIONS[@]}"
@@ -515,10 +521,16 @@ MainPostBuildScript() {
          "${BUILD_DIR}"/FV/DUETEFIMAINFV${TARGETARCH}.z
 	if [[ "$USE_BIOS_BLOCKIO" -ne 0 ]]; then
         cat $BOOTSECTOR_BIN_DIR/Start64H2.com $BOOTSECTOR_BIN_DIR/efi64.com3 "${BUILD_DIR}"/FV/Efildr64 > "${BUILD_DIR}"/FV/Efildr20Pure
+    elif [[ "$USE_LOW_EBDA" -ne 0 ]]; then
+        cat $BOOTSECTOR_BIN_DIR/Start64H3.com $BOOTSECTOR_BIN_DIR/efi64.com3 "${BUILD_DIR}"/FV/Efildr64 > "${BUILD_DIR}"/FV/Efildr20Pure
     else
         cat $BOOTSECTOR_BIN_DIR/Start64H.com $BOOTSECTOR_BIN_DIR/efi64.com3 "${BUILD_DIR}"/FV/Efildr64 > "${BUILD_DIR}"/FV/Efildr20Pure    
     fi
-        "$BASETOOLS_DIR"/GenPage "${BUILD_DIR}"/FV/Efildr20Pure -o "${BUILD_DIR}"/FV/Efildr20
+        if [[ "$USE_LOW_EBDA" -ne 0 ]]; then
+           "$BASETOOLS_DIR"/GenPage "${BUILD_DIR}"/FV/Efildr20Pure -b 0x88000 -f 0x68000 -o "${BUILD_DIR}"/FV/Efildr20
+        else   
+          "$BASETOOLS_DIR"/GenPage "${BUILD_DIR}"/FV/Efildr20Pure -o "${BUILD_DIR}"/FV/Efildr20
+        fi  
         # Create CloverEFI file
         dd if="${BUILD_DIR}"/FV/Efildr20 of="${BUILD_DIR}"/FV/boot bs=512 skip=1
 
@@ -531,7 +543,11 @@ MainPostBuildScript() {
         mkdir -p "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI
 
         # Install CloverEFI file
-        cp -v "${BUILD_DIR}"/FV/boot "$CLOVER_PKG_DIR"/Bootloaders/x64/$cloverEFIFile
+        if [[ "$USE_LOW_EBDA" -ne 0 ]]; then
+          cp -v "${BUILD_DIR}"/FV/boot "$CLOVER_PKG_DIR"/Bootloaders/x64/boot5
+        else
+          cp -v "${BUILD_DIR}"/FV/boot "$CLOVER_PKG_DIR"/Bootloaders/x64/$cloverEFIFile
+        fi  
 
         # Mandatory drivers
         cp -v "$BUILD_DIR_ARCH"/FSInject.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers64/FSInject-64.efi

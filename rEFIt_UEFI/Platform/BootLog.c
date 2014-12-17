@@ -114,7 +114,7 @@ EFI_FILE_PROTOCOL* GetDebugLogFile()
 VOID SaveMessageToDebugLogFile(IN CHAR8 *LastMessage)
 {
   STATIC BOOLEAN          FirstTimeSave = TRUE;
-  STATIC UINTN            Position = 0;
+//  STATIC UINTN            Position = 0;
   CHAR8                   *MemLogBuffer;
   UINTN                   MemLogLen;
   CHAR8                   *Text;
