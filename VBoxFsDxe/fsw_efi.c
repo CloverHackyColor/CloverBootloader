@@ -787,9 +787,9 @@ EFI_STATUS EFIAPI fsw_efi_FileHandle_GetInfo(IN EFI_FILE_PROTOCOL *This,
                                              IN OUT UINTN *BufferSize,
                                              OUT VOID *Buffer)
 {
-    FSW_FILE_DATA      *File = FSW_FILE_FROM_FILE_HANDLE(This);
+  FSW_FILE_DATA      *File = FSW_FILE_FROM_FILE_HANDLE(This);
 
-    return fsw_efi_dnode_getinfo(File, InformationType, BufferSize, Buffer);
+  return fsw_efi_dnode_getinfo(File, InformationType, BufferSize, Buffer);
 }
 
 /**
@@ -803,7 +803,7 @@ EFI_STATUS EFIAPI fsw_efi_FileHandle_SetInfo(IN EFI_FILE_PROTOCOL *This,
                                              IN VOID *Buffer)
 {
     // this driver is read-only
-    return EFI_WRITE_PROTECTED;
+  return EFI_WRITE_PROTECTED;
 }
 
 /**
@@ -814,12 +814,12 @@ EFI_STATUS EFIAPI fsw_efi_FileHandle_SetInfo(IN EFI_FILE_PROTOCOL *This,
 EFI_STATUS EFIAPI fsw_efi_FileHandle_Flush(IN EFI_FILE_PROTOCOL *This)
 {
     // this driver is read-only
-    return EFI_WRITE_PROTECTED;
+  return EFI_WRITE_PROTECTED;
 }
 
 EFI_STATUS EFIAPI fsw_efi_FileHandle_FlushEx(IN EFI_FILE_PROTOCOL *This, IN OUT EFI_FILE_IO_TOKEN *Token)
 {
-    return fsw_efi_FileHandle_Flush(This);
+  return fsw_efi_FileHandle_Flush(This);
 }
 
 /**
@@ -831,54 +831,54 @@ EFI_STATUS EFIAPI fsw_efi_FileHandle_FlushEx(IN EFI_FILE_PROTOCOL *This, IN OUT 
 EFI_STATUS fsw_efi_dnode_to_FileHandle(IN struct fsw_dnode *dno,
                                        OUT EFI_FILE_PROTOCOL **NewFileHandle)
 {
-    EFI_STATUS          Status;
-    FSW_FILE_DATA       *File;
-
-    // make sure the dnode has complete info
-    Status = fsw_efi_map_status(fsw_dnode_fill(dno), (FSW_VOLUME_DATA *)dno->vol->host_data);
-    if (EFI_ERROR(Status))
-        return Status;
-
-    // check type
-    if (dno->type != FSW_DNODE_TYPE_FILE && dno->type != FSW_DNODE_TYPE_DIR)
-        return EFI_UNSUPPORTED;
-
-    // allocate file structure
-    File = AllocateZeroPool(sizeof(FSW_FILE_DATA));
-    File->Signature = FSW_FILE_DATA_SIGNATURE;
-    if (dno->type == FSW_DNODE_TYPE_FILE)
-        File->Type = FSW_EFI_FILE_TYPE_FILE;
-    else if (dno->type == FSW_DNODE_TYPE_DIR)
-        File->Type = FSW_EFI_FILE_TYPE_DIR;
-
-    // open shandle
-    Status = fsw_efi_map_status(fsw_shandle_open(dno, &File->shand),
-                                (FSW_VOLUME_DATA *)dno->vol->host_data);
-    if (EFI_ERROR(Status)) {
-        FreePool(File);
-        return Status;
-    }
-
-    // populate the file handle
-    File->FileHandle.Revision    = EFI_FILE_HANDLE_REVISION;
-    File->FileHandle.Open        = fsw_efi_FileHandle_Open;
-    File->FileHandle.Close       = fsw_efi_FileHandle_Close;
-    File->FileHandle.Delete      = fsw_efi_FileHandle_Delete;
-    File->FileHandle.Read        = fsw_efi_FileHandle_Read;
-    File->FileHandle.Write       = fsw_efi_FileHandle_Write;
-    File->FileHandle.GetPosition = fsw_efi_FileHandle_GetPosition;
-    File->FileHandle.SetPosition = fsw_efi_FileHandle_SetPosition;
-    File->FileHandle.GetInfo     = fsw_efi_FileHandle_GetInfo;
-    File->FileHandle.SetInfo     = fsw_efi_FileHandle_SetInfo;
-    File->FileHandle.Flush       = fsw_efi_FileHandle_Flush;
-    File->FileHandle.OpenEx      = fsw_efi_FileHandle_OpenEx;
-    File->FileHandle.ReadEx      = fsw_efi_FileHandle_ReadEx;
-    File->FileHandle.WriteEx     = fsw_efi_FileHandle_WriteEx;
-    File->FileHandle.FlushEx     = fsw_efi_FileHandle_FlushEx;
-
-    *NewFileHandle = &File->FileHandle;
-
-    return EFI_SUCCESS;
+  EFI_STATUS          Status;
+  FSW_FILE_DATA       *File;
+  
+  // make sure the dnode has complete info
+  Status = fsw_efi_map_status(fsw_dnode_fill(dno), (FSW_VOLUME_DATA *)dno->vol->host_data);
+  if (EFI_ERROR(Status))
+    return Status;
+  
+  // check type
+  if (dno->type != FSW_DNODE_TYPE_FILE && dno->type != FSW_DNODE_TYPE_DIR)
+    return EFI_UNSUPPORTED;
+  
+  // allocate file structure
+  File = AllocateZeroPool(sizeof(FSW_FILE_DATA));
+  File->Signature = FSW_FILE_DATA_SIGNATURE;
+  if (dno->type == FSW_DNODE_TYPE_FILE)
+    File->Type = FSW_EFI_FILE_TYPE_FILE;
+  else if (dno->type == FSW_DNODE_TYPE_DIR)
+    File->Type = FSW_EFI_FILE_TYPE_DIR;
+  
+  // open shandle
+  Status = fsw_efi_map_status(fsw_shandle_open(dno, &File->shand),
+                              (FSW_VOLUME_DATA *)dno->vol->host_data);
+  if (EFI_ERROR(Status)) {
+    FreePool(File);
+    return Status;
+  }
+  
+  // populate the file handle
+  File->FileHandle.Revision    = EFI_FILE_HANDLE_REVISION;
+  File->FileHandle.Open        = fsw_efi_FileHandle_Open;
+  File->FileHandle.Close       = fsw_efi_FileHandle_Close;
+  File->FileHandle.Delete      = fsw_efi_FileHandle_Delete;
+  File->FileHandle.Read        = fsw_efi_FileHandle_Read;
+  File->FileHandle.Write       = fsw_efi_FileHandle_Write;
+  File->FileHandle.GetPosition = fsw_efi_FileHandle_GetPosition;
+  File->FileHandle.SetPosition = fsw_efi_FileHandle_SetPosition;
+  File->FileHandle.GetInfo     = fsw_efi_FileHandle_GetInfo;
+  File->FileHandle.SetInfo     = fsw_efi_FileHandle_SetInfo;
+  File->FileHandle.Flush       = fsw_efi_FileHandle_Flush;
+  File->FileHandle.OpenEx      = fsw_efi_FileHandle_OpenEx;
+  File->FileHandle.ReadEx      = fsw_efi_FileHandle_ReadEx;
+  File->FileHandle.WriteEx     = fsw_efi_FileHandle_WriteEx;
+  File->FileHandle.FlushEx     = fsw_efi_FileHandle_FlushEx;
+  
+  *NewFileHandle = &File->FileHandle;
+  
+  return EFI_SUCCESS;
 }
 
 /**
@@ -889,19 +889,19 @@ EFI_STATUS fsw_efi_file_read(IN FSW_FILE_DATA *File,
                              IN OUT UINTN *BufferSize,
                              OUT VOID *Buffer)
 {
-    EFI_STATUS          Status;
-    fsw_u32             buffer_size;
-
+  EFI_STATUS          Status;
+  fsw_u32             buffer_size;
+  
 #if DEBUG_LEVEL
-    Print(L"fsw_efi_file_read %d bytes\n", *BufferSize);
+  Print(L"fsw_efi_file_read %d bytes\n", *BufferSize);
 #endif
-
-    buffer_size = (fsw_u32)*BufferSize;
-    Status = fsw_efi_map_status(fsw_shandle_read(&File->shand, &buffer_size, Buffer),
-                                (FSW_VOLUME_DATA *)File->shand.dnode->vol->host_data);
-    *BufferSize = buffer_size;
-
-    return Status;
+  
+  buffer_size = (fsw_u32)*BufferSize;
+  Status = fsw_efi_map_status(fsw_shandle_read(&File->shand, &buffer_size, Buffer),
+                              (FSW_VOLUME_DATA *)File->shand.dnode->vol->host_data);
+  *BufferSize = buffer_size;
+  
+  return Status;
 }
 
 /**

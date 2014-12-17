@@ -58,7 +58,7 @@ PrintBytes(IN VOID *Bytes, IN UINTN Number)
 
 
 
-EFI_FILE_PROTOCOL* GetDebugLogFile(BOOLEAN FirstTimeSave)
+EFI_FILE_PROTOCOL* GetDebugLogFile()
 {
   EFI_STATUS          Status;
   EFI_LOADED_IMAGE    *LoadedImage;
@@ -78,12 +78,7 @@ EFI_FILE_PROTOCOL* GetDebugLogFile(BOOLEAN FirstTimeSave)
   // Open log file from current root
   Status = RootDir->Open(RootDir, &LogFile, DEBUG_LOG,
                          EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE, 0);
-  /*
-  if (FirstTimeSave && Status == EFI_SUCCESS) {
-    LogFile->Delete(LogFile);
-    Status = EFI_NOT_FOUND;
-  }
-   */
+
   // If the log file is not found try to create it
   if (Status == EFI_NOT_FOUND) {
     Status = RootDir->Open(RootDir, &LogFile, DEBUG_LOG,
@@ -98,12 +93,6 @@ EFI_FILE_PROTOCOL* GetDebugLogFile(BOOLEAN FirstTimeSave)
     if (!EFI_ERROR(Status)) {
       Status = RootDir->Open(RootDir, &LogFile, DEBUG_LOG,
                              EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE, 0);
-      /*
-      if (FirstTimeSave && Status == EFI_SUCCESS) {
-        LogFile->Delete(LogFile);
-        Status = EFI_NOT_FOUND;
-      }
-       */
       // If the log file is not found try to create it
       if (Status == EFI_NOT_FOUND) {
         Status = RootDir->Open(RootDir, &LogFile, DEBUG_LOG,
@@ -124,7 +113,8 @@ EFI_FILE_PROTOCOL* GetDebugLogFile(BOOLEAN FirstTimeSave)
 
 VOID SaveMessageToDebugLogFile(IN CHAR8 *LastMessage)
 {
-  static BOOLEAN          FirstTimeSave = TRUE;
+  STATIC BOOLEAN          FirstTimeSave = TRUE;
+  STATIC UINTN            Position = 0;
   CHAR8                   *MemLogBuffer;
   UINTN                   MemLogLen;
   CHAR8                   *Text;
@@ -136,19 +126,16 @@ VOID SaveMessageToDebugLogFile(IN CHAR8 *LastMessage)
   Text = LastMessage;
   TextLen = AsciiStrLen(LastMessage);
 
+  LogFile = GetDebugLogFile();
   
-  LogFile = GetDebugLogFile(FirstTimeSave);
   // Write to the log file
-  if (LogFile != NULL)
-  {
+  if (LogFile != NULL) {
     // Advance to the EOF so we append
     EFI_FILE_INFO *Info = EfiLibFileInfo(LogFile);
-    if (Info)
-    {
+    if (Info) {
       LogFile->SetPosition(LogFile, Info->FileSize);
       // If we haven't had root before this write out whole log
-      if (FirstTimeSave)
-      {
+      if (FirstTimeSave) {
         Text = MemLogBuffer;
         TextLen = MemLogLen;
         FirstTimeSave = FALSE;
@@ -183,8 +170,7 @@ VOID EFIAPI DebugLog(IN INTN DebugMode, IN CONST CHAR8 *FormatString, ...)
    //UINTN offset = 0;
    
    // Make sure the buffer is intact for writing
-   if (FormatString == NULL || DebugMode < 0)
-   {
+   if (FormatString == NULL || DebugMode < 0) {
      return;
    }
 
@@ -221,15 +207,6 @@ EFI_STATUS SetupBooterLog(BOOLEAN AllowGrownSize)
     Status = LogDataHub(&gEfiMiscSubClassGuid, L"boot-log", MemLogBuffer, (UINT32)MemLogLen);
   }
   
-  // Save BOOT_LOG only once on successful boot
-  /*
-  if (GlobalConfig.DebugLog){
-    Status = SaveBooterLog(SelfRootDir, BOOT_LOG);
-    if (EFI_ERROR(Status)) {
-      Status = SaveBooterLog(NULL, BOOT_LOG);
-    }
-  }
-   */
 	return Status;
 }
 

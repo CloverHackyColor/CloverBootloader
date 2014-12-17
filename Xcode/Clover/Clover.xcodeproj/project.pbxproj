@@ -626,13 +626,7 @@
 		2C794AA91A0AA85900D845B0 /* GraphicsConsoleDxe.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = GraphicsConsoleDxe.inf; sourceTree = "<group>"; };
 		2C794AAA1A0AA85900D845B0 /* LaffStd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = LaffStd.c; sourceTree = "<group>"; };
 		2C794AAC1A0AA85900D845B0 /* HFSPlus.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HFSPlus.inf; sourceTree = "<group>"; };
-		2C794AAD1A0AA85900D845B0 /* HFSPlus.efi */ = {isa = PBXFileReference; lastKnownFileType = file; path = HFSPlus.efi; sourceTree = "<group>"; };
 		2C794AAF1A0AA85900D845B0 /* ReadMe.rtf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.rtf; path = ReadMe.rtf; sourceTree = "<group>"; };
-		2C794AB01A0AA85900D845B0 /* HFSPlus-orig.efi */ = {isa = PBXFileReference; lastKnownFileType = file; path = "HFSPlus-orig.efi"; sourceTree = "<group>"; };
-		2C794AB11A0AA85900D845B0 /* HFSPlus-patched.efi */ = {isa = PBXFileReference; lastKnownFileType = file; path = "HFSPlus-patched.efi"; sourceTree = "<group>"; };
-		2C794AB21A0AA85900D845B0 /* HFSPlus.efi */ = {isa = PBXFileReference; lastKnownFileType = file; path = HFSPlus.efi; sourceTree = "<group>"; };
-		2C794AB31A0AA85900D845B0 /* vbHFSPlus.efi */ = {isa = PBXFileReference; lastKnownFileType = file; path = vbHFSPlus.efi; sourceTree = "<group>"; };
-		2C794AB41A0AA85900D845B0 /* vboxHFSPlus.efi */ = {isa = PBXFileReference; lastKnownFileType = file; path = vboxHFSPlus.efi; sourceTree = "<group>"; };
 		2C794AB71A0AA85900D845B0 /* EfiFlashMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EfiFlashMap.h; sourceTree = "<group>"; };
 		2C794AB81A0AA85900D845B0 /* EfiLdrHandoff.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EfiLdrHandoff.h; sourceTree = "<group>"; };
 		2C794AB91A0AA85900D845B0 /* FlashLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlashLayout.h; sourceTree = "<group>"; };
@@ -1716,7 +1710,6 @@
 		2C794AAE1A0AA85900D845B0 /* Ia32 */ = {
 			isa = PBXGroup;
 			children = (
-				2C794AAD1A0AA85900D845B0 /* HFSPlus.efi */,
 			);
 			path = Ia32;
 			sourceTree = "<group>";
@@ -1724,11 +1717,6 @@
 		2C794AB51A0AA85900D845B0 /* X64 */ = {
 			isa = PBXGroup;
 			children = (
-				2C794AB01A0AA85900D845B0 /* HFSPlus-orig.efi */,
-				2C794AB11A0AA85900D845B0 /* HFSPlus-patched.efi */,
-				2C794AB21A0AA85900D845B0 /* HFSPlus.efi */,
-				2C794AB31A0AA85900D845B0 /* vbHFSPlus.efi */,
-				2C794AB41A0AA85900D845B0 /* vboxHFSPlus.efi */,
 			);
 			path = X64;
 			sourceTree = "<group>";

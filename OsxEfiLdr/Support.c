@@ -170,7 +170,7 @@ GenMemoryMap (
   
   EBDAaddr = LShiftU64((UINT64)(*(UINT16 *)(UINTN)(0x40E)), 4);
   //fool proof
-  if (EBDAaddr < 0x99000 || EBDAaddr > 0x9F800) {
+  if (EBDAaddr < 0x90000 || EBDAaddr > 0x9F800) {
     EBDAaddr = 0x9A000;
   }
   NumMap =  BiosMemoryMap->MemoryMapSize / sizeof(BIOS_MEMORY_MAP_ENTRY);

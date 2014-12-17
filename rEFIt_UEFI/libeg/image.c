@@ -376,33 +376,51 @@ EFI_STATUS egFindESP(OUT EFI_FILE_HANDLE *RootDir)
 EFI_STATUS egSaveFile(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CHAR16 *FileName,
                       IN UINT8 *FileData, IN UINTN FileDataLength)
 {
-    EFI_STATUS          Status;
-    EFI_FILE_HANDLE     FileHandle;
-    UINTN               BufferSize;
-    
-    if (BaseDir == NULL) {
-        Status = egFindESP(&BaseDir);
-        if (EFI_ERROR(Status))
-            return Status;
-    }
-    
-    // Delete existing file if it exists
-    Status = BaseDir->Open(BaseDir, &FileHandle, FileName,
-                           EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE, 0);
-    if (!EFI_ERROR(Status))
-        FileHandle->Delete(FileHandle);
-
+  EFI_STATUS          Status;
+  EFI_FILE_HANDLE     FileHandle;
+  UINTN               BufferSize;
+  BOOLEAN             CreateNew = TRUE;
+  
+  if (BaseDir == NULL) {
+    Status = egFindESP(&BaseDir);
+    if (EFI_ERROR(Status))
+      return Status;
+  }
+  
+  // Delete existing file if it exists
+  Status = BaseDir->Open(BaseDir, &FileHandle, FileName,
+                         EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE, 0);
+  if (!EFI_ERROR(Status)) {
+    Status = FileHandle->Delete(FileHandle);
+    if (Status == EFI_WARN_DELETE_FAILURE) {
+      //This is READ_ONLY file system
+      CreateNew = FALSE; // will write into existing file
+    } 
+  }
+  
+  if (CreateNew) {
     // Write new file
     Status = BaseDir->Open(BaseDir, &FileHandle, FileName,
                            EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE | EFI_FILE_MODE_CREATE, 0);
     if (EFI_ERROR(Status))
-        return Status;
-    
-    BufferSize = FileDataLength;
-    Status = FileHandle->Write(FileHandle, &BufferSize, FileData);
-    FileHandle->Close(FileHandle);
-    
-    return Status;
+      return Status;
+  } else {
+    //to write into existing file we must sure it size larger then our data
+    EFI_FILE_INFO *Info = EfiLibFileInfo(FileHandle);
+    if (Info && Info->FileSize < FileDataLength) {
+      return EFI_NOT_FOUND;
+    }
+  }
+  
+  if (!FileHandle) {
+    return EFI_NOT_FOUND;
+  }
+  
+  BufferSize = FileDataLength;
+  Status = FileHandle->Write(FileHandle, &BufferSize, FileData);
+  FileHandle->Close(FileHandle);
+  
+  return Status;
 }
 
 //

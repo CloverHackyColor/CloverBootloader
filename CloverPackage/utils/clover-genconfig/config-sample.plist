@@ -600,7 +600,7 @@
 		<key>MLB</key>
 		<string>C02032109R5DC771H</string>
 		<key>ROM</key>
-		<string>001122334455</string>
+		<string>UseMacAddr0</string>
 	</dict>
 	<key>SMBIOS</key>
 	<dict>

@@ -479,45 +479,45 @@ void fsw_dnode_release(struct fsw_dnode *dno)
   
   dno->refcount--;
   
-    // numcslots always zero for non dir dnodes
-    if (dno->refcount != dno->numcslots)
-        return;
-
-    parent_dno = dno->parent;
-    
-    // de-register from volume's list
-    if (dno->next)
-      dno->next->prev = dno->prev;
-    if (dno->prev)
-      dno->prev->next = dno->next;
-    if (vol->dnode_head == dno)
-      vol->dnode_head = dno->next;
-    
+  // numcslots always zero for non dir dnodes
+  if (dno->refcount != dno->numcslots)
+    return;
+  
+  parent_dno = dno->parent;
+  
+  // de-register from volume's list
+  if (dno->next)
+    dno->next->prev = dno->prev;
+  if (dno->prev)
+    dno->prev->next = dno->next;
+  if (vol->dnode_head == dno)
+    vol->dnode_head = dno->next;
+  
 #if defined(FSW_DNODE_CACHE_SIZE) && FSW_DNODE_CACHE_SIZE > 0
-    if (dno->type == FSW_DNODE_TYPE_DIR) {
-        int i;
-
-        for (i = 0; i < FSW_DNODE_CACHE_SIZE; i++) {
-            struct fsw_dnode *cache_entry = dno->cache[i];
-
-            if (cache_entry == NULL)
-                continue;
-            // numcslots not decremented on purpose
-            fsw_dnode_release(cache_entry);
-        }
+  if (dno->type == FSW_DNODE_TYPE_DIR) {
+    int i;
+    
+    for (i = 0; i < FSW_DNODE_CACHE_SIZE; i++) {
+      struct fsw_dnode *cache_entry = dno->cache[i];
+      
+      if (cache_entry == NULL)
+        continue;
+      // numcslots not decremented on purpose
+      fsw_dnode_release(cache_entry);
     }
-#endif
-
-    // run fstype-specific cleanup
-    vol->fstype_table->dnode_free(vol, dno);
-    
-    fsw_strfree(&dno->name);
-    fsw_free(dno);
-    
-    // release our pointer to the parent, possibly deallocating it, too
-    if (parent_dno)
-      fsw_dnode_release(parent_dno);
   }
+#endif
+  
+  // run fstype-specific cleanup
+  vol->fstype_table->dnode_free(vol, dno);
+  
+  fsw_strfree(&dno->name);
+  fsw_free(dno);
+  
+  // release our pointer to the parent, possibly deallocating it, too
+  if (parent_dno)
+    fsw_dnode_release(parent_dno);
+}
 
 /**
  * Get full information about a dnode from disk. This function is called by the host
@@ -1034,9 +1034,10 @@ fsw_status_t fsw_shandle_open(struct fsw_dnode *dno, struct fsw_shandle *shand)
 
 void fsw_shandle_close(struct fsw_shandle *shand)
 {
-    if (shand->extent.type == FSW_EXTENT_TYPE_BUFFER)
-        fsw_free(shand->extent.buffer);
-    fsw_dnode_release(shand->dnode);
+  if (shand->extent.type == FSW_EXTENT_TYPE_BUFFER) {
+    fsw_free(shand->extent.buffer);
+  }
+  fsw_dnode_release(shand->dnode);
 }
 
 /**
@@ -1046,90 +1047,90 @@ void fsw_shandle_close(struct fsw_shandle *shand)
 
 fsw_status_t fsw_shandle_read(struct fsw_shandle *shand, fsw_u32 *buffer_size_inout, void *buffer_in)
 {
-    fsw_status_t    status;
-    struct fsw_dnode *dno = shand->dnode;
-    struct fsw_volume *vol = dno->vol;
-    fsw_u8          *buffer, *block_buffer;
-    fsw_u32         buflen, copylen, pos;
-    fsw_u32         log_bno, pos_in_extent, phys_bno, pos_in_physblock;
-    fsw_u32         cache_level;
-
-    if (shand->pos >= dno->size) {   // already at EOF
-        *buffer_size_inout = 0;
-        return FSW_SUCCESS;
-    }
-
-    // initialize vars
-    buffer = buffer_in;
-    buflen = *buffer_size_inout;
-    pos = (fsw_u32)shand->pos;
-    cache_level = (dno->type != FSW_DNODE_TYPE_FILE) ? 1 : 0;
-    // restrict read to file size
-    if (buflen > dno->size - pos)
-        buflen = (fsw_u32)(dno->size - pos);
-
-    while (buflen > 0) {
-        // get extent for the current logical block
-        log_bno = pos / vol->log_blocksize;
-        if (shand->extent.type == FSW_EXTENT_TYPE_INVALID ||
-            log_bno < shand->extent.log_start ||
-            log_bno >= shand->extent.log_start + shand->extent.log_count) {
-
-            if (shand->extent.type == FSW_EXTENT_TYPE_BUFFER)
-                fsw_free(shand->extent.buffer);
-
-            // ask the file system for the proper extent
-            shand->extent.log_start = log_bno;
-            status = vol->fstype_table->get_extent(vol, dno, &shand->extent);
-            if (status) {
-                shand->extent.type = FSW_EXTENT_TYPE_INVALID;
-                return status;
-            }
-        }
-
-        pos_in_extent = pos - shand->extent.log_start * vol->log_blocksize;
-
-        // dispatch by extent type
-        if (shand->extent.type == FSW_EXTENT_TYPE_PHYSBLOCK) {
-            // convert to physical block number and offset
-            phys_bno = shand->extent.phys_start + pos_in_extent / vol->phys_blocksize;
-            pos_in_physblock = pos_in_extent & (vol->phys_blocksize - 1);
-            copylen = vol->phys_blocksize - pos_in_physblock;
-            if (copylen > buflen)
-                copylen = buflen;
-
-            // get one physical block
-            status = fsw_block_get(vol, phys_bno, cache_level, (void **)&block_buffer);
-            if (status)
-                return status;
-
-            // copy data from it
-            fsw_memcpy(buffer, block_buffer + pos_in_physblock, copylen);
-            fsw_block_release(vol, phys_bno, block_buffer);
-
-        } else if (shand->extent.type == FSW_EXTENT_TYPE_BUFFER) {
-            copylen = shand->extent.log_count * vol->log_blocksize - pos_in_extent;
-            if (copylen > buflen)
-                copylen = buflen;
-            fsw_memcpy(buffer, (fsw_u8 *)shand->extent.buffer + pos_in_extent, copylen);
-
-        } else {   // _SPARSE or _INVALID
-            copylen = shand->extent.log_count * vol->log_blocksize - pos_in_extent;
-            if (copylen > buflen)
-                copylen = buflen;
-            fsw_memzero(buffer, copylen);
-
-        }
-
-        buffer += copylen;
-        buflen -= copylen;
-        pos    += copylen;
-    }
-
-    *buffer_size_inout = (fsw_u32)(pos - shand->pos);
-    shand->pos = pos;
-
+  fsw_status_t    status;
+  struct fsw_dnode *dno = shand->dnode;
+  struct fsw_volume *vol = dno->vol;
+  fsw_u8          *buffer, *block_buffer;
+  fsw_u32         buflen, copylen, pos;
+  fsw_u32         log_bno, pos_in_extent, phys_bno, pos_in_physblock;
+  fsw_u32         cache_level;
+  
+  if (shand->pos >= dno->size) {   // already at EOF
+    *buffer_size_inout = 0;
     return FSW_SUCCESS;
+  }
+  
+  // initialize vars
+  buffer = buffer_in;
+  buflen = *buffer_size_inout;
+  pos = (fsw_u32)shand->pos;
+  cache_level = (dno->type != FSW_DNODE_TYPE_FILE) ? 1 : 0;
+  // restrict read to file size
+  if (buflen > dno->size - pos)
+    buflen = (fsw_u32)(dno->size - pos);
+  
+  while (buflen > 0) {
+    // get extent for the current logical block
+    log_bno = pos / vol->log_blocksize;
+    if (shand->extent.type == FSW_EXTENT_TYPE_INVALID ||
+        log_bno < shand->extent.log_start ||
+        log_bno >= shand->extent.log_start + shand->extent.log_count) {
+      
+      if (shand->extent.type == FSW_EXTENT_TYPE_BUFFER)
+        fsw_free(shand->extent.buffer);
+      
+      // ask the file system for the proper extent
+      shand->extent.log_start = log_bno;
+      status = vol->fstype_table->get_extent(vol, dno, &shand->extent);
+      if (status) {
+        shand->extent.type = FSW_EXTENT_TYPE_INVALID;
+        return status;
+      }
+    }
+    
+    pos_in_extent = pos - shand->extent.log_start * vol->log_blocksize;
+    
+    // dispatch by extent type
+    if (shand->extent.type == FSW_EXTENT_TYPE_PHYSBLOCK) {
+      // convert to physical block number and offset
+      phys_bno = shand->extent.phys_start + pos_in_extent / vol->phys_blocksize;
+      pos_in_physblock = pos_in_extent & (vol->phys_blocksize - 1);
+      copylen = vol->phys_blocksize - pos_in_physblock;
+      if (copylen > buflen)
+        copylen = buflen;
+      
+      // get one physical block
+      status = fsw_block_get(vol, phys_bno, cache_level, (void **)&block_buffer);
+      if (status)
+        return status;
+      
+      // copy data from it
+      fsw_memcpy(buffer, block_buffer + pos_in_physblock, copylen);
+      fsw_block_release(vol, phys_bno, block_buffer);
+      
+    } else if (shand->extent.type == FSW_EXTENT_TYPE_BUFFER) {
+      copylen = shand->extent.log_count * vol->log_blocksize - pos_in_extent;
+      if (copylen > buflen)
+        copylen = buflen;
+      fsw_memcpy(buffer, (fsw_u8 *)shand->extent.buffer + pos_in_extent, copylen);
+      
+    } else {   // _SPARSE or _INVALID
+      copylen = shand->extent.log_count * vol->log_blocksize - pos_in_extent;
+      if (copylen > buflen)
+        copylen = buflen;
+      fsw_memzero(buffer, copylen);
+      
+    }
+    
+    buffer += copylen;
+    buflen -= copylen;
+    pos    += copylen;
+  }
+  
+  *buffer_size_inout = (fsw_u32)(pos - shand->pos);
+  shand->pos = pos;
+  
+  return FSW_SUCCESS;
 }
 
 // EOF
