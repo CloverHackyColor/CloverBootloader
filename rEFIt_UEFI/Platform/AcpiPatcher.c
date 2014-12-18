@@ -53,52 +53,6 @@ CHAR8*      acpi_cpu_score;
 extern OPER_REGION *gRegions;
 //-----------------------------------
 
-/*
-#define NUM_TABLES 31
-CHAR16* ACPInames[NUM_TABLES] = {
-    L"SSDT.aml",
-    L"SSDT-0.aml",
-    L"SSDT-1.aml",
-    L"SSDT-2.aml",
-    L"SSDT-3.aml",
-    L"SSDT-4.aml",
-    L"SSDT-5.aml",
-    L"SSDT-6.aml",
-    L"SSDT-7.aml",
-    L"SSDT-8.aml",
-    L"SSDT-9.aml",
-    L"SSDT-10.aml",
-    L"SSDT-11.aml",
-    L"SSDT-12.aml",
-    L"SSDT-13.aml",
-    L"SSDT-14.aml",
-    L"SSDT-15.aml",
-    L"SSDT-16.aml",
-    L"SSDT-17.aml",
-    L"SSDT-18.aml",
-    L"SSDT-19.aml",
-    L"APIC.aml",
-    L"BOOT.aml",
-    L"DMAR.aml",
-    L"ECDT.aml",
-    L"HPET.aml",
-    L"MCFG.aml",
-    L"SLIC.aml",
-    L"SLIT.aml",
-    L"SRAT.aml",
-    L"UEFI.aml"
-};
-*/
-
-#define NUM_TABLES 5
-CHAR16* ACPInames[NUM_TABLES] = {
-  L"SSDT.aml",
-  L"SLIC.aml",
-  L"SLIT.aml",
-  L"SRAT.aml",
-  L"UEFI.aml"
-};
-
 
 UINT8 pmBlock[] = {
 	
@@ -1832,29 +1786,8 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
     DropTableFromXSDT(XXXX_SIGN, 0, 0);
     DropTableFromRSDT(XXXX_SIGN, 0, 0);
   }
-  
-  
-  //find other ACPI tables
-/*  for (Index = 0; Index < NUM_TABLES; Index++) {
-    CHAR16* FullName = PoolPrint(L"%s\\%s", AcpiOemPath, ACPInames[Index]);
-    Status = EFI_NOT_FOUND;
-    // DBG("Looking for ACPI table %s from %s ... ", ACPInames[Index], AcpiOemPath);
-    if (FileExists(SelfRootDir, FullName)) {
-      DBG("Inserting %s from %s ... ", ACPInames[Index], AcpiOemPath);
-      Status = egLoadFile(SelfRootDir, FullName, &buffer, &bufferLen);
-      if (!EFI_ERROR(Status)) {
-        //before insert we should checksum it
-        if (buffer) {
-          TableHeader = (EFI_ACPI_DESCRIPTION_HEADER*)buffer;
-          TableHeader->Checksum = 0;
-          TableHeader->Checksum = (UINT8)(256-Checksum8((CHAR8*)buffer, TableHeader->Length));
-        }
-        Status = InsertTable((VOID*)buffer, bufferLen);
-      }
-      DBG("%r\n", Status);
-    }
-  } */
- // find other ACPI tables except DSDT
+
+  // find other ACPI tables except DSDT
   DirIterOpen(SelfRootDir, AcpiOemPath, &DirIter);
   while (DirIterNext(&DirIter, 2, L"*.aml", &DirEntry)) {
     CHAR16            FullName[256];
@@ -2061,44 +1994,30 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
 
 
 /**
- * Searches for TableName in AcpiOemPath or PathPatched dirs and loads it
+ * Searches for TableName in PathPatched dirs and loads it
  * to Buffer if found. Buffer is allocated here and should be released
  * by caller.
  */
-EFI_STATUS LoadAcpiTable
-(
-  CHAR16                *AcpiOemPath,
-  CHAR16                *PathPatched,
-  CHAR16                *TableName,
-  UINT8                 **Buffer,
-  UINTN                 *BufferLen
-)
+EFI_STATUS LoadAcpiTable (
+                          CHAR16                *PathPatched,
+                          CHAR16                *TableName,
+                          UINT8                 **Buffer,
+                          UINTN                 *BufferLen
+                          )
 {
   EFI_STATUS            Status;
   CHAR16*               TmpStr;
-  
+
   Status = EFI_NOT_FOUND;
-  
-  // checking \EFI\OEM\xxx\ACPI\patched dir
-  TmpStr = PoolPrint(L"%s\\%s", AcpiOemPath, TableName);
-  if (FileExists(SelfRootDir, TmpStr))
-  {
+
+  // checking \EFI\ACPI\patched dir
+  TmpStr = PoolPrint(L"%s\\%s", PathPatched, TableName);
+  if (FileExists(SelfRootDir, TmpStr)) {
     DBG("found %s\n", TmpStr);
     Status = egLoadFile(SelfRootDir, TmpStr, Buffer, BufferLen);
   }
   FreePool(TmpStr);
-  
-  if (EFI_ERROR(Status))
-  {
-    // checking \EFI\ACPI\patched dir
-    TmpStr = PoolPrint(L"%s\\%s", PathPatched, TableName);
-    if (FileExists(SelfRootDir, TmpStr)) {
-      DBG("found %s\n", TmpStr);
-      Status = egLoadFile(SelfRootDir, TmpStr, Buffer, BufferLen);
-    }
-    FreePool(TmpStr);
-  }
-  
+
   return Status;
 }
 
@@ -2106,7 +2025,8 @@ EFI_STATUS LoadAcpiTable
  * Searches for DSDT in AcpiOemPath or PathPatched dirs and inserts it
  * to FadtPointer if found.
  */
-EFI_STATUS LoadAndInjectDSDT(CHAR16 *AcpiOemPath, CHAR16 *PathPatched, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE *FadtPointer)
+EFI_STATUS LoadAndInjectDSDT(CHAR16 *PathPatched,
+                             EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE *FadtPointer)
 {
 	EFI_STATUS            Status;
 	UINT8                 *Buffer = NULL;
@@ -2114,10 +2034,9 @@ EFI_STATUS LoadAndInjectDSDT(CHAR16 *AcpiOemPath, CHAR16 *PathPatched, EFI_ACPI_
 	EFI_PHYSICAL_ADDRESS  Dsdt;
   
   // load if exists
-  Status = LoadAcpiTable(AcpiOemPath, PathPatched, gSettings.DsdtName, &Buffer, &BufferLen);
+  Status = LoadAcpiTable(PathPatched, gSettings.DsdtName, &Buffer, &BufferLen);
   
-  if (!EFI_ERROR(Status))
-  {
+  if (!EFI_ERROR(Status)) {
     // loaded - allocate EfiACPIReclaim
     Dsdt = EFI_SYSTEM_TABLE_MAX_ADDRESS; //0xFE000000;
     Status = gBS->AllocatePages (
@@ -2127,8 +2046,7 @@ EFI_STATUS LoadAndInjectDSDT(CHAR16 *AcpiOemPath, CHAR16 *PathPatched, EFI_ACPI_
                                  &Dsdt
                                  );
     
-    if(!EFI_ERROR(Status))
-    {
+    if(!EFI_ERROR(Status)) {
       // copy DSDT into EfiACPIReclaim block
       CopyMem((VOID*)(UINTN)Dsdt, Buffer, BufferLen);
       
@@ -2153,7 +2071,8 @@ EFI_STATUS LoadAndInjectDSDT(CHAR16 *AcpiOemPath, CHAR16 *PathPatched, EFI_ACPI_
  * Searches for TableName in AcpiOemPath or PathPatched dirs and inserts it
  * to Rsdt and/or Xsdt (globals) if found.
  */
-EFI_STATUS LoadAndInjectAcpiTable(CHAR16 *AcpiOemPath, CHAR16 *PathPatched, CHAR16 *TableName)
+EFI_STATUS LoadAndInjectAcpiTable(CHAR16 *PathPatched,
+                                  CHAR16 *TableName)
 {
   EFI_STATUS                    Status;
   UINT8                         *Buffer = NULL;
@@ -2162,10 +2081,9 @@ EFI_STATUS LoadAndInjectAcpiTable(CHAR16 *AcpiOemPath, CHAR16 *PathPatched, CHAR
   
   
   // load if exists
-  Status = LoadAcpiTable(AcpiOemPath, PathPatched, TableName, &Buffer, &BufferLen);
+  Status = LoadAcpiTable(PathPatched, TableName, &Buffer, &BufferLen);
   
-  if(!EFI_ERROR(Status))
-  {
+  if(!EFI_ERROR(Status)) {
     //before insert we should checksum it
     if (Buffer) {
       TableHeader = (EFI_ACPI_DESCRIPTION_HEADER*)Buffer;
@@ -2173,8 +2091,7 @@ EFI_STATUS LoadAndInjectAcpiTable(CHAR16 *AcpiOemPath, CHAR16 *PathPatched, CHAR
       TableHeader->Checksum = (UINT8)(256-Checksum8((CHAR8*)Buffer, TableHeader->Length));
       
       // if this is SLIC, then remove previous SLIC if it is there
-      if (TableHeader->Signature == SLIC_SIGN)
-      {
+      if (TableHeader->Signature == SLIC_SIGN) {
         DropTableFromXSDT(SLIC_SIGN, 0, 0);
         DropTableFromRSDT(SLIC_SIGN, 0, 0);
       }
@@ -2183,38 +2100,31 @@ EFI_STATUS LoadAndInjectAcpiTable(CHAR16 *AcpiOemPath, CHAR16 *PathPatched, CHAR
     // loaded - insert it into XSDT/RSDT
     Status = InsertTable((VOID*)Buffer, BufferLen);
     
-    if(!EFI_ERROR(Status))
-    {
+    if(!EFI_ERROR(Status)) {
       DBG("Table %s inserted.\n", TableName);
       
       // if this was SLIC, then update IDs in XSDT/RSDT
       
-      if (TableHeader->Signature == SLIC_SIGN)
-      {
-        if (Rsdt)
-        {
+      if (TableHeader->Signature == SLIC_SIGN) {
+        if (Rsdt) {
           DBG("SLIC: Rsdt OEMid '%6.6a', TabId '%8.8a'", (CHAR8*)&Rsdt->Header.OemId, (CHAR8*)&Rsdt->Header.OemTableId);
           CopyMem((CHAR8 *)&Rsdt->Header.OemId, (CHAR8 *)&TableHeader->OemId, 6);
           Rsdt->Header.OemTableId = TableHeader->OemTableId;
           DBG(" to OEMid '%6.6a', TabId '%8.8a'\n", (CHAR8*)&Rsdt->Header.OemId, (CHAR8*)&Rsdt->Header.OemTableId);
         }
-        if (Xsdt)
-        {
+        if (Xsdt) {
           DBG("SLIC: Xsdt OEMid '%6.6a', TabId '%8.8a'", (CHAR8*)&Xsdt->Header.OemId, (CHAR8*)&Xsdt->Header.OemTableId);
           CopyMem((CHAR8 *)&Xsdt->Header.OemId, (CHAR8 *)&TableHeader->OemId, 6);
           Xsdt->Header.OemTableId = TableHeader->OemTableId;
           DBG(" to OEMid '%6.6a', TabId '%8.8a'\n", (CHAR8*)&Xsdt->Header.OemId, (CHAR8*)&Xsdt->Header.OemTableId);
         }
       }
-    }
-    else
-    {
+    } else {
       DBG("Insert return status %r\n", Status);
     }
     
     // buffer allocated with AllocatePages() and we do not know how many pages is allocated
     gBS->FreePages((EFI_PHYSICAL_ADDRESS)(UINTN)Buffer, EFI_SIZE_TO_PAGES(BufferLen));
-    
   } // if table loaded
   
   return Status;
@@ -2229,10 +2139,11 @@ EFI_STATUS PatchACPI_OtherOS(CHAR16* OsSubdir, BOOLEAN DropSSDT)
 	EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE       *FadtPointer;
 	
 	EFI_STATUS            Status; // = EFI_SUCCESS;
-	UINTN                 Index;
+//	UINTN                 Index;
 	CHAR16*               PathPatched;
   CHAR16*               AcpiOemPath;
-  
+  REFIT_DIR_ITER        DirIter;
+  EFI_FILE_INFO         *DirEntry;
   
   //
   // Search for RSDP in UEFI SystemTable/ConfigTable (first Acpi 2.0, then 1.0)
@@ -2289,20 +2200,24 @@ EFI_STATUS PatchACPI_OtherOS(CHAR16* OsSubdir, BOOLEAN DropSSDT)
   DBG("FADT pointer = %p\n", FadtPointer);
 
   // if not found - quit
-  if(FadtPointer == NULL)
-  {
+  if(FadtPointer == NULL) {
     return EFI_NOT_FOUND;
   }
-  
-  
+
   //
   // Inject/drop tables
   //
   
   // prepare dirs that will be searched for custom ACPI tables
   AcpiOemPath = PoolPrint(L"%s\\ACPI\\%s", OEMPath, OsSubdir);
-  PathPatched = PoolPrint(L"\\EFI\\CLOVER\\ACPI\\%s", OsSubdir);
-  if (!FileExists(SelfRootDir, AcpiOemPath) && !FileExists(SelfRootDir, PathPatched)) {
+  if (FileExists(SelfRootDir, AcpiOemPath)) {
+    PathPatched = AcpiOemPath;
+  } else {
+    FreePool(AcpiOemPath);
+    PathPatched = PoolPrint(L"\\EFI\\CLOVER\\ACPI\\%s", OsSubdir);
+  }
+  if (!FileExists(SelfRootDir, PathPatched)) {
+    FreePool(PathPatched);
     DBG("Dir %s not found. No patching will be done.\n", OsSubdir);
     return EFI_NOT_FOUND;
   }
@@ -2310,13 +2225,12 @@ EFI_STATUS PatchACPI_OtherOS(CHAR16* OsSubdir, BOOLEAN DropSSDT)
   //
   // Inject DSDT
   //
- /* Status = */LoadAndInjectDSDT(AcpiOemPath, PathPatched, FadtPointer);
+ /* Status = */LoadAndInjectDSDT(PathPatched, FadtPointer);
   
   //
   // Drop SSDT if requested
   //
-  if (DropSSDT)
-  {
+  if (DropSSDT) {
     DropTableFromXSDT(EFI_ACPI_4_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE, 0, 0);
     DropTableFromRSDT(EFI_ACPI_4_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE, 0, 0);
   }
@@ -2324,42 +2238,20 @@ EFI_STATUS PatchACPI_OtherOS(CHAR16* OsSubdir, BOOLEAN DropSSDT)
   //
   // find and inject other ACPI tables
   //
-  for (Index = 0; Index < NUM_TABLES; Index++)
-  {
-    //Status = 
-    LoadAndInjectAcpiTable(AcpiOemPath, PathPatched, ACPInames[Index]);
-  }
-/*
-  DirIterOpen(SelfRootDir, AcpiOemPath, &DirIter);
+
+  DirIterOpen(SelfRootDir, PathPatched, &DirIter);
   while (DirIterNext(&DirIter, 2, L"*.aml", &DirEntry)) {
-    CHAR16            FullName[256];
+
     if (DirEntry->FileName[0] == L'.') {
       continue;
     }
     if (StrStr(DirEntry->FileName, L"DSDT")) {
       continue;
     }
-    
-    UnicodeSPrint(FullName, 512, L"%s\\%s", AcpiOemPath, DirEntry->FileName);
-    Status = EFI_NOT_FOUND;
-    // DBG("Looking for ACPI table %s from %s ... ", ACPInames[Index], AcpiOemPath);
-    if (FileExists(SelfRootDir, FullName)) {
-      DBG("Inserting %s from %s ... ", DirEntry->FileName, AcpiOemPath);
-      Status = egLoadFile(SelfRootDir, FullName, &buffer, &bufferLen);
-      if (!EFI_ERROR(Status)) {
-        //before insert we should checksum it
-        if (buffer) {
-          TableHeader = (EFI_ACPI_DESCRIPTION_HEADER*)buffer;
-          TableHeader->Checksum = 0;
-          TableHeader->Checksum = (UINT8)(256-Checksum8((CHAR8*)buffer, TableHeader->Length));
-        }
-        Status = InsertTable((VOID*)buffer, bufferLen);
-      }
-      DBG("%r\n", Status);
-    }
+
+    LoadAndInjectAcpiTable(PathPatched, DirEntry->FileName);
   }
-  Status = DirIterClose(&DirIter);
-*/
+  /*Status = */DirIterClose(&DirIter);
   //
   // fix checksums
   //
@@ -2373,7 +2265,6 @@ EFI_STATUS PatchACPI_OtherOS(CHAR16* OsSubdir, BOOLEAN DropSSDT)
   }
   
   // release mem
-  if (AcpiOemPath) FreePool(AcpiOemPath);
   if (PathPatched) FreePool(PathPatched);
   
   return EFI_SUCCESS;

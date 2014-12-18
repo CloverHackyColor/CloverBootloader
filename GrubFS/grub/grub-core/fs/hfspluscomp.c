@@ -105,8 +105,9 @@ grub_hfsplus_cmp_attrkey (struct grub_hfsplus_key *keya,
      uint16_t but may be faster.  */
   diff = grub_memcmp (attrkey_a->name, attrkey_b->name,
 		      len * sizeof (attrkey_a->name[0]));
-  if (diff == 0)
+  if (diff == 0) {
     diff = grub_be_to_cpu16 (attrkey_a->namelen) - attrkey_b->namelen;
+  }
   return diff;
 }
 
@@ -119,62 +120,63 @@ hfsplus_read_compressed_real (struct grub_hfsplus_file *node,
   char *tmp_buf = 0;
   grub_size_t len0 = len;
 
-  if (node->compressed == 1)
-    {
-      grub_memcpy (buf, node->cbuf + pos, len);
-      if (grub_file_progress_hook && node->file)
-	grub_file_progress_hook (0, 0, len, node->file);
-      return len;
+  if (node->compressed == 1) {
+    grub_memcpy (buf, node->cbuf + pos, len);
+    if (grub_file_progress_hook && node->file) {
+      grub_file_progress_hook (0, 0, len, node->file);
     }
+    return len;
+  }
 
-  while (len)
-    {
-      grub_uint32_t block = pos / HFSPLUS_COMPRESS_BLOCK_SIZE;
-      grub_size_t curlen = HFSPLUS_COMPRESS_BLOCK_SIZE
-	- (pos % HFSPLUS_COMPRESS_BLOCK_SIZE);
+  while (len) {
+    grub_uint32_t block = pos / HFSPLUS_COMPRESS_BLOCK_SIZE;
+    grub_size_t curlen = HFSPLUS_COMPRESS_BLOCK_SIZE
+    - (pos % HFSPLUS_COMPRESS_BLOCK_SIZE);
 
-      if (curlen > len)
-	curlen = len;
+    if (curlen > len)
+      curlen = len;
 
-      if (node->cbuf_block != block)
-	{
-	  grub_uint32_t sz = grub_le_to_cpu32 (node->compress_index[block].size);
-	  grub_size_t ts;
-	  if (!tmp_buf)
-	    tmp_buf = grub_malloc (HFSPLUS_COMPRESS_BLOCK_SIZE);
-	  if (!tmp_buf)
-	    return -1;
-	  if (grub_hfsplus_read_file (node, 0, 0,
-				      grub_le_to_cpu32 (node->compress_index[block].start) + 0x104,
-				      sz, tmp_buf)
-	      != (grub_ssize_t) sz)
-	    {
-	      grub_free (tmp_buf);
-	      return -1;
-	    }
-	  ts = HFSPLUS_COMPRESS_BLOCK_SIZE;
-	  if (ts > node->size - (pos & ~(HFSPLUS_COMPRESS_BLOCK_SIZE)))
-	    ts = node->size - (pos & ~(HFSPLUS_COMPRESS_BLOCK_SIZE));
-	  if (grub_zlib_decompress (tmp_buf, sz, 0,
-				    node->cbuf, ts) != (grub_ssize_t) ts)
-	    {
-	      if (!grub_errno)
-		grub_error (GRUB_ERR_BAD_COMPRESSED_DATA,
-			    "premature end of compressed");
+    if (node->cbuf_block != block) {
+      grub_uint32_t sz = grub_le_to_cpu32 (node->compress_index[block].size);
+      grub_size_t ts;
+      if (!tmp_buf) {
+        tmp_buf = grub_malloc (HFSPLUS_COMPRESS_BLOCK_SIZE);
+      }
+      if (!tmp_buf) {
+        return -1;
+      }
+      if (grub_hfsplus_read_file (node, 0, 0,
+                                  grub_le_to_cpu32 (node->compress_index[block].start) + 0x104,
+                                  sz, tmp_buf)
+          != (grub_ssize_t) sz) {
+        grub_free (tmp_buf);
+        return -1;
+      }
+      ts = HFSPLUS_COMPRESS_BLOCK_SIZE;
+      if (ts > node->size - (pos & ~(HFSPLUS_COMPRESS_BLOCK_SIZE))) {
+        ts = node->size - (pos & ~(HFSPLUS_COMPRESS_BLOCK_SIZE));
+      }
+      if (grub_zlib_decompress (tmp_buf, sz, 0,
+                                node->cbuf, ts) != (grub_ssize_t) ts) {
+        if (!grub_errno) {
+          grub_error (GRUB_ERR_BAD_COMPRESSED_DATA,
+                      "premature end of compressed");
+        }
 
-	      grub_free (tmp_buf);
-	      return -1;
-	    }
-	  node->cbuf_block = block;
-	}
-      grub_memcpy (buf, node->cbuf + (pos % HFSPLUS_COMPRESS_BLOCK_SIZE),
-		   curlen);
-      if (grub_file_progress_hook && node->file)
-	grub_file_progress_hook (0, 0, curlen, node->file);
-      buf += curlen;
-      pos += curlen;
-      len -= curlen;
+        grub_free (tmp_buf);
+        return -1;
+      }
+      node->cbuf_block = block;
     }
+    grub_memcpy (buf, node->cbuf + (pos % HFSPLUS_COMPRESS_BLOCK_SIZE),
+                 curlen);
+    if (grub_file_progress_hook && node->file) {
+      grub_file_progress_hook (0, 0, curlen, node->file);
+    }
+    buf += curlen;
+    pos += curlen;
+    len -= curlen;
+  }
   grub_free (tmp_buf);
   return len0;
 }
@@ -183,7 +185,7 @@ grub_ssize_t
 grub_hfsplus_read_compressed(struct grub_hfsplus_file *node,
                              grub_off_t pos, grub_size_t len, char *buf)
 {
-    return hfsplus_read_compressed_real(node, pos, len, buf);
+  return hfsplus_read_compressed_real(node, pos, len, buf);
 }
 
 static grub_err_t 
@@ -197,9 +199,9 @@ hfsplus_open_compressed_real (struct grub_hfsplus_file *node)
   struct grub_hfsplus_compress_attr *cmp_head;
 #define c grub_cpu_to_be16_compile_time
   const grub_uint16_t compress_attr_name[] =
-    {
-      c('c'), c('o'), c('m'), c('.'), c('a'), c('p'), c('p'), c('l'), c('e'),
-      c('.'), c('d'), c('e'), c('c'), c('m'), c('p'), c('f'), c('s') };
+  {
+    c('c'), c('o'), c('m'), c('.'), c('a'), c('p'), c('p'), c('l'), c('e'),
+    c('.'), c('d'), c('e'), c('c'), c('m'), c('p'), c('f'), c('s') };
 #undef c
   if (node->size)
     return 0;
@@ -209,104 +211,96 @@ hfsplus_open_compressed_real (struct grub_hfsplus_file *node)
   key.attrkey.name = compress_attr_name;
 
   err = grub_hfsplus_btree_search (&node->data->attr_tree, &key,
-				   grub_hfsplus_cmp_attrkey,
-				   &attr_node, &attr_off);
-  if (err || !attr_node)
-    {
+                                   grub_hfsplus_cmp_attrkey,
+                                   &attr_node, &attr_off);
+  if (err || !attr_node) {
+    grub_errno = 0;
+    return 0;
+  }
+
+  attr_head = (struct grub_hfsplus_attr_header *)
+  ((char *) grub_hfsplus_btree_recptr (&node->data->attr_tree,
+                                       attr_node, attr_off)
+   + sizeof (struct grub_hfsplus_attrkey) + sizeof (compress_attr_name));
+  if (attr_head->type != 0x10
+      || !(attr_head->size & grub_cpu_to_be64_compile_time(~0xfULL))) {
+    grub_free (attr_node);
+    return 0;
+  }
+  cmp_head = (struct grub_hfsplus_compress_attr *) (attr_head + 1);
+  if (cmp_head->magic != grub_cpu_to_be32_compile_time (0x66706d63)) {
+    grub_free (attr_node);
+    return 0;
+  }
+  node->size = grub_le_to_cpu32 (cmp_head->uncompressed_inline_size);
+
+  if (cmp_head->type == grub_cpu_to_le32_compile_time (HFSPLUS_COMPRESSION_RESOURCE)) {
+    grub_uint32_t index_size;
+    node->compressed = 2;
+
+    if (grub_hfsplus_read_file (node, 0, 0,
+                                0x104, sizeof (index_size),
+                                (char *) &index_size)
+        != 4) {
+      node->compressed = 0;
+      grub_free (attr_node);
       grub_errno = 0;
       return 0;
     }
-
-  attr_head = (struct grub_hfsplus_attr_header *)
-    ((char *) grub_hfsplus_btree_recptr (&node->data->attr_tree,
-					 attr_node, attr_off)
-     + sizeof (struct grub_hfsplus_attrkey) + sizeof (compress_attr_name));
-  if (attr_head->type != 0x10
-      || !(attr_head->size & grub_cpu_to_be64_compile_time(~0xfULL)))
-    {
+    node->compress_index_size = grub_le_to_cpu32 (index_size);
+    node->compress_index = grub_malloc (node->compress_index_size
+                                        * sizeof (node->compress_index[0]));
+    if (!node->compress_index) {
+      node->compressed = 0;
       grub_free (attr_node);
-      return 0;
-    }
-  cmp_head = (struct grub_hfsplus_compress_attr *) (attr_head + 1);
-  if (cmp_head->magic != grub_cpu_to_be32_compile_time (0x66706d63))
-    {
-      grub_free (attr_node);
-      return 0;
-    }
-  node->size = grub_le_to_cpu32 (cmp_head->uncompressed_inline_size);
-
-  if (cmp_head->type == grub_cpu_to_le32_compile_time (HFSPLUS_COMPRESSION_RESOURCE))
-    {
-      grub_uint32_t index_size;
-      node->compressed = 2;
-
-      if (grub_hfsplus_read_file (node, 0, 0,
-				  0x104, sizeof (index_size),
-				  (char *) &index_size)
-	  != 4)
-	{
-	  node->compressed = 0;
-	  grub_free (attr_node);
-	  grub_errno = 0;
-	  return 0;
-	}
-      node->compress_index_size = grub_le_to_cpu32 (index_size);
-      node->compress_index = grub_malloc (node->compress_index_size
-					  * sizeof (node->compress_index[0]));
-      if (!node->compress_index)
-	{
-	  node->compressed = 0;
-	  grub_free (attr_node);
-	  return grub_errno;
-	}
-      if (grub_hfsplus_read_file (node, 0, 0,
-				  0x104 + sizeof (index_size),
-				  node->compress_index_size
-				  * sizeof (node->compress_index[0]),
-				  (char *) node->compress_index)
-	  != (grub_ssize_t) (node->compress_index_size
-			     * sizeof (node->compress_index[0])))
-	{
-	  node->compressed = 0;
-	  grub_free (attr_node);
-	  grub_free (node->compress_index);
-	  grub_errno = 0;
-	  return 0;
-	}
-
-      node->cbuf_block = -1;
-
-      node->cbuf = grub_malloc (HFSPLUS_COMPRESS_BLOCK_SIZE);
-      grub_free (attr_node);
-      if (!node->cbuf)
-	{
-	  node->compressed = 0;
-	  grub_free (node->compress_index);
-	  return grub_errno;
-	}
-      return 0;
-    }
-  if (cmp_head->type != HFSPLUS_COMPRESSION_INLINE)
-    {
-      grub_free (attr_node);
-      return 0;
-    }
-
-  node->cbuf = grub_malloc (node->size);
-  if (!node->cbuf)
-    return grub_errno;
-
-  if (grub_zlib_decompress ((char *) (cmp_head + 1),
-			    grub_cpu_to_be64 (attr_head->size)
-			    - sizeof (*cmp_head), 0,
-			    node->cbuf, node->size)
-      != (grub_ssize_t) node->size)
-    {
-      if (!grub_errno)
-	grub_error (GRUB_ERR_BAD_COMPRESSED_DATA,
-		    "premature end of compressed");
       return grub_errno;
     }
+    if (grub_hfsplus_read_file (node, 0, 0,
+                                0x104 + sizeof (index_size),
+                                node->compress_index_size
+                                * sizeof (node->compress_index[0]),
+                                (char *) node->compress_index) !=
+        (grub_ssize_t) (node->compress_index_size
+                           * sizeof (node->compress_index[0]))) {
+          node->compressed = 0;
+          grub_free (attr_node);
+          grub_free (node->compress_index);
+          grub_errno = 0;
+          return 0;
+        }
+
+    node->cbuf_block = -1;
+
+    node->cbuf = grub_malloc (HFSPLUS_COMPRESS_BLOCK_SIZE);
+    grub_free (attr_node);
+    if (!node->cbuf) {
+      node->compressed = 0;
+      grub_free (node->compress_index);
+      return grub_errno;
+    }
+    return 0;
+  }
+  if (cmp_head->type != HFSPLUS_COMPRESSION_INLINE) {
+    grub_free (attr_node);
+    return 0;
+  }
+
+  node->cbuf = grub_malloc (node->size);
+  if (!node->cbuf) {
+    return grub_errno;
+  }
+
+  if (grub_zlib_decompress ((char *) (cmp_head + 1),
+                            grub_cpu_to_be64 (attr_head->size)
+                            - sizeof (*cmp_head), 0,
+                            node->cbuf, node->size) !=
+      (grub_ssize_t) node->size) {
+    if (!grub_errno) {
+      grub_error (GRUB_ERR_BAD_COMPRESSED_DATA,
+                  "premature end of compressed");
+    }
+    return grub_errno;
+  }
   node->compressed = 1;
   return 0;
 }

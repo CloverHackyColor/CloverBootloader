@@ -45,35 +45,35 @@ grub_register_command_prio (const char *name,
 
   cmd->flags = 0;
   cmd->prio = prio;
-    
-  for (p = &grub_command_list, q = *p; q; p = &(q->next), q = q->next)
-    {
-      int r;
 
-      r = grub_strcmp (cmd->name, q->name);
-      if (r < 0)
-	break;
-      if (r > 0)
-	continue;
+  for (p = &grub_command_list, q = *p; q; p = &(q->next), q = q->next) {
+    int r;
 
-      if (cmd->prio >= (q->prio & GRUB_COMMAND_PRIO_MASK))
-	{
-	  q->prio &= ~GRUB_COMMAND_FLAG_ACTIVE;
-	  break;
-	}
+    r = grub_strcmp (cmd->name, q->name);
+    if (r < 0)
+      break;
+    if (r > 0)
+      continue;
 
-      inactive = 1;
+    if (cmd->prio >= (q->prio & GRUB_COMMAND_PRIO_MASK)) {
+      q->prio &= ~GRUB_COMMAND_FLAG_ACTIVE;
+      break;
     }
+
+    inactive = 1;
+  }
 
   *p = cmd;
   cmd->next = q;
-  if (q)
+  if (q) {
     q->prev = &cmd->next;
+  }
   cmd->prev = p;
 
-  if (! inactive)
+  if (! inactive) {
     cmd->prio |= GRUB_COMMAND_FLAG_ACTIVE;
-
+  }
+  
   return cmd;
 }
 

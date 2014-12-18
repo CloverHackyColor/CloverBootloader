@@ -141,34 +141,12 @@
 		2C2A0FEF1A0ACF3500E9E558 /* tsc.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C2A0BD31A0ACF3400E9E558 /* tsc.c */; };
 		2C2A0FF01A0ACF3500E9E558 /* hypercall.S in Sources */ = {isa = PBXBuildFile; fileRef = 2C2A0BD51A0ACF3400E9E558 /* hypercall.S */; };
 		2C2A0FF11A0ACF3500E9E558 /* startup.S in Sources */ = {isa = PBXBuildFile; fileRef = 2C2A0BD61A0ACF3400E9E558 /* startup.S */; };
-		2C2A0FF21A0ACF3500E9E558 /* cache.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C2A0BD81A0ACF3400E9E558 /* cache.c */; };
-		2C2A0FF31A0ACF3500E9E558 /* dl.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C2A0BD91A0ACF3400E9E558 /* dl.c */; };
-		2C2A0FF41A0ACF3500E9E558 /* dl_helper.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C2A0BDA1A0ACF3400E9E558 /* dl_helper.c */; };
-		2C2A0FF51A0ACF3500E9E558 /* init.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C2A0BDC1A0ACF3400E9E558 /* init.c */; };
-		2C2A0FF61A0ACF3500E9E558 /* startup.S in Sources */ = {isa = PBXBuildFile; fileRef = 2C2A0BDD1A0ACF3400E9E558 /* startup.S */; };
-		2C2A0FF71A0ACF3500E9E558 /* cmain.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C2A0BDF1A0ACF3400E9E558 /* cmain.c */; };
-		2C2A0FF81A0ACF3500E9E558 /* ieee1275.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C2A0BE01A0ACF3400E9E558 /* ieee1275.c */; };
-		2C2A0FF91A0ACF3500E9E558 /* init.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C2A0BE11A0ACF3400E9E558 /* init.c */; };
-		2C2A0FFA1A0ACF3500E9E558 /* mmap.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C2A0BE21A0ACF3400E9E558 /* mmap.c */; };
-		2C2A0FFB1A0ACF3500E9E558 /* openfw.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C2A0BE31A0ACF3400E9E558 /* openfw.c */; };
 		2C2A0FFC1A0ACF3500E9E558 /* list.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C2A0BE41A0ACF3400E9E558 /* list.c */; };
 		2C2A0FFD1A0ACF3500E9E558 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C2A0BE51A0ACF3400E9E558 /* main.c */; };
-		2C2A0FFE1A0ACF3500E9E558 /* init.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C2A0BE81A0ACF3400E9E558 /* init.c */; };
-		2C2A0FFF1A0ACF3500E9E558 /* cache.S in Sources */ = {isa = PBXBuildFile; fileRef = 2C2A0BE91A0ACF3400E9E558 /* cache.S */; };
-		2C2A10001A0ACF3500E9E558 /* cache_flush.S in Sources */ = {isa = PBXBuildFile; fileRef = 2C2A0BEA1A0ACF3400E9E558 /* cache_flush.S */; };
-		2C2A10011A0ACF3500E9E558 /* dl.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C2A0BEB1A0ACF3400E9E558 /* dl.c */; };
-		2C2A10021A0ACF3500E9E558 /* init.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C2A0BEC1A0ACF3400E9E558 /* init.c */; };
-		2C2A10031A0ACF3500E9E558 /* init.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C2A0BEE1A0ACF3400E9E558 /* init.c */; };
-		2C2A10041A0ACF3500E9E558 /* init.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C2A0BF01A0ACF3400E9E558 /* init.c */; };
-		2C2A10051A0ACF3500E9E558 /* startup.S in Sources */ = {isa = PBXBuildFile; fileRef = 2C2A0BF11A0ACF3400E9E558 /* startup.S */; };
 		2C2A10061A0ACF3500E9E558 /* misc.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C2A0BF21A0ACF3400E9E558 /* misc.c */; };
 		2C2A10071A0ACF3500E9E558 /* mm.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C2A0BF31A0ACF3400E9E558 /* mm.c */; };
 		2C2A10081A0ACF3500E9E558 /* parser.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C2A0BF41A0ACF3400E9E558 /* parser.c */; };
 		2C2A10091A0ACF3500E9E558 /* partition.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C2A0BF51A0ACF3400E9E558 /* partition.c */; };
-		2C2A100A1A0ACF3500E9E558 /* cache.S in Sources */ = {isa = PBXBuildFile; fileRef = 2C2A0BF71A0ACF3400E9E558 /* cache.S */; };
-		2C2A100B1A0ACF3500E9E558 /* cache_flush.S in Sources */ = {isa = PBXBuildFile; fileRef = 2C2A0BF81A0ACF3400E9E558 /* cache_flush.S */; };
-		2C2A100C1A0ACF3500E9E558 /* dl.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C2A0BF91A0ACF3400E9E558 /* dl.c */; };
-		2C2A100D1A0ACF3500E9E558 /* startup.S in Sources */ = {isa = PBXBuildFile; fileRef = 2C2A0BFB1A0ACF3400E9E558 /* startup.S */; };
 		2C2A100E1A0ACF3500E9E558 /* rescue_parser.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C2A0BFC1A0ACF3400E9E558 /* rescue_parser.c */; };
 		2C2A100F1A0ACF3500E9E558 /* rescue_reader.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C2A0BFD1A0ACF3400E9E558 /* rescue_reader.c */; };
 		2C2A10101A0ACF3500E9E558 /* cache.S in Sources */ = {isa = PBXBuildFile; fileRef = 2C2A0BFF1A0ACF3400E9E558 /* cache.S */; };
@@ -585,34 +563,12 @@
 		2C2A0BD31A0ACF3400E9E558 /* tsc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tsc.c; sourceTree = "<group>"; };
 		2C2A0BD51A0ACF3400E9E558 /* hypercall.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = hypercall.S; sourceTree = "<group>"; };
 		2C2A0BD61A0ACF3400E9E558 /* startup.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = startup.S; sourceTree = "<group>"; };
-		2C2A0BD81A0ACF3400E9E558 /* cache.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = cache.c; sourceTree = "<group>"; };
-		2C2A0BD91A0ACF3400E9E558 /* dl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dl.c; sourceTree = "<group>"; };
-		2C2A0BDA1A0ACF3400E9E558 /* dl_helper.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dl_helper.c; sourceTree = "<group>"; };
-		2C2A0BDC1A0ACF3400E9E558 /* init.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = init.c; sourceTree = "<group>"; };
-		2C2A0BDD1A0ACF3400E9E558 /* startup.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = startup.S; sourceTree = "<group>"; };
-		2C2A0BDF1A0ACF3400E9E558 /* cmain.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = cmain.c; sourceTree = "<group>"; };
-		2C2A0BE01A0ACF3400E9E558 /* ieee1275.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ieee1275.c; sourceTree = "<group>"; };
-		2C2A0BE11A0ACF3400E9E558 /* init.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = init.c; sourceTree = "<group>"; };
-		2C2A0BE21A0ACF3400E9E558 /* mmap.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mmap.c; sourceTree = "<group>"; };
-		2C2A0BE31A0ACF3400E9E558 /* openfw.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = openfw.c; sourceTree = "<group>"; };
 		2C2A0BE41A0ACF3400E9E558 /* list.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = list.c; sourceTree = "<group>"; };
 		2C2A0BE51A0ACF3400E9E558 /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
-		2C2A0BE81A0ACF3400E9E558 /* init.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = init.c; sourceTree = "<group>"; };
-		2C2A0BE91A0ACF3400E9E558 /* cache.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = cache.S; sourceTree = "<group>"; };
-		2C2A0BEA1A0ACF3400E9E558 /* cache_flush.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = cache_flush.S; sourceTree = "<group>"; };
-		2C2A0BEB1A0ACF3400E9E558 /* dl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dl.c; sourceTree = "<group>"; };
-		2C2A0BEC1A0ACF3400E9E558 /* init.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = init.c; sourceTree = "<group>"; };
-		2C2A0BEE1A0ACF3400E9E558 /* init.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = init.c; sourceTree = "<group>"; };
-		2C2A0BF01A0ACF3400E9E558 /* init.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = init.c; sourceTree = "<group>"; };
-		2C2A0BF11A0ACF3400E9E558 /* startup.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = startup.S; sourceTree = "<group>"; };
 		2C2A0BF21A0ACF3400E9E558 /* misc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = misc.c; sourceTree = "<group>"; };
 		2C2A0BF31A0ACF3400E9E558 /* mm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mm.c; sourceTree = "<group>"; };
 		2C2A0BF41A0ACF3400E9E558 /* parser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = parser.c; sourceTree = "<group>"; };
 		2C2A0BF51A0ACF3400E9E558 /* partition.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = partition.c; sourceTree = "<group>"; };
-		2C2A0BF71A0ACF3400E9E558 /* cache.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = cache.S; sourceTree = "<group>"; };
-		2C2A0BF81A0ACF3400E9E558 /* cache_flush.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = cache_flush.S; sourceTree = "<group>"; };
-		2C2A0BF91A0ACF3400E9E558 /* dl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dl.c; sourceTree = "<group>"; };
-		2C2A0BFB1A0ACF3400E9E558 /* startup.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = startup.S; sourceTree = "<group>"; };
 		2C2A0BFC1A0ACF3400E9E558 /* rescue_parser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = rescue_parser.c; sourceTree = "<group>"; };
 		2C2A0BFD1A0ACF3400E9E558 /* rescue_reader.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = rescue_reader.c; sourceTree = "<group>"; };
 		2C2A0BFF1A0ACF3400E9E558 /* cache.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = cache.S; sourceTree = "<group>"; };
@@ -1602,16 +1558,12 @@
 				2C2A0BB81A0ACF3400E9E558 /* fs.c */,
 				2C2A0BB91A0ACF3400E9E558 /* generic */,
 				2C2A0BBC1A0ACF3400E9E558 /* i386 */,
-				2C2A0BD71A0ACF3400E9E558 /* ia64 */,
-				2C2A0BDE1A0ACF3400E9E558 /* ieee1275 */,
 				2C2A0BE41A0ACF3400E9E558 /* list.c */,
 				2C2A0BE51A0ACF3400E9E558 /* main.c */,
-				2C2A0BE61A0ACF3400E9E558 /* mips */,
 				2C2A0BF21A0ACF3400E9E558 /* misc.c */,
 				2C2A0BF31A0ACF3400E9E558 /* mm.c */,
 				2C2A0BF41A0ACF3400E9E558 /* parser.c */,
 				2C2A0BF51A0ACF3400E9E558 /* partition.c */,
-				2C2A0BF61A0ACF3400E9E558 /* powerpc */,
 				2C2A0BFC1A0ACF3400E9E558 /* rescue_parser.c */,
 				2C2A0BFD1A0ACF3400E9E558 /* rescue_reader.c */,
 				2C2A0BFE1A0ACF3400E9E558 /* sparc64 */,
@@ -1789,96 +1741,6 @@
 				2C2A0BD61A0ACF3400E9E558 /* startup.S */,
 			);
 			path = xen;
-			sourceTree = "<group>";
-		};
-		2C2A0BD71A0ACF3400E9E558 /* ia64 */ = {
-			isa = PBXGroup;
-			children = (
-				2C2A0BD81A0ACF3400E9E558 /* cache.c */,
-				2C2A0BD91A0ACF3400E9E558 /* dl.c */,
-				2C2A0BDA1A0ACF3400E9E558 /* dl_helper.c */,
-				2C2A0BDB1A0ACF3400E9E558 /* efi */,
-			);
-			path = ia64;
-			sourceTree = "<group>";
-		};
-		2C2A0BDB1A0ACF3400E9E558 /* efi */ = {
-			isa = PBXGroup;
-			children = (
-				2C2A0BDC1A0ACF3400E9E558 /* init.c */,
-				2C2A0BDD1A0ACF3400E9E558 /* startup.S */,
-			);
-			path = efi;
-			sourceTree = "<group>";
-		};
-		2C2A0BDE1A0ACF3400E9E558 /* ieee1275 */ = {
-			isa = PBXGroup;
-			children = (
-				2C2A0BDF1A0ACF3400E9E558 /* cmain.c */,
-				2C2A0BE01A0ACF3400E9E558 /* ieee1275.c */,
-				2C2A0BE11A0ACF3400E9E558 /* init.c */,
-				2C2A0BE21A0ACF3400E9E558 /* mmap.c */,
-				2C2A0BE31A0ACF3400E9E558 /* openfw.c */,
-			);
-			path = ieee1275;
-			sourceTree = "<group>";
-		};
-		2C2A0BE61A0ACF3400E9E558 /* mips */ = {
-			isa = PBXGroup;
-			children = (
-				2C2A0BE71A0ACF3400E9E558 /* arc */,
-				2C2A0BE91A0ACF3400E9E558 /* cache.S */,
-				2C2A0BEA1A0ACF3400E9E558 /* cache_flush.S */,
-				2C2A0BEB1A0ACF3400E9E558 /* dl.c */,
-				2C2A0BEC1A0ACF3400E9E558 /* init.c */,
-				2C2A0BED1A0ACF3400E9E558 /* loongson */,
-				2C2A0BEF1A0ACF3400E9E558 /* qemu_mips */,
-				2C2A0BF11A0ACF3400E9E558 /* startup.S */,
-			);
-			path = mips;
-			sourceTree = "<group>";
-		};
-		2C2A0BE71A0ACF3400E9E558 /* arc */ = {
-			isa = PBXGroup;
-			children = (
-				2C2A0BE81A0ACF3400E9E558 /* init.c */,
-			);
-			path = arc;
-			sourceTree = "<group>";
-		};
-		2C2A0BED1A0ACF3400E9E558 /* loongson */ = {
-			isa = PBXGroup;
-			children = (
-				2C2A0BEE1A0ACF3400E9E558 /* init.c */,
-			);
-			path = loongson;
-			sourceTree = "<group>";
-		};
-		2C2A0BEF1A0ACF3400E9E558 /* qemu_mips */ = {
-			isa = PBXGroup;
-			children = (
-				2C2A0BF01A0ACF3400E9E558 /* init.c */,
-			);
-			path = qemu_mips;
-			sourceTree = "<group>";
-		};
-		2C2A0BF61A0ACF3400E9E558 /* powerpc */ = {
-			isa = PBXGroup;
-			children = (
-				2C2A0BF71A0ACF3400E9E558 /* cache.S */,
-				2C2A0BF81A0ACF3400E9E558 /* cache_flush.S */,
-				2C2A0BF91A0ACF3400E9E558 /* dl.c */,
-				2C2A0BFA1A0ACF3400E9E558 /* ieee1275 */,
-			);
-			path = powerpc;
-			sourceTree = "<group>";
-		};
-		2C2A0BFA1A0ACF3400E9E558 /* ieee1275 */ = {
-			isa = PBXGroup;
-			children = (
-				2C2A0BFB1A0ACF3400E9E558 /* startup.S */,
-			);
-			path = ieee1275;
 			sourceTree = "<group>";
 		};
 		2C2A0BFE1A0ACF3400E9E558 /* sparc64 */ = {
@@ -3521,11 +3383,9 @@
 				2C2A0FEF1A0ACF3500E9E558 /* tsc.c in Sources */,
 				2C2A0F861A0ACF3500E9E558 /* cpio_common.c in Sources */,
 				2C2A0F9D1A0ACF3500E9E558 /* romfs.c in Sources */,
-				2C2A100B1A0ACF3500E9E558 /* cache_flush.S in Sources */,
 				2C2A10391A0ACF3500E9E558 /* vesa_modes_table.c in Sources */,
 				2C2A103C1A0ACF3500E9E558 /* relocator.c in Sources */,
 				2C2A10B71A0ACF3500E9E558 /* mpiutil.c in Sources */,
-				2C2A10051A0ACF3500E9E558 /* startup.S in Sources */,
 				2C2A104B1A0ACF3500E9E558 /* relocator.c in Sources */,
 				2C2A0FA71A0ACF3500E9E558 /* zfs_fletcher.c in Sources */,
 				2C2A10771A0ACF3500E9E558 /* mpih-add1.S in Sources */,
@@ -3545,7 +3405,6 @@
 				2C2A10D41A0ACF3500E9E558 /* mpih-mul2.S in Sources */,
 				2C2A0FD81A0ACF3500E9E558 /* env.c in Sources */,
 				2C2A0FD01A0ACF3500E9E558 /* full.c in Sources */,
-				2C2A10011A0ACF3500E9E558 /* dl.c in Sources */,
 				2C2A101F1A0ACF3500E9E558 /* init.c in Sources */,
 				2C2A105D1A0ACF3500E9E558 /* md.c in Sources */,
 				2C2A11051A0ACF3500E9E558 /* relocator.c in Sources */,
@@ -3558,7 +3417,6 @@
 				2C2A0FB21A0ACF3500E9E558 /* cache.c in Sources */,
 				2C2A10851A0ACF3500E9E558 /* mpih-sub1.c in Sources */,
 				2C2A110B1A0ACF3500E9E558 /* grub.c in Sources */,
-				2C2A10021A0ACF3500E9E558 /* init.c in Sources */,
 				2C2A10581A0ACF3500E9E558 /* elgamal.c in Sources */,
 				2C2A10EB1A0ACF3500E9E558 /* reboot.c in Sources */,
 				2C2A10251A0ACF3500E9E558 /* backtrace.c in Sources */,
@@ -3662,14 +3520,12 @@
 				2C2A110C1A0ACF3500E9E558 /* grub_driver.c in Sources */,
 				2C2A0FBE1A0ACF3500E9E558 /* cache_flush.S in Sources */,
 				2C2A0F821A0ACF3500E9E558 /* btrfs.c in Sources */,
-				2C2A0FFE1A0ACF3500E9E558 /* init.c in Sources */,
 				2C2A10601A0ACF3500E9E558 /* primegen.c in Sources */,
 				2C2A10371A0ACF3500E9E558 /* halt.c in Sources */,
 				2C2A10B31A0ACF3500E9E558 /* mpi-scan.c in Sources */,
 				2C2A0FE41A0ACF3500E9E558 /* startup.S in Sources */,
 				2C2A10941A0ACF3500E9E558 /* mpih-lshift.S in Sources */,
 				2C2A10441A0ACF3500E9E558 /* relocator.S in Sources */,
-				2C2A0FF41A0ACF3500E9E558 /* dl_helper.c in Sources */,
 				2C2A10191A0ACF3500E9E558 /* vga_init.c in Sources */,
 				2C2A0F901A0ACF3500E9E558 /* minix.c in Sources */,
 				2C2A10611A0ACF3500E9E558 /* pubkey.c in Sources */,
@@ -3711,7 +3567,6 @@
 				2C2A0FBF1A0ACF3500E9E558 /* dl.c in Sources */,
 				2C2A0FD91A0ACF3500E9E558 /* err.c in Sources */,
 				2C2A10FD1A0ACF3500E9E558 /* halt.c in Sources */,
-				2C2A0FF61A0ACF3500E9E558 /* startup.S in Sources */,
 				2C2A10971A0ACF3500E9E558 /* mpih-mul3.S in Sources */,
 				2C2A0F811A0ACF3500E9E558 /* bfs.c in Sources */,
 				2C2A106A1A0ACF3500E9E558 /* sha512.c in Sources */,
@@ -3727,7 +3582,6 @@
 				2C2A10871A0ACF3500E9E558 /* mpih-add1.S in Sources */,
 				2C2A10C01A0ACF3500E9E558 /* mpih-sub1.S in Sources */,
 				2C2A10ED1A0ACF3500E9E558 /* reboot.c in Sources */,
-				2C2A0FFA1A0ACF3500E9E558 /* mmap.c in Sources */,
 				2C2A10181A0ACF3500E9E558 /* uboot.c in Sources */,
 				2C2A10E81A0ACF3500E9E558 /* LzmaDec.c in Sources */,
 				2C2A10781A0ACF3500E9E558 /* mpih-lshift.S in Sources */,
@@ -3742,7 +3596,6 @@
 				2C2A10F51A0ACF3500E9E558 /* priority_queue.c in Sources */,
 				2C2A0F771A0ACF3500E9E558 /* pnvram.c in Sources */,
 				2C2A10BC1A0ACF3500E9E558 /* mpih-add1.S in Sources */,
-				2C2A10041A0ACF3500E9E558 /* init.c in Sources */,
 				2C2A10A81A0ACF3500E9E558 /* mpi-add.c in Sources */,
 				2C2A0FAC1A0ACF3500E9E558 /* zfsinfo.c in Sources */,
 				2C2A10A51A0ACF3500E9E558 /* mpih-mul3.S in Sources */,
@@ -3757,11 +3610,8 @@
 				2C2A0F741A0ACF3500E9E558 /* loadcore_common.c in Sources */,
 				2C2A0F981A0ACF3500E9E558 /* ntfs.c in Sources */,
 				2C2A10EC1A0ACF3500E9E558 /* reboot.c in Sources */,
-				2C2A0FF31A0ACF3500E9E558 /* dl.c in Sources */,
-				2C2A100C1A0ACF3500E9E558 /* dl.c in Sources */,
 				2C2A0F921A0ACF3500E9E558 /* minix2_be.c in Sources */,
 				2C2A10411A0ACF3500E9E558 /* relocator_common.S in Sources */,
-				2C2A10001A0ACF3500E9E558 /* cache_flush.S in Sources */,
 				2C2A10E61A0ACF3500E9E558 /* mem.c in Sources */,
 				2C2A10CE1A0ACF3500E9E558 /* mpih-sub1.S in Sources */,
 				2C2A10741A0ACF3500E9E558 /* mpih-rshift.S in Sources */,
@@ -3779,7 +3629,6 @@
 				2C2A102C1A0ACF3500E9E558 /* datetime.c in Sources */,
 				2C2A107B1A0ACF3500E9E558 /* mpih-mul3.S in Sources */,
 				2C2A105A1A0ACF3500E9E558 /* hmac-tests.c in Sources */,
-				2C2A0FF51A0ACF3500E9E558 /* init.c in Sources */,
 				2C2A10361A0ACF3500E9E558 /* backtrace.c in Sources */,
 				2C2A10661A0ACF3500E9E558 /* seed.c in Sources */,
 				2C2A10071A0ACF3500E9E558 /* mm.c in Sources */,
@@ -3809,11 +3658,9 @@
 				2C2A0FC31A0ACF3500E9E558 /* corecmd.c in Sources */,
 				2C2A10DA1A0ACF3500E9E558 /* gcryptrnd.c in Sources */,
 				2C2A10BD1A0ACF3500E9E558 /* mpih-mul1.S in Sources */,
-				2C2A10031A0ACF3500E9E558 /* init.c in Sources */,
 				2C2A101D1A0ACF3500E9E558 /* hypercall.S in Sources */,
 				2C2A106C1A0ACF3500E9E558 /* tiger.c in Sources */,
 				2C2A109A1A0ACF3500E9E558 /* mpih-mul1.S in Sources */,
-				2C2A0FF81A0ACF3500E9E558 /* ieee1275.c in Sources */,
 				2C2A10DC1A0ACF3500E9E558 /* global.c in Sources */,
 				2C2A0F761A0ACF3500E9E558 /* mm.c in Sources */,
 				2C2A10151A0ACF3500E9E558 /* time.c in Sources */,
@@ -3852,18 +3699,15 @@
 				2C2A104C1A0ACF3500E9E558 /* legacy_parse.c in Sources */,
 				2C2A10EA1A0ACF3500E9E558 /* minilzo.c in Sources */,
 				2C2A10511A0ACF3500E9E558 /* camellia.c in Sources */,
-				2C2A0FFF1A0ACF3500E9E558 /* cache.S in Sources */,
 				2C2A110A1A0ACF3500E9E558 /* file.c in Sources */,
 				2C2A107D1A0ACF3500E9E558 /* mpih-sub1.S in Sources */,
 				2C2A10641A0ACF3500E9E558 /* rmd160.c in Sources */,
 				2C2A104D1A0ACF3500E9E558 /* ac.c in Sources */,
-				2C2A100D1A0ACF3500E9E558 /* startup.S in Sources */,
 				2C2A10C31A0ACF3500E9E558 /* mpih-mul1.S in Sources */,
 				2C2A107E1A0ACF3500E9E558 /* ec.c in Sources */,
 				2C2A10B41A0ACF3500E9E558 /* mpicoder.c in Sources */,
 				2C2A0FD11A0ACF3500E9E558 /* hostdisk.c in Sources */,
 				2C2A11111A0ACF3500E9E558 /* path.c in Sources */,
-				2C2A100A1A0ACF3500E9E558 /* cache.S in Sources */,
 				2C2A0FFC1A0ACF3500E9E558 /* list.c in Sources */,
 				2C2A0FBA1A0ACF3500E9E558 /* startup.S in Sources */,
 				2C2A10D71A0ACF3500E9E558 /* ath.c in Sources */,
@@ -3881,7 +3725,6 @@
 				2C2A10481A0ACF3500E9E558 /* datetime.c in Sources */,
 				2C2A10061A0ACF3500E9E558 /* misc.c in Sources */,
 				2C2A10141A0ACF3500E9E558 /* term.c in Sources */,
-				2C2A0FFB1A0ACF3500E9E558 /* openfw.c in Sources */,
 				2C2A10B61A0ACF3500E9E558 /* mpih-mul.c in Sources */,
 				2C2A0F9E1A0ACF3500E9E558 /* sfs.c in Sources */,
 				2C2A10211A0ACF3500E9E558 /* datetime.c in Sources */,
@@ -3912,7 +3755,6 @@
 				2C2A10EF1A0ACF3500E9E558 /* relocator_asm.S in Sources */,
 				2C2A110F1A0ACF3500E9E558 /* Makefile in Sources */,
 				2C2A0FEC1A0ACF3500E9E558 /* mmap.c in Sources */,
-				2C2A0FF71A0ACF3500E9E558 /* cmain.c in Sources */,
 				2C2A10AA1A0ACF3500E9E558 /* mpi-cmp.c in Sources */,
 				2C2A10341A0ACF3500E9E558 /* getline.c in Sources */,
 				2C2A0FA91A0ACF3500E9E558 /* zfs_lzjb.c in Sources */,
@@ -3924,8 +3766,6 @@
 				2C2A10621A0ACF3500E9E558 /* rfc2268.c in Sources */,
 				2C2A108F1A0ACF3500E9E558 /* mpih-mul2.S in Sources */,
 				2C2A0FD61A0ACF3500E9E558 /* mm.c in Sources */,
-				2C2A0FF91A0ACF3500E9E558 /* init.c in Sources */,
-				2C2A0FF21A0ACF3500E9E558 /* cache.c in Sources */,
 				2C2A10281A0ACF3500E9E558 /* crc.c in Sources */,
 				2C2A103D1A0ACF3500E9E558 /* relocator16.S in Sources */,
 				2C2A0FDD1A0ACF3500E9E558 /* rtc_get_time_ms.c in Sources */,
@@ -4103,6 +3943,7 @@
 				2C2A0B311A0ACEEC00E9E558 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

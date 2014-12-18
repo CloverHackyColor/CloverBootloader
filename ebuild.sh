@@ -521,9 +521,12 @@ MainPostBuildScript() {
         startBlock=Start64H.com
 		if [[ "$USE_BIOS_BLOCKIO" -ne 0 ]]; then
 			cloverEFIFile=boot7
-			startBlock=Start64H2.com
-		fi
-		if [[ "$USE_LOW_EBDA" -ne 0 ]]; then
+			if [[ "$USE_LOW_EBDA" -ne 0 ]]; then
+				startBlock=Start64H4.com
+			else
+				startBlock=Start64H2.com
+			fi
+		elif [[ "$USE_LOW_EBDA" -ne 0 ]]; then
 			cloverEFIFile=boot5
 			startBlock=Start64H3.com
 		fi
