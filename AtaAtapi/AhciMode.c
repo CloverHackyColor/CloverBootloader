@@ -1355,10 +1355,10 @@ AhciStartCommand (
   //
   // Setting the command
   //
-  Offset = EFI_AHCI_PORT_START + Port * EFI_AHCI_PORT_REG_WIDTH + EFI_AHCI_PORT_SACT;
+/*  Offset = EFI_AHCI_PORT_START + Port * EFI_AHCI_PORT_REG_WIDTH + EFI_AHCI_PORT_SACT;
   AhciAndReg (PciIo, Offset, 0);
   AhciOrReg (PciIo, Offset, CmdSlotBit);
-
+*/
   Offset = EFI_AHCI_PORT_START + Port * EFI_AHCI_PORT_REG_WIDTH + EFI_AHCI_PORT_CI;
   AhciAndReg (PciIo, Offset, 0);
   AhciOrReg (PciIo, Offset, CmdSlotBit);

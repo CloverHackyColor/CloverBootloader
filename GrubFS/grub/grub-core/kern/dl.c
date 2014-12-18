@@ -453,6 +453,7 @@ grub_dl_find_section (Elf_Ehdr *e, const char *name)
    constitutes linking) and GRUB core being licensed under GPLv3+.
    Be sure to understand your license obligations.
 */
+// fuck you, Volodya
 /*
 static grub_err_t
 grub_dl_check_license (Elf_Ehdr *e)
