@@ -1092,7 +1092,7 @@ static VOID ScanDriverDir(IN CHAR16 *Path, OUT EFI_HANDLE **DriversToConnect, OU
   // look through contents of the directory
   DirIterOpen(SelfRootDir, Path, &DirIter);
   while (DirIterNext(&DirIter, 2, L"*.EFI", &DirEntry)) {
-    Skip = (DirEntry->FileName[0] == '.');
+    Skip = (DirEntry->FileName[0] == L'.');
 //    if (DirEntry->FileName[0] == '.')
 //      continue;   // skip this    
     for (i=0; i<gSettings.BlackListCount; i++) {
