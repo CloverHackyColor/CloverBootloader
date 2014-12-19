@@ -743,6 +743,11 @@ EG_IMAGE * BuiltinIcon(IN UINTN Id);
 #define MENU_EXIT_HELP        (7)
 #define MENU_EXIT_HIDE_TOGGLE (8)
 
+#define X_IS_LEFT    64
+#define X_IS_RIGHT   0
+#define X_IS_CENTER  1
+#define BADGE_DIMENSION 64
+
 VOID AddMenuInfoLine(IN REFIT_MENU_SCREEN *Screen, IN CHAR16 *InfoLine);
 VOID AddMenuEntry(IN REFIT_MENU_SCREEN *Screen, IN REFIT_MENU_ENTRY *Entry);
 VOID FreeMenu(IN REFIT_MENU_SCREEN *Screen);
@@ -753,6 +758,7 @@ VOID ReinitVolumes(VOID);
 BOOLEAN ReadAllKeyStrokes(VOID);
 VOID OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry);
 VOID FreeScrollBar(VOID);
+INTN DrawTextXY(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign);
 
 //
 // config module

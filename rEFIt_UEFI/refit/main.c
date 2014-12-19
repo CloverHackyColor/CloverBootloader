@@ -1710,6 +1710,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   BOOLEAN           UniteConfigs = FALSE;
   EFI_TIME          Now;
   BOOLEAN           HaveDefaultVolume;
+  CHAR16            *FirstMessage;
   
   // CHAR16            *InputBuffer; //, *Y;
   //  EFI_INPUT_KEY Key;
@@ -1767,6 +1768,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   DBG(" AddProperties:  %x\n",    OFFSET_OF(SETTINGS_DATA, AddProperties));
   DBG(" BlockKexts:     %x\n",    OFFSET_OF(SETTINGS_DATA, BlockKexts));
    */
+  
   
   // disable EFI watchdog timer
   gBS->SetWatchdogTimer(0x0000, 0x0000, 0x0000, NULL);
@@ -1853,7 +1855,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   InitializeSecureBoot();
 #endif // ENABLE_SECURE_BOOT
 
-#if HIBERNATE
+#if HIBERNATE_DUMP_DATA
   {
     UINT32                    machineSignature		= 0;
     EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE		  *FadtPointer = NULL;
@@ -1941,6 +1943,17 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 #endif // ENABLE_SECURE_BOOT
     return Status;
   }
+
+  if (!GlobalConfig.FastBoot) {
+    FirstMessage = PoolPrint(L"   Welcome to Clover %s   ", FIRMWARE_REVISION);
+    i = (UGAWidth - StrLen(FirstMessage) * GlobalConfig.CharWidth) >> 1;
+    DrawTextXY(FirstMessage, i, UGAHeight >> 1, X_IS_CENTER);
+    FreePool(FirstMessage);
+    FirstMessage = PoolPrint(L"... testing hardware ...");
+    i = (UGAWidth - StrLen(FirstMessage) * GlobalConfig.CharWidth) >> 1;
+    DrawTextXY(FirstMessage, i, (UGAHeight >> 1) + 20, X_IS_CENTER);
+    FreePool(FirstMessage);
+  }
   
   ZeroMem((VOID*)&gGraphics[0], sizeof(GFX_PROPERTIES) * 4);
   
@@ -1970,6 +1983,13 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
                                          (gCPUStructure.MaxRatio == 0) ? 1 : gCPUStructure.MaxRatio);
   gCPUStructure.ExternalClock = (UINT32)DivU64x32(gCPUStructure.FSBFrequency, kilo);
   gCPUStructure.MaxSpeed = (UINT32)DivU64x32(gCPUStructure.TSCFrequency, Mega);
+
+  if (!GlobalConfig.FastBoot) {
+    FirstMessage = PoolPrint(L"... user settings ...");
+    i = (UGAWidth - StrLen(FirstMessage) * GlobalConfig.CharWidth) >> 1;
+    DrawTextXY(FirstMessage, i, (UGAHeight >> 1) + 20, X_IS_CENTER);
+    FreePool(FirstMessage);
+  }
 
   //Second step. Load config.plist into gSettings
   for (i=0; i<2; i++) {
@@ -2006,6 +2026,14 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 // this speeds up loading of default OSX volume.
      GetEfiBootDeviceFromNvram();
   }
+  
+  if (!GlobalConfig.FastBoot) {
+    FirstMessage = PoolPrint(L"... scan entries ...");
+    i = (UGAWidth - StrLen(FirstMessage) * GlobalConfig.CharWidth) >> 1;
+    DrawTextXY(FirstMessage, i, (UGAHeight >> 1) + 20, X_IS_CENTER);
+    FreePool(FirstMessage);
+  }
+    
   AfterTool = FALSE;
   gGuiIsReady = TRUE;
   do {
@@ -2030,8 +2058,8 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         FreeMenu(&OptionMenu);
       }
       gThemeChanged = FALSE;
-      DBG("Choosing theme %s\n", GlobalConfig.Theme); 
-
+      DBG("Choosing theme %s\n", GlobalConfig.Theme);
+      
       //now it is a time to set RtVariables
       SetVariablesFromNvram();
       FillInputs(TRUE);
@@ -2087,6 +2115,11 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         MenuEntryShutdown.Image = BuiltinIcon(BUILTIN_ICON_FUNC_SHUTDOWN);
         AddMenuEntry(&MainMenu, &MenuEntryShutdown);
       }
+      
+      FirstMessage = PoolPrint(L"...theme %s ...", GlobalConfig.Theme);
+      i = (UGAWidth - StrLen(FirstMessage) * GlobalConfig.CharWidth) >> 1;
+      DrawTextXY(FirstMessage, i, (UGAHeight >> 1) + 20, X_IS_CENTER);
+      FreePool(FirstMessage);
     }
     // wait for user ACK when there were errors
     FinishTextScreen(FALSE);

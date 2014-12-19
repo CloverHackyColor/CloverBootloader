@@ -56,7 +56,7 @@
 EG_IMAGE *FontImage = NULL;
 INTN FontWidth = 7;
 INTN FontHeight = 12;
-INTN TextHeight;
+INTN TextHeight = 16;
 
 //
 // Text rendering

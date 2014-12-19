@@ -145,7 +145,7 @@
   HobLib
   IoLib
 #  HiiLib
-  EfiFileLib
+#  EfiFileLib
   PeCoffLib
 #  GenericBdsLib
   MemLogLib

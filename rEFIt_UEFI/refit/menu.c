@@ -51,10 +51,6 @@
 #define DBG(...) DebugLog(DEBUG_MENU, __VA_ARGS__)	
 #endif
 
-#define X_IS_LEFT    64
-#define X_IS_RIGHT   0
-#define X_IS_CENTER  1
-#define BADGE_DIMENSION 64
 
 //#define PREBOOT_LOG L"EFI\\CLOVER\\misc\\preboot.log"
 #define VBIOS_BIN L"EFI\\CLOVER\\misc\\c0000.bin"
@@ -87,7 +83,7 @@ INTN LayoutAnimMoveForMenuX = 0;
 #define SCROLL_SCROLL_UP      (8)
 #define SCROLL_SCROLLBAR_MOVE (9)
 
-INTN DrawTextXY(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign);
+
 
 // other menu definitions
 
@@ -1848,8 +1844,9 @@ VOID DrawMenuText(IN CHAR16 *Text, IN INTN SelectedWidth, IN INTN XPos, IN INTN 
     TextBuffer = NULL;
   }
 
-  if (TextBuffer == NULL)
+  if (TextBuffer == NULL) {
     TextBuffer = egCreateImage(LAYOUT_TEXT_WIDTH, TextHeight, TRUE);
+  }
   
   if (Cursor != 0xFFFF) {
     egFillImage(TextBuffer, &MenuBackgroundPixel);
@@ -1865,7 +1862,7 @@ VOID DrawMenuText(IN CHAR16 *Text, IN INTN SelectedWidth, IN INTN XPos, IN INTN 
   }
   
   // render the text
-  egRenderText(Text, TextBuffer, TEXT_XMARGIN, TEXT_YMARGIN, (INTN)Cursor);
+  egRenderText(Text, TextBuffer, TEXT_XMARGIN, TEXT_YMARGIN, Cursor);
   BltImageAlpha(TextBuffer, (INTN)XPos, (INTN)YPos, &MenuBackgroundPixel, 16);
 }
 
