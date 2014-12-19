@@ -317,9 +317,10 @@ void PrintConfig(CFTypeRef data)
   addInteger(bootDict, CFSTR("XMPDetection"), s->XMPDetection);
   addUString(bootDict, CFSTR("DefaultVolume"), (const UniChar *)&s->DefaultVolume);
   addUString(bootDict, CFSTR("DefaultLoader"), (const UniChar *)&s->DefaultLoader);
-  addBoolean(bootDict, CFSTR("Log"), s->Debug);
-  addString(bootDict, CFSTR("Timeout"), "_NOT_SHOWN_");
+  addBoolean(bootDict, CFSTR("Debug"), s->Debug);
+  addString(bootDict, CFSTR("#Timeout"), "_NOT_SHOWN_");
   addBoolean(bootDict, CFSTR("Fast"), 0);
+  addString(bootDict, CFSTR("#CustomLogo"), "_NOT_SHOWN_");
   
   
   // SystemParameters
@@ -333,14 +334,14 @@ void PrintConfig(CFTypeRef data)
   // GUI
   CFMutableDictionaryRef guiDict = addDict(dict, CFSTR("GUI"));
   addString(guiDict, CFSTR("Language"), s->Language);
-  addString(guiDict, CFSTR("Theme"), "BGM");
+  addString(guiDict, CFSTR("Theme"), "embedded");
   addBoolean(guiDict, CFSTR("TextOnly"), 0);
   addBoolean(guiDict, CFSTR("CustomIcons"), 0);
     
   CFMutableDictionaryRef mouseDict = addDict(guiDict, CFSTR("Mouse"));
   addBoolean(mouseDict, CFSTR("Enabled"), s->PointerEnabled);
   addInteger(mouseDict, CFSTR("Speed"), s->PointerSpeed);
-  addInteger(mouseDict, CFSTR("DoubleClick"), s->DoubleClickTime);
+//  addInteger(mouseDict, CFSTR("DoubleClick"), s->DoubleClickTime);
   addBoolean(mouseDict, CFSTR("Mirror"), s->PointerMirror);
   
   CFMutableArrayRef hideArray = addArray(guiDict, CFSTR("Hide"));
@@ -350,49 +351,49 @@ void PrintConfig(CFTypeRef data)
   
   CFMutableDictionaryRef scanDict = addDict(guiDict, CFSTR("Scan"));
   addString(scanDict, CFSTR("Comment"), "These values wrong, they present for sample");
-  addBoolean(scanDict, CFSTR("Entries"), 1);
-  addBoolean(scanDict, CFSTR("Tool"), 1);
-  addBoolean(scanDict, CFSTR("Legacy"), 1);
+  addBoolean(scanDict, CFSTR("#Entries"), 1);
+  addBoolean(scanDict, CFSTR("#Tool"), 1);
+  addBoolean(scanDict, CFSTR("#Legacy"), 1);
   
   CFMutableDictionaryRef customDict = addDict(guiDict, CFSTR("Custom"));
   addString(customDict, CFSTR("Comment"), "These values wrong, they present for sample");
     CFMutableArrayRef entriesArray = addArray(customDict, CFSTR("Entries"));
       CFMutableDictionaryRef entries1Dict = addDictToArray(entriesArray);
       addString(entries1Dict, CFSTR("Comment"), "These values wrong, they present for sample");
-      addString(entries1Dict, CFSTR("Volume"), "VolumeUUID_NOT_SHOWN");
-      addString(entries1Dict, CFSTR("Path"), "_NOT_SHOWN_");
-      addString(entries1Dict, CFSTR("Type"), "_NOT_SHOWN_");
-      addString(entries1Dict, CFSTR("Arguments"), "_NOT_SHOWN_");
-      addString(entries1Dict, CFSTR("Title"), "_NOT_SHOWN_");
-      addString(entries1Dict, CFSTR("FullTitle"), "_NOT_SHOWN_");
-      addString(entries1Dict, CFSTR("Image"), "_NOT_SHOWN_");
-      addString(entries1Dict, CFSTR("Hotkey"), "_NOT_SHOWN_");
-      addBoolean(entries1Dict, CFSTR("Disabled"), 1);
-      addBoolean(entries1Dict, CFSTR("InjectKexts"), 1);
-      addBoolean(entries1Dict, CFSTR("NoCaches"), 0);
-      addBoolean(entries1Dict, CFSTR("Hidden"), 1);
+      addString(entries1Dict, CFSTR("#Volume"), "VolumeUUID_NOT_SHOWN");
+      addString(entries1Dict, CFSTR("#Path"), "_NOT_SHOWN_");
+      addString(entries1Dict, CFSTR("#Type"), "_NOT_SHOWN_");
+      addString(entries1Dict, CFSTR("#Arguments"), "_NOT_SHOWN_");
+      addString(entries1Dict, CFSTR("#Title"), "_NOT_SHOWN_");
+      addString(entries1Dict, CFSTR("#FullTitle"), "_NOT_SHOWN_");
+      addString(entries1Dict, CFSTR("#Image"), "_NOT_SHOWN_");
+      addString(entries1Dict, CFSTR("#Hotkey"), "_NOT_SHOWN_");
+      addBoolean(entries1Dict, CFSTR("#Disabled"), 1);
+      addBoolean(entries1Dict, CFSTR("#InjectKexts"), 1);
+      addBoolean(entries1Dict, CFSTR("#NoCaches"), 0);
+      addBoolean(entries1Dict, CFSTR("#Hidden"), 1);
       CFMutableArrayRef subEntriesArray = addArray(entries1Dict, CFSTR("SubEntries"));
         CFMutableDictionaryRef subEntries1Dict = addDictToArray(subEntriesArray);
-        addString(subEntries1Dict, CFSTR("Title"), "_NOT_SHOWN_");
-        addString(subEntries1Dict, CFSTR("AddArguments"), "_NOT_SHOWN_");
+        addString(subEntries1Dict, CFSTR("#Title"), "_NOT_SHOWN_");
+        addString(subEntries1Dict, CFSTR("#AddArguments"), "_NOT_SHOWN_");
     CFMutableArrayRef legacyArray = addArray(customDict, CFSTR("Legacy"));
       CFMutableDictionaryRef legacy1Dict = addDictToArray(legacyArray);
-      addString(legacy1Dict, CFSTR("Volume"), "VolumeUUID_NOT_SHOWN");
-      addString(legacy1Dict, CFSTR("Type"), "_NOT_SHOWN_");
-      addString(legacy1Dict, CFSTR("Title"), "_NOT_SHOWN_");
-      addString(legacy1Dict, CFSTR("Hotkey"), "_NOT_SHOWN_");
-      addBoolean(legacy1Dict, CFSTR("Disabled"), 1);
-      addBoolean(legacy1Dict, CFSTR("Hidden"), 1);
+      addString(legacy1Dict, CFSTR("#Volume"), "VolumeUUID_NOT_SHOWN");
+      addString(legacy1Dict, CFSTR("#Type"), "_NOT_SHOWN_");
+      addString(legacy1Dict, CFSTR("#Title"), "_NOT_SHOWN_");
+      addString(legacy1Dict, CFSTR("#Hotkey"), "_NOT_SHOWN_");
+      addBoolean(legacy1Dict, CFSTR("#Disabled"), 1);
+      addBoolean(legacy1Dict, CFSTR("#Hidden"), 1);
     CFMutableArrayRef toolArray = addArray(customDict, CFSTR("Tool"));
       CFMutableDictionaryRef tool1Dict = addDictToArray(toolArray);
-      addString(tool1Dict, CFSTR("Volume"), "VolumeUUID_NOT_SHOWN");
-      addString(tool1Dict, CFSTR("Path"), "_NOT_SHOWN_");
-      addString(tool1Dict, CFSTR("Type"), "_NOT_SHOWN_");
-      addString(tool1Dict, CFSTR("Title"), "_NOT_SHOWN_");
-      addString(tool1Dict, CFSTR("Arguments"), "_NOT_SHOWN_");
-      addString(tool1Dict, CFSTR("Hotkey"), "_NOT_SHOWN_");
-      addBoolean(tool1Dict, CFSTR("Disabled"), 1);
-      addBoolean(tool1Dict, CFSTR("Hidden"), 1);
+      addString(tool1Dict, CFSTR("#Volume"), "VolumeUUID_NOT_SHOWN");
+      addString(tool1Dict, CFSTR("#Path"), "_NOT_SHOWN_");
+      addString(tool1Dict, CFSTR("#Type"), "_NOT_SHOWN_");
+      addString(tool1Dict, CFSTR("#Title"), "_NOT_SHOWN_");
+      addString(tool1Dict, CFSTR("#Arguments"), "_NOT_SHOWN_");
+      addString(tool1Dict, CFSTR("#Hotkey"), "_NOT_SHOWN_");
+      addBoolean(tool1Dict, CFSTR("#Disabled"), 1);
+      addBoolean(tool1Dict, CFSTR("#Hidden"), 1);
   
 /*  
   CFMutableDictionaryRef volumesDict = addDict(guiDict, CFSTR("Volumes"));
@@ -447,18 +448,18 @@ void PrintConfig(CFTypeRef data)
     CFMutableDictionaryRef memoryDict = addDict(smbiosDict, CFSTR("Memory"));
     
     addString(memoryDict, CFSTR("Comment"), "there are no real data here");
-    addInteger(memoryDict, CFSTR("SlotCount"), 0);
-    addInteger(memoryDict, CFSTR("Channels"), 0);
+    addInteger(memoryDict, CFSTR("#SlotCount"), 0);
+    addInteger(memoryDict, CFSTR("#Channels"), 0);
     
     CFMutableArrayRef modulesArray = addArray(memoryDict, CFSTR("Modules"));
     CFMutableDictionaryRef moduleDict = addDictToArray(modulesArray);
-    addInteger(moduleDict, CFSTR("Slot"), 0);
-    addInteger(moduleDict, CFSTR("Size"), 0);
-    addString(moduleDict, CFSTR("Vendor"), s->MemoryManufacturer);
-    addString(moduleDict, CFSTR("Serial"), s->MemorySerialNumber);
-    addString(moduleDict, CFSTR("Part"), s->MemoryPartNumber);
-    addString(moduleDict, CFSTR("Frequency"), s->MemorySpeed);
-    addString(moduleDict, CFSTR("Type"), "DDRx");
+    addInteger(moduleDict, CFSTR("#Slot"), 0);
+    addInteger(moduleDict, CFSTR("#Size"), 0);
+    addString(moduleDict, CFSTR("#Vendor"), s->MemoryManufacturer);
+    addString(moduleDict, CFSTR("#Serial"), s->MemorySerialNumber);
+    addString(moduleDict, CFSTR("#Part"), s->MemoryPartNumber);
+    addString(moduleDict, CFSTR("#Frequency"), s->MemorySpeed);
+    addString(moduleDict, CFSTR("#Type"), "DDRx");
   }
   
   // CPU
@@ -470,22 +471,22 @@ void PrintConfig(CFTypeRef data)
   addInteger(cpuDict, CFSTR("SavingMode"), s->SavingMode);
   // these values read only
   addInteger(cpuDict, CFSTR("EnabledCores"), s->EnabledCores);
-  addBoolean(cpuDict, CFSTR("C2"), s->EnableC2);  
-  addBoolean(cpuDict, CFSTR("C4"), s->EnableC4); 
-  addBoolean(cpuDict, CFSTR("C6"), s->EnableC6); 
-  addInteger(cpuDict, CFSTR("Latency"), s->C3Latency); 
+//  addBoolean(cpuDict, CFSTR("C2"), s->EnableC2);
+//  addBoolean(cpuDict, CFSTR("C4"), s->EnableC4);
+//  addBoolean(cpuDict, CFSTR("C6"), s->EnableC6);
+//  addInteger(cpuDict, CFSTR("Latency"), s->C3Latency);
   
   // Devices
   CFMutableDictionaryRef pciDict = addDict(dict, CFSTR("Devices"));
-  addBoolean(pciDict, CFSTR("Inject"), s->StringInjector);
-  addString(pciDict, CFSTR("Properties"), "_NOT_SHOWN_");
+  addBoolean(pciDict, CFSTR("#Inject"), s->StringInjector);
+  addString(pciDict, CFSTR("#Properties"), "_NOT_SHOWN_");
 //  addInteger(pciDict, CFSTR("PCIRootUID"), s->PCIRootUID);
-  addBoolean(pciDict, CFSTR("NoDefaultProperties"), s->NoDefaultProperties);
-  CFMutableArrayRef appPropArray = addArray(pciDict, CFSTR("AddProperties"));
+  addBoolean(pciDict, CFSTR("#NoDefaultProperties"), s->NoDefaultProperties);
+  CFMutableArrayRef appPropArray = addArray(pciDict, CFSTR("#AddProperties"));
   CFMutableDictionaryRef appPropDict = addDictToArray(appPropArray);
-  addString(appPropDict, CFSTR("Device"), "XXX");
-  addString(appPropDict, CFSTR("Key"), "AAPL,XXX");
-  addHex(appPropDict, CFSTR("Value"), 0xFFFF);
+  addString(appPropDict, CFSTR("#Device"), "XXX");
+  addString(appPropDict, CFSTR("#Key"), "AAPL,XXX");
+  addHex(appPropDict, CFSTR("#Value"), 0xFFFF);
   
   CFMutableDictionaryRef fakeIDDict = addDict(pciDict, CFSTR("FakeID"));
   addHex(fakeIDDict, CFSTR("ATI"), s->FakeATI);
@@ -499,10 +500,14 @@ void PrintConfig(CFTypeRef data)
   
   CFMutableDictionaryRef audioDict = addDict(pciDict, CFSTR("Audio"));
   if (s->HDAInjection)
-    addInteger(audioDict, CFSTR("Inject"), s->HDALayoutId);
+    addInteger(audioDict, CFSTR("#Inject"), s->HDALayoutId);
   else
-    addBoolean(audioDict, CFSTR("Inject"), s->HDAInjection);
+    addBoolean(audioDict, CFSTR("#Inject"), s->HDAInjection);
+  addBoolean(audioDict, CFSTR("#ResetHDA"), s->ResetHDA);
   addBoolean(pciDict, CFSTR("UseIntelHDMI"), s->UseIntelHDMI);
+  addBoolean(pciDict, CFSTR("ForceHPET"), s->ForceHPET);
+  
+  
 
   CFMutableDictionaryRef usbDict = addDict(pciDict, CFSTR("USB"));
   addBoolean(usbDict, CFSTR("Inject"), s->USBInjection);
@@ -518,7 +523,7 @@ void PrintConfig(CFTypeRef data)
   addBoolean(injectDict, CFSTR("Intel"), s->InjectIntel);
   addBoolean(graphicsDict, CFSTR("LoadVBios"), s->LoadVBios);
   addBoolean(graphicsDict, CFSTR("InjectEDID"), s->InjectEDID);
-  addString(graphicsDict, CFSTR("CustomEDID"), "_NOT_SHOWN_");
+  addString(graphicsDict, CFSTR("#CustomEDID"), "_NOT_SHOWN_");
   addBoolean(graphicsDict, CFSTR("PatchVBios"), s->PatchVBios);
   addInteger(graphicsDict, CFSTR("VideoPorts"), s->VideoPorts);
   addInteger(graphicsDict, CFSTR("VRAM"), s->VRAM);
@@ -530,11 +535,11 @@ void PrintConfig(CFTypeRef data)
   addIntArray(graphicsDict, CFSTR("NVCAP"), &s->NVCAP[0], 20);
   // INTEL specific
   addHex(graphicsDict, CFSTR("ig-platform-id"), s->IgPlatform);
-  addInteger(graphicsDict, CFSTR("PatchVBiosBytes Count"), s->PatchVBiosBytesCount);
-  CFMutableArrayRef vbiosArray = addArray(graphicsDict, CFSTR("PatchVBiosBytes"));
+  addInteger(graphicsDict, CFSTR("#PatchVBiosBytes Count"), s->PatchVBiosBytesCount);
+  CFMutableArrayRef vbiosArray = addArray(graphicsDict, CFSTR("#PatchVBiosBytes"));
   CFMutableDictionaryRef vbiosDict = addDictToArray(vbiosArray);
-  addString(vbiosDict, CFSTR("Find"), "_NOT_SHOWN_");
-  addString(vbiosDict, CFSTR("Replace"), "_NOT_SHOWN_");
+  addString(vbiosDict, CFSTR("#Find"), "_NOT_SHOWN_");
+  addString(vbiosDict, CFSTR("#Replace"), "_NOT_SHOWN_");
   
   //ACPI
   CFMutableDictionaryRef acpiDict = addDict(dict, CFSTR("ACPI"));
@@ -552,7 +557,7 @@ void PrintConfig(CFTypeRef data)
   addBoolean(dsdtDict, CFSTR("SuspendOverride"), s->SuspendOverride);
   addBoolean(dsdtDict, CFSTR("Rtc8Allowed"), s->Rtc8Allowed);
 //  addBoolean(dsdtDict, CFSTR("SlpSmiAtWake"), s->SlpWak);
-  addInteger(dsdtDict, CFSTR("Patches count"), s->PatchDsdtNum);
+  addInteger(dsdtDict, CFSTR("#Patches count"), s->PatchDsdtNum);
 
   CFMutableDictionaryRef fixDict = addDict(dsdtDict, CFSTR("Fixes"));
   addBoolean(fixDict, CFSTR("AddDTGP_0001"),       !!(s->FixDsdt & FIX_DTGP));
@@ -589,8 +594,8 @@ void PrintConfig(CFTypeRef data)
   CFMutableArrayRef dsdtPatchArray = addArray(dsdtDict, CFSTR("Patches"));
     CFMutableDictionaryRef dsdtPatchDict = addDictToArray(dsdtPatchArray);
     addString(dsdtPatchDict, CFSTR("Comment"), "This is for sample");
-    addString(dsdtPatchDict, CFSTR("Find"), "_NOT_SHOWN_");
-    addString(dsdtPatchDict, CFSTR("Replace"), "_NOT_SHOWN_");
+    addString(dsdtPatchDict, CFSTR("#Find"), "_NOT_SHOWN_");
+    addString(dsdtPatchDict, CFSTR("#Replace"), "_NOT_SHOWN_");
 
   CFMutableDictionaryRef dsmDict = addDict(dsdtDict, CFSTR("DropOEM_DSM"));
   addBoolean(dsmDict, CFSTR("ATI"),       !!(s->DropOEM_DSM & DEV_ATI));
@@ -612,43 +617,44 @@ void PrintConfig(CFTypeRef data)
     addBoolean(genDict, CFSTR("PStates"), s->GeneratePStates);
     addBoolean(genDict, CFSTR("CStates"), s->GenerateCStates);
   addBoolean(ssdtDict, CFSTR("DropOem"), s->DropSSDT);
-  addBoolean(ssdtDict, CFSTR("DoubleFirstState"), s->DoubleFirstState);
-  addInteger(ssdtDict, CFSTR("MinMultiplier"), s->MinMultiplier);
-  addInteger(ssdtDict, CFSTR("MaxMultiplier"), s->MaxMultiplier);
-  addInteger(ssdtDict, CFSTR("PLimitDict"), s->PLimitDict);
-  addInteger(ssdtDict, CFSTR("UnderVoltStep"), s->UnderVoltStep);
-  addInteger(ssdtDict, CFSTR("PluginType"), s->PluginType);
-  addBoolean(ssdtDict, CFSTR("UseSystemIO"), s->EnableISS);
-  addBoolean(ssdtDict, CFSTR("EnableC2"), s->EnableC2);
-  addBoolean(ssdtDict, CFSTR("EnableC4"), s->EnableC4);
-  addBoolean(ssdtDict, CFSTR("EnableC6"), s->EnableC6);
-  addBoolean(ssdtDict, CFSTR("EnableC7"), s->EnableC7);
-  addInteger(ssdtDict, CFSTR("C3Latency"), s->C3Latency);
+  addBoolean(ssdtDict, CFSTR("#DoubleFirstState"), s->DoubleFirstState);
+  addInteger(ssdtDict, CFSTR("#MinMultiplier"), s->MinMultiplier);
+  addInteger(ssdtDict, CFSTR("#MaxMultiplier"), s->MaxMultiplier);
+  addInteger(ssdtDict, CFSTR("#PLimitDict"), s->PLimitDict);
+  addInteger(ssdtDict, CFSTR("#UnderVoltStep"), s->UnderVoltStep);
+  addInteger(ssdtDict, CFSTR("#PluginType"), s->PluginType);
+  addBoolean(ssdtDict, CFSTR("#UseSystemIO"), s->EnableISS);
+  addBoolean(ssdtDict, CFSTR("#EnableC2"), s->EnableC2);
+  addBoolean(ssdtDict, CFSTR("#EnableC4"), s->EnableC4);
+  addBoolean(ssdtDict, CFSTR("#EnableC6"), s->EnableC6);
+  addBoolean(ssdtDict, CFSTR("#EnableC7"), s->EnableC7);
+  addInteger(ssdtDict, CFSTR("#C3Latency"), s->C3Latency);
 
   CFMutableArrayRef dropArray = addArray(acpiDict, CFSTR("DropTables"));
   CFMutableDictionaryRef drop1Dict = addDictToArray(dropArray);
-  addString(drop1Dict, CFSTR("Signature"), "_NOT_SHOWN_");
-  addString(drop1Dict, CFSTR("TableId"), "_NOT_SHOWN_");
-  addInteger(drop1Dict, CFSTR("Length"), 0);
+  addString(drop1Dict, CFSTR("#Signature"), "_NOT_SHOWN_");
+  addString(drop1Dict, CFSTR("#TableId"), "_NOT_SHOWN_");
+  addInteger(drop1Dict, CFSTR("#Length"), 0);
   
   
   // KernelAndKextPatches
   CFMutableDictionaryRef KernelAndKextPatchesDict = addDict(dict, CFSTR("KernelAndKextPatches"));
-  addBoolean(KernelAndKextPatchesDict, CFSTR("Debug"), s->KernelAndKextPatches.KPDebug);
+  addBoolean(KernelAndKextPatchesDict, CFSTR("#Debug"), s->KernelAndKextPatches.KPDebug);
   addBoolean(KernelAndKextPatchesDict, CFSTR("KernelCpu"), s->KernelAndKextPatches.KPKernelCpu);
   addBoolean(KernelAndKextPatchesDict, CFSTR("KernelPm"), s->KernelAndKextPatches.KPKernelPm);
   addBoolean(KernelAndKextPatchesDict, CFSTR("KernelLapic"), s->KernelAndKextPatches.KPLapicPanic);
   addBoolean(KernelAndKextPatchesDict, CFSTR("AppleRTC"), s->KernelAndKextPatches.KPAppleRTC);
   addBoolean(KernelAndKextPatchesDict, CFSTR("AsusAICPUPM"), s->KernelAndKextPatches.KPAsusAICPUPM);
   //addBoolean(KernelAndKextPatchesDict, CFSTR("KextPatchesAllowed"), s->KextPatchesAllowed);
-  addInteger(KernelAndKextPatchesDict, CFSTR("Number_of_KextsToPatch"), s->KernelAndKextPatches.NrKexts);
+  addInteger(KernelAndKextPatchesDict, CFSTR("#Number_of_KextsToPatch"), s->KernelAndKextPatches.NrKexts);
+  addString(KernelAndKextPatchesDict, CFSTR("#FakeCPUID"), "0x0");
     
   CFMutableArrayRef KKPatchArray = addArray(KernelAndKextPatchesDict, CFSTR("KextsToPatch"));
   for (i = 0; i < s->KernelAndKextPatches.NrKexts; i++) {
     patchDict[i] = addDictToArray(KKPatchArray);
-    addString(patchDict[i], CFSTR("Name"), "_NOT_SHOWN_");
-    addString(patchDict[i], CFSTR("Find"), "_NOT_SHOWN_");
-    addString(patchDict[i], CFSTR("Replace"), "_NOT_SHOWN_");
+    addString(patchDict[i], CFSTR("#Name"), "_NOT_SHOWN_");
+    addString(patchDict[i], CFSTR("#Find"), "_NOT_SHOWN_");
+    addString(patchDict[i], CFSTR("#Replace"), "_NOT_SHOWN_");
   }
   
 //  CFMutableDictionaryRef rtVariablesDict = addDict(dict, CFSTR("RtVariables"));
@@ -658,7 +664,7 @@ void PrintConfig(CFTypeRef data)
 //  addInteger(rtVariablesDict, CFSTR("LogLineCount"), s->LogLineCount);
 //  addString(rtVariablesDict, CFSTR("LogEveryBoot"), "_NOT_SHOWN_");
   
-  CFMutableArrayRef disArray = addArray(dict, CFSTR("DisableDrivers"));
+  CFMutableArrayRef disArray = addArray(dict, CFSTR("#DisableDrivers"));
   addStringToArray(disArray, "_NOT_SHOWN_");
   
   dump_plist(dict);

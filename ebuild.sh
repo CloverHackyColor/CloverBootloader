@@ -527,7 +527,7 @@ MainPostBuildScript() {
 				startBlock=Start64H2.com
 			fi
 		elif [[ "$USE_LOW_EBDA" -ne 0 ]]; then
-			cloverEFIFile=boot5
+#			cloverEFIFile=boot5   ### it will be same boot6
 			startBlock=Start64H3.com
 		fi
         cat $BOOTSECTOR_BIN_DIR/$startBlock $BOOTSECTOR_BIN_DIR/efi64.com3 "${BUILD_DIR}"/FV/Efildr64 > "${BUILD_DIR}"/FV/Efildr20Pure    

@@ -228,7 +228,7 @@
 		<string>PBR</string>
 		<key>LegacyBiosDefaultEntry</key>
 		<integer>0</integer>
-		<key>Log</key>
+		<key>Debug</key>
 		<false/>
 		<key>Timeout</key>
 		<integer>5</integer>
@@ -570,30 +570,23 @@
 				<key>Comment</key>
 				<string>Second Stage patch 1</string>
 				<key>Find</key>
-				<data>
-				hcB0XUg=
-				</data>
+				<data>hcB0XUg=</data>
 				<key>Name</key>
 				<string>IOGraphicsFamily</string>
 				<key>Replace</key>
-				<data>
-				McB0W0g=
-				</data>
+				<data>McB0W0g=</data>
 			</dict>
 			<dict>
 				<key>Comment</key>
 				<string>Second Stage patch 2</string>
 				<key>Find</key>
-				<data>
-				QYjE6wM=
-				</data>
+				<data>QYjE6wM=</data>
 				<key>Name</key>
 				<string>IOGraphicsFamily</string>
 				<key>Replace</key>
-				<data>
-				QYjE6yM=
-				</data>
-			</dict>		</array>
+				<data>QYjE6yM=</data>
+			</dict>
+		</array>
 	</dict>
 	<key>RtVariables</key>
 	<dict>

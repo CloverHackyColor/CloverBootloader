@@ -230,7 +230,7 @@
 		<string>PBR</string>
 		<key>#LegacyBiosDefaultEntry</key>
 		<integer>0</integer>
-		<key>Log</key>
+		<key>Debug</key>
 		<false/>
 		<key>Timeout</key>
 		<integer>5</integer>
