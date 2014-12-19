@@ -1823,7 +1823,7 @@ GetEarlyUserSettings (
         AsciiStrToUnicodeStr (Prop->string, gSettings.DefaultLoader);
       }
       
-      Prop = GetProperty (DictPointer, "Log");
+      Prop = GetProperty (DictPointer, "Debug");
       if (IsPropertyTrue (Prop)) {
         GlobalConfig.DebugLog       = TRUE;
       }
