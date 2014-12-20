@@ -2479,7 +2479,7 @@ GetListOfThemes ()
       continue;
     }
 
-    DBG ("Found theme %s", DirEntry->FileName);
+    DBG ("Found theme directory: %s", DirEntry->FileName);
     ThemeTestPath = PoolPrint (L"EFI\\CLOVER\\themes\\%s", DirEntry->FileName);
     if (ThemeTestPath != NULL) {
       Status = SelfRootDir->Open (SelfRootDir, &ThemeTestDir, ThemeTestPath, EFI_FILE_MODE_READ, 0);
@@ -2487,7 +2487,7 @@ GetListOfThemes ()
         Status = egLoadFile (ThemeTestDir, CONFIG_THEME_FILENAME, (UINT8**)&ThemePtr, &Size);
         if (EFI_ERROR (Status) || (ThemePtr == NULL) || (Size == 0)) {
           Status = EFI_NOT_FOUND;
-          DBG (" - no theme.plist");
+          DBG (" - bad theme because %s can't be load", CONFIG_THEME_FILENAME);
         } else {
           //we found a theme
           ThemesList[ThemesNum++] = (CHAR16*)AllocateCopyPool (StrSize (DirEntry->FileName), DirEntry->FileName);
