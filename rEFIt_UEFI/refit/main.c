@@ -1944,7 +1944,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     return Status;
   }
 
-  if (!GlobalConfig.FastBoot) {
+  if (!GlobalConfig.FastBoot  && GlobalConfig.Timeout>0) {
     FirstMessage = PoolPrint(L"   Welcome to Clover %s   ", FIRMWARE_REVISION);
     i = (UGAWidth - StrLen(FirstMessage) * GlobalConfig.CharWidth) >> 1;
     DrawTextXY(FirstMessage, i, UGAHeight >> 1, X_IS_CENTER);
@@ -1984,7 +1984,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   gCPUStructure.ExternalClock = (UINT32)DivU64x32(gCPUStructure.FSBFrequency, kilo);
   gCPUStructure.MaxSpeed = (UINT32)DivU64x32(gCPUStructure.TSCFrequency, Mega);
 
-  if (!GlobalConfig.FastBoot) {
+  if (!GlobalConfig.FastBoot && GlobalConfig.Timeout>0) {
     FirstMessage = PoolPrint(L"... user settings ...");
     i = (UGAWidth - StrLen(FirstMessage) * GlobalConfig.CharWidth) >> 1;
     DrawTextXY(FirstMessage, i, (UGAHeight >> 1) + 20, X_IS_CENTER);
@@ -2027,7 +2027,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
      GetEfiBootDeviceFromNvram();
   }
   
-  if (!GlobalConfig.FastBoot) {
+  if (!GlobalConfig.FastBoot && GlobalConfig.Timeout>0) {
     FirstMessage = PoolPrint(L"... scan entries ...");
     i = (UGAWidth - StrLen(FirstMessage) * GlobalConfig.CharWidth) >> 1;
     DrawTextXY(FirstMessage, i, (UGAHeight >> 1) + 20, X_IS_CENTER);
@@ -2115,11 +2115,13 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         MenuEntryShutdown.Image = BuiltinIcon(BUILTIN_ICON_FUNC_SHUTDOWN);
         AddMenuEntry(&MainMenu, &MenuEntryShutdown);
       }
-      
-      FirstMessage = PoolPrint(L"...theme %s ...", GlobalConfig.Theme);
-      i = (UGAWidth - StrLen(FirstMessage) * GlobalConfig.CharWidth) >> 1;
-      DrawTextXY(FirstMessage, i, (UGAHeight >> 1) + 20, X_IS_CENTER);
-      FreePool(FirstMessage);
+
+      if (GlobalConfig.Timeout>0) {
+        FirstMessage = PoolPrint(L"...theme %s ...", GlobalConfig.Theme);
+        i = (UGAWidth - StrLen(FirstMessage) * GlobalConfig.CharWidth) >> 1;
+        DrawTextXY(FirstMessage, i, (UGAHeight >> 1) + 20, X_IS_CENTER);
+        FreePool(FirstMessage);
+      }
     }
     // wait for user ACK when there were errors
     FinishTextScreen(FALSE);
