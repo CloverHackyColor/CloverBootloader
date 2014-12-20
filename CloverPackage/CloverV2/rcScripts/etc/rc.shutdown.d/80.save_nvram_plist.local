@@ -79,7 +79,7 @@ function mountNVRAMDisk {
     #
     umount "$mntpt"       2>/dev/null
     umount "/dev/$device" 2>/dev/null
-    for fstype in hfs msdos; do
+    for fstype in hfs msdos exfat; do
         mount -t $fstype /dev/$device "$mntpt" &>/dev/null
         [[ $? -eq 0 ]] && echo "$mntpt" && return 0
     done
