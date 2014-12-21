@@ -14,8 +14,6 @@ export DEBUG=${DEBUG:-0}
 declare -r CLOVER_LOG_LOCATION=/Library/Logs/CloverEFI
 export CLOVER_LOG_LOCATION
 
-declare -r plistbuddy='/usr/libexec/PlistBuddy'
-
 ##################### FUNCTIONS #####################
 
 #

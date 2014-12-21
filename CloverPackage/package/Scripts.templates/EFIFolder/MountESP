@@ -16,7 +16,9 @@ disk_partition_scheme=$(LC_ALL=C diskutil info "$DiskDevice" 2>/dev/null | \
 
 if [[ "$disk_partition_scheme" = "GUID_partition_scheme" ]]; then
 
-    # Get the index of the ESP device
+  plistbuddy='/usr/libexec/PlistBuddy'
+
+  # Get the index of the ESP device
     index=$(LC_ALL=C /usr/sbin/gpt -r show "/dev/$DiskDevice" 2>/dev/null | \
      awk 'toupper($7) == "C12A7328-F81F-11D2-BA4B-00A0C93EC93B" {print $3; exit}')
     [[ -z "$index" ]] && index=1 # if not found use the index 1

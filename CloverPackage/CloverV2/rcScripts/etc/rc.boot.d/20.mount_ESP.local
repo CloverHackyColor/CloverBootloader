@@ -24,6 +24,7 @@ fi
 
 # Variables
 ESPMountPoint=/Volumes/EFI
+declare -r plistbuddy='/usr/libexec/PlistBuddy'
 
 # Debug mode ?
 [[ "$DEBUG" -ne 0 ]] && set -x
