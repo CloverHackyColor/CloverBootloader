@@ -397,9 +397,9 @@ Returns:
               //
               // Disable the SMI in USBLEGCTLSTS firstly
               //
-              PciIo->Pci.Read (PciIo, EfiPciIoWidthUint32, ExtendCap + 0x4, 1, &mSaveValue);
-              Value = mSaveValue & 0xFFFF0000;
-              PciIo->Pci.Write (PciIo, EfiPciIoWidthUint32, ExtendCap + 0x4, 1, &Value);
+//              PciIo->Pci.Read (PciIo, EfiPciIoWidthUint32, ExtendCap + 0x4, 1, &mSaveValue);
+//              Value = mSaveValue & 0xFFFF0000;
+//              PciIo->Pci.Write (PciIo, EfiPciIoWidthUint32, ExtendCap + 0x4, 1, &Value);
               
               //
               // Get EHCI Ownership from legacy bios
@@ -418,11 +418,16 @@ Returns:
                   break;
                 }
               }
-              if (!TimeOut) {
+              if ((INT32) TimeOut < 0) {
                 //DBG("Cannot disable UsbLegacy, ExtCap=0x%x\n", Value);
-                //as Sunki suggested
-                PciIo->Pci.Write (PciIo, EfiPciIoWidthUint32, ExtendCap + 0x4, 1, &mSaveValue);
-                
+               
+ //               PciIo->Pci.Write (PciIo, EfiPciIoWidthUint32, ExtendCap + 0x4, 1, &mSaveValue);
+                //
+                // Disable the SMI in USBLEGCTLSTS if BIOS doesn't respond
+                //
+                PciIo->Pci.Read (PciIo, EfiPciIoWidthUint32, ExtendCap + 0x4, 1, &mSaveValue);
+                Value = mSaveValue & 0xFFFF0000;
+                PciIo->Pci.Write (PciIo, EfiPciIoWidthUint32, ExtendCap + 0x4, 1, &Value);
               }
             }
           } 
