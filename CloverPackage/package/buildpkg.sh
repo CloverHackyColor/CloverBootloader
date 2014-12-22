@@ -535,9 +535,11 @@ main ()
     # Utils
     ditto --noextattr --noqtn ${SYMROOT}/bdmesg/bdmesg  ${PKG_BUILD_DIR}/${choiceId}/Root/usr/local/bin/
     ditto --noextattr --noqtn ${SYMROOT}/clover-genconfig/clover-genconfig  ${PKG_BUILD_DIR}/${choiceId}/Root/usr/local/bin/
+    ditto --noextattr --noqtn ${SYMROOT}/boot1-install/boot1-install  ${PKG_BUILD_DIR}/${choiceId}/Root/usr/local/bin/
     fixperms "${PKG_BUILD_DIR}/${choiceId}/Root/"
     chmod 755 "${PKG_BUILD_DIR}/${choiceId}/Root/usr/local/bin/bdmesg"
     chmod 755 "${PKG_BUILD_DIR}/${choiceId}/Root/usr/local/bin/clover-genconfig"
+    chmod 755 "${PKG_BUILD_DIR}/${choiceId}/Root/usr/local/bin/boot1-install"
     packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
     buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/"
     addChoice --start-visible="false" --start-selected="checkFileExists('/System/Library/CoreServices/boot.efi')"  \

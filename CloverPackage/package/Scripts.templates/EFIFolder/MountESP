@@ -10,6 +10,13 @@ if [[ -z "$DiskDevice" ]]; then
     exit 1
 fi
 
+# Installing boot1-install in /usr/local/bin if not exists
+if [[ ! -e "/usr/local/bin/boot1-install" ]]; then
+  mkdir -p /usr/local/bin
+  cp -f "${DEST_VOL}/usr/local/bin"/boot1-install /usr/local/bin/
+fi
+
+
 # Check if the disk is a GPT disk
 disk_partition_scheme=$(LC_ALL=C diskutil info "$DiskDevice" 2>/dev/null | \
  sed -nE 's/.*(Partition Type|Content \(IOContent\)): *//p')
@@ -38,12 +45,11 @@ if [[ "$disk_partition_scheme" = "GUID_partition_scheme" ]]; then
         ESPMountPoint="/Volumes/ESP"
         exitcode=1
 
-        tmpfile=$(mktemp -t fstyp)
-        LC_ALL=C diskutil info -plist /dev/$ESPDevice > "$tmpfile"
-        fstype=$($plistbuddy -c "Print FilesystemType" \
-         "$tmpfile" 2>/dev/null)
-        rm -f "$tmpfile"
-
+#tmpfile=$(mktemp -t fstyp)
+#LC_ALL=C diskutil info -plist /dev/$ESPDevice > "$tmpfile"
+#fstype=$($plistbuddy -c "Print FilesystemType" "$tmpfile" 2>/dev/null)
+#rm -f "$tmpfile"
+        fstype=$(${DEST_VOL}/usr/local/bin/boot1-install -q /dev/$ESPDevice)
         if [[ -n "$fstype" ]]; then
             [[ ! -d "${ESPMountPoint}" ]] && mkdir -p "${ESPMountPoint}"
             mount -t $fstype /dev/$ESPDevice "${ESPMountPoint}" 2>&1

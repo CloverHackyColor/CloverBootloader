@@ -83,6 +83,7 @@ mkdir -p "${IMGROOT}"/usr/local/bin
 cp -p "${SYMROOT}"/clover-genconfig/clover-genconfig "${IMGROOT}"/usr/local/bin
 cp -p "${SYMROOT}"/bdmesg/bdmesg "${IMGROOT}"/usr/local/bin
 cp -p "${SYMROOT}"/fdisk440/fdisk440 "${IMGROOT}"/usr/local/bin
+cp -p "${SYMROOT}"/boot1-install/boot1-install "${IMGROOT}"/usr/local/bin
 echo "[MKDIR] ${IMGROOT}/Library/Application Support/Clover"
 mkdir -p "${IMGROOT}/Library/Application Support/Clover"
 cp -p "${SRCROOT}"/CloverUpdater/CloverUpdaterUtility "${IMGROOT}/Library/Application Support/Clover/"
