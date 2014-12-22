@@ -774,13 +774,13 @@ int main(int argc, char* const argv[])
   if (askFstyp) {
     switch (daVolumeKind) {
       case _exfat:
-        printf("exfat\n");
+        printf("exfat");
         return 0;
       case _hfs:
-        printf("hfs\n");
+        printf("hfs");
         return 0;
       case _msdos:
-        printf("msdos\n");
+        printf("msdos");
         return 0;
       default:
         break;

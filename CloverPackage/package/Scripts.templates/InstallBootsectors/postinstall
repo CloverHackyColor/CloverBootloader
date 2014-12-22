@@ -84,11 +84,11 @@ bootdisk_partition_scheme=$(LC_ALL=C diskutil info "$bootdisk" 2>/dev/null | \
 
 case "$bootdisk_partition_scheme" in
     FDisk_partition_scheme)
-        echo "${bootdev} use MBR partition scheme"   >> "$install_log" 
+        echo "${bootdev} use MBR partition scheme" >> "$install_log"
         bootdisk_partition_scheme="mbr"
         ;;
     GUID_partition_scheme)
-        echo "${bootdev} use GPT/Hybrid GPT partition scheme"   >> "$install_log" 
+        echo "${bootdev} use GPT/Hybrid GPT partition scheme" >> "$install_log"
         bootdisk_partition_scheme="gpt"
         ;;
      *) echo "ERROR: $bootdev use an unsupported partition scheme: $bootdisk_partition_scheme"
@@ -96,7 +96,7 @@ case "$bootdisk_partition_scheme" in
         exit 1
         ;;
 esac
-echo ""
+echo "" >> "$install_log"
 echo ""  >> "$install_log" 
 
 echo "==============================================="   >> "$install_log" 
@@ -110,11 +110,13 @@ echo "==============================================="   >> "$install_log"
 #rm -f "$tmpfile"
 boot_volume_format=$(${DEST_VOL}/usr/local/bin/boot1-install -q $bootdev)
 case "$boot_volume_format" in
-      hfs) echo "${bootdev} is currently formatted as HFS"  >> "$install_log" ;; 
-    msdos) echo "${bootdev} is currently formatted as msdos" >> "$install_log" ;;
-    exfat) echo "${bootdev} is currently formatted as ExFAT" >> "$install_log" ;;
+    hfs) echo "${bootdev} is currently formatted as HFS"  >> "$install_log"
+    ;;
+    msdos) echo "${bootdev} is currently formatted as msdos" >> "$install_log"
+    ;;
+    exfat) echo "${bootdev} is currently formatted as ExFAT" >> "$install_log"
+    ;;
 esac
-echo "${bootdev}:${boot_volume_format}" >> "$install_log"
 echo "" >> "$install_log"
 
 echo "======================================================" >> "$install_log"
