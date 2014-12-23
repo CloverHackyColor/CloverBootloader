@@ -70,12 +70,12 @@ function mountESP {
         umount /dev/${ESP} &>/dev/null
         exitcode=1
 
-#local tmpfile=$(mktemp -t fstyp)
-#LC_ALL=C diskutil info -plist /dev/$ESP > "$tmpfile"
-#local fstype=$($plistbuddy -c "Print FilesystemType" "$tmpfile" 2>/dev/null)
-#rm -f "$tmpfile"
-        fstype=$(/usr/local/bin/boot1-install -q /dev/$ESP)
-
+        local tmpfile=$(mktemp -t fstyp)
+        LC_ALL=C diskutil info -plist /dev/$ESP > "$tmpfile"
+        local fstype=$($plistbuddy -c "Print FilesystemType" \
+         "$tmpfile" 2>/dev/null)
+        rm -f "$tmpfile"
+        [[ -z "$fstype" ]] && fstype=$(/sbin/fstyp /dev/$ESP)
         if [[ -n "$fstype" ]]; then
             [[ ! -d "${ESPMountPoint}" ]] && mkdir -p "${ESPMountPoint}"
             mount -t "$fstype" /dev/$ESP "${ESPMountPoint}" &>/dev/null

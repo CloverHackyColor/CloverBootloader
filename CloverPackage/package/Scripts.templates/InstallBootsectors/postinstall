@@ -51,14 +51,10 @@ fi
 
 echo "==============================================="
 echo "Installer Variables:"
-echo "==============================================="   >> "$install_log"
-echo "Installer Variables:"   >> "$install_log"
 echo "********************"
 echo "bootvolume: Volume is ${bootvolume}"
 echo "bootdev: Volume device is ${bootdev}"
-echo "bootdev: Volume device is ${bootdev}"   >> "$install_log"
 echo "bootrdev: Volume raw device is ${bootrdev}"
-echo "bootrdev: Volume raw device is ${bootrdev}"  >> "$install_log"
 echo "bootslice: Volume slice is ${bootslice}"
 echo "bootdisk: Disk device is ${bootdisk}"
 echo "bootrdisk: Disk raw device is ${bootrdisk}"
@@ -84,11 +80,11 @@ bootdisk_partition_scheme=$(LC_ALL=C diskutil info "$bootdisk" 2>/dev/null | \
 
 case "$bootdisk_partition_scheme" in
     FDisk_partition_scheme)
-        echo "${bootdev} use MBR partition scheme" >> "$install_log"
+        echo "${bootdev} use MBR partition scheme"
         bootdisk_partition_scheme="mbr"
         ;;
     GUID_partition_scheme)
-        echo "${bootdev} use GPT/Hybrid GPT partition scheme" >> "$install_log"
+        echo "${bootdev} use GPT/Hybrid GPT partition scheme"
         bootdisk_partition_scheme="gpt"
         ;;
      *) echo "ERROR: $bootdev use an unsupported partition scheme: $bootdisk_partition_scheme"
@@ -96,28 +92,24 @@ case "$bootdisk_partition_scheme" in
         exit 1
         ;;
 esac
-echo "" >> "$install_log"
-echo ""  >> "$install_log" 
+echo ""
 
-echo "==============================================="   >> "$install_log" 
-echo "Check the format of the selected partition"   >> "$install_log" 
-echo "==============================================="   >> "$install_log" 
+echo "==============================================="
+echo "Check the format of the selected partition"
+echo "==============================================="
 
-#tmpfile=$(mktemp -t fstyp)
-#LC_ALL=C diskutil info -plist $bootdev > "$tmpfile"
-#boot_volume_format=$($plistbuddy -c "Print FilesystemType" \
-# "$tmpfile" 2>/dev/null)
-#rm -f "$tmpfile"
-boot_volume_format=$(${DEST_VOL}/usr/local/bin/boot1-install -q $bootdev)
+tmpfile=$(mktemp -t fstyp)
+LC_ALL=C diskutil info -plist $bootdev > "$tmpfile"
+boot_volume_format=$($plistbuddy -c "Print FilesystemType" \
+ "$tmpfile" 2>/dev/null)
+rm -f "$tmpfile"
+[[ -z "$boot_volume_format" ]] && fstype=$(/sbin/fstyp /dev/$bootdev)
 case "$boot_volume_format" in
-    hfs) echo "${bootdev} is currently formatted as HFS"  >> "$install_log"
-    ;;
-    msdos) echo "${bootdev} is currently formatted as msdos" >> "$install_log"
-    ;;
-    exfat) echo "${bootdev} is currently formatted as ExFAT" >> "$install_log"
-    ;;
+      hfs) echo "${bootdev} is currently formatted as HFS"   ;;
+    msdos) echo "${bootdev} is currently formatted as msdos" ;;
+    exfat) echo "${bootdev} is currently formatted as ExFAT" ;;
 esac
-echo "" >> "$install_log"
+echo ""
 
 echo "======================================================" >> "$install_log"
 echo "Installing BootSectors/BootLoader" >> "$install_log"
@@ -158,7 +150,6 @@ if [[ -n "$mnt_pt" ]]; then
         [[ $? -ne 0 ]] && mnt_pt=''
     fi
 fi
-
 
 if [[ ${boot_volume_format} = "hfs" ]]; then
     echo "Stage 1 - Writting ${partitionloaderhfs} to ${bootrdev}" >> "$tmp_log"

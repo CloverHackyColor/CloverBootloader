@@ -34,13 +34,6 @@ install_log="${DEST_VOL}/Clover_Install_Log.txt"
 plistbuddy='/usr/libexec/PlistBuddy'
 installer_target_esp_refid='@INSTALLER_TARGET_ESP_REFID@'
 
-# Installing boot1-install in /usr/local/bin if not exists
-if [[ ! -e "${DEST_VOL}/usr/local/bin/boot1-install" ]]; then
-  mkdir -p ${DEST_VOL}/usr/local/bin
-  cp -f "../../../utils/binaries/boot1-install ${DEST_VOL}/usr/local/bin/
-fi
-
-
 #
 # get value of a nvram key
 #
