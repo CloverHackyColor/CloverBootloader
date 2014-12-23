@@ -98,12 +98,12 @@ echo "==============================================="
 echo "Check the format of the selected partition"
 echo "==============================================="
 
-tmpfile=$(mktemp -t fstyp)
+tmpfile=$(mktemp -t fstyp0)
 LC_ALL=C diskutil info -plist $bootdev > "$tmpfile"
 boot_volume_format=$($plistbuddy -c "Print FilesystemType" \
  "$tmpfile" 2>/dev/null)
 rm -f "$tmpfile"
-[[ -z "$boot_volume_format" ]] && boot_volume_format=$(/sbin/fstyp /dev/$bootdev)
+[[ -z "$boot_volume_format" ]] && boot_volume_format=$(/sbin/fstyp $bootdev)
 case "$boot_volume_format" in
       hfs) echo "${bootdev} is currently formatted as HFS"   ;;
     msdos) echo "${bootdev} is currently formatted as msdos" ;;
