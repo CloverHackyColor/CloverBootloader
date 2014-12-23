@@ -1,5 +1,5 @@
 SRCROOT = $(abspath $(CURDIR)/..)
-OBJROOT = $(abspath $(CURDIR)/../../sym/boot1-install)
+OBJROOT = $(abspath $(CURDIR)/../../sym/utils)
 
 DIR = boot1-install
 
@@ -7,7 +7,7 @@ include ${SRCROOT}/Make.rules
 
 XCODE_VERSION_GE_4 := $(shell expr `xcodebuild -version | sed -nE 's/^Xcode ([0-9]).*/\1/p'` \>= 4)
 
-XCODEBUILD_OPTIONS = OBJROOT=$(OBJROOT) CONFIGURATION_BUILD_DIR=$(OBJROOT) DEPLOYMENT_LOCATION=NO
+XCODEBUILD_OPTIONS = OBJROOT=$(OBJROOT)  DEPLOYMENT_LOCATION=NO CONFIGURATION_BUILD_DIR=$(OBJROOT)
 
 ifeq "$(XCODE_VERSION_GE_4)" "1"
 	XCODEBUILD_OPTIONS += -scheme 'boot1-install'
@@ -24,6 +24,8 @@ all: $(PROG)
 
 $(PROG):
 	@/usr/bin/xcodebuild $(XCODEBUILD_OPTIONS) $(BUILD_ACTION) >/dev/null
+	@rm -rf $(OBJROOT)/*.build
+	@rm -rf $(OBJROOT)/*.dSYM
 
 	@echo [XCODE] $(PROGRAMS)
 

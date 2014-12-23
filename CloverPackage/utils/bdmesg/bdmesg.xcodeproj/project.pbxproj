@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		126151301A151CCF00903E7B /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 1261512F1A151CCF00903E7B /* main.c */; };
-		129263A31A31CC7F005F1426 /* DiskArbitration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 129263A21A31CC7F005F1426 /* DiskArbitration.framework */; };
 		129263A61A31CC88005F1426 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 129263A51A31CC88005F1426 /* CoreFoundation.framework */; };
 		129263A81A31CC91005F1426 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 129263A71A31CC91005F1426 /* IOKit.framework */; };
 /* End PBXBuildFile section */
@@ -40,7 +39,6 @@
 			files = (
 				129263A81A31CC91005F1426 /* IOKit.framework in Frameworks */,
 				129263A61A31CC88005F1426 /* CoreFoundation.framework in Frameworks */,
-				129263A31A31CC7F005F1426 /* DiskArbitration.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -229,11 +227,11 @@
 				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				DEAD_CODE_STRIPPING = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				MACOSX_DEPLOYMENT_TARGET = "";
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_CFLAGS = "-Wl,-no_function_starts";
 				PRESERVE_DEAD_CODE_INITS_AND_TERMS = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
+				SDKROOT = macosx10.7;
 			};
 			name = Debug;
 		};
@@ -244,11 +242,11 @@
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				MACOSX_DEPLOYMENT_TARGET = "";
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_CFLAGS = "-Wl,-no_function_starts";
 				PRESERVE_DEAD_CODE_INITS_AND_TERMS = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
+				SDKROOT = macosx10.7;
 			};
 			name = Release;
 		};

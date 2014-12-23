@@ -43,7 +43,10 @@ if [[ -n "$xcode_path" ]]; then
   # Make CloverPrefpane
   make -C "${SRCROOT}"/CloverPrefpane || exit $?
   # Make utils
-  make -C "${SRCROOT}"/utils || exit $?
+#  make -C "${SRCROOT}"/utils || exit $?
+# temporary use ready-to-use binaries
+  mkdir -p "${SYMROOT}"/utils
+  cp -v "${SRCROOT}"/utils/binaries/* "${SYMROOT}"/utils/
 fi
 
 # Start to build installer.

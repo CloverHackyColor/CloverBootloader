@@ -1,5 +1,5 @@
 SRCROOT = $(abspath $(CURDIR)/..)
-OBJROOT = $(abspath $(CURDIR)/../../sym/fdisk440)
+OBJROOT = $(abspath $(CURDIR)/../../sym/utils)
 
 DIR = fdisk440
 
@@ -30,6 +30,9 @@ $(PROGRAM): $(DIRS_NEEDED) $(OBJS)
 	@lipo -create -arch i386 $@_32 -arch x86_64 $@_64 -output $@
 	@strip $@
 	@rm $@_32 $@_64
+	@rm -f $(OBJROOT)/*.o32*
+	@rm -f $(OBJROOT)/*.o64*
+
 
 install-local: $(PROGRAM)
 	@sudo install -d -g 0 -o 0 /usr/local/bin /usr/local/man/man8

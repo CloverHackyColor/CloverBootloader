@@ -1,5 +1,5 @@
 SRCROOT = $(abspath $(CURDIR)/..)
-OBJROOT = $(abspath $(CURDIR)/../../sym/clover-genconfig)
+OBJROOT = $(abspath $(CURDIR)/../../sym/utils)
 
 include ${SRCROOT}/Make.rules
 
@@ -22,6 +22,8 @@ all: $(PROG)
 
 $(PROG):
 	@/usr/bin/xcodebuild $(XCODEBUILD_OPTIONS) $(BUILD_ACTION) >/dev/null
+	@rm -rf $(OBJROOT)/*.build
+	@rm -rf $(OBJROOT)/*.dSYM
 	@echo [XCODE] $(PROGRAMS)
 
 install-local: $(PROG)

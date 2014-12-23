@@ -103,13 +103,14 @@ LC_ALL=C diskutil info -plist $bootdev > "$tmpfile"
 boot_volume_format=$($plistbuddy -c "Print FilesystemType" \
  "$tmpfile" 2>/dev/null)
 rm -f "$tmpfile"
-[[ -z "$boot_volume_format" ]] && fstype=$(/sbin/fstyp /dev/$bootdev)
+[[ -z "$boot_volume_format" ]] && boot_volume_format=$(/sbin/fstyp /dev/$bootdev)
 case "$boot_volume_format" in
       hfs) echo "${bootdev} is currently formatted as HFS"   ;;
     msdos) echo "${bootdev} is currently formatted as msdos" ;;
     exfat) echo "${bootdev} is currently formatted as ExFAT" ;;
 esac
 echo ""
+echo "${bootdev} is currently formatted as $boot_volume_format"  >> "$install_log"
 
 echo "======================================================" >> "$install_log"
 echo "Installing BootSectors/BootLoader" >> "$install_log"
