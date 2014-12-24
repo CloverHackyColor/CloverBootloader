@@ -140,7 +140,7 @@ GetMacAddress()
       }
       DevicePath = NextDevicePathNode (DevicePath);
     }
-    if (nLanPaths > 4) {
+    if (nLanPaths > 3) {
       break;
     }
   }
