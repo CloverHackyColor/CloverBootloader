@@ -67,10 +67,14 @@ echo ""
 echo ""
 
 # Installing fdisk440 and boot1-install in /usr/local/bin if not exists
-if [[ ! -e "/usr/local/bin/fdisk440" || ! -e "/usr/local/bin/boot1-install" ]]; then
+if [[ ! -e "/usr/local/bin/fdisk440" ]]; then
     mkdir -p /usr/local/bin
-    cp -f "${DEST_VOL}/usr/local/bin"/{fdisk440,boot1-install} /usr/local/bin/
+    cp -f "${DEST_VOL}/usr/local/bin"/{fdisk440} /usr/local/bin/
 fi
+# Installing  boot1-install unconditional because it may be changed in version
+mkdir -p /usr/local/bin
+cp -f "${DEST_VOL}/usr/local/bin"/boot1-install /usr/local/bin/
+
 
 echo "==============================================="
 echo "Check partition scheme"
@@ -103,7 +107,8 @@ LC_ALL=C diskutil info -plist $bootdev > "$tmpfile"
 boot_volume_format=$($plistbuddy -c "Print FilesystemType" \
  "$tmpfile" 2>/dev/null)
 rm -f "$tmpfile"
-[[ -z "$boot_volume_format" ]] && boot_volume_format=$(/sbin/fstyp $bootdev)
+#[[ -z "$boot_volume_format" ]] && boot_volume_format=$(/sbin/fstyp $bootdev)
+[[ -z "$boot_volume_format" ]] && boot_volume_format=$(/usr/local/bin/boot1-install -q $bootdev)
 case "$boot_volume_format" in
       hfs) echo "${bootdev} is currently formatted as HFS"   ;;
     msdos) echo "${bootdev} is currently formatted as msdos" ;;

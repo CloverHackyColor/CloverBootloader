@@ -6,7 +6,13 @@
 cd "$(dirname $0)"
 
 version=v2k
-revision=$(cat ../vers.txt)
+if [[ -d .git ]]; then
+  revision=$(git svn info | grep Revision | tr -cd [:digit:])
+else
+  revision=$(svnversion -n | tr -d [:alpha:])
+fi
+
+#revision=$(cat ../vers.txt)
 
 SRCROOT="${PWD}"
 SYMROOT="${SRCROOT}"/sym
@@ -43,10 +49,10 @@ if [[ -n "$xcode_path" ]]; then
   # Make CloverPrefpane
   make -C "${SRCROOT}"/CloverPrefpane || exit $?
   # Make utils
-#  make -C "${SRCROOT}"/utils || exit $?
+  make -C "${SRCROOT}"/utils || exit $?
 # temporary use ready-to-use binaries
-  mkdir -p "${SYMROOT}"/utils
-  cp -v "${SRCROOT}"/utils/binaries/* "${SYMROOT}"/utils/
+#  mkdir -p "${SYMROOT}"/utils
+#  cp -v "${SRCROOT}"/utils/binaries/* "${SYMROOT}"/utils/
 fi
 
 # Start to build installer.
