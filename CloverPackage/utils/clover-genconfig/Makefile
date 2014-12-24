@@ -1,30 +1,33 @@
-SRCROOT = $(abspath $(CURDIR)/..)
-OBJROOT = $(abspath $(CURDIR)/../../sym/utils)
+
+PROGRAM = clover-genconfig
+
+SRCROOT := $(abspath $(CURDIR)/..)
+SYMROOT := $(abspath $(CURDIR)/../../sym)
+OBJROOT := $(SYMROOT)/build/$(PROGRAM)
+INSTALL_DIR_NAME=utils
+UTILSDIR= $(SYMROOT)/$(INSTALL_DIR_NAME)
 
 include ${SRCROOT}/Make.rules
 
 XCODE_VERSION_GE_4 := $(shell expr `xcodebuild -version | sed -nE 's/^Xcode ([0-9]).*/\1/p'` \>= 4)
 
-XCODEBUILD_OPTIONS=-project 'clover-genconfig.xcodeproj' OBJROOT=$(OBJROOT) CONFIGURATION_BUILD_DIR=$(OBJROOT) DEPLOYMENT_LOCATION=NO
+XCODEBUILD_OPTIONS = OBJROOT=$(OBJROOT) CONFIGURATION_BUILD_DIR=$(OBJROOT) DEPLOYMENT_LOCATION=YES DSTROOT=$(SYMROOT) INSTALL_PATH='/$(INSTALL_DIR_NAME)'
 
 ifeq "$(XCODE_VERSION_GE_4)" "1"
 	XCODEBUILD_OPTIONS += -scheme 'clover-genconfig'
-	BUILD_ACTION=archive
-else
-	XCODEBUILD_OPTIONS += -configuration 'Release'
+	BUILD_ACTION=install
 endif
+XCODEBUILD_OPTIONS += -configuration 'Release'
 
-DIRS_NEEDED := $(OBJROOT)
-PROGRAMS := clover-genconfig
-PROG := $(addprefix $(OBJROOT)/, $(PROGRAMS))
+
+SRCS := $(wildcard *.c)
+PROG := $(addprefix $(UTILSDIR)/, $(PROGRAM))
 
 all: $(PROG)
 
-$(PROG):
+$(PROG): $(SRCS)
+	@echo "\t[XCODE] $(PROGRAM)"
 	@/usr/bin/xcodebuild $(XCODEBUILD_OPTIONS) $(BUILD_ACTION) >/dev/null
-	@rm -rf $(OBJROOT)/*.build
-	@rm -rf $(OBJROOT)/*.dSYM
-	@echo [XCODE] $(PROGRAMS)
 
 install-local: $(PROG)
 	@sudo install -d -g 0 -o 0 /usr/local/bin
@@ -32,10 +35,4 @@ install-local: $(PROG)
 
 clean-local:
 	@/usr/bin/xcodebuild $(XCODEBUILD_OPTIONS) clean  >/dev/null
-	@rm -rf build *~
-	@echo [CLEAN-LOCAL] $(PROGRAMS)
-
-clean:
-	@/usr/bin/xcodebuild $(XCODEBUILD_OPTIONS) clean  >/dev/null
-	@rm -rf build *~
-	@echo [CLEAN] $(PROGRAMS)
+	@rm -rf $(OBJROOT) *~

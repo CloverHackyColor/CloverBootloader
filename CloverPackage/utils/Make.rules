@@ -71,7 +71,7 @@ $(OBJROOT)/%.o: %.s
 	@$(CC) $(CPPFLAGS) -c $(INC) -arch i386 $< -o $@
 
 # This breaks make, must use make all (FIXME)
-$(DIRS_NEEDED) $(OBJROOT) $(SYMROOT):
+$(DIRS_NEEDED):
 	@echo "\t[MKDIR] $@"
 	@$(MKDIRS) $@
 
