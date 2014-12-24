@@ -2,7 +2,7 @@
   Unicode Collation Support component that hides the trivial difference of Unicode Collation
   and Unicode collation 2 Protocol.
 
-  Copyright (c) 2007 - 2012, Intel Corporation. All rights reserved.<BR>
+  Copyright (c) 2007 - 2013, Intel Corporation. All rights reserved.<BR>
   This program and the accompanying materials
   are licensed and made available under the terms and conditions of the Software
   License Agreement which accompanies this distribution.
@@ -36,6 +36,7 @@ InitializeUnicodeCollationSupportWorker (
   IN CONST CHAR8        *DefaultLanguage
   )
 {
+  EFI_STATUS                      ReturnStatus;
   EFI_STATUS                      Status;
   UINTN                           NumHandles;
   UINTN                           Index;
@@ -59,7 +60,7 @@ InitializeUnicodeCollationSupportWorker (
   Iso639Language = (BOOLEAN) (ProtocolGuid == &gEfiUnicodeCollationProtocolGuid);
   GetEfiGlobalVariable2 (VariableName, (VOID**) &Language, NULL);
 
-  Status = EFI_UNSUPPORTED;
+  ReturnStatus = EFI_UNSUPPORTED;
   for (Index = 0; Index < NumHandles; Index++) {
     //
     // Open Unicode Collation Protocol
@@ -90,7 +91,7 @@ InitializeUnicodeCollationSupportWorker (
     if (BestLanguage != NULL) {
       FreePool (BestLanguage);
       mUnicodeCollationInterface = Uci;
-      Status = EFI_SUCCESS;
+      ReturnStatus = EFI_SUCCESS;
       break;
     }
   }
@@ -101,7 +102,7 @@ InitializeUnicodeCollationSupportWorker (
 
   FreePool (Handles);
 
-  return Status;
+  return ReturnStatus;
 }
 
 /**

@@ -28,9 +28,6 @@ READ_STATUS        = TRUE
 READ_LOCK_CAP      = TRUE
 READ_LOCK_STATUS   = TRUE
 
-# Pei Module
-INF  Clover/FatPkg/FatPei/FatPei.inf
-
 # Dxe Module
 INF  Clover/FatPkg/EnhancedFatDxe/Fat.inf
 INF  Clover/VBoxFsDxe/VBoxExt2.inf

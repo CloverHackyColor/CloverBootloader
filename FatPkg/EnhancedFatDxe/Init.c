@@ -1,98 +1,6 @@
-#include "Fat.h"
-/**
- Tests whether a language code has format of ISO639-2.
-
- @param  Languages     The language code to be tested.
-
- @retval TRUE          Language code format is ISO 639-2.
- @retval FALSE         Language code format is not ISO639-2.
-
- **/
-STATIC
-BOOLEAN
-IsIso639LanguageCode (
-                      IN CONST CHAR8          *Languages
-                      )
-{
-  UINTN  Index;
-
-  //
-  // Find out format of Languages
-  //
-  for (Index = 0; Languages[Index] != 0 && Languages[Index] != ';' && Languages[Index] != '-'; Index++);
-  if (Languages[Index] != 0) {
-    //
-    // RFC4646 language code
-    //
-    return FALSE;
-  }
-
-  //
-  // No ';' and '-', it's either ISO639-2 code (list) or single RFC4646 code
-  //
-  if (Index == 2) {
-    //
-    // Single RFC4646 language code without country code, e.g. "en"
-    //
-    return FALSE;
-  }
-
-  //
-  // Languages in format of ISO639-2
-  //
-  return TRUE;
-}
-
-/**
- Compare the first language instance of two language codes, either could be a
- single language code or a language code list. This function assume Language1
- and Language2 has the same language code format, i.e. either ISO639-2 or RFC4646.
-
- @param  Language1     The first language code to be tested.
- @param  Language2     The second language code to be tested.
-
- @retval TRUE          Language code match.
- @retval FALSE         Language code mismatch.
-
- **/
-STATIC
-BOOLEAN
-CompareLanguageCode (
-                     IN CONST CHAR8          *Language1,
-                     IN CONST CHAR8          *Language2
-                     )
-{
-  UINTN Index;
-
-  //
-  // Compare first two bytes of language tag
-  //
-  if ((Language1[0] != Language2[0]) || (Language1[1] != Language2[1])) {
-    return FALSE;
-  }
-
-  if (IsIso639LanguageCode (Language1)) {
-    //
-    // ISO639-2 language code, compare the third byte of language tag
-    //
-    return (BOOLEAN) ((Language1[2] == Language2[2]) ? TRUE : FALSE);
-  }
-
-  //
-  // RFC4646 language code
-  //
-  for (Index = 0; Language1[Index] != 0 && Language1[Index] != ';'; Index++);
-  if ((AsciiStrnCmp (Language1, Language2, Index) == 0) && (Language2[Index] == 0 || Language2[Index] == ';')) {
-    return TRUE;
-  }
-  
-  return FALSE;
-}
-
-
 /*++
 
-Copyright (c) 2005 - 2010, Intel Corporation. All rights reserved.<BR>
+Copyright (c) 2005 - 2013, Intel Corporation. All rights reserved.<BR>
 This program and the accompanying materials
 are licensed and made available under the terms and conditions of the Software
 License Agreement which accompanies this distribution.
@@ -108,118 +16,13 @@ Abstract:
 
 --*/
 
-
-
-EFI_STATUS
-FatInitUnicodeCollationSupport (
-  IN  EFI_DRIVER_BINDING_PROTOCOL    *This,
-  IN  LC_ISO_639_2                   *LangCode,
-  OUT EFI_UNICODE_COLLATION_PROTOCOL **UnicodeCollationInterface
-  )
-/*++
-
-Routine Description:
-
-  Initializes Unicode Collation support.
-    
-Arguments:
-
-  This                       - Protocol instance pointer.    
-  LangCode                   - Language Code specified.
-  UnicodeCollationInterface  - Unicode Collation protocol interface returned.
-
-Returns:
-
-  EFI_SUCCESS                - Successfully get the Unicode Collation protocol interface by 
-                               specified LangCode.
-  EFI_NOT_FOUND              - Specified Unicode Collation protocol is not found.
-
---*/
-{
-  EFI_STATUS                      Status;
-  LC_ISO_639_2                    *Languages;
-  UINTN                           Index;
-  UINTN                           NoHandles;
-  EFI_HANDLE                      *Handles;
-  EFI_UNICODE_COLLATION_PROTOCOL  *Uci;
-  EFI_UNICODE_COLLATION_PROTOCOL  *EngUci;
-  EFI_UNICODE_COLLATION_PROTOCOL  *FoundUci;
-
-  ASSERT (LangCode != NULL);
-  //
-  // Locate all Unicode Collation drivers.
-  //
-  Status = gBS->LocateHandleBuffer (
-                  ByProtocol,
-                  &gEfiUnicodeCollationProtocolGuid,
-                  NULL,
-                  &NoHandles,
-                  &Handles
-                  );
-  if (EFI_ERROR (Status)) {
-    return EFI_NOT_FOUND;
-  }
-
-  FoundUci  = NULL;
-  EngUci    = NULL;
-
-  //
-  // Check all Unicode Collation drivers for a matching language code.
-  //
-  for (Index = 0; Index < NoHandles; Index++) {
-    //
-    // Open Unicode Collation Protocol
-    //
-    Status = gBS->OpenProtocol (
-                    Handles[Index],
-                    &gEfiUnicodeCollationProtocolGuid,
-                    (VOID **) &Uci,
-                    This->DriverBindingHandle,
-                    NULL,
-                    EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                    );
-
-    if (EFI_ERROR (Status)) {
-      continue;
-    }
-    //
-    // Check for a matching language code.
-    //
-    for (Languages = Uci->SupportedLanguages; *Languages != 0; Languages += LC_ISO_639_2_ENTRY_SIZE) {
-      //
-      // If this code matches, use this driver
-      //
-      if (CompareLanguageCode (Languages, LangCode)) {
-        FoundUci = Uci;
-        goto Done;
-      }
-
-      if (CompareLanguageCode (Languages, "eng")) {
-        EngUci = Uci;
-      }
-    }
-  }
-
-Done:
-  //
-  // Cleanup
-  //
-  if (Handles != NULL) {
-    gBS->FreePool (Handles);
-  }
-
-  if (FoundUci == NULL) {
-    FoundUci = EngUci;
-  }
-
-  *UnicodeCollationInterface = FoundUci;
-  return FoundUci != NULL ? EFI_SUCCESS : EFI_NOT_FOUND;
-}
+#include "Fat.h"
 
 EFI_STATUS
 FatAllocateVolume (
   IN  EFI_HANDLE                Handle,
   IN  EFI_DISK_IO_PROTOCOL      *DiskIo,
+  IN  EFI_DISK_IO2_PROTOCOL     *DiskIo2,
   IN  EFI_BLOCK_IO_PROTOCOL     *BlockIo
   )
 /*++
@@ -260,6 +63,7 @@ Returns:
   Volume->Signature                   = FAT_VOLUME_SIGNATURE;
   Volume->Handle                      = Handle;
   Volume->DiskIo                      = DiskIo;
+  Volume->DiskIo2                     = DiskIo2;
   Volume->BlockIo                     = BlockIo;
   Volume->MediaId                     = BlockIo->Media->MediaId;
   Volume->ReadOnly                    = BlockIo->Media->ReadOnly;
@@ -387,7 +191,7 @@ Returns:
   // FatCleanupVolume do the task.
   //
   if (LockedByMe) {
-    FatCleanupVolume (Volume, NULL, EFI_SUCCESS);
+    FatCleanupVolume (Volume, NULL, EFI_SUCCESS, NULL);
     FatReleaseLock ();
   }
 
@@ -582,7 +386,7 @@ Returns:
   if (FatType == FAT32) {
     Volume->FreeInfoPos = FatBs.FatBse.Fat32Bse.FsInfoSector * BlockSize;
     if (FatBs.FatBse.Fat32Bse.FsInfoSector != 0) {
-      FatDiskIo (Volume, READ_DISK, Volume->FreeInfoPos, sizeof (FAT_INFO_SECTOR), &Volume->FatInfoSector);
+      FatDiskIo (Volume, READ_DISK, Volume->FreeInfoPos, sizeof (FAT_INFO_SECTOR), &Volume->FatInfoSector, NULL);
       if (Volume->FatInfoSector.Signature == FAT_INFO_SIGNATURE &&
           Volume->FatInfoSector.InfoBeginSignature == FAT_INFO_BEGIN_SIGNATURE &&
           Volume->FatInfoSector.InfoEndSignature == FAT_INFO_END_SIGNATURE &&

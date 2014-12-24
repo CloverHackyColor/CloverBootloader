@@ -33,6 +33,8 @@ enum volume_kind_t
 	_exfat = 1,
 	_hfs = 2,
 	_msdos = 3,
+  _ntfs = 4,
+  _ext4 = 5,
 	_other = 255
 };
 
@@ -542,6 +544,9 @@ int checkSupportedVolume(enum volume_kind_t* pKind, struct buffer_t const* pBpbB
 			else
 				*pKind = _other;
 			break;
+    case _ntfs:
+      rc = 0;
+      break;
 		default:
 			break;
 	}
@@ -596,6 +601,8 @@ int checkDevicePath2(char const* pathName)
 			daVolumeKind = _hfs;
 		else if (!strcmp(cstr, "msdos"))
 			daVolumeKind = _msdos;
+		else if (!strcmp(cstr, "ntfs"))
+			daVolumeKind = _ntfs;
 		else
 			daVolumeKind = _other;
 	}
@@ -732,6 +739,7 @@ int main(int argc, char* const argv[])
 			case _exfat:
 			case _hfs:
 			case _msdos:
+      case _ntfs:
 				break;
 			default:
 				unsupported();
@@ -752,6 +760,26 @@ int main(int argc, char* const argv[])
 		goto remount_and_error;
 	if (checkSupportedVolume(&daVolumeKind, &bpbBlob, devicePath) < 0)
 		goto cleanup_and_error;
+  if (askFstyp) {
+    switch (daVolumeKind) {
+      case _exfat:
+        printf("exfat\n");
+        return 0;
+      case _hfs:
+        printf("hfs\n");
+        return 0;
+      case _msdos:
+        printf("msdos\n");
+        return 0;
+      case _ntfs:
+        printf("ntfs\n");
+        return 0;
+      default:
+        printf("unknown\n");
+        return 0;
+    }
+  }
+  
 	if (!bootFile) {
 		switch (daVolumeKind) {
 			case _exfat:
@@ -764,29 +792,12 @@ int main(int argc, char* const argv[])
 				bootFile = &defaultBootFile_fat32[0];
 				break;
 			default:
-				assert(0);
-				break;
+				unsupported();
+				return -1;
 		}
-    if (!askFstyp) {
-		  printf("Using %s as default boot template\n", bootFile);
-    }
+	  printf("Using %s as default boot template\n", bootFile);
 	}
-  if (askFstyp) {
-    switch (daVolumeKind) {
-      case _exfat:
-        printf("exfat\n");
-        return 0;
-      case _hfs:
-        printf("hfs\n");
-        return 0;
-      case _msdos:
-        printf("msdos\n");
-        return 0;
-      default:
-        break;
-    }
-  }
-  
+
 	if (loadChunk(bootFile, 0, 0, &bootBlob) < 0)
 		goto cleanup_and_error;
   

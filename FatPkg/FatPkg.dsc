@@ -48,7 +48,7 @@
   PLATFORM_GUID                  = 25b55dbc-9d0b-4a32-80da-46e1273d622c
   PLATFORM_VERSION               = 0.3
   DSC_SPECIFICATION              = 0x00010005
-    SUPPORTED_ARCHITECTURES        = IA32|X64|IPF|EBC|ARM|AARCH64
+  SUPPORTED_ARCHITECTURES        = IA32|X64|IPF|EBC|ARM|AARCH64
   OUTPUT_DIRECTORY               = Build/Fat
   BUILD_TARGETS                  = DEBUG|RELEASE
   SKUID_IDENTIFIER               = DEFAULT
@@ -87,8 +87,9 @@
   HobLib|MdePkg/Library/PeiHobLib/PeiHobLib.inf
   MemoryAllocationLib|MdePkg/Library/PeiMemoryAllocationLib/PeiMemoryAllocationLib.inf
 
-  [LibraryClasses.ARM, LibraryClasses.AARCH64]
+[LibraryClasses.ARM, LibraryClasses.AARCH64]
   NULL|ArmPkg/Library/CompilerIntrinsicsLib/CompilerIntrinsicsLib.inf
+  NULL|MdePkg/Library/BaseStackCheckLib/BaseStackCheckLib.inf
 
 ###################################################################################################
 #
@@ -110,7 +111,6 @@
 ###################################################################################################
 
 [Components]
-    Clover/FatPkg/FatPei/FatPei.inf
     Clover/FatPkg/EnhancedFatDxe/Fat.inf
     Clover/VBoxFsDxe/VBoxExt2.inf
     Clover/VBoxFsDxe/VBoxExt4.inf

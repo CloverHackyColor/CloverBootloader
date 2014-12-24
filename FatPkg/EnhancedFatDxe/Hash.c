@@ -1,15 +1,15 @@
 /*++
 
-Copyright (c) 2006, Intel Corporation
-All rights reserved. This program and the accompanying materials
-are licensed and made available under the terms and conditions of the Software 
+Copyright (c) 2005 - 2014, Intel Corporation. All rights reserved.<BR>
+This program and the accompanying materials
+are licensed and made available under the terms and conditions of the Software
 License Agreement which accompanies this distribution.
 
 
 Module Name:
 
   Hash.c
-  
+
 Abstract:
 
   Hash table operations
@@ -30,7 +30,7 @@ FatHashLongName (
 Routine Description:
 
   Get hash value for long name.
-  
+
 Arguments:
 
   LongNameString        - The long name string to be hashed.
@@ -38,12 +38,13 @@ Arguments:
 Returns:
 
   HashValue.
-  
+
 --*/
 {
   UINT32  HashValue;
   CHAR16  UpCasedLongFileName[EFI_PATH_STRING_LENGTH];
-  StrCpy (UpCasedLongFileName, LongNameString);
+  StrnCpy (UpCasedLongFileName, LongNameString, EFI_PATH_STRING_LENGTH - 1);
+  UpCasedLongFileName[EFI_PATH_STRING_LENGTH - 1] = L'\0';
   FatStrUpr (UpCasedLongFileName);
   gBS->CalculateCrc32 (UpCasedLongFileName, StrSize (UpCasedLongFileName), &HashValue);
   return (HashValue & HASH_TABLE_MASK);
@@ -59,15 +60,15 @@ FatHashShortName (
 Routine Description:
 
   Get hash value for short name.
-  
+
 Arguments:
 
   ShortNameString       - The short name string to be hashed.
 
-Returns: 
+Returns:
 
   HashValue
-  
+
 --*/
 {
   UINT32  HashValue;
@@ -85,16 +86,16 @@ FatLongNameHashSearch (
 Routine Description:
 
   Search the long name hash table for the directory entry.
-  
+
 Arguments:
 
   ODir                  - The directory to be searched.
   LongNameString        - The long name string to search.
 
-Returns: 
+Returns:
 
   The previous long name hash node of the directory entry.
-  
+
 --*/
 {
   FAT_DIRENT  **PreviousHashNode;
@@ -120,16 +121,16 @@ FatShortNameHashSearch (
 Routine Description:
 
   Search the short name hash table for the directory entry.
-  
+
 Arguments:
 
   ODir                  - The directory to be searched.
   ShortNameString       - The short name string to search.
 
-Returns: 
+Returns:
 
   The previous short name hash node of the directory entry.
-  
+
 --*/
 {
   FAT_DIRENT  **PreviousHashNode;
@@ -154,22 +155,22 @@ FatInsertToHashTable (
 
 Routine Description:
 
-  Insert directory entry to hash table. 
-  
+  Insert directory entry to hash table.
+
 Arguments:
 
   ODir                  - The parent directory.
   DirEnt                - The directory entry node.
 
-Returns: 
+Returns:
 
   None.
-  
+
 --*/
 {
   FAT_DIRENT  **HashTable;
   UINT32      HashTableIndex;
-  
+
   //
   // Insert hash table index for short name
   //
@@ -196,16 +197,16 @@ FatDeleteFromHashTable (
 Routine Description:
 
   Delete directory entry from hash table.
-  
+
 Arguments:
 
   ODir                  - The parent directory.
   DirEnt                - The directory entry node.
 
-Returns: 
+Returns:
 
   None.
-  
+
 --*/
 {
   *FatShortNameHashSearch (ODir, DirEnt->Entry.FileName) = DirEnt->ShortNameForwardLink;

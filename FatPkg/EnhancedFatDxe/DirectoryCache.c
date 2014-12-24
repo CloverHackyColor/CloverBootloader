@@ -1,8 +1,8 @@
 /*++
 
-Copyright (c) 2006, Intel Corporation
-All rights reserved. This program and the accompanying materials
-are licensed and made available under the terms and conditions of the Software 
+Copyright (c) 2005, Intel Corporation. All rights reserved.<BR>
+This program and the accompanying materials
+are licensed and made available under the terms and conditions of the Software
 License Agreement which accompanies this distribution.
 
 
@@ -30,11 +30,11 @@ FatFreeODir (
 Routine Description:
 
   Free the directory structure and release the memory.
-  
+
 Arguments:
 
   ODir                  - The directory to be freed.
-  
+
 Returns:
 
   None.
@@ -56,7 +56,7 @@ Returns:
     FatFreeDirEnt (DirEnt);
   }
 
-  gBS->FreePool (ODir);
+  FreePool (ODir);
 }
 
 STATIC
@@ -69,11 +69,11 @@ FatAllocateODir (
 Routine Description:
 
   Allocate the directory structure.
-  
+
 Arguments:
 
   OFile                   - The corresponding OFile.
-  
+
 Returns:
 
   None.
@@ -105,11 +105,11 @@ Routine Description:
 
   Discard the directory structure when an OFile will be freed.
   Volume will cache this directory if the OFile does not represent a deleted file.
-  
+
 Arguments:
 
   OFile                 - The OFile whose directory structure is to be discarded.
-  
+
 Returns:
 
   None.
@@ -161,11 +161,11 @@ Routine Description:
   Request the directory structure when an OFile is newly generated.
   If the directory structure is cached by volume, then just return this directory;
   Otherwise, allocate a new one for OFile.
-  
+
 Arguments:
 
   OFile                 - The OFile which requests directory structure.
-  
+
 Returns:
 
   None.
@@ -176,7 +176,7 @@ Returns:
   FAT_VOLUME      *Volume;
   FAT_ODIR        *ODir;
   FAT_ODIR        *CurrentODir;
-  LIST_ENTRY  *CurrentODirLink;
+  LIST_ENTRY      *CurrentODirLink;
 
   Volume      = OFile->Volume;
   ODir        = NULL;
@@ -213,11 +213,11 @@ FatCleanupODirCache (
 Routine Description:
 
   Clean up all the cached directory structures when the volume is going to be abandoned.
-  
+
 Arguments:
 
   Volume                - FAT file system volume.
-  
+
 Returns:
 
   None.

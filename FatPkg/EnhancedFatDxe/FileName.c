@@ -1,15 +1,15 @@
 /*++
 
-Copyright (c) 2006, Intel Corporation
-All rights reserved. This program and the accompanying materials
-are licensed and made available under the terms and conditions of the Software 
+Copyright (c) 2005 - 2007, Intel Corporation. All rights reserved.<BR>
+This program and the accompanying materials
+are licensed and made available under the terms and conditions of the Software
 License Agreement which accompanies this distribution.
 
 
 Module Name:
 
   FileName.c
-  
+
 Abstract:
 
   Functions for manipulating file names
@@ -38,11 +38,11 @@ Arguments:
   FileName              - The input unicode filename.
   File8Dot3Name         - The output ascii 8.3 short name or base tag of 8.3 short name.
 
-Returns: 
+Returns:
 
   TRUE                  - The input unicode filename is a valid 8.3 short name.
   FALSE                 - The input unicode filename is not a valid 8.3 short name.
-  
+
 --*/
 {
   BOOLEAN PossibleShortName;
@@ -125,16 +125,16 @@ FatTrimAsciiTrailingBlanks (
 Routine Description:
 
   Trim the trailing blanks of fat name.
-  
+
 Arguments:
 
   Name                  - The Char8 string needs to be trimed.
   Len                   - The length of the fat name.
-  
-Returns: 
+
+Returns:
 
   The real length of the fat name after the trailing blanks are trimmed.
-  
+
 --*/
 {
   while (Len > 0 && Name[Len - 1] == ' ') {
@@ -155,20 +155,20 @@ FatNameToStr (
 
 Routine Description:
 
-  Convert the ascii fat name to the unicode string and strip trailing spaces, 
+  Convert the ascii fat name to the unicode string and strip trailing spaces,
   and if necessary, convert the unicode string to lower case.
-  
+
 Arguments:
 
   FatName               - The Char8 string needs to be converted.
   Len                   - The length of the fat name.
   LowerCase             - Indicate whether to convert the string to lower case.
   Str                   - The result of the convertion.
-  
-Returns: 
+
+Returns:
 
   None.
-  
+
 --*/
 {
   //
@@ -204,10 +204,10 @@ Arguments:
   Parent                - The parent directory.
   DirEnt                - The directory entry whose 8Dot3Name needs to be generated.
 
-Returns: 
+Returns:
 
   None.
-  
+
 --*/
 {
   CHAR8 *ShortName;
@@ -243,7 +243,7 @@ Returns:
   *ShortNameChar    = '1';
   Retry = 0;
   while (*FatShortNameHashSearch (Parent->ODir, ShortName) != NULL) {
-    *ShortNameChar = *ShortNameChar + 1;
+    *ShortNameChar = (CHAR8)(*ShortNameChar + 1);
     if (++Retry == MAX_SPEC_RETRY) {
       //
       // We use new algorithm to generate 8.3 name
@@ -259,9 +259,9 @@ Returns:
       for (Index = 0; Index < HASH_VALUE_TAG_LEN; Index++) {
         Segment = HashValue.Hex[Index].Segment;
         if (Segment > 9) {
-          *ShortNameChar++ = Segment - 10 + 'A';
+          *ShortNameChar++ = (CHAR8)(Segment - 10 + 'A');
         } else {
-          *ShortNameChar++ = Segment + '0';
+          *ShortNameChar++ = (CHAR8)(Segment + '0');
         }
       }
 
@@ -289,13 +289,13 @@ Arguments:
   Str                   - The string which needs to be checked.
   InCaseFlag            - The input case flag which is returned when the string is lower case.
 
-Returns: 
+Returns:
 
   OutCaseFlag           - The output case flag.
-  
+
 --*/
 {
-  CHAR16  Buffer[FAT_MAIN_NAME_LEN + 1];
+  CHAR16  Buffer[FAT_MAIN_NAME_LEN + 1 + FAT_EXTEND_NAME_LEN + 1];
   UINT8   OutCaseFlag;
 
   ASSERT (StrSize (Str) <= sizeof (Buffer));
@@ -332,17 +332,17 @@ FatSetCaseFlag (
 /*++
 
 Routine Description:
-  
+
   Set the caseflag value for the directory entry.
-  
+
 Arguments:
- 
+
   DirEnt                - The logical directory entry whose caseflag value is to be set.
-  
+
 Returns:
-  
+
   None.
-  
+
 --*/
 {
   CHAR16  LfnBuffer[FAT_MAIN_NAME_LEN + 1 + FAT_EXTEND_NAME_LEN + 1];
@@ -368,10 +368,10 @@ Returns:
   if (ExtendName != NULL) {
     *ExtendName = 0;
     ExtendName++;
-    CaseFlag |= FatCheckNameCase (ExtendName, FAT_CASE_EXT_LOWER);
+    CaseFlag = (UINT8)(CaseFlag | FatCheckNameCase (ExtendName, FAT_CASE_EXT_LOWER));
   }
 
-  CaseFlag |= FatCheckNameCase (LfnBuffer, FAT_CASE_NAME_LOWER);
+  CaseFlag = (UINT8)(CaseFlag | FatCheckNameCase (LfnBuffer, FAT_CASE_NAME_LOWER));
   if ((CaseFlag & FAT_CASE_MIXED) == 0) {
     //
     // We just need one directory entry to store this file name entry
@@ -396,16 +396,16 @@ FatGetFileNameViaCaseFlag (
 Routine Description:
 
   Convert the 8.3 ASCII fat name to cased Unicode string according to case flag.
-  
+
 Arguments:
 
-  DirEnt	              - The corresponding directory entry.
-  FileString	          - The output Unicode file name.
-  
-Returns: 
+  DirEnt                - The corresponding directory entry.
+  FileString            - The output Unicode file name.
+
+Returns:
 
   None.
-  
+
 --*/
 {
   UINT8   CaseFlag;
@@ -434,22 +434,22 @@ FatCheckSum (
 Routine Description:
 
   Get the Check sum for a short name.
-  
+
 Arguments:
 
   ShortNameString       - The short name for a file.
 
-Returns: 
+Returns:
 
   Sum                   - UINT8 checksum.
-  
+
 --*/
 {
   UINTN ShortNameLen;
   UINT8 Sum;
   Sum = 0;
   for (ShortNameLen = FAT_NAME_LEN; ShortNameLen != 0; ShortNameLen--) {
-    Sum = ((Sum & 1) ? 0x80 : 0) + (Sum >> 1) + *ShortNameString++;
+    Sum = (UINT8)(((Sum & 1) ? 0x80 : 0) + (Sum >> 1) + *ShortNameString++);
   }
 
   return Sum;
@@ -467,16 +467,16 @@ Routine Description:
   Takes Path as input, returns the next name component
   in Name, and returns the position after Name (e.g., the
   start of the next name component)
-    
+
 Arguments:
 
   Path                  - The path of one file.
   Name                  - The next name component in Path.
 
-Returns: 
+Returns:
 
   The position after Name in the Path
-   
+
 --*/
 {
   while (*Path != 0 && *Path != PATH_NAME_SEPARATOR) {
@@ -505,18 +505,18 @@ Routine Description:
   Check whether the IFileName is valid long file name. If the IFileName is a valid
   long file name, then we trim the possible leading blanks and leading/trailing dots.
   the trimmed filename is stored in OutputFileName
-  
+
 Arguments:
 
   InputFileName         - The input file name.
   OutputFileName        - The output file name.
- 
-  
-Returns: 
+
+
+Returns:
 
   TRUE                  - The InputFileName is a valid long file name.
   FALSE                 - The InputFileName is not a valid long file name.
-  
+
 --*/
 {
   CHAR16  *TempNamePointer;

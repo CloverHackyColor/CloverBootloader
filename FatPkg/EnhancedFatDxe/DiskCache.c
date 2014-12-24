@@ -1,6 +1,6 @@
 /*++
 
-Copyright (c) 2005 - 2007, Intel Corporation. All rights reserved.<BR>
+Copyright (c) 2005 - 2013, Intel Corporation. All rights reserved.<BR>
 This program and the accompanying materials
 are licensed and made available under the terms and conditions of the Software
 License Agreement which accompanies this distribution.
@@ -105,7 +105,8 @@ FatExchangeCachePage (
   IN FAT_VOLUME         *Volume,
   IN CACHE_DATA_TYPE    DataType,
   IN IO_MODE            IoMode,
-  IN CACHE_TAG          *CacheTag
+  IN CACHE_TAG          *CacheTag,
+  IN FAT_TASK           *Task
   )
 /*++
 
@@ -163,7 +164,7 @@ Returns:
     //
     // Only fat table writing will execute more than once
     //
-    Status = FatDiskIo (Volume, IoMode, EntryPos, RealSize, PageAddress);
+    Status = FatDiskIo (Volume, IoMode, EntryPos, RealSize, PageAddress, Task);
     if (EFI_ERROR (Status)) {
       return Status;
     }
@@ -219,7 +220,7 @@ Returns:
   // Write dirty cache page back to disk
   //
   if (CacheTag->RealSize > 0 && CacheTag->Dirty) {
-    Status = FatExchangeCachePage (Volume, CacheDataType, WRITE_DISK, CacheTag);
+    Status = FatExchangeCachePage (Volume, CacheDataType, WRITE_DISK, CacheTag, NULL);
     if (EFI_ERROR (Status)) {
       return Status;
     }
@@ -228,7 +229,7 @@ Returns:
   // Load new data from disk;
   //
   CacheTag->PageNo  = PageNo;
-  Status            = FatExchangeCachePage (Volume, CacheDataType, READ_DISK, CacheTag);
+  Status            = FatExchangeCachePage (Volume, CacheDataType, READ_DISK, CacheTag, NULL);
 
   return Status;
 }
@@ -301,7 +302,8 @@ FatAccessCache (
   IN     IO_MODE            IoMode,
   IN     UINT64             Offset,
   IN     UINTN              BufferSize,
-  IN OUT UINT8              *Buffer
+  IN OUT UINT8              *Buffer,
+  IN     FAT_TASK           *Task
   )
 /*++
 Routine Description:
@@ -389,7 +391,7 @@ Returns:
 
     EntryPos    = Volume->RootPos + LShiftU64 (PageNo, PageAlignment);
     AlignedSize = AlignedPageCount << PageAlignment;
-    Status      = FatDiskIo (Volume, IoMode, EntryPos, AlignedSize, Buffer);
+    Status      = FatDiskIo (Volume, IoMode, EntryPos, AlignedSize, Buffer, Task);
     if (EFI_ERROR (Status)) {
       return Status;
     }
@@ -417,7 +419,8 @@ Returns:
 
 EFI_STATUS
 FatVolumeFlushCache (
-  IN FAT_VOLUME         *Volume
+  IN FAT_VOLUME         *Volume,
+  IN FAT_TASK           *Task
   )
 /*++
 
@@ -456,7 +459,7 @@ Returns:
           //
           // Write back all Dirty Data Cache Page to disk
           //
-          Status = FatExchangeCachePage (Volume, CacheDataType, WRITE_DISK, CacheTag);
+          Status = FatExchangeCachePage (Volume, CacheDataType, WRITE_DISK, CacheTag, Task);
           if (EFI_ERROR (Status)) {
             return Status;
           }
@@ -525,7 +528,7 @@ Returns:
   //
   // Allocate the Fat Cache buffer
   //
-  CacheBuffer = AllocatePool (FatCacheSize + DataCacheSize);
+  CacheBuffer = AllocateZeroPool (FatCacheSize + DataCacheSize);
   if (CacheBuffer == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }

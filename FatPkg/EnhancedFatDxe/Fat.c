@@ -1,6 +1,6 @@
 /*++
 
-Copyright (c) 2005 - 2010, Intel Corporation. All rights reserved.<BR>
+Copyright (c) 2005 - 2014, Intel Corporation. All rights reserved.<BR>
 This program and the accompanying materials
 are licensed and made available under the terms and conditions of the Software
 License Agreement which accompanies this distribution.
@@ -103,7 +103,7 @@ Returns:
              &gFatDriverBinding,
              ImageHandle,
              &gFatComponentName,
-             NULL
+             &gFatComponentName2
              );
   ASSERT_EFI_ERROR (Status);
 
@@ -136,6 +136,8 @@ Returns:
   EFI_HANDLE  *DeviceHandleBuffer;
   UINTN       DeviceHandleCount;
   UINTN       Index;
+  VOID        *ComponentName;
+  VOID        *ComponentName2;
 
   Status = gBS->LocateHandleBuffer (
                   AllHandles,
@@ -144,18 +146,75 @@ Returns:
                   &DeviceHandleCount,
                   &DeviceHandleBuffer
                   );
-  if (!EFI_ERROR (Status)) {
-    for (Index = 0; Index < DeviceHandleCount; Index++) {
+  if (EFI_ERROR (Status)) {
+    return Status;
+  }
+
+  for (Index = 0; Index < DeviceHandleCount; Index++) {
+    Status = EfiTestManagedDevice (DeviceHandleBuffer[Index], ImageHandle, &gEfiDiskIoProtocolGuid);
+    if (!EFI_ERROR (Status)) {
       Status = gBS->DisconnectController (
                       DeviceHandleBuffer[Index],
                       ImageHandle,
                       NULL
                       );
+      if (EFI_ERROR (Status)) {
+        break;
+      }
+    }
+  }
+
+  if (Index == DeviceHandleCount) {
+    //
+    // Driver is stopped successfully.
+    //
+    Status = gBS->HandleProtocol (ImageHandle, &gEfiComponentNameProtocolGuid, &ComponentName);
+    if (EFI_ERROR (Status)) {
+      ComponentName = NULL;
     }
 
-    if (DeviceHandleBuffer != NULL) {
-      FreePool (DeviceHandleBuffer);
+    Status = gBS->HandleProtocol (ImageHandle, &gEfiComponentName2ProtocolGuid, &ComponentName2);
+    if (EFI_ERROR (Status)) {
+      ComponentName2 = NULL;
     }
+
+    if (ComponentName == NULL) {
+      if (ComponentName2 == NULL) {
+        Status = gBS->UninstallMultipleProtocolInterfaces (
+                        ImageHandle,
+                        &gEfiDriverBindingProtocolGuid,  &gFatDriverBinding,
+                        NULL
+                        );
+      } else {
+        Status = gBS->UninstallMultipleProtocolInterfaces (
+                        ImageHandle,
+                        &gEfiDriverBindingProtocolGuid,  &gFatDriverBinding,
+                        &gEfiComponentName2ProtocolGuid, ComponentName2,
+                        NULL
+                        );
+      }
+    } else {
+      if (ComponentName2 == NULL) {
+        Status = gBS->UninstallMultipleProtocolInterfaces (
+                        ImageHandle,
+                        &gEfiDriverBindingProtocolGuid,  &gFatDriverBinding,
+                        &gEfiComponentNameProtocolGuid,  ComponentName,
+                        NULL
+                        );
+      } else {
+        Status = gBS->UninstallMultipleProtocolInterfaces (
+                        ImageHandle,
+                        &gEfiDriverBindingProtocolGuid,  &gFatDriverBinding,
+                        &gEfiComponentNameProtocolGuid,  ComponentName,
+                        &gEfiComponentName2ProtocolGuid, ComponentName2,
+                        NULL
+                        );
+      }
+    }
+  }
+
+  if (DeviceHandleBuffer != NULL) {
+    FreePool (DeviceHandleBuffer);
   }
 
   return Status;
@@ -265,6 +324,7 @@ Returns:
   EFI_STATUS            Status;
   EFI_BLOCK_IO_PROTOCOL *BlockIo;
   EFI_DISK_IO_PROTOCOL  *DiskIo;
+  EFI_DISK_IO2_PROTOCOL *DiskIo2;
   BOOLEAN               LockedByMe;
 
   LockedByMe = FALSE;
@@ -307,11 +367,24 @@ Returns:
   if (EFI_ERROR (Status)) {
     goto Exit;
   }
+
+  Status = gBS->OpenProtocol (
+                  ControllerHandle,
+                  &gEfiDiskIo2ProtocolGuid,
+                  (VOID **) &DiskIo2,
+                  This->DriverBindingHandle,
+                  ControllerHandle,
+                  EFI_OPEN_PROTOCOL_BY_DRIVER
+                  );
+  if (EFI_ERROR (Status)) {
+    DiskIo2 = NULL;
+  }
+
   //
   // Allocate Volume structure. In FatAllocateVolume(), Resources
   // are allocated with protocol installed and cached initialized
   //
-  Status = FatAllocateVolume (ControllerHandle, DiskIo, BlockIo);
+  Status = FatAllocateVolume (ControllerHandle, DiskIo, DiskIo2, BlockIo);
 
   //
   // When the media changes on a device it will Reinstall the BlockIo interaface.
@@ -331,6 +404,12 @@ Returns:
       gBS->CloseProtocol (
              ControllerHandle,
              &gEfiDiskIoProtocolGuid,
+             This->DriverBindingHandle,
+             ControllerHandle
+             );
+      gBS->CloseProtocol (
+             ControllerHandle,
+             &gEfiDiskIo2ProtocolGuid,
              This->DriverBindingHandle,
              ControllerHandle
              );
@@ -375,7 +454,9 @@ Returns:
   EFI_STATUS                      Status;
   EFI_SIMPLE_FILE_SYSTEM_PROTOCOL *FileSystem;
   FAT_VOLUME                      *Volume;
+  EFI_DISK_IO2_PROTOCOL           *DiskIo2;
 
+  DiskIo2 = NULL;
   //
   // Get our context back
   //
@@ -389,19 +470,33 @@ Returns:
                   );
 
   if (!EFI_ERROR (Status)) {
-    Volume = VOLUME_FROM_VOL_INTERFACE (FileSystem);
-    Status = FatAbandonVolume (Volume);
+    Volume  = VOLUME_FROM_VOL_INTERFACE (FileSystem);
+    DiskIo2 = Volume->DiskIo2;
+    Status  = FatAbandonVolume (Volume);
+  }
+
+  if (!EFI_ERROR (Status)) {
+    if (DiskIo2 != NULL) {
+      Status = gBS->CloseProtocol (
+        ControllerHandle,
+        &gEfiDiskIo2ProtocolGuid,
+        This->DriverBindingHandle,
+        ControllerHandle
+        );
+      if (EFI_ERROR (Status)) {
+        return Status;
+      }
+    }
+    Status = gBS->CloseProtocol (
+      ControllerHandle,
+      &gEfiDiskIoProtocolGuid,
+      This->DriverBindingHandle,
+      ControllerHandle
+      );
     if (EFI_ERROR (Status)) {
       return Status;
     }
   }
-
-  Status = gBS->CloseProtocol (
-                  ControllerHandle,
-                  &gEfiDiskIoProtocolGuid,
-                  This->DriverBindingHandle,
-                  ControllerHandle
-                  );
 
   return Status;
 }
