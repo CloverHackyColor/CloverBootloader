@@ -140,6 +140,9 @@ GetMacAddress()
       }
       DevicePath = NextDevicePathNode (DevicePath);
     }
+    if (nLanPaths > 4) {
+      break;
+    }
   }
   if (HandleBuffer != NULL) {
     FreePool (HandleBuffer);
