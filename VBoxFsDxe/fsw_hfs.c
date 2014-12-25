@@ -100,7 +100,7 @@ struct fsw_fstype_table   FSW_FSTYPE_TABLE_NAME(hfs) = {
     fsw_hfs_get_extent,	 // get the physical disk block number for the requested logical block number
     fsw_hfs_dir_lookup,  //retrieve the directory entry with the given name
     fsw_hfs_dir_read,	// next directory entry when reading a directory
-    fsw_hfs_readlink,   // return FSW_UNSUPPORTED;
+    fsw_hfs_readlink,   // ;
 };
 
 static fsw_s32
@@ -162,7 +162,7 @@ fsw_hfs_read_file (struct fsw_hfs_dnode    * dno,
     len  -= next_len;
     read += next_len;
   }
-  
+  hardlink = 0; //this is static value that me must initialize sometimes 
   return read;
 }
 
@@ -755,6 +755,8 @@ fill_fileinfo (
       finfo->crtype = be32_to_cpu (info->userInfo.fdType);
       finfo->type = FSW_DNODE_TYPE_FILE;
       finfo->ilink = 0;
+      finfo->isfilelink = 0;
+      finfo->isdirlink = 0;
       DBG("file creator=%x crtype=%x\n", finfo->creator, finfo->crtype);
       /* Is the file any kind of link? */
       if ((finfo->creator == kSymLinkCreator && finfo->crtype == kSymLinkFileType) ||
@@ -1123,8 +1125,7 @@ fsw_hfs_cmpi_catkey (BTreeKey *key1, BTreeKey *key2)
         break;
       }
       if (bpos == key1Len) {
-//        return key1Len - key2Len;
-        return 0;  //it is needed to resolve links
+        return (key1Len - key2Len);
       }
     }
     if (ac == bc)
@@ -1463,9 +1464,9 @@ done:
 
 static const char metaprefix[] = "/\0\0\0\0HFS+ Private Data/iNode0123456789";
 /**
- * Get the target path of a symbolic link. This function is called when a symbolic
+ * Get the target path of a  link. This function is called when a 
  * link needs to be resolved. The core makes sure that the fsw_hfs_dnode_fill has been
- * called on the dnode and that it really is a symlink.
+ * called on the dnode.
  *
  */
 static fsw_status_t fsw_hfs_readlink(struct fsw_hfs_volume *vol,
@@ -1473,13 +1474,13 @@ static fsw_status_t fsw_hfs_readlink(struct fsw_hfs_volume *vol,
                                      struct fsw_string *link_target)
 {
   /*
-   * XXX: Hardlinks for directories -- not yet.
+   * XXX: Hardlinks for directories -- it is alias to folder .
    * Hex dump visual inspection of Apple hfsplus{32,64}.efi
    * revealed no signs of directory hardlinks support.
    finder links, not properly documented
    kHFSAliasType    = 0x66647270,  // 'fdrp' - finder alias for folder
    kHFSAliasCreator = 0x4D414353   // 'MACS'
-   kHFSAliasFile    = 0x616C6973   // 'alis' - finder alias for file
+   kHFSAliasFile    = 0x616C6973   // 'alis' - finder alias for file - not implemented yet
    */
   fsw_u32 sz = 0;
 //  int     i;

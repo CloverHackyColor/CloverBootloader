@@ -1005,7 +1005,7 @@ VOID ScanLoader(VOID)
     // renamed to bootmgfw.efi
     AddLoaderEntry(L"\\EFI\\microsoft\\Boot\\bootmgfw.efi", L"", L"Microsoft EFI boot menu", Volume, NULL, OSTYPE_WINEFI, 0);
     // check for Microsoft boot loader/menu. This entry is redundant
-//    AddLoaderEntry(L"\\bootmgr.efi", L"", L"Microsoft EFI mgrboot menu", Volume, NULL, OSTYPE_WINEFI, 0);
+    AddLoaderEntry(L"\\bootmgr.efi", L"", L"Microsoft EFI mgrboot menu", Volume, NULL, OSTYPE_WINEFI, 0);
     // check for Microsoft boot loader/menu on CDROM
     AddLoaderEntry(L"\\EFI\\MICROSOFT\\BOOT\\cdboot.efi", L"", L"Microsoft EFI cdboot menu", Volume, NULL, OSTYPE_WINEFI, 0);
     
