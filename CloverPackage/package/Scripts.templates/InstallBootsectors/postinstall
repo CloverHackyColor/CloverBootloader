@@ -9,6 +9,9 @@ install_log="${DEST_VOL}/Clover_Install_Log.txt"
 plistbuddy='/usr/libexec/PlistBuddy'
 installer_choice="@INSTALLER_CHOICE@"
 installer_altboot_refid='@INSTALLER_ALTBOOT_REFID@'
+fdisk440="${DEST_VOL}"/usr/local/bin/fdisk440
+boot1install="${DEST_VOL}"/usr/local/bin/boot1-install
+showfstype="${DEST_VOL}"/usr/local/bin/showfstype
 
 bootvolume="$EFI_ROOT_DIR"
 echo "Boot Volume is $bootvolume"
@@ -66,16 +69,6 @@ echo "-----------------------------------------------"
 echo ""
 echo ""
 
-# Installing fdisk440 and boot1-install in /usr/local/bin if not exists
-if [[ ! -e "/usr/local/bin/fdisk440" ]]; then
-    mkdir -p /usr/local/bin
-    cp -f "${DEST_VOL}/usr/local/bin"/{fdisk440} /usr/local/bin/
-fi
-# Installing  boot1-install unconditional because it may be changed in version
-mkdir -p /usr/local/bin
-cp -f "${DEST_VOL}/usr/local/bin"/boot1-install /usr/local/bin/
-
-
 echo "==============================================="
 echo "Check partition scheme"
 echo "==============================================="
@@ -102,13 +95,7 @@ echo "==============================================="
 echo "Check the format of the selected partition"
 echo "==============================================="
 
-tmpfile=$(mktemp -t fstyp0)
-LC_ALL=C diskutil info -plist $bootdev > "$tmpfile"
-boot_volume_format=$($plistbuddy -c "Print FilesystemType" \
- "$tmpfile" 2>/dev/null)
-rm -f "$tmpfile"
-#[[ -z "$boot_volume_format" ]] && boot_volume_format=$(/sbin/fstyp $bootdev)
-[[ -z "$boot_volume_format" ]] && boot_volume_format=$(/usr/local/bin/boot1-install -q $bootdev)
+boot_volume_format=$("$showfstype" $bootrdev)
 case "$boot_volume_format" in
       hfs) echo "${bootdev} is currently formatted as HFS"   ;;
     msdos) echo "${bootdev} is currently formatted as msdos" ;;
@@ -120,7 +107,7 @@ echo "${bootdev} is currently formatted as $boot_volume_format"  >> "$install_lo
 echo "======================================================" >> "$install_log"
 echo "Installing BootSectors/BootLoader" >> "$install_log"
 echo "" >> "$install_log"
-partitionactive=$( /usr/local/bin/fdisk440 -d ${bootrdisk} | grep -n "*" | awk -F: '{print $1}')
+partitionactive=$( "$fdisk440" -d ${bootrdisk} | grep -n "*" | awk -F: '{print $1}')
 if [[ -n "$partitionactive" ]]; then
     echo "Current Active Partition: ${partitionactive}" >> "$install_log"
 else
@@ -130,8 +117,8 @@ echo "" >> "$install_log"
 
 ### Stage 0 ###
 echo "Stage 0 - Writting ${diskloader} to ${bootdisk}" >> "$install_log"
-echo "/usr/local/bin/fdisk440 -u -f ${DEST_VOL}/usr/standalone/i386/${diskloader} -y ${bootdisk}" >> "$install_log"
-/usr/local/bin/fdisk440 -u -f "${DEST_VOL}/usr/standalone/i386/${diskloader}" -y ${bootdisk}
+echo "$fdisk440 -u -f ${DEST_VOL}/usr/standalone/i386/${diskloader} -y ${bootdisk}" >> "$install_log"
+"$fdisk440" -u -f "${DEST_VOL}/usr/standalone/i386/${diskloader}" -y ${bootdisk}
 echo "" >> "$install_log"
 
 ### Stage 1 ###
@@ -190,8 +177,8 @@ elif [[ ${boot_volume_format} = "msdos" ]]; then
 elif [[ ${boot_volume_format} = "exfat" ]]; then
     echo "Stage 1 - Writting ${partitionloaderexfat} to ${bootrdev}" >> "$tmp_log"
     echo "File system is ExFat." >> "$tmp_log"
-    echo "/usr/local/bin/boot1-install -y -f ${partitionloaderexfat_copy} ${bootrdev}" >> "$tmp_log"
-    /usr/local/bin/boot1-install -y -f "${partitionloaderexfat_copy}" ${bootrdev}
+    echo "$boot1install -y -f ${partitionloaderexfat_copy} ${bootrdev}" >> "$tmp_log"
+    "$boot1install" -y -f "${partitionloaderexfat_copy}" ${bootrdev}
 else
     echo "Unknown boot volume format: $boot_volume_format" >> "$tmp_log"
     echo "No Stage1 was written" >> "$tmp_log"
@@ -218,7 +205,7 @@ echo "" >> "$install_log"
 
 if [[ "$bootdisk_partition_scheme" == mbr && "$diskloader" == boot0af ]]; then
     echo "Setup Active Partition to be: ${bootslice}" >> "$install_log"
-    "/usr/local/bin/fdisk440" -e ${bootrdisk} <<-MAKEACTIVE
+    "$fdisk440" -e ${bootrdisk} <<-MAKEACTIVE
 print
 flag ${bootslice}
 write
@@ -226,7 +213,7 @@ y
 quit
 MAKEACTIVE
 
-    partitionactive=$( /usr/local/bin/fdisk440 -d ${bootrdisk} | grep -n "*" | awk -F: '{print $1}')
+    partitionactive=$( "$fdisk440" -d ${bootrdisk} | grep -n "*" | awk -F: '{print $1}')
     echo "New Active Partition: ${partitionactive}" >> "$install_log"
     echo "" >> "$install_log"
 fi

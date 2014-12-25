@@ -511,8 +511,9 @@ main ()
     ditto --noextattr --noqtn ${SRCROOT}/CloverV2/BootSectors/boot1x      ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/
 
     ditto --noextattr --noqtn ${SRCROOT}/utils/fdisk440/fdisk440.8        ${PKG_BUILD_DIR}/${choiceId}/Root/usr/local/man/man8/
-    ditto --noextattr --noqtn ${SYMROOT}/utils/fdisk440                ${PKG_BUILD_DIR}/${choiceId}/Root/usr/local/bin/
-    ditto --noextattr --noqtn ${SYMROOT}/utils/boot1-install      ${PKG_BUILD_DIR}/${choiceId}/Root/usr/local/bin/
+    ditto --noextattr --noqtn ${SYMROOT}/utils/fdisk440                   ${PKG_BUILD_DIR}/${choiceId}/Root/usr/local/bin/
+    ditto --noextattr --noqtn ${SYMROOT}/utils/boot1-install              ${PKG_BUILD_DIR}/${choiceId}/Root/usr/local/bin/
+    ditto --noextattr --noqtn ${SYMROOT}/utils/showfstype                 ${PKG_BUILD_DIR}/${choiceId}/Root/usr/local/bin/
 
     # Add some documentation
     ditto --noextattr --noqtn ${SRCROOT}/CloverV2/BootSectors/Description.txt  ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/
@@ -520,7 +521,7 @@ main ()
     ditto --noextattr --noqtn ${SRCROOT}/CloverV2/BootSectors/Installation.txt ${PKG_BUILD_DIR}/${choiceId}/Root/EFIROOTDIR/EFI/CLOVER/doc/
 
     fixperms "${PKG_BUILD_DIR}/${choiceId}/Root/"
-    chmod 755 "${PKG_BUILD_DIR}/${choiceId}"/Root/usr/local/bin/{fdisk440,boot1-install}
+    chmod 755 "${PKG_BUILD_DIR}/${choiceId}"/Root/usr/local/bin/{fdisk440,boot1-install,showfstype}
 
     packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
     packageBiosBootRefId=$packageRefId
@@ -533,13 +534,11 @@ main ()
     packagesidentity="$clover_package_identity"
     choiceId="Utils"
     # Utils
-    ditto --noextattr --noqtn ${SYMROOT}/utils/bdmesg  ${PKG_BUILD_DIR}/${choiceId}/Root/usr/local/bin/
+    ditto --noextattr --noqtn ${SYMROOT}/utils/bdmesg            ${PKG_BUILD_DIR}/${choiceId}/Root/usr/local/bin/
     ditto --noextattr --noqtn ${SYMROOT}/utils/clover-genconfig  ${PKG_BUILD_DIR}/${choiceId}/Root/usr/local/bin/
-    ditto --noextattr --noqtn ${SYMROOT}/utils/boot1-install  ${PKG_BUILD_DIR}/${choiceId}/Root/usr/local/bin/
+    ditto --noextattr --noqtn ${SYMROOT}/utils/showfstype        ${PKG_BUILD_DIR}/${choiceId}/Root/usr/local/bin/
     fixperms "${PKG_BUILD_DIR}/${choiceId}/Root/"
-    chmod 755 "${PKG_BUILD_DIR}/${choiceId}/Root/usr/local/bin/bdmesg"
-    chmod 755 "${PKG_BUILD_DIR}/${choiceId}/Root/usr/local/bin/clover-genconfig"
-    chmod 755 "${PKG_BUILD_DIR}/${choiceId}/Root/usr/local/bin/boot1-install"
+    chmod 755 "${PKG_BUILD_DIR}/${choiceId}"/Root/usr/local/bin/{bdmesg,clover-genconfig,showfstype}
     packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
     buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/"
     addChoice --start-visible="false" --start-selected="checkFileExists('/System/Library/CoreServices/boot.efi')"  \
