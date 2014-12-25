@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1238BF871A4C4041000E363A /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 129263B01A31CD2B005F1426 /* CoreFoundation.framework */; };
+		1238BF891A4C404E000E363A /* DiskArbitration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 129263AD1A31CD23005F1426 /* DiskArbitration.framework */; };
+		1238BF8A1A4C4055000E363A /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 129263B21A31CD34005F1426 /* IOKit.framework */; };
 		A350924C1A4B00DC00A7C8EB /* showfstype.c in Sources */ = {isa = PBXBuildFile; fileRef = 12F2E5531A3102E80058A333 /* showfstype.c */; };
 /* End PBXBuildFile section */
 
@@ -35,6 +38,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1238BF8A1A4C4055000E363A /* IOKit.framework in Frameworks */,
+				1238BF891A4C404E000E363A /* DiskArbitration.framework in Frameworks */,
+				1238BF871A4C4041000E363A /* CoreFoundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
