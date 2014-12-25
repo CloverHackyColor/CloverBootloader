@@ -146,7 +146,10 @@ int checkDevice(char const* pathName)
             }
         }
         printf("%s\n", fsTypeStr[checkFsType]);
-	}
+    }
+    else {
+        fprintf(stderr,"undetected\n");
+    }
 
 #if 0
 	CFShow(descDict);
