@@ -3658,9 +3658,9 @@ GetUserSettings(
     //*** ACPI ***//
     
     DictPointer = GetProperty (Dict, "ACPI");
-    if (DictPointer != NULL) {
+    if (DictPointer) {
       Prop = GetProperty (DictPointer, "DropTables");
-      if (Prop != NULL) {
+      if (Prop) {
         INTN i;
         INTN Count = GetTagCount (Prop);
 
@@ -3758,7 +3758,7 @@ GetUserSettings(
       }
       
       Dict2 = GetProperty (DictPointer, "DSDT");
-      if (Dict2 != NULL) {
+      if (Dict2) {
         //gSettings.DsdtName by default is "DSDT.aml", but name "BIOS" will mean autopatch
         Prop = GetProperty (Dict2, "Name");
         if (Prop != NULL) {
@@ -4074,7 +4074,7 @@ GetUserSettings(
       }
       
       Dict2 = GetProperty (DictPointer, "SSDT");
-      if (Dict2 != NULL) {
+      if (Dict2) {
         Prop2 = GetProperty (Dict2, "Generate");
         if (Prop2 != NULL) {
           if (IsPropertyTrue (Prop2)) {
@@ -4160,7 +4160,7 @@ GetUserSettings(
       gSettings.DropMCFG = IsPropertyTrue (Prop);
       
       Prop = GetProperty (DictPointer, "ResetAddress");
-      if (Prop != NULL) {
+      if (Prop) {
         gSettings.ResetAddr = (UINT32)GetPropertyInteger (Prop, 0x64);
         DBG ("Config set ResetAddr=0x%x\n", gSettings.ResetAddr);
 
@@ -4174,7 +4174,7 @@ GetUserSettings(
       }
 
       Prop = GetProperty (DictPointer, "ResetValue");
-      if (Prop != NULL) {
+      if (Prop) {
         gSettings.ResetVal = (UINT8)GetPropertyInteger (Prop, gSettings.ResetVal);
         DBG ("Config set ResetVal=0x%x\n", gSettings.ResetVal);
       }
@@ -4184,13 +4184,31 @@ GetUserSettings(
       gSettings.SlpSmiEnable = IsPropertyTrue (Prop);
        
       Prop = GetProperty (DictPointer, "smartUPS");
-      if (Prop != NULL) {
+      if (Prop) {
         gSettings.smartUPS   = IsPropertyTrue (Prop);
         DBG ("Config set smartUPS present\n");
       }
 
       Prop               = GetProperty (DictPointer, "PatchAPIC");
       gSettings.PatchNMI = IsPropertyTrue (Prop);
+      
+      Prop               = GetProperty (DictPointer, "SortedOrder");
+      if (Prop) {
+        INTN i;
+        TagPtr Prop2 = NULL;
+        INTN Count = GetTagCount (Prop);
+        if (Count > 0) {
+          gSettings.SortedACPICount = 0;
+          gSettings.SortedACPI = AllocateZeroPool (Count * sizeof(CHAR16 *));
+          
+          for (i = 0; i < Count; i++) {
+            if (!EFI_ERROR (GetElement (Prop, i, &Prop2)) &&
+                (Prop2 != NULL) && (Prop2->type == kTagTypeString)) {
+              gSettings.SortedACPI[gSettings.SortedACPICount++] = PoolPrint (L"%a", Prop2->string);
+            }
+          }
+        }
+      }
     }
     
     //*** SMBIOS ***//

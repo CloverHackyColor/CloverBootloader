@@ -1788,35 +1788,66 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
   }
 
   // find other ACPI tables except DSDT
-  DirIterOpen(SelfRootDir, AcpiOemPath, &DirIter);
-  while (DirIterNext(&DirIter, 2, L"*.aml", &DirEntry)) {
-    CHAR16            FullName[256];
-    if (DirEntry->FileName[0] == L'.') {
-      continue;
-    }
-    if (StrStr(DirEntry->FileName, L"DSDT")) {
-      continue;
-    }
-    
-    UnicodeSPrint(FullName, 512, L"%s\\%s", AcpiOemPath, DirEntry->FileName);
-    Status = EFI_NOT_FOUND;
-    // DBG("Looking for ACPI table %s from %s ... ", ACPInames[Index], AcpiOemPath);
-    if (FileExists(SelfRootDir, FullName)) {
-      DBG("Inserting %s from %s ... ", DirEntry->FileName, AcpiOemPath);
-      Status = egLoadFile(SelfRootDir, FullName, &buffer, &bufferLen);
-      if (!EFI_ERROR(Status)) {
-        //before insert we should checksum it
-        if (buffer) {
-          TableHeader = (EFI_ACPI_DESCRIPTION_HEADER*)buffer;
-          TableHeader->Checksum = 0;
-          TableHeader->Checksum = (UINT8)(256-Checksum8((CHAR8*)buffer, TableHeader->Length));
-        }
-        Status = InsertTable((VOID*)buffer, bufferLen);
+  if (gSettings.SortedACPICount == 0) {
+    DirIterOpen(SelfRootDir, AcpiOemPath, &DirIter);
+    while (DirIterNext(&DirIter, 2, L"*.aml", &DirEntry)) {
+      CHAR16            FullName[256];
+      if (DirEntry->FileName[0] == L'.') {
+        continue;
       }
-      DBG("%r\n", Status);
+      if (StrStr(DirEntry->FileName, L"DSDT")) {
+        continue;
+      }
+      
+      UnicodeSPrint(FullName, 512, L"%s\\%s", AcpiOemPath, DirEntry->FileName);
+      Status = EFI_NOT_FOUND;
+      // DBG("Looking for ACPI table %s from %s ... ", ACPInames[Index], AcpiOemPath);
+      if (FileExists(SelfRootDir, FullName)) {
+        DBG("Inserting %s from %s ... ", DirEntry->FileName, AcpiOemPath);
+        Status = egLoadFile(SelfRootDir, FullName, &buffer, &bufferLen);
+        if (!EFI_ERROR(Status)) {
+          //before insert we should checksum it
+          if (buffer) {
+            TableHeader = (EFI_ACPI_DESCRIPTION_HEADER*)buffer;
+            if (TableHeader->Length > 500 * kilo) {
+              DBG("wrong table\n");
+              continue;
+            }
+            TableHeader->Checksum = 0;
+            TableHeader->Checksum = (UINT8)(256-Checksum8((CHAR8*)buffer, TableHeader->Length));
+          }
+          Status = InsertTable((VOID*)buffer, bufferLen);
+        }
+        DBG("%r\n", Status);
+      }
+    }
+    Status = DirIterClose(&DirIter);
+
+  } else {
+    for (Index = 0; Index < gSettings.SortedACPICount; Index++) {
+      CHAR16* FullName = PoolPrint(L"%s\\%s", AcpiOemPath, gSettings.SortedACPI[Index]);
+      Status = EFI_NOT_FOUND;
+      // DBG("Looking for ACPI table %s from %s ... ", ACPInames[Index], AcpiOemPath);
+      if (FileExists(SelfRootDir, FullName)) {
+        DBG("Inserting table[%d]:%s from %s ... ", Index, gSettings.SortedACPI[Index], AcpiOemPath);
+        Status = egLoadFile(SelfRootDir, FullName, &buffer, &bufferLen);
+        if (!EFI_ERROR(Status)) {
+          //before insert we should checksum it
+          if (buffer) {
+            TableHeader = (EFI_ACPI_DESCRIPTION_HEADER*)buffer;
+            if (TableHeader->Length > 500 * kilo) {
+              DBG("wrong table\n");
+              continue;
+            }
+            TableHeader->Checksum = 0;
+            TableHeader->Checksum = (UINT8)(256-Checksum8((CHAR8*)buffer, TableHeader->Length));
+          }
+          Status = InsertTable((VOID*)buffer, bufferLen);
+        }
+        DBG("%r\n", Status);
+      }
     }
   }
-  Status = DirIterClose(&DirIter);
 
   
   //Slice - this is a time to patch MADT table. 

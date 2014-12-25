@@ -211,6 +211,12 @@
 		</dict>
 		<key>#smartUPS</key>
 		<false/>
+		<key>#SortedOrder</key>
+		<array>
+			<string>SSDT-3.aml</string>
+			<string>SSDT-1.aml</string>
+			<string>SSDT-2.aml</string>
+		</array>
 	</dict>
 	<key>Boot</key>
 	<dict>

@@ -1094,6 +1094,17 @@ typedef struct {
   //BlackListed kexts
   CHAR16                  BlockKexts[64];
   
+  //ACPI tables
+  INTN    SortedACPICount;
+#if defined(MDE_CPU_IA32)
+  UINT32                  align37;
+#endif
+  CHAR16                  **SortedACPI;
+#if defined(MDE_CPU_IA32)
+  UINT32                  align38;
+#endif
+
+  
 } SETTINGS_DATA;
 
 typedef struct {
