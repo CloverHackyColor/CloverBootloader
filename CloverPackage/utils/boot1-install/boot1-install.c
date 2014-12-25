@@ -672,7 +672,6 @@ void usage(char const* self)
 	fprintf(stderr, "Usage: %s [-yM] [-f boot_code_file] disk\n", self);
 	fprintf(stderr, "  boot_code_file is an optional boot template\n");
 	fprintf(stderr, "  -y: don't ask any questions\n");
-  fprintf(stderr, "  -q: ask disk fstyp\n");
 	fprintf(stderr, "  -M: keep volume mounted while proceeding (useful for root filesystem)\n");
 	fprintf(stderr, "disk is of the form /dev/rdiskUsS or /dev/diskUsS\n");
 	fprintf(stderr, "default boot files are\n");
@@ -698,15 +697,11 @@ int main(int argc, char* const argv[])
 	char const* devicePath = NULL;
 	int dontAsk = 0;
 	int keepMounted = 0;
-  int askFstyp = 0;
 
-	while ((ch = getopt(argc, argv, "yqMf:")) != -1)
+	while ((ch = getopt(argc, argv, "yMf:")) != -1)
 		switch (ch) {
 			case 'y':
 				dontAsk = 1;
-				break;
-			case 'q':
-				askFstyp = 1;
 				break;
 			case 'M':
 				keepMounted = 1;
@@ -720,7 +715,7 @@ int main(int argc, char* const argv[])
 	if (optind + 1 > argc)
 		goto usage_and_error;
 	devicePath = argv[optind];
-	if (geteuid() != 0 && !askFstyp) {
+	if (geteuid() != 0) {
 		fprintf(stderr, "This program must be run as root\n");
 		return -1;
 	}
@@ -760,26 +755,6 @@ int main(int argc, char* const argv[])
 		goto remount_and_error;
 	if (checkSupportedVolume(&daVolumeKind, &bpbBlob, devicePath) < 0)
 		goto cleanup_and_error;
-  if (askFstyp) {
-    switch (daVolumeKind) {
-      case _exfat:
-        printf("exfat\n");
-        return 0;
-      case _hfs:
-        printf("hfs\n");
-        return 0;
-      case _msdos:
-        printf("msdos\n");
-        return 0;
-      case _ntfs:
-        printf("ntfs\n");
-        return 0;
-      default:
-        printf("unknown\n");
-        return 0;
-    }
-  }
-  
 	if (!bootFile) {
 		switch (daVolumeKind) {
 			case _exfat:
@@ -795,7 +770,7 @@ int main(int argc, char* const argv[])
 				unsupported();
 				return -1;
 		}
-	  printf("Using %s as default boot template\n", bootFile);
+		printf("Using %s as default boot template\n", bootFile);
 	}
 
 	if (loadChunk(bootFile, 0, 0, &bootBlob) < 0)
