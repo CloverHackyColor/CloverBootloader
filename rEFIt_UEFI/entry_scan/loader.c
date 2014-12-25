@@ -998,16 +998,16 @@ VOID ScanLoader(VOID)
     // it is needed to get rid of bootmgfw.efi to allow starting of
     // Clover as /efi/boot/bootx64.efi from HD. We can do that by renaming
     // bootmgfw.efi to bootmgfw-orig.efi
-    AddLoaderEntry(L"\\EFI\\Microsoft\\Boot\\bootmgfw-orig.efi", L"", L"Microsoft EFI boot menu", Volume, NULL, OSTYPE_WINEFI, 0);
+    AddLoaderEntry(L"\\EFI\\microsoft\\Boot\\bootmgfw-orig.efi", L"", L"Microsoft EFI boot menu", Volume, NULL, OSTYPE_WINEFI, 0);
     // check for Microsoft boot loader/menu
     // If there is bootmgfw-orig.efi, then do not check for bootmgfw.efi
     // since on some systems this will actually be CloverX64.efi
     // renamed to bootmgfw.efi
-    AddLoaderEntry(L"\\EFI\\Microsoft\\Boot\\bootmgfw.efi", L"", L"Microsoft EFI boot menu", Volume, NULL, OSTYPE_WINEFI, 0);
-    // check for Microsoft boot loader/menu
-    AddLoaderEntry(L"\\bootmgr.efi", L"", L"Microsoft EFI boot menu", Volume, NULL, OSTYPE_WINEFI, 0);
+    AddLoaderEntry(L"\\EFI\\microsoft\\Boot\\bootmgfw.efi", L"", L"Microsoft EFI boot menu", Volume, NULL, OSTYPE_WINEFI, 0);
+    // check for Microsoft boot loader/menu. This entry is redundant
+//    AddLoaderEntry(L"\\bootmgr.efi", L"", L"Microsoft EFI mgrboot menu", Volume, NULL, OSTYPE_WINEFI, 0);
     // check for Microsoft boot loader/menu on CDROM
-    AddLoaderEntry(L"\\EFI\\MICROSOFT\\BOOT\\cdboot.efi", L"", L"Microsoft EFI boot menu", Volume, NULL, OSTYPE_WINEFI, 0);
+    AddLoaderEntry(L"\\EFI\\MICROSOFT\\BOOT\\cdboot.efi", L"", L"Microsoft EFI cdboot menu", Volume, NULL, OSTYPE_WINEFI, 0);
     
     // check for linux loaders
     for (Index = 0; Index < LinuxEntryDataCount; ++Index) {

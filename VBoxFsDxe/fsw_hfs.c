@@ -1123,7 +1123,8 @@ fsw_hfs_cmpi_catkey (BTreeKey *key1, BTreeKey *key2)
         break;
       }
       if (bpos == key1Len) {
-        return 0;
+//        return key1Len - key2Len;
+        return 0;  //it is needed to resolve links
       }
     }
     if (ac == bc)
