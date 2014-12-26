@@ -6,13 +6,11 @@
 cd "$(dirname $0)"
 
 version=v2k
-if [[ -d .git ]]; then
+if [[ -d ../.git ]]; then
   revision=$(git svn info | grep Revision | tr -cd [:digit:])
 else
   revision=$(svnversion -n | tr -d [:alpha:])
 fi
-
-#revision=$(cat ../vers.txt)
 
 SRCROOT="${PWD}"
 SYMROOT="${SRCROOT}"/sym
