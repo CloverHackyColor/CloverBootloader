@@ -205,8 +205,8 @@ int queryDevice(char const* deviceName)
                 CFStringGetCString(cfstr_value, &value_buffer[0], (CFIndex) sizeof value_buffer, kCFStringEncodingUTF8);
                 value = &value_buffer[0];
             }
-            CFRelease(cfstr_value);
             printf("%s\n", value);
+            CFRelease(cfstr_value);
             result = EXIT_SUCCESS;
         }
     }
