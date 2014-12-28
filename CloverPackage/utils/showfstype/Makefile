@@ -24,14 +24,20 @@ SRCS := $(wildcard *.c)
 PROG := $(addprefix $(UTILSDIR)/, $(PROGRAM))
 
 all: $(PROG)
+debug: $(PROGRAM)
 
 $(PROG): $(SRCS)
 	@echo "\t[XCODE] $(PROGRAM)"
 	@/usr/bin/xcodebuild $(XCODEBUILD_OPTIONS) $(BUILD_ACTION) >/dev/null
 
+$(PROGRAM): $(SRCS)
+	@echo "\t[XCODE] $(PROGRAM) (Debug)"
+	@/usr/bin/xcodebuild build -configuration Debug >/dev/null
+
 install-local: $(PROG)
-	@sudo install -psv -g 0 -o 0 $(PROGRAM) /usr/local/bin
+	@sudo install -psv -g 0 -o 0 $(PROG) /usr/local/bin
 
 clean-local:
 	@/usr/bin/xcodebuild $(XCODEBUILD_OPTIONS) clean  >/dev/null
-	@rm -rf $(OBJROOT) *~
+	@rm -f $(PROGRAM) *~
+	@rm -rf build $(OBJROOT)
