@@ -11,7 +11,7 @@ installer_choice="@INSTALLER_CHOICE@"
 installer_altboot_refid='@INSTALLER_ALTBOOT_REFID@'
 fdisk440="${DEST_VOL}"/usr/local/bin/fdisk440
 boot1install="${DEST_VOL}"/usr/local/bin/boot1-install
-showfstype="${DEST_VOL}"/usr/local/bin/showfstype
+partutil="${DEST_VOL}"/usr/local/bin/partutil
 
 bootvolume="$EFI_ROOT_DIR"
 echo "Boot Volume is $bootvolume"
@@ -95,7 +95,7 @@ echo "==============================================="
 echo "Check the format of the selected partition"
 echo "==============================================="
 
-boot_volume_format=$("$showfstype" $bootrdev)
+boot_volume_format=$("$partutil" --show-fstype $bootdev)
 case "$boot_volume_format" in
       hfs) echo "${bootdev} is currently formatted as HFS"   ;;
     msdos) echo "${bootdev} is currently formatted as msdos" ;;
