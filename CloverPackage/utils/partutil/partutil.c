@@ -50,6 +50,7 @@ typedef enum queryType {
     query_volumename,
     query_uuid,
     query_blocksize,
+    query_dump,
     query_undefined
 } queryType_t;
 queryType_t query = query_undefined;
@@ -177,6 +178,11 @@ int queryDevice(char const* deviceName)
             break;
         case query_blocksize:
             key = kDADiskDescriptionMediaBlockSizeKey;
+            break;
+        case query_dump:
+            CFShow(descDict);
+            CFRelease(descDict);
+            return EXIT_SUCCESS;
             break;
         case query_undefined:
             break;
@@ -340,6 +346,7 @@ Query options:\n\
 \t--show-volumename       display the volume name of the partition\n\
 \t--show-uuid             display the UUID of the partition\n\
 \t--show-blocksize        display the prefer blocksize of the partition\n\
+\t--dump                  dump properties of the partition\n\
 \n\
 Search options: \n\
 \t--search-uuid UUID      search a partition with the specific UUID\n\
@@ -368,6 +375,7 @@ static struct option options[] =
     {"show-volumename", no_argument, 0, query_volumename},
     {"show-uuid", no_argument, 0, query_uuid},
     {"show-blocksize", no_argument, 0, query_blocksize},
+    {"dump", no_argument, 0, query_dump},
     {"help",    no_argument, 0, 'h'},
     {"version", no_argument, 0, 'V'},
     {"verbose", no_argument, 0, 'v'},
@@ -418,6 +426,7 @@ int main(int argc, char* const argv[])
                 case query_volumename:
                 case query_uuid:
                 case query_blocksize:
+                case query_dump:
                     define_query(c);
                     break;
 
