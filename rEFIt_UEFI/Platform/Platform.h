@@ -1095,7 +1095,7 @@ typedef struct {
   CHAR16                  BlockKexts[64];
   
   //ACPI tables
-  INTN    SortedACPICount;
+  UINTN    SortedACPICount;
 #if defined(MDE_CPU_IA32)
   UINT32                  align37;
 #endif

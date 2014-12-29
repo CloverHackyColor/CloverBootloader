@@ -114,7 +114,7 @@ rem have edk2 prepare to build
       if x"%DSCFILE%" == x"" goto buildall
       rem build specific dsc
       echo Building selected ...
-      build %*
+      build -DNO_GRUB_DRIVERS  %*
       if errorlevel 1 goto failscript
       if not x"%CLEANING%" == x"" goto:eof
       goto postbuild
@@ -126,7 +126,7 @@ rem have edk2 prepare to build
          if x"%BUILD_ARCH%" == x"" set "ARCH_ARGUMENT=-a IA32"
 
          echo Building Clover (IA32) ...
-         build -p "%WORKSPACE%\Clover\Clover.dsc" %ARCH_ARGUMENT% %*
+         build -p "%WORKSPACE%\Clover\Clover.dsc" -DNO_GRUB_DRIVERS %ARCH_ARGUMENT% %*
          if errorlevel 1 goto failscript
 
          if x"%BUILD_ARCH%" == x"IA32" (
@@ -139,7 +139,7 @@ rem have edk2 prepare to build
          if x"%BUILD_ARCH%" == x"" set "ARCH_ARGUMENT=-a X64"
 
          echo Building Clover (X64) ...
-         build -p "%WORKSPACE%\Clover\Clover.dsc" %ARCH_ARGUMENT% %*
+         build -p "%WORKSPACE%\Clover\Clover.dsc" -DNO_GRUB_DRIVERS %ARCH_ARGUMENT% %*
          if errorlevel 1 goto failscript
 
          if not x"%CLEANING%" == x"" goto:eof

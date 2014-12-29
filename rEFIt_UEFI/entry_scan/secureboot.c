@@ -238,7 +238,7 @@ PrecheckSecureBootPolicy(IN OUT EFI_STATUS                     *AuthenticationSt
 
   case SECURE_BOOT_POLICY_WHITELIST:
     // Check the white list for this image
-    DevicePathStr = FileDevicePathToStr(DevicePath);
+    DevicePathStr = FileDevicePathToStr((EFI_DEVICE_PATH_PROTOCOL *)DevicePath);
     if (DevicePathStr == NULL) {
       return FALSE;
     }
@@ -254,7 +254,7 @@ PrecheckSecureBootPolicy(IN OUT EFI_STATUS                     *AuthenticationSt
 
   case SECURE_BOOT_POLICY_BLACKLIST:
     // Check the black list for this image
-    DevicePathStr = FileDevicePathToStr(DevicePath);
+    DevicePathStr = FileDevicePathToStr((EFI_DEVICE_PATH_PROTOCOL *)DevicePath);
     if (DevicePathStr == NULL) {
       return FALSE;
     }
@@ -269,7 +269,7 @@ PrecheckSecureBootPolicy(IN OUT EFI_STATUS                     *AuthenticationSt
     return TRUE;
 
   case SECURE_BOOT_POLICY_USER:
-    DevicePathStr = FileDevicePathToStr(DevicePath);
+    DevicePathStr = FileDevicePathToStr((EFI_DEVICE_PATH_PROTOCOL *)DevicePath);
     if (DevicePathStr == NULL) {
       return FALSE;
     }
@@ -363,7 +363,7 @@ InternalFileAuthentication(IN CONST EFI_SECURITY_ARCH_PROTOCOL *This,
     }
   }
   if (EFI_ERROR(Status)) {
-    CHAR16 *DevicePathStr = FileDevicePathToStr(DevicePath);
+    CHAR16 *DevicePathStr = FileDevicePathToStr((EFI_DEVICE_PATH_PROTOCOL *)DevicePath);
     if (DevicePathStr) {
       DBG("VerifySecureBootImage(1): %r %s\n", Status, DevicePathStr);
       FreePool(DevicePathStr);
@@ -390,7 +390,7 @@ Internal2FileAuthentication(IN CONST EFI_SECURITY2_ARCH_PROTOCOL *This,
     }
   }
   if (EFI_ERROR(Status)) {
-    CHAR16 *DevicePathStr = FileDevicePathToStr(DevicePath);
+    CHAR16 *DevicePathStr = FileDevicePathToStr((EFI_DEVICE_PATH_PROTOCOL *)DevicePath);
     if (DevicePathStr) {
       DBG("VerifySecureBootImage(2): %r %s\n", Status, DevicePathStr);
       FreePool(DevicePathStr);
@@ -409,7 +409,7 @@ EFI_STATUS VerifySecureBootImage(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath)
     }
   }
   if (EFI_ERROR(Status)) {
-    CHAR16 *DevicePathStr = FileDevicePathToStr(DevicePath);
+    CHAR16 *DevicePathStr = FileDevicePathToStr((EFI_DEVICE_PATH_PROTOCOL *)DevicePath);
     if (DevicePathStr) {
       DBG("VerifySecureBootImage: %r %s\n", Status, DevicePathStr);
       FreePool(DevicePathStr);

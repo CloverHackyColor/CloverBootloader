@@ -191,7 +191,7 @@ static fsw_status_t fsw_hfs_volume_mount(struct fsw_hfs_volume *vol)
   fsw_u32                blockno;
   struct fsw_string      s;
   HFSMasterDirectoryBlock* mdb;
-  UINTN i;
+  INTN i;
   
   rv = FSW_UNSUPPORTED;
   
@@ -264,7 +264,7 @@ static fsw_status_t fsw_hfs_volume_mount(struct fsw_hfs_volume *vol)
         break;
     
     s.type = FSW_STRING_TYPE_ISO88591;
-    s.size = s.len = i;
+    s.size = s.len = (int)i;
     s.data = &mdb->drVN; //"HFS+ volume";
     
     //fsw_status_t fsw_strdup_coerce(struct fsw_string *dest, int type, struct fsw_string *src)
@@ -338,7 +338,7 @@ static fsw_status_t fsw_hfs_volume_mount(struct fsw_hfs_volume *vol)
    //     DBG(" btnd->kind ==%d expected -1\n", btnd->kind);
   //      DBG(" ck->parentID ==%d expected 1\n", be32_to_cpu (ck->parentID));
         if (btnd->kind == kBTLeafNode &&
-            be32_to_cpu_ua (&ck->parentID) == kHFSRootParentID) {
+            be32_to_cpu_ua ((fsw_u32 *)(((UINT8 *)ck) + OFFSET_OF(HFSPlusCatalogKey, parentID))) == kHFSRootParentID) {
           struct fsw_string vn;
           
           vn.type = FSW_STRING_TYPE_UTF16_BE;
@@ -1063,7 +1063,7 @@ fsw_hfs_cmpi_catkey (BTreeKey *key1, BTreeKey *key2)
   fsw_u16 *p1;
   fsw_u16 *p2;
 
-  parentId1 = be32_to_cpu_ua(&ckey1->parentID); // MSC warns about a possibly unaligned result of '&' (C4366)
+  parentId1 = be32_to_cpu_ua((fsw_u32 *)(((UINT8 *)ckey1) + OFFSET_OF(HFSPlusCatalogKey, parentID))); // MSC warns about a possibly unaligned result of '&' (C4366)
 //  if (hardlink) {
 //    DBG("parents: %d <-> %d\n", parentId1, ckey2->parentID);
 //  }

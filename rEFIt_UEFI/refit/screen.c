@@ -916,7 +916,6 @@ VOID InitAnime(REFIT_MENU_SCREEN *Screen)
 {
   CHAR16      FileName[256];
   CHAR16      *Path;
-  UINTN       i;
   EG_IMAGE    *p = NULL;
   EG_IMAGE    *Last = NULL;
   GUI_ANIME   *Anime;
@@ -932,6 +931,7 @@ VOID InitAnime(REFIT_MENU_SCREEN *Screen)
 //    DBG(" free screen\n");
     if (Screen->Film) {
       //free images in the film
+      INTN i;
       for (i = 0; i <= Screen->Frames; i++) { //really there are N+1 frames
         // free only last occurrence of repeated frames
         if (Screen->Film[i] != NULL && (i == Screen->Frames || Screen->Film[i] != Screen->Film[i+1])) {
@@ -952,6 +952,7 @@ VOID InitAnime(REFIT_MENU_SCREEN *Screen)
     Screen->Film = (EG_IMAGE**)AllocateZeroPool((Anime->Frames + 1) * sizeof(VOID*));
     if (Path && Screen->Film) {
       // Look through contents of the directory
+      UINTN i;
       for (i = 0; i < Anime->Frames; i++) {
         UnicodeSPrint(FileName, 512, L"%s\\%s_%03d.png", Path, Path, i);
  //       DBG("Try to load file %s\n", FileName);

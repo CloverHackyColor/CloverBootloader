@@ -39,11 +39,11 @@ UINT8                           *gEDID = NULL;
 //UINT16                          gCPUtype;
 UINTN                           NGFX                        = 0; // number of GFX
 
-INTN                            nLanCards;        // number of LAN cards
+UINTN                           nLanCards;        // number of LAN cards
 UINT16                          gLanVendor[4];    // their vendors
 UINT8                           *gLanMmio[4];     // their MMIO regions
 UINT8                           gLanMac[4][6];    // their MAC addresses
-INTN                            nLanPaths;        // number of LAN pathes
+UINTN                           nLanPaths;        // number of LAN pathes
 
 UINTN                           ThemesNum                   = 0;
 CHAR16                          *ThemesList[50]; //no more then 50 themes?

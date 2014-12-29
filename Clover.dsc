@@ -318,6 +318,7 @@
   #Clover/OsxMmcDxe/MmcDxe.inf
   Clover/FatPkg/EnhancedFatDxe/Fat.inf
   # FS from grub
+!ifndef NO_GRUB_DRIVERS
   Clover/GrubFS/src/EXFAT.inf
   Clover/GrubFS/src/HFSPLUS.inf
   Clover/GrubFS/src/ISO9660.inf
@@ -326,6 +327,7 @@
   #Clover/GrubFS/src/UFS.inf
   #Clover/GrubFS/src/UFS2.inf
   #Clover/GrubFS/src/XFS.inf
+!endif
 
   #Video
   IntelFrameworkModulePkg/Bus/Pci/VgaMiniPortDxe/VgaMiniPortDxe.inf
@@ -540,7 +542,6 @@
 !ifdef DISABLE_UDMA_SUPPORT
   DEFINE NOUDMA_FLAG = -DDISABLE_UDMA_SUPPORT
 !endif  
-
 
 # Slice: I propose this flag always true
 #!ifdef AMD_SUPPORT

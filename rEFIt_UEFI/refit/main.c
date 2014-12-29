@@ -731,7 +731,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
           if (AsciiStrnCmp(InstallerVersion, "10.7", 4) &&
               AsciiStrnCmp(InstallerVersion, "10.8", 4) &&
               AsciiStrnCmp(InstallerVersion, "10.9", 4) &&
-              AsciiStrnCmp(InstallerVersion, "10.10", 4)) {   //xxx
+              AsciiStrnCmp(InstallerVersion, "10.10", 5)) {   //xxx
             InstallerVersion = NULL; // flag known version was not found
           }
           if (InstallerVersion != NULL) { // known version was found in image
@@ -757,7 +757,18 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     }
     // */
 
-    //we are booting OSX - restore emulation if it's not installed before starting boot.efi
+    // Set boot argument for kernel if no caches, this should force kernel loading
+    if (OSFLAG_ISSET(Entry->Flags, OSFLAG_NOCACHES) &&
+        (StriStr(Entry->LoadOptions, L"Kernel=") == NULL)) {
+      CHAR16 *TempOptions = AddLoadOption(Entry->LoadOptions,
+          AsciiStrnCmp(Entry->OSVersion, "10.10", 5) ?
+            L"\"Kernel=/mach_kernel\"" :
+            L"\"Kernel=/System/Library/Kernels/kernel\"");
+      FreePool(Entry->LoadOptions);
+      Entry->LoadOptions = TempOptions;
+    }
+
+    //we are booting OSX - restore emulation if it's not installed before g boot.efi
     if (gEmuVariableControl != NULL) {
         gEmuVariableControl->InstallEmulation(gEmuVariableControl);
     }

@@ -98,10 +98,10 @@ UINTN QuerySecureBootUser(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath)
   if (DevicePath != NULL) {
     // Get the device path string
     CHAR16 *Information[] = { L"Please select the authentication action for", NULL, NULL };
-    Information[1] = FileDevicePathToStr(DevicePath);
+    Information[1] = FileDevicePathToStr((EFI_DEVICE_PATH_PROTOCOL *)DevicePath);
     if (Information[1] != NULL) {
       // Get the device path file path
-      Information[2] = FileDevicePathFileToStr(DevicePath);
+      Information[2] = FileDevicePathFileToStr((EFI_DEVICE_PATH_PROTOCOL *)DevicePath);
       if (Information[2] != NULL) {
         // Create the entries
         REFIT_MENU_ENTRY  *ChosenEntry = NULL;
@@ -161,7 +161,7 @@ STATIC VOID *FindImageSignatureDatabase(IN  CONST EFI_DEVICE_PATH_PROTOCOL *Devi
     return NULL;
   }
   // Get device path string
-  FDP = FileDevicePathToStr(DevicePath);
+  FDP = FileDevicePathToStr((EFI_DEVICE_PATH_PROTOCOL *)DevicePath);
   if (FDP == NULL) {
     return NULL;
   }
@@ -258,9 +258,9 @@ EFI_STATUS AppendImageToAuthorizedDatabase(IN CONST EFI_DEVICE_PATH_PROTOCOL *De
     }
   }
   if (ErrorString != NULL) {
-    CHAR16 *DevicePathStr = FileDevicePathToStr(DevicePath);
+    CHAR16 *DevicePathStr = FileDevicePathToStr((EFI_DEVICE_PATH_PROTOCOL *)DevicePath);
     if (DevicePathStr != NULL) {
-      CHAR16 *FileDevicePathStr = FileDevicePathFileToStr(DevicePath);
+      CHAR16 *FileDevicePathStr = FileDevicePathFileToStr((EFI_DEVICE_PATH_PROTOCOL *)DevicePath);
       if (FileDevicePathStr != NULL) {
         CHAR16 *Str = PoolPrint(L"%s\n%s\n%s", ErrorString, DevicePathStr, FileDevicePathStr);
         if (Str != NULL) {
@@ -339,9 +339,9 @@ EFI_STATUS RemoveImageFromAuthorizedDatabase(IN CONST EFI_DEVICE_PATH_PROTOCOL *
     }
   }
   if (ErrorString != NULL) {
-    CHAR16 *DevicePathStr = FileDevicePathToStr(DevicePath);
+    CHAR16 *DevicePathStr = FileDevicePathToStr((EFI_DEVICE_PATH_PROTOCOL *)DevicePath);
     if (DevicePathStr != NULL) {
-      CHAR16 *FileDevicePathStr = FileDevicePathFileToStr(DevicePath);
+      CHAR16 *FileDevicePathStr = FileDevicePathFileToStr((EFI_DEVICE_PATH_PROTOCOL *)DevicePath);
       if (FileDevicePathStr != NULL) {
         CHAR16 *Str = PoolPrint(L"%s\n%s\n%s", ErrorString, DevicePathStr, FileDevicePathStr);
         if (Str != NULL) {

@@ -17,8 +17,8 @@
 #define DBG(...) DebugLog(DEBUG_MAC, __VA_ARGS__)
 #endif
 
-extern INTN                            nLanCards;     // number of LAN cards
-extern INTN                            nLanPaths;     // number of UEFI LAN
+extern UINTN                           nLanCards;     // number of LAN cards
+extern UINTN                           nLanPaths;     // number of UEFI LAN
 extern UINT16                          gLanVendor[4]; // their vendors
 extern UINT8                           *gLanMmio[4];   // their MMIO regions
 extern UINT8                           gLanMac[4][6]; // their MAC addresses
@@ -203,12 +203,12 @@ GetMacAddress()
       Mac0 = *(UINT32*)(gLanMmio[Index] + Offset);
       Mac4 = *(UINT32*)(gLanMmio[Index] + Offset + 4);
       if (Swab) {
-        gLanMac[Index][0] = (Mac4 & 0xFF00) >> 8;
-        gLanMac[Index][1] = (Mac4 & 0xFF);
-        gLanMac[Index][2] = (Mac0 & 0xFF000000) >> 24;
-        gLanMac[Index][3] = (Mac0 & 0x00FF0000) >> 16;
-        gLanMac[Index][4] = (Mac0 & 0x0000FF00) >> 8;
-        gLanMac[Index][5] = (Mac0 & 0x000000FF);
+        gLanMac[Index][0] = (UINT8)((Mac4 & 0xFF00) >> 8);
+        gLanMac[Index][1] = (UINT8)(Mac4 & 0xFF);
+        gLanMac[Index][2] = (UINT8)((Mac0 & 0xFF000000) >> 24);
+        gLanMac[Index][3] = (UINT8)((Mac0 & 0x00FF0000) >> 16);
+        gLanMac[Index][4] = (UINT8)((Mac0 & 0x0000FF00) >> 8);
+        gLanMac[Index][5] = (UINT8)(Mac0 & 0x000000FF);
         goto done;
       }
     copy:

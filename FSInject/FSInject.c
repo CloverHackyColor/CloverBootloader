@@ -427,6 +427,36 @@ FSI_FP_Open(
 			}
 		}
 	}
+	// S/L/Kernels/kernel - if exists in SrcDir, then inject this one
+	if (StrCmpiBasic(NewFName, L"\\System\\Library\\Kernels\\kernel") == 0) {
+		DBG("kernel ");
+		if (FSIThis->FSI_FS->SrcDir != NULL && FSIThis->FSI_FS->SrcFS != NULL) {
+			InjFName = GetInjectionFName(L"\0", FSIThis->FSI_FS->SrcDir, L"\\kernel");
+			if (InjFName != NULL) {
+				// if this one exists inside injection dir - should be opened with SrcFP
+				FSINew->SrcFP = OpenFileProtocol(FSIThis->FSI_FS->SrcFS, InjFName, OpenMode, Attributes);
+				if (FSINew->SrcFP != NULL) {
+					FSINew->FromTgt = FALSE;
+					DBG("Opened with SrcFP ");
+					goto SuccessExit;
+				} else {
+					DBG(" no injection, SrcFP->Open=%r ", Status);
+				}
+			}
+			InjFName = GetInjectionFName(L"\0", FSIThis->FSI_FS->SrcDir, L"\\mach_kernel");
+			if (InjFName != NULL) {
+				// if this one exists inside injection dir - should be opened with SrcFP
+				FSINew->SrcFP = OpenFileProtocol(FSIThis->FSI_FS->SrcFS, InjFName, OpenMode, Attributes);
+				if (FSINew->SrcFP != NULL) {
+					FSINew->FromTgt = FALSE;
+					DBG("Opened with SrcFP ");
+					goto SuccessExit;
+				} else {
+					DBG(" no injection, SrcFP->Open=%r ", Status);
+				}
+			}
+		}
+	}
 	
 	// try with target
 	if (FSIThis->TgtFP != NULL) {

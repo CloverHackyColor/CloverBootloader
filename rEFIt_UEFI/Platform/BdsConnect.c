@@ -422,11 +422,11 @@ EFI_STATUS BdsLibConnectMostlyAllEfi()
 	EFI_STATUS				Status;
 	UINTN             AllHandleCount = 0;
 	EFI_HANDLE				*AllHandleBuffer = NULL;
-	INTN             Index;
+	UINTN             Index;
 	UINTN             HandleCount = 0;
 	EFI_HANDLE				*HandleBuffer = NULL;
 	UINT32            *HandleType = NULL;
-	INTN             HandleIndex;
+	UINTN             HandleIndex;
 	BOOLEAN           Parent;
 	BOOLEAN           Device;
 	EFI_PCI_IO_PROTOCOL*	PciIo = NULL;

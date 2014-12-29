@@ -298,8 +298,8 @@ struct fsw_dnode {
     struct fsw_dnode *next;         //!< Doubly-linked list of all dnodes: previous dnode
     struct fsw_dnode *prev;         //!< Doubly-linked list of all dnodes: next dnode
 
-#if defined(FSW_DNODE_CACHE_SIZE)
     fsw_u32    numcslots;                          //!< Number of slots occupied
+#if defined(FSW_DNODE_CACHE_SIZE) && (FSW_DNODE_CACHE_SIZE > 0)
     struct fsw_dnode *cache[FSW_DNODE_CACHE_SIZE];         //!< Rudimentary cache for directory lookups
 #endif
 };
