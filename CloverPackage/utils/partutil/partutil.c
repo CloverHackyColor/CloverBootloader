@@ -55,8 +55,12 @@ typedef enum queryType {
 } queryType_t;
 queryType_t query = query_undefined;
 
+static char const fat16ID[] = "FAT16   ";
+static char const fat32ID[] = "FAT32   ";
+static char const exfatID[] = "EXFAT   ";
+
 #pragma mark -
-#pragma mark DiskArbitration Helpers
+#pragma mark DiskArbitration and PBR Helpers
 #pragma mark -
 
 static
@@ -78,6 +82,54 @@ char const* toBSDName(char const* pathName)
         exit(EXIT_FAILURE);
     }
 	return bsdName;
+}
+
+static
+int getFSTypeFromPBR(char const* pathName) {
+    const unsigned int bytes_to_read = 4096;
+    unsigned char buffer[bytes_to_read];
+    char rawPathName[ MAXPATHLEN ];
+
+    assert(pathName);
+    snprintf(rawPathName,MAXPATHLEN, "%sr%s", _PATH_DEV, toBSDName(pathName));
+    int fd = open(rawPathName, O_RDONLY);
+    if (fd < 0) {
+        fprintf(stderr, "Error: unable to open %s: %s\n", rawPathName, strerror(errno));
+        return EXIT_FAILURE;
+    }
+    ssize_t rc = read(fd, (void *)buffer, bytes_to_read);
+    close(fd);
+
+    if (rc != bytes_to_read) {
+        fprintf(stderr, "Error: unable to read from %s: %s\n", rawPathName, strerror(errno));
+        return EXIT_FAILURE;
+    }
+
+    uint16_t fat_bytesPerSector = OSSwapLittleToHostInt16(*(uint16_t const*)&buffer[0xb]);
+    uint8_t fat_sectorsPerCluster = buffer[0xd];
+
+    if (!(fat_bytesPerSector & (fat_bytesPerSector - 1U)) &&
+        fat_bytesPerSector >= 0x200U && fat_bytesPerSector <= 0x1000U &&
+        fat_sectorsPerCluster && !(fat_sectorsPerCluster & (fat_sectorsPerCluster - 1U)) &&
+        ((memcmp(&buffer[0x52], fat32ID, sizeof(fat32ID)-1) == 0) ||
+         (memcmp(&buffer[0x36], fat16ID, sizeof(fat16ID)-1) == 0))) {
+        printf("msdos\n");
+        return EXIT_SUCCESS;
+    }
+
+    uint16_t hfs_sig = OSSwapBigToHostInt16(*(uint16_t const*)&buffer[1024]);
+    if (hfs_sig == 0x4244 /*'BD'*/ ||
+        hfs_sig == 0x482B /*'H+'*/ ||
+        hfs_sig == 0x4858 /*'HX'*/) {
+        printf("hfs\n");
+        return EXIT_SUCCESS;
+    }
+
+    if (memcmp(&buffer[0x3], exfatID, sizeof(exfatID)) == 0) {
+        printf("exfat\n");
+        return EXIT_SUCCESS;
+    }
+    return EXIT_FAILURE;
 }
 
 static
@@ -122,11 +174,10 @@ int queryDevice(char const* deviceName)
     assert(deviceName);
 
     char devFilePath[ MAXPATHLEN ];
-    size_t maxPathSize = sizeof( devFilePath );
     char *deviceFilePath = &devFilePath[0];
 
-    strncpy( deviceFilePath, _PATH_DEV, maxPathSize );
-    strncat( deviceFilePath, deviceName, maxPathSize - strlen(deviceFilePath) - 1);
+    strlcpy( deviceFilePath, _PATH_DEV, sizeof( devFilePath ) );
+    strlcat( deviceFilePath, deviceName, sizeof( devFilePath ) );
 
     if (stat(deviceFilePath, &buf) < 0) {
         fprintf(stderr, "Error: stat failed on %s: %s\n", deviceFilePath, strerror(errno));
@@ -216,16 +267,17 @@ int queryDevice(char const* deviceName)
             result = EXIT_SUCCESS;
         }
     }
-
-#if 0
-	CFShow(descDict);
-#endif
 	CFRelease(descDict);
-	return result;
+
+    if (result != EXIT_SUCCESS && query == query_fstype) {
+        // Try to find the fstype by analysing the PBR of the partition
+        return getFSTypeFromPBR(deviceName);
+    }
+    return result;
 }
 
 #pragma mark -
-#pragma mark Test
+#pragma mark Search
 #pragma mark -
 
 int doSearch()
@@ -409,8 +461,6 @@ void define_query(queryType_t query_option) {
 
 int main(int argc, char* const argv[])
 {
-    //test();
-
     /* Check for options.  */
     while (1) {
         int c = getopt_long (argc, argv, "d:r:hVv", options, 0);
@@ -449,6 +499,11 @@ int main(int argc, char* const argv[])
     }
     
     argc -= optind;
+
+    if (geteuid() != 0) {
+        fprintf(stderr, "Error: this program must be run as root !\n");
+        return EXIT_FAILURE;
+    }
 
     /* check arguments.  */
     if (query == query_undefined && search == search_undefined)
