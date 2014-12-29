@@ -13,6 +13,17 @@ fdisk440="${DEST_VOL}"/usr/local/bin/fdisk440
 boot1install="${DEST_VOL}"/usr/local/bin/boot1-install
 partutil="${DEST_VOL}"/usr/local/bin/partutil
 
+function finish {
+    local exit_code=$?
+    if [[ $exit_code -ne 0 ]]; then
+        if [[ -e "$install_log" && -d "${EFI_ROOT_DIR}/EFI" ]]; then
+            mv -f "$install_log" "${EFI_ROOT_DIR}/EFI/Clover_Install_Log.txt"
+        fi
+    fi
+    echo $exit_code
+}
+trap finish EXIT
+
 bootvolume="$EFI_ROOT_DIR"
 echo "Boot Volume is $bootvolume"
 
@@ -70,29 +81,28 @@ echo ""
 echo ""
 
 echo "==============================================="
-echo "Check partition scheme"
+echo "Check partition scheme of $bootdisk"
 echo "==============================================="
 bootdisk_partition_scheme=$(LC_ALL=C diskutil info "$bootdisk" 2>/dev/null | \
  sed -nE 's/.*(Partition Type|Content \(IOContent\)): *//p')
 
 case "$bootdisk_partition_scheme" in
     FDisk_partition_scheme)
-        echo "${bootdev} use MBR partition scheme"
+        echo "${bootdisk} use MBR partition scheme"
         bootdisk_partition_scheme="mbr"
         ;;
     GUID_partition_scheme)
-        echo "${bootdev} use GPT/Hybrid GPT partition scheme"
+        echo "${bootdisk} use GPT/Hybrid GPT partition scheme"
         bootdisk_partition_scheme="gpt"
         ;;
-     *) echo "ERROR: $bootdev use an unsupported partition scheme: $bootdisk_partition_scheme"
-        echo "ERROR: $bootdev use an unsupported partition scheme: $bootdisk_partition_scheme" >> "$install_log"
+     *) echo "ERROR: $bootdev use an unsupported partition scheme: $bootdisk_partition_scheme" | tee -a "$install_log"
         exit 1
         ;;
 esac
 echo ""
 
 echo "==============================================="
-echo "Check the format of the selected partition"
+echo "Checking the format of the $bootdev partition"
 echo "==============================================="
 
 boot_volume_format=$("$partutil" --show-fstype $bootdev)
@@ -102,11 +112,18 @@ case "$boot_volume_format" in
     exfat) echo "${bootdev} is currently formatted as ExFAT" ;;
 esac
 echo ""
-echo "${bootdev} is currently formatted as $boot_volume_format"  >> "$install_log"
 
-echo "======================================================" >> "$install_log"
-echo "Installing BootSectors/BootLoader" >> "$install_log"
-echo "" >> "$install_log"
+if [[ -z "$boot_volume_format" ]]; then
+    # Try to find why we can't find fstype
+    echo "Can't detect filesystem type for $bootdev !" | tee -a "$install_log"
+    echo "$partutil --dump $bootdev:" | tee -a "$install_log"
+    "$partutil" --dump $bootdev 2>&1  | tee -a "$install_log"
+    echo "Installation abort !" | tee -a "$install_log"
+    exit 33
+else
+    echo "${bootdev} is currently formatted as $boot_volume_format"
+fi
+
 partitionactive=$( "$fdisk440" -d ${bootrdisk} | grep -n "*" | awk -F: '{print $1}')
 if [[ -n "$partitionactive" ]]; then
     echo "Current Active Partition: ${partitionactive}" >> "$install_log"
@@ -152,16 +169,16 @@ if [[ ${boot_volume_format} = "hfs" ]]; then
 
 elif [[ ${boot_volume_format} = "msdos" ]]; then
     echo "Stage 1 - Writting ${partitionloaderfat} to ${bootrdev}" >> "$tmp_log"
-    echo "File system is Fat32." >> "$tmp_log"
 
     # copy partition boot sector to origbs
     echo "dd if=${bootrdev} count=1 bs=512 of=/tmp/origbs" >> "$tmp_log"
     dd if=${bootrdev} count=1 bs=512 of=/tmp/origbs
 
     if [[cat /tmp/origbs | grep FAT16]]; then
-      echo " boot volume format is FAT16" >> "$tmp_log"
+      echo "boot volume format is FAT16" >> "$tmp_log"
       echo "No Stage1 was written" >> "$tmp_log"
     else
+      echo "boot volume format is FAT32" >> "$tmp_log"
       # copy boot1f32 to newbs
       echo "cp ${partitionloaderfat_copy} /tmp/newbs" >> "$tmp_log"
       cp -f "${partitionloaderfat_copy}" /tmp/newbs
