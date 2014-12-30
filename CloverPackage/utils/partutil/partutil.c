@@ -46,6 +46,7 @@ typedef enum {
 typedef enum {
     query_fstype=search_undefined+1,
     query_bsdname,
+    query_mountpoint,
     query_volumename,
     query_uuid,
     query_blocksize,
@@ -271,6 +272,9 @@ bool queryDevice(char const* deviceName, queryType query, char *answer, size_t a
         case query_bsdname:
             key = kDADiskDescriptionMediaBSDNameKey;
             break;
+        case query_mountpoint:
+            key = kDADiskDescriptionVolumePathKey;
+            break;
         case query_volumename:
             key = kDADiskDescriptionVolumeNameKey;
             break;
@@ -312,6 +316,8 @@ bool queryDevice(char const* deviceName, queryType query, char *answer, size_t a
             cfstr_value = CFUUIDCreateString(NULL, valueRef); // convert CFUUIDRef to CFStringRef
         else if (typeID == CFNumberGetTypeID())
             cfstr_value = CFStringCreateWithFormat(NULL, NULL, CFSTR("%@"), valueRef); // convert CFNumber to CFStringRef
+        else if (typeID == CFURLGetTypeID())
+            cfstr_value = CFURLCopyFileSystemPath ( valueRef, kCFURLPOSIXPathStyle ); // convert CFURL to CFStringRef
         if (cfstr_value) {
             result = CFStringGetCString(cfstr_value, answer, answer_maxsize, kCFStringEncodingUTF8);
             CFRelease(cfstr_value);
@@ -447,6 +453,7 @@ Usage: " PROGNAME_S " [QUERY OPTION] [DEVICE|UUID]\n\
 Query options:\n\
 \t--show-fstype           display the filesytem type of the partition\n\
 \t--show-bsdname          display the device name of the partition\n\
+\t--show-mountpoint       display the mount point of the partition\n\
 \t--show-volumename       display the volume name of the partition\n\
 \t--show-uuid             display the UUID of the partition\n\
 \t--show-blocksize        display the prefer blocksize of the partition\n\
@@ -482,6 +489,7 @@ static struct option options[] =
     {"search-uuid", required_argument, 0, search_uuid},
     {"show-fstype", no_argument, 0, query_fstype},
     {"show-bsdname", no_argument, 0, query_bsdname},
+    {"show-mountpoint", no_argument, 0, query_mountpoint},
     {"show-volumename", no_argument, 0, query_volumename},
     {"show-uuid", no_argument, 0, query_uuid},
     {"show-blocksize", no_argument, 0, query_blocksize},
@@ -525,6 +533,7 @@ int main(int argc, char* const argv[])
 
                 case query_fstype:
                 case query_bsdname:
+                case query_mountpoint:
                 case query_volumename:
                 case query_uuid:
                 case query_blocksize:
