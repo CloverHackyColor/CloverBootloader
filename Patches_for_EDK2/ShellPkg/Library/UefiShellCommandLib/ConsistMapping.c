@@ -42,12 +42,26 @@ typedef struct {
   CHAR16    *Name;
 } MTD_NAME;
 
-typedef VOID (EFIAPI *SerialDecodeFucntion) (EFI_DEVICE_PATH_PROTOCOL *DevPath, DEVICE_CONSIST_MAPPING_INFO *MapInfo,EFI_DEVICE_PATH_PROTOCOL *);
+/**
+  Serial Decode function.
+
+  @param  DevPath          The Device path info.
+  @param  MapInfo          The map info.
+  @param  OrigDevPath      The original device path protocol.
+
+**/
+typedef 
+VOID 
+(EFIAPI *SERIAL_DECODE_FUNCTION) (
+  EFI_DEVICE_PATH_PROTOCOL    *DevPath, 
+  DEVICE_CONSIST_MAPPING_INFO *MapInfo,
+  EFI_DEVICE_PATH_PROTOCOL    *OrigDevPath
+  );
 
 typedef struct {
   UINT8 Type;
   UINT8 SubType;
-  SerialDecodeFucntion SerialFun;
+  SERIAL_DECODE_FUNCTION SerialFun;
   INTN (EFIAPI *CompareFun) (EFI_DEVICE_PATH_PROTOCOL *DevPath, EFI_DEVICE_PATH_PROTOCOL *DevPath2);
 } DEV_PATH_CONSIST_MAPPING_TABLE;
 
@@ -426,6 +440,7 @@ DevPathCompareDefault (
 
   @param[in] DevicePathNode   The node to get info on.
   @param[in] MappingItem      The info item to populate.
+  @param[in] DevicePath       Ignored.
 **/
 VOID
 EFIAPI
@@ -453,6 +468,7 @@ DevPathSerialHardDrive (
 
   @param[in] DevicePathNode   The node to get info on.
   @param[in] MappingItem      The info item to populate.
+  @param[in] DevicePath       Ignored.
 **/
 VOID
 EFIAPI
@@ -476,6 +492,7 @@ DevPathSerialAtapi (
 
   @param[in] DevicePathNode   The node to get info on.
   @param[in] MappingItem      The info item to populate.
+  @param[in] DevicePath       Ignored.
 **/
 VOID
 EFIAPI
@@ -500,6 +517,7 @@ DevPathSerialCdRom (
 
   @param[in] DevicePathNode   The node to get info on.
   @param[in] MappingItem      The info item to populate.
+  @param[in] DevicePath       Ignored.
 **/
 VOID
 EFIAPI
@@ -524,6 +542,7 @@ DevPathSerialFibre (
 
   @param[in] DevicePathNode   The node to get info on.
   @param[in] MappingItem      The info item to populate.
+  @param[in] DevicePath       Ignored.
 **/
 VOID
 EFIAPI
@@ -550,6 +569,7 @@ DevPathSerialUart (
 
   @param[in] DevicePathNode   The node to get info on.
   @param[in] MappingItem      The info item to populate.
+  @param[in] DevicePath       Ignored.
 **/
 VOID
 EFIAPI
@@ -609,6 +629,7 @@ DevPathSerialUsb (
 
   @param[in] DevicePathNode   The node to get info on.
   @param[in] MappingItem      The info item to populate.
+  @param[in] DevicePath       Ignored.
 
 **/
 VOID
@@ -672,6 +693,7 @@ DevPathSerialVendor (
 
   @param[in] DevicePathNode   The node to get info on.
   @param[in] MappingItem      The info item to populate.
+  @param[in] DevicePath       Ignored.
 **/
 VOID
 EFIAPI
@@ -695,6 +717,7 @@ DevPathSerialLun (
 
   @param[in] DevicePathNode   The node to get info on.
   @param[in] MappingItem      The info item to populate.
+  @param[in] DevicePath       Ignored.
 **/
 VOID
 EFIAPI
@@ -720,6 +743,7 @@ DevPathSerialSata (
 
   @param[in] DevicePathNode   The node to get info on.
   @param[in] MappingItem      The info item to populate.
+  @param[in] DevicePath       Ignored.
 **/
 VOID
 EFIAPI
@@ -764,6 +788,7 @@ DevPathSerialIScsi (
 
   @param[in] DevicePathNode   The node to get info on.
   @param[in] MappingItem      The info item to populate.
+  @param[in] DevicePath       Ignored.
 **/
 VOID
 EFIAPI
@@ -787,6 +812,7 @@ DevPathSerialI2O (
 
   @param[in] DevicePathNode   The node to get info on.
   @param[in] MappingItem      The info item to populate.
+  @param[in] DevicePath       Ignored.
 **/
 VOID
 EFIAPI
@@ -824,6 +850,7 @@ DevPathSerialMacAddr (
 
   @param[in] DevicePathNode   The node to get info on.
   @param[in] MappingItem      The info item to populate.
+  @param[in] DevicePath       Ignored.
 **/
 VOID
 EFIAPI
@@ -857,6 +884,7 @@ DevPathSerialInfiniBand (
 
   @param[in] DevicePathNode   The node to get info on.
   @param[in] MappingItem      The info item to populate.
+  @param[in] DevicePath       Ignored.
 **/
 VOID
 EFIAPI
@@ -903,6 +931,8 @@ DevPathSerialIPv4 (
 
   @param[in] DevicePathNode   The node to get info on.
   @param[in] MappingItem      The info item to populate.
+  @param[in] DevicePath       Ignored.
+
 **/
 VOID
 EFIAPI
@@ -941,6 +971,8 @@ DevPathSerialIPv6 (
 
   @param[in] DevicePathNode   The node to get info on.
   @param[in] MappingItem      The info item to populate.
+  @param[in] DevicePath       Ignored.
+
 **/
 VOID
 EFIAPI
@@ -966,6 +998,7 @@ DevPathSerialScsi (
 
   @param[in] DevicePathNode   The node to get info on.
   @param[in] MappingItem      The info item to populate.
+  @param[in] DevicePath       Ignored.
 **/
 VOID
 EFIAPI
@@ -992,6 +1025,7 @@ DevPathSerial1394 (
 
   @param[in] DevicePathNode   The node to get info on.
   @param[in] MappingItem      The info item to populate.
+  @param[in] DevicePath       Ignored.
 **/
 VOID
 EFIAPI
@@ -1021,6 +1055,7 @@ DevPathSerialAcpi (
 
   @param[in] DevicePathNode       Ignored.
   @param[in] MappingItem          Ignored.
+  @param[in] DevicePath           Ignored.
 
   Does nothing.
 **/
@@ -1274,7 +1309,7 @@ GetDeviceConsistMappingInfo (
   IN EFI_DEVICE_PATH_PROTOCOL       *DevicePath
   )
 {
-  SerialDecodeFucntion      SerialFun;
+  SERIAL_DECODE_FUNCTION    SerialFun;
   UINTN                     Index;
   EFI_DEVICE_PATH_PROTOCOL  *OriginalDevicePath;
 
