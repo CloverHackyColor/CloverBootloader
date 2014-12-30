@@ -45,11 +45,13 @@ typedef enum {
 
 typedef enum {
     query_fstype=search_undefined+1,
+    query_bsdname,
     query_volumename,
     query_uuid,
     query_blocksize,
     query_partitionscheme,
     query_pbrtype,
+    query_wholedisk,
     query_dump,
     query_undefined
 } queryType;
@@ -245,16 +247,17 @@ bool queryDevice(char const* deviceName, queryType query, char *answer, size_t a
         CFBooleanGetValue(b_ref))
         isMediaLeaf = 1;
 
-    // If not query the blocksize or dump, check if the device is not a whole disk
+    // If not query the blocksize, partitionscheme or dump,
+    // check that the media is a leaf
     if (query != query_blocksize && query != query_partitionscheme &&
-        query != query_dump && (isMediaWhole || !isMediaLeaf)) {
-            fprintf(stderr, "Error: %s is a whole disk\n", deviceName);
+        query != query_wholedisk && query != query_dump && !isMediaLeaf) {
+            fprintf(stderr, "Error: %s isn't a slice of a disk\n", deviceName);
             CFRelease(descDict);
             return false;
     }
 
     // If query partition scheme, the device must be a whole disk
-    if (query == query_partitionscheme && (!isMediaWhole || isMediaLeaf)) {
+    if (query == query_partitionscheme && !isMediaWhole) {
         fprintf(stderr, "Error: device must be a whole disk to query about partition scheme !\n");
         CFRelease(descDict);
         return false;
@@ -264,6 +267,9 @@ bool queryDevice(char const* deviceName, queryType query, char *answer, size_t a
     switch (query) {
         case query_fstype:
             key = kDADiskDescriptionVolumeKindKey;
+            break;
+        case query_bsdname:
+            key = kDADiskDescriptionMediaBSDNameKey;
             break;
         case query_volumename:
             key = kDADiskDescriptionVolumeNameKey;
@@ -276,6 +282,9 @@ bool queryDevice(char const* deviceName, queryType query, char *answer, size_t a
             break;
         case query_partitionscheme:
             key = kDADiskDescriptionMediaContentKey;
+            break;
+        case query_wholedisk:
+            key = kDADiskDescriptionMediaBSDUnitKey;
             break;
         case query_dump:
             CFShow(descDict);
@@ -310,6 +319,12 @@ bool queryDevice(char const* deviceName, queryType query, char *answer, size_t a
     }
 	CFRelease(descDict);
 
+    if (query == query_wholedisk && result == true) {
+        // append the string "disk" after the BSD unit number
+        char bsd_unit_number[answer_maxsize];
+        strlcpy(bsd_unit_number, answer, sizeof(bsd_unit_number));
+        snprintf(answer, answer_maxsize, "disk%s", bsd_unit_number);
+    }
     if (result == false && query == query_fstype) {
         // Try to find the fstype by analysing the PBR of the partition
         return getFSTypeFromPBR(deviceName, answer, answer_maxsize);
@@ -342,8 +357,6 @@ bool doSearch(searchType search, char const* searchValue, char *answer, size_t a
         fprintf( stderr, "IOServiceMatching returned a NULL dictionary.\n" );
         return false;
     }
-    CFDictionarySetValue( classesToMatch,
-                         CFSTR( kIOMediaWholeKey ), kCFBooleanFalse ); // Not a Whole disk
     CFDictionarySetValue( classesToMatch,
                          CFSTR( kIOMediaLeafKey ), kCFBooleanTrue ); // Is a leaf device
 
@@ -433,11 +446,13 @@ Usage: " PROGNAME_S " [QUERY OPTION] [DEVICE|UUID]\n\
 \n\
 Query options:\n\
 \t--show-fstype           display the filesytem type of the partition\n\
+\t--show-bsdname          display the device name of the partition\n\
 \t--show-volumename       display the volume name of the partition\n\
 \t--show-uuid             display the UUID of the partition\n\
 \t--show-blocksize        display the prefer blocksize of the partition\n\
 \t--show-partitionscheme  display the partition scheme of a disk\n\
 \t--show-pbrtype          display the filesystem type from the PBR of the device\n\
+\t--show-wholedisk        display the whole disk of the device\n\
 \t--dump                  dump properties of the partition\n\
 \n\
 Search options: \n\
@@ -449,7 +464,7 @@ Other options:\n\
 \t-v, --verbose           print verbose messages\n\
 \n\
 example: " PROGNAME_S " --show-fstype disk0s4\n\
-         " PROGNAME_S " --show-volumename 6A9017D9-2B9E-4786-B0A5-A75BD2264239\n\
+         " PROGNAME_S " --show-bsdname 6A9017D9-2B9E-4786-B0A5-A75BD2264239\n\
          " PROGNAME_S " --show-blocksize disk0s4\n\
          " PROGNAME_S " --search-uuid 2C97F84A-F488-4917-A312-5D64BAE5BCFC\n");
     }
@@ -466,11 +481,13 @@ static struct option options[] =
 {
     {"search-uuid", required_argument, 0, search_uuid},
     {"show-fstype", no_argument, 0, query_fstype},
+    {"show-bsdname", no_argument, 0, query_bsdname},
     {"show-volumename", no_argument, 0, query_volumename},
     {"show-uuid", no_argument, 0, query_uuid},
     {"show-blocksize", no_argument, 0, query_blocksize},
     {"show-partitionscheme", no_argument, 0, query_partitionscheme},
     {"show-pbrtype", no_argument, 0, query_pbrtype},
+    {"show-wholedisk", no_argument, 0, query_wholedisk},
     {"dump", no_argument, 0, query_dump},
     {"help",    no_argument, 0, 'h'},
     {"version", no_argument, 0, 'V'},
@@ -507,11 +524,13 @@ int main(int argc, char* const argv[])
                     break;
 
                 case query_fstype:
+                case query_bsdname:
                 case query_volumename:
                 case query_uuid:
                 case query_blocksize:
                 case query_partitionscheme:
                 case query_pbrtype:
+                case query_wholedisk:
                 case query_dump:
                     if (query != query_undefined) {
                         fprintf(stderr, "Error: only one query can be done !\n");
