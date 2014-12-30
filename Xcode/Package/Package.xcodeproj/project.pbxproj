@@ -36,6 +36,21 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		1210F28E1A51EF0A00461427 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
+		1210F2941A51EF0A00461427 /* CoreFoundation-2F9UZAQGRJX2F.pcm */ = {isa = PBXFileReference; lastKnownFileType = file; path = "CoreFoundation-2F9UZAQGRJX2F.pcm"; sourceTree = "<group>"; };
+		1210F2951A51EF0A00461427 /* Darwin-1X6DCOAHVUA1I.pcm */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Darwin-1X6DCOAHVUA1I.pcm"; sourceTree = "<group>"; };
+		1210F2961A51EF0A00461427 /* DiskArbitration-3UG471J3HYX3N.pcm */ = {isa = PBXFileReference; lastKnownFileType = file; path = "DiskArbitration-3UG471J3HYX3N.pcm"; sourceTree = "<group>"; };
+		1210F2971A51EF0A00461427 /* Dispatch-2V15OGNTZIFP9.pcm */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Dispatch-2V15OGNTZIFP9.pcm"; sourceTree = "<group>"; };
+		1210F2981A51EF0A00461427 /* IOKit-36UG0SGXPXPHQ.pcm */ = {isa = PBXFileReference; lastKnownFileType = file; path = "IOKit-36UG0SGXPXPHQ.pcm"; sourceTree = "<group>"; };
+		1210F2991A51EF0A00461427 /* libkern-1X6DCOAHVUA1I.pcm */ = {isa = PBXFileReference; lastKnownFileType = file; path = "libkern-1X6DCOAHVUA1I.pcm"; sourceTree = "<group>"; };
+		1210F29A1A51EF0A00461427 /* modules.idx */ = {isa = PBXFileReference; lastKnownFileType = file; path = modules.idx; sourceTree = "<group>"; };
+		1210F29B1A51EF0A00461427 /* os-1X6DCOAHVUA1I.pcm */ = {isa = PBXFileReference; lastKnownFileType = file; path = "os-1X6DCOAHVUA1I.pcm"; sourceTree = "<group>"; };
+		1210F29C1A51EF0A00461427 /* modules.timestamp */ = {isa = PBXFileReference; lastKnownFileType = text; path = modules.timestamp; sourceTree = "<group>"; };
+		1210F29E1A51EF0A00461427 /* info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = info.plist; sourceTree = "<group>"; };
+		1210F2A11A51EF0A00461427 /* 30410935-FCE7-44F7-9187-9C9A555CEF0C.xcactivitylog */ = {isa = PBXFileReference; lastKnownFileType = file; path = "30410935-FCE7-44F7-9187-9C9A555CEF0C.xcactivitylog"; sourceTree = "<group>"; };
+		1210F2A21A51EF0A00461427 /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
+		1210F2A31A51EF0A00461427 /* partutil.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = partutil.c; sourceTree = "<group>"; };
+		1210F2A41A51EF0A00461427 /* partutil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = partutil.h; sourceTree = "<group>"; };
 		129260BE1A305A3E005F1426 /* Package */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Package; sourceTree = BUILT_PRODUCTS_DIR; };
 		129260CD1A305A67005F1426 /* clean_po_headers.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = clean_po_headers.sh; sourceTree = "<group>"; };
 		129260CF1A305A67005F1426 /* COPYING */ = {isa = PBXFileReference; lastKnownFileType = text; path = COPYING; sourceTree = "<group>"; };
@@ -200,6 +215,92 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1210F28D1A51EF0A00461427 /* partutil */ = {
+			isa = PBXGroup;
+			children = (
+				1210F28E1A51EF0A00461427 /* .gitignore */,
+				1210F28F1A51EF0A00461427 /* Build */,
+				1210F2911A51EF0A00461427 /* DerivedData */,
+				1210F2A21A51EF0A00461427 /* Makefile */,
+				1210F2A31A51EF0A00461427 /* partutil.c */,
+				1210F2A41A51EF0A00461427 /* partutil.h */,
+			);
+			path = partutil;
+			sourceTree = "<group>";
+		};
+		1210F28F1A51EF0A00461427 /* Build */ = {
+			isa = PBXGroup;
+			children = (
+				1210F2901A51EF0A00461427 /* Products */,
+			);
+			path = Build;
+			sourceTree = "<group>";
+		};
+		1210F2901A51EF0A00461427 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Products;
+			sourceTree = "<group>";
+		};
+		1210F2911A51EF0A00461427 /* DerivedData */ = {
+			isa = PBXGroup;
+			children = (
+				1210F2921A51EF0A00461427 /* ModuleCache */,
+				1210F29D1A51EF0A00461427 /* partutil */,
+			);
+			path = DerivedData;
+			sourceTree = "<group>";
+		};
+		1210F2921A51EF0A00461427 /* ModuleCache */ = {
+			isa = PBXGroup;
+			children = (
+				1210F2931A51EF0A00461427 /* 2W9X1FKTZA71Z */,
+				1210F29C1A51EF0A00461427 /* modules.timestamp */,
+			);
+			path = ModuleCache;
+			sourceTree = "<group>";
+		};
+		1210F2931A51EF0A00461427 /* 2W9X1FKTZA71Z */ = {
+			isa = PBXGroup;
+			children = (
+				1210F2941A51EF0A00461427 /* CoreFoundation-2F9UZAQGRJX2F.pcm */,
+				1210F2951A51EF0A00461427 /* Darwin-1X6DCOAHVUA1I.pcm */,
+				1210F2961A51EF0A00461427 /* DiskArbitration-3UG471J3HYX3N.pcm */,
+				1210F2971A51EF0A00461427 /* Dispatch-2V15OGNTZIFP9.pcm */,
+				1210F2981A51EF0A00461427 /* IOKit-36UG0SGXPXPHQ.pcm */,
+				1210F2991A51EF0A00461427 /* libkern-1X6DCOAHVUA1I.pcm */,
+				1210F29A1A51EF0A00461427 /* modules.idx */,
+				1210F29B1A51EF0A00461427 /* os-1X6DCOAHVUA1I.pcm */,
+			);
+			path = 2W9X1FKTZA71Z;
+			sourceTree = "<group>";
+		};
+		1210F29D1A51EF0A00461427 /* partutil */ = {
+			isa = PBXGroup;
+			children = (
+				1210F29E1A51EF0A00461427 /* info.plist */,
+				1210F29F1A51EF0A00461427 /* Logs */,
+			);
+			path = partutil;
+			sourceTree = "<group>";
+		};
+		1210F29F1A51EF0A00461427 /* Logs */ = {
+			isa = PBXGroup;
+			children = (
+				1210F2A01A51EF0A00461427 /* Build */,
+			);
+			path = Logs;
+			sourceTree = "<group>";
+		};
+		1210F2A01A51EF0A00461427 /* Build */ = {
+			isa = PBXGroup;
+			children = (
+				1210F2A11A51EF0A00461427 /* 30410935-FCE7-44F7-9187-9C9A555CEF0C.xcactivitylog */,
+			);
+			path = Build;
+			sourceTree = "<group>";
+		};
 		129260B31A305A3D005F1426 = {
 			isa = PBXGroup;
 			children = (
@@ -585,6 +686,7 @@
 				1292616D1A305A8F005F1426 /* boot1-install */,
 				129261701A305A8F005F1426 /* clover-genconfig */,
 				129261961A305A8F005F1426 /* fdisk440 */,
+				1210F28D1A51EF0A00461427 /* partutil */,
 				129261AC1A305A8F005F1426 /* Make.rules */,
 				129261AE1A305A8F005F1426 /* Makefile */,
 			);

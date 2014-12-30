@@ -12,7 +12,7 @@ if [[ -z "$DiskDevice" ]]; then
 fi
 
 # Check if the disk is a GPT disk
-disk_partition_scheme=$("$oartutil" --show-partitionscheme "$DiskDevice")
+disk_partition_scheme=$("$partutil" --show-partitionscheme "$DiskDevice")
 
 if [[ "$disk_partition_scheme" = "GUID_partition_scheme" ]]; then
 
