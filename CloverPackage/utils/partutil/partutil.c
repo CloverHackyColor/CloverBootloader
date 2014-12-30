@@ -38,30 +38,45 @@ static char const diskStr[] = "disk";
 static __used char const copyright[] = "Copyright 2014-2015 JrCs.";
 int verbosity = 0;
 
-typedef enum searchType {
+typedef enum {
     search_uuid=300, // must be > 255
     search_undefined
-} searchType_t;
-searchType_t search = search_undefined;
-char const *searchValue = NULL;
+} searchType;
 
-typedef enum queryType {
+typedef enum {
     query_fstype=search_undefined+1,
     query_volumename,
     query_uuid,
     query_blocksize,
+    query_partitionscheme,
+    query_pbrtype,
     query_dump,
     query_undefined
-} queryType_t;
-queryType_t query = query_undefined;
+} queryType;
 
 static char const fat16ID[] = "FAT16   ";
 static char const fat32ID[] = "FAT32   ";
 static char const exfatID[] = "EXFAT   ";
 
+static char const fat16[] = "fat16";
+static char const fat32[] = "fat32";
+static char const msdos[] = "msdos";
+static char const hfs[]   = "hfs";
+static char const exfat[] = "exfat";
+
+
 #pragma mark -
 #pragma mark DiskArbitration and PBR Helpers
 #pragma mark -
+
+static
+bool isUUID(const char* string) {
+    if (strlen(string) == 36 &&
+        string[8]  == '-' && string[13] == '-' &&
+        string[18] == '-' && string[23] == '-')
+        return true;
+    return false;
+}
 
 static
 char const* toBSDName(char const* pathName)
@@ -85,24 +100,30 @@ char const* toBSDName(char const* pathName)
 }
 
 static
-int getFSTypeFromPBR(char const* pathName) {
+bool getPBRType(char const* pathName, char *answer, size_t answer_maxsize) {
     const unsigned int bytes_to_read = 4096;
     unsigned char buffer[bytes_to_read];
     char rawPathName[ MAXPATHLEN ];
 
+    if (geteuid() != 0) {
+        fprintf(stderr, "Error: this program must be run as root to get Filesystem Type on this platform !\n");
+        return false;
+    }
+
     assert(pathName);
+
     snprintf(rawPathName,MAXPATHLEN, "%sr%s", _PATH_DEV, toBSDName(pathName));
     int fd = open(rawPathName, O_RDONLY);
     if (fd < 0) {
         fprintf(stderr, "Error: unable to open %s: %s\n", rawPathName, strerror(errno));
-        return EXIT_FAILURE;
+        return false;
     }
     ssize_t rc = read(fd, (void *)buffer, bytes_to_read);
     close(fd);
 
     if (rc != bytes_to_read) {
         fprintf(stderr, "Error: unable to read from %s: %s\n", rawPathName, strerror(errno));
-        return EXIT_FAILURE;
+        return false;
     }
 
     uint16_t fat_bytesPerSector = OSSwapLittleToHostInt16(*(uint16_t const*)&buffer[0xb]);
@@ -110,26 +131,43 @@ int getFSTypeFromPBR(char const* pathName) {
 
     if (!(fat_bytesPerSector & (fat_bytesPerSector - 1U)) &&
         fat_bytesPerSector >= 0x200U && fat_bytesPerSector <= 0x1000U &&
-        fat_sectorsPerCluster && !(fat_sectorsPerCluster & (fat_sectorsPerCluster - 1U)) &&
-        ((memcmp(&buffer[0x52], fat32ID, sizeof(fat32ID)-1) == 0) ||
-         (memcmp(&buffer[0x36], fat16ID, sizeof(fat16ID)-1) == 0))) {
-        printf("msdos\n");
-        return EXIT_SUCCESS;
+        fat_sectorsPerCluster && !(fat_sectorsPerCluster & (fat_sectorsPerCluster - 1U)))
+    {
+        if (memcmp(&buffer[0x52], fat32ID, sizeof(fat32ID)-1) == 0) {
+            strlcpy(answer, fat32, answer_maxsize);
+            return true;
+        }
+        if (memcmp(&buffer[0x36], fat16ID, sizeof(fat16ID)-1) == 0) {
+            strlcpy(answer, fat16, answer_maxsize);
+            return true;
+        }
+        fprintf(stderr, "Error: unknown %s format\n", msdos);
+        return false;
     }
 
     uint16_t hfs_sig = OSSwapBigToHostInt16(*(uint16_t const*)&buffer[1024]);
     if (hfs_sig == 0x4244 /*'BD'*/ ||
         hfs_sig == 0x482B /*'H+'*/ ||
         hfs_sig == 0x4858 /*'HX'*/) {
-        printf("hfs\n");
-        return EXIT_SUCCESS;
+        strlcpy(answer, hfs, answer_maxsize);
+        return true;
     }
 
     if (memcmp(&buffer[0x3], exfatID, sizeof(exfatID)) == 0) {
-        printf("exfat\n");
-        return EXIT_SUCCESS;
+        strlcpy(answer, exfat, answer_maxsize);
+        return true;
     }
-    return EXIT_FAILURE;
+    return false;
+}
+
+static
+bool getFSTypeFromPBR(char const* pathName, char *answer, size_t answer_maxsize) {
+    bool isSuccess = getPBRType(pathName, answer, answer_maxsize);
+    if (isSuccess &&
+        (strncmp(answer, fat32, answer_maxsize) == 0 ||
+         strncmp(answer, fat16, answer_maxsize) == 0))
+        strlcpy(answer, msdos, answer_maxsize); // return msdos for fat32 or fat16
+    return isSuccess;
 }
 
 static
@@ -163,13 +201,15 @@ int getDASessionAndDisk(char const* pathName, DASessionRef* pSession, DADiskRef*
 }
 
 static
-int queryDevice(char const* deviceName)
+bool queryDevice(char const* deviceName, queryType query, char *answer, size_t answer_maxsize)
 {
     struct stat buf;
     DADiskRef disk;
     CFDictionaryRef descDict;
     CFBooleanRef b_ref;
-    int result = EXIT_FAILURE;
+    bool result = false;
+    int isMediaWhole = 0;
+    int isMediaLeaf  = 0;
 
     assert(deviceName);
 
@@ -181,39 +221,43 @@ int queryDevice(char const* deviceName)
 
     if (stat(deviceFilePath, &buf) < 0) {
         fprintf(stderr, "Error: stat failed on %s: %s\n", deviceFilePath, strerror(errno));
-        return EXIT_FAILURE;
+        return false;
     }
     if (!(buf.st_mode & (S_IFCHR | S_IFBLK))) {
         fprintf(stderr, "Error: %s is not a block or character special device\n", deviceFilePath);
-        return EXIT_FAILURE;
+        return false;
     }
 
     if (getDASessionAndDisk(deviceName, NULL, &disk) < 0)
-		return EXIT_FAILURE;
+		return false;
 
     descDict = DADiskCopyDescription(disk);
     CFRelease(disk);
 
 	if (!descDict) {
-		return EXIT_FAILURE;
+		return false;
 	}
 
-    // If not query the blocksize, check if the device is not a whole disk
-    if (query != query_blocksize) {
-        int isMediaWhole = 0;
-        int isMediaLeaf = 0;
-        if (CFDictionaryGetValueIfPresent(descDict, kDADiskDescriptionMediaWholeKey, (void const**) &b_ref) &&
-            CFBooleanGetValue(b_ref))
-            isMediaWhole = 1;
-        if (CFDictionaryGetValueIfPresent(descDict, kDADiskDescriptionMediaLeafKey, (void const**) &b_ref) &&
-            CFBooleanGetValue(b_ref))
-            isMediaLeaf = 1;
+    if (CFDictionaryGetValueIfPresent(descDict, kDADiskDescriptionMediaWholeKey, (void const**) &b_ref) &&
+        CFBooleanGetValue(b_ref))
+        isMediaWhole = 1;
+    if (CFDictionaryGetValueIfPresent(descDict, kDADiskDescriptionMediaLeafKey, (void const**) &b_ref) &&
+        CFBooleanGetValue(b_ref))
+        isMediaLeaf = 1;
 
-        if (isMediaWhole && !isMediaLeaf) {
+    // If not query the blocksize or dump, check if the device is not a whole disk
+    if (query != query_blocksize && query != query_partitionscheme &&
+        query != query_dump && (isMediaWhole || !isMediaLeaf)) {
             fprintf(stderr, "Error: %s is a whole disk\n", deviceName);
             CFRelease(descDict);
-            return EXIT_FAILURE;
-        }
+            return false;
+    }
+
+    // If query partition scheme, the device must be a whole disk
+    if (query == query_partitionscheme && (!isMediaWhole || isMediaLeaf)) {
+        fprintf(stderr, "Error: device must be a whole disk to query about partition scheme !\n");
+        CFRelease(descDict);
+        return false;
     }
 
     CFStringRef key = NULL;
@@ -230,17 +274,21 @@ int queryDevice(char const* deviceName)
         case query_blocksize:
             key = kDADiskDescriptionMediaBlockSizeKey;
             break;
+        case query_partitionscheme:
+            key = kDADiskDescriptionMediaContentKey;
+            break;
         case query_dump:
             CFShow(descDict);
             CFRelease(descDict);
             return EXIT_SUCCESS;
             break;
+        case query_pbrtype: // never used here
         case query_undefined:
             break;
     }
     if (!key) {
         CFRelease(descDict);
-        return EXIT_FAILURE;
+        return false;
     }
 
     CFTypeRef valueRef;
@@ -256,22 +304,15 @@ int queryDevice(char const* deviceName)
         else if (typeID == CFNumberGetTypeID())
             cfstr_value = CFStringCreateWithFormat(NULL, NULL, CFSTR("%@"), valueRef); // convert CFNumber to CFStringRef
         if (cfstr_value) {
-            static char value_buffer[64];
-            char const* value = CFStringGetCStringPtr(cfstr_value, kCFStringEncodingUTF8); // Convert to CString
-            if (!value) {
-                CFStringGetCString(cfstr_value, &value_buffer[0], (CFIndex) sizeof value_buffer, kCFStringEncodingUTF8);
-                value = &value_buffer[0];
-            }
-            printf("%s\n", value);
+            result = CFStringGetCString(cfstr_value, answer, answer_maxsize, kCFStringEncodingUTF8);
             CFRelease(cfstr_value);
-            result = EXIT_SUCCESS;
         }
     }
 	CFRelease(descDict);
 
-    if (result != EXIT_SUCCESS && query == query_fstype) {
+    if (result == false && query == query_fstype) {
         // Try to find the fstype by analysing the PBR of the partition
-        return getFSTypeFromPBR(deviceName);
+        return getFSTypeFromPBR(deviceName, answer, answer_maxsize);
     }
     return result;
 }
@@ -280,7 +321,8 @@ int queryDevice(char const* deviceName)
 #pragma mark Search
 #pragma mark -
 
-int doSearch()
+static
+bool doSearch(searchType search, char const* searchValue, char *answer, size_t answer_maxsize)
 {
     mach_port_t         masterPort;
     kern_return_t       kernResult;
@@ -292,13 +334,13 @@ int doSearch()
     kernResult = IOMasterPort( MACH_PORT_NULL, &masterPort );
     if ( kernResult != KERN_SUCCESS ) {
         fprintf(stderr, "IOMasterPort returned %d\n", kernResult );
-        return EXIT_FAILURE;
+        return false;
     }
 
     classesToMatch = IOServiceMatching( kIOMediaClass ); // All Storage Media
     if ( classesToMatch == NULL ) {
         fprintf( stderr, "IOServiceMatching returned a NULL dictionary.\n" );
-        return EXIT_FAILURE;
+        return false;
     }
     CFDictionarySetValue( classesToMatch,
                          CFSTR( kIOMediaWholeKey ), kCFBooleanFalse ); // Not a Whole disk
@@ -308,20 +350,22 @@ int doSearch()
     CFStringRef searchCFString = CFStringCreateWithCString(NULL, searchValue, kCFStringEncodingASCII);
     switch (search) {
         case search_uuid:
-            if (strlen(searchValue) != 36 || searchValue[8] != '-' ||
-                searchValue[13] != '-' || searchValue[18] != '-' || searchValue[23] != '-') {
+            if ( ! isUUID(searchValue) ) {
                 fprintf(stderr, "Error: invalid UUID value '%s'\n", searchValue);
                 CFRelease(searchCFString);
                 CFRelease(classesToMatch); // Not use so release it
-                return EXIT_FAILURE;
+                return false;
             }
-            CFDictionarySetValue( classesToMatch, CFSTR( kIOMediaUUIDKey ), searchCFString);
+            CFMutableStringRef tmpMutableStr = CFStringCreateMutableCopy(0, 36, searchCFString);
+            CFStringUppercase(tmpMutableStr, 0); // Convert to Uppercase
+            CFDictionarySetValue( classesToMatch, CFSTR( kIOMediaUUIDKey ), tmpMutableStr);
+            CFRelease(tmpMutableStr);
             break;
 
         case search_undefined:
             CFRelease(searchCFString);
             CFRelease(classesToMatch); // Not use so release it
-            return EXIT_FAILURE;
+            return false;
             break;
     }
     CFRelease(searchCFString);
@@ -332,7 +376,7 @@ int doSearch()
 
     if ( kernResult != KERN_SUCCESS ) {
         fprintf(stderr, "No Block Storage media found.\n kernResult = %d\n", kernResult );
-        return EXIT_FAILURE;
+        return false;
     }
 
     io_service_t service;
@@ -344,28 +388,22 @@ int doSearch()
         if ( kernResult != KERN_SUCCESS ) {
             fprintf(stderr, "Error: IORegistryEntryCreateCFProperties returned %d\n", kernResult );
             IOObjectRelease( service );
-            return EXIT_FAILURE;
+            return false;
         }
 
         CFStringRef s_ref;
         // get the BSO device name
         if (CFDictionaryGetValueIfPresent(serviceProperties, CFSTR( kIOBSDNameKey ), (void const**) &s_ref)) {
-            static char bsd_name_buffer[64];
-            char const* bsd_name = CFStringGetCStringPtr(s_ref, kCFStringEncodingASCII);
-            if (!bsd_name) {
-                CFStringGetCString(s_ref, &bsd_name_buffer[0], (CFIndex) sizeof bsd_name_buffer, kCFStringEncodingUTF8);
-                bsd_name = &bsd_name_buffer[0];
-            }
-            printf( "%s\n", bsd_name );
+            CFStringGetCString(s_ref, answer, answer_maxsize, kCFStringEncodingUTF8);
             CFRelease(serviceProperties);
             IOObjectRelease( service );
-            return EXIT_SUCCESS;
+            return true;
         }
 
         CFRelease(serviceProperties);
         IOObjectRelease( service );
     }
-    return EXIT_FAILURE;
+    return false;
 }
 
 #pragma mark -
@@ -390,7 +428,7 @@ usage (int status)
     else {
         print_version();
         printf ("\n\
-Usage: " PROGNAME_S " [QUERY OPTION] DEVICE\n\
+Usage: " PROGNAME_S " [QUERY OPTION] [DEVICE|UUID]\n\
        " PROGNAME_S " [SEARCH OPTION]\n\
 \n\
 Query options:\n\
@@ -398,6 +436,8 @@ Query options:\n\
 \t--show-volumename       display the volume name of the partition\n\
 \t--show-uuid             display the UUID of the partition\n\
 \t--show-blocksize        display the prefer blocksize of the partition\n\
+\t--show-partitionscheme  display the partition scheme of a disk\n\
+\t--show-pbrtype          display the filesystem type from the PBR of the device\n\
 \t--dump                  dump properties of the partition\n\
 \n\
 Search options: \n\
@@ -409,6 +449,8 @@ Other options:\n\
 \t-v, --verbose           print verbose messages\n\
 \n\
 example: " PROGNAME_S " --show-fstype disk0s4\n\
+         " PROGNAME_S " --show-volumename 6A9017D9-2B9E-4786-B0A5-A75BD2264239\n\
+         " PROGNAME_S " --show-blocksize disk0s4\n\
          " PROGNAME_S " --search-uuid 2C97F84A-F488-4917-A312-5D64BAE5BCFC\n");
     }
     exit (status);
@@ -427,6 +469,8 @@ static struct option options[] =
     {"show-volumename", no_argument, 0, query_volumename},
     {"show-uuid", no_argument, 0, query_uuid},
     {"show-blocksize", no_argument, 0, query_blocksize},
+    {"show-partitionscheme", no_argument, 0, query_partitionscheme},
+    {"show-pbrtype", no_argument, 0, query_pbrtype},
     {"dump", no_argument, 0, query_dump},
     {"help",    no_argument, 0, 'h'},
     {"version", no_argument, 0, 'V'},
@@ -434,33 +478,14 @@ static struct option options[] =
     {0, 0, 0, 0}
 };
 
-void define_search(searchType_t search_option, const char* value) {
-    if (search != search_undefined) {
-        fprintf(stderr, "Error: only one search can be done !\n");
-        exit(EXIT_FAILURE);
-    }
-    if (query != query_undefined) {
-        fprintf(stderr, "Error: can't mix query and search !\n");
-        exit(EXIT_FAILURE);
-    }
-    search = search_option;
-    searchValue = value;
-}
-
-void define_query(queryType_t query_option) {
-    if (query != query_undefined) {
-        fprintf(stderr, "Error: only one query can be done !\n");
-        exit(EXIT_FAILURE);
-    }
-    if (search != search_undefined) {
-        fprintf(stderr, "Error: can't mix query and search !\n");
-        exit(EXIT_FAILURE);
-    }
-    query = query_option;
-}
-
 int main(int argc, char* const argv[])
 {
+    queryType query = query_undefined;
+    searchType search = search_undefined;
+    char const *searchValue = NULL;
+    char answer[64] = "\0";
+    bool isSuccess = false;
+
     /* Check for options.  */
     while (1) {
         int c = getopt_long (argc, argv, "d:r:hVv", options, 0);
@@ -469,15 +494,34 @@ int main(int argc, char* const argv[])
         else
             switch (c) {
                 case search_uuid:
-                    define_search(c, optarg);
+                    if (search != search_undefined) {
+                        fprintf(stderr, "Error: only one search can be done !\n");
+                        exit(EXIT_FAILURE);
+                    }
+                    if (query != query_undefined) {
+                        fprintf(stderr, "Error: can't mix query and search !\n");
+                        exit(EXIT_FAILURE);
+                    }
+                    search = c;
+                    searchValue = optarg;
                     break;
 
                 case query_fstype:
                 case query_volumename:
                 case query_uuid:
                 case query_blocksize:
+                case query_partitionscheme:
+                case query_pbrtype:
                 case query_dump:
-                    define_query(c);
+                    if (query != query_undefined) {
+                        fprintf(stderr, "Error: only one query can be done !\n");
+                        exit(EXIT_FAILURE);
+                    }
+                    if (search != search_undefined) {
+                        fprintf(stderr, "Error: can't mix query and search !\n");
+                        exit(EXIT_FAILURE);
+                    }
+                    query = c;
                     break;
 
                 case 'h':
@@ -500,11 +544,6 @@ int main(int argc, char* const argv[])
     
     argc -= optind;
 
-    if (geteuid() != 0) {
-        fprintf(stderr, "Error: this program must be run as root !\n");
-        return EXIT_FAILURE;
-    }
-
     /* check arguments.  */
     if (query == query_undefined && search == search_undefined)
         usage(EXIT_SUCCESS);
@@ -520,10 +559,37 @@ int main(int argc, char* const argv[])
         usage(EXIT_FAILURE);
     }
 
-    if (query != query_undefined) {
-        char const* device = toBSDName(argv[optind++]);
-        return queryDevice(device);
+    if (search != search_undefined) {
+        isSuccess = doSearch(search, searchValue, answer, sizeof(answer));
     }
-    else
-        return doSearch();
+    else {
+        char const* argument = argv[optind++];
+        char device[ MAXPATHLEN ];
+        if (strlen(argument) >= 30) { // It's must be a uuid
+            if (!isUUID(argument)) {
+                fprintf(stderr, "Error: invalid UUID value '%s'\n", argument);
+                return EXIT_FAILURE;
+            }
+            // it's an UUID try to get the devicename
+            isSuccess = doSearch(search_uuid, argument, answer, sizeof(answer));
+            if (!isSuccess) {
+                fprintf(stderr,"Error: can't find device with UUID '%s'\n",argument);
+                return EXIT_FAILURE;
+            }
+            strlcpy(device, answer, sizeof(device));
+        }
+        else {
+            strlcpy(device, toBSDName(argument), sizeof(device));
+        }
+
+        if (query == query_pbrtype)
+            isSuccess = getPBRType(device, answer, sizeof(answer));
+        else
+            isSuccess = queryDevice(device, query, answer, sizeof(answer));
+    }
+
+
+    if (isSuccess)
+        printf("%s\n", answer);
+    return isSuccess ? EXIT_SUCCESS : EXIT_FAILURE;
 }
