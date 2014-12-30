@@ -83,8 +83,7 @@ echo ""
 echo "==============================================="
 echo "Check partition scheme of $bootdisk"
 echo "==============================================="
-bootdisk_partition_scheme=$(LC_ALL=C diskutil info "$bootdisk" 2>/dev/null | \
- sed -nE 's/.*(Partition Type|Content \(IOContent\)): *//p')
+bootdisk_partition_scheme=$("$partutil" --show-partitionscheme "$bootdisk")
 
 case "$bootdisk_partition_scheme" in
     FDisk_partition_scheme)
