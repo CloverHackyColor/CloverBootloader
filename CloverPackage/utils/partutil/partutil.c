@@ -110,14 +110,11 @@ int getFSTypeFromPBR(char const* pathName) {
 
     if (!(fat_bytesPerSector & (fat_bytesPerSector - 1U)) &&
         fat_bytesPerSector >= 0x200U && fat_bytesPerSector <= 0x1000U &&
-        fat_sectorsPerCluster && !(fat_sectorsPerCluster & (fat_sectorsPerCluster - 1U))) {
-          if (memcmp(&buffer[0x52], fat32ID, sizeof(fat32ID)-1) == 0) {
-            printf("msdos\n");
-            return EXIT_SUCCESS;
-          } else if (memcmp(&buffer[0x36], fat16ID, sizeof(fat16ID)-1) == 0) {
-            printf("fat16\n");
-            return EXIT_FAILURE;
-          }
+        fat_sectorsPerCluster && !(fat_sectorsPerCluster & (fat_sectorsPerCluster - 1U)) &&
+        ((memcmp(&buffer[0x52], fat32ID, sizeof(fat32ID)-1) == 0) ||
+         (memcmp(&buffer[0x36], fat16ID, sizeof(fat16ID)-1) == 0))) {
+        printf("msdos\n");
+        return EXIT_SUCCESS;
     }
 
     uint16_t hfs_sig = OSSwapBigToHostInt16(*(uint16_t const*)&buffer[1024]);

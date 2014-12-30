@@ -7,13 +7,6 @@
 	objects = {
 
 /* Begin PBXContainerItemProxy section */
-		1282E1321A52D64C00407FBC /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1282E12A1A52D64C00407FBC /* partutil.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = A3A6091C1A50539800A95E01;
-			remoteInfo = partutil;
-		};
 		129261BE1A305A8F005F1426 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 129261661A305A8F005F1426 /* bdmesg.xcodeproj */;
@@ -43,25 +36,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		1282E10C1A52D64C00407FBC /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
-		1282E1121A52D64C00407FBC /* partutil-all-target-headers.hmap */ = {isa = PBXFileReference; lastKnownFileType = file; path = "partutil-all-target-headers.hmap"; sourceTree = "<group>"; };
-		1282E1131A52D64C00407FBC /* partutil-generated-files.hmap */ = {isa = PBXFileReference; lastKnownFileType = file; path = "partutil-generated-files.hmap"; sourceTree = "<group>"; };
-		1282E1141A52D64C00407FBC /* partutil-own-target-headers.hmap */ = {isa = PBXFileReference; lastKnownFileType = file; path = "partutil-own-target-headers.hmap"; sourceTree = "<group>"; };
-		1282E1151A52D64C00407FBC /* partutil-project-headers.hmap */ = {isa = PBXFileReference; lastKnownFileType = file; path = "partutil-project-headers.hmap"; sourceTree = "<group>"; };
-		1282E1161A52D64C00407FBC /* partutil.hmap */ = {isa = PBXFileReference; lastKnownFileType = file; path = partutil.hmap; sourceTree = "<group>"; };
-		1282E11E1A52D64C00407FBC /* db.xcindexdb */ = {isa = PBXFileReference; lastKnownFileType = file; path = db.xcindexdb; sourceTree = "<group>"; };
-		1282E11F1A52D64C00407FBC /* db.xcindexdb.strings-cmp */ = {isa = PBXFileReference; lastKnownFileType = file; path = "db.xcindexdb.strings-cmp"; sourceTree = "<group>"; };
-		1282E1201A52D64C00407FBC /* db.xcindexdb.strings-dir */ = {isa = PBXFileReference; lastKnownFileType = file; path = "db.xcindexdb.strings-dir"; sourceTree = "<group>"; };
-		1282E1211A52D64C00407FBC /* db.xcindexdb.strings-file */ = {isa = PBXFileReference; lastKnownFileType = file; path = "db.xcindexdb.strings-file"; sourceTree = "<group>"; };
-		1282E1221A52D64C00407FBC /* db.xcindexdb.strings-res */ = {isa = PBXFileReference; lastKnownFileType = file; path = "db.xcindexdb.strings-res"; sourceTree = "<group>"; };
-		1282E1231A52D64C00407FBC /* db.xcindexdb.strings-sym */ = {isa = PBXFileReference; lastKnownFileType = file; path = "db.xcindexdb.strings-sym"; sourceTree = "<group>"; };
-		1282E1241A52D64C00407FBC /* partutil.hmap */ = {isa = PBXFileReference; lastKnownFileType = file; path = partutil.hmap; sourceTree = "<group>"; };
-		1282E1251A52D64C00407FBC /* info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = info.plist; sourceTree = "<group>"; };
-		1282E1261A52D64C00407FBC /* scm.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = scm.plist; sourceTree = "<group>"; };
-		1282E1271A52D64C00407FBC /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
-		1282E1281A52D64C00407FBC /* partutil.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = partutil.c; sourceTree = "<group>"; };
-		1282E1291A52D64C00407FBC /* partutil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = partutil.h; sourceTree = "<group>"; };
-		1282E12A1A52D64C00407FBC /* partutil.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = partutil.xcodeproj; sourceTree = "<group>"; };
 		129260BE1A305A3E005F1426 /* Package */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Package; sourceTree = BUILT_PRODUCTS_DIR; };
 		129260CD1A305A67005F1426 /* clean_po_headers.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = clean_po_headers.sh; sourceTree = "<group>"; };
 		129260CF1A305A67005F1426 /* COPYING */ = {isa = PBXFileReference; lastKnownFileType = text; path = COPYING; sourceTree = "<group>"; };
@@ -226,136 +200,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		1282E10B1A52D64C00407FBC /* partutil */ = {
-			isa = PBXGroup;
-			children = (
-				1282E10C1A52D64C00407FBC /* .gitignore */,
-				1282E10D1A52D64C00407FBC /* Build */,
-				1282E1181A52D64C00407FBC /* DerivedData */,
-				1282E1271A52D64C00407FBC /* Makefile */,
-				1282E1281A52D64C00407FBC /* partutil.c */,
-				1282E1291A52D64C00407FBC /* partutil.h */,
-				1282E12A1A52D64C00407FBC /* partutil.xcodeproj */,
-			);
-			path = partutil;
-			sourceTree = "<group>";
-		};
-		1282E10D1A52D64C00407FBC /* Build */ = {
-			isa = PBXGroup;
-			children = (
-				1282E10E1A52D64C00407FBC /* Intermediates */,
-				1282E1171A52D64C00407FBC /* Products */,
-			);
-			path = Build;
-			sourceTree = "<group>";
-		};
-		1282E10E1A52D64C00407FBC /* Intermediates */ = {
-			isa = PBXGroup;
-			children = (
-				1282E10F1A52D64C00407FBC /* partutil.build */,
-			);
-			path = Intermediates;
-			sourceTree = "<group>";
-		};
-		1282E10F1A52D64C00407FBC /* partutil.build */ = {
-			isa = PBXGroup;
-			children = (
-				1282E1101A52D64C00407FBC /* Debug */,
-			);
-			path = partutil.build;
-			sourceTree = "<group>";
-		};
-		1282E1101A52D64C00407FBC /* Debug */ = {
-			isa = PBXGroup;
-			children = (
-				1282E1111A52D64C00407FBC /* partutil.build */,
-			);
-			path = Debug;
-			sourceTree = "<group>";
-		};
-		1282E1111A52D64C00407FBC /* partutil.build */ = {
-			isa = PBXGroup;
-			children = (
-				1282E1121A52D64C00407FBC /* partutil-all-target-headers.hmap */,
-				1282E1131A52D64C00407FBC /* partutil-generated-files.hmap */,
-				1282E1141A52D64C00407FBC /* partutil-own-target-headers.hmap */,
-				1282E1151A52D64C00407FBC /* partutil-project-headers.hmap */,
-				1282E1161A52D64C00407FBC /* partutil.hmap */,
-			);
-			path = partutil.build;
-			sourceTree = "<group>";
-		};
-		1282E1171A52D64C00407FBC /* Products */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Products;
-			sourceTree = "<group>";
-		};
-		1282E1181A52D64C00407FBC /* DerivedData */ = {
-			isa = PBXGroup;
-			children = (
-				1282E1191A52D64C00407FBC /* partutil */,
-			);
-			path = DerivedData;
-			sourceTree = "<group>";
-		};
-		1282E1191A52D64C00407FBC /* partutil */ = {
-			isa = PBXGroup;
-			children = (
-				1282E11A1A52D64C00407FBC /* Index */,
-				1282E1251A52D64C00407FBC /* info.plist */,
-				1282E1261A52D64C00407FBC /* scm.plist */,
-			);
-			path = partutil;
-			sourceTree = "<group>";
-		};
-		1282E11A1A52D64C00407FBC /* Index */ = {
-			isa = PBXGroup;
-			children = (
-				1282E11B1A52D64C00407FBC /* Debug */,
-				1282E1241A52D64C00407FBC /* partutil.hmap */,
-			);
-			path = Index;
-			sourceTree = "<group>";
-		};
-		1282E11B1A52D64C00407FBC /* Debug */ = {
-			isa = PBXGroup;
-			children = (
-				1282E11C1A52D64C00407FBC /* macosx10.8-i386 */,
-			);
-			path = Debug;
-			sourceTree = "<group>";
-		};
-		1282E11C1A52D64C00407FBC /* macosx10.8-i386 */ = {
-			isa = PBXGroup;
-			children = (
-				1282E11D1A52D64C00407FBC /* partutil.xcindex */,
-			);
-			path = "macosx10.8-i386";
-			sourceTree = "<group>";
-		};
-		1282E11D1A52D64C00407FBC /* partutil.xcindex */ = {
-			isa = PBXGroup;
-			children = (
-				1282E11E1A52D64C00407FBC /* db.xcindexdb */,
-				1282E11F1A52D64C00407FBC /* db.xcindexdb.strings-cmp */,
-				1282E1201A52D64C00407FBC /* db.xcindexdb.strings-dir */,
-				1282E1211A52D64C00407FBC /* db.xcindexdb.strings-file */,
-				1282E1221A52D64C00407FBC /* db.xcindexdb.strings-res */,
-				1282E1231A52D64C00407FBC /* db.xcindexdb.strings-sym */,
-			);
-			path = partutil.xcindex;
-			sourceTree = "<group>";
-		};
-		1282E12B1A52D64C00407FBC /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				1282E1331A52D64C00407FBC /* partutil */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		129260B31A305A3D005F1426 = {
 			isa = PBXGroup;
 			children = (
@@ -741,7 +585,6 @@
 				1292616D1A305A8F005F1426 /* boot1-install */,
 				129261701A305A8F005F1426 /* clover-genconfig */,
 				129261961A305A8F005F1426 /* fdisk440 */,
-				1282E10B1A52D64C00407FBC /* partutil */,
 				129261AC1A305A8F005F1426 /* Make.rules */,
 				129261AE1A305A8F005F1426 /* Makefile */,
 			);
@@ -1186,10 +1029,6 @@
 					ProductGroup = 129261781A305A8F005F1426 /* Products */;
 					ProjectRef = 129261771A305A8F005F1426 /* clover-genconfig.xcodeproj */;
 				},
-				{
-					ProductGroup = 1282E12B1A52D64C00407FBC /* Products */;
-					ProjectRef = 1282E12A1A52D64C00407FBC /* partutil.xcodeproj */;
-				},
 			);
 			projectRoot = "";
 			targets = (
@@ -1199,13 +1038,6 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		1282E1331A52D64C00407FBC /* partutil */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			path = partutil;
-			remoteRef = 1282E1321A52D64C00407FBC /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		129261BF1A305A8F005F1426 /* bdmesg */ = {
 			isa = PBXReferenceProxy;
 			fileType = "compiled.mach-o.executable";
