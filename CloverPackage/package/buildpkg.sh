@@ -513,7 +513,6 @@ main ()
     ditto --noextattr --noqtn ${SRCROOT}/utils/fdisk440/fdisk440.8        ${PKG_BUILD_DIR}/${choiceId}/Root/usr/local/man/man8/
     ditto --noextattr --noqtn ${SYMROOT}/utils/fdisk440                   ${PKG_BUILD_DIR}/${choiceId}/Root/usr/local/bin/
     ditto --noextattr --noqtn ${SYMROOT}/utils/boot1-install              ${PKG_BUILD_DIR}/${choiceId}/Root/usr/local/bin/
-    ditto --noextattr --noqtn ${SYMROOT}/utils/partutil                   ${PKG_BUILD_DIR}/${choiceId}/Root/usr/local/bin/
 
     # Add some documentation
     ditto --noextattr --noqtn ${SRCROOT}/CloverV2/BootSectors/Description.txt  ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/
@@ -521,7 +520,7 @@ main ()
     ditto --noextattr --noqtn ${SRCROOT}/CloverV2/BootSectors/Installation.txt ${PKG_BUILD_DIR}/${choiceId}/Root/EFIROOTDIR/EFI/CLOVER/doc/
 
     fixperms "${PKG_BUILD_DIR}/${choiceId}/Root/"
-    chmod 755 "${PKG_BUILD_DIR}/${choiceId}"/Root/usr/local/bin/{fdisk440,boot1-install,partutil}
+    chmod 755 "${PKG_BUILD_DIR}/${choiceId}"/Root/usr/local/bin/{fdisk440,boot1-install}
 
     packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
     packageBiosBootRefId=$packageRefId
@@ -540,8 +539,9 @@ main ()
     fixperms "${PKG_BUILD_DIR}/${choiceId}/Root/"
     chmod 755 "${PKG_BUILD_DIR}/${choiceId}"/Root/usr/local/bin/{bdmesg,clover-genconfig,partutil}
     packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
+    packageUtilsRefId=$packageRefId
     buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/"
-    addChoice --start-visible="false" --start-selected="checkFileExists('/System/Library/CoreServices/boot.efi')"  \
+    addChoice --start-visible="false" --start-selected="true"  \
               --pkg-refs="$packageRefId" "${choiceId}"
 # End build Utils package
 
@@ -592,7 +592,7 @@ main ()
     addChoice --start-selected="choicePreviouslySelected('$packageRefId')"                          \
               --selected="!choices['UEFI.only'].selected &amp;&amp; choices['$choiceId'].selected"  \
               --visible="choices['boot0af'].selected || choices['boot0ss'].selected"                \
-              --pkg-refs="$packageBiosBootRefId $packageRefId" "${choiceId}"
+              --pkg-refs="$packageBiosBootRefId $packageUtilsRefId $packageRefId" "${choiceId}"
 # End alternative booting package
 
 # build bootNo package
@@ -624,7 +624,7 @@ main ()
     addChoice --group="Bootloader"                                         \
               --enabled="!choices['UEFI.only'].selected"                   \
               --start-selected="choicePreviouslySelected('$packageRefId')" \
-              --pkg-refs="$packageBiosBootRefId $packageRefId" "${choiceId}"
+              --pkg-refs="$packageBiosBootRefId $packageUtilsRefId $packageRefId" "${choiceId}"
 # End build boot0af package
 
 # build boot0ss package
@@ -640,7 +640,7 @@ main ()
     addChoice --group="Bootloader"                                          \
               --enabled="!choices['UEFI.only'].selected"                    \
               --start-selected="choicePreviouslySelected('$packageRefId')"  \
-              --pkg-refs="$packageBiosBootRefId $packageRefId" "${choiceId}"
+              --pkg-refs="$packageBiosBootRefId $packageUtilsRefId $packageRefId" "${choiceId}"
 # End build boot0ss package
 
 # Create CloverEFI Node

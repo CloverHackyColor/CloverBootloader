@@ -27,10 +27,9 @@ if [[ "$disk_partition_scheme" = "GUID_partition_scheme" ]]; then
     ESPDevice="${DiskDevice}s${index}"
 
     # Get the ESP mount point if the partition is currently mounted
-    ESPMountPoint=$(LC_ALL=C diskutil info "$ESPDevice" 2>/dev/null | \
-     sed -n 's/.*Mount Point: *//p')
+    ESPMountPoint=$("$partutil" --show-mountpoint "$ESPDevice")
 
-    if [[ "$ESPMountPoint" ]]; then
+    if [[ -n "$ESPMountPoint" ]]; then
         # If already mounted it's okay
         exitcode=0
     else
