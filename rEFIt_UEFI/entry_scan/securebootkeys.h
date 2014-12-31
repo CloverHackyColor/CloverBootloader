@@ -33,6 +33,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "CloverDB.h"
+#include "CanonicalDB.h"
+#include "MSPCADB.h"
+#include "MSUEFICADB.h"
+#include "CloverKEK.h"
+#include "MSKEK.h"
+
 // Secure boot platform key
 STATIC CONST UINT8 gSecureBootPlatformSignedKey[] = {
   0xde, 0x07, 0x0b, 0x05, 0x01, 0x37, 0x22, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,

@@ -20,7 +20,6 @@
   PACKAGE_NAME                   = CloverPkg
   PACKAGE_GUID                   = C10BE46B-35C3-4B0B-9B9C-3F02051D782F
   PACKAGE_VERSION                = 0.4
-#  DEFINE OPENSSL_VERSION         = 0.9.8w
   DEFINE OPENSSL_VERSION         = 1.0.1e
 
 [Includes]

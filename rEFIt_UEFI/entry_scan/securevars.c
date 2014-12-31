@@ -422,11 +422,11 @@ EFI_STATUS SetSignedVariable(IN CHAR16   *DatabaseName,
     }
     // Do the actual signing process
     BioData = BIO_new(BIO_s_mem());
-    BIO_write(BioData, DatabaseName, StrLen(DatabaseName));
+    BIO_write(BioData, DatabaseName, (int)StrLen(DatabaseName));
     BIO_write(BioData, DatabaseGuid, sizeof(EFI_GUID));
     BIO_write(BioData, &Attributes, sizeof(UINT32));
     BIO_write(BioData, &Timestamp, sizeof(EFI_TIME));
-    BIO_write(BioData, Database, DatabaseSize);
+    BIO_write(BioData, Database, (int)DatabaseSize);
 
     md = EVP_get_digestbyname("SHA256");
 

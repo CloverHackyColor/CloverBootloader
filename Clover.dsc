@@ -27,7 +27,6 @@
   FLASH_DEFINITION               = Clover/Clover.fdf
 
   !ifndef OPENSSL_VERSION
-#    DEFINE OPENSSL_VERSION       = 0.9.8w
     DEFINE OPENSSL_VERSION       = 1.0.1e
   !endif
 

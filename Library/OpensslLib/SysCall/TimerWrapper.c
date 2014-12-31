@@ -16,6 +16,11 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #include <Uefi.h>
 #include <OpenSslSupport.h>
 #include <Library/UefiRuntimeServicesTableLib.h>
+#include  <Library/MemoryAllocationLib.h>
+
+/* AnV - fix for malloc */
+#undef  malloc
+#define malloc AllocateZeroPool
 
 //
 // -- Time Management Routines --

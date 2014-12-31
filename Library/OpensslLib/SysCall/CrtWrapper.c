@@ -15,6 +15,15 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 
 #include <OpenSslSupport.h>
 
+/* AnV - malloc + free fix */
+#include <Library/MemoryAllocationLib.h>
+
+#undef  malloc
+#define malloc AllocateZeroPool
+
+#undef  free
+#define free FreePool
+
 int errno = 0;
 
 FILE  *stderr = NULL;

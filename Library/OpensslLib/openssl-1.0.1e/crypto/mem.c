@@ -61,6 +61,139 @@
 #include <openssl/crypto.h>
 #include "cryptlib.h"
 
+/* AnV - malloc + realloc + free fix */
+#include <Library/MemoryAllocationLib.h>
+#include <Library/BaseMemoryLib.h>
+#include <Uefi/UefiBaseType.h>
+#include <Uefi/UefiSpec.h>
+#include <Library/UefiBootServicesTableLib.h>
+#include <Library/UefiLib.h>
+#include <Base.h>
+#include <errno.h>
+
+#define CPOOL_HEAD_SIGNATURE   SIGNATURE_32('C','p','h','d')
+
+typedef struct {
+    LIST_ENTRY      List;
+    UINT32          Signature;
+    UINT64          Size;
+    CHAR8           Data[1];
+} CPOOL_HEAD;
+
+static  LIST_ENTRY      MemPoolHead = INITIALIZE_LIST_HEAD_VARIABLE(MemPoolHead);
+
+void *
+uefimalloc(size_t Size)
+{
+    CPOOL_HEAD   *Head;
+    void         *RetVal;
+    EFI_STATUS    Status;
+    UINTN         NodeSize;
+    
+    if( Size == 0) {
+        errno = EINVAL;   // Make errno diffenent, just in case of a lingering ENOMEM.
+        return NULL;
+    }
+    
+    NodeSize = (UINTN)(Size + sizeof(CPOOL_HEAD));
+    
+    Status = gBS->AllocatePool( EfiLoaderData, NodeSize, (void**)&Head);
+    if( Status != EFI_SUCCESS) {
+        RetVal  = NULL;
+        errno   = ENOMEM;
+    }
+    else {
+        assert(Head != NULL);
+        // Fill out the pool header
+        Head->Signature = CPOOL_HEAD_SIGNATURE;
+        Head->Size      = NodeSize;
+        
+        // Add this node to the list
+        (void)InsertTailList(&MemPoolHead, (LIST_ENTRY *)Head);
+        
+        // Return a pointer to the data
+        RetVal          = (void*)Head->Data;
+    }
+    
+    return RetVal;
+}
+
+void
+uefifree(void *Ptr)
+{
+    CPOOL_HEAD   *Head;
+    
+    Head = BASE_CR(Ptr, CPOOL_HEAD, Data);
+    assert(Head != NULL);
+    
+    if(Ptr != NULL) {
+        if (Head->Signature == CPOOL_HEAD_SIGNATURE) {
+            (void) RemoveEntryList((LIST_ENTRY *)Head);   // Remove this node from the malloc pool
+            (void) gBS->FreePool (Head);                  // Now free the associated memory
+        }
+        else {
+            errno = 14;
+        }
+    }
+    DEBUG((DEBUG_POOL, "free Done\n"));
+}
+
+void *
+uefirealloc(void *Ptr, size_t ReqSize)
+{
+    void       *RetVal = NULL;
+    CPOOL_HEAD *Head    = NULL;
+    size_t      OldSize = 0;
+    size_t      NewSize;
+    size_t      NumCpy;
+    
+    // Find out the size of the OLD memory region
+    if( Ptr != NULL) {
+        Head = BASE_CR (Ptr, CPOOL_HEAD, Data);
+        assert(Head != NULL);
+        if (Head->Signature != CPOOL_HEAD_SIGNATURE) {
+            errno = 14;
+            DEBUG((DEBUG_ERROR, "ERROR realloc(0x%p): Signature is 0x%8X, expected 0x%8X\n",
+                   Ptr, Head->Signature, CPOOL_HEAD_SIGNATURE));
+            return NULL;
+        }
+        OldSize = (size_t)Head->Size;
+    }
+    
+    // At this point, Ptr is either NULL or a valid pointer to an allocated space
+    NewSize = (size_t)(ReqSize + (sizeof(CPOOL_HEAD)));
+    
+    if( ReqSize > 0) {
+        RetVal = AllocateZeroPool(NewSize); // Get the NEW memory region
+        if( Ptr != NULL) {          // If there is an OLD region...
+            if( RetVal != NULL) {     // and the NEW region was successfully allocated
+                NumCpy = OldSize;
+                if( OldSize > NewSize) {
+                    NumCpy = NewSize;
+                }
+                (VOID)CopyMem( RetVal, Ptr, NumCpy);  // Copy old data to the new region.
+                FreePool( Ptr);                           // and reclaim the old region.
+            }
+            else {
+                errno = ENOMEM;
+            }
+        }
+    }
+    else {
+        FreePool( Ptr);                           // Reclaim the old region.
+    }
+    
+    return RetVal;
+}
+
+#undef  realloc
+#define realloc uefirealloc
+
+#undef  malloc
+#define malloc uefimalloc
+
+#undef  free
+#define free uefifree
 
 static int allow_customize = 1;      /* we provide flexible functions for */
 static int allow_customize_debug = 1;/* exchanging memory-related functions at
