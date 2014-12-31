@@ -212,7 +212,6 @@ bool queryDevice(char const* deviceName, queryType query, char *answer, size_t a
     CFBooleanRef b_ref;
     bool result = false;
     int isMediaWhole = 0;
-    int isMediaLeaf  = 0;
 
     assert(deviceName);
 
@@ -244,18 +243,6 @@ bool queryDevice(char const* deviceName, queryType query, char *answer, size_t a
     if (CFDictionaryGetValueIfPresent(descDict, kDADiskDescriptionMediaWholeKey, (void const**) &b_ref) &&
         CFBooleanGetValue(b_ref))
         isMediaWhole = 1;
-    if (CFDictionaryGetValueIfPresent(descDict, kDADiskDescriptionMediaLeafKey, (void const**) &b_ref) &&
-        CFBooleanGetValue(b_ref))
-        isMediaLeaf = 1;
-
-    // If not query the blocksize, partitionscheme or dump,
-    // check that the media is a leaf
-    if (query != query_blocksize && query != query_partitionscheme &&
-        query != query_wholedisk && query != query_dump && !isMediaLeaf) {
-            fprintf(stderr, "Error: %s isn't a slice of a disk\n", deviceName);
-            CFRelease(descDict);
-            return false;
-    }
 
     // If query partition scheme, the device must be a whole disk
     if (query == query_partitionscheme && !isMediaWhole) {
