@@ -53,6 +53,7 @@ typedef enum {
     query_partitionscheme,
     query_pbrtype,
     query_wholedisk,
+    query_contenttype,
     query_dump,
     query_undefined
 } queryType;
@@ -277,6 +278,9 @@ bool queryDevice(char const* deviceName, queryType query, char *answer, size_t a
         case query_wholedisk:
             key = kDADiskDescriptionMediaBSDUnitKey;
             break;
+        case query_contenttype:
+            key = kDADiskDescriptionMediaContentKey;
+            break;
         case query_dump:
             CFShow(descDict);
             CFRelease(descDict);
@@ -445,6 +449,7 @@ Query options:\n\
 \t--show-uuid             display the UUID of the partition\n\
 \t--show-blocksize        display the prefer blocksize of the partition\n\
 \t--show-partitionscheme  display the partition scheme of a disk\n\
+\t--show-contenttype      display the content type of the device\n\
 \t--show-pbrtype          display the filesystem type from the PBR of the device\n\
 \t--show-wholedisk        display the whole disk of the device\n\
 \t--dump                  dump properties of the partition\n\
@@ -481,6 +486,7 @@ static struct option options[] =
     {"show-uuid", no_argument, 0, query_uuid},
     {"show-blocksize", no_argument, 0, query_blocksize},
     {"show-partitionscheme", no_argument, 0, query_partitionscheme},
+    {"show-contenttype", no_argument, 0, query_contenttype},
     {"show-pbrtype", no_argument, 0, query_pbrtype},
     {"show-wholedisk", no_argument, 0, query_wholedisk},
     {"dump", no_argument, 0, query_dump},
@@ -525,6 +531,7 @@ int main(int argc, char* const argv[])
                 case query_uuid:
                 case query_blocksize:
                 case query_partitionscheme:
+                case query_contenttype:
                 case query_pbrtype:
                 case query_wholedisk:
                 case query_dump:
