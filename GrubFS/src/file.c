@@ -656,7 +656,7 @@ FileGetInfo(EFI_FILE_HANDLE This, EFI_GUID *Type, UINTN *Len, VOID *Data)
 static EFI_STATUS EFIAPI
 FileSetInfo(EFI_FILE_HANDLE This, EFI_GUID *Type, UINTN Len, VOID *Data)
 {
-	EFI_GRUB_FILE *File = _CR(This, EFI_GRUB_FILE, EfiFile);
+//	EFI_GRUB_FILE *File = _CR(This, EFI_GRUB_FILE, EfiFile);
 
 /*	Print(L"Cannot set information of type ");
     PrintGuid(Type);
@@ -677,7 +677,7 @@ FileSetInfo(EFI_FILE_HANDLE This, EFI_GUID *Type, UINTN Len, VOID *Data)
 static EFI_STATUS EFIAPI
 FileFlush(EFI_FILE_HANDLE This)
 {
-	EFI_GRUB_FILE *File = _CR(This, EFI_GRUB_FILE, EfiFile);
+//	EFI_GRUB_FILE *File = _CR(This, EFI_GRUB_FILE, EfiFile);
 
 //	PrintInfo(L"Flush(%llx|'%s')\n", (UINTN)This, FileName(File));
 	return EFI_SUCCESS;
