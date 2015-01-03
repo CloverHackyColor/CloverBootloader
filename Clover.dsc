@@ -125,6 +125,9 @@
   S3BootScriptLib|MdeModulePkg/Library/PiDxeS3BootScriptLib/DxeS3BootScriptLib.inf
   ExtractGuidedSectionLib|MdePkg/Library/DxeExtractGuidedSectionLib/DxeExtractGuidedSectionLib.inf
   PlatformHookLib|MdeModulePkg/Library/BasePlatformHookLibNull/BasePlatformHookLibNull.inf
+  ShellLib|ShellPkg/Library/UefiShellLib/UefiShellLib.inf
+  FileHandleLib|ShellPkg/Library/UefiFileHandleLib/UefiFileHandleLib.inf
+  SortLib|ShellPkg/Library/UefiSortLib/UefiSortLib.inf
 
   #SerialPortLib|PcAtChipsetPkg/Library/SerialIoLib/SerialIoLib.inf
   SerialPortLib|MdePkg/Library/BaseSerialPortLibNull/BaseSerialPortLibNull.inf
@@ -454,6 +457,7 @@
   #MdeModulePkg/Application/VariableInfo/VariableInfo.inf
   #Clover/Sample/Application/Sample.inf
   #Clover/gptsync/gptsync.inf
+  Clover/bdmesg_efi/bdmesg.inf
   
 !ifdef DEBUG_ON_SERIAL_PORT
 
