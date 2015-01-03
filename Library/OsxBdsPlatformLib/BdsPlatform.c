@@ -323,7 +323,7 @@ DisableUsbLegacySupport(
 /*++
 
 Routine Description:
-  Disable the USB legacy Support in all Ehci and Uhci.
+  Disable the USB legacy Support in all Xhci, Ehci and Uhci.
   This function assume all PciIo handles have been created in system.
   
 Arguments:
@@ -335,7 +335,7 @@ Returns:
 --*/
 {
   EFI_STATUS                            Status;
-  EFI_HANDLE                            *HandleArray;
+  EFI_HANDLE                            *HandleArray = NULL;
   UINTN                                 HandleArrayCount;
   UINTN                                 Index;
   EFI_PCI_IO_PROTOCOL                   *PciIo;
@@ -345,7 +345,7 @@ Returns:
   UINT32                                ExtendCap;
   UINT32                                Value, mSaveValue;
   UINT32                                TimeOut;
-  
+
   //
   // Find the usb host controller
   //
@@ -377,8 +377,6 @@ Returns:
               //
               Command = 0;
               Status = PciIo->Pci.Write (PciIo, EfiPciIoWidthUint16, 0xC0, 1, &Command);
-              //         } else if ((PCI_IF_EHCI == Class[0]) ||
-              //                    (PCI_IF_XHCI == Class[0])) {
             } else if (PCI_IF_EHCI == Class[0]) {
               
               //
@@ -430,14 +428,60 @@ Returns:
                 PciIo->Pci.Write (PciIo, EfiPciIoWidthUint32, ExtendCap + 0x4, 1, &Value);
               }
             }
+          } else if (PCI_IF_XHCI == Class[0]) {
+            //
+            // Found the XHCI, then disable the legacy support, if present
+            //
+            Status = PciIo->Mem.Read(PciIo, EfiPciIoWidthUint32, 0 /* BAR0 */, (UINT64) 0x10 /* HCCPARAMS1 */, 1, &HcCapParams);
+            ExtendCap = EFI_ERROR(Status) ? 0 : ((HcCapParams >> 14) & 0x3FFFC);
+            while (ExtendCap) {
+              Status = PciIo->Mem.Read(PciIo, EfiPciIoWidthUint32, 0 /* BAR0 */, (UINT64) ExtendCap, 1, &Value);
+              if (EFI_ERROR(Status))
+                break;
+              if ((Value & 0xFF) == 1) {
+                Value |= (0x1 << 24);
+                (VOID) PciIo->Mem.Write(PciIo, EfiPciIoWidthUint32, 0 /* BAR0 */, (UINT64) ExtendCap, 1, &Value);
+                TimeOut = 40;
+                while (TimeOut--) {
+                  gBS->Stall(500);
+                  Status = PciIo->Mem.Read(PciIo, EfiPciIoWidthUint32, 0 /* BAR0 */, (UINT64) ExtendCap, 1, &Value);
+                  if (EFI_ERROR(Status)) {
+                    TimeOut = ~0;
+                    break;
+                  }
+                  if ((Value & 0x01010000) == 0x01000000) {
+                    TimeOut = ~0;  /* Optional - always disable the SMI */
+                    break;
+                  }
+                }
+                if ((INT32) TimeOut >= 0)
+                  break;
+                /*
+                 +						 * Disable the SMI in USBLEGCTLSTS if BIOS doesn't respond
+                 +						 */
+                Status = PciIo->Mem.Read(PciIo, EfiPciIoWidthUint32, 0 /* BAR0 */, (UINT64) ExtendCap + 4, 1, &Value);
+                if (EFI_ERROR(Status))
+                  break;
+                Value &= 0x1F1FEE;
+                Value |= 0xE0000000;
+                (VOID) PciIo->Mem.Write(PciIo, EfiPciIoWidthUint32, 0 /* BAR0 */, (UINT64) ExtendCap + 4, 1, &Value);
+                break;
+              }
+              if (!(Value & 0xFF00))
+                break;
+              ExtendCap += ((Value >> 6) & 0x3FC);
+            }
+
           } 
-        }
-      }
-    }
-  } else {
+        } // if !EFI_ERROR Pci.Read
+      }  // if !EFI_ERROR HandleProtocol
+    } //for Index
+  } else { //LocateHandle
     return Status;
   }
-  gBS->FreePool (HandleArray);
+  if (HandleArray) {
+    gBS->FreePool (HandleArray);
+  }
   return EFI_SUCCESS;
 }
 
