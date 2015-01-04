@@ -1165,6 +1165,7 @@ typedef enum {
   MacBook41,
   MacBook52,
   MacBookPro51,
+  MacBookPro62,
   MacBookPro81,
   MacBookPro83,
   MacBookPro92,

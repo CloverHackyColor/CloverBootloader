@@ -834,6 +834,9 @@ MACHINE_TYPES GetDefaultModel()
 				} else
 					DefaultType = MacBook41;
 				break;
+      case CPU_MODEL_CLARKDALE:
+        DefaultType = MacBookPro62;
+        break;
 			case CPU_MODEL_JAKETOWN:
 			case CPU_MODEL_SANDY_BRIDGE: 
 				if((AsciiStrStr(gCPUStructure.BrandString, "i3")) || 
