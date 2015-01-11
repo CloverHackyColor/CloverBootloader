@@ -53,14 +53,16 @@ bootslice=${bootdev#*disk*s}
 altBoot=$($plistbuddy -c "Print $installer_altboot_refid" \
  "$CLOVER_INSTALLER_PLIST_NEW" 2>/dev/null)
 
-partitionloaderexfat="boot1x"
+
 
 if [[ "$altBoot" == true ]]; then
     partitionloaderhfs="boot1h2"
     partitionloaderfat="boot1f32alt"
+    partitionloaderexfat="boot1xalt"
 else
     partitionloaderhfs="boot1h"
     partitionloaderfat="boot1f32"
+    partitionloaderexfat="boot1x"
 fi
 
 echo "==============================================="

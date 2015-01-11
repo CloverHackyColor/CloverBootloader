@@ -1,4 +1,4 @@
-BOOTSECTORS = boot0af boot0ss boot1h boot1h2 boot1f32 boot1f32alt boot1x
+BOOTSECTORS = boot0af boot0ss boot1h boot1h2 boot1f32 boot1f32alt boot1x boot1xalt
 TEXTFILES   = Description.txt Installation.txt
 
 BOOTSECTOR_SRCS = $(addsuffix .s, $(BOOTSECTORS))

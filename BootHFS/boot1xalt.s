@@ -24,6 +24,7 @@
 ;
 	bits 16
 
+%define SELECTION_FEATURE 1
 %define VERBOSE 1
 %define USESIDL 1
 %define USEBP 1
