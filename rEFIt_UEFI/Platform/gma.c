@@ -56,9 +56,12 @@ UINT8 GMAX3100_vals[28][4] = {
 // 5 - 32Mb 6 - 48Mb 9 - 64Mb, 0 - 96Mb
 
 UINT8 FakeID_126[] = {0x26, 0x01, 0x00, 0x00 };
+extern CHAR8 ClassFix[];
 
 UINT8 reg_TRUE[]	= { 0x01, 0x00, 0x00, 0x00 };
 UINT8 reg_FALSE[] = { 0x00, 0x00, 0x00, 0x00 };
+UINT8 OsInfo[] = {0x30, 0x49, 0x01, 0x11, 0x01, 0x10, 0x08, 0x00, 0x00,
+  0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0xFF, 0xFF};
 
 static struct gma_gpu_t KnownGPUS[] = {
 	{ 0x0000, "Unknown"			},
@@ -81,6 +84,7 @@ static struct gma_gpu_t KnownGPUS[] = {
 //	{ 0x2A13, "GMAX3100"		},
 	{ 0x2A42, "GMAX3100"		},
 //	{ 0x2A43, "GMAX3100"		},
+  { 0x0042, "Intel HD Graphics"  },
   { 0x0046, "Intel HD Graphics"  },
   { 0x0102, "Intel HD Graphics 2000"  },
   { 0x0106, "Intel HD Graphics 3000"  },
@@ -129,7 +133,6 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
 	UINT8 BuiltIn =		0x00;
   UINTN j;
   INT32 i;
-	UINT8 ClassFix[4] =	{ 0x00, 0x00, 0x03, 0x00 };
   BOOLEAN Injected = FALSE;
 //  UINT8 IG_ID[4] = { 0x00, 0x00, 0x62, 0x01 };
   
@@ -202,7 +205,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
   }
   switch (gma_dev->device_id) {
     case 0x0102: 
-      devprop_add_value(device, "class-code",	ClassFix, 4);
+      devprop_add_value(device, "class-code",	(UINT8*)ClassFix, 4);
     case 0x0106:
     case 0x0112:  
     case 0x0116:
@@ -230,7 +233,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
           case 0x162:
           case 0x16a:
             devprop_add_value(device, "AAPL,ig-platform-id", GMAX3100_vals[23], 4);
-            devprop_add_value(device, "class-code",	ClassFix, 4);
+            devprop_add_value(device, "class-code",	(UINT8*)ClassFix, 4);
             break;
           case 0x152:
             devprop_add_value(device, "AAPL,ig-platform-id", GMAX3100_vals[24], 4);
@@ -261,11 +264,12 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
       break;
     case 0x2772:
     case 0x29C2:  
-    case 0x0044:  
+    case 0x0042:
     case 0x0046: 
     case 0xA002:  
       devprop_add_value(device, "built-in", &BuiltIn, 1);
       devprop_add_value(device, "AAPL00,DualLink", (UINT8*)&DualLink, 1);
+      devprop_add_value(device, "AAPL,os-info", (UINT8*)&OsInfo, sizeof(OsInfo));
       break;
     case 0x2A02:
     case 0x2A12:
@@ -293,7 +297,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
       devprop_add_value(device, "AAPL01,Refresh", GMAX3100_vals[18], 4);
       devprop_add_value(device, "AAPL01,Stretch", GMAX3100_vals[19], 4);
       devprop_add_value(device, "AAPL01,InverterFrequency", GMAX3100_vals[20], 4);
-      //		devprop_add_value(device, "class-code",						ClassFix, 4);
+      //		devprop_add_value(device, "class-code",		(UINT8*)ClassFix, 4);
 //      devprop_add_value(device, "subsystem-vendor-id", GMAX3100_vals[21], 4);
       devprop_add_value(device, "subsystem-id", GMAX3100_vals[22], 4);
       devprop_add_value(device, "built-in", &BuiltIn, 1);

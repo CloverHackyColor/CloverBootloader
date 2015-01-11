@@ -226,8 +226,8 @@
 		<string>kext-dev-mode=1</string>
 		<key>DefaultLoader</key>
 		<string>boot.efi</string>
-		<key>#DefaultVolume</key>
-		<string>MacHDD</string>
+		<key>DefaultVolume</key>
+		<string>LastBootedVolume</string>
 		<key>NeverHibernate</key>
 		<false/>
 		<key>Fast</key>
