@@ -4240,6 +4240,8 @@ GetUserSettings(
           TagPtr Prop3 = NULL;
 
           for (i = 0; i < Count; i++) {
+            UINT8 Slot = MAX_RAM_SLOTS;
+            RAM_SLOT_INFO *SlotPtr;
             if (EFI_ERROR (GetElement (Prop2, i, &Prop3))) {
               continue;
             }
@@ -4253,8 +4255,6 @@ GetUserSettings(
               continue;
             }
 
-            UINT8 Slot = MAX_RAM_SLOTS;
-
             if (Dict2->type == kTagTypeString && Dict2->string) {
               Slot = (UINT8)AsciiStrDecimalToUintn (Dict2->string);
             } else if (Dict2->type == kTagTypeInteger) {
@@ -4267,7 +4267,7 @@ GetUserSettings(
               continue;
             }
 
-            RAM_SLOT_INFO *SlotPtr = &gRAM.User[Slot];
+            SlotPtr = &gRAM.User[Slot];
 
             // Get memory size
             Dict2 = GetProperty (Prop3, "Size");
@@ -4296,6 +4296,10 @@ GetUserSettings(
             if (Dict2 && Dict2->type == kTagTypeString && Dict2->string != NULL) {
               if (AsciiStriCmp (Dict2->string, "DDR2") == 0) {
                 SlotPtr->Type = MemoryTypeDdr2;
+              } else if (AsciiStriCmp (Dict2->string, "DDR3") == 0) {
+                SlotPtr->Type = MemoryTypeDdr3;
+              } else if (AsciiStriCmp (Dict2->string, "DDR4") == 0) {
+                SlotPtr->Type = MemoryTypeDdr4;
               } else if (AsciiStriCmp (Dict2->string, "DDR") == 0) {
                 SlotPtr->Type = MemoryTypeDdr;
               }

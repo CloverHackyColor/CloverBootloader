@@ -11,11 +11,13 @@
  * Serial Presence Detect (SPD) data stored on SDRAM modules.
  *
  * Datasheet:
+ *  -- the link is broken!
  *   - Name: PC SDRAM Serial Presence Detect (SPD) Specification
  *           Revision 1.2A, December, 1997
  *   - PDF: http://www.intel.com/design/chipsets/memory/spdsd12a.pdf
  *
  * Datasheet (alternative):
+ *  -- the link is not accessible without registration
  *   - Name: SERIAL PRESENCE DETECT STANDARD, General Standard
  *           JEDEC Standard No. 21-C
  *   - PDF: http://www.jedec.org/download/search/4_01_02_00R9.PDF
@@ -24,7 +26,7 @@
 
 /* Byte numbers. */
 #define SPD_NUM_MANUFACTURER_BYTES          0  /* Number of bytes used by module manufacturer */
-#define SPD_TOTAL_SPD_MEMORY_SIZE           1  /* Total SPD memory size */
+#define SPD_TOTAL_SPD_MEMORY_SIZE           1  /* Total SPD memory size | Byte 1 (0x001): SPD Revision*/ 
 #define SPD_MEMORY_TYPE                     2  /* (Fundamental) memory type */
 #define SPD_NUM_ROWS                        3  /* Number of row address bits */
 #define SPD_NUM_COLUMNS                     4  /* Number of column address bits */
@@ -84,6 +86,13 @@
 #define SPD_DDR3_MEMORY_BANK			   0x75
 #define SPD_DDR3_MEMORY_CODE			   0x76
 
+#define SPD_DDR4_MANUFACTURER_ID_CODE       0x140 /* Manufacturer's JEDEC ID code (bytes 140-141) */
+#define SPD_DDR4_MANUFACTURING_LOCATION     0x142 /* Manufacturing location */
+#define SPD_DDR4_MANUFACTURING_DATE         0x143 /* bytes 143-144 */
+#define SPD_DDR4_SERIAL_NUMBER              0x145 /* Assembly serial number (bytes 145-148) */
+#define SPD_DDR4_MANUFACTURER_PART_NUMBER   0x149 /*  in 6-bit ASCII (bytes 149-15c) */
+#define SPD_DDR4_REVISION_CODE              0x15d /* Revision code  */
+
 /* DRAM specifications use the following naming conventions for SPD locations */
 #define SPD_tRP                             SPD_MIN_ROW_PRECHARGE_TIME
 #define SPD_tRRD                            SPD_MIN_ROWACTIVE_TO_ROWACTIVE
@@ -96,15 +105,18 @@
 
 
 /* SPD_MEMORY_TYPE values. */
-#define SPD_MEMORY_TYPE_FPM_DRAM			1
-#define SPD_MEMORY_TYPE_EDO					2
-#define SPD_MEMORY_TYPE_PIPELINED_NIBBLE	3
-#define SPD_MEMORY_TYPE_SDRAM				4
-#define SPD_MEMORY_TYPE_MULTIPLEXED_ROM		5
-#define SPD_MEMORY_TYPE_SGRAM_DDR			6
-#define SPD_MEMORY_TYPE_SDRAM_DDR			7
-#define SPD_MEMORY_TYPE_SDRAM_DDR2			8
-#define SPD_MEMORY_TYPE_SDRAM_DDR3			0xb
+#define SPD_MEMORY_TYPE_FPM_DRAM            1
+#define SPD_MEMORY_TYPE_EDO                 2
+#define SPD_MEMORY_TYPE_PIPELINED_NIBBLE    3
+#define SPD_MEMORY_TYPE_SDRAM               4
+#define SPD_MEMORY_TYPE_MULTIPLEXED_ROM     5
+#define SPD_MEMORY_TYPE_SGRAM_DDR           6
+#define SPD_MEMORY_TYPE_SDRAM_DDR           7
+#define SPD_MEMORY_TYPE_SDRAM_DDR2          8
+#define SPD_MEMORY_TYPE_SDRAM_DDR2_FB_DIMM  9
+#define SPD_MEMORY_TYPE_SDRAM_DDR2_FB_PROBE 0xa
+#define SPD_MEMORY_TYPE_SDRAM_DDR3          0xb
+#define SPD_MEMORY_TYPE_SDRAM_DDR4          0xc
 
 /* SPD_MODULE_VOLTAGE values. */
 #define SPD_VOLTAGE_TTL						0 /* 5.0 Volt/TTL */
@@ -115,7 +127,7 @@
 
 /* SPD_DIMM_CONFIG_TYPE values. */
 #define ERROR_SCHEME_NONE					0
-#define ERROR_SCHEME_PARITY					1
+#define ERROR_SCHEME_PARITY				1
 #define ERROR_SCHEME_ECC					2
 
 /* SPD_ACCEPTABLE_CAS_LATENCIES values. */
@@ -143,5 +155,24 @@
 /* SPD_MODULE_ATTRIBUTES values. */
 #define MODULE_BUFFERED						1
 #define MODULE_REGISTERED					2
+
+//DDR4 specification
+/*
+Block 2, upper half: Manufacturing Information
+Bytes 320~383 (0x140~0x17F) The following table details the location of each byte in this block.
+Byte Number Function Described Notes
+320 0x140 Module Manufacturer’s ID Code, Least Significant Byte
+321 0x141 Module Manufacturer’s ID Code, Most Significant Byte
+322 0x142 Module Manufacturing Location
+323~324 0x143~0x144 Module Manufacturing Date
+325~328 0x145~0x148 Module Serial Number
+329~348 0x149~0x15C Module Part Number
+349 0x15D Module Revision Code
+350 0x15E DRAM Manufacturer’s ID Code, Least Significant Byte
+351 0x15F DRAM Manufacturer’s ID Code, Most Significant Byte
+352 0x160 DRAM Stepping
+353~381 0x161~0x17D Module Manufacturer’s Specific Data
+382~383 0x17E~0x17F Reserved; must be coded as 0x00
+ */
 
 #endif /* !__LIBSAIO_SPD_H */

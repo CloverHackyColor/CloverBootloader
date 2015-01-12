@@ -1233,6 +1233,7 @@ VOID PatchTableType17()
         newSmbiosTable.Type17->Size = (UINT16)gRAM.User[UserIndex].ModuleSize;
         newSmbiosTable.Type17->MemoryType = gRAM.User[UserIndex].Type;
         if ((newSmbiosTable.Type17->MemoryType != MemoryTypeDdr2) &&
+            (newSmbiosTable.Type17->MemoryType != MemoryTypeDdr4) &&
             (newSmbiosTable.Type17->MemoryType != MemoryTypeDdr)) {
           newSmbiosTable.Type17->MemoryType = MemoryTypeDdr3;
         }
@@ -1498,8 +1499,9 @@ VOID PatchTableType17()
 
     AsciiSPrint(gSettings.MemorySpeed, 64, "%d", newSmbiosTable.Type17->Speed);
     
-    // Assume DDR3 unless explicitly set to DDR2/DDR
+    // Assume DDR3 unless explicitly set to DDR2/DDR/DDR4
     if ((newSmbiosTable.Type17->MemoryType != MemoryTypeDdr2) &&
+        (newSmbiosTable.Type17->MemoryType != MemoryTypeDdr4) &&
         (newSmbiosTable.Type17->MemoryType != MemoryTypeDdr)) {
       newSmbiosTable.Type17->MemoryType = MemoryTypeDdr3;
     }      
