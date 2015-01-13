@@ -69,6 +69,60 @@ UINTN SearchAndReplace(UINT8 *Source, UINT32 SourceSize, UINT8 *Search, UINTN Se
   return NumReplaces;
 }
 
+UINTN SearchAndReplaceTxt(UINT8 *Source, UINT32 SourceSize, UINT8 *Search, UINTN SearchSize, UINT8 *Replace, INTN MaxReplaces)
+{
+  UINTN     NumReplaces = 0;
+  UINTN     Skip;
+  BOOLEAN   NoReplacesRestriction = MaxReplaces <= 0;
+  UINT8     *End = Source + SourceSize;
+  UINT8     *Pos;
+  UINT8     *FirstMatch;
+  if (!Source || !Search || !Replace || !SearchSize) {
+    return 0;
+  }
+  
+  while ((Source < End) && (NoReplacesRestriction || (MaxReplaces > 0))) { // num replaces
+    Skip = 0;
+    while (*Source != '\0') {  //comparison
+      Pos = Search;
+      FirstMatch = Source;
+      while (*Source != '\0') { 
+        while (*Source <= 0x20) { //skip invisibles in sources
+          Source++;
+          Skip++;
+        }
+        if (*Source != *Pos) {
+          break;
+        }
+        Source++;
+        Pos++;
+      }
+      
+      if (*Pos == '\0') { //end of pattern to compare
+        Pos = FirstMatch;
+        break;
+      }
+      
+      if (*Source == '\0') { //not found
+        Pos = NULL;
+        break;
+      }
+      
+      Source = FirstMatch + 1;
+    }
+
+    if (!Pos) {
+      break;
+    }
+    CopyMem (Pos, Replace, SearchSize);
+    SetMem (Pos + SearchSize, Skip, 0x20); //fill skip places with spaces
+    NumReplaces++;
+    MaxReplaces--;
+    Source = FirstMatch + SearchSize;
+  }
+  return NumReplaces;
+}
+
 /** Global for storing KextBoundleIdentifier */
 CHAR8 gKextBoundleIdentifier[256];
 
@@ -467,7 +521,7 @@ VOID AnyKextPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 Inf
   } else {
     // Info plist patch
     DBG_RT(Entry, "Info.plist patch: '%a' -> '%a'\n", Entry->KernelAndKextPatches->KextPatches[N].Data, Entry->KernelAndKextPatches->KextPatches[N].Patch);
-    Num = SearchAndReplace((UINT8*)InfoPlist,
+    Num = SearchAndReplaceTxt((UINT8*)InfoPlist,
                            InfoPlistSize,
                            Entry->KernelAndKextPatches->KextPatches[N].Data,
                            Entry->KernelAndKextPatches->KextPatches[N].DataLen,
@@ -481,7 +535,7 @@ VOID AnyKextPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 Inf
     } else {
       DBG_RT(Entry, "==> NOT patched!\n");
     }
-    gBS->Stall(5000000);
+    gBS->Stall(2000000);
   }
 }
 
@@ -507,7 +561,7 @@ VOID KextPatcherRegisterKexts(FSINJECTION_PROTOCOL *FSInject, FSI_STRING_LIST *F
 
 //
 // PatchKext is called for every kext from prelinked kernel (kernelcache) or from DevTree (booting with drivers).
-// Add kext detection code here and call kext speciffic patch function.
+// Add kext detection code here and call kext specific patch function.
 //
 VOID PatchKext(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize, LOADER_ENTRY *Entry)
 {
@@ -888,7 +942,7 @@ VOID KextPatcherStart(LOADER_ENTRY *Entry)
   if (isKernelcache) {
     DBG_RT(Entry, "Patching kernelcache ...\n");
     if (Entry->KernelAndKextPatches->KPDebug) {
-      gBS->Stall(5000000);
+      gBS->Stall(2000000);
     }
     PatchPrelinkedKexts(Entry);
     
@@ -896,7 +950,7 @@ VOID KextPatcherStart(LOADER_ENTRY *Entry)
     
     DBG_RT(Entry, "Patching loaded kexts ...\n");
     if (Entry->KernelAndKextPatches->KPDebug) {
-      gBS->Stall(5000000);
+      gBS->Stall(2000000);
     }
     PatchLoadedKexts(Entry);
     
