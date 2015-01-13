@@ -71,7 +71,6 @@
   HiiLib
   SortLib
   HandleParsingLib
-#  PathLib
 
 [Guids]
   gShellVariableGuid                                      # ALWAYS_CONSUMES
