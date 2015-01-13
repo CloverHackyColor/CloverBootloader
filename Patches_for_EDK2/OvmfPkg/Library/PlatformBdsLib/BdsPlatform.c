@@ -13,7 +13,7 @@
 **/
 
 #include "BdsPlatform.h"
-#include "QemuBootOrder.h"
+#include <Library/QemuBootOrderLib.h>
 
 #ifdef Q35
 #define IS_PLATFORM_Q35 1

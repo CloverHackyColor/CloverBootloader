@@ -219,7 +219,7 @@
 		<key>DefaultLoader</key>
 		<string>boot.efi</string>
 		<key>DefaultVolume</key>
-		<string>MacHDD</string>
+		<string>LastBootedVolume</string>
 		<key>NeverHibernate</key>
 		<false/>
 		<key>Fast</key>
@@ -585,6 +585,18 @@
 				<string>IOGraphicsFamily</string>
 				<key>Replace</key>
 				<data>QYjE6yM=</data>
+			</dict>
+			<dict>
+				<key>Comment</key>
+				<string>Power states 1-&gt; 0</string>
+				<key>Name</key>
+				<string>Some_kext</string>
+				<key>Find</key>
+				<data>PHN0cmluZz5Qb3dlclN0YXRlczwvc3RyaW5nPgo8aW50ZWdlcj4xPC9pbnRlZ2VyPg==</data>
+				<key>InfoPlistPatch</key>
+				<true/>
+				<key>Replace</key>
+				<data>PHN0cmluZz5Qb3dlclN0YXRlczwvc3RyaW5nPgo8aW50ZWdlcj4wPC9pbnRlZ2VyPg==</data>
 			</dict>
 		</array>
 	</dict>

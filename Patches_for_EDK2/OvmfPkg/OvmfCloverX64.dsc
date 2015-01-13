@@ -627,13 +627,3 @@
 !endif
 
   OvmfPkg/PlatformDxe/Platform.inf
-  
-  #BUG reproducer
-  OvmfPkg/GccBugReproducer/GccBugReproducer-O0.inf {
-    <LibraryClasses>
-      ShellCEntryLib|ShellPkg/Library/UefiShellCEntryLib/UefiShellCEntryLib.inf
-  }
-  OvmfPkg/GccBugReproducer/GccBugReproducer-Os.inf {
-    <LibraryClasses>
-      ShellCEntryLib|ShellPkg/Library/UefiShellCEntryLib/UefiShellCEntryLib.inf
-  }

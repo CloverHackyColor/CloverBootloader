@@ -4,7 +4,7 @@
 # It also provides the definitions(including PPIs/PROTOCOLs/GUIDs and library classes)
 # and libraries instances, which are used for those modules.
 #
-# Copyright (c) 2007 - 2014, Intel Corporation. All rights reserved.<BR>
+# Copyright (c) 2007 - 2015, Intel Corporation. All rights reserved.<BR>
 # This program and the accompanying materials are licensed and made available under 
 # the terms and conditions of the BSD License that accompanies this distribution.  
 # The full text of the license may be found at
@@ -102,6 +102,9 @@
   ##  @libraryclass    Provides platform specific display interface.
   #
   CustomizedDisplayLib|Include/Library/CustomizedDisplayLib.h
+
+  ## @libraryclass   Provides sorting functions
+  SortLib|Include/Library/SortLib.h
 
 [Guids]
   ## MdeModule package token space guid
@@ -274,6 +277,9 @@
   ## Include/Guid/StatusCodeDataTypeVariable.h
   gEdkiiStatusCodeDataTypeVariableGuid = { 0xf6ee6dbb, 0xd67f, 0x4ea0, { 0x8b, 0x96, 0x6a, 0x71, 0xb1, 0x9d, 0x84, 0xad }}
 
+  ## Include/Guid/MemoryProfile.h
+  gEdkiiMemoryProfileGuid              = { 0x821c9a09, 0x541a, 0x40f6, { 0x9f, 0x43, 0xa, 0xd1, 0x93, 0xa1, 0x2c, 0xfe }}
+
 [Ppis]
   ## Include/Ppi/AtaController.h
   gPeiAtaControllerPpiGuid       = { 0xa45e60d1, 0xc719, 0x44aa, { 0xb0, 0x7a, 0xaa, 0x77, 0x7f, 0x85, 0x90, 0x6d }}
@@ -352,6 +358,12 @@
   ## This protocol is intended for use as a means to mark a variable read-only after the event EFI_END_OF_DXE_EVENT_GUID is signaled.
   #  Include/Protocol/VariableLock.h
   gEdkiiVariableLockProtocolGuid = { 0xcd3d0a05, 0x9e24, 0x437c, { 0xa8, 0x91, 0x1e, 0xe0, 0x53, 0xdb, 0x76, 0x38 }}
+
+  ## Include/Protocol/VarCheck.h
+  gEdkiiVarCheckProtocolGuid     = { 0xaf23b340, 0x97b4, 0x4685, { 0x8d, 0x4f, 0xa3, 0xf2, 0x81, 0x69, 0xb2, 0x1d } }
+
+  ## Include/Protocol/SmmVarCheck.h
+  gEdkiiSmmVarCheckProtocolGuid  = { 0xb0d8f3c1, 0xb7de, 0x4c11, { 0xbc, 0x89, 0x2f, 0xb5, 0x62, 0xc8, 0xc4, 0x11 } }
 
   ## This protocol is similar with DXE FVB protocol and used in the UEFI SMM evvironment.
   #  Include/Protocol/SmmFirmwareVolumeBlock.h
@@ -771,8 +783,9 @@
   # @Expression 0x80000002 | (gEfiMdeModulePkgTokenSpaceGuid.PcdSerialFifoControl & 0xD8) == 0
   gEfiMdeModulePkgTokenSpaceGuid.PcdSerialFifoControl|0x07|UINT8|0x00020005
 
-  ## TFTP BlockSize. Initial value 0 means using default block size which is (MTU-IP_HEADER-UDP_HEADER-TFTP_HEADER)
-  #  to handle all link layers. If the value is non zero, the PCD value will be used as block size.
+  ## This setting can override the default TFTP block size. A value of 0 computes
+  # the default from MTU information. A non-zero value will be used as block size
+  # in bytes.
   # @Prompt TFTP block size.
   gEfiMdeModulePkgTokenSpaceGuid.PcdTftpBlockSize|0x0|UINT64|0x30001026
 
@@ -812,6 +825,38 @@
   ## Default Creator Revision for ACPI table creation.
   # @Prompt Default Creator Revision for ACPI table creation.
   gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultCreatorRevision|0x01000013|UINT32|0x30001038
+
+  ## The mask is used to control memory profile behavior.<BR><BR>
+  #  BIT0 - Enable UEFI memory profile.<BR>
+  #  BIT1 - Enable SMRAM profile.<BR>
+  # @Prompt Memory Profile Property.
+  # @Expression  0x80000002 | (gEfiMdeModulePkgTokenSpaceGuid.PcdMemoryProfilePropertyMask & 0xFC) == 0
+  gEfiMdeModulePkgTokenSpaceGuid.PcdMemoryProfilePropertyMask|0x0|UINT8|0x30001041
+
+  ## This flag is to control which memory types of alloc info will be recorded by DxeCore & SmmCore.<BR><BR>
+  # For SmmCore, only EfiRuntimeServicesCode and EfiRuntimeServicesData are valid.<BR>
+  #
+  # Below is bit mask for this PCD: (Order is same as UEFI spec)<BR>
+  #  EfiReservedMemoryType          0x0001<BR>
+  #  EfiLoaderCode                  0x0002<BR>
+  #  EfiLoaderData                  0x0004<BR>
+  #  EfiBootServicesCode            0x0008<BR>
+  #  EfiBootServicesData            0x0010<BR>
+  #  EfiRuntimeServicesCode         0x0020<BR>
+  #  EfiRuntimeServicesData         0x0040<BR>
+  #  EfiConventionalMemory          0x0080<BR>
+  #  EfiUnusableMemory              0x0100<BR>
+  #  EfiACPIReclaimMemory           0x0200<BR>
+  #  EfiACPIMemoryNVS               0x0400<BR>
+  #  EfiMemoryMappedIO              0x0800<BR>
+  #  EfiMemoryMappedIOPortSpace     0x1000<BR>
+  #  EfiPalCode                     0x2000<BR>
+  #  OS Reserved        0x8000000000000000<BR>
+  #
+  # e.g. Reserved+ACPINvs+ACPIReclaim+RuntimeCode+RuntimeData are needed, 0x661 should be used.<BR>
+  #
+  # @Prompt Memory profile memory type.
+  gEfiMdeModulePkgTokenSpaceGuid.PcdMemoryProfileMemoryType|0x0|UINT64|0x30001042
 
   ## UART clock frequency is for the baud rate configuration.
   # @Prompt Serial Port Clock Rate.
@@ -905,6 +950,9 @@
   #  The range is valid if non-zero.  The memory range size must be PcdVariableStoreSize.
   # @Prompt Reserved memory range for EMU variable NV storage.
   gEfiMdeModulePkgTokenSpaceGuid.PcdEmuVariableNvStoreReserved|0|UINT64|0x40000008
+
+
+[PcdsFixedAtBuild, PcdsPatchableInModule, PcdsDynamic, PcdsDynamicEx]
 
   ## This PCD defines the times to print hello world string.
   #  This PCD is a sample to explain UINT32 PCD usage.
