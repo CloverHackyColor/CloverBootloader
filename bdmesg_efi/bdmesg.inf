@@ -28,6 +28,7 @@
   UefiLib
   ShellLib
   MemLogLib
+#  PathLib
   
 [BuildOptions]
   XCODE:*_*_*_CC_FLAGS = -Os 
