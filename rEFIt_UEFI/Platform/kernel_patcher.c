@@ -1330,13 +1330,7 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
       return;
     }
 
-    if (is64BitKernel) {
-      DBG_RT(Entry, "64-bit patch ...\n");
-      patchedOk = KernelHaswellEPatch(KernelData);
-    } else {
-      DBG_RT(Entry, "32-bit patch ...\n");
-      patchedOk = KernelLapicPatch_32(KernelData);
-    }
+    patchedOk = KernelHaswellEPatch(KernelData);
     if (patchedOk) {
       DBG_RT(Entry, "OK\n");
     } else {
