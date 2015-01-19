@@ -508,6 +508,10 @@ VOID FillInputs(BOOLEAN New)
     InputItems[InputItemsCount].SValue = AllocateZeroPool(26);
   }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.KernelAndKextPatches.FakeCPUID);
+
+  InputItems[InputItemsCount].ItemType = BoolValue; //105
+  InputItems[InputItemsCount].BValue = gSettings.KernelAndKextPatches.KPHaswellE;
+  InputItems[InputItemsCount].SValue = gSettings.KernelAndKextPatches.KPHaswellE ? L"[+]" : L"[ ]";
   
   InputItemsCount = 110;
   for (j=0; j<16; j++) {
@@ -949,6 +953,10 @@ VOID ApplyInputs(VOID)
   if (InputItems[i].Valid) {    
     gSettings.KernelAndKextPatches.FakeCPUID = (UINT32)StrHexToUint64(InputItems[i].SValue);
     DBG("applied FakeCPUID=%06x\n", gSettings.KernelAndKextPatches.FakeCPUID);
+  }
+  i++; //105
+  if (InputItems[i].Valid) {
+    gSettings.KernelAndKextPatches.KPHaswellE = InputItems[i].BValue;
   }
   
   if (NeedSave) {
@@ -3053,6 +3061,15 @@ REFIT_MENU_ENTRY  *SubMenuBinaries()
   InputBootArgs->Entry.Tag = TAG_INPUT;
   InputBootArgs->Entry.Row = 0xFFFF; //cursor
   InputBootArgs->Item = &InputItems[91];
+  InputBootArgs->Entry.AtClick = ActionEnter;
+  InputBootArgs->Entry.AtRightClick = ActionDetails;
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+
+  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  InputBootArgs->Entry.Title = PoolPrint(L"Kernel Haswell-E Patch:");
+  InputBootArgs->Entry.Tag = TAG_INPUT;
+  InputBootArgs->Entry.Row = 0xFFFF; //cursor
+  InputBootArgs->Item = &InputItems[105];
   InputBootArgs->Entry.AtClick = ActionEnter;
   InputBootArgs->Entry.AtRightClick = ActionDetails;
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);

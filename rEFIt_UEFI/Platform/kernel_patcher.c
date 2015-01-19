@@ -768,6 +768,38 @@ BOOLEAN KernelLapicPatch_32(VOID *kernelData)
   }
   return TRUE;
 }
+
+
+BOOLEAN KernelHaswellEPatch(VOID *KernelData)
+{
+  // Credit to stinga11 for the patches used below
+  // Based on Pike R. Alpha's Haswell patch for Mavericks
+
+  UINT8  *Bytes = (UINT8*)KernelData;
+  UINT32 Index;
+
+  DBG("Searching for Haswell-E patch pattern\n");
+
+  for (Index = 0; Index < 0x1000000; ++Index) {
+    if (Bytes[Index] == 0x74 && Bytes[Index + 1] == 0x11 && Bytes[Index + 2] == 0x83 && Bytes[Index + 3] == 0xF8 && Bytes[Index + 4] == 0x3C) {
+      Bytes[Index + 4] = 0x3F;
+
+      DBG("Found Haswell-E pattern #1; patched.\n");
+
+      return TRUE;
+    } else if (Bytes[Index] == 0xEB && Bytes[Index + 1] == 0x0A && Bytes[Index + 2] == 0x83 && Bytes[Index + 3] == 0xF8 && Bytes[Index + 4] == 0x3A) {
+      Bytes[Index + 4] = 0x3F;
+
+      DBG("Found Haswell-E pattern #2; patched.\n");
+
+      return TRUE;
+    }
+  }
+
+  DBG("Can't find Haswell-E patch pattern, kernel patch aborted.\n");
+
+  return FALSE;
+}
 	
 
 VOID Patcher_SSE3_6(VOID* kernelData)
@@ -1278,6 +1310,34 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
       patchedOk = KernelLapicPatch_32(KernelData);
     }
     if(patchedOk) {
+      DBG_RT(Entry, "OK\n");
+    } else {
+      DBG_RT(Entry, " FAILED!\n");
+    }
+  } else {
+    DBG_RT(Entry, "Not done - Disabled.\n");
+  }
+
+  DBG_RT(Entry, "\nHaswell-E patch: ");
+  if (Entry->KernelAndKextPatches->KPHaswellE) {
+    BOOLEAN patchedOk;
+    KernelAndKextPatcherInit(Entry);
+    if (KernelData == NULL) {
+      if (Entry->KernelAndKextPatches->KPDebug) {
+        DBG_RT(Entry, "ERROR: Kernel not found\n");
+        gBS->Stall(5000000);
+      }
+      return;
+    }
+
+    if (is64BitKernel) {
+      DBG_RT(Entry, "64-bit patch ...\n");
+      patchedOk = KernelHaswellEPatch(KernelData);
+    } else {
+      DBG_RT(Entry, "32-bit patch ...\n");
+      patchedOk = KernelLapicPatch_32(KernelData);
+    }
+    if (patchedOk) {
       DBG_RT(Entry, "OK\n");
     } else {
       DBG_RT(Entry, " FAILED!\n");

@@ -643,6 +643,7 @@ void PrintConfig(CFTypeRef data)
   addBoolean(KernelAndKextPatchesDict, CFSTR("KernelCpu"), s->KernelAndKextPatches.KPKernelCpu);
   addBoolean(KernelAndKextPatchesDict, CFSTR("KernelPm"), s->KernelAndKextPatches.KPKernelPm);
   addBoolean(KernelAndKextPatchesDict, CFSTR("KernelLapic"), s->KernelAndKextPatches.KPLapicPanic);
+  addBoolean(KernelAndKextPatchesDict, CFSTR("KernelHaswellE"), s->KernelAndKextPatches.KPHaswellE);
   addBoolean(KernelAndKextPatchesDict, CFSTR("AppleRTC"), s->KernelAndKextPatches.KPAppleRTC);
   addBoolean(KernelAndKextPatchesDict, CFSTR("AsusAICPUPM"), s->KernelAndKextPatches.KPAsusAICPUPM);
   //addBoolean(KernelAndKextPatchesDict, CFSTR("KextPatchesAllowed"), s->KextPatchesAllowed);

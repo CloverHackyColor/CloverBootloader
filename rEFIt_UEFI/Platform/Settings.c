@@ -757,6 +757,11 @@ FillinKextPatches (
     Patches->KPLapicPanic = IsPropertyTrue (Prop);
   }
 
+  Prop = GetProperty(DictPointer, "KernelHaswellE");
+  if (Prop != NULL) {
+    Patches->KPHaswellE = IsPropertyTrue(Prop);
+  }
+
   Prop = GetProperty (DictPointer, "ATIConnectorsController");
   if (Prop != NULL) {
     UINTN len = 0;

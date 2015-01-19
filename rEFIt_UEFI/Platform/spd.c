@@ -216,7 +216,7 @@ VOID init_spd(UINT8* spd, UINT32 base, UINT8 slot)
   }
   if (spd[SPD_MEMORY_TYPE] == SPD_MEMORY_TYPE_SDRAM_DDR4) {
     for (i = SPD_DDR4_MANUFACTURER_ID_CODE; i < SPD_DDR4_REVISION_CODE; i++) {
-      READ_SPD(spd, base, slot, i);
+      READ_SPD(spd, base, slot, (UINT8)i);
     }
   }
 }
@@ -434,7 +434,7 @@ CHAR8* getDDRPartNum(UINT8* spd, UINT32 base, UINT8 slot)
   // Check that the spd part name is zero terminated and that it is ascii:
   ZeroMem(asciiPartNo, 32);  //sizeof(asciiPartNo));
 	for (i = start; i < start + 20; i++) {
-		READ_SPD(spd, base, slot, i); // only read once the corresponding model part (ddr3 or ddr2)
+		READ_SPD(spd, base, slot, (UINT8)i); // only read once the corresponding model part (ddr3 or ddr2)
 		c = spd[i];
 		if (IS_ALFA(c) || IS_DIGIT(c) || IS_PUNCT(c)) // It seems that System Profiler likes only letters and digits...
 			asciiPartNo[index++] = c;

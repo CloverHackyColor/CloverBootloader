@@ -455,6 +455,7 @@ typedef struct KERNEL_AND_KEXT_PATCHES
    BOOLEAN KPDebug;
    BOOLEAN KPKernelCpu;
    BOOLEAN KPLapicPanic;
+   BOOLEAN KPHaswellE;
    BOOLEAN KPAsusAICPUPM;
    BOOLEAN KPAppleRTC;
    BOOLEAN KPKernelPm;

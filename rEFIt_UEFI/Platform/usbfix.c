@@ -303,11 +303,11 @@ FixOwnership(VOID)
                       gBS->Stall(500);
                       Status = PciIo->Mem.Read(PciIo, EfiPciIoWidthUint32, 0 /* BAR0 */, (UINT64) ExtendCap, 1, &Value);
                       if (EFI_ERROR(Status)) {
-                        TimeOut = ~0;
+                        TimeOut = (UINT32)~0;
                         break;
                       }
                       if ((Value & 0x01010000) == 0x01000000) {
-                        TimeOut = ~0;  /* Optional - always disable the SMI */
+                        TimeOut = (UINT32)~0;  /* Optional - always disable the SMI */
                         break;
                       }
                     }

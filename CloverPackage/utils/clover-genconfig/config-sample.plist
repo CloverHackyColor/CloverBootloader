@@ -516,6 +516,8 @@
 		<false/>
 		<key>KernelLapic</key>
 		<false/>
+    <key>KernelHaswellE</key>
+    <false/>
 		<key>KextsToPatch</key>
 		<array>
 			<dict>

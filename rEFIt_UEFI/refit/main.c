@@ -641,6 +641,7 @@ VOID DumpKernelAndKextPatches(KERNEL_AND_KEXT_PATCHES *Patches)
    DBG("\tDebug: %c\n", Patches->KPDebug ? 'y' : 'n');
    DBG("\tKernelCpu: %c\n", Patches->KPKernelCpu ? 'y' : 'n');
    DBG("\tLapic: %c\n", Patches->KPLapicPanic ? 'y' : 'n');
+   DBG("\tHaswell-E: %c\n", Patches->KPHaswellE ? 'y' : 'n');
    DBG("\tAICPUPM: %c\n", Patches->KPAsusAICPUPM ? 'y' : 'n');
    DBG("\tAppleRTC: %c\n", Patches->KPAppleRTC ? 'y' : 'n');
    DBG("\tKernelPm: %c\n", Patches->KPKernelPm ? 'y' : 'n');
