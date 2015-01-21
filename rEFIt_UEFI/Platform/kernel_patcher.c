@@ -775,10 +775,14 @@ BOOLEAN KernelHaswellEPatch(VOID *KernelData)
   // Credit to stinga11 for the patches used below
   // Based on Pike R. Alpha's Haswell patch for Mavericks
 
-  UINT8  *Bytes = (UINT8*)KernelData;
-  UINT32 Index;
+  UINT8   *Bytes;
+  UINT32  Index;
+  BOOLEAN PatchApplied;
 
   DBG("Searching for Haswell-E patch pattern\n");
+
+  Bytes = (UINT8*)KernelData;
+  PatchApplied = FALSE;
 
   for (Index = 0; Index < 0x1000000; ++Index) {
     if (Bytes[Index] == 0x74 && Bytes[Index + 1] == 0x11 && Bytes[Index + 2] == 0x83 && Bytes[Index + 3] == 0xF8 && Bytes[Index + 4] == 0x3C) {
@@ -786,19 +790,31 @@ BOOLEAN KernelHaswellEPatch(VOID *KernelData)
 
       DBG("Found Haswell-E pattern #1; patched.\n");
 
-      return TRUE;
-    } else if (Bytes[Index] == 0xEB && Bytes[Index + 1] == 0x0A && Bytes[Index + 2] == 0x83 && Bytes[Index + 3] == 0xF8 && Bytes[Index + 4] == 0x3A) {
+      if (PatchApplied) {
+        break;
+      }
+
+      PatchApplied = TRUE;
+    }
+    
+    if (Bytes[Index] == 0xEB && Bytes[Index + 1] == 0x0A && Bytes[Index + 2] == 0x83 && Bytes[Index + 3] == 0xF8 && Bytes[Index + 4] == 0x3A) {
       Bytes[Index + 4] = 0x3F;
 
       DBG("Found Haswell-E pattern #2; patched.\n");
 
-      return TRUE;
+      if (PatchApplied) {
+        break;
+      }
+
+      PatchApplied = TRUE;
     }
   }
 
-  DBG("Can't find Haswell-E patch pattern, kernel patch aborted.\n");
+  if (!PatchApplied) {
+    DBG("Can't find Haswell-E patch pattern, kernel patch aborted.\n");
+  }
 
-  return FALSE;
+  return PatchApplied;
 }
 	
 
