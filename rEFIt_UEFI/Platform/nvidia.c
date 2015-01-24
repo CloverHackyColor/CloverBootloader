@@ -1374,6 +1374,7 @@ static nvidia_card_info_t nvidia_card_exceptions[] = {
 
 	{ 0x10DE0E23,	0x10B00401,	"Gainward GeForce GTX 460" },
 	// 0F00 - 0FFF
+    { 0x10DE0FBB,	0x38422974,	"EVGA GTX 970 OC" },
 	{ 0x10DE0FD2,	0x10280595,	"Dell GeForce GT 640M LE" },
 	{ 0x10DE0FD2,	0x102805B2,	"Dell GeForce GT 640M LE" },
 	// 1000 - 10FF
@@ -1449,8 +1450,6 @@ static nvidia_card_info_t nvidia_card_exceptions[] = {
 	{ 0x10DE1248,	0x152D0930,	"Quanta GeForce GT 635M" },
 
 	{ 0x10DE124D,	0x146210CC,	"MSi GeForce GT 635M" },
-    
-    { 0x10DEOFBB,	0x38422974,	"EVGA GTX 970 OC" },
 };
 /*
 static UINT16 read16(UINT8 *ptr, UINT16 offset)
