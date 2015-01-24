@@ -995,6 +995,7 @@ static nvidia_pci_info_t nvidia_card_generic[] = {
 	// 0F90 - 0F9F
 	// 0FA0 - 0FAF
 	// 0FB0 - 0FBF
+    { 0x10DE0FBB,	"GeForce GTX 970" },
 	// 0FC0 - 0FCF
 	{ 0x10DE0FC0,	"GeForce GT 640" },
 	{ 0x10DE0FC1,	"GeForce GT 640" },
