@@ -1449,6 +1449,8 @@ static nvidia_card_info_t nvidia_card_exceptions[] = {
 	{ 0x10DE1248,	0x152D0930,	"Quanta GeForce GT 635M" },
 
 	{ 0x10DE124D,	0x146210CC,	"MSi GeForce GT 635M" },
+    
+    { 0x10DE13C2,	0x38420010,	"EVGA GTX 970 OC" },
 };
 /*
 static UINT16 read16(UINT8 *ptr, UINT16 offset)
