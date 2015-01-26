@@ -696,9 +696,11 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
          gCPUStructure.MaxSpeed);
 
   if (gBootArgsChanged) {
-    CopyMem (&(Entry->KernelAndKextPatches,
+    CopyMem (&(Entry->KernelAndKextPatches),
              &gSettings.KernelAndKextPatches,
              sizeof(KERNEL_AND_KEXT_PATCHES));
+    DBG("KernelAndKextPatches copyed to started entry\n");
+             
   }
   DumpKernelAndKextPatches(Entry->KernelAndKextPatches);
 
