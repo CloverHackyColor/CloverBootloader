@@ -838,6 +838,12 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
   }
   else if (OSTYPE_IS_WINDOWS(Entry->LoaderType)) {
     
+    DBG("Closing events for Windows\n");
+    gBS->CloseEvent (OnReadyToBootEvent);
+    gBS->CloseEvent (ExitBootServiceEvent);
+    gBS->CloseEvent (mSimpleFileSystemChangeEvent);
+
+    
     if (gEmuVariableControl != NULL) {
       gEmuVariableControl->UninstallEmulation(gEmuVariableControl);
     }
@@ -847,6 +853,12 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
       
   }
   else if (OSTYPE_IS_LINUX(Entry->LoaderType) || (Entry->LoaderType == OSTYPE_LINEFI)) {
+    
+    DBG("Closing events for Linux\n");
+    gBS->CloseEvent (OnReadyToBootEvent);
+    gBS->CloseEvent (ExitBootServiceEvent);
+    gBS->CloseEvent (mSimpleFileSystemChangeEvent);
+
     if (gEmuVariableControl != NULL) {
       gEmuVariableControl->UninstallEmulation(gEmuVariableControl);
     }
@@ -887,7 +899,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
       OSTYPE_IS_OSX_INSTALLER(Entry->LoaderType)) {
     
     if (DoHibernateWake) {
-      DBG("Closing events\n");
+      DBG("Closing events for wake\n");
       gBS->CloseEvent (OnReadyToBootEvent);
       gBS->CloseEvent (ExitBootServiceEvent);
       gBS->CloseEvent (mSimpleFileSystemChangeEvent);
