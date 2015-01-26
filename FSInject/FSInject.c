@@ -20,6 +20,7 @@ Module Name:
 #include <Library/MemoryAllocationLib.h>
 #include <Library/DebugLib.h>
 #include <Library/PrintLib.h>
+#include <Library/MemLogLib.h>
 
 #include <Protocol/SimpleFileSystem.h>
 
@@ -42,12 +43,14 @@ CONST CHAR8* CloverRevision = REVISION_STR;
 //  gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x07
 //  gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0xFFFFFFFF
 // in package DSC file
-#define DBG_TO 0
+#define DBG_TO 3
 
-#if DBG_TO == 2
-#define DBG(...) AsciiPrint(__VA_ARGS__);
+#if DBG_TO == 3
+#define DBG(...) MemLog(FALSE, 0, __VA_ARGS__)
+#elif DBG_TO == 2
+#define DBG(...) AsciiPrint(__VA_ARGS__)
 #elif DBG_TO == 1
-#define DBG(...) DebugPrint(1, __VA_ARGS__);
+#define DBG(...) DebugPrint(1, __VA_ARGS__)
 #else
 #define DBG(...)
 #endif

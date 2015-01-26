@@ -5388,6 +5388,7 @@ SetFSInjection (
     FSInject->AddStringToList(Blacklist, L"\\System\\Library\\Extensions.mkext");
     FSInject->AddStringToList(Blacklist, L"\\com.apple.recovery.boot\\kernelcache");
     FSInject->AddStringToList(Blacklist, L"\\com.apple.recovery.boot\\Extensions.mkext");
+    FSInject->AddStringToList(Blacklist, L"\\.IABootFiles\\kernelcache");
 
     if (gSettings.BlockKexts[0] != L'\0') {
       FSInject->AddStringToList(Blacklist, PoolPrint (L"\\System\\Library\\Extensions\\%s", gSettings.BlockKexts));

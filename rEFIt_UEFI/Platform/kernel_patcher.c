@@ -643,15 +643,15 @@ BOOLEAN KernelPatchPm(VOID *kernelData)
     }
     //rehabman: for 10.10 (data portion)
     else if (0x00000002000000E2ULL == (*((UINT64 *)Ptr))) {
-      (*((UINT64 *)Ptr)) = 0x0000000200000000ULL;
+      (*((UINT64 *)Ptr)) = 0x0000000000000000ULL;
       DBG("Kernel power management patch 10.10(data1) found and patched\n");
     }
     else if (0x0000004C000000E2ULL == (*((UINT64 *)Ptr))) {
-      (*((UINT64 *)Ptr)) = 0x0000004C00000000ULL;
+      (*((UINT64 *)Ptr)) = 0x0000000000000000ULL;
       DBG("Kernel power management patch 10.10(data2) found and patched\n");
     }
     else if (0x00000190000000E2ULL == (*((UINT64 *)Ptr))) {
-      (*((UINT64 *)Ptr)) = 0x0000019000000000ULL;
+      (*((UINT64 *)Ptr)) = 0x0000000000000000ULL;
       DBG("Kernel power management patch 10.10(data3) found and patched\n");
       return TRUE;
     }

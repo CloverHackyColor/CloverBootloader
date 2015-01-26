@@ -30,6 +30,7 @@
 #define SMB_MEM_TYPE_DDR2		19
 #define SMB_MEM_TYPE_FBDIMM		20
 #define SMB_MEM_TYPE_DDR3		24				// Supported in 10.5.6+ AppleSMBIOS
+#define SMB_MEM_TYPE_DDR4  26
 
 /* Memory Configuration Types */ 
 #define SMB_MEM_CHANNEL_UNKNOWN		0

@@ -75,8 +75,8 @@ UINTN SearchAndReplaceTxt(UINT8 *Source, UINT32 SourceSize, UINT8 *Search, UINTN
   UINTN     Skip;
   BOOLEAN   NoReplacesRestriction = MaxReplaces <= 0;
   UINT8     *End = Source + SourceSize;
-  UINT8     *Pos;
-  UINT8     *FirstMatch;
+  UINT8     *Pos = NULL;
+  UINT8     *FirstMatch = Source;
   if (!Source || !Search || !Replace || !SearchSize) {
     return 0;
   }

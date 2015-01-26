@@ -37,6 +37,7 @@
   MemoryAllocationLib
   DebugLib
   PrintLib
+  MemLogLib
   
 [Sources]
   FSInject.h

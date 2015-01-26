@@ -60,7 +60,8 @@ CHAR8 *spd_memory_types[] =
 	"DDR2 SDRAM",   /* 08h  SDRAM DDR 2 */
 	"",				/* 09h  Undefined */
 	"",				/* 0Ah  Undefined */
-	"DDR3 SDRAM"	/* 0Bh  SDRAM DDR 3 */
+	"DDR3 SDRAM",	/* 0Bh  SDRAM DDR 3 */
+  "DDR4 SDRAM" /* 0Ch SDRAM DDR 4 */
 };
 
 #define UNKNOWN_MEM_TYPE 2
@@ -77,7 +78,8 @@ UINT8 spd_mem_to_smbios[] =
 	SMB_MEM_TYPE_DDR2,		/* 08h  SDRAM DDR 2 */
 	UNKNOWN_MEM_TYPE,		/* 09h  Undefined */
 	UNKNOWN_MEM_TYPE,		/* 0Ah  Undefined */
-	SMB_MEM_TYPE_DDR3		/* 0Bh  SDRAM DDR 3 */
+	SMB_MEM_TYPE_DDR3,		/* 0Bh  SDRAM DDR 3 */
+  SMB_MEM_TYPE_DDR4 /* 0Ch SDRAM DDR 4 */
 };
 #define SPD_TO_SMBIOS_SIZE (sizeof(spd_mem_to_smbios)/sizeof(UINT8))
 
@@ -214,11 +216,13 @@ VOID init_spd(UINT8* spd, UINT32 base, UINT8 slot)
 	for (i=0; i< SPD_INDEXES_SIZE; i++) {
 		READ_SPD(spd, base, slot, spd_indexes[i]);
   }
+
   if (spd[SPD_MEMORY_TYPE] == SPD_MEMORY_TYPE_SDRAM_DDR4) {
     for (i = SPD_DDR4_MANUFACTURER_ID_CODE; i < SPD_DDR4_REVISION_CODE; i++) {
       READ_SPD(spd, base, slot, (UINT16)i);
     }
   }
+
 }
 
 // Get Vendor Name from spd, 3 cases handled DDR3, DDR4 and DDR2,
@@ -421,7 +425,7 @@ CHAR8* getDDRPartNum(UINT8* spd, UINT32 base, UINT8 slot)
   UINT16 i, start=0, index = 0;
   CHAR8 c;
 	CHAR8* asciiPartNo = AllocatePool(32); //[32];
-  
+
   if (spd[SPD_MEMORY_TYPE] == SPD_MEMORY_TYPE_SDRAM_DDR4) {
 		start = 329;
 	} else if (spd[SPD_MEMORY_TYPE] == SPD_MEMORY_TYPE_SDRAM_DDR3) {
