@@ -895,6 +895,7 @@ VOID ApplyInputs(VOID)
   i++; //91
   if (InputItems[i].Valid) {
     gSettings.KernelAndKextPatches.KPLapicPanic = InputItems[i].BValue;
+    gBootArgsChanged = TRUE;
   }
   i++; //92
   if (InputItems[i].Valid) {
@@ -953,11 +954,14 @@ VOID ApplyInputs(VOID)
   if (InputItems[i].Valid) {    
     gSettings.KernelAndKextPatches.FakeCPUID = (UINT32)StrHexToUint64(InputItems[i].SValue);
     DBG("applied FakeCPUID=%06x\n", gSettings.KernelAndKextPatches.FakeCPUID);
+    gBootArgsChanged = TRUE;
   }
   i++; //105
   if (InputItems[i].Valid) {
     gSettings.KernelAndKextPatches.KPHaswellE = InputItems[i].BValue;
+    gBootArgsChanged = TRUE;
   }
+  
   
   if (NeedSave) {
     SaveSettings(); 

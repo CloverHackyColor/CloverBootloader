@@ -695,6 +695,11 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
          DivU64x32(gCPUStructure.FSBFrequency, kilo),
          gCPUStructure.MaxSpeed);
 
+  if (gBootArgsChanged) {
+    CopyMem (&(Entry->KernelAndKextPatches,
+             &gSettings.KernelAndKextPatches,
+             sizeof(KERNEL_AND_KEXT_PATCHES));
+  }
   DumpKernelAndKextPatches(Entry->KernelAndKextPatches);
 
 //  MsgLog("Turbo=%c\n", gSettings.Turbo?'Y':'N');
