@@ -140,7 +140,7 @@ UINT8 spd_indexes[] = {
 
 /** Read one byte from i2c, used for reading SPD */
 
-UINT8 smb_read_byte(UINT32 base, UINT8 adr, UINT8 cmd)
+UINT8 smb_read_byte(UINT32 base, UINT8 adr, UINT16 cmd)
 {
   //   INTN l1, h1, l2, h2;
   UINT64 t, t1, t2;
@@ -158,7 +158,7 @@ UINT8 smb_read_byte(UINT32 base, UINT8 adr, UINT8 cmd)
               return 0xFF;                  // break
       }
 	
-      IoWrite8(base + SMBHSTCMD, cmd);
+      IoWrite16(base + SMBHSTCMD, cmd);
       IoWrite8(base + SMBHSTADD, (adr << 1) | 0x01 );
       IoWrite8(base + SMBHSTCNT, 0x48 );
 	
@@ -187,7 +187,7 @@ UINT8 smb_read_byte(UINT32 base, UINT8 adr, UINT8 cmd)
       }
     
       IoWrite8(base + SMBHSTSTS_NV, 0x00); // clear status register
-      IoWrite8(base + SMBHSTCMD_NV, cmd);
+      IoWrite16(base + SMBHSTCMD_NV, cmd);
       IoWrite8(base + SMBHSTADD_NV, (adr << 1) | 0x01 );
       IoWrite8(base + SMBHPRTCL_NV, 0x07 );
       t1 = AsmReadTsc();
@@ -216,7 +216,7 @@ VOID init_spd(UINT8* spd, UINT32 base, UINT8 slot)
   }
   if (spd[SPD_MEMORY_TYPE] == SPD_MEMORY_TYPE_SDRAM_DDR4) {
     for (i = SPD_DDR4_MANUFACTURER_ID_CODE; i < SPD_DDR4_REVISION_CODE; i++) {
-      READ_SPD(spd, base, slot, (UINT8)i);
+      READ_SPD(spd, base, slot, (UINT16)i);
     }
   }
 }
