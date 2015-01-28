@@ -797,7 +797,8 @@ BuildEdd30DevicePath (
       Node.Usb.Header.Type    = MESSAGING_DEVICE_PATH;
       Node.Usb.Header.SubType = MSG_USB_DP;
       SetDevicePathNodeLength (&Node.Usb.Header, sizeof (USB_DEVICE_PATH));
-      Node.Usb.ParentPortNumber = (UINT8) Drive->Parameters.DevicePath.Usb.Reserved;
+      Node.Usb.ParentPortNumber = Drive->Number; //(UINT8) Drive->Parameters.DevicePath.Usb.Reserved;
+      Node.Usb.InterfaceNumber = (UINT8) Drive->Parameters.DevicePath.Usb.SerialNumber;
 
     } else if (AsciiStrnCmp ("1394", Drive->Parameters.InterfaceType, 4) == 0) {
       //
