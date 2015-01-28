@@ -1767,6 +1767,8 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   gFirmwareClover = StrCmp(gST->FirmwareVendor, L"CLOVER") == 0;
   InitializeConsoleSim();
   InitBooterLog();
+  ZeroMem((VOID*)&gGraphics[0], sizeof(GFX_PROPERTIES) * 4);
+  
   DBG("\n");
   MsgLog("Now is %d.%d.%d,  %d:%d:%d (GMT+%d)\n",
       Now.Day, Now.Month, Now.Year, Now.Hour, Now.Minute, Now.Second, Now.TimeZone);
@@ -1836,6 +1838,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   DBG("... with board %a\n", gSettings.OEMBoard);
 
   GetCPUProperties();
+  GetDevices();
   GetDefaultSettings();
   
   // LoadOptions Parsing
@@ -1993,7 +1996,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     FreePool(FirstMessage);
   }
   
-  ZeroMem((VOID*)&gGraphics[0], sizeof(GFX_PROPERTIES) * 4);
+//  ZeroMem((VOID*)&gGraphics[0], sizeof(GFX_PROPERTIES) * 4);
   
 //  DumpBiosMemoryMap();
 
@@ -2003,7 +2006,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   if (!gSettings.EnabledCores) {
     gSettings.EnabledCores = gCPUStructure.Cores;
   }
-  GetDevices();
+//  GetDevices();
+
+
   GetMacAddress();
   DBG("ScanSPD() start\n");
   ScanSPD();
@@ -2011,7 +2016,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
   SetPrivateVarProto();
 //  GetDefaultSettings();
-   GetAcpiTablesList();
+  GetAcpiTablesList();
   DBG("Calibrated TSC frequency =%ld =%ldMHz\n", gCPUStructure.TSCCalibr, DivU64x32(gCPUStructure.TSCCalibr, Mega));
   if (gCPUStructure.TSCCalibr > 200000000ULL) {  //200MHz
     gCPUStructure.TSCFrequency = gCPUStructure.TSCCalibr;
