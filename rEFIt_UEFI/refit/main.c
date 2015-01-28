@@ -636,7 +636,11 @@ static CHAR8 *SearchString (
 
 VOID DumpKernelAndKextPatches(KERNEL_AND_KEXT_PATCHES *Patches)
 {
-   DBG("Kernel and Kext Patches:\n");
+  if (!Patches) {
+    DBG("Kernel and Kext Patches null pointer\n");
+    return;
+  }
+   DBG("Kernel and Kext Patches at %p:\n", Patches);
    DBG("\tAllowed: %c\n", gSettings.KextPatchesAllowed ? 'y' : 'n');
    DBG("\tDebug: %c\n", Patches->KPDebug ? 'y' : 'n');
    DBG("\tKernelCpu: %c\n", Patches->KPKernelCpu ? 'y' : 'n');
@@ -646,7 +650,7 @@ VOID DumpKernelAndKextPatches(KERNEL_AND_KEXT_PATCHES *Patches)
    DBG("\tAppleRTC: %c\n", Patches->KPAppleRTC ? 'y' : 'n');
    DBG("\tKernelPm: %c\n", Patches->KPKernelPm ? 'y' : 'n');
    DBG("\tFakeCPUID: 0x%x\n", Patches->FakeCPUID);
-   DBG("\tATIController: %s\n", Patches->KPATIConnectorsController);
+   DBG("\tATIController: %s\n", (Patches->KPATIConnectorsController == NULL) ? L"null": Patches->KPATIConnectorsController);
    DBG("\tATIDataLength: %d\n", Patches->KPATIConnectorsDataLen);
    DBG("\t%d Kexts to load\n", Patches->NrForceKexts);
    if (Patches->ForceKexts) {
@@ -696,7 +700,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
          gCPUStructure.MaxSpeed);
 
   if (gBootArgsChanged) {
-    CopyMem (&(Entry->KernelAndKextPatches),
+    CopyMem (Entry->KernelAndKextPatches,
              &gSettings.KernelAndKextPatches,
              sizeof(KERNEL_AND_KEXT_PATCHES));
     DBG("KernelAndKextPatches copyed to started entry\n");
@@ -1811,7 +1815,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   }
   
   PrepatchSmbios();
-  
+
 #ifdef REVISION_STR
   DBG(REVISION_STR);
 #endif
@@ -1830,6 +1834,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   }
   DBG("  running on %a\n",   gSettings.OEMProduct);
   DBG("... with board %a\n", gSettings.OEMBoard);
+
+  GetCPUProperties();
+  GetDefaultSettings();
   
   // LoadOptions Parsing
   DBG("Clover load options size = %d bytes\n", SelfLoadedImage->LoadOptionsSize);
@@ -1880,7 +1887,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
   gSettings.PointerEnabled = TRUE;
   gSettings.PointerSpeed = 2;
-  gSettings.DoubleClickTime = 500; //TODO - make it constant as nobody change it 
+  gSettings.DoubleClickTime = 500; //TODO - make it constant as nobody change it
 
 #ifdef ENABLE_SECURE_BOOT
   InitializeSecureBoot();
@@ -1992,7 +1999,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
   GuiEventsInitialize();
   
-  GetCPUProperties();
+//  GetCPUProperties();
   if (!gSettings.EnabledCores) {
     gSettings.EnabledCores = gCPUStructure.Cores;
   }
@@ -2003,7 +2010,8 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   DBG("ScanSPD() end\n");
 
   SetPrivateVarProto();
-  GetDefaultSettings();
+//  GetDefaultSettings();
+   GetAcpiTablesList();
   DBG("Calibrated TSC frequency =%ld =%ldMHz\n", gCPUStructure.TSCCalibr, DivU64x32(gCPUStructure.TSCCalibr, Mega));
   if (gCPUStructure.TSCCalibr > 200000000ULL) {  //200MHz
     gCPUStructure.TSCFrequency = gCPUStructure.TSCCalibr;

@@ -16,8 +16,8 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 
 #include "Variable.h"
 
-#include "Version.h"
-CONST CHAR8* CloverRevision = REVISION_STR;
+//#include "Version.h"
+//CONST CHAR8* CloverRevision = REVISION_STR;
 
 ///
 /// Don't use module globals after the SetVirtualAddress map is signaled

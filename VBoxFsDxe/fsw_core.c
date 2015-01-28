@@ -40,8 +40,8 @@
 
 #include "fsw_core.h"
 
-#include "Version.h"
-CONST CHAR8* CloverRevision = REVISION_STR;
+//#include "Version.h"
+//CONST CHAR8* CloverRevision = REVISION_STR;
 
 #define DEBUG_CR 0
 

@@ -672,5 +672,5 @@ GetDefaultSettings ()
 //gSettings.EnableISS            = ((msr & (1ULL<<16)) != 0);
 
   //Fill ACPI table list
-  GetAcpiTablesList ();
+//  GetAcpiTablesList ();
 }

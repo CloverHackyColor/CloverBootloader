@@ -73,6 +73,9 @@ VOID DoCpuid(UINT32 selector, UINT32 *data)
 	AsmCpuid(selector, data, data+1, data+2, data+3);
 }
 
+//
+// Should be used after PrepatchSmbios() but before users's config.plist reading
+//
 VOID GetCPUProperties (VOID)
 {
 	UINT32		reg[4];
@@ -102,12 +105,8 @@ VOID GetCPUProperties (VOID)
 	gCPUStructure.MaxRatio = 10; //keep it as K*10
 	gCPUStructure.MinRatio = 10; //same
   gCPUStructure.SubDivider = 0;
-	//gCPUStructure.MaxSpeed = 0;
 	gSettings.CpuFreqMHz = 0;
 	gCPUStructure.FSBFrequency = MultU64x32(gCPUStructure.ExternalClock, kilo); //kHz -> Hz
-//	gCPUStructure.CPUFrequency = 0;
-//	gCPUStructure.TSCFrequency = MultU64x32(gCPUStructure.CurrentSpeed, Mega); //MHz -> Hz
-//  gCPUStructure.CPUFrequency = gCPUStructure.TSCFrequency;
 	gCPUStructure.ProcessorInterconnectSpeed = 0;
 	gCPUStructure.Mobile = FALSE; //not same as gMobile
 
@@ -223,8 +222,6 @@ VOID GetCPUProperties (VOID)
         break;
         
       default:		
-//        gCPUStructure.Cores   = (UINT8)(bitfield(gCPUStructure.CPUID[CPUID_1][EBX], 23, 16));
-//        gCPUStructure.Threads = (UINT8)(gCPUStructure.LogicalPerPackage & 0xff);
         gCPUStructure.Cores = 0;
         break;
     }    
@@ -312,10 +309,7 @@ VOID GetCPUProperties (VOID)
             }
 
             // This makes no sense and seems arbitrary - apianti
-            if (gCPUStructure.Turbo /* &&
-                (gCPUStructure.Model != CPU_MODEL_NEHALEM_EX) &&
-                (gCPUStructure.Model != CPU_MODEL_WESTMERE_EX)  &&
-                (gCPUStructure.Model != CPU_MODEL_FIELDS) */ ) {
+            if (gCPUStructure.Turbo) {
               msr = AsmReadMsr64(MSR_TURBO_RATIO_LIMIT);
 
               gCPUStructure.Turbo1 = (UINT8)(RShiftU64(msr, 0) & 0xff);
@@ -323,15 +317,6 @@ VOID GetCPUProperties (VOID)
               gCPUStructure.Turbo3 = (UINT8)(RShiftU64(msr, 16) & 0xff);
               gCPUStructure.Turbo4 = (UINT8)(RShiftU64(msr, 24) & 0xff); //later
             }
-            /* Not sure what this is here for - apianti
-            } else {
-              gCPUStructure.Turbo4 = (UINT16)(gCPUStructure.MaxRatio + 1);
-            }
-
-            
-            if (gCPUStructure.Cores < 4) {
-              gCPUStructure.Turbo4 = gCPUStructure.Turbo1;
-            } */
 
             gCPUStructure.MaxRatio *= 10;
             gCPUStructure.MinRatio *= 10;
@@ -395,13 +380,7 @@ VOID GetCPUProperties (VOID)
               gCPUStructure.FSBFrequency = 100000000ULL; //100*Mega
             }
 
-            /* Unneccessary - apianti
-            msr = AsmReadMsr64(MSR_IA32_PERF_STATUS);  //0x198
-            gCPUStructure.MaxRatio = (UINT8)((msr >> 8) & 0xff);
-            TurboMsr = msr + (1 << 8);
-            */
-            
-            msr = AsmReadMsr64(MSR_TURBO_RATIO_LIMIT);   //0x1AD           
+            msr = AsmReadMsr64(MSR_TURBO_RATIO_LIMIT);   //0x1AD
             gCPUStructure.Turbo1 = (UINT8)(RShiftU64(msr, 0) & 0xff);
             gCPUStructure.Turbo2 = (UINT8)(RShiftU64(msr, 8) & 0xff);
             gCPUStructure.Turbo3 = (UINT8)(RShiftU64(msr, 16) & 0xff);
@@ -441,7 +420,6 @@ VOID GetCPUProperties (VOID)
             gCPUStructure.TSCFrequency = MultU64x32(gCPUStructure.MaxSpeed, Mega); //MHz -> Hz
             gCPUStructure.CPUFrequency = gCPUStructure.TSCFrequency;
             msr = AsmReadMsr64(MSR_IA32_PERF_STATUS);
-     //       TurboMsr = msr + (1 << 8);
             gCPUStructure.MaxRatio = (UINT32)(RShiftU64(msr, 8)) & 0x1f;
             TurboMsr = (UINT32)(RShiftU64(msr, 40)) & 0x1f;
             if ((TurboMsr > gCPUStructure.MaxRatio) && (gCPUStructure.Model == CPU_MODEL_MEROM)) {
@@ -453,8 +431,6 @@ VOID GetCPUProperties (VOID)
             gCPUStructure.MinRatio = 60;
             if(!gCPUStructure.MaxRatio) gCPUStructure.MaxRatio = 6; // :(
             msr = AsmReadMsr64(0xCD);
-           // gCPUStructure.FSBFrequency = DivU64x32(gCPUStructure.TSCFrequency * 2,
-           //                                     gCPUStructure.MaxRatio * 2 + gCPUStructure.SubDivider);
             gCPUStructure.FSBFrequency = DivU64x32(LShiftU64(gCPUStructure.TSCFrequency, 1),
                                 gCPUStructure.MaxRatio * 2 + gCPUStructure.SubDivider);
             if ((msr & 3) == 2 && (gCPUStructure.FSBFrequency < 196 * Mega)) {

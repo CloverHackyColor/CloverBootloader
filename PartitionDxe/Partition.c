@@ -29,8 +29,8 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #define DBG(...) DebugLog(DEBUG_PAR, __VA_ARGS__)	
 #endif
 
-#include "Version.h"
-CONST CHAR8* CloverRevision = REVISION_STR;
+//#include "Version.h"
+//CONST CHAR8* CloverRevision = REVISION_STR;
 
 CHAR8 *msgCursor;
 MESSAGE_LOG_PROTOCOL *Msg = NULL; 
