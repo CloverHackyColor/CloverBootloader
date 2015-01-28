@@ -285,7 +285,8 @@ FixOwnership(VOID)
 								MsgLog("USB EHCI Ownership for device %04x value=%x\n", Pci.Hdr.DeviceId, Value); 
 								
 								break;
-              case PCI_IF_XHCI:
+             case PCI_IF_XHCI:
+                break;
                 //
                 // Found the XHCI, then disable the legacy support, if present
                 //
@@ -307,7 +308,7 @@ FixOwnership(VOID)
                         break;
                       }
                       if ((Value & 0x01010000) == 0x01000000) {
-                        TimeOut = ~(UINT32)0;  /* Optional - always disable the SMI */
+                        TimeOut = ~(UINT32)0;  // Optional - always disable the SMI
                         break;
                       }
                     }

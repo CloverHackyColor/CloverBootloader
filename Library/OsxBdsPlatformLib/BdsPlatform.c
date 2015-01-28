@@ -427,7 +427,7 @@ Returns:
                 Value = mSaveValue & 0xFFFF0000;
                 PciIo->Pci.Write (PciIo, EfiPciIoWidthUint32, ExtendCap + 0x4, 1, &Value);
               }
-            } else if (PCI_IF_XHCI == Class[0]) {
+            } else if (0 && PCI_IF_XHCI == Class[0]) {
               //
               // Found the XHCI, then disable the legacy support, if present
               //
