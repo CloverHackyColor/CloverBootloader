@@ -38,7 +38,7 @@
 
 
 #include "Platform.h"
-//#include "Version.h"
+#include "Version.h"
 
 #include <Guid/DataHubRecords.h>
 
