@@ -764,6 +764,7 @@ BuildEdd30DevicePath (
     //
     // Not an ATA/ATAPI drive
     //
+#if 0
     if (Controller != 0) {
       ZeroMem (&Node, sizeof (Node));
       Node.Controller.Header.Type      = HARDWARE_DEVICE_PATH;
@@ -774,6 +775,7 @@ BuildEdd30DevicePath (
     }
 
     ZeroMem (&Node, sizeof (Node));
+#endif
 
     if (AsciiStrnCmp ("SCSI", Drive->Parameters.InterfaceType, 4) == 0) {
       //
