@@ -344,7 +344,7 @@ Returns:
   UINT32                                HcCapParams;
   UINT32                                ExtendCap;
   UINT32                                Value, mSaveValue;
-  UINT32                                TimeOut;
+  INT32                                 TimeOut;
 
   //
   // Find the usb host controller
@@ -416,7 +416,7 @@ Returns:
                   break;
                 }
               }
-              if ((INT32) TimeOut < 0) {
+              if (TimeOut < 0) {
                 //DBG("Cannot disable UsbLegacy, ExtCap=0x%x\n", Value);
 
                 //               PciIo->Pci.Write (PciIo, EfiPciIoWidthUint32, ExtendCap + 0x4, 1, &mSaveValue);
@@ -445,15 +445,15 @@ Returns:
                     gBS->Stall(500);
                     Status = PciIo->Mem.Read(PciIo, EfiPciIoWidthUint32, 0 /* BAR0 */, (UINT64) ExtendCap, 1, &Value);
                     if (EFI_ERROR(Status)) {
-                      TimeOut = ~0U;
+                      TimeOut = -1;
                       break;
                     }
                     if ((Value & 0x01010000) == 0x01000000) {
-                      TimeOut = ~0U;  // Optional - always disable the SMI
+                      TimeOut = -1;  // Optional - always disable the SMI
                       break;
                     }
                   }
-                  if ((INT32) TimeOut >= 0)
+                  if (TimeOut >= 0)
                     break;
                   //
                   // Disable the SMI in USBLEGCTLSTS if BIOS doesn't respond

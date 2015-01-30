@@ -54,7 +54,7 @@ FixOwnership(VOID)
 	UINT32						HcCapParams;
 	UINT32						ExtendCap;
 	UINT32						Value;
-	UINT32						TimeOut;
+	INT32						TimeOut;
 	UINT32						Base;
 	UINT32						PortBase;
 	volatile UINT32				opaddr;  		
@@ -304,15 +304,15 @@ FixOwnership(VOID)
                       gBS->Stall(500);
                       Status = PciIo->Mem.Read(PciIo, EfiPciIoWidthUint32, 0 /* BAR0 */, (UINT64) ExtendCap, 1, &Value);
                       if (EFI_ERROR(Status)) {
-                        TimeOut = ~0U;
+                        TimeOut = -1;
                         break;
                       }
                       if ((Value & 0x01010000) == 0x01000000) {
-                        TimeOut = ~0U;  // Optional - always disable the SMI
+                        TimeOut = -1;  // Optional - always disable the SMI
                         break;
                       }
                     }
-                    if ((INT32) TimeOut >= 0)
+                    if (TimeOut >= 0)
                       break;
                     //
                     // Disable the SMI in USBLEGCTLSTS if BIOS doesn't respond
