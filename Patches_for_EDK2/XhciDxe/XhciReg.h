@@ -573,4 +573,14 @@ XhcGetCapabilityAddr (
   IN UINT8                CapId
   );
 
+/**
+   Perform Intel-specific Quirks
+
+   @param  PciIo   The PciIo of Xhc Instance.
+ **/
+VOID
+XhcIntelQuirks (
+  IN EFI_PCI_IO_PROTOCOL  *PciIo
+  );
+
 #endif

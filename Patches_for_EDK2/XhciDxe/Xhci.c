@@ -2039,6 +2039,9 @@ XhcDriverBindingStart (
     goto CLOSE_PCIIO;
   }
 
+  DBG("XhcIntelQuirks\n");
+  XhcIntelQuirks(PciIo);
+
   //
   // Create then install USB2_HC_PROTOCOL
   //

@@ -591,24 +591,29 @@ XhcSetBiosOwnership (
     gBS->Stall(500);
     Buffer = XhcReadExtCapReg (Xhc, Xhc->UsbLegSupOffset);
     if ((Buffer & (USBLEGSP_OS_SEMAPHORE | USBLEGSP_BIOS_SEMAPHORE)) == USBLEGSP_BIOS_SEMAPHORE) {
-      TimeOut = -1;  // Optional - always disable the SMI
+      TimeOut = -1;  // previous owner refuses to exit
       break;
     }
     if ((Buffer & USBLEGSP_BIOS_SEMAPHORE) == 0) {
       break; // previous owner exit
     }
   }
-/*  if (TimeOut <= 0) {
+  Buffer = XhcReadExtCapReg (Xhc, Xhc->UsbLegSupOffset + 4);
+  if (TimeOut >= 0) {
     //
-    // Disable the SMI in USBLEGCTLSTS if BIOS doesn't respond
+    // Disable SMI on OS Ownership change in USBLEGCTLSTS if previous owner responds
     //
-    Buffer = XhcReadExtCapReg (Xhc, Xhc->UsbLegSupOffset + 4);
+    Buffer &= 0x1FDFFF;
+    Buffer |= 0xE0000000;
+  } else {
+    //
+    // Disable all SMI in USBLEGCTLSTS if previous owner doesn't respond
+    //
     Buffer &= 0x1F1FEE;
     Buffer |= 0xE0000000;
-    XhcWriteExtCapReg (Xhc, Xhc->UsbLegSupOffset + 4, Buffer);
-  } */
-// should we enable SMI again?
-  
+  }
+  XhcWriteExtCapReg (Xhc, Xhc->UsbLegSupOffset + 4, Buffer);
+
 // now set our BIOS ownership
   Buffer = XhcReadExtCapReg (Xhc, Xhc->UsbLegSupOffset);
   Buffer = ((Buffer & (~USBLEGSP_OS_SEMAPHORE)) | USBLEGSP_BIOS_SEMAPHORE);
@@ -801,3 +806,42 @@ XhcRunHC (
   return Status;
 }
 
+/**
+ Perform Intel-specific Quirks
+
+ @param  PciIo   The PciIo of Xhc Instance.
+ **/
+VOID
+XhcIntelQuirks (
+  IN EFI_PCI_IO_PROTOCOL  *PciIo
+  )
+{
+	EFI_STATUS Status;
+	UINT32 Regs[4];
+	struct {
+		UINT16 Vendor;
+		UINT16 Device;
+	} Ids;
+
+	if (!PciIo)
+		return;
+
+	Status = PciIo->Pci.Read(PciIo, EfiPciIoWidthUint16, 0U, 2U, &Ids);
+	if (EFI_ERROR(Status) || Ids.Vendor != 0x8086U)
+		return;
+	switch (Ids.Device) {
+		case 0x1E31U:	// Panther Point
+		case 0x8C31U:	// Lynx Point
+		case 0x8CB1U:	// Wildcat Point
+			Status = PciIo->Pci.Read(PciIo, EfiPciIoWidthUint32, 0xD0U, 4U, &Regs[0]);
+			if (EFI_ERROR(Status))
+				break;
+			Regs[0] = (Regs[0] & ~Regs[1]) | Regs[1];
+			Regs[2] = (Regs[2] & ~Regs[3]) | Regs[3];
+			(VOID) PciIo->Pci.Write(PciIo, EfiPciIoWidthUint32, 0xD0U, 1U, &Regs[0]);
+			(VOID) PciIo->Pci.Write(PciIo, EfiPciIoWidthUint32, 0xD8U, 1U, &Regs[2]);
+			break;
+		default:
+			break;
+	}
+}
