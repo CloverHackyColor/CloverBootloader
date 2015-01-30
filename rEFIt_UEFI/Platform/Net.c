@@ -128,7 +128,7 @@ GetMacAddress()
         //  HwAddressSize = 6;
         //}
         CopyMem(&MacAddr, &MacAddressNode->MacAddress.Addr[0], HwAddressSize);
-        DBG("MAC address of LAN #%d= ", Index);
+        DBG("MAC address of LAN #%d= ", nLanPaths);
         HwAddress = &MacAddressNode->MacAddress.Addr[0];
         for (Index2 = 0; Index2 < HwAddressSize; Index2++) {
           DBG("%02x:", *HwAddress++);

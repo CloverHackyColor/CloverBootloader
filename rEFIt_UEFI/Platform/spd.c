@@ -71,15 +71,15 @@ UINT8 spd_mem_to_smbios[] =
 	UNKNOWN_MEM_TYPE,		/* 01h  FPM */
 	UNKNOWN_MEM_TYPE,		/* 02h  EDO */
 	UNKNOWN_MEM_TYPE,		/* 03h  PIPELINE NIBBLE */
-	SMB_MEM_TYPE_SDRAM,		/* 04h  SDRAM */
+	SMB_MEM_TYPE_SDRAM,	/* 04h  SDRAM */
 	SMB_MEM_TYPE_ROM,		/* 05h  MULTIPLEXED ROM */
-	SMB_MEM_TYPE_SGRAM,		/* 06h  SGRAM DDR */
+	SMB_MEM_TYPE_SGRAM,	/* 06h  SGRAM DDR */
 	SMB_MEM_TYPE_DDR,		/* 07h  SDRAM DDR */
-	SMB_MEM_TYPE_DDR2,		/* 08h  SDRAM DDR 2 */
+	SMB_MEM_TYPE_DDR2,	/* 08h  SDRAM DDR 2 */
 	UNKNOWN_MEM_TYPE,		/* 09h  Undefined */
 	UNKNOWN_MEM_TYPE,		/* 0Ah  Undefined */
-	SMB_MEM_TYPE_DDR3,		/* 0Bh  SDRAM DDR 3 */
-  SMB_MEM_TYPE_DDR4 /* 0Ch SDRAM DDR 4 */
+	SMB_MEM_TYPE_DDR3,	/* 0Bh  SDRAM DDR 3 */
+  SMB_MEM_TYPE_DDR4   /* 0Ch  SDRAM DDR 4 */
 };
 #define SPD_TO_SMBIOS_SIZE (sizeof(spd_mem_to_smbios)/sizeof(UINT8))
 
@@ -93,6 +93,7 @@ UINT8 spd_mem_to_smbios[] =
 #define SMBHSTCMD 3
 #define SMBHSTADD 4
 #define SMBHSTDAT 5
+#define SMBHSTDAT1 6
 #define SBMBLKDAT 7
 // MCP and nForce SMB reg offsets
 #define SMBHPRTCL_NV 0 /* protocol, PEC */
@@ -146,63 +147,65 @@ UINT8 smb_read_byte(UINT32 base, UINT8 adr, UINT16 cmd)
 {
   //   INTN l1, h1, l2, h2;
   UINT64 t, t1, t2;
-    
+  
   if (smbIntel) {
-      IoWrite8(base + SMBHSTSTS, 0x1f);				// reset SMBus Controller
-      IoWrite8(base + SMBHSTDAT, 0xff);
-	
-      t1 = AsmReadTsc(); //rdtsc(l1, h1);
-      while ( IoRead8(base + SMBHSTSTS) & 0x01)    // wait until read
-      {
-          t2 = AsmReadTsc(); //rdtsc(l2, h2);
-          t = DivU64x64Remainder((t2 - t1), DivU64x32(gCPUStructure.TSCFrequency, 1000), 0);
-          if (t > 5)
-              return 0xFF;                  // break
-      }
-	
-      IoWrite16(base + SMBHSTCMD, cmd);
-      IoWrite8(base + SMBHSTADD, (adr << 1) | 0x01 );
-      IoWrite8(base + SMBHSTCNT, 0x48 );
-	
-      t1 = AsmReadTsc();
-	
-      while (!( IoRead8(base + SMBHSTSTS) & 0x02))		// wait til command finished
-      {
-          t2 = AsmReadTsc();
-          t = DivU64x64Remainder((t2 - t1), DivU64x32(gCPUStructure.TSCFrequency, 1000), 0);
-          if (t > 5)
-              break;									// break after 5ms
-      }
-      return IoRead8(base + SMBHSTDAT);
+    IoWrite8(base + SMBHSTSTS, 0x1f);				// reset SMBus Controller
+    IoWrite8(base + SMBHSTDAT, 0xff);
+    
+    t1 = AsmReadTsc(); //rdtsc(l1, h1);
+    while ( IoRead8(base + SMBHSTSTS) & 0x01) {   // wait until read
+      t2 = AsmReadTsc(); //rdtsc(l2, h2);
+      t = DivU64x64Remainder((t2 - t1),
+                             DivU64x32(gCPUStructure.TSCFrequency, 1000),
+                             0);
+      if (t > 5)
+        return 0xFF;                  // break
+    }
+    
+    IoWrite16(base + SMBHSTCMD, cmd);
+    IoWrite8(base + SMBHSTADD, (adr << 1) | 0x01 );
+    IoWrite8(base + SMBHSTCNT, 0x48 );
+    
+    t1 = AsmReadTsc();
+    
+    while (!( IoRead8(base + SMBHSTSTS) & 0x02)) {	// wait til command finished
+      t2 = AsmReadTsc();
+      t = DivU64x64Remainder((t2 - t1), DivU64x32(gCPUStructure.TSCFrequency, 1000), 0);
+      if (t > 5)
+        break;									// break after 5ms
+    }
+    return IoRead8(base + SMBHSTDAT);
   }
   else {
-      IoWrite8(base + SMBHSTSTS_NV, 0x1f);			// reset SMBus Controller
-      IoWrite8(base + SMBHSTDAT_NV, 0xff);
+    IoWrite8(base + SMBHSTSTS_NV, 0x1f);			// reset SMBus Controller
+    IoWrite8(base + SMBHSTDAT_NV, 0xff);
     
-      t1 = AsmReadTsc(); //rdtsc(l1, h1);
-      while ( IoRead8(base + SMBHSTSTS_NV) & 0x01)    // wait until read
-      {
-          t2 = AsmReadTsc(); //rdtsc(l2, h2);
-          t = DivU64x64Remainder((t2 - t1), DivU64x32(gCPUStructure.TSCFrequency, 1000), 0);
-          if (t > 5)
-              return 0xFF;                  // break
-      }
-    
-      IoWrite8(base + SMBHSTSTS_NV, 0x00); // clear status register
-      IoWrite16(base + SMBHSTCMD_NV, cmd);
-      IoWrite8(base + SMBHSTADD_NV, (adr << 1) | 0x01 );
-      IoWrite8(base + SMBHPRTCL_NV, 0x07 );
-      t1 = AsmReadTsc();
-    
-      while (!( IoRead8(base + SMBHSTSTS_NV) & 0x9F))		// wait till command finished
-      {
-          t2 = AsmReadTsc();
-          t = DivU64x64Remainder((t2 - t1), DivU64x32(gCPUStructure.TSCFrequency, 1000), 0);
-          if (t > 5)
-              break; // break after 5ms
-      }
-      return IoRead8(base + SMBHSTDAT_NV);
+    t1 = AsmReadTsc(); //rdtsc(l1, h1);
+    while ( IoRead8(base + SMBHSTSTS_NV) & 0x01) {    // wait until read
+      t2 = AsmReadTsc(); //rdtsc(l2, h2);
+      t = DivU64x64Remainder((t2 - t1),
+                             DivU64x32(gCPUStructure.TSCFrequency, 1000),
+                             0);
+      if (t > 5)
+        return 0xFF;                  // break
     }
+    
+    IoWrite8(base + SMBHSTSTS_NV, 0x00); // clear status register
+    IoWrite16(base + SMBHSTCMD_NV, cmd);
+    IoWrite8(base + SMBHSTADD_NV, (adr << 1) | 0x01 );
+    IoWrite8(base + SMBHPRTCL_NV, 0x07 );
+    t1 = AsmReadTsc();
+    
+    while (!( IoRead8(base + SMBHSTSTS_NV) & 0x9F)) {		// wait till command finished
+      t2 = AsmReadTsc();
+      t = DivU64x64Remainder((t2 - t1),
+                             DivU64x32(gCPUStructure.TSCFrequency, 1000),
+                             0);
+      if (t > 5)
+        break; // break after 5ms
+    }
+    return IoRead8(base + SMBHSTDAT_NV);
+  }
 }
 
 /* SPD i2c read optimization: prefetch only what we need, read non prefetcheable bytes on the fly */

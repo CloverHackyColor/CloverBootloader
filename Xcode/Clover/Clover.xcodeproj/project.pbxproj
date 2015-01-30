@@ -454,6 +454,17 @@
 		1290174B1A2F8EA50069691F /* RuntimeServices.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RuntimeServices.h; sourceTree = "<group>"; };
 		1290174C1A2F8EA50069691F /* StandaloneCompilation.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = StandaloneCompilation.txt; sourceTree = "<group>"; };
 		1294CC311A231CA80056FF03 /* scroll_images.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = scroll_images.h; sourceTree = "<group>"; };
+		12A88C5D1A7B6E0A008C4829 /* ComponentName.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ComponentName.c; sourceTree = "<group>"; };
+		12A88C5E1A7B6E0A008C4829 /* ComponentName.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ComponentName.h; sourceTree = "<group>"; };
+		12A88C5F1A7B6E0A008C4829 /* UsbHcMem.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = UsbHcMem.c; sourceTree = "<group>"; };
+		12A88C601A7B6E0A008C4829 /* UsbHcMem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UsbHcMem.h; sourceTree = "<group>"; };
+		12A88C611A7B6E0A008C4829 /* Xhci.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Xhci.c; sourceTree = "<group>"; };
+		12A88C621A7B6E0A008C4829 /* Xhci.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Xhci.h; sourceTree = "<group>"; };
+		12A88C631A7B6E0A008C4829 /* XhciDxe.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = XhciDxe.inf; sourceTree = "<group>"; };
+		12A88C641A7B6E0A008C4829 /* XhciReg.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = XhciReg.c; sourceTree = "<group>"; };
+		12A88C651A7B6E0A008C4829 /* XhciReg.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XhciReg.h; sourceTree = "<group>"; };
+		12A88C661A7B6E0A008C4829 /* XhciSched.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = XhciSched.c; sourceTree = "<group>"; };
+		12A88C671A7B6E0A008C4829 /* XhciSched.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XhciSched.h; sourceTree = "<group>"; };
 		12E38DD81A2DB6EB0093F748 /* DriverOverride.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = DriverOverride.c; sourceTree = "<group>"; };
 		12E38DD91A2DB6EB0093F748 /* DriverOverride.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DriverOverride.inf; sourceTree = "<group>"; };
 		2C7949E31A0AA7F700D845B0 /* Clover */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Clover; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1334,6 +1345,25 @@
 			);
 			name = DumpUefiCalls;
 			path = ../../DumpUefiCalls;
+			sourceTree = "<group>";
+		};
+		12A88C5C1A7B6E0A008C4829 /* XhciDxe */ = {
+			isa = PBXGroup;
+			children = (
+				12A88C5D1A7B6E0A008C4829 /* ComponentName.c */,
+				12A88C5E1A7B6E0A008C4829 /* ComponentName.h */,
+				12A88C5F1A7B6E0A008C4829 /* UsbHcMem.c */,
+				12A88C601A7B6E0A008C4829 /* UsbHcMem.h */,
+				12A88C611A7B6E0A008C4829 /* Xhci.c */,
+				12A88C621A7B6E0A008C4829 /* Xhci.h */,
+				12A88C631A7B6E0A008C4829 /* XhciDxe.inf */,
+				12A88C641A7B6E0A008C4829 /* XhciReg.c */,
+				12A88C651A7B6E0A008C4829 /* XhciReg.h */,
+				12A88C661A7B6E0A008C4829 /* XhciSched.c */,
+				12A88C671A7B6E0A008C4829 /* XhciSched.h */,
+			);
+			name = XhciDxe;
+			path = ../../Patches_for_EDK2/XhciDxe;
 			sourceTree = "<group>";
 		};
 		12E38DD71A2DB6EB0093F748 /* DriverOverride */ = {
@@ -2991,6 +3021,7 @@
 				2C794CB31A0AA85900D845B0 /* UefiCpuPkg */,
 				2C794CB41A0AA85900D845B0 /* UsbMouseDxe */,
 				2C794CDC1A0AA85900D845B0 /* VBoxFsDxe */,
+				12A88C5C1A7B6E0A008C4829 /* XhciDxe */,
 				2C794CDD1A0AA85900D845B0 /* vers.txt */,
 				2C794CDE1A0AA85900D845B0 /* Version.h */,
 			);

@@ -575,12 +575,41 @@ XhcSetBiosOwnership (
   )
 {
   UINT32                    Buffer;
+  INT32                     TimeOut;
 
-  DEBUG ((EFI_D_INFO, "XhcSetBiosOwnership: called to set BIOS ownership\n"));
+//  DEBUG ((EFI_D_INFO, "XhcSetBiosOwnership: called to set BIOS ownership\n"));
   if (!Xhc || (Xhc->UsbLegSupOffset == 0xFFFFFFFF)) {
     return;
   }
-
+// free from previous owner
+  Buffer = XhcReadExtCapReg (Xhc, Xhc->UsbLegSupOffset);
+  Buffer |= USBLEGSP_OS_SEMAPHORE;
+  XhcWriteExtCapReg (Xhc, Xhc->UsbLegSupOffset, Buffer);
+  
+  TimeOut = 40;
+  while (TimeOut--) {
+    gBS->Stall(500);
+    Buffer = XhcReadExtCapReg (Xhc, Xhc->UsbLegSupOffset);
+    if ((Buffer & (USBLEGSP_OS_SEMAPHORE | USBLEGSP_BIOS_SEMAPHORE)) == USBLEGSP_BIOS_SEMAPHORE) {
+      TimeOut = -1;  // Optional - always disable the SMI
+      break;
+    }
+    if ((Buffer & USBLEGSP_BIOS_SEMAPHORE) == 0) {
+      break; // previous owner exit
+    }
+  }
+/*  if (TimeOut <= 0) {
+    //
+    // Disable the SMI in USBLEGCTLSTS if BIOS doesn't respond
+    //
+    Buffer = XhcReadExtCapReg (Xhc, Xhc->UsbLegSupOffset + 4);
+    Buffer &= 0x1F1FEE;
+    Buffer |= 0xE0000000;
+    XhcWriteExtCapReg (Xhc, Xhc->UsbLegSupOffset + 4, Buffer);
+  } */
+// should we enable SMI again?
+  
+// now set our BIOS ownership
   Buffer = XhcReadExtCapReg (Xhc, Xhc->UsbLegSupOffset);
   Buffer = ((Buffer & (~USBLEGSP_OS_SEMAPHORE)) | USBLEGSP_BIOS_SEMAPHORE);
   XhcWriteExtCapReg (Xhc, Xhc->UsbLegSupOffset, Buffer);
@@ -602,7 +631,7 @@ XhcClearBiosOwnership (
     return;
   }
 
-  DEBUG ((EFI_D_INFO, "XhcClearBiosOwnership: called to clear BIOS ownership\n"));
+//  DEBUG ((EFI_D_INFO, "XhcClearBiosOwnership: called to clear BIOS ownership\n"));
 
   Buffer = XhcReadExtCapReg (Xhc, Xhc->UsbLegSupOffset);
   Buffer = ((Buffer & (~USBLEGSP_BIOS_SEMAPHORE)) | USBLEGSP_OS_SEMAPHORE);
