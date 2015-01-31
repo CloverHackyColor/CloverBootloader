@@ -1923,7 +1923,7 @@ XhcExitBootService (
     gBS->CloseEvent (Xhc->PollTimer);
   }
 
-  XhcClearBiosOwnership (Xhc);
+//  XhcClearBiosOwnership (Xhc);
 
   //
   // Restore original PCI attributes
@@ -2039,9 +2039,6 @@ XhcDriverBindingStart (
     goto CLOSE_PCIIO;
   }
 
-  DBG("XhcIntelQuirks\n");
-  XhcIntelQuirks(PciIo);
-
   //
   // Create then install USB2_HC_PROTOCOL
   //
@@ -2055,6 +2052,8 @@ XhcDriverBindingStart (
   }
 DBG("XhcSetBiosOwnership\n");
   XhcSetBiosOwnership (Xhc);
+DBG("XhcIntelQuirks\n");
+  XhcIntelQuirks(PciIo);
 DBG("XhcResetHC\n");
   XhcResetHC (Xhc, XHC_RESET_TIMEOUT);
 //  ASSERT (XhcIsHalt (Xhc));
@@ -2245,7 +2244,7 @@ XhcDriverBindingStop (
   }
 
   XhcHaltHC (Xhc, XHC_GENERIC_TIMEOUT);
-  XhcClearBiosOwnership (Xhc);
+//  XhcClearBiosOwnership (Xhc);
 
   Status = gBS->UninstallProtocolInterface (
                   Controller,

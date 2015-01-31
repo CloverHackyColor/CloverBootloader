@@ -286,7 +286,6 @@ FixOwnership(VOID)
 								
 								break;
              case PCI_IF_XHCI:
-                break;
                 //
                 // Found the XHCI, then disable the legacy support, if present
                 //
@@ -297,25 +296,22 @@ FixOwnership(VOID)
                   if (EFI_ERROR(Status))
                     break;
                   if ((Value & 0xFF) == 1) {
+                    //
+                    // Do nothing if Bios Ownership clear
+                    //
+                    if (!(Value & (0x1 << 16)))
+                      break;
                     Value |= (0x1 << 24);
                     (VOID) PciIo->Mem.Write(PciIo, EfiPciIoWidthUint32, 0 /* BAR0 */, (UINT64) ExtendCap, 1, &Value);
                     TimeOut = 40;
                     while (TimeOut--) {
                       gBS->Stall(500);
                       Status = PciIo->Mem.Read(PciIo, EfiPciIoWidthUint32, 0 /* BAR0 */, (UINT64) ExtendCap, 1, &Value);
-                      if (EFI_ERROR(Status)) {
-                        TimeOut = -1;
+                      if (EFI_ERROR(Status) || !(Value & (0x1 << 16)))
                         break;
-                      }
-                      if ((Value & 0x01010000) == 0x01000000) {
-                        TimeOut = -1;  // Optional - always disable the SMI
-                        break;
-                      }
                     }
-                    if (TimeOut >= 0)
-                      break;
                     //
-                    // Disable the SMI in USBLEGCTLSTS if BIOS doesn't respond
+                    // Disable all SMI in USBLEGCTLSTS
                     //
                     Status = PciIo->Mem.Read(PciIo, EfiPciIoWidthUint32, 0 /* BAR0 */, (UINT64) ExtendCap + 4, 1, &Value);
                     if (EFI_ERROR(Status))
@@ -323,6 +319,14 @@ FixOwnership(VOID)
                     Value &= 0x1F1FEE;
                     Value |= 0xE0000000;
                     (VOID) PciIo->Mem.Write(PciIo, EfiPciIoWidthUint32, 0 /* BAR0 */, (UINT64) ExtendCap + 4, 1, &Value);
+                    //
+                    // Clear all ownership
+                    //
+                    Status = PciIo->Mem.Read(PciIo, EfiPciIoWidthUint32, 0 /* BAR0 */, (UINT64) ExtendCap, 1, &Value);
+                    if (EFI_ERROR(Status))
+                      break;
+                    Value &= ~((0x1 << 24) | (0x1 << 16));
+                    (VOID) PciIo->Mem.Write(PciIo, EfiPciIoWidthUint32, 0 /* BAR0 */, (UINT64) ExtendCap, 1, &Value);
                     break;
                   } //Value & FF
                   if (!(Value & 0xFF00))

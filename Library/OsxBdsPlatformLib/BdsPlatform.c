@@ -26,7 +26,7 @@ Abstract:
 #include "AcpiTable.h"
 
 #define IS_PCI_ISA_PDECODE(_p)        IS_CLASS3 (_p, PCI_CLASS_BRIDGE, PCI_CLASS_BRIDGE_ISA_PDECODE, 0)
-#define PCI_IF_XHCI 0x30
+//#define PCI_IF_XHCI 0x30
 
 extern BOOLEAN  gConnectAllHappened;
 extern USB_CLASS_FORMAT_DEVICE_PATH gUsbClassKeyboardDevicePath;
@@ -323,7 +323,7 @@ DisableUsbLegacySupport(
 /*++
 
 Routine Description:
-  Disable the USB legacy Support in all Xhci, Ehci and Uhci.
+  Disable the USB legacy Support in all Ehci and Uhci.
   This function assume all PciIo handles have been created in system.
   
 Arguments:
@@ -427,50 +427,7 @@ Returns:
                 Value = mSaveValue & 0xFFFF0000;
                 PciIo->Pci.Write (PciIo, EfiPciIoWidthUint32, ExtendCap + 0x4, 1, &Value);
               }
-            } else if (0 && PCI_IF_XHCI == Class[0]) {
-              //
-              // Found the XHCI, then disable the legacy support, if present
-              //
-              Status = PciIo->Mem.Read(PciIo, EfiPciIoWidthUint32, 0 /* BAR0 */, (UINT64) 0x10 /* HCCPARAMS1 */, 1, &HcCapParams);
-              ExtendCap = EFI_ERROR(Status) ? 0 : ((HcCapParams >> 14) & 0x3FFFC);
-              while (ExtendCap) {
-                Status = PciIo->Mem.Read(PciIo, EfiPciIoWidthUint32, 0 /* BAR0 */, (UINT64) ExtendCap, 1, &Value);
-                if (EFI_ERROR(Status))
-                  break;
-                if ((Value & 0xFF) == 1) {
-                  Value |= (0x1 << 24);
-                  (VOID) PciIo->Mem.Write(PciIo, EfiPciIoWidthUint32, 0 /* BAR0 */, (UINT64) ExtendCap, 1, &Value);
-                  TimeOut = 40;
-                  while (TimeOut--) {
-                    gBS->Stall(500);
-                    Status = PciIo->Mem.Read(PciIo, EfiPciIoWidthUint32, 0 /* BAR0 */, (UINT64) ExtendCap, 1, &Value);
-                    if (EFI_ERROR(Status)) {
-                      TimeOut = -1;
-                      break;
-                    }
-                    if ((Value & 0x01010000) == 0x01000000) {
-                      TimeOut = -1;  // Optional - always disable the SMI
-                      break;
-                    }
-                  }
-                  if (TimeOut >= 0)
-                    break;
-                  //
-                  // Disable the SMI in USBLEGCTLSTS if BIOS doesn't respond
-                  //
-                  Status = PciIo->Mem.Read(PciIo, EfiPciIoWidthUint32, 0 /* BAR0 */, (UINT64) ExtendCap + 4, 1, &Value);
-                  if (EFI_ERROR(Status))
-                    break;
-                  Value &= 0x1F1FEE;
-                  Value |= 0xE0000000;
-                  (VOID) PciIo->Mem.Write(PciIo, EfiPciIoWidthUint32, 0 /* BAR0 */, (UINT64) ExtendCap + 4, 1, &Value);
-                  break;
-                } //Value & FF
-                if (!(Value & 0xFF00))
-                  break;
-                ExtendCap += ((Value >> 6) & 0x3FC);
-              } //while ExtendCap
-            } //if class[0]
+            } // else if (PCI_IF_XHCI == Class[0]) { ... Code moved to XhciDxe ... }
           } // if class [2] && [1]
         } // if !EFI_ERROR Pci.Read
       }  // if !EFI_ERROR HandleProtocol

@@ -583,40 +583,30 @@ XhcSetBiosOwnership (
   }
 // free from previous owner
   Buffer = XhcReadExtCapReg (Xhc, Xhc->UsbLegSupOffset);
-  Buffer |= USBLEGSP_OS_SEMAPHORE;
-  XhcWriteExtCapReg (Xhc, Xhc->UsbLegSupOffset, Buffer);
-  
-  TimeOut = 40;
-  while (TimeOut--) {
-    gBS->Stall(500);
-    Buffer = XhcReadExtCapReg (Xhc, Xhc->UsbLegSupOffset);
-    if ((Buffer & (USBLEGSP_OS_SEMAPHORE | USBLEGSP_BIOS_SEMAPHORE)) == USBLEGSP_BIOS_SEMAPHORE) {
-      TimeOut = -1;  // previous owner refuses to exit
-      break;
-    }
-    if ((Buffer & USBLEGSP_BIOS_SEMAPHORE) == 0) {
-      break; // previous owner exit
+  if (Buffer & USBLEGSP_BIOS_SEMAPHORE) {
+    Buffer |= USBLEGSP_OS_SEMAPHORE;
+    XhcWriteExtCapReg (Xhc, Xhc->UsbLegSupOffset, Buffer);
+
+    TimeOut = 40;
+    while (TimeOut--) {
+      gBS->Stall(500);
+      Buffer = XhcReadExtCapReg (Xhc, Xhc->UsbLegSupOffset);
+      if ((Buffer & USBLEGSP_BIOS_SEMAPHORE) == 0) {
+        break; // previous owner exit
+      }
     }
   }
   Buffer = XhcReadExtCapReg (Xhc, Xhc->UsbLegSupOffset + 4);
-  if (TimeOut >= 0) {
-    //
-    // Disable SMI on OS Ownership change in USBLEGCTLSTS if previous owner responds
-    //
-    Buffer &= 0x1FDFFF;
-    Buffer |= 0xE0000000;
-  } else {
-    //
-    // Disable all SMI in USBLEGCTLSTS if previous owner doesn't respond
-    //
-    Buffer &= 0x1F1FEE;
-    Buffer |= 0xE0000000;
-  }
+  //
+  // Disable all SMI in USBLEGCTLSTS
+  //
+  Buffer &= 0x1F1FEEU;
+  Buffer |= 0xE0000000U;
   XhcWriteExtCapReg (Xhc, Xhc->UsbLegSupOffset + 4, Buffer);
 
-// now set our BIOS ownership
+// now clear all ownership
   Buffer = XhcReadExtCapReg (Xhc, Xhc->UsbLegSupOffset);
-  Buffer = ((Buffer & (~USBLEGSP_OS_SEMAPHORE)) | USBLEGSP_BIOS_SEMAPHORE);
+  Buffer &= ~(USBLEGSP_OS_SEMAPHORE | USBLEGSP_BIOS_SEMAPHORE);
   XhcWriteExtCapReg (Xhc, Xhc->UsbLegSupOffset, Buffer);
 }
 
@@ -833,14 +823,16 @@ XhcIntelQuirks (
 		case 0x1E31U:	// Panther Point
 		case 0x8C31U:	// Lynx Point
 		case 0x8CB1U:	// Wildcat Point
-    case 0x8D31U:	// X99
+		case 0x8D31U:	// X99
 			Status = PciIo->Pci.Read(PciIo, EfiPciIoWidthUint32, 0xD0U, 4U, &Regs[0]);
 			if (EFI_ERROR(Status))
 				break;
-			Regs[0] = (Regs[0] & ~Regs[1]) | Regs[1];
-			Regs[2] = (Regs[2] & ~Regs[3]) | Regs[3];
-			(VOID) PciIo->Pci.Write(PciIo, EfiPciIoWidthUint32, 0xD0U, 1U, &Regs[0]);
-			(VOID) PciIo->Pci.Write(PciIo, EfiPciIoWidthUint32, 0xD8U, 1U, &Regs[2]);
+			Regs[1] |= Regs[0];
+			Regs[3] |= Regs[2];
+			if (Regs[1] != Regs[0])
+				(VOID) PciIo->Pci.Write(PciIo, EfiPciIoWidthUint32, 0xD0U, 1U, &Regs[1]);
+			if (Regs[3] != Regs[2])
+				(VOID) PciIo->Pci.Write(PciIo, EfiPciIoWidthUint32, 0xD8U, 1U, &Regs[3]);
 			break;
 		default:
 			break;
