@@ -833,6 +833,7 @@ XhcIntelQuirks (
 		case 0x1E31U:	// Panther Point
 		case 0x8C31U:	// Lynx Point
 		case 0x8CB1U:	// Wildcat Point
+    case 0x8D31U:	// X99
 			Status = PciIo->Pci.Read(PciIo, EfiPciIoWidthUint32, 0xD0U, 4U, &Regs[0]);
 			if (EFI_ERROR(Status))
 				break;

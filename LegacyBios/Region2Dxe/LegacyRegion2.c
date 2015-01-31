@@ -737,7 +737,7 @@ DetectChipset (
         mPamPciFunc = 1;
       }
       break;
-
+//case 0x2F008086:  //Haswell-E information needed
     case 0x3C008086: // Xeon E5 Processor 
       //DID = 3CF4 Check?
       DBG(" Xeon E5 processors (PAM 0x40-0x47)\n");

@@ -1236,7 +1236,9 @@ static nvidia_pci_info_t nvidia_card_generic[] = {
 	{ 0x10DE1390,	"GeForce 845M" },
 	{ 0x10DE1391,	"GeForce GTX 850M" },
 	{ 0x10DE1392,	"GeForce GTX 860M" },
-	{ 0x10DE1393,	"GeForce 840M" }
+	{ 0x10DE1393,	"GeForce 840M" },
+  //
+  { 0x10DE13C2,	"GeForce GTX 970" },   // MSI
 };
 
 static nvidia_card_info_t nvidia_card_exceptions[] = {
@@ -1451,17 +1453,7 @@ static nvidia_card_info_t nvidia_card_exceptions[] = {
 
 	{ 0x10DE124D,	0x146210CC,	"MSi GeForce GT 635M" },
 };
-/*
-static UINT16 read16(UINT8 *ptr, UINT16 offset)
-{
-	UINT8 ret[2];
 
-	ret[0] = ptr[offset+1];
-	ret[1] = ptr[offset];
-	
-	return *((UINT16*)&ret);
-}
-*/
 EFI_STATUS read_nVidia_PRAMIN(pci_dt_t *nvda_dev, VOID* rom, UINT16 arch)
 {
 	EFI_STATUS Status;
