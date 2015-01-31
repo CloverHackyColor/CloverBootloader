@@ -1,6 +1,6 @@
 /*++
 
-Copyright (c) 2005 - 2013, Intel Corporation. All rights reserved.<BR>
+Copyright (c) 2005 - 2015, Intel Corporation. All rights reserved.<BR>
 This program and the accompanying materials
 are licensed and made available under the terms and conditions of the Software
 License Agreement which accompanies this distribution.
@@ -531,20 +531,16 @@ Returns:
     //
     Status = EFI_UNSUPPORTED;
     if (IsSet) {
-      if (Volume->ReadOnly) {
-        Status = EFI_WRITE_PROTECTED;
-      } else {
-        if (CompareGuid (Type, &gEfiFileInfoGuid)) {
-          Status = FatSetFileInfo (Volume, IFile, OFile, *BufferSize, Buffer);
-        }
+      if (CompareGuid (Type, &gEfiFileInfoGuid)) {
+        Status = Volume->ReadOnly ? EFI_WRITE_PROTECTED : FatSetFileInfo (Volume, IFile, OFile, *BufferSize, Buffer);
+      }
 
-        if (CompareGuid (Type, &gEfiFileSystemInfoGuid)) {
-          Status = FatSetVolumeInfo (Volume, *BufferSize, Buffer);
-        }
+      if (CompareGuid (Type, &gEfiFileSystemInfoGuid)) {
+        Status = Volume->ReadOnly ? EFI_WRITE_PROTECTED : FatSetVolumeInfo (Volume, *BufferSize, Buffer);
+      }
 
-        if (CompareGuid (Type, &gEfiFileSystemVolumeLabelInfoIdGuid)) {
-          Status = FatSetVolumeLabelInfo (Volume, *BufferSize, Buffer);
-        }
+      if (CompareGuid (Type, &gEfiFileSystemVolumeLabelInfoIdGuid)) {
+        Status = Volume->ReadOnly ? EFI_WRITE_PROTECTED : FatSetVolumeLabelInfo (Volume, *BufferSize, Buffer);
       }
     } else {
       if (CompareGuid (Type, &gEfiFileInfoGuid)) {
