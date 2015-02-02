@@ -692,6 +692,7 @@ ShellOpenFileByName(
       if ((Attributes & EFI_FILE_DIRECTORY) == EFI_FILE_DIRECTORY) {
       return ShellCreateDirectory(FileName, FileHandle);
     }
+
     //
       // Create the directory to create the file in
       //

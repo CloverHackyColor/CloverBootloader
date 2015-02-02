@@ -81,7 +81,8 @@ UINTN SearchAndReplaceTxt(UINT8 *Source, UINT32 SourceSize, UINT8 *Search, UINTN
     return 0;
   }
   
-  while ((Source < End) && (NoReplacesRestriction || (MaxReplaces > 0))) { // num replaces
+  while (((Source - SearchSize) < End) &&
+         (NoReplacesRestriction || (MaxReplaces > 0))) { // num replaces
     Skip = 0;
     while (*Source != '\0') {  //comparison
       Pos = Search;
@@ -94,11 +95,12 @@ UINTN SearchAndReplaceTxt(UINT8 *Source, UINT32 SourceSize, UINT8 *Search, UINTN
         if (*Source != *Pos) {
           break;
         }
+ //       AsciiPrint("%c", *Source);
         Source++;
         Pos++;
       }
       
-      if (*Pos == '\0') { //end of pattern to compare
+      if (*Pos == '\0') { // pattern found
         Pos = FirstMatch;
         break;
       }
@@ -108,7 +110,11 @@ UINTN SearchAndReplaceTxt(UINT8 *Source, UINT32 SourceSize, UINT8 *Search, UINTN
         break;
       }
       
-      Source = FirstMatch + 1;
+      Source = FirstMatch + Skip + 1;
+/*      if (Pos != Search) {
+        AsciiPrint("\n");
+      } */
+      
     }
 
     if (!Pos) {
@@ -118,7 +124,7 @@ UINTN SearchAndReplaceTxt(UINT8 *Source, UINT32 SourceSize, UINT8 *Search, UINTN
     SetMem (Pos + SearchSize, Skip, 0x20); //fill skip places with spaces
     NumReplaces++;
     MaxReplaces--;
-    Source = FirstMatch + SearchSize;
+    Source = FirstMatch + SearchSize + Skip;
   }
   return NumReplaces;
 }
@@ -520,7 +526,7 @@ VOID AnyKextPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 Inf
                            -1);
   } else {
     // Info plist patch
-    DBG_RT(Entry, "Info.plist patch: '%a' -> '%a'\n", Entry->KernelAndKextPatches->KextPatches[N].Data, Entry->KernelAndKextPatches->KextPatches[N].Patch);
+    DBG_RT(Entry, "Info.plist patch: '%a' ->\n '%a'\n", Entry->KernelAndKextPatches->KextPatches[N].Data, Entry->KernelAndKextPatches->KextPatches[N].Patch);
     Num = SearchAndReplaceTxt((UINT8*)InfoPlist,
                            InfoPlistSize,
                            Entry->KernelAndKextPatches->KextPatches[N].Data,

@@ -901,7 +901,7 @@ FillinKextPatches (
           // Info.plist
           // Find and Replace should be in <string>...</string>
           DBG (" Info.plist patch");
-          Dict = GetProperty (Prop2, "Find");
+ /*         Dict = GetProperty (Prop2, "Find");
           Patches->KextPatches[Patches->NrKexts].DataLen = 0;
           if (Dict && Dict->string) {
             Patches->KextPatches[Patches->NrKexts].DataLen = AsciiStrLen (Dict->string);
@@ -912,16 +912,20 @@ FillinKextPatches (
           j = 0;
           if (Dict && Dict->string) {
             j = AsciiStrLen (Dict->string);
-            Patches->KextPatches[Patches->NrKexts].Patch = (UINT8*)AllocateCopyPool (j + 1, Dict->string);
-          }
-        } else {
+            Patches->KextPatches[Patches->NrKexts].Patch = (UINT8*)AllocateCopyPool (j + 1, Dict->string); //may differ in length
+          } */
+        } else { 
           // kext binary patch
           // Find and Replace should be in <data>...</data> or <string>...</string>
           DBG (" Kext bin patch");
+        }
+        //
+        //  Find and Replace must be in <data>...</data>
+        //
           Patches->KextPatches[Patches->NrKexts].Data    = GetDataSetting (Prop2, "Find", &j);
           Patches->KextPatches[Patches->NrKexts].DataLen = j;
           Patches->KextPatches[Patches->NrKexts].Patch   = GetDataSetting (Prop2, "Replace", &j);
-        }
+  //      }
 
         if ((Patches->KextPatches[Patches->NrKexts].DataLen != (INTN)j) || (j == 0)) {
           DBG (" - invalid Find/Replace data - skipping!\n");

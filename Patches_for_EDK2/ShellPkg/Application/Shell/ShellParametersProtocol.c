@@ -4,7 +4,7 @@
 
   Copyright (C) 2014, Red Hat, Inc.
   Copyright (c) 2013 Hewlett-Packard Development Company, L.P.
-  Copyright (c) 2009 - 2014, Intel Corporation. All rights reserved.<BR>
+  Copyright (c) 2009 - 2015, Intel Corporation. All rights reserved.<BR>
   This program and the accompanying materials
   are licensed and made available under the terms and conditions of the BSD License
   which accompanies this distribution.  The full text of the license may be found at
@@ -18,7 +18,50 @@
 #include "Shell.h"
 
 /**
-  return the next parameter from a command line string;
+  Return the next parameter's end from a command line string.
+
+  @param[in] String        the string to parse
+**/
+CONST CHAR16*
+EFIAPI
+FindEndOfParameter(
+  IN CONST CHAR16 *String
+  )
+{
+  CONST CHAR16 *First;
+  CONST CHAR16 *CloseQuote;
+
+  First = FindFirstCharacter(String, L" \"", L'^');
+
+  //
+  // nothing, all one parameter remaining
+  //
+  if (*First == CHAR_NULL) {
+    return (First);
+  }
+
+  //
+  // If space before a quote (or neither found, i.e. both CHAR_NULL),
+  // then that's the end.
+  //
+  if (*First == L' ') {
+    return (First);
+  }
+
+  CloseQuote = FindFirstCharacter (First+1, L"\"", L'^');
+
+  //
+  // We did not find a terminator...
+  //
+  if (*CloseQuote == CHAR_NULL) {
+    return (NULL);
+  }
+
+  return (FindEndOfParameter (CloseQuote+1));
+}
+
+/**
+  Return the next parameter from a command line string.
 
   This function moves the next parameter from Walker into TempParameter and moves
   Walker up past that parameter for recursive calling.  When the final parameter
@@ -27,12 +70,17 @@
   Temp Parameter must be large enough to hold the parameter before calling this
   function.
 
+  This will also remove all remaining ^ characters after processing.
+
   @param[in, out] Walker        pointer to string of command line.  Adjusted to
                                 reminaing command line on return
   @param[in, out] TempParameter pointer to string of command line item extracted.
   @param[in]      Length        buffer size of TempParameter.
+
+  @return   EFI_INALID_PARAMETER  A required parameter was NULL or pointed to a NULL or empty string.
+  @return   EFI_NOT_FOUND         A closing " could not be found on the specified string
 **/
-VOID
+EFI_STATUS
 EFIAPI
 GetNextParameter(
   IN OUT CHAR16   **Walker,
@@ -40,15 +88,14 @@ GetNextParameter(
   IN CONST UINTN  Length
   )
 {
-  CHAR16 *NextDelim;
-  CHAR16 *TempLoc;
+  CONST CHAR16 *NextDelim;
 
 //  ASSERT(Walker           != NULL);
 //  ASSERT(*Walker          != NULL);
 //  ASSERT(TempParameter    != NULL);
 //  ASSERT(*TempParameter   != NULL);
   if (!Walker || !(*Walker) || !TempParameter || !(*TempParameter)) {
-    return;
+    return EFI_INVALID_PARAMETER;
   }
 
   //
@@ -64,79 +111,57 @@ GetNextParameter(
   if (StrLen(*Walker) == 0) {
 //    ASSERT((*Walker)[0] == CHAR_NULL);
     *Walker = NULL;
-    return;
+    return EFI_NOT_FOUND;
   }
 
-  //
-  // we have a quoted parameter
-  // could be the last parameter, but SHOULD have a trailing quote
-  //
-  if ((*Walker)[0] == L'\"') {
-    NextDelim = NULL;
-    for (TempLoc = *Walker + 1 ; TempLoc != NULL && *TempLoc != CHAR_NULL ; TempLoc++) {
-      if (*TempLoc == L'^' && *(TempLoc+1) == L'\"') {
-        TempLoc++;
-      } else if (*TempLoc == L'\"') {
-        NextDelim = TempLoc;
-        break;
-      }
-    }
+  NextDelim = FindEndOfParameter(*Walker);
 
-    if (NextDelim - ((*Walker)+1) == 0) {
-      //
-      // found ""
-      //
-      *(*TempParameter) = CHAR_NULL;
-      *Walker = NextDelim + 1;
-    } else if (NextDelim != NULL) {
-
-      //
-      // Copy ensuring that both quotes are left in place.
-      //
-      StrnCpy(*TempParameter, (*Walker), NextDelim - *Walker + 1);
-      *Walker = NextDelim + 1;
-    } else {
-      //
-      // last one... someone forgot the training quote!
-      //
-      StrnCpy(*TempParameter, *Walker, Length/sizeof(CHAR16) - 1);
-      *Walker = NULL;
-    }
-    for (TempLoc = *TempParameter ; TempLoc != NULL && *TempLoc != CHAR_NULL ; TempLoc++) {
-      if (*TempLoc == L'^' && *(TempLoc+1) == L'\"') {
-        CopyMem(TempLoc, TempLoc+1, StrSize(TempLoc) - sizeof(TempLoc[0]));
-      }
-    }
-  } else {
-    //
-    // we have a regular parameter (no quote) OR
-    // we have the final parameter (no trailing space)
-    //
-    NextDelim = StrStr((*Walker), L" ");
-    if (NextDelim != NULL) {
-      StrnCpy(*TempParameter, *Walker, NextDelim - (*Walker));
-      (*TempParameter)[NextDelim - (*Walker)] = CHAR_NULL;
-      *Walker = NextDelim+1;
-    } else {
-      //
-      // last one.
-      //
-      StrnCpy(*TempParameter, *Walker, Length/sizeof(CHAR16) - 1);
-      *Walker = NULL;
-    }
-    for (NextDelim = *TempParameter ; NextDelim != NULL && *NextDelim != CHAR_NULL ; NextDelim++) {
-      if (*NextDelim == L'^' && *(NextDelim+1) == L'^') {
-        CopyMem(NextDelim, NextDelim+1, StrSize(NextDelim) - sizeof(NextDelim[0]));
-      }
-    }
-    while ((*TempParameter)[StrLen(*TempParameter)-1] == L' ') {
-      (*TempParameter)[StrLen(*TempParameter)-1] = CHAR_NULL;
-    }
-    while ((*TempParameter)[0] == L' ') {
-      CopyMem(*TempParameter, (*TempParameter)+1, StrSize(*TempParameter) - sizeof((*TempParameter)[0]));
-    }
+  if (NextDelim == NULL){
+DEBUG_CODE_BEGIN();
+    *Walker        = NULL;
+DEBUG_CODE_END();
+    return (EFI_NOT_FOUND);
   }
-  return;
+
+  StrnCpy(*TempParameter, (*Walker), NextDelim - *Walker);
+
+  //
+  // Add a CHAR_NULL if we didnt get one via the copy
+  //
+  if (*NextDelim != CHAR_NULL) {
+    (*TempParameter)[NextDelim - *Walker] = CHAR_NULL;
+    }
+
+      //
+  // Update Walker for the next iteration through the function
+      //
+  *Walker = (CHAR16*)NextDelim;
+
+      //
+  // Remove any non-escaped quotes in the string
+  // Remove any remaining escape characters in the string
+      //
+  for (NextDelim = FindFirstCharacter(*TempParameter, L"\"^", CHAR_NULL) 
+    ; *NextDelim != CHAR_NULL 
+    ; NextDelim = FindFirstCharacter(NextDelim, L"\"^", CHAR_NULL)
+    ) {
+    if (*NextDelim == L'^') {
+
+      //
+      // eliminate the escape ^
+      //
+      CopyMem ((CHAR16*)NextDelim, NextDelim + 1, StrSize (NextDelim + 1));
+      NextDelim++;
+    } else if (*NextDelim == L'\"') {
+
+    //
+      // eliminate the unescaped quote
+    //
+      CopyMem ((CHAR16*)NextDelim, NextDelim + 1, StrSize (NextDelim + 1));
+    }
+    }
+
+  return EFI_SUCCESS;
 }
 
 /**
@@ -145,6 +170,9 @@ GetNextParameter(
   This function parses the CommandLine and divides it into standard C style Argc/Argv
   parameters for inclusion in EFI_SHELL_PARAMETERS_PROTOCOL.  this supports space
   delimited and quote surrounded parameter definition.
+
+  All special character processing (alias, environment variable, redirection, 
+  etc... must be complete before calling this API.
 
   @param[in] CommandLine         String of command line to parse
   @param[in, out] Argv           pointer to array of strings; one for each parameter
@@ -188,9 +216,12 @@ ParseCommandLineToArgs(
   for ( Count = 0
       , Walker = (CHAR16*)CommandLine
       ; Walker != NULL && *Walker != CHAR_NULL
-      ; GetNextParameter(&Walker, &TempParameter, Size)
-      , Count++
-     );
+      ; Count++
+      ) {
+    if (EFI_ERROR(GetNextParameter(&Walker, &TempParameter, Size))) {
+      break;
+    }
+  }
 
   //
   // lets allocate the pointer array
@@ -205,7 +236,11 @@ ParseCommandLineToArgs(
   Walker = (CHAR16*)CommandLine;
   while(Walker != NULL && *Walker != CHAR_NULL) {
     SetMem16(TempParameter, Size, CHAR_NULL);
-    GetNextParameter(&Walker, &TempParameter, Size);
+    if (EFI_ERROR(GetNextParameter(&Walker, &TempParameter, Size))) {
+      SHELL_FREE_NON_NULL(TempParameter);
+      return (EFI_INVALID_PARAMETER);
+    }
+
     NewParam = AllocateCopyPool(StrSize(TempParameter), TempParameter);
     if (NewParam == NULL){
       SHELL_FREE_NON_NULL(TempParameter);

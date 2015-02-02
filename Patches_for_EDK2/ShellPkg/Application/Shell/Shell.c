@@ -1,7 +1,7 @@
 /** @file
   This is THE shell (application)
 
-  Copyright (c) 2009 - 2014, Intel Corporation. All rights reserved.<BR>
+  Copyright (c) 2009 - 2015, Intel Corporation. All rights reserved.<BR>
   (C) Copyright 2013-2014, Hewlett-Packard Development Company, L.P.
   This program and the accompanying materials
   are licensed and made available under the terms and conditions of the BSD License
@@ -193,33 +193,6 @@ IsValidEnvironmentVariableName(
 }
 
 /**
-  Find a command line contains a split operation
-
-  @param[in] CmdLine      The command line to parse.
-
-  @retval                 A pointer to the | character in CmdLine or NULL if not present.
-**/
-CONST CHAR16*
-EFIAPI
-FindSplit(
-  IN CONST CHAR16 *CmdLine
-  )
-{
-  CONST CHAR16 *TempSpot;
-  TempSpot = NULL;
-  if (StrStr(CmdLine, L"|") != NULL) {
-    for (TempSpot = CmdLine ; TempSpot != NULL && *TempSpot != CHAR_NULL ; TempSpot++) {
-      if (*TempSpot == L'^' && *(TempSpot+1) == L'|') {
-        TempSpot++;
-      } else if (*TempSpot == L'|') {
-        break;
-      }
-    }
-  }
-  return (TempSpot);
-}
-
-/**
   Determine if a command line contains a split operation
 
   @param[in] CmdLine      The command line to parse.
@@ -239,7 +212,7 @@ ContainsSplit(
 
   FirstQuote    = FindNextInstance (CmdLine, L"\"", TRUE);
   SecondQuote   = NULL;
-  TempSpot = FindSplit(CmdLine);
+  TempSpot      = FindFirstCharacter(CmdLine, L"|", L'^');
 
   if (FirstQuote == NULL    || 
       TempSpot == NULL      || 
@@ -262,7 +235,7 @@ ContainsSplit(
       continue;
     } else {
       FirstQuote = FindNextInstance (SecondQuote + 1, L"\"", TRUE);
-      TempSpot = FindSplit(TempSpot + 1);
+      TempSpot = FindFirstCharacter(TempSpot + 1, L"|", L'^');
       continue;
     } 
   }
@@ -1446,8 +1419,8 @@ StripUnreplacedEnvironmentVariables(
       break;
     }
 
-    if (FirstQuote < FirstPercent) {
-      SecondQuote = FirstQuote!= NULL?FindNextInstance(FirstQuote+1, L"\"", TRUE):NULL;
+    if (FirstQuote!= NULL && FirstQuote < FirstPercent) {
+      SecondQuote = FindNextInstance(FirstQuote+1, L"\"", TRUE);
       //
       // Quote is first found
       //
@@ -1601,12 +1574,12 @@ ShellConvertVariables (
     ShellCopySearchAndReplace(NewCommandLine1, NewCommandLine2, NewSize, AliasListNode->Alias, AliasListNode->CommandString, TRUE, FALSE);
     StrnCpy(NewCommandLine1, NewCommandLine2, NewSize/sizeof(CHAR16)-1);
     }
+  }
 
     //
-    // Remove non-existant environment variables in scripts only
+  // Remove non-existant environment variables
     //
     StripUnreplacedEnvironmentVariables(NewCommandLine1);
-  }
 
   //
   // Now cleanup any straggler intentionally ignored "%" characters
@@ -1961,13 +1934,13 @@ IsValidSplit(
       return (EFI_OUT_OF_RESOURCES);
     }
     TempWalker = (CHAR16*)Temp;
-    GetNextParameter(&TempWalker, &FirstParameter, StrSize(CmdLine));
-
+    if (!EFI_ERROR(GetNextParameter(&TempWalker, &FirstParameter, StrSize(CmdLine)))) {
     if (GetOperationType(FirstParameter) == Unknown_Invalid) {
       ShellPrintHiiEx(-1, -1, NULL, STRING_TOKEN (STR_SHELL_NOT_FOUND), ShellInfoObject.HiiHandle, FirstParameter);
       SetLastError(SHELL_NOT_FOUND);
       Status = EFI_NOT_FOUND;
     }
+  }
   }
 
   SHELL_FREE_NON_NULL(Temp);
@@ -2010,7 +1983,7 @@ VerifySplit(
   //
   // recurse to verify the next item
   //
-  TempSpot = FindSplit(CmdLine)+1;
+  TempSpot = FindFirstCharacter(CmdLine, L"|", L'^') + 1;
   return (VerifySplit(TempSpot));
 }
 
@@ -2122,7 +2095,7 @@ DoHelpUpdate(
   Walker = *CmdLine;
   while(Walker != NULL && *Walker != CHAR_NULL) {
     LastWalker = Walker;
-    GetNextParameter(&Walker, &CurrentParameter, StrSize(*CmdLine));
+    if (!EFI_ERROR(GetNextParameter(&Walker, &CurrentParameter, StrSize(*CmdLine)))) {
     if (StrStr(CurrentParameter, L"-?") == CurrentParameter) {
       LastWalker[0] = L' ';
       LastWalker[1] = L' ';
@@ -2141,6 +2114,7 @@ DoHelpUpdate(
       *CmdLine = NewCommandLine;
       break;
     }
+  }
   }
 
   SHELL_FREE_NON_NULL(CurrentParameter);
@@ -2590,8 +2564,7 @@ RunCommand(
     return (EFI_OUT_OF_RESOURCES);
   }
   TempWalker = CleanOriginal;
-  GetNextParameter(&TempWalker, &FirstParameter, StrSize(CleanOriginal));
-
+  if (!EFI_ERROR(GetNextParameter(&TempWalker, &FirstParameter, StrSize(CleanOriginal)))) {
   //
   // Depending on the first parameter we change the behavior
   //
@@ -2611,6 +2584,10 @@ RunCommand(
       ShellPrintHiiEx(-1, -1, NULL, STRING_TOKEN (STR_SHELL_NOT_FOUND), ShellInfoObject.HiiHandle, FirstParameter);
       SetLastError(SHELL_NOT_FOUND);
       break;
+  }
+  } else {
+    ShellPrintHiiEx(-1, -1, NULL, STRING_TOKEN (STR_SHELL_NOT_FOUND), ShellInfoObject.HiiHandle, FirstParameter);
+    SetLastError(SHELL_NOT_FOUND);
   }
  
   SHELL_FREE_NON_NULL(CleanOriginal);
@@ -3054,4 +3031,39 @@ RunScriptFile (
   RestoreArgcArgv(ParamProtocol, &Argv, &Argc);
 
   return (Status);
+}
+
+/**
+  Return the pointer to the first occurance of any character from a list of characters
+
+  @param[in] String           the string to parse
+  @param[in] CharacterList    the list of character to look for
+  @param[in] EscapeCharacter  An escape character to skip
+
+  @return the location of the first character in the string
+  @retval CHAR_NULL no instance of any character in CharacterList was found in String
+**/
+CONST CHAR16*
+EFIAPI
+FindFirstCharacter(
+  IN CONST CHAR16 *String,
+  IN CONST CHAR16 *CharacterList,
+  IN CONST CHAR16 EscapeCharacter
+  )
+{
+  UINT32 WalkChar;
+  UINT32 WalkStr;
+
+  for (WalkStr = 0; WalkStr < StrLen(String); WalkStr++) {
+    if (String[WalkStr] == EscapeCharacter) {
+      WalkStr++;
+      continue;
+    }
+    for (WalkChar = 0; WalkChar < StrLen(CharacterList); WalkChar++) {
+      if (String[WalkStr] == CharacterList[WalkChar]) {
+        return (&String[WalkStr]);
+      }
+    }
+  }
+  return (String + StrLen(String));
 }

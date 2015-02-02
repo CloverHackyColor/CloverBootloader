@@ -544,7 +544,7 @@ FileInterfaceStdInRead(
           for ( TempPos = (EFI_SHELL_FILE_INFO*)GetFirstNode(&(FoundFileList->Link))
               ; !IsNull(&FoundFileList->Link, &TempPos->Link)
               ; TempPos = (EFI_SHELL_FILE_INFO*)GetNextNode(&(FoundFileList->Link), &(TempPos->Link))
-             ) {
+             ){
             //
             // If "cd" is typed, only directory name will be auto-complete filled
             // in either case . and .. will be removed.
@@ -555,7 +555,7 @@ FileInterfaceStdInRead(
                 ||(StrCmp(TempPos->FileName, L".") == 0)
                 ||(StrCmp(TempPos->FileName, L"..") == 0)
                )) || ((StrCmp(TempPos->FileName, L".") == 0)
-                ||(StrCmp(TempPos->FileName, L"..") == 0))) {
+                ||(StrCmp(TempPos->FileName, L"..") == 0))){
                 TabLinePos = TempPos;
                 TempPos = (EFI_SHELL_FILE_INFO*)(RemoveEntryList(&(TempPos->Link))->BackLink);
                 InternalFreeShellFileInfoNode(TabLinePos);
