@@ -97,7 +97,7 @@ static VOID AboutRefit(VOID)
     AboutMenu.TitleImage = NULL;
   }
   if (AboutMenu.EntryCount == 0) {
-    AddMenuInfoLine(&AboutMenu, L"Clover Version 2k"); // by Slice, dmazar, apianti, JrCs, pene and others");
+    AddMenuInfoLine(&AboutMenu, L"Clover Version 2.3k"); // by Slice, dmazar, apianti, JrCs, pene and others");
 #ifdef FIRMWARE_BUILDDATE
     AddMenuInfoLine(&AboutMenu, PoolPrint(L" Build: %a", FIRMWARE_BUILDDATE));
 #else
@@ -111,7 +111,7 @@ static VOID AboutRefit(VOID)
     AddMenuInfoLine(&AboutMenu, L"Credits also:");
     AddMenuInfoLine(&AboutMenu, L"  Kabyl, pcj, jadran, Blackosx, STLVNUB, ycr.ru");
     AddMenuInfoLine(&AboutMenu, L"  FrodoKenny, skoczi, crazybirdy, Oscar09, xsmile");
-    AddMenuInfoLine(&AboutMenu, L"  cparm, rehabman, nms42, sherlocks");
+    AddMenuInfoLine(&AboutMenu, L"  cparm, rehabman, nms42, sherlocks, Zenith432");
     AddMenuInfoLine(&AboutMenu, L"  projectosx.com, applelife.ru");
     AddMenuInfoLine(&AboutMenu, L"");
     AddMenuInfoLine(&AboutMenu, L"Running on:");
