@@ -1381,13 +1381,17 @@ AtaPassThruPassThru (
 
     return EFI_SUCCESS;
   } else {
-    return AtaPassThruPassThruExecute (
-             Port,
-             PortMultiplierPort,
-             Packet,
-             Instance,
-             NULL
-             );
+    EFI_STATUS Status;
+    OldTpl = gBS->RaiseTPL (TPL_NOTIFY);
+    Status = AtaPassThruPassThruExecute (
+               Port,
+               PortMultiplierPort,
+               Packet,
+               Instance,
+               NULL
+               );
+    gBS->RestoreTPL (OldTpl);
+    return Status;
   }
 }
 

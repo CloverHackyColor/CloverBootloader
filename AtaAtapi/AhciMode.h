@@ -264,7 +264,11 @@ typedef struct {
   EFI_AHCI_COMMAND_FIS      CommandFis;       // A software constructed FIS.
   EFI_AHCI_ATAPI_COMMAND    AtapiCmd;         // 12 or 16 bytes ATAPI cmd.
   UINT8                     Reserved[0x30];
-  EFI_AHCI_COMMAND_PRDT     PrdtTable[65535];     // The scatter/gather list for data transfer
+  //
+  // AtaPassThruPassThru restricts buffer size to 2^25,
+  //   so need at most 8 buffers of size EFI_AHCI_MAX_DATA_PER_PRDT
+  //
+  EFI_AHCI_COMMAND_PRDT     PrdtTable[8];     // The scatter/gather list for data transfer
 } EFI_AHCI_COMMAND_TABLE;
 
 //

@@ -435,10 +435,8 @@ AhciEnableFisReceive (
   return AhciWaitMmioSet (
            PciIo,
            Offset,
-           EFI_AHCI_PORT_CMD_FRE,
-           EFI_AHCI_PORT_CMD_FRE,
-//           EFI_AHCI_PORT_CMD_FR,
-//           EFI_AHCI_PORT_CMD_FR,
+           EFI_AHCI_PORT_CMD_FR,
+           EFI_AHCI_PORT_CMD_FR,
            Timeout
            );
 }
@@ -530,7 +528,6 @@ AhciBuildCommand (
   IN     UINT32                     DataLength
   )
 {
-  UINT64     BaseAddr;
   UINT32     PrdtNumber;
   UINT32     PrdtIndex;
   UINTN      RemainedData;
@@ -541,24 +538,20 @@ AhciBuildCommand (
   if (!PciIo) return;
   //
   // Filling the PRDT
+  // Note: DataLength is at most 2^25
   //
-  PrdtNumber = (UINT32)DivU64x32 (((UINT64)DataLength + EFI_AHCI_MAX_DATA_PER_PRDT - 1), EFI_AHCI_MAX_DATA_PER_PRDT);
+  PrdtNumber = (UINT32) (DataLength + EFI_AHCI_MAX_DATA_PER_PRDT - 1) >> 22;
 
   //
   // According to AHCI 1.3 spec, a PRDT entry can point to a maximum 4MB data block.
   // It also limits that the maximum amount of the PRDT entry in the command table
   // is 65535.
+  // But since DataLength <= 2^25, need at most 8 PRDTs
   //
  // ASSERT (PrdtNumber <= 65535);
-  if (PrdtNumber > 65535) PrdtNumber = 65535;
+  if (PrdtNumber > 8) PrdtNumber = 8;
 
-  Data64.Uint64 = (UINTN) (AhciRegisters->AhciRFis) + sizeof (EFI_AHCI_RECEIVED_FIS) * Port;
-
-  BaseAddr = Data64.Uint64;
-
-  ZeroMem ((VOID *)((UINTN) BaseAddr), sizeof (EFI_AHCI_RECEIVED_FIS));
-
-  ZeroMem (AhciRegisters->AhciCommandTable, sizeof (EFI_AHCI_COMMAND_TABLE));
+  ZeroMem (&AhciRegisters->AhciRFis[Port], sizeof (EFI_AHCI_RECEIVED_FIS));
 
   CommandFis->AhciCFisPmNum = PortMultiplier;
 
@@ -571,6 +564,7 @@ AhciBuildCommand (
       AtapiCommand,
       AtapiCommandLength
       );
+    ZeroMem (&AhciRegisters->AhciCommandTable->Reserved, 0x30U);
 
     CommandList->AhciCmdA = 1;
     CommandList->AhciCmdP = 1;
@@ -578,6 +572,7 @@ AhciBuildCommand (
 
     AhciOrReg (PciIo, Offset, (EFI_AHCI_PORT_CMD_DLAE | EFI_AHCI_PORT_CMD_ATAPI));
   } else {
+    ZeroMem (&AhciRegisters->AhciCommandTable->AtapiCmd, 0x40U);
     AhciAndReg (PciIo, Offset, (UINT32)~(EFI_AHCI_PORT_CMD_DLAE | EFI_AHCI_PORT_CMD_ATAPI));
   }
 
@@ -599,15 +594,19 @@ AhciBuildCommand (
     MemAddr      += EFI_AHCI_MAX_DATA_PER_PRDT;
   }
 
+#if 0
+  //
+  // Don't need this interrupt
   //
   // Set the last PRDT to Interrupt On Complete
   //
   if (PrdtNumber > 0) {
     AhciRegisters->AhciCommandTable->PrdtTable[PrdtNumber - 1].AhciPrdtIoc = 1;
   }
+#endif
 
   CopyMem (
-    (VOID *) ((UINTN) AhciRegisters->AhciCmdList + (UINTN) CommandSlotNumber * sizeof (EFI_AHCI_COMMAND_LIST)),
+    &AhciRegisters->AhciCmdList[CommandSlotNumber],
     CommandList,
     sizeof (EFI_AHCI_COMMAND_LIST)
     );
@@ -945,7 +944,6 @@ AhciDmaTransfer (
   UINT32                        PortTfd;
 
   EFI_PCI_IO_PROTOCOL           *PciIo;
-  EFI_TPL                       OldTpl;
 
   Map   = NULL;
   PciIo = Instance->PciIo;
@@ -958,8 +956,8 @@ AhciDmaTransfer (
   // Before starting the Blocking BlockIO operation, push to finish all non-blocking
   // BlockIO tasks.
   // Delay 100us to simulate the blocking time out checking.
+  // Note: This code always enters at TPL_NOTIFY
   //
-  OldTpl = gBS->RaiseTPL (TPL_NOTIFY);
   while ((Task == NULL) && (!IsListEmpty (&Instance->NonBlockingTaskList))) {
     AsyncNonBlockingTransferRoutine (NULL, Instance);
     //
@@ -967,7 +965,6 @@ AhciDmaTransfer (
     //
     MicroSecondDelay (100);
   }
-  gBS->RestoreTPL (OldTpl);
 
   if ((Task == NULL) || ((Task != NULL) && (!Task->IsStart))) {
     //
