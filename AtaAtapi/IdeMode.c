@@ -180,6 +180,7 @@ IdeWritePortWMultiple (
   UINT32  *WorkingBuffer;
   UINTN   Size;
 
+  if (((UINTN) Buffer) & 1U) {
   //
   // Prepare an 16-bit aligned working buffer. CpuIo will return failure and
   // not perform actual I/O operations if buffer pointer passed in is not at
@@ -199,7 +200,10 @@ IdeWritePortWMultiple (
   //
   // Copy data from user buffer to working buffer
   //
-  CopyMem ((UINT16 *) AlignedBuffer, Buffer, Size);
+  CopyMem (AlignedBuffer, Buffer, Size);
+  } else {
+    AlignedBuffer = (UINT16 *) Buffer;
+  }
 
   //
   // perform UINT16 data write to the FIFO
@@ -210,10 +214,12 @@ IdeWritePortWMultiple (
               EFI_PCI_IO_PASS_THROUGH_BAR,
               (UINT64) Port,
               Count,
-              (UINT16 *) AlignedBuffer
+              AlignedBuffer
               );
 
-  gBS->FreePool (WorkingBuffer);
+  if (AlignedBuffer != Buffer) {
+    gBS->FreePool (WorkingBuffer);
+  }
 }
 
 /**
@@ -240,6 +246,7 @@ IdeReadPortWMultiple (
   UINT16  *WorkingBuffer;
   UINTN   Size;
 
+  if (((UINTN) Buffer) & 1U) {
   //
   // Prepare an 16-bit aligned working buffer. CpuIo will return failure and
   // not perform actual I/O operations if buffer pointer passed in is not at
@@ -255,6 +262,9 @@ IdeReadPortWMultiple (
         );
 
   AlignedBuffer = (UINT16 *) ((UINTN)(((UINTN) WorkingBuffer + 0x1) & (~0x1)));
+  } else {
+    AlignedBuffer = (UINT16 *) Buffer;
+  }
 
   //
   // Perform UINT16 data read from FIFO
@@ -265,14 +275,16 @@ IdeReadPortWMultiple (
               EFI_PCI_IO_PASS_THROUGH_BAR,
               (UINT64) Port,
               Count,
-              (UINT16*)AlignedBuffer
+              AlignedBuffer
               );
 
+  if (AlignedBuffer != Buffer) {
   //
   // Copy data to user buffer
   //
-  CopyMem (Buffer, (UINT16*)AlignedBuffer, Size);
+  CopyMem (Buffer, AlignedBuffer, Size);
   gBS->FreePool (WorkingBuffer);
+  }
 }
 
 /**
@@ -1789,7 +1801,6 @@ AtaUdmaInOut (
 
   UINT8                         DeviceHead;
   EFI_PCI_IO_PROTOCOL           *PciIo;
-  EFI_TPL                       OldTpl;
 
 
   Status        = EFI_SUCCESS;
@@ -1806,16 +1817,15 @@ AtaUdmaInOut (
   //
   // Before starting the Blocking BlockIO operation, push to finish all non-blocking
   // BlockIO tasks.
-  // Delay 1ms to simulate the blocking time out checking.
+  // Delay 100us to simulate the blocking time out checking.
+  // Note: This code always enters at TPL_NOTIFY
   //
   while ((Task == NULL) && (!IsListEmpty (&Instance->NonBlockingTaskList))) {
-    OldTpl = gBS->RaiseTPL (TPL_NOTIFY);
     AsyncNonBlockingTransferRoutine (NULL, Instance);
-    gBS->RestoreTPL (OldTpl);
     //
-    // Stall for 1 milliseconds.
+    // Stall for 100 microseconds.
     //
-    MicroSecondDelay (1000);
+    MicroSecondDelay (100);
   }
 
   //
@@ -1887,7 +1897,7 @@ AtaUdmaInOut (
       return EFI_OUT_OF_RESOURCES;
     }
 
-    ZeroMem ((VOID *) ((UINTN) PrdBaseAddr), ByteCount);
+    ZeroMem ((VOID *) ((UINTN) PrdBaseAddr), PrdTableSize);
 
     //
     // Map the host address of DataBuffer to DMA master address.

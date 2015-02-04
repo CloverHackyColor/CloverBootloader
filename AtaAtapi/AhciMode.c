@@ -557,6 +557,8 @@ AhciBuildCommand (
 
   CopyMem (&AhciRegisters->AhciCommandTable->CommandFis, CommandFis, sizeof (EFI_AHCI_COMMAND_FIS));
 
+  ZeroMem (&AhciRegisters->AhciCommandTable->AtapiCmd, 0x40U + (PrdtNumber << 4));
+
   Offset = EFI_AHCI_PORT_START + Port * EFI_AHCI_PORT_REG_WIDTH + EFI_AHCI_PORT_CMD;
   if (AtapiCommand != NULL) {
     CopyMem (
@@ -564,7 +566,6 @@ AhciBuildCommand (
       AtapiCommand,
       AtapiCommandLength
       );
-    ZeroMem (&AhciRegisters->AhciCommandTable->Reserved, 0x30U);
 
     CommandList->AhciCmdA = 1;
     CommandList->AhciCmdP = 1;
@@ -572,7 +573,6 @@ AhciBuildCommand (
 
     AhciOrReg (PciIo, Offset, (EFI_AHCI_PORT_CMD_DLAE | EFI_AHCI_PORT_CMD_ATAPI));
   } else {
-    ZeroMem (&AhciRegisters->AhciCommandTable->AtapiCmd, 0x40U);
     AhciAndReg (PciIo, Offset, (UINT32)~(EFI_AHCI_PORT_CMD_DLAE | EFI_AHCI_PORT_CMD_ATAPI));
   }
 
