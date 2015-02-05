@@ -4445,10 +4445,18 @@ GetUserSettings(
         DBG ("Config set CpuType=%x\n", gSettings.CpuType);
       }
       
+      Prop = GetProperty (DictPointer, "QEMU");
+      gSettings.QEMU = IsPropertyTrue (Prop);
+      if (gSettings.QEMU) {
+        DBG ("Config set QEMU = true\n");
+      }
+      
+      gSettings.UserChange = FALSE;
       Prop = GetProperty (DictPointer, "BusSpeedkHz");
       if (Prop != NULL) {
         gSettings.BusSpeed = (UINT32)GetPropertyInteger (Prop, gSettings.BusSpeed);
         DBG ("Config set BusSpeed=%dkHz\n", gSettings.BusSpeed);
+        gSettings.UserChange = TRUE;
       }
       
       Prop = GetProperty (DictPointer, "C6");

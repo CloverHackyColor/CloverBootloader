@@ -2044,6 +2044,29 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       }
     }
   }
+  
+  if (gSettings.QEMU) {
+//    UINT64 Msrflex = 0ULL;
+    
+    if (!gSettings.UserChange) {
+      gSettings.BusSpeed = 200000;
+    }
+    gCPUStructure.MaxRatio = DivU64x32(gCPUStructure.TSCCalibr, gSettings.BusSpeed * kilo);
+    DBG("Set MaxRatio for QEMU: %d\n", gCPUStructure.MaxRatio);
+    gCPUStructure.MaxRatio *= 10;
+    gCPUStructure.MinRatio = 60;
+/*    AsmWriteMsr64(MSR_FLEX_RATIO, ((6ULL << 40) + //(1ULL << 16) +
+                                   (gCPUStructure.MaxRatio << 8)));
+    DBG("check if flex is RW\n");
+    Msrflex = AsmReadMsr64(MSR_FLEX_RATIO); //0 == not Rw :(
+    DBG("MSR_FLEX_RATIO = %lx\n", Msrflex);
+ */
+    gCPUStructure.FSBFrequency = DivU64x32(MultU64x32(gCPUStructure.CPUFrequency, 10),
+                                           (gCPUStructure.MaxRatio == 0) ? 1 : gCPUStructure.MaxRatio);
+    gCPUStructure.ExternalClock = (UINT32)DivU64x32(gCPUStructure.FSBFrequency, kilo);
+  }
+  
+
 
   dropDSM = 0xFFFF; //by default we drop all OEM _DSM. They have no sense for us.
   if (defDSM) {

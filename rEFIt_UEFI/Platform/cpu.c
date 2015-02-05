@@ -268,6 +268,11 @@ VOID GetCPUProperties (VOID)
 
 
 	//get Min and Max Ratio Cpu/Bus
+/*  if (QEMU) {
+    
+    0x06170C2D06000C2DULL
+  } */
+  
 	if(gCPUStructure.Vendor == CPU_VENDOR_INTEL && 
      ((gCPUStructure.Family == 0x06 && gCPUStructure.Model >= 0x0c) ||
 			(gCPUStructure.Family == 0x0f && gCPUStructure.Model >= 0x03))) {
