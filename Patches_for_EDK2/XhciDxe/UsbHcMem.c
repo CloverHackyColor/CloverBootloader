@@ -314,7 +314,6 @@ UsbHcGetHostAddrForPciAddr (
   if (!Block) {
     return 0;
   }
-
   //
   // calculate the pci memory address for host memory address.
   //
@@ -699,7 +698,7 @@ UsbHcAllocateAlignedPages (
     // Make sure that Pages plus EFI_SIZE_TO_PAGES (Alignment) does not overflow.
     //
 //    ASSERT (RealPages > Pages);
-    if (RealPages < Pages) {
+    if (RealPages <= Pages) {
       return EFI_INVALID_PARAMETER;
     }
  
@@ -815,5 +814,4 @@ UsbHcFreeAlignedPages (
   if (EFI_ERROR (Status)) {
     return;
   }
-
 }

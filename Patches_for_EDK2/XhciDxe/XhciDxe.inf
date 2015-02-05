@@ -1,12 +1,9 @@
 ## @file
-#
-#  Component Description File For XhciDxe Module.
-#
-#  XhciDxe driver is responsible for managing the behavior of XHCI controller.
+#  The XhciDxe driver is responsible for managing the behavior of XHCI controller.
 #  It implements the interfaces of monitoring the status of all ports and transferring
 #  Control, Bulk, Interrupt and Isochronous requests to those attached usb LS/FS/HS/SS devices.
 #
-#  Copyright (c) 2011 - 2013, Intel Corporation. All rights reserved.<BR>
+#  Copyright (c) 2011 - 2014, Intel Corporation. All rights reserved.<BR>
 #
 #  This program and the accompanying materials
 #  are licensed and made available under the terms and conditions of the BSD License
@@ -63,21 +60,16 @@
   BaseMemoryLib
   DebugLib
   ReportStatusCodeLib
-    MemLogLib
+  MemLogLib
   PrintLib
-DevicePathLib
-
 
 [Guids]
-  gEfiEventExitBootServicesGuid                 ## PRODUCES ## Event
+  gEfiEventExitBootServicesGuid                 ## SOMETIMES_CONSUMES ## Event
 
 [Protocols]
   gEfiPciIoProtocolGuid                         ## TO_START
   gEfiUsb2HcProtocolGuid                        ## BY_START
 
 # [Event]
-#   ##
-#   # Periodic timer event for checking the result of interrupt transfer execution.
-#   #
-#   EVENT_TYPE_PERIODIC_TIMER                   ## PRODUCES
+# EVENT_TYPE_PERIODIC_TIMER       ## CONSUMES
 #

@@ -2,7 +2,7 @@
 
   The XHCI register operation routines.
 
-Copyright (c) 2011, Intel Corporation. All rights reserved.<BR>
+Copyright (c) 2011 - 2013, Intel Corporation. All rights reserved.<BR>
 This program and the accompanying materials
 are licensed and made available under the terms and conditions of the BSD License
 which accompanies this distribution.  The full text of the license may be found at
@@ -532,7 +532,7 @@ XhcClearOpRegBit (
   @param  Offset       The offset of the operation register.
   @param  Bit          The bit of the register to wait for.
   @param  WaitToSet    Wait the bit to set or clear.
-  @param  Timeout      The time to wait before abort (in millisecond, ms).
+  @param  Timeout      The time to wait before abort (in microsecond, us).
 
   @retval EFI_SUCCESS  The bit successfully changed by host controller.
   @retval EFI_TIMEOUT  The time out occurred.
@@ -550,7 +550,7 @@ XhcWaitOpRegBit (
   UINT32                  Index;
   UINTN                   Loop;
 
-  Loop   = (Timeout * XHC_1_MILLISECOND / XHC_POLL_DELAY) + 1;
+  Loop   = (Timeout / XHC_POLL_DELAY) + 1;
 
   for (Index = 0; Index < Loop; Index++) {
     if (XHC_REG_BIT_IS_SET (Xhc, Offset, Bit) == WaitToSet) {
@@ -577,10 +577,12 @@ XhcSetBiosOwnership (
   UINT32                    Buffer;
   INT32                     TimeOut;
 
-//  DEBUG ((EFI_D_INFO, "XhcSetBiosOwnership: called to set BIOS ownership\n"));
   if (!Xhc || (Xhc->UsbLegSupOffset == 0xFFFFFFFF)) {
     return;
   }
+
+//  DEBUG ((EFI_D_INFO, "XhcSetBiosOwnership: called to set BIOS ownership\n"));
+
 // free from previous owner
   Buffer = XhcReadExtCapReg (Xhc, Xhc->UsbLegSupOffset);
   if (Buffer & USBLEGSP_BIOS_SEMAPHORE) {
@@ -622,6 +624,7 @@ XhcClearBiosOwnership (
   )
 {
   UINT32                    Buffer;
+
   if (!Xhc || (Xhc->UsbLegSupOffset == 0xFFFFFFFF)) {
     return;
   }
@@ -634,7 +637,7 @@ XhcClearBiosOwnership (
 }
 
 /**
-  Calculate the XHCI legacy support capability register offset.
+  Calculate the offset of the XHCI capability.
 
   @param  Xhc     The XHCI Instance.
   @param  CapId   The XHCI Capability ID.
@@ -669,7 +672,7 @@ XhcGetCapabilityAddr (
     ExtCapOffset += (NextExtCapReg << 2);
   } while (NextExtCapReg != 0);
 
-  return 0;
+  return 0xFFFFFFFF;
 }
 
 /**
@@ -711,7 +714,7 @@ XhcIsSysError (
   Reset the XHCI host controller.
 
   @param  Xhc          The XHCI Instance.
-  @param  Timeout      Time to wait before abort (in millisecond, ms).
+  @param  Timeout      Time to wait before abort (in microsecond, us).
 
   @retval EFI_SUCCESS  The XHCI host controller is reset.
   @return Others       Failed to reset the XHCI before Timeout.
@@ -739,7 +742,7 @@ XhcResetHC (
     }
   }
 
-  if (((XhcReadExtCapReg (Xhc, Xhc->DebugCapSupOffset) & 0xFF) != XHC_CAP_USB_DEBUG) ||
+  if ((Xhc->DebugCapSupOffset == 0xFFFFFFFF) || ((XhcReadExtCapReg (Xhc, Xhc->DebugCapSupOffset) & 0xFF) != XHC_CAP_USB_DEBUG) ||
       ((XhcReadExtCapReg (Xhc, Xhc->DebugCapSupOffset + XHC_DC_DCCTRL) & BIT0) == 0)) {
     XhcSetOpRegBit (Xhc, XHC_USBCMD_OFFSET, XHC_USBCMD_RESET);
     Status = XhcWaitOpRegBit (Xhc, XHC_USBCMD_OFFSET, XHC_USBCMD_RESET, FALSE, Timeout);
@@ -753,7 +756,7 @@ XhcResetHC (
   Halt the XHCI host controller.
 
   @param  Xhc          The XHCI Instance.
-  @param  Timeout      Time to wait before abort (in millisecond, ms).
+  @param  Timeout      Time to wait before abort (in microsecond, us).
 
   @return EFI_SUCCESS  The XHCI host controller is halt.
   @return EFI_TIMEOUT  Failed to halt the XHCI before Timeout.
@@ -777,7 +780,7 @@ XhcHaltHC (
   Set the XHCI host controller to run.
 
   @param  Xhc          The XHCI Instance.
-  @param  Timeout      Time to wait before abort (in millisecond, ms).
+  @param  Timeout      Time to wait before abort (in microsecond, us).
 
   @return EFI_SUCCESS  The XHCI host controller is running.
   @return EFI_TIMEOUT  Failed to set the XHCI to run before Timeout.

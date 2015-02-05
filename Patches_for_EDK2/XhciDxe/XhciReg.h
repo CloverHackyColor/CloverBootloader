@@ -2,7 +2,7 @@
 
   This file contains the register definition of XHCI host controller.
 
-Copyright (c) 2011 - 2012, Intel Corporation. All rights reserved.<BR>
+Copyright (c) 2011 - 2013, Intel Corporation. All rights reserved.<BR>
 This program and the accompanying materials
 are licensed and made available under the terms and conditions of the BSD License
 which accompanies this distribution.  The full text of the license may be found at
@@ -149,7 +149,6 @@ typedef union {
 #define	XHCI_CMD_EWE	                   BIT10	/* RW Enable Wrap Event */
 #define	XHCI_CMD_EU3S	                   BIT11	/* RW Enable U3 MFINDEX Stop */
 
-
 #define XHC_USBSTS_HALT                    BIT0  // Host Controller Halted
 #define XHC_USBSTS_HSE                     BIT2  // Host System Error
 #define XHC_USBSTS_EINT                    BIT3  // Event Interrupt
@@ -191,7 +190,6 @@ typedef union {
 #define	XHCI_PS_DR		                     BIT30	/* RO - device removable */
 #define	XHCI_PS_WPR		                     BIT31	/* RW1S - warm port reset (RsvdZ for USB2 ports) */
 
-
 #define XHC_HUB_PORTSC_CCS                 BIT0  // Hub's Current Connect Status
 #define XHC_HUB_PORTSC_PED                 BIT1  // Hub's Port Enabled/Disabled
 #define XHC_HUB_PORTSC_OCA                 BIT3  // Hub's Over-current Active
@@ -201,11 +199,22 @@ typedef union {
 #define XHC_HUB_PORTSC_PEC                 BIT17 // Hub's Port Enabled/Disabled Change
 #define XHC_HUB_PORTSC_OCC                 BIT19 // Hub's Over-Current Change
 #define XHC_HUB_PORTSC_PRC                 BIT20 // Hub's Port Reset Change
+#define XHC_HUB_PORTSC_BHRC                BIT21 // Hub's Port Warm Reset Change
 #define XHC_IMAN_IP                        BIT0  // Interrupt Pending
 #define XHC_IMAN_IE                        BIT1  // Interrupt Enable
 
 #define XHC_IMODI_MASK                     0x0000FFFF  // Interrupt Moderation Interval
 #define XHC_IMODC_MASK                     0xFFFF0000  // Interrupt Moderation Counter
+
+//
+//  Hub Class Feature Selector for Clear Port Feature Request
+//  It's the extension of hub class feature selector of USB 2.0 in USB 3.0 Spec.
+//  For more details, Please refer to USB 3.0 Spec Table 10-7.
+//
+typedef enum {
+  Usb3PortBHPortReset          = 28,
+  Usb3PortBHPortResetChange    = 29
+} XHC_PORT_FEATURE;
 
 //
 // Structure to map the hardware port states to the
@@ -215,6 +224,14 @@ typedef struct {
   UINT32                  HwState;
   UINT16                  UefiState;
 } USB_PORT_STATE_MAP;
+
+//
+// Structure to map the hardware port states to feature selector for clear port feature request.
+//
+typedef struct {
+  UINT32                  HwState;
+  UINT16                  Selector;
+} USB_CLEAR_PORT_MAP;
 
 /**
   Read 1-byte width XHCI capability register.
@@ -392,7 +409,7 @@ XhcClearOpRegBit (
   @param  Offset       The offset of the operational register.
   @param  Bit          The bit of the register to wait for.
   @param  WaitToSet    Wait the bit to set or clear.
-  @param  Timeout      The time to wait before abort (in millisecond, ms).
+  @param  Timeout      The time to wait before abort (in microsecond, us).
 
   @retval EFI_SUCCESS  The bit successfully changed by host controller.
   @retval EFI_TIMEOUT  The time out occurred.
@@ -514,7 +531,7 @@ XhcIsSysError (
   Reset the XHCI host controller.
 
   @param  Xhc          The XHCI Instance.
-  @param  Timeout      Time to wait before abort (in millisecond, ms).
+  @param  Timeout      Time to wait before abort (in microsecond, us).
 
   @retval EFI_SUCCESS  The XHCI host controller is reset.
   @return Others       Failed to reset the XHCI before Timeout.
@@ -530,7 +547,7 @@ XhcResetHC (
   Halt the XHCI host controller.
 
   @param  Xhc          The XHCI Instance.
-  @param  Timeout      Time to wait before abort (in millisecond, ms).
+  @param  Timeout      Time to wait before abort (in microsecond, us).
 
   @return EFI_SUCCESS  The XHCI host controller is halt.
   @return EFI_TIMEOUT  Failed to halt the XHCI before Timeout.
@@ -546,7 +563,7 @@ XhcHaltHC (
   Set the XHCI host controller to run.
 
   @param  Xhc          The XHCI Instance.
-  @param  Timeout      Time to wait before abort (in millisecond, ms).
+  @param  Timeout      Time to wait before abort (in microsecond, us).
 
   @return EFI_SUCCESS  The XHCI host controller is running.
   @return EFI_TIMEOUT  Failed to set the XHCI to run before Timeout.

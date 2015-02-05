@@ -189,7 +189,7 @@ usage() {
     echo "Target:"
     print_option_help "-ia32"      "build Clover in 32-bit [boot3]"
     print_option_help "-x64"       "build Clover in 64-bit [boot6] [Default]"
-    print_option_help "-x64-mcp"   "build Clover in 64-bit [boot7] using BiosBlockIO (compatible with MCP chipset)"
+    print_option_help “—mc, -x64-mcp"   "build Clover in 64-bit [boot7] using BiosBlockIO (compatible with MCP chipset)"
     print_option_help "-a TARGETARCH, --arch=TARGETARCH" "overrides target.txt's TARGET_ARCH definition"
     print_option_help "-p PLATFORMFILE, --platform=PLATFORMFILE" "Build the platform specified by the DSC filename argument"
     print_option_help "-m MODULEFILE, --module=MODULEFILE" "Build only the module specified by the INF filename argument"
@@ -200,6 +200,7 @@ usage() {
     print_option_help "--vbios-patch-cloverefi" "activate vbios patch in CloverEFI"
     print_option_help "--only-sata0" "activate only SATA0 patch"
     print_option_help "--low-ebda" "ebda offset shift to 0x88000"
+    print_option_help "--no-usb" "disable USB support"
     echo
     echo "Report bugs to http://www.projectosx.com/forum/index.php?showtopic=2490"
 }
@@ -233,7 +234,6 @@ checkCmdlineArguments() {
             -GCC49  | --GCC49)   TOOLCHAIN=GCC49   ;;
             -gcc49  | --gcc49)   TOOLCHAIN=GCC49   ;;
             -unixgcc | --gcc)    TOOLCHAIN=UNIXGCC ;;
-            -xcode5  | --xcode5 )  TOOLCHAIN=XCODE5 ; CLANG=1 ;;
             -xcode  | --xcode )  TOOLCHAIN=XCODE32 ;;
             -ia32 | --ia32)      TARGETARCH=IA32   ;;
             -x64 | --x64)        TARGETARCH=X64    ;;
@@ -285,6 +285,9 @@ checkCmdlineArguments() {
             --low-ebda)
                 USE_LOW_EBDA=1
                 ;;
+            --no-usb)
+               addEdk2BuildMacro DISABLE_USB_SUPPORT
+               ;;
             -h | -\? | -help | --help)
                 usage && exit 0
                 ;;

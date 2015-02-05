@@ -1,7 +1,7 @@
 /** @file
   The XHCI controller driver.
 
-Copyright (c) 2011 - 2013, Intel Corporation. All rights reserved.<BR>
+Copyright (c) 2011 - 2014, Intel Corporation. All rights reserved.<BR>
 This program and the accompanying materials
 are licensed and made available under the terms and conditions of the BSD License
 which accompanies this distribution.  The full text of the license may be found at
@@ -51,6 +51,13 @@ USB_PORT_STATE_MAP  mUsbPortChangeMap[] = {
   {XHC_PORTSC_PRC, USB_PORT_STAT_C_RESET}
 };
 
+USB_CLEAR_PORT_MAP mUsbClearPortChangeMap[] = {
+  {XHC_PORTSC_CSC, EfiUsbPortConnectChange},
+  {XHC_PORTSC_PEC, EfiUsbPortEnableChange},
+  {XHC_PORTSC_OCC, EfiUsbPortOverCurrentChange},
+  {XHC_PORTSC_PRC, EfiUsbPortResetChange}
+};
+
 USB_PORT_STATE_MAP  mUsbHubPortStateMap[] = {
   {XHC_HUB_PORTSC_CCS,   USB_PORT_STAT_CONNECTION},
   {XHC_HUB_PORTSC_PED,   USB_PORT_STAT_ENABLE},
@@ -63,6 +70,14 @@ USB_PORT_STATE_MAP  mUsbHubPortChangeMap[] = {
   {XHC_HUB_PORTSC_PEC, USB_PORT_STAT_C_ENABLE},
   {XHC_HUB_PORTSC_OCC, USB_PORT_STAT_C_OVERCURRENT},
   {XHC_HUB_PORTSC_PRC, USB_PORT_STAT_C_RESET}
+};
+
+USB_CLEAR_PORT_MAP mUsbHubClearPortChangeMap[] = {
+  {XHC_HUB_PORTSC_CSC, EfiUsbPortConnectChange},
+  {XHC_HUB_PORTSC_PEC, EfiUsbPortEnableChange},
+  {XHC_HUB_PORTSC_OCC, EfiUsbPortOverCurrentChange},
+  {XHC_HUB_PORTSC_PRC, EfiUsbPortResetChange},
+  {XHC_HUB_PORTSC_BHRC, Usb3PortBHPortResetChange}
 };
 
 EFI_DRIVER_BINDING_PROTOCOL  gXhciDriverBinding = {
@@ -162,7 +177,6 @@ XhcReset (
   USB_XHCI_INSTANCE  *Xhc;
   EFI_STATUS         Status;
   EFI_TPL            OldTpl;
-  UINTN           HCbit = 0;
 
   Xhc = XHC_FROM_THIS (This);
   
@@ -180,57 +194,51 @@ XhcReset (
   OldTpl = gBS->RaiseTPL (XHC_TPL);
 
   switch (Attributes) {
-    case EFI_USB_HC_RESET_GLOBAL:
-      //
-      // Flow through, same behavior as Host Controller Reset
-      //
-    case EFI_USB_HC_RESET_HOST_CONTROLLER:
-    if (((XhcReadExtCapReg (Xhc, Xhc->DebugCapSupOffset) & 0xFF) == XHC_CAP_USB_DEBUG) &&
+  case EFI_USB_HC_RESET_GLOBAL:
+  //
+  // Flow through, same behavior as Host Controller Reset
+  //
+  case EFI_USB_HC_RESET_HOST_CONTROLLER:
+    if ((Xhc->DebugCapSupOffset != 0xFFFFFFFF) && ((XhcReadExtCapReg (Xhc, Xhc->DebugCapSupOffset) & 0xFF) == XHC_CAP_USB_DEBUG) &&
         ((XhcReadExtCapReg (Xhc, Xhc->DebugCapSupOffset + XHC_DC_DCCTRL) & BIT0) != 0)) {
       Status = EFI_SUCCESS;
       goto ON_EXIT;
     }
-      //
-      // Host Controller must be Halt when Reset it
-      //
-      if (!XhcIsHalt (Xhc)) {
-        Status = XhcHaltHC (Xhc, XHC_GENERIC_TIMEOUT);
+    //
+    // Host Controller must be Halt when Reset it
+    //
+    if (!XhcIsHalt (Xhc)) {
+      Status = XhcHaltHC (Xhc, XHC_GENERIC_TIMEOUT);
 
-        if (EFI_ERROR (Status)) {
-          Status = EFI_DEVICE_ERROR;
-          goto ON_EXIT;
-        }
-      }
-
-      Status = XhcResetHC (Xhc, XHC_RESET_TIMEOUT);
       if (EFI_ERROR (Status)) {
+        Status = EFI_DEVICE_ERROR;
         goto ON_EXIT;
       }
+    }
 
-      HCbit = XHC_REG_BIT_IS_SET (Xhc, XHC_USBSTS_OFFSET, XHC_USBSTS_CNR);
-      if (HCbit) {
-        DBG("ResetHC bit is set=%x, exitting\n", HCbit);
-        goto ON_EXIT;
-      }
-//    ASSERT (!(XHC_REG_BIT_IS_SET (Xhc, XHC_USBSTS_OFFSET, XHC_USBSTS_CNR)));
+    Status = XhcResetHC (Xhc, XHC_RESET_TIMEOUT);
+//  ASSERT (!(XHC_REG_BIT_IS_SET (Xhc, XHC_USBSTS_OFFSET, XHC_USBSTS_CNR)));
 
-      //
-      // Clean up the asynchronous transfers, currently only
-      // interrupt supports asynchronous operation.
-      //
-      XhciDelAllAsyncIntTransfers (Xhc);
-      XhcFreeSched (Xhc);
+    if (EFI_ERROR (Status)) {
+      goto ON_EXIT;
+    }
+    //
+    // Clean up the asynchronous transfers, currently only
+    // interrupt supports asynchronous operation.
+    //
+    XhciDelAllAsyncIntTransfers (Xhc);
+    XhcFreeSched (Xhc);
 
-      XhcInitSched (Xhc);
-      break;
+    XhcInitSched (Xhc);
+    break;
 
-    case EFI_USB_HC_RESET_GLOBAL_WITH_DEBUG:
-    case EFI_USB_HC_RESET_HOST_WITH_DEBUG:
-      Status = EFI_UNSUPPORTED;
-      break;
+  case EFI_USB_HC_RESET_GLOBAL_WITH_DEBUG:
+  case EFI_USB_HC_RESET_HOST_WITH_DEBUG:
+    Status = EFI_UNSUPPORTED;
+    break;
 
-    default:
-      Status = EFI_INVALID_PARAMETER;
+  default:
+    Status = EFI_INVALID_PARAMETER;
   }
 
 ON_EXIT:
@@ -463,6 +471,14 @@ XhcGetRootHubPortStatus (
     }
   }
 
+  MapSize = sizeof (mUsbClearPortChangeMap) / sizeof (USB_CLEAR_PORT_MAP);
+
+  for (Index = 0; Index < MapSize; Index++) {
+    if (XHC_BIT_IS_SET (State, mUsbClearPortChangeMap[Index].HwState)) {
+      XhcClearRootHubPortFeature (This, PortNumber, (EFI_USB_PORT_FEATURE)mUsbClearPortChangeMap[Index].Selector);
+    }
+  }
+
   //
   // Poll the root port status register to enable/disable corresponding device slot if there is a device attached/detached.
   // For those devices behind hub, we get its attach/detach event by hooking Get_Port_Status request at control transfer for those hub.
@@ -500,8 +516,6 @@ XhcSetRootHubPortFeature (
   UINT32                  Offset;
   UINT32                  State;
   UINT32                  TotalPort;
-  UINT8                   SlotId;
-  USB_DEV_ROUTE           RouteChart;
   EFI_STATUS              Status;
   EFI_TPL                 OldTpl;
 
@@ -559,24 +573,13 @@ XhcSetRootHubPortFeature (
       }
     }
 
-    RouteChart.Route.RouteString = 0;
-    RouteChart.Route.RootPortNum = PortNumber + 1;
-    RouteChart.Route.TierNum     = 1;
     //
-    // If the port reset operation happens after the usb super speed device is enabled,
-    // The subsequent configuration, such as getting device descriptor, will fail.
-    // So here a workaround is introduced to skip the reset operation if the device is enabled.
+    // 4.3.1 Resetting a Root Hub Port
+    // 1) Write the PORTSC register with the Port Reset (PR) bit set to '1'.
     //
-    SlotId = XhcRouteStringToSlotId (Xhc, RouteChart);
-    if (SlotId == 0) {
-      //
-      // 4.3.1 Resetting a Root Hub Port
-      // 1) Write the PORTSC register with the Port Reset (PR) bit set to '1'.
-      //
-      State |= XHC_PORTSC_RESET;
-      XhcWriteOpReg (Xhc, Offset, State);
-      XhcWaitOpRegBit(Xhc, Offset, XHC_PORTSC_PRC, TRUE, XHC_GENERIC_TIMEOUT);
-    }
+    State |= XHC_PORTSC_RESET;
+    XhcWriteOpReg (Xhc, Offset, State);
+    XhcWaitOpRegBit(Xhc, Offset, XHC_PORTSC_PRC, TRUE, XHC_GENERIC_TIMEOUT);
     break;
 
   case EfiUsbPortPower:
@@ -812,6 +815,8 @@ XhcControlTransfer (
   UINTN                   MapSize;
   EFI_USB_PORT_STATUS     PortStatus;
   UINT32                  State;
+  EFI_USB_DEVICE_REQUEST  ClearPortRequest;
+  UINTN                   Len;
 
   //
   // Validate parameters
@@ -857,6 +862,7 @@ XhcControlTransfer (
 
   Status          = EFI_DEVICE_ERROR;
   *TransferResult = EFI_USB_ERR_SYSTEM;
+  Len             = 0;
 
   if (XhcIsHalt (Xhc) || XhcIsSysError (Xhc)) {
 //    DEBUG ((EFI_D_ERROR, "XhcControlTransfer: HC halted at entrance\n"));
@@ -889,6 +895,11 @@ XhcControlTransfer (
         Xhc->UsbDevContext[Index + 1].BusDevAddr = 0;
       }
     }
+
+    if (Xhc->UsbDevContext[SlotId].XhciDevAddr == 0) {
+      Status = EFI_DEVICE_ERROR;
+      goto ON_EXIT;
+    }
     //
     // The actual device address has been assigned by XHCI during initializing the device slot.
     // So we just need establish the mapping relationship between the device address requested from UsbBus
@@ -898,20 +909,6 @@ XhcControlTransfer (
     Xhc->UsbDevContext[SlotId].BusDevAddr = (UINT8)Request->Value;
     Status = EFI_SUCCESS;
     goto ON_EXIT;
-  }
-  
-  //
-  // If the port reset operation happens after the usb super speed device is enabled,
-  // The subsequent configuration, such as getting device descriptor, will fail.
-  // So here a workaround is introduced to skip the reset operation if the device is enabled.
-  //
-  if ((Request->Request     == USB_REQ_SET_FEATURE) &&
-      (Request->RequestType == USB_REQUEST_TYPE (EfiUsbNoData, USB_REQ_TYPE_CLASS, USB_TARGET_OTHER)) &&
-      (Request->Value       == EfiUsbPortReset)) {
-    if (DeviceSpeed == EFI_USB_SPEED_SUPER) {
-      Status = EFI_SUCCESS;
-      goto ON_EXIT;
-    }
   }
 
   //
@@ -1028,6 +1025,10 @@ XhcControlTransfer (
         }
         Xhc->UsbDevContext[SlotId].ConfDesc[Index] = AllocateZeroPool(*DataLength);
         CopyMem (Xhc->UsbDevContext[SlotId].ConfDesc[Index], Data, *DataLength);
+        //
+        // Default to use AlternateSetting 0 for all interfaces.
+        //
+        Xhc->UsbDevContext[SlotId].ActiveAlternateSetting = AllocateZeroPool (Xhc->UsbDevContext[SlotId].ConfDesc[Index]->NumInterfaces * sizeof (UINT8));
       }
     } else if (((DescriptorType == USB_DESC_TYPE_HUB) ||
                (DescriptorType == USB_DESC_TYPE_HUB_SUPER_SPEED)) && (*DataLength > 2)) {
@@ -1079,6 +1080,20 @@ XhcControlTransfer (
         break;
       }
     }
+  } else if ((Request->Request     == USB_REQ_SET_INTERFACE) &&
+             (Request->RequestType == USB_REQUEST_TYPE (EfiUsbNoData, USB_REQ_TYPE_STANDARD, USB_TARGET_INTERFACE))) {
+    //
+    // Hook Set_Interface request from UsbBus as we need configure interface setting.
+    // Request->Value indicates AlterlateSetting to set
+    // Request->Index indicates Interface to set
+    //
+    if (Xhc->UsbDevContext[SlotId].ActiveAlternateSetting[(UINT8) Request->Index] != (UINT8) Request->Value) {
+      if (Xhc->HcCParams.Data.Csz == 0) {
+        Status = XhcSetInterface (Xhc, SlotId, DeviceSpeed, Xhc->UsbDevContext[SlotId].ConfDesc[Xhc->UsbDevContext[SlotId].ActiveConfiguration - 1], Request);
+      } else {
+        Status = XhcSetInterface64 (Xhc, SlotId, DeviceSpeed, Xhc->UsbDevContext[SlotId].ConfDesc[Xhc->UsbDevContext[SlotId].ActiveConfiguration - 1], Request);
+      }
+    }
   } else if ((Request->Request     == USB_REQ_GET_STATUS) &&
              (Request->RequestType == USB_REQUEST_TYPE (EfiUsbDataIn, USB_REQ_TYPE_CLASS, USB_TARGET_OTHER))) {
     //      ASSERT (Data != NULL);
@@ -1125,6 +1140,33 @@ XhcControlTransfer (
     for (Index = 0; Index < MapSize; Index++) {
       if (XHC_BIT_IS_SET (State, mUsbHubPortChangeMap[Index].HwState)) {
         PortStatus.PortChangeStatus = (UINT16) (PortStatus.PortChangeStatus | mUsbHubPortChangeMap[Index].UefiState);
+      }
+    }
+
+    MapSize = sizeof (mUsbHubClearPortChangeMap) / sizeof (USB_CLEAR_PORT_MAP);
+
+    for (Index = 0; Index < MapSize; Index++) {
+      if (XHC_BIT_IS_SET (State, mUsbHubClearPortChangeMap[Index].HwState)) {
+        ZeroMem (&ClearPortRequest, sizeof (EFI_USB_DEVICE_REQUEST));
+        ClearPortRequest.RequestType  = USB_REQUEST_TYPE (EfiUsbNoData, USB_REQ_TYPE_CLASS, USB_TARGET_OTHER);
+        ClearPortRequest.Request      = (UINT8) USB_REQ_CLEAR_FEATURE;
+        ClearPortRequest.Value        = mUsbHubClearPortChangeMap[Index].Selector;
+        ClearPortRequest.Index        = Request->Index;
+        ClearPortRequest.Length       = 0;
+
+        XhcControlTransfer (
+          This, 
+          DeviceAddress,
+          DeviceSpeed,
+          MaximumPacketLength,
+          &ClearPortRequest,
+          EfiUsbNoData,
+          NULL,
+          &Len,
+          Timeout,
+          Translator,
+          TransferResult
+          );
       }
     }
 
@@ -1895,7 +1937,7 @@ ON_ERROR:
   One notified function to stop the Host Controller when gBS->ExitBootServices() called.
 
   @param  Event                   Pointer to this event
-  @param  Context                 Event hanlder private data
+  @param  Context                 Event handler private data
 
 **/
 VOID
@@ -2022,8 +2064,7 @@ XhcDriverBindingStart (
                     );
   DBG("attribute supports=%x Status=%r\n", Supports, Status);
   if (!EFI_ERROR (Status)) {
-    
-    Supports &= EFI_PCI_DEVICE_ENABLE;
+    Supports &= (UINT64)EFI_PCI_DEVICE_ENABLE;
     Status = PciIo->Attributes (
                       PciIo,
                       EfiPciIoAttributeOperationEnable,
@@ -2218,6 +2259,16 @@ XhcDriverBindingStop (
     return Status;
   }
 
+  Status = gBS->UninstallProtocolInterface (
+                  Controller,
+                  &gEfiUsb2HcProtocolGuid,
+                  Usb2Hc
+                  );
+
+  if (EFI_ERROR (Status)) {
+    return Status;
+  }
+
   Xhc   = XHC_FROM_THIS (Usb2Hc);
   PciIo = Xhc->PciIo;
 
@@ -2243,19 +2294,6 @@ XhcDriverBindingStop (
     }
   }
 
-  XhcHaltHC (Xhc, XHC_GENERIC_TIMEOUT);
-//  XhcClearBiosOwnership (Xhc);
-
-  Status = gBS->UninstallProtocolInterface (
-                  Controller,
-                  &gEfiUsb2HcProtocolGuid,
-                  Usb2Hc
-                  );
-
-  if (EFI_ERROR (Status)) {
-    return Status;
-  }
-
   if (Xhc->PollTimer != NULL) {
     gBS->CloseEvent (Xhc->PollTimer);
   }
@@ -2264,6 +2302,8 @@ XhcDriverBindingStop (
     gBS->CloseEvent (Xhc->ExitBootServiceEvent);
   }
 
+  XhcHaltHC (Xhc, XHC_GENERIC_TIMEOUT);
+//  XhcClearBiosOwnership (Xhc);
   XhciDelAllAsyncIntTransfers (Xhc);
   XhcFreeSched (Xhc);
 
