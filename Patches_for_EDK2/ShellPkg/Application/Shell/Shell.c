@@ -2,7 +2,7 @@
   This is THE shell (application)
 
   Copyright (c) 2009 - 2015, Intel Corporation. All rights reserved.<BR>
-  (C) Copyright 2013-2014, Hewlett-Packard Development Company, L.P.
+  (C) Copyright 2013-2014 Hewlett-Packard Development Company, L.P.<BR>
   This program and the accompanying materials
   are licensed and made available under the terms and conditions of the BSD License
   which accompanies this distribution.  The full text of the license may be found at
@@ -2793,61 +2793,61 @@ CalleeExitStatus = SHELL_SUCCESS;
       if (NewScriptFile->Argv != NULL) {
         switch (NewScriptFile->Argc) {
           default:
-            Status = ShellCopySearchAndReplace(CommandLine2,  CommandLine, PcdGet16 (PcdShellPrintBufferSize), L"%9", NewScriptFile->Argv[9], FALSE, FALSE);
+            Status = ShellCopySearchAndReplace(CommandLine2,  CommandLine, PcdGet16 (PcdShellPrintBufferSize), L"%9", NewScriptFile->Argv[9], FALSE, TRUE);
          //   ASSERT_EFI_ERROR(Status);
             if (EFI_ERROR(Status)) {
               return Status;
             }
           case 9:
-            Status = ShellCopySearchAndReplace(CommandLine,  CommandLine2, PcdGet16 (PcdShellPrintBufferSize), L"%8", NewScriptFile->Argv[8], FALSE, FALSE);
+            Status = ShellCopySearchAndReplace(CommandLine,  CommandLine2, PcdGet16 (PcdShellPrintBufferSize), L"%8", NewScriptFile->Argv[8], FALSE, TRUE);
             //   ASSERT_EFI_ERROR(Status);
             if (EFI_ERROR(Status)) {
               return Status;
             }
           case 8:
-            Status = ShellCopySearchAndReplace(CommandLine2,  CommandLine, PcdGet16 (PcdShellPrintBufferSize), L"%7", NewScriptFile->Argv[7], FALSE, FALSE);
+            Status = ShellCopySearchAndReplace(CommandLine2,  CommandLine, PcdGet16 (PcdShellPrintBufferSize), L"%7", NewScriptFile->Argv[7], FALSE, TRUE);
             //   ASSERT_EFI_ERROR(Status);
             if (EFI_ERROR(Status)) {
               return Status;
             }
           case 7:
-            Status = ShellCopySearchAndReplace(CommandLine,  CommandLine2, PcdGet16 (PcdShellPrintBufferSize), L"%6", NewScriptFile->Argv[6], FALSE, FALSE);
+            Status = ShellCopySearchAndReplace(CommandLine,  CommandLine2, PcdGet16 (PcdShellPrintBufferSize), L"%6", NewScriptFile->Argv[6], FALSE, TRUE);
             //   ASSERT_EFI_ERROR(Status);
             if (EFI_ERROR(Status)) {
               return Status;
             }
           case 6:
-            Status = ShellCopySearchAndReplace(CommandLine2,  CommandLine, PcdGet16 (PcdShellPrintBufferSize), L"%5", NewScriptFile->Argv[5], FALSE, FALSE);
+            Status = ShellCopySearchAndReplace(CommandLine2,  CommandLine, PcdGet16 (PcdShellPrintBufferSize), L"%5", NewScriptFile->Argv[5], FALSE, TRUE);
             //   ASSERT_EFI_ERROR(Status);
             if (EFI_ERROR(Status)) {
               return Status;
             }
           case 5:
-            Status = ShellCopySearchAndReplace(CommandLine,  CommandLine2, PcdGet16 (PcdShellPrintBufferSize), L"%4", NewScriptFile->Argv[4], FALSE, FALSE);
+            Status = ShellCopySearchAndReplace(CommandLine,  CommandLine2, PcdGet16 (PcdShellPrintBufferSize), L"%4", NewScriptFile->Argv[4], FALSE, TRUE);
             //   ASSERT_EFI_ERROR(Status);
             if (EFI_ERROR(Status)) {
               return Status;
             }
           case 4:
-            Status = ShellCopySearchAndReplace(CommandLine2,  CommandLine, PcdGet16 (PcdShellPrintBufferSize), L"%3", NewScriptFile->Argv[3], FALSE, FALSE);
+            Status = ShellCopySearchAndReplace(CommandLine2,  CommandLine, PcdGet16 (PcdShellPrintBufferSize), L"%3", NewScriptFile->Argv[3], FALSE, TRUE);
             //   ASSERT_EFI_ERROR(Status);
             if (EFI_ERROR(Status)) {
               return Status;
             }
           case 3:
-            Status = ShellCopySearchAndReplace(CommandLine,  CommandLine2, PcdGet16 (PcdShellPrintBufferSize), L"%2", NewScriptFile->Argv[2], FALSE, FALSE);
+            Status = ShellCopySearchAndReplace(CommandLine,  CommandLine2, PcdGet16 (PcdShellPrintBufferSize), L"%2", NewScriptFile->Argv[2], FALSE, TRUE);
             //   ASSERT_EFI_ERROR(Status);
             if (EFI_ERROR(Status)) {
               return Status;
             }
           case 2:
-            Status = ShellCopySearchAndReplace(CommandLine2,  CommandLine, PcdGet16 (PcdShellPrintBufferSize), L"%1", NewScriptFile->Argv[1], FALSE, FALSE);
+            Status = ShellCopySearchAndReplace(CommandLine2,  CommandLine, PcdGet16 (PcdShellPrintBufferSize), L"%1", NewScriptFile->Argv[1], FALSE, TRUE);
             //   ASSERT_EFI_ERROR(Status);
             if (EFI_ERROR(Status)) {
               return Status;
             }
           case 1:
-            Status = ShellCopySearchAndReplace(CommandLine,  CommandLine2, PcdGet16 (PcdShellPrintBufferSize), L"%0", NewScriptFile->Argv[0], FALSE, FALSE);
+            Status = ShellCopySearchAndReplace(CommandLine,  CommandLine2, PcdGet16 (PcdShellPrintBufferSize), L"%0", NewScriptFile->Argv[0], FALSE, TRUE);
             //   ASSERT_EFI_ERROR(Status);
             if (EFI_ERROR(Status)) {
               return Status;
@@ -3034,7 +3034,7 @@ RunScriptFile (
 }
 
 /**
-  Return the pointer to the first occurance of any character from a list of characters
+  Return the pointer to the first occurance of any character from a list of characters.
 
   @param[in] String           the string to parse
   @param[in] CharacterList    the list of character to look for

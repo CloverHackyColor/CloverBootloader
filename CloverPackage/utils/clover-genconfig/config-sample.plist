@@ -590,15 +590,15 @@
 			</dict>
 			<dict>
 				<key>Comment</key>
-				<string>Power states 1-&gt; 0</string>
+				<string>Power state 1 - 0</string>
 				<key>Name</key>
-				<string>Some_kext</string>
-				<key>Find</key>
-				<data>PHN0cmluZz5Qb3dlclN0YXRlczwvc3RyaW5nPgo8aW50ZWdlcj4xPC9pbnRlZ2VyPg==</data>
+				<string>AppleIntelHDGraphicsFB</string>
 				<key>InfoPlistPatch</key>
 				<true/>
+				<key>Find</key>
+				<data>PGtleT5Qb3dlclN0YXRlczwva2V5PjxpbnRlZ2VyPjE8L2ludGVnZXI+</data>
 				<key>Replace</key>
-				<data>PHN0cmluZz5Qb3dlclN0YXRlczwvc3RyaW5nPgo8aW50ZWdlcj4wPC9pbnRlZ2VyPg==</data>
+				<data>PGtleT5Qb3dlclN0YXRlczwva2V5PjxpbnRlZ2VyPjA8L2ludGVnZXI+</data>
 			</dict>
 		</array>
 	</dict>
