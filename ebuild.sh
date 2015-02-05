@@ -189,7 +189,7 @@ usage() {
     echo "Target:"
     print_option_help "-ia32"      "build Clover in 32-bit [boot3]"
     print_option_help "-x64"       "build Clover in 64-bit [boot6] [Default]"
-    print_option_help “—mc, -x64-mcp"   "build Clover in 64-bit [boot7] using BiosBlockIO (compatible with MCP chipset)"
+    print_option_help "-mc, --x64-mcp"   "build Clover in 64-bit [boot7] using BiosBlockIO (compatible with MCP chipset)"
     print_option_help "-a TARGETARCH, --arch=TARGETARCH" "overrides target.txt's TARGET_ARCH definition"
     print_option_help "-p PLATFORMFILE, --platform=PLATFORMFILE" "Build the platform specified by the DSC filename argument"
     print_option_help "-m MODULEFILE, --module=MODULEFILE" "Build only the module specified by the INF filename argument"
@@ -286,8 +286,8 @@ checkCmdlineArguments() {
                 USE_LOW_EBDA=1
                 ;;
             --no-usb)
-               addEdk2BuildMacro DISABLE_USB_SUPPORT
-               ;;
+                addEdk2BuildMacro DISABLE_USB_SUPPORT
+                ;;
             -h | -\? | -help | --help)
                 usage && exit 0
                 ;;
