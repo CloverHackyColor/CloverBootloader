@@ -334,7 +334,9 @@ IdentifyAtaDevice (
       AtaDevice->UdmaValid = TRUE;
     }
   }
- // AtaDevice->UdmaValid = FALSE; //Slice
+#ifdef DISABLE_UDMA_SUPPORT
+  AtaDevice->UdmaValid = FALSE; //Slice
+#endif
 
   Capacity = GetAtapi6Capacity (AtaDevice);
   if (Capacity > MAX_28BIT_ADDRESSING_CAPACITY) {
