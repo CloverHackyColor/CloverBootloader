@@ -208,6 +208,7 @@ AtaPassThruPassThruExecute (
   Mode = Instance->Mode;
   switch (Mode) {
     case EfiAtaIdeMode:
+#if 0
       //
       // Reassign IDE mode io port registers' base addresses
       //
@@ -216,6 +217,7 @@ AtaPassThruPassThruExecute (
       if (EFI_ERROR (Status)) {
         return Status;
       }
+#endif
 //      DBG(L"Protocol = %x\n", Protocol);
       switch (Protocol) {
         case EFI_ATA_PASS_THRU_PROTOCOL_ATA_NON_DATA:
@@ -2065,6 +2067,7 @@ ExtScsiPassThruPassThru (
   Mode = Instance->Mode;
   switch (Mode) {
     case EfiAtaIdeMode:
+#if 0
       //
       // Reassign IDE mode io port registers' base addresses
       //
@@ -2074,6 +2077,7 @@ ExtScsiPassThruPassThru (
 //        DBG(L"GetIdeRegisterIoAddr Status=%r\n", Status);
         return Status;
       }
+#endif
 
       Status = AtaPacketCommandExecute (Instance->PciIo, &Instance->IdeRegisters[Port], Port, PortMultiplier, Packet);
 //      DBG(L"AtaPacketCommandExecute Multiplier=%d Status=%r\n", PortMultiplier, Status);

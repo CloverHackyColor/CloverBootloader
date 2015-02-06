@@ -1398,10 +1398,12 @@ AtaIssueCommand (
   //
   IdeWritePortB (PciIo, IdeRegisters->CmdOrStatus, AtaCommand);
 
+#if 0
   //
   // Stall at least 400 microseconds.
   //
   MicroSecondDelay (400);
+#endif
 
   return EFI_SUCCESS;
 }
@@ -1793,6 +1795,7 @@ AtaUdmaInOut (
   UINTN                         PageCount;
   UINTN                         ByteCount;
   UINTN                         ByteRemaining;
+  UINTN                         BytesThisPrd;
   UINT8                         DeviceControl;
 
   VOID                          *BufferMap;
@@ -1852,7 +1855,7 @@ AtaUdmaInOut (
     // Calculate the number of PRD entry.
     // Every entry in PRD table can specify a 64K memory region.
     //
-    PrdTableNum   = (UINTN)(RShiftU64(DataLength, 16) + 1);
+    PrdTableNum   = (UINTN)(RShiftU64(DataLength, 16) + 2);
 
     //
     // Make sure that the memory region of PRD table is not cross 64K boundary
@@ -1866,15 +1869,8 @@ AtaUdmaInOut (
     // Allocate buffer for PRD table initialization.
     //
     PageCount = EFI_SIZE_TO_PAGES (PrdTableSize);
-    Status    = PciIo->AllocateBuffer (
-                         PciIo,
-                         AllocateAnyPages,
-                         EfiBootServicesData,
-                         PageCount,
-                         (VOID **)&PrdBaseAddr,
-                         0
-                         );
-    if (EFI_ERROR (Status)) {
+    PrdBaseAddr = (EFI_ATA_DMA_PRD*) AllocateAlignedPages(PageCount, GetPowerOfTwo32((UINT32)PrdTableSize) << 1);
+    if (!PrdBaseAddr) {
       return EFI_OUT_OF_RESOURCES;
     }
 
@@ -1893,11 +1889,11 @@ AtaUdmaInOut (
       // it means the DMA operation may be broken into several discontinuous smaller chunks.
       // Can't handle this case.
       //
-      PciIo->FreeBuffer (PciIo, PageCount, PrdBaseAddr);
+      FreeAlignedPages(PrdBaseAddr, PageCount);
       return EFI_OUT_OF_RESOURCES;
     }
 
-    ZeroMem ((VOID *) ((UINTN) PrdBaseAddr), PrdTableSize);
+    ZeroMem (PrdBaseAddr, PrdTableSize);
 
     //
     // Map the host address of DataBuffer to DMA master address.
@@ -1919,7 +1915,7 @@ AtaUdmaInOut (
                          );
     if (EFI_ERROR (Status) || (ByteCount != DataLength)) {
       PciIo->Unmap (PciIo, PrdTableMap);
-      PciIo->FreeBuffer (PciIo, PageCount, PrdBaseAddr);
+      FreeAlignedPages(PrdBaseAddr, PageCount);
       return EFI_OUT_OF_RESOURCES;
     }
 
@@ -1935,20 +1931,19 @@ AtaUdmaInOut (
     ByteRemaining   = ByteCount;
     TempPrdBaseAddr = PrdBaseAddr;
     while (ByteRemaining != 0) {
-      if (ByteRemaining <= 0x10000) {
-        TempPrdBaseAddr->RegionBaseAddr = (UINT32) ((UINTN) BufferMapAddress);
-        TempPrdBaseAddr->ByteCount      = (UINT16) ByteRemaining;
-        TempPrdBaseAddr->EndOfTable     = 0x8000;
-        break;
+      BytesThisPrd = ByteRemaining < 0x10000U ? ByteRemaining : 0x10000U;
+      if ((((UINTN)BufferMapAddress + BytesThisPrd - 1U) >> 16) != ((UINTN)BufferMapAddress >> 16)) {
+        BytesThisPrd = ((UINTN)BufferMapAddress & ~(UINTN)0xFFFFU) + 0x10000U - (UINTN)BufferMapAddress;
       }
 
       TempPrdBaseAddr->RegionBaseAddr = (UINT32) ((UINTN) BufferMapAddress);
-      TempPrdBaseAddr->ByteCount      = (UINT16) 0x0;
-
-      ByteRemaining    -= 0x10000;
-      BufferMapAddress += 0x10000;
-      TempPrdBaseAddr++;
+      TempPrdBaseAddr->ByteCount      = (UINT16) BytesThisPrd;
+      ByteRemaining    -= BytesThisPrd;
+      BufferMapAddress += BytesThisPrd;
+      ++TempPrdBaseAddr;
     }
+    if (TempPrdBaseAddr != PrdBaseAddr)
+      TempPrdBaseAddr[-1].EndOfTable     = 0x8000U;
 
     //
     // Start to enable the DMA operation
@@ -2054,7 +2049,9 @@ AtaUdmaInOut (
     // Read Status Register of IDE device to clear interrupt
     //
     /*RegisterValue  =*/ IdeReadPortB(PciIo, IdeRegisters->CmdOrStatus);
+#if 0
     MicroSecondDelay (1000);
+#endif
     //
     // Clear START bit of BMIC register
     //
@@ -2068,10 +2065,12 @@ AtaUdmaInOut (
     DeviceControl  = IdeReadPortB (PciIo, IdeRegisters->AltOrDev);
     DeviceControl |= ATA_CTLREG_IEN_L;
     IdeWritePortB (PciIo, IdeRegisters->AltOrDev, DeviceControl);
+#if 0
     //
     // Stall for 10 milliseconds.
     //
     MicroSecondDelay (10000);
+#endif
 
   }
 
@@ -2082,11 +2081,11 @@ Exit:
   if ((Task == NULL) || Status != EFI_NOT_READY) {
     if (Task != NULL) {
       PciIo->Unmap (PciIo, Task->TableMap);
-      PciIo->FreeBuffer (PciIo, Task->PageCount, Task->MapBaseAddress);
+      FreeAlignedPages(Task->MapBaseAddress, Task->PageCount);
       PciIo->Unmap (PciIo, Task->Map);
     } else {
       PciIo->Unmap (PciIo, PrdTableMap);
-      PciIo->FreeBuffer (PciIo, PageCount, PrdBaseAddr);
+      FreeAlignedPages(PrdBaseAddr, PageCount);
       PciIo->Unmap (PciIo, BufferMap);
     }
 
@@ -2343,6 +2342,11 @@ AtaPacketCommandExecute (
   if (EFI_ERROR (Status)) {
     return Status;
   }
+
+  //
+  // Stall at least 400 nanoseconds.
+  //
+  MicroSecondDelay (1);
 
   Status = DRQReady (PciIo, IdeRegisters, Packet->Timeout);
   if (EFI_ERROR (Status)) {
