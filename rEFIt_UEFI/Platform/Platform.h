@@ -150,7 +150,7 @@ Headers collection for procedures
 #define CPU_MODEL_FIELDS        0x1E  /* Lynnfield, Clarksfield, Jasper */
 #define CPU_MODEL_DALES         0x1F  /* Havendale, Auburndale */
 #define CPU_MODEL_CLARKDALE     0x25  /* Clarkdale, Arrandale */
-#define CPU_MODEL_ATOM_SAN      0x26  /* UN */
+#define CPU_MODEL_ATOM_SAN      0x26  /* Haswell H ? */
 #define CPU_MODEL_LINCROFT      0x27  /* UN */
 #define CPU_MODEL_SANDY_BRIDGE	0x2A
 #define CPU_MODEL_WESTMERE      0x2C  /* Gulftown LGA1366 */
