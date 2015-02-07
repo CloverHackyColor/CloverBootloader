@@ -31,7 +31,7 @@ fi
 
 last_revision=$(LC_ALL=C $CURL --silent --fail --connect-timeout 30 \
  --max-time 60 "$CLOVER_LAST_VERSION_URL" 2>&1 |                    \
- $SED -nE 's#^.*Installer/Clover_v2*k?_r([0-9]+).*#\1#p')
+ $SED -nE 's#^.*Installer/Clover_v2.3k?_r([0-9]+).*#\1#p')
 
 [[ -z "$last_revision" ]] && exit 1
 
