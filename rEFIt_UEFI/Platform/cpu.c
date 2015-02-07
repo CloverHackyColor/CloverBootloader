@@ -204,7 +204,8 @@ VOID GetCPUProperties (VOID)
       case CPU_MODEL_SANDY_BRIDGE:	
 			case CPU_MODEL_IVY_BRIDGE:	
       case CPU_MODEL_IVY_BRIDGE_E5: 
-      case CPU_MODEL_HASWELL:  
+      case CPU_MODEL_HASWELL:
+      case CPU_MODEL_HASWELL_U5:
       case CPU_MODEL_HASWELL_MB:
       case CPU_MODEL_HASWELL_ULT:
       case CPU_MODEL_HASWELL_ULX:
@@ -336,6 +337,7 @@ VOID GetCPUProperties (VOID)
           case CPU_MODEL_IVY_BRIDGE_E5:  
           case CPU_MODEL_JAKETOWN:
           case CPU_MODEL_HASWELL:
+          case CPU_MODEL_HASWELL_U5:
           case CPU_MODEL_HASWELL_MB:
           case CPU_MODEL_HASWELL_ULT:
           case CPU_MODEL_HASWELL_ULX:
@@ -763,6 +765,7 @@ UINT16 GetAdvancedCpuType ()
               return 0x604;
             }
 						return 0x704;
+          case CPU_MODEL_HASWELL_U5:
           case CPU_MODEL_IVY_BRIDGE_E5:
             return 0xA01;
           case CPU_MODEL_HASWELL:
@@ -837,6 +840,7 @@ MACHINE_TYPES GetDefaultModel()
 				break;  
       case CPU_MODEL_HASWELL_ULT:
       case CPU_MODEL_HASWELL_ULX:
+      case CPU_MODEL_HASWELL_U5:
         DefaultType = MacBookPro111;
 				break;  
 			default:
@@ -922,6 +926,9 @@ MACHINE_TYPES GetDefaultModel()
 			case CPU_MODEL_JAKETOWN:
 				DefaultType = MacPro41;
 				break;
+      case CPU_MODEL_HASWELL_U5:
+        DefaultType = iMac151;
+        break;
       case CPU_MODEL_HASWELL:
       case CPU_MODEL_HASWELL_MB:
         DefaultType = iMac142;
