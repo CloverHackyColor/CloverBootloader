@@ -3322,6 +3322,21 @@ GetUserSettings(
   Dict              = CfgDict;
   if (Dict != NULL) {
     DBG ("Loading main settings\n");
+    
+    // Boot settings.
+    // Discussion. Why Arguments is here? It should be SystemParameters property!
+    // we will read them again because of change in GUI menu. It is not only EarlySettings
+    //
+    DictPointer = GetProperty (Dict, "Boot");
+    if (DictPointer != NULL) {
+      
+      Prop = GetProperty (DictPointer, "Arguments");
+      if (Prop != NULL && (Prop->type == kTagTypeString) && Prop->string != NULL) {
+        AsciiStrnCpy(gSettings.BootArgs, Prop->string, 255);
+      }
+    }
+    
+    
     //Graphics
     
     DictPointer = GetProperty (Dict, "Graphics");
@@ -4587,7 +4602,7 @@ GetUserSettings(
     SaveSettings();
   }
 //DBG ("config.plist read and return %r\n", Status);
-  return Status;
+  return EFI_SUCCESS;
 }
 
 CHAR16* SystemPlists[] = { L"\\System\\Library\\CoreServices\\SystemVersion.plist", // OS X Regular

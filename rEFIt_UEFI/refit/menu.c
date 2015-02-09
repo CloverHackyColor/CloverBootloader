@@ -877,9 +877,9 @@ VOID ApplyInputs(VOID)
           }
         }
       } else {
-        LoadUserSettings(SelfRootDir, InputItems[i].SValue, &dict);
-        Status = GetUserSettings(SelfRootDir, dict);
+        Status = LoadUserSettings(SelfRootDir, InputItems[i].SValue, &dict);
         if (!EFI_ERROR(Status)) {
+          GetUserSettings(SelfRootDir, dict);        
           if (gConfigDict[2]) FreeTag(gConfigDict[2]);
           gConfigDict[2] = dict;
           if (gSettings.ConfigName) FreePool(gSettings.ConfigName);
