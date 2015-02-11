@@ -97,7 +97,7 @@ card_config_t card_configs[] = {
 	{"Hamachi",	4},
 	{"OPM",         6},
 	{"Ikura",       6},
-	{"IkuraS",      1}.
+	{"IkuraS",      1},
   {"Baladi",		5},
 };
 
