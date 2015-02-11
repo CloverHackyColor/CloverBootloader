@@ -166,6 +166,7 @@ typedef enum {
 	kOPM,
 	kIkura,
 	kIkuraS,
+  kBaladi,
 	kCfgEnd
 } config_name_t;
 
