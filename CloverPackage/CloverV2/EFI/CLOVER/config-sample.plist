@@ -526,8 +526,8 @@
 		<false/>
 		<key>KernelLapic</key>
 		<false/>
-    <key>KernelHaswellE</key>
-    <false/>
+	    <key>KernelHaswellE</key>
+	    <false/>
 		<key>#KextsToPatch</key>
 		<array>
 			<dict>
@@ -549,16 +549,6 @@
 				<string>AppleHDAController</string>
 				<key>Replace</key>
 				<string>0x44220000</string>
-			</dict>
-			<dict>
-				<key>Comment</key>
-				<string>Trim enabler</string>
-				<key>Name</key>
-				<string>AppleAHCIPort</string>
-				<key>Find</key>
-				<data>QVBQTEUgU1NE</data>
-				<key>Replace</key>
-				<data>AAAAAAAAAAAA</data>
 			</dict>
 			<dict>
 				<key>Find</key>

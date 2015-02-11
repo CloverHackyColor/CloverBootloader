@@ -713,6 +713,7 @@ radeon_card_info_t radeon_cards[] = {
 	{ 0x6806,	0x00000000, CHIP_FAMILY_PITCAIRN,	"AMD Radeon HD 7600 Series",	kFutomaki	},
 	{ 0x6808,	0x00000000, CHIP_FAMILY_PITCAIRN,	"AMD Radeon HD 7600 Series",	kFutomaki	},
 //	{ 0x6809,	0x00000000, CHIP_FAMILY_PITCAIRN,	"AMD Radeon HD ??? Series",	kNull		},
+  //Curacao
 	{ 0x6810,	0x00000000, CHIP_FAMILY_PITCAIRN,	"AMD Radeon R9 270X",	kFutomaki		},
 	{ 0x6811,	0x00000000, CHIP_FAMILY_PITCAIRN,	"AMD Radeon R9 270",	kFutomaki		},
 //	{ 0x6816,	0x00000000, CHIP_FAMILY_PITCAIRN,	"AMD Radeon",	kFutomaki		},
@@ -760,9 +761,10 @@ radeon_card_info_t radeon_cards[] = {
 	{ 0x6850,	0x00000000, CHIP_FAMILY_TURKS,	"AMD Radeon HD 7600M Series",	kPondweed   },
 	{ 0x6858,	0x00000000, CHIP_FAMILY_TURKS,	"AMD Radeon HD 7400 Series",	kPondweed   },
 	{ 0x6859,	0x00000000, CHIP_FAMILY_TURKS,	"AMD Radeon HD 7600M Series",	kPondweed   },
-//new series
+// Oland: R7-240, 250
   { 0x6613,	0x00000000, CHIP_FAMILY_BONAIRE,	"AMD Radeon R7 240",	kFutomaki		},
   { 0x665C,	0x00000000, CHIP_FAMILY_BONAIRE,	"AMD Radeon HD 7790",	kFutomaki		},
+  //Bonair: R7-260X
   { 0x665D,	0x00000000, CHIP_FAMILY_BONAIRE,	"AMD Radeon R9 260",	kFutomaki		},
 
 	{ 0x0000,	0x00000000, CHIP_FAMILY_UNKNOW,	"AMD Unknown",			kNull		}
@@ -805,7 +807,7 @@ radeon_card_info_t radeon_cards[] = {
  Redwood
  0x68D81002 0x68C01002 0x68C11002 0x68D91002
 
- Tahiti
+ Tahiti - R9-280X
  0x67901002 0x67981002 0x679A1002 0x679E1002 0x67801002
 
  Turks = NI
@@ -889,7 +891,7 @@ AtiDevProp ati_devprop_list[] = {
 	
   //{FLAGTRUE,	TRUE,	"@0,AAPL,vram-memory",		get_vrammemory_val,		NULVAL				},
   {FLAGTRUE,	TRUE,	"AAPL00,override-no-connect",		get_edid_val,       NULVAL        },
-  {FLAGTRUE,	TRUE,	"@0,compatible",              get_name_val,       NULVAL				},
+  {FLAGNOTFAKE,	TRUE,	"@0,compatible",              get_name_val,       NULVAL				},
   {FLAGTRUE,	TRUE,	"@0,connector-type",          get_conntype_val,		NULVAL        },
   {FLAGTRUE,	TRUE,	"@0,device_type",             NULL,					STRVAL("display")   },
 //	{FLAGTRUE,	FALSE,	"@0,display-connect-flags", NULL,				DWRVAL(0)   },
@@ -918,8 +920,8 @@ AtiDevProp ati_devprop_list[] = {
   {FLAGTRUE,	FALSE,	"ATY,EFIVersion",	NULL,	STRVAL("01.00.3180")                  },
 	{FLAGTRUE,	FALSE,	"ATY,Card#",			get_romrevision_val,	NULVAL                },
 //  {FLAGTRUE,	FALSE,	"ATY,Rom#",	NULL,	STRVAL("www.amd.com")                  },
-	{FLAGTRUE,	FALSE,	"ATY,VendorID",		NULL,					WRDVAL(0x1002)        },
-	{FLAGTRUE,	FALSE,	"ATY,DeviceID",		get_deviceid_val,		NULVAL                  },
+	{FLAGNOTFAKE,	FALSE,	"ATY,VendorID",		NULL,					WRDVAL(0x1002)        },
+	{FLAGNOTFAKE,	FALSE,	"ATY,DeviceID",		get_deviceid_val,		NULVAL                  },
 	
   //	{FLAGTRUE,	FALSE,	"ATY,MCLK",					get_mclk_val,			NULVAL							},
   //	{FLAGTRUE,	FALSE,	"ATY,SCLK",					get_sclk_val,			NULVAL							},
@@ -1256,21 +1258,15 @@ VOID devprop_add_list(AtiDevProp devprop_list[])
 	INTN i, pnum;
 	value_t *val = AllocateZeroPool(sizeof(value_t));
 	
-	for (i = 0; devprop_list[i].name != NULL; i++)
-	{
-		if ((devprop_list[i].flags == FLAGTRUE) || (devprop_list[i].flags & card->flags))
-		{
-			if (devprop_list[i].get_value && devprop_list[i].get_value(val, 0))
-			{
+	for (i = 0; devprop_list[i].name != NULL; i++) {
+		if ((devprop_list[i].flags == FLAGTRUE) || (devprop_list[i].flags & card->flags)) {
+			if (devprop_list[i].get_value && devprop_list[i].get_value(val, 0)) {
 				devprop_add_value(card->device, devprop_list[i].name, val->data, val->size);
 				free_val(val);
 				
-				if (devprop_list[i].all_ports)
-				{
-					for (pnum = 1; pnum < card->ports; pnum++)
-					{
-						if (devprop_list[i].get_value(val, pnum))
-						{
+				if (devprop_list[i].all_ports) {
+					for (pnum = 1; pnum < card->ports; pnum++) {
+						if (devprop_list[i].get_value(val, pnum)) {
 							devprop_list[i].name[1] = (CHAR8)(0x30 + pnum); // convert to ascii
 							devprop_add_value(card->device, devprop_list[i].name, val->data, val->size);
 							free_val(val);
@@ -1278,23 +1274,17 @@ VOID devprop_add_list(AtiDevProp devprop_list[])
 					}
 					devprop_list[i].name[1] = 0x30; // write back our "@0," for a next possible card
 				}
-			}
-			else
-			{
-				if (devprop_list[i].default_val.type != kNul)
-				{
+			} else {
+				if (devprop_list[i].default_val.type != kNul) {
 					devprop_add_value(card->device, devprop_list[i].name,
 						devprop_list[i].default_val.type == kCst ?
 						(UINT8 *)&(devprop_list[i].default_val.data) : devprop_list[i].default_val.data,
 						devprop_list[i].default_val.size);
 				}
 				
-				if (devprop_list[i].all_ports)
-				{
-					for (pnum = 1; pnum < card->ports; pnum++)
-					{
-						if (devprop_list[i].default_val.type != kNul)
-						{
+				if (devprop_list[i].all_ports) {
+					for (pnum = 1; pnum < card->ports; pnum++) {
+						if (devprop_list[i].default_val.type != kNul) {
 							devprop_list[i].name[1] = (CHAR8)(0x30 + pnum); // convert to ascii
 							devprop_add_value(card->device, devprop_list[i].name,
 								devprop_list[i].default_val.type == kCst ?
@@ -1698,6 +1688,8 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
     card->flags |= FLAGMOBILE;
   }
   
+  card->flags |= FLAGNOTFAKE;
+  
 	NameLen = StrLen(gSettings.FBName);
   if (NameLen > 2) {  //fool proof: cfg_name is 3 character or more.
     CfgName = AllocateZeroPool(NameLen);
@@ -1778,6 +1770,11 @@ BOOLEAN setup_ati_devprop(LOADER_ENTRY *Entry, pci_dt_t *ati_dev)
 		return FALSE;
 	// -------------------------------------------------
   
+  if (gSettings.FakeATI) {
+    card->flags &= ~FLAGNOTFAKE;
+    card->flags |= FLAGOLD;
+  }
+  
 	if (!gSettings.NoDefaultProperties) {
     devprop_add_list(ati_devprop_list);
     if (gSettings.UseIntelHDMI) {
@@ -1796,7 +1793,7 @@ BOOLEAN setup_ati_devprop(LOADER_ENTRY *Entry, pci_dt_t *ati_dev)
     devprop_add_value(card->device, "ATY,DeviceID", (UINT8*)&FakeID, 2);
     AsciiSPrint(compatible, 64, "pci1002,%04x", FakeID);
     LowCase(compatible);
-//    devprop_add_value(card->device, "compatible", (UINT8*)&compatible[0], 12);
+    devprop_add_value(card->device, "@0,compatible", (UINT8*)&compatible[0], 12);
     FakeID = gSettings.FakeATI & 0xFFFF;
     devprop_add_value(card->device, "vendor-id", (UINT8*)&FakeID, 4);
     devprop_add_value(card->device, "ATY,VendorID", (UINT8*)&FakeID, 2);

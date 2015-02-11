@@ -608,195 +608,171 @@ grub_udf_mount (grub_disk_t disk)
   unsigned *sblklist;
   grub_uint32_t block, vblock;
   int i, lbshift;
-
+  
   data = grub_malloc (sizeof (struct grub_udf_data));
   if (!data)
     return 0;
-
+  
   data->disk = disk;
-
+  
   /* Search for Anchor Volume Descriptor Pointer (AVDP)
    * and determine logical block size.  */
   block = 0;
-  for (lbshift = 0; lbshift < 4; lbshift++)
-    {
-      for (sblklist = sblocklist; *sblklist; sblklist++)
-        {
-	  struct grub_udf_avdp avdp;
-
-	  if (grub_disk_read (disk, *sblklist << lbshift, 0,
-			      sizeof (struct grub_udf_avdp), &avdp))
-	    {
+  for (lbshift = 0; lbshift < 4; lbshift++) {
+    for (sblklist = sblocklist; *sblklist; sblklist++) {
+      struct grub_udf_avdp avdp;
+      
+      if (grub_disk_read (disk, *sblklist << lbshift, 0,
+                          sizeof (struct grub_udf_avdp), &avdp)) {
 	      grub_error (GRUB_ERR_BAD_FS, "not an UDF filesystem");
 	      goto fail;
 	    }
-
-	  if (U16 (avdp.tag.tag_ident) == GRUB_UDF_TAG_IDENT_AVDP &&
-	      U32 (avdp.tag.tag_location) == *sblklist)
-	    {
+      
+      if (U16 (avdp.tag.tag_ident) == GRUB_UDF_TAG_IDENT_AVDP &&
+          U32 (avdp.tag.tag_location) == *sblklist) {
 	      block = U32 (avdp.vds.start);
 	      break;
 	    }
-	}
-
-      if (block)
-	break;
     }
-
-  if (!block)
-    {
+    
+    if (block)
+      break;
+  }
+  
+  if (!block) {
+    grub_error (GRUB_ERR_BAD_FS, "not an UDF filesystem");
+    goto fail;
+  }
+  data->lbshift = lbshift;
+  
+  /* Search for Volume Recognition Sequence (VRS).  */
+  for (vblock = (32767 >> (lbshift + GRUB_DISK_SECTOR_BITS)) + 1;;
+       vblock += (2047 >> (lbshift + GRUB_DISK_SECTOR_BITS)) + 1) {
+    struct grub_udf_vrs vrs;
+    
+    if (grub_disk_read (disk, vblock << lbshift, 0,
+                        sizeof (struct grub_udf_vrs), &vrs)) {
       grub_error (GRUB_ERR_BAD_FS, "not an UDF filesystem");
       goto fail;
     }
-  data->lbshift = lbshift;
-
-  /* Search for Volume Recognition Sequence (VRS).  */
-  for (vblock = (32767 >> (lbshift + GRUB_DISK_SECTOR_BITS)) + 1;;
-       vblock += (2047 >> (lbshift + GRUB_DISK_SECTOR_BITS)) + 1)
-    {
-      struct grub_udf_vrs vrs;
-
-      if (grub_disk_read (disk, vblock << lbshift, 0,
-			  sizeof (struct grub_udf_vrs), &vrs))
-	{
-	  grub_error (GRUB_ERR_BAD_FS, "not an UDF filesystem");
-	  goto fail;
-	}
-
-      if ((!grub_memcmp (vrs.magic, GRUB_UDF_STD_IDENT_NSR03, 5)) ||
-	  (!grub_memcmp (vrs.magic, GRUB_UDF_STD_IDENT_NSR02, 5)))
-	break;
-
-      if ((grub_memcmp (vrs.magic, GRUB_UDF_STD_IDENT_BEA01, 5)) &&
-	  (grub_memcmp (vrs.magic, GRUB_UDF_STD_IDENT_BOOT2, 5)) &&
-	  (grub_memcmp (vrs.magic, GRUB_UDF_STD_IDENT_CD001, 5)) &&
-	  (grub_memcmp (vrs.magic, GRUB_UDF_STD_IDENT_CDW02, 5)) &&
-	  (grub_memcmp (vrs.magic, GRUB_UDF_STD_IDENT_TEA01, 5)))
-	{
-	  grub_error (GRUB_ERR_BAD_FS, "not an UDF filesystem");
-	  goto fail;
-	}
+    
+    if ((!grub_memcmp (vrs.magic, GRUB_UDF_STD_IDENT_NSR03, 5)) ||
+        (!grub_memcmp (vrs.magic, GRUB_UDF_STD_IDENT_NSR02, 5)))
+      break;
+    
+    if ((grub_memcmp (vrs.magic, GRUB_UDF_STD_IDENT_BEA01, 5)) &&
+        (grub_memcmp (vrs.magic, GRUB_UDF_STD_IDENT_BOOT2, 5)) &&
+        (grub_memcmp (vrs.magic, GRUB_UDF_STD_IDENT_CD001, 5)) &&
+        (grub_memcmp (vrs.magic, GRUB_UDF_STD_IDENT_CDW02, 5)) &&
+        (grub_memcmp (vrs.magic, GRUB_UDF_STD_IDENT_TEA01, 5))) {
+      grub_error (GRUB_ERR_BAD_FS, "not an UDF filesystem");
+      goto fail;
     }
-
+  }
+  
   data->npd = data->npm = 0;
   /* Locate Partition Descriptor (PD) and Logical Volume Descriptor (LVD).  */
-  while (1)
-    {
-      struct grub_udf_tag tag;
-
-      if (grub_disk_read (disk, block << lbshift, 0,
-			  sizeof (struct grub_udf_tag), &tag))
-	{
-	  grub_error (GRUB_ERR_BAD_FS, "not an UDF filesystem");
-	  goto fail;
-	}
-
-      tag.tag_ident = U16 (tag.tag_ident);
-      if (tag.tag_ident == GRUB_UDF_TAG_IDENT_PD)
-	{
-	  if (data->npd >= GRUB_UDF_MAX_PDS)
-	    {
+  while (1) {
+    struct grub_udf_tag tag;
+    
+    if (grub_disk_read (disk, block << lbshift, 0,
+                        sizeof (struct grub_udf_tag), &tag)) {
+      grub_error (GRUB_ERR_BAD_FS, "not an UDF filesystem");
+      goto fail;
+    }
+    
+    tag.tag_ident = U16 (tag.tag_ident);
+    if (tag.tag_ident == GRUB_UDF_TAG_IDENT_PD) {
+      if (data->npd >= GRUB_UDF_MAX_PDS) {
 	      grub_error (GRUB_ERR_BAD_FS, "too many PDs");
 	      goto fail;
 	    }
-
-	  if (grub_disk_read (disk, block << lbshift, 0,
-			      sizeof (struct grub_udf_pd),
-			      &data->pds[data->npd]))
-	    {
+      
+      if (grub_disk_read (disk, block << lbshift, 0,
+                          sizeof (struct grub_udf_pd),
+                          &data->pds[data->npd])) {
 	      grub_error (GRUB_ERR_BAD_FS, "not an UDF filesystem");
 	      goto fail;
 	    }
-
-	  data->npd++;
-	}
-      else if (tag.tag_ident == GRUB_UDF_TAG_IDENT_LVD)
-	{
-	  int k;
-
-	  struct grub_udf_partmap *ppm;
-
-	  if (grub_disk_read (disk, block << lbshift, 0,
-			      sizeof (struct grub_udf_lvd),
-			      &data->lvd))
-	    {
+      
+      data->npd++;
+    }
+    else if (tag.tag_ident == GRUB_UDF_TAG_IDENT_LVD) {
+      int k;
+      
+      struct grub_udf_partmap *ppm;
+      
+      if (grub_disk_read (disk, block << lbshift, 0,
+                          sizeof (struct grub_udf_lvd),
+                          &data->lvd)) {
 	      grub_error (GRUB_ERR_BAD_FS, "not an UDF filesystem");
 	      goto fail;
 	    }
-
-	  if (data->npm + U32 (data->lvd.num_part_maps) > GRUB_UDF_MAX_PMS)
-	    {
+      
+      if (data->npm + U32 (data->lvd.num_part_maps) > GRUB_UDF_MAX_PMS) {
 	      grub_error (GRUB_ERR_BAD_FS, "too many partition maps");
 	      goto fail;
 	    }
-
-	  ppm = (struct grub_udf_partmap *) &data->lvd.part_maps;
-	  for (k = U32 (data->lvd.num_part_maps); k > 0; k--)
-	    {
-	      if (ppm->type != GRUB_UDF_PARTMAP_TYPE_1)
-		{
-		  grub_error (GRUB_ERR_BAD_FS, "partmap type not supported");
-		  goto fail;
-		}
-
+      
+      ppm = (struct grub_udf_partmap *) &data->lvd.part_maps;
+      for (k = U32 (data->lvd.num_part_maps); k > 0; k--) {
+	      if (ppm->type != GRUB_UDF_PARTMAP_TYPE_1) {
+          grub_error (GRUB_ERR_BAD_FS, "partmap type not supported");
+          goto fail;
+        }
+        
 	      data->pms[data->npm++] = ppm;
 	      ppm = (struct grub_udf_partmap *) ((char *) ppm +
-                                                 U32 (ppm->length));
+                                           U32 (ppm->length));
 	    }
-	}
-      else if (tag.tag_ident > GRUB_UDF_TAG_IDENT_TD)
-	{
-	  grub_error (GRUB_ERR_BAD_FS, "invalid tag ident");
-	  goto fail;
-	}
-      else if (tag.tag_ident == GRUB_UDF_TAG_IDENT_TD)
-	break;
-
-      block++;
     }
-
-  for (i = 0; i < data->npm; i++)
-    {
-      int j;
-
-      for (j = 0; j < data->npd; j++)
-	if (data->pms[i]->type1.part_num == data->pds[j].part_num)
-	  {
-	    data->pms[i]->type1.part_num = j;
-	    break;
-	  }
-
-      if (j == data->npd)
-	{
-	  grub_error (GRUB_ERR_BAD_FS, "can\'t find PD");
-	  goto fail;
-	}
+    else if (tag.tag_ident > GRUB_UDF_TAG_IDENT_TD) {
+      grub_error (GRUB_ERR_BAD_FS, "invalid tag ident");
+      goto fail;
     }
-
+    else if (tag.tag_ident == GRUB_UDF_TAG_IDENT_TD)
+      break;
+    
+    block++;
+  }
+  
+  for (i = 0; i < data->npm; i++) {
+    int j;
+    
+    for (j = 0; j < data->npd; j++)
+      if (data->pms[i]->type1.part_num == data->pds[j].part_num) {
+        data->pms[i]->type1.part_num = j;
+        break;
+      }
+    
+    if (j == data->npd) {
+      grub_error (GRUB_ERR_BAD_FS, "can\'t find PD");
+      goto fail;
+    }
+  }
+  
   block = grub_udf_get_block (data,
-			      data->lvd.root_fileset.block.part_ref,
-			      data->lvd.root_fileset.block.block_num);
-
+                              data->lvd.root_fileset.block.part_ref,
+                              data->lvd.root_fileset.block.block_num);
+  
   if (grub_errno)
     goto fail;
-
+  
   if (grub_disk_read (disk, block << lbshift, 0,
-		      sizeof (struct grub_udf_fileset), &root_fs))
-    {
-      grub_error (GRUB_ERR_BAD_FS, "not an UDF filesystem");
-      goto fail;
-    }
-
-  if (U16 (root_fs.tag.tag_ident) != GRUB_UDF_TAG_IDENT_FSD)
-    {
-      grub_error (GRUB_ERR_BAD_FS, "invalid fileset descriptor");
-      goto fail;
-    }
-
+                      sizeof (struct grub_udf_fileset), &root_fs)) {
+    grub_error (GRUB_ERR_BAD_FS, "not an UDF filesystem");
+    goto fail;
+  }
+  
+  if (U16 (root_fs.tag.tag_ident) != GRUB_UDF_TAG_IDENT_FSD) {
+    grub_error (GRUB_ERR_BAD_FS, "invalid fileset descriptor");
+    goto fail;
+  }
+  
   data->root_icb = root_fs.root_icb;
-
+  
   return data;
-
+  
 fail:
   grub_free (data);
   return 0;

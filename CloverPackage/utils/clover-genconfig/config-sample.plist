@@ -516,8 +516,8 @@
 		<false/>
 		<key>KernelLapic</key>
 		<false/>
-    <key>KernelHaswellE</key>
-    <false/>
+		<key>KernelHaswellE</key>
+		<false/>
 		<key>KextsToPatch</key>
 		<array>
 			<dict>
@@ -539,16 +539,6 @@
 				<string>AppleHDAController</string>
 				<key>Replace</key>
 				<string>0x44220000</string>
-			</dict>
-			<dict>
-				<key>Comment</key>
-				<string>Trim enabler</string>
-				<key>Name</key>
-				<string>AppleAHCIPort</string>
-				<key>Find</key>
-				<data>QVBQTEUgU1NE</data>
-				<key>Replace</key>
-				<data>AAAAAAAAAAAA</data>
 			</dict>
 			<dict>
 				<key>Find</key>
@@ -599,6 +589,76 @@
 				<data>PGtleT5Qb3dlclN0YXRlczwva2V5PjxpbnRlZ2VyPjE8L2ludGVnZXI+</data>
 				<key>Replace</key>
 				<data>PGtleT5Qb3dlclN0YXRlczwva2V5PjxpbnRlZ2VyPjA8L2ludGVnZXI+</data>
+			</dict>
+			<dict>
+				<key>Comment</key>
+				<string>USB3 patch1 dont check chip</string>
+				<key>Name</key>
+				<string>AppleUSBXHCI</string>
+				<key>Find</key>
+				<data>dVtJiwZIjTWC+wAATIn3/w==</data>
+				<key>Replace</key>
+				<data>61tJiwZIjTWC+wAATIn3/w==</data>
+			</dict>
+			<dict>
+				<key>Comment</key>
+				<string>USB3 patch2 dont check xhci version</string>
+				<key>Name</key>
+				<string>AppleUSBXHCI</string>
+				<key>Find</key>
+				<data>4GY9AAEPguwLAABJi4bAAg==</data>
+				<key>Replace</key>
+				<data>4GY9AAAPguwLAABJi4bAAg==</data>
+			</dict>
+			<dict>
+				<key>Comment</key>
+				<string>USB3 patch3 interrupts-1</string>
+				<key>Name</key>
+				<string>AppleUSBXHCI</string>
+				<key>Find</key>
+				<data>gUkIAABAAEGB5P//DwBECQ==</data>
+				<key>Replace</key>
+				<data>gUkIAAAAAEGB5P//DwBECQ==</data>
+			</dict>
+			<dict>
+				<key>Comment</key>
+				<string>USB3 patch4 interrupts-2</string>
+				<key>Name</key>
+				<string>AppleUSBXHCI</string>
+				<key>Find</key>
+				<data>QQ9Oz0HHRCQIAABAAIC9Zw==</data>
+				<key>Replace</key>
+				<data>QQ9Oz0HHRCQIAAAAAIC9Zw==</data>
+			</dict>
+			<dict>
+				<key>Comment</key>
+				<string>USB3 patch5 interrupts-3</string>
+				<key>Name</key>
+				<string>AppleUSBXHCI</string>
+				<key>Find</key>
+				<data>AEAAQYtGDIPgATUBHAAAgA==</data>
+				<key>Replace</key>
+				<data>AAAAQYtGDIPgATUBHAAAgA==</data>
+			</dict>
+			<dict>
+				<key>Comment</key>
+				<string>USB3 patch6 restart after wake</string>
+				<key>Name</key>
+				<string>AppleUSBXHCI</string>
+				<key>Find</key>
+				<data>yAAAAAHGg386AgAASIu76A==</data>
+				<key>Replace</key>
+				<data>yAAAAADGg386AgAASIu76A==</data>
+			</dict>
+			<dict>
+				<key>Comment</key>
+				<string>USB3 patch7 PCI PM if not DSDT</string>
+				<key>Name</key>
+				<string>AppleUSBXHCI</string>
+				<key>Find</key>
+				<data>AgAASIXAdSZIi7voAQAASA==</data>
+				<key>Replace</key>
+				<data>AgAASIXA6yZIi7voAQAASA==</data>
 			</dict>
 		</array>
 	</dict>

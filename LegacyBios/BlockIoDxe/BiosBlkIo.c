@@ -264,7 +264,7 @@ BiosBlockIoDriverBindingStart (
 //  EFI_LEGACY_BIOS_PROTOCOL  *LegacyBios;
   EFI_PCI_IO_PROTOCOL       *PciIo;
   UINT8                     DiskStart = 0x80;
-  UINT8                     DiskEnd = 0x88;
+  UINT8                     DiskEnd = 0xFF;
   BIOS_BLOCK_IO_DEV         *BiosBlockIoPrivate;
   EFI_DEVICE_PATH_PROTOCOL  *PciDevPath;
   UINTN                     Index;
@@ -434,7 +434,7 @@ BiosBlockIoDriverBindingStart (
   //
   // Allocate the private device structure for each disk
   //
-  for (Index = DiskStart; Index < DiskEnd; Index++) {
+  for (Index = DiskStart; Index <= DiskEnd; Index++) {
 
     Status = gBS->AllocatePool (
                     EfiBootServicesData,

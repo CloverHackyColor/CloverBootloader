@@ -1492,22 +1492,6 @@
 			path = ../../BiosVideo;
 			sourceTree = "<group>";
 		};
-		2C794A0E1A0AA85900D845B0 /* AutoResolution */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = AutoResolution;
-			sourceTree = "<group>";
-		};
-		2C794A0F1A0AA85900D845B0 /* BiosVideoAuto */ = {
-			isa = PBXGroup;
-			children = (
-				2C794A0E1A0AA85900D845B0 /* AutoResolution */,
-			);
-			name = BiosVideoAuto;
-			path = ../../BiosVideoAuto;
-			sourceTree = "<group>";
-		};
 		2C794A1C1A0AA85900D845B0 /* BootHFS */ = {
 			isa = PBXGroup;
 			children = (
@@ -3007,7 +2991,6 @@
 				2C7949FF1A0AA85900D845B0 /* AtaBus */,
 				2C794A061A0AA85900D845B0 /* BiosKeyboard */,
 				2C794A0D1A0AA85900D845B0 /* BiosVideo */,
-				2C794A0F1A0AA85900D845B0 /* BiosVideoAuto */,
 				2C794A1C1A0AA85900D845B0 /* BootHFS */,
 				2C794A3F1A0AA85900D845B0 /* BootSector */,
 				2C794A401A0AA85900D845B0 /* buildgcc-4.9.sh */,

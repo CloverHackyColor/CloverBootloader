@@ -207,11 +207,12 @@ typedef struct {
 	RADEON_IS_PCI = 0x00800000UL,
 	RADEON_IS_IGPGART = 0x01000000UL,
 };*/
-#define MKFLAG(n)	(1 << n)
-#define FLAGTRUE	MKFLAG(0)
-#define EVERGREEN	MKFLAG(1)
+#define MKFLAG(n)   (1 << n)
+#define FLAGTRUE    MKFLAG(0)
+#define EVERGREEN   MKFLAG(1)
 #define FLAGMOBILE	MKFLAG(2)
-#define FLAGOLD		MKFLAG(3)
+#define FLAGOLD     MKFLAG(3)
+#define FLAGNOTFAKE MKFLAG(4)
 
 typedef struct {
 	type_t		type;
