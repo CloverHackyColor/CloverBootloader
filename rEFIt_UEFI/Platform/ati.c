@@ -98,7 +98,10 @@ card_config_t card_configs[] = {
 	{"OPM",         6},
 	{"Ikura",       6},
 	{"IkuraS",      1},
-  {"Baladi",		5},
+  {"Baladi",		5}, //desktop
+  {"Exmoor", 4},    //mobile
+  {"Basset", 4},
+
 };
 
 radeon_card_info_t radeon_cards[] = {

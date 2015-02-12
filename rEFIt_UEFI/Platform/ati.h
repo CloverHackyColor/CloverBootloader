@@ -166,7 +166,10 @@ typedef enum {
 	kOPM,
 	kIkura,
 	kIkuraS,
+  // 8000 & 9000 families (R7, R9)
   kBaladi,
+  kExmoor,
+  kBasset,
 	kCfgEnd
 } config_name_t;
 
