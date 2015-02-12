@@ -882,8 +882,18 @@ const CHAR8 *chip_family_name[] = {
 	"Cayman",
 	"Turks",
 	/* Southern Islands */
+  "Palm",
+  "Sumo",
+  "Aruba",
 	"Tahiti",
 	"Pitcairn",
+  "Verde",
+  "Oland",
+  "Hainan",
+  "Bonair",
+  "Kaveri",
+  "Kabini",
+  "Hawaii",
 	""
 };
 
