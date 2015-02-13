@@ -114,7 +114,7 @@ radeon_card_info_t radeon_cards[] = {
 
   /*old series*/
 	// R423
-	{ 0x5D48, 0x00000000, CHIP_FAMILY_R423,  "ATI Radeon HD Mobile ",	kNull		},
+/*	{ 0x5D48, 0x00000000, CHIP_FAMILY_R423,  "ATI Radeon HD Mobile ",	kNull		},
 	{ 0x5D49, 0x00000000, CHIP_FAMILY_R423,  "ATI Radeon HD Mobile ",	kNull		},
 	{ 0x5D4A, 0x00000000, CHIP_FAMILY_R423,  "ATI Radeon HD Mobile ",	kNull		},
 	{ 0x5D4C, 0x00000000, CHIP_FAMILY_R423,  "ATI Radeon HD Desktop ",	kNull		},
@@ -254,7 +254,7 @@ radeon_card_info_t radeon_cards[] = {
 	{ 0x7293, 0x00000000, CHIP_FAMILY_RV560, "ATI Radeon HD Desktop ",	kAlopias	},
 	{ 0x7297, 0x00000000, CHIP_FAMILY_RV560, "ATI Radeon HD Desktop ",	kAlopias	},
 
-	/* IGP */
+	// IGP
 
 	// RS690
 	{ 0x791E,	0x00000000, CHIP_FAMILY_RS690,	"ATI Radeon IGP ",	kNull			},
@@ -275,7 +275,7 @@ radeon_card_info_t radeon_cards[] = {
   //      0x95911002 0x95931002 0x94401002 0x94421002 0x944A1002 0x945A1002 0x94901002 0x949E1002 0x94801002
   //      0x95401002 0x95411002 0x954E1002 0x954F1002 0x95521002 0x95531002 0x94a01002  
 
-	/* standard/default models */
+	// standard/default models
 
     // RS600
 	{ 0x9400,	0x00000000, CHIP_FAMILY_R600,	"ATI Radeon HD 2900 XT",	kNull		},
@@ -286,7 +286,7 @@ radeon_card_info_t radeon_cards[] = {
 	{ 0x940A,	0x00000000, CHIP_FAMILY_R600,	"ATI FireGL V8650",	kNull		},
 	{ 0x940B,	0x00000000, CHIP_FAMILY_R600,	"ATI FireGL V8600",	kNull		},
 	{ 0x940F,	0x00000000, CHIP_FAMILY_R600,	"ATI FireGL V7600",	kNull		},
-
+*/
 	// RV740
 	{ 0x94A0,	0x00000000, CHIP_FAMILY_RV740,	"ATI Radeon HD 4830M",	kFlicker	},
 	{ 0x94A1,	0x00000000, CHIP_FAMILY_RV740,	"ATI Radeon HD 4860M",	kFlicker	},
@@ -339,7 +339,7 @@ radeon_card_info_t radeon_cards[] = {
 
 	//94C8 -Iago
 	// RV610
-	{ 0x94C0,	0x00000000, CHIP_FAMILY_RV610,	"ATI Radeon HD Series",	kIago		},
+/*	{ 0x94C0,	0x00000000, CHIP_FAMILY_RV610,	"ATI Radeon HD Series",	kIago		},
 	{ 0x94C1,	0x00000000, CHIP_FAMILY_RV610,	"ATI Radeon HD 2400 Series",	kIago		},
 	{ 0x94C3,	0x00000000, CHIP_FAMILY_RV610,	"ATI Radeon HD 2350 Series",	kIago		},
 	{ 0x94C4,	0x00000000, CHIP_FAMILY_RV610,	"ATI Radeon HD 2400 Series",	kIago		},
@@ -367,7 +367,7 @@ radeon_card_info_t radeon_cards[] = {
 	{ 0x9515,	0x00000000, CHIP_FAMILY_RV670,	"ATI Radeon HD 3850 Series",	kMegalodon	},
 	{ 0x9517,	0x00000000, CHIP_FAMILY_RV670,	"ATI Radeon HD Series",	kMegalodon	},
 	{ 0x9519,	0x00000000, CHIP_FAMILY_RV670,	"AMD FireStream 9170",	kMegalodon	},
-
+*/
 	// RV710
 	{ 0x9540,	0x00000000, CHIP_FAMILY_RV710,	"ATI Radeon HD 4550",	kFlicker	},
 	{ 0x9541,	0x00000000, CHIP_FAMILY_RV710,	"ATI Radeon HD",	kFlicker	},
@@ -379,7 +379,7 @@ radeon_card_info_t radeon_cards[] = {
 	{ 0x9555,	0x00000000, CHIP_FAMILY_RV710,	"ATI Mobility Radeon HD 4550", 	kShrike     },
 	{ 0x9557,	0x00000000, CHIP_FAMILY_RV710,	"ATI FirePro RG220",	kFlicker	},
 	{ 0x955F,	0x00000000, CHIP_FAMILY_RV710,	"ATI Radeon HD 4330M series",	kFlicker	},
-
+/*
 	//9583, 9588 - Lamna, Hypoprion HD2600
 	// RV630
 	{ 0x9580,	0x00000000, CHIP_FAMILY_RV630,	"ATI Radeon HD Series",	kHypoprion	},
@@ -420,7 +420,7 @@ radeon_card_info_t radeon_cards[] = {
 //	{ 0x95CE,	0x00000000, CHIP_FAMILY_RV620,	"ATI Radeon HD",	kIago       },
 //	{ 0x95CF,	0x00000000, CHIP_FAMILY_RV620,	"ATI Radeon HD",	kIago       },
 
-	/* IGP */
+	// IGP
 
 	// RS780
 	{ 0x9610,	0x00000000, CHIP_FAMILY_RS780,	"ATI Radeon HD 3200 Graphics",	kNull       },
@@ -532,7 +532,7 @@ radeon_card_info_t radeon_cards[] = {
 //	{ 0x99A0,	0x00000000, CHIP_FAMILY_ARUBA,	"AMD Radeon HD",      kNull       }, // Mobile
 //	{ 0x99A2,	0x00000000, CHIP_FAMILY_ARUBA,	"AMD Radeon HD",      kNull       }, // Mobile
 //	{ 0x99A4,	0x00000000, CHIP_FAMILY_ARUBA,	"AMD Radeon HD",      kNull       },
-
+*/
   //X2000.kext
   //0x94001002 0x94011002 0x94021002 0x94031002 0x95811002 0x95831002 0x95881002 0x94c81002 0x94c91002
   //0x95001002 0x95011002 0x95051002 0x95071002 0x95041002 0x95061002 0x95981002 0x94881002 0x95991002

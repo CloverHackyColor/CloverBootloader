@@ -1053,11 +1053,14 @@ VOID GetTableType17()
   BOOLEAN Found;
   
 	// Get Table Type17 and count Size
-   gRAMCount = 0;
-	for (Index = 0; Index < MAX_RAM_SLOTS; Index++) {
+  gRAMCount = 0;
+	for (Index = 0; Index < 24; Index++) {  //how many tables there may be?
 		SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_MEMORY_DEVICE, Index);
 		if (SmbiosTable.Raw == NULL) {
 //			DBG("SmbiosTable: Type 17 (Memory Device number %d) not found!\n", Index);
+      if (SmbiosTable.Hdr->Type == SMBIOS_TYPE_END_OF_TABLE) {
+        break; //no need to continue
+      }
 			continue;
 		}
       DBG("Type 17 Index = %d\n", Index);
@@ -1071,9 +1074,12 @@ VOID GetTableType17()
         //  to just skip all entries that have an error - apianti
         // will try
         Found = FALSE;
-        for (Index2 = 0; Index2 < MAX_RAM_SLOTS; Index2++) {
+        for (Index2 = 0; Index2 < 24; Index2++) {
           newSmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_32BIT_MEMORY_ERROR_INFORMATION, Index2);
           if (newSmbiosTable.Raw == NULL) {
+            if (newSmbiosTable.Hdr->Type == SMBIOS_TYPE_END_OF_TABLE) {
+              break; //no need to continue
+            }
             continue;
           }
           if (newSmbiosTable.Type18->Hdr.Handle == SmbiosTable.Type17->MemoryErrorInformationHandle) {
@@ -1418,7 +1424,7 @@ VOID PatchTableType17()
   // Memory Device
   //
   gRAMCount = 0;
-  for (Index = 0; Index < MAX_RAM_SLOTS; Index++) {
+  for (Index = 0; Index < 24; Index++) {
     UINTN SMBIOSIndex = wrongSMBIOSBanks ? Index : channelMap[Index];
     UINTN SPDIndex = channelMap[Index];
     UINT8 bank = (UINT8)Index / channels;
@@ -1559,9 +1565,12 @@ PatchTableType19 ()
 	UINT32	TotalEnd = 0; 
 	UINT8	PartWidth = 1;
 	UINT16  SomeHandle = 0x1300; //as a common rule handle=(type<<8 + index)
-	for (Index=0; Index<MAX_RAM_SLOTS; Index++) {
+	for (Index = 0; Index < 24; Index++) {
 		SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_MEMORY_ARRAY_MAPPED_ADDRESS, Index);
-		if (SmbiosTable.Raw == NULL) {			
+		if (SmbiosTable.Raw == NULL) {
+      if (SmbiosTable.Hdr->Type == SMBIOS_TYPE_END_OF_TABLE) {
+        break; //no need to continue
+      }
 			continue;
 		}
 		if (SmbiosTable.Type19->EndingAddress > TotalEnd) {
@@ -1593,9 +1602,9 @@ VOID PatchTableType20 ()
 	// Generate Memory Array Mapped Address info (TYPE 20)
 	// not needed neither for Apple nor for EFI
 	m = 0;
-	for (Index = 0; Index < MAX_RAM_SLOTS; Index++) {
+	for (Index = 0; Index < 24; Index++) {
 		SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_MEMORY_DEVICE_MAPPED_ADDRESS, Index);
-		if (SmbiosTable.Raw == NULL) {			
+		if (SmbiosTable.Raw == NULL) {
 			return ;
 		}
 		TableSize = SmbiosTableLength(SmbiosTable);
