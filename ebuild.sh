@@ -42,7 +42,7 @@ echo "TOOLCHAIN_DIR: $TOOLCHAIN_DIR"
 VBIOSPATCHCLOVEREFI=0
 ONLYSATA0PATCH=0
 USE_BIOS_BLOCKIO=0
-USE_LOW_EBDA=0
+USE_LOW_EBDA=1
 CLANG=0
 
 # Bash options
@@ -199,7 +199,7 @@ usage() {
     print_option_help "-D MACRO, --define=MACRO" "Macro: \"Name[=Value]\"."
     print_option_help "--vbios-patch-cloverefi" "activate vbios patch in CloverEFI"
     print_option_help "--only-sata0" "activate only SATA0 patch"
-    print_option_help "--low-ebda" "ebda offset shift to 0x88000"
+    print_option_help "--std-ebda" "ebda offset dont shift to 0x88000"
     print_option_help "--no-usb" "disable USB support"
     echo
     echo "Report bugs to http://www.projectosx.com/forum/index.php?showtopic=2490"
@@ -282,8 +282,8 @@ checkCmdlineArguments() {
             --only-sata0)
                 ONLYSATA0PATCH=1
                 ;;
-            --low-ebda)
-                USE_LOW_EBDA=1
+            --std-ebda)
+                USE_LOW_EBDA=0
                 ;;
             --no-usb)
                 addEdk2BuildMacro DISABLE_USB_SUPPORT
