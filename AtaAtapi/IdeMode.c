@@ -463,7 +463,7 @@ DRQClear (
 #if 0	  
     if ((StatusRegister & ATA_STSREG_BSY) == 0) {
       if ((StatusRegister & ATA_STSREG_DRQ) == ATA_STSREG_DRQ) {
-        return EFI_NOT_READY;
+        return EFI_DEVICE_ERROR;
       } else {
         return EFI_SUCCESS;
       }
@@ -846,7 +846,7 @@ DRDYReady (
       if ((StatusRegister & ATA_STSREG_DRDY) == ATA_STSREG_DRDY) {
         return EFI_SUCCESS;
       } else {
-        return EFI_NOT_READY;
+        return EFI_DEVICE_ERROR;
       }
     }
 #else
@@ -941,7 +941,7 @@ DRDYReady2 (
       if ((AltRegister & ATA_STSREG_DRDY) == ATA_STSREG_DRDY) {
         return EFI_SUCCESS;
       } else {
-        return EFI_NOT_READY;
+        return EFI_DEVICE_ERROR;
       }
     }
 #else
@@ -1637,7 +1637,7 @@ Exit:
 **/
 EFI_STATUS
 AtaUdmStatusWait (
-  IN     EFI_PCI_IO_PROTOCOL       *PciIo,
+  IN  EFI_PCI_IO_PROTOCOL       *PciIo,
   IN  EFI_IDE_REGISTERS         *IdeRegisters,
   IN  UINT64                    Timeout
  )
@@ -1677,7 +1677,7 @@ AtaUdmStatusWait (
       break;
     }
     //
-    // Stall for 1 milliseconds.
+    // Stall for 100 microseconds.
     //
     MicroSecondDelay (100);
     Delay--;
@@ -1932,8 +1932,8 @@ AtaUdmaInOut (
     TempPrdBaseAddr = PrdBaseAddr;
     while (ByteRemaining != 0) {
       BytesThisPrd = ByteRemaining < 0x10000U ? ByteRemaining : 0x10000U;
-      if ((((UINTN)BufferMapAddress + BytesThisPrd - 1U) >> 16) != ((UINTN)BufferMapAddress >> 16)) {
-        BytesThisPrd = ((UINTN)BufferMapAddress & ~(UINTN)0xFFFFU) + 0x10000U - (UINTN)BufferMapAddress;
+      if ((((UINTN)BufferMapAddress + BytesThisPrd - 1U) & 0x10000U) != ((UINTN)BufferMapAddress & 0x10000U)) {
+        BytesThisPrd = (-(UINTN)BufferMapAddress) & 0xFFFFU;
       }
 
       TempPrdBaseAddr->RegionBaseAddr = (UINT32) ((UINTN) BufferMapAddress);
@@ -2021,9 +2021,6 @@ AtaUdmaInOut (
 
   //
   // Check the INTERRUPT and ERROR bit of BMIS
-  // Max transfer number of sectors for one command is 65536(32Mbyte),
-  // it will cost 1 second to transfer these data in UDMA mode 2(33.3MBps).
-  // So set the variable Count to 2000, for about 2 second Timeout time.
   //
   if (Task != NULL) {
     Status = AtaUdmStatusCheck (PciIo, Task, IdeRegisters);
@@ -2554,8 +2551,17 @@ IdeAtaSmartReturnStatusCheck (
 
 //  DBG(L"Send S.M.A.R.T DeviceHead=%x Status=%r\n", AtaCommandBlock.AtaDeviceHead, Status);
   if (EFI_ERROR (Status)) {
+    REPORT_STATUS_CODE (
+      EFI_ERROR_CODE | EFI_ERROR_MINOR,
+      (EFI_IO_BUS_ATA_ATAPI | EFI_IOB_ATA_BUS_SMART_DISABLED)
+      );
     return EFI_DEVICE_ERROR;
   }
+
+  REPORT_STATUS_CODE (
+    EFI_PROGRESS_CODE,
+    (EFI_IO_BUS_ATA_ATAPI | EFI_IOB_ATA_BUS_SMART_ENABLE)
+    );
 
   LBAMid  = IdeReadPortB (Instance->PciIo, Instance->IdeRegisters[Channel].CylinderLsb);
   LBAHigh = IdeReadPortB (Instance->PciIo, Instance->IdeRegisters[Channel].CylinderMsb);
@@ -2567,12 +2573,20 @@ IdeAtaSmartReturnStatusCheck (
 //    DEBUG ((EFI_D_INFO, "The S.M.A.R.T threshold exceeded condition is not detected\n"));
     DBG(L"The S.M.A.R.T threshold exceeded condition is not detected\n");
 
+    REPORT_STATUS_CODE (
+          EFI_PROGRESS_CODE,
+          (EFI_IO_BUS_ATA_ATAPI | EFI_IOB_ATA_BUS_SMART_UNDERTHRESHOLD)
+          );
   } else if ((LBAMid == 0xf4) && (LBAHigh == 0x2c)) {
     //
     // The threshold exceeded condition is detected by the device
     //
 //    DEBUG ((EFI_D_INFO, "The S.M.A.R.T threshold exceeded condition is detected\n"));
     DBG(L"The S.M.A.R.T threshold exceeded condition is detected\n");
+    REPORT_STATUS_CODE (
+         EFI_PROGRESS_CODE,
+         (EFI_IO_BUS_ATA_ATAPI | EFI_IOB_ATA_BUS_SMART_OVERTHRESHOLD)
+         );
   }
 
   return EFI_SUCCESS;
@@ -2612,11 +2626,20 @@ IdeAtaSmartSupport (
 //            (Channel == 1) ? "secondary" : "primary", (Device == 1) ? "slave" : "master"));
     DBG(L"S.M.A.R.T feature is not supported at [%a] channel [%a] device!\n", 
             (Channel == 1) ? "secondary" : "primary", (Device == 1) ? "slave" : "master");
+    REPORT_STATUS_CODE (
+      EFI_ERROR_CODE | EFI_ERROR_MINOR,
+      (EFI_IO_BUS_ATA_ATAPI | EFI_IOB_ATA_BUS_SMART_NOTSUPPORTED)
+      );
   } else {
     //
     // Check if the feature is enabled. If not, then enable S.M.A.R.T.
     //
     if ((IdentifyData->AtaData.command_set_feature_enb_85 & 0x0001) != 0x0001) {
+
+      REPORT_STATUS_CODE (
+        EFI_PROGRESS_CODE,
+        (EFI_IO_BUS_ATA_ATAPI | EFI_IOB_ATA_BUS_SMART_DISABLE)
+        );
 
       ZeroMem (&AtaCommandBlock, sizeof (EFI_ATA_COMMAND_BLOCK));
 

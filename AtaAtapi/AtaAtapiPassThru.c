@@ -50,7 +50,7 @@ ATA_ATAPI_PASS_THRU_INSTANCE gAtaAtapiPassThruInstanceTemplate = {
     // According to UEFI2.3 spec Section 12.10, Drivers for non-RAID ATA controllers should set
     // both EFI_ATA_PASS_THRU_ATTRIBUTES_PHYSICAL and EFI_ATA_PASS_THRU_ATTRIBUTES_LOGICAL
     // bits.
-    // Note that the driver doesn't support AtaPassThru non blocking I/O.
+    // Note that the driver supports AtaPassThru non blocking I/O.
     //
     EFI_ATA_PASS_THRU_ATTRIBUTES_PHYSICAL | EFI_ATA_PASS_THRU_ATTRIBUTES_LOGICAL | EFI_ATA_PASS_THRU_ATTRIBUTES_NONBLOCKIO,
     //
@@ -735,7 +735,7 @@ AtaAtapiPassThruStart (
                     &Supports
                     );
   if (!EFI_ERROR (Status)) {
-    Supports &= EFI_PCI_DEVICE_ENABLE;
+    Supports &= (UINT64)EFI_PCI_DEVICE_ENABLE;
     Status = PciIo->Attributes (
                       PciIo,
                       EfiPciIoAttributeOperationEnable,
@@ -970,7 +970,7 @@ AtaAtapiPassThruStop (
                     &Supports
                     );
   if (!EFI_ERROR (Status)) {
-    Supports &= EFI_PCI_DEVICE_ENABLE;
+    Supports &= (UINT64)EFI_PCI_DEVICE_ENABLE;
     PciIo->Attributes (
              PciIo,
              EfiPciIoAttributeOperationDisable,
@@ -1215,8 +1215,13 @@ EnumerateAttachedDevice (
 //        goto Done;
       }
       break;
+    case PCI_CLASS_MASS_STORAGE_RAID :
+    	Instance->AtaPassThruMode.Attributes &= ~EFI_ATA_PASS_THRU_ATTRIBUTES_PHYSICAL;
+    	Instance->ExtScsiPassThruMode.Attributes &= ~EFI_EXT_SCSI_PASS_THRU_ATTRIBUTES_PHYSICAL;
+    	//
+    	// Fall through to AHCI
+    	//
     case PCI_CLASS_MASS_STORAGE_SATADPA :
-    case PCI_CLASS_MASS_STORAGE_RAID:
       //
       // The ATA controller is working at AHCI mode
       //

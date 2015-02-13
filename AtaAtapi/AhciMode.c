@@ -548,7 +548,7 @@ AhciBuildCommand (
   // is 65535.
   // But since DataLength <= 2^25, need at most 8 PRDTs
   //
- // ASSERT (PrdtNumber <= 65535);
+ // ASSERT (PrdtNumber <= 8);
   if (PrdtNumber > 8) PrdtNumber = 8;
 
   ZeroMem (&AhciRegisters->AhciRFis[Port], sizeof (EFI_AHCI_RECEIVED_FIS));
@@ -569,7 +569,6 @@ AhciBuildCommand (
 
     CommandList->AhciCmdA = 1;
     CommandList->AhciCmdP = 1;
-    CommandList->AhciCmdC = (DataLength == 0) ? 1 : 0;
 
     AhciOrReg (PciIo, Offset, (EFI_AHCI_PORT_CMD_DLAE | EFI_AHCI_PORT_CMD_ATAPI));
   } else {
@@ -809,7 +808,7 @@ AhciPioTransfer (
       // To get better device compatibilities, we further check if the PxTFD's ERR bit is set.
       // By this way, we can know if there is a real error happened.
       //
-        Offset = FisBaseAddr + EFI_AHCI_D2H_FIS_OFFSET;
+      Offset = FisBaseAddr + EFI_AHCI_D2H_FIS_OFFSET;
       Status = AhciCheckMemSet (Offset, EFI_AHCI_FIS_TYPE_MASK, EFI_AHCI_FIS_REGISTER_D2H, NULL);
       if (!EFI_ERROR (Status)) {
         D2hFisReceived = TRUE;
@@ -972,7 +971,6 @@ AhciDmaTransfer (
     //
     if (Task != NULL) {
       Task->IsStart      = TRUE;
-      Task->RetryTimes   = (UINT32) (DivU64x32(Timeout, 1000) + 1);
     }
     if (Read) {
       Flag = EfiPciIoOperationBusMasterWrite;
@@ -1352,10 +1350,6 @@ AhciStartCommand (
   //
   // Setting the command
   //
-/*  Offset = EFI_AHCI_PORT_START + Port * EFI_AHCI_PORT_REG_WIDTH + EFI_AHCI_PORT_SACT;
-  AhciAndReg (PciIo, Offset, 0);
-  AhciOrReg (PciIo, Offset, CmdSlotBit);
-*/
   Offset = EFI_AHCI_PORT_START + Port * EFI_AHCI_PORT_REG_WIDTH + EFI_AHCI_PORT_CI;
   AhciAndReg (PciIo, Offset, 0);
   AhciOrReg (PciIo, Offset, CmdSlotBit);
@@ -1546,8 +1540,17 @@ AhciAtaSmartReturnStatusCheck (
              );
 
   if (EFI_ERROR (Status)) {
+    REPORT_STATUS_CODE (
+      EFI_ERROR_CODE | EFI_ERROR_MINOR,
+      (EFI_IO_BUS_ATA_ATAPI | EFI_IOB_ATA_BUS_SMART_DISABLED)
+      );
     return EFI_DEVICE_ERROR;
   }
+
+  REPORT_STATUS_CODE (
+    EFI_PROGRESS_CODE,
+    (EFI_IO_BUS_ATA_ATAPI | EFI_IOB_ATA_BUS_SMART_ENABLE)
+    );
 
   FisBaseAddr = (UINTN)AhciRegisters->AhciRFis + Port * sizeof (EFI_AHCI_RECEIVED_FIS);
 
@@ -1564,12 +1567,20 @@ AhciAtaSmartReturnStatusCheck (
 //      DEBUG ((EFI_D_INFO, "The S.M.A.R.T threshold exceeded condition is not detected\n"));
 //      Print(L"The S.M.A.R.T threshold exceeded condition is not detected\n");
 
+      REPORT_STATUS_CODE (
+            EFI_PROGRESS_CODE,
+            (EFI_IO_BUS_ATA_ATAPI | EFI_IOB_ATA_BUS_SMART_UNDERTHRESHOLD)
+            );
     } else if ((LBAMid == 0xf4) && (LBAHigh == 0x2c)) {
       //
       // The threshold exceeded condition is detected by the device
       //
 //      DEBUG ((EFI_D_INFO, "The S.M.A.R.T threshold exceeded condition is detected\n"));
 //      Print(L"The S.M.A.R.T threshold exceeded condition is detected\n");		
+      REPORT_STATUS_CODE (
+           EFI_PROGRESS_CODE,
+           (EFI_IO_BUS_ATA_ATAPI | EFI_IOB_ATA_BUS_SMART_OVERTHRESHOLD)
+           );
     }
   }
 
@@ -1612,11 +1623,21 @@ AhciAtaSmartSupport (
 //            Port, PortMultiplier));
 //    Print(L"S.M.A.R.T feature is not supported at port [%d] PortMultiplier [%d]!\n", 
 //            Port, PortMultiplier);
+    REPORT_STATUS_CODE (
+      EFI_ERROR_CODE | EFI_ERROR_MINOR,
+      (EFI_IO_BUS_ATA_ATAPI | EFI_IOB_ATA_BUS_SMART_NOTSUPPORTED)
+      );
   } else {
     //
     // Check if the feature is enabled. If not, then enable S.M.A.R.T.
     //
     if ((IdentifyData->AtaData.command_set_feature_enb_85 & 0x0001) != 0x0001) {
+
+      REPORT_STATUS_CODE (
+        EFI_PROGRESS_CODE,
+        (EFI_IO_BUS_ATA_ATAPI | EFI_IOB_ATA_BUS_SMART_DISABLE)
+        );
+
       ZeroMem (&AtaCommandBlock, sizeof (EFI_ATA_COMMAND_BLOCK));
 
       AtaCommandBlock.AtaCommand      = ATA_CMD_SMART;
@@ -2264,21 +2285,22 @@ AhciModeInitialization (
   //
 //  MaxPortNumber        = (UINT8) ((Capability & 0x1F) + 1);
 //  if (MaxPortNumber < 6) MaxPortNumber = 6; //Slice - Intel chipset always has 6 ports
+
+  //
+  // Get the bit map of those ports exposed by this HBA.
+  // It indicates which ports that the HBA supports are available for software to use.
+  //
+#ifndef ONLY_SATA_0
   PortImplementBitMap  = AhciReadReg(PciIo, EFI_AHCI_PI_OFFSET);
 /*  Data = PortImplementBitMap;
   for (Port = 0; PortImplementBitMap != 0; PortImplementBitMap >>= 1) {
     MaxPortNumber = ++Port;
   }
 */
-  //
-  // Get the bit map of those ports exposed by this HBA.
-  // It indicates which ports that the HBA supports are available for software to use.
-  //
-#ifdef ONLY_SATA_0
+#else
   PortImplementBitMap  = 1;
-//#else
-//  PortImplementBitMap  = Data; //AhciReadReg(PciIo, EFI_AHCI_PI_OFFSET);
 #endif  
+
   AhciRegisters = &Instance->AhciRegisters;
   Status = AhciCreateTransferDescriptor (PciIo, AhciRegisters);
 
@@ -2337,8 +2359,8 @@ AhciModeInitialization (
       //
       // Enable FIS Receive DMA engine for the first D2H FIS.
       //
-      Offset = EFI_AHCI_PORT_START + Port * EFI_AHCI_PORT_REG_WIDTH + EFI_AHCI_PORT_CMD;
-/*      AhciOrReg (PciIo, Offset, EFI_AHCI_PORT_CMD_FRE);
+/*    Offset = EFI_AHCI_PORT_START + Port * EFI_AHCI_PORT_REG_WIDTH + EFI_AHCI_PORT_CMD;
+      AhciOrReg (PciIo, Offset, EFI_AHCI_PORT_CMD_FRE);
       Status = AhciWaitMmioSet (
                  PciIo,
                  Offset,
