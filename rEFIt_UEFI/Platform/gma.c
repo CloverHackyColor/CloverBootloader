@@ -137,13 +137,12 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
   UINTN j;
   INT32 i;
   BOOLEAN Injected = FALSE;
+  UINT32 SnbId = 0;
+  MACHINE_TYPES MacModel;
 //  UINT8 IG_ID[4] = { 0x00, 0x00, 0x62, 0x01 };
   
 	devicepath = get_pci_dev_path(gma_dev);
-	
-//	bar[0] = pci_config_read32(gma_dev, PCI_BASE_ADDRESS_0);
-//	gma_dev->regs = (UINT8 *) (UINTN)(bar[0] & ~0x0f);
-	
+
 	model = get_gma_model(gma_dev->device_id);
   for (j = 0; j < NGFX; j++) {    
     if ((gGraphics[j].Vendor == Intel) &&
@@ -206,6 +205,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
   if (gSettings.UseIntelHDMI) {
     devprop_add_value(device, "hda-gfx", (UINT8*)"onboard-1", 10);
   }
+  MacModel = GetModelFromString(gSettings.ProductName);
   switch (gma_dev->device_id) {
     case 0x0102: 
       devprop_add_value(device, "class-code",	(UINT8*)ClassFix, 4);
@@ -214,8 +214,29 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
     case 0x0116:
     case 0x0122:
     case 0x0126:
-//      if ((gma_dev->device_id == 0x112) || (gma_dev->device_id == 0x122))
-//        devprop_add_value(device, "device-id", FakeID_126, 4);
+      switch (MacModel) {
+        case MacBookPro81:
+          SnbId = 0x00000100;
+          break;
+        case MacBookPro83:
+          SnbId = 0x00000200;
+          break;
+        case Macmini51:
+          SnbId = 0x10000300;
+          break;
+/*      case Macmini52:
+          SnbId = 0x20000300;
+          break;
+        case MacBookAir41:
+          SnbId = 0x00000400;
+          break;
+*/
+        default:
+          break;
+      }
+      if (SnbId != 0) {
+        devprop_add_value(device, "AAPL,snb-platform-id",	(UINT8*)&SnbId, 4);
+      }
     case 0x0152:
     case 0x0156:
     case 0x0162:
@@ -234,7 +255,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
     case 0x1606:
     case 0x1616:
     case 0x161E:
-      if (!gSettings.IgPlatform) {
+      if (!gSettings.IgPlatform && (gma_dev->device_id > 0x130)) {
         switch (gma_dev->device_id) {
           case 0x162:
           case 0x16a:
