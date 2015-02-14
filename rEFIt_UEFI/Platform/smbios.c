@@ -1058,9 +1058,6 @@ VOID GetTableType17()
 		SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_MEMORY_DEVICE, Index);
 		if (SmbiosTable.Raw == NULL) {
 //			DBG("SmbiosTable: Type 17 (Memory Device number %d) not found!\n", Index);
-      if (SmbiosTable.Hdr->Type == SMBIOS_TYPE_END_OF_TABLE) {
-        break; //no need to continue
-      }
 			continue;
 		}
       DBG("Type 17 Index = %d\n", Index);
@@ -1076,9 +1073,6 @@ VOID GetTableType17()
         for (Index2 = 0; Index2 < 24; Index2++) {
           newSmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_32BIT_MEMORY_ERROR_INFORMATION, Index2);
           if (newSmbiosTable.Raw == NULL) {
-            if (newSmbiosTable.Hdr->Type == SMBIOS_TYPE_END_OF_TABLE) {
-              break; //no need to continue
-            }
             continue;
           }
           if (newSmbiosTable.Type18->Hdr.Handle == SmbiosTable.Type17->MemoryErrorInformationHandle) {
@@ -1567,9 +1561,6 @@ PatchTableType19 ()
 	for (Index = 0; Index < TotalCount; Index++) {
 		SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_MEMORY_ARRAY_MAPPED_ADDRESS, Index);
 		if (SmbiosTable.Raw == NULL) {
-      if (SmbiosTable.Hdr->Type == SMBIOS_TYPE_END_OF_TABLE) {
-        break; //no need to continue
-      }
 			continue;
 		}
 		if (SmbiosTable.Type19->EndingAddress > TotalEnd) {
