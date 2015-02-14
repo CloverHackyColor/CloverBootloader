@@ -137,8 +137,8 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
   UINTN j;
   INT32 i;
   BOOLEAN Injected = FALSE;
-  UINT32 SnbId = 0;
-  MACHINE_TYPES MacModel;
+//  UINT32 SnbId = 0;
+//  MACHINE_TYPES MacModel;
 //  UINT8 IG_ID[4] = { 0x00, 0x00, 0x62, 0x01 };
   
 	devicepath = get_pci_dev_path(gma_dev);
@@ -205,7 +205,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
   if (gSettings.UseIntelHDMI) {
     devprop_add_value(device, "hda-gfx", (UINT8*)"onboard-1", 10);
   }
-  MacModel = GetModelFromString(gSettings.ProductName);
+//  MacModel = GetModelFromString(gSettings.ProductName);
   switch (gma_dev->device_id) {
     case 0x0102: 
       devprop_add_value(device, "class-code",	(UINT8*)ClassFix, 4);
@@ -214,7 +214,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
     case 0x0116:
     case 0x0122:
     case 0x0126:
-      switch (MacModel) {
+ /*     switch (MacModel) {
         case MacBookPro81:
           SnbId = 0x00000100;
           break;
@@ -224,19 +224,20 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
         case MacMini51:
           SnbId = 0x10000300;
           break;
-/*      case Macmini52:
+      case Macmini52:
           SnbId = 0x20000300;
           break;
         case MacBookAir41:
           SnbId = 0x00000400;
           break;
-*/
+
         default:
           break;
       }
       if (SnbId != 0) {
         devprop_add_value(device, "AAPL,snb-platform-id",	(UINT8*)&SnbId, 4);
       }
+  */
     case 0x0152:
     case 0x0156:
     case 0x0162:
@@ -255,7 +256,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
     case 0x1606:
     case 0x1616:
     case 0x161E:
-      if (!gSettings.IgPlatform && (gma_dev->device_id > 0x130)) {
+      if (!gSettings.IgPlatform) {
         switch (gma_dev->device_id) {
           case 0x162:
           case 0x16a:
@@ -268,6 +269,13 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
           case 0x166:
           case 0x156:
             devprop_add_value(device, "AAPL,ig-platform-id", GMAX3100_vals[25], 4);
+            break;
+          case 0x0102:
+          case 0x0106:
+          case 0x0112:
+          case 0x0116:
+          case 0x0122:
+          case 0x0126:
             break;
           default:
             devprop_add_value(device, "AAPL,ig-platform-id", GMAX3100_vals[26], 4);
