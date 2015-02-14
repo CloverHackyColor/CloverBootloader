@@ -221,7 +221,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
         case MacBookPro83:
           SnbId = 0x00000200;
           break;
-        case Macmini51:
+        case MacMini51:
           SnbId = 0x10000300;
           break;
 /*      case Macmini52:
