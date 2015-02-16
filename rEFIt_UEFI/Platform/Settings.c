@@ -3057,52 +3057,59 @@ InitTheme(
   }
  
   if (ThemesNum > 0 &&
-      (!GlobalConfig.Theme ||
-       StrCmp (GlobalConfig.Theme, L"embedded") != 0)) {
-//DBG("1\n");
+      (!GlobalConfig.Theme || StrCmp (GlobalConfig.Theme, L"embedded") != 0)) {
+    //DBG("1\n");
     // Try special theme first
     if (Time != NULL) {
       if ((Time->Month == 12) && ((Time->Day >= 25) && (Time->Day <= 31))) {
-         TestTheme = PoolPrint (L"christmas");
+        TestTheme = PoolPrint (L"christmas");
       } else if ((Time->Month == 1) && ((Time->Day >= 1) && (Time->Day <= 7))) {
-         TestTheme = PoolPrint (L"newyear");
+        TestTheme = PoolPrint (L"newyear");
       }
-
+      
       if (TestTheme != NULL) {
         ThemeDict = LoadTheme (TestTheme);
         if (ThemeDict != NULL) {
-  //        DBG ("special theme %s found and %s parsed\n", TestTheme, CONFIG_THEME_FILENAME);
+          //        DBG ("special theme %s found and %s parsed\n", TestTheme, CONFIG_THEME_FILENAME);
           if (GlobalConfig.Theme) {
             FreePool (GlobalConfig.Theme);
           }
           GlobalConfig.Theme = TestTheme;
         } else { // special theme not loaded
- //         DBG ("special theme %s not found, skipping\n", TestTheme, CONFIG_THEME_FILENAME);
+          //         DBG ("special theme %s not found, skipping\n", TestTheme, CONFIG_THEME_FILENAME);
           FreePool (TestTheme);
         }
         TestTheme = NULL;
-      } else {
-        //shuffle
-        if (StrCmp (GlobalConfig.Theme, L"random") == 0) {
-          ThemeDict = LoadTheme (ThemesList[Rnd]);
-        }
-      }
+      } /* else {  //later
+         //shuffle
+         if (StrCmp (GlobalConfig.Theme, L"random") == 0) {
+         ThemeDict = LoadTheme (ThemesList[Rnd]);
+         }
+         } */
     }
- //       DBG("2\n");
-    // Try theme from nvram  
+    //       DBG("2\n");
+    // Try theme from nvram
     if (ThemeDict == NULL && UseThemeDefinedInNVRam) {
       ChosenTheme   = GetNvramVariable(L"Clover.Theme", &gEfiAppleBootGuid, NULL, &Size);
       if (ChosenTheme != NULL) {
+        if (AsciiStrCmp (ChosenTheme, "embedded") == 0) {
+          goto finish;
+        }
+        if (AsciiStrCmp (ChosenTheme, "random") == 0) {
+          ThemeDict = LoadTheme (ThemesList[Rnd]);
+          goto finish;
+        }
+        
         TestTheme   = PoolPrint (L"%a", ChosenTheme);
         if (TestTheme != NULL) {
           ThemeDict = LoadTheme (TestTheme);
- //         DBG("3\n");
+          //         DBG("3\n");
           if (ThemeDict != NULL) {
-             DBG ("theme %a defined in NVRAM found and %s parsed\n", ChosenTheme, CONFIG_THEME_FILENAME);
-             if (GlobalConfig.Theme != NULL) {
-               FreePool (GlobalConfig.Theme);
-             }
-             GlobalConfig.Theme = TestTheme;
+            DBG ("theme %a defined in NVRAM found and %s parsed\n", ChosenTheme, CONFIG_THEME_FILENAME);
+            if (GlobalConfig.Theme != NULL) {
+              FreePool (GlobalConfig.Theme);
+            }
+            GlobalConfig.Theme = TestTheme;
           } else { // theme from nvram not loaded
             if (GlobalConfig.Theme != NULL) {
               DBG ("theme %a chosen from nvram is absent, using theme defined in config: %s\n", ChosenTheme, GlobalConfig.Theme);
@@ -3126,15 +3133,19 @@ InitTheme(
           DBG ("no default theme, get first theme %s\n",  CONFIG_THEME_FILENAME, ThemesList[0]);
         }
       } else {
-         ThemeDict = LoadTheme (GlobalConfig.Theme);
-        if (ThemeDict == NULL) {
-          DBG ("GlobalConfig: %s not found, get random theme %s\n", CONFIG_THEME_FILENAME, ThemesList[Rnd]);
-          FreePool (GlobalConfig.Theme);
-          GlobalConfig.Theme = NULL; 
+        if (StrCmp (GlobalConfig.Theme, L"random") == 0) {
+          ThemeDict = LoadTheme (ThemesList[Rnd]);
+        } else {
+          ThemeDict = LoadTheme (GlobalConfig.Theme);
+          if (ThemeDict == NULL) {
+            DBG ("GlobalConfig: %s not found, get random theme %s\n", CONFIG_THEME_FILENAME, ThemesList[Rnd]);
+            FreePool (GlobalConfig.Theme);
+            GlobalConfig.Theme = NULL;
+          }
         }
       }
     }
-     // Try to get a theme
+    // Try to get a theme
     if (ThemeDict == NULL) {
       ThemeDict = LoadTheme (ThemesList[Rnd]);
       if (ThemeDict != NULL) {
@@ -3142,9 +3153,11 @@ InitTheme(
       }
     }
   } // ThemesNum>0
-  // No theme could be loaded, use embedded
-  if (!ThemeDict) {
-    DBG ("no themes available, using embedded\n");
+  
+
+finish:
+  if (!ThemeDict) {  // No theme could be loaded, use embedded
+    DBG (" using embedded theme\n");
     GlobalConfig.Theme = NULL;
     if (ThemePath != NULL) {
       FreePool (ThemePath);
