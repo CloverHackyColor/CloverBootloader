@@ -2340,11 +2340,6 @@ AtaPacketCommandExecute (
     return Status;
   }
 
-  //
-  // Stall at least 400 nanoseconds.
-  //
-  MicroSecondDelay (1);
-
   Status = DRQReady (PciIo, IdeRegisters, Packet->Timeout);
   if (EFI_ERROR (Status)) {
     return Status;

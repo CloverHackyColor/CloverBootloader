@@ -1207,7 +1207,7 @@ EFI_STATUS fsw_efi_dnode_fill_FileInfo(IN FSW_VOLUME_DATA *Volume,
   
   FileInfo->Size = RequiredSize;
   FileInfo->FileSize          = dno->size;
-  FileInfo->Attribute         = 0;
+  FileInfo->Attribute         = EFI_FILE_READ_ONLY;
   if (dno->type == FSW_DNODE_TYPE_DIR)
     FileInfo->Attribute    |= EFI_FILE_DIRECTORY;
   

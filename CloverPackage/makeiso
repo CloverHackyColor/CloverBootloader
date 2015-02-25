@@ -166,7 +166,7 @@ if [ ${IMAGE_WITH_IA32} -eq 1 ]; then
     mv -f ${ISOIMAGE32} ${SYMROOT}/CloverISO-${REVISION}/
 fi
 echo "[TAR] CloverISO-${REVISION}"
-tar -cv ${SYMROOT}/CloverISO-${REVISION} > ${SYMROOT}/CloverISO-${REVISION}.tar
+tar -cv -f ${SYMROOT}/CloverISO-${REVISION}.tar -C ${SYMROOT}/CloverISO-${REVISION} .
 echo "[LZMA] CloverISO-${REVISION}"
 ${CLOVERROOT}/BootSectors/lzma e ${SYMROOT}/CloverISO-${REVISION}.tar ${SYMROOT}/CloverISO-${REVISION}.tar.lzma
 rm -rf ${SYMROOT}/CloverISO-${REVISION}.tar

@@ -62,9 +62,9 @@ typedef struct _USB_DEV_CONTEXT      USB_DEV_CONTEXT;
 #define XHC_RESET_TIMEOUT            (1000 * 1000)
 //
 // XHC delay experience value for polling operation.
-// The unit is microsecond, set it as 1ms.
+// The unit is microsecond, set it as 100us.
 //
-#define XHC_POLL_DELAY               (1000)
+#define XHC_POLL_DELAY               (100)
 //
 // XHC async transfer timer interval, set by experience.
 // The unit is 100us, takes 50ms as interval.

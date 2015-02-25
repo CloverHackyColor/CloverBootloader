@@ -890,6 +890,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
 //    DBG("BeginExternalScreen\n");
   BeginExternalScreen(OSFLAG_ISSET(Entry->Flags, OSFLAG_USEGRAPHICS), L"Booting OS");
 
+  if (!OSTYPE_IS_WINDOWS(Entry->LoaderType)) {
   if (OSFLAG_ISSET(Entry->Flags, OSFLAG_USEGRAPHICS)) {
     // save orig OutputString and replace it with
     // null implementation
@@ -904,6 +905,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
   else if (EFI_ERROR(Status = LockBootScreen())) {
     DBG("Failed to lock custom boot screen: %r!\n", Status);
   }
+  } // !OSTYPE_IS_WINDOWS
 
   if (OSTYPE_IS_OSX(Entry->LoaderType) ||
       OSTYPE_IS_OSX_RECOVERY(Entry->LoaderType) ||
