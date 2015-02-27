@@ -483,7 +483,7 @@ AhciDisableFisReceive (
     return EFI_SUCCESS;
   }
 
-  AhciAndReg (PciIo, Offset, (UINT32)~(EFI_AHCI_PORT_CMD_FRE));
+  AhciWriteReg (PciIo, Offset, Data & ~(UINT32)EFI_AHCI_PORT_CMD_FRE);
 
   return AhciWaitMmioSet (
            PciIo,
@@ -551,7 +551,12 @@ AhciBuildCommand (
  // ASSERT (PrdtNumber <= 8);
   if (PrdtNumber > 8) PrdtNumber = 8;
 
+#if 0
   ZeroMem (&AhciRegisters->AhciRFis[Port], sizeof (EFI_AHCI_RECEIVED_FIS));
+#else
+  AhciRegisters->AhciRFis[Port].AhciPioSetupFis[0] = 0;
+  AhciRegisters->AhciRFis[Port].AhciD2HRegisterFis[0] = 0;
+#endif
 
   CommandFis->AhciCFisPmNum = PortMultiplier;
 
@@ -572,6 +577,9 @@ AhciBuildCommand (
 
     AhciOrReg (PciIo, Offset, (EFI_AHCI_PORT_CMD_DLAE | EFI_AHCI_PORT_CMD_ATAPI));
   } else {
+    if (PrdtNumber) {
+      CommandList->AhciCmdP = 1;
+    }
     AhciAndReg (PciIo, Offset, (UINT32)~(EFI_AHCI_PORT_CMD_DLAE | EFI_AHCI_PORT_CMD_ATAPI));
   }
 
@@ -1252,7 +1260,7 @@ AhciStopCommand (
   }
 
   if ((Data & EFI_AHCI_PORT_CMD_ST) != 0) {
-    AhciAndReg (PciIo, Offset, (UINT32)~(EFI_AHCI_PORT_CMD_ST));
+    AhciWriteReg (PciIo, Offset, Data & ~(UINT32)EFI_AHCI_PORT_CMD_ST);
   }
 
   return AhciWaitMmioSet (
@@ -1286,20 +1294,11 @@ AhciStartCommand (
   IN  UINT64                    Timeout
   )
 {
-  UINT32     CmdSlotBit;
   EFI_STATUS Status;
   UINT32     PortStatus;
   UINT32     StartCmd;
   UINT32     PortTfd;
   UINT32     Offset;
-  UINT32     Capability;
-
-  //
-  // Collect AHCI controller information
-  //
-  Capability = AhciReadReg(PciIo, EFI_AHCI_CAPABILITY_OFFSET);
-
-  CmdSlotBit = (UINT32) (1 << CommandSlot);
 
   AhciClearPortStatus (
     PciIo,
@@ -1330,6 +1329,7 @@ AhciStartCommand (
   PortTfd = AhciReadReg (PciIo, Offset);
 
   if ((PortTfd & (EFI_AHCI_PORT_TFD_BSY | EFI_AHCI_PORT_TFD_DRQ)) != 0) {
+    UINT32 Capability = AhciReadReg(PciIo, EFI_AHCI_CAPABILITY_OFFSET);
     if ((Capability & BIT24) != 0) {
       Offset = EFI_AHCI_PORT_START + Port * EFI_AHCI_PORT_REG_WIDTH + EFI_AHCI_PORT_CMD;
       AhciOrReg (PciIo, Offset, EFI_AHCI_PORT_CMD_CLO);
@@ -1351,8 +1351,7 @@ AhciStartCommand (
   // Setting the command
   //
   Offset = EFI_AHCI_PORT_START + Port * EFI_AHCI_PORT_REG_WIDTH + EFI_AHCI_PORT_CI;
-  AhciAndReg (PciIo, Offset, 0);
-  AhciOrReg (PciIo, Offset, CmdSlotBit);
+  AhciWriteReg (PciIo, Offset, (UINT32) (1 << CommandSlot));
 
   return EFI_SUCCESS;
 }
@@ -2395,7 +2394,7 @@ AhciModeInitialization (
         // Clear PxCMD.SUD for those ports at which there are no device present.
         //
         Offset = EFI_AHCI_PORT_START + Port * EFI_AHCI_PORT_REG_WIDTH + EFI_AHCI_PORT_CMD;
-        AhciAndReg (PciIo, Offset, (UINT32) ~(EFI_AHCI_PORT_CMD_SUD));
+        AhciAndReg (PciIo, Offset, ~(UINT32)EFI_AHCI_PORT_CMD_SUD);
         continue;
       }
 

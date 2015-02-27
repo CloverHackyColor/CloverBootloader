@@ -773,7 +773,7 @@ DRQReady2 (
 #endif
 
     //
-    // Stall for 100 microseconds.
+    // Stall for 100 microseconds. -> 30
     //
     MicroSecondDelay (30);
 
@@ -962,7 +962,7 @@ DRDYReady2 (
 #endif
 
     //
-    // Stall for 100 microseconds.
+    // Stall for 100 microseconds. -> 30
     //
     MicroSecondDelay (30);
 
@@ -1079,7 +1079,7 @@ WaitForBSYClear2 (
     }
 
     //
-    // Stall for 100 microseconds.
+    // Stall for 100 microseconds. -> 30
     //
     MicroSecondDelay (30);
 
@@ -1398,12 +1398,13 @@ AtaIssueCommand (
   //
   IdeWritePortB (PciIo, IdeRegisters->CmdOrStatus, AtaCommand);
 
-#if 0
   //
-  // Stall at least 400 microseconds.
+  // Stall at least 400 nanoseconds.
+  //   Serial ATA 3.2 specification section 10.5.5.3 -
+  //     HBA can take up to 400ns to set BSY after
+  //     writing Cmd register.
   //
-  MicroSecondDelay (400);
-#endif
+  MicroSecondDelay (1);
 
   return EFI_SUCCESS;
 }
@@ -1931,9 +1932,9 @@ AtaUdmaInOut (
     ByteRemaining   = ByteCount;
     TempPrdBaseAddr = PrdBaseAddr;
     while (ByteRemaining != 0) {
-      BytesThisPrd = ByteRemaining < 0x10000U ? ByteRemaining : 0x10000U;
-      if ((((UINTN)BufferMapAddress + BytesThisPrd - 1U) & 0x10000U) != ((UINTN)BufferMapAddress & 0x10000U)) {
-        BytesThisPrd = (-(UINTN)BufferMapAddress) & 0xFFFFU;
+      BytesThisPrd = 0x10000U - ((UINTN)BufferMapAddress & 0xFFFFU);
+      if (ByteRemaining < BytesThisPrd) {
+        BytesThisPrd = ByteRemaining;
       }
 
       TempPrdBaseAddr->RegionBaseAddr = (UINT32) ((UINTN) BufferMapAddress);
