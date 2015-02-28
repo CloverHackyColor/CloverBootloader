@@ -246,8 +246,6 @@ CalculateBestUdmaMode (
   UINT16    TempMode;
   UINT16    DeviceUDmaMode;
 
-  DeviceUDmaMode = 0;
-
   //
   // Check whether the WORD 88 (supported UltraDMA by drive) is valid
   //
@@ -255,9 +253,19 @@ CalculateBestUdmaMode (
     return EFI_UNSUPPORTED;
   }
 
-  DeviceUDmaMode = IdentifyData->AtaData.ultra_dma_mode;
+  DeviceUDmaMode = IdentifyData->AtaData.ultra_dma_mode & 0x7fU;
+  if ((IdentifyData->AtaData.config & 0xC000U) == 0x8000U) {
+    //
+    // Atapi Device
+    //
+    if (IdentifyData->AtapiData.dma_dir & 0x8000U) {
+      DeviceUDmaMode = IdentifyData->AtapiData.dma_dir & 0x7fU;
+    }
+  }
   DBG(L"CalculateBestUdmaMode: DeviceUDmaMode = %x\n", DeviceUDmaMode);
-  DeviceUDmaMode &= 0x3f;
+  if (!DeviceUDmaMode) {
+    return EFI_UNSUPPORTED;
+  }
   TempMode = 0;                 // initialize it to UDMA-0
 
   while ((DeviceUDmaMode >>= 1) != 0) {
@@ -901,6 +909,7 @@ IdeInitSubmitData (
   IN EFI_IDENTIFY_DATA                  *IdentifyData
   )
 {
+  UINTN Index;
   EFI_SATA_CONTROLLER_PRIVATE_DATA  *SataPrivateData;
   SataPrivateData = SATA_CONTROLLER_PRIVATE_DATA_FROM_THIS (This);
 //  ASSERT (SataPrivateData != NULL);
@@ -912,19 +921,21 @@ IdeInitSubmitData (
     return EFI_INVALID_PARAMETER;
   }
 
+  Index = (UINTN) Channel * (UINTN) SataPrivateData->DeviceCount + (UINTN) Device;
+
   //
   // Make a local copy of device's IdentifyData and mark the valid flag
   //
   if (IdentifyData != NULL) {
     CopyMem (
-      &(SataPrivateData->IdentifyData[Channel * Device]),
+      &(SataPrivateData->IdentifyData[Index]),
       IdentifyData,
       sizeof (EFI_IDENTIFY_DATA)
       );
 
-    SataPrivateData->IdentifyValid[Channel * Device] = TRUE;
+    SataPrivateData->IdentifyValid[Index] = TRUE;
   } else {
-    SataPrivateData->IdentifyValid[Channel * Device] = FALSE;
+    SataPrivateData->IdentifyValid[Index] = FALSE;
   }
 
   return EFI_SUCCESS;
@@ -995,7 +1006,7 @@ IdeInitDisqualifyMode (
   // if a mode is not supported, the modes higher than it is also not supported.
   //
   CopyMem (
-    &(SataPrivateData->DisqulifiedModes[Channel * Device]),
+    &(SataPrivateData->DisqulifiedModes[(UINTN) Channel * (UINTN) SataPrivateData->DeviceCount + (UINTN) Device]),
     BadModes,
     sizeof (EFI_ATA_COLLECTIVE_MODE)
     );
@@ -1072,6 +1083,7 @@ IdeInitCalculateMode (
   EFI_ATA_COLLECTIVE_MODE           *DisqulifiedModes;
   UINT16                            SelectedMode;
   EFI_STATUS                        Status;
+  UINTN                             Index;
 
   SataPrivateData = SATA_CONTROLLER_PRIVATE_DATA_FROM_THIS (This);
 //  ASSERT (SataPrivateData != NULL);
@@ -1088,9 +1100,10 @@ IdeInitCalculateMode (
     return EFI_OUT_OF_RESOURCES;
   }
 
-  IdentifyData = &(SataPrivateData->IdentifyData[Channel * Device]);
-  IdentifyValid = SataPrivateData->IdentifyValid[Channel * Device];
-  DisqulifiedModes = &(SataPrivateData->DisqulifiedModes[Channel * Device]);
+  Index = (UINTN) Channel * (UINTN) SataPrivateData->DeviceCount + (UINTN) Device;
+  IdentifyData = &(SataPrivateData->IdentifyData[Index]);
+  IdentifyValid = SataPrivateData->IdentifyValid[Index];
+  DisqulifiedModes = &(SataPrivateData->DisqulifiedModes[Index]);
 
   //
   // Make sure we've got the valid identify data of the device from SubmitData()

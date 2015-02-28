@@ -2522,6 +2522,7 @@ AhciModeInitialization (
         TransferMode.ModeCategory = EFI_ATA_MODE_MDMA;
         TransferMode.ModeNumber = (UINT8) SupportedModes->MultiWordDmaMode.Mode;
       }
+      FreePool(SupportedModes);
 
       Status = AhciDeviceSetFeature (PciIo, AhciRegisters, Port, 0, 0x03, (UINT32)(*(UINT8 *)&TransferMode));
       if (EFI_ERROR (Status)) {

@@ -3077,6 +3077,7 @@ DetectAndConfigIdeDevice (
       if (EFI_ERROR (Status)) {
 //        DEBUG ((EFI_D_ERROR, "Set transfer Mode Fail, Status = %r\n", Status));
         DBG(L"Set PIO transfer Mode %d Fail, Status = %r\n", TransferMode.ModeNumber, Status);
+        FreePool(SupportedModes);
         continue;
       }
     }
@@ -3095,6 +3096,7 @@ DetectAndConfigIdeDevice (
       if (EFI_ERROR (Status)) {
 //        DEBUG ((EFI_D_ERROR, "Set transfer Mode Fail, Status = %r\n", Status));
         DBG(L"Set DMA transfer Mode %d Fail, Status = %r\n", TransferMode.ModeNumber, Status);
+        FreePool(SupportedModes);
         continue;
       }
     } else if (SupportedModes->MultiWordDmaMode.Valid) {
@@ -3105,6 +3107,7 @@ DetectAndConfigIdeDevice (
       if (EFI_ERROR (Status)) {
  //       DEBUG ((EFI_D_ERROR, "Set transfer Mode Fail, Status = %r\n", Status));
         DBG(L"Set transfer Mode Fail, Status = %r\n", Status);
+        FreePool(SupportedModes);
         continue;
       }
     }
@@ -3129,6 +3132,7 @@ DetectAndConfigIdeDevice (
     // Set IDE controller Timing Blocks in the PCI Configuration Space
     //
     IdeInit->SetTiming (IdeInit, IdeChannel, IdeDevice, SupportedModes);
+    FreePool(SupportedModes);
 
     //
     // IDE controller and IDE device timing is configured successfully.
