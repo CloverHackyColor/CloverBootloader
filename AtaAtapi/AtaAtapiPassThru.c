@@ -1989,6 +1989,7 @@ ExtScsiPassThruPassThru (
   EFI_SCSI_SENSE_DATA             *PtrSenseData;
   UINTN                           SenseDataLen;
   EFI_STATUS                      SenseStatus;
+  UINT8                           AtapiUdmaFlags;
 
   SenseDataLen = 0;
   Instance     = EXT_SCSI_PASS_THRU_PRIVATE_DATA_FROM_THIS (This);
@@ -2062,6 +2063,9 @@ ExtScsiPassThruPassThru (
   //
   if (*((UINT8*)Packet->Cdb) == ATA_CMD_IDENTIFY_DEVICE) {
     CopyMem (Packet->InDataBuffer, DeviceInfo->IdentifyData, sizeof (EFI_IDENTIFY_DATA));
+    if (Instance->Mode == EfiAtaAhciMode) {
+      ((EFI_IDENTIFY_DATA*) Packet->InDataBuffer)->AtapiData.reserved_224_254[0] = 0U; // hide stashed value
+    }
     //
     // For IDENTIFY DEVICE cmd, we don't need to get sense data.
     //
@@ -2088,7 +2092,8 @@ ExtScsiPassThruPassThru (
 //      DBG(L"AtaPacketCommandExecute Multiplier=%d Status=%r\n", PortMultiplier, Status);
       break;
     case EfiAtaAhciMode:
-      Status = AhciPacketCommandExecute (Instance->PciIo, &Instance->AhciRegisters, Port, PortMultiplier, Packet);
+      AtapiUdmaFlags = (UINT8) DeviceInfo->IdentifyData->AtapiData.reserved_224_254[0]; // stashed by AhciModeInitialization()
+      Status = AhciPacketCommandExecute (Instance->PciIo, &Instance->AhciRegisters, Port, PortMultiplier | (AtapiUdmaFlags << 4), Packet);
 //      DBG(L"EfiAtaAhciMode on port %d\n", Port);
       break;
     default :

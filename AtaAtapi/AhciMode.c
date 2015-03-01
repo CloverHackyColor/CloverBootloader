@@ -1911,18 +1911,25 @@ AhciPacketCommandExecute (
   EFI_ATA_COMMAND_BLOCK        AtaCommandBlock;
   EFI_ATA_STATUS_BLOCK         AtaStatusBlock;
   BOOLEAN                      Read;
+  UINT8                        AtapiUdmaFlags;
+
+#define ATAPI_DMA_BIT 1U
+#define ATAPI_DMADIR_BIT 4U
 
   if (Packet == NULL || Packet->Cdb == NULL) {
     return EFI_INVALID_PARAMETER;
   }
 
+  AtapiUdmaFlags = (PortMultiplier >> 4) & 15U;
+  PortMultiplier &= 15U;
+
   ZeroMem (&AtaCommandBlock, sizeof (EFI_ATA_COMMAND_BLOCK));
   ZeroMem (&AtaStatusBlock, sizeof (EFI_ATA_STATUS_BLOCK));
   AtaCommandBlock.AtaCommand      = ATA_CMD_PACKET;
   //
-  // No OVL; No DMA
+  // No OVL, DMA bit from AtapiUdmaFlags
   //
-  AtaCommandBlock.AtaFeatures     = 0x00;
+  AtaCommandBlock.AtaFeatures     = (AtapiUdmaFlags & ATAPI_DMA_BIT);
   //
   // set the transfersize to ATAPI_MAX_BYTE_COUNT to let the device
   // determine how many data should be transferred.
@@ -1934,6 +1941,9 @@ AhciPacketCommandExecute (
     Buffer = Packet->InDataBuffer;
     Length = Packet->InTransferLength;
     Read = TRUE;
+    if ((AtapiUdmaFlags & (ATAPI_DMA_BIT | ATAPI_DMADIR_BIT)) == (ATAPI_DMA_BIT | ATAPI_DMADIR_BIT)) {
+      AtaCommandBlock.AtaFeatures |= ATAPI_DMADIR_BIT;    // Set DMADIR bit if device wants it, using DMA, and Read
+    }
   } else {
     Buffer = Packet->OutDataBuffer;
     Length = Packet->OutTransferLength;
@@ -1954,6 +1964,10 @@ AhciPacketCommandExecute (
                NULL
                );
   } else {
+    //
+    // Note: If DMA is on, code sequences in AhciPioTransfer and AhciDmaTransfer
+    //   for Atapi, non-task mode are identical.
+    //
     Status = AhciPioTransfer (
                PciIo,
                AhciRegisters,
@@ -2332,7 +2346,7 @@ AhciModeInitialization (
       Offset = EFI_AHCI_PORT_START + Port * EFI_AHCI_PORT_REG_WIDTH + EFI_AHCI_PORT_CMD;
       Data = AhciReadReg (PciIo, Offset);
       if ((Data & EFI_AHCI_PORT_CMD_CPD) != 0) {
-        AhciOrReg (PciIo, Offset, EFI_AHCI_PORT_CMD_POD);
+        AhciWriteReg (PciIo, Offset, Data | EFI_AHCI_PORT_CMD_POD);
       }
 
       if ((Capability & EFI_AHCI_CAP_SSS) != 0) {
@@ -2348,7 +2362,7 @@ AhciModeInitialization (
       // Disable the reporting of the corresponding interrupt to system software.
       //
       Offset = EFI_AHCI_PORT_START + Port * EFI_AHCI_PORT_REG_WIDTH + EFI_AHCI_PORT_IE;
-      AhciAndReg (PciIo, Offset, 0);
+      AhciWriteReg (PciIo, Offset, 0);
 
       //
       // Now inform the IDE Controller Init Module.
@@ -2529,6 +2543,23 @@ AhciModeInitialization (
 //        DEBUG ((EFI_D_ERROR, "Set transfer Mode Fail, Status = %r\n", Status));
 //        Print(L"Set transfer Mode Fail, Status = %r\n", Status);
         continue;
+      }
+
+      if (DeviceType == EfiIdeCdrom) {
+        //
+        // Prepare and stash DMA flags for Atapi
+        //
+        UINT8 AtapiUdmaFlags = 0U;
+        if (TransferMode.ModeCategory == EFI_ATA_MODE_UDMA) {
+          AtapiUdmaFlags |= ATAPI_DMA_BIT;
+          //
+          // If word 62, bit 15 of IdentifyData is set, Atapi device requires DMADIR bit
+          //
+          if (Buffer.AtapiData.dma_dir & 0x8000U) {
+            AtapiUdmaFlags |= ATAPI_DMADIR_BIT;
+          }
+        }
+        Buffer.AtapiData.reserved_224_254[0] = AtapiUdmaFlags;
       }
 
       //
