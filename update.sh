@@ -15,8 +15,6 @@ cd ../IntelFrameworkModulePkg/
 svn up
 cd ../IntelFrameworkPkg/
 svn up
-cd ../IntelFrameworkPkg/
-svn up
 cd ../OvmfPkg/
 svn up
 cd ../PcAtChipsetPkg/
