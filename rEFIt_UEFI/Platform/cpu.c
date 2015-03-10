@@ -266,6 +266,13 @@ VOID GetCPUProperties (VOID)
     gCPUStructure.Cores   = 1;
     gCPUStructure.Threads = 2;
   }
+  
+  //workaround for Quad
+  if (AsciiStrStr(gCPUStructure.BrandString, "Quad")) {
+    gCPUStructure.Cores   = 4;
+    gCPUStructure.Threads = 4;
+  }
+  
 
 
 	//get Min and Max Ratio Cpu/Bus
