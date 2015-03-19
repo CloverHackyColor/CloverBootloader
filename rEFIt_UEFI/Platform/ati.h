@@ -86,6 +86,8 @@ typedef enum {
 	CHIP_FAMILY_KAVERI,
 	CHIP_FAMILY_KABINI,
 	CHIP_FAMILY_HAWAII,
+	/* ... */
+	CHIP_FAMILY_MULLINS,
 	CHIP_FAMILY_LAST
 } ati_chip_family_t;
 
@@ -155,21 +157,30 @@ typedef enum {
 	kSpikerush,
 	kTypha,
 	/* AMD7000Controller */
-	kAji,  //4 
-	kBuri, //4 M
-	kChutoro, //5 M
-	kDashimaki, //4
-	kEbi, //5 M
-	kGari, //5 M
-	kFutomaki, //5
-	kHamachi, //4
+	kNamako,
+	kAji,
+	kBuri,
+	kChutoro,
+	kDashimaki,
+	kEbi,
+	kGari,
+	kFutomaki,
+	kHamachi,
 	kOPM,
 	kIkura,
 	kIkuraS,
-  // 8000 & 9000 families (R7, R9)
+	kJunsai,
+	kKani,
+	kKaniS,
+	kDashimakiS,
+	kMaguro,
+	kMaguroS,
+	/* AMD8000Controller */
   kBaladi,
+	/* AMD9000Controller */
   kExmoor,
   kBasset,
+	kGreyhound,
 	kCfgEnd
 } config_name_t;
 
