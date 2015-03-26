@@ -2053,7 +2053,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     if (!gSettings.UserChange) {
       gSettings.BusSpeed = 200000;
     }
-    gCPUStructure.MaxRatio = DivU64x32(gCPUStructure.TSCCalibr, gSettings.BusSpeed * kilo);
+    gCPUStructure.MaxRatio = (UINT32)DivU64x32(gCPUStructure.TSCCalibr, gSettings.BusSpeed * kilo);
     DBG("Set MaxRatio for QEMU: %d\n", gCPUStructure.MaxRatio);
     gCPUStructure.MaxRatio *= 10;
     gCPUStructure.MinRatio = 60;
