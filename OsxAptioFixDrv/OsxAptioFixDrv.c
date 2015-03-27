@@ -182,7 +182,7 @@ AllocateRelocBlock()
 	CalculateRelocBlockSize();
 	
 	gRelocBase = 0;
-	Addr = 0x200000000; // max address
+	Addr = 0x100000000; // max address
 	Status = AllocatePagesFromTop(EfiBootServicesData, gRelocSizePages, &Addr);
 	if (Status != EFI_SUCCESS) {
 		DBG("OsxAptioFixDrv: AllocateRelocBlock(): can not allocate relocation block (0x%x pages below 0x%lx): %r\n",
