@@ -290,7 +290,7 @@ VmAllocateMemoryPool(VOID)
 	}
 
 	VmMemoryPoolFreePages = 0x200; // 2 MB should be enough
-	Addr = 0x200000000; // max address
+	Addr = 0x100000000; // max address
 	
 	Status = AllocatePagesFromTop(EfiBootServicesData, VmMemoryPoolFreePages, &Addr);
 	if (Status != EFI_SUCCESS) {
