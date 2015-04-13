@@ -21,3 +21,4 @@ $(TEXTFILES_TARGET): $(TEXTFILES)
 
 clean:
 	rm -f $(BOOTSECTOR_BINS) $(PBOOTSECTOR_BINS) $(TEXTFILES_TARGET) *~
+# Dependencies for File: ú1ÀŽÐ¼ðÿûŽØŽÀV¾

@@ -1563,6 +1563,10 @@ XhcSyncInterruptTransfer (
     return EFI_INVALID_PARAMETER;
   }
 
+  if (!XHCI_IS_DATAIN (EndPointAddress)) {
+    return EFI_INVALID_PARAMETER;
+  }
+
   if ((*DataToggle != 1) && (*DataToggle != 0)) {
     return EFI_INVALID_PARAMETER;
   }

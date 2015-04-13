@@ -280,6 +280,14 @@
   ## Include/Guid/MemoryProfile.h
   gEdkiiMemoryProfileGuid              = { 0x821c9a09, 0x541a, 0x40f6, { 0x9f, 0x43, 0xa, 0xd1, 0x93, 0xa1, 0x2c, 0xfe }}
 
+  ## Include/Protocol/VarErrorFlag.h
+  gEdkiiVarErrorFlagGuid               = { 0x4b37fe8, 0xf6ae, 0x480b, { 0xbd, 0xd5, 0x37, 0xd9, 0x8c, 0x5e, 0x89, 0xaa } }
+
+  ## GUID indicates the LZMA custom compress/decompress algorithm.
+  #  Include/Guid/LzmaDecompress.h
+  gLzmaCustomDecompressGuid      = { 0xEE4E5898, 0x3914, 0x4259, { 0x9D, 0x6E, 0xDC, 0x7B, 0xD7, 0x94, 0x03, 0xCF }}
+  gLzmaF86CustomDecompressGuid     = { 0xD42AE6BD, 0x1352, 0x4bfb, { 0x90, 0x9A, 0xCA, 0x72, 0xA6, 0xEA, 0xE8, 0x89 }}
+
 [Ppis]
   ## Include/Ppi/AtaController.h
   gPeiAtaControllerPpiGuid       = { 0xa45e60d1, 0xc719, 0x44aa, { 0xb0, 0x7a, 0xaa, 0x77, 0x7f, 0x85, 0x90, 0x6d }}
@@ -704,12 +712,43 @@
   # @Prompt Maximum HwErr variable size.
   gEfiMdeModulePkgTokenSpaceGuid.PcdMaxHardwareErrorVariableSize|0x8000|UINT32|0x30000004
 
-  ## The size of reserved HwErr variable space. Note that this value must be less than or equal to PcdFlashNvStorageVariableSize.
+  ## The size of reserved HwErr variable space. Note that this value must be less than (PcdFlashNvStorageVariableSize - EFI_FIRMWARE_VOLUME_HEADER.HeaderLength - sizeof (VARIABLE_STORE_HEADER)).
   # In EdkII implementation, HwErr type variable is stored with common non-volatile variables in the same NV region.
-  # so the platform integrator should ensure this value is less than or equal to PcdFlashNvStorageVariableSize.
+  # so the platform integrator should ensure this value is less than (PcdFlashNvStorageVariableSize - EFI_FIRMWARE_VOLUME_HEADER.HeaderLength - sizeof (VARIABLE_STORE_HEADER)).
   # this value is used to guarantee the space of HwErr type variable and not populated by common variable.
   # @Prompt HwErr variable storage size.
   gEfiMdeModulePkgTokenSpaceGuid.PcdHwErrStorageSize|0x0000|UINT32|0x30000006
+
+  ## The size of maximum user NV variable space.<BR><BR>
+  # Note that this value must be less than (PcdFlashNvStorageVariableSize - EFI_FIRMWARE_VOLUME_HEADER.HeaderLength - sizeof (VARIABLE_STORE_HEADER) - PcdHwErrStorageSize).<BR>
+  # If the value is 0, it means user variable share the same NV storage with system variable,
+  # this is designed to keep the compatibility for the platform that does not allocate special region for user variable.<BR>
+  # If the value is non-0, the below 4 types of variables will be regarded as System Variable after EndOfDxe, their property could be got by VarCheck protocol,
+  # otherwise the variable will be regarded as user variable.<BR>
+  #  1) UEFI defined variables (gEfiGlobalVariableGuid and gEfiImageSecurityDatabaseGuid(auth variable) variables at least).<BR>
+  #  2) Variables managed by Variable driver internally.<BR>
+  #  3) Variables need to be locked, they MUST be set by VariableLock protocol.<BR>
+  #  4) Important variables during platform boot, their property SHOULD be set by VarCheck protocol.<BR>
+  # The PCD is used to guarantee the space of system variable and not populated by user variable.<BR>
+  # @Prompt Maximum user NV variable space size.
+  gEfiMdeModulePkgTokenSpaceGuid.PcdMaxUserNvVariableSpaceSize|0x00|UINT32|0x00000009
+
+  ## The size of NV variable space reserved at UEFI boottime.<BR><BR>
+  # Note that this value must be less than (PcdFlashNvStorageVariableSize - EFI_FIRMWARE_VOLUME_HEADER.HeaderLength - sizeof (VARIABLE_STORE_HEADER) - PcdHwErrStorageSize).<BR>
+  # In EdkII implementation, variable driver can reserved some NV storage region for boottime settings.
+  # So at UEFI runtime, the variable service consumer can not exhaust full NV storage region.<BR>
+  # Then the common NV variable space size at boottime will be
+  #  (PcdFlashNvStorageVariableSize - EFI_FIRMWARE_VOLUME_HEADER.HeaderLength - sizeof (VARIABLE_STORE_HEADER) - PcdHwErrStorageSize),<BR>
+  # and the common NV variable space size at runtime will be
+  #  (PcdFlashNvStorageVariableSize - EFI_FIRMWARE_VOLUME_HEADER.HeaderLength - sizeof (VARIABLE_STORE_HEADER) - PcdHwErrStorageSize) - PcdBoottimeReservedNvVariableSpaceSize.<BR>
+  # @Prompt Boottime reserved NV variable space size.
+  gEfiMdeModulePkgTokenSpaceGuid.PcdBoottimeReservedNvVariableSpaceSize|0x00|UINT32|0x30000007
+
+  ## Reclaim variable space at EndOfDxe.<BR><BR>
+  # The value is FALSE as default for compatibility that variable driver tries to reclaim variable space at ReadyToBoot event.<BR>
+  # If the value is set to TRUE, variable driver tries to reclaim variable space at EndOfDxe event.<BR>
+  # @Prompt Reclaim variable space at EndOfDxe.
+  gEfiMdeModulePkgTokenSpaceGuid.PcdReclaimVariableSpaceAtEndOfDxe|FALSE|BOOLEAN|0x30000008
 
   ## The size of volatile buffer. This buffer is used to store VOLATILE attribute variables.
   # @Prompt Variable storage size.
@@ -1133,7 +1172,18 @@
 
   ## SMBIOS version.
   # @Prompt SMBIOS version.
-  gEfiMdeModulePkgTokenSpaceGuid.PcdSmbiosVersion|0x0207|UINT16|0x00010055
+  gEfiMdeModulePkgTokenSpaceGuid.PcdSmbiosVersion|0x0204|UINT16|0x00010055
+
+  ## SMBIOS Docrev field in SMBIOS 3.0 (64-bit) Entry Point Structure.
+  # @Prompt SMBIOS Docrev field in SMBIOS 3.0 (64-bit) Entry Point Structure.
+  gEfiMdeModulePkgTokenSpaceGuid.PcdSmbiosDocRev|0x0|UINT8|0x0001006A
+
+  ## SMBIOS produce method.
+  #  BIT0 set indicates 32-bit entry point and table are produced.<BR>
+  #  BIT1 set indicates 64-bit entry point and table are produced.<BR>
+  # @Prompt The policy to produce SMBIOS entry point and table.
+  gEfiMdeModulePkgTokenSpaceGuid.PcdSmbiosEntryPointProvideMethod|0x3|UINT32|0x00010069
+
 
   ## This PCD specifies the additional pad size in FPDT Basic Boot Performance Table for 
   #  the extension FPDT boot records received after ReadyToBoot and before ExitBootService.
