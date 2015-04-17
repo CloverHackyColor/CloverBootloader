@@ -4714,27 +4714,27 @@ CHAR16
   CHAR16 *OSIconName;
   if (OSVersion == NULL) {
     OSIconName = L"mac";
-  } else if (AsciiStrStr (OSVersion, "10.4") != 0) {
-    // Tiger
-    OSIconName = L"tiger,mac";
-  } else if (AsciiStrStr (OSVersion, "10.5") != 0) {
-    // Leopard
-    OSIconName = L"leo,mac";
-  } else if (AsciiStrStr (OSVersion, "10.6") != 0) {
-    // Snow Leopard
-    OSIconName = L"snow,mac";
-  } else if (AsciiStrStr (OSVersion, "10.7") != 0) {
-    // Lion
-    OSIconName = L"lion,mac";
-  } else if (AsciiStrStr (OSVersion, "10.8") != 0) {
-    // Mountain Lion
-    OSIconName = L"cougar,mac";
-  } else if (AsciiStrStr (OSVersion, "10.9") != 0) {
-    // Mavericks
-    OSIconName = L"mav,mac";
   } else if (AsciiStrStr (OSVersion, "10.10") != 0) {
     // Yosemite
     OSIconName = L"yos,mac";
+  } else if (AsciiStrStr (OSVersion, "10.9") != 0) {
+    // Mavericks
+    OSIconName = L"mav,mac";
+  } else if (AsciiStrStr (OSVersion, "10.8") != 0) {
+    // Mountain Lion
+    OSIconName = L"cougar,mac";
+  } else if (AsciiStrStr (OSVersion, "10.7") != 0) {
+    // Lion
+    OSIconName = L"lion,mac";
+  } else if (AsciiStrStr (OSVersion, "10.6") != 0) {
+    // Snow Leopard
+    OSIconName = L"snow,mac";
+  } else if (AsciiStrStr (OSVersion, "10.5") != 0) {
+    // Leopard
+    OSIconName = L"leo,mac";
+  } else if (AsciiStrStr (OSVersion, "10.4") != 0) {
+    // Tiger
+    OSIconName = L"tiger,mac";
   } else {
     OSIconName = L"mac";
   }

@@ -1358,6 +1358,20 @@
 			path = ../../DumpUefiCalls;
 			sourceTree = "<group>";
 		};
+		12912A3F1AE0FEF30086B81B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		12912A411AE0FEF30086B81B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		12A88C5C1A7B6E0A008C4829 /* XhciDxe */ = {
 			isa = PBXGroup;
 			children = (
@@ -3262,6 +3276,16 @@
 			mainGroup = 2C7949DA1A0AA7F700D845B0;
 			productRefGroup = 2C7949E41A0AA7F700D845B0 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 12912A3F1AE0FEF30086B81B /* Products */;
+					ProjectRef = 2C794A181A0AA85900D845B0 /* BootHFS.xcodeproj */;
+				},
+				{
+					ProductGroup = 12912A411AE0FEF30086B81B /* Products */;
+					ProjectRef = 2C794A311A0AA85900D845B0 /* BootSector.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				2C7949E21A0AA7F700D845B0 /* Clover */,
