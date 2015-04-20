@@ -24,3 +24,4 @@ qemu-system-x86_64 -L ~/Desktop/QemuTest/QEMU -m 2048 -cpu core2duo -bios bios-2
 
 qemu-system-x86_64 -L ~/Desktop/QemuTest/QEMU -m 2048 -cpu core2duo -bios OVMF.fd  -machine q35 -usb -device usb-mouse,bus=usb-bus.0,port=2 -device usb-kbd,bus=usb-bus.0,port=1 -device ahci,id=ahc -device ide-drive,bus=ahc.0,drive=hda -drive id=hda,file=/Users/slice/Desktop/QemuTest/QEMU-test2.img
 
+qemu -L ~/Desktop/QEMU-Clover/QEMU -m 2048 -cpu core2duo -bios OVMF.fd  -machine q35 -usb -device usb-mouse,bus=usb-bus.0,port=2 -device usb-kbd,bus=usb-bus.0,port=1 -drive id=hda,file=/Users/slice/Desktop/QEMU-Clover/QEMU-Clover.img

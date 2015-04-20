@@ -102,14 +102,19 @@ static struct gma_gpu_t KnownGPUS[] = {
   { 0x041E, "Intel HD Graphics 4400"  },  //Haswell
   { 0x0A0E, "Intel HD Graphics 4400"  },  //Haswell
   { 0x0A16, "Intel HD Graphics 4400"  },  //Haswell
-  { 0x0A1E, "Intel HD Graphics 4400"  },  //Haswell
-  { 0x0A26, "Intel HD Graphics 5000"  },  //Haswell
-  { 0x0A2E, "Intel HD Graphics 5100"  },  //Haswell Intel Iris 5100 (i7-4558U, i7-4578U)
-  { 0x0D22, "Intel HD Graphics 5200"  },  //Haswell
-  { 0x0D26, "Intel HD Graphics 5200"  },  //Haswell i7 4860HQ
-  { 0x1606, "Intel HD Graphics 5500"  },  //Haswell i7 5500U
-  { 0x1616, "Intel HD Graphics 6000"  },  //Haswell i7 5550U
-  { 0x161E, "Intel Iris Graphics 6100"},  //Haswell i7 5557U
+  { 0x0A1E, "Intel HD Graphics 4200"  },  // Haswell *
+  { 0x0A26, "Intel HD Graphics 5000"  },  //Haswell *
+  { 0x0A2E, "Intel Iris"  },  // Haswell Intel Iris 5100 (i7-4558U, i7-4578U) *
+  { 0x0D22, "Intel Iris Pro"  },  //Haswell *
+  { 0x0D26, "Intel Iris Pro"  },  //Haswell i7 4860HQ *
+  { 0x1602, "Intel HD Graphics"  }, // *
+  { 0x1606, "Intel HD Graphics"  }, // *
+  { 0x161E, "Intel HD Graphics 5300"  }, // *
+  { 0x1616, "Intel HD Graphics 5500"  }, // *
+  { 0x1612, "Intel HD Graphics 5600"  }, // *
+  { 0x1626, "Intel HD Graphics 6000"  }, // *
+  { 0x162B, "Intel Iris"  }, // *
+  { 0x1622, "Intel Iris Pro"  }, // *
   // 0x0e08 - Xeon E5-1620 
 };
 
@@ -253,9 +258,14 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
     case 0x0a2e:
     case 0x0d22:
     case 0x0d26:
+    case 0x1602:
     case 0x1606:
-    case 0x1616:
     case 0x161E:
+    case 0x1616:
+    case 0x1612:
+    case 0x1626:
+    case 0x162b:
+    case 0x1622:
       if (!gSettings.IgPlatform) {
         switch (gma_dev->device_id) {
           case 0x162:

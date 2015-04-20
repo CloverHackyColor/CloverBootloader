@@ -38,6 +38,8 @@
   DriverSupportedEfiVersion.c
   Gop.c
   Initialize.c
+
+[Sources.Ia32, Sources.X64]
   VbeShim.c
 
 [Packages]

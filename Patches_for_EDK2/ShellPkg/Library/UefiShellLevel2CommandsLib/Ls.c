@@ -431,7 +431,6 @@ PrintLsOutput(
         ShellStatus = SHELL_ABORTED;
         break;
     }
-//      ASSERT(Node != NULL);
       if (LongestPath < StrSize(Node->FullName)) {
         LongestPath = StrSize(Node->FullName);
       }
