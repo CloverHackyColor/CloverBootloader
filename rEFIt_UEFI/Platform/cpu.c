@@ -773,6 +773,7 @@ UINT16 GetAdvancedCpuType ()
             }
 						return 0x704;
           case CPU_MODEL_HASWELL_U5:
+            return 0x606;
           case CPU_MODEL_IVY_BRIDGE_E5:
             return 0xA01;
           case CPU_MODEL_HASWELL:

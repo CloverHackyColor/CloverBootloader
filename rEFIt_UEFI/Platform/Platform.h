@@ -160,7 +160,7 @@ Headers collection for procedures
 #define CPU_MODEL_ATOM_2000     0x36  /* UN */
 #define CPU_MODEL_IVY_BRIDGE    0x3A
 #define CPU_MODEL_HASWELL       0x3C  /* Haswell DT */
-#define CPU_MODEL_HASWELL_U5    0x3D  /* Haswell U5  5th generation */
+#define CPU_MODEL_HASWELL_U5    0x3D  /* Haswell U5  5th generation Broadwell*/
 #define CPU_MODEL_IVY_BRIDGE_E5 0x3E  /* Ivy Bridge Xeon UN */
 #define CPU_MODEL_HASWELL_MB		0x3F	/* Haswell MB */
 //#define CPU_MODEL_HASWELL_H		0x??	// Haswell H
