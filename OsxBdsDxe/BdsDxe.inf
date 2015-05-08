@@ -196,7 +196,7 @@
   gEfiMdePkgTokenSpaceGuid.PcdUefiVariableDefaultPlatformLang       ## SOMETIMES_CONSUMES
   ## CONSUMES
   ## PRODUCES
-  gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdHardwareErrorRecordLevel
+##  gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdHardwareErrorRecordLevel
   gEfiMdeModulePkgTokenSpaceGuid.PcdConOutRow     ## PRODUCES
   gEfiMdeModulePkgTokenSpaceGuid.PcdConOutColumn  ## PRODUCES
   ## SOMETIMES_CONSUMES
