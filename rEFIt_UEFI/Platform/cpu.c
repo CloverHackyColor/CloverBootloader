@@ -203,7 +203,8 @@ VOID GetCPUProperties (VOID)
       case CPU_MODEL_JAKETOWN:
       case CPU_MODEL_SANDY_BRIDGE:	
 			case CPU_MODEL_IVY_BRIDGE:	
-      case CPU_MODEL_IVY_BRIDGE_E5: 
+      case CPU_MODEL_IVY_BRIDGE_E5:
+      case CPU_MODEL_ATOM_3700:
       case CPU_MODEL_HASWELL:
       case CPU_MODEL_HASWELL_U5:
       case CPU_MODEL_HASWELL_MB:
@@ -343,6 +344,7 @@ VOID GetCPUProperties (VOID)
           case CPU_MODEL_IVY_BRIDGE:  
           case CPU_MODEL_IVY_BRIDGE_E5:  
           case CPU_MODEL_JAKETOWN:
+          case CPU_MODEL_ATOM_3700:
           case CPU_MODEL_HASWELL:
           case CPU_MODEL_HASWELL_U5:
           case CPU_MODEL_HASWELL_MB:
@@ -776,6 +778,7 @@ UINT16 GetAdvancedCpuType ()
             return 0x606;
           case CPU_MODEL_IVY_BRIDGE_E5:
             return 0xA01;
+          case CPU_MODEL_ATOM_3700:
           case CPU_MODEL_HASWELL:
           case CPU_MODEL_HASWELL_MB:
           case CPU_MODEL_HASWELL_ULT:
@@ -844,6 +847,7 @@ MACHINE_TYPES GetDefaultModel()
 				break;
       case CPU_MODEL_HASWELL:
       case CPU_MODEL_HASWELL_MB:
+      case CPU_MODEL_ATOM_3700:
         DefaultType = MacBookAir62;
 				break;  
       case CPU_MODEL_HASWELL_ULT:

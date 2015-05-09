@@ -158,6 +158,7 @@ Headers collection for procedures
 #define CPU_MODEL_NEHALEM_EX    0x2E
 #define CPU_MODEL_WESTMERE_EX   0x2F
 #define CPU_MODEL_ATOM_2000     0x36  /* UN */
+#define CPU_MODEL_ATOM_3700     0x37  /* Bay Trail */
 #define CPU_MODEL_IVY_BRIDGE    0x3A
 #define CPU_MODEL_HASWELL       0x3C  /* Haswell DT */
 #define CPU_MODEL_HASWELL_U5    0x3D  /* Haswell U5  5th generation Broadwell*/

@@ -91,6 +91,8 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
     case CPU_MODEL_HASWELL_MB:
     case CPU_MODEL_HASWELL_ULT:
     case CPU_MODEL_HASWELL_ULX:
+    case CPU_MODEL_HASWELL_U5:
+    case CPU_MODEL_ATOM_3700:
     {
       Aplf = 0;
       break;
@@ -212,6 +214,8 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
           case CPU_MODEL_HASWELL_MB:
           case CPU_MODEL_HASWELL_ULT:
           case CPU_MODEL_HASWELL_ULX:
+          case CPU_MODEL_HASWELL_U5:
+          case CPU_MODEL_ATOM_3700:
 					{
             maximum.Control.Control = RShiftU64(AsmReadMsr64(MSR_PLATFORM_INFO), 8) & 0xff;
             if (gSettings.MaxMultiplier) {
@@ -255,6 +259,8 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
                     (gCPUStructure.Model == CPU_MODEL_HASWELL_ULT) ||
                     (gCPUStructure.Model == CPU_MODEL_HASWELL_ULX) ||
                     (gCPUStructure.Model == CPU_MODEL_IVY_BRIDGE_E5) ||
+                    (gCPUStructure.Model == CPU_MODEL_HASWELL_U5) ||
+                    (gCPUStructure.Model == CPU_MODEL_ATOM_3700) ||
                     (gCPUStructure.Model == CPU_MODEL_JAKETOWN)) {
                   j = i << 8;
                   p_states[p_states_count].Frequency = (UINT32)(100 * i);
