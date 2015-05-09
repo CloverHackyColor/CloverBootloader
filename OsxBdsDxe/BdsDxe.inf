@@ -201,7 +201,10 @@
   gEfiMdeModulePkgTokenSpaceGuid.PcdConOutColumn  ## PRODUCES
   ## SOMETIMES_CONSUMES
   ## SOMETIMES_PRODUCES
-  gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdPlatformBootTimeOut
+##  gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdPlatformBootTimeOut
+  gEfiMdePkgTokenSpaceGuid.PcdHardwareErrorRecordLevel                ## CONSUMES
+  gEfiMdePkgTokenSpaceGuid.PcdPlatformBootTimeOut                     ## CONSUMES
+
   gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdBootState
   gEfiMdeModulePkgTokenSpaceGuid.PcdFirmwareVendor   ## CONSUMES   
   gEfiMdeModulePkgTokenSpaceGuid.PcdFirmwareRevision ## CONSUMES
@@ -210,10 +213,13 @@
   gEfiMdeModulePkgTokenSpaceGuid.PcdConInConnectOnDemand       ## SOMETIMES_CONSUMES
   ## CONSUMES
   ## SOMETIMES_PRODUCES
-  gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdSetupConOutColumn
-  gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdSetupConOutRow
-  gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdSetupVideoHorizontalResolution
-  gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdSetupVideoVerticalResolution
+  gEfiMdeModulePkgTokenSpaceGuid.PcdSetupConOutColumn
+  ## CONSUMES
+  ## SOMETIMES_PRODUCES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdSetupConOutRow
+  gEfiMdeModulePkgTokenSpaceGuid.PcdSetupVideoHorizontalResolution            ## CONSUMES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdSetupVideoVerticalResolution              ## CONSUMES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdErrorCodeSetVariable                      ## CONSUMES
   gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdShellFile
   gEfiMdeModulePkgTokenSpaceGuid.PcdErrorCodeSetVariable
 
