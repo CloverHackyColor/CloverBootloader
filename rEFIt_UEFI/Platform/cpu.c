@@ -204,7 +204,6 @@ VOID GetCPUProperties (VOID)
       case CPU_MODEL_SANDY_BRIDGE:	
 			case CPU_MODEL_IVY_BRIDGE:	
       case CPU_MODEL_IVY_BRIDGE_E5:
-      case CPU_MODEL_ATOM_3700:
       case CPU_MODEL_HASWELL:
       case CPU_MODEL_HASWELL_U5:
       case CPU_MODEL_HASWELL_MB:
@@ -222,7 +221,11 @@ VOID GetCPUProperties (VOID)
         gCPUStructure.Cores   = (UINT8)bitfield((UINT32)msr, 19, 16);
         gCPUStructure.Threads = (UINT8)bitfield((UINT32)msr, 15,  0);
         break;
-        
+      case CPU_MODEL_ATOM_3700:
+        gCPUStructure.Cores   = 4;
+        gCPUStructure.Threads = 4;
+        break;
+
       default:		
         gCPUStructure.Cores = 0;
         break;
