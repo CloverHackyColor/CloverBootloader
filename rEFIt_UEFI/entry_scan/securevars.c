@@ -57,8 +57,9 @@
 #define DBG(...) DebugLog(DEBUG_SECURE_VARS, __VA_ARGS__)
 #endif
 
-#define SET_DATABASE_ATTRIBUTES (EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS)
-#define SET_ADD_DATABASE_ATTRIBUTES (EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS | EFI_VARIABLE_APPEND_WRITE)
+#define SET_DATABASE_ATTRIBUTES (EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS | \
+                                 EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS | EFI_VARIABLE_AUTHENTICATED_WRITE_ACCESS)
+#define SET_ADD_DATABASE_ATTRIBUTES (SET_DATABASE_ATTRIBUTES | EFI_VARIABLE_APPEND_WRITE)
 
 // Clear the secure boot keys
 EFI_STATUS ClearSecureBootKeys(VOID)
@@ -344,7 +345,7 @@ STATIC EFI_STATUS GetUTCTime(OUT EFI_TIME *Timestamp)
       break;
     }
   }
-  Timestamp->Year = (UINT16)(YearNo + 70);
+  Timestamp->Year = (UINT16)(YearNo + 1970);
 
   for (MonthNo = 12; MonthNo > 1; --MonthNo) {
     if (DayNo >= CumulativeDays[IsLeap(Year)][MonthNo]) {
@@ -353,9 +354,14 @@ STATIC EFI_STATUS GetUTCTime(OUT EFI_TIME *Timestamp)
     }
   }
 
-  Timestamp->Month = (UINT8)(MonthNo - 1);
+  Timestamp->Month = (UINT8)MonthNo;
   Timestamp->Day   = (UINT8)(DayNo + 1);
   Timestamp->Nanosecond = 0;
+  Timestamp->TimeZone = 0;
+  Timestamp->Daylight = 0;
+  Timestamp->Pad1 = 0;
+  Timestamp->Pad2 = 0;
+
   return EFI_SUCCESS;
 }
 

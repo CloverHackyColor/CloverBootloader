@@ -106,7 +106,7 @@ VOID EnableSecureBoot(VOID)
     // Enroll secure boot keys
     Status = EnrollSecureBootKeys(CloverSignature, CloverSignatureSize, WantDefaultKeys);
     if (EFI_ERROR(Status)) {
-      ErrorString = L"failed to enroll secure boot keys";
+      ErrorString = L"Failed to enroll secure boot keys";
     }
     FreePool(CloverSignature);
   }
@@ -116,7 +116,7 @@ VOID EnableSecureBoot(VOID)
   if (!EFI_ERROR(Status)) {
     Status = InstallSecureBoot();
     if (EFI_ERROR(Status)) {
-      ErrorString = L"secure boot protocols not found";
+      ErrorString = L"Secure boot protocols not found";
     }
   }
   if (EFI_ERROR(Status)) {
