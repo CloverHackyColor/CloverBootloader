@@ -81,7 +81,7 @@ REFIT_CONFIG   GlobalConfig = { FALSE, -1, 0, 0, 0, TRUE, FALSE, FALSE, FALSE, F
   //BannerEdgeHorizontal
   0, 0, 0, 0,
   //VerticalLayout
-  FALSE, FALSE, 128, 8, 24
+  FALSE, FALSE, 128, 8, 24, FALSE
 };
 /*
 VOID __inline WaitForSts(VOID) {
@@ -2077,7 +2077,14 @@ GetEarlyUserSettings (
       if (IsPropertyTrue (Prop)) {
         GlobalConfig.TextOnly = TRUE;
       }
-      
+
+      Prop = GetProperty (DictPointer, "Font");
+      if (Prop != NULL) {
+        Dict2 = GetProperty (DictPointer, "Proportional");
+        gSettings.Proportional = IsPropertyTrue (Dict2);
+        GlobalConfig.Proportional = gSettings.Proportional;
+      }
+
       Prop = GetProperty (DictPointer, "ScreenResolution");
       if (Prop != NULL) {
         if ((Prop->type == kTagTypeString) && Prop->string) {
@@ -2840,6 +2847,10 @@ GetThemeTagSettings (
 
     Dict2 = GetProperty (Dict, "CharWidth");
     GlobalConfig.CharWidth = (UINTN)GetPropertyInteger (Dict2, GlobalConfig.CharWidth);
+
+    Dict2 = GetProperty (Dict, "Proportional");
+    GlobalConfig.Proportional = IsPropertyTrue (Dict2);
+
   }
   
   Dict = GetProperty (DictPointer, "Anime");

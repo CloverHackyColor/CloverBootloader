@@ -834,14 +834,15 @@ typedef struct {
   
   // GUI parameters
   BOOLEAN                 Debug;
-  UINT8                   Pad22[7];
+  BOOLEAN                 Proportional;
+  UINT8                   Pad22[6];
   
   //ACPI
-  UINT64	                ResetAddr;
-  UINT8 	                ResetVal;
-  BOOLEAN	                UseDSDTmini;
+  UINT64	              ResetAddr;
+  UINT8 	              ResetVal;
+  BOOLEAN	              UseDSDTmini;
   BOOLEAN                 DropSSDT;
-  BOOLEAN	                GeneratePStates;
+  BOOLEAN	              GeneratePStates;
   BOOLEAN                 GenerateCStates;
   UINT8                   PLimitDict;
   UINT8                   UnderVoltStep;
@@ -853,7 +854,7 @@ typedef struct {
   BOOLEAN                 EnableISS;
   BOOLEAN                 SlpSmiEnable;
   UINT16                  C3Latency;
-  BOOLEAN               	smartUPS;
+  BOOLEAN                 smartUPS;
   BOOLEAN                 PatchNMI;
   BOOLEAN                 EnableC7;
   UINT8                   SavingMode;
