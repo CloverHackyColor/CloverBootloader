@@ -66,7 +66,7 @@ INTN TextHeight = 16;
 VOID egMeasureText(IN CHAR16 *Text, OUT INTN *Width, OUT INTN *Height)
 {
     if (Width != NULL)
-        *Width = StrLen(Text) * GlobalConfig.CharWidth;
+        *Width = StrLen(Text) * FontWidth; //GlobalConfig.CharWidth;
     if (Height != NULL)
         *Height = FontHeight;
 }
@@ -223,7 +223,7 @@ static inline BOOLEAN EmptyPix(EG_PIXEL *Ptr, EG_PIXEL *FirstPixel)
    return ((Ptr->r >= FirstPixel->r - (FirstPixel->r >> 2)) && (Ptr->r <= FirstPixel->r + (FirstPixel->r >> 2)) &&
            (Ptr->g >= FirstPixel->g - (FirstPixel->g >> 2)) && (Ptr->g <= FirstPixel->g + (FirstPixel->g >> 2)) &&
            (Ptr->b >= FirstPixel->b - (FirstPixel->b >> 2)) && (Ptr->b <= FirstPixel->b + (FirstPixel->b >> 2)) &&
-           (Ptr->a == 0)); //hack for transparent fonts
+           (Ptr->a == FirstPixel->a)); //hack for transparent fonts
 }
 
 INTN GetEmpty(EG_PIXEL *Ptr, EG_PIXEL *FirstPixel, INTN MaxWidth, INTN Step, INTN Row)
@@ -251,7 +251,7 @@ INTN GetEmpty(EG_PIXEL *Ptr, EG_PIXEL *FirstPixel, INTN MaxWidth, INTN Step, INT
   return m;
 }
 
-VOID egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage,
+INTN egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage,
                   IN INTN PosX, IN INTN PosY, IN INTN Cursor)
 {
   EG_PIXEL        *BufferPtr;
@@ -269,9 +269,9 @@ VOID egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage,
   TextLength = StrLen(Text);
   if ((TextLength * GlobalConfig.CharWidth + PosX) > CompImage->Width){
     if (GlobalConfig.CharWidth) {
-      TextLength = (CompImage->Width - PosX) / GlobalConfig.CharWidth;
+      TextLength = (CompImage->Width - PosX + GlobalConfig.CharWidth - 1) / GlobalConfig.CharWidth;
     } else
-      TextLength = (CompImage->Width - PosX) / FontWidth;
+      TextLength = (CompImage->Width - PosX + FontWidth - 1) / FontWidth;
   }
   if (!FontImage) {
     GlobalConfig.Font = FONT_LOAD;
@@ -307,7 +307,7 @@ VOID egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage,
 
       if (GlobalConfig.Proportional) {
         if (c0 <= 0x20) {  // space before or buffer edge
-          LeftSpace = 1;
+          LeftSpace = 2;
         } else {
           LeftSpace = GetEmpty(BufferPtr, FirstPixelBuf, GlobalConfig.CharWidth, -1, BufferLineOffset);
         }
@@ -320,11 +320,11 @@ VOID egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage,
           }
         }
       } else {
-        LeftSpace = 1;
+        LeftSpace = 2;
         RightSpace = Shift;
       }
       c0 = c; //old value
-      egRawCompose(BufferPtr - LeftSpace + 1, FontPixelData + c * FontWidth + RightSpace,
+      egRawCompose(BufferPtr - LeftSpace + 2, FontPixelData + c * FontWidth + RightSpace,
                    GlobalConfig.CharWidth, FontHeight,
                    BufferLineOffset, FontLineOffset);
       if (i == Cursor) {
@@ -333,7 +333,7 @@ VOID egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage,
                      GlobalConfig.CharWidth, FontHeight,
                      BufferLineOffset, FontLineOffset);
       }
-      BufferPtr += GlobalConfig.CharWidth - LeftSpace + 1;
+      BufferPtr += GlobalConfig.CharWidth - LeftSpace + 2;
     } else {
       //
       if ((c >= 0x20) && (c <= 0x7F)) {
@@ -384,6 +384,7 @@ VOID egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage,
       BufferPtr += Shift;
     }
   }
+  return ((INTN)BufferPtr - (INTN)FirstPixelBuf) / sizeof(EG_PIXEL);
 }
 
 /* EOF */

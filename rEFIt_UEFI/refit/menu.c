@@ -1843,7 +1843,7 @@ INTN DrawTextXY(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
   egFillImage(TextBufferXY, &MenuBackgroundPixel);
 
   // render the text
-  egRenderText(Text, TextBufferXY, 0, 0, 0xFFFF); //input only
+  TextWidth = egRenderText(Text, TextBufferXY, 0, 0, 0xFFFF); //input only
   BltImageAlpha(TextBufferXY, (XPos - (TextWidth >> XAlign)), YPos,  &MenuBackgroundPixel, 16);
   egFreeImage(TextBufferXY);
   return TextWidth;
