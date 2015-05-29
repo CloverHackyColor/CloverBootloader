@@ -29,9 +29,11 @@
 		<key>Font</key>
 		<dict>
 			<key>CharWidth</key>
-			<integer>10</integer>
+			<integer>9</integer>
 			<key>Path</key>
 			<string>WoB_Hellfire_Bold_9W.png</string>
+			<key>Proportional</key>
+			<true/>
 			<key>Type</key>
 			<string>Load</string>
 		</dict>
