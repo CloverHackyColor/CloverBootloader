@@ -286,6 +286,7 @@ VOID egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage,
   if (GlobalConfig.CharWidth < FontWidth) {
     Shift = (FontWidth - GlobalConfig.CharWidth) >> 1;
   }
+  c0 = 0;
   for (i = 0; i < TextLength; i++) {
     c = Text[i];
     if (gLanguage != korean) {
@@ -298,7 +299,6 @@ VOID egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage,
         c1 = (((c >=0x410) ? (c -= 0x350) : c) & 0xff); //Russian letters
         c = c1;
       }
-      c0 = c; //old value
 
       if (GlobalConfig.Proportional) {
         if (c0 <= 0x20 || i == 0) {  // space before or buffer edge
@@ -318,7 +318,7 @@ VOID egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage,
         LeftSpace = 0;
         RightSpace = Shift;
       }
-
+       c0 = c; //old value
       egRawCompose(BufferPtr - LeftSpace + 1, FontPixelData + c * FontWidth + RightSpace,
                    GlobalConfig.CharWidth, FontHeight,
                    BufferLineOffset, FontLineOffset);
