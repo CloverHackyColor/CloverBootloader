@@ -47,6 +47,8 @@
 		<string>logo-trans.png</string>
 		<key>Font</key>
 		<dict>
+			<key>Proportional</key>
+			<true/>
 			<key>CharWidth</key>
 			<integer>10</integer>
 			<key>Path</key>

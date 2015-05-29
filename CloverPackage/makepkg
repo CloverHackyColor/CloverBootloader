@@ -1,4 +1,7 @@
 #!/bin/bash
+#
+# Reset default charset for GNUsed problems...
+export LC_ALL=C
 
 # Workspace = edk2/Clover/CloverPackage
 

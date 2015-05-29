@@ -1,4 +1,7 @@
 #!/bin/bash
+#
+# Reset default charset for GNUsed problems...
+export LC_ALL=C
 
 # Check that the caller is make
 caller=$(ps -p $PPID -o comm=)

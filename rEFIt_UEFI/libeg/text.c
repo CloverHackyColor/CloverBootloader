@@ -33,6 +33,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+//Slice 2011 - 2015 numerous improvements
 
 #include "libegint.h"
 
@@ -221,21 +222,23 @@ static inline BOOLEAN EmptyPix(EG_PIXEL *Ptr, EG_PIXEL *FirstPixel)
   //compare with first pixel of the array top-left point [0][0]
    return ((Ptr->r >= FirstPixel->r - (FirstPixel->r >> 2)) && (Ptr->r <= FirstPixel->r + (FirstPixel->r >> 2)) &&
            (Ptr->g >= FirstPixel->g - (FirstPixel->g >> 2)) && (Ptr->g <= FirstPixel->g + (FirstPixel->g >> 2)) &&
-           (Ptr->b >= FirstPixel->b - (FirstPixel->b >> 2)) && (Ptr->b <= FirstPixel->b + (FirstPixel->b >> 2)));
+           (Ptr->b >= FirstPixel->b - (FirstPixel->b >> 2)) && (Ptr->b <= FirstPixel->b + (FirstPixel->b >> 2)) &&
+           (Ptr->a == 0)); //hack for transparent fonts
 }
 
 INTN GetEmpty(EG_PIXEL *Ptr, EG_PIXEL *FirstPixel, INTN MaxWidth, INTN Step, INTN Row)
 {
   INTN i, j, m;
-  EG_PIXEL *Ptr0;
+  EG_PIXEL *Ptr0, *Ptr1;
 
-    DBG("Ptr=%x First=%x (%d, %d, %d) W=%d Row=%d\n", Ptr, FirstPixel,
-        FirstPixel->r, FirstPixel->g, FirstPixel->b, MaxWidth, Row);
+  Ptr1 = (Step > 0)?Ptr:Ptr - 1;
+  DBG("Ptr=%x Ptr1=%x First=%x (%d, %d, %d, %d) W=%d Row=0x%x\n", Ptr, Ptr1, FirstPixel,
+        FirstPixel->r, FirstPixel->g, FirstPixel->b, FirstPixel->b, MaxWidth, Row);
   m = MaxWidth;
   for (j = 0; j < FontHeight; j++) {
-    Ptr0 = Ptr + j * Row;
+    Ptr0 = Ptr1 + j * Row;
     for (i = 0; i < MaxWidth; i++) {
-      DBG("(%d, %d, %d) at step %d\n", Ptr0->r, Ptr0->g, Ptr0->b, i);
+      DBG("(%d, %d, %d, %d) at step %d\n", Ptr0->r, Ptr0->g, Ptr0->b, Ptr0->a, i);
       if (!EmptyPix(Ptr0, FirstPixel)) {
         break;
       }
@@ -253,6 +256,7 @@ VOID egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage,
 {
   EG_PIXEL        *BufferPtr;
   EG_PIXEL        *FontPixelData;
+  EG_PIXEL        *FirstPixelBuf;
   INTN            BufferLineOffset, FontLineOffset;
   INTN            TextLength;
   INTN            i;
@@ -274,14 +278,15 @@ VOID egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage,
     PrepareFont();
   }
   
-//  DBG("TextLength =%d PosX=%d PosY=%d\n", TextLength, PosX, PosY);
+  DBG("TextLength =%d PosX=%d PosY=%d\n", TextLength, PosX, PosY);
   // render it
   BufferPtr = CompImage->PixelData;
   BufferLineOffset = CompImage->Width;
   BufferPtr += PosX + PosY * BufferLineOffset;
+  FirstPixelBuf = BufferPtr;
   FontPixelData = FontImage->PixelData;
   FontLineOffset = FontImage->Width;
-//  DBG("BufferLineOffset=%d  FontLineOffset=%d\n", BufferLineOffset, FontLineOffset);
+  DBG("BufferLineOffset=%d  FontLineOffset=%d\n", BufferLineOffset, FontLineOffset);
 
   if (GlobalConfig.CharWidth < FontWidth) {
     Shift = (FontWidth - GlobalConfig.CharWidth) >> 1;
@@ -301,34 +306,34 @@ VOID egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage,
       }
 
       if (GlobalConfig.Proportional) {
-        if (c0 <= 0x20 || i == 0) {  // space before or buffer edge
-          LeftSpace = 0;
+        if (c0 <= 0x20) {  // space before or buffer edge
+          LeftSpace = 1;
         } else {
-          LeftSpace = GetEmpty(BufferPtr, CompImage->PixelData, GlobalConfig.CharWidth, -1, BufferLineOffset);
+          LeftSpace = GetEmpty(BufferPtr, FirstPixelBuf, GlobalConfig.CharWidth, -1, BufferLineOffset);
         }
-        if (c <= 0x20) { //new space
-          RightSpace = 0;
+        if (c <= 0x20) { //new space will be half width
+          RightSpace = GlobalConfig.CharWidth >> 1; 
         } else {
           RightSpace = GetEmpty(FontPixelData + c * FontWidth, FontPixelData, FontWidth, 1, FontLineOffset);
           if (RightSpace >= GlobalConfig.CharWidth + Shift) {
-            RightSpace = 0; //empty place
+            RightSpace = 0; //empty place for invisible characters
           }
         }
       } else {
-        LeftSpace = 0;
+        LeftSpace = 1;
         RightSpace = Shift;
       }
       c0 = c; //old value
-      egRawCompose(BufferPtr - LeftSpace + 2, FontPixelData + c * FontWidth + RightSpace,
+      egRawCompose(BufferPtr - LeftSpace + 1, FontPixelData + c * FontWidth + RightSpace,
                    GlobalConfig.CharWidth, FontHeight,
                    BufferLineOffset, FontLineOffset);
       if (i == Cursor) {
         c = (GlobalConfig.Font == FONT_LOAD)?0x5F:0x3F;
-        egRawCompose(BufferPtr - LeftSpace + 2, FontPixelData + c * FontWidth + RightSpace,
+        egRawCompose(BufferPtr - LeftSpace + 1, FontPixelData + c * FontWidth + RightSpace,
                      GlobalConfig.CharWidth, FontHeight,
                      BufferLineOffset, FontLineOffset);
       }
-      BufferPtr += GlobalConfig.CharWidth - LeftSpace;
+      BufferPtr += GlobalConfig.CharWidth - LeftSpace + 1;
     } else {
       //
       if ((c >= 0x20) && (c <= 0x7F)) {
