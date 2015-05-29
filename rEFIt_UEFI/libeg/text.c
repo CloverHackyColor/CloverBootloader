@@ -318,13 +318,13 @@ VOID egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage,
         LeftSpace = 0;
         RightSpace = Shift;
       }
-       c0 = c; //old value
-      egRawCompose(BufferPtr - LeftSpace + 1, FontPixelData + c * FontWidth + RightSpace,
+      c0 = c; //old value
+      egRawCompose(BufferPtr - LeftSpace + 2, FontPixelData + c * FontWidth + RightSpace,
                    GlobalConfig.CharWidth, FontHeight,
                    BufferLineOffset, FontLineOffset);
       if (i == Cursor) {
         c = (GlobalConfig.Font == FONT_LOAD)?0x5F:0x3F;
-        egRawCompose(BufferPtr - LeftSpace + 1, FontPixelData + c * FontWidth + RightSpace,
+        egRawCompose(BufferPtr - LeftSpace + 2, FontPixelData + c * FontWidth + RightSpace,
                      GlobalConfig.CharWidth, FontHeight,
                      BufferLineOffset, FontLineOffset);
       }
