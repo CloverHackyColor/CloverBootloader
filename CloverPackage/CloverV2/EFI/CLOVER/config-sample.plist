@@ -221,7 +221,7 @@
 	<key>Boot</key>
 	<dict>
 		<key>#Arguments</key>
-		<string>-v arch=i386 slide=0 darwake=0</string>
+		<string>-v arch=i386 slide=0 darkwake=0</string>
 		<key>Arguments</key>
 		<string>kext-dev-mode=1</string>
 		<key>DefaultLoader</key>
@@ -526,8 +526,8 @@
 		<false/>
 		<key>KernelLapic</key>
 		<false/>
-	    <key>KernelHaswellE</key>
-	    <false/>
+		<key>KernelHaswellE</key>
+		<false/>
 		<key>#KextsToPatch</key>
 		<array>
 			<dict>
