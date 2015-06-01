@@ -128,9 +128,37 @@ Install to /EFI/CLOVER/themes/bluemac";
 "bootcamp_description" = "Bootcamp theme from Bijo,
 Install to /EFI/CLOVER/themes/bootcamp";
 
+"BGM256_title" = "BGM256";
+"BGM256_description" = "BGM A version of BGM with 256px icons theme from Blackosx,
+Install to /EFI/CLOVER/themes/BGM256";
+
+"chrome_title" = "chrome";
+"chrome_description" = "chrome theme from chris1111,
+Install to /EFI/CLOVER/themes/chrome";
+
+"CloverX_title" = "CloverX";
+"CloverX_description" = "CloverX theme from =)(=,
+Install to /EFI/CLOVER/themes/CloverX";
+
+"dawn_title" = "dawn";
+"dawn_description" = "dawn theme from Slice,
+Install to /EFI/CLOVER/themes/dawn";
+
+"embedded_title" = "embedded";
+"embedded_description" = "embedded theme from Blackosx,
+Install to /EFI/CLOVER/themes/embedded";
+
+"gold_clover_title" = "gold_clover";
+"gold_clover_description" = "gold_clover theme from chris1111,
+Install to /EFI/CLOVER/themes/gold_clover";
+
 "iclover_title" = "iClover";
 "iclover_description" = "Grey style theme by winlog,
 Install to /EFI/CLOVER/themes/iclover";
+
+"ios7_title" = "ios7";
+"ios7_description" = "ios7 theme by Ukr55, Winlog,
+Install to /EFI/CLOVER/themes/ios7";
 
 "magnifico_title" = "Magnifico";
 "magnifico_description" = "Magnifico theme from Magnifico,
@@ -156,6 +184,10 @@ Install to /EFI/CLOVER/themes/os_box";
 "os_one_description" = "OS One theme from Kyndder,
 Install to /EFI/CLOVER/themes/os_one";
 
+"random_title" = "random";
+"random_description" = "random theme from Slice,
+Install to /EFI/CLOVER/themes/random choose a theme from others";
+
 "thinkpad_title" = "ThinkPad";
 "thinkpad_description" = "ThinkPad theme from Kogen Mantis,
 Install to /EFI/CLOVER/themes/thinkpad";
@@ -179,6 +211,22 @@ Install to /EFI/CLOVER/themes/Shield.";
 "wooden_title" = "wooden";
 "wooden_description" = "Wooden theme from iROOTa,
 Install to /EFI/CLOVER/themes/wooden.";
+
+"sketched_title" = "sketched";
+"sketched_description" = "sketched theme from kyndder,
+Install to /EFI/CLOVER/themes/sketched.";
+
+"Space_title" = "Space";
+"Space_description" = "Space theme from chris1111,
+Install to /EFI/CLOVER/themes/Space";
+
+"steampunkblack_title" = "steampunkblack";
+"steampunkblack_description" = "steampunkblack theme from medik,
+Install to /EFI/CLOVER/themes/steampunkblack";
+
+"thinkpad_title" = "ThinkPad";
+"thinkpad_description" = "ThinkPad theme from Kogen Mantis,
+Install to /EFI/CLOVER/themes/thinkpad";
 
 // ============================================================================
 // RC Scripts

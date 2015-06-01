@@ -264,6 +264,7 @@ INTN egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage,
   UINTN           Shift = 0;
   UINTN           Cho = 0, Jong = 0, Joong = 0;
   UINTN           LeftSpace, RightSpace;
+  INTN            RealWidth = 0;
   
   // clip the text
   TextLength = StrLen(Text);
@@ -292,6 +293,7 @@ INTN egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage,
     Shift = (FontWidth - GlobalConfig.CharWidth) >> 1;
   }
   c0 = 0;
+  RealWidth = GlobalConfig.CharWidth;
   for (i = 0; i < TextLength; i++) {
     c = Text[i];
     if (gLanguage != korean) {
@@ -319,21 +321,22 @@ INTN egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage,
             RightSpace = 0; //empty place for invisible characters
           }
         }
+        RealWidth = FontWidth - RightSpace;
       } else {
         LeftSpace = 2;
         RightSpace = Shift;
       }
       c0 = c; //old value
       egRawCompose(BufferPtr - LeftSpace + 2, FontPixelData + c * FontWidth + RightSpace,
-                   GlobalConfig.CharWidth, FontHeight,
+                   RealWidth, FontHeight,
                    BufferLineOffset, FontLineOffset);
       if (i == Cursor) {
         c = (GlobalConfig.Font == FONT_LOAD)?0x5F:0x3F;
-        egRawCompose(BufferPtr - LeftSpace + 1, FontPixelData + c * FontWidth + RightSpace,
-                     GlobalConfig.CharWidth, FontHeight,
+        egRawCompose(BufferPtr - LeftSpace + 2, FontPixelData + c * FontWidth + RightSpace,
+                     RealWidth, FontHeight,
                      BufferLineOffset, FontLineOffset);
       }
-      BufferPtr += GlobalConfig.CharWidth - LeftSpace + 2;
+      BufferPtr += RealWidth - LeftSpace + 2;
     } else {
       //
       if ((c >= 0x20) && (c <= 0x7F)) {
