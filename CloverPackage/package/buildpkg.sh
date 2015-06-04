@@ -60,7 +60,7 @@ declare -r CLOVER_TIMESTAMP=$( date -j -f "%Y-%m-%d %H:%M:%S" "${CLOVER_BUILDDAT
 declare -r CLOVER_DEVELOP=$(awk "NR==6{print;exit}"  ${PKGROOT}/../CREDITS)
 declare -r CLOVER_CREDITS=$(awk "NR==10{print;exit}" ${PKGROOT}/../CREDITS)
 declare -r CLOVER_PKGDEV=$(awk "NR==14{print;exit}"  ${PKGROOT}/../CREDITS)
-declare -r CLOVER_CPRYEAR=$(awk "NR==18{print;exit}" ${PKGROOT}/../CREDITS)
+declare -r CLOVER_CPRYEAR=$(awk "NR==18{print;exit}" ${PKGROOT}/../CREDITS)"-"$( date +"%Y" )
 whoami=$(whoami | awk '{print $1}' | cut -d ":" -f3)
 if [[ "$whoami" == "admin" ]];then
     declare -r CLOVER_WHOBUILD="VoodooLabs BuildBot"

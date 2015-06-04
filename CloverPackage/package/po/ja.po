@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-03-12 19:57+0400\n"
+"POT-Creation-Date: 2015-06-04 16:43+0300\n"
 "PO-Revision-Date: 2014-07-20 16:27+0000\n"
 "Last-Translator: kantok <somech_08013@yahoo.co.jp>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -103,14 +103,17 @@ msgstr "- OSX 10.4 - 10.8、Windows EFIとLinux EFIのブートをサポート"
 msgid ""
 "- It's EFI bootloader provides RuntimeServices for OS that impossible for "
 "Legacy Bootloaders"
-msgstr "- これまでのブートローダーでは非対応の、OSランタイムサービスをサポートしたEFIブートローダーです"
+msgstr ""
+"- これまでのブートローダーでは非対応の、OSランタイムサービスをサポートしたEFI"
+"ブートローダーです"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:23
 msgid ""
 "- mostly Clover do automatic detection of hardware and set all properties by "
 "default."
-msgstr "- ハードウェア構成をほぼ自動で認識し、デフォルトで各プロパティを設定します。"
+msgstr ""
+"- ハードウェア構成をほぼ自動で認識し、デフォルトで各プロパティを設定します。"
 
 #. type: Content of: <html><body><p><span>
 #: Resources/templates/Description.html:23
@@ -162,7 +165,9 @@ msgstr "- RestartFix、sleep/wake fixesおよびPCIRootUID値はカスタマイ�
 msgid ""
 "- Graphics Properties Injector for ATI, NVidia and Intel for wide range of "
 "supported cards."
-msgstr "- ATI・Nvidia・Intelの、幅広いカードに対応するグラフィックス・インジェクターも"
+msgstr ""
+"- ATI・Nvidia・Intelの、幅広いカードに対応するグラフィックス・インジェクター"
+"も"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:32
@@ -187,7 +192,9 @@ msgstr "- CPUターボブーストとP/Cステートジェネレーター"
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:36
 msgid "- ACPI tables loading (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI...)"
-msgstr "- ACPIテーブルをロードします (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFIなど)"
+msgstr ""
+"- ACPIテーブルをロードします (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFIな"
+"ど)"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:37
@@ -199,7 +206,9 @@ msgstr "- 追加kextのロードとFireWireセキュリティモード"
 msgid ""
 "- default boot after timeout, customizable GUI , and saving screenshots from "
 "GUI typing F10"
-msgstr "- デフォルトではタイムアウト後にブートします。GUIはカスタマイズ可能。GUI上でF10の押下によりスクリーンショットを保存します"
+msgstr ""
+"- デフォルトではタイムアウト後にブートします。GUIはカスタマイズ可能。GUI上で"
+"F10の押下によりスクリーンショットを保存します"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:39
@@ -646,14 +655,129 @@ msgstr ""
 "Bijo制作『Bootcamp』を、\n"
 "/EFI/CLOVER/themes/bootcampにインストール"
 
-#. type: "iclover_title"
+#. type: "BGM256_title"
 #: Resources/templates/Localizable.strings:131
+#, no-wrap
+msgid "BGM256"
+msgstr ""
+
+#. type: "BGM256_description"
+#: Resources/templates/Localizable.strings:132
+#, fuzzy, no-wrap
+#| msgid ""
+#| "BGM (Black Green and Moody) theme from Blackosx,\n"
+#| "Install to /EFI/CLOVER/themes/BGM"
+msgid ""
+"BGM A version of BGM with 256px icons theme from Blackosx,\n"
+"Install to /EFI/CLOVER/themes/BGM256"
+msgstr ""
+"Blackosx制作『BGM（Black Green and Moody）』を、\n"
+"/EFI/CLOVER/themes/BGMにインストール"
+
+#. type: "chrome_title"
+#: Resources/templates/Localizable.strings:135
+#, no-wrap
+msgid "chrome"
+msgstr ""
+
+#. type: "chrome_description"
+#: Resources/templates/Localizable.strings:136
+#, fuzzy, no-wrap
+#| msgid ""
+#| "Orange theme from dwm,\n"
+#| "Install to /EFI/CLOVER/themes/orange"
+msgid ""
+"chrome theme from chris1111,\n"
+"Install to /EFI/CLOVER/themes/chrome"
+msgstr ""
+"dwm制作『Orange』を、\n"
+"/EFI/CLOVER/themes/orangeにインストール"
+
+#. type: "CloverX_title"
+#: Resources/templates/Localizable.strings:139
+#, fuzzy, no-wrap
+#| msgid "Clover"
+msgid "CloverX"
+msgstr "Clover"
+
+#. type: "CloverX_description"
+#: Resources/templates/Localizable.strings:140
+#, fuzzy, no-wrap
+#| msgid ""
+#| "Orange theme from dwm,\n"
+#| "Install to /EFI/CLOVER/themes/orange"
+msgid ""
+"CloverX theme from =)(=,\n"
+"Install to /EFI/CLOVER/themes/CloverX"
+msgstr ""
+"dwm制作『Orange』を、\n"
+"/EFI/CLOVER/themes/orangeにインストール"
+
+#. type: "dawn_title"
+#: Resources/templates/Localizable.strings:143
+#, no-wrap
+msgid "dawn"
+msgstr ""
+
+#. type: "dawn_description"
+#: Resources/templates/Localizable.strings:144
+#, fuzzy, no-wrap
+#| msgid ""
+#| "Orange theme from dwm,\n"
+#| "Install to /EFI/CLOVER/themes/orange"
+msgid ""
+"dawn theme from Slice,\n"
+"Install to /EFI/CLOVER/themes/dawn"
+msgstr ""
+"dwm制作『Orange』を、\n"
+"/EFI/CLOVER/themes/orangeにインストール"
+
+#. type: "embedded_title"
+#: Resources/templates/Localizable.strings:147
+#, no-wrap
+msgid "embedded"
+msgstr ""
+
+#. type: "embedded_description"
+#: Resources/templates/Localizable.strings:148
+#, fuzzy, no-wrap
+#| msgid ""
+#| "Default black_green theme from Blackosx,\n"
+#| "Install to /EFI/CLOVER/themes/black_green"
+msgid ""
+"embedded theme from Blackosx,\n"
+"Install to /EFI/CLOVER/themes/embedded"
+msgstr ""
+"Blackosx制作『black_green』＜デフォルト＞を、\n"
+"/EFI/CLOVER/themes/black_greenにインストール"
+
+#. type: "gold_clover_title"
+#: Resources/templates/Localizable.strings:151
+#, no-wrap
+msgid "gold_clover"
+msgstr ""
+
+#. type: "gold_clover_description"
+#: Resources/templates/Localizable.strings:152
+#, fuzzy, no-wrap
+#| msgid ""
+#| "Wooden theme from iROOTa,\n"
+#| "Install to /EFI/CLOVER/themes/wooden."
+msgid ""
+"gold_clover theme from chris1111,\n"
+"Install to /EFI/CLOVER/themes/gold_clover"
+msgstr ""
+"iROOTa制作『Wooden』を、\n"
+"/EFI/CLOVER/themes/woodenにインストール"
+
+#. type: "iclover_title"
+#: Resources/templates/Localizable.strings:155
 #, no-wrap
 msgid "iClover"
 msgstr "iClover"
 
 #. type: "iclover_description"
-#: Resources/templates/Localizable.strings:132
+#: Resources/templates/Localizable.strings:156
 #, no-wrap
 msgid ""
 "Grey style theme by winlog,\n"
@@ -662,14 +786,33 @@ msgstr ""
 "winlog制作『Grey style』を、\n"
 "/EFI/CLOVER/themes/icloverにインストール"
 
+#. type: "ios7_title"
+#: Resources/templates/Localizable.strings:159
+#, no-wrap
+msgid "ios7"
+msgstr ""
+
+#. type: "ios7_description"
+#: Resources/templates/Localizable.strings:160
+#, fuzzy, no-wrap
+#| msgid ""
+#| "Grey style theme by winlog,\n"
+#| "Install to /EFI/CLOVER/themes/iclover"
+msgid ""
+"ios7 theme by Ukr55, Winlog,\n"
+"Install to /EFI/CLOVER/themes/ios7"
+msgstr ""
+"winlog制作『Grey style』を、\n"
+"/EFI/CLOVER/themes/icloverにインストール"
+
 #. type: "magnifico_title"
-#: Resources/templates/Localizable.strings:135
+#: Resources/templates/Localizable.strings:163
 #, no-wrap
 msgid "Magnifico"
 msgstr "Magnifico"
 
 #. type: "magnifico_description"
-#: Resources/templates/Localizable.strings:136
+#: Resources/templates/Localizable.strings:164
 #, no-wrap
 msgid ""
 "Magnifico theme from Magnifico,\n"
@@ -679,13 +822,13 @@ msgstr ""
 "/EFI/CLOVER/themes/magnificoにインストール"
 
 #. type: "metal_title"
-#: Resources/templates/Localizable.strings:139
+#: Resources/templates/Localizable.strings:167
 #, no-wrap
 msgid "metal"
 msgstr "metal"
 
 #. type: "metal_description"
-#: Resources/templates/Localizable.strings:140
+#: Resources/templates/Localizable.strings:168
 #, no-wrap
 msgid ""
 "The original metal theme from Slice,\n"
@@ -695,13 +838,13 @@ msgstr ""
 "/EFI/CLOVER/themes/metalにインストール"
 
 #. type: "mrengles_title"
-#: Resources/templates/Localizable.strings:143
+#: Resources/templates/Localizable.strings:171
 #, no-wrap
 msgid "mrengles"
 msgstr "mrengles"
 
 #. type: "mrengles_description"
-#: Resources/templates/Localizable.strings:144
+#: Resources/templates/Localizable.strings:172
 #, no-wrap
 msgid ""
 "mrengles theme from mrengles,\n"
@@ -711,13 +854,13 @@ msgstr ""
 "/EFI/CLOVER/themes/mrenglesにインストール"
 
 #. type: "orange_title"
-#: Resources/templates/Localizable.strings:147
+#: Resources/templates/Localizable.strings:175
 #, no-wrap
 msgid "Orange"
 msgstr "Orange"
 
 #. type: "orange_description"
-#: Resources/templates/Localizable.strings:148
+#: Resources/templates/Localizable.strings:176
 #, no-wrap
 msgid ""
 "Orange theme from dwm,\n"
@@ -727,13 +870,13 @@ msgstr ""
 "/EFI/CLOVER/themes/orangeにインストール"
 
 #. type: "os_box_title"
-#: Resources/templates/Localizable.strings:151
+#: Resources/templates/Localizable.strings:179
 #, no-wrap
 msgid "OS Box"
 msgstr "OS Box"
 
 #. type: "os_box_description"
-#: Resources/templates/Localizable.strings:152
+#: Resources/templates/Localizable.strings:180
 #, no-wrap
 msgid ""
 "OS Box theme from Kyndder,\n"
@@ -743,13 +886,13 @@ msgstr ""
 "/EFI/CLOVER/themes/os_boxにインストール"
 
 #. type: "os_one_title"
-#: Resources/templates/Localizable.strings:155
+#: Resources/templates/Localizable.strings:183
 #, no-wrap
 msgid "OS One"
 msgstr "OS One"
 
 #. type: "os_one_description"
-#: Resources/templates/Localizable.strings:156
+#: Resources/templates/Localizable.strings:184
 #, no-wrap
 msgid ""
 "OS One theme from Kyndder,\n"
@@ -758,14 +901,35 @@ msgstr ""
 "Kyndder制作『OS One』を、\n"
 "/EFI/CLOVER/themes/os_oneにインストール"
 
+#. type: "random_title"
+#: Resources/templates/Localizable.strings:187
+#, no-wrap
+msgid "random"
+msgstr ""
+
+#. type: "random_description"
+#: Resources/templates/Localizable.strings:188
+#, fuzzy, no-wrap
+#| msgid ""
+#| "Orange theme from dwm,\n"
+#| "Install to /EFI/CLOVER/themes/orange"
+msgid ""
+"random theme from Slice,\n"
+"Install to /EFI/CLOVER/themes/random choose a theme from others"
+msgstr ""
+"dwm制作『Orange』を、\n"
+"/EFI/CLOVER/themes/orangeにインストール"
+
 #. type: "thinkpad_title"
-#: Resources/templates/Localizable.strings:159
+#: Resources/templates/Localizable.strings:191
+#: Resources/templates/Localizable.strings:227
 #, no-wrap
 msgid "ThinkPad"
 msgstr "ThinkPad"
 
 #. type: "thinkpad_description"
-#: Resources/templates/Localizable.strings:160
+#: Resources/templates/Localizable.strings:192
+#: Resources/templates/Localizable.strings:228
 #, no-wrap
 msgid ""
 "ThinkPad theme from Kogen Mantis,\n"
@@ -775,13 +939,13 @@ msgstr ""
 "/EFI/CLOVER/themes/thinkpadにインストール"
 
 #. type: "buttons_title"
-#: Resources/templates/Localizable.strings:163
+#: Resources/templates/Localizable.strings:195
 #, no-wrap
 msgid "buttons"
 msgstr "ボタン"
 
 #. type: "buttons_description"
-#: Resources/templates/Localizable.strings:164
+#: Resources/templates/Localizable.strings:196
 #, no-wrap
 msgid ""
 "Buttons theme from Trauma,\n"
@@ -791,13 +955,13 @@ msgstr ""
 "/EFI/CLOVER/themes/buttonsにインストール"
 
 #. type: "hellfire_title"
-#: Resources/templates/Localizable.strings:167
+#: Resources/templates/Localizable.strings:199
 #, no-wrap
 msgid "hellfire"
 msgstr "hellfire"
 
 #. type: "hellfire_description"
-#: Resources/templates/Localizable.strings:168
+#: Resources/templates/Localizable.strings:200
 #, no-wrap
 msgid ""
 "Hellfire theme from lllevelll,\n"
@@ -807,13 +971,13 @@ msgstr ""
 "/EFI/CLOVER/themes/hellfireにインストール"
 
 #. type: "simple_gray_title"
-#: Resources/templates/Localizable.strings:171
+#: Resources/templates/Localizable.strings:203
 #, no-wrap
 msgid "simple_gray"
 msgstr "simple_gray"
 
 #. type: "simple_gray_description"
-#: Resources/templates/Localizable.strings:172
+#: Resources/templates/Localizable.strings:204
 #, no-wrap
 msgid ""
 "Simple_gray theme from hijeane,\n"
@@ -823,13 +987,13 @@ msgstr ""
 "/EFI/CLOVER/themes/simple_grayにインストール"
 
 #. type: "Shield_title"
-#: Resources/templates/Localizable.strings:175
+#: Resources/templates/Localizable.strings:207
 #, no-wrap
 msgid "Shield"
 msgstr "Shield"
 
 #. type: "Shield_description"
-#: Resources/templates/Localizable.strings:176
+#: Resources/templates/Localizable.strings:208
 #, no-wrap
 msgid ""
 "An animated, harmonious theme from Blackosx,\n"
@@ -839,13 +1003,13 @@ msgstr ""
 "/EFI/CLOVER/themes/Shieldにインストール"
 
 #. type: "wooden_title"
-#: Resources/templates/Localizable.strings:179
+#: Resources/templates/Localizable.strings:211
 #, no-wrap
 msgid "wooden"
 msgstr "wooden"
 
 #. type: "wooden_description"
-#: Resources/templates/Localizable.strings:180
+#: Resources/templates/Localizable.strings:212
 #, no-wrap
 msgid ""
 "Wooden theme from iROOTa,\n"
@@ -854,14 +1018,71 @@ msgstr ""
 "iROOTa制作『Wooden』を、\n"
 "/EFI/CLOVER/themes/woodenにインストール"
 
+#. type: "sketched_title"
+#: Resources/templates/Localizable.strings:215
+#, no-wrap
+msgid "sketched"
+msgstr ""
+
+#. type: "sketched_description"
+#: Resources/templates/Localizable.strings:216
+#, fuzzy, no-wrap
+#| msgid ""
+#| "OS One theme from Kyndder,\n"
+#| "Install to /EFI/CLOVER/themes/os_one"
+msgid ""
+"sketched theme from kyndder,\n"
+"Install to /EFI/CLOVER/themes/sketched."
+msgstr ""
+"Kyndder制作『OS One』を、\n"
+"/EFI/CLOVER/themes/os_oneにインストール"
+
+#. type: "Space_title"
+#: Resources/templates/Localizable.strings:219
+#, no-wrap
+msgid "Space"
+msgstr ""
+
+#. type: "Space_description"
+#: Resources/templates/Localizable.strings:220
+#, fuzzy, no-wrap
+#| msgid ""
+#| "Orange theme from dwm,\n"
+#| "Install to /EFI/CLOVER/themes/orange"
+msgid ""
+"Space theme from chris1111,\n"
+"Install to /EFI/CLOVER/themes/Space"
+msgstr ""
+"dwm制作『Orange』を、\n"
+"/EFI/CLOVER/themes/orangeにインストール"
+
+#. type: "steampunkblack_title"
+#: Resources/templates/Localizable.strings:223
+#, no-wrap
+msgid "steampunkblack"
+msgstr ""
+
+#. type: "steampunkblack_description"
+#: Resources/templates/Localizable.strings:224
+#, fuzzy, no-wrap
+#| msgid ""
+#| "Bootcamp theme from Bijo,\n"
+#| "Install to /EFI/CLOVER/themes/bootcamp"
+msgid ""
+"steampunkblack theme from medik,\n"
+"Install to /EFI/CLOVER/themes/steampunkblack"
+msgstr ""
+"Bijo制作『Bootcamp』を、\n"
+"/EFI/CLOVER/themes/bootcampにインストール"
+
 #. type: "rc.scripts.on.target_title"
-#: Resources/templates/Localizable.strings:186
+#: Resources/templates/Localizable.strings:234
 #, no-wrap
 msgid "Install RC scripts on target volume"
 msgstr "RCスクリプトをターゲットボリュームにインストール"
 
 #. type: "rc.scripts.on.target_description"
-#: Resources/templates/Localizable.strings:187
+#: Resources/templates/Localizable.strings:235
 #, no-wrap
 msgid ""
 "Install all RC scripts on target volume.\n"
@@ -871,37 +1092,37 @@ msgstr ""
 "ターゲットボリュームは起動可能なOSXシステムボリュームであることが必要。"
 
 #. type: "rc.scripts.on.all.volumes_title"
-#: Resources/templates/Localizable.strings:189
+#: Resources/templates/Localizable.strings:237
 #, no-wrap
 msgid "Install all RC scripts on all other bootable OSX volumes"
 msgstr "RCスクリプトを他のすべてのOSXボリュームにインストール"
 
 #. type: "rc.scripts.on.all.volumes_description"
-#: Resources/templates/Localizable.strings:190
+#: Resources/templates/Localizable.strings:238
 #, no-wrap
 msgid "Install all RC scripts on all internal bootable OSX volumes other than the target volume."
 msgstr "RCスクリプトを、ターゲットボリューム以外のOSXを起動可能なすべての内蔵ボリュームにインストールします。"
 
 #. type: "Optional RC Scripts"
-#: Resources/templates/Localizable.strings:191
+#: Resources/templates/Localizable.strings:239
 #, no-wrap
 msgid "Optional RC Scripts"
 msgstr "オプションのRCスクリプト"
 
 #. type: "disable_sleep_proxy_client_description"
-#: Resources/templates/Localizable.strings:192
+#: Resources/templates/Localizable.strings:240
 #, no-wrap
 msgid "Disable the mDNSResponder sleep proxy client service. This will prevent the system waking from sleep every hours"
 msgstr "mDNSResponder sleep proxy client serviceを無効化します。これにより、1時間ごとにスリープから復帰する問題を解決します。"
 
 #. type: "CloverPrefpane_title"
-#: Resources/templates/Localizable.strings:197
+#: Resources/templates/Localizable.strings:245
 #, no-wrap
 msgid "Install Clover Preference Pane"
 msgstr "Clover環境設定をインストール"
 
 #. type: "CloverPrefpane_description"
-#: Resources/templates/Localizable.strings:198
+#: Resources/templates/Localizable.strings:246
 #, no-wrap
 msgid ""
 "Install Clover Preference Pane on target volume.\n"
