@@ -911,7 +911,8 @@ typedef struct {
   
   CHAR16                  FBName[16];
   UINT16                  VideoPorts;
-  UINT8                   pad4[2];
+  BOOLEAN                 NvidiaGeneric;
+  UINT8                   pad4[1];
   UINT64                  VRAM;
   UINT8                   Dcfg[8];
   UINT8                   NVCAP[20];

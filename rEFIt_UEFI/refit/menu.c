@@ -317,7 +317,12 @@ VOID FillInputs(BOOLEAN New)
   }
   //and so on
   
-  InputItemsCount = 44;
+  InputItemsCount = 43;
+    // ErmaC: NvidiaGeneric menu selector y/n
+      InputItems[InputItemsCount].ItemType = BoolValue; //26+6i
+      InputItems[InputItemsCount].BValue = gSettings.NvidiaGeneric;
+      InputItems[InputItemsCount++].SValue = gSettings.NvidiaGeneric?L"[+]":L"[ ]";
+  
   InputItems[InputItemsCount].ItemType = BoolValue; //44
   InputItems[InputItemsCount].BValue = gSettings.KextPatchesAllowed;
   InputItems[InputItemsCount++].SValue = gSettings.KextPatchesAllowed ? L"[+]" : L"[ ]";
@@ -698,6 +703,12 @@ VOID ApplyInputs(VOID)
     }    
   }  //end of Graphics Cards
   // next number == 42
+    i = 43; //26
+    // ErmaC: NvidiaGeneric bool(Y/N)
+    if (InputItems[i].Valid) {
+        gSettings.NvidiaGeneric = InputItems[i].BValue;
+    }
+
   i = 44;
   if (InputItems[i].Valid) {
     gSettings.KextPatchesAllowed = InputItems[i].BValue;
@@ -2728,6 +2739,18 @@ REFIT_MENU_ENTRY  *SubMenuGraphics()
     InputBootArgs->Entry.AtRightClick = ActionDetails;
     AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
     
+    // ErmaC: NvidiaGeneric entry
+    if (gGraphics[i].Vendor == Nvidia) {
+       InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+       InputBootArgs->Entry.Title = PoolPrint(L"Generic NVIDIA name:");
+       InputBootArgs->Entry.Tag = TAG_INPUT;
+       InputBootArgs->Entry.Row = 0xFFFF; //cursor
+       InputBootArgs->Item = &InputItems[43];
+       InputBootArgs->Entry.AtClick = ActionEnter;
+       InputBootArgs->Entry.AtRightClick = ActionDetails;
+       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+    }
+
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
     if (gGraphics[i].Vendor == Nvidia) {
       Ven = 95;

@@ -2424,6 +2424,11 @@ GetEarlyUserSettings (
           InitializeEdidOverride ();
         }
       }
+
+      // ErmaC: NiviaGeneric
+      Prop = GetProperty (DictPointer, "NvidiaGeneric");
+      gSettings.NvidiaGeneric            = IsPropertyTrue (Prop);
+
     }
 
     DictPointer = GetProperty (Dict, "DisableDrivers");

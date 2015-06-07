@@ -1492,6 +1492,7 @@ static nvidia_card_info_t nvidia_card_exceptions[] = {
 
 	{ 0x10DE0E23,	0x10B00401,	"Gainward GeForce GTX 460" },
 	// 0F00 - 0FFF
+//	{ 0x10DE0F00,	0x14583544,	"TEST ErmaC" }, // 0400000000000300080000000000000700000000
     { 0x10DE0FBB,	0x38422974,	"EVGA GTX 970 OC" },
 	{ 0x10DE0FD2,	0x10280595,	"Dell GeForce GT 640M LE" },
 	{ 0x10DE0FD2,	0x102805B2,	"Dell GeForce GT 640M LE" },
@@ -1932,6 +1933,9 @@ CHAR8 *get_nvidia_model(UINT32 device_id, UINT32 subsys_id)
 		}
 	}
 	
+	//ErmaC added selector for nVidia "old" style in System Profiler
+	DBG("NvidiaGeneric = %s\n", gSettings.NvidiaGeneric?L"YES":L"NO");
+	if (gSettings.NvidiaGeneric == FALSE) {
 	// Then check the exceptions table
 	if (subsys_id) {
 		for (i = 0; i < (sizeof(nvidia_card_exceptions) / sizeof(nvidia_card_exceptions[0])); i++) {
@@ -1941,10 +1945,20 @@ CHAR8 *get_nvidia_model(UINT32 device_id, UINT32 subsys_id)
       }
 		}
 	}
+	}
 
 	// At last try the generic names
 	for (i = 1; i < (sizeof(nvidia_card_generic) / sizeof(nvidia_card_generic[0])); i++) {
     if (nvidia_card_generic[i].device == device_id) {
+		//--
+			//ErmaC added selector for nVidia "old" style in System Profiler
+			if (gSettings.NvidiaGeneric == TRUE) {
+				DBG("Apply NvidiaGeneric\n");
+				AsciiSPrint(generic_name, 128, "NVIDIA %a", nvidia_card_generic[i].name_model);
+				return &generic_name[0]; // generic_name;
+			}
+			DBG("Not applied NvidiaGeneric\n");
+		//--
 			if (subsys_id) {
 				for (j = 0; j < (sizeof(nvidia_card_vendors) / sizeof(nvidia_card_vendors[0])); j++) {
 					if (nvidia_card_vendors[j].device == (subsys_id & 0xffff0000)) {

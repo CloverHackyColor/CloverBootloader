@@ -533,6 +533,7 @@ void PrintConfig(CFTypeRef data)
   // NVIDIA specific
   addIntArray(graphicsDict, CFSTR("display-cfg"), &s->Dcfg[0], 8);
   addIntArray(graphicsDict, CFSTR("NVCAP"), &s->NVCAP[0], 20);
+  addBoolean(graphicsDict, CFSTR("NvidiaGeneric"), s->NvidiaGeneric);
   // INTEL specific
   addHex(graphicsDict, CFSTR("ig-platform-id"), s->IgPlatform);
   addInteger(graphicsDict, CFSTR("#PatchVBiosBytes Count"), s->PatchVBiosBytesCount);
