@@ -2411,7 +2411,7 @@ GetEarlyUserSettings (
       
       //InjectEDID
       Prop = GetProperty (DictPointer, "InjectEDID");
-      gSettings.InjectEDID            = IsPropertyTrue (Prop);
+      gSettings.InjectEDID = IsPropertyTrue (Prop);
 
       Prop = GetProperty (DictPointer, "CustomEDID");
       if (Prop != NULL) {
@@ -2425,9 +2425,9 @@ GetEarlyUserSettings (
         }
       }
 
-      // ErmaC: NiviaGeneric
+      // ErmaC: NvidiaGeneric
       Prop = GetProperty (DictPointer, "NvidiaGeneric");
-      gSettings.NvidiaGeneric            = IsPropertyTrue (Prop);
+      gSettings.NvidiaGeneric = IsPropertyTrue (Prop);
 
     }
 
