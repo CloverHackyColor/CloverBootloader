@@ -898,25 +898,8 @@ FillinKextPatches (
         Patches->KextPatches[Patches->NrKexts].IsPlistPatch = IsPropertyTrue (Dict);
 
         if (Patches->KextPatches[Patches->NrKexts].IsPlistPatch) {
-          // Info.plist
-          // Find and Replace should be in <string>...</string>
           DBG (" Info.plist patch");
- /*         Dict = GetProperty (Prop2, "Find");
-          Patches->KextPatches[Patches->NrKexts].DataLen = 0;
-          if (Dict && Dict->string) {
-            Patches->KextPatches[Patches->NrKexts].DataLen = AsciiStrLen (Dict->string);
-            Patches->KextPatches[Patches->NrKexts].Data = (UINT8*)AllocateCopyPool (Patches->KextPatches[Patches->NrKexts].DataLen + 1, Dict->string);
-          }
-
-          Dict = GetProperty (Prop2, "Replace");
-          j = 0;
-          if (Dict && Dict->string) {
-            j = AsciiStrLen (Dict->string);
-            Patches->KextPatches[Patches->NrKexts].Patch = (UINT8*)AllocateCopyPool (j + 1, Dict->string); //may differ in length
-          } */
-        } else { 
-          // kext binary patch
-          // Find and Replace should be in <data>...</data> or <string>...</string>
+        } else {
           DBG (" Kext bin patch");
         }
         //
@@ -4725,6 +4708,9 @@ CHAR16
   CHAR16 *OSIconName;
   if (OSVersion == NULL) {
     OSIconName = L"mac";
+  } else if (AsciiStrStr (OSVersion, "10.11") != 0) {
+    // El Capitano
+    OSIconName = L"cap,mac";
   } else if (AsciiStrStr (OSVersion, "10.10") != 0) {
     // Yosemite
     OSIconName = L"yos,mac";

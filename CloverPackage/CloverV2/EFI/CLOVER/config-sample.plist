@@ -223,7 +223,7 @@
 		<key>#Arguments</key>
 		<string>-v arch=i386 slide=0 darkwake=0</string>
 		<key>Arguments</key>
-		<string>kext-dev-mode=1</string>
+		<string>kext-dev-mode=1 rootless=0</string>
 		<key>DefaultLoader</key>
 		<string>boot.efi</string>
 		<key>DefaultVolume</key>
