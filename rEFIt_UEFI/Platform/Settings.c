@@ -2412,6 +2412,9 @@ GetEarlyUserSettings (
       Prop = GetProperty (DictPointer, "NvidiaGeneric");
       gSettings.NvidiaGeneric = IsPropertyTrue (Prop);
 
+      Prop = GetProperty (DictPointer, "NvidiaSingle");
+      gSettings.NvidiaSingle = IsPropertyTrue (Prop);
+
     }
 
     DictPointer = GetProperty (Dict, "DisableDrivers");
