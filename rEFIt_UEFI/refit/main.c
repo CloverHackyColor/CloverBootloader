@@ -768,14 +768,23 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
       gSettings.WithKextsIfNoFakeSMC = FALSE;
     }
     // */
+    if ((OSVersion != NULL && AsciiOSVersionToUint64(OSVersion) < AsciiOSVersionToUint64("10.9")) || (gSettings.HDALayoutId > 0)) {
+    }
 
     // Set boot argument for kernel if no caches, this should force kernel loading
     if (OSFLAG_ISSET(Entry->Flags, OSFLAG_NOCACHES) &&
         (StriStr(Entry->LoadOptions, L"Kernel=") == NULL)) {
-      CHAR16 *TempOptions = AddLoadOption(Entry->LoadOptions,
-          AsciiStrnCmp(Entry->OSVersion, "10.10", 5) ?
-            L"\"Kernel=/mach_kernel\"" :
-            L"\"Kernel=/System/Library/Kernels/kernel\"");
+      CHAR16 *KernelLocation = NULL;
+      CHAR16 *TempOptions;
+
+      if (Entry->OSVersion && AsciiOSVersionToUint64(Entry->OSVersion) <= AsciiOSVersionToUint64("10.9")) {
+        KernelLocation =L"\"Kernel=/mach_kernel\"";
+      } else {
+        // used for 10.10, 10.11, and new version.
+        KernelLocation =L"\"Kernel=/System/Library/Kernels/kernel\"";
+      }
+
+      TempOptions = AddLoadOption(Entry->LoadOptions, KernelLocation);
       FreePool(Entry->LoadOptions);
       Entry->LoadOptions = TempOptions;
     }

@@ -76,18 +76,18 @@ typedef struct {
 
 /* Option ROM PCI Data Structure */
 typedef struct {
-	UINT32		signature;		// 0x52494350 'PCIR'
-	UINT16		vendor_id;
-	UINT16		device_id;
-	UINT16		vital_product_data_offset;
-	UINT16		structure_length;
-	UINT8			structure_revision;
-	UINT8			class_code[3];
-	UINT16		image_length;  //same as rom_size for NVidia and ATI, 0x80 for Intel 
-	UINT16		image_revision;
-	UINT8			code_type;
-	UINT8			indicator;
-	UINT16		reserved;
+  UINT32		signature;		// 0x52494350 'PCIR'
+  UINT16		vendor_id;
+  UINT16		device_id;
+  UINT16		vital_product_data_offset;
+  UINT16		structure_length;
+  UINT8			structure_revision;
+  UINT8			class_code[3];
+  UINT16		image_length;  //same as rom_size for NVidia and ATI, 0x80 for Intel
+  UINT16		image_revision;
+  UINT8			code_type;
+  UINT8			indicator;
+  UINT16		reserved;
 } option_rom_pci_header_t;
 
 

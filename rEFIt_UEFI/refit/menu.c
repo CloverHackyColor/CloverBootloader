@@ -319,9 +319,9 @@ VOID FillInputs(BOOLEAN New)
   
   InputItemsCount = 43;
     // ErmaC: NvidiaGeneric menu selector y/n
-      InputItems[InputItemsCount].ItemType = BoolValue; //26+6i
-      InputItems[InputItemsCount].BValue = gSettings.NvidiaGeneric;
-      InputItems[InputItemsCount++].SValue = gSettings.NvidiaGeneric?L"[+]":L"[ ]";
+  InputItems[InputItemsCount].ItemType = BoolValue; //26+6i
+  InputItems[InputItemsCount].BValue = gSettings.NvidiaGeneric;
+  InputItems[InputItemsCount++].SValue = gSettings.NvidiaGeneric?L"[+]":L"[ ]";
   
   InputItems[InputItemsCount].ItemType = BoolValue; //44
   InputItems[InputItemsCount].BValue = gSettings.KextPatchesAllowed;
@@ -703,11 +703,11 @@ VOID ApplyInputs(VOID)
     }    
   }  //end of Graphics Cards
   // next number == 42
-    i = 43; //26
-    // ErmaC: NvidiaGeneric bool(Y/N)
-    if (InputItems[i].Valid) {
-        gSettings.NvidiaGeneric = InputItems[i].BValue;
-    }
+  i = 43; //26
+  // ErmaC: NvidiaGeneric bool(Y/N)
+  if (InputItems[i].Valid) {
+    gSettings.NvidiaGeneric = InputItems[i].BValue;
+  }
 
   i = 44;
   if (InputItems[i].Valid) {
