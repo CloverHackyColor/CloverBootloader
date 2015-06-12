@@ -1926,7 +1926,7 @@ CHAR8 *get_nvidia_model(UINT32 device_id, UINT32 subsys_id)
   //DBG("get_nvidia_model for (%08x, %08x)\n", device_id, subsys_id);
   
 	//ErmaC added selector for nVidia "old" style in System Profiler
-	DBG("NvidiaGeneric = %s\n", gSettings.NvidiaGeneric?L"YES":L"NO");
+  //DBG("NvidiaGeneric = %s\n", gSettings.NvidiaGeneric?L"YES":L"NO");
 	if (gSettings.NvidiaGeneric == FALSE) {
     // First check in the plist, (for e.g this can override any hardcoded devices)
     CARDLIST * nvcard = FindCardWithIds(device_id, subsys_id);
@@ -1957,7 +1957,7 @@ CHAR8 *get_nvidia_model(UINT32 device_id, UINT32 subsys_id)
 				AsciiSPrint(generic_name, 128, "NVIDIA %a", nvidia_card_generic[i].name_model);
 				return &generic_name[0]; // generic_name;
 			}
-			DBG("Not applied NvidiaGeneric\n");
+      //			DBG("Not applied NvidiaGeneric\n");
       //--
 			if (subsys_id) {
 				for (j = 0; j < (sizeof(nvidia_card_vendors) / sizeof(nvidia_card_vendors[0])); j++) {
@@ -2088,7 +2088,7 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 	EFI_STATUS		Status = EFI_NOT_FOUND;
 	DevPropDevice	*device = NULL;
 	CHAR8         *devicepath = NULL;
-	BOOLEAN				load_vbios = gSettings.LoadVBios;
+  BOOLEAN				load_vbios = gSettings.LoadVBios;
   BOOLEAN				Injected = FALSE;
 	UINT8         *rom = NULL;
 	UINT16				nvCardType = 0;

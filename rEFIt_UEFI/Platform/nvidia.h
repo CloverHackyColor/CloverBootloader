@@ -68,6 +68,7 @@ typedef struct
 	UINT32 device; // VendorID + DeviceID
 	UINT32 subdev; // SubdeviceID + SubvendorID
 	CHAR8 *name_model;
+  UINT8 *custom_NVCAP;
 }nvidia_card_info_t;
 
 #define DCB_MAX_NUM_ENTRIES 16

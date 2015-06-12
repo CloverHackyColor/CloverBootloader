@@ -743,7 +743,8 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
           if (AsciiStrnCmp(InstallerVersion, "10.7", 4) &&
               AsciiStrnCmp(InstallerVersion, "10.8", 4) &&
               AsciiStrnCmp(InstallerVersion, "10.9", 4) &&
-              AsciiStrnCmp(InstallerVersion, "10.10", 5)) {   //xxx
+              AsciiStrnCmp(InstallerVersion, "10.10", 5) &&
+              AsciiStrnCmp(InstallerVersion, "10.11", 5)) {   //xxx
             InstallerVersion = NULL; // flag known version was not found
           }
           if (InstallerVersion != NULL) { // known version was found in image
