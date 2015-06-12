@@ -768,8 +768,6 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
       gSettings.WithKextsIfNoFakeSMC = FALSE;
     }
     // */
-    if ((OSVersion != NULL && AsciiOSVersionToUint64(OSVersion) < AsciiOSVersionToUint64("10.9")) || (gSettings.HDALayoutId > 0)) {
-    }
 
     // Set boot argument for kernel if no caches, this should force kernel loading
     if (OSFLAG_ISSET(Entry->Flags, OSFLAG_NOCACHES) &&
