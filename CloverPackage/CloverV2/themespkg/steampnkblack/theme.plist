@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Author</key>
+	<string>medik</string>
+	<key>Description</key>
+	<string>Victorian era</string>
+	<key>Theme</key>
+	<dict>
+		<key>Anime</key>
+		<array>
+			<dict>
+				<key>FrameTime</key>
+				<integer>100</integer>
+				<key>Frames</key>
+				<integer>5</integer>
+				<key>ID</key>
+				<integer>1</integer>
+				<key>Path</key>
+				<string>logo_anim</string>
+			</dict>
+		</array>
+		<key>Background</key>
+		<dict>
+			<key>Path</key>
+			<string>fon_st7.png</string>
+			<key>Type</key>
+			<string>Tile</string>
+		</dict>
+		<key>Badges</key>
+		<dict>
+			<key>Inline</key>
+			<false/>
+			<key>Show</key>
+			<true/>
+			<key>Swap</key>
+			<false/>
+		</dict>
+		<key>Banner</key>
+		<string>clover_simlogo.png</string>
+		<key>Font</key>
+		<dict>
+			<key>CharWidth</key>
+			<integer>10</integer>
+			<key>Path</key>
+			<string>WoB_Monaco_10W.png</string>
+			<key>Type</key>
+			<string>Load</string>
+		</dict>
+		<key>Selection</key>
+		<dict>
+			<key>Big</key>
+			<string>frame-144x144.png</string>
+			<key>Color</key>
+			<string>0x7F3F3F80</string>
+			<key>Small</key>
+			<string>frame-64x64.png</string>
+		</dict>
+	</dict>
+	<key>Year</key>
+	<string>1885</string>
+</dict>
+</plist>
