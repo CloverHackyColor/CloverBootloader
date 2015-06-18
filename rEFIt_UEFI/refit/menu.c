@@ -2097,7 +2097,7 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
       //DBG("MENU_FUNCTION_INIT 1 EntriesPosY=%d VisibleHeight=%d\n", EntriesPosY, VisibleHeight);
       InitScroll(State, Screen->EntryCount, Screen->EntryCount, VisibleHeight);
       // determine width of the menu
-      MenuWidth = 50;  // minimum
+      MenuWidth = 80;  // minimum
       /* for (i = 0; i < (INTN)Screen->InfoLineCount; i++) {
        ItemWidth = StrLen(Screen->InfoLines[i]);
        if (MenuWidth < ItemWidth)

@@ -47,14 +47,14 @@
 		<string>logo-trans.png</string>
 		<key>Font</key>
 		<dict>
-			<key>Proportional</key>
-			<true/>
 			<key>CharWidth</key>
-			<integer>10</integer>
+			<integer>20</integer>
 			<key>Path</key>
-			<string>BoG_LucidaConsole_10W_NA.png</string>
+			<string>Baskerville_20pt_Cell_26x27_l0.png</string>
 			<key>Type</key>
 			<string>Load</string>
+			<key>Proportional</key>
+			<true/>
 		</dict>
 		<key>Selection</key>
 		<dict>

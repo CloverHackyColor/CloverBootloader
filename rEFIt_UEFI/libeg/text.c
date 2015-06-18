@@ -66,7 +66,7 @@ INTN TextHeight = 16;
 VOID egMeasureText(IN CHAR16 *Text, OUT INTN *Width, OUT INTN *Height)
 {
     if (Width != NULL)
-        *Width = StrLen(Text) * FontWidth; //GlobalConfig.CharWidth;
+        *Width = StrLen(Text) * ((FontWidth > GlobalConfig.CharWidth)?FontWidth:GlobalConfig.CharWidth);
     if (Height != NULL)
         *Height = FontHeight;
 }
