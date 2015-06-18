@@ -2112,8 +2112,8 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
        } */
       
 //      DBG("MENU_FUNCTION_INIT 3\n");
-      MenuWidth = TEXT_XMARGIN * 2 + (MenuWidth * GlobalConfig.CharWidth); // FontWidth;
-      if (MenuWidth > LAYOUT_TEXT_WIDTH)
+//      MenuWidth = TEXT_XMARGIN * 2 + (MenuWidth * GlobalConfig.CharWidth); // FontWidth;
+//      if (MenuWidth > LAYOUT_TEXT_WIDTH)
         MenuWidth = LAYOUT_TEXT_WIDTH;
       
       if (Screen->TitleImage) {
