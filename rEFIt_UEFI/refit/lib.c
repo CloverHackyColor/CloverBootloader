@@ -629,7 +629,7 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
         Volume->BootType = BOOTING_BY_PBR;
         
       } else if (FindMem(SectorBuffer, 512, "\x04" "beos\x06" "system\x05" "zbeos", 18) >= 0 ||
-                 FindMem(SectorBuffer, 512, "\x06" "system\x0c" "haiku_loader", 20) >= 0) {
+                 FindMem(SectorBuffer, 512, "haiku_loader", 12) >= 0) {
         Volume->HasBootCode = TRUE;
         Volume->LegacyOS->IconName = L"haiku";
         Volume->LegacyOS->Name = L"Haiku";
