@@ -1849,7 +1849,7 @@ INTN DrawTextXY(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
   if (!Text) return 0;
 
   egMeasureText(Text, &TextWidth, NULL);
-  if (XAlign == left) {
+  if (XAlign == X_IS_LEFT) {
     TextWidth = UGAWidth - XPos - 1;
   }
   TextBufferXY = egCreateImage(TextWidth, TextHeight, TRUE);
