@@ -677,21 +677,21 @@ BOOLEAN KernelLapicPatch_64(VOID *kernelData)
         bytes[i+45] == 0x65 && bytes[i+46] == 0x8B && bytes[i+47] == 0x04 && bytes[i+48] == 0x25 &&
         bytes[i+49] == 0x3C && bytes[i+50] == 0x00 && bytes[i+51] == 0x00 && bytes[i+52] == 0x00) {
       patchLocation = i+40;
-      DBG("Found SL Lapic panic at 0x%08x\n", patchLocation);
+      DBG("Found Snow Leopard Lapic panic at 0x%08x\n", patchLocation);
       break;
     } else if (bytes[i+0]  == 0x65 && bytes[i+1]  == 0x8B && bytes[i+2]  == 0x04 && bytes[i+3]  == 0x25 &&
         bytes[i+4]  == 0x14 && bytes[i+5]  == 0x00 && bytes[i+6]  == 0x00 && bytes[i+7]  == 0x00 &&
         bytes[i+35] == 0x65 && bytes[i+36] == 0x8B && bytes[i+37] == 0x04 && bytes[i+38] == 0x25 &&
         bytes[i+39] == 0x14 && bytes[i+40] == 0x00 && bytes[i+41] == 0x00 && bytes[i+42] == 0x00) {
       patchLocation = i+30;
-      DBG("Found Lapic panic at 0x%08x\n", patchLocation);
+      DBG("Found Lion, Mountain Lion Lapic panic at 0x%08x\n", patchLocation);
       break;
     } else if (bytes[i+0] == 0x65 && bytes[i+1] == 0x8B && bytes[i+2] == 0x04 && bytes[i+3] == 0x25 &&
                bytes[i+4] == 0x1C && bytes[i+5] == 0x00 && bytes[i+6] == 0x00 && bytes[i+7] == 0x00 &&
                bytes[i+36] == 0x65 && bytes[i+37] == 0x8B && bytes[i+38] == 0x04 && bytes[i+39] == 0x25 &&
                bytes[i+40] == 0x1C && bytes[i+41] == 0x00 && bytes[i+42] == 0x00 && bytes[i+43] == 0x00) {
       patchLocation = i+31;
-      DBG("Found MV Lapic panic at 0x%08x\n", patchLocation);
+      DBG("Found Mavericks Lapic panic at 0x%08x\n", patchLocation);
       break;
       //rehabman: 10.10.DP1 lapic
     } else if (bytes[i+0] == 0x65 && bytes[i+1] == 0x8B && bytes[i+2] == 0x04 && bytes[i+3] == 0x25 &&
@@ -699,7 +699,15 @@ BOOLEAN KernelLapicPatch_64(VOID *kernelData)
                bytes[i+33] == 0x65 && bytes[i+34] == 0x8B && bytes[i+35] == 0x04 && bytes[i+36] == 0x25 &&
                bytes[i+37] == 0x1C && bytes[i+38] == 0x00 && bytes[i+39] == 0x00 && bytes[i+40] == 0x00) {
       patchLocation = i+28;
-      DBG("Found Yos Lapic panic at 0x%08x\n", patchLocation);
+      DBG("Found Yosemite Lapic panic at 0x%08x\n", patchLocation);
+      break;
+      //sherlocks: 10.11.DB1
+    } else if (bytes[i+0] == 0x65 && bytes[i+1] == 0x8B && bytes[i+2] == 0x0C && bytes[i+3] == 0x25 &&
+               bytes[i+4] == 0x1C && bytes[i+5] == 0x00 && bytes[i+6] == 0x00 && bytes[i+7] == 0x00 &&
+               bytes[i+1411] == 0x65 && bytes[i+1412] == 0x8B && bytes[i+1413] == 0x0C && bytes[i+1414] == 0x25 &&
+               bytes[i+1415] == 0x1C && bytes[i+1416] == 0x00 && bytes[i+1417] == 0x00 && bytes[i+1418] == 0x00) {
+      patchLocation = i+1400;
+      DBG("Found El Capitan Lapic panic at 0x%08x\n", patchLocation);
       break;
     }
   }
