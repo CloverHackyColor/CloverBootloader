@@ -232,22 +232,22 @@ INTN GetEmpty(EG_PIXEL *Ptr, EG_PIXEL *FirstPixel, INTN MaxWidth, INTN Step, INT
   EG_PIXEL *Ptr0, *Ptr1;
 
   Ptr1 = (Step > 0)?Ptr:Ptr - 1;
-  DBG("Ptr=%x Ptr1=%x First=%x (%d, %d, %d, %d) W=%d Row=0x%x\n", Ptr, Ptr1, FirstPixel,
-        FirstPixel->r, FirstPixel->g, FirstPixel->b, FirstPixel->b, MaxWidth, Row);
+//  DBG("Ptr=%x Ptr1=%x First=%x (%d, %d, %d, %d) W=%d Row=0x%x\n", Ptr, Ptr1, FirstPixel,
+//        FirstPixel->r, FirstPixel->g, FirstPixel->b, FirstPixel->b, MaxWidth, Row);
   m = MaxWidth;
   for (j = 0; j < FontHeight; j++) {
     Ptr0 = Ptr1 + j * Row;
     for (i = 0; i < MaxWidth; i++) {
-      DBG("(%d, %d, %d, %d) at step %d\n", Ptr0->r, Ptr0->g, Ptr0->b, Ptr0->a, i);
+//      DBG("(%d, %d, %d, %d) at step %d\n", Ptr0->r, Ptr0->g, Ptr0->b, Ptr0->a, i);
       if (!EmptyPix(Ptr0, FirstPixel)) {
         break;
       }
       Ptr0 += Step;
     }
     m = (i > m)?m:i;
-    DBG("choosen shift %d\n", m);
+//    DBG("choosen shift %d\n", m);
   }
-  DBG("Empty %a %d\n", (Step > 0)?"right":"left", m);
+//  DBG("Empty %a %d\n", (Step > 0)?"right":"left", m);
   return m;
 }
 
@@ -258,7 +258,7 @@ INTN egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage,
   EG_PIXEL        *FontPixelData;
   EG_PIXEL        *FirstPixelBuf;
   INTN            BufferLineOffset, FontLineOffset;
-  INTN            TextLength;
+  INTN            TextLength /*, NewTextLength = 0 */;
   INTN            i;
   UINT16          c, c1, c0;
   UINTN           Shift = 0;
@@ -268,12 +268,14 @@ INTN egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage,
   
   // clip the text
   TextLength = StrLen(Text);
+/*  DBG("call for textlength=%d\n", TextLength);
   if ((TextLength * GlobalConfig.CharWidth + PosX) > CompImage->Width){
     if (GlobalConfig.CharWidth) {
-      TextLength = (CompImage->Width - PosX + GlobalConfig.CharWidth - 1) / GlobalConfig.CharWidth;
+      NewTextLength = (CompImage->Width - PosX + GlobalConfig.CharWidth - 1) / GlobalConfig.CharWidth;
     } else
-      TextLength = (CompImage->Width - PosX + FontWidth - 1) / FontWidth;
+      NewTextLength = (CompImage->Width - PosX + FontWidth - 1) / FontWidth;
   }
+  DBG(" NewTextLength=%d\n", NewTextLength); */
   if (!FontImage) {
     GlobalConfig.Font = FONT_LOAD;
     PrepareFont();
@@ -294,6 +296,7 @@ INTN egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage,
   }
   c0 = 0;
   RealWidth = GlobalConfig.CharWidth;
+  DBG("FontWidth=%d, CharWidth=%d\n", FontWidth, RealWidth);
   for (i = 0; i < TextLength; i++) {
     c = Text[i];
     if (gLanguage != korean) {
@@ -326,7 +329,14 @@ INTN egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage,
         LeftSpace = 2;
         RightSpace = Shift;
       }
+ /*     DBG("at char %d there is width end: %x > %x\n", i,
+          (UINTN)BufferPtr + RealWidth * 4,
+          (UINTN)FirstPixelBuf + BufferLineOffset * 4);
+ */     
       c0 = c; //old value
+      if ((UINTN)BufferPtr + RealWidth * 4 > (UINTN)FirstPixelBuf + BufferLineOffset * 4) {
+        break;
+      }
       egRawCompose(BufferPtr - LeftSpace + 2, FontPixelData + c * FontWidth + RightSpace,
                    RealWidth, FontHeight,
                    BufferLineOffset, FontLineOffset);

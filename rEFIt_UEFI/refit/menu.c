@@ -1865,11 +1865,18 @@ INTN DrawTextXY(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
 
 VOID DrawMenuText(IN CHAR16 *Text, IN INTN SelectedWidth, IN INTN XPos, IN INTN YPos, IN INTN Cursor)
 {
+  //use Text=null to reinit the buffer
+  if (!Text && TextBuffer) {
+    egFreeImage(TextBuffer);
+    TextBuffer = NULL;
+    return;
+  }
+  
   if (TextBuffer && (TextBuffer->Height != TextHeight)) {
     egFreeImage(TextBuffer);
     TextBuffer = NULL;
   }
-
+  
   if (TextBuffer == NULL) {
     TextBuffer = egCreateImage(LAYOUT_TEXT_WIDTH, TextHeight, TRUE);
   }
@@ -2100,7 +2107,7 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
       //DBG("MENU_FUNCTION_INIT 1 EntriesPosY=%d VisibleHeight=%d\n", EntriesPosY, VisibleHeight);
       InitScroll(State, Screen->EntryCount, Screen->EntryCount, VisibleHeight);
       // determine width of the menu
-      MenuWidth = 80;  // minimum
+      //MenuWidth = 80;  // minimum
       /* for (i = 0; i < (INTN)Screen->InfoLineCount; i++) {
        ItemWidth = StrLen(Screen->InfoLines[i]);
        if (MenuWidth < ItemWidth)
@@ -2117,13 +2124,16 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
 //      DBG("MENU_FUNCTION_INIT 3\n");
 //      MenuWidth = TEXT_XMARGIN * 2 + (MenuWidth * GlobalConfig.CharWidth); // FontWidth;
 //      if (MenuWidth > LAYOUT_TEXT_WIDTH)
-        MenuWidth = LAYOUT_TEXT_WIDTH;
+      MenuWidth = LAYOUT_TEXT_WIDTH;
+      DrawMenuText(NULL, 0, 0, 0, 0);
       
       if (Screen->TitleImage) {
         if (MenuWidth > (INTN)(UGAWidth - TITLEICON_SPACING - Screen->TitleImage->Width)) {
           MenuWidth = UGAWidth - TITLEICON_SPACING - Screen->TitleImage->Width - 2;
         }        
         EntriesPosX = (UGAWidth - (Screen->TitleImage->Width + TITLEICON_SPACING + MenuWidth)) >> 1;
+  //        DBG("UGAWIdth=%d TitleImage=%d MenuWidth=%d\n", UGAWidth,
+  //            Screen->TitleImage->Width, MenuWidth);
       }
       else {
         EntriesPosX = (UGAWidth - MenuWidth) >> 1;
