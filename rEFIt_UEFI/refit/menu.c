@@ -1866,9 +1866,11 @@ INTN DrawTextXY(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
 VOID DrawMenuText(IN CHAR16 *Text, IN INTN SelectedWidth, IN INTN XPos, IN INTN YPos, IN INTN Cursor)
 {
   //use Text=null to reinit the buffer
-  if (!Text && TextBuffer) {
-    egFreeImage(TextBuffer);
-    TextBuffer = NULL;
+  if (!Text)
+    if (TextBuffer) {
+      egFreeImage(TextBuffer);
+      TextBuffer = NULL;
+    }
     return;
   }
   
