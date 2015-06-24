@@ -306,7 +306,7 @@ radeon_card_info_t radeon_cards[] = {
     { 0x6830,	0x00000000, CHIP_FAMILY_VERDE,	"AMD Radeon HD 7800M Series",   kBuri	}, // Mobile
     { 0x6831,	0x00000000, CHIP_FAMILY_VERDE,	"AMD Radeon HD 7700 Series",    kBuri	}, // Mobile
     { 0x6835,	0x00000000, CHIP_FAMILY_VERDE,	"AMD Radeon HD R7 Series",      kBuri	},
-    { 0x6837,	0x00000000, CHIP_FAMILY_VERDE,	"AMD Radeon HD 7700 Series",    kBuri	},
+    { 0x6837,	0x00000000, CHIP_FAMILY_VERDE,	"AMD Radeon HD 7730 Series",    kBuri	},
     { 0x6838,	0x00000000, CHIP_FAMILY_VERDE,	"AMD Radeon HD 7700 Series",    kBuri	},
     { 0x6839,	0x00000000, CHIP_FAMILY_VERDE,	"AMD Radeon HD 7700 Series",    kBuri	},
     { 0x683B,	0x00000000, CHIP_FAMILY_VERDE,	"AMD Radeon HD 7700 Series",    kBuri	},
