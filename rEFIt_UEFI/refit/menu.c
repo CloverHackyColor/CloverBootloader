@@ -1880,7 +1880,7 @@ VOID DrawMenuText(IN CHAR16 *Text, IN INTN SelectedWidth, IN INTN XPos, IN INTN 
   }
   
   if (TextBuffer == NULL) {
-    TextBuffer = egCreateImage(LAYOUT_TEXT_WIDTH, TextHeight, TRUE);
+    TextBuffer = egCreateImage(UGAWidth-XPos, TextHeight, TRUE);
   }
   
   if (Cursor != 0xFFFF) {
@@ -2136,6 +2136,7 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
         EntriesPosX = (UGAWidth - (Screen->TitleImage->Width + TITLEICON_SPACING + MenuWidth)) >> 1;
   //        DBG("UGAWIdth=%d TitleImage=%d MenuWidth=%d\n", UGAWidth,
   //            Screen->TitleImage->Width, MenuWidth);
+          MenuWidth += Screen->TitleImage->Width;
       }
       else {
         EntriesPosX = (UGAWidth - MenuWidth) >> 1;
@@ -2164,6 +2165,7 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
       }
       
       if (Screen->InfoLineCount > 0) {
+        DrawMenuText(NULL, 0, 0, 0, 0);
         for (i = 0; i < (INTN)Screen->InfoLineCount; i++) {
           DrawMenuText(Screen->InfoLines[i], 0, EntriesPosX, EntriesPosY, 0xFFFF);
           EntriesPosY += TextHeight;
