@@ -157,7 +157,7 @@ radeon_card_info_t radeon_cards[] = {
     { 0x6607,	0x00000000, CHIP_FAMILY_OLAND,		"AMD Radeon R5 M240",       kNull       }, // Mobile
     { 0x6608,	0x00000000, CHIP_FAMILY_OLAND,		"AMD FirePro W2100",        kNull       },
     { 0x6610,	0x00000000, CHIP_FAMILY_OLAND,		"AMD Radeon R7 250",        kFutomaki		},
-    { 0x6611,	0x00000000, CHIP_FAMILY_OLAND,		"AMD Radeon R7 200 Series",	kNull       },
+    { 0x6611,	0x00000000, CHIP_FAMILY_OLAND,		"AMD Radeon R7 250 Series",	kNull       },
     { 0x6613,	0x00000000, CHIP_FAMILY_OLAND,		"AMD Radeon R7 240",        kFutomaki	},
     //	{ 0x6620,	0x00000000, CHIP_FAMILY_OLAND,		"AMD Radeon",           kNull       }, // Mobile
     //	{ 0x6621,	0x00000000, CHIP_FAMILY_OLAND,		"AMD Radeon",           kNull       }, // Mobile
@@ -172,7 +172,7 @@ radeon_card_info_t radeon_cards[] = {
     { 0x6649,	0x00000000, CHIP_FAMILY_BONAIRE,	"AMD FirePro W5100",        kNull       },
     //	{ 0x6650,	0x00000000, CHIP_FAMILY_BONAIRE,	"AMD Radeon",           kNull       },
     //	{ 0x6651,	0x00000000, CHIP_FAMILY_BONAIRE,	"AMD Radeon",           kNull       },
-    { 0x6658,	0x00000000, CHIP_FAMILY_BONAIRE,	"AMD Radeon R7 200",        kNull       },
+    { 0x6658,	0x00000000, CHIP_FAMILY_BONAIRE,	"AMD Radeon R7 260X",        kNull       },
     { 0x665C,	0x00000000, CHIP_FAMILY_BONAIRE,	"AMD Radeon HD 7790",       kFutomaki	},
     { 0x665D,	0x00000000, CHIP_FAMILY_BONAIRE,	"AMD Radeon R9 260",        kFutomaki	},
     
