@@ -88,6 +88,9 @@ typedef enum {
 	CHIP_FAMILY_HAWAII,
 	/* ... */
 	CHIP_FAMILY_MULLINS,
+    CHIP_FAMILY_TOPAS,
+    CHIP_FAMILY_AMETHYST,
+    CHIP_FAMILY_TONGA,
 	CHIP_FAMILY_LAST
 } ati_chip_family_t;
 
