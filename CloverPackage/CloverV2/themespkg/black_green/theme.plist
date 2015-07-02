@@ -7,7 +7,7 @@
 	<key>Year</key>
 	<string>2012</string>
 	<key>Description</key>
-	<string>black_green</string>
+	<string>3rd revision of my black_green (v3.1)</string>
 	<key>Theme</key>
 	<dict>
 		<key>Badges</key>
@@ -18,6 +18,12 @@
 			<false/>
 			<key>Swap</key>
 			<true/>
+			<key>Scale</key>
+            <integer>4</integer>
+			<key>OffsetX</key>
+			<integer>50</integer>
+			<key>OffsetY</key>
+			<integer>96</integer>
 		</dict>
 		<key>Background</key>
 		<dict>
@@ -50,7 +56,7 @@
 			<key>Small</key>
 			<string>Selection_small.png</string>
 			<key>ChangeNonSelectedGrey</key>
-			<true/>
+			<false/>
 			<key>OnTop</key>
 			<true/>
 		</dict>
