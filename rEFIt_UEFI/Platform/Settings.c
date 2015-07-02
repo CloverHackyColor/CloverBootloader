@@ -3168,7 +3168,7 @@ finish:
 
     GetThemeTagSettings(NULL);
     //fill some fields
-    GlobalConfig.Timeout = -1;
+    //GlobalConfig.Timeout = -1;
     GlobalConfig.SelectionColor = 0xA0A0A080;
     GlobalConfig.Font = FONT_ALFA; //to be inverted later
     GlobalConfig.CharWidth = 7;
