@@ -209,6 +209,7 @@ VOID GetCPUProperties (VOID)
       case CPU_MODEL_HASWELL_MB:
       case CPU_MODEL_HASWELL_ULT:
       case CPU_MODEL_HASWELL_ULX:
+      case CPU_MODEL_BROADWELL_HQ:
         msr = AsmReadMsr64(MSR_CORE_THREAD_COUNT);  //0x35
         gCPUStructure.Cores   = (UINT8)bitfield((UINT32)msr, 31, 16);  
         gCPUStructure.Threads = (UINT8)bitfield((UINT32)msr, 15,  0);
@@ -353,6 +354,7 @@ VOID GetCPUProperties (VOID)
           case CPU_MODEL_HASWELL_MB:
           case CPU_MODEL_HASWELL_ULT:
           case CPU_MODEL_HASWELL_ULX:
+          case CPU_MODEL_BROADWELL_HQ:
             gCPUStructure.TSCFrequency = MultU64x32(gCPUStructure.CurrentSpeed, Mega); //MHz -> Hz
             gCPUStructure.CPUFrequency = gCPUStructure.TSCFrequency;
             //----test C3 patch
@@ -778,18 +780,7 @@ UINT16 GetAdvancedCpuType ()
             }
 						return 0x704;
           case CPU_MODEL_HASWELL_U5:
-            if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) M"))
-              return 0xB06; // Core M
-            if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i3"))
-              return 0x906; // Core i3 - Apple doesn't use it
-            if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i5"))
-              return 0x606; // Core i5
-            if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i7"))
-              return 0x706; // Core i7
-            if (gCPUStructure.Cores <= 2) {
-              return 0x606;
-            }
-            return 0x706;
+            return 0x606;
           case CPU_MODEL_IVY_BRIDGE_E5:
             return 0xA01;
           case CPU_MODEL_ATOM_3700:
@@ -797,6 +788,7 @@ UINT16 GetAdvancedCpuType ()
           case CPU_MODEL_HASWELL_MB:
           case CPU_MODEL_HASWELL_ULT:
           case CPU_MODEL_HASWELL_ULX:
+          case CPU_MODEL_BROADWELL_HQ:
             if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i3"))
 							return 0x905; // Core i3 - Apple doesn't use it
             if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i5"))
@@ -867,6 +859,7 @@ MACHINE_TYPES GetDefaultModel()
       case CPU_MODEL_HASWELL_ULT:
       case CPU_MODEL_HASWELL_ULX:
       case CPU_MODEL_HASWELL_U5:
+      case CPU_MODEL_BROADWELL_HQ:
         DefaultType = MacBookPro111;
 				break;  
 			default:

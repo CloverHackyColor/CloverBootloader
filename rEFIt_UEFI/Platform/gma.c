@@ -111,7 +111,7 @@ static struct gma_gpu_t KnownGPUS[] = {
   { 0x1606, "Intel HD Graphics"  }, // *
   { 0x161E, "Intel HD Graphics 5300"  }, // *
   { 0x1616, "Intel HD Graphics 5500"  }, // *
-  { 0x1612, "Intel HD Graphics 5600"  }, // *
+  { 0x1612, "Intel HD Graphics 5600"  }, // * Broadwell i7-5700HQ
   { 0x1626, "Intel HD Graphics 6000"  }, // *
   { 0x162B, "Intel Iris"  }, // *
   { 0x1622, "Intel Iris Pro"  }, // *
