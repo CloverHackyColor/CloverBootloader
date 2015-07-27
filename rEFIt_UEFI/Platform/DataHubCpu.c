@@ -252,6 +252,15 @@ SetVariablesForOSX()
     }
   }
 
+  //Hack for recovery by Asgorath
+  if (gSettings.CsrActiveConfig != 0xFFFF) {
+    SetNvramVariable(L"csr-active-config", &gEfiAppleBootGuid, Attributes, sizeof(gSettings.CsrActiveConfig), &gSettings.CsrActiveConfig);
+  }
+
+  if (gSettings.BooterConfig != 0xFFFF) {
+    SetNvramVariable(L"bootercfg", &gEfiAppleBootGuid, Attributes, sizeof(gSettings.BooterConfig), &gSettings.BooterConfig);
+  }
+
   return EFI_SUCCESS;
 }
 

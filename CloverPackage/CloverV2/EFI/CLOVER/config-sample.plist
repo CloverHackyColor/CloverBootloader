@@ -600,6 +600,10 @@
 		<string>C02032109R5DC771H</string>
 		<key>ROM</key>
 		<string>UseMacAddr0</string>
+		<key>CsrActiveConfig</key>
+		<string>0x67</string>
+		<key>BooterConfig</key>
+		<string>0x28</string>
 	</dict>
 	<key>SMBIOS</key>
 	<dict>

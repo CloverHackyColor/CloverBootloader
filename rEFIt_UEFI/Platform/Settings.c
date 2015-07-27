@@ -4553,6 +4553,15 @@ GetUserSettings(
       if (Prop != NULL) {
         DBG ("** Warning: ignoring RtVariable LogEveryBoot set in config.plist: deprecated !\n");
       }
+
+      // CsrActiveConfig
+      Prop = GetProperty (DictPointer, "CsrActiveConfig");
+      gSettings.CsrActiveConfig = (UINT32)GetPropertyInteger (Prop, 0x67); //the value 0xFFFF means not set
+
+      //BooterConfig
+      Prop = GetProperty (DictPointer, "BooterConfig");
+      gSettings.BooterConfig = (UINT16)GetPropertyInteger (Prop, 0xFFFF); //the value 0xFFFF means not set
+
     }
 
     if (gSettings.RtROM == NULL) {

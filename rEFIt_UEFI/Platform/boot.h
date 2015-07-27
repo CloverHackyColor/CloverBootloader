@@ -115,8 +115,34 @@ typedef struct Boot_Video	Boot_Video;
 #define kBootArgsEfiMode64              64
 
 /* Bitfields for boot_args->flags */
-#define kBootArgsFlagRebootOnPanic	(1 << 0)
-#define kBootArgsFlagHiDPI		(1 << 1)
+#define kBootArgsFlagRebootOnPanic    (1 << 0)
+#define kBootArgsFlagHiDPI            (1 << 1)
+#define kBootArgsFlagBlack            (1 << 2)
+#define kBootArgsFlagCSRActiveConfig	(1 << 3)
+#define kBootArgsFlagCSRPendingConfig	(1 << 4)
+#define kBootArgsFlagCSRBoot          (1 << 5)
+#define kBootArgsFlagBlackBg          (1 << 6)
+#define kBootArgsFlagLoginUI          (1 << 7)
+
+/* Rootless configuration flags */
+#define CSR_ALLOW_UNTRUSTED_KEXTS     (1 << 0)
+#define CSR_ALLOW_UNRESTRICTED_FS     (1 << 1)
+#define CSR_ALLOW_TASK_FOR_PID        (1 << 2)
+#define CSR_ALLOW_KERNEL_DEBUGGER     (1 << 3)
+#define CSR_ALLOW_APPLE_INTERNAL      (1 << 4)
+#define CSR_ALLOW_DESTRUCTIVE_DTRACE	(1 << 5) /* name deprecated */
+#define CSR_ALLOW_UNRESTRICTED_DTRACE	(1 << 5)
+#define CSR_ALLOW_UNRESTRICTED_NVRAM	(1 << 6)
+
+#define CSR_VALID_FLAGS (CSR_ALLOW_UNTRUSTED_KEXTS | \
+                          CSR_ALLOW_UNRESTRICTED_FS | \
+                          CSR_ALLOW_TASK_FOR_PID | \
+                          CSR_ALLOW_KERNEL_DEBUGGER | \
+                          CSR_ALLOW_APPLE_INTERNAL | \
+                          CSR_ALLOW_UNRESTRICTED_DTRACE | \
+                          CSR_ALLOW_UNRESTRICTED_NVRAM)
+
+
 
 typedef struct {
     UINT16    Revision;	/* Revision of boot_args structure */
@@ -156,11 +182,11 @@ typedef struct {
 	UINT16			Revision;	/* Revision of boot_args structure */
 	UINT16			Version;	/* Version of boot_args structure */
 
-	UINT8			efiMode;    /* 32 = 32-bit, 64 = 64-bit */
-	UINT8			debugMode;  /* Bit field with behavior changes */
+	UINT8       efiMode;    /* 32 = 32-bit, 64 = 64-bit */
+	UINT8       debugMode;  /* Bit field with behavior changes */
 	UINT16			flags;
 
-	CHAR8			CommandLine[BOOT_LINE_LENGTH];	/* Passed in command line */
+	CHAR8       CommandLine[BOOT_LINE_LENGTH];	/* Passed in command line */
 
 	UINT32			MemoryMap;  /* Physical address of memory map */
 	UINT32			MemoryMapSize;
@@ -194,7 +220,9 @@ typedef struct {
 	UINT64			pciConfigSpaceBaseAddress;
 	UINT32			pciConfigSpaceStartBusNumber;
 	UINT32			pciConfigSpaceEndBusNumber;
-	UINT32			__reserved4[730];
+  UINT32      csrActiveConfig;
+  UINT32      csrPendingConfig;
+	UINT32			__reserved4[728];
     
 
 } BootArgs2;

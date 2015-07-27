@@ -862,7 +862,6 @@ typedef struct {
   
   CHAR16                  DsdtName[60];
   UINT32                  FixDsdt;
-//  BOOLEAN RememberBIOS;
   UINT8                   MinMultiplier;
   UINT8                   MaxMultiplier;
   UINT8                   PluginType;
@@ -1000,6 +999,10 @@ typedef struct {
 #if defined(MDE_CPU_IA32)
   UINT32                  align6;
 #endif
+
+  UINT32                  CsrActiveConfig;
+  UINT16                  BooterConfig;
+  UINT8                   pad71[2];
   
   // Multi-config
   CHAR16  *ConfigName;
