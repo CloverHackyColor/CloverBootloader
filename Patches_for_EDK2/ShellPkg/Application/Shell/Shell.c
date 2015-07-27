@@ -2646,6 +2646,7 @@ RunScriptFileHandle (
   EFI_STATUS          Status = EFI_SUCCESS;
   SCRIPT_FILE         *NewScriptFile;
   UINTN               LoopVar;
+  UINTN               PrintBuffSize;
   CHAR16              *CommandLine;
   CHAR16              *CommandLine2;
   CHAR16              *CommandLine3;
@@ -2666,6 +2667,7 @@ RunScriptFileHandle (
 CalleeExitStatus = SHELL_SUCCESS;
 
   PreScriptEchoState = ShellCommandGetEchoState();
+  PrintBuffSize = PcdGet16(PcdShellPrintBufferSize);
 
   NewScriptFile = (SCRIPT_FILE*)AllocateZeroPool(sizeof(SCRIPT_FILE));
   if (NewScriptFile == NULL) {
@@ -2747,12 +2749,12 @@ CalleeExitStatus = SHELL_SUCCESS;
   //
   // Now enumerate through the commands and run each one.
   //
-  CommandLine = AllocateZeroPool(PcdGet16(PcdShellPrintBufferSize));
+  CommandLine = AllocateZeroPool(PrintBuffSize);
   if (CommandLine == NULL) {
     DeleteScriptFileStruct(NewScriptFile);
     return (EFI_OUT_OF_RESOURCES);
   }
-  CommandLine2 = AllocateZeroPool(PcdGet16(PcdShellPrintBufferSize));
+  CommandLine2 = AllocateZeroPool(PrintBuffSize);
   if (CommandLine2 == NULL) {
     FreePool(CommandLine);
     DeleteScriptFileStruct(NewScriptFile);
@@ -2793,43 +2795,43 @@ CalleeExitStatus = SHELL_SUCCESS;
       if (NewScriptFile->Argv != NULL) {
         switch (NewScriptFile->Argc) {
           default:
-            Status = ShellCopySearchAndReplace(CommandLine2,  CommandLine, PcdGet16 (PcdShellPrintBufferSize), L"%9", NewScriptFile->Argv[9], FALSE, TRUE);
+            Status = ShellCopySearchAndReplace(CommandLine2,  CommandLine, PrintBuffSize, L"%9", NewScriptFile->Argv[9], FALSE, TRUE);
          //   ASSERT_EFI_ERROR(Status);
             if (EFI_ERROR(Status)) {
               return Status;
             }
           case 9:
-            Status = ShellCopySearchAndReplace(CommandLine,  CommandLine2, PcdGet16 (PcdShellPrintBufferSize), L"%8", NewScriptFile->Argv[8], FALSE, TRUE);
+            Status = ShellCopySearchAndReplace(CommandLine,  CommandLine2, PrintBuffSize, L"%8", NewScriptFile->Argv[8], FALSE, TRUE);
             //   ASSERT_EFI_ERROR(Status);
             if (EFI_ERROR(Status)) {
               return Status;
             }
           case 8:
-            Status = ShellCopySearchAndReplace(CommandLine2,  CommandLine, PcdGet16 (PcdShellPrintBufferSize), L"%7", NewScriptFile->Argv[7], FALSE, TRUE);
+            Status = ShellCopySearchAndReplace(CommandLine2,  CommandLine, PrintBuffSize, L"%7", NewScriptFile->Argv[7], FALSE, TRUE);
             //   ASSERT_EFI_ERROR(Status);
             if (EFI_ERROR(Status)) {
               return Status;
             }
           case 7:
-            Status = ShellCopySearchAndReplace(CommandLine,  CommandLine2, PcdGet16 (PcdShellPrintBufferSize), L"%6", NewScriptFile->Argv[6], FALSE, TRUE);
+            Status = ShellCopySearchAndReplace(CommandLine,  CommandLine2, PrintBuffSize, L"%6", NewScriptFile->Argv[6], FALSE, TRUE);
             //   ASSERT_EFI_ERROR(Status);
             if (EFI_ERROR(Status)) {
               return Status;
             }
           case 6:
-            Status = ShellCopySearchAndReplace(CommandLine2,  CommandLine, PcdGet16 (PcdShellPrintBufferSize), L"%5", NewScriptFile->Argv[5], FALSE, TRUE);
+            Status = ShellCopySearchAndReplace(CommandLine2,  CommandLine, PrintBuffSize, L"%5", NewScriptFile->Argv[5], FALSE, TRUE);
             //   ASSERT_EFI_ERROR(Status);
             if (EFI_ERROR(Status)) {
               return Status;
             }
           case 5:
-            Status = ShellCopySearchAndReplace(CommandLine,  CommandLine2, PcdGet16 (PcdShellPrintBufferSize), L"%4", NewScriptFile->Argv[4], FALSE, TRUE);
+            Status = ShellCopySearchAndReplace(CommandLine,  CommandLine2, PrintBuffSize, L"%4", NewScriptFile->Argv[4], FALSE, TRUE);
             //   ASSERT_EFI_ERROR(Status);
             if (EFI_ERROR(Status)) {
               return Status;
             }
           case 4:
-            Status = ShellCopySearchAndReplace(CommandLine2,  CommandLine, PcdGet16 (PcdShellPrintBufferSize), L"%3", NewScriptFile->Argv[3], FALSE, TRUE);
+            Status = ShellCopySearchAndReplace(CommandLine2,  CommandLine, PrintBuffSize, L"%3", NewScriptFile->Argv[3], FALSE, TRUE);
             //   ASSERT_EFI_ERROR(Status);
             if (EFI_ERROR(Status)) {
               return Status;
@@ -2841,13 +2843,13 @@ CalleeExitStatus = SHELL_SUCCESS;
               return Status;
             }
           case 2:
-            Status = ShellCopySearchAndReplace(CommandLine2,  CommandLine, PcdGet16 (PcdShellPrintBufferSize), L"%1", NewScriptFile->Argv[1], FALSE, TRUE);
+            Status = ShellCopySearchAndReplace(CommandLine2,  CommandLine, PrintBuffSize, L"%1", NewScriptFile->Argv[1], FALSE, TRUE);
             //   ASSERT_EFI_ERROR(Status);
             if (EFI_ERROR(Status)) {
               return Status;
             }
           case 1:
-            Status = ShellCopySearchAndReplace(CommandLine,  CommandLine2, PcdGet16 (PcdShellPrintBufferSize), L"%0", NewScriptFile->Argv[0], FALSE, TRUE);
+            Status = ShellCopySearchAndReplace(CommandLine,  CommandLine2, PrintBuffSize, L"%0", NewScriptFile->Argv[0], FALSE, TRUE);
             //   ASSERT_EFI_ERROR(Status);
             if (EFI_ERROR(Status)) {
               return Status;

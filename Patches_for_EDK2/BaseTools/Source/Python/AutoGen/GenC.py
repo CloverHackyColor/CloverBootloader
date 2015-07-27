@@ -1325,13 +1325,11 @@ def CreateGuidDefinitionCode(Info, AutoGenC, AutoGenH):
 
     if Info.GuidList:
         AutoGenC.Append("\n// Guids\n")
-        AutoGenH.Append("\n// Guids\n")
     #
     # GUIDs
     #
     for Key in Info.GuidList:
         AutoGenC.Append('GLOBAL_REMOVE_IF_UNREFERENCED %s %s = %s;\n' % (GuidType, Key, Info.GuidList[Key]))
-        AutoGenH.Append('extern %s %s;\n' % (GuidType, Key))
 
 ## Create code for protocol
 #
@@ -1350,13 +1348,11 @@ def CreateProtocolDefinitionCode(Info, AutoGenC, AutoGenH):
 
     if Info.ProtocolList:
         AutoGenC.Append("\n// Protocols\n")
-        AutoGenH.Append("\n// Protocols\n")
     #
     # Protocol GUIDs
     #
     for Key in Info.ProtocolList:
         AutoGenC.Append('GLOBAL_REMOVE_IF_UNREFERENCED %s %s = %s;\n' % (GuidType, Key, Info.ProtocolList[Key]))
-        AutoGenH.Append('extern %s %s;\n' % (GuidType, Key))
 
 ## Create code for PPI
 #
@@ -1375,13 +1371,11 @@ def CreatePpiDefinitionCode(Info, AutoGenC, AutoGenH):
 
     if Info.PpiList:
         AutoGenC.Append("\n// PPIs\n")
-        AutoGenH.Append("\n// PPIs\n")
     #
     # PPI GUIDs
     #
     for Key in Info.PpiList:
         AutoGenC.Append('GLOBAL_REMOVE_IF_UNREFERENCED %s %s = %s;\n' % (GuidType, Key, Info.PpiList[Key]))
-        AutoGenH.Append('extern %s %s;\n' % (GuidType, Key))
 
 ## Create code for PCD
 #
