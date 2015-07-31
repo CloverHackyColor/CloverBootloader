@@ -88,13 +88,14 @@ static struct gma_gpu_t KnownGPUS[] = {
   { 0x0046, "Intel HD Graphics"  },
   { 0x0102, "Intel HD Graphics 2000"  },
   { 0x0106, "Intel HD Graphics 3000"  },
+  { 0x010A, "Intel HD Graphics P3000" },  //Xeon E3 1200 v1, needs FakeID
   { 0x0112, "Intel HD Graphics 2000"  },
   { 0x0116, "Intel HD Graphics 3000"  },
   { 0x0122, "Intel HD Graphics 3000"  },
   { 0x0126, "Intel HD Graphics 3000"  },
   { 0x0162, "Intel HD Graphics 4000"  },  //Desktop
   { 0x0166, "Intel HD Graphics 4000"  }, // MacBookPro10,1 have this string as model name whatever chameleon team may say
-  { 0x0152, "Intel HD Graphics 4000"  },  //iMac
+  { 0x0152, "Intel HD Graphics 2500"  },  //iMac
   { 0x0156, "Intel HD Graphics 4000"  },  //MacBook
   { 0x016A, "Intel HD Graphics P4000" },  //Xeon E3-1245
   { 0x0412, "Intel HD Graphics 4600"  },  //Haswell
