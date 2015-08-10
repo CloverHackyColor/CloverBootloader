@@ -81,16 +81,17 @@ UINTN SearchAndReplaceTxt(UINT8 *Source, UINT32 SourceSize, UINT8 *Search, UINTN
     return 0;
   }
   
-  while (((Source - SearchSize) < End) &&
+  while (((Source + SearchSize) <= End) &&
          (NoReplacesRestriction || (MaxReplaces > 0))) { // num replaces
-    Skip = 0;
     while (*Source != '\0') {  //comparison
       Pos = Search;
       FirstMatch = Source;
-      while (*Source != '\0') { 
-        while (*Source <= 0x20) { //skip invisibles in sources
+      Skip = 0;
+      while (*Source != '\0') {
+        if (*Source <= 0x20) { //skip invisibles in sources
           Source++;
           Skip++;
+          continue;
         }
         if (*Source != *Pos) {
           break;
@@ -104,13 +105,10 @@ UINTN SearchAndReplaceTxt(UINT8 *Source, UINT32 SourceSize, UINT8 *Search, UINTN
         Pos = FirstMatch;
         break;
       }
-      
-      if (*Source == '\0') { //not found
+      else
         Pos = NULL;
-        break;
-      }
       
-      Source = FirstMatch + Skip + 1;
+      Source = FirstMatch + 1;
 /*      if (Pos != Search) {
         AsciiPrint("\n");
       } */
