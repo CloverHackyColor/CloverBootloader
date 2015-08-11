@@ -75,6 +75,7 @@ UINTN SearchAndReplaceTxt(UINT8 *Source, UINT32 SourceSize, UINT8 *Search, UINTN
   UINTN     Skip;
   BOOLEAN   NoReplacesRestriction = MaxReplaces <= 0;
   UINT8     *End = Source + SourceSize;
+  UINT8     *SearchEnd = Search + SearchSize;
   UINT8     *Pos = NULL;
   UINT8     *FirstMatch = Source;
   if (!Source || !Search || !Replace || !SearchSize) {
@@ -87,7 +88,7 @@ UINTN SearchAndReplaceTxt(UINT8 *Source, UINT32 SourceSize, UINT8 *Search, UINTN
       Pos = Search;
       FirstMatch = Source;
       Skip = 0;
-      while (*Source != '\0') {
+      while (*Source != '\0' && Pos != SearchEnd) {
         if (*Source <= 0x20) { //skip invisibles in sources
           Source++;
           Skip++;
@@ -101,7 +102,7 @@ UINTN SearchAndReplaceTxt(UINT8 *Source, UINT32 SourceSize, UINT8 *Search, UINTN
         Pos++;
       }
       
-      if (*Pos == '\0') { // pattern found
+      if (Pos == SearchEnd) { // pattern found
         Pos = FirstMatch;
         break;
       }
