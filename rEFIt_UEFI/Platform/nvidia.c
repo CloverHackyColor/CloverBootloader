@@ -2186,19 +2186,14 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
     
     if (rom[0] != 0x55 || rom[1] != 0xaa) {
       read_nVidia_PROM(nvda_dev, rom);
-      if (rom[0] != 0x55 || rom[1] != 0xaa)
+      if (rom[0] != 0x55 || rom[1] != 0xaa) {
         DBG("ERROR: Unable to locate nVidia Video BIOS\n");
-    }
-    
-    if (rom[0] == 0x55 && rom[1] == 0xaa) {
-      if ((nvPatch = patch_nvidia_rom(rom)) == PATCH_ROM_FAILED) {
-        DBG("ERROR: nVidia ROM Patching Failed!\n");
+        FreePool(rom);
+        rom = NULL;
       }
-    } else {
-      FreePool(rom);
-      rom = NULL;
     }
   }
+
   if (!rom){
     if (buffer) {
       rom = buffer;
@@ -2211,7 +2206,10 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
   }
   
   if(rom) {
-    
+
+    if ((nvPatch = patch_nvidia_rom(rom)) == PATCH_ROM_FAILED) {
+      DBG("ERROR: nVidia ROM Patching Failed!\n");
+    }
     rom_pci_header = (option_rom_pci_header_t*)(rom + *(UINT16 *)&rom[24]);
     
     // check for 'PCIR' sig
@@ -2224,8 +2222,7 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
     } else {
       DBG("nVidia incorrect PCI ROM signature: 0x%x\n", rom_pci_header->signature);
     }
-    
-    
+
     // get bios version
     
     // only search the first 384 bytes
@@ -2251,7 +2248,6 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
                 *s1++ = *s++;
               }
               *s1 = 0;
-              //				AsciiStrnCpy(version_str, (const CHAR8*)rom+version_start, i-version_start);
               DBG("version %a\n", version_str);
               break;
             }
@@ -2275,7 +2271,6 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 	if (!string) {
 		string = devprop_create_string();
 	}
-	//device = devprop_add_device(string, devicepath);
 	device = devprop_add_device_pci(string, nvda_dev);
 	devprop_add_nvidia_template(device);
   
@@ -2326,9 +2321,6 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 		UINT8 built_in = 0x01;
 		devprop_add_value(device, "@0,built-in", &built_in, 1);
 	}
-  
-	//AsciiSPrint(biosVersion, 32, "%a", version_str);
-	//AsciiSPrint(kNVCAP, 12, "NVCAP_%04x", nvda_dev->device_id);
   
 	if ((gSettings.NVCAP[0] != 0)) {
 		devprop_add_value(device, "NVCAP", &gSettings.NVCAP[0], NVCAP_LEN);
