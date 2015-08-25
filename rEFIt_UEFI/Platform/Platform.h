@@ -542,6 +542,7 @@ MSR C001006B  0000-0000-0000-0000
 #define DEV_FIREWIRE  bit(12)
 #define DEV_MCHC      bit(13)
 #define DEV_IMEI      bit(14)
+#define DEV_BY_PCI    bit(31)
 
 #define NUM_OF_CONFIGS 3
 
@@ -685,12 +686,14 @@ typedef struct {
 } GUID;
 */
 
-typedef struct {
+typedef struct DEV_PROPERTY DEV_PROPERTY;
+struct DEV_PROPERTY {
   UINT32 Device;
   CHAR8  *Key;
   CHAR8  *Value;
   UINTN  ValueLen;
-} DEV_PROPERTY;
+  DEV_PROPERTY *Next;
+};
 
 typedef struct CUSTOM_LOADER_ENTRY CUSTOM_LOADER_ENTRY;
 struct CUSTOM_LOADER_ENTRY {

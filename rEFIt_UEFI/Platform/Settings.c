@@ -3475,89 +3475,167 @@ GetUserSettings(
       Prop                          = GetProperty (DictPointer, "NoDefaultProperties");
       gSettings.NoDefaultProperties = IsPropertyTrue (Prop);
       
-      Prop = GetProperty (DictPointer, "AddProperties");
+      Prop = GetProperty (DictPointer, "Arbitrary");
       if (Prop != NULL) {
-        INTN i;
         INTN Index;
         INTN Count = GetTagCount (Prop);
-
-        Index = 0;  //begin from 0 if second enter
+        DEV_PROPERTY *DevProp;
+        
         if (Count > 0) {
-          DBG ("Add %d properties\n", Count);
-          gSettings.AddProperties = AllocateZeroPool (Count * sizeof(DEV_PROPERTY));
-          
-          for (i = 0; i < Count; i++) {
-            UINTN Size = 0;
-            if (EFI_ERROR (GetElement (Prop, i, &Dict2))) {
-              DBG ("AddProperties continue at %d\n", i);
+          DBG ("Add %d devices\n", Count);
+          for (Index = 0; Index < Count; Index++) {
+            UINTN DeviceAddr;
+            if (EFI_ERROR (GetElement (Prop, Index, &Prop2))) {
+              DBG ("AddProperties continue at %d\n", Index);
               continue;
             }
-
-            if (Dict2 == NULL) {
-              DBG ("AddProperties break at %d\n", i);
-              break;
+            Dict2 = GetProperty (Prop2, "Comment");
+            if (Dict2 != NULL) {
+              DBG ("%d: %a ", Index, Dict2->string);
             }
-
-            Prop2 = GetProperty (Dict2, "Device");
-            if (Prop2 && (Prop2->type == kTagTypeString) && Prop2->string) {
-              DEV_PROPERTY *Property = &gSettings.AddProperties[Index];
-
-              if (AsciiStriCmp (Prop2->string,        "ATI") == 0) {
-                Property->Device = DEV_ATI;
-              } else if (AsciiStriCmp (Prop2->string, "NVidia") == 0) {
-                Property->Device = DEV_NVIDIA;
-              } else if (AsciiStriCmp (Prop2->string, "IntelGFX") == 0) {
-                Property->Device = DEV_INTEL;
-              } else if (AsciiStriCmp (Prop2->string, "LAN") == 0) {
-                Property->Device = DEV_LAN;
-              } else if (AsciiStriCmp (Prop2->string, "WIFI") == 0) {
-                Property->Device = DEV_WIFI;
-              } else if (AsciiStriCmp (Prop2->string, "Firewire") == 0) {
-                Property->Device = DEV_FIREWIRE;
-              } else if (AsciiStriCmp (Prop2->string, "SATA") == 0) {
-                Property->Device = DEV_SATA;
-              } else if (AsciiStriCmp (Prop2->string, "IDE") == 0) {
-                Property->Device = DEV_IDE;
-              } else if (AsciiStriCmp (Prop2->string, "HDA") == 0) {
-                Property->Device = DEV_HDA;
-              } else if (AsciiStriCmp (Prop2->string, "HDMI") == 0) {
-                Property->Device = DEV_HDMI;
-              } else if (AsciiStriCmp (Prop2->string, "LPC") == 0) {
-                Property->Device = DEV_LPC;
-              } else if (AsciiStriCmp (Prop2->string, "SmBUS") == 0) {
-                Property->Device = DEV_SMBUS;
-              } else if (AsciiStriCmp (Prop2->string, "USB") == 0) {
-                Property->Device = DEV_USB;
-              } else {
-                DBG (" add properties to unknown device, ignored\n");
+            Dict2 = GetProperty (Prop2, "PciAddr");
+            if (Dict2 != NULL) {
+              INTN Bus, Dev, Func;
+              CHAR8 *Str = Dict2->string;
+              
+              if (Str[2] != ':') {
+                DBG("  wrong PciAddr string: %a\n", Str);
                 continue;
               }
+              Bus   = hexstrtouint8(Str);
+              Dev   = hexstrtouint8(&Str[3]);
+              Func  = hexstrtouint8(&Str[6]);
+              DeviceAddr = PCIADDR(Bus, Dev, Func);
+            }
+
+            Dict2 = GetProperty (Prop2, "CustomProperties");
+            if (Dict2 != NULL) {
+              TagPtr Prop3, Dict3;
+              INTN PropIndex;
+              INTN PropCount = GetTagCount (Dict2);
+              
+              for (PropIndex = 0; PropIndex < PropCount; PropIndex++) {
+                UINTN Size = 0;
+                if (!EFI_ERROR (GetElement (Dict2, i, &Dict3))) {
+                  
+                  DevProp = gSettings.AddProperties;
+                  gSettings.AddProperties = AllocateZeroPool (sizeof(DEV_PROPERTY));
+                  gSettings.AddProperties->Next = DevProp;
+                  
+                  gSettings.AddProperties->Device = DeviceAddr;
+                  
+                  Prop3 = GetProperty (Dict3, "Key");
+                  if (Prop3 && (Prop3->type == kTagTypeString) && Prop3->string) {
+                    gSettings.AddProperties->Key = AllocateCopyPool (AsciiStrSize (Prop3->string), Prop3->string);
+                  }
+                  
+                  Prop3 = GetProperty (Dict3, "Value");
+                  if (Prop3 && (Prop3->type == kTagTypeString) && Prop3->string) {
+                    //first suppose it is Ascii string
+                    gSettings.AddProperties->Value = AllocateCopyPool (AsciiStrSize (Prop3->string), Prop3->string);
+                    gSettings.AddProperties->ValueLen = AsciiStrLen (Prop3->string) + 1;
+                  } else if (Prop3 && (Prop3->type == kTagTypeInteger)) {
+                    gSettings.AddProperties->Value = AllocatePool (4);
+                    CopyMem (gSettings.AddProperties->Value, &(Prop3->string), 4);
+                    gSettings.AddProperties->ValueLen = 4;
+                  } else {
+                    //else  data
+                    gSettings.AddProperties->Value = GetDataSetting (Dict3, "Value", &Size);
+                    gSettings.AddProperties->ValueLen = Size;
+                  }                  
+                }
+               // gSettings.NrAddProperties++;
+              }   //for() device properties
+            }
+          } //for() devices
+        }
+        gSettings.NrAddProperties = 0xFFFE;
+      }
+      else { //can't use AddProperties with CustomProperties
+        Prop = GetProperty (DictPointer, "AddProperties");
+        if (Prop != NULL) {
+          INTN i;
+          INTN Index;
+          INTN Count = GetTagCount (Prop);
+          
+          Index = 0;  //begin from 0 if second enter
+          if (Count > 0) {
+            DBG ("Add %d properties\n", Count);
+            gSettings.AddProperties = AllocateZeroPool (Count * sizeof(DEV_PROPERTY));
+            
+            for (i = 0; i < Count; i++) {
+              UINTN Size = 0;
+              if (EFI_ERROR (GetElement (Prop, i, &Dict2))) {
+                DBG ("AddProperties continue at %d\n", i);
+                continue;
+              }
+              
+              if (Dict2 == NULL) {
+                DBG ("AddProperties break at %d\n", i);
+                break;
+              }
+              
+              Prop2 = GetProperty (Dict2, "Device");
+              if (Prop2 && (Prop2->type == kTagTypeString) && Prop2->string) {
+                DEV_PROPERTY *Property = &gSettings.AddProperties[Index];
+                
+                if (AsciiStriCmp (Prop2->string,        "ATI") == 0) {
+                  Property->Device = DEV_ATI;
+                } else if (AsciiStriCmp (Prop2->string, "NVidia") == 0) {
+                  Property->Device = DEV_NVIDIA;
+                } else if (AsciiStriCmp (Prop2->string, "IntelGFX") == 0) {
+                  Property->Device = DEV_INTEL;
+                } else if (AsciiStriCmp (Prop2->string, "LAN") == 0) {
+                  Property->Device = DEV_LAN;
+                } else if (AsciiStriCmp (Prop2->string, "WIFI") == 0) {
+                  Property->Device = DEV_WIFI;
+                } else if (AsciiStriCmp (Prop2->string, "Firewire") == 0) {
+                  Property->Device = DEV_FIREWIRE;
+                } else if (AsciiStriCmp (Prop2->string, "SATA") == 0) {
+                  Property->Device = DEV_SATA;
+                } else if (AsciiStriCmp (Prop2->string, "IDE") == 0) {
+                  Property->Device = DEV_IDE;
+                } else if (AsciiStriCmp (Prop2->string, "HDA") == 0) {
+                  Property->Device = DEV_HDA;
+                } else if (AsciiStriCmp (Prop2->string, "HDMI") == 0) {
+                  Property->Device = DEV_HDMI;
+                } else if (AsciiStriCmp (Prop2->string, "LPC") == 0) {
+                  Property->Device = DEV_LPC;
+                } else if (AsciiStriCmp (Prop2->string, "SmBUS") == 0) {
+                  Property->Device = DEV_SMBUS;
+                } else if (AsciiStriCmp (Prop2->string, "USB") == 0) {
+                  Property->Device = DEV_USB;
+                } else {
+                  DBG (" add properties to unknown device, ignored\n");
+                  continue;
+                }
+              }
+              
+              Prop2 = GetProperty (Dict2, "Key");
+              if (Prop2 && (Prop2->type == kTagTypeString) && Prop2->string) {
+                gSettings.AddProperties[Index].Key = AllocateCopyPool (AsciiStrSize (Prop2->string), Prop2->string);
+              }
+              
+              Prop2 = GetProperty (Dict2, "Value");
+              if (Prop2 && (Prop2->type == kTagTypeString) && Prop2->string) {
+                //first suppose it is Ascii string
+                gSettings.AddProperties[Index].Value = AllocateCopyPool (AsciiStrSize (Prop2->string), Prop2->string);
+                gSettings.AddProperties[Index].ValueLen = AsciiStrLen (Prop2->string) + 1;
+              } else if (Prop2 && (Prop2->type == kTagTypeInteger)) {
+                gSettings.AddProperties[Index].Value = AllocatePool (4);
+                CopyMem (gSettings.AddProperties[Index].Value, &(Prop2->string), 4);
+                gSettings.AddProperties[Index].ValueLen = 4;
+              } else {
+                //else  data
+                gSettings.AddProperties[Index].Value = GetDataSetting (Dict2, "Value", &Size);
+                gSettings.AddProperties[Index].ValueLen = Size;
+              }
+              
+              ++Index;
             }
             
-            Prop2 = GetProperty (Dict2, "Key");
-            if (Prop2 && (Prop2->type == kTagTypeString) && Prop2->string) {
-              gSettings.AddProperties[Index].Key = AllocateCopyPool (AsciiStrSize (Prop2->string), Prop2->string);
-            }
-
-            Prop2 = GetProperty (Dict2, "Value");
-            if (Prop2 && (Prop2->type == kTagTypeString) && Prop2->string) {
-              //first suppose it is Ascii string
-              gSettings.AddProperties[Index].Value = AllocateCopyPool (AsciiStrSize (Prop2->string), Prop2->string);
-              gSettings.AddProperties[Index].ValueLen = AsciiStrLen (Prop2->string) + 1;
-            } else if (Prop2 && (Prop2->type == kTagTypeInteger)) {
-              gSettings.AddProperties[Index].Value = AllocatePool (4);
-              CopyMem (gSettings.AddProperties[Index].Value, &(Prop2->string), 4);
-              gSettings.AddProperties[Index].ValueLen = 4;
-            } else {
-              //else  data
-              gSettings.AddProperties[Index].Value = GetDataSetting (Dict2, "Value", &Size);
-              gSettings.AddProperties[Index].ValueLen = Size;
-            }
-
-            ++Index;
+            gSettings.NrAddProperties = Index;
           }
-
-          gSettings.NrAddProperties = Index;
         }
       }
       
@@ -5107,6 +5185,30 @@ SetDevices (
         PCIdevice.class_id                   = *((UINT16*)(Pci.Hdr.ClassCode+1));
         PCIdevice.subsys_id.subsys.vendor_id = Pci.Device.SubsystemVendorID;
         PCIdevice.subsys_id.subsys.device_id = Pci.Device.SubsystemID;
+        
+        if (gSettings.NrAddProperties == 0xFFFE) {
+          DEV_PROPERTY *Prop = gSettings.AddProperties;
+          DevPropDevice *device = NULL;
+          BOOLEAN Once = TRUE;
+          if (!string) {
+            string = devprop_create_string();
+          }
+          while (Prop) {
+            if (Prop->Device != PCIdevice.dev.addr) {
+              continue;
+            }
+            if (Once) {
+              device = devprop_add_device_pci(string, &PCIdevice);
+              Once = FALSE;
+            }
+            devprop_add_value(device, Prop->Key, (UINT8*)Prop->Value, Prop->ValueLen);
+            StringDirty = TRUE;
+            Prop = Prop->Next;
+          }
+          DBG("custom properties for device %02x:%02x.%02x injected, continue\n",
+               Bus, Device, Function);
+          continue;
+        }
         // GFX
         if (/* gSettings.GraphicsInjector && */
             (Pci.Hdr.ClassCode[2] == PCI_CLASS_DISPLAY) &&
@@ -5117,7 +5219,7 @@ SetDevices (
           switch (Pci.Hdr.VendorId) {
             case 0x1002:
               if (gSettings.InjectATI) {
-                //can't do in one step because of C-conventions
+                //can't do this in one step because of C-conventions
                 TmpDirty    = setup_ati_devprop(Entry, &PCIdevice);
                 StringDirty |=  TmpDirty;
               } else {

@@ -249,7 +249,52 @@
 	<key>Devices</key>
 	<dict>
 		<key>NoDefaultProperties</key>
-		<false/>
+		<true/>
+		<key>Arbitrary</key>
+		<array>
+			<dict>
+				<key>PciAddr</key>
+				<string>00:02.00</string>
+				<key>Comment</key>
+				<string>Intel chipset video</string>
+				<key>CustomProperties</key>
+				<array>
+					<dict>
+						<key>Key</key>
+						<string>model</string>
+						<key>Value</key>
+						<string>Intel GMA951</string>
+					</dict>
+					<dict>
+						<key>Key</key>
+						<string>AAPL,HasPanel</string>
+						<key>Value</key>
+						<data>AQAAAA==</data>
+					</dict>
+				</array>
+			</dict>
+			<dict>
+				<key>PciAddr</key>
+				<string>01:00.00</string>
+				<key>Comment</key>
+				<string>Radeon card in PCIe slot</string>
+				<key>CustomProperties</key>
+				<array>
+					<dict>
+						<key>Key</key>
+						<string>model</string>
+						<key>Value</key>
+						<string>ATI Radeon HD6450</string>
+					</dict>
+					<dict>
+						<key>Key</key>
+						<string>AAPL,boot-device</string>
+						<key>Value</key>
+						<data>AQAAAA==</data>
+					</dict>
+				</array>
+			</dict>
+		</array>
 		<key>AddProperties</key>
 		<array>
 			<dict>

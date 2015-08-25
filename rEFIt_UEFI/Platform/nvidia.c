@@ -2274,19 +2274,21 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 	device = devprop_add_device_pci(string, nvda_dev);
 	devprop_add_nvidia_template(device);
   
-  for (i = 0; i < gSettings.NrAddProperties; i++) {
-    if (gSettings.AddProperties[i].Device != DEV_NVIDIA) {
-      continue;
+  if (gSettings.NrAddProperties != 0xFFFE) {
+    for (i = 0; i < gSettings.NrAddProperties; i++) {
+      if (gSettings.AddProperties[i].Device != DEV_NVIDIA) {
+        continue;
+      }
+      Injected = TRUE;
+      devprop_add_value(device,
+                        gSettings.AddProperties[i].Key,
+                        (UINT8*)gSettings.AddProperties[i].Value,
+                        gSettings.AddProperties[i].ValueLen);
     }
-    Injected = TRUE;
-    devprop_add_value(device,
-                      gSettings.AddProperties[i].Key,
-                      (UINT8*)gSettings.AddProperties[i].Value,
-                      gSettings.AddProperties[i].ValueLen);
-  }
-  if (Injected) {
-    DBG("custom NVIDIA properties injected, continue\n");
-    //    return TRUE;
+    if (Injected) {
+      DBG("custom NVIDIA properties injected, continue\n");
+      //    return TRUE;
+    }
   }
   
   if (gSettings.FakeNVidia) {
@@ -2324,7 +2326,7 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
   
 	if ((gSettings.NVCAP[0] != 0)) {
 		devprop_add_value(device, "NVCAP", &gSettings.NVCAP[0], NVCAP_LEN);
-    DBG("default_NVCAP: %02x%02x%02x%02x-%02x%02x%02x%02x-%02x%02x%02x%02x-%02x%02x%02x%02x-%02x%02x%02x%02x\n",
+    DBG("set NVCAP: %02x%02x%02x%02x-%02x%02x%02x%02x-%02x%02x%02x%02x-%02x%02x%02x%02x-%02x%02x%02x%02x\n",
         gSettings.NVCAP[0], gSettings.NVCAP[1], gSettings.NVCAP[2], gSettings.NVCAP[3],
         gSettings.NVCAP[4], gSettings.NVCAP[5], gSettings.NVCAP[6], gSettings.NVCAP[7],
         gSettings.NVCAP[8], gSettings.NVCAP[9], gSettings.NVCAP[10], gSettings.NVCAP[11],
@@ -2332,7 +2334,7 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
         gSettings.NVCAP[16], gSettings.NVCAP[17], gSettings.NVCAP[18], gSettings.NVCAP[19]);
 	} else {
 		devprop_add_value(device, "NVCAP", default_NVCAP, NVCAP_LEN);
-    DBG("default_NVCAP: %02x%02x%02x%02x-%02x%02x%02x%02x-%02x%02x%02x%02x-%02x%02x%02x%02x-%02x%02x%02x%02x\n",
+    DBG("default NVCAP: %02x%02x%02x%02x-%02x%02x%02x%02x-%02x%02x%02x%02x-%02x%02x%02x%02x-%02x%02x%02x%02x\n",
         default_NVCAP[0], default_NVCAP[1], default_NVCAP[2], default_NVCAP[3],
         default_NVCAP[4], default_NVCAP[5], default_NVCAP[6], default_NVCAP[7],
         default_NVCAP[8], default_NVCAP[9], default_NVCAP[10], default_NVCAP[11],

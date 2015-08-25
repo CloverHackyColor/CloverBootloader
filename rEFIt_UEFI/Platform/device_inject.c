@@ -364,15 +364,17 @@ BOOLEAN set_eth_props(pci_dt_t *eth_dev)
  		builtin = 0x01;
  	}
   
-  for (i = 0; i < gSettings.NrAddProperties; i++) {
-    if (gSettings.AddProperties[i].Device != DEV_LAN) {
-      continue;
+  if (gSettings.NrAddProperties != 0xFFFE) {
+    for (i = 0; i < gSettings.NrAddProperties; i++) {
+      if (gSettings.AddProperties[i].Device != DEV_LAN) {
+        continue;
+      }
+      Injected = TRUE;
+      devprop_add_value(device,
+                        gSettings.AddProperties[i].Key,
+                        (UINT8*)gSettings.AddProperties[i].Value,
+                        gSettings.AddProperties[i].ValueLen);
     }
-    Injected = TRUE;
-    devprop_add_value(device,
-                      gSettings.AddProperties[i].Key,
-                      (UINT8*)gSettings.AddProperties[i].Value,
-                      gSettings.AddProperties[i].ValueLen);
   }
   if (Injected) {
     DBG("custom LAN properties injected, continue\n");
@@ -427,16 +429,18 @@ BOOLEAN set_usb_props(pci_dt_t *usb_dev)
   // -------------------------------------------------
   DBG("USB Controller [%04x:%04x] :: %a\n", usb_dev->vendor_id, usb_dev->device_id, devicepath);
   //  DBG("Setting dev.prop built-in=0x%x\n", builtin);
-  
-  for (i = 0; i < gSettings.NrAddProperties; i++) {
-    if (gSettings.AddProperties[i].Device != DEV_USB) {
-      continue;
+ 
+  if (gSettings.NrAddProperties != 0xFFFE) {
+    for (i = 0; i < gSettings.NrAddProperties; i++) {
+      if (gSettings.AddProperties[i].Device != DEV_USB) {
+        continue;
+      }
+      Injected = TRUE;
+      devprop_add_value(device,
+                        gSettings.AddProperties[i].Key,
+                        (UINT8*)gSettings.AddProperties[i].Value,
+                        gSettings.AddProperties[i].ValueLen);
     }
-    Injected = TRUE;
-    devprop_add_value(device,
-                      gSettings.AddProperties[i].Key,
-                      (UINT8*)gSettings.AddProperties[i].Value,
-                      gSettings.AddProperties[i].ValueLen);
   }
   if (Injected) {
     DBG("custom USB properties injected, continue\n");
@@ -663,15 +667,17 @@ BOOLEAN set_hda_props(EFI_PCI_IO_PROTOCOL *PciIo, pci_dt_t *hda_dev, CHAR8 *OSVe
   DBG("HDA Controller [%04x:%04x] :: %a =>", hda_dev->vendor_id, hda_dev->device_id, devicepath);
   
   if (IsHDMIAudio(hda_dev->DeviceHandle)) {
-    for (i = 0; i < gSettings.NrAddProperties; i++) {
-      if (gSettings.AddProperties[i].Device != DEV_HDMI) {
-        continue;
+    if (gSettings.NrAddProperties != 0xFFFE) {
+      for (i = 0; i < gSettings.NrAddProperties; i++) {
+        if (gSettings.AddProperties[i].Device != DEV_HDMI) {
+          continue;
+        }
+        Injected = TRUE;
+        devprop_add_value(device,
+                          gSettings.AddProperties[i].Key,
+                          (UINT8*)gSettings.AddProperties[i].Value,
+                          gSettings.AddProperties[i].ValueLen);
       }
-      Injected = TRUE;
-      devprop_add_value(device,
-                        gSettings.AddProperties[i].Key,
-                        (UINT8*)gSettings.AddProperties[i].Value,
-                        gSettings.AddProperties[i].ValueLen);
     }
     if (Injected) {
       DBG("custom USB properties injected, continue\n");
@@ -702,15 +708,17 @@ BOOLEAN set_hda_props(EFI_PCI_IO_PROTOCOL *PciIo, pci_dt_t *hda_dev, CHAR8 *OSVe
       }
       //     DBG(", setting layout-id=%d (0x%x)\n", layoutId, layoutId);
     }
-    for (i = 0; i < gSettings.NrAddProperties; i++) {
-      if (gSettings.AddProperties[i].Device != DEV_HDA) {
-        continue;
+    if (gSettings.NrAddProperties != 0xFFFE) {
+      for (i = 0; i < gSettings.NrAddProperties; i++) {
+        if (gSettings.AddProperties[i].Device != DEV_HDA) {
+          continue;
+        }
+        Injected = TRUE;
+        devprop_add_value(device,
+                          gSettings.AddProperties[i].Key,
+                          (UINT8*)gSettings.AddProperties[i].Value,
+                          gSettings.AddProperties[i].ValueLen);
       }
-      Injected = TRUE;
-      devprop_add_value(device,
-                        gSettings.AddProperties[i].Key,
-                        (UINT8*)gSettings.AddProperties[i].Value,
-                        gSettings.AddProperties[i].ValueLen);
     }
     if (!Injected) {
       if ((OSVersion != NULL && AsciiOSVersionToUint64(OSVersion) < AsciiOSVersionToUint64("10.8")) || (gSettings.HDALayoutId > 0)) {

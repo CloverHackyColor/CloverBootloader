@@ -1898,14 +1898,16 @@ BOOLEAN setup_ati_devprop(LOADER_ENTRY *Entry, pci_dt_t *ati_dev)
     devprop_add_value(card->device, "ATY,VendorID", (UINT8*)&FakeID, 2);
   }
 
-  for (i = 0; i < gSettings.NrAddProperties; i++) {
-    if (gSettings.AddProperties[i].Device != DEV_ATI) {
-      continue;
+  if (gSettings.NrAddProperties != 0xFFFE) {
+    for (i = 0; i < gSettings.NrAddProperties; i++) {
+      if (gSettings.AddProperties[i].Device != DEV_ATI) {
+        continue;
+      }
+      devprop_add_value(card->device,
+                        gSettings.AddProperties[i].Key,
+                        (UINT8*)gSettings.AddProperties[i].Value,
+                        gSettings.AddProperties[i].ValueLen);
     }
-    devprop_add_value(card->device,
-                      gSettings.AddProperties[i].Key,
-                      (UINT8*)gSettings.AddProperties[i].Value,
-                      gSettings.AddProperties[i].ValueLen);
   }
 
 	

@@ -1494,6 +1494,9 @@ BOOLEAN AddProperties(AML_CHUNK* pack, UINT32 Dev)
 {
   INT32 i;
   BOOLEAN Injected = FALSE;
+  if (gSettings.NrAddProperties == 0xFFFE) {
+    return FALSE; // not do this for Arbitrary properties?
+  }
   for (i = 0; i < gSettings.NrAddProperties; i++) {
     if (gSettings.AddProperties[i].Device != Dev) {
       continue;

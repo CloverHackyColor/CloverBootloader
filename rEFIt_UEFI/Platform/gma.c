@@ -173,16 +173,17 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
 		//pause();
 		return FALSE;
 	}
-
-  for (i = 0; i < gSettings.NrAddProperties; i++) {
-    if (gSettings.AddProperties[i].Device != DEV_INTEL) {
-      continue;
+  if (gSettings.NrAddProperties != 0xFFFE) {
+    for (i = 0; i < gSettings.NrAddProperties; i++) {
+      if (gSettings.AddProperties[i].Device != DEV_INTEL) {
+        continue;
+      }
+      Injected = TRUE;
+      devprop_add_value(device,
+                        gSettings.AddProperties[i].Key,
+                        (UINT8*)gSettings.AddProperties[i].Value,
+                        gSettings.AddProperties[i].ValueLen);
     }
-    Injected = TRUE;
-    devprop_add_value(device,
-                      gSettings.AddProperties[i].Key,
-                      (UINT8*)gSettings.AddProperties[i].Value,
-                      gSettings.AddProperties[i].ValueLen);
   }
   if (Injected) {
     DBG("custom IntelGFX properties injected, continue\n");
