@@ -50,7 +50,8 @@ CONST CHAR8* CloverRevision = REVISION_STR;
 
 // defines the size of block that will be allocated for kernel image relocation,
 // without RT and MMIO regions
-#define KERNEL_BLOCK_NO_RT_SIZE_PAGES	0x4000 // 64MB for
+//rehabman - Increase the size for ElCapitan to 128Mb
+#define KERNEL_BLOCK_NO_RT_SIZE_PAGES	0x8000 
 
 // TRUE if we are doing hibernate wake
 BOOLEAN gHibernateWake = FALSE;

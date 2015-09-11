@@ -166,7 +166,7 @@
 			</dict>
 		</array>
 		<key>HaltEnabler</key>
-		<false/>
+		<true/>
 		<key>PatchAPIC</key>
 		<false/>
 		<key>ResetAddress</key>
