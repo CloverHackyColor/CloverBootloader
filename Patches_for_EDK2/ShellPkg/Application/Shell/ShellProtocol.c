@@ -3257,6 +3257,7 @@ EfiShellGetAlias(
   UINT32      Attribs;
   EFI_STATUS  Status;
   CHAR16      *AliasLower;
+  CHAR16      *AliasVal;
 
   // Convert to lowercase to make aliases case-insensitive
   if (Alias != NULL) {
@@ -3265,7 +3266,8 @@ EfiShellGetAlias(
     ToLower (AliasLower);
 
     if (Volatile == NULL) {
-      return (AddBufferToFreeList(GetVariable(AliasLower, &gShellAliasGuid)));
+      GetVariable2 (AliasLower, &gShellAliasGuid, (VOID **)&AliasVal, NULL);
+      return (AddBufferToFreeList(AliasVal));
     }
     RetSize = 0;
     RetVal = NULL;

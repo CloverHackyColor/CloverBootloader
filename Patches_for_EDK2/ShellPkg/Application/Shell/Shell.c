@@ -2837,7 +2837,7 @@ CalleeExitStatus = SHELL_SUCCESS;
               return Status;
             }
           case 3:
-            Status = ShellCopySearchAndReplace(CommandLine,  CommandLine2, PcdGet16 (PcdShellPrintBufferSize), L"%2", NewScriptFile->Argv[2], FALSE, TRUE);
+            Status = ShellCopySearchAndReplace(CommandLine,  CommandLine2, PrintBuffSize, L"%2", NewScriptFile->Argv[2], FALSE, TRUE);
             //   ASSERT_EFI_ERROR(Status);
             if (EFI_ERROR(Status)) {
               return Status;
