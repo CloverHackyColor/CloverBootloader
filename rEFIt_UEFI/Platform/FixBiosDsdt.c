@@ -2654,9 +2654,24 @@ UINT32 AddHDMI (UINT8 *dsdt, UINT32 len)
       aml_add_byte(dev, 0x01);
     }
     met = aml_add_method(dev, "_DSM", 4);
+    k = FindMethod(dsdt + i, Size, "_SUN");
+    if (k == 0) {
+      k = FindName(dsdt + i, Size, "_SUN");
+      if (k == 0) {
+        aml_add_name(dev, "_SUN");
+        aml_add_dword(dev, SlotDevices[4].SlotID);
+      } else {
+        //we have name sun, set the number
+        if (dsdt[k + 4] == 0x0A) {
+          dsdt[k + 5] = SlotDevices[4].SlotID;
+        }
+      }
+    }
   } else {
+    //HDAU device already present
     met = aml_add_method(root, "_DSM", 4);
-  }  
+  }
+  
   
   met2 = aml_add_store(met);
   pack = aml_add_package(met2);

@@ -5112,6 +5112,16 @@ GetDevices ()
         }
         else if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_MEDIA) &&
                  (Pci.Hdr.ClassCode[1] == PCI_CLASS_MEDIA_HDA)) {
+          if (Pci.Hdr.VendorId != 0x8086) {
+            SlotDevice = &SlotDevices[4];
+            SlotDevice->SegmentGroupNum = (UINT16)Segment;
+            SlotDevice->BusNum          = (UINT8)Bus;
+            SlotDevice->DevFuncNum      = (UINT8)((Device << 3) | (Function & 0x07));
+            SlotDevice->Valid           = TRUE;
+            AsciiSPrint (SlotDevice->SlotName, 31, "HDMI port");
+            SlotDevice->SlotID          = 5;
+            SlotDevice->SlotType        = SlotTypePciExpressX4;            
+          }
           if (gSettings.ResetHDA) {
             //Slice method from VoodooHDA
             UINT8 Value = 0;
