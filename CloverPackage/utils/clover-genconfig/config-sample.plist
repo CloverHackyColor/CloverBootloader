@@ -424,7 +424,7 @@
 					<key>Type</key>
 					<string>OSX</string>
 					<key>Settings</key>
-					<string>ElCapitan.plist</string>
+					<string>ElCapitan</string>
 					<key>Volume</key>
 					<string>D68F1885-571C-4441-8DD5-F14803EFEF54</string>
 					<key>SubEntries</key>
