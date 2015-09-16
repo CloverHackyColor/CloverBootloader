@@ -981,6 +981,19 @@ FillinCustomEntry (
     Entry->Path = PoolPrint (L"%a", Prop->string);
   }
 
+  Prop = GetProperty (DictPointer, "Settings");
+  if (Prop != NULL && (Prop->type == kTagTypeString)) {
+    if (Entry->Settings) {
+      FreePool (Entry->Settings);
+    }
+    
+    Entry->Settings = PoolPrint (L"%a", Prop->string);
+  }
+  
+  Prop = GetProperty (DictPointer, "CommonSettings");
+  Entry->CommonSettings = IsPropertyTrue (Prop);
+
+
   Prop = GetProperty (DictPointer, "AddArguments");
   if (Prop != NULL && (Prop->type == kTagTypeString)) {
     if (Entry->Options != NULL) {
@@ -1317,7 +1330,7 @@ FillinCustomEntry (
     }
 
     // KernelAndKextPatches
-    DBG ("Copying global patch settings\n");
+    //DBG ("Copying global patch settings\n");
     CopyKernelAndKextPatches ((KERNEL_AND_KEXT_PATCHES *)(((UINTN)Entry) + OFFSET_OF(CUSTOM_LOADER_ENTRY, KernelAndKextPatches)),
                              (KERNEL_AND_KEXT_PATCHES *)(((UINTN)&gSettings) + OFFSET_OF(SETTINGS_DATA, KernelAndKextPatches)));
     Prop = GetProperty (DictPointer, "KernelAndKextPatches");
@@ -3437,6 +3450,25 @@ GetUserSettings(
         gSettings.DualLink = (UINT32)GetPropertyInteger (Prop, 0);
       }
       //InjectEDID - already done in earlysettings
+      //No! Take again
+
+      Prop = GetProperty (DictPointer, "InjectEDID");
+      gSettings.InjectEDID = IsPropertyTrue (Prop);
+      
+      Prop = GetProperty (DictPointer, "CustomEDID");
+      if (Prop != NULL) {
+        UINTN j = 128;
+        gSettings.CustomEDID   = GetDataSetting (DictPointer, "CustomEDID", &j);
+      }
+      
+      // ErmaC: NvidiaGeneric
+      Prop = GetProperty (DictPointer, "NvidiaGeneric");
+      gSettings.NvidiaGeneric = IsPropertyTrue (Prop);
+      
+      Prop = GetProperty (DictPointer, "NvidiaSingle");
+      gSettings.NvidiaSingle = IsPropertyTrue (Prop);
+      
+
       
       Prop = GetProperty (DictPointer, "ig-platform-id");
       if (Prop != NULL) {

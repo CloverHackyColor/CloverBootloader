@@ -693,25 +693,39 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
   EFI_HANDLE              ImageHandle = NULL;
   EFI_LOADED_IMAGE        *LoadedImage;
   CHAR8                   *InstallerVersion;
+  TagPtr                  dict = NULL;
   
   DBG("StartLoader() start\n");
-  MsgLog("Finally: Bus=%ldkHz CPU=%ldMHz\n",
+  DBG("Entry->Settings: %s\n", Entry->Settings);
+  if (Entry->Settings) {
+    Status = LoadUserSettings(SelfRootDir, Entry->Settings, &dict);
+    if (!EFI_ERROR(Status)) {
+      DBG("Found custom settings for this entry:%s\n", Entry->Settings);
+      Status = GetUserSettings(SelfRootDir, dict);
+      if (EFI_ERROR(Status)) {
+        DBG("... but: %r\n", Status);
+      } else {
+        if ((gSettings.CpuFreqMHz > 100) && (gSettings.CpuFreqMHz < 20000)) {
+          gCPUStructure.MaxSpeed      = gSettings.CpuFreqMHz;
+        }
+      }
+    } else {
+      DBG("LoadUserSettings failed: %r\n", Status);
+    }
+  }
+  
+  DBG("Finally: Bus=%ldkHz CPU=%ldMHz\n",
          DivU64x32(gCPUStructure.FSBFrequency, kilo),
          gCPUStructure.MaxSpeed);
+
 
   if (gBootArgsChanged) {
     CopyMem (Entry->KernelAndKextPatches,
              &gSettings.KernelAndKextPatches,
              sizeof(KERNEL_AND_KEXT_PATCHES));
-    DBG("KernelAndKextPatches copyed to started entry\n");
-             
+    DBG("KernelAndKextPatches copyed to started entry\n");             
   }
   DumpKernelAndKextPatches(Entry->KernelAndKextPatches);
-
-//  MsgLog("Turbo=%c\n", gSettings.Turbo?'Y':'N');
-//  MsgLog("PatchAPIC=%c\n", gSettings.PatchNMI?'Y':'N');
-//  MsgLog("PatchVBios=%c\n", gSettings.PatchVBios?'Y':'N');
-//  DBG("KillMouse\n");
 
   // Load image into memory (will be started later) 
   Status = LoadEFIImage(Entry->DevicePath, Basename(Entry->LoaderPath), NULL, &ImageHandle);

@@ -418,6 +418,31 @@
 					<key>Volume</key>
 					<string>454794AC-760D-46E8-8F77-D6EB23D2FD32</string>
 				</dict>
+				<dict>
+					<key>Title</key>
+					<string>ElCapitan</string>
+					<key>Type</key>
+					<string>OSX</string>
+					<key>Settings</key>
+					<string>ElCapitan.plist</string>
+					<key>Volume</key>
+					<string>D68F1885-571C-4441-8DD5-F14803EFEF54</string>
+					<key>SubEntries</key>
+					<array>
+						<dict>
+							<key>FullTitle</key>
+							<string>Boot ElCapitan with own settings</string>
+							<key>CommonSettings</key>
+							<false/>
+						</dict>
+						<dict>
+							<key>FullTitle</key>
+							<string>Boot ElCapitan with common settings</string>
+							<key>CommonSettings</key>
+							<true/>
+						</dict>
+					</array>
+				</dict>
 			</array>
 			<key>Legacy</key>
 			<array>

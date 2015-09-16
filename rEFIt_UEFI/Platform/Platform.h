@@ -697,25 +697,27 @@ struct DEV_PROPERTY {
 
 typedef struct CUSTOM_LOADER_ENTRY CUSTOM_LOADER_ENTRY;
 struct CUSTOM_LOADER_ENTRY {
-  CUSTOM_LOADER_ENTRY    *Next;
-  CUSTOM_LOADER_ENTRY    *SubEntries;
-  EG_IMAGE               *Image;
-  EG_IMAGE               *DriveImage;
-  CHAR16                 *ImagePath;
-  CHAR16                 *DriveImagePath;
-  CHAR16                 *Volume;
-  CHAR16                 *Path;
-  CHAR16                 *Options;
-  CHAR16                 *FullTitle;
-  CHAR16                 *Title;
-  CHAR16                 Hotkey;
-  UINT8                  Flags;
-  UINT8                  Type;
-  UINT8                  VolumeType;
-  UINT8                  KernelScan;
-  UINT8                  CustomBoot;
-  EG_IMAGE               *CustomLogo;
-  EG_PIXEL               *BootBgColor;
+  CUSTOM_LOADER_ENTRY     *Next;
+  CUSTOM_LOADER_ENTRY     *SubEntries;
+  EG_IMAGE                *Image;
+  EG_IMAGE                *DriveImage;
+  CHAR16                  *ImagePath;
+  CHAR16                  *DriveImagePath;
+  CHAR16                  *Volume;
+  CHAR16                  *Path;
+  CHAR16                  *Options;
+  CHAR16                  *FullTitle;
+  CHAR16                  *Title;
+  CHAR16                  *Settings;
+  CHAR16                  Hotkey;
+  BOOLEAN                 CommonSettings; 
+  UINT8                   Flags;
+  UINT8                   Type;
+  UINT8                   VolumeType;
+  UINT8                   KernelScan;
+  UINT8                   CustomBoot;
+  EG_IMAGE                *CustomLogo;
+  EG_PIXEL                *BootBgColor;
   KERNEL_AND_KEXT_PATCHES KernelAndKextPatches;
 };
 
@@ -1772,9 +1774,6 @@ BOOLEAN
 setup_nvidia_devprop (
   pci_dt_t *nvda_dev
   );
-
-//CHAR8 *
-//get_nvidia_model(IN UINT16 DeviceID);
 
 CHAR8
 *get_nvidia_model (

@@ -513,6 +513,7 @@ typedef struct {
   UINT8             CustomBoot;
   EG_IMAGE         *CustomLogo;
   KERNEL_AND_KEXT_PATCHES *KernelAndKextPatches;
+  CHAR16            *Settings;
 } LOADER_ENTRY;
 
 typedef struct {

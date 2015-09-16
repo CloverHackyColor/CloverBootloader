@@ -1724,9 +1724,14 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
         }
       }
       DBG("match!\n");
-      // Create a entry for this volume
+      // Create an entry for this volume
       Entry = CreateLoaderEntry(CustomPath, CustomOptions, Custom->FullTitle, Custom->Title, Volume, Image, DriveImage, Custom->Type, Custom->Flags, Custom->Hotkey, Custom->BootBgColor, Custom->CustomBoot, Custom->CustomLogo, (KERNEL_AND_KEXT_PATCHES *)(((UINTN)Custom) + OFFSET_OF(CUSTOM_LOADER_ENTRY, KernelAndKextPatches)), TRUE);
       if (Entry != NULL) {
+        DBG("Custom settings: %s.plist will %a be applied\n",
+            Custom->Settings, Custom->CommonSettings?"not":"");
+        if (!Custom->CommonSettings) {
+          Entry->Settings = Custom->Settings;
+        }
         if (OSFLAG_ISUNSET(Custom->Flags, OSFLAG_NODEFAULTMENU)) {
           AddDefaultMenu(Entry);
         } else if (Custom->SubEntries != NULL) {
@@ -1748,8 +1753,11 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
               FreePool(GuidStr);
             }
             AddMenuInfoLine(SubScreen, PoolPrint(L"Options: %s", Entry->LoadOptions));
-            // Create sub entries
+            DBG("Create sub entries\n");
             for (CustomSubEntry = Custom->SubEntries; CustomSubEntry; CustomSubEntry = CustomSubEntry->Next) {
+              if (!CustomSubEntry->Settings) {
+                CustomSubEntry->Settings = Custom->Settings;
+              }
               AddCustomEntry(CustomSubIndex++, (CustomSubEntry->Path != NULL) ? CustomSubEntry->Path : CustomPath, CustomSubEntry, SubScreen);
             }
             AddMenuEntry(SubScreen, &MenuEntryReturn);
