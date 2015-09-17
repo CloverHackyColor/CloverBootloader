@@ -1725,7 +1725,7 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
       }
       DBG("match!\n");
       // Create an entry for this volume
-      Entry = CreateLoaderEntry(CustomPath, CustomOptions, Custom->FullTitle, Custom->Title, Volume, Image, DriveImage, Custom->Type, Custom->Flags, Custom->Hotkey, Custom->BootBgColor, Custom->CustomBoot, Custom->CustomLogo, (KERNEL_AND_KEXT_PATCHES *)(((UINTN)Custom) + OFFSET_OF(CUSTOM_LOADER_ENTRY, KernelAndKextPatches)), TRUE);
+      Entry = CreateLoaderEntry(CustomPath, CustomOptions, Custom->FullTitle, Custom->Title, Volume, Image, DriveImage, Custom->Type, Custom->Flags, Custom->Hotkey, Custom->BootBgColor, Custom->CustomBoot, Custom->CustomLogo, /*(KERNEL_AND_KEXT_PATCHES *)(((UINTN)Custom) + OFFSET_OF(CUSTOM_LOADER_ENTRY, KernelAndKextPatches))*/ NULL, TRUE);
       if (Entry != NULL) {
         DBG("Custom settings: %s.plist will %a be applied\n",
             Custom->Settings, Custom->CommonSettings?"not":"");

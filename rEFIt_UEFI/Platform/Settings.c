@@ -849,18 +849,23 @@ FillinKextPatches (
 
   Prop = GetProperty (DictPointer, "KextsToPatch");
   if (Prop != NULL) {
+    //delete old and create new
+    if (Patches->KextPatches) {
+      Patches->NrKexts = 0;
+      FreePool (Patches->KextPatches);
+    }
     UINTN Count = GetTagCount (Prop);
     if (Count > 0) {
       UINTN      j = 0;
       TagPtr     Prop2 = NULL;
       TagPtr     Dict;
-      KEXT_PATCH *newPatches = AllocateZeroPool ((Patches->NrKexts + Count) * sizeof(KEXT_PATCH));
+      KEXT_PATCH *newPatches = AllocateZeroPool ((/*Patches->NrKexts + */Count) * sizeof(KEXT_PATCH));
 
       // Patches->NrKexts = 0;
-      if (Patches->KextPatches != NULL) {
+/*      if (Patches->KextPatches != NULL) {
          CopyMem (newPatches, Patches->KextPatches, (Patches->NrKexts * sizeof(KEXT_PATCH)));
          FreePool (Patches->KextPatches);
-      }
+      } */
 
       Patches->KextPatches = newPatches;
       DBG ("KextsToPatch: %d requested\n", Count);
@@ -882,7 +887,8 @@ FillinKextPatches (
 
         Dict = GetProperty (Prop2, "Name");
         if (Dict == NULL) {
-           continue;
+          DBG("patch without Name, skipped\n");
+          continue;
         }
 
         Patches->KextPatches[Patches->NrKexts].Name = AllocateCopyPool (AsciiStrSize (Dict->string), Dict->string);

@@ -708,6 +708,10 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
         if ((gSettings.CpuFreqMHz > 100) && (gSettings.CpuFreqMHz < 20000)) {
           gCPUStructure.MaxSpeed      = gSettings.CpuFreqMHz;
         }
+        CopyMem (Entry->KernelAndKextPatches,
+                 &gSettings.KernelAndKextPatches,
+                 sizeof(KERNEL_AND_KEXT_PATCHES));
+        DBG("Custom KernelAndKextPatches copyed to started entry\n");
       }
     } else {
       DBG("LoadUserSettings failed: %r\n", Status);
@@ -1994,10 +1998,12 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     } else {
       InitScreen(!gFirmwareClover); // ? FALSE : TRUE);
     }
+    //    DBG("DBG: setup screen\n");
     SetupScreen();
   } else {
     InitScreen(FALSE);
   }
+  //  DBG("DBG: ReinitSelfLib\n");
   //Now we have to reinit handles
   Status = ReinitSelfLib();
   if (EFI_ERROR(Status)){
@@ -2008,7 +2014,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 #endif // ENABLE_SECURE_BOOT
     return Status;
   }
-
+  //  DBG("DBG: messages\n");
   if (!GlobalConfig.FastBoot  && GlobalConfig.Timeout>0) {
     FirstMessage = PoolPrint(L"   Welcome to Clover %s   ", FIRMWARE_REVISION);
     i = (UGAWidth - StrLen(FirstMessage) * GlobalConfig.CharWidth) >> 1;
