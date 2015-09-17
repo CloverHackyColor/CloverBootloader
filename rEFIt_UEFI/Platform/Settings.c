@@ -1339,11 +1339,12 @@ FillinCustomEntry (
     //DBG ("Copying global patch settings\n");
     CopyKernelAndKextPatches ((KERNEL_AND_KEXT_PATCHES *)(((UINTN)Entry) + OFFSET_OF(CUSTOM_LOADER_ENTRY, KernelAndKextPatches)),
                              (KERNEL_AND_KEXT_PATCHES *)(((UINTN)&gSettings) + OFFSET_OF(SETTINGS_DATA, KernelAndKextPatches)));
-    Prop = GetProperty (DictPointer, "KernelAndKextPatches");
+/*    Prop = GetProperty (DictPointer, "KernelAndKextPatches");
     if (Prop != NULL) {
       FillinKextPatches ((KERNEL_AND_KEXT_PATCHES *)(((UINTN)Entry) + OFFSET_OF(CUSTOM_LOADER_ENTRY, KernelAndKextPatches)), Prop);
       DBG ("Filled in patch settings\n");
     }
+ */
 #ifdef DUMP_KERNEL_KEXT_PATCHES
     DumpKernelAndKextPatches ((KERNEL_AND_KEXT_PATCHES *)(((UINTN)Entry) + OFFSET_OF(CUSTOM_LOADER_ENTRY, KernelAndKextPatches)));
 #endif
