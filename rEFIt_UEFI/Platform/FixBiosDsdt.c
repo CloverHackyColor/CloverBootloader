@@ -2655,7 +2655,7 @@ UINT32 AddHDMI (UINT8 *dsdt, UINT32 len)
     }
     met = aml_add_method(dev, "_DSM", 4);
     //something here is not liked by apple... 
-    k = FindMethod(dsdt + i, Size, "_SUN");
+/*    k = FindMethod(dsdt + i, Size, "_SUN");
     if (k == 0) {
       k = FindName(dsdt + i, Size, "_SUN");
       if (k == 0) {
@@ -2668,6 +2668,7 @@ UINT32 AddHDMI (UINT8 *dsdt, UINT32 len)
         }
       }
     }
+ */
   } else {
     //HDAU device already present
     met = aml_add_method(root, "_DSM", 4);
