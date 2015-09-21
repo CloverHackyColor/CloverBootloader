@@ -2,7 +2,7 @@
 
   This file contains the definition for XHCI host controller schedule routines.
 
-Copyright (c) 2011 - 2014, Intel Corporation. All rights reserved.<BR>
+Copyright (c) 2011 - 2015, Intel Corporation. All rights reserved.<BR>
 This program and the accompanying materials
 are licensed and made available under the terms and conditions of the BSD License
 which accompanies this distribution.  The full text of the license may be found at
@@ -224,7 +224,7 @@ typedef struct _TRANSFER_TRB_NORMAL {
 
   UINT32                  TRBPtrHi;
 
-  UINT32                  Lenth:17;
+  UINT32                  Length:17;
   UINT32                  TDSize:5;
   UINT32                  IntTarget:10;
 
@@ -253,7 +253,7 @@ typedef struct _TRANSFER_TRB_CONTROL_SETUP {
   UINT32                  wIndex:16;
   UINT32                  wLength:16;
 
-  UINT32                  Lenth:17;
+  UINT32                  Length:17;
   UINT32                  RsvdZ1:5;
   UINT32                  IntTarget:10;
 
@@ -276,7 +276,7 @@ typedef struct _TRANSFER_TRB_CONTROL_DATA {
 
   UINT32                  TRBPtrHi;
 
-  UINT32                  Lenth:17;
+  UINT32                  Length:17;
   UINT32                  TDSize:5;
   UINT32                  IntTarget:10;
 
@@ -325,7 +325,7 @@ typedef struct _EVT_TRB_TRANSFER {
 
   UINT32                  TRBPtrHi;
 
-  UINT32                  Lenth:24;
+  UINT32                  Length:24;
   UINT32                  Completecode:8;
 
   UINT32                  CycleBit:1;
@@ -1042,26 +1042,6 @@ XhcSetConfigCmd64 (
   );
 
 /**
-  Stop endpoint through XHCI's Stop_Endpoint cmd.
-
-  @param  Xhc                   The XHCI Instance.
-  @param  SlotId                The slot id to be configured.
-  @param  Dci                   The device context index of endpoint.
-
-  @retval EFI_SUCCESS           Stop endpoint successfully.
-  @retval Others                Failed to stop endpoint.
-
- **/
-EFI_STATUS
-EFIAPI
-XhcStopEndpoint (
-  IN USB_XHCI_INSTANCE      *Xhc,
-  IN UINT8                  SlotId,
-  IN UINT8                  Dci
-  );
-
-
-/**
   Set interface through XHCI's Configure_Endpoint cmd.
 
   @param  Xhc           The XHCI Instance.
@@ -1238,52 +1218,6 @@ XhcDisableSlotCmd64 (
 
 
 /**
-  Initialize endpoint context in input context.
-
-  @param Xhc            The XHCI Instance.
-  @param SlotId         The slot id to be configured.
-  @param DeviceSpeed    The device's speed.
-  @param InputContext   The pointer to the input context.
-  @param IfDesc         The pointer to the usb device interface descriptor.
-
-  @return The maximum device context index of endpoint.
-
- **/
-UINT8
-EFIAPI
-XhcInitializeEndpointContext (
-  IN USB_XHCI_INSTANCE          *Xhc,
-  IN UINT8                      SlotId,
-  IN UINT8                      DeviceSpeed,
-  IN INPUT_CONTEXT              *InputContext,
-  IN USB_INTERFACE_DESCRIPTOR   *IfDesc
-  );
-
-
-/**
-  Initialize endpoint context in input context.
-
-  @param Xhc            The XHCI Instance.
-  @param SlotId         The slot id to be configured.
-  @param DeviceSpeed    The device's speed.
-  @param InputContext   The pointer to the input context.
-  @param IfDesc         The pointer to the usb device interface descriptor.
-
-  @return The maximum device context index of endpoint.
-
-**/
-UINT8
-EFIAPI
-XhcInitializeEndpointContext64 (
-  IN USB_XHCI_INSTANCE          *Xhc,
-  IN UINT8                      SlotId,
-  IN UINT8                      DeviceSpeed,
-  IN INPUT_CONTEXT_64           *InputContext,
-  IN USB_INTERFACE_DESCRIPTOR   *IfDesc
-  );
-
-
-/**
   Synchronize the specified transfer ring to update the enqueue and dequeue pointer.
 
   @param  Xhc         The XHCI Instance.
@@ -1381,6 +1315,86 @@ EFIAPI
 XhcRecoverHaltedEndpoint (
   IN  USB_XHCI_INSTANCE   *Xhc,
   IN  URB                 *Urb
+  );
+
+/**
+  System software shall use a Stop Endpoint Command (section 4.6.9) and the Set TR Dequeue Pointer
+  Command (section 4.6.10) to remove the timed-out TDs from the xHC transfer ring. The next write to
+  the Doorbell of the Endpoint will transition the Endpoint Context from the Stopped to the Running
+  state.
+
+  @param  Xhc                   The XHCI Instance.
+  @param  Urb                   The urb which doesn't get completed in a specified timeout range.
+
+  @retval EFI_SUCCESS           The dequeuing of the TDs is successful.
+  @retval Others                Failed to stop the endpoint and dequeue the TDs.
+
+**/
+EFI_STATUS
+EFIAPI
+XhcDequeueTrbFromEndpoint (
+  IN  USB_XHCI_INSTANCE   *Xhc,
+  IN  URB                 *Urb
+  );
+
+/**
+  Stop endpoint through XHCI's Stop_Endpoint cmd.
+
+  @param  Xhc                   The XHCI Instance.
+  @param  SlotId                The slot id to be configured.
+  @param  Dci                   The device context index of endpoint.
+
+  @retval EFI_SUCCESS           Stop endpoint successfully.
+  @retval Others                Failed to stop endpoint.
+
+**/
+EFI_STATUS
+EFIAPI
+XhcStopEndpoint (
+  IN USB_XHCI_INSTANCE      *Xhc,
+  IN UINT8                  SlotId,
+  IN UINT8                  Dci
+  );
+
+/**
+  Reset endpoint through XHCI's Reset_Endpoint cmd.
+
+  @param  Xhc                   The XHCI Instance.
+  @param  SlotId                The slot id to be configured.
+  @param  Dci                   The device context index of endpoint.
+
+  @retval EFI_SUCCESS           Reset endpoint successfully.
+  @retval Others                Failed to reset endpoint.
+
+**/
+EFI_STATUS
+EFIAPI
+XhcResetEndpoint (
+  IN USB_XHCI_INSTANCE      *Xhc,
+  IN UINT8                  SlotId,
+  IN UINT8                  Dci
+  );
+
+/**
+  Set transfer ring dequeue pointer through XHCI's Set_Tr_Dequeue_Pointer cmd.
+
+  @param  Xhc                   The XHCI Instance.
+  @param  SlotId                The slot id to be configured.
+  @param  Dci                   The device context index of endpoint.
+  @param  Urb                   The dequeue pointer of the transfer ring specified
+                                by the urb to be updated.
+
+  @retval EFI_SUCCESS           Set transfer ring dequeue pointer succeeds.
+  @retval Others                Failed to set transfer ring dequeue pointer.
+
+**/
+EFI_STATUS
+EFIAPI
+XhcSetTrDequeuePointer (
+  IN USB_XHCI_INSTANCE      *Xhc,
+  IN UINT8                  SlotId,
+  IN UINT8                  Dci,
+  IN URB                    *Urb
   );
 
 /**

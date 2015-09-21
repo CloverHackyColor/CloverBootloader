@@ -19,6 +19,7 @@
 [Defines]
   INF_VERSION                    = 0x00010005
   BASE_NAME                      = XhciDxe
+  MODULE_UNI_FILE                = XhciDxe.uni
   FILE_GUID                      = B7F50E91-A759-412c-ADE4-DCD03E7F7C28
   MODULE_TYPE                    = UEFI_DRIVER
   VERSION_STRING                 = 1.0
@@ -73,3 +74,6 @@
 # [Event]
 # EVENT_TYPE_PERIODIC_TIMER       ## CONSUMES
 #
+
+[UserExtensions.TianoCore."ExtraFiles"]
+  XhciDxeExtra.uni

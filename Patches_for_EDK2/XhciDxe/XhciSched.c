@@ -2,7 +2,7 @@
 
   XHCI transfer scheduling routines.
 
-Copyright (c) 2011 - 2014, Intel Corporation. All rights reserved.<BR>
+Copyright (c) 2011 - 2015, Intel Corporation. All rights reserved.<BR>
 This program and the accompanying materials
 are licensed and made available under the terms and conditions of the BSD License
 which accompanies this distribution.  The full text of the license may be found at
@@ -298,7 +298,7 @@ XhcCreateTransferTrb (
       TrbStart->TrbCtrSetup.wValue        = Urb->Request->Value;
       TrbStart->TrbCtrSetup.wIndex        = Urb->Request->Index;
       TrbStart->TrbCtrSetup.wLength       = Urb->Request->Length;
-      TrbStart->TrbCtrSetup.Lenth         = 8;
+      TrbStart->TrbCtrSetup.Length        = 8;
       TrbStart->TrbCtrSetup.IntTarget     = 0;
       TrbStart->TrbCtrSetup.IOC           = 1;
       TrbStart->TrbCtrSetup.IDT           = 1;
@@ -324,7 +324,7 @@ XhcCreateTransferTrb (
         TrbStart = (TRB *)(UINTN)EPRing->RingEnqueue;
         TrbStart->TrbCtrData.TRBPtrLo  = XHC_LOW_32BIT(Urb->DataPhy);
         TrbStart->TrbCtrData.TRBPtrHi  = XHC_HIGH_32BIT(Urb->DataPhy);
-        TrbStart->TrbCtrData.Lenth     = (UINT32) Urb->DataLen;
+        TrbStart->TrbCtrData.Length    = (UINT32) Urb->DataLen;
         TrbStart->TrbCtrData.TDSize    = 0;
         TrbStart->TrbCtrData.IntTarget = 0;
         TrbStart->TrbCtrData.ISP       = 1;
@@ -390,7 +390,7 @@ XhcCreateTransferTrb (
         TrbStart = (TRB *)(UINTN)EPRing->RingEnqueue;
         TrbStart->TrbNormal.TRBPtrLo  = XHC_LOW_32BIT((UINT8 *) Urb->DataPhy + TotalLen);
         TrbStart->TrbNormal.TRBPtrHi  = XHC_HIGH_32BIT((UINT8 *) Urb->DataPhy + TotalLen);
-        TrbStart->TrbNormal.Lenth     = (UINT32) Len;
+        TrbStart->TrbNormal.Length    = (UINT32) Len;
         TrbStart->TrbNormal.TDSize    = 0;
         TrbStart->TrbNormal.IntTarget = 0;
         TrbStart->TrbNormal.ISP       = 1;
@@ -425,7 +425,7 @@ XhcCreateTransferTrb (
         TrbStart = (TRB *)(UINTN)EPRing->RingEnqueue;
         TrbStart->TrbNormal.TRBPtrLo  = XHC_LOW_32BIT((UINT8 *) Urb->DataPhy + TotalLen);
         TrbStart->TrbNormal.TRBPtrHi  = XHC_HIGH_32BIT((UINT8 *) Urb->DataPhy + TotalLen);
-        TrbStart->TrbNormal.Lenth     = (UINT32) Len;
+        TrbStart->TrbNormal.Length    = (UINT32) Len;
         TrbStart->TrbNormal.TDSize    = 0;
         TrbStart->TrbNormal.IntTarget = 0;
         TrbStart->TrbNormal.ISP       = 1;
@@ -678,12 +678,8 @@ XhcRecoverHaltedEndpoint (
   )
 {
   EFI_STATUS                  Status;
-  EVT_TRB_COMMAND_COMPLETION  *EvtTrb;
-  CMD_TRB_RESET_ENDPOINT      CmdTrbResetED;
-  CMD_SET_TR_DEQ_POINTER      CmdSetTRDeq;
   UINT8                       Dci;
   UINT8                       SlotId;
-  EFI_PHYSICAL_ADDRESS        PhyAddr;
 
   Status = EFI_SUCCESS;
   if (!Urb || !Xhc) {
@@ -699,46 +695,23 @@ XhcRecoverHaltedEndpoint (
     return EFI_DEVICE_ERROR;
   }
   
-  DEBUG ((EFI_D_INFO, "Recovery Halted Slot = %x,Dci = %x\n", SlotId, Dci));
+//  DEBUG ((EFI_D_INFO, "Recovery Halted Slot = %x,Dci = %x\n", SlotId, Dci));
 
   //
   // 1) Send Reset endpoint command to transit from halt to stop state
   //
-  ZeroMem (&CmdTrbResetED, sizeof (CmdTrbResetED));
-  CmdTrbResetED.CycleBit = 1;
-  CmdTrbResetED.Type     = TRB_TYPE_RESET_ENDPOINT;
-  CmdTrbResetED.EDID     = Dci;
-  CmdTrbResetED.SlotId   = SlotId;
-  Status = XhcCmdTransfer (
-             Xhc,
-             (TRB_TEMPLATE *) (UINTN) &CmdTrbResetED,
-             XHC_GENERIC_TIMEOUT,
-             (TRB_TEMPLATE **) (UINTN) &EvtTrb
-             );
+  Status = XhcResetEndpoint(Xhc, SlotId, Dci);
   if (EFI_ERROR(Status)) {
-    DEBUG ((EFI_D_ERROR, "XhcRecoverHaltedEndpoint: Reset Endpoint Failed, Status = %r\n", Status));
+//    DEBUG ((EFI_D_ERROR, "XhcRecoverHaltedEndpoint: Reset Endpoint Failed, Status = %r\n", Status));
     goto Done;
   }
 
   //
   // 2)Set dequeue pointer
   //
-  ZeroMem (&CmdSetTRDeq, sizeof (CmdSetTRDeq));
-  PhyAddr = UsbHcGetPciAddrForHostAddr (Xhc->MemPool, Urb->Ring->RingEnqueue, sizeof (CMD_SET_TR_DEQ_POINTER));
-  CmdSetTRDeq.PtrLo    = XHC_LOW_32BIT (PhyAddr) | Urb->Ring->RingPCS;
-  CmdSetTRDeq.PtrHi    = XHC_HIGH_32BIT (PhyAddr);
-  CmdSetTRDeq.CycleBit = 1;
-  CmdSetTRDeq.Type     = TRB_TYPE_SET_TR_DEQUE;
-  CmdSetTRDeq.Endpoint = Dci;
-  CmdSetTRDeq.SlotId   = SlotId;
-  Status = XhcCmdTransfer (
-             Xhc,
-             (TRB_TEMPLATE *) (UINTN) &CmdSetTRDeq,
-             XHC_GENERIC_TIMEOUT,
-             (TRB_TEMPLATE **) (UINTN) &EvtTrb
-             );
+  Status = XhcSetTrDequeuePointer(Xhc, SlotId, Dci, Urb);
   if (EFI_ERROR(Status)) {
-    DEBUG ((EFI_D_ERROR, "XhcRecoverHaltedEndpoint: Set Dequeue Pointer Failed, Status = %r\n", Status));
+//    DEBUG ((EFI_D_ERROR, "XhcRecoverHaltedEndpoint: Set Transfer Ring Dequeue Pointer Failed, Status = %r\n", Status));
     goto Done;
   }
 
@@ -750,6 +723,68 @@ XhcRecoverHaltedEndpoint (
 Done:
   return Status;
 }
+
+/**
+  System software shall use a Stop Endpoint Command (section 4.6.9) and the Set TR Dequeue Pointer
+  Command (section 4.6.10) to remove the timed-out TDs from the xHC transfer ring. The next write to
+  the Doorbell of the Endpoint will transition the Endpoint Context from the Stopped to the Running
+  state.
+
+  @param  Xhc                   The XHCI Instance.
+  @param  Urb                   The urb which doesn't get completed in a specified timeout range.
+
+  @retval EFI_SUCCESS           The dequeuing of the TDs is successful.
+  @retval Others                Failed to stop the endpoint and dequeue the TDs.
+
+**/
+EFI_STATUS
+EFIAPI
+XhcDequeueTrbFromEndpoint (
+  IN  USB_XHCI_INSTANCE   *Xhc,
+  IN  URB                 *Urb
+  )
+{
+  EFI_STATUS                  Status;
+  UINT8                       Dci;
+  UINT8                       SlotId;
+
+  Status = EFI_SUCCESS;
+  SlotId = XhcBusDevAddrToSlotId (Xhc, Urb->Ep.BusAddr);
+  if (SlotId == 0) {
+    return EFI_DEVICE_ERROR;
+  }
+  Dci = XhcEndpointToDci (Urb->Ep.EpAddr, (UINT8)(Urb->Ep.Direction));
+//  ASSERT (Dci < 32);
+  
+//  DEBUG ((EFI_D_INFO, "Stop Slot = %x,Dci = %x\n", SlotId, Dci));
+
+  //
+  // 1) Send Stop endpoint command to stop xHC from executing of the TDs on the endpoint
+  //
+  Status = XhcStopEndpoint(Xhc, SlotId, Dci);
+  if (EFI_ERROR(Status)) {
+//    DEBUG ((EFI_D_ERROR, "XhcDequeueTrbFromEndpoint: Stop Endpoint Failed, Status = %r\n", Status));
+    goto Done;
+  }
+
+  //
+  // 2)Set dequeue pointer
+  //
+  Status = XhcSetTrDequeuePointer(Xhc, SlotId, Dci, Urb);
+  if (EFI_ERROR(Status)) {
+//    DEBUG ((EFI_D_ERROR, "XhcDequeueTrbFromEndpoint: Set Transfer Ring Dequeue Pointer Failed, Status = %r\n", Status));
+    goto Done;
+  }
+
+  //
+  // 3)Ring the doorbell to transit from stop to active
+  //
+  XhcRingDoorBell (Xhc, SlotId, Dci);
+
+Done:
+  return Status;
+}
+
 
 /**
   Create XHCI event ring.
@@ -1082,7 +1117,7 @@ IsTransferRingTrb (
   @return Whether the result of URB transfer is finialized.
 
 **/
-EFI_STATUS
+BOOLEAN
 XhcCheckUrbResult (
   IN  USB_XHCI_INSTANCE   *Xhc,
   IN  URB                 *Urb
@@ -1102,7 +1137,7 @@ XhcCheckUrbResult (
 
 //  ASSERT ((Xhc != NULL) && (Urb != NULL));
   if (!Xhc || !Urb) {
-    return EFI_INVALID_PARAMETER;
+    return FALSE;
   }
 
   Status   = EFI_SUCCESS;
@@ -1116,7 +1151,6 @@ XhcCheckUrbResult (
 
   if (XhcIsHalt (Xhc) || XhcIsSysError (Xhc)) {
     Urb->Result |= EFI_USB_ERR_SYSTEM;
-    Status       = EFI_DEVICE_ERROR;
     goto EXIT;
   }
 
@@ -1195,7 +1229,7 @@ XhcCheckUrbResult (
         if ((TRBType == TRB_TYPE_DATA_STAGE) ||
             (TRBType == TRB_TYPE_NORMAL) ||
             (TRBType == TRB_TYPE_ISOCH)) {
-          CheckedUrb->Completed += (CheckedUrb->DataLen - EvtTrb->Lenth);
+          CheckedUrb->Completed += (((TRANSFER_TRB_NORMAL*)TRBPtr)->Length - EvtTrb->Length);
         }
 
         break;
@@ -1247,7 +1281,7 @@ EXIT:
     XhcWriteRuntimeReg (Xhc, XHC_ERDP_OFFSET + 4, XHC_HIGH_32BIT (PhyAddr));
   }
 
-  return Status;
+  return Urb->Finished;
 }
 
 
@@ -1274,9 +1308,10 @@ XhcExecTransfer (
 {
   EFI_STATUS              Status;
   UINTN                   Index;
-  UINTN                   Loop;
+  UINT64                  Loop;
   UINT8                   SlotId;
   UINT8                   Dci;
+  BOOLEAN                 Finished;
 
   if (CmdTransfer) {
     SlotId = 0;
@@ -1303,8 +1338,8 @@ XhcExecTransfer (
   XhcRingDoorBell (Xhc, SlotId, Dci);
 
   for (Index = 0; Index < Loop; Index++) {
-    Status = XhcCheckUrbResult (Xhc, Urb);
-    if (Urb->Finished) {
+    Finished = XhcCheckUrbResult (Xhc, Urb);
+    if (Finished) {
       break;
     }
     gBS->Stall (XHC_1_MICROSECOND);
@@ -1312,6 +1347,9 @@ XhcExecTransfer (
 
   if (Index == Loop) {
     Urb->Result = EFI_USB_ERR_TIMEOUT;
+    Status      = EFI_TIMEOUT;
+  } else if (Urb->Result != EFI_USB_NOERROR) {
+    Status      = EFI_DEVICE_ERROR;
   }
 
   return Status;
@@ -3173,6 +3211,105 @@ XhcStopEndpoint (
              );
   if (EFI_ERROR(Status)) {
     DEBUG ((EFI_D_ERROR, "XhcStopEndpoint: Stop Endpoint Failed, Status = %r\n", Status));
+  }
+
+  return Status;
+}
+
+/**
+  Reset endpoint through XHCI's Reset_Endpoint cmd.
+
+  @param  Xhc                   The XHCI Instance.
+  @param  SlotId                The slot id to be configured.
+  @param  Dci                   The device context index of endpoint.
+
+  @retval EFI_SUCCESS           Reset endpoint successfully.
+  @retval Others                Failed to reset endpoint.
+
+**/
+EFI_STATUS
+EFIAPI
+XhcResetEndpoint (
+  IN USB_XHCI_INSTANCE      *Xhc,
+  IN UINT8                  SlotId,
+  IN UINT8                  Dci
+  )
+{
+  EFI_STATUS                  Status;
+  EVT_TRB_COMMAND_COMPLETION  *EvtTrb;
+  CMD_TRB_RESET_ENDPOINT      CmdTrbResetED;
+
+  DEBUG ((EFI_D_INFO, "XhcResetEndpoint: Slot = 0x%x, Dci = 0x%x\n", SlotId, Dci));
+
+  //
+  // Send stop endpoint command to transit Endpoint from running to stop state
+  //
+  ZeroMem (&CmdTrbResetED, sizeof (CmdTrbResetED));
+  CmdTrbResetED.CycleBit = 1;
+  CmdTrbResetED.Type     = TRB_TYPE_RESET_ENDPOINT;
+  CmdTrbResetED.EDID     = Dci;
+  CmdTrbResetED.SlotId   = SlotId;
+  Status = XhcCmdTransfer (
+             Xhc,
+             (TRB_TEMPLATE *) (UINTN) &CmdTrbResetED,
+             XHC_GENERIC_TIMEOUT,
+             (TRB_TEMPLATE **) (UINTN) &EvtTrb
+             );
+  if (EFI_ERROR(Status)) {
+    DEBUG ((EFI_D_ERROR, "XhcResetEndpoint: Reset Endpoint Failed, Status = %r\n", Status));
+  }
+
+  return Status;
+}
+
+/**
+  Set transfer ring dequeue pointer through XHCI's Set_Tr_Dequeue_Pointer cmd.
+
+  @param  Xhc                   The XHCI Instance.
+  @param  SlotId                The slot id to be configured.
+  @param  Dci                   The device context index of endpoint.
+  @param  Urb                   The dequeue pointer of the transfer ring specified
+                                by the urb to be updated.
+
+  @retval EFI_SUCCESS           Set transfer ring dequeue pointer succeeds.
+  @retval Others                Failed to set transfer ring dequeue pointer.
+
+**/
+EFI_STATUS
+EFIAPI
+XhcSetTrDequeuePointer (
+  IN USB_XHCI_INSTANCE      *Xhc,
+  IN UINT8                  SlotId,
+  IN UINT8                  Dci,
+  IN URB                    *Urb
+  )
+{
+  EFI_STATUS                  Status;
+  EVT_TRB_COMMAND_COMPLETION  *EvtTrb;
+  CMD_SET_TR_DEQ_POINTER      CmdSetTRDeq;
+  EFI_PHYSICAL_ADDRESS        PhyAddr;
+
+  DEBUG ((EFI_D_INFO, "XhcSetTrDequeuePointer: Slot = 0x%x, Dci = 0x%x, Urb = 0x%x\n", SlotId, Dci, Urb));
+
+  //
+  // Send stop endpoint command to transit Endpoint from running to stop state
+  //
+  ZeroMem (&CmdSetTRDeq, sizeof (CmdSetTRDeq));
+  PhyAddr = UsbHcGetPciAddrForHostAddr (Xhc->MemPool, Urb->Ring->RingEnqueue, sizeof (CMD_SET_TR_DEQ_POINTER));
+  CmdSetTRDeq.PtrLo    = XHC_LOW_32BIT (PhyAddr) | Urb->Ring->RingPCS;
+  CmdSetTRDeq.PtrHi    = XHC_HIGH_32BIT (PhyAddr);
+  CmdSetTRDeq.CycleBit = 1;
+  CmdSetTRDeq.Type     = TRB_TYPE_SET_TR_DEQUE;
+  CmdSetTRDeq.Endpoint = Dci;
+  CmdSetTRDeq.SlotId   = SlotId;
+  Status = XhcCmdTransfer (
+             Xhc,
+             (TRB_TEMPLATE *) (UINTN) &CmdSetTRDeq,
+             XHC_GENERIC_TIMEOUT,
+             (TRB_TEMPLATE **) (UINTN) &EvtTrb
+             );
+  if (EFI_ERROR(Status)) {
+    DEBUG ((EFI_D_ERROR, "XhcSetTrDequeuePointer: Set TR Dequeue Pointer Failed, Status = %r\n", Status));
   }
 
   return Status;
