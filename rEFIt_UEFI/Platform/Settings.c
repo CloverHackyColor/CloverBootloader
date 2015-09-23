@@ -2142,6 +2142,8 @@ GetEarlyUserSettings (
           gLanguage = indonesian;
         } else if (AsciiStrStr (Prop->string, "ko")) {
           gLanguage = korean;
+        } else if (AsciiStrStr (Prop->string, "ro")) {
+          gLanguage = romanian;
         }
       }
       

@@ -1263,21 +1263,22 @@ typedef struct {
 
 typedef enum {
   english = 0,  //en
-  russian,  //ru
-  french,   //fr
-  german,   //de
-  dutch,    //nl
-  italian,  //it
-  spanish,  //es
+  russian,    //ru
+  french,     //fr
+  german,     //de
+  dutch,      //nl
+  italian,    //it
+  spanish,    //es
   portuguese, //pt
-  brasil,   //br
-  polish,   //pl
-  ukrainian, //ua
-  croatian,  //hr
-  czech,     //cs
+  brasil,     //br
+  polish,     //pl
+  ukrainian,  //ua
+  croatian,   //hr
+  czech,      //cs
   indonesian, //id
-  korean,   //ko
-  chinese   //cn
+  korean,     //ko
+  chinese,    //cn
+  romanian    //ro
   //something else? add, please
 } LANGUAGES;
 

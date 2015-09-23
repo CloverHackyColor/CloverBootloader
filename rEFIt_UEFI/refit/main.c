@@ -387,6 +387,22 @@ static VOID HelpRefit(VOID)
         AddMenuInfoLine(&HelpMenu, L"R - 단축키 - 리셋");
         AddMenuInfoLine(&HelpMenu, L"U - 단축키 - 시스템 종료");
         break;
+      case romanian:
+        AddMenuInfoLine(&HelpMenu, L"ESC - Iesire din sub-meniu, Refresh meniul principal");
+        AddMenuInfoLine(&HelpMenu, L"F1  - Ajutor");
+        AddMenuInfoLine(&HelpMenu, L"F2  - Salvare preboot.log (doar pentru FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F4  - Salvare oem DSDT in EFI/ACPI/origin/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F5  - Salvare DSDT modificat in EFI/ACPI/origin/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F6  - Salvare VideoBios in EFI/misc/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F10 - Salvare screenshot in EFI/misc/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F12 - Scoatere volum selectat (DVD)");
+        AddMenuInfoLine(&HelpMenu, L"Space - Detalii despre item-ul selectat");
+        AddMenuInfoLine(&HelpMenu, L"Cifre 1-9 - Scurtaturi pentru itemele meniului");
+        AddMenuInfoLine(&HelpMenu, L"A - Despre");
+        AddMenuInfoLine(&HelpMenu, L"O - Optiuni");
+        AddMenuInfoLine(&HelpMenu, L"R - Soft Reset");
+        AddMenuInfoLine(&HelpMenu, L"U - Inchidere");
+        break;
       case english:
       default:
         AddMenuInfoLine(&HelpMenu, L"ESC - Escape from submenu, Refresh main menu");
