@@ -2072,7 +2072,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   gCPUStructure.FSBFrequency = DivU64x32(MultU64x32(gCPUStructure.CPUFrequency, 10),
                                          (gCPUStructure.MaxRatio == 0) ? 1 : gCPUStructure.MaxRatio);
   gCPUStructure.ExternalClock = (UINT32)DivU64x32(gCPUStructure.FSBFrequency, kilo);
-  gCPUStructure.MaxSpeed = (UINT32)DivU64x32(gCPUStructure.TSCFrequency, Mega);
+  gCPUStructure.MaxSpeed = (UINT32)DivU64x32(gCPUStructure.TSCFrequency + (Mega >> 1), Mega);
 
   if (!GlobalConfig.FastBoot && GlobalConfig.Timeout>0) {
     FirstMessage = PoolPrint(L"... user settings ...");
