@@ -73,7 +73,7 @@ msgstr "Copyright © %CPRYEAR%"
 #. type: Content of: <html><body><p><span>
 #: Resources/templates/Description.html:17
 msgid "Clover v2"
-msgstr "Clover v2k"
+msgstr "Clover v2.3k"
 
 #
 #. type: Content of: <html><body><p>
@@ -101,8 +101,8 @@ msgstr "Основные возможности:"
 #: Resources/templates/Description.html:21
 #, fuzzy
 #| msgid "- boot into 10.4 - 10.8 OSX, Windows EFI and Linux EFI"
-msgid "- boot into 10.4 - 10.9 OSX, Windows EFI and Linux EFI"
-msgstr "- загрузка систем 10.4 - 10.9 OSX, Windows EFI и Linux EFI"
+msgid "- boot into 10.4 - 10.11 OSX, Windows EFI and Linux EFI"
+msgstr "- загрузка систем 10.4 - 10.11 OSX, Windows EFI и Linux EFI"
 
 #
 #. type: Content of: <html><body><p>

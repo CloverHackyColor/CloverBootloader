@@ -6,9 +6,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-06-04 16:43+0300\n"
-"PO-Revision-Date: 2013-06-17 18:11+0000\n"
-"Last-Translator: beta992 <beta992@gmail.com>\n"
+"POT-Creation-Date: 2014-02-13 12:33+0100\n"
+"PO-Revision-Date: 2015-09-24 19:43+0000\n"
+"Last-Translator: Rene_ <jani.soelaas@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: nl\n"
 "MIME-Version: 1.0\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1371492679.0\n"
+"X-POOTLE-MTIME: 1443123800.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -93,10 +93,8 @@ msgstr "Hoofdfuncties:"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:21
-#, fuzzy
-#| msgid "- boot into 10.4 - 10.8 OSX, Windows EFI and Linux EFI"
-msgid "- boot into 10.4 - 10.9 OSX, Windows EFI and Linux EFI"
-msgstr "- opstarten in 10.4-10.8 OSX, Windows EFI en Linux EFI"
+msgid "- boot into 10.4 - 10.11 OSX, Windows EFI and Linux EFI"
+msgstr "- opstarten in 10.4-10.11 OSX, Windows EFI en Linux EFI"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:22
@@ -227,7 +225,7 @@ msgstr "Installatie Compleet!"
 
 #. type: "UEFI.only_title"
 #: Resources/templates/Localizable.strings:4
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Install for UEFI motherboards"
 msgid "Install for UEFI booting only"
 msgstr "Installatie voor UEFI moederborden"
@@ -594,16 +592,18 @@ msgid ""
 "AppleStyle theme from Eps,\n"
 "Install to /EFI/CLOVER/themes/applestyle"
 msgstr ""
+"AppleStyle thema van Eps,\n"
+"Installeer in /EFI/CLOVER/themes/applestyle"
 
 #. type: "BGM_title"
 #: Resources/templates/Localizable.strings:115
 #, no-wrap
 msgid "Black_Green_Moody"
-msgstr ""
+msgstr "Black_Green_Moody"
 
 #. type: "BGM_description"
 #: Resources/templates/Localizable.strings:116
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "Wooden theme from iROOTa,\n"
 #| "Install to /EFI/CLOVER/themes/wooden."
@@ -611,14 +611,14 @@ msgid ""
 "BGM (Black Green and Moody) theme from Blackosx,\n"
 "Install to /EFI/CLOVER/themes/BGM"
 msgstr ""
-"Houten thema door iROOTa,\n"
-"Installeert naar /EFI/CLOVER/themes/wooden."
+"BGM thema door Blackosx\n"
+"Installeert in /EFI/CLOVER/themes/BGM"
 
 #. type: "black_green_title"
 #: Resources/templates/Localizable.strings:119
 #, no-wrap
 msgid "Black_Green"
-msgstr ""
+msgstr "Black_Green"
 
 #. type: "black_green_description"
 #: Resources/templates/Localizable.strings:120
@@ -627,6 +627,8 @@ msgid ""
 "Default black_green theme from Blackosx,\n"
 "Install to /EFI/CLOVER/themes/black_green"
 msgstr ""
+"Standaard black_green thema from Blackosx,\n"
+"Installeert in /EFI/CLOVER/themes/black_green"
 
 #. type: "bluemac_title"
 #: Resources/templates/Localizable.strings:123
@@ -641,6 +643,8 @@ msgid ""
 "Bluemac theme from FowZiey,\n"
 "Install to /EFI/CLOVER/themes/bluemac"
 msgstr ""
+"Bluemac thema van FowZiey,\n"
+"Installeert in /EFI/CLOVER/themes/bluemac"
 
 #. type: "bootcamp_title"
 #: Resources/templates/Localizable.strings:127
@@ -817,6 +821,8 @@ msgid ""
 "Magnifico theme from Magnifico,\n"
 "Install to /EFI/CLOVER/themes/magnifico"
 msgstr ""
+"Magnifico thema van Magnifico,\n"
+"Installeert in /EFI/CLOVER/themes/magnifico"
 
 #. type: "metal_title"
 #: Resources/templates/Localizable.strings:167
@@ -831,6 +837,8 @@ msgid ""
 "The original metal theme from Slice,\n"
 "Install to /EFI/CLOVER/themes/metal"
 msgstr ""
+"Originele metaal thema van Slice,\n"
+"Installeert in /EFI/CLOVER/themes/metal"
 
 #. type: "mrengles_title"
 #: Resources/templates/Localizable.strings:171
@@ -845,12 +853,14 @@ msgid ""
 "mrengles theme from mrengles,\n"
 "Install to /EFI/CLOVER/themes/mrengles"
 msgstr ""
+"mrengles thema van mrengles,\n"
+"Installeert in /EFI/CLOVER/themes/mrengles"
 
 #. type: "orange_title"
 #: Resources/templates/Localizable.strings:175
 #, no-wrap
 msgid "Orange"
-msgstr "Orange"
+msgstr "Oranje"
 
 #. type: "orange_description"
 #: Resources/templates/Localizable.strings:176
@@ -859,6 +869,8 @@ msgid ""
 "Orange theme from dwm,\n"
 "Install to /EFI/CLOVER/themes/orange"
 msgstr ""
+"Orange thema van dwm,\n"
+"Installeert in /EFI/CLOVER/themes/orange"
 
 #. type: "os_box_title"
 #: Resources/templates/Localizable.strings:179
@@ -873,6 +885,8 @@ msgid ""
 "OS Box theme from Kyndder,\n"
 "Install to /EFI/CLOVER/themes/os_box"
 msgstr ""
+"OS Box thema van Kyndder,\n"
+"Installeert to /EFI/CLOVER/themes/os_box"
 
 #. type: "os_one_title"
 #: Resources/templates/Localizable.strings:183
@@ -922,12 +936,14 @@ msgid ""
 "ThinkPad theme from Kogen Mantis,\n"
 "Install to /EFI/CLOVER/themes/thinkpad"
 msgstr ""
+"ThinkPad thema van Kogen Mantis,\n"
+"Installeert in /EFI/CLOVER/themes/thinkpad"
 
 #. type: "buttons_title"
 #: Resources/templates/Localizable.strings:195
 #, no-wrap
 msgid "buttons"
-msgstr "buttons"
+msgstr "Knoppen"
 
 #. type: "buttons_description"
 #: Resources/templates/Localizable.strings:196
@@ -936,8 +952,8 @@ msgid ""
 "Buttons theme from Trauma,\n"
 "Install to /EFI/CLOVER/themes/buttons."
 msgstr ""
-"Knoppen thema door Trauma,\n"
-"Installeert naar /EFI/CLOVER/themes/buttons."
+"Buttons thema van Trauma,\n"
+"Installeert in /EFI/CLOVER/themes/buttons."
 
 #. type: "hellfire_title"
 #: Resources/templates/Localizable.strings:199
@@ -975,7 +991,7 @@ msgstr ""
 #: Resources/templates/Localizable.strings:207
 #, no-wrap
 msgid "Shield"
-msgstr ""
+msgstr "Schild"
 
 #. type: "Shield_description"
 #: Resources/templates/Localizable.strings:208
@@ -987,14 +1003,14 @@ msgid ""
 "An animated, harmonious theme from Blackosx,\n"
 "Install to /EFI/CLOVER/themes/Shield."
 msgstr ""
-"Houten thema door iROOTa,\n"
-"Installeert naar /EFI/CLOVER/themes/wooden."
+"Een animatie, harmonieus thema van Blackosx,\n"
+"Installeert in /EFI/CLOVER/themes/Shield."
 
 #. type: "wooden_title"
 #: Resources/templates/Localizable.strings:211
 #, no-wrap
 msgid "wooden"
-msgstr "wooden"
+msgstr "houten"
 
 #. type: "wooden_description"
 #: Resources/templates/Localizable.strings:212

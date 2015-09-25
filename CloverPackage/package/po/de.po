@@ -6,9 +6,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-06-04 16:43+0300\n"
-"PO-Revision-Date: 2013-06-23 08:16+0000\n"
-"Last-Translator: !Xabbu <holger_frey07@web.de>\n"
+"POT-Creation-Date: 2014-02-13 12:33+0100\n"
+"PO-Revision-Date: 2015-09-24 19:50+0000\n"
+"Last-Translator: ErmaC <ErmaC@insanelymac.com>\n"
 "Language-Team: ge <ge@li.org>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1371975392.0\n"
+"X-POOTLE-MTIME: 1443124236.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -98,9 +98,7 @@ msgstr "Hauptmerkmale:"
 #
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:21
-#, fuzzy
-#| msgid "- boot into 10.4 - 10.8 OSX, Windows EFI and Linux EFI"
-msgid "- boot into 10.4 - 10.9 OSX, Windows EFI and Linux EFI"
+msgid "- boot into 10.4 - 10.11 OSX, Windows EFI and Linux EFI"
 msgstr "- booten in 10.4 - 10.8 OSX, Windows EFI und Linux EFI"
 
 #
@@ -250,7 +248,7 @@ msgstr "Installation beendet!"
 
 #. type: "UEFI.only_title"
 #: Resources/templates/Localizable.strings:4
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Install for UEFI motherboards"
 msgid "Install for UEFI booting only"
 msgstr "Installation für UEFI-Motherboards"
@@ -623,14 +621,14 @@ msgstr ""
 
 #. type: "BGM_title"
 #: Resources/templates/Localizable.strings:115
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Black_Green"
 msgid "Black_Green_Moody"
 msgstr "Black_Green"
 
 #. type: "BGM_description"
 #: Resources/templates/Localizable.strings:116
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "Default black_green theme from Blackosx,\n"
 #| "Install to /EFI/CLOVER/themes/black_green"
@@ -1036,8 +1034,8 @@ msgid ""
 "An animated, harmonious theme from Blackosx,\n"
 "Install to /EFI/CLOVER/themes/Shield."
 msgstr ""
-"Thema black_green von Blackosx,\n"
-"Wird installiert in /EFI/CLOVER/themes/black_green."
+"Thema Shield von Blackosx,\n"
+"Wird installiert in /EFI/CLOVER/themes/Shield."
 
 #. type: "wooden_title"
 #: Resources/templates/Localizable.strings:211
