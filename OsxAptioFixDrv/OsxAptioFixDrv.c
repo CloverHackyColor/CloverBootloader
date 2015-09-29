@@ -52,8 +52,7 @@ CONST CHAR8* CloverRevision = REVISION_STR;
 //   without RT and MMIO regions
 // rehabman - Increase the size for ElCapitan to 128Mb 0x8000
 // stinga11 - 0x6000
-// okrasit - revert to 0x4000
-#define KERNEL_BLOCK_NO_RT_SIZE_PAGES	0x4000
+#define KERNEL_BLOCK_NO_RT_SIZE_PAGES	0x6000
 
 // TRUE if we are doing hibernate wake
 BOOLEAN gHibernateWake = FALSE;
@@ -280,8 +279,11 @@ MOAllocatePages (
 		UpperAddr = *Memory + EFI_PAGES_TO_SIZE(NumberOfPages);
 		
 		// check if the requested mem can be served from reloc block
-    //if (UpperAddr >= EFI_PAGES_TO_SIZE(gRelocSizePages)) {
-    if (NumberOfPages >= gRelocSizePages) {
+    // the upper address is compared to the size of the relocation block to achieve Address + gRelocBase for all
+    // allocations, so that the entire block can be copied to the proper location on kernel entry
+    // Comparing only the number of pages will not only give wrong results as gRelocSizePages is not decreased,
+    // but also implies memory is 'stacked', which it is not.
+    if (UpperAddr >= EFI_PAGES_TO_SIZE(gRelocSizePages)) {
 			// no - exceeds our block - signal error
 			Print(L"OsxAptipFixDrv: Error - requested memory exceeds our allocated relocation block\n");
 			Print(L"Requested mem: %lx - %lx, Pages: %x, Size: %lx\n",
