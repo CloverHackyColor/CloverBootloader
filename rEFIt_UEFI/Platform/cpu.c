@@ -210,6 +210,7 @@ VOID GetCPUProperties (VOID)
       case CPU_MODEL_HASWELL_ULT:
       case CPU_MODEL_HASWELL_ULX:
       case CPU_MODEL_BROADWELL_HQ:
+      case CPU_MODEL_SKYLAKE_S:
         msr = AsmReadMsr64(MSR_CORE_THREAD_COUNT);  //0x35
         gCPUStructure.Cores   = (UINT8)bitfield((UINT32)msr, 31, 16);  
         gCPUStructure.Threads = (UINT8)bitfield((UINT32)msr, 15,  0);
@@ -355,6 +356,7 @@ VOID GetCPUProperties (VOID)
           case CPU_MODEL_HASWELL_ULT:
           case CPU_MODEL_HASWELL_ULX:
           case CPU_MODEL_BROADWELL_HQ:
+          case CPU_MODEL_SKYLAKE_S:
             gCPUStructure.TSCFrequency = MultU64x32(gCPUStructure.CurrentSpeed, Mega); //MHz -> Hz
             gCPUStructure.CPUFrequency = gCPUStructure.TSCFrequency;
             //----test C3 patch
@@ -780,6 +782,7 @@ UINT16 GetAdvancedCpuType ()
             }
 						return 0x704;
           case CPU_MODEL_HASWELL_U5:
+          case CPU_MODEL_SKYLAKE_S:
             if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) M"))
               return 0xB06; // Core M
             if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i3"))
@@ -957,6 +960,7 @@ MACHINE_TYPES GetDefaultModel()
 				DefaultType = MacPro41;
 				break;
       case CPU_MODEL_HASWELL_U5:
+      case CPU_MODEL_SKYLAKE_S:
         DefaultType = iMac151;
         break;
       case CPU_MODEL_HASWELL:
