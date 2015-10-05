@@ -211,7 +211,7 @@ BOOLEAN devprop_add_value(DevPropDevice *device, CHAR8 *nm, UINT8 *vl, UINTN len
   UINT32 *datalength;
   UINT8 *newdata;
   
-  if(!device || !nm || !vl || !len)
+  if(!device || !nm || !vl /*|| !len*/) //rehabman: allow zero length data
     return FALSE;
   /*	DBG("devprop_add_value %a=", nm);
    for (i=0; i<len; i++) {

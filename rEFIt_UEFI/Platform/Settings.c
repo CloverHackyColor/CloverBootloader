@@ -403,7 +403,7 @@ VOID
     
   Prop = GetProperty (Dict, PropName);
   if (Prop != NULL) {
-    if (Prop->data != NULL && Prop->dataLen > 0) {
+    if (Prop->data != NULL /*&& Prop->dataLen > 0*/) { //rehabman: allow zero length data
       // data property
       Data = AllocateZeroPool (Prop->dataLen);
       CopyMem (Data, Prop->data, Prop->dataLen);
@@ -3557,7 +3557,7 @@ GetUserSettings(
               
               for (PropIndex = 0; PropIndex < PropCount; PropIndex++) {
                 UINTN Size = 0;
-                if (!EFI_ERROR (GetElement (Dict2, i, &Dict3))) {
+                if (!EFI_ERROR (GetElement (Dict2, PropIndex, &Dict3))) {
                   
                   DevProp = gSettings.AddProperties;
                   gSettings.AddProperties = AllocateZeroPool (sizeof(DEV_PROPERTY));
@@ -5246,6 +5246,7 @@ SetDevices (
           }
           while (Prop) {
             if (Prop->Device != PCIdevice.dev.addr) {
+              Prop = Prop->Next;
               continue;
             }
             if (Once) {
