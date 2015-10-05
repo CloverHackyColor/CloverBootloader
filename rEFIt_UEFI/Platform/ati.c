@@ -280,7 +280,7 @@ radeon_card_info_t radeon_cards[] = {
     { 0x6808,	0x00000000, CHIP_FAMILY_PITCAIRN,	"AMD Radeon HD 7600 Series",	kFutomaki	},
     { 0x6809,	0x00000000, CHIP_FAMILY_PITCAIRN,	"ATI FirePro V",	kNull		},
     //Curacao
-    { 0x6810,	0x00000000, CHIP_FAMILY_PITCAIRN,	"AMD Radeon R9 270X",         kFutomaki		},
+  { 0x6810,	0x00000000, CHIP_FAMILY_PITCAIRN,	"AMD Radeon R9 270X",         kFutomaki		}, //AMD FirePro D300
     { 0x6811,	0x00000000, CHIP_FAMILY_PITCAIRN,	"AMD Radeon R9 270",          kFutomaki		},
     //	{ 0x6816,	0x00000000, CHIP_FAMILY_PITCAIRN,	"AMD Radeon",             kFutomaki		},
     //	{ 0x6817,	0x00000000, CHIP_FAMILY_PITCAIRN,	"AMD Radeon",             kFutomaki		},

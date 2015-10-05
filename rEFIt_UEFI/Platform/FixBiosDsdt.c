@@ -1077,7 +1077,7 @@ UINT32 move_data(UINT32 start, UINT8* buffer, UINT32 len, INT32 offset)
       buffer[i] = buffer[i-offset];
     }
   }
-  else  { // data move to back        
+  else  if (offset>0) { // data move to back
     for (i=len-1; i>=start; i--) {
       buffer[i+offset] = buffer[i];
     }
@@ -1687,17 +1687,17 @@ UINT32 FixAny (UINT8* dsdt, UINT32 len, UINT8* ToFind, UINT32 LenTF, UINT8* ToRe
   INT32 sizeoffset, adr;
   UINT32 i;
   BOOLEAN found = FALSE;
-  if (!ToFind) {
+  if (!ToFind || !LenTF || !LenTR) {
     return len;
   }
-  DBG(" patch pattern %01x%01x%01x%01x\n", ToFind[0], ToFind[1], ToFind[2], ToFind[3]);
+  DBG(" patch pattern %02x%02x%02x%02x\n", ToFind[0], ToFind[1], ToFind[2], ToFind[3]);
   if ((LenTF + sizeof(EFI_ACPI_DESCRIPTION_HEADER)) > len) {
     DBG("  the patch is too large!\n");
     return len;
   }
   sizeoffset = LenTR - LenTF;
-  for (i = 20; i < len; i++) {
-    adr = FindBin(dsdt + i, len, ToFind, LenTF);
+  for (i = 20; i < len; ) {
+    adr = FindBin(dsdt + i, len - i, ToFind, LenTF);
     if (adr < 0) {
       if (!found) {
         DBG("  bin not found\n");
@@ -1712,6 +1712,7 @@ UINT32 FixAny (UINT8* dsdt, UINT32 len, UINT8* ToFind, UINT32 LenTF, UINT8* ToRe
     }
     len = CorrectOuterMethod(dsdt, len, adr + i - 2, sizeoffset);
     len = CorrectOuters(dsdt, len, adr + i - 3, sizeoffset);
+    i += adr + LenTR;
   }
 
   return len;
