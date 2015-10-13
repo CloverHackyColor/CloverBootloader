@@ -5486,14 +5486,32 @@ SaveSettings ()
   return EFI_SUCCESS;
 }
 
+CHAR16
+*GetOtherKextsDir ()
+{
+  CHAR16 *SrcDir         = NULL;
+
+  SrcDir     = PoolPrint (L"%s\\kexts\\Other", OEMPath);
+  if (!FileExists (SelfVolume->RootDir, SrcDir)) {
+    FreePool (SrcDir);
+    SrcDir = PoolPrint (L"\\EFI\\CLOVER\\kexts\\Other");
+    if (!FileExists (SelfVolume->RootDir, SrcDir)) {
+      FreePool (SrcDir);
+      SrcDir = NULL;
+    }
+  }
+
+  return SrcDir;
+}
+
 //dmazar
 CHAR16
-*GetExtraKextsDir (
+*GetOSVersionKextsDir (
   CHAR8 *OSVersion
   )
 {
   CHAR16 *SrcDir         = NULL;
-  CHAR8  FixedVersion[6] = "Other";
+  CHAR8  FixedVersion[6];
   CHAR8  *DotPtr;
 
   if (OSVersion != NULL) {
@@ -5516,29 +5534,29 @@ CHAR16
   SrcDir     = PoolPrint (L"%s\\kexts\\%a", OEMPath, FixedVersion);
   if (!FileExists (SelfVolume->RootDir, SrcDir)) {
     FreePool (SrcDir);
-    SrcDir   = PoolPrint (L"%s\\kexts\\Other", OEMPath);
-
+    SrcDir = PoolPrint (L"\\EFI\\CLOVER\\kexts\\%a", FixedVersion);
     if (!FileExists (SelfVolume->RootDir, SrcDir)) {
       FreePool (SrcDir);
       SrcDir = NULL;
     }
   }
-
-  if (SrcDir == NULL) {
-    // if not found, check EFI\CLOVER\kexts\...
-    SrcDir = PoolPrint (L"\\EFI\\CLOVER\\kexts\\%a", FixedVersion);
-    if (!FileExists (SelfVolume->RootDir, SrcDir)) {
-      FreePool (SrcDir);
- //     SrcDir = PoolPrint (L"\\EFI\\CLOVER\\kexts\\Other", gSettings.OEMProduct);
-      SrcDir   = PoolPrint (L"\\EFI\\CLOVER\\kexts\\Other");
-      if (!FileExists (SelfVolume->RootDir, SrcDir)) {
-        FreePool (SrcDir);
-        SrcDir = NULL;
-      }
-    }
-  }
   
   return SrcDir;
+}
+
+EFI_STATUS
+InjectKextsFromDir (
+  EFI_STATUS Status,
+  CHAR16 *SrcDir
+  )
+{
+
+  if (EFI_ERROR (Status)) {
+    MsgLog (" - ERROR: Kext injection failed!\n");
+    return EFI_NOT_STARTED;
+  }
+
+  return Status;
 }
 
 EFI_STATUS
@@ -5555,7 +5573,7 @@ SetFSInjection (
   FSI_STRING_LIST      *Blacklist      = 0;
   FSI_STRING_LIST      *ForceLoadKexts;
 
-  MsgLog ("FSInjection: ");
+  MsgLog ("Beginning FSInjection\n");
     
   Volume = Entry->Volume;
     
@@ -5574,18 +5592,18 @@ SetFSInjection (
   Status = gBS->LocateProtocol(&gFSInjectProtocolGuid, NULL, (void **)&FSInject);
   if (EFI_ERROR (Status)) {
     //Print (L"- No FSINJECTION_PROTOCOL, Status = %r\n", Status);
-    MsgLog ("not started - gFSInjectProtocolGuid not found\n");
+    MsgLog (" - ERROR: gFSInjectProtocolGuid not found!\n");
     return EFI_NOT_STARTED;
   }
 
   // check if blocking of caches is needed
   if (OSFLAG_ISSET(Entry->Flags, OSFLAG_NOCACHES)) {
-    MsgLog ("blocking caches");
+    MsgLog ("Blocking kext caches\n");
 //  BlockCaches = TRUE;
     // add caches to blacklist
     Blacklist = FSInject->CreateStringList ();
     if (Blacklist == NULL) {
-      MsgLog (": Error not enough memory!\n");
+      MsgLog (" - ERROR: Not enough memory!\n");
       return EFI_NOT_STARTED;
     }
 
@@ -5599,24 +5617,33 @@ SetFSInjection (
     if (gSettings.BlockKexts[0] != L'\0') {
       FSInject->AddStringToList(Blacklist, PoolPrint (L"\\System\\Library\\Extensions\\%s", gSettings.BlockKexts));
     }
-
-    MsgLog (", ");
   }
     
   // check if kext injection is needed
   // (will be done only if caches are blocked or if boot.efi refuses to load kernelcache)
   SrcDir = NULL;
   if (OSFLAG_ISSET(Entry->Flags, OSFLAG_WITHKEXTS)) {
-    SrcDir = GetExtraKextsDir(Entry->OSVersion);
-    if (SrcDir != NULL) {
-      // we have found it - injection will be done
-      MsgLog ("using kexts path: '%s'", SrcDir);
-//    InjectionNeeded = TRUE;
-    } else {
-      MsgLog ("skipping kext injection (kexts folder not found)");
-    }
+    Status = FSInject->Install (
+                       Volume->DeviceHandle,
+                       L"\\System\\Library\\Extensions",
+                       SelfVolume->DeviceHandle,
+                       GetOtherKextsDir (),
+                       Blacklist,
+                       ForceLoadKexts
+                       );
+    InjectKextsFromDir(Status, GetOtherKextsDir());
+
+    Status = FSInject->Install (
+                       Volume->DeviceHandle,
+                       L"\\System\\Library\\Extensions",
+                       SelfVolume->DeviceHandle,
+                       GetOSVersionKextsDir (Entry->OSVersion),
+                       Blacklist,
+                       ForceLoadKexts
+                       );
+    InjectKextsFromDir(Status, GetOSVersionKextsDir(Entry->OSVersion));
   } else {
-    MsgLog ("skipping kext injection (not requested)");
+    MsgLog ("skipping kext injection (not requested)\n");
   }
     
   // prepare list of kext that will be forced to load
@@ -5627,27 +5654,8 @@ SetFSInjection (
   }
 
   KextPatcherRegisterKexts (FSInject, ForceLoadKexts, Entry);
-
-  Status = FSInject->Install (
-                       Volume->DeviceHandle,
-                       L"\\System\\Library\\Extensions",
-                       SelfVolume->DeviceHandle,
-                       SrcDir,
-                       Blacklist,
-                       ForceLoadKexts
-                       );
-    
-  if (SrcDir != NULL) {
-    FreePool (SrcDir);
-  }
-    
-  if (EFI_ERROR (Status)) {
-    MsgLog (" - Error: could not install injection!\n");
-    return EFI_NOT_STARTED;
-  }
-    
+   
   // reinit Volume->RootDir? it seems it's not needed.
     
-  MsgLog ("\n");
   return Status;
 }

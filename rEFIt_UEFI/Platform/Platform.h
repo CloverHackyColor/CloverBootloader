@@ -1646,8 +1646,17 @@ SetFSInjection (
   );
 
 CHAR16*
-GetExtraKextsDir (
+GetOtherKextsDir ();
+
+CHAR16*
+GetOSVersionKextsDir (
   CHAR8 *OSVersion
+  );
+
+EFI_STATUS
+InjectKextsFromDir (
+  EFI_STATUS Status,
+  CHAR16 *SrcDir
   );
 
 EFI_STATUS

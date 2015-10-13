@@ -303,7 +303,26 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
    }
 
   //	Volume = Entry->Volume;
-	SrcDir = GetExtraKextsDir(Entry->OSVersion);
+	SrcDir = GetOtherKextsDir();
+	if (SrcDir != NULL) {
+		MsgLog("Preparing kexts injection for arch=%s from %s\n", (archCpuType==CPU_TYPE_X86_64)?L"x86_64":(archCpuType==CPU_TYPE_I386)?L"i386":L"", SrcDir);
+		// look through contents of the directory
+		DirIterOpen(SelfVolume->RootDir, SrcDir, &KextIter);
+		while (DirIterNext(&KextIter, 1, L"*.kext", &KextFile)) {
+			if (KextFile->FileName[0] == '.' || StrStr(KextFile->FileName, L".kext") == NULL)
+				continue;   // skip this
+			
+			UnicodeSPrint(FileName, 512, L"%s\\%s", SrcDir, KextFile->FileName);
+			MsgLog("  Extra kext: %s\n", FileName);
+			AddKext(Entry, SelfVolume->RootDir, FileName, archCpuType);
+      
+			UnicodeSPrint(PlugIns, 512, L"%s\\%s", FileName, L"Contents\\PlugIns");
+         LoadPlugInKexts(Entry, SelfVolume->RootDir, PlugIns, archCpuType, FALSE);
+		}
+		DirIterClose(&KextIter);
+	}
+
+	SrcDir = GetOSVersionKextsDir(Entry->OSVersion);
 	if (SrcDir != NULL) {
 		MsgLog("Preparing kexts injection for arch=%s from %s\n", (archCpuType==CPU_TYPE_X86_64)?L"x86_64":(archCpuType==CPU_TYPE_I386)?L"i386":L"", SrcDir);
 		// look through contents of the directory
