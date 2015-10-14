@@ -397,12 +397,38 @@ CompileBinutils () {
 }
 
 
+GCC_patch () {
+# GCC patch for 4.9.3 to allow objc in --enable-languages= also on Xcode 7.x
+if [[ "${GCC_VERSION}" = "4.9.3" ]]; then
+  read -r -d '' diffvar <<"EOF"
+--- gcc/config/darwin.c
++++ gcc/config/darwin.c
+@@ -1232,6 +1232,11 @@
+ void
+ darwin_mark_decl_preserved (const char *name)
+ {
++  /* Actually we shouldn't mark any local symbol this way, but for now
++     this only happens with ObjC meta-data.  */
++  if (darwin_label_is_anonymous_local_objc_name (name))
++    return;
++
+   fprintf (asm_out_file, "\t.no_dead_strip ");
+   assemble_name (asm_out_file, name);
+   fputc ('\n', asm_out_file);
+EOF
+  echo "${diffvar}" | patch -Np0 > /dev/null
+fi
+}
+
+
 GCC_native () {
     if [[ ! -x "$PREFIX"/bin/gcc ]]; then
         # Mount RamDisk
         mountRamDisk
 
         local GCC_DIR=$(ExtractTarball "gcc-${GCC_VERSION}.tar.bz2") || exit 1
+        cd ${GCC_DIR}
+        GCC_patch
 
         local BUILD_DIR="${DIR_BUILD}/$ARCH-gcc-native"
         rm -rf "$BUILD_DIR"
@@ -486,6 +512,8 @@ CompileCrossGCC () {
 
     # Extract the tarball
     local GCC_DIR=$(ExtractTarball "gcc-${GCC_VERSION}.tar.bz2")
+    cd ${GCC_DIR}
+    GCC_patch
 
     local BUILD_DIR="${DIR_BUILD}/$ARCH-gcc-cross"
     rm -rf "$BUILD_DIR"
