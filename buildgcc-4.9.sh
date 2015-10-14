@@ -32,8 +32,8 @@ export GCC_VERSION=${GCC_VERSION:-4.9.3}
 
 # Version of libraries are from ./contrib/download_prerequisites in gcc source directory
 export GMP_VERSION=${GMP_VERSION:-gmp-6.0.0a}
-export MPFR_VERSION=${MPFR_VERSION:-mpfr-3.1.2}
-export MPC_VERSION=${MPC_VERSION:-mpc-1.0.2}
+export MPFR_VERSION=${MPFR_VERSION:-mpfr-3.1.3}
+export MPC_VERSION=${MPC_VERSION:-mpc-1.0.3}
 export ISL_VERSION=${ISL_VERSION:-isl-0.12.2}
 export CLOOG_VERSION=${CLOOG_VERSION:-cloog-0.18.1}
 
