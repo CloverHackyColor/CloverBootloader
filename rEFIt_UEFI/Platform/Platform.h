@@ -168,6 +168,7 @@ Headers collection for procedures
 #define CPU_MODEL_HASWELL_ULT		0x45	/* Haswell ULT */
 #define CPU_MODEL_HASWELL_ULX		0x46	/* Haswell ULX CPUID_MODEL_CRYSTALWELL */
 #define CPU_MODEL_BROADWELL_HQ  0x47
+#define CPU_MODEL_BROADWELL_M   0x4E
 #define CPU_MODEL_SKYLAKE_S     0x5E
 
 #define CPU_VENDOR_INTEL        0x756E6547

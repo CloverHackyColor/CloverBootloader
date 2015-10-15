@@ -210,6 +210,7 @@ VOID GetCPUProperties (VOID)
       case CPU_MODEL_HASWELL_ULT:
       case CPU_MODEL_HASWELL_ULX:
       case CPU_MODEL_BROADWELL_HQ:
+      case CPU_MODEL_BROADWELL_M:
       case CPU_MODEL_SKYLAKE_S:
         msr = AsmReadMsr64(MSR_CORE_THREAD_COUNT);  //0x35
         gCPUStructure.Cores   = (UINT8)bitfield((UINT32)msr, 31, 16);  
@@ -356,6 +357,7 @@ VOID GetCPUProperties (VOID)
           case CPU_MODEL_HASWELL_ULT:
           case CPU_MODEL_HASWELL_ULX:
           case CPU_MODEL_BROADWELL_HQ:
+          case CPU_MODEL_BROADWELL_M:
           case CPU_MODEL_SKYLAKE_S:
             gCPUStructure.TSCFrequency = MultU64x32(gCPUStructure.CurrentSpeed, Mega); //MHz -> Hz
             gCPUStructure.CPUFrequency = gCPUStructure.TSCFrequency;
@@ -804,6 +806,7 @@ UINT16 GetAdvancedCpuType ()
           case CPU_MODEL_HASWELL_ULT:
           case CPU_MODEL_HASWELL_ULX:
           case CPU_MODEL_BROADWELL_HQ:
+          case CPU_MODEL_BROADWELL_M:
             if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i3"))
 							return 0x905; // Core i3 - Apple doesn't use it
             if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i5"))
@@ -875,6 +878,7 @@ MACHINE_TYPES GetDefaultModel()
       case CPU_MODEL_HASWELL_ULX:
       case CPU_MODEL_HASWELL_U5:
       case CPU_MODEL_BROADWELL_HQ:
+      case CPU_MODEL_BROADWELL_M:  
         DefaultType = MacBookPro111;
 				break;  
 			default:

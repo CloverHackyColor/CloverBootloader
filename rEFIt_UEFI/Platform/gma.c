@@ -116,6 +116,10 @@ static struct gma_gpu_t KnownGPUS[] = {
   { 0x1626, "Intel HD Graphics 6000"  }, // *
   { 0x162B, "Intel Iris"  }, // *
   { 0x1622, "Intel Iris Pro"  }, // *
+  { 0x1912, "Intel HD Graphics 530"  }, // *
+  { 0x1916, "Intel HD Graphics 520"  }, // * or Intel® Iris™ Graphics 540
+  { 0x191B, "Intel HD Graphics 530"  }, // *
+  { 0x1926, "Intel Iris Graphics 550"  }, // *
   // 0x0e08 - Xeon E5-1620 
 };
 
@@ -268,6 +272,11 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
     case 0x1626:
     case 0x162b:
     case 0x1622:
+    case 0x1912:
+    case 0x1916:
+    case 0x191b:
+    case 0x1926:
+  
       if (!gSettings.IgPlatform) {
         switch (gma_dev->device_id) {
           case 0x162:
