@@ -641,6 +641,8 @@ VOID MarkTableAsSaved(VOID *TableEntry)
 }
 
 STATIC CHAR8 NameSSDT[] = {0x08, 0x53, 0x53, 0x44, 0x54};
+STATIC CHAR8 NameCSDT[] = {0x08, 0x43, 0x53, 0x44, 0x54};
+STATIC CHAR8 NameTSDT[] = {0x08, 0x54, 0x53, 0x44, 0x54};
 // OperationRegion (SSDT, SystemMemory, 0xDF5DAC18, 0x038C)
 STATIC UINT8 NameSSDT2[] = {0x80, 0x53, 0x53, 0x44, 0x54};
 // OperationRegion (CSDT, SystemMemory, 0xDF5DBE18, 0x84)
@@ -661,7 +663,9 @@ VOID DumpChildSsdt(EFI_ACPI_DESCRIPTION_HEADER *TableEntry, CHAR16 *DirName, CHA
   End = Entry + TableEntry->Length;
   while (Entry < End) {
     
-    if (CompareMem(Entry, NameSSDT, 5) == 0) {
+    if ((CompareMem(Entry, NameSSDT, 5) == 0) ||
+        (CompareMem(Entry, NameCSDT, 5) == 0) ||
+        (CompareMem(Entry, NameTSDT, 5) == 0)) {
       pacLen = Entry[8];
       if (pacLen % 3 == 0) {
         DBG("\n Found hidden SSDT %d pcs\n", pacLen/3);
