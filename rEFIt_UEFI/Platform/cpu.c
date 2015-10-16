@@ -965,8 +965,10 @@ MACHINE_TYPES GetDefaultModel()
 				DefaultType = MacPro41;
 				break;
       case CPU_MODEL_HASWELL_U5:
-      case CPU_MODEL_SKYLAKE_S:
         DefaultType = iMac151;
+        break;
+      case CPU_MODEL_SKYLAKE_S:
+        DefaultType = iMac171;
         break;
       case CPU_MODEL_HASWELL:
       case CPU_MODEL_HASWELL_MB:

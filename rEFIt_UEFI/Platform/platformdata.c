@@ -48,6 +48,7 @@ CHAR8   *AppleFirmwareVersion[] =
   "IM141.88Z.0118.B00.1309031248",
   "IM142.88Z.0118.B00.1309031249",
   "IM151.88Z.0207.B00.1409291931", //correct data
+  "IM171.88Z.0105.B00.1509221819", //im171
 	"MP31.88Z.006C.B05.0802291410",
 	"MP41.88Z.0081.B07.0903051113",
 	"MP51.88Z.007F.B03.1010071432",   //007F.B00.1008031144"
@@ -85,6 +86,7 @@ CHAR8* AppleBoardID[] =    //Lion DR1 compatible
   "Mac-031B6874CF7F642A",  // IM141  - i5-4570S/i7-4770S
   "Mac-27ADBB7B4CEE8E61",  // IM142  - i5-4670/i7-4771
   "Mac-42FD25EABCABB274",  // IM151  - i5-4690 CPU @ 3.50GHz
+  "Mac-DB15BD556843C820",  // IM171  - i5-4690 CPU @ 3.50GHz
 	"Mac-F2268DC8",          // MP31   - xeon quad 02/09 conroe
 	"Mac-F4238CC8",          // MP41   - xeon wolfdale
 	"Mac-F221BEC8",          // MP51   - Xeon Nehalem 4 cores
@@ -123,6 +125,7 @@ CHAR8* AppleReleaseDate[] =
   "09/03/2013",
   "09/03/2013",  // IM142
   "09/29/2014",  // IM151  - correct date
+  "09/22/2015",  // IM171 
 	"02/29/08",
 	"03/05/09",
 	"10/07/10",
@@ -160,6 +163,7 @@ CHAR8* AppleProductName[] =
   "iMac14,1",
   "iMac14,2",
   "iMac15,1",
+  "iMac17,1",
 	"MacPro3,1",
 	"MacPro4,1",
 	"MacPro5,1",
@@ -191,6 +195,7 @@ CHAR8* AppleFamilies[] =
 	"iMac",
 	"iMac",
 	"iMac",
+  "iMac",
   "iMac",
   "iMac",
   "iMac",
@@ -235,6 +240,7 @@ CHAR8* AppleSystemVersion[] =
   "1.0",
   "1.0",
   "1.0",
+  "1.0", //IM171
 	"1.3",
 	"1.4",
 	"1.2",
@@ -272,6 +278,7 @@ CHAR8* AppleSerialNumber[] = //random generated
   "D25LHACKF8J3", // IM141 - i5-4570S/i7-4770S
   "D25LHACKF8JC", // IM142 - i5-4670/i7-4771
   "C02ND2VTFY11", // IM151 - New 5k iMac
+  "C02QFHACGG7L", // IM171 - Skylake iMac
 	"W88A77AA5J4",  // MP31  - xeon quad 02/09
 	"CT93051DK9Y",  // MP41
 	"C07J77F7F4MC", // MP51 C07J50F7F4MC  CK04000AHFC  "CG154TB9WU3"
@@ -310,6 +317,7 @@ CHAR8* AppleChassisAsset[] =
   "iMac-Aluminum",
   "iMac-Aluminum",
   "iMac-Aluminum", //iMac15,1
+  "iMac-Aluminum", //iMac17,1
 	"Pro-Enclosure",
 	"Pro-Enclosure",
   "Pro-Enclosure",
@@ -348,6 +356,7 @@ CHAR8* SmcPlatform[] =
   "NA",   // iMac14,1
   "NA",   // iMac14,2
   "j78",  // iMac15,1
+  "NA",   // iMac17,1
 	"m86",  // MacPro3,1,
 	"NA",   // MacPro4,1,
 	"k5",   // MacPro5,1
@@ -385,6 +394,7 @@ UINT8 SmcRevision[][6] = {
   { 0x02, 0x14, 0x0F, 0, 0, 0x19 },   // iMac14,1
   { 0x02, 0x15, 0x0F, 0, 0, 0x02 },   // iMac14,2
   { 0x02, 0x22, 0x0F, 0, 0, 0x16 },   // iMac15,1
+  { 0x02, 0x33, 0x0F, 0, 0, 0x09 },   // iMac17,1
 	{ 0x01, 0x25, 0x0F, 0, 0, 0x04 },   // MacPro3,1,
 	{ 0x01, 0x39, 0x0F, 0, 0, 0x05 },   // MacPro4,1,
 	{ 0x01, 0x39, 0x0F, 0, 0, 0x11 },   // MacPro5,1
@@ -423,6 +433,7 @@ UINT32 SmcConfig[] =
   0x79007,  //iMac14,1
   0x7a007,  //iMac14,2
   0xf00008,  //iMac15,1
+  0xf00009,  //iMac17,1
 	0x79001,  //"MacPro3,1",
 	0x7c002,  //"MacPro4,1",
 	0x7c002,  //"MacPro5,1"
@@ -495,7 +506,8 @@ SetDMISettingsForModel (
     case iMac141:
     case iMac142:
     case iMac151:
-      gSettings.ChassisType = MiscChassisTypeAllInOne; //13; 
+    case iMac171:
+      gSettings.ChassisType = MiscChassisTypeAllInOne; //13;
       gSettings.Mobile      = FALSE;
       break;
 
