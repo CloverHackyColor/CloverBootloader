@@ -643,10 +643,11 @@ VOID MarkTableAsSaved(VOID *TableEntry)
 STATIC CHAR8 NameSSDT[] = {0x08, 0x53, 0x53, 0x44, 0x54};
 STATIC CHAR8 NameCSDT[] = {0x08, 0x43, 0x53, 0x44, 0x54};
 STATIC CHAR8 NameTSDT[] = {0x08, 0x54, 0x53, 0x44, 0x54};
+
 // OperationRegion (SSDT, SystemMemory, 0xDF5DAC18, 0x038C)
 STATIC UINT8 NameSSDT2[] = {0x80, 0x53, 0x53, 0x44, 0x54};
 // OperationRegion (CSDT, SystemMemory, 0xDF5DBE18, 0x84)
-STATIC UINT8 NameCSDT[] = {0x80, 0x43, 0x53, 0x44, 0x54};
+STATIC UINT8 NameCSDT2[] = {0x80, 0x43, 0x53, 0x44, 0x54};
 
 VOID DumpChildSsdt(EFI_ACPI_DESCRIPTION_HEADER *TableEntry, CHAR16 *DirName, CHAR16 *FileNamePrefix, UINTN *SsdtCount)
 {
@@ -702,7 +703,7 @@ VOID DumpChildSsdt(EFI_ACPI_DESCRIPTION_HEADER *TableEntry, CHAR16 *DirName, CHA
       }
       Entry += 5;
     } else if (CompareMem(Entry, NameSSDT2, 5) == 0
-               || CompareMem(Entry, NameCSDT, 5) == 0)
+               || CompareMem(Entry, NameCSDT2, 5) == 0)
     {
       
       adr = ReadUnaligned32((UINT32*)(Entry + 7));
