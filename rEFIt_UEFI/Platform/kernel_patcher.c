@@ -655,6 +655,12 @@ BOOLEAN KernelPatchPm(VOID *kernelData)
       DBG("Kernel power management patch 10.10(data3) found and patched\n");
       return TRUE;
     }
+    // rehabman: change for 10.11.1 beta 15B38b
+    else if (0x00001390000000E2ULL == (*((UINT64 *)Ptr))) {
+      (*((UINT64 *)Ptr)) = 0x0000000000000000ULL;
+      DBG("Kernel power management patch 10.11.1(beta 15B38b)(data3) found and patched\n");
+      return TRUE;
+    }
     Ptr += 16;
   }
   DBG("Kernel power management patch region not found!\n");
