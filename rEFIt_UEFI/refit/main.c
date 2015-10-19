@@ -112,7 +112,8 @@ static VOID AboutRefit(VOID)
     AddMenuInfoLine(&AboutMenu, L"  Kabyl, pcj, jadran, Blackosx, STLVNUB, ycr.ru");
     AddMenuInfoLine(&AboutMenu, L"  FrodoKenny, skoczi, crazybirdy, Oscar09, xsmile");
     AddMenuInfoLine(&AboutMenu, L"  cparm, rehabman, nms42, sherlocks, Zenith432");
-    AddMenuInfoLine(&AboutMenu, L"  projectosx.com, applelife.ru");
+    AddMenuInfoLine(&AboutMenu, L"  stinga11, TheRacerMaster, solstice");
+    AddMenuInfoLine(&AboutMenu, L"  projectosx.com, applelife.ru, insanelymac.com");
     AddMenuInfoLine(&AboutMenu, L"");
     AddMenuInfoLine(&AboutMenu, L"Running on:");
     AddMenuInfoLine(&AboutMenu, PoolPrint(L" EFI Revision %d.%02d",
