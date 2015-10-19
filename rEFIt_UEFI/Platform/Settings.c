@@ -883,7 +883,7 @@ FillinKextPatches (
         Patches->KextPatches[Patches->NrKexts].Name  = NULL;
         Patches->KextPatches[Patches->NrKexts].Data  = NULL;
         Patches->KextPatches[Patches->NrKexts].Patch = NULL;
-        DBG ("KextToPatch %d:", i);
+        DBG ("KextsToPatch %d:", i);
 
         Dict = GetProperty (Prop2, "Name");
         if (Dict == NULL) {
@@ -911,10 +911,9 @@ FillinKextPatches (
         //
         //  Find and Replace must be in <data>...</data>
         //
-          Patches->KextPatches[Patches->NrKexts].Data    = GetDataSetting (Prop2, "Find", &j);
-          Patches->KextPatches[Patches->NrKexts].DataLen = j;
-          Patches->KextPatches[Patches->NrKexts].Patch   = GetDataSetting (Prop2, "Replace", &j);
-  //      }
+        Patches->KextPatches[Patches->NrKexts].Data    = GetDataSetting (Prop2, "Find", &j);
+        Patches->KextPatches[Patches->NrKexts].DataLen = j;
+        Patches->KextPatches[Patches->NrKexts].Patch   = GetDataSetting (Prop2, "Replace", &j);
 
         if ((Patches->KextPatches[Patches->NrKexts].DataLen != (INTN)j) || (j == 0)) {
           DBG (" - invalid Find/Replace data - skipping!\n");
@@ -1771,8 +1770,6 @@ GetEarlyUserSettings (
   TagPtr      Dict2;
   TagPtr      DictPointer;
   TagPtr      Prop;
-//CHAR8       ANum[4];
-//UINTN       i      = 0;
 
   gSettings.KextPatchesAllowed              = TRUE;
   gSettings.KernelAndKextPatches.KPAppleRTC = TRUE;
@@ -1787,18 +1784,6 @@ GetEarlyUserSettings (
       if (Prop != NULL) {
         GlobalConfig.Timeout = (INT32)GetPropertyInteger (Prop, GlobalConfig.Timeout);
         DBG ("timeout set to %d\n", GlobalConfig.Timeout);
- /*
-        if (Prop->type == kTagTypeInteger) {
-          GlobalConfig.Timeout = (INT32)(UINTN)Prop->string;
-          DBG ("timeout set to %d\n", GlobalConfig.Timeout);
-        } else if ((Prop->type == kTagTypeString) && Prop->string) {
-          if (Prop->string[0] == '-') {
-            GlobalConfig.Timeout = -1;
-          } else {
-            GlobalConfig.Timeout = (INTN)AsciiStrDecimalToUintn (Prop->string);
-          }
-        }
-*/
       }
 
       Prop = GetProperty (DictPointer, "Arguments");

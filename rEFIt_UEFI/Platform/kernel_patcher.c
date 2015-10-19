@@ -802,7 +802,7 @@ BOOLEAN KernelHaswellEPatch(VOID *KernelData)
     if (Bytes[Index] == 0x74 && Bytes[Index + 1] == 0x11 && Bytes[Index + 2] == 0x83 && Bytes[Index + 3] == 0xF8 && Bytes[Index + 4] == 0x3C) {
       Bytes[Index + 4] = 0x3F;
 
-      DBG("Found Haswell-E pattern #1; patched.\n");
+/*      DBG("Found Haswell-E pattern #1; patched.\n");
 
       if (PatchApplied) {
         break;
@@ -813,8 +813,8 @@ BOOLEAN KernelHaswellEPatch(VOID *KernelData)
     
     if (Bytes[Index] == 0xEB && Bytes[Index + 1] == 0x0A && Bytes[Index + 2] == 0x83 && Bytes[Index + 3] == 0xF8 && Bytes[Index + 4] == 0x3A) {
       Bytes[Index + 4] = 0x3F;
-
-      DBG("Found Haswell-E pattern #2; patched.\n");
+*/
+      DBG("Found Haswell-E pattern; patched.\n");
 
       if (PatchApplied) {
         break;
