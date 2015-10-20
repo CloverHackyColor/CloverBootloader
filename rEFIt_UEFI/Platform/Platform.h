@@ -1229,7 +1229,7 @@ typedef struct {
 
 // The maximum number of RAM slots to detect
 // even for 3-channels chipset X58 there are no more then 8 slots
-#define MAX_RAM_SLOTS 8
+#define MAX_RAM_SLOTS 24
 // The maximum sane frequency for a RAM module
 #define MAX_RAM_FREQUENCY 5000
 

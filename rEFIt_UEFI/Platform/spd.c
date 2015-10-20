@@ -545,7 +545,7 @@ VOID read_smb(EFI_PCI_IO_PROTOCOL *PciIo)
   if (!TotalSlotsCount) {
     TotalSlotsCount = MAX_RAM_SLOTS;
   } */
-  TotalSlotsCount = MAX_RAM_SLOTS;
+  TotalSlotsCount = 8; //MAX_RAM_SLOTS;  -- spd can read only 8 slots
   DBG("Slots to scan [%d]...\n", TotalSlotsCount);
   for (i = 0; i <  TotalSlotsCount; i++){
   //<==
