@@ -2032,7 +2032,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     return Status;
   }
   //  DBG("DBG: messages\n");
-  if (!GlobalConfig.FastBoot  && GlobalConfig.Timeout>0) {
+  if (!GlobalConfig.NoEarlyProgress && !GlobalConfig.FastBoot  && GlobalConfig.Timeout>0) {
     FirstMessage = PoolPrint(L"   Welcome to Clover %s   ", FIRMWARE_REVISION);
     i = (UGAWidth - StrLen(FirstMessage) * GlobalConfig.CharWidth) >> 1;
     DrawTextXY(FirstMessage, i, UGAHeight >> 1, X_IS_CENTER);
@@ -2075,7 +2075,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   gCPUStructure.ExternalClock = (UINT32)DivU64x32(gCPUStructure.FSBFrequency, kilo);
   gCPUStructure.MaxSpeed = (UINT32)DivU64x32(gCPUStructure.TSCFrequency + (Mega >> 1), Mega);
 
-  if (!GlobalConfig.FastBoot && GlobalConfig.Timeout>0) {
+  if (!GlobalConfig.NoEarlyProgress && !GlobalConfig.FastBoot && GlobalConfig.Timeout>0) {
     FirstMessage = PoolPrint(L"... user settings ...");
     i = (UGAWidth - StrLen(FirstMessage) * GlobalConfig.CharWidth) >> 1;
     DrawTextXY(FirstMessage, i, (UGAHeight >> 1) + 20, X_IS_CENTER);
@@ -2141,7 +2141,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
      GetEfiBootDeviceFromNvram();
   }
   
-  if (!GlobalConfig.FastBoot && GlobalConfig.Timeout>0) {
+  if (!GlobalConfig.NoEarlyProgress && !GlobalConfig.FastBoot && GlobalConfig.Timeout>0) {
     FirstMessage = PoolPrint(L"... scan entries ...");
     i = (UGAWidth - StrLen(FirstMessage) * GlobalConfig.CharWidth) >> 1;
     DrawTextXY(FirstMessage, i, (UGAHeight >> 1) + 20, X_IS_CENTER);
@@ -2230,7 +2230,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         AddMenuEntry(&MainMenu, &MenuEntryShutdown);
       }
 
-      if (GlobalConfig.Timeout>0) {
+      if (!GlobalConfig.NoEarlyProgress && !GlobalConfig.FastBoot && GlobalConfig.Timeout>0) {
         FirstMessage = PoolPrint(L"...theme %s ...", GlobalConfig.Theme);
         i = (UGAWidth - StrLen(FirstMessage) * GlobalConfig.CharWidth) >> 1;
         DrawTextXY(FirstMessage, i, (UGAHeight >> 1) + 20, X_IS_CENTER);

@@ -1830,6 +1830,11 @@ GetEarlyUserSettings (
         GlobalConfig.FastBoot       = TRUE;
       }
 
+      Prop = GetProperty (DictPointer, "NoEarlyProgress");
+      if (IsPropertyTrue (Prop)) {
+          GlobalConfig.NoEarlyProgress = TRUE;
+      }
+
       Prop = GetProperty (DictPointer, "NeverHibernate");
       if (IsPropertyTrue (Prop)) {
         GlobalConfig.NeverHibernate = TRUE;

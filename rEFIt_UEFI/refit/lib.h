@@ -435,6 +435,7 @@ typedef struct {
   INTN        TileXSpace;
   INTN        TileYSpace;
   BOOLEAN     Proportional;
+  BOOLEAN     NoEarlyProgress;
 } REFIT_CONFIG;
 
 // types
