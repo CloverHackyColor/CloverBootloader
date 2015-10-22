@@ -88,12 +88,12 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
   switch (gCPUStructure.Model) {
     case CPU_MODEL_HASWELL:
     case CPU_MODEL_IVY_BRIDGE_E5:
-    case CPU_MODEL_HASWELL_MB:
+    case CPU_MODEL_HASWELL_E:
     case CPU_MODEL_HASWELL_ULT:
-    case CPU_MODEL_HASWELL_ULX:
+    case CPU_MODEL_CRYSTALWELL:
     case CPU_MODEL_HASWELL_U5:
     case CPU_MODEL_BROADWELL_HQ:
-    case CPU_MODEL_BROADWELL_M:
+    case CPU_MODEL_SKYLAKE_U:
     case CPU_MODEL_SKYLAKE_S:
     case CPU_MODEL_ATOM_3700:
     {
@@ -214,12 +214,12 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
           case CPU_MODEL_IVY_BRIDGE:
           case CPU_MODEL_HASWELL:
           case CPU_MODEL_IVY_BRIDGE_E5:  
-          case CPU_MODEL_HASWELL_MB:
+          case CPU_MODEL_HASWELL_E:
           case CPU_MODEL_HASWELL_ULT:
-          case CPU_MODEL_HASWELL_ULX:
+          case CPU_MODEL_CRYSTALWELL:
           case CPU_MODEL_HASWELL_U5:
           case CPU_MODEL_BROADWELL_HQ:
-          case CPU_MODEL_BROADWELL_M:
+          case CPU_MODEL_SKYLAKE_U:
           case CPU_MODEL_SKYLAKE_S:
           case CPU_MODEL_ATOM_3700:
 					{
@@ -261,13 +261,13 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
                 if ((gCPUStructure.Model == CPU_MODEL_SANDY_BRIDGE) ||
                     (gCPUStructure.Model == CPU_MODEL_IVY_BRIDGE) ||
                     (gCPUStructure.Model == CPU_MODEL_HASWELL) ||
-                    (gCPUStructure.Model == CPU_MODEL_HASWELL_MB) ||
+                    (gCPUStructure.Model == CPU_MODEL_HASWELL_E) ||
                     (gCPUStructure.Model == CPU_MODEL_HASWELL_ULT) ||
-                    (gCPUStructure.Model == CPU_MODEL_HASWELL_ULX) ||
+                    (gCPUStructure.Model == CPU_MODEL_CRYSTALWELL) ||
                     (gCPUStructure.Model == CPU_MODEL_IVY_BRIDGE_E5) ||
                     (gCPUStructure.Model == CPU_MODEL_HASWELL_U5) ||
                     (gCPUStructure.Model == CPU_MODEL_BROADWELL_HQ) ||
-                    (gCPUStructure.Model == CPU_MODEL_BROADWELL_M) ||
+                    (gCPUStructure.Model == CPU_MODEL_SKYLAKE_U) ||
                     (gCPUStructure.Model == CPU_MODEL_ATOM_3700) ||
                     (gCPUStructure.Model == CPU_MODEL_SKYLAKE_S) ||
                     (gCPUStructure.Model == CPU_MODEL_JAKETOWN)) {

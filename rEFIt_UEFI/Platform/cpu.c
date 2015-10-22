@@ -206,11 +206,11 @@ VOID GetCPUProperties (VOID)
       case CPU_MODEL_IVY_BRIDGE_E5:
       case CPU_MODEL_HASWELL:
       case CPU_MODEL_HASWELL_U5:
-      case CPU_MODEL_HASWELL_MB:
+      case CPU_MODEL_HASWELL_E:
       case CPU_MODEL_HASWELL_ULT:
-      case CPU_MODEL_HASWELL_ULX:
+      case CPU_MODEL_CRYSTALWELL:
       case CPU_MODEL_BROADWELL_HQ:
-      case CPU_MODEL_BROADWELL_M:
+      case CPU_MODEL_SKYLAKE_U:
       case CPU_MODEL_SKYLAKE_S:
         msr = AsmReadMsr64(MSR_CORE_THREAD_COUNT);  //0x35
         gCPUStructure.Cores   = (UINT8)bitfield((UINT32)msr, 31, 16);  
@@ -353,11 +353,11 @@ VOID GetCPUProperties (VOID)
           case CPU_MODEL_ATOM_3700:
           case CPU_MODEL_HASWELL:
           case CPU_MODEL_HASWELL_U5:
-          case CPU_MODEL_HASWELL_MB:
+          case CPU_MODEL_HASWELL_E:
           case CPU_MODEL_HASWELL_ULT:
-          case CPU_MODEL_HASWELL_ULX:
+          case CPU_MODEL_CRYSTALWELL:
           case CPU_MODEL_BROADWELL_HQ:
-          case CPU_MODEL_BROADWELL_M:
+          case CPU_MODEL_SKYLAKE_U:
           case CPU_MODEL_SKYLAKE_S:
             gCPUStructure.TSCFrequency = MultU64x32(gCPUStructure.CurrentSpeed, Mega); //MHz -> Hz
             gCPUStructure.CPUFrequency = gCPUStructure.TSCFrequency;
@@ -798,15 +798,16 @@ UINT16 GetAdvancedCpuType ()
               return 0x606;
             }
             return 0x706;
+          case CPU_MODEL_HASWELL_E:
+            return 0x507;
           case CPU_MODEL_IVY_BRIDGE_E5:
             return 0xA01;
           case CPU_MODEL_ATOM_3700:
           case CPU_MODEL_HASWELL:
-          case CPU_MODEL_HASWELL_MB:
           case CPU_MODEL_HASWELL_ULT:
-          case CPU_MODEL_HASWELL_ULX:
+          case CPU_MODEL_CRYSTALWELL:
           case CPU_MODEL_BROADWELL_HQ:
-          case CPU_MODEL_BROADWELL_M:
+          case CPU_MODEL_SKYLAKE_U:
             if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i3"))
 							return 0x905; // Core i3 - Apple doesn't use it
             if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i5"))
@@ -870,15 +871,15 @@ MACHINE_TYPES GetDefaultModel()
         DefaultType = MacBookAir52;
 				break;
       case CPU_MODEL_HASWELL:
-      case CPU_MODEL_HASWELL_MB:
+      case CPU_MODEL_HASWELL_E:
       case CPU_MODEL_ATOM_3700:
         DefaultType = MacBookAir62;
 				break;  
       case CPU_MODEL_HASWELL_ULT:
-      case CPU_MODEL_HASWELL_ULX:
+      case CPU_MODEL_CRYSTALWELL:
       case CPU_MODEL_HASWELL_U5:
       case CPU_MODEL_BROADWELL_HQ:
-      case CPU_MODEL_BROADWELL_M:  
+      case CPU_MODEL_SKYLAKE_U:  
         DefaultType = MacBookPro111;
 				break;  
 			default:
@@ -971,7 +972,7 @@ MACHINE_TYPES GetDefaultModel()
         DefaultType = iMac171;
         break;
       case CPU_MODEL_HASWELL:
-      case CPU_MODEL_HASWELL_MB:
+      case CPU_MODEL_HASWELL_E:
         DefaultType = iMac142;
         if (AsciiStrStr(gCPUStructure.BrandString, "70S")) {
         	DefaultType = iMac141;

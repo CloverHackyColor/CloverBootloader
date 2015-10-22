@@ -163,13 +163,21 @@ Headers collection for procedures
 #define CPU_MODEL_HASWELL       0x3C  /* Haswell DT */
 #define CPU_MODEL_HASWELL_U5    0x3D  /* Haswell U5  5th generation Broadwell*/
 #define CPU_MODEL_IVY_BRIDGE_E5 0x3E  /* Ivy Bridge Xeon UN */
-#define CPU_MODEL_HASWELL_MB		0x3F	/* Haswell MB */
+#define CPU_MODEL_HASWELL_E     0x3F	/* Haswell Extreme */
 //#define CPU_MODEL_HASWELL_H		0x??	// Haswell H
 #define CPU_MODEL_HASWELL_ULT		0x45	/* Haswell ULT */
-#define CPU_MODEL_HASWELL_ULX		0x46	/* Haswell ULX CPUID_MODEL_CRYSTALWELL */
+#define CPU_MODEL_CRYSTALWELL		0x46	/* Haswell ULX CPUID_MODEL_CRYSTALWELL */
 #define CPU_MODEL_BROADWELL_HQ  0x47
-#define CPU_MODEL_BROADWELL_M   0x4E
+#define CPU_MODEL_AIRMONT       0x4C
+#define CPU_MODEL_AVOTON        0x4D
+#define CPU_MODEL_SKYLAKE_U     0x4E
+#define CPU_MODEL_BROADWELL_DE  0x56
+#define CPU_MODEL_KNIGHT        0x57
+#define CPU_MODEL_MOOREFIELD    0x5A
+#define CPU_MODEL_GOLDMONT      0x5C
+#define CPU_MODEL_ATOM_X3       0x5D
 #define CPU_MODEL_SKYLAKE_S     0x5E
+#define CPU_MODEL_CANNONLAKE    0x66
 
 #define CPU_VENDOR_INTEL        0x756E6547
 #define CPU_VENDOR_AMD          0x68747541
