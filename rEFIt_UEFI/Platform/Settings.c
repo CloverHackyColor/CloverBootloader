@@ -5020,13 +5020,13 @@ GetDevices ()
               info        = NULL;
               gfx->Vendor = Ati;
 
-              for (i = 0; radeon_cards[i].device_id; i++) {
+              i = 0;
+              do {
                 info      = &radeon_cards[i];
-
                 if (info->device_id == Pci.Hdr.DeviceId) {
-                   break;
+                  break;
                 }
-              }
+              } while (radeon_cards[i++].device_id != 0);
 
               AsciiSPrint (gfx->Model,  64, "%a", info->model_name);
               AsciiSPrint (gfx->Config, 64, "%a", card_configs[info->cfg_name].name);
