@@ -443,7 +443,7 @@ radeon_card_info_t radeon_cards[] = {
 	{ 0x710C, 0x00000000, CHIP_FAMILY_R520,  "ATI Radeon HD Desktop ",	kNull		},
 	{ 0x710E, 0x00000000, CHIP_FAMILY_R520,  "ATI Radeon HD Desktop ",	kNull		},
 	{ 0x710F, 0x00000000, CHIP_FAMILY_R520,  "ATI Radeon HD Desktop ",	kNull		},
-
+*/
 	// RV515
 	{ 0x7140, 0x00000000, CHIP_FAMILY_RV515, "ATI Radeon HD Desktop ",	kCaretta	},
 	{ 0x7141, 0x00000000, CHIP_FAMILY_RV515, "ATI Radeon HD Desktop ",	kCaretta	},
@@ -470,7 +470,7 @@ radeon_card_info_t radeon_cards[] = {
 	{ 0x7181, 0x00000000, CHIP_FAMILY_RV515, "ATI Radeon HD Desktop ",	kCaretta	},
 	{ 0x7183, 0x00000000, CHIP_FAMILY_RV515, "ATI Radeon HD Desktop ",	kCaretta	},
 	{ 0x7186, 0x00000000, CHIP_FAMILY_RV515, "ATI Radeon HD Mobile ",	kCaretta	},
-	{ 0x7187, 0x00000000, CHIP_FAMILY_RV515, "ATI Radeon HD Desktop ",	kCaretta	},
+	{ 0x7187, 0x00000000, CHIP_FAMILY_RV515, "ATI Radeon HD1900 ",	kCaretta	},
 	{ 0x7188, 0x00000000, CHIP_FAMILY_RV515, "ATI Radeon HD2300 Mobile ",	kCaretta	},
 	{ 0x718A, 0x00000000, CHIP_FAMILY_RV515, "ATI Radeon HD Mobile ",	kCaretta	},
 	{ 0x718B, 0x00000000, CHIP_FAMILY_RV515, "ATI Radeon HD Mobile ",	kCaretta	},
@@ -505,7 +505,7 @@ radeon_card_info_t radeon_cards[] = {
 	{ 0x7200, 0x00000000, CHIP_FAMILY_RV515, "ATI Radeon HD Desktop ",	kWormy		},
 	{ 0x7210, 0x00000000, CHIP_FAMILY_RV515, "ATI Radeon HD Mobile ",	kWormy		},
 	{ 0x7211, 0x00000000, CHIP_FAMILY_RV515, "ATI Radeon HD Mobile ",	kWormy		},
-
+/*
 	// R580
 	{ 0x7240, 0x00000000, CHIP_FAMILY_R580,  "ATI Radeon HD Desktop ",	kAlopias	},
 	{ 0x7243, 0x00000000, CHIP_FAMILY_R580,  "ATI Radeon HD Desktop ",	kAlopias	},
