@@ -309,6 +309,8 @@
 		<false/>
 		<key>UseIntelHDMI</key>
 		<false/>
+		<key>#SetIntelBrightness</key>
+		<false/>
 		<key>#ForceHPET</key>
 		<false/>
 		<key>#Properties</key>

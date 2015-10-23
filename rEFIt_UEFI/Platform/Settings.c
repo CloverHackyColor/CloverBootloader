@@ -3480,6 +3480,9 @@ GetUserSettings(
       Prop = GetProperty (DictPointer, "Inject");
       gSettings.StringInjector = IsPropertyTrue (Prop);
 
+      Prop = GetProperty (DictPointer, "SetIntelBacklight");
+      gSettings.IntelBacklight = IsPropertyTrue (Prop);
+
       Prop = GetProperty (DictPointer, "Properties");
       if (Prop != NULL) {
         EFI_PHYSICAL_ADDRESS  BufferPtr = EFI_SYSTEM_TABLE_MAX_ADDRESS; //0xFE000000;
@@ -5255,6 +5258,7 @@ SetDevices (
         if (/* gSettings.GraphicsInjector && */
             (Pci.Hdr.ClassCode[2] == PCI_CLASS_DISPLAY) &&
             (Pci.Hdr.ClassCode[1] == PCI_CLASS_DISPLAY_VGA)) {
+          UINT32 LevelW = 0xC0000000;
           
 //        gGraphics.DeviceID = Pci.Hdr.DeviceId;
           
@@ -5277,6 +5281,17 @@ SetDevices (
                 MsgLog ("Intel GFX revision  =0x%x\n", PCIdevice.revision);
               } else {
                 MsgLog ("Intel GFX injection not set\n");
+              }
+              if (gSettings.IntelBacklight) {
+                /*Status = */PciIo->Mem.Write(
+                                              PciIo,
+                                              EfiPciIoWidthUint32,
+                                              0,
+                                              0xC8250,
+                                              1,
+                                              &LevelW
+                                              );
+
               }
 
               break;

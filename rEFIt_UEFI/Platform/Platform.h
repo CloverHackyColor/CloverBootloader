@@ -842,6 +842,7 @@ typedef struct {
 #endif
   UINT16                  BacklightLevel;
   BOOLEAN                 BacklightLevelConfig;
+  BOOLEAN                 IntelBacklight;
   BOOLEAN                 MemoryFix;
   BOOLEAN                 WithKexts;
   BOOLEAN                 WithKextsIfNoFakeSMC;
@@ -851,7 +852,7 @@ typedef struct {
   // GUI parameters
   BOOLEAN                 Debug;
   BOOLEAN                 Proportional;
-  UINT8                   Pad22[6];
+  UINT8                   Pad22[5];
   
   //ACPI
   UINT64	              ResetAddr;
