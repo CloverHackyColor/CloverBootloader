@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-06-04 16:43+0300\n"
-"PO-Revision-Date: 2014-02-13 18:34+0000\n"
+"PO-Revision-Date: 2015-10-25 11:16+0000\n"
 "Last-Translator: oswaldini <oswaldinimtb@gmail.com>\n"
 "Language-Team: pl <pl@li.org>\n"
 "Language: pl\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
 "|| n%100>=20) ? 1 : 2);\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1392316454.0\n"
+"X-POOTLE-MTIME: 1445771815.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -99,10 +99,9 @@ msgstr "Główne funkcje:"
 #
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:21
-#, fuzzy
 #| msgid "- boot into 10.4 - 10.8 OSX, Windows EFI and Linux EFI"
 msgid "- boot into 10.4 - 10.9 OSX, Windows EFI and Linux EFI"
-msgstr "- uruchamianie Mac OS X 10.4 - 10.8, Windows EFI oraz Linux EFI"
+msgstr "- uruchamianie Mac OS X 10.4 - 10.9, Windows EFI oraz Linux EFI"
 
 #
 #. type: Content of: <html><body><p>
@@ -696,11 +695,11 @@ msgstr ""
 #: Resources/templates/Localizable.strings:131
 #, no-wrap
 msgid "BGM256"
-msgstr ""
+msgstr "BGM256"
 
 #. type: "BGM256_description"
 #: Resources/templates/Localizable.strings:132
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "BGM (Black Green and Moody) theme from Blackosx,\n"
 #| "Install to /EFI/CLOVER/themes/BGM"
@@ -708,18 +707,18 @@ msgid ""
 "BGM A version of BGM with 256px icons theme from Blackosx,\n"
 "Install to /EFI/CLOVER/themes/BGM256"
 msgstr ""
-"Motyw BGM (Black Green i Moody) od Blackosx,\n"
-"Lokalizacja motywu: /EFI/CLOVER/themes/BGM"
+"Motyw BGM wersja z ikonami 256px od Blackosx,\n"
+"Lokalizacja motywu: /EFI/CLOVER/themes/BGM256"
 
 #. type: "chrome_title"
 #: Resources/templates/Localizable.strings:135
 #, no-wrap
 msgid "chrome"
-msgstr ""
+msgstr "chrome"
 
 #. type: "chrome_description"
 #: Resources/templates/Localizable.strings:136
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "Orange theme from dwm,\n"
 #| "Install to /EFI/CLOVER/themes/orange"
@@ -727,19 +726,19 @@ msgid ""
 "chrome theme from chris1111,\n"
 "Install to /EFI/CLOVER/themes/chrome"
 msgstr ""
-"Motyw Orange od dwm,\n"
-"Lokalizacja motywu: /EFI/CLOVER/themes/orange"
+"Motyw chrome od chris1111,\n"
+"Lokalizacja motywu: /EFI/CLOVER/themes/chrome"
 
 #. type: "CloverX_title"
 #: Resources/templates/Localizable.strings:139
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Clover"
 msgid "CloverX"
-msgstr "Clover"
+msgstr "CloverX"
 
 #. type: "CloverX_description"
 #: Resources/templates/Localizable.strings:140
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "Orange theme from dwm,\n"
 #| "Install to /EFI/CLOVER/themes/orange"
@@ -747,18 +746,18 @@ msgid ""
 "CloverX theme from =)(=,\n"
 "Install to /EFI/CLOVER/themes/CloverX"
 msgstr ""
-"Motyw Orange od dwm,\n"
-"Lokalizacja motywu: /EFI/CLOVER/themes/orange"
+"Motyw CloverX od =)(=,\n"
+"Lokalizacja motywu: /EFI/CLOVER/themes/ClocerX"
 
 #. type: "dawn_title"
 #: Resources/templates/Localizable.strings:143
 #, no-wrap
 msgid "dawn"
-msgstr ""
+msgstr "dawn"
 
 #. type: "dawn_description"
 #: Resources/templates/Localizable.strings:144
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "Orange theme from dwm,\n"
 #| "Install to /EFI/CLOVER/themes/orange"
@@ -766,18 +765,18 @@ msgid ""
 "dawn theme from Slice,\n"
 "Install to /EFI/CLOVER/themes/dawn"
 msgstr ""
-"Motyw Orange od dwm,\n"
-"Lokalizacja motywu: /EFI/CLOVER/themes/orange"
+"Motyw dawn od Slice,\n"
+"Lokalizacja motywu: /EFI/CLOVER/themes/dawn"
 
 #. type: "embedded_title"
 #: Resources/templates/Localizable.strings:147
 #, no-wrap
 msgid "embedded"
-msgstr ""
+msgstr "embedded"
 
 #. type: "embedded_description"
 #: Resources/templates/Localizable.strings:148
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "Default black_green theme from Blackosx,\n"
 #| "Install to /EFI/CLOVER/themes/black_green"
@@ -785,18 +784,18 @@ msgid ""
 "embedded theme from Blackosx,\n"
 "Install to /EFI/CLOVER/themes/embedded"
 msgstr ""
-"Domyślny motyw black_green od Blackosx,\n"
-"Lokalizacja motywu: /EFI/CLOVER/themes/black_green."
+"Domyślny motyw embedded  od Blackosx,\n"
+"Lokalizacja motywu: /EFI/CLOVER/themes/embedded"
 
 #. type: "gold_clover_title"
 #: Resources/templates/Localizable.strings:151
 #, no-wrap
 msgid "gold_clover"
-msgstr ""
+msgstr "gold_clover"
 
 #. type: "gold_clover_description"
 #: Resources/templates/Localizable.strings:152
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "Wooden theme from iROOTa,\n"
 #| "Install to /EFI/CLOVER/themes/wooden."
@@ -804,8 +803,8 @@ msgid ""
 "gold_clover theme from chris1111,\n"
 "Install to /EFI/CLOVER/themes/gold_clover"
 msgstr ""
-"Motyw Wooden od iROOTa,\n"
-"Lokalizacja instalacji motywu: /EFI/CLOVER/themes/wooden."
+"Motyw gold_clover od chris1111,\n"
+"Lokalizacja instalacji motywu: /EFI/CLOVER/themes/chris1111"
 
 #. type: "iclover_title"
 #: Resources/templates/Localizable.strings:155
@@ -827,11 +826,11 @@ msgstr ""
 #: Resources/templates/Localizable.strings:159
 #, no-wrap
 msgid "ios7"
-msgstr ""
+msgstr "ios7"
 
 #. type: "ios7_description"
 #: Resources/templates/Localizable.strings:160
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "Grey style theme by winlog,\n"
 #| "Install to /EFI/CLOVER/themes/iclover"
@@ -839,8 +838,8 @@ msgid ""
 "ios7 theme by Ukr55, Winlog,\n"
 "Install to /EFI/CLOVER/themes/ios7"
 msgstr ""
-"Motyw Grey od winlog,\n"
-"Lokalizacja motywu: /EFI/CLOVER/themes/iclover."
+"Motyw ios7 od w Ukr55 i Winlog,\n"
+"Lokalizacja motywu: /EFI/CLOVER/themes/ios7."
 
 #. type: "magnifico_title"
 #: Resources/templates/Localizable.strings:163
@@ -942,11 +941,11 @@ msgstr ""
 #: Resources/templates/Localizable.strings:187
 #, no-wrap
 msgid "random"
-msgstr ""
+msgstr "random"
 
 #. type: "random_description"
 #: Resources/templates/Localizable.strings:188
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "Orange theme from dwm,\n"
 #| "Install to /EFI/CLOVER/themes/orange"
@@ -954,8 +953,8 @@ msgid ""
 "random theme from Slice,\n"
 "Install to /EFI/CLOVER/themes/random choose a theme from others"
 msgstr ""
-"Motyw Orange od dwm,\n"
-"Lokalizacja motywu: /EFI/CLOVER/themes/orange"
+"Motyw random od Slice,\n"
+"Lokalizacja motywu: /EFI/CLOVER/themes/random"
 
 #. type: "thinkpad_title"
 #: Resources/templates/Localizable.strings:191
@@ -1059,11 +1058,11 @@ msgstr ""
 #: Resources/templates/Localizable.strings:215
 #, no-wrap
 msgid "sketched"
-msgstr ""
+msgstr "sketched"
 
 #. type: "sketched_description"
 #: Resources/templates/Localizable.strings:216
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "OS One theme from Kyndder,\n"
 #| "Install to /EFI/CLOVER/themes/os_one"
@@ -1071,18 +1070,18 @@ msgid ""
 "sketched theme from kyndder,\n"
 "Install to /EFI/CLOVER/themes/sketched."
 msgstr ""
-"Motyw OS One od Kyndder,\n"
-"Lokalizacja instalacji motywu: /EFI/CLOVER/themes/os_one"
+"Motyw sketched od kyndder,\n"
+"Lokalizacja instalacji motywu: /EFI/CLOVER/themes/sketched"
 
 #. type: "Space_title"
 #: Resources/templates/Localizable.strings:219
 #, no-wrap
 msgid "Space"
-msgstr ""
+msgstr "Space"
 
 #. type: "Space_description"
 #: Resources/templates/Localizable.strings:220
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "Orange theme from dwm,\n"
 #| "Install to /EFI/CLOVER/themes/orange"
@@ -1090,18 +1089,18 @@ msgid ""
 "Space theme from chris1111,\n"
 "Install to /EFI/CLOVER/themes/Space"
 msgstr ""
-"Motyw Orange od dwm,\n"
-"Lokalizacja motywu: /EFI/CLOVER/themes/orange"
+"Motyw Space od chris1111,\n"
+"Lokalizacja motywu: /EFI/CLOVER/themes/Space"
 
 #. type: "steampunkblack_title"
 #: Resources/templates/Localizable.strings:223
 #, no-wrap
 msgid "steampunkblack"
-msgstr ""
+msgstr "steampunkblack"
 
 #. type: "steampunkblack_description"
 #: Resources/templates/Localizable.strings:224
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "Bootcamp theme from Bijo,\n"
 #| "Install to /EFI/CLOVER/themes/bootcamp"
@@ -1109,8 +1108,8 @@ msgid ""
 "steampunkblack theme from medik,\n"
 "Install to /EFI/CLOVER/themes/steampunkblack"
 msgstr ""
-"Motyw BootCamp od Bijo,\n"
-"Lokalizacja instalacji motywu: /EFI/CLOVER/themes/bootcamp."
+"Motyw steampunkblack od medik,\n"
+"Lokalizacja motywu: /EFI/CLOVER/themes/steampunkblack"
 
 #. type: "rc.scripts.on.target_title"
 #: Resources/templates/Localizable.strings:234
