@@ -1351,6 +1351,7 @@ static nvidia_pci_info_t nvidia_card_generic[] = {
 	{ 0x10DE17BE,	"GM107 CS1" }, // GM107
 //	{ 0x10DE17C1,	"Graphics Device" }, //
 //	{ 0x10DE17C2,	"Graphics Device" }, //
+  { 0x10DE17C8,	"GeForce GTX 980 TI" }, //
 //	{ 0x10DE17EE,	"Graphics Device" }, //
 //	{ 0x10DE17EF,	"Graphics Device" }, //
 	{ 0x10DE17F0,	"Quadro M6000" }
