@@ -280,7 +280,11 @@ VOID GetCPUProperties (VOID)
     gCPUStructure.Threads = 4;
   }
   
-
+  //workaround for Xeon Harpertown
+  if (AsciiStrStr(gCPUStructure.BrandString, "E5405")) {
+    gCPUStructure.Cores   = 4;
+    gCPUStructure.Threads = 4;
+  }
 
 	//get Min and Max Ratio Cpu/Bus
 /*  if (QEMU) {
@@ -316,7 +320,7 @@ VOID GetCPUProperties (VOID)
               }
             }
      //       
-            msr = AsmReadMsr64(MSR_PLATFORM_INFO);            
+            msr = AsmReadMsr64(MSR_PLATFORM_INFO);     //0xCE
             gCPUStructure.MinRatio = (UINT8)RShiftU64(msr, 40) & 0xff;
             // msr = AsmReadMsr64(MSR_IA32_PERF_STATUS);
             gCPUStructure.MaxRatio = (UINT8)(RShiftU64(msr, 8) & 0xff);
@@ -463,8 +467,13 @@ VOID GetCPUProperties (VOID)
               DBG("wrong MaxRatio = %d.%d, corrected\n", gCPUStructure.MaxRatio, gCPUStructure.SubDivider * 5);
               gCPUStructure.MaxRatio = (UINT32)DivU64x32(gCPUStructure.TSCFrequency, 200 * Mega);
             }
-            gCPUStructure.MaxRatio = gCPUStructure.MaxRatio * 10 + gCPUStructure.SubDivider * 5; 
-            gCPUStructure.Turbo4 = (UINT16)(gCPUStructure.MaxRatio + 10);
+            gCPUStructure.MaxRatio = gCPUStructure.MaxRatio * 10 + gCPUStructure.SubDivider * 5;
+            if (TurboMsr == 6) {
+              TurboMsr = AsmReadMsr64(MSR_PLATFORM_INFO); //0xCE
+              gCPUStructure.Turbo4 = ((UINT32)(RShiftU64(TurboMsr, 8)) & 0x1f) * 10; //workaround for Harpertown
+            } else {
+              gCPUStructure.Turbo4 = (UINT16)(gCPUStructure.MaxRatio + 10);
+            }
             DBG("MSR dumps:\n");
             DBG("\t@0x00CD=%lx\n", msr);
             DBG("\t@0x0198=%lx\n", AsmReadMsr64(MSR_IA32_PERF_STATUS));
