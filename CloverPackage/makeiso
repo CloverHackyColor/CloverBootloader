@@ -144,6 +144,7 @@ cp -f ${CLOVERROOT}/BootSectors/boot0ss  ${IMGROOT}/usr/standalone/i386
 cp -f ${CLOVERROOT}/BootSectors/boot0md  ${IMGROOT}/usr/standalone/i386
 cp -f ${CLOVERROOT}/BootSectors/boot1h   ${IMGROOT}/usr/standalone/i386
 cp -f ${CLOVERROOT}/BootSectors/boot1h2  ${IMGROOT}/usr/standalone/i386
+cp -f ${CLOVERROOT}/BootSectors/boot1f32 ${IMGROOT}/usr/standalone/i386
 cp -f ${CLOVERROOT}/BootSectors/boot1f32alt ${IMGROOT}/usr/standalone/i386
 cp -f ${CLOVERROOT}/BootSectors/boot1x    ${IMGROOT}/usr/standalone/i386
 cp -f ${CLOVERROOT}/BootSectors/boot1xalt ${IMGROOT}/usr/standalone/i386

@@ -5,10 +5,34 @@
 	<key>Default Themes</key>
 	<array>
 		<string>AppleStyle</string>
-		<string>black_green</string>
+		<string>BGM</string>
+		<string>Black_Green</string>
+		<string>bluemac</string>
+		<string>bootcamp</string>
+		<string>BGM256</string>
+		<string>chrome</string>
+		<string>CloverX</string>
+		<string>dawn</string>
+		<string>embedded</string>
+		<string>gold_clover</string>
 		<string>iClover</string>
+		<string>ios7</string>
+		<string>Magnifico</string>
 		<string>metal</string>
 		<string>mrengles</string>
+		<string>Orange</string>
+		<string>OS Box</string>
+		<string>OS One</string>
+		<string>random</string>
+		<string>ThinkPad</string>
+		<string>buttons</string>
+		<string>hellfire</string>
+		<string>simple_gray</string>
+		<string>Shield</string>
+		<string>wooden</string>
+		<string>sketched</string>
+		<string>Space</string>
+		<string>steampunkblack</string>
 	</array>
 </dict>
 </plist>
