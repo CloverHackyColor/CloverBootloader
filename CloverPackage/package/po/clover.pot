@@ -6,7 +6,7 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Clover v2.0-r3217\n"
+"Project-Id-Version: Clover v2.3k-r3217\n"
 "POT-Creation-Date: 2015-06-04 16:43+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
@@ -58,7 +58,7 @@ msgstr ""
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:34
-msgid "Supports Fat32, HFS+, ESP."
+msgid "Supports Fat32, HFS+, ExFAT, ESP."
 msgstr ""
 
 #. type: Content of: <html><body><p>
@@ -68,12 +68,12 @@ msgstr ""
 
 #. type: Content of: <html><body><p><span>
 #: Resources/templates/Description.html:17
-msgid "Clover v2"
+msgid "Clover v2.3k"
 msgstr ""
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:17
-msgid "is open source based on different projects: Clover, rEFIt, XNU, VirtualBox."
+msgid "is open source based on different projects: Chameleon, rEFIt, XNU, VirtualBox."
 msgstr ""
 
 #. type: Content of: <html><body><p><span>
@@ -88,7 +88,7 @@ msgstr ""
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:21
-msgid "- boot into 10.4 - 10.9 OSX, Windows EFI and Linux EFI"
+msgid "- boot into 10.4 - 10.11 OSX, Windows EFI and Linux EFI"
 msgstr ""
 
 #. type: Content of: <html><body><p>
@@ -258,10 +258,7 @@ msgstr ""
 #, no-wrap
 msgid ""
 "Used for BIOS booting on BIOS motherboards.\n"
-"boot0af (boot0 Active First) bootloader try to boot the active partition "
-"defined in MBR. If there is no active partition, it will try to boot the "
-"first EFI/FAT32/HFS partition (defined in the MBR and then the GPT) with a "
-"valid PBR signature.\n"
+"boot0af (boot0 Active First) bootloader try to boot the active partition defined in MBR. If there is no active partition, it will try to boot the first EFI/FAT32/HFS partition (defined in the MBR and then the GPT) with a valid PBR signature.\n"
 "This choice will setup selected HFS/Fat32 partition to be active."
 msgstr ""
 
@@ -276,12 +273,8 @@ msgstr ""
 #, no-wrap
 msgid ""
 "Used for BIOS booting on BIOS motherboards.\n"
-"boot0ss (boot0 Signature Scanning) bootloader try to boot the first "
-"EFI/FAT32/HFS partition (defined in the MBR and then the GPT) with a valid "
-"PBR signature. If no partition is found it will try to boot the active "
-"partition defined in MBR.\n"
-"This bootloader is a good choice when you have Windows installed on the same "
-"disk because Windows wants to have its partition active.\n"
+"boot0ss (boot0 Signature Scanning) bootloader try to boot the first EFI/FAT32/HFS partition (defined in the MBR and then the GPT) with a valid PBR signature. If no partition is found it will try to boot the active partition defined in MBR.\n"
+"This bootloader is a good choice when you have Windows installed on the same disk because Windows wants to have its partition active.\n"
 "This choice will not activate any partition in MBR."
 msgstr ""
 
@@ -477,8 +470,7 @@ msgstr ""
 #, no-wrap
 msgid ""
 "This is DataHub protocol support mandatory for MacOSX.\n"
-"Usually it is already present but sometime it may be missed. In this case "
-"you should see warning on screen."
+"Usually it is already present but sometime it may be missed. In this case you should see warning on screen."
 msgstr ""
 
 #. type: "EmuVariableUefi-64_description"
@@ -486,8 +478,7 @@ msgstr ""
 #, no-wrap
 msgid ""
 "64bit driver for support of NVRAM variables needed by MacOSX.\n"
-"Mostly UEFI boot uses hardware NVRAM but in some rare cases this driver is "
-"needed.\n"
+"Mostly UEFI boot uses hardware NVRAM but in some rare cases this driver is needed.\n"
 "Use it only if you have a problem without it"
 msgstr ""
 

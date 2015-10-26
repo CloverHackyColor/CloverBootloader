@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-02-13 12:33+0100\n"
+"POT-Creation-Date: 2015-06-04 16:43+0300\n"
 "PO-Revision-Date: 2015-09-24 19:52+0000\n"
 "Last-Translator: ErmaC <ErmaC@insanelymac.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -94,7 +94,9 @@ msgstr "Pamata īpašības:"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:21
-msgid "- boot into 10.4 - 10.11 OSX, Windows EFI and Linux EFI"
+#, fuzzy
+#| msgid "- boot into 10.4 - 10.11 OSX, Windows EFI and Linux EFI"
+msgid "- boot into 10.4 - 10.9 OSX, Windows EFI and Linux EFI"
 msgstr "- operētājsistēmu 10.4 - 10.11 OSX, Windows EFI и Linux EFI ielāde"
 
 #. type: Content of: <html><body><p>
@@ -234,7 +236,6 @@ msgstr "Instalācija pabeigta!"
 #. type: "UEFI.only_title"
 #: Resources/templates/Localizable.strings:4
 #, no-wrap
-#| msgid "Install for UEFI motherboards"
 msgid "Install for UEFI booting only"
 msgstr "Instalēt priekš UEFI"
 
@@ -604,16 +605,12 @@ msgstr ""
 #. type: "BGM_title"
 #: Resources/templates/Localizable.strings:115
 #, no-wrap
-#| msgid "Black_Green"
 msgid "Black_Green_Moody"
 msgstr "Black_Green"
 
 #. type: "BGM_description"
 #: Resources/templates/Localizable.strings:116
 #, no-wrap
-#| msgid ""
-#| "Default black_green theme from Blackosx,\n"
-#| "Install to /EFI/CLOVER/themes/black_green"
 msgid ""
 "BGM (Black Green and Moody) theme from Blackosx,\n"
 "Install to /EFI/CLOVER/themes/BGM"
