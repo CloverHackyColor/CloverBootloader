@@ -4,11 +4,11 @@
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 msgid ""
 msgstr ""
-"Project-Id-Version: Clover 2.3k\n"
+"Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-06-04 16:43+0300\n"
-"PO-Revision-Date: 2015-10-26 12:41+0000\n"
-"Last-Translator: Slice <sergey.slice@gmail.com>\n"
+"POT-Creation-Date: 2014-02-13 12:33+0100\n"
+"PO-Revision-Date: 2015-09-24 20:43+0000\n"
+"Last-Translator: arsradu <arsradu@gmail.com>\n"
 "Language-Team: en <en@li.org>\n"
 "Language: en\n"
 "MIME-Version: 1.0\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1445863288.0\n"
+"X-POOTLE-MTIME: 1443127438.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -60,8 +60,8 @@ msgstr "%PKGDEV%"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:34
-msgid "Supports Fat32, HFS+, ExFAT, ESP."
-msgstr "Supports Fat32, HFS+, ExFAT, ESP."
+msgid "Supports Fat32, HFS+, ESP."
+msgstr "Supports Fat32, HFS+, ESP."
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:35 Resources/templates/Conclusion.html:25
@@ -70,13 +70,15 @@ msgstr "Copyright © %CPRYEAR%"
 
 #. type: Content of: <html><body><p><span>
 #: Resources/templates/Description.html:17
-msgid "Clover v2.3k"
-msgstr "Clover v2.3k"
+msgid "Clover v2"
+msgstr "Clover v2"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:17
-msgid "is open source based on different projects: Chameleon, rEFIt, XNU, VirtualBox."
-msgstr "is open source based on different projects: Chameleon, rEFIt, XNU, VirtualBox."
+msgid ""
+"is open source based on different projects: Clover, rEFIt, XNU, VirtualBox."
+msgstr ""
+"is open source based on different projects: Clover, rEFIt, XNU, VirtualBox."
 
 #. type: Content of: <html><body><p><span>
 #: Resources/templates/Description.html:18
@@ -90,8 +92,6 @@ msgstr "Main features:"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:21
-#, fuzzy
-#| msgid "- boot into 10.4 - 10.11 OSX, Windows EFI and Linux EFI"
 msgid "- boot into 10.4 - 10.11 OSX, Windows EFI and Linux EFI"
 msgstr "- boot into 10.4 - 10.11 OSX, Windows EFI and Linux EFI"
 
@@ -101,8 +101,8 @@ msgid ""
 "- It's EFI bootloader provides RuntimeServices for OS that impossible for "
 "Legacy Bootloaders"
 msgstr ""
-"- It's EFI bootloader provides RuntimeServices for OS that are impossible "
-"for Legacy Bootloaders."
+"- It's EFI bootloader provides RuntimeServices for OS that are impossible for "
+"Legacy Bootloaders."
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:23
@@ -595,6 +595,9 @@ msgstr "BGM"
 #. type: "BGM_description"
 #: Resources/templates/Localizable.strings:116
 #, no-wrap
+#| msgid ""
+#| "Black Green and Moody theme from Blackosx,\n"
+#| "Install to /EFI/CLOVER/themes/BGM"
 msgid ""
 "BGM (Black Green and Moody) theme from Blackosx,\n"
 "Install to /EFI/CLOVER/themes/BGM"
@@ -654,97 +657,116 @@ msgstr ""
 #: Resources/templates/Localizable.strings:131
 #, no-wrap
 msgid "BGM256"
-msgstr "BGM256"
+msgstr ""
 
 #. type: "BGM256_description"
 #: Resources/templates/Localizable.strings:132
-#, no-wrap
+#, fuzzy, no-wrap
+#| msgid ""
+#| "BGM (Black Green and Moody) theme from Blackosx,\n"
+#| "Install to /EFI/CLOVER/themes/BGM"
 msgid ""
 "BGM A version of BGM with 256px icons theme from Blackosx,\n"
 "Install to /EFI/CLOVER/themes/BGM256"
 msgstr ""
-"BGM (Black Green and Moody) with 256px icons theme from Blackosx,\n"
-"Install to /EFI/CLOVER/themes/BGM256"
+"BGM (Black Green and Moody) theme from Blackosx,\n"
+"Install to /EFI/CLOVER/themes/BGM"
 
 #. type: "chrome_title"
 #: Resources/templates/Localizable.strings:135
 #, no-wrap
 msgid "chrome"
-msgstr "chrome"
+msgstr ""
 
 #. type: "chrome_description"
 #: Resources/templates/Localizable.strings:136
-#, no-wrap
+#, fuzzy, no-wrap
+#| msgid ""
+#| "Orange theme from dwm,\n"
+#| "Install to /EFI/CLOVER/themes/orange"
 msgid ""
 "chrome theme from chris1111,\n"
 "Install to /EFI/CLOVER/themes/chrome"
 msgstr ""
-"chrome theme from chris1111,\n"
-"Install to /EFI/CLOVER/themes/chrome"
+"Orange theme from dwm,\n"
+"Install to /EFI/CLOVER/themes/orange"
 
 #. type: "CloverX_title"
 #: Resources/templates/Localizable.strings:139
-#, no-wrap
+#, fuzzy, no-wrap
+#| msgid "Clover"
 msgid "CloverX"
-msgstr "CloverX"
+msgstr "Clover"
 
 #. type: "CloverX_description"
 #: Resources/templates/Localizable.strings:140
-#, no-wrap
+#, fuzzy, no-wrap
+#| msgid ""
+#| "Orange theme from dwm,\n"
+#| "Install to /EFI/CLOVER/themes/orange"
 msgid ""
 "CloverX theme from =)(=,\n"
 "Install to /EFI/CLOVER/themes/CloverX"
 msgstr ""
-"CloverX theme from =)(=,\n"
-"Install to /EFI/CLOVER/themes/CloverX"
+"Orange theme from dwm,\n"
+"Install to /EFI/CLOVER/themes/orange"
 
 #. type: "dawn_title"
 #: Resources/templates/Localizable.strings:143
 #, no-wrap
 msgid "dawn"
-msgstr "dawn"
+msgstr ""
 
 #. type: "dawn_description"
 #: Resources/templates/Localizable.strings:144
-#, no-wrap
+#, fuzzy, no-wrap
+#| msgid ""
+#| "Orange theme from dwm,\n"
+#| "Install to /EFI/CLOVER/themes/orange"
 msgid ""
 "dawn theme from Slice,\n"
 "Install to /EFI/CLOVER/themes/dawn"
 msgstr ""
-"dawn theme from Slice,\n"
-"Install to /EFI/CLOVER/themes/dawn"
+"Orange theme from dwm,\n"
+"Install to /EFI/CLOVER/themes/orange"
 
 #. type: "embedded_title"
 #: Resources/templates/Localizable.strings:147
 #, no-wrap
 msgid "embedded"
-msgstr "embedded"
+msgstr ""
 
 #. type: "embedded_description"
 #: Resources/templates/Localizable.strings:148
-#, no-wrap
+#, fuzzy, no-wrap
+#| msgid ""
+#| "Default black_green theme from Blackosx,\n"
+#| "Install to /EFI/CLOVER/themes/black_green"
 msgid ""
 "embedded theme from Blackosx,\n"
 "Install to /EFI/CLOVER/themes/embedded"
 msgstr ""
-"embedded theme from Blackosx,\n"
-"Nothing to install"
+"Default black_green theme from Blackosx,\n"
+"Install to /EFI/CLOVER/themes/black_green"
 
 #. type: "gold_clover_title"
 #: Resources/templates/Localizable.strings:151
 #, no-wrap
 msgid "gold_clover"
-msgstr "gold_clover"
+msgstr ""
 
 #. type: "gold_clover_description"
 #: Resources/templates/Localizable.strings:152
-#, no-wrap
+#, fuzzy, no-wrap
+#| msgid ""
+#| "Wooden theme from iROOTa,\n"
+#| "Install to /EFI/CLOVER/themes/wooden."
 msgid ""
 "gold_clover theme from chris1111,\n"
 "Install to /EFI/CLOVER/themes/gold_clover"
 msgstr ""
-"gold_clover theme from chris1111,\n"
-"Install to /EFI/CLOVER/themes/gold_clover."
+"Wooden theme from iROOTa,\n"
+"Install to /EFI/CLOVER/themes/wooden."
 
 #. type: "iclover_title"
 #: Resources/templates/Localizable.strings:155
@@ -766,17 +788,20 @@ msgstr ""
 #: Resources/templates/Localizable.strings:159
 #, no-wrap
 msgid "ios7"
-msgstr "iOS7"
+msgstr ""
 
 #. type: "ios7_description"
 #: Resources/templates/Localizable.strings:160
-#, no-wrap
+#, fuzzy, no-wrap
+#| msgid ""
+#| "Grey style theme by winlog,\n"
+#| "Install to /EFI/CLOVER/themes/iclover"
 msgid ""
 "ios7 theme by Ukr55, Winlog,\n"
 "Install to /EFI/CLOVER/themes/ios7"
 msgstr ""
-"ios7 theme by Ukr55, Winlog,\n"
-"Install to /EFI/CLOVER/themes/ios7"
+"Grey style theme by win log,\n"
+"Install to /EFI/CLOVER/themes/iclover"
 
 #. type: "magnifico_title"
 #: Resources/templates/Localizable.strings:163
@@ -878,17 +903,20 @@ msgstr ""
 #: Resources/templates/Localizable.strings:187
 #, no-wrap
 msgid "random"
-msgstr "random theme"
+msgstr ""
 
 #. type: "random_description"
 #: Resources/templates/Localizable.strings:188
-#, no-wrap
+#, fuzzy, no-wrap
+#| msgid ""
+#| "Orange theme from dwm,\n"
+#| "Install to /EFI/CLOVER/themes/orange"
 msgid ""
 "random theme from Slice,\n"
 "Install to /EFI/CLOVER/themes/random choose a theme from others"
 msgstr ""
-"randomly choosing theme from existing,\n"
-"Nothing to install"
+"Orange theme from dwm,\n"
+"Install to /EFI/CLOVER/themes/orange"
 
 #. type: "thinkpad_title"
 #: Resources/templates/Localizable.strings:191
@@ -965,6 +993,9 @@ msgstr "Shield"
 #. type: "Shield_description"
 #: Resources/templates/Localizable.strings:208
 #, no-wrap
+#| msgid ""
+#| "Black Green and Moody theme from Blackosx,\n"
+#| "Install to /EFI/CLOVER/themes/BGM"
 msgid ""
 "An animated, harmonious theme from Blackosx,\n"
 "Install to /EFI/CLOVER/themes/Shield."
@@ -992,49 +1023,58 @@ msgstr ""
 #: Resources/templates/Localizable.strings:215
 #, no-wrap
 msgid "sketched"
-msgstr "sketched"
+msgstr ""
 
 #. type: "sketched_description"
 #: Resources/templates/Localizable.strings:216
-#, no-wrap
+#, fuzzy, no-wrap
+#| msgid ""
+#| "OS One theme from Kyndder,\n"
+#| "Install to /EFI/CLOVER/themes/os_one"
 msgid ""
 "sketched theme from kyndder,\n"
 "Install to /EFI/CLOVER/themes/sketched."
 msgstr ""
-"sketched theme from kyndder,\n"
-"Install to /EFI/CLOVER/themes/sketched"
+"OS One theme from Kyndder,\n"
+"Install to /EFI/CLOVER/themes/os_one"
 
 #. type: "Space_title"
 #: Resources/templates/Localizable.strings:219
 #, no-wrap
 msgid "Space"
-msgstr "Space"
+msgstr ""
 
 #. type: "Space_description"
 #: Resources/templates/Localizable.strings:220
-#, no-wrap
+#, fuzzy, no-wrap
+#| msgid ""
+#| "Orange theme from dwm,\n"
+#| "Install to /EFI/CLOVER/themes/orange"
 msgid ""
 "Space theme from chris1111,\n"
 "Install to /EFI/CLOVER/themes/Space"
 msgstr ""
-"Space theme from chris1111,\n"
-"Install to /EFI/CLOVER/themes/Space"
+"Orange theme from dwm,\n"
+"Install to /EFI/CLOVER/themes/orange"
 
 #. type: "steampunkblack_title"
 #: Resources/templates/Localizable.strings:223
 #, no-wrap
 msgid "steampunkblack"
-msgstr "steampunkblack"
+msgstr ""
 
 #. type: "steampunkblack_description"
 #: Resources/templates/Localizable.strings:224
-#, no-wrap
+#, fuzzy, no-wrap
+#| msgid ""
+#| "Bootcamp theme from Bijo,\n"
+#| "Install to /EFI/CLOVER/themes/bootcamp"
 msgid ""
 "steampunkblack theme from medik,\n"
 "Install to /EFI/CLOVER/themes/steampunkblack"
 msgstr ""
-"steampunkblack theme from medik,\n"
-"Install to /EFI/CLOVER/themes/steampunkblack"
+"Bootcamp theme from Bijo,\n"
+"Install to /EFI/CLOVER/themes/bootcamp"
 
 #. type: "rc.scripts.on.target_title"
 #: Resources/templates/Localizable.strings:234
