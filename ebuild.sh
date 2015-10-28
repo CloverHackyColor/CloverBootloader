@@ -203,7 +203,7 @@ usage() {
     print_option_help "--std-ebda" "ebda offset dont shift to 0x88000"
     print_option_help "--no-usb" "disable USB support"
     echo
-    echo "Report bugs to http://www.projectosx.com/forum/index.php?showtopic=2490"
+    echo "Report bugs to https://sourceforge.net/p/cloverefiboot/discussion/1726372/"
 }
 
 # Manage option argument

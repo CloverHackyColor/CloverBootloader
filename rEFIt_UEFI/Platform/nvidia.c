@@ -1932,9 +1932,9 @@ CHAR8 *get_nvidia_model(UINT32 device_id, UINT32 subsys_id)
     // First check in the plist, (for e.g this can override any hardcoded devices)
     CARDLIST * nvcard = FindCardWithIds(device_id, subsys_id);
     if (nvcard) {
-      if (nvcard->Model) {
+      //      if (nvcard->Model) {
         return nvcard->Model;
-      }
+      //      }
     }
     
     // Then check the exceptions table

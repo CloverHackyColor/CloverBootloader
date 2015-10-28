@@ -223,10 +223,11 @@ DEFINE SOURCERY_CYGWIN_TOOLS = /cygdrive/c/Program Files/CodeSourcery/Sourcery G
 #
 # Change to the location clang was built
 #
-DEFINE CLANG_BIN = /usr/bin/
+#DEFINE CLANG_BIN = /usr/bin/
 #DEFINE CLANG_BIN = /opt/local/libexec/llvm-3.6/bin/
 
-DEFINE LLVM_BIN = ENV(HOME)/src/llvm/Release/bin/
+DEFINE LLVM_BIN = ENV(HOME)/src/llvm-build/Release/bin/
+DEFINE CLANG_BIN = ENV(HOME)/src/llvm-build/Release/bin/
 
 ####################################################################################
 #
@@ -4702,7 +4703,7 @@ RELEASE_GCC48_AARCH64_CC_FLAGS   = DEF(GCC48_AARCH64_CC_FLAGS) -Wno-unused-but-s
 *_LLVM_X64_PP_PATH              = DEF(LLVM_BIN)clang
 *_LLVM_X64_VFRPP_PATH           = DEF(LLVM_BIN)clang
 *_LLVM_X64_ASLCC_PATH           = DEF(LLVM_BIN)clang
-*_LLVM_64_ASLPP_PATH           = DEF(LLVM_BIN)clang
+*_LLVM_X64_ASLPP_PATH           = DEF(LLVM_BIN)clang
 *_LLVM_X64_RC_PATH              = DEF(GCC47_X64_PREFIX)objcopy
 *_LLVM_X64_ASLCC_FLAGS          = DEF(GCC_ASLCC_FLAGS) -m64
 *_LLVM_X64_ASLDLINK_FLAGS       = DEF(GCC47_IA32_X64_ASLDLINK_FLAGS) -m elf_x86_64
@@ -6636,7 +6637,7 @@ RELEASE_XCODE32_ARM_CC_FLAGS   = $(ARCHCC_FLAGS) $(PLATFORM_FLAGS) -mthumb-inter
 *_XCLANG_*_ASL_PATH          = /usr/local/bin/iasl
 *_XCLANG_*_MAKE_PATH        = make
 *_XCLANG_*_DSYMUTIL_PATH    = /usr/bin/dsymutil
-
+#*_XCLANG_*_DSYMUTIL_PATH   = DEF(CLANG_BIN)llvm-dsymutil
       *_*_*_MTOC_PATH  = /usr/local/bin/mtoc.NEW
       *_*_*_STRIP_PATH = strip
 
@@ -6645,7 +6646,8 @@ RELEASE_XCLANG_*_MTOC_FLAGS = -align 0x20
 
 *_XCLANG_*_CC_PATH      = DEF(CLANG_BIN)clang
 *_XCLANG_*_SLINK_PATH   = libtool
-*_XCLANG_*_DLINK_PATH   = DEF(CLANG_BIN)ld
+#*_XCLANG_*_DLINK_PATH   = DEF(CLANG_BIN)clang
+*_XCLANG_*_DLINK_PATH   = ld
 *_XCLANG_*_ASM_PATH     = as
 *_XCLANG_*_PP_PATH      = DEF(CLANG_BIN)clang
 *_XCLANG_*_VFRPP_PATH   = DEF(CLANG_BIN)clang
@@ -6653,7 +6655,8 @@ RELEASE_XCLANG_*_MTOC_FLAGS = -align 0x20
 *_XCLANG_*_ASLCC_PATH   = DEF(CLANG_BIN)clang
 #*_XCLANG_*_ASLPP_PATH   = DEF(CLANG_BIN)clang
 *_XCLANG_*_ASLPP_PATH   = gcc
-*_XCLANG_*_ASLDLINK_PATH  = DEF(CLANG_BIN)ld
+#*_XCLANG_*_ASLDLINK_PATH  = DEF(CLANG_BIN)clang
+*_XCLANG_*_ASLDLINK_PATH  = ld
 *_XCLANG_*_NASM_PATH     = nasm
 
 ####################
@@ -6693,8 +6696,8 @@ RELEASE_XCLANG_X64_ASM_FLAGS  = -arch x86_64
 *_XCLANG_*_VFRPP_FLAGS      = -x c -E -P -DVFRCOMPILE -include $(DEST_DIR_DEBUG)/$(MODULE_NAME)StrDefs.h 
 
 
-  DEBUG_XCLANG_X64_CC_FLAGS   = -target x86_64-pc-win32-macho -c -g -O0  -Wall -Werror -include AutoGen.h -fno-stack-protector -fno-builtin -fshort-wchar -mno-sse -mno-mmx -Wno-empty-body -Wno-pointer-sign -Wno-unused-function -Wno-unused-value -Wno-tautological-compare -Wreturn-type -Wno-unused-variable -Wno-deprecated-declarations 
-RELEASE_XCLANG_X64_CC_FLAGS   = -target x86_64-pc-win32-macho -c -Wall -Werror -include AutoGen.h -fno-ms-extensions -fno-stack-protector -fno-builtin -fshort-wchar -mno-sse -mno-mmx -Wno-empty-body -Wno-pointer-sign -Wno-unused-function -Wno-unused-value -Wno-tautological-compare -Wreturn-type -Wno-unused-variable  -Wno-deprecated-declarations
+  DEBUG_XCLANG_X64_CC_FLAGS   = -target x86_64-pc-win32-macho -c -g -O0  -Wall -Werror -include AutoGen.h -fno-stack-protector -fno-builtin -fshort-wchar -mno-sse -mno-mmx -Wno-empty-body -Wno-pointer-sign -Wno-unused-function -Wno-unused-value -Wno-tautological-compare -Wreturn-type -Wno-unused-variable -Wno-deprecated-declarations -Wno-shift-negative-value
+RELEASE_XCLANG_X64_CC_FLAGS   = -target x86_64-pc-win32-macho -c -Wall -Werror -include AutoGen.h -fno-ms-extensions -fno-stack-protector -fno-builtin -fshort-wchar -mno-sse -mno-mmx -Wno-empty-body -Wno-pointer-sign -Wno-unused-function -Wno-unused-value -Wno-tautological-compare -Wreturn-type -Wno-unused-variable  -Wno-deprecated-declarations -Wno-shift-negative-value
 # -DNO_BUILTIN_VA_FUNCS
 #-mdynamic-no-pic -mno-implicit-float 
 *_XCLANG_*_ASLCC_FLAGS      = -x c -save-temps -g -O0 -fshort-wchar -fno-strict-aliasing -Wall -Werror -Wno-missing-braces -c -include AutoGen.h -mdynamic-no-pic

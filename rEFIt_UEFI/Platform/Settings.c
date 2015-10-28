@@ -5576,7 +5576,7 @@ SetFSInjection (
 //BOOLEAN              InjectionNeeded = FALSE;
 //BOOLEAN              BlockCaches     = FALSE;
   FSI_STRING_LIST      *Blacklist      = 0;
-  FSI_STRING_LIST      *ForceLoadKexts;
+  FSI_STRING_LIST      *ForceLoadKexts = NULL;
 
   MsgLog ("Beginning FSInjection\n");
     
