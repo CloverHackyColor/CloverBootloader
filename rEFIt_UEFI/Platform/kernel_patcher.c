@@ -1161,9 +1161,10 @@ FindBootArgs(IN LOADER_ENTRY *Entry)
       //DBG("bootArgs2->kaddr = 0x%08x and bootArgs2->ksize =  0x%08x\n", bootArgs2->kaddr, bootArgs2->ksize);
       //DBG("bootArgs2->efiMode = 0x%02x\n", bootArgs2->efiMode);
       DBG_RT(Entry, "bootArgs2->CommandLine = %a\n", bootArgs2->CommandLine);
-      DBG_RT(Entry, "bootArgs2->flags = %x %x\n", bootArgs2->flags);
-      DBG_RT(Entry, "bootArgs2->kslide = %x\n", bootArgs2->kslide);
-      //gBS->Stall(5000000);
+      DBG_RT(Entry, "bootArgs2->flags = 0x%x\n", bootArgs2->flags);
+      DBG_RT(Entry, "bootArgs2->kslide = 0x%x\n", bootArgs2->kslide);
+      DBG_RT(Entry, "bootArgs2->bootMemStart = 0x%x\n", bootArgs2->bootMemStart);
+      gBS->Stall(2000000);
       
       // disable other pointer
       bootArgs1 = NULL;
