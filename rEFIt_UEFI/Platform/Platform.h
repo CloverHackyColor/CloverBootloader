@@ -785,7 +785,7 @@ typedef struct {
   CHAR8	                  SerialNr[64];
   EFI_GUID                SmUUID;
   BOOLEAN                 SmUUIDConfig;
-  CHAR8 pad0[7];
+  CHAR8                   pad0[7];
 //CHAR8	                  Uuid[64];
 //CHAR8	                  SKUNumber[64];
   CHAR8                 	FamilyName[64];

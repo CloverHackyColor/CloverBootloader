@@ -292,8 +292,8 @@ VOID FillInputs(BOOLEAN New)
       InputItems[InputItemsCount].ItemType = BoolValue; //21+i*6
       InputItems[InputItemsCount].BValue = gSettings.InjectIntel;
       InputItems[InputItemsCount++].SValue = gSettings.InjectIntel?L"[+]":L"[ ]";
-      InputItems[InputItemsCount].ItemType = ASString; //22+6i
-      InputItems[InputItemsCount++].SValue = L"NA";
+      InputItems[InputItemsCount].ItemType = Hex; //22+6i
+      InputItems[InputItemsCount++].SValue = PoolPrint(L"%08lx", gSettings.IgPlatform);;
     }
     
     InputItems[InputItemsCount].ItemType = Decimal;  //23+6i
@@ -649,7 +649,7 @@ VOID ApplyInputs(VOID)
   i++; //18 | Download-Fritz: There is no GUI element for BacklightLevel; please revise
   if (InputItems[i].Valid) {
     gSettings.BacklightLevel = (UINT16)StrHexToUint64(InputItems[i].SValue);
-	gSettings.BacklightLevelConfig = TRUE;
+    gSettings.BacklightLevelConfig = TRUE;
   }  
   i++; //19
   if (InputItems[i].Valid) {
@@ -681,9 +681,10 @@ VOID ApplyInputs(VOID)
         ZeroMem(AString, 255);
         AsciiSPrint(AString, 255, "%s", InputItems[i].SValue);
         hex2bin(AString, (UINT8*)&gSettings.Dcfg[0], 8);
-      } /* else if (gGraphics[j].Vendor == Intel) {
-        //nothing to do
-      } */
+      } else if (gGraphics[j].Vendor == Intel) {
+        //ig-platform-id for Ivy+ and snb-platform-id for Sandy
+        gSettings.IgPlatform = (UINT32)StrHexToUint64(InputItems[i].SValue);
+      } 
     }
     i++; //23
     if (InputItems[i].Valid) {
@@ -2787,8 +2788,10 @@ REFIT_MENU_ENTRY  *SubMenuGraphics()
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
     if (gGraphics[i].Vendor == Nvidia) {
       InputBootArgs->Entry.Title = PoolPrint(L"DisplayCFG:");
-    } else {
+    } else if (gGraphics[i].Vendor == Ati) {
       InputBootArgs->Entry.Title = PoolPrint(L"FBConfig:");
+    } else /*if (gGraphics[i].Vendor == Intel)*/{
+      InputBootArgs->Entry.Title = PoolPrint(L"*-platform-id:");
     }
     InputBootArgs->Entry.Tag = TAG_INPUT;
     InputBootArgs->Entry.Row = StrLen(InputItems[N+2].SValue); //cursor
@@ -2837,6 +2840,15 @@ REFIT_MENU_ENTRY  *SubMenuGraphics()
     
   }
   
+  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  InputBootArgs->Entry.Title = PoolPrint(L"Backlight Level:");
+  InputBootArgs->Entry.Tag = TAG_INPUT;
+  InputBootArgs->Entry.Row = StrLen(InputItems[18].SValue); //cursor
+  InputBootArgs->Item = &InputItems[18];
+  InputBootArgs->Entry.AtClick = ActionSelect;
+  InputBootArgs->Entry.AtDoubleClick = ActionEnter;
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+
   
   AddMenuEntry(SubScreen, &MenuEntryReturn);
   Entry->SubScreen = SubScreen;                
