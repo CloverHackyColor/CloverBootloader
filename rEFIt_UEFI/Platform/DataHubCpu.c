@@ -291,6 +291,20 @@ SetupDataForOSX()
     DBG("Wrong FrontSideBus=%d, set to 100MHz\n", FrontSideBus);
     FrontSideBus = 100 * Mega;
   }
+  
+  if (gSettings.QEMU) {
+    FrontSideBus = gCPUStructure.TSCFrequency;
+    switch (gCPUStructure.Model) {
+      case CPU_MODEL_DOTHAN:
+      case CPU_MODEL_YONAH:
+      case CPU_MODEL_MEROM:
+        FrontSideBus = DivU64x32(FrontSideBus, 4);
+        break;
+      default:
+        break;
+    }
+    DBG("Using QEMU FrontSideBus=%d\n", FrontSideBus);
+  }
 
   // Save values into gSettings for the genconfig aim
   gSettings.BusSpeed   = (UINT32)DivU64x32(FrontSideBus, kilo);
