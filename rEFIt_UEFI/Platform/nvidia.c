@@ -1328,7 +1328,7 @@ static nvidia_pci_info_t nvidia_card_generic[] = {
 //	{ 0x10DE13F0,	"Graphics Device" }, // GM107GLM
 //	{ 0x10DE13F1,	"Graphics Device" }, // GM107GLM
 	{ 0x10DE1401,	"GeForce GTX 960" }, //
-//	{ 0x10DE1402,	"Graphics Device" }, //
+	{ 0x10DE1402,	"GeForce GTX 950" }, //
 //	{ 0x10DE143F,	"Graphics Device" }, //
 //	{ 0x10DE1600,	"Graphics Device" }, //
 //	{ 0x10DE1601,	"Graphics Device" }, //

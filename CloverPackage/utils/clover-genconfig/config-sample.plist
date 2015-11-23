@@ -239,6 +239,8 @@
 	<dict>
 		<key>BusSpeedkHz</key>
 		<integer>133330</integer>
+		<key>FrequencyMHz</key>
+		<integer>3140</integer>
 		<key>QPI</key>
 		<integer>4800</integer>
 		<key>Type</key>
@@ -312,6 +314,14 @@
 				<string>AAPL,Haslid</string>
 				<key>Value</key>
 				<data>AQAAAA==</data>
+			</dict>
+			<dict>
+				<key>Device</key>
+				<string>IntelGFX</string>
+				<key>Key</key>
+				<string>class-code</string>
+				<key>Value</key>
+				<data>AIADAA==</data>
 			</dict>
 		</array>
 		<key>Audio</key>
