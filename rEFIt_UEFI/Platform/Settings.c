@@ -2189,6 +2189,7 @@ GetEarlyUserSettings (
           }
         }
       }
+      gSettings.LinuxScan = TRUE;
       // Disable loader scan
       Prop = GetProperty (DictPointer, "Scan");
       if (Prop != NULL) {
@@ -2206,6 +2207,9 @@ GetEarlyUserSettings (
           if (IsPropertyFalse (Dict2)) {
             gSettings.DisableToolScan = TRUE;
           }
+
+          Dict2 = GetProperty (Prop, "Linux");
+          gSettings.LinuxScan = !IsPropertyFalse (Dict2);
 
           Dict2 = GetProperty (Prop, "Legacy");
           if (Dict2 != NULL) {

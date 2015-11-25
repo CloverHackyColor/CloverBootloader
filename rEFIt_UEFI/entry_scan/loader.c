@@ -1008,7 +1008,7 @@ VOID ScanLoader(VOID)
     AddLoaderEntry(L"\\bootmgr.efi", L"", L"Microsoft EFI mgrboot menu", Volume, NULL, OSTYPE_WINEFI, 0);
     // check for Microsoft boot loader/menu on CDROM
     AddLoaderEntry(L"\\EFI\\MICROSOFT\\BOOT\\cdboot.efi", L"", L"Microsoft EFI cdboot menu", Volume, NULL, OSTYPE_WINEFI, 0);
-    
+    if (gSettings.LinuxScan) {
     // check for linux loaders
     for (Index = 0; Index < LinuxEntryDataCount; ++Index) {
       AddLoaderEntry(LinuxEntryData[Index].Path, L"", LinuxEntryData[Index].Title, Volume,
@@ -1246,7 +1246,7 @@ VOID ScanLoader(VOID)
       //close the directory
       DirIterClose(&Iter);
     }
-
+    } //if linux scan
     //     DBG("search for  optical UEFI\n");
     if (Volume->DiskKind == DISK_KIND_OPTICAL) {
       AddLoaderEntry(BOOT_LOADER_PATH, L"", L"UEFI optical", Volume, NULL, OSTYPE_OTHER, 0);

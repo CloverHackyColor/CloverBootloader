@@ -1092,7 +1092,8 @@ typedef struct {
   BOOLEAN                 DisableToolScan;
   BOOLEAN                 ShowHiddenEntries;
   UINT8                   KernelScan;
-  UINT8                   pad84[4];
+  BOOLEAN                 LinuxScan;
+  UINT8                   pad84[3];
   CUSTOM_LOADER_ENTRY     *CustomEntries;
 #if defined(MDE_CPU_IA32)
   UINT32                  align33;
