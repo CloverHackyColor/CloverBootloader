@@ -3726,6 +3726,11 @@ GetUserSettings(
       Prop                = GetProperty (DictPointer, "ForceHPET");
       gSettings.ForceHPET = IsPropertyTrue (Prop);
       
+      Prop                = GetProperty (DictPointer, "DisableFunctions");
+      if (Prop && (Prop->type == kTagTypeString)) {
+        gSettings.DisableFunctions  = (UINT32)AsciiStrHexToUint64(Prop->string);
+      }
+            
       Prop2 = GetProperty (DictPointer, "Audio");
       if (Prop2 != NULL) {
         // HDA
@@ -5392,34 +5397,23 @@ SetDevices (
             MsgLog ("Set PmCon value=%x\n", PmCon);                   
             
           }
-          if (gSettings.ForceHPET) {
-            Rcba   = 0;
-            /* Scan Port */
-            Status = PciIo->Pci.Read (PciIo, EfiPciIoWidthUint32, 0xF0, 1, &Rcba);
+          Rcba   = 0;
+          /* Scan Port */
+          Status = PciIo->Pci.Read (PciIo, EfiPciIoWidthUint32, 0xF0, 1, &Rcba);          
+          if (EFI_ERROR (Status)) continue;
+          Rcba &= 0xFFFFC000;
+          if ((Rcba & 0xFFFFC000) == 0) {
+            MsgLog (" RCBA disabled; cannot use it\n");
+            continue;
+          }
+          if ((Rcba & 1) == 0) {
+            MsgLog (" RCBA access disabled; trying to enable\n");
+            Rcba |= 1;
             
-            if (EFI_ERROR (Status)) continue;
-            //Rcba &= 0xFFFFC000;
-            if ((Rcba & 0xFFFFC000) == 0) {
-              MsgLog (" RCBA disabled; cannot force enable HPET\n");
-            } else {
-              if ((Rcba & 1) == 0) {
-                MsgLog (" RCBA access disabled; trying to enable\n");
-                Rcba |= 1;
-
-                PciIo->Pci.Write (PciIo, EfiPciIoWidthUint32, 0xF0, 1, &Rcba);
-              }
-
- /*           Hptc = 0;
-              PciIo->Mem.Read (
-                       PciIo,
-                       EfiPciIoWidthUint32,
-                       EFI_PCI_IO_PASS_THROUGH_BAR,
-                       0x3404ULL,
-                       1,
-                       &Hptc
-                       );
-*/
-              Rcba &= 0xFFFFC000;
+            PciIo->Pci.Write (PciIo, EfiPciIoWidthUint32, 0xF0, 1, &Rcba);
+          }
+          
+          if (gSettings.ForceHPET) {              
               Hptc = REG32 ((UINTN)Rcba, 0x3404);
               if ((Hptc & 0x80) != 0) {
                 DBG ("HPET is already enabled\n");
@@ -5434,7 +5428,15 @@ SetDevices (
               } else {
                 DBG ("HPET is enabled\n");
               }
-            }
+          }  
+          
+          if (gSettings.DisableFunctions){
+            UINT32 FD = REG32 ((UINTN)Rcba, 0x3418);
+            DBG ("Initial value of FD register 0x%x\n", FD);
+            FD |= gSettings.DisableFunctions;
+            REG32 ((UINTN)Rcba, 0x3418) = FD;
+            FD = REG32 ((UINTN)Rcba, 0x3418);
+            DBG (" recheck value after patch 0x%x\n", FD);
           }
         }
       }

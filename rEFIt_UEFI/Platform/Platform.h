@@ -1047,10 +1047,12 @@ typedef struct {
   UINT8                   EPCI[4];
   UINT8                   REV[6];
   
+  //other devices
   BOOLEAN                 Rtc8Allowed;
   BOOLEAN                 ForceHPET;
   BOOLEAN                 ResetHDA;
-  UINT8                   pad8[7];
+  UINT8                   pad8[3];
+  UINT32                  DisableFunctions;
 
   //Patch DSDT arbitrary
   UINT32                  PatchDsdtNum;
