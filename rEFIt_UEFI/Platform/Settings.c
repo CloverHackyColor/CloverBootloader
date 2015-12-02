@@ -899,6 +899,13 @@ FillinKextPatches (
            DBG (" %a", Patches->KextPatches[Patches->NrKexts].Name);
         }
 
+        // check disabled patch by cecekpawon
+        Dict = GetProperty (Prop2, "Disabled");
+        if ((Dict != NULL) && IsPropertyTrue (Dict)) {
+          DBG("patch disabled, skipped\n");
+          continue;
+        }
+
         // check if this is Info.plist patch or kext binary patch
         Dict = GetProperty (Prop2, "InfoPlistPatch");
         Patches->KextPatches[Patches->NrKexts].IsPlistPatch = IsPropertyTrue (Dict);
@@ -5268,6 +5275,7 @@ SetDevices (
             (Pci.Hdr.ClassCode[2] == PCI_CLASS_DISPLAY) &&
             (Pci.Hdr.ClassCode[1] == PCI_CLASS_DISPLAY_VGA)) {
           UINT32 LevelW = 0xC0000000;
+          UINT32 IntelDisable = 0x03;
           
 //        gGraphics.DeviceID = Pci.Hdr.DeviceId;
           
@@ -5302,7 +5310,9 @@ SetDevices (
                                               );
 
               }
-
+              if (gSettings.FakeIntel == 0x00008086) {
+                PciIo->Pci.Write (PciIo, EfiPciIoWidthUint32, 0x50, 1, &IntelDisable);
+              }
               break;
 
             case 0x10de:
