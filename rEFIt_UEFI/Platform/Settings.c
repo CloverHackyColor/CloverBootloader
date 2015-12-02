@@ -3349,6 +3349,7 @@ GetUserSettings(
   TagPtr     Dict2;
   TagPtr     Prop;
   TagPtr     Prop2;
+  TagPtr     Prop3;
   TagPtr     DictPointer;
   UINTN      i;
   
@@ -3555,7 +3556,7 @@ GetUserSettings(
 
             Dict2 = GetProperty (Prop2, "CustomProperties");
             if (Dict2 != NULL) {
-              TagPtr Prop3, Dict3;
+              TagPtr Dict3;
               INTN PropIndex;
               INTN PropCount = GetTagCount (Dict2);
               
@@ -4125,6 +4126,12 @@ GetUserSettings(
 
               if (Prop2 == NULL) {
                 break;
+              }
+
+              Prop3 = GetProperty (Prop2, "Disabled");
+              if ((Prop3 != NULL) && IsPropertyTrue (Prop3)) {
+                DBG(" patch disabled, skipped\n");
+                continue;
               }
 
               DBG (" DSDT bin patch #%d ", i);
