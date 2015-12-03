@@ -4753,6 +4753,19 @@ GetUserSettings(
      DBG ("Platform Uuid: %g, InjectSystemID: %a\n", &AppleGuid, gSettings.InjectSystemID ? "Yes" : "No");
      }
 */
+    // KernelAndKextPatches
+    if (!StrLen(gSettings.ConfigName)) {
+      //DBG("\n\n***********************************************n\n");
+      //DBG("\nConfigName: %s\n", gSettings.ConfigName);
+      //DBG("==================================================\n\n");
+      DictPointer = GetProperty (Dict, "KernelAndKextPatches");
+      if (DictPointer != NULL) {
+        FillinKextPatches ((KERNEL_AND_KEXT_PATCHES *)(((UINTN)&gSettings) + OFFSET_OF(SETTINGS_DATA, KernelAndKextPatches)), DictPointer);
+      }
+    } else {
+      //DBG("\n ConfigName: %s n", gSettings.ConfigName);
+    }
+
     SaveSettings();
   }
 //DBG ("config.plist read and return %r\n", Status);

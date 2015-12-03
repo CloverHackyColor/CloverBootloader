@@ -371,6 +371,9 @@ VOID FillInputs(BOOLEAN New)
   InputItems[InputItemsCount].BValue   = gSettings.PointerMirror;
   InputItems[InputItemsCount++].SValue = gSettings.PointerMirror?L"[+]":L"[ ]";
   //reserve for mouse and continue
+  InputItems[InputItemsCount].ItemType = BoolValue; //73
+  InputItems[InputItemsCount].BValue   = gSettings.StringInjector;
+  InputItems[InputItemsCount++].SValue = gSettings.StringInjector?L"[+]":L"[ ]";
   
   InputItemsCount = 74;
   InputItems[InputItemsCount].ItemType = BoolValue; //74
@@ -795,6 +798,11 @@ VOID ApplyInputs(VOID)
     gSettings.PointerMirror = InputItems[i].BValue;
   }
   
+  i++; //73
+  if (InputItems[i].Valid) {
+    gSettings.StringInjector = InputItems[i].BValue;
+  }
+
 
   i = 74;
   if (InputItems[i].Valid) {
@@ -891,10 +899,12 @@ VOID ApplyInputs(VOID)
       } else {
         Status = LoadUserSettings(SelfRootDir, InputItems[i].SValue, &dict);
         if (!EFI_ERROR(Status)) {
+          if (gSettings.ConfigName) FreePool(gSettings.ConfigName);
+          gSettings.ConfigName  = PoolPrint(L"");
           GetUserSettings(SelfRootDir, dict);        
           if (gConfigDict[2]) FreeTag(gConfigDict[2]);
           gConfigDict[2] = dict;
-          if (gSettings.ConfigName) FreePool(gSettings.ConfigName);
+          //if (gSettings.ConfigName) FreePool(gSettings.ConfigName);
           gSettings.ConfigName = EfiStrDuplicate(InputItems[i].SValue);
         }
         DBG("Main settings3 from menu: %r\n", Status);
@@ -3733,6 +3743,15 @@ REFIT_MENU_ENTRY  *SubMenuPCI()
   InputBootArgs->Entry.AtRightClick = ActionDetails;
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
   
+  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  InputBootArgs->Entry.Title = PoolPrint(L"Inject EFI Strings:");
+  InputBootArgs->Entry.Tag = TAG_INPUT;
+  InputBootArgs->Entry.Row = 0xFFFF;
+  InputBootArgs->Item = &InputItems[73];
+  InputBootArgs->Entry.AtClick = ActionEnter;
+  InputBootArgs->Entry.AtRightClick = ActionDetails;
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
   InputBootArgs->Entry.Title = PoolPrint(L"FakeID LAN:");
   InputBootArgs->Entry.Tag = TAG_INPUT;
