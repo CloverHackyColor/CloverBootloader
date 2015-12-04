@@ -4896,8 +4896,10 @@ VOID GetBiosRegions(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt)
               CopyMem(&gRegions->Address, &buffer[j+5], 2);
             }          
           }
-        }      
-        DBG("Found OperationRegion(%a, SystemMemory, %x, ...)\n", gRegions->Name, gRegions->Address);
+        }
+        if (gRegions->Address != 0) {
+          DBG("Found OperationRegion(%a, SystemMemory, %x, ...)\n", gRegions->Name, gRegions->Address);
+        }
         gRegions->next = tmpRegion;
       }      
     }

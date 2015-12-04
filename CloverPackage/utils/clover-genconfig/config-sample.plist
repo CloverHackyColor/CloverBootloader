@@ -107,6 +107,8 @@
 				<dict>
 					<key>Comment</key>
 					<string>Remove battery device from desktop</string>
+					<key>Disabled</key>
+					<true/>
 					<key>Find</key>
 					<data>W4IeQkFUMQhfSElEDEHQDAoIX1VJRAEUCF9TVEEApAA=</data>
 					<key>Replace</key>
