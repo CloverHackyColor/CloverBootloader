@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-06-04 16:43+0300\n"
-"PO-Revision-Date: 2014-11-18 08:17+0000\n"
+"PO-Revision-Date: 2015-12-30 23:27+0000\n"
 "Last-Translator: Mill <ceruns@ymail.com>\n"
 "Language-Team: ko <ko@li.org>\n"
 "Language: ko\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1416298625.0\n"
+"X-POOTLE-MTIME: 1451518021.0\n"
 
 # //Don't need change
 #. type: Content of: <html><body><div><p>
@@ -667,11 +667,11 @@ msgstr ""
 #: Resources/templates/Localizable.strings:131
 #, no-wrap
 msgid "BGM256"
-msgstr ""
+msgstr "BGM256"
 
 #. type: "BGM256_description"
 #: Resources/templates/Localizable.strings:132
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "BGM (Black Green and Moody) theme from Blackosx,\n"
 #| "Install to /EFI/CLOVER/themes/BGM"
@@ -679,18 +679,18 @@ msgid ""
 "BGM A version of BGM with 256px icons theme from Blackosx,\n"
 "Install to /EFI/CLOVER/themes/BGM256"
 msgstr ""
-"Blackosx의 BGM(흑녹색조) 테마,\n"
-"다음에 설치합니다: /EFI/CLOVER/themes/BGM"
+"Blackosx의 256픽셀 아이콘이 있는 BGM A 버전 BGM(흑녹색조) 테마,\n"
+"다음에 설치합니다: /EFI/CLOVER/themes/BGM256"
 
 #. type: "chrome_title"
 #: Resources/templates/Localizable.strings:135
 #, no-wrap
 msgid "chrome"
-msgstr ""
+msgstr "크롬"
 
 #. type: "chrome_description"
 #: Resources/templates/Localizable.strings:136
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "Orange theme from dwm,\n"
 #| "Install to /EFI/CLOVER/themes/orange"
@@ -698,19 +698,19 @@ msgid ""
 "chrome theme from chris1111,\n"
 "Install to /EFI/CLOVER/themes/chrome"
 msgstr ""
-"dwm의 Orange테마,\n"
-"다음에 설치합니다: /EFI/CLOVER/themes/orange"
+"chris111의 크롬테마,\n"
+"다음에 설치합니다: /EFI/CLOVER/themes/chrome"
 
 #. type: "CloverX_title"
 #: Resources/templates/Localizable.strings:139
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Clover"
 msgid "CloverX"
-msgstr "클로버"
+msgstr "클로버X"
 
 #. type: "CloverX_description"
 #: Resources/templates/Localizable.strings:140
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "Orange theme from dwm,\n"
 #| "Install to /EFI/CLOVER/themes/orange"
@@ -718,18 +718,18 @@ msgid ""
 "CloverX theme from =)(=,\n"
 "Install to /EFI/CLOVER/themes/CloverX"
 msgstr ""
-"dwm의 Orange테마,\n"
-"다음에 설치합니다: /EFI/CLOVER/themes/orange"
+"=)(=의 클로버X 테마,\n"
+"다음에 설치합니다: /EFI/CLOVER/themes/CloverX"
 
 #. type: "dawn_title"
 #: Resources/templates/Localizable.strings:143
 #, no-wrap
 msgid "dawn"
-msgstr ""
+msgstr "새벽"
 
 #. type: "dawn_description"
 #: Resources/templates/Localizable.strings:144
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "Orange theme from dwm,\n"
 #| "Install to /EFI/CLOVER/themes/orange"
@@ -737,18 +737,18 @@ msgid ""
 "dawn theme from Slice,\n"
 "Install to /EFI/CLOVER/themes/dawn"
 msgstr ""
-"dwm의 Orange테마,\n"
-"다음에 설치합니다: /EFI/CLOVER/themes/orange"
+"Slice의 새벽테마,\n"
+"다음에 설치합니다: /EFI/CLOVER/themes/dawn"
 
 #. type: "embedded_title"
 #: Resources/templates/Localizable.strings:147
 #, no-wrap
 msgid "embedded"
-msgstr ""
+msgstr "임베디드"
 
 #. type: "embedded_description"
 #: Resources/templates/Localizable.strings:148
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "Default black_green theme from Blackosx,\n"
 #| "Install to /EFI/CLOVER/themes/black_green"
@@ -756,18 +756,18 @@ msgid ""
 "embedded theme from Blackosx,\n"
 "Install to /EFI/CLOVER/themes/embedded"
 msgstr ""
-"Blackosx의 흑녹색조 기본 테마,\n"
-"다음에 설치합니다: /EFI/CLOVER/themes/black_green"
+"Blackosx의 임베디드 테마,\n"
+"다음에 설치합니다: /EFI/CLOVER/themes/embedded"
 
 #. type: "gold_clover_title"
 #: Resources/templates/Localizable.strings:151
 #, no-wrap
 msgid "gold_clover"
-msgstr ""
+msgstr "골드 클로버"
 
 #. type: "gold_clover_description"
 #: Resources/templates/Localizable.strings:152
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "Wooden theme from iROOTa,\n"
 #| "Install to /EFI/CLOVER/themes/wooden."
@@ -775,8 +775,8 @@ msgid ""
 "gold_clover theme from chris1111,\n"
 "Install to /EFI/CLOVER/themes/gold_clover"
 msgstr ""
-"iROOTa의 Wooden 테마,\n"
-"다음에 설치합니다: /EFI/CLOVER/themes/wooden."
+"chris1111의 골드 클로버 테마,\n"
+"다음에 설치합니다: /EFI/CLOVER/themes/gold_clover"
 
 #. type: "iclover_title"
 #: Resources/templates/Localizable.strings:155
@@ -798,11 +798,11 @@ msgstr ""
 #: Resources/templates/Localizable.strings:159
 #, no-wrap
 msgid "ios7"
-msgstr ""
+msgstr "iOS7"
 
 #. type: "ios7_description"
 #: Resources/templates/Localizable.strings:160
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "Grey style theme by winlog,\n"
 #| "Install to /EFI/CLOVER/themes/iclover"
@@ -810,8 +810,8 @@ msgid ""
 "ios7 theme by Ukr55, Winlog,\n"
 "Install to /EFI/CLOVER/themes/ios7"
 msgstr ""
-"winlog의 회색조 테마,\n"
-"다음에 설치합니다: /EFI/CLOVER/themes/iclover"
+"Ukr55, Winlog 의 iOS7 테마,\n"
+"다음에 설치합니다: /EFI/CLOVER/themes/ios7"
 
 #. type: "magnifico_title"
 #: Resources/templates/Localizable.strings:163
@@ -913,11 +913,11 @@ msgstr ""
 #: Resources/templates/Localizable.strings:187
 #, no-wrap
 msgid "random"
-msgstr ""
+msgstr "랜덤"
 
 #. type: "random_description"
 #: Resources/templates/Localizable.strings:188
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "Orange theme from dwm,\n"
 #| "Install to /EFI/CLOVER/themes/orange"
@@ -925,8 +925,8 @@ msgid ""
 "random theme from Slice,\n"
 "Install to /EFI/CLOVER/themes/random choose a theme from others"
 msgstr ""
-"dwm의 Orange테마,\n"
-"다음에 설치합니다: /EFI/CLOVER/themes/orange"
+"Slice의 랜덤테마,\n"
+"다음에 설치합니다: /EFI/CLOVER/themes/random"
 
 #. type: "thinkpad_title"
 #: Resources/templates/Localizable.strings:191
@@ -1030,11 +1030,11 @@ msgstr ""
 #: Resources/templates/Localizable.strings:215
 #, no-wrap
 msgid "sketched"
-msgstr ""
+msgstr "스케치화"
 
 #. type: "sketched_description"
 #: Resources/templates/Localizable.strings:216
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "OS One theme from Kyndder,\n"
 #| "Install to /EFI/CLOVER/themes/os_one"
@@ -1042,18 +1042,18 @@ msgid ""
 "sketched theme from kyndder,\n"
 "Install to /EFI/CLOVER/themes/sketched."
 msgstr ""
-"Kyndder의 OS One 테마,\n"
-"다음에 설치합니다: /EFI/CLOVER/themes/os_one"
+"kyndder의 스케치화 테마,\n"
+"다음에 설치합니다: /EFI/CLOVER/themes/sketched"
 
 #. type: "Space_title"
 #: Resources/templates/Localizable.strings:219
 #, no-wrap
 msgid "Space"
-msgstr ""
+msgstr "스페이스"
 
 #. type: "Space_description"
 #: Resources/templates/Localizable.strings:220
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "Orange theme from dwm,\n"
 #| "Install to /EFI/CLOVER/themes/orange"
@@ -1061,18 +1061,18 @@ msgid ""
 "Space theme from chris1111,\n"
 "Install to /EFI/CLOVER/themes/Space"
 msgstr ""
-"dwm의 Orange테마,\n"
-"다음에 설치합니다: /EFI/CLOVER/themes/orange"
+"chris1111의 스페이스 테마,\n"
+"다음에 설치합니다: /EFI/CLOVER/themes/Space"
 
 #. type: "steampunkblack_title"
 #: Resources/templates/Localizable.strings:223
 #, no-wrap
 msgid "steampunkblack"
-msgstr ""
+msgstr "스팀펑크 블랙"
 
 #. type: "steampunkblack_description"
 #: Resources/templates/Localizable.strings:224
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "Bootcamp theme from Bijo,\n"
 #| "Install to /EFI/CLOVER/themes/bootcamp"
@@ -1080,8 +1080,8 @@ msgid ""
 "steampunkblack theme from medik,\n"
 "Install to /EFI/CLOVER/themes/steampunkblack"
 msgstr ""
-"Bijo의 부트캠프 테마,\n"
-"다음에 설치합니다: /EFI/CLOVER/themes/bootcamp"
+"medik의 스팀펑크 블랙 테마,\n"
+"다음에 설치합니다: /EFI/CLOVER/themes/steampunkblack"
 
 #. type: "rc.scripts.on.target_title"
 #: Resources/templates/Localizable.strings:234
