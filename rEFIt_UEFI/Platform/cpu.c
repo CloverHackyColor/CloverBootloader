@@ -202,7 +202,7 @@ VOID GetCPUProperties (VOID)
       case CPU_MODEL_NEHALEM_EX:	
       case CPU_MODEL_JAKETOWN:
       case CPU_MODEL_SANDY_BRIDGE:	
-			case CPU_MODEL_IVY_BRIDGE:	
+      case CPU_MODEL_IVY_BRIDGE:	
       case CPU_MODEL_IVY_BRIDGE_E5:
       case CPU_MODEL_HASWELL:
       case CPU_MODEL_HASWELL_U5:
@@ -210,8 +210,16 @@ VOID GetCPUProperties (VOID)
       case CPU_MODEL_HASWELL_ULT:
       case CPU_MODEL_CRYSTALWELL:
       case CPU_MODEL_BROADWELL_HQ:
+      case CPU_MODEL_AIRMONT:
+      case CPU_MODEL_AVOTON:
       case CPU_MODEL_SKYLAKE_U:
+      case CPU_MODEL_BROADWELL_DE:
+      case CPU_MODEL_KNIGHT:
+      case CPU_MODEL_MOOREFIELD:
+      case CPU_MODEL_GOLDMONT:
+      case CPU_MODEL_ATOM_X3:
       case CPU_MODEL_SKYLAKE_S:
+      case CPU_MODEL_CANNONLAKE:
         msr = AsmReadMsr64(MSR_CORE_THREAD_COUNT);  //0x35
         gCPUStructure.Cores   = (UINT8)bitfield((UINT32)msr, 31, 16);  
         gCPUStructure.Threads = (UINT8)bitfield((UINT32)msr, 15,  0);
@@ -437,11 +445,13 @@ VOID GetCPUProperties (VOID)
             gCPUStructure.Turbo3 *= 10;
             gCPUStructure.Turbo4 *= 10;
             break;
+          case CPU_MODEL_PENTIUM_M:
           case CPU_MODEL_ATOM://  Atom
           case CPU_MODEL_DOTHAN:// Pentium M, Dothan, 90nm
           case CPU_MODEL_YONAH:// Core Duo/Solo, Pentium M DC
           case CPU_MODEL_MEROM:// Core Xeon, Core 2 Duo, 65nm, Mobile
           //case CPU_MODEL_CONROE:// Core Xeon, Core 2 Duo, 65nm, Desktop like Merom but not mobile
+          case CPU_MODEL_CELERON:
           case CPU_MODEL_PENRYN:// Core 2 Duo/Extreme, Xeon, 45nm , Mobile
           //case CPU_MODEL_WOLFDALE:// Core 2 Duo/Extreme, Xeon, 45nm, Desktop like Penryn but not Mobile
             if(AsmReadMsr64(MSR_IA32_PLATFORM_ID) & (1 << 28)){
@@ -460,7 +470,7 @@ VOID GetCPUProperties (VOID)
             gCPUStructure.SubDivider = (UINT32)(RShiftU64(msr, 46)) & 0x1;
             gCPUStructure.MinRatio = 60;
             if(!gCPUStructure.MaxRatio) gCPUStructure.MaxRatio = 6; // :(
-            msr = AsmReadMsr64(0xCD);
+            msr = AsmReadMsr64(MSR_FSB_FREQ); //0xCD
             gCPUStructure.FSBFrequency = DivU64x32(LShiftU64(gCPUStructure.TSCFrequency, 1),
                                 gCPUStructure.MaxRatio * 2 + gCPUStructure.SubDivider);
             if ((msr & 3) == 2 && (gCPUStructure.FSBFrequency < 196 * Mega)) {
@@ -717,9 +727,11 @@ UINT16 GetAdvancedCpuType ()
 			case 0x06:	
 			{			
 				switch (gCPUStructure.Model) {
+          case CPU_MODEL_PENTIUM_M:
 					case CPU_MODEL_DOTHAN:// Dothan
 					case CPU_MODEL_YONAH: // Yonah
 						return 0x201;
+          case CPU_MODEL_CELERON: //M520
 					case CPU_MODEL_MEROM: // Merom
 					case CPU_MODEL_PENRYN:// Penryn
             if (AsciiStrStr(gCPUStructure.BrandString, "Xeon"))
@@ -847,13 +859,15 @@ MACHINE_TYPES GetDefaultModel()
 			case CPU_MODEL_ATOM:
 				DefaultType = MacBookAir31; //MacBookAir1,1 doesn't support _PSS for speedstep!
 				break;
-			case CPU_MODEL_DOTHAN:	
+			case CPU_MODEL_DOTHAN:
 				DefaultType = MacBook11;
 				break;
-			case CPU_MODEL_YONAH: 
+			case CPU_MODEL_YONAH:
+      case CPU_MODEL_PENTIUM_M:
 				DefaultType = MacBook11;
 				break;
-			case CPU_MODEL_MEROM: 
+      case CPU_MODEL_CELERON:
+			case CPU_MODEL_MEROM:
 				DefaultType = MacBook21;
 				break;
 			case CPU_MODEL_PENRYN:
@@ -867,30 +881,30 @@ MACHINE_TYPES GetDefaultModel()
         DefaultType = MacBookPro62;
         break;
 			case CPU_MODEL_JAKETOWN:
-			case CPU_MODEL_SANDY_BRIDGE: 
-				if((AsciiStrStr(gCPUStructure.BrandString, "i3")) || 
+			case CPU_MODEL_SANDY_BRIDGE:
+				if((AsciiStrStr(gCPUStructure.BrandString, "i3")) ||
 				   (AsciiStrStr(gCPUStructure.BrandString, "i5"))) {
 					DefaultType = MacBookPro81;
 					break;
 				}
         DefaultType = MacBookPro83;
 				break;
-      case CPU_MODEL_IVY_BRIDGE:  
-      case CPU_MODEL_IVY_BRIDGE_E5:  
+      case CPU_MODEL_IVY_BRIDGE:
+      case CPU_MODEL_IVY_BRIDGE_E5:
         DefaultType = MacBookAir52;
 				break;
       case CPU_MODEL_HASWELL:
       case CPU_MODEL_HASWELL_E:
       case CPU_MODEL_ATOM_3700:
         DefaultType = MacBookAir62;
-				break;  
+				break;
       case CPU_MODEL_HASWELL_ULT:
       case CPU_MODEL_CRYSTALWELL:
       case CPU_MODEL_HASWELL_U5:
       case CPU_MODEL_BROADWELL_HQ:
-      case CPU_MODEL_SKYLAKE_U:  
+      case CPU_MODEL_SKYLAKE_U:
         DefaultType = MacBookPro111;
-				break;  
+				break;
 			default:
 				if ((gGraphics[0].Vendor == Nvidia) ||
             (gGraphics[1].Vendor == Nvidia)) {
@@ -902,10 +916,10 @@ MACHINE_TYPES GetDefaultModel()
 	} else {
 		switch (gCPUStructure.Model) {
 			case CPU_MODEL_CELERON:
-
+        
 				DefaultType = MacMini21;
 				break;
-	
+        
 			case CPU_MODEL_LINCROFT:
 				DefaultType = MacMini21;
 				break;
@@ -931,7 +945,7 @@ MACHINE_TYPES GetDefaultModel()
         }
 				DefaultType = iMac113;
 				break;
-			case CPU_MODEL_DALES: 
+			case CPU_MODEL_DALES:
 				DefaultType = iMac112;
 				break;
 			case CPU_MODEL_CLARKDALE:
@@ -948,19 +962,19 @@ MACHINE_TYPES GetDefaultModel()
           DefaultType = MacMini51;
 					break;
         }
-				if((AsciiStrStr(gCPUStructure.BrandString, "i3")) || 
+				if((AsciiStrStr(gCPUStructure.BrandString, "i3")) ||
 				   (AsciiStrStr(gCPUStructure.BrandString, "i5"))) {
 					DefaultType = iMac121;
 					break;
 				}
-				if(AsciiStrStr(gCPUStructure.BrandString, "i7")) { 
+				if(AsciiStrStr(gCPUStructure.BrandString, "i7")) {
 					DefaultType = iMac122;
 					break;
 				}
 				DefaultType = MacPro51;
 				break;
       case CPU_MODEL_IVY_BRIDGE:
-      case CPU_MODEL_IVY_BRIDGE_E5:  
+      case CPU_MODEL_IVY_BRIDGE_E5:
         DefaultType = iMac132;
         if (gGraphics[0].Vendor == Intel) {
           DefaultType = MacMini62;
@@ -987,11 +1001,11 @@ MACHINE_TYPES GetDefaultModel()
         	DefaultType = iMac141;
         	break;
         }
-        break;        
+        break;
 			default:
 				DefaultType = MacPro31;
 				break;
 		}
-	}	
+	}
 	return DefaultType;
 }

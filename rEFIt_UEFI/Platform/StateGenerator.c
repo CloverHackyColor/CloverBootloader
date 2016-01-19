@@ -110,11 +110,13 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
 			{
 				switch (gCPUStructure.Model) {
 					case CPU_MODEL_DOTHAN:				// Pentium-M
+          case CPU_MODEL_CELERON:
+          case CPU_MODEL_PENTIUM_M:
 					case CPU_MODEL_YONAH:	// Intel Mobile Core Solo, Duo
 					case CPU_MODEL_MEROM:	// Intel Mobile Core 2 Solo, Duo, Xeon 30xx, Xeon 51xx, Xeon X53xx, Xeon E53xx, Xeon X32xx
 					case CPU_MODEL_PENRYN:	// Intel Core 2 Solo, Duo, Quad, Extreme, Xeon X54xx, Xeon X33xx
 					case CPU_MODEL_ATOM:	// Intel Atom (45nm)
-					{						
+					{
 						if (AsmReadMsr64(MSR_IA32_EXT_CONFIG) & (1 << 27)) {
 							AsmWriteMsr64(MSR_IA32_EXT_CONFIG, (AsmReadMsr64(MSR_IA32_EXT_CONFIG) | (1 << 28)));
 							gBS->Stall(10);
@@ -122,7 +124,7 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
               DBG("DynamicFSB: %a\n", cpu_dynamic_fsb?"yes":"no");
 						}
 						
-						cpu_noninteger_bus_ratio = ((AsmReadMsr64(MSR_IA32_PERF_STATUS) & (1ULL << 46)) != 0)?1:0;						
+						cpu_noninteger_bus_ratio = ((AsmReadMsr64(MSR_IA32_PERF_STATUS) & (1ULL << 46)) != 0)?1:0;
 						initial.Control.Control = (UINT16)AsmReadMsr64(MSR_IA32_PERF_STATUS);
             DBG("Initial control=0x%x\n", initial.Control);
 						
@@ -213,7 +215,7 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
           case CPU_MODEL_JAKETOWN:	// Intel Xeon E3
           case CPU_MODEL_IVY_BRIDGE:
           case CPU_MODEL_HASWELL:
-          case CPU_MODEL_IVY_BRIDGE_E5:  
+          case CPU_MODEL_IVY_BRIDGE_E5:
           case CPU_MODEL_HASWELL_E:
           case CPU_MODEL_HASWELL_ULT:
           case CPU_MODEL_CRYSTALWELL:
@@ -234,7 +236,7 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
             DBG("Maximum control=0x%x\n", realMax);
             if (gSettings.Turbo) {
               realTurbo = (gCPUStructure.Turbo4 > gCPUStructure.Turbo1) ?
-                          (gCPUStructure.Turbo4 / 10) : (gCPUStructure.Turbo1 / 10);
+              (gCPUStructure.Turbo4 / 10) : (gCPUStructure.Turbo1 / 10);
               maximum.Control.Control = realTurbo;
               MsgLog("Turbo control=0x%x\n", realTurbo);
             }
@@ -257,7 +259,7 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
 							p_states_count = 0;
 							
 							for (i = maximum.Control.Control; i >= minimum.Control.Control; i--) {
-                j = i; 
+                j = i;
                 if ((gCPUStructure.Model == CPU_MODEL_SANDY_BRIDGE) ||
                     (gCPUStructure.Model == CPU_MODEL_IVY_BRIDGE) ||
                     (gCPUStructure.Model == CPU_MODEL_HASWELL) ||
@@ -278,7 +280,7 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
                 }
 								p_states[p_states_count].Control.Control = (UINT16)j;
 								p_states[p_states_count].CID = j;
-
+                
                 if (!p_states_count && gSettings.DoubleFirstState) {
                   //double first state
                   p_states_count++;

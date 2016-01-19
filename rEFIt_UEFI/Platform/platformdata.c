@@ -546,6 +546,7 @@ SetDMISettingsForModel (
   } else {
     switch (gCPUStructure.Model) {
       case CPU_MODEL_PENTIUM_M:
+      case CPU_MODEL_CELERON:
         AsciiStrCpy (gSettings.RPlt, "M70");
         break;
 
