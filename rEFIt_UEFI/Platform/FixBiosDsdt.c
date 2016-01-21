@@ -4857,7 +4857,7 @@ VOID FixRegions (UINT8 *dsdt, UINT32 len)
     }
   }
 }
-
+/* commented out as Rehabman proposed the better one
 VOID GetBiosRegions(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt)
 {
   EFI_ACPI_DESCRIPTION_HEADER *TableHeader;
@@ -4902,6 +4902,60 @@ VOID GetBiosRegions(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt)
         }
         gRegions->next = tmpRegion;
       }      
+    }
+  }
+}
+*/
+
+VOID GetBiosRegions(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt)
+{
+  EFI_ACPI_DESCRIPTION_HEADER *TableHeader;
+  UINT8       *buffer = NULL;
+  UINT32      bufferLen = 0;
+  UINTN       i, j;
+  INTN        shift, shift2;
+  CHAR8       Name[8];
+  CHAR8       NameAdr[8];
+  
+  gRegions = NULL;
+  buffer = (UINT8*)(UINTN)fadt->Dsdt;
+  TableHeader = (EFI_ACPI_DESCRIPTION_HEADER*)buffer;
+  bufferLen = TableHeader->Length;
+  
+  for (i=0x24; i<bufferLen-15; i++) {
+    if ((buffer[i] == 0x5B) && (buffer[i+1] == 0x80) &&
+        GetName(buffer, (INT32)(i+2), &Name[0], &shift)) {
+      if (buffer[i+6+shift] == 0) {
+        //this is SystemMemory region. Write to bios regions tables
+        OPER_REGION tmp;
+        tmp.Address = 0;
+        CopyMem(&tmp.Name[0], &buffer[i+2+shift], 4);
+        tmp.Name[4] = 0;
+        if (buffer[i+7+shift] == 0x0C) {
+          CopyMem(&tmp.Address, &buffer[i+8+shift], 4);
+        } else if (buffer[i+7+shift] == 0x0B) {
+          CopyMem(&tmp.Address, &buffer[i+8+shift], 2);
+        } else if (GetName(buffer, (INT32)(i+7+shift), &NameAdr[0], &shift2)) {
+          j = FindName(buffer, bufferLen, &NameAdr[0]);
+          if (j > 0) {
+            if (buffer[j+4] == 0x0C) {
+              CopyMem(&tmp.Address, &buffer[j+5], 4);
+            } else if (buffer[j+4] == 0x0B) {
+              CopyMem(&tmp.Address, &buffer[j+5], 2);
+            }
+          }
+        }
+        if (!tmp.Address) {
+          DBG("Unable to determine address for OperationRegion(%a, SystemMemory, ...) skipping\n", tmp.Name);
+          // ignore OperationRegion where the address cannot be determined
+          continue;
+        }
+        DBG("Found OperationRegion(%a, SystemMemory, %x, ...)\n", tmp.Name, tmp.Address);
+        OPER_REGION *newRegion = AllocateZeroPool(sizeof(OPER_REGION));
+        *newRegion = tmp;
+        newRegion->next = gRegions;
+        gRegions = newRegion;
+      }
     }
   }
 }
