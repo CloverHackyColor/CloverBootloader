@@ -4827,10 +4827,13 @@ VOID FixRegions (UINT8 *dsdt, UINT32 len)
       p = gRegions;
       while (p)  {
         if (AsciiStrStr(p->Name, Name)) {
+          UINT32 oldAddress = 0;
           //apply patch
           if (dsdt[i+7+shift] == 0x0C) {
+            CopyMem(&oldAddress, &dsdt[i+8+shift], 4);
             CopyMem(&dsdt[i+8+shift], &p->Address, 4);
           } else if (dsdt[i+7+shift] == 0x0B) {
+            CopyMem(&oldAddress, &dsdt[i+8+shift], 2);
             CopyMem(&dsdt[i+8+shift], &p->Address, 2);
           } else {
             //propose this is indirect name
@@ -4839,9 +4842,11 @@ VOID FixRegions (UINT8 *dsdt, UINT32 len)
               if (j > 0) {
                 DBG("  indirect name=%a\n", NameAdr);
                 if (dsdt[j+4] == 0x0C) {
+                  CopyMem(&oldAddress, &dsdt[j+5], 4);
                   CopyMem(&dsdt[j+5], &p->Address, 4);
  //                 Corrected = TRUE;
                 } else if (dsdt[j+4] == 0x0B) {
+                  CopyMem(&oldAddress, &dsdt[j+5], 2);
                   CopyMem(&dsdt[j+5], &p->Address, 2);
                 } else {
                   DBG("... value not defined\n");
@@ -4849,7 +4854,9 @@ VOID FixRegions (UINT8 *dsdt, UINT32 len)
               }
             }
           }
-          DBG("OperationRegion (%a...) corrected to addr=0x%x\n", Name, p->Address);
+          if (oldAddress != p->Address) {
+            DBG("OperationRegion (%a...) corrected to addr=0x%x\n", Name, p->Address);
+          }
           break;
         }
         p = p->next;
