@@ -1654,7 +1654,13 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
   }
 
   //Get regions from BIOS DSDT
-  GetBiosRegions(FadtPointer);
+  if (((gSettings.FixDsdt & FIX_WARNING) &&
+       !(gSettings.FixDsdt & FIX_NEW_WAY)) ||
+      ((gSettings.FixDsdt & FIX_NEW_WAY) &&
+       (gSettings.FixDsdt & FIX_REGIONS))) {
+    GetBiosRegions(FadtPointer);
+  }
+
   
   //  DBG("DSDT finding\n");
   if (!Volume) {
