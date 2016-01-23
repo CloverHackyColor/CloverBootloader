@@ -57,27 +57,27 @@ CHAR8   *AppleFirmwareVersion[] =
 
 CHAR8* AppleBoardID[] =    //Lion DR1 compatible
 {
-	"Mac-F4208CC8",          // MB11   - yonah
-	"Mac-F4208CA9",          // MB21   - merom 05/07
-	"Mac-F22788A9",          // MB41   - penryn
-	"Mac-F22788AA",          // MB52
-	"Mac-F42D86C8",          // MBP51
+  "Mac-F4208CC8",          // MB11   - yonah
+  "Mac-F4208CA9",          // MB21   - merom 05/07
+  "Mac-F22788A9",          // MB41   - penryn
+  "Mac-F22788AA",          // MB52
+  "Mac-F42D86C8",          // MBP51
   "Mac-F22586C8",          // MBP62  - arrandale + nVidia
   "Mac-94245B3640C91C81",  // MBP81  - i5 SB IntelHD3000
   "Mac-942459F5819B171B",  // MBP83  - i7 SB  ATI
   "Mac-6F01561E16C75D06",  // MBP92  - i5-3210M IvyBridge HD4000
   "Mac-C3EC7CD22292981F",  // MBP101
   "Mac-189A3D4F975D5FFC",  // MBP111 - i5-4258U CPU @ 2.40GHz
-	"Mac-942452F5819B1C1B",  // MBA31
+  "Mac-942452F5819B1C1B",  // MBA31
   "Mac-2E6FAB96566FE58C",  // MBA52  - i5-3427U IVY BRIDGE IntelHD4000 did=166
   "Mac-7DF21CB3ED6977E5",  // MBA62  - i5-4250U/i7-4650U HD5000
-	"Mac-F4208EAA",          // MM21   - merom GMA950 07/07
+  "Mac-F4208EAA",          // MM21   - merom GMA950 07/07
   "Mac-8ED6AF5B48C039E1",  // MM51   - Sandy + Intel 30000
   "Mac-F65AE981FFA204ED",  // MM62   - Ivy
-	"Mac-F227BEC8",          // IM81   - merom 01/09, penryn E8435
-	"Mac-F2268CC8",          // IM101  - wolfdale? E7600 01/
+  "Mac-F227BEC8",          // IM81   - merom 01/09, penryn E8435
+  "Mac-F2268CC8",          // IM101  - wolfdale? E7600 01/
   "Mac-F2268DAE",          // IM111  - Nehalem
-	"Mac-F2238AC8",          // IM112  - Clarkdale
+  "Mac-F2238AC8",          // IM112  - Clarkdale
   "Mac-F2238BAE",          // IM113  - lynnfield
   "Mac-942B5BF58194151B",  // IM121  - i5-2500 - sandy
   "Mac-942B59F58194171B",  // IM122  - i7-2600
@@ -87,11 +87,11 @@ CHAR8* AppleBoardID[] =    //Lion DR1 compatible
   "Mac-27ADBB7B4CEE8E61",  // IM142  - i5-4670/i7-4771
   "Mac-42FD25EABCABB274",  // IM151  - i5-4690 CPU @ 3.50GHz
   "Mac-DB15BD556843C820",  // IM171  - i5-4690 CPU @ 3.50GHz
-	"Mac-F2268DC8",          // MP31   - xeon quad 02/09 conroe
-	"Mac-F4238CC8",          // MP41   - xeon wolfdale
-	"Mac-F221BEC8",          // MP51   - Xeon Nehalem 4 cores
+  "Mac-F2268DC8",          // MP31   - xeon quad 02/09 conroe
+  "Mac-F4238CC8",          // MP41   - xeon wolfdale
+  "Mac-F221BEC8",          // MP51   - Xeon Nehalem 4 cores
   "Mac-F60DEB81FF30ACF6",  // MP61   - Intel(R) Xeon(R) CPU E5-1620 v2 @ 3.70GHz Model 0x3E
-
+  
 };
 
 CHAR8* AppleReleaseDate[] = 

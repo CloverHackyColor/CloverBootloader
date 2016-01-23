@@ -595,6 +595,12 @@
 		<false/>
 		<key>KernelCpu</key>
 		<false/>
+		<key>ForceKextsToLoad</key>
+		<array>
+			<string>IONetworkingFamily</string>
+			<string>AMDFramebuffer</string>
+			<string>IOAudioFamily</string>
+		</array>
 		<key>FakeCPUID</key>
 		<string>0x010676</string>
 		<key>KernelPm</key>
