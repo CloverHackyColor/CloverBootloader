@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-02-13 12:33+0100\n"
-"PO-Revision-Date: 2015-09-24 19:43+0000\n"
-"Last-Translator: Rene_ <jani.soelaas@gmail.com>\n"
+"PO-Revision-Date: 2016-01-03 11:13+0000\n"
+"Last-Translator: ErmaC <ErmaC@insanelymac.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: nl\n"
 "MIME-Version: 1.0\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1443123800.0\n"
+"X-POOTLE-MTIME: 1451819604.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -659,16 +659,18 @@ msgid ""
 "Bootcamp theme from Bijo,\n"
 "Install to /EFI/CLOVER/themes/bootcamp"
 msgstr ""
+"Bootcamp thema van Bijo,\n"
+"Installeert in /EFI/CLOVER/themes/bootcamp"
 
 #. type: "BGM256_title"
 #: Resources/templates/Localizable.strings:131
 #, no-wrap
 msgid "BGM256"
-msgstr ""
+msgstr "BGM256"
 
 #. type: "BGM256_description"
 #: Resources/templates/Localizable.strings:132
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "Wooden theme from iROOTa,\n"
 #| "Install to /EFI/CLOVER/themes/wooden."
@@ -676,18 +678,18 @@ msgid ""
 "BGM A version of BGM with 256px icons theme from Blackosx,\n"
 "Install to /EFI/CLOVER/themes/BGM256"
 msgstr ""
-"Houten thema door iROOTa,\n"
-"Installeert naar /EFI/CLOVER/themes/wooden."
+"BGM een versie van BGM met 256px icoonen thema van Blackosx,\n"
+"Installeert in /EFI/CLOVER/themes/BMG256."
 
 #. type: "chrome_title"
 #: Resources/templates/Localizable.strings:135
 #, no-wrap
 msgid "chrome"
-msgstr ""
+msgstr "chrome"
 
 #. type: "chrome_description"
 #: Resources/templates/Localizable.strings:136
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "Wooden theme from iROOTa,\n"
 #| "Install to /EFI/CLOVER/themes/wooden."
@@ -695,19 +697,19 @@ msgid ""
 "chrome theme from chris1111,\n"
 "Install to /EFI/CLOVER/themes/chrome"
 msgstr ""
-"Houten thema door iROOTa,\n"
-"Installeert naar /EFI/CLOVER/themes/wooden."
+"chrome thema van chris1111,\n"
+"Installeert in /EFI/CLOVER/themes/chrome."
 
 #. type: "CloverX_title"
 #: Resources/templates/Localizable.strings:139
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Clover"
 msgid "CloverX"
-msgstr "Clover"
+msgstr "CloverX"
 
 #. type: "CloverX_description"
 #: Resources/templates/Localizable.strings:140
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "Wooden theme from iROOTa,\n"
 #| "Install to /EFI/CLOVER/themes/wooden."
@@ -715,18 +717,18 @@ msgid ""
 "CloverX theme from =)(=,\n"
 "Install to /EFI/CLOVER/themes/CloverX"
 msgstr ""
-"Houten thema door iROOTa,\n"
-"Installeert naar /EFI/CLOVER/themes/wooden."
+"CloverX thema van =)(=,\n"
+"Installeert in /EFI/CLOVER/themes/CloverX."
 
 #. type: "dawn_title"
 #: Resources/templates/Localizable.strings:143
 #, no-wrap
 msgid "dawn"
-msgstr ""
+msgstr "dawn"
 
 #. type: "dawn_description"
 #: Resources/templates/Localizable.strings:144
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "Wooden theme from iROOTa,\n"
 #| "Install to /EFI/CLOVER/themes/wooden."
@@ -734,18 +736,18 @@ msgid ""
 "dawn theme from Slice,\n"
 "Install to /EFI/CLOVER/themes/dawn"
 msgstr ""
-"Houten thema door iROOTa,\n"
-"Installeert naar /EFI/CLOVER/themes/wooden."
+"dawn thema van Slice,\n"
+"Installeert in /EFI/CLOVER/themes/dawn."
 
 #. type: "embedded_title"
 #: Resources/templates/Localizable.strings:147
 #, no-wrap
 msgid "embedded"
-msgstr ""
+msgstr "embedded"
 
 #. type: "embedded_description"
 #: Resources/templates/Localizable.strings:148
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "Wooden theme from iROOTa,\n"
 #| "Install to /EFI/CLOVER/themes/wooden."
@@ -753,18 +755,18 @@ msgid ""
 "embedded theme from Blackosx,\n"
 "Install to /EFI/CLOVER/themes/embedded"
 msgstr ""
-"Houten thema door iROOTa,\n"
-"Installeert naar /EFI/CLOVER/themes/wooden."
+"embedded thema door Blackosx,\n"
+"Installeert in /EFI/CLOVER/themes/embedded"
 
 #. type: "gold_clover_title"
 #: Resources/templates/Localizable.strings:151
 #, no-wrap
 msgid "gold_clover"
-msgstr ""
+msgstr "gold_clover"
 
 #. type: "gold_clover_description"
 #: Resources/templates/Localizable.strings:152
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "Wooden theme from iROOTa,\n"
 #| "Install to /EFI/CLOVER/themes/wooden."
@@ -772,8 +774,8 @@ msgid ""
 "gold_clover theme from chris1111,\n"
 "Install to /EFI/CLOVER/themes/gold_clover"
 msgstr ""
-"Houten thema door iROOTa,\n"
-"Installeert naar /EFI/CLOVER/themes/wooden."
+"gold_clover thema van chris1111,\n"
+"Installeert in /EFI/CLOVER/themes/gold_clover."
 
 #. type: "iclover_title"
 #: Resources/templates/Localizable.strings:155
@@ -788,16 +790,18 @@ msgid ""
 "Grey style theme by winlog,\n"
 "Install to /EFI/CLOVER/themes/iclover"
 msgstr ""
+"Grey style thema van winlog,\n"
+"Installeert in /EFI/CLOVER/themes/iclover"
 
 #. type: "ios7_title"
 #: Resources/templates/Localizable.strings:159
 #, no-wrap
 msgid "ios7"
-msgstr ""
+msgstr "ios7"
 
 #. type: "ios7_description"
 #: Resources/templates/Localizable.strings:160
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "Buttons theme from Trauma,\n"
 #| "Install to /EFI/CLOVER/themes/buttons."
@@ -805,8 +809,8 @@ msgid ""
 "ios7 theme by Ukr55, Winlog,\n"
 "Install to /EFI/CLOVER/themes/ios7"
 msgstr ""
-"Knoppen thema door Trauma,\n"
-"Installeert naar /EFI/CLOVER/themes/buttons."
+"ios7 thema van Ukr55, Winlog,\n"
+"Installeert in /EFI/CLOVER/themes/ios7"
 
 #. type: "magnifico_title"
 #: Resources/templates/Localizable.strings:163
@@ -901,16 +905,18 @@ msgid ""
 "OS One theme from Kyndder,\n"
 "Install to /EFI/CLOVER/themes/os_one"
 msgstr ""
+"OS One thema van Kyndder,\n"
+"Installeert in /EFI/CLOVER/themes/os_one"
 
 #. type: "random_title"
 #: Resources/templates/Localizable.strings:187
 #, no-wrap
 msgid "random"
-msgstr ""
+msgstr "random"
 
 #. type: "random_description"
 #: Resources/templates/Localizable.strings:188
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "Hellfire theme from lllevelll,\n"
 #| "Install to /EFI/CLOVER/themes/hellfire."
@@ -918,8 +924,8 @@ msgid ""
 "random theme from Slice,\n"
 "Install to /EFI/CLOVER/themes/random choose a theme from others"
 msgstr ""
-"Hellfire thema door lllevelll,\n"
-"Installeert naar /EFI/CLOVER/themes/hellfire."
+"random thema van Slice,\n"
+"Installeert in /EFI/CLOVER/themes/random"
 
 #. type: "thinkpad_title"
 #: Resources/templates/Localizable.strings:191
@@ -995,7 +1001,7 @@ msgstr "Schild"
 
 #. type: "Shield_description"
 #: Resources/templates/Localizable.strings:208
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "Wooden theme from iROOTa,\n"
 #| "Install to /EFI/CLOVER/themes/wooden."
@@ -1019,18 +1025,18 @@ msgid ""
 "Wooden theme from iROOTa,\n"
 "Install to /EFI/CLOVER/themes/wooden."
 msgstr ""
-"Houten thema door iROOTa,\n"
-"Installeert naar /EFI/CLOVER/themes/wooden."
+"Houten thema van iROOTa,\n"
+"Installeert in /EFI/CLOVER/themes/wooden."
 
 #. type: "sketched_title"
 #: Resources/templates/Localizable.strings:215
 #, no-wrap
 msgid "sketched"
-msgstr ""
+msgstr "sketched"
 
 #. type: "sketched_description"
 #: Resources/templates/Localizable.strings:216
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "Hellfire theme from lllevelll,\n"
 #| "Install to /EFI/CLOVER/themes/hellfire."
@@ -1038,18 +1044,18 @@ msgid ""
 "sketched theme from kyndder,\n"
 "Install to /EFI/CLOVER/themes/sketched."
 msgstr ""
-"Hellfire thema door lllevelll,\n"
-"Installeert naar /EFI/CLOVER/themes/hellfire."
+"sketched thema van kyndder,\n"
+"Installeert in /EFI/CLOVER/themes/sketched."
 
 #. type: "Space_title"
 #: Resources/templates/Localizable.strings:219
 #, no-wrap
 msgid "Space"
-msgstr ""
+msgstr "Space"
 
 #. type: "Space_description"
 #: Resources/templates/Localizable.strings:220
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "Wooden theme from iROOTa,\n"
 #| "Install to /EFI/CLOVER/themes/wooden."
@@ -1057,18 +1063,18 @@ msgid ""
 "Space theme from chris1111,\n"
 "Install to /EFI/CLOVER/themes/Space"
 msgstr ""
-"Houten thema door iROOTa,\n"
-"Installeert naar /EFI/CLOVER/themes/wooden."
+"Space thema van chris1111,\n"
+"Installeert in /EFI/CLOVER/themes/Space."
 
 #. type: "steampunkblack_title"
 #: Resources/templates/Localizable.strings:223
 #, no-wrap
 msgid "steampunkblack"
-msgstr ""
+msgstr "steampunkblack"
 
 #. type: "steampunkblack_description"
 #: Resources/templates/Localizable.strings:224
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "Simple_gray theme from hijeane,\n"
 #| "Install to /EFI/CLOVER/themes/simple_gray."
@@ -1076,14 +1082,14 @@ msgid ""
 "steampunkblack theme from medik,\n"
 "Install to /EFI/CLOVER/themes/steampunkblack"
 msgstr ""
-"Simpel_grijs thema door hijeane,\n"
-"Installeert naar /EFI/CLOVER/themes/simple_gray."
+"steampunkblack thema van medik,\n"
+"Installeert in /EFI/CLOVER/themes/steampunkblack."
 
 #. type: "rc.scripts.on.target_title"
 #: Resources/templates/Localizable.strings:234
 #, no-wrap
 msgid "Install RC scripts on target volume"
-msgstr "Installeer RC scripts op de doelvolume"
+msgstr "Installert RC scripts op het doel volume"
 
 #. type: "rc.scripts.on.target_description"
 #: Resources/templates/Localizable.strings:235
