@@ -292,15 +292,15 @@ VOID GetCPUProperties (VOID)
   }
   
   //workaround for Xeon Harpertown
-  if (AsciiStrStr(gCPUStructure.BrandString, "E5405")) {
-    gCPUStructure.Cores   = 4;
-    gCPUStructure.Threads = 4;
-  }
-
-  //workaround for Xeon Wolfdale
-  if (AsciiStrStr(gCPUStructure.BrandString, "X5260")) {
-    gCPUStructure.Cores   = 2;
-    gCPUStructure.Threads = 2;
+  if ((gCPUStructure.Model == CPU_MODEL_PENRYN) &&
+      (AsciiStrStr(gCPUStructure.BrandString, "Xeon"))) {
+    if (AsciiStrStr(gCPUStructure.BrandString, "E54")) {
+      gCPUStructure.Cores   = 4;
+      gCPUStructure.Threads = 4;
+    } else {
+      gCPUStructure.Cores   = 2;
+      gCPUStructure.Threads = 2;
+    }
   }
 
 	//get Min and Max Ratio Cpu/Bus
