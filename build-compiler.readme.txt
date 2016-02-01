@@ -1,0 +1,6 @@
+Currently, 01.02.2016 it is possible to compile full Clover package only
+with gcc-4.9.
+Don't use clang or gcc-5.x until some developer found and corrected fatal errors with them.
+gcc-4.8 is possible but it is required reverted some changes in build scripts and settings. They are deep in history and I see no reason to do this.
+
+Slice.

@@ -120,6 +120,7 @@ INF IntelFrameworkModulePkg/Universal/DataHubDxe/DataHubDxe.inf
 INF  Clover/DriverOverride/DriverOverride.inf	
 !ifndef NO_GRUB_DRIVERS
 INF  Clover/GrubFS/src/EXFAT.inf	
+#INF  Clover/GrubFS/src/NTFS.inf
 !endif
 #INF  Clover/VBoxFsDxe/VBoxFsDxe.inf
 #INF  Clover/VBoxFsDxe/VBoxIso9660.inf
