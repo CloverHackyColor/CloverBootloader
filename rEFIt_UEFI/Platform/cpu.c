@@ -285,24 +285,23 @@ VOID GetCPUProperties (VOID)
     gCPUStructure.Threads = 2;
   }
   
-  //workaround for Quad
-  if (AsciiStrStr(gCPUStructure.BrandString, "Quad")) {
-    gCPUStructure.Cores   = 4;
-    gCPUStructure.Threads = 4;
-  }
-  
   //workaround for Xeon Harpertown
-  if ((gCPUStructure.Model == CPU_MODEL_PENRYN) &&
-      (AsciiStrStr(gCPUStructure.BrandString, "Xeon"))) {
+  if (gCPUStructure.Model == CPU_MODEL_PENRYN) {
     if ((AsciiStrStr(gCPUStructure.BrandString, "X54")) ||
         (AsciiStrStr(gCPUStructure.BrandString, "E54")) ||
         (AsciiStrStr(gCPUStructure.BrandString, "L54"))) {
       gCPUStructure.Cores   = 4;
       gCPUStructure.Threads = 4;
-    } else {
+    } else { //other Penryn and Wolfdale
       gCPUStructure.Cores   = 2;
       gCPUStructure.Threads = 2;
     }
+  }
+
+  //workaround for Quad
+  if (AsciiStrStr(gCPUStructure.BrandString, "Quad")) {
+    gCPUStructure.Cores   = 4;
+    gCPUStructure.Threads = 4;
   }
 
 	//get Min and Max Ratio Cpu/Bus
