@@ -402,7 +402,7 @@ BITS 64
 	mov		ss, ax
 	; lets align the stack
 	mov		rax, rsp
-	and		rax, 0fffffffffffffff8h
+	and		rax, 0fffffffffffffff0h
 	mov		rsp, rax
 	
 	; call our C code

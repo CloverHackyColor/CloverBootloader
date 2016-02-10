@@ -377,7 +377,7 @@ DataBaseAdr	dd	0
 	mov		ss, ax
 	; lets align the stack
 	mov		rax, rsp
-	and		rax, 0xfffffffffffffff8
+	and		rax, 0xfffffffffffffff0
 	mov		rsp, rax
 	
 	; call our C code

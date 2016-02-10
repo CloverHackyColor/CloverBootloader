@@ -359,7 +359,7 @@ DataBaseAdr:	.long 0
 	movw	%ax, %ss
 	# lets align the stack
 	movq	%rsp, %rax
-	andq	$0xfffffffffffffff8, %rax
+	andq	$0xfffffffffffffff0, %rax
 	movq	%rax, %rsp
 	
 	# call our C code
