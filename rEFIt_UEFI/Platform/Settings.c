@@ -4640,7 +4640,14 @@ GetUserSettings(
 
       Prop                 = GetProperty (DictPointer, "SavingMode");
       gSettings.SavingMode = (UINT8)GetPropertyInteger (Prop, 0xFF); //the default value means not set
-
+      
+      Prop                 = GetProperty (DictPointer, "TurboDisable");
+      if (Prop && IsPropertyTrue (Prop)) {
+        UINT64 msr = AsmReadMsr64(MSR_IA32_MISC_ENABLE);
+        gSettings.Turbo = 0;
+        msr &= ~(1ULL<<38);
+        AsmWriteMsr64 (MSR_IA32_MISC_ENABLE, msr);
+      }
     }
     
     // RtVariables
