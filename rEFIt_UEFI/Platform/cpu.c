@@ -285,13 +285,23 @@ VOID GetCPUProperties (VOID)
     gCPUStructure.Threads = 2;
   }
   
-  //workaround for Xeon Harpertown
-  if (gCPUStructure.Model == CPU_MODEL_PENRYN) {
+  //workaround for Xeon Harpertown and Yorkfield
+  if ((gCPUStructure.Model == CPU_MODEL_PENRYN) &&
+      (AsciiStrStr(gCPUStructure.BrandString, "Xeon")) {
     if ((AsciiStrStr(gCPUStructure.BrandString, "X54")) ||
         (AsciiStrStr(gCPUStructure.BrandString, "E54")) ||
+        (AsciiStrStr(gCPUStructure.BrandString, "W35")) ||
+        (AsciiStrStr(gCPUStructure.BrandString, "X34")) ||
+        (AsciiStrStr(gCPUStructure.BrandString, "X33")) ||
+        (AsciiStrStr(gCPUStructure.BrandString, "L33")) ||
+        (AsciiStrStr(gCPUStructure.BrandString, "X32")) ||
+        (AsciiStrStr(gCPUStructure.BrandString, "L3426")) ||        
         (AsciiStrStr(gCPUStructure.BrandString, "L54"))) {
       gCPUStructure.Cores   = 4;
       gCPUStructure.Threads = 4;
+    } else if (AsciiStrStr(gCPUStructure.BrandString, "W36")) {
+      gCPUStructure.Cores   = 6;
+      gCPUStructure.Threads = 6;
     } else { //other Penryn and Wolfdale
       gCPUStructure.Cores   = 2;
       gCPUStructure.Threads = 2;
