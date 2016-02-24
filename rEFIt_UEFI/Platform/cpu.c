@@ -287,7 +287,7 @@ VOID GetCPUProperties (VOID)
   
   //workaround for Xeon Harpertown and Yorkfield
   if ((gCPUStructure.Model == CPU_MODEL_PENRYN) &&
-      (AsciiStrStr(gCPUStructure.BrandString, "Xeon")) {
+      (AsciiStrStr(gCPUStructure.BrandString, "Xeon"))) {
     if ((AsciiStrStr(gCPUStructure.BrandString, "X54")) ||
         (AsciiStrStr(gCPUStructure.BrandString, "E54")) ||
         (AsciiStrStr(gCPUStructure.BrandString, "W35")) ||
