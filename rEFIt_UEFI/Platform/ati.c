@@ -237,6 +237,7 @@ radeon_card_info_t radeon_cards[] = {
     { 0x6763,	0x00000000, CHIP_FAMILY_CAICOS,	"AMD Radeon E6460 Series",    kHydrilla	},
     { 0x6768,	0x00000000, CHIP_FAMILY_CAICOS,	"AMD Radeon HD 6400M Series",	kHydrilla	},
     { 0x6770,	0x00000000, CHIP_FAMILY_CAICOS,	"AMD Radeon HD 6400 Series",	kBulrushes	},
+    { 0x6771,	0x00000000, CHIP_FAMILY_CAICOS,	"AMD Radeon HD 8490",         kBulrushes	},
     { 0x6772,	0x00000000, CHIP_FAMILY_CAICOS,	"AMD Radeon HD 7400A Series",	kBulrushes	},
     { 0x6778,	0x00000000, CHIP_FAMILY_CAICOS,	"AMD Radeon HD 7470",         kBulrushes	},
     { 0x6779,	0x00000000, CHIP_FAMILY_CAICOS,	"AMD Radeon HD 6450/7450/8450/R5 230",	kBulrushes	},
