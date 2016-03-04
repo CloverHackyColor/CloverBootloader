@@ -384,6 +384,9 @@ Headers collection for procedures
 #define MSR_CONFIG_TDP_CONTROL      0x64B  /* write once to lock */
 #define MSR_TURBO_ACTIVATION_RATIO  0x64C
 
+//Skylake
+#define BASE_ART_CLOCK_SOURCE 	24000000ULL	/* 24Mhz */
+
 
 //AMD
 #define K8_FIDVID_STATUS            0xC0010042
@@ -432,6 +435,7 @@ MSR C001006B  0000-0000-0000-0000
 #define CPUID_81	8
 #define CPUID_87  9
 #define CPUID_88  10
+#define CPUID_15  15
 #define CPUID_MAX	16
 
 /* CPU Cache */
@@ -1183,6 +1187,7 @@ typedef struct {
   UINT16                  Turbo4; //4 Core
   
   UINT64                  TSCCalibr;
+  UINT64                  ARTFrequency;
     
 } CPU_STRUCTURE;
 

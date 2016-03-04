@@ -178,7 +178,7 @@ VOID GetCPUProperties (VOID)
 	}
   
   /* Fold in the Invariant TSC feature bit, if present */
-	if((gCPUStructure.CPUID[CPUID_80][EAX] & 0x0000000f) >= 7){
+	if(gCPUStructure.CPUID[CPUID_80][EAX] >= 0x80000007){
 		DoCpuid(0x80000007, gCPUStructure.CPUID[CPUID_87]);
     gCPUStructure.ExtFeatures |=
     gCPUStructure.CPUID[CPUID_87][EDX] & (UINT32)CPUID_EXTFEATURE_TSCI;
@@ -313,6 +313,22 @@ VOID GetCPUProperties (VOID)
     gCPUStructure.Cores   = 4;
     gCPUStructure.Threads = 4;
   }
+  
+  //New for SkyLake 0x4E, 0x5E
+  if(gCPUStructure.CPUID[CPUID_0][EAX] >= 0x15) {
+    INTN Num, Denom;
+		DoCpuid(0x15, gCPUStructure.CPUID[CPUID_15]);
+    Num = gCPUStructure.CPUID[CPUID_15][EBX];
+    Denom = gCPUStructure.CPUID[CPUID_15][EAX];
+    DBG(" TSC/CCC Information Leaf:\n");
+		DBG("  numerator     : %d\n", Num);
+		DBG("  denominator   : %d\n", Denom);
+    if (Num && Denom) {
+      gCPUStructure.ARTFrequency = DivU64x32(MultU64x32(gCPUStructure.TSCCalibr, Denom), Num);
+      DBG(" Calibrated ARTFrequency: %lld\n", gCPUStructure.ARTFrequency);
+    }
+	}
+
 
 	//get Min and Max Ratio Cpu/Bus
   /*  if (QEMU) {
@@ -393,6 +409,8 @@ VOID GetCPUProperties (VOID)
            case CPU_MODEL_SKYLAKE_S:
              gCPUStructure.TSCFrequency = MultU64x32(gCPUStructure.CurrentSpeed, Mega); //MHz -> Hz
              gCPUStructure.CPUFrequency = gCPUStructure.TSCFrequency;
+             
+             
              //----test C3 patch
              msr = AsmReadMsr64(MSR_PKG_CST_CONFIG_CONTROL); //0xE2
              MsgLog("MSR 0xE2 before patch %08x\n", msr);

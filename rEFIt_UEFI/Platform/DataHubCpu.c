@@ -275,6 +275,7 @@ SetupDataForOSX()
   UINT64     FrontSideBus;
   UINT64     CpuSpeed;
   UINT64     TscFrequency;
+  UINT64     ARTFrequency;
   CHAR16*    ProductName;
   CHAR16*    SerialNumber;
   UINTN      Revision;
@@ -321,7 +322,12 @@ SetupDataForOSX()
     SerialNumber        = AllocateZeroPool(64);
     AsciiStrToUnicodeStr(gSettings.SerialNr,    SerialNumber);   
     
-    LogDataHub(&gEfiProcessorSubClassGuid, L"FSBFrequency",         &FrontSideBus,        sizeof(UINT64));
+    LogDataHub(&gEfiProcessorSubClassGuid, L"FSBFrequency",     &FrontSideBus,        sizeof(UINT64));
+    
+    if (gCPUStructure.ARTFrequency) {
+      ARTFrequency = gCPUStructure.ARTFrequency;
+      LogDataHub(&gEfiProcessorSubClassGuid, L"ARTFrequency",   &ARTFrequency,        sizeof(UINT64));
+    }
 
     TscFrequency        = gCPUStructure.TSCFrequency;
     LogDataHub(&gEfiProcessorSubClassGuid, L"InitialTSC",         &TscFrequency,        sizeof(UINT64));

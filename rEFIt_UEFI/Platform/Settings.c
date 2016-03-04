@@ -4521,6 +4521,8 @@ GetUserSettings(
               DeviceN = 4;
             } else if (AsciiStriCmp (Prop2->string, "USB") == 0) {
               DeviceN = 11;
+            } else if (AsciiStriCmp (Prop2->string, "NMVE") == 0) {
+              DeviceN = 13;
             } else {
               DBG (" add properties to unknown device %a, ignored\n", Prop2->string);
               continue;
