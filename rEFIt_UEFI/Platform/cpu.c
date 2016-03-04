@@ -168,6 +168,11 @@ VOID GetCPUProperties (VOID)
   if (gCPUStructure.Vendor == CPU_VENDOR_INTEL) {
     DoCpuid(4, gCPUStructure.CPUID[CPUID_4]);
     gCPUStructure.CoresPerPackage =  (UINT32)bitfield(gCPUStructure.CPUID[CPUID_4][EAX], 31, 26) + 1; //Atom330 = 2
+    DBG("CPUID_4_eax=%x\n", gCPUStructure.CPUID[CPUID_4][EAX]);
+    DoCpuid(4, gCPUStructure.CPUID[CPUID_4]);
+    DBG("CPUID_4_eax=%x\n", gCPUStructure.CPUID[CPUID_4][EAX]);
+    DoCpuid(4, gCPUStructure.CPUID[CPUID_4]);
+    DBG("CPUID_4_eax=%x\n", gCPUStructure.CPUID[CPUID_4][EAX]);
   } else if (gCPUStructure.Vendor == CPU_VENDOR_AMD) {
     DoCpuid(0x80000008, gCPUStructure.CPUID[CPUID_88]);
     gCPUStructure.CoresPerPackage =  (gCPUStructure.CPUID[CPUID_88][ECX] & 0xFF) + 1;
@@ -286,8 +291,8 @@ VOID GetCPUProperties (VOID)
   }
   
   //workaround for Xeon Harpertown and Yorkfield
-  if ((gCPUStructure.Model == CPU_MODEL_PENRYN) &&
-      (AsciiStrStr(gCPUStructure.BrandString, "Xeon"))) {
+  if ((gCPUStructure.Model == CPU_MODEL_PENRYN) /*&&
+      (AsciiStrStr(gCPUStructure.BrandString, "Xeon")) */) {
     if ((AsciiStrStr(gCPUStructure.BrandString, "X54")) ||
         (AsciiStrStr(gCPUStructure.BrandString, "E54")) ||
         (AsciiStrStr(gCPUStructure.BrandString, "W35")) ||
