@@ -351,7 +351,8 @@ VOID UniquifySmbiosTableStr (SMBIOS_STRUCTURE_POINTER SmbiosTableN, SMBIOS_TABLE
       ref_str = SmbiosTableN.Raw[str_idx[j]];
       if (cmp_str == ref_str) {
         SmbiosTableN.Raw[cmp_idx] = 0;    // pretend the string doesn't exist
-        UpdateSmbiosString(SmbiosTableN, &SmbiosTableN.Raw[cmp_idx], GetSmbiosString(SmbiosTableN, ref_str));
+        // UpdateSmbiosString(SmbiosTableN, &SmbiosTableN.Raw[cmp_idx], GetSmbiosString(SmbiosTableN, ref_str));
+        break;
       }
     }
   }
