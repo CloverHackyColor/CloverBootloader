@@ -84,6 +84,19 @@ UINT8 gRAMCount = 0;
 #define SMBIOS_PTR        SIGNATURE_32('_','S','M','_')
 #define MAX_TABLE_SIZE    512
 
+#define smbios_offsetof(s,m) ( (SMBIOS_TABLE_STRING) ((UINT8*)&((s*)0)->m - (UINT8*)0))
+
+SMBIOS_TABLE_STRING    SMBIOS_TABLE_TYPE1_STR_IDX[] = {
+  smbios_offsetof(SMBIOS_TABLE_TYPE1, Manufacturer),
+  smbios_offsetof(SMBIOS_TABLE_TYPE1, ProductName),
+  smbios_offsetof(SMBIOS_TABLE_TYPE1, Version),
+  smbios_offsetof(SMBIOS_TABLE_TYPE1, SerialNumber),
+  smbios_offsetof(SMBIOS_TABLE_TYPE1, SKUNumber),
+  smbios_offsetof(SMBIOS_TABLE_TYPE1, Family),
+  0x00
+}; // offsets of structures that values are strings for type 1
+
+
 
 /* Functions */
 
@@ -321,6 +334,29 @@ VOID AddSmbiosEndOfTable()
 	NumberOfRecords++;
 }
 
+VOID UniquifySmbiosTableStr (SMBIOS_STRUCTURE_POINTER SmbiosTableN, SMBIOS_TABLE_STRING* str_idx)
+{
+  INTN            i, j;
+  SMBIOS_TABLE_STRING    cmp_idx;
+  SMBIOS_TABLE_STRING    cmp_str;
+  SMBIOS_TABLE_STRING    ref_str;
+  
+  if (0 == str_idx[0]) return;    // SMBIOS doesn't have string structures, just return;
+  for (i = 1; ;i++) {
+    cmp_idx = str_idx[i];
+    if (0 == cmp_idx) break;
+    cmp_str = SmbiosTableN.Raw[cmp_idx];
+    if (0 == cmp_str) continue;        // if string is undefine, continue
+    for (j = 0; j < i; j++) {
+      ref_str = SmbiosTableN.Raw[str_idx[j]];
+      if (cmp_str == ref_str) {
+        SmbiosTableN.Raw[cmp_idx] = 0;    // pretend the string doesn't exist
+        UpdateSmbiosString(SmbiosTableN, &SmbiosTableN.Raw[cmp_idx], GetSmbiosString(SmbiosTableN, ref_str));
+      }
+    }
+  }
+}
+
 /* Patching Functions */
 VOID PatchTableType0()
 {
@@ -411,6 +447,8 @@ VOID PatchTableType1()
 	CopyMem((VOID*)newSmbiosTable.Type1, (VOID*)SmbiosTable.Type1, Size); //copy main table
 	CopyMem((CHAR8*)newSmbiosTable.Type1+NewSize, (CHAR8*)SmbiosTable.Type1+Size, TableSize - Size); //copy strings
 	newSmbiosTable.Type1->Hdr.Length = (UINT8)NewSize;
+  
+  UniquifySmbiosTableStr(newSmbiosTable, SMBIOS_TABLE_TYPE1_STR_IDX);
 	
 	newSmbiosTable.Type1->WakeUpType = SystemWakeupTypePowerSwitch;
 	Once = TRUE;
