@@ -470,7 +470,7 @@ VOID PatchTableType1()
 		UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type1->SerialNumber, gSettings.SerialNr);
 	}
 	if(iStrLen(gSettings.BoardNumber, 64)>0){
-		UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type1->SKUNumber, gSettings.BoardNumber);
+		UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type1->SKUNumber, gSettings.BoardNumber); //iMac17,1 - there is nothing
 	}	
 	if(iStrLen(gSettings.FamilyName, 64)>0){
 		UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type1->Family, gSettings.FamilyName);
@@ -542,7 +542,7 @@ VOID PatchTableType2()
 		UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type2->ProductName, gSettings.BoardNumber);
 	}
 	if(iStrLen( gSettings.BoardVersion, 64)>0){
-		UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type2->Version, gSettings.BoardVersion);
+		UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type2->Version, gSettings.BoardVersion); //iMac17,1 - there is ProductName
 	}	
 	if(iStrLen(gSettings.BoardSerialNumber, 64)>0){
 		UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type2->SerialNumber, gSettings.BoardSerialNumber);

@@ -855,7 +855,7 @@ UINT16 GetAdvancedCpuType ()
             }
 						return 0x704;
           case CPU_MODEL_HASWELL_U5:
-          case CPU_MODEL_SKYLAKE_S:
+   //       case CPU_MODEL_SKYLAKE_S:
             if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) M"))
               return 0xB06; // Core M
             if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i3"))
@@ -878,6 +878,7 @@ UINT16 GetAdvancedCpuType ()
           case CPU_MODEL_CRYSTALWELL:
           case CPU_MODEL_BROADWELL_HQ:
           case CPU_MODEL_SKYLAKE_U:
+          case CPU_MODEL_SKYLAKE_S:
             if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i3"))
 							return 0x905; // Core i3 - Apple doesn't use it
             if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i5"))
