@@ -86,6 +86,13 @@ UINT8 gRAMCount = 0;
 
 #define smbios_offsetof(s,m) ( (SMBIOS_TABLE_STRING) ((UINT8*)&((s*)0)->m - (UINT8*)0))
 
+SMBIOS_TABLE_STRING    SMBIOS_TABLE_TYPE0_STR_IDX[] = {
+  smbios_offsetof(SMBIOS_TABLE_TYPE0, Vendor),
+  smbios_offsetof(SMBIOS_TABLE_TYPE0, BiosVersion),
+  smbios_offsetof(SMBIOS_TABLE_TYPE0, BiosReleaseDate),
+  0x00
+}; // offsets of structures that values are strings for type 0 Bios
+
 SMBIOS_TABLE_STRING    SMBIOS_TABLE_TYPE1_STR_IDX[] = {
   smbios_offsetof(SMBIOS_TABLE_TYPE1, Manufacturer),
   smbios_offsetof(SMBIOS_TABLE_TYPE1, ProductName),
@@ -94,9 +101,35 @@ SMBIOS_TABLE_STRING    SMBIOS_TABLE_TYPE1_STR_IDX[] = {
   smbios_offsetof(SMBIOS_TABLE_TYPE1, SKUNumber),
   smbios_offsetof(SMBIOS_TABLE_TYPE1, Family),
   0x00
-}; // offsets of structures that values are strings for type 1
+}; // offsets of structures that values are strings for type 1 System
 
+SMBIOS_TABLE_STRING    SMBIOS_TABLE_TYPE2_STR_IDX[] = {
+  smbios_offsetof(SMBIOS_TABLE_TYPE2, Manufacturer),
+  smbios_offsetof(SMBIOS_TABLE_TYPE2, ProductName),
+  smbios_offsetof(SMBIOS_TABLE_TYPE2, Version),
+  smbios_offsetof(SMBIOS_TABLE_TYPE2, SerialNumber),
+  smbios_offsetof(SMBIOS_TABLE_TYPE2, AssetTag),
+  smbios_offsetof(SMBIOS_TABLE_TYPE2, LocationInChassis),
+  0x00
+}; // offsets of structures that values are strings for type 2 BaseBoard
 
+SMBIOS_TABLE_STRING    SMBIOS_TABLE_TYPE3_STR_IDX[] = {
+  smbios_offsetof(SMBIOS_TABLE_TYPE3, Manufacturer),
+  smbios_offsetof(SMBIOS_TABLE_TYPE3, Version),
+  smbios_offsetof(SMBIOS_TABLE_TYPE3, SerialNumber),
+  smbios_offsetof(SMBIOS_TABLE_TYPE3, AssetTag),
+  0x00
+}; // offsets of structures that values are strings for type 3 Chassis
+
+SMBIOS_TABLE_STRING    SMBIOS_TABLE_TYPE4_STR_IDX[] = {
+  smbios_offsetof(SMBIOS_TABLE_TYPE4, Socket),
+  smbios_offsetof(SMBIOS_TABLE_TYPE4, ProcessorManufacture),
+  smbios_offsetof(SMBIOS_TABLE_TYPE4, ProcessorVersion),
+  smbios_offsetof(SMBIOS_TABLE_TYPE4, SerialNumber),
+  smbios_offsetof(SMBIOS_TABLE_TYPE4, AssetTag),
+  smbios_offsetof(SMBIOS_TABLE_TYPE4, PartNumber),
+  0x00
+}; // offsets of structures that values are strings for type 3 Chassis
 
 /* Functions */
 
@@ -396,6 +429,9 @@ VOID PatchTableType0()
 	//if use patched AppleSMBIOS
 	//----------------
 	Once = TRUE;
+  
+  UniquifySmbiosTableStr(newSmbiosTable, SMBIOS_TABLE_TYPE0_STR_IDX);
+  
 	if(iStrLen(gSettings.VendorName, 64)>0){
 		UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type0->Vendor, gSettings.VendorName);
 	}
@@ -535,6 +571,8 @@ VOID PatchTableType2()
 		newSmbiosTable.Type2->FeatureFlag.Removable = 1;
 	}
 	Once = TRUE;
+  
+  UniquifySmbiosTableStr(newSmbiosTable, SMBIOS_TABLE_TYPE2_STR_IDX);
 	
 	if(iStrLen(gSettings.BoardManufactureName, 64)>0){
 		UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type2->Manufacturer, gSettings.BoardManufactureName);
@@ -612,6 +650,8 @@ VOID PatchTableType3()
 	newSmbiosTable.Type3->ContainedElementCount = 0;
 	newSmbiosTable.Type3->ContainedElementRecordLength = 0;
 	Once = TRUE;
+  
+  UniquifySmbiosTableStr(newSmbiosTable, SMBIOS_TABLE_TYPE3_STR_IDX);
 	
 	if (gSettings.ChassisType != 0) {
 		newSmbiosTable.Type3->Type = gSettings.ChassisType;
@@ -725,6 +765,8 @@ VOID PatchTableType4()
         newSmbiosTable.Type4->ThreadCount > newSmbiosTable.Type4->CoreCount * 2) {
       newSmbiosTable.Type4->ThreadCount = gCPUStructure.Threads;
     }
+    
+    UniquifySmbiosTableStr(newSmbiosTable, SMBIOS_TABLE_TYPE4_STR_IDX);
     
 		// TODO: Set SmbiosTable.Type4->ProcessorFamily for all implemented CPU models
 		Once = TRUE;
