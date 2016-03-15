@@ -365,7 +365,7 @@ radeon_card_info_t radeon_cards[] = {
     { 0x689D,	0x00000000, CHIP_FAMILY_HEMLOCK,	"ATI Radeon HD 5900 Series",	kUakari	},
     
     // CYPRESS
-    { 0x689E,	0x00000000, CHIP_FAMILY_CYPRESS,	"ATI Radeon HD 5830eFInject Series",	kUakari	},
+    { 0x689E,	0x00000000, CHIP_FAMILY_CYPRESS,	"ATI Radeon HD 5830 Series",	kUakari	},
     
     // JUNIPER
     { 0x68A0,	0x00000000, CHIP_FAMILY_JUNIPER,	"ATI Radeon HD 5770 Series",	kHoolock	}, // Mobile
