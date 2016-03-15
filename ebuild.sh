@@ -35,7 +35,7 @@ export CONF_PATH=${CONF_PATH:-}
 # checking if it is where CloverGrowerPro put it
 TOOLCHAIN_DIR=${TOOLCHAIN_DIR:-"$CLOVERROOT"/../../toolchain}
 if [[ ! -d $TOOLCHAIN_DIR ]]; then
-    TOOLCHAIN_DIR=~/src/opt/local
+  TOOLCHAIN_DIR="${PWD}"/../../opt/local
 fi
 export TOOLCHAIN_DIR
 echo "TOOLCHAIN_DIR: $TOOLCHAIN_DIR"
