@@ -2259,7 +2259,7 @@ typedef struct { //kSMBTypeOemProcessorBusSpeed
 
 typedef struct { //kSMBTypeOemPlatformFeature
 	SMBIOS_TABLE_HEADER   Hdr;
-	UINT16			PlatformFeature;   // MT/s unit
+	UINT64			PlatformFeature;   // MT/s unit
 } SMBIOS_TABLE_TYPE133;
 
 ///

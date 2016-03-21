@@ -241,7 +241,7 @@ VOID FillInputs(BOOLEAN New)
   InputItems[InputItemsCount].BValue = gSettings.PatchVBios;
   InputItems[InputItemsCount++].SValue = gSettings.PatchVBios?L"[+]":L"[ ]";
   InputItems[InputItemsCount].ItemType = Decimal;  //17
-  InputItems[InputItemsCount++].SValue = PoolPrint(L"%06d", gSettings.PlatformFeature);
+  InputItems[InputItemsCount++].SValue = PoolPrint(L"%08d", gSettings.PlatformFeature);
   InputItems[InputItemsCount].ItemType = Hex;  //18
   if (New) {
     InputItems[InputItemsCount].SValue = AllocateZeroPool(36);
@@ -644,7 +644,7 @@ VOID ApplyInputs(VOID)
   }
   i++; //17
   if (InputItems[i].Valid) {
-    gSettings.PlatformFeature = (UINT32)StrDecimalToUintn(InputItems[i].SValue);
+    gSettings.PlatformFeature = (UINT64)StrDecimalToUintn(InputItems[i].SValue);
     DBG("Apply PlatformFeature=%d\n", gSettings.PlatformFeature);
   }
   i++; //18 | Download-Fritz: There is no GUI element for BacklightLevel; please revise

@@ -830,8 +830,7 @@ typedef struct {
   INT8                    XMPDetection;
   INT8                    reserved;
   // SMBIOS TYPE133
-  UINT32	                PlatformFeature;
-  UINT32	                reserved2; 
+  UINT64	                PlatformFeature;
 
   // OS parameters
   CHAR8                   Language[16];

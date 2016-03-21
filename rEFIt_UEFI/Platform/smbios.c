@@ -1831,7 +1831,7 @@ VOID PatchTableType133()
   if (gSettings.PlatformFeature == 0xFFFF) {
     return;
   }
-  // Get Table Type131
+  // Get Table Type133
 	SmbiosTable = GetSmbiosTableFromType (EntryPoint, 133, 0);
 	if (SmbiosTable.Raw != NULL) {
     MsgLog("Table 133 is present, PlatformFeature=%x\n", SmbiosTable.Type133->PlatformFeature);
@@ -1839,7 +1839,7 @@ VOID PatchTableType133()
   }
   ZeroMem((VOID*)newSmbiosTable.Type133, MAX_TABLE_SIZE);
   newSmbiosTable.Type133->Hdr.Type = 133;
-  newSmbiosTable.Type133->Hdr.Length = sizeof(SMBIOS_TABLE_HEADER)+4;
+  newSmbiosTable.Type133->Hdr.Length = sizeof(SMBIOS_TABLE_HEADER)+8;
   newSmbiosTable.Type133->Hdr.Handle = 0x8500; //ugly
   newSmbiosTable.Type133->PlatformFeature = gSettings.PlatformFeature;
   Handle = LogSmbiosTable(newSmbiosTable);
