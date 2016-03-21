@@ -1952,6 +1952,7 @@ VOID PatchSmbios(VOID) //continue
 	PatchTableType130();
 	PatchTableType131();
 	PatchTableType132();
+    PatchTableType133();
 	AddSmbiosEndOfTable();
 	if(MaxStructureSize > MAX_TABLE_SIZE){
 //    DBG("Too long SMBIOS!\n");
