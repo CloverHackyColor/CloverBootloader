@@ -693,6 +693,8 @@
 		<true/>
 		<key>#Version</key>
 		<string>1.0</string>
+		<key>#PlatformFeature</key>
+		<integer>3</integer>
 		<key>#Slots</key>
 		<array>
 			<dict>
