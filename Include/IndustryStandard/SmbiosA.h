@@ -2257,6 +2257,11 @@ typedef struct { //kSMBTypeOemProcessorBusSpeed
 	UINT16			ProcessorBusSpeed;   // MT/s unit
 } SMBIOS_TABLE_TYPE132;
 
+typedef struct { //kSMBTypeOemPlatformFeature
+	SMBIOS_TABLE_HEADER   Hdr;
+	UINT16			PlatformFeature;   // MT/s unit
+} SMBIOS_TABLE_TYPE133;
+
 ///
 /// Union of all the possible SMBIOS record types.
 ///
@@ -2311,6 +2316,7 @@ typedef union {
 	SMBIOS_TABLE_TYPE130  *Type130;
 	SMBIOS_TABLE_TYPE131  *Type131;
 	SMBIOS_TABLE_TYPE132  *Type132;
+	SMBIOS_TABLE_TYPE133  *Type133;
   UINT8                 *Raw;
 } SMBIOS_STRUCTURE_POINTER;
 

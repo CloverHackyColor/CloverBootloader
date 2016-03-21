@@ -240,11 +240,8 @@ VOID FillInputs(BOOLEAN New)
   InputItems[InputItemsCount].ItemType = BoolValue; //16
   InputItems[InputItemsCount].BValue = gSettings.PatchVBios;
   InputItems[InputItemsCount++].SValue = gSettings.PatchVBios?L"[+]":L"[ ]";
-  InputItems[InputItemsCount].ItemType = Hex;  //17
-  if (New) {
-    InputItems[InputItemsCount].SValue = AllocateZeroPool(36);
-  }
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 36, L"0x%X", gSettings.FixDsdt);
+  InputItems[InputItemsCount].ItemType = Decimal;  //17
+  InputItems[InputItemsCount++].SValue = PoolPrint(L"%06d", gSettings.PlatformFeature);
   InputItems[InputItemsCount].ItemType = Hex;  //18
   if (New) {
     InputItems[InputItemsCount].SValue = AllocateZeroPool(36);
@@ -646,9 +643,10 @@ VOID ApplyInputs(VOID)
     gSettings.PatchVBios = InputItems[i].BValue;
   }
   i++; //17
-/*  if (InputItems[i].Valid) {
-    gSettings.FixDsdt = (UINT32)StrHexToUint64(InputItems[i].SValue);
-  } */
+  if (InputItems[i].Valid) {
+    gSettings.PlatformFeature = (UINT32)StrDecimalToUintn(InputItems[i].SValue);
+    DBG("Apply PlatformFeature=%d\n", gSettings.PlatformFeature);
+  }
   i++; //18 | Download-Fritz: There is no GUI element for BacklightLevel; please revise
   if (InputItems[i].Valid) {
     gSettings.BacklightLevel = (UINT16)StrHexToUint64(InputItems[i].SValue);
@@ -3364,6 +3362,16 @@ REFIT_MENU_ENTRY  *SubMenuSmbios()
   InputBootArgs->Entry.Tag = TAG_INPUT;
   InputBootArgs->Entry.Row = StrLen(InputItems[87].SValue);
   InputBootArgs->Item = &InputItems[87];    
+  InputBootArgs->Entry.AtClick = ActionSelect;
+  InputBootArgs->Entry.AtDoubleClick = ActionEnter;
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+  
+  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  UnicodeSPrint(Flags, 255, L"PlatformFeature:");
+  InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
+  InputBootArgs->Entry.Tag = TAG_INPUT;
+  InputBootArgs->Entry.Row = StrLen(InputItems[17].SValue); //cursor
+  InputBootArgs->Item = &InputItems[17];
   InputBootArgs->Entry.AtClick = ActionSelect;
   InputBootArgs->Entry.AtDoubleClick = ActionEnter;
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);

@@ -4578,6 +4578,9 @@ GetUserSettings(
           }
         }
       }
+      
+      Prop = GetProperty (DictPointer, "PlatformFeature");
+      gSettings.PlatformFeature = (UINT32)GetPropertyInteger(Prop, 0xFFFF);
     }
     
     //CPU

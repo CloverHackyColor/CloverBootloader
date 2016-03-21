@@ -829,6 +829,10 @@ typedef struct {
   BOOLEAN                 InjectMemoryTables;
   INT8                    XMPDetection;
   INT8                    reserved;
+  // SMBIOS TYPE133
+  UINT32	                PlatformFeature;
+  UINT32	                reserved2; 
+
   // OS parameters
   CHAR8                   Language[16];
   CHAR8                   BootArgs[256];
