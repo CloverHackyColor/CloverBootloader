@@ -171,6 +171,7 @@ Headers collection for procedures
 #define CPU_MODEL_AIRMONT       0x4C
 #define CPU_MODEL_AVOTON        0x4D
 #define CPU_MODEL_SKYLAKE_U     0x4E
+#define CPU_MODEL_BROADWELL_E5  0x4F
 #define CPU_MODEL_BROADWELL_DE  0x56
 #define CPU_MODEL_KNIGHT        0x57
 #define CPU_MODEL_MOOREFIELD    0x5A
