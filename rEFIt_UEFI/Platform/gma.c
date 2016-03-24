@@ -119,6 +119,7 @@ static struct gma_gpu_t KnownGPUS[] = {
   { 0x1912, "Intel HD Graphics 530"  }, // *
   { 0x1916, "Intel HD Graphics 520"  }, // * or Intel® Iris™ Graphics 540
   { 0x191B, "Intel HD Graphics 530"  }, // *
+  { 0x191E, "Intel HD Graphics 515"  }, // * Skylake M7
   { 0x1926, "Intel Iris Graphics 550"  }, // *
   // 0x0e08 - Xeon E5-1620 
 };
@@ -253,34 +254,35 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
     case 0x0156:
     case 0x0162:
     case 0x0166:
-    case 0x016a:
+    case 0x016A:
     case 0x0412:
     case 0x0416:
-    case 0x041e:
-    case 0x0a0e:
-    case 0x0a16:
-    case 0x0a1e:
-    case 0x0a26:
-    case 0x0a2e:
-    case 0x0d22:
-    case 0x0d26:
+    case 0x041E:
+    case 0x0A0E:
+    case 0x0A16:
+    case 0x0A1E:
+    case 0x0A26:
+    case 0x0A2E:
+    case 0x0D22:
+    case 0x0D26:
     case 0x1602:
     case 0x1606:
     case 0x161E:
     case 0x1616:
     case 0x1612:
     case 0x1626:
-    case 0x162b:
+    case 0x162B:
     case 0x1622:
     case 0x1912:
     case 0x1916:
-    case 0x191b:
+    case 0x191B:
+    case 0x191E:
     case 0x1926:
   
       if (!gSettings.IgPlatform) {
         switch (gma_dev->device_id) {
           case 0x162:
-          case 0x16a:
+          case 0x16A:
             devprop_add_value(device, "AAPL,ig-platform-id", GMAX3100_vals[23], 4);
             devprop_add_value(device, "class-code",	(UINT8*)ClassFix, 4);
             break;
