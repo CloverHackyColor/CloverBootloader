@@ -108,20 +108,51 @@ static struct gma_gpu_t KnownGPUS[] = {
   { 0x0A2E, "Intel Iris"  },  // Haswell Intel Iris 5100 (i7-4558U, i7-4578U) *
   { 0x0D22, "Intel Iris Pro"  },  //Haswell *
   { 0x0D26, "Intel Iris Pro"  },  //Haswell i7 4860HQ *
-  { 0x1602, "Intel HD Graphics"  }, // *
-  { 0x1606, "Intel HD Graphics"  }, // *
-  { 0x161E, "Intel HD Graphics 5300"  }, // *
-  { 0x1616, "Intel HD Graphics 5500"  }, // *
-  { 0x1612, "Intel HD Graphics 5600"  }, // * Broadwell i7-5700HQ
-  { 0x1626, "Intel HD Graphics 6000"  }, // *
-  { 0x162B, "Intel Iris"  }, // *
-  { 0x1622, "Intel Iris Pro"  }, // *
-  { 0x1912, "Intel HD Graphics 530"  }, // *
-  { 0x1916, "Intel HD Graphics 520"  }, // * or Intel® Iris™ Graphics 540
-  { 0x191B, "Intel HD Graphics 530"  }, // *
-  { 0x191E, "Intel HD Graphics 515"  }, // * Skylake M7
-  { 0x1926, "Intel Iris Graphics 550"  }, // *
-  // 0x0e08 - Xeon E5-1620 
+                                  // Broadwell
+    { 0x1602, "Intel HD Graphics"  }, // *
+    { 0x1606, "Intel HD Graphics"  }, // *
+    { 0x160A, "Intel HD Graphics"  }, // Broadwell-U Integrated
+    //  { 0x160B, "Intel HD Graphics"  }, // Broadwell-U Integrated
+    //  { 0x160D, "Intel HD Graphics"  }, // Broadwell-U Integrated
+    { 0x1612, "Intel HD Graphics 5600"  }, // * Broadwell i7-5700HQ
+    { 0x1616, "Intel HD Graphics 5500"  }, // *
+    { 0x161A, "Intel HD Graphics"  }, // Broadwell-U Integrated
+    //  { 0x161B, "Intel HD Graphics"  }, // Broadwell-U Integrated
+    //  { 0x161D, "Intel HD Graphics"  }, // Broadwell-U Integrated
+    { 0x161E, "Intel HD Graphics 5300"  }, // *
+    { 0x1622, "Intel Iris Pro"  }, // *
+    { 0x1626, "Intel HD Graphics 6000"  }, // *
+    { 0x162A, "Intel Iris Pro Graphics P6300"  }, // Intel(R) Iris(TM) Pro Graphics
+    //{ 0x162B, "Intel Iris"  }, // *
+    //{ 0x162D, "Intel Iris Pro Graphics P6300"  }, // Intel(R) Iris(TM) Pro Graphics 6300P Drivers
+    { 0x162E, "Intel HD Graphics"  }, // Broadwell-U Integrated Graphics
+    { 0x1632, "Intel HD Graphics"  }, // Broadwell-U Integrated Graphics
+    { 0x1636, "Intel HD Graphics"  }, // Broadwell-U Integrated Graphics
+    { 0x163A, "Intel HD Graphics"  }, // Broadwell-U Integrated Graphics
+//  { 0x163B, "Intel HD Graphics"  }, // Broadwell-U Integrated Graphics
+//  { 0x163D, "Intel HD Graphics"  }, // Broadwell-U Integrated Graphics
+    { 0x163E, "Intel HD Graphics"  }, // Broadwell-U Integrated
+// Skylake
+    { 0x1902, "Intel HD Graphics 510"  }, // Intel(R) HD Graphics 510
+    { 0x1906, "Intel HD Graphics 510"  }, // Intel(R) HD Graphics 510
+    { 0x1912, "Intel HD Graphics 530"  }, // *
+//  { 0x1913, "Intel HD Graphics 510"  }, // Intel(R) HD Graphics 510
+    { 0x1916, "Intel HD Graphics 520"  }, // * or Intel® Iris™ Graphics 540
+//  { 0x1917, "Intel HD Graphics 530"  }, // Intel(R) HD Graphics 530
+    { 0x191A, "Intel HD Graphics 530"  }, // Intel(R) HD Graphics 530
+//  { 0x191D, "Intel HD Graphics P530"  }, // Intel(R) HD Graphics P530
+    { 0x191E, "Intel HD Graphics 515"  }, // Intel(R) HD Graphics 515
+//  { 0x1921, "Intel HD Graphics 520"  }, // Intel(R) HD Graphics 520
+    { 0x1922, "Intel Iris Graphics 535"  }, // Intel(R) HD Graphics 535
+    { 0x1926, "Intel Iris Graphics 540"  }, // Intel(R) Iris(TM) Graphics 540
+//  { 0x1927, "Intel Iris Graphics 550"  }, // Intel(R) Iris(TM) Graphics 550
+    { 0x192A, "Intel Iris Pro Graphics P580"  }, // Intel(R) Iris(TM) Pro Graphics P580
+//  { 0x192B, "Intel Iris"  }, // Intel(R) Iris(TM) Graphics
+    { 0x1932, "Intel Iris Pro Graphics 570/580"  }, // Intel(R) Iris(TM) Pro Graphics 570/580
+    { 0x193A, "Intel Iris Pro Graphics P580"  }, // Intel(R) Iris(TM) Pro Graphics P580
+//  { 0x193B, "Intel Iris Pro Graphics 580"  }, // Intel(R) Iris(TM) Pro Graphics 580
+//  { 0x193D, "Intel Iris Pro Graphics P580"  }, // Intel(R) Iris(TM) Pro Graphics P580
+  // 0x0e08 - Xeon E5-1620
 };
 
 CHAR8 *get_gma_model(UINT16 id)
@@ -267,18 +298,29 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
     case 0x0D26:
     case 0x1602:
     case 0x1606:
-    case 0x161E:
-    case 0x1616:
+    case 0x160A:
     case 0x1612:
-    case 0x1626:
-    case 0x162B:
+    case 0x1616:
+    case 0x161A:
+    case 0x161E:
     case 0x1622:
+    case 0x1626:
+    case 0x162A:
+    case 0x1632:
+    case 0x1636:
+    case 0x163A:
+    case 0x163E:
+    case 0x1902:
+    case 0x1906:
     case 0x1912:
     case 0x1916:
-    case 0x191B:
+    case 0x191A:
     case 0x191E:
     case 0x1926:
-  
+    case 0x192A:
+    case 0x1932:
+    case 0x193A:
+
       if (!gSettings.IgPlatform) {
         switch (gma_dev->device_id) {
           case 0x162:

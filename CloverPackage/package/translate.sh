@@ -9,6 +9,7 @@ packagename="Clover"
 cd "$(dirname $0)"
 
 declare -r PKGROOT="$PWD"
+declare -r SRCROOT="$PWD"/../../../..
 declare -r SYMROOT=../sym
 declare -r PKG_RESOURCES_DIR="${SYMROOT}"/Resources
 
@@ -23,7 +24,9 @@ declare -r CLOVER_REVISION=$( cat "$PKGROOT"/../../vers.txt )
 
 # ==== CHECK ENVIRONEMENT ====
 
-GETTEXT_PREFIX=${GETTEXT_PREFIX:-"${HOME}"/src/opt/local}
+GETTEXT_PREFIX=${GETTEXT_PREFIX:-"${SRCROOT}"/opt/local}
+
+echo "${GETTEXT_PREFIX}"
 
 # Check that the gettext utilities exists
 if [[ ! -x "$GETTEXT_PREFIX/bin/msgmerge" ]]; then
