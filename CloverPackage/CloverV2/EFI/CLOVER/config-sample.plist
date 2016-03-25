@@ -257,6 +257,8 @@
 		<string>0x0201</string>
 		<key>#SavingMode</key>
 		<integer>7</integer>
+		<key>#TurboDisable</key>
+		<true/>
 	</dict>
 	<key>Devices</key>
 	<dict>
