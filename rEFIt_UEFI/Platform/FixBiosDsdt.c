@@ -2334,12 +2334,12 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
     gfx0 = peg0;
   
   // Intel GMA and HD
-  if ((DisplayVendor[VCard] == 0x8086) && !DsmFound) {
+  if ((DisplayVendor[VCard] == 0x8086) && !gSettings.NoDefaultProperties && !DsmFound) {
     DBG("Creating DSM for Intel card\n");
     met = aml_add_method(gfx0, "_DSM", 4);
     met2 = aml_add_store(met);
     pack = aml_add_package(met2);
-    if (!gSettings.NoDefaultProperties) {
+//    if (!gSettings.NoDefaultProperties) {
       if (gSettings.FakeIntel) {
         FakeID = gSettings.FakeIntel >> 16;
         aml_add_string(pack, "device-id");
@@ -2352,7 +2352,7 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
         aml_add_string(pack, "hda-gfx");
         aml_add_string_buffer(pack, "onboard-1");
       }
-    }
+//    }
     if(!AddProperties(pack, DEV_INTEL) &&
        !gSettings.UseIntelHDMI &&
        !gSettings.FakeIntel) {
@@ -2366,12 +2366,12 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
   }
   
   // NVIDIA
-  if ((DisplayVendor[VCard] == 0x10DE)  && !DsmFound) {
+  if ((DisplayVendor[VCard] == 0x10DE)  && !gSettings.NoDefaultProperties && !DsmFound) {
     DBG("Creating DSM for NVIDIA card\n");
     met = aml_add_method(gfx0, "_DSM", 4);
     met2 = aml_add_store(met);
     pack = aml_add_package(met2);
-    if (!gSettings.NoDefaultProperties) {
+//    if (!gSettings.NoDefaultProperties) {
       if (gSettings.FakeNVidia) {
         FakeID = gSettings.FakeNVidia >> 16;
         aml_add_string(pack, "device-id");
@@ -2388,7 +2388,7 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
           aml_add_string_buffer(pack, "onboard-1");
         }
       }
-    }
+//    }
     if(!AddProperties(pack, DEV_NVIDIA) &&
        !GFXHDAFIX &&
        !gSettings.FakeNVidia) {
@@ -2420,12 +2420,12 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
   }
   
   // ATI
-  if ((DisplayVendor[VCard] == 0x1002) && !DsmFound) {
+  if ((DisplayVendor[VCard] == 0x1002) && !gSettings.NoDefaultProperties && !DsmFound) {
     DBG("Creating DSM for ATI card\n");
     met = aml_add_method(gfx0, "_DSM", 4);  //if no subdevice
     met2 = aml_add_store(met);
     pack = aml_add_package(met2);
-    if (!gSettings.NoDefaultProperties) {
+//    if (!gSettings.NoDefaultProperties) {
       if (gSettings.FakeATI) {
         FakeID = gSettings.FakeATI >> 16;
         aml_add_string(pack, "device-id");
@@ -2449,7 +2449,7 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
           aml_add_string_buffer(pack, "onboard-1");
         }
       }
-    }
+//    }
     if(!AddProperties(pack, DEV_ATI) &&
        !GFXHDAFIX &&
        !gSettings.FakeATI) {
