@@ -324,7 +324,7 @@ SetupDataForOSX()
     
     LogDataHub(&gEfiProcessorSubClassGuid, L"FSBFrequency",     &FrontSideBus,        sizeof(UINT64));
     
-    if (gCPUStructure.ARTFrequency) {
+    if (gCPUStructure.ARTFrequency && gSettings.UseARTFreq) {
       ARTFrequency = gCPUStructure.ARTFrequency;
       LogDataHub(&gEfiProcessorSubClassGuid, L"ARTFrequency",   &ARTFrequency,        sizeof(UINT64));
     }

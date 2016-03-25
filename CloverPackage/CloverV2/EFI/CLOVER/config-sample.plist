@@ -247,6 +247,8 @@
 	<dict>
 		<key>#BusSpeedkHz</key>
 		<integer>133330</integer>
+		<key>#UseARTFrequency</key>
+		<true/>
 		<key>#FrequencyMHz</key>
 		<integer>3140</integer>
 		<key>#QPI</key>

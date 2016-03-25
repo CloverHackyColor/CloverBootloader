@@ -338,8 +338,7 @@ VOID GetCPUProperties (VOID)
       gCPUStructure.ARTFrequency = DivU64x32(MultU64x32(gCPUStructure.TSCCalibr, Denom), Num);
       DBG(" Calibrated ARTFrequency: %lld\n", gCPUStructure.ARTFrequency);
     }
-	}
-
+  }
 
 	//get Min and Max Ratio Cpu/Bus
   /*  if (QEMU) {

@@ -4615,6 +4615,9 @@ GetUserSettings(
       if (gSettings.QEMU) {
         DBG ("Config set QEMU = true\n");
       }
+        
+      Prop = GetProperty (DictPointer, "UseARTFrequency");
+      gSettings.UseARTFreq = !IsPropertyFalse (Prop);
       
       gSettings.UserChange = FALSE;
       Prop = GetProperty (DictPointer, "BusSpeedkHz");

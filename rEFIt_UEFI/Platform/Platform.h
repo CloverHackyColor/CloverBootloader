@@ -829,7 +829,7 @@ typedef struct {
   BOOLEAN                 TrustSMBIOS;
   BOOLEAN                 InjectMemoryTables;
   INT8                    XMPDetection;
-  INT8                    reserved;
+  BOOLEAN                 UseARTFreq;
   // SMBIOS TYPE133
   UINT64	                PlatformFeature;
 
