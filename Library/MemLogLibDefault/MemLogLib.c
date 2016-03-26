@@ -146,8 +146,11 @@ MemLogInit (
     AsciiSPrint(InitError, sizeof(InitError), "Intel ICH device was not found.");
   } else if ((PciRead8 (PCI_ICH_LPC_ADDRESS (R_ICH_LPC_ACPI_CNT)) & B_ICH_LPC_ACPI_CNT_ACPI_EN) == 0) { // ACPI I/O space is not enabled
     AsciiSPrint(InitError, sizeof(InitError), "ACPI I/O space is not enabled.");
-  } else if ((TimerAddr = ((PciRead16 (PCI_ICH_LPC_ADDRESS (R_ICH_LPC_ACPI_BASE))) & B_ICH_LPC_ACPI_BASE_BAR) + R_ACPI_PM1_TMR) == 0) { // Timer address can't be obtained
-    AsciiSPrint(InitError, sizeof(InitError), "Timer address can't be obtained.");
+  } else if (!(TimerAddr = ((PciRead16 (PCI_ICH_LPC_ADDRESS (R_ICH_LPC_ACPI_BASE))) & B_ICH_LPC_ACPI_BASE_BAR) + R_ACPI_PM1_TMR)) { // Timer address can't be obtained
+    AsciiSPrint(InitError, sizeof(InitError), "Timer address can't be obtained from LPC, try SMB.");
+    if (!(TimerAddr = ((PciRead16 (PCI_ICH_SMBUS_ADDRESS (R_ICH_SMBUS_ACPI_BASE))) & B_ICH_SMBUS_ACPI_BASE_BAR) + R_ACPI_PM1_TMR)) {
+      AsciiSPrint(InitError, sizeof(InitError), "Timer address can't be obtained.");
+    }
   } else {
     // Check that Timer is advancing
     AcpiTick0 = IoRead32 (TimerAddr);
