@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXFileReference section */
+		12344F511CA691B200318A6E /* PerformancePkg */ = {isa = PBXFileReference; lastKnownFileType = folder; name = PerformancePkg; path = ../../../PerformancePkg; sourceTree = "<group>"; };
 		1294CC961A25E8EF0056FF03 /* 8254Timer.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = 8254Timer.inf; sourceTree = "<group>"; };
 		1294CC971A25E8EF0056FF03 /* Timer.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Timer.c; sourceTree = "<group>"; };
 		1294CC981A25E8EF0056FF03 /* Timer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Timer.h; sourceTree = "<group>"; };
@@ -185,7 +186,7 @@
 		1294CD751A25E8FF0056FF03 /* Main.asm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm.asm; path = Main.asm; sourceTree = "<group>"; };
 		1294CD761A25E8FF0056FF03 /* Port80Debug.asm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm.asm; path = Port80Debug.asm; sourceTree = "<group>"; };
 		1294CD771A25E8FF0056FF03 /* PostCodes.inc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.pascal; path = PostCodes.inc; sourceTree = "<group>"; };
-		1294CD781A25E8FF0056FF03 /* rbc */ = {isa = PBXFileReference; lastKnownFileType = file; path = rbc; sourceTree = "<group>"; };
+		1294CD781A25E8FF0056FF03 /* rbc */ = {isa = PBXFileReference; lastKnownFileType = text; path = rbc; sourceTree = "<group>"; };
 		1294CD791A25E8FF0056FF03 /* ReadMe.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = ReadMe.txt; sourceTree = "<group>"; };
 		1294CD7A1A25E8FF0056FF03 /* ResetVector.uni */ = {isa = PBXFileReference; lastKnownFileType = text; path = ResetVector.uni; sourceTree = "<group>"; };
 		1294CD7B1A25E8FF0056FF03 /* ResetVectorExtra.uni */ = {isa = PBXFileReference; lastKnownFileType = text; path = ResetVectorExtra.uni; sourceTree = "<group>"; };
@@ -883,6 +884,7 @@
 				1294CC941A25E8EF0056FF03 /* PcAtChipsetPkg */,
 				1294CCF51A25E8FE0056FF03 /* UefiCpuPkg */,
 				2C2A111D1A0AD20A00E9E558 /* Products */,
+				12344F511CA691B200318A6E /* PerformancePkg */,
 			);
 			sourceTree = "<group>";
 		};
