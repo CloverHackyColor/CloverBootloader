@@ -1,7 +1,7 @@
 /** @file
   This is THE shell (application)
 
-  Copyright (c) 2009 - 2015, Intel Corporation. All rights reserved.<BR>
+  Copyright (c) 2009 - 2016, Intel Corporation. All rights reserved.<BR>
   (C) Copyright 2013-2014 Hewlett-Packard Development Company, L.P.<BR>
   This program and the accompanying materials
   are licensed and made available under the terms and conditions of the BSD License
@@ -25,6 +25,7 @@ SHELL_INFO ShellInfoObject = {
   FALSE,
   {
     {{
+      0,
       0,
       0,
       0,
@@ -69,6 +70,9 @@ SHELL_INFO ShellInfoObject = {
 STATIC CONST CHAR16 mScriptExtension[]      = L".NSH";
 STATIC CONST CHAR16 mExecutableExtensions[] = L".NSH;.EFI";
 STATIC CONST CHAR16 mStartupScript[]        = L"startup.nsh";
+CONST CHAR16 mNoNestingEnvVarName[]         = L"nonesting";
+CONST CHAR16 mNoNestingTrue[]               = L"True";
+CONST CHAR16 mNoNestingFalse[]              = L"False";
 
 /**
   Cleans off leading and trailing spaces and tabs.
@@ -472,6 +476,29 @@ UefiMain (
     if (PcdGet8(PcdShellSupportLevel) >= 1) {
       Status = ShellCommandCreateInitialMappingsAndPaths();
     }
+
+    //
+    // Set the environment variable for nesting support
+    //
+    Size = 0;
+    TempString = NULL;
+    if (!ShellInfoObject.ShellInitSettings.BitUnion.Bits.NoNest) {
+      //
+      // No change.  require nesting in Shell Protocol Execute()
+      //
+      StrnCatGrow(&TempString,
+                  &Size,
+                  L"False",
+                  0);
+    } else {
+      StrnCatGrow(&TempString,
+                  &Size,
+                  mNoNestingTrue,
+                  0);
+    }
+    Status = InternalEfiShellSetEnv(mNoNestingEnvVarName, TempString, TRUE);
+    SHELL_FREE_NON_NULL(TempString);
+    Size = 0;
 
     //
     // save the device path for the loaded image and the device path for the filepath (under loaded image)
@@ -944,6 +971,7 @@ ProcessCommandLine(
   ShellInfoObject.ShellInitSettings.BitUnion.Bits.NoVersion    = FALSE;
   ShellInfoObject.ShellInitSettings.BitUnion.Bits.Delay        = FALSE;
   ShellInfoObject.ShellInitSettings.BitUnion.Bits.Exit         = FALSE;
+  ShellInfoObject.ShellInitSettings.BitUnion.Bits.NoNest       = FALSE;
   ShellInfoObject.ShellInitSettings.Delay = 5;
 
   //
@@ -1002,6 +1030,13 @@ ProcessCommandLine(
                                  CurrentArg
                                  ) == 0) {
       ShellInfoObject.ShellInitSettings.BitUnion.Bits.NoVersion    = TRUE;
+    }
+    else if (UnicodeCollation->StriColl (
+                                 UnicodeCollation,
+                                 L"-nonest",
+                                 CurrentArg
+                                 ) == 0) {
+      ShellInfoObject.ShellInitSettings.BitUnion.Bits.NoNest       = TRUE;
     }
     else if (UnicodeCollation->StriColl (
                                  UnicodeCollation,
@@ -1140,7 +1175,7 @@ DoStartupScript(
     }
     Status = RunShellCommand(FileStringPath, &CalleeStatus);
     if (ShellInfoObject.ShellInitSettings.BitUnion.Bits.Exit == TRUE) {
-      ShellCommandRegisterExit(gEfiShellProtocol->BatchIsActive(), (CONST UINT64)CalleeStatus);
+      ShellCommandRegisterExit(gEfiShellProtocol->BatchIsActive(), (UINT64)CalleeStatus);
     }
     FreePool(FileStringPath);
     return (Status);
@@ -1261,6 +1296,7 @@ DoShellPrompt (
   CONST CHAR16  *CurDir;
   UINTN         BufferSize;
   EFI_STATUS    Status;
+  LIST_ENTRY    OldBufferList;
 
   CurDir  = NULL;
 
@@ -1274,6 +1310,7 @@ DoShellPrompt (
     return EFI_OUT_OF_RESOURCES;
   }
 
+  SaveBufferList(&OldBufferList);
   CurDir = ShellInfoObject.NewEfiShellProtocol->GetEnv(L"cwd");
 
   //
@@ -1303,6 +1340,7 @@ DoShellPrompt (
   //
   // Done with this command
   //
+  RestoreBufferList(&OldBufferList);
   FreePool (CmdLine);
   return Status;
 }
@@ -1335,6 +1373,36 @@ AddBufferToFreeList(
   return (Buffer);
 }
 
+
+/**
+  Create a new buffer list and stores the old one to OldBufferList 
+
+  @param OldBufferList   The temporary list head used to store the nodes in BufferToFreeList.
+**/
+VOID
+SaveBufferList (
+  OUT LIST_ENTRY     *OldBufferList
+  )
+{
+  CopyMem (OldBufferList, &ShellInfoObject.BufferToFreeList.Link, sizeof (LIST_ENTRY));
+  InitializeListHead (&ShellInfoObject.BufferToFreeList.Link);
+}
+
+/**
+  Restore previous nodes into BufferToFreeList .
+
+  @param OldBufferList   The temporary list head used to store the nodes in BufferToFreeList.
+**/
+VOID
+RestoreBufferList (
+  IN OUT LIST_ENTRY     *OldBufferList
+  )
+{
+  FreeBufferList (&ShellInfoObject.BufferToFreeList);
+  CopyMem (&ShellInfoObject.BufferToFreeList.Link, OldBufferList, sizeof (LIST_ENTRY));
+}
+
+
 /**
   Add a buffer to the Line History List
 
@@ -1347,6 +1415,17 @@ AddLineToCommandHistory(
   )
 {
   BUFFER_LIST *Node;
+  BUFFER_LIST *Walker;
+  UINT16       MaxHistoryCmdCount;
+  UINT16       Count;
+
+  Count = 0;
+  MaxHistoryCmdCount = PcdGet16(PcdShellMaxHistoryCommandCount);
+  
+  if (MaxHistoryCmdCount == 0) {
+    return ;
+  }
+
 
   Node = AllocateZeroPool(sizeof(BUFFER_LIST));
 //  ASSERT(Node != NULL);
@@ -1359,7 +1438,23 @@ AddLineToCommandHistory(
     FreePool(Node);
     return;
   }
+  for ( Walker = (BUFFER_LIST*)GetFirstNode(&ShellInfoObject.ViewingSettings.CommandHistory.Link)
+      ; !IsNull(&ShellInfoObject.ViewingSettings.CommandHistory.Link, &Walker->Link)
+      ; Walker = (BUFFER_LIST*)GetNextNode(&ShellInfoObject.ViewingSettings.CommandHistory.Link, &Walker->Link)
+   ){
+    Count++;
+  }
+  if (Count < MaxHistoryCmdCount){
+    InsertTailList(&ShellInfoObject.ViewingSettings.CommandHistory.Link, &Node->Link);
+  } else {
+    Walker = (BUFFER_LIST*)GetFirstNode(&ShellInfoObject.ViewingSettings.CommandHistory.Link);
+    RemoveEntryList(&Walker->Link);
+    if (Walker->Buffer != NULL) {
+      FreePool(Walker->Buffer);
+    }
+    FreePool(Walker);
   InsertTailList(&ShellInfoObject.ViewingSettings.CommandHistory.Link, &Node->Link);
+}
 }
 
 /**
@@ -1945,7 +2040,7 @@ IsValidSplit(
       return (EFI_OUT_OF_RESOURCES);
     }
     TempWalker = (CHAR16*)Temp;
-    if (!EFI_ERROR(GetNextParameter(&TempWalker, &FirstParameter, StrSize(CmdLine)))) {
+    if (!EFI_ERROR(GetNextParameter(&TempWalker, &FirstParameter, StrSize(CmdLine), TRUE))) {
     if (GetOperationType(FirstParameter) == Unknown_Invalid) {
       ShellPrintHiiEx(-1, -1, NULL, STRING_TOKEN (STR_SHELL_NOT_FOUND), ShellInfoObject.HiiHandle, FirstParameter);
       SetLastError(SHELL_NOT_FOUND);
@@ -2255,7 +2350,7 @@ RunInternalCommand(
   //
   // get the argc and argv updated for internal commands
   //
-  Status = UpdateArgcArgv(ParamProtocol, NewCmdLine, &Argv, &Argc);
+  Status = UpdateArgcArgv(ParamProtocol, NewCmdLine, Internal_Command, &Argv, &Argc);
   if (!EFI_ERROR(Status)) {
     //
     // Run the internal command.
@@ -2601,7 +2696,7 @@ RunShellCommand(
     return (EFI_OUT_OF_RESOURCES);
   }
   TempWalker = CleanOriginal;
-  if (!EFI_ERROR(GetNextParameter(&TempWalker, &FirstParameter, StrSize(CleanOriginal)))) {
+  if (!EFI_ERROR(GetNextParameter(&TempWalker, &FirstParameter, StrSize(CleanOriginal), TRUE))) {
   //
   // Depending on the first parameter we change the behavior
   //
@@ -2826,6 +2921,8 @@ CalleeExitStatus = SHELL_SUCCESS;
  //   ASSERT(CommandLine2 != NULL);
     StrnCpy(CommandLine2, NewScriptFile->CurrentCommand->Cl, PcdGet16(PcdShellPrintBufferSize)/sizeof(CHAR16)-1);
 
+    SaveBufferList(&OldBufferList);
+
     //
     // NULL out comments
     //
@@ -2853,61 +2950,61 @@ CalleeExitStatus = SHELL_SUCCESS;
       if (NewScriptFile->Argv != NULL) {
         switch (NewScriptFile->Argc) {
           default:
-            Status = ShellCopySearchAndReplace(CommandLine2,  CommandLine, PrintBuffSize, L"%9", NewScriptFile->Argv[9], FALSE, TRUE);
+            Status = ShellCopySearchAndReplace(CommandLine2,  CommandLine, PrintBuffSize, L"%9", NewScriptFile->Argv[9], FALSE, FALSE);
          //   ASSERT_EFI_ERROR(Status);
             if (EFI_ERROR(Status)) {
               return Status;
             }
           case 9:
-            Status = ShellCopySearchAndReplace(CommandLine,  CommandLine2, PrintBuffSize, L"%8", NewScriptFile->Argv[8], FALSE, TRUE);
+            Status = ShellCopySearchAndReplace(CommandLine,  CommandLine2, PrintBuffSize, L"%8", NewScriptFile->Argv[8], FALSE, FALSE);
             //   ASSERT_EFI_ERROR(Status);
             if (EFI_ERROR(Status)) {
               return Status;
             }
           case 8:
-            Status = ShellCopySearchAndReplace(CommandLine2,  CommandLine, PrintBuffSize, L"%7", NewScriptFile->Argv[7], FALSE, TRUE);
+            Status = ShellCopySearchAndReplace(CommandLine2,  CommandLine, PrintBuffSize, L"%7", NewScriptFile->Argv[7], FALSE, FALSE);
             //   ASSERT_EFI_ERROR(Status);
             if (EFI_ERROR(Status)) {
               return Status;
             }
           case 7:
-            Status = ShellCopySearchAndReplace(CommandLine,  CommandLine2, PrintBuffSize, L"%6", NewScriptFile->Argv[6], FALSE, TRUE);
+            Status = ShellCopySearchAndReplace(CommandLine,  CommandLine2, PrintBuffSize, L"%6", NewScriptFile->Argv[6], FALSE, FALSE);
             //   ASSERT_EFI_ERROR(Status);
             if (EFI_ERROR(Status)) {
               return Status;
             }
           case 6:
-            Status = ShellCopySearchAndReplace(CommandLine2,  CommandLine, PrintBuffSize, L"%5", NewScriptFile->Argv[5], FALSE, TRUE);
+            Status = ShellCopySearchAndReplace(CommandLine2,  CommandLine, PrintBuffSize, L"%5", NewScriptFile->Argv[5], FALSE, FALSE);
             //   ASSERT_EFI_ERROR(Status);
             if (EFI_ERROR(Status)) {
               return Status;
             }
           case 5:
-            Status = ShellCopySearchAndReplace(CommandLine,  CommandLine2, PrintBuffSize, L"%4", NewScriptFile->Argv[4], FALSE, TRUE);
+            Status = ShellCopySearchAndReplace(CommandLine,  CommandLine2, PrintBuffSize, L"%4", NewScriptFile->Argv[4], FALSE, FALSE);
             //   ASSERT_EFI_ERROR(Status);
             if (EFI_ERROR(Status)) {
               return Status;
             }
           case 4:
-            Status = ShellCopySearchAndReplace(CommandLine2,  CommandLine, PrintBuffSize, L"%3", NewScriptFile->Argv[3], FALSE, TRUE);
+            Status = ShellCopySearchAndReplace(CommandLine2,  CommandLine, PrintBuffSize, L"%3", NewScriptFile->Argv[3], FALSE, FALSE);
             //   ASSERT_EFI_ERROR(Status);
             if (EFI_ERROR(Status)) {
               return Status;
             }
           case 3:
-            Status = ShellCopySearchAndReplace(CommandLine,  CommandLine2, PrintBuffSize, L"%2", NewScriptFile->Argv[2], FALSE, TRUE);
+            Status = ShellCopySearchAndReplace(CommandLine,  CommandLine2, PrintBuffSize, L"%2", NewScriptFile->Argv[2], FALSE, FALSE);
             //   ASSERT_EFI_ERROR(Status);
             if (EFI_ERROR(Status)) {
               return Status;
             }
           case 2:
-            Status = ShellCopySearchAndReplace(CommandLine2,  CommandLine, PrintBuffSize, L"%1", NewScriptFile->Argv[1], FALSE, TRUE);
+            Status = ShellCopySearchAndReplace(CommandLine2,  CommandLine, PrintBuffSize, L"%1", NewScriptFile->Argv[1], FALSE, FALSE);
             //   ASSERT_EFI_ERROR(Status);
             if (EFI_ERROR(Status)) {
               return Status;
             }
           case 1:
-            Status = ShellCopySearchAndReplace(CommandLine,  CommandLine2, PrintBuffSize, L"%0", NewScriptFile->Argv[0], FALSE, TRUE);
+            Status = ShellCopySearchAndReplace(CommandLine,  CommandLine2, PrintBuffSize, L"%0", NewScriptFile->Argv[0], FALSE, FALSE);
             //   ASSERT_EFI_ERROR(Status);
             if (EFI_ERROR(Status)) {
               return Status;
@@ -2983,9 +3080,11 @@ CalleeExitStatus = SHELL_SUCCESS;
 
           ShellCommandRegisterExit(FALSE, 0);
           Status = EFI_SUCCESS;
+          RestoreBufferList(&OldBufferList);
           break;
         }
         if (ShellGetExecutionBreakFlag()) {
+          RestoreBufferList(&OldBufferList);
           break;
         }
         if (EFI_ERROR(Status)) {
@@ -3012,6 +3111,7 @@ CalleeExitStatus = SHELL_SUCCESS;
         NewScriptFile->CurrentCommand->Reset = TRUE;
       }
     }
+    RestoreBufferList(&OldBufferList);
   }
 
 
@@ -3060,7 +3160,7 @@ RunScriptFile (
   //
   // get the argc and argv updated for scripts
   //
-  Status = UpdateArgcArgv(ParamProtocol, CmdLine, &Argv, &Argc);
+  Status = UpdateArgcArgv(ParamProtocol, CmdLine, Script_File_Name, &Argv, &Argc);
   if (!EFI_ERROR(Status)) {
 
     if (Handle == NULL) {

@@ -1,7 +1,8 @@
 /** @file
   Provides interface to shell functionality for shell commands and applications.
 
-  Copyright (c) 2006 - 2015, Intel Corporation. All rights reserved.<BR>
+  Copyright 2016 Dell Inc.
+  Copyright (c) 2006 - 2016, Intel Corporation. All rights reserved.<BR>
   This program and the accompanying materials
   are licensed and made available under the terms and conditions of the BSD License
   which accompanies this distribution.  The full text of the license may be found at
@@ -673,6 +674,7 @@ ShellOpenFileByName(
   EFI_STATUS                    Status;
   EFI_FILE_INFO                 *FileInfo;
   CHAR16                        *FileNameCopy;
+  EFI_STATUS                    Status2;
 
   //
   // ASSERT if FileName is NULL
@@ -719,8 +721,12 @@ ShellOpenFileByName(
       FileInfo = FileFunctionMap.GetFileInfo(*FileHandle);
       ASSERT(FileInfo != NULL);
       FileInfo->Attribute = Attributes;
-      Status = FileFunctionMap.SetFileInfo(*FileHandle, FileInfo);
+      Status2 = FileFunctionMap.SetFileInfo(*FileHandle, FileInfo);
       FreePool(FileInfo);
+      if (EFI_ERROR (Status2)) {
+        gEfiShellProtocol->CloseFile(*FileHandle);
+      }
+      Status = Status2;
     }
     return (Status);
   }
@@ -4068,6 +4074,9 @@ ShellFileHandleReturnLine(
     Status = ShellFileHandleReadLine(Handle, RetVal, &Size, FALSE, Ascii);
 
   }
+  if (Status == EFI_END_OF_FILE && RetVal != NULL && *RetVal != CHAR_NULL) {
+    Status = EFI_SUCCESS;
+  }
   if (EFI_ERROR(Status) && (RetVal != NULL)) {
     FreePool(RetVal);
     RetVal = NULL;
@@ -4081,9 +4090,20 @@ ShellFileHandleReturnLine(
   If the position upon start is 0, then the Ascii Boolean will be set.  This should be
   maintained and not changed for all operations with the same file.
 
+  NOTE: LINES THAT ARE RETURNED BY THIS FUNCTION ARE UCS2, EVEN IF THE FILE BEING READ
+        IS IN ASCII FORMAT.
+
   @param[in]       Handle        SHELL_FILE_HANDLE to read from.
-  @param[in, out]  Buffer        The pointer to buffer to read into.
-  @param[in, out]  Size          The pointer to number of bytes in Buffer.
+  @param[in, out]  Buffer        The pointer to buffer to read into. If this function
+                                 returns EFI_SUCCESS, then on output Buffer will
+                                 contain a UCS2 string, even if the file being
+                                 read is ASCII.
+  @param[in, out]  Size          On input, pointer to number of bytes in Buffer.
+                                 On output, unchanged unless Buffer is too small
+                                 to contain the next line of the file. In that
+                                 case Size is set to the number of bytes needed
+                                 to hold the next line of the file (as a UCS2
+                                 string, even if it is an ASCII file).
   @param[in]       Truncate      If the buffer is large enough, this has no effect.
                                  If the buffer is is too small and Truncate is TRUE,
                                  the line will be truncated.
@@ -4095,6 +4115,7 @@ ShellFileHandleReturnLine(
 
   @retval EFI_SUCCESS           The operation was successful.  The line is stored in
                                 Buffer.
+  @retval EFI_END_OF_FILE       There are no more lines in the file.
   @retval EFI_INVALID_PARAMETER Handle was NULL.
   @retval EFI_INVALID_PARAMETER Size was NULL.
   @retval EFI_BUFFER_TOO_SMALL  Size was not large enough to store the line.
@@ -4140,19 +4161,22 @@ ShellFileHandleReadLine(
     }
   }
 
-  for (CountSoFar = 0;;CountSoFar++){
-    CharBuffer = 0;
     if (*Ascii) {
       CharSize = sizeof(CHAR8);
     } else {
       CharSize = sizeof(CHAR16);
     }
+  for (CountSoFar = 0;;CountSoFar++){
+    CharBuffer = 0;
     Status = gEfiShellProtocol->ReadFile(Handle, &CharSize, &CharBuffer);
     if (  EFI_ERROR(Status)
        || CharSize == 0
        || (CharBuffer == L'\n' && !(*Ascii))
        || (CharBuffer ==  '\n' && *Ascii)
      ){
+      if (CharSize == 0) {
+        Status = EFI_END_OF_FILE;
+      }
       break;
     }
     //

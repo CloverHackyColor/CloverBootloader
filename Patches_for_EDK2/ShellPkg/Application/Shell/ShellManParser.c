@@ -14,6 +14,111 @@
 
 #include "Shell.h"
 
+#define SHELL_MAN_HII_GUID \
+{ \
+  0xf62ccd0c, 0x2449, 0x453c, { 0x8a, 0xcb, 0x8c, 0xc5, 0x7c, 0xf0, 0x2a, 0x97 } \
+}
+
+EFI_HII_HANDLE  mShellManHiiHandle    = NULL;
+EFI_HANDLE      mShellManDriverHandle = NULL;
+
+
+SHELL_MAN_HII_VENDOR_DEVICE_PATH  mShellManHiiDevicePath = {
+  {
+    {
+      HARDWARE_DEVICE_PATH,
+      HW_VENDOR_DP,
+      {
+        (UINT8) (sizeof (VENDOR_DEVICE_PATH)),
+        (UINT8) ((sizeof (VENDOR_DEVICE_PATH)) >> 8)
+      }
+    },
+    SHELL_MAN_HII_GUID
+  },
+  {
+    END_DEVICE_PATH_TYPE,
+    END_ENTIRE_DEVICE_PATH_SUBTYPE,
+    {
+      (UINT8) (END_DEVICE_PATH_LENGTH),
+      (UINT8) ((END_DEVICE_PATH_LENGTH) >> 8)
+    }
+  }
+};
+
+
+/**
+  Convert a Unicode character to upper case only if
+  it maps to a valid small-case ASCII character.
+
+  This internal function only deal with Unicode character
+  which maps to a valid small-case ASCII character, i.e.
+  L'a' to L'z'. For other Unicode character, the input character
+  is returned directly.
+
+  @param  Char  The character to convert.
+
+  @retval LowerCharacter   If the Char is with range L'a' to L'z'.
+  @retval Unchanged        Otherwise.
+
+**/
+CHAR16
+EFIAPI 
+InternalShellCharToUpper (
+  IN CHAR16  Char
+  );
+
+/**
+  Verifies that the filename has .EFI on the end.
+
+  allocates a new buffer and copies the name (appending .EFI if necessary).
+  Caller to free the buffer.
+
+  @param[in] NameString            original name string
+
+  @return                          the new filename with .efi as the extension.
+**/
+CHAR16 *
+EFIAPI
+GetExecuatableFileName (
+  IN CONST CHAR16    *NameString
+  )
+{
+  CHAR16  *Buffer;
+  CHAR16  *SuffixStr;
+  if (NameString == NULL) {
+    return (NULL);
+  }
+
+  //
+  // Fix the file name
+  //
+  if (StrnCmp(NameString+StrLen(NameString)-StrLen(L".efi"), L".efi", StrLen(L".efi"))==0) {
+    Buffer = AllocateCopyPool(StrSize(NameString), NameString);
+  } else if (StrnCmp(NameString+StrLen(NameString)-StrLen(L".man"), L".man", StrLen(L".man"))==0) {
+    Buffer = AllocateCopyPool(StrSize(NameString), NameString);
+    if (Buffer != NULL) {
+      SuffixStr = Buffer+StrLen(Buffer)-StrLen(L".man");
+      StrnCpyS (SuffixStr, StrSize(L".man")/sizeof(CHAR16), L".efi", StrLen(L".efi"));
+    }
+  } else {
+    Buffer = AllocateZeroPool(StrSize(NameString) + StrLen(L".efi")*sizeof(CHAR16));
+    if (Buffer != NULL) {
+      StrnCpyS( Buffer,
+                (StrSize(NameString) + StrLen(L".efi")*sizeof(CHAR16))/sizeof(CHAR16),
+                NameString,
+                StrLen(NameString)
+                );
+      StrnCatS( Buffer,
+                (StrSize(NameString) + StrLen(L".efi")*sizeof(CHAR16))/sizeof(CHAR16),
+                L".efi",
+                StrLen(L".efi")
+                );
+    }
+  }
+  return (Buffer);
+
+}
+
 /**
   Verifies that the filename has .MAN on the end.
 
@@ -185,6 +290,7 @@ ManBufferFindSections(
         SectionLen = StrLen(SectionName);
         SectionName = StrStr(Sections, SectionName);
         if (SectionName == NULL) {
+          SHELL_FREE_NON_NULL(TempString);
           continue;
         }
         if (*(SectionName + SectionLen) == CHAR_NULL || *(SectionName + SectionLen) == L',') {
@@ -227,6 +333,7 @@ ManBufferFindSections(
     }
     SHELL_FREE_NON_NULL(TempString);
   }
+  SHELL_FREE_NON_NULL(TempString);
   if (!Found && !EFI_ERROR(Status)) {
     return (EFI_NOT_FOUND);
   }
@@ -356,7 +463,7 @@ ManFileFindSections(
 
   Upon a sucessful return the caller is responsible to free the memory in *BriefDesc
 
-  @param[in] Handle             Buffer to read from
+  @param[in] Buffer             Buffer to read from
   @param[in] Command            name of command's section to find
   @param[in] BriefDesc          pointer to pointer to string where description goes.
   @param[in] BriefSize          pointer to size of allocated BriefDesc
@@ -379,6 +486,7 @@ ManBufferFindTitleSection(
   CHAR16        *TitleEnd;
   CHAR16        *CurrentLocation;
   UINTN         TitleLength;
+  UINTN         Start;
   CONST CHAR16  StartString[] = L".TH ";
   CONST CHAR16  EndString[]   = L" 0 ";
 
@@ -392,9 +500,20 @@ ManBufferFindTitleSection(
   Status    = EFI_SUCCESS;
 
   //
+  // Do not pass any leading path information that may be present to IsTitleHeader().
+  //
+  Start = StrLen(Command);
+  while ((Start != 0)
+         && (*(Command + Start - 1) != L'\\')
+         && (*(Command + Start - 1) != L'/')
+         && (*(Command + Start - 1) != L':')) {
+    --Start;
+  }
+
+  //
   // more characters for StartString and EndString
   //
-  TitleLength = StrSize(Command) + (StrLen(StartString) + StrLen(EndString)) * sizeof(CHAR16);
+  TitleLength = StrSize(Command + Start) + (StrLen(StartString) + StrLen(EndString)) * sizeof(CHAR16);
   TitleString = AllocateZeroPool(TitleLength);
   if (TitleString == NULL) {
     return (EFI_OUT_OF_RESOURCES);
@@ -444,22 +563,151 @@ ManBufferFindTitleSection(
 }
 
 /**
+  Parses a line from a MAN file to see if it is the Title Header. If it is, then
+  if the "Brief Description" is desired, allocate a buffer for it and return a
+  copy. Upon a sucessful return the caller is responsible to free the memory in
+  *BriefDesc
+
+  Uses a simple state machine that allows "unlimited" whitespace before and after the
+  ".TH", compares Command and the MAN file commnd name without respect to case, and
+  allows "unlimited" whitespace and '0' and '1' characters before the Short Description.
+  The PCRE regex describing this functionality is: ^\s*\.TH\s+(\S)\s[\s01]*(.*)$
+  where group 1 is the Command Name and group 2 is the Short Description.
+
+  @param[in] Command             name of command whose MAN file we think Line came from
+  @param[in] Line                Pointer to a line from the MAN file
+  @param[out] BriefDesc          pointer to pointer to string where description goes.
+  @param[out] BriefSize          pointer to size of allocated BriefDesc
+  @param[out] Found              TRUE if the Title Header was found and it belongs to Command
+
+  @retval TRUE   Line contained the Title Header
+  @retval FALSE  Line did not contain the Title Header
+**/
+BOOLEAN
+IsTitleHeader(
+  IN CONST CHAR16       *Command,
+  IN CHAR16             *Line,
+  OUT CHAR16            **BriefDesc OPTIONAL,
+  OUT UINTN             *BriefSize OPTIONAL,
+  OUT BOOLEAN           *Found
+  )
+{
+  // The states of a simple state machine used to recognize a title header line
+  // and to extract the Short Description, if desired.
+  typedef enum {
+    LookForThMacro, LookForCommandName, CompareCommands, GetBriefDescription, Final
+  } STATEVALUES;
+
+  STATEVALUES  State;
+  UINTN        CommandIndex; // Indexes Command as we compare its chars to the MAN file.
+  BOOLEAN      ReturnValue;  // TRUE if this the Title Header line of *some* MAN file.
+  BOOLEAN      ReturnFound;  // TRUE if this the Title Header line of *the desired* MAN file.
+
+  ReturnValue = FALSE;
+  ReturnFound = FALSE;
+  CommandIndex = 0;
+  State = LookForThMacro;
+
+  do {
+
+    if (*Line == L'\0') {
+      break;
+    }
+
+    switch (State) {
+
+      // Handle "^\s*.TH\s"
+      // Go to state LookForCommandName if the title header macro is present; otherwise,
+      // eat white space. If we see something other than white space, this is not a
+      // title header line.
+      case LookForThMacro:
+        if (StrnCmp (L".TH ", Line, 4) == 0 || StrnCmp (L".TH\t", Line, 4) == 0) {
+          Line += 4;
+          State = LookForCommandName;
+        }
+        else if (*Line == L' ' || *Line == L'\t') {
+          Line++;
+        }
+        else {
+          State = Final;
+        }
+      break;
+
+      // Handle "\s*"
+      // Eat any "extra" whitespace after the title header macro (we have already seen
+      // at least one white space character). Go to state CompareCommands when a
+      // non-white space is seen.
+      case LookForCommandName:
+        if (*Line == L' ' || *Line == L'\t') {
+          Line++;
+        }
+        else {
+          ReturnValue = TRUE;  // This is *some* command's title header line.
+          State = CompareCommands;
+          // Do not increment Line; it points to the first character of the command
+          // name on the title header line.
+        }
+      break;
+
+      // Handle "(\S)\s"
+      // Compare Command to the title header command name, ignoring case. When we
+      // reach the end of the command (i.e. we see white space), the next state
+      // depends on whether the caller wants a copy of the Brief Description.
+      case CompareCommands:
+        if (*Line == L' ' || *Line == L'\t') {
+          ReturnFound = TRUE;  // This is the desired command's title header line.
+          State = (BriefDesc == NULL) ? Final : GetBriefDescription;
+        }
+        else if (InternalShellCharToUpper (*Line) != InternalShellCharToUpper (*(Command + CommandIndex++))) {
+          State = Final;
+        }
+        Line++;
+      break;
+
+      // Handle "[\s01]*(.*)$"
+      // Skip whitespace, '0', and '1' characters, if any, prior to the brief description.
+      // Return the description to the caller.
+      case GetBriefDescription:
+        if (*Line != L' ' && *Line != L'\t' && *Line != L'0' && *Line != L'1') {
+          *BriefSize = StrSize(Line);
+          *BriefDesc = AllocateZeroPool(*BriefSize);
+          if (*BriefDesc != NULL) {
+            StrCpyS(*BriefDesc, (*BriefSize)/sizeof(CHAR16), Line);
+          }
+          State = Final;
+        }
+        Line++;
+      break;
+
+      default:
+       break;
+    }
+
+  } while (State < Final);
+
+  *Found = ReturnFound;
+  return ReturnValue;
+}
+
+/**
   parses through the MAN file specified by SHELL_FILE_HANDLE and returns the
-  "Brief Description" for the .TH section as specified by Command.  if the
+  "Brief Description" for the .TH section as specified by Command.  If the
   command section is not found return EFI_NOT_FOUND.
 
   Upon a sucessful return the caller is responsible to free the memory in *BriefDesc
 
   @param[in] Handle              FileHandle to read from
-  @param[in] Command             name of command's section to find
+  @param[in] Command             name of command's section to find as entered on the
+                                 command line (may be a relative or absolute path or
+                                 be in any case: upper, lower, or mixed in numerous ways!).
   @param[out] BriefDesc          pointer to pointer to string where description goes.
   @param[out] BriefSize          pointer to size of allocated BriefDesc
   @param[in, out] Ascii          TRUE if the file is ASCII, FALSE otherwise, will be
                                  set if the file handle is at the 0 position.
 
   @retval EFI_OUT_OF_RESOURCES  a memory allocation failed.
-  @retval EFI_SUCCESS           the section was found and its description sotred in
-                                an alloceted buffer.
+  @retval EFI_SUCCESS           the section was found and its description stored in
+                                an allocated buffer if requested.
 **/
 EFI_STATUS
 EFIAPI
@@ -472,13 +720,10 @@ ManFileFindTitleSection(
   )
 {
   EFI_STATUS  Status;
-  CHAR16      *TitleString;
   CHAR16      *ReadLine;
   UINTN       Size;
-  CHAR16      *TitleEnd;
-  UINTN       TitleLen;
   BOOLEAN     Found;
-  UINTN       TitleSize;
+  UINTN       Start;
 
   if ( Handle     == NULL
     || Command    == NULL
@@ -496,31 +741,25 @@ ManFileFindTitleSection(
     return (EFI_OUT_OF_RESOURCES);
   }
 
-  TitleSize = (4*sizeof(CHAR16)) + StrSize(Command);
-  TitleString = AllocateZeroPool(TitleSize);
-  if (TitleString == NULL) {
-    FreePool(ReadLine);
-    return (EFI_OUT_OF_RESOURCES);
+  //
+  // Do not pass any leading path information that may be present to IsTitleHeader().
+  //
+  Start = StrLen(Command);
+  while ((Start != 0)
+         && (*(Command + Start - 1) != L'\\')
+         && (*(Command + Start - 1) != L'/')
+         && (*(Command + Start - 1) != L':')) {
+    --Start;
   }
   StrnCpy(TitleString, L".TH ", TitleSize/sizeof(CHAR16) - 1);
   StrnCat(TitleString, Command, TitleSize/sizeof(CHAR16) - 1 - StrLen(TitleString));
 
-  TitleLen = StrLen(TitleString);
   for (;!ShellFileHandleEof(Handle);Size = 1024) {
    Status = ShellFileHandleReadLine(Handle, ReadLine, &Size, TRUE, Ascii);
-    if (ReadLine[0] == L'#') {
-      //
-      // Skip comment lines
-      //
-      continue;
-    }
     //
     // ignore too small of buffer...
     //
-    if (Status == EFI_BUFFER_TOO_SMALL) {
-      Status = EFI_SUCCESS;
-    }
-    if (EFI_ERROR(Status)) {
+    if (EFI_ERROR(Status) && Status != EFI_BUFFER_TOO_SMALL) {
       break;
     }
     if (StrnCmp(ReadLine, TitleString, TitleLen) == 0) {
@@ -544,11 +783,8 @@ ManFileFindTitleSection(
       break;
     }
   }
+
   FreePool(ReadLine);
-  FreePool(TitleString);
-  if (!Found && !EFI_ERROR(Status)) {
-    return (EFI_NOT_FOUND);
-  }
   return (Status);
 }
 
@@ -594,13 +830,19 @@ ProcessManFile(
 {
   CHAR16            *TempString;
   SHELL_FILE_HANDLE FileHandle;
+  EFI_HANDLE        CmdFileImgHandle;
   EFI_STATUS        Status;
   UINTN             HelpSize;
   UINTN             BriefSize;
+  UINTN             StringIdWalker;
   BOOLEAN           Ascii;
   CHAR16            *TempString2;
+  CHAR16            *CmdFileName;
+  CHAR16            *CmdFilePathName;
+  CHAR16            *StringBuff;
   EFI_DEVICE_PATH_PROTOCOL  *FileDevPath;
   EFI_DEVICE_PATH_PROTOCOL  *DevPath;
+  EFI_HII_PACKAGE_LIST_HEADER   *PackageListHeader;
 
   if ( ManFileName == NULL
     || Command     == NULL
@@ -624,6 +866,9 @@ ProcessManFile(
       Status = ManBufferFindSections(TempString2, Sections, HelpText, &HelpSize);
     }
   } else {
+    //
+    // If the image is a external app, check .MAN file first.
+    //
     FileHandle    = NULL;
     TempString  = GetManFileName(ManFileName);
     if (TempString == NULL) {
@@ -635,8 +880,8 @@ ProcessManFile(
       FileDevPath = FileDevicePath(NULL, TempString);
       DevPath = AppendDevicePath (ShellInfoObject.ImageDevPath, FileDevPath);
       Status = InternalOpenFileDevicePath(DevPath, &FileHandle, EFI_FILE_MODE_READ, 0);
-      FreePool(FileDevPath);
-      FreePool(DevPath);
+      SHELL_FREE_NON_NULL(FileDevPath);
+      SHELL_FREE_NON_NULL(DevPath);
     }
 
     if (!EFI_ERROR(Status)) {
@@ -647,13 +892,127 @@ ProcessManFile(
         Status = ManFileFindSections(FileHandle, Sections, HelpText, &HelpSize, Ascii);
       }
       ShellInfoObject.NewEfiShellProtocol->CloseFile(FileHandle);
-    } else {
-      *HelpText = NULL;
+      if (!EFI_ERROR(Status)) {
+        //
+        // Get help text from .MAN file success.
+        //
+        goto Done;
+      }
     }
+
+    //
+    // Load the app image to check  EFI_HII_PACKAGE_LIST_PROTOCOL.
+    //
+    CmdFileName     = GetExecuatableFileName(TempString);
+    if (CmdFileName == NULL) {
+      Status = EFI_OUT_OF_RESOURCES;
+      goto Done;
+    }
+    //
+    // If the file in CWD then use the file name, else use the full
+    // path name.
+    //
+    CmdFilePathName = ShellFindFilePath(CmdFileName);
+    if (CmdFilePathName == NULL) {
+      Status = EFI_NOT_FOUND;
+      goto Done;
+    }
+    DevPath = ShellInfoObject.NewEfiShellProtocol->GetDevicePathFromFilePath(CmdFilePathName);
+    Status      = gBS->LoadImage(FALSE, gImageHandle, DevPath, NULL, 0, &CmdFileImgHandle);
+    if(EFI_ERROR(Status)) {
+      *HelpText = NULL;
+      goto Done;
+    }
+    Status = gBS->OpenProtocol(
+                    CmdFileImgHandle,
+                    &gEfiHiiPackageListProtocolGuid,
+                    (VOID**)&PackageListHeader,
+                    gImageHandle,
+                    NULL,
+                    EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                    );
+    if(EFI_ERROR(Status)) {
+      *HelpText = NULL;
+      goto Done;
+    }
+
+    //
+    // If get package list on image handle, install it on HiiDatabase.
+    //
+    Status = gBS->InstallProtocolInterface (
+                    &mShellManDriverHandle,
+                    &gEfiDevicePathProtocolGuid,
+                    EFI_NATIVE_INTERFACE,
+                    &mShellManHiiDevicePath
+                    );
+    if (EFI_ERROR(Status)) {
+      goto Done;
+    }
+
+    Status = gHiiDatabase->NewPackageList (
+                            gHiiDatabase,
+                            PackageListHeader,
+                            mShellManDriverHandle,
+                            &mShellManHiiHandle
+                            );
+    if (EFI_ERROR (Status)) {
+      goto Done;
+    }
+
+    StringIdWalker = 1;
+    do {
+        SHELL_FREE_NON_NULL(StringBuff);
+        if (BriefDesc != NULL) {
+          SHELL_FREE_NON_NULL(*BriefDesc);
+        }
+        StringBuff = HiiGetString (mShellManHiiHandle, (EFI_STRING_ID)StringIdWalker, NULL);
+        if (StringBuff == NULL) {
+          Status = EFI_NOT_FOUND;
+          goto Done;
+    }
+        TempString2 = StringBuff;
+        Status = ManBufferFindTitleSection(&TempString2, Command, BriefDesc, &BriefSize);
+        if (!EFI_ERROR(Status) && HelpText != NULL){
+          Status = ManBufferFindSections(TempString2, Sections, HelpText, &HelpSize);
   }
-  if (TempString != NULL) {
-    FreePool(TempString);
+        if (!EFI_ERROR(Status)){
+          //
+          // Found what we need and return
+          //
+          goto Done;
+        }
+
+        StringIdWalker += 1;
+    } while (StringIdWalker < 0xFFFF && StringBuff != NULL);
+
   }
+
+Done:
+  if (mShellManDriverHandle != NULL) {
+    gBS->UninstallProtocolInterface (
+            mShellManDriverHandle,
+            &gEfiDevicePathProtocolGuid,
+            &mShellManHiiDevicePath
+           );
+    mShellManDriverHandle = NULL;
+  }
+
+  if (mShellManHiiHandle != NULL) {
+    HiiRemovePackages (mShellManHiiHandle);
+    mShellManHiiHandle = NULL;
+  }
+
+  if (CmdFileImgHandle != NULL) {
+    Status = gBS->UnloadImage (CmdFileImgHandle);
+  }
+
+  SHELL_FREE_NON_NULL(StringBuff);
+  SHELL_FREE_NON_NULL(TempString);
+  SHELL_FREE_NON_NULL(CmdFileName);
+  SHELL_FREE_NON_NULL(CmdFilePathName);
+  SHELL_FREE_NON_NULL(FileDevPath);
+  SHELL_FREE_NON_NULL(DevPath);
 
   return (Status);
 }
+

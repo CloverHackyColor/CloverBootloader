@@ -141,6 +141,7 @@ ShellCommandRunHelp (
   ShellStatus         = SHELL_SUCCESS;
   CommandToGetHelpOn  = NULL;
   SectionToGetHelpOn  = NULL;
+  SortedCommandList   = NULL;
   Found               = FALSE;
 
   //
@@ -309,6 +310,7 @@ ShellCommandRunHelp (
   if (SectionToGetHelpOn != NULL) {
     FreePool(SectionToGetHelpOn);
   }
+  SHELL_FREE_NON_NULL(SortedCommandList);
 
   return (ShellStatus);
 }

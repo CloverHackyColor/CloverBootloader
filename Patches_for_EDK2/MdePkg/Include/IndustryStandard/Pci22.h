@@ -5,6 +5,7 @@
     PCI Local Bus Specification, 2.2
     PCI-to-PCI Bridge Architecture Specification, Revision 1.2
     PC Card Standard, 8.0
+    PCI Power Management Interface Specifiction, Revision 1.2
 
   
 
@@ -665,7 +666,7 @@ typedef union {
   struct {
     UINT16 Version : 3;
     UINT16 PmeClock : 1;
-    UINT16 : 1;
+    UINT16 Reserved : 1;
     UINT16 DeviceSpecificInitialization : 1;
     UINT16 AuxCurrent : 3;
     UINT16 D1Support : 1;
@@ -684,7 +685,7 @@ typedef union {
 typedef union {
   struct {
     UINT16 PowerState : 2;
-    UINT16 : 6;
+    UINT16 Reserved : 6;
     UINT16 PmeEnable : 1;
     UINT16 DataSelect : 4;
     UINT16 DataScale : 2;

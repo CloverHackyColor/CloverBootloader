@@ -750,7 +750,7 @@ ShellCommandRunMv (
             //
             // ValidateAndMoveFiles will report errors to the screen itself
             //
-            CwdSize = StrSize(ShellGetCurrentDir(NULL)) + 1;
+            CwdSize = StrSize(ShellGetCurrentDir(NULL)) + sizeof(CHAR16);
             Cwd = AllocateZeroPool(CwdSize);
             ASSERT (Cwd != NULL);
             StrCpyS(Cwd, CwdSize/sizeof(CHAR16), ShellGetCurrentDir(NULL));
