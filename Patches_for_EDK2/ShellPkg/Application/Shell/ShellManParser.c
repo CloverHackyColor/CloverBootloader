@@ -1,7 +1,8 @@
 /** @file
   Provides interface to shell MAN file parser.
 
-  Copyright (c) 2009 - 2014, Intel Corporation. All rights reserved.<BR>
+  Copyright (c) 2009 - 2016, Intel Corporation. All rights reserved.<BR>
+  Copyright 2015 Dell Inc.
   This program and the accompanying materials
   are licensed and made available under the terms and conditions of the BSD License
   which accompanies this distribution.  The full text of the license may be found at
@@ -148,8 +149,16 @@ GetManFileName(
   } else {
     Buffer = AllocateZeroPool(StrSize(ManFileName) + 4*sizeof(CHAR16));
     if (Buffer != NULL) {
-      StrnCpy(Buffer, ManFileName, StrLen(ManFileName));
-      StrnCat(Buffer, L".man", 4);
+      StrnCpyS( Buffer, 
+                (StrSize(ManFileName) + 4*sizeof(CHAR16))/sizeof(CHAR16), 
+                ManFileName, 
+                StrLen(ManFileName)
+                );
+      StrnCatS( Buffer, 
+                (StrSize(ManFileName) + 4*sizeof(CHAR16))/sizeof(CHAR16),
+                L".man", 
+                4
+                );
     }
   }
   return (Buffer);
@@ -518,9 +527,9 @@ ManBufferFindTitleSection(
   if (TitleString == NULL) {
     return (EFI_OUT_OF_RESOURCES);
   }
-  StrnCpy(TitleString, StartString, TitleLength/sizeof(CHAR16) - 1);
-  StrnCat(TitleString, Command,     TitleLength/sizeof(CHAR16) - 1 - StrLen(TitleString));
-  StrnCat(TitleString, EndString,   TitleLength/sizeof(CHAR16) - 1 - StrLen(TitleString));
+  StrCpyS(TitleString, TitleLength/sizeof(CHAR16), StartString);
+  StrCatS(TitleString, TitleLength/sizeof(CHAR16), Command + Start);
+  StrCatS(TitleString, TitleLength/sizeof(CHAR16), EndString);
 
   CurrentLocation = StrStr(*Buffer, TitleString);
   if (CurrentLocation == NULL){
@@ -544,7 +553,7 @@ ManBufferFindTitleSection(
         if (*BriefDesc == NULL) {
           Status = EFI_OUT_OF_RESOURCES;
         } else {
-          StrnCpy(*BriefDesc, CurrentLocation, TitleEnd-CurrentLocation);
+          StrnCpyS(*BriefDesc, (*BriefSize)/sizeof(CHAR16), CurrentLocation, TitleEnd-CurrentLocation);
         }
       }
 
@@ -751,8 +760,6 @@ ManFileFindTitleSection(
          && (*(Command + Start - 1) != L':')) {
     --Start;
   }
-  StrnCpy(TitleString, L".TH ", TitleSize/sizeof(CHAR16) - 1);
-  StrnCat(TitleString, Command, TitleSize/sizeof(CHAR16) - 1 - StrLen(TitleString));
 
   for (;!ShellFileHandleEof(Handle);Size = 1024) {
    Status = ShellFileHandleReadLine(Handle, ReadLine, &Size, TRUE, Ascii);
@@ -762,24 +769,10 @@ ManFileFindTitleSection(
     if (EFI_ERROR(Status) && Status != EFI_BUFFER_TOO_SMALL) {
       break;
     }
-    if (StrnCmp(ReadLine, TitleString, TitleLen) == 0) {
-      Found = TRUE;
-      //
-      // we found it so copy out the rest of the line into BriefDesc
-      // After skipping any spaces or zeroes
-      //
-      for ( TitleEnd = ReadLine+TitleLen
-          ; *TitleEnd == L' ' || *TitleEnd == L'0' || *TitleEnd == L'1'
-          ; TitleEnd++);
-      if (BriefDesc != NULL) {
-        *BriefSize = StrSize(TitleEnd);
-        *BriefDesc = AllocateZeroPool(*BriefSize);
-        if (*BriefDesc == NULL) {
-          Status = EFI_OUT_OF_RESOURCES;
-          break;
-        }
-        StrnCpy(*BriefDesc, TitleEnd, (*BriefSize)/sizeof(CHAR16) - 1);
-      }
+
+    Status = EFI_NOT_FOUND;
+    if (IsTitleHeader (Command+Start, ReadLine, BriefDesc, BriefSize, &Found)) {
+      Status = Found ? EFI_SUCCESS : EFI_NOT_FOUND;
       break;
     }
   }
@@ -853,8 +846,17 @@ ProcessManFile(
 
   HelpSize    = 0;
   BriefSize   = 0;
-//  TempString  = NULL;
+  StringIdWalker    = 0;
+  TempString        = NULL;
   Ascii       = FALSE;
+  CmdFileName       = NULL;
+  CmdFilePathName   = NULL;
+  CmdFileImgHandle  = NULL;
+  StringBuff        = NULL;
+  PackageListHeader = NULL;
+  FileDevPath       = NULL;
+  DevPath           = NULL;
+
   //
   // See if it's in HII first
   //

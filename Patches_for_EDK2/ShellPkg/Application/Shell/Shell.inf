@@ -112,6 +112,8 @@
   gEfiShellPkgTokenSpaceGuid.PcdShellPrintBufferSize      ## CONSUMES
   gEfiShellPkgTokenSpaceGuid.PcdShellForceConsole         ## CONSUMES
   gEfiShellPkgTokenSpaceGuid.PcdShellSupplier             ## CONSUMES
+  gEfiShellPkgTokenSpaceGuid.PcdShellMaxHistoryCommandCount ## CONSUMES
+
 
 [BuildOptions]
   XCODE:*_*_*_CC_FLAGS = -Os 

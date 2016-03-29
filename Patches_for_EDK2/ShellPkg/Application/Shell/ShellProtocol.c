@@ -469,7 +469,8 @@ EfiShellGetFilePathFromDevicePath(
           PathForReturn = NULL;
   //        ASSERT(FALSE);
           return NULL;
-        } else {
+        }
+
           //
           // append the path part onto the filepath.
           //
@@ -479,8 +480,6 @@ EfiShellGetFilePathFromDevicePath(
           }
 
           AlignedNode = AllocateCopyPool (DevicePathNodeLength(FilePath), FilePath);
-
-        AlignedNode = AllocateCopyPool (DevicePathNodeLength(FilePath), FilePath);
  //       ASSERT (AlignedNode != NULL);
 
           // File Path Device Path Nodes 'can optionally add a "\" separator to
@@ -554,13 +553,13 @@ EfiShellGetDevicePathFromFilePath(
     if (NewPath == NULL) {
       return (NULL);
     }
-    StrnCpy(NewPath, Cwd, Size/sizeof(CHAR16)-1);
+    StrCpyS(NewPath, Size/sizeof(CHAR16), Cwd);
     StrCatS(NewPath, Size/sizeof(CHAR16), L"\\");
     if (*Path == L'\\') {
       Path++;
       while (PathRemoveLastItem(NewPath)) ;
     }
-    StrnCat(NewPath, Path, Size/sizeof(CHAR16) - 1 - StrLen(NewPath));
+    StrCatS(NewPath, Size/sizeof(CHAR16), Path);
     DevicePathForReturn = EfiShellGetDevicePathFromFilePath(NewPath);
     FreePool(NewPath);
     return (DevicePathForReturn);
@@ -1794,11 +1793,12 @@ EfiShellExecute(
   StrnCatGrow(&Temp, &Size, L"Shell.efi -_exit ", 0);
   StrnCatGrow(&Temp, &Size, CommandLine, 0);
 
-  Temp = NULL;
-  Size = 0;
-//  ASSERT((Temp == NULL && Size == 0) || (Temp != NULL));
-  StrnCatGrow(&Temp, &Size, L"Shell.efi -_exit ", 0);
-  StrnCatGrow(&Temp, &Size, CommandLine, 0);
+    Status = InternalShellExecuteDevicePath(
+      ParentImageHandle,
+      DevPath,
+      Temp,
+      (CONST CHAR16**)Environment,
+      StatusCode);
 
   //
   // de-allocate and return
@@ -2376,7 +2376,7 @@ ShellSearchHandle(
   if (!CurrentFilePattern) {
     return EFI_OUT_OF_RESOURCES;
   }
-  StrnCpy(CurrentFilePattern, FilePattern, NextFilePatternStart-FilePattern);
+  StrnCpyS(CurrentFilePattern, NextFilePatternStart-FilePattern+1, FilePattern, NextFilePatternStart-FilePattern);
 
   if (CurrentFilePattern[0]   == CHAR_NULL
     &&NextFilePatternStart[0] == CHAR_NULL
@@ -2440,8 +2440,8 @@ ShellSearchHandle(
             if (NewFullName == NULL) {
               Status = EFI_OUT_OF_RESOURCES;
             } else {
-              StrnCpy(NewFullName, MapName, Size/sizeof(CHAR16)-1);
-              StrnCat(NewFullName, ShellInfoNode->FullName+1, (Size/sizeof(CHAR16))-StrLen(NewFullName)-1);
+              StrCpyS(NewFullName, Size/sizeof(CHAR16), MapName);
+              StrCatS(NewFullName, Size/sizeof(CHAR16), ShellInfoNode->FullName+1);
               FreePool((VOID*)ShellInfoNode->FullName);
               ShellInfoNode->FullName = NewFullName;
             }
@@ -2781,7 +2781,10 @@ EfiShellGetEnvEx(
       if (!Node->Key) {
         return NULL;
       }
-      StrnCpy(CurrentWriteLocation, Node->Key,  (Size)/sizeof(CHAR16) - (CurrentWriteLocation - ((CHAR16*)Buffer)) - 1);
+      StrCpyS( CurrentWriteLocation, 
+                (Size)/sizeof(CHAR16) - (CurrentWriteLocation - ((CHAR16*)Buffer)), 
+                Node->Key
+                );
       CurrentWriteLocation += StrLen(CurrentWriteLocation) + 1;
     }
 
@@ -2805,10 +2808,6 @@ EfiShellGetEnvEx(
       // Allocate the space and recall the get function
       //
       Buffer = AllocateZeroPool(Size);
- //     ASSERT(Buffer != NULL);
-      if (!Buffer) {
-        return (NULL);
-      }
       Status = SHELL_GET_ENVIRONMENT_VARIABLE_AND_ATTRIBUTES(Name, Attributes, &Size, Buffer);
     }
     //
@@ -3238,7 +3237,11 @@ EfiShellGetHelpText(
       FixCommand = AllocateZeroPool(StrSize(Command) - 4 * sizeof (CHAR16));
 //      ASSERT(FixCommand != NULL);
 
-      StrnCpy(FixCommand, Command, StrLen(Command)-4);
+      StrnCpyS( FixCommand, 
+                (StrSize(Command) - 4 * sizeof (CHAR16))/sizeof(CHAR16), 
+                Command, 
+                StrLen(Command)-4
+                );
       Status = ProcessManFile(FixCommand, FixCommand, Sections, NULL, HelpText);
       FreePool(FixCommand);
       return Status;
@@ -3296,23 +3299,17 @@ EFIAPI
 InternalEfiShellGetListAlias(
   )
 {
-  UINT64            MaxStorSize;
-  UINT64            RemStorSize;
-  UINT64            MaxVarSize;
+  
   EFI_STATUS        Status;
   EFI_GUID          Guid;
   CHAR16            *VariableName;
   UINTN             NameSize;
+  UINTN             NameBufferSize;
   CHAR16            *RetVal;
   UINTN             RetSize;
 
-  Status = gRT->QueryVariableInfo(EFI_VARIABLE_NON_VOLATILE|EFI_VARIABLE_BOOTSERVICE_ACCESS, &MaxStorSize, &RemStorSize, &MaxVarSize);
-//  ASSERT_EFI_ERROR(Status);
-  if (EFI_ERROR(Status)) {
-    return NULL;
-  }
-
-  VariableName  = AllocateZeroPool((UINTN)MaxVarSize);
+  NameBufferSize = INIT_NAME_BUFFER_SIZE;
+  VariableName  = AllocateZeroPool(NameBufferSize);
   RetSize       = 0;
   RetVal        = NULL;
 
@@ -3323,22 +3320,38 @@ InternalEfiShellGetListAlias(
   VariableName[0] = CHAR_NULL;
 
   while (TRUE) {
-    NameSize = (UINTN)MaxVarSize;
+    NameSize = NameBufferSize;
     Status = gRT->GetNextVariableName(&NameSize, VariableName, &Guid);
     if (Status == EFI_NOT_FOUND){
       break;
+    } else if (Status == EFI_BUFFER_TOO_SMALL) {
+      NameBufferSize = NameSize > NameBufferSize * 2 ? NameSize : NameBufferSize * 2;
+      SHELL_FREE_NON_NULL(VariableName);
+      VariableName = AllocateZeroPool(NameBufferSize);
+      if (VariableName == NULL) {
+        Status = EFI_OUT_OF_RESOURCES;
+        SHELL_FREE_NON_NULL(RetVal);
+        RetVal = NULL;
+        break;
     }
-//    ASSERT_EFI_ERROR(Status);
-    if (EFI_ERROR(Status)) {
+      
+      NameSize = NameBufferSize;
+      Status = gRT->GetNextVariableName(&NameSize, VariableName, &Guid);
+    }
+    
+    if (EFI_ERROR (Status)) {
+      SHELL_FREE_NON_NULL(RetVal);
+      RetVal = NULL;
       break;
     }
+    
     if (CompareGuid(&Guid, &gShellAliasGuid)){
   //    ASSERT((RetVal == NULL && RetSize == 0) || (RetVal != NULL));
       RetVal = StrnCatGrow(&RetVal, &RetSize, VariableName, 0);
       RetVal = StrnCatGrow(&RetVal, &RetSize, L";", 0);
     } // compare guid
   } // while
-  FreePool(VariableName);
+  SHELL_FREE_NON_NULL(VariableName);
 
   return (RetVal);
 }

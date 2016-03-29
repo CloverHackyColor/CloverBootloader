@@ -130,7 +130,7 @@ FindNextInstance(
   Temp = StrStr(SourceString, FindString);
 
   //
-  // If nothing found, or we dont care about escape characters
+  // If nothing found, or we don't care about escape characters
   //
   if (Temp == NULL || !CheckForEscapeCharacter) {
     return (Temp);
@@ -1168,10 +1168,10 @@ DoStartupScript(
     if (FileStringPath == NULL) {
       return (EFI_OUT_OF_RESOURCES);
     }
-    StrnCpy(FileStringPath, ShellInfoObject.ShellInitSettings.FileName, NewSize/sizeof(CHAR16) -1);
+    StrCpyS(FileStringPath, NewSize/sizeof(CHAR16), ShellInfoObject.ShellInitSettings.FileName);
     if (ShellInfoObject.ShellInitSettings.FileOptions != NULL) {
-      StrnCat(FileStringPath, L" ", NewSize/sizeof(CHAR16) - StrLen(FileStringPath) -1);
-      StrnCat(FileStringPath, ShellInfoObject.ShellInitSettings.FileOptions, NewSize/sizeof(CHAR16) - StrLen(FileStringPath) -1);
+      StrnCatS(FileStringPath, NewSize/sizeof(CHAR16), L" ", NewSize/sizeof(CHAR16) - StrLen(FileStringPath) -1);
+      StrnCatS(FileStringPath, NewSize/sizeof(CHAR16), ShellInfoObject.ShellInitSettings.FileOptions, NewSize/sizeof(CHAR16) - StrLen(FileStringPath) -1);
     }
     Status = RunShellCommand(FileStringPath, &CalleeStatus);
     if (ShellInfoObject.ShellInitSettings.BitUnion.Bits.Exit == TRUE) {
@@ -1259,7 +1259,7 @@ DoStartupScript(
     FileStringPath = ShellFindFilePath(mStartupScript);
     if (FileStringPath == NULL) {
       //
-      // we return success since we dont need to have a startup script
+      // we return success since we don't need to have a startup script
       //
       Status = EFI_SUCCESS;
 //      ASSERT(FileHandle == NULL);
@@ -1513,7 +1513,7 @@ StripUnreplacedEnvironmentVariables(
     SecondPercent = FirstPercent!=NULL?FindNextInstance(FirstPercent+1, L"%", TRUE):NULL;
     if (FirstPercent == NULL || SecondPercent == NULL) {
       //
-      // If we ever dont have 2 % we are done.
+      // If we ever don't have 2 % we are done.
       //
       break;
     }
@@ -1537,24 +1537,20 @@ StripUnreplacedEnvironmentVariables(
       }
       continue;
     }
-//    ASSERT(FirstPercent < FirstQuote);
-    if (SecondPercent < FirstQuote) {
+    
+    if (FirstQuote == NULL || SecondPercent < FirstQuote) {
       if (IsValidEnvironmentVariableName(FirstPercent, SecondPercent)) {
       //
       // We need to remove from FirstPercent to SecondPercent
       //
         CopyMem(FirstPercent, SecondPercent + 1, StrSize(SecondPercent + 1));
         //
-        // dont need to update the locator.  both % characters are gone.
+        // don't need to update the locator.  both % characters are gone.
         //
       } else {
         CurrentLocator = SecondPercent + 1;
       }
       continue;
-    }
-//    ASSERT(FirstQuote < SecondPercent);
-    if (FirstQuote >= SecondPercent) {
-      return EFI_INVALID_PARAMETER;
     }
     CurrentLocator = FirstQuote;
   }
@@ -1659,11 +1655,20 @@ ShellConvertVariables (
     ;  MasterEnvList != NULL && *MasterEnvList != CHAR_NULL
     ;  MasterEnvList += StrLen(MasterEnvList) + 1
    ){
-    StrnCpy(ItemTemp, L"%", ((ItemSize+(2*sizeof(CHAR16)))/sizeof(CHAR16))-1);
-    StrnCat(ItemTemp, MasterEnvList, ((ItemSize+(2*sizeof(CHAR16)))/sizeof(CHAR16))-1 - StrLen(ItemTemp));
-    StrnCat(ItemTemp, L"%", ((ItemSize+(2*sizeof(CHAR16)))/sizeof(CHAR16))-1 - StrLen(ItemTemp));
+    StrCpyS( ItemTemp, 
+              ((ItemSize+(2*sizeof(CHAR16)))/sizeof(CHAR16)), 
+              L"%"
+              );
+    StrCatS( ItemTemp, 
+              ((ItemSize+(2*sizeof(CHAR16)))/sizeof(CHAR16)), 
+              MasterEnvList
+              );
+    StrCatS( ItemTemp, 
+              ((ItemSize+(2*sizeof(CHAR16)))/sizeof(CHAR16)), 
+              L"%"
+              );
     ShellCopySearchAndReplace(NewCommandLine1, NewCommandLine2, NewSize, ItemTemp, EfiShellGetEnv(MasterEnvList), TRUE, FALSE);
-    StrnCpy(NewCommandLine1, NewCommandLine2, NewSize/sizeof(CHAR16)-1);
+    StrCpyS(NewCommandLine1, NewSize/sizeof(CHAR16), NewCommandLine2);
   }
   if (CurrentScriptFile != NULL) {
     for (AliasListNode = (ALIAS_LIST*)GetFirstNode(&CurrentScriptFile->SubstList)
@@ -1671,7 +1676,7 @@ ShellConvertVariables (
       ;  AliasListNode = (ALIAS_LIST*)GetNextNode(&CurrentScriptFile->SubstList, &AliasListNode->Link)
    ){
     ShellCopySearchAndReplace(NewCommandLine1, NewCommandLine2, NewSize, AliasListNode->Alias, AliasListNode->CommandString, TRUE, FALSE);
-    StrnCpy(NewCommandLine1, NewCommandLine2, NewSize/sizeof(CHAR16)-1);
+    StrCpyS(NewCommandLine1, NewSize/sizeof(CHAR16), NewCommandLine2);
     }
   }
 
@@ -1684,7 +1689,7 @@ ShellConvertVariables (
   // Now cleanup any straggler intentionally ignored "%" characters
   //
   ShellCopySearchAndReplace(NewCommandLine1, NewCommandLine2, NewSize, L"^%", L"%", TRUE, FALSE);
-  StrnCpy(NewCommandLine1, NewCommandLine2, NewSize/sizeof(CHAR16)-1);
+  StrCpyS(NewCommandLine1, NewSize/sizeof(CHAR16), NewCommandLine2);
   
   FreePool(NewCommandLine2);
   FreePool(ItemTemp);
@@ -2194,9 +2199,9 @@ DoHelpUpdate(
 {
   CHAR16 *CurrentParameter;
   CHAR16 *Walker;
-  CHAR16 *LastWalker;
   CHAR16 *NewCommandLine;
   EFI_STATUS Status;
+  UINTN  NewCmdLineSize;
 
   Status = EFI_SUCCESS;
 
@@ -2207,12 +2212,12 @@ DoHelpUpdate(
 
   Walker = *CmdLine;
   while(Walker != NULL && *Walker != CHAR_NULL) {
-    LastWalker = Walker;
-    if (!EFI_ERROR(GetNextParameter(&Walker, &CurrentParameter, StrSize(*CmdLine)))) {
+    if (!EFI_ERROR(GetNextParameter(&Walker, &CurrentParameter, StrSize(*CmdLine), TRUE))) {
     if (StrStr(CurrentParameter, L"-?") == CurrentParameter) {
-      LastWalker[0] = L' ';
-      LastWalker[1] = L' ';
-      NewCommandLine = AllocateZeroPool(StrSize(L"help ") + StrSize(*CmdLine));
+        CurrentParameter[0] = L' ';
+        CurrentParameter[1] = L' ';
+        NewCmdLineSize = StrSize(L"help ") + StrSize(*CmdLine);
+        NewCommandLine = AllocateZeroPool(NewCmdLineSize);
       if (NewCommandLine == NULL) {
         Status = EFI_OUT_OF_RESOURCES;
         break;
@@ -2221,8 +2226,8 @@ DoHelpUpdate(
       //
       // We know the space is sufficient since we just calculated it.
       //
-      StrnCpy(NewCommandLine, L"help ", 5);
-      StrnCat(NewCommandLine, *CmdLine, StrLen(*CmdLine));
+        StrnCpyS(NewCommandLine, NewCmdLineSize/sizeof(CHAR16), L"help ", 5);
+        StrnCatS(NewCommandLine, NewCmdLineSize/sizeof(CHAR16), *CmdLine, StrLen(*CmdLine));
       SHELL_FREE_NON_NULL(*CmdLine);
       *CmdLine = NewCommandLine;
       break;
@@ -2287,6 +2292,7 @@ ProcessCommandLineToFinal(
   if (EFI_ERROR(Status)) {
     return (Status);
   }
+//  ASSERT (*CmdLine != NULL);
 
   TrimSpaces(CmdLine);
 
@@ -2568,7 +2574,8 @@ SetupAndRunCommandOrFile(
   IN   SHELL_OPERATION_TYPES          Type,
   IN   CHAR16                         *CmdLine,
   IN   CHAR16                         *FirstParameter,
-  IN EFI_SHELL_PARAMETERS_PROTOCOL  *ParamProtocol
+  IN   EFI_SHELL_PARAMETERS_PROTOCOL  *ParamProtocol,
+  OUT EFI_STATUS                      *CommandStatus
 )
 {
   EFI_STATUS                Status;
@@ -2679,7 +2686,7 @@ RunShellCommand(
   }
 
   //
-  // We dont do normal processing with a split command line (output from one command input to another)
+  // We don't do normal processing with a split command line (output from one command input to another)
   //
   if (ContainsSplit(CleanOriginal)) {
     Status = ProcessNewSplitCommandLine(CleanOriginal);
@@ -2707,7 +2714,7 @@ RunShellCommand(
     case   Internal_Command:
     case   Script_File_Name:
     case   Efi_Application:
-      Status = SetupAndRunCommandOrFile(Type, CleanOriginal, FirstParameter, ShellInfoObject.NewShellParametersProtocol);
+        Status = SetupAndRunCommandOrFile(Type, CleanOriginal, FirstParameter, ShellInfoObject.NewShellParametersProtocol, CommandStatus);
       break;
     default:
       //
@@ -2810,14 +2817,11 @@ RunScriptFileHandle (
   CONST CHAR16        *CurDir;
   UINTN               LineCount;
   CHAR16              LeString[50];
-  SHELL_STATUS        CalleeExitStatus;
-
-//  ASSERT(!ShellCommandGetScriptExit());
-  if (ShellCommandGetScriptExit()) {
-    return (EFI_NOT_STARTED);
-  }
+  LIST_ENTRY          OldBufferList;
   
-CalleeExitStatus = SHELL_SUCCESS;
+if (!ShellCommandGetScriptExit()) {
+	return (EFI_OUT_OF_RESOURCES);
+}
 
   PreScriptEchoState = ShellCommandGetEchoState();
   PrintBuffSize = PcdGet16(PcdShellPrintBufferSize);
@@ -2919,7 +2923,11 @@ CalleeExitStatus = SHELL_SUCCESS;
       ; // conditional increment in the body of the loop
   ){
  //   ASSERT(CommandLine2 != NULL);
-    StrnCpy(CommandLine2, NewScriptFile->CurrentCommand->Cl, PcdGet16(PcdShellPrintBufferSize)/sizeof(CHAR16)-1);
+    StrnCpyS( CommandLine2, 
+              PrintBuffSize/sizeof(CHAR16), 
+              NewScriptFile->CurrentCommand->Cl,
+              PrintBuffSize/sizeof(CHAR16) - 1
+              );
 
     SaveBufferList(&OldBufferList);
 
@@ -2942,7 +2950,11 @@ CalleeExitStatus = SHELL_SUCCESS;
       //
       // Due to variability in starting the find and replace action we need to have both buffers the same.
       //
-      StrnCpy(CommandLine, CommandLine2, PcdGet16(PcdShellPrintBufferSize)/sizeof(CHAR16)-1);
+      StrnCpyS( CommandLine, 
+                PrintBuffSize/sizeof(CHAR16), 
+                CommandLine2,
+                PrintBuffSize/sizeof(CHAR16) - 1
+                );
 
       //
       // Remove the %0 to %9 from the command line (if we have some arguments)
@@ -3014,17 +3026,21 @@ CalleeExitStatus = SHELL_SUCCESS;
             break;
         }
       }
-      /*Status = */ShellCopySearchAndReplace(CommandLine2,  CommandLine, PcdGet16 (PcdShellPrintBufferSize), L"%1", L"\"\"", FALSE, FALSE);
-      /*Status = */ShellCopySearchAndReplace(CommandLine,  CommandLine2, PcdGet16 (PcdShellPrintBufferSize), L"%2", L"\"\"", FALSE, FALSE);
-      /*Status = */ShellCopySearchAndReplace(CommandLine2,  CommandLine, PcdGet16 (PcdShellPrintBufferSize), L"%3", L"\"\"", FALSE, FALSE);
-      /*Status = */ShellCopySearchAndReplace(CommandLine,  CommandLine2, PcdGet16 (PcdShellPrintBufferSize), L"%4", L"\"\"", FALSE, FALSE);
-      /*Status = */ShellCopySearchAndReplace(CommandLine2,  CommandLine, PcdGet16 (PcdShellPrintBufferSize), L"%5", L"\"\"", FALSE, FALSE);
-      /*Status = */ShellCopySearchAndReplace(CommandLine,  CommandLine2, PcdGet16 (PcdShellPrintBufferSize), L"%6", L"\"\"", FALSE, FALSE);
-      /*Status = */ShellCopySearchAndReplace(CommandLine2,  CommandLine, PcdGet16 (PcdShellPrintBufferSize), L"%7", L"\"\"", FALSE, FALSE);
-      /*Status = */ShellCopySearchAndReplace(CommandLine,  CommandLine2, PcdGet16 (PcdShellPrintBufferSize), L"%8", L"\"\"", FALSE, FALSE);
-      /*Status = */ShellCopySearchAndReplace(CommandLine2,  CommandLine, PcdGet16 (PcdShellPrintBufferSize), L"%9", L"\"\"", FALSE, FALSE);
+      Status = ShellCopySearchAndReplace(CommandLine2,  CommandLine, PrintBuffSize, L"%1", L"\"\"", FALSE, FALSE);
+      Status = ShellCopySearchAndReplace(CommandLine,  CommandLine2, PrintBuffSize, L"%2", L"\"\"", FALSE, FALSE);
+      Status = ShellCopySearchAndReplace(CommandLine2,  CommandLine, PrintBuffSize, L"%3", L"\"\"", FALSE, FALSE);
+      Status = ShellCopySearchAndReplace(CommandLine,  CommandLine2, PrintBuffSize, L"%4", L"\"\"", FALSE, FALSE);
+      Status = ShellCopySearchAndReplace(CommandLine2,  CommandLine, PrintBuffSize, L"%5", L"\"\"", FALSE, FALSE);
+      Status = ShellCopySearchAndReplace(CommandLine,  CommandLine2, PrintBuffSize, L"%6", L"\"\"", FALSE, FALSE);
+      Status = ShellCopySearchAndReplace(CommandLine2,  CommandLine, PrintBuffSize, L"%7", L"\"\"", FALSE, FALSE);
+      Status = ShellCopySearchAndReplace(CommandLine,  CommandLine2, PrintBuffSize, L"%8", L"\"\"", FALSE, FALSE);
+      Status = ShellCopySearchAndReplace(CommandLine2,  CommandLine, PrintBuffSize, L"%9", L"\"\"", FALSE, FALSE);
 
-      StrnCpy(CommandLine2, CommandLine, PcdGet16(PcdShellPrintBufferSize)/sizeof(CHAR16)-1);
+      StrnCpyS( CommandLine2, 
+                PrintBuffSize/sizeof(CHAR16), 
+                CommandLine,
+                PrintBuffSize/sizeof(CHAR16) - 1
+                );
 
       LastCommand = NewScriptFile->CurrentCommand;
 
@@ -3073,8 +3089,7 @@ CalleeExitStatus = SHELL_SUCCESS;
           //
           // ShellCommandGetExitCode() always returns a UINT64
           //
-          CalleeExitStatus = (SHELL_STATUS) ShellCommandGetExitCode();
-          UnicodeSPrint(LeString, sizeof(LeString), L"0x%Lx", CalleeExitStatus);
+          UnicodeSPrint(LeString, sizeof(LeString), L"0x%Lx", ShellCommandGetExitCode());
           DEBUG_CODE(InternalEfiShellSetEnv(L"debuglasterror", LeString, TRUE););
           InternalEfiShellSetEnv(L"lasterror", LeString, TRUE);
 
@@ -3088,11 +3103,11 @@ CalleeExitStatus = SHELL_SUCCESS;
           break;
         }
         if (EFI_ERROR(Status)) {
-          CalleeExitStatus = (SHELL_STATUS) Status;
+          RestoreBufferList(&OldBufferList);
           break;
         }
         if (ShellCommandGetExit()) {
-          CalleeExitStatus = (SHELL_STATUS) ShellCommandGetExitCode();
+          RestoreBufferList(&OldBufferList);
           break;
         }
       }
@@ -3125,7 +3140,6 @@ CalleeExitStatus = SHELL_SUCCESS;
   if (ShellCommandGetCurrentScriptFile()==NULL) {
     ShellCommandSetEchoState(PreScriptEchoState);
   }
-
   return (EFI_SUCCESS);
 }
 

@@ -95,13 +95,14 @@ GetNextParameter(
 {
   CONST CHAR16 *NextDelim;
 
-//  ASSERT(Walker           != NULL);
-//  ASSERT(*Walker          != NULL);
-//  ASSERT(TempParameter    != NULL);
-//  ASSERT(*TempParameter   != NULL);
-  if (!Walker || !(*Walker) || !TempParameter || !(*TempParameter)) {
-    return EFI_INVALID_PARAMETER;
+  if (Walker           == NULL
+    ||*Walker          == NULL
+    ||TempParameter    == NULL
+    ||*TempParameter   == NULL
+    ){
+    return (EFI_INVALID_PARAMETER);
   }
+
 
   //
   // make sure we dont have any leading spaces
@@ -114,9 +115,10 @@ GetNextParameter(
   // make sure we still have some params now...
   //
   if (StrLen(*Walker) == 0) {
-//    ASSERT((*Walker)[0] == CHAR_NULL);
+DEBUG_CODE_BEGIN();
     *Walker = NULL;
-    return EFI_NOT_FOUND;
+DEBUG_CODE_END();
+    return (EFI_INVALID_PARAMETER);
   }
 
   NextDelim = FindEndOfParameter(*Walker);
@@ -128,7 +130,7 @@ DEBUG_CODE_END();
     return (EFI_NOT_FOUND);
   }
 
-  StrnCpy(*TempParameter, (*Walker), NextDelim - *Walker);
+  StrnCpyS(*TempParameter, Length / sizeof(CHAR16), (*Walker), NextDelim - *Walker);
 
   //
   // Add a CHAR_NULL if we didnt get one via the copy
@@ -1050,7 +1052,7 @@ UpdateStdInStdOutStdErr(
   //
   // re-populate the string to support any filenames that were in quotes.
   //
-  StrnCpy(CommandLineCopy, NewCommandLine, StrLen(NewCommandLine));
+  StrnCpyS(CommandLineCopy, StrSize(CommandLineCopy)/sizeof(CHAR16), NewCommandLine, StrLen(NewCommandLine));
 
   if (FirstLocation != CommandLineCopy + StrLen(CommandLineCopy)
     && ((UINTN)(FirstLocation - CommandLineCopy) < StrLen(NewCommandLine))
@@ -1417,6 +1419,7 @@ UpdateArgcArgv(
   OUT UINTN                             *OldArgc OPTIONAL
   )
 {
+   BOOLEAN                 StripParamQuotation;
 //  ASSERT(ShellParameters != NULL);
   if (!ShellParameters) {
     return EFI_INVALID_PARAMETER;
