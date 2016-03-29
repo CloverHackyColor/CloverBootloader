@@ -46,8 +46,8 @@ VOID                        *Smbios;  //pointer to SMBIOS data
 SMBIOS_TABLE_ENTRY_POINT		*EntryPoint; //SmbiosEps original
 SMBIOS_TABLE_ENTRY_POINT		*SmbiosEpsNew; //new SmbiosEps
 //for patching
-SMBIOS_STRUCTURE_POINTER		SmbiosTable;
-SMBIOS_STRUCTURE_POINTER		newSmbiosTable;
+APPLE_SMBIOS_STRUCTURE_POINTER  SmbiosTable;
+APPLE_SMBIOS_STRUCTURE_POINTER  newSmbiosTable;
 UINT16                      NumberOfRecords;
 UINT16                      MaxStructureSize;
 UINT8*                      Current; //pointer to the current end of tables
@@ -224,7 +224,7 @@ UINTN iStrLen(CHAR8* String, UINTN MaxLen)
 
 // Internal functions for flat SMBIOS
 
-UINT16 SmbiosTableLength (SMBIOS_STRUCTURE_POINTER SmbiosTableN)
+UINT16 SmbiosTableLength (APPLE_SMBIOS_STRUCTURE_POINTER SmbiosTableN)
 {
 	CHAR8  *AChar;
 	UINT16  Length;
@@ -238,7 +238,7 @@ UINT16 SmbiosTableLength (SMBIOS_STRUCTURE_POINTER SmbiosTableN)
 }
 
 
-EFI_SMBIOS_HANDLE LogSmbiosTable (SMBIOS_STRUCTURE_POINTER SmbiosTableN)
+EFI_SMBIOS_HANDLE LogSmbiosTable (APPLE_SMBIOS_STRUCTURE_POINTER SmbiosTableN)
 {
 	UINT16  Length = SmbiosTableLength(SmbiosTableN);
 	if (Length > MaxStructureSize) {
@@ -250,7 +250,7 @@ EFI_SMBIOS_HANDLE LogSmbiosTable (SMBIOS_STRUCTURE_POINTER SmbiosTableN)
 	return SmbiosTableN.Hdr->Handle;
 }
 
-EFI_STATUS UpdateSmbiosString (SMBIOS_STRUCTURE_POINTER SmbiosTableN, SMBIOS_TABLE_STRING* Field, CHAR8* Buffer)
+EFI_STATUS UpdateSmbiosString (APPLE_SMBIOS_STRUCTURE_POINTER SmbiosTableN, SMBIOS_TABLE_STRING* Field, CHAR8* Buffer)
 {
 	CHAR8*	AString;
 	CHAR8*	C1; //pointers for copy
@@ -309,10 +309,10 @@ EFI_STATUS UpdateSmbiosString (SMBIOS_STRUCTURE_POINTER SmbiosTableN, SMBIOS_TAB
 	return EFI_SUCCESS;
 }
 
-SMBIOS_STRUCTURE_POINTER GetSmbiosTableFromType (
+APPLE_SMBIOS_STRUCTURE_POINTER GetSmbiosTableFromType (
 	SMBIOS_TABLE_ENTRY_POINT *SmbiosPoint, UINT8 SmbiosType, UINTN IndexTable)
 {
-	SMBIOS_STRUCTURE_POINTER SmbiosTableN;
+	APPLE_SMBIOS_STRUCTURE_POINTER SmbiosTableN;
 	UINTN                    SmbiosTypeIndex;
 
 	SmbiosTypeIndex = 0;
@@ -334,7 +334,7 @@ SMBIOS_STRUCTURE_POINTER GetSmbiosTableFromType (
 }
 
 CHAR8* GetSmbiosString (
-	SMBIOS_STRUCTURE_POINTER SmbiosTableN, SMBIOS_TABLE_STRING StringN)
+	APPLE_SMBIOS_STRUCTURE_POINTER SmbiosTableN, SMBIOS_TABLE_STRING StringN)
 {
 	CHAR8      *AString;
 	UINT8      Ind;
@@ -357,17 +357,17 @@ CHAR8* GetSmbiosString (
 
 VOID AddSmbiosEndOfTable()
 {	
-	SMBIOS_TABLE_HEADER* StructurePtr = (SMBIOS_TABLE_HEADER*)Current;
+	SMBIOS_STRUCTURE* StructurePtr = (SMBIOS_STRUCTURE*)Current;
 	StructurePtr->Type		= SMBIOS_TYPE_END_OF_TABLE; 
-	StructurePtr->Length	= sizeof(SMBIOS_TABLE_HEADER);
+	StructurePtr->Length	= sizeof(SMBIOS_STRUCTURE);
 	StructurePtr->Handle	= SMBIOS_TYPE_INACTIVE; //spec 2.7 p.120
-	Current += sizeof(SMBIOS_TABLE_HEADER);
+	Current += sizeof(SMBIOS_STRUCTURE);
 	*Current++ = 0;
 	*Current++ = 0; //double 0 at the end
 	NumberOfRecords++;
 }
 
-VOID UniquifySmbiosTableStr (SMBIOS_STRUCTURE_POINTER SmbiosTableN, SMBIOS_TABLE_STRING* str_idx)
+VOID UniquifySmbiosTableStr (APPLE_SMBIOS_STRUCTURE_POINTER SmbiosTableN, SMBIOS_TABLE_STRING* str_idx)
 {
   INTN            i, j;
   SMBIOS_TABLE_STRING    cmp_idx;
@@ -1050,7 +1050,7 @@ VOID PatchTableType11()
 	ZeroMem((VOID*)newSmbiosTable.Type11, MAX_TABLE_SIZE);
 //	CopyMem((VOID*)newSmbiosTable.Type11, (VOID*)SmbiosTable.Type11, 5); //minimum, other bytes = 0
 	newSmbiosTable.Type11->Hdr.Type = EFI_SMBIOS_TYPE_OEM_STRINGS;
-	newSmbiosTable.Type11->Hdr.Length = sizeof(SMBIOS_TABLE_HEADER)+2; 
+	newSmbiosTable.Type11->Hdr.Length = sizeof(SMBIOS_STRUCTURE)+2; 
 	newSmbiosTable.Type11->Hdr.Handle = 0x0B00; //common rule
 	
 	newSmbiosTable.Type11->StringCount = 1;
@@ -1627,7 +1627,7 @@ PatchTableType19 ()
 	 /// One structure is present for each contiguous address range described.
 	 ///
 	 typedef struct {
-		SMBIOS_TABLE_HEADER      Hdr;
+		SMBIOS_STRUCTURE      Hdr;
 		UINT32                StartingAddress;
 		UINT32                EndingAddress;
 		UINT16                MemoryArrayHandle;
@@ -1792,7 +1792,7 @@ VOID PatchTableType131()
   
 		ZeroMem((VOID*)newSmbiosTable.Type131, MAX_TABLE_SIZE);
 		newSmbiosTable.Type131->Hdr.Type = 131;
-		newSmbiosTable.Type131->Hdr.Length = sizeof(SMBIOS_TABLE_HEADER)+2; 
+		newSmbiosTable.Type131->Hdr.Length = sizeof(SMBIOS_STRUCTURE)+2; 
 		newSmbiosTable.Type131->Hdr.Handle = 0x8300; //common rule
 		// Patch ProcessorType
 			newSmbiosTable.Type131->ProcessorType = gSettings.CpuType;
@@ -1814,7 +1814,7 @@ VOID PatchTableType132()
 	
 		ZeroMem((VOID*)newSmbiosTable.Type132, MAX_TABLE_SIZE);
 		newSmbiosTable.Type132->Hdr.Type = 132;
-		newSmbiosTable.Type132->Hdr.Length = sizeof(SMBIOS_TABLE_HEADER)+2; 
+		newSmbiosTable.Type132->Hdr.Length = sizeof(SMBIOS_STRUCTURE)+2; 
 		newSmbiosTable.Type132->Hdr.Handle = 0x8400; //ugly
 	// Patch ProcessorBusSpeed
 		if(gSettings.QPI){
@@ -1839,7 +1839,7 @@ VOID PatchTableType133()
   }
   ZeroMem((VOID*)newSmbiosTable.Type133, MAX_TABLE_SIZE);
   newSmbiosTable.Type133->Hdr.Type = 133;
-  newSmbiosTable.Type133->Hdr.Length = sizeof(SMBIOS_TABLE_HEADER)+8;
+  newSmbiosTable.Type133->Hdr.Length = sizeof(SMBIOS_STRUCTURE)+8;
   newSmbiosTable.Type133->Hdr.Handle = 0x8500; //ugly
   newSmbiosTable.Type133->PlatformFeature = gSettings.PlatformFeature;
   Handle = LogSmbiosTable(newSmbiosTable);

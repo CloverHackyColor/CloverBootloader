@@ -43,7 +43,7 @@ Headers collection for procedures
 #include <IndustryStandard/Acpi10.h>
 #include <IndustryStandard/Acpi20.h>
 #include <IndustryStandard/Atapi.h>
-#include <IndustryStandard/SmbiosA.h>
+#include <IndustryStandard/AppleSmBios.h>
 #include <IndustryStandard/Bmp.h>
 
 #include <Protocol/Cpu.h>
@@ -1401,7 +1401,7 @@ typedef struct {
 #pragma pack(pop)
 //extern CHAR8                          *msgbuf;
 //extern CHAR8                          *msgCursor;
-extern SMBIOS_STRUCTURE_POINTER	      SmbiosTable;
+extern APPLE_SMBIOS_STRUCTURE_POINTER SmbiosTable;
 extern GFX_PROPERTIES                 gGraphics[];
 extern UINTN                          NGFX;
 extern BOOLEAN                        gMobile;

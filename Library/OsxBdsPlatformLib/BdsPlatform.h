@@ -27,7 +27,7 @@ Abstract:
 
 #include <IndustryStandard/Pci.h>
 #include <IndustryStandard/Acpi.h>
-#include <IndustryStandard/SmbiosA.h>
+#include <IndustryStandard/AppleSmBios.h>
 #include <IndustryStandard/LegacyBiosMpTable.h>
 
 #include <Library/DebugLib.h>

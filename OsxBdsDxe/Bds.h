@@ -22,7 +22,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #include <Guid/HiiPlatformSetupFormset.h>
 #include <Guid/StatusCodeDataTypeVariable.h>
 #include <Protocol/DevicePath.h>
-#include <IndustryStandard/SmbiosA.h>
+#include <IndustryStandard/AppleSmBios.h>
 #include <Protocol/LoadFile.h>
 #include <Guid/FileInfo.h>
 #include <Guid/FileSystemInfo.h>
