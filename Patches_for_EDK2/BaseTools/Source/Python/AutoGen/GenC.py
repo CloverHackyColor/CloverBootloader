@@ -868,7 +868,7 @@ def CreateModulePcdCode(Info, AutoGenC, AutoGenH, Pcd):
         if PcdCNameList.count(Pcd.TokenCName) > 1:
             EdkLogger.error("build", AUTOGEN_ERROR, "More than one Dynamic Pcds [%s] are different Guids but same CName. They need to be changed to DynamicEx type to avoid the confliction.\n" % (Pcd.TokenCName), ExtraData="[%s]" % str(Info.MetaFile.Path))
         else:
-        AutoGenH.Append('#define %s  LibPcdGet%s(%s)\n' % (GetModeName, DatumSizeLib, PcdTokenName))
+	        AutoGenH.Append('#define %s  LibPcdGet%s(%s)\n' % (GetModeName, DatumSizeLib, PcdTokenName))
         AutoGenH.Append('#define %s  LibPcdGetSize(%s)\n' % (GetModeSizeName, PcdTokenName))
         if Pcd.DatumType == 'VOID*':
             AutoGenH.Append('#define %s(SizeOfBuffer, Buffer)  LibPcdSet%s(%s, (SizeOfBuffer), (Buffer))\n' %(SetModeName, DatumSizeLib, PcdTokenName))
