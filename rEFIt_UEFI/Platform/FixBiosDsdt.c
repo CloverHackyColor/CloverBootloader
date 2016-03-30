@@ -2883,7 +2883,8 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
       aml_add_string_buffer(pack, &NameCard[0]);
     }
   }
-  if (!AddProperties(pack, DEV_LAN) && gSettings.NoDefaultProperties) {
+  if (!AddProperties(pack, DEV_LAN) &&
+      !gSettings.NoDefaultProperties) {
     aml_add_string(pack, "empty");
     aml_add_byte(pack, 0);
   }
@@ -3102,7 +3103,7 @@ UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
     aml_add_string_buffer(pack, (CHAR8 *)&NameCard[0]);
   }
   if (!AddProperties(pack, DEV_WIFI) && 
-      gSettings.NoDefaultProperties &&
+      !gSettings.NoDefaultProperties &&
       !gSettings.FakeWIFI) {
     aml_add_string(pack, "empty");
     aml_add_byte(pack, 0);
@@ -4279,7 +4280,8 @@ UINT32 FIXSATAAHCI (UINT8 *dsdt, UINT32 len)
     aml_add_string(pack, "vendor-id");
     aml_add_byte_buffer(pack, (CHAR8*)&FakeVen, 4);
   }
-  if (!AddProperties(pack, DEV_SATA)) {
+  if (!AddProperties(pack, DEV_SATA) && 
+      !gSettings.NoDefaultProperties) {
     aml_add_string(pack, "empty");
     aml_add_byte(pack, 0);
   }
@@ -4371,7 +4373,8 @@ UINT32 FIXSATA (UINT8 *dsdt, UINT32 len)
     aml_add_string(pack, "vendor-id");
     aml_add_byte_buffer(pack, (CHAR8*)&FakeVen, 4);
   }
-  if (!AddProperties(pack, DEV_SATA)) {
+  if (!AddProperties(pack, DEV_SATA) && 
+      !gSettings.NoDefaultProperties) {
     aml_add_string(pack, "empty");
     aml_add_byte(pack, 0);
   }
