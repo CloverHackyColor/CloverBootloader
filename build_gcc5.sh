@@ -27,14 +27,14 @@ set -u # exit with error if unbound variables
 # GCC toolchain source version
 # here we can change source versions of tools
 #
-export BINUTILS_VERSION=${BINUTILS_VERSION:-binutils-2.25}
-export GCC_VERSION=${GCC_VERSION:-5.2.0}
+export BINUTILS_VERSION=${BINUTILS_VERSION:-binutils-2.26}
+export GCC_VERSION=${GCC_VERSION:-5.3.0}
 
 # Version of libraries are from ./contrib/download_prerequisites in gcc source directory
-export GMP_VERSION=${GMP_VERSION:-gmp-6.0.0a}
-export MPFR_VERSION=${MPFR_VERSION:-mpfr-3.1.3}
+export GMP_VERSION=${GMP_VERSION:-gmp-6.1.0}
+export MPFR_VERSION=${MPFR_VERSION:-mpfr-3.1.4}
 export MPC_VERSION=${MPC_VERSION:-mpc-1.0.3}
-export ISL_VERSION=${ISL_VERSION:-isl-0.14}
+export ISL_VERSION=${ISL_VERSION:-isl-0.16.1}
 
 # Change PREFIX if you want gcc and binutils
 # installed on different place
