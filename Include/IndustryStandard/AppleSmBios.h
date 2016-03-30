@@ -31,6 +31,8 @@ enum {
   NUM_FLASHMAP_ENTRIES = 8
 };
 
+#pragma pack(1)
+
 ///
 /// Apple Firmware Volume - Region Info Type.
 ///
@@ -153,5 +155,7 @@ typedef union {
   SMBIOS_TABLE_TYPE134  *Type134;
   UINT8                 *Raw;
 } APPLE_SMBIOS_STRUCTURE_POINTER;
+
+#pragma pack()
 
 #endif
