@@ -1841,7 +1841,8 @@ VOID PatchTableType133()
   newSmbiosTable.Type133->Hdr.Type = 133;
   newSmbiosTable.Type133->Hdr.Length = sizeof(SMBIOS_STRUCTURE)+8;
   newSmbiosTable.Type133->Hdr.Handle = 0x8500; //ugly
-  newSmbiosTable.Type133->PlatformFeature = gSettings.PlatformFeature;
+//  newSmbiosTable.Type133->PlatformFeature = gSettings.PlatformFeature;
+  CopyMem((VOID*)newSmbiosTable.Type133->PlatformFeature, (VOID*)gSettings.PlatformFeature, 8);
   Handle = LogSmbiosTable(newSmbiosTable);
   return;  
 }

@@ -331,6 +331,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		12344F581CAB9A5700318A6E /* AppleSmBios.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleSmBios.h; sourceTree = "<group>"; };
 		1261513A1A15BBB000903E7B /* bootscreen.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = bootscreen.c; sourceTree = "<group>"; };
 		1261513B1A15BBB000903E7B /* common.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = common.c; sourceTree = "<group>"; };
 		1261513C1A15BBB000903E7B /* entry_scan.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = entry_scan.h; sourceTree = "<group>"; };
@@ -664,7 +665,6 @@
 		2C794AC41A0AA85900D845B0 /* PciCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PciCommand.h; sourceTree = "<group>"; };
 		2C794AC51A0AA85900D845B0 /* PeImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PeImage.h; sourceTree = "<group>"; };
 		2C794AC61A0AA85900D845B0 /* PiBootMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PiBootMode.h; sourceTree = "<group>"; };
-		2C794AC71A0AA85900D845B0 /* SmbiosA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SmbiosA.h; sourceTree = "<group>"; };
 		2C794AC81A0AA85900D845B0 /* VesaBiosExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VesaBiosExtensions.h; sourceTree = "<group>"; };
 		2C794ACA1A0AA85900D845B0 /* GenericBdsLib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GenericBdsLib.h; sourceTree = "<group>"; };
 		2C794ACB1A0AA85900D845B0 /* MemLogLib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemLogLib.h; sourceTree = "<group>"; };
@@ -1808,12 +1808,12 @@
 		2C794AC91A0AA85900D845B0 /* IndustryStandard */ = {
 			isa = PBXGroup;
 			children = (
+				12344F581CAB9A5700318A6E /* AppleSmBios.h */,
 				2C794AC21A0AA85900D845B0 /* AtomBios.h */,
 				2C794AC31A0AA85900D845B0 /* PciBus.h */,
 				2C794AC41A0AA85900D845B0 /* PciCommand.h */,
 				2C794AC51A0AA85900D845B0 /* PeImage.h */,
 				2C794AC61A0AA85900D845B0 /* PiBootMode.h */,
-				2C794AC71A0AA85900D845B0 /* SmbiosA.h */,
 				2C794AC81A0AA85900D845B0 /* VesaBiosExtensions.h */,
 			);
 			path = IndustryStandard;
