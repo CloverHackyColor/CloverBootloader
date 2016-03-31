@@ -4,7 +4,7 @@
 #
 #  This Platform file is used to generate the Binary Fat Drivers
 #  for EDK II Prime release.
-#  Copyright (c) 2007 - 2014, Intel Corporation. All rights reserved.<BR>
+#  Copyright (c) 2007 - 2016, Intel Corporation. All rights reserved.<BR>
 #
 #  Redistribution and use in source and binary forms, with or without
 #  modification, are permitted provided that the following conditions are
@@ -50,7 +50,7 @@
   DSC_SPECIFICATION              = 0x00010005
   SUPPORTED_ARCHITECTURES        = IA32|X64|IPF|EBC|ARM|AARCH64
   OUTPUT_DIRECTORY               = Build/Fat
-  BUILD_TARGETS                  = DEBUG|RELEASE
+  BUILD_TARGETS                  = DEBUG|RELEASE|NOOPT
   SKUID_IDENTIFIER               = DEFAULT
     FLASH_DEFINITION               = Clover/FatPkg/FatPkg.fdf
 

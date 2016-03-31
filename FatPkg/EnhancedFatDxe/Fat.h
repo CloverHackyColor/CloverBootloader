@@ -1237,8 +1237,9 @@ FatSetCaseFlag (
 
 VOID
 FatGetFileNameViaCaseFlag (
-  IN  FAT_DIRENT        *DirEnt,
-  OUT CHAR16            *FileString
+  IN     FAT_DIRENT     *DirEnt,
+  IN OUT CHAR16         *FileString,
+  IN     UINTN          FileStringMax
   );
 
 UINT8
