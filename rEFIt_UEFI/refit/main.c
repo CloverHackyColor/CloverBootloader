@@ -113,6 +113,7 @@ static VOID AboutRefit(VOID)
     AddMenuInfoLine(&AboutMenu, L"  FrodoKenny, skoczi, crazybirdy, Oscar09, xsmile");
     AddMenuInfoLine(&AboutMenu, L"  cparm, rehabman, nms42, sherlocks, Zenith432");
     AddMenuInfoLine(&AboutMenu, L"  stinga11, TheRacerMaster, solstice");
+    AddMenuInfoLine(&AboutMenu, L"  cecekpawon, ");
     AddMenuInfoLine(&AboutMenu, L"  projectosx.com, applelife.ru, insanelymac.com");
     AddMenuInfoLine(&AboutMenu, L"");
     AddMenuInfoLine(&AboutMenu, L"Running on:");

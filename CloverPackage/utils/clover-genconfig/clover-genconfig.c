@@ -329,12 +329,12 @@ void PrintConfig(CFTypeRef data)
   addBoolean(systemParametersDict, CFSTR("InjectSystemID"), s->InjectSystemID);
   addHex(systemParametersDict, CFSTR("BacklightLevel"),s->BacklightLevel);
 //  addBoolean(systemParametersDict, CFSTR("InjectKexts"), 0);
-  addString(systemParametersDict, CFSTR("InjectKexts"), "Detect");
+  addString(systemParametersDict, CFSTR("#InjectKexts"), "Detect");
 
   // GUI
   CFMutableDictionaryRef guiDict = addDict(dict, CFSTR("GUI"));
-  addString(guiDict, CFSTR("Language"), s->Language);
-  addString(guiDict, CFSTR("Theme"), "embedded");
+  addString(guiDict, CFSTR("#Language"), s->Language);
+  addString(guiDict, CFSTR("#Theme"), "embedded");
   addBoolean(guiDict, CFSTR("TextOnly"), 0);
   addBoolean(guiDict, CFSTR("CustomIcons"), 0);
     
@@ -344,7 +344,7 @@ void PrintConfig(CFTypeRef data)
 //  addInteger(mouseDict, CFSTR("DoubleClick"), s->DoubleClickTime);
   addBoolean(mouseDict, CFSTR("Mirror"), s->PointerMirror);
   
-  CFMutableArrayRef hideArray = addArray(guiDict, CFSTR("Hide"));
+  CFMutableArrayRef hideArray = addArray(guiDict, CFSTR("#Hide"));
   addStringToArray(hideArray, "VolumeName_NOT_SHOWN");
   addStringToArray(hideArray, "VolumeUUID_NOT_SHOWN");
   addStringToArray(hideArray, "EntryPath_NOT_SHOWN");
@@ -364,6 +364,7 @@ void PrintConfig(CFTypeRef data)
       addString(entries1Dict, CFSTR("#Path"), "_NOT_SHOWN_");
       addString(entries1Dict, CFSTR("#Type"), "_NOT_SHOWN_");
       addString(entries1Dict, CFSTR("#Arguments"), "_NOT_SHOWN_");
+      addString(entries1Dict, CFSTR("#AddArguments"), "-v");
       addString(entries1Dict, CFSTR("#Title"), "_NOT_SHOWN_");
       addString(entries1Dict, CFSTR("#FullTitle"), "_NOT_SHOWN_");
       addString(entries1Dict, CFSTR("#Image"), "_NOT_SHOWN_");
@@ -443,6 +444,9 @@ void PrintConfig(CFTypeRef data)
   addString(smbiosDict, CFSTR("OEMProduct"), s->OEMProduct);
   addString(smbiosDict, CFSTR("OEMVendor"), s->OEMVendor);
   addString(smbiosDict, CFSTR("OEMBoard"), s->OEMBoard);
+  if (s->PlatformFeature != 0xFFFF) {
+    addHex(smbiosDict, CFSTR("PlatformFeature"), s->PlatformFeature);
+  }
   
   if (s->InjectMemoryTables) {
     CFMutableDictionaryRef memoryDict = addDict(smbiosDict, CFSTR("Memory"));
@@ -464,13 +468,16 @@ void PrintConfig(CFTypeRef data)
   
   // CPU
   CFMutableDictionaryRef cpuDict = addDict(dict, CFSTR("CPU"));
-  addInteger(cpuDict, CFSTR("Type"), s->CpuType);
+  addHex(cpuDict, CFSTR("Type"), s->CpuType);
   addInteger(cpuDict, CFSTR("FrequencyMHz"), s->CpuFreqMHz);
-  addInteger(cpuDict, CFSTR("BusSpeedkHz"), s->BusSpeed);
+  addInteger(cpuDict, CFSTR("#BusSpeedkHz"), s->BusSpeed);
   addInteger(cpuDict, CFSTR("QPI"), s->QPI);
   addInteger(cpuDict, CFSTR("SavingMode"), s->SavingMode);
+  addBoolean(cpuDict, CFSTR("#UseARTFrequency"), s->UseARTFrequency);
+  addBoolean(cpuDict, CFSTR("#TurboDisable"), s->TurboDisable);
   // these values read only
   addInteger(cpuDict, CFSTR("EnabledCores"), s->EnabledCores);
+
 //  addBoolean(cpuDict, CFSTR("C2"), s->EnableC2);
 //  addBoolean(cpuDict, CFSTR("C4"), s->EnableC4);
 //  addBoolean(cpuDict, CFSTR("C6"), s->EnableC6);
@@ -487,7 +494,7 @@ void PrintConfig(CFTypeRef data)
   addString(appPropDict, CFSTR("#Device"), "XXX");
   addString(appPropDict, CFSTR("#Key"), "AAPL,XXX");
   addHex(appPropDict, CFSTR("#Value"), 0xFFFF);
-  
+
   CFMutableDictionaryRef fakeIDDict = addDict(pciDict, CFSTR("FakeID"));
   addHex(fakeIDDict, CFSTR("ATI"), s->FakeATI);
   addHex(fakeIDDict, CFSTR("NVidia"), s->FakeNVidia);
@@ -504,8 +511,10 @@ void PrintConfig(CFTypeRef data)
   else
     addBoolean(audioDict, CFSTR("#Inject"), s->HDAInjection);
   addBoolean(audioDict, CFSTR("#ResetHDA"), s->ResetHDA);
+
   addBoolean(pciDict, CFSTR("UseIntelHDMI"), s->UseIntelHDMI);
   addBoolean(pciDict, CFSTR("ForceHPET"), s->ForceHPET);
+  addBoolean(pciDict, CFSTR("#SetIntelBacklight"), s->IntelBacklight);
   
   
 
@@ -521,6 +530,7 @@ void PrintConfig(CFTypeRef data)
   addBoolean(injectDict, CFSTR("ATI"), s->InjectATI);
   addBoolean(injectDict, CFSTR("NVidia"), s->InjectNVidia);
   addBoolean(injectDict, CFSTR("Intel"), s->InjectIntel);
+  
   addBoolean(graphicsDict, CFSTR("LoadVBios"), s->LoadVBios);
   addBoolean(graphicsDict, CFSTR("InjectEDID"), s->InjectEDID);
   addString(graphicsDict, CFSTR("#CustomEDID"), "_NOT_SHOWN_");

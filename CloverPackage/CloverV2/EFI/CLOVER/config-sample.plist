@@ -438,8 +438,6 @@
 		<string>ru:0</string>
 		<key>#Mouse</key>
 		<dict>
-			<key>DoubleClick</key>
-			<integer>500</integer>
 			<key>Enabled</key>
 			<true/>
 			<key>Mirror</key>
