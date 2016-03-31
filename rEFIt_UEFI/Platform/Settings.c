@@ -902,7 +902,7 @@ FillinKextPatches (
         // check disabled patch by cecekpawon
         Dict = GetProperty (Prop2, "Disabled");
         if ((Dict != NULL) && IsPropertyTrue (Dict)) {
-          DBG("patch disabled, skipped\n");
+          DBG(" :: patch disabled, skipped\n");
           continue;
         }
 
@@ -5055,8 +5055,13 @@ GetDevices ()
             );
 
         // GFX
+        //if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_DISPLAY) &&
+        //    (Pci.Hdr.ClassCode[1] == PCI_CLASS_DISPLAY_VGA) &&
+        //    (NGFX < 4)) {
+
         if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_DISPLAY) &&
-            (Pci.Hdr.ClassCode[1] == PCI_CLASS_DISPLAY_VGA) &&
+            ((Pci.Hdr.ClassCode[1] == (PCI_CLASS_DISPLAY_VGA)) ||
+            (Pci.Hdr.ClassCode[1] == (PCI_CLASS_DISPLAY_OTHER))) &&
             (NGFX < 4)) {
           GFX_PROPERTIES *gfx = &gGraphics[NGFX];
           gfx->DeviceID       = Pci.Hdr.DeviceId;
@@ -5306,9 +5311,14 @@ SetDevices (
           continue;
         }
         // GFX
+        //if (/* gSettings.GraphicsInjector && */
+        //    (Pci.Hdr.ClassCode[2] == PCI_CLASS_DISPLAY) &&
+        //    (Pci.Hdr.ClassCode[1] == PCI_CLASS_DISPLAY_VGA)) {
+
         if (/* gSettings.GraphicsInjector && */
             (Pci.Hdr.ClassCode[2] == PCI_CLASS_DISPLAY) &&
-            (Pci.Hdr.ClassCode[1] == PCI_CLASS_DISPLAY_VGA)) {
+            ((Pci.Hdr.ClassCode[1] == PCI_CLASS_DISPLAY_VGA) || (Pci.Hdr.ClassCode[1] == PCI_CLASS_DISPLAY_OTHER))) {
+
           UINT32 LevelW = 0xC0000000;
           UINT32 IntelDisable = 0x03;
           

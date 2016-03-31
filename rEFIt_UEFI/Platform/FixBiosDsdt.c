@@ -2208,10 +2208,10 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
   BOOLEAN DsmFound = FALSE;
   AML_CHUNK *root = NULL;
   AML_CHUNK *gfx0, *peg0;
-  AML_CHUNK *met, *met2;
-  AML_CHUNK *pack;
-  UINT32 FakeID = 0;
-  UINT32 FakeVen = 0;
+  //AML_CHUNK *met, *met2;
+  //AML_CHUNK *pack;
+  //UINT32 FakeID = 0;
+  //UINT32 FakeVen = 0;
   DisplayName1 = FALSE;
   
   if (!DisplayADR1[VCard]) return len;
@@ -2330,16 +2330,21 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
       aml_add_dword(gfx0, DisplayADR2[VCard]);
     else
       aml_add_byte(gfx0, (UINT8)DisplayADR2[VCard]);
-  } else
+  } else {
     gfx0 = peg0;
+  }
   
+/*
   // Intel GMA and HD
-  if ((DisplayVendor[VCard] == 0x8086) && !gSettings.NoDefaultProperties && !DsmFound) {
+  // add Method(_DSM,4,NotSerialized)
+  if ((gSettings.FakeIntel || gSettings.UseIntelHDMI || !gSettings.NoDefaultProperties) &&
+    (DisplayVendor[VCard] == 0x8086) &&
+    !DsmFound) {
     DBG("Creating DSM for Intel card\n");
     met = aml_add_method(gfx0, "_DSM", 4);
     met2 = aml_add_store(met);
     pack = aml_add_package(met2);
-//    if (!gSettings.NoDefaultProperties) {
+
       if (gSettings.FakeIntel) {
         FakeID = gSettings.FakeIntel >> 16;
         aml_add_string(pack, "device-id");
@@ -2348,12 +2353,15 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
         aml_add_string(pack, "vendor-id");
         aml_add_byte_buffer(pack, (CHAR8*)&FakeVen, 4);
       }
+
       if (gSettings.UseIntelHDMI) {
         aml_add_string(pack, "hda-gfx");
         aml_add_string_buffer(pack, "onboard-1");
       }
-//    }
+
+    // Could we just comment this part? (Until remember what was the purposes?)
     if(!AddProperties(pack, DEV_INTEL) &&
+       !gSettings.NoDefaultProperties &&
        !gSettings.UseIntelHDMI &&
        !gSettings.FakeIntel) {
       aml_add_string(pack, "empty");
@@ -2362,16 +2370,21 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
     
     aml_add_local0(met);
     aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
-    // finish Method(_DSM,4,NotSerialized)
   }
+  // finish Method(_DSM,4,NotSerialized)
+*/
   
+/*
   // NVIDIA
-  if ((DisplayVendor[VCard] == 0x10DE)  && !gSettings.NoDefaultProperties && !DsmFound) {
+  // add Method(_DSM,4,NotSerialized)
+  if ((gSettings.FakeNVidia || !gSettings.NoDefaultProperties) &&
+    (DisplayVendor[VCard] == 0x10DE) &&
+    !DsmFound) {
     DBG("Creating DSM for NVIDIA card\n");
     met = aml_add_method(gfx0, "_DSM", 4);
     met2 = aml_add_store(met);
     pack = aml_add_package(met2);
-//    if (!gSettings.NoDefaultProperties) {
+
       if (gSettings.FakeNVidia) {
         FakeID = gSettings.FakeNVidia >> 16;
         aml_add_string(pack, "device-id");
@@ -2380,6 +2393,7 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
         aml_add_string(pack, "vendor-id");
         aml_add_byte_buffer(pack, (CHAR8*)&FakeVen, 4);
       }
+
       if (GFXHDAFIX) {
         aml_add_string(pack, "hda-gfx");
         if (gSettings.UseIntelHDMI) {
@@ -2388,8 +2402,10 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
           aml_add_string_buffer(pack, "onboard-1");
         }
       }
-//    }
+
+    // Could we just comment this part? (Until remember what was the purposes?)
     if(!AddProperties(pack, DEV_NVIDIA) &&
+       !gSettings.NoDefaultProperties &&
        !GFXHDAFIX &&
        !gSettings.FakeNVidia) {
       aml_add_string(pack, "empty");
@@ -2397,8 +2413,9 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
     }
     aml_add_local0(met);
     aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
-    // finish Method(_DSM,4,NotSerialized)
   }
+  // finish Method(_DSM,4,NotSerialized)
+*/
   if (DisplayVendor[VCard] == 0x10DE) {
     //add _sun
     Size = get_size(dsdt, i);
@@ -2418,14 +2435,18 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
       DBG("Warning: Method(_SUN) found for NVidia card\n");
     }
   }
-  
+/*
   // ATI
-  if ((DisplayVendor[VCard] == 0x1002) && !gSettings.NoDefaultProperties && !DsmFound) {
+  // add Method(_DSM,4,NotSerialized)
+  if ((gSettings.FakeATI || !gSettings.NoDefaultProperties) &&
+    (DisplayVendor[VCard] == 0x1002) &&
+    !DsmFound) {
     DBG("Creating DSM for ATI card\n");
+    DBG("### YOD: FIXDSDT\n");
     met = aml_add_method(gfx0, "_DSM", 4);  //if no subdevice
     met2 = aml_add_store(met);
     pack = aml_add_package(met2);
-//    if (!gSettings.NoDefaultProperties) {
+
       if (gSettings.FakeATI) {
         FakeID = gSettings.FakeATI >> 16;
         aml_add_string(pack, "device-id");
@@ -2449,8 +2470,10 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
           aml_add_string_buffer(pack, "onboard-1");
         }
       }
-//    }
+
+    // Could we just comment this part? (Until remember what was the purposes?)
     if(!AddProperties(pack, DEV_ATI) &&
+       !gSettings.NoDefaultProperties &&
        !GFXHDAFIX &&
        !gSettings.FakeATI) {
       aml_add_string(pack, "empty");
@@ -2458,8 +2481,10 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
     }
     aml_add_local0(met);
     aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
-    // finish Method(_DSM,4,NotSerialized)
   }
+  // finish Method(_DSM,4,NotSerialized)
+*/
+
   if (DisplayVendor[VCard] == 0x1002) {
     //add _sun
     Size = get_size(dsdt, i);
@@ -2845,7 +2870,7 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
       aml_add_byte(dev, 0x00);
     }
   }
-  met = aml_add_method(dev, "_DSM", 4);
+
   Size = get_size(dsdt, i);
   k = FindMethod(dsdt + i, Size, "_SUN");
   if (k == 0) {
@@ -2861,9 +2886,11 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
     }
   }
   // add Method(_DSM,4,NotSerialized) for network
+  if (gSettings.FakeLAN || !gSettings.NoDefaultProperties) {
+    met = aml_add_method(dev, "_DSM", 4);
   met2 = aml_add_store(met);
   pack = aml_add_package(met2);
-  if (!gSettings.NoDefaultProperties) {
+
     aml_add_string(pack, "built-in");
     aml_add_byte_buffer(pack, dataBuiltin, sizeof(dataBuiltin));
     aml_add_string(pack, "model");
@@ -2882,14 +2909,17 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
       aml_add_string(pack, "compatible");
       aml_add_string_buffer(pack, &NameCard[0]);
     }
-  }
+
+    // Could we just comment this part? (Until remember what was the purposes?)
   if (!AddProperties(pack, DEV_LAN) &&
+        !gSettings.FakeLAN &&
       !gSettings.NoDefaultProperties) {
     aml_add_string(pack, "empty");
     aml_add_byte(pack, 0);
   }
   aml_add_local0(met2);
   aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
+  }
   // finish Method(_DSM,4,NotSerialized)
   aml_calculate_size(root);
   network = AllocateZeroPool(root->Size);
@@ -3032,7 +3062,6 @@ UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
       aml_add_byte(dev, 0x00);
     }
   }
-  met = aml_add_method(dev, "_DSM", 4);
 
   Size = get_size(dsdt, i);
   k = FindMethod(dsdt + i, Size, "_SUN");
@@ -3052,6 +3081,8 @@ UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
   }
 
   // add Method(_DSM,4,NotSerialized) for network
+  if (gSettings.FakeWIFI || !gSettings.NoDefaultProperties) {
+    met = aml_add_method(dev, "_DSM", 4);
   met2 = aml_add_store(met);
   pack = aml_add_package(met2);
   if (!gSettings.NoDefaultProperties) {
@@ -3109,9 +3140,9 @@ UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
     aml_add_byte(pack, 0);
   }
   
-  
   aml_add_local0(met);
   aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
+  }
   // finish Method(_DSM,4,NotSerialized)
   
   aml_calculate_size(root);  
@@ -4271,6 +4302,7 @@ UINT32 FIXSATAAHCI (UINT8 *dsdt, UINT32 len)
 	root = aml_create_node(NULL);
 	
 	// add Method(_DSM,4,NotSerialized) 
+  if (gSettings.FakeSATA || !gSettings.NoDefaultProperties) {
   met = aml_add_method(root, "_DSM", 4);
   met2 = aml_add_store(met);
   pack = aml_add_package(met2);
@@ -4281,12 +4313,14 @@ UINT32 FIXSATAAHCI (UINT8 *dsdt, UINT32 len)
     aml_add_byte_buffer(pack, (CHAR8*)&FakeVen, 4);
   }
   if (!AddProperties(pack, DEV_SATA) && 
-      !gSettings.NoDefaultProperties) {
+        !gSettings.NoDefaultProperties &&
+        !gSettings.FakeSATA) {
     aml_add_string(pack, "empty");
     aml_add_byte(pack, 0);
   }
   aml_add_local0(met2);
   aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
+  }
   // finish Method(_DSM,4,NotSerialized)
   
   aml_calculate_size(root);  
@@ -4364,6 +4398,7 @@ UINT32 FIXSATA (UINT8 *dsdt, UINT32 len)
   
 	root = aml_create_node(NULL);
 	// add Method(_DSM,4,NotSerialized)
+  if (gSettings.FakeSATA || !gSettings.NoDefaultProperties) {
   met = aml_add_method(root, "_DSM", 4);
   met2 = aml_add_store(met);
   pack = aml_add_package(met2);
@@ -4374,12 +4409,14 @@ UINT32 FIXSATA (UINT8 *dsdt, UINT32 len)
     aml_add_byte_buffer(pack, (CHAR8*)&FakeVen, 4);
   }
   if (!AddProperties(pack, DEV_SATA) && 
-      !gSettings.NoDefaultProperties) {
+        !gSettings.NoDefaultProperties &&
+        !gSettings.FakeSATA) {
     aml_add_string(pack, "empty");
     aml_add_byte(pack, 0);
   }
   aml_add_local0(met2);
   aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
+  }
   // finish Method(_DSM,4,NotSerialized)
   
   aml_calculate_size(root);

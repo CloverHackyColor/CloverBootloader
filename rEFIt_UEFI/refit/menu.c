@@ -368,9 +368,6 @@ VOID FillInputs(BOOLEAN New)
   InputItems[InputItemsCount].BValue   = gSettings.PointerMirror;
   InputItems[InputItemsCount++].SValue = gSettings.PointerMirror?L"[+]":L"[ ]";
   //reserve for mouse and continue
-  InputItems[InputItemsCount].ItemType = BoolValue; //73
-  InputItems[InputItemsCount].BValue   = gSettings.StringInjector;
-  InputItems[InputItemsCount++].SValue = gSettings.StringInjector?L"[+]":L"[ ]";
   
   InputItemsCount = 74;
   InputItems[InputItemsCount].ItemType = BoolValue; //74
@@ -516,7 +513,14 @@ VOID FillInputs(BOOLEAN New)
 
   InputItems[InputItemsCount].ItemType = BoolValue; //105
   InputItems[InputItemsCount].BValue = gSettings.KernelAndKextPatches.KPHaswellE;
-  InputItems[InputItemsCount].SValue = gSettings.KernelAndKextPatches.KPHaswellE ? L"[+]" : L"[ ]";
+  InputItems[InputItemsCount++].SValue = gSettings.KernelAndKextPatches.KPHaswellE ? L"[+]" : L"[ ]";
+
+  InputItems[InputItemsCount].ItemType = BoolValue; //106
+  InputItems[InputItemsCount].BValue   = gSettings.StringInjector;
+  InputItems[InputItemsCount++].SValue = gSettings.StringInjector?L"[+]":L"[ ]";
+  InputItems[InputItemsCount].ItemType = BoolValue; //107
+  InputItems[InputItemsCount].BValue   = gSettings.NoDefaultProperties;
+  InputItems[InputItemsCount].SValue = gSettings.NoDefaultProperties?L"[+]":L"[ ]";
   
   InputItemsCount = 110;
   for (j=0; j<16; j++) {
@@ -796,11 +800,6 @@ VOID ApplyInputs(VOID)
     gSettings.PointerMirror = InputItems[i].BValue;
   }
   
-  i++; //73
-  if (InputItems[i].Valid) {
-    gSettings.StringInjector = InputItems[i].BValue;
-  }
-
 
   i = 74;
   if (InputItems[i].Valid) {
@@ -982,6 +981,16 @@ VOID ApplyInputs(VOID)
     gBootArgsChanged = TRUE;
   }
   
+  i++; //106
+  if (InputItems[i].Valid) {
+    gSettings.StringInjector = InputItems[i].BValue;
+  }
+
+  i++; //107
+  if (InputItems[i].Valid) {
+    gSettings.NoDefaultProperties = InputItems[i].BValue;
+  }
+
   
   if (NeedSave) {
     SaveSettings(); 
@@ -3755,7 +3764,16 @@ REFIT_MENU_ENTRY  *SubMenuPCI()
   InputBootArgs->Entry.Title = PoolPrint(L"Inject EFI Strings:");
   InputBootArgs->Entry.Tag = TAG_INPUT;
   InputBootArgs->Entry.Row = 0xFFFF;
-  InputBootArgs->Item = &InputItems[73];
+  InputBootArgs->Item = &InputItems[106];
+  InputBootArgs->Entry.AtClick = ActionEnter;
+  InputBootArgs->Entry.AtRightClick = ActionDetails;
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+
+  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  InputBootArgs->Entry.Title = PoolPrint(L"No Default Properties:");
+  InputBootArgs->Entry.Tag = TAG_INPUT;
+  InputBootArgs->Entry.Row = 0xFFFF;
+  InputBootArgs->Item = &InputItems[107];
   InputBootArgs->Entry.AtClick = ActionEnter;
   InputBootArgs->Entry.AtRightClick = ActionDetails;
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);

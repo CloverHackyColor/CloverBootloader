@@ -198,8 +198,9 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
 	DBG("Intel %a [%04x:%04x] :: %a\n",
 			model, gma_dev->vendor_id, gma_dev->device_id, devicepath);
 	
-	if (!string)
+	if (!string) {
 		string = devprop_create_string();
+  }
 	
 	//device = devprop_add_device(string, devicepath); //AllocatePool inside
 	device = devprop_add_device_pci(string, gma_dev);
@@ -209,6 +210,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
 		//pause();
 		return FALSE;
 	}
+
   if (gSettings.NrAddProperties != 0xFFFE) {
     for (i = 0; i < gSettings.NrAddProperties; i++) {
       if (gSettings.AddProperties[i].Device != DEV_INTEL) {
@@ -221,9 +223,11 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
                         gSettings.AddProperties[i].ValueLen);
     }
   }
+
   if (Injected) {
     DBG("custom IntelGFX properties injected, continue\n");
   }
+
   if (gSettings.FakeIntel) {
     UINT32 FakeID = gSettings.FakeIntel >> 16;
     devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
@@ -231,23 +235,29 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
     devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
   }
     
+  if (gSettings.UseIntelHDMI) {
+    devprop_add_value(device, "hda-gfx", (UINT8*)"onboard-1", 10);
+  }
+
+  if (gSettings.InjectEDID) {
+    devprop_add_value(device, "AAPL00,override-no-connect", gSettings.CustomEDID, 128);
+  }
+  
+  if (gSettings.IgPlatform) {
+    devprop_add_value(device, "AAPL,ig-platform-id", (UINT8*)&gSettings.IgPlatform, 4);
+  }
+
   if (gSettings.NoDefaultProperties) {
     DBG("Intel: no default properties\n");
     return TRUE;
   }
 
-  DualLink = gSettings.DualLink;
-                                  
-  if (gSettings.InjectEDID) {
-    devprop_add_value(device, "AAPL00,override-no-connect", gSettings.CustomEDID, 128);
-  }
-  
   devprop_add_value(device, "model", (UINT8*)model, (UINT32)AsciiStrLen(model));
 	devprop_add_value(device, "device_type", (UINT8*)"display", 7);	
   devprop_add_value(device, "subsystem-vendor-id", GMAX3100_vals[21], 4);
-  if (gSettings.UseIntelHDMI) {
-    devprop_add_value(device, "hda-gfx", (UINT8*)"onboard-1", 10);
-  }
+
+  DualLink = gSettings.DualLink;
+
 //  MacModel = GetModelFromString(gSettings.ProductName);
   switch (gma_dev->device_id) {
     case 0x0102: 
@@ -346,9 +356,9 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
             devprop_add_value(device, "AAPL,ig-platform-id", GMAX3100_vals[26], 4);
             break;
         }
-      } else {
-        devprop_add_value(device, "AAPL,ig-platform-id", (UINT8*)&gSettings.IgPlatform, 4);
-      }
+      } /*else {
+        //devprop_add_value(device, "AAPL,ig-platform-id", (UINT8*)&gSettings.IgPlatform, 4);
+      } */
 
     case 0xA011:
     case 0xA012:  

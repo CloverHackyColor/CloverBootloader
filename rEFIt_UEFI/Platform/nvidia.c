@@ -2272,6 +2272,7 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 	if (!string) {
 		string = devprop_create_string();
 	}
+
 	device = devprop_add_device_pci(string, nvda_dev);
 	devprop_add_nvidia_template(device);
   
@@ -2300,6 +2301,22 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
     devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
   }
   
+	if ((gSettings.NVCAP[0] != 0)) {
+		devprop_add_value(device, "NVCAP", &gSettings.NVCAP[0], NVCAP_LEN);
+    DBG("set NVCAP: %02x%02x%02x%02x-%02x%02x%02x%02x-%02x%02x%02x%02x-%02x%02x%02x%02x-%02x%02x%02x%02x\n",
+        gSettings.NVCAP[0], gSettings.NVCAP[1], gSettings.NVCAP[2], gSettings.NVCAP[3],
+        gSettings.NVCAP[4], gSettings.NVCAP[5], gSettings.NVCAP[6], gSettings.NVCAP[7],
+        gSettings.NVCAP[8], gSettings.NVCAP[9], gSettings.NVCAP[10], gSettings.NVCAP[11],
+        gSettings.NVCAP[12], gSettings.NVCAP[13], gSettings.NVCAP[14], gSettings.NVCAP[15],
+        gSettings.NVCAP[16], gSettings.NVCAP[17], gSettings.NVCAP[18], gSettings.NVCAP[19]);
+	}
+
+  if (gSettings.UseIntelHDMI) {
+    devprop_add_value(device, "hda-gfx", (UINT8*)"onboard-2", 10);
+  } else {
+    devprop_add_value(device, "hda-gfx", (UINT8*)"onboard-1", 10);
+  }
+
   if (gSettings.NoDefaultProperties) {
     DBG("NVidia: no default properties\n");
     if (buffer) {
@@ -2314,26 +2331,13 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 	/* FIXME: for primary graphics card only */
 	boot_display = 1;
 	devprop_add_value(device, "@0,AAPL,boot-display", (UINT8*)&boot_display, 4);
-  if (gSettings.UseIntelHDMI) {
-    devprop_add_value(device, "hda-gfx", (UINT8*)"onboard-2", 10);
-  } else {
-    devprop_add_value(device, "hda-gfx", (UINT8*)"onboard-1", 10);
-  }
   
 	if (nvPatch == PATCH_ROM_SUCCESS_HAS_LVDS) {
 		UINT8 built_in = 0x01;
 		devprop_add_value(device, "@0,built-in", &built_in, 1);
 	}
   
-	if ((gSettings.NVCAP[0] != 0)) {
-		devprop_add_value(device, "NVCAP", &gSettings.NVCAP[0], NVCAP_LEN);
-    DBG("set NVCAP: %02x%02x%02x%02x-%02x%02x%02x%02x-%02x%02x%02x%02x-%02x%02x%02x%02x-%02x%02x%02x%02x\n",
-        gSettings.NVCAP[0], gSettings.NVCAP[1], gSettings.NVCAP[2], gSettings.NVCAP[3],
-        gSettings.NVCAP[4], gSettings.NVCAP[5], gSettings.NVCAP[6], gSettings.NVCAP[7],
-        gSettings.NVCAP[8], gSettings.NVCAP[9], gSettings.NVCAP[10], gSettings.NVCAP[11],
-        gSettings.NVCAP[12], gSettings.NVCAP[13], gSettings.NVCAP[14], gSettings.NVCAP[15],
-        gSettings.NVCAP[16], gSettings.NVCAP[17], gSettings.NVCAP[18], gSettings.NVCAP[19]);
-	} else {
+	if ((gSettings.NVCAP[0] == 0)) {
 		devprop_add_value(device, "NVCAP", default_NVCAP, NVCAP_LEN);
     DBG("default NVCAP: %02x%02x%02x%02x-%02x%02x%02x%02x-%02x%02x%02x%02x-%02x%02x%02x%02x-%02x%02x%02x%02x\n",
         default_NVCAP[0], default_NVCAP[1], default_NVCAP[2], default_NVCAP[3],
@@ -2342,6 +2346,7 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
         default_NVCAP[12], default_NVCAP[13], default_NVCAP[14], default_NVCAP[15],
         default_NVCAP[16], default_NVCAP[17], default_NVCAP[18], default_NVCAP[19]);
 	}
+
 	devprop_add_value(device, "NVPM", default_NVPM, NVPM_LEN);
 	if ((gSettings.VRAM != 0)) {
 		devprop_add_value(device, "VRAM,totalsize", (UINT8*)&gSettings.VRAM, 4);
@@ -2360,7 +2365,7 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 		devprop_add_value(device, "@0,display-cfg", default_dcfg_0, DCFG0_LEN);
 		devprop_add_value(device, "@1,display-cfg", default_dcfg_1, DCFG1_LEN);
 	}
-  devprop_add_value(device, "hda-gfx", (UINT8*)"onboard-1", 10);
+  //devprop_add_value(device, "hda-gfx", (UINT8*)"onboard-1", 10);
   
   
 	//add HDMI Audio back to nvidia

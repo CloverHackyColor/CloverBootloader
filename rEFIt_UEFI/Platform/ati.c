@@ -1863,34 +1863,22 @@ BOOLEAN setup_ati_devprop(LOADER_ENTRY *Entry, pci_dt_t *ati_dev)
 	
 	// -------------------------------------------------
 	// Find a better way to do this (in device_inject.c)
-	if (!string)
+  if (!string) {
 		string = devprop_create_string();
+  }
 	
 	devicepath = get_pci_dev_path(ati_dev);
 	//card->device = devprop_add_device(string, devicepath);
 	card->device = devprop_add_device_pci(string, ati_dev);
-	if (!card->device)
+  if (!card->device) {
 		return FALSE;
+  }
 	// -------------------------------------------------
   
   if (gSettings.FakeATI) {
     card->flags &= ~FLAGNOTFAKE;
     card->flags |= FLAGOLD;
-  }
   
-	if (!gSettings.NoDefaultProperties) {
-    devprop_add_list(ati_devprop_list);
-    if (gSettings.UseIntelHDMI) {
-      devprop_add_value(card->device, "hda-gfx", (UINT8*)"onboard-2", 10);
-    } else {
-      devprop_add_value(card->device, "hda-gfx", (UINT8*)"onboard-1", 10);
-    }
-
-  } else {
-    DBG("ATI: No default properties injected\n");
-  }
-  
-  if (gSettings.FakeATI) {
     FakeID = gSettings.FakeATI >> 16;
     devprop_add_value(card->device, "device-id", (UINT8*)&FakeID, 4);
     devprop_add_value(card->device, "ATY,DeviceID", (UINT8*)&FakeID, 2);
@@ -1900,6 +1888,18 @@ BOOLEAN setup_ati_devprop(LOADER_ENTRY *Entry, pci_dt_t *ati_dev)
     FakeID = gSettings.FakeATI & 0xFFFF;
     devprop_add_value(card->device, "vendor-id", (UINT8*)&FakeID, 4);
     devprop_add_value(card->device, "ATY,VendorID", (UINT8*)&FakeID, 2);
+  }
+
+  if (!gSettings.NoDefaultProperties) {
+    devprop_add_list(ati_devprop_list);
+  } else {
+    DBG("ATI: No default properties injected\n");
+  }
+
+  if (gSettings.UseIntelHDMI) {
+    devprop_add_value(card->device, "hda-gfx", (UINT8*)"onboard-2", 10);
+  } else {
+    devprop_add_value(card->device, "hda-gfx", (UINT8*)"onboard-1", 10);
   }
 
   if (gSettings.NrAddProperties != 0xFFFE) {
