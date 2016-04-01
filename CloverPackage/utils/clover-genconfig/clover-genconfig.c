@@ -473,8 +473,8 @@ void PrintConfig(CFTypeRef data)
   addInteger(cpuDict, CFSTR("#BusSpeedkHz"), s->BusSpeed);
   addInteger(cpuDict, CFSTR("QPI"), s->QPI);
   addInteger(cpuDict, CFSTR("SavingMode"), s->SavingMode);
-  addBoolean(cpuDict, CFSTR("#UseARTFrequency"), s->UseARTFrequency);
-  addBoolean(cpuDict, CFSTR("#TurboDisable"), s->TurboDisable);
+  addBoolean(cpuDict, CFSTR("#UseARTFrequency"), s->UseARTFreq);
+  addBoolean(cpuDict, CFSTR("#TurboDisable"), (s->Turbo == 0));
   // these values read only
   addInteger(cpuDict, CFSTR("EnabledCores"), s->EnabledCores);
 
