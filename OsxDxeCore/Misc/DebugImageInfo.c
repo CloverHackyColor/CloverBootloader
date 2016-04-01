@@ -86,7 +86,7 @@ CoreInitializeDebugImageInfoTable (
                RealPages, 
                &Memory
                );
-    ASSERT_EFI_ERROR (Status);
+//    ASSERT_EFI_ERROR (Status);
     if (EFI_ERROR (Status)) {
       return;
     }
@@ -102,7 +102,7 @@ CoreInitializeDebugImageInfoTable (
     // Free first unaligned page(s).
     //
     Status = CoreFreePages (Memory, UnalignedPages);
-    ASSERT_EFI_ERROR (Status);
+//    ASSERT_EFI_ERROR (Status);
   }
   Memory         = (EFI_PHYSICAL_ADDRESS)(AlignedMemory + EFI_PAGES_TO_SIZE (Pages));
   UnalignedPages = RealPages - Pages - UnalignedPages;
@@ -111,14 +111,14 @@ CoreInitializeDebugImageInfoTable (
     // Free last unaligned page(s).
     //
     Status = CoreFreePages (Memory, UnalignedPages);
-    ASSERT_EFI_ERROR (Status);
+//    ASSERT_EFI_ERROR (Status);
   }
 
   //
   // Set mDebugTable to the 4MB aligned allocated pages
   //
   mDebugTable = (EFI_SYSTEM_TABLE_POINTER  *)(AlignedMemory);
-  ASSERT (mDebugTable != NULL);
+//  ASSERT (mDebugTable != NULL);
 
   //
   // Initialize EFI_SYSTEM_TABLE_POINTER structure
@@ -132,7 +132,7 @@ CoreInitializeDebugImageInfoTable (
   // Configuration Table
   //
   Status = CoreInstallConfigurationTable (&gEfiDebugImageInfoTableGuid, &mDebugInfoTableHeader);
-  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR (Status);
 }
 
 
@@ -149,7 +149,7 @@ CoreUpdateDebugTableCrc32 (
   VOID
   )
 {
-  ASSERT(mDebugTable != NULL);
+//  ASSERT(mDebugTable != NULL);
   mDebugTable->Crc32 = 0;
   gBS->CalculateCrc32 ((VOID *)mDebugTable, sizeof (EFI_SYSTEM_TABLE_POINTER), &mDebugTable->Crc32);
 }
@@ -195,7 +195,7 @@ CoreNewDebugImageInfoEntry (
     //
     // There must be an empty entry in the in the table.
     //
-    ASSERT (Index < mMaxTableEntries);
+//    ASSERT (Index < mMaxTableEntries);
   } else {
     //
     //  Table is full, so re-allocate another page for a larger table...

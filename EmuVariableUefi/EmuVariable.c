@@ -320,11 +320,11 @@ UpdateVariableInfo (
       // the EFI System Table
       //
       gVariableInfo = AllocateZeroPool (sizeof (VARIABLE_INFO_ENTRY));
-      ASSERT (gVariableInfo != NULL);
+ //     ASSERT (gVariableInfo != NULL);
 
       CopyGuid (&gVariableInfo->VendorGuid, VendorGuid);
       gVariableInfo->Name = AllocatePool (StrSize (VariableName));
-      ASSERT (gVariableInfo->Name != NULL);
+ //     ASSERT (gVariableInfo->Name != NULL);
       StrCpy (gVariableInfo->Name, VariableName);
       gVariableInfo->Volatile = Volatile;
 
@@ -358,11 +358,11 @@ UpdateVariableInfo (
         // Next iteration of the loop will fill in the data
         //
         Entry->Next = AllocateZeroPool (sizeof (VARIABLE_INFO_ENTRY));
-        ASSERT (Entry->Next != NULL);
+ //       ASSERT (Entry->Next != NULL);
 
         CopyGuid (&Entry->Next->VendorGuid, VendorGuid);
         Entry->Next->Name = AllocatePool (StrSize (VariableName));
-        ASSERT (Entry->Next->Name != NULL);
+ //       ASSERT (Entry->Next->Name != NULL);
         StrCpy (Entry->Next->Name, VariableName);
         Entry->Next->Volatile = Volatile;
       }
@@ -419,7 +419,7 @@ GetIndexFromSupportedLangCodes(
         return Index;
       }
     }
-    ASSERT (FALSE);
+//    ASSERT (FALSE);
     return 0;
   } else {
     //
@@ -446,7 +446,7 @@ GetIndexFromSupportedLangCodes(
         return Index;
       }
     }
-    ASSERT (FALSE);
+//    ASSERT (FALSE);
     return 0;
   }
 }
@@ -513,7 +513,7 @@ GetLangFromSupportedLangCodes (
         // Have completed the traverse, but not find corrsponding string.
         // This case is not allowed to happen.
         //
-        ASSERT(FALSE);
+  //      ASSERT(FALSE);
         return NULL;
       }
       if (SubIndex == Index) {
@@ -589,7 +589,7 @@ VariableGetBestLanguage (
   CONST CHAR8  *Supported;
   CHAR8        *Buffer;
 
-  ASSERT (SupportedLanguages != NULL);
+//  ASSERT (SupportedLanguages != NULL);
 
   VA_START (Args, Iso639Language);
   while ((Language = VA_ARG (Args, CHAR8 *)) != NULL) {
@@ -723,7 +723,7 @@ AutoUpdateLangVariable(
       FreePool (mVariableModuleGlobal->PlatformLangCodes);
     }
     mVariableModuleGlobal->PlatformLangCodes = AllocateRuntimeCopyPool (DataSize, Data);
-    ASSERT (mVariableModuleGlobal->PlatformLangCodes != NULL);
+//    ASSERT (mVariableModuleGlobal->PlatformLangCodes != NULL);
 
     //
     // PlatformLang holds a single language from PlatformLangCodes, 
@@ -733,7 +733,7 @@ AutoUpdateLangVariable(
       FreePool (mVariableModuleGlobal->PlatformLang);
     }
     mVariableModuleGlobal->PlatformLang = AllocateRuntimePool (DataSize);
-    ASSERT (mVariableModuleGlobal->PlatformLang != NULL);
+//    ASSERT (mVariableModuleGlobal->PlatformLang != NULL);
 
   } else if (StrCmp (VariableName, L"LangCodes") == 0) {
     //
@@ -753,7 +753,7 @@ AutoUpdateLangVariable(
       FreePool (mVariableModuleGlobal->LangCodes);
     }
     mVariableModuleGlobal->LangCodes = AllocateRuntimeCopyPool (DataSize, Data);
-    ASSERT (mVariableModuleGlobal->LangCodes != NULL);
+//    ASSERT (mVariableModuleGlobal->LangCodes != NULL);
   }
 
   if (SetLanguageCodes 
@@ -823,7 +823,7 @@ AutoUpdateLangVariable(
 
         DEBUG ((EFI_D_INFO, "Variable Driver Auto Update PlatformLang, PlatformLang:%a, Lang:%a\n", BestPlatformLang, BestLang));
 
-        ASSERT_EFI_ERROR(Status);
+ //       ASSERT_EFI_ERROR(Status);
       }
     }
 
@@ -856,7 +856,7 @@ AutoUpdateLangVariable(
                                  AsciiStrSize (BestPlatformLang), Attributes, &Variable);
 
         DEBUG ((EFI_D_INFO, "Variable Driver Auto Update Lang, Lang:%a, PlatformLang:%a\n", BestLang, BestPlatformLang));
-        ASSERT_EFI_ERROR (Status);
+ //       ASSERT_EFI_ERROR (Status);
       }
     }
   }
@@ -1206,7 +1206,7 @@ EmuGetVariable (
       goto Done;
     }
     VariableDataPtr = GetVariableDataPtr (Variable.CurrPtr);
-    ASSERT (VariableDataPtr != NULL);
+//   ASSERT (VariableDataPtr != NULL);
     
     CopyMem (Data, VariableDataPtr, VarDataSize);
     if (Attributes != NULL) {
@@ -1546,7 +1546,7 @@ EmuQueryVariableInfo (
     *MaximumVariableSize = PcdGet32 (PcdMaxHardwareErrorVariableSize) - sizeof (VARIABLE_HEADER);
   } else {
     if ((Attributes & EFI_VARIABLE_NON_VOLATILE) != 0) {
-      ASSERT (PcdGet32 (PcdHwErrStorageSize) < VariableStoreHeader->Size);
+ //     ASSERT (PcdGet32 (PcdHwErrStorageSize) < VariableStoreHeader->Size);
       *MaximumVariableStorageSize = VariableStoreHeader->Size - sizeof (VARIABLE_STORE_HEADER) - PcdGet32 (PcdHwErrStorageSize);
     }
 
@@ -1638,7 +1638,7 @@ InitializeVariableStore (
   // ensure that the value of PcdHwErrStorageSize is less than or equal to the value of 
   // PcdVariableStoreSize.
   //
-  ASSERT (PcdGet32 (PcdHwErrStorageSize) <= PcdGet32 (PcdVariableStoreSize));
+//  ASSERT (PcdGet32 (PcdHwErrStorageSize) <= PcdGet32 (PcdVariableStoreSize));
 
   //
   // Allocate memory for variable store.
@@ -1708,8 +1708,8 @@ InitializeVariableStore (
             ; (Variable < GetEndPointer (VariableStoreHeader) && (Variable != NULL))
             ; Variable = GetNextVariablePtr (Variable)
             ) {
-          ASSERT (Variable->State == VAR_ADDED);
-          ASSERT ((Variable->Attributes & EFI_VARIABLE_NON_VOLATILE) != 0);
+   //       ASSERT (Variable->State == VAR_ADDED);
+   //       ASSERT ((Variable->Attributes & EFI_VARIABLE_NON_VOLATILE) != 0);
           VariableData = GetVariableDataPtr (Variable);
           Status = EmuSetVariable (
                      GET_VARIABLE_NAME_PTR (Variable),
@@ -1721,7 +1721,10 @@ InitializeVariableStore (
                      &mVariableModuleGlobal->VolatileLastVariableOffset,
                      &mVariableModuleGlobal->NonVolatileLastVariableOffset
                      );
-          ASSERT_EFI_ERROR (Status);
+   //       ASSERT_EFI_ERROR (Status);
+            if (EFI_ERROR (Status)) {
+                return (Status);
+            }
         }
       }
     }

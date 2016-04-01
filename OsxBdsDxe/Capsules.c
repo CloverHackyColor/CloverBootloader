@@ -92,11 +92,11 @@ BdsProcessCapsules (
   // Init temp Capsule Data table.
   //
   CapsulePtr       = (VOID **) AllocateZeroPool (sizeof (VOID *) * CapsuleTotalNumber);
-  ASSERT (CapsulePtr != NULL);
+//  ASSERT (CapsulePtr != NULL);
   CapsulePtrCache  = (VOID **) AllocateZeroPool (sizeof (VOID *) * CapsuleTotalNumber);
-  ASSERT (CapsulePtrCache != NULL);
+//  ASSERT (CapsulePtrCache != NULL);
   CapsuleGuidCache = (EFI_GUID *) AllocateZeroPool (sizeof (EFI_GUID) * CapsuleTotalNumber);
-  ASSERT (CapsuleGuidCache != NULL);
+//  ASSERT (CapsuleGuidCache != NULL);
   
   //
   // Find all capsule images from hob
@@ -169,11 +169,11 @@ BdsProcessCapsules (
     if (CapsuleNumber != 0) {
       Size = sizeof(EFI_CAPSULE_TABLE) + (CapsuleNumber - 1) * sizeof(VOID*);  
       CapsuleTable = AllocateRuntimePool (Size);
-      ASSERT (CapsuleTable != NULL);
+//      ASSERT (CapsuleTable != NULL);
       CapsuleTable->CapsuleArrayNumber =  CapsuleNumber;
       CopyMem(&CapsuleTable->CapsulePtr[0], CapsulePtrCache, CapsuleNumber * sizeof(VOID*));
       Status = gBS->InstallConfigurationTable (&CapsuleGuidCache[CacheIndex], (VOID*)CapsuleTable);
-      ASSERT_EFI_ERROR (Status);
+//      ASSERT_EFI_ERROR (Status);
     }
     CacheIndex++;
   }
