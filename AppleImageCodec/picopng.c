@@ -1279,47 +1279,69 @@ PNG_INFO *PNG_decode(/* const*/ UINT8 *in, UINT32 size)
 }
 
 /**********************************************************************************************/
+EG_IMAGE * egCreateImage(IN INTN Width, IN INTN Height, IN BOOLEAN HasAlpha)
+{
+    EG_IMAGE        *NewImage;
+    
+    NewImage = (EG_IMAGE *) AllocatePool(sizeof(EG_IMAGE));
+    if (NewImage == NULL)
+        return NULL;
+    NewImage->PixelData = (EFI_UGA_PIXEL *) AllocatePool((UINTN)(Width * Height * sizeof(EFI_UGA_PIXEL)));
+    if (NewImage->PixelData == NULL) {
+        FreePool(NewImage);
+        return NULL;
+    }
+    
+    NewImage->Width = Width;
+    NewImage->Height = Height;
+    NewImage->HasAlpha = HasAlpha;
+    return NewImage;
+}
+
+VOID egFreeImage(IN EG_IMAGE *Image)
+{
+    if (Image != NULL) {
+        if (Image->PixelData != NULL) {
+            FreePool(Image->PixelData);
+            Image->PixelData = NULL; //FreePool will not zero pointer
+        }
+        FreePool(Image);
+    }
+}
 
 EG_IMAGE * egDecodePNG(IN UINT8 *FileData, IN UINTN FileDataLength, IN UINTN IconSize, IN BOOLEAN WantAlpha)
 {
-  EG_IMAGE            *NewImage;
-  PNG_INFO            *info;
-  //  UINT8               AlphaValue;
-  EG_PIXEL            *Pixel;
-  INTN                x, y;
-  
-  // read and check header
-  if (FileDataLength < sizeof(BMP_IMAGE_HEADER) || FileData == NULL)
-    return NULL;
-  
-  // read and check header
-  PNG_error = 0;
-  info = PNG_decode(FileData, (UINT32)FileDataLength);
-  if (info == NULL || PNG_error) {
-    //       DBG("PNG_decode == null, PNG_error=%d", PNG_error);
-    return NULL;
-  }
-	
-  NewImage = egCreateImage((INTN)info->width, (INTN)info->height, WantAlpha);
-  if (NewImage == NULL) {
-    //        DBG("egCreateImage == null");
-    return NULL;
-  }
-  
-  CopyMem(NewImage->PixelData, info->image->data, info->image->size);
-  png_alloc_free_all();
-  Pixel = (EG_PIXEL*)NewImage->PixelData;
-  for (y = 0; y < NewImage->Height; y++) {
-    for (x = 0; x < NewImage->Width; x++) {
-      UINT8	Temp;
-      Temp = Pixel->b;
-      Pixel->b = Pixel->r;
-      Pixel->r = Temp;
-      Pixel++;        
+    EG_IMAGE            *NewImage;
+    PNG_INFO            *info;
+    EFI_UGA_PIXEL       *Pixel;
+    INTN                x, y;
+    
+    // read and check header
+    info = PNG_decode(FileData, (UINT32)FileDataLength);
+    if (info == NULL) {
+        return NULL;
     }
-  }
-  //      DBG("png decoded %dx%d datalenght=%d iconsize=%d\n", NewImage->Height, NewImage->Width, FileDataLength, IconSize);
-  return NewImage;
+    
+    NewImage = egCreateImage((INTN)info->width, (INTN)info->height, WantAlpha);
+    if (NewImage == NULL) {
+        return NULL;
+    }
+    
+    CopyMem(NewImage->PixelData, info->image->data, info->image->size);
+    png_alloc_free_all();
+    Pixel = (EFI_UGA_PIXEL*)NewImage->PixelData;
+    for (y = 0; y < NewImage->Height; y++) {
+        for (x = 0; x < NewImage->Width; x++) {
+            UINT8	Temp;
+            Temp = Pixel->Blue;
+            Pixel->Blue = Pixel->Red;
+            Pixel->Red = Temp;
+            // It seems 0 is opaque and 255 is fully transparent
+            Pixel->Reserved = 255 - Pixel->Reserved;
+            Pixel++;
+        }
+    }
+    return NewImage;
 }
 
 
