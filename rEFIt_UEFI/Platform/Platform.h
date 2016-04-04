@@ -940,7 +940,8 @@ typedef struct {
   UINT64                  VRAM;
   UINT8                   Dcfg[8];
   UINT8                   NVCAP[20];
-  UINT8                   pad41[4];
+  INT8                    BootDisplay;
+  UINT8                   pad41[3];
   UINT32                  DualLink;
   UINT32                  IgPlatform;
   

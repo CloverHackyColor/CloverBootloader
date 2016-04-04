@@ -271,7 +271,6 @@ CoreNotifySignalList (
       CoreNotifyEvent (Event);
     }
   }
-
   CoreReleaseEventLock ();
 }
 

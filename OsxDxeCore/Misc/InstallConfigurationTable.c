@@ -49,7 +49,7 @@ CoreInstallConfigurationTable (
   if (Guid == NULL) {
     return EFI_INVALID_PARAMETER;
   }
-
+  Print(L"InstallConfigTable\n");
   EfiConfigurationTable = gDxeCoreST->ConfigurationTable;
 
   //
@@ -60,11 +60,12 @@ CoreInstallConfigurationTable (
       break;
     }
   }
-
+  Print(L"-- index = %d\n", Index);
   if (Index < gDxeCoreST->NumberOfTableEntries) {
     //
     // A match was found, so this is either a modify or a delete operation
     //
+    Print(L"A match was found\n");
     if (Table != NULL) {
       //
       // If Table is not NULL, then this is a modify operation.
@@ -76,7 +77,7 @@ CoreInstallConfigurationTable (
       // Signal Configuration Table change
       //
       CoreNotifySignalList (Guid);
-
+      Print(L"Signalled\n");
       return EFI_SUCCESS;
     }
 
@@ -88,6 +89,7 @@ CoreInstallConfigurationTable (
     //
     // Copy over deleted entry
     //
+    Print(L"Copy over deleted entry\n");
     CopyMem (
       &(EfiConfigurationTable[Index]),
       &(gDxeCoreST->ConfigurationTable[Index + 1]),
@@ -99,7 +101,7 @@ CoreInstallConfigurationTable (
     //
     // No matching GUIDs were found, so this is an add operation.
     //
-
+    Print(L"No matching GUIDs were found\n");
     if (Table == NULL) {
       //
       // If Table is NULL on an add operation, then return an error.
@@ -110,11 +112,13 @@ CoreInstallConfigurationTable (
     //
     // Assume that Index == gDxeCoreST->NumberOfTableEntries
     //
+    Print(L"-- index = %d\n", Index);
     if ((Index * sizeof (EFI_CONFIGURATION_TABLE)) >= mSystemTableAllocateSize) {
       //
       // Allocate a table with one additional entry.
       //
       mSystemTableAllocateSize += (CONFIG_TABLE_SIZE_INCREASED * sizeof (EFI_CONFIGURATION_TABLE));
+      Print(L"allocate\n");
       EfiConfigurationTable = AllocateRuntimePool (mSystemTableAllocateSize);
       if (EfiConfigurationTable == NULL) {
         //
@@ -127,6 +131,7 @@ CoreInstallConfigurationTable (
         //
         // Copy the old table to the new table.
         //
+        Print(L"Copy the old table to the new table\n");
         CopyMem (
           EfiConfigurationTable,
           gDxeCoreST->ConfigurationTable,
@@ -136,36 +141,42 @@ CoreInstallConfigurationTable (
         //
         // Free Old Table
         //
+        Print(L"Free Old Table\n");
         CoreFreePool (gDxeCoreST->ConfigurationTable);
       }
 
       //
       // Update System Table
       //
+      Print(L"Update System Table\n");
       gDxeCoreST->ConfigurationTable = EfiConfigurationTable;
     }
 
     //
     // Fill in the new entry
     //
+    Print(L"Fill in the new entry\n");
     CopyGuid ((VOID *)&EfiConfigurationTable[Index].VendorGuid, Guid);
     EfiConfigurationTable[Index].VendorTable  = Table;
 
     //
     // This is an add operation, so increment the number of table entries
     //
+     Print(L"increment the number of table entries\n");
     gDxeCoreST->NumberOfTableEntries++;
   }
 
   //
   // Fix up the CRC-32 in the EFI System Table
   //
+  Print(L"Fix up the CRC-32 in the EFI System Table\n");
   CalculateEfiHdrCrc (&gDxeCoreST->Hdr);
 
   //
   // Signal Configuration Table change
   //
+  Print(L"Signal Configuration Table change\n");
   CoreNotifySignalList (Guid);
-
+  Print(L"return\n");
   return EFI_SUCCESS;
 }

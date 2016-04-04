@@ -3432,6 +3432,9 @@ GetUserSettings(
       if (Prop != NULL) {
         gSettings.VideoPorts   = (UINT16)GetPropertyInteger (Prop, 0);
       }
+      
+      Prop = GetProperty (DictPointer, "BootDisplay");
+      gSettings.BootDisplay = (UINT8)GetPropertyInteger (Prop, -1);
 
       Prop = GetProperty (DictPointer, "FBName");
       if (Prop != NULL) {
@@ -5129,12 +5132,12 @@ GetDevices ()
                 gfx->Model,
                 64,
                 "%a",
-                get_nvidia_model (((Pci.Hdr.VendorId <<16) | Pci.Hdr.DeviceId),
+                get_nvidia_model (((Pci.Hdr.VendorId << 16) | Pci.Hdr.DeviceId),
                 ((Pci.Device.SubsystemVendorID << 16) | Pci.Device.SubsystemID))
                 );
 
               DBG ("Found NVidia model=%a\n", gfx->Model);
-              gfx->Ports                  = 2;
+              gfx->Ports                  = 0;
 
               SlotDevice                  = &SlotDevices[1];
               SlotDevice->SegmentGroupNum = (UINT16)Segment;

@@ -10,9 +10,11 @@
 #ifndef __LIBSAIO_DEVICE_INJECT_H
 #define __LIBSAIO_DEVICE_INJECT_H
 
+/* No more used
 #define DP_ADD_TEMP_VAL(dev, val) devprop_add_value(dev, (CHAR8*)val[0], (UINT8*)val[1], (UINT32)AsciiStrLen(val[1]))
 #define DP_ADD_TEMP_VAL_DATA(dev, val) devprop_add_value(dev, (CHAR8*)val.name, (UINT8*)val.data, val.size)
-#define MAX_PCI_DEV_PATHS 4
+ */
+#define MAX_PCI_DEV_PATHS 16
 
 //#define REG8(reg)  ((volatile UINT8 *)regs)[(reg)]
 //#define REG16(reg)  ((volatile UINT16 *)regs)[(reg) >> 1]

@@ -124,7 +124,7 @@ static nvidia_pci_info_t nvidia_card_vendors[] = {
 	{ 0x13DC0000,	"Netbost" },
 	{ 0x144D0000,	"Samsung" },
 	{ 0x14580000,	"Gigabyte" },
-	{ 0x14620000,	"MSi" },
+	{ 0x14620000,	"MSI" },
 	{ 0x14C00000,	"Compal" },
 	{ 0x152D0000,	"Quanta" },
 	{ 0x15540000,	"Prolink" },
@@ -1436,7 +1436,7 @@ static nvidia_card_info_t nvidia_card_exceptions[] = {
 	{ 0x10DE0649,	0x1043202D,	"Asus GeForce GT 220M" },
 
 	{ 0x10DE06CD,	0x10DE079F,	"Point of View GeForce GTX 470" },
-	{ 0x10DE06CD,	0x14622220,	"MSi GeForce GTX 470 Twin Frozr II" },
+	{ 0x10DE06CD,	0x14622220,	"MSI GeForce GTX 470 Twin Frozr II" },
 
 	{ 0x10DE06D1,	0x10DE0771,	"nVidia Tesla C2050" },
 	{ 0x10DE06D1,	0x10DE0772,	"nVidia Tesla C2070" },
@@ -1477,7 +1477,7 @@ static nvidia_card_info_t nvidia_card_exceptions[] = {
 	{ 0x10DE0A75,	0x17AA3605,	"Lenovo ION" },
 	// 0B00 - 0BFF
 	// 0C00 - 0CFF
-	{ 0x10DE0CA3,	0x14628041,	"MSi VN240GT-MD1G" },
+	{ 0x10DE0CA3,	0x14628041,	"MSI VN240GT-MD1G" },
 	{ 0x10DE0CA3,	0x16423926,	"Bitland GeForce GT 230" },
 	// 0D00 - 0DFF
 	{ 0x10DE0DD8,	0x10DE0914,	"nVidia Quadro 2000D" },
@@ -1538,9 +1538,9 @@ static nvidia_card_info_t nvidia_card_exceptions[] = {
 	{ 0x10DE1180,	0x104383F6,	"Asus GTX 680 Direct CU II" },
 	{ 0x10DE1180,	0x104383F7,	"Asus GTX 680 Direct CU II" },
 	{ 0x10DE1180,	0x1458353C,	"GV-N680OC-2GD WindForce GTX 680 OC" },
-	{ 0x10DE1180,	0x14622820,	"MSi N680GTX TwinFrozer" },
-	{ 0x10DE1180,	0x14622830,	"MSi GTX 680 Lightning" },
-	{ 0x10DE1180,	0x14622831,	"MSi GTX 680 Lightning LN2" },
+	{ 0x10DE1180,	0x14622820,	"MSI N680GTX TwinFrozer" },
+	{ 0x10DE1180,	0x14622830,	"MSI GTX 680 Lightning" },
+	{ 0x10DE1180,	0x14622831,	"MSI GTX 680 Lightning LN2" },
 	{ 0x10DE1180,	0x15691180,	"Palit GTX 680 JetStream" },
 	{ 0x10DE1180,	0x15691181,	"Palit GTX 680 JetStream" },
 	{ 0x10DE1180,	0x15691189,	"Palit GTX 680 JetStream" },
@@ -1571,7 +1571,7 @@ static nvidia_card_info_t nvidia_card_exceptions[] = {
 
 	{ 0x10DE1248,	0x152D0930,	"Quanta GeForce GT 635M" },
 
-	{ 0x10DE124D,	0x146210CC,	"MSi GeForce GT 635M" },
+	{ 0x10DE124D,	0x146210CC,	"MSI GeForce GT 635M" },
 };
 
 EFI_STATUS read_nVidia_PRAMIN(pci_dt_t *nvda_dev, VOID* rom, UINT16 arch)
@@ -1976,14 +1976,60 @@ CHAR8 *get_nvidia_model(UINT32 device_id, UINT32 subsys_id)
 	return nvidia_card_generic[0].name_model;
 }
 
-static INT32 devprop_add_nvidia_template(DevPropDevice *device)
+static INT32 devprop_add_nvidia_template(DevPropDevice *device, INTN n_ports)
 {
-//	CHAR8 tmp[16];
+  INTN    pnum;
+  UINT32	boot_display = 1;
+  
+  CHAR8 nkey[24];
+  CHAR8 nval[24];
+
 	DBG("devprop_add_nvidia_template\n");
 
 	if (!device) {
 		return 0;
 	}
+  
+  DBG("Nvidia: VideoPorts:");
+  if (n_ports > 0) {
+    DBG(" user defined (GUI-menu): %d\n", n_ports);
+  } else if (gSettings.VideoPorts > 0) {
+    n_ports = gSettings.VideoPorts;
+    DBG(" user defined from config.plist: %d\n", n_ports);
+  } else {
+  	n_ports = 2; //default
+    DBG(" undefined, default to: %d\n", n_ports);
+  }
+  
+  for (pnum = 0; pnum < n_ports; pnum++) {
+    AsciiSPrint(nkey, 24, "@%d,name", pnum);
+    AsciiSPrint(nval, 24, "NVDA,Display-%c\0", (65+pnum));
+    //DBG("Nvidia: insert [%a : %a]\n", nkey, nval);
+    devprop_add_value(device, nkey, (UINT8*)nval, 16);
+    
+    AsciiSPrint(nkey, 24, "@%d,compatible", pnum);
+    devprop_add_value(device, nkey, (UINT8*)"NVDA,NVMac\0", 12);
+    
+    AsciiSPrint(nkey, 24, "@%d,device_type", pnum);
+    devprop_add_value(device, nkey, (UINT8*)"display\0", 8);
+    
+    if (pnum == 0) {
+      if (gSettings.Dcfg[0] != 0) {
+        devprop_add_value(device, "@0,display-cfg", &gSettings.Dcfg[0], DCFG0_LEN);
+      } else {
+        devprop_add_value(device, "@0,display-cfg", default_dcfg_0, DCFG0_LEN);
+      }
+    } else {
+      AsciiSPrint(nkey, 24, "@%d,display-cfg", pnum);
+      if (gSettings.Dcfg[1] != 0) {
+        devprop_add_value(device, nkey, &gSettings.Dcfg[4], DCFG1_LEN);
+      } else {
+        devprop_add_value(device, nkey, default_dcfg_1, DCFG1_LEN);
+      }
+    }
+  }
+  
+/*
 	if (!DP_ADD_TEMP_VAL(device, nvidia_compatible_0)) {
 		return 0;
 	}
@@ -2015,13 +2061,23 @@ static INT32 devprop_add_nvidia_template(DevPropDevice *device)
 	} else if (!DP_ADD_TEMP_VAL(device, nvidia_device_type_child)) {
 			return 0;
 	}
-
-//	AsciiSPrint(tmp, 16, "Slot-%x",devices_number);
-//	devprop_add_value(device, "AAPL,slot-name", (UINT8 *) tmp, (UINT32)AsciiStrLen(tmp));
+*/
+  
+  if (devices_number == 1) {
+    devprop_add_value(device, "device_type", (UINT8*)"NVDA,Parent\0", 12);
+    if ((gSettings.BootDisplay >= 0) && (gSettings.BootDisplay < n_ports)) {
+      AsciiSPrint(nkey, 24, "@%d,AAPL,boot-display", gSettings.BootDisplay);
+      devprop_add_value(device, nkey, (UINT8*)&boot_display, 4);
+      DBG("Nvidia: BootDisplay: %d\n", gSettings.BootDisplay);
+ 		}
+  } else {
+    devprop_add_value(device, "device_type", (UINT8*)"NVDA,Child\0", 12);
+  }
+  
 	devices_number++;
-
 	return 1;
 }
+
 UINT64 mem_detect(UINT16 nvCardType, pci_dt_t *nvda_dev)
 {
 	
@@ -2095,14 +2151,14 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 	UINT16				nvCardType = 0;
 	UINT64				videoRam = 0;
 	UINT32				bar[7];
-	UINT32				boot_display = 0;
+//	UINT32				boot_display = 0;
   UINT32        subsystem;
 	INT32         nvPatch = 0;
 	CHAR8         *model = NULL;
 	CHAR16				FileName[64];
 	UINT8         *buffer = NULL;
 	UINTN         bufferLen;
-	UINTN         j; //, n_ports = 0;
+	UINTN         j, n_ports = 0;
 	INT32         i, version_start;
 	INT32         crlf_count = 0;
 	option_rom_pci_header_t		*rom_pci_header;
@@ -2121,12 +2177,14 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 	nvCardType = (REG32(nvda_dev->regs, 0) >> 20) & 0x1ff;
   
 	// Amount of VRAM in kilobytes (?) no, it is already in bytes!!!
-	if (gSettings.VRAM != 0) {
+/*	if (gSettings.VRAM != 0) {
 		videoRam = gSettings.VRAM;
 	} else {
 		videoRam = mem_detect(nvCardType, nvda_dev);
     gSettings.VRAM = videoRam;
-	}
+	} */
+  
+  videoRam = mem_detect(nvCardType, nvda_dev);
   
   if (gSettings.NvidiaGeneric) {
     // Get Model from the PCI
@@ -2262,19 +2320,16 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
   }
   
   DBG("nVidia %a ", model);
-	DBG(" %dMB NV%02x [%04x:%04x] :: \n", (UINT32)(RShiftU64(videoRam, 20)),
-      nvCardType, nvda_dev->vendor_id, nvda_dev->device_id);
-  
-  
-	DBG(devicepath);
-	DBG("\n");
+	DBG(" %dMB NV%02x [%04x:%04x] :: %a => device #%d \n", (UINT32)(RShiftU64(videoRam, 20)),
+      nvCardType, nvda_dev->vendor_id, nvda_dev->device_id,
+      devicepath, devices_number);
   
 	if (!string) {
 		string = devprop_create_string();
 	}
 
 	device = devprop_add_device_pci(string, nvda_dev);
-	devprop_add_nvidia_template(device);
+//	devprop_add_nvidia_template(device);
   
   if (gSettings.NrAddProperties != 0xFFFE) {
     for (i = 0; i < gSettings.NrAddProperties; i++) {
@@ -2301,7 +2356,7 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
     devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
   }
   
-	if ((gSettings.NVCAP[0] != 0)) {
+	if (gSettings.NVCAP[0] != 0) {
 		devprop_add_value(device, "NVCAP", &gSettings.NVCAP[0], NVCAP_LEN);
     DBG("set NVCAP: %02x%02x%02x%02x-%02x%02x%02x%02x-%02x%02x%02x%02x-%02x%02x%02x%02x-%02x%02x%02x%02x\n",
         gSettings.NVCAP[0], gSettings.NVCAP[1], gSettings.NVCAP[2], gSettings.NVCAP[3],
@@ -2316,9 +2371,22 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
   } else {
     devprop_add_value(device, "hda-gfx", (UINT8*)"onboard-1", 10);
   }
+  
+  if (gSettings.VRAM != 0) {
+    devprop_add_value(device, "VRAM,totalsize", (UINT8*)&gSettings.VRAM, 4);
+  } else if (videoRam != 0) {
+    devprop_add_value(device, "VRAM,totalsize", (UINT8*)&videoRam, 4);
+  } else {
+    DBG("Warning! VideoRAM is not detected and not set\n");
+  }
+  
+  if (gSettings.InjectEDID && gSettings.CustomEDID) {
+    devprop_add_value(device, "AAPL00,override-no-connect", gSettings.CustomEDID, 128);
+  }
 
-  if (gSettings.NoDefaultProperties) {
-    DBG("NVidia: no default properties\n");
+  if (gSettings.NoDefaultProperties ||
+      (gSettings.NvidiaSingle && (devices_number >=1))) {
+    DBG(gSettings.NoDefaultProperties ? "NVidia: no default properties\n" : "NVidia: NvidiaSingle :: skip injecting other then first one\n");
     if (buffer) {
       FreePool(buffer);
     }
@@ -2328,9 +2396,11 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
     return TRUE;
   }
   
+  devprop_add_nvidia_template(device, n_ports);
+  
 	/* FIXME: for primary graphics card only */
-	boot_display = 1;
-	devprop_add_value(device, "@0,AAPL,boot-display", (UINT8*)&boot_display, 4);
+//	boot_display = 1;
+//	devprop_add_value(device, "@0,AAPL,boot-display", (UINT8*)&boot_display, 4);
   
 	if (nvPatch == PATCH_ROM_SUCCESS_HAS_LVDS) {
 		UINT8 built_in = 0x01;
@@ -2348,30 +2418,20 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 	}
 
 	devprop_add_value(device, "NVPM", default_NVPM, NVPM_LEN);
-	if ((gSettings.VRAM != 0)) {
+	if (gSettings.VRAM != 0) {
 		devprop_add_value(device, "VRAM,totalsize", (UINT8*)&gSettings.VRAM, 4);
 	} else {
 		devprop_add_value(device, "VRAM,totalsize", (UINT8*)&videoRam, 4);
 	}
-	if (gSettings.InjectEDID) {
-		devprop_add_value(device, "AAPL00,override-no-connect", gSettings.CustomEDID, 128);
-	}
 	devprop_add_value(device, "model", (UINT8*)model, (UINT32)AsciiStrLen(model));
 	devprop_add_value(device, "rom-revision", (UINT8*)version_str, (UINT32)AsciiStrLen(version_str));
-	if ((gSettings.Dcfg[0] != 0) && (gSettings.Dcfg[1] != 0)) {
-		devprop_add_value(device, "@0,display-cfg", &gSettings.Dcfg[0], DCFG0_LEN);
-		devprop_add_value(device, "@1,display-cfg", &gSettings.Dcfg[4], DCFG1_LEN);
-	} else {
-		devprop_add_value(device, "@0,display-cfg", default_dcfg_0, DCFG0_LEN);
-		devprop_add_value(device, "@1,display-cfg", default_dcfg_1, DCFG1_LEN);
-	}
   //devprop_add_value(device, "hda-gfx", (UINT8*)"onboard-1", 10);
   
   
 	//add HDMI Audio back to nvidia
 	//http://forge.voodooprojects.org/p/chameleon/issues/67/
   //	UINT8 connector_type_1[]= {0x00, 0x08, 0x00, 0x00};
-	devprop_add_value(device, "@1,connector-type",connector_type_1, 4);
+  //	devprop_add_value(device, "@1,connector-type",connector_type_1, 4);
 	//end Nvidia HDMI Audio
   
   
