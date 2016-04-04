@@ -2373,9 +2373,9 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
   }
   
   if (gSettings.VRAM != 0) {
-    devprop_add_value(device, "VRAM,totalsize", (UINT8*)&gSettings.VRAM, 4);
+    devprop_add_value(device, "VRAM,totalsize", (UINT8*)&gSettings.VRAM, 8);
   } else if (videoRam != 0) {
-    devprop_add_value(device, "VRAM,totalsize", (UINT8*)&videoRam, 4);
+    devprop_add_value(device, "VRAM,totalsize", (UINT8*)&videoRam, 8);
   } else {
     DBG("Warning! VideoRAM is not detected and not set\n");
   }
@@ -2418,11 +2418,6 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 	}
 
 	devprop_add_value(device, "NVPM", default_NVPM, NVPM_LEN);
-	if (gSettings.VRAM != 0) {
-		devprop_add_value(device, "VRAM,totalsize", (UINT8*)&gSettings.VRAM, 4);
-	} else {
-		devprop_add_value(device, "VRAM,totalsize", (UINT8*)&videoRam, 4);
-	}
 	devprop_add_value(device, "model", (UINT8*)model, (UINT32)AsciiStrLen(model));
 	devprop_add_value(device, "rom-revision", (UINT8*)version_str, (UINT32)AsciiStrLen(version_str));
   //devprop_add_value(device, "hda-gfx", (UINT8*)"onboard-1", 10);

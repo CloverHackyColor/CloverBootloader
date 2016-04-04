@@ -1074,7 +1074,10 @@ ExitPmAuthNotification (
                   &gEfiAcpiSdtProtocolGuid,
                   &mPrivateData->AcpiSdtProtocol
                   );
-  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR (Status);
+  if (EFI_ERROR (Status)) {
+    return ;
+  }
 
   //
   // Close event, so it will not be invoked again.
