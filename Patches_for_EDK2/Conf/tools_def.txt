@@ -190,6 +190,9 @@ DEFINE GCC48_X64_PREFIX        = ENV(TOOLCHAIN_DIR)/cross/bin/x86_64-clover-linu
 DEFINE GCC49_IA32_PREFIX       =  ENV(TOOLCHAIN_DIR)/cross/bin/x86_64-clover-linux-gnu-
 DEFINE GCC49_X64_PREFIX        =  ENV(TOOLCHAIN_DIR)/cross/bin/x86_64-clover-linux-gnu-
 
+DEFINE GCC53_IA32_PREFIX       = ENV(TOOLCHAIN_DIR)/cross/bin/x86_64-clover-linux-gnu-
+DEFINE GCC53_X64_PREFIX        = ENV(TOOLCHAIN_DIR)/cross/bin/x86_64-clover-linux-gnu-
+
 DEFINE UNIX_IASL_BIN           = /usr/local/bin/iasl
 #DEFINE UNIX_IASL_BIN           = $(HOME)/programs/iasl
 DEFINE WIN_ASL_BIN_DIR         = C:\ASL
@@ -356,6 +359,12 @@ DEFINE CLANG_BIN = ENV(HOME)/src/llvm-build/Release/bin/
 #                               http://www.acpica.org/downloads/previous_releases.php
 #   GCC49       -Linux-  Requires:
 #                             GCC 4.9
+#                        Optional:
+#                             Required to build platforms or ACPI tables:
+#                               Intel(r) ACPI Compiler v20101013 from
+#                               http://www.acpica.org/downloads/previous_releases.php
+#   GCC53       -Linux-  Requires:
+#                             GCC 5.3
 #                        Optional:
 #                             Required to build platforms or ACPI tables:
 #                               Intel(r) ACPI Compiler v20101013 from
@@ -3979,6 +3988,13 @@ DEFINE GCC49_AARCH64_DEBUG_FLAGS     = -O0
 
 DEFINE GCC49_AARCH64_RELEASE_FLAGS   = -Wno-unused-but-set-variable
 
+DEFINE GCC53_IA32_CC_FLAGS           = DEF(GCC49_IA32_CC_FLAGS)
+DEFINE GCC53_X64_CC_FLAGS            = DEF(GCC49_X64_CC_FLAGS)
+DEFINE GCC53_IA32_X64_DLINK_COMMON   = DEF(GCC49_IA32_X64_DLINK_COMMON)
+DEFINE GCC53_IA32_X64_ASLDLINK_FLAGS = DEF(GCC49_IA32_X64_ASLDLINK_FLAGS)
+DEFINE GCC53_IA32_X64_DLINK_FLAGS    = DEF(GCC49_IA32_X64_DLINK_FLAGS)
+DEFINE GCC53_X64_DLINK_FLAGS         = DEF(GCC49_X64_DLINK_FLAGS)
+DEFINE GCC53_ASM_FLAGS               = DEF(GCC49_ASM_FLAGS)
 
 ####################################################################################
 #
@@ -4671,6 +4687,81 @@ RELEASE_GCC48_AARCH64_CC_FLAGS   = DEF(GCC48_AARCH64_CC_FLAGS) -Wno-unused-but-s
 *_GCC49_X64_OBJCOPY_FLAGS        = 
 *_GCC49_X64_NASM_FLAGS           = -f elf64
 
+
+####################################################################################
+#
+# GCC 5.3 - This configuration is used to compile under Linux/MacOSX to produce
+#           PE/COFF binaries using GCC 5.3.
+#
+####################################################################################
+*_GCC53_*_*_FAMILY               = GCC
+
+*_GCC53_*_MAKE_PATH                    = make
+#*_GCC53_*_MAKE_PATH                    = DEF(GCC53_IA32_PREFIX)make
+
+*_GCC53_*_*_DLL                        = ENV(GCC53_DLL)
+
+*_GCC53_X64_GCCLINK_PREFIX             = -Wl,
+
+*_GCC53_IA32_GCCLINK_PREFIX            = -Wl,
+
+*_GCC53_*_ASL_PATH                     = DEF(UNIX_IASL_BIN)
+
+*_GCC53_*_PP_FLAGS                     = DEF(GCC_PP_FLAGS)
+*_GCC53_*_ASLPP_FLAGS                  = DEF(GCC_ASLPP_FLAGS)
+*_GCC53_*_ASLCC_FLAGS                  = DEF(GCC_ASLCC_FLAGS)
+*_GCC53_*_VFRPP_FLAGS                  = DEF(GCC_VFRPP_FLAGS)
+*_GCC53_*_APP_FLAGS                    =
+*_GCC53_*_ASL_FLAGS                    = DEF(IASL_FLAGS)
+*_GCC53_*_ASL_OUTFLAGS                 = DEF(IASL_OUTFLAGS)
+
+##################
+# GCC53 IA32 definitions
+##################
+*_GCC53_IA32_OBJCOPY_PATH         = DEF(GCC53_IA32_PREFIX)objcopy
+*_GCC53_IA32_CC_PATH              = DEF(GCC53_IA32_PREFIX)gcc
+*_GCC53_IA32_SLINK_PATH           = DEF(GCC53_IA32_PREFIX)gcc-ar
+*_GCC53_IA32_DLINK_PATH           = DEF(GCC53_IA32_PREFIX)gcc
+*_GCC53_IA32_ASLDLINK_PATH        = DEF(GCC53_IA32_PREFIX)gcc
+*_GCC53_IA32_ASM_PATH             = DEF(GCC53_IA32_PREFIX)gcc
+*_GCC53_IA32_PP_PATH              = DEF(GCC53_IA32_PREFIX)gcc
+*_GCC53_IA32_VFRPP_PATH           = DEF(GCC53_IA32_PREFIX)gcc
+*_GCC53_IA32_ASLCC_PATH           = DEF(GCC53_IA32_PREFIX)gcc
+*_GCC53_IA32_ASLPP_PATH           = DEF(GCC53_IA32_PREFIX)gcc
+*_GCC53_IA32_RC_PATH              = DEF(GCC53_IA32_PREFIX)objcopy
+
+*_GCC53_IA32_ASLCC_FLAGS          = DEF(GCC_ASLCC_FLAGS) -m32
+*_GCC53_IA32_ASLDLINK_FLAGS       = DEF(GCC53_IA32_X64_ASLDLINK_FLAGS),-m,elf_i386
+*_GCC53_IA32_ASM_FLAGS            = DEF(GCC53_ASM_FLAGS) -m32 -march=i386
+*_GCC53_IA32_CC_FLAGS             = DEF(GCC53_IA32_CC_FLAGS) ENV(GCC53_IA32_EXTRA_CC_FLAGS) -c
+*_GCC53_IA32_DLINK_FLAGS          = DEF(GCC53_IA32_X64_DLINK_FLAGS),-m,elf_i386,--oformat=elf32-i386 DEF(GCC53_IA32_CC_FLAGS)
+*_GCC53_IA32_RC_FLAGS             = DEF(GCC_IA32_RC_FLAGS)
+*_GCC53_IA32_OBJCOPY_FLAGS        =
+*_GCC53_IA32_NASM_FLAGS           = -f elf32
+
+##################
+# GCC53 X64 definitions
+##################
+*_GCC53_X64_OBJCOPY_PATH         = DEF(GCC53_X64_PREFIX)objcopy
+*_GCC53_X64_CC_PATH              = DEF(GCC53_X64_PREFIX)gcc
+*_GCC53_X64_SLINK_PATH           = DEF(GCC53_X64_PREFIX)gcc-ar
+*_GCC53_X64_DLINK_PATH           = DEF(GCC53_X64_PREFIX)gcc
+*_GCC53_X64_ASLDLINK_PATH        = DEF(GCC53_X64_PREFIX)gcc
+*_GCC53_X64_ASM_PATH             = DEF(GCC53_X64_PREFIX)gcc
+*_GCC53_X64_PP_PATH              = DEF(GCC53_X64_PREFIX)gcc
+*_GCC53_X64_VFRPP_PATH           = DEF(GCC53_X64_PREFIX)gcc
+*_GCC53_X64_ASLCC_PATH           = DEF(GCC53_X64_PREFIX)gcc
+*_GCC53_X64_ASLPP_PATH           = DEF(GCC53_X64_PREFIX)gcc
+*_GCC53_X64_RC_PATH              = DEF(GCC53_X64_PREFIX)objcopy
+
+*_GCC53_X64_ASLCC_FLAGS          = DEF(GCC_ASLCC_FLAGS) -m64
+*_GCC53_X64_ASLDLINK_FLAGS       = DEF(GCC53_IA32_X64_ASLDLINK_FLAGS),-m,elf_x86_64
+*_GCC53_X64_ASM_FLAGS            = DEF(GCC53_ASM_FLAGS) -m64
+*_GCC53_X64_CC_FLAGS             = DEF(GCC53_X64_CC_FLAGS) ENV(GCC53_X64_EXTRA_CC_FLAGS) -c
+*_GCC53_X64_DLINK_FLAGS          = DEF(GCC53_X64_DLINK_FLAGS) DEF(GCC53_X64_CC_FLAGS) ENV(GCC53_X64_EXTRA_CC_FLAGS)
+*_GCC53_X64_RC_FLAGS             = DEF(GCC_X64_RC_FLAGS)
+*_GCC53_X64_OBJCOPY_FLAGS        =
+*_GCC53_X64_NASM_FLAGS           = -f elf64
 
 ####################################################################################
 #

@@ -183,6 +183,7 @@ usage() {
     print_option_help "-clang"     "use XCode Clang toolchain"
     print_option_help "-gcc47"     "use GCC 4.7 toolchain"
     print_option_help "-gcc49"     "use GCC 4.9 toolchain [Default]"
+    print_option_help "-gcc53"     "use GCC 5.3 toolchain"
     print_option_help "-xcode"     "use XCode 3.2 toolchain"
     print_option_help "-xcode5"     "use XCode 5+ toolchain"
     print_option_help "-t TOOLCHAIN, --tagname=TOOLCHAIN" "force to use a specific toolchain"
@@ -234,6 +235,8 @@ checkCmdlineArguments() {
             -gcc48  | --gcc48)   TOOLCHAIN=GCC48   ;;
             -GCC49  | --GCC49)   TOOLCHAIN=GCC49   ;;
             -gcc49  | --gcc49)   TOOLCHAIN=GCC49   ;;
+            -GCC53  | --GCC53)   TOOLCHAIN=GCC53   ;;
+            -gcc53  | --gcc53)   TOOLCHAIN=GCC53   ;;
             -unixgcc | --gcc)    TOOLCHAIN=UNIXGCC ;;
             -xcode  | --xcode )  TOOLCHAIN=XCODE32 ;;
             -ia32 | --ia32)      TARGETARCH=IA32   ;;
