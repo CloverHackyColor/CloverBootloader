@@ -1552,12 +1552,12 @@ BOOLEAN read_disabled_vbios(VOID)
 	
 	if (chip_family >= CHIP_FAMILY_RV770)
 	{
-		UINT32 viph_control		= REG32(card->mmio, RADEON_VIPH_CONTROL);
-		UINT32 bus_cntl			= REG32(card->mmio, RADEON_BUS_CNTL);
-		UINT32 d1vga_control		= REG32(card->mmio, AVIVO_D1VGA_CONTROL);
-		UINT32 d2vga_control		= REG32(card->mmio, AVIVO_D2VGA_CONTROL);
+		UINT32 viph_control       = REG32(card->mmio, RADEON_VIPH_CONTROL);
+		UINT32 bus_cntl           = REG32(card->mmio, RADEON_BUS_CNTL);
+		UINT32 d1vga_control      = REG32(card->mmio, AVIVO_D1VGA_CONTROL);
+		UINT32 d2vga_control      = REG32(card->mmio, AVIVO_D2VGA_CONTROL);
 		UINT32 vga_render_control = REG32(card->mmio, AVIVO_VGA_RENDER_CONTROL);
-		UINT32 rom_cntl			= REG32(card->mmio, R600_ROM_CNTL);
+		UINT32 rom_cntl           = REG32(card->mmio, R600_ROM_CNTL);
 		UINT32 cg_spll_func_cntl	= 0;
 		UINT32 cg_spll_status;
 		

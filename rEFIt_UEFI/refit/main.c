@@ -2044,8 +2044,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     FreePool(FirstMessage);
   }
   
-//  ZeroMem((VOID*)&gGraphics[0], sizeof(GFX_PROPERTIES) * 4);
-  
 //  DumpBiosMemoryMap();
 
   GuiEventsInitialize();

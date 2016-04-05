@@ -5122,11 +5122,10 @@ GetDevices ()
             case 0x10de:
               gfx->Vendor = Nvidia;
               Bar0        = Pci.Device.Bar[0];
-              Mmio        = (UINT8*)(UINTN)(Bar0 & ~0x0f);
+              gfx->Mmio   = (UINT8*)(UINTN)(Bar0 & ~0x0f);
               //DBG ("BAR: 0x%p\n", Mmio);
               // get card type
-              gfx->Family = (REG32 (Mmio, 0) >> 20) & 0x1ff;
-              
+              gfx->Family = (REG32(gfx->Mmio, 0) >> 20) & 0x1ff;              
 
               AsciiSPrint (
                 gfx->Model,
@@ -5136,7 +5135,7 @@ GetDevices ()
                 ((Pci.Device.SubsystemVendorID << 16) | Pci.Device.SubsystemID))
                 );
 
-              DBG ("Found NVidia model=%a\n", gfx->Model);
+              DBG ("Found NVidia model=%a family %#x\n", gfx->Model, gfx->Family);
               gfx->Ports                  = 0;
 
               SlotDevice                  = &SlotDevices[1];
@@ -5320,7 +5319,8 @@ SetDevices (
 
         if (/* gSettings.GraphicsInjector && */
             (Pci.Hdr.ClassCode[2] == PCI_CLASS_DISPLAY) &&
-            ((Pci.Hdr.ClassCode[1] == PCI_CLASS_DISPLAY_VGA) || (Pci.Hdr.ClassCode[1] == PCI_CLASS_DISPLAY_OTHER))) {
+            ((Pci.Hdr.ClassCode[1] == PCI_CLASS_DISPLAY_VGA) ||
+             (Pci.Hdr.ClassCode[1] == PCI_CLASS_DISPLAY_OTHER))) {
 
           UINT32 LevelW = 0xC0000000;
           UINT32 IntelDisable = 0x03;

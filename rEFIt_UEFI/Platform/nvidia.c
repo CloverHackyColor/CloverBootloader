@@ -1983,6 +1983,7 @@ static INT32 devprop_add_nvidia_template(DevPropDevice *device, INTN n_ports)
   
   CHAR8 nkey[24];
   CHAR8 nval[24];
+	UINT8 connector_type_1[]= {0x00, 0x08, 0x00, 0x00};
 
 	DBG("devprop_add_nvidia_template\n");
 
@@ -2013,19 +2014,11 @@ static INT32 devprop_add_nvidia_template(DevPropDevice *device, INTN n_ports)
     AsciiSPrint(nkey, 24, "@%d,device_type", pnum);
     devprop_add_value(device, nkey, (UINT8*)"display\0", 8);
     
+    AsciiSPrint(nkey, 24, "@%d,display-cfg", pnum);
     if (pnum == 0) {
-      if (gSettings.Dcfg[0] != 0) {
-        devprop_add_value(device, "@0,display-cfg", &gSettings.Dcfg[0], DCFG0_LEN);
-      } else {
-        devprop_add_value(device, "@0,display-cfg", default_dcfg_0, DCFG0_LEN);
-      }
+      devprop_add_value(device, nkey, (gSettings.Dcfg[0] != 0) ? &gSettings.Dcfg[0] : default_dcfg_0, DCFG0_LEN);
     } else {
-      AsciiSPrint(nkey, 24, "@%d,display-cfg", pnum);
-      if (gSettings.Dcfg[1] != 0) {
-        devprop_add_value(device, nkey, &gSettings.Dcfg[4], DCFG1_LEN);
-      } else {
-        devprop_add_value(device, nkey, default_dcfg_1, DCFG1_LEN);
-      }
+      devprop_add_value(device, nkey, (gSettings.Dcfg[1] != 0) ? &gSettings.Dcfg[4] : default_dcfg_1, DCFG1_LEN);
     }
   }
   
@@ -2177,14 +2170,12 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 	nvCardType = (REG32(nvda_dev->regs, 0) >> 20) & 0x1ff;
   
 	// Amount of VRAM in kilobytes (?) no, it is already in bytes!!!
-/*	if (gSettings.VRAM != 0) {
+	if (gSettings.VRAM != 0) {
 		videoRam = gSettings.VRAM;
 	} else {
 		videoRam = mem_detect(nvCardType, nvda_dev);
-    gSettings.VRAM = videoRam;
-	} */
-  
-  videoRam = mem_detect(nvCardType, nvda_dev);
+	//    gSettings.VRAM = videoRam;
+	}
   
   if (gSettings.NvidiaGeneric) {
     // Get Model from the PCI
@@ -2194,7 +2185,7 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
     for (j = 0; j < NGFX; j++) {
       if ((gGraphics[j].Vendor == Nvidia) && (gGraphics[j].DeviceID == nvda_dev->device_id)) {
         model = gGraphics[j].Model; //menu setting
-        //		n_ports = gGraphics[j].Ports;
+        n_ports = gGraphics[j].Ports;
         load_vbios = gGraphics[j].LoadVBios;
         break;
       }
@@ -2407,7 +2398,7 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 		devprop_add_value(device, "@0,built-in", &built_in, 1);
 	}
   
-	if ((gSettings.NVCAP[0] == 0)) {
+	if (gSettings.NVCAP[0] == 0) {
 		devprop_add_value(device, "NVCAP", default_NVCAP, NVCAP_LEN);
     DBG("default NVCAP: %02x%02x%02x%02x-%02x%02x%02x%02x-%02x%02x%02x%02x-%02x%02x%02x%02x-%02x%02x%02x%02x\n",
         default_NVCAP[0], default_NVCAP[1], default_NVCAP[2], default_NVCAP[3],
