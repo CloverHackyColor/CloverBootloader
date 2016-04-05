@@ -560,6 +560,13 @@ IsOsxHibernated (IN REFIT_VOLUME *Volume)
   UINTN               Size                = 0;
   UINT8               *Data               = NULL;
 
+  //if sleep image is good but OSX was not hibernated.
+  //or we choose "cancel hibernate wake" then it must be canceled
+  if (GlobalConfig.NeverHibernate) {
+    DBG("     hibernated: set as never\n");
+    return FALSE;
+  }
+  
   DBG("    Check if volume Is Hibernated:\n");
 
   // CloverEFI or UEFI with EmuVariable
@@ -573,13 +580,6 @@ IsOsxHibernated (IN REFIT_VOLUME *Volume)
 //    IsHibernate = TRUE;
   } else {
     DBG("     hibernated: no - sign\n");
-    return FALSE;
-  }
-  
-  //if sleep image is good but OSX was not hibernated.
-  //or we choose "cancel hibernate wake" then it must be canceled
-  if (GlobalConfig.NeverHibernate) {
-    DBG("     hibernated: set as never\n");
     return FALSE;
   }
   
