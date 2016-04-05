@@ -301,6 +301,7 @@ SetBootCurrent(REFIT_MENU_ENTRY *LoadedEntry)
   BootVariable = (UINT8*)GetNvramVariable (VarName, &gEfiGlobalVariableGuid, NULL, &VarSize);
   if ((BootVariable == NULL) || (VarSize == 0)) {
     DBG("Boot option %s not found\n", VarName);
+    FreePool(VarName);
     return;
   }
   FreePool(VarName);
@@ -313,6 +314,7 @@ SetBootCurrent(REFIT_MENU_ENTRY *LoadedEntry)
       (BootOption.OptionalData == NULL) ||
       (*(UINT32*)BootOption.OptionalData != CLOVER_SIGN)) {
     DBG("BootOption of the entry is empty\n");
+    FreePool(BootVariable);
     return;
   }
   
