@@ -179,6 +179,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
   UINTN j;
   INT32 i;
   BOOLEAN Injected = FALSE;
+  BOOLEAN SetSnb = FALSE;
 //  UINT32 SnbId = 0;
 //  MACHINE_TYPES MacModel;
 //  UINT8 IG_ID[4] = { 0x00, 0x00, 0x62, 0x01 };
@@ -287,10 +288,12 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
         default:
           break;
       }
-      if (SnbId != 0) {
-        devprop_add_value(device, "AAPL,snb-platform-id",	(UINT8*)&SnbId, 4);
-      }
   */
+      if (gSettings.IgPlatform != 0) {
+        devprop_add_value(device, "AAPL,snb-platform-id",	(UINT8*)&gSettings.IgPlatform, 4);
+        SetSnb = TRUE;
+      }
+  
     case 0x0152:
     case 0x0156:
     case 0x0162:
@@ -331,7 +334,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
     case 0x1932:
     case 0x193A:
 
-      if (!gSettings.IgPlatform) {
+      if (!gSettings.IgPlatform && !SetSnb) {
         switch (gma_dev->device_id) {
           case 0x162:
           case 0x16A:
@@ -413,7 +416,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
       devprop_add_value(device, "built-in", &BuiltIn, 1);
       break;
     default:
-      DBG("Intel card id=%x unsupported, please report to projectosx\n", gma_dev->device_id);
+      DBG("Intel card id=%x unsupported, please report to the project home\n", gma_dev->device_id);
       return FALSE;
   }
 #if DEBUG_GMA == 2  

@@ -3406,16 +3406,10 @@ GetUserSettings(
       }
       
       Prop = GetProperty (DictPointer, "VRAM");
-      if (Prop != NULL) {
-        gSettings.VRAM = LShiftU64((UINTN)GetPropertyInteger (Prop, 0), 20); //Mb -> bytes
-      }
+      gSettings.VRAM = LShiftU64((UINTN)GetPropertyInteger(Prop, gSettings.VRAM), 20); //Mb -> bytes
       //
-      gSettings.RefCLK = 0;
       Prop = GetProperty (DictPointer, "RefCLK");
-
-      if (Prop != NULL) {
-        gSettings.RefCLK = (UINT16)GetPropertyInteger (Prop, 0);
-      }
+      gSettings.RefCLK = (UINT16)GetPropertyInteger (Prop, 0);
       
       Prop = GetProperty (DictPointer, "LoadVBios");
       gSettings.LoadVBios      = FALSE;
@@ -3429,12 +3423,10 @@ GetUserSettings(
       }
 
       Prop = GetProperty (DictPointer, "VideoPorts");
-      if (Prop != NULL) {
-        gSettings.VideoPorts   = (UINT16)GetPropertyInteger (Prop, 0);
-      }
+      gSettings.VideoPorts   = (UINT16)GetPropertyInteger (Prop, gSettings.VideoPorts);
       
       Prop = GetProperty (DictPointer, "BootDisplay");
-      gSettings.BootDisplay = (UINT8)GetPropertyInteger (Prop, -1);
+      gSettings.BootDisplay = (UINT8)GetPropertyInteger (Prop, gSettings.BootDisplay);
 
       Prop = GetProperty (DictPointer, "FBName");
       if (Prop != NULL) {
@@ -3460,9 +3452,8 @@ GetUserSettings(
       }
       //
       Prop = GetProperty (DictPointer, "DualLink");
-      if (Prop != NULL) {
-        gSettings.DualLink = (UINT32)GetPropertyInteger (Prop, 0);
-      }
+      gSettings.DualLink = (UINT32)GetPropertyInteger (Prop, gSettings.DualLink);
+
       //InjectEDID - already done in earlysettings
       //No! Take again
 
@@ -3481,13 +3472,12 @@ GetUserSettings(
       
       Prop = GetProperty (DictPointer, "NvidiaSingle");
       gSettings.NvidiaSingle = IsPropertyTrue (Prop);
-      
-
-      
+            
       Prop = GetProperty (DictPointer, "ig-platform-id");
-      if (Prop != NULL) {
-        gSettings.IgPlatform = (UINT32)GetPropertyInteger (Prop, 0);
-      }
+      gSettings.IgPlatform = (UINT32)GetPropertyInteger (Prop, gSettings.IgPlatform);
+      
+      Prop = GetProperty (DictPointer, "snb-platform-id");
+      gSettings.IgPlatform = (UINT32)GetPropertyInteger (Prop, gSettings.IgPlatform);
     }
     
     DictPointer = GetProperty (Dict, "Devices");
@@ -5015,7 +5005,7 @@ GetDevices ()
   UINTN               Function     = 0;
   UINTN               i;
   UINT32              Bar0;
-  UINT8               *Mmio        = NULL;
+//  UINT8               *Mmio        = NULL;
   radeon_card_info_t  *info;
   SLOT_DEVICE         *SlotDevice;
 

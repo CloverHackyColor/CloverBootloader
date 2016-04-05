@@ -1331,7 +1331,7 @@ typedef struct {
   UINTN             Device;
   UINTN             Function;
   EFI_HANDLE        Handle;
-  UINT8             *Mmio
+  UINT8             *Mmio;
 } GFX_PROPERTIES;
 
 typedef struct {

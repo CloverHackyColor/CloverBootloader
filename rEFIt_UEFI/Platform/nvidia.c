@@ -1976,6 +1976,8 @@ CHAR8 *get_nvidia_model(UINT32 device_id, UINT32 subsys_id)
 	return nvidia_card_generic[0].name_model;
 }
 
+UINT8 connector_type_1[]= {0x00, 0x08, 0x00, 0x00};
+
 static INT32 devprop_add_nvidia_template(DevPropDevice *device, INTN n_ports)
 {
   INTN    pnum;
@@ -1983,7 +1985,6 @@ static INT32 devprop_add_nvidia_template(DevPropDevice *device, INTN n_ports)
   
   CHAR8 nkey[24];
   CHAR8 nval[24];
-	UINT8 connector_type_1[]= {0x00, 0x08, 0x00, 0x00};
 
 	DBG("devprop_add_nvidia_template\n");
 
@@ -2129,8 +2130,6 @@ UINT64 mem_detect(UINT16 nvCardType, pci_dt_t *nvda_dev)
 	DBG("mem_detected %ld\n", vram_size);
 	return vram_size;
 }
-
-UINT8 connector_type_1[]= {0x00, 0x08, 0x00, 0x00};
 
 BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 {
