@@ -25,6 +25,8 @@
 /CloverPackage/CloverV2/BootSectors/boot1f32alt
 /CloverPackage/CloverV2/BootSectors/boot1f32
 /CloverPackage/CloverV2/BootSectors/boot1altV3
+/CloverPackage/CloverV2/BootSectors/boot1x
+/CloverPackage/CloverV2/BootSectors/boot1xalt
 /CloverPackage/CloverV2/BootSectors/Description.txt
 /CloverPackage/CloverV2/BootSectors/Installation.txt
 /CloverPackage/CloverV2/Bootloaders/
@@ -35,6 +37,7 @@
 /CloverPackage/CloverV2/EFI/CLOVER/drivers32UEFI/
 /CloverPackage/CloverV2/EFI/CLOVER/drivers64/
 /CloverPackage/CloverV2/EFI/CLOVER/drivers64UEFI/
+/CloverPackage/CloverV2/EFI/CLOVER/tools/bdmesg.efi
 /CloverPackage/CloverV2/drivers-Off/
 
 /HFSPlus/Ia32/
