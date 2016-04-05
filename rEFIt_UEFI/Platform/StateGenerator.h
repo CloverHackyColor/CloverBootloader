@@ -10,7 +10,7 @@
 
 #ifndef DEBUG_AML
 #ifndef DEBUG_ALL
-#define DEBUG_AML 1
+#define DEBUG_AML 0
 #else
 #define DEBUG_AML DEBUG_ALL
 #endif

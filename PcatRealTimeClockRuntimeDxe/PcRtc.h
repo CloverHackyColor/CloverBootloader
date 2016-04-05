@@ -1,7 +1,7 @@
 /** @file
   Header file for real time clock driver.
 
-Copyright (c) 2006 - 2007, Intel Corporation. All rights reserved.<BR>
+Copyright (c) 2006 - 2015, Intel Corporation. All rights reserved.<BR>
 This program and the accompanying materials
 are licensed and made available under the terms and conditions of the BSD License
 which accompanies this distribution.  The full text of the license may be found at
@@ -32,6 +32,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #include <Library/UefiRuntimeLib.h>
 #include <Library/UefiRuntimeServicesTableLib.h>
 #include <Library/PcdLib.h>
+#include <Library/ReportStatusCodeLib.h>
 
 
 typedef struct {
@@ -60,7 +61,6 @@ typedef struct {
 #define RTC_ADDRESS_REGISTER_B        11  // R/W
 #define RTC_ADDRESS_REGISTER_C        12  // RO
 #define RTC_ADDRESS_REGISTER_D        13  // RO
-#define RTC_ADDRESS_CENTURY           50  // R/W  Range 19..20 Bit 8 is R/W
 //
 // Date and time initial values.
 // They are used if the RTC values are invalid during driver initialization
@@ -70,7 +70,6 @@ typedef struct {
 #define RTC_INIT_HOUR   0
 #define RTC_INIT_DAY    1
 #define RTC_INIT_MONTH  1
-#define RTC_INIT_YEAR   2001
 
 //
 // Register initial values
@@ -290,14 +289,11 @@ RtcTimeFieldsValid (
   @param   Time       On input, the time data read from UEFI to convert
                       On output, the time converted to RTC format
   @param   RegisterB  Value of Register B of RTC, indicating data mode
-  @param   Century    It is set according to EFI_TIME Time.
-
 **/
 VOID
 ConvertEfiTimeToRtcTime (
   IN OUT EFI_TIME        *Time,
-  IN     RTC_REGISTER_B  RegisterB,
-  OUT    UINT8           *Century
+  IN     RTC_REGISTER_B  RegisterB
   );
 
 
@@ -311,7 +307,6 @@ ConvertEfiTimeToRtcTime (
 
   @param   Time       On input, the time data read from RTC to convert
                       On output, the time converted to UEFI format
-  @param   Century    Value of century read from RTC.
   @param   RegisterB  Value of Register B of RTC, indicating data mode
                       and hour format.
 
@@ -322,7 +317,6 @@ ConvertEfiTimeToRtcTime (
 EFI_STATUS
 ConvertRtcTimeToEfiTime (
   IN OUT EFI_TIME        *Time,
-  IN     UINT8           Century,
   IN     RTC_REGISTER_B  RegisterB
   );
 

@@ -22,7 +22,7 @@
 #ifndef DEBUG_ALL
 #define DEBUG_ACPI 0
 #else
-#define DEBUG_ACPI 1
+#define DEBUG_ACPI 0
 //DEBUG_ALL
 #endif
 #endif
@@ -299,6 +299,9 @@ InstallLegacyTables (
 											  );
 */
     }
+#if DEBUG_ACPI==2
+  gBS->Stall(5000000);
+#endif
 	
 }
 #define NUM_TABLES 12
@@ -683,6 +686,10 @@ AcpiPlatformEntryPoint (
 	}	
 	
 #endif	
+#if DEBUG_ACPI==2
+  gBS->Stall(5000000);
+#endif
+
 	return EFI_SUCCESS;
 }
 

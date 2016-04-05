@@ -1482,14 +1482,14 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
         
         // and Xsdt will come after it
         BufferPtr += 0x30;
-  //      DBG("::pointers %p %p\n", NewRsdPointer, RsdPointer);
+   //     DBG("::pointers %p %p\n", NewRsdPointer, RsdPointer);
         // Signature, Checksum, OemId, Reserved/Revision, RsdtAddress
         CopyMem((VOID*)NewRsdPointer, (VOID*)RsdPointer, sizeof(EFI_ACPI_1_0_ROOT_SYSTEM_DESCRIPTION_POINTER));
         NewRsdPointer->Revision = 2;
         NewRsdPointer->Length = sizeof(EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER);
         RsdPointer = NewRsdPointer;
         gBS->InstallConfigurationTable (&gEfiAcpiTableGuid, (VOID*)RsdPointer);
- //         DBG("first install success\n");
+  //      DBG("first install success\n");
         gBS->InstallConfigurationTable (&gEfiAcpi10TableGuid, (VOID*)RsdPointer);
         DBG("RsdPointer Acpi 2.0 installed\n");
       }

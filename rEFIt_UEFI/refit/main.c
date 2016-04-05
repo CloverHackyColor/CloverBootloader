@@ -1818,8 +1818,13 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   ZeroMem((VOID*)&gGraphics[0], sizeof(GFX_PROPERTIES) * 4);
   
   DBG("\n");
-  MsgLog("Now is %d.%d.%d,  %d:%d:%d (GMT+%d)\n",
+  if (Now.TimeZone < 0 || Now.TimeZone > 24) {
+    MsgLog("Now is %d.%d.%d,  %d:%d:%d (GMT)\n",
+           Now.Day, Now.Month, Now.Year, Now.Hour, Now.Minute, Now.Second);
+  } else {
+    MsgLog("Now is %d.%d.%d,  %d:%d:%d (GMT+%d)\n",
       Now.Day, Now.Month, Now.Year, Now.Hour, Now.Minute, Now.Second, Now.TimeZone);
+  }
   MsgLog("Starting Clover rev %s on %s EFI\n", FIRMWARE_REVISION, gST->FirmwareVendor);
 
   Status = InitRefitLib(gImageHandle);

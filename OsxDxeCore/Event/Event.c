@@ -169,7 +169,7 @@ CoreDispatchEventNotifies (
   LIST_ENTRY      *Head;
 
   CoreAcquireEventLock ();
-  ASSERT (gEventQueueLock.OwnerTpl == Priority);
+//  ASSERT (gEventQueueLock.OwnerTpl == Priority);
   Head = &gEventQueue[Priority];
 
   //
@@ -195,7 +195,7 @@ CoreDispatchEventNotifies (
     //
     // Notify this event
     //
-    ASSERT (Event->NotifyFunction != NULL);
+//    ASSERT (Event->NotifyFunction != NULL);
     Event->NotifyFunction (Event, Event->NotifyContext);
 
     //
@@ -225,7 +225,7 @@ CoreNotifyEvent (
   //
   // Event database must be locked
   //
-  ASSERT_LOCKED (&gEventQueueLock);
+//  ASSERT_LOCKED (&gEventQueueLock);
 
   //
   // If the event is queued somewhere, remove it
@@ -763,7 +763,7 @@ CoreCloseEvent (
   CoreUnregisterProtocolNotify (Event);
 
   Status = CoreFreePool (Event);
-  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR (Status);
 
   return Status;
 }

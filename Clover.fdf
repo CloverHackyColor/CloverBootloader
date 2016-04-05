@@ -140,7 +140,8 @@ INF  Clover/AcpiReset/Reset.inf
 INF  MdeModulePkg/Universal/Metronome/Metronome.inf
 INF  PcAtChipsetPkg/8254TimerDxe/8254Timer.inf
 #INF  PcAtChipsetPkg/HpetTimerDxe/HpetTimerDxe.inf
-INF  PcAtChipsetPkg/PcatRealTimeClockRuntimeDxe/PcatRealTimeClockRuntimeDxe.inf
+#INF  PcAtChipsetPkg/PcatRealTimeClockRuntimeDxe/PcatRealTimeClockRuntimeDxe.inf
+INF Clover/PcatRealTimeClockRuntimeDxe/PcatRealTimeClockRuntimeDxe.inf
 #INF  PcAtChipsetPkg/PciHostBridgeDxe/PciHostBridgeDxe.inf
 #INF  DuetPkg/PciRootBridgeNoEnumerationDxe/PciRootBridgeNoEnumeration.inf
 INF  Clover/PciRootBridgeDxe/PciRootBridge.inf
