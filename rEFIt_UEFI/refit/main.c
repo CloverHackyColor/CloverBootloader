@@ -861,8 +861,10 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     if (OSFLAG_ISSET(Entry->Flags, OSFLAG_HIBERNATED)) {
       DoHibernateWake = PrepareHibernation(Entry->Volume);
     }
-    if (gDriversFlags.AptioFixLoaded && !DoHibernateWake) {
-      // Add slide=0 argument for ML and Mavericks if not present
+    if (gDriversFlags.AptioFixLoaded &&
+        !DoHibernateWake &&
+        !StrStr(Entry->LoadOptions, L"slide=")) {
+      // Add slide=0 argument for ML+ if not present
       CHAR16 *TempOptions = AddLoadOption(Entry->LoadOptions, L"slide=0");
       FreePool(Entry->LoadOptions);
       Entry->LoadOptions = TempOptions;
@@ -884,7 +886,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     if ((Entry->LoadOptions != NULL) &&
         ((StrStr(Entry->LoadOptions, L"-v") != NULL) ||
          (StrStr(Entry->LoadOptions, L"-V") != NULL))) {
-      Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_USEGRAPHICS);
+          Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_USEGRAPHICS);
         } else if (!Entry->LoadOptions) {
           CHAR16 *TempOptions = AddLoadOption(Entry->LoadOptions, L" ");
           FreePool(Entry->LoadOptions);
