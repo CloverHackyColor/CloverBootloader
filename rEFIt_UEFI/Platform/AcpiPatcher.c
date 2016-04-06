@@ -1488,9 +1488,9 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
         NewRsdPointer->Revision = 2;
         NewRsdPointer->Length = sizeof(EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER);
         RsdPointer = NewRsdPointer;
-        gBS->InstallConfigurationTable (&gEfiAcpiTableGuid, (VOID*)RsdPointer);
+//        gBS->InstallConfigurationTable (&gEfiAcpiTableGuid, (VOID*)RsdPointer);
   //      DBG("first install success\n");
-        gBS->InstallConfigurationTable (&gEfiAcpi10TableGuid, (VOID*)RsdPointer);
+//        gBS->InstallConfigurationTable (&gEfiAcpi10TableGuid, (VOID*)RsdPointer);
         DBG("RsdPointer Acpi 2.0 installed\n");
       }
       Xsdt = (XSDT_TABLE*)(UINTN)BufferPtr;
@@ -2007,7 +2007,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
     Status = EFI_NOT_FOUND;
     Ssdt = generate_cst_ssdt(FadtPointer, CPUBase, ApicCPUNum);
     if (Ssdt) {
-      Status = InsertTable((VOID*)Ssdt, Ssdt->Length);      
+      Status = InsertTable((VOID*)Ssdt, Ssdt->Length);
     }
     if(EFI_ERROR(Status)){
       DBG("GenerateCStates failed Status=%r\n", Status);
@@ -2023,6 +2023,9 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
     Xsdt->Header.Checksum = 0;
     Xsdt->Header.Checksum = (UINT8)(256-Checksum8((CHAR8*)Xsdt, Xsdt->Header.Length));
   }
+  
+  gBS->InstallConfigurationTable (&gEfiAcpiTableGuid, (VOID*)RsdPointer);
+  gBS->InstallConfigurationTable (&gEfiAcpi10TableGuid, (VOID*)RsdPointer);
 
   //free regions?
   while (gRegions) {
