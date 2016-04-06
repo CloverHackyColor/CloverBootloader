@@ -240,7 +240,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
     devprop_add_value(device, "hda-gfx", (UINT8*)"onboard-1", 10);
   }
 
-  if (gSettings.InjectEDID) {
+  if (gSettings.InjectEDID && gSettings.CustomEDID) {
     devprop_add_value(device, "AAPL00,override-no-connect", gSettings.CustomEDID, 128);
   }
   

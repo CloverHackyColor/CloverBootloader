@@ -1975,12 +1975,11 @@ CHAR8 *get_nvidia_model(UINT32 device_id, UINT32 subsys_id)
 }
 
 UINT8 connector_type_1[]= {0x00, 0x08, 0x00, 0x00};
+UINT32	boot_display = 1;
 
 static INT32 devprop_add_nvidia_template(DevPropDevice *device, INTN n_ports)
 {
-  INTN    pnum;
-  UINT32	boot_display = 1;
-  
+  INTN    pnum;  
   CHAR8 nkey[24];
   CHAR8 nval[24];
   
@@ -2325,9 +2324,10 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
   
   if ((devices_number == 1) &&
       ((gSettings.BootDisplay >= 0) && (gSettings.BootDisplay < n_ports))) {
-      AsciiSPrint(nkey, 24, "@%d,AAPL,boot-display", gSettings.BootDisplay);
-      devprop_add_value(device, nkey, (UINT8*)&boot_display, 4);
-      DBG("Nvidia: BootDisplay: %d\n", gSettings.BootDisplay);
+    CHAR8 nkey[24];
+    AsciiSPrint(nkey, 24, "@%d,AAPL,boot-display", gSettings.BootDisplay);
+    devprop_add_value(device, nkey, (UINT8*)&boot_display, 4);
+    DBG("Nvidia: BootDisplay: %d\n", gSettings.BootDisplay);
   }
   
   //there are default or calculated properties, can be skipped
