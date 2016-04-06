@@ -1464,6 +1464,7 @@ extern EFI_EVENT	                    mSimpleFileSystemChangeEvent;
 extern UINTN	                        gEvent;
 
 extern UINT16	                        gBacklightLevel;
+extern UINT32 devices_number;
 //mouse
 extern ACTION	                        gAction;
 extern UINTN	                        gItemID;

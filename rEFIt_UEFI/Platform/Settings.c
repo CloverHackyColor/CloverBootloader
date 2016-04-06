@@ -5250,6 +5250,7 @@ SetDevices (
   UINT32              Hptc;
   
   GetEdidDiscovered ();
+  devices_number = 1; //should initialize for reentering GUI
   // Scan PCI handles 
   Status = gBS->LocateHandleBuffer (
                   ByProtocol,

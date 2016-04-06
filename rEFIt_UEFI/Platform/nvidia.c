@@ -67,8 +67,6 @@
 
 CHAR8 generic_name[128];
 
-extern UINT32 devices_number;
-
 const CHAR8 *nvidia_compatible_0[]        =	{ "@0,compatible",	"NVDA,NVMac"    };
 const CHAR8 *nvidia_compatible_1[]        =	{ "@1,compatible",	"NVDA,NVMac"    };
 const CHAR8 *nvidia_device_type_0[]       =	{ "@0,device_type", "display"       };
@@ -1989,17 +1987,6 @@ static INT32 devprop_add_nvidia_template(DevPropDevice *device, INTN n_ports)
 		return 0;
 	}
   
-  DBG("Nvidia: VideoPorts:");
-  if (n_ports > 0) {
-    DBG(" user defined (GUI-menu): %d\n", n_ports);
-  } else if (gSettings.VideoPorts > 0) {
-    n_ports = gSettings.VideoPorts;
-    DBG(" user defined from config.plist: %d\n", n_ports);
-  } else {
-  	n_ports = 2; //default
-    DBG(" undefined, default to: %d\n", n_ports);
-  }
-  
   for (pnum = 0; pnum < n_ports; pnum++) {
     AsciiSPrint(nkey, 24, "@%d,name", pnum);
     AsciiSPrint(nval, 24, "NVDA,Display-%c", (65+pnum));
@@ -2026,7 +2013,6 @@ static INT32 devprop_add_nvidia_template(DevPropDevice *device, INTN n_ports)
     devprop_add_value(device, "device_type", (UINT8*)"NVDA,Child", 10);
   }
   
-	devices_number++;
 	return 1;
 }
 
@@ -2275,7 +2261,18 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 		string = devprop_create_string();
 	}
   
-	device = devprop_add_device_pci(string, nvda_dev);
+	device = devprop_add_device_pci(string, nvda_dev);  
+  
+  DBG("Nvidia: VideoPorts:");
+  if (n_ports > 0) {
+    DBG(" user defined (GUI-menu): %d\n", n_ports);
+  } else if (gSettings.VideoPorts > 0) {
+    n_ports = gSettings.VideoPorts;
+    DBG(" user defined from config.plist: %d\n", n_ports);
+  } else {
+  	n_ports = 2; //default
+    DBG(" undefined, default to: %d\n", n_ports);
+  }
   
 //There are custom properties, injected if set by user
   if (gSettings.NvidiaSingle && (devices_number >=1)) {
@@ -2389,6 +2386,7 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 	}
   
 done:
+  devices_number++;
   FreePool(version_str);
   if (buffer) {
     FreePool(buffer);
