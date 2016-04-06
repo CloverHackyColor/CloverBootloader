@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-06-04 16:43+0300\n"
+"POT-Creation-Date: 2016-04-06 20:15+0300\n"
 "PO-Revision-Date: 2014-02-13 18:34+0000\n"
 "Last-Translator: oswaldini <oswaldinimtb@gmail.com>\n"
 "Language-Team: pl <pl@li.org>\n"
@@ -124,17 +124,6 @@ msgstr ""
 "- automatyczna detekcja sprzętu z możliwością ręcznej edycji ustawień w pliku"
 
 #
-#. type: Content of: <html><body><p><span>
-#: Resources/templates/Description.html:23
-#: Resources/templates/Description.html:24
-#: Resources/templates/Description.html:29
-#: Resources/templates/Description.html:31
-#: Resources/templates/Description.html:32
-#: Resources/templates/Description.html:33
-msgid " "
-msgstr " "
-
-#
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:24
 msgid "But user can change them by config.plist"
@@ -171,9 +160,14 @@ msgid "Custom DSDT will be loaded from booted partition or from EFI folder"
 msgstr ""
 "Niestandardowe tabele DSDT ładowane z bootowanej partycji lub z katalogu EFI"
 
-#
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:30
+msgid "- DSDT patching on the fly by fixes and by patterns"
+msgstr ""
+
+#
+#. type: Content of: <html><body><p>
+#: Resources/templates/Description.html:31
 msgid "- customizable RestartFix and sleep/wake fixes and PCIRootUID value"
 msgstr ""
 "- konfigurowalny RestartFix, poprawka sleep/wake oraz wstrzykiwanie "
@@ -181,7 +175,7 @@ msgstr ""
 
 #
 #. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:31
+#: Resources/templates/Description.html:32
 msgid ""
 "- Graphics Properties Injector for ATI, NVidia and Intel for wide range of "
 "supported cards."
@@ -191,19 +185,19 @@ msgstr ""
 
 #
 #. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:32
+#: Resources/templates/Description.html:33
 msgid "Also customizable."
 msgstr "konfiguracji w pliku config.plist"
 
 #
 #. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:33
+#: Resources/templates/Description.html:34
 msgid "- USB fix (LegacyOff, Ownership, Builtin, clock-id) up to USB 3.0"
 msgstr "- poprawka dla USB (łącznie z obsługą USB 3.0)"
 
 #
 #. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:34
+#: Resources/templates/Description.html:35
 msgid "- HDA injector and Ethernet builtin injector"
 msgstr ""
 "- wstrzykiwanie ID dla karty dźwiękowej oraz informacji \"Built in\" dla "
@@ -211,7 +205,7 @@ msgstr ""
 
 #
 #. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:35
+#: Resources/templates/Description.html:36
 msgid "- CPU turbo and P- and C-states generator"
 msgstr ""
 "- generowanie stanów turbo, P-State oraz C-State w celu uzyskania natywnego "
@@ -219,20 +213,29 @@ msgstr ""
 
 #
 #. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:36
+#: Resources/templates/Description.html:37
 msgid "- ACPI tables loading (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI...)"
 msgstr ""
 "- ładowanie tabel ACPI (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI...)"
 
-#
 #. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:37
-msgid "- extra kexts loading and security mode for FireWire"
-msgstr "- ładowanie dodatkowych kextów oraz tryb bezpieczeństwa FireWire"
+#: Resources/templates/Description.html:38
+msgid "- extra kexts loading"
+msgstr ""
+
+#. type: Content of: <html><body><p>
+#: Resources/templates/Description.html:39
+msgid "- kernel and kext patching on the fly"
+msgstr ""
+
+#. type: Content of: <html><body><p>
+#: Resources/templates/Description.html:40
+msgid "- set NVRAM variables for different purpose"
+msgstr ""
 
 #
 #. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:38
+#: Resources/templates/Description.html:41
 msgid ""
 "- default boot after timeout, customizable GUI , and saving screenshots from "
 "GUI typing F10"
@@ -242,7 +245,7 @@ msgstr ""
 
 #
 #. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:39
+#: Resources/templates/Description.html:42
 msgid "- saving boot.log in OS and preboot.log from GUI by typing F2"
 msgstr ""
 "- zapisywanie boot.log w OS oraz preboot.log w GUI za pomocą klawisza F2"
@@ -1509,6 +1512,14 @@ msgstr "Ustaw lokalizację EFI"
 #, no-wrap
 msgid "Unknown"
 msgstr "Nieznany"
+
+#
+#~ msgid " "
+#~ msgstr " "
+
+#
+#~ msgid "- extra kexts loading and security mode for FireWire"
+#~ msgstr "- ładowanie dodatkowych kextów oraz tryb bezpieczeństwa FireWire"
 
 #~ msgid "Nowhere"
 #~ msgstr "Nigdzie"

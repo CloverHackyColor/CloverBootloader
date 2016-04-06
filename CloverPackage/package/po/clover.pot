@@ -6,8 +6,8 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Clover v2.0-r3217\n"
-"POT-Creation-Date: 2015-06-04 16:43+0300\n"
+"Project-Id-Version: Clover v2.3k-r3391:3392\n"
+"POT-Creation-Date: 2016-04-06 20:15+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -105,11 +105,6 @@ msgid ""
 "default."
 msgstr ""
 
-#. type: Content of: <html><body><p><span>
-#: Resources/templates/Description.html:23 Resources/templates/Description.html:24 Resources/templates/Description.html:29 Resources/templates/Description.html:31 Resources/templates/Description.html:32 Resources/templates/Description.html:33
-msgid " "
-msgstr ""
-
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:24
 msgid "But user can change them by config.plist"
@@ -142,55 +137,70 @@ msgstr ""
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:30
-msgid "- customizable RestartFix and sleep/wake fixes and PCIRootUID value"
+msgid "- DSDT patching on the fly by fixes and by patterns"
 msgstr ""
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:31
+msgid "- customizable RestartFix and sleep/wake fixes and PCIRootUID value"
+msgstr ""
+
+#. type: Content of: <html><body><p>
+#: Resources/templates/Description.html:32
 msgid ""
 "- Graphics Properties Injector for ATI, NVidia and Intel for wide range of "
 "supported cards."
 msgstr ""
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:32
+#: Resources/templates/Description.html:33
 msgid "Also customizable."
 msgstr ""
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:33
+#: Resources/templates/Description.html:34
 msgid "- USB fix (LegacyOff, Ownership, Builtin, clock-id) up to USB 3.0"
 msgstr ""
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:34
+#: Resources/templates/Description.html:35
 msgid "- HDA injector and Ethernet builtin injector"
 msgstr ""
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:35
+#: Resources/templates/Description.html:36
 msgid "- CPU turbo and P- and C-states generator"
 msgstr ""
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:36
+#: Resources/templates/Description.html:37
 msgid "- ACPI tables loading (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI...)"
 msgstr ""
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:37
-msgid "- extra kexts loading and security mode for FireWire"
+#: Resources/templates/Description.html:38
+msgid "- extra kexts loading"
 msgstr ""
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:38
+#: Resources/templates/Description.html:39
+msgid "- kernel and kext patching on the fly"
+msgstr ""
+
+#. type: Content of: <html><body><p>
+#: Resources/templates/Description.html:40
+msgid "- set NVRAM variables for different purpose"
+msgstr ""
+
+#. type: Content of: <html><body><p>
+#: Resources/templates/Description.html:41
 msgid ""
 "- default boot after timeout, customizable GUI , and saving screenshots from "
 "GUI typing F10"
 msgstr ""
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:39
+#: Resources/templates/Description.html:42
 msgid "- saving boot.log in OS and preboot.log from GUI by typing F2"
 msgstr ""
 

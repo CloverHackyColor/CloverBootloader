@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-02-13 12:33+0100\n"
+"POT-Creation-Date: 2016-04-06 20:15+0300\n"
 "PO-Revision-Date: 2015-09-24 20:27+0000\n"
 "Last-Translator: Taylan <taylan__@hotmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -93,7 +93,9 @@ msgstr "Ana özellikler:"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:21
-msgid "- boot into 10.4 - 10.11 OSX, Windows EFI and Linux EFI"
+#, fuzzy
+#| msgid "- boot into 10.4 - 10.11 OSX, Windows EFI and Linux EFI"
+msgid "- boot into 10.4 - 10.9 OSX, Windows EFI and Linux EFI"
 msgstr "- 10.4 - 10.11 OS X, Windows EFI ve Linux EFI'ye boot edebilme"
 
 #. type: Content of: <html><body><p>
@@ -113,16 +115,6 @@ msgid ""
 msgstr ""
 "- Clover çoğunlukla donanımları otomatik tespit eder ve buna göre "
 "özellikleri varsayılan olarak ayarlar"
-
-#. type: Content of: <html><body><p><span>
-#: Resources/templates/Description.html:23
-#: Resources/templates/Description.html:24
-#: Resources/templates/Description.html:29
-#: Resources/templates/Description.html:31
-#: Resources/templates/Description.html:32
-#: Resources/templates/Description.html:33
-msgid " "
-msgstr ""
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:24
@@ -158,13 +150,18 @@ msgstr "Özel DSDT, boot edilen bölümden veya EFI klasöründen yüklenecektir
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:30
+msgid "- DSDT patching on the fly by fixes and by patterns"
+msgstr ""
+
+#. type: Content of: <html><body><p>
+#: Resources/templates/Description.html:31
 msgid "- customizable RestartFix and sleep/wake fixes and PCIRootUID value"
 msgstr ""
 "- Özelleştirilebilir RestartFix ve uyku/uyanma onarımları ve PCIRootUID "
 "değeri"
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:31
+#: Resources/templates/Description.html:32
 msgid ""
 "- Graphics Properties Injector for ATI, NVidia and Intel for wide range of "
 "supported cards."
@@ -173,38 +170,48 @@ msgstr ""
 "Graphics Properties Injector"
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:32
+#: Resources/templates/Description.html:33
 msgid "Also customizable."
 msgstr "Ayrıca özelleştirilebilir."
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:33
+#: Resources/templates/Description.html:34
 msgid "- USB fix (LegacyOff, Ownership, Builtin, clock-id) up to USB 3.0"
 msgstr "- USB 3.0 dahil USB onarımı (LegacyOff, Ownership, Builtin, clock-id)"
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:34
+#: Resources/templates/Description.html:35
 msgid "- HDA injector and Ethernet builtin injector"
 msgstr "- HDA ve Ethernet builtin enjektörü"
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:35
+#: Resources/templates/Description.html:36
 msgid "- CPU turbo and P- and C-states generator"
 msgstr "- CPU turbo ve P- ve C-states oluşturucu"
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:36
+#: Resources/templates/Description.html:37
 msgid "- ACPI tables loading (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI...)"
 msgstr ""
 "- ACPI tablosu yükleme (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI...)"
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:37
-msgid "- extra kexts loading and security mode for FireWire"
-msgstr "- Fazladan kext yükleme ve FireWire için güvenlik modu"
+#: Resources/templates/Description.html:38
+msgid "- extra kexts loading"
+msgstr ""
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:38
+#: Resources/templates/Description.html:39
+msgid "- kernel and kext patching on the fly"
+msgstr ""
+
+#. type: Content of: <html><body><p>
+#: Resources/templates/Description.html:40
+msgid "- set NVRAM variables for different purpose"
+msgstr ""
+
+#. type: Content of: <html><body><p>
+#: Resources/templates/Description.html:41
 msgid ""
 "- default boot after timeout, customizable GUI , and saving screenshots from "
 "GUI typing F10"
@@ -213,7 +220,7 @@ msgstr ""
 "ve F10 tuşu ile arabirimden ekran görüntüsü kaydetme"
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:39
+#: Resources/templates/Description.html:42
 msgid "- saving boot.log in OS and preboot.log from GUI by typing F2"
 msgstr ""
 "- İşletim sistemine boot.log ve F2 ile arabirimden preboot.log kaydetme"
@@ -226,7 +233,6 @@ msgstr "Kurulum Tamamlandı!"
 #. type: "UEFI.only_title"
 #: Resources/templates/Localizable.strings:4
 #, no-wrap
-#| msgid "Install for UEFI motherboards"
 msgid "Install for UEFI booting only"
 msgstr "UEFI anakartlar için yükleme"
 
@@ -604,9 +610,6 @@ msgstr "Siyah_Yeşil_Karamsar"
 #. type: "BGM_description"
 #: Resources/templates/Localizable.strings:116
 #, no-wrap
-#| msgid ""
-#| "Black Green and Moody theme from Blackosx,\n"
-#| "Install to /EFI/CLOVER/themes/BGM"
 msgid ""
 "BGM (Black Green and Moody) theme from Blackosx,\n"
 "Install to /EFI/CLOVER/themes/BGM"
@@ -1481,3 +1484,6 @@ msgstr "EFI dizinini belirle"
 #, no-wrap
 msgid "Unknown"
 msgstr "Bilinmeyen"
+
+#~ msgid "- extra kexts loading and security mode for FireWire"
+#~ msgstr "- Fazladan kext yükleme ve FireWire için güvenlik modu"

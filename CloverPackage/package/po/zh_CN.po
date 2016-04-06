@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-06-04 16:43+0300\n"
+"POT-Creation-Date: 2016-04-06 20:15+0300\n"
 "PO-Revision-Date: 2014-02-14 08:41+0000\n"
 "Last-Translator: crazybirdy <>\n"
 "Language-Team: zh_CN <zh_CN@li.org>\n"
@@ -110,17 +110,6 @@ msgid ""
 "default."
 msgstr "- 默认 自动侦测大部份的硬件并设置所有属性"
 
-# Don't change this ! It must be one space only !
-#. type: Content of: <html><body><p><span>
-#: Resources/templates/Description.html:23
-#: Resources/templates/Description.html:24
-#: Resources/templates/Description.html:29
-#: Resources/templates/Description.html:31
-#: Resources/templates/Description.html:32
-#: Resources/templates/Description.html:33
-msgid " "
-msgstr " "
-
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:24
 msgid "But user can change them by config.plist"
@@ -153,49 +142,64 @@ msgstr ". 支持从 开机分区 或 EFI文件夹 加载 DSDT"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:30
+msgid "- DSDT patching on the fly by fixes and by patterns"
+msgstr ""
+
+#. type: Content of: <html><body><p>
+#: Resources/templates/Description.html:31
 msgid "- customizable RestartFix and sleep/wake fixes and PCIRootUID value"
 msgstr "- 支持 睡眠/唤醒 修复 并 支持 PCIRootUID 设置"
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:31
+#: Resources/templates/Description.html:32
 msgid ""
 "- Graphics Properties Injector for ATI, NVidia and Intel for wide range of "
 "supported cards."
 msgstr "- 支持 ATI, NVidia 及 Intel 显卡启用功能,"
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:32
+#: Resources/templates/Description.html:33
 msgid "Also customizable."
 msgstr ". 并支持客制化参数设置"
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:33
+#: Resources/templates/Description.html:34
 msgid "- USB fix (LegacyOff, Ownership, Builtin, clock-id) up to USB 3.0"
 msgstr ""
 "- 支持 USB 及 USB 3.0 的修复 (LegacyOff, Ownership, Builtin, clock-id) "
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:34
+#: Resources/templates/Description.html:35
 msgid "- HDA injector and Ethernet builtin injector"
 msgstr "- 支持 HDA 及 以太网卡 属性内建功能"
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:35
+#: Resources/templates/Description.html:36
 msgid "- CPU turbo and P- and C-states generator"
 msgstr "- 支持 开启 CPU turbo 及 自动生成 P-State 及 C-State 的功能"
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:36
+#: Resources/templates/Description.html:37
 msgid "- ACPI tables loading (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI...)"
 msgstr "- 支持 ACPI 表单加载 (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI...)"
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:37
-msgid "- extra kexts loading and security mode for FireWire"
-msgstr "- 可加载额外 kexts 及 支持 FireWire 安全保密模式"
+#: Resources/templates/Description.html:38
+msgid "- extra kexts loading"
+msgstr ""
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:38
+#: Resources/templates/Description.html:39
+msgid "- kernel and kext patching on the fly"
+msgstr ""
+
+#. type: Content of: <html><body><p>
+#: Resources/templates/Description.html:40
+msgid "- set NVRAM variables for different purpose"
+msgstr ""
+
+#. type: Content of: <html><body><p>
+#: Resources/templates/Description.html:41
 msgid ""
 "- default boot after timeout, customizable GUI , and saving screenshots from "
 "GUI typing F10"
@@ -203,7 +207,7 @@ msgstr ""
 "- 可按 F10 储存 图形用户界面 GUI 的截图，可设定默认开机区及客制化 GUI 图形"
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:39
+#: Resources/templates/Description.html:42
 msgid "- saving boot.log in OS and preboot.log from GUI by typing F2"
 msgstr "- 可按 F2 储存 OS 的纪录 boot.log 及 GUI 的纪录 preboot.log"
 
@@ -1477,6 +1481,13 @@ msgstr "设置 EFI 目录"
 #, no-wrap
 msgid "Unknown"
 msgstr "未知"
+
+# Don't change this ! It must be one space only !
+#~ msgid " "
+#~ msgstr " "
+
+#~ msgid "- extra kexts loading and security mode for FireWire"
+#~ msgstr "- 可加载额外 kexts 及 支持 FireWire 安全保密模式"
 
 #~ msgid "Nowhere"
 #~ msgstr "不显示"

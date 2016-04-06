@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-06-04 16:43+0300\n"
+"POT-Creation-Date: 2016-04-06 20:15+0300\n"
 "PO-Revision-Date: 2016-01-03 11:06+0000\n"
 "Last-Translator: ErmaC <ErmaC@insanelymac.com>\n"
 "Language-Team: it <it@li.org>\n"
@@ -98,7 +98,6 @@ msgstr "Caratteristiche Principali:"
 #
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:21
-#| msgid "- boot into 10.4 - 10.8 OSX, Windows EFI and Linux EFI"
 msgid "- boot into 10.4 - 10.9 OSX, Windows EFI and Linux EFI"
 msgstr "- Avvia da Mac OS X 10.4 a OS X 10.11, Windows EFI e Linux EFI"
 
@@ -121,17 +120,6 @@ msgid ""
 msgstr ""
 "- Principalmente Clover effettua il rilevamento automatico dell'hardware e "
 "configura tutte le caratteristiche di base."
-
-#
-#. type: Content of: <html><body><p><span>
-#: Resources/templates/Description.html:23
-#: Resources/templates/Description.html:24
-#: Resources/templates/Description.html:29
-#: Resources/templates/Description.html:31
-#: Resources/templates/Description.html:32
-#: Resources/templates/Description.html:33
-msgid " "
-msgstr " "
 
 #
 #. type: Content of: <html><body><p>
@@ -169,15 +157,20 @@ msgstr "- L'ACPI sarà corretto allo standard 4.0."
 msgid "Custom DSDT will be loaded from booted partition or from EFI folder"
 msgstr "Il DSDT personalizzato sarà caricato dalla partizione di avvio"
 
-#
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:30
+msgid "- DSDT patching on the fly by fixes and by patterns"
+msgstr ""
+
+#
+#. type: Content of: <html><body><p>
+#: Resources/templates/Description.html:31
 msgid "- customizable RestartFix and sleep/wake fixes and PCIRootUID value"
 msgstr "- RestartFix, sleep/wake e PCIRootUID personalizzabile"
 
 #
 #. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:31
+#: Resources/templates/Description.html:32
 msgid ""
 "- Graphics Properties Injector for ATI, NVidia and Intel for wide range of "
 "supported cards."
@@ -187,45 +180,54 @@ msgstr ""
 
 #
 #. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:32
+#: Resources/templates/Description.html:33
 msgid "Also customizable."
 msgstr "anch'esse personalizzabile."
 
 #
 #. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:33
+#: Resources/templates/Description.html:34
 msgid "- USB fix (LegacyOff, Ownership, Builtin, clock-id) up to USB 3.0"
 msgstr "- USB fix (LegacyOff, Ownership, Builtin, clock-id) fino alla USB 3.0"
 
 #
 #. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:34
+#: Resources/templates/Description.html:35
 msgid "- HDA injector and Ethernet builtin injector"
 msgstr "- Iniezione dell'HDA e iniezione Ethernet incorporato"
 
 #
 #. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:35
+#: Resources/templates/Description.html:36
 msgid "- CPU turbo and P- and C-states generator"
 msgstr "- Generatore CPU turbo, P e C state"
 
 #
 #. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:36
+#: Resources/templates/Description.html:37
 msgid "- ACPI tables loading (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI...)"
 msgstr ""
 "- Caricamento delle tabelle ACPI (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, "
 "UEFI…)"
 
-#
 #. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:37
-msgid "- extra kexts loading and security mode for FireWire"
-msgstr "- Caricamento aggiuntivo degli kext e modo sicurezza per il FireWire"
+#: Resources/templates/Description.html:38
+msgid "- extra kexts loading"
+msgstr ""
+
+#. type: Content of: <html><body><p>
+#: Resources/templates/Description.html:39
+msgid "- kernel and kext patching on the fly"
+msgstr ""
+
+#. type: Content of: <html><body><p>
+#: Resources/templates/Description.html:40
+msgid "- set NVRAM variables for different purpose"
+msgstr ""
 
 #
 #. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:38
+#: Resources/templates/Description.html:41
 msgid ""
 "- default boot after timeout, customizable GUI , and saving screenshots from "
 "GUI typing F10"
@@ -235,7 +237,7 @@ msgstr ""
 
 #
 #. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:39
+#: Resources/templates/Description.html:42
 msgid "- saving boot.log in OS and preboot.log from GUI by typing F2"
 msgstr "- Salva il boot.log in OS e preboot.log dalla GUI premendo F2"
 
@@ -690,9 +692,6 @@ msgstr "BGM256"
 #. type: "BGM256_description"
 #: Resources/templates/Localizable.strings:132
 #, no-wrap
-#| msgid ""
-#| "BGM (Black Green and Moody) theme from Blackosx,\n"
-#| "Install to /EFI/CLOVER/themes/BGM"
 msgid ""
 "BGM A version of BGM with 256px icons theme from Blackosx,\n"
 "Install to /EFI/CLOVER/themes/BGM256"
@@ -709,9 +708,6 @@ msgstr "Chrome"
 #. type: "chrome_description"
 #: Resources/templates/Localizable.strings:136
 #, no-wrap
-#| msgid ""
-#| "Orange theme from dwm,\n"
-#| "Install to /EFI/CLOVER/themes/orange"
 msgid ""
 "chrome theme from chris1111,\n"
 "Install to /EFI/CLOVER/themes/chrome"
@@ -722,16 +718,12 @@ msgstr ""
 #. type: "CloverX_title"
 #: Resources/templates/Localizable.strings:139
 #, no-wrap
-#| msgid "Clover"
 msgid "CloverX"
 msgstr "CloverX"
 
 #. type: "CloverX_description"
 #: Resources/templates/Localizable.strings:140
 #, no-wrap
-#| msgid ""
-#| "Orange theme from dwm,\n"
-#| "Install to /EFI/CLOVER/themes/orange"
 msgid ""
 "CloverX theme from =)(=,\n"
 "Install to /EFI/CLOVER/themes/CloverX"
@@ -748,9 +740,6 @@ msgstr "Dawn"
 #. type: "dawn_description"
 #: Resources/templates/Localizable.strings:144
 #, no-wrap
-#| msgid ""
-#| "Orange theme from dwm,\n"
-#| "Install to /EFI/CLOVER/themes/orange"
 msgid ""
 "dawn theme from Slice,\n"
 "Install to /EFI/CLOVER/themes/dawn"
@@ -767,9 +756,6 @@ msgstr "Embedded"
 #. type: "embedded_description"
 #: Resources/templates/Localizable.strings:148
 #, no-wrap
-#| msgid ""
-#| "Default black_green theme from Blackosx,\n"
-#| "Install to /EFI/CLOVER/themes/black_green"
 msgid ""
 "embedded theme from Blackosx,\n"
 "Install to /EFI/CLOVER/themes/embedded"
@@ -786,9 +772,6 @@ msgstr "Gold Clover"
 #. type: "gold_clover_description"
 #: Resources/templates/Localizable.strings:152
 #, no-wrap
-#| msgid ""
-#| "Wooden theme from iROOTa,\n"
-#| "Install to /EFI/CLOVER/themes/wooden."
 msgid ""
 "gold_clover theme from chris1111,\n"
 "Install to /EFI/CLOVER/themes/gold_clover"
@@ -821,9 +804,6 @@ msgstr "iOS7"
 #. type: "ios7_description"
 #: Resources/templates/Localizable.strings:160
 #, no-wrap
-#| msgid ""
-#| "Grey style theme by winlog,\n"
-#| "Install to /EFI/CLOVER/themes/iclover"
 msgid ""
 "ios7 theme by Ukr55, Winlog,\n"
 "Install to /EFI/CLOVER/themes/ios7"
@@ -936,9 +916,6 @@ msgstr "Random"
 #. type: "random_description"
 #: Resources/templates/Localizable.strings:188
 #, no-wrap
-#| msgid ""
-#| "Orange theme from dwm,\n"
-#| "Install to /EFI/CLOVER/themes/orange"
 msgid ""
 "random theme from Slice,\n"
 "Install to /EFI/CLOVER/themes/random choose a theme from others"
@@ -1053,9 +1030,6 @@ msgstr "Sketched"
 #. type: "sketched_description"
 #: Resources/templates/Localizable.strings:216
 #, no-wrap
-#| msgid ""
-#| "OS One theme from Kyndder,\n"
-#| "Install to /EFI/CLOVER/themes/os_one"
 msgid ""
 "sketched theme from kyndder,\n"
 "Install to /EFI/CLOVER/themes/sketched."
@@ -1072,9 +1046,6 @@ msgstr "Space"
 #. type: "Space_description"
 #: Resources/templates/Localizable.strings:220
 #, no-wrap
-#| msgid ""
-#| "Orange theme from dwm,\n"
-#| "Install to /EFI/CLOVER/themes/orange"
 msgid ""
 "Space theme from chris1111,\n"
 "Install to /EFI/CLOVER/themes/Space"
@@ -1091,9 +1062,6 @@ msgstr "Steampunkblack"
 #. type: "steampunkblack_description"
 #: Resources/templates/Localizable.strings:224
 #, no-wrap
-#| msgid ""
-#| "Bootcamp theme from Bijo,\n"
-#| "Install to /EFI/CLOVER/themes/bootcamp"
 msgid ""
 "steampunkblack theme from medik,\n"
 "Install to /EFI/CLOVER/themes/steampunkblack"
@@ -1498,6 +1466,15 @@ msgstr "Imposta la directory EFI"
 #, no-wrap
 msgid "Unknown"
 msgstr "Sconosciuto"
+
+#
+#~ msgid " "
+#~ msgstr " "
+
+#
+#~ msgid "- extra kexts loading and security mode for FireWire"
+#~ msgstr ""
+#~ "- Caricamento aggiuntivo degli kext e modo sicurezza per il FireWire"
 
 #~ msgid "Nowhere"
 #~ msgstr "Da nessuna parte"

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-06-04 16:43+0300\n"
+"POT-Creation-Date: 2016-04-06 20:15+0300\n"
 "PO-Revision-Date: 2015-12-30 23:27+0000\n"
 "Last-Translator: Mill <ceruns@ymail.com>\n"
 "Language-Team: ko <ko@li.org>\n"
@@ -114,17 +114,6 @@ msgid ""
 msgstr ""
 "- 대체로 Clover는 모든 하드웨어를 자동으로 인식하고 기본 값으로 설정합니다."
 
-# It's good no need to change this
-#. type: Content of: <html><body><p><span>
-#: Resources/templates/Description.html:23
-#: Resources/templates/Description.html:24
-#: Resources/templates/Description.html:29
-#: Resources/templates/Description.html:31
-#: Resources/templates/Description.html:32
-#: Resources/templates/Description.html:33
-msgid " "
-msgstr " "
-
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:24
 msgid "But user can change them by config.plist"
@@ -161,13 +150,18 @@ msgstr ""
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:30
+msgid "- DSDT patching on the fly by fixes and by patterns"
+msgstr ""
+
+#. type: Content of: <html><body><p>
+#: Resources/templates/Description.html:31
 msgid "- customizable RestartFix and sleep/wake fixes and PCIRootUID value"
 msgstr ""
 "- 사용자 환경에 맞게 재부팅 오류, 잠자기/깨어나기 오류, PCIRootUID 값 등을 수"
 "정할 수 있습니다."
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:31
+#: Resources/templates/Description.html:32
 msgid ""
 "- Graphics Properties Injector for ATI, NVidia and Intel for wide range of "
 "supported cards."
@@ -176,38 +170,48 @@ msgstr ""
 "수 있습니다."
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:32
+#: Resources/templates/Description.html:33
 msgid "Also customizable."
 msgstr "이 역시 사용자 환경에 맞게 조절할 수 있습니다."
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:33
+#: Resources/templates/Description.html:34
 msgid "- USB fix (LegacyOff, Ownership, Builtin, clock-id) up to USB 3.0"
 msgstr ""
 "- USB 3.0까지 지원되는 USB 속성 수정(LegacyOff, Ownership, BuiltIn, clock-id)"
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:34
+#: Resources/templates/Description.html:35
 msgid "- HDA injector and Ethernet builtin injector"
 msgstr "- HDA와 내장 이더넷의 속성 부여"
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:35
+#: Resources/templates/Description.html:36
 msgid "- CPU turbo and P- and C-states generator"
 msgstr "- CPU 터보 기능 구현과 P-state, C-state 생성 가능"
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:36
+#: Resources/templates/Description.html:37
 msgid "- ACPI tables loading (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI...)"
 msgstr "- ACPI 테이블 로딩(SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI...)"
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:37
-msgid "- extra kexts loading and security mode for FireWire"
-msgstr "- FireWire를 위한 추가 kext 로딩 및 보안 모드"
+#: Resources/templates/Description.html:38
+msgid "- extra kexts loading"
+msgstr ""
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:38
+#: Resources/templates/Description.html:39
+msgid "- kernel and kext patching on the fly"
+msgstr ""
+
+#. type: Content of: <html><body><p>
+#: Resources/templates/Description.html:40
+msgid "- set NVRAM variables for different purpose"
+msgstr ""
+
+#. type: Content of: <html><body><p>
+#: Resources/templates/Description.html:41
 msgid ""
 "- default boot after timeout, customizable GUI , and saving screenshots from "
 "GUI typing F10"
@@ -216,7 +220,7 @@ msgstr ""
 "의 스크린샷 기능(F10키)"
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:39
+#: Resources/templates/Description.html:42
 msgid "- saving boot.log in OS and preboot.log from GUI by typing F2"
 msgstr "- F12키로 boot.log(OS)와 preboot.log(GUI) 저장"
 
@@ -672,9 +676,6 @@ msgstr "BGM256"
 #. type: "BGM256_description"
 #: Resources/templates/Localizable.strings:132
 #, no-wrap
-#| msgid ""
-#| "BGM (Black Green and Moody) theme from Blackosx,\n"
-#| "Install to /EFI/CLOVER/themes/BGM"
 msgid ""
 "BGM A version of BGM with 256px icons theme from Blackosx,\n"
 "Install to /EFI/CLOVER/themes/BGM256"
@@ -691,9 +692,6 @@ msgstr "크롬"
 #. type: "chrome_description"
 #: Resources/templates/Localizable.strings:136
 #, no-wrap
-#| msgid ""
-#| "Orange theme from dwm,\n"
-#| "Install to /EFI/CLOVER/themes/orange"
 msgid ""
 "chrome theme from chris1111,\n"
 "Install to /EFI/CLOVER/themes/chrome"
@@ -704,16 +702,12 @@ msgstr ""
 #. type: "CloverX_title"
 #: Resources/templates/Localizable.strings:139
 #, no-wrap
-#| msgid "Clover"
 msgid "CloverX"
 msgstr "클로버X"
 
 #. type: "CloverX_description"
 #: Resources/templates/Localizable.strings:140
 #, no-wrap
-#| msgid ""
-#| "Orange theme from dwm,\n"
-#| "Install to /EFI/CLOVER/themes/orange"
 msgid ""
 "CloverX theme from =)(=,\n"
 "Install to /EFI/CLOVER/themes/CloverX"
@@ -730,9 +724,6 @@ msgstr "새벽"
 #. type: "dawn_description"
 #: Resources/templates/Localizable.strings:144
 #, no-wrap
-#| msgid ""
-#| "Orange theme from dwm,\n"
-#| "Install to /EFI/CLOVER/themes/orange"
 msgid ""
 "dawn theme from Slice,\n"
 "Install to /EFI/CLOVER/themes/dawn"
@@ -749,9 +740,6 @@ msgstr "임베디드"
 #. type: "embedded_description"
 #: Resources/templates/Localizable.strings:148
 #, no-wrap
-#| msgid ""
-#| "Default black_green theme from Blackosx,\n"
-#| "Install to /EFI/CLOVER/themes/black_green"
 msgid ""
 "embedded theme from Blackosx,\n"
 "Install to /EFI/CLOVER/themes/embedded"
@@ -768,9 +756,6 @@ msgstr "골드 클로버"
 #. type: "gold_clover_description"
 #: Resources/templates/Localizable.strings:152
 #, no-wrap
-#| msgid ""
-#| "Wooden theme from iROOTa,\n"
-#| "Install to /EFI/CLOVER/themes/wooden."
 msgid ""
 "gold_clover theme from chris1111,\n"
 "Install to /EFI/CLOVER/themes/gold_clover"
@@ -803,9 +788,6 @@ msgstr "iOS7"
 #. type: "ios7_description"
 #: Resources/templates/Localizable.strings:160
 #, no-wrap
-#| msgid ""
-#| "Grey style theme by winlog,\n"
-#| "Install to /EFI/CLOVER/themes/iclover"
 msgid ""
 "ios7 theme by Ukr55, Winlog,\n"
 "Install to /EFI/CLOVER/themes/ios7"
@@ -918,9 +900,6 @@ msgstr "랜덤"
 #. type: "random_description"
 #: Resources/templates/Localizable.strings:188
 #, no-wrap
-#| msgid ""
-#| "Orange theme from dwm,\n"
-#| "Install to /EFI/CLOVER/themes/orange"
 msgid ""
 "random theme from Slice,\n"
 "Install to /EFI/CLOVER/themes/random choose a theme from others"
@@ -1035,9 +1014,6 @@ msgstr "스케치화"
 #. type: "sketched_description"
 #: Resources/templates/Localizable.strings:216
 #, no-wrap
-#| msgid ""
-#| "OS One theme from Kyndder,\n"
-#| "Install to /EFI/CLOVER/themes/os_one"
 msgid ""
 "sketched theme from kyndder,\n"
 "Install to /EFI/CLOVER/themes/sketched."
@@ -1054,9 +1030,6 @@ msgstr "스페이스"
 #. type: "Space_description"
 #: Resources/templates/Localizable.strings:220
 #, no-wrap
-#| msgid ""
-#| "Orange theme from dwm,\n"
-#| "Install to /EFI/CLOVER/themes/orange"
 msgid ""
 "Space theme from chris1111,\n"
 "Install to /EFI/CLOVER/themes/Space"
@@ -1073,9 +1046,6 @@ msgstr "스팀펑크 블랙"
 #. type: "steampunkblack_description"
 #: Resources/templates/Localizable.strings:224
 #, no-wrap
-#| msgid ""
-#| "Bootcamp theme from Bijo,\n"
-#| "Install to /EFI/CLOVER/themes/bootcamp"
 msgid ""
 "steampunkblack theme from medik,\n"
 "Install to /EFI/CLOVER/themes/steampunkblack"
@@ -1479,6 +1449,13 @@ msgstr "EFI 디렉터리를 설정하세요"
 #, no-wrap
 msgid "Unknown"
 msgstr "알 수 없음"
+
+# It's good no need to change this
+#~ msgid " "
+#~ msgstr " "
+
+#~ msgid "- extra kexts loading and security mode for FireWire"
+#~ msgstr "- FireWire를 위한 추가 kext 로딩 및 보안 모드"
 
 #~ msgid "Nowhere"
 #~ msgstr "없음"

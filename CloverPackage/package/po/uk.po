@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-06-04 16:43+0300\n"
+"POT-Creation-Date: 2016-04-06 20:15+0300\n"
 "PO-Revision-Date: 2014-02-13 21:26+0000\n"
 "Last-Translator: AlexKord <alexkord@lan.com.ua>\n"
 "Language-Team: ua <ua@li.org>\n"
@@ -126,17 +126,6 @@ msgstr ""
 "властивості за замовчуванням,"
 
 #
-#. type: Content of: <html><body><p><span>
-#: Resources/templates/Description.html:23
-#: Resources/templates/Description.html:24
-#: Resources/templates/Description.html:29
-#: Resources/templates/Description.html:31
-#: Resources/templates/Description.html:32
-#: Resources/templates/Description.html:33
-msgid " "
-msgstr " "
-
-#
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:24
 msgid "But user can change them by config.plist"
@@ -175,16 +164,21 @@ msgid "Custom DSDT will be loaded from booted partition or from EFI folder"
 msgstr ""
 "DSDT вашого ПК використовується з завантажувального розділу або з папки EFI"
 
-#
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:30
+msgid "- DSDT patching on the fly by fixes and by patterns"
+msgstr ""
+
+#
+#. type: Content of: <html><body><p>
+#: Resources/templates/Description.html:31
 msgid "- customizable RestartFix and sleep/wake fixes and PCIRootUID value"
 msgstr ""
 "- коригування проблем рестарту і сну/пробудження та значення PCIRootUID"
 
 #
 #. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:31
+#: Resources/templates/Description.html:32
 msgid ""
 "- Graphics Properties Injector for ATI, NVidia and Intel for wide range of "
 "supported cards."
@@ -192,47 +186,54 @@ msgstr "- Графік Інжектор для під'єднання відео�
 
 #
 #. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:32
+#: Resources/templates/Description.html:33
 msgid "Also customizable."
 msgstr "Також з можливостями налаштування."
 
 #
 #. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:33
+#: Resources/templates/Description.html:34
 msgid "- USB fix (LegacyOff, Ownership, Builtin, clock-id) up to USB 3.0"
 msgstr "- коригування USB1.0-USB3.0(LegacyOff, Ownership, Builtin, clock-id)"
 
 #
 #. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:34
+#: Resources/templates/Description.html:35
 msgid "- HDA injector and Ethernet builtin injector"
 msgstr "- Інжекція властивостей Аудіо та Мережевих карт."
 
 #
 #. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:35
+#: Resources/templates/Description.html:36
 msgid "- CPU turbo and P- and C-states generator"
 msgstr "- керування живленням частотами ЦП (CPU: Turbo, P/C-states)"
 
 #
 #. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:36
+#: Resources/templates/Description.html:37
 msgid "- ACPI tables loading (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI...)"
 msgstr ""
 "- довантаження додаткових таблиць ACPI (SSDT-xx, APIC, BOOT, SLIC, SLIT, "
 "SRAT, UEFI...)"
 
-#
 #. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:37
-msgid "- extra kexts loading and security mode for FireWire"
+#: Resources/templates/Description.html:38
+msgid "- extra kexts loading"
 msgstr ""
-"- довантаження додаткових драйверів (kexts), встановлення безпечного режиму "
-"для FireWire"
+
+#. type: Content of: <html><body><p>
+#: Resources/templates/Description.html:39
+msgid "- kernel and kext patching on the fly"
+msgstr ""
+
+#. type: Content of: <html><body><p>
+#: Resources/templates/Description.html:40
+msgid "- set NVRAM variables for different purpose"
+msgstr ""
 
 #
 #. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:38
+#: Resources/templates/Description.html:41
 msgid ""
 "- default boot after timeout, customizable GUI , and saving screenshots from "
 "GUI typing F10"
@@ -242,7 +243,7 @@ msgstr ""
 
 #
 #. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:39
+#: Resources/templates/Description.html:42
 msgid "- saving boot.log in OS and preboot.log from GUI by typing F2"
 msgstr ""
 "- збереження звітів: в ОС - boot.log, в GUI - preboot.log натиснути F2 для "
@@ -1508,6 +1509,16 @@ msgstr "Встановити EFI каталог"
 #, no-wrap
 msgid "Unknown"
 msgstr "Невідомо"
+
+#
+#~ msgid " "
+#~ msgstr " "
+
+#
+#~ msgid "- extra kexts loading and security mode for FireWire"
+#~ msgstr ""
+#~ "- довантаження додаткових драйверів (kexts), встановлення безпечного "
+#~ "режиму для FireWire"
 
 #~ msgid "Nowhere"
 #~ msgstr "Ніде"

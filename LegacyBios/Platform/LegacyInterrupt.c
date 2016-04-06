@@ -180,7 +180,7 @@ LegacyInterruptInstall (
   // Make sure the Legacy Interrupt Protocol is not already installed in the system
   //
 //  ASSERT_PROTOCOL_ALREADY_INSTALLED(NULL, &gEfiLegacyInterruptProtocolGuid);
-  Status = gBS->LocateProtocol ((EFI_GUID *)&gEfiLegacyInterruptProtocolGuid, NULL, &Instance));
+  Status = gBS->LocateProtocol ((EFI_GUID *)&gEfiLegacyInterruptProtocolGuid, NULL, &Instance);
   if (!EFI_ERROR(Status)) {
     return Status;
   }
