@@ -3990,9 +3990,8 @@ DEFINE GCC49_AARCH64_RELEASE_FLAGS   = -Wno-unused-but-set-variable
 
 DEFINE GCC53_IA32_CC_FLAGS           = DEF(GCC49_IA32_CC_FLAGS)
 DEFINE GCC53_X64_CC_FLAGS            = DEF(GCC49_X64_CC_FLAGS)
-DEFINE GCC53_IA32_X64_DLINK_COMMON   = DEF(GCC49_IA32_X64_DLINK_COMMON)
 DEFINE GCC53_IA32_X64_ASLDLINK_FLAGS = DEF(GCC49_IA32_X64_ASLDLINK_FLAGS)
-DEFINE GCC53_IA32_X64_DLINK_FLAGS    = DEF(GCC49_IA32_X64_DLINK_FLAGS)
+DEFINE GCC53_IA32_DLINK_FLAGS        = DEF(GCC49_IA32_X64_DLINK_FLAGS)
 DEFINE GCC53_X64_DLINK_FLAGS         = DEF(GCC49_X64_DLINK_FLAGS)
 DEFINE GCC53_ASM_FLAGS               = DEF(GCC49_ASM_FLAGS)
 
@@ -4734,7 +4733,7 @@ RELEASE_GCC48_AARCH64_CC_FLAGS   = DEF(GCC48_AARCH64_CC_FLAGS) -Wno-unused-but-s
 *_GCC53_IA32_ASLDLINK_FLAGS       = DEF(GCC53_IA32_X64_ASLDLINK_FLAGS),-m,elf_i386
 *_GCC53_IA32_ASM_FLAGS            = DEF(GCC53_ASM_FLAGS) -m32 -march=i386
 *_GCC53_IA32_CC_FLAGS             = DEF(GCC53_IA32_CC_FLAGS) ENV(GCC53_IA32_EXTRA_CC_FLAGS) -c
-*_GCC53_IA32_DLINK_FLAGS          = DEF(GCC53_IA32_X64_DLINK_FLAGS),-m,elf_i386,--oformat=elf32-i386 DEF(GCC53_IA32_CC_FLAGS)
+*_GCC53_IA32_DLINK_FLAGS          = DEF(GCC53_IA32_DLINK_FLAGS),-m,elf_i386,--oformat=elf32-i386 DEF(GCC53_IA32_CC_FLAGS)
 *_GCC53_IA32_RC_FLAGS             = DEF(GCC_IA32_RC_FLAGS)
 *_GCC53_IA32_OBJCOPY_FLAGS        =
 *_GCC53_IA32_NASM_FLAGS           = -f elf32
@@ -6875,7 +6874,7 @@ RELEASE_XCODE5_X64_ASM_FLAGS  = -arch x86_64
   NOOPT_XCODE5_X64_CC_FLAGS   = -target x86_64-pc-win32-macho -c -g -O0       -Wall -Werror -Wextra -include AutoGen.h -funsigned-char -fno-ms-extensions -fno-stack-protector -fno-builtin -fshort-wchar -mms-bitfields -Wno-unused-parameter -Wno-missing-braces -Wno-missing-field-initializers -Wno-tautological-compare -Wno-sign-compare -ftrap-function=undefined_behavior_has_been_optimized_away_by_clang $(PLATFORM_FLAGS)
 
 #-mno-implicit-float
-RELEASE_XCODE5_X64_CC_FLAGS   = -target x86_64-pc-win32-macho -c    -Os       -Wall -Werror -Wextra -include AutoGen.h -funsigned-char -fno-ms-extensions -fno-stack-protector -fno-builtin -fshort-wchar-mms-bitfields -Wno-unused-parameter -Wno-missing-braces -Wno-missing-field-initializers -Wno-tautological-compare -Wno-sign-compare -ftrap-function=undefined_behavior_has_been_optimized_away_by_clang $(PLATFORM_FLAGS)
+RELEASE_XCODE5_X64_CC_FLAGS   = -target x86_64-pc-win32-macho -c    -Os       -Wall -Werror -Wextra -include AutoGen.h -funsigned-char -fno-ms-extensions -fno-stack-protector -fno-builtin -fshort-wchar -mms-bitfields -Wno-unused-parameter -Wno-missing-braces -Wno-missing-field-initializers -Wno-tautological-compare -Wno-sign-compare -ftrap-function=undefined_behavior_has_been_optimized_away_by_clang $(PLATFORM_FLAGS)
 
 #-mno-implicit-float
 
