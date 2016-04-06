@@ -2336,9 +2336,11 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
     goto done;
   }
   
-  if (gSettings.BootDisplay == 0xFF) {
+  if (gSettings.BootDisplay < 0) {
     // if not set this is default property
     devprop_add_value(device, "@0,AAPL,boot-display", (UINT8*)&boot_display, 4);
+  } else {
+    DBG("Nvidia: BootDisplay: %x\n", gSettings.BootDisplay);
   }
   
   if (gSettings.UseIntelHDMI) {

@@ -3428,7 +3428,7 @@ GetUserSettings(
       gSettings.VideoPorts   = (UINT16)GetPropertyInteger (Prop, gSettings.VideoPorts);
       
       Prop = GetProperty (DictPointer, "BootDisplay");
-      gSettings.BootDisplay = (UINT8)GetPropertyInteger (Prop, 0xFF);
+      gSettings.BootDisplay = (INT8)GetPropertyInteger (Prop, -1);
 
       Prop = GetProperty (DictPointer, "FBName");
       if (Prop != NULL) {
