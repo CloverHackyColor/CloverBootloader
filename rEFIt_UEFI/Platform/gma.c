@@ -172,10 +172,10 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
 	CHAR8					*devicepath;
   DevPropDevice *device;
 //	UINT8         *regs;
-  UINT32        DualLink;
+  UINT32        DualLink = 0; //local variable must be inited
 //	UINT32				bar[7];
 	CHAR8					*model;
-	UINT8 BuiltIn =		0x00;
+	UINT8         BuiltIn =		0x00;
   UINTN j;
   INT32 i;
   BOOLEAN Injected = FALSE;
@@ -244,8 +244,17 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
     devprop_add_value(device, "AAPL00,override-no-connect", gSettings.CustomEDID, 128);
   }
   
-  if (gSettings.IgPlatform) {
-    devprop_add_value(device, "AAPL,ig-platform-id", (UINT8*)&gSettings.IgPlatform, 4);
+  if (gSettings.IgPlatform != 0) {
+    if (gma_dev->device_id < 0x130) {
+      devprop_add_value(device, "AAPL,snb-platform-id",	(UINT8*)&gSettings.IgPlatform, 4);
+    } else {
+      devprop_add_value(device, "AAPL,ig-platform-id", (UINT8*)&gSettings.IgPlatform, 4);
+    }
+    SetSnb = TRUE;
+  }
+  
+  if (gSettings.DualLink != 0) {
+    devprop_add_value(device, "AAPL00,DualLink", (UINT8*)&gSettings.DualLink, 1);
   }
 
   if (gSettings.NoDefaultProperties) {
@@ -256,8 +265,9 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
   devprop_add_value(device, "model", (UINT8*)model, (UINT32)AsciiStrLen(model));
 	devprop_add_value(device, "device_type", (UINT8*)"display", 7);	
   devprop_add_value(device, "subsystem-vendor-id", GMAX3100_vals[21], 4);
+  devprop_add_value(device, "class-code",	(UINT8*)ClassFix, 4);
 
-  DualLink = gSettings.DualLink;
+//  DualLink = gSettings.DualLink;
 
 //  MacModel = GetModelFromString(gSettings.ProductName);
   switch (gma_dev->device_id) {
@@ -289,11 +299,6 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
           break;
       }
   */
-      if (gSettings.IgPlatform != 0) {
-        devprop_add_value(device, "AAPL,snb-platform-id",	(UINT8*)&gSettings.IgPlatform, 4);
-        SetSnb = TRUE;
-      }
-  
     case 0x0152:
     case 0x0156:
     case 0x0162:
@@ -334,12 +339,11 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
     case 0x1932:
     case 0x193A:
 
-      if (!gSettings.IgPlatform && !SetSnb) {
+      if (!SetSnb) {
         switch (gma_dev->device_id) {
           case 0x162:
           case 0x16A:
-            devprop_add_value(device, "AAPL,ig-platform-id", GMAX3100_vals[23], 4);
-            devprop_add_value(device, "class-code",	(UINT8*)ClassFix, 4);
+            devprop_add_value(device, "AAPL,ig-platform-id", GMAX3100_vals[23], 4);            
             break;
           case 0x152:
             devprop_add_value(device, "AAPL,ig-platform-id", GMAX3100_vals[24], 4);
@@ -359,9 +363,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
             devprop_add_value(device, "AAPL,ig-platform-id", GMAX3100_vals[26], 4);
             break;
         }
-      } /*else {
-        //devprop_add_value(device, "AAPL,ig-platform-id", (UINT8*)&gSettings.IgPlatform, 4);
-      } */
+      }
 
     case 0xA011:
     case 0xA012:  
