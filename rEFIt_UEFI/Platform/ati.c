@@ -1891,15 +1891,14 @@ BOOLEAN setup_ati_devprop(LOADER_ENTRY *Entry, pci_dt_t *ati_dev)
   }
 
   if (!gSettings.NoDefaultProperties) {
-    devprop_add_list(ati_devprop_list);
+    devprop_add_list(ati_devprop_list);    
+    if (gSettings.UseIntelHDMI) {
+      devprop_add_value(card->device, "hda-gfx", (UINT8*)"onboard-2", 10);
+    } else {
+      devprop_add_value(card->device, "hda-gfx", (UINT8*)"onboard-1", 10);
+    }
   } else {
     DBG("ATI: No default properties injected\n");
-  }
-
-  if (gSettings.UseIntelHDMI) {
-    devprop_add_value(card->device, "hda-gfx", (UINT8*)"onboard-2", 10);
-  } else {
-    devprop_add_value(card->device, "hda-gfx", (UINT8*)"onboard-1", 10);
   }
 
   if (gSettings.NrAddProperties != 0xFFFE) {
@@ -1917,7 +1916,7 @@ BOOLEAN setup_ati_devprop(LOADER_ENTRY *Entry, pci_dt_t *ati_dev)
 	
 	DBG("ATI %a %a %dMB (%a) [%04x:%04x] (subsys [%04x:%04x]):: %a\n",
 			chip_family_name[card->info->chip_family], card->info->model_name,
-			(INTN)RShiftU64(card->vram_size, 20), card->cfg_name,
+			(UINT32)RShiftU64(card->vram_size, 20), card->cfg_name,
 			ati_dev->vendor_id, ati_dev->device_id,
 			ati_dev->subsys_id.subsys.vendor_id, ati_dev->subsys_id.subsys.device_id,
 			devicepath);

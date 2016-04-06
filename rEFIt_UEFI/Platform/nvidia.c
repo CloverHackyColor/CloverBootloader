@@ -2005,15 +2005,12 @@ static INT32 devprop_add_nvidia_template(DevPropDevice *device, INTN n_ports)
     AsciiSPrint(nkey, 24, "@%d,name", pnum);
     AsciiSPrint(nval, 24, "NVDA,Display-%c", (65+pnum));
     //DBG("Nvidia: insert [%a : %a]\n", nkey, nval);
-    //devprop_add_value(device, nkey, (UINT8*)nval, 16);
     devprop_add_value(device, nkey, (UINT8*)nval, 14);
     
     AsciiSPrint(nkey, 24, "@%d,compatible", pnum);
-    //devprop_add_value(device, nkey, (UINT8*)"NVDA,NVMac\0", 12);
     devprop_add_value(device, nkey, (UINT8*)"NVDA,NVMac", 10);
     
     AsciiSPrint(nkey, 24, "@%d,device_type", pnum);
-    //devprop_add_value(device, nkey, (UINT8*)"display\0", 8);
     devprop_add_value(device, nkey, (UINT8*)"display", 7);
     
     AsciiSPrint(nkey, 24, "@%d,display-cfg", pnum);
@@ -2021,60 +2018,12 @@ static INT32 devprop_add_nvidia_template(DevPropDevice *device, INTN n_ports)
       devprop_add_value(device, nkey, (gSettings.Dcfg[0] != 0) ? &gSettings.Dcfg[0] : default_dcfg_0, DCFG0_LEN);
     } else {
       devprop_add_value(device, nkey, (gSettings.Dcfg[1] != 0) ? &gSettings.Dcfg[4] : default_dcfg_1, DCFG1_LEN);
-    }
-    
-	  //#@ moved from setup_nvidia_devprop
-	  //add HDMI Audio back to nvidia
-	  //http://forge.voodooprojects.org/p/chameleon/issues/67/
-    //AsciiSPrint(nkey, 24, "@%d,connector-type", pnum);
-    //devprop_add_value(device, nkey, connector_type_1, 4);
-		//end Nvidia HDMI Audio
+    }    
   }
-  
-  /*
-   if (!DP_ADD_TEMP_VAL(device, nvidia_compatible_0)) {
-   return 0;
-   }
-   if (!DP_ADD_TEMP_VAL(device, nvidia_device_type_0)) {
-   return 0;
-   }
-   if (!DP_ADD_TEMP_VAL(device, nvidia_name_0)) {
-   return 0;
-   }
-   
-   if (!gSettings.NvidiaSingle) {
-   if (!DP_ADD_TEMP_VAL(device, nvidia_compatible_1)) {
-   return 0;
-   }
-   if (!DP_ADD_TEMP_VAL(device, nvidia_device_type_1)) {
-   return 0;
-   }
-   if (!DP_ADD_TEMP_VAL(device, nvidia_name_1)) {
-   return 0;
-   }
-   } else {
-   DBG("NVidia: Injecting only device 0\n");
-   }
-   
-   if (devices_number == 1) {
-   if (!DP_ADD_TEMP_VAL(device, nvidia_device_type_parent)) {
-   return 0;
-   }
-   } else if (!DP_ADD_TEMP_VAL(device, nvidia_device_type_child)) {
-   return 0;
-   }
-   */
-  
+    
   if (devices_number == 1) {
-    //devprop_add_value(device, "device_type", (UINT8*)"NVDA,Parent\0", 12);
     devprop_add_value(device, "device_type", (UINT8*)"NVDA,Parent", 11);
-    if ((gSettings.BootDisplay >= 0) && (gSettings.BootDisplay < n_ports)) {
-      AsciiSPrint(nkey, 24, "@%d,AAPL,boot-display", gSettings.BootDisplay);
-      devprop_add_value(device, nkey, (UINT8*)&boot_display, 4);
-      DBG("Nvidia: BootDisplay: %d\n", gSettings.BootDisplay);
- 		}
   } else {
-    //devprop_add_value(device, "device_type", (UINT8*)"NVDA,Child\0", 12);
     devprop_add_value(device, "device_type", (UINT8*)"NVDA,Child", 10);
   }
   
@@ -2328,7 +2277,12 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 	}
   
 	device = devprop_add_device_pci(string, nvda_dev);
-  //	devprop_add_nvidia_template(device);
+  
+//There are custom properties, injected if set by user
+  if (gSettings.NvidiaSingle && (devices_number >=1)) {
+    DBG("NVidia: NvidiaSingle :: skip injecting other then first card\n");
+    goto done;
+  }
   
   if (gSettings.NrAddProperties != 0xFFFE) {
     for (i = 0; i < gSettings.NrAddProperties; i++) {
@@ -2365,6 +2319,28 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
         gSettings.NVCAP[16], gSettings.NVCAP[17], gSettings.NVCAP[18], gSettings.NVCAP[19]);
 	}
   
+  if (gSettings.InjectEDID && gSettings.CustomEDID) {
+    devprop_add_value(device, "AAPL00,override-no-connect", gSettings.CustomEDID, 128);
+  }
+  
+  if ((devices_number == 1) &&
+      ((gSettings.BootDisplay >= 0) && (gSettings.BootDisplay < n_ports))) {
+      AsciiSPrint(nkey, 24, "@%d,AAPL,boot-display", gSettings.BootDisplay);
+      devprop_add_value(device, nkey, (UINT8*)&boot_display, 4);
+      DBG("Nvidia: BootDisplay: %d\n", gSettings.BootDisplay);
+  }
+  
+  //there are default or calculated properties, can be skipped
+  if (gSettings.NoDefaultProperties) {
+    DBG("Nvidia: no default properties injected\n");
+    goto done;
+  }
+  
+  if (gSettings.BootDisplay == 0xFF) {
+    // if not set this is default property
+    devprop_add_value(device, "@0,AAPL,boot-display", (UINT8*)&boot_display, 4);
+  }
+  
   if (gSettings.UseIntelHDMI) {
     devprop_add_value(device, "hda-gfx", (UINT8*)"onboard-2", 10);
   } else {
@@ -2379,34 +2355,28 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
     DBG("Warning! VideoRAM is not detected and not set\n");
   }
   
-  if (gSettings.InjectEDID && gSettings.CustomEDID) {
-    devprop_add_value(device, "AAPL00,override-no-connect", gSettings.CustomEDID, 128);
-  }
-  
-  if (gSettings.NoDefaultProperties ||
-      (gSettings.NvidiaSingle && (devices_number >=1))) {
-    DBG(gSettings.NoDefaultProperties ? "NVidia: no default properties\n" : "NVidia: NvidiaSingle :: skip injecting other then first one\n");
-    if (buffer) {
-      FreePool(buffer);
-    }
-    if (rom && !RomAssigned) {
-      FreePool(rom);
-    }
-    return TRUE;
-  }
-  
   devprop_add_nvidia_template(device, n_ports);
   
-	/* FIXME: for primary graphics card only */
-  //	boot_display = 1;
-  //	devprop_add_value(device, "@0,AAPL,boot-display", (UINT8*)&boot_display, 4);
-  
+  //add HDMI Audio back to nvidia
+  //http://forge.voodooprojects.org/p/chameleon/issues/67/
+  //AsciiSPrint(nkey, 24, "@%d,connector-type", pnum);
+  //devprop_add_value(device, nkey, connector_type_1, 4);
+  //end Nvidia HDMI Audio
+    
 	if (nvPatch == PATCH_ROM_SUCCESS_HAS_LVDS) {
 		UINT8 built_in = 0x01;
 		devprop_add_value(device, "@0,built-in", &built_in, 1);
-	}
+        // HDMI is not LVDS
+    devprop_add_value(device, "@1,connector-type", connector_type_1, 4);
+	} else {
+    devprop_add_value(device, "@0,connector-type", connector_type_1, 4);
+  }  
   
-	if (gSettings.NVCAP[0] == 0) {
+	devprop_add_value(device, "NVPM", default_NVPM, NVPM_LEN);
+	devprop_add_value(device, "model", (UINT8*)model, (UINT32)AsciiStrLen(model));
+	devprop_add_value(device, "rom-revision", (UINT8*)version_str, (UINT32)AsciiStrLen(version_str));
+  
+  if (gSettings.NVCAP[0] == 0) {
 		devprop_add_value(device, "NVCAP", default_NVCAP, NVCAP_LEN);
     DBG("default NVCAP: %02x%02x%02x%02x-%02x%02x%02x%02x-%02x%02x%02x%02x-%02x%02x%02x%02x-%02x%02x%02x%02x\n",
         default_NVCAP[0], default_NVCAP[1], default_NVCAP[2], default_NVCAP[3],
@@ -2416,21 +2386,7 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
         default_NVCAP[16], default_NVCAP[17], default_NVCAP[18], default_NVCAP[19]);
 	}
   
-	devprop_add_value(device, "NVPM", default_NVPM, NVPM_LEN);
-	devprop_add_value(device, "model", (UINT8*)model, (UINT32)AsciiStrLen(model));
-	devprop_add_value(device, "rom-revision", (UINT8*)version_str, (UINT32)AsciiStrLen(version_str));
-  //devprop_add_value(device, "hda-gfx", (UINT8*)"onboard-1", 10);
-  
-  
-	//add HDMI Audio back to nvidia
-	//http://forge.voodooprojects.org/p/chameleon/issues/67/
-  //	UINT8 connector_type_1[]= {0x00, 0x08, 0x00, 0x00};
-  //	devprop_add_value(device, "@1,connector-type",connector_type_1, 4);
-	//end Nvidia HDMI Audio
-  
-  
-  //	gDeviceProperties = (VOID*)devprop_generate_string(string);
-  //	gBS->Stall(2000000);
+done:
   FreePool(version_str);
   if (buffer) {
     FreePool(buffer);
