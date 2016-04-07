@@ -1416,6 +1416,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
   UINTN             ApicCPUNum;
   UINT8             *SubTable;
   BOOLEAN           DsdtLoaded = FALSE;
+  BOOLEAN           NeedUpdate = FALSE;
   OPER_REGION       *tmpRegion;
   REFIT_DIR_ITER    DirIter;
   EFI_FILE_INFO     *DirEntry;
@@ -1488,6 +1489,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
         NewRsdPointer->Revision = 2;
         NewRsdPointer->Length = sizeof(EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER);
         RsdPointer = NewRsdPointer;
+        NeedUpdate = TRUE;
 //        gBS->InstallConfigurationTable (&gEfiAcpiTableGuid, (VOID*)RsdPointer);
   //      DBG("first install success\n");
 //        gBS->InstallConfigurationTable (&gEfiAcpi10TableGuid, (VOID*)RsdPointer);
@@ -2024,8 +2026,10 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
     Xsdt->Header.Checksum = (UINT8)(256-Checksum8((CHAR8*)Xsdt, Xsdt->Header.Length));
   }
   
-  gBS->InstallConfigurationTable (&gEfiAcpiTableGuid, (VOID*)RsdPointer);
-  gBS->InstallConfigurationTable (&gEfiAcpi10TableGuid, (VOID*)RsdPointer);
+  if (NeedUpdate) {
+    gBS->InstallConfigurationTable (&gEfiAcpiTableGuid, (VOID*)RsdPointer);
+    gBS->InstallConfigurationTable (&gEfiAcpi10TableGuid, (VOID*)RsdPointer);
+  }
 
   //free regions?
   while (gRegions) {
