@@ -577,8 +577,3 @@
   GCC:*_*_*_CC_FLAGS   = $(BUILD_OPTIONS) 
   #-Wunused-but-set-variable
   # -Os -fno-omit-frame-pointer -maccumulate-outgoing-args
-!ifdef USE_LOW_EBDA
-!ifndef USE_BIOS_BLOCKIO
-  GCC:*_GCC53_X64_CC_FLAGS = -Os
-!endif
-!endif

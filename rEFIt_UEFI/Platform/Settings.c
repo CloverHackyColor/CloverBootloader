@@ -3525,7 +3525,7 @@ GetUserSettings(
         if (Count > 0) {
           DBG ("Add %d devices\n", Count);
           for (Index = 0; Index < Count; Index++) {
-            UINTN DeviceAddr;
+            UINTN DeviceAddr = 0U;
             if (EFI_ERROR (GetElement (Prop, Index, &Prop2))) {
               DBG ("AddProperties continue at %d\n", Index);
               continue;

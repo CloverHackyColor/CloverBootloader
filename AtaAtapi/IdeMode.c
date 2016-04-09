@@ -244,7 +244,7 @@ IdeReadPortWMultiple (
 {
   UINT16  *AlignedBuffer;
   UINT16  *WorkingBuffer;
-  UINTN   Size;
+  UINTN   Size = 0U;
 
   if (((UINTN) Buffer) & 1U) {
   //
