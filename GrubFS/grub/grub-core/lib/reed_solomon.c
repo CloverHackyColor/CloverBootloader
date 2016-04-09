@@ -357,12 +357,12 @@ grub_reed_solomon_add_redundancy (void *buffer, grub_size_t data_size,
   gf_single_t *rptr = ptr + s;
   void *tmp;
 
-  tmp = xmalloc (data_size);
-  grub_memcpy (tmp, buffer, data_size);
-
   /* Nothing to do.  */
   if (!rs)
     return;
+
+  tmp = xmalloc (data_size);
+  grub_memcpy (tmp, buffer, data_size);
 
   init_powx ();
 
