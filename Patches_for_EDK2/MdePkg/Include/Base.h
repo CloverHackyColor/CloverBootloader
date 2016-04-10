@@ -498,7 +498,7 @@ typedef __builtin_va_list VA_LIST;
 
 #define VA_COPY(Dest, Start)         __builtin_va_copy (Dest, Start)
 
-#elif defined(__GNUC__) && defined(__x86_64__) && (GCC_VERSION >= 48)
+#elif defined(__GNUC__) && defined(__x86_64__) && ((GCC_VERSION >= 48) || defined(__clang__))
 
   typedef __builtin_ms_va_list VA_LIST;
 
