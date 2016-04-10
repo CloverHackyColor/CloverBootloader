@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #  ebuild.sh ->ebuild.sh  //renamed to be unique file begining from E
-#  Script for building CloverEFI source under OS X
+#  Script for building CloverEFI source under OS X or Linux
 #  Supported chainloads(compilers) are XCODE32, UNIXGCC and CLANG
 #  
 #
@@ -14,7 +14,12 @@ cd "$(dirname $0)"
 # Global variables
 declare -r SELF="${0##*/}"
 declare -r CLOVERROOT="$PWD"
-declare -r NUMBER_OF_CPUS=$(sysctl -n hw.ncpu)
+declare -r SYSNAME="$(uname)"
+if [[ "$SYSNAME" == Linux ]]; then
+  declare -r NUMBER_OF_CPUS=$(nproc)
+else
+  declare -r NUMBER_OF_CPUS=$(sysctl -n hw.ncpu)
+fi
 declare -a EDK2_BUILD_OPTIONS=
 print_option_help_wc=
 have_fmt=
@@ -33,7 +38,11 @@ export CONF_PATH=${CONF_PATH:-}
 
 # if building through Xcode, then TOOLCHAIN_DIR is not defined
 # checking if it is where CloverGrowerPro put it
-TOOLCHAIN_DIR=${TOOLCHAIN_DIR:-"$CLOVERROOT"/../../toolchain}
+if [[ "$SYSNAME" == Linux ]]; then
+  TOOLCHAIN_DIR=${TOOLCHAIN_DIR:-/usr}
+else
+  TOOLCHAIN_DIR=${TOOLCHAIN_DIR:-"$CLOVERROOT"/../../toolchain}
+fi
 if [[ ! -d $TOOLCHAIN_DIR ]]; then
   TOOLCHAIN_DIR="${PWD}"/../../opt/local
 fi
@@ -58,21 +67,31 @@ fi
 
 # Check if we need to patch the sources
 PATCH_FILE=
-declare -r XCODE_MAJOR_VERSION="$(xcodebuild -version | sed -nE 's/^Xcode ([0-9]).*/\1/p')"
-case "$XCODE_MAJOR_VERSION" in
-    5) PATCH_FILE=;;
-esac
+if [[ "$SYSNAME" == Linux ]]; then
+  if [[ ! -x "$TOOLCHAIN_DIR"/bin/gcc ]]; then
+      echo "No clover toolchain found !" >&2
+      echo "Install on your system or define the TOOLCHAIN_DIR variable." >&2
+      exit 1
+  fi
+else
+  declare -r XCODE_MAJOR_VERSION="$(xcodebuild -version | sed -nE 's/^Xcode ([0-9]).*/\1/p')"
+  case "$XCODE_MAJOR_VERSION" in
+      5) PATCH_FILE=;;
+  esac
 
-if [[ ! -x "$TOOLCHAIN_DIR"/cross/bin/x86_64-clover-linux-gnu-gcc && \
-      ! -x "$TOOLCHAIN_DIR"/cross/bin/i686-clover-linux-gnu-gcc ]]; then
-    echo "No clover toolchain found !" >&2
-    echo "Build it with the buidgcc.sh script or defined the TOOLCHAIN_DIR variable." >&2
-    exit 1
+  if [[ ! -x "$TOOLCHAIN_DIR"/cross/bin/x86_64-clover-linux-gnu-gcc && \
+        ! -x "$TOOLCHAIN_DIR"/cross/bin/i686-clover-linux-gnu-gcc ]]; then
+      echo "No clover toolchain found !" >&2
+      echo "Build it with the buidgcc.sh script or defined the TOOLCHAIN_DIR variable." >&2
+      exit 1
+  fi
 fi
 
 if [[ ! -x "$TOOLCHAIN_DIR"/bin/nasm ]]; then
     echo "No nasm binary found in toolchain directory !" >&2
-    echo "Build it with the buidnasm.sh script." >&2
+    if [[ "$SYSNAME" != Linux ]]; then
+      echo "Build it with the buidnasm.sh script." >&2
+    fi
     exit 1
 fi
 
@@ -373,12 +392,14 @@ MainBuildScript() {
 
     # Cleaning part of the script if we have told to do it
     if [[ "$TARGETRULE" == cleanpkg ]]; then
-        # Make some house cleaning
-        echo "Cleaning CloverUpdater files..."
-        make -C "$CLOVERROOT"/CloverPackage/CloverUpdater clean
+        if [[ "$SYSNAME" != Linux ]]; then
+            # Make some house cleaning
+            echo "Cleaning CloverUpdater files..."
+            make -C "$CLOVERROOT"/CloverPackage/CloverUpdater clean
 
-        echo "Cleaning CloverPrefpane files..."
-        make -C "$CLOVERROOT"/CloverPackage/CloverPrefpane clean
+            echo "Cleaning CloverPrefpane files..."
+            make -C "$CLOVERROOT"/CloverPackage/CloverPrefpane clean
+        fi
 
         echo "Cleaning bootsector files..."
         local BOOTHFS="$CLOVERROOT"/BootHFS
@@ -615,7 +636,9 @@ export LC_ALL=POSIX
 
 
 # Add toolchain bin directory to the PATH
-pathmunge "$TOOLCHAIN_DIR/bin"
+if [[ "$SYSNAME" != Linux ]]; then
+  pathmunge "$TOOLCHAIN_DIR/bin"
+fi
 
 MainBuildScript $@
 if [[ -z $MODULEFILE  ]]; then
