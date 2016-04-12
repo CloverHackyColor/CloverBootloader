@@ -142,6 +142,7 @@ SetVariablesForOSX()
 
   UINT32  Attributes;
   UINT32  FwFeaturesMask;
+  UINT32  Color;
   CHAR8   *None;
 
   CHAR16  *KbdPrevLang;
@@ -198,9 +199,9 @@ SetVariablesForOSX()
 
   // reserved for a future. Should be tested on Yosemite
   // HW_MLB and HW_ROM are also around on some Macs with the same values as MLB and ROM
-/*
+
   AddNvramVariable(L"HW_BID", &gEfiAppleNvramGuid, Attributes, AsciiStrLen(gSettings.BoardNumber), gSettings.BoardNumber);
-*/
+
 
   //
   // OS X non-volatile Variables
@@ -251,6 +252,9 @@ SetVariablesForOSX()
       AddNvramVariable(L"backlight-level", &gEfiAppleBootGuid, Attributes, sizeof(gSettings.BacklightLevel), &gSettings.BacklightLevel);
     }
   }
+
+  Color = 0x80808080;
+  AddNvramVariable(L"DefaultBackgroundColor", &gEfiAppleNvramGuid, Attributes, 4, &Color);
 
   //Hack for recovery by Asgorath
   if (gSettings.CsrActiveConfig != 0xFFFF) {
