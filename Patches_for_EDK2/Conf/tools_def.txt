@@ -6818,7 +6818,9 @@ RELEASE_XCODE5_*_MTOC_FLAGS = -align 0x20
 #
 *_XCODE5_*_CC_PATH      = clang
 *_XCODE5_*_SLINK_PATH   = libtool
-*_XCODE5_*_DLINK_PATH   = ld
+DEBUG_XCODE5_*_DLINK_PATH   = ld
+NOOPT_XCODE5_*_DLINK_PATH   = ld
+RELEASE_XCODE5_*_DLINK_PATH   = clang
 *_XCODE5_*_ASM_PATH     = as
 *_XCODE5_*_PP_PATH      = clang
 *_XCODE5_*_VFRPP_PATH   = clang
@@ -6830,9 +6832,9 @@ RELEASE_XCODE5_*_MTOC_FLAGS = -align 0x20
 ####################
 # IA-32 definitions
 ####################
-  DEBUG_XCODE5_IA32_DLINK_FLAGS      = -arch i386 -u _$(IMAGE_ENTRY_POINT) -e _$(IMAGE_ENTRY_POINT) -preload -segalign 0x20  -pie -all_load -dead_strip -seg1addr 0x240 -read_only_relocs suppress -map $(DEST_DIR_DEBUG)/$(BASE_NAME).map
-  NOOPT_XCODE5_IA32_DLINK_FLAGS      = -arch i386 -u _$(IMAGE_ENTRY_POINT) -e _$(IMAGE_ENTRY_POINT) -preload -segalign 0x20  -pie -all_load -dead_strip -seg1addr 0x240 -read_only_relocs suppress -map $(DEST_DIR_DEBUG)/$(BASE_NAME).map
-RELEASE_XCODE5_IA32_DLINK_FLAGS      = -arch i386 -u _$(IMAGE_ENTRY_POINT) -e _$(IMAGE_ENTRY_POINT) -preload -segalign 0x20  -pie -all_load -dead_strip -seg1addr 0x240 -read_only_relocs suppress -map $(DEST_DIR_DEBUG)/$(BASE_NAME).map
+  DEBUG_XCODE5_IA32_DLINK_FLAGS      = -arch i386 -u _$(IMAGE_ENTRY_POINT) -e _$(IMAGE_ENTRY_POINT) -preload -segalign 0x20  -pie -dead_strip -seg1addr 0x240 -read_only_relocs suppress -map $(DEST_DIR_DEBUG)/$(BASE_NAME).map
+  NOOPT_XCODE5_IA32_DLINK_FLAGS      = -arch i386 -u _$(IMAGE_ENTRY_POINT) -e _$(IMAGE_ENTRY_POINT) -preload -segalign 0x20  -pie -dead_strip -seg1addr 0x240 -read_only_relocs suppress -map $(DEST_DIR_DEBUG)/$(BASE_NAME).map
+RELEASE_XCODE5_IA32_DLINK_FLAGS      = -arch i386 -nostdlib -Os -flto -Wl,-u,_$(IMAGE_ENTRY_POINT),-e,_$(IMAGE_ENTRY_POINT),-preload,-segalign,0x20,-pie,-dead_strip,-seg1addr,0x240,-read_only_relocs,suppress,-map,$(DEST_DIR_DEBUG)/$(BASE_NAME).map
 
 *_XCODE5_IA32_SLINK_FLAGS      = -static -o
   DEBUG_XCODE5_IA32_ASM_FLAGS  = -arch i386 -g
@@ -6845,7 +6847,7 @@ RELEASE_XCODE5_IA32_ASM_FLAGS  = -arch i386
 # -ftrap-function=undefined_behavior_has_been_optimized_away_by_clang
 
 #-mno-implicit-float
-RELEASE_XCODE5_IA32_CC_FLAGS   = -arch i386 -c    -Os       -Wall -Werror -include AutoGen.h -funsigned-char -fno-stack-protector -fno-builtin -fshort-wchar -fasm-blocks -mdynamic-no-pic -mms-bitfields -msoft-float -Wno-unused-parameter -Wno-missing-braces -Wno-missing-field-initializers -Wno-tautological-compare -Wno-sign-compare $(PLATFORM_FLAGS)
+RELEASE_XCODE5_IA32_CC_FLAGS   = -arch i386 -c    -Os -flto -Wall -Werror -include AutoGen.h -funsigned-char -fno-stack-protector -fno-builtin -fshort-wchar -fasm-blocks -mdynamic-no-pic -mms-bitfields -msoft-float -Wno-unused-parameter -Wno-missing-braces -Wno-missing-field-initializers -Wno-tautological-compare -Wno-sign-compare $(PLATFORM_FLAGS)
 #-ftrap-function=undefined_behavior_has_been_optimized_away_by_clang 
 
 #-mno-implicit-float
@@ -6859,9 +6861,9 @@ RELEASE_XCODE5_IA32_CC_FLAGS   = -arch i386 -c    -Os       -Wall -Werror -inclu
 ##################
 # X64 definitions
 ##################
-  DEBUG_XCODE5_X64_DLINK_FLAGS      = -arch x86_64 -u _$(IMAGE_ENTRY_POINT) -e _$(IMAGE_ENTRY_POINT) -preload -segalign 0x20  -pie -all_load -dead_strip -seg1addr 0x240 -map $(DEST_DIR_DEBUG)/$(BASE_NAME).map
-  NOOPT_XCODE5_X64_DLINK_FLAGS      = -arch x86_64 -u _$(IMAGE_ENTRY_POINT) -e _$(IMAGE_ENTRY_POINT) -preload -segalign 0x20  -pie -all_load -dead_strip -seg1addr 0x240 -map $(DEST_DIR_DEBUG)/$(BASE_NAME).map
-RELEASE_XCODE5_X64_DLINK_FLAGS      = -arch x86_64 -u _$(IMAGE_ENTRY_POINT) -e _$(IMAGE_ENTRY_POINT) -preload -segalign 0x20  -pie -all_load -dead_strip -seg1addr 0x240 -map $(DEST_DIR_DEBUG)/$(BASE_NAME).map
+  DEBUG_XCODE5_X64_DLINK_FLAGS      = -arch x86_64 -u _$(IMAGE_ENTRY_POINT) -e _$(IMAGE_ENTRY_POINT) -preload -segalign 0x20  -pie -dead_strip -seg1addr 0x240 -map $(DEST_DIR_DEBUG)/$(BASE_NAME).map
+  NOOPT_XCODE5_X64_DLINK_FLAGS      = -arch x86_64 -u _$(IMAGE_ENTRY_POINT) -e _$(IMAGE_ENTRY_POINT) -preload -segalign 0x20  -pie -dead_strip -seg1addr 0x240 -map $(DEST_DIR_DEBUG)/$(BASE_NAME).map
+RELEASE_XCODE5_X64_DLINK_FLAGS      = -arch x86_64 -nostdlib -Os -flto -Wl,-u,_$(IMAGE_ENTRY_POINT),-e,_$(IMAGE_ENTRY_POINT),-preload,-segalign,0x20,-pie,-dead_strip,-seg1addr,0x240,-map,$(DEST_DIR_DEBUG)/$(BASE_NAME).map
 
 *_XCODE5_X64_SLINK_FLAGS      = -static -o
   DEBUG_XCODE5_X64_ASM_FLAGS  = -arch x86_64 -g
@@ -6880,7 +6882,7 @@ RELEASE_XCODE5_X64_ASM_FLAGS  = -arch x86_64
 # -ftrap-function=undefined_behavior_has_been_optimized_away_by_clang
 
 #-mno-implicit-float
-RELEASE_XCODE5_X64_CC_FLAGS   = -target x86_64-pc-win32-macho -c    -Os       -Wall -Werror -Wextra -include AutoGen.h -funsigned-char -fno-ms-extensions -fno-stack-protector -fno-builtin -fshort-wchar -mms-bitfields -Wno-unused-parameter -Wno-missing-braces -Wno-missing-field-initializers -Wno-tautological-compare -Wno-sign-compare $(PLATFORM_FLAGS)
+RELEASE_XCODE5_X64_CC_FLAGS   = -target x86_64-pc-win32-macho -c    -Os -flto -Wall -Werror -Wextra -include AutoGen.h -funsigned-char -fno-ms-extensions -fno-stack-protector -fno-builtin -fshort-wchar -mms-bitfields -Wno-unused-parameter -Wno-missing-braces -Wno-missing-field-initializers -Wno-tautological-compare -Wno-sign-compare $(PLATFORM_FLAGS)
 # -ftrap-function=undefined_behavior_has_been_optimized_away_by_clang
 
 #-mno-implicit-float

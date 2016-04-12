@@ -7,10 +7,8 @@
     PC Card Standard, 8.0
     PCI Power Management Interface Specifiction, Revision 1.2
 
-  
-
-  Copyright (c) 2006 - 2012, Intel Corporation. All rights reserved.<BR>
-  Copyright (c) 2014, Hewlett-Packard Development Company, L.P.<BR>
+  Copyright (c) 2006 - 2016, Intel Corporation. All rights reserved.<BR>
+  Copyright (c) 2014 - 2015, Hewlett-Packard Development Company, L.P.<BR>
   This program and the accompanying materials                          
   are licensed and made available under the terms and conditions of the BSD License         
   which accompanies this distribution.  The full text of the license may be found at        
@@ -553,6 +551,7 @@ typedef struct {
 #define PCI_BRIDGE_PRIMARY_BUS_REGISTER_OFFSET      0x18   
 #define PCI_BRIDGE_SECONDARY_BUS_REGISTER_OFFSET    0x19   
 #define PCI_BRIDGE_SUBORDINATE_BUS_REGISTER_OFFSET  0x1a   
+#define PCI_BRIDGE_SECONDARY_LATENCY_TIMER_OFFSET   0x1b
 #define PCI_BRIDGE_STATUS_REGISTER_OFFSET           0x1E   
 #define PCI_BRIDGE_CONTROL_REGISTER_OFFSET          0x3E   
 

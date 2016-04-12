@@ -256,8 +256,8 @@ LegacyBiosInt86 (
   ThunkRegSet.E.SS   = (UINT16) (((UINTN) Stack16 >> 16) << 12);
   ThunkRegSet.E.ESP  = (UINT16) (UINTN) Stack16;
 
-  ThunkRegSet.E.Eip  = (UINT16)((UINT32 *)NULL)[BiosInt];
-  ThunkRegSet.E.CS   = (UINT16)(((UINT32 *)NULL)[BiosInt] >> 16);
+  ThunkRegSet.E.Eip  = *(UINT16*)(((UINTN)BiosInt) * sizeof(UINT32));
+  ThunkRegSet.E.CS   = *(UINT16*)((((UINTN)BiosInt) * sizeof(UINT32)) + sizeof(UINT16));
   mThunkContext->RealModeState = &ThunkRegSet;
   AsmThunk16 (mThunkContext);
   
