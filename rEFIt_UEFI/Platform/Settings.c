@@ -3369,6 +3369,7 @@ GetUserSettings(
       Prop = GetProperty (DictPointer, "Arguments");
       if (Prop != NULL && (Prop->type == kTagTypeString) && Prop->string != NULL) {
         AsciiStrnCpy(gSettings.BootArgs, Prop->string, 255);
+        gBootArgsChanged = TRUE;
       }
     }
     
