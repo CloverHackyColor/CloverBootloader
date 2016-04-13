@@ -1495,7 +1495,7 @@ void get_vram_size(void)
       // size in MB on evergreen
       // XXX watch for overflow!!!
       card->vram_size = ((UINT64)REG32(card->mmio, R600_CONFIG_MEMSIZE)) << 20;
-      DBG("Set VRAM for Cedar=%dMb\n", (INTN)RShiftU64(card->vram_size, 20));
+      DBG("Set VRAM for Cedar+ =%dMb\n", (INTN)RShiftU64(card->vram_size, 20));
     } else if (chip_family >= CHIP_FAMILY_R600) {
 			card->vram_size = REG32(card->mmio, R600_CONFIG_MEMSIZE);
     } else {

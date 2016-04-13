@@ -45,6 +45,7 @@
 
 [Packages]
   MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
   IntelFrameworkPkg/IntelFrameworkPkg.dec
   IntelFrameworkModulePkg/IntelFrameworkModulePkg.dec
 
@@ -70,9 +71,9 @@
   gEfiDevicePathProtocolGuid                    # PROTOCOL ALWAYS_CONSUMED
 
 [FeaturePcd]
-  gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdPs2KbdExtendedVerification|FALSE
+#  gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdPs2KbdExtendedVerification|FALSE
+  gEfiMdeModulePkgTokenSpaceGuid.PcdPs2KbdExtendedVerification|FALSE
   
-[BuildOptions]
 [BuildOptions]
   XCODE:*_*_*_CC_FLAGS = -Os  -DMDEPKG_NDEBUG
   GCC:*_*_*_CC_FLAGS = -O0 -DMDEPKG_NDEBUG
