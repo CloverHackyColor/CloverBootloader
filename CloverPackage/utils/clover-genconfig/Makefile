@@ -17,7 +17,7 @@ ifeq "$(XCODE_VERSION_GE_4)" "1"
 	XCODEBUILD_OPTIONS += -scheme 'clover-genconfig'
 	BUILD_ACTION=install
 endif
-XCODEBUILD_OPTIONS += -configuration 'Release'
+XCODEBUILD_OPTIONS += -configuration 'Release' -project 'clover-genconfig.xcodeproj'
 
 
 SRCS := $(wildcard *.c)

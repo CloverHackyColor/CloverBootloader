@@ -479,7 +479,7 @@ struct _LIST_ENTRY {
 #define VA_COPY(Dest, Start)          __va_copy (Dest, Start)
 
 //#elif defined(__GNUC__) && !defined(NO_BUILTIN_VA_FUNCS)
-#elif defined(__GNUC__) && !defined(__x86_64__)
+#elif defined(__GNUC__) && (!defined(__x86_64__) || defined(TARGET_MAC))
 //
 // Use GCC built-in macros for variable argument lists.
 //
