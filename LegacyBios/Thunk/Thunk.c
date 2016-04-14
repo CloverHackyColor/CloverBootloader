@@ -58,6 +58,8 @@ LegacyBiosInt86 (
   )
 {
   UINT32  *VectorBase;
+  UINT16  Segment;
+  UINT16  Offset
 
   Regs->X.Flags.Reserved1 = 1;
   Regs->X.Flags.Reserved2 = 0;
@@ -73,11 +75,13 @@ LegacyBiosInt86 (
   // We use this base address to get the legacy interrupt handler.
   //
   VectorBase              = 0;
+  Offset   = *(UINT16*)(UINTN)(VectorBase + (UINTN)BiosInt);
+  Segment  = *(UINT16*)((UINTN)(VectorBase + (UINTN)(BiosInt)) + sizeof(UINT16));
   
   return InternalLegacyBiosFarCall (
            This,
-           (UINT16) ((VectorBase)[BiosInt] >> 16),
-           (UINT16) (VectorBase)[BiosInt],
+           Segment,
+           Offset,
            Regs,
            &Regs->X.Flags,
            sizeof (Regs->X.Flags)
@@ -90,7 +94,7 @@ LegacyBiosInt86 (
   the Stack argument
 
   @param  This                   Protocol instance pointer.
-  @param  Segment                Segemnt of 16-bit mode call
+  @param  Segment                Segment of 16-bit mode call
   @param  Offset                 Offset of 16-bit mdoe call
   @param  Regs                   Register contexted passed into (and returned) from
                                  thunk to  16-bit mode

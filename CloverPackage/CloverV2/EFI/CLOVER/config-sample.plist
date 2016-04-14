@@ -559,6 +559,8 @@
 				<string>0x44220000</string>
 			</dict>
 			<dict>
+				<key>Comment</key>
+				<string>Make all drives to be internal</string>
 				<key>Find</key>
 				<data>RXh0ZXJuYWw=</data>
 				<key>Name</key>
