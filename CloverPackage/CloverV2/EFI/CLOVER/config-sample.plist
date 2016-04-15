@@ -733,6 +733,8 @@
 		<string>511CE201-1000-4000-9999-010203040506</string>
 		<key>InjectSystemID</key>
 		<true/>
+		<key>#DefaultBackgroundColor</key>
+		<string>0xF0F0F0</string>
 	</dict>
 </dict>
 </plist>

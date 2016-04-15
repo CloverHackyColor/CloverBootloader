@@ -253,8 +253,10 @@ SetVariablesForOSX()
     }
   }
 
-  Color = 0x80808080;
-  AddNvramVariable(L"DefaultBackgroundColor", &gEfiAppleNvramGuid, Attributes, 4, &Color);
+  if (gSettings.DefaultBackgroundColor != 0x80000000) {
+    Color = gSettings.DefaultBackgroundColor;
+    AddNvramVariable(L"DefaultBackgroundColor", &gEfiAppleNvramGuid, Attributes, 4, &Color);
+  }
 
   //Hack for recovery by Asgorath
   if (gSettings.CsrActiveConfig != 0xFFFF) {

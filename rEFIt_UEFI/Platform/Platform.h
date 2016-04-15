@@ -860,7 +860,8 @@ typedef struct {
   // GUI parameters
   BOOLEAN                 Debug;
   BOOLEAN                 Proportional;
-  UINT8                   Pad22[5];
+  UINT8                   Pad22[1];
+  UINT32                DefaultBackgroundColor;
   
   //ACPI
   UINT64	              ResetAddr;
