@@ -22,6 +22,27 @@ global ASM_PFX(SystemTimerHandler)
 
 ;global ASM_PFX(mExceptionCodeSize)
 
+;
+; Workaround for NASM bug emitting incorrect
+;   pc-relative relocations to mach-o i386
+;   object files.
+;
+%ifidn __OUTPUT_FORMAT__, macho
+%macro    MakeCall 2
+  mov     %1, %2
+  call    %1
+%endmacro
+%elifidn __OUTPUT_FORMAT__, macho32
+%macro    MakeCall 2
+  mov     %1, %2
+  call    %1
+%endmacro
+%else
+%macro    MakeCall 2
+  call    %2
+%endmacro
+%endif
+
 SECTION .text
 
 EXTERN ASM_PFX(TimerHandler)
@@ -338,10 +359,10 @@ commonIdtEntry:
   push    eax
   cmp     eax, 32
   jb      CallException
-  call    ASM_PFX(TimerHandler)
+  MakeCall eax, ASM_PFX(TimerHandler)
   jmp     ExceptionDone
 CallException:
-  call    ASM_PFX(ExceptionHandler)
+  MakeCall eax, ASM_PFX(ExceptionHandler)
 ExceptionDone:
   add     esp, 8
 

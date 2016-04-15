@@ -22,7 +22,7 @@ Revision History:
 #include "SerialStatusCode.h"
 #include "Debug.h"
 
-UINT8 *mCursor;
+UINT8 *mCursor = (UINT8 *)(UINTN)(0x000b8000 + 160);
 UINT8 mHeaderIndex = 10;
 
 
@@ -43,7 +43,7 @@ ClearScreen (
   UINT32 Index;
 
   mCursor = (UINT8 *)(UINTN)(0x000b8000 + 160);
-  for (Index = 0; Index < 80 * 49; Index++) {
+  for (Index = 0; Index < 80 * 24; Index++) {
     *mCursor = ' ';
     mCursor += 2;
   }
