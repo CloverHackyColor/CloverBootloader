@@ -253,7 +253,9 @@ SetVariablesForOSX()
     }
   }
 
-  if (gSettings.DefaultBackgroundColor != 0x80000000) {
+  if (gSettings.DefaultBackgroundColor == 0x80000000) {
+    DeleteNvramVariable(L"DefaultBackgroundColor", &gEfiAppleNvramGuid);
+  } else {
     Color = gSettings.DefaultBackgroundColor;
     AddNvramVariable(L"DefaultBackgroundColor", &gEfiAppleNvramGuid, Attributes, 4, &Color);
   }
