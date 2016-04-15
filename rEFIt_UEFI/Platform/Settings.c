@@ -4736,7 +4736,7 @@ GetUserSettings(
       }
       
       Prop = GetProperty (DictPointer, "DefaultBackgroundColor");
-      gSettings.DefaultBackgroundColor = (UINT16)GetPropertyInteger (Prop, 0x80000000); //the value 0x80000000 means not set
+      gSettings.DefaultBackgroundColor = (UINT32)GetPropertyInteger (Prop, 0x80000000); //the value 0x80000000 means not set
       
       Prop = GetProperty (DictPointer, "CustomUUID");
       if (Prop != NULL) {
