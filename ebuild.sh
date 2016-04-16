@@ -548,6 +548,17 @@ MainPostBuildScript() {
         "${BUILD_DIR}"/FV/DxeIpl${TARGETARCH}.z        \
         "${BUILD_DIR}"/FV/DxeMain${TARGETARCH}.z       \
         "${BUILD_DIR}"/FV/DUETEFIMAINFV${TARGETARCH}.z
+        if [[ "$USE_LOW_EBDA" -ne 0 ]]; then
+            if [[ "$SYSNAME" == Linux ]]; then
+                local EL_SIZE=$(stat -c "%s" "${BUILD_DIR}"/FV/Efildr64)
+            else
+                local EL_SIZE=$(stat -f "%z" "${BUILD_DIR}"/FV/Efildr64)
+            fi
+            if (( $((EL_SIZE)) > 417792 )); then
+                echo 'warning: boot file bigger than low-ebda permits, switching to --std-ebda'
+                USE_LOW_EBDA=0
+            fi
+        fi
         startBlock=Start64H.com
 		if [[ "$USE_BIOS_BLOCKIO" -ne 0 ]]; then
 			cloverEFIFile=boot7
