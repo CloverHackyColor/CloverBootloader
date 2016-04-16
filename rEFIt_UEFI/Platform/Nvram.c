@@ -467,11 +467,13 @@ GetEfiBootDeviceFromNvram ()
   }
 
   gEfiBootDeviceData = GetNvramVariable (L"efi-boot-next-data", &gEfiAppleBootGuid, NULL, &Size);
+  DBG("got efi-boot-next-data size=%d\n", Size);
   if (gEfiBootDeviceData != NULL) {
     DBG ("\n");
     DBG (" efi-boot-next-data: %s\n", FileDevicePathToStr (gEfiBootDeviceData));
   } else {
     gEfiBootDeviceData = GetNvramVariable (L"efi-boot-device-data", &gEfiAppleBootGuid, NULL, &Size);
+    DBG("second efi-boot-next-data size=%d\n", Size);
   }
   if (gEfiBootDeviceData == NULL) {
     DBG (" efi-boot-device-data not found\n");

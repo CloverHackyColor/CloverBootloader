@@ -127,14 +127,14 @@ grub_file_seek(grub_file_t file, grub_off_t offset)
 
 	return old;
 }
-
+/*
 int
 grub_device_iterate(grub_device_iterate_hook_t hook, void *hook_data)
 {
 	PrintError(L"grub_device_iterate() called\n");
 	return 0;
 }
-
+*/
 grub_disk_read_hook_t grub_file_progress_hook = NULL;
 
 grub_err_t
