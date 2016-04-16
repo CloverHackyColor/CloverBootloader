@@ -741,7 +741,7 @@ IDT_BASE:
 # divide by zero (INT 0)
 .equ                DIV_ZERO_SEL, .-IDT_BASE
         .word 0               # offset 15:0
-        .long SYS_CODE64_SEL  # selector 15:0
+        .word SYS_CODE64_SEL  # selector 15:0
         .byte 0               # 0 for interrupt gate
         .byte 0x0e | 0x80     # type = 386 interrupt gate, present
         .word 0               # offset 31:16
@@ -751,7 +751,7 @@ IDT_BASE:
 # debug exception (INT 1)
 .equ                DEBUG_EXCEPT_SEL, .-IDT_BASE
         .word 0               # offset 15:0
-        .long SYS_CODE64_SEL  # selector 15:0
+        .word SYS_CODE64_SEL  # selector 15:0
         .byte 0               # 0 for interrupt gate
         .byte 0x0e | 0x80     # type = 386 interrupt gate, present
         .word 0               # offset 31:16
@@ -761,7 +761,7 @@ IDT_BASE:
 # NMI (INT 2)
 .equ                NMI_SEL, .-IDT_BASE
         .word 0               # offset 15:0
-        .long SYS_CODE64_SEL  # selector 15:0
+        .word SYS_CODE64_SEL  # selector 15:0
         .byte 0               # 0 for interrupt gate
         .byte 0x0e | 0x80     # type = 386 interrupt gate, present
         .word 0               # offset 31:16
@@ -771,7 +771,7 @@ IDT_BASE:
 # soft breakpoint (INT 3)
 .equ                BREAKPOINT_SEL, .-IDT_BASE
         .word 0               # offset 15:0
-        .long SYS_CODE64_SEL  # selector 15:0
+        .word SYS_CODE64_SEL  # selector 15:0
         .byte 0               # 0 for interrupt gate
         .byte 0x0e | 0x80     # type = 386 interrupt gate, present
         .word 0               # offset 31:16
@@ -781,7 +781,7 @@ IDT_BASE:
 # overflow (INT 4)
 .equ                OVERFLOW_SEL, .-IDT_BASE
         .word 0               # offset 15:0
-        .long SYS_CODE64_SEL  # selector 15:0
+        .word SYS_CODE64_SEL  # selector 15:0
         .byte 0               # 0 for interrupt gate
         .byte 0x0e | 0x80     # type = 386 interrupt gate, present
         .word 0               # offset 31:16
@@ -791,7 +791,7 @@ IDT_BASE:
 # bounds check (INT 5)
 .equ                BOUNDS_CHECK_SEL, .-IDT_BASE
         .word 0               # offset 15:0
-        .long SYS_CODE64_SEL  # selector 15:0
+        .word SYS_CODE64_SEL  # selector 15:0
         .byte 0               # 0 for interrupt gate
         .byte 0x0e | 0x80     # type = 386 interrupt gate, present
         .word 0               # offset 31:16
@@ -801,7 +801,7 @@ IDT_BASE:
 # invalid opcode (INT 6)
 .equ                INVALID_OPCODE_SEL, .-IDT_BASE
         .word 0               # offset 15:0
-        .long SYS_CODE64_SEL  # selector 15:0
+        .word SYS_CODE64_SEL  # selector 15:0
         .byte 0               # 0 for interrupt gate
         .byte 0x0e | 0x80     # type = 386 interrupt gate, present
         .word 0               # offset 31:16
@@ -811,7 +811,7 @@ IDT_BASE:
 # device not available (INT 7)
 .equ                DEV_NOT_AVAIL_SEL, .-IDT_BASE
         .word 0               # offset 15:0
-        .long SYS_CODE64_SEL  # selector 15:0
+        .word SYS_CODE64_SEL  # selector 15:0
         .byte 0               # 0 for interrupt gate
         .byte 0x0e | 0x80     # type = 386 interrupt gate, present
         .word 0               # offset 31:16
@@ -821,7 +821,7 @@ IDT_BASE:
 # double fault (INT 8)
 .equ                DOUBLE_FAULT_SEL, .-IDT_BASE
         .word 0               # offset 15:0
-        .long SYS_CODE64_SEL  # selector 15:0
+        .word SYS_CODE64_SEL  # selector 15:0
         .byte 0               # 0 for interrupt gate
         .byte 0x0e | 0x80     # type = 386 interrupt gate, present
         .word 0               # offset 31:16
@@ -831,7 +831,7 @@ IDT_BASE:
 # Coprocessor segment overrun - reserved (INT 9)
 .equ                RSVD_INTR_SEL1, .-IDT_BASE
         .word 0               # offset 15:0
-        .long SYS_CODE64_SEL  # selector 15:0
+        .word SYS_CODE64_SEL  # selector 15:0
         .byte 0               # 0 for interrupt gate
         .byte 0x0e | 0x80     # type = 386 interrupt gate, present
         .word 0               # offset 31:16
@@ -841,7 +841,7 @@ IDT_BASE:
 # invalid TSS (INT 0ah)
 .equ                INVALID_TSS_SEL, .-IDT_BASE
         .word 0               # offset 15:0
-        .long SYS_CODE64_SEL  # selector 15:0
+        .word SYS_CODE64_SEL  # selector 15:0
         .byte 0               # 0 for interrupt gate
         .byte 0x0e | 0x80     # type = 386 interrupt gate, present
         .word 0               # offset 31:16
@@ -851,7 +851,7 @@ IDT_BASE:
 # segment not present (INT 0bh)
 .equ                SEG_NOT_PRESENT_SEL, .-IDT_BASE
         .word 0               # offset 15:0
-        .long SYS_CODE64_SEL  # selector 15:0
+        .word SYS_CODE64_SEL  # selector 15:0
         .byte 0               # 0 for interrupt gate
         .byte 0x0e | 0x80     # type = 386 interrupt gate, present
         .word 0               # offset 31:16
@@ -861,7 +861,7 @@ IDT_BASE:
 # stack fault (INT 0ch)
 .equ                STACK_FAULT_SEL, .-IDT_BASE
         .word 0               # offset 15:0
-        .long SYS_CODE64_SEL  # selector 15:0
+        .word SYS_CODE64_SEL  # selector 15:0
         .byte 0               # 0 for interrupt gate
         .byte 0x0e | 0x80     # type = 386 interrupt gate, present
         .word 0               # offset 31:16
@@ -871,7 +871,7 @@ IDT_BASE:
 # general protection (INT 0dh)
 .equ                GP_FAULT_SEL, .-IDT_BASE
         .word 0               # offset 15:0
-        .long SYS_CODE64_SEL  # selector 15:0
+        .word SYS_CODE64_SEL  # selector 15:0
         .byte 0               # 0 for interrupt gate
         .byte 0x0e | 0x80     # type = 386 interrupt gate, present
         .word 0               # offset 31:16
@@ -881,7 +881,7 @@ IDT_BASE:
 # page fault (INT 0eh)
 .equ                PAGE_FAULT_SEL, .-IDT_BASE
         .word 0               # offset 15:0
-        .long SYS_CODE64_SEL  # selector 15:0
+        .word SYS_CODE64_SEL  # selector 15:0
         .byte 0               # 0 for interrupt gate
         .byte 0x0e | 0x80     # type = 386 interrupt gate, present
         .word 0               # offset 31:16
@@ -891,7 +891,7 @@ IDT_BASE:
 # Intel reserved - do not use (INT 0fh)
 .equ                RSVD_INTR_SEL2, .-IDT_BASE
         .word 0               # offset 15:0
-        .long SYS_CODE64_SEL  # selector 15:0
+        .word SYS_CODE64_SEL  # selector 15:0
         .byte 0               # 0 for interrupt gate
         .byte 0x0e | 0x80     # type = 386 interrupt gate, present
         .word 0               # offset 31:16
@@ -901,7 +901,7 @@ IDT_BASE:
 # floating point error (INT 10h)
 .equ                FLT_POINT_ERR_SEL, .-IDT_BASE
         .word 0               # offset 15:0
-        .long SYS_CODE64_SEL  # selector 15:0
+        .word SYS_CODE64_SEL  # selector 15:0
         .byte 0               # 0 for interrupt gate
         .byte 0x0e | 0x80     # type = 386 interrupt gate, present
         .word 0               # offset 31:16
@@ -911,7 +911,7 @@ IDT_BASE:
 # alignment check (INT 11h)
 .equ                ALIGNMENT_CHECK_SEL, .-IDT_BASE
         .word 0               # offset 15:0
-        .long SYS_CODE64_SEL  # selector 15:0
+        .word SYS_CODE64_SEL  # selector 15:0
         .byte 0               # 0 for interrupt gate
         .byte 0x0e | 0x80     # type = 386 interrupt gate, present
         .word 0               # offset 31:16
@@ -921,7 +921,7 @@ IDT_BASE:
 # machine check (INT 12h)
 .equ                MACHINE_CHECK_SEL, .-IDT_BASE
         .word 0               # offset 15:0
-        .long SYS_CODE64_SEL  # selector 15:0
+        .word SYS_CODE64_SEL  # selector 15:0
         .byte 0               # 0 for interrupt gate
         .byte 0x0e | 0x80     # type = 386 interrupt gate, present
         .word 0               # offset 31:16
@@ -931,20 +931,20 @@ IDT_BASE:
 # SIMD floating-point exception (INT 13h)
 .equ                SIMD_EXCEPTION_SEL, .-IDT_BASE
         .word 0               # offset 15:0
-        .long SYS_CODE64_SEL  # selector 15:0
+        .word SYS_CODE64_SEL  # selector 15:0
         .byte 0               # 0 for interrupt gate
         .byte 0x0e | 0x80     # type = 386 interrupt gate, present
         .word 0               # offset 31:16
         .long 0               # offset 63:32
         .long 0               # 0 for reserved
 
-# 85 unspecified descriptors, First 12 of them are reserved, the rest are avail
-        .fill 85 * 16, 1, 0   # db (85 * 16) dup(0)
+# 84 unspecified descriptors, First 12 of them are reserved, the rest are avail
+        .fill 84 * 16, 1, 0   # db (84 * 16) dup(0)
 
 # IRQ 0 (System timer) - (INT 68h)
 .equ                IRQ0_SEL, .-IDT_BASE
         .word 0               # offset 15:0
-        .long SYS_CODE64_SEL  # selector 15:0
+        .word SYS_CODE64_SEL  # selector 15:0
         .byte 0               # 0 for interrupt gate
         .byte 0x0e | 0x80     # type = 386 interrupt gate, present
         .word 0               # offset 31:16
@@ -954,7 +954,7 @@ IDT_BASE:
 # IRQ 1 (8042 Keyboard controller) - (INT 69h)
 .equ                IRQ1_SEL, .-IDT_BASE
         .word 0               # offset 15:0
-        .long SYS_CODE64_SEL  # selector 15:0
+        .word SYS_CODE64_SEL  # selector 15:0
         .byte 0               # 0 for interrupt gate
         .byte 0x0e | 0x80     # type = 386 interrupt gate, present
         .word 0               # offset 31:16
@@ -964,7 +964,7 @@ IDT_BASE:
 # Reserved - IRQ 2 redirect (IRQ 2) - DO NOT USE!!! - (INT 6ah)
 .equ                IRQ2_SEL, .-IDT_BASE
         .word 0               # offset 15:0
-        .long SYS_CODE64_SEL  # selector 15:0
+        .word SYS_CODE64_SEL  # selector 15:0
         .byte 0               # 0 for interrupt gate
         .byte 0x0e | 0x80     # type = 386 interrupt gate, present
         .word 0               # offset 31:16
@@ -974,7 +974,7 @@ IDT_BASE:
 # IRQ 3 (COM 2) - (INT 6bh)
 .equ                IRQ3_SEL, .-IDT_BASE
         .word 0               # offset 15:0
-        .long SYS_CODE64_SEL  # selector 15:0
+        .word SYS_CODE64_SEL  # selector 15:0
         .byte 0               # 0 for interrupt gate
         .byte 0x0e | 0x80     # type = 386 interrupt gate, present
         .word 0               # offset 31:16
@@ -984,7 +984,7 @@ IDT_BASE:
 # IRQ 4 (COM 1) - (INT 6ch)
 .equ                IRQ4_SEL, .-IDT_BASE
         .word 0               # offset 15:0
-        .long SYS_CODE64_SEL  # selector 15:0
+        .word SYS_CODE64_SEL  # selector 15:0
         .byte 0               # 0 for interrupt gate
         .byte 0x0e | 0x80     # type = 386 interrupt gate, present
         .word 0               # offset 31:16
@@ -994,7 +994,7 @@ IDT_BASE:
 # IRQ 5 (LPT 2) - (INT 6dh)
 .equ                IRQ5_SEL, .-IDT_BASE
         .word 0               # offset 15:0
-        .long SYS_CODE64_SEL  # selector 15:0
+        .word SYS_CODE64_SEL  # selector 15:0
         .byte 0               # 0 for interrupt gate
         .byte 0x0e | 0x80     # type = 386 interrupt gate, present
         .word 0               # offset 31:16
@@ -1004,7 +1004,7 @@ IDT_BASE:
 # IRQ 6 (Floppy controller) - (INT 6eh)
 .equ                IRQ6_SEL, .-IDT_BASE
         .word 0               # offset 15:0
-        .long SYS_CODE64_SEL  # selector 15:0
+        .word SYS_CODE64_SEL  # selector 15:0
         .byte 0               # 0 for interrupt gate
         .byte 0x0e | 0x80     # type = 386 interrupt gate, present
         .word 0               # offset 31:16
@@ -1014,7 +1014,7 @@ IDT_BASE:
 # IRQ 7 (LPT 1) - (INT 6fh)
 .equ                IRQ7_SEL, .-IDT_BASE
         .word 0               # offset 15:0
-        .long SYS_CODE64_SEL  # selector 15:0
+        .word SYS_CODE64_SEL  # selector 15:0
         .byte 0               # 0 for interrupt gate
         .byte 0x0e | 0x80     # type = 386 interrupt gate, present
         .word 0               # offset 31:16
@@ -1024,7 +1024,7 @@ IDT_BASE:
 # IRQ 8 (RTC Alarm) - (INT 70h)
 .equ                IRQ8_SEL, .-IDT_BASE
         .word 0               # offset 15:0
-        .long SYS_CODE64_SEL  # selector 15:0
+        .word SYS_CODE64_SEL  # selector 15:0
         .byte 0               # 0 for interrupt gate
         .byte 0x0e | 0x80     # type = 386 interrupt gate, present
         .word 0               # offset 31:16
@@ -1034,7 +1034,7 @@ IDT_BASE:
 # IRQ 9 - (INT 71h)
 .equ                IRQ9_SEL, .-IDT_BASE
         .word 0               # offset 15:0
-        .long SYS_CODE64_SEL  # selector 15:0
+        .word SYS_CODE64_SEL  # selector 15:0
         .byte 0               # 0 for interrupt gate
         .byte 0x0e | 0x80     # type = 386 interrupt gate, present
         .word 0               # offset 31:16
@@ -1044,7 +1044,7 @@ IDT_BASE:
 # IRQ 10 - (INT 72h)
 .equ                 IRQ10_SEL, .-IDT_BASE
         .word 0               # offset 15:0
-        .long SYS_CODE64_SEL  # selector 15:0
+        .word SYS_CODE64_SEL  # selector 15:0
         .byte 0               # 0 for interrupt gate
         .byte 0x0e | 0x80     # type = 386 interrupt gate, present
         .word 0               # offset 31:16
@@ -1054,7 +1054,7 @@ IDT_BASE:
 # IRQ 11 - (INT 73h)
 .equ                 IRQ11_SEL, .-IDT_BASE
         .word 0               # offset 15:0
-        .long SYS_CODE64_SEL  # selector 15:0
+        .word SYS_CODE64_SEL  # selector 15:0
         .byte 0               # 0 for interrupt gate
         .byte 0x0e | 0x80     # type = 386 interrupt gate, present
         .word 0               # offset 31:16
@@ -1064,7 +1064,7 @@ IDT_BASE:
 # IRQ 12 (PS/2 mouse) - (INT 74h)
 .equ                 IRQ12_SEL, .-IDT_BASE
         .word 0               # offset 15:0
-        .long SYS_CODE64_SEL  # selector 15:0
+        .word SYS_CODE64_SEL  # selector 15:0
         .byte 0               # 0 for interrupt gate
         .byte 0x0e | 0x80     # type = 386 interrupt gate, present
         .word 0               # offset 31:16
@@ -1074,7 +1074,7 @@ IDT_BASE:
 # IRQ 13 (Floating point error) - (INT 75h)
 .equ                 IRQ13_SEL, .-IDT_BASE
         .word 0               # offset 15:0
-        .long SYS_CODE64_SEL  # selector 15:0
+        .word SYS_CODE64_SEL  # selector 15:0
         .byte 0               # 0 for interrupt gate
         .byte 0x0e | 0x80     # type = 386 interrupt gate, present
         .word 0               # offset 31:16
@@ -1084,7 +1084,7 @@ IDT_BASE:
 # IRQ 14 (Secondary IDE) - (INT 76h)
 .equ                 IRQ14_SEL, .-IDT_BASE
         .word 0               # offset 15:0
-        .long SYS_CODE64_SEL  # selector 15:0
+        .word SYS_CODE64_SEL  # selector 15:0
         .byte 0               # 0 for interrupt gate
         .byte 0x0e | 0x80     # type = 386 interrupt gate, present
         .word 0               # offset 31:16
@@ -1094,7 +1094,7 @@ IDT_BASE:
 # IRQ 15 (Primary IDE) - (INT 77h)
 .equ                 IRQ15_SEL, .-IDT_BASE
         .word 0               # offset 15:0
-        .long SYS_CODE64_SEL  # selector 15:0
+        .word SYS_CODE64_SEL  # selector 15:0
         .byte 0               # 0 for interrupt gate
         .byte 0x0e | 0x80     # type = 386 interrupt gate, present
         .word 0               # offset 31:16
