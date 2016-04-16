@@ -767,8 +767,8 @@ IDT_BASE:
         .byte 0x0e | 0x80  # type = 386 interrupt gate, present
         .word 0            # offset 31:16
 
-# 85 unspecified descriptors, First 12 of them are reserved, the rest are avail
-        .fill 85 * 8, 1, 0
+# 84 unspecified descriptors, First 12 of them are reserved, the rest are avail
+        .fill 84 * 8, 1, 0
 
 # IRQ 0 (System timer) - (INT 68h)
 .equ                IRQ0_SEL, .-IDT_BASE
