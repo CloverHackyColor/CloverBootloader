@@ -454,7 +454,7 @@ BootVolumeMediaDevicePathNodesEqual (
 EFI_STATUS
 GetEfiBootDeviceFromNvram ()
 {
-  UINTN                Size;
+  UINTN                Size = 0;
   EFI_GUID             *Guid;
   FILEPATH_DEVICE_PATH *FileDevPath;
   

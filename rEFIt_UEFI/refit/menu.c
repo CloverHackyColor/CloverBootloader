@@ -293,12 +293,19 @@ VOID FillInputs(BOOLEAN New)
       InputItems[InputItemsCount++].SValue = PoolPrint(L"%08lx", gSettings.IgPlatform);;
     }
     
+    if (gGraphics[i].Vendor == Intel) {
+      InputItemsCount += 3;
+      continue;
+    }
+
     InputItems[InputItemsCount].ItemType = Decimal;  //23+6i
     if (gSettings.VideoPorts > 0) {
       InputItems[InputItemsCount++].SValue = PoolPrint(L"%02d", gSettings.VideoPorts);
     } else {
       InputItems[InputItemsCount++].SValue = PoolPrint(L"%02d", gGraphics[i].Ports);
     }
+
+
     InputItems[InputItemsCount].ItemType = ASString; //24+6i
     for (j=0; j<20; j++) {
       AsciiSPrint((CHAR8*)&tmp[2*j], 3, "%02x", gSettings.NVCAP[j]);
@@ -691,6 +698,13 @@ VOID ApplyInputs(VOID)
         gSettings.IgPlatform = (UINT32)StrHexToUint64(InputItems[i].SValue);
       } 
     }
+
+
+    if (gGraphics[i].Vendor == Intel) {
+      i += 3;
+      continue;
+    }
+
     i++; //23
     if (InputItems[i].Valid) {
       gGraphics[j].Ports = (UINT8)(StrDecimalToUintn(InputItems[i].SValue) & 0x0F);
@@ -2774,18 +2788,6 @@ REFIT_MENU_ENTRY  *SubMenuGraphics()
     InputBootArgs->Entry.AtRightClick = ActionDetails;
     AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
     
-    // ErmaC: NvidiaGeneric entry
-    if (gGraphics[i].Vendor == Nvidia) {
-       InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-       InputBootArgs->Entry.Title = PoolPrint(L"Generic NVIDIA name:");
-       InputBootArgs->Entry.Tag = TAG_INPUT;
-       InputBootArgs->Entry.Row = 0xFFFF; //cursor
-       InputBootArgs->Item = &InputItems[43];
-       InputBootArgs->Entry.AtClick = ActionEnter;
-       InputBootArgs->Entry.AtRightClick = ActionDetails;
-       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-    }
-
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
     if (gGraphics[i].Vendor == Nvidia) {
       Ven = 95;
@@ -2817,6 +2819,22 @@ REFIT_MENU_ENTRY  *SubMenuGraphics()
     InputBootArgs->Entry.AtDoubleClick = ActionEnter;
     AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
     
+    // ErmaC: NvidiaGeneric entry
+    if (gGraphics[i].Vendor == Nvidia) {
+       InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+       InputBootArgs->Entry.Title = PoolPrint(L"Generic NVIDIA name:");
+       InputBootArgs->Entry.Tag = TAG_INPUT;
+       InputBootArgs->Entry.Row = 0xFFFF; //cursor
+       InputBootArgs->Item = &InputItems[43];
+       InputBootArgs->Entry.AtClick = ActionEnter;
+       InputBootArgs->Entry.AtRightClick = ActionDetails;
+       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+    }
+
+    if (gGraphics[i].Vendor == Intel) {
+      continue;
+    }
+
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
     InputBootArgs->Entry.Title = PoolPrint(L"Ports:");
     InputBootArgs->Entry.Tag = TAG_INPUT;
