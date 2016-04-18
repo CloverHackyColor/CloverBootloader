@@ -129,6 +129,6 @@
   gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdShellFile
 
 [BuildOptions]
-  XCODE:*_*_*_CC_FLAGS = -Os -DMDEPKG_NDEBUG
+  XCODE:*_*_*_CC_FLAGS = -Os -fno-lto -DMDEPKG_NDEBUG
   GCC:*_*_*_CC_FLAGS = -Os -fno-lto -DMDEPKG_NDEBUG
   
