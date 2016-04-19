@@ -78,7 +78,6 @@ MemMapDone:
         addl    %ebx, (gdtr + 2)            # Rebase address of GDT
         addl    %ebx, (idtr + 2)            # Rebase address of IDT
         addl    %ebx, JumpToLongMode        # Rebase ljmp Real Mode -> Long Mode
-        pushl   %ebx                        # Save Linear Base
 
 #
 # Enable A20 Gate
@@ -128,8 +127,6 @@ A20GateEnabled:
         movw    $0x000F, %bx
         movw    $(0x0E00 | (CHARACTER_TO_SHOW & 255)), %ax
         int     $0x10
-
-        popl    %ebx     # Restore Linear Base
 
         cli
 
@@ -193,17 +190,14 @@ InLongMode:
     movw    %ax,%ds
     movw    %ax,%es
     movw    %ax,%ss
-    andl    $0xFFFF, %esp
-    addl    %ebx, %esp      # Adjust ESP and zero-extend to RSP
-    movl    %ebx, %ebx      # Zero-extend EBX to RBX (Linear Base)
+    leaq    MyStack(%rip), %rsp     # Reload RSP
 
     #
     # load IDT
     #
-    lidtq   idtr(%rbx)
+    lidtq   idtr(%rip)
 
-    leaq    (BlockSignature + 2)(%rbx), %rax
-    jmpq    *%rax
+    jmp     BlockSignature + 2
 
     .code16
 
