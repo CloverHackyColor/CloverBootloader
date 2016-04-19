@@ -97,7 +97,7 @@ static VOID AboutRefit(VOID)
     AboutMenu.TitleImage = NULL;
   }
   if (AboutMenu.EntryCount == 0) {
-    AddMenuInfoLine(&AboutMenu, L"Clover Version 2.3k"); // by Slice, dmazar, apianti, JrCs, pene and others");
+    AddMenuInfoLine(&AboutMenu, L"Clover Version 2.3k rev %s", FIRMWARE_REVISION); // by Slice, dmazar, apianti, JrCs, pene and others");
 #ifdef FIRMWARE_BUILDDATE
     AddMenuInfoLine(&AboutMenu, PoolPrint(L" Build: %a", FIRMWARE_BUILDDATE));
 #else
@@ -126,11 +126,7 @@ static VOID AboutRefit(VOID)
 #else
     AddMenuInfoLine(&AboutMenu, L" Platform: unknown");
 #endif
-#ifdef FIRMWARE_REVISION
-    AddMenuInfoLine(&AboutMenu, PoolPrint(L" Firmware: %s rev %s", gST->FirmwareVendor, FIRMWARE_REVISION));
-#else
     AddMenuInfoLine(&AboutMenu, PoolPrint(L" Firmware: %s rev %d", gST->FirmwareVendor, gST->FirmwareRevision));
-#endif
     AddMenuInfoLine(&AboutMenu, PoolPrint(L" Screen Output: %s", egScreenDescription()));
     AboutMenu.AnimeRun = GetAnime(&AboutMenu);
     AddMenuEntry(&AboutMenu, &MenuEntryReturn);
