@@ -97,7 +97,7 @@ static VOID AboutRefit(VOID)
     AboutMenu.TitleImage = NULL;
   }
   if (AboutMenu.EntryCount == 0) {
-    AddMenuInfoLine(&AboutMenu, L"Clover Version 2.3k rev %s", FIRMWARE_REVISION); // by Slice, dmazar, apianti, JrCs, pene and others");
+    AddMenuInfoLine(&AboutMenu, PoolPrint(L"Clover Version 2.3k rev %s", FIRMWARE_REVISION)); // by Slice, dmazar, apianti, JrCs, pene and others");
 #ifdef FIRMWARE_BUILDDATE
     AddMenuInfoLine(&AboutMenu, PoolPrint(L" Build: %a", FIRMWARE_BUILDDATE));
 #else

@@ -34,8 +34,13 @@ ASM_PFX(InitDescriptor):
 #        movq    GDT_BASE(%rip),%rax              # EAX=PHYSICAL address of gdt
 #        movq    %rax, (gdtr + 2)(%rip)              # Put address of gdt into the gdtr
 #        lgdt    gdtr(%rip)
-        movabs  $gdtr, %rax
-        lgdt    (%rax)
+      leaq GDT_BASE(%rip),%rax
+      movq    %rax, (gdtr + 2)(%rip)
+      leaq    gdtr(%rip), %rax
+      lgdt    (%rax)
+
+#        movabs  $gdtr, %rax
+#        lgdt    (%rax)
         movq    $0x18, %rax
         movl    %eax, %gs
         movl    %eax, %fs
@@ -43,11 +48,16 @@ ASM_PFX(InitDescriptor):
 #        movw    %eax, %gs
 #        movw    %eax, %fs
 
-#        movq    IDT_BASE(%rip),%rax              # EAX=PHYSICAL address of idt
-#        movq    %rax, (idtr + 2)(%rip)              # Put address of idt into the idtr
-#        lidt    idtr(%rip)
-        movabs  $idtr, %rax
-        lidt    (%rax)
+        leaq    IDT_BASE(%rip),%rax              # EAX=PHYSICAL address of idt
+        movq    %rax, (idtr + 2)(%rip)              # Put address of idt into the idtr
+        leaq    idtr(%rip), %rax
+        lgdt    (%rax)
+
+#lidt    idtr(%rip)
+
+
+#        movabs  $idtr, %rax
+#        lidt    (%rax)
         ret
 
 # VOID
@@ -531,7 +541,7 @@ ExceptionDone:
 
 gdtr: .short GDT_END - GDT_BASE - 1   # GDT limit
 #gdtr: .short GDT_LEN
-      .quad GDT_BASE                  # (GDT base gets set above)
+        .quad 0  #GDT_BASE                  # (GDT base gets set above)
 ##############################################################################
 #   global descriptor table (GDT)
 ##############################################################################
@@ -625,7 +635,7 @@ GDT_END:
 #GDT_LEN = . - GDT_BASE - 1
 #idtr: .short IDT_END - IDT_BASE - 1   # IDT limit
 idtr: .short IDT_LEN
-      .quad IDT_BASE                  # (IDT base gets set above)
+      .quad 0 #IDT_BASE                  # (IDT base gets set above)
 ##############################################################################
 #   interrupt descriptor table (IDT)
 #
