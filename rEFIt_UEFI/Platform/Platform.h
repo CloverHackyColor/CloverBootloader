@@ -1353,6 +1353,8 @@ typedef struct {
   UINT32            Id;
   UINT32            SubId;
   UINT64            VideoRam;
+  UINTN             VideoPorts;
+  BOOLEAN           LoadVBios;
 } CARDLIST;
 
 typedef struct {
@@ -1816,11 +1818,14 @@ setup_nvidia_devprop (
 CHAR8
 *get_nvidia_model (
   UINT32 device_id,
-  UINT32 subsys_id
+  UINT32 subsys_id,
+  CARDLIST * nvcard
   );
 
 VOID
-FillCardList();
+FillCardList(
+  TagPtr CfgDict
+  );
 
 CARDLIST
 *FindCardWithIds (
@@ -1833,7 +1838,10 @@ AddCard (
   CONST CHAR8 *Model,
   UINT32      Id,
   UINT32      SubId,
-  UINT64      VideoRam);
+  UINT64      VideoRam,
+  UINTN       VideoPorts,
+  BOOLEAN     LoadVBios
+  );
 
 EG_IMAGE
 *egDecodePNG (
@@ -1972,6 +1980,22 @@ GetElement (
   INTN   id, 
   TagPtr *dict1
 );
+
+BOOLEAN
+IsPropertyTrue (
+  TagPtr Prop
+  );
+
+BOOLEAN
+IsPropertyFalse (
+  TagPtr Prop
+  );
+
+INTN
+GetPropertyInteger (
+  TagPtr Prop,
+  INTN Default
+  );
 
 EFI_STATUS
 SaveSettings ();

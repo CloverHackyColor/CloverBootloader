@@ -3481,6 +3481,8 @@ GetUserSettings(
       
       Prop = GetProperty (DictPointer, "snb-platform-id");
       gSettings.IgPlatform = (UINT32)GetPropertyInteger (Prop, gSettings.IgPlatform);
+
+      FillCardList(DictPointer); //#@ Getcardslist
     }
     
     DictPointer = GetProperty (Dict, "Devices");
@@ -5128,7 +5130,8 @@ GetDevices ()
                 64,
                 "%a",
                 get_nvidia_model (((Pci.Hdr.VendorId << 16) | Pci.Hdr.DeviceId),
-                ((Pci.Device.SubsystemVendorID << 16) | Pci.Device.SubsystemID))
+                ((Pci.Device.SubsystemVendorID << 16) | Pci.Device.SubsystemID),
+                NULL) //NULL: get from generic lists
                 );
 
               DBG ("Found NVidia model=%a family %#x\n", gfx->Model, gfx->Family);
