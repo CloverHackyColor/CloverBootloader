@@ -59,6 +59,7 @@ ONLYSATA0PATCH=0
 USE_BIOS_BLOCKIO=0
 USE_LOW_EBDA=1
 CLANG=0
+GENPAGE=0
 
 # Bash options
 set -e # errexit
@@ -242,6 +243,7 @@ usage() {
     print_option_help "--vbios-patch-cloverefi" "activate vbios patch in CloverEFI"
     print_option_help "--only-sata0" "activate only SATA0 patch"
     print_option_help "--std-ebda" "ebda offset dont shift to 0x88000"
+    print_option_help "--genpage" "dynamically generate page table under ebda"
     print_option_help "--no-usb" "disable USB support"
     echo
     echo "Report bugs to https://sourceforge.net/p/cloverefiboot/discussion/1726372/"
@@ -328,6 +330,9 @@ checkCmdlineArguments() {
                 ;;
             --std-ebda)
                 USE_LOW_EBDA=0
+                ;;
+            --genpage)
+                GENPAGE=1
                 ;;
             --no-usb)
                 addEdk2BuildMacro DISABLE_USB_SUPPORT
@@ -561,7 +566,7 @@ MainPostBuildScript() {
     fi
 
     if [[ "$TARGETARCH" = X64 ]]; then
-        cloverEFIFile=boot6
+        cloverEFIFile=boot$((6 + USE_BIOS_BLOCKIO))
 
         "$BASETOOLS_DIR"/GenFw --rebase 0x10000 -o "$BUILD_DIR_ARCH/EfiLoader.efi" "$BUILD_DIR_ARCH/EfiLoader.efi"
         "$BASETOOLS_DIR"/EfiLdrImage -o "${BUILD_DIR}"/FV/Efildr64 \
@@ -569,18 +574,22 @@ MainPostBuildScript() {
         "${BUILD_DIR}"/FV/DxeIpl${TARGETARCH}.z        \
         "${BUILD_DIR}"/FV/DxeMain${TARGETARCH}.z       \
         "${BUILD_DIR}"/FV/DUETEFIMAINFV${TARGETARCH}.z
-        startBlock=Start64H.com
-		if [[ "$USE_BIOS_BLOCKIO" -ne 0 ]]; then
-			cloverEFIFile=boot7
-			if [[ "$USE_LOW_EBDA" -ne 0 ]]; then
-				startBlock=Start64H4.com
-			else
-				startBlock=Start64H2.com
-			fi
-		elif [[ "$USE_LOW_EBDA" -ne 0 ]]; then
-#			cloverEFIFile=boot5   ### it will be same boot6
-			startBlock=Start64H3.com
-		fi
+        if [[ "$GENPAGE" -eq 0 && "$USE_LOW_EBDA" -ne 0 ]]; then
+            if [[ "$SYSNAME" == Linux ]]; then
+                local -r EL_SIZE=$(stat -c "%s" "${BUILD_DIR}"/FV/Efildr64)
+            else
+                local -r EL_SIZE=$(stat -f "%z" "${BUILD_DIR}"/FV/Efildr64)
+            fi
+            if (( $((EL_SIZE)) > 417792 )); then
+                echo 'warning: boot file bigger than low-ebda permits, switching to --std-ebda'
+                USE_LOW_EBDA=0
+            fi
+        fi
+        local -ar COM_NAMES=(H H2 H3 H4 H5 H6 H5 H6)           # Note: (H{,2,3,4,5,6,5,6}) works in Linux bash, but not Darwin bash
+        startBlock=Start64${COM_NAMES[$((GENPAGE << 2 | USE_LOW_EBDA << 1 | USE_BIOS_BLOCKIO))]}.com
+        if [[ "$GENPAGE" -ne 0 ]]; then
+        cat $BOOTSECTOR_BIN_DIR/$startBlock $BOOTSECTOR_BIN_DIR/efi64.com3 "${BUILD_DIR}"/FV/Efildr64 > "${BUILD_DIR}"/FV/boot
+        else
         cat $BOOTSECTOR_BIN_DIR/$startBlock $BOOTSECTOR_BIN_DIR/efi64.com3 "${BUILD_DIR}"/FV/Efildr64 > "${BUILD_DIR}"/FV/Efildr20Pure    
 
         if [[ "$USE_LOW_EBDA" -ne 0 ]]; then
@@ -590,6 +599,7 @@ MainPostBuildScript() {
         fi  
         # Create CloverEFI file
         dd if="${BUILD_DIR}"/FV/Efildr20 of="${BUILD_DIR}"/FV/boot bs=512 skip=1
+        fi
 
         # Be sure that all needed directories exists
         mkdir -p "$CLOVER_PKG_DIR"/Bootloaders/x64
