@@ -126,7 +126,7 @@ static VOID AboutRefit(VOID)
 #else
     AddMenuInfoLine(&AboutMenu, L" Platform: unknown");
 #endif
-    AddMenuInfoLine(&AboutMenu, PoolPrint(L" Firmware: %s rev %d", gST->FirmwareVendor, gST->FirmwareRevision));
+    AddMenuInfoLine(&AboutMenu, PoolPrint(L" Firmware: %s rev %d.%d", gST->FirmwareVendor, gST->FirmwareRevision >> 16, gST->FirmwareRevision & ((1 << 16) - 1)));
     AddMenuInfoLine(&AboutMenu, PoolPrint(L" Screen Output: %s", egScreenDescription()));
     AboutMenu.AnimeRun = GetAnime(&AboutMenu);
     AddMenuEntry(&AboutMenu, &MenuEntryReturn);
