@@ -978,7 +978,7 @@ commonIdtEntry:
     .byte 0x48
     movl    16*8(%ebp),%eax       ## move Int number into RAX 
     .byte 0x48
-    cmpl    $18,%eax
+    cmpl    $19,%eax
     ja      PrintDefaultString
 PrintExceptionString: 
     shll    $3,%eax             ## multiply by 8 to get offset from StringTable to actual string address

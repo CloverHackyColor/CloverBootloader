@@ -339,6 +339,9 @@ LBAOffsetForBootSector:
 .equ                 KBD_STATUS_PORT, 0x064 # 8042 status port      
 .equ                 WRITE_DATA_PORT_CMD, 0x0d1 # 8042 command to write the data port
 .equ                 ENABLE_A20_CMD, 0x0df # 8042 command to enable A20
+.ifndef CHARACTER_TO_SHOW
+.equ                 CHARACTER_TO_SHOW, 0x37
+.endif
 
         .org     0x200
         jmp start
@@ -431,7 +434,7 @@ A20GateEnabled:
 # DISABLE INTERRUPTS - Entering Protected Mode
 #  253668.pdf page 401
 		movl	$0x000F, %ebx
-		movl	$0x0E37, %eax
+		movl	$(0x0E00 | (CHARACTER_TO_SHOW & 255)), %eax
 		movl	$0x0010, %ecx
 		int		$0x10
 
@@ -517,8 +520,13 @@ Cl: jmp Cl */
     #    90000 ~    96000 - 4G pagetable (will be reload later)
     #
     .byte 0xb8
+.ifdef USE_LOW_EBDA
+    .long 0x88000
+#    mov eax, 88000h
+.else
     .long 0x90000
 #    mov eax, 90000h
+.endif
     movl %eax, %cr3
 
     #
