@@ -120,7 +120,7 @@ VOID FillCardList(TagPtr CfgDict)
         TagPtr		prop2		= 0;
         count = GetTagCount(prop);
         for (i = 0; i < count; i++) {
-          CHAR8     *model_name;
+          CHAR8     *model_name = NULL;
           UINT32		dev_id		= 0;
           UINT32		subdev_id	= 0;
           UINT64		VramSize	= 0;
@@ -132,6 +132,8 @@ VOID FillCardList(TagPtr CfgDict)
             if (element) {
               if ((prop2 = GetProperty(element, "Model")) != 0) {
                 model_name = prop2->string;
+              } else {
+                model_name = "VideoCard";
               }
               
               prop2 = GetProperty (element, "IOPCIPrimaryMatch");
