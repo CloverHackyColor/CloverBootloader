@@ -55,13 +55,18 @@ USE_BIOS_BLOCKIO=0
 USE_LOW_EBDA=1
 CLANG=0
 GENPAGE=0
+GIT=`which git`
+GITDIR=`git status 2> /dev/null`
+
 
 # Bash options
 set -e # errexit
 set -u # Blow on unbound variable
 
-if [[ -x /usr/bin/git ]]; then
-    PATCH_CMD="/usr/bin/git apply --whitespace=nowarn"
+#if [[ -x /usr/bin/git ]]; then
+#    PATCH_CMD="/usr/bin/git apply --whitespace=nowarn"
+if [[ -n $GIT ]]; then
+    PATCH_CMD="${GIT} apply --whitespace=nowarn"
 else
     PATCH_CMD="/usr/bin/patch"
 fi
@@ -354,10 +359,11 @@ MainBuildScript() {
     checkToolchain
 
 #    if [[ -d .git ]]; then
-#        git svn info | grep Revision | tr -cd [:digit:] >vers.txt
-#    else
+    if [[ -n $GIT && -n $GITDIR ]]; then
+        git svn info | grep Revision | tr -cd [:digit:] >vers.txt
+    else
         svnversion -n | tr -d [:alpha:] >vers.txt
-#    fi
+    fi
 
     #
     # Setup workspace if it is not set
