@@ -353,11 +353,11 @@ MainBuildScript() {
     checkCmdlineArguments $@
     checkToolchain
 
-    if [[ -d .git ]]; then
-        git svn info | grep Revision | tr -cd [:digit:] >vers.txt
-    else
+#    if [[ -d .git ]]; then
+#        git svn info | grep Revision | tr -cd [:digit:] >vers.txt
+#    else
         svnversion -n | tr -d [:alpha:] >vers.txt
-    fi
+#    fi
 
     #
     # Setup workspace if it is not set
