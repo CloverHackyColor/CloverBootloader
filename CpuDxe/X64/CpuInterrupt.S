@@ -23,9 +23,9 @@
 #EXTERN ExceptionHandler: NEAR
 #EXTERN mTimerVector: DWORD
 
-  .data
-  ASM_GLOBAL ASM_PFX(mExceptionCodeSize)
-  ASM_PFX(mExceptionCodeSize): .long  9
+#  .data
+#  ASM_GLOBAL ASM_PFX(mExceptionCodeSize)
+#  ASM_PFX(mExceptionCodeSize): .long  9
 
   .text
   ASM_GLOBAL ASM_PFX(InitDescriptor)
@@ -300,7 +300,7 @@ INTUnknown:
   ASM_GLOBAL ASM_PFX(SystemTimerHandler)
 ASM_PFX(SystemTimerHandler):
     push     $0
-    push     $ASM_PFX(mTimerVector)
+    push     $0  #$ASM_PFX(mTimerVector) //to be patched in Cpu.c
     JmpCommonIdtEntry
 
 commonIdtEntry:
@@ -539,8 +539,8 @@ ExceptionDone:
 
   .data
 
-gdtr: .short GDT_END - GDT_BASE - 1   # GDT limit
-#gdtr: .short GDT_LEN
+#gdtr: .short GDT_END - GDT_BASE - 1   # GDT limit
+gdtr: .short GDT_LEN
         .quad 0  #GDT_BASE                  # (GDT base gets set above)
 ##############################################################################
 #   global descriptor table (GDT)
@@ -632,7 +632,8 @@ SPARE4_SEL    = .-GDT_BASE            # Selector [0x40]
         .byte 0
 
 GDT_END:
-#GDT_LEN = . - GDT_BASE - 1
+.set GDT_LEN, . - GDT_BASE - 1
+ 
 #idtr: .short IDT_END - IDT_BASE - 1   # IDT limit
 idtr: .short IDT_LEN
       .quad 0 #IDT_BASE                  # (IDT base gets set above)
@@ -1116,4 +1117,4 @@ IRQ15_SEL            = .-IDT_BASE
 IDT_END:
   .set IDT_LEN, .-IDT_BASE - 1
 
-ASM_FUNCTION_REMOVE_IF_UNREFERENCED
+#ASM_FUNCTION_REMOVE_IF_UNREFERENCED
