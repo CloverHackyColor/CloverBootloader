@@ -455,7 +455,7 @@ gdtr    dw GDT_END - GDT_BASE - 1   ; GDT limit
 
          ALIGN 010h,db 0                      ; make GDT 16-byte align
 
-global GDT_BASE
+;global GDT_BASE
 GDT_BASE:
 ; null descriptor
 NULL_SEL        equ $-GDT_BASE          ; Selector [0x0]
@@ -554,7 +554,7 @@ idtr    dw IDT_END - IDT_BASE - 1   ; IDT limit
 
          ALIGN 08h, db 0       ; make IDT 8-byte align
 
-global IDT_BASE
+;global IDT_BASE
 IDT_BASE:
 ; divide by zero (INT 0)
 DIV_ZERO_SEL        equ $-IDT_BASE
