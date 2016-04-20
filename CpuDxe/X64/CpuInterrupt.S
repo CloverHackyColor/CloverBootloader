@@ -51,7 +51,7 @@ ASM_PFX(InitDescriptor):
         leaq    IDT_BASE(%rip),%rax              # EAX=PHYSICAL address of idt
         movq    %rax, (idtr + 2)(%rip)              # Put address of idt into the idtr
         leaq    idtr(%rip), %rax
-        lgdt    (%rax)
+        lidt    (%rax)
 
 #lidt    idtr(%rip)
 
