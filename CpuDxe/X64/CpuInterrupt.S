@@ -348,9 +348,9 @@ commonIdtEntry:
   push %rdi
   
 ## UINT64  Gs, Fs, Es, Ds, Cs, Ss#  insure high 16 bits of each is zero
-  movzx   7*8(%rbp), %rax
+  movzwq  7*8(%rbp), %rax
   push    %rax                      # for ss
-  movzx   4*8(%rbp), %rax
+  movzwq  4*8(%rbp), %rax
   push    %rax                      # for cs
   movl    %ds, %eax
   push    %rax
