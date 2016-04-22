@@ -56,7 +56,7 @@ USE_LOW_EBDA=1
 CLANG=0
 GENPAGE=0
 GIT=`which git`
-GITDIR=`git status 2> /dev/null`
+#GITDIR=`git status 2> /dev/null`        # unsafe as git repository may exist in parent directory
 
 
 # Bash options
@@ -358,11 +358,12 @@ MainBuildScript() {
     checkCmdlineArguments $@
     checkToolchain
 
-#    if [[ -d .git ]]; then
-    if [[ -n $GIT && -n $GITDIR ]]; then
-        git svn info | grep Revision | tr -cd [:digit:] >vers.txt
-    else
+    if [[ -d .svn ]]; then
         svnversion -n | tr -d [:alpha:] >vers.txt
+    elif [[ -d .git ]]; then
+        git svn find-rev git-svn | tr -cd [:digit:] >vers.txt
+    else
+        echo -n $RANDOM >vers.txt
     fi
 
     #
