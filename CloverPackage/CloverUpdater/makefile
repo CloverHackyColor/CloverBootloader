@@ -5,7 +5,7 @@ XCODEBUILD_OPTIONS=-project 'src/CloverUpdater.xcodeproj' CONFIGURATION_BUILD_DI
 
 ifeq "$(XCODE_VERSION_GE_4)" "1"
 	XCODEBUILD_OPTIONS += -scheme 'CloverUpdater'
-	BUILD_ACTION=archive
+#	BUILD_ACTION=running
 else
 	XCODEBUILD_OPTIONS += -configuration 'Release'
 endif

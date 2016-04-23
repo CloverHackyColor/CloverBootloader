@@ -5,7 +5,7 @@ XCODEBUILD_OPTIONS=-project 'CloverPrefpane.xcodeproj' CONFIGURATION_BUILD_DIR=$
 
 ifeq "$(XCODE_VERSION_GE_4)" "1"
 	XCODEBUILD_OPTIONS += -scheme 'Clover'
-	BUILD_ACTION=archive
+#	BUILD_ACTION=archive
 else
 	XCODEBUILD_OPTIONS += -configuration 'Release'
 endif

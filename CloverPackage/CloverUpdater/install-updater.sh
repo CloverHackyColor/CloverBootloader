@@ -7,7 +7,7 @@ set -u  # Abort with unset variables
 cd "$(dirname $0)"
 
 declare -r CLOVER_UPDATER_DIR="$PWD"
-declare -r CLOVER_APP_SUPPORT="/Library/Application Support/Clover"
+declare -r CLOVER_APP_SUPPORT="$HOME"/Library/Application Support/Clover
 
 # Install files
 sudo mkdir -p "$CLOVER_APP_SUPPORT"
