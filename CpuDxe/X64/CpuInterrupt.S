@@ -23,12 +23,8 @@
 #EXTERN ExceptionHandler: NEAR
 #EXTERN mTimerVector: DWORD
 
-#  .data
-#  ASM_GLOBAL ASM_PFX(mExceptionCodeSize)
-#  ASM_PFX(mExceptionCodeSize): .long  9
-
-  .text
-  ASM_GLOBAL ASM_PFX(InitDescriptor)
+#.text
+ASM_GLOBAL ASM_PFX(InitDescriptor)
 
 ASM_PFX(InitDescriptor):
 #        movq    GDT_BASE(%rip),%rax              # EAX=PHYSICAL address of gdt
@@ -65,7 +61,7 @@ ASM_PFX(InitDescriptor):
 #     UINTN Vector,
 #     VOID  (*Handler)(VOID)
 #     )
-  ASM_GLOBAL ASM_PFX(InstallInterruptHandler)
+ASM_GLOBAL ASM_PFX(InstallInterruptHandler)
 ASM_PFX(InstallInterruptHandler):
 #  Vector:DWORD @ 4(%esp)
 #  Handler:DWORD @ 8(%esp)
@@ -102,7 +98,7 @@ ASM_PFX(InstallInterruptHandler):
   .endm
 
     .p2align 1
-  ASM_GLOBAL ASM_PFX(SystemExceptionHandler)
+ASM_GLOBAL ASM_PFX(SystemExceptionHandler)
 ASM_PFX(SystemExceptionHandler):
 INT0:
     push     $0x0      # push error code place holder on the stack
@@ -297,7 +293,7 @@ INTUnknown:
     JmpCommonIdtEntry
 
 
-  ASM_GLOBAL ASM_PFX(SystemTimerHandler)
+ASM_GLOBAL ASM_PFX(SystemTimerHandler)
 ASM_PFX(SystemTimerHandler):
     push     $0
     push     $0  #$ASM_PFX(mTimerVector) //to be patched in Cpu.c

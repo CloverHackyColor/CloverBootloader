@@ -375,7 +375,7 @@
         
     <Command.XCODE>
         # tool to convert Mach-O to PE/COFF
-        @"$(STRIP)" ${src}
+        #@"$(STRIP)" ${src}
         @"$(MTOC)" -subsystem $(MODULE_TYPE)  $(MTOC_FLAGS)  ${src}  $(DEBUG_DIR)(+)$(MODULE_NAME).pecoff
 	
         @"echo" [MTOC] $(MODULE_NAME)
@@ -487,7 +487,7 @@
         @"$(ASLDLINK)" -o $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.dll $(ASLDLINK_FLAGS) $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.obj
 	
         @"echo" [MTOC-ACPI] $(MODULE_NAME)
-        @"$(STRIP)" ${src}
+        #@"$(STRIP)" ${src}
         @"$(MTOC)" -subsystem $(MODULE_TYPE)  $(MTOC_FLAGS) $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.dll $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.efi
         @"$(GENFW)" -o ${dst} -c $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.efi $(GENFW_FLAGS)
 	

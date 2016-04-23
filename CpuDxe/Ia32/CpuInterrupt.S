@@ -27,7 +27,7 @@
 #  ASM_GLOBAL ASM_PFX(mExceptionCodeSize)
 #ASM_PFX(mExceptionCodeSize): .long  9
 
-  .text
+#  .text
 ASM_GLOBAL ASM_PFX(InitDescriptor)
 
 ASM_PFX(InitDescriptor):
@@ -44,7 +44,7 @@ ASM_PFX(InitDescriptor):
 #     UINTN Vector,
 #     VOID  (*Handler)(VOID)
 #     )
-  ASM_GLOBAL ASM_PFX(InstallInterruptHandler)
+ASM_GLOBAL ASM_PFX(InstallInterruptHandler)
 ASM_PFX(InstallInterruptHandler):
 #  Vector:DWORD @ 4(%esp)
 #  Handler:DWORD @ 8(%esp)

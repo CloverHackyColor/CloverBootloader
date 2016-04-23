@@ -3991,9 +3991,13 @@ DEFINE GCC49_AARCH64_RELEASE_FLAGS   = -Wno-unused-but-set-variable
 DEFINE GCC53_IA32_CC_FLAGS           = DEF(GCC49_IA32_CC_FLAGS)
 DEFINE GCC53_X64_CC_FLAGS            = DEF(GCC49_X64_CC_FLAGS)
 DEFINE GCC53_IA32_X64_DLINK_COMMON   = -nostdlib -Wl,-n,-q,--gc-sections,-z,common-page-size=0x40
+
 DEFINE GCC53_IA32_X64_ASLDLINK_FLAGS = DEF(GCC53_IA32_X64_DLINK_COMMON),--entry,ReferenceAcpiTable,-u,ReferenceAcpiTable
+
 DEFINE GCC53_IA32_X64_DLINK_FLAGS    = DEF(GCC53_IA32_X64_DLINK_COMMON),--entry,$(IMAGE_ENTRY_POINT),-u,$(IMAGE_ENTRY_POINT),-Map,$(DEST_DIR_DEBUG)/$(BASE_NAME).map
+
 DEFINE GCC53_X64_DLINK_FLAGS         = DEF(GCC53_IA32_X64_DLINK_FLAGS),-melf_x86_64,--oformat=elf64-x86-64
+
 DEFINE GCC53_ASM_FLAGS               = DEF(GCC49_ASM_FLAGS)
 
 ####################################################################################
@@ -4602,6 +4606,7 @@ RELEASE_GCC48_AARCH64_CC_FLAGS   = DEF(GCC48_AARCH64_CC_FLAGS) -Wno-unused-but-s
 #
 ####################################################################################
 *_GCC49_*_*_FAMILY               = GCC
+*_GCC49_*_*_BUILDRULEORDER    = nasm S s
 
 *_GCC49_*_MAKE_PATH                    = make
 #*_GCC49_*_MAKE_PATH                    = DEF(GCC49_IA32_PREFIX)make
@@ -6872,7 +6877,7 @@ RELEASE_XCODE5_IA32_CC_FLAGS   = -arch i386 -c    -Os -flto -Wall -Werror -inclu
 ##################
   DEBUG_XCODE5_X64_DLINK_FLAGS      = -arch x86_64 -u _$(IMAGE_ENTRY_POINT) -e _$(IMAGE_ENTRY_POINT) -preload -segalign 0x20  -pie -dead_strip -seg1addr 0x240 -map $(DEST_DIR_DEBUG)/$(BASE_NAME).map
   NOOPT_XCODE5_X64_DLINK_FLAGS      = -arch x86_64 -u _$(IMAGE_ENTRY_POINT) -e _$(IMAGE_ENTRY_POINT) -preload -segalign 0x20  -pie -dead_strip -seg1addr 0x240 -map $(DEST_DIR_DEBUG)/$(BASE_NAME).map
-RELEASE_XCODE5_X64_DLINK_FLAGS      = -arch x86_64 -nostdlib -Os -flto -Wl,-u,_$(IMAGE_ENTRY_POINT),-e,_$(IMAGE_ENTRY_POINT),-preload,-segalign,0x20,-pie,-dead_strip,-seg1addr,0x240,-map,$(DEST_DIR_DEBUG)/$(BASE_NAME).map
+RELEASE_XCODE5_X64_DLINK_FLAGS      = -arch x86_64 -nostdlib -Os -flto -Wl,-u,_$(IMAGE_ENTRY_POINT),-e,_$(IMAGE_ENTRY_POINT),-preload,-segalign,0x20,-pie,-all_load,-dead_strip,-seg1addr,0x240,-map,$(DEST_DIR_DEBUG)/$(BASE_NAME).map
 
 *_XCODE5_X64_SLINK_FLAGS      = -static -o
   DEBUG_XCODE5_X64_ASM_FLAGS  = -arch x86_64 -g
