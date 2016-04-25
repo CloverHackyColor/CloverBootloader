@@ -87,7 +87,7 @@ CHAR8* AppleBoardID[] =    //Lion DR1 compatible
   "Mac-27ADBB7B4CEE8E61",  // IM142  - i5-4670/i7-4771
   "Mac-42FD25EABCABB274",  // IM151  - i5-4690 CPU @ 3.50GHz
   "Mac-DB15BD556843C820",  // IM171  - i5-4690 CPU @ 3.50GHz
-  "Mac-F2268DC8",          // MP31   - xeon quad 02/09 conroe
+  "Mac-F42C88C8",          // MP31   - F2268DC8 xeon quad 02/09 conroe,
   "Mac-F4238CC8",          // MP41   - xeon wolfdale
   "Mac-F221BEC8",          // MP51   - Xeon Nehalem 4 cores
   "Mac-F60DEB81FF30ACF6",  // MP61   - Intel(R) Xeon(R) CPU E5-1620 v2 @ 3.70GHz Model 0x3E
@@ -279,7 +279,7 @@ CHAR8* AppleSerialNumber[] = //random generated
   "D25LHACKF8JC", // IM142 - i5-4670/i7-4771
   "C02ND2VTFY11", // IM151 - New 5k iMac
   "C02QFHACGG7L", // IM171 - Skylake iMac
-  "W88A77AA5J4",  // MP31  - xeon quad 02/09
+  "W88A77AA5J4",  // MP31  - xeon quad 02/09, "G8801234XYK"
   "CT93051DK9Y",  // MP41
   "C07J77F7F4MC", // MP51 C07J50F7F4MC  CK04000AHFC  "CG154TB9WU3"
   "F5KLA770F9VM", // MP61
@@ -396,7 +396,7 @@ UINT8 SmcRevision[][6] =
   { 0x02, 0x15, 0x0F, 0, 0, 0x02 },   // iMac14,2
   { 0x02, 0x22, 0x0F, 0, 0, 0x16 },   // iMac15,1
   { 0x02, 0x33, 0x0F, 0, 0, 0x10 },   // iMac17,1
-  { 0x01, 0x25, 0x0F, 0, 0, 0x04 },   // MacPro3,1,
+  { 0x01, 0x30, 0x0F, 0, 0, 0x03 },   // MacPro3,1,
   { 0x01, 0x39, 0x0F, 0, 0, 0x05 },   // MacPro4,1,
   { 0x01, 0x39, 0x0F, 0, 0, 0x11 },   // MacPro5,1
   { 0x02, 0x02, 0x0F, 0, 0, 0x18 },   // MacPro6,1
