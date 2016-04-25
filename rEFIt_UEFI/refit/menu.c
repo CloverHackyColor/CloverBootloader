@@ -560,9 +560,10 @@ VOID ApplyInputs(VOID)
   UINT32 k;
   CHAR16 *ch;
   CHAR8  AString[256];
-    TagPtr dict;
+  TagPtr dict;
 //  DBG("ApplyInputs\n");
   if (InputItems[i].Valid) {
+    ZeroMem(&gSettings.BootArgs, 255);
     gBootArgsChanged = TRUE;
     ch = InputItems[i].SValue;
     do {
@@ -589,7 +590,7 @@ VOID ApplyInputs(VOID)
     GlobalConfig.Theme = PoolPrint(L"%s", InputItems[i].SValue);
     //will change theme after ESC
     gThemeChanged = TRUE;
-    //will change '\' to '_' because of underscore has a problem with some keyboard
+    //will change '\' to '_' because of underscore has a problem with some keyboards
     ch = GlobalConfig.Theme;
     do {
       if (*ch == L'\\') {

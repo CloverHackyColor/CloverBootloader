@@ -455,6 +455,7 @@
 		1290174B1A2F8EA50069691F /* RuntimeServices.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RuntimeServices.h; sourceTree = "<group>"; };
 		1290174C1A2F8EA50069691F /* StandaloneCompilation.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = StandaloneCompilation.txt; sourceTree = "<group>"; };
 		1294CC311A231CA80056FF03 /* scroll_images.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = scroll_images.h; sourceTree = "<group>"; };
+		12A7ABAE1CCE1C8E00BD837C /* config-sample.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "config-sample.plist"; path = "../../CloverPackage/CloverV2/EFI/CLOVER/config-sample.plist"; sourceTree = "<group>"; };
 		12A88C5D1A7B6E0A008C4829 /* ComponentName.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ComponentName.c; sourceTree = "<group>"; };
 		12A88C5E1A7B6E0A008C4829 /* ComponentName.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ComponentName.h; sourceTree = "<group>"; };
 		12A88C5F1A7B6E0A008C4829 /* UsbHcMem.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = UsbHcMem.c; sourceTree = "<group>"; };
@@ -3016,6 +3017,7 @@
 				2C794A491A0AA85900D845B0 /* Clover.dsc */,
 				2C794A4A1A0AA85900D845B0 /* Clover.fdf */,
 				2C794A4B1A0AA85900D845B0 /* CloverPkg.dec */,
+				12A7ABAE1CCE1C8E00BD837C /* config-sample.plist */,
 				2C794A571A0AA85900D845B0 /* CpuDxe */,
 				12E38DD71A2DB6EB0093F748 /* DriverOverride */,
 				2C794A5C1A0AA85900D845B0 /* DVDBus */,
