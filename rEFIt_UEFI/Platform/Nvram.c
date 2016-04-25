@@ -467,13 +467,27 @@ GetEfiBootDeviceFromNvram ()
   }
 
   gEfiBootDeviceData = GetNvramVariable (L"efi-boot-next-data", &gEfiAppleBootGuid, NULL, &Size);
-  DBG("got efi-boot-next-data size=%d\n", Size);
   if (gEfiBootDeviceData != NULL) {
-    DBG ("\n");
-    DBG (" efi-boot-next-data: %s\n", FileDevicePathToStr (gEfiBootDeviceData));
-  } else {
+    DBG("got efi-boot-next-data size=%d\n", Size);
+    if (IsDevicePathValid(gEfiBootDeviceData, Size)) {
+      DBG(" efi-boot-next-data: %s\n", FileDevicePathToStr (gEfiBootDeviceData));
+    } else {
+      DBG(" device path for efi-boot-next-data is invalid\n");
+      FreePool(gEfiBootDeviceData);
+      gEfiBootDeviceData = NULL;
+    }
+  }
+  if (gEfiBootDeviceData == NULL) {
     gEfiBootDeviceData = GetNvramVariable (L"efi-boot-device-data", &gEfiAppleBootGuid, NULL, &Size);
-    DBG("second efi-boot-next-data size=%d\n", Size);
+    if (gEfiBootDeviceData != NULL) {
+      if (IsDevicePathValid(gEfiBootDeviceData, Size)) {
+        DBG("got efi-boot-device-data size=%d\n", Size);
+      } else {
+        DBG(" device path for efi-boot-device-data is invalid\n");
+        FreePool(gEfiBootDeviceData);
+        gEfiBootDeviceData = NULL;
+      }
+    }
   }
   if (gEfiBootDeviceData == NULL) {
     DBG (" efi-boot-device-data not found\n");
@@ -495,6 +509,13 @@ GetEfiBootDeviceFromNvram ()
 
     if (gBootCampHD == NULL) {
       DBG (" Error: BootCampHD not found\n");
+      return EFI_NOT_FOUND;
+    }
+
+    if (!IsDevicePathValid(gBootCampHD, Size)) {
+      DBG (" Error: BootCampHD device path is invalid\n");
+      FreePool(gBootCampHD);
+      gEfiBootVolume = gBootCampHD = NULL;
       return EFI_NOT_FOUND;
     }
 
