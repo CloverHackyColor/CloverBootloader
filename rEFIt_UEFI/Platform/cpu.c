@@ -67,6 +67,31 @@ BOOLEAN           NeedPMfix = FALSE;
 #define ECX 2
 #define EDX 3
 
+#define MSR_AMD_INT_PENDING_CMP_HALT    0xC0010055
+#define AMD_ACTONCMPHALT_SHIFT  27
+#define AMD_ACTONCMPHALT_MASK   3
+// Bronya C1E fix
+// * Portions Copyright 2009 Advanced Micro Devices, Inc.
+void post_startup_cpu_fixups(void)
+{
+  /*
+   * Some AMD processors support C1E state. Entering this state will
+   * cause the local APIC timer to stop, which we can't deal with at
+   * this time.
+   */
+
+  UINT64 reg;
+  DBG("\tLooking to disable C1E if is already enabled by the BIOS:\n");
+  reg = AsmReadMsr64(MSR_AMD_INT_PENDING_CMP_HALT);
+  /* Disable C1E state if it is enabled by the BIOS */
+  if ((reg >> AMD_ACTONCMPHALT_SHIFT) & AMD_ACTONCMPHALT_MASK)
+  {
+    reg &= ~(AMD_ACTONCMPHALT_MASK << AMD_ACTONCMPHALT_SHIFT);
+    AsmWriteMsr64(MSR_AMD_INT_PENDING_CMP_HALT, reg);
+    DBG("\tC1E disabled!\n");
+  }
+}
+
 
 VOID DoCpuid(UINT32 selector, UINT32 *data)
 {
@@ -179,6 +204,8 @@ VOID GetCPUProperties (VOID)
       DBG("got cores from CPUID_1 = %d\n", gCPUStructure.CoresPerPackage);
     }
   } else if (gCPUStructure.Vendor == CPU_VENDOR_AMD) {
+
+    post_startup_cpu_fixups();
     DoCpuid(0x80000008, gCPUStructure.CPUID[CPUID_88]);
     gCPUStructure.CoresPerPackage =  (gCPUStructure.CPUID[CPUID_88][ECX] & 0xFF) + 1;
   }
