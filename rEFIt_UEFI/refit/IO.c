@@ -290,6 +290,7 @@ Returns:
   //ps.args     = args;
   VA_COPY(ps.args, args);
   _PPrint (&ps);
+  VA_END(ps.args);
 }
 
 CHAR16 *
@@ -322,6 +323,7 @@ Returns:
   ZeroMem (&spc, sizeof (spc));
   VA_START (args, fmt);
   _PoolCatPrint (fmt, args, &spc, _PoolPrint);
+  VA_END(args);
   return spc.Str;
 }
 
@@ -351,9 +353,12 @@ Returns:
 --*/
 {
   VA_LIST args;
+  UINTN ret;
 
   VA_START (args, fmt);
-  return _IPrint (Column, Row, gST->ConOut, fmt, NULL, args);
+  ret = _IPrint (Column, Row, gST->ConOut, fmt, NULL, args);
+  VA_END(args);
+  return ret;
 }
 
 UINTN
@@ -423,7 +428,9 @@ Returns:
     Out->SetCursorPosition (Out, Column, Row);
   }
 
-  return _PPrint (&ps);
+  back = _PPrint (&ps);
+  VA_END(ps.args);
+  return back;
 }
 
 UINTN
@@ -451,9 +458,12 @@ Returns:
 --*/
 {
   VA_LIST args;
+  UINTN ret;
 
   VA_START (args, fmt);
-  return _IPrint ((UINTN) -1, (UINTN) -1, Out, fmt, NULL, args);
+  ret = _IPrint ((UINTN) -1, (UINTN) -1, Out, fmt, NULL, args);
+  VA_END(args);
+  return ret;
 }
 
 UINTN
@@ -486,9 +496,12 @@ Returns:
 --*/
 {
   VA_LIST args;
+  UINTN ret;
 
   VA_START (args, fmt);
-  return _IPrint (Column, Row, gST->ConOut, fmt, NULL, args);
+  ret = _IPrint (Column, Row, gST->ConOut, fmt, NULL, args);
+  VA_END(args);
+  return ret;
 }
 
 VOID

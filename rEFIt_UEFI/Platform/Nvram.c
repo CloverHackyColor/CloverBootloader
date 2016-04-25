@@ -480,9 +480,8 @@ GetEfiBootDeviceFromNvram ()
   if (gEfiBootDeviceData == NULL) {
     gEfiBootDeviceData = GetNvramVariable (L"efi-boot-device-data", &gEfiAppleBootGuid, NULL, &Size);
     if (gEfiBootDeviceData != NULL) {
-      if (IsDevicePathValid(gEfiBootDeviceData, Size)) {
-        DBG("got efi-boot-device-data size=%d\n", Size);
-      } else {
+      DBG("got efi-boot-device-data size=%d\n", Size);
+      if (!IsDevicePathValid(gEfiBootDeviceData, Size)) {
         DBG(" device path for efi-boot-device-data is invalid\n");
         FreePool(gEfiBootDeviceData);
         gEfiBootDeviceData = NULL;

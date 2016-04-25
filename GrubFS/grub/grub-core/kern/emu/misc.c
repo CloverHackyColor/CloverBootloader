@@ -127,6 +127,7 @@ xasprintf (const char *fmt, ...)
   
   va_start (ap, fmt);
   result = grub_xvasprintf (fmt, ap);
+  va_end (ap);
   if (!result)
     grub_util_error ("%s", _("out of memory"));
   

@@ -448,6 +448,28 @@ struct _LIST_ENTRY {
 **/
 #define _INT_SIZE_OF(n) ((sizeof (n) + sizeof (UINTN) - 1) &~(sizeof (UINTN) - 1))
 #define GCC_VERSION (__GNUC__ * 10 + __GNUC_MINOR__)
+#ifdef __clang__
+/*
+ * clang defines __MACH__ if the target is OS X, but not if the target is Windows
+ */
+#if !defined(__MACH__) && defined(__x86_64__)
+#ifdef __apple_build_version__      // Apple clang
+#if (__clang_major__ * 0x100 + __clang_minor__) >= 0x703
+// Use __builtin_ms_va_list if Apple clang ver >= 7.3.0
+#define USE_CLANG_BUILTIN_MS_VA_LIST
+#endif
+#else   // Generic clang
+// Use __builtin_ms_va_list if Generic clang ver >= 3.7.0
+#if (__clang_major__ * 0x100 + __clang_minor__) >= 0x307
+#define USE_CLANG_BUILTIN_MS_VA_LIST
+#endif
+#endif  // end Apple/Generic clang
+#endif  // end !__MACH__ && __x86_64__
+// Use __builtin_va_list in rest of clang cases
+#ifndef USE_CLANG_BUILTIN_MS_VA_LIST
+#define USE_CLANG_BUILTIN_VA_LIST
+#endif
+#endif  // end __clang__
 #if defined(__CC_ARM)
 //
 // RVCT ARM variable argument list support.
@@ -479,7 +501,7 @@ struct _LIST_ENTRY {
 #define VA_COPY(Dest, Start)          __va_copy (Dest, Start)
 
 //#elif defined(__GNUC__) && !defined(NO_BUILTIN_VA_FUNCS)
-#elif defined(__GNUC__) && (!defined(__x86_64__) || defined(TARGET_MAC))
+#elif defined(USE_CLANG_BUILTIN_VA_LIST) || (defined(__GNUC__) && !defined(__x86_64__))
 //
 // Use GCC built-in macros for variable argument lists.
 //
@@ -498,7 +520,7 @@ typedef __builtin_va_list VA_LIST;
 
 #define VA_COPY(Dest, Start)         __builtin_va_copy (Dest, Start)
 
-#elif defined(__GNUC__) && defined(__x86_64__) && ((GCC_VERSION >= 48) || defined(__clang__))
+#elif defined(USE_CLANG_BUILTIN_MS_VA_LIST) || (defined(__GNUC__) && defined(__x86_64__) && (GCC_VERSION >= 48))
 
   typedef __builtin_ms_va_list VA_LIST;
 

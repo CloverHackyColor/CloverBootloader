@@ -187,7 +187,6 @@
 					../../../rEFIt_UEFI/libeg,
 					../../../Include,
 				);
-				OTHER_CFLAGS = "-DTARGET_MAC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -204,7 +203,6 @@
 					../../../rEFIt_UEFI/libeg,
 					../../../Include,
 				);
-				OTHER_CFLAGS = "-DTARGET_MAC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
