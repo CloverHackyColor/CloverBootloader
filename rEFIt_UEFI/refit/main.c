@@ -1825,6 +1825,10 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   }
   MsgLog("Starting Clover rev %s on %s EFI\n", FIRMWARE_REVISION, gST->FirmwareVendor);
 
+  #ifdef BUILDINFOS_STR
+    DBG("Build with: [%a]\n", BUILDINFOS_STR);
+  #endif // BUILDINFOS_STR
+
   Status = InitRefitLib(gImageHandle);
   if (EFI_ERROR(Status))
     return Status;
