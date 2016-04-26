@@ -659,7 +659,7 @@ GetDefaultSettings ()
   gSettings.TrustSMBIOS          = TRUE;
   
   gSettings.SmUUIDConfig         = FALSE;
-  
+  gSettings.DefaultBackgroundColor = 0x80000000; //the value to delete the variable
   gSettings.RtROM                = NULL;
   gSettings.RtROMLen             = 0;
   
