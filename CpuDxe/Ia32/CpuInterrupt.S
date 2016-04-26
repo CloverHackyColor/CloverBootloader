@@ -276,7 +276,7 @@ INTUnknown:
   ASM_GLOBAL ASM_PFX(SystemTimerHandler)
 ASM_PFX(SystemTimerHandler):
     pushl    $0
-    pushl    $ASM_PFX(mTimerVector)
+    pushl    $0 # $ASM_PFX(mTimerVector)
     JmpCommonIdtEntry
 
 commonIdtEntry:
@@ -319,7 +319,7 @@ commonIdtEntry:
 ## UINT32  Gs, Fs, Es, Ds, Cs, Ss#
   movw  %ss,%ax
   push  %eax
-  movzx 4*4(%ebp),%eax
+  movzwl 4*4(%ebp),%eax
   push %eax
   movw  %ds,%ax
   push %eax
@@ -399,12 +399,14 @@ commonIdtEntry:
   mov     1*4(%ebp),%eax
   push    %eax
   cmpl    $32,%eax
-  jb      CallException
+  jb      1f # CallException
   call    ASM_PFX(TimerHandler)
-  jmp     ExceptionDone
-CallException:
+  jmp     2f # ExceptionDone
+#CallException:
+1:
   call    ASM_PFX(ExceptionHandler)
-ExceptionDone:
+#ExceptionDone:
+2:
   addl    $8,%esp
 
   cli
@@ -574,7 +576,8 @@ GDT_END:
 
 
 
-idtr: .short IDT_END - IDT_BASE - 1   # IDT limit
+#idtr: .short IDT_END - IDT_BASE - 1   # IDT limit
+idtr: .short IDT_LEN
         .long 0                         # (IDT base gets set above)
 #;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 #   interrupt descriptor table (IDT)
@@ -955,8 +958,9 @@ IRQ15_SEL            = .-IDT_BASE
         .byte 0x0e | 0x80   # (10001110)type = 386 interrupt gate, present
         .short 0            # offset 31:16
 
-  .fill 1 * 8, 1, 0
+#  .fill 1 * 8, 1, 0
 
 IDT_END:
+  .set IDT_LEN, .-IDT_BASE - 1
 
-ASM_FUNCTION_REMOVE_IF_UNREFERENCED
+#ASM_FUNCTION_REMOVE_IF_UNREFERENCED

@@ -235,7 +235,7 @@ INTUnknown:
 
 ASM_PFX(SystemTimerHandler):
     push    0
-    push   strict DWORD 0  ;mTimerVector ;to be patched in Cpu.c
+    push    0  ;mTimerVector ;to be patched in Cpu.c
     JmpCommonIdtEntry
 
 commonIdtEntry:
@@ -278,7 +278,7 @@ commonIdtEntry:
 ;; UINT32  Gs, Fs, Es, Ds, Cs, Ss;
   mov  ax, ss
   push eax
-  movzx eax, byte  [ebp + 4 * 4]
+  movzx eax, word  [ebp + 4 * 4]
   push eax
   mov  ax, ds
   push eax
@@ -545,7 +545,7 @@ idtr    dw IDT_END - IDT_BASE - 1   ; IDT limit
 
          ALIGN 04h       ; make IDT 4-byte align
 
-global IDT_BASE
+;global IDT_BASE
 IDT_BASE:
 ; divide by zero (INT 0)
 DIV_ZERO_SEL        equ $-IDT_BASE
@@ -848,7 +848,7 @@ IRQ15_SEL            equ $-IDT_BASE
         dw 0            ; offset 31:16
 
 ;        db (1 * 8) dup(0)
-TIMES (1 * 8) db 0
+;TIMES (1 * 8) db 0
 
 IDT_END:
 

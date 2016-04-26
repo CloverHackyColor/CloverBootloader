@@ -208,7 +208,7 @@ INTUnknown:
 
 ASM_PFX(SystemTimerHandler):
     push    0
-    push   strict DWORD 0  ;mTimerVector ;to be patched in Cpu.c
+    push    0  ;mTimerVector ;to be patched in Cpu.c
     JmpCommonIdtEntry
 
 commonIdtEntry:
@@ -931,7 +931,7 @@ IRQ15_SEL            equ $-IDT_BASE
         dd 0            ; 0 for reserved
 
 ;        db (1 * 16) dup(0)
-TIMES 16 db 0
+;TIMES 16 db 0
 
 IDT_END:
 
