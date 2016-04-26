@@ -77,6 +77,7 @@ fi
 # Check if we need to patch the sources
 PATCH_FILE=
 if [[ "$SYSNAME" == Linux ]]; then
+  declare -r XCODE_VERSION=
   if [[ ! -x "$TOOLCHAIN_DIR"/bin/gcc ]]; then
       echo "No clover toolchain found !" >&2
       echo "Install on your system or define the TOOLCHAIN_DIR variable." >&2

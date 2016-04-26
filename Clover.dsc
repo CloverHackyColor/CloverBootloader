@@ -573,7 +573,7 @@
   DEFINE BUILD_OPTIONS=-DMDEPKG_NDEBUG -DCLOVER_BUILD $(VBIOS_PATCH_CLOVEREFI_FLAG) $(ONLY_SATA_0_FLAG) $(BLOCKIO_FLAG) $(NOUSB_FLAG) $(AMD_FLAG) $(SECURE_BOOT_FLAG) $(PS2MOUSE_LEGACYBOOT_FLAG) $(DEBUG_ON_SERIAL_PORT_FLAG) $(NOUDMA_FLAG)
 
   MSFT:*_*_*_CC_FLAGS  = /FAcs /FR$(@R).SBR /wd4701 /wd4703 $(BUILD_OPTIONS)
-  XCODE:*_*_*_CC_FLAGS = -Os $(BUILD_OPTIONS) -Wno-msvc-include
+  XCODE:*_*_*_CC_FLAGS = -fno-unwind-tables -Os $(BUILD_OPTIONS) -Wno-msvc-include
   GCC:*_*_*_CC_FLAGS   = $(BUILD_OPTIONS) 
   #-Wunused-but-set-variable
   # -Os -fno-omit-frame-pointer -maccumulate-outgoing-args
