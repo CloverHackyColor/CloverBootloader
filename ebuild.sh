@@ -3,10 +3,11 @@
 #  ebuild.sh ->ebuild.sh  //renamed to be unique file begining from E
 #  Script for building CloverEFI source under OS X or Linux
 #  Supported chainloads(compilers) are XCODE32, UNIXGCC and CLANG
-#  
+#
 #
 #  Created by Jadran Puharic on 1/6/12.
 #  Modified by JrCs on 3/9/13.
+#  Zenith432, STLVNUB, cecekpawon 2016
 
 # Go to the Clover root directory
 cd "$(dirname $0)"
@@ -56,62 +57,21 @@ USE_LOW_EBDA=1
 CLANG=0
 GENPAGE=0
 
-GIT=`which git`
-#GITDIR=`git status 2> /dev/null`        # unsafe as git repository may exist in parent directory
-ARGS="$@"
-VERSTXT="vers.txt"
-OSVER="$(sw_vers -productVersion | sed -e 's/\.0$//g')"
+declare -r GIT=`which git`
+#declare -r GITDIR=`git status 2> /dev/null`        # unsafe as git repository may exist in parent directory
+declare -r VERSTXT="vers.txt"
+declare -r OSVER="$(sw_vers -productVersion | sed -e 's/\.0$//g')"
+XCODE_BUILD=
+XCODE_VERSION=
+PATCH_FILE=
 
 # Bash options
 set -e # errexit
 set -u # Blow on unbound variable
 
-#if [[ -x /usr/bin/git ]]; then
-#    PATCH_CMD="/usr/bin/git apply --whitespace=nowarn"
-if [[ -n $GIT ]]; then
-    PATCH_CMD="${GIT} apply --whitespace=nowarn"
-else
-    PATCH_CMD="/usr/bin/patch"
-fi
-
-# Check if we need to patch the sources
-PATCH_FILE=
-if [[ "$SYSNAME" == Linux ]]; then
-  declare -r XCODE_VERSION=
-  if [[ ! -x "$TOOLCHAIN_DIR"/bin/gcc ]]; then
-      echo "No clover toolchain found !" >&2
-      echo "Install on your system or define the TOOLCHAIN_DIR variable." >&2
-      exit 1
-  fi
-else
-  # this shoud be in checkXcode()
-  #declare -r XCODE_MAJOR_VERSION="$(xcodebuild -version | sed -nE 's/^Xcode ([0-9]).*/\1/p')"
-  declare -r XCODE_VERSION="$(xcodebuild -version | sed -nE 's/^Xcode ([0-9.]+).*/\1/p')"
-  declare -r XCODE_MAJOR_VERSION="$(echo $XCODE_VERSION | sed -nE 's/^([0-9]).*/\1/p')"
-  case "$XCODE_MAJOR_VERSION" in
-      5) PATCH_FILE=;;
-  esac
-
-  if [[ ! -x "$TOOLCHAIN_DIR"/cross/bin/x86_64-clover-linux-gnu-gcc && \
-        ! -x "$TOOLCHAIN_DIR"/cross/bin/i686-clover-linux-gnu-gcc ]]; then
-      echo "No clover toolchain found !" >&2
-      echo "Build it with the buidgcc.sh script or defined the TOOLCHAIN_DIR variable." >&2
-      exit 1
-  fi
-fi
-
-if [[ ! -x "$TOOLCHAIN_DIR"/bin/nasm ]]; then
-    echo "No nasm binary found in toolchain directory !" >&2
-    if [[ "$SYSNAME" != Linux ]]; then
-      echo "Build it with the buidnasm.sh script." >&2
-    fi
-    exit 1
-fi
-
 ## FUNCTIONS ##
 
 function exitTrap() {
-
     if [[ -n "$PATCH_FILE" && -n "$WORKSPACE" ]]; then
         echo -n "Unpatching edk2..."
         ( cd "$WORKSPACE" && cat "$CLOVERROOT"/Patches_for_EDK2/$PATCH_FILE | eval "$PATCH_CMD -p0 -R" &>/dev/null )
@@ -121,6 +81,52 @@ function exitTrap() {
             echo " failed"
         fi
     fi
+}
+
+# Check if we need to patch the sources
+checkPatch() {
+  #if [[ -x /usr/bin/git ]]; then
+  #    PATCH_CMD="/usr/bin/git apply --whitespace=nowarn"
+  if [[ -n "${GIT}" ]]; then
+      PATCH_CMD="${GIT} apply --whitespace=nowarn"
+  else
+      PATCH_CMD="/usr/bin/patch"
+  fi
+
+  checkToolchain
+
+  if [[ "$SYSNAME" == Linux ]]; then
+    if [[ ! -x "$TOOLCHAIN_DIR"/bin/gcc ]]; then
+        echo "No clover toolchain found !" >&2
+        echo "Install on your system or define the TOOLCHAIN_DIR variable." >&2
+        exit 1
+    fi
+  else
+    if [[ -n "${XCODE_BUILD}" ]]; then
+      #declare -r XCODE_MAJOR_VERSION="$(xcodebuild -version | sed -nE 's/^Xcode ([0-9]).*/\1/p')"
+      XCODE_VERSION="$(echo `$XCODE_BUILD -version` | sed -nE 's/^Xcode ([0-9.]+).*/\1/p')"
+      declare -r XCODE_MAJOR_VERSION="$(echo $XCODE_VERSION | cut -d. -f1)"
+
+      case "$XCODE_MAJOR_VERSION" in
+          5) PATCH_FILE=;;
+      esac
+    fi
+
+    if [[ ! -x "$TOOLCHAIN_DIR"/cross/bin/x86_64-clover-linux-gnu-gcc && \
+          ! -x "$TOOLCHAIN_DIR"/cross/bin/i686-clover-linux-gnu-gcc ]]; then
+        echo "No clover toolchain found !" >&2
+        echo "Build it with the buidgcc.sh script or defined the TOOLCHAIN_DIR variable." >&2
+        exit 1
+    fi
+  fi
+
+  if [[ ! -x "$TOOLCHAIN_DIR"/bin/nasm ]]; then
+      echo "No nasm binary found in toolchain directory !" >&2
+      if [[ "$SYSNAME" != Linux ]]; then
+        echo "Build it with the buidnasm.sh script." >&2
+      fi
+      exit 1
+  fi
 }
 
 print_option_help () {
@@ -194,7 +200,8 @@ addEdk2BuildMacro() {
 
 # Check Xcode toolchain
 checkXcode () {
-    if [[ ! -x /usr/bin/xcodebuild ]]; then
+    XCODE_BUILD="/usr/bin/xcodebuild"
+    if [[ ! -x "${XCODE_BUILD}" ]]; then
         echo "ERROR: Install Xcode Tools from Apple before using this script." >&2
         exit 1
     fi
@@ -358,12 +365,11 @@ checkToolchain() {
     esac
 }
 
-
 # Main build script
 MainBuildScript() {
-
     checkCmdlineArguments $@
-    checkToolchain
+    #checkToolchain
+    checkPatch
 
     if [[ -d .svn ]]; then
         svnversion -n | tr -d [:alpha:] > "${VERSTXT}"
@@ -484,11 +490,11 @@ MainBuildScript() {
     echo "#define FIRMWARE_REVISION L\"${clover_revision}\""   >> "$CLOVERROOT"/Version.h
     echo "#define REVISION_STR \"Clover revision: ${clover_revision}\"" >> "$CLOVERROOT"/Version.h
 
-    local clover_build_info="Args: ./${0##*/}"
-    if [[ -n "${ARGS}" ]]; then
-      clover_build_info="${clover_build_info} ${ARGS}"
+    local clover_build_info="Args: ./${SELF}"
+    if [[ -n "$@" ]]; then
+      clover_build_info="${clover_build_info} $@"
     fi
-    clover_build_info="${clover_build_info} | Command: $(echo $cmd | xargs) ${ARGS}"
+    clover_build_info="${clover_build_info} | Command: $(echo $cmd | xargs)"
 
     if [[ -n "${OSVER}" ]]; then
       clover_build_info="${clover_build_info} | OS: ${OSVER}"
@@ -506,7 +512,6 @@ MainBuildScript() {
 
 # Deploy Clover files for packaging
 MainPostBuildScript() {
-
     if [[ -z "$EDK_TOOLS_PATH" ]]; then
         export BASETOOLS_DIR="$WORKSPACE"/BaseTools/Source/C/bin
     else
@@ -567,7 +572,7 @@ MainPostBuildScript() {
         cp -v "$BUILD_DIR_ARCH"/Ps2MouseDxe.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers32/Ps2MouseDxe-32.efi
         cp -v "$BUILD_DIR_ARCH"/UsbMouseDxe.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers32/UsbMouseDxe-32.efi
         cp -v "$BUILD_DIR_ARCH"/XhciDxe.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers32/XhciDxe-32.efi
-                
+
         #applications
         cp -v "$BUILD_DIR_ARCH"/bdmesg.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/tools/bdmesg-32.efi
         cp -v "$BUILD_DIR_ARCH"/CLOVER${TARGETARCH}.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/
@@ -600,13 +605,13 @@ MainPostBuildScript() {
         if [[ "$GENPAGE" -ne 0 ]]; then
         cat $BOOTSECTOR_BIN_DIR/$startBlock $BOOTSECTOR_BIN_DIR/efi64.com3 "${BUILD_DIR}"/FV/Efildr64 > "${BUILD_DIR}"/FV/boot
         else
-        cat $BOOTSECTOR_BIN_DIR/$startBlock $BOOTSECTOR_BIN_DIR/efi64.com3 "${BUILD_DIR}"/FV/Efildr64 > "${BUILD_DIR}"/FV/Efildr20Pure    
+        cat $BOOTSECTOR_BIN_DIR/$startBlock $BOOTSECTOR_BIN_DIR/efi64.com3 "${BUILD_DIR}"/FV/Efildr64 > "${BUILD_DIR}"/FV/Efildr20Pure
 
         if [[ "$USE_LOW_EBDA" -ne 0 ]]; then
            "$BASETOOLS_DIR"/GenPage "${BUILD_DIR}"/FV/Efildr20Pure -b 0x88000 -f 0x68000 -o "${BUILD_DIR}"/FV/Efildr20
-        else   
+        else
           "$BASETOOLS_DIR"/GenPage "${BUILD_DIR}"/FV/Efildr20Pure -o "${BUILD_DIR}"/FV/Efildr20
-        fi  
+        fi
         # Create CloverEFI file
         dd if="${BUILD_DIR}"/FV/Efildr20 of="${BUILD_DIR}"/FV/boot bs=512 skip=1
         fi
@@ -644,14 +649,14 @@ MainPostBuildScript() {
         #cp -v "$BUILD_DIR_ARCH"/Ps2MouseAbsolutePointerDxe.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64/Ps2MouseAbsolutePointerDxe-64.efi
         cp -v "$BUILD_DIR_ARCH"/Ps2MouseDxe.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64/Ps2MouseDxe-64.efi
         cp -v "$BUILD_DIR_ARCH"/UsbMouseDxe.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64/UsbMouseDxe-64.efi
-        cp -v "$BUILD_DIR_ARCH"/XhciDxe.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64/XhciDxe-64.efi        
+        cp -v "$BUILD_DIR_ARCH"/XhciDxe.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64/XhciDxe-64.efi
         cp -v "$BUILD_DIR_ARCH"/NvmExpressDxe.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64/NvmExpressDxe-64.efi
         cp -v "$BUILD_DIR_ARCH"/OsxAptioFixDrv.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/OsxAptioFixDrv-64.efi
         cp -v "$BUILD_DIR_ARCH"/OsxAptioFix2Drv.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/OsxAptioFix2Drv-64.efi
         cp -v "$BUILD_DIR_ARCH"/OsxLowMemFixDrv.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/OsxLowMemFixDrv-64.efi
         cp -v "$BUILD_DIR_ARCH"/CsmVideoDxe.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/CsmVideoDxe-64.efi
         cp -v "$BUILD_DIR_ARCH"/EmuVariableUefi.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/EmuVariableUefi-64.efi
-        
+
         #applications
         cp -v "$BUILD_DIR_ARCH"/bdmesg.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/tools/
         cp -v "$BUILD_DIR_ARCH"/CLOVER${TARGETARCH}.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/
@@ -667,7 +672,7 @@ MainPostBuildScript() {
     local BOOTHFS="$CLOVERROOT"/BootHFS
     DESTDIR="$CLOVER_PKG_DIR"/BootSectors make -C $BOOTHFS
     echo "Done!"
-} 
+}
 
 # BUILD START #
 trap 'exitTrap' EXIT
