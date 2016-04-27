@@ -40,7 +40,7 @@ SavedIDTROff =		. - DataBase
 ASM_PFX(SavedIDTR):		.word 0
 						.quad 0
 
-	.align 8
+	.p2align 3
 
 SavedCR3Off =			. - DataBase
 ASM_PFX(SavedCR3):		.quad 0
@@ -69,7 +69,7 @@ SavedDS32:				.word 0
 SavedESP32Off =			. - DataBase
 SavedESP32:				.long 0
 
-	.align 8
+	.p2align 3
 
 # address of relocated MyAsmCopyAndJumpToKernel32 - 64 bit
 MyAsmCopyAndJumpToKernel32AddrOff =			. - DataBase
@@ -100,17 +100,17 @@ AsmKernelImageSizeOff =						. - DataBase
 ASM_PFX(AsmKernelImageSize):				.quad 0
 
 
-	.align 8
+	.p2align 3
 
 # GDT not used since we are reusing UEFI state
 # but left here in case will be needed.
 #
 # GDR record
 GDTROff = 		. - DataBase
-GDTR:			.word GDT_END - GDT_BASE - 1   # GDT limit
+GDTR:			.word L_GDT_LEN                # GDT limit
 GDTR_BASE:		.quad 0                        # GDT base - needs to be set in code
 
-	.align 8
+	.p2align 3
 
 # GDT table
 GDT_BASE:
@@ -151,6 +151,7 @@ CODE32_SEL =	. - GDT_BASE			# 0x18
 	.byte 0
 
 GDT_END:
+L_GDT_LEN = . - GDT_BASE - 1
 
 
 	.text
@@ -182,8 +183,8 @@ ASM_PFX(MyAsmPrepareJumpFromKernel):
 	sidt	ASM_PFX(SavedIDTR)(%rip)
 	movq	%cr3, %rax
 	movq	%rax, ASM_PFX(SavedCR3)(%rip)
-	movw	%cs, SavedCS(%rip)
-	movw	%ds, SavedDS(%rip)
+	movl	%cs, SavedCS(%rip)
+	movl	%ds, SavedDS(%rip)
 
 	# pass DataBase to 32 bit code
 	lea		DataBase(%rip), %rax
@@ -305,14 +306,16 @@ DataBaseAdr:	.long 0
 	# lets save 32 bit state to be able to recover it later
 	sgdt	SavedGDTR32Off(%ebx)
 	sidt	SavedIDTR32Off(%ebx)
-	movw	%cs, SavedCS32Off(%ebx)
-	movw	%ds, SavedDS32Off(%ebx)
+	movl	%cs, SavedCS32Off(%ebx)
+	movl	%ds, SavedDS32Off(%ebx)
 	movl	%esp, SavedESP32Off(%ebx)
 	
 	#
 	# move to 64 bit mode ...
 	#
 	
+	# FIXME: all this with interrupts enabled? no-no
+
 	# load saved UEFI GDT, IDT
 	# will become active after code segment is changed in long jump
 	lgdt	SavedGDTROff(%ebx)
@@ -353,14 +356,15 @@ DataBaseAdr:	.long 0
 
 	# set segments
 	movw	SavedDSOff(%rbx), %ax
-	movw	%ax, %ds
+	movl	%eax, %ds
 	# set up stack ...
 	# not sure if needed, but lets set ss to ds
-	movw	%ax, %ss
+	movl	%eax, %ss  # disables interrupts for 1 instruction to load rsp
 	# lets align the stack
-	movq	%rsp, %rax
-	andq	$0xfffffffffffffff0, %rax
-	movq	%rax, %rsp
+#	movq	%rsp, %rax
+#	andq	$0xfffffffffffffff0, %rax
+#	movq	%rax, %rsp
+	andq	$0xfffffffffffffff0, %rsp
 	
 	# call our C code
 	# (calling conv.: always reserve place for 4 args on stack)
@@ -380,7 +384,7 @@ DataBaseAdr:	.long 0
 
 	# KernelEntryPatchJumpBack should be EFIAPI
 	# and rbx should not be changed by EFIAPI calling convention
-	call	KernelEntryPatchJumpBack
+	call	ASM_PFX(KernelEntryPatchJumpBack)
 	#hlt	# uncomment to stop here for test
 	# return value in rax is bootArgs pointer
 	mov		%rax, %rdi
@@ -388,6 +392,8 @@ DataBaseAdr:	.long 0
 	#
 	# time to go back to 32 bit
 	#
+
+	# FIXME: all this with interrupts enabled? no-no
 
 	# load saved 32 bit gdtr
 	lgdt	SavedGDTR32Off(%rbx)
@@ -421,11 +427,11 @@ DataBaseAdr:	.long 0
 	# now reload saved 32 bit state data
 	lidt	SavedIDTR32Off(%ebx)
 	movw	SavedDS32Off(%ebx), %ax
-	movw	%ax, %ss
-	movw	%ax, %ds
-	movw	%ax, %es
-	movw	%ax, %fs
-	movw	%ax, %gs
+	movl	%eax, %ds
+	movl	%eax, %es
+	movl	%eax, %fs
+	movl	%eax, %gs
+	movl	%eax, %ss  # disables interrupts for 1 instruction to load esp
 	movl	SavedESP32Off(%ebx), %esp
 
 	#
@@ -486,7 +492,7 @@ MyAsmJumpFromKernel64:
 	push	%rdx
 	push	%rcx
 	# KernelEntryPatchJumpBack should be EFIAPI
-	call	KernelEntryPatchJumpBack
+	call	ASM_PFX(KernelEntryPatchJumpBack)
 	#hlt	# uncomment to stop here for test
 	# return value in rax is bootArgs pointer
 
@@ -513,7 +519,7 @@ MyAsmJumpFromKernel64:
 	jmp		*%rbx
 	ret
 
-	.align 8
+	.p2align 3
 #------------------------------------------------------------------------------
 # MyAsmCopyAndJumpToKernel 
 # 
@@ -556,7 +562,7 @@ ASM_PFX(MyAsmCopyAndJumpToKernel32):
 	# ES:EDI = destination
 	#
 	cld								# direction is up
-	rep movsd
+	rep movsl
 	
 	#
 	# and finally jump to kernel:
@@ -576,7 +582,7 @@ ASM_PFX(MyAsmCopyAndJumpToKernel32):
 # RDI = proper start of kernel image (destination)
 # RCX = kernel image size in bytes
 #------------------------------------------------------------------------------
-	.align 8
+	.p2align 3
 ASM_GLOBAL ASM_PFX(MyAsmCopyAndJumpToKernel64)
 ASM_PFX(MyAsmCopyAndJumpToKernel64):
 	.code64

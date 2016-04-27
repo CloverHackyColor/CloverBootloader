@@ -356,6 +356,8 @@ DataBaseAdr	dd	0
 	; move to 64 bit mode ...
 	;
 	
+	; FIXME: all this with interrupts enabled? no-no
+
 	; load saved UEFI GDT, IDT
 	; will become active after code segment is changed in long jump
 	; rbx is ebx in 32 bit
@@ -399,11 +401,12 @@ BITS 64
 	mov		ds, ax
 	; set up stack ...
 	; not sure if needed, but lets set ss to ds
-	mov		ss, ax
+	mov		ss, ax  ; disables interrupts for 1 instruction to load rsp
 	; lets align the stack
-	mov		rax, rsp
-	and		rax, 0fffffffffffffff0h
-	mov		rsp, rax
+;	mov		rax, rsp
+;	and		rax, 0fffffffffffffff0h
+;	mov		rsp, rax
+	and		rsp, 0fffffffffffffff0h
 	
 	; call our C code
 	; (calling conv.: always reserve place for 4 args on stack)
@@ -432,6 +435,8 @@ BITS 64
 	; time to go back to 32 bit
 	;
 	
+	; FIXME: all this with interrupts enabled? no-no
+
 	; load saved 32 bit gdtr
 	lgdt	[rbx + SavedGDTR32Off]
 	; push saved cs and rip (with call) to stack and do retf
@@ -463,11 +468,11 @@ toNext:
 	; now reload saved 32 bit state data
 	lidt	[ebx + SavedIDTR32Off]
 	mov		ax, word [ebx + SavedDS32Off]
-	mov		ss, ax
 	mov		ds, ax
 	mov		es, ax
 	mov		fs, ax
 	mov		gs, ax
+	mov		ss, ax  ; disables interrupts for 1 instruction to load esp
 	mov		esp, dword [ebx + SavedESP32Off]
 	
 	;

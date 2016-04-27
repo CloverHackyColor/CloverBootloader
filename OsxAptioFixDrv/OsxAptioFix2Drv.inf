@@ -54,9 +54,9 @@
   Hibernate.h
 
 [Sources.X64]
-  X64/AsmFuncsX64.asm
-  #X64/AsmFuncsX64.S | GCC
-  X64/AsmFuncsX64.S | XCODE
+  X64/AsmFuncsX64.asm | INTEL
+  X64/AsmFuncsX64.asm | MSFT
+  X64/AsmFuncsX64.S | GCC
   X64/AsmFuncsX64.nasm | GCC
 
 [Guids]
