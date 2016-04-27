@@ -4700,6 +4700,7 @@ RELEASE_GCC48_AARCH64_CC_FLAGS   = DEF(GCC48_AARCH64_CC_FLAGS) -Wno-unused-but-s
 #
 ####################################################################################
 *_GCC53_*_*_FAMILY               = GCC
+*_GCC53_*_*_BUILDRULEORDER       = nasm S s
 
 *_GCC53_*_MAKE_PATH                    = make
 #*_GCC53_*_MAKE_PATH                    = DEF(GCC53_IA32_PREFIX)make
@@ -6730,6 +6731,7 @@ RELEASE_XCODE32_ARM_CC_FLAGS   = $(ARCHCC_FLAGS) $(PLATFORM_FLAGS) -mthumb-inter
 #   CLANG         - clang that produce Mach-O with EFI x86_64 ABI
 *_XCLANG_*_*_FAMILY            = GCC
 *_XCLANG_*_*_BUILDRULEFAMILY   = XCODE
+*_XCLANG_*_*_BUILDRULEORDER    = S s nasm
 *_XCLANG_*_ASL_PATH          = /usr/local/bin/iasl
 *_XCLANG_*_MAKE_PATH        = make
 *_XCLANG_*_DSYMUTIL_PATH    = /usr/bin/dsymutil

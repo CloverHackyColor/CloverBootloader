@@ -183,8 +183,8 @@ ASM_PFX(MyAsmPrepareJumpFromKernel):
 	sidt	ASM_PFX(SavedIDTR)(%rip)
 	movq	%cr3, %rax
 	movq	%rax, ASM_PFX(SavedCR3)(%rip)
-	movl	%cs, SavedCS(%rip)
-	movl	%ds, SavedDS(%rip)
+	mov	%cs, SavedCS(%rip)
+	mov	%ds, SavedDS(%rip)
 
 	# pass DataBase to 32 bit code
 	lea		DataBase(%rip), %rax
@@ -306,8 +306,8 @@ DataBaseAdr:	.long 0
 	# lets save 32 bit state to be able to recover it later
 	sgdt	SavedGDTR32Off(%ebx)
 	sidt	SavedIDTR32Off(%ebx)
-	movl	%cs, SavedCS32Off(%ebx)
-	movl	%ds, SavedDS32Off(%ebx)
+	mov	%cs, SavedCS32Off(%ebx)
+	mov	%ds, SavedDS32Off(%ebx)
 	movl	%esp, SavedESP32Off(%ebx)
 	
 	#
