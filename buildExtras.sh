@@ -9,15 +9,22 @@
 
 # Change PREFIX if you want nasm installed on different place
 #
-PLATFORMDIR=$(dirname "$0")
+[ -z $TOOLCHAIN ] && export TOOLCHAIN=GCC53
 TOOLCHAIN_DIR=${TOOLCHAIN_DIR:-~/src/opt/local}
-PREFIX=${PREFIX:-$TOOLCHAIN_DIR}
+export PREFIX=${PREFIX:-$TOOLCHAIN_DIR}
 
-if [[ ! -x "$TOOLCHAIN_DIR"/bin/gcc || \
-      ! -x "$TOOLCHAIN_DIR"/bin/g++ ]]; then
+if [[ ! -x "$TOOLCHAIN_DIR"/bin/gcc || ! -x "$TOOLCHAIN_DIR"/bin/g++ ]]; then
     echo "No clover toolchain found !" >&2
-    echo "Build it with the buidgcc.sh script or defined the TOOLCHAIN_DIR variable." >&2
-    exit 1
+    if [ -z $CLEAN_BUILD ]; then
+   	  echo "Press b to BUILD it OR else define the TOOLCHAIN_DIR variable." >&2
+   	  read -n 1 result
+   	  [ "$result" != "b" ] && exit 1
+  	else
+      echo -n b
+  	fi
+   	echo "uilding it"
+ 	./build_gcc5.sh
+   	echo "Continuing..."
 fi
 
 #
@@ -132,6 +139,9 @@ pathmunge () {
 # Add XCode bin directory for the command line tools to the PATH
 pathmunge "$(xcode-select --print-path)"/usr/bin
 
+# Add toolchain bin directory to the PATH
+pathmunge "$TOOLCHAIN_DIR"/bin
+
 cd ${DIR_DOWNLOADS}
 iaslLocalVers=
 if [[ -f ${PREFIX}/bin/iasl ]]; then
@@ -176,7 +186,7 @@ if [ ! -f ${PREFIX}/bin/iasl ]; then
   echoc "Building ACPICA $acpicaVers" green
   tar -zxf ${TARBALL_ACPICA}.tar.gz
   cd ${TARBALL_ACPICA}
-  make iasl CC=gcc-6 1> /dev/null 2> $DIR_LOGS/${TARBALL_ACPICA}.make.log.txt
+  make iasl CC=gcc 1> /dev/null 2> $DIR_LOGS/${TARBALL_ACPICA}.make.log.txt
   make install 1> $DIR_LOGS/${TARBALL_ACPICA}.install.log.txt 2> /dev/null
   rm -Rf ${DIR_DOWNLOADS}/${TARBALL_ACPICA}
   echo
@@ -194,12 +204,10 @@ if [[ "$nasmUpdate" == "Yes" ]]; then
   echoc "Building nasm V${NASM_VERSION}" green
   tar -zxf $tarball
   cd nasm-${NASM_VERSION}
-  ./configure --prefix=${PREFIX}
+  ./configure --prefix=${PREFIX} 1> /dev/null 2> $DIR_LOGS/$tarball.config.log.txt
   make CC=clang 1> /dev/null 2> $DIR_LOGS/$tarball.make.log.txt
   cp nasm ${PREFIX}/bin/
   rm -Rf ${DIR_DOWNLOADS}/nasm-${NASM_VERSION}
   echo
 fi
-if [ ! -f ${PREFIX}/bin/gettext ]; then 
-  	$PLATFORMDIR/buildgettext.sh  
-fi
+

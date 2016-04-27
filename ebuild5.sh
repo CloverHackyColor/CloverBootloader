@@ -1,4 +1,4 @@
-#!/bin/bash #-x
+#!/bin/bash
 
 #  ebuild.sh ->ebuild.sh  //renamed to be unique file begining from E
 #  Script for building CloverEFI source under OS X or Linux
@@ -7,14 +7,11 @@
 #
 #  Created by Jadran Puharic on 1/6/12.
 #  Modified by JrCs on 3/9/13.
+#  Enhanced by STLVNB on 13/04/2016. 
 
-# Go to the edk2 root directory
+# Go to the Clover root directory
+cd "$(dirname $0)"
 
-PLATFORMDIR=$(dirname "$0")
-PLATFORMNAME=$(basename "$PLATFORMDIR")
-# Set name to Clover
-PLATFORMFILE="$PLATFORMNAME"/"$PLATFORMNAME".dsc
-cd "$PLATFORMDIR"
 # Global variables
 declare -r SELF="${0##*/}"
 declare -r CLOVERROOT="$PWD"
@@ -31,14 +28,19 @@ PLATFORMFILE=
 MODULEFILE=
 TARGETRULE=
 
+
 # Default values
-export TOOLCHAIN=GCC53
+export TOOLCHAIN=XCODE5
 export TARGETARCH=X64
 export BUILDTARGET=RELEASE
 export BUILDTHREADS=$(( NUMBER_OF_CPUS + 1 ))
 export WORKSPACE=${WORKSPACE:-}
 export CONF_PATH=${CONF_PATH:-}
-export LTO_PREFIX=gcc-
+
+# flag to auto-build gcc
+# CLEAN_BUILD= will ask
+# CLEAN_BUILD=y will NOT ask
+[ -z $CLEAN_BUILD ] && export CLEAN_BUILD= 
 
 
 # if building through Xcode, then TOOLCHAIN_DIR is not defined
@@ -53,7 +55,7 @@ if [[ ! -d $TOOLCHAIN_DIR ]]; then
 fi
 export TOOLCHAIN_DIR
 echo "TOOLCHAIN_DIR: $TOOLCHAIN_DIR"
-cd ..
+
 VBIOSPATCHCLOVEREFI=0
 ONLYSATA0PATCH=0
 USE_BIOS_BLOCKIO=0
@@ -96,38 +98,36 @@ else
   case "$XCODE_MAJOR_VERSION" in
       5) PATCH_FILE=;;
   esac
-  if [ -x "$TOOLCHAIN_DIR"/cross/bin/x86_64-clover-linux-gnu-gcc ]; then
-	  export GCC${TOOLCHAIN}_BIN="$TOOLCHAIN_DIR"/cross/bin/x86_64-clover-linux-gnu-
-  else
-      echo "No clover toolchain found !" >&2
-	  if [ -z $CLEAN_BUILD ]; then
-      	 echo "Press b to BUILD it OR else define the TOOLCHAIN_DIR variable." >&2
-      	 read -n 1 result
-      	 [ "$result" != "b" ] && exit 1
-	  else
-         echo -n b
-	  fi
-      echo "uilding it"
-	  Clover/build_gcc5.sh
-      echo "Continuing..."
+
+  if [[ ! -x "$TOOLCHAIN_DIR"/cross/bin/x86_64-clover-linux-gnu-gcc && \
+    ! -x "$TOOLCHAIN_DIR"/cross/bin/i686-clover-linux-gnu-gcc ]]; then
+    echo "No clover toolchain found !" >&2
+    if [ -z $CLEAN_BUILD ]; then
+      echo "Press b to BUILD it OR else define the TOOLCHAIN_DIR variable." >&2
+      read -n 1 result
+      [ "$result" != "b" ] && exit 1
+	else
+      echo -n b
+ 	fi
+   	echo "uilding it"
+ 	./build_gcc5.sh
+   	echo "Continuing..."
   fi
 fi
-#
-# check and build essentials
-#
+
 if [ -x "$TOOLCHAIN_DIR"/bin/nasm ]; then
 	export NASM_PREFIX="$TOOLCHAIN_DIR"/bin/
 else
     echo "No nasm binary found in toolchain directory !" >&2
     if [[ "$SYSNAME" != Linux ]]; then
       echo "Will Build Clover Essentials"
-	  Clover/buildExtras.sh 
+	  ./buildExtras.sh 
     fi
 fi
 
-export IASL_PREFIX="$TOOLCHAIN_DIR"/bin/
-
-
+if [ ! -f "${TOOLCHAIN_DIR}"/bin/gettext ]; then 
+   ./buildgettext.sh
+fi
 
 ## FUNCTIONS ##
 
@@ -320,7 +320,7 @@ checkCmdlineArguments() {
             --buildtarget=*)
                 BUILDTARGET=$(echo "$option" | sed 's/--buildtarget=//')
                 ;;
-            -t) TOOLCHAIN=$(argument $option "$@"); shift
+            -t) export TOOLCHAIN=$(argument $option "$@"); shift
                 ;;
             --tagname=*)
                 TOOLCHAIN=$(echo "$option" | sed 's/--tagname=//')
