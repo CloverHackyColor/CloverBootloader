@@ -61,12 +61,20 @@ USE_LOW_EBDA=1
 CLANG=0
 GENPAGE=0
 
+GIT=`which git`
+#GITDIR=`git status 2> /dev/null`        # unsafe as git repository may exist in parent directory
+ARGS="$@"
+VERSTXT="vers.txt"
+OSVER="$(sw_vers -productVersion | sed -e 's/\.0$//g')"
+
 # Bash options
 set -e # errexit
 set -u # Blow on unbound variable
 
-if [[ -x /usr/bin/git ]]; then
-    PATCH_CMD="/usr/bin/git apply --whitespace=nowarn"
+#if [[ -x /usr/bin/git ]]; then
+#    PATCH_CMD="/usr/bin/git apply --whitespace=nowarn"
+if [[ -n $GIT ]]; then
+    PATCH_CMD="${GIT} apply --whitespace=nowarn"
 else
     PATCH_CMD="/usr/bin/patch"
 fi
@@ -74,13 +82,17 @@ fi
 # Check if we need to patch the sources
 PATCH_FILE=
 if [[ "$SYSNAME" == Linux ]]; then
+  declare -r XCODE_VERSION=
   if [[ ! -x "$TOOLCHAIN_DIR"/bin/gcc ]]; then
       echo "No clover toolchain found !" >&2
       echo "Install on your system or define the TOOLCHAIN_DIR variable." >&2
       exit 1
   fi
 else
-  declare -r XCODE_MAJOR_VERSION="$(xcodebuild -version | sed -nE 's/^Xcode ([0-9]).*/\1/p')"
+  # this shoud be in checkXcode()
+  #declare -r XCODE_MAJOR_VERSION="$(xcodebuild -version | sed -nE 's/^Xcode ([0-9]).*/\1/p')"
+  declare -r XCODE_VERSION="$(xcodebuild -version | sed -nE 's/^Xcode ([0-9.]+).*/\1/p')"
+  declare -r XCODE_MAJOR_VERSION="$(echo $XCODE_VERSION | sed -nE 's/^([0-9]).*/\1/p')"
   case "$XCODE_MAJOR_VERSION" in
       5) PATCH_FILE=;;
   esac
@@ -374,10 +386,12 @@ MainBuildScript() {
     checkCmdlineArguments $@
     checkToolchain
 
-    if [[ -d .git ]]; then
-        git svn info | grep Revision | tr -cd [:digit:] >vers.txt
+    if [[ -d .svn ]]; then
+        svnversion -n | tr -d [:alpha:] > "${VERSTXT}"
+    elif [[ -d .git ]]; then
+        git svn find-rev git-svn | tr -cd [:digit:] > "${VERSTXT}"
     else
-        svnversion -n | tr -d [:alpha:] >vers.txt
+        echo -n "0000" > "${VERSTXT}"
     fi
 
     #
@@ -466,15 +480,6 @@ MainBuildScript() {
         echo "Building tools as they are not found"
         make -C "$WORKSPACE"/BaseTools CC="gcc -Wno-deprecated-declarations"
     fi
-    
-    # Build Clover
-    local clover_revision=$(cat "$CLOVERROOT"/vers.txt)
-    local clover_build_date=$(date '+%Y-%m-%d %H:%M:%S')
-    echo "#define FIRMWARE_VERSION \"2.31\"" > "$CLOVERROOT"/Version.h
-    echo "#define FIRMWARE_BUILDDATE \"${clover_build_date}\"" >> "$CLOVERROOT"/Version.h
-    echo "#define FIRMWARE_REVISION L\"${clover_revision}\""   >> "$CLOVERROOT"/Version.h
-    echo "#define REVISION_STR \"Clover revision: ${clover_revision}\"" >> "$CLOVERROOT"/Version.h
-    cp "$CLOVERROOT"/Version.h "$CLOVERROOT"/rEFIt_UEFI/
 
     # Apply options
     [[ "$USE_BIOS_BLOCKIO" -ne 0 ]]    && addEdk2BuildMacro 'USE_BIOS_BLOCKIO'
@@ -491,6 +496,32 @@ MainBuildScript() {
     echo "Running edk2 build for Clover$TARGETARCH using the command:"
     echo "$cmd"
     echo
+
+    # Build Clover
+    local clover_revision=$(cat "${CLOVERROOT}/${VERSTXT}")
+    local clover_build_date=$(date '+%Y-%m-%d %H:%M:%S')
+    echo "#define FIRMWARE_VERSION \"2.31\"" > "$CLOVERROOT"/Version.h
+    echo "#define FIRMWARE_BUILDDATE \"${clover_build_date}\"" >> "$CLOVERROOT"/Version.h
+    echo "#define FIRMWARE_REVISION L\"${clover_revision}\""   >> "$CLOVERROOT"/Version.h
+    echo "#define REVISION_STR \"Clover revision: ${clover_revision}\"" >> "$CLOVERROOT"/Version.h
+
+    local clover_build_info="Args: ./${0##*/}"
+    if [[ -n "${ARGS}" ]]; then
+      clover_build_info="${clover_build_info} ${ARGS}"
+    fi
+    clover_build_info="${clover_build_info} | Command: $(echo $cmd | xargs) ${ARGS}"
+
+    if [[ -n "${OSVER}" ]]; then
+      clover_build_info="${clover_build_info} | OS: ${OSVER}"
+    fi
+    if [[ -n "${XCODE_VERSION}" ]]; then
+      clover_build_info="${clover_build_info} | XCODE: ${XCODE_VERSION}"
+    fi
+
+    echo "#define BUILDINFOS_STR \"${clover_build_info}\"" >> "$CLOVERROOT"/Version.h
+
+    cp "$CLOVERROOT"/Version.h "$CLOVERROOT"/rEFIt_UEFI/
+
     eval "$cmd"
 }
 
