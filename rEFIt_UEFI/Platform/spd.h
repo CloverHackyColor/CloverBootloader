@@ -86,7 +86,8 @@
 #define SPD_DDR3_MEMORY_BANK			   0x75
 #define SPD_DDR3_MEMORY_CODE			   0x76
 
-#define SPD_DDR4_MANUFACTURER_ID_CODE       0x140 /* Manufacturer's JEDEC ID code (bytes 140-141) */
+#define SPD_DDR4_MANUFACTURER_ID_BANK       0x140 /* Manufacturer's JEDEC ID code (bytes 140-141) */
+#define SPD_DDR4_MANUFACTURER_ID_CODE       0x141 /* Manufacturer's JEDEC ID code (bytes 140-141) */
 #define SPD_DDR4_MANUFACTURING_LOCATION     0x142 /* Manufacturing location */
 #define SPD_DDR4_MANUFACTURING_DATE         0x143 /* bytes 143-144 */
 #define SPD_DDR4_SERIAL_NUMBER              0x145 /* Assembly serial number (bytes 145-148) */

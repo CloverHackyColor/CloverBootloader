@@ -43,7 +43,7 @@
 #define RAM_SLOT_ENUMERATOR		{0, 2, 4, 1, 3, 5, 6, 8, 10, 7, 9, 11}
 
 /* Maximum number of SPD bytes */
-#define MAX_SPD_SIZE			384  /* for DDR4 */
+#define MAX_SPD_SIZE			0x1E7  /* end of DDR4 XMP 2.0 */
 
 typedef struct _vidTag {
     UINT8			bank;

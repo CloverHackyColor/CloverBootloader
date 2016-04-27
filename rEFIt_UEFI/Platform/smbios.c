@@ -1210,7 +1210,11 @@ VOID GetTableType17()
 //		DBG("gDMI->MemoryModules = %d\n", gDMI->MemoryModules)
 		DBG("SmbiosTable.Type17->Speed = %dMHz\n", gRAM.SMBIOS[Index].Frequency);
 		DBG("SmbiosTable.Type17->Size = %dMB\n", gRAM.SMBIOS[Index].ModuleSize);
-    DBG("SmbiosTable.Type17->Bank/Device = %a %a\n", GetSmbiosString(SmbiosTable, SmbiosTable.Type17->BankLocator), GetSmbiosString(SmbiosTable, SmbiosTable.Type17->DeviceLocator));
+	    DBG("SmbiosTable.Type17->Bank/Device = %a %a\n", GetSmbiosString(SmbiosTable, SmbiosTable.Type17->BankLocator), GetSmbiosString(SmbiosTable, SmbiosTable.Type17->DeviceLocator));
+		DBG("SmbiosTable.Type17->Vendor = %a\n", gRAM.SMBIOS[Index].Vendor);
+		DBG("SmbiosTable.Type17->SerialNumber = %a\n", gRAM.SMBIOS[Index].SerialNo);
+		DBG("SmbiosTable.Type17->PartNumber = %a\n", gRAM.SMBIOS[Index].PartNo);
+		
       /*
 		if ((SmbiosTable.Type17->Size & 0x8000) == 0) {
 			mTotalSystemMemory += SmbiosTable.Type17->Size; //Mb
