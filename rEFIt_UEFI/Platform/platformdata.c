@@ -662,6 +662,8 @@ GetDefaultSettings ()
   gSettings.DefaultBackgroundColor = 0x80000000; //the value to delete the variable
   gSettings.RtROM                = NULL;
   gSettings.RtROMLen             = 0;
+  gSettings.CsrActiveConfig      = 0xFFFF;
+  gSettings.BooterConfig         = 0xFFFF;
   
   if (gCPUStructure.Model >= CPU_MODEL_IVY_BRIDGE) {
     gSettings.GeneratePStates    = TRUE;
