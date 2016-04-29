@@ -669,6 +669,8 @@ IDT_BASE:
         .byte 0x0e | 0x80 # type = 386 interrupt gate, present
         .word 0 # offset 31:16
 
+        .fill 8, 1, 0
+
 IDT_END:
 
         .p2align 1
