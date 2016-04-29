@@ -931,7 +931,7 @@ IRQ15_SEL            equ $-IDT_BASE
         dd 0            ; 0 for reserved
 
 ;        db (1 * 16) dup(0)
-;TIMES 16 db 0
+TIMES 16 db 0
 
 IDT_END:
 

@@ -848,7 +848,7 @@ IRQ15_SEL            equ $-IDT_BASE
         dw 0            ; offset 31:16
 
 ;        db (1 * 8) dup(0)
-;TIMES (1 * 8) db 0
+TIMES (1 * 8) db 0
 
 IDT_END:
 

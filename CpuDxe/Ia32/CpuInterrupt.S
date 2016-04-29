@@ -958,7 +958,7 @@ IRQ15_SEL            = .-IDT_BASE
         .byte 0x0e | 0x80   # (10001110)type = 386 interrupt gate, present
         .short 0            # offset 31:16
 
-#  .fill 1 * 8, 1, 0
+  .fill 1 * 8, 1, 0
 
 IDT_END:
   .set IDT_LEN, .-IDT_BASE - 1
