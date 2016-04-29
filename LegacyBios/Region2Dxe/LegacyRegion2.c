@@ -708,7 +708,8 @@ DetectChipset (
     case 0x00448086: // Core Processor DRAM Controller - Arrandale
     case 0x00488086: // Core Processor DRAM Controller
     case 0x00698086: // Core Processor DRAM Controller
-      
+
+    case 0xD1308086: // Xeon(R) CPU L3426 Processor DRAM Controller
     case 0xD1318086: // Core-i Processor DRAM Controller
     case 0xD1328086: //PM55 i7-720QM  DRAM Controller  
     case 0x34008086: // Core-i Processor DRAM Controller   
