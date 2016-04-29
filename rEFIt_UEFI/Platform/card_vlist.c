@@ -143,7 +143,7 @@ VOID FillCardList(TagPtr CfgDict)
               subdev_id = (UINT32)GetPropertyInteger (prop2, 0);
               
               prop2 = GetProperty (element, "VRAM");
-              VramSize = LShiftU64((UINTN)GetPropertyInteger(prop2, VramSize), 20); //Mb -> bytes
+              VramSize = LShiftU64((UINTN)GetPropertyInteger(prop2, (INTN)VramSize), 20); //Mb -> bytes
               
               prop2 = GetProperty (element, "VideoPorts");
               VideoPorts = (UINT16)GetPropertyInteger (prop2, VideoPorts);

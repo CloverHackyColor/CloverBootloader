@@ -2112,7 +2112,6 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
   device_id = ((nvda_dev->vendor_id << 16) | nvda_dev->device_id);
   subsys_id = ((nvda_dev->subsys_id.subsys.vendor_id << 16) | nvda_dev->subsys_id.subsys.device_id);
   
-  
 	// get card type
 	nvCardType = (REG32(nvda_dev->regs, 0) >> 20) & 0x1ff;
   
@@ -2150,14 +2149,14 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
     for (j = 0; j < NGFX; j++) {
       if ((gGraphics[j].Vendor == Nvidia) && (gGraphics[j].DeviceID == nvda_dev->device_id)) {
         model = gGraphics[j].Model; //menu setting
+        if (n_ports == 0) { // !nvcard->VideoPorts
+          n_ports = gGraphics[j].Ports;
+        }
+        if (load_vbios == FALSE) { // !nvcard->LoadVBios
+          load_vbios = gGraphics[j].LoadVBios;
+        }
+        break;
       }
-      if (n_ports == 0) { // !nvcard->VideoPorts
-        n_ports = gGraphics[j].Ports;
-      }
-      if (load_vbios == FALSE) { // !nvcard->LoadVBios
-        load_vbios = gGraphics[j].LoadVBios;
-      }
-      break;
     }
   }
   
@@ -2348,7 +2347,7 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
   }
   
   if ((devices_number == 1) &&
-      ((gSettings.BootDisplay >= 0) && (gSettings.BootDisplay < n_ports))) {
+      ((gSettings.BootDisplay >= 0) && (gSettings.BootDisplay < (INT8)n_ports))) {
     CHAR8 nkey[24];
     AsciiSPrint(nkey, 24, "@%d,AAPL,boot-display", gSettings.BootDisplay);
     devprop_add_value(device, nkey, (UINT8*)&boot_display, 4);

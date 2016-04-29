@@ -355,7 +355,7 @@ VOID GetCPUProperties (VOID)
   
   //New for SkyLake 0x4E, 0x5E
   if(gCPUStructure.CPUID[CPUID_0][EAX] >= 0x15) {
-    INTN Num, Denom;
+    UINT32 Num, Denom;
 		DoCpuid(0x15, gCPUStructure.CPUID[CPUID_15]);
     Num = gCPUStructure.CPUID[CPUID_15][EBX];
     Denom = gCPUStructure.CPUID[CPUID_15][EAX];

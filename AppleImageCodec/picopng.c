@@ -122,11 +122,8 @@ void *png_alloc_realloc(void *addr, UINT32 oldSize, UINT32 newSize)
   if (!addr) {
 		return png_alloc_malloc(newSize);
   }
-  if ( newSize <= oldSize ) {
-    return addr;
-  }
-  png_alloc_node_t *old_node;
-  old_node = png_alloc_find_node(addr, oldSize);
+  if ( newSize > oldSize ) {
+  	png_alloc_node_t *old_node = png_alloc_find_node(addr, oldSize);
   if (old_node) {
     void *new_addr = ReallocatePool(oldSize, newSize, addr);
     old_node->addr = new_addr;
@@ -138,7 +135,9 @@ void *png_alloc_realloc(void *addr, UINT32 oldSize, UINT32 newSize)
     CopyMem(node->addr, addr, oldSize); // here, newSize is > oldSize
     return node->addr;
 	}
-	return addr; //return something
+  } else {
+    return addr;
+  }
 }
 
 void png_alloc_free(void *addr)
