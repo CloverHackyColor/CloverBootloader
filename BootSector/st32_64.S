@@ -1109,6 +1109,8 @@ IDT_BASE:
         .long 0               # offset 63:32
         .long 0               # 0 for reserved
 
+        .fill 16, 1, 0
+
 IDT_END: 
 
         .p2align 1
