@@ -27,33 +27,17 @@
 ASM_GLOBAL ASM_PFX(InitDescriptor)
 
 ASM_PFX(InitDescriptor):
-#        movq    GDT_BASE(%rip),%rax              # EAX=PHYSICAL address of gdt
-#        movq    %rax, (gdtr + 2)(%rip)              # Put address of gdt into the gdtr
-#        lgdt    gdtr(%rip)
-      leaq GDT_BASE(%rip),%rax
-      movq    %rax, (gdtr + 2)(%rip)
-      leaq    gdtr(%rip), %rax
-      lgdt    (%rax)
+        leaq    GDT_BASE(%rip),%rax         # RAX=PHYSICAL address of gdt
+        movq    %rax, (gdtr + 2)(%rip)      # Put address of gdt into the gdtr
+        lgdt    gdtr(%rip)
 
-#        movabs  $gdtr, %rax
-#        lgdt    (%rax)
-        movq    $0x18, %rax
+        movl    $0x18, %eax
         movl    %eax, %gs
         movl    %eax, %fs
-#or?
-#        movw    %eax, %gs
-#        movw    %eax, %fs
 
-        leaq    IDT_BASE(%rip),%rax              # EAX=PHYSICAL address of idt
-        movq    %rax, (idtr + 2)(%rip)              # Put address of idt into the idtr
-        leaq    idtr(%rip), %rax
-        lidt    (%rax)
-
-#lidt    idtr(%rip)
-
-
-#        movabs  $idtr, %rax
-#        lidt    (%rax)
+        leaq    IDT_BASE(%rip),%rax         # RAX=PHYSICAL address of idt
+        movq    %rax, (idtr + 2)(%rip)      # Put address of idt into the idtr
+        lidt    idtr(%rip)
         ret
 
 # VOID

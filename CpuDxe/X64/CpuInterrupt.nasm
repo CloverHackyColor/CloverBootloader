@@ -27,17 +27,15 @@ EXTERN ASM_PFX(ExceptionHandler)
 
 
 ASM_PFX(InitDescriptor):
-        lea     rax, [REL GDT_BASE]             ; RAX=PHYSICAL address of gdt
-        mov     [REL gdtr + 2], rax   ; Put address of gdt into the gdtr+2
-        lea     rax, [REL gdtr]
-        lgdt       [rax]
-        mov     rax, 18h
-        mov     gs, rax
-        mov     fs, rax
-        lea     rax, [REL IDT_BASE]             ; RAX=PHYSICAL address of idt
-        mov     qword  [REL idtr + 2], rax   ; Put address of idt into the idtr
-        lea     rax, [REL idtr]
-        lidt      [rax]
+        lea     rax, [REL GDT_BASE]         ; RAX=PHYSICAL address of gdt
+        mov     [REL gdtr + 2], rax         ; Put address of gdt into the gdtr
+        lgdt    [REL gdtr]
+        mov     eax, 18h
+        mov     gs, eax
+        mov     fs, eax
+        lea     rax, [REL IDT_BASE]         ; RAX=PHYSICAL address of idt
+        mov     qword  [REL idtr + 2], rax  ; Put address of idt into the idtr
+        lidt    [REL idtr]
         ret
 
 

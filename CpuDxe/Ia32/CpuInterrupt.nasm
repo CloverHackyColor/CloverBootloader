@@ -50,23 +50,13 @@ EXTERN ASM_PFX(ExceptionHandler)
 
 
 ASM_PFX(InitDescriptor):
-        lea     eax, [REL GDT_BASE]        ; RAX=PHYSICAL address of gdt;
-        mov     [REL gdtr + 2], eax        ; Put address of gdt into the gdtr+2
-        lea     eax, [REL gdtr]
-        lgdt       [eax]
+        mov     eax, GDT_BASE             ; EAX=PHYSICAL address of gdt
+        mov     [gdtr + 2], eax           ; Put address of gdt into the gdtr
+        lgdt    [gdtr]
 
-;        mov     eax, GDT_BASE
-;        mov     [gdtr + 2], eax
-;        lgdt    [gdtr]
-
-        lea     eax, [REL IDT_BASE]          ; RAX=PHYSICAL address of idt
-        mov     [REL idtr + 2], eax     ; Put address of idt into the idtr+2
-        lea     eax, [REL idtr]
-        lidt      [eax]
-
-;        mov     eax, IDT_BASE
-;        mov     [idtr + 2], eax
-;        lidt    [idtr]
+        mov     eax, IDT_BASE             ; EAX=PHYSICAL address of idt
+        mov     [idtr + 2], eax           ; Put address of idt into the idtr
+        lidt    [idtr]
         ret
 
 
