@@ -3212,7 +3212,10 @@ ParseSMBIOSSettings(
                     )
 {
   CHAR16 UStr[64];
-  TagPtr Prop = GetProperty (DictPointer, "ProductName");
+  TagPtr Prop;
+  BOOLEAN Default = FALSE;
+
+  Prop = GetProperty (DictPointer, "ProductName");
   if (Prop != NULL) {
     MACHINE_TYPES Model;
     AsciiStrCpy (gSettings.ProductName, Prop->string);
@@ -3221,6 +3224,10 @@ ParseSMBIOSSettings(
     Model = GetModelFromString (gSettings.ProductName);
     if (Model != MaxMachineType) {
       SetDMISettingsForModel (Model);
+      Default = TRUE;
+    } else {
+      //if new model then fill at least as MacPro3,1
+      SetDMISettingsForModel (MacPro31);
     }
   }
   
@@ -3289,6 +3296,8 @@ ParseSMBIOSSettings(
   Prop = GetProperty (DictPointer, "BoardVersion");
   if (Prop != NULL) {
     AsciiStrCpy (gSettings.BoardVersion, Prop->string);
+  } else if (!Default) {
+    AsciiStrCpy (gSettings.BoardVersion, gSettings.ProductName);
   }
   
   Prop = GetProperty (DictPointer, "BoardType");
@@ -3302,6 +3311,8 @@ ParseSMBIOSSettings(
       gSettings.Mobile = FALSE;
     else if (IsPropertyTrue(Prop))
       gSettings.Mobile = TRUE;
+  } else if (!Default) {
+    gSettings.Mobile = (AsciiStrStr(gSettings.ProductName, "MacBook") != NULL);
   }
   
   Prop = GetProperty (DictPointer, "LocationInChassis");
