@@ -73,7 +73,7 @@ EFI_STATUS EFIAPI ThinFatFile(IN OUT UINT8 **binary, IN OUT UINTN *length, IN cp
 	return EFI_SUCCESS;
 }
 
-extern VOID KernelAndKextPatcherInit(VOID);
+extern VOID KernelAndKextPatcherInit(IN LOADER_ENTRY *Entry);
 extern VOID AnyKextPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize, INT32 N, LOADER_ENTRY *Entry);
 
 EFI_STATUS EFIAPI LoadKext(IN LOADER_ENTRY *Entry, IN EFI_FILE *RootDir, IN CHAR16 *FileName, IN cpu_type_t archCpuType, IN OUT _DeviceTreeBuffer *kext)
@@ -484,7 +484,7 @@ EFI_STATUS InjectKexts(/*IN EFI_MEMORY_DESCRIPTOR *Desc*/ IN UINT32 deviceTreeP,
             CHAR8 *InfoPlist = (CHAR8*)(UINTN)drvinfo->infoDictPhysAddr;
             SavedValue = InfoPlist[drvinfo->infoDictLength];
             InfoPlist[drvinfo->infoDictLength] = '\0';
-            KernelAndKextPatcherInit();
+            KernelAndKextPatcherInit(Entry);
             for (i = 0; i < Entry->KernelAndKextPatches->NrKexts; i++) {
                if ((Entry->KernelAndKextPatches->KextPatches[i].DataLen > 0) &&
                   (AsciiStrStr(InfoPlist, Entry->KernelAndKextPatches->KextPatches[i].Name) != NULL)) {
