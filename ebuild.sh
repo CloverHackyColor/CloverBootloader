@@ -243,6 +243,7 @@ usage() {
     print_option_help "--std-ebda" "ebda offset dont shift to 0x88000"
     print_option_help "--genpage" "dynamically generate page table under ebda"
     print_option_help "--no-usb" "disable USB support"
+    print_option_help "--no-lto" "disable Link Time Optimisation"
     echo
     echo "Report bugs to https://sourceforge.net/p/cloverefiboot/discussion/1726372/"
 }
@@ -334,6 +335,9 @@ checkCmdlineArguments() {
                 ;;
             --no-usb)
                 addEdk2BuildMacro DISABLE_USB_SUPPORT
+                ;;
+            --no-lto)
+                addEdk2BuildMacro DISABLE_LTO
                 ;;
             -h | -\? | -help | --help)
                 usage && exit 0
