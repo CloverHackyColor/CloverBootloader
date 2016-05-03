@@ -1132,99 +1132,99 @@ VOID GetTableType17()
   //
   INTN Index2;
   BOOLEAN Found;
-  
-	// Get Table Type17 and count Size
+
+  // Get Table Type17 and count Size
   gRAMCount = 0;
-	for (Index = 0; Index < TotalCount; Index++) {  //how many tables there may be?
-		SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_MEMORY_DEVICE, Index);
-		if (SmbiosTable.Raw == NULL) {
-//			DBG("SmbiosTable: Type 17 (Memory Device number %d) not found!\n", Index);
-			continue;
-		}
-      DBG("Type 17 Index = %d\n", Index);
-		//gDMI->CntMemorySlots++;
-      if (SmbiosTable.Type17->MemoryErrorInformationHandle < 0xFFFE) {
-        DBG("Table has error information, checking\n"); //why skipping?
-        // Why trust it if it has an error? I guess we could look
-        //  up the error handle and determine certain errors may
-        //  be skipped where others may not but it seems easier
-        //  to just skip all entries that have an error - apianti
-        // will try
-        Found = FALSE;
-        for (Index2 = 0; Index2 < 24; Index2++) {
-          newSmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_32BIT_MEMORY_ERROR_INFORMATION, Index2);
-          if (newSmbiosTable.Raw == NULL) {
-            continue;
-          }
-          if (newSmbiosTable.Type18->Hdr.Handle == SmbiosTable.Type17->MemoryErrorInformationHandle) {
-            Found = TRUE;
-            DBG("Found memory information in table 18/%d, type=0x%x, operation=0x%x syndrome=0x%x\n", Index2,
-                newSmbiosTable.Type18->ErrorType,
-                newSmbiosTable.Type18->ErrorOperation,
-                newSmbiosTable.Type18->VendorSyndrome);
-            switch (newSmbiosTable.Type18->ErrorType) {
-              case MemoryErrorOk:
-                DBG("...memory OK\n");
-                break;
-              case MemoryErrorCorrected:
-                DBG("...memory errors corrected\n");
-                break;
-              case MemoryErrorChecksum:
-                DBG("...error type: Checksum\n");
-                break;
-              default:
-                DBG("...error type not shown\n");
-                break;
-            }
-            break;
-          }           
+  for (Index = 0; Index < TotalCount; Index++) {  //how many tables there may be?
+    SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_MEMORY_DEVICE, Index);
+    if (SmbiosTable.Raw == NULL) {
+      //			DBG("SmbiosTable: Type 17 (Memory Device number %d) not found!\n", Index);
+      continue;
+    }
+    DBG("Type 17 Index = %d\n", Index);
+    //gDMI->CntMemorySlots++;
+    if (SmbiosTable.Type17->MemoryErrorInformationHandle < 0xFFFE) {
+      DBG("Table has error information, checking\n"); //why skipping?
+      // Why trust it if it has an error? I guess we could look
+      //  up the error handle and determine certain errors may
+      //  be skipped where others may not but it seems easier
+      //  to just skip all entries that have an error - apianti
+      // will try
+      Found = FALSE;
+      for (Index2 = 0; Index2 < 24; Index2++) {
+        newSmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_32BIT_MEMORY_ERROR_INFORMATION, Index2);
+        if (newSmbiosTable.Raw == NULL) {
+          continue;
         }
-        if (Found) {
-          if ((newSmbiosTable.Type18->ErrorType != MemoryErrorOk) &&
-              (newSmbiosTable.Type18->ErrorType != MemoryErrorCorrected)) {
-            DBG("skipping wrong module\n");
-            continue;
+        if (newSmbiosTable.Type18->Hdr.Handle == SmbiosTable.Type17->MemoryErrorInformationHandle) {
+          Found = TRUE;
+          DBG("Found memory information in table 18/%d, type=0x%x, operation=0x%x syndrome=0x%x\n", Index2,
+              newSmbiosTable.Type18->ErrorType,
+              newSmbiosTable.Type18->ErrorOperation,
+              newSmbiosTable.Type18->VendorSyndrome);
+          switch (newSmbiosTable.Type18->ErrorType) {
+            case MemoryErrorOk:
+              DBG("...memory OK\n");
+              break;
+            case MemoryErrorCorrected:
+              DBG("...memory errors corrected\n");
+              break;
+            case MemoryErrorChecksum:
+              DBG("...error type: Checksum\n");
+              break;
+            default:
+              DBG("...error type not shown\n");
+              break;
           }
+          break;
         }
       }
-      // Determine if slot has size
-      if (SmbiosTable.Type17->Size > 0) {
-        gRAM.SMBIOS[Index].InUse = TRUE;
-        gRAM.SMBIOS[Index].ModuleSize = SmbiosTable.Type17->Size;
+      if (Found) {
+        if ((newSmbiosTable.Type18->ErrorType != MemoryErrorOk) &&
+            (newSmbiosTable.Type18->ErrorType != MemoryErrorCorrected)) {
+          DBG("skipping wrong module\n");
+          continue;
+        }
       }
-      // Determine if module frequency is sane value
-      if ((SmbiosTable.Type17->Speed > 0) && (SmbiosTable.Type17->Speed <= MAX_RAM_FREQUENCY)) {
-        gRAM.SMBIOS[Index].InUse = TRUE;
-        gRAM.SMBIOS[Index].Frequency = SmbiosTable.Type17->Speed;
-      } else {
-         DBG("Ignoring insane frequency value %dMHz\n", SmbiosTable.Type17->Speed);
-      }
-      // Fill rest of information if in use
-      if (gRAM.SMBIOS[Index].InUse) {
-        ++(gRAM.SMBIOSInUse);
-        gRAM.SMBIOS[Index].Vendor = GetSmbiosString(SmbiosTable, SmbiosTable.Type17->Manufacturer);
-        gRAM.SMBIOS[Index].SerialNo = GetSmbiosString(SmbiosTable, SmbiosTable.Type17->SerialNumber);
-        gRAM.SMBIOS[Index].PartNo = GetSmbiosString(SmbiosTable, SmbiosTable.Type17->PartNumber);
-      }
-//		DBG("CntMemorySlots = %d\n", gDMI->CntMemorySlots)
-//		DBG("gDMI->MemoryModules = %d\n", gDMI->MemoryModules)
-		DBG("SmbiosTable.Type17->Speed = %dMHz\n", gRAM.SMBIOS[Index].Frequency);
-		DBG("SmbiosTable.Type17->Size = %dMB\n", gRAM.SMBIOS[Index].ModuleSize);
-	    DBG("SmbiosTable.Type17->Bank/Device = %a %a\n", GetSmbiosString(SmbiosTable, SmbiosTable.Type17->BankLocator), GetSmbiosString(SmbiosTable, SmbiosTable.Type17->DeviceLocator));
-		DBG("SmbiosTable.Type17->Vendor = %a\n", gRAM.SMBIOS[Index].Vendor);
-		DBG("SmbiosTable.Type17->SerialNumber = %a\n", gRAM.SMBIOS[Index].SerialNo);
-		DBG("SmbiosTable.Type17->PartNumber = %a\n", gRAM.SMBIOS[Index].PartNo);
-		
-      /*
-		if ((SmbiosTable.Type17->Size & 0x8000) == 0) {
-			mTotalSystemMemory += SmbiosTable.Type17->Size; //Mb
-			mMemory17[Index] = (UINT16)(SmbiosTable.Type17->Size > 0 ? mTotalSystemMemory : 0);
-		}
-		DBG("mTotalSystemMemory = %d\n", mTotalSystemMemory);
-      */
-	}
+    }
+    // Determine if slot has size
+    if (SmbiosTable.Type17->Size > 0) {
+      gRAM.SMBIOS[Index].InUse = TRUE;
+      gRAM.SMBIOS[Index].ModuleSize = SmbiosTable.Type17->Size;
+    }
+    // Determine if module frequency is sane value
+    if ((SmbiosTable.Type17->Speed > 0) && (SmbiosTable.Type17->Speed <= MAX_RAM_FREQUENCY)) {
+      gRAM.SMBIOS[Index].InUse = TRUE;
+      gRAM.SMBIOS[Index].Frequency = SmbiosTable.Type17->Speed;
+    } else {
+      DBG("Ignoring insane frequency value %dMHz\n", SmbiosTable.Type17->Speed);
+    }
+    // Fill rest of information if in use
+    if (gRAM.SMBIOS[Index].InUse) {
+      ++(gRAM.SMBIOSInUse);
+      gRAM.SMBIOS[Index].Vendor = GetSmbiosString(SmbiosTable, SmbiosTable.Type17->Manufacturer);
+      gRAM.SMBIOS[Index].SerialNo = GetSmbiosString(SmbiosTable, SmbiosTable.Type17->SerialNumber);
+      gRAM.SMBIOS[Index].PartNo = GetSmbiosString(SmbiosTable, SmbiosTable.Type17->PartNumber);
+    }
+    //		DBG("CntMemorySlots = %d\n", gDMI->CntMemorySlots)
+    //		DBG("gDMI->MemoryModules = %d\n", gDMI->MemoryModules)
+    DBG("SmbiosTable.Type17->Speed = %dMHz\n", gRAM.SMBIOS[Index].Frequency);
+    DBG("SmbiosTable.Type17->Size = %dMB\n", gRAM.SMBIOS[Index].ModuleSize);
+    DBG("SmbiosTable.Type17->Bank/Device = %a %a\n", GetSmbiosString(SmbiosTable, SmbiosTable.Type17->BankLocator), GetSmbiosString(SmbiosTable, SmbiosTable.Type17->DeviceLocator));
+    DBG("SmbiosTable.Type17->Vendor = %a\n", gRAM.SMBIOS[Index].Vendor);
+    DBG("SmbiosTable.Type17->SerialNumber = %a\n", gRAM.SMBIOS[Index].SerialNo);
+    DBG("SmbiosTable.Type17->PartNumber = %a\n", gRAM.SMBIOS[Index].PartNo);
+
+    /*
+     if ((SmbiosTable.Type17->Size & 0x8000) == 0) {
+     mTotalSystemMemory += SmbiosTable.Type17->Size; //Mb
+     mMemory17[Index] = (UINT16)(SmbiosTable.Type17->Size > 0 ? mTotalSystemMemory : 0);
+     }
+     DBG("mTotalSystemMemory = %d\n", mTotalSystemMemory);
+     */
+  }
 }
-		
+
 VOID PatchTableType17()
 {
   CHAR8   deviceLocator[10];
@@ -1237,7 +1237,7 @@ VOID PatchTableType17()
   BOOLEAN wrongSMBIOSBanks = FALSE;
   BOOLEAN isMacPro = FALSE;
   MACHINE_TYPES Model = GetModelFromString(gSettings.ProductName);
-  if ((Model == MacPro31) || (Model == MacPro41) || (Model == MacPro51)) {
+  if ((Model == MacPro31) || (Model == MacPro41) || (Model == MacPro51) || (Model == MacPro61)) {
     isMacPro = TRUE;
   }
   // Inject user memory tables
@@ -1324,12 +1324,15 @@ VOID PatchTableType17()
         DBG("%a %a %dMHz %dMB\n", bankLocator, deviceLocator, newSmbiosTable.Type17->Speed, newSmbiosTable.Type17->Size);
         mTotalSystemMemory += newSmbiosTable.Type17->Size; //Mb
         mMemory17[gRAMCount] = (UINT16)mTotalSystemMemory;
-        DBG("mTotalSystemMemory = %d\n", mTotalSystemMemory);
+//        DBG("mTotalSystemMemory = %d\n", mTotalSystemMemory);
       } else {
         DBG("%a %a EMPTY\n", bankLocator, deviceLocator);
       }
       newSmbiosTable.Type17->MemoryErrorInformationHandle = 0xFFFF;
       mHandle17[gRAMCount++] = LogSmbiosTable(newSmbiosTable);
+    }
+    if (mTotalSystemMemory > 0) {
+      DBG("mTotalSystemMemory = %d\n", mTotalSystemMemory);
     }
     return;
   }
@@ -1613,10 +1616,13 @@ VOID PatchTableType17()
       DBG("%a %a %dMHz %dMB\n", bankLocator, deviceLocator, newSmbiosTable.Type17->Speed, newSmbiosTable.Type17->Size);
       mTotalSystemMemory += newSmbiosTable.Type17->Size; //Mb
       mMemory17[gRAMCount] = (UINT16)mTotalSystemMemory;
-      DBG("mTotalSystemMemory = %d\n", mTotalSystemMemory);
+//      DBG("mTotalSystemMemory = %d\n", mTotalSystemMemory);
     }
     newSmbiosTable.Type17->MemoryErrorInformationHandle = 0xFFFF;
     mHandle17[gRAMCount++] = LogSmbiosTable(newSmbiosTable);
+  }
+  if (mTotalSystemMemory > 0) {
+    DBG("mTotalSystemMemory = %d\n", mTotalSystemMemory);
   }
 }
 

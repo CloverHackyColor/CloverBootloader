@@ -241,7 +241,7 @@ UINT8 smb_read_byte(UINT32 base, UINT8 adr, UINT16 cmd)
     }
 
    	// p = 0xFF;
-    IoWrite8(base + SMBHSTCMD, cmd);
+    IoWrite8(base + SMBHSTCMD, (UINT8)(cmd & 0xFF));  //or this must be IoWrite16 ?
     IoWrite8(base + SMBHSTADD, (adr << 1) | 0x01 ); // read from spd
     IoWrite8(base + SMBHSTCNT, 0x48 ); // Start + Byte Data Read
     // status goes from 0x41 (Busy) -> 0x42 (Completed) or 0x44 (Error)
