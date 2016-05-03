@@ -227,6 +227,7 @@
      # ReportStatusCodeLib|DuetPkg/Library/DxeCoreReportStatusCodeLibFromHob/DxeCoreReportStatusCodeLibFromHob.inf
      DebugLib|MdePkg/Library/BaseDebugLibNull/BaseDebugLibNull.inf
  	 ReportStatusCodeLib|MdePkg/Library/BaseReportStatusCodeLibNull/BaseReportStatusCodeLibNull.inf
+ 	 PeCoffLib|Clover/Library/VBoxPeCoffLib/VBoxPeCoffLib.inf
 
   }
 
@@ -436,7 +437,11 @@
 
 !else
 
-  Clover/DumpUefiCalls/DumpUefiCalls.inf
+  Clover/DumpUefiCalls/DumpUefiCalls.inf {
+  	<LibraryClasses>
+  		PeCoffLib|Clover/Library/VBoxPeCoffLib/VBoxPeCoffLib.inf
+  }
+
 
 !endif
   
@@ -456,7 +461,6 @@
   }
 
   Clover/AppleImageCodec/AppleImageCodec.inf
-
   #
   # Sample Application
   #

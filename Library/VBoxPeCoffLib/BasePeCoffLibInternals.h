@@ -36,11 +36,11 @@
 #define __BASE_PECOFF_LIB_INTERNALS__
 
 #include <Base.h>
-#include "PeCoffLib.h"
+#include <Library/PeCoffLib.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>
 #include <Library/PeCoffExtraActionLib.h>
-#include "PeImage.h"
+#include <IndustryStandard/PeImage.h>
 
 
 
