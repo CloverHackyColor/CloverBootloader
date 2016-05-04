@@ -169,7 +169,7 @@ fsw_status_t fsw_volume_stat(struct fsw_volume *vol, struct fsw_volume_stat *sb)
  * than 512 bytes. The logical block size cannot be smaller than the physical block size.
  */
 
-void fsw_set_blocksize(struct fsw_volume *vol, fsw_u32 phys_blocksize, fsw_u32 log_blocksize)
+void fsw_set_blocksize_(struct fsw_volume *vol, fsw_u32 phys_blocksize, fsw_u32 log_blocksize)
 {
     // TODO: Check the sizes. Both must be powers of 2. log_blocksize must not be smaller than
     //  phys_blocksize.
@@ -203,7 +203,7 @@ void fsw_set_blocksize(struct fsw_volume *vol, fsw_u32 phys_blocksize, fsw_u32 l
  * caller calls fsw_block_release.
  */
 
-fsw_status_t fsw_block_get(struct VOLSTRUCTNAME *vol, fsw_u32 phys_bno, fsw_u32 cache_level, void **buffer_out)
+fsw_status_t fsw_block_get_(struct VOLSTRUCTNAME *vol, fsw_u32 phys_bno, fsw_u32 cache_level, void **buffer_out)
 {
   fsw_status_t    status;
   fsw_u32         i, discard_level, new_bcache_size;
@@ -296,7 +296,7 @@ fsw_status_t fsw_block_get(struct VOLSTRUCTNAME *vol, fsw_u32 phys_bno, fsw_u32 
  * from fsw_block_get.
  */
 
-void fsw_block_release(struct VOLSTRUCTNAME *vol, fsw_u32 phys_bno, void *buffer)
+void fsw_block_release_(struct VOLSTRUCTNAME *vol, fsw_u32 phys_bno, void *buffer)
 {
   fsw_u32 i;
   if (!vol) {
@@ -362,7 +362,7 @@ static void fsw_dnode_register(struct fsw_volume *vol, struct fsw_dnode *dno)
  * behaves in the same way as fsw_dnode_create.
  */
 
-fsw_status_t fsw_dnode_create_root(struct fsw_volume *vol, fsw_u32 dnode_id, struct fsw_dnode **dno_out)
+fsw_status_t fsw_dnode_create_root_(struct fsw_volume *vol, fsw_u32 dnode_id, struct fsw_dnode **dno_out)
 {
   fsw_status_t    status;
   struct fsw_dnode *dno;
@@ -405,7 +405,7 @@ fsw_status_t fsw_dnode_create_root(struct fsw_volume *vol, fsw_u32 dnode_id, str
  * that must be released by the caller with fsw_dnode_release.
  */
 
-fsw_status_t fsw_dnode_create(struct fsw_dnode *parent_dno, fsw_u32 dnode_id, int type,
+fsw_status_t fsw_dnode_create_(struct fsw_dnode *parent_dno, fsw_u32 dnode_id, int type,
                               struct fsw_string *name, struct fsw_dnode **dno_out)
 {
   fsw_status_t    status;
@@ -895,7 +895,7 @@ fsw_status_t fsw_dnode_readlink(struct fsw_dnode *dno, struct fsw_string *target
  * for calling fsw_strfree on the string.
  */
 
-fsw_status_t fsw_dnode_readlink_data(struct fsw_dnode *dno, struct fsw_string *link_target)
+fsw_status_t fsw_dnode_readlink_data_(struct fsw_dnode *dno, struct fsw_string *link_target)
 {
   fsw_status_t    status;
   struct fsw_shandle shand;
@@ -1001,7 +1001,7 @@ errorexit:
  * the dnode reference held by the shandle.
  */
 
-fsw_status_t fsw_shandle_open(struct fsw_dnode *dno, struct fsw_shandle *shand)
+fsw_status_t fsw_shandle_open_(struct fsw_dnode *dno, struct fsw_shandle *shand)
 {
   fsw_status_t    status;
   struct fsw_volume *vol;

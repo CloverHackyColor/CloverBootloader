@@ -436,9 +436,15 @@ fsw_status_t fsw_mount(void *host_data,
 void         fsw_unmount(struct fsw_volume *vol);
 fsw_status_t fsw_volume_stat(struct fsw_volume *vol, struct fsw_volume_stat *sb);
 
-void         fsw_set_blocksize(struct VOLSTRUCTNAME *vol, fsw_u32 phys_blocksize, fsw_u32 log_blocksize);
-fsw_status_t fsw_block_get(struct VOLSTRUCTNAME *vol, fsw_u32 phys_bno, fsw_u32 cache_level, void **buffer_out);
-void         fsw_block_release(struct VOLSTRUCTNAME *vol, fsw_u32 phys_bno, void *buffer);
+//void         fsw_set_blocksize(struct VOLSTRUCTNAME *vol, fsw_u32 phys_blocksize, fsw_u32 log_blocksize);
+#define      fsw_set_blocksize(x, y, z) fsw_set_blocksize_((struct fsw_volume*) (x), (y), (z))
+void         fsw_set_blocksize_(struct fsw_volume *vol, fsw_u32 phys_blocksize, fsw_u32 log_blocksize);
+//fsw_status_t fsw_block_get(struct VOLSTRUCTNAME *vol, fsw_u32 phys_bno, fsw_u32 cache_level, void **buffer_out);
+#define      fsw_block_get(x, y, z, w) fsw_block_get_((struct fsw_volume*) (x), (y), (z), (w))
+fsw_status_t fsw_block_get_(struct fsw_volume *vol, fsw_u32 phys_bno, fsw_u32 cache_level, void **buffer_out);
+//void         fsw_block_release(struct VOLSTRUCTNAME *vol, fsw_u32 phys_bno, void *buffer);
+#define      fsw_block_release(x, y, z) fsw_block_release_((struct fsw_volume*) (x), (y), (z))
+void         fsw_block_release_(struct fsw_volume *vol, fsw_u32 phys_bno, void *buffer);
 
 /*@}*/
 
@@ -448,9 +454,14 @@ void         fsw_block_release(struct VOLSTRUCTNAME *vol, fsw_u32 phys_bno, void
  */
 /*@{*/
 
-fsw_status_t fsw_dnode_create_root(struct VOLSTRUCTNAME *vol, fsw_u32 dnode_id, struct DNODESTRUCTNAME **dno_out);
-fsw_status_t fsw_dnode_create(struct DNODESTRUCTNAME *parent_dno, fsw_u32 dnode_id, int type,
-                              struct fsw_string *name, struct DNODESTRUCTNAME **dno_out);
+//fsw_status_t fsw_dnode_create_root(struct VOLSTRUCTNAME *vol, fsw_u32 dnode_id, struct DNODESTRUCTNAME **dno_out);
+#define      fsw_dnode_create_root(x, y, z) fsw_dnode_create_root_((struct fsw_volume*) (x), (y), (struct fsw_dnode**) (z))
+fsw_status_t fsw_dnode_create_root_(struct fsw_volume *vol, fsw_u32 dnode_id, struct fsw_dnode **dno_out);
+//fsw_status_t fsw_dnode_create(struct DNODESTRUCTNAME *parent_dno, fsw_u32 dnode_id, int type,
+//                              struct fsw_string *name, struct DNODESTRUCTNAME **dno_out);
+#define      fsw_dnode_create(x, y, z, w, u) fsw_dnode_create_((struct fsw_dnode*) (x), (y), (z), (w), (struct fsw_dnode**) (u))
+fsw_status_t fsw_dnode_create_(struct fsw_dnode *parent_dno, fsw_u32 dnode_id, int type,
+                              struct fsw_string *name, struct fsw_dnode **dno_out);
 void         fsw_dnode_retain(struct fsw_dnode *dno);
 void         fsw_dnode_release(struct fsw_dnode *dno);
 
@@ -466,7 +477,9 @@ fsw_status_t fsw_dnode_lookup_path(struct fsw_dnode *dno,
                                    struct fsw_dnode **child_dno_out);
 fsw_status_t fsw_dnode_dir_read(struct fsw_shandle *shand, struct fsw_dnode **child_dno_out);
 fsw_status_t fsw_dnode_readlink(struct fsw_dnode *dno, struct fsw_string *link_target);
-fsw_status_t fsw_dnode_readlink_data(struct DNODESTRUCTNAME *dno, struct fsw_string *link_target);
+//fsw_status_t fsw_dnode_readlink_data(struct DNODESTRUCTNAME *dno, struct fsw_string *link_target);
+#define      fsw_dnode_readlink_data(x, y) fsw_dnode_readlink_data_((struct fsw_dnode*) (x), (y))
+fsw_status_t fsw_dnode_readlink_data_(struct fsw_dnode *dno, struct fsw_string *link_target);
 fsw_status_t fsw_dnode_resolve(struct fsw_dnode *dno, struct fsw_dnode **target_dno_out);
 
 /*@}*/
@@ -477,7 +490,9 @@ fsw_status_t fsw_dnode_resolve(struct fsw_dnode *dno, struct fsw_dnode **target_
  */
 /*@{*/
 
-fsw_status_t fsw_shandle_open(struct DNODESTRUCTNAME *dno, struct fsw_shandle *shand);
+//fsw_status_t fsw_shandle_open(struct DNODESTRUCTNAME *dno, struct fsw_shandle *shand);
+#define      fsw_shandle_open(x, y) fsw_shandle_open_((struct fsw_dnode*) (x), (y))
+fsw_status_t fsw_shandle_open_(struct fsw_dnode *dno, struct fsw_shandle *shand);
 void         fsw_shandle_close(struct fsw_shandle *shand);
 fsw_status_t fsw_shandle_read(struct fsw_shandle *shand, fsw_u32 *buffer_size_inout, void *buffer);
 
