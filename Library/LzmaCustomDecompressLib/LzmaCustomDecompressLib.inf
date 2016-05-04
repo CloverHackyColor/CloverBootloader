@@ -61,6 +61,6 @@
   ExtractGuidedSectionLib
 
 [BuildOptions]
-  XCODE:*_*_*_CC_FLAGS = -O0 -DMDEPKG_NDEBUG -Wno-msvc-include
+  XCODE:*_*_*_CC_FLAGS = -O0 -DMDEPKG_NDEBUG
   GCC:*_*_*_CC_FLAGS = -O0 -DMDEPKG_NDEBUG
 
