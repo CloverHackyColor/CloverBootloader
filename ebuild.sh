@@ -113,7 +113,7 @@ checkPatch() {
     fi
 
     if [[ ! -x "$TOOLCHAIN_DIR"/cross/bin/x86_64-clover-linux-gnu-gcc && \
-          ! -x "$TOOLCHAIN_DIR"/cross/bin/i686-clover-linux-gnu-gcc ]]; then
+          ! -x "$TOOLCHAIN_DIR"/cross/bin/i686-clover-linux-gnu-gcc ]] && [[ $TOOLCHAIN == GCC* ]] ; then
         echo "No clover toolchain found !" >&2
         echo "Build it with the buidgcc.sh script or defined the TOOLCHAIN_DIR variable." >&2
         exit 1
