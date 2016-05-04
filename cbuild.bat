@@ -167,10 +167,6 @@ rem # setup
     goto usage
   )
 
-  echo %EDK2_BUILD_OPTIONS%
-  exit /b 0
-  pause
-
   echo.
   if ["%CLEANING%"] == [""] (
     echo Building Clover ^(%TARGETARCH%^) ...
@@ -298,6 +294,7 @@ rem #
   set "DEST_OFF=%DEST_DIR%\drivers-Off\drivers%TARGETARCH_INT%"
 
   rem # Be sure that all needed directories exists
+  call:createDir %DEST_BOOTSECTORS%
   call:createDir %DEST_BOOT%
   call:createDir %DEST_TOOLS%
   call:createDir %DEST_DRIVER%
