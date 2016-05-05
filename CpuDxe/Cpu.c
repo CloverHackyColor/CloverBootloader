@@ -24,13 +24,13 @@ MESSAGE_LOG_PROTOCOL *Msg;
 
 
 
-extern VOID BiosPutC(CHAR8 ch);
+//extern VOID BiosPutC(CHAR8 ch);
 //
 // Global Variables
 //
 
 //extern
-UINT32    mExceptionCodeSize = 9;
+UINT32 CONST   mExceptionCodeSize = 9;
 #if 0 //defined(MDE_CPU_X64)
 extern UINTN    mGdtPtr;
 extern UINTN    mIdtPtr;
@@ -559,6 +559,49 @@ DumpExceptionDataDebugOut (
 }
 #endif
 
+STATIC
+CHAR16*
+DumpMemoryVgaOut (
+  IN CHAR16* VideoBuffer,
+  IN UINTN ColumnMax,
+  IN UINTN MemoryAddress,
+  IN UINTN Count
+  )
+{
+    UINT32 Space = 8U;
+    UINT32 InLine = 4U;
+    CHAR16* Line = VideoBuffer;
+    UINT8 CONST* Data = (UINT8 CONST*) MemoryAddress;
+
+    while (Count) {
+        UnicodeSPrintAsciiFormat (
+          VideoBuffer,
+          3U * sizeof (CHAR16),
+          "%02x",
+          (UINTN) *Data
+          );
+        VideoBuffer += 2;
+        --Space;
+        if (!Space) {
+            *(CHAR8*) VideoBuffer = ' ';
+            ++VideoBuffer;
+            Space = 8U;
+            --InLine;
+            if (!InLine) {
+                Line += ColumnMax;
+                VideoBuffer = Line;
+                InLine = 4U;
+            }
+        }
+        ++Data;
+        --Count;
+    }
+    if (VideoBuffer != Line) {
+        Line += ColumnMax;
+        VideoBuffer = Line;
+    }
+    return VideoBuffer;
+}
 
 VOID
 DumpExceptionDataVgaOut (
@@ -689,6 +732,18 @@ DumpExceptionDataVgaOut (
     SystemContext.SystemContextIa32->Dr7
     );
   VideoBuffer += COLUMN_MAX;
+  VideoBuffer = DumpMemoryVgaOut (
+    VideoBuffer,
+    COLUMN_MAX,
+    (UINTN) SystemContext.SystemContextIa32->Esp,
+    128U
+    );
+  VideoBuffer = DumpMemoryVgaOut (
+    VideoBuffer,
+    COLUMN_MAX,
+    (UINTN) SystemContext.SystemContextIa32->Eip - 64U,
+    128U
+    );
 #else
   UnicodeSPrintAsciiFormat (
     VideoBuffer,
@@ -853,6 +908,18 @@ DumpExceptionDataVgaOut (
     SystemContext.SystemContextX64->Dr7
     );
   VideoBuffer += COLUMN_MAX;
+  VideoBuffer = DumpMemoryVgaOut (
+    VideoBuffer,
+    COLUMN_MAX,
+    (UINTN) SystemContext.SystemContextX64->Rsp,
+    128U
+    );
+  VideoBuffer = DumpMemoryVgaOut (
+    VideoBuffer,
+    COLUMN_MAX,
+    (UINTN) SystemContext.SystemContextX64->Rip - 64U,
+    128U
+    );
 #endif
 
   for (Index = 0; Index < COLUMN_MAX * ROW_MAX; Index ++) {
@@ -885,12 +952,11 @@ Return
  
 --*/
 {
-  EFI_STATUS                      Status;
-  EFI_LEGACY_BIOS_THUNK_PROTOCOL  *LegacyBios;
   EFI_IA32_REGISTER_SET           Regs;
   UINT16                          OriginalVideoMode = (UINT16) -1;
   
 
+#if 0
   //
   // VESA SuperVGA BIOS - GET CURRENT VIDEO MODE
   // AX = 4F03h
@@ -916,6 +982,7 @@ Return
     LegacyBiosInt86 (0x10, &Regs);
     OriginalVideoMode = Regs.H.AL;
   }
+#endif
 
   //
   // Set new video mode
@@ -994,9 +1061,9 @@ ExceptionHandler (
   // Switch to text mode for RED-SCREEN output
   //
   VideoMode = SwitchVideoMode (0x83);
-  if (VideoMode == (UINT16) -1) {
+//  if (VideoMode == (UINT16) -1) {
 //    DEBUG ((EFI_D_ERROR, "Video Mode Unknown!\n"));
-  }
+//  }
 #endif
 
   DumpExceptionDataVgaOut (InterruptType, SystemContext);
@@ -1150,26 +1217,28 @@ InitializeBiosIntCaller (
   UINT32                RealModeBufferSize;
   UINT32                ExtraStackSize;
   EFI_PHYSICAL_ADDRESS  LegacyRegionBase;
+  UINT32                LegacyRegionSize;
   
   //
   // Get LegacyRegion
   //
   AsmGetThunk16Properties (&RealModeBufferSize, &ExtraStackSize);
-
+  LegacyRegionSize = (((RealModeBufferSize + ExtraStackSize) / EFI_PAGE_SIZE) + 1) * EFI_PAGE_SIZE;
   LegacyRegionBase = 0x0C0000;
   Status = gBS->AllocatePages (
                   AllocateMaxAddress,
                   EfiACPIMemoryNVS,
-                  EFI_SIZE_TO_PAGES(RealModeBufferSize + ExtraStackSize + 200),
+                  EFI_SIZE_TO_PAGES(LegacyRegionSize),
                   &LegacyRegionBase
                   );
 //  ASSERT_EFI_ERROR (Status);
   if (EFI_ERROR (Status)) {
+    mThunkContext.RealModeBuffer = 0;
     return;
   }
   
   mThunkContext.RealModeBuffer     = (VOID*)(UINTN)LegacyRegionBase;
-  mThunkContext.RealModeBufferSize = EFI_PAGES_TO_SIZE ((UINTN)RealModeBufferSize);
+  mThunkContext.RealModeBufferSize = LegacyRegionSize;
   mThunkContext.ThunkAttributes    = 3;
   AsmPrepareThunk16(&mThunkContext);
   
@@ -1188,6 +1257,9 @@ LegacyBiosInt86 (
   BOOLEAN               Ret;
   UINT16                *Stack16;
   
+  if (!gLegacy8259 || !mThunkContext.RealModeBuffer) {
+    return FALSE;
+  }
   Regs->X.Flags.Reserved1 = 1;
   Regs->X.Flags.Reserved2 = 0;
   Regs->X.Flags.Reserved3 = 0;
@@ -1225,7 +1297,10 @@ LegacyBiosInt86 (
   Status = gLegacy8259->SetMode (gLegacy8259, Efi8259LegacyMode, NULL, NULL);
 //  ASSERT_EFI_ERROR (Status);
   if (EFI_ERROR (Status)) {
-    return 0;
+    if ((Eflags & EFI_CPU_EFLAGS_IF) != 0) {
+      EnableInterrupts ();
+    }
+    return FALSE;
   }
 
   Stack16 = (UINT16 *)((UINT8 *) mThunkContext.RealModeBuffer + mThunkContext.RealModeBufferSize - sizeof (UINT16));
@@ -1247,9 +1322,9 @@ LegacyBiosInt86 (
   //
   Status = gLegacy8259->SetMode (gLegacy8259, Efi8259ProtectedMode, NULL, NULL);
 //  ASSERT_EFI_ERROR (Status);
-  if (EFI_ERROR (Status)) {
-    return 0;
-  }
+//  if (EFI_ERROR (Status)) {
+//    return FALSE;
+//  }
 
   //
   // End critical section
@@ -1277,7 +1352,7 @@ LegacyBiosInt86 (
   return Ret;
 }
 
-
+#if 0
 VOID BiosPutC(CHAR8 ch)
 {
 	EFI_IA32_REGISTER_SET           Regs;
@@ -1290,3 +1365,4 @@ VOID BiosPutC(CHAR8 ch)
 	LegacyBiosInt86 (0x10, &Regs);
 	
 }
+#endif

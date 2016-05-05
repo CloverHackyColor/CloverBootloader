@@ -185,6 +185,7 @@ INF   Clover/LegacyBios/Region2Dxe/LegacyRegion2Dxe.inf
 !else
   #INF  Clover/VBoxIdeControllerDxe/VBoxIdeControllerDxe.inf
   #INF  Clover/VBoxIdeBusDxe/VBoxIdeBusDxe.inf
+  #INF  DuetPkg/SataControllerDxe/SataControllerDxe.inf
   INF  Clover/SataControllerDxe/SataControllerDxe.inf
   #INF  MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru.inf
   INF  Clover/AtaAtapi/AtaAtapiPassThru.inf
