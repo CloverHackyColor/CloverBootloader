@@ -241,7 +241,7 @@ UINT8 smb_read_byte(UINT32 base, UINT8 adr, UINT16 cmd)
     }
 
    	// p = 0xFF;
-    IoWrite8(base + SMBHSTCMD, (UINT8)(cmd & 0xFF));  //or this must be IoWrite16 ?
+    IoWrite8(base + SMBHSTCMD, (UINT8)(cmd & 0xFF)); // SMBus uses 8 bit commands
     IoWrite8(base + SMBHSTADD, (adr << 1) | 0x01 ); // read from spd
     IoWrite8(base + SMBHSTCNT, 0x48 ); // Start + Byte Data Read
     // status goes from 0x41 (Busy) -> 0x42 (Completed) or 0x44 (Error)
@@ -587,7 +587,7 @@ VOID read_smb(EFI_PCI_IO_PROTOCOL *PciIo)
 
   UINT8                  TotalSlotsCount;
 
-  smbPage = 0;
+  smbPage = 0xFF; // valid pages are 0 and 1; 0xFF will force setting page 0 at the start.
   vid = gPci.Hdr.VendorId;
   did = gPci.Hdr.DeviceId;
 
@@ -721,10 +721,10 @@ VOID read_smb(EFI_PCI_IO_PROTOCOL *PciIo)
         /*
          Total = SDRAM Capacity / 8 * Primary Bus Width / SDRAM Width * Logical Ranks per DIMM
          where:
-         • SDRAM Capacity = SPD byte 4 bits 3~0
-         • Primary Bus Width = SPD byte 13 bits 2~0
-         • SDRAM Width = SPD byte 12 bits 2~0
-         • Logical Ranks per DIMM =
+         : SDRAM Capacity = SPD byte 4 bits 3~0
+         : Primary Bus Width = SPD byte 13 bits 2~0
+         : SDRAM Width = SPD byte 12 bits 2~0
+         : Logical Ranks per DIMM =
          for SDP, DDP, QDP: = SPD byte 12 bits 5~3
          for 3DS: = SPD byte 12 bits 5~3
          times SPD byte 6 bits 6~4 (Die Count)
@@ -829,6 +829,9 @@ VOID read_smb(EFI_PCI_IO_PROTOCOL *PciIo)
     //slot->spd = NULL;
 
   } // for
+  if (smbPage != 0) {
+    READ_SPD(spdbuf, base, 0, 0); // force first page when we're done
+  }
 }
 
 VOID ScanSPD()
