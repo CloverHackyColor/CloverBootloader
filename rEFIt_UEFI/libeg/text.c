@@ -257,7 +257,7 @@ INTN egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage,
   EG_PIXEL        *BufferPtr;
   EG_PIXEL        *FontPixelData;
   EG_PIXEL        *FirstPixelBuf;
-  INTN            BufferLineOffset, FontLineOffset;
+  INTN            BufferLineWidth, BufferLineOffset, FontLineOffset;
   INTN            TextLength /*, NewTextLength = 0 */;
   INTN            i;
   UINT16          c, c1, c0;
@@ -285,6 +285,7 @@ INTN egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage,
   // render it
   BufferPtr = CompImage->PixelData;
   BufferLineOffset = CompImage->Width;
+  BufferLineWidth = BufferLineOffset - PosX; // remove indent from drawing width
   BufferPtr += PosX + PosY * BufferLineOffset;
   FirstPixelBuf = BufferPtr;
   FontPixelData = FontImage->PixelData;
@@ -334,7 +335,7 @@ INTN egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage,
           (UINTN)FirstPixelBuf + BufferLineOffset * 4);
  */     
       c0 = c; //old value
-      if ((UINTN)BufferPtr + RealWidth * 4 > (UINTN)FirstPixelBuf + BufferLineOffset * 4) {
+      if ((UINTN)BufferPtr + RealWidth * 4 > (UINTN)FirstPixelBuf + BufferLineWidth * 4) {
         break;
       }
       egRawCompose(BufferPtr - LeftSpace + 2, FontPixelData + c * FontWidth + RightSpace,
