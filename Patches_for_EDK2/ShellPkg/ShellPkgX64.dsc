@@ -126,3 +126,5 @@
 
 [BuildOptions]
 GCC:*_*_*_CC_FLAGS   = -Os -flto -DMDEPKG_NDEBUG 
+MSFT:*_*_*_CC_FLAGS = /D MDEPKG_NDEBUG
+

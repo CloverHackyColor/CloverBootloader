@@ -777,6 +777,15 @@ struct ACPI_DROP_TABLE
   INPUT_ITEM      MenuItem;
 };
 
+// ACPI/PATCHED/AML
+typedef struct ACPI_PATCHED_AML ACPI_PATCHED_AML;
+struct ACPI_PATCHED_AML
+{
+  ACPI_PATCHED_AML  *Next;
+  CHAR16            *FileName;
+  INPUT_ITEM        MenuItem;
+};
+
 typedef struct {
   
   // SMBIOS TYPE0
@@ -1142,6 +1151,9 @@ typedef struct {
   UINT32                  align38;
 #endif
 
+  // ACPI/PATCHED/AML
+  UINT32                  DisabledAMLCount;
+  CHAR16                  **DisabledAML;
   
 } SETTINGS_DATA;
 
@@ -1483,6 +1495,9 @@ extern BOOLEAN	                      defDSM;
 extern UINT16	                        dropDSM;
 
 extern TagPtr                         gConfigDict[];
+
+// ACPI/PATCHED/AML
+extern ACPI_PATCHED_AML              *ACPIPatchedAML;
 //-----------------------------------
 
 VOID

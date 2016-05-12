@@ -26,6 +26,9 @@
 
 //EFI_GUID gRandomUUID = {0x0A0B0C0D, 0x0000, 0x1010, {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07}};
 
+
+ACPI_PATCHED_AML                *ACPIPatchedAML;
+
 TagPtr                          gConfigDict[NUM_OF_CONFIGS] = {NULL, NULL, NULL};
 
 SETTINGS_DATA                   gSettings;
@@ -2476,6 +2479,52 @@ GetEarlyUserSettings (
   
   return Status;
 }
+
+
+VOID
+GetListOfACPI ()
+{
+  REFIT_DIR_ITER    DirIter;
+  EFI_FILE_INFO     *DirEntry;
+  CHAR16*           AcpiPath   = L"\\EFI\\CLOVER\\ACPI\\patched";
+  ACPI_PATCHED_AML  *ACPIPatchedAMLTmp;
+  INTN i, Count = gSettings.DisabledAMLCount;
+  ACPIPatchedAML = NULL;
+
+  DirIterOpen(SelfRootDir, AcpiPath, &DirIter);
+
+  while (DirIterNext(&DirIter, 2, L"*.aml", &DirEntry)) {
+    CHAR16  FullName[256];
+    if (DirEntry->FileName[0] == L'.') {
+      continue;
+    }
+    if (StrStr(DirEntry->FileName, L"DSDT")) {
+      continue;
+    }
+
+    UnicodeSPrint(FullName, 512, L"%s\\%s", AcpiPath, DirEntry->FileName);
+    if (FileExists(SelfRootDir, FullName)) {
+      BOOLEAN Disabled = FALSE;
+      ACPIPatchedAMLTmp = AllocateZeroPool (sizeof(ACPI_PATCHED_AML));
+      ACPIPatchedAMLTmp->FileName = PoolPrint(L"%s", DirEntry->FileName);
+
+      for (i = 0; i < Count; i++) {
+        if ((gSettings.DisabledAML[i] != NULL) &&
+          (StrCmpiBasic(ACPIPatchedAMLTmp->FileName, gSettings.DisabledAML[i]) == 0)
+        ) {
+          Disabled = TRUE;
+          break;
+        }
+      }
+      ACPIPatchedAMLTmp->MenuItem.BValue = Disabled;
+      ACPIPatchedAMLTmp->Next = ACPIPatchedAML;
+      ACPIPatchedAML = ACPIPatchedAMLTmp;
+    }
+  }
+
+  DirIterClose(&DirIter);
+}
+
 #define CONFIG_THEME_FILENAME L"theme.plist"
 
 VOID
@@ -4369,6 +4418,27 @@ GetUserSettings(
             if (!EFI_ERROR (GetElement (Prop, i, &Prop2)) &&
                 (Prop2 != NULL) && (Prop2->type == kTagTypeString)) {
               gSettings.SortedACPI[gSettings.SortedACPICount++] = PoolPrint (L"%a", Prop2->string);
+            }
+          }
+        }
+      }
+
+      Prop = GetProperty (DictPointer, "DisabledAML");
+      if (Prop) {
+        TagPtr Prop2 = NULL;
+        INTN   i, Count = GetTagCount (Prop);
+        if (Count > 0) {
+          gSettings.DisabledAMLCount = 0;
+          gSettings.DisabledAML = AllocateZeroPool (Count * sizeof(CHAR16 *));
+
+          if (gSettings.DisabledAML) {
+            for (i = 0; i < Count; i++) {
+              if (!EFI_ERROR (GetElement (Prop, i, &Prop2)) &&
+                  (Prop2 != NULL) &&
+                  (Prop2->type == kTagTypeString)
+              ) {
+                gSettings.DisabledAML[gSettings.DisabledAMLCount++] = PoolPrint (L"%a", Prop2->string);
+    }
             }
           }
         }

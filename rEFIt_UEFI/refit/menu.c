@@ -547,6 +547,14 @@ VOID FillInputs(BOOLEAN New)
     }
   }
 
+  if (ACPIPatchedAML) {
+    ACPI_PATCHED_AML *ACPIPatchedAMLTmp = ACPIPatchedAML;
+    while (ACPIPatchedAMLTmp) {
+      ACPIPatchedAMLTmp->MenuItem.ItemType = BoolValue;
+      ACPIPatchedAMLTmp->MenuItem.SValue = ACPIPatchedAMLTmp->MenuItem.BValue?L"[+]":L"[ ]";
+      ACPIPatchedAMLTmp = ACPIPatchedAMLTmp->Next;
+}
+  }
 }
 
 
@@ -2795,7 +2803,7 @@ REFIT_MENU_ENTRY  *SubMenuGraphics()
   REFIT_INPUT_DIALOG *InputBootArgs;
   
   Entry = AllocateZeroPool(sizeof(REFIT_MENU_ENTRY));
-  Entry->Title = PoolPrint(L"Graphics Injector menu ->");
+  Entry->Title = PoolPrint(L"Graphics Injector ->");
   Entry->Image =  OptionMenu.TitleImage;
   Entry->Tag = TAG_OPTIONS;
   Entry->AtClick = ActionEnter;
@@ -2956,7 +2964,7 @@ REFIT_MENU_ENTRY  *SubMenuSpeedStep()
   REFIT_INPUT_DIALOG *InputBootArgs;
     
   Entry = AllocateZeroPool(sizeof(REFIT_MENU_ENTRY));
-  Entry->Title = PoolPrint(L"CPU tuning menu ->");
+  Entry->Title = PoolPrint(L"CPU tuning ->");
   Entry->Image =  OptionMenu.TitleImage;
   Entry->Tag = TAG_OPTIONS;
   Entry->AtClick = ActionEnter;
@@ -3162,7 +3170,7 @@ REFIT_MENU_ENTRY  *SubMenuBinaries()
   REFIT_INPUT_DIALOG *InputBootArgs;
   
   Entry = AllocateZeroPool(sizeof(REFIT_MENU_ENTRY));
-  Entry->Title = PoolPrint(L"Binaries patching menu ->");
+  Entry->Title = PoolPrint(L"Binaries patching ->");
   Entry->Image =  OptionMenu.TitleImage;
   Entry->Tag = TAG_OPTIONS;
   Entry->AtClick = ActionEnter;
@@ -3268,7 +3276,7 @@ REFIT_MENU_ENTRY  *SubMenuDropTables()
   Flags = AllocateZeroPool(255);
 
   Entry = AllocateZeroPool(sizeof(REFIT_MENU_ENTRY));
-  Entry->Title = PoolPrint(L"Tables dropping menu ->");
+  Entry->Title = PoolPrint(L"Tables dropping ->");
   Entry->Image =  OptionMenu.TitleImage;
   Entry->Tag = TAG_OPTIONS;
   Entry->AtClick = ActionEnter;
@@ -3279,6 +3287,7 @@ REFIT_MENU_ENTRY  *SubMenuDropTables()
   SubScreen->ID = SCREEN_TABLES;
   SubScreen->AnimeRun = GetAnime(SubScreen);
 
+  //AddMenuInfoLine(SubScreen, L"OEM ACPI TABLE:");
   if (gSettings.ACPIDropTables) {
     ACPI_DROP_TABLE *DropTable = gSettings.ACPIDropTables;
     while (DropTable) {
@@ -3290,10 +3299,10 @@ REFIT_MENU_ENTRY  *SubMenuDropTables()
       CopyMem((CHAR8*)&sign, (CHAR8*)&(DropTable->Signature), 4);
       CopyMem((CHAR8*)&OTID, (CHAR8*)&(DropTable->TableId), 8);
 
-      MsgLog("adding to menu %a (%x) %a (%lx) L=%d(0x%x)\n",
-             sign, DropTable->Signature,
-             OTID, DropTable->TableId,
-             DropTable->Length, DropTable->Length);
+      //MsgLog("adding to menu %a (%x) %a (%lx) L=%d(0x%x)\n",
+      //       sign, DropTable->Signature,
+      //       OTID, DropTable->TableId,
+      //       DropTable->Length, DropTable->Length);
       InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
       UnicodeSPrint(Flags, 255, L"Drop \"%4.4a\"  \"%8.8a\" %d:", sign, OTID, DropTable->Length);
       InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
@@ -3318,6 +3327,23 @@ REFIT_MENU_ENTRY  *SubMenuDropTables()
   InputBootArgs->Entry.AtClick = ActionEnter;
   InputBootArgs->Entry.AtRightClick = ActionDetails;
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+
+  //AddMenuInfoLine(SubScreen, L"PATCHED AML:");
+  if (ACPIPatchedAML) {
+    ACPI_PATCHED_AML *ACPIPatchedAMLTmp = ACPIPatchedAML;
+    while (ACPIPatchedAMLTmp) {
+      InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+      UnicodeSPrint(Flags, 255, L"Drop \"%s\":", ACPIPatchedAMLTmp->FileName);
+      InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
+      InputBootArgs->Entry.Tag = TAG_INPUT;
+      InputBootArgs->Entry.Row = 0xFFFF; //cursor
+      InputBootArgs->Item = &(ACPIPatchedAMLTmp->MenuItem);
+      InputBootArgs->Entry.AtClick = ActionEnter;
+      InputBootArgs->Entry.AtRightClick = ActionDetails;
+      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+      ACPIPatchedAMLTmp = ACPIPatchedAMLTmp->Next;
+    }
+  }
 
   AddMenuEntry(SubScreen, &MenuEntryReturn);
   Entry->SubScreen = SubScreen;

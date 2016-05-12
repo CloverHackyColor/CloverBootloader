@@ -1418,8 +1418,6 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
   BOOLEAN           DsdtLoaded = FALSE;
   BOOLEAN           NeedUpdate = FALSE;
   OPER_REGION       *tmpRegion;
-  REFIT_DIR_ITER    DirIter;
-  EFI_FILE_INFO     *DirEntry;
   INTN              ApicCPUBase = 0;
   CHAR16*           AcpiOemPath = PoolPrint(L"%s\\ACPI\\patched", OEMPath);
   
@@ -1801,6 +1799,81 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
     DropTableFromRSDT(XXXX_SIGN, 0, 0);
   }
 
+  if (ACPIPatchedAML) {
+    DBG("Start: Processing Patched AML(s): ");
+    if (gSettings.SortedACPICount) {
+      DBG("Sorted\n");
+      for (Index = 0; Index < gSettings.SortedACPICount; Index++) {
+        ACPI_PATCHED_AML *ACPIPatchedAMLTmp = ACPIPatchedAML;
+        BOOLEAN ACPIAllow = TRUE;
+        //while (ACPIPatchedAMLTmp) {
+        while (ACPIPatchedAMLTmp && ACPIAllow) {
+          if (
+            (StrCmpiBasic(ACPIPatchedAMLTmp->FileName, gSettings.SortedACPI[Index]) == 0) &&
+            (ACPIPatchedAMLTmp->MenuItem.BValue)
+          ) {
+            DBG("Disabled: %s, skip\n", ACPIPatchedAMLTmp->FileName);
+            //ACPIPatchedAMLTmp = NULL;
+            ACPIAllow = FALSE;
+          }
+          if (ACPIAllow) {
+            ACPIPatchedAMLTmp = ACPIPatchedAMLTmp->Next;
+          }
+        }
+
+        if (ACPIAllow) {
+          CHAR16* FullName = PoolPrint(L"%s\\%s", AcpiOemPath, gSettings.SortedACPI[Index]);
+          DBG("Inserting table[%d]:%s from %s ... ", Index, gSettings.SortedACPI[Index], AcpiOemPath);
+          Status = egLoadFile(SelfRootDir, FullName, &buffer, &bufferLen);
+          if (!EFI_ERROR(Status)) {
+            //before insert we should checksum it
+            if (buffer) {
+              TableHeader = (EFI_ACPI_DESCRIPTION_HEADER*)buffer;
+              if (TableHeader->Length > 500 * kilo) {
+                DBG("wrong table\n");
+                continue;
+              }
+              TableHeader->Checksum = 0;
+              TableHeader->Checksum = (UINT8)(256-Checksum8((CHAR8*)buffer, TableHeader->Length));
+            }
+            Status = InsertTable((VOID*)buffer, bufferLen);
+          }
+          DBG("%r\n", Status);
+        }
+      }
+    } else {
+      ACPI_PATCHED_AML *ACPIPatchedAMLTmp = ACPIPatchedAML;
+      DBG("Unsorted\n");
+      while (ACPIPatchedAMLTmp) {
+        if (ACPIPatchedAMLTmp->MenuItem.BValue == FALSE) {
+          CHAR16  FullName[256];
+          UnicodeSPrint(FullName, 512, L"%s\\%s", AcpiOemPath, ACPIPatchedAMLTmp->FileName);
+          DBG("Inserting %s from %s ... ", ACPIPatchedAMLTmp->FileName, AcpiOemPath);
+          Status = egLoadFile(SelfRootDir, FullName, &buffer, &bufferLen);
+          if (!EFI_ERROR(Status)) {
+            //before insert we should checksum it
+            if (buffer) {
+              TableHeader = (EFI_ACPI_DESCRIPTION_HEADER*)buffer;
+              if (TableHeader->Length > 500 * kilo) {
+                DBG("wrong table\n");
+                continue;
+              }
+              TableHeader->Checksum = 0;
+              TableHeader->Checksum = (UINT8)(256-Checksum8((CHAR8*)buffer, TableHeader->Length));
+            }
+            Status = InsertTable((VOID*)buffer, bufferLen);
+          }
+          DBG("%r\n", Status);
+        } else {
+          DBG("Disabled: %s, skip\n", ACPIPatchedAMLTmp->FileName);
+        }
+        ACPIPatchedAMLTmp = ACPIPatchedAMLTmp->Next;
+      }
+    }
+    DBG("End: Processing Patched AML(s)\n");
+  }
+
+/*
   // find other ACPI tables except DSDT
   if (gSettings.SortedACPICount == 0) {
     DirIterOpen(SelfRootDir, AcpiOemPath, &DirIter);
@@ -1862,8 +1935,8 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
       }
     }
   }
+*/
 
-  
   //Slice - this is a time to patch MADT table. 
 //  DBG("Fool proof: size of APIC NMI  = %d\n", sizeof(EFI_ACPI_2_0_LOCAL_APIC_NMI_STRUCTURE));
 //  DBG("----------- size of APIC DESC = %d\n", sizeof(EFI_ACPI_2_0_MULTIPLE_APIC_DESCRIPTION_TABLE_HEADER));

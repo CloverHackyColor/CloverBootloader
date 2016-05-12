@@ -2156,6 +2156,8 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     FreePool(FirstMessage);
   }
     
+  GetListOfACPI();//###
+
   AfterTool = FALSE;
   gGuiIsReady = TRUE;
   do {

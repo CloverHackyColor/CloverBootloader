@@ -594,6 +594,8 @@ VOID FreeList(IN OUT VOID ***ListPtr, IN OUT UINTN *ElementCount /*, IN Callback
 
 VOID GetListOfThemes(VOID);
 
+VOID GetListOfACPI(VOID);
+
 EFI_STATUS ExtractLegacyLoaderPaths(EFI_DEVICE_PATH **PathList, UINTN MaxPaths, EFI_DEVICE_PATH **HardcodedPathList);
 
 VOID ScanVolumes(VOID);
