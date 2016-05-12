@@ -245,7 +245,8 @@ typedef struct {
   UINTN   LineShift;
 } INPUT_ITEM;
 
-#define SVALUE_MAX_SIZE 255
+// Allow for 255 unicode characters + 2 byte unicode null terminator.
+#define SVALUE_MAX_SIZE 512
 
 typedef enum {
   ActionNone = 0,

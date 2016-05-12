@@ -563,7 +563,7 @@ VOID ApplyInputs(VOID)
   TagPtr dict;
 //  DBG("ApplyInputs\n");
   if (InputItems[i].Valid) {
-    ZeroMem(&gSettings.BootArgs, 255);
+    ZeroMem(&gSettings.BootArgs, 256);
     gBootArgsChanged = TRUE;
     ch = InputItems[i].SValue;
     do {
@@ -691,7 +691,7 @@ VOID ApplyInputs(VOID)
       if (gGraphics[j].Vendor == Ati) {
         UnicodeSPrint(gSettings.FBName, 32, L"%s", InputItems[i].SValue); 
       } else if (gGraphics[j].Vendor == Nvidia) {
-        ZeroMem(AString, 255);
+        ZeroMem(AString, 256);
         AsciiSPrint(AString, 255, "%s", InputItems[i].SValue);
         hex2bin(AString, (UINT8*)&gSettings.Dcfg[0], 8);
       } else if (gGraphics[j].Vendor == Intel) {
@@ -712,7 +712,7 @@ VOID ApplyInputs(VOID)
     }    
     i++; //24
     if (InputItems[i].Valid) {
-      ZeroMem(AString, 255);
+      ZeroMem(AString, 256);
       if (StrLen(InputItems[i].SValue) > 0) {
         AsciiSPrint(AString, 255, "%s", InputItems[i].SValue);
         hex2bin(AString, (UINT8*)&gSettings.NVCAP[0], 20);
@@ -1346,10 +1346,29 @@ static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC  Style
   UINTN         Pos = (Screen->Entries[State->CurrentSelection])->Row;
   INPUT_ITEM    *Item = ((REFIT_INPUT_DIALOG*)(Screen->Entries[State->CurrentSelection]))->Item;
   CHAR16        *Backup = EfiStrDuplicate(Item->SValue);
+  UINTN         BackupPos, BackupShift;
   CHAR16        *Buffer;
-  SCROLL_STATE  StateLine;
+  //SCROLL_STATE  StateLine;
 
+  /*
+    I would like to see a LineSize that depends on the Title width and the menu width so
+    the edit dialog does not extend beyond the menu width.
+    There are 3 cases:
+    1) Text menu where MenuWidth is min of ConWidth - 6 and max of 50 and all StrLen(Title)
+    2) Graphics menu where MenuWidth is measured in pixels and font is fixed width.
+       The following works well in my case but depends on font width and minimum screen size.
+         LineSize = 76 - StrLen(Screen->Entries[State->CurrentSelection]->Title);
+    3) Graphics menu where font is proportional. In this case LineSize would depend on the
+       current width of the displayed string which would need to be recalculated after
+       every change.
+    Anyway, the above will not be implemented for now, and LineSize will remain at 38
+    because it works.
+  */
   UINTN         LineSize = 38;
+#define DBG_INPUTDIALOG 0
+#if DBG_INPUTDIALOG
+  UINTN         Iteration = 0;
+#endif
 
 
   if (Item->ItemType != BoolValue) {
@@ -1358,8 +1377,10 @@ static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC  Style
   }
   
   Buffer = Item->SValue;
+  BackupShift = Item->LineShift;
+  BackupPos = Pos;
 
-  InitScroll(&StateLine, 128, 128, StrLen(Item->SValue));
+  // InitScroll(&StateLine, 128, 128, StrLen(Item->SValue));
   //  MsgLog("initial SValue: %s\n", Item->SValue);
 
   do {
@@ -1372,6 +1393,17 @@ static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC  Style
     } else {
 
       Status = gST->ConIn->ReadKeyStroke (gST->ConIn, &key);
+
+#if DBG_INPUTDIALOG
+      // For debugging the InputDialog
+      PrintAt(0, 0, L"%5d: Buffer:%x MaxSize:%d Line:%3d", Iteration, Buffer, SVALUE_MAX_SIZE, LineSize);
+      PrintAt(0, 1, L"%5d: Size:%3d Len:%3d", Iteration, StrSize(Buffer), StrLen(Buffer));
+      PrintAt(0, 2, L"%5d: Pos:%3d Shift:%3d AbsPos:%3d", Iteration, Pos, Item->LineShift, Pos+Item->LineShift);
+      PrintAt(0, 3, L"%5d: KeyCode:%4d KeyChar:%4d", Iteration, key.ScanCode, (UINTN)key.UnicodeChar);
+      PrintAt(0, 4, L"%5d: Title:\"%s\"", Iteration, Screen->Entries[State->CurrentSelection]->Title);
+      Iteration++;
+#endif
+
       if (Status == EFI_NOT_READY) {
         gBS->WaitForEvent(1, &gST->ConIn->WaitForKey, &ind);
         continue;
@@ -1430,12 +1462,30 @@ static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC  Style
         case SCAN_F10:
           egScreenShot();
           break;
+
+        case SCAN_DELETE:
+          // forward delete
+          if (Pos + Item->LineShift < StrLen(Buffer)) {
+            for (i = Pos + Item->LineShift; i < StrLen(Buffer); i++) {
+               Buffer[i] = Buffer[i+1];
+            }
+            /*
+            // Commented this out because it looks weird - Forward Delete should not
+            // affect anything left of the cursor even if it's just to shift more of the
+            // string into view.
+            if (Item->LineShift > 0 && Item->LineShift + LineSize > StrLen(Buffer)) {
+              Item->LineShift--;
+              Pos++;
+            }
+            */
+          }
+          break;
       }
       
       switch (key.UnicodeChar) {
         case CHAR_BACKSPACE:  
           if (Buffer[0] != CHAR_NULL && Pos != 0) {
-            for (i = Pos + Item->LineShift; i < StrSize(Buffer); i++) {
+            for (i = Pos + Item->LineShift; i <= StrLen(Buffer); i++) {
                Buffer[i-1] = Buffer[i];
             }
             Item->LineShift > 0 ? Item->LineShift-- : Pos--;
@@ -1452,8 +1502,8 @@ static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC  Style
         default:
           if ((key.UnicodeChar >= 0x20) &&
               (key.UnicodeChar < 0x80)){
-            if (StrSize(Buffer) < SVALUE_MAX_SIZE - 1) {
-              for (i = StrSize(Buffer); i >  Pos + Item->LineShift; i--) {
+            if (StrSize(Buffer) < SVALUE_MAX_SIZE) {
+              for (i = StrLen(Buffer)+1; i > Pos + Item->LineShift; i--) {
                  Buffer[i] = Buffer[i-1];
               }
               Buffer[i] = key.UnicodeChar;
@@ -1475,8 +1525,14 @@ static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC  Style
       break;
 
     case MENU_EXIT_ESCAPE:
-      UnicodeSPrint(Item->SValue, SVALUE_MAX_SIZE, L"%s", Backup);
-      StyleFunc(Screen, State, MENU_FUNCTION_PAINT_SELECTION, NULL);
+      if (StrCmp(Item->SValue, Backup) != 0) {
+        UnicodeSPrint(Item->SValue, SVALUE_MAX_SIZE, L"%s", Backup);
+        if (Item->ItemType != BoolValue) {
+          Item->LineShift = BackupShift;
+          (Screen->Entries[State->CurrentSelection])->Row = BackupPos;
+        }
+        StyleFunc(Screen, State, MENU_FUNCTION_PAINT_SELECTION, NULL);
+      }
       break;
   }
   Item->Valid = FALSE;
@@ -1748,7 +1804,7 @@ static VOID TextMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
   static UINTN MenuPosY = 0;
   //static CHAR16 **DisplayStrings;
   CHAR16 *TimeoutMessage;
-	CHAR16 ResultString[256];
+  CHAR16 ResultString[SVALUE_MAX_SIZE / sizeof(CHAR16) + 128]; // assume a title max length of around 128
 
   switch (Function) {
 
@@ -2126,7 +2182,7 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
   INTN ItemWidth = 0;
   INTN X;
   INTN VisibleHeight = 0; //assume vertical layout
-  CHAR16 ResultString[256];
+  CHAR16 ResultString[SVALUE_MAX_SIZE / sizeof(CHAR16) + 128]; // assume a title max length of around 128
   
   switch (Function) {
       
