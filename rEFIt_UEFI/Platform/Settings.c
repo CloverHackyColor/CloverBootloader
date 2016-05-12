@@ -5130,7 +5130,7 @@ GetDevices ()
                                              NULL) //NULL: get from generic lists
                            );
               
-              DBG ("Found NVidia model=%a family %#x\n", gfx->Model, gfx->Family);
+              DBG ("Found NVidia model=%a family %x\n", gfx->Model, gfx->Family);
               gfx->Ports                  = 0;
               
               SlotDevice                  = &SlotDevices[1];

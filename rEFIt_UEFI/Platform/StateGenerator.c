@@ -270,7 +270,6 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
                     (gCPUStructure.Model == CPU_MODEL_HASWELL_U5) ||
                     (gCPUStructure.Model == CPU_MODEL_BROADWELL_HQ) ||
                     (gCPUStructure.Model == CPU_MODEL_SKYLAKE_U) ||
-                    (gCPUStructure.Model == CPU_MODEL_ATOM_3700) ||
                     (gCPUStructure.Model == CPU_MODEL_SKYLAKE_S) ||
                     (gCPUStructure.Model == CPU_MODEL_JAKETOWN)) {
                   j = i << 8;

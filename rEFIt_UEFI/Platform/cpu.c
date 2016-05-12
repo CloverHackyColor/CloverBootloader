@@ -271,7 +271,10 @@ VOID GetCPUProperties (VOID)
         gCPUStructure.Threads = (UINT8)bitfield((UINT32)msr, 15,  0);
         break;
       case CPU_MODEL_ATOM_3700:
-      case CPU_MODEL_ATOM:  
+        gCPUStructure.Cores   = 4;
+        gCPUStructure.Threads = 4;
+        break;
+      case CPU_MODEL_ATOM:
         gCPUStructure.Cores   = 2;
         gCPUStructure.Threads = 2;
         break;

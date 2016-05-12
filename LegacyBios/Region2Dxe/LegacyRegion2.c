@@ -699,6 +699,7 @@ DetectChipset (
     case 0x0A048086: // 4rd Generation U-Processor Series
     case 0x0D048086: // 4rd Generation H-Processor Series (BGA) with GT3 Graphics
     case 0x16048086: // 5th Generation Core Processor Family DRAM Controller
+    case 0x0F008086: // Bay Trail Family DRAM Controller
       DBG(" Next Generation Core processors (PAM 0x80-0x86)\n");
       mRegisterValues = mRegisterValuesCP;
       break;
