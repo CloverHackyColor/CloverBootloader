@@ -1562,7 +1562,8 @@ PrintBytes (
 
 VOID
 SetDMISettingsForModel (
-  MACHINE_TYPES Model
+  MACHINE_TYPES Model,
+  BOOLEAN Redefine
   );
 
 MACHINE_TYPES GetModelFromString (

@@ -3223,11 +3223,12 @@ ParseSMBIOSSettings(
     // to serve as default
     Model = GetModelFromString (gSettings.ProductName);
     if (Model != MaxMachineType) {
-      SetDMISettingsForModel (Model);
+      SetDMISettingsForModel (Model, FALSE);
       Default = TRUE;
     } else {
-      //if new model then fill at least as MacPro3,1
-      SetDMISettingsForModel (MacPro31);
+      //if new model then fill at least as MacPro3,1, except custom ProductName
+      // something else?
+      SetDMISettingsForModel (MacPro31, FALSE);
     }
   }
   

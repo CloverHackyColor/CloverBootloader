@@ -446,15 +446,15 @@ CHAR8 *AppleBoardSN       = "C02140302D5DMT31M";
 CHAR8 *AppleBoardLocation = "Part Component";
 
 VOID
-SetDMISettingsForModel (
-                        MACHINE_TYPES Model
-                        )
+SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
 {
   AsciiStrCpy (gSettings.VendorName,           BiosVendor);
   AsciiStrCpy (gSettings.RomVersion,           AppleFirmwareVersion[Model]);
   AsciiStrCpy (gSettings.ReleaseDate,          AppleReleaseDate[Model]);
   AsciiStrCpy (gSettings.ManufactureName,      BiosVendor);
-  AsciiStrCpy (gSettings.ProductName,          AppleProductName[Model]);
+  if (Redefine) {
+    AsciiStrCpy (gSettings.ProductName,          AppleProductName[Model]);
+  }  
   AsciiStrCpy (gSettings.VersionNr,            AppleSystemVersion[Model]);
   AsciiStrCpy (gSettings.SerialNr,             AppleSerialNumber[Model]);
   AsciiStrCpy (gSettings.FamilyName,           AppleFamilies[Model]);
@@ -634,7 +634,7 @@ GetDefaultSettings ()
   Model             = GetDefaultModel ();
   gSettings.CpuType	= GetAdvancedCpuType ();
   
-  SetDMISettingsForModel (Model);
+  SetDMISettingsForModel (Model, TRUE);
   
   //default values will be overritten by config.plist
   //use explicitly settings TRUE or FALSE (Yes or No)

@@ -841,7 +841,7 @@ VOID ApplyInputs(VOID)
     // to serve as default
     Model = GetModelFromString(gSettings.ProductName);
     if (Model != MaxMachineType) {
-      SetDMISettingsForModel(Model);
+      SetDMISettingsForModel(Model, FALSE);
     }  
   }
   
