@@ -474,6 +474,7 @@ Edd30BiosReadBlocks (
   Media     = This->Media;
   BlockSize = Media->BlockSize;
 
+  ReadBlocks
   ZeroMem (&Regs, sizeof (IA32_REGISTER_SET));
 
   if (MediaId != Media->MediaId) {
@@ -604,6 +605,10 @@ Edd30BiosReadBlocksEx (
 
   Media     = This->Media;
   BlockSize = Media->BlockSize;
+
+  if (!BlockSize) {
+    return EFI_NO_MEDIA;
+  }
 
   ZeroMem (&Regs, sizeof (IA32_REGISTER_SET));
 
@@ -1171,6 +1176,10 @@ Edd11BiosReadBlocks (
   Media     = This->Media;
   BlockSize = Media->BlockSize;
 
+  if (!BlockSize) {
+    return EFI_NO_MEDIA;
+  }
+
   ZeroMem (&Regs, sizeof (IA32_REGISTER_SET));
 
   if (MediaId != Media->MediaId) {
@@ -1306,6 +1315,10 @@ Edd11BiosReadBlocksEx (
 
   Media     = This->Media;
   BlockSize = Media->BlockSize;
+
+  if (!BlockSize) {
+    return EFI_NO_MEDIA;
+  }
 
   ZeroMem (&Regs, sizeof (IA32_REGISTER_SET));
 
