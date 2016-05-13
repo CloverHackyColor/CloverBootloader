@@ -2489,7 +2489,7 @@ GetListOfACPI ()
   ACPI_PATCHED_AML  *ACPIPatchedAMLTmp;
   INTN i, Count = gSettings.DisabledAMLCount;
   ACPIPatchedAML = NULL;
-  
+
   CHAR16*     AcpiPath = PoolPrint(L"%s\\ACPI\\patched", OEMPath);
 
   DirIterOpen(SelfRootDir, AcpiPath, &DirIter);
@@ -2505,7 +2505,7 @@ GetListOfACPI ()
 
     UnicodeSPrint(FullName, 512, L"%s\\%s", AcpiPath, DirEntry->FileName);
     if (FileExists(SelfRootDir, FullName)) {
-      BOOLEAN ACPIAllow = TRUE;
+      BOOLEAN ACPIDisabled = FALSE;
       ACPIPatchedAMLTmp = AllocateZeroPool (sizeof(ACPI_PATCHED_AML));
       ACPIPatchedAMLTmp->FileName = PoolPrint(L"%s", DirEntry->FileName);
 
@@ -2513,11 +2513,11 @@ GetListOfACPI ()
         if ((gSettings.DisabledAML[i] != NULL) &&
           (StrCmpiBasic(ACPIPatchedAMLTmp->FileName, gSettings.DisabledAML[i]) == 0)
         ) {
-          ACPIAllow = FALSE;
+          ACPIDisabled = TRUE;
           break;
         }
       }
-      ACPIPatchedAMLTmp->MenuItem.BValue = ACPIAllow;
+      ACPIPatchedAMLTmp->MenuItem.BValue = ACPIDisabled;
       ACPIPatchedAMLTmp->Next = ACPIPatchedAML;
       ACPIPatchedAML = ACPIPatchedAMLTmp;
     }
