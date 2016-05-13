@@ -474,7 +474,10 @@ Edd30BiosReadBlocks (
   Media     = This->Media;
   BlockSize = Media->BlockSize;
 
-  ReadBlocks
+  if (!BlockSize) {
+    return EFI_NO_MEDIA;
+  }
+
   ZeroMem (&Regs, sizeof (IA32_REGISTER_SET));
 
   if (MediaId != Media->MediaId) {
@@ -760,6 +763,10 @@ Edd30BiosWriteBlocks (
   Media     = This->Media;
   BlockSize = Media->BlockSize;
 
+  if (!BlockSize) {
+    return EFI_NO_MEDIA;
+  }
+
   ZeroMem (&Regs, sizeof (IA32_REGISTER_SET));
 
   if (MediaId != Media->MediaId) {
@@ -897,6 +904,10 @@ Edd30BiosWriteBlocksEx (
 
   Media     = This->Media;
   BlockSize = Media->BlockSize;
+
+  if (!BlockSize) {
+    return EFI_NO_MEDIA;
+  }
 
   ZeroMem (&Regs, sizeof (IA32_REGISTER_SET));
 
@@ -1475,6 +1486,10 @@ Edd11BiosWriteBlocks (
   Media     = This->Media;
   BlockSize = Media->BlockSize;
 
+  if (!BlockSize) {
+    return EFI_NO_MEDIA;
+  }
+
   ZeroMem (&Regs, sizeof (IA32_REGISTER_SET));
 
   if (MediaId != Media->MediaId) {
@@ -1619,6 +1634,10 @@ Edd11BiosWriteBlocksEx (
 
   Media     = This->Media;
   BlockSize = Media->BlockSize;
+
+  if (!BlockSize) {
+    return EFI_NO_MEDIA;
+  }
 
   ZeroMem (&Regs, sizeof (IA32_REGISTER_SET));
 
@@ -1784,6 +1803,10 @@ BiosReadLegacyDrive (
 
   Media     = This->Media;
   BlockSize = Media->BlockSize;
+
+  if (!BlockSize) {
+    return EFI_NO_MEDIA;
+  }
 
   ZeroMem (&Regs, sizeof (IA32_REGISTER_SET));
 
@@ -1968,6 +1991,10 @@ BiosReadLegacyDriveEx (
 
   Media     = This->Media;
   BlockSize = Media->BlockSize;
+
+  if (!BlockSize) {
+    return EFI_NO_MEDIA;
+  }
 
   ZeroMem (&Regs, sizeof (IA32_REGISTER_SET));
 
@@ -2172,6 +2199,10 @@ BiosWriteLegacyDrive (
   Media     = This->Media;
   BlockSize = Media->BlockSize;
 
+  if (!BlockSize) {
+    return EFI_NO_MEDIA;
+  }
+
   ZeroMem (&Regs, sizeof (IA32_REGISTER_SET));
 
   if (MediaId != Media->MediaId) {
@@ -2359,6 +2390,10 @@ BiosWriteLegacyDriveEx (
 
   Media     = This->Media;
   BlockSize = Media->BlockSize;
+
+  if (!BlockSize) {
+    return EFI_NO_MEDIA;
+  }
 
   ZeroMem (&Regs, sizeof (IA32_REGISTER_SET));
 
