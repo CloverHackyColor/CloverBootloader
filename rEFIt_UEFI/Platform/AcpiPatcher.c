@@ -1298,6 +1298,7 @@ VOID SaveOemTables()
 	SaveBufferToDisk(MemLogStart, GetMemLogLen() - MemLogStartLen, AcpiOriginPath, L"DumpLog.txt");
 	
 	FreePool(mSavedTables);
+  FreePool(AcpiOriginPath);
 }
 
 VOID        SaveOemDsdt(BOOLEAN FullPatch)
@@ -1365,7 +1366,9 @@ VOID        SaveOemDsdt(BOOLEAN FullPatch)
     if (FullPatch) {
       FixBiosDsdt(buffer, FadtPointer, NULL);
       DsdtLen = ((EFI_ACPI_DESCRIPTION_HEADER*)buffer)->Length;
+      FreePool(OriginDsdt); //avoid memory leak
 			OriginDsdt = OriginDsdtFixed;
+      OriginDsdtFixed = NULL; //to not free twice
     }
     Status = egSaveFile(SelfRootDir, OriginDsdt, buffer, DsdtLen);
     if (EFI_ERROR(Status)) {
@@ -1378,6 +1381,9 @@ VOID        SaveOemDsdt(BOOLEAN FullPatch)
 		}
     gBS->FreePages(dsdt, Pages);
   }
+  FreePool(OriginDsdt);
+  if (OriginDsdtFixed) FreePool(OriginDsdtFixed);
+  FreePool(AcpiOemPath);
 }
 
 EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
@@ -1800,29 +1806,22 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
   }
 
   if (ACPIPatchedAML) {
+    CHAR16  FullName[256];
     DBG("Start: Processing Patched AML(s): ");
     if (gSettings.SortedACPICount) {
       DBG("Sorted\n");
       for (Index = 0; Index < gSettings.SortedACPICount; Index++) {
         ACPI_PATCHED_AML *ACPIPatchedAMLTmp = ACPIPatchedAML;
-        BOOLEAN ACPIAllow = TRUE;
-        //while (ACPIPatchedAMLTmp) {
-        while (ACPIPatchedAMLTmp && ACPIAllow) {
-          if (
-            (StrCmpiBasic(ACPIPatchedAMLTmp->FileName, gSettings.SortedACPI[Index]) == 0) &&
-            (ACPIPatchedAMLTmp->MenuItem.BValue)
-          ) {
+        while (ACPIPatchedAMLTmp) {
+          if ((StrCmpiBasic(ACPIPatchedAMLTmp->FileName, gSettings.SortedACPI[Index]) == 0) &&
+            (ACPIPatchedAMLTmp->MenuItem.BValue)) {
             DBG("Disabled: %s, skip\n", ACPIPatchedAMLTmp->FileName);
-            //ACPIPatchedAMLTmp = NULL;
-            ACPIAllow = FALSE;
+            break;
           }
-          if (ACPIAllow) {
-            ACPIPatchedAMLTmp = ACPIPatchedAMLTmp->Next;
-          }
+          ACPIPatchedAMLTmp = ACPIPatchedAMLTmp->Next;
         }
-
-        if (ACPIAllow) {
-          CHAR16* FullName = PoolPrint(L"%s\\%s", AcpiOemPath, gSettings.SortedACPI[Index]);
+        if (!ACPIPatchedAMLTmp) { // NULL when not disabled
+          UnicodeSPrint(FullName, 512, L"%s\\%s", AcpiOemPath, gSettings.SortedACPI[Index]);
           DBG("Inserting table[%d]:%s from %s ... ", Index, gSettings.SortedACPI[Index], AcpiOemPath);
           Status = egLoadFile(SelfRootDir, FullName, &buffer, &bufferLen);
           if (!EFI_ERROR(Status)) {
@@ -1846,7 +1845,6 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
       DBG("Unsorted\n");
       while (ACPIPatchedAMLTmp) {
         if (ACPIPatchedAMLTmp->MenuItem.BValue == FALSE) {
-          CHAR16  FullName[256];
           UnicodeSPrint(FullName, 512, L"%s\\%s", AcpiOemPath, ACPIPatchedAMLTmp->FileName);
           DBG("Inserting %s from %s ... ", ACPIPatchedAMLTmp->FileName, AcpiOemPath);
           Status = egLoadFile(SelfRootDir, FullName, &buffer, &bufferLen);
@@ -2110,7 +2108,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
     FreePool(gRegions);
     gRegions = tmpRegion;
   }
-  
+  FreePool(AcpiOemPath);
   return EFI_SUCCESS;
 }
 
@@ -2389,7 +2387,6 @@ EFI_STATUS PatchACPI_OtherOS(CHAR16* OsSubdir, BOOLEAN DropSSDT)
   
   // release mem
   if (PathPatched) FreePool(PathPatched);
-  
   return EFI_SUCCESS;
 }
 

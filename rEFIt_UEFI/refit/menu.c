@@ -553,7 +553,7 @@ VOID FillInputs(BOOLEAN New)
       ACPIPatchedAMLTmp->MenuItem.ItemType = BoolValue;
       ACPIPatchedAMLTmp->MenuItem.SValue = ACPIPatchedAMLTmp->MenuItem.BValue?L"[+]":L"[ ]";
       ACPIPatchedAMLTmp = ACPIPatchedAMLTmp->Next;
-}
+    }
   }
 }
 

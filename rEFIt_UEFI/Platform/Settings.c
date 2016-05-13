@@ -2486,12 +2486,13 @@ GetListOfACPI ()
 {
   REFIT_DIR_ITER    DirIter;
   EFI_FILE_INFO     *DirEntry;
-  CHAR16*           AcpiOemPath = PoolPrint(L"%s\\ACPI\\patched", OEMPath);
   ACPI_PATCHED_AML  *ACPIPatchedAMLTmp;
   INTN i, Count = gSettings.DisabledAMLCount;
   ACPIPatchedAML = NULL;
+  
+  CHAR16*     AcpiPath = PoolPrint(L"%s\\ACPI\\patched", OEMPath);
 
-  DirIterOpen(SelfRootDir, AcpiOemPath, &DirIter);
+  DirIterOpen(SelfRootDir, AcpiPath, &DirIter);
 
   while (DirIterNext(&DirIter, 2, L"*.aml", &DirEntry)) {
     CHAR16  FullName[256];
@@ -2502,7 +2503,7 @@ GetListOfACPI ()
       continue;
     }
 
-    UnicodeSPrint(FullName, 512, L"%s\\%s", AcpiOemPath, DirEntry->FileName);
+    UnicodeSPrint(FullName, 512, L"%s\\%s", AcpiPath, DirEntry->FileName);
     if (FileExists(SelfRootDir, FullName)) {
       BOOLEAN ACPIAllow = TRUE;
       ACPIPatchedAMLTmp = AllocateZeroPool (sizeof(ACPI_PATCHED_AML));
@@ -2523,6 +2524,7 @@ GetListOfACPI ()
   }
 
   DirIterClose(&DirIter);
+  FreePool(AcpiPath);
 }
 
 #define CONFIG_THEME_FILENAME L"theme.plist"
