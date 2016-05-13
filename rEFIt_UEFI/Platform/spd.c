@@ -587,7 +587,7 @@ VOID read_smb(EFI_PCI_IO_PROTOCOL *PciIo)
 
   UINT8                  TotalSlotsCount;
 
-  smbPage = 0xFF; // valid pages are 0 and 1; 0xFF will force setting page 0 at the start.
+  smbPage = 0; // valid pages are 0 and 1; assume the first page (page 0) is already selected
   vid = gPci.Hdr.VendorId;
   did = gPci.Hdr.DeviceId;
 
@@ -673,8 +673,15 @@ VOID read_smb(EFI_PCI_IO_PROTOCOL *PciIo)
       //DBG("SPD[%d]: Empty\n", i);
       continue;
     }
+    else if (spdbuf[SPD_MEMORY_TYPE] == 0) {
+      // First 0x40 bytes of DDR4 spd second page is 0. Maybe we need to change page, so do that and retry.
+      DBG("SPD[%d]: Got invalid type %d @0x%x. Will set page and retry.\n", i, spdbuf[SPD_MEMORY_TYPE], 0x50 + i);
+      smbPage = 0xFF; // force page to be set
+      READ_SPD(spdbuf, base, i, SPD_MEMORY_TYPE);
+    }
+    
     // Copy spd data into buffer
-    DBG("SPD[%d]: Type %d @0x%x \n", i, spdbuf[SPD_MEMORY_TYPE], 0x50 + i);
+    DBG("SPD[%d]: Type %d @0x%x\n", i, spdbuf[SPD_MEMORY_TYPE], 0x50 + i);
     switch (spdbuf[SPD_MEMORY_TYPE])  {
       case SPD_MEMORY_TYPE_SDRAM_DDR:
         init_spd(spd_indexes_ddr, spdbuf, base, i);
@@ -791,7 +798,7 @@ VOID read_smb(EFI_PCI_IO_PROTOCOL *PciIo)
     //XXX - when we can FreePool allocated for these buffers?
     // determine spd speed
     speed = getDDRspeedMhz(spdbuf);
-    DBG("DDR speed %dMHz \n", speed);
+    DBG("DDR speed %dMHz\n", speed);
     if (gRAM.SPD[i].Frequency<speed) gRAM.SPD[i].Frequency = speed;
 
     // pci memory controller if available, is more reliable
@@ -807,10 +814,10 @@ VOID read_smb(EFI_PCI_IO_PROTOCOL *PciIo)
         case 99:	freq++; break;
       }
       gRAM.SPD[i].Frequency = freq;
-      DBG("RAM speed %dMHz \n", freq);
+      DBG("RAM speed %dMHz\n", freq);
     }
 
-    MsgLog("Slot: %d Type %d %dMB %dMHz Vendor=%a PartNo=%a SerialNo=%a \n",
+    MsgLog("Slot: %d Type %d %dMB %dMHz Vendor=%a PartNo=%a SerialNo=%a\n",
            i,
            (int)gRAM.SPD[i].Type,
            gRAM.SPD[i].ModuleSize,
