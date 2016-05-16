@@ -1377,7 +1377,7 @@ static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC  Style
 #if DBG_INPUTDIALOG
   UINTN         Iteration = 0;
 #endif
-
+  
 
   if (Item->ItemType != BoolValue) {
     // Grow Item->SValue to SVALUE_MAX_SIZE if we want to edit a text field
@@ -1561,7 +1561,7 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
   INTN          TimeoutCountdown = 0;
   CHAR16        *TimeoutMessage;
   UINTN         MenuExit;
-  //UINTN         LogSize;
+//  CHAR8 *SomeText = "some text to write\n";
 
   //no default - no timeout!
   if ((*DefaultEntryIndex != -1) && (Screen->TimeoutSeconds > 0)) {
@@ -1757,6 +1757,16 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
           Status = egSaveFile(NULL, VBIOS_BIN, (UINT8*)(UINTN)0xc0000, 0x20000);
         }
         break;
+/* just a sample code
+      case SCAN_F7:
+        Status = egMkDir(SelfRootDir,  L"EFI\\CLOVER\\new_folder");
+        DBG("create folder %r\n", Status);
+        if (!EFI_ERROR(Status)) {
+          Status = egSaveFile(SelfRootDir,  L"EFI\\CLOVER\\new_folder\\new_file.txt", (UINT8*)SomeText, sizeof(*SomeText)+1);
+          DBG("create file %r\n", Status);
+        }
+        break;
+ */
       case SCAN_F10:
         egScreenShot();
         break;

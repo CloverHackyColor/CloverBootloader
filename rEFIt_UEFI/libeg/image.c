@@ -423,6 +423,31 @@ EFI_STATUS egSaveFile(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CHAR16 *FileName,
   return Status;
 }
 
+
+EFI_STATUS egMkDir(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CHAR16 *DirName)
+{
+  EFI_STATUS          Status;
+  EFI_FILE_HANDLE     FileHandle;
+  
+  DBG("base dir=%s new dir =%s\n", BaseDir, DirName);
+  if (BaseDir == NULL) {
+    Status = egFindESP(&BaseDir);
+    if (EFI_ERROR(Status))
+      return Status;
+  }
+  
+  Status = BaseDir->Open(BaseDir, &FileHandle, DirName,
+                         EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE, EFI_FILE_DIRECTORY);
+  DBG("dir exists = %r\n", Status);
+  if (EFI_ERROR(Status)) {
+    // Write new dir
+    Status = BaseDir->Open(BaseDir, &FileHandle, DirName,
+                           EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE | EFI_FILE_MODE_CREATE, EFI_FILE_DIRECTORY);
+    DBG("dir create = %r\n", Status);
+  }
+  return Status;
+}
+
 //
 // Loading images from files and embedded data
 //
