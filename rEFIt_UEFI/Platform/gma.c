@@ -133,6 +133,7 @@ static struct gma_gpu_t KnownGPUS[] = {
 //  { 0x163D, "Intel HD Graphics"  }, // Broadwell-U Integrated Graphics
     { 0x163E, "Intel HD Graphics"  }, // Broadwell-U Integrated
 // Skylake
+/*
     { 0x1902, "Intel HD Graphics 510"  }, // Intel(R) HD Graphics 510
     { 0x1906, "Intel HD Graphics 510"  }, // Intel(R) HD Graphics 510
     { 0x1912, "Intel HD Graphics 530"  }, // *
@@ -147,6 +148,37 @@ static struct gma_gpu_t KnownGPUS[] = {
     { 0x1926, "Intel Iris Graphics 540"  }, // Intel(R) Iris(TM) Graphics 540
 //  { 0x1927, "Intel Iris Graphics 550"  }, // Intel(R) Iris(TM) Graphics 550
     { 0x192A, "Intel Iris Pro Graphics P580"  }, // Intel(R) Iris(TM) Pro Graphics P580
+*/
+
+// https://github.com/anholt/mesa/blob/master/include/pci_ids/i965_pci_ids.h
+//SKL1
+    { 0x1902, "Intel(R) HD Graphics 510 (Skylake GT1)" },
+    { 0x1906, "Intel(R) HD Graphics 510 (Skylake GT1)" },
+    { 0x190A, "Intel(R) Skylake GT1" },
+    { 0x190E, "Intel(R) Skylake GT1" },
+//SKL2
+    { 0x1912, "Intel(R) HD Graphics 530 (Skylake GT2)" },
+    { 0x1913, "Intel(R) Skylake GT2f" },
+    { 0x1915, "Intel(R) Skylake GT2f" },
+    { 0x1916, "Intel(R) HD Graphics 520 (Skylake GT2)" },
+    { 0x1917, "Intel(R) Skylake GT2f" },
+    { 0x191A, "Intel(R) Skylake GT2" },
+    { 0x191B, "Intel(R) HD Graphics 530 (Skylake GT2)" },
+    { 0x191D, "Intel(R) HD Graphics P530 (Skylake GT2)" },
+    { 0x191E, "Intel(R) HD Graphics 515 (Skylake GT2)" },
+    { 0x1921, "Intel(R) Skylake GT2" },
+//SKL3
+    { 0x1923, "Intel(R) Iris Graphics 540 (Skylake GT3e)" },
+    { 0x1926, "Intel(R) HD Graphics 535 (Skylake GT3)" },
+    { 0x1927, "Intel(R) Iris Graphics 550 (Skylake GT3e)" },
+    { 0x192A, "Intel(R) Skylake GT4" },
+    { 0x192B, "Intel(R) Iris Graphics (Skylake GT3fe)" },
+//SKL4
+    //{ 0x1932, "Intel(R) Skylake GT4" },
+    //{ 0x193A, "Intel(R) Skylake GT4" },
+    { 0x193B, "Intel(R) Skylake GT4" },
+    { 0x193D, "Intel(R) Skylake GT4" },
+
 //  { 0x192B, "Intel Iris"  }, // Intel(R) Iris(TM) Graphics
     { 0x1932, "Intel Iris Pro Graphics 570/580"  }, // Intel(R) Iris(TM) Pro Graphics 570/580
     { 0x193A, "Intel Iris Pro Graphics P580"  }, // Intel(R) Iris(TM) Pro Graphics P580
@@ -330,24 +362,37 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
     case 0x163E:
     case 0x1902:
     case 0x1906:
+    case 0x190A://#
+    case 0x190E://#
     case 0x1912:
+    case 0x1913://#
+    case 0x1915://#
     case 0x1916:
+    case 0x1917://#
     case 0x191A:
+    case 0x191B://#
+    case 0x191D://#
     case 0x191E:
+    case 0x1921://#
+    //0x1922://#
+    case 0x1923://#
     case 0x1926:
+    case 0x1927://#
     case 0x192A:
+    case 0x192B://#
     case 0x1932:
     case 0x193A:
-
+    case 0x193B://#
+    case 0x193D://#
       if (!SetSnb) {
         switch (gma_dev->device_id) {
           case 0x162:
           case 0x16A:
-            devprop_add_value(device, "AAPL,ig-platform-id", GMAX3100_vals[23], 4);            
+            devprop_add_value(device, "AAPL,ig-platform-id", GMAX3100_vals[23], 4);
             break;
           case 0x152:
             devprop_add_value(device, "AAPL,ig-platform-id", GMAX3100_vals[24], 4);
-            break;           
+            break;
           case 0x166:
           case 0x156:
             devprop_add_value(device, "AAPL,ig-platform-id", GMAX3100_vals[25], 4);
