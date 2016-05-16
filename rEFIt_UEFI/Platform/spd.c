@@ -44,7 +44,6 @@ extern MEM_STRUCTURE		gRAM;
 extern UINT16 TotalCount;
 //<==
 
-PCI_TYPE00          gPci;
 BOOLEAN             smbIntel;
 UINT8				smbPage;
 
@@ -573,7 +572,7 @@ CHAR8* getDDRPartNum(UINT8* spd, UINT32 base, UINT8 slot)
 #define PCI_COMMAND_OFFSET                          0x04
 
 /** Read from smbus the SPD content and interpret it for detecting memory attributes */
-VOID read_smb(EFI_PCI_IO_PROTOCOL *PciIo)
+STATIC VOID read_smb(EFI_PCI_IO_PROTOCOL *PciIo, UINT16	vid, UINT16	did)
 {
   //	EFI_STATUS	Status;
   UINT16      speed;
@@ -583,13 +582,13 @@ VOID read_smb(EFI_PCI_IO_PROTOCOL *PciIo)
   //RAM_SLOT_INFO*  slot;
   //BOOLEAN			fullBanks;
   UINT8*			spdbuf;
-  UINT16			vid, did;
+//  UINT16			vid, did;
 
   UINT8                  TotalSlotsCount;
 
   smbPage = 0; // valid pages are 0 and 1; assume the first page (page 0) is already selected
-  vid = gPci.Hdr.VendorId;
-  did = gPci.Hdr.DeviceId;
+//  vid = gPci->Hdr.VendorId;
+//  did = gPci->Hdr.DeviceId;
 
   /*Status = */PciIo->Pci.Read (
                                 PciIo,
@@ -843,17 +842,58 @@ VOID read_smb(EFI_PCI_IO_PROTOCOL *PciIo)
 
 VOID ScanSPD()
 {
-  EFI_STATUS			Status;
-  EFI_HANDLE			*HandleBuffer;
-  EFI_GUID			**ProtocolGuidArray;
-  EFI_PCI_IO_PROTOCOL *PciIo;
-  UINTN				HandleCount;
-  UINTN				ArrayCount;
-  UINTN				HandleIndex;
-  UINTN				ProtocolIndex;
+  EFI_STATUS            Status;
+  EFI_HANDLE            *HandleBuffer = NULL;
+//  EFI_GUID              **ProtocolGuidArray;
+  EFI_PCI_IO_PROTOCOL   *PciIo = NULL;
+  UINTN                 HandleCount;
+//  UINTN                 ArrayCount;
+  UINTN                 Index;
+//  UINTN                 ProtocolIndex;
+  PCI_TYPE00            gPci;
+  
+  // Scan PCI handles
+  Status = gBS->LocateHandleBuffer (
+                                    ByProtocol,
+                                    &gEfiPciIoProtocolGuid,
+                                    NULL,
+                                    &HandleCount,
+                                    &HandleBuffer
+                                    );
+  
+  if (!EFI_ERROR (Status)) {
+    for (Index = 0; Index < HandleCount; ++Index) {
+      Status = gBS->HandleProtocol(HandleBuffer[Index], &gEfiPciIoProtocolGuid, (VOID **)&PciIo);
+      if (!EFI_ERROR (Status)) {
+        // Read PCI BUS
+        //PciIo->GetLocation (PciIo, &Segment, &Bus, &Device, &Function);
+        Status = PciIo->Pci.Read (
+                                  PciIo,
+                                  EfiPciIoWidthUint32,
+                                  0,
+                                  sizeof (gPci) / sizeof (UINT32),
+                                  &gPci
+                                  );
+        //SmBus controller has class = 0x0c0500
+        if ((gPci.Hdr.ClassCode[2] == 0x0c) && (gPci.Hdr.ClassCode[1] == 5)
+            && (gPci.Hdr.ClassCode[0] == 0) && (gPci.Hdr.VendorId == 0x8086 || gPci.Hdr.VendorId == 0x10DE)) {
+          DBG ("SMBus device : %04x %04x class=%02x%02x%02x status=%r\n",
+               gPci.Hdr.VendorId,
+               gPci.Hdr.DeviceId,
+               gPci.Hdr.ClassCode[2],
+               gPci.Hdr.ClassCode[1],
+               gPci.Hdr.ClassCode[0],
+               Status
+               );
+          read_smb(PciIo, gPci.Hdr.VendorId, gPci.Hdr.DeviceId);
+        }
+      }
+    }
+  }
 
-  /* Scan PCI BUS For SmBus controller */
-  Status = gBS->LocateHandleBuffer(AllHandles,NULL,NULL,&HandleCount,&HandleBuffer);
+
+  // Scan PCI BUS For SmBus controller 
+/*  Status = gBS->LocateHandleBuffer(AllHandles,NULL,NULL,&HandleCount,&HandleBuffer);
   if (!EFI_ERROR(Status)) {
     for (HandleIndex = 0; HandleIndex < HandleCount; HandleIndex++) {
       Status = gBS->ProtocolsPerHandle(HandleBuffer[HandleIndex],&ProtocolGuidArray,&ArrayCount);
@@ -861,8 +901,9 @@ VOID ScanSPD()
         for (ProtocolIndex = 0; ProtocolIndex < ArrayCount; ProtocolIndex++) {
           if (CompareGuid(&gEfiPciIoProtocolGuid, ProtocolGuidArray[ProtocolIndex])) {
             Status = gBS->OpenProtocol(HandleBuffer[HandleIndex],&gEfiPciIoProtocolGuid,(VOID **)&PciIo,gImageHandle,NULL,EFI_OPEN_PROTOCOL_GET_PROTOCOL);
+            
             if (!EFI_ERROR(Status)) {
-              /* Read PCI BUS */
+              // Read PCI BUS 
               Status = PciIo->Pci.Read (
                                         PciIo,
                                         EfiPciIoWidthUint32,
@@ -882,4 +923,5 @@ VOID ScanSPD()
       }
     }
   }
+ */
 }
