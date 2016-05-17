@@ -2047,12 +2047,10 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   //  DBG("DBG: messages\n");
   if (!GlobalConfig.NoEarlyProgress && !GlobalConfig.FastBoot  && GlobalConfig.Timeout>0) {
     FirstMessage = PoolPrint(L"   Welcome to Clover %s   ", FIRMWARE_REVISION);
-    i = (UGAWidth - StrLen(FirstMessage) * GlobalConfig.CharWidth) >> 1;
-    DrawTextXY(FirstMessage, i, UGAHeight >> 1, X_IS_CENTER);
+    DrawTextXY(FirstMessage, (UGAWidth >> 1), UGAHeight >> 1, X_IS_CENTER);
     FreePool(FirstMessage);
     FirstMessage = PoolPrint(L"... testing hardware ...");
-    i = (UGAWidth - StrLen(FirstMessage) * GlobalConfig.CharWidth) >> 1;
-    DrawTextXY(FirstMessage, i, (UGAHeight >> 1) + 20, X_IS_CENTER);
+    DrawTextXY(FirstMessage, (UGAWidth >> 1), (UGAHeight >> 1) + 20, X_IS_CENTER);
     FreePool(FirstMessage);
   }
 
@@ -2060,12 +2058,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
   GuiEventsInitialize();
 
-//  GetCPUProperties();
   if (!gSettings.EnabledCores) {
     gSettings.EnabledCores = gCPUStructure.Cores;
   }
-//  GetDevices();
-
 
   GetMacAddress();
   DBG("ScanSPD() start\n");
@@ -2088,8 +2083,8 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
   if (!GlobalConfig.NoEarlyProgress && !GlobalConfig.FastBoot && GlobalConfig.Timeout>0) {
     FirstMessage = PoolPrint(L"... user settings ...");
-    i = (UGAWidth - StrLen(FirstMessage) * GlobalConfig.CharWidth) >> 1;
-    DrawTextXY(FirstMessage, i, (UGAHeight >> 1) + 20, X_IS_CENTER);
+ //   i = (UGAWidth - StrLen(FirstMessage) * GlobalConfig.CharWidth) >> 1;
+    DrawTextXY(FirstMessage, (UGAWidth >> 1), (UGAHeight >> 1) + 20, X_IS_CENTER);
     FreePool(FirstMessage);
   }
 
@@ -2153,9 +2148,8 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   }
 
   if (!GlobalConfig.NoEarlyProgress && !GlobalConfig.FastBoot && GlobalConfig.Timeout>0) {
-    FirstMessage = PoolPrint(L"... scan entries ...");
-    i = (UGAWidth - StrLen(FirstMessage) * GlobalConfig.CharWidth) >> 1;
-    DrawTextXY(FirstMessage, i, (UGAHeight >> 1) + 20, X_IS_CENTER);
+    FirstMessage = PoolPrint(L"...  scan entries  ...");
+    DrawTextXY(FirstMessage, (UGAWidth >> 1), (UGAHeight >> 1) + 20, X_IS_CENTER);
     FreePool(FirstMessage);
   }
 
@@ -2242,19 +2236,16 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         MenuEntryShutdown.Image = BuiltinIcon(BUILTIN_ICON_FUNC_SHUTDOWN);
         AddMenuEntry(&MainMenu, &MenuEntryShutdown);
       }
-
+// font already changed and this message very quirky, clear line here
       if (!GlobalConfig.NoEarlyProgress && !GlobalConfig.FastBoot && GlobalConfig.Timeout>0) {
-        FirstMessage = PoolPrint(L"...theme %s ...", GlobalConfig.Theme);
-        i = (UGAWidth - StrLen(FirstMessage) * GlobalConfig.CharWidth) >> 1;
-        DrawTextXY(FirstMessage, i, (UGAHeight >> 1) + 20, X_IS_CENTER);
-        FreePool(FirstMessage);
-      }
+        DrawTextXY(L"                          ", (UGAWidth >> 1), (UGAHeight >> 1) + 20, X_IS_CENTER);
+      } 
     }
     // wait for user ACK when there were errors
     FinishTextScreen(FALSE);
 
     DefaultIndex = FindDefaultEntry();
-      DBG("DefaultIndex=%d and MainMenu.EntryCount=%d\n", DefaultIndex, MainMenu.EntryCount);
+    DBG("DefaultIndex=%d and MainMenu.EntryCount=%d\n", DefaultIndex, MainMenu.EntryCount);
     if ((DefaultIndex >= 0) && (DefaultIndex < (INTN)MainMenu.EntryCount)) {
       DefaultEntry = MainMenu.Entries[DefaultIndex];
     } else {

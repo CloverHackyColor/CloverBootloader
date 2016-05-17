@@ -1974,22 +1974,25 @@ static VOID TextMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
 
 INTN DrawTextXY(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
 {
-  INTN TextWidth;
-  EG_IMAGE *TextBufferXY = NULL;
+  INTN      TextWidth = 0;
+  INTN      XText;
+  EG_IMAGE  *TextBufferXY = NULL;
 
   if (!Text) return 0;
-
   egMeasureText(Text, &TextWidth, NULL);
-  if ((XAlign == X_IS_LEFT) && (GlobalConfig.VerticalLayout)) {
+  if (XAlign == X_IS_LEFT) {
     TextWidth = UGAWidth - XPos - 1;
+    XText = XPos; 
   }
   TextBufferXY = egCreateImage(TextWidth, TextHeight, TRUE);
 
   egFillImage(TextBufferXY, &MenuBackgroundPixel);
-
   // render the text
-  TextWidth = egRenderText(Text, TextBufferXY, 0, 0, 0xFFFF); //input only
-  BltImageAlpha(TextBufferXY, ((XAlign == X_IS_LEFT) && (!GlobalConfig.VerticalLayout)) ? XPos : (XPos - (TextWidth >> XAlign)), YPos,  &MenuBackgroundPixel, 16);
+  TextWidth = egRenderText(Text, TextBufferXY, 0, 0, 0xFFFF);
+  if (XAlign != X_IS_LEFT) { // shift 64 is prohibited
+    XText = XPos - (TextWidth >> XAlign);
+  }
+  BltImageAlpha(TextBufferXY, XText, YPos,  &MenuBackgroundPixel, 16);
   egFreeImage(TextBufferXY);
   return TextWidth;
 }
@@ -2521,9 +2524,39 @@ VOID CountItems(IN REFIT_MENU_SCREEN *Screen)
       CONSTRAIN_MAX(row1PosX, i);
     }
   }
-  if (row0PosX > row1PosX) { //9<10
-    MsgLog("BUG! (index_row0 > index_row1) Needed sorting\n");
+}
+
+VOID DrawRevision(UINT8 Align)
+{
+  INTN    TextWidth = 0;
+  INTN    Xpos;
+  CHAR16  *Text;
+  
+  if ((GlobalConfig.HideUIFlags & HIDEUI_FLAG_REVISION) != 0){
+    return;
   }
+  
+#ifdef FIRMWARE_REVISION
+  Text = FIRMWARE_REVISION;
+#else
+  Text = gST->FirmwareRevision;
+#endif
+  
+  egMeasureText(Text, &TextWidth, NULL);
+  switch (Align) {
+    case X_IS_LEFT:
+      Xpos = 5;
+      break;
+    case X_IS_RIGHT:
+      Xpos = UGAWidth - 2;
+      break;
+    case X_IS_CENTER: //not used
+      Xpos = UGAWidth >> 1;
+      break;      
+    default:
+      return;
+  }
+  DrawTextXY(Text, Xpos, UGAHeight - 5 - TextHeight, Align);
 }
 
 VOID MainMenuVerticalStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINTN Function, IN CHAR16 *ParamText)
@@ -2613,14 +2646,7 @@ VOID MainMenuVerticalStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State,
       }
 
       ScrollingBar(State);
-      if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_REVISION)){
-#ifdef FIRMWARE_REVISION
-        DrawTextXY(FIRMWARE_REVISION, 2, UGAHeight - 2 - TextHeight, X_IS_LEFT);
-#else
-        DrawTextXY(gST->FirmwareRevision, 2, UGAHeight - 2 - TextHeight, X_IS_LEFT);
-#endif
-      }
-
+      DrawRevision(X_IS_LEFT);
       MouseBirth();
       break;
 
@@ -2651,14 +2677,7 @@ VOID MainMenuVerticalStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State,
       }
 
       ScrollingBar(State);
-      if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_REVISION)){
-#ifdef FIRMWARE_REVISION
-        DrawTextXY(FIRMWARE_REVISION, 2, UGAHeight - 2 - TextHeight, X_IS_LEFT);
-#else
-        DrawTextXY(gST->FirmwareRevision, 2, UGAHeight - 2 - TextHeight, X_IS_LEFT);
-#endif
-      }
-
+      DrawRevision(X_IS_LEFT);
       MouseBirth();
       break;
 
@@ -2672,18 +2691,10 @@ VOID MainMenuVerticalStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State,
                              OldTimeoutTextWidth, TextHeight, &MenuBackgroundPixel, X_IS_CENTER);
         OldTimeoutTextWidth = DrawTextXY(ParamText, (UGAWidth >> 1), textPosY + TextHeight * i, X_IS_CENTER);
       }
-      if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_REVISION)){
-#ifdef FIRMWARE_REVISION
-        DrawTextXY(FIRMWARE_REVISION, 2, UGAHeight - 2 - TextHeight, X_IS_LEFT);
-#else
-        DrawTextXY(gST->FirmwareRevision, 2, UGAHeight - 2 - TextHeight, X_IS_LEFT);
-#endif
-      }
-
+      DrawRevision(X_IS_LEFT);
       break;
   }
 }
-
 
 //static
 VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINTN Function, IN CHAR16 *ParamText)
@@ -2769,13 +2780,8 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
       if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_HELP)){
         DrawTextXY(L"F1:?", 2, UGAHeight - 2 - TextHeight, X_IS_LEFT);
       }
-      if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_REVISION)){
-#ifdef FIRMWARE_REVISION
-        DrawTextXY(FIRMWARE_REVISION, (UGAWidth - 2), UGAHeight - 2 - TextHeight, X_IS_RIGHT);
-#else
-        DrawTextXY(gST->FirmwareRevision, (UGAWidth - 2), UGAHeight - 2 - TextHeight, X_IS_RIGHT);
-#endif
-      }
+
+      DrawRevision(X_IS_RIGHT);
       MouseBirth();
       break;
 
@@ -2803,13 +2809,7 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
       if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_HELP)){
         DrawTextXY(L"F1:?", 2, UGAHeight - 2 - TextHeight, X_IS_LEFT);
       }
-      if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_REVISION)){
-#ifdef FIRMWARE_REVISION
-          DrawTextXY(FIRMWARE_REVISION, (UGAWidth - 2), UGAHeight - 2 - TextHeight, X_IS_RIGHT);
-#else
-          DrawTextXY(gST->FirmwareRevision, (UGAWidth - 2), UGAHeight - 2 - TextHeight, X_IS_RIGHT);
-#endif
-      }
+      DrawRevision(X_IS_RIGHT);
       MouseBirth();
       break;
 
@@ -2821,16 +2821,7 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
                                    OldTimeoutTextWidth, TextHeight, &MenuBackgroundPixel, X_IS_CENTER);
         OldTimeoutTextWidth = DrawTextXY(ParamText, (UGAWidth >> 1), textPosY + TextHeight * i, X_IS_CENTER);
       }
-      if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_HELP)){
-        DrawTextXY(L"F1:?", 2, UGAHeight - 2 - TextHeight, X_IS_LEFT);
-      }
-      if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_REVISION)){
-#ifdef FIRMWARE_REVISION
-          DrawTextXY(FIRMWARE_REVISION, (UGAWidth - 2), UGAHeight - 2 - TextHeight, X_IS_RIGHT);
-#else
-          DrawTextXY(gST->FirmwareRevision, (UGAWidth - 2), UGAHeight - 2 - TextHeight, X_IS_RIGHT);
-#endif
-      }
+      DrawRevision(X_IS_RIGHT);
       MouseBirth();
       break;
 
