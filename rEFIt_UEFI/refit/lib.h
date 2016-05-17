@@ -46,7 +46,7 @@
 
 extern EFI_HANDLE             gImageHandle;
 extern EFI_SYSTEM_TABLE*			gST;
-extern EFI_BOOT_SERVICES*			gBS; 
+extern EFI_BOOT_SERVICES*			gBS;
 extern EFI_RUNTIME_SERVICES*	gRS;
 
 #define TAG_ABOUT              (1)
@@ -214,10 +214,10 @@ typedef struct _pointers {
   EG_IMAGE *Pointer;
   EG_IMAGE *newImage;
   EG_IMAGE *oldImage;
-  
+
   EG_RECT  newPlace;
   EG_RECT  oldPlace;
-  
+
   UINT64	LastClickTime;  //not EFI_TIME
   EFI_SIMPLE_POINTER_STATE    State;
   MOUSE_EVENT MouseEvent;
@@ -230,7 +230,7 @@ typedef enum {
   Hex,
   ASString,
   UNIString,
-  
+
 } ITEM_TYPE;
 
 typedef struct {
@@ -360,17 +360,18 @@ struct _refit_menu_screen {
 #define VOLTYPE_INTERNAL   (0x0004)
 #define VOLTYPE_FIREWIRE   (0x0008)
 
-#define HIDEUI_FLAG_SHELL      (0x0010)
-#define HIDEUI_FLAG_TOOLS      (0x0020)
-#define HIDEUI_FLAG_SINGLEUSER (0x0040)
-#define HIDEUI_FLAG_HWTEST     (0x0080)
-#define HIDEUI_FLAG_BANNER     (0x0100)
-#define HIDEUI_FLAG_FUNCS      (0x0200)
-#define HIDEUI_FLAG_LABEL      (0x0400)
-#define HIDEUI_FLAG_REVISION   (0x0800)
-#define HIDEUI_FLAG_MENU_TITLE (0x1000)
-#define HIDEUI_FLAG_MENU_TITLE_IMAGE (0x2000)
-#define HIDEUI_ALL             (0xffff & (~VOLTYPE_INTERNAL))
+#define HIDEUI_FLAG_SHELL             (0x0010)
+#define HIDEUI_FLAG_TOOLS             (0x0020)
+#define HIDEUI_FLAG_SINGLEUSER        (0x0040)
+#define HIDEUI_FLAG_HWTEST            (0x0080)
+#define HIDEUI_FLAG_BANNER            (0x0100)
+#define HIDEUI_FLAG_FUNCS             (0x0200)
+#define HIDEUI_FLAG_LABEL             (0x0400)
+#define HIDEUI_FLAG_REVISION          (0x0800)
+#define HIDEUI_FLAG_MENU_TITLE        (0x1000)
+#define HIDEUI_FLAG_MENU_TITLE_IMAGE  (0x2000)
+#define HIDEUI_FLAG_HELP              (0x3000)
+#define HIDEUI_ALL                    (0xffff & (~VOLTYPE_INTERNAL))
 /*
 #define HDBADGES_NONE   0
 #define HDBADGES_INT    1
@@ -387,7 +388,7 @@ typedef enum {
   Scale,
   Crop,
   Tile
-  
+
 } SCALING;
 
 typedef struct {
@@ -448,7 +449,7 @@ typedef struct {
    INTN    DataLen;
 #if defined(MDE_CPU_IA32)
    UINT32  align1;
-#endif  
+#endif
    UINT8   *Data;
    UINT8   *Patch;
 } KEXT_PATCH;

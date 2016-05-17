@@ -1,13 +1,13 @@
 /*++
 
-Copyright (c) 2005, Intel Corporation                                                         
-All rights reserved. This program and the accompanying materials                          
-are licensed and made available under the terms and conditions of the BSD License         
-which accompanies this distribution. The full text of the license may be found at         
-http://opensource.org/licenses/bsd-license.php                                            
-                                                                                          
-THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,                     
-WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.             
+Copyright (c) 2005, Intel Corporation
+All rights reserved. This program and the accompanying materials
+are licensed and made available under the terms and conditions of the BSD License
+which accompanies this distribution. The full text of the license may be found at
+http://opensource.org/licenses/bsd-license.php
+
+THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,
+WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 
 Module Name:
 
@@ -197,7 +197,6 @@ WaitFor2EventWithTsc (
 VOID        LowCase (IN OUT CHAR8 *Str);
 UINT32      hex2bin(IN CHAR8 *hex, OUT UINT8 *bin, UINT32 len);
 UINT8       hexstrtouint8 (CHAR8* buf); //one or two hex letters to one byte
-
-
+CHAR8       *Bytes2HexStr(UINT8 *data, UINTN len);
 
 #endif

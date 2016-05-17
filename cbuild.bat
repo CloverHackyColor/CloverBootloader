@@ -96,6 +96,12 @@ rem # copybin
 rem # sometimes broken
 :getFilesize
   set filesize=%~z1
+  rem echo Set objFS = CreateObject("Scripting.FileSystemObject")>%F_TMP_VBS%
+  rem echo WScript.Echo objFS.GetFile("%~1").Size>>%F_TMP_VBS%
+  rem cscript //Nologo %F_TMP_VBS%>%F_TMP_TXT%
+  rem del %F_TMP_VBS%
+  rem set /P filesize= < %F_TMP_TXT%
+  rem del %F_TMP_TXT%
   goto:eof
 
 rem # initialize
@@ -111,9 +117,6 @@ rem # initialize
 
   rem # pass 1-call param
   if ["%SHOW_USAGE%"] == ["1"] goto usage
-  if ["%UPDATEEDK%"] == ["1"] call:update "EDK"
-  if ["%UPDATETOOLS%"] == ["1"] call:update "TOOLS"
-  if ["%UPDATECLOVER%"] == ["1"] call:update "CLOVER"
 
   if not defined CYGWIN_HOME (
     set CYGWIN_HOME=%DEFAULT_CYGWIN_HOME%
@@ -170,6 +173,10 @@ rem # have edk2 prepare to build
 rem # setup build
 :prebuild
   cd "%CURRENTDIR%"
+
+  if ["%UPDATEEDK%"] == ["1"] call:update "EDK"
+  if ["%UPDATETOOLS%"] == ["1"] call:update "TOOLS"
+  if ["%UPDATECLOVER%"] == ["1"] call:update "CLOVER"
 
   rem # fix any parameters not set
   set "BASETOOLS_DIR=%WORKSPACE_TOOLS_PATH%\Bin\Win32"
@@ -392,12 +399,6 @@ rem # drop compiled files to EFI folder
   set filesize=
 
   call:getFilesize "%BUILD_DIR%\FV\Efildr%TARGETARCH_INT%"
-  rem echo Set objFS = CreateObject("Scripting.FileSystemObject")>%F_TMP_VBS%
-  rem echo WScript.Echo objFS.GetFile("%BUILD_DIR%\FV\Efildr%TARGETARCH_INT%").Size>>%F_TMP_VBS%
-  rem cscript //Nologo %F_TMP_VBS%>%F_TMP_TXT%
-  rem del %F_TMP_VBS%
-  rem set /P filesize= < %F_TMP_TXT%
-  rem del %F_TMP_TXT%
 
   if ["%GENPAGE%"] == ["0"] (
     if not ["%USE_LOW_EBDA%"] == ["0"] (
@@ -561,12 +562,12 @@ rem # update source
   set UPDPATH=
   set UPDSTR=%~1
 
-  if ["%UPDSTR%"] == ["TOOLS"] (
-    set UPDPATH=%BASETOOLS_DIR%
-    set "UPDPCMD=git pull"
-  )
   if ["%UPDSTR%"] == ["EDK"] (
     set UPDPATH=%WORKSPACE%
+    set "UPDPCMD=git pull"
+  )
+  if ["%UPDSTR%"] == ["TOOLS"] (
+    set UPDPATH=%BASETOOLS_DIR%
     set "UPDPCMD=git pull"
   )
   if ["%UPDSTR%"] == ["CLOVER"] (
@@ -868,6 +869,9 @@ rem # print Logo
     ) else (
       call:addEdk2Args "Reconfig"
     )
+  )
+  if ["%1"] == ["--beta"] (
+    set DEVSTAGE=b
   )
   if ["%1"] == ["-h"] (
     set EDK_BUILDINFOS=%1

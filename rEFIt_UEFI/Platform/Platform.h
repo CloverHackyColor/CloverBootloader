@@ -198,7 +198,7 @@ Headers collection for procedures
 
 /*
  * The CPUID_FEATURE_XXX values define 64-bit values
- * returned in %ecx:%edx to a CPUID request with %eax of 1: 
+ * returned in %ecx:%edx to a CPUID request with %eax of 1:
  */
 #define	CPUID_FEATURE_FPU       _Bit(0)	/* Floating point unit on-chip */
 #define	CPUID_FEATURE_VME       _Bit(1)	/* Virtual Mode Extension */
@@ -273,7 +273,7 @@ Headers collection for procedures
 
 /*
  * The CPUID_EXTFEATURE_XXX values define 64-bit values
- * returned in %ecx:%edx to a CPUID request with %eax of 0x80000001: 
+ * returned in %ecx:%edx to a CPUID request with %eax of 0x80000001:
  */
 #define CPUID_EXTFEATURE_SYSCALL   _Bit(11)	/* SYSCALL/sysret */
 #define CPUID_EXTFEATURE_XD		     _Bit(20)	/* eXecute Disable */
@@ -286,7 +286,7 @@ Headers collection for procedures
 #define CPUID_EXTFEATURE_LAHF	   _HBit(0)	/* LAHF/SAHF instructions */
 /*
  * The CPUID_EXTFEATURE_XXX values define 64-bit values
- * returned in %ecx:%edx to a CPUID request with %eax of 0x80000007: 
+ * returned in %ecx:%edx to a CPUID request with %eax of 0x80000007:
  */
 #define CPUID_EXTFEATURE_TSCI      _Bit(8)	/* TSC Invariant */
 
@@ -296,10 +296,10 @@ Headers collection for procedures
 #define CPUID_MWAIT_BREAK	_Bit(1)	/* interrupts are break events	   */
 
 /* Known MSR registers */
-#define MSR_IA32_PLATFORM_ID        0x0017	 
+#define MSR_IA32_PLATFORM_ID        0x0017
 #define IA32_APIC_BASE              0x001B  /* used also for AMD */
 #define MSR_CORE_THREAD_COUNT       0x0035	 /* limited use - not for Penryn or older	*/
-#define IA32_TSC_ADJUST             0x003B   
+#define IA32_TSC_ADJUST             0x003B
 #define MSR_IA32_BIOS_SIGN_ID       0x008B   /* microcode version */
 #define MSR_FSB_FREQ                0x00CD	 /* limited use - not for i7						*/
 /*
@@ -345,7 +345,7 @@ Headers collection for procedures
 #define MSR_RAPL_POWER_UNIT			    0x606     /* R/O */
 //MSR 00000606                                      0000-0000-000A-1003
 #define MSR_PKGC3_IRTL              0x60A    /* RW time limit to go C3 */
-          // bit 15 = 1 -- the value valid for C-state PM     
+          // bit 15 = 1 -- the value valid for C-state PM
 #define MSR_PKGC6_IRTL              0x60B    /* RW time limit to go C6 */
 //MSR 0000060B                                      0000-0000-0000-8854
   //Valid + 010=1024ns + 0x54=84mks
@@ -372,7 +372,7 @@ Headers collection for procedures
 #define MSR_PP1_POLICY              0x642
 
 // JakeTown only Memory MSR's.
-#define MSR_PKG_PERF_STATUS			    0x613 
+#define MSR_PKG_PERF_STATUS			    0x613
 #define MSR_DRAM_POWER_LIMIT	    	0x618
 #define MSR_DRAM_ENERGY_STATUS	    0x619
 #define MSR_DRAM_PERF_STATUS		    0x61B
@@ -395,18 +395,18 @@ Headers collection for procedures
 #define K10_COFVID_CONTROL          0xC0010062 /* switch to p-state */
 #define K10_PSTATE_STATUS           0xC0010064
 #define K10_COFVID_STATUS           0xC0010071 /* current p-state (msr >> 16) & 7 */
-/* specific settings 
+/* specific settings
 static void SavePState(unsigned int index, unsigned int lowMsr, unsigned int core)
 {
   CONST unsigned int msrIndex = 0xC0010064u + index;
   CONST DWORD_PTR affinityMask = (DWORD_PTR)1 << core;
-  
+
   DWORD lower, higher;
   RdmsrTx(msrIndex, &lower, &higher, affinityMask);
-  
+
   CONST DWORD lowMsrMask = 0xFE40FFFFu;
   lower = (lower & ~lowMsrMask) | (lowMsr & lowMsrMask);
-  
+
   WrmsrTx(msrIndex, lower, higher, affinityMask);
 }
 
@@ -424,12 +424,12 @@ MSR C001006B  0000-0000-0000-0000
 #define DEFAULT_FSB                 100000          /* for now, hardcoding 100MHz for old CPUs */
 
 
-/* CPUID Index */ 
-#define CPUID_0		0 
-#define CPUID_1		1 
-#define CPUID_2		2 
-#define CPUID_3		3 
-#define CPUID_4		4 
+/* CPUID Index */
+#define CPUID_0		0
+#define CPUID_1		1
+#define CPUID_2		2
+#define CPUID_3		3
+#define CPUID_4		4
 #define CPUID_5		5
 #define CPUID_6		6
 #define CPUID_80	7
@@ -587,17 +587,17 @@ MSR C001006B  0000-0000-0000-0000
 // User policy, white and black list with query
 #define SECURE_BOOT_POLICY_USER      (6)
 
-struct aml_chunk 
+struct aml_chunk
 {
   UINT8		          Type;
   UINT8		          pad;
   UINT16		        Length;
   UINT32		        pad2;
   CHAR8		          *Buffer;
-  
+
   UINT16		        Size;
   UINT16		        pad3[3];
-  
+
   struct aml_chunk*	Next;
   struct aml_chunk*	First;
   struct aml_chunk*	Last;
@@ -616,10 +616,10 @@ union p_state_control
   struct p_state_vid_fid VID_FID;
 };
 
-struct p_state 
+struct p_state
 {
   union p_state_control Control;
-  
+
   UINT32 CID;		// Compare ID
   UINT32 Frequency;
 };
@@ -668,7 +668,7 @@ struct Symbol {
 typedef struct Symbol Symbol, *SymbolPtr;
 
 typedef struct {
-  
+
   UINTN	type;
   CHAR8 *string;
   UINT8	*data;
@@ -676,21 +676,21 @@ typedef struct {
   UINTN offset;
   VOID	*tag;
   VOID	*tagNext;
-  
+
 } TagStruct, *TagPtr;
 
 typedef struct {
-  
+
   EFI_ACPI_DESCRIPTION_HEADER Header;
   UINT32						          Entry;
-  
+
 } RSDT_TABLE;
 
 typedef struct {
-  
+
   EFI_ACPI_DESCRIPTION_HEADER Header;
   UINT64						          Entry;
-  
+
 } XSDT_TABLE;
 /*
 typedef struct {
@@ -725,7 +725,7 @@ struct CUSTOM_LOADER_ENTRY {
   CHAR16                  *Title;
   CHAR16                  *Settings;
   CHAR16                  Hotkey;
-  BOOLEAN                 CommonSettings; 
+  BOOLEAN                 CommonSettings;
   UINT8                   Flags;
   UINT8                   Type;
   UINT8                   VolumeType;
@@ -786,8 +786,17 @@ struct ACPI_PATCHED_AML
   INPUT_ITEM        MenuItem;
 };
 
+// SysVariables
+typedef struct SYSVARIABLES SYSVARIABLES;
+struct SYSVARIABLES
+{
+  SYSVARIABLES       *Next;
+  CHAR16            *Key;
+  INPUT_ITEM        MenuItem;
+};
+
 typedef struct {
-  
+
   // SMBIOS TYPE0
   CHAR8                 	VendorName[64];
   CHAR8	                  RomVersion[64];
@@ -852,7 +861,7 @@ typedef struct {
 #endif
   BOOLEAN                 LastBootedVolume;
   UINT8                   Pad21[7];
-  
+
   CHAR16                  *DefaultLoader;
 #if defined(MDE_CPU_IA32)
   UINT32                  align11;
@@ -865,13 +874,13 @@ typedef struct {
   BOOLEAN                 WithKextsIfNoFakeSMC;
   BOOLEAN                 FakeSMCFound;
   BOOLEAN                 NoCaches;
-  
+
   // GUI parameters
   BOOLEAN                 Debug;
   BOOLEAN                 Proportional;
   UINT8                   Pad22[1];
   UINT32                DefaultBackgroundColor;
-  
+
   //ACPI
   UINT64	              ResetAddr;
   UINT8 	              ResetVal;
@@ -893,21 +902,21 @@ typedef struct {
   BOOLEAN                 PatchNMI;
   BOOLEAN                 EnableC7;
   UINT8                   SavingMode;
-  
+
   CHAR16                  DsdtName[60];
   UINT32                  FixDsdt;
   UINT8                   MinMultiplier;
   UINT8                   MaxMultiplier;
   UINT8                   PluginType;
   BOOLEAN                 DropMCFG;
-  
+
   //Injections
   BOOLEAN                 StringInjector;
   BOOLEAN                 InjectSystemID;
   BOOLEAN                 NoDefaultProperties;
-  
+
   BOOLEAN                 ReuseFFFF;
-    
+
   //PCI devices
   UINT32                  FakeATI;    //97
   UINT32                  FakeNVidia;
@@ -917,7 +926,7 @@ typedef struct {
   UINT32                  FakeSATA;
   UINT32                  FakeXHCI;  //103
   UINT32                  FakeIMEI;  //106
-  
+
   //Graphics
   UINT16                  PCIRootUID;
   BOOLEAN                 GraphicsInjector;
@@ -930,7 +939,7 @@ typedef struct {
 #if defined(MDE_CPU_IA32)
   UINT32                  align12;
 #endif
-  
+
   UINTN                   PatchVBiosBytesCount;
 #if defined(MDE_CPU_IA32)
   UINT32                  align1;
@@ -942,7 +951,7 @@ typedef struct {
 #if defined(MDE_CPU_IA32)
   UINT32  align13;
 #endif
-  
+
   CHAR16                  FBName[16];
   UINT16                  VideoPorts;
   BOOLEAN                 NvidiaGeneric;
@@ -954,7 +963,7 @@ typedef struct {
   UINT8                   pad41[3];
   UINT32                  DualLink;
   UINT32                  IgPlatform;
-  
+
   // Secure boot white/black list
   UINT32                  SecureBootWhiteListCount;
   UINT32                  SecureBootBlackListCount;
@@ -962,12 +971,12 @@ typedef struct {
 #if defined(MDE_CPU_IA32)
   UINT32                  align14;
 #endif
-  
+
   CHAR16                  **SecureBootBlackList;
 #if defined(MDE_CPU_IA32)
   UINT32                  align15;
 #endif
-  
+
   // Secure boot
   UINT8                   SecureBoot;
   UINT8                   SecureBootSetupMode;
@@ -976,7 +985,7 @@ typedef struct {
   // HDA
   BOOLEAN                 HDAInjection;
   INT32                   HDALayoutId;
-  
+
   // USB DeviceTree injection
   BOOLEAN USBInjection;
   // USB ownership fix
@@ -984,23 +993,23 @@ typedef struct {
   BOOLEAN                 InjectClockID;
   BOOLEAN                 HighCurrent;
   UINT8                   pad61[4];
-  
+
   // LegacyBoot
   CHAR16                  LegacyBoot[32];
   UINT16                  LegacyBiosDefaultEntry;
   UINT8                   pad62[6];
-  
+
   //Volumes hiding
   CHAR16                  **HVHideStrings;
 #if defined(MDE_CPU_IA32)
   UINT32  align191;
 #endif
-  
+
   INTN                    HVCount;
 #if defined(MDE_CPU_IA32)
   UINT32  align4;
 #endif
-  
+
   // KernelAndKextPatches
   KERNEL_AND_KEXT_PATCHES KernelAndKextPatches;
   BOOLEAN                 KextPatchesAllowed;
@@ -1017,15 +1026,15 @@ typedef struct {
   UINT8                   pad7[2];
   UINT8                   CustomBoot;
   EG_IMAGE                *CustomLogo;
-  
+
   UINT32                  RefCLK;
-  
-  // RtVariables
+
+  // SysVariables
   CHAR8                   *RtMLB;
 #if defined(MDE_CPU_IA32)
   UINT32                  align20;
 #endif
-  
+
   UINT8                   *RtROM;
 #if defined(MDE_CPU_IA32)
   UINT32                  align21;
@@ -1038,18 +1047,18 @@ typedef struct {
   UINT32                  CsrActiveConfig;
   UINT16                  BooterConfig;
   UINT8                   pad71[2];
-  
+
   // Multi-config
   CHAR16  *ConfigName;
 #if defined(MDE_CPU_IA32)
   UINT32                  align24;
 #endif
-  
+
   CHAR16  *MainConfigName;
 #if defined(MDE_CPU_IA32)
   UINT32                  align25;
 #endif
-  
+
   //Drivers
   INTN    BlackListCount;
 #if defined(MDE_CPU_IA32)
@@ -1059,13 +1068,13 @@ typedef struct {
 #if defined(MDE_CPU_IA32)
   UINT32                  align26;
 #endif
-  
+
   //SMC keys
   CHAR8                   RPlt[8];
   CHAR8                   RBr[8];
   UINT8                   EPCI[4];
   UINT8                   REV[6];
-  
+
   //other devices
   BOOLEAN                 Rtc8Allowed;
   BOOLEAN                 ForceHPET;
@@ -1079,22 +1088,22 @@ typedef struct {
 #if defined(MDE_CPU_IA32)
   UINT32                  align27;
 #endif
-  
+
   UINT32 *LenToFind;
 #if defined(MDE_CPU_IA32)
   UINT32                  align28;
 #endif
-  
+
   UINT8  **PatchDsdtReplace;
 #if defined(MDE_CPU_IA32)
   UINT32                  align29;
 #endif
-  
+
   UINT32 *LenToReplace;
 #if defined(MDE_CPU_IA32)
   UINT32                  align30;
 #endif
-  
+
   BOOLEAN                 DebugDSDT;
   BOOLEAN                 SlpWak;
   BOOLEAN                 UseIntelHDMI;
@@ -1106,7 +1115,7 @@ typedef struct {
 #if defined(MDE_CPU_IA32)
   UINT32  align32;
 #endif
-  
+
 
   // Custom entries
   BOOLEAN                 DisableEntryScan;
@@ -1127,7 +1136,7 @@ typedef struct {
 #if defined(MDE_CPU_IA32)
   UINT32                  align35;
 #endif
-  
+
   //Add custom properties
   INTN                    NrAddProperties;
 #if defined(MDE_CPU_IA32)
@@ -1140,7 +1149,7 @@ typedef struct {
 
   //BlackListed kexts
   CHAR16                  BlockKexts[64];
-  
+
   //ACPI tables
   UINTN    SortedACPICount;
 #if defined(MDE_CPU_IA32)
@@ -1154,11 +1163,12 @@ typedef struct {
   // ACPI/PATCHED/AML
   UINT32                  DisabledAMLCount;
   CHAR16                  **DisabledAML;
-  
+  BOOLEAN                 ExposeSysVariables;
+
 } SETTINGS_DATA;
 
 typedef struct {
- //values from CPUID 
+ //values from CPUID
   UINT32                  CPUID[CPUID_MAX][4];
   UINT32                  Vendor;
   UINT32                  Signature;
@@ -1173,13 +1183,13 @@ typedef struct {
   UINT32                  CoresPerPackage;
   UINT32                  LogicalPerPackage;
   CHAR8                   BrandString[48];
-  
+
   //values from BIOS
   UINT32                  ExternalClock; //keep this values as kHz
   UINT32                  MaxSpeed;       //MHz
   UINT32                  CurrentSpeed;   //MHz
   UINT32                  Pad;
-  
+
   //calculated from MSR
   UINT64                  MicroCode;
   UINT64                  ProcessorFlag;
@@ -1203,14 +1213,14 @@ typedef struct {
   UINT16                  Turbo2; //2 Core
   UINT16                  Turbo3; //3 Core
   UINT16                  Turbo4; //4 Core
-  
+
   UINT64                  TSCCalibr;
   UINT64                  ARTFrequency;
-    
+
 } CPU_STRUCTURE;
 
 typedef enum {
-  
+
   MacBook11,
   MacBook21,
   MacBook41,
@@ -1245,9 +1255,9 @@ typedef enum {
   MacPro41,
   MacPro51,
   MacPro61,
-  
+
   MaxMachineType
-  
+
 } MACHINE_TYPES;
 
 typedef struct {
@@ -1260,7 +1270,7 @@ typedef struct {
   CHAR8*	Vendor;
   CHAR8*	PartNo;
   CHAR8*	SerialNo;
-} RAM_SLOT_INFO; 
+} RAM_SLOT_INFO;
 
 // The maximum number of RAM slots to detect
 // even for 3-channels chipset X58 there are no more then 8 slots
@@ -1269,7 +1279,7 @@ typedef struct {
 #define MAX_RAM_FREQUENCY 5000
 
 typedef struct {
-  
+
   UINT64        Frequency;
   UINT32        Divider;
   UINT8         TRC;
@@ -1325,12 +1335,12 @@ typedef enum {
   Ati,
   Intel,
   Nvidia
-  
+
 } GFX_MANUFACTERER;
 
 typedef struct {
   GFX_MANUFACTERER  Vendor;
-  UINT8             Ports;  
+  UINT8             Ports;
   UINT16            DeviceID;
   UINT16            Family;
 //UINT16            Width;
@@ -1350,7 +1360,7 @@ typedef struct {
 typedef struct {
   UINT16            SegmentGroupNum;
   UINT8             BusNum;
-  UINT8             DevFuncNum;  
+  UINT8             DevFuncNum;
   BOOLEAN           Valid;
 //UINT8             DeviceN;
   UINT8             SlotID;
@@ -1358,7 +1368,7 @@ typedef struct {
   CHAR8             SlotName[31];
 } SLOT_DEVICE;
 
-typedef struct {	
+typedef struct {
   UINT32            Signature;
   LIST_ENTRY        Link;
   CHAR8             Model[64];
@@ -1498,6 +1508,9 @@ extern TagPtr                         gConfigDict[];
 
 // ACPI/PATCHED/AML
 extern ACPI_PATCHED_AML              *ACPIPatchedAML;
+
+// SysVariables
+extern SYSVARIABLES                   *SysVariables;
 //-----------------------------------
 
 VOID
@@ -1993,7 +2006,7 @@ GetTagCount (
 EFI_STATUS
 GetElement (
   TagPtr dict,
-  INTN   id, 
+  INTN   id,
   TagPtr *dict1
 );
 
@@ -2165,7 +2178,7 @@ DeleteBootOptionsContainingFile (
   IN  CHAR16 *FileName
   );
 
-//get default boot 
+//get default boot
 VOID GetBootFromOption(VOID);
 //
 // check if this entry corresponds to Boot# variable and then set BootCurrent

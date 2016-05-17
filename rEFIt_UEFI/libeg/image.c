@@ -48,7 +48,7 @@
 #if DEBUG_IMG == 0
 #define DBG(...)
 #else
-#define DBG(...) DebugLog(DEBUG_IMG, __VA_ARGS__)	
+#define DBG(...) DebugLog(DEBUG_IMG, __VA_ARGS__)
 #endif
 
 //
@@ -58,7 +58,7 @@
 EG_IMAGE * egCreateImage(IN INTN Width, IN INTN Height, IN BOOLEAN HasAlpha)
 {
     EG_IMAGE        *NewImage;
-    
+
     NewImage = (EG_IMAGE *) AllocatePool(sizeof(EG_IMAGE));
     if (NewImage == NULL)
         return NULL;
@@ -67,7 +67,7 @@ EG_IMAGE * egCreateImage(IN INTN Width, IN INTN Height, IN BOOLEAN HasAlpha)
         FreePool(NewImage);
         return NULL;
     }
-    
+
     NewImage->Width = Width;
     NewImage->Height = Height;
     NewImage->HasAlpha = HasAlpha;
@@ -77,11 +77,11 @@ EG_IMAGE * egCreateImage(IN INTN Width, IN INTN Height, IN BOOLEAN HasAlpha)
 EG_IMAGE * egCreateFilledImage(IN INTN Width, IN INTN Height, IN BOOLEAN HasAlpha, IN EG_PIXEL *Color)
 {
     EG_IMAGE        *NewImage;
-    
+
     NewImage = egCreateImage(Width, Height, HasAlpha);
     if (NewImage == NULL)
         return NULL;
-    
+
     egFillImage(NewImage, Color);
     return NewImage;
 }
@@ -92,16 +92,16 @@ EG_IMAGE * egCopyImage(IN EG_IMAGE *Image)
   if (!Image) {
     return NULL;
   }
-  
+
   NewImage = egCreateImage(Image->Width, Image->Height, Image->HasAlpha);
   if (NewImage == NULL)
     return NULL;
-  
+
   CopyMem(NewImage->PixelData, Image->PixelData, (UINTN)(Image->Width * Image->Height * sizeof(EG_PIXEL)));
   return NewImage;
 }
 
-//Scaling functions 
+//Scaling functions
 EG_IMAGE * egCopyScaledImage(IN EG_IMAGE *OldImage, IN INTN Ratio) //will be N/16
 {
   //(c)Slice 2012
@@ -110,7 +110,7 @@ EG_IMAGE * egCopyScaledImage(IN EG_IMAGE *OldImage, IN INTN Ratio) //will be N/1
   INTN        x, x0, x1, x2, y, y0, y1, y2;
   INTN        NewH, NewW;
   EG_PIXEL    *Dest;
-  EG_PIXEL    *Src; 
+  EG_PIXEL    *Src;
   INTN        OldW;
 
   if (Ratio < 0) {
@@ -166,7 +166,7 @@ EG_IMAGE * egCopyScaledImage(IN EG_IMAGE *OldImage, IN INTN Ratio) //will be N/1
       }
     }
   }
-  
+
   return NewImage;
 }
 
@@ -250,7 +250,7 @@ VOID  ScaleImage(OUT EG_IMAGE *NewImage, IN EG_IMAGE *OldImage)
   EG_PIXEL  a10, a11, a12, a01, a21;
   EG_PIXEL  *Src = OldImage->PixelData;
   EG_PIXEL  *Dest = NewImage->PixelData;
-  
+
   W1 = OldImage->Width;
   H1 = OldImage->Height;
   W2 = NewImage->Width;
@@ -267,7 +267,7 @@ VOID  ScaleImage(OUT EG_IMAGE *NewImage, IN EG_IMAGE *OldImage)
     y = (j << 12) / f;
     y1 = y * W1;
     dy = j - ((y * f) >> 12);
-    
+
     for (i = 0; i < W2; i++) {
       x = (i << 12) / f;
       dx = i - ((x * f) >> 12);
@@ -321,11 +321,11 @@ EFI_STATUS egLoadFile(IN EFI_FILE_HANDLE BaseDir, IN CHAR16 *FileName,
     UINT64              ReadSize;
     UINTN               BufferSize;
     UINT8               *Buffer;
-    
+
     Status = BaseDir->Open(BaseDir, &FileHandle, FileName, EFI_FILE_MODE_READ, 0);
     if (EFI_ERROR(Status))
         return Status;
-    
+
     FileInfo = EfiLibFileInfo(FileHandle);
     if (FileInfo == NULL) {
         FileHandle->Close(FileHandle);
@@ -335,21 +335,21 @@ EFI_STATUS egLoadFile(IN EFI_FILE_HANDLE BaseDir, IN CHAR16 *FileName,
     if (ReadSize > MAX_FILE_SIZE)
         ReadSize = MAX_FILE_SIZE;
     FreePool(FileInfo);
-    
+
     BufferSize = (UINTN)ReadSize;   // was limited to 1 GB above, so this is safe
     Buffer = (UINT8 *) AllocateZeroPool (BufferSize);
     if (Buffer == NULL) {
         FileHandle->Close(FileHandle);
         return EFI_OUT_OF_RESOURCES;
     }
-    
+
     Status = FileHandle->Read(FileHandle, &BufferSize, Buffer);
     FileHandle->Close(FileHandle);
     if (EFI_ERROR(Status)) {
         FreePool(Buffer);
         return Status;
     }
-    
+
     *FileData = Buffer;
     *FileDataLength = BufferSize;
     return EFI_SUCCESS;
@@ -362,7 +362,7 @@ EFI_STATUS egFindESP(OUT EFI_FILE_HANDLE *RootDir)
     EFI_STATUS          Status;
     UINTN               HandleCount = 0;
     EFI_HANDLE          *Handles;
-    
+
     Status = gBS->LocateHandleBuffer(ByProtocol, &gEfiPartTypeSystemPartGuid, NULL, &HandleCount, &Handles);
     if (!EFI_ERROR(Status) && HandleCount > 0) {
         *RootDir = EfiLibOpenRoot(Handles[0]);
@@ -380,13 +380,13 @@ EFI_STATUS egSaveFile(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CHAR16 *FileName,
   EFI_FILE_HANDLE     FileHandle;
   UINTN               BufferSize;
   BOOLEAN             CreateNew = TRUE;
-  
+
   if (BaseDir == NULL) {
     Status = egFindESP(&BaseDir);
     if (EFI_ERROR(Status))
       return Status;
   }
-  
+
   // Delete existing file if it exists
   Status = BaseDir->Open(BaseDir, &FileHandle, FileName,
                          EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE, 0);
@@ -395,9 +395,9 @@ EFI_STATUS egSaveFile(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CHAR16 *FileName,
     if (Status == EFI_WARN_DELETE_FAILURE) {
       //This is READ_ONLY file system
       CreateNew = FALSE; // will write into existing file
-    } 
+    }
   }
-  
+
   if (CreateNew) {
     // Write new file
     Status = BaseDir->Open(BaseDir, &FileHandle, FileName,
@@ -411,15 +411,15 @@ EFI_STATUS egSaveFile(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CHAR16 *FileName,
       return EFI_NOT_FOUND;
     }
   }
-  
+
   if (!FileHandle) {
     return EFI_NOT_FOUND;
   }
-  
+
   BufferSize = FileDataLength;
   Status = FileHandle->Write(FileHandle, &BufferSize, FileData);
   FileHandle->Close(FileHandle);
-  
+
   return Status;
 }
 
@@ -428,23 +428,28 @@ EFI_STATUS egMkDir(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CHAR16 *DirName)
 {
   EFI_STATUS          Status;
   EFI_FILE_HANDLE     FileHandle;
-  
-  DBG("base dir=%s new dir =%s\n", BaseDir, DirName);
+
+  //DBG("Looking up dir assets (%s):", DirName);
+
   if (BaseDir == NULL) {
     Status = egFindESP(&BaseDir);
-    if (EFI_ERROR(Status))
+    if (EFI_ERROR(Status)) {
+      //DBG(" %r\n", Status);
       return Status;
+    }
   }
-  
+
   Status = BaseDir->Open(BaseDir, &FileHandle, DirName,
                          EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE, EFI_FILE_DIRECTORY);
-  DBG("dir exists = %r\n", Status);
+
   if (EFI_ERROR(Status)) {
     // Write new dir
+    //DBG("%r, attempt to create one:", Status);
     Status = BaseDir->Open(BaseDir, &FileHandle, DirName,
                            EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE | EFI_FILE_MODE_CREATE, EFI_FILE_DIRECTORY);
-    DBG("dir create = %r\n", Status);
   }
+
+  //DBG(" %r\n", Status);
   return Status;
 }
 
@@ -455,7 +460,7 @@ EFI_STATUS egMkDir(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CHAR16 *DirName)
 static CHAR16 * egFindExtension(IN CHAR16 *FileName)
 {
     INTN i;
-    
+
     for (i = StrLen(FileName); i >= 0; i--) {
         if (FileName[i] == '.')
             return FileName + i + 1;
@@ -470,7 +475,7 @@ static EG_IMAGE * egDecodeAny(IN UINT8 *FileData, IN UINTN FileDataLength,
 {
   EG_DECODE_FUNC  DecodeFunc;
   EG_IMAGE        *NewImage;
-  
+
   if (Format) {
     // dispatch by extension
     DecodeFunc = NULL;
@@ -484,14 +489,14 @@ static EG_IMAGE * egDecodeAny(IN UINT8 *FileData, IN UINTN FileDataLength,
     }
     //  else if (StriCmp(Format, L"TGA") == 0)
     //    DecodeFunc = egDecodeTGA;
-    
+
     if (DecodeFunc == NULL)
       return NULL;
-    //  DBG("will decode data=%x len=%d icns=%d alpha=%c\n", FileData, FileDataLength, IconSize, WantAlpha?'Y':'N'); 
+    //  DBG("will decode data=%x len=%d icns=%d alpha=%c\n", FileData, FileDataLength, IconSize, WantAlpha?'Y':'N');
     // decode it
-    NewImage = DecodeFunc(FileData, FileDataLength, IconSize, WantAlpha);    
+    NewImage = DecodeFunc(FileData, FileDataLength, IconSize, WantAlpha);
   } else {
-    
+
     //automatic choose format
     NewImage = egDecodePNG(FileData, FileDataLength, IconSize, WantAlpha);
     if (!NewImage) {
@@ -506,9 +511,9 @@ static EG_IMAGE * egDecodeAny(IN UINT8 *FileData, IN UINTN FileDataLength,
       NewImage = egDecodeBMP(FileData, FileDataLength, IconSize, WantAlpha);
     }
   }
-#if DEBUG_IMG == 2  
+#if DEBUG_IMG == 2
    PauseForKey(L"After egDecodeAny\n");
-#endif  
+#endif
   return NewImage;
 }
 
@@ -519,10 +524,10 @@ EG_IMAGE * egLoadImage(IN EFI_FILE_HANDLE BaseDir, IN CHAR16 *FileName, IN BOOLE
   UINT8           *FileData;
   UINTN           FileDataLength;
   EG_IMAGE        *NewImage;
-  
+
   if (BaseDir == NULL || FileName == NULL)
     return NULL;
-  
+
   // load file
   Status = egLoadFile(BaseDir, FileName, &FileData, &FileDataLength);
   //  DBG("File=%s loaded with status=%r length=%d\n", FileName, Status, FileDataLength);
@@ -546,21 +551,21 @@ EG_IMAGE * egLoadIcon(IN EFI_FILE_HANDLE BaseDir, IN CHAR16 *FileName, IN UINTN 
   UINT8           *FileData;
   UINTN           FileDataLength;
   EG_IMAGE        *NewImage;
-  
+
   if (BaseDir == NULL || FileName == NULL)
     return NULL;
-  
+
   //   DBG("egLoadIcon filename: %s\n", FileName);
-  
+
   // load file
   Status = egLoadFile(BaseDir, FileName, &FileData, &FileDataLength);
   if (EFI_ERROR(Status))
     return NULL;
-  
+
   // decode it
   NewImage = egDecodeAny(FileData, FileDataLength, NULL, /*egFindExtension(FileName),*/ IconSize, TRUE);
   FreePool(FileData);
-  
+
   return NewImage;
 }
 
@@ -575,26 +580,26 @@ EG_IMAGE * egPrepareEmbeddedImage(IN EG_EMBEDDED_IMAGE *EmbeddedImage, IN BOOLEA
   UINT8               *CompData;
   UINTN               CompLen;
   UINTN               PixelCount;
-  
+
   // sanity check
   if (EmbeddedImage->PixelMode > EG_MAX_EIPIXELMODE ||
       (EmbeddedImage->CompressMode != EG_EICOMPMODE_NONE && EmbeddedImage->CompressMode != EG_EICOMPMODE_RLE))
     return NULL;
-  
+
   // allocate image structure and pixel buffer
   NewImage = egCreateImage(EmbeddedImage->Width, EmbeddedImage->Height, WantAlpha);
   if (NewImage == NULL)
     return NULL;
-  
+
   CompData = (UINT8 *)EmbeddedImage->Data;   // drop const
   CompLen  = EmbeddedImage->DataLength;
   PixelCount = EmbeddedImage->Width * EmbeddedImage->Height;
-  
+
   // FUTURE: for EG_EICOMPMODE_EFICOMPRESS, decompress whole data block here
-  
+
   if (EmbeddedImage->PixelMode == EG_EIPIXELMODE_GRAY ||
       EmbeddedImage->PixelMode == EG_EIPIXELMODE_GRAY_ALPHA) {
-    
+
     // copy grayscale plane and expand
     if (EmbeddedImage->CompressMode == EG_EICOMPMODE_RLE) {
       egDecompressIcnsRLE(&CompData, &CompLen, PLPTR(NewImage, r), PixelCount);
@@ -604,10 +609,10 @@ EG_IMAGE * egPrepareEmbeddedImage(IN EG_EMBEDDED_IMAGE *EmbeddedImage, IN BOOLEA
     }
     egCopyPlane(PLPTR(NewImage, r), PLPTR(NewImage, g), PixelCount);
     egCopyPlane(PLPTR(NewImage, r), PLPTR(NewImage, b), PixelCount);
-    
+
   } else if (EmbeddedImage->PixelMode == EG_EIPIXELMODE_COLOR ||
              EmbeddedImage->PixelMode == EG_EIPIXELMODE_COLOR_ALPHA) {
-    
+
     // copy color planes
     if (EmbeddedImage->CompressMode == EG_EICOMPMODE_RLE) {
       egDecompressIcnsRLE(&CompData, &CompLen, PLPTR(NewImage, r), PixelCount);
@@ -621,20 +626,20 @@ EG_IMAGE * egPrepareEmbeddedImage(IN EG_EMBEDDED_IMAGE *EmbeddedImage, IN BOOLEA
       egInsertPlane(CompData, PLPTR(NewImage, b), PixelCount);
       CompData += PixelCount;
     }
-    
+
   } else {
-    
+
     // set color planes to black
     egSetPlane(PLPTR(NewImage, r), 0, PixelCount);
     egSetPlane(PLPTR(NewImage, g), 0, PixelCount);
     egSetPlane(PLPTR(NewImage, b), 0, PixelCount);
-    
+
   }
-  
+
   if (WantAlpha && (EmbeddedImage->PixelMode == EG_EIPIXELMODE_GRAY_ALPHA ||
                     EmbeddedImage->PixelMode == EG_EIPIXELMODE_COLOR_ALPHA ||
                     EmbeddedImage->PixelMode == EG_EIPIXELMODE_ALPHA)) {
-    
+
     // copy alpha plane
     if (EmbeddedImage->CompressMode == EG_EICOMPMODE_RLE) {
       egDecompressIcnsRLE(&CompData, &CompLen, PLPTR(NewImage, a), PixelCount);
@@ -642,11 +647,11 @@ EG_IMAGE * egPrepareEmbeddedImage(IN EG_EMBEDDED_IMAGE *EmbeddedImage, IN BOOLEA
       egInsertPlane(CompData, PLPTR(NewImage, a), PixelCount);
       //            CompData += PixelCount;
     }
-    
+
   } else {
     egSetPlane(PLPTR(NewImage, a), WantAlpha ? 255 : 0, PixelCount);
   }
-  
+
   return NewImage;
 }
 
@@ -661,7 +666,7 @@ VOID egRestrictImageArea(IN EG_IMAGE *Image,
   if (!Image || !AreaWidth || !AreaHeight) {
     return;
   }
-  
+
   if (AreaPosX >= Image->Width || AreaPosY >= Image->Height) {
     // out of bounds, operation has no effect
     *AreaWidth  = 0;
@@ -683,11 +688,11 @@ VOID egFillImage(IN OUT EG_IMAGE *CompImage, IN EG_PIXEL *Color)
   if (!CompImage || !Color) {
     return;
   }
-  
+
   FillColor = *Color;
   if (!CompImage->HasAlpha)
     FillColor.a = 0;
-  
+
   PixelPtr = CompImage->PixelData;
   for (i = 0; i < CompImage->Width * CompImage->Height; i++) {
     *PixelPtr++ = FillColor;
@@ -707,14 +712,14 @@ VOID egFillImageArea(IN OUT EG_IMAGE *CompImage,
   if (!CompImage || !Color) {
     return;
   }
-  
+
   egRestrictImageArea(CompImage, AreaPosX, AreaPosY, &xAreaWidth, &xAreaHeight);
-  
+
   if (xAreaWidth > 0) {
     FillColor = *Color;
     if (!CompImage->HasAlpha)
       FillColor.a = 0;
-    
+
     PixelBasePtr = CompImage->PixelData + AreaPosY * CompImage->Width + AreaPosX;
     for (y = 0; y < xAreaHeight; y++) {
       EG_PIXEL    *PixelPtr = PixelBasePtr;
@@ -735,7 +740,7 @@ VOID egRawCopy(IN OUT EG_PIXEL *CompBasePtr, IN EG_PIXEL *TopBasePtr,
   if (!CompBasePtr || !TopBasePtr) {
     return;
   }
-    
+
   for (y = 0; y < Height; y++) {
     EG_PIXEL    *TopPtr = TopBasePtr;
     EG_PIXEL    *CompPtr = CompBasePtr;
@@ -768,7 +773,7 @@ VOID egRawCompose(IN OUT EG_PIXEL *CompBasePtr, IN EG_PIXEL *TopBasePtr,
   //Slice - my opinion
 //if TopAlpha=255 then draw Top - non transparent
 //else if TopAlpha=0 then draw Comp - full transparent
-//else draw mixture |-----comp---|--top--| 
+//else draw mixture |-----comp---|--top--|
 //final alpha =(1-(1-x)*(1-y)) =(255*255-(255-topA)*(255-compA))/255
 
   for (y = 0; y < Height; y++) {
@@ -780,25 +785,25 @@ VOID egRawCompose(IN OUT EG_PIXEL *CompBasePtr, IN EG_PIXEL *TopBasePtr,
       RevAlpha = 255 - TopAlpha;
 //      Alpha = 255 * (UINT8)TopAlpha + (UINT8)CompPtr->a * (UINT8)RevAlpha;
       Alpha = (255*255 - (255 - TopAlpha) * (255 - CompAlpha)) / 255;
-      
+
       if (TopAlpha == 0) {
         TopPtr++, CompPtr++; // no need to bother
         continue;
       }
-      
-      
-      
+
+
+
       Temp = (TopPtr->b * TopAlpha) + (CompPtr->b * RevAlpha);
       CompPtr->b = (UINT8)(Temp / 255);
-      
+
       Temp = (TopPtr->g * TopAlpha) + (CompPtr->g  * RevAlpha);
       CompPtr->g = (UINT8)(Temp / 255);
-      
+
       Temp = (TopPtr->r * TopAlpha) + (CompPtr->r * RevAlpha);
       CompPtr->r = (UINT8)(Temp / 255);
-      
+
       CompPtr->a = (UINT8)Alpha;
-      
+
       // apianti - Determine the alpha channel first and use associative compose
       //Temp = (UINTN)CompPtr->a * RevAlpha + Alpha * Alpha;
 /*      CompPtr->a = (CompPtr->a > Alpha) ? CompPtr->a : (UINT8)Alpha; // (UINT8)(Temp / 255);
@@ -839,13 +844,13 @@ VOID egRawComposeOnFlat(IN OUT EG_PIXEL *CompBasePtr, IN EG_PIXEL *TopBasePtr,
 
       Temp = ((UINT8)CompPtr->b * RevAlpha) + ((UINT8)TopPtr->b * TopAlpha);
       CompPtr->b = (UINT8)(Temp / 255);
-      
+
       Temp = ((UINT8)CompPtr->g * RevAlpha) + ((UINT8)TopPtr->g * TopAlpha);
       CompPtr->g = (UINT8)(Temp / 255);
-      
+
       Temp = ((UINT8)CompPtr->r * RevAlpha) + ((UINT8)TopPtr->r * TopAlpha);
       CompPtr->r = (UINT8)(Temp / 255);
-      
+
       CompPtr->a = (UINT8)(255);
 
       TopPtr++, CompPtr++;
@@ -861,17 +866,17 @@ VOID egComposeImage(IN OUT EG_IMAGE *CompImage, IN EG_IMAGE *TopImage, IN INTN P
   if (!TopImage || !CompImage) {
     return;
   }
-  
+
   CompWidth  = TopImage->Width;
   CompHeight = TopImage->Height;
   egRestrictImageArea(CompImage, PosX, PosY, &CompWidth, &CompHeight);
-  
+
   // compose
   if (CompWidth > 0) {
     if (CompImage->HasAlpha && !BackgroundImage) {
       CompImage->HasAlpha = FALSE;
     }
-    
+
     if (TopImage->HasAlpha) {
       if (CompImage->HasAlpha) {
         egRawCompose(CompImage->PixelData + PosY * CompImage->Width + PosX,
@@ -898,7 +903,7 @@ EG_IMAGE * egEnsureImageSize(IN EG_IMAGE *Image, IN INTN Width, IN INTN Height, 
         return NULL;
     if (Image->Width == Width && Image->Height == Height)
         return Image;
-    
+
     NewImage = egCreateFilledImage(Width, Height, Image->HasAlpha, Color);
     if (NewImage == NULL) {
         egFreeImage(Image);
@@ -906,7 +911,7 @@ EG_IMAGE * egEnsureImageSize(IN EG_IMAGE *Image, IN INTN Width, IN INTN Height, 
     }
     egComposeImage(NewImage, Image, 0, 0);
     egFreeImage(Image);
-    
+
     return NewImage;
 }
 
@@ -920,7 +925,7 @@ VOID egInsertPlane(IN UINT8 *SrcDataPtr, IN UINT8 *DestPlanePtr, IN UINTN PixelC
   if (!SrcDataPtr || !DestPlanePtr) {
     return;
   }
-    
+
     for (i = 0; i < PixelCount; i++) {
         *DestPlanePtr = *SrcDataPtr++;
         DestPlanePtr += 4;
@@ -933,7 +938,7 @@ VOID egSetPlane(IN UINT8 *DestPlanePtr, IN UINT8 Value, IN UINT64 PixelCount)
   if (!DestPlanePtr) {
     return;
   }
-  
+
     for (i = 0; i < PixelCount; i++) {
         *DestPlanePtr = Value;
         DestPlanePtr += 4;
@@ -946,7 +951,7 @@ VOID egCopyPlane(IN UINT8 *SrcPlanePtr, IN UINT8 *DestPlanePtr, IN UINTN PixelCo
   if (!SrcPlanePtr || !DestPlanePtr) {
     return;
   }
-  
+
     for (i = 0; i < PixelCount; i++) {
         *DestPlanePtr = *SrcPlanePtr;
         DestPlanePtr += 4, SrcPlanePtr += 4;

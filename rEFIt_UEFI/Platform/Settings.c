@@ -28,6 +28,7 @@
 
 
 ACPI_PATCHED_AML                *ACPIPatchedAML;
+SYSVARIABLES                     *SysVariables;
 
 TagPtr                          gConfigDict[NUM_OF_CONFIGS] = {NULL, NULL, NULL};
 
@@ -76,16 +77,55 @@ extern UINT8 GetOSTypeFromPath (
                                 );
 
 // global configuration with default values
-REFIT_CONFIG   GlobalConfig = { FALSE, -1, 0, 0, 0, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE,
-  //Font
-  FONT_ALFA, 7, 0xFFFFFF80, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, None, 0,
-  //BackgroundDark
-  FALSE, FALSE, FALSE, 0, 0, 4, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF,
-  //BannerEdgeHorizontal
-  0, 0, 0, 0,
-  //VerticalLayout
-  FALSE, FALSE, 128, 8, 24, FALSE
+REFIT_CONFIG   GlobalConfig = {
+  FALSE,          // BOOLEAN     TextOnly;
+  -1,             // INTN        Timeout;
+  0,              // UINTN       DisableFlags;
+  0,              // UINTN       HideBadges;
+  0,              // UINTN       HideUIFlags;
+  TRUE,           // BOOLEAN     Quiet;
+  FALSE,          // BOOLEAN     LegacyFirst;
+  FALSE,          // BOOLEAN     NoLegacy;
+  FALSE,          // BOOLEAN     DebugLog;
+  FALSE,          // BOOLEAN     FastBoot;
+  FALSE,          // BOOLEAN     NeverHibernate;
+  FONT_ALFA,      // FONT_TYPE   Font;
+  7,              // INTN        CharWidth;
+  0xFFFFFF80,     // UINTN       SelectionColor;
+  NULL,           // CHAR16      *FontFileName;
+  NULL,           // CHAR16      *Theme;
+  NULL,           // CHAR16      *BannerFileName;
+  NULL,           // CHAR16      *SelectionSmallFileName;
+  NULL,           // CHAR16      *SelectionBigFileName;
+  NULL,           // CHAR16      *DefaultSelection;
+  NULL,           // CHAR16      *ScreenResolution;
+  0,              // INTN        ConsoleMode;
+  NULL,           // CHAR16      *BackgroundName;
+  None,           // SCALING     BackgroundScale;
+  0,              // UINTN       BackgroundSharp;
+  FALSE,          // BOOLEAN     BackgroundDark;
+  FALSE,          // BOOLEAN     CustomIcons;
+  FALSE,          // BOOLEAN     SelectionOnTop;
+  0,              // INTN        BadgeOffsetX;
+  0,              // INTN        BadgeOffsetY;
+  4,              // INTN        BadgeScale;
+  0xFFFF,         // INTN        ThemeDesignWidth;
+  0xFFFF,         // INTN        ThemeDesignHeight;
+  0xFFFF,         // INTN        BannerPosX;
+  0xFFFF,         // INTN        BannerPosY;
+  0,              // INTN        BannerEdgeHorizontal;
+  0,              // INTN        BannerEdgeVertical;
+  0,              // INTN        BannerNudgeX;
+  0,              // INTN        BannerNudgeY;
+  FALSE,          // BOOLEAN     VerticalLayout;
+  FALSE,          // BOOLEAN     NonSelectedGrey;
+  128,            // INTN        MainEntriesSize;
+  8,              // INTN        TileXSpace;
+  24,             // INTN        TileYSpace;
+  FALSE           // BOOLEAN     Proportional;
+                  // BOOLEAN     NoEarlyProgress;
 };
+
 /*
  VOID __inline WaitForSts(VOID) {
  UINT32 inline_timeout = 100000;
@@ -2832,6 +2872,11 @@ GetThemeTagSettings (
       GlobalConfig.HideUIFlags |= HIDEUI_FLAG_REVISION;
     }
 
+    Dict2 = GetProperty (Dict, "Help");
+    if (Dict2 && Dict2->type == kTagTypeFalse) {
+      GlobalConfig.HideUIFlags |= HIDEUI_FLAG_HELP;
+    }
+
     Dict2 = GetProperty (Dict, "MenuTitle");
     if (Dict2 && Dict2->type == kTagTypeFalse) {
       GlobalConfig.HideUIFlags |= HIDEUI_FLAG_MENU_TITLE;
@@ -4726,6 +4771,7 @@ GetUserSettings(
     }
 
     // RtVariables
+    SYSVARIABLES  *SysVariablesTmp;
     DictPointer = GetProperty (Dict, "RtVariables");
     if (DictPointer != NULL) {
       // ROM: <data>bin data</data> or <string>base 64 encoded bin data</string>
@@ -4775,10 +4821,23 @@ GetUserSettings(
       Prop = GetProperty (DictPointer, "CsrActiveConfig");
       gSettings.CsrActiveConfig = (UINT32)GetPropertyInteger (Prop, 0x67); //the value 0xFFFF means not set
 
+      SysVariablesTmp                    = AllocateZeroPool (sizeof(SYSVARIABLES));
+      SysVariablesTmp->Key               = PoolPrint(L"CsrActiveConfig");
+      SysVariablesTmp->MenuItem.SValue   = PoolPrint(L"0x%02x", gSettings.CsrActiveConfig);
+      SysVariablesTmp->MenuItem.ItemType = Hex;
+      SysVariablesTmp->Next              = SysVariables;
+      SysVariables                       = SysVariablesTmp;
+
       //BooterConfig
       Prop = GetProperty (DictPointer, "BooterConfig");
       gSettings.BooterConfig = (UINT16)GetPropertyInteger (Prop, 0xFFFF); //the value 0xFFFF means not set
 
+      SysVariablesTmp                    = AllocateZeroPool (sizeof(SYSVARIABLES));
+      SysVariablesTmp->Key               = PoolPrint(L"BooterConfig");
+      SysVariablesTmp->MenuItem.SValue   = PoolPrint(L"0x%02x", gSettings.BooterConfig);
+      SysVariablesTmp->MenuItem.ItemType = Hex;
+      SysVariablesTmp->Next              = SysVariables;
+      SysVariables                       = SysVariablesTmp;
     }
 
     if (gSettings.RtROM == NULL) {
@@ -4795,6 +4854,8 @@ GetUserSettings(
     // to get Chameleon's default behaviour (to make user's life easier)
     CopyMem ((VOID*)&gUuid, (VOID*)&gSettings.SmUUID, sizeof(EFI_GUID));
     gSettings.InjectSystemID = TRUE;
+
+    gSettings.ExposeSysVariables = FALSE;
 
     // SystemParameters again - values that can depend on previous params
     DictPointer = GetProperty (Dict, "SystemParameters");
@@ -4825,7 +4886,32 @@ GetUserSettings(
 
       Prop                     = GetProperty (DictPointer, "InjectSystemID");
       gSettings.InjectSystemID = gSettings.InjectSystemID ? !IsPropertyFalse(Prop) : IsPropertyTrue (Prop);
+
+      Prop                     = GetProperty (DictPointer, "ExposeSysVariables");
+      if (Prop && IsPropertyTrue (Prop)) {
+        gSettings.ExposeSysVariables = TRUE;
+      }
     }
+
+    if (gSettings.ExposeSysVariables) {
+      CHAR16 *RomTmp = AllocateZeroPool((gSettings.RtROMLen * 2) + 1);
+      AsciiStrToUnicodeStr(Bytes2HexStr(gSettings.RtROM, gSettings.RtROMLen), RomTmp);
+      SysVariablesTmp                    = AllocateZeroPool (sizeof(SYSVARIABLES));
+      SysVariablesTmp->Key               = PoolPrint(L"ROM");
+      SysVariablesTmp->MenuItem.SValue   = PoolPrint(L"%s", RomTmp);
+      SysVariablesTmp->MenuItem.ItemType = ASString;
+      SysVariablesTmp->Next              = SysVariables;
+      SysVariables                       = SysVariablesTmp;
+      FreePool(RomTmp);
+
+      SysVariablesTmp                    = AllocateZeroPool (sizeof(SYSVARIABLES));
+      SysVariablesTmp->Key               = PoolPrint(L"MLB");
+      SysVariablesTmp->MenuItem.SValue   = PoolPrint(L"%a", gSettings.RtMLB);
+      SysVariablesTmp->MenuItem.ItemType = ASString;
+      SysVariablesTmp->Next              = SysVariables;
+      SysVariables                       = SysVariablesTmp;
+    }
+
 
     /*
      {

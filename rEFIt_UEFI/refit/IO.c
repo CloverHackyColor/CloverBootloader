@@ -1,13 +1,13 @@
 /*++
 
-Copyright (c) 2005 - 2007, Intel Corporation                                                  
-All rights reserved. This program and the accompanying materials                          
-are licensed and made available under the terms and conditions of the BSD License         
-which accompanies this distribution. The full text of the license may be found at         
-http://opensource.org/licenses/bsd-license.php                                            
-                                                                                          
-THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,                     
-WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.             
+Copyright (c) 2005 - 2007, Intel Corporation
+All rights reserved. This program and the accompanying materials
+are licensed and made available under the terms and conditions of the BSD License
+which accompanies this distribution. The full text of the license may be found at
+http://opensource.org/licenses/bsd-license.php
+
+THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,
+WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 
 Module Name:
 
@@ -204,21 +204,21 @@ _SPrint (
   )
 /*++
 Routine Description:
-  
+
   Print function
-   
+
 Arguments:
 
   Context  - The Context
   Buffer   - The Buffer
-  
+
 Returns:
 
 --*/
 {
   INTN        len;
   POOL_PRINT  *spc;
-  
+
 //  ASSERT (Context != NULL);
 //  ASSERT (Buffer != NULL);
   if (!Context || !Buffer) {
@@ -276,7 +276,7 @@ Arguments:
     args   - args
     spc    - spc
     Output - Output
-    
+
 Returns:
 
 --*/
@@ -311,7 +311,7 @@ Arguments:
 
 Returns:
 
-    Allocated buffer with the formatted string printed in it.  
+    Allocated buffer with the formatted string printed in it.
     The caller must free the allocated buffer.   The buffer
     allocation is not packed.
 
@@ -338,7 +338,7 @@ PrintAt (
 
 Routine Description:
 
-  Prints a formatted unicode string to the default console, at 
+  Prints a formatted unicode string to the default console, at
   the supplied cursor position
 
 Arguments:
@@ -378,9 +378,9 @@ Routine Description:
 Arguments:
 
     Column - Column
-    Row    - Row 
-    Out    - Out 
-    fmt    - fmt 
+    Row    - Row
+    Out    - Out
+    fmt    - fmt
     fmta   - fmta
     args   - args
 
@@ -692,7 +692,7 @@ UINTN
 _PPrint (
   IN PRINT_STATE     *ps
   )
- 
+
 /*++
 
 Routine Description:
@@ -704,7 +704,7 @@ Routine Description:
   Args F:
     0       -   pad with zeros
     -       -   justify on left (default is on right)
-    ,       -   add comma's to field    
+    ,       -   add comma's to field
     *       -   width provided on stack
     n       -   Set output attribute to normal (for this field only)
     h       -   Set output attribute to highlight (for this field only)
@@ -717,7 +717,7 @@ Routine Description:
     s       -   unicode string
     X       -   fixed 8 byte value in hex
     x       -   hex value
-    d       -   value as decimal    
+    d       -   value as decimal
     c       -   Unicode char
     t       -   EFI time structure
     g       -   Pointer to GUID
@@ -729,14 +729,14 @@ Routine Description:
     B       -   Set output attribute to blue color
     V       -   Set output attribute to green color
     %       -   Print a %
-    
+
 Arguments:
 
     ps - Ps
 
 Returns:
 
-  Number of charactors written   
+  Number of charactors written
 
 --*/
 
@@ -887,7 +887,7 @@ Returns:
         Item.Item.u.pw = Item.Scratch;
 			  //SPrint(Buffer, 64, L"EFI Error №%r", (UINTN)Status);
      //   ValueToHex (
-		UnicodeSPrint(	  
+		UnicodeSPrint(
           Item.Item.u.pw, 64, L"%x",
           Item.Long ? VA_ARG (ps->args, UINT64) : VA_ARG (ps->args, UINTN)
           );
@@ -905,7 +905,7 @@ Returns:
       case 'd':
         Item.Item.u.pw = Item.Scratch;
       //  ValueToString (
-		UnicodeSPrint(	  
+		UnicodeSPrint(
           Item.Item.u.pw, 64, L"%d",
        //   Item.Comma,
           Item.Long ? VA_ARG (ps->args, UINT64) : VA_ARG (ps->args, INTN)
@@ -919,7 +919,7 @@ Returns:
 */
       case 'r':
         Item.Item.u.pw = Item.Scratch;
-   //     StatusToString 
+   //     StatusToString
 		UnicodeSPrint(Item.Item.u.pw, 64, L"%r", VA_ARG (ps->args, EFI_STATUS));
         break;
 
@@ -1014,38 +1014,38 @@ WaitForSingleEvent (
 {
 	EFI_STATUS					Status;
 	UINTN						Index;
-	
+
 	EFI_EVENT					WaitList[3];
 	EFI_EVENT					TimerEvent;
-	
-	if (Timeout != 0) 
+
+	if (Timeout != 0)
 	{
 		//
 		// Create a timer event
 		//
 		Status = gBS->CreateEvent(EVT_TIMER, 0, NULL, NULL, &TimerEvent);
-		if (!EFI_ERROR (Status)) 
+		if (!EFI_ERROR (Status))
 		{
 			//
 			// Set the timer event
 			//
 			gBS->SetTimer(TimerEvent, TimerRelative, Timeout);
-			
+
 			//
 			// Wait for the original event or the timer
 			//
 			WaitList[0] = Event;
 			WaitList[1] = TimerEvent;
-			
+
 			Status = gBS->WaitForEvent(2, WaitList, &Index);
 			gBS->CloseEvent (TimerEvent);
-			if (!EFI_ERROR (Status) && Index == 1) 
+			if (!EFI_ERROR (Status) && Index == 1)
 			{
 				Status = EFI_TIMEOUT;
 			}
 		}
-	} 
-	else 
+	}
+	else
 	{
 		WaitList[0] = Event;
 		Status = gBS->WaitForEvent (1, WaitList, &Index);
@@ -1080,7 +1080,7 @@ WaitFor2EventWithTsc (
         Status = gBS->CheckEvent(Event2);
         if (!EFI_ERROR(Status)) {
           break;
-        }        
+        }
       }
       // Let's try to relax processor a bit
       CpuPause();
@@ -1088,14 +1088,14 @@ WaitFor2EventWithTsc (
       t1 = AsmReadTsc();
     } while ((t1 - t0) < Delta);
 	}
-	else 
+	else
 	{
     WaitList[0] = Event1;
     WaitList[1] = Event2;
     Status = gBS->WaitForEvent (2, WaitList, &Index);
 	}
-	return Status; 
-}  
+	return Status;
+}
 
 BOOLEAN
 SetPageBreak (
@@ -1261,7 +1261,7 @@ _PoolPrint (
 Routine Description:
 
     Append string worker for PoolPrint and CatPrint
-    
+
 Arguments:
     Context - Context
     Buffer  - Buffer
@@ -1277,7 +1277,7 @@ Returns:
   if (!Context) {
     return 0;
   }
-  
+
   spc     = Context;
   newlen  = spc->Len + StrLen (Buffer) + 1;
 
@@ -1340,7 +1340,7 @@ Input (
 Routine Description:
 
   Input a string at the current cursor location, for StrLen
-  
+
 Arguments:
 
     Prompt - Prompt
@@ -1386,7 +1386,7 @@ Returns:
   if (!Column || !Row) {
     return;
   }
-  
+
   //
   // If current column is 0, move to the last column of the previous line,
   // otherwise, just decrement column.
@@ -1486,7 +1486,7 @@ Returns:
   UINTN         TailColumn;
   EFI_INPUT_KEY Key;
   BOOLEAN       InsertMode;
-  
+
 //  ASSERT (ConOut != NULL);
 //  ASSERT (ConIn != NULL);
 //  ASSERT (InStr != NULL);
@@ -1527,7 +1527,7 @@ Returns:
  // SetMem (InStr, StrLength * sizeof (CHAR16), 0);
   //prepare default string
   Len = StrLen(InStr);
-  StrPos = 0; 
+  StrPos = 0;
   OutputLength = Len;
   Print(L"%s", InStr);
   Done = FALSE;
@@ -1908,4 +1908,20 @@ UINT32 hex2bin(IN CHAR8 *hex, OUT UINT8 *bin, UINT32 len) //assume len = number 
 	return outlen;
 }
 
+CHAR8* Bytes2HexStr(UINT8 *data, UINTN len)
+{
+  UINTN i, j, b = 0;
+  CHAR8 *result = (CHAR8*)AllocateZeroPool((len*2)+1);
+  //CHAR8 *buf = AllocateZeroPool(2);
 
+  for (i = j = 0; i < len; i++) {
+    b = data[i] >> 4;
+    result[j++] = (CHAR8) (87 + b + (((b - 10) >> 31) & -39));
+    b = data[i] & 0xf;
+    result[j++] = (CHAR8) (87 + b + (((b - 10) >> 31) & -39));
+    //buf = (CHAR8*)PoolPrint(L"%02x", (UINT8*)data[i]);
+  }
+  result[j] = '\0';
+  //FreePool(buf);
+  return result;
+}
