@@ -1823,6 +1823,17 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
           DBG("create file %r\n", Status);
         }
         break;
+ 
+      case SCAN_F8:
+        do {
+          CHAR16 *Str = PoolPrint(L"%s\n%s\n%s", L"ABC", L"123456", L"xy");
+          if (Str != NULL) {
+            AlertMessage(L"Sample message", Str);
+            FreePool(Str);
+          }
+        } while (0);
+ //this way screen is dirty
+        break;
  */
       case SCAN_F10:
         egScreenShot();
@@ -2561,12 +2572,11 @@ VOID CountItems(IN REFIT_MENU_SCREEN *Screen)
 
 VOID DrawTextCorner(UINTN TextC, UINT8 Align)
 {
-  INTN    TextWidth = 0;
   INTN    Xpos;
   CHAR16  *Text;
 
   if (
-    // HIDEUI_ALL???
+    // HIDEUI_ALL - included
     ((TextC == TEXT_CORNER_REVISION) && ((GlobalConfig.HideUIFlags & HIDEUI_FLAG_REVISION) != 0)) ||
     ((TextC == TEXT_CORNER_HELP) && ((GlobalConfig.HideUIFlags & HIDEUI_FLAG_HELP) != 0))
   ) {
@@ -2576,9 +2586,9 @@ VOID DrawTextCorner(UINTN TextC, UINT8 Align)
   switch (TextC) {
     case TEXT_CORNER_REVISION:
 #ifdef FIRMWARE_REVISION
-  Text = FIRMWARE_REVISION;
+      Text = FIRMWARE_REVISION;
 #else
-  Text = gST->FirmwareRevision;
+      Text = gST->FirmwareRevision;
 #endif
       break;
     case TEXT_CORNER_HELP:
@@ -2602,7 +2612,6 @@ VOID DrawTextCorner(UINTN TextC, UINT8 Align)
       return;
   }
 
-  egMeasureText(Text, &TextWidth, NULL);
   DrawTextXY(Text, Xpos, UGAHeight - 5 - TextHeight, Align);
 }
 
@@ -2729,8 +2738,6 @@ VOID MainMenuVerticalStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State,
       break;
 
     case MENU_FUNCTION_PAINT_TIMEOUT:
-//      X = (EntriesPosX - StrLen(ParamText) * GlobalConfig.CharWidth) >> 1;
-//      DrawMenuText(ParamText, 0, X, TimeoutPosY, 0xFFFF);
       i = (GlobalConfig.HideBadges & HDBADGES_INLINE)?3:1;
       HidePointer();
       if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)){
@@ -4105,6 +4112,9 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
   INTN              EntryIndex = 0;
   INTN              SubMenuIndex;
   REFIT_INPUT_DIALOG* InputBootArgs;
+  BOOLEAN           OldFontStyle = GlobalConfig.Proportional;
+  
+  GlobalConfig.Proportional = FALSE; //temporary disable proportional
 
   if (AllowGraphicsMode)
     Style = GraphicsMenuStyle;
@@ -4240,8 +4250,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
             if (TmpChosenEntry->ShortcutDigit == 0xF1) {
               MenuExit = MENU_EXIT_ENTER;
               //     DBG("Escape menu from input dialog\n");
-              ApplyInputs();
-              return;
+              goto exit;
             } //if F1
           }
         } //while(!SubMenuExit)
@@ -4254,6 +4263,8 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
       } //if F1
     } // if MENU_EXIT_ENTER
   }
+exit:
+  GlobalConfig.Proportional = OldFontStyle;
   ApplyInputs();
 }
 

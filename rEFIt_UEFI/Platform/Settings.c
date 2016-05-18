@@ -122,8 +122,8 @@ REFIT_CONFIG   GlobalConfig = {
   128,            // INTN        MainEntriesSize;
   8,              // INTN        TileXSpace;
   24,             // INTN        TileYSpace;
-  FALSE           // BOOLEAN     Proportional;
-                  // BOOLEAN     NoEarlyProgress;
+  FALSE,          // BOOLEAN     Proportional;
+  FALSE           // BOOLEAN     NoEarlyProgress;
 };
 
 /*
@@ -1281,40 +1281,40 @@ FillinCustomEntry (
   Prop = GetProperty (DictPointer, "VolumeType");
   if (Prop != NULL) {
     if (Prop->type == kTagTypeString) {
-    if (AsciiStriCmp (Prop->string, "Internal") == 0) {
-      Entry->VolumeType = VOLTYPE_INTERNAL;
-    } else if (AsciiStriCmp (Prop->string, "External") == 0) {
-      Entry->VolumeType = VOLTYPE_EXTERNAL;
-    } else if (AsciiStriCmp (Prop->string, "Optical") == 0) {
-      Entry->VolumeType = VOLTYPE_OPTICAL;
-    } else if (AsciiStriCmp (Prop->string, "FireWire") == 0) {
-      Entry->VolumeType = VOLTYPE_FIREWIRE;
-    }
+      if (AsciiStriCmp (Prop->string, "Internal") == 0) {
+        Entry->VolumeType = VOLTYPE_INTERNAL;
+      } else if (AsciiStriCmp (Prop->string, "External") == 0) {
+        Entry->VolumeType = VOLTYPE_EXTERNAL;
+      } else if (AsciiStriCmp (Prop->string, "Optical") == 0) {
+        Entry->VolumeType = VOLTYPE_OPTICAL;
+      } else if (AsciiStriCmp (Prop->string, "FireWire") == 0) {
+        Entry->VolumeType = VOLTYPE_FIREWIRE;
+      }
     } else if (Prop->type == kTagTypeArray) {
-    INTN   i, Count = GetTagCount (Prop);
-    if (Count > 0) {
-      TagPtr Prop2 = NULL;
-      for (i = 0; i < Count; i++) {
-        if (EFI_ERROR (GetElement (Prop, i, &Prop2))) {
-          continue;
-        }
-
-        if (Prop2 == NULL) {
-          break;
-        }
-
-        if ((Prop2->type != kTagTypeString) || (Prop2->string == NULL)) {
-          continue;
-        }
-
-        if (AsciiStriCmp (Prop2->string, "Internal") == 0) {
-          Entry->VolumeType |= VOLTYPE_INTERNAL;
-        } else if (AsciiStriCmp (Prop2->string, "External") == 0) {
-          Entry->VolumeType |= VOLTYPE_EXTERNAL;
-        } else if (AsciiStriCmp (Prop2->string, "Optical") == 0) {
-          Entry->VolumeType |= VOLTYPE_OPTICAL;
-        } else if (AsciiStriCmp (Prop2->string, "FireWire") == 0) {
-          Entry->VolumeType |= VOLTYPE_FIREWIRE;
+      INTN   i, Count = GetTagCount (Prop);
+      if (Count > 0) {
+        TagPtr Prop2 = NULL;
+        for (i = 0; i < Count; i++) {
+          if (EFI_ERROR (GetElement (Prop, i, &Prop2))) {
+            continue;
+          }
+          
+          if (Prop2 == NULL) {
+            break;
+          }
+          
+          if ((Prop2->type != kTagTypeString) || (Prop2->string == NULL)) {
+            continue;
+          }
+          
+          if (AsciiStriCmp (Prop2->string, "Internal") == 0) {
+            Entry->VolumeType |= VOLTYPE_INTERNAL;
+          } else if (AsciiStriCmp (Prop2->string, "External") == 0) {
+            Entry->VolumeType |= VOLTYPE_EXTERNAL;
+          } else if (AsciiStriCmp (Prop2->string, "Optical") == 0) {
+            Entry->VolumeType |= VOLTYPE_OPTICAL;
+          } else if (AsciiStriCmp (Prop2->string, "FireWire") == 0) {
+            Entry->VolumeType |= VOLTYPE_FIREWIRE;
           }
         }
       }
@@ -1609,39 +1609,40 @@ FillinCustomLegacy (
     }
   }
   Prop = GetProperty (DictPointer, "VolumeType");
-  if (Prop != NULL && (Prop->type == kTagTypeString)) {
-    if (AsciiStriCmp (Prop->string, "Internal") == 0) {
-      Entry->VolumeType = VOLTYPE_INTERNAL;
-    } else if (AsciiStriCmp (Prop->string, "External") == 0) {
-      Entry->VolumeType = VOLTYPE_EXTERNAL;
-    } else if (AsciiStriCmp (Prop->string, "Optical") == 0) {
-      Entry->VolumeType = VOLTYPE_OPTICAL;
-    } else if (AsciiStriCmp (Prop->string, "FireWire") == 0) {
-      Entry->VolumeType = VOLTYPE_FIREWIRE;
-    }
-  } else {
-    INTN   i, Count = GetTagCount (Prop);
-    if (Count > 0)
-    {
-      TagPtr Prop2 = NULL;
-      for (i = 0; i < Count; i++) {
-        if (EFI_ERROR (GetElement (Prop, i, &Prop2))) {
-          continue;
-        }
-        if (Prop2 == NULL) {
-          break;
-        }
-        if ((Prop2->type != kTagTypeString) || (Prop2->string == NULL)) {
-          continue;
-        }
-        if (AsciiStriCmp (Prop2->string, "Internal") == 0) {
-          Entry->VolumeType |= VOLTYPE_INTERNAL;
-        } else if (AsciiStriCmp (Prop2->string, "External") == 0) {
-          Entry->VolumeType |= VOLTYPE_EXTERNAL;
-        } else if (AsciiStriCmp (Prop2->string, "Optical") == 0) {
-          Entry->VolumeType |= VOLTYPE_OPTICAL;
-        } else if (AsciiStriCmp (Prop2->string, "FireWire") == 0) {
-          Entry->VolumeType |= VOLTYPE_FIREWIRE;
+  if (Prop != NULL) {
+    if (Prop->type == kTagTypeString) {
+      if (AsciiStriCmp (Prop->string, "Internal") == 0) {
+        Entry->VolumeType = VOLTYPE_INTERNAL;
+      } else if (AsciiStriCmp (Prop->string, "External") == 0) {
+        Entry->VolumeType = VOLTYPE_EXTERNAL;
+      } else if (AsciiStriCmp (Prop->string, "Optical") == 0) {
+        Entry->VolumeType = VOLTYPE_OPTICAL;
+      } else if (AsciiStriCmp (Prop->string, "FireWire") == 0) {
+        Entry->VolumeType = VOLTYPE_FIREWIRE;
+      }
+    } else if (Prop->type == kTagTypeArray) {
+      INTN   i, Count = GetTagCount (Prop);
+      if (Count > 0) {
+        TagPtr Prop2 = NULL;
+        for (i = 0; i < Count; i++) {
+          if (EFI_ERROR (GetElement (Prop, i, &Prop2))) {
+            continue;
+          }
+          if (Prop2 == NULL) {
+            break;
+          }
+          if ((Prop2->type != kTagTypeString) || (Prop2->string == NULL)) {
+            continue;
+          }
+          if (AsciiStriCmp (Prop2->string, "Internal") == 0) {
+            Entry->VolumeType |= VOLTYPE_INTERNAL;
+          } else if (AsciiStriCmp (Prop2->string, "External") == 0) {
+            Entry->VolumeType |= VOLTYPE_EXTERNAL;
+          } else if (AsciiStriCmp (Prop2->string, "Optical") == 0) {
+            Entry->VolumeType |= VOLTYPE_OPTICAL;
+          } else if (AsciiStriCmp (Prop2->string, "FireWire") == 0) {
+            Entry->VolumeType |= VOLTYPE_FIREWIRE;
+          }
         }
       }
     }
@@ -1767,47 +1768,44 @@ FillinCustomTool (
   }
 
   Prop = GetProperty (DictPointer, "VolumeType");
-  if (Prop != NULL && (Prop->type == kTagTypeString)) {
-    if (AsciiStriCmp (Prop->string, "Internal") == 0) {
-      Entry->VolumeType = VOLTYPE_INTERNAL;
-    } else if (AsciiStriCmp (Prop->string, "External") == 0) {
-      Entry->VolumeType = VOLTYPE_EXTERNAL;
-    } else if (AsciiStriCmp (Prop->string, "Optical") == 0) {
-      Entry->VolumeType = VOLTYPE_OPTICAL;
-    } else if (AsciiStriCmp (Prop->string, "FireWire") == 0) {
-      Entry->VolumeType = VOLTYPE_FIREWIRE;
-    }
-  } else {
-    INTN   i, Count = GetTagCount (Prop);
-    if (Count > 0)
-    {
-      TagPtr Prop2 = NULL;
-      for (i = 0; i < Count; i++) {
-        if (EFI_ERROR (GetElement (Prop, i, &Prop2))) {
-          continue;
-        }
-
-        if (Prop2 == NULL) {
-          break;
-        }
-
-        if ((Prop2->type != kTagTypeString) || (Prop2->string == NULL)) {
-          continue;
-        }
-
-        if (AsciiStriCmp (Prop2->string, "Internal") == 0) {
-          Entry->VolumeType |= VOLTYPE_INTERNAL;
-        } else if (AsciiStriCmp (Prop2->string, "External") == 0) {
-          Entry->VolumeType |= VOLTYPE_EXTERNAL;
-        } else if (AsciiStriCmp (Prop2->string, "Optical") == 0) {
-          Entry->VolumeType |= VOLTYPE_OPTICAL;
-        } else if (AsciiStriCmp (Prop2->string, "FireWire") == 0) {
-          Entry->VolumeType |= VOLTYPE_FIREWIRE;
+  if (Prop != NULL) {
+    if (Prop->type == kTagTypeString) {
+      if (AsciiStriCmp (Prop->string, "Internal") == 0) {
+        Entry->VolumeType = VOLTYPE_INTERNAL;
+      } else if (AsciiStriCmp (Prop->string, "External") == 0) {
+        Entry->VolumeType = VOLTYPE_EXTERNAL;
+      } else if (AsciiStriCmp (Prop->string, "Optical") == 0) {
+        Entry->VolumeType = VOLTYPE_OPTICAL;
+      } else if (AsciiStriCmp (Prop->string, "FireWire") == 0) {
+        Entry->VolumeType = VOLTYPE_FIREWIRE;
+      }
+    } else if (Prop->type == kTagTypeArray) {
+      INTN   i, Count = GetTagCount (Prop);
+      if (Count > 0) {
+        TagPtr Prop2 = NULL;
+        for (i = 0; i < Count; i++) {
+          if (EFI_ERROR (GetElement (Prop, i, &Prop2))) {
+            continue;
+          }
+          if (Prop2 == NULL) {
+            break;
+          }
+          if ((Prop2->type != kTagTypeString) || (Prop2->string == NULL)) {
+            continue;
+          }
+          if (AsciiStriCmp (Prop2->string, "Internal") == 0) {
+            Entry->VolumeType |= VOLTYPE_INTERNAL;
+          } else if (AsciiStriCmp (Prop2->string, "External") == 0) {
+            Entry->VolumeType |= VOLTYPE_EXTERNAL;
+          } else if (AsciiStriCmp (Prop2->string, "Optical") == 0) {
+            Entry->VolumeType |= VOLTYPE_OPTICAL;
+          } else if (AsciiStriCmp (Prop2->string, "FireWire") == 0) {
+            Entry->VolumeType |= VOLTYPE_FIREWIRE;
+          }
         }
       }
     }
-  }
-  return TRUE;
+  }  return TRUE;
 }
 
 EFI_STATUS
