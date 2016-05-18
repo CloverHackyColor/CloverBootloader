@@ -1280,7 +1280,7 @@ FillinCustomEntry (
 
   Prop = GetProperty (DictPointer, "VolumeType");
   if (Prop != NULL) {
-    if (Prop->type == kTagTypeString)) {
+    if (Prop->type == kTagTypeString) {
       if (AsciiStriCmp (Prop->string, "Internal") == 0) {
         Entry->VolumeType = VOLTYPE_INTERNAL;
       } else if (AsciiStriCmp (Prop->string, "External") == 0) {
@@ -1290,7 +1290,7 @@ FillinCustomEntry (
       } else if (AsciiStriCmp (Prop->string, "FireWire") == 0) {
         Entry->VolumeType = VOLTYPE_FIREWIRE;
       }
-    } else if (Prop->type == kTagTypeArray)){
+    } else if (Prop->type == kTagTypeArray) {
       INTN   i, Count = GetTagCount (Prop);
       if (Count > 0) {
         TagPtr Prop2 = NULL;
