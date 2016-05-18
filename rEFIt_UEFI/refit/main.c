@@ -288,7 +288,7 @@ static VOID HelpRefit(VOID)
       case indonesian:
         AddMenuInfoLine(&HelpMenu, L"ESC - Keluar submenu, Refresh main menu");
         AddMenuInfoLine(&HelpMenu, L"F1  - Help");
-        AddMenuInfoLine(&HelpMenu, L"F2  - Simpan preboot.log (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F2  - Simpan preboot.log ke EFI/CLOVER/ACPI/misc/ (FAT32)");
         AddMenuInfoLine(&HelpMenu, L"F3  - Show hidden entries");
         AddMenuInfoLine(&HelpMenu, L"F4  - Simpan oem DSDT ke EFI/CLOVER/ACPI/origin/ (FAT32)");
         AddMenuInfoLine(&HelpMenu, L"F5  - Simpan patched DSDT ke EFI/CLOVER/ACPI/origin/ (FAT32)");
@@ -405,7 +405,7 @@ static VOID HelpRefit(VOID)
       default:
         AddMenuInfoLine(&HelpMenu, L"ESC - Escape from submenu, Refresh main menu");
         AddMenuInfoLine(&HelpMenu, L"F1  - This help");
-        AddMenuInfoLine(&HelpMenu, L"F2  - Save preboot.log (FAT32 only)");
+        AddMenuInfoLine(&HelpMenu, L"F2  - Save preboot.log into EFI/CLOVER/misc/ (FAT32)");
         AddMenuInfoLine(&HelpMenu, L"F3  - Show hidden entries");
         AddMenuInfoLine(&HelpMenu, L"F4  - Save oem DSDT into EFI/CLOVER/ACPI/origin/ (FAT32)");
         AddMenuInfoLine(&HelpMenu, L"F5  - Save patched DSDT into EFI/CLOVER/ACPI/origin/ (FAT32)");
@@ -1798,6 +1798,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
   // Init assets dir: misc
   /*Status = */egMkDir(SelfRootDir,  L"EFI\\CLOVER\\misc");
+  //Should apply to: "ACPI/origin/" too
 
   // get TSC freq and init MemLog if needed
   gCPUStructure.TSCCalibr = GetMemLogTscTicksPerSecond(); //ticks for 1second
@@ -1812,6 +1813,10 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
   gRS->GetTime(&Now, NULL);
 
+  //GMT always wrong
+  //Now.TimeZone = 7;
+  //gRS->SetTime(&Now);
+
   // firmware detection
   gFirmwareClover = StrCmp(gST->FirmwareVendor, L"CLOVER") == 0;
   InitializeConsoleSim();
@@ -1819,6 +1824,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   ZeroMem((VOID*)&gGraphics[0], sizeof(GFX_PROPERTIES) * 4);
 
   DBG("\n");
+  //Range TimeZone: -1440 to 1440 or 2047
   if (Now.TimeZone < 0 || Now.TimeZone > 24) {
     MsgLog("Now is %d.%d.%d,  %d:%d:%d (GMT)\n",
            Now.Day, Now.Month, Now.Year, Now.Hour, Now.Minute, Now.Second);
@@ -2239,7 +2245,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 // font already changed and this message very quirky, clear line here
       if (!GlobalConfig.NoEarlyProgress && !GlobalConfig.FastBoot && GlobalConfig.Timeout>0) {
         DrawTextXY(L"                          ", (UGAWidth >> 1), (UGAHeight >> 1) + 20, X_IS_CENTER);
-      } 
+      }
     }
     // wait for user ACK when there were errors
     FinishTextScreen(FALSE);

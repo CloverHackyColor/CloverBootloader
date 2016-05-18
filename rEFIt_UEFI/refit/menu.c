@@ -65,6 +65,7 @@ extern UINTN            ThemesNum;
 extern CHAR16           *ThemesList[];
 extern CHAR8            *NonDetected;
 extern BOOLEAN          GetLegacyLanAddress;
+extern UINT8            gLanMac[4][6]; // their MAC addresses
 
 INTN LayoutBannerOffset = 64;
 INTN LayoutButtonOffset = 0;
@@ -84,6 +85,8 @@ INTN LayoutAnimMoveForMenuX = 0;
 #define SCROLL_SCROLLBAR_MOVE (9)
 
 
+#define TEXT_CORNER_REVISION  (1)
+#define TEXT_CORNER_HELP      (2)
 
 // other menu definitions
 
@@ -1016,6 +1019,7 @@ VOID ApplyInputs(VOID)
 
   if (SysVariables) {
     SYSVARIABLES *SysVariablesTmp = SysVariables;
+    CHAR8 *SysVarsTmp = NULL;
     while (SysVariablesTmp) {
       if (SysVariablesTmp->MenuItem.Valid) {
         if (StrCmp(SysVariablesTmp->Key, L"CsrActiveConfig") == 0) {
@@ -1027,23 +1031,52 @@ VOID ApplyInputs(VOID)
           UnicodeStrToAsciiStr(SysVariablesTmp->MenuItem.SValue, gSettings.RtMLB);
         } else if (StrCmp(SysVariablesTmp->Key, L"ROM") == 0) {
           UINT32 len;
-          CHAR8 *RomTmp= AllocateZeroPool(StrSize(SysVariablesTmp->MenuItem.SValue));
-          UnicodeStrToAsciiStr(SysVariablesTmp->MenuItem.SValue, RomTmp);
-          len = (UINT32)(AsciiStrLen(RomTmp) >> 1);
-          gSettings.RtROM = (UINT8*)AllocateZeroPool(len);
-          gSettings.RtROMLen = hex2bin(RomTmp, gSettings.RtROM, len);
-          FreePool(RomTmp);
+          SysVarsTmp = AllocateZeroPool(StrSize(SysVariablesTmp->MenuItem.SValue));
+          UnicodeStrToAsciiStr(SysVariablesTmp->MenuItem.SValue, SysVarsTmp);
+          if (AsciiStriCmp(SysVarsTmp, "UseMacAddr0") == 0) {
+            gSettings.RtROM     = &gLanMac[0][0];
+            gSettings.RtROMLen  = 6;
+          } else if (AsciiStriCmp(SysVarsTmp, "UseMacAddr1") == 0) {
+            gSettings.RtROM     = &gLanMac[1][0];
+            gSettings.RtROMLen  = 6;
+          } else {
+            len = (UINT32)(AsciiStrLen(SysVarsTmp) >> 1);
+            gSettings.RtROM = (UINT8*)AllocateZeroPool(len);
+            gSettings.RtROMLen = hex2bin(SysVarsTmp, gSettings.RtROM, len);
+          }
+        } else if (StrCmp(SysVariablesTmp->Key, L"CustomUUID") == 0) {
+          BOOLEAN IsValidCustomUUID = FALSE;
+          SysVarsTmp = AllocateZeroPool(StrSize(SysVariablesTmp->MenuItem.SValue));
+          UnicodeStrToAsciiStr(SysVariablesTmp->MenuItem.SValue, SysVarsTmp);
+          if (IsValidGuidAsciiString (SysVarsTmp)) {
+            AsciiStrToUnicodeStr (SysVarsTmp, gSettings.CustomUuid);
+            Status = StrToGuidLE (gSettings.CustomUuid, &gUuid);
+            if (!EFI_ERROR (Status)) {
+              IsValidCustomUUID = TRUE;
+              // if CustomUUID specified, then default for InjectSystemID=FALSE
+              // to stay compatibile with previous Clover behaviour
+              gSettings.InjectSystemID = FALSE;
+            }
+          }
+
+          if (!IsValidCustomUUID && (AsciiStrLen(SysVarsTmp) > 0)) {
+            DBG ("Error: invalid CustomUUID '%a' - should be in the format XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX\n", SysVarsTmp);
+          }
+        } else if (StrCmp(SysVariablesTmp->Key, L"InjectSystemID") == 0) {
+          gSettings.InjectSystemID = SysVariablesTmp->MenuItem.BValue;
         }
       }
       SysVariablesTmp = SysVariablesTmp->Next;
     }
-  }
 
+    if (SysVarsTmp != NULL) {
+      FreePool(SysVarsTmp);
+    }
+  }
 
   if (NeedSave) {
     SaveSettings();
   }
-
 }
 
 
@@ -1402,7 +1435,7 @@ static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC  Style
 #if DBG_INPUTDIALOG
   UINTN         Iteration = 0;
 #endif
-  
+
 
   if (Item->ItemType != BoolValue) {
     // Grow Item->SValue to SVALUE_MAX_SIZE if we want to edit a text field
@@ -1982,7 +2015,7 @@ INTN DrawTextXY(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
   egMeasureText(Text, &TextWidth, NULL);
   if (XAlign == X_IS_LEFT) {
     TextWidth = UGAWidth - XPos - 1;
-    XText = XPos; 
+    XText = XPos;
   }
   TextBufferXY = egCreateImage(TextWidth, TextHeight, TRUE);
 
@@ -2526,36 +2559,50 @@ VOID CountItems(IN REFIT_MENU_SCREEN *Screen)
   }
 }
 
-VOID DrawRevision(UINT8 Align)
+VOID DrawTextCorner(UINTN TextC, UINT8 Align)
 {
   INTN    TextWidth = 0;
   INTN    Xpos;
   CHAR16  *Text;
-  
-  if ((GlobalConfig.HideUIFlags & HIDEUI_FLAG_REVISION) != 0){
+
+  if (
+    // HIDEUI_ALL???
+    ((TextC == TEXT_CORNER_REVISION) && ((GlobalConfig.HideUIFlags & HIDEUI_FLAG_REVISION) != 0)) ||
+    ((TextC == TEXT_CORNER_HELP) && ((GlobalConfig.HideUIFlags & HIDEUI_FLAG_HELP) != 0))
+  ) {
     return;
   }
-  
+
+  switch (TextC) {
+    case TEXT_CORNER_REVISION:
 #ifdef FIRMWARE_REVISION
   Text = FIRMWARE_REVISION;
 #else
   Text = gST->FirmwareRevision;
 #endif
-  
-  egMeasureText(Text, &TextWidth, NULL);
+      break;
+    case TEXT_CORNER_HELP:
+      Text = L"F1:?";
+      break;
+    default:
+      return;
+  }
+
   switch (Align) {
     case X_IS_LEFT:
       Xpos = 5;
       break;
     case X_IS_RIGHT:
-      Xpos = UGAWidth - 2;
+      Xpos = UGAWidth - 5;//2
       break;
     case X_IS_CENTER: //not used
       Xpos = UGAWidth >> 1;
-      break;      
+      break;
     default:
       return;
   }
+
+  egMeasureText(Text, &TextWidth, NULL);
   DrawTextXY(Text, Xpos, UGAHeight - 5 - TextHeight, Align);
 }
 
@@ -2646,7 +2693,7 @@ VOID MainMenuVerticalStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State,
       }
 
       ScrollingBar(State);
-      DrawRevision(X_IS_LEFT);
+      DrawTextCorner(TEXT_CORNER_REVISION, X_IS_LEFT);
       MouseBirth();
       break;
 
@@ -2677,7 +2724,7 @@ VOID MainMenuVerticalStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State,
       }
 
       ScrollingBar(State);
-      DrawRevision(X_IS_LEFT);
+      DrawTextCorner(TEXT_CORNER_REVISION, X_IS_LEFT);
       MouseBirth();
       break;
 
@@ -2691,7 +2738,8 @@ VOID MainMenuVerticalStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State,
                              OldTimeoutTextWidth, TextHeight, &MenuBackgroundPixel, X_IS_CENTER);
         OldTimeoutTextWidth = DrawTextXY(ParamText, (UGAWidth >> 1), textPosY + TextHeight * i, X_IS_CENTER);
       }
-      DrawRevision(X_IS_LEFT);
+
+      DrawTextCorner(TEXT_CORNER_REVISION, X_IS_LEFT);
       break;
   }
 }
@@ -2776,12 +2824,9 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
         DrawMainMenuLabel(Screen->Entries[State->CurrentSelection]->Title,
                           (UGAWidth >> 1), textPosY, Screen, State);
       }
-      //      DBG("DrawRevision\n");
-      if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_HELP)){
-        DrawTextXY(L"F1:?", 2, UGAHeight - 2 - TextHeight, X_IS_LEFT);
-      }
 
-      DrawRevision(X_IS_RIGHT);
+      DrawTextCorner(TEXT_CORNER_HELP, X_IS_LEFT);
+      DrawTextCorner(TEXT_CORNER_REVISION, X_IS_RIGHT);
       MouseBirth();
       break;
 
@@ -2806,10 +2851,9 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
           DrawMainMenuLabel(Screen->Entries[State->CurrentSelection]->Title,
                             (UGAWidth >> 1), textPosY, Screen, State);
       }
-      if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_HELP)){
-        DrawTextXY(L"F1:?", 2, UGAHeight - 2 - TextHeight, X_IS_LEFT);
-      }
-      DrawRevision(X_IS_RIGHT);
+
+      DrawTextCorner(TEXT_CORNER_HELP, X_IS_LEFT);
+      DrawTextCorner(TEXT_CORNER_REVISION, X_IS_RIGHT);
       MouseBirth();
       break;
 
@@ -2821,7 +2865,9 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
                                    OldTimeoutTextWidth, TextHeight, &MenuBackgroundPixel, X_IS_CENTER);
         OldTimeoutTextWidth = DrawTextXY(ParamText, (UGAWidth >> 1), textPosY + TextHeight * i, X_IS_CENTER);
       }
-      DrawRevision(X_IS_RIGHT);
+
+      DrawTextCorner(TEXT_CORNER_HELP, X_IS_LEFT);
+      DrawTextCorner(TEXT_CORNER_REVISION, X_IS_RIGHT);
       MouseBirth();
       break;
 
@@ -3404,14 +3450,14 @@ REFIT_MENU_ENTRY  *SubMenuSysVariables()
   SubScreen->ID = SCREEN_TABLES;
   SubScreen->AnimeRun = GetAnime(SubScreen);
 
-  //AddMenuInfoLine(SubScreen, L"PATCHED AML:");
+  AddMenuInfoLine(SubScreen, L"More: SystemParameters -> ExposeSysVariables = TRUE");
   if (SysVariables) {
     SYSVARIABLES *SysVariablesTmp = SysVariables;
     while (SysVariablesTmp) {
       InputRT = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
       InputRT->Entry.Title = PoolPrint(L"%s:", SysVariablesTmp->Key);
       InputRT->Entry.Tag = TAG_INPUT;
-      InputRT->Entry.Row = StrLen(SysVariablesTmp->MenuItem.SValue); //cursor
+      InputRT->Entry.Row = (SysVariablesTmp->MenuItem.ItemType == BoolValue) ? 0xFFFF : StrLen(SysVariablesTmp->MenuItem.SValue); //cursor
       InputRT->Item = &(SysVariablesTmp->MenuItem);
       InputRT->Entry.AtClick = ActionEnter;
       InputRT->Entry.AtRightClick = ActionDetails;

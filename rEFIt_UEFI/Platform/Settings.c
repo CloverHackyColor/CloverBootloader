@@ -1281,40 +1281,40 @@ FillinCustomEntry (
   Prop = GetProperty (DictPointer, "VolumeType");
   if (Prop != NULL) {
     if (Prop->type == kTagTypeString) {
-      if (AsciiStriCmp (Prop->string, "Internal") == 0) {
-        Entry->VolumeType = VOLTYPE_INTERNAL;
-      } else if (AsciiStriCmp (Prop->string, "External") == 0) {
-        Entry->VolumeType = VOLTYPE_EXTERNAL;
-      } else if (AsciiStriCmp (Prop->string, "Optical") == 0) {
-        Entry->VolumeType = VOLTYPE_OPTICAL;
-      } else if (AsciiStriCmp (Prop->string, "FireWire") == 0) {
-        Entry->VolumeType = VOLTYPE_FIREWIRE;
-      }
+    if (AsciiStriCmp (Prop->string, "Internal") == 0) {
+      Entry->VolumeType = VOLTYPE_INTERNAL;
+    } else if (AsciiStriCmp (Prop->string, "External") == 0) {
+      Entry->VolumeType = VOLTYPE_EXTERNAL;
+    } else if (AsciiStriCmp (Prop->string, "Optical") == 0) {
+      Entry->VolumeType = VOLTYPE_OPTICAL;
+    } else if (AsciiStriCmp (Prop->string, "FireWire") == 0) {
+      Entry->VolumeType = VOLTYPE_FIREWIRE;
+    }
     } else if (Prop->type == kTagTypeArray) {
-      INTN   i, Count = GetTagCount (Prop);
-      if (Count > 0) {
-        TagPtr Prop2 = NULL;
-        for (i = 0; i < Count; i++) {
-          if (EFI_ERROR (GetElement (Prop, i, &Prop2))) {
-            continue;
-          }
-          
-          if (Prop2 == NULL) {
-            break;
-          }
-          
-          if ((Prop2->type != kTagTypeString) || (Prop2->string == NULL)) {
-            continue;
-          }
-          
-          if (AsciiStriCmp (Prop2->string, "Internal") == 0) {
-            Entry->VolumeType |= VOLTYPE_INTERNAL;
-          } else if (AsciiStriCmp (Prop2->string, "External") == 0) {
-            Entry->VolumeType |= VOLTYPE_EXTERNAL;
-          } else if (AsciiStriCmp (Prop2->string, "Optical") == 0) {
-            Entry->VolumeType |= VOLTYPE_OPTICAL;
-          } else if (AsciiStriCmp (Prop2->string, "FireWire") == 0) {
-            Entry->VolumeType |= VOLTYPE_FIREWIRE;
+    INTN   i, Count = GetTagCount (Prop);
+    if (Count > 0) {
+      TagPtr Prop2 = NULL;
+      for (i = 0; i < Count; i++) {
+        if (EFI_ERROR (GetElement (Prop, i, &Prop2))) {
+          continue;
+        }
+
+        if (Prop2 == NULL) {
+          break;
+        }
+
+        if ((Prop2->type != kTagTypeString) || (Prop2->string == NULL)) {
+          continue;
+        }
+
+        if (AsciiStriCmp (Prop2->string, "Internal") == 0) {
+          Entry->VolumeType |= VOLTYPE_INTERNAL;
+        } else if (AsciiStriCmp (Prop2->string, "External") == 0) {
+          Entry->VolumeType |= VOLTYPE_EXTERNAL;
+        } else if (AsciiStriCmp (Prop2->string, "Optical") == 0) {
+          Entry->VolumeType |= VOLTYPE_OPTICAL;
+        } else if (AsciiStriCmp (Prop2->string, "FireWire") == 0) {
+          Entry->VolumeType |= VOLTYPE_FIREWIRE;
           }
         }
       }
@@ -4772,8 +4772,17 @@ GetUserSettings(
       }
     }
 
-    // RtVariables
+    // SysVars -->
+    gSettings.ExposeSysVariables = FALSE;
+    CHAR16 *SysVarsTmp = NULL;
     SYSVARIABLES  *SysVariablesTmp;
+    UINT32 SysVarsTmpCsrActiveConfig = 0x67;
+    UINT16 SysVarsTmpBooterConfig = 0xFFFF;
+    // SysVars <--
+
+    BOOLEAN IsValidCustomUUID = FALSE;
+
+    // RtVariables
     DictPointer = GetProperty (Dict, "RtVariables");
     if (DictPointer != NULL) {
       // ROM: <data>bin data</data> or <string>base 64 encoded bin data</string>
@@ -4822,24 +4831,12 @@ GetUserSettings(
       // CsrActiveConfig
       Prop = GetProperty (DictPointer, "CsrActiveConfig");
       gSettings.CsrActiveConfig = (UINT32)GetPropertyInteger (Prop, 0x67); //the value 0xFFFF means not set
-
-      SysVariablesTmp                    = AllocateZeroPool (sizeof(SYSVARIABLES));
-      SysVariablesTmp->Key               = PoolPrint(L"CsrActiveConfig");
-      SysVariablesTmp->MenuItem.SValue   = PoolPrint(L"0x%02x", gSettings.CsrActiveConfig);
-      SysVariablesTmp->MenuItem.ItemType = Hex;
-      SysVariablesTmp->Next              = SysVariables;
-      SysVariables                       = SysVariablesTmp;
+      SysVarsTmpCsrActiveConfig = gSettings.CsrActiveConfig;
 
       //BooterConfig
       Prop = GetProperty (DictPointer, "BooterConfig");
       gSettings.BooterConfig = (UINT16)GetPropertyInteger (Prop, 0xFFFF); //the value 0xFFFF means not set
-
-      SysVariablesTmp                    = AllocateZeroPool (sizeof(SYSVARIABLES));
-      SysVariablesTmp->Key               = PoolPrint(L"BooterConfig");
-      SysVariablesTmp->MenuItem.SValue   = PoolPrint(L"0x%02x", gSettings.BooterConfig);
-      SysVariablesTmp->MenuItem.ItemType = Hex;
-      SysVariablesTmp->Next              = SysVariables;
-      SysVariables                       = SysVariablesTmp;
+      SysVarsTmpBooterConfig = gSettings.BooterConfig;
     }
 
     if (gSettings.RtROM == NULL) {
@@ -4856,8 +4853,6 @@ GetUserSettings(
     // to get Chameleon's default behaviour (to make user's life easier)
     CopyMem ((VOID*)&gUuid, (VOID*)&gSettings.SmUUID, sizeof(EFI_GUID));
     gSettings.InjectSystemID = TRUE;
-
-    gSettings.ExposeSysVariables = FALSE;
 
     // SystemParameters again - values that can depend on previous params
     DictPointer = GetProperty (Dict, "SystemParameters");
@@ -4877,10 +4872,15 @@ GetUserSettings(
         if (IsValidGuidAsciiString (Prop->string)) {
           AsciiStrToUnicodeStr (Prop->string, gSettings.CustomUuid);
           Status = StrToGuidLE (gSettings.CustomUuid, &gUuid);
-          // if CustomUUID specified, then default for InjectSystemID=FALSE
-          // to stay compatibile with previous Clover behaviour
-          gSettings.InjectSystemID = FALSE;
-        } else {
+          if (!EFI_ERROR (Status)) {
+            IsValidCustomUUID = TRUE;
+            // if CustomUUID specified, then default for InjectSystemID=FALSE
+            // to stay compatibile with previous Clover behaviour
+            gSettings.InjectSystemID = FALSE;
+          }
+        }
+
+        if (!IsValidCustomUUID) {
           DBG ("Error: invalid CustomUUID '%a' - should be in the format XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX\n", Prop->string);
         }
       }
@@ -4895,16 +4895,30 @@ GetUserSettings(
       }
     }
 
+    // SysVars -->
+    SysVariablesTmp                    = AllocateZeroPool (sizeof(SYSVARIABLES));
+    SysVariablesTmp->Key               = PoolPrint(L"CsrActiveConfig");
+    SysVariablesTmp->MenuItem.SValue   = PoolPrint(L"0x%02x", SysVarsTmpCsrActiveConfig);
+    SysVariablesTmp->MenuItem.ItemType = Hex;
+    SysVariablesTmp->Next              = SysVariables;
+    SysVariables                       = SysVariablesTmp;
+
+    SysVariablesTmp                    = AllocateZeroPool (sizeof(SYSVARIABLES));
+    SysVariablesTmp->Key               = PoolPrint(L"BooterConfig");
+    SysVariablesTmp->MenuItem.SValue   = PoolPrint(L"0x%02x", SysVarsTmpBooterConfig);
+    SysVariablesTmp->MenuItem.ItemType = Hex;
+    SysVariablesTmp->Next              = SysVariables;
+    SysVariables                       = SysVariablesTmp;
+
     if (gSettings.ExposeSysVariables) {
-      CHAR16 *RomTmp = AllocateZeroPool((gSettings.RtROMLen * 2) + 1);
-      AsciiStrToUnicodeStr(Bytes2HexStr(gSettings.RtROM, gSettings.RtROMLen), RomTmp);
+      SysVarsTmp = AllocateZeroPool((gSettings.RtROMLen * 2) + 1);
+      AsciiStrToUnicodeStr(Bytes2HexStr(gSettings.RtROM, gSettings.RtROMLen), SysVarsTmp);
       SysVariablesTmp                    = AllocateZeroPool (sizeof(SYSVARIABLES));
       SysVariablesTmp->Key               = PoolPrint(L"ROM");
-      SysVariablesTmp->MenuItem.SValue   = PoolPrint(L"%s", RomTmp);
+      SysVariablesTmp->MenuItem.SValue   = PoolPrint(L"%s", SysVarsTmp);
       SysVariablesTmp->MenuItem.ItemType = ASString;
       SysVariablesTmp->Next              = SysVariables;
       SysVariables                       = SysVariablesTmp;
-      FreePool(RomTmp);
 
       SysVariablesTmp                    = AllocateZeroPool (sizeof(SYSVARIABLES));
       SysVariablesTmp->Key               = PoolPrint(L"MLB");
@@ -4912,7 +4926,29 @@ GetUserSettings(
       SysVariablesTmp->MenuItem.ItemType = ASString;
       SysVariablesTmp->Next              = SysVariables;
       SysVariables                       = SysVariablesTmp;
+
+      SysVariablesTmp                    = AllocateZeroPool (sizeof(SYSVARIABLES));
+      SysVariablesTmp->Key               = PoolPrint(L"InjectSystemID");
+      SysVariablesTmp->MenuItem.SValue   = gSettings.InjectSystemID?L"[+]":L"[ ]";
+      SysVariablesTmp->MenuItem.BValue   = gSettings.InjectSystemID;
+      SysVariablesTmp->MenuItem.ItemType = BoolValue;
+      SysVariablesTmp->Next              = SysVariables;
+      SysVariables                       = SysVariablesTmp;
+
+      if (IsValidCustomUUID) {
+        SysVariablesTmp                    = AllocateZeroPool (sizeof(SYSVARIABLES));
+        SysVariablesTmp->Key               = PoolPrint(L"CustomUUID");
+        SysVariablesTmp->MenuItem.SValue   = PoolPrint(L"%s", gSettings.CustomUuid);
+        SysVariablesTmp->MenuItem.ItemType = ASString;
+        SysVariablesTmp->Next              = SysVariables;
+        SysVariables                       = SysVariablesTmp;
+      }
     }
+
+    if (SysVarsTmp != NULL) {
+      FreePool(SysVarsTmp);
+    }
+    // SysVars <--
 
 
     /*
