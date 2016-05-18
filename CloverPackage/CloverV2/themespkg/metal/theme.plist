@@ -8,6 +8,11 @@
 	<string>Main metallic looking theme</string>
 	<key>Theme</key>
 	<dict>
+		<key>Layout</key>
+		<dict>
+			<key>Vertical</key>
+			<false/>
+		</dict>
 		<key>Anime</key>
 		<array>
 			<dict>
@@ -48,9 +53,9 @@
 		<key>Font</key>
 		<dict>
 			<key>CharWidth</key>
-			<integer>20</integer>
+			<integer>12</integer>
 			<key>Path</key>
-			<string>Candara_24pt_Cell_23x29_noAA.png</string>
+			<string>Cambria_20pt_Cell_22x25_l-2_ra.png</string>
 			<key>Type</key>
 			<string>Load</string>
 			<key>Proportional</key>
