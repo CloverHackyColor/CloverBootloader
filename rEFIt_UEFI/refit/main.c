@@ -1813,10 +1813,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
   gRS->GetTime(&Now, NULL);
 
-  //GMT always wrong
-  //Now.TimeZone = 7;
-  //gRS->SetTime(&Now);
-
   // firmware detection
   gFirmwareClover = StrCmp(gST->FirmwareVendor, L"CLOVER") == 0;
   InitializeConsoleSim();
@@ -1824,7 +1820,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   ZeroMem((VOID*)&gGraphics[0], sizeof(GFX_PROPERTIES) * 4);
 
   DBG("\n");
-  //Range TimeZone: -1440 to 1440 or 2047
   if (Now.TimeZone < 0 || Now.TimeZone > 24) {
     MsgLog("Now is %d.%d.%d,  %d:%d:%d (GMT)\n",
            Now.Day, Now.Month, Now.Year, Now.Hour, Now.Minute, Now.Second);

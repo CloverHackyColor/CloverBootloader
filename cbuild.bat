@@ -23,6 +23,7 @@ set LOGOSHOWN=0
 set UPDATETOOLS=0
 set UPDATEEDK=0
 set UPDATECLOVER=0
+set EDK2SHELL=
 
 set EDK2_SETUP_OPTIONS=
 set EDK2_BUILD_OPTIONS=-D NO_GRUB_DRIVERS
@@ -328,6 +329,19 @@ rem # drop compiled files to EFI folder
   set "DEST_DRIVER=%DEST_CLOVER%\drivers%TARGETARCH_INT%"
   set "DEST_OFF=%DEST_DIR%\drivers-Off\drivers%TARGETARCH_INT%"
 
+  set "EDK2SHELL_PATH=%WORKSPACE%\EdkShellBinPkg\%EDK2SHELL%\%TARGETARCH%"
+  set "EDK2SHELL_MIN=%EDK2SHELL_PATH%\Shell.efi"
+  set "EDK2SHELL_FULL=%EDK2SHELL_PATH%\Shell_Full.efi"
+  set CLOVER_EDK2SHELL=
+
+  if exist "%EDK2SHELL_MIN%" (
+    set CLOVER_EDK2SHELL=%EDK2SHELL_MIN%
+  ) else (
+    if exist "%EDK2SHELL_FULL%" (
+      set CLOVER_EDK2SHELL=%EDK2SHELL_FULL%
+    )
+  )
+
   if ["%CLEANING%"] == [""] goto finalizebuild
 
   for /R "%DEST_BOOTSECTORS%" %%i in (boot0* boot1*) do del "%%i"
@@ -485,6 +499,23 @@ rem # drop compiled files to EFI folder
   call:copybin "%BUILD_DIR_ARCH%\CLOVER%TARGETARCH%.efi" "%DEST_CLOVER%" "CLOVER%TARGETARCH%.efi"
   call:copybin "%BUILD_DIR_ARCH%\CLOVER%TARGETARCH%.efi" "%DEST_BOOT%" "BOOT%TARGETARCH%.efi"
 
+  if ["%CLOVER_EDK2SHELL%"] == [""] goto donebuild64
+
+  echo.
+  echo EDK2 Shell ^(%EDK2SHELL%^):
+  echo.
+
+  set CLOVER_SHELL_LIST=(Shell%TARGETARCH_INT%U Shell%TARGETARCH_INT%)
+  for %%i in %CLOVER_SHELL_LIST% do (
+    if not exist "%DEST_TOOLS%\%%i.efi.bak" (
+      if exist "%DEST_TOOLS%\%%i.efi" (
+        ren "%DEST_TOOLS%\%%i.efi" "%%i.efi.bak"
+      )
+    )
+  )
+  call:copybin "%CLOVER_EDK2SHELL%" "%DEST_TOOLS%" "Shell%TARGETARCH_INT%.efi"
+
+:donebuild64
   echo.
   echo End copying ...
   echo.
@@ -551,6 +582,23 @@ rem # drop compiled files to EFI folder
   call:copybin "%BUILD_DIR_ARCH%\CLOVER%TARGETARCH%.efi" "%DEST_CLOVER%" "CLOVER%TARGETARCH%.efi"
   call:copybin "%BUILD_DIR_ARCH%\CLOVER%TARGETARCH%.efi" "%DEST_BOOT%" "BOOT%TARGETARCH%.efi"
 
+  if ["%CLOVER_EDK2SHELL%"] == [""] goto donebuild32
+
+  echo.
+  echo EDK2 Shell ^(%EDK2SHELL%^):
+  echo.
+
+  set CLOVER_SHELL_LIST=(Shell%TARGETARCH_INT%)
+  for %%i in %CLOVER_SHELL_LIST% do (
+    if not exist "%DEST_TOOLS%\%%i.efi.bak" (
+      if exist "%DEST_TOOLS%\%%i.efi" (
+        ren "%DEST_TOOLS%\%%i.efi" "%%i.efi.bak"
+      )
+    )
+  )
+  call:copybin "%CLOVER_EDK2SHELL%" "%DEST_TOOLS%" "Shell%TARGETARCH_INT%.efi"
+
+:donebuild32
   echo.
   echo End copying ...
   echo.
@@ -691,6 +739,7 @@ rem # Print the usage
   echo --genpage : dynamically generate page table under ebda
   echo --no-usb : disable USB support
   echo --mc : build in 64-bit [boot7] using BiosBlockIO ^(compatible with MCP chipset^)
+  echo --edk2shell ^<MinimumShell^|FullShell^> : copy edk2 Shell to EFI tools dir
   echo.
   echo Extras:
   echo --cygwin : set CYGWIN dir ^(def: %DEFAULT_CYGWIN_HOME%^)
@@ -869,6 +918,9 @@ rem # print Logo
     ) else (
       call:addEdk2Args "Reconfig"
     )
+  )
+  if ["%1"] == ["--edk2shell"] (
+    set EDK2SHELL=%2
   )
   if ["%1"] == ["--beta"] (
     set DEVSTAGE=b
