@@ -40,6 +40,7 @@ export CONF_PATH=${CONF_PATH:-}
 # if building through Xcode, then TOOLCHAIN_DIR is not defined
 # checking if it is where CloverGrowerPro put it
 if [[ "$SYSNAME" == Linux ]]; then
+  export TOOLCHAIN=GCC53
   TOOLCHAIN_DIR=${TOOLCHAIN_DIR:-/usr}
 else
   TOOLCHAIN_DIR=${TOOLCHAIN_DIR:-"$CLOVERROOT"/../../toolchain}
@@ -60,9 +61,11 @@ GENPAGE=0
 declare -r GIT=`which git`
 #declare -r GITDIR=`git status 2> /dev/null`        # unsafe as git repository may exist in parent directory
 declare -r VERSTXT="vers.txt"
-declare -r OSVER="$(sw_vers -productVersion | sed -e 's/\.0$//g')"
-XCODE_BUILD=
-XCODE_VERSION=
+if [[ -x "/usr/bin/sw_vers" ]]; then
+  declare -r OSVER="$(sw_vers -productVersion | sed -e 's/\.0$//g')"
+elif [[ -x "/usr/bin/lsb_release" ]]; then
+  declare -r OSVER="$(lsb_release -sir)"
+fi
 PATCH_FILE=
 
 # Bash options
@@ -102,7 +105,7 @@ checkPatch() {
         exit 1
     fi
   else
-    if [[ -n "${XCODE_BUILD}" ]]; then
+    if [[ -n "${XCODE_BUILD:-}" ]]; then
       #declare -r XCODE_MAJOR_VERSION="$(xcodebuild -version | sed -nE 's/^Xcode ([0-9]).*/\1/p')"
       XCODE_VERSION="$(echo `$XCODE_BUILD -version` | sed -nE 's/^Xcode ([0-9.]+).*/\1/p')"
       declare -r XCODE_MAJOR_VERSION="$(echo $XCODE_VERSION | cut -d. -f1)"
@@ -244,6 +247,7 @@ usage() {
     print_option_help "--genpage" "dynamically generate page table under ebda"
     print_option_help "--no-usb" "disable USB support"
     print_option_help "--no-lto" "disable Link Time Optimisation"
+    print_option_help "--edk2shell <MinimumShell|FullShell>" "copy edk2 Shell to EFI tools dir"
     echo
     echo "Report bugs to https://sourceforge.net/p/cloverefiboot/discussion/1726372/"
 }
@@ -338,6 +342,8 @@ checkCmdlineArguments() {
                 ;;
             --no-lto)
                 addEdk2BuildMacro DISABLE_LTO
+                ;;
+            --edk2shell) EDK2SHELL=$(argument $option "$@"); shift
                 ;;
             -h | -\? | -help | --help)
                 usage && exit 0
@@ -500,10 +506,10 @@ MainBuildScript() {
     fi
     clover_build_info="${clover_build_info} | Command: $(echo $cmd | xargs)"
 
-    if [[ -n "${OSVER}" ]]; then
+    if [[ -n "${OSVER:-}" ]]; then
       clover_build_info="${clover_build_info} | OS: ${OSVER}"
     fi
-    if [[ -n "${XCODE_VERSION}" ]]; then
+    if [[ -n "${XCODE_VERSION:-}" ]]; then
       clover_build_info="${clover_build_info} | XCODE: ${XCODE_VERSION}"
     fi
 
@@ -582,6 +588,11 @@ MainPostBuildScript() {
         cp -v "$BUILD_DIR_ARCH"/CLOVER${TARGETARCH}.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/
         cp -v "$BUILD_DIR_ARCH"/CLOVER${TARGETARCH}.efi "$CLOVER_PKG_DIR"/EFI/BOOT/BOOTIA32.efi
 
+        if [[ "${EDK2SHELL:-}" == "MinimumShell" ]]; then
+            cp -v "${WORKSPACE}"/ShellBinPkg/MinUefiShell/Ia32/Shell.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/tools/Shell32.efi
+        elif [[ "${EDK2SHELL:-}" == "FullShell" ]]; then
+            cp -v "${WORKSPACE}"/ShellBinPkg/UefiShell/Ia32/Shell.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/tools/Shell32.efi
+        fi
     fi
 
     if [[ "$TARGETARCH" = X64 ]]; then
@@ -666,6 +677,11 @@ MainPostBuildScript() {
         cp -v "$BUILD_DIR_ARCH"/CLOVER${TARGETARCH}.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/
         cp -v "$BUILD_DIR_ARCH"/CLOVER${TARGETARCH}.efi "$CLOVER_PKG_DIR"/EFI/BOOT/BOOTX64.efi
 
+        if [[ "${EDK2SHELL:-}" == "MinimumShell" ]]; then
+            cp -v "${WORKSPACE}"/ShellBinPkg/MinUefiShell/X64/Shell.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/tools/Shell64U.efi
+        elif [[ "${EDK2SHELL:-}" == "FullShell" ]]; then
+            cp -v "${WORKSPACE}"/ShellBinPkg/UefiShell/X64/Shell.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/tools/Shell64U.efi
+        fi
     fi
 
     echo "Done!"
