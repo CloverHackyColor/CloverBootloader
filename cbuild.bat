@@ -134,9 +134,6 @@ rem # initialize
     set NASM_PREFIX=%DEFAULT_NASM_PREFIX%
   )
 
-  rem # space to implement: clover template, please vote!
-  rem # http://www.insanelymac.com/forum/topic/306156-clover-bugissue-report-and-patch/?p=2236614
-
   rem # setup current dir and edk2 if needed
   if not defined WORKSPACE (
     echo Searching for EDK2 ...
@@ -199,11 +196,112 @@ rem # setup build
   if ["%USE_LOW_EBDA%"] == ["1"] call:addEdk2BuildMacro "USE_LOW_EBDA"
   if ["%DISABLE_USB_SUPPORT%"] == ["1"] call:addEdk2BuildMacro "DISABLE_USB_SUPPORT"
 
-  set CONFIG_FILE="%WORKSPACE%\Conf\target.txt"
+:doTemplate
+  echo Process template ...
 
+  set EDK_CONF=%WORKSPACE%\Conf
+  set EDK_CONF_TPL=%WORKSPACE%\BaseTools\Conf
+
+  set EDK_CONF_TARGET_TXT=%EDK_CONF%\target.txt
+  set EDK_CONF_TARGET_TXT_BAK=%EDK_CONF%\target.txt.bak
+  set EDK_CONF_TARGET_TPL=%EDK_CONF_TPL%\target.template
+
+  set CLOVER_CONF=%CURRENTDIR%\Conf
+  set CLOVER_CONF_TPL=%CLOVER_CONF%\Tpl
+  set CLOVER_CONF_TPL_CURRENT=%CLOVER_CONF_TPL%\MSFT
+
+  set CLOVER_CONF_TARGET_TXT=%CLOVER_CONF%\target.txt
+  set CLOVER_CONF_TARGET_TPL=%CLOVER_CONF_TPL_CURRENT%\target.template
+  set CLOVER_CONF_TARGET_TPL_TMP=%CLOVER_CONF_TPL_CURRENT%\target.tmp
+
+  set CLOVER_CONF_BUILD_RULE_TXT=%CLOVER_CONF%\build_rule.txt
+  set CLOVER_CONF_BUILD_RULE_TXT_TPL=%CLOVER_CONF_TPL_CURRENT%\build_rule.template
+
+  set CLOVER_CONF_TOOLS_DEF_TXT=%CLOVER_CONF%\tools_def.txt
+  set CLOVER_CONF_TOOLS_DEF_TXT_TPL=%CLOVER_CONF_TPL_CURRENT%\tools_def.template
+
+  set F_TMP_TXT=%CLOVER_CONF_TPL_CURRENT%\tmp.txt
+  set F_TMP_TXT2=%CLOVER_CONF_TPL_CURRENT%\tmp2.txt
+
+  rem # user doesnt have tpl, svn up to receive Clover/Conf dir?
+  if not exist "%CLOVER_CONF_TARGET_TPL%" (
+    goto readTemplate
+  )
+
+  rem # create target.txt backup
+  if not exist "%EDK_CONF_TARGET_TXT_BAK%" (
+    if exist "%EDK_CONF_TARGET_TXT%" (
+      copy %EDK_CONF_TARGET_TXT%  %EDK_CONF_TARGET_TXT_BAK%>nul
+    ) else (
+      if exist "%EDK_CONF_TARGET_TPL%" (
+        copy %EDK_CONF_TARGET_TPL%  %EDK_CONF_TARGET_TXT_BAK%>nul
+      )
+    )
+  )
+
+  rem # if script found target.txt / tools_def.txt / build_rule.txt in Clover/Conf we can jump to call edksetup
+  if exist "%CLOVER_CONF_TARGET_TXT%" (
+    copy %CLOVER_CONF_TARGET_TXT% %EDK_CONF_TARGET_TXT%>nul
+    goto readTemplate
+  )
+
+  rem # clone Clover target.txt tpl for process
+  copy %CLOVER_CONF_TARGET_TPL%  %CLOVER_CONF_TARGET_TPL_TMP%>nul
+
+  rem # remove / ignore commented (use EDK default later) & blanklines in CLOVER target.txt
+  findstr /v /r /c:"^#" /c:"^$" %CLOVER_CONF_TARGET_TPL%>%F_TMP_TXT%
+
+  rem # seek stripped tpl
+  rem # replace Clover path pattern '@CLOVER_PATH@' to current working path
+  rem # remove EDK default, replace later w/ user defined
+  for /f "tokens=1,3" %%a in (%F_TMP_TXT%) do (
+    if not ["%%~a"] == [""] (
+      if not ["%%~b"] == [""] (
+        rem # if any user given params, then set it here
+        set val=%%b
+        call set val=%%val:@CLOVER_PATH@=%CURRENTDIR%%%
+        call echo %%~a ^= %%val%%
+        rem # set script var for process later
+        set "CFG_%%~a=%val%"
+        rem # remove defined
+        findstr /v /r /c:"^%%~a " %CLOVER_CONF_TARGET_TPL_TMP%>%CLOVER_CONF_TARGET_TPL_TMP%
+      )
+    )
+  )>>%F_TMP_TXT2%
+
+  move %F_TMP_TXT2% %F_TMP_TXT%>nul
+
+  rem # merge edk default & user defined
+  for /f "tokens=*" %%a in (%F_TMP_TXT%) do (
+    echo %%~a
+  )>>%CLOVER_CONF_TARGET_TPL_TMP%
+
+  del %F_TMP_TXT%
+
+  rem # finally copy our target.txt to EDK Conf
+  copy %CLOVER_CONF_TARGET_TPL_TMP% %CLOVER_CONF_TARGET_TXT%>nul
+  move %CLOVER_CONF_TARGET_TPL_TMP% %EDK_CONF_TARGET_TXT%>nul
+
+  rem # we had custom path for tools_def.txt & build_rule.txt already set in Clover target.txt now
+  rem # we can also copy it to EDK/Conf OR keep it as custom path (Clover/Conf OR whatever)
+  if exist "%CLOVER_CONF_BUILD_RULE_TXT_TPL%" (
+    if not exist "%CLOVER_CONF_BUILD_RULE_TXT%" (
+      copy %CLOVER_CONF_BUILD_RULE_TXT_TPL%  %CLOVER_CONF_BUILD_RULE_TXT%>nul
+    )
+    rem copy %CLOVER_CONF_BUILD_RULE_TXT%  %EDK_CONF_BUILD_RULE_TXT%>nul
+  )
+
+  if exist "%CLOVER_CONF_TOOLS_DEF_TXT_TPL%" (
+    if not exist "%CLOVER_CONF_TOOLS_DEF_TXT%" (
+      copy %CLOVER_CONF_TOOLS_DEF_TXT_TPL%  %CLOVER_CONF_TOOLS_DEF_TXT%>nul
+    )
+    rem copy %CLOVER_CONF_TOOLS_DEF_TXT%  %EDK_CONF_TOOLS_DEF_TXT%>nul
+  )
+
+:readTemplate
   rem # Read target.txt. Dont look TARGET_ARCH, we build multi ARCH if undefined
 
-  findstr /v /r /c:"^#" /c:"^$" %CONFIG_FILE%>%F_TMP_TXT%
+  findstr /v /r /c:"^#" /c:"^$" %EDK_CONF_TARGET_TXT%>%F_TMP_TXT%
   for /f "tokens=1*" %%i in ('type %F_TMP_TXT% ^| findstr /i "TOOL_CHAIN_TAG"') do set SCAN_TOOLCHAIN%%j
   rem for /f "tokens=1*" %%i in ('type %F_TMP_TXT% ^| findstr /i "TARGETARCH"') do set SCAN_TARGETARCH%%j
   for /f "tokens=1*" %%i in ('type %F_TMP_TXT% ^| findstr /v /r /c:"TARGET_ARCH"  ^| findstr /i "TARGET"') do set SCAN_BUILDTARGET%%j

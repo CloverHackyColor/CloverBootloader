@@ -5881,27 +5881,35 @@ SetFSInjection (
 
   // check if kext injection is needed
   // (will be done only if caches are blocked or if boot.efi refuses to load kernelcache)
-  SrcDir = NULL;
+  //SrcDir = NULL;
   if (OSFLAG_ISSET(Entry->Flags, OSFLAG_WITHKEXTS)) {
+    SrcDir = GetOtherKextsDir();
     Status = FSInject->Install (
                                 Volume->DeviceHandle,
                                 L"\\System\\Library\\Extensions",
                                 SelfVolume->DeviceHandle,
-                                GetOtherKextsDir (),
+                                //GetOtherKextsDir (),
+                                SrcDir,
                                 Blacklist,
                                 ForceLoadKexts
                                 );
-    InjectKextsFromDir(Status, GetOtherKextsDir());
+    //InjectKextsFromDir(Status, GetOtherKextsDir());
+    InjectKextsFromDir(Status, SrcDir);
+    FreePool (SrcDir);
 
+    SrcDir = GetOSVersionKextsDir (Entry->OSVersion);
     Status = FSInject->Install (
                                 Volume->DeviceHandle,
                                 L"\\System\\Library\\Extensions",
                                 SelfVolume->DeviceHandle,
-                                GetOSVersionKextsDir (Entry->OSVersion),
+                                //GetOSVersionKextsDir (Entry->OSVersion),
+                                SrcDir,
                                 Blacklist,
                                 ForceLoadKexts
                                 );
-    InjectKextsFromDir(Status, GetOSVersionKextsDir(Entry->OSVersion));
+    //InjectKextsFromDir(Status, GetOSVersionKextsDir(Entry->OSVersion));
+    InjectKextsFromDir(Status, SrcDir);
+    FreePool(SrcDir);
   } else {
     MsgLog ("skipping kext injection (not requested)\n");
   }

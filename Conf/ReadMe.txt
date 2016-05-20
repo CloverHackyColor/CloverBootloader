@@ -1,0 +1,2 @@
+Initial propose: (http://www.insanelymac.com/forum/topic/306156-clover-bugissue-report-and-patch/?p=2236614)
+If you believe by do templating (cut-off unused compiler) can speed build time as reported here (https://github.com/tianocore/edk2/issues/56), otherwise we can remove this method.
