@@ -1823,7 +1823,7 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
           DBG("create file %r\n", Status);
         }
         break;
- 
+
       case SCAN_F8:
         do {
           CHAR16 *Str = PoolPrint(L"%s\n%s\n%s", L"ABC", L"123456", L"xy");
@@ -2592,7 +2592,7 @@ VOID DrawTextCorner(UINTN TextC, UINT8 Align)
 #endif
       break;
     case TEXT_CORNER_HELP:
-      Text = L"F1:?";
+      Text = L"F1:Help";
       break;
     default:
       return;
@@ -4113,7 +4113,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
   INTN              SubMenuIndex;
   REFIT_INPUT_DIALOG* InputBootArgs;
   BOOLEAN           OldFontStyle = GlobalConfig.Proportional;
-  
+
   GlobalConfig.Proportional = FALSE; //temporary disable proportional
 
   if (AllowGraphicsMode)

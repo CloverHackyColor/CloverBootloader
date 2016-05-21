@@ -91,7 +91,7 @@ CHAR8* AppleBoardID[] =    //Lion DR1 compatible
   "Mac-F4238CC8",          // MP41   - xeon wolfdale
   "Mac-F221BEC8",          // MP51   - Xeon Nehalem 4 cores
   "Mac-F60DEB81FF30ACF6",  // MP61   - Intel(R) Xeon(R) CPU E5-1620 v2 @ 3.70GHz Model 0x3E
-  
+
 };
 
 CHAR8* AppleReleaseDate[] =
@@ -399,7 +399,8 @@ UINT8 SmcRevision[][6] =
   { 0x01, 0x30, 0x0F, 0, 0, 0x03 },   // MacPro3,1,
   { 0x01, 0x39, 0x0F, 0, 0, 0x05 },   // MacPro4,1,
   { 0x01, 0x39, 0x0F, 0, 0, 0x11 },   // MacPro5,1
-  { 0x02, 0x02, 0x0F, 0, 0, 0x18 },   // MacPro6,1
+  //{ 0x02, 0x02, 0x0F, 0, 0, 0x18 },   // MacPro6,1 :2.2f18
+  { 0x02, 0x20, 0x0F, 0, 0, 0x18 },   // MacPro6,1 :2.20f18
 };
 
 
@@ -454,7 +455,7 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
   AsciiStrCpy (gSettings.ManufactureName,      BiosVendor);
   if (Redefine) {
     AsciiStrCpy (gSettings.ProductName,          AppleProductName[Model]);
-  }  
+  }
   AsciiStrCpy (gSettings.VersionNr,            AppleSystemVersion[Model]);
   AsciiStrCpy (gSettings.SerialNr,             AppleSerialNumber[Model]);
   AsciiStrCpy (gSettings.FamilyName,           AppleFamilies[Model]);
@@ -465,13 +466,13 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
   AsciiStrCpy (gSettings.LocationInChassis,    AppleBoardLocation);
   AsciiStrCpy (gSettings.ChassisManufacturer,  BiosVendor);
   AsciiStrCpy (gSettings.ChassisAssetTag,      AppleChassisAsset[Model]);
-  
+
   if (Model >= MacPro31) {
     gSettings.BoardType = BaseBoardTypeProcessorMemoryModule; //11;
   } else {
     gSettings.BoardType = BaseBoardTypeMotherBoard; //10;
   }
-  
+
   switch (Model) {
     case MacBook11:
     case MacBook21:
@@ -484,7 +485,7 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
       gSettings.ChassisType = MiscChassisTypeNotebook; //10;
       gSettings.Mobile      = TRUE;
       break;
-      
+
     case MacBookPro51:
     case MacBookPro62:
     case MacBookPro81:
@@ -494,7 +495,7 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
       gSettings.ChassisType = MiscChassisTypePortable; //08;
       gSettings.Mobile      = TRUE;
       break;
-      
+
     case iMac81:
     case iMac101:
     case iMac111:
@@ -511,26 +512,26 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
       gSettings.ChassisType = MiscChassisTypeAllInOne; //13;
       gSettings.Mobile      = FALSE;
       break;
-      
+
     case MacMini21:
     case MacMini51:
     case MacMini62:
       gSettings.ChassisType = MiscChassisTypeLunchBox; //16;
       gSettings.Mobile      = FALSE;
       break;
-      
+
     case MacPro31:
     case MacPro41:
     case MacPro51:
       gSettings.ChassisType = MiscChassisTypeMiniTower; //06;
       gSettings.Mobile      = FALSE;
       break;
-      
+
     case MacPro61:
       gSettings.ChassisType = MiscChassisTypeUnknown;  //02; this is a joke but think different!
       gSettings.Mobile      = FALSE;
       break;
-      
+
     default: //unknown - use oem SMBIOS value to be default
       gSettings.Mobile      = gMobile;
       gSettings.ChassisType = 0; //let SMBIOS value to be
@@ -550,15 +551,15 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
       case CPU_MODEL_CELERON:
         AsciiStrCpy (gSettings.RPlt, "M70");
         break;
-        
+
       case CPU_MODEL_YONAH:
         AsciiStrCpy (gSettings.RPlt, "k22");
         break;
-        
+
       case CPU_MODEL_MEROM: //TODO check for mobile
         AsciiStrCpy (gSettings.RPlt, "M75");
         break;
-        
+
       case CPU_MODEL_PENRYN:
         if (gSettings.Mobile) {
           AsciiStrCpy (gSettings.RPlt, "M82");
@@ -566,7 +567,7 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
           AsciiStrCpy (gSettings.RPlt, "k36");
         }
         break;
-        
+
       case CPU_MODEL_SANDY_BRIDGE:
         if (gSettings.Mobile) {
           AsciiStrCpy (gSettings.RPlt, "k90i");
@@ -574,29 +575,29 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
           AsciiStrCpy (gSettings.RPlt, "k60");
         }
         break;
-        
+
       case CPU_MODEL_IVY_BRIDGE:
         AsciiStrCpy (gSettings.RPlt, "j30");
         break;
-        
+
       case CPU_MODEL_IVY_BRIDGE_E5:
         AsciiStrCpy (gSettings.RPlt, "j90");
         break;
-        
+
       case CPU_MODEL_HASWELL_ULT:
         AsciiStrCpy (gSettings.RPlt, "j44");
         break;
-        
+
       case CPU_MODEL_SKYLAKE_S:
         AsciiStrCpy (gSettings.RPlt, "j95");
         break;
-        
+
       default:
         AsciiStrCpy (gSettings.RPlt, "T9");
         break;
     }
   }
-  
+
   CopyMem (gSettings.REV,  SmcRevision[Model], 6);
   AsciiStrCpy (gSettings.RBr,  gSettings.RPlt); //SmcBranch[Model]); // as no other ideas
   CopyMem (gSettings.EPCI, &SmcConfig[Model],  4);
@@ -614,7 +615,7 @@ GetModelFromString (
                     )
 {
   UINTN i;
-  
+
   for (i = 0; i < MaxMachineType; ++i) {
     if (AsciiStrCmp (AppleProductName[i], ProductName) == 0) {
       return i;
@@ -629,24 +630,24 @@ GetDefaultSettings ()
 {
   MACHINE_TYPES  Model;
   //UINT64         msr = 0;
-  
+
   //gLanguage         = english;
   Model             = GetDefaultModel ();
   gSettings.CpuType	= GetAdvancedCpuType ();
-  
+
   SetDMISettingsForModel (Model, TRUE);
-  
+
   //default values will be overritten by config.plist
   //use explicitly settings TRUE or FALSE (Yes or No)
-  
+
   gSettings.InjectIntel          = (gGraphics[0].Vendor == Intel) || (gGraphics[1].Vendor == Intel);
-  
+
   gSettings.InjectATI            = (((gGraphics[0].Vendor == Ati) && ((gGraphics[0].DeviceID & 0xF000) != 0x6000)) ||
                                     ((gGraphics[1].Vendor == Ati) && ((gGraphics[1].DeviceID & 0xF000) != 0x6000)));
-  
+
   gSettings.InjectNVidia         = (((gGraphics[0].Vendor == Nvidia) && (gGraphics[0].Family < 0xE0)) ||
                                     ((gGraphics[1].Vendor == Nvidia) && (gGraphics[1].Family < 0xE0)));
-  
+
   gSettings.GraphicsInjector     = gSettings.InjectATI || gSettings.InjectNVidia;
   //gSettings.CustomEDID           = NULL; //no sense to assign 0 as the structure is zeroed
   gSettings.DualLink             = 1;
@@ -657,14 +658,14 @@ GetDefaultSettings ()
   gSettings.BacklightLevel       = 0xFFFF; //0x0503; -- the value from MBA52
   gSettings.BacklightLevelConfig = FALSE;
   gSettings.TrustSMBIOS          = TRUE;
-  
+
   gSettings.SmUUIDConfig         = FALSE;
   gSettings.DefaultBackgroundColor = 0x80000000; //the value to delete the variable
   gSettings.RtROM                = NULL;
   gSettings.RtROMLen             = 0;
   gSettings.CsrActiveConfig      = 0xFFFF;
   gSettings.BooterConfig         = 0xFFFF;
-  
+
   if (gCPUStructure.Model >= CPU_MODEL_IVY_BRIDGE) {
     gSettings.GeneratePStates    = TRUE;
     gSettings.GenerateCStates    = TRUE;
@@ -672,7 +673,7 @@ GetDefaultSettings ()
     //  gSettings.EnableC2           = TRUE;
     gSettings.EnableC6           = TRUE;
     gSettings.PluginType         = 1;
-    
+
     if (gCPUStructure.Model == CPU_MODEL_IVY_BRIDGE) {
       gSettings.MinMultiplier    = 7;
     }
@@ -680,7 +681,7 @@ GetDefaultSettings ()
     gSettings.DropSSDT           = TRUE;
     gSettings.C3Latency          = 0x00FA;
   }
-  
+
   //gSettings.EnableISS            = FALSE; //((gCPUStructure.CPUID[CPUID_1][ECX] & (1<<7)) != 0);
   gSettings.Turbo                = gCPUStructure.Turbo;
   //MsgLog ("Turbo default value: %a\n", gCPUStructure.Turbo ? "Yes" : "No");
@@ -690,7 +691,7 @@ GetDefaultSettings ()
   //AsmWriteMsr64 (MSR_IA32_MISC_ENABLE, msr);
   //gSettings.Turbo                = ((msr & (1ULL<<38)) == 0);
   //gSettings.EnableISS            = ((msr & (1ULL<<16)) != 0);
-  
+
   //Fill ACPI table list
   //  GetAcpiTablesList ();
 }
