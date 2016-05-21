@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Author</key>
+	<string>chris1111</string>
+	<key>Description</key>
+	<string>Space</string>
+	<key>Theme</key>
+	<dict>
+		<key>Anime</key>
+		<array>
+			<dict>
+				<key>FrameTime</key>
+				<integer>200</integer>
+				<key>Frames</key>
+				<integer>9</integer>
+				<key>ID</key>
+				<integer>1</integer>
+				<key>Path</key>
+				<string>Space_logo</string>
+			</dict>
+		</array>
+		<key>Background</key>
+		<dict>
+			<key>Path</key>
+			<string>background-1920x1080.png</string>
+			<key>Type</key>
+			<string>Scale</string>
+		</dict>
+		<key>Badges</key>
+		<dict>
+			<key>Inline</key>
+			<false/>
+			<key>Show</key>
+			<true/>
+			<key>Swap</key>
+			<false/>
+		</dict>
+		<key>Banner</key>
+		<string>logo.png</string>
+		<key>Font</key>
+		<dict>
+			<key>CharWidth</key>
+			<integer>10</integer>
+			<key>Path</key>
+			<string>WoB_Monaco_10W.png</string>
+			<key>Type</key>
+			<string>Load</string>
+		</dict>
+		<key>Selection</key>
+		<dict>
+			<key>Big</key>
+			<string>SelectBig.png</string>
+			<key>Color</key>
+			<string>0x303030</string>
+			<key>Small</key>
+			<string>SelectSmall.png</string>
+		</dict>
+	</dict>
+	<key>Year</key>
+	<string>2015</string>
+</dict>
+</plist>
