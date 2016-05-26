@@ -976,7 +976,6 @@
 		2C794C351A0AA85900D845B0 /* Ps2Mouse.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Ps2Mouse.c; sourceTree = "<group>"; };
 		2C794C361A0AA85900D845B0 /* Ps2Mouse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Ps2Mouse.h; sourceTree = "<group>"; };
 		2C794C371A0AA85900D845B0 /* Ps2MouseDxe.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Ps2MouseDxe.inf; sourceTree = "<group>"; };
-		2C794C391A0AA85900D845B0 /* Readme.rtf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.rtf; name = Readme.rtf; path = ../../Readme.rtf; sourceTree = "<group>"; };
 		2C794C3B1A0AA85900D845B0 /* ComponentName.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ComponentName.c; sourceTree = "<group>"; };
 		2C794C3C1A0AA85900D845B0 /* SataController.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = SataController.c; sourceTree = "<group>"; };
 		2C794C3D1A0AA85900D845B0 /* SataController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SataController.h; sourceTree = "<group>"; };
@@ -3045,7 +3044,6 @@
 				2C794C241A0AA85900D845B0 /* PcatRealTimeClockRuntimeDxe */,
 				2C794C311A0AA85900D845B0 /* PciRootBridgeDxe */,
 				2C794C381A0AA85900D845B0 /* Ps2MouseDxe */,
-				2C794C391A0AA85900D845B0 /* Readme.rtf */,
 				2C794C3F1A0AA85900D845B0 /* SataControllerDxe */,
 				2C794CB31A0AA85900D845B0 /* UefiCpuPkg */,
 				2C794CB41A0AA85900D845B0 /* UsbMouseDxe */,

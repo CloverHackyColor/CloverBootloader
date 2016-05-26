@@ -299,7 +299,7 @@ extern INTN ScrollbarYMovement;
 #define SCREEN_USB        13
 #define SCREEN_THEME      14
 
-#define MAX_ANIME  40
+#define MAX_ANIME  41
 
 typedef struct _refit_menu_screen REFIT_MENU_SCREEN;
 

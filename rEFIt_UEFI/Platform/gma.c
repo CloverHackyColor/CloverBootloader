@@ -151,33 +151,37 @@ static struct gma_gpu_t KnownGPUS[] = {
 */
 
 // https://github.com/anholt/mesa/blob/master/include/pci_ids/i965_pci_ids.h
-//SKL1
-    { 0x1902, "Intel(R) HD Graphics 510 (Skylake GT1)" },
-    { 0x1906, "Intel(R) HD Graphics 510 (Skylake GT1)" },
+// https://01.org/sites/default/files/documentation/intel-gfx-prm-osrc-skl-vol04-configurations.pdf
+//GT1F
+    { 0x1902, "Intel(R) HD Graphics 510" },
+    { 0x1906, "Intel(R) HD Graphics 510" },
     { 0x190A, "Intel(R) Skylake GT1" },
+    { 0x190B, "Intel(R) HD Graphics 510" },
     { 0x190E, "Intel(R) Skylake GT1" },
-//SKL2
-    { 0x1912, "Intel(R) HD Graphics 530 (Skylake GT2)" },
+//GT2
+    { 0x1912, "Intel(R) HD Graphics 530" },
     { 0x1913, "Intel(R) Skylake GT2f" },
     { 0x1915, "Intel(R) Skylake GT2f" },
-    { 0x1916, "Intel(R) HD Graphics 520 (Skylake GT2)" },
+    { 0x1916, "Intel(R) HD Graphics 520" },
     { 0x1917, "Intel(R) Skylake GT2f" },
     { 0x191A, "Intel(R) Skylake GT2" },
-    { 0x191B, "Intel(R) HD Graphics 530 (Skylake GT2)" },
-    { 0x191D, "Intel(R) HD Graphics P530 (Skylake GT2)" },
-    { 0x191E, "Intel(R) HD Graphics 515 (Skylake GT2)" },
+    { 0x191B, "Intel(R) HD Graphics 530" },
+    { 0x191D, "Intel(R) HD Graphics P530" },
+    { 0x191E, "Intel(R) HD Graphics 515" },
     { 0x1921, "Intel(R) Skylake GT2" },
-//SKL3
-    { 0x1923, "Intel(R) Iris Graphics 540 (Skylake GT3e)" },
-    { 0x1926, "Intel(R) HD Graphics 535 (Skylake GT3)" },
-    { 0x1927, "Intel(R) Iris Graphics 550 (Skylake GT3e)" },
+//GT3
+    { 0x1923, "Intel(R) HD Graphics 535" },
+//GT3e
+    { 0x1926, "Iris(TM) Graphics 540" },
+    { 0x1927, "Iris(TM) Graphics 550" },
     { 0x192A, "Intel(R) Skylake GT4" },
     { 0x192B, "Intel(R) Iris Graphics (Skylake GT3fe)" },
-//SKL4
+    { 0x192D, "Iris(TM) Graphics P555" },
+//GT4e
     //{ 0x1932, "Intel(R) Skylake GT4" },
     //{ 0x193A, "Intel(R) Skylake GT4" },
-    { 0x193B, "Intel(R) Skylake GT4" },
-    { 0x193D, "Intel(R) Skylake GT4" },
+    { 0x193B, "Iris(TM) Graphics P580" },
+    { 0x193D, "Iris(TM) Graphics P580" },
 
 //  { 0x192B, "Intel Iris"  }, // Intel(R) Iris(TM) Graphics
     { 0x1932, "Intel Iris Pro Graphics 570/580"  }, // Intel(R) Iris(TM) Pro Graphics 570/580

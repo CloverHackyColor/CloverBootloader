@@ -1842,8 +1842,8 @@ VOID PatchTableType133()
     return;
   }
   // Get Table Type133
-	SmbiosTable = GetSmbiosTableFromType (EntryPoint, 133, 0);
-	if (SmbiosTable.Raw != NULL) {
+  SmbiosTable = GetSmbiosTableFromType (EntryPoint, 133, 0);
+  if (SmbiosTable.Raw != NULL) {
     MsgLog("Table 133 is present, PlatformFeature=%x\n", SmbiosTable.Type133->PlatformFeature);
     MsgLog("Change to: %x\n", gSettings.PlatformFeature);
   }
