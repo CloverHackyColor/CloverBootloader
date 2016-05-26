@@ -282,7 +282,7 @@ radeon_card_info_t radeon_cards[] = {
     { 0x6808,	0x00000000, CHIP_FAMILY_PITCAIRN,	"AMD Radeon HD 7600 Series",	kFutomaki	},
     { 0x6809,	0x00000000, CHIP_FAMILY_PITCAIRN,	"ATI FirePro V",	kNull		},
     //Curacao
-  { 0x6810,	0x00000000, CHIP_FAMILY_PITCAIRN,	"AMD Radeon R9 270X",         kNamako		}, //AMD FirePro D300, AMD Radeon R9 M290X
+    { 0x6810,	0x00000000, CHIP_FAMILY_PITCAIRN,	"AMD Radeon R9 270X",         kNamako		}, //AMD FirePro D300, AMD Radeon R9 M290X
     { 0x6811,	0x00000000, CHIP_FAMILY_PITCAIRN,	"AMD Radeon R9 270",          kFutomaki		},
     //	{ 0x6816,	0x00000000, CHIP_FAMILY_PITCAIRN,	"AMD Radeon",             kFutomaki		},
     //	{ 0x6817,	0x00000000, CHIP_FAMILY_PITCAIRN,	"AMD Radeon",             kFutomaki		},
@@ -295,9 +295,9 @@ radeon_card_info_t radeon_cards[] = {
     { 0x6822,	0x00000000, CHIP_FAMILY_VERDE,	"AMD Radeon E8860",             kBuri	}, // Mobile
     { 0x6823,	0x00000000, CHIP_FAMILY_VERDE,	"AMD Radeon HD 8800M Series",   kBuri	}, // Mobile
     //	{ 0x6824,	0x00000000, CHIP_FAMILY_VERDE,	"AMD Radeon HD 7700M Series",	kBuri	}, // Mobile
-    { 0x6825,	0x00000000, CHIP_FAMILY_VERDE,	"AMD Radeon HD 7800M Series",   kPondweed	}, // Mobile
+    { 0x6825,	0x00000000, CHIP_FAMILY_VERDE,	"AMD Radeon HD 7870M Series",   kChutoro	}, // Mobile
     { 0x6826,	0x00000000, CHIP_FAMILY_VERDE,	"AMD Radeon HD 7700 Series",    kBuri	}, // Mobile
-    { 0x6827,	0x00000000, CHIP_FAMILY_VERDE,	"AMD Radeon HD 7800M Series",   kPondweed	}, // Mobile
+    { 0x6827,	0x00000000, CHIP_FAMILY_VERDE,	"AMD Radeon HD 7800M Series",   kChutoro	}, // Mobile
     { 0x6828,	0x00000000, CHIP_FAMILY_VERDE,	"ATI FirePro V",	kBuri	},
     //	{ 0x6829,	0x00000000, CHIP_FAMILY_VERDE,	"AMD Radeon HD ??? Series",	kBuri	},
     //	{ 0x682A,	0x00000000, CHIP_FAMILY_VERDE,	"AMD Radeon HD",	kBuri	}, // Mobile
