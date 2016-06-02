@@ -1007,7 +1007,9 @@ VOID ScanLoader(VOID)
     // check for Microsoft boot loader/menu. This entry is redundant
     AddLoaderEntry(L"\\bootmgr.efi", L"", L"Microsoft EFI mgrboot menu", Volume, NULL, OSTYPE_WINEFI, 0);
     // check for Microsoft boot loader/menu on CDROM
-    AddLoaderEntry(L"\\EFI\\MICROSOFT\\BOOT\\cdboot.efi", L"", L"Microsoft EFI cdboot menu", Volume, NULL, OSTYPE_WINEFI, 0);
+    if (!AddLoaderEntry(L"\\EFI\\MICROSOFT\\BOOT\\cdboot.efi", L"", L"Microsoft EFI cdboot menu", Volume, NULL, OSTYPE_WINEFI, 0)) {
+      AddLoaderEntry(L"\\EFI\\MICROSOF\\BOOT\\CDBOOT.EFI", L"", L"Microsoft EFI CDBOOT menu", Volume, NULL, OSTYPE_WINEFI, 0);
+    }
     if (gSettings.LinuxScan) {
     // check for linux loaders
     for (Index = 0; Index < LinuxEntryDataCount; ++Index) {
