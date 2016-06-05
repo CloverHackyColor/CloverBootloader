@@ -366,6 +366,13 @@ checkCmdlineArguments() {
     if [ ! -z "${MODULEFILE}" ]; then
         MODULEFILE=" -m Clover/$MODULEFILE"
     fi
+
+    # Allow custom config path
+    if [[ -f "${CONF_PATH}/target.txt" ]]; then
+      addEdk2BuildOption "--conf=${CONF_PATH%/}"
+    elif [[ -f "${CLOVERROOT}/Conf/target.txt" ]]; then
+      addEdk2BuildOption "--conf=${CLOVERROOT}/Conf"
+    fi
 }
 
 ## Check tools for the toolchain
