@@ -2213,12 +2213,13 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
   BOOLEAN DISPLAYFIX = FALSE;
   BOOLEAN NonUsable = FALSE;
   BOOLEAN DsmFound = FALSE;
+  BOOLEAN NeedHDMI = ((gSettings.FixDsdt & FIX_NEW_WAY) && (gSettings.FixDsdt & FIX_HDMI));
   AML_CHUNK *root = NULL;
   AML_CHUNK *gfx0, *peg0;
-  //AML_CHUNK *met, *met2;
-  //AML_CHUNK *pack;
-  //UINT32 FakeID = 0;
-  //UINT32 FakeVen = 0;
+  AML_CHUNK *met, *met2;
+  AML_CHUNK *pack;
+  UINT32 FakeID = 0;
+  UINT32 FakeVen = 0;
   DisplayName1 = FALSE;
 
   if (!DisplayADR1[VCard]) return len;
@@ -2341,17 +2342,33 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
     gfx0 = peg0;
   }
 
-/*
-  // Intel GMA and HD
-  // add Method(_DSM,4,NotSerialized)
-  if ((gSettings.FakeIntel || gSettings.UseIntelHDMI || !gSettings.NoDefaultProperties) &&
-    (DisplayVendor[VCard] == 0x8086) &&
-    !DsmFound) {
-    DBG("Creating DSM for Intel card\n");
-    met = aml_add_method(gfx0, "_DSM", 4);
-    met2 = aml_add_store(met);
-    pack = aml_add_package(met2);
+  if (
+    DsmFound ||
+    (
+      !NeedHDMI &&
+      (
+        ((DisplayVendor[VCard] == 0x8086) && (gSettings.InjectIntel   || !gSettings.FakeIntel)) ||
+        ((DisplayVendor[VCard] == 0x10DE) && (gSettings.InjectNVidia  || !gSettings.FakeNVidia)) ||
+        ((DisplayVendor[VCard] == 0x1002) && (gSettings.InjectATI     || !gSettings.FakeATI))
+      )
+    )
+  ) {
+    DBG("Skipping Method(_DSM) for %04x card\n", DisplayVendor[VCard]);
+    goto Skip_DSM;
+  }
 
+  DBG("Creating Method(_DSM) for %04x card\n", DisplayVendor[VCard]);
+  met = aml_add_method(gfx0, "_DSM", 4);
+  met2 = aml_add_store(met);
+  pack = aml_add_package(met2);
+
+  if (NeedHDMI) {
+    aml_add_string(pack, "hda-gfx");
+    aml_add_string_buffer(pack, (gSettings.UseIntelHDMI && DisplayVendor[VCard] !=  0x8086) ? "onboard-2" : "onboard-1");
+  }
+
+  switch (DisplayVendor[VCard]) {
+    case 0x8086:
       if (gSettings.FakeIntel) {
         FakeID = gSettings.FakeIntel >> 16;
         aml_add_string(pack, "device-id");
@@ -2360,38 +2377,8 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
         aml_add_string(pack, "vendor-id");
         aml_add_byte_buffer(pack, (CHAR8*)&FakeVen, 4);
       }
-
-      if (gSettings.UseIntelHDMI) {
-        aml_add_string(pack, "hda-gfx");
-        aml_add_string_buffer(pack, "onboard-1");
-      }
-
-    // Could we just comment this part? (Until remember what was the purposes?)
-    if(!AddProperties(pack, DEV_INTEL) &&
-       !gSettings.NoDefaultProperties &&
-       !gSettings.UseIntelHDMI &&
-       !gSettings.FakeIntel) {
-      aml_add_string(pack, "empty");
-      aml_add_byte(pack, 0);
-    }
-
-    aml_add_local0(met);
-    aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
-  }
-  // finish Method(_DSM,4,NotSerialized)
-*/
-
-/*
-  // NVIDIA
-  // add Method(_DSM,4,NotSerialized)
-  if ((gSettings.FakeNVidia || !gSettings.NoDefaultProperties) &&
-    (DisplayVendor[VCard] == 0x10DE) &&
-    !DsmFound) {
-    DBG("Creating DSM for NVIDIA card\n");
-    met = aml_add_method(gfx0, "_DSM", 4);
-    met2 = aml_add_store(met);
-    pack = aml_add_package(met2);
-
+      break;
+    case 0x10DE:
       if (gSettings.FakeNVidia) {
         FakeID = gSettings.FakeNVidia >> 16;
         aml_add_string(pack, "device-id");
@@ -2400,60 +2387,8 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
         aml_add_string(pack, "vendor-id");
         aml_add_byte_buffer(pack, (CHAR8*)&FakeVen, 4);
       }
-
-      if (GFXHDAFIX) {
-        aml_add_string(pack, "hda-gfx");
-        if (gSettings.UseIntelHDMI) {
-          aml_add_string_buffer(pack, "onboard-2");
-        } else {
-          aml_add_string_buffer(pack, "onboard-1");
-        }
-      }
-
-    // Could we just comment this part? (Until remember what was the purposes?)
-    if(!AddProperties(pack, DEV_NVIDIA) &&
-       !gSettings.NoDefaultProperties &&
-       !GFXHDAFIX &&
-       !gSettings.FakeNVidia) {
-      aml_add_string(pack, "empty");
-      aml_add_byte(pack, 0);
-    }
-    aml_add_local0(met);
-    aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
-  }
-  // finish Method(_DSM,4,NotSerialized)
-*/
-  if (DisplayVendor[VCard] == 0x10DE) {
-    //add _sun
-    Size = get_size(dsdt, i);
-    k = FindMethod(dsdt + i, Size, "_SUN");
-    if (k == 0) {
-      k = FindName(dsdt + i, Size, "_SUN");
-      if (k == 0) {
-        aml_add_name(gfx0, "_SUN");
-        aml_add_dword(gfx0, SlotDevices[1].SlotID);
-      } else {
-        //we have name sun, set the number
-        if (dsdt[k + 4] == 0x0A) {
-          dsdt[k + 5] = SlotDevices[1].SlotID;
-        }
-      }
-    } else {
-      DBG("Warning: Method(_SUN) found for NVidia card\n");
-    }
-  }
-/*
-  // ATI
-  // add Method(_DSM,4,NotSerialized)
-  if ((gSettings.FakeATI || !gSettings.NoDefaultProperties) &&
-    (DisplayVendor[VCard] == 0x1002) &&
-    !DsmFound) {
-    DBG("Creating DSM for ATI card\n");
-    DBG("### YOD: FIXDSDT\n");
-    met = aml_add_method(gfx0, "_DSM", 4);  //if no subdevice
-    met2 = aml_add_store(met);
-    pack = aml_add_package(met2);
-
+      break;
+    case 0x1002:
       if (gSettings.FakeATI) {
         FakeID = gSettings.FakeATI >> 16;
         aml_add_string(pack, "device-id");
@@ -2465,53 +2400,41 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
         aml_add_byte_buffer(pack, (CHAR8*)&FakeVen, 4);
         aml_add_string(pack, "ATY,VendorID");
         aml_add_byte_buffer(pack, (CHAR8*)&FakeVen, 2);
-      } else {
+      }/* else {
         aml_add_string(pack, "ATY,VendorID");
         aml_add_byte_buffer(pack, VenATI, 2);
-      }
-      if (GFXHDAFIX) {
-        aml_add_string(pack, "hda-gfx");
-        if (gSettings.UseIntelHDMI) {
-          aml_add_string_buffer(pack, "onboard-2");
-        } else {
-          aml_add_string_buffer(pack, "onboard-1");
-        }
-      }
-
-    // Could we just comment this part? (Until remember what was the purposes?)
-    if(!AddProperties(pack, DEV_ATI) &&
-       !gSettings.NoDefaultProperties &&
-       !GFXHDAFIX &&
-       !gSettings.FakeATI) {
-      aml_add_string(pack, "empty");
-      aml_add_byte(pack, 0);
-    }
-    aml_add_local0(met);
-    aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
+      }*/
+      break;
   }
-  // finish Method(_DSM,4,NotSerialized)
-*/
 
-  if (DisplayVendor[VCard] == 0x1002) {
-    //add _sun
-    Size = get_size(dsdt, i);
-    k = FindMethod(dsdt + i, Size, "_SUN");
-    if (k == 0) {
-      k = FindName(dsdt + i, Size, "_SUN");
+  aml_add_local0(met);
+  aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
+
+Skip_DSM:
+
+  //add _sun
+  switch (DisplayVendor[VCard]) {
+    case 0x10DE:
+    case 0x1002:
+      Size = get_size(dsdt, i);
+      j = (DisplayVendor[VCard] == 0x1002) ? 0 : 1;
+      k = FindMethod(dsdt + i, Size, "_SUN");
       if (k == 0) {
-        aml_add_name(gfx0, "_SUN");
-        aml_add_dword(gfx0, SlotDevices[0].SlotID);
-      } else {
-        //we have name sun, set the number
-        if (dsdt[k + 4] == 0x0A) {
-          dsdt[k + 5] = SlotDevices[0].SlotID;
+        k = FindName(dsdt + i, Size, "_SUN");
+        if (k == 0) {
+          aml_add_name(gfx0, "_SUN");
+          aml_add_dword(gfx0, SlotDevices[j].SlotID);
+        } else {
+          //we have name sun, set the number
+          if (dsdt[k + 4] == 0x0A) {
+            dsdt[k + 5] = SlotDevices[j].SlotID;
+          }
         }
+      } else {
+        DBG("Warning: Method(_SUN) found for %04x card\n", DisplayVendor[VCard]);
       }
-    } else {
-      DBG("Warning: Method(_SUN) found for ATI card\n");
-    }
+      break;
   }
-
 
   if (!NonUsable) {
     //now insert video
