@@ -1025,7 +1025,7 @@ VOID ApplyInputs(VOID)
         if (StrCmp(SysVariablesTmp->Key, L"CsrActiveConfig") == 0) {
           gSettings.CsrActiveConfig = (UINT32)StrHexToUint64(SysVariablesTmp->MenuItem.SValue);
         } else if (StrCmp(SysVariablesTmp->Key, L"BooterConfig") == 0) {
-          gSettings.BooterConfig = (UINT32)StrHexToUint64(SysVariablesTmp->MenuItem.SValue);
+          gSettings.BooterConfig = (UINT16)StrHexToUint64(SysVariablesTmp->MenuItem.SValue);
         } else if (StrCmp(SysVariablesTmp->Key, L"MLB") == 0) {
           gSettings.RtMLB = AllocateZeroPool(StrSize(SysVariablesTmp->MenuItem.SValue));
           UnicodeStrToAsciiStr(SysVariablesTmp->MenuItem.SValue, gSettings.RtMLB);

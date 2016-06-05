@@ -384,7 +384,7 @@ UINT16 getDDRspeedMhz(UINT8 * spd)
   if (spd[SPD_MEMORY_TYPE] == SPD_MEMORY_TYPE_SDRAM_DDR4) {
     UINT16 mincycle = spd[18];
     INT8 fineadjust = spd[125];
-    frequency = 2000000 / (mincycle * 125 + fineadjust);
+    frequency = (UINT16)(2000000 / (mincycle * 125 + fineadjust));
 
     // Check if module supports XMP
     if ((spd[SPD_XMP20_SIG1] == SPD_XMP_SIG1_VALUE) &&
@@ -396,14 +396,14 @@ UINT16 getDDRspeedMhz(UINT8 * spd)
         // Check the first profile
         mincycle = spd[SPD_XMP20_PROF1_MINCYCLE];
         fineadjust = spd[SPD_XMP20_PROF1_FINEADJUST];
-        xmpFrequency1 = 2000000 / (mincycle * 125 + fineadjust);
+        xmpFrequency1 = (UINT16)(2000000 / (mincycle * 125 + fineadjust));
         DBG("XMP Profile1: %d*125 %d ns\n", mincycle, fineadjust);
       }
       if ((xmpProfiles & 2) == 2) {
         // Check the second profile
         mincycle = spd[SPD_XMP20_PROF2_MINCYCLE];
         fineadjust = spd[SPD_XMP20_PROF2_FINEADJUST];
-        xmpFrequency2 = 2000000 / (mincycle * 125 + fineadjust);
+        xmpFrequency2 = (UINT16)(2000000 / (mincycle * 125 + fineadjust));
         DBG("XMP Profile2: %d*125 %d ns\n", mincycle, fineadjust);
       }
     }
