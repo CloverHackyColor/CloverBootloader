@@ -147,7 +147,7 @@ radeon_card_info_t radeon_cards[] = {
     
     // OLAND
     
-    // Oland: R7-240, 250
+    // Oland: R7-240, 250  - Southand Island
     { 0x6600,	0x00000000, CHIP_FAMILY_OLAND,		"AMD Radeon HD 8600/8700M",	kNull       }, // Mobile
     { 0x6601,	0x00000000, CHIP_FAMILY_OLAND,		"AMD Radeon HD 8500/8700M",	kNull       }, // Mobile
     //	{ 0x6602,	0x00000000, CHIP_FAMILY_OLAND,		"AMD Radeon",           kNull       }, // Mobile
@@ -165,7 +165,7 @@ radeon_card_info_t radeon_cards[] = {
     //	{ 0x6623,	0x00000000, CHIP_FAMILY_OLAND,		"AMD Radeon",           kNull       }, // Mobile
     //	{ 0x6631,	0x00000000, CHIP_FAMILY_OLAND,		"AMD Radeon",           kNull       },
     
-    // BONAIRE
+    // BONAIRE - Sea Island
     { 0x6640,	0x00000000, CHIP_FAMILY_BONAIRE,	"AMD Radeon HD 8950",       kNull       }, // Mobile
     { 0x6641,	0x00000000, CHIP_FAMILY_BONAIRE,	"AMD Radeon HD 8930M",        kNull       }, // Mobile
     { 0x6646,	0x00000000, CHIP_FAMILY_BONAIRE,	"AMD Radeon R9 M280X",      kNull       }, // Mobile
@@ -177,7 +177,7 @@ radeon_card_info_t radeon_cards[] = {
     { 0x665C,	0x00000000, CHIP_FAMILY_BONAIRE,	"AMD Radeon HD 7790",       kFutomaki	},
     { 0x665D,	0x00000000, CHIP_FAMILY_BONAIRE,	"AMD Radeon R9 260",        kFutomaki	},
     { 0x665F,	0x00000000, CHIP_FAMILY_BONAIRE,	"AMD Radeon R9 360",        kFutomaki	},
-    // HAINAN
+    // HAINAN - Southand Island
     { 0x6660,	0x00000000, CHIP_FAMILY_HAINAN,		"AMD Radeon HD 8670M",      kNull       }, // Mobile
     { 0x6663,	0x00000000, CHIP_FAMILY_HAINAN,		"AMD Radeon HD 8570M",      kNull       }, // Mobile
     { 0x6664,	0x00000000, CHIP_FAMILY_HAINAN,		"AMD Radeon R5 M240",       kNull       }, // Mobile
@@ -260,7 +260,7 @@ radeon_card_info_t radeon_cards[] = {
     { 0x679E,	0x00000000, CHIP_FAMILY_TAHITI,	"AMD Radeon HD 7870 XT",      kFutomaki	},
     { 0x679F,	0x00000000, CHIP_FAMILY_TAHITI,	"AMD Radeon HD 7950 Series",	kFutomaki	},
     
-    // HAWAII
+    // HAWAII - Sea Island
     //	{ 0x67A0,	0x00000000, CHIP_FAMILY_HAWAII,	"AMD Radeon",             kFutomaki	},
     //	{ 0x67A1,	0x00000000, CHIP_FAMILY_HAWAII,	"AMD Radeon",             kFutomaki	},
     //	{ 0x67A2,	0x00000000, CHIP_FAMILY_HAWAII,	"AMD Radeon",             kFutomaki	},
@@ -409,7 +409,7 @@ radeon_card_info_t radeon_cards[] = {
     { 0x68FA,	0x00000000, CHIP_FAMILY_CEDAR,    "ATI Radeon HD 7300 Series",    kEulemur	},
     //	{ 0x68FE,	0x00000000, CHIP_FAMILY_CEDAR,	"ATI Radeon HD ??? Series",	kNull		},
     
-    //
+    // Volcanic Island
     { 0x6900,	0x00000000, CHIP_FAMILY_TOPAS,    "ATI Radeon R7 M260/M265",  kExmoor	},
     { 0x6901,	0x00000000, CHIP_FAMILY_TOPAS,    "ATI Radeon R5 M255",       kExmoor	},
     { 0x6920,	0x00000000, CHIP_FAMILY_AMETHYST, "ATI Radeon R9 M395",      kLabrador	},
