@@ -382,6 +382,9 @@ VOID DropTableFromXSDT (UINT32 Signature, UINT64 TableId, UINT32 Length)
   BOOLEAN                         DoubleZero = FALSE;
   BOOLEAN                         Drop;
 //  UINT32                          i, SsdtLen;
+  if (!Xsdt) {
+    return;
+  }
   
   if ((Signature == 0) && (TableId == 0)) {
     return;
@@ -2260,7 +2263,7 @@ EFI_STATUS PatchACPI_OtherOS(CHAR16* OsSubdir, BOOLEAN DropSSDT)
 	EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE       *FadtPointer;
 	
 	EFI_STATUS            Status; // = EFI_SUCCESS;
-//	UINTN                 Index;
+  //	UINTN                 Index;
 	CHAR16*               PathPatched;
   CHAR16*               AcpiOemPath;
   REFIT_DIR_ITER        DirIter;
@@ -2308,7 +2311,7 @@ EFI_STATUS PatchACPI_OtherOS(CHAR16* OsSubdir, BOOLEAN DropSSDT)
   if (Rsdt == NULL && Xsdt == NULL) {
     return EFI_UNSUPPORTED;
   }
-
+  
   //
   // Take FADT (FACP) from XSDT or RSDT (always first entry)
   //
@@ -2319,12 +2322,12 @@ EFI_STATUS PatchACPI_OtherOS(CHAR16* OsSubdir, BOOLEAN DropSSDT)
     FadtPointer = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE*)(UINTN)(Rsdt->Entry);
   }
   DBG("FADT pointer = %p\n", FadtPointer);
-
+  
   // if not found - quit
   if(FadtPointer == NULL) {
     return EFI_NOT_FOUND;
   }
-
+  
   //
   // Inject/drop tables
   //
@@ -2346,30 +2349,31 @@ EFI_STATUS PatchACPI_OtherOS(CHAR16* OsSubdir, BOOLEAN DropSSDT)
   //
   // Inject DSDT
   //
- /* Status = */LoadAndInjectDSDT(PathPatched, FadtPointer);
+  /* Status = */LoadAndInjectDSDT(PathPatched, FadtPointer);
   
   //
-  // Drop SSDT if requested
+  // Drop SSDT if requested. Not until now
   //
+  /* 
   if (DropSSDT) {
     DropTableFromXSDT(EFI_ACPI_4_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE, 0, 0);
     DropTableFromRSDT(EFI_ACPI_4_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE, 0, 0);
   }
-  
+  */
   //
   // find and inject other ACPI tables
   //
-
+  
   DirIterOpen(SelfRootDir, PathPatched, &DirIter);
   while (DirIterNext(&DirIter, 2, L"*.aml", &DirEntry)) {
-
+    
     if (DirEntry->FileName[0] == L'.') {
       continue;
     }
     if (StrStr(DirEntry->FileName, L"DSDT")) {
       continue;
     }
-
+    
     LoadAndInjectAcpiTable(PathPatched, DirEntry->FileName);
   }
   /*Status = */DirIterClose(&DirIter);
@@ -2387,6 +2391,6 @@ EFI_STATUS PatchACPI_OtherOS(CHAR16* OsSubdir, BOOLEAN DropSSDT)
   
   // release mem
   if (PathPatched) FreePool(PathPatched);
-  return EFI_SUCCESS;
+    return EFI_SUCCESS;
 }
 

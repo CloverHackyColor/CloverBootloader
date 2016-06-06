@@ -933,20 +933,20 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
   BeginExternalScreen(OSFLAG_ISSET(Entry->Flags, OSFLAG_USEGRAPHICS), L"Booting OS");
 
   if (!OSTYPE_IS_WINDOWS(Entry->LoaderType)) {
-  if (OSFLAG_ISSET(Entry->Flags, OSFLAG_USEGRAPHICS)) {
-    // save orig OutputString and replace it with
-    // null implementation
-    ConOutOutputString = gST->ConOut->OutputString;
-    gST->ConOut->OutputString = NullConOutOutputString;
-  }
-
-  // Initialize the boot screen
-  if (EFI_ERROR(Status = InitBootScreen(Entry))) {
-    if (Status != EFI_ABORTED) DBG("Failed to initialize custom boot screen: %r!\n", Status);
-  }
-  else if (EFI_ERROR(Status = LockBootScreen())) {
-    DBG("Failed to lock custom boot screen: %r!\n", Status);
-  }
+    if (OSFLAG_ISSET(Entry->Flags, OSFLAG_USEGRAPHICS)) {
+      // save orig OutputString and replace it with
+      // null implementation
+      ConOutOutputString = gST->ConOut->OutputString;
+      gST->ConOut->OutputString = NullConOutOutputString;
+    }
+    
+    // Initialize the boot screen
+    if (EFI_ERROR(Status = InitBootScreen(Entry))) {
+      if (Status != EFI_ABORTED) DBG("Failed to initialize custom boot screen: %r!\n", Status);
+    }
+    else if (EFI_ERROR(Status = LockBootScreen())) {
+      DBG("Failed to lock custom boot screen: %r!\n", Status);
+    }
   } // !OSTYPE_IS_WINDOWS
 
   if (OSTYPE_IS_OSX(Entry->LoaderType) ||
