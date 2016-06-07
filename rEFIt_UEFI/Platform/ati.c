@@ -214,7 +214,7 @@ radeon_card_info_t radeon_cards[] = {
     { 0x6722,	0x00000000, CHIP_FAMILY_BARTS,	"AMD Radeon HD 6900M Series",	kFanwort	},
     { 0x6729,	0x00000000, CHIP_FAMILY_BARTS,	"AMD Radeon HD 6900M Series",	kFanwort	},
     { 0x6738,	0x00000000, CHIP_FAMILY_BARTS,	"AMD Radeon HD 6870 Series",	kDuckweed	},
-    { 0x6739,	0x00000000, CHIP_FAMILY_BARTS,	"AMD Radeon HD 6850 X2",      kDuckweed	},
+    { 0x6739,	0x00000000, CHIP_FAMILY_BARTS,	"AMD Radeon HD 6850 Series",  kDuckweed	},
     { 0x673E,	0x00000000, CHIP_FAMILY_BARTS,	"AMD Radeon HD 6790 Series",	kDuckweed	},
     
     // TURKS
