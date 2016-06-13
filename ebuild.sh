@@ -204,9 +204,23 @@ addEdk2BuildMacro() {
 # Check Xcode toolchain
 checkXcode () {
     XCODE_BUILD="/usr/bin/xcodebuild"
+    local LOCALBIN="/usr/local/bin"
+    local CLOVERBIN="${CLOVERROOT}/BuildTools/usr/local/bin"
     if [[ ! -x "${XCODE_BUILD}" ]]; then
         echo "ERROR: Install Xcode Tools from Apple before using this script." >&2
         exit 1
+    elif [[ -f "${CLOVERBIN}/mtoc.NEW.zip" ]]; then
+        unzip -qo "${CLOVERBIN}/mtoc.NEW.zip" -d "${CLOVERBIN}"
+        [[ ! -d "${LOCALBIN}" ]] && sudo mkdir -p "${LOCALBIN}"
+        if [[ ! -x "${LOCALBIN}/mtoc" ]]; then
+            echo "Installing mtoc"
+            sudo ln -s "${CLOVERBIN}/mtoc.NEW" "${LOCALBIN}/mtoc"
+        fi
+        if [[ ! -x "${LOCALBIN}/mtoc.NEW" ]]; then
+            echo "Installing mtoc.NEW"
+            sudo ln -s "${CLOVERBIN}/mtoc.NEW" "${LOCALBIN}/mtoc.NEW"
+        fi
+        sudo -k
     fi
 }
 
