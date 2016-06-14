@@ -5027,6 +5027,9 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
           if (AsciiStrStr (Prop->string, "Install%20OS%20X%20Mavericks.app")) {
             OSVersion = AllocateZeroPool (5);
             UnicodeStrToAsciiStr (L"10.9", OSVersion);
+          } else if (AsciiStrStr (Prop->string, "Install%20OS%20X%20Sierra") || AsciiStrStr (Prop->string, "Install%20OS%20X%2010.12")) {
+            OSVersion = AllocateZeroPool (6);
+            UnicodeStrToAsciiStr (L"10.12", OSVersion);
           } else if (AsciiStrStr (Prop->string, "Install%20OS%20X%20El%20Capitan") || AsciiStrStr (Prop->string, "Install%20OS%20X%2010.11")) {
             OSVersion = AllocateZeroPool (6);
             UnicodeStrToAsciiStr (L"10.11", OSVersion);
@@ -5078,6 +5081,9 @@ CHAR16
   CHAR16 *OSIconName;
   if (OSVersion == NULL) {
     OSIconName = L"mac";
+  } else if (AsciiStrStr (OSVersion, "10.12") != 0) {
+    // El Capitan
+    OSIconName = L"sierra,mac";
   } else if (AsciiStrStr (OSVersion, "10.11") != 0) {
     // El Capitan
     OSIconName = L"cap,mac";
