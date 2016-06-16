@@ -662,7 +662,7 @@ BOOLEAN KernelPatchPm(VOID *kernelData)
       return TRUE;
     }
     // sherlocks: change for 10.12 DP1
-    else if (/* 0x00033900000000E2ULL */ 0x00003390000000E2ULL == (*((UINT64 *)Ptr))) {
+    else if (0x00003390000000E2ULL == (*((UINT64 *)Ptr))) {
         (*((UINT64 *)Ptr)) = 0x0000000000000000ULL;
         DBG("Kernel power management patch 10.12 DP1 found and patched\n");
         return TRUE;
