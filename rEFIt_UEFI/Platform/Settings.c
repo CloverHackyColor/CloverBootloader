@@ -5876,7 +5876,7 @@ SetFSInjection (
     FSInject->AddStringToList(Blacklist, L"\\System\\Library\\Caches\\com.apple.kext.caches\\Startup\\kernelcache");
     FSInject->AddStringToList(Blacklist, L"\\System\\Library\\Caches\\com.apple.kext.caches\\Startup\\Extensions.mkext");
     FSInject->AddStringToList(Blacklist, L"\\System\\Library\\Extensions.mkext");
-    FSInject->AddStringToList(Blacklist, L"\\System\\Library\\PrelinkedKernels\\prelinkedkernel");
+  //  FSInject->AddStringToList(Blacklist, L"\\System\\Library\\PrelinkedKernels\\prelinkedkernel");
     FSInject->AddStringToList(Blacklist, L"\\com.apple.recovery.boot\\kernelcache");
     FSInject->AddStringToList(Blacklist, L"\\com.apple.recovery.boot\\Extensions.mkext");
     FSInject->AddStringToList(Blacklist, L"\\.IABootFiles\\kernelcache");
