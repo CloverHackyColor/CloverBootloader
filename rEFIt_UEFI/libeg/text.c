@@ -73,7 +73,7 @@ VOID egMeasureText(IN CHAR16 *Text, OUT INTN *Width, OUT INTN *Height)
 
 EG_IMAGE * egLoadFontImage(IN BOOLEAN FromTheme, IN INTN Rows, IN INTN Cols)
 {
-  EG_IMAGE            *NewImage;
+  EG_IMAGE            *NewImage = NULL;
   EG_IMAGE            *NewFontImage;
 //  UINTN     FontWidth;  //using global variables
 //  UINTN     FontHeight;
@@ -83,16 +83,17 @@ EG_IMAGE * egLoadFontImage(IN BOOLEAN FromTheme, IN INTN Rows, IN INTN Cols)
   EG_PIXEL    FirstPixel;
   BOOLEAN     WantAlpha = TRUE;
   
-  if (!ThemeDir) {
+/*  if (!ThemeDir) {
     GlobalConfig.Font = FONT_GRAY;
     return NULL;
-  }
+  } */
 
   if (FromTheme) {
     NewImage = egLoadImage(ThemeDir, GlobalConfig.FontFileName, WantAlpha);
-  } else {
-    NewImage = egLoadImage(ThemeDir, L"FontKorean.png", WantAlpha);
   }
+  /* else {
+    NewImage = egLoadImage(ThemeDir, L"FontKorean.png", WantAlpha);
+  } */
 
   if (NewImage) {
     if (FromTheme) {
@@ -102,7 +103,12 @@ EG_IMAGE * egLoadFontImage(IN BOOLEAN FromTheme, IN INTN Rows, IN INTN Cols)
     }
   } else {
     CHAR16 *commonFontDir = L"EFI\\CLOVER\\font";
-    CHAR16 *fontFilePath = PoolPrint(L"%s\\%s", commonFontDir, GlobalConfig.FontFileName);
+    CHAR16 *fontFilePath;
+    if (FromTheme) {
+      fontFilePath = PoolPrint(L"%s\\%s", commonFontDir, GlobalConfig.FontFileName);
+    } else {
+      fontFilePath = PoolPrint(L"%s\\%s", commonFontDir, L"FontKorean.png");
+    }
     NewImage = egLoadImage(SelfRootDir, fontFilePath, WantAlpha);
     if (!NewImage) {
       DBG("Font %s is not loaded, using default\n", fontFilePath);
@@ -161,13 +167,14 @@ VOID PrepareFont(VOID)
     if (FontImage) {
       FontHeight = 16;
  //     if (GlobalConfig.CharWidth == 0) {
-        GlobalConfig.CharWidth = 16;
+        GlobalConfig.CharWidth = 20;
  //     }
       FontWidth = GlobalConfig.CharWidth;
       TextHeight = FontHeight + TEXT_YMARGIN * 2;
       DBG("Using Korean font matrix\n");
       return;
     } else {
+      DBG("font image not loaded, use english\n");
       gLanguage = english;
     }
   }
