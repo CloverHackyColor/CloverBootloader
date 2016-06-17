@@ -4729,7 +4729,7 @@ GetUserSettings(
       }
 
       Prop = GetProperty (DictPointer, "UseARTFrequency");
-      gSettings.UseARTFreq = !IsPropertyFalse (Prop);
+      gSettings.UseARTFreq = IsPropertyTrue (Prop);
 
       gSettings.UserChange = FALSE;
       Prop = GetProperty (DictPointer, "BusSpeedkHz");
