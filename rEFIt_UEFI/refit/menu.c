@@ -923,7 +923,7 @@ VOID ApplyInputs(VOID)
         Status = LoadUserSettings(SelfRootDir, InputItems[i].SValue, &dict);
         if (!EFI_ERROR(Status)) {
           if (gSettings.ConfigName) FreePool(gSettings.ConfigName);
-          gSettings.ConfigName  = PoolPrint(L"");
+          //gSettings.ConfigName  = PoolPrint(L"");
           GetUserSettings(SelfRootDir, dict);
           if (gConfigDict[2]) FreeTag(gConfigDict[2]);
           gConfigDict[2] = dict;

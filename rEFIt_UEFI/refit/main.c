@@ -714,7 +714,8 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
   if (Entry->Settings) {
     Status = LoadUserSettings(SelfRootDir, Entry->Settings, &dict);
     if (!EFI_ERROR(Status)) {
-      DBG("Found custom settings for this entry:%s\n", Entry->Settings);
+      DBG("Found custom settings for this entry: %s\n", Entry->Settings);
+      gBootArgsChanged = TRUE;
       Status = GetUserSettings(SelfRootDir, dict);
       if (EFI_ERROR(Status)) {
         DBG("... but: %r\n", Status);
@@ -722,10 +723,10 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
         if ((gSettings.CpuFreqMHz > 100) && (gSettings.CpuFreqMHz < 20000)) {
           gCPUStructure.MaxSpeed      = gSettings.CpuFreqMHz;
         }
-        CopyMem (Entry->KernelAndKextPatches,
-                 &gSettings.KernelAndKextPatches,
-                 sizeof(KERNEL_AND_KEXT_PATCHES));
-        DBG("Custom KernelAndKextPatches copyed to started entry\n");
+        //CopyMem (Entry->KernelAndKextPatches,
+        //         &gSettings.KernelAndKextPatches,
+        //         sizeof(KERNEL_AND_KEXT_PATCHES));
+        //DBG("Custom KernelAndKextPatches copyed to started entry\n");
       }
     } else {
       DBG("LoadUserSettings failed: %r\n", Status);
@@ -736,13 +737,17 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
          DivU64x32(gCPUStructure.FSBFrequency, kilo),
          gCPUStructure.MaxSpeed);
 
+  //if (gBootArgsChanged) {
+    //CopyMem (Entry->KernelAndKextPatches,
+    //         &gSettings.KernelAndKextPatches,
+    //         sizeof(KERNEL_AND_KEXT_PATCHES));
+    //DBG("KernelAndKextPatches copyed to started entry\n");
+  //}
 
-  if (gBootArgsChanged) {
-    CopyMem (Entry->KernelAndKextPatches,
-             &gSettings.KernelAndKextPatches,
-             sizeof(KERNEL_AND_KEXT_PATCHES));
-    DBG("KernelAndKextPatches copyed to started entry\n");
-  }
+  //if (dict != NULL) {
+  //  FillinKextPatches (Entry->KernelAndKextPatches, dict);
+  //}
+  
   DumpKernelAndKextPatches(Entry->KernelAndKextPatches);
 
   // Load image into memory (will be started later)

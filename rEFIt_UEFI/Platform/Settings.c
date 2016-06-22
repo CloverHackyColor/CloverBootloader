@@ -4961,7 +4961,8 @@ GetUserSettings(
      }
      */
     // KernelAndKextPatches
-    if (!StrLen(gSettings.ConfigName)) {
+    //if (!StrLen(gSettings.ConfigName)) {
+    if (gBootArgsChanged) {
       //DBG("\n\n***********************************************n\n");
       //DBG("\nConfigName: %s\n", gSettings.ConfigName);
       //DBG("==================================================\n\n");
