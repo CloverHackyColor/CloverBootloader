@@ -5399,7 +5399,8 @@ GetDevices ()
           SlotDevice->SlotType        = SlotTypePciExpressX4;
         }
         else if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_MEDIA) &&
-                 (Pci.Hdr.ClassCode[1] == PCI_CLASS_MEDIA_HDA)) {
+                 ((Pci.Hdr.ClassCode[1] == PCI_CLASS_MEDIA_HDA) ||
+                  (Pci.Hdr.ClassCode[1] == PCI_CLASS_MEDIA_AUDIO))) {
           if (Pci.Hdr.VendorId != 0x8086) {
             SlotDevice = &SlotDevices[4];
             SlotDevice->SegmentGroupNum = (UINT16)Segment;
@@ -5597,7 +5598,8 @@ SetDevices (
         // HDA
         else if (gSettings.HDAInjection &&
                  (Pci.Hdr.ClassCode[2] == PCI_CLASS_MEDIA) &&
-                 (Pci.Hdr.ClassCode[1] == PCI_CLASS_MEDIA_HDA)) {
+                 ((Pci.Hdr.ClassCode[1] == PCI_CLASS_MEDIA_HDA) ||
+                  (Pci.Hdr.ClassCode[1] == PCI_CLASS_MEDIA_AUDIO))) {
           //no HDMI injection
           if ((Pci.Hdr.VendorId != 0x1002) &&
               (Pci.Hdr.VendorId != 0x10de)) {

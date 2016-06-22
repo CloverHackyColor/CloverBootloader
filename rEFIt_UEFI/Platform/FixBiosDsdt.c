@@ -761,7 +761,8 @@ VOID CheckHardware()
 
           // HDA and HDMI Audio
           if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_MEDIA) &&
-              (Pci.Hdr.ClassCode[1] == PCI_CLASS_MEDIA_HDA)) {
+              ((Pci.Hdr.ClassCode[1] == PCI_CLASS_MEDIA_HDA) ||
+               (Pci.Hdr.ClassCode[1] == PCI_CLASS_MEDIA_AUDIO))) {
             UINT32 codecId = 0, layoutId = 0;
             if ((Pci.Hdr.VendorId == 0x8086) &&
                 ((Pci.Hdr.DeviceId & 0xFF00) != 0x0C00)) { //0x0C0C is HDMI sound
