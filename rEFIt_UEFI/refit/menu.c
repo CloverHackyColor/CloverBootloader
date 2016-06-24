@@ -1886,7 +1886,7 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
 static VOID TextMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINTN Function, IN CHAR16 *ParamText)
 {
   INTN i = 0, j = 0;
-  static UINTN MenuWidth = 0, ItemWidth = 0, MenuHeight = 0;
+  static UINTN TextMenuWidth = 0,ItemWidth = 0, MenuHeight = 0;
   static UINTN MenuPosY = 0;
   //static CHAR16 **DisplayStrings;
   CHAR16 *TimeoutMessage;
@@ -1905,14 +1905,14 @@ static VOID TextMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
       InitScroll(State, Screen->EntryCount, Screen->EntryCount, MenuHeight);
 
       // determine width of the menu
-      MenuWidth = 50;  // minimum
+      TextMenuWidth = 50;  // minimum
       for (i = 0; i <= State->MaxIndex; i++) {
         ItemWidth = StrLen(Screen->Entries[i]->Title);
-        if (MenuWidth < ItemWidth)
-          MenuWidth = ItemWidth;
+        if (TextMenuWidth < ItemWidth)
+          TextMenuWidth = ItemWidth;
       }
-      if (MenuWidth > ConWidth - 6)
-        MenuWidth = ConWidth - 6;
+      if (TextMenuWidth > ConWidth - 6)
+        TextMenuWidth = ConWidth - 6;
 
       break;
 
@@ -1947,7 +1947,7 @@ static VOID TextMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
 				StrCpy(ResultString, Screen->Entries[i]->Title);
 				if (Screen->Entries[i]->Tag == TAG_INPUT)
 					StrCat(ResultString, ((REFIT_INPUT_DIALOG*)(Screen->Entries[i]))->Item->SValue);
-				for (j = StrLen(ResultString); j < (INTN)MenuWidth; j++)
+				for (j = StrLen(ResultString); j < (INTN)TextMenuWidth; j++)
 					ResultString[j] = L' ';
 				ResultString[j] = 0;
 				gST->ConOut->OutputString (gST->ConOut, ResultString);
@@ -1974,7 +1974,7 @@ static VOID TextMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
 			StrCpy(ResultString, Screen->Entries[State->LastSelection]->Title);
       if (Screen->Entries[State->LastSelection]->Tag == TAG_INPUT)
 				StrCat(ResultString, ((REFIT_INPUT_DIALOG*)(Screen->Entries[State->LastSelection]))->Item->SValue);
-			for (j = StrLen(ResultString); j < (INTN)MenuWidth; j++)
+			for (j = StrLen(ResultString); j < (INTN)TextMenuWidth; j++)
 				ResultString[j] = L' ';
 			ResultString[j] = 0;
 			gST->ConOut->OutputString (gST->ConOut, ResultString);
@@ -1986,7 +1986,7 @@ static VOID TextMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
 			StrCpy(ResultString, Screen->Entries[State->CurrentSelection]->Title);
 			if (Screen->Entries[State->CurrentSelection]->Tag == TAG_INPUT)
 				StrCat(ResultString, ((REFIT_INPUT_DIALOG*)(Screen->Entries[State->CurrentSelection]))->Item->SValue);
-			for (j = StrLen(ResultString); j < (INTN)MenuWidth; j++)
+			for (j = StrLen(ResultString); j < (INTN)TextMenuWidth; j++)
 				ResultString[j] = L' ';
 			ResultString[j] = 0;
 			gST->ConOut->OutputString (gST->ConOut, ResultString);

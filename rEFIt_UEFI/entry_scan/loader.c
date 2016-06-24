@@ -853,18 +853,18 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
       FreePool(SubEntry->LoadOptions);
       if (WithSplash) {
         if (Quiet) {
-          CHAR16 *TempOptions = RemoveLoadOption(Entry->LoadOptions, L"splash");
+          TempOptions = RemoveLoadOption(Entry->LoadOptions, L"splash");
           SubEntry->me.Title    = PoolPrint(L"%s verbose without splash", Entry->me.Title);
           SubEntry->LoadOptions = RemoveLoadOption(TempOptions, L"quiet");
           FreePool(TempOptions);
         } else {
-          CHAR16 *TempOptions = RemoveLoadOption(Entry->LoadOptions, L"splash");
+          TempOptions = RemoveLoadOption(Entry->LoadOptions, L"splash");
           SubEntry->me.Title    = PoolPrint(L"%s quiet without splash", Entry->me.Title);
           SubEntry->LoadOptions = AddLoadOption(TempOptions, L"quiet");
           FreePool(TempOptions);
         }
       } else if (Quiet) {
-        CHAR16 *TempOptions = RemoveLoadOption(Entry->LoadOptions, L"quiet");
+        TempOptions = RemoveLoadOption(Entry->LoadOptions, L"quiet");
         SubEntry->me.Title    = PoolPrint(L"%s verbose with splash", Entry->me.Title);
         SubEntry->LoadOptions = AddLoadOption(Entry->LoadOptions, L"splash");
         FreePool(TempOptions);

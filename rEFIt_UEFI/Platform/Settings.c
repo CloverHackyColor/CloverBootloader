@@ -760,7 +760,7 @@ FillinKextPatches (
                    )
 {
   TagPtr Prop;
-  UINTN  i;
+ // UINTN  i;
 
   if (Patches == NULL || DictPointer == NULL) {
     return FALSE;
@@ -809,7 +809,7 @@ FillinKextPatches (
 
   Prop = GetProperty (DictPointer, "ATIConnectorsController");
   if (Prop != NULL) {
-    UINTN len = 0;
+    UINTN len = 0, i=0;
 
     // ATIConnectors patch
     Patches->KPATIConnectorsController = AllocateZeroPool (AsciiStrSize (Prop->string) * sizeof(CHAR16));
@@ -1429,7 +1429,7 @@ FillinCustomEntry (
     if (Prop->type == kTagTypeFalse) {
       Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_NODEFAULTMENU);
     } else if (Prop->type != kTagTypeTrue) {
-      CUSTOM_LOADER_ENTRY *SubEntry;
+      CUSTOM_LOADER_ENTRY *CustomSubEntry;
       INTN   i, Count = GetTagCount (Prop);
       TagPtr Dict = NULL;
       Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_NODEFAULTMENU);
@@ -1441,11 +1441,12 @@ FillinCustomEntry (
           if (Dict == NULL) {
             break;
           }
-          // Allocate a sub entry
-          SubEntry = DuplicateCustomEntry (Entry);
           if (SubEntry) {
-            if (!FillinCustomEntry (SubEntry, Dict, TRUE) || !AddCustomSubEntry (Entry, SubEntry)) {
-              FreePool (SubEntry);
+                    // Allocate a sub entry
+            CustomSubEntry = DuplicateCustomEntry (Entry);
+            if (!FillinCustomEntry (CustomSubEntry, Dict, TRUE) || !AddCustomSubEntry (Entry, CustomSubEntry)) {
+              if (CustomSubEntry)
+                FreePool (CustomSubEntry);
             }
           }
         }
@@ -3452,7 +3453,7 @@ GetUserSettings(
   TagPtr     Prop2;
   TagPtr     Prop3;
   TagPtr     DictPointer;
-  UINTN      i;
+  //UINTN      i;
 
   Dict              = CfgDict;
   if (Dict != NULL) {
@@ -3477,6 +3478,7 @@ GetUserSettings(
 
     DictPointer = GetProperty (Dict, "Graphics");
     if (DictPointer != NULL) {
+      INTN i;
       Dict2     = GetProperty (DictPointer, "Inject");
       if (Dict2 != NULL) {
         if (IsPropertyTrue (Dict2)) {
@@ -3520,7 +3522,7 @@ GetUserSettings(
         gSettings.LoadVBios    = TRUE;
       }
 
-      for (i = 0; i < NGFX; i++) {
+      for (i = 0; i < (INTN)NGFX; i++) {
         gGraphics[i].LoadVBios = gSettings.LoadVBios; //default
       }
 
@@ -4455,7 +4457,7 @@ GetUserSettings(
 
       Prop               = GetProperty (DictPointer, "SortedOrder");
       if (Prop) {
-        TagPtr Prop2 = NULL;
+        Prop2 = NULL;
         INTN   i, Count = GetTagCount (Prop);
         if (Count > 0) {
           gSettings.SortedACPICount = 0;
@@ -4472,7 +4474,7 @@ GetUserSettings(
 
       Prop = GetProperty (DictPointer, "DisabledAML");
       if (Prop) {
-        TagPtr Prop2 = NULL;
+        Prop2 = NULL;
         INTN   i, Count = GetTagCount (Prop);
         if (Count > 0) {
           gSettings.DisabledAMLCount = 0;
@@ -4508,7 +4510,7 @@ GetUserSettings(
       Prop = GetProperty (DictPointer, "Memory");
       if (Prop != NULL){
         // Get memory table count
-        TagPtr Prop2   = GetProperty (Prop, "SlotCount");
+        Prop2   = GetProperty (Prop, "SlotCount");
         gRAM.UserInUse = (UINT8)GetPropertyInteger (Prop2, 0);
         // Get memory channels
         Prop2             = GetProperty (Prop, "Channels");
@@ -4517,7 +4519,7 @@ GetUserSettings(
         Prop2 = GetProperty (Prop, "Modules");
         if (Prop2 != NULL) {
           INTN   i, Count = GetTagCount (Prop2);
-          TagPtr Prop3 = NULL;
+          Prop3 = NULL;
 
           for (i = 0; i < Count; i++) {
             UINT8 Slot = MAX_RAM_SLOTS;
@@ -4603,7 +4605,7 @@ GetUserSettings(
       if (Prop != NULL) {
         INTN   DeviceN;
         INTN   Index, Count = GetTagCount (Prop);
-        TagPtr Prop3 = NULL;
+        Prop3 = NULL;
 
         for (Index = 0; Index < Count; ++Index) {
           if (EFI_ERROR (GetElement (Prop, Index, &Prop3))) {

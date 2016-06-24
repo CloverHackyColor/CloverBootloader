@@ -498,11 +498,11 @@ BOOLEAN PatchCPUID(UINT8* bytes, UINT8* Location, INT32 LenLoc,
   return Patched;
 }
 
-VOID KernelCPUIDPatch(VOID* KernelData, LOADER_ENTRY *Entry)
+VOID KernelCPUIDPatch(UINT8* kernelData, LOADER_ENTRY *Entry)
 {
 //Snow patterns
   DBG_RT(Entry, "CPUID: try Snow patch...\n");
-  if (PatchCPUID((UINT8*)KernelData, &StrCpuid1[0], sizeof(StrCpuid1), &SearchModel106[0],
+  if (PatchCPUID(kernelData, &StrCpuid1[0], sizeof(StrCpuid1), &SearchModel106[0],
                  &SearchExt106[0], &ReplaceModel106[0], &ReplaceModel106[0],
                  sizeof(SearchModel106), Entry)) {
     DBG_RT(Entry, "...done!\n");
@@ -510,7 +510,7 @@ VOID KernelCPUIDPatch(VOID* KernelData, LOADER_ENTRY *Entry)
   }
 //Lion patterns
   DBG_RT(Entry, "CPUID: try Lion patch...\n");
-  if (PatchCPUID((UINT8*)KernelData, &StrMsr8b[0], sizeof(StrMsr8b), &SearchModel107[0],
+  if (PatchCPUID(kernelData, &StrMsr8b[0], sizeof(StrMsr8b), &SearchModel107[0],
                  &SearchExt107[0], &ReplaceModel107[0], &ReplaceModel107[0],
                  sizeof(SearchModel107), Entry)) {
     DBG_RT(Entry, "...done!\n");
@@ -518,7 +518,7 @@ VOID KernelCPUIDPatch(VOID* KernelData, LOADER_ENTRY *Entry)
   }
 //Mavericks
   DBG_RT(Entry, "CPUID: try Mavericks patch...\n");
-  if (PatchCPUID((UINT8*)KernelData, &StrMsr8b[0], sizeof(StrMsr8b), &SearchModel109[0],
+  if (PatchCPUID(kernelData, &StrMsr8b[0], sizeof(StrMsr8b), &SearchModel109[0],
                  &SearchExt109[0], &ReplaceModel109[0], &ReplaceExt109[0],
                  sizeof(SearchModel109), Entry)) {
     DBG_RT(Entry, "...done!\n");
@@ -526,7 +526,7 @@ VOID KernelCPUIDPatch(VOID* KernelData, LOADER_ENTRY *Entry)
   }
 //Yosemite
   DBG_RT(Entry, "CPUID: try Yosemite patch...\n");
-  if (PatchCPUID((UINT8*)KernelData, &StrMsr8b[0], sizeof(StrMsr8b), &SearchModel101[0],
+  if (PatchCPUID(kernelData, &StrMsr8b[0], sizeof(StrMsr8b), &SearchModel101[0],
                  &SearchExt101[0], &ReplaceModel107[0], &ReplaceModel107[0],
                  sizeof(SearchModel107), Entry)) {
     DBG_RT(Entry, "...done!\n");
@@ -798,7 +798,7 @@ BOOLEAN KernelLapicPatch_32(VOID *kernelData)
 }
 
 
-BOOLEAN KernelHaswellEPatch(VOID *KernelData)
+BOOLEAN KernelHaswellEPatch(VOID *kernelData)
 {
   // Credit to stinga11 for the patches used below
   // Based on Pike R. Alpha's Haswell patch for Mavericks
@@ -809,7 +809,7 @@ BOOLEAN KernelHaswellEPatch(VOID *KernelData)
 
   DBG("Searching for Haswell-E patch pattern\n");
 
-  Bytes = (UINT8*)KernelData;
+  Bytes = (UINT8*)kernelData;
   PatchApplied = FALSE;
 
   for (Index = 0; Index < 0x1000000; ++Index) {
@@ -1309,7 +1309,7 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
       }
       return;
     }
-    KernelCPUIDPatch(KernelData, Entry);
+    KernelCPUIDPatch((UINT8*)KernelData, Entry);
   } else {
     DBG_RT(Entry, "KernelCPUID patch not done\n");
   }

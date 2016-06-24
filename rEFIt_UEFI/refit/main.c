@@ -737,16 +737,6 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
          DivU64x32(gCPUStructure.FSBFrequency, kilo),
          gCPUStructure.MaxSpeed);
 
-  //if (gBootArgsChanged) {
-    //CopyMem (Entry->KernelAndKextPatches,
-    //         &gSettings.KernelAndKextPatches,
-    //         sizeof(KERNEL_AND_KEXT_PATCHES));
-    //DBG("KernelAndKextPatches copyed to started entry\n");
-  //}
-
-  //if (dict != NULL) {
-  //  FillinKextPatches (Entry->KernelAndKextPatches, dict);
-  //}
   
   DumpKernelAndKextPatches(Entry->KernelAndKextPatches);
 

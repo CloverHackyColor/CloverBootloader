@@ -136,7 +136,7 @@ SMBIOS_TABLE_STRING    SMBIOS_TABLE_TYPE4_STR_IDX[] = {
 // validate the SMBIOS entry point structure
 BOOLEAN IsEntryPointStructureValid (IN SMBIOS_TABLE_ENTRY_POINT *EntryPointStructure)
 {
-  UINTN                     Index;
+  UINTN                     I;
   UINT8                     Length;
   UINT8                     Checksum = 0;
   UINT8                     *BytePtr;
@@ -147,8 +147,8 @@ BOOLEAN IsEntryPointStructureValid (IN SMBIOS_TABLE_ENTRY_POINT *EntryPointStruc
   BytePtr = (UINT8*) EntryPointStructure;
   Length = EntryPointStructure->EntryPointLength;
 
-  for (Index = 0; Index < Length; Index++) {
-    Checksum = Checksum + (UINT8) BytePtr[Index];
+  for (I = 0; I < Length; I++) {
+    Checksum = Checksum + (UINT8) BytePtr[I];
   }
 
   // a valid SMBIOS EPS must have checksum of 0
