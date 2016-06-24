@@ -590,7 +590,7 @@ EFI_STATUS bootMBR(REFIT_VOLUME* volume)
 	return EFI_SUCCESS;	
 }
 
-EFI_STATUS bootPBRtest(REFIT_VOLUME* volume) 
+EFI_STATUS bootPBRtest(REFIT_VOLUME* volume)
 {
 	EFI_STATUS                  Status		= EFI_NOT_FOUND;
 	EFI_BLOCK_IO*               pDisk     = volume->BlockIO;
@@ -739,201 +739,205 @@ gRS->ResetSystem(EfiResetWarm, EFI_SUCCESS, 0, NULL);
 /** For BIOS and some UEFI boots.
  * Loads partition boot record (PBR) and starts it.
  */
-EFI_STATUS bootPBR(REFIT_VOLUME* volume) 
+EFI_STATUS bootPBR(REFIT_VOLUME* volume, BOOLEAN SataReset)
 {
-	EFI_STATUS					Status;
-	EFI_BLOCK_IO				*pDisk			= volume->BlockIO;
-	UINT8               *pBootSector	= (UINT8*)(UINTN)0x7C00;
-	UINT8               *mBootSector;
-	UINT32                      LbaOffset		= 0;
-	UINT32                      LbaSize			= 0;
-	HARDDRIVE_DEVICE_PATH       *HdPath			= NULL; 
-	EFI_DEVICE_PATH_PROTOCOL    *DevicePath		= volume->DevicePath;
+  EFI_STATUS					Status;
+  EFI_BLOCK_IO				*pDisk			= volume->BlockIO;
+  UINT8               *pBootSector	= (UINT8*)(UINTN)0x7C00;
+  UINT8               *mBootSector;
+  UINT32                      LbaOffset		= 0;
+  UINT32                      LbaSize			= 0;
+  HARDDRIVE_DEVICE_PATH       *HdPath			= NULL;
+  EFI_DEVICE_PATH_PROTOCOL    *DevicePath		= volume->DevicePath;
   UINT8                       BiosDriveNum;
-	//UINT16                      OldMask;
-	//UINT16                      NewMask;
-	UINTN                       i, j;  //for debug dump
-	IA32_REGISTER_SET           Regs;
-	//UINTN						LogSize;  
-	
-	EFI_LEGACY_BIOS_PROTOCOL    *LegacyBios;
-	//UINT16                    HddCount;
-	//HDD_INFO                  *HddInfo = NULL;
-	UINT16                      BbsCount;
-	BBS_TABLE                   *BbsTable = NULL;
-	BBS_TABLE                   *BbsTableIt = NULL;
-	CHAR16                      *BbsPriorityTxt;
-	CHAR16                      *BbsDevTypeTxt;
-	MBR_PARTITION_INFO          *pMBR = (MBR_PARTITION_INFO*)(UINTN)0x11BE; // typical location boot0 installs it, should be unused otherwise...
-	
-	//
-	// get EfiLegacy8259Protocol - mandatory
-	//
-	Status = gBS->LocateProtocol(&gEfiLegacy8259ProtocolGuid, NULL, (VOID**)&gLegacy8259);
-	DBG("EfiLegacy8259ProtocolGuid: %r\n", Status);
-	if (EFI_ERROR(Status)) {
-		return Status;
-	}
-	
-	//
-	// get EfiLegacyBiosProtocol - optional
-	//
-	Status = gBS->LocateProtocol(&gEfiLegacyBiosProtocolGuid, NULL, (VOID**)&LegacyBios);
-	DBG("EfiLegacyBiosProtocolGuid: %r\n", Status);
-	if (!EFI_ERROR(Status)) {
-		//
-		// call PrepareToBootEfi() to init BIOS drives
-		//
-		
-		//Status = LegacyBios->GetBbsInfo(LegacyBios, &HddCount, &HddInfo, &BbsCount, &BbsTable);
-		//DBG("GetBbsInfo = %r, HddCnt=%d, HddInfo=%p, BbsCount=%d, BbsTabl%p\n", Status, HddCount, HddInfo, BbsCount, BbsTable);
-		Status = LegacyBios->PrepareToBootEfi(LegacyBios, &BbsCount, &BbsTable);
-		DBG("PrepareToBootEfi = %r, BbsCount=%d, BbsTabl%p\n", Status, BbsCount, BbsTable);
-		//PauseForKey(L"continue ...\n");
-		
-		//
-		// debug: dump BbsTable
-		//
-		BbsTableIt = BbsTable;
-		for (i=0; i<BbsCount; i++, BbsTableIt++) {
-			
-			BbsPriorityTxt = L"";
-			switch (BbsTableIt->BootPriority) {
-				case BBS_DO_NOT_BOOT_FROM:
-					BbsPriorityTxt = L"NOT";
-					break;
+  //UINT16                      OldMask;
+  //UINT16                      NewMask;
+  UINTN                       i, j;  //for debug dump
+  IA32_REGISTER_SET           Regs;
+  //UINTN						LogSize;
 
-				case BBS_LOWEST_PRIORITY:
-					BbsPriorityTxt = L"LOW";
-					break;
-					
-				case BBS_UNPRIORITIZED_ENTRY:
-					BbsPriorityTxt = L"UNP";
-					break;
-					
-				case BBS_IGNORE_ENTRY:
-					BbsPriorityTxt = L"IGN";
-					break;
-			}
-			
-			BbsDevTypeTxt = L"-";
-			switch (BbsTableIt->DeviceType) {
-				case BBS_FLOPPY:
-					BbsDevTypeTxt = L"FLP";
-					break;
-					
-				case BBS_HARDDISK:
-					BbsDevTypeTxt = L"HDD";
-					break;
-					
-				case BBS_CDROM:
-					BbsDevTypeTxt = L"CDR";
-					break;
-					
-				case BBS_PCMCIA:
-					BbsDevTypeTxt = L"PCM";
-					break;
-					
-				case BBS_USB:
-					BbsDevTypeTxt = L"USB";
-					break;
-					
-				case BBS_EMBED_NETWORK:
-					BbsDevTypeTxt = L"NET";
-					break;
-					
-				case BBS_BEV_DEVICE:
-					BbsDevTypeTxt = L"BEV";
-					break;
-			}
-			
-			DBG("%d: Drv: %x P: %x %s PCI(%x,%x,%x), DT: %x %s SF: %x Txt: '%a'\n",
-				i, BbsTableIt->AssignedDriveNumber, BbsTableIt->BootPriority, BbsPriorityTxt,
-				BbsTableIt->Bus, BbsTableIt->Device, BbsTableIt->Function,
-				BbsTableIt->DeviceType, BbsDevTypeTxt, BbsTableIt->StatusFlags,
-				(CHAR8*)(UINTN)((BbsTableIt->DescStringSegment << 4) + BbsTableIt->DescStringOffset)
-				);
-		}
-		//PauseForKey(L"continue ...\n");
-	}
-	
-	//
-	// find the partition device path node
-	//
-	while (!IsDevicePathEnd (DevicePath)) {
-		if ((DevicePathType (DevicePath) == MEDIA_DEVICE_PATH) &&
-			(DevicePathSubType (DevicePath) == MEDIA_HARDDRIVE_DP)) {
-			HdPath = (HARDDRIVE_DEVICE_PATH *)DevicePath;
-			break;
-		}		
-		DevicePath = NextDevicePathNode (DevicePath);
-	}
-	
-	if (HdPath != NULL) {
-		DBG("boot from partition %s\n", FileDevicePathToStr((EFI_DEVICE_PATH *)HdPath));
-		LbaOffset	= (UINT32)HdPath->PartitionStart;
-		LbaSize		= (UINT32)HdPath->PartitionSize;
-        DBG("starting from 0x%x LBA \n", LbaOffset);
-	} else {
-		return Status;
-	}
-	
-	//
-	// prepare ThunkContext for 16bit BIOS calls
-	//
-	if (mThunkContext == NULL) {
-		Status = gBS->AllocatePool (EfiBootServicesData, sizeof(THUNK_CONTEXT), (VOID **)&mThunkContext);
-		if (EFI_ERROR (Status)) {
-			return Status;
-		}
-		DBG("Thunk allocated\n");
-		Status = InitializeBiosIntCaller(); //mThunkContext);
+  EFI_LEGACY_BIOS_PROTOCOL    *LegacyBios;
+  //UINT16                    HddCount;
+  //HDD_INFO                  *HddInfo = NULL;
+  UINT16                      BbsCount;
+  BBS_TABLE                   *BbsTable = NULL;
+  BBS_TABLE                   *BbsTableIt = NULL;
+  CHAR16                      *BbsPriorityTxt;
+  CHAR16                      *BbsDevTypeTxt;
+  MBR_PARTITION_INFO          *pMBR = (MBR_PARTITION_INFO*)(UINTN)0x11BE; // typical location boot0 installs it, should be unused otherwise...
+
+  //
+  // get EfiLegacy8259Protocol - mandatory
+  //
+  Status = gBS->LocateProtocol(&gEfiLegacy8259ProtocolGuid, NULL, (VOID**)&gLegacy8259);
+  DBG("EfiLegacy8259ProtocolGuid: %r\n", Status);
+  if (EFI_ERROR(Status)) {
+    return Status;
+  }
+
+  if (SataReset) {
+    IoWrite8(0x3F2, 0x0C);
+  }
+
+  //
+  // get EfiLegacyBiosProtocol - optional
+  //
+  Status = gBS->LocateProtocol(&gEfiLegacyBiosProtocolGuid, NULL, (VOID**)&LegacyBios);
+  DBG("EfiLegacyBiosProtocolGuid: %r\n", Status);
+  if (!EFI_ERROR(Status)) {
+    //
+    // call PrepareToBootEfi() to init BIOS drives
+    //
+
+    //Status = LegacyBios->GetBbsInfo(LegacyBios, &HddCount, &HddInfo, &BbsCount, &BbsTable);
+    //DBG("GetBbsInfo = %r, HddCnt=%d, HddInfo=%p, BbsCount=%d, BbsTabl%p\n", Status, HddCount, HddInfo, BbsCount, BbsTable);
+    Status = LegacyBios->PrepareToBootEfi(LegacyBios, &BbsCount, &BbsTable);
+    DBG("PrepareToBootEfi = %r, BbsCount=%d, BbsTabl%p\n", Status, BbsCount, BbsTable);
+    //PauseForKey(L"continue ...\n");
+
+    //
+    // debug: dump BbsTable
+    //
+    BbsTableIt = BbsTable;
+    for (i=0; i<BbsCount; i++, BbsTableIt++) {
+
+      BbsPriorityTxt = L"";
+      switch (BbsTableIt->BootPriority) {
+        case BBS_DO_NOT_BOOT_FROM:
+          BbsPriorityTxt = L"NOT";
+          break;
+
+        case BBS_LOWEST_PRIORITY:
+          BbsPriorityTxt = L"LOW";
+          break;
+
+        case BBS_UNPRIORITIZED_ENTRY:
+          BbsPriorityTxt = L"UNP";
+          break;
+
+        case BBS_IGNORE_ENTRY:
+          BbsPriorityTxt = L"IGN";
+          break;
+      }
+
+      BbsDevTypeTxt = L"-";
+      switch (BbsTableIt->DeviceType) {
+        case BBS_FLOPPY:
+          BbsDevTypeTxt = L"FLP";
+          break;
+
+        case BBS_HARDDISK:
+          BbsDevTypeTxt = L"HDD";
+          break;
+
+        case BBS_CDROM:
+          BbsDevTypeTxt = L"CDR";
+          break;
+
+        case BBS_PCMCIA:
+          BbsDevTypeTxt = L"PCM";
+          break;
+
+        case BBS_USB:
+          BbsDevTypeTxt = L"USB";
+          break;
+
+        case BBS_EMBED_NETWORK:
+          BbsDevTypeTxt = L"NET";
+          break;
+
+        case BBS_BEV_DEVICE:
+          BbsDevTypeTxt = L"BEV";
+          break;
+      }
+
+      DBG("%d: Drv: %x P: %x %s PCI(%x,%x,%x), DT: %x %s SF: %x Txt: '%a'\n",
+          i, BbsTableIt->AssignedDriveNumber, BbsTableIt->BootPriority, BbsPriorityTxt,
+          BbsTableIt->Bus, BbsTableIt->Device, BbsTableIt->Function,
+          BbsTableIt->DeviceType, BbsDevTypeTxt, BbsTableIt->StatusFlags,
+          (CHAR8*)(UINTN)((BbsTableIt->DescStringSegment << 4) + BbsTableIt->DescStringOffset)
+          );
+    }
+    //PauseForKey(L"continue ...\n");
+  }
+
+  //
+  // find the partition device path node
+  //
+  while (!IsDevicePathEnd (DevicePath)) {
+    if ((DevicePathType (DevicePath) == MEDIA_DEVICE_PATH) &&
+        (DevicePathSubType (DevicePath) == MEDIA_HARDDRIVE_DP)) {
+      HdPath = (HARDDRIVE_DEVICE_PATH *)DevicePath;
+      break;
+    }
+    DevicePath = NextDevicePathNode (DevicePath);
+  }
+
+  if (HdPath != NULL) {
+    DBG("boot from partition %s\n", FileDevicePathToStr((EFI_DEVICE_PATH *)HdPath));
+    LbaOffset	= (UINT32)HdPath->PartitionStart;
+    LbaSize		= (UINT32)HdPath->PartitionSize;
+    DBG("starting from 0x%x LBA \n", LbaOffset);
+  } else {
+    return Status;
+  }
+
+  //
+  // prepare ThunkContext for 16bit BIOS calls
+  //
+  if (mThunkContext == NULL) {
+    Status = gBS->AllocatePool (EfiBootServicesData, sizeof(THUNK_CONTEXT), (VOID **)&mThunkContext);
     if (EFI_ERROR (Status)) {
       return Status;
     }
-	}
-	
-	//
-	// read partition boot record and copy it to BIOS boot area 0000:07C00
-	//
-	mBootSector = AllocatePages(1);  
-	Status = pDisk->ReadBlocks(pDisk, pDisk->Media->MediaId, 0, 1*512, mBootSector);
-	CopyMem(pBootSector, mBootSector, 1*512);
-	DBG("PBR:\n");
-    for (i=0; i<4; i++) {
-        DBG("%04x: ", i*16);
-        for (j=0; j<16; j++) {
-            DBG("%02x ", pBootSector[i*16+j]);
-        }
-        DBG("\n");
+    DBG("Thunk allocated\n");
+    Status = InitializeBiosIntCaller(); //mThunkContext);
+    if (EFI_ERROR (Status)) {
+      return Status;
     }
-	
-	//
-    // find parent disk volume and it's BIOS drive num
-	// todo: if we managed to get BbsTable, then we may find
-	// BIOS drive from there, by matching PCI bus, device, function
-	//
-    DBG("Looking for parent disk of %s\n", FileDevicePathToStr(volume->DevicePath));
-    BiosDriveNum = 0;
-    for (i = 0; i < VolumesCount; i++) {
-        if (Volumes[i] != volume && Volumes[i]->BlockIO == volume->WholeDiskBlockIO)
-        {
-            BiosDriveNum = GetBiosDriveNumForVolume(Volumes[i]);
-			break;
-        }
+  }
+
+  //
+  // read partition boot record and copy it to BIOS boot area 0000:07C00
+  //
+  mBootSector = AllocatePages(1);
+  Status = pDisk->ReadBlocks(pDisk, pDisk->Media->MediaId, 0, 1*512, mBootSector);
+  CopyMem(pBootSector, mBootSector, 1*512);
+  DBG("PBR:\n");
+  for (i=0; i<4; i++) {
+    DBG("%04x: ", i*16);
+    for (j=0; j<16; j++) {
+      DBG("%02x ", pBootSector[i*16+j]);
     }
-    if (BiosDriveNum == 0) {
-        // not found
-		DBG("HDBoot: BIOS drive number not found, using default 0x80\n");
-		BiosDriveNum = 0x80;
+    DBG("\n");
+  }
+
+  //
+  // find parent disk volume and it's BIOS drive num
+  // todo: if we managed to get BbsTable, then we may find
+  // BIOS drive from there, by matching PCI bus, device, function
+  //
+  DBG("Looking for parent disk of %s\n", FileDevicePathToStr(volume->DevicePath));
+  BiosDriveNum = 0;
+  for (i = 0; i < VolumesCount; i++) {
+    if (Volumes[i] != volume && Volumes[i]->BlockIO == volume->WholeDiskBlockIO)
+    {
+      BiosDriveNum = GetBiosDriveNumForVolume(Volumes[i]);
+      break;
     }
-		
-	//
-	// prepare 16bit regs:
-	// DX = BIOS drive num
-	//
-	gBS->SetMem (&Regs, sizeof (Regs), 0);
-	Regs.X.DX = BiosDriveNum;
+  }
+  if (BiosDriveNum == 0) {
+    // not found
+    DBG("HDBoot: BIOS drive number not found, using default 0x80\n");
+    BiosDriveNum = 0x80;
+  }
+
+  //
+  // prepare 16bit regs:
+  // DX = BIOS drive num
+  //
+  gBS->SetMem (&Regs, sizeof (Regs), 0);
+  Regs.X.DX = BiosDriveNum;
 
   // set up SI to partition table entry, some boot1 boot code (such a boot1f32 and boot1h) depend on it
   if (volume->IsMbrPartition) {
@@ -948,26 +952,26 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume)
     pMBR->Size = LbaSize;
     Regs.X.SI = (UINT16)(UINTN)pMBR;
   }
-  
+
   DBG("mbr: %x index: %x pointer: %x dx: %x si: %x\n", volume->IsMbrPartition, volume->MbrPartitionIndex, volume->MbrPartitionTable, Regs.X.DX, Regs.X.SI);
   DBG("pmbr: %x start: %x size: %x\n", pMBR[volume->MbrPartitionIndex], pMBR[volume->MbrPartitionIndex].StartLBA, pMBR[volume->MbrPartitionIndex].Size);
+
+  //
+  // call 16bit partition boot code
+  //
+  //PauseForKey(L"Doing  LegacyBiosFarCall86 ...\n");
+  LegacyBiosFarCall86(0, 0x7c00, &Regs);
   
-	//
-	// call 16bit partition boot code
-	//
-	//PauseForKey(L"Doing  LegacyBiosFarCall86 ...\n");
-	LegacyBiosFarCall86(0, 0x7c00, &Regs);
-	
-	//Status = gLegacy8259->SetMask(gLegacy8259, &OldMask, NULL, NULL, NULL);
-	PauseForKey(L"save legacy-boot.log ...\n");
+  //Status = gLegacy8259->SetMask(gLegacy8259, &OldMask, NULL, NULL, NULL);
+  PauseForKey(L"save legacy-boot.log ...\n");
   Status = SaveBooterLog(SelfRootDir, LEGBOOT_LOG);
   if (EFI_ERROR(Status)) {
     DBG("can't save legacy-boot.log\n");
     /*Status = */SaveBooterLog(NULL, LEGBOOT_LOG);
   }
-	
-	return EFI_SUCCESS;	
-}	
+  
+  return EFI_SUCCESS;	
+}
 
 
 /** For DefaultLegacyBios (UEFI)

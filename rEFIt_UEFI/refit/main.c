@@ -1099,9 +1099,11 @@ static VOID StartLegacy(IN LEGACY_ENTRY *Entry)
             Status = bootLegacyBiosDefault(gSettings.LegacyBiosDefaultEntry);
           } else if (StrCmp(gSettings.LegacyBoot, L"PBRtest") == 0) {
             Status = bootPBRtest(Entry->Volume);
+          } else if (StrCmp(gSettings.LegacyBoot, L"PBRsata") == 0) {
+            Status = bootPBR(Entry->Volume, TRUE);
           } else {
             // default
-            Status = bootPBR(Entry->Volume);
+            Status = bootPBR(Entry->Volume, FALSE);
           }
           break;
         default:
