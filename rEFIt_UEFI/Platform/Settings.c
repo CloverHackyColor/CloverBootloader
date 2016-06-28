@@ -1441,12 +1441,13 @@ FillinCustomEntry (
           if (Dict == NULL) {
             break;
           }
-          if (SubEntry) {
-                    // Allocate a sub entry
-            CustomSubEntry = DuplicateCustomEntry (Entry);
+          // Allocate a sub entry
+          CustomSubEntry = DuplicateCustomEntry (Entry);
+          if (CustomSubEntry) {
             if (!FillinCustomEntry (CustomSubEntry, Dict, TRUE) || !AddCustomSubEntry (Entry, CustomSubEntry)) {
-              if (CustomSubEntry)
+              if (CustomSubEntry) {
                 FreePool (CustomSubEntry);
+              }
             }
           }
         }
