@@ -69,19 +69,19 @@ extern EFI_RUNTIME_SERVICES*	gRS;
 //
 
 typedef struct {
-    EFI_STATUS          LastStatus;
-    EFI_FILE            *DirHandle;
-    BOOLEAN             CloseDirHandle;
-    EFI_FILE_INFO       *LastFileInfo;
+  EFI_STATUS          LastStatus;
+  EFI_FILE            *DirHandle;
+  BOOLEAN             CloseDirHandle;
+  EFI_FILE_INFO       *LastFileInfo;
 } REFIT_DIR_ITER;
 
 typedef struct {
-    UINT8 Flags;
-    UINT8 StartCHS[3];
-    UINT8 Type;
-    UINT8 EndCHS[3];
-    UINT32 StartLBA;
-    UINT32 Size;
+  UINT8 Flags;
+  UINT8 StartCHS[3];
+  UINT8 Type;
+  UINT8 EndCHS[3];
+  UINT32 StartLBA;
+  UINT32 Size;
 } MBR_PARTITION_INFO;
 
 #define DISK_KIND_INTERNAL      (0)
@@ -109,11 +109,11 @@ typedef struct {
 #define OSTYPE_RECOVERY         (10)
 #define OSTYPE_OSX_INSTALLER    (11)
 /*#define OSTYPE_TIGER            (14)
-#define OSTYPE_LEO              (15)
-#define OSTYPE_SNOW             (16)
-#define OSTYPE_LION             (17)
-#define OSTYPE_ML               (18)
-#define OSTYPE_MAV              (19)*/
+ #define OSTYPE_LEO              (15)
+ #define OSTYPE_SNOW             (16)
+ #define OSTYPE_LION             (17)
+ #define OSTYPE_ML               (18)
+ #define OSTYPE_MAV              (19)*/
 #define OSTYPE_OTHER            (99)
 //#define OSTYPE_HIDE             (100)
 
@@ -125,8 +125,8 @@ typedef struct {
 #define OSTYPE_IS_OTHER(type) ((type == OSTYPE_OTHER) || (type == OSTYPE_EFI) || (type == OSTYPE_VAR))
 #define OSTYPE_COMPARE_IMP(comparator, type1, type2) (comparator(type1) && comparator(type2))
 #define OSTYPE_COMPARE(type1, type2) (OSTYPE_COMPARE_IMP(OSTYPE_IS_OSX, type1, type2) || OSTYPE_COMPARE_IMP(OSTYPE_IS_OSX_RECOVERY, type1, type2) || \
-                                      OSTYPE_COMPARE_IMP(OSTYPE_IS_OSX_INSTALLER, type1, type2) || OSTYPE_COMPARE_IMP(OSTYPE_IS_WINDOWS, type1, type2) || \
-                                      OSTYPE_COMPARE_IMP(OSTYPE_IS_LINUX, type1, type2) || OSTYPE_COMPARE_IMP(OSTYPE_IS_OTHER, type1, type2))
+OSTYPE_COMPARE_IMP(OSTYPE_IS_OSX_INSTALLER, type1, type2) || OSTYPE_COMPARE_IMP(OSTYPE_IS_WINDOWS, type1, type2) || \
+OSTYPE_COMPARE_IMP(OSTYPE_IS_LINUX, type1, type2) || OSTYPE_COMPARE_IMP(OSTYPE_IS_OTHER, type1, type2))
 
 #define OSFLAG_ISSET(flags, flag) ((flags & flag) == flag)
 #define OSFLAG_ISUNSET(flags, flag) ((flags & flag) != flag)
@@ -191,7 +191,7 @@ typedef enum {
   AlignCenter,
   AlignUp,
   AlignDown
-
+  
 } ALIGNMENT;
 
 //mouse types
@@ -214,10 +214,10 @@ typedef struct _pointers {
   EG_IMAGE *Pointer;
   EG_IMAGE *newImage;
   EG_IMAGE *oldImage;
-
+  
   EG_RECT  newPlace;
   EG_RECT  oldPlace;
-
+  
   UINT64	LastClickTime;  //not EFI_TIME
   EFI_SIMPLE_POINTER_STATE    State;
   MOUSE_EVENT MouseEvent;
@@ -230,7 +230,7 @@ typedef enum {
   Hex,
   ASString,
   UNIString,
-
+  
 } ITEM_TYPE;
 
 typedef struct {
@@ -239,8 +239,8 @@ typedef struct {
   BOOLEAN BValue;
   UINT8   Pad8;
   UINT32  Pad32;
-//  UINT64  UValue;
-//  CHAR8*  AValue;
+  //  UINT64  UValue;
+  //  CHAR8*  AValue;
   CHAR16* SValue; // Max Size (see below) so the field can be edit by the GUI
   UINTN   LineShift;
 } INPUT_ITEM;
@@ -373,11 +373,11 @@ struct _refit_menu_screen {
 #define HIDEUI_FLAG_HELP              (0x3000)
 #define HIDEUI_ALL                    (0xffff & (~VOLTYPE_INTERNAL))
 /*
-#define HDBADGES_NONE   0
-#define HDBADGES_INT    1
-#define HDBADGES_ALL    2
-#define HDBADGES_SWAP   3
-#define HDBADGES_DRIVE  4
+ #define HDBADGES_NONE   0
+ #define HDBADGES_INT    1
+ #define HDBADGES_ALL    2
+ #define HDBADGES_SWAP   3
+ #define HDBADGES_DRIVE  4
  */
 #define HDBADGES_SWAP   (1<<0)
 #define HDBADGES_SHOW   (1<<1)
@@ -388,7 +388,7 @@ typedef enum {
   Scale,
   Crop,
   Tile
-
+  
 } SCALING;
 
 typedef struct {
@@ -443,60 +443,61 @@ typedef struct {
 // types
 
 typedef struct {
-   CHAR8   *Name;
-   BOOLEAN IsPlistPatch;
-   CHAR8   align[7];
-   INTN    DataLen;
+  CHAR8   *Name;
+  BOOLEAN IsPlistPatch;
+  CHAR8   align[7];
+  INTN    DataLen;
 #if defined(MDE_CPU_IA32)
-   UINT32  align1;
+  UINT32  align1;
 #endif
-   UINT8   *Data;
-   UINT8   *Patch;
+  UINT8   *Data;
+  UINT8   *Patch;
+  CHAR8   *MatchOS;
 } KEXT_PATCH;
 
 typedef struct KERNEL_AND_KEXT_PATCHES
 {
-   BOOLEAN KPDebug;
-   BOOLEAN KPKernelCpu;
-   BOOLEAN KPLapicPanic;
-   BOOLEAN KPHaswellE;
-   BOOLEAN KPAsusAICPUPM;
-   BOOLEAN KPAppleRTC;
-   BOOLEAN KPKernelPm;
-   UINT8   pad[1];
-   UINT32  FakeCPUID;
-    UINT32  align0;
-   CHAR16  *KPATIConnectorsController;
+  BOOLEAN KPDebug;
+  BOOLEAN KPKernelCpu;
+  BOOLEAN KPLapicPanic;
+  BOOLEAN KPHaswellE;
+  BOOLEAN KPAsusAICPUPM;
+  BOOLEAN KPAppleRTC;
+  BOOLEAN KPKernelPm;
+  UINT8   pad[1];
+  UINT32  FakeCPUID;
+  UINT32  align0;
+  CHAR16  *KPATIConnectorsController;
 #if defined(MDE_CPU_IA32)
-   UINT32  align1;
+  UINT32  align1;
 #endif
-
-   UINT8   *KPATIConnectorsData;
+  
+  UINT8   *KPATIConnectorsData;
 #if defined(MDE_CPU_IA32)
-   UINT32  align2;
+  UINT32  align2;
 #endif
-
-   UINTN   KPATIConnectorsDataLen;
+  
+  UINTN   KPATIConnectorsDataLen;
 #if defined(MDE_CPU_IA32)
-   UINT32  align3;
+  UINT32  align3;
 #endif
-   UINT8   *KPATIConnectorsPatch;
+  UINT8   *KPATIConnectorsPatch;
 #if defined(MDE_CPU_IA32)
-   UINT32  align4;
+  UINT32  align4;
 #endif
-
-   INT32   NrKexts;
+  
+  INT32   NrKexts;
   UINT32  align40;
-   KEXT_PATCH *KextPatches;
+  KEXT_PATCH *KextPatches;
 #if defined(MDE_CPU_IA32)
-   UINT32  align5;
+  UINT32  align5;
 #endif
-
-   INT32    NrForceKexts;
+  
+  INT32    NrForceKexts;
   UINT32  align50;
-   CHAR16 **ForceKexts;
+  CHAR16 **ForceKexts;
 #if defined(MDE_CPU_IA32)
-   UINT32 align6;
+  UINT32 align6;
 #endif
 } KERNEL_AND_KEXT_PATCHES;
 
@@ -784,68 +785,68 @@ VOID ReadConfig(INTN What);
 //
 extern EFI_STATUS
 EfiLibLocateProtocol (
-					  IN  EFI_GUID    *ProtocolGuid,
-					  OUT VOID        **Interface
-					  );
+                      IN  EFI_GUID    *ProtocolGuid,
+                      OUT VOID        **Interface
+                      );
 
 
 extern EFI_FILE_HANDLE
 EfiLibOpenRoot (
-				IN EFI_HANDLE                   DeviceHandle
-				);
+                IN EFI_HANDLE                   DeviceHandle
+                );
 
 extern EFI_FILE_SYSTEM_VOLUME_LABEL *
 EfiLibFileSystemVolumeLabelInfo (
-								 IN EFI_FILE_HANDLE      FHand
-								 );
+                                 IN EFI_FILE_HANDLE      FHand
+                                 );
 extern CHAR16 *
 EfiStrDuplicate (
-				 IN CHAR16   *Src
-				 );
+                 IN CHAR16   *Src
+                 );
 
 extern INTN StriCmp (
-		 IN      CONST CHAR16              *FirstString,
-		 IN      CONST CHAR16              *SecondString
-		 );
+                     IN      CONST CHAR16              *FirstString,
+                     IN      CONST CHAR16              *SecondString
+                     );
 
 extern INTN AsciiStriCmp (
-              IN      CONST CHAR8              *FirstString,
-              IN      CONST CHAR8              *SecondString
-              );
+                          IN      CONST CHAR8              *FirstString,
+                          IN      CONST CHAR8              *SecondString
+                          );
 
 extern BOOLEAN AsciiStriNCmp (
-               IN      CONST CHAR8              *FirstString,
-               IN      CONST CHAR8              *SecondString,
-               IN      CONST UINTN               sSize
-               );
+                              IN      CONST CHAR8              *FirstString,
+                              IN      CONST CHAR8              *SecondString,
+                              IN      CONST UINTN               sSize
+                              );
 
 extern BOOLEAN AsciiStrStriN (
-                IN      CONST CHAR8              *WhatString,
-                IN      CONST UINTN               sWhatSize,
-                IN      CONST CHAR8              *WhereString,
-                IN      CONST UINTN               sWhereSize
-                );
+                              IN      CONST CHAR8              *WhatString,
+                              IN      CONST UINTN               sWhatSize,
+                              IN      CONST CHAR8              *WhereString,
+                              IN      CONST UINTN               sWhereSize
+                              );
 
 extern EFI_FILE_INFO * EfiLibFileInfo (IN EFI_FILE_HANDLE      FHand);
 extern EFI_FILE_SYSTEM_INFO * EfiLibFileSystemInfo (IN EFI_FILE_HANDLE   Root);
 
 extern UINTN
 EfiDevicePathInstanceCount (
-							IN EFI_DEVICE_PATH_PROTOCOL      *DevicePath
-							);
+                            IN EFI_DEVICE_PATH_PROTOCOL      *DevicePath
+                            );
 
 extern VOID *
 EfiReallocatePool (
-				   IN VOID                 *OldPool,
-				   IN UINTN                OldSize,
-				   IN UINTN                NewSize
-				   );
+                   IN VOID                 *OldPool,
+                   IN UINTN                OldSize,
+                   IN UINTN                NewSize
+                   );
 
 extern BOOLEAN
 TimeCompare (
-			 IN EFI_TIME               *FirstTime,
-			 IN EFI_TIME               *SecondTime
-			 );
+             IN EFI_TIME               *FirstTime,
+             IN EFI_TIME               *SecondTime
+             );
 
 extern BOOLEAN DumpVariable(CHAR16* Name, EFI_GUID* Guid, INTN DevicePathAt);
 
@@ -853,5 +854,5 @@ extern BOOLEAN DumpVariable(CHAR16* Name, EFI_GUID* Guid, INTN DevicePathAt);
 VOID DumpKernelAndKextPatches(KERNEL_AND_KEXT_PATCHES *Patches);
 #endif
 /*
-
+ 
  EOF */

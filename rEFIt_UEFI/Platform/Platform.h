@@ -2061,6 +2061,31 @@ TimeDiff(
 VOID
 SetCPUProperties ();
 
+// Settings.c
+// Micky1979: Next four functions (+ needed struct) are to split a string like "10.10.5,10.7,10.11.6,10.8.x"
+// in their components separated by comma (in this case)
+struct MatchOSes {
+    INTN   count;
+    CHAR8  * array[100];
+} MatchOSes;
+
+//typedef struct MatchOSes oses;
+
+/** Returns a boolean and then enable disable the patch if MachOSEntry have a match for the booted OS. */
+//BOOLEAN IsPatchEnabled ( CHAR8 *MachOSEntry );
+
+/** return true if a given os contains '.' as separator,
+ and then match components of the current booted OS. Also allow 10.10.x format meaning all revisions
+ of the 10.10 OS */
+BOOLEAN IsOSValid(CHAR8 *MatchOS, CHAR8 *CurrOS);
+
+/** load the given struct (count+array) with the components of str that contains the given char sep as separator. */
+VOID
+GetStrArraySeparatedByChar(CHAR8 *str, CHAR8 sep, struct MatchOSes *mo);
+
+/** count occurrences of a given char in a char* string. */
+INTN
+countOccurrences( CHAR8 * s, CHAR8 c );
 
 //
 // BootOptions.c

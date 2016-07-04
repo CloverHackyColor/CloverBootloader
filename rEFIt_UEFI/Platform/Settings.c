@@ -627,8 +627,7 @@ AddCustomSubEntry (
 }
 
 BOOLEAN
-CopyKernelAndKextPatches (
-                          IN OUT  KERNEL_AND_KEXT_PATCHES *Dst,
+CopyKernelAndKextPatches (IN OUT  KERNEL_AND_KEXT_PATCHES *Dst,
                           IN      KERNEL_AND_KEXT_PATCHES *Src)
 {
   if (Dst == NULL || Src == NULL) return FALSE;
@@ -754,10 +753,8 @@ CUSTOM_LOADER_ENTRY
 
 STATIC
 BOOLEAN
-FillinKextPatches (
-                   IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
-                   TagPtr DictPointer
-                   )
+FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
+                   TagPtr DictPointer)
 {
   TagPtr Prop;
  // UINTN  i;
@@ -935,8 +932,8 @@ FillinKextPatches (
           DBG("patch without Name, skipped\n");
           continue;
         }
-
         Patches->KextPatches[Patches->NrKexts].Name = AllocateCopyPool (AsciiStrSize (Dict->string), Dict->string);
+        
         Dict = GetProperty (Prop2, "Comment");
         if (Dict != NULL) {
           DBG (" %a (%a)", Patches->KextPatches[Patches->NrKexts].Name, Dict->string);
@@ -950,7 +947,14 @@ FillinKextPatches (
           DBG(" :: patch disabled, skipped\n");
           continue;
         }
-
+        
+        // check enable/disabled patch (OS based) by Micky1979
+        Dict = GetProperty (Prop2, "MatchOS");
+        if ((Dict != NULL) && (Dict->type == kTagTypeString)) {
+          Patches->KextPatches[Patches->NrKexts].MatchOS = AllocateCopyPool (AsciiStrSize (Dict->string), Dict->string);
+          DBG("Matched OSes: %a\n", Patches->KextPatches[Patches->NrKexts].MatchOS);
+        }
+        
         // check if this is Info.plist patch or kext binary patch
         Dict = GetProperty (Prop2, "InfoPlistPatch");
         Patches->KextPatches[Patches->NrKexts].IsPlistPatch = IsPropertyTrue (Dict);
@@ -984,7 +988,7 @@ FillinKextPatches (
             Patches->KextPatches[Patches->NrKexts].Patch = NULL;
           }
 
-          continue; //same i
+          continue; //same NrKexts next i
         }
 
         DBG (", data len: %d\n", Patches->KextPatches[Patches->NrKexts].DataLen);
@@ -1000,6 +1004,142 @@ FillinKextPatches (
 
   return TRUE;
 }
+
+
+// Micky1979: Next four functions to split a string like "10.10.5,10.7,10.11.6,10.8.x"
+// in their components separated by comma (in this case)
+/* Example
+BOOLEAN
+IsPatchEnabled (CHAR8 *MatchOSEntry, CHAR8 *OSVersion)
+{
+  INTN i;
+  struct MatchOSes mos;
+  
+  GetStrArraySeparatedByChar(MatchOSEntry, ',', &mos);
+  if (mos.count > 0) {
+    for (i = 0; i < mos.count; ++i) {
+      if (IsOSValid(mos.array[i], OSVersion)) {
+        //DBG ("\nthis patch will activated for OS %s!\n", mos.array[i]);
+        return TRUE;
+      }
+    }
+  }
+  return FALSE;
+}
+ */
+
+VOID
+GetStrArraySeparatedByChar(CHAR8 *str, CHAR8 sep, struct MatchOSes *mo)
+{
+  INTN len = 0, i = 0, inc = 1;
+  CHAR8 *comp = NULL;
+  CHAR8 doubleSep[2];
+  UINTN newLen = 0;
+  
+  mo->count = countOccurrences( str, sep ) + 1;
+  len = AsciiStrLen(str);
+  doubleSep[0] = sep; doubleSep[1] = sep;
+  
+  if(AsciiStrStr(str, doubleSep) || !len || str[0] == sep || str[len -1] == sep) {
+    mo->count = 0;
+    mo->array[0] = "";
+    return;
+  }
+  
+  if (mo->count > 1) {
+    INTN indexes[mo->count + 1];
+    
+    for (i = 0; i < len; ++i) {
+      CHAR8 c = str[i];
+      if (c == sep) {
+        indexes[inc]=i;
+        inc++;
+      }
+    }
+    // manually add first index
+    indexes[0] = 0;
+    // manually add last index
+    indexes[mo->count + 1] = len;
+    
+    for (i = 0; i < mo->count; ++i) {
+      INTN startLocation, endLocation;
+      
+      if (i == 0) {
+        startLocation = indexes[0];
+        endLocation = indexes[i + 1] - 2;
+      } else if (i == mo->count - 1) { // never reach the end of the array
+        startLocation = indexes[i] + 1;
+        endLocation = len;
+      } else {
+        startLocation = indexes[i] + 1;
+        endLocation = indexes[i+1] - 2;
+      }
+      newLen = (endLocation - startLocation) + 2;
+      comp = (CHAR8 *) AllocatePool(newLen);
+      AsciiStrnCpy(comp, str + startLocation, newLen);
+      comp[newLen] = '\0';
+      mo->array[i] = comp;
+    }
+  }
+  else {
+    // str contains only one component and it is our string!
+    mo->array[0] = str;
+  }
+}
+
+BOOLEAN IsOSValid(CHAR8 *MatchOS, CHAR8 *CurrOS)
+{
+  /* example for valid matches are:
+   10.7, only 10.7 (10.7.1 will be skipped)
+   10.10.2 only 10.10.2 (10.10.1 or 10.10.5 will be skipped)
+   10.10.x (or 10.10.X), in this case is valid for all minor version of 10.10 (10.10.(0-9))
+   */
+  struct MatchOSes osToc;
+  struct MatchOSes currOStoc;
+  BOOLEAN ret = FALSE;
+  INTN i;
+  
+  if (!MatchOS || !CurrOS) {
+    return TRUE; //undefined matched corresponds to old behavior
+  }
+  
+  GetStrArraySeparatedByChar(MatchOS, '.', &osToc);
+  GetStrArraySeparatedByChar(CurrOS,  '.', &currOStoc);
+  
+  if (osToc.count == 2) {    
+    if (AsciiStrCmp(osToc.array[0], currOStoc.array[0]) == 0
+        && AsciiStrCmp(osToc.array[1], currOStoc.array[1]) == 0) {
+      ret = TRUE;
+    }
+  } else if (osToc.count == 3) {
+    if (AsciiStrCmp(osToc.array[0], currOStoc.array[0]) == 0
+        && AsciiStrCmp(osToc.array[1], currOStoc.array[1]) == 0
+        && AsciiStrCmp(osToc.array[2], currOStoc.array[2]) == 0) {
+      ret = TRUE;
+    } else if (AsciiStrCmp(osToc.array[0], currOStoc.array[0]) == 0
+               && AsciiStrCmp(osToc.array[1], currOStoc.array[1]) == 0
+               && (AsciiStrCmp(osToc.array[2], "x") == 0 || AsciiStrCmp(osToc.array[2], "X") == 0)) {
+      ret = TRUE;
+    }
+  }
+  
+  for (i = 0; i < osToc.count; i++) {
+    FreePool(osToc.array[i]);
+  }
+  for (i = 0; i < currOStoc.count; i++) {
+    FreePool(currOStoc.array[i]);
+  }
+  
+  return ret;
+}
+
+INTN countOccurrences( CHAR8 * s, CHAR8 c )
+{
+  return *s == '\0'
+  ? 0
+  : countOccurrences( s + 1, c ) + (*s == c);
+}
+// End of MatchOS
 
 STATIC
 BOOLEAN
