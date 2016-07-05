@@ -1088,7 +1088,7 @@ GetStrArraySeparatedByChar(CHAR8 *str, CHAR8 sep, struct MatchOSes *mo)
   }
   else {
     // str contains only one component and it is our string!
-    mo->array[0] = AllocateCopyPool(sizeof(str), str);
+    mo->array[0] = AllocateCopyPool(AsciiStrSize(str), str);
   }
 }
 
