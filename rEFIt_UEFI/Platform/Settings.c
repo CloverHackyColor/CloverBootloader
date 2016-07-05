@@ -921,7 +921,14 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         if (Prop2 == NULL) {
           break;
         }
-
+        
+        // check disabled patch by cecekpawon
+        Dict = GetProperty (Prop2, "Disabled");
+        if ((Dict != NULL) && IsPropertyTrue (Dict)) {
+          DBG(" :: patch disabled, skipped\n");
+          continue;
+        }
+        
         Patches->KextPatches[Patches->NrKexts].Name  = NULL;
         Patches->KextPatches[Patches->NrKexts].Data  = NULL;
         Patches->KextPatches[Patches->NrKexts].Patch = NULL;
@@ -941,13 +948,6 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
           DBG (" %a", Patches->KextPatches[Patches->NrKexts].Name);
         }
 
-        // check disabled patch by cecekpawon
-        Dict = GetProperty (Prop2, "Disabled");
-        if ((Dict != NULL) && IsPropertyTrue (Dict)) {
-          DBG(" :: patch disabled, skipped\n");
-          continue;
-        }
-        
         // check enable/disabled patch (OS based) by Micky1979
         Dict = GetProperty (Prop2, "MatchOS");
         if ((Dict != NULL) && (Dict->type == kTagTypeString)) {
