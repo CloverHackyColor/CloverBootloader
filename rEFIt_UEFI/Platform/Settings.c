@@ -1008,25 +1008,30 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
 
 // Micky1979: Next four functions to split a string like "10.10.5,10.7,10.11.6,10.8.x"
 // in their components separated by comma (in this case)
-/* Example
+
 BOOLEAN
 IsPatchEnabled (CHAR8 *MatchOSEntry, CHAR8 *OSVersion)
 {
   INTN i;
+  BOOLEAN ret = FALSE;
   struct MatchOSes mos;
   
   GetStrArraySeparatedByChar(MatchOSEntry, ',', &mos);
-  if (mos.count > 0) {
-    for (i = 0; i < mos.count; ++i) {
-      if (IsOSValid(mos.array[i], OSVersion)) {
-        //DBG ("\nthis patch will activated for OS %s!\n", mos.array[i]);
-        return TRUE;
-      }
+  for (i = 0; i < mos.count; ++i) {
+    if (IsOSValid(mos.array[i], OSVersion)) {
+      //DBG ("\nthis patch will activated for OS %s!\n", mos.array[i]);
+      ret =  TRUE;
     }
   }
-  return FALSE;
+  
+  for (i = 0; i < mos.count; i++) {
+    if (mos.array[i]) {
+      FreePool(mos.array[i]);
+    }
+  }
+  
+  return ret;
 }
- */
 
 VOID
 GetStrArraySeparatedByChar(CHAR8 *str, CHAR8 sep, struct MatchOSes *mo)
@@ -1124,10 +1129,14 @@ BOOLEAN IsOSValid(CHAR8 *MatchOS, CHAR8 *CurrOS)
   }
   
   for (i = 0; i < osToc.count; i++) {
-    FreePool(osToc.array[i]);
+    if (osToc.array[i]) {
+      FreePool(osToc.array[i]);
+    }    
   }
   for (i = 0; i < currOStoc.count; i++) {
-    FreePool(currOStoc.array[i]);
+    if (currOStoc.array[i]) {
+      FreePool(currOStoc.array[i]);
+    }
   }
   
   return ret;

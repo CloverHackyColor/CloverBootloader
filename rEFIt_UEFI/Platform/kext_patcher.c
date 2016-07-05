@@ -514,7 +514,7 @@ VOID AnyKextPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 Inf
   
   MatchOS = Entry->KernelAndKextPatches->KextPatches[N].MatchOS;
   CurrOS = Entry->OSVersion;
-  if (!IsOSValid(MatchOS, CurrOS)) {
+  if (!IsPatchEnabled(MatchOS, CurrOS)) {
     DBG_RT(Entry, "This patch is not allowed for booted OS %a\n", CurrOS);
     return;
   }

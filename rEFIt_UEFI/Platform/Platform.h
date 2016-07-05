@@ -2066,13 +2066,13 @@ SetCPUProperties ();
 // in their components separated by comma (in this case)
 struct MatchOSes {
     INTN   count;
-    CHAR8  * array[100];
-} MatchOSes;
+    CHAR8* array[100];
+};
 
 //typedef struct MatchOSes oses;
 
 /** Returns a boolean and then enable disable the patch if MachOSEntry have a match for the booted OS. */
-//BOOLEAN IsPatchEnabled ( CHAR8 *MachOSEntry );
+BOOLEAN IsPatchEnabled(CHAR8 *MatchOSEntry, CHAR8 *CurrOS);
 
 /** return true if a given os contains '.' as separator,
  and then match components of the current booted OS. Also allow 10.10.x format meaning all revisions
@@ -2085,7 +2085,7 @@ GetStrArraySeparatedByChar(CHAR8 *str, CHAR8 sep, struct MatchOSes *mo);
 
 /** count occurrences of a given char in a char* string. */
 INTN
-countOccurrences( CHAR8 * s, CHAR8 c );
+countOccurrences(CHAR8 *s, CHAR8 c);
 
 //
 // BootOptions.c
