@@ -97,6 +97,7 @@ REFIT_CONFIG   GlobalConfig = {
   NULL,           // CHAR16      *BannerFileName;
   NULL,           // CHAR16      *SelectionSmallFileName;
   NULL,           // CHAR16      *SelectionBigFileName;
+  NULL,           // CHAR16      *SelectionIndicatorName;
   NULL,           // CHAR16      *DefaultSelection;
   NULL,           // CHAR16      *ScreenResolution;
   0,              // INTN        ConsoleMode;
@@ -106,6 +107,7 @@ REFIT_CONFIG   GlobalConfig = {
   FALSE,          // BOOLEAN     BackgroundDark;
   FALSE,          // BOOLEAN     CustomIcons;
   FALSE,          // BOOLEAN     SelectionOnTop;
+  FALSE,          // BOOLEAN     SelectionBootCampStyle;
   0,              // INTN        BadgeOffsetX;
   0,              // INTN        BadgeOffsetY;
   4,              // INTN        BadgeScale;
@@ -2820,6 +2822,11 @@ GetThemeTagSettings (
     FreePool (GlobalConfig.SelectionBigFileName);
     GlobalConfig.SelectionBigFileName   = NULL;
   }
+  
+  if (GlobalConfig.SelectionIndicatorName != NULL) {
+    FreePool (GlobalConfig.SelectionIndicatorName);
+    GlobalConfig.SelectionIndicatorName = NULL;
+  }
 
   GlobalConfig.SelectionOnTop           = FALSE;
   ScrollWidth                           = 16;
@@ -2854,6 +2861,9 @@ GetThemeTagSettings (
   if (DictPointer == NULL) {
     return EFI_SUCCESS;
   }
+  
+  Dict    = GetProperty (DictPointer, "BootCampStyle");
+  GlobalConfig.SelectionBootCampStyle = IsPropertyTrue(Dict);
 
   Dict    = GetProperty (DictPointer, "Background");
   if (Dict != NULL) {
@@ -3054,6 +3064,11 @@ GetThemeTagSettings (
       GlobalConfig.SelectionBigFileName = PoolPrint (L"%a", Dict2->string);
     }
 
+    Dict2 = GetProperty (Dict, "Indicator");
+    if ((Dict2->type == kTagTypeString) && Dict2->string) {
+      GlobalConfig.SelectionIndicatorName = PoolPrint (L"%a", Dict2->string);
+    }
+    
     Dict2 = GetProperty (Dict, "OnTop");
     GlobalConfig.SelectionOnTop = IsPropertyTrue (Dict2);
 

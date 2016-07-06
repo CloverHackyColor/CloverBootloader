@@ -122,7 +122,7 @@ INTN ScrollbarYMovement;
 #define TILE_YSPACING (24)
 #define ROW0_SCROLLSIZE (100)
 
-EG_IMAGE *SelectionImages[4] = { NULL, NULL, NULL, NULL };
+EG_IMAGE *SelectionImages[5] = { NULL, NULL, NULL, NULL, NULL};
 static EG_IMAGE *TextBuffer = NULL;
 
 EG_PIXEL SelectionBackgroundPixel = { 0xef, 0xef, 0xef, 0xff }; //non-trasparent
@@ -133,7 +133,7 @@ static INTN row0Count, row0PosX, row0PosXRunning;
 static INTN row1Count, row1PosX, row1PosXRunning;
 static INTN *itemPosX = NULL;
 static INTN *itemPosY = NULL;
-static INTN row0PosY, row1PosY, textPosY;
+static INTN row0PosY, row1PosY, textPosY, FunctextPosY, ArrowPosX, ArrowPosY;
 static EG_IMAGE* MainImage;
 static INTN OldX = 0, OldY = 0;
 static INTN OldTextWidth = 0;
@@ -1139,6 +1139,26 @@ static VOID InitSelection(VOID)
       SelectionImages[2]->HasAlpha = TRUE;
     }
   }
+  if (GlobalConfig.SelectionBootCampStyle)
+  {
+    // load indicator selection image
+    if (GlobalConfig.SelectionIndicatorName != NULL)
+    {
+        SelectionImages[4] = egLoadImage(ThemeDir, GlobalConfig.SelectionIndicatorName, FALSE);
+    }
+    if (SelectionImages[4] == NULL)
+    {
+        SelectionImages[4] = BuiltinIcon(BUILTIN_SELECTION_SMALL);
+        CopyMem(&BlueBackgroundPixel, &StdBackgroundPixel, sizeof(EG_PIXEL));
+    }
+    
+    SelectionImages[4] = egEnsureImageSize(SelectionImages[4], ROW1_TILESIZE, ROW1_TILESIZE, &MenuBackgroundPixel);
+    
+    if (SelectionImages[4] == NULL)
+    {
+        return;
+    }
+  }
   // non-selected background images
   //TODO FALSE -> TRUE
   if (GlobalConfig.SelectionBigFileName != NULL) {
@@ -2022,7 +2042,10 @@ INTN DrawTextXY(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
   INTN      XText;
   EG_IMAGE  *TextBufferXY = NULL;
 
-  if (!Text) return 0;
+  if (!Text) {
+    return 0;
+  }
+    
   egMeasureText(Text, &TextWidth, NULL);
   if (XAlign == X_IS_LEFT) {
     TextWidth = UGAWidth - XPos - 1;
@@ -2456,6 +2479,10 @@ static VOID DrawMainMenuEntry(REFIT_MENU_ENTRY *Entry, BOOLEAN selected, INTN XP
 {
 //  EG_IMAGE *TmpBuffer = NULL;
   INTN Scale = GlobalConfig.MainEntriesSize >> 3;
+  
+  if (GlobalConfig.SelectionBootCampStyle && (Entry->Row == 1)) {
+    return;
+  }
 
   if (((Entry->Tag == TAG_LOADER) || (Entry->Tag == TAG_LEGACY)) &&
       !(GlobalConfig.HideBadges & HDBADGES_SWAP) &&
@@ -2490,6 +2517,17 @@ static VOID DrawMainMenuEntry(REFIT_MENU_ENTRY *Entry, BOOLEAN selected, INTN XP
                            MainImage, (Entry->Row == 0) ? Entry->BadgeImage:NULL,
                            XPos, YPos, Scale);
   }
+    
+  if (GlobalConfig.SelectionBootCampStyle) {
+    ArrowPosY = textPosY + 15;
+    ArrowPosX = XPos + (ROW1_TILESIZE / 2) + TILE_XSPACING;
+        
+    if (Entry->Row == 0) {
+      BltImageCompositeIndicator(SelectionImages[(4) + (selected ? 0 : 1)], SelectionImages[4],
+                                 ArrowPosX, ArrowPosY, Scale);
+    }
+  }
+    
   Entry->Place.XPos = XPos;
   Entry->Place.YPos = YPos;
   Entry->Place.Width = MainImage->Width;
@@ -2523,11 +2561,20 @@ static VOID DrawMainMenuLabel(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN RE
   INTN TextWidth;
 
   egMeasureText(Text, &TextWidth, NULL);
-  if (OldTextWidth > TextWidth) {
-    //Clear old text
-    FillRectAreaOfScreen(OldX, OldY,
+  
+  if ((OldX > 0) && (OldY > 0)) {
+    if ((!(GlobalConfig.SelectionBootCampStyle)) && (OldTextWidth > TextWidth)) {
+      //Clear old text
+      FillRectAreaOfScreen(OldX, OldY,
                          OldTextWidth, TextHeight, &MenuBackgroundPixel, X_IS_CENTER);
+    }
+        
+    if ((GlobalConfig.SelectionBootCampStyle) && (OldTextWidth > TextWidth)) {
+          //Clear old text
+      FillRectAreaOfScreen(OldX, OldY, OldTextWidth, TextHeight, &MenuBackgroundPixel, X_IS_CENTER);
+    }
   }
+    
   if ((GlobalConfig.HideBadges & HDBADGES_INLINE) &&
       (!OldRow) && (OldTextWidth) && (OldTextWidth != TextWidth)) {
     //Clear badge
@@ -2537,8 +2584,9 @@ static VOID DrawMainMenuLabel(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN RE
   DrawTextXY(Text, XPos, YPos, X_IS_CENTER);
 
   //show inline badge
-   if ((GlobalConfig.HideBadges & HDBADGES_INLINE) &&
-      (Screen->Entries[State->CurrentSelection]->Row == 0)) {
+   if ((!(GlobalConfig.SelectionBootCampStyle)) &&
+       (GlobalConfig.HideBadges & HDBADGES_INLINE) &&
+       (Screen->Entries[State->CurrentSelection]->Row == 0)) {
     // Display Inline Badge: small icon before the text
     BltImageAlpha(((LOADER_ENTRY*)Screen->Entries[State->CurrentSelection])->me.Image,
                   (XPos - (TextWidth >> 1) - (BADGE_DIMENSION + 16)),
@@ -2751,7 +2799,6 @@ VOID MainMenuVerticalStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State,
   }
 }
 
-//static
 VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINTN Function, IN CHAR16 *ParamText)
 {
   INTN i;
@@ -2775,11 +2822,24 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
       row0PosY = ((UGAHeight - LayoutMainMenuHeight) >> 1) + LayoutBannerOffset; //LAYOUT_BANNER_YOFFSET;
 
       row1PosX = (UGAWidth + 8 - (ROW1_TILESIZE + TILE_XSPACING) * row1Count) >> 1;
-      row1PosY = row0PosY + EntriesHeight + GlobalConfig.TileYSpace + LayoutButtonOffset;
-      if (row1Count > 0)
-        textPosY = row1PosY + ROW1_TILESIZE + GlobalConfig.TileYSpace + LayoutTextOffset;
-      else
+          
+      if (GlobalConfig.SelectionBootCampStyle) {
+        row1PosY = row0PosY + EntriesHeight + 30 + GlobalConfig.TileYSpace + LayoutButtonOffset;
+      } else {
+        row1PosY = row0PosY + EntriesHeight + GlobalConfig.TileYSpace + LayoutButtonOffset;
+      }
+          
+      if (row1Count > 0) {
+        if (GlobalConfig.SelectionBootCampStyle) {
+          textPosY = row0PosY + EntriesHeight + 15;
+        } else {
+          textPosY = row1PosY + ROW1_TILESIZE + GlobalConfig.TileYSpace + LayoutTextOffset;
+        }
+          
+        FunctextPosY = row1PosY + ROW1_TILESIZE + GlobalConfig.TileYSpace + LayoutTextOffset;
+      } else {
         textPosY = row1PosY;
+      }
 
       if (!itemPosX) {
         itemPosX = AllocatePool(sizeof(UINT64) * Screen->EntryCount);
@@ -2822,14 +2882,40 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
             DrawMainMenuEntry(Screen->Entries[i], (i == State->CurrentSelection)?1:0,
                               itemPosX[i - State->FirstVisible], row0PosY);
           }
+            
+          // create static text for the boot options if the BootCampStyle is used
+          if (GlobalConfig.SelectionBootCampStyle && !(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)) {
+            DrawTextXY(Screen->Entries[i]->Title, itemPosX[i] + ROW1_TILESIZE + TILE_XSPACING,
+                           textPosY, X_IS_CENTER);
+          }
         } else {
           DrawMainMenuEntry(Screen->Entries[i], (i == State->CurrentSelection)?1:0,
                             itemPosX[i], row1PosY);
         }
       }
-      if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)){
+      
+      // clear the text from the second row, required by the BootCampStyle
+      if ((Screen->Entries[State->LastSelection]->Row == 1) && (Screen->Entries[State->CurrentSelection]->Row == 0)
+          && GlobalConfig.SelectionBootCampStyle && !(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)) {
+          FillRectAreaOfScreen((UGAWidth >> 1), FunctextPosY,
+                               OldTextWidth, TextHeight, &MenuBackgroundPixel, X_IS_CENTER);
+      }
+      
+      // something is wrong with the DrawMainMenuLabel or Screen->Entries[State->CurrentSelection]
+      // and it's required to create the first selection text from here
+      // used for the second row entries
+      if ((Screen->Entries[State->LastSelection]->Row == 0) && (Screen->Entries[State->CurrentSelection]->Row == 1)
+          && GlobalConfig.SelectionBootCampStyle && !(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)) {
+          DrawMainMenuLabel(Screen->Entries[State->CurrentSelection]->Title,
+                            (UGAWidth >> 1), FunctextPosY, Screen, State);
+      }
+          
+      // something is wrong with the DrawMainMenuLabel or Screen->Entries[State->CurrentSelection]
+      // and it's required to create the first selection text from here
+      // used for all the entries
+      if (!(GlobalConfig.SelectionBootCampStyle) && !(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)) {
         DrawMainMenuLabel(Screen->Entries[State->CurrentSelection]->Title,
-                          (UGAWidth >> 1), textPosY, Screen, State);
+                            (UGAWidth >> 1), FunctextPosY, Screen, State);
       }
 
       DrawTextCorner(TEXT_CORNER_HELP, X_IS_LEFT);
@@ -2854,7 +2940,16 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
         DrawMainMenuEntry(Screen->Entries[State->CurrentSelection], TRUE,
                           itemPosX[State->CurrentSelection], row1PosY);
       }
-      if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)) {
+      
+      // create dynamic for the second row if BootCampStyle is used
+      if ((GlobalConfig.SelectionBootCampStyle) && (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL))
+          && Screen->Entries[State->CurrentSelection]->Row == 1) {
+          DrawMainMenuLabel(Screen->Entries[State->CurrentSelection]->Title,
+                            (UGAWidth >> 1), FunctextPosY, Screen, State);
+      }
+      
+      // create dynamic text for all the entries
+      if ((!(GlobalConfig.SelectionBootCampStyle)) && (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL))) {
           DrawMainMenuLabel(Screen->Entries[State->CurrentSelection]->Title,
                             (UGAWidth >> 1), textPosY, Screen, State);
       }
@@ -2868,9 +2963,9 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
       i = (GlobalConfig.HideBadges & HDBADGES_INLINE)?3:1;
       HidePointer();
       if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)){
-        FillRectAreaOfScreen((UGAWidth >> 1), textPosY + TextHeight * i,
+        FillRectAreaOfScreen((UGAWidth >> 1), FunctextPosY + TextHeight * i,
                                    OldTimeoutTextWidth, TextHeight, &MenuBackgroundPixel, X_IS_CENTER);
-        OldTimeoutTextWidth = DrawTextXY(ParamText, (UGAWidth >> 1), textPosY + TextHeight * i, X_IS_CENTER);
+        OldTimeoutTextWidth = DrawTextXY(ParamText, (UGAWidth >> 1), FunctextPosY + TextHeight * i, X_IS_CENTER);
       }
 
       DrawTextCorner(TEXT_CORNER_HELP, X_IS_LEFT);

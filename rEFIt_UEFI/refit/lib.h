@@ -411,6 +411,7 @@ typedef struct {
   CHAR16      *BannerFileName;
   CHAR16      *SelectionSmallFileName;
   CHAR16      *SelectionBigFileName;
+  CHAR16      *SelectionIndicatorName;
   CHAR16      *DefaultSelection;
   CHAR16      *ScreenResolution;
   INTN        ConsoleMode;
@@ -420,6 +421,7 @@ typedef struct {
   BOOLEAN     BackgroundDark;
   BOOLEAN     CustomIcons;
   BOOLEAN     SelectionOnTop;
+  BOOLEAN     SelectionBootCampStyle;
   INTN       BadgeOffsetX;
   INTN       BadgeOffsetY;
   INTN       BadgeScale;
@@ -699,6 +701,7 @@ VOID BltImage(IN EG_IMAGE *Image, IN INTN XPos, IN INTN YPos);
 VOID BltImageAlpha(IN EG_IMAGE *Image, IN INTN XPos, IN INTN YPos, IN EG_PIXEL *BackgroundPixel, INTN Scale);
 VOID BltImageComposite(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN INTN XPos, IN INTN YPos);
 VOID BltImageCompositeBadge(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN EG_IMAGE *BadgeImage, IN INTN XPos, IN INTN YPos, INTN Scale);
+VOID BltImageCompositeIndicator(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN INTN XPos, IN INTN YPos, INTN Scale);
 
 BOOLEAN GetAnime(REFIT_MENU_SCREEN *Screen);
 VOID    InitAnime(REFIT_MENU_SCREEN *Screen);

@@ -730,6 +730,89 @@ VOID BltImageCompositeBadge(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN EG
   GraphicsScreenDirty = TRUE;
 }
 
+VOID BltImageCompositeIndicator(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN INTN XPos, IN INTN YPos, INTN Scale)
+{
+    INTN TotalWidth, TotalHeight, CompWidth, CompHeight, OffsetX, OffsetY;
+    BOOLEAN Selected = TRUE;
+    EG_IMAGE *CompImage;
+    EG_IMAGE *NewBaseImage;
+    EG_IMAGE *NewTopImage;
+    
+    if (!BaseImage || !TopImage) {
+        return;
+    }
+    if (Scale < 0) {
+        Scale = -Scale;
+        Selected = FALSE;
+    }
+    
+    NewBaseImage = egCopyScaledImage(BaseImage, Scale); //will be Scale/16
+    TotalWidth = NewBaseImage->Width;
+    TotalHeight = NewBaseImage->Height;
+    //DBG("BaseImage: Width=%d Height=%d Alfa=%d\n", TotalWidth, TotalHeight, NewBaseImage->HasAlpha);
+    
+    NewTopImage = egCopyScaledImage(TopImage, Scale); //will be Scale/16
+    CompWidth = NewTopImage->Width;
+    CompHeight = NewTopImage->Height;
+    //DBG("TopImage: Width=%d Height=%d Alfa=%d\n", CompWidth, CompHeight, NewTopImage->HasAlpha);
+    
+    if (GlobalConfig.Theme) { // regular theme
+        CompImage = egCreateFilledImage((CompWidth > TotalWidth)?CompWidth:TotalWidth,
+                                        (CompHeight > TotalHeight)?CompHeight:TotalHeight,
+                                        TRUE,
+                                        &MenuBackgroundPixel);
+    } else { // embedded theme - draw box around icons
+        EG_PIXEL EmbeddedBackgroundPixel  = { 0xaa, 0xaa, 0xaa, 0xaa};
+        CompImage = egCreateFilledImage((CompWidth > TotalWidth)?CompWidth:TotalWidth,
+                                        (CompHeight > TotalHeight)?CompHeight:TotalHeight,
+                                        TRUE,
+                                        &EmbeddedBackgroundPixel);
+    }
+    if (!CompImage) {
+        DBG("Can't create CompImage\n");
+        return;
+    }
+    //to simplify suppose square images
+    if (CompWidth < TotalWidth)
+    {
+        OffsetX = (TotalWidth - CompWidth) >> 1;
+        OffsetY = (TotalHeight - CompHeight) >> 1;
+        egComposeImage(CompImage, NewBaseImage, 0, 0);
+        CompWidth = TotalWidth;
+        CompHeight = TotalHeight;
+    }
+    else
+    {
+        OffsetX = (CompWidth - TotalWidth) >> 1;
+        OffsetY = (CompHeight - TotalHeight) >> 1;
+        egComposeImage(CompImage, NewBaseImage, OffsetX, OffsetY);
+    }
+    
+    // blit to screen and clean up
+    if (GlobalConfig.Theme)
+    {
+        // regular theme
+        if (GlobalConfig.NonSelectedGrey && !Selected)
+        {
+            BltImageAlpha(CompImage, XPos, YPos, &MenuBackgroundPixel, -16);
+        }
+        else
+        {
+            BltImageAlpha(CompImage, XPos, YPos, &MenuBackgroundPixel, 16);
+        }
+    }
+    else
+    {
+        // embedded theme - don't use BltImageAlpha as it can't handle refit's built in image
+        egDrawImageArea(CompImage, 0, 0, TotalWidth, TotalHeight, XPos, YPos);
+    }
+    
+    egFreeImage(CompImage);
+    egFreeImage(NewBaseImage);
+    egFreeImage(NewTopImage);
+    GraphicsScreenDirty = TRUE;
+}
+
 #define MAX_SIZE_ANIME 256
 
 VOID FreeAnime(GUI_ANIME *Anime)

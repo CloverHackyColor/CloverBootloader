@@ -542,11 +542,21 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath,
   if (FullTitle) {
     Entry->me.Title = EfiStrDuplicate(FullTitle);
   } else if ((Entry->VolName == NULL) || (StrLen(Entry->VolName) == 0)) {
- //   DBG("encounter Entry->VolName ==%s and StrLen(Entry->VolName) ==%d\n",Entry->VolName, StrLen(Entry->VolName));
-    Entry->me.Title = PoolPrint(L"Boot %s from %s", (LoaderTitle != NULL) ? LoaderTitle : Basename(LoaderPath), Basename(Volume->DevicePathString));
+    //DBG("encounter Entry->VolName ==%s and StrLen(Entry->VolName) ==%d\n",Entry->VolName, StrLen(Entry->VolName));
+    if (GlobalConfig.SelectionBootCampStyle) {
+      Entry->me.Title = PoolPrint(L"%s", (LoaderTitle != NULL) ? LoaderTitle : Basename(LoaderPath));
+    } else {
+      Entry->me.Title = PoolPrint(L"Boot %s from %s", (LoaderTitle != NULL) ? LoaderTitle : Basename(LoaderPath),
+                                    Basename(Volume->DevicePathString));
+    }
   } else {
-//    DBG("encounter LoaderTitle ==%s and Entry->VolName ==%s\n", LoaderTitle, Entry->VolName);
-    Entry->me.Title = PoolPrint(L"Boot %s from %s", (LoaderTitle != NULL) ? LoaderTitle : Basename(LoaderPath), Entry->VolName);
+    //DBG("encounter LoaderTitle ==%s and Entry->VolName ==%s\n", LoaderTitle, Entry->VolName);
+    if (GlobalConfig.SelectionBootCampStyle) {
+      Entry->me.Title = PoolPrint(L"%s", (LoaderTitle != NULL) ? LoaderTitle : Basename(LoaderPath));
+    } else {
+      Entry->me.Title = PoolPrint(L"Boot %s from %s", (LoaderTitle != NULL) ? LoaderTitle : Basename(LoaderPath),
+                                    Entry->VolName);
+    }
   }
 //  DBG("Entry->me.Title =%s\n", Entry->me.Title);
   // just an example that UI can show hibernated volume to the user

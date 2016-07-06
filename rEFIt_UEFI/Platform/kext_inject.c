@@ -537,8 +537,14 @@ UINT8   KBEMLReplace[] = { 0xC6, 0xE8, 0x30, 0x00, 0x00, 0x00, 0x90, 0x90, 0x48,
 //UINT8   KBEYosSearch[]  = {0xE8, 0x27, 0x00, 0x00, 0x00, 0xEB, 0x08, 0x48, 0x89, 0xDF };
 //UINT8   KBEYosReplace[]  = {0xE8, 0x27, 0x00, 0x00, 0x00, 0x90, 0x90, 0x48, 0x89, 0xDF };
 
+// -- startupExt -->
 UINT8 KBEYosSearch[]  = { 0xE8, 0x25, 0x00, 0x00, 0x00, 0xEB, 0x05, 0xE8, 0xCE, 0x02, 0x00, 0x00 };
 UINT8 KBEYosReplace[] = { 0xE8, 0x25, 0x00, 0x00, 0x00, 0x90, 0x90, 0xE8, 0xCE, 0x02, 0x00, 0x00 };
+
+// 10.12 dp2
+UINT8 KBEYosSearch2[]  =  { 0xE8, 0x25, 0x00, 0x00, 0x00, 0xEB, 0x05, 0xE8, 0x7E, 0x05, 0x00, 0x00 };
+UINT8 KBEYosReplace2[]  = { 0xE8, 0x25, 0x00, 0x00, 0x00, 0x90, 0x90, 0xE8, 0x7E, 0x05, 0x00, 0x00 };
+// -- startupExt <--
 
 // as of El Capitan DP6
 UINT8 KBEECSearch[]  = { 0xC3, 0x48, 0x85, 0xDB, 0x74, 0x70, 0x48, 0x8B, 0x03, 0x48, 0x89, 0xDF, 0xFF, 0x50, 0x28, 0x48 };
@@ -570,7 +576,7 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
   UINTN   NumLion_X64 = 0;
   UINTN   NumLion_i386 = 0;
   UINTN   NumML = 0;
-  UINTN   NumYos = 0;
+  UINTN   NumYos = 0; //startupExt
   
   DBG_RT(Entry, "\nPatching kernel for injected kexts\n");
   
@@ -579,6 +585,10 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
     NumSnow_X64 = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBESnowSearch_X64, sizeof(KBESnowSearch_X64));
     NumML  = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBEMLSearch, sizeof(KBEMLSearch));
     NumYos = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBEYosSearch, sizeof(KBEYosSearch));
+    if (!NumYos) {
+      // 10.12 dp2
+      NumYos = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBEYosSearch2, sizeof(KBEYosSearch2));      
+    }
   } else {
     NumLion_i386 = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBELionSearch_i386, sizeof(KBELionSearch_i386));
     NumSnow_i386 = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBESnowSearch_i386, sizeof(KBESnowSearch_i386));
@@ -601,8 +611,10 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
 	  Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEYosSearch, sizeof(KBEYosSearch), KBEYosReplace, 1) +
 		SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEECSearch, sizeof(KBEECSearch), KBEECReplace, 1) +
       /* Micky1979, was a pain to place F/R here */
-      SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBESieSearch, sizeof(KBESieSearch), KBESieReplace, 1) +
+    SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBESieSearch, sizeof(KBESieSearch), KBESieReplace, 1) +
     SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBESieDP2Search, sizeof(KBESieDP2Search), KBESieDP2Replace, 1);
+    // 10.12 dp2 by cecekpawon
+    SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEYosSearch2, sizeof(KBEYosSearch2), KBEYosReplace2, 1);
     DBG_RT(Entry, "==> kernel Yosemite/El Capitan/Sierra: %d replaces done.\n", Num);
   }
   else if (NumLion_i386 == 1) {
