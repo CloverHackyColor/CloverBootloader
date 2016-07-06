@@ -121,6 +121,7 @@ INTN ScrollbarYMovement;
 #define TILE_XSPACING (8)
 #define TILE_YSPACING (24)
 #define ROW0_SCROLLSIZE (100)
+#define INDICATOR_SIZE (52)
 
 EG_IMAGE *SelectionImages[5] = { NULL, NULL, NULL, NULL, NULL};
 static EG_IMAGE *TextBuffer = NULL;
@@ -133,7 +134,7 @@ static INTN row0Count, row0PosX, row0PosXRunning;
 static INTN row1Count, row1PosX, row1PosXRunning;
 static INTN *itemPosX = NULL;
 static INTN *itemPosY = NULL;
-static INTN row0PosY, row1PosY, textPosY, FunctextPosY, ArrowPosX, ArrowPosY;
+static INTN row0PosY, row1PosY, textPosY, FunctextPosY;
 static EG_IMAGE* MainImage;
 static INTN OldX = 0, OldY = 0;
 static INTN OldTextWidth = 0;
@@ -1139,6 +1140,7 @@ static VOID InitSelection(VOID)
       SelectionImages[2]->HasAlpha = TRUE;
     }
   }
+    
   if (GlobalConfig.SelectionBootCampStyle)
   {
     // load indicator selection image
@@ -1146,19 +1148,10 @@ static VOID InitSelection(VOID)
     {
         SelectionImages[4] = egLoadImage(ThemeDir, GlobalConfig.SelectionIndicatorName, FALSE);
     }
-    if (SelectionImages[4] == NULL)
-    {
-        SelectionImages[4] = BuiltinIcon(BUILTIN_SELECTION_SMALL);
-        CopyMem(&BlueBackgroundPixel, &StdBackgroundPixel, sizeof(EG_PIXEL));
-    }
-    
-    SelectionImages[4] = egEnsureImageSize(SelectionImages[4], ROW1_TILESIZE, ROW1_TILESIZE, &MenuBackgroundPixel);
-    
-    if (SelectionImages[4] == NULL)
-    {
-        return;
-    }
+      
+    SelectionImages[4] = egEnsureImageSize(SelectionImages[4], INDICATOR_SIZE, INDICATOR_SIZE, &MenuBackgroundPixel);
   }
+    
   // non-selected background images
   //TODO FALSE -> TRUE
   if (GlobalConfig.SelectionBigFileName != NULL) {
@@ -2506,7 +2499,8 @@ static VOID DrawMainMenuEntry(REFIT_MENU_ENTRY *Entry, BOOLEAN selected, INTN XP
   if (GlobalConfig.SelectionOnTop) {
     SelectionImages[0]->HasAlpha = TRUE;
     SelectionImages[2]->HasAlpha = TRUE;
-    //    MainImage->HasAlpha = TRUE;
+    SelectionImages[4]->HasAlpha = TRUE;
+    //MainImage->HasAlpha = TRUE;
     BltImageCompositeBadge(MainImage,
                            SelectionImages[((Entry->Row == 0) ? 0 : 2) + (selected ? 0 : 1)],
                            (Entry->Row == 0) ? Entry->BadgeImage:NULL,
@@ -2519,12 +2513,12 @@ static VOID DrawMainMenuEntry(REFIT_MENU_ENTRY *Entry, BOOLEAN selected, INTN XP
   }
     
   if (GlobalConfig.SelectionBootCampStyle) {
-    ArrowPosY = textPosY + 15;
-    ArrowPosX = XPos + (ROW1_TILESIZE / 2) + TILE_XSPACING;
-        
     if (Entry->Row == 0) {
       BltImageCompositeIndicator(SelectionImages[(4) + (selected ? 0 : 1)], SelectionImages[4],
-                                 ArrowPosX, ArrowPosY, Scale);
+                                     XPos + (row0TileSize / 2) - (INDICATOR_SIZE / 2),
+                                     row0PosY + row0TileSize
+                                     + ((GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL) ? 15 : (FontHeight + 30)),
+                                     Scale);
     }
   }
     
@@ -2562,21 +2556,12 @@ static VOID DrawMainMenuLabel(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN RE
 
   egMeasureText(Text, &TextWidth, NULL);
   
-  if ((OldX > 0) && (OldY > 0)) {
-    if ((!(GlobalConfig.SelectionBootCampStyle)) && (OldTextWidth > TextWidth)) {
-      //Clear old text
-      FillRectAreaOfScreen(OldX, OldY,
-                         OldTextWidth, TextHeight, &MenuBackgroundPixel, X_IS_CENTER);
-    }
-        
-    if ((GlobalConfig.SelectionBootCampStyle) && (OldTextWidth > TextWidth)) {
-          //Clear old text
-      FillRectAreaOfScreen(OldX, OldY, OldTextWidth, TextHeight, &MenuBackgroundPixel, X_IS_CENTER);
-    }
-  }
+  //Clear old text
+  FillRectAreaOfScreen(OldX, OldY, OldTextWidth, TextHeight, &MenuBackgroundPixel, X_IS_CENTER);
     
-  if ((GlobalConfig.HideBadges & HDBADGES_INLINE) &&
-      (!OldRow) && (OldTextWidth) && (OldTextWidth != TextWidth)) {
+  if (!(GlobalConfig.SelectionBootCampStyle)
+      && (GlobalConfig.HideBadges & HDBADGES_INLINE) && (!OldRow)
+      && (OldTextWidth) && (OldTextWidth != TextWidth)) {
     //Clear badge
     BltImageAlpha(NULL, (OldX - (OldTextWidth >> 1) - (BADGE_DIMENSION + 16)),
                   (OldY - ((BADGE_DIMENSION - TextHeight) >> 1)), &MenuBackgroundPixel, BADGE_DIMENSION >> 3);
@@ -2584,7 +2569,7 @@ static VOID DrawMainMenuLabel(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN RE
   DrawTextXY(Text, XPos, YPos, X_IS_CENTER);
 
   //show inline badge
-   if ((!(GlobalConfig.SelectionBootCampStyle)) &&
+   if (!(GlobalConfig.SelectionBootCampStyle) &&
        (GlobalConfig.HideBadges & HDBADGES_INLINE) &&
        (Screen->Entries[State->CurrentSelection]->Row == 0)) {
     // Display Inline Badge: small icon before the text
@@ -2824,14 +2809,15 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
       row1PosX = (UGAWidth + 8 - (ROW1_TILESIZE + TILE_XSPACING) * row1Count) >> 1;
           
       if (GlobalConfig.SelectionBootCampStyle) {
-        row1PosY = row0PosY + EntriesHeight + 30 + GlobalConfig.TileYSpace + LayoutButtonOffset;
+        row1PosY = row0PosY + row0TileSize + LayoutButtonOffset + GlobalConfig.TileYSpace + INDICATOR_SIZE
+                     + ((GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL) ? 15 : (FontHeight + 30));
       } else {
         row1PosY = row0PosY + EntriesHeight + GlobalConfig.TileYSpace + LayoutButtonOffset;
       }
           
       if (row1Count > 0) {
         if (GlobalConfig.SelectionBootCampStyle) {
-          textPosY = row0PosY + EntriesHeight + 15;
+          textPosY = row0PosY + row0TileSize + 15;
         } else {
           textPosY = row1PosY + ROW1_TILESIZE + GlobalConfig.TileYSpace + LayoutTextOffset;
         }
@@ -2885,7 +2871,7 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
             
           // create static text for the boot options if the BootCampStyle is used
           if (GlobalConfig.SelectionBootCampStyle && !(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)) {
-            DrawTextXY(Screen->Entries[i]->Title, itemPosX[i] + ROW1_TILESIZE + TILE_XSPACING,
+            DrawTextXY(Screen->Entries[i]->Title, itemPosX[i] + (row0TileSize / 2),
                            textPosY, X_IS_CENTER);
           }
         } else {
@@ -2895,8 +2881,8 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
       }
       
       // clear the text from the second row, required by the BootCampStyle
-      if ((Screen->Entries[State->LastSelection]->Row == 1) && (Screen->Entries[State->CurrentSelection]->Row == 0)
-          && GlobalConfig.SelectionBootCampStyle && !(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)) {
+      if ((GlobalConfig.SelectionBootCampStyle) && (Screen->Entries[State->LastSelection]->Row == 1)
+          && (Screen->Entries[State->CurrentSelection]->Row == 0) && !(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)) {
           FillRectAreaOfScreen((UGAWidth >> 1), FunctextPosY,
                                OldTextWidth, TextHeight, &MenuBackgroundPixel, X_IS_CENTER);
       }
@@ -2915,7 +2901,7 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
       // used for all the entries
       if (!(GlobalConfig.SelectionBootCampStyle) && !(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)) {
         DrawMainMenuLabel(Screen->Entries[State->CurrentSelection]->Title,
-                            (UGAWidth >> 1), FunctextPosY, Screen, State);
+                            (UGAWidth >> 1), textPosY, Screen, State);
       }
 
       DrawTextCorner(TEXT_CORNER_HELP, X_IS_LEFT);
@@ -2941,7 +2927,7 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
                           itemPosX[State->CurrentSelection], row1PosY);
       }
       
-      // create dynamic for the second row if BootCampStyle is used
+      // create dynamic text for the second row if BootCampStyle is used
       if ((GlobalConfig.SelectionBootCampStyle) && (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL))
           && Screen->Entries[State->CurrentSelection]->Row == 1) {
           DrawMainMenuLabel(Screen->Entries[State->CurrentSelection]->Title,
