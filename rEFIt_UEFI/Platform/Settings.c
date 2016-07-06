@@ -1018,7 +1018,7 @@ IsPatchEnabled (CHAR8 *MatchOSEntry, CHAR8 *OSVersion)
   BOOLEAN ret = FALSE;
   struct MatchOSes mos;
   
-  if (!MatchOS || !OSVersion) {
+  if (!MatchOSEntry || !OSVersion) {
     return TRUE; //undefined matched corresponds to old behavior
   }
   
