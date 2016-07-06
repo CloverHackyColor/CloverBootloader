@@ -1018,6 +1018,10 @@ IsPatchEnabled (CHAR8 *MatchOSEntry, CHAR8 *OSVersion)
   BOOLEAN ret = FALSE;
   struct MatchOSes mos;
   
+  if (!MatchOS || !OSVersion) {
+    return TRUE; //undefined matched corresponds to old behavior
+  }
+  
   GetStrArraySeparatedByChar(MatchOSEntry, ',', &mos);
   for (i = 0; i < mos.count; ++i) {
     if (IsOSValid(mos.array[i], OSVersion)) {
