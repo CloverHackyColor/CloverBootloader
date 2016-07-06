@@ -548,6 +548,10 @@ UINT8 KBEECReplace[] = { 0xC3, 0x48, 0x85, 0xDB, 0xEB, 0x12, 0x48, 0x8B, 0x03, 0
 UINT8 KBESieSearch[]  = { 0xC3, 0x48, 0x85, 0xDB, 0x74, 0x71, 0x48, 0x8B, 0x03, 0x48, 0x89, 0xDF, 0xFF, 0x50, 0x28, 0x48 };
 UINT8 KBESieReplace[] = { 0xC3, 0x48, 0x85, 0xDB, 0xEB, 0x12, 0x48, 0x8B, 0x03, 0x48, 0x89, 0xDF, 0xFF, 0x50, 0x28, 0x48 };
 
+//SieDP2
+UINT8 KBESieDP2Search[]  = { 0x48, 0x89, 0xC3, 0x49, 0x8B, 0x04, 0x24, 0x4C, 0x89, 0xE7, 0x48, 0x85, 0xDB, 0x74, 0x77, 0xFF, 0x90, 0xD0};
+UINT8 KBESieDP2Replace[] = { 0x48, 0x89, 0xC3, 0x49, 0x8B, 0x04, 0x24, 0x4C, 0x89, 0xE7, 0x48, 0x85, 0xDB, 0xEB, 0x77, 0xFF, 0x90, 0xD0};
+
 //
 // We can not rely on OSVersion global variable for OS version detection,
 // since in some cases it is not correct (install of ML from Lion, for example).
@@ -597,7 +601,8 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
 	  Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEYosSearch, sizeof(KBEYosSearch), KBEYosReplace, 1) +
 		SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEECSearch, sizeof(KBEECSearch), KBEECReplace, 1) +
       /* Micky1979, was a pain to place F/R here */
-      SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBESieSearch, sizeof(KBESieSearch), KBESieReplace, 1);
+      SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBESieSearch, sizeof(KBESieSearch), KBESieReplace, 1) +
+    SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBESieDP2Search, sizeof(KBESieDP2Search), KBESieDP2Replace, 1);
     DBG_RT(Entry, "==> kernel Yosemite/El Capitan/Sierra: %d replaces done.\n", Num);
   }
   else if (NumLion_i386 == 1) {

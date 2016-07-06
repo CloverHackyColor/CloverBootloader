@@ -545,6 +545,8 @@
 				<string>VoodooHDA</string>
 				<key>Replace</key>
 				<data>VGVsZXBob25lcwA=</data>
+				<key>Disabled</key>
+				<true/>
 			</dict>
 			<dict>
 				<key>Comment</key>
