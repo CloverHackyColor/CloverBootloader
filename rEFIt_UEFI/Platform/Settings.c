@@ -934,6 +934,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         Patches->KextPatches[Patches->NrKexts].Name  = NULL;
         Patches->KextPatches[Patches->NrKexts].Data  = NULL;
         Patches->KextPatches[Patches->NrKexts].Patch = NULL;
+        Patches->KextPatches[Patches->NrKexts].MatchOS = NULL;
         DBG ("KextsToPatch %d:", i);
 
         Dict = GetProperty (Prop2, "Name");
