@@ -2062,14 +2062,12 @@ VOID
 SetCPUProperties ();
 
 // Settings.c
-// Micky1979: Next four functions (+ needed struct) are to split a string like "10.10.5,10.7,10.11.6,10.8.x"
+// Micky1979: Next five functions (+ needed struct) are to split a string like "10.10.5,10.7,10.11.6,10.8.x"
 // in their components separated by comma (in this case)
 struct MatchOSes {
     INTN   count;
     CHAR8* array[100];
 };
-
-//typedef struct MatchOSes oses;
 
 /** Returns a boolean and then enable disable the patch if MachOSEntry have a match for the booted OS. */
 BOOLEAN IsPatchEnabled(CHAR8 *MatchOSEntry, CHAR8 *CurrOS);
@@ -2079,9 +2077,12 @@ BOOLEAN IsPatchEnabled(CHAR8 *MatchOSEntry, CHAR8 *CurrOS);
  of the 10.10 OS */
 BOOLEAN IsOSValid(CHAR8 *MatchOS, CHAR8 *CurrOS);
 
-/** load the given struct (count+array) with the components of str that contains the given char sep as separator. */
-VOID
-GetStrArraySeparatedByChar(CHAR8 *str, CHAR8 sep, struct MatchOSes *mo);
+/** return MatchOSes struct (count+array) with the components of str that contains the given char sep as separator. */
+struct
+MatchOSes *GetStrArraySeparatedByChar(CHAR8 *str, CHAR8 sep);
+
+/** free MatchOSes struct and its array. */
+VOID deallocMatchOSes(struct MatchOSes *s);
 
 /** count occurrences of a given char in a char* string. */
 INTN

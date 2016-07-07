@@ -1008,54 +1008,44 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
   return TRUE;
 }
 
-
-// Micky1979: Next four functions to split a string like "10.10.5,10.7,10.11.6,10.8.x"
-// in their components separated by comma (in this case)
-
 BOOLEAN
-IsPatchEnabled (CHAR8 *MatchOSEntry, CHAR8 *OSVersion)
+IsPatchEnabled (CHAR8 *MatchOSEntry, CHAR8 *CurrOS)
 {
   INTN i;
   BOOLEAN ret = FALSE;
-  struct MatchOSes mos;
+  struct MatchOSes *mos = AllocatePool(sizeof(struct MatchOSes));
   
-  if (!MatchOSEntry || !OSVersion) {
-    return TRUE; //undefined matched corresponds to old behavior
-  }
-  
-  GetStrArraySeparatedByChar(MatchOSEntry, ',', &mos);
-  for (i = 0; i < mos.count; ++i) {
-    if (IsOSValid(mos.array[i], OSVersion)) {
-      //DBG ("\nthis patch will activated for OS %s!\n", mos.array[i]);
+  mos = GetStrArraySeparatedByChar(MatchOSEntry, ',');
+  for (i = 0; i < mos->count; ++i) {
+    if (IsOSValid(mos->array[i], CurrOS)) {
+      //DBG ("\nthis patch will activated for OS %s!\n", mos->array[i]);
       ret =  TRUE;
+      break;
     }
   }
-  
-  for (i = 0; i < mos.count; i++) {
-    if (mos.array[i]) {
-      FreePool(mos.array[i]);
-    }
-  }
-  
+  deallocMatchOSes(mos);
   return ret;
 }
 
-VOID
-GetStrArraySeparatedByChar(CHAR8 *str, CHAR8 sep, struct MatchOSes *mo)
+struct
+MatchOSes *GetStrArraySeparatedByChar(CHAR8 *str, CHAR8 sep)
 {
+  struct MatchOSes *mo = AllocatePool(sizeof(struct MatchOSes));
+  
   INTN len = 0, i = 0, inc = 1;
-  CHAR8 *comp = NULL;
+//  CHAR8 *comp = NULL; //unused
   CHAR8 doubleSep[2];
-  UINTN newLen = 0;
+  INTN newLen = 0;
   
   mo->count = countOccurrences( str, sep ) + 1;
-  len = AsciiStrLen(str);
+  // printf("found %d %c in %s\n", mo->count, sep, str);
+  len = (INTN)AsciiStrLen(str);
   doubleSep[0] = sep; doubleSep[1] = sep;
   
   if(AsciiStrStr(str, doubleSep) || !len || str[0] == sep || str[len -1] == sep) {
     mo->count = 0;
-    mo->array[0] = NULL;
-    return;
+    mo->array[0] = "";
+    return mo;
   }
   
   if (mo->count > 1) {
@@ -1075,6 +1065,7 @@ GetStrArraySeparatedByChar(CHAR8 *str, CHAR8 sep, struct MatchOSes *mo)
     
     for (i = 0; i < mo->count; ++i) {
       INTN startLocation, endLocation;
+      mo->array[i] = 0;
       
       if (i == 0) {
         startLocation = indexes[0];
@@ -1084,19 +1075,21 @@ GetStrArraySeparatedByChar(CHAR8 *str, CHAR8 sep, struct MatchOSes *mo)
         endLocation = len;
       } else {
         startLocation = indexes[i] + 1;
-        endLocation = indexes[i+1] - 2;
+        endLocation = indexes[i + 1] - 2;
       }
       newLen = (endLocation - startLocation) + 2;
-      comp = (CHAR8 *) AllocatePool(newLen);
+ /*     comp = (CHAR8 *) AllocatePool(newLen);
       AsciiStrnCpy(comp, str + startLocation, newLen);
-      comp[newLen] = '\0';
-      mo->array[i] = comp;
+      comp[newLen] = '\0'; */
+      mo->array[i] = AllocateCopyPool(newLen, str + startLocation);
+      mo->array[newLen - 1] = '\0';
     }
   }
   else {
     // str contains only one component and it is our string!
     mo->array[0] = AllocateCopyPool(AsciiStrSize(str), str);
   }
+  return mo;
 }
 
 BOOLEAN IsOSValid(CHAR8 *MatchOS, CHAR8 *CurrOS)
@@ -1106,54 +1099,68 @@ BOOLEAN IsOSValid(CHAR8 *MatchOS, CHAR8 *CurrOS)
    10.10.2 only 10.10.2 (10.10.1 or 10.10.5 will be skipped)
    10.10.x (or 10.10.X), in this case is valid for all minor version of 10.10 (10.10.(0-9))
    */
-  struct MatchOSes osToc;
-  struct MatchOSes currOStoc;
+  
   BOOLEAN ret = FALSE;
-  INTN i;
+  struct MatchOSes *osToc;
+  struct MatchOSes *currOStoc;
   
   if (!MatchOS || !CurrOS) {
     return TRUE; //undefined matched corresponds to old behavior
   }
   
-  GetStrArraySeparatedByChar(MatchOS, '.', &osToc);
-  GetStrArraySeparatedByChar(CurrOS,  '.', &currOStoc);
+  osToc = GetStrArraySeparatedByChar(MatchOS, '.');
+  currOStoc = GetStrArraySeparatedByChar(CurrOS,  '.');
   
-  if (osToc.count == 2) {    
-    if (AsciiStrCmp(osToc.array[0], currOStoc.array[0]) == 0
-        && AsciiStrCmp(osToc.array[1], currOStoc.array[1]) == 0) {
+  if (osToc->count == 2) {
+    if (AsciiStrCmp(osToc->array[0], currOStoc->array[0]) == 0
+        && AsciiStrCmp(osToc->array[1], currOStoc->array[1]) == 0) {
       ret = TRUE;
     }
-  } else if (osToc.count == 3) {
-    if (AsciiStrCmp(osToc.array[0], currOStoc.array[0]) == 0
-        && AsciiStrCmp(osToc.array[1], currOStoc.array[1]) == 0
-        && AsciiStrCmp(osToc.array[2], currOStoc.array[2]) == 0) {
-      ret = TRUE;
-    } else if (AsciiStrCmp(osToc.array[0], currOStoc.array[0]) == 0
-               && AsciiStrCmp(osToc.array[1], currOStoc.array[1]) == 0
-               && (AsciiStrCmp(osToc.array[2], "x") == 0 || AsciiStrCmp(osToc.array[2], "X") == 0)) {
-      ret = TRUE;
+  } else if (osToc->count == 3) {
+    if (currOStoc->count == 3) {
+      if (AsciiStrCmp(osToc->array[0], currOStoc->array[0]) == 0
+          && AsciiStrCmp(osToc->array[1], currOStoc->array[1]) == 0
+          && AsciiStrCmp(osToc->array[2], currOStoc->array[2]) == 0) {
+        ret = TRUE;
+      } else if (AsciiStrCmp(osToc->array[0], currOStoc->array[0]) == 0
+                 && AsciiStrCmp(osToc->array[1], currOStoc->array[1]) == 0
+                 && (AsciiStrCmp(osToc->array[2], "x") == 0 || AsciiStrCmp(osToc->array[2], "X") == 0)) {
+        ret = TRUE;
+      }
+    } else if (currOStoc->count == 2) {
+      if (AsciiStrCmp(osToc->array[0], currOStoc->array[0]) == 0
+          && AsciiStrCmp(osToc->array[1], currOStoc->array[1]) == 0) {
+        ret = TRUE;
+      } else if (AsciiStrCmp(osToc->array[0], currOStoc->array[0]) == 0
+                 && AsciiStrCmp(osToc->array[1], currOStoc->array[1]) == 0
+                 && (AsciiStrCmp(osToc->array[2], "x") == 0 || AsciiStrCmp(osToc->array[2], "X") == 0)) {
+        ret = TRUE;
+      }
     }
+    
   }
   
-  for (i = 0; i < osToc.count; i++) {
-    if (osToc.array[i]) {
-      FreePool(osToc.array[i]);
-    }    
-  }
-  for (i = 0; i < currOStoc.count; i++) {
-    if (currOStoc.array[i]) {
-      FreePool(currOStoc.array[i]);
-    }
-  }
-  
+  deallocMatchOSes(osToc);
+  deallocMatchOSes(currOStoc);
   return ret;
 }
 
-INTN countOccurrences( CHAR8 * s, CHAR8 c )
+INTN countOccurrences( CHAR8 *s, CHAR8 c )
 {
   return *s == '\0'
   ? 0
   : countOccurrences( s + 1, c ) + (*s == c);
+}
+
+VOID deallocMatchOSes(struct MatchOSes *s)
+{
+  INTN i;
+  
+  for (i = 0; i < s->count; i++) {
+    FreePool(s->array[i]);
+  }
+  
+  FreePool(s);
 }
 // End of MatchOS
 
