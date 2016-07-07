@@ -1013,7 +1013,7 @@ IsPatchEnabled (CHAR8 *MatchOSEntry, CHAR8 *CurrOS)
 {
   INTN i;
   BOOLEAN ret = FALSE;
-  struct MatchOSes *mos = AllocatePool(sizeof(struct MatchOSes));
+  struct MatchOSes *mos; // = AllocatePool(sizeof(struct MatchOSes));
   
   mos = GetStrArraySeparatedByChar(MatchOSEntry, ',');
   for (i = 0; i < mos->count; ++i) {
@@ -1033,18 +1033,19 @@ MatchOSes *GetStrArraySeparatedByChar(CHAR8 *str, CHAR8 sep)
   struct MatchOSes *mo = AllocatePool(sizeof(struct MatchOSes));
   
   INTN len = 0, i = 0, inc = 1;
-//  CHAR8 *comp = NULL; //unused
+  //  CHAR8 *comp = NULL; //unused
   CHAR8 doubleSep[2];
   INTN newLen = 0;
   
   mo->count = countOccurrences( str, sep ) + 1;
-  // printf("found %d %c in %s\n", mo->count, sep, str);
+//  DBG("found %d %c in %s\n", mo->count, sep, str);
   len = (INTN)AsciiStrLen(str);
   doubleSep[0] = sep; doubleSep[1] = sep;
   
   if(AsciiStrStr(str, doubleSep) || !len || str[0] == sep || str[len -1] == sep) {
     mo->count = 0;
-    mo->array[0] = "";
+    mo->array[0] = NULL;
+//    DBG("emtpy string\n");
     return mo;
   }
   
@@ -1055,13 +1056,14 @@ MatchOSes *GetStrArraySeparatedByChar(CHAR8 *str, CHAR8 sep)
       CHAR8 c = str[i];
       if (c == sep) {
         indexes[inc]=i;
+//        DBG("index %d = %d\n", inc, i);
         inc++;
       }
     }
     // manually add first index
     indexes[0] = 0;
     // manually add last index
-    indexes[mo->count + 1] = len;
+    indexes[mo->count] = len;
     
     for (i = 0; i < mo->count; ++i) {
       INTN startLocation, endLocation;
@@ -1069,25 +1071,26 @@ MatchOSes *GetStrArraySeparatedByChar(CHAR8 *str, CHAR8 sep)
       
       if (i == 0) {
         startLocation = indexes[0];
-        endLocation = indexes[i + 1] - 2;
+        endLocation = indexes[1] - 1;
       } else if (i == mo->count - 1) { // never reach the end of the array
         startLocation = indexes[i] + 1;
         endLocation = len;
       } else {
         startLocation = indexes[i] + 1;
-        endLocation = indexes[i + 1] - 2;
+        endLocation = indexes[i + 1] - 1;
       }
+//      DBG("start %d, end %d\n", startLocation, endLocation);
       newLen = (endLocation - startLocation) + 2;
- /*     comp = (CHAR8 *) AllocatePool(newLen);
-      AsciiStrnCpy(comp, str + startLocation, newLen);
-      comp[newLen] = '\0'; */
+      /*     comp = (CHAR8 *) AllocatePool(newLen);
+       AsciiStrnCpy(comp, str + startLocation, newLen);
+       comp[newLen] = '\0'; */
       mo->array[i] = AllocateCopyPool(newLen, str + startLocation);
-      mo->array[newLen - 1] = '\0';
+      mo->array[i][newLen - 1] = '\0';
     }
   }
   else {
-    // str contains only one component and it is our string!
-    mo->array[0] = AllocateCopyPool(AsciiStrSize(str), str);
+//    DBG("str contains only one component and it is our string %s!\n", str);
+    mo->array[0] = AllocateCopyPool(AsciiStrLen(str)+1, str);
   }
   return mo;
 }
@@ -1156,8 +1159,14 @@ VOID deallocMatchOSes(struct MatchOSes *s)
 {
   INTN i;
   
+  if (!s) {
+    return;
+  }
+  
   for (i = 0; i < s->count; i++) {
-    FreePool(s->array[i]);
+    if (s->array[i]) {
+      FreePool(s->array[i]);
+    }
   }
   
   FreePool(s);
