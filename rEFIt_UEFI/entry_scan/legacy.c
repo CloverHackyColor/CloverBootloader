@@ -119,12 +119,9 @@ static LEGACY_ENTRY * AddLegacyEntry(IN CHAR16 *FullTitle, IN CHAR16 *LoaderTitl
   if (FullTitle) {
     Entry->me.Title = EfiStrDuplicate(FullTitle);
   } else {
-    if (GlobalConfig.SelectionBootCampStyle)
-    {
+    if (GlobalConfig.SelectionBootCampStyle) {
       Entry->me.Title = PoolPrint(L"%s", LoaderTitle);
-    }
-    else
-    {
+    } else {
       Entry->me.Title = PoolPrint(L"Boot %s from %s", LoaderTitle, VolDesc);
     }
   }

@@ -1141,14 +1141,11 @@ static VOID InitSelection(VOID)
     }
   }
     
-  if (GlobalConfig.SelectionBootCampStyle)
-  {
+  if (GlobalConfig.SelectionBootCampStyle) {
     // load indicator selection image
-    if (GlobalConfig.SelectionIndicatorName != NULL)
-    {
-        SelectionImages[4] = egLoadImage(ThemeDir, GlobalConfig.SelectionIndicatorName, FALSE);
+    if (GlobalConfig.SelectionIndicatorName != NULL) {
+      SelectionImages[4] = egLoadImage(ThemeDir, GlobalConfig.SelectionIndicatorName, FALSE);
     }
-      
     SelectionImages[4] = egEnsureImageSize(SelectionImages[4], INDICATOR_SIZE, INDICATOR_SIZE, &MenuBackgroundPixel);
   }
     
@@ -2526,7 +2523,7 @@ static VOID DrawMainMenuEntry(REFIT_MENU_ENTRY *Entry, BOOLEAN selected, INTN XP
   Entry->Place.YPos = YPos;
   Entry->Place.Width = MainImage->Width;
   Entry->Place.Height = MainImage->Height;
-//  egFreeImage(TmpBuffer);
+  //egFreeImage(TmpBuffer);
 }
 
 static VOID FillRectAreaOfScreen(IN INTN XPos, IN INTN YPos, IN INTN Width, IN INTN Height, IN EG_PIXEL *Color, IN UINT8 XAlign)
@@ -2569,7 +2566,7 @@ static VOID DrawMainMenuLabel(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN RE
   DrawTextXY(Text, XPos, YPos, X_IS_CENTER);
 
   //show inline badge
-   if (!(GlobalConfig.SelectionBootCampStyle) &&
+  if (!(GlobalConfig.SelectionBootCampStyle) &&
        (GlobalConfig.HideBadges & HDBADGES_INLINE) &&
        (Screen->Entries[State->CurrentSelection]->Row == 0)) {
     // Display Inline Badge: small icon before the text
@@ -2833,7 +2830,7 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
 
       row0PosXRunning = row0PosX;
       row1PosXRunning = row1PosX;
- //     DBG("EntryCount =%d\n", Screen->EntryCount);
+      //DBG("EntryCount =%d\n", Screen->EntryCount);
       for (i = 0; i < (INTN)Screen->EntryCount; i++) {
         if (Screen->Entries[i]->Row == 0) {
           itemPosX[i] = row0PosXRunning;
@@ -2841,7 +2838,7 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
         } else {
           itemPosX[i] = row1PosXRunning;
           row1PosXRunning += ROW1_TILESIZE + TILE_XSPACING;
- //         DBG("next item in row1 at x=%d\n", row1PosXRunning);
+          //DBG("next item in row1 at x=%d\n", row1PosXRunning);
         }
       }
       // initial painting
@@ -2852,7 +2849,7 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
         CopyMem(&Screen->FilmPlace, &BannerPlace, sizeof(BannerPlace));
       }
 
-  //    DBG("main menu inited\n");
+      //DBG("main menu inited\n");
       break;
 
     case MENU_FUNCTION_CLEANUP:
@@ -2868,7 +2865,6 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
             DrawMainMenuEntry(Screen->Entries[i], (i == State->CurrentSelection)?1:0,
                               itemPosX[i - State->FirstVisible], row0PosY);
           }
-            
           // create static text for the boot options if the BootCampStyle is used
           if (GlobalConfig.SelectionBootCampStyle && !(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)) {
             DrawTextXY(Screen->Entries[i]->Title, itemPosX[i] + (row0TileSize / 2),
@@ -4200,7 +4196,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
   if (AllowGraphicsMode)
     Style = GraphicsMenuStyle;
 
-  //remember, if you extended this menu then change procedures
+  // remember, if you extended this menu then change procedures
   // FillInputs and ApplyInputs
 
   if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_MENU_TITLE_IMAGE)) {

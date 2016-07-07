@@ -544,7 +544,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath,
   } else if ((Entry->VolName == NULL) || (StrLen(Entry->VolName) == 0)) {
     //DBG("encounter Entry->VolName ==%s and StrLen(Entry->VolName) ==%d\n",Entry->VolName, StrLen(Entry->VolName));
     if (GlobalConfig.SelectionBootCampStyle) {
-      Entry->me.Title = PoolPrint(L"%s", (LoaderTitle != NULL) ? LoaderTitle : Basename(LoaderPath));
+      Entry->me.Title = PoolPrint(L"%s", ((LoaderTitle != NULL) ? LoaderTitle : Basename(Volume->DevicePathString)));
     } else {
       Entry->me.Title = PoolPrint(L"Boot %s from %s", (LoaderTitle != NULL) ? LoaderTitle : Basename(LoaderPath),
                                     Basename(Volume->DevicePathString));
@@ -552,13 +552,17 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath,
   } else {
     //DBG("encounter LoaderTitle ==%s and Entry->VolName ==%s\n", LoaderTitle, Entry->VolName);
     if (GlobalConfig.SelectionBootCampStyle) {
-      Entry->me.Title = PoolPrint(L"%s", (LoaderTitle != NULL) ? LoaderTitle : Basename(LoaderPath));
+      if ((StriCmp(LoaderTitle, L"Mac OS X") == 0) || (StriCmp(LoaderTitle, L"Recovery") == 0)) {
+        Entry->me.Title = PoolPrint(L"%s", Entry->VolName);
+      } else {
+        Entry->me.Title = PoolPrint(L"%s", (LoaderTitle != NULL) ? LoaderTitle : Basename(LoaderPath));
+      }
     } else {
       Entry->me.Title = PoolPrint(L"Boot %s from %s", (LoaderTitle != NULL) ? LoaderTitle : Basename(LoaderPath),
                                     Entry->VolName);
     }
   }
-//  DBG("Entry->me.Title =%s\n", Entry->me.Title);
+  //DBG("Entry->me.Title =%s\n", Entry->me.Title);
   // just an example that UI can show hibernated volume to the user
   // should be better to show it on entry image
   if (OSFLAG_ISSET(Entry->Flags, OSFLAG_HIBERNATED)) {
@@ -1008,17 +1012,17 @@ VOID ScanLoader(VOID)
     // it is needed to get rid of bootmgfw.efi to allow starting of
     // Clover as /efi/boot/bootx64.efi from HD. We can do that by renaming
     // bootmgfw.efi to bootmgfw-orig.efi
-    AddLoaderEntry(L"\\EFI\\microsoft\\Boot\\bootmgfw-orig.efi", L"", L"Microsoft EFI boot menu", Volume, NULL, OSTYPE_WINEFI, 0);
+    AddLoaderEntry(L"\\EFI\\microsoft\\Boot\\bootmgfw-orig.efi", L"", L"Microsoft EFI", Volume, NULL, OSTYPE_WINEFI, 0);
     // check for Microsoft boot loader/menu
     // If there is bootmgfw-orig.efi, then do not check for bootmgfw.efi
     // since on some systems this will actually be CloverX64.efi
     // renamed to bootmgfw.efi
-    AddLoaderEntry(L"\\EFI\\microsoft\\Boot\\bootmgfw.efi", L"", L"Microsoft EFI boot menu", Volume, NULL, OSTYPE_WINEFI, 0);
+    AddLoaderEntry(L"\\EFI\\microsoft\\Boot\\bootmgfw.efi", L"", L"Microsoft EFI boot", Volume, NULL, OSTYPE_WINEFI, 0);
     // check for Microsoft boot loader/menu. This entry is redundant
-    AddLoaderEntry(L"\\bootmgr.efi", L"", L"Microsoft EFI mgrboot menu", Volume, NULL, OSTYPE_WINEFI, 0);
+    AddLoaderEntry(L"\\bootmgr.efi", L"", L"Microsoft EFI mgrboot", Volume, NULL, OSTYPE_WINEFI, 0);
     // check for Microsoft boot loader/menu on CDROM
-    if (!AddLoaderEntry(L"\\EFI\\MICROSOFT\\BOOT\\cdboot.efi", L"", L"Microsoft EFI cdboot menu", Volume, NULL, OSTYPE_WINEFI, 0)) {
-      AddLoaderEntry(L"\\EFI\\MICROSOF\\BOOT\\CDBOOT.EFI", L"", L"Microsoft EFI CDBOOT menu", Volume, NULL, OSTYPE_WINEFI, 0);
+    if (!AddLoaderEntry(L"\\EFI\\MICROSOFT\\BOOT\\cdboot.efi", L"", L"Microsoft EFI cdboot", Volume, NULL, OSTYPE_WINEFI, 0)) {
+      AddLoaderEntry(L"\\EFI\\MICROSOF\\BOOT\\CDBOOT.EFI", L"", L"Microsoft EFI CDBOOT", Volume, NULL, OSTYPE_WINEFI, 0);
     }
     if (gSettings.LinuxScan) {
     // check for linux loaders

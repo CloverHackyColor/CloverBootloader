@@ -773,38 +773,29 @@ VOID BltImageCompositeIndicator(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, I
         return;
     }
     //to simplify suppose square images
-    if (CompWidth < TotalWidth)
-    {
+    if (CompWidth < TotalWidth) {
         OffsetX = (TotalWidth - CompWidth) >> 1;
         OffsetY = (TotalHeight - CompHeight) >> 1;
         egComposeImage(CompImage, NewBaseImage, 0, 0);
         CompWidth = TotalWidth;
         CompHeight = TotalHeight;
-    }
-    else
-    {
+    } else {
         OffsetX = (CompWidth - TotalWidth) >> 1;
         OffsetY = (CompHeight - TotalHeight) >> 1;
         egComposeImage(CompImage, NewBaseImage, OffsetX, OffsetY);
     }
     
     // blit to screen and clean up
-    if (GlobalConfig.Theme)
-    {
+    if (GlobalConfig.Theme) {
         // regular theme
-        if (GlobalConfig.NonSelectedGrey && !Selected)
-        {
-            BltImageAlpha(CompImage, XPos, YPos, &MenuBackgroundPixel, -16);
-        }
-        else
-        {
-            BltImageAlpha(CompImage, XPos, YPos, &MenuBackgroundPixel, 16);
-        }
-    }
-    else
-    {
-        // embedded theme - don't use BltImageAlpha as it can't handle refit's built in image
-        egDrawImageArea(CompImage, 0, 0, TotalWidth, TotalHeight, XPos, YPos);
+      if (GlobalConfig.NonSelectedGrey && !Selected) {
+        BltImageAlpha(CompImage, XPos, YPos, &MenuBackgroundPixel, -16);
+      } else {
+        BltImageAlpha(CompImage, XPos, YPos, &MenuBackgroundPixel, 16);
+      }
+    } else {
+      // embedded theme - don't use BltImageAlpha as it can't handle refit's built in image
+      egDrawImageArea(CompImage, 0, 0, TotalWidth, TotalHeight, XPos, YPos);
     }
     
     egFreeImage(CompImage);
