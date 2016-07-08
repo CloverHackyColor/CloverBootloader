@@ -540,15 +540,10 @@
 		2C794A2D1A0AA85900D845B0 /* Start64H2.com */ = {isa = PBXFileReference; lastKnownFileType = file; path = Start64H2.com; sourceTree = "<group>"; };
 		2C794A2F1A0AA85900D845B0 /* boot1.s */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = boot1.s; sourceTree = "<group>"; };
 		2C794A301A0AA85900D845B0 /* BootDuet.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = BootDuet.S; sourceTree = "<group>"; };
-		2C794A311A0AA85900D845B0 /* BootSector.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = BootSector.xcodeproj; sourceTree = "<group>"; };
 		2C794A321A0AA85900D845B0 /* cbuild.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = cbuild.sh; sourceTree = "<group>"; };
 		2C794A331A0AA85900D845B0 /* cdboot.s */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = cdboot.s; sourceTree = "<group>"; };
 		2C794A341A0AA85900D845B0 /* efi32.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = efi32.S; sourceTree = "<group>"; };
 		2C794A351A0AA85900D845B0 /* efi64.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = efi64.S; sourceTree = "<group>"; };
-		2C794A361A0AA85900D845B0 /* fix-embedded-paths */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = "fix-embedded-paths"; sourceTree = "<group>"; };
-		2C794A371A0AA85900D845B0 /* gnu-gcc */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = "gnu-gcc"; sourceTree = "<group>"; };
-		2C794A381A0AA85900D845B0 /* gnu-ld */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = "gnu-ld"; sourceTree = "<group>"; };
-		2C794A391A0AA85900D845B0 /* HowToCompileAsm.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HowToCompileAsm.txt; sourceTree = "<group>"; };
 		2C794A3A1A0AA85900D845B0 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		2C794A3B1A0AA85900D845B0 /* st32_64.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = st32_64.S; sourceTree = "<group>"; };
 		2C794A3C1A0AA85900D845B0 /* start32.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = start32.S; sourceTree = "<group>"; };
@@ -1365,13 +1360,6 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		12912A411AE0FEF30086B81B /* Products */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		12A88C5C1A7B6E0A008C4829 /* XhciDxe */ = {
 			isa = PBXGroup;
 			children = (
@@ -1556,15 +1544,10 @@
 				2C794A2E1A0AA85900D845B0 /* bin */,
 				2C794A2F1A0AA85900D845B0 /* boot1.s */,
 				2C794A301A0AA85900D845B0 /* BootDuet.S */,
-				2C794A311A0AA85900D845B0 /* BootSector.xcodeproj */,
 				2C794A321A0AA85900D845B0 /* cbuild.sh */,
 				2C794A331A0AA85900D845B0 /* cdboot.s */,
 				2C794A341A0AA85900D845B0 /* efi32.S */,
 				2C794A351A0AA85900D845B0 /* efi64.S */,
-				2C794A361A0AA85900D845B0 /* fix-embedded-paths */,
-				2C794A371A0AA85900D845B0 /* gnu-gcc */,
-				2C794A381A0AA85900D845B0 /* gnu-ld */,
-				2C794A391A0AA85900D845B0 /* HowToCompileAsm.txt */,
 				2C794A3A1A0AA85900D845B0 /* Makefile */,
 				2C794A3B1A0AA85900D845B0 /* st32_64.S */,
 				2C794A3C1A0AA85900D845B0 /* start32.S */,
@@ -3280,10 +3263,6 @@
 				{
 					ProductGroup = 12912A3F1AE0FEF30086B81B /* Products */;
 					ProjectRef = 2C794A181A0AA85900D845B0 /* BootHFS.xcodeproj */;
-				},
-				{
-					ProductGroup = 12912A411AE0FEF30086B81B /* Products */;
-					ProjectRef = 2C794A311A0AA85900D845B0 /* BootSector.xcodeproj */;
 				},
 			);
 			projectRoot = "";

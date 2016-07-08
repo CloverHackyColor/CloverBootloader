@@ -2029,7 +2029,7 @@ static VOID TextMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
 INTN DrawTextXY(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
 {
   INTN      TextWidth = 0;
-  INTN      XText;
+  INTN      XText = 0;
   EG_IMAGE  *TextBufferXY = NULL;
 
   if (!Text) {
@@ -4174,7 +4174,12 @@ REFIT_MENU_ENTRY  *SubMenuThemes()
 
   AddMenuInfoLine(SubScreen, L"Installed themes:");
   for (i = 0; i < ThemesNum; i++) {
-    AddMenuInfoLine(SubScreen, PoolPrint(L"     %s", ThemesList[i]));
+//    AddMenuInfoLine(SubScreen, PoolPrint(L"     %s", ThemesList[i]));
+    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+    InputBootArgs->Entry.Title = PoolPrint(L"     %s", ThemesList[i]);
+    InputBootArgs->Entry.Tag = TAG_INFO;
+    InputBootArgs->Item = &InputItems[3];
+    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
   }
 
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
