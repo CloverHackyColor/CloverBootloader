@@ -1,4 +1,4 @@
-/*
+ff/*
  Slice 2012
  */
 
@@ -914,6 +914,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
       Patches->KextPatches = newPatches;
       DBG ("KextsToPatch: %d requested\n", Count);
       for (i = 0; i < Count; i++) {
+        CHAR8 *KextPatchesLabel;
         EFI_STATUS Status = GetElement (Prop, i, &Prop2);
         if (EFI_ERROR (Status)) {
           DBG ("error %r getting next element at index %d\n", Status, i);
@@ -923,41 +924,44 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         if (Prop2 == NULL) {
           break;
         }
-        
-        // check disabled patch by cecekpawon
+
+        DBG ("KextsToPatch %d:", i);
+
+        Dict = GetProperty (Prop2, "Name");
+        if (Dict == NULL) {
+          DBG(" patch without Name, skipped\n");
+          continue;
+        }
+
+        KextPatchesLabel = AllocateCopyPool (AsciiStrSize (Dict->string), Dict->string);
+
+        Dict = GetProperty (Prop2, "Comment");
+        if (Dict != NULL) {
+          DBG (" %a (%a)", KextPatchesLabel, Dict->string);
+        } else {
+          DBG (" %a", KextPatchesLabel);
+        }
+
         Dict = GetProperty (Prop2, "Disabled");
         if ((Dict != NULL) && IsPropertyTrue (Dict)) {
           DBG(" :: patch disabled, skipped\n");
           continue;
         }
-        
-        Patches->KextPatches[Patches->NrKexts].Name  = NULL;
+
         Patches->KextPatches[Patches->NrKexts].Data  = NULL;
         Patches->KextPatches[Patches->NrKexts].Patch = NULL;
         Patches->KextPatches[Patches->NrKexts].MatchOS = NULL;
-        DBG ("KextsToPatch %d:", i);
+        Patches->KextPatches[Patches->NrKexts].Name = AllocateCopyPool (AsciiStrSize (KextPatchesLabel), KextPatchesLabel);
 
-        Dict = GetProperty (Prop2, "Name");
-        if (Dict == NULL) {
-          DBG("patch without Name, skipped\n");
-          continue;
-        }
-        Patches->KextPatches[Patches->NrKexts].Name = AllocateCopyPool (AsciiStrSize (Dict->string), Dict->string);
-        
-        Dict = GetProperty (Prop2, "Comment");
-        if (Dict != NULL) {
-          DBG (" %a (%a)", Patches->KextPatches[Patches->NrKexts].Name, Dict->string);
-        } else {
-          DBG (" %a", Patches->KextPatches[Patches->NrKexts].Name);
-        }
+        FreePool(KextPatchesLabel);
 
         // check enable/disabled patch (OS based) by Micky1979
         Dict = GetProperty (Prop2, "MatchOS");
         if ((Dict != NULL) && (Dict->type == kTagTypeString)) {
           Patches->KextPatches[Patches->NrKexts].MatchOS = AllocateCopyPool (AsciiStrSize (Dict->string), Dict->string);
-          DBG("Matched OSes: %a\n", Patches->KextPatches[Patches->NrKexts].MatchOS);
+          DBG(" :: Matched OSes: %a\n", Patches->KextPatches[Patches->NrKexts].MatchOS);
         }
-        
+
         // check if this is Info.plist patch or kext binary patch
         Dict = GetProperty (Prop2, "InfoPlistPatch");
         Patches->KextPatches[Patches->NrKexts].IsPlistPatch = IsPropertyTrue (Dict);
