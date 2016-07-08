@@ -1015,7 +1015,7 @@ IsPatchEnabled (CHAR8 *MatchOSEntry, CHAR8 *CurrOS)
   BOOLEAN ret = FALSE;
   struct MatchOSes *mos; // = AllocatePool(sizeof(struct MatchOSes));
   
-  if (!MatchOS || !CurrOS) {
+  if (!MatchOSEntry || !CurrOS) {
     return TRUE; //undefined matched corresponds to old behavior
   }
   
