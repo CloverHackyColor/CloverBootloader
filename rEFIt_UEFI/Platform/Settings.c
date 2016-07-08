@@ -1015,7 +1015,15 @@ IsPatchEnabled (CHAR8 *MatchOSEntry, CHAR8 *CurrOS)
   BOOLEAN ret = FALSE;
   struct MatchOSes *mos; // = AllocatePool(sizeof(struct MatchOSes));
   
+  if (!MatchOS || !CurrOS) {
+    return TRUE; //undefined matched corresponds to old behavior
+  }
+  
   mos = GetStrArraySeparatedByChar(MatchOSEntry, ',');
+  if (!mos) {
+    return TRUE; //memory fails -> anyway the patch enabled
+  }
+  
   for (i = 0; i < mos->count; ++i) {
     if (IsOSValid(mos->array[i], CurrOS)) {
       //DBG ("\nthis patch will activated for OS %s!\n", mos->array[i]);
@@ -1030,13 +1038,16 @@ IsPatchEnabled (CHAR8 *MatchOSEntry, CHAR8 *CurrOS)
 struct
 MatchOSes *GetStrArraySeparatedByChar(CHAR8 *str, CHAR8 sep)
 {
-  struct MatchOSes *mo = AllocatePool(sizeof(struct MatchOSes));
-  
+  struct MatchOSes *mo;  
   INTN len = 0, i = 0, inc = 1;
   //  CHAR8 *comp = NULL; //unused
   CHAR8 doubleSep[2];
   INTN newLen = 0;
   
+  mo = AllocatePool(sizeof(struct MatchOSes));
+  if (!mo) {
+    return NULL;
+  }
   mo->count = countOccurrences( str, sep ) + 1;
 //  DBG("found %d %c in %s\n", mo->count, sep, str);
   len = (INTN)AsciiStrLen(str);
