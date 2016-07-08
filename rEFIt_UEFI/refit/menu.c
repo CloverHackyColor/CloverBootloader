@@ -2469,11 +2469,11 @@ static VOID DrawMainMenuEntry(REFIT_MENU_ENTRY *Entry, BOOLEAN selected, INTN XP
 {
 //  EG_IMAGE *TmpBuffer = NULL;
   INTN Scale = GlobalConfig.MainEntriesSize >> 3;
-  
+/*  
   if (GlobalConfig.SelectionBootCampStyle && (Entry->Row == 1)) {
     return;
   }
-
+*/
   if (((Entry->Tag == TAG_LOADER) || (Entry->Tag == TAG_LEGACY)) &&
       !(GlobalConfig.HideBadges & HDBADGES_SWAP) &&
       (Entry->Row == 0)) {
@@ -2811,7 +2811,23 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
       } else {
         row1PosY = row0PosY + EntriesHeight + GlobalConfig.TileYSpace + LayoutButtonOffset;
       }
-          
+      
+      if (row1Count > 0) {
+        if (GlobalConfig.SelectionBootCampStyle) {
+          textPosY = row0PosY + row0TileSize + 15;
+        } else {
+          textPosY = row1PosY + ROW1_TILESIZE + GlobalConfig.TileYSpace + LayoutTextOffset;
+        }
+      } else {
+        if (GlobalConfig.SelectionBootCampStyle) {
+          textPosY = row0PosY + row0TileSize + 15;
+        } else {
+          textPosY = row1PosY;
+        }
+      }
+      
+      FunctextPosY = row1PosY + ROW1_TILESIZE + GlobalConfig.TileYSpace + LayoutTextOffset;
+/*
       if (row1Count > 0) {
         if (GlobalConfig.SelectionBootCampStyle) {
           textPosY = row0PosY + row0TileSize + 15;
@@ -2823,7 +2839,7 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
       } else {
         textPosY = row1PosY;
       }
-
+*/
       if (!itemPosX) {
         itemPosX = AllocatePool(sizeof(UINT64) * Screen->EntryCount);
       }

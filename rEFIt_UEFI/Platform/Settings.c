@@ -2861,6 +2861,7 @@ GetThemeTagSettings (
   }
 
   GlobalConfig.SelectionOnTop           = FALSE;
+  GlobalConfig.SelectionBootCampStyle   = FALSE;
   ScrollWidth                           = 16;
   ScrollButtonsHeight                   = 20;
   ScrollBarDecorationsHeight            = 5;
@@ -3258,6 +3259,9 @@ GetThemeTagSettings (
   if (GlobalConfig.SelectionBigFileName == NULL) {
     GlobalConfig.SelectionBigFileName   = PoolPrint (L"selection_big.png");
   }
+  if (GlobalConfig.SelectionIndicatorName == NULL) {
+    GlobalConfig.SelectionIndicatorName = PoolPrint (L"selection_indicator.png");
+  }
 
   return EFI_SUCCESS;
 }
@@ -3328,7 +3332,7 @@ InitTheme(
   Rnd = ((Time != NULL) && (ThemesNum != 0)) ? Time->Second % ThemesNum : 0;
 
   // Free selection images which are not builtin icons
-  for (i = 0; i < 4; i++) {
+  for (i = 0; i < 5; i++) {
     if (SelectionImages[i] != NULL) {
       if (SelectionImages[i] != BuiltinIcon(BUILTIN_SELECTION_SMALL) && SelectionImages[i] != BuiltinIcon(BUILTIN_SELECTION_BIG)) {
         egFreeImage (SelectionImages[i]);

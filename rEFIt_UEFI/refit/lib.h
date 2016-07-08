@@ -370,7 +370,8 @@ struct _refit_menu_screen {
 #define HIDEUI_FLAG_REVISION          (0x0800)
 #define HIDEUI_FLAG_MENU_TITLE        (0x1000)
 #define HIDEUI_FLAG_MENU_TITLE_IMAGE  (0x2000)
-#define HIDEUI_FLAG_HELP              (0x3000)
+#define HIDEUI_FLAG_HELP              (0x4000)
+#define HIDEUI_FLAG_ROW1              (0x8000)
 #define HIDEUI_ALL                    (0xffff & (~VOLTYPE_INTERNAL))
 /*
  #define HDBADGES_NONE   0
