@@ -88,6 +88,18 @@ DRIVERS_FLAGS gDriversFlags = {FALSE, FALSE, FALSE, FALSE, FALSE, FALSE};  //the
 
 EMU_VARIABLE_CONTROL_PROTOCOL *gEmuVariableControl = NULL;
 
+VOID AddMenuInfo(  REFIT_MENU_SCREEN  *SubScreen, CHAR16 *Line)
+{
+  REFIT_INPUT_DIALOG *InputBootArgs;
+
+  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  InputBootArgs->Entry.Title = PoolPrint(L"%s", Line);
+  InputBootArgs->Entry.Tag = TAG_INFO;
+  InputBootArgs->Item = NULL;
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+}
+
+
 static VOID AboutRefit(VOID)
 {
   //  CHAR8* Revision = NULL;
@@ -97,37 +109,37 @@ static VOID AboutRefit(VOID)
     AboutMenu.TitleImage = NULL;
   }
   if (AboutMenu.EntryCount == 0) {
-    AddMenuInfoLine(&AboutMenu, PoolPrint(L"Clover Version 2.3k rev %s", FIRMWARE_REVISION)); // by Slice, dmazar, apianti, JrCs, pene and others");
+    AddMenuInfo(&AboutMenu, PoolPrint(L"Clover Version 2.3k rev %s", FIRMWARE_REVISION)); // by Slice, dmazar, apianti, JrCs, pene and others");
 #ifdef FIRMWARE_BUILDDATE
-    AddMenuInfoLine(&AboutMenu, PoolPrint(L" Build: %a", FIRMWARE_BUILDDATE));
+    AddMenuInfo(&AboutMenu, PoolPrint(L" Build: %a", FIRMWARE_BUILDDATE));
 #else
-    AddMenuInfoLine(&AboutMenu, L" Build: unknown");
+    AddMenuInfo(&AboutMenu, L" Build: unknown");
 #endif
-    AddMenuInfoLine(&AboutMenu, L"");
-    AddMenuInfoLine(&AboutMenu, L"Based on rEFIt (c) 2006-2010 Christoph Pfisterer");
-    AddMenuInfoLine(&AboutMenu, L"Portions Copyright (c) Intel Corporation");
-    AddMenuInfoLine(&AboutMenu, L"Developers:");
-    AddMenuInfoLine(&AboutMenu, L"  Slice, dmazar, apianti, JrCs, pene, usrsse2, SoThOr, DF");
-    AddMenuInfoLine(&AboutMenu, L"Credits also:");
-    AddMenuInfoLine(&AboutMenu, L"  Kabyl, pcj, jadran, Blackosx, STLVNUB, ycr.ru");
-    AddMenuInfoLine(&AboutMenu, L"  FrodoKenny, skoczi, crazybirdy, Oscar09, xsmile");
-    AddMenuInfoLine(&AboutMenu, L"  cparm, rehabman, nms42, sherlocks, Zenith432");
-    AddMenuInfoLine(&AboutMenu, L"  stinga11, TheRacerMaster, solstice");
-    AddMenuInfoLine(&AboutMenu, L"  cecekpawon, Micky1979, Needy");
-    AddMenuInfoLine(&AboutMenu, L"  projectosx.com, applelife.ru, insanelymac.com");
-    AddMenuInfoLine(&AboutMenu, L"");
-    AddMenuInfoLine(&AboutMenu, L"Running on:");
-    AddMenuInfoLine(&AboutMenu, PoolPrint(L" EFI Revision %d.%02d",
+    AddMenuInfo(&AboutMenu, L"");
+    AddMenuInfo(&AboutMenu, L"Based on rEFIt (c) 2006-2010 Christoph Pfisterer");
+    AddMenuInfo(&AboutMenu, L"Portions Copyright (c) Intel Corporation");
+    AddMenuInfo(&AboutMenu, L"Developers:");
+    AddMenuInfo(&AboutMenu, L"  Slice, dmazar, apianti, JrCs, pene, usrsse2, SoThOr, DF");
+    AddMenuInfo(&AboutMenu, L"Credits also:");
+    AddMenuInfo(&AboutMenu, L"  Kabyl, pcj, jadran, Blackosx, STLVNUB, ycr.ru");
+    AddMenuInfo(&AboutMenu, L"  FrodoKenny, skoczi, crazybirdy, Oscar09, xsmile");
+    AddMenuInfo(&AboutMenu, L"  cparm, rehabman, nms42, sherlocks, Zenith432");
+    AddMenuInfo(&AboutMenu, L"  stinga11, TheRacerMaster, solstice");
+    AddMenuInfo(&AboutMenu, L"  cecekpawon, Micky1979, Needy");
+    AddMenuInfo(&AboutMenu, L"  projectosx.com, applelife.ru, insanelymac.com");
+    AddMenuInfo(&AboutMenu, L"");
+    AddMenuInfo(&AboutMenu, L"Running on:");
+    AddMenuInfo(&AboutMenu, PoolPrint(L" EFI Revision %d.%02d",
                                           gST->Hdr.Revision >> 16, gST->Hdr.Revision & ((1 << 16) - 1)));
 #if defined(MDE_CPU_IA32)
-    AddMenuInfoLine(&AboutMenu, L" Platform: i386 (32 bit)");
+    AddMenuInfo(&AboutMenu, L" Platform: i386 (32 bit)");
 #elif defined(MDE_CPU_X64)
-    AddMenuInfoLine(&AboutMenu, L" Platform: x86_64 (64 bit)");
+    AddMenuInfo(&AboutMenu, L" Platform: x86_64 (64 bit)");
 #else
-    AddMenuInfoLine(&AboutMenu, L" Platform: unknown");
+    AddMenuInfo(&AboutMenu, L" Platform: unknown");
 #endif
-    AddMenuInfoLine(&AboutMenu, PoolPrint(L" Firmware: %s rev %d.%d", gST->FirmwareVendor, gST->FirmwareRevision >> 16, gST->FirmwareRevision & ((1 << 16) - 1)));
-    AddMenuInfoLine(&AboutMenu, PoolPrint(L" Screen Output: %s", egScreenDescription()));
+    AddMenuInfo(&AboutMenu, PoolPrint(L" Firmware: %s rev %d.%d", gST->FirmwareVendor, gST->FirmwareRevision >> 16, gST->FirmwareRevision & ((1 << 16) - 1)));
+    AddMenuInfo(&AboutMenu, PoolPrint(L" Screen Output: %s", egScreenDescription()));
     AboutMenu.AnimeRun = GetAnime(&AboutMenu);
     AddMenuEntry(&AboutMenu, &MenuEntryReturn);
   }  else {

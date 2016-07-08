@@ -107,7 +107,7 @@ STATIC CONST UINTN LinuxEntryDataCount = (sizeof(LinuxEntryData) / sizeof(LINUX_
 // OS X installer paths
 STATIC CHAR16 *OSXInstallerPaths[] = {
   L"\\Mac OS X Install Data\\boot.efi",
-  L"\\macOS X Install Data\\boot.efi",
+  L"\\macOS Install Data\\boot.efi",
   L"\\OS X Install Data\\boot.efi",
   L"\\.IABootFiles\\boot.efi"
 };
@@ -157,7 +157,7 @@ UINT8 GetOSTypeFromPath(IN CHAR16 *Path)
     return OSTYPE_OSX;
   } else if ((StriCmp(Path, L"\\OS X Install Data\\boot.efi") == 0) ||
              (StriCmp(Path, L"\\Mac OS X Install Data\\boot.efi") == 0) ||
-             (StriCmp(Path, L"\\macOS X Install Data\\boot.efi") == 0) ||
+             (StriCmp(Path, L"\\macOS Install Data\\boot.efi") == 0) ||
              (StriCmp(Path, L"\\.IABootFiles\\boot.efi") == 0)) {
     return OSTYPE_OSX_INSTALLER;
   } else if (StriCmp(Path, L"\\com.apple.recovery.boot\\boot.efi") == 0) {
@@ -1006,7 +1006,7 @@ VOID ScanLoader(VOID)
     // check for Mac OS X Install Data
     AddLoaderEntry(L"\\OS X Install Data\\boot.efi", NULL, L"OS X Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
     AddLoaderEntry(L"\\Mac OS X Install Data\\boot.efi", NULL, L"Mac OS X Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
-    AddLoaderEntry(L"\\macOS X Install Data\\boot.efi", NULL, L"macOS X Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
+    AddLoaderEntry(L"\\macOS Install Data\\boot.efi", NULL, L"macOS Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
     AddLoaderEntry(L"\\.IABootFiles\\boot.efi", NULL, L"OS X Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
     // check for Mac OS X Recovery Boot
     AddLoaderEntry(L"\\com.apple.recovery.boot\\boot.efi", NULL, L"Recovery", Volume, NULL, OSTYPE_RECOVERY, 0);
