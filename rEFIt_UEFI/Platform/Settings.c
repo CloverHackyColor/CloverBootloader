@@ -900,7 +900,6 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
       FreePool (Patches->KextPatches);
     }
     if (Count > 0) {
-      UINTN      j = 0;
       TagPtr     Prop2 = NULL;
       TagPtr     Dict;
       KEXT_PATCH *newPatches = AllocateZeroPool ((/*Patches->NrKexts + */Count) * sizeof(KEXT_PATCH));
@@ -915,6 +914,10 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
       DBG ("KextsToPatch: %d requested\n", Count);
       for (i = 0; i < Count; i++) {
         CHAR8 *KextPatchesLabel;
+        UINTN FindLen = 0;
+        UINTN ReplaceLen = 0;
+        UINT8 *TmpData;
+        UINT8 *TmpPatch;
         EFI_STATUS Status = GetElement (Prop, i, &Prop2);
         if (EFI_ERROR (Status)) {
           DBG ("error %r getting next element at index %d\n", Status, i);
@@ -934,69 +937,83 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         }
 
         KextPatchesLabel = AllocateCopyPool (AsciiStrSize (Dict->string), Dict->string);
-
+        
         Dict = GetProperty (Prop2, "Comment");
         if (Dict != NULL) {
           DBG (" %a (%a)", KextPatchesLabel, Dict->string);
         } else {
           DBG (" %a", KextPatchesLabel);
         }
-
+        
         Dict = GetProperty (Prop2, "Disabled");
         if ((Dict != NULL) && IsPropertyTrue (Dict)) {
           DBG(" :: patch disabled, skipped\n");
           continue;
         }
 
-        Patches->KextPatches[Patches->NrKexts].Data  = NULL;
-        Patches->KextPatches[Patches->NrKexts].Patch = NULL;
+        TmpData    = GetDataSetting (Prop2, "Find", &FindLen);
+        TmpPatch   = GetDataSetting (Prop2, "Replace", &ReplaceLen);
+
+        if (!FindLen || !ReplaceLen || (FindLen != ReplaceLen)) {
+          DBG (" - invalid Find/Replace data - skipping!\n");
+          continue;
+        }
+        
+        Patches->KextPatches[Patches->NrKexts].Data = AllocateCopyPool (FindLen, TmpData);
+        Patches->KextPatches[Patches->NrKexts].DataLen = FindLen;
+        Patches->KextPatches[Patches->NrKexts].Patch = AllocateCopyPool (FindLen, TmpPatch);
+        //Patches->KextPatches[Patches->NrKexts].Data  = NULL;
+        //Patches->KextPatches[Patches->NrKexts].Patch = NULL;
         Patches->KextPatches[Patches->NrKexts].MatchOS = NULL;
+        Patches->KextPatches[Patches->NrKexts].Disabled = FALSE;
         Patches->KextPatches[Patches->NrKexts].Name = AllocateCopyPool (AsciiStrSize (KextPatchesLabel), KextPatchesLabel);
 
+        FreePool(TmpData);
+        FreePool(TmpPatch);
         FreePool(KextPatchesLabel);
 
         // check enable/disabled patch (OS based) by Micky1979
         Dict = GetProperty (Prop2, "MatchOS");
         if ((Dict != NULL) && (Dict->type == kTagTypeString)) {
           Patches->KextPatches[Patches->NrKexts].MatchOS = AllocateCopyPool (AsciiStrSize (Dict->string), Dict->string);
-          DBG(" :: Matched OSes: %a\n", Patches->KextPatches[Patches->NrKexts].MatchOS);
+          DBG(" :: Matched OSes: %a", Patches->KextPatches[Patches->NrKexts].MatchOS);
         }
-
+        
         // check if this is Info.plist patch or kext binary patch
         Dict = GetProperty (Prop2, "InfoPlistPatch");
         Patches->KextPatches[Patches->NrKexts].IsPlistPatch = IsPropertyTrue (Dict);
 
         if (Patches->KextPatches[Patches->NrKexts].IsPlistPatch) {
-          DBG (" Info.plist patch");
+          DBG (" :: Info.plist patch");
         } else {
-          DBG (" Kext bin patch");
+          DBG (" :: Kext bin patch");
         }
         //
         //  Find and Replace must be in <data>...</data>
         //
-        Patches->KextPatches[Patches->NrKexts].Data    = GetDataSetting (Prop2, "Find", &j);
-        Patches->KextPatches[Patches->NrKexts].DataLen = j;
-        Patches->KextPatches[Patches->NrKexts].Patch   = GetDataSetting (Prop2, "Replace", &j);
+//        Patches->KextPatches[Patches->NrKexts].Data    = GetDataSetting (Prop2, "Find", &j);
+//        Patches->KextPatches[Patches->NrKexts].DataLen = j;
+//        Patches->KextPatches[Patches->NrKexts].Patch   = GetDataSetting (Prop2, "Replace", &j);
 
-        if ((Patches->KextPatches[Patches->NrKexts].DataLen != (INTN)j) || (j == 0)) {
-          DBG (" - invalid Find/Replace data - skipping!\n");
-          if (Patches->KextPatches[Patches->NrKexts].Name != NULL) {
-            FreePool (Patches->KextPatches[Patches->NrKexts].Name); //just erase name
-            Patches->KextPatches[Patches->NrKexts].Name  = NULL;
-          }
-
-          if (Patches->KextPatches[Patches->NrKexts].Data != NULL) {
-            FreePool (Patches->KextPatches[Patches->NrKexts].Data); //just erase data
-            Patches->KextPatches[Patches->NrKexts].Data  = NULL;
-          }
-
-          if (Patches->KextPatches[Patches->NrKexts].Patch != NULL) {
-            FreePool (Patches->KextPatches[Patches->NrKexts].Patch); //just erase patch
-            Patches->KextPatches[Patches->NrKexts].Patch = NULL;
-          }
-
-          continue; //same NrKexts next i
-        }
+//        if ((Patches->KextPatches[Patches->NrKexts].DataLen != (INTN)j) || (j == 0)) {
+//          DBG (" - invalid Find/Replace data - skipping!\n");
+//          if (Patches->KextPatches[Patches->NrKexts].Name != NULL) {
+//            FreePool (Patches->KextPatches[Patches->NrKexts].Name); //just erase name
+//            Patches->KextPatches[Patches->NrKexts].Name  = NULL;
+//          }
+//
+//          if (Patches->KextPatches[Patches->NrKexts].Data != NULL) {
+//            FreePool (Patches->KextPatches[Patches->NrKexts].Data); //just erase data
+//            Patches->KextPatches[Patches->NrKexts].Data  = NULL;
+//          }
+//
+//          if (Patches->KextPatches[Patches->NrKexts].Patch != NULL) {
+//            FreePool (Patches->KextPatches[Patches->NrKexts].Patch); //just erase patch
+//            Patches->KextPatches[Patches->NrKexts].Patch = NULL;
+//          }
+//
+//          continue; //same NrKexts next i
+//        }
 
         DBG (", data len: %d\n", Patches->KextPatches[Patches->NrKexts].DataLen);
         Patches->NrKexts++; //must be out of DBG because it may be empty compiled

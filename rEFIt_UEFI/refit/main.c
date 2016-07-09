@@ -666,36 +666,59 @@ VOID DumpKernelAndKextPatches(KERNEL_AND_KEXT_PATCHES *Patches)
     DBG("Kernel and Kext Patches null pointer\n");
     return;
   }
-   DBG("Kernel and Kext Patches at %p:\n", Patches);
-   DBG("\tAllowed: %c\n", gSettings.KextPatchesAllowed ? 'y' : 'n');
-   DBG("\tDebug: %c\n", Patches->KPDebug ? 'y' : 'n');
-   DBG("\tKernelCpu: %c\n", Patches->KPKernelCpu ? 'y' : 'n');
-   DBG("\tLapic: %c\n", Patches->KPLapicPanic ? 'y' : 'n');
-   DBG("\tHaswell-E: %c\n", Patches->KPHaswellE ? 'y' : 'n');
-   DBG("\tAICPUPM: %c\n", Patches->KPAsusAICPUPM ? 'y' : 'n');
-   DBG("\tAppleRTC: %c\n", Patches->KPAppleRTC ? 'y' : 'n');
-   DBG("\tKernelPm: %c\n", Patches->KPKernelPm ? 'y' : 'n');
-   DBG("\tFakeCPUID: 0x%x\n", Patches->FakeCPUID);
-   DBG("\tATIController: %s\n", (Patches->KPATIConnectorsController == NULL) ? L"null": Patches->KPATIConnectorsController);
-   DBG("\tATIDataLength: %d\n", Patches->KPATIConnectorsDataLen);
-   DBG("\t%d Kexts to load\n", Patches->NrForceKexts);
-   if (Patches->ForceKexts) {
-      INTN i = 0;
-      for (; i < Patches->NrForceKexts; ++i) {
-         DBG("\t  KextToLoad[%d]: %s\n", i, Patches->ForceKexts[i]);
+  DBG("Kernel and Kext Patches at %p:\n", Patches);
+  DBG("\tAllowed: %c\n", gSettings.KextPatchesAllowed ? 'y' : 'n');
+  DBG("\tDebug: %c\n", Patches->KPDebug ? 'y' : 'n');
+  DBG("\tKernelCpu: %c\n", Patches->KPKernelCpu ? 'y' : 'n');
+  DBG("\tLapic: %c\n", Patches->KPLapicPanic ? 'y' : 'n');
+  DBG("\tHaswell-E: %c\n", Patches->KPHaswellE ? 'y' : 'n');
+  DBG("\tAICPUPM: %c\n", Patches->KPAsusAICPUPM ? 'y' : 'n');
+  DBG("\tAppleRTC: %c\n", Patches->KPAppleRTC ? 'y' : 'n');
+  DBG("\tKernelPm: %c\n", Patches->KPKernelPm ? 'y' : 'n');
+  DBG("\tFakeCPUID: 0x%x\n", Patches->FakeCPUID);
+  DBG("\tATIController: %s\n", (Patches->KPATIConnectorsController == NULL) ? L"null": Patches->KPATIConnectorsController);
+  DBG("\tATIDataLength: %d\n", Patches->KPATIConnectorsDataLen);
+  DBG("\t%d Kexts to load\n", Patches->NrForceKexts);
+  if (Patches->ForceKexts) {
+    INTN i = 0;
+    for (; i < Patches->NrForceKexts; ++i) {
+       DBG("\t  KextToLoad[%d]: %s\n", i, Patches->ForceKexts[i]);
+    }
+  }
+  DBG("\t%d Kexts to patch\n", Patches->NrKexts);
+  if (Patches->KextPatches) {
+    INTN i = 0;
+    for (; i < Patches->NrKexts; ++i) {
+       if (Patches->KextPatches[i].IsPlistPatch) {
+          DBG("\t  KextPatchPlist[%d]: %d bytes, %a\n", i, Patches->KextPatches[i].DataLen, Patches->KextPatches[i].Name);
+       } else {
+          DBG("\t  KextPatch[%d]: %d bytes, %a\n", i, Patches->KextPatches[i].DataLen, Patches->KextPatches[i].Name);
+       }
+    }
+  }
+}
+
+VOID FilterKextPatches(IN LOADER_ENTRY *Entry)
+{
+  if ((Entry->KernelAndKextPatches->KextPatches != NULL) && Entry->KernelAndKextPatches->NrKexts) {
+    DBG("Filtering KextPatches:\n");
+    INTN i = 0;
+    for (; i < Entry->KernelAndKextPatches->NrKexts; ++i) {
+      DBG(" - Patch [%d] \"%a\" :: %a :: [OS: %a | MatchOS: %a]",
+        i,
+        Entry->KernelAndKextPatches->KextPatches[i].Name, 
+        Entry->KernelAndKextPatches->KextPatches[i].IsPlistPatch ? "KextPatchPlist" : "KextPatch", 
+        Entry->OSVersion,
+        Entry->KernelAndKextPatches->KextPatches[i].MatchOS ? Entry->KernelAndKextPatches->KextPatches[i].MatchOS : "undefined"
+      );
+      if (!IsPatchEnabled(Entry->KernelAndKextPatches->KextPatches[i].MatchOS, Entry->OSVersion)) {
+        DBG(" ==> not allowed\n");
+        Entry->KernelAndKextPatches->KextPatches[i].Disabled = TRUE;
+        continue;
       }
-   }
-   DBG("\t%d Kexts to patch\n", Patches->NrKexts);
-   if (Patches->KextPatches) {
-      INTN i = 0;
-      for (; i < Patches->NrKexts; ++i) {
-         if (Patches->KextPatches[i].IsPlistPatch) {
-            DBG("\t  KextPatchPlist[%d]: %d bytes, %a\n", i, Patches->KextPatches[i].DataLen, Patches->KextPatches[i].Name);
-         } else {
-            DBG("\t  KextPatch[%d]: %d bytes, %a\n", i, Patches->KextPatches[i].DataLen, Patches->KextPatches[i].Name);
-         }
-      }
-   }
+      DBG(" ==> allowed\n");
+    }
+  }
 }
 
 //
@@ -749,7 +772,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
          DivU64x32(gCPUStructure.FSBFrequency, kilo),
          gCPUStructure.MaxSpeed);
   
-  DumpKernelAndKextPatches(Entry->KernelAndKextPatches);
+  //DumpKernelAndKextPatches(Entry->KernelAndKextPatches);
 
   // Load image into memory (will be started later)
   Status = LoadEFIImage(Entry->DevicePath, Basename(Entry->LoaderPath), NULL, &ImageHandle);
@@ -766,7 +789,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
       OSTYPE_IS_OSX_RECOVERY(Entry->LoaderType) ||
       OSTYPE_IS_OSX_INSTALLER(Entry->LoaderType)) {
 
-    DBG("GetOSVersion: ");
+    DBG("GetOSVersion:");
 
     // Correct OSVersion if it was not found
     // This should happen only for 10.7-10.9 OSTYPE_OSX_INSTALLER
@@ -797,7 +820,11 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
         }
       }
     }
-    DBG(": %a\n", Entry->OSVersion);
+    DBG(" %a\n", Entry->OSVersion);
+#ifdef DUMP_KERNEL_KEXT_PATCHES
+    DumpKernelAndKextPatches(Entry->KernelAndKextPatches);
+#endif
+    FilterKextPatches(Entry);
     // if "InjectKexts if no FakeSMC" and OSFLAG_WITHKEXTS is not set
     // then user selected submenu entry and requested no injection.
     // we'll turn off global "InjectKexts if no FakeSMC" to avoid unnecessary

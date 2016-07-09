@@ -507,15 +507,20 @@ VOID AnyKextPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 Inf
 {
   
   UINTN   Num = 0;
-  CHAR8   *MatchOS, *CurrOS;
+  //CHAR8   *MatchOS, *CurrOS;
   
   DBG_RT(Entry, "\nAnyKextPatch %d: driverAddr = %x, driverSize = %x\nAnyKext = %a\n",
          N, Driver, DriverSize, Entry->KernelAndKextPatches->KextPatches[N].Name);
   
-  MatchOS = Entry->KernelAndKextPatches->KextPatches[N].MatchOS;
-  CurrOS = Entry->OSVersion;
-  if (!IsPatchEnabled(MatchOS, CurrOS)) {
-    DBG_RT(Entry, "This patch is not allowed for booted OS %a\n", CurrOS);
+  //MatchOS = Entry->KernelAndKextPatches->KextPatches[N].MatchOS;
+  //CurrOS = Entry->OSVersion;
+  //if (!IsPatchEnabled(MatchOS, CurrOS)) {
+  //  DBG_RT(Entry, "This patch is not allowed for booted OS %a\n", CurrOS);
+  //  return;
+  //}
+
+  if (Entry->KernelAndKextPatches->KextPatches[N].Disabled) {
+    DBG_RT(Entry, "This patch is not allowed for booted OS %a\n", Entry->OSVersion);
     return;
   }
   

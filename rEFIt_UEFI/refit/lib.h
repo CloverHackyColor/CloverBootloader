@@ -456,6 +456,7 @@ typedef struct {
   UINT8   *Data;
   UINT8   *Patch;
   CHAR8   *MatchOS;
+  BOOLEAN Disabled;
 } KEXT_PATCH;
 
 typedef struct KERNEL_AND_KEXT_PATCHES
@@ -856,6 +857,8 @@ extern BOOLEAN DumpVariable(CHAR16* Name, EFI_GUID* Guid, INTN DevicePathAt);
 
 // Utils functions
 VOID DumpKernelAndKextPatches(KERNEL_AND_KEXT_PATCHES *Patches);
+
+VOID FilterKextPatches(IN LOADER_ENTRY *Entry);
 #endif
 /*
  
