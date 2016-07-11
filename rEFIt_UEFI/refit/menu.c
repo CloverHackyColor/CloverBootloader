@@ -4151,7 +4151,7 @@ REFIT_MENU_ENTRY  *SubMenuThemes()
   REFIT_MENU_SCREEN  *SubScreen;
   REFIT_INPUT_DIALOG *InputBootArgs;
   UINTN               i;
-  CHAR16*             Flags = AllocateZeroPool(255);
+//  CHAR16*             Flags = AllocateZeroPool(255);
 
   Entry = AllocateZeroPool(sizeof(REFIT_MENU_ENTRY));
   Entry->Title = PoolPrint(L"Themes ->");
@@ -4177,8 +4177,9 @@ REFIT_MENU_ENTRY  *SubMenuThemes()
   }
 
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  UnicodeSPrint(Flags, 255, L"Theme:");
-  InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
+//  UnicodeSPrint(Flags, 255, L"Theme:");
+//  InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
+  InputBootArgs->Entry.Title = PoolPrint("%s", L"Theme:");
   InputBootArgs->Entry.Tag = TAG_INPUT;
   InputBootArgs->Entry.Row = StrLen(InputItems[3].SValue);
   InputBootArgs->Item = &InputItems[3];
@@ -4198,7 +4199,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
   REFIT_MENU_ENTRY  *TmpChosenEntry = NULL;
   UINTN             MenuExit = 0;
   UINTN             SubMenuExit;
-  CHAR16*           Flags;
+//  CHAR16*           Flags;
   MENU_STYLE_FUNC   Style = TextMenuStyle;
   MENU_STYLE_FUNC   SubStyle;
   INTN              EntryIndex = 0;
@@ -4222,12 +4223,13 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
   if (OptionMenu.EntryCount == 0) {
     OptionMenu.ID = SCREEN_OPTIONS;
     OptionMenu.AnimeRun = GetAnime(&OptionMenu); //FALSE;
-    Flags = AllocateZeroPool(255);
+//    Flags = AllocateZeroPool(255);
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
     *ChosenEntry = (REFIT_MENU_ENTRY*)InputBootArgs;
 
-    UnicodeSPrint(Flags, 255, L"Config:");
-    InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
+//    UnicodeSPrint(Flags, 255, L"Config:");
+//    InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
+    InputBootArgs->Entry.Title = PoolPrint("%s", L"Config:");
     InputBootArgs->Entry.Tag = TAG_INPUT;
     InputBootArgs->Entry.Row = StrLen(InputItems[90].SValue);
     InputBootArgs->Entry.ShortcutDigit = 0xF1;
@@ -4237,8 +4239,9 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
 
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-    UnicodeSPrint(Flags, 255, L"Boot Args:");
-    InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
+//    UnicodeSPrint(Flags, 255, L"Boot Args:");
+//    InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
+    InputBootArgs->Entry.Title = PoolPrint("%s", L"Boot Args:");
     InputBootArgs->Entry.Tag = TAG_INPUT;
     InputBootArgs->Entry.Row = StrLen(InputItems[0].SValue);
     InputBootArgs->Item = &InputItems[0];
@@ -4247,8 +4250,9 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
 
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-    UnicodeSPrint(Flags, 255, L"Block kext:");
-    InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
+//    UnicodeSPrint(Flags, 255, L"Block kext:");
+//    InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
+    InputBootArgs->Entry.Title = PoolPrint("%s", L"Block kext:");
     InputBootArgs->Entry.Tag = TAG_INPUT;
     InputBootArgs->Entry.Row = StrLen(InputItems[2].SValue);
     InputBootArgs->Item = &InputItems[2];
@@ -4257,8 +4261,9 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
 
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-    UnicodeSPrint(Flags, 255, L"Set OS version if not:");
-    InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
+//    UnicodeSPrint(Flags, 255, L"Set OS version if not:");
+//    InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
+    InputBootArgs->Entry.Title = PoolPrint("%s", L"Set OS version if not:");
     InputBootArgs->Entry.Tag = TAG_INPUT;
     InputBootArgs->Entry.Row = StrLen(InputItems[51].SValue);
     InputBootArgs->Item = &InputItems[51];
@@ -4301,7 +4306,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     }
 
     AddMenuEntry(&OptionMenu, &MenuEntryReturn);
-    FreePool(Flags);
+//    FreePool(Flags);
     //    DBG("option menu created entries=%d\n", OptionMenu.EntryCount);
   }
 
@@ -4358,6 +4363,8 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
 exit:
   GlobalConfig.Proportional = OldFontStyle;
   ApplyInputs();
+  //TODO - here we must FreePool for a list of Entries, Screens, InputBootArgs
+  
 }
 
 //
