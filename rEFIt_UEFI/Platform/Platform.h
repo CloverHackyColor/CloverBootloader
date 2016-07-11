@@ -1470,6 +1470,7 @@ extern UINT32                         cPropSize;
 extern UINT8                          *cProperties;
 extern CHAR8                          *cDeviceProperties;
 extern INPUT_ITEM                     *InputItems;
+extern BOOLEAN SavePreBootLog;
 //extern EFI_GRAPHICS_OUTPUT_PROTOCOL *GraphicsOutput;
 
 extern EFI_GUID	                      gEfiAppleBootGuid;

@@ -72,6 +72,7 @@ INTN LayoutButtonOffset = 0;
 INTN LayoutTextOffset = 0;
 INTN LayoutMainMenuHeight = 376;
 INTN LayoutAnimMoveForMenuX = 0;
+BOOLEAN SavePreBootLog = FALSE;
 
 #define SCROLL_LINE_UP        (0)
 #define SCROLL_LINE_DOWN      (1)
@@ -1517,10 +1518,12 @@ static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC  Style
           continue;
           break;
         case SCAN_F2:
+          SavePreBootLog = TRUE;
+          /*
           Status = SaveBooterLog(SelfRootDir, PREBOOT_LOG);
           if (EFI_ERROR(Status)) {
             Status = SaveBooterLog(NULL, PREBOOT_LOG);
-          }
+          } */
           /*
           LogSize = msgCursor - msgbuf;
           Status = egSaveFile(SelfRootDir, PREBOOT_LOG, (UINT8*)msgbuf, LogSize);
@@ -1804,10 +1807,11 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
         MenuExit = MENU_EXIT_HELP;
         break;
       case SCAN_F2:
-        Status = SaveBooterLog(SelfRootDir, PREBOOT_LOG);
+        SavePreBootLog = TRUE;
+  /*      Status = SaveBooterLog(SelfRootDir, PREBOOT_LOG);
         if (EFI_ERROR(Status)) {
           Status = SaveBooterLog(NULL, PREBOOT_LOG);
-        }
+        } */
         break;
       case SCAN_F3:
          MenuExit = MENU_EXIT_HIDE_TOGGLE;

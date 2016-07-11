@@ -1000,15 +1000,22 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
                                 0, NULL);
 
     }
-    DBG("Closing log\n");
-    if (0 /* DoHibernateWake */) {
+/*    if (0 // DoHibernateWake ) {
       Status = SaveBooterLog(SelfRootDir, PREWAKE_LOG);
       if (EFI_ERROR(Status)) {
-        /*Status = */SaveBooterLog(NULL, PREWAKE_LOG);
+        SaveBooterLog(NULL, PREWAKE_LOG);
       }
-    } else {
+    } else { */
       // When doing hibernate wake, save to DataHub only up to initial size of log
-      /*Status = */SetupBooterLog(!DoHibernateWake);
+      SetupBooterLog(!DoHibernateWake);
+//    }
+  }
+  
+  DBG("Closing log\n");
+  if (SavePreBootLog) {
+    Status = SaveBooterLog(SelfRootDir, PREBOOT_LOG);
+    if (EFI_ERROR(Status)) {
+      /*Status = */SaveBooterLog(NULL, PREBOOT_LOG);
     }
   }
 
