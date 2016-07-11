@@ -745,12 +745,12 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
   TagPtr                  dict = NULL;
 
   DBG("StartLoader() start\n");
-  DBG("Entry->Settings: %s\n", Entry->Settings);
   if (Entry->Settings) {
+    DBG("Entry->Settings: %s\n", Entry->Settings);
     Status = LoadUserSettings(SelfRootDir, Entry->Settings, &dict);
     if (!EFI_ERROR(Status)) {
       DBG("Found custom settings for this entry: %s\n", Entry->Settings);
-      gBootArgsChanged = TRUE;
+      gBootChanged = TRUE;
       Status = GetUserSettings(SelfRootDir, dict);
       if (EFI_ERROR(Status)) {
         DBG("... but: %r\n", Status);
@@ -758,10 +758,10 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
         if ((gSettings.CpuFreqMHz > 100) && (gSettings.CpuFreqMHz < 20000)) {
           gCPUStructure.MaxSpeed      = gSettings.CpuFreqMHz;
         }
-        CopyMem (Entry->KernelAndKextPatches,
-                 &gSettings.KernelAndKextPatches,
-                 sizeof(KERNEL_AND_KEXT_PATCHES));
-        DBG("Custom KernelAndKextPatches copyed to started entry\n");
+        //CopyMem (Entry->KernelAndKextPatches,
+        //         &gSettings.KernelAndKextPatches,
+        //         sizeof(KERNEL_AND_KEXT_PATCHES));
+        //DBG("Custom KernelAndKextPatches copyed to started entry\n");
       }
     } else {
       DBG("LoadUserSettings failed: %r\n", Status);
@@ -821,9 +821,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
       }
     }
     DBG(" %a\n", Entry->OSVersion);
-#ifdef DUMP_KERNEL_KEXT_PATCHES
-    DumpKernelAndKextPatches(Entry->KernelAndKextPatches);
-#endif
+
     FilterKextPatches(Entry);
     // if "InjectKexts if no FakeSMC" and OSFLAG_WITHKEXTS is not set
     // then user selected submenu entry and requested no injection.
@@ -2334,9 +2332,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       }
 
       if (MenuExit == MENU_EXIT_OPTIONS){
-        gBootArgsChanged = FALSE;
+        gBootChanged = FALSE;
         OptionsMenu(&OptionEntry);
-        if (gBootArgsChanged) {
+        if (gBootChanged) {
           AfterTool = TRUE;
           MainLoopRunning = FALSE;
           break;
@@ -2397,11 +2395,11 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
           break;
 
         case TAG_OPTIONS:    // Options like KernelFlags, DSDTname etc.
-          gBootArgsChanged = FALSE;
+          gBootChanged = FALSE;
           OptionsMenu(&OptionEntry);
-          if (gBootArgsChanged)
+          if (gBootChanged)
             AfterTool = TRUE;
-          if (gBootArgsChanged || gThemeChanged) // If theme has changed reinit the desktop
+          if (gBootChanged || gThemeChanged) // If theme has changed reinit the desktop
             MainLoopRunning = FALSE;
           break;
 

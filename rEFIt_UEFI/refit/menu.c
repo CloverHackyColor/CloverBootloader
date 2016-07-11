@@ -577,7 +577,7 @@ VOID ApplyInputs(VOID)
 //  DBG("ApplyInputs\n");
   if (InputItems[i].Valid) {
     ZeroMem(&gSettings.BootArgs, 256);
-    gBootArgsChanged = TRUE;
+    gBootChanged = TRUE;
     ch = InputItems[i].SValue;
     do {
       if (*ch == L'\\') {
@@ -746,27 +746,27 @@ VOID ApplyInputs(VOID)
   i = 44;
   if (InputItems[i].Valid) {
     gSettings.KextPatchesAllowed = InputItems[i].BValue;
-    gBootArgsChanged = TRUE;
+    gBootChanged = TRUE;
   }
   i++; //45
   if (InputItems[i].Valid) {
     gSettings.KernelAndKextPatches.KPKernelCpu = InputItems[i].BValue;
-    gBootArgsChanged = TRUE;
+    gBootChanged = TRUE;
   }
   i++; //46
   if (InputItems[i].Valid) {
     gSettings.KernelAndKextPatches.KPAsusAICPUPM = InputItems[i].BValue;
-    gBootArgsChanged = TRUE;
+    gBootChanged = TRUE;
   }
   i++; //47
   if (InputItems[i].Valid) {
     gSettings.KernelAndKextPatches.KPAppleRTC = InputItems[i].BValue;
-    gBootArgsChanged = TRUE;
+    gBootChanged = TRUE;
   }
   i++; //48
   if (InputItems[i].Valid) {
      gSettings.KernelAndKextPatches.KPKernelPm = InputItems[i].BValue;
-     gBootArgsChanged = TRUE;
+     gBootChanged = TRUE;
   }
   i++; //49
   if (InputItems[i].Valid) {
@@ -906,9 +906,11 @@ VOID ApplyInputs(VOID)
 
   i=90; //90
   if (InputItems[i].Valid) {
-    if (StrCmp(InputItems[i].SValue, gSettings.ConfigName) != 0) {
+    if (StriCmp(InputItems[i].SValue, gSettings.ConfigName) != 0) {
+      gBootChanged = TRUE;
+      gThemeChanged = TRUE;
       if ((StrLen(InputItems[i].SValue) == 0) ||
-          (StrCmp(InputItems[i].SValue, gSettings.MainConfigName) == 0)) {
+          (StriCmp(InputItems[i].SValue, gSettings.MainConfigName) == 0)) {
         for (i=0; i<2; i++) {
           if (gConfigDict[i]) {
             Status = GetUserSettings(SelfRootDir, gConfigDict[i]);
@@ -942,7 +944,7 @@ VOID ApplyInputs(VOID)
   i++; //91
   if (InputItems[i].Valid) {
     gSettings.KernelAndKextPatches.KPLapicPanic = InputItems[i].BValue;
-    gBootArgsChanged = TRUE;
+    gBootChanged = TRUE;
   }
   i++; //92
   if (InputItems[i].Valid) {
@@ -1001,12 +1003,12 @@ VOID ApplyInputs(VOID)
   if (InputItems[i].Valid) {
     gSettings.KernelAndKextPatches.FakeCPUID = (UINT32)StrHexToUint64(InputItems[i].SValue);
     DBG("applied FakeCPUID=%06x\n", gSettings.KernelAndKextPatches.FakeCPUID);
-    gBootArgsChanged = TRUE;
+    gBootChanged = TRUE;
   }
   i++; //105
   if (InputItems[i].Valid) {
     gSettings.KernelAndKextPatches.KPHaswellE = InputItems[i].BValue;
-    gBootArgsChanged = TRUE;
+    gBootChanged = TRUE;
   }
 
   i++; //106

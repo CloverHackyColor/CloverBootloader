@@ -1082,7 +1082,8 @@ MatchOSes *GetStrArraySeparatedByChar(CHAR8 *str, CHAR8 sep)
   }
   
   if (mo->count > 1) {
-    INTN indexes[mo->count + 1];
+    //INTN indexes[mo->count + 1];
+    UINT8 *indexes = (UINT8 *) AllocatePool(mo->count + 1);
     
     for (i = 0; i < len; ++i) {
       CHAR8 c = str[i];
@@ -1119,6 +1120,8 @@ MatchOSes *GetStrArraySeparatedByChar(CHAR8 *str, CHAR8 sep)
       mo->array[i] = AllocateCopyPool(newLen, str + startLocation);
       mo->array[i][newLen - 1] = '\0';
     }
+
+    FreePool(indexes);
   }
   else {
 //    DBG("str contains only one component and it is our string %s!\n", str);
@@ -1592,18 +1595,17 @@ FillinCustomEntry (
     }
 
     // KernelAndKextPatches
-    //DBG ("Copying global patch settings\n");
-    CopyKernelAndKextPatches ((KERNEL_AND_KEXT_PATCHES *)(((UINTN)Entry) + OFFSET_OF(CUSTOM_LOADER_ENTRY, KernelAndKextPatches)),
-                              (KERNEL_AND_KEXT_PATCHES *)(((UINTN)&gSettings) + OFFSET_OF(SETTINGS_DATA, KernelAndKextPatches)));
-    /*    Prop = GetProperty (DictPointer, "KernelAndKextPatches");
-     if (Prop != NULL) {
-     FillinKextPatches ((KERNEL_AND_KEXT_PATCHES *)(((UINTN)Entry) + OFFSET_OF(CUSTOM_LOADER_ENTRY, KernelAndKextPatches)), Prop);
-     DBG ("Filled in patch settings\n");
-     }
-     */
-#ifdef DUMP_KERNEL_KEXT_PATCHES
-    DumpKernelAndKextPatches ((KERNEL_AND_KEXT_PATCHES *)(((UINTN)Entry) + OFFSET_OF(CUSTOM_LOADER_ENTRY, KernelAndKextPatches)));
-#endif
+    if (!SubEntry) { // CopyKernelAndKextPatches already in: DuplicateCustomEntry if SubEntry == TRUE
+      //DBG ("Copying global patch settings\n");
+      CopyKernelAndKextPatches ((KERNEL_AND_KEXT_PATCHES *)(((UINTN)Entry) + OFFSET_OF(CUSTOM_LOADER_ENTRY, KernelAndKextPatches)),
+                                (KERNEL_AND_KEXT_PATCHES *)(((UINTN)&gSettings) + OFFSET_OF(SETTINGS_DATA, KernelAndKextPatches)));
+
+//#ifdef DUMP_KERNEL_KEXT_PATCHES
+//    DumpKernelAndKextPatches ((KERNEL_AND_KEXT_PATCHES *)(((UINTN)Entry) + OFFSET_OF(CUSTOM_LOADER_ENTRY, KernelAndKextPatches)));
+//#endif
+
+    }
+
   }
 
   if (Entry->Type == OSTYPE_LINEFI) {
@@ -3689,9 +3691,11 @@ GetUserSettings(
     if (DictPointer != NULL) {
 
       Prop = GetProperty (DictPointer, "Arguments");
-      if (Prop != NULL && (Prop->type == kTagTypeString) && Prop->string != NULL) {
+      //if (Prop != NULL && (Prop->type == kTagTypeString) && Prop->string != NULL) {
+      if ((Prop != NULL) && (Prop->type == kTagTypeString) && (Prop->string != NULL) && (AsciiStrStr(gSettings.BootArgs, Prop->string) == NULL)) {
         AsciiStrnCpy(gSettings.BootArgs, Prop->string, 255);
-        gBootArgsChanged = TRUE;
+        //gBootArgsChanged = TRUE;
+        //gBootChanged = TRUE;
       }
     }
 
@@ -5186,16 +5190,26 @@ GetUserSettings(
      */
     // KernelAndKextPatches
     //if (!StrLen(gSettings.ConfigName)) {
-    if (gBootArgsChanged) {
-      //DBG("\n\n***********************************************n\n");
-      //DBG("\nConfigName: %s\n", gSettings.ConfigName);
-      //DBG("==================================================\n\n");
+    //if (gBootArgsChanged) {
+    if (gBootChanged) {
       DictPointer = GetProperty (Dict, "KernelAndKextPatches");
       if (DictPointer != NULL) {
         FillinKextPatches ((KERNEL_AND_KEXT_PATCHES *)(((UINTN)&gSettings) + OFFSET_OF(SETTINGS_DATA, KernelAndKextPatches)), DictPointer);
       }
     } else {
       //DBG("\n ConfigName: %s n", gSettings.ConfigName);
+    }
+
+    if (gThemeChanged && GlobalConfig.Theme) {
+      DictPointer = GetProperty (Dict, "GUI");
+      if (DictPointer != NULL) {
+        Prop = GetProperty (DictPointer, "Theme");
+        if ((Prop != NULL) && (Prop->type == kTagTypeString) && Prop->string) {
+          FreePool(GlobalConfig.Theme);
+          GlobalConfig.Theme = PoolPrint (L"%a", Prop->string);
+          DBG ("Theme from new config: %s\n", GlobalConfig.Theme);
+        }
+      }
     }
 
     SaveSettings();
