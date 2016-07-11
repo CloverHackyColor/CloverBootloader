@@ -3440,14 +3440,14 @@ REFIT_MENU_ENTRY  *SubMenuDropTables()
 {
   CHAR8               sign[5];
   CHAR8               OTID[9];
-  CHAR16*             Flags;
+ // CHAR16*             Flags;
   REFIT_MENU_ENTRY    *Entry; //, *SubEntry;
   REFIT_MENU_SCREEN   *SubScreen;
   REFIT_INPUT_DIALOG  *InputBootArgs;
 
   sign[4] = 0;
   OTID[8] = 0;
-  Flags = AllocateZeroPool(255);
+//  Flags = AllocateZeroPool(255);
 
   Entry = AllocateZeroPool(sizeof(REFIT_MENU_ENTRY));
   Entry->Title = PoolPrint(L"Tables dropping ->");
@@ -3478,8 +3478,9 @@ REFIT_MENU_ENTRY  *SubMenuDropTables()
       //       OTID, DropTable->TableId,
       //       DropTable->Length, DropTable->Length);
       InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-      UnicodeSPrint(Flags, 255, L"Drop \"%4.4a\"  \"%8.8a\" %d:", sign, OTID, DropTable->Length);
-      InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
+ //     UnicodeSPrint(Flags, 255, L"Drop \"%4.4a\"  \"%8.8a\" %d:", sign, OTID, DropTable->Length);
+ //     InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
+      InputBootArgs->Entry.Title = PoolPrint(L"Drop \"%4.4a\"  \"%8.8a\" %d:", sign, OTID, DropTable->Length);
       InputBootArgs->Entry.Tag = TAG_INPUT;
       InputBootArgs->Entry.Row = 0xFFFF; //cursor
       InputBootArgs->Item = &(DropTable->MenuItem);
@@ -3507,8 +3508,9 @@ REFIT_MENU_ENTRY  *SubMenuDropTables()
     ACPI_PATCHED_AML *ACPIPatchedAMLTmp = ACPIPatchedAML;
     while (ACPIPatchedAMLTmp) {
       InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-      UnicodeSPrint(Flags, 255, L"Drop \"%s\":", ACPIPatchedAMLTmp->FileName);
-      InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
+ //     UnicodeSPrint(Flags, 255, L"Drop \"%s\":", ACPIPatchedAMLTmp->FileName);
+ //     InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
+      InputBootArgs->Entry.Title = PoolPrint(L"Drop \"%s\":", ACPIPatchedAMLTmp->FileName);
       InputBootArgs->Entry.Tag = TAG_INPUT;
       InputBootArgs->Entry.Row = 0xFFFF; //cursor
       InputBootArgs->Item = &(ACPIPatchedAMLTmp->MenuItem);
@@ -3521,7 +3523,7 @@ REFIT_MENU_ENTRY  *SubMenuDropTables()
 
   AddMenuEntry(SubScreen, &MenuEntryReturn);
   Entry->SubScreen = SubScreen;
-  FreePool(Flags);
+//  FreePool(Flags);
   return Entry;
 }
 
@@ -3571,8 +3573,8 @@ REFIT_MENU_ENTRY  *SubMenuSmbios()
   REFIT_MENU_ENTRY   *Entry;
   REFIT_MENU_SCREEN  *SubScreen;
   REFIT_INPUT_DIALOG *InputBootArgs;
-  CHAR16*           Flags;
-  Flags = AllocateZeroPool(255);
+//  CHAR16*           Flags;
+//  Flags = AllocateZeroPool(255);
 
   Entry = AllocateZeroPool(sizeof(REFIT_MENU_ENTRY));
   Entry->Title = PoolPrint(L"SMBIOS ->");
@@ -3590,8 +3592,9 @@ REFIT_MENU_ENTRY  *SubMenuSmbios()
   AddMenuInfoLine(SubScreen, PoolPrint(L"with board %a", gSettings.OEMBoard));
 
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  UnicodeSPrint(Flags, 255, L"Product name:");
-  InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
+//  UnicodeSPrint(Flags, 255, L"Product name:");
+//  InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
+  InputBootArgs->Entry.Title = PoolPrint(L"Product name:");
   InputBootArgs->Entry.Tag = TAG_INPUT;
   InputBootArgs->Entry.Row = StrLen(InputItems[78].SValue);
   InputBootArgs->Entry.ShortcutDigit = 0xF1;
@@ -3601,8 +3604,9 @@ REFIT_MENU_ENTRY  *SubMenuSmbios()
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
 
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  UnicodeSPrint(Flags, 255, L"Product version:");
-  InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
+//  UnicodeSPrint(Flags, 255, L"Product version:");
+//  InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
+  InputBootArgs->Entry.Title = PoolPrint(L"Product version:");
   InputBootArgs->Entry.Tag = TAG_INPUT;
   InputBootArgs->Entry.Row = StrLen(InputItems[79].SValue);
   InputBootArgs->Item = &InputItems[79];
@@ -3611,8 +3615,9 @@ REFIT_MENU_ENTRY  *SubMenuSmbios()
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
 
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  UnicodeSPrint(Flags, 255, L"Product sn:");
-  InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
+//  UnicodeSPrint(Flags, 255, L"Product sn:");
+//  InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
+  InputBootArgs->Entry.Title = PoolPrint(L"Product sn:");
   InputBootArgs->Entry.Tag = TAG_INPUT;
   InputBootArgs->Entry.Row = StrLen(InputItems[80].SValue);
   InputBootArgs->Item = &InputItems[80];
@@ -3621,8 +3626,9 @@ REFIT_MENU_ENTRY  *SubMenuSmbios()
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
 
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  UnicodeSPrint(Flags, 255, L"Board ID:");
-  InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
+//  UnicodeSPrint(Flags, 255, L"Board ID:");
+// InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
+  InputBootArgs->Entry.Title = PoolPrint(L"Board ID:");
   InputBootArgs->Entry.Tag = TAG_INPUT;
   InputBootArgs->Entry.Row = StrLen(InputItems[81].SValue);
   InputBootArgs->Item = &InputItems[81];
@@ -3631,8 +3637,9 @@ REFIT_MENU_ENTRY  *SubMenuSmbios()
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
 
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  UnicodeSPrint(Flags, 255, L"Board sn:");
-  InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
+//  UnicodeSPrint(Flags, 255, L"Board sn:");
+// InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
+  InputBootArgs->Entry.Title = PoolPrint(L"Board sn:");
   InputBootArgs->Entry.Tag = TAG_INPUT;
   InputBootArgs->Entry.Row = StrLen(InputItems[82].SValue);
   InputBootArgs->Item = &InputItems[82];
@@ -3641,8 +3648,9 @@ REFIT_MENU_ENTRY  *SubMenuSmbios()
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
 
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  UnicodeSPrint(Flags, 255, L"Board type:");
-  InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
+//  UnicodeSPrint(Flags, 255, L"Board type:");
+//  InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
+  InputBootArgs->Entry.Title = PoolPrint(L"Board type:");
   InputBootArgs->Entry.Tag = TAG_INPUT;
   InputBootArgs->Entry.Row = StrLen(InputItems[83].SValue);
   InputBootArgs->Item = &InputItems[83];
@@ -3651,8 +3659,9 @@ REFIT_MENU_ENTRY  *SubMenuSmbios()
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
 
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  UnicodeSPrint(Flags, 255, L"Board version:");
-  InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
+//  UnicodeSPrint(Flags, 255, L"Board version:");
+//  InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
+  InputBootArgs->Entry.Title = PoolPrint(L"Board version:");
   InputBootArgs->Entry.Tag = TAG_INPUT;
   InputBootArgs->Entry.Row = StrLen(InputItems[84].SValue);
   InputBootArgs->Item = &InputItems[84];
@@ -3661,8 +3670,9 @@ REFIT_MENU_ENTRY  *SubMenuSmbios()
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
 
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  UnicodeSPrint(Flags, 255, L"Chassis type:");
-  InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
+//  UnicodeSPrint(Flags, 255, L"Chassis type:");
+//  InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
+  InputBootArgs->Entry.Title = PoolPrint(L"ROM version:");
   InputBootArgs->Entry.Tag = TAG_INPUT;
   InputBootArgs->Entry.Row = StrLen(InputItems[85].SValue);
   InputBootArgs->Item = &InputItems[85];
@@ -3671,8 +3681,9 @@ REFIT_MENU_ENTRY  *SubMenuSmbios()
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
 
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  UnicodeSPrint(Flags, 255, L"ROM version:");
-  InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
+//  UnicodeSPrint(Flags, 255, L"ROM version:");
+//  InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
+  InputBootArgs->Entry.Title = PoolPrint(L"ROM version:");
   InputBootArgs->Entry.Tag = TAG_INPUT;
   InputBootArgs->Entry.Row = StrLen(InputItems[86].SValue);
   InputBootArgs->Item = &InputItems[86];
@@ -3681,8 +3692,9 @@ REFIT_MENU_ENTRY  *SubMenuSmbios()
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
 
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  UnicodeSPrint(Flags, 255, L"ROM release date:");
-  InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
+//  UnicodeSPrint(Flags, 255, L"ROM release date:");
+//  InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
+  InputBootArgs->Entry.Title = PoolPrint(L"ROM release date:");
   InputBootArgs->Entry.Tag = TAG_INPUT;
   InputBootArgs->Entry.Row = StrLen(InputItems[87].SValue);
   InputBootArgs->Item = &InputItems[87];
@@ -3691,8 +3703,9 @@ REFIT_MENU_ENTRY  *SubMenuSmbios()
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
 
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  UnicodeSPrint(Flags, 255, L"PlatformFeature:");
-  InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
+//  UnicodeSPrint(Flags, 255, L"PlatformFeature:");
+//  InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
+  InputBootArgs->Entry.Title = PoolPrint(L"PlatformFeature:");
   InputBootArgs->Entry.Tag = TAG_INPUT;
   InputBootArgs->Entry.Row = StrLen(InputItems[17].SValue); //cursor
   InputBootArgs->Item = &InputItems[17];
@@ -3702,7 +3715,7 @@ REFIT_MENU_ENTRY  *SubMenuSmbios()
 
   AddMenuEntry(SubScreen, &MenuEntryReturn);
   Entry->SubScreen = SubScreen;
-  FreePool(Flags);
+//  FreePool(Flags);
   return Entry;
 }
 
@@ -3711,12 +3724,13 @@ REFIT_MENU_ENTRY  *SubMenuDsdtFix()
   REFIT_MENU_ENTRY   *Entry; //, *SubEntry;
   REFIT_MENU_SCREEN  *SubScreen;
   REFIT_INPUT_DIALOG *InputBootArgs;
-  CHAR16*           Flags;
-  Flags = AllocateZeroPool(255);
+//  CHAR16*           Flags;
+//  Flags = AllocateZeroPool(255);
 
   Entry = AllocateZeroPool(sizeof(REFIT_MENU_ENTRY));
-  Entry->Title = AllocateZeroPool(255);
-  UnicodeSPrint(Entry->Title, 255, L"DSDT fix mask [0x%08x]->", gSettings.FixDsdt);
+//  Entry->Title = AllocateZeroPool(255);
+//  UnicodeSPrint(Entry->Title, 255, L"DSDT fix mask [0x%08x]->", gSettings.FixDsdt);
+  Entry->Title = PoolPrint(L"DSDT fix mask [0x%08x]->", gSettings.FixDsdt);
   Entry->Image =  OptionMenu.TitleImage;
   Entry->Tag = TAG_OPTIONS;
   Entry->AtClick = ActionEnter;
@@ -3737,8 +3751,9 @@ REFIT_MENU_ENTRY  *SubMenuDsdtFix()
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
 
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  UnicodeSPrint(Flags, 255, L"DSDT name:");
-  InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
+//  UnicodeSPrint(Flags, 255, L"DSDT name:");
+//  InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
+  InputBootArgs->Entry.Title = PoolPrint(L"DSDT name:");
   InputBootArgs->Entry.Tag = TAG_INPUT;
   InputBootArgs->Entry.Row = StrLen(InputItems[1].SValue);
 //  InputBootArgs->Entry.ShortcutDigit = 0;
@@ -4023,7 +4038,7 @@ REFIT_MENU_ENTRY  *SubMenuDsdtFix()
 
   AddMenuEntry(SubScreen, &MenuEntryReturn);
   Entry->SubScreen = SubScreen;
-  FreePool(Flags);
+//  FreePool(Flags);
   return Entry;
 }
 
@@ -4032,8 +4047,8 @@ REFIT_MENU_ENTRY  *SubMenuPCI()
   REFIT_MENU_ENTRY   *Entry;
   REFIT_MENU_SCREEN  *SubScreen;
   REFIT_INPUT_DIALOG *InputBootArgs;
-  CHAR16*           Flags;
-  Flags = AllocateZeroPool(255);
+//  CHAR16*           Flags;
+//  Flags = AllocateZeroPool(255);
 
   Entry = AllocateZeroPool(sizeof(REFIT_MENU_ENTRY));
   Entry->Title = PoolPrint(L"PCI devices ->");
@@ -4140,7 +4155,7 @@ REFIT_MENU_ENTRY  *SubMenuPCI()
 
   AddMenuEntry(SubScreen, &MenuEntryReturn);
   Entry->SubScreen = SubScreen;
-  FreePool(Flags);
+//  FreePool(Flags);
   return Entry;
 }
 
@@ -4179,7 +4194,7 @@ REFIT_MENU_ENTRY  *SubMenuThemes()
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
 //  UnicodeSPrint(Flags, 255, L"Theme:");
 //  InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
-  InputBootArgs->Entry.Title = PoolPrint("%s", L"Theme:");
+  InputBootArgs->Entry.Title = PoolPrint(L"Theme:");
   InputBootArgs->Entry.Tag = TAG_INPUT;
   InputBootArgs->Entry.Row = StrLen(InputItems[3].SValue);
   InputBootArgs->Item = &InputItems[3];
@@ -4189,7 +4204,7 @@ REFIT_MENU_ENTRY  *SubMenuThemes()
 
   AddMenuEntry(SubScreen, &MenuEntryReturn);
   Entry->SubScreen = SubScreen;
-  FreePool(Flags);
+//  FreePool(Flags);
   return Entry;
 }
 
@@ -4229,7 +4244,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
 
 //    UnicodeSPrint(Flags, 255, L"Config:");
 //    InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
-    InputBootArgs->Entry.Title = PoolPrint("%s", L"Config:");
+    InputBootArgs->Entry.Title = PoolPrint(L"Config:");
     InputBootArgs->Entry.Tag = TAG_INPUT;
     InputBootArgs->Entry.Row = StrLen(InputItems[90].SValue);
     InputBootArgs->Entry.ShortcutDigit = 0xF1;
@@ -4241,7 +4256,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
 //    UnicodeSPrint(Flags, 255, L"Boot Args:");
 //    InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
-    InputBootArgs->Entry.Title = PoolPrint("%s", L"Boot Args:");
+    InputBootArgs->Entry.Title = PoolPrint(L"Boot Args:");
     InputBootArgs->Entry.Tag = TAG_INPUT;
     InputBootArgs->Entry.Row = StrLen(InputItems[0].SValue);
     InputBootArgs->Item = &InputItems[0];
@@ -4252,7 +4267,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
 //    UnicodeSPrint(Flags, 255, L"Block kext:");
 //    InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
-    InputBootArgs->Entry.Title = PoolPrint("%s", L"Block kext:");
+    InputBootArgs->Entry.Title = PoolPrint(L"Block kext:");
     InputBootArgs->Entry.Tag = TAG_INPUT;
     InputBootArgs->Entry.Row = StrLen(InputItems[2].SValue);
     InputBootArgs->Item = &InputItems[2];
@@ -4263,7 +4278,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
 //    UnicodeSPrint(Flags, 255, L"Set OS version if not:");
 //    InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
-    InputBootArgs->Entry.Title = PoolPrint("%s", L"Set OS version if not:");
+    InputBootArgs->Entry.Title = PoolPrint(L"Set OS version if not:");
     InputBootArgs->Entry.Tag = TAG_INPUT;
     InputBootArgs->Entry.Row = StrLen(InputItems[51].SValue);
     InputBootArgs->Item = &InputItems[51];
