@@ -3060,6 +3060,9 @@ GetThemeTagSettings (
 
     Dict2 = GetProperty (Dict, "SelectionBigWidth");
     row0TileSize = (INT32)GetPropertyInteger (Dict2, row0TileSize);
+      
+    Dict2 = GetProperty (Dict, "SelectionSmallWidth");
+    row1TileSize = (INT32)GetPropertyInteger (Dict2, row1TileSize);
   }
 
   Dict = GetProperty (DictPointer, "Components");

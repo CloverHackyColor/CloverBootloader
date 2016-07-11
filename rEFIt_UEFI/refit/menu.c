@@ -130,6 +130,7 @@ static EG_IMAGE *TextBuffer = NULL;
 EG_PIXEL SelectionBackgroundPixel = { 0xef, 0xef, 0xef, 0xff }; //non-trasparent
 
 INTN row0TileSize = 144;
+INTN row1TileSize = 64;
 
 static INTN row0Count, row0PosX, row0PosXRunning;
 static INTN row1Count, row1PosX, row1PosXRunning;
@@ -1119,7 +1120,7 @@ static VOID InitSelection(VOID)
     CopyMem(&BlueBackgroundPixel, &StdBackgroundPixel, sizeof(EG_PIXEL));
   }
   SelectionImages[2] = egEnsureImageSize(SelectionImages[2],
-                                         ROW1_TILESIZE, ROW1_TILESIZE, &MenuBackgroundPixel);
+                                         row1TileSize, row1TileSize, &MenuBackgroundPixel);
   if (SelectionImages[2] == NULL)
     return;
   // load big selection image
@@ -1157,12 +1158,12 @@ static VOID InitSelection(VOID)
   if (GlobalConfig.SelectionBigFileName != NULL) {
     SelectionImages[1] = egCreateFilledImage(row0TileSize, row0TileSize,
                                              TRUE, &MenuBackgroundPixel);
-    SelectionImages[3] = egCreateFilledImage(ROW1_TILESIZE, ROW1_TILESIZE,
+    SelectionImages[3] = egCreateFilledImage(row1TileSize, row1TileSize,
                                              TRUE, &MenuBackgroundPixel);
   } else { // using embedded theme (this is an assumption but a better check is required)
     SelectionImages[1] = egCreateFilledImage(row0TileSize, row0TileSize,
                                              TRUE, &StdBackgroundPixel);
-    SelectionImages[3] = egCreateFilledImage(ROW1_TILESIZE, ROW1_TILESIZE,
+    SelectionImages[3] = egCreateFilledImage(row1TileSize, row1TileSize,
                                              TRUE, &StdBackgroundPixel);
   }
 //  DBG("selections inited\n");
@@ -2677,9 +2678,9 @@ VOID MainMenuVerticalStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State,
       InitScroll(State, row0Count, Screen->EntryCount, VisibleHeight);
       row0PosX = EntriesPosX;
       row0PosY = EntriesPosY;
-      row1PosX = (UGAWidth + EntriesGap - (ROW1_TILESIZE + TILE_XSPACING) * row1Count) >> 1;
+      row1PosX = (UGAWidth + EntriesGap - (row1TileSize + TILE_XSPACING) * row1Count) >> 1;
       textPosY = TimeoutPosY - GlobalConfig.TileYSpace - TextHeight;
-      row1PosY = textPosY - ROW1_TILESIZE - GlobalConfig.TileYSpace - LayoutTextOffset;
+      row1PosY = textPosY - row1TileSize - GlobalConfig.TileYSpace - LayoutTextOffset;
       if (!itemPosX) {
         itemPosX = AllocatePool(sizeof(UINT64) * Screen->EntryCount);
         itemPosY = AllocatePool(sizeof(UINT64) * Screen->EntryCount);
@@ -2696,7 +2697,7 @@ VOID MainMenuVerticalStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State,
         } else {
           itemPosX[i] = row1PosXRunning;
           itemPosY[i] = row1PosY;
-          row1PosXRunning += ROW1_TILESIZE + TILE_XSPACING;
+          row1PosXRunning += row1TileSize + TILE_XSPACING;
           //         DBG("next item in row1 at x=%d\n", row1PosXRunning);
         }
       }
@@ -2809,7 +2810,7 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
                   ((MaxItemOnScreen < row0Count)?MaxItemOnScreen:row0Count)) >> 1;
       row0PosY = ((UGAHeight - LayoutMainMenuHeight) >> 1) + LayoutBannerOffset; //LAYOUT_BANNER_YOFFSET;
 
-      row1PosX = (UGAWidth + 8 - (ROW1_TILESIZE + TILE_XSPACING) * row1Count) >> 1;
+      row1PosX = (UGAWidth + 8 - (row1TileSize + TILE_XSPACING) * row1Count) >> 1;
           
       if (GlobalConfig.SelectionBootCampStyle) {
         row1PosY = row0PosY + row0TileSize + LayoutButtonOffset + GlobalConfig.TileYSpace + INDICATOR_SIZE
@@ -2822,7 +2823,7 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
         if (GlobalConfig.SelectionBootCampStyle) {
           textPosY = row0PosY + row0TileSize + 15;
         } else {
-          textPosY = row1PosY + ROW1_TILESIZE + GlobalConfig.TileYSpace + LayoutTextOffset;
+          textPosY = row1PosY + row1TileSize + GlobalConfig.TileYSpace + LayoutTextOffset;
         }
       } else {
         if (GlobalConfig.SelectionBootCampStyle) {
@@ -2832,20 +2833,7 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
         }
       }
       
-      FunctextPosY = row1PosY + ROW1_TILESIZE + GlobalConfig.TileYSpace + LayoutTextOffset;
-/*
-      if (row1Count > 0) {
-        if (GlobalConfig.SelectionBootCampStyle) {
-          textPosY = row0PosY + row0TileSize + 15;
-        } else {
-          textPosY = row1PosY + ROW1_TILESIZE + GlobalConfig.TileYSpace + LayoutTextOffset;
-        }
-          
-        FunctextPosY = row1PosY + ROW1_TILESIZE + GlobalConfig.TileYSpace + LayoutTextOffset;
-      } else {
-        textPosY = row1PosY;
-      }
-*/
+      FunctextPosY = row1PosY + row1TileSize + GlobalConfig.TileYSpace + LayoutTextOffset;
       if (!itemPosX) {
         itemPosX = AllocatePool(sizeof(UINT64) * Screen->EntryCount);
       }
@@ -2859,7 +2847,7 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
           row0PosXRunning += EntriesWidth + EntriesGap;
         } else {
           itemPosX[i] = row1PosXRunning;
-          row1PosXRunning += ROW1_TILESIZE + TILE_XSPACING;
+          row1PosXRunning += row1TileSize + TILE_XSPACING;
           //DBG("next item in row1 at x=%d\n", row1PosXRunning);
         }
       }
