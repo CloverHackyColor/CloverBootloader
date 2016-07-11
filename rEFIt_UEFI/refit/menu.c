@@ -3672,7 +3672,7 @@ REFIT_MENU_ENTRY  *SubMenuSmbios()
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
 //  UnicodeSPrint(Flags, 255, L"Chassis type:");
 //  InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
-  InputBootArgs->Entry.Title = PoolPrint(L"ROM version:");
+  InputBootArgs->Entry.Title = PoolPrint(L"Chassis type:");
   InputBootArgs->Entry.Tag = TAG_INPUT;
   InputBootArgs->Entry.Row = StrLen(InputItems[85].SValue);
   InputBootArgs->Item = &InputItems[85];
