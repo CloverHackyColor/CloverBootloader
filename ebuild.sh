@@ -598,6 +598,9 @@ MainPostBuildScript() {
       cat $BOOTSECTOR_BIN_DIR/start32H.com2 $BOOTSECTOR_BIN_DIR/efi32.com3 \
        "${BUILD_DIR}"/FV/Efildr32 > "${BUILD_DIR}"/FV/boot
 
+      rm -Rf "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers3* 2> /dev/null
+      rm -Rf "$CLOVER_PKG_DIR"/drivers-Off/drivers3* 2> /dev/null
+
       mkdir -p "$CLOVER_PKG_DIR"/Bootloaders/ia32
       mkdir -p "$CLOVER_PKG_DIR"/EFI/BOOT
       mkdir -p "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers32
@@ -689,6 +692,9 @@ MainPostBuildScript() {
         dd if="${BUILD_DIR}"/FV/Efildr20 of="${BUILD_DIR}"/FV/boot bs=512 skip=1
       fi
 
+      rm -Rf "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers6* 2> /dev/null
+      rm -Rf "$CLOVER_PKG_DIR"/drivers-Off/drivers6* 2> /dev/null
+
       # Be sure that all needed directories exists
       mkdir -p "$CLOVER_PKG_DIR"/Bootloaders/x64
       mkdir -p "$CLOVER_PKG_DIR"/EFI/BOOT
@@ -707,7 +713,6 @@ MainPostBuildScript() {
       echo "Copy Mandatory drivers:"
       copyBin "$BUILD_DIR_ARCH"/FSInject.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers64/FSInject-64.efi
 
-      # VBoxHfs
       binArray=( FSInject OsxFatBinaryDrv )
       for efi in "${binArray[@]}"
       do
@@ -722,7 +727,9 @@ MainPostBuildScript() {
 
       # Optional drivers
       echo "Copy Optional drivers:"
-      binArray=( DataHubDxe PartitionDxe VBoxExt2 VBoxExt4 VBoxIso9600 )
+      # drivers64
+      # Ps2KeyboardDxe Ps2MouseAbsolutePointerDxe
+      binArray=( NvmExpressDxe Ps2MouseDxe UsbMouseDxe VBoxExt2 VBoxExt4 VBoxIso9600 XhciDxe )
       for efi in "${binArray[@]}"
       do
         copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64/$efi-64.efi
@@ -735,12 +742,12 @@ MainPostBuildScript() {
           copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64/$efi-64.efi
         done
       fi
-      
-      # Ps2KeyboardDxe Ps2MouseAbsolutePointerDxe
-      binArray=( CsmVideoDxe EmuVariableUefi NvmExpressDxe OsxAptioFix2Drv OsxAptioFixDrv OsxLowMemFixDrv Ps2MouseDxe UsbMouseDxe XhciDxe )
+
+      # drivers64UEFI      
+      binArray=( CsmVideoDxe DataHubDxe EmuVariableUefi OsxAptioFix2Drv OsxAptioFixDrv OsxLowMemFixDrv PartitionDxe )
       for efi in "${binArray[@]}"
       do
-        copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64/$efi-64.efi
+        copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/$efi-64.efi
       done
 
       # Applications
