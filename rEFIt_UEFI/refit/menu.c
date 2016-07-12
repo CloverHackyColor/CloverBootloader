@@ -2129,35 +2129,35 @@ VOID DrawMenuText(IN CHAR16 *Text, IN INTN SelectedWidth, IN INTN XPos, IN INTN 
 VOID FreeScrollBar(VOID)
 {
   if (ScrollbarBackgroundImage) {
-    FreePool(ScrollbarBackgroundImage);
+    egFreeImage(ScrollbarBackgroundImage);
     ScrollbarBackgroundImage = NULL;
   }
   if (BarStartImage) {
-    FreePool(BarStartImage);
+    egFreeImage(BarStartImage);
     BarStartImage = NULL;
   }
   if (BarEndImage) {
-    FreePool(BarEndImage);
+    egFreeImage(BarEndImage);
     BarEndImage = NULL;
   }
   if (ScrollbarImage) {
-    FreePool(ScrollbarImage);
+    egFreeImage(ScrollbarImage);
     ScrollbarImage = NULL;
   }
   if (ScrollStartImage) {
-    FreePool(ScrollStartImage);
+    egFreeImage(ScrollStartImage);
     ScrollStartImage = NULL;
   }
   if (ScrollEndImage) {
-    FreePool(ScrollEndImage);
+    egFreeImage(ScrollEndImage);
     ScrollEndImage = NULL;
   }
   if (UpButtonImage) {
-    FreePool(UpButtonImage);
+    egFreeImage(UpButtonImage);
     UpButtonImage = NULL;
   }
   if (DownButtonImage) {
-    FreePool(DownButtonImage);
+    egFreeImage(DownButtonImage);
     DownButtonImage = NULL;
   }
 }
@@ -2434,8 +2434,8 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
                        EntriesPosX, Screen->Entries[i]->Place.YPos,
                        TitleLen + Screen->Entries[i]->Row);
         } else if (Screen->Entries[i]->Tag == TAG_SWITCH) {
-          StrCpy(ResultString, Screen->Entries[i]->Title);
-          StrCat(ResultString, (Screen->Entries[i]->Row == OldChosenTheme)?L"(*)":L"( )");
+          StrCpy(ResultString, (Screen->Entries[i]->Row == OldChosenTheme)?L"  (*) ":L"  ( ) ");
+          StrCat(ResultString, Screen->Entries[i]->Title);
           DrawMenuText(ResultString,
                        (i == State->CurrentSelection) ? MenuWidth : 0,
                        EntriesPosX, Screen->Entries[i]->Place.YPos, 0xFFFF);
@@ -4227,7 +4227,7 @@ REFIT_MENU_ENTRY  *SubMenuThemes()
   for (i = 0; i < ThemesNum; i++) {
 //    AddMenuInfoLine(SubScreen, PoolPrint(L"     %s", ThemesList[i]));
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-    InputBootArgs->Entry.Title = PoolPrint(L"     %s:", ThemesList[i] /*, (i == OldChosenTheme)?"(*)":"( )" */);
+    InputBootArgs->Entry.Title = PoolPrint(L"%s:", ThemesList[i] /*, (i == OldChosenTheme)?"(*)":"( )" */);
     InputBootArgs->Entry.Tag = TAG_SWITCH;
     InputBootArgs->Entry.Row = i;
     InputBootArgs->Item = &InputItems[3];
