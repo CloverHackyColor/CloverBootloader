@@ -30,6 +30,7 @@ TARGETRULE=
 
 # Macro
 M_NOGRUB=0
+M_APPLEHFS=0
 
 # Default values
 export TOOLCHAIN=XCODE5
@@ -200,8 +201,9 @@ addEdk2BuildOption() {
 # Add edk2 build macro
 addEdk2BuildMacro() {
     local macro="$1"
-    addEdk2BuildOption "-D" "$macro"
     [[ "$macro" == "NO_GRUB_DRIVERS" ]] && M_NOGRUB=1
+    [[ "$macro" == "USE_APPLE_HFSPLUS_DRIVER" ]] && return
+    addEdk2BuildOption "-D" "$macro"
 }
 
 # Check Xcode toolchain
