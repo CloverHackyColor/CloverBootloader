@@ -1490,10 +1490,11 @@ extern EFI_EVENT	                    mSimpleFileSystemChangeEvent;
 extern UINTN	                        gEvent;
 
 extern UINT16	                        gBacklightLevel;
-extern UINT32 devices_number;
+extern UINT32                         devices_number;
 //mouse
 extern ACTION	                        gAction;
 extern UINTN	                        gItemID;
+extern INTN                           OldChosenTheme;
 
 //CHAR8*   orgBiosDsdt;
 extern UINT64	                        BiosDsdt;

@@ -168,6 +168,9 @@ EG_RECT ScrollbarNewPointerPlace;
 INPUT_ITEM *InputItems = NULL;
 UINTN  InputItemsCount = 0;
 
+INTN OldChosenTheme;
+//INTN NewChosenTheme;
+
 BOOLEAN mGuiReady = FALSE;
 
 UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc, IN OUT INTN *DefaultEntryIndex, OUT REFIT_MENU_ENTRY **ChosenEntry);
@@ -202,13 +205,17 @@ VOID FillInputs(BOOLEAN New)
     InputItems[InputItemsCount].SValue = AllocateZeroPool(63);
   }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 63, L"%s", gSettings.BlockKexts);
-
+/*
   InputItems[InputItemsCount].ItemType = UNIString; //3
   if (New) {
     InputItems[InputItemsCount].SValue = AllocateZeroPool(53);
   }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 53, L"%s",
                 (GlobalConfig.Theme == NULL)?L"embedded":GlobalConfig.Theme);
+*/
+  InputItems[InputItemsCount++].ItemType = RadioSwitch;  //3
+//  InputItems[InputItemsCount].SValue   = (InputItems[InputItemsCount].IValue == OldChosenTheme)?L"(*)":L"( )";
+//  InputItems[InputItemsCount++].IValue = OldChosenTheme;
 
   InputItems[InputItemsCount].ItemType = BoolValue; //4
   InputItems[InputItemsCount].BValue = gSettings.DropSSDT;
@@ -601,16 +608,18 @@ VOID ApplyInputs(VOID)
     if (GlobalConfig.Theme) {
       FreePool(GlobalConfig.Theme);
     }
-    GlobalConfig.Theme = PoolPrint(L"%s", InputItems[i].SValue);
+    GlobalConfig.Theme = PoolPrint(L"%s", ThemesList[OldChosenTheme]);
+
     //will change theme after ESC
     gThemeChanged = TRUE;
     //will change '\' to '_' because of underscore has a problem with some keyboards
-    ch = GlobalConfig.Theme;
+/*    ch = GlobalConfig.Theme;
     do {
       if (*ch == L'\\') {
         *ch = L'_';
       }
     } while (*(++ch));
+ */
   }
   i++; //4
   if (InputItems[i].Valid) {
@@ -1175,12 +1184,13 @@ static VOID InitSelection(VOID)
 #define CONSTRAIN_MIN(Variable, MinValue) if (Variable < MinValue) Variable = MinValue
 #define CONSTRAIN_MAX(Variable, MaxValue) if (Variable > MaxValue) Variable = MaxValue
 
-static VOID InitScroll(OUT SCROLL_STATE *State, IN INTN ItemCount, IN UINTN MaxCount, IN UINTN VisibleSpace)
+static VOID InitScroll(OUT SCROLL_STATE *State, IN INTN ItemCount, IN UINTN MaxCount,
+                       IN UINTN VisibleSpace, IN INTN FirstLine)
 {
   State->LastSelection = State->CurrentSelection = 0;
   State->MaxIndex = (INTN)MaxCount - 1;
   State->MaxScroll = ItemCount - 1;
-  State->FirstVisible = 0;
+//  State->FirstVisible = 0;
 
   if (VisibleSpace == 0)
     State->MaxVisible = State->MaxScroll;
@@ -1192,14 +1202,15 @@ static VOID InitScroll(OUT SCROLL_STATE *State, IN INTN ItemCount, IN UINTN MaxC
 
   State->MaxFirstVisible = State->MaxScroll - State->MaxVisible;
   CONSTRAIN_MIN(State->MaxFirstVisible, 0);
+  State->FirstVisible = (FirstLine > State->MaxFirstVisible)?State->MaxFirstVisible:FirstLine;
 
   State->IsScrolling = (State->MaxFirstVisible > 0);
   State->PaintAll = TRUE;
   State->PaintSelection = FALSE;
 
   State->LastVisible = State->FirstVisible + State->MaxVisible;
- // DBG("InitScroll: MaxIndex=%d, FirstVisible=%d, MaxVisible=%d, MaxFirstVisible=%d\n",
-  //    State->MaxIndex, State->FirstVisible, State->MaxVisible, State->MaxFirstVisible);
+  DBG("InitScroll: MaxIndex=%d, FirstVisible=%d, MaxVisible=%d, MaxFirstVisible=%d\n",
+      State->MaxIndex, State->FirstVisible, State->MaxVisible, State->MaxFirstVisible);
      //4 0 11 0
 }
 
@@ -1209,7 +1220,7 @@ static VOID UpdateScroll(IN OUT SCROLL_STATE *State, IN UINTN Movement)
   UINTN ScrollMovement = SCROLL_SCROLL_DOWN;
   INTN i;
   State->LastSelection = State->CurrentSelection;
-//  DBG("UpdateScroll on %d\n", Movement);
+  DBG("UpdateScroll on %d\n", Movement);
   switch (Movement) {
     case SCROLL_SCROLLBAR_MOVE:
       ScrollbarYMovement += ScrollbarNewPointerPlace.YPos - ScrollbarOldPointerPlace.YPos;
@@ -1451,7 +1462,7 @@ static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC  Style
 #endif
 
 
-  if (Item->ItemType != BoolValue) {
+  if ((Item->ItemType != BoolValue) && (Item->ItemType != RadioSwitch)) {
     // Grow Item->SValue to SVALUE_MAX_SIZE if we want to edit a text field
     Item->SValue = EfiReallocatePool(Item->SValue, StrSize(Item->SValue), SVALUE_MAX_SIZE);
   }
@@ -1469,7 +1480,10 @@ static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC  Style
       Item->BValue = !Item->BValue;
       Item->SValue = Item->BValue?L"[+] ":L"[ ] ";
       MenuExit = MENU_EXIT_ENTER;
-
+    } else if (Item->ItemType == RadioSwitch) {
+      OldChosenTheme = Pos;
+ //     Item->IValue = Pos;
+      MenuExit = MENU_EXIT_ENTER;
     } else {
 
       Status = gST->ConIn->ReadKeyStroke (gST->ConIn, &key);
@@ -1710,8 +1724,11 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
       case ActionEnter:
         State.LastSelection = State.CurrentSelection;
         State.CurrentSelection = gItemID;
-        if ((Screen->Entries[gItemID])->Tag == TAG_INPUT){
+        if ((Screen->Entries[gItemID])->Tag == TAG_INPUT) {
           MenuExit = InputDialog(Screen, StyleFunc, &State);
+        } else if ((Screen->Entries[gItemID])->Tag == TAG_SWITCH) {
+          MenuExit = InputDialog(Screen, StyleFunc, &State);
+          State.PaintAll = TRUE;
         } else {
           MenuExit = MENU_EXIT_ENTER;
         }
@@ -1728,8 +1745,11 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
         State.LastSelection = State.CurrentSelection;
         // Index = State.CurrentSelection;
         State.CurrentSelection = gItemID;
-        if ((Screen->Entries[gItemID])->Tag == TAG_INPUT){
+        if ((Screen->Entries[gItemID])->Tag == TAG_INPUT) {
           MenuExit = InputDialog(Screen, StyleFunc, &State);
+        } else if ((Screen->Entries[gItemID])->Tag == TAG_SWITCH) {
+          MenuExit = InputDialog(Screen, StyleFunc, &State);
+          State.PaintAll = TRUE;
         } else {
           MenuExit = MENU_EXIT_DETAILS;
         }
@@ -1864,8 +1884,11 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
     switch (key.UnicodeChar) {
       case CHAR_LINEFEED:
       case CHAR_CARRIAGE_RETURN:
-        if ((Screen->Entries[State.CurrentSelection])->Tag == TAG_INPUT){
+        if ((Screen->Entries[State.CurrentSelection])->Tag == TAG_INPUT) {
           MenuExit = InputDialog(Screen, StyleFunc, &State);
+        } else if ((Screen->Entries[State.CurrentSelection])->Tag == TAG_SWITCH){
+          MenuExit = InputDialog(Screen, StyleFunc, &State);
+          State.PaintAll = TRUE;
         } else if ((Screen->Entries[State.CurrentSelection])->Tag == TAG_CLOVER){
           MenuExit = MENU_EXIT_DETAILS;
         } else {
@@ -1873,8 +1896,11 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
         }
         break;
       case ' ':
-        if ((Screen->Entries[State.CurrentSelection])->Tag == TAG_INPUT){
+        if ((Screen->Entries[State.CurrentSelection])->Tag == TAG_INPUT) {
           MenuExit = InputDialog(Screen, StyleFunc, &State);
+        } else if ((Screen->Entries[State.CurrentSelection])->Tag == TAG_SWITCH){
+          MenuExit = InputDialog(Screen, StyleFunc, &State);
+          State.PaintAll = TRUE;
         } else {
           MenuExit = MENU_EXIT_DETAILS;
         }
@@ -1919,7 +1945,7 @@ static VOID TextMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
       MenuHeight = ConHeight - MenuPosY;
       if (Screen->TimeoutSeconds > 0)
         MenuHeight -= 2;
-      InitScroll(State, Screen->EntryCount, Screen->EntryCount, MenuHeight);
+      InitScroll(State, Screen->EntryCount, Screen->EntryCount, MenuHeight, 0);
 
       // determine width of the menu
       TextMenuWidth = 50;  // minimum
@@ -2287,7 +2313,7 @@ VOID ScrollingBar(IN SCROLL_STATE *State)
 VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINTN Function, IN CHAR16 *ParamText)
 {
   INTN i;
-  INTN j;
+  INTN j = 0;
   INTN ItemWidth = 0;
   INTN X;
   INTN VisibleHeight = 0; //assume vertical layout
@@ -2305,7 +2331,10 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
 
       VisibleHeight = (UGAHeight - EntriesPosY) / TextHeight - Screen->InfoLineCount - 1;
       //DBG("MENU_FUNCTION_INIT 1 EntriesPosY=%d VisibleHeight=%d\n", EntriesPosY, VisibleHeight);
-      InitScroll(State, Screen->EntryCount, Screen->EntryCount, VisibleHeight);
+      if (Screen->Entries[0]->Tag == TAG_SWITCH) {
+        j = OldChosenTheme;
+      }
+      InitScroll(State, Screen->EntryCount, Screen->EntryCount, VisibleHeight, 0);
       // determine width of the menu
       //MenuWidth = 80;  // minimum
       /* for (i = 0; i < (INTN)Screen->InfoLineCount; i++) {
@@ -2404,8 +2433,13 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
                        (i == State->CurrentSelection)?(MenuWidth /* Screen->Entries[i]->Place.Width */):0,
                        EntriesPosX, Screen->Entries[i]->Place.YPos,
                        TitleLen + Screen->Entries[i]->Row);
-        }
-        else {
+        } else if (Screen->Entries[i]->Tag == TAG_SWITCH) {
+          StrCpy(ResultString, Screen->Entries[i]->Title);
+          StrCat(ResultString, (Screen->Entries[i]->Row == OldChosenTheme)?L"(*)":L"( )");
+          DrawMenuText(ResultString,
+                       (i == State->CurrentSelection) ? MenuWidth : 0,
+                       EntriesPosX, Screen->Entries[i]->Place.YPos, 0xFFFF);
+        } else {
 //          DBG("paint entry %d title=%s\n", i, Screen->Entries[i]->Title);
           DrawMenuText(Screen->Entries[i]->Title,
                        (i == State->CurrentSelection) ? MenuWidth : 0,
@@ -2432,8 +2466,12 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
         DrawMenuText(ResultString, 0,
                      EntriesPosX, EntriesPosY + (State->LastSelection - State->FirstVisible) * TextHeight,
                      TitleLen + Screen->Entries[State->LastSelection]->Row);
-      }
-      else {
+      } else if (Screen->Entries[State->LastSelection]->Tag == TAG_SWITCH) {
+        StrCpy(ResultString, Screen->Entries[State->LastSelection]->Title);
+        StrCat(ResultString, (Screen->Entries[State->LastSelection]->Row == OldChosenTheme)?L"(*)":L"( )");
+        DrawMenuText(ResultString, 0,
+                     EntriesPosX, EntriesPosY + (State->LastSelection - State->FirstVisible) * TextHeight, 0xFFFF);
+      } else {
         DrawMenuText(Screen->Entries[State->LastSelection]->Title, 0,
                      EntriesPosX, EntriesPosY + (State->LastSelection - State->FirstVisible) * TextHeight, 0xFFFF);
       }
@@ -2446,8 +2484,12 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
         DrawMenuText(ResultString, MenuWidth /* StrLen(ResultString) * GlobalConfig.CharWidth */,
                      EntriesPosX, EntriesPosY + (State->CurrentSelection - State->FirstVisible) * TextHeight,
                      TitleLen + Screen->Entries[State->CurrentSelection]->Row);
-      }
-      else {
+      } else if (Screen->Entries[State->CurrentSelection]->Tag == TAG_SWITCH) {
+        StrCpy(ResultString, Screen->Entries[State->CurrentSelection]->Title);
+        StrCat(ResultString, (Screen->Entries[State->CurrentSelection]->Row == OldChosenTheme)?L"(*)":L"( )");
+        DrawMenuText(ResultString, MenuWidth,
+                     EntriesPosX, EntriesPosY + (State->CurrentSelection - State->FirstVisible) * TextHeight, 0xFFFF);
+      } else {
         DrawMenuText(Screen->Entries[State->CurrentSelection]->Title, MenuWidth,
                      EntriesPosX, EntriesPosY + (State->CurrentSelection - State->FirstVisible) * TextHeight, 0xFFFF);
       }
@@ -2675,7 +2717,7 @@ VOID MainMenuVerticalStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State,
       TimeoutPosY = UGAHeight - LAYOUT_Y_EDGE - TextHeight;
 
       CountItems(Screen);
-      InitScroll(State, row0Count, Screen->EntryCount, VisibleHeight);
+      InitScroll(State, row0Count, Screen->EntryCount, VisibleHeight, 0);
       row0PosX = EntriesPosX;
       row0PosY = EntriesPosY;
       row1PosX = (UGAWidth + EntriesGap - (row1TileSize + TILE_XSPACING) * row1Count) >> 1;
@@ -2805,7 +2847,7 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
 
       MaxItemOnScreen = (UGAWidth - ROW0_SCROLLSIZE * 2) / (EntriesWidth + EntriesGap); //8
       CountItems(Screen);
-      InitScroll(State, row0Count, Screen->EntryCount, MaxItemOnScreen);
+      InitScroll(State, row0Count, Screen->EntryCount, MaxItemOnScreen, 0);
       row0PosX = (UGAWidth + 8 - (EntriesWidth + EntriesGap) *
                   ((MaxItemOnScreen < row0Count)?MaxItemOnScreen:row0Count)) >> 1;
       row0PosY = ((UGAHeight - LayoutMainMenuHeight) >> 1) + LayoutBannerOffset; //LAYOUT_BANNER_YOFFSET;
@@ -4185,12 +4227,15 @@ REFIT_MENU_ENTRY  *SubMenuThemes()
   for (i = 0; i < ThemesNum; i++) {
 //    AddMenuInfoLine(SubScreen, PoolPrint(L"     %s", ThemesList[i]));
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-    InputBootArgs->Entry.Title = PoolPrint(L"     %s", ThemesList[i]);
-    InputBootArgs->Entry.Tag = TAG_INFO;
+    InputBootArgs->Entry.Title = PoolPrint(L"     %s:", ThemesList[i] /*, (i == OldChosenTheme)?"(*)":"( )" */);
+    InputBootArgs->Entry.Tag = TAG_SWITCH;
+    InputBootArgs->Entry.Row = i;
     InputBootArgs->Item = &InputItems[3];
+    InputBootArgs->Entry.AtClick = ActionEnter;
+    InputBootArgs->Entry.AtRightClick = ActionDetails;
     AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
   }
-
+/*
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
 //  UnicodeSPrint(Flags, 255, L"Theme:");
 //  InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
@@ -4201,7 +4246,7 @@ REFIT_MENU_ENTRY  *SubMenuThemes()
   InputBootArgs->Entry.AtClick = ActionSelect;
   InputBootArgs->Entry.AtRightClick = ActionEnter;
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-
+*/
   AddMenuEntry(SubScreen, &MenuEntryReturn);
   Entry->SubScreen = SubScreen;
 //  FreePool(Flags);

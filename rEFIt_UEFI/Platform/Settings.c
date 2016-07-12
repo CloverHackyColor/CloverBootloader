@@ -2311,8 +2311,15 @@ GetEarlyUserSettings (
       Prop = GetProperty (DictPointer, "Theme");
       if (Prop != NULL) {
         if ((Prop->type == kTagTypeString) && Prop->string) {
+          INTN i;
           GlobalConfig.Theme = PoolPrint (L"%a", Prop->string);
           DBG ("Default theme: %s\n", GlobalConfig.Theme);
+          for (i = 0; i < ThemesNum; i++) {
+            if (StrCmpiBasic(GlobalConfig.Theme, ThemesList[i]) == 0) {
+              OldChosenTheme = i;
+              break;
+            }
+          }
         }
       }
       //CustomIcons
@@ -3525,6 +3532,13 @@ finish:
     }
     FreeTag(ThemeDict);
   }
+  for (i = 0; i < ThemesNum; i++) {
+    if (StrCmpiBasic(GlobalConfig.Theme, ThemesList[i]) == 0) {
+      OldChosenTheme = i;
+      break;
+    }
+  }
+
   //  DBG("8\n");
   PrepareFont();
   return Status;

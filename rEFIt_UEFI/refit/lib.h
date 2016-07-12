@@ -59,6 +59,7 @@ extern EFI_RUNTIME_SERVICES*	gRS;
 #define TAG_OPTIONS            (8)
 #define TAG_INPUT              (9)
 #define TAG_HELP               (10)
+#define TAG_SWITCH             (11)
 #define TAG_SECURE_BOOT        (13)
 #define TAG_SECURE_BOOT_CONFIG (14)
 #define TAG_CLOVER             (100)
@@ -230,6 +231,7 @@ typedef enum {
   Hex,
   ASString,
   UNIString,
+  RadioSwitch,
   
 } ITEM_TYPE;
 
@@ -238,7 +240,7 @@ typedef struct {
   BOOLEAN Valid;
   BOOLEAN BValue;
   UINT8   Pad8;
-  UINT32  Pad32;
+  UINT32  IValue;
   //  UINT64  UValue;
   //  CHAR8*  AValue;
   CHAR16* SValue; // Max Size (see below) so the field can be edit by the GUI
