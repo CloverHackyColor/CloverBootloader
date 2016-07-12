@@ -28,6 +28,8 @@ PLATFORMFILE=
 MODULEFILE=
 TARGETRULE=
 
+# Macro
+M_NOGRUB=0
 
 # Default values
 export TOOLCHAIN=XCODE5
@@ -199,6 +201,7 @@ addEdk2BuildOption() {
 addEdk2BuildMacro() {
     local macro="$1"
     addEdk2BuildOption "-D" "$macro"
+    [[ "$macro" == "NO_GRUB_DRIVERS" ]] && M_NOGRUB=1
 }
 
 # Check Xcode toolchain
@@ -594,10 +597,12 @@ MainPostBuildScript() {
         #cp -v "${BUILD_DIR}"/${TARGETARCH}/VBoxIso9600.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers32/VBoxIso9600-32.efi
         cp -v "$BUILD_DIR_ARCH"/VBoxExt2.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers32/VBoxExt2-32.efi
         cp -v "$BUILD_DIR_ARCH"/VBoxExt4.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers32/VBoxExt4-32.efi
-        cp -v "$BUILD_DIR_ARCH"/GrubEXFAT.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers32/GrubEXFAT-32.efi
-        cp -v "$BUILD_DIR_ARCH"/GrubISO9660.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers32/GrubISO9660-32.efi
-        cp -v "$BUILD_DIR_ARCH"/GrubNTFS.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers32/GrubNTFS-32.efi
-        cp -v "$BUILD_DIR_ARCH"/GrubUDF.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers32/GrubUDF-32.efi
+        if [[ $M_NOGRUB -eq 0 ]]; then
+          cp -v "$BUILD_DIR_ARCH"/GrubEXFAT.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers32/GrubEXFAT-32.efi
+          cp -v "$BUILD_DIR_ARCH"/GrubISO9660.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers32/GrubISO9660-32.efi
+          cp -v "$BUILD_DIR_ARCH"/GrubNTFS.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers32/GrubNTFS-32.efi
+          cp -v "$BUILD_DIR_ARCH"/GrubUDF.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers32/GrubUDF-32.efi
+        fi
         cp -v "$BUILD_DIR_ARCH"/Ps2KeyboardDxe.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers32/Ps2KeyboardDxe-32.efi
         cp -v "$BUILD_DIR_ARCH"/Ps2MouseAbsolutePointerDxe.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers32/Ps2MouseAbsolutePointerDxe-32.efi
         cp -v "$BUILD_DIR_ARCH"/Ps2MouseDxe.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers32/Ps2MouseDxe-32.efi
@@ -676,10 +681,12 @@ MainPostBuildScript() {
         cp -v "$BUILD_DIR_ARCH"/VBoxExt4.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64/VBoxExt4-64.efi
         cp -v "$BUILD_DIR_ARCH"/PartitionDxe.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/PartitionDxe-64.efi
         cp -v "$BUILD_DIR_ARCH"/DataHubDxe.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/DataHubDxe-64.efi
-        cp -v "$BUILD_DIR_ARCH"/GrubEXFAT.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64/GrubEXFAT-64.efi
-        cp -v "$BUILD_DIR_ARCH"/GrubISO9660.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64/GrubISO9660-64.efi
-        cp -v "$BUILD_DIR_ARCH"/GrubNTFS.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64/GrubNTFS-64.efi
-        cp -v "$BUILD_DIR_ARCH"/GrubUDF.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64/GrubUDF-64.efi
+        if [[ $M_NOGRUB -eq 0 ]]; then
+          cp -v "$BUILD_DIR_ARCH"/GrubEXFAT.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64/GrubEXFAT-64.efi
+          cp -v "$BUILD_DIR_ARCH"/GrubISO9660.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64/GrubISO9660-64.efi
+          cp -v "$BUILD_DIR_ARCH"/GrubNTFS.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64/GrubNTFS-64.efi
+          cp -v "$BUILD_DIR_ARCH"/GrubUDF.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64/GrubUDF-64.efi
+        fi
 
         #cp -v "$BUILD_DIR_ARCH"/Ps2KeyboardDxe.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64/Ps2KeyboardDxe-64.efi
         #cp -v "$BUILD_DIR_ARCH"/Ps2MouseAbsolutePointerDxe.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64/Ps2MouseAbsolutePointerDxe-64.efi
