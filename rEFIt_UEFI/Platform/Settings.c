@@ -2867,7 +2867,8 @@ GetThemeTagSettings (
   GlobalConfig.MainEntriesSize          = 128;
   GlobalConfig.TileXSpace               = 8;
   GlobalConfig.TileYSpace               = 24;
-  row0TileSize = 144;
+  row0TileSize                          = 144;
+  row1TileSize                          = 64;
   LayoutBannerOffset                    = 64; //default value if not set
   LayoutButtonOffset                    = 0; //default value if not set
   LayoutTextOffset                      = 0; //default value if not set
