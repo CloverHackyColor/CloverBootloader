@@ -1741,6 +1741,7 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
         } else if ((Screen->Entries[gItemID])->Tag == TAG_SWITCH) {
           MenuExit = InputDialog(Screen, StyleFunc, &State);
           State.PaintAll = TRUE;
+          HidePointer();
         } else {
           MenuExit = MENU_EXIT_ENTER;
         }
@@ -1762,6 +1763,7 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
         } else if ((Screen->Entries[gItemID])->Tag == TAG_SWITCH) {
           MenuExit = InputDialog(Screen, StyleFunc, &State);
           State.PaintAll = TRUE;
+          HidePointer();
         } else {
           MenuExit = MENU_EXIT_DETAILS;
         }
@@ -1823,12 +1825,12 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
         break;
       case SCAN_PAGE_UP:
         //      UpdateScroll(&State, SCROLL_PAGE_UP);
-        SetNextScreenMode(1);
+    //    SetNextScreenMode(1);
         StyleFunc(Screen, &State, MENU_FUNCTION_INIT, NULL);
         break;
       case SCAN_PAGE_DOWN:
         //        UpdateScroll(&State, SCROLL_PAGE_DOWN);
-        SetNextScreenMode(-1);
+     //   SetNextScreenMode(-1);
         StyleFunc(Screen, &State, MENU_FUNCTION_INIT, NULL);
         break;
       case SCAN_ESC:
@@ -1913,6 +1915,7 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
         } else if ((Screen->Entries[State.CurrentSelection])->Tag == TAG_SWITCH){
           MenuExit = InputDialog(Screen, StyleFunc, &State);
           State.PaintAll = TRUE;
+          HidePointer();
         } else {
           MenuExit = MENU_EXIT_DETAILS;
         }
@@ -2450,6 +2453,7 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
           DrawMenuText(ResultString,
                        (i == State->CurrentSelection) ? MenuWidth : 0,
                        EntriesPosX + 36, Screen->Entries[i]->Place.YPos, 0xFFFF);
+          HidePointer();
           BltImageCompositeIndicator((Screen->Entries[i]->Row == OldChosenTheme) ? Buttons[1] : Buttons[0], Buttons[0], EntriesPosX + 2, Screen->Entries[i]->Place.YPos + PlaceCentre, 16);
         } else {
 //          DBG("paint entry %d title=%s\n", i, Screen->Entries[i]->Title);
@@ -2484,6 +2488,7 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
         StrCpy(ResultString, Screen->Entries[State->LastSelection]->Title);
         DrawMenuText(ResultString, 0,
                      EntriesPosX + 36, EntriesPosY + (State->LastSelection - State->FirstVisible) * TextHeight, 0xFFFF);
+        HidePointer();
         BltImageCompositeIndicator((Screen->Entries[State->LastSelection]->Row == OldChosenTheme) ? Buttons[1] : Buttons[0], Buttons[0], EntriesPosX + 2, Screen->Entries[State->LastSelection]->Place.YPos + PlaceCentre, 16);
         
       } else {
@@ -2505,6 +2510,7 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
         StrCpy(ResultString, Screen->Entries[State->CurrentSelection]->Title);
         DrawMenuText(ResultString, MenuWidth,
                      EntriesPosX + 36, EntriesPosY + (State->CurrentSelection - State->FirstVisible) * TextHeight, 0xFFFF);
+        HidePointer();
         BltImageCompositeIndicator((Screen->Entries[State->CurrentSelection]->Row == OldChosenTheme) ? Buttons[1] : Buttons[0], Buttons[0], EntriesPosX + 2, Screen->Entries[State->CurrentSelection]->Place.YPos + PlaceCentre, 16);
       } else {
         DrawMenuText(Screen->Entries[State->CurrentSelection]->Title, MenuWidth,
