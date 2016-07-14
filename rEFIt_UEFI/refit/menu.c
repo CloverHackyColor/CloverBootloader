@@ -124,7 +124,7 @@ INTN ScrollbarYMovement;
 #define ROW0_SCROLLSIZE (100)
 #define INDICATOR_SIZE (52)
 
-EG_IMAGE *SelectionImages[5] = { NULL, NULL, NULL, NULL, NULL};
+EG_IMAGE *SelectionImages[6] = { NULL, NULL, NULL, NULL, NULL, NULL};
 EG_IMAGE *Buttons[2] = {NULL, NULL};
 static EG_IMAGE *TextBuffer = NULL;
 
@@ -1161,6 +1161,8 @@ static VOID InitSelection(VOID)
       SelectionImages[4] = egLoadImage(ThemeDir, GlobalConfig.SelectionIndicatorName, FALSE);
     }
     SelectionImages[4] = egEnsureImageSize(SelectionImages[4], INDICATOR_SIZE, INDICATOR_SIZE, &MenuBackgroundPixel);
+    SelectionImages[5] = egCreateFilledImage(INDICATOR_SIZE, INDICATOR_SIZE,
+                                             TRUE, &MenuBackgroundPixel);
   }
   
   //Radio buttons
@@ -2636,7 +2638,7 @@ static VOID DrawMainMenuEntry(REFIT_MENU_ENTRY *Entry, BOOLEAN selected, INTN XP
     
   if (GlobalConfig.BootCampStyle) {
     if (Entry->Row == 0) {
-      BltImageCompositeIndicator(SelectionImages[(4) + (selected ? 0 : 1)], SelectionImages[4],
+      BltImageCompositeIndicator(SelectionImages[(4) + (selected ? 0 : 1)], SelectionImages[5],
                                      XPos + (row0TileSize / 2) - (INDICATOR_SIZE / 2),
                                      row0PosY + row0TileSize
                                      + ((GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL) ? 10 : (FontHeight - TEXT_YMARGIN + 20)), Scale);
