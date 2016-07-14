@@ -2639,7 +2639,7 @@ static VOID DrawMainMenuEntry(REFIT_MENU_ENTRY *Entry, BOOLEAN selected, INTN XP
       BltImageCompositeIndicator(SelectionImages[(4) + (selected ? 0 : 1)], SelectionImages[4],
                                      XPos + (row0TileSize / 2) - (INDICATOR_SIZE / 2),
                                      row0PosY + row0TileSize
-                                     + ((GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL) ? 10 : (FontHeight + 20)), Scale);
+                                     + ((GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL) ? 10 : (FontHeight - TEXT_YMARGIN + 20)), Scale);
     }
   }
     
