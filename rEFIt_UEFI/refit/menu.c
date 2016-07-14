@@ -125,6 +125,7 @@ INTN ScrollbarYMovement;
 #define INDICATOR_SIZE (52)
 
 EG_IMAGE *SelectionImages[5] = { NULL, NULL, NULL, NULL, NULL};
+EG_IMAGE *Buttons[2] = {NULL, NULL};
 static EG_IMAGE *TextBuffer = NULL;
 
 EG_PIXEL SelectionBackgroundPixel = { 0xef, 0xef, 0xef, 0xff }; //non-trasparent
@@ -1161,6 +1162,18 @@ static VOID InitSelection(VOID)
     }
     SelectionImages[4] = egEnsureImageSize(SelectionImages[4], INDICATOR_SIZE, INDICATOR_SIZE, &MenuBackgroundPixel);
   }
+  
+  //Radio buttons
+  Buttons[0] = egLoadImage(ThemeDir, L"radio_button.png", TRUE);
+  Buttons[1] = egLoadImage(ThemeDir, L"radio_button_selected.png", TRUE);
+  if (!Buttons[0]) {
+    Buttons[0] = egDecodePNG(&emb_radio_button[0], sizeof(emb_radio_button), 20, TRUE);
+  }
+  Buttons[0] = egEnsureImageSize(Buttons[0], TextHeight, TextHeight, &MenuBackgroundPixel);
+  if (!Buttons[1]) {
+    Buttons[1] = egDecodePNG(&emb_radio_button_selected[0], sizeof(emb_radio_button_selected), 20, TRUE);
+  }
+  Buttons[1] = egEnsureImageSize(Buttons[1], TextHeight, TextHeight, &MenuBackgroundPixel);
     
   // non-selected background images
   //TODO FALSE -> TRUE
@@ -1482,7 +1495,6 @@ static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC  Style
       MenuExit = MENU_EXIT_ENTER;
     } else if (Item->ItemType == RadioSwitch) {
       OldChosenTheme = Pos;
- //     Item->IValue = Pos;
       MenuExit = MENU_EXIT_ENTER;
     } else {
 
@@ -2315,6 +2327,7 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
   INTN X;
   INTN VisibleHeight = 0; //assume vertical layout
   CHAR16 ResultString[SVALUE_MAX_SIZE / sizeof(CHAR16) + 128]; // assume a title max length of around 128
+  INTN  PlaceCentre = TextHeight / 2 - 7;
 
   switch (Function) {
 
@@ -2412,7 +2425,7 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
       // blackosx swapped this around so drawing of selection comes before drawing scrollbar.
 
       for (i = State->FirstVisible, j = 0; i <= State->LastVisible; i++, j++) {
-        INTN  TitleLen;
+        INTN  TitleLen;        
 
         TitleLen = StrLen(Screen->Entries[i]->Title);
         Screen->Entries[i]->Place.XPos = EntriesPosX;
@@ -2431,11 +2444,13 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
                        EntriesPosX, Screen->Entries[i]->Place.YPos,
                        TitleLen + Screen->Entries[i]->Row);
         } else if (Screen->Entries[i]->Tag == TAG_SWITCH) {
-          StrCpy(ResultString, (Screen->Entries[i]->Row == OldChosenTheme)?L"  (*) ":L"  ( ) ");
-          StrCat(ResultString, Screen->Entries[i]->Title);
+  //        StrCpy(ResultString, (Screen->Entries[i]->Row == OldChosenTheme)?L"  (*) ":L"  ( ) ");
+  //        StrCat(ResultString, Screen->Entries[i]->Title);
+          StrCpy(ResultString, Screen->Entries[i]->Title);
           DrawMenuText(ResultString,
                        (i == State->CurrentSelection) ? MenuWidth : 0,
-                       EntriesPosX, Screen->Entries[i]->Place.YPos, 0xFFFF);
+                       EntriesPosX + 36, Screen->Entries[i]->Place.YPos, 0xFFFF);
+          BltImageCompositeIndicator((Screen->Entries[i]->Row == OldChosenTheme) ? Buttons[1] : Buttons[0], Buttons[0], EntriesPosX + 2, Screen->Entries[i]->Place.YPos + PlaceCentre, 16);
         } else {
 //          DBG("paint entry %d title=%s\n", i, Screen->Entries[i]->Title);
           DrawMenuText(Screen->Entries[i]->Title,
@@ -2464,10 +2479,13 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
                      EntriesPosX, EntriesPosY + (State->LastSelection - State->FirstVisible) * TextHeight,
                      TitleLen + Screen->Entries[State->LastSelection]->Row);
       } else if (Screen->Entries[State->LastSelection]->Tag == TAG_SWITCH) {
-        StrCpy(ResultString, (Screen->Entries[State->LastSelection]->Row == OldChosenTheme)?L"  (*) ":L"  ( ) ");
-        StrCat(ResultString, Screen->Entries[State->LastSelection]->Title);
+//        StrCpy(ResultString, (Screen->Entries[State->LastSelection]->Row == OldChosenTheme)?L"  (*) ":L"  ( ) ");
+//        StrCat(ResultString, Screen->Entries[State->LastSelection]->Title);
+        StrCpy(ResultString, Screen->Entries[State->LastSelection]->Title);
         DrawMenuText(ResultString, 0,
-                     EntriesPosX, EntriesPosY + (State->LastSelection - State->FirstVisible) * TextHeight, 0xFFFF);
+                     EntriesPosX + 36, EntriesPosY + (State->LastSelection - State->FirstVisible) * TextHeight, 0xFFFF);
+        BltImageCompositeIndicator((Screen->Entries[State->LastSelection]->Row == OldChosenTheme) ? Buttons[1] : Buttons[0], Buttons[0], EntriesPosX + 2, Screen->Entries[State->LastSelection]->Place.YPos + PlaceCentre, 16);
+        
       } else {
         DrawMenuText(Screen->Entries[State->LastSelection]->Title, 0,
                      EntriesPosX, EntriesPosY + (State->LastSelection - State->FirstVisible) * TextHeight, 0xFFFF);
@@ -2482,10 +2500,12 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
                      EntriesPosX, EntriesPosY + (State->CurrentSelection - State->FirstVisible) * TextHeight,
                      TitleLen + Screen->Entries[State->CurrentSelection]->Row);
       } else if (Screen->Entries[State->CurrentSelection]->Tag == TAG_SWITCH) {
-        StrCpy(ResultString, (Screen->Entries[State->CurrentSelection]->Row == OldChosenTheme)?L"  (*) ":L"  ( ) ");
-        StrCat(ResultString, Screen->Entries[State->CurrentSelection]->Title);
+//        StrCpy(ResultString, (Screen->Entries[State->CurrentSelection]->Row == OldChosenTheme)?L"  (*) ":L"  ( ) ");
+//        StrCat(ResultString, Screen->Entries[State->CurrentSelection]->Title);
+        StrCpy(ResultString, Screen->Entries[State->CurrentSelection]->Title);
         DrawMenuText(ResultString, MenuWidth,
-                     EntriesPosX, EntriesPosY + (State->CurrentSelection - State->FirstVisible) * TextHeight, 0xFFFF);
+                     EntriesPosX + 36, EntriesPosY + (State->CurrentSelection - State->FirstVisible) * TextHeight, 0xFFFF);
+        BltImageCompositeIndicator((Screen->Entries[State->CurrentSelection]->Row == OldChosenTheme) ? Buttons[1] : Buttons[0], Buttons[0], EntriesPosX + 2, Screen->Entries[State->CurrentSelection]->Place.YPos + PlaceCentre, 16);
       } else {
         DrawMenuText(Screen->Entries[State->CurrentSelection]->Title, MenuWidth,
                      EntriesPosX, EntriesPosY + (State->CurrentSelection - State->FirstVisible) * TextHeight, 0xFFFF);

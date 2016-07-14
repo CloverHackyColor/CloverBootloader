@@ -301,3 +301,9 @@ static const UINT8 egemb_font_data[3587] = {
 };
 static EG_EMBEDDED_IMAGE egemb_font = { 672, 12, EG_EIPIXELMODE_ALPHA, EG_EICOMPMODE_RLE, egemb_font_data, 3587 };
 static EG_EMBEDDED_IMAGE egemb_font_gray = { 672, 12, EG_EIPIXELMODE_GRAY, EG_EICOMPMODE_RLE, egemb_font_data, 3587 };
+
+//Special symbols
+// ◎ = 0x25CE -> E2 97 8E
+// ◉ = 0x25C9 -> E2 97 89
+// ☐ = 0x2610 -> E2 98 90
+// ☑ = 0x2611 -> E2 98 91
