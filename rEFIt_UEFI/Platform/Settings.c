@@ -107,7 +107,7 @@ REFIT_CONFIG   GlobalConfig = {
   FALSE,          // BOOLEAN     BackgroundDark;
   FALSE,          // BOOLEAN     CustomIcons;
   FALSE,          // BOOLEAN     SelectionOnTop;
-  FALSE,          // BOOLEAN     SelectionBootCampStyle;
+  FALSE,          // BOOLEAN     BootCampStyle;
   0,              // INTN        BadgeOffsetX;
   0,              // INTN        BadgeOffsetY;
   4,              // INTN        BadgeScale;
@@ -2892,7 +2892,7 @@ GetThemeTagSettings (
   }
 
   GlobalConfig.SelectionOnTop           = FALSE;
-  GlobalConfig.SelectionBootCampStyle   = FALSE;
+  GlobalConfig.BootCampStyle   = FALSE;
   ScrollWidth                           = 16;
   ScrollButtonsHeight                   = 20;
   ScrollBarDecorationsHeight            = 5;
@@ -2927,7 +2927,7 @@ GetThemeTagSettings (
   }
   
   Dict    = GetProperty (DictPointer, "BootCampStyle");
-  GlobalConfig.SelectionBootCampStyle = IsPropertyTrue(Dict);
+  GlobalConfig.BootCampStyle = IsPropertyTrue(Dict);
 
   Dict    = GetProperty (DictPointer, "Background");
   if (Dict != NULL) {

@@ -424,7 +424,7 @@ typedef struct {
   BOOLEAN     BackgroundDark;
   BOOLEAN     CustomIcons;
   BOOLEAN     SelectionOnTop;
-  BOOLEAN     SelectionBootCampStyle;
+  BOOLEAN     BootCampStyle;
   INTN       BadgeOffsetX;
   INTN       BadgeOffsetY;
   INTN       BadgeScale;
@@ -780,6 +780,7 @@ BOOLEAN ReadAllKeyStrokes(VOID);
 VOID OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry);
 VOID FreeScrollBar(VOID);
 INTN DrawTextXY(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign);
+VOID DrawBCSText(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign);
 
 //
 // config module

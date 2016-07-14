@@ -545,7 +545,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath,
     Entry->me.Title = EfiStrDuplicate(FullTitle);
   } else if ((Entry->VolName == NULL) || (StrLen(Entry->VolName) == 0)) {
     //DBG("encounter Entry->VolName ==%s and StrLen(Entry->VolName) ==%d\n",Entry->VolName, StrLen(Entry->VolName));
-    if (GlobalConfig.SelectionBootCampStyle) {
+    if (GlobalConfig.BootCampStyle) {
       Entry->me.Title = PoolPrint(L"%s", ((LoaderTitle != NULL) ? LoaderTitle : Basename(Volume->DevicePathString)));
     } else {
       Entry->me.Title = PoolPrint(L"Boot %s from %s", (LoaderTitle != NULL) ? LoaderTitle : Basename(LoaderPath),
@@ -553,7 +553,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath,
     }
   } else {
     //DBG("encounter LoaderTitle ==%s and Entry->VolName ==%s\n", LoaderTitle, Entry->VolName);
-    if (GlobalConfig.SelectionBootCampStyle) {
+    if (GlobalConfig.BootCampStyle) {
       if ((StriCmp(LoaderTitle, L"Mac OS X") == 0) || (StriCmp(LoaderTitle, L"Recovery") == 0)) {
         Entry->me.Title = PoolPrint(L"%s", Entry->VolName);
       } else {
