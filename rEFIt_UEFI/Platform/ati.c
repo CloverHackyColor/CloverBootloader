@@ -273,6 +273,12 @@ radeon_card_info_t radeon_cards[] = {
     { 0x67B9,	0x00000000, CHIP_FAMILY_HAWAII,	"AMD Radeon R9 200",          kFutomaki	},
     //	{ 0x67BA,	0x00000000, CHIP_FAMILY_HAWAII,	"AMD Radeon",             kFutomaki	},
     //	{ 0x67BE,	0x00000000, CHIP_FAMILY_HAWAII,	"AMD Radeon",             kFutomaki	},
+
+  //Polaris
+  { 0x67C0,	0x00000000, CHIP_FAMILY_HAWAII,	"AMD Radeon Polaris 10",        kNull	},
+  { 0x67DF,	0x00000000, CHIP_FAMILY_HAWAII,	"AMD Radeon RX480",             kNull	},
+  { 0x67E0,	0x00000000, CHIP_FAMILY_HAWAII,	"AMD Radeon RX460",             kNull	},
+  { 0x67FF,	0x00000000, CHIP_FAMILY_HAWAII,	"AMD Radeon Polaris 11",        kNull	},
     
     // PITCAIRN
     { 0x6800,	0x00000000, CHIP_FAMILY_PITCAIRN,	"AMD Radeon HD 7970M",        kBuri	}, // Mobile
