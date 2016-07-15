@@ -5,7 +5,7 @@
 	<key>Author</key>
 	<string>blackosx</string>
 	<key>Description</key>
-	<string>BGM (black_green and moody) v1.3</string>
+	<string>BGM (black_green and moody) v1.4</string>
 	<key>Year</key>
 	<string>2013/4</string>
 	<key>Theme</key>
@@ -66,6 +66,8 @@
 			<key>Type</key>
 			<string>Load</string>
 		</dict>
+		<key>BootCampStyle</key>
+		<false/>
 		<key>Selection</key>
 		<dict>
 			<key>Big</key>
@@ -76,6 +78,8 @@
 			<true/>
 			<key>Small</key>
 			<string>Selection_small.png</string>
+			<key>Indicator</key>
+			<string>selection_indicator.png</string>
 		</dict>
 		<key>Scroll</key>
 		<dict>

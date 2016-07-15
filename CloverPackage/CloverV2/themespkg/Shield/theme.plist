@@ -5,7 +5,7 @@
 	<key>Author</key>
 	<string>blackosx</string>
 	<key>Description</key>
-	<string>A complete theme with animated titles (v1.2).</string>
+	<string>A complete theme with animated titles (v1.3)</string>
 	<key>Year</key>
 	<string>2014</string>
 	<key>Theme</key>
@@ -85,6 +85,8 @@
 			<key>Type</key>
 			<string>Load</string>
 		</dict>
+		<key>BootCampStyle</key>
+		<false/>
 		<key>Selection</key>
 		<dict>
 			<key>Big</key>
@@ -95,6 +97,8 @@
 			<false/>
 			<key>Small</key>
 			<string>Selection_Small.png</string>
+			<key>Indicator</key>
+			<string>selection_indicator.png</string>
 		</dict>
 		<key>Scroll</key>
 		<dict>
