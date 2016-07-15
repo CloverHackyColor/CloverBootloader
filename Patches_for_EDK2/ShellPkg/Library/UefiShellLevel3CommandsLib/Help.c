@@ -220,7 +220,7 @@ PrintDynamicCommandHelp(
   
   Status = EFI_NOT_FOUND;
   Found = FALSE;
-  CommandHandleList = NULL;
+//  CommandHandleList = NULL;
 
   CommandHandleList = GetHandleListByProtocol(&gEfiShellDynamicCommandProtocolGuid);
 
@@ -440,7 +440,6 @@ ShellCommandRunHelp (
             }
           }
         }
-
         //
         // Search the .man file for Shell applications (Shell external commands).
         //

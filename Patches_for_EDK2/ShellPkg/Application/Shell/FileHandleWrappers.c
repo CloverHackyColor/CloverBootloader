@@ -2,7 +2,8 @@
   EFI_FILE_PROTOCOL wrappers for other items (Like Environment Variables,
   StdIn, StdOut, StdErr, etc...).
 
-  Copyright (c) 2009 - 2014, Intel Corporation. All rights reserved.<BR>
+  Copyright 2016 Dell Inc.
+  Copyright (c) 2009 - 2016, Intel Corporation. All rights reserved.<BR>
   (C) Copyright 2013 Hewlett-Packard Development Company, L.P.<BR>
   This program and the accompanying materials
   are licensed and made available under the terms and conditions of the BSD License
@@ -421,6 +422,12 @@ FileInterfaceStdInRead(
     gBS->WaitForEvent (1, &gST->ConIn->WaitForKey, &EventIndex);
     Status = gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
     if (EFI_ERROR (Status)) {
+
+      if (Status == EFI_NOT_READY)
+        continue;
+
+      ZeroMem (CurrentString, MaxStr * sizeof(CHAR16));
+      StringLen = 0;
       break;
     }
 
@@ -516,20 +523,24 @@ FileInterfaceStdInRead(
         if (StrStr(CurrentString + TabPos, L":") == NULL) {
           Cwd = ShellInfoObject.NewEfiShellProtocol->GetCurDir(NULL);
           if (Cwd != NULL) {
-            StrnCpy(TabStr, Cwd, (*BufferSize)/sizeof(CHAR16) - 1);
+            StrnCpyS(TabStr, (*BufferSize)/sizeof(CHAR16), Cwd, (*BufferSize)/sizeof(CHAR16) - 1);
             StrCatS(TabStr, (*BufferSize)/sizeof(CHAR16), L"\\");
             if (TabStr[StrLen(TabStr)-1] == L'\\' && *(CurrentString + TabPos) == L'\\' ) {
               TabStr[StrLen(TabStr)-1] = CHAR_NULL;
             }
-            StrnCat(TabStr, CurrentString + TabPos, (StringLen - TabPos) * sizeof (CHAR16));
+            StrnCatS( TabStr, 
+                      (*BufferSize)/sizeof(CHAR16), 
+                      CurrentString + TabPos, 
+                      StringLen - TabPos
+                      );
           } else {
             *TabStr = CHAR_NULL;
-            StrnCat(TabStr, CurrentString + TabPos, (StringLen - TabPos) * sizeof (CHAR16));
+            StrnCatS(TabStr, (*BufferSize)/sizeof(CHAR16), CurrentString + TabPos, StringLen - TabPos);
           }
         } else {
-          StrnCpy(TabStr, CurrentString + TabPos, (*BufferSize)/sizeof(CHAR16) - 1);
+          StrnCpyS(TabStr, (*BufferSize)/sizeof(CHAR16), CurrentString + TabPos, (*BufferSize)/sizeof(CHAR16) - 1);
         }
-        StrnCat(TabStr, L"*", (*BufferSize)/sizeof(CHAR16) - 1 - StrLen(TabStr));
+        StrnCatS(TabStr, (*BufferSize)/sizeof(CHAR16), L"*", (*BufferSize)/sizeof(CHAR16) - 1 - StrLen(TabStr));
         FoundFileList = NULL;
         Status  = ShellInfoObject.NewEfiShellProtocol->FindFiles(TabStr, &FoundFileList);
         for ( TempStr = CurrentString
@@ -571,9 +582,8 @@ FileInterfaceStdInRead(
               TabLinePos = (EFI_SHELL_FILE_INFO*)GetFirstNode(&FoundFileList->Link);
               InTabScrolling = TRUE;
             } else {
-              FreePool(FoundFileList);
-              FoundFileList = NULL;
-            }            
+              ShellInfoObject.NewEfiShellProtocol->FreeFileList (&FoundFileList);
+            }
           }
         }
       }
@@ -856,9 +866,8 @@ FileInterfaceStdInRead(
   // if this was used it should be deallocated by now...
   // prevent memory leaks...
   //
-//  ASSERT(FoundFileList == NULL);
-  if (FoundFileList) {
-    FreePool (FoundFileList);
+  if (FoundFileList != NULL) {
+    ShellInfoObject.NewEfiShellProtocol->FreeFileList (&FoundFileList);
   }
 
   return Status;
@@ -1529,6 +1538,16 @@ CreateFileInterfaceMem(
 //  ASSERT(FileInterface->Position    == 0);
   FileInterface->Position    = 0;
 
+  if (Unicode) {
+    FileInterface->Buffer = AllocateZeroPool(sizeof(gUnicodeFileTag));
+    if (FileInterface->Buffer == NULL) {
+      FreePool (FileInterface);
+      return NULL;
+    }
+    *((CHAR16 *) (FileInterface->Buffer)) = EFI_UNICODE_BYTE_ORDER_MARK;
+    FileInterface->BufferSize = 2;
+    FileInterface->Position = 2;
+  }
 
   return ((EFI_FILE_PROTOCOL *)FileInterface);
 }

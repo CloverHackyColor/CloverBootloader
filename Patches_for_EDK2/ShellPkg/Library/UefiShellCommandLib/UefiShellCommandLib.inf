@@ -50,13 +50,14 @@
 
 [Protocols]
   gEfiUnicodeCollation2ProtocolGuid                       ## CONSUMES
+  gEfiUnicodeCollationProtocolGuid                       ## SOMETIMES_CONSUMES
   gEfiShellProtocolGuid                                   ## CONSUMES
   gEfiShellParametersProtocolGuid                         ## CONSUMES
   gEfiShellDynamicCommandProtocolGuid                     ## SOMETIMES_CONSUMES
   gEfiUsbIoProtocolGuid                                   ## SOMETIMES_CONSUMES
 
 [Guids]
-  gEfiSasDevicePathGuid                                   ## CONSUMES ## GUID
+  gEfiSasDevicePathGuid                                   ## SOMETIMES_CONSUMES ## GUID
 
 [Pcd.common]
   gEfiShellPkgTokenSpaceGuid.PcdShellSupportLevel         ## CONSUMES
@@ -66,4 +67,4 @@
   gEfiShellPkgTokenSpaceGuid.PcdShellVendorExtendedDecode ## SOMETIMES_CONSUMES
 
 [Depex]
-  gEfiUnicodeCollation2ProtocolGuid
+#  gEfiUnicodeCollation2ProtocolGuid

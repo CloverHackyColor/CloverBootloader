@@ -95,8 +95,8 @@
   #  bit 1 = Debug1
   #  bit 2 = Install1
   #  bit 3 = Network1
-  # default 0xFF
-  gEfiShellPkgTokenSpaceGuid.PcdShellProfileMask|0x07|UINT8|0x0000000D
+  #  bit 4 = Network2
+  gEfiShellPkgTokenSpaceGuid.PcdShellProfileMask|0xFF|UINT8|0x0000000D
 
   ## This is the character count for allocation for consistent mappings
   gEfiShellPkgTokenSpaceGuid.PcdShellMapNameLength|50|UINT8|0x00000009

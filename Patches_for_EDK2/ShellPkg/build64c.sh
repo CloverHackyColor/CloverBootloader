@@ -53,11 +53,11 @@ case `uname` in
         echo ShellPkg requires Snow Leopard or later OS
         exit 1
       else
-        TARGET_TOOLS=XCLANG
+        TARGET_TOOLS=XCODE5
       fi
       ;;
   Linux*)
-    TARGET_TOOLS=GCC44
+    TARGET_TOOLS=GCC49
     ;;
 
 esac

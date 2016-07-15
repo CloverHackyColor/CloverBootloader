@@ -125,6 +125,8 @@
   }
 
 [BuildOptions]
+XCODE:*_*_*_DLINK_FLAGS   = -Wl,-no_compact_unwind
+XCODE:*_*_*_CC_FLAGS   = -Os -DMDEPKG_NDEBUG 
 GCC:*_*_*_CC_FLAGS   = -Os -flto -DMDEPKG_NDEBUG 
 MSFT:*_*_*_CC_FLAGS = /D MDEPKG_NDEBUG
 

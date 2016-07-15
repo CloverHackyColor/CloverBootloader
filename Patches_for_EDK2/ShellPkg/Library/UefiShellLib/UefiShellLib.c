@@ -16,7 +16,7 @@
 #include "UefiShellLib.h"
 #include <ShellBase.h>
 #include <Library/SortLib.h>
-//#include <Library/PathLib.h>
+#include <Library/BaseLib.h>
 
 #define FIND_XXXXX_FILE_BUFFER_SIZE (SIZE_OF_EFI_FILE_INFO + MAX_FILE_NAME_LEN)
 
@@ -373,6 +373,8 @@ EFIAPI
 ShellInitialize (
   )
 {
+  EFI_STATUS Status;
+
   //
   // if auto initialize is not false then skip
   //
@@ -383,7 +385,8 @@ ShellInitialize (
   //
   // deinit the current stuff
   //
-  ASSERT_EFI_ERROR(ShellLibDestructor(gImageHandle, gST));
+  Status = ShellLibDestructor (gImageHandle, gST);
+  ASSERT_EFI_ERROR (Status);
 
   //
   // init the new stuff
@@ -1722,8 +1725,9 @@ ShellFindFilePath (
     if (TestPath == NULL) {
       return (NULL);
     }
-    StrnCpy(TestPath, Path, Size/sizeof(CHAR16) - 1);
-    StrnCat(TestPath, FileName, Size/sizeof(CHAR16) - 1 - StrLen(TestPath));
+    StrCpyS(TestPath, Size/sizeof(CHAR16), Path);
+    StrCatS(TestPath, Size/sizeof(CHAR16), L"\\");
+    StrCatS(TestPath, Size/sizeof(CHAR16), FileName);
     Status = ShellOpenFileByName(TestPath, &Handle, EFI_FILE_MODE_READ, 0);
     if (!EFI_ERROR(Status)){
       if (FileHandleIsDirectory(Handle) != EFI_SUCCESS) {
@@ -1755,12 +1759,12 @@ ShellFindFilePath (
           *TempChar = CHAR_NULL;
         }
         if (TestPath[StrLen(TestPath)-1] != L'\\') {
-          StrnCat(TestPath, L"\\", Size/sizeof(CHAR16) - 1 - StrLen(TestPath));
+          StrCatS(TestPath, Size/sizeof(CHAR16), L"\\");
         }
         if (FileName[0] == L'\\') {
           FileName++;
         }
-        StrnCat(TestPath, FileName, Size/sizeof(CHAR16) - 1 - StrLen(TestPath));
+        StrCatS(TestPath, Size/sizeof(CHAR16), FileName);
         if (StrStr(Walker, L";") != NULL) {
           Walker = StrStr(Walker, L";") + 1;
         } else {
@@ -1829,9 +1833,9 @@ ShellFindFilePathEx (
     return (NULL);
   }
   for (ExtensionWalker = FileExtension, TempChar2 = (CHAR16*)FileExtension;  TempChar2 != NULL ; ExtensionWalker = TempChar2 + 1){
-    StrnCpy(TestPath, FileName, Size/sizeof(CHAR16) - 1);
+    StrCpyS(TestPath, Size/sizeof(CHAR16), FileName);
     if (ExtensionWalker != NULL) {
-      StrnCat(TestPath, ExtensionWalker, Size/sizeof(CHAR16) - 1 - StrLen(TestPath));
+      StrCatS(TestPath, Size/sizeof(CHAR16), ExtensionWalker);
     }
     TempChar = StrStr(TestPath, L";");
     if (TempChar != NULL) {
@@ -2016,7 +2020,7 @@ InternalCommandLineParse (
   UINTN                         ValueSize;
   UINTN                         Count;
   CONST CHAR16                  *TempPointer;
-  UINTN                         CurrentValueSize;
+  UINTN                         CurrentValueSize = 0;
 
   CurrentItemPackage = NULL;
   GetItemValue = 0;
@@ -2110,40 +2114,30 @@ InternalCommandLineParse (
           ASSERT(GetItemValue == 0);
           break;
       }
-    } else if (GetItemValue != 0 && CurrentItemPackage != NULL && !InternalIsFlag(Argv[LoopCounter], AlwaysAllowNumbers, (CONST BOOLEAN)(CurrentItemPackage->Type == TypeTimeValue))) {
+    } else if (GetItemValue != 0 && CurrentItemPackage != NULL && !InternalIsFlag(Argv[LoopCounter], AlwaysAllowNumbers, (BOOLEAN)(CurrentItemPackage->Type == TypeTimeValue))) {
       //
       // get the item VALUE for a previous flag
       //
-      if (StrStr(Argv[LoopCounter], L" ") == NULL) {
         CurrentValueSize = ValueSize + StrSize(Argv[LoopCounter]) + sizeof(CHAR16);
         CurrentItemPackage->Value = ReallocatePool(ValueSize, CurrentValueSize, CurrentItemPackage->Value);
         ASSERT(CurrentItemPackage->Value != NULL);
         if (ValueSize == 0) {
-          StrnCpy(CurrentItemPackage->Value, Argv[LoopCounter], CurrentValueSize/sizeof(CHAR16) - 1);
+        StrCpyS( CurrentItemPackage->Value, 
+                  CurrentValueSize/sizeof(CHAR16), 
+                  Argv[LoopCounter]
+                  );
         } else {
-          StrnCat(CurrentItemPackage->Value, L" ", CurrentValueSize/sizeof(CHAR16) - 1 - StrLen(CurrentItemPackage->Value));
-          StrnCat(CurrentItemPackage->Value, Argv[LoopCounter], CurrentValueSize/sizeof(CHAR16) - 1 - StrLen(CurrentItemPackage->Value));
+        StrCatS( CurrentItemPackage->Value, 
+                  CurrentValueSize/sizeof(CHAR16), 
+                  L" "
+                  );
+        StrCatS( CurrentItemPackage->Value, 
+                  CurrentValueSize/sizeof(CHAR16), 
+                  Argv[LoopCounter]
+                  );
         }
         ValueSize += StrSize(Argv[LoopCounter]) + sizeof(CHAR16);
-      } else {
-        //
-        // the parameter has spaces.  must be quoted.
-        //
-        CurrentValueSize =  ValueSize + StrSize(Argv[LoopCounter]) + sizeof(CHAR16) + sizeof(CHAR16) + sizeof(CHAR16);
-        CurrentItemPackage->Value = ReallocatePool(ValueSize, CurrentValueSize, CurrentItemPackage->Value);
-        ASSERT(CurrentItemPackage->Value != NULL);
-        if (ValueSize == 0) {
-          StrnCpy(CurrentItemPackage->Value, L"\"", CurrentValueSize/sizeof(CHAR16) - 1);
-          StrnCat(CurrentItemPackage->Value, Argv[LoopCounter], CurrentValueSize/sizeof(CHAR16) - 1 - StrLen(CurrentItemPackage->Value));
-          StrnCat(CurrentItemPackage->Value, L"\"", CurrentValueSize/sizeof(CHAR16) - 1 - StrLen(CurrentItemPackage->Value));
-        } else {
-          StrnCat(CurrentItemPackage->Value, L" ", CurrentValueSize/sizeof(CHAR16) - 1 - StrLen(CurrentItemPackage->Value));
-          StrnCat(CurrentItemPackage->Value, L"\"", CurrentValueSize/sizeof(CHAR16) - 1 - StrLen(CurrentItemPackage->Value));
-          StrnCat(CurrentItemPackage->Value, Argv[LoopCounter], CurrentValueSize/sizeof(CHAR16) - 1 - StrLen(CurrentItemPackage->Value));
-          StrnCat(CurrentItemPackage->Value, L"\"", CurrentValueSize/sizeof(CHAR16) - 1 - StrLen(CurrentItemPackage->Value));
-       }
-        ValueSize += StrSize(Argv[LoopCounter]) + sizeof(CHAR16);
-      }
+      
       GetItemValue--;
       if (GetItemValue == 0) {
         InsertHeadList(*CheckPackage, &CurrentItemPackage->Link);
@@ -2663,14 +2657,14 @@ ShellCopySearchAndReplace(
         FreePool(Replace);
         return (EFI_BUFFER_TOO_SMALL);
       }
-      StrnCat(NewString, Replace, NewSize/sizeof(CHAR16) - 1 - StrLen(NewString));
+      StrCatS(NewString, NewSize/sizeof(CHAR16), Replace);
     } else {
       Size = StrSize(NewString);
       if (Size + sizeof(CHAR16) > NewSize) {
         FreePool(Replace);
         return (EFI_BUFFER_TOO_SMALL);
       }
-      StrnCat(NewString, SourceString, 1);
+      StrnCatS(NewString, NewSize/sizeof(CHAR16), SourceString, 1);
       SourceString++;
     }
   }
@@ -3273,7 +3267,8 @@ StrnCatGrow (
       *CurrentSize = NewSize;
     }
   } else {
-    *Destination = AllocateZeroPool((Count+1)*sizeof(CHAR16));
+    NewSize = (Count+1)*sizeof(CHAR16);
+    *Destination = AllocateZeroPool(NewSize);
   }
 
   //
@@ -3282,14 +3277,16 @@ StrnCatGrow (
   if (*Destination == NULL) {
     return (NULL);
   }
-  return StrnCat(*Destination, Source, Count);
+  
+  StrnCatS(*Destination, NewSize/sizeof(CHAR16), Source, Count);
+  return *Destination;
 }
 
 /**
   Prompt the user and return the resultant answer to the requestor.
 
   This function will display the requested question on the shell prompt and then
-  wait for an apropriate answer to be input from the console.
+  wait for an appropriate answer to be input from the console.
 
   if the SHELL_PROMPT_REQUEST_TYPE is SHELL_PROMPT_REQUEST_TYPE_YESNO, ShellPromptResponseTypeQuitContinue
   or SHELL_PROMPT_REQUEST_TYPE_YESNOCANCEL then *Response is of type SHELL_PROMPT_RESPONSE.
@@ -3745,7 +3742,7 @@ InternalShellHexCharToUintn (
 /**
   Convert a Null-terminated Unicode hexadecimal string to a value of type UINT64.
 
-  This function returns a value of type UINTN by interpreting the contents
+  This function returns a value of type UINT64 by interpreting the contents
   of the Unicode string specified by String as a hexadecimal number.
   The format of the input Unicode string String is:
 
@@ -3813,7 +3810,7 @@ InternalShellStrHexToUint64 (
   Result = 0;
 
   //
-  // Skip spaces if requested
+  // there is a space where there should't be
   //
   while (StopAtSpace && *String == L' ') {
     String++;
@@ -3822,7 +3819,7 @@ InternalShellStrHexToUint64 (
   while (ShellIsHexaDecimalDigitCharacter (*String)) {
     //
     // If the Hex Number represented by String overflows according
-    // to the range defined by UINTN, then ASSERT().
+    // to the range defined by UINT64, then return EFI_DEVICE_ERROR.
     //
     if (!(Result <= (RShiftU64((((UINT64) ~0) - InternalShellHexCharToUintn (*String)), 4)))) {
 //    if (!(Result <= ((((UINT64) ~0) - InternalShellHexCharToUintn (*String)) >> 4))) {
@@ -3905,15 +3902,17 @@ InternalShellStrDecimalToUint64 (
   Result = 0;
 
   //
-  // Skip spaces if requested
+  // Stop upon space if requested 
+  // (if the whole value was 0)
   //
   while (StopAtSpace && *String == L' ') {
     String++;
   }
+
   while (ShellIsDecimalDigitCharacter (*String)) {
     //
     // If the number represented by String overflows according
-    // to the range defined by UINT64, then ASSERT().
+    // to the range defined by UINT64, then return EFI_DEVICE_ERROR.
     //
 
     if (!(Result <= (DivU64x32((((UINT64) ~0) - (*String - L'0')),10)))) {
@@ -4258,7 +4257,8 @@ ShellPrintHelp (
   // Print this out to the console
   //
   if (PrintCommandText) {
-    ShellPrintEx(-1, -1, L"%H%-14s%N- %s\r\n", CommandToGetHelpOn, OutText);
+    ShellPrintEx(-1, -1, L"%H%-14s%N - %s\r\n", CommandToGetHelpOn, OutText);
+//    Print(L"%-14s - %s\n", CommandToGetHelpOn, OutText);
   } else {
     ShellPrintEx(-1, -1, L"%N%s\r\n", OutText);
   }

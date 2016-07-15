@@ -76,42 +76,6 @@ typedef struct {
 } BGFG_OPERATION;
 
 /**
-  Get the actual number of entries in EFI_KEY_OPTION.Keys, from 0-3.
-
-  @param   KeyOption  Pointer to the EFI_KEY_OPTION structure. 
-
-  @return  Actual number of entries in EFI_KEY_OPTION.Keys.
-**/
-#define KEY_OPTION_INPUT_KEY_COUNT(KeyOption) \
-  (((KeyOption)->KeyData & EFI_KEY_OPTION_INPUT_KEY_COUNT_MASK) >> LowBitSet32 (EFI_KEY_OPTION_INPUT_KEY_COUNT_MASK))
-
-//from dmazar
-/** Finds and returns pointer to specified DevPath node in DevicePath or NULL.
- *  If SubType == 0 then it is ignored.
- */
-EFI_DEVICE_PATH_PROTOCOL *
-FindDevicePathNodeWithType (
-                            IN  EFI_DEVICE_PATH_PROTOCOL    *DevicePath,
-                            IN  UINT8           Type,
-                            IN  UINT8           SubType OPTIONAL
-                            )
-{
-
-  while ( !IsDevicePathEnd (DevicePath) ) {
-    if (DevicePathType (DevicePath) == Type && (SubType == 0 || DevicePathSubType (DevicePath) == SubType)) {
-      return DevicePath;
-    }
-    DevicePath = NextDevicePathNode (DevicePath);
-  }
-  
-  //
-  // Not found
-  //
-  return NULL;
-}
-
-
-/**
   Update the optional data for a boot or driver option.
 
   If optional data exists it will be changed.
@@ -346,6 +310,7 @@ BcfgAdd(
 {
   EFI_STATUS                Status;
   EFI_DEVICE_PATH_PROTOCOL  *DevicePath;
+  EFI_DEVICE_PATH_PROTOCOL  *DevPath;
   EFI_DEVICE_PATH_PROTOCOL  *FilePath;
   CHAR16                    *Str;
   UINT8                     *TempByteBuffer;
@@ -389,7 +354,7 @@ BcfgAdd(
   if (UseHandle) {
     CurHandle = ConvertHandleIndexToHandle(HandleNumber);
     if (CurHandle == NULL) {
-      ShellPrintHiiEx(-1, -1, NULL, STRING_TOKEN (STR_GEN_PROBLEM), gShellBcfgHiiHandle, L"Handle Number");
+      ShellPrintHiiEx(-1, -1, NULL, STRING_TOKEN (STR_GEN_PARAM_INV), gShellBcfgHiiHandle, L"bcfg", L"Handle Number");
       ShellStatus = SHELL_INVALID_PARAMETER;
     } else {
       if (Target == BcfgTargetBootOrder) {
@@ -498,9 +463,9 @@ BcfgAdd(
           ShellPrintHiiEx(-1, -1, NULL, STRING_TOKEN (STR_BCFG_FILE_DP), gShellBcfgHiiHandle, L"bcfg", Arg->FullName);  
           ShellStatus = SHELL_UNSUPPORTED;
         } else {
-/*
           if (UsePath) {
             DevPath = DevicePath;
+            ShellStatus = SHELL_INVALID_PARAMETER;
             while (!IsDevicePathEnd(DevPath)) {
               if ((DevicePathType(DevPath) == MEDIA_DEVICE_PATH) &&
                 (DevicePathSubType(DevPath) == MEDIA_HARDDRIVE_DP)) {
@@ -508,34 +473,16 @@ BcfgAdd(
                 //
                 // If we find it use it instead
                 //
-                DevicePath = DevPath;
+                ShellStatus = SHELL_SUCCESS;
+                FilePath    = DuplicateDevicePath (DevPath);
                 break;
               }
               DevPath = NextDevicePathNode(DevPath);
             }
-            //
-            // append the file
-            //
-            for(StringWalker=Arg->FullName; *StringWalker != CHAR_NULL && *StringWalker != ':'; StringWalker++);
-            FileNode = FileDevicePath(NULL, StringWalker+1);
-            FilePath = AppendDevicePath(DevicePath, FileNode);
-            FreePool(FileNode);
           } else {
-*/
-//            FilePath = DuplicateDevicePath(DevicePath);
-          //now we want to shorten DevicePath
-          FilePath = DuplicateDevicePath (FindDevicePathNodeWithType (DevicePath, MEDIA_DEVICE_PATH, MEDIA_HARDDRIVE_DP));
-          if (FilePath != NULL) {
-            FreePool (DevicePath);
-          } else {
-            //can't shorten
-            FilePath = DevicePath;
+            FilePath = DuplicateDevicePath(DevicePath);
           }
-          ShellStatus = SHELL_SUCCESS;
-/*
-          }
-*/
-//          FreePool(DevicePath);
+          FreePool(DevicePath);
         }
       }
     }

@@ -1464,6 +1464,7 @@ InternalShellExecuteDevicePath(
   }
 
   InitializeListHead(&OrigEnvs);
+  ZeroMem(&ShellParamsProtocol, sizeof(EFI_SHELL_PARAMETERS_PROTOCOL));
 
   NewHandle = NULL;
 
@@ -1506,6 +1507,20 @@ InternalShellExecuteDevicePath(
     EFI_OPEN_PROTOCOL_GET_PROTOCOL);
 
   if (!EFI_ERROR(Status)) {
+      //
+    // If the image is not an app abort it.
+    //
+    if (LoadedImage->ImageCodeType != EfiLoaderCode){
+      ShellPrintHiiEx(
+        -1, 
+        -1, 
+        NULL,
+        STRING_TOKEN (STR_SHELL_IMAGE_NOT_APP),
+        ShellInfoObject.HiiHandle
+      );
+      goto UnloadImage;
+    }
+
 //    ASSERT(LoadedImage->LoadOptionsSize == 0);
     LoadedImage->LoadOptionsSize = 0;
     if (NewCmdLine != NULL) {
@@ -2731,7 +2746,6 @@ EfiShellGetEnvEx(
   EFI_STATUS  Status;
   VOID        *Buffer;
   UINTN       Size;
-  LIST_ENTRY  List;
   ENV_VAR_LIST *Node;
   CHAR16      *CurrentWriteLocation;
 
@@ -2739,21 +2753,13 @@ EfiShellGetEnvEx(
   Buffer = NULL;
 
   if (Name == NULL) {
-    //
-    // Get all our environment variables
-    //
-    InitializeListHead(&List);
-    Status = GetEnvironmentVariableList(&List);
-    if (EFI_ERROR(Status)){
-      return (NULL);
-    }
 
     //
     // Build the semi-colon delimited list. (2 passes)
     //
-    for ( Node = (ENV_VAR_LIST*)GetFirstNode(&List)
-      ; !IsNull(&List, &Node->Link)
-      ; Node = (ENV_VAR_LIST*)GetNextNode(&List, &Node->Link)
+    for ( Node = (ENV_VAR_LIST*)GetFirstNode(&gShellEnvVarList.Link)
+      ; !IsNull(&gShellEnvVarList.Link, &Node->Link)
+      ; Node = (ENV_VAR_LIST*)GetNextNode(&gShellEnvVarList.Link, &Node->Link)
      ){
  //     ASSERT(Node->Key != NULL);
       if (!Node->Key) {
@@ -2766,16 +2772,13 @@ EfiShellGetEnvEx(
 
     Buffer = AllocateZeroPool(Size);
     if (Buffer == NULL) {
-      if (!IsListEmpty (&List)) {
-        FreeEnvironmentVariableList(&List);
-      }
       return (NULL);
     }
     CurrentWriteLocation = (CHAR16*)Buffer;
 
-    for ( Node = (ENV_VAR_LIST*)GetFirstNode(&List)
-      ; !IsNull(&List, &Node->Link)
-      ; Node = (ENV_VAR_LIST*)GetNextNode(&List, &Node->Link)
+    for ( Node = (ENV_VAR_LIST*)GetFirstNode(&gShellEnvVarList.Link)
+      ; !IsNull(&gShellEnvVarList.Link, &Node->Link)
+      ; Node = (ENV_VAR_LIST*)GetNextNode(&gShellEnvVarList.Link, &Node->Link)
      ){
       //     ASSERT(Node->Key != NULL);
       if (!Node->Key) {
@@ -2788,17 +2791,13 @@ EfiShellGetEnvEx(
       CurrentWriteLocation += StrLen(CurrentWriteLocation) + 1;
     }
 
-    //
-    // Free the list...
-    //
-    if (!IsListEmpty (&List)) {
-      FreeEnvironmentVariableList(&List);
-    }
   } else {
     //
     // We are doing a specific environment variable
     //
+    Status = ShellFindEnvVarInList(Name, (CHAR16**)&Buffer, &Size, Attributes);
 
+    if (EFI_ERROR(Status)){
     //
     // get the size we need for this EnvVariable
     //
@@ -2819,6 +2818,16 @@ EfiShellGetEnvEx(
         FreePool(Buffer);
       }
       return (NULL);
+      } else {
+        //
+        // If we did not find the environment variable in the gShellEnvVarList
+        // but get it from UEFI variable storage successfully then we need update
+        // the gShellEnvVarList.
+        //
+        ShellFreeEnvVarList ();
+        Status = ShellInitEnvVarList ();
+ //       ASSERT (Status == EFI_SUCCESS);
+      }
     }
   }
 
@@ -2878,14 +2887,35 @@ InternalEfiShellSetEnv(
   IN BOOLEAN Volatile
   )
 {
+  EFI_STATUS      Status;
+  UINT32          Atts;
+
+  Atts = 0x0;
+  
   if (Value == NULL || StrLen(Value) == 0) {
-    return (SHELL_DELETE_ENVIRONMENT_VARIABLE(Name));
+    Status = SHELL_DELETE_ENVIRONMENT_VARIABLE(Name);
+    if (!EFI_ERROR(Status)) {
+      ShellRemvoeEnvVarFromList(Name);
+    }
+    return Status;
   } else {
     SHELL_DELETE_ENVIRONMENT_VARIABLE(Name);
     if (Volatile) {
-      return (SHELL_SET_ENVIRONMENT_VARIABLE_V(Name, StrSize(Value), Value));
+      Status = SHELL_SET_ENVIRONMENT_VARIABLE_V(Name, StrSize(Value), Value);
+      if (!EFI_ERROR(Status)) {
+        Atts   &= ~EFI_VARIABLE_NON_VOLATILE;
+        Atts   |= EFI_VARIABLE_BOOTSERVICE_ACCESS;
+        ShellAddEnvVarToList(Name, Value, StrSize(Value), Atts);
+      }
+      return Status;
     } else {
-      return (SHELL_SET_ENVIRONMENT_VARIABLE_NV(Name, StrSize(Value), Value));
+      Status = SHELL_SET_ENVIRONMENT_VARIABLE_NV(Name, StrSize(Value), Value);
+      if (!EFI_ERROR(Status)) {
+        Atts   |= EFI_VARIABLE_NON_VOLATILE;
+        Atts   |= EFI_VARIABLE_BOOTSERVICE_ACCESS;
+        ShellAddEnvVarToList(Name, Value, StrSize(Value), Atts);
+      } 
+      return Status;
     }
   }
 }

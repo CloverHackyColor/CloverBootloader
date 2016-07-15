@@ -74,9 +74,10 @@
   UefiHiiServicesLib
 
 [Guids]
-  gShellVariableGuid                                      ## CONSUMES ## GUID
+  gShellVariableGuid                                      ## SOMETIMES_CONSUMES ## GUID
   gShellMapGuid                                           ## CONSUMES ## GUID
-  gShellAliasGuid                                         ## CONSUMES ## GUID
+  gShellAliasGuid                                         ## SOMETIMES_CONSUMES ## GUID
+  gShellAliasGuid                                         ## SOMETIMES_PRODUCES ## GUID
   gEfiGlobalVariableGuid
 
 [Protocols]
@@ -88,15 +89,15 @@
 #  gEfiShellEnvironment2Guid                              ## SOMETIMES_PRODUCES
 #  gEfiShellInterfaceGuid                                 ## SOMETIMES_PRODUCES
 
-  gEfiSimpleTextInputExProtocolGuid                       # ALWAYS_CONSUMED
-  gEfiSimpleTextInProtocolGuid                            # ALWAYS_CONSUMED
-  gEfiSimpleTextOutProtocolGuid                           # ALWAYS_CONSUMED
-  gEfiSimpleFileSystemProtocolGuid                        # ALWAYS_CONSUMED
-  gEfiLoadedImageProtocolGuid                             # ALWAYS_CONSUMED
-  gEfiComponentName2ProtocolGuid                          # ALWAYS_CONSUMED
+  gEfiSimpleTextInputExProtocolGuid                       ## CONSUMES
+  gEfiSimpleTextInProtocolGuid                            ## CONSUMES
+  gEfiSimpleTextOutProtocolGuid                           ## CONSUMES
+  gEfiSimpleFileSystemProtocolGuid                        ## SOMETIMES_CONSUMES
+  gEfiLoadedImageProtocolGuid                             ## CONSUMES
+  gEfiComponentName2ProtocolGuid                          ## SOMETIMES_CONSUMES
   gEfiUnicodeCollationProtocolGuid                       # ALWAYS_CONSUMED
-  gEfiUnicodeCollation2ProtocolGuid
-  gEfiDevicePathProtocolGuid                              # ALWAYS_CONSUMED
+  gEfiUnicodeCollation2ProtocolGuid                       ## CONSUMES
+  gEfiDevicePathProtocolGuid                              ## CONSUMES
   gEfiHiiPackageListProtocolGuid                          ## SOMETIMES_PRODUCES
 
 [Pcd]
