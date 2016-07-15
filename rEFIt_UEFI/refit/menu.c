@@ -1158,7 +1158,11 @@ static VOID InitSelection(VOID)
   if (GlobalConfig.BootCampStyle) {
     // load indicator selection image
     if (GlobalConfig.SelectionIndicatorName != NULL) {
-      SelectionImages[4] = egLoadImage(ThemeDir, GlobalConfig.SelectionIndicatorName, FALSE);
+      SelectionImages[4] = egLoadImage(ThemeDir, GlobalConfig.SelectionIndicatorName, TRUE);
+    }
+    if (!SelectionImages[4]) {
+      SelectionImages[4] = egDecodePNG(&emb_selection_indicator[0], sizeof(emb_selection_indicator), 52, TRUE);
+      
     }
     SelectionImages[4] = egEnsureImageSize(SelectionImages[4], INDICATOR_SIZE, INDICATOR_SIZE, &MenuBackgroundPixel);
     SelectionImages[5] = egCreateFilledImage(INDICATOR_SIZE, INDICATOR_SIZE,
