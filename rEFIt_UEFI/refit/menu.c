@@ -4354,7 +4354,11 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
   } else {
     OptionMenu.TitleImage = NULL;
   }
+
+  gThemeOptionsChanged = FALSE;
+
   if (OptionMenu.EntryCount == 0) {
+    gThemeOptionsChanged = TRUE;
     OptionMenu.ID = SCREEN_OPTIONS;
     OptionMenu.AnimeRun = GetAnime(&OptionMenu); //FALSE;
 //    Flags = AllocateZeroPool(255);

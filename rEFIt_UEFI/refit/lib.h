@@ -584,6 +584,7 @@ extern EG_IMAGE         *SelectionImages[];
 extern BOOLEAN          gThemeChanged;
 //extern BOOLEAN          gBootArgsChanged;
 extern BOOLEAN          gBootChanged;
+extern BOOLEAN          gThemeOptionsChanged;
 //extern POINTERS         gPointer;
 extern REFIT_MENU_SCREEN OptionMenu;
 //extern EFI_GUID gEfiAppleBootGuid;

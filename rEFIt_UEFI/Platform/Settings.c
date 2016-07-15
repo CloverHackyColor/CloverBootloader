@@ -2823,6 +2823,8 @@ GetListOfThemes ()
     DBG ("\n");
   }
 
+  ThemesList[ThemesNum++] = PoolPrint(L"embedded");
+
   DirIterClose (&DirIter);
 }
 

@@ -1000,7 +1000,8 @@ VOID InitAnime(REFIT_MENU_SCREEN *Screen)
 
   // Check if we should clear old film vars (no anime or anime path changed)
   //
-  if (!Anime || !Screen->Film || !GlobalConfig.Theme || !Screen->Theme ||
+  //if (!Anime || !Screen->Film || !GlobalConfig.Theme || !Screen->Theme ||
+  if (gThemeOptionsChanged || !Anime || !Screen->Film || !GlobalConfig.Theme || !Screen->Theme ||
       (/*gThemeChanged && */StrCmp(GlobalConfig.Theme, Screen->Theme) != 0)) {
 //    DBG(" free screen\n");
     if (Screen->Film) {

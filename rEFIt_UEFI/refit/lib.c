@@ -63,6 +63,7 @@ CHAR16           *ThemePath;
 BOOLEAN          gThemeChanged = FALSE;
 //BOOLEAN          gBootArgsChanged = FALSE;
 BOOLEAN          gBootChanged = FALSE;
+BOOLEAN          gThemeOptionsChanged = FALSE;
 
 EFI_FILE         *OEMDir;
 CHAR16           *OEMPath = L"EFI\\CLOVER";
