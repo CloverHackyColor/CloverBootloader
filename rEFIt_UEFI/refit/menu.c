@@ -2105,6 +2105,7 @@ VOID DrawBCSText(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
 {
   INTN      TextWidth = 0;
   INTN      XText = 0;
+  INTN      i;
   EG_IMAGE  *TextBufferXY = NULL;
   CHAR16    *BCSText = NULL;
   
@@ -2123,7 +2124,7 @@ VOID DrawBCSText(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
   if (StrLen(Text) > 13) {
     BCSText = AllocatePool(sizeof(CHAR16) * 16);
     
-    for (INTN i = 0; i < 16; i++) {
+    for (i = 0; i < 16; i++) {
       if (i < 13) {
         BCSText[i] = Text[i];
       } else {
