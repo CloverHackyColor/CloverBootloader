@@ -2109,7 +2109,7 @@ VOID DrawBCSText(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
 {
   INTN      TextWidth = 0;
   INTN      XText = 0;
-  INTN      i;
+  INTN      i = 0;
   EG_IMAGE  *TextBufferXY = NULL;
   CHAR16    *BCSText = NULL;
   
@@ -2117,7 +2117,7 @@ VOID DrawBCSText(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
     return;
   }
   
-  TextWidth = ((StrLen(Text) <= 13) ? StrLen(Text) : 16) *
+  TextWidth = ((StrLen(Text) <= 13) ? StrLen(Text) : ((GlobalConfig.Font == FONT_LOAD) ? 13 : 16)) *
   ((FontWidth > GlobalConfig.CharWidth) ? FontWidth : GlobalConfig.CharWidth);
   
   TextBufferXY = egCreateImage(TextWidth, FontHeight, TRUE);
@@ -2126,15 +2126,16 @@ VOID DrawBCSText(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
   
   // render the text
   if (StrLen(Text) > 13) {
-    BCSText = AllocatePool(sizeof(CHAR16) * 16);
+    BCSText = AllocatePool(sizeof(CHAR16) * ((GlobalConfig.Font == FONT_LOAD) ? 13 : 16));
     
-    for (i = 0; i < 16; i++) {
-      if (i < 13) {
+    for (i = 0; i < ((GlobalConfig.Font == FONT_LOAD) ? 13 : 16); i++) {
+      if (i < ((GlobalConfig.Font == FONT_LOAD) ? 10 : 13)) {
         BCSText[i] = Text[i];
       } else {
         BCSText[i] = L'.';
       }
     }
+    BCSText[((GlobalConfig.Font == FONT_LOAD) ? 13 : 16)] = '\0';
     
     if (!BCSText) {
       return;
@@ -2646,7 +2647,8 @@ static VOID DrawMainMenuEntry(REFIT_MENU_ENTRY *Entry, BOOLEAN selected, INTN XP
       BltImageCompositeIndicator(SelectionImages[(4) + (selected ? 0 : 1)], SelectionImages[5],
                                      XPos + (row0TileSize / 2) - (INDICATOR_SIZE / 2),
                                      row0PosY + row0TileSize
-                                     + ((GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL) ? 10 : (FontHeight - TEXT_YMARGIN + 20)), Scale);
+                                     + ((GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL) ? 10 :
+                                        (FontHeight - TEXT_YMARGIN + 20)), Scale);
     }
   }
     
