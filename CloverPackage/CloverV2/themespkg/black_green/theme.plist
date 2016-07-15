@@ -7,7 +7,7 @@
 	<key>Year</key>
 	<string>2012</string>
 	<key>Description</key>
-	<string>3rd revision of my black_green (v3.1)</string>
+	<string>3rd revision of my black_green (v3.3)</string>
 	<key>Theme</key>
 	<dict>
 		<key>Badges</key>
@@ -47,6 +47,8 @@
 			<key>Type</key>
 			<string>Load</string>
 		</dict>
+		<key>BootCampStyle</key>
+		<false/>
 		<key>Selection</key>
 		<dict>
 			<key>Big</key>
@@ -59,6 +61,8 @@
 			<false/>
 			<key>OnTop</key>
 			<true/>
+			<key>Indicator</key>
+			<string>selection_indicator.png</string>
 		</dict>
 		<key>Anime</key>
 		<array>
