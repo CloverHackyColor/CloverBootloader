@@ -2782,8 +2782,6 @@ GetListOfACPI ()
   FreePool(AcpiPath);
 }
 
-#define CONFIG_THEME_FILENAME L"theme.plist"
-
 VOID
 GetListOfThemes ()
 {
@@ -2798,7 +2796,8 @@ GetListOfThemes ()
   ThemesNum = 0;
   DirIterOpen (SelfRootDir, L"\\EFI\\CLOVER\\themes", &DirIter);
   while (DirIterNext(&DirIter, 1, L"*.EFI", &DirEntry)) {
-    if (DirEntry->FileName[0] == '.'){
+    if (DirEntry->FileName[0] == '.' || (StriCmp(DirEntry->FileName, CONFIG_THEME_EMEDDED) == 0) || (StriCmp(DirEntry->FileName, CONFIG_THEME_RANDOM) == 0)) {
+      //DBG("Skip theme: %s\n", DirEntry->FileName);
       continue;
     }
 
@@ -2816,14 +2815,12 @@ GetListOfThemes ()
           ThemesList[ThemesNum++] = (CHAR16*)AllocateCopyPool (StrSize (DirEntry->FileName), DirEntry->FileName);
         }
       }
-
       FreePool (ThemeTestPath);
     }
-
     DBG ("\n");
   }
 
-  ThemesList[ThemesNum++] = PoolPrint(L"embedded");
+  ThemesList[ThemesNum++] = PoolPrint(CONFIG_THEME_EMEDDED);
 
   DirIterClose (&DirIter);
 }
@@ -3361,7 +3358,7 @@ InitTheme(
   UINTN      Size         = 0;
   UINTN      i;
   TagPtr     ThemeDict    = NULL;
-  CHAR8      *ChosenTheme = NULL;
+  CHAR16     *ChosenTheme = NULL;
   CHAR16     *TestTheme   = NULL;
   UINTN      Rnd;
 
@@ -3404,14 +3401,14 @@ InitTheme(
   }
 
   if (ThemesNum > 0 &&
-      (!GlobalConfig.Theme || StrCmp (GlobalConfig.Theme, L"embedded") != 0)) {
+      (!GlobalConfig.Theme || StriCmp (GlobalConfig.Theme, CONFIG_THEME_EMEDDED) != 0)) {
     //DBG("1\n");
     // Try special theme first
     if (Time != NULL) {
       if ((Time->Month == 12) && ((Time->Day >= 25) && (Time->Day <= 31))) {
-        TestTheme = PoolPrint (L"christmas");
+        TestTheme = PoolPrint (CONFIG_THEME_CHRISTMAS);
       } else if ((Time->Month == 1) && ((Time->Day >= 1) && (Time->Day <= 7))) {
-        TestTheme = PoolPrint (L"newyear");
+        TestTheme = PoolPrint (CONFIG_THEME_NEWYEAR);
       }
 
       if (TestTheme != NULL) {
@@ -3429,7 +3426,7 @@ InitTheme(
         TestTheme = NULL;
       } /* else {  //later
          //shuffle
-         if (StrCmp (GlobalConfig.Theme, L"random") == 0) {
+         if (StrCmp (GlobalConfig.Theme, CONFIG_THEME_RANDOM) == 0) {
          ThemeDict = LoadTheme (ThemesList[Rnd]);
          }
          } */
@@ -3439,29 +3436,29 @@ InitTheme(
     if (ThemeDict == NULL && UseThemeDefinedInNVRam) {
       ChosenTheme   = GetNvramVariable(L"Clover.Theme", &gEfiAppleBootGuid, NULL, &Size);
       if (ChosenTheme != NULL) {
-        if (AsciiStrCmp (ChosenTheme, "embedded") == 0) {
+        if (StriCmp (ChosenTheme, CONFIG_THEME_EMEDDED) == 0) {
           goto finish;
         }
-        if (AsciiStrCmp (ChosenTheme, "random") == 0) {
+        if (StriCmp (ChosenTheme, CONFIG_THEME_RANDOM) == 0) {
           ThemeDict = LoadTheme (ThemesList[Rnd]);
           goto finish;
         }
 
-        TestTheme   = PoolPrint (L"%a", ChosenTheme);
+        TestTheme   = PoolPrint (L"%s", ChosenTheme);
         if (TestTheme != NULL) {
           ThemeDict = LoadTheme (TestTheme);
           //         DBG("3\n");
           if (ThemeDict != NULL) {
-            DBG ("theme %a defined in NVRAM found and %s parsed\n", ChosenTheme, CONFIG_THEME_FILENAME);
+            DBG ("theme %s defined in NVRAM found and %s parsed\n", ChosenTheme, CONFIG_THEME_FILENAME);
             if (GlobalConfig.Theme != NULL) {
               FreePool (GlobalConfig.Theme);
             }
             GlobalConfig.Theme = TestTheme;
           } else { // theme from nvram not loaded
             if (GlobalConfig.Theme != NULL) {
-              DBG ("theme %a chosen from nvram is absent, using theme defined in config: %s\n", ChosenTheme, GlobalConfig.Theme);
+              DBG ("theme %s chosen from nvram is absent, using theme defined in config: %s\n", ChosenTheme, GlobalConfig.Theme);
             } else {
-              DBG ("theme %a chosen from nvram is absent, get first theme\n", ChosenTheme);
+              DBG ("theme %s chosen from nvram is absent, get first theme\n", ChosenTheme);
             }
             FreePool (TestTheme);
           }
@@ -3475,12 +3472,12 @@ InitTheme(
     if (ThemeDict == NULL) {
       if (GlobalConfig.Theme == NULL) {
         if (Time != NULL) {
-          DBG ("no default theme, get random theme %s\n", CONFIG_THEME_FILENAME, ThemesList[Rnd]);
+          DBG ("no default theme, get random theme %s\n", ThemesList[Rnd]);
         } else {
-          DBG ("no default theme, get first theme %s\n",  CONFIG_THEME_FILENAME, ThemesList[0]);
+          DBG ("no default theme, get first theme %s\n", ThemesList[0]);
         }
       } else {
-        if (StrCmp (GlobalConfig.Theme, L"random") == 0) {
+        if (StrCmp (GlobalConfig.Theme, CONFIG_THEME_RANDOM) == 0) {
           ThemeDict = LoadTheme (ThemesList[Rnd]);
         } else {
           ThemeDict = LoadTheme (GlobalConfig.Theme);
