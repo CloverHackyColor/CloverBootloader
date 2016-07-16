@@ -340,12 +340,12 @@ VOID FilterKextPatches(IN LOADER_ENTRY *Entry)
     DBG("Filtering KextPatches:\n");
     INTN i = 0;
     for (; i < Entry->KernelAndKextPatches->NrKexts; ++i) {
-      DBG(" - Patch [%d] \"%a\" :: %a :: [OS: %a | MatchOS: %a]",
+      DBG(" - [%d]: %a :: %a :: [OS: %a | MatchOS: %a]",
         i,
-        Entry->KernelAndKextPatches->KextPatches[i].Name, 
-        Entry->KernelAndKextPatches->KextPatches[i].IsPlistPatch ? "KextPatchPlist" : "KextPatch", 
+        Entry->KernelAndKextPatches->KextPatches[i].Label, 
+        Entry->KernelAndKextPatches->KextPatches[i].IsPlistPatch ? "PlistPatch" : "BinPatch", 
         Entry->OSVersion,
-        Entry->KernelAndKextPatches->KextPatches[i].MatchOS ? Entry->KernelAndKextPatches->KextPatches[i].MatchOS : "undefined"
+        Entry->KernelAndKextPatches->KextPatches[i].MatchOS ? Entry->KernelAndKextPatches->KextPatches[i].MatchOS : "All"
       );
       if (!IsPatchEnabled(Entry->KernelAndKextPatches->KextPatches[i].MatchOS, Entry->OSVersion)) {
         DBG(" ==> not allowed\n");
@@ -356,6 +356,30 @@ VOID FilterKextPatches(IN LOADER_ENTRY *Entry)
     }
   }
 }
+
+#if ENABLE_KERNELTOPATCH >= 1
+VOID FilterKernelPatches(IN LOADER_ENTRY *Entry)
+{
+  if ((Entry->KernelAndKextPatches->KernelPatches != NULL) && Entry->KernelAndKextPatches->NrKernels) {
+    DBG("Filtering KernelPatches:\n");
+    INTN i = 0;
+    for (; i < Entry->KernelAndKextPatches->NrKernels; ++i) {
+      DBG(" - [%d]: %a :: [OS: %a | MatchOS: %a]",
+        i,
+        Entry->KernelAndKextPatches->KernelPatches[i].Label, 
+        Entry->OSVersion,
+        Entry->KernelAndKextPatches->KernelPatches[i].MatchOS ? Entry->KernelAndKextPatches->KernelPatches[i].MatchOS : "All"
+      );
+      if (!IsPatchEnabled(Entry->KernelAndKextPatches->KernelPatches[i].MatchOS, Entry->OSVersion)) {
+        DBG(" ==> not allowed\n");
+        Entry->KernelAndKextPatches->KernelPatches[i].Disabled = TRUE;
+        continue;
+      }
+      DBG(" ==> allowed\n");
+    }
+  }
+}
+#endif
 
 //
 // Null ConOut OutputString() implementation - for blocking
@@ -459,6 +483,11 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     DBG(" %a\n", Entry->OSVersion);
 
     FilterKextPatches(Entry);
+
+#if ENABLE_KERNELTOPATCH >= 1
+    FilterKernelPatches(Entry);
+#endif
+
     // if "InjectKexts if no FakeSMC" and OSFLAG_WITHKEXTS is not set
     // then user selected submenu entry and requested no injection.
     // we'll turn off global "InjectKexts if no FakeSMC" to avoid unnecessary

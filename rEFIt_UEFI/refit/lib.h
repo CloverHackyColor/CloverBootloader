@@ -44,6 +44,8 @@
 #define Print if ((!GlobalConfig.Quiet) || (GlobalConfig.TextOnly)) Print
 //#include "GenericBdsLib.h"
 
+#define ENABLE_KERNELTOPATCH 0
+
 extern EFI_HANDLE             gImageHandle;
 extern EFI_SYSTEM_TABLE*			gST;
 extern EFI_BOOT_SERVICES*			gBS;
@@ -449,6 +451,7 @@ typedef struct {
 
 typedef struct {
   CHAR8   *Name;
+  CHAR8   *Label;
   BOOLEAN IsPlistPatch;
   CHAR8   align[7];
   INTN    DataLen;
@@ -460,6 +463,18 @@ typedef struct {
   CHAR8   *MatchOS;
   BOOLEAN Disabled;
 } KEXT_PATCH;
+
+#if ENABLE_KERNELTOPATCH >= 1
+typedef struct {
+  CHAR8   *Label;
+  INTN    DataLen;
+  UINT8   *Data;
+  UINT8   *Patch;
+  INTN    Count;
+  CHAR8   *MatchOS;
+  BOOLEAN Disabled;
+} KERNEL_PATCH;
+#endif
 
 typedef struct KERNEL_AND_KEXT_PATCHES
 {
@@ -504,6 +519,10 @@ typedef struct KERNEL_AND_KEXT_PATCHES
   CHAR16 **ForceKexts;
 #if defined(MDE_CPU_IA32)
   UINT32 align6;
+#endif
+#if ENABLE_KERNELTOPATCH >= 1
+  INT32   NrKernels;
+  KERNEL_PATCH *KernelPatches;
 #endif
 } KERNEL_AND_KEXT_PATCHES;
 
@@ -562,7 +581,7 @@ struct GUI_ANIME {
 
 #define CONFIG_THEME_FILENAME     L"theme.plist"
 #define CONFIG_THEME_RANDOM       L"random"
-#define CONFIG_THEME_EMEDDED      L"embedded"
+#define CONFIG_THEME_EMBEDDED     L"embedded"
 #define CONFIG_THEME_CHRISTMAS    L"christmas"
 #define CONFIG_THEME_NEWYEAR      L"newyear"
 

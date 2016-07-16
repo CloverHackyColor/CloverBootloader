@@ -610,7 +610,7 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
   else if (NumYos == 1) {
 	  Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEYosSearch, sizeof(KBEYosSearch), KBEYosReplace, 1) +
 		SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEECSearch, sizeof(KBEECSearch), KBEECReplace, 1) +
-      /* Micky1979, was a pain to place F/R here */
+    // Micky1979, was a pain to place F/R here
     SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBESieSearch, sizeof(KBESieSearch), KBESieReplace, 1) +
  //   SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBESieDP2Search, sizeof(KBESieDP2Search), KBESieDP2Replace, 1);
     // 10.12 dp2 by cecekpawon

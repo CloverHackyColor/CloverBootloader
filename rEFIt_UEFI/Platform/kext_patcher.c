@@ -505,30 +505,22 @@ VOID CheckForFakeSMC(CHAR8 *InfoPlist, LOADER_ENTRY *Entry)
 //
 VOID AnyKextPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize, INT32 N, LOADER_ENTRY *Entry)
 {
-  
   UINTN   Num = 0;
-  //CHAR8   *MatchOS, *CurrOS;
   
   DBG_RT(Entry, "\nAnyKextPatch %d: driverAddr = %x, driverSize = %x\nAnyKext = %a\n",
          N, Driver, DriverSize, Entry->KernelAndKextPatches->KextPatches[N].Name);
-  
-  //MatchOS = Entry->KernelAndKextPatches->KextPatches[N].MatchOS;
-  //CurrOS = Entry->OSVersion;
-  //if (!IsPatchEnabled(MatchOS, CurrOS)) {
-  //  DBG_RT(Entry, "This patch is not allowed for booted OS %a\n", CurrOS);
-  //  return;
-  //}
 
   if (Entry->KernelAndKextPatches->KextPatches[N].Disabled) {
-    DBG_RT(Entry, "This patch is not allowed for booted OS %a\n", Entry->OSVersion);
+    DBG_RT(Entry, "Patch[%d]: %a :: is not allowed for booted OS %a\n", N, Entry->KernelAndKextPatches->KextPatches[N].Label, Entry->OSVersion);
     return;
   }
   
   if (Entry->KernelAndKextPatches->KPDebug) {
     ExtractKextBoundleIdentifier(InfoPlist);
   }
+
   DBG_RT(Entry, "Kext: %a\n", gKextBoundleIdentifier);
-  
+
   if (!Entry->KernelAndKextPatches->KextPatches[N].IsPlistPatch) {
     // kext binary patch
     DBG_RT(Entry, "Binary patch\n");

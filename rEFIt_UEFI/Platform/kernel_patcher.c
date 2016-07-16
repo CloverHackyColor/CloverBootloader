@@ -1211,6 +1211,51 @@ FindBootArgs(IN LOADER_ENTRY *Entry)
   }
 }
 
+#if ENABLE_KERNELTOPATCH >= 1
+#define UKERNEL_MAX_SIZE 40000000
+BOOLEAN
+KernelUserPatch(IN UINT8 *UKernelData, LOADER_ENTRY *Entry)
+{
+  INTN Num, i = 0, y = 0;
+  for (; i < Entry->KernelAndKextPatches->NrKernels; ++i) {
+    if (Entry->KernelAndKextPatches->KernelPatches[i].Disabled) {
+      DBG_RT(Entry, "Patch[%d]: %a :: is not allowed for booted OS %a\n", i, Entry->KernelAndKextPatches->KernelPatches[i].Label, Entry->OSVersion);
+      continue;
+    }
+
+    Num = SearchAndCount(
+      UKernelData, 
+      UKERNEL_MAX_SIZE, 
+      Entry->KernelAndKextPatches->KernelPatches[i].Data, 
+      Entry->KernelAndKextPatches->KernelPatches[i].DataLen
+    );
+
+    DBG_RT(Entry, "==> Patch[%d]: %a", i, Entry->KernelAndKextPatches->KernelPatches[i].Label);
+
+    if (!Num) {
+      DBG_RT(Entry, " :: %d pattern(s) not found.\n", Num);
+      continue;    
+    }
+
+    Num = SearchAndReplace(
+      UKernelData, 
+      UKERNEL_MAX_SIZE, 
+      Entry->KernelAndKextPatches->KernelPatches[i].Data, 
+      Entry->KernelAndKextPatches->KernelPatches[i].DataLen,
+      Entry->KernelAndKextPatches->KernelPatches[i].Patch,
+      Entry->KernelAndKextPatches->KernelPatches[i].Count
+    );
+
+    if (Num) {
+      y++;
+      DBG_RT(Entry, " :: %d replaces done.\n", Num);
+    }
+  }
+
+  return (y != 0);
+}
+#endif
+
 VOID
 KernelAndKextPatcherInit(IN LOADER_ENTRY *Entry)
 {
@@ -1384,7 +1429,31 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
   } else {
     DBG_RT(Entry, "Not done - Disabled.\n");
   }
-  
+
+#if ENABLE_KERNELTOPATCH >= 1
+  DBG_RT(Entry, "\nKernelToPatch: ");
+  if ((Entry->KernelAndKextPatches->KernelPatches != NULL) && Entry->KernelAndKextPatches->NrKernels) {
+    BOOLEAN patchedOk;
+    KernelAndKextPatcherInit(Entry);
+    if (KernelData == NULL) {
+      if (Entry->KernelAndKextPatches->KPDebug) {
+        DBG_RT(Entry, "ERROR: Kernel not found\n");
+        gBS->Stall(5000000);
+      }
+      return;
+    }
+
+    patchedOk = KernelUserPatch(KernelData, Entry);
+    if (patchedOk) {
+      DBG_RT(Entry, "OK\n");
+    } else {
+      DBG_RT(Entry, " FAILED!\n");
+    }
+  } else {
+    DBG_RT(Entry, "Not done - Disabled.\n");
+  }
+#endif
+
   if (Entry->KernelAndKextPatches->KPDebug) {
     gBS->Stall(2000000);
   }

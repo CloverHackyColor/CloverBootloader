@@ -459,12 +459,12 @@ VOID
         *DataLen = Prop->dataLen;
       }
       /*
-       DBG ("Data: %p, Len: %d = ", Data, Prop->dataLen);
-       for (i = 0; i < Prop->dataLen; i++) {
-       DBG ("%02x ", Data[i]);
-       }
-       DBG ("\n");
-       */
+      DBG ("Data: %p, Len: %d = ", Data, Prop->dataLen);
+      for (i = 0; i < Prop->dataLen; i++) {
+        DBG ("%02x ", Data[i]);
+      }
+      DBG ("\n");
+      */
     } else {
       // assume data in hex encoded string property
       Len = (UINT32)AsciiStrLen (Prop->string) >> 1; // number of hex digits
@@ -475,13 +475,12 @@ VOID
         *DataLen = Len;
       }
       /*
-       DBG ("Data(str): %p, Len: %d = ", data, len);
-       for (i = 0; i < Len; i++) {
-       DBG ("%02x ", data[i]);
-       }
-
-       DBG ("\n");
-       */
+      DBG ("Data(str): %p, Len: %d = ", data, len);
+      for (i = 0; i < Len; i++) {
+        DBG ("%02x ", data[i]);
+      }
+      DBG ("\n");
+      */
     }
   }
 
@@ -679,13 +678,47 @@ CopyKernelAndKextPatches (IN OUT  KERNEL_AND_KEXT_PATCHES *Dst,
         Dst->KextPatches[Dst->NrKexts].Name       = (CHAR8 *)AllocateCopyPool (AsciiStrSize (Src->KextPatches[i].Name), Src->KextPatches[i].Name);
       }
 
+      if (Src->KextPatches[i].Label) {
+        Dst->KextPatches[Dst->NrKexts].Label       = (CHAR8 *)AllocateCopyPool (AsciiStrSize (Src->KextPatches[i].Label), Src->KextPatches[i].Label);
+      }
+
+      Dst->KextPatches[Dst->NrKexts].Disabled     = Src->KextPatches[i].Disabled;
       Dst->KextPatches[Dst->NrKexts].IsPlistPatch = Src->KextPatches[i].IsPlistPatch;
       Dst->KextPatches[Dst->NrKexts].DataLen      = Src->KextPatches[i].DataLen;
       Dst->KextPatches[Dst->NrKexts].Data         = AllocateCopyPool (Src->KextPatches[i].DataLen, Src->KextPatches[i].Data);
       Dst->KextPatches[Dst->NrKexts].Patch        = AllocateCopyPool (Src->KextPatches[i].DataLen, Src->KextPatches[i].Patch);
+      Dst->KextPatches[Dst->NrKexts].MatchOS      = AllocateCopyPool (AsciiStrSize(Src->KextPatches[i].MatchOS), Src->KextPatches[i].MatchOS);
       ++(Dst->NrKexts);
     }
   }
+
+#if ENABLE_KERNELTOPATCH >= 1
+  if ((Src->NrKernels > 0) && (Src->KernelPatches != NULL)) {
+    INTN i;
+    Dst->KernelPatches = AllocatePool (Src->NrKernels * sizeof(KERNEL_PATCH));
+
+    for (i = 0; i < Src->NrKernels; i++)
+    {
+      if ((Src->KernelPatches[i].DataLen <= 0) ||
+          (Src->KernelPatches[i].Data == NULL) ||
+          (Src->KernelPatches[i].Patch == NULL)) {
+        continue;
+      }
+
+      if (Src->KernelPatches[i].Label) {
+        Dst->KernelPatches[Dst->NrKernels].Label      = (CHAR8 *)AllocateCopyPool (AsciiStrSize (Src->KernelPatches[i].Label), Src->KernelPatches[i].Label);
+      }
+
+      Dst->KernelPatches[Dst->NrKernels].Disabled     = Src->KernelPatches[i].Disabled;
+      Dst->KernelPatches[Dst->NrKernels].DataLen      = Src->KernelPatches[i].DataLen;
+      Dst->KernelPatches[Dst->NrKernels].Data         = AllocateCopyPool (Src->KernelPatches[i].DataLen, Src->KernelPatches[i].Data);
+      Dst->KernelPatches[Dst->NrKernels].Patch        = AllocateCopyPool (Src->KernelPatches[i].DataLen, Src->KernelPatches[i].Patch);
+      Dst->KernelPatches[Dst->NrKernels].Count        = Src->KernelPatches[i].Count;
+      Dst->KernelPatches[Dst->NrKernels].MatchOS      = AllocateCopyPool (AsciiStrSize(Src->KernelPatches[i].MatchOS), Src->KernelPatches[i].MatchOS);
+      ++(Dst->NrKernels);
+    }
+  }
+#endif
 
   return TRUE;
 }
@@ -902,7 +935,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
     if (Count > 0) {
       TagPtr     Prop2 = NULL;
       TagPtr     Dict;
-      KEXT_PATCH *newPatches = AllocateZeroPool ((/*Patches->NrKexts + */Count) * sizeof(KEXT_PATCH));
+      KEXT_PATCH *newPatches = AllocateZeroPool (Count * sizeof(KEXT_PATCH));
 
       // Patches->NrKexts = 0;
       /*      if (Patches->KextPatches != NULL) {
@@ -913,6 +946,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
       Patches->KextPatches = newPatches;
       DBG ("KextsToPatch: %d requested\n", Count);
       for (i = 0; i < Count; i++) {
+        CHAR8 *KextPatchesName;
         CHAR8 *KextPatchesLabel;
         UINTN FindLen = 0;
         UINTN ReplaceLen = 0;
@@ -920,7 +954,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         UINT8 *TmpPatch;
         EFI_STATUS Status = GetElement (Prop, i, &Prop2);
         if (EFI_ERROR (Status)) {
-          DBG ("error %r getting next element at index %d\n", Status, i);
+          DBG ("Patches error %r getting next element at index %d\n", Status, i);
           continue;
         }
 
@@ -928,7 +962,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
           break;
         }
 
-        DBG ("KextsToPatch %d:", i);
+        DBG (" - [%d]:", i);
 
         Dict = GetProperty (Prop2, "Name");
         if (Dict == NULL) {
@@ -936,14 +970,18 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
           continue;
         }
 
-        KextPatchesLabel = AllocateCopyPool (AsciiStrSize (Dict->string), Dict->string);
-        
+        KextPatchesName = AllocateCopyPool (AsciiStrSize (Dict->string), Dict->string);
+        KextPatchesLabel = AllocateCopyPool (AsciiStrSize (KextPatchesName), KextPatchesName);
+
         Dict = GetProperty (Prop2, "Comment");
         if (Dict != NULL) {
-          DBG (" %a (%a)", KextPatchesLabel, Dict->string);
+          UnicodeStrToAsciiStr(PoolPrint(L"%a (%a)", KextPatchesLabel, Dict->string), KextPatchesLabel);
         } else {
-          DBG (" %a", KextPatchesLabel);
+          AsciiStrCat(KextPatchesLabel, " (NoLabel)");
         }
+
+
+        DBG (" %a", KextPatchesLabel);
         
         Dict = GetProperty (Prop2, "Disabled");
         if ((Dict != NULL) && IsPropertyTrue (Dict)) {
@@ -962,14 +1000,14 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         Patches->KextPatches[Patches->NrKexts].Data = AllocateCopyPool (FindLen, TmpData);
         Patches->KextPatches[Patches->NrKexts].DataLen = FindLen;
         Patches->KextPatches[Patches->NrKexts].Patch = AllocateCopyPool (FindLen, TmpPatch);
-        //Patches->KextPatches[Patches->NrKexts].Data  = NULL;
-        //Patches->KextPatches[Patches->NrKexts].Patch = NULL;
         Patches->KextPatches[Patches->NrKexts].MatchOS = NULL;
         Patches->KextPatches[Patches->NrKexts].Disabled = FALSE;
-        Patches->KextPatches[Patches->NrKexts].Name = AllocateCopyPool (AsciiStrSize (KextPatchesLabel), KextPatchesLabel);
+        Patches->KextPatches[Patches->NrKexts].Name = AllocateCopyPool (AsciiStrSize (KextPatchesName), KextPatchesName);
+        Patches->KextPatches[Patches->NrKexts].Label = AllocateCopyPool (AsciiStrSize (KextPatchesLabel), KextPatchesLabel);
 
         FreePool(TmpData);
         FreePool(TmpPatch);
+        FreePool(KextPatchesName);
         FreePool(KextPatchesLabel);
 
         // check enable/disabled patch (OS based) by Micky1979
@@ -984,36 +1022,10 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         Patches->KextPatches[Patches->NrKexts].IsPlistPatch = IsPropertyTrue (Dict);
 
         if (Patches->KextPatches[Patches->NrKexts].IsPlistPatch) {
-          DBG (" :: Info.plist patch");
+          DBG (" :: PlistPatch");
         } else {
-          DBG (" :: Kext bin patch");
+          DBG (" :: BinPatch");
         }
-        //
-        //  Find and Replace must be in <data>...</data>
-        //
-//        Patches->KextPatches[Patches->NrKexts].Data    = GetDataSetting (Prop2, "Find", &j);
-//        Patches->KextPatches[Patches->NrKexts].DataLen = j;
-//        Patches->KextPatches[Patches->NrKexts].Patch   = GetDataSetting (Prop2, "Replace", &j);
-
-//        if ((Patches->KextPatches[Patches->NrKexts].DataLen != (INTN)j) || (j == 0)) {
-//          DBG (" - invalid Find/Replace data - skipping!\n");
-//          if (Patches->KextPatches[Patches->NrKexts].Name != NULL) {
-//            FreePool (Patches->KextPatches[Patches->NrKexts].Name); //just erase name
-//            Patches->KextPatches[Patches->NrKexts].Name  = NULL;
-//          }
-//
-//          if (Patches->KextPatches[Patches->NrKexts].Data != NULL) {
-//            FreePool (Patches->KextPatches[Patches->NrKexts].Data); //just erase data
-//            Patches->KextPatches[Patches->NrKexts].Data  = NULL;
-//          }
-//
-//          if (Patches->KextPatches[Patches->NrKexts].Patch != NULL) {
-//            FreePool (Patches->KextPatches[Patches->NrKexts].Patch); //just erase patch
-//            Patches->KextPatches[Patches->NrKexts].Patch = NULL;
-//          }
-//
-//          continue; //same NrKexts next i
-//        }
 
         DBG (", data len: %d\n", Patches->KextPatches[Patches->NrKexts].DataLen);
         Patches->NrKexts++; //must be out of DBG because it may be empty compiled
@@ -1025,6 +1037,94 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
     // after OnExitBootServices. This is wrong and these arrays should be reallocated
     // but I am not sure
   }
+
+#if ENABLE_KERNELTOPATCH >= 1
+  Prop = GetProperty (DictPointer, "KernelToPatch");
+  if (Prop != NULL) {
+    INTN   i, Count = GetTagCount (Prop);
+    //delete old and create new
+    if (Patches->KernelPatches) {
+      Patches->NrKernels = 0;
+      FreePool (Patches->KernelPatches);
+    }
+    if (Count > 0) {
+      TagPtr        Prop2 = NULL;
+      TagPtr        Dict;
+      KERNEL_PATCH  *newPatches = AllocateZeroPool (Count * sizeof(KERNEL_PATCH));
+
+      Patches->KernelPatches = newPatches;
+      DBG ("KernelToPatch: %d requested\n", Count);
+      for (i = 0; i < Count; i++) {
+        CHAR8 *KernelPatchesLabel;
+        UINTN FindLen = 0;
+        UINTN ReplaceLen = 0;
+        UINT8 *TmpData;
+        UINT8 *TmpPatch;
+        EFI_STATUS Status = GetElement (Prop, i, &Prop2);
+        if (EFI_ERROR (Status)) {
+          DBG ("error %r getting next element at index %d\n", Status, i);
+          continue;
+        }
+
+        if (Prop2 == NULL) {
+          break;
+        }
+
+        DBG (" - [%d]:", i);
+        
+        Dict = GetProperty (Prop2, "Comment");
+        if (Dict != NULL) {
+          KernelPatchesLabel = AllocateCopyPool (AsciiStrSize (Dict->string), Dict->string);
+        } else {
+          KernelPatchesLabel = AllocateCopyPool (8, "NoLabel");
+        }
+
+        DBG (" %a", KernelPatchesLabel);
+        
+        Dict = GetProperty (Prop2, "Disabled");
+        if ((Dict != NULL) && IsPropertyTrue (Dict)) {
+          DBG(" :: patch disabled, skipped\n");
+          continue;
+        }
+
+        TmpData    = GetDataSetting (Prop2, "Find", &FindLen);
+        TmpPatch   = GetDataSetting (Prop2, "Replace", &ReplaceLen);
+
+        if (!FindLen || !ReplaceLen || (FindLen != ReplaceLen)) {
+          DBG (" :: invalid Find/Replace data - skipping!\n");
+          continue;
+        }
+
+        Patches->KernelPatches[Patches->NrKernels].Data = AllocateCopyPool (FindLen, TmpData);
+        Patches->KernelPatches[Patches->NrKernels].DataLen = FindLen;
+        Patches->KernelPatches[Patches->NrKernels].Patch = AllocateCopyPool (FindLen, TmpPatch);
+        Patches->KernelPatches[Patches->NrKernels].Count = 0;
+        Patches->KernelPatches[Patches->NrKernels].MatchOS = NULL;
+        Patches->KernelPatches[Patches->NrKernels].Disabled = FALSE;
+        Patches->KernelPatches[Patches->NrKernels].Label = AllocateCopyPool (AsciiStrSize (KernelPatchesLabel), KernelPatchesLabel);
+
+        Dict = GetProperty (Prop2, "Count");
+        if (Dict != NULL) {
+          Patches->KernelPatches[Patches->NrKernels].Count = (INTN)GetPropertyInteger (Dict, 0);
+        }
+
+        FreePool(TmpData);
+        FreePool(TmpPatch);
+        FreePool(KernelPatchesLabel);
+
+        // check enable/disabled patch (OS based) by Micky1979
+        Dict = GetProperty (Prop2, "MatchOS");
+        if ((Dict != NULL) && (Dict->type == kTagTypeString)) {
+          Patches->KernelPatches[Patches->NrKernels].MatchOS = AllocateCopyPool (AsciiStrSize (Dict->string), Dict->string);
+          DBG(" :: Matched OSes: %a", Patches->KernelPatches[Patches->NrKernels].MatchOS);
+        }
+
+        DBG (", data len: %d\n", Patches->KernelPatches[Patches->NrKernels].DataLen);
+        Patches->NrKernels++;
+      }
+    }
+  }
+#endif
 
   return TRUE;
 }
@@ -2796,7 +2896,7 @@ GetListOfThemes ()
   ThemesNum = 0;
   DirIterOpen (SelfRootDir, L"\\EFI\\CLOVER\\themes", &DirIter);
   while (DirIterNext(&DirIter, 1, L"*.EFI", &DirEntry)) {
-    if (DirEntry->FileName[0] == '.' || (StriCmp(DirEntry->FileName, CONFIG_THEME_EMEDDED) == 0) || (StriCmp(DirEntry->FileName, CONFIG_THEME_RANDOM) == 0)) {
+    if (DirEntry->FileName[0] == '.' || (StriCmp(DirEntry->FileName, CONFIG_THEME_EMBEDDED) == 0) || (StriCmp(DirEntry->FileName, CONFIG_THEME_RANDOM) == 0)) {
       //DBG("Skip theme: %s\n", DirEntry->FileName);
       continue;
     }
@@ -2820,7 +2920,7 @@ GetListOfThemes ()
     DBG ("\n");
   }
 
-  ThemesList[ThemesNum++] = PoolPrint(CONFIG_THEME_EMEDDED);
+  ThemesList[ThemesNum++] = PoolPrint(CONFIG_THEME_EMBEDDED);
 
   DirIterClose (&DirIter);
 }
@@ -3401,7 +3501,7 @@ InitTheme(
   }
 
   if (ThemesNum > 0 &&
-      (!GlobalConfig.Theme || StriCmp (GlobalConfig.Theme, CONFIG_THEME_EMEDDED) != 0)) {
+      (!GlobalConfig.Theme || StriCmp (GlobalConfig.Theme, CONFIG_THEME_EMBEDDED) != 0)) {
     //DBG("1\n");
     // Try special theme first
     if (Time != NULL) {
@@ -3436,7 +3536,7 @@ InitTheme(
     if (ThemeDict == NULL && UseThemeDefinedInNVRam) {
       ChosenTheme   = GetNvramVariable(L"Clover.Theme", &gEfiAppleBootGuid, NULL, &Size);
       if (ChosenTheme != NULL) {
-        if (StriCmp (ChosenTheme, CONFIG_THEME_EMEDDED) == 0) {
+        if (StriCmp (ChosenTheme, CONFIG_THEME_EMBEDDED) == 0) {
           goto finish;
         }
         if (StriCmp (ChosenTheme, CONFIG_THEME_RANDOM) == 0) {

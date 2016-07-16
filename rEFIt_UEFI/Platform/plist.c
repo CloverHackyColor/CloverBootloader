@@ -80,6 +80,35 @@ CONST XMLEntity ents[] = {
   _e("amp;", '&')
 };
 
+/*
+  Taken from Shell
+  Trim leading trailing spaces
+*/
+EFI_STATUS
+AsciiTrimSpaces(
+  IN CHAR8 **String
+  )
+{
+  if (!String || !(*String)) {
+    return EFI_INVALID_PARAMETER;
+  }
+  //
+  // Remove any spaces and tabs at the beginning of the (*String).
+  //
+  while (((*String)[0] == ' ') || ((*String)[0] == '\t')) {
+    CopyMem((*String), (*String)+1, AsciiStrSize((*String)) - sizeof((*String)[0]));
+  }
+
+  //
+  // Remove any spaces and tabs at the end of the (*String).
+  //
+  while ((AsciiStrLen (*String) > 0) && (((*String)[AsciiStrLen((*String))-1] == ' ') || ((*String)[AsciiStrLen((*String))-1] == '\t'))) {
+    (*String)[AsciiStrLen((*String))-1] = 0;
+  }
+
+  return (EFI_SUCCESS);
+}
+
 CHAR8*
 XMLDecode(CHAR8* src)
 {
@@ -90,6 +119,8 @@ XMLDecode(CHAR8* src)
   if (!src) {
     return 0;
   }
+
+  AsciiTrimSpaces(&src);
 	
   len = AsciiStrLen(src);
   
@@ -552,7 +583,7 @@ EFI_STATUS ParseTagString(CHAR8* buffer, TagPtr * tag,UINT32* lenPtr)
 		FreeTag(tmpTag);
 		return EFI_OUT_OF_RESOURCES;
 	}
-  
+
 	tmpTag->type = kTagTypeString;
 	tmpTag->string = tmpString;
 	tmpTag->tag = NULL;
