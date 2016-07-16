@@ -174,6 +174,21 @@ INTN OldChosenTheme;
 
 BOOLEAN mGuiReady = FALSE;
 
+REFIT_MENU_ENTRY MenuEntryOptions  = { L"Options", TAG_OPTIONS, 1, 0, 'O', NULL, NULL, NULL,
+  {0, 0, 0, 0}, ActionEnter, ActionEnter, ActionNone, ActionNone, NULL };
+REFIT_MENU_ENTRY MenuEntryAbout    = { L"About Clover", TAG_ABOUT, 1, 0, 'A', NULL, NULL, NULL,
+  {0, 0, 0, 0}, ActionEnter, ActionEnter, ActionNone, ActionNone,  NULL };
+REFIT_MENU_ENTRY MenuEntryReset    = { L"Restart Computer", TAG_RESET, 1, 0, 'R', NULL, NULL, NULL,
+  {0, 0, 0, 0}, ActionSelect, ActionEnter, ActionNone, ActionNone,  NULL };
+REFIT_MENU_ENTRY MenuEntryShutdown = { L"Exit Clover", TAG_SHUTDOWN, 1, 0, 'U', NULL, NULL, NULL,
+  {0, 0, 0, 0}, ActionSelect, ActionEnter, ActionNone, ActionNone,  NULL };
+REFIT_MENU_ENTRY MenuEntryReturn   = { L"Return", TAG_RETURN, 0, 0, 0, NULL, NULL, NULL,
+  {0, 0, 0, 0}, ActionEnter, ActionEnter, ActionNone, ActionNone,  NULL };
+
+REFIT_MENU_SCREEN MainMenu    = {1, L"Main Menu", NULL, 0, NULL, 0, NULL, 0, L"Automatic boot", NULL, FALSE, FALSE, 0, 0, 0, 0, {0, 0, 0, 0}, NULL};
+REFIT_MENU_SCREEN AboutMenu   = {2, L"About",     NULL, 0, NULL, 0, NULL, 0, NULL,              NULL, FALSE, FALSE, 0, 0, 0, 0, {0, 0, 0, 0}, NULL};
+REFIT_MENU_SCREEN HelpMenu    = {3, L"Help",      NULL, 0, NULL, 0, NULL, 0, NULL,              NULL, FALSE, FALSE, 0, 0, 0, 0, {0, 0, 0, 0}, NULL};
+
 UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc, IN OUT INTN *DefaultEntryIndex, OUT REFIT_MENU_ENTRY **ChosenEntry);
 
 
@@ -1105,11 +1120,348 @@ VOID FreeItems(VOID)
   FreePool(InputItems);
 }
 
+
+VOID AddMenuInfo(  REFIT_MENU_SCREEN  *SubScreen, CHAR16 *Line)
+{
+  REFIT_INPUT_DIALOG *InputBootArgs;
+
+  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  InputBootArgs->Entry.Title = PoolPrint(L"%s", Line);
+  InputBootArgs->Entry.Tag = TAG_INFO;
+  InputBootArgs->Item = NULL;
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+}
+
+
+VOID AboutRefit(VOID)
+{
+  //  CHAR8* Revision = NULL;
+  if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_MENU_TITLE_IMAGE)) {
+    AboutMenu.TitleImage = BuiltinIcon(BUILTIN_ICON_FUNC_ABOUT);
+  } else {
+    AboutMenu.TitleImage = NULL;
+  }
+  if (AboutMenu.EntryCount == 0) {
+    AddMenuInfo(&AboutMenu, PoolPrint(L"Clover Version 2.3k rev %s", FIRMWARE_REVISION)); // by Slice, dmazar, apianti, JrCs, pene and others");
+#ifdef FIRMWARE_BUILDDATE
+    AddMenuInfo(&AboutMenu, PoolPrint(L" Build: %a", FIRMWARE_BUILDDATE));
+#else
+    AddMenuInfo(&AboutMenu, L" Build: unknown");
+#endif
+    AddMenuInfo(&AboutMenu, L"");
+    AddMenuInfo(&AboutMenu, L"Based on rEFIt (c) 2006-2010 Christoph Pfisterer");
+    AddMenuInfo(&AboutMenu, L"Portions Copyright (c) Intel Corporation");
+    AddMenuInfo(&AboutMenu, L"Developers:");
+    AddMenuInfo(&AboutMenu, L"  Slice, dmazar, apianti, JrCs, pene, usrsse2");
+    AddMenuInfo(&AboutMenu, L"Credits also:");
+    AddMenuInfo(&AboutMenu, L"  Kabyl, pcj, jadran, Blackosx, STLVNUB, ycr.ru");
+    AddMenuInfo(&AboutMenu, L"  FrodoKenny, skoczi, crazybirdy, Oscar09, xsmile");
+    AddMenuInfo(&AboutMenu, L"  cparm, rehabman, nms42, sherlocks, Zenith432");
+    AddMenuInfo(&AboutMenu, L"  stinga11, TheRacerMaster, solstice, SoThOr, DF");
+    AddMenuInfo(&AboutMenu, L"  cecekpawon, Micky1979, Needy, joevt");
+    AddMenuInfo(&AboutMenu, L"  projectosx.com, applelife.ru, insanelymac.com");
+    AddMenuInfo(&AboutMenu, L"");
+    AddMenuInfo(&AboutMenu, L"Running on:");
+    AddMenuInfo(&AboutMenu, PoolPrint(L" EFI Revision %d.%02d",
+                                      gST->Hdr.Revision >> 16, gST->Hdr.Revision & ((1 << 16) - 1)));
+#if defined(MDE_CPU_IA32)
+    AddMenuInfo(&AboutMenu, L" Platform: i386 (32 bit)");
+#elif defined(MDE_CPU_X64)
+    AddMenuInfo(&AboutMenu, L" Platform: x86_64 (64 bit)");
+#else
+    AddMenuInfo(&AboutMenu, L" Platform: unknown");
+#endif
+    AddMenuInfo(&AboutMenu, PoolPrint(L" Firmware: %s rev %d.%d", gST->FirmwareVendor, gST->FirmwareRevision >> 16, gST->FirmwareRevision & ((1 << 16) - 1)));
+    AddMenuInfo(&AboutMenu, PoolPrint(L" Screen Output: %s", egScreenDescription()));
+    AboutMenu.AnimeRun = GetAnime(&AboutMenu);
+    AddMenuEntry(&AboutMenu, &MenuEntryReturn);
+  }  else {
+    FreePool(AboutMenu.InfoLines[AboutMenu.InfoLineCount-1]);
+    AboutMenu.InfoLines[AboutMenu.InfoLineCount-1]=PoolPrint(L" Screen Output: %s", egScreenDescription());
+  }
+
+  RunMenu(&AboutMenu, NULL);
+}
+
+VOID HelpRefit(VOID)
+{
+  if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_MENU_TITLE_IMAGE)) {
+    HelpMenu.TitleImage = BuiltinIcon(BUILTIN_ICON_FUNC_HELP);
+  } else {
+    HelpMenu.TitleImage = NULL;
+  }
+  if (HelpMenu.EntryCount == 0) {
+    switch (gLanguage)
+    {
+      case russian:
+        AddMenuInfoLine(&HelpMenu, L"ESC - Выход из подменю, обновление главного меню");
+        AddMenuInfoLine(&HelpMenu, L"F1  - Помощь по горячим клавишам");
+        AddMenuInfoLine(&HelpMenu, L"F2  - Сохранить отчет в preboot.log (только если FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F3  - Показать скрытые значки в меню");
+        AddMenuInfoLine(&HelpMenu, L"F4  - Родной DSDT сохранить в EFI/CLOVER/ACPI/origin/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F5  - Патченный DSDT сохранить в EFI/CLOVER/ACPI/origin/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F6  - Сохранить ВидеоБиос в EFI/CLOVER/misc/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F10 - Снимок экрана в папку EFI/CLOVER/misc/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F12 - Извлечь указанный DVD");
+        AddMenuInfoLine(&HelpMenu, L"Пробел - Подробнее о выбранном пункте");
+        AddMenuInfoLine(&HelpMenu, L"Цифры 1-9 - Быстрый запуск тома по порядку в меню");
+        AddMenuInfoLine(&HelpMenu, L"A - О загрузчике");
+        AddMenuInfoLine(&HelpMenu, L"O - Дополнительные настройки");
+        AddMenuInfoLine(&HelpMenu, L"R - Теплый перезапуск");
+        AddMenuInfoLine(&HelpMenu, L"U - Завершить работу в Кловере");
+        break;
+      case ukrainian:
+        AddMenuInfoLine(&HelpMenu, L"ESC - Вийти з меню, оновити головне меню");
+        AddMenuInfoLine(&HelpMenu, L"F1  - Ця довідка");
+        AddMenuInfoLine(&HelpMenu, L"F2  - Зберегти preboot.log (тiльки FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F3  - Відображати приховані розділи");
+        AddMenuInfoLine(&HelpMenu, L"F4  - Зберегти OEM DSDT в EFI/CLOVER/ACPI/origin/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F5  - Зберегти патчений DSDT в EFI/CLOVER/ACPI/origin/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F6  - Зберегти VideoBios в EFI/CLOVER/misc/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F10 - Зберегти знімок екрану в EFI/CLOVER/misc/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F12 - Відкрити обраний диск (DVD)");
+        AddMenuInfoLine(&HelpMenu, L"Пробіл - докладніше про обраний пункт меню");
+        AddMenuInfoLine(&HelpMenu, L"Клавіші 1-9 -  клавіші пунктів меню");
+        AddMenuInfoLine(&HelpMenu, L"A - Про систему");
+        AddMenuInfoLine(&HelpMenu, L"O - Опції меню");
+        AddMenuInfoLine(&HelpMenu, L"R - Перезавантаження");
+        AddMenuInfoLine(&HelpMenu, L"U - Відключити ПК");
+        break;
+      case spanish:
+        AddMenuInfoLine(&HelpMenu, L"ESC - Salir de submenu o actualizar el menu principal");
+        AddMenuInfoLine(&HelpMenu, L"F1  - Esta Ayuda");
+        AddMenuInfoLine(&HelpMenu, L"F2  - Guardar preboot.log (Solo FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F3  - Show hidden entries");
+        AddMenuInfoLine(&HelpMenu, L"F4  - Guardar DSDT oem en EFI/CLOVER/ACPI/origin/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F5  - Guardar DSDT parcheado en EFI/CLOVER/ACPI/origin/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F6  - Guardar VideoBios en EFI/CLOVER/misc/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F10 - Guardar Captura de pantalla en EFI/CLOVER/misc/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F12 - Expulsar volumen seleccionado (DVD)");
+        AddMenuInfoLine(&HelpMenu, L"Espacio - Detalles acerca selected menu entry");
+        AddMenuInfoLine(&HelpMenu, L"Digitos 1-9 - Atajo a la entrada del menu");
+        AddMenuInfoLine(&HelpMenu, L"A - Menu Acerca de");
+        AddMenuInfoLine(&HelpMenu, L"O - Menu Optiones");
+        AddMenuInfoLine(&HelpMenu, L"R - Reiniciar Equipo");
+        AddMenuInfoLine(&HelpMenu, L"U - Apagar");
+        break;
+      case portuguese:
+      case brasil:
+        AddMenuInfoLine(&HelpMenu, L"ESC - Sai do submenu, atualiza o menu principal");
+        AddMenuInfoLine(&HelpMenu, L"F1  - Esta ajuda");
+        AddMenuInfoLine(&HelpMenu, L"F2  - Salva preboot.log (somente FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F3  - Show hidden entries");
+        AddMenuInfoLine(&HelpMenu, L"F4  - Salva oem DSDT em EFI/CLOVER/ACPI/origin/ (somente FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F5  - Salva DSDT corrigido em EFI/CLOVER/ACPI/origin/ (somente FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F6  - Salva VideoBios em EFI/CLOVER/misc/ (somente FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F10 - Salva screenshot em EFI/CLOVER/misc/ (somente FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F12 - Ejeta o volume selecionado (DVD)");
+        AddMenuInfoLine(&HelpMenu, L"Espaco - Detalhes sobre a opcao do menu selecionada");
+        AddMenuInfoLine(&HelpMenu, L"Tecle 1-9 - Atalho para as entradas do menu");
+        AddMenuInfoLine(&HelpMenu, L"A - Sobre o Menu");
+        AddMenuInfoLine(&HelpMenu, L"O - Opcoes do Menu");
+        AddMenuInfoLine(&HelpMenu, L"R - Reiniciar");
+        AddMenuInfoLine(&HelpMenu, L"U - Desligar");
+        break;
+      case italian:
+        AddMenuInfoLine(&HelpMenu, L"ESC - Esci dal submenu, Aggiorna menu principale");
+        AddMenuInfoLine(&HelpMenu, L"F1  - Aiuto");
+        AddMenuInfoLine(&HelpMenu, L"F2  - Salva il preboot.log (solo su FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F3  - Show hidden entries");
+        AddMenuInfoLine(&HelpMenu, L"F4  - Salva il DSDT oem in EFI/CLOVER/ACPI/origin/ (solo suFAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F5  - Salva il patched DSDT in EFI/CLOVER/ACPI/origin/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F6  - Salva il VideoBios in EFI/CLOVER/misc/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F10 - Salva screenshot in EFI/CLOVER/misc/ (solo su FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F12 - Espelli il volume selezionato (DVD)");
+        AddMenuInfoLine(&HelpMenu, L"Spazio - Dettagli sul menu selezionato");
+        AddMenuInfoLine(&HelpMenu, L"Digita 1-9 - Abbreviazioni per il menu");
+        AddMenuInfoLine(&HelpMenu, L"A - Informazioni");
+        AddMenuInfoLine(&HelpMenu, L"O - Menu Opzioni");
+        AddMenuInfoLine(&HelpMenu, L"R - Riavvio");
+        AddMenuInfoLine(&HelpMenu, L"U - Spegnimento");
+        break;
+      case german:
+        AddMenuInfoLine(&HelpMenu, L"ESC - Zurueck aus Untermenue, Hauptmenue erneuern");
+        AddMenuInfoLine(&HelpMenu, L"F1  - Diese Hilfe");
+        AddMenuInfoLine(&HelpMenu, L"F2  - Sichere preboot.log (nur mit FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F3  - Show hidden entries");
+        AddMenuInfoLine(&HelpMenu, L"F4  - Sichere OEM DSDT in EFI/CLOVER/ACPI/origin/ (nur mit FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F5  - Sichere gepatchtes DSDT in EFI/CLOVER/ACPI/origin/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F6  - Sichere VideoBios in EFI/CLOVER/misc/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F10 - Sichere Bildschirmfoto in EFI/CLOVER/misc/ (nur mit FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F12 - Volume auswerfen (DVD)");
+        AddMenuInfoLine(&HelpMenu, L"Leertaste - Details über den gewählten Menue Eintrag");
+        AddMenuInfoLine(&HelpMenu, L"Zahlen 1-9 - Kurzwahl zum Menue Eintrag");
+        AddMenuInfoLine(&HelpMenu, L"A - Menue Informationen");
+        AddMenuInfoLine(&HelpMenu, L"O - Menue Optionen");
+        AddMenuInfoLine(&HelpMenu, L"R - Neustart");
+        AddMenuInfoLine(&HelpMenu, L"U - Ausschalten");
+        break;
+      case dutch:
+        AddMenuInfoLine(&HelpMenu, L"ESC - Verlaat submenu, Vernieuwen hoofdmenu");
+        AddMenuInfoLine(&HelpMenu, L"F1  - Onderdeel hulp");
+        AddMenuInfoLine(&HelpMenu, L"F2  - preboot.log opslaan (FAT32 only)");
+        AddMenuInfoLine(&HelpMenu, L"F3  - Show hidden entries");
+        AddMenuInfoLine(&HelpMenu, L"F4  - Opslaan oem DSDT in EFI/CLOVER/ACPI/origin/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F5  - Opslaan gepatchte DSDT in EFI/CLOVER/ACPI/origin/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F6  - Opslaan VideoBios in EFI/CLOVER/misc/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F10 - Opslaan schermafdruk in EFI/CLOVER/misc/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F12 - Uitwerpen geselecteerd volume (DVD)");
+        AddMenuInfoLine(&HelpMenu, L"Spatie - Details over geselecteerd menuoptie");
+        AddMenuInfoLine(&HelpMenu, L"Cijfers 1-9 - Snelkoppeling naar menuoptie");
+        AddMenuInfoLine(&HelpMenu, L"A - Menu Over");
+        AddMenuInfoLine(&HelpMenu, L"O - Menu Opties");
+        AddMenuInfoLine(&HelpMenu, L"R - Soft Reset");
+        AddMenuInfoLine(&HelpMenu, L"U - Verlaten");
+        break;
+      case french:
+        AddMenuInfoLine(&HelpMenu, L"ESC - Quitter sous-menu, Retour menu principal");
+        AddMenuInfoLine(&HelpMenu, L"F1  - Aide");
+        AddMenuInfoLine(&HelpMenu, L"F2  - Enregistrer preboot.log (FAT32 only)");
+        AddMenuInfoLine(&HelpMenu, L"F3  - Show hidden entries");
+        AddMenuInfoLine(&HelpMenu, L"F4  - Enregistrer oem DSDT dans EFI/CLOVER/ACPI/origin/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F5  - Enregistrer DSDT modifié dans EFI/CLOVER/ACPI/origin/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F6  - Enregistrer VideoBios dans EFI/CLOVER/misc/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F10 - Enregistrer la capture d'écran dans EFI/CLOVER/misc/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F12 - Ejecter le volume (DVD)");
+        AddMenuInfoLine(&HelpMenu, L"Space - Détails a propos du menu selectionné");
+        AddMenuInfoLine(&HelpMenu, L"Digits 1-9 - Raccourci vers entrée menu");
+        AddMenuInfoLine(&HelpMenu, L"A - A propos");
+        AddMenuInfoLine(&HelpMenu, L"O - Options Menu");
+        AddMenuInfoLine(&HelpMenu, L"R - Redémarrer");
+        AddMenuInfoLine(&HelpMenu, L"U - Eteindre");
+        break;
+      case indonesian:
+        AddMenuInfoLine(&HelpMenu, L"ESC - Keluar submenu, Refresh main menu");
+        AddMenuInfoLine(&HelpMenu, L"F1  - Help");
+        AddMenuInfoLine(&HelpMenu, L"F2  - Simpan preboot.log ke EFI/CLOVER/ACPI/misc/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F3  - Show hidden entries");
+        AddMenuInfoLine(&HelpMenu, L"F4  - Simpan oem DSDT ke EFI/CLOVER/ACPI/origin/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F5  - Simpan patched DSDT ke EFI/CLOVER/ACPI/origin/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F6  - Simpan VideoBios ke EFI/CLOVER/misc/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F10 - Simpan screenshot ke EFI/CLOVER/misc/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F12 - Eject volume (DVD)");
+        AddMenuInfoLine(&HelpMenu, L"Spasi - Detail dari menu yang dipilih");
+        AddMenuInfoLine(&HelpMenu, L"Tombol 1-9 - Shortcut pilihan menu");
+        AddMenuInfoLine(&HelpMenu, L"A - About");
+        AddMenuInfoLine(&HelpMenu, L"O - Opsi");
+        AddMenuInfoLine(&HelpMenu, L"R - Soft Reset");
+        AddMenuInfoLine(&HelpMenu, L"U - Shutdown");
+        break;
+      case polish:
+        AddMenuInfoLine(&HelpMenu, L"ESC - Wyjscie z podmenu, Odswiezenie glownego menu");
+        AddMenuInfoLine(&HelpMenu, L"F1  - Pomoc");
+        AddMenuInfoLine(&HelpMenu, L"F2  - Zapis preboot.log (tylko FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F3  - Show hidden entries");
+        AddMenuInfoLine(&HelpMenu, L"F4  - Zapis DSDT do EFI/CLOVER/ACPI/origin/ (tylko FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F5  - Zapis poprawionego DSDT do EFI/CLOVER/ACPI/origin/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F6  - Zapis BIOSu k. graficznej do EFI/CLOVER/misc/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F10 - Zapis zrzutu ekranu do EFI/CLOVER/misc/ (tylko FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F12 - Wysuniecie zaznaczonego dysku (tylko dla DVD)");
+        AddMenuInfoLine(&HelpMenu, L"Spacja - Informacje nt. dostepnych opcji dla zaznaczonego dysku");
+        AddMenuInfoLine(&HelpMenu, L"Znaki 1-9 - Skroty opcji dla wybranego dysku");
+        AddMenuInfoLine(&HelpMenu, L"A - Menu Informacyjne");
+        AddMenuInfoLine(&HelpMenu, L"O - Menu Opcje");
+        AddMenuInfoLine(&HelpMenu, L"R - Restart komputera");
+        AddMenuInfoLine(&HelpMenu, L"U - Wylaczenie komputera");
+        break;
+      case croatian:
+        AddMenuInfoLine(&HelpMenu, L"ESC - izlaz iz podizbornika, Osvježi glavni izbornik");
+        AddMenuInfoLine(&HelpMenu, L"F1  - Ovaj izbornik");
+        AddMenuInfoLine(&HelpMenu, L"F2  - Spremi preboot.log (samo na FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F3  - Show hidden entries");
+        AddMenuInfoLine(&HelpMenu, L"F4  - Spremi oem DSDT u EFI/CLOVER/ACPI/origin/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F5  - Spremi patched DSDT into EFI/CLOVER/ACPI/origin/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F6  - Spremi VideoBios into EFI/CLOVER/misc/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F10 - Spremi screenshot into EFI/CLOVER/misc/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F12 - Izbaci izabrai (DVD)");
+        AddMenuInfoLine(&HelpMenu, L"Space - Detalji o odabranom sistemu");
+        AddMenuInfoLine(&HelpMenu, L"Brojevi 1 do 9 su prečac do izbora");
+        AddMenuInfoLine(&HelpMenu, L"A - Izbornik o meni");
+        AddMenuInfoLine(&HelpMenu, L"O - Izbornik opcije");
+        AddMenuInfoLine(&HelpMenu, L"R - Restart računala");
+        AddMenuInfoLine(&HelpMenu, L"U - Isključivanje računala");
+        break;
+      case czech:
+        AddMenuInfoLine(&HelpMenu, L"ESC - Vrátit se do hlavní nabídky");
+        AddMenuInfoLine(&HelpMenu, L"F1  - Tato Nápověda");
+        AddMenuInfoLine(&HelpMenu, L"F2  - Uložit preboot.log (FAT32 only)");
+        AddMenuInfoLine(&HelpMenu, L"F3  - Show hidden entries");
+        AddMenuInfoLine(&HelpMenu, L"F4  - Uložit oem DSDT do EFI/CLOVER/ACPI/origin/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F5  - Uložit patchnuté DSDT do EFI/CLOVER/ACPI/origin/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F6  - Uložit VideoBios do EFI/CLOVER/misc/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F10 - Uložit snímek obrazovky do EFI/CLOVER/misc/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F12 - Vysunout vybranou mechaniku (DVD)");
+        AddMenuInfoLine(&HelpMenu, L"Mezerník - Podrobnosti o vybraném disku");
+        AddMenuInfoLine(&HelpMenu, L"čísla 1-9 - Klávesové zkratky pro disky");
+        AddMenuInfoLine(&HelpMenu, L"A - Menu O Programu");
+        AddMenuInfoLine(&HelpMenu, L"O - Menu Možnosti");
+        AddMenuInfoLine(&HelpMenu, L"R - Částečný restart");
+        AddMenuInfoLine(&HelpMenu, L"U - Odejít");
+        break;
+      case korean:
+        AddMenuInfoLine(&HelpMenu, L"ESC - 하위메뉴에서 나감, 메인메뉴 새로 고침");
+        AddMenuInfoLine(&HelpMenu, L"F1  - 이 도움말");
+        AddMenuInfoLine(&HelpMenu, L"F2  - preboot.log를 저장합니다. (FAT32방식에만 해당됨)");
+        AddMenuInfoLine(&HelpMenu, L"F3  - Show hidden entries");
+        AddMenuInfoLine(&HelpMenu, L"F4  - oem DSDT를 EFI/CLOVER/ACPI/origin/에 저장합니다. (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F5  - 패치된 DSDT를 EFI/CLOVER/ACPI/origin/에 저장합니다. (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F6  - VideoBios를 EFI/CLOVER/misc/에 저장합니다. (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F10 - 스크린샷을 EFI/CLOVER/misc/에 저장합니다. (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F12 - 선택한 볼륨을 제거합니다. (DVD)");
+        AddMenuInfoLine(&HelpMenu, L"Space - 선택한 메뉴의 상세 설명");
+        AddMenuInfoLine(&HelpMenu, L"Digits 1-9 - 메뉴 단축 번호");
+        AddMenuInfoLine(&HelpMenu, L"A - 단축키 - 이 부트로더에 관하여");
+        AddMenuInfoLine(&HelpMenu, L"O - 단축키 - 부트 옵션");
+        AddMenuInfoLine(&HelpMenu, L"R - 단축키 - 리셋");
+        AddMenuInfoLine(&HelpMenu, L"U - 단축키 - 시스템 종료");
+        break;
+      case romanian:
+        AddMenuInfoLine(&HelpMenu, L"ESC - Iesire din sub-meniu, Refresh meniul principal");
+        AddMenuInfoLine(&HelpMenu, L"F1  - Ajutor");
+        AddMenuInfoLine(&HelpMenu, L"F2  - Salvare preboot.log (doar pentru FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F4  - Salvare oem DSDT in EFI/ACPI/origin/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F5  - Salvare DSDT modificat in EFI/ACPI/origin/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F6  - Salvare VideoBios in EFI/misc/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F10 - Salvare screenshot in EFI/misc/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F12 - Scoatere volum selectat (DVD)");
+        AddMenuInfoLine(&HelpMenu, L"Space - Detalii despre item-ul selectat");
+        AddMenuInfoLine(&HelpMenu, L"Cifre 1-9 - Scurtaturi pentru itemele meniului");
+        AddMenuInfoLine(&HelpMenu, L"A - Despre");
+        AddMenuInfoLine(&HelpMenu, L"O - Optiuni");
+        AddMenuInfoLine(&HelpMenu, L"R - Soft Reset");
+        AddMenuInfoLine(&HelpMenu, L"U - Inchidere");
+        break;
+      case english:
+      default:
+        AddMenuInfoLine(&HelpMenu, L"ESC - Escape from submenu, Refresh main menu");
+        AddMenuInfoLine(&HelpMenu, L"F1  - This help");
+        AddMenuInfoLine(&HelpMenu, L"F2  - Save preboot.log into EFI/CLOVER/misc/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F3  - Show hidden entries");
+        AddMenuInfoLine(&HelpMenu, L"F4  - Save oem DSDT into EFI/CLOVER/ACPI/origin/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F5  - Save patched DSDT into EFI/CLOVER/ACPI/origin/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F6  - Save VideoBios into EFI/CLOVER/misc/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F10 - Save screenshot into EFI/CLOVER/misc/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F12 - Eject selected volume (DVD)");
+        AddMenuInfoLine(&HelpMenu, L"Space - Details about selected menu entry");
+        AddMenuInfoLine(&HelpMenu, L"Digits 1-9 - Shortcut to menu entry");
+        AddMenuInfoLine(&HelpMenu, L"A - Menu About");
+        AddMenuInfoLine(&HelpMenu, L"O - Menu Options");
+        AddMenuInfoLine(&HelpMenu, L"R - Soft Reset");
+        AddMenuInfoLine(&HelpMenu, L"U - Exit");
+        break;
+    }
+    HelpMenu.AnimeRun = GetAnime(&HelpMenu);
+    AddMenuEntry(&HelpMenu, &MenuEntryReturn);
+  }
+
+  RunMenu(&HelpMenu, NULL);
+}
+
 //
 // Graphics helper functions
 //
 
-static VOID InitSelection(VOID)
+VOID InitSelection(VOID)
 {
 
   if (!AllowGraphicsMode)
@@ -1230,7 +1582,6 @@ static VOID InitScroll(OUT SCROLL_STATE *State, IN INTN ItemCount, IN UINTN MaxC
   State->LastVisible = State->FirstVisible + State->MaxVisible;
   DBG("InitScroll: MaxIndex=%d, FirstVisible=%d, MaxVisible=%d, MaxFirstVisible=%d\n",
       State->MaxIndex, State->FirstVisible, State->MaxVisible, State->MaxFirstVisible);
-     //4 0 11 0
 }
 
 static VOID UpdateScroll(IN OUT SCROLL_STATE *State, IN UINTN Movement)
@@ -1260,8 +1611,7 @@ static VOID UpdateScroll(IN OUT SCROLL_STATE *State, IN UINTN Movement)
         State->CurrentSelection --;
         if (State->CurrentSelection < State->FirstVisible) {
           State->PaintAll = TRUE;
-          State->FirstVisible = State->CurrentSelection; // - (State->MaxVisible >> 1);
-          //      CONSTRAIN_MIN(State->FirstVisible, 0);
+          State->FirstVisible = State->CurrentSelection;
         }
         if (State->CurrentSelection == State->MaxScroll) {
           State->PaintAll = TRUE;
@@ -1353,7 +1703,6 @@ static VOID UpdateScroll(IN OUT SCROLL_STATE *State, IN UINTN Movement)
           State->FirstVisible+= State->MaxVisible;
           CONSTRAIN_MAX(State->FirstVisible, State->MaxFirstVisible);
         }
-
       }
       break;
 
@@ -1409,36 +1758,35 @@ static VOID UpdateScroll(IN OUT SCROLL_STATE *State, IN UINTN Movement)
 
 VOID AddMenuInfoLine(IN REFIT_MENU_SCREEN *Screen, IN CHAR16 *InfoLine)
 {
-    AddListElement((VOID ***) &(Screen->InfoLines), (UINTN*)&(Screen->InfoLineCount), InfoLine);
+  AddListElement((VOID ***) &(Screen->InfoLines), (UINTN*)&(Screen->InfoLineCount), InfoLine);
 }
 
 VOID AddMenuEntry(IN REFIT_MENU_SCREEN *Screen, IN REFIT_MENU_ENTRY *Entry)
 {
-    AddListElement((VOID ***) &(Screen->Entries), (UINTN*)&(Screen->EntryCount), Entry);
+  AddListElement((VOID ***) &(Screen->Entries), (UINTN*)&(Screen->EntryCount), Entry);
 }
 
 VOID FreeMenu(IN REFIT_MENU_SCREEN *Screen)
 {
-    if (Screen->Entries)
-        FreePool(Screen->Entries);
+  if (Screen->Entries)
+    FreePool(Screen->Entries);
 }
 
 static INTN FindMenuShortcutEntry(IN REFIT_MENU_SCREEN *Screen, IN CHAR16 Shortcut)
 {
-    INTN i;
-    if (Shortcut >= 'a' && Shortcut <= 'z')
-        Shortcut -= ('a' - 'A');
-    if (Shortcut) {
-        for (i = 0; i < Screen->EntryCount; i++) {
-            if (Screen->Entries[i]->ShortcutDigit == Shortcut ||
-                Screen->Entries[i]->ShortcutLetter == Shortcut) {
-                return i;
-            }
-        }
+  INTN i;
+  if (Shortcut >= 'a' && Shortcut <= 'z')
+    Shortcut -= ('a' - 'A');
+  if (Shortcut) {
+    for (i = 0; i < Screen->EntryCount; i++) {
+      if (Screen->Entries[i]->ShortcutDigit == Shortcut ||
+          Screen->Entries[i]->ShortcutLetter == Shortcut) {
+        return i;
+      }
     }
-    return -1;
+  }
+  return -1;
 }
-
 
 //
 // generic input menu function
@@ -1489,9 +1837,6 @@ static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC  Style
   Buffer = Item->SValue;
   BackupShift = Item->LineShift;
   BackupPos = Pos;
-
-  // InitScroll(&StateLine, 128, 128, StrLen(Item->SValue));
-  //  MsgLog("initial SValue: %s\n", Item->SValue);
 
   do {
 
@@ -1773,7 +2118,6 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
         } else {
           MenuExit = MENU_EXIT_DETAILS;
         }
-        //  State.CurrentSelection = Index;
         break;
       case ActionDeselect:
         State.LastSelection = State.CurrentSelection;
@@ -1830,12 +2174,12 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
         UpdateScroll(&State, SCROLL_LAST);
         break;
       case SCAN_PAGE_UP:
-        //      UpdateScroll(&State, SCROLL_PAGE_UP);
+        UpdateScroll(&State, SCROLL_PAGE_UP);
     //    SetNextScreenMode(1);
         StyleFunc(Screen, &State, MENU_FUNCTION_INIT, NULL);
         break;
       case SCAN_PAGE_DOWN:
-        //        UpdateScroll(&State, SCROLL_PAGE_DOWN);
+        UpdateScroll(&State, SCROLL_PAGE_DOWN);
      //   SetNextScreenMode(-1);
         StyleFunc(Screen, &State, MENU_FUNCTION_INIT, NULL);
         break;
@@ -2266,35 +2610,27 @@ VOID InitBar(VOID)
   }
 
   if (!BarStartImage) {
-//    BarStartImage = egCreateFilledImage(ScrollWidth, 5, TRUE, &StdBackgroundPixel);
     BarStartImage = egDecodePNG(&emb_scroll_bar_start[0], sizeof(emb_scroll_bar_start), 5, TRUE);
   }
   if (!BarEndImage) {
-//    BarEndImage = egCreateFilledImage(ScrollWidth, 5, TRUE, &StdBackgroundPixel);
     BarEndImage = egDecodePNG(&emb_scroll_bar_end[0], sizeof(emb_scroll_bar_end), 5, TRUE);
   }
   if (!ScrollbarBackgroundImage) {
-//    ScrollbarBackgroundImage = egCreateFilledImage(ScrollWidth, 1, TRUE, &DarkBackgroundPixel);
     ScrollbarBackgroundImage = egDecodePNG(&emb_scroll_bar_fill[0], sizeof(emb_scroll_bar_fill), 1, TRUE);
   }
   if (!ScrollbarImage) {
-//    ScrollbarImage = egCreateFilledImage(ScrollWidth, 1, TRUE, &StdBackgroundPixel);
     ScrollbarImage = egDecodePNG(&emb_scroll_scroll_fill[0], sizeof(emb_scroll_scroll_fill), 5, TRUE);
   }
   if (!ScrollStartImage) {
-//    ScrollStartImage = egCreateFilledImage(ScrollWidth, 7, TRUE, &StdBackgroundPixel);
     ScrollStartImage = egDecodePNG(&emb_scroll_scroll_start[0], sizeof(emb_scroll_scroll_start), 7, TRUE);
   }
   if (!ScrollEndImage) {
-//    ScrollEndImage = egCreateFilledImage(ScrollWidth, 7, TRUE, &StdBackgroundPixel);
     ScrollEndImage = egDecodePNG(&emb_scroll_scroll_end[0], sizeof(emb_scroll_scroll_end), 7, TRUE);
   }
   if (!UpButtonImage) {
-//    UpButtonImage = egCreateFilledImage(ScrollWidth, 20, TRUE, &StdBackgroundPixel);
     UpButtonImage = egDecodePNG(&emb_scroll_up_button[0], sizeof(emb_scroll_up_button), 20, TRUE);
   }
   if (!DownButtonImage) {
-//    DownButtonImage = egCreateFilledImage(ScrollWidth, 20, TRUE, &StdBackgroundPixel);
     DownButtonImage = egDecodePNG(&emb_scroll_down_button[0], sizeof(emb_scroll_down_button), 20, TRUE);
   }
 }
@@ -2371,7 +2707,6 @@ VOID ScrollingBar(IN SCROLL_STATE *State)
       egComposeImage(Total, ScrollbarImage, Scrollbar.XPos - ScrollTotal.XPos, Scrollbar.YPos + i - ScrollTotal.YPos);
     }
 
-
     egComposeImage(Total, UpButtonImage, UpButton.XPos - ScrollTotal.XPos, UpButton.YPos - ScrollTotal.YPos);
     egComposeImage(Total, DownButtonImage, DownButton.XPos - ScrollTotal.XPos, DownButton.YPos - ScrollTotal.YPos);
     egComposeImage(Total, ScrollStartImage, ScrollStart.XPos - ScrollTotal.XPos, ScrollStart.YPos - ScrollTotal.YPos);
@@ -2400,7 +2735,6 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
       InitAnime(Screen);
       SwitchToGraphicsAndClear();
 
- //     EntriesPosY = ((UGAHeight - LAYOUT_TOTAL_HEIGHT) >> 1) + LAYOUT_BANNER_YOFFSET + (TextHeight << 1);
       EntriesPosY = ((UGAHeight - LAYOUT_TOTAL_HEIGHT) >> 1) + LayoutBannerOffset + (TextHeight << 1);
 
       VisibleHeight = (UGAHeight - EntriesPosY) / TextHeight - Screen->InfoLineCount - 1;
@@ -2409,24 +2743,8 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
         j = OldChosenTheme;
       }
       InitScroll(State, Screen->EntryCount, Screen->EntryCount, VisibleHeight, j);
-      // determine width of the menu
+      // determine width of the menu -- not working
       //MenuWidth = 80;  // minimum
-      /* for (i = 0; i < (INTN)Screen->InfoLineCount; i++) {
-       ItemWidth = StrLen(Screen->InfoLines[i]);
-       if (MenuWidth < ItemWidth)
-       MenuWidth = ItemWidth;
-       }
-      // DBG("MENU_FUNCTION_INIT 2\n");
-      for (i = 0; i <= State->MaxIndex; i++) {
-       ItemWidth = StrLen(Screen->Entries[i]->Title) +
-       StrLen(((REFIT_INPUT_DIALOG*)(Screen->Entries[i]))->Item->SValue);
-       if (MenuWidth < ItemWidth)
-       MenuWidth = ItemWidth;
-       } */
-
-//      DBG("MENU_FUNCTION_INIT 3\n");
-//      MenuWidth = TEXT_XMARGIN * 2 + (MenuWidth * GlobalConfig.CharWidth); // FontWidth;
-//      if (MenuWidth > LAYOUT_TEXT_WIDTH)
       MenuWidth = LAYOUT_TEXT_WIDTH;
       DrawMenuText(NULL, 0, 0, 0, 0);
 
@@ -2442,7 +2760,6 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
       else {
         EntriesPosX = (UGAWidth - MenuWidth) >> 1;
       }
- //     TimeoutPosY = EntriesPosY + MultU64x64((Screen->EntryCount + 1), TextHeight);
       TimeoutPosY = EntriesPosY + (Screen->EntryCount + 1) * TextHeight;
 
       // initial painting
@@ -2508,8 +2825,6 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
                        EntriesPosX, Screen->Entries[i]->Place.YPos,
                        TitleLen + Screen->Entries[i]->Row);
         } else if (Screen->Entries[i]->Tag == TAG_SWITCH) {
-  //        StrCpy(ResultString, (Screen->Entries[i]->Row == OldChosenTheme)?L"  (*) ":L"  ( ) ");
-  //        StrCat(ResultString, Screen->Entries[i]->Title);
           StrCpy(ResultString, Screen->Entries[i]->Title);
           DrawMenuText(ResultString,
                        (i == State->CurrentSelection) ? MenuWidth : 0,
@@ -2544,8 +2859,6 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
                      EntriesPosX, EntriesPosY + (State->LastSelection - State->FirstVisible) * TextHeight,
                      TitleLen + Screen->Entries[State->LastSelection]->Row);
       } else if (Screen->Entries[State->LastSelection]->Tag == TAG_SWITCH) {
-//        StrCpy(ResultString, (Screen->Entries[State->LastSelection]->Row == OldChosenTheme)?L"  (*) ":L"  ( ) ");
-//        StrCat(ResultString, Screen->Entries[State->LastSelection]->Title);
         StrCpy(ResultString, Screen->Entries[State->LastSelection]->Title);
         DrawMenuText(ResultString, 0,
                      EntriesPosX + 36, EntriesPosY + (State->LastSelection - State->FirstVisible) * TextHeight, 0xFFFF);
@@ -2566,8 +2879,6 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
                      EntriesPosX, EntriesPosY + (State->CurrentSelection - State->FirstVisible) * TextHeight,
                      TitleLen + Screen->Entries[State->CurrentSelection]->Row);
       } else if (Screen->Entries[State->CurrentSelection]->Tag == TAG_SWITCH) {
-//        StrCpy(ResultString, (Screen->Entries[State->CurrentSelection]->Row == OldChosenTheme)?L"  (*) ":L"  ( ) ");
-//        StrCat(ResultString, Screen->Entries[State->CurrentSelection]->Title);
         StrCpy(ResultString, Screen->Entries[State->CurrentSelection]->Title);
         DrawMenuText(ResultString, MenuWidth,
                      EntriesPosX + 36, EntriesPosY + (State->CurrentSelection - State->FirstVisible) * TextHeight, 0xFFFF);
@@ -2577,7 +2888,6 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
         DrawMenuText(Screen->Entries[State->CurrentSelection]->Title, MenuWidth,
                      EntriesPosX, EntriesPosY + (State->CurrentSelection - State->FirstVisible) * TextHeight, 0xFFFF);
       }
-
 
       ScrollStart.YPos = ScrollbarBackground.YPos + ScrollbarBackground.Height * State->FirstVisible / (State->MaxIndex + 1);
       Scrollbar.YPos = ScrollStart.YPos + ScrollStart.Height;
@@ -2624,7 +2934,6 @@ static VOID DrawMainMenuEntry(REFIT_MENU_ENTRY *Entry, BOOLEAN selected, INTN XP
     }
   }
   //  DBG("Entry title=%s; Width=%d\n", Entry->Title, MainImage->Width);
-  //  egComposeImage();
   Scale = ((Entry->Row == 0) ? (Scale * (selected ? 1 : -1)): 16) ;
   if (GlobalConfig.SelectionOnTop) {
     SelectionImages[0]->HasAlpha = TRUE;
@@ -2656,7 +2965,6 @@ static VOID DrawMainMenuEntry(REFIT_MENU_ENTRY *Entry, BOOLEAN selected, INTN XP
   Entry->Place.YPos = YPos;
   Entry->Place.Width = MainImage->Width;
   Entry->Place.Height = MainImage->Height;
-  //egFreeImage(TmpBuffer);
 }
 
 static VOID FillRectAreaOfScreen(IN INTN XPos, IN INTN YPos, IN INTN Width, IN INTN Height, IN EG_PIXEL *Color, IN UINT8 XAlign)
@@ -2813,7 +3121,6 @@ VOID MainMenuVerticalStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State,
         itemPosX = AllocatePool(sizeof(UINT64) * Screen->EntryCount);
         itemPosY = AllocatePool(sizeof(UINT64) * Screen->EntryCount);
       }
-  //    row0PosXRunning = row0PosX;
       row0PosYRunning = row0PosY;
       row1PosXRunning = row1PosX;
       //     DBG("EntryCount =%d\n", Screen->EntryCount);
@@ -3593,11 +3900,6 @@ REFIT_MENU_ENTRY  *SubMenuDropTables()
   if (gSettings.ACPIDropTables) {
     ACPI_DROP_TABLE *DropTable = gSettings.ACPIDropTables;
     while (DropTable) {
-      //      DBG("Attempting to drop \"%4.4a\" (%8.8X) \"%8.8a\" (%16.16lX)\n", &(DropTable->Signature), DropTable->Signature, &(DropTable->TableId), DropTable->TableId);
-/*      AddMenuInfoLine(SubScreen, PoolPrint(L"To drop \"%4.4a\": \"%8.8a\"",
-                                           &(DropTable->Signature),
-                                           &(DropTable->TableId)));
- */
       CopyMem((CHAR8*)&sign, (CHAR8*)&(DropTable->Signature), 4);
       CopyMem((CHAR8*)&OTID, (CHAR8*)&(DropTable->TableId), 8);
 
@@ -3606,8 +3908,6 @@ REFIT_MENU_ENTRY  *SubMenuDropTables()
       //       OTID, DropTable->TableId,
       //       DropTable->Length, DropTable->Length);
       InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
- //     UnicodeSPrint(Flags, 255, L"Drop \"%4.4a\"  \"%8.8a\" %d:", sign, OTID, DropTable->Length);
- //     InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
       InputBootArgs->Entry.Title = PoolPrint(L"Drop \"%4.4a\"  \"%8.8a\" %d:", sign, OTID, DropTable->Length);
       InputBootArgs->Entry.Tag = TAG_INPUT;
       InputBootArgs->Entry.Row = 0xFFFF; //cursor
@@ -3636,8 +3936,6 @@ REFIT_MENU_ENTRY  *SubMenuDropTables()
     ACPI_PATCHED_AML *ACPIPatchedAMLTmp = ACPIPatchedAML;
     while (ACPIPatchedAMLTmp) {
       InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
- //     UnicodeSPrint(Flags, 255, L"Drop \"%s\":", ACPIPatchedAMLTmp->FileName);
- //     InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
       InputBootArgs->Entry.Title = PoolPrint(L"Drop \"%s\":", ACPIPatchedAMLTmp->FileName);
       InputBootArgs->Entry.Tag = TAG_INPUT;
       InputBootArgs->Entry.Row = 0xFFFF; //cursor
@@ -3651,7 +3949,6 @@ REFIT_MENU_ENTRY  *SubMenuDropTables()
 
   AddMenuEntry(SubScreen, &MenuEntryReturn);
   Entry->SubScreen = SubScreen;
-//  FreePool(Flags);
   return Entry;
 }
 
@@ -3701,8 +3998,6 @@ REFIT_MENU_ENTRY  *SubMenuSmbios()
   REFIT_MENU_ENTRY   *Entry;
   REFIT_MENU_SCREEN  *SubScreen;
   REFIT_INPUT_DIALOG *InputBootArgs;
-//  CHAR16*           Flags;
-//  Flags = AllocateZeroPool(255);
 
   Entry = AllocateZeroPool(sizeof(REFIT_MENU_ENTRY));
   Entry->Title = PoolPrint(L"SMBIOS ->");
@@ -3720,8 +4015,6 @@ REFIT_MENU_ENTRY  *SubMenuSmbios()
   AddMenuInfoLine(SubScreen, PoolPrint(L"with board %a", gSettings.OEMBoard));
 
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-//  UnicodeSPrint(Flags, 255, L"Product name:");
-//  InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
   InputBootArgs->Entry.Title = PoolPrint(L"Product name:");
   InputBootArgs->Entry.Tag = TAG_INPUT;
   InputBootArgs->Entry.Row = StrLen(InputItems[78].SValue);
@@ -3732,8 +4025,6 @@ REFIT_MENU_ENTRY  *SubMenuSmbios()
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
 
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-//  UnicodeSPrint(Flags, 255, L"Product version:");
-//  InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
   InputBootArgs->Entry.Title = PoolPrint(L"Product version:");
   InputBootArgs->Entry.Tag = TAG_INPUT;
   InputBootArgs->Entry.Row = StrLen(InputItems[79].SValue);
@@ -3743,8 +4034,6 @@ REFIT_MENU_ENTRY  *SubMenuSmbios()
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
 
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-//  UnicodeSPrint(Flags, 255, L"Product sn:");
-//  InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
   InputBootArgs->Entry.Title = PoolPrint(L"Product sn:");
   InputBootArgs->Entry.Tag = TAG_INPUT;
   InputBootArgs->Entry.Row = StrLen(InputItems[80].SValue);
@@ -3754,8 +4043,6 @@ REFIT_MENU_ENTRY  *SubMenuSmbios()
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
 
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-//  UnicodeSPrint(Flags, 255, L"Board ID:");
-// InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
   InputBootArgs->Entry.Title = PoolPrint(L"Board ID:");
   InputBootArgs->Entry.Tag = TAG_INPUT;
   InputBootArgs->Entry.Row = StrLen(InputItems[81].SValue);
@@ -3765,8 +4052,6 @@ REFIT_MENU_ENTRY  *SubMenuSmbios()
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
 
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-//  UnicodeSPrint(Flags, 255, L"Board sn:");
-// InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
   InputBootArgs->Entry.Title = PoolPrint(L"Board sn:");
   InputBootArgs->Entry.Tag = TAG_INPUT;
   InputBootArgs->Entry.Row = StrLen(InputItems[82].SValue);
@@ -3776,8 +4061,6 @@ REFIT_MENU_ENTRY  *SubMenuSmbios()
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
 
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-//  UnicodeSPrint(Flags, 255, L"Board type:");
-//  InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
   InputBootArgs->Entry.Title = PoolPrint(L"Board type:");
   InputBootArgs->Entry.Tag = TAG_INPUT;
   InputBootArgs->Entry.Row = StrLen(InputItems[83].SValue);
@@ -3787,8 +4070,6 @@ REFIT_MENU_ENTRY  *SubMenuSmbios()
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
 
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-//  UnicodeSPrint(Flags, 255, L"Board version:");
-//  InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
   InputBootArgs->Entry.Title = PoolPrint(L"Board version:");
   InputBootArgs->Entry.Tag = TAG_INPUT;
   InputBootArgs->Entry.Row = StrLen(InputItems[84].SValue);
@@ -3798,8 +4079,6 @@ REFIT_MENU_ENTRY  *SubMenuSmbios()
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
 
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-//  UnicodeSPrint(Flags, 255, L"Chassis type:");
-//  InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
   InputBootArgs->Entry.Title = PoolPrint(L"Chassis type:");
   InputBootArgs->Entry.Tag = TAG_INPUT;
   InputBootArgs->Entry.Row = StrLen(InputItems[85].SValue);
@@ -3809,8 +4088,6 @@ REFIT_MENU_ENTRY  *SubMenuSmbios()
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
 
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-//  UnicodeSPrint(Flags, 255, L"ROM version:");
-//  InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
   InputBootArgs->Entry.Title = PoolPrint(L"ROM version:");
   InputBootArgs->Entry.Tag = TAG_INPUT;
   InputBootArgs->Entry.Row = StrLen(InputItems[86].SValue);
@@ -3820,8 +4097,6 @@ REFIT_MENU_ENTRY  *SubMenuSmbios()
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
 
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-//  UnicodeSPrint(Flags, 255, L"ROM release date:");
-//  InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
   InputBootArgs->Entry.Title = PoolPrint(L"ROM release date:");
   InputBootArgs->Entry.Tag = TAG_INPUT;
   InputBootArgs->Entry.Row = StrLen(InputItems[87].SValue);
@@ -3831,8 +4106,6 @@ REFIT_MENU_ENTRY  *SubMenuSmbios()
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
 
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-//  UnicodeSPrint(Flags, 255, L"PlatformFeature:");
-//  InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
   InputBootArgs->Entry.Title = PoolPrint(L"PlatformFeature:");
   InputBootArgs->Entry.Tag = TAG_INPUT;
   InputBootArgs->Entry.Row = StrLen(InputItems[17].SValue); //cursor
@@ -3843,7 +4116,6 @@ REFIT_MENU_ENTRY  *SubMenuSmbios()
 
   AddMenuEntry(SubScreen, &MenuEntryReturn);
   Entry->SubScreen = SubScreen;
-//  FreePool(Flags);
   return Entry;
 }
 
@@ -3852,12 +4124,8 @@ REFIT_MENU_ENTRY  *SubMenuDsdtFix()
   REFIT_MENU_ENTRY   *Entry; //, *SubEntry;
   REFIT_MENU_SCREEN  *SubScreen;
   REFIT_INPUT_DIALOG *InputBootArgs;
-//  CHAR16*           Flags;
-//  Flags = AllocateZeroPool(255);
 
   Entry = AllocateZeroPool(sizeof(REFIT_MENU_ENTRY));
-//  Entry->Title = AllocateZeroPool(255);
-//  UnicodeSPrint(Entry->Title, 255, L"DSDT fix mask [0x%08x]->", gSettings.FixDsdt);
   Entry->Title = PoolPrint(L"DSDT fix mask [0x%08x]->", gSettings.FixDsdt);
   Entry->Image =  OptionMenu.TitleImage;
   Entry->Tag = TAG_OPTIONS;
@@ -3879,8 +4147,6 @@ REFIT_MENU_ENTRY  *SubMenuDsdtFix()
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
 
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-//  UnicodeSPrint(Flags, 255, L"DSDT name:");
-//  InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
   InputBootArgs->Entry.Title = PoolPrint(L"DSDT name:");
   InputBootArgs->Entry.Tag = TAG_INPUT;
   InputBootArgs->Entry.Row = StrLen(InputItems[1].SValue);
@@ -4166,7 +4432,6 @@ REFIT_MENU_ENTRY  *SubMenuDsdtFix()
 
   AddMenuEntry(SubScreen, &MenuEntryReturn);
   Entry->SubScreen = SubScreen;
-//  FreePool(Flags);
   return Entry;
 }
 
@@ -4175,8 +4440,6 @@ REFIT_MENU_ENTRY  *SubMenuPCI()
   REFIT_MENU_ENTRY   *Entry;
   REFIT_MENU_SCREEN  *SubScreen;
   REFIT_INPUT_DIALOG *InputBootArgs;
-//  CHAR16*           Flags;
-//  Flags = AllocateZeroPool(255);
 
   Entry = AllocateZeroPool(sizeof(REFIT_MENU_ENTRY));
   Entry->Title = PoolPrint(L"PCI devices ->");
@@ -4283,7 +4546,6 @@ REFIT_MENU_ENTRY  *SubMenuPCI()
 
   AddMenuEntry(SubScreen, &MenuEntryReturn);
   Entry->SubScreen = SubScreen;
-//  FreePool(Flags);
   return Entry;
 }
 
@@ -4319,16 +4581,6 @@ REFIT_MENU_ENTRY  *SubMenuThemes()
     InputBootArgs->Entry.AtRightClick = ActionDetails;
     AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
   }
-/*
-  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"Theme:");
-  InputBootArgs->Entry.Tag = TAG_INPUT;
-  InputBootArgs->Entry.Row = StrLen(InputItems[3].SValue);
-  InputBootArgs->Item = &InputItems[3];
-  InputBootArgs->Entry.AtClick = ActionSelect;
-  InputBootArgs->Entry.AtRightClick = ActionEnter;
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-*/
   AddMenuEntry(SubScreen, &MenuEntryReturn);
   Entry->SubScreen = SubScreen;
   return Entry;
@@ -4368,12 +4620,9 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     gThemeOptionsChanged = TRUE;
     OptionMenu.ID = SCREEN_OPTIONS;
     OptionMenu.AnimeRun = GetAnime(&OptionMenu); //FALSE;
-//    Flags = AllocateZeroPool(255);
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
     *ChosenEntry = (REFIT_MENU_ENTRY*)InputBootArgs;
 
-//    UnicodeSPrint(Flags, 255, L"Config:");
-//    InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
     InputBootArgs->Entry.Title = PoolPrint(L"Config:");
     InputBootArgs->Entry.Tag = TAG_INPUT;
     InputBootArgs->Entry.Row = StrLen(InputItems[90].SValue);
@@ -4384,8 +4633,6 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
 
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-//    UnicodeSPrint(Flags, 255, L"Boot Args:");
-//    InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
     InputBootArgs->Entry.Title = PoolPrint(L"Boot Args:");
     InputBootArgs->Entry.Tag = TAG_INPUT;
     InputBootArgs->Entry.Row = StrLen(InputItems[0].SValue);
@@ -4395,8 +4642,6 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
 
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-//    UnicodeSPrint(Flags, 255, L"Block kext:");
-//    InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
     InputBootArgs->Entry.Title = PoolPrint(L"Block kext:");
     InputBootArgs->Entry.Tag = TAG_INPUT;
     InputBootArgs->Entry.Row = StrLen(InputItems[2].SValue);
@@ -4406,8 +4651,6 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
 
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-//    UnicodeSPrint(Flags, 255, L"Set OS version if not:");
-//    InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
     InputBootArgs->Entry.Title = PoolPrint(L"Set OS version if not:");
     InputBootArgs->Entry.Tag = TAG_INPUT;
     InputBootArgs->Entry.Row = StrLen(InputItems[51].SValue);
@@ -4451,7 +4694,6 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     }
 
     AddMenuEntry(&OptionMenu, &MenuEntryReturn);
-//    FreePool(Flags);
     //    DBG("option menu created entries=%d\n", OptionMenu.EntryCount);
   }
 

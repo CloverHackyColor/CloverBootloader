@@ -36,6 +36,10 @@
 #include "Platform.h"
 
 extern REFIT_MENU_ENTRY MenuEntryReturn;
+extern REFIT_MENU_ENTRY MenuEntryOptions;
+extern REFIT_MENU_ENTRY MenuEntryAbout;
+extern REFIT_MENU_ENTRY MenuEntryReset;
+extern REFIT_MENU_ENTRY MenuEntryShutdown;
 extern REFIT_MENU_SCREEN MainMenu;
 
 #define PLATFORM_DATABASE_NAME L"PK"
