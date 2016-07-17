@@ -508,10 +508,10 @@ VOID AnyKextPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 Inf
   UINTN   Num = 0;
   
   DBG_RT(Entry, "\nAnyKextPatch %d: driverAddr = %x, driverSize = %x\nAnyKext = %a\n",
-         N, Driver, DriverSize, Entry->KernelAndKextPatches->KextPatches[N].Name);
+         N, Driver, DriverSize, Entry->KernelAndKextPatches->KextPatches[N].Label);
 
   if (Entry->KernelAndKextPatches->KextPatches[N].Disabled) {
-    DBG_RT(Entry, "Patch[%d]: %a :: is not allowed for booted OS %a\n", N, Entry->KernelAndKextPatches->KextPatches[N].Label, Entry->OSVersion);
+    DBG_RT(Entry, "==> is not allowed for booted OS %a\n", Entry->OSVersion);
     return;
   }
   
@@ -616,7 +616,7 @@ VOID PatchKext(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPl
     for (i = 0; i < Entry->KernelAndKextPatches->NrKexts; i++) {
       if ((Entry->KernelAndKextPatches->KextPatches[i].DataLen > 0) &&
           (AsciiStrStr(InfoPlist, Entry->KernelAndKextPatches->KextPatches[i].Name) != NULL)) {
-        DBG_RT(Entry, "patch kext %a\n", Entry->KernelAndKextPatches->KextPatches[i].Name);
+        DBG_RT(Entry, "\n\nPatch kext: %a\n", Entry->KernelAndKextPatches->KextPatches[i].Name);
         AnyKextPatch(Driver, DriverSize, InfoPlist, InfoPlistSize, i, Entry);
       }
     }

@@ -65,8 +65,8 @@ BOOLEAN                 gThemeNeedInit = TRUE;
 BOOLEAN                 DoHibernateWake = FALSE;
 EFI_HANDLE              gImageHandle;
 EFI_SYSTEM_TABLE*       gST;
-EFI_BOOT_SERVICES*		  gBS;
-EFI_RUNTIME_SERVICES*	  gRS;
+EFI_BOOT_SERVICES*      gBS;
+EFI_RUNTIME_SERVICES*   gRS;
 EFI_DXE_SERVICES*       gDS;
 
 DRIVERS_FLAGS gDriversFlags = {FALSE, FALSE, FALSE, FALSE, FALSE, FALSE};  //the initializer is not needed for global variables
@@ -387,7 +387,7 @@ VOID FilterKernelPatches(IN LOADER_ENTRY *Entry)
 //
 EFI_STATUS EFIAPI
 NullConOutOutputString(IN EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL *This, IN CHAR16 *String) {
-	return EFI_SUCCESS;
+  return EFI_SUCCESS;
 }
 
 //
@@ -974,7 +974,7 @@ VOID DisconnectInvalidDiskIoChildDrivers(VOID)
   UINTN                                 Index;
   UINTN                                 OpenInfoIndex;
   EFI_HANDLE                            *Handles = NULL;
-	EFI_SIMPLE_FILE_SYSTEM_PROTOCOL       *Fs;
+  EFI_SIMPLE_FILE_SYSTEM_PROTOCOL       *Fs;
   EFI_BLOCK_IO_PROTOCOL                 *BlockIo;
   EFI_OPEN_PROTOCOL_INFORMATION_ENTRY   *OpenInfo;
   UINTN                                 OpenInfoCount;
@@ -1082,12 +1082,12 @@ VOID DisconnectSomeDevices(VOID)
   EFI_HANDLE              *Handles ;
   EFI_HANDLE              *ControllerHandles;
   UINTN                   ControllerHandleCount;
-	EFI_BLOCK_IO_PROTOCOL   *BlockIo	= NULL;
-//  EFI_DISK_IO_PROTOCOL    *DiskIo	= NULL;
-	EFI_PCI_IO_PROTOCOL     *PciIo	= NULL;
-//  EFI_FILE_PROTOCOL				*RootFP = NULL;
-//  EFI_SIMPLE_FILE_SYSTEM_PROTOCOL	*VolumeFS = NULL;
-	PCI_TYPE00              Pci;
+  EFI_BLOCK_IO_PROTOCOL   *BlockIo  = NULL;
+//  EFI_DISK_IO_PROTOCOL    *DiskIo = NULL;
+  EFI_PCI_IO_PROTOCOL     *PciIo  = NULL;
+//  EFI_FILE_PROTOCOL       *RootFP = NULL;
+//  EFI_SIMPLE_FILE_SYSTEM_PROTOCOL *VolumeFS = NULL;
+  PCI_TYPE00              Pci;
   CHAR16                           *DriverName;
   EFI_COMPONENT_NAME_PROTOCOL      *CompName;
 
@@ -1505,11 +1505,11 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   //GlobalConfig.TextOnly = TRUE;
 
   // bootstrap
-	gST				= SystemTable;
-	gImageHandle	= ImageHandle;
-	gBS				= SystemTable->BootServices;
-	gRS				= SystemTable->RuntimeServices;
-	/*Status = */EfiGetSystemConfigurationTable (&gEfiDxeServicesTableGuid, (VOID **) &gDS);
+  gST       = SystemTable;
+  gImageHandle  = ImageHandle;
+  gBS       = SystemTable->BootServices;
+  gRS       = SystemTable->RuntimeServices;
+  /*Status = */EfiGetSystemConfigurationTable (&gEfiDxeServicesTableGuid, (VOID **) &gDS);
 
   gRS->GetTime(&Now, NULL);
 
@@ -1657,9 +1657,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
 #if HIBERNATE_DUMP_DATA
   {
-    UINT32                    machineSignature		= 0;
-    EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE		  *FadtPointer = NULL;
-    EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE	*Facs = NULL;
+    UINT32                    machineSignature    = 0;
+    EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE     *FadtPointer = NULL;
+    EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE  *Facs = NULL;
 
     DBG("---dump hibernations data---\n");
     FadtPointer = GetFadt();

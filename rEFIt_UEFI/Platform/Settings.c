@@ -22,7 +22,7 @@
 
 //#define SHORT_LOCATE 1
 
-//#define kXMLTagArray   		"array"
+//#define kXMLTagArray      "array"
 
 //EFI_GUID gRandomUUID = {0x0A0B0C0D, 0x0000, 0x1010, {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07}};
 
@@ -242,7 +242,7 @@ ParseLoadOptions (
   }
 
   TailSize = End - Start;
-  //  DBG ("TailSize = %d\n", TailSize);
+  //DBG ("TailSize = %d\n", TailSize);
 
   if ((TailSize) <= 0) {
     return;
@@ -250,17 +250,15 @@ ParseLoadOptions (
 
   for (i = 0; PlistStrings[i] != '\0'; i++) {
     PlistStringsLen = AsciiStrLen (PlistStrings[i]);
-    //    DBG ("PlistStrings[%d] = %a\n", i, PlistStrings[i]);
+    //DBG ("PlistStrings[%d] = %a\n", i, PlistStrings[i]);
     if (PlistStringsLen < TailSize) {
       if (AsciiStriNCmp (PlistStrings[i], Start, PlistStringsLen)) {
         DBG ("Found Plist String = %a, parse XML in LoadOptions\n", PlistStrings[i]);
         if (ParseXML (Start, Dict, (UINT32)TailSize) != EFI_SUCCESS) {
           *Dict = NULL;
           DBG ("Xml in load options is bad\n");
-
           return;
         }
-
         return;
       }
     }
@@ -289,7 +287,6 @@ ParseLoadOptions (
     *Conf = AllocateZeroPool ((TailSize + 1) * sizeof (CHAR16));
     AsciiStrToUnicodeStr (AsciiConf, *Conf);
     FreePool (AsciiConf);
-    return;
   }
 }
 
@@ -997,13 +994,13 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
           continue;
         }
         
-        Patches->KextPatches[Patches->NrKexts].Data = AllocateCopyPool (FindLen, TmpData);
-        Patches->KextPatches[Patches->NrKexts].DataLen = FindLen;
-        Patches->KextPatches[Patches->NrKexts].Patch = AllocateCopyPool (FindLen, TmpPatch);
-        Patches->KextPatches[Patches->NrKexts].MatchOS = NULL;
-        Patches->KextPatches[Patches->NrKexts].Disabled = FALSE;
-        Patches->KextPatches[Patches->NrKexts].Name = AllocateCopyPool (AsciiStrSize (KextPatchesName), KextPatchesName);
-        Patches->KextPatches[Patches->NrKexts].Label = AllocateCopyPool (AsciiStrSize (KextPatchesLabel), KextPatchesLabel);
+        Patches->KextPatches[Patches->NrKexts].Data       = AllocateCopyPool (FindLen, TmpData);
+        Patches->KextPatches[Patches->NrKexts].DataLen    = FindLen;
+        Patches->KextPatches[Patches->NrKexts].Patch      = AllocateCopyPool (FindLen, TmpPatch);
+        Patches->KextPatches[Patches->NrKexts].MatchOS    = NULL;
+        Patches->KextPatches[Patches->NrKexts].Disabled   = FALSE;
+        Patches->KextPatches[Patches->NrKexts].Name       = AllocateCopyPool (AsciiStrSize (KextPatchesName), KextPatchesName);
+        Patches->KextPatches[Patches->NrKexts].Label      = AllocateCopyPool (AsciiStrSize (KextPatchesLabel), KextPatchesLabel);
 
         FreePool(TmpData);
         FreePool(TmpPatch);
@@ -1027,7 +1024,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
           DBG (" :: BinPatch");
         }
 
-        DBG (", data len: %d\n", Patches->KextPatches[Patches->NrKexts].DataLen);
+        DBG (" :: data len: %d\n", Patches->KextPatches[Patches->NrKexts].DataLen);
         Patches->NrKexts++; //must be out of DBG because it may be empty compiled
       }
     }
@@ -1095,17 +1092,17 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
           continue;
         }
 
-        Patches->KernelPatches[Patches->NrKernels].Data = AllocateCopyPool (FindLen, TmpData);
-        Patches->KernelPatches[Patches->NrKernels].DataLen = FindLen;
-        Patches->KernelPatches[Patches->NrKernels].Patch = AllocateCopyPool (FindLen, TmpPatch);
-        Patches->KernelPatches[Patches->NrKernels].Count = 0;
-        Patches->KernelPatches[Patches->NrKernels].MatchOS = NULL;
-        Patches->KernelPatches[Patches->NrKernels].Disabled = FALSE;
-        Patches->KernelPatches[Patches->NrKernels].Label = AllocateCopyPool (AsciiStrSize (KernelPatchesLabel), KernelPatchesLabel);
+        Patches->KernelPatches[Patches->NrKernels].Data       = AllocateCopyPool (FindLen, TmpData);
+        Patches->KernelPatches[Patches->NrKernels].DataLen    = FindLen;
+        Patches->KernelPatches[Patches->NrKernels].Patch      = AllocateCopyPool (FindLen, TmpPatch);
+        Patches->KernelPatches[Patches->NrKernels].Count      = 0;
+        Patches->KernelPatches[Patches->NrKernels].MatchOS    = NULL;
+        Patches->KernelPatches[Patches->NrKernels].Disabled   = FALSE;
+        Patches->KernelPatches[Patches->NrKernels].Label      = AllocateCopyPool (AsciiStrSize (KernelPatchesLabel), KernelPatchesLabel);
 
         Dict = GetProperty (Prop2, "Count");
         if (Dict != NULL) {
-          Patches->KernelPatches[Patches->NrKernels].Count = (INTN)GetPropertyInteger (Dict, 0);
+          Patches->KernelPatches[Patches->NrKernels].Count = GetPropertyInteger (Dict, 0);
         }
 
         FreePool(TmpData);
@@ -1119,7 +1116,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
           DBG(" :: Matched OSes: %a", Patches->KernelPatches[Patches->NrKernels].MatchOS);
         }
 
-        DBG (", data len: %d\n", Patches->KernelPatches[Patches->NrKernels].DataLen);
+        DBG (" :: data len: %d\n", Patches->KernelPatches[Patches->NrKernels].DataLen);
         Patches->NrKernels++;
       }
     }
@@ -2122,7 +2119,7 @@ GetEarlyUserSettings (
                       TagPtr CfgDict
                       )
 {
-  EFI_STATUS	Status = EFI_SUCCESS;
+  EFI_STATUS  Status = EFI_SUCCESS;
   TagPtr      Dict;
   TagPtr      Dict2;
   TagPtr      DictPointer;
@@ -5556,7 +5553,7 @@ GetDevices ()
 {
   EFI_STATUS          Status;
   UINTN               HandleCount  = 0;
-  EFI_HANDLE			    *HandleArray = NULL;
+  EFI_HANDLE          *HandleArray = NULL;
   EFI_PCI_IO_PROTOCOL *PciIo;
   PCI_TYPE00          Pci;
   UINTN               Index;
@@ -5792,8 +5789,8 @@ SetDevices (
             LOADER_ENTRY *Entry
             )
 {
-  //	EFI_GRAPHICS_OUTPUT_MODE_INFORMATION  *modeInfo;
-  EFI_STATUS					Status;
+  //  EFI_GRAPHICS_OUTPUT_MODE_INFORMATION  *modeInfo;
+  EFI_STATUS          Status;
   EFI_PCI_IO_PROTOCOL *PciIo;
   PCI_TYPE00          Pci;
   UINTN               HandleCount;
