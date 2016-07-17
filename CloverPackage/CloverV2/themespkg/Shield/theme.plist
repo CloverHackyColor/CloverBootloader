@@ -5,7 +5,7 @@
 	<key>Author</key>
 	<string>blackosx</string>
 	<key>Description</key>
-	<string>A complete theme with animated titles (v1.3)</string>
+	<string>A complete theme with animated titles (v1.4)</string>
 	<key>Year</key>
 	<string>2014</string>
 	<key>Theme</key>
@@ -384,6 +384,26 @@
 				<string>Anim_14_Options_Themes</string>
 				<key>Frames</key>
 				<integer>79</integer>
+				<key>FrameTime</key>
+				<integer>25</integer>
+				<key>Once</key>
+				<true/>
+				<key>ScreenEdgeX</key>
+				<string>left</string>
+				<key>DistanceFromScreenEdgeX%</key>
+				<integer>33</integer>
+				<key>ScreenEdgeY</key>
+				<string>top</string>
+				<key>DistanceFromScreenEdgeY%</key>
+				<integer>34</integer>
+			</dict>
+			<dict>
+				<key>ID</key>
+				<integer>15</integer>
+				<key>Path</key>
+				<string>Anim_15_Options_SysVars</string>
+				<key>Frames</key>
+				<integer>82</integer>
 				<key>FrameTime</key>
 				<integer>25</integer>
 				<key>Once</key>
