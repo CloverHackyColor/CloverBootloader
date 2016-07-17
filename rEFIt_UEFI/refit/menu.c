@@ -3968,7 +3968,7 @@ REFIT_MENU_ENTRY  *SubMenuSysVariables()
   SubScreen = AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
   SubScreen->Title = Entry->Title;
   SubScreen->TitleImage = Entry->Image;
-  SubScreen->ID = SCREEN_TABLES;
+  SubScreen->ID = SCREEN_SYSVARS;
   SubScreen->AnimeRun = GetAnime(SubScreen);
 
   AddMenuInfoLine(SubScreen, L"More: SystemParameters -> ExposeSysVariables = TRUE");

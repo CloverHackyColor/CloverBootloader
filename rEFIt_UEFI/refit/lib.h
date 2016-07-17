@@ -302,6 +302,7 @@ extern INTN ScrollbarYMovement;
 #define SCREEN_RC_SCRIPTS 12
 #define SCREEN_USB        13
 #define SCREEN_THEME      14
+#define SCREEN_SYSVARS    15
 
 #define MAX_ANIME  41
 
