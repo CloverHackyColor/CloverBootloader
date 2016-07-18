@@ -2461,7 +2461,8 @@ VOID DrawBCSText(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
     return;
   }
   
-  TextWidth = ((StrLen(Text) <= 13) ? StrLen(Text) : ((GlobalConfig.Font == FONT_LOAD) ? 13 : 16)) *
+  TextWidth = ((StrLen(Text) <= ((GlobalConfig.Font == FONT_LOAD) ? 9 : 13)) ?
+               StrLen(Text) : ((GlobalConfig.Font == FONT_LOAD) ? 12 : 16)) *
   ((FontWidth > GlobalConfig.CharWidth) ? FontWidth : GlobalConfig.CharWidth);
   
   TextBufferXY = egCreateImage(TextWidth, FontHeight, TRUE);
@@ -2469,17 +2470,17 @@ VOID DrawBCSText(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
   egFillImage(TextBufferXY, &MenuBackgroundPixel);
   
   // render the text
-  if (StrLen(Text) > 13) {
-    BCSText = AllocatePool(sizeof(CHAR16) * ((GlobalConfig.Font == FONT_LOAD) ? 13 : 16));
+  if (StrLen(Text) > ((GlobalConfig.Font == FONT_LOAD) ? 9 : 13)) {
+    BCSText = AllocatePool(sizeof(CHAR16) * ((GlobalConfig.Font == FONT_LOAD) ? 12 : 16));
     
-    for (i = 0; i < ((GlobalConfig.Font == FONT_LOAD) ? 13 : 16); i++) {
-      if (i < ((GlobalConfig.Font == FONT_LOAD) ? 10 : 13)) {
+    for (i = 0; i < ((GlobalConfig.Font == FONT_LOAD) ? 12 : 16); i++) {
+      if (i < ((GlobalConfig.Font == FONT_LOAD) ? 9 : 13)) {
         BCSText[i] = Text[i];
       } else {
         BCSText[i] = L'.';
       }
     }
-    BCSText[((GlobalConfig.Font == FONT_LOAD) ? 13 : 16)] = '\0';
+    BCSText[((GlobalConfig.Font == FONT_LOAD) ? 12 : 16)] = '\0';
     
     if (!BCSText) {
       return;
@@ -3309,11 +3310,13 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
           if ((i >= State->FirstVisible) && (i <= State->LastVisible)) {
             DrawMainMenuEntry(Screen->Entries[i], (i == State->CurrentSelection)?1:0,
                               itemPosX[i - State->FirstVisible], row0PosY);
-          }
           // create static text for the boot options if the BootCampStyle is used
           if (GlobalConfig.BootCampStyle && !(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)) {
-            DrawBCSText(Screen->Entries[i]->Title, itemPosX[i] + (row0TileSize / 2),
+              FillRectAreaOfScreen(itemPosX[i - State->FirstVisible] + (row0TileSize / 2), textPosY,
+                                   EntriesWidth, TextHeight, &MenuBackgroundPixel, X_IS_CENTER);
+              DrawBCSText(Screen->Entries[i]->Title, itemPosX[i - State->FirstVisible] + (row0TileSize / 2),
                            textPosY, X_IS_CENTER);
+          }
           }
         } else {
           DrawMainMenuEntry(Screen->Entries[i], (i == State->CurrentSelection)?1:0,
