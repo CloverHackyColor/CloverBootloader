@@ -319,20 +319,22 @@ INTN egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage,
       }
 
       if (GlobalConfig.Proportional) {
-        if (c0 <= 0x20) {  // space before or buffer edge
+        if (c0 <= 0x20) {  // space before or at buffer edge
           LeftSpace = 2;
         } else {
           LeftSpace = GetEmpty(BufferPtr, FirstPixelBuf, GlobalConfig.CharWidth, -1, BufferLineOffset);
         }
         if (c <= 0x20) { //new space will be half width
-          RightSpace = GlobalConfig.CharWidth >> 1; 
+          RightSpace = 1;
+          RealWidth = (GlobalConfig.CharWidth >> 1) + 1;
         } else {
           RightSpace = GetEmpty(FontPixelData + c * FontWidth, FontPixelData, FontWidth, 1, FontLineOffset);
           if (RightSpace >= GlobalConfig.CharWidth + Shift) {
             RightSpace = 0; //empty place for invisible characters
           }
+          RealWidth = FontWidth - RightSpace;
         }
-        RealWidth = FontWidth - RightSpace;
+        
       } else {
         LeftSpace = 2;
         RightSpace = Shift;
