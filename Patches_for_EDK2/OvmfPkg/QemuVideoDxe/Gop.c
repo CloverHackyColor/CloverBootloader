@@ -219,8 +219,8 @@ Routine Description:
     //
     // Set PCDs to Inform GraphicsConsole of video resolution.
     //    
-    PcdSet32 (PcdVideoHorizontalResolution, This->Mode->Info->HorizontalResolution);
-    PcdSet32 (PcdVideoVerticalResolution, This->Mode->Info->VerticalResolution);
+ //   PcdSet32 (PcdVideoHorizontalResolution, This->Mode->Info->HorizontalResolution);
+//    PcdSet32 (PcdVideoVerticalResolution, This->Mode->Info->VerticalResolution);
 
     //
     // Video mode is changed, so restart graphics console driver and higher level driver.
