@@ -3455,7 +3455,7 @@ InitTheme(
   UINTN      Size         = 0;
   UINTN      i;
   TagPtr     ThemeDict    = NULL;
-  CHAR16     *ChosenTheme = NULL;
+  CHAR8      *ChosenTheme = NULL;
   CHAR16     *TestTheme   = NULL;
   UINTN      Rnd;
 
@@ -3533,29 +3533,29 @@ InitTheme(
     if (ThemeDict == NULL && UseThemeDefinedInNVRam) {
       ChosenTheme   = GetNvramVariable(L"Clover.Theme", &gEfiAppleBootGuid, NULL, &Size);
       if (ChosenTheme != NULL) {
-        if (StriCmp (ChosenTheme, CONFIG_THEME_EMBEDDED) == 0) {
+        if (AsciiStrCmp (ChosenTheme, "embedded") == 0) {
           goto finish;
         }
-        if (StriCmp (ChosenTheme, CONFIG_THEME_RANDOM) == 0) {
+        if (AsciiStrCmp (ChosenTheme, "random") == 0) {
           ThemeDict = LoadTheme (ThemesList[Rnd]);
           goto finish;
         }
 
-        TestTheme   = PoolPrint (L"%s", ChosenTheme);
+        TestTheme   = PoolPrint (L"%a", ChosenTheme);
         if (TestTheme != NULL) {
           ThemeDict = LoadTheme (TestTheme);
           //         DBG("3\n");
           if (ThemeDict != NULL) {
-            DBG ("theme %s defined in NVRAM found and %s parsed\n", ChosenTheme, CONFIG_THEME_FILENAME);
+            DBG ("theme %a defined in NVRAM found and %s parsed\n", ChosenTheme, CONFIG_THEME_FILENAME);
             if (GlobalConfig.Theme != NULL) {
               FreePool (GlobalConfig.Theme);
             }
             GlobalConfig.Theme = TestTheme;
           } else { // theme from nvram not loaded
             if (GlobalConfig.Theme != NULL) {
-              DBG ("theme %s chosen from nvram is absent, using theme defined in config: %s\n", ChosenTheme, GlobalConfig.Theme);
+              DBG ("theme %a chosen from nvram is absent, using theme defined in config: %s\n", ChosenTheme, GlobalConfig.Theme);
             } else {
-              DBG ("theme %s chosen from nvram is absent, get first theme\n", ChosenTheme);
+              DBG ("theme %a chosen from nvram is absent, get first theme\n", ChosenTheme);
             }
             FreePool (TestTheme);
           }
