@@ -576,16 +576,6 @@ struct GUI_ANIME {
   GUI_ANIME *Next;
 };
 
-/*
-  Theme Vars
-*/
-
-#define CONFIG_THEME_FILENAME     L"theme.plist"
-#define CONFIG_THEME_RANDOM       L"random"
-#define CONFIG_THEME_EMBEDDED     L"embedded"
-#define CONFIG_THEME_CHRISTMAS    L"christmas"
-#define CONFIG_THEME_NEWYEAR      L"newyear"
-
 extern EFI_HANDLE       SelfImageHandle;
 extern EFI_HANDLE       SelfDeviceHandle;
 extern EFI_LOADED_IMAGE *SelfLoadedImage;

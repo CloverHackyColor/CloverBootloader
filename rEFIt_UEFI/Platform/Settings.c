@@ -2879,6 +2879,8 @@ GetListOfACPI ()
   FreePool(AcpiPath);
 }
 
+#define CONFIG_THEME_FILENAME L"theme.plist"
+
 VOID
 GetListOfThemes ()
 {
@@ -2893,7 +2895,7 @@ GetListOfThemes ()
   ThemesNum = 0;
   DirIterOpen (SelfRootDir, L"\\EFI\\CLOVER\\themes", &DirIter);
   while (DirIterNext(&DirIter, 1, L"*.EFI", &DirEntry)) {
-    if (DirEntry->FileName[0] == '.' || (StriCmp(DirEntry->FileName, CONFIG_THEME_EMBEDDED) == 0) || (StriCmp(DirEntry->FileName, CONFIG_THEME_RANDOM) == 0)) {
+    if (DirEntry->FileName[0] == '.') {
       //DBG("Skip theme: %s\n", DirEntry->FileName);
       continue;
     }
@@ -2916,8 +2918,6 @@ GetListOfThemes ()
     }
     DBG ("\n");
   }
-
-  ThemesList[ThemesNum++] = PoolPrint(CONFIG_THEME_EMBEDDED);
 
   DirIterClose (&DirIter);
 }
@@ -3498,14 +3498,14 @@ InitTheme(
   }
 
   if (ThemesNum > 0 &&
-      (!GlobalConfig.Theme || StriCmp (GlobalConfig.Theme, CONFIG_THEME_EMBEDDED) != 0)) {
+      (!GlobalConfig.Theme || StrCmp (GlobalConfig.Theme, L"embedded") != 0)) {
     //DBG("1\n");
     // Try special theme first
     if (Time != NULL) {
       if ((Time->Month == 12) && ((Time->Day >= 25) && (Time->Day <= 31))) {
-        TestTheme = PoolPrint (CONFIG_THEME_CHRISTMAS);
+        TestTheme = PoolPrint (L"christmas");
       } else if ((Time->Month == 1) && ((Time->Day >= 1) && (Time->Day <= 7))) {
-        TestTheme = PoolPrint (CONFIG_THEME_NEWYEAR);
+        TestTheme = PoolPrint (L"newyear");
       }
 
       if (TestTheme != NULL) {
@@ -3523,7 +3523,7 @@ InitTheme(
         TestTheme = NULL;
       } /* else {  //later
          //shuffle
-         if (StrCmp (GlobalConfig.Theme, CONFIG_THEME_RANDOM) == 0) {
+         if (StrCmp (GlobalConfig.Theme, L"random") == 0) {
          ThemeDict = LoadTheme (ThemesList[Rnd]);
          }
          } */
@@ -3574,7 +3574,7 @@ InitTheme(
           DBG ("no default theme, get first theme %s\n", ThemesList[0]);
         }
       } else {
-        if (StrCmp (GlobalConfig.Theme, CONFIG_THEME_RANDOM) == 0) {
+        if (StrCmp (GlobalConfig.Theme, L"random") == 0) {
           ThemeDict = LoadTheme (ThemesList[Rnd]);
         } else {
           ThemeDict = LoadTheme (GlobalConfig.Theme);
