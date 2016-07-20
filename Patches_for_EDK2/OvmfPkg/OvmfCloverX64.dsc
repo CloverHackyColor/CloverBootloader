@@ -473,12 +473,12 @@
   gEfiMdePkgTokenSpaceGuid.PcdPlatformBootTimeOut|0
 
   # Set video resolution for text setup.
-  gEfiMdeModulePkgTokenSpaceGuid.PcdSetupVideoHorizontalResolution|800
-  gEfiMdeModulePkgTokenSpaceGuid.PcdSetupVideoVerticalResolution|600
+  gEfiMdeModulePkgTokenSpaceGuid.PcdSetupVideoHorizontalResolution|0
+  gEfiMdeModulePkgTokenSpaceGuid.PcdSetupVideoVerticalResolution|0
 
-  gEfiMdeModulePkgTokenSpaceGuid.PcdSmbiosVersion|0x0208
+  gEfiMdeModulePkgTokenSpaceGuid.PcdSmbiosVersion|0x0204
   gEfiMdeModulePkgTokenSpaceGuid.PcdSmbiosDocRev|0x0
-  gUefiOvmfPkgTokenSpaceGuid.PcdQemuSmbiosValidated|FALSE
+  gUefiOvmfPkgTokenSpaceGuid.PcdQemuSmbiosValidated|TRUE
 
   # Noexec settings for DXE.
   gEfiMdeModulePkgTokenSpaceGuid.PcdSetNxForStack|FALSE
@@ -679,11 +679,13 @@
   #
   # SMBIOS Support
   #
-  MdeModulePkg/Universal/SmbiosDxe/SmbiosDxe.inf {
-    <LibraryClasses>
-      NULL|OvmfPkg/Library/SmbiosVersionLib/DetectSmbiosVersionLib.inf
-  }
-  OvmfPkg/SmbiosPlatformDxe/SmbiosPlatformDxe.inf
+  MdeModulePkg/Universal/SmbiosDxe/SmbiosDxe.inf
+#  {
+#    <LibraryClasses>
+#      NULL|OvmfPkg/Library/SmbiosVersionLib/DetectSmbiosVersionLib.inf
+#  }
+  OvmfPkg/QemuSmbiosPlatformDxe/SmbiosPlatformDxe.inf
+#	DuetPkg/SmbiosGenDxe/SmbiosGen.inf
 
   #
   # ACPI Support

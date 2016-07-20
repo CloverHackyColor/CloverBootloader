@@ -83,7 +83,7 @@
 #
 ################################################################################
 [PcdsFixedAtBuild]
-  gEfiMdeModulePkgTokenSpaceGuid.PcdSmbiosVersion|0x0204|UINT32|0x10010001
+#  gEfiMdeModulePkgTokenSpaceGuid.PcdSmbiosVersion|0x0204|UINT32|0x10010001
   gEfiMdeModulePkgTokenSpaceGuid.PcdHelloWorldPrintString|L"UEFI Hello Clover!\n"|VOID*|0x10010002
   gEfiMdeModulePkgTokenSpaceGuid.PcdFirmwareVendor|L"CLOVER"|VOID*|0x10010003
   gEfiMdeModulePkgTokenSpaceGuid.PcdFirmwareRevision|0x00010010|UINT32|0x10010004
@@ -97,6 +97,7 @@
   gPcAtChipsetPkgTokenSpaceGuid.PcdIsaAcpiCom2Enable|FALSE|BOOLEAN|0x10010012
   
 [PcdsPatchableInModule, PcdsDynamic, PcdsDynamicEx]
+#  gEfiMdeModulePkgTokenSpaceGuid.PcdSmbiosVersion|0x0204|UINT32|0x10010001
   gEfiMdeModulePkgTokenSpaceGuid.PcdConOutRow|0|UINT32|0x10010015
   gEfiMdeModulePkgTokenSpaceGuid.PcdConOutColumn|0|UINT32|0x10010016
   gEfiMdeModulePkgTokenSpaceGuid.PcdVideoHorizontalResolution|0|UINT32|0x10010017
