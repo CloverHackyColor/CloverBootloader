@@ -337,9 +337,27 @@ VOID DumpKernelAndKextPatches(KERNEL_AND_KEXT_PATCHES *Patches)
 VOID FilterKextPatches(IN LOADER_ENTRY *Entry)
 {
   if ((Entry->KernelAndKextPatches->KextPatches != NULL) && Entry->KernelAndKextPatches->NrKexts) {
-    DBG("Filtering KextPatches:\n");
     INTN i = 0;
+    DBG("Filtering KextPatches:\n");
     for (; i < Entry->KernelAndKextPatches->NrKexts; ++i) {
+#if ENABLE_KEXTTOPATCH_BUILDVERSION >= 1
+      DBG(" - [%d]: %a :: %a :: [OS: %a | MatchOS: %a | MatchBuild: %a]",
+        i,
+        Entry->KernelAndKextPatches->KextPatches[i].Label, 
+        Entry->KernelAndKextPatches->KextPatches[i].IsPlistPatch ? "PlistPatch" : "BinPatch", 
+        Entry->OSVersion,
+        Entry->KernelAndKextPatches->KextPatches[i].MatchOS ? Entry->KernelAndKextPatches->KextPatches[i].MatchOS : "All",
+        Entry->KernelAndKextPatches->KextPatches[i].MatchBuild != NULL ? Entry->KernelAndKextPatches->KextPatches[i].MatchBuild : "All"
+      );
+
+      if ((Entry->BuildVersion != NULL) && (Entry->KernelAndKextPatches->KextPatches[i].MatchBuild != NULL)) {
+        if (AsciiStrCmp(Entry->BuildVersion, Entry->KernelAndKextPatches->KextPatches[i].MatchBuild) != 0) {
+          Entry->KernelAndKextPatches->KextPatches[i].Disabled = TRUE;
+        }
+        DBG(" ==> %a\n", Entry->KernelAndKextPatches->KextPatches[i].Disabled ? "not allowed" : "allowed");
+        continue; // Ignore MatchOS
+      }
+#else
       DBG(" - [%d]: %a :: %a :: [OS: %a | MatchOS: %a]",
         i,
         Entry->KernelAndKextPatches->KextPatches[i].Label, 
@@ -347,12 +365,10 @@ VOID FilterKextPatches(IN LOADER_ENTRY *Entry)
         Entry->OSVersion,
         Entry->KernelAndKextPatches->KextPatches[i].MatchOS ? Entry->KernelAndKextPatches->KextPatches[i].MatchOS : "All"
       );
-      if (!IsPatchEnabled(Entry->KernelAndKextPatches->KextPatches[i].MatchOS, Entry->OSVersion)) {
-        DBG(" ==> not allowed\n");
-        Entry->KernelAndKextPatches->KextPatches[i].Disabled = TRUE;
-        continue;
-      }
-      DBG(" ==> allowed\n");
+#endif
+
+      Entry->KernelAndKextPatches->KextPatches[i].Disabled = !IsPatchEnabled(Entry->KernelAndKextPatches->KextPatches[i].MatchOS, Entry->OSVersion);
+      DBG(" ==> %a\n", Entry->KernelAndKextPatches->KextPatches[i].Disabled ? "not allowed" : "allowed");
     }
   }
 }
@@ -361,21 +377,36 @@ VOID FilterKextPatches(IN LOADER_ENTRY *Entry)
 VOID FilterKernelPatches(IN LOADER_ENTRY *Entry)
 {
   if ((Entry->KernelAndKextPatches->KernelPatches != NULL) && Entry->KernelAndKextPatches->NrKernels) {
-    DBG("Filtering KernelPatches:\n");
     INTN i = 0;
+    DBG("Filtering KernelPatches:\n");
     for (; i < Entry->KernelAndKextPatches->NrKernels; ++i) {
+#if ENABLE_KEXTTOPATCH_BUILDVERSION >= 1
+      DBG(" - [%d]: %a :: [OS: %a | MatchOS: %a | MatchBuild: %a]",
+        i,
+        Entry->KernelAndKextPatches->KernelPatches[i].Label, 
+        Entry->OSVersion,
+        Entry->KernelAndKextPatches->KernelPatches[i].MatchOS ? Entry->KernelAndKextPatches->KernelPatches[i].MatchOS : "All"
+        Entry->KernelAndKextPatches->KernelPatches[i].MatchBuild != NULL ? Entry->KernelAndKextPatches->KernelPatches[i].MatchBuild : "All"
+      );
+
+      if ((Entry->BuildVersion != NULL) && (Entry->KernelAndKextPatches->KernelPatches[i].MatchBuild != NULL)) {
+        if (AsciiStrCmp(Entry->BuildVersion, Entry->KernelAndKextPatches->KernelPatches[i].MatchBuild) != 0) {
+          Entry->KernelAndKextPatches->KernelPatches[i].Disabled = TRUE;
+        }
+        DBG(" ==> %a\n", Entry->KernelAndKextPatches->KernelPatches[i].Disabled ? "not allowed" : "allowed");
+        continue; // Ignore MatchOS
+      }
+#else
       DBG(" - [%d]: %a :: [OS: %a | MatchOS: %a]",
         i,
         Entry->KernelAndKextPatches->KernelPatches[i].Label, 
         Entry->OSVersion,
         Entry->KernelAndKextPatches->KernelPatches[i].MatchOS ? Entry->KernelAndKextPatches->KernelPatches[i].MatchOS : "All"
       );
-      if (!IsPatchEnabled(Entry->KernelAndKextPatches->KernelPatches[i].MatchOS, Entry->OSVersion)) {
-        DBG(" ==> not allowed\n");
-        Entry->KernelAndKextPatches->KernelPatches[i].Disabled = TRUE;
-        continue;
-      }
-      DBG(" ==> allowed\n");
+#endif
+
+      Entry->KernelAndKextPatches->KernelPatches[i].Disabled = !IsPatchEnabled(Entry->KernelAndKextPatches->KernelPatches[i].MatchOS, Entry->OSVersion);
+      DBG(" ==> %a\n", Entry->KernelAndKextPatches->KernelPatches[i].Disabled ? "not allowed" : "allowed");
     }
   }
 }
@@ -458,9 +489,14 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
       Status = gBS->HandleProtocol(ImageHandle, &gEfiLoadedImageProtocolGuid, (VOID **) &LoadedImage);
       if (!EFI_ERROR(Status)) {
         // version in boot.efi appears as "Mac OS X 10.?"
+        /*
+          Start OSName Mac OS X 10.12 End OSName Start OSVendor Apple Inc. End
+        */
         InstallerVersion = SearchString(LoadedImage->ImageBase, LoadedImage->ImageSize, "Mac OS X ", 9);
+
         if (InstallerVersion != NULL) { // string was found
           InstallerVersion += 9; // advance to version location
+
           if (AsciiStrnCmp(InstallerVersion, "10.7", 4) &&
               AsciiStrnCmp(InstallerVersion, "10.8", 4) &&
               AsciiStrnCmp(InstallerVersion, "10.9", 4) &&
@@ -479,8 +515,24 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
           }
         }
       }
+
+#if ENABLE_KEXTTOPATCH_BUILDVERSION >= 1
+      if (Entry->BuildVersion != NULL) {
+        FreePool(Entry->BuildVersion);
+        Entry->BuildVersion = NULL;
+      }
+#endif
     }
+
+#if ENABLE_KEXTTOPATCH_BUILDVERSION >= 1
+    if (Entry->BuildVersion != NULL) {
+      DBG(" %a (%a)\n", Entry->OSVersion, Entry->BuildVersion);
+    } else {
+      DBG(" %a\n", Entry->OSVersion);
+    }
+#else
     DBG(" %a\n", Entry->OSVersion);
+#endif
 
     FilterKextPatches(Entry);
 

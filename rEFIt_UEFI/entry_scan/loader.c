@@ -489,6 +489,9 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath,
   Entry->CustomBoot = CustomBoot;
   Entry->CustomLogo = CustomLogo;
   Entry->LoaderType = OSType;
+#if ENABLE_KEXTTOPATCH_BUILDVERSION >= 1
+  Entry->BuildVersion = NULL;
+#endif
   Entry->OSVersion = GetOSVersion(Entry);
   
   // detect specific loaders

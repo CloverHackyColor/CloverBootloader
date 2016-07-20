@@ -45,6 +45,7 @@
 //#include "GenericBdsLib.h"
 
 #define ENABLE_KERNELTOPATCH 0
+#define ENABLE_KEXTTOPATCH_BUILDVERSION 0
 
 extern EFI_HANDLE             gImageHandle;
 extern EFI_SYSTEM_TABLE*			gST;
@@ -462,6 +463,9 @@ typedef struct {
   UINT8   *Data;
   UINT8   *Patch;
   CHAR8   *MatchOS;
+#if ENABLE_KEXTTOPATCH_BUILDVERSION >= 1
+  CHAR8   *MatchBuild;
+#endif
   BOOLEAN Disabled;
 } KEXT_PATCH;
 
@@ -473,6 +477,9 @@ typedef struct {
   UINT8   *Patch;
   INTN    Count;
   CHAR8   *MatchOS;
+#if ENABLE_KEXTTOPATCH_BUILDVERSION >= 1
+  CHAR8   *MatchBuild;
+#endif
   BOOLEAN Disabled;
 } KERNEL_PATCH;
 #endif
@@ -539,6 +546,9 @@ typedef struct {
   UINT16            Flags;
   UINT8             LoaderType;
   CHAR8            *OSVersion;
+#if ENABLE_KEXTTOPATCH_BUILDVERSION >= 1
+  CHAR8            *BuildVersion;
+#endif
   EG_PIXEL         *BootBgColor;
   UINT8             CustomBoot;
   EG_IMAGE         *CustomLogo;

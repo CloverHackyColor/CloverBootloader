@@ -685,6 +685,9 @@ CopyKernelAndKextPatches (IN OUT  KERNEL_AND_KEXT_PATCHES *Dst,
       Dst->KextPatches[Dst->NrKexts].Data         = AllocateCopyPool (Src->KextPatches[i].DataLen, Src->KextPatches[i].Data);
       Dst->KextPatches[Dst->NrKexts].Patch        = AllocateCopyPool (Src->KextPatches[i].DataLen, Src->KextPatches[i].Patch);
       Dst->KextPatches[Dst->NrKexts].MatchOS      = AllocateCopyPool (AsciiStrSize(Src->KextPatches[i].MatchOS), Src->KextPatches[i].MatchOS);
+#if ENABLE_KEXTTOPATCH_BUILDVERSION >= 1
+      Dst->KextPatches[Dst->NrKexts].MatchBuild = AllocateCopyPool (AsciiStrSize(Src->KextPatches[i].MatchBuild), Src->KextPatches[i].MatchBuild);
+#endif
       ++(Dst->NrKexts);
     }
   }
@@ -712,6 +715,9 @@ CopyKernelAndKextPatches (IN OUT  KERNEL_AND_KEXT_PATCHES *Dst,
       Dst->KernelPatches[Dst->NrKernels].Patch        = AllocateCopyPool (Src->KernelPatches[i].DataLen, Src->KernelPatches[i].Patch);
       Dst->KernelPatches[Dst->NrKernels].Count        = Src->KernelPatches[i].Count;
       Dst->KernelPatches[Dst->NrKernels].MatchOS      = AllocateCopyPool (AsciiStrSize(Src->KernelPatches[i].MatchOS), Src->KernelPatches[i].MatchOS);
+#if ENABLE_KEXTTOPATCH_BUILDVERSION >= 1
+      Dst->KernelPatches[Dst->NrKernels].MatchBuild = AllocateCopyPool (AsciiStrSize(Src->KernelPatches[i].MatchBuild), Src->KernelPatches[i].MatchBuild);
+#endif
       ++(Dst->NrKernels);
     }
   }
@@ -994,13 +1000,16 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
           continue;
         }
         
-        Patches->KextPatches[Patches->NrKexts].Data       = AllocateCopyPool (FindLen, TmpData);
-        Patches->KextPatches[Patches->NrKexts].DataLen    = FindLen;
-        Patches->KextPatches[Patches->NrKexts].Patch      = AllocateCopyPool (FindLen, TmpPatch);
-        Patches->KextPatches[Patches->NrKexts].MatchOS    = NULL;
-        Patches->KextPatches[Patches->NrKexts].Disabled   = FALSE;
-        Patches->KextPatches[Patches->NrKexts].Name       = AllocateCopyPool (AsciiStrSize (KextPatchesName), KextPatchesName);
-        Patches->KextPatches[Patches->NrKexts].Label      = AllocateCopyPool (AsciiStrSize (KextPatchesLabel), KextPatchesLabel);
+        Patches->KextPatches[Patches->NrKexts].Data         = AllocateCopyPool (FindLen, TmpData);
+        Patches->KextPatches[Patches->NrKexts].DataLen      = FindLen;
+        Patches->KextPatches[Patches->NrKexts].Patch        = AllocateCopyPool (FindLen, TmpPatch);
+        Patches->KextPatches[Patches->NrKexts].MatchOS      = NULL;
+#if ENABLE_KEXTTOPATCH_BUILDVERSION >= 1
+        Patches->KextPatches[Patches->NrKexts].MatchBuild   = NULL;
+#endif
+        Patches->KextPatches[Patches->NrKexts].Disabled     = FALSE;
+        Patches->KextPatches[Patches->NrKexts].Name         = AllocateCopyPool (AsciiStrSize (KextPatchesName), KextPatchesName);
+        Patches->KextPatches[Patches->NrKexts].Label        = AllocateCopyPool (AsciiStrSize (KextPatchesLabel), KextPatchesLabel);
 
         FreePool(TmpData);
         FreePool(TmpPatch);
@@ -1011,9 +1020,17 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         Dict = GetProperty (Prop2, "MatchOS");
         if ((Dict != NULL) && (Dict->type == kTagTypeString)) {
           Patches->KextPatches[Patches->NrKexts].MatchOS = AllocateCopyPool (AsciiStrSize (Dict->string), Dict->string);
-          DBG(" :: Matched OSes: %a", Patches->KextPatches[Patches->NrKexts].MatchOS);
+          DBG(" :: MatchOS: %a", Patches->KextPatches[Patches->NrKexts].MatchOS);
         }
-        
+
+#if ENABLE_KEXTTOPATCH_BUILDVERSION >= 1
+        Dict = GetProperty (Prop2, "MatchBuild");
+        if ((Dict != NULL) && (Dict->type == kTagTypeString)) {
+          Patches->KextPatches[Patches->NrKexts].MatchBuild = AllocateCopyPool (AsciiStrSize (Dict->string), Dict->string);
+          DBG(" :: MatchBuild: %a", Patches->KextPatches[Patches->NrKexts].MatchBuild);
+        }
+#endif
+
         // check if this is Info.plist patch or kext binary patch
         Dict = GetProperty (Prop2, "InfoPlistPatch");
         Patches->KextPatches[Patches->NrKexts].IsPlistPatch = IsPropertyTrue (Dict);
@@ -1092,13 +1109,16 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
           continue;
         }
 
-        Patches->KernelPatches[Patches->NrKernels].Data       = AllocateCopyPool (FindLen, TmpData);
-        Patches->KernelPatches[Patches->NrKernels].DataLen    = FindLen;
-        Patches->KernelPatches[Patches->NrKernels].Patch      = AllocateCopyPool (FindLen, TmpPatch);
-        Patches->KernelPatches[Patches->NrKernels].Count      = 0;
-        Patches->KernelPatches[Patches->NrKernels].MatchOS    = NULL;
-        Patches->KernelPatches[Patches->NrKernels].Disabled   = FALSE;
-        Patches->KernelPatches[Patches->NrKernels].Label      = AllocateCopyPool (AsciiStrSize (KernelPatchesLabel), KernelPatchesLabel);
+        Patches->KernelPatches[Patches->NrKernels].Data         = AllocateCopyPool (FindLen, TmpData);
+        Patches->KernelPatches[Patches->NrKernels].DataLen      = FindLen;
+        Patches->KernelPatches[Patches->NrKernels].Patch        = AllocateCopyPool (FindLen, TmpPatch);
+        Patches->KernelPatches[Patches->NrKernels].Count        = 0;
+        Patches->KernelPatches[Patches->NrKernels].MatchOS      = NULL;
+#if ENABLE_KEXTTOPATCH_BUILDVERSION >= 1
+        Patches->KernelPatches[Patches->NrKernels].MatchBuild   = NULL;
+#endif
+        Patches->KernelPatches[Patches->NrKernels].Disabled     = FALSE;
+        Patches->KernelPatches[Patches->NrKernels].Label        = AllocateCopyPool (AsciiStrSize (KernelPatchesLabel), KernelPatchesLabel);
 
         Dict = GetProperty (Prop2, "Count");
         if (Dict != NULL) {
@@ -1113,8 +1133,16 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         Dict = GetProperty (Prop2, "MatchOS");
         if ((Dict != NULL) && (Dict->type == kTagTypeString)) {
           Patches->KernelPatches[Patches->NrKernels].MatchOS = AllocateCopyPool (AsciiStrSize (Dict->string), Dict->string);
-          DBG(" :: Matched OSes: %a", Patches->KernelPatches[Patches->NrKernels].MatchOS);
+          DBG(" :: MatchOS: %a", Patches->KernelPatches[Patches->NrKernels].MatchOS);
         }
+
+#if ENABLE_KEXTTOPATCH_BUILDVERSION >= 1
+        Dict = GetProperty (Prop2, "MatchBuild");
+        if ((Dict != NULL) && (Dict->type == kTagTypeString)) {
+          Patches->KernelPatches[Patches->NrKernels].MatchBuild = AllocateCopyPool (AsciiStrSize (Dict->string), Dict->string);
+          DBG(" :: MatchBuild: %a", Patches->KernelPatches[Patches->NrKernels].MatchBuild);
+        }
+#endif
 
         DBG (" :: data len: %d\n", Patches->KernelPatches[Patches->NrKernels].DataLen);
         Patches->NrKernels++;
@@ -5364,6 +5392,12 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
         if (Prop != NULL && Prop->string != NULL && Prop->string[0] != '\0') {
           OSVersion = AllocateCopyPool (AsciiStrSize (Prop->string), Prop->string);
         }
+#if ENABLE_KEXTTOPATCH_BUILDVERSION >= 1
+        Prop = GetProperty (Dict, "ProductBuildVersion");
+        if (Prop != NULL && Prop->string != NULL && Prop->string[0] != '\0') {
+          Entry->BuildVersion = AllocateCopyPool (AsciiStrSize (Prop->string), Prop->string);
+        }
+#endif
       }
     }
   }
@@ -5371,33 +5405,56 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
   if (OSTYPE_IS_OSX_INSTALLER (Entry->LoaderType)) {
     // Detect exact version for 2nd stage Installer (thanks to dmazar for this idea)
     // This should work for most installer cases. Rest cases will be read from boot.efi before booting.
-    CHAR16 *InstallerPlist = L"\\.IABootFiles\\com.apple.Boot.plist";
-    if (FileExists (Entry->Volume->RootDir, InstallerPlist)) {
-      Status = egLoadFile (Entry->Volume->RootDir, InstallerPlist, (UINT8 **)&PlistBuffer, &PlistLen);
+
+    BOOLEAN OSINSTALLER_VER = FALSE;
+/*
+    CHAR16 *IABootFilesSystemVersion = L"\\.IABootFilesSystemVersion.plist";
+    if (FileExists (Entry->Volume->RootDir, IABootFilesSystemVersion)) {
+      Status = egLoadFile (Entry->Volume->RootDir, IABootFilesSystemVersion, (UINT8 **)&PlistBuffer, &PlistLen);
       if (!EFI_ERROR (Status) && PlistBuffer != NULL && ParseXML (PlistBuffer, &Dict, 0) == EFI_SUCCESS) {
-        Prop = GetProperty (Dict, "Kernel Flags");
+        Prop = GetProperty (Dict, "ProductVersion");
         if (Prop != NULL && Prop->string != NULL && Prop->string[0] != '\0') {
-          if (AsciiStrStr (Prop->string, "Install%20OS%20X%20Mavericks.app")) {
-            OSVersion = AllocateZeroPool (5);
-            UnicodeStrToAsciiStr (L"10.9", OSVersion);
-          } else if (AsciiStrStr (Prop->string, "Install%20macOS%20Sierra") || AsciiStrStr (Prop->string, "Install%20OS%20X%2010.12")) {
-            OSVersion = AllocateZeroPool (6);
-            UnicodeStrToAsciiStr (L"10.12", OSVersion);
-          } else if (AsciiStrStr (Prop->string, "Install%20OS%20X%20El%20Capitan") || AsciiStrStr (Prop->string, "Install%20OS%20X%2010.11")) {
-            OSVersion = AllocateZeroPool (6);
-            UnicodeStrToAsciiStr (L"10.11", OSVersion);
-          } else if (AsciiStrStr (Prop->string, "Install%20OS%20X%20Yosemite") || AsciiStrStr (Prop->string, "Install%20OS%20X%2010.10")) {
-            OSVersion = AllocateZeroPool (6);
-            UnicodeStrToAsciiStr (L"10.10", OSVersion);
-          } else if (AsciiStrStr (Prop->string, "Install%20OS%20X%20Mountain%20Lion")) {
-            OSVersion = AllocateZeroPool (5);
-            UnicodeStrToAsciiStr (L"10.8", OSVersion);
-          } else if (AsciiStrStr (Prop->string, "Install%20Mac%20OS%20X%20Lion")) {
-            OSVersion = AllocateZeroPool (5);
-            UnicodeStrToAsciiStr (L"10.7", OSVersion);
+          OSVersion = AllocateCopyPool (AsciiStrSize (Prop->string), Prop->string);
+          OSINSTALLER_VER = TRUE;
+        }
+#if ENABLE_KEXTTOPATCH_BUILDVERSION >= 1
+        Prop = GetProperty (Dict, "ProductBuildVersion");
+        if (Prop != NULL && Prop->string != NULL && Prop->string[0] != '\0') {
+          Entry->BuildVersion = AllocateCopyPool (AsciiStrSize (Prop->string), Prop->string);
+        }
+#endif
+      }
+    }
+*/
+    if (!OSINSTALLER_VER) {
+      CHAR16 *InstallerPlist = L"\\.IABootFiles\\com.apple.Boot.plist";
+      if (FileExists (Entry->Volume->RootDir, InstallerPlist)) {
+        Status = egLoadFile (Entry->Volume->RootDir, InstallerPlist, (UINT8 **)&PlistBuffer, &PlistLen);
+        if (!EFI_ERROR (Status) && PlistBuffer != NULL && ParseXML (PlistBuffer, &Dict, 0) == EFI_SUCCESS) {
+          Prop = GetProperty (Dict, "Kernel Flags");
+          if (Prop != NULL && Prop->string != NULL && Prop->string[0] != '\0') {
+            if (AsciiStrStr (Prop->string, "Install%20OS%20X%20Mavericks.app")) {
+              OSVersion = AllocateZeroPool (5);
+              UnicodeStrToAsciiStr (L"10.9", OSVersion);
+            } else if (AsciiStrStr (Prop->string, "Install%20macOS%20Sierra") || AsciiStrStr (Prop->string, "Install%20OS%20X%2010.12")) {
+              OSVersion = AllocateZeroPool (6);
+              UnicodeStrToAsciiStr (L"10.12", OSVersion);
+            } else if (AsciiStrStr (Prop->string, "Install%20OS%20X%20El%20Capitan") || AsciiStrStr (Prop->string, "Install%20OS%20X%2010.11")) {
+              OSVersion = AllocateZeroPool (6);
+              UnicodeStrToAsciiStr (L"10.11", OSVersion);
+            } else if (AsciiStrStr (Prop->string, "Install%20OS%20X%20Yosemite") || AsciiStrStr (Prop->string, "Install%20OS%20X%2010.10")) {
+              OSVersion = AllocateZeroPool (6);
+              UnicodeStrToAsciiStr (L"10.10", OSVersion);
+            } else if (AsciiStrStr (Prop->string, "Install%20OS%20X%20Mountain%20Lion")) {
+              OSVersion = AllocateZeroPool (5);
+              UnicodeStrToAsciiStr (L"10.8", OSVersion);
+            } else if (AsciiStrStr (Prop->string, "Install%20Mac%20OS%20X%20Lion")) {
+              OSVersion = AllocateZeroPool (5);
+              UnicodeStrToAsciiStr (L"10.7", OSVersion);
+            }
           }
         }
-      }
+      }      
     }
   }
 
@@ -5411,11 +5468,17 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
         if (Prop != NULL && Prop->string != NULL && Prop->string[0] != '\0') {
           OSVersion = AllocateCopyPool (AsciiStrSize (Prop->string), Prop->string);
         }
+#if ENABLE_KEXTTOPATCH_BUILDVERSION >= 1
+        Prop       = GetProperty (Dict, "ProductBuildVersion");
+        if (Prop != NULL && Prop->string != NULL && Prop->string[0] != '\0') {
+          Entry->BuildVersion = AllocateCopyPool (AsciiStrSize (Prop->string), Prop->string);
+        }
+#endif
       }
     } else if (FileExists (Entry->Volume->RootDir, L"\\com.apple.recovery.boot\\boot.efi")) {
       // Special case - com.apple.recovery.boot/boot.efi exists but SystemVersion.plist doesn't --> 10.9 recovery
       OSVersion    = AllocateZeroPool (5);
-      UnicodeStrToAsciiStr (L"10.9", OSVersion);
+      UnicodeStrToAsciiStr (L"10.9", OSVersion); // >= 10.9 ?
     }
   }
 

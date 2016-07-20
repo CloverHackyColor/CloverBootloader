@@ -149,6 +149,9 @@ LOADER_ENTRY * DuplicateLoaderEntry(IN LOADER_ENTRY *Entry)
     DuplicateEntry->Flags           = Entry->Flags;
     DuplicateEntry->LoaderType      = Entry->LoaderType;
     DuplicateEntry->OSVersion       = Entry->OSVersion;
+#if ENABLE_KEXTTOPATCH_BUILDVERSION >= 1
+    DuplicateEntry->BuildVersion    = Entry->BuildVersion;
+#endif
     DuplicateEntry->KernelAndKextPatches = Entry->KernelAndKextPatches;
   }
   return DuplicateEntry;

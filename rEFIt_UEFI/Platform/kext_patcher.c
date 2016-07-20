@@ -511,7 +511,7 @@ VOID AnyKextPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 Inf
          N, Driver, DriverSize, Entry->KernelAndKextPatches->KextPatches[N].Label);
 
   if (Entry->KernelAndKextPatches->KextPatches[N].Disabled) {
-    DBG_RT(Entry, "==> is not allowed for booted OS %a\n", Entry->OSVersion);
+    DBG_RT(Entry, "==> DISABLED!\n");
     return;
   }
   
