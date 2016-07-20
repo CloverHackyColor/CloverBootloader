@@ -1580,8 +1580,8 @@ static VOID InitScroll(OUT SCROLL_STATE *State, IN INTN ItemCount, IN UINTN MaxC
   State->PaintSelection = FALSE;
 
   State->LastVisible = State->FirstVisible + State->MaxVisible;
-  DBG("InitScroll: MaxIndex=%d, FirstVisible=%d, MaxVisible=%d, MaxFirstVisible=%d\n",
-      State->MaxIndex, State->FirstVisible, State->MaxVisible, State->MaxFirstVisible);
+//  DBG("InitScroll: MaxIndex=%d, FirstVisible=%d, MaxVisible=%d, MaxFirstVisible=%d\n",
+//      State->MaxIndex, State->FirstVisible, State->MaxVisible, State->MaxFirstVisible);
 }
 
 static VOID UpdateScroll(IN OUT SCROLL_STATE *State, IN UINTN Movement)
@@ -1590,7 +1590,7 @@ static VOID UpdateScroll(IN OUT SCROLL_STATE *State, IN UINTN Movement)
   UINTN ScrollMovement = SCROLL_SCROLL_DOWN;
   INTN i;
   State->LastSelection = State->CurrentSelection;
-  DBG("UpdateScroll on %d\n", Movement);
+//  DBG("UpdateScroll on %d\n", Movement);
   switch (Movement) {
     case SCROLL_SCROLLBAR_MOVE:
       ScrollbarYMovement += ScrollbarNewPointerPlace.YPos - ScrollbarOldPointerPlace.YPos;
@@ -2236,6 +2236,9 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
  //this way screen is dirty
         break;
  */
+      case SCAN_F9:
+        SetNextScreenMode(1);
+        break;
       case SCAN_F10:
         egScreenShot();
         break;
@@ -2695,7 +2698,6 @@ VOID ScrollingBar(IN SCROLL_STATE *State)
 
   ScrollEnabled = (State->MaxFirstVisible != 0);
   if (ScrollEnabled) {
-    //VOID egComposeImage(IN OUT EG_IMAGE *CompImage, IN EG_IMAGE *TopImage, IN INTN PosX, IN INTN PosY)
     Total = egCreateFilledImage(ScrollTotal.Width, ScrollTotal.Height, TRUE, &MenuBackgroundPixel);
     for (i = 0; i < ScrollbarBackground.Height; i++) {
       egComposeImage(Total, ScrollbarBackgroundImage, ScrollbarBackground.XPos - ScrollTotal.XPos, ScrollbarBackground.YPos + i - ScrollTotal.YPos);
