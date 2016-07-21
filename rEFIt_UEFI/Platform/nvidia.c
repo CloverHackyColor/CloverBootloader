@@ -1268,6 +1268,7 @@ static nvidia_pci_info_t nvidia_card_generic[] = {
 	{ 0x10DE1286,	"GeForce GT 720" },
 	{ 0x10DE1287,	"GeForce GT 730" }, // GK208
 	{ 0x10DE1288,	"GeForce GT 720" }, // GK208
+  { 0x10DE128b,	"GeForce GT 710" },
 	// 1290 - 129F
 	{ 0x10DE1290,	"GeForce GT 730M" },
 	{ 0x10DE1291,	"GeForce GT 735M" },
