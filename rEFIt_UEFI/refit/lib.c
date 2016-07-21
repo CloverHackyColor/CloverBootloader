@@ -310,7 +310,7 @@ VOID AddListElement(IN OUT VOID ***ListPtr, IN OUT UINTN *ElementCount, IN VOID 
   (*ListPtr)[*ElementCount] = NewElement;
   (*ElementCount)++;
 }
-
+/*
 VOID FreeList(IN OUT VOID ***ListPtr, IN OUT UINTN *ElementCount)
 {
   UINTN i;
@@ -323,7 +323,7 @@ VOID FreeList(IN OUT VOID ***ListPtr, IN OUT UINTN *ElementCount)
     FreePool(*ListPtr);
   }
 }
-
+*/
 //
 // firmware device path discovery
 //

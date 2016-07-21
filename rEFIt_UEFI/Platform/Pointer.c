@@ -350,6 +350,12 @@ EFI_STATUS CheckMouseEvent(REFIT_MENU_SCREEN *Screen)
       else // down
         gAction = ActionPageDown;
       // page up/down, like in OS X
+    } else if (ScrollEnabled &&
+               gPointer.MouseEvent == ScrollDown) {
+      gAction = ActionScrollDown;
+    } else if (ScrollEnabled &&
+               gPointer.MouseEvent == ScrollUp) {
+      gAction = ActionScrollUp;
     } else {
       for (EntryId = 0; EntryId < Screen->EntryCount; EntryId++) {
         if (MouseInRect(&(Screen->Entries[EntryId]->Place))) {

@@ -1768,8 +1768,48 @@ VOID AddMenuEntry(IN REFIT_MENU_SCREEN *Screen, IN REFIT_MENU_ENTRY *Entry)
 
 VOID FreeMenu(IN REFIT_MENU_SCREEN *Screen)
 {
-  if (Screen->Entries)
+  UINTN i;
+  REFIT_MENU_ENTRY *Tentry = NULL;
+//TODO - here we must FreePool for a list of Entries, Screens, InputBootArgs  
+  if (Screen->EntryCount > 0) {
+    for (i = 0; i < Screen->EntryCount; i++) {
+      Tentry = Screen->Entries[i];
+      if (Tentry->SubScreen) {
+        if (Tentry->SubScreen->Title) {
+          FreePool(Tentry->SubScreen->Title);
+          Tentry->SubScreen->Title = NULL;          
+        }
+        // don't free image because of reusing them
+   //     egFreeImage(Tentry->SubScreen->Image);
+        FreeMenu(Tentry->SubScreen);
+        Tentry->SubScreen = NULL;
+      }
+      if (Tentry->Tag != TAG_RETURN) { //can't free constants
+        if (Tentry->Title) {
+          FreePool(Tentry->Title);
+          Tentry->Title = NULL;
+        }
+   //     egFreeImage(Tentry->Image);
+   //     egFreeImage(Tentry->DriveImage);
+   //     egFreeImage(Tentry->BadgeImage);
+      }
+      FreePool(Tentry);
+      Screen->Entries[i] = NULL;
+    }
+    Screen->EntryCount = 0;
     FreePool(Screen->Entries);
+    Screen->Entries = NULL;
+  }
+  if (Screen->InfoLineCount > 0) {
+    for (i = 0; i < Screen->InfoLineCount; i++) {
+      // TODO: call a user-provided routine for each element here
+      FreePool(Screen->InfoLines[i]);
+    }
+    Screen->InfoLineCount = 0;
+    FreePool(Screen->InfoLines);
+    Screen->InfoLines = NULL;
+  }
+
 }
 
 static INTN FindMenuShortcutEntry(IN REFIT_MENU_SCREEN *Screen, IN CHAR16 Shortcut)
@@ -4755,8 +4795,6 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
 exit:
   GlobalConfig.Proportional = OldFontStyle;
   ApplyInputs();
-  //TODO - here we must FreePool for a list of Entries, Screens, InputBootArgs
-  
 }
 
 //
