@@ -75,25 +75,15 @@ EG_IMAGE * egLoadFontImage(IN BOOLEAN FromTheme, IN INTN Rows, IN INTN Cols)
 {
   EG_IMAGE            *NewImage = NULL;
   EG_IMAGE            *NewFontImage;
-//  UINTN     FontWidth;  //using global variables
-//  UINTN     FontHeight;
   INTN        ImageWidth, ImageHeight;
   INTN        x, y, Ypos, j;
   EG_PIXEL    *PixelPtr;
   EG_PIXEL    FirstPixel;
   BOOLEAN     WantAlpha = TRUE;
-  
-/*  if (!ThemeDir) {
-    GlobalConfig.Font = FONT_GRAY;
-    return NULL;
-  } */
 
   if (FromTheme) {
     NewImage = egLoadImage(ThemeDir, GlobalConfig.FontFileName, WantAlpha);
   }
-  /* else {
-    NewImage = egLoadImage(ThemeDir, L"FontKorean.png", WantAlpha);
-  } */
 
   if (NewImage) {
     if (FromTheme) {
@@ -157,18 +147,14 @@ EG_IMAGE * egLoadFontImage(IN BOOLEAN FromTheme, IN INTN Rows, IN INTN Cols)
 VOID PrepareFont(VOID)
 {
   BOOLEAN ChangeFont = FALSE;
-//  EG_PIXEL *FontPixelData;
   EG_PIXEL *p;
   INTN      Width;
   INTN      Height;
   if (gLanguage == korean) {
-//    FontImage = egLoadImage(ThemeDir, L"FontKorean.png", TRUE);
     FontImage = egLoadFontImage(FALSE, 10, 28);
     if (FontImage) {
       FontHeight = 16;
- //     if (GlobalConfig.CharWidth == 0) {
-        GlobalConfig.CharWidth = 20;
- //     }
+      GlobalConfig.CharWidth = 20;
       FontWidth = GlobalConfig.CharWidth;
       TextHeight = FontHeight + TEXT_YMARGIN * 2;
       DBG("Using Korean font matrix\n");
@@ -239,22 +225,17 @@ INTN GetEmpty(EG_PIXEL *Ptr, EG_PIXEL *FirstPixel, INTN MaxWidth, INTN Step, INT
   EG_PIXEL *Ptr0, *Ptr1;
 
   Ptr1 = (Step > 0)?Ptr:Ptr - 1;
-//  DBG("Ptr=%x Ptr1=%x First=%x (%d, %d, %d, %d) W=%d Row=0x%x\n", Ptr, Ptr1, FirstPixel,
-//        FirstPixel->r, FirstPixel->g, FirstPixel->b, FirstPixel->b, MaxWidth, Row);
   m = MaxWidth;
   for (j = 0; j < FontHeight; j++) {
     Ptr0 = Ptr1 + j * Row;
     for (i = 0; i < MaxWidth; i++) {
-//      DBG("(%d, %d, %d, %d) at step %d\n", Ptr0->r, Ptr0->g, Ptr0->b, Ptr0->a, i);
       if (!EmptyPix(Ptr0, FirstPixel)) {
         break;
       }
       Ptr0 += Step;
     }
     m = (i > m)?m:i;
-//    DBG("choosen shift %d\n", m);
   }
-//  DBG("Empty %a %d\n", (Step > 0)?"right":"left", m);
   return m;
 }
 
@@ -275,20 +256,12 @@ INTN egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage,
   
   // clip the text
   TextLength = StrLen(Text);
-/*  DBG("call for textlength=%d\n", TextLength);
-  if ((TextLength * GlobalConfig.CharWidth + PosX) > CompImage->Width){
-    if (GlobalConfig.CharWidth) {
-      NewTextLength = (CompImage->Width - PosX + GlobalConfig.CharWidth - 1) / GlobalConfig.CharWidth;
-    } else
-      NewTextLength = (CompImage->Width - PosX + FontWidth - 1) / FontWidth;
-  }
-  DBG(" NewTextLength=%d\n", NewTextLength); */
   if (!FontImage) {
     GlobalConfig.Font = FONT_LOAD;
     PrepareFont();
   }
   
-  DBG("TextLength =%d PosX=%d PosY=%d\n", TextLength, PosX, PosY);
+//  DBG("TextLength =%d PosX=%d PosY=%d\n", TextLength, PosX, PosY);
   // render it
   BufferPtr = CompImage->PixelData;
   BufferLineOffset = CompImage->Width;
@@ -297,14 +270,14 @@ INTN egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage,
   FirstPixelBuf = BufferPtr;
   FontPixelData = FontImage->PixelData;
   FontLineOffset = FontImage->Width;
-  DBG("BufferLineOffset=%d  FontLineOffset=%d\n", BufferLineOffset, FontLineOffset);
+//  DBG("BufferLineOffset=%d  FontLineOffset=%d\n", BufferLineOffset, FontLineOffset);
 
   if (GlobalConfig.CharWidth < FontWidth) {
     Shift = (FontWidth - GlobalConfig.CharWidth) >> 1;
   }
   c0 = 0;
   RealWidth = GlobalConfig.CharWidth;
-  DBG("FontWidth=%d, CharWidth=%d\n", FontWidth, RealWidth);
+//  DBG("FontWidth=%d, CharWidth=%d\n", FontWidth, RealWidth);
   for (i = 0; i < TextLength; i++) {
     c = Text[i];
     if (gLanguage != korean) {
@@ -339,10 +312,6 @@ INTN egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage,
         LeftSpace = 2;
         RightSpace = Shift;
       }
- /*     DBG("at char %d there is width end: %x > %x\n", i,
-          (UINTN)BufferPtr + RealWidth * 4,
-          (UINTN)FirstPixelBuf + BufferLineOffset * 4);
- */     
       c0 = c; //old value
       if ((UINTN)BufferPtr + RealWidth * 4 > (UINTN)FirstPixelBuf + BufferLineWidth * 4) {
         break;

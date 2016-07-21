@@ -3527,12 +3527,11 @@ InitTheme(
 
   if (ThemesNum > 0 &&
       (!GlobalConfig.Theme || StrCmp (GlobalConfig.Theme, L"embedded") != 0)) {
-    //DBG("1\n");
     // Try special theme first
     if (Time != NULL) {
       if ((Time->Month == 12) && ((Time->Day >= 25) && (Time->Day <= 31))) {
         TestTheme = PoolPrint (L"christmas");
-      } else if ((Time->Month == 1) && ((Time->Day >= 1) && (Time->Day <= 7))) {
+      } else if ((Time->Month == 1) && ((Time->Day >= 1) && (Time->Day <= 3))) {
         TestTheme = PoolPrint (L"newyear");
       }
 
@@ -3549,14 +3548,8 @@ InitTheme(
           FreePool (TestTheme);
         }
         TestTheme = NULL;
-      } /* else {  //later
-         //shuffle
-         if (StrCmp (GlobalConfig.Theme, L"random") == 0) {
-         ThemeDict = LoadTheme (ThemesList[Rnd]);
-         }
-         } */
+      }
     }
-    //       DBG("2\n");
     // Try theme from nvram
     if (ThemeDict == NULL && UseThemeDefinedInNVRam) {
       ChosenTheme   = GetNvramVariable(L"Clover.Theme", &gEfiAppleBootGuid, NULL, &Size);
@@ -3765,9 +3758,7 @@ ParseSMBIOSSettings(
   }
 
   Prop = GetProperty (DictPointer, "BoardType");
-  if (Prop != NULL) {
-    gSettings.BoardType = (UINT8)GetPropertyInteger (Prop, gSettings.BoardType);
-  }
+  gSettings.BoardType = (UINT8)GetPropertyInteger (Prop, gSettings.BoardType);
 
   Prop = GetProperty (DictPointer, "Mobile");
   if (Prop != NULL) {
@@ -3801,9 +3792,8 @@ ParseSMBIOSSettings(
   }
   //gFwFeatures = 0xC0001403 - by default
   Prop = GetProperty (DictPointer, "FirmwareFeatures");
-  if (Prop != NULL) {
-    gFwFeatures       = (UINT32)GetPropertyInteger (Prop, gFwFeatures);
-  }
+  gFwFeatures       = (UINT32)GetPropertyInteger (Prop, gFwFeatures);
+
 }
 
 EFI_STATUS
@@ -3884,11 +3874,7 @@ GetUserSettings(
       gSettings.RefCLK = (UINT16)GetPropertyInteger (Prop, 0);
 
       Prop = GetProperty (DictPointer, "LoadVBios");
-      gSettings.LoadVBios      = FALSE;
-
-      if (Prop != NULL && IsPropertyTrue (Prop)) {
-        gSettings.LoadVBios    = TRUE;
-      }
+      gSettings.LoadVBios = IsPropertyTrue (Prop);
 
       for (i = 0; i < (INTN)NGFX; i++) {
         gGraphics[i].LoadVBios = gSettings.LoadVBios; //default
@@ -4396,19 +4382,14 @@ GetUserSettings(
         }
 
         Prop = GetProperty (Dict2, "Rtc8Allowed");
-        if (Prop != NULL && IsPropertyTrue (Prop)) {
-          gSettings.Rtc8Allowed = TRUE;
-        }
+        gSettings.Rtc8Allowed = IsPropertyTrue (Prop);
 
         Prop = GetProperty (Dict2, "FixMask");
-        if (Prop != NULL) {
-          gSettings.FixDsdt = (UINT32)GetPropertyInteger (Prop, gSettings.FixDsdt);
-          DBG ("Config set Fix DSDT mask=%08x\n", gSettings.FixDsdt);
-        }
+        gSettings.FixDsdt = (UINT32)GetPropertyInteger (Prop, gSettings.FixDsdt);
 
         Prop = GetProperty (Dict2, "Fixes");
         if (Prop != NULL) {
-          DBG ("Config set Fixes will override FixMask mask!\n");
+          DBG ("Config set Fixes will override DSDT fix mask %08x!\n", gSettings.FixDsdt);
 
           if (Prop->type == kTagTypeDict) {
             gSettings.FixDsdt = 0;
@@ -4564,8 +4545,8 @@ GetUserSettings(
             }
           }
 
-          DBG ("   final mask=%08x\n", gSettings.FixDsdt);
         }
+        DBG ("   final mask=%08x\n", gSettings.FixDsdt);
 
         Prop = GetProperty (Dict2, "Patches");
         if (Prop != NULL) {
@@ -4616,14 +4597,7 @@ GetUserSettings(
         if (IsPropertyTrue (Prop)) {
           gSettings.SuspendOverride = TRUE;
         }
-        /*
-         Prop = GetProperty (Dict2, "SlpSmiAtWake");
-         if (Prop != NULL) {
-         if (IsPropertyTrue (Prop)) {
-         gSettings.SlpWak = TRUE;
-         }
-         }
-         */
+
         Prop   = GetProperty (Dict2, "DropOEM_DSM");
         defDSM = FALSE;
 
@@ -4762,8 +4736,8 @@ GetUserSettings(
         Prop                       = GetProperty (Dict2, "PLimitDict");
         gSettings.PLimitDict       = (UINT8)GetPropertyInteger (Prop, 0);
 
-        Prop                    = GetProperty (Dict2, "UnderVoltStep");
-        gSettings.UnderVoltStep = (UINT8)GetPropertyInteger (Prop, 0);
+        Prop                       = GetProperty (Dict2, "UnderVoltStep");
+        gSettings.UnderVoltStep    = (UINT8)GetPropertyInteger (Prop, 0);
 
         Prop                       = GetProperty (Dict2, "DoubleFirstState");
         gSettings.DoubleFirstState = IsPropertyTrue (Prop);
