@@ -4230,40 +4230,24 @@ GetUserSettings(
       if (Prop2 != NULL) {
         // USB
         Prop = GetProperty (Prop2, "Inject");
-        if (Prop != NULL) {
-          // enabled by default
-          if (IsPropertyFalse (Prop)) {
-            gSettings.USBInjection = FALSE;
-          }
-        }
+        gSettings.USBInjection = !IsPropertyFalse (Prop); // enabled by default
+
         Prop = GetProperty (Prop2, "AddClockID");
-        if (Prop != NULL) {
-          // disabled by default
-          if (IsPropertyFalse (Prop))
-            gSettings.InjectClockID = FALSE;
-          else if (IsPropertyTrue (Prop))
-            gSettings.InjectClockID = TRUE;
-        }
+        gSettings.InjectClockID = IsPropertyTrue (Prop); // disabled by default
         // enabled by default for CloverEFI
         // disabled for others
         gSettings.USBFixOwnership = gFirmwareClover;
         Prop = GetProperty (Prop2, "FixOwnership");
         if (Prop != NULL) {
-          if (IsPropertyFalse (Prop))
-            gSettings.USBFixOwnership = FALSE;
-          else if (IsPropertyTrue (Prop)) {
-            gSettings.USBFixOwnership = TRUE;
-            DBG ("USB FixOwnership: true\n");
-          }
+          gSettings.USBFixOwnership = IsPropertyTrue (Prop);
         }
+        DBG ("USB FixOwnership: %a\n", gSettings.USBFixOwnership?"true":"false");
+        
         Prop = GetProperty (Prop2, "HighCurrent");
-        if (Prop != NULL) {
-          // disabled by default
-          if (IsPropertyFalse (Prop))
-            gSettings.HighCurrent = FALSE;
-          else if (IsPropertyTrue (Prop))
-            gSettings.HighCurrent = TRUE;
-        }
+        gSettings.HighCurrent = IsPropertyTrue (Prop);
+        
+        Prop = GetProperty (Prop2, "NameEH00");
+        gSettings.NameEH00 = IsPropertyTrue (Prop);
       }
     }
 

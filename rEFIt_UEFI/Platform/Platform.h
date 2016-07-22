@@ -992,7 +992,10 @@ typedef struct {
   BOOLEAN                 USBFixOwnership;
   BOOLEAN                 InjectClockID;
   BOOLEAN                 HighCurrent;
-  UINT8                   pad61[4];
+  BOOLEAN                 NameEH00;
+  BOOLEAN                 NameXH00;
+  
+  UINT8                   pad61[2];
 
   // LegacyBoot
   CHAR16                  LegacyBoot[32];

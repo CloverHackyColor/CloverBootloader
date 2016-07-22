@@ -3827,15 +3827,24 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
 
                 device_name[10] = AllocateZeroPool(5);
                 CopyMem(device_name[10], dsdt+k, 4);
-                DBG("found USB device [%08x:%x] at %x and Name is %a\n",
+                DBG("found USB device [%08x:%x] at %x and Name was %a ->",
                     USBADR[i], USBADR2[i], k, device_name[10]);
                 if (USB30[i]) {
-                  AsciiSPrint(UsbName[i], 5, "XHC%d", XhciCount++);
+                  if (gSettings.NameXH00) {
+                    AsciiSPrint(UsbName[i], 5, "XH%02X", XhciCount++);
+                  } else {
+                    AsciiSPrint(UsbName[i], 5, "XHC%01X", XhciCount++);
+                  }
                 } else if (USB20[i]) {
-                  AsciiSPrint(UsbName[i], 5, "EHC%d", EhciCount++);
+                  if (gSettings.NameEH00) {
+                    AsciiSPrint(UsbName[i], 5, "EH%02X", EhciCount++);
+                  } else {
+                    AsciiSPrint(UsbName[i], 5, "EHC%01X", EhciCount++);
+                  }
                 } else {
                   AsciiSPrint(UsbName[i], 5, "USB%d", i);
                 }
+                DBG(" %a\n", UsbName[i]);
                 ReplaceName(dsdt + adr1, Size, device_name[10], UsbName[i]);
                 XhciName = TRUE;
                 break;
