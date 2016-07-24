@@ -1175,9 +1175,15 @@ VOID AboutRefit(VOID)
     AddMenuInfo(&AboutMenu, PoolPrint(L" Screen Output: %s", egScreenDescription()));
     AboutMenu.AnimeRun = GetAnime(&AboutMenu);
     AddMenuEntry(&AboutMenu, &MenuEntryReturn);
-  }  else {
+  } /* else {
     FreePool(AboutMenu.InfoLines[AboutMenu.InfoLineCount-1]);
     AboutMenu.InfoLines[AboutMenu.InfoLineCount-1]=PoolPrint(L" Screen Output: %s", egScreenDescription());
+  } */ else if (AboutMenu.EntryCount >= 2) {
+    /*
+      EntryCount instead of InfoLineCount. Lastline == return/back. Is necessary recheck screen res here?
+    */
+    FreePool(AboutMenu.Entries[AboutMenu.EntryCount-2]->Title);
+    AboutMenu.Entries[AboutMenu.EntryCount-2]->Title = PoolPrint(L" Screen Output: %s", egScreenDescription());
   }
 
   RunMenu(&AboutMenu, NULL);
