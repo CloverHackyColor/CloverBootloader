@@ -216,7 +216,7 @@ ContainsSplit(
 
   FirstQuote    = FindNextInstance (CmdLine, L"\"", TRUE);
   SecondQuote   = NULL;
-  TempSpot      = FindFirstCharacter(CmdLine, L"|", L'^');
+  TempSpot      = ShellFindFirstCharacter(CmdLine, L"|", TRUE);
 
   if (FirstQuote == NULL    || 
       TempSpot == NULL      || 
@@ -239,7 +239,7 @@ ContainsSplit(
       continue;
     } else {
       FirstQuote = FindNextInstance (SecondQuote + 1, L"\"", TRUE);
-      TempSpot = FindFirstCharacter(TempSpot + 1, L"|", L'^');
+      TempSpot = ShellFindFirstCharacter(TempSpot + 1, L"|", TRUE);
       continue;
     } 
   }
@@ -2060,7 +2060,7 @@ IsValidSplit(
       return (EFI_OUT_OF_RESOURCES);
     }
     TempWalker = (CHAR16*)Temp;
-    if (!EFI_ERROR(GetNextParameter(&TempWalker, &FirstParameter, StrSize(CmdLine), TRUE))) {
+    if (!EFI_ERROR(ShellGetNextParameter(&TempWalker, FirstParameter, StrSize(CmdLine), TRUE))) {
     if (GetOperationType(FirstParameter) == Unknown_Invalid) {
       ShellPrintHiiEx(-1, -1, NULL, STRING_TOKEN (STR_SHELL_NOT_FOUND), ShellInfoObject.HiiHandle, FirstParameter);
       SetLastError(SHELL_NOT_FOUND);
@@ -2109,7 +2109,7 @@ VerifySplit(
   //
   // recurse to verify the next item
   //
-  TempSpot = FindFirstCharacter(CmdLine, L"|", L'^') + 1;
+  TempSpot = ShellFindFirstCharacter(CmdLine, L"|", TRUE) + 1;
   if (*TempSpot == L'a' && 
       (*(TempSpot + 1) == L' ' || *(TempSpot + 1) == CHAR_NULL)
      ) {
@@ -2227,7 +2227,7 @@ DoHelpUpdate(
 
   Walker = *CmdLine;
   while(Walker != NULL && *Walker != CHAR_NULL) {
-    if (!EFI_ERROR(GetNextParameter(&Walker, &CurrentParameter, StrSize(*CmdLine), TRUE))) {
+    if (!EFI_ERROR(ShellGetNextParameter(&Walker, CurrentParameter, StrSize(*CmdLine), TRUE))) {
     if (StrStr(CurrentParameter, L"-?") == CurrentParameter) {
         CurrentParameter[0] = L' ';
         CurrentParameter[1] = L' ';
@@ -2727,7 +2727,7 @@ RunShellCommand(
     return (EFI_OUT_OF_RESOURCES);
   }
   TempWalker = CleanOriginal;
-  if (!EFI_ERROR(GetNextParameter(&TempWalker, &FirstParameter, StrSize(CleanOriginal), TRUE))) {
+  if (!EFI_ERROR(ShellGetNextParameter(&TempWalker, FirstParameter, StrSize(CleanOriginal), TRUE))) {
   //
   // Depending on the first parameter we change the behavior
   //
@@ -3241,7 +3241,7 @@ RunScriptFile (
   @return the location of the first character in the string
   @retval CHAR_NULL no instance of any character in CharacterList was found in String
 **/
-CONST CHAR16*
+/*CONST CHAR16*
 EFIAPI
 FindFirstCharacter(
   IN CONST CHAR16 *String,
@@ -3264,4 +3264,4 @@ FindFirstCharacter(
     }
   }
   return (String + StrLen(String));
-}
+} */

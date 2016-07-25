@@ -311,8 +311,8 @@ checkCmdlineArguments() {
             -mc | --x64-mcp)     TARGETARCH=X64 ; USE_BIOS_BLOCKIO=1 ;;
             -clean)    TARGETRULE=clean ;;
             -cleanall) TARGETRULE=cleanall ;;
-            -d | -debug | --debug)  BUILDTARGET=DEBUG ;;
-            -r | -release | --release) BUILDTARGET=RELEASE ;;
+#            -d | -debug | --debug)  BUILDTARGET=DEBUG ;;
+#            -r | -release | --release) BUILDTARGET=RELEASE ;;
             -a) TARGETARCH=$(argument $option "$@"); shift
                 ;;
             --arch=*)

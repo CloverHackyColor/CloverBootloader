@@ -33,7 +33,7 @@ FindEndOfParameter(
   CONST CHAR16 *First;
   CONST CHAR16 *CloseQuote;
 
-  First = FindFirstCharacter(String, L" \"", L'^');
+  First = ShellFindFirstCharacter(String, L" \"", TRUE);
 
   //
   // nothing, all one parameter remaining
@@ -50,7 +50,7 @@ FindEndOfParameter(
     return (First);
   }
 
-  CloseQuote = FindFirstCharacter (First+1, L"\"", L'^');
+  CloseQuote = ShellFindFirstCharacter (First+1, L"\"", TRUE);
 
   //
   // We did not find a terminator...
@@ -84,7 +84,7 @@ FindEndOfParameter(
   @return   EFI_INALID_PARAMETER  A required parameter was NULL or pointed to a NULL or empty string.
   @return   EFI_NOT_FOUND         A closing " could not be found on the specified string
 **/
-EFI_STATUS
+/*EFI_STATUS
 EFIAPI
 GetNextParameter(
   IN OUT CHAR16   **Walker,
@@ -174,7 +174,7 @@ DEBUG_CODE_END();
 
   return EFI_SUCCESS;
 }
-
+*/
 /**
   Function to populate Argc and Argv.
 
@@ -241,7 +241,7 @@ ParseCommandLineToArgs(
       ; Walker != NULL && *Walker != CHAR_NULL
       ; Count++
       ) {
-    if (EFI_ERROR(GetNextParameter(&Walker, &TempParameter, Size, TRUE))) {
+    if (EFI_ERROR(ShellGetNextParameter(&Walker, TempParameter, Size, TRUE))) {
       break;
     }
   }
@@ -259,7 +259,7 @@ ParseCommandLineToArgs(
   Walker = (CHAR16*)NewCommandLine;
   while(Walker != NULL && *Walker != CHAR_NULL) {
     SetMem16(TempParameter, Size, CHAR_NULL);
-    if (EFI_ERROR(GetNextParameter(&Walker, &TempParameter, Size, StripQuotation))) {
+    if (EFI_ERROR(ShellGetNextParameter(&Walker, TempParameter, Size, StripQuotation))) {
       Status = EFI_INVALID_PARAMETER;
       goto Done;
     }
