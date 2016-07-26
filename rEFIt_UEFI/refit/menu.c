@@ -1795,12 +1795,8 @@ VOID FreeMenu(IN REFIT_MENU_SCREEN *Screen)
           FreePool(Tentry->Title);
           Tentry->Title = NULL;
         }
-   //     egFreeImage(Tentry->Image);
-   //     egFreeImage(Tentry->DriveImage);
-   //     egFreeImage(Tentry->BadgeImage);
       }
       FreePool(Tentry);
-      Screen->Entries[i] = NULL;
     }
     Screen->EntryCount = 0;
     FreePool(Screen->Entries);
@@ -2241,10 +2237,11 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
         break;
       case SCAN_F2:
         SavePreBootLog = TRUE;
-  /*      Status = SaveBooterLog(SelfRootDir, PREBOOT_LOG);
+        //let it be twice
+        Status = SaveBooterLog(SelfRootDir, PREBOOT_LOG);
         if (EFI_ERROR(Status)) {
           Status = SaveBooterLog(NULL, PREBOOT_LOG);
-        } */
+        }
         break;
       case SCAN_F3:
          MenuExit = MENU_EXIT_HIDE_TOGGLE;
@@ -2804,9 +2801,8 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
         EntriesPosX = (UGAWidth - (Screen->TitleImage->Width + TITLEICON_SPACING + MenuWidth)) >> 1;
   //        DBG("UGAWIdth=%d TitleImage=%d MenuWidth=%d\n", UGAWidth,
   //            Screen->TitleImage->Width, MenuWidth);
-          MenuWidth += Screen->TitleImage->Width;
-      }
-      else {
+        MenuWidth += Screen->TitleImage->Width;
+      } else {
         EntriesPosX = (UGAWidth - MenuWidth) >> 1;
       }
       TimeoutPosY = EntriesPosY + (Screen->EntryCount + 1) * TextHeight;
@@ -2848,7 +2844,8 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
       break;
 
     case MENU_FUNCTION_PAINT_ALL:
-
+      HidePointer();
+      DrawMenuText(NULL, 0, 0, 0, 0); 
       SetBar(EntriesPosX + MenuWidth + 16, EntriesPosY,
              EntriesPosY + (State->MaxVisible + 1) * TextHeight - DownButton.Height, State);
 
@@ -2878,7 +2875,7 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
           DrawMenuText(ResultString,
                        (i == State->CurrentSelection) ? MenuWidth : 0,
                        EntriesPosX + 36, Screen->Entries[i]->Place.YPos, 0xFFFF);
-          HidePointer();
+ //         HidePointer();
           BltImageCompositeIndicator((Screen->Entries[i]->Row == OldChosenTheme) ? Buttons[1] : Buttons[0], Buttons[0], EntriesPosX + 2, Screen->Entries[i]->Place.YPos + PlaceCentre, 16);
         } else {
 //          DBG("paint entry %d title=%s\n", i, Screen->Entries[i]->Title);
