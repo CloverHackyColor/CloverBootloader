@@ -753,6 +753,7 @@ FreeResources:
   }
 
   ShellFreeEnvVarList ();
+  ShellSetRawCmdLine (NULL);
 
   if (ShellCommandGetExit()) {
     return ((EFI_STATUS)ShellCommandGetExitCode());
@@ -2658,6 +2659,7 @@ RunShellCommand(
   CHAR16                    *FirstParameter;
   CHAR16                    *TempWalker;
   SHELL_OPERATION_TYPES     Type;
+  CHAR16                    *OldCmdLine;
 
 //  ASSERT(CmdLine != NULL);
   if (!CmdLine) {
@@ -2668,11 +2670,14 @@ RunShellCommand(
   }
 
   Status              = EFI_SUCCESS;
+  FirstParameter      = NULL;
   CleanOriginal       = NULL;
+  OldCmdLine          = NULL;
 
   CleanOriginal = StrnCatGrow(&CleanOriginal, NULL, CmdLine, 0);
   if (CleanOriginal == NULL) {
-    return (EFI_OUT_OF_RESOURCES);
+    Status = EFI_OUT_OF_RESOURCES;
+    goto Done;
   }
 
   TrimSpaces(&CleanOriginal);
@@ -2699,23 +2704,24 @@ RunShellCommand(
   // Handle case that passed in command line is just 1 or more " " characters.
   //
   if (StrLen (CleanOriginal) == 0) {
-    SHELL_FREE_NON_NULL(CleanOriginal);
-    return (EFI_SUCCESS);
+    Status = EFI_SUCCESS;
+    goto Done;
   }
 
   Status = ProcessCommandLineToFinal(&CleanOriginal);
   if (EFI_ERROR(Status)) {
-    SHELL_FREE_NON_NULL(CleanOriginal);
-    return (Status);
+    goto Done;
   }
+
+  OldCmdLine = ShellGetRawCmdLine ();
+  ShellSetRawCmdLine (CleanOriginal);
 
   //
   // We don't do normal processing with a split command line (output from one command input to another)
   //
   if (ContainsSplit(CleanOriginal)) {
     Status = ProcessNewSplitCommandLine(CleanOriginal);
-    SHELL_FREE_NON_NULL(CleanOriginal);
-    return (Status);
+    goto Done;
   } 
 
   //
@@ -2723,8 +2729,8 @@ RunShellCommand(
   //
   FirstParameter = AllocateZeroPool(StrSize(CleanOriginal));
   if (FirstParameter == NULL) {
-    SHELL_FREE_NON_NULL(CleanOriginal);
-    return (EFI_OUT_OF_RESOURCES);
+    Status = EFI_OUT_OF_RESOURCES;
+    goto Done;
   }
   TempWalker = CleanOriginal;
   if (!EFI_ERROR(ShellGetNextParameter(&TempWalker, FirstParameter, StrSize(CleanOriginal), TRUE))) {
@@ -2753,8 +2759,11 @@ RunShellCommand(
     SetLastError(SHELL_NOT_FOUND);
   }
  
-  SHELL_FREE_NON_NULL(CleanOriginal);
-  SHELL_FREE_NON_NULL(FirstParameter);
+Done:
+  ShellSetRawCmdLine (OldCmdLine);
+  SHELL_FREE_NON_NULL (OldCmdLine);
+  SHELL_FREE_NON_NULL (CleanOriginal);
+  SHELL_FREE_NON_NULL (FirstParameter);
 
   return (Status);
 }
@@ -3231,37 +3240,3 @@ RunScriptFile (
   return (Status);
 }
 
-/**
-  Return the pointer to the first occurrence of any character from a list of characters.
-
-  @param[in] String           the string to parse
-  @param[in] CharacterList    the list of character to look for
-  @param[in] EscapeCharacter  An escape character to skip
-
-  @return the location of the first character in the string
-  @retval CHAR_NULL no instance of any character in CharacterList was found in String
-**/
-/*CONST CHAR16*
-EFIAPI
-FindFirstCharacter(
-  IN CONST CHAR16 *String,
-  IN CONST CHAR16 *CharacterList,
-  IN CONST CHAR16 EscapeCharacter
-  )
-{
-  UINT32 WalkChar;
-  UINT32 WalkStr;
-
-  for (WalkStr = 0; WalkStr < StrLen(String); WalkStr++) {
-    if (String[WalkStr] == EscapeCharacter) {
-      WalkStr++;
-      continue;
-    }
-    for (WalkChar = 0; WalkChar < StrLen(CharacterList); WalkChar++) {
-      if (String[WalkStr] == CharacterList[WalkChar]) {
-        return (&String[WalkStr]);
-      }
-    }
-  }
-  return (String + StrLen(String));
-} */
