@@ -5373,23 +5373,23 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
           Prop = GetProperty (Dict, "Kernel Flags");
           if (Prop != NULL && Prop->string != NULL && Prop->string[0] != '\0') {
             if (AsciiStrStr (Prop->string, "Install%20OS%20X%20Mavericks.app")) {
-              OSVersion = AllocateZeroPool (5);
-              UnicodeStrToAsciiStr (L"10.9", OSVersion);
+              OSVersion = AllocateCopyPool (5, "10.9");
+    //          UnicodeStrToAsciiStr (L"10.9", OSVersion);
             } else if (AsciiStrStr (Prop->string, "Install%20macOS%20Sierra") || AsciiStrStr (Prop->string, "Install%20OS%20X%2010.12")) {
-              OSVersion = AllocateZeroPool (6);
-              UnicodeStrToAsciiStr (L"10.12", OSVersion);
+              OSVersion = AllocateCopyPool (6, "10.12");
+    //          UnicodeStrToAsciiStr (L"10.12", OSVersion);
             } else if (AsciiStrStr (Prop->string, "Install%20OS%20X%20El%20Capitan") || AsciiStrStr (Prop->string, "Install%20OS%20X%2010.11")) {
-              OSVersion = AllocateZeroPool (6);
-              UnicodeStrToAsciiStr (L"10.11", OSVersion);
+              OSVersion = AllocateCopyPool (6, "10.11");
+    //          UnicodeStrToAsciiStr (L"10.11", OSVersion);
             } else if (AsciiStrStr (Prop->string, "Install%20OS%20X%20Yosemite") || AsciiStrStr (Prop->string, "Install%20OS%20X%2010.10")) {
-              OSVersion = AllocateZeroPool (6);
-              UnicodeStrToAsciiStr (L"10.10", OSVersion);
+              OSVersion = AllocateCopyPool (6, "10.10");
+    //          UnicodeStrToAsciiStr (L"10.10", OSVersion);
             } else if (AsciiStrStr (Prop->string, "Install%20OS%20X%20Mountain%20Lion")) {
-              OSVersion = AllocateZeroPool (5);
-              UnicodeStrToAsciiStr (L"10.8", OSVersion);
+              OSVersion = AllocateCopyPool (5, "10.8");
+     //         UnicodeStrToAsciiStr (L"10.8", OSVersion);
             } else if (AsciiStrStr (Prop->string, "Install%20Mac%20OS%20X%20Lion")) {
-              OSVersion = AllocateZeroPool (5);
-              UnicodeStrToAsciiStr (L"10.7", OSVersion);
+              OSVersion = AllocateCopyPool (5, "10.7");
+     //         UnicodeStrToAsciiStr (L"10.7", OSVersion);
             }
           }
         }
@@ -5414,8 +5414,8 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
       }
     } else if (FileExists (Entry->Volume->RootDir, L"\\com.apple.recovery.boot\\boot.efi")) {
       // Special case - com.apple.recovery.boot/boot.efi exists but SystemVersion.plist doesn't --> 10.9 recovery
-      OSVersion    = AllocateZeroPool (5);
-      UnicodeStrToAsciiStr (L"10.9", OSVersion); // >= 10.9 ?
+      OSVersion    = AllocateCopyPool (5, "10.9");
+ //     UnicodeStrToAsciiStr (L"10.9", OSVersion); // >= 10.9 ?
     }
   }
 

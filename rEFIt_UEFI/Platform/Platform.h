@@ -1020,7 +1020,7 @@ typedef struct {
 
   //Pointer
   BOOLEAN                 PointerEnabled;
-  UINT8                   pad82[6];
+  UINT8                   pad82[5];
   INTN                    PointerSpeed;
 #if defined(MDE_CPU_IA32)
   UINT32                  align5;

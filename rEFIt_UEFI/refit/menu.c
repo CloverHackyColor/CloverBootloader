@@ -560,7 +560,7 @@ VOID FillInputs(BOOLEAN New)
 
   InputItemsCount++;
   InputItems[InputItemsCount].ItemType = BoolValue; //108
-  InputItems[InputItemsCount].BValue = gSettings.KextPatchesAllowed;
+  InputItems[InputItemsCount].BValue = gSettings.KernelPatchesAllowed;
   InputItems[InputItemsCount].SValue = gSettings.KernelPatchesAllowed ? L"[+]" : L"[ ]";
 
   InputItemsCount = 110;
