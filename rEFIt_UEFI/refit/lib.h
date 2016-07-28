@@ -44,9 +44,6 @@
 #define Print if ((!GlobalConfig.Quiet) || (GlobalConfig.TextOnly)) Print
 //#include "GenericBdsLib.h"
 
-#define ENABLE_KERNELTOPATCH 0
-#define ENABLE_KEXTTOPATCH_BUILDVERSION 0
-
 extern EFI_HANDLE             gImageHandle;
 extern EFI_SYSTEM_TABLE*			gST;
 extern EFI_BOOT_SERVICES*			gBS;
@@ -463,13 +460,10 @@ typedef struct {
   UINT8   *Data;
   UINT8   *Patch;
   CHAR8   *MatchOS;
-#if ENABLE_KEXTTOPATCH_BUILDVERSION >= 1
   CHAR8   *MatchBuild;
-#endif
   BOOLEAN Disabled;
 } KEXT_PATCH;
 
-#if ENABLE_KERNELTOPATCH >= 1
 typedef struct {
   CHAR8   *Label;
   INTN    DataLen;
@@ -477,12 +471,9 @@ typedef struct {
   UINT8   *Patch;
   INTN    Count;
   CHAR8   *MatchOS;
-#if ENABLE_KEXTTOPATCH_BUILDVERSION >= 1
   CHAR8   *MatchBuild;
-#endif
   BOOLEAN Disabled;
 } KERNEL_PATCH;
-#endif
 
 typedef struct KERNEL_AND_KEXT_PATCHES
 {
@@ -528,10 +519,8 @@ typedef struct KERNEL_AND_KEXT_PATCHES
 #if defined(MDE_CPU_IA32)
   UINT32 align6;
 #endif
-#if ENABLE_KERNELTOPATCH >= 1
   INT32   NrKernels;
   KERNEL_PATCH *KernelPatches;
-#endif
 } KERNEL_AND_KEXT_PATCHES;
 
 typedef struct {
@@ -546,9 +535,7 @@ typedef struct {
   UINT16            Flags;
   UINT8             LoaderType;
   CHAR8            *OSVersion;
-#if ENABLE_KEXTTOPATCH_BUILDVERSION >= 1
   CHAR8            *BuildVersion;
-#endif
   EG_PIXEL         *BootBgColor;
   UINT8             CustomBoot;
   EG_IMAGE         *CustomLogo;

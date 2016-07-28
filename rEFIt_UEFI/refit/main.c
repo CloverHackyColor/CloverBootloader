@@ -336,15 +336,14 @@ VOID DumpKernelAndKextPatches(KERNEL_AND_KEXT_PATCHES *Patches)
 
 VOID FilterKextPatches(IN LOADER_ENTRY *Entry)
 {
-  if ((Entry->KernelAndKextPatches->KextPatches != NULL) && Entry->KernelAndKextPatches->NrKexts) {
+  if (gSettings.KextPatchesAllowed && (Entry->KernelAndKextPatches->KextPatches != NULL) && Entry->KernelAndKextPatches->NrKexts) {
     INTN i = 0;
     DBG("Filtering KextPatches:\n");
     for (; i < Entry->KernelAndKextPatches->NrKexts; ++i) {
-#if ENABLE_KEXTTOPATCH_BUILDVERSION >= 1
       DBG(" - [%d]: %a :: %a :: [OS: %a | MatchOS: %a | MatchBuild: %a]",
         i,
-        Entry->KernelAndKextPatches->KextPatches[i].Label, 
-        Entry->KernelAndKextPatches->KextPatches[i].IsPlistPatch ? "PlistPatch" : "BinPatch", 
+        Entry->KernelAndKextPatches->KextPatches[i].Label,
+        Entry->KernelAndKextPatches->KextPatches[i].IsPlistPatch ? "PlistPatch" : "BinPatch",
         Entry->OSVersion,
         Entry->KernelAndKextPatches->KextPatches[i].MatchOS ? Entry->KernelAndKextPatches->KextPatches[i].MatchOS : "All",
         Entry->KernelAndKextPatches->KextPatches[i].MatchBuild != NULL ? Entry->KernelAndKextPatches->KextPatches[i].MatchBuild : "All"
@@ -355,17 +354,8 @@ VOID FilterKextPatches(IN LOADER_ENTRY *Entry)
           Entry->KernelAndKextPatches->KextPatches[i].Disabled = TRUE;
         }
         DBG(" ==> %a\n", Entry->KernelAndKextPatches->KextPatches[i].Disabled ? "not allowed" : "allowed");
-        continue; // Ignore MatchOS
+        continue; // If user give MatchOS, should we ignore MatchOS / keep reading 'em?
       }
-#else
-      DBG(" - [%d]: %a :: %a :: [OS: %a | MatchOS: %a]",
-        i,
-        Entry->KernelAndKextPatches->KextPatches[i].Label, 
-        Entry->KernelAndKextPatches->KextPatches[i].IsPlistPatch ? "PlistPatch" : "BinPatch", 
-        Entry->OSVersion,
-        Entry->KernelAndKextPatches->KextPatches[i].MatchOS ? Entry->KernelAndKextPatches->KextPatches[i].MatchOS : "All"
-      );
-#endif
 
       Entry->KernelAndKextPatches->KextPatches[i].Disabled = !IsPatchEnabled(Entry->KernelAndKextPatches->KextPatches[i].MatchOS, Entry->OSVersion);
       DBG(" ==> %a\n", Entry->KernelAndKextPatches->KextPatches[i].Disabled ? "not allowed" : "allowed");
@@ -373,19 +363,17 @@ VOID FilterKextPatches(IN LOADER_ENTRY *Entry)
   }
 }
 
-#if ENABLE_KERNELTOPATCH >= 1
 VOID FilterKernelPatches(IN LOADER_ENTRY *Entry)
 {
-  if ((Entry->KernelAndKextPatches->KernelPatches != NULL) && Entry->KernelAndKextPatches->NrKernels) {
+  if (gSettings.KernelPatchesAllowed && (Entry->KernelAndKextPatches->KernelPatches != NULL) && Entry->KernelAndKextPatches->NrKernels) {
     INTN i = 0;
     DBG("Filtering KernelPatches:\n");
     for (; i < Entry->KernelAndKextPatches->NrKernels; ++i) {
-#if ENABLE_KEXTTOPATCH_BUILDVERSION >= 1
       DBG(" - [%d]: %a :: [OS: %a | MatchOS: %a | MatchBuild: %a]",
         i,
-        Entry->KernelAndKextPatches->KernelPatches[i].Label, 
+        Entry->KernelAndKextPatches->KernelPatches[i].Label,
         Entry->OSVersion,
-        Entry->KernelAndKextPatches->KernelPatches[i].MatchOS ? Entry->KernelAndKextPatches->KernelPatches[i].MatchOS : "All"
+        Entry->KernelAndKextPatches->KernelPatches[i].MatchOS ? Entry->KernelAndKextPatches->KernelPatches[i].MatchOS : "All",
         Entry->KernelAndKextPatches->KernelPatches[i].MatchBuild != NULL ? Entry->KernelAndKextPatches->KernelPatches[i].MatchBuild : "All"
       );
 
@@ -394,23 +382,40 @@ VOID FilterKernelPatches(IN LOADER_ENTRY *Entry)
           Entry->KernelAndKextPatches->KernelPatches[i].Disabled = TRUE;
         }
         DBG(" ==> %a\n", Entry->KernelAndKextPatches->KernelPatches[i].Disabled ? "not allowed" : "allowed");
-        continue; // Ignore MatchOS
+        continue; // If user give MatchOS, should we ignore MatchOS / keep reading 'em?
       }
-#else
-      DBG(" - [%d]: %a :: [OS: %a | MatchOS: %a]",
-        i,
-        Entry->KernelAndKextPatches->KernelPatches[i].Label, 
-        Entry->OSVersion,
-        Entry->KernelAndKextPatches->KernelPatches[i].MatchOS ? Entry->KernelAndKextPatches->KernelPatches[i].MatchOS : "All"
-      );
-#endif
 
       Entry->KernelAndKextPatches->KernelPatches[i].Disabled = !IsPatchEnabled(Entry->KernelAndKextPatches->KernelPatches[i].MatchOS, Entry->OSVersion);
       DBG(" ==> %a\n", Entry->KernelAndKextPatches->KernelPatches[i].Disabled ? "not allowed" : "allowed");
     }
   }
 }
-#endif
+
+VOID ReadSIPCfg() {
+  UINT32 csrCfg = gSettings.CsrActiveConfig & CSR_VALID_FLAGS;
+  CHAR16 *csrLog = AllocateZeroPool(SVALUE_MAX_SIZE);
+
+  if (csrCfg & CSR_ALLOW_UNTRUSTED_KEXTS)
+    StrCat(csrLog, L"CSR_ALLOW_UNTRUSTED_KEXTS");
+  if (csrCfg & CSR_ALLOW_UNRESTRICTED_FS)
+    StrCat(csrLog, PoolPrint(L"%a%a", StrLen(csrLog) ? " | " : "", "CSR_ALLOW_UNRESTRICTED_FS"));
+  if (csrCfg & CSR_ALLOW_TASK_FOR_PID)
+    StrCat(csrLog, PoolPrint(L"%a%a", StrLen(csrLog) ? " | " : "", "CSR_ALLOW_TASK_FOR_PID"));
+  if (csrCfg & CSR_ALLOW_KERNEL_DEBUGGER)
+    StrCat(csrLog, PoolPrint(L"%a%a", StrLen(csrLog) ? " | " : "", "CSR_ALLOW_KERNEL_DEBUGGER"));
+  if (csrCfg & CSR_ALLOW_APPLE_INTERNAL)
+    StrCat(csrLog, PoolPrint(L"%a%a", StrLen(csrLog) ? " | " : "", "CSR_ALLOW_APPLE_INTERNAL"));
+  if (csrCfg & CSR_ALLOW_UNRESTRICTED_DTRACE)
+    StrCat(csrLog, PoolPrint(L"%a%a", StrLen(csrLog) ? " | " : "", "CSR_ALLOW_UNRESTRICTED_DTRACE"));
+  if (csrCfg & CSR_ALLOW_UNRESTRICTED_NVRAM)
+    StrCat(csrLog, PoolPrint(L"%a%a", StrLen(csrLog) ? " | " : "", "CSR_ALLOW_UNRESTRICTED_NVRAM"));
+  if (csrCfg & CSR_ALLOW_DEVICE_CONFIGURATION)
+    StrCat(csrLog, PoolPrint(L"%a%a", StrLen(csrLog) ? " | " : "", "CSR_ALLOW_DEVICE_CONFIGURATION"));
+
+  if (StrLen(csrLog)) DBG("CSR_CFG: %s\n", csrLog);
+
+  FreePool(csrLog);
+}
 
 //
 // Null ConOut OutputString() implementation - for blocking
@@ -462,7 +467,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
   DBG("Finally: Bus=%ldkHz CPU=%ldMHz\n",
          DivU64x32(gCPUStructure.FSBFrequency, kilo),
          gCPUStructure.MaxSpeed);
-  
+
   //DumpKernelAndKextPatches(Entry->KernelAndKextPatches);
 
   // Load image into memory (will be started later)
@@ -516,29 +521,29 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
         }
       }
 
-#if ENABLE_KEXTTOPATCH_BUILDVERSION >= 1
       if (Entry->BuildVersion != NULL) {
         FreePool(Entry->BuildVersion);
         Entry->BuildVersion = NULL;
       }
-#endif
     }
 
-#if ENABLE_KEXTTOPATCH_BUILDVERSION >= 1
     if (Entry->BuildVersion != NULL) {
       DBG(" %a (%a)\n", Entry->OSVersion, Entry->BuildVersion);
     } else {
       DBG(" %a\n", Entry->OSVersion);
     }
-#else
-    DBG(" %a\n", Entry->OSVersion);
-#endif
 
     FilterKextPatches(Entry);
 
-#if ENABLE_KERNELTOPATCH >= 1
     FilterKernelPatches(Entry);
-#endif
+
+    if (
+      (gSettings.CsrActiveConfig != 0xFFFF) &&
+      Entry->OSVersion &&
+      AsciiOSVersionToUint64(Entry->OSVersion) >= AsciiOSVersionToUint64("10.11")
+    ) {
+      ReadSIPCfg();
+    }
 
     // if "InjectKexts if no FakeSMC" and OSFLAG_WITHKEXTS is not set
     // then user selected submenu entry and requested no injection.

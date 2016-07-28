@@ -994,7 +994,7 @@ typedef struct {
   BOOLEAN                 HighCurrent;
   BOOLEAN                 NameEH00;
   BOOLEAN                 NameXH00;
-  
+
   UINT8                   pad61[2];
 
   // LegacyBoot
@@ -1016,6 +1016,7 @@ typedef struct {
   // KernelAndKextPatches
   KERNEL_AND_KEXT_PATCHES KernelAndKextPatches;
   BOOLEAN                 KextPatchesAllowed;
+  BOOLEAN                 KernelPatchesAllowed; //From GUI: Only for user patches, not internal Clover
 
   //Pointer
   BOOLEAN                 PointerEnabled;

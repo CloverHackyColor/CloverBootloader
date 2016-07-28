@@ -2217,11 +2217,28 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
   
   if (!rom){
     if (buffer) {
-      rom = buffer;
+      if (buffer[0] != 0x55 && buffer[1] != 0xaa) {
+        //DBG("buffer->size: %d\n", bufferLen);
+        i = 0;
+        while (i < bufferLen) {
+          //DBG("%x%x\n", buffer[i], buffer[i+1]);
+          if (buffer[i] == 0x55 && buffer[i+1] == 0xaa) {
+            DBG(" header found at: %d\n", i);
+            bufferLen -= i;
+            rom = AllocateZeroPool(bufferLen);
+            for (j = 0; j < bufferLen; j++) {
+              rom[j] = buffer[i+j];
+            }
+            break;
+          }
+          i += 512;
+        }
+      }
+      if (!rom) rom = buffer;
       RomAssigned = TRUE;
-      DBG("using loaded ROM image\n");
+      DBG(" using loaded ROM image\n");
     } else {
-      DBG("there are no ROM loaded and no VBIOS read from hardware\n");
+      DBG(" there are no ROM loaded and no VBIOS read from hardware\n");
       //      return FALSE;
     }
   }

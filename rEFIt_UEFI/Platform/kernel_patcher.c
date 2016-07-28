@@ -59,7 +59,7 @@ VOID SetKernelRelocBase()
 {
 //  EFI_STATUS      Status;
   UINTN           DataSize = sizeof(KernelRelocBase);
-  
+
   KernelRelocBase = 0;
   // OsxAptioFixDrv will set this
   /*Status = */gRT->GetVariable(L"OsxAptioFixDrv-RelocBase", &gEfiAppleBootGuid, NULL, &DataSize, &KernelRelocBase);
@@ -72,7 +72,7 @@ VOID SetKernelRelocBase()
 
 VOID KernelPatcher_64(VOID* kernelData, LOADER_ENTRY *Entry)
 {
-  
+
     UINT8       *bytes = (UINT8*)kernelData;
     UINT32      patchLocation=0, patchLocation1=0;
     UINT32      i;
@@ -80,9 +80,9 @@ VOID KernelPatcher_64(VOID* kernelData, LOADER_ENTRY *Entry)
     UINT32      mask_family=0, mask_model=0;
     UINT32      cpuid_family_addr=0, cpuid_model_addr=0;
     UINT64      os_version;
-  
+
     DBG_RT(Entry, "\nLooking for _cpuid_set_info _panic ...\n");
-    
+
     // Determine location of _cpuid_set_info _panic call for reference
     // basically looking for info_p->cpuid_model = bitfield32(reg[eax],  7,  4);
     for (i=0; i<0x1000000; i++) {
@@ -93,7 +93,7 @@ VOID KernelPatcher_64(VOID* kernelData, LOADER_ENTRY *Entry)
             break;
         }
     }
-    
+
     if (!patchLocation) {
         DBG_RT(Entry, "_cpuid_set_info Unsupported CPU _panic not found \n");
         return;
@@ -105,7 +105,7 @@ VOID KernelPatcher_64(VOID* kernelData, LOADER_ENTRY *Entry)
     if (os_version >= AsciiOSVersionToUint64("10.6") && os_version <= AsciiOSVersionToUint64("10.7.3")) {
 
         DBG_RT(Entry, "will patch kernel for OSX 10.6.0 to 10.7.3\n");
-        
+
         // remove tsc_init: unknown CPU family panic for kernels prior to 10.6.2 which still had Atom support
         if (os_version < AsciiOSVersionToUint64("10.6.2")) {
             for (i=0; i<0x1000000; i++) {
@@ -117,7 +117,7 @@ VOID KernelPatcher_64(VOID* kernelData, LOADER_ENTRY *Entry)
                     break;
                 }
             }
-        
+
             // NOP _panic call
             if (patchLocation1) {
                 bytes[patchLocation1 + 0] = 0x90;
@@ -128,14 +128,14 @@ VOID KernelPatcher_64(VOID* kernelData, LOADER_ENTRY *Entry)
             }
         }
         else { // assume patching logic for OSX 10.6.2 to 10.7.3
-            
+
             /*
              Here is our case from CPUID switch statement, it sets CPUFAMILY_UNKNOWN
              C7051C2C5F0000000000   mov     dword [ds:0xffffff80008a22c0], 0x0 (example from 10.7)
              */
             switchaddr = patchLocation - 19;
             DBG_RT(Entry, "switch statement patch location is 0x%08x\n", (switchaddr+6));
-        
+
             if (bytes[switchaddr + 0] == 0xC7 && bytes[switchaddr + 1] == 0x05 &&
                 bytes[switchaddr + 5] == 0x00 && bytes[switchaddr + 6] == 0x00 &&
                 bytes[switchaddr + 7] == 0x00 && bytes[switchaddr + 8] == 0x00) {
@@ -147,9 +147,9 @@ VOID KernelPatcher_64(VOID* kernelData, LOADER_ENTRY *Entry)
                   bytes[switchaddr + 4] << 16 |
                   bytes[switchaddr + 5] << 24;
                 cpuid_family_addr = cpuid_family_addr + (switchaddr + 10);
-                    
+
                 if (cpuid_family_addr) {
-                    
+
                     // Determine cpuid_model address
                     // for 10.6.2 kernels it's offset by 299 bytes from cpuid_family address
                     if (os_version ==  AsciiOSVersionToUint64("10.6.2")) {
@@ -163,16 +163,16 @@ VOID KernelPatcher_64(VOID* kernelData, LOADER_ENTRY *Entry)
                     else {
                         cpuid_model_addr = cpuid_family_addr - 0X153;
                     }
-                    
+
                     DBG_RT(Entry, "cpuid_family address: 0x%08x\n", cpuid_family_addr);
                     DBG_RT(Entry, "cpuid_model address: 0x%08x\n",  cpuid_model_addr);
-                
+
                     switchaddr += 6; // offset 6 bytes in mov operation to write a dword instead of zero
-                    
+
                     // calculate mask for patching, cpuid_family mask not needed as we offset on a valid mask
                     mask_model   = cpuid_model_addr - (switchaddr+14);
                     DBG_RT(Entry, "model mask 0x%08x\n", mask_model);
-                
+
                     DBG_RT(Entry, "overriding cpuid_family and cpuid_model as CPUID_INTEL_PENRYN\n");
                     bytes[switchaddr+0] = (CPUFAMILY_INTEL_PENRYN & 0x000000FF) >>  0;
                     bytes[switchaddr+1] = (CPUFAMILY_INTEL_PENRYN & 0x0000FF00) >>  8;
@@ -190,7 +190,7 @@ VOID KernelPatcher_64(VOID* kernelData, LOADER_ENTRY *Entry)
                     bytes[switchaddr+11] = 0x01; // cpuid_extmodel
                     bytes[switchaddr+12] = 0x00; // cpuid_extfamily
                     bytes[switchaddr+13] = 0x02; // cpuid_stepping
-                    
+
                     // fill remainder with 4 NOPs
                     for (i=14; i<18; i++) {
                         bytes[switchaddr+i] = 0x90;
@@ -202,7 +202,7 @@ VOID KernelPatcher_64(VOID* kernelData, LOADER_ENTRY *Entry)
                 return;
             }
         }
-  
+
         // patch ssse3
         if (!SSSE3 && (AsciiStrnCmp(Entry->OSVersion,"10.6",4)==0)) {
             Patcher_SSE3_6((VOID*)bytes);
@@ -211,13 +211,13 @@ VOID KernelPatcher_64(VOID* kernelData, LOADER_ENTRY *Entry)
             Patcher_SSE3_7((VOID*)bytes);
         }
     }
-    
+
     // all 10.7.4+ kernels share common CPUID switch statement logic,
     // it needs to be exploited in diff manner due to the lack of space
     else if (os_version >= AsciiOSVersionToUint64("10.7.4")) {
-        
+
         DBG_RT(Entry, "will patch kernel for OSX 10.7.4+\n");
-        
+
         /*
          Here is our switchaddress location ... it should be case 20 from CPUID switch statement
          833D78945F0000  cmp        dword [ds:0xffffff80008a21d0], 0x0;
@@ -225,11 +225,11 @@ VOID KernelPatcher_64(VOID* kernelData, LOADER_ENTRY *Entry)
          */
         switchaddr = patchLocation-45;
         DBG_RT(Entry, "switch statement patch location is 0x%08x\n", switchaddr);
-        
+
         if(bytes[switchaddr + 0] == 0x83 && bytes[switchaddr + 1] == 0x3D &&
            bytes[switchaddr + 5] == 0x00 && bytes[switchaddr + 6] == 0x00 &&
            bytes[switchaddr + 7] == 0x74) {
-            
+
             // Determine cpuid_family address
             // 891D4F945F00    mov        dword [ds:0xffffff80008a21a0], ebx
             cpuid_family_addr =
@@ -240,19 +240,19 @@ VOID KernelPatcher_64(VOID* kernelData, LOADER_ENTRY *Entry)
             cpuid_family_addr = cpuid_family_addr + switchaddr;
 
             if (cpuid_family_addr) {
-            
+
             // Determine cpuid_model address
                 // for 10.6.8+ kernels it's 339 bytes apart from cpuid_family address
                 cpuid_model_addr = cpuid_family_addr - 0X153;
-            
+
                 DBG_RT(Entry, "cpuid_family address: 0x%08x\n", cpuid_family_addr);
                 DBG_RT(Entry, "cpuid_model address: 0x%08x\n",  cpuid_model_addr);
-                
+
                 // Calculate masks for patching
                 mask_family  = cpuid_family_addr - (switchaddr +15);
                 mask_model   = cpuid_model_addr -  (switchaddr +25);
                 DBG_RT(Entry, "\nfamily mask: 0x%08x \nmodel mask: 0x%08x\n", mask_family, mask_model);
-                
+
                 // retain original
                 // test ebx, ebx
                 bytes[switchaddr+0] = bytes[patchLocation-13];
@@ -267,7 +267,7 @@ VOID KernelPatcher_64(VOID* kernelData, LOADER_ENTRY *Entry)
                 bytes[switchaddr+6] = (CPUFAMILY_INTEL_PENRYN & 0x0000FF00) >>  8;
                 bytes[switchaddr+7] = (CPUFAMILY_INTEL_PENRYN & 0x00FF0000) >> 16;
                 bytes[switchaddr+8] = (CPUFAMILY_INTEL_PENRYN & 0xFF000000) >> 24;
-                
+
                 // mov dword, ebx
                 bytes[switchaddr+9]  = 0x89;
                 bytes[switchaddr+10] = 0x1D;
@@ -276,7 +276,7 @@ VOID KernelPatcher_64(VOID* kernelData, LOADER_ENTRY *Entry)
                 bytes[switchaddr+12] = (UINT8)((mask_family & 0x0000FF00) >> 8);
                 bytes[switchaddr+13] = (UINT8)((mask_family & 0x00FF0000) >> 16);
                 bytes[switchaddr+14] = (UINT8)((mask_family & 0xFF000000) >> 24);
-                
+
                 // mov dword
                 bytes[switchaddr+15] = 0xC7;
                 bytes[switchaddr+16] = 0x05;
@@ -285,12 +285,12 @@ VOID KernelPatcher_64(VOID* kernelData, LOADER_ENTRY *Entry)
                 bytes[switchaddr+18] = (UINT8)((mask_model & 0x0000FF00) >> 8);
                 bytes[switchaddr+19] = (UINT8)((mask_model & 0x00FF0000) >> 16);
                 bytes[switchaddr+20] = (UINT8)((mask_model & 0xFF000000) >> 24);
-                
+
                 bytes[switchaddr+21] = 0x17; // cpuid_model
                 bytes[switchaddr+22] = 0x01; // cpuid_extmodel
                 bytes[switchaddr+23] = 0x00; // cpuid_extfamily
                 bytes[switchaddr+24] = 0x02; // cpuid_stepping
-                
+
                 // fill remainder with 25 NOPs
                 for (i=25; i<25+25; i++) {
                     bytes[switchaddr+i] = 0x90;
@@ -310,10 +310,10 @@ VOID KernelPatcher_32(VOID* kernelData, CHAR8 *OSVersion)
   UINT32 patchLocation=0, patchLocation1=0;
   UINT32 i;
   UINT32 jumpaddr;
-  
+
   DBG("Found _cpuid_set_info _panic Start\n");
   // _cpuid_set_info _panic address
-  for (i=0; i<0x1000000; i++) {   
+  for (i=0; i<0x1000000; i++) {
     if (bytes[i] == 0xC7 && bytes[i+1] == 0x05 && bytes[i+6] == 0x07 && bytes[i+7] == 0x00 &&
         bytes[i+8] == 0x00 && bytes[i+9] == 0x00 && bytes[i+10] == 0xC7 && bytes[i+11] == 0x05 &&
         bytes[i-5] == 0xE8) {
@@ -322,12 +322,12 @@ VOID KernelPatcher_32(VOID* kernelData, CHAR8 *OSVersion)
       break;
     }
   }
-  
+
   if (!patchLocation) {
     DBG("Can't find _cpuid_set_info _panic address, patch kernel abort.\n",i);
     return;
   }
-  
+
   // this for 10.6.0 and 10.6.1 kernel and remove tsc.c unknow cpufamily panic
   //  c70424540e5900
   // find _tsc_init panic address
@@ -341,7 +341,7 @@ VOID KernelPatcher_32(VOID* kernelData, CHAR8 *OSVersion)
       break;
     }
   }
-  
+
   // found _tsc_init panic addres and patch it
   if (patchLocation1) {
     bytes[patchLocation1 + 0] = 0x90;
@@ -351,16 +351,16 @@ VOID KernelPatcher_32(VOID* kernelData, CHAR8 *OSVersion)
     bytes[patchLocation1 + 4] = 0x90;
   }
   // end tsc.c panic
-  
+
   //first move panic code total 5 bytes, if patch cpuid fail still can boot with kernel
   bytes[patchLocation + 0] = 0x90;
   bytes[patchLocation + 1] = 0x90;
   bytes[patchLocation + 2] = 0x90;
   bytes[patchLocation + 3] = 0x90;
   bytes[patchLocation + 4] = 0x90;
-  
+
   jumpaddr = patchLocation;
-  
+
   for (i=0;i<500;i++) {
     if (bytes[jumpaddr-i-3] == 0x85 && bytes[jumpaddr-i-2] == 0xC0 &&
         bytes[jumpaddr-i-1] == 0x75 ) {
@@ -368,24 +368,24 @@ VOID KernelPatcher_32(VOID* kernelData, CHAR8 *OSVersion)
       bytes[jumpaddr-1] = 0x77;
       if(bytes[patchLocation - 17] == 0xC7)
         bytes[jumpaddr] -=10;
-      
+
       break;
-    } 
+    }
   }
-  
+
   if (jumpaddr == patchLocation) {
     DBG("Can't Found jumpaddr address.\n");
     return;  //can't find jump location
   }
   // patch info_p->cpufamily to CPUFAMILY_INTEL_MEROM
-  
+
   if (bytes[patchLocation - 17] == 0xC7) {
     bytes[patchLocation - 11] = (CPUFAMILY_INTEL_MEROM & 0x000000FF) >>  0;
     bytes[patchLocation - 10] = (CPUFAMILY_INTEL_MEROM & 0x0000FF00) >>  8;
     bytes[patchLocation -  9] = (CPUFAMILY_INTEL_MEROM & 0x00FF0000) >> 16;
     bytes[patchLocation -  8] = (CPUFAMILY_INTEL_MEROM & 0xFF000000) >> 24;
-  } 
-  
+  }
+
   //patch info->cpuid_cpufamily
   bytes[patchLocation -  7] = 0xC7;
   bytes[patchLocation -  6] = 0x05;
@@ -393,17 +393,17 @@ VOID KernelPatcher_32(VOID* kernelData, CHAR8 *OSVersion)
   bytes[patchLocation -  4] = bytes[jumpaddr + 4];
   bytes[patchLocation -  3] = bytes[jumpaddr + 5];
   bytes[patchLocation -  2] = bytes[jumpaddr + 6];
-  
+
   bytes[patchLocation -  1] = CPUIDFAMILY_DEFAULT; //cpuid_family  need alway set 0x06
   bytes[patchLocation +  0] = CPUID_MODEL_MEROM;   //cpuid_model set CPUID_MODEL_MEROM
   bytes[patchLocation +  1] = 0x01;                //cpuid_extmodel alway set 0x01
   bytes[patchLocation +  2] = 0x00;                //cpuid_extfamily alway set 0x00
   bytes[patchLocation +  3] = 0x90;
   bytes[patchLocation +  4] = 0x90;
-  
+
   if (OSVersion) {
     if (AsciiStrnCmp(OSVersion,"10.7",4)==0) return;
-    
+
     if (!SSSE3 && (AsciiStrnCmp(OSVersion,"10.6",4)==0)) {
       Patcher_SSE3_6((VOID*)bytes);
     }
@@ -627,7 +627,7 @@ BOOLEAN KernelPatchPm(VOID *kernelData)
   while (Ptr < End) {
     if (KERNEL_PATCH_SIGNATURE == (*((UINT64 *)Ptr))) {
       // Bytes 19,20 of KernelPm patch for kernel 13.x change between kernel versions, so we skip them in search&replace
-      if ((CompareMem(Ptr + sizeof(UINT64),   KernelPatchPmSrc + sizeof(UINT64),   18*sizeof(UINT8) - sizeof(UINT64)) == 0) && 
+      if ((CompareMem(Ptr + sizeof(UINT64),   KernelPatchPmSrc + sizeof(UINT64),   18*sizeof(UINT8) - sizeof(UINT64)) == 0) &&
           (CompareMem(Ptr + 20*sizeof(UINT8), KernelPatchPmSrc + 20*sizeof(UINT8), sizeof(KernelPatchPmSrc) - 20*sizeof(UINT8)) == 0)) {
         // Don't copy more than the source here!
         CopyMem(Ptr, KernelPatchPmRepl, 18*sizeof(UINT8));
@@ -678,14 +678,14 @@ BOOLEAN KernelPatchPm(VOID *kernelData)
 BOOLEAN KernelLapicPatch_64(VOID *kernelData)
 {
   // Credits to donovan6000 and sherlocks for providing the lapic kernel patch source used to build this function
-  
+
   UINT8       *bytes = (UINT8*)kernelData;
   UINT32      patchLocation=0;
   UINT32      i;
-  
+
   DBG("Looking for Lapic panic call (64-bit) Start\n");
-  
-  for (i=0; i<0x1000000; i++) {   
+
+  for (i=0; i<0x1000000; i++) {
     if (bytes[i+0] == 0x65 && bytes[i+1] == 0x8B && bytes[i+2] == 0x04 && bytes[i+3] == 0x25 &&
         bytes[i+4] == 0x3C && bytes[i+5] == 0x00 && bytes[i+6] == 0x00 && bytes[i+7] == 0x00 &&
         bytes[i+45] == 0x65 && bytes[i+46] == 0x8B && bytes[i+47] == 0x04 && bytes[i+48] == 0x25 &&
@@ -733,15 +733,15 @@ BOOLEAN KernelLapicPatch_64(VOID *kernelData)
         break;
     }
   }
-  
+
   if (!patchLocation) {
     DBG("Can't find Lapic panic, kernel patch aborted.\n");
     return FALSE;
   }
-  
+
   // Already patched?  May be running a non-vanilla kernel already?
-  
-  if (bytes[patchLocation + 0] == 0x90 && bytes[patchLocation + 1] == 0x90 && 
+
+  if (bytes[patchLocation + 0] == 0x90 && bytes[patchLocation + 1] == 0x90 &&
       bytes[patchLocation + 2] == 0x90 && bytes[patchLocation + 3] == 0x90 &&
       bytes[patchLocation + 4] == 0x90) {
     DBG("Lapic panic already patched, kernel file manually patched?\n");
@@ -759,14 +759,14 @@ BOOLEAN KernelLapicPatch_64(VOID *kernelData)
 BOOLEAN KernelLapicPatch_32(VOID *kernelData)
 {
   // Credits to donovan6000 and sherlocks for providing the lapic kernel patch source used to build this function
-  
+
   UINT8       *bytes = (UINT8*)kernelData;
   UINT32      patchLocation=0;
   UINT32      i;
-  
+
   DBG("Looking for Lapic panic call (32-bit) Start\n");
-  
-  for (i=0; i<0x1000000; i++) {   
+
+  for (i=0; i<0x1000000; i++) {
     if (bytes[i+0]  == 0x65 && bytes[i+1]  == 0xA1 && bytes[i+2]  == 0x0C && bytes[i+3]  == 0x00 &&
         bytes[i+4]  == 0x00 && bytes[i+5]  == 0x00 &&
         bytes[i+30] == 0x65 && bytes[i+31] == 0xA1 && bytes[i+32] == 0x0C && bytes[i+33] == 0x00 &&
@@ -776,15 +776,15 @@ BOOLEAN KernelLapicPatch_32(VOID *kernelData)
       break;
     }
   }
-  
+
   if (!patchLocation) {
     DBG("Can't find Lapic panic, kernel patch aborted.\n");
     return FALSE;
   }
-  
+
   // Already patched?  May be running a non-vanilla kernel already?
-  
-  if (bytes[patchLocation + 0] == 0x90 && bytes[patchLocation + 1] == 0x90 && 
+
+  if (bytes[patchLocation + 0] == 0x90 && bytes[patchLocation + 1] == 0x90 &&
       bytes[patchLocation + 2] == 0x90 && bytes[patchLocation + 3] == 0x90 &&
       bytes[patchLocation + 4] == 0x90) {
     DBG("Lapic panic already patched, kernel file manually patched?\n");
@@ -826,7 +826,7 @@ BOOLEAN KernelHaswellEPatch(VOID *kernelData)
 
       PatchApplied = TRUE;
     }
-    
+
     if (Bytes[Index] == 0xEB && Bytes[Index + 1] == 0x0A && Bytes[Index + 2] == 0x83 && Bytes[Index + 3] == 0xF8 && Bytes[Index + 4] == 0x3A) {
       Bytes[Index + 4] = 0x3F;
 */
@@ -846,7 +846,7 @@ BOOLEAN KernelHaswellEPatch(VOID *kernelData)
 
   return PatchApplied;
 }
-	
+
 
 VOID Patcher_SSE3_6(VOID* kernelData)
 {
@@ -854,21 +854,21 @@ VOID Patcher_SSE3_6(VOID* kernelData)
   UINT32 patchLocation1 = 0;
   UINT32 patchLocation2 = 0;
   UINT32 patchlast = 0;
-  UINT32 i; 
+  UINT32 i;
   //UINT32 Length = sizeof(kernelData);
-  
+
   DBG("Start find SSE3 address\n");
   i=0;
-  //for (i=0;i<Length;i++) 
+  //for (i=0;i<Length;i++)
   while(TRUE) {
-    if (bytes[i] == 0x66 && bytes[i+1] == 0x0F && bytes[i+2] == 0x6F && 
+    if (bytes[i] == 0x66 && bytes[i+1] == 0x0F && bytes[i+2] == 0x6F &&
         bytes[i+3] == 0x44 && bytes[i+4] == 0x0E && bytes[i+5] == 0xF1 &&
         bytes[i-1664-32] == 0x55
         ) {
       patchLocation1 = i-1664-32;
       DBG("Found SSE3 data address at 0x%08x\n",patchLocation1);
     }
-    
+
     // hasSSE2+..... title
     if (bytes[i] == 0xE3 && bytes[i+1] == 0x07 && bytes[i+2] == 0x00 &&
         bytes[i+3] == 0x00 && bytes[i+4] == 0x80 && bytes[i+5] == 0x07 &&
@@ -879,13 +879,13 @@ VOID Patcher_SSE3_6(VOID* kernelData)
       break;
     }
     i++;
-  }            
-  
+  }
+
   if (!patchLocation1 || !patchLocation2) {
     DBG("Can't found SSE3 data addres or Title address at 0x%08x 0x%08x\n", patchLocation1, patchLocation2);
     return;
   }
-  
+
   DBG("Found SSE3 last data addres Start\n");
   i = patchLocation1 + 1500;
   //for (i=(patchLocation1+1500); i<(patchLocation1+3000); i++)
@@ -897,13 +897,13 @@ VOID Patcher_SSE3_6(VOID* kernelData)
     }
     i++;
   }
-  
+
   if (!patchlast) {
     DBG("Can't found SSE3 data last addres at 0x%08x\n", patchlast);
     return;
   }
   // patch sse3_64 data
-  
+
   for (i=0; i<patchlast; i++) {
     if (i<sizeof(sse3_patcher)) {
       bytes[patchLocation1 + i] = sse3_patcher[i];
@@ -911,13 +911,13 @@ VOID Patcher_SSE3_6(VOID* kernelData)
       bytes[patchLocation1 + i] = 0x90;
     }
   }
-  
+
   // patch kHasSSE3 title
   bytes[patchLocation2 + 0] = 0xFC;
   bytes[patchLocation2 + 1] = 0x05;
   bytes[patchLocation2 + 8] = 0x2C;
   bytes[patchLocation2 + 9] = 0x00;
-  
+
 }
 
 VOID Patcher_SSE3_5(VOID* kernelData)
@@ -927,18 +927,18 @@ VOID Patcher_SSE3_5(VOID* kernelData)
   UINT32 patchLocation2 = 0;
   UINT32 patchlast=0;
   UINT32 Length = sizeof(kernelData);
-  UINT32 i; 
-  
+  UINT32 i;
+
   DBG("Start find SSE3 address\n");
-  
+
   for (i=256; i<(Length-256); i++) {
-    if (bytes[i] == 0x66 && bytes[i+1] == 0x0F && bytes[i+2] == 0x6F && 
+    if (bytes[i] == 0x66 && bytes[i+1] == 0x0F && bytes[i+2] == 0x6F &&
         bytes[i+3] == 0x44 && bytes[i+4] == 0x0E && bytes[i+5] == 0xF1 &&
         bytes[i-1680-32] == 0x55) {
       patchLocation1 = i-1680-32;
       DBG("Found SSE3 data address at 0x%08x\n",patchLocation1);
     }
-    
+
     // khasSSE2+..... title
     if (bytes[i] == 0xF3 && bytes[i+1] == 0x07 && bytes[i+2] == 0x00 &&
         bytes[i+3] == 0x00 && bytes[i+4] == 0x80 && bytes[i+5] == 0x07 &&
@@ -948,15 +948,15 @@ VOID Patcher_SSE3_5(VOID* kernelData)
       DBG("Found SSE3 Title address at 0x%08x\n",patchLocation2);
       break;
     }
-  }            
-  
+  }
+
   if (!patchLocation1 || !patchLocation2) {
     DBG("Can't found SSE3 data addres or Title address at 0x%08x 0x%08x\n", patchLocation1, patchLocation2);
     return;
   }
-  
+
   DBG("Found SSE3 last data addres Start\n");
-  
+
   for (i=(patchLocation1+1500);i<Length;i++) {
     if (bytes[i] == 0x90 && bytes[i+1] == 0x90 && bytes[i+2] == 0x55) {
       patchlast = (i+1) - patchLocation1;
@@ -964,14 +964,14 @@ VOID Patcher_SSE3_5(VOID* kernelData)
       break;
     }
   }
-  
+
   if (!patchlast) {
     DBG("Can't found SSE3 data last addres at 0x%08x\n", patchlast);
     return;
   }
-  
+
   // patech sse3_64 data
-  
+
   for (i=0; i<patchlast; i++) {
     if (i<sizeof(sse3_5_patcher)) {
       bytes[patchLocation1 + i] = sse3_5_patcher[i];
@@ -979,14 +979,14 @@ VOID Patcher_SSE3_5(VOID* kernelData)
       bytes[patchLocation1 + i] = 0x90;
     }
   }
-  
+
   // patch kHasSSE3 title
   bytes[patchLocation2 + 0] = 0x0C;
   bytes[patchLocation2 + 1] = 0x06;
   bytes[patchLocation2 + 8] = 0x2C;
   bytes[patchLocation2 + 9] = 0x00;
-  
-} 
+
+}
 
 VOID Patcher_SSE3_7(VOID* kernelData)
 {
@@ -1003,26 +1003,26 @@ VOID Get_PreLink()
   struct load_command         *loadCommand;
   struct  segment_command     *segCmd;
   struct segment_command_64   *segCmd64;
-  
-  
+
+
   if (is64BitKernel) {
     binaryIndex = sizeof(struct mach_header_64);
   } else {
     binaryIndex = sizeof(struct mach_header);
   }
-  
+
   ncmds = MACH_GET_NCMDS(binary);
-  
+
   for (cnt = 0; cnt < ncmds; cnt++) {
     loadCommand = (struct load_command *)(binary + binaryIndex);
     cmdsize = loadCommand->cmdsize;
-    
+
     switch (loadCommand->cmd) {
-      case LC_SEGMENT_64: 
+      case LC_SEGMENT_64:
         segCmd64 = (struct segment_command_64 *)loadCommand;
         //DBG("segCmd64->segname = %a\n",segCmd64->segname);
         //DBG("segCmd64->vmaddr = 0x%08x\n",segCmd64->vmaddr)
-        //DBG("segCmd64->vmsize = 0x%08x\n",segCmd64->vmsize); 
+        //DBG("segCmd64->vmsize = 0x%08x\n",segCmd64->vmsize);
         if (AsciiStrCmp(segCmd64->segname, kPrelinkTextSegment) == 0) {
           DBG("Found PRELINK_TEXT, 64bit\n");
           if (segCmd64->vmsize > 0) {
@@ -1049,7 +1049,7 @@ VOID Get_PreLink()
         if (AsciiStrCmp(segCmd64->segname, kPrelinkInfoSegment) == 0) {
           UINT32 sectionIndex;
           struct section_64 *sect;
-          
+
           DBG("Found PRELINK_INFO, 64bit\n");
           //DBG("cmd = 0x%08x\n",segCmd64->cmd);
           //DBG("cmdsize = 0x%08x\n",segCmd64->cmdsize);
@@ -1062,11 +1062,11 @@ VOID Get_PreLink()
           //DBG("nsects = 0x%08x\n",segCmd64->nsects);
           //DBG("flags = 0x%08x\n",segCmd64->flags);
           sectionIndex = sizeof(struct segment_command_64);
-          
+
           while(sectionIndex < segCmd64->cmdsize) {
             sect = (struct section_64 *)((UINT8*)segCmd64 + sectionIndex);
             sectionIndex += sizeof(struct section_64);
-            
+
             if(AsciiStrCmp(sect->sectname, kPrelinkInfoSection) == 0 && AsciiStrCmp(sect->segname, kPrelinkInfoSegment) == 0) {
               if (sect->size > 0) {
                 // 64bit sect->addr is 0xffffff80xxxxxxxx
@@ -1082,7 +1082,7 @@ VOID Get_PreLink()
           }
         }
         break;
-        
+
       case LC_SEGMENT:
         segCmd = (struct segment_command *)loadCommand;
         //DBG("segCmd->segname = %a\n",segCmd->segname);
@@ -1104,7 +1104,7 @@ VOID Get_PreLink()
         if (AsciiStrCmp(segCmd->segname, kPrelinkInfoSegment) == 0) {
           UINT32 sectionIndex;
           struct section *sect;
-          
+
           DBG("Found PRELINK_INFO, 32bit\n");
           //DBG("cmd = 0x%08x\n",segCmd->cmd);
           //DBG("cmdsize = 0x%08x\n",segCmd->cmdsize);
@@ -1117,11 +1117,11 @@ VOID Get_PreLink()
           //DBG("nsects = 0x%08x\n",segCmd->nsects);
           //DBG("flags = 0x%08x\n",segCmd->flags);
           sectionIndex = sizeof(struct segment_command);
-          
+
           while(sectionIndex < segCmd->cmdsize) {
             sect = (struct section *)((UINT8*)segCmd + sectionIndex);
             sectionIndex += sizeof(struct section);
-            
+
             if(AsciiStrCmp(sect->sectname, kPrelinkInfoSection) == 0 && AsciiStrCmp(sect->segname, kPrelinkInfoSegment) == 0) {
               if (sect->size > 0) {
                 // PrelinkInfoAddr = sect->addr + KernelRelocBase
@@ -1137,13 +1137,13 @@ VOID Get_PreLink()
           }
         }
         break;
-        
+
       default:
         break;
     }
     binaryIndex += cmdsize;
   }
-  
+
   //gBS->Stall(20*1000000);
   return;
 }
@@ -1153,16 +1153,16 @@ FindBootArgs(IN LOADER_ENTRY *Entry)
 {
   UINT8           *ptr;
   UINT8           archMode = sizeof(UINTN) * 8;
-  
+
   // start searching from 0x200000.
   ptr = (UINT8*)(UINTN)0x200000;
-  
-  
+
+
   while(TRUE) {
-    
+
     // check bootargs for 10.7 and up
     bootArgs2 = (BootArgs2*)ptr;
-    
+
     if (bootArgs2->Version==2 && bootArgs2->Revision==0
         // plus additional checks - some values are not inited by boot.efi yet
         && bootArgs2->efiMode == archMode
@@ -1172,7 +1172,7 @@ FindBootArgs(IN LOADER_ENTRY *Entry)
       // set vars
       dtRoot = (CHAR8*)(UINTN)bootArgs2->deviceTreeP;
       KernelSlide = bootArgs2->kslide;
-      
+
       DBG_RT(Entry, "Found bootArgs2 at 0x%08x, DevTree at %p\n", ptr, dtRoot);
       //DBG("bootArgs2->kaddr = 0x%08x and bootArgs2->ksize =  0x%08x\n", bootArgs2->kaddr, bootArgs2->ksize);
       //DBG("bootArgs2->efiMode = 0x%02x\n", bootArgs2->efiMode);
@@ -1181,15 +1181,15 @@ FindBootArgs(IN LOADER_ENTRY *Entry)
       DBG_RT(Entry, "bootArgs2->kslide = 0x%x\n", bootArgs2->kslide);
       DBG_RT(Entry, "bootArgs2->bootMemStart = 0x%x\n", bootArgs2->bootMemStart);
       gBS->Stall(2000000);
-      
+
       // disable other pointer
       bootArgs1 = NULL;
       break;
     }
-    
-    // check bootargs for 10.4 - 10.6.x  
+
+    // check bootargs for 10.4 - 10.6.x
     bootArgs1 = (BootArgs1*)ptr;
-    
+
     if (bootArgs1->Version==1
         && (bootArgs1->Revision==6 || bootArgs1->Revision==5 || bootArgs1->Revision==4)
         // plus additional checks - some values are not inited by boot.efi yet
@@ -1199,21 +1199,20 @@ FindBootArgs(IN LOADER_ENTRY *Entry)
         ) {
       // set vars
       dtRoot = (CHAR8*)(UINTN)bootArgs1->deviceTreeP;
-      
+
       DBG_RT(Entry, "Found bootArgs1 at 0x%08x, DevTree at %p\n", ptr, dtRoot);
       //DBG("bootArgs1->kaddr = 0x%08x and bootArgs1->ksize =  0x%08x\n", bootArgs1->kaddr, bootArgs1->ksize);
       //DBG("bootArgs1->efiMode = 0x%02x\n", bootArgs1->efiMode);
-      
+
       // disable other pointer
       bootArgs2 = NULL;
       break;
     }
-    
+
     ptr += 0x1000;
   }
 }
 
-#if ENABLE_KERNELTOPATCH >= 1
 #define UKERNEL_MAX_SIZE 40000000
 BOOLEAN
 KernelUserPatch(IN UINT8 *UKernelData, LOADER_ENTRY *Entry)
@@ -1226,9 +1225,9 @@ KernelUserPatch(IN UINT8 *UKernelData, LOADER_ENTRY *Entry)
     }
 
     Num = SearchAndCount(
-      UKernelData, 
-      UKERNEL_MAX_SIZE, 
-      Entry->KernelAndKextPatches->KernelPatches[i].Data, 
+      UKernelData,
+      UKERNEL_MAX_SIZE,
+      Entry->KernelAndKextPatches->KernelPatches[i].Data,
       Entry->KernelAndKextPatches->KernelPatches[i].DataLen
     );
 
@@ -1236,13 +1235,13 @@ KernelUserPatch(IN UINT8 *UKernelData, LOADER_ENTRY *Entry)
 
     if (!Num) {
       DBG_RT(Entry, " :: %d pattern(s) not found.\n", Num);
-      continue;    
+      continue;
     }
 
     Num = SearchAndReplace(
-      UKernelData, 
-      UKERNEL_MAX_SIZE, 
-      Entry->KernelAndKextPatches->KernelPatches[i].Data, 
+      UKernelData,
+      UKERNEL_MAX_SIZE,
+      Entry->KernelAndKextPatches->KernelPatches[i].Data,
       Entry->KernelAndKextPatches->KernelPatches[i].DataLen,
       Entry->KernelAndKextPatches->KernelPatches[i].Patch,
       Entry->KernelAndKextPatches->KernelPatches[i].Count
@@ -1256,7 +1255,6 @@ KernelUserPatch(IN UINT8 *UKernelData, LOADER_ENTRY *Entry)
 
   return (y != 0);
 }
-#endif
 
 VOID
 KernelAndKextPatcherInit(IN LOADER_ENTRY *Entry)
@@ -1264,14 +1262,14 @@ KernelAndKextPatcherInit(IN LOADER_ENTRY *Entry)
   if (PatcherInited) {
     return;
   }
-  
+
   PatcherInited = TRUE;
-  
+
   // KernelRelocBase will normally be 0
   // but if OsxAptioFixDrv is used, then it will be > 0
   SetKernelRelocBase();
   DBG("KernelRelocBase = %lx\n", KernelRelocBase);
-  
+
   // Find bootArgs - we need then for proper detection
   // of kernel Mach-O header
   FindBootArgs(Entry);
@@ -1279,13 +1277,13 @@ KernelAndKextPatcherInit(IN LOADER_ENTRY *Entry)
     DBG("BootArgs not found - skipping patches!\n");
     return;
   }
-  
+
   // Find kernel Mach-O header:
   // for ML: bootArgs2->kslide + 0x00200000
   // for older versions: just 0x200000
   // for AptioFix booting - it's always at KernelRelocBase + 0x200000
   KernelData = (VOID*)(UINTN)(KernelSlide + KernelRelocBase + 0x00200000);
-  
+
   // check that it is Mach-O header and detect architecture
   if(MACH_GET_MAGIC(KernelData) == MH_MAGIC || MACH_GET_MAGIC(KernelData) == MH_CIGAM) {
     DBG("Found 32 bit kernel at 0x%p\n", KernelData);
@@ -1299,10 +1297,10 @@ KernelAndKextPatcherInit(IN LOADER_ENTRY *Entry)
     KernelData = NULL;
     return;
   }
-  
+
   // find __PRELINK_TEXT and __PRELINK_INFO
   Get_PreLink();
-    
+
   isKernelcache = PrelinkTextSize > 0 && PrelinkInfoSize > 0;
   DBG_RT(Entry, "isKernelcache: %s\n", isKernelcache ? L"Yes" : L"No");
 }
@@ -1322,9 +1320,19 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
     ((Entry->KernelAndKextPatches->NrKexts > 0) && (Entry->KernelAndKextPatches->KextPatches != NULL))
   );
 
-  DBG_RT(Entry, "\nKernelCpu patch: ");
+  DBG_RT(Entry, "\nKernelToPatch: ");
+  if (gSettings.KernelPatchesAllowed && (Entry->KernelAndKextPatches->KernelPatches != NULL) && Entry->KernelAndKextPatches->NrKernels) {
+    DBG_RT(Entry, "Enabled: ");
+    KernelAndKextPatcherInit(Entry);
+    if (KernelData == NULL) goto NoKernelData;
+    patchedOk = KernelUserPatch(KernelData, Entry);
+    DBG_RT(Entry, patchedOk ? " OK\n" : " FAILED!\n");
+  } else {
+    DBG_RT(Entry, "Disabled\n");
+  }
 
-  if (Entry->KernelAndKextPatches->KPKernelCpu) {    
+  DBG_RT(Entry, "\nKernelCpu patch: ");
+  if (Entry->KernelAndKextPatches->KPKernelCpu) {
     //
     // Kernel patches
     //
@@ -1342,7 +1350,7 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
   } else {
     DBG_RT(Entry, "Disabled\n");
   }
-  
+
   //other method for KernelCPU patch is FakeCPUID
   DBG_RT(Entry, "\nFakeCPUID patch: ");
   if (Entry->KernelAndKextPatches->FakeCPUID) {
@@ -1368,8 +1376,8 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
   } else {
     DBG_RT(Entry, "Disabled\n");
   }
-  
-  // Lapic Panic Kernel Patch  
+
+  // Lapic Panic Kernel Patch
   DBG_RT(Entry, "\nKernelLapic patch: ");
   if (Entry->KernelAndKextPatches->KPLapicPanic) {
     KernelAndKextPatcherInit(Entry);
@@ -1398,27 +1406,14 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
     DBG_RT(Entry, "Disabled\n");
   }
 
-#if ENABLE_KERNELTOPATCH >= 1
-  DBG_RT(Entry, "\nKernelToPatch: ");
-  if ((Entry->KernelAndKextPatches->KernelPatches != NULL) && Entry->KernelAndKextPatches->NrKernels) {
-    DBG_RT(Entry, "Enabled: ");
-    KernelAndKextPatcherInit(Entry);
-    if (KernelData == NULL) goto NoKernelData;
-    patchedOk = KernelUserPatch(KernelData, Entry);
-    DBG_RT(Entry, patchedOk ? " OK\n" : " FAILED!\n");
-  } else {
-    DBG_RT(Entry, "Disabled\n");
-  }
-#endif
-
   if (Entry->KernelAndKextPatches->KPDebug) {
     gBS->Stall(2000000);
   }
-  
+
   //
   // Kext patches
   //
-  
+
   // we need to scan kexts if "InjectKexts true and CheckFakeSMC"
   if (OSFLAG_ISSET(Entry->Flags, OSFLAG_WITHKEXTS) &&
       OSFLAG_ISSET(Entry->Flags, OSFLAG_CHECKFAKESMC)) {
@@ -1426,7 +1421,7 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
     gSettings.KextPatchesAllowed = TRUE;
     KextPatchesNeeded = TRUE;
   }
-  
+
   DBG_RT(Entry, "\nKextPatches Needed: %c, Allowed: %c ... ",
          (KextPatchesNeeded ? L'Y' : L'n'),
          (gSettings.KextPatchesAllowed ? L'Y' : L'n')
@@ -1446,7 +1441,7 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
     DBG_RT(Entry, "Pausing 10 secs ...\n\n");
     gBS->Stall(10000000);
   }
-  
+
   //
   // Kext add
   //
@@ -1464,7 +1459,7 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
     UINT32      deviceTreeLength;
     EFI_STATUS  Status;
     UINTN       DataSize;
-    
+
     // check if FSInject already injected kexts
     DataSize = 0;
     Status = gRT->GetVariable (L"FSInject.KextsInjected", &gEfiGlobalVariableGuid, NULL, &DataSize, NULL);
@@ -1476,9 +1471,9 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
       }
       return;
     }
-    
+
     KernelAndKextPatcherInit(Entry);
-    if (KernelData == NULL) goto NoKernelData;    
+    if (KernelData == NULL) goto NoKernelData;
     if (bootArgs1 != NULL) {
       deviceTreeP = bootArgs1->deviceTreeP;
       deviceTreeLength = bootArgs1->deviceTreeLength;
@@ -1486,9 +1481,9 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
       deviceTreeP = bootArgs2->deviceTreeP;
       deviceTreeLength = bootArgs2->deviceTreeLength;
     } else return;
-    
+
     Status = InjectKexts(deviceTreeP, &deviceTreeLength, Entry);
-    
+
     if (!EFI_ERROR(Status)) KernelBooterExtensionsPatch(KernelData, Entry);
   }
 

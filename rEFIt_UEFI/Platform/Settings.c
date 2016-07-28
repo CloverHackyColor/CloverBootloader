@@ -676,7 +676,7 @@ CopyKernelAndKextPatches (IN OUT  KERNEL_AND_KEXT_PATCHES *Dst,
       }
 
       if (Src->KextPatches[i].Label) {
-        Dst->KextPatches[Dst->NrKexts].Label       = (CHAR8 *)AllocateCopyPool (AsciiStrSize (Src->KextPatches[i].Label), Src->KextPatches[i].Label);
+        Dst->KextPatches[Dst->NrKexts].Label      = (CHAR8 *)AllocateCopyPool (AsciiStrSize (Src->KextPatches[i].Label), Src->KextPatches[i].Label);
       }
 
       Dst->KextPatches[Dst->NrKexts].Disabled     = Src->KextPatches[i].Disabled;
@@ -685,14 +685,11 @@ CopyKernelAndKextPatches (IN OUT  KERNEL_AND_KEXT_PATCHES *Dst,
       Dst->KextPatches[Dst->NrKexts].Data         = AllocateCopyPool (Src->KextPatches[i].DataLen, Src->KextPatches[i].Data);
       Dst->KextPatches[Dst->NrKexts].Patch        = AllocateCopyPool (Src->KextPatches[i].DataLen, Src->KextPatches[i].Patch);
       Dst->KextPatches[Dst->NrKexts].MatchOS      = AllocateCopyPool (AsciiStrSize(Src->KextPatches[i].MatchOS), Src->KextPatches[i].MatchOS);
-#if ENABLE_KEXTTOPATCH_BUILDVERSION >= 1
-      Dst->KextPatches[Dst->NrKexts].MatchBuild = AllocateCopyPool (AsciiStrSize(Src->KextPatches[i].MatchBuild), Src->KextPatches[i].MatchBuild);
-#endif
+      Dst->KextPatches[Dst->NrKexts].MatchBuild   = AllocateCopyPool (AsciiStrSize(Src->KextPatches[i].MatchBuild), Src->KextPatches[i].MatchBuild);
       ++(Dst->NrKexts);
     }
   }
 
-#if ENABLE_KERNELTOPATCH >= 1
   if ((Src->NrKernels > 0) && (Src->KernelPatches != NULL)) {
     INTN i;
     Dst->KernelPatches = AllocatePool (Src->NrKernels * sizeof(KERNEL_PATCH));
@@ -715,13 +712,10 @@ CopyKernelAndKextPatches (IN OUT  KERNEL_AND_KEXT_PATCHES *Dst,
       Dst->KernelPatches[Dst->NrKernels].Patch        = AllocateCopyPool (Src->KernelPatches[i].DataLen, Src->KernelPatches[i].Patch);
       Dst->KernelPatches[Dst->NrKernels].Count        = Src->KernelPatches[i].Count;
       Dst->KernelPatches[Dst->NrKernels].MatchOS      = AllocateCopyPool (AsciiStrSize(Src->KernelPatches[i].MatchOS), Src->KernelPatches[i].MatchOS);
-#if ENABLE_KEXTTOPATCH_BUILDVERSION >= 1
-      Dst->KernelPatches[Dst->NrKernels].MatchBuild = AllocateCopyPool (AsciiStrSize(Src->KernelPatches[i].MatchBuild), Src->KernelPatches[i].MatchBuild);
-#endif
+      Dst->KernelPatches[Dst->NrKernels].MatchBuild   = AllocateCopyPool (AsciiStrSize(Src->KernelPatches[i].MatchBuild), Src->KernelPatches[i].MatchBuild);
       ++(Dst->NrKernels);
     }
   }
-#endif
 
   return TRUE;
 }
@@ -1004,9 +998,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         Patches->KextPatches[Patches->NrKexts].DataLen      = FindLen;
         Patches->KextPatches[Patches->NrKexts].Patch        = AllocateCopyPool (FindLen, TmpPatch);
         Patches->KextPatches[Patches->NrKexts].MatchOS      = NULL;
-#if ENABLE_KEXTTOPATCH_BUILDVERSION >= 1
         Patches->KextPatches[Patches->NrKexts].MatchBuild   = NULL;
-#endif
         Patches->KextPatches[Patches->NrKexts].Disabled     = FALSE;
         Patches->KextPatches[Patches->NrKexts].Name         = AllocateCopyPool (AsciiStrSize (KextPatchesName), KextPatchesName);
         Patches->KextPatches[Patches->NrKexts].Label        = AllocateCopyPool (AsciiStrSize (KextPatchesLabel), KextPatchesLabel);
@@ -1023,13 +1015,11 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
           DBG(" :: MatchOS: %a", Patches->KextPatches[Patches->NrKexts].MatchOS);
         }
 
-#if ENABLE_KEXTTOPATCH_BUILDVERSION >= 1
         Dict = GetProperty (Prop2, "MatchBuild");
         if ((Dict != NULL) && (Dict->type == kTagTypeString)) {
           Patches->KextPatches[Patches->NrKexts].MatchBuild = AllocateCopyPool (AsciiStrSize (Dict->string), Dict->string);
           DBG(" :: MatchBuild: %a", Patches->KextPatches[Patches->NrKexts].MatchBuild);
         }
-#endif
 
         // check if this is Info.plist patch or kext binary patch
         Dict = GetProperty (Prop2, "InfoPlistPatch");
@@ -1052,7 +1042,6 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
     // but I am not sure
   }
 
-#if ENABLE_KERNELTOPATCH >= 1
   Prop = GetProperty (DictPointer, "KernelToPatch");
   if (Prop != NULL) {
     INTN   i, Count = GetTagCount (Prop);
@@ -1085,7 +1074,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         }
 
         DBG (" - [%d]:", i);
-        
+
         Dict = GetProperty (Prop2, "Comment");
         if (Dict != NULL) {
           KernelPatchesLabel = AllocateCopyPool (AsciiStrSize (Dict->string), Dict->string);
@@ -1094,7 +1083,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         }
 
         DBG (" %a", KernelPatchesLabel);
-        
+
         Dict = GetProperty (Prop2, "Disabled");
         if ((Dict != NULL) && IsPropertyTrue (Dict)) {
           DBG(" :: patch disabled, skipped\n");
@@ -1114,9 +1103,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         Patches->KernelPatches[Patches->NrKernels].Patch        = AllocateCopyPool (FindLen, TmpPatch);
         Patches->KernelPatches[Patches->NrKernels].Count        = 0;
         Patches->KernelPatches[Patches->NrKernels].MatchOS      = NULL;
-#if ENABLE_KEXTTOPATCH_BUILDVERSION >= 1
         Patches->KernelPatches[Patches->NrKernels].MatchBuild   = NULL;
-#endif
         Patches->KernelPatches[Patches->NrKernels].Disabled     = FALSE;
         Patches->KernelPatches[Patches->NrKernels].Label        = AllocateCopyPool (AsciiStrSize (KernelPatchesLabel), KernelPatchesLabel);
 
@@ -1136,20 +1123,17 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
           DBG(" :: MatchOS: %a", Patches->KernelPatches[Patches->NrKernels].MatchOS);
         }
 
-#if ENABLE_KEXTTOPATCH_BUILDVERSION >= 1
         Dict = GetProperty (Prop2, "MatchBuild");
         if ((Dict != NULL) && (Dict->type == kTagTypeString)) {
           Patches->KernelPatches[Patches->NrKernels].MatchBuild = AllocateCopyPool (AsciiStrSize (Dict->string), Dict->string);
           DBG(" :: MatchBuild: %a", Patches->KernelPatches[Patches->NrKernels].MatchBuild);
         }
-#endif
 
         DBG (" :: data len: %d\n", Patches->KernelPatches[Patches->NrKernels].DataLen);
         Patches->NrKernels++;
       }
     }
   }
-#endif
 
   return TRUE;
 }
@@ -2155,6 +2139,7 @@ GetEarlyUserSettings (
 
   gSettings.KextPatchesAllowed              = TRUE;
   gSettings.KernelAndKextPatches.KPAppleRTC = TRUE;
+  gSettings.KernelPatchesAllowed            = TRUE;
 
   Dict = CfgDict;
   if (Dict != NULL) {
@@ -5350,12 +5335,10 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
         if (Prop != NULL && Prop->string != NULL && Prop->string[0] != '\0') {
           OSVersion = AllocateCopyPool (AsciiStrSize (Prop->string), Prop->string);
         }
-#if ENABLE_KEXTTOPATCH_BUILDVERSION >= 1
         Prop = GetProperty (Dict, "ProductBuildVersion");
         if (Prop != NULL && Prop->string != NULL && Prop->string[0] != '\0') {
           Entry->BuildVersion = AllocateCopyPool (AsciiStrSize (Prop->string), Prop->string);
         }
-#endif
       }
     }
   }
@@ -5375,12 +5358,10 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
           OSVersion = AllocateCopyPool (AsciiStrSize (Prop->string), Prop->string);
           OSINSTALLER_VER = TRUE;
         }
-#if ENABLE_KEXTTOPATCH_BUILDVERSION >= 1
         Prop = GetProperty (Dict, "ProductBuildVersion");
         if (Prop != NULL && Prop->string != NULL && Prop->string[0] != '\0') {
           Entry->BuildVersion = AllocateCopyPool (AsciiStrSize (Prop->string), Prop->string);
         }
-#endif
       }
     }
 */
@@ -5412,7 +5393,7 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
             }
           }
         }
-      }      
+      }
     }
   }
 
@@ -5426,17 +5407,15 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
         if (Prop != NULL && Prop->string != NULL && Prop->string[0] != '\0') {
           OSVersion = AllocateCopyPool (AsciiStrSize (Prop->string), Prop->string);
         }
-#if ENABLE_KEXTTOPATCH_BUILDVERSION >= 1
         Prop       = GetProperty (Dict, "ProductBuildVersion");
         if (Prop != NULL && Prop->string != NULL && Prop->string[0] != '\0') {
           Entry->BuildVersion = AllocateCopyPool (AsciiStrSize (Prop->string), Prop->string);
         }
-#endif
       }
     } else if (FileExists (Entry->Volume->RootDir, L"\\com.apple.recovery.boot\\boot.efi")) {
       // Special case - com.apple.recovery.boot/boot.efi exists but SystemVersion.plist doesn't --> 10.9 recovery
       OSVersion    = AllocateZeroPool (5);
-      UnicodeStrToAsciiStr (L"10.9", OSVersion); // >= 10.9 ?
+      UnicodeStrToAsciiStr (L"10.9", OSVersion); // >= 10.9 ?
     }
   }
 
