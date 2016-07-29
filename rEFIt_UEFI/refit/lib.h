@@ -426,9 +426,9 @@ typedef struct {
   BOOLEAN     CustomIcons;
   BOOLEAN     SelectionOnTop;
   BOOLEAN     BootCampStyle;
-  INTN       BadgeOffsetX;
-  INTN       BadgeOffsetY;
-  INTN       BadgeScale;
+  INTN        BadgeOffsetX;
+  INTN        BadgeOffsetY;
+  INTN        BadgeScale;
   INTN        ThemeDesignWidth;
   INTN        ThemeDesignHeight;
   INTN        BannerPosX;
@@ -444,6 +444,7 @@ typedef struct {
   INTN        TileYSpace;
   BOOLEAN     Proportional;
   BOOLEAN     NoEarlyProgress;
+  INTN        PruneScrollRows;
 } REFIT_CONFIG;
 
 // types

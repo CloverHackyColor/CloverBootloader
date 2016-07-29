@@ -556,9 +556,7 @@ VOID FillInputs(BOOLEAN New)
   InputItems[InputItemsCount++].SValue = gSettings.StringInjector?L"[+]":L"[ ]";
   InputItems[InputItemsCount].ItemType = BoolValue; //107
   InputItems[InputItemsCount].BValue   = gSettings.NoDefaultProperties;
-  InputItems[InputItemsCount].SValue = gSettings.NoDefaultProperties?L"[+]":L"[ ]";
-
-  InputItemsCount++;
+  InputItems[InputItemsCount++].SValue = gSettings.NoDefaultProperties?L"[+]":L"[ ]";
   InputItems[InputItemsCount].ItemType = BoolValue; //108
   InputItems[InputItemsCount].BValue = gSettings.KernelPatchesAllowed;
   InputItems[InputItemsCount].SValue = gSettings.KernelPatchesAllowed ? L"[+]" : L"[ ]";
@@ -743,7 +741,6 @@ VOID ApplyInputs(VOID)
         gSettings.IgPlatform = (UINT32)StrHexToUint64(InputItems[i].SValue);
       }
     }
-
 
     if (gGraphics[i].Vendor == Intel) {
       i += 3;
@@ -2794,7 +2791,8 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
 
       EntriesPosY = ((UGAHeight - LAYOUT_TOTAL_HEIGHT) >> 1) + LayoutBannerOffset + (TextHeight << 1);
 
-      VisibleHeight = (UGAHeight - EntriesPosY) / TextHeight - Screen->InfoLineCount - 1;
+      //VisibleHeight = (UGAHeight - EntriesPosY) / TextHeight - Screen->InfoLineCount - 1;
+      VisibleHeight = ((UGAHeight - EntriesPosY) / TextHeight) - Screen->InfoLineCount - 1 - GlobalConfig.PruneScrollRows;
       //DBG("MENU_FUNCTION_INIT 1 EntriesPosY=%d VisibleHeight=%d\n", EntriesPosY, VisibleHeight);
       if (Screen->Entries[0]->Tag == TAG_SWITCH) {
         j = OldChosenTheme;
