@@ -566,11 +566,47 @@ UINT8 KBESieReplace[] = { 0xC3, 0x48, 0x85, 0xDB, 0xEB, 0x12, 0x48, 0x8B, 0x03, 
 // we are planning to patch.
 //
 
-#define KERNEL_MAX_SIZE 40000000
+//#define KERNEL_MAX_SIZE 40000000
 VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
 {
-  
   UINTN   Num = 0;
+#if defined(FKERNELPATCH)
+  DBG_RT(Entry, "\n\nPatching (%dbit) kernel for injected kexts:\n", is64BitKernel ? 64 : 32);
+
+  if (is64BitKernel) {
+    //startupExt
+    Num = FSearchReplace(Kernel, KBEYosSearch2, KBEYosReplace2) +
+          FSearchReplace(Kernel, KBEYosSearch, KBEYosReplace);
+    if (Num) {
+      Num +=  FSearchReplace(Kernel, KBESieSearch, KBESieReplace) +
+              FSearchReplace(Kernel, KBEECSearch, KBEECReplace);
+      DBG_RT(Entry, "==> kernel 10.12/10.11/10.10:\n");
+    } else {
+      //Wheres Mavericks?
+      Num = FSearchReplace(Kernel, KBEMLSearch, KBEMLReplace) +
+            FSearchReplace(Kernel, KBELionSearch_X64, KBELionReplace_X64) +
+            FSearchReplace(Kernel, KBESnowSearch_X64, KBESnowReplace_X64);
+      DBG_RT(Entry, "==> kernel 10.8/10.7/10.6:\n");
+    }
+  } else {
+    Num = FSearchReplace(Kernel, KBELionSearch_i386, KBELionReplace_i386) +
+          FSearchReplace(Kernel, KBESnowSearch_i386, KBESnowReplace_i386);
+    DBG_RT(Entry, "==> kernel 10.7/10.6:\n");
+  }
+
+  DBG_RT(Entry, "==> %a : %d replaces done\n", Num ? "Success" : "Error", Num);
+
+/*
+  if (NumSnow_X64 + NumSnow_i386 + NumLion_X64 + NumLion_i386 + NumML + NumYos > 1) {
+    // more then one pattern found - we do not know what to do with it
+    // and we'll skipp it
+    AsciiPrint("\nERROR patching kernel for injected kexts:\nmultiple patterns found (LionX64: %d, Lioni386: %d, ML: %d) - skipping patching!\n",
+      NumLion_X64, NumLion_i386, NumML);
+    gBS->Stall(10000000);
+    return;
+  }
+*/
+#else //FKERNELPATCH
   UINTN   NumSnow_X64 = 0;
   UINTN   NumSnow_i386 = 0;
   UINTN   NumLion_X64 = 0;
@@ -636,7 +672,8 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
   else {
     DBG_RT(Entry, "==> ERROR: NOT patched - unknown kernel.\n");
   }
-  
+#endif //FKERNELPATCH
+
   if (Entry->KernelAndKextPatches->KPDebug) {
     DBG_RT(Entry, "Pausing 5 secs ...\n");
     gBS->Stall(5000000);

@@ -1213,34 +1213,35 @@ FindBootArgs(IN LOADER_ENTRY *Entry)
   }
 }
 
-#define UKERNEL_MAX_SIZE 40000000
 BOOLEAN
 KernelUserPatch(IN UINT8 *UKernelData, LOADER_ENTRY *Entry)
 {
   INTN Num, i = 0, y = 0;
   for (; i < Entry->KernelAndKextPatches->NrKernels; ++i) {
+    DBG_RT(Entry, "Patch[%d]: %a\n", i, Entry->KernelAndKextPatches->KernelPatches[i].Label);
     if (Entry->KernelAndKextPatches->KernelPatches[i].Disabled) {
-      DBG_RT(Entry, "Patch[%d]: %a :: is not allowed for booted OS %a\n", i, Entry->KernelAndKextPatches->KernelPatches[i].Label, Entry->OSVersion);
+      //DBG_RT(Entry, "Patch[%d]: %a :: is not allowed for booted OS %a\n", i, Entry->KernelAndKextPatches->KernelPatches[i].Label, Entry->OSVersion);
+      DBG_RT(Entry, "==> is not allowed for booted OS %a\n", Entry->OSVersion);
       continue;
     }
 
+#if !defined(FKERNELPATCH)
     Num = SearchAndCount(
       UKernelData,
-      UKERNEL_MAX_SIZE,
+      KERNEL_MAX_SIZE,
       Entry->KernelAndKextPatches->KernelPatches[i].Data,
       Entry->KernelAndKextPatches->KernelPatches[i].DataLen
     );
 
-    DBG_RT(Entry, "==> Patch[%d]: %a", i, Entry->KernelAndKextPatches->KernelPatches[i].Label);
-
     if (!Num) {
-      DBG_RT(Entry, " :: %d pattern(s) not found.\n", Num);
+      DBG_RT(Entry, "==> pattern(s) not found.\n");
       continue;
     }
+#endif //FKERNELPATCH
 
     Num = SearchAndReplace(
       UKernelData,
-      UKERNEL_MAX_SIZE,
+      KERNEL_MAX_SIZE,
       Entry->KernelAndKextPatches->KernelPatches[i].Data,
       Entry->KernelAndKextPatches->KernelPatches[i].DataLen,
       Entry->KernelAndKextPatches->KernelPatches[i].Patch,
@@ -1249,8 +1250,9 @@ KernelUserPatch(IN UINT8 *UKernelData, LOADER_ENTRY *Entry)
 
     if (Num) {
       y++;
-      DBG_RT(Entry, " :: %d replaces done.\n", Num);
     }
+
+    DBG_RT(Entry, "==> %a : %d replaces done\n", Num ? "Success" : "Error", Num);
   }
 
   return (y != 0);

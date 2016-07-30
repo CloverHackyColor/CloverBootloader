@@ -37,6 +37,18 @@
 #ifndef __REFITLIB_STANDARD_H__
 #define __REFITLIB_STANDARD_H__
 
+// Experimental -->
+
+/*
+  - FKERNELPATCH: Sat Jul 30 19:13:21 2016
+    Since we're in bruteforce mode, no need to check the existence of given patterns before patching (except for debugging purposes). Just patch or leave it.
+    This will skip "SearchAndCount" to boost those operations. We hope this will be safe enough. The "SearchAndReplace" always do a CompareMem before CopyMem.
+    And dataLen (for search & replace) already sanitized while parsing user config & should be matched.
+*/
+
+//#define FKERNELPATCH 1
+
+// Experimental <--
 
 #include "libeg.h"
 
@@ -882,7 +894,13 @@ extern BOOLEAN DumpVariable(CHAR16* Name, EFI_GUID* Guid, INTN DevicePathAt);
 // Utils functions
 VOID DumpKernelAndKextPatches(KERNEL_AND_KEXT_PATCHES *Patches);
 
-VOID FilterKextPatches(IN LOADER_ENTRY *Entry);
+//VOID FilterKextPatches(IN LOADER_ENTRY *Entry);
+
+#define KERNEL_MAX_SIZE 40000000
+#if defined(FKERNELPATCH)
+#define FSearchReplace(Source, Search, Replace) SearchAndReplace(Source, KERNEL_MAX_SIZE, Search, sizeof(Search), Replace, 1)
+#endif //FKERNELPATCH
+
 #endif
 /*
  
