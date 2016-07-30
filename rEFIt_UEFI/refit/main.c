@@ -350,11 +350,13 @@ VOID FilterKextPatches(IN LOADER_ENTRY *Entry)
       );
 
       if ((Entry->BuildVersion != NULL) && (Entry->KernelAndKextPatches->KextPatches[i].MatchBuild != NULL)) {
-        if (AsciiStrCmp(Entry->BuildVersion, Entry->KernelAndKextPatches->KextPatches[i].MatchBuild) != 0) {
-          Entry->KernelAndKextPatches->KextPatches[i].Disabled = TRUE;
-        }
+        //if (AsciiStrCmp(Entry->BuildVersion, Entry->KernelAndKextPatches->KextPatches[i].MatchBuild) != 0) {
+        //  Entry->KernelAndKextPatches->KextPatches[i].Disabled = TRUE;
+        //}
+        Entry->KernelAndKextPatches->KextPatches[i].Disabled = !IsPatchEnabled(Entry->KernelAndKextPatches->KextPatches[i].MatchBuild, Entry->BuildVersion);
         DBG(" ==> %a\n", Entry->KernelAndKextPatches->KextPatches[i].Disabled ? "not allowed" : "allowed");
-        continue; // If user give MatchOS, should we ignore MatchOS / keep reading 'em?
+        //if (!Entry->KernelAndKextPatches->KextPatches[i].Disabled)
+          continue; // If user give MatchOS, should we ignore MatchOS / keep reading 'em?
       }
 
       Entry->KernelAndKextPatches->KextPatches[i].Disabled = !IsPatchEnabled(Entry->KernelAndKextPatches->KextPatches[i].MatchOS, Entry->OSVersion);
@@ -378,11 +380,13 @@ VOID FilterKernelPatches(IN LOADER_ENTRY *Entry)
       );
 
       if ((Entry->BuildVersion != NULL) && (Entry->KernelAndKextPatches->KernelPatches[i].MatchBuild != NULL)) {
-        if (AsciiStrCmp(Entry->BuildVersion, Entry->KernelAndKextPatches->KernelPatches[i].MatchBuild) != 0) {
-          Entry->KernelAndKextPatches->KernelPatches[i].Disabled = TRUE;
-        }
+        //if (AsciiStrCmp(Entry->BuildVersion, Entry->KernelAndKextPatches->KernelPatches[i].MatchBuild) != 0) {
+        //  Entry->KernelAndKextPatches->KernelPatches[i].Disabled = TRUE;
+        //}
+        Entry->KernelAndKextPatches->KernelPatches[i].Disabled = !IsPatchEnabled(Entry->KernelAndKextPatches->KernelPatches[i].MatchBuild, Entry->BuildVersion);
         DBG(" ==> %a\n", Entry->KernelAndKextPatches->KernelPatches[i].Disabled ? "not allowed" : "allowed");
-        continue; // If user give MatchOS, should we ignore MatchOS / keep reading 'em?
+        //if (!Entry->KernelAndKextPatches->KernelPatches[i].Disabled)
+          continue; // If user give MatchOS, should we ignore MatchOS / keep reading 'em?
       }
 
       Entry->KernelAndKextPatches->KernelPatches[i].Disabled = !IsPatchEnabled(Entry->KernelAndKextPatches->KernelPatches[i].MatchOS, Entry->OSVersion);
@@ -533,10 +537,6 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
       DBG(" %a\n", Entry->OSVersion);
     }
 
-    FilterKextPatches(Entry);
-
-    FilterKernelPatches(Entry);
-
     if (
       (gSettings.CsrActiveConfig != 0xFFFF) &&
       Entry->OSVersion &&
@@ -544,6 +544,10 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     ) {
       ReadSIPCfg();
     }
+
+    FilterKextPatches(Entry);
+
+    FilterKernelPatches(Entry);
 
     // if "InjectKexts if no FakeSMC" and OSFLAG_WITHKEXTS is not set
     // then user selected submenu entry and requested no injection.

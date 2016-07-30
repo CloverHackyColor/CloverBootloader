@@ -1156,8 +1156,12 @@ IsPatchEnabled (CHAR8 *MatchOSEntry, CHAR8 *CurrOS)
   }
   
   for (i = 0; i < mos->count; ++i) {
-    if (IsOSValid(mos->array[i], CurrOS)) {
+    // dot represent MatchOS
+    if ((AsciiStrStr(mos->array[i], ".") != NULL) && IsOSValid(mos->array[i], CurrOS)) {
       //DBG ("\nthis patch will activated for OS %s!\n", mos->array[i]);
+      ret =  TRUE;
+      break;
+    } else if (AsciiStrCmp(mos->array[i], CurrOS) == 0) {
       ret =  TRUE;
       break;
     }
