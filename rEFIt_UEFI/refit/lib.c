@@ -1535,6 +1535,19 @@ VOID ReplaceExtension(IN OUT CHAR16 *Path, IN CHAR16 *Extension)
   StrCat(Path, Extension);
 }
 
+CHAR16 * egFindExtension(IN CHAR16 *FileName)
+{
+    INTN i;
+
+    for (i = StrLen(FileName); i >= 0; i--) {
+        if (FileName[i] == '.')
+            return FileName + i + 1;
+        if (FileName[i] == '/' || FileName[i] == '\\')
+            break;
+    }
+    return FileName + StrLen(FileName);
+}
+
 //
 // memory string search
 //

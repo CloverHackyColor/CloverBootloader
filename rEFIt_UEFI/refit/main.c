@@ -1987,15 +1987,32 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 //we should never exclude them
 //      if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_FUNCS)) {
         MenuEntryOptions.Image = BuiltinIcon(BUILTIN_ICON_FUNC_OPTIONS);
+#if defined(ADVICON)
+        MenuEntryOptions.ImageHover = GetSmallHover(BUILTIN_ICON_FUNC_OPTIONS);
+#endif //ADVICON
         AddMenuEntry(&MainMenu, &MenuEntryOptions);
         MenuEntryAbout.Image = BuiltinIcon(BUILTIN_ICON_FUNC_ABOUT);
+#if defined(ADVICON)
+        MenuEntryAbout.ImageHover = GetSmallHover(BUILTIN_ICON_FUNC_ABOUT);
+#endif //ADVICON
         AddMenuEntry(&MainMenu, &MenuEntryAbout);
+        //MenuEntryHelp.Image = BuiltinIcon(BUILTIN_ICON_FUNC_HELP);
+//#if defined(ADVICON)
+        //MenuEntryHelp.ImageHover = GetSmallHover(BUILTIN_ICON_FUNC_HELP);
+//#endif //ADVICON
+        //AddMenuEntry(&MainMenu, &MenuEntryHelp);
 //      }
 
       if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_FUNCS) || MainMenu.EntryCount == 0) {
         MenuEntryReset.Image = BuiltinIcon(BUILTIN_ICON_FUNC_RESET);
+#if defined(ADVICON)
+        MenuEntryReset.ImageHover = GetSmallHover(BUILTIN_ICON_FUNC_RESET);
+#endif //ADVICON
         AddMenuEntry(&MainMenu, &MenuEntryReset);
         MenuEntryShutdown.Image = BuiltinIcon(BUILTIN_ICON_FUNC_SHUTDOWN);
+#if defined(ADVICON)
+        MenuEntryShutdown.ImageHover = GetSmallHover(BUILTIN_ICON_FUNC_SHUTDOWN);
+#endif //ADVICON
         AddMenuEntry(&MainMenu, &MenuEntryShutdown);
       }
 // font already changed and this message very quirky, clear line here
@@ -2125,6 +2142,10 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
         case TAG_ABOUT:    // About rEFIt
           AboutRefit();
+          break;
+
+        case TAG_HELP:
+          HelpRefit();
           break;
 
         case TAG_LOADER:   // Boot OS via .EFI loader

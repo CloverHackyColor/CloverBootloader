@@ -12,7 +12,7 @@
  *  * Redistributions of source code must retain the above copyright
  *    notice, this list of conditions and the following disclaimer.
  *
- *  * Redistributions in binary form must reproduce t222++++++++++++++++++++++++++++66he above copyright
+ *  * Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the
  *    distribution.
@@ -41,12 +41,46 @@
 
 /*
   - FKERNELPATCH: Sat Jul 30 19:13:21 2016
+
     Since we're in bruteforce mode, no need to check the existence of given patterns before patching (except for debugging purposes). Just patch or leave it.
     This will skip "SearchAndCount" to boost those operations. We hope this will be safe enough. The "SearchAndReplace" always do a CompareMem before CopyMem.
-    And dataLen (for search & replace) already sanitized while parsing user config & should be matched.
+    And dataLen (for search & replace) already sanitised while parsing user config & should be matched.
+
+  - ADVICON: Sun Jul 31 15:04:40 2016
+
+    Hover icons, for both 1st & 2nd row:
+      Clover will search any icons with suffix "_hover.(ext)" & use it as hovered state. Ex: func_about_hover.png, os_mac_hover.png, tool_shell_hover.png.
+    Fixed icon format:
+      One extension for all. Ex: If user has specified an ext like "png", then Clover will ignore any other extensions including default "icns".
+      Valid values: icns, png, bmp.
+
+      <key>Theme</key>
+      <dict>
+        <key>Badges</key>
+        <dict>
+          <key>Inline</key>
+          <false/>
+          <key>OffsetX</key>
+          <integer>0</integer>
+          <key>OffsetY</key>
+          <integer>0</integer>
+          <key>Scale</key>
+          <integer>16</integer>
+          <key>Show</key>
+          <true/>
+          <key>Swap</key>
+          <false/>
+        </dict>
+        <key>Icon</key>
+        <dict>
+          <key>Format</key>
+          <string>png</string>
+        </dict>
+      </dict>
 */
 
 //#define FKERNELPATCH 1
+//#define ADVICON 1
 
 // Experimental <--
 
@@ -75,6 +109,7 @@ extern EFI_RUNTIME_SERVICES*	gRS;
 #define TAG_SECURE_BOOT        (13)
 #define TAG_SECURE_BOOT_CONFIG (14)
 #define TAG_CLOVER             (100)
+#define TAG_EXIT               (101)
 #define TAG_RETURN             ((UINTN)(-1))
 
 //
@@ -325,6 +360,9 @@ typedef struct _refit_menu_entry {
   CHAR16             ShortcutDigit;
   CHAR16             ShortcutLetter;
   EG_IMAGE          *Image;
+#if defined(ADVICON)
+  EG_IMAGE          *ImageHover;
+#endif //ADVICON
   EG_IMAGE          *DriveImage;
   EG_IMAGE          *BadgeImage;
   EG_RECT            Place;
@@ -457,6 +495,9 @@ typedef struct {
   BOOLEAN     Proportional;
   BOOLEAN     NoEarlyProgress;
   INTN        PruneScrollRows;
+#if defined(ADVICON)
+  INTN        IconFormat;
+#endif //ADVICON
 } REFIT_CONFIG;
 
 // types
@@ -654,6 +695,7 @@ EFI_STATUS DirIterClose(IN OUT REFIT_DIR_ITER *DirIter);
 
 CHAR16 * Basename(IN CHAR16 *Path);
 VOID   ReplaceExtension(IN OUT CHAR16 *Path, IN CHAR16 *Extension);
+CHAR16 * egFindExtension(IN CHAR16 *FileName);
 
 INTN FindMem(IN VOID *Buffer, IN UINTN BufferLength, IN VOID *SearchString, IN UINTN SearchStringLength);
 
@@ -748,14 +790,22 @@ VOID    FreeAnime(GUI_ANIME *Anime);
 //
 // icns loader module
 //
-
+#if defined(ADVICON)
+EG_IMAGE * LoadOSIcon(IN OUT CHAR16 *OSIconName OPTIONAL, IN CHAR16 *FallbackIconName, IN UINTN PixelSize, IN BOOLEAN BootLogo, IN BOOLEAN WantDummy);
+EG_IMAGE * LoadHoverIcon(IN CHAR16 *OSIconName, IN UINTN PixelSize);
+#else //ADVICON
 EG_IMAGE * LoadOSIcon(IN CHAR16 *OSIconName OPTIONAL, IN CHAR16 *FallbackIconName, IN UINTN PixelSize, IN BOOLEAN BootLogo, IN BOOLEAN WantDummy);
+#endif //ADVICON
 
 EG_IMAGE * LoadIcns(IN EFI_FILE_HANDLE BaseDir, IN CHAR16 *FileName, IN UINTN PixelSize);
 EG_IMAGE * LoadIcnsFallback(IN EFI_FILE_HANDLE BaseDir, IN CHAR16 *FileName, IN UINTN PixelSize);
 EG_IMAGE * DummyImage(IN UINTN PixelSize);
 
 EG_IMAGE * BuiltinIcon(IN UINTN Id);
+#if defined(ADVICON)
+CHAR16 * GetIconsExt(IN CHAR16 *Icon, IN CHAR16 *Def);
+EG_IMAGE * GetSmallHover(IN UINTN Id);
+#endif //ADVICON
 
 #define BUILTIN_ICON_FUNC_ABOUT                (0)
 #define BUILTIN_ICON_FUNC_OPTIONS              (1)
@@ -764,24 +814,25 @@ EG_IMAGE * BuiltinIcon(IN UINTN Id);
 #define BUILTIN_ICON_FUNC_SECURE_BOOT_CONFIG   (4)
 #define BUILTIN_ICON_FUNC_RESET                (5)
 #define BUILTIN_ICON_FUNC_SHUTDOWN             (6)
-#define BUILTIN_ICON_FUNC_HELP                 (7)
-#define BUILTIN_ICON_TOOL_SHELL                (8)
-#define BUILTIN_ICON_TOOL_PART                 (9)
-#define BUILTIN_ICON_TOOL_RESCUE               (10)
-#define BUILTIN_ICON_POINTER                   (11)
-#define BUILTIN_ICON_VOL_INTERNAL              (12)
-#define BUILTIN_ICON_VOL_EXTERNAL              (13)
-#define BUILTIN_ICON_VOL_OPTICAL               (14)
-#define BUILTIN_ICON_VOL_FIREWIRE              (15)
-#define BUILTIN_ICON_VOL_BOOTER                (16)
-#define BUILTIN_ICON_VOL_INTERNAL_HFS          (17)
-#define BUILTIN_ICON_VOL_INTERNAL_NTFS         (18)
-#define BUILTIN_ICON_VOL_INTERNAL_EXT3         (19)
-#define BUILTIN_ICON_VOL_INTERNAL_REC          (20)
-#define BUILTIN_ICON_BANNER                    (21)
-#define BUILTIN_SELECTION_SMALL                (22)
-#define BUILTIN_SELECTION_BIG                  (23)
-#define BUILTIN_ICON_COUNT                     (24)
+#define BUILTIN_ICON_FUNC_EXIT                 (7)
+#define BUILTIN_ICON_FUNC_HELP                 (8)
+#define BUILTIN_ICON_TOOL_SHELL                (9)
+#define BUILTIN_ICON_TOOL_PART                 (10)
+#define BUILTIN_ICON_TOOL_RESCUE               (11)
+#define BUILTIN_ICON_POINTER                   (12)
+#define BUILTIN_ICON_VOL_INTERNAL              (13)
+#define BUILTIN_ICON_VOL_EXTERNAL              (14)
+#define BUILTIN_ICON_VOL_OPTICAL               (15)
+#define BUILTIN_ICON_VOL_FIREWIRE              (16)
+#define BUILTIN_ICON_VOL_BOOTER                (17)
+#define BUILTIN_ICON_VOL_INTERNAL_HFS          (18)
+#define BUILTIN_ICON_VOL_INTERNAL_NTFS         (19)
+#define BUILTIN_ICON_VOL_INTERNAL_EXT3         (20)
+#define BUILTIN_ICON_VOL_INTERNAL_REC          (21)
+#define BUILTIN_ICON_BANNER                    (22)
+#define BUILTIN_SELECTION_SMALL                (23)
+#define BUILTIN_SELECTION_BIG                  (24)
+#define BUILTIN_ICON_COUNT                     (25)
 //
 // menu module
 //
@@ -799,6 +850,14 @@ EG_IMAGE * BuiltinIcon(IN UINTN Id);
 #define X_IS_RIGHT   0
 #define X_IS_CENTER  1
 #define BADGE_DIMENSION 64
+
+#if defined(ADVICON)
+// IconFormat
+#define ICON_FORMAT_DEF       (0)
+#define ICON_FORMAT_ICNS      (1)
+#define ICON_FORMAT_PNG       (2)
+#define ICON_FORMAT_BMP       (3)
+#endif //ADVICON
 
 VOID AddMenuInfoLine(IN REFIT_MENU_SCREEN *Screen, IN CHAR16 *InfoLine);
 VOID AddMenuEntry(IN REFIT_MENU_SCREEN *Screen, IN REFIT_MENU_ENTRY *Entry);

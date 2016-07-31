@@ -70,8 +70,13 @@
 
 extern EMU_VARIABLE_CONTROL_PROTOCOL *gEmuVariableControl;
 
+#if defined(ADVICON)
+STATIC BOOLEAN AddToolEntry(IN CHAR16 *LoaderPath, IN CHAR16 *FullTitle, IN CHAR16 *LoaderTitle,
+                            IN REFIT_VOLUME *Volume, IN EG_IMAGE *Image, IN EG_IMAGE *ImageHover, IN CHAR16 ShortcutLetter)
+#else //ADVICON
 STATIC BOOLEAN AddToolEntry(IN CHAR16 *LoaderPath, IN CHAR16 *FullTitle, IN CHAR16 *LoaderTitle,
                             IN REFIT_VOLUME *Volume, IN EG_IMAGE *Image, IN CHAR16 ShortcutLetter)
+#endif //ADVICON
 {
   LOADER_ENTRY *Entry;
   // Check the loader exists
@@ -84,7 +89,7 @@ STATIC BOOLEAN AddToolEntry(IN CHAR16 *LoaderPath, IN CHAR16 *FullTitle, IN CHAR
   if (Entry == NULL) {
     return FALSE;
   }
-  
+
   if (FullTitle) {
     Entry->me.Title = EfiStrDuplicate(FullTitle);
   } else {
@@ -94,6 +99,9 @@ STATIC BOOLEAN AddToolEntry(IN CHAR16 *LoaderPath, IN CHAR16 *FullTitle, IN CHAR
   Entry->me.Row = 1;
   Entry->me.ShortcutLetter = ShortcutLetter;
   Entry->me.Image = Image;
+#if defined(ADVICON)
+  Entry->me.ImageHover = ImageHover;
+#endif //ADVICON
   Entry->LoaderPath = EfiStrDuplicate(LoaderPath);
   Entry->DevicePath = FileDevicePath(Volume->DeviceHandle, Entry->LoaderPath);
   Entry->DevicePathString = FileDevicePathToStr(Entry->DevicePath);
@@ -101,7 +109,7 @@ STATIC BOOLEAN AddToolEntry(IN CHAR16 *LoaderPath, IN CHAR16 *FullTitle, IN CHAR
   Entry->me.AtClick = ActionSelect;
   Entry->me.AtDoubleClick = ActionEnter;
   Entry->me.AtRightClick = ActionHelp;
-  
+
   DBG("found tool %s\n", LoaderPath);
   AddMenuEntry(&MainMenu, (REFIT_MENU_ENTRY *)Entry);
   return TRUE;
@@ -112,7 +120,7 @@ STATIC VOID AddCloverEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTitle, IN REF
   LOADER_ENTRY      *Entry, *SubEntry;
   REFIT_MENU_SCREEN *SubScreen;
 //  EFI_STATUS        Status;
-  
+
   // prepare the menu entry
   Entry = AllocateZeroPool(sizeof(LOADER_ENTRY));
   Entry->me.Title          = LoaderTitle;
@@ -120,6 +128,9 @@ STATIC VOID AddCloverEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTitle, IN REF
   Entry->me.Row            = 1;
   Entry->me.ShortcutLetter = 'C';
   Entry->me.Image          = BuiltinIcon(BUILTIN_ICON_FUNC_CLOVER);
+#if defined(ADVICON)
+  Entry->me.ImageHover     = GetSmallHover(BUILTIN_ICON_FUNC_CLOVER);
+#endif //ADVICON
   Entry->Volume = Volume;
   Entry->LoaderPath      = EfiStrDuplicate(LoaderPath);
   Entry->VolName         = Volume->VolName;
@@ -128,12 +139,12 @@ STATIC VOID AddCloverEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTitle, IN REF
   Entry->Flags           = 0;
   Entry->LoadOptions     = NULL;
   Entry->LoaderType      = OSTYPE_OTHER;
-  
+
   //actions
   Entry->me.AtClick = ActionEnter;
   Entry->me.AtDoubleClick = ActionDetails;
   Entry->me.AtRightClick = ActionDetails;
-  
+
   // create the submenu
   SubScreen = AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
   SubScreen->Title = EfiStrDuplicate(LoaderTitle);
@@ -141,7 +152,7 @@ STATIC VOID AddCloverEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTitle, IN REF
   SubScreen->ID = SCREEN_BOOT;
   SubScreen->AnimeRun = GetAnime(SubScreen);
   AddMenuInfoLine(SubScreen, FileDevicePathToStr(Volume->DevicePath));
-  
+
   if (gEmuVariableControl != NULL) {
     gEmuVariableControl->UninstallEmulation(gEmuVariableControl);
   }
@@ -167,21 +178,21 @@ STATIC VOID AddCloverEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTitle, IN REF
       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
     }
 //  }
-  
+
   SubEntry = DuplicateLoaderEntry(Entry);
   if (SubEntry) {
     SubEntry->me.Title        = L"Remove all Clover boot options";
     SubEntry->LoadOptions     = L"BO-REMOVE";
     AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
   }
-  
+
   SubEntry = DuplicateLoaderEntry(Entry);
   if (SubEntry) {
     SubEntry->me.Title        = L"Print all UEFI boot options to log";
     SubEntry->LoadOptions     = L"BO-PRINT";
     AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
   }
-  
+
   AddMenuEntry(SubScreen, &MenuEntryReturn);
   Entry->me.SubScreen = SubScreen;
   AddMenuEntry(&MainMenu, (REFIT_MENU_ENTRY *)Entry);
@@ -193,12 +204,12 @@ VOID ScanTool(VOID)
   UINTN                   VolumeIndex;
   REFIT_VOLUME            *Volume;
   VOID                    *Interface;
-  
+
   if (GlobalConfig.DisableFlags & HIDEUI_FLAG_TOOLS)
     return;
-  
+
   //    Print(L"Scanning for tools...\n");
-  
+
   // look for the EFI shell
   if (!(GlobalConfig.DisableFlags & HIDEUI_FLAG_SHELL)) {
 #if defined(MDE_CPU_X64)
@@ -206,33 +217,43 @@ VOID ScanTool(VOID)
 //      AddToolEntry(L"\\EFI\\CLOVER\\tools\\Shell64U.efi", NULL, L"EFI Shell 64", SelfVolume, BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S');
 //    } else
     //there seems to be the best version
+#if defined(ADVICON)
+      if (!AddToolEntry(L"\\EFI\\CLOVER\\tools\\Shell64U.efi", NULL, L"UEFI Shell 64", SelfVolume, BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), GetSmallHover(BUILTIN_ICON_TOOL_SHELL), 'S')) {
+        AddToolEntry(L"\\EFI\\CLOVER\\tools\\Shell64.efi", NULL, L"EFI Shell 64", SelfVolume, BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), GetSmallHover(BUILTIN_ICON_TOOL_SHELL), 'S');
+      }
+#else //ADVICON
       if (!AddToolEntry(L"\\EFI\\CLOVER\\tools\\Shell64U.efi", NULL, L"UEFI Shell 64", SelfVolume, BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S')) {
         AddToolEntry(L"\\EFI\\CLOVER\\tools\\Shell64.efi", NULL, L"EFI Shell 64", SelfVolume, BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S');
       }
+#endif //ADVICON
 //  }
 #else
+#if defined(ADVICON)
+    AddToolEntry(L"\\EFI\\CLOVER\\tools\\Shell32.efi", NULL, L"EFI Shell 32", SelfVolume, BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), GetSmallHover(BUILTIN_ICON_TOOL_SHELL), 'S');
+#else //ADVICON
     AddToolEntry(L"\\EFI\\CLOVER\\tools\\Shell32.efi", NULL, L"EFI Shell 32", SelfVolume, BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S');
+#endif //ADVICON
 #endif
   }
-  
+
 //  if (!gFirmwareClover) { //Slice: I wish to extend functionality on emulated nvram
     for (VolumeIndex = 0; VolumeIndex < VolumesCount; VolumeIndex++) {
       Volume = Volumes[VolumeIndex];
       if (!Volume->RootDir || !Volume->DeviceHandle) {
         continue;
       }
-      
+
       Status = gBS->HandleProtocol (Volume->DeviceHandle, &gEfiPartTypeSystemPartGuid, &Interface);
       if (Status == EFI_SUCCESS) {
         DBG("Checking EFI partition Volume %d for Clover\n", VolumeIndex);
-        
+
         // OSX adds label "EFI" to EFI volumes and some UEFIs see that
         // as a file. This file then blocks access to the /EFI directory.
         // We will delete /EFI file here and leave only /EFI directory.
         if (DeleteFile(Volume->RootDir, L"EFI")) {
           DBG(" Deleted /EFI label\n");
         }
-        
+
         if (FileExists(Volume->RootDir, CLOVER_MEDIA_FILE_NAME)) {
           DBG(" Found Clover\n");
           // Volume->BootType = BOOTING_BY_EFI;
@@ -250,8 +271,12 @@ VOID AddCustomTool(VOID)
   REFIT_VOLUME      *Volume;
   CUSTOM_TOOL_ENTRY *Custom;
   EG_IMAGE          *Image;
+#if defined(ADVICON)
+  EG_IMAGE          *ImageHover = NULL;
+  CHAR16            *ImageHoverPath;
+#endif //ADVICON
   UINTN              i = 0;
-  
+
   DBG("Custom tool start\n");
   // Traverse the custom entries
   for (Custom = gSettings.CustomTool; Custom; ++i, Custom = Custom->Next) {
@@ -263,15 +288,15 @@ VOID AddCustomTool(VOID)
       DBG("Custom tool %d skipped because it is hidden.\n", i);
       continue;
     }
-    
+
     if (Custom->Volume) {
       DBG("Custom tool %d matching \"%s\" ...\n", i, Custom->Volume);
     }
     for (VolumeIndex = 0; VolumeIndex < VolumesCount; ++VolumeIndex) {
       Volume = Volumes[VolumeIndex];
-      
+
       DBG("   Checking volume \"%s\" (%s) ... ", Volume->VolName, Volume->DevicePathString);
-      
+
       // skip volume if its kind is configured as disabled
       if ((Volume->DiskKind == DISK_KIND_OPTICAL && (GlobalConfig.DisableFlags & VOLTYPE_OPTICAL)) ||
           (Volume->DiskKind == DISK_KIND_EXTERNAL && (GlobalConfig.DisableFlags & VOLTYPE_EXTERNAL)) ||
@@ -281,7 +306,7 @@ VOID AddCustomTool(VOID)
         DBG("skipped because media is disabled\n");
         continue;
       }
-      
+
       if (Custom->VolumeType != 0) {
         if ((Volume->DiskKind == DISK_KIND_OPTICAL && ((Custom->VolumeType & VOLTYPE_OPTICAL) == 0)) ||
             (Volume->DiskKind == DISK_KIND_EXTERNAL && ((Custom->VolumeType & VOLTYPE_EXTERNAL) == 0)) ||
@@ -291,12 +316,12 @@ VOID AddCustomTool(VOID)
           continue;
         }
       }
-      
+
       if (Volume->Hidden) {
         DBG("skipped because volume is hidden\n");
         continue;
       }
-      
+
       // Check for exact volume matches
       if (Custom->Volume) {
         if ((StrStr(Volume->DevicePathString, Custom->Volume) == NULL) &&
@@ -317,6 +342,32 @@ VOID AddCustomTool(VOID)
       // Change to custom image if needed
       Image = Custom->Image;
       if ((Image == NULL) && Custom->ImagePath) {
+
+#if defined(ADVICON)
+        ImageHoverPath = EfiStrDuplicate(Custom->ImagePath);
+        ReplaceExtension(ImageHoverPath, L"");
+        ImageHoverPath = PoolPrint(L"%s_hover.%s", ImageHoverPath, egFindExtension(Custom->ImagePath));
+        Image = egLoadImage(Volume->RootDir, Custom->ImagePath, TRUE);
+        if (Image == NULL) {
+          Image = egLoadImage(ThemeDir, Custom->ImagePath, TRUE);
+          if (Image == NULL) {
+            Image = egLoadImage(SelfDir, Custom->ImagePath, TRUE);
+            if (Image == NULL) {
+              Image = egLoadImage(SelfRootDir, Custom->ImagePath, TRUE);
+              if (Image != NULL) {
+                ImageHover = egLoadIcon(SelfRootDir, ImageHoverPath, 32);
+              }
+            } else {
+              ImageHover = egLoadIcon(SelfDir, ImageHoverPath, 32);
+            }
+          } else {
+            ImageHover = egLoadIcon(ThemeDir, ImageHoverPath, 32);
+          }
+        } else {
+          ImageHover = egLoadIcon(Volume->RootDir, ImageHoverPath, 32);
+        }
+        FreePool(ImageHoverPath);
+#else //ADVICON
         Image = egLoadImage(Volume->RootDir, Custom->ImagePath, TRUE);
         if (Image == NULL) {
           Image = egLoadImage(ThemeDir, Custom->ImagePath, TRUE);
@@ -327,12 +378,24 @@ VOID AddCustomTool(VOID)
             }
           }
         }
+#endif //ADVICON
+
+      } else {
+        // Image base64 data
       }
       if (Image == NULL) {
         Image = BuiltinIcon(BUILTIN_ICON_TOOL_SHELL);
+#if defined(ADVICON)
+        ImageHover = GetSmallHover(BUILTIN_ICON_TOOL_SHELL);
+#endif //ADVICON
       }
       // Create a legacy entry for this volume
+#if defined(ADVICON)
+      AddToolEntry(Custom->Path, Custom->FullTitle, Custom->Title, Volume, Image, ImageHover, Custom->Hotkey);
+#else //ADVICON
       AddToolEntry(Custom->Path, Custom->FullTitle, Custom->Title, Volume, Image, Custom->Hotkey);
+#endif //ADVICON
+
       DBG("match!\n");
     }
   }

@@ -1517,6 +1517,10 @@ extern ACPI_PATCHED_AML              *ACPIPatchedAML;
 
 // SysVariables
 extern SYSVARIABLES                   *SysVariables;
+
+#if defined(ADVICON)
+extern CHAR16 *IconFormat;
+#endif //ADVICON
 //-----------------------------------
 
 VOID

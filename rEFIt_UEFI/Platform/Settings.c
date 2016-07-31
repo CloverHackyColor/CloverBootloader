@@ -29,6 +29,9 @@
 
 ACPI_PATCHED_AML                *ACPIPatchedAML;
 SYSVARIABLES                     *SysVariables;
+#if defined(ADVICON)
+CHAR16                          *IconFormat = NULL;
+#endif //ADVICON
 
 TagPtr                          gConfigDict[NUM_OF_CONFIGS] = {NULL, NULL, NULL};
 
@@ -127,6 +130,9 @@ REFIT_CONFIG   GlobalConfig = {
   FALSE,          // BOOLEAN     Proportional;
   FALSE,          // BOOLEAN     NoEarlyProgress;
   0,              // INTN        PruneScrollRows;
+#if defined(ADVICON)
+  ICON_FORMAT_DEF // INTN        IconFormat;
+#endif //ADVICON
 };
 
 /*
@@ -2999,7 +3005,7 @@ GetThemeTagSettings (
     FreePool (GlobalConfig.SelectionBigFileName);
     GlobalConfig.SelectionBigFileName   = NULL;
   }
-  
+
   if (GlobalConfig.SelectionIndicatorName != NULL) {
     FreePool (GlobalConfig.SelectionIndicatorName);
     GlobalConfig.SelectionIndicatorName = NULL;
@@ -3036,11 +3042,20 @@ GetThemeTagSettings (
   }
   FreeScrollBar();
 
+#if defined(ADVICON)
+  if (IconFormat != NULL) {
+    FreePool (IconFormat);
+    IconFormat = NULL;
+  }
+
+  GlobalConfig.IconFormat = ICON_FORMAT_DEF;
+#endif //ADVICON
+
   // if NULL parameter, quit after setting default values, this is embedded theme
   if (DictPointer == NULL) {
     return EFI_SUCCESS;
   }
-  
+
   Dict    = GetProperty (DictPointer, "BootCampStyle");
   GlobalConfig.BootCampStyle = IsPropertyTrue(Dict);
 
@@ -3253,7 +3268,7 @@ GetThemeTagSettings (
     if ((Dict2->type == kTagTypeString) && Dict2->string) {
       GlobalConfig.SelectionIndicatorName = PoolPrint (L"%a", Dict2->string);
     }
-    
+
     Dict2 = GetProperty (Dict, "OnTop");
     GlobalConfig.SelectionOnTop = IsPropertyTrue (Dict2);
 
@@ -3399,6 +3414,43 @@ GetThemeTagSettings (
   }
 
   // set file defaults in case they were not set
+#if defined(ADVICON)
+  Dict = GetProperty (DictPointer, "Icon");
+  if (Dict != NULL) {
+    Dict2 = GetProperty (Dict, "Format");
+    if (AsciiStriCmp (Dict2->string, "ICNS") == 0) {
+      GlobalConfig.IconFormat = ICON_FORMAT_ICNS;
+      IconFormat = PoolPrint (L"%s", L"icns");
+    } else if (AsciiStriCmp (Dict2->string, "PNG") == 0) {
+      GlobalConfig.IconFormat = ICON_FORMAT_PNG;
+      IconFormat = PoolPrint (L"%s", L"png");
+    } else if (AsciiStriCmp (Dict2->string, "BMP") == 0) {
+      GlobalConfig.IconFormat = ICON_FORMAT_BMP;
+      IconFormat = PoolPrint (L"%s", L"bmp");
+    }/* else {
+      GlobalConfig.IconFormat = ICON_FORMAT_DEF;
+    }*/
+  }
+
+  if (GlobalConfig.BackgroundName == NULL) {
+    GlobalConfig.BackgroundName = GetIconsExt(L"background", L"png");
+  }
+  if (GlobalConfig.BannerFileName == NULL) {
+    GlobalConfig.BannerFileName = GetIconsExt(L"logo", L"png");
+  }
+  if (GlobalConfig.SelectionSmallFileName == NULL) {
+    GlobalConfig.SelectionSmallFileName = GetIconsExt(L"selection_small", L"png");
+  }
+  if (GlobalConfig.SelectionBigFileName == NULL) {
+    GlobalConfig.SelectionBigFileName = GetIconsExt(L"selection_big", L"png");
+  }
+  if (GlobalConfig.SelectionIndicatorName == NULL) {
+    GlobalConfig.SelectionIndicatorName = GetIconsExt(L"selection_indicator", L"png");
+  }
+  if (GlobalConfig.FontFileName == NULL) {
+    GlobalConfig.FontFileName = GetIconsExt(L"font", L"png");
+  }
+#else //ADVICON
   if (GlobalConfig.BackgroundName == NULL) {
     GlobalConfig.BackgroundName         = PoolPrint (L"background.png");
   }
@@ -3414,7 +3466,10 @@ GetThemeTagSettings (
   if (GlobalConfig.SelectionIndicatorName == NULL) {
     GlobalConfig.SelectionIndicatorName = PoolPrint (L"selection_indicator.png");
   }
-
+  if (GlobalConfig.FontFileName == NULL) {
+    GlobalConfig.FontFileName = PoolPrint (L"font.png");
+  }
+#endif //ADVICON
   return EFI_SUCCESS;
 }
 
@@ -3486,7 +3541,7 @@ InitTheme(
   // Free selection images which are not builtin icons
   for (i = 0; i < 5; i++) {
     if (SelectionImages[i] != NULL) {
-      if (SelectionImages[i] != BuiltinIcon(BUILTIN_SELECTION_SMALL) && SelectionImages[i] != BuiltinIcon(BUILTIN_SELECTION_BIG)) {
+      if ((SelectionImages[i] != BuiltinIcon(BUILTIN_SELECTION_SMALL)) && (SelectionImages[i] != BuiltinIcon(BUILTIN_SELECTION_BIG))) {
         egFreeImage (SelectionImages[i]);
       }
       SelectionImages[i] = NULL;

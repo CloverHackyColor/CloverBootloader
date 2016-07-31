@@ -40,24 +40,9 @@ extern REFIT_MENU_ENTRY MenuEntryOptions;
 extern REFIT_MENU_ENTRY MenuEntryAbout;
 extern REFIT_MENU_ENTRY MenuEntryReset;
 extern REFIT_MENU_ENTRY MenuEntryShutdown;
+extern REFIT_MENU_ENTRY MenuEntryHelp;
+extern REFIT_MENU_ENTRY MenuEntryExit;
 extern REFIT_MENU_SCREEN MainMenu;
-
-#define PLATFORM_DATABASE_NAME L"PK"
-#define PLATFORM_DATABASE_GUID gEfiGlobalVariableGuid
-#define EXCHANGE_DATABASE_NAME L"KEK"
-#define EXCHANGE_DATABASE_GUID gEfiGlobalVariableGuid
-#define AUTHORIZED_DATABASE_NAME EFI_IMAGE_SECURITY_DATABASE
-#define AUTHORIZED_DATABASE_GUID gEfiImageSecurityDatabaseGuid
-#define UNAUTHORIZED_DATABASE_NAME EFI_IMAGE_SECURITY_DATABASE1
-#define UNAUTHORIZED_DATABASE_GUID gEfiImageSecurityDatabaseGuid
-#define DEFAULT_PLATFORM_DATABASE_NAME L"PKDefault"
-#define DEFAULT_PLATFORM_DATABASE_GUID gEfiGlobalVariableGuid
-#define DEFAULT_EXCHANGE_DATABASE_NAME L"KEKDefault"
-#define DEFAULT_EXCHANGE_DATABASE_GUID gEfiGlobalVariableGuid
-#define DEFAULT_AUTHORIZED_DATABASE_NAME L"dbDefault"
-#define DEFAULT_AUTHORIZED_DATABASE_GUID gEfiGlobalVariableGuid
-#define DEFAULT_UNAUTHORIZED_DATABASE_NAME L"dbxDefault"
-#define DEFAULT_UNAUTHORIZED_DATABASE_GUID gEfiGlobalVariableGuid
 
 // common
 EG_IMAGE *LoadBuiltinIcon(IN CHAR16 *IconName);
@@ -70,7 +55,7 @@ INTN StrniCmp(IN CHAR16 *Str1,
               IN CHAR16 *Str2,
               IN UINTN   Count);
 CHAR16 *StriStr(IN CHAR16 *Str,
-                IN CHAR16 *SearchFor); 
+                IN CHAR16 *SearchFor);
 VOID StrToLower(IN CHAR16 *Str);
 VOID AlertMessage(IN CHAR16 *Title, IN CHAR16 *Message);
 BOOLEAN YesNoMessage(IN CHAR16 *Title, IN CHAR16 *Message);
@@ -104,6 +89,24 @@ EFI_STATUS LockBootScreen(VOID);
 EFI_STATUS UnlockBootScreen(VOID);
 
 // secure boot
+#ifdef ENABLE_SECURE_BOOT
+#define PLATFORM_DATABASE_NAME L"PK"
+#define PLATFORM_DATABASE_GUID gEfiGlobalVariableGuid
+#define EXCHANGE_DATABASE_NAME L"KEK"
+#define EXCHANGE_DATABASE_GUID gEfiGlobalVariableGuid
+#define AUTHORIZED_DATABASE_NAME EFI_IMAGE_SECURITY_DATABASE
+#define AUTHORIZED_DATABASE_GUID gEfiImageSecurityDatabaseGuid
+#define UNAUTHORIZED_DATABASE_NAME EFI_IMAGE_SECURITY_DATABASE1
+#define UNAUTHORIZED_DATABASE_GUID gEfiImageSecurityDatabaseGuid
+#define DEFAULT_PLATFORM_DATABASE_NAME L"PKDefault"
+#define DEFAULT_PLATFORM_DATABASE_GUID gEfiGlobalVariableGuid
+#define DEFAULT_EXCHANGE_DATABASE_NAME L"KEKDefault"
+#define DEFAULT_EXCHANGE_DATABASE_GUID gEfiGlobalVariableGuid
+#define DEFAULT_AUTHORIZED_DATABASE_NAME L"dbDefault"
+#define DEFAULT_AUTHORIZED_DATABASE_GUID gEfiGlobalVariableGuid
+#define DEFAULT_UNAUTHORIZED_DATABASE_NAME L"dbxDefault"
+#define DEFAULT_UNAUTHORIZED_DATABASE_GUID gEfiGlobalVariableGuid
+
 VOID AddSecureBootTool(VOID);
 VOID InitializeSecureBoot(VOID);
 EFI_STATUS InstallSecureBoot(VOID);
@@ -156,3 +159,4 @@ EFI_STATUS AppendSignatureToDatabase(IN OUT VOID     **Database,
                                      IN     EFI_GUID  *SignatureType,
                                      IN     VOID      *Signature,
                                      IN     UINTN      SignatureSize);
+#endif //ENABLE_SECURE_BOOT

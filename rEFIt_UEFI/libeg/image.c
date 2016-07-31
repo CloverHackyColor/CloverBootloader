@@ -456,20 +456,6 @@ EFI_STATUS egMkDir(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CHAR16 *DirName)
 //
 // Loading images from files and embedded data
 //
-/*
-static CHAR16 * egFindExtension(IN CHAR16 *FileName)
-{
-    INTN i;
-
-    for (i = StrLen(FileName); i >= 0; i--) {
-        if (FileName[i] == '.')
-            return FileName + i + 1;
-        if (FileName[i] == '/' || FileName[i] == '\\')
-            break;
-    }
-    return FileName + StrLen(FileName);
-}
-*/
 static EG_IMAGE * egDecodeAny(IN UINT8 *FileData, IN UINTN FileDataLength,
                               IN CHAR16 *Format, IN UINTN IconSize, IN BOOLEAN WantAlpha)
 {
@@ -479,13 +465,16 @@ static EG_IMAGE * egDecodeAny(IN UINT8 *FileData, IN UINTN FileDataLength,
   if (Format) {
     // dispatch by extension
     DecodeFunc = NULL;
-    if (StriCmp(Format, L"BMP") == 0)
-      DecodeFunc = egDecodeBMP;
-    else if (StriCmp(Format, L"ICNS") == 0)
-      DecodeFunc = egDecodeICNS;
-    else if (StriCmp(Format, L"PNG") == 0){
- //         DBG("decode format PNG\n");
+
+    if (StriCmp(Format, L"PNG") == 0){
+      //DBG("decode format PNG\n");
       DecodeFunc = egDecodePNG;
+    } else if (StriCmp(Format, L"ICNS") == 0){
+      //DBG("decode format ICNS\n");
+      DecodeFunc = egDecodeICNS;
+    } else  if (StriCmp(Format, L"BMP") == 0) {
+      //DBG("decode format BMP\n");
+      DecodeFunc = egDecodeBMP;
     }
     //  else if (StriCmp(Format, L"TGA") == 0)
     //    DecodeFunc = egDecodeTGA;
