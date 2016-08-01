@@ -5304,7 +5304,9 @@ GetUserSettings(
 
       SysVariablesTmp                    = AllocateZeroPool (sizeof(SYSVARIABLES));
       SysVariablesTmp->Key               = PoolPrint(L"InjectSystemID");
+      if (GlobalConfig.TextOnly) {
       SysVariablesTmp->MenuItem.SValue   = gSettings.InjectSystemID?L"[+]":L"[ ]";
+      }
       SysVariablesTmp->MenuItem.BValue   = gSettings.InjectSystemID;
       SysVariablesTmp->MenuItem.ItemType = BoolValue;
       SysVariablesTmp->Next              = SysVariables;
