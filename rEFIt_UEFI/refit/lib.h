@@ -80,7 +80,7 @@
 */
 
 //#define FKERNELPATCH 1
-//#define ADVICON 1
+#define ADVICON 1
 
 // Experimental <--
 

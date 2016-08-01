@@ -629,12 +629,12 @@ VOID FillInputs(BOOLEAN New)
   InputItems[InputItemsCount].ItemType = BoolValue; //105
   InputItems[(GlobalConfig.TextOnly) ? InputItemsCount : InputItemsCount++].BValue = gSettings.KernelAndKextPatches.KPHaswellE;
   if (GlobalConfig.TextOnly) {
-  InputItems[InputItemsCount++].SValue = gSettings.KernelAndKextPatches.KPHaswellE ? L"[+]" : L"[ ]";
+    InputItems[InputItemsCount++].SValue = gSettings.KernelAndKextPatches.KPHaswellE ? L"[+]" : L"[ ]";
   }
   InputItems[InputItemsCount].ItemType = BoolValue; //106
   InputItems[(GlobalConfig.TextOnly) ? InputItemsCount : InputItemsCount++].BValue = gSettings.StringInjector;
   if (GlobalConfig.TextOnly) {
-  InputItems[InputItemsCount++].SValue = gSettings.StringInjector?L"[+]":L"[ ]";
+    InputItems[InputItemsCount++].SValue = gSettings.StringInjector?L"[+]":L"[ ]";
   }
   InputItems[InputItemsCount].ItemType = BoolValue; //107
   InputItems[(GlobalConfig.TextOnly) ? InputItemsCount : InputItemsCount++].BValue = gSettings.NoDefaultProperties;
@@ -664,7 +664,7 @@ VOID FillInputs(BOOLEAN New)
     while (DropTable) {
       DropTable->MenuItem.ItemType = BoolValue;
       if (GlobalConfig.TextOnly) {
-      DropTable->MenuItem.SValue = DropTable->MenuItem.BValue?L"[+]":L"[ ]";
+        DropTable->MenuItem.SValue = DropTable->MenuItem.BValue?L"[+]":L"[ ]";
       }
       DropTable = DropTable->Next;
     }
@@ -675,7 +675,7 @@ VOID FillInputs(BOOLEAN New)
     while (ACPIPatchedAMLTmp) {
       ACPIPatchedAMLTmp->MenuItem.ItemType = BoolValue;
       if (GlobalConfig.TextOnly) {
-      ACPIPatchedAMLTmp->MenuItem.SValue = ACPIPatchedAMLTmp->MenuItem.BValue?L"[+]":L"[ ]";
+        ACPIPatchedAMLTmp->MenuItem.SValue = ACPIPatchedAMLTmp->MenuItem.BValue?L"[+]":L"[ ]";
       }
       ACPIPatchedAMLTmp = ACPIPatchedAMLTmp->Next;
     }
@@ -1276,10 +1276,7 @@ VOID AboutRefit(VOID)
     AddMenuInfo(&AboutMenu, PoolPrint(L" Screen Output: %s", egScreenDescription()));
     AboutMenu.AnimeRun = GetAnime(&AboutMenu);
     AddMenuEntry(&AboutMenu, &MenuEntryReturn);
-  } /* else {
-    FreePool(AboutMenu.InfoLines[AboutMenu.InfoLineCount-1]);
-    AboutMenu.InfoLines[AboutMenu.InfoLineCount-1]=PoolPrint(L" Screen Output: %s", egScreenDescription());
-  } */ else if (AboutMenu.EntryCount >= 2) {
+  } else if (AboutMenu.EntryCount >= 2) {
     /*
       EntryCount instead of InfoLineCount. Lastline == return/back. Is necessary recheck screen res here?
     */
@@ -4115,6 +4112,7 @@ REFIT_MENU_ENTRY  *SubMenuBinaries()
   InputBootArgs->Entry.AtRightClick = ActionDetails;
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
 
+  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
   InputBootArgs->Entry.Title = PoolPrint(L"Kernel patching allowed");
   InputBootArgs->Entry.Tag = TAG_INPUT;
   InputBootArgs->Entry.Row = 0xFFFF; //cursor
