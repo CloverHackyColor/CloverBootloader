@@ -899,6 +899,7 @@ static VOID StartLegacy(IN LEGACY_ENTRY *Entry)
 
 static VOID StartTool(IN LOADER_ENTRY *Entry)
 {
+  DBG("StartTool: %s\n", Entry->LoaderPath);
   egClearScreen(&DarkBackgroundPixel);
     BeginExternalScreen(OSFLAG_ISSET(Entry->Flags, OSFLAG_USEGRAPHICS), Entry->me.Title + 6);  // assumes "Start <title>" as assigned below
     StartEFIImage(Entry->DevicePath, Entry->LoadOptions, Basename(Entry->LoaderPath),

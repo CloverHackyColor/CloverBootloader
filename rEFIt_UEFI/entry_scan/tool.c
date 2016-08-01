@@ -72,10 +72,10 @@ extern EMU_VARIABLE_CONTROL_PROTOCOL *gEmuVariableControl;
 
 #if defined(ADVICON)
 STATIC BOOLEAN AddToolEntry(IN CHAR16 *LoaderPath, IN CHAR16 *FullTitle, IN CHAR16 *LoaderTitle,
-                            IN REFIT_VOLUME *Volume, IN EG_IMAGE *Image, IN EG_IMAGE *ImageHover, IN CHAR16 ShortcutLetter)
+                            IN REFIT_VOLUME *Volume, IN EG_IMAGE *Image, IN EG_IMAGE *ImageHover, IN CHAR16 ShortcutLetter, IN CHAR16 *Options)
 #else //ADVICON
 STATIC BOOLEAN AddToolEntry(IN CHAR16 *LoaderPath, IN CHAR16 *FullTitle, IN CHAR16 *LoaderTitle,
-                            IN REFIT_VOLUME *Volume, IN EG_IMAGE *Image, IN CHAR16 ShortcutLetter)
+                            IN REFIT_VOLUME *Volume, IN EG_IMAGE *Image, IN CHAR16 ShortcutLetter, IN CHAR16 *Options)
 #endif //ADVICON
 {
   LOADER_ENTRY *Entry;
@@ -105,6 +105,7 @@ STATIC BOOLEAN AddToolEntry(IN CHAR16 *LoaderPath, IN CHAR16 *FullTitle, IN CHAR
   Entry->LoaderPath = EfiStrDuplicate(LoaderPath);
   Entry->DevicePath = FileDevicePath(Volume->DeviceHandle, Entry->LoaderPath);
   Entry->DevicePathString = FileDevicePathToStr(Entry->DevicePath);
+  Entry->LoadOptions = Options ? Options : NULL;
   //actions
   Entry->me.AtClick = ActionSelect;
   Entry->me.AtDoubleClick = ActionEnter;
@@ -218,20 +219,20 @@ VOID ScanTool(VOID)
 //    } else
     //there seems to be the best version
 #if defined(ADVICON)
-      if (!AddToolEntry(L"\\EFI\\CLOVER\\tools\\Shell64U.efi", NULL, L"UEFI Shell 64", SelfVolume, BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), GetSmallHover(BUILTIN_ICON_TOOL_SHELL), 'S')) {
-        AddToolEntry(L"\\EFI\\CLOVER\\tools\\Shell64.efi", NULL, L"EFI Shell 64", SelfVolume, BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), GetSmallHover(BUILTIN_ICON_TOOL_SHELL), 'S');
+      if (!AddToolEntry(L"\\EFI\\CLOVER\\tools\\Shell64U.efi", NULL, L"UEFI Shell 64", SelfVolume, BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), GetSmallHover(BUILTIN_ICON_TOOL_SHELL), 'S', NULL)) {
+        AddToolEntry(L"\\EFI\\CLOVER\\tools\\Shell64.efi", NULL, L"EFI Shell 64", SelfVolume, BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), GetSmallHover(BUILTIN_ICON_TOOL_SHELL), 'S', NULL);
       }
 #else //ADVICON
-      if (!AddToolEntry(L"\\EFI\\CLOVER\\tools\\Shell64U.efi", NULL, L"UEFI Shell 64", SelfVolume, BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S')) {
-        AddToolEntry(L"\\EFI\\CLOVER\\tools\\Shell64.efi", NULL, L"EFI Shell 64", SelfVolume, BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S');
+      if (!AddToolEntry(L"\\EFI\\CLOVER\\tools\\Shell64U.efi", NULL, L"UEFI Shell 64", SelfVolume, BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S', NULL)) {
+        AddToolEntry(L"\\EFI\\CLOVER\\tools\\Shell64.efi", NULL, L"EFI Shell 64", SelfVolume, BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S', NULL);
       }
 #endif //ADVICON
 //  }
 #else
 #if defined(ADVICON)
-    AddToolEntry(L"\\EFI\\CLOVER\\tools\\Shell32.efi", NULL, L"EFI Shell 32", SelfVolume, BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), GetSmallHover(BUILTIN_ICON_TOOL_SHELL), 'S');
+    AddToolEntry(L"\\EFI\\CLOVER\\tools\\Shell32.efi", NULL, L"EFI Shell 32", SelfVolume, BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), GetSmallHover(BUILTIN_ICON_TOOL_SHELL), 'S', NULL);
 #else //ADVICON
-    AddToolEntry(L"\\EFI\\CLOVER\\tools\\Shell32.efi", NULL, L"EFI Shell 32", SelfVolume, BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S');
+    AddToolEntry(L"\\EFI\\CLOVER\\tools\\Shell32.efi", NULL, L"EFI Shell 32", SelfVolume, BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S', NULL);
 #endif //ADVICON
 #endif
   }
@@ -297,6 +298,12 @@ VOID AddCustomTool(VOID)
 
       DBG("   Checking volume \"%s\" (%s) ... ", Volume->VolName, Volume->DevicePathString);
 
+      // Skip Whole Disc Boot
+      if (Volume->RootDir == NULL) {
+        DBG("skipped because volume is not readable\n");
+        continue;
+      }
+
       // skip volume if its kind is configured as disabled
       if ((Volume->DiskKind == DISK_KIND_OPTICAL && (GlobalConfig.DisableFlags & VOLTYPE_OPTICAL)) ||
           (Volume->DiskKind == DISK_KIND_EXTERNAL && (GlobalConfig.DisableFlags & VOLTYPE_EXTERNAL)) ||
@@ -331,10 +338,6 @@ VOID AddCustomTool(VOID)
         }
       }
       // Check the tool exists on the volume
-      if (Volume->RootDir == NULL) {
-        DBG("skipped because volume is not readable\n");
-        continue;
-      }
       if (!FileExists(Volume->RootDir, Custom->Path)) {
         DBG("skipped because path does not exist\n");
         continue;
@@ -389,14 +392,16 @@ VOID AddCustomTool(VOID)
         ImageHover = GetSmallHover(BUILTIN_ICON_TOOL_SHELL);
 #endif //ADVICON
       }
+
       // Create a legacy entry for this volume
 #if defined(ADVICON)
-      AddToolEntry(Custom->Path, Custom->FullTitle, Custom->Title, Volume, Image, ImageHover, Custom->Hotkey);
+      AddToolEntry(Custom->Path, Custom->FullTitle, Custom->Title, Volume, Image, ImageHover, Custom->Hotkey, Custom->Options);
 #else //ADVICON
-      AddToolEntry(Custom->Path, Custom->FullTitle, Custom->Title, Volume, Image, Custom->Hotkey);
+      AddToolEntry(Custom->Path, Custom->FullTitle, Custom->Title, Volume, Image, Custom->Hotkey, Custom->Options);
 #endif //ADVICON
 
       DBG("match!\n");
+      break; // break scan volumes, continue scan entries
     }
   }
   DBG("Custom tool end\n");
