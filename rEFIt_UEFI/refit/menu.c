@@ -1602,6 +1602,18 @@ VOID HelpRefit(VOID)
 // Graphics helper functions
 //
 
+/*
+  SelectionImages:
+    [0] SelectionBig
+    [2] SelectionSmall
+    [4] SelectionIndicator
+  Buttons:
+    [0] radio_button
+    [1] radio_button_selected
+    [2] checkbox
+    [3] checkbox_checked
+*/
+
 VOID InitSelection(VOID)
 {
 
@@ -1681,8 +1693,13 @@ VOID InitSelection(VOID)
   Buttons[1] = egEnsureImageSize(Buttons[1], TextHeight, TextHeight, &MenuBackgroundPixel);
     
   // Checkbox
+#if defined(ADVICON)
+  Buttons[2] = egLoadImage(ThemeDir, GetIconsExt(L"checkbox", L"png"), TRUE);
+  Buttons[3] = egLoadImage(ThemeDir, GetIconsExt(L"checkbox_checked", L"png"), TRUE);
+#else //ADVICON
   Buttons[2] = egLoadImage(ThemeDir, L"checkbox.png", TRUE);
   Buttons[3] = egLoadImage(ThemeDir, L"checkbox_checked.png", TRUE);
+#endif //ADVICON
   if (!Buttons[2]) {
     Buttons[2] = egDecodePNG(&emb_checkbox[0], sizeof(emb_checkbox), 15, TRUE);
   }

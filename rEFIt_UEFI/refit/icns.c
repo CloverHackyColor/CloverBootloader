@@ -80,9 +80,9 @@ BUILTIN_ICON BuiltinIconTable[BUILTIN_ICON_COUNT] = {
   { NULL, L"icons\\vol_internal_ext3"      , L"icns", 128 },
   { NULL, L"icons\\vol_recovery"           , L"icns", 128 },//21
 
-  //icon_banner
-  //selection_small
-  //selection_big
+  { NULL, L"logo"                          , L"png",  128 },
+  { NULL, L"selection_small"               , L"png",  64  },
+  { NULL, L"selection_big"                 , L"png",  144 }
 };
 
 #define DEC_BUILTIN_ICON(id, ico) BuiltinIconTable[id].Image = egDecodePNG(ico, sizeof(ico), BuiltinIconTable[id].PixelSize, TRUE)
@@ -328,9 +328,9 @@ BUILTIN_ICON BuiltinIconTable[BUILTIN_ICON_COUNT] = {
   { NULL, L"icons\\vol_internal_ext3.icns",     128 },
   { NULL, L"icons\\vol_recovery.icns",          128 }, //21
 
-  //icon_banner
-  //selection_small
-  //selection_big
+  { NULL, L"logo.png",                          128 },
+  { NULL, L"selection_small.png",               64 },
+  { NULL, L"selection_big.png",                 144 }
 };
 
 EG_IMAGE * BuiltinIcon(IN UINTN Id)

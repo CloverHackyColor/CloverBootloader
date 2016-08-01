@@ -622,9 +622,17 @@ VOID BltImageComposite(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN INTN XP
   GraphicsScreenDirty = TRUE;
 }
 
+/*
+  --------------------------------------------------------------------
+  Pos                           : Bottom    -> Mid        -> Top
+  --------------------------------------------------------------------
+   GlobalConfig.SelectionOnTop  : MainImage -> Badge      -> Selection
+  !GlobalConfig.SelectionOnTop  : Selection -> MainImage  -> Badge
+*/
+
 VOID BltImageCompositeBadge(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN EG_IMAGE *BadgeImage, IN INTN XPos, IN INTN YPos, INTN Scale)
 {
-  INTN TotalWidth, TotalHeight, CompWidth, CompHeight, OffsetX, OffsetY;
+  INTN TotalWidth, TotalHeight, CompWidth, CompHeight, OffsetX, OffsetY, OffsetXTmp, OffsetYTmp;
   BOOLEAN Selected = TRUE;
   EG_IMAGE *CompImage;
   EG_IMAGE *NewBaseImage;
@@ -669,15 +677,22 @@ VOID BltImageCompositeBadge(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN EG
     OffsetX = (TotalWidth - CompWidth) >> 1;
     OffsetY = (TotalHeight - CompHeight) >> 1;
     egComposeImage(CompImage, NewBaseImage, 0, 0);
-    egComposeImage(CompImage, NewTopImage, OffsetX, OffsetY);
+    if (!GlobalConfig.SelectionOnTop) {
+      egComposeImage(CompImage, NewTopImage, OffsetX, OffsetY);
+    }
     CompWidth = TotalWidth;
     CompHeight = TotalHeight;
   } else {
     OffsetX = (CompWidth - TotalWidth) >> 1;
     OffsetY = (CompHeight - TotalHeight) >> 1;
     egComposeImage(CompImage, NewBaseImage, OffsetX, OffsetY);
-    egComposeImage(CompImage, NewTopImage, 0, 0);
+    if (!GlobalConfig.SelectionOnTop) {
+      egComposeImage(CompImage, NewTopImage, 0, 0);
+    }
   }
+
+  OffsetXTmp = OffsetX;
+  OffsetYTmp = OffsetY;
 
   // place the badge image
   if (BadgeImage != NULL &&
@@ -712,6 +727,14 @@ VOID BltImageCompositeBadge(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN EG
       OffsetY += CompHeight - 8 - BadgeImage->Height;
     }
     egComposeImage(CompImage, BadgeImage, OffsetX, OffsetY);
+  }
+
+  if (GlobalConfig.SelectionOnTop) {
+    if (CompWidth < TotalWidth) {
+      egComposeImage(CompImage, NewTopImage, OffsetXTmp, OffsetYTmp);
+    } else {
+      egComposeImage(CompImage, NewTopImage, 0, 0);
+    }
   }
 
   // blit to screen and clean up
