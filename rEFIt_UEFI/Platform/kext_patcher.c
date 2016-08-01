@@ -506,6 +506,7 @@ VOID CheckForFakeSMC(CHAR8 *InfoPlist, LOADER_ENTRY *Entry)
 VOID AnyKextPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize, INT32 N, LOADER_ENTRY *Entry)
 {
   UINTN   Num = 0;
+  INTN Ind;
   
   DBG_RT(Entry, "\nAnyKextPatch %d: driverAddr = %x, driverSize = %x\nAnyKext = %a\n",
          N, Driver, DriverSize, Entry->KernelAndKextPatches->KextPatches[N].Label);
@@ -532,7 +533,17 @@ VOID AnyKextPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 Inf
                            -1);
   } else {
     // Info plist patch
-    DBG_RT(Entry, "Info.plist patch: '%a' ->\n '%a'\n", Entry->KernelAndKextPatches->KextPatches[N].Data, Entry->KernelAndKextPatches->KextPatches[N].Patch);
+    DBG_RT(Entry, "Info.plist data : '");
+    for (Ind = 0; Ind < Entry->KernelAndKextPatches->KextPatches[N].DataLen; Ind++) {
+      DBG_RT(Entry, "%c", Entry->KernelAndKextPatches->KextPatches[N].Data[Ind]);
+    }
+    DBG_RT(Entry, "' ->\n");
+    DBG_RT(Entry, "Info.plist patch: '");
+    for (Ind = 0; Ind < Entry->KernelAndKextPatches->KextPatches[N].DataLen; Ind++) {
+      DBG_RT(Entry, "%c", Entry->KernelAndKextPatches->KextPatches[N].Patch[Ind]);
+    }
+    DBG_RT(Entry, "' \n");
+    
     Num = SearchAndReplaceTxt((UINT8*)InfoPlist,
                            InfoPlistSize,
                            Entry->KernelAndKextPatches->KextPatches[N].Data,

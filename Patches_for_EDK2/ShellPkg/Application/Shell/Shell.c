@@ -704,7 +704,7 @@ FreeResources:
     if (ShellInfoObject.NewEfiShellProtocol->IsRootShell()){
       InternalEfiShellSetEnv(L"cwd", NULL, TRUE);
     }
-    CleanUpShellProtocol(ShellInfoObject.NewEfiShellProtocol);
+    CleanUpShellEnvironment (ShellInfoObject.NewEfiShellProtocol);
     DEBUG_CODE(ShellInfoObject.NewEfiShellProtocol = NULL;);
   }
 
@@ -753,7 +753,6 @@ FreeResources:
   }
 
   ShellFreeEnvVarList ();
-  ShellSetRawCmdLine (NULL);
 
   if (ShellCommandGetExit()) {
     return ((EFI_STATUS)ShellCommandGetExitCode());
@@ -2659,7 +2658,6 @@ RunShellCommand(
   CHAR16                    *FirstParameter;
   CHAR16                    *TempWalker;
   SHELL_OPERATION_TYPES     Type;
-  CHAR16                    *OldCmdLine;
 
 //  ASSERT(CmdLine != NULL);
   if (!CmdLine) {
@@ -2670,14 +2668,11 @@ RunShellCommand(
   }
 
   Status              = EFI_SUCCESS;
-  FirstParameter      = NULL;
   CleanOriginal       = NULL;
-  OldCmdLine          = NULL;
 
   CleanOriginal = StrnCatGrow(&CleanOriginal, NULL, CmdLine, 0);
   if (CleanOriginal == NULL) {
-    Status = EFI_OUT_OF_RESOURCES;
-    goto Done;
+    return (EFI_OUT_OF_RESOURCES);
   }
 
   TrimSpaces(&CleanOriginal);
@@ -2704,24 +2699,23 @@ RunShellCommand(
   // Handle case that passed in command line is just 1 or more " " characters.
   //
   if (StrLen (CleanOriginal) == 0) {
-    Status = EFI_SUCCESS;
-    goto Done;
+    SHELL_FREE_NON_NULL(CleanOriginal);
+    return (EFI_SUCCESS);
   }
 
   Status = ProcessCommandLineToFinal(&CleanOriginal);
   if (EFI_ERROR(Status)) {
-    goto Done;
+    SHELL_FREE_NON_NULL(CleanOriginal);
+    return (Status);
   }
-
-  OldCmdLine = ShellGetRawCmdLine ();
-  ShellSetRawCmdLine (CleanOriginal);
 
   //
   // We don't do normal processing with a split command line (output from one command input to another)
   //
   if (ContainsSplit(CleanOriginal)) {
     Status = ProcessNewSplitCommandLine(CleanOriginal);
-    goto Done;
+    SHELL_FREE_NON_NULL(CleanOriginal);
+    return (Status);
   } 
 
   //
@@ -2729,8 +2723,8 @@ RunShellCommand(
   //
   FirstParameter = AllocateZeroPool(StrSize(CleanOriginal));
   if (FirstParameter == NULL) {
-    Status = EFI_OUT_OF_RESOURCES;
-    goto Done;
+    SHELL_FREE_NON_NULL(CleanOriginal);
+    return (EFI_OUT_OF_RESOURCES);
   }
   TempWalker = CleanOriginal;
   if (!EFI_ERROR(ShellGetNextParameter(&TempWalker, FirstParameter, StrSize(CleanOriginal), TRUE))) {
@@ -2759,11 +2753,8 @@ RunShellCommand(
     SetLastError(SHELL_NOT_FOUND);
   }
  
-Done:
-  ShellSetRawCmdLine (OldCmdLine);
-  SHELL_FREE_NON_NULL (OldCmdLine);
-  SHELL_FREE_NON_NULL (CleanOriginal);
-  SHELL_FREE_NON_NULL (FirstParameter);
+  SHELL_FREE_NON_NULL(CleanOriginal);
+  SHELL_FREE_NON_NULL(FirstParameter);
 
   return (Status);
 }

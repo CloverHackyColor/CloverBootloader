@@ -521,9 +521,9 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath,
       }
       break;
     case OSTYPE_WIN:
-      //OSIconName = L"win";
-      //ShortcutLetter = 'W';
-      //break;
+      OSIconName = L"win";
+      ShortcutLetter = 'W';
+      break;
     case OSTYPE_WINEFI:
       OSIconName = L"vista,win";
       //ShortcutLetter = 'V';
