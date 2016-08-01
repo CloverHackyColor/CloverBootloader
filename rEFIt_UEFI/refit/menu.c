@@ -631,7 +631,6 @@ VOID FillInputs(BOOLEAN New)
   if (GlobalConfig.TextOnly) {
   InputItems[InputItemsCount++].SValue = gSettings.KernelAndKextPatches.KPHaswellE ? L"[+]" : L"[ ]";
   }
-
   InputItems[InputItemsCount].ItemType = BoolValue; //106
   InputItems[(GlobalConfig.TextOnly) ? InputItemsCount : InputItemsCount++].BValue = gSettings.StringInjector;
   if (GlobalConfig.TextOnly) {
@@ -642,6 +641,12 @@ VOID FillInputs(BOOLEAN New)
   if (GlobalConfig.TextOnly) {
     InputItems[InputItemsCount].SValue = gSettings.NoDefaultProperties?L"[+]":L"[ ]";
   }
+  InputItems[InputItemsCount].ItemType = BoolValue; //108
+  InputItems[(GlobalConfig.TextOnly) ? InputItemsCount : InputItemsCount++].BValue = gSettings.KernelPatchesAllowed;
+  if (GlobalConfig.TextOnly) {
+    InputItems[InputItemsCount].SValue = gSettings.KernelPatchesAllowed ? L"[+]" : L"[ ]";
+  }
+  
 
   InputItemsCount = 110;
   for (j=0; j<16; j++) {
@@ -4106,6 +4111,14 @@ REFIT_MENU_ENTRY  *SubMenuBinaries()
   InputBootArgs->Entry.Tag = TAG_INPUT;
   InputBootArgs->Entry.Row = 0xFFFF; //cursor
   InputBootArgs->Item = &InputItems[44];
+  InputBootArgs->Entry.AtClick = ActionEnter;
+  InputBootArgs->Entry.AtRightClick = ActionDetails;
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+
+  InputBootArgs->Entry.Title = PoolPrint(L"Kernel patching allowed");
+  InputBootArgs->Entry.Tag = TAG_INPUT;
+  InputBootArgs->Entry.Row = 0xFFFF; //cursor
+  InputBootArgs->Item = &InputItems[108];
   InputBootArgs->Entry.AtClick = ActionEnter;
   InputBootArgs->Entry.AtRightClick = ActionDetails;
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
