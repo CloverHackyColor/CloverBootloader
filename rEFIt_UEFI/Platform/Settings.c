@@ -2952,8 +2952,7 @@ GetThemeTagSettings (
                      TagPtr DictPointer
                      )
 {
-  TagPtr Dict;
-  TagPtr Dict2;
+  TagPtr Dict, Dict2, Dict3;
 
   //fill default to have an ability change theme
   GlobalConfig.BackgroundScale = Crop;
@@ -3323,11 +3322,11 @@ GetThemeTagSettings (
     INTN   i, Count = GetTagCount (Dict);
     for (i = 0; i < Count; i++) {
       GUI_ANIME *Anime;
-      if (EFI_ERROR (GetElement (Dict, i, &DictPointer))) {
+      if (EFI_ERROR (GetElement (Dict, i, &Dict3))) {
         continue;
       }
 
-      if (DictPointer == NULL) {
+      if (Dict3 == NULL) {
         break;
       }
 
@@ -3336,21 +3335,21 @@ GetThemeTagSettings (
         break;
       }
 
-      Dict2 = GetProperty (DictPointer, "ID");
+      Dict2 = GetProperty (Dict3, "ID");
       Anime->ID = (UINTN)GetPropertyInteger (Dict2, 1); //default=main screen
 
-      Dict2 = GetProperty (DictPointer, "Path");
+      Dict2 = GetProperty (Dict3, "Path");
       if (Dict2 != NULL && (Dict2->type == kTagTypeString) && Dict2->string) {
         Anime->Path = PoolPrint (L"%a", Dict2->string);
       }
 
-      Dict2 = GetProperty (DictPointer, "Frames");
+      Dict2 = GetProperty (Dict3, "Frames");
       Anime->Frames = (UINTN)GetPropertyInteger (Dict2, Anime->Frames);
 
-      Dict2 = GetProperty (DictPointer, "FrameTime");
+      Dict2 = GetProperty (Dict3, "FrameTime");
       Anime->FrameTime = (UINTN)GetPropertyInteger (Dict2, Anime->FrameTime);
 
-      Dict2 = GetProperty (DictPointer, "ScreenEdgeX");
+      Dict2 = GetProperty (Dict3, "ScreenEdgeX");
       if (Dict2 != NULL && (Dict2->type == kTagTypeString) && Dict2->string) {
         if (AsciiStrCmp (Dict2->string, "left") == 0) {
           Anime->ScreenEdgeHorizontal = SCREEN_EDGE_LEFT;
@@ -3359,7 +3358,7 @@ GetThemeTagSettings (
         }
       }
 
-      Dict2 = GetProperty (DictPointer, "ScreenEdgeY");
+      Dict2 = GetProperty (Dict3, "ScreenEdgeY");
       if (Dict2 != NULL && (Dict2->type == kTagTypeString) && Dict2->string) {
         if (AsciiStrCmp (Dict2->string, "top") == 0) {
           Anime->ScreenEdgeVertical = SCREEN_EDGE_TOP;
@@ -3370,19 +3369,19 @@ GetThemeTagSettings (
 
       //default values are centre
 
-      Dict2 = GetProperty (DictPointer, "DistanceFromScreenEdgeX%");
+      Dict2 = GetProperty (Dict3, "DistanceFromScreenEdgeX%");
       Anime->FilmX = (INT32)GetPropertyInteger (Dict2, INITVALUE);
 
-      Dict2 = GetProperty (DictPointer, "DistanceFromScreenEdgeY%");
+      Dict2 = GetProperty (Dict3, "DistanceFromScreenEdgeY%");
       Anime->FilmY = (INT32)GetPropertyInteger (Dict2, INITVALUE);
 
-      Dict2 = GetProperty (DictPointer, "NudgeX");
+      Dict2 = GetProperty (Dict3, "NudgeX");
       Anime->NudgeX = (INT32)GetPropertyInteger (Dict2, INITVALUE);
 
-      Dict2 = GetProperty (DictPointer, "NudgeY");
+      Dict2 = GetProperty (Dict3, "NudgeY");
       Anime->NudgeY = (INT32)GetPropertyInteger (Dict2, INITVALUE);
 
-      Dict2 = GetProperty (DictPointer, "Once");
+      Dict2 = GetProperty (Dict3, "Once");
       Anime->Once = IsPropertyTrue (Dict2);
 
       // Add the anime to the list
@@ -3418,18 +3417,20 @@ GetThemeTagSettings (
   Dict = GetProperty (DictPointer, "Icon");
   if (Dict != NULL) {
     Dict2 = GetProperty (Dict, "Format");
-    if (AsciiStriCmp (Dict2->string, "ICNS") == 0) {
-      GlobalConfig.IconFormat = ICON_FORMAT_ICNS;
-      IconFormat = PoolPrint (L"%s", L"icns");
-    } else if (AsciiStriCmp (Dict2->string, "PNG") == 0) {
-      GlobalConfig.IconFormat = ICON_FORMAT_PNG;
-      IconFormat = PoolPrint (L"%s", L"png");
-    } else if (AsciiStriCmp (Dict2->string, "BMP") == 0) {
-      GlobalConfig.IconFormat = ICON_FORMAT_BMP;
-      IconFormat = PoolPrint (L"%s", L"bmp");
-    }/* else {
-      GlobalConfig.IconFormat = ICON_FORMAT_DEF;
-    }*/
+    if (Dict2 != NULL && (Dict2->type == kTagTypeString) && Dict2->string) {
+      if (AsciiStriCmp (Dict2->string, "ICNS") == 0) {
+        GlobalConfig.IconFormat = ICON_FORMAT_ICNS;
+        IconFormat = PoolPrint (L"%s", L"icns");
+      } else if (AsciiStriCmp (Dict2->string, "PNG") == 0) {
+        GlobalConfig.IconFormat = ICON_FORMAT_PNG;
+        IconFormat = PoolPrint (L"%s", L"png");
+      } else if (AsciiStriCmp (Dict2->string, "BMP") == 0) {
+        GlobalConfig.IconFormat = ICON_FORMAT_BMP;
+        IconFormat = PoolPrint (L"%s", L"bmp");
+      }/* else {
+        GlobalConfig.IconFormat = ICON_FORMAT_DEF;
+      }*/
+    }
   }
 
   if (GlobalConfig.BackgroundName == NULL) {
@@ -3470,6 +3471,7 @@ GetThemeTagSettings (
     GlobalConfig.FontFileName = PoolPrint (L"font.png");
   }
 #endif //ADVICON
+
   return EFI_SUCCESS;
 }
 
