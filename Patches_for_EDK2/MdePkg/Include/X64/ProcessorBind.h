@@ -29,12 +29,16 @@
 
 #if defined(__GNUC__) && defined(__pic__) && !defined(__clang__)
 //
-// Mark all symbol declarations and references as protected, meaning they will
+// Mark all symbol declarations and references as hidden, meaning they will
 // not be subject to symbol preemption. This allows the compiler to refer to
 // symbols directly using relative references rather than via the GOT, which
 // contains absolute symbol addresses that are subject to runtime relocation.
 //
-#pragma GCC visibility push (protected)
+// The LTO linker will not emit GOT based relocations when all symbol
+// references can be resolved locally, and so there is no need to set the
+// pragma in that case (and doing so will cause other issues).
+//
+#pragma GCC visibility push (hidden)
 #endif
 
 #if defined(__INTEL_COMPILER)

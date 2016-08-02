@@ -3111,7 +3111,7 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
       break;
 
     case MENU_FUNCTION_PAINT_ALL:
-      
+      DrawMenuText(NULL, 0, 0, 0, 0); //should clean every line to avoid artefacts
 //      DBG("PAINT_ALL: EntriesPosY=%d MaxVisible=%d\n", EntriesPosY, State->MaxVisible);
 //      DBG("DownButton.Height=%d TextHeight=%d\n", DownButton.Height, TextHeight);
       t2 = EntriesPosY + (State->MaxVisible + 1) * TextHeight - DownButton.Height;
@@ -3123,7 +3123,7 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
 
       for (i = State->FirstVisible, j = 0; i <= State->LastVisible; i++, j++) {
         INTN  TitleLen;        
-        DrawMenuText(NULL, 0, 0, 0, 0); //should clean every line to avoid artefacts
+
         TitleLen = StrLen(Screen->Entries[i]->Title);
         Screen->Entries[i]->Place.XPos = EntriesPosX;
         Screen->Entries[i]->Place.YPos = EntriesPosY + j * TextHeight;

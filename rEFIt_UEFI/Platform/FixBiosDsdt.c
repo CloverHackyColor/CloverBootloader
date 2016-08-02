@@ -783,7 +783,7 @@ VOID CheckHardware()
               HDAFIX = TRUE;
               HDAcodecId = codecId;
               HDAlayoutId = layoutId;
-            } else {
+            } else if ((Pci.Hdr.VendorId == 0x1002) || (Pci.Hdr.VendorId == 0x10DE)){ //HDMI
               GetPciADR(DevicePath, &HDMIADR1, &HDMIADR2, NULL);
               GFXHDAFIX = TRUE;
             }
