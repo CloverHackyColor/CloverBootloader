@@ -118,7 +118,7 @@ INTN ScrollbarYMovement;
 #define TITLEICON_SPACING (16)
 
 //#define ROW0__TILESIZE (144)
-#define ROW1_TILESIZE (64)
+//#define ROW1_TILESIZE (64)
 #define TILE_XSPACING (8)
 #define TILE_YSPACING (24)
 #define ROW0_SCROLLSIZE (100)
@@ -143,7 +143,8 @@ static INTN OldX = 0, OldY = 0;
 static INTN OldTextWidth = 0;
 static UINTN OldRow = 0;
 static INTN OldTimeoutTextWidth = 0;
-static INTN MenuWidth, EntriesPosX, EntriesPosY, TimeoutPosY;
+static INTN MenuWidth, TimeoutPosY;
+static INTN EntriesPosX, EntriesPosY;
 static INTN EntriesWidth, EntriesHeight, EntriesGap;
 static EG_IMAGE* ScrollbarImage = NULL;
 static EG_IMAGE* ScrollbarBackgroundImage = NULL;
@@ -1069,16 +1070,17 @@ VOID ApplyInputs(VOID)
       gThemeChanged = TRUE;
       if ((StrLen(InputItems[i].SValue) == 0) ||
           (StriCmp(InputItems[i].SValue, gSettings.MainConfigName) == 0)) {
-        for (i=0; i<2; i++) {
-          if (gConfigDict[i]) {
-            Status = GetUserSettings(SelfRootDir, gConfigDict[i]);
+        INTN Ind;
+        for (Ind=0; Ind<2; Ind++) {
+          if (gConfigDict[Ind]) {
+            Status = GetUserSettings(SelfRootDir, gConfigDict[Ind]);
             if (!EFI_ERROR(Status)) {
               if (gSettings.ConfigName) FreePool(gSettings.ConfigName);
               gSettings.ConfigName = EfiStrDuplicate(gSettings.MainConfigName);
               if (gConfigDict[2]) FreeTag(gConfigDict[2]);
               gConfigDict[2] = NULL;
             }
-            DBG("Main settings%d from menu: %r\n", i, Status);
+            DBG("Main settings%d from menu: %r\n", Ind, Status);
           }
         }
       } else {
@@ -1734,30 +1736,40 @@ VOID InitSelection(VOID)
 static VOID InitScroll(OUT SCROLL_STATE *State, IN INTN ItemCount, IN UINTN MaxCount,
                        IN UINTN VisibleSpace, IN INTN Selected)
 {
+  //ItemCount - a number to scroll (Row0)
+  //MaxCount - total number (Row0 + Row1)
+  //VisibleSpace - a number to fit
+// DBG("InitScroll <= %d %d %d\n", ItemCount, MaxCount, VisibleSpace);
+  // main menu  <= 2 8 5 
+  // about menu <= 21 21 14
   State->LastSelection = State->CurrentSelection = Selected;
+  //MaxIndex, MaxScroll, MaxVisible are indexes, 0..N-1
   State->MaxIndex = (INTN)MaxCount - 1;
   State->MaxScroll = ItemCount - 1;
-//  State->FirstVisible = 0;
-
   if (VisibleSpace == 0)
     State->MaxVisible = State->MaxScroll;
   else
     State->MaxVisible = (INTN)VisibleSpace - 1;
 
-  if (State->MaxVisible >= (INTN)ItemCount)
-      State->MaxVisible = (INTN)ItemCount - 1;
+  if (State->MaxVisible >= ItemCount)
+      State->MaxVisible = ItemCount - 1;
 
   State->MaxFirstVisible = State->MaxScroll - State->MaxVisible;
   CONSTRAIN_MIN(State->MaxFirstVisible, 0);
-  State->FirstVisible = (Selected > State->MaxFirstVisible)?State->MaxFirstVisible:Selected;
+  State->FirstVisible = MIN(Selected, State->MaxFirstVisible);
+//  State->FirstVisible = (Selected > State->MaxFirstVisible)?State->MaxFirstVisible:Selected;
 
   State->IsScrolling = (State->MaxFirstVisible > 0);
   State->PaintAll = TRUE;
   State->PaintSelection = FALSE;
 
   State->LastVisible = State->FirstVisible + State->MaxVisible;
-//  DBG("InitScroll: MaxIndex=%d, FirstVisible=%d, MaxVisible=%d, MaxFirstVisible=%d\n",
+//  DBG("InitScroll => MaxIndex=%d, FirstVisible=%d, MaxVisible=%d, MaxFirstVisible=%d\n",
 //      State->MaxIndex, State->FirstVisible, State->MaxVisible, State->MaxFirstVisible);
+  // main menu
+  // => MaxIndex=7, FirstVisible=0, MaxVisible=1, MaxFirstVisible=0
+  //  about
+  // => MaxIndex=20, FirstVisible=0, MaxVisible=13, MaxFirstVisible=7
 }
 
 static VOID UpdateScroll(IN OUT SCROLL_STATE *State, IN UINTN Movement)
@@ -1813,6 +1825,7 @@ static VOID UpdateScroll(IN OUT SCROLL_STATE *State, IN UINTN Movement)
         if (State->CurrentSelection == State->MaxScroll + 1) {
           State->PaintAll = TRUE;
         }
+//        DBG("SCROLL_LINE_DOWN\n");
       }
       break;
 
@@ -1823,6 +1836,7 @@ static VOID UpdateScroll(IN OUT SCROLL_STATE *State, IN UINTN Movement)
         State->FirstVisible++;
         State->LastVisible++;
         State->PaintAll = TRUE;
+//        DBG("SCROLL_SCROLL_DOWN\n");
       }
       break;
 
@@ -1923,6 +1937,7 @@ static VOID UpdateScroll(IN OUT SCROLL_STATE *State, IN UINTN Movement)
     State->PaintSelection = TRUE;
   State->LastVisible = State->FirstVisible + State->MaxVisible;
 
+//  DBG("UpdateScroll first=%d last=%d\n", State->FirstVisible, State->LastVisible);
   //ycr.ru
   if ((State->PaintAll) && (Movement != SCROLL_NONE))
     HidePointer();
@@ -2929,18 +2944,22 @@ VOID InitBar(VOID)
   if (!DownButtonImage) {
     DownButtonImage = egDecodePNG(&emb_scroll_down_button[0], sizeof(emb_scroll_down_button), 20, TRUE);
   }
+  UpButton.Width      = ScrollWidth; // 16
+  UpButton.Height     = ScrollButtonsHeight; // 20  
+  DownButton.Height   = ScrollButtonsHeight;
+  BarStart.Height     = ScrollBarDecorationsHeight; // 5
+  BarEnd.Height       = ScrollBarDecorationsHeight;
+  ScrollStart.Height  = ScrollScrollDecorationsHeight; // 7
+  ScrollEnd.Height    = ScrollScrollDecorationsHeight;
 }
 
 VOID SetBar(INTN PosX, INTN UpPosY, INTN DownPosY, IN SCROLL_STATE *State)
 {
-
+//  DBG("SetBar <= %d %d %d %d %d\n", UpPosY, DownPosY, State->MaxVisible, State->MaxIndex, State->FirstVisible);
   UpButton.XPos = PosX;
   UpButton.YPos = UpPosY;
-  UpButton.Width = ScrollWidth; // 16
-  UpButton.Height = ScrollButtonsHeight; // 20
 
   DownButton.Width = UpButton.Width;
-  DownButton.Height = ScrollButtonsHeight;
   DownButton.XPos = UpButton.XPos;
   DownButton.YPos = DownPosY;
 
@@ -2952,18 +2971,14 @@ VOID SetBar(INTN PosX, INTN UpPosY, INTN DownPosY, IN SCROLL_STATE *State)
   BarStart.XPos = ScrollbarBackground.XPos;
   BarStart.YPos = ScrollbarBackground.YPos;
   BarStart.Width = ScrollbarBackground.Width;
-  BarStart.Height = ScrollBarDecorationsHeight; // 5
 
   BarEnd.Width = ScrollbarBackground.Width;
-  BarEnd.Height = ScrollBarDecorationsHeight;
   BarEnd.XPos = ScrollbarBackground.XPos;
   BarEnd.YPos = DownButton.YPos - BarEnd.Height;
 
   ScrollStart.XPos = ScrollbarBackground.XPos;
   ScrollStart.YPos = ScrollbarBackground.YPos + ScrollbarBackground.Height * State->FirstVisible / (State->MaxIndex + 1);
   ScrollStart.Width = ScrollbarBackground.Width;
-  ScrollStart.Height = ScrollScrollDecorationsHeight; // 7
-
 
   Scrollbar.XPos = ScrollbarBackground.XPos;
   Scrollbar.YPos = ScrollStart.YPos + ScrollStart.Height;
@@ -2971,7 +2986,6 @@ VOID SetBar(INTN PosX, INTN UpPosY, INTN DownPosY, IN SCROLL_STATE *State)
   Scrollbar.Height = ScrollbarBackground.Height * (State->MaxVisible + 1) / (State->MaxIndex + 1) - ScrollStart.Height;
 
   ScrollEnd.Width = ScrollbarBackground.Width;
-  ScrollEnd.Height = ScrollScrollDecorationsHeight;
   ScrollEnd.XPos = ScrollbarBackground.XPos;
   ScrollEnd.YPos = Scrollbar.YPos + Scrollbar.Height - ScrollEnd.Height;
 
@@ -2981,6 +2995,7 @@ VOID SetBar(INTN PosX, INTN UpPosY, INTN DownPosY, IN SCROLL_STATE *State)
   ScrollTotal.YPos = UpButton.YPos;
   ScrollTotal.Width = UpButton.Width;
   ScrollTotal.Height = DownButton.YPos + DownButton.Height - UpButton.YPos;
+//  DBG("ScrollTotal.Height = %d\n", ScrollTotal.Height);
 }
 
 VOID ScrollingBar(IN SCROLL_STATE *State)
@@ -3018,7 +3033,7 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
   INTN i;
   INTN j = 0;
   INTN ItemWidth = 0;
-  INTN X;
+  INTN X, t1, t2;
   INTN VisibleHeight = 0; //assume vertical layout
   CHAR16 ResultString[SVALUE_MAX_SIZE / sizeof(CHAR16) + 128]; // assume a title max length of around 128
   INTN PlaceCentre = (GlobalConfig.Font == FONT_LOAD) ? ((TextHeight / 2) - 7) : 0;
@@ -3035,7 +3050,7 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
       EntriesPosY = ((UGAHeight - LAYOUT_TOTAL_HEIGHT) >> 1) + LayoutBannerOffset + (TextHeight << 1);
 
       //VisibleHeight = (UGAHeight - EntriesPosY) / TextHeight - Screen->InfoLineCount - 1;
-      VisibleHeight = ((UGAHeight - EntriesPosY) / TextHeight) - Screen->InfoLineCount - 1 - GlobalConfig.PruneScrollRows;
+      VisibleHeight = ((UGAHeight - EntriesPosY) / TextHeight) - Screen->InfoLineCount - 2 - GlobalConfig.PruneScrollRows;
       //DBG("MENU_FUNCTION_INIT 1 EntriesPosY=%d VisibleHeight=%d\n", EntriesPosY, VisibleHeight);
       if (Screen->Entries[0]->Tag == TAG_SWITCH) {
         j = OldChosenTheme;
@@ -3043,7 +3058,7 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
       InitScroll(State, Screen->EntryCount, Screen->EntryCount, VisibleHeight, j);
       // determine width of the menu -- not working
       //MenuWidth = 80;  // minimum
-      MenuWidth = LAYOUT_TEXT_WIDTH;
+      MenuWidth = LAYOUT_TEXT_WIDTH; //500
       DrawMenuText(NULL, 0, 0, 0, 0);
 
       if (Screen->TitleImage) {
@@ -3096,15 +3111,19 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
       break;
 
     case MENU_FUNCTION_PAINT_ALL:
-      DrawMenuText(NULL, 0, 0, 0, 0); 
-      SetBar(EntriesPosX + MenuWidth + 16, EntriesPosY,
-             EntriesPosY + (State->MaxVisible + 1) * TextHeight - DownButton.Height, State);
+      
+//      DBG("PAINT_ALL: EntriesPosY=%d MaxVisible=%d\n", EntriesPosY, State->MaxVisible);
+//      DBG("DownButton.Height=%d TextHeight=%d\n", DownButton.Height, TextHeight);
+      t2 = EntriesPosY + (State->MaxVisible + 1) * TextHeight - DownButton.Height;
+      t1 = EntriesPosX + TextHeight + TEXT_XMARGIN + MenuWidth + 16;
+//      DBG("PAINT_ALL: %d %d\n", t1, t2);
+      SetBar(t1, EntriesPosY, t2, State);
 
       // blackosx swapped this around so drawing of selection comes before drawing scrollbar.
 
       for (i = State->FirstVisible, j = 0; i <= State->LastVisible; i++, j++) {
         INTN  TitleLen;        
-
+        DrawMenuText(NULL, 0, 0, 0, 0); //should clean every line to avoid artefacts
         TitleLen = StrLen(Screen->Entries[i]->Title);
         Screen->Entries[i]->Place.XPos = EntriesPosX;
         Screen->Entries[i]->Place.YPos = EntriesPosY + j * TextHeight;
@@ -3116,10 +3135,12 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
           // Slice - suppose to use Row as Cursor in text
           if (((REFIT_INPUT_DIALOG*)(Screen->Entries[i]))->Item->ItemType == BoolValue) {
             Screen->Entries[i]->Place.Width = StrLen(ResultString) * GlobalConfig.CharWidth;
+            DrawMenuText(L" ", 0, EntriesPosX, Screen->Entries[i]->Place.YPos, 0xFFFF);
             DrawMenuText(ResultString,
-                       (i == State->CurrentSelection)?(MenuWidth /* Screen->Entries[i]->Place.Width */):0,
-                         EntriesPosX + (TextHeight + TEXT_XMARGIN), Screen->Entries[i]->Place.YPos,
-                       TitleLen + Screen->Entries[i]->Row);
+                         (i == State->CurrentSelection)?(MenuWidth - (TextHeight + TEXT_XMARGIN)):0,
+                         EntriesPosX + (TextHeight + TEXT_XMARGIN),
+                         Screen->Entries[i]->Place.YPos, 0xFFFF);
+                      //   TitleLen + Screen->Entries[i]->Row);
             BltImageCompositeIndicator((((REFIT_INPUT_DIALOG*)(Screen->Entries[i]))->Item->BValue) ? Buttons[3] :
                                        Buttons[2], Buttons[2], EntriesPosX + TEXT_XMARGIN,
                                        Screen->Entries[i]->Place.YPos + PlaceCentre, 16);
@@ -3664,12 +3685,12 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
             DrawMainMenuEntry(Screen->Entries[i], (i == State->CurrentSelection)?1:0,
                               itemPosX[i - State->FirstVisible], row0PosY);
           // create static text for the boot options if the BootCampStyle is used
-          if (GlobalConfig.BootCampStyle && !(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)) {
+            if (GlobalConfig.BootCampStyle && !(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)) {
               FillRectAreaOfScreen(itemPosX[i - State->FirstVisible] + (row0TileSize / 2), textPosY,
                                    EntriesWidth, TextHeight, &MenuBackgroundPixel, X_IS_CENTER);
               DrawBCSText(Screen->Entries[i]->Title, itemPosX[i - State->FirstVisible] + (row0TileSize / 2),
                            textPosY, X_IS_CENTER);
-          }
+            }
           }
         } else {
           DrawMainMenuEntry(Screen->Entries[i], (i == State->CurrentSelection)?1:0,

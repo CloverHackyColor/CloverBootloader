@@ -510,8 +510,8 @@ static EG_IMAGE * egDecodeAny(IN UINT8 *FileData, IN UINTN FileDataLength,
 EG_IMAGE * egLoadImage(IN EFI_FILE_HANDLE BaseDir, IN CHAR16 *FileName, IN BOOLEAN WantAlpha)
 {
   EFI_STATUS      Status;
-  UINT8           *FileData;
-  UINTN           FileDataLength;
+  UINT8           *FileData = NULL;
+  UINTN           FileDataLength = 0;
   EG_IMAGE        *NewImage;
 
   if (BaseDir == NULL || FileName == NULL)

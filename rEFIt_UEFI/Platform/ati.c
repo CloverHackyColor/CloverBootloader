@@ -619,7 +619,7 @@ radeon_card_info_t radeon_cards[] = {
 	{ 0x9452,	0x00000000, CHIP_FAMILY_RV770,	"AMD FireStream 9250",            kMotmot		},
 	{ 0x9456,	0x00000000, CHIP_FAMILY_RV770,	"ATI FirePro V8700 (FireGL)",     kMotmot		},
 	{ 0x945A,	0x00000000, CHIP_FAMILY_RV770,	"ATI Mobility Radeon HD 4870",    kMotmot		},
-	{ 0x9460,	0x00000000, CHIP_FAMILY_RV770,	"ATI Radeon HD 4800 Series",      kMotmot		},
+	{ 0x9460,	0x00000000, CHIP_FAMILY_RV770,	"ATI Radeon HD 4890",             kMotmot		},
 	{ 0x9462,	0x00000000, CHIP_FAMILY_RV770,	"ATI Radeon HD 4800 Series",      kMotmot		},
 //	{ 0x946A,	0x00000000, CHIP_FAMILY_RV770,	"ATI Mobility Radeon",          kMotmot		},
 //	{ 0x946B,	0x00000000, CHIP_FAMILY_RV770,	"ATI Mobility Radeon",          kMotmot		},

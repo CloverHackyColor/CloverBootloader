@@ -17,7 +17,7 @@
 [Defines]
   INF_VERSION                   = 0x00010005
   BASE_NAME                     = CLOVER$(ARCH)
-  FILE_GUID                     = 8F7D7B1E-0E1C-4c98-B12E-4EC99C4081AC
+  FILE_GUID                     = 8F7D7B1E-0E1C-4C98-B12E-4EC99C4081AC
   MODULE_TYPE                   = UEFI_APPLICATION
   EDK_RELEASE_VERSION			= 0x00020000
   EFI_SPECIFICATION_VERSION		= 0x00010000
@@ -36,7 +36,6 @@
 #  Platform/DevicePath.c #included into GenericBdsLib
   Platform/BdsConnect.c #included into GenericBdsLib
   refit/main.c
-#  refit/config.c
   refit/icns.c
   refit/lib.c
   refit/menu.c
