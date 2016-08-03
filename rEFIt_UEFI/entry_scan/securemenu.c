@@ -79,12 +79,40 @@ VOID AddSecureBootTool(VOID)
   Entry->me.AtRightClick = ActionHelp;
   AddMenuEntry(&MainMenu, (REFIT_MENU_ENTRY *)Entry);
 }
-
+/*
+typedef struct _refit_menu_entry {
+  CHAR16            *Title;
+  UINTN              Tag;
+  UINTN              Row;
+  CHAR16             ShortcutDigit;
+  CHAR16             ShortcutLetter;
+  EG_IMAGE          *Image;
+#if defined(ADVICON)
+  EG_IMAGE          *ImageHover;
+#endif //ADVICON
+  EG_IMAGE          *DriveImage;
+  EG_IMAGE          *BadgeImage;
+  EG_RECT            Place;
+  ACTION             AtClick;
+  ACTION             AtDoubleClick;
+  ACTION             AtRightClick;
+  ACTION             AtMouseOver;
+  REFIT_MENU_SCREEN *SubScreen;
+} REFIT_MENU_ENTRY;
+*/
+#if defined(ADVICON)
+STATIC REFIT_MENU_ENTRY   QueryEntry[] = {
+  { L"Deny authentication", SECURE_BOOT_POLICY_DENY, 0, 0, 0, NULL, NULL, NULL, NULL, {0, 0, 0, 0}, ActionEnter, ActionNone, ActionNone, ActionNone, NULL },
+  { L"Allow authentication", SECURE_BOOT_POLICY_ALLOW, 0, 0, 0, NULL, NULL, NULL, NULL, {0, 0, 0, 0}, ActionEnter, ActionNone, ActionNone, ActionNone, NULL },
+  { L"Insert authentication into database", SECURE_BOOT_POLICY_INSERT, 0, 0, 0, NULL, NULL, NULL, NULL, {0, 0, 0, 0}, ActionEnter, ActionNone, ActionNone, ActionNone, NULL },
+};
+#else
 STATIC REFIT_MENU_ENTRY   QueryEntry[] = {
   { L"Deny authentication", SECURE_BOOT_POLICY_DENY, 0, 0, 0, NULL, NULL, NULL, {0, 0, 0, 0}, ActionEnter, ActionNone, ActionNone, ActionNone, NULL },
   { L"Allow authentication", SECURE_BOOT_POLICY_ALLOW, 0, 0, 0, NULL, NULL, NULL, {0, 0, 0, 0}, ActionEnter, ActionNone, ActionNone, ActionNone, NULL },
   { L"Insert authentication into database", SECURE_BOOT_POLICY_INSERT, 0, 0, 0, NULL, NULL, NULL, {0, 0, 0, 0}, ActionEnter, ActionNone, ActionNone, ActionNone, NULL },
 };
+#endif //ADVICON
 STATIC REFIT_MENU_ENTRY  *QueryEntries[] = { QueryEntry, QueryEntry + 1, QueryEntry + 2 };
 STATIC REFIT_MENU_SCREEN  QueryUserMenu = { 0, L"Secure Boot Authentication", NULL, 3, NULL, 2, QueryEntries,
                                             0, NULL, NULL, FALSE, FALSE, 0, 0, 0, 0,
@@ -372,6 +400,29 @@ extern REFIT_MENU_ENTRY MenuEntryReturn;
 #define TAG_CLEAR   4
 #define TAG_DISABLE 5
 
+#if defined(ADVICON)
+
+STATIC REFIT_MENU_ENTRY   SecureBootPolicyEntry = { NULL, TAG_POLICY, 0, 0, 0, NULL, NULL, NULL, NULL, { 0, 0, 0, 0 }, ActionEnter, ActionNone, ActionNone, ActionNone, NULL };
+STATIC REFIT_MENU_ENTRY   InsertImageSignatureEntry = { L"Add image authentication to database", TAG_INSERT, 0, 0, 0, NULL, NULL, NULL, NULL, {0, 0, 0, 0}, ActionEnter, ActionNone, ActionNone, ActionNone, NULL };
+STATIC REFIT_MENU_ENTRY   RemoveImageSignatureEntry = { L"Remove image authentication from database", TAG_REMOVE, 0, 0, 0, NULL, NULL, NULL, NULL, {0, 0, 0, 0}, ActionEnter, ActionNone, ActionNone, ActionNone, NULL };
+STATIC REFIT_MENU_ENTRY   ClearImageSignatureEntry = { L"Clear image authentication database", TAG_CLEAR, 0, 0, 0, NULL, NULL, NULL, NULL, {0, 0, 0, 0}, ActionEnter, ActionNone, ActionNone, ActionNone, NULL };
+STATIC REFIT_MENU_ENTRY   DisableSecureBootEntry = { L"Disable secure boot", TAG_DISABLE, 0, 0, 0, NULL, NULL, NULL, NULL, {0, 0, 0, 0}, ActionEnter, ActionNone, ActionNone, ActionNone, NULL };
+STATIC REFIT_MENU_ENTRY  *SecureBootEntries[] = { NULL, NULL, NULL, NULL, NULL, NULL };
+STATIC REFIT_MENU_SCREEN  SecureBootMenu = { 0, L"Secure Boot Configuration", NULL, 0, NULL, 0, SecureBootEntries,
+                                             0, NULL, NULL, FALSE, FALSE, 0, 0, 0, 0,
+                                        /*   FILM_CENTRE, FILM_CENTRE,*/ { 0, 0, 0, 0 }, NULL };
+
+STATIC REFIT_MENU_ENTRY   SecureBootPolicyNameEntry[] = {
+  { L"Deny", SECURE_BOOT_POLICY_DENY, 0, 0, 0, NULL, NULL, NULL, NULL, { 0, 0, 0, 0 }, ActionEnter, ActionNone, ActionNone, ActionNone, NULL },
+  { L"Allow", SECURE_BOOT_POLICY_ALLOW, 0, 0, 0, NULL, NULL, NULL, NULL, { 0, 0, 0, 0 }, ActionEnter, ActionNone, ActionNone, ActionNone, NULL },
+  { L"Query", SECURE_BOOT_POLICY_QUERY, 0, 0, 0, NULL, NULL, NULL, NULL, { 0, 0, 0, 0 }, ActionEnter, ActionNone, ActionNone, ActionNone, NULL },
+  { L"Insert", SECURE_BOOT_POLICY_INSERT, 0, 0, 0, NULL, NULL, NULL, NULL, { 0, 0, 0, 0 }, ActionEnter, ActionNone, ActionNone, ActionNone, NULL },
+  { L"WhiteList", SECURE_BOOT_POLICY_WHITELIST, 0, 0, 0, NULL, NULL, NULL, NULL, { 0, 0, 0, 0 }, ActionEnter, ActionNone, ActionNone, ActionNone, NULL },
+  { L"BlackList", SECURE_BOOT_POLICY_BLACKLIST, 0, 0, 0, NULL, NULL, NULL, NULL, { 0, 0, 0, 0 }, ActionEnter, ActionNone, ActionNone, ActionNone, NULL },
+  { L"User", SECURE_BOOT_POLICY_USER, 0, 0, 0, NULL, NULL, NULL, NULL, { 0, 0, 0, 0 }, ActionEnter, ActionNone, ActionNone, ActionNone, NULL },
+};
+#else
+
 STATIC REFIT_MENU_ENTRY   SecureBootPolicyEntry = { NULL, TAG_POLICY, 0, 0, 0, NULL, NULL, NULL, { 0, 0, 0, 0 }, ActionEnter, ActionNone, ActionNone, ActionNone, NULL };
 STATIC REFIT_MENU_ENTRY   InsertImageSignatureEntry = { L"Add image authentication to database", TAG_INSERT, 0, 0, 0, NULL, NULL, NULL, {0, 0, 0, 0}, ActionEnter, ActionNone, ActionNone, ActionNone, NULL };
 STATIC REFIT_MENU_ENTRY   RemoveImageSignatureEntry = { L"Remove image authentication from database", TAG_REMOVE, 0, 0, 0, NULL, NULL, NULL, {0, 0, 0, 0}, ActionEnter, ActionNone, ActionNone, ActionNone, NULL };
@@ -379,8 +430,8 @@ STATIC REFIT_MENU_ENTRY   ClearImageSignatureEntry = { L"Clear image authenticat
 STATIC REFIT_MENU_ENTRY   DisableSecureBootEntry = { L"Disable secure boot", TAG_DISABLE, 0, 0, 0, NULL, NULL, NULL, {0, 0, 0, 0}, ActionEnter, ActionNone, ActionNone, ActionNone, NULL };
 STATIC REFIT_MENU_ENTRY  *SecureBootEntries[] = { NULL, NULL, NULL, NULL, NULL, NULL };
 STATIC REFIT_MENU_SCREEN  SecureBootMenu = { 0, L"Secure Boot Configuration", NULL, 0, NULL, 0, SecureBootEntries,
-                                             0, NULL, NULL, FALSE, FALSE, 0, 0, 0, 0,
-                                        /*   FILM_CENTRE, FILM_CENTRE,*/ { 0, 0, 0, 0 }, NULL };
+  0, NULL, NULL, FALSE, FALSE, 0, 0, 0, 0,
+  /*   FILM_CENTRE, FILM_CENTRE,*/ { 0, 0, 0, 0 }, NULL };
 
 STATIC REFIT_MENU_ENTRY   SecureBootPolicyNameEntry[] = {
   { L"Deny", SECURE_BOOT_POLICY_DENY, 0, 0, 0, NULL, NULL, NULL, { 0, 0, 0, 0 }, ActionEnter, ActionNone, ActionNone, ActionNone, NULL },
@@ -391,7 +442,8 @@ STATIC REFIT_MENU_ENTRY   SecureBootPolicyNameEntry[] = {
   { L"BlackList", SECURE_BOOT_POLICY_BLACKLIST, 0, 0, 0, NULL, NULL, NULL, { 0, 0, 0, 0 }, ActionEnter, ActionNone, ActionNone, ActionNone, NULL },
   { L"User", SECURE_BOOT_POLICY_USER, 0, 0, 0, NULL, NULL, NULL, { 0, 0, 0, 0 }, ActionEnter, ActionNone, ActionNone, ActionNone, NULL },
 };
-STATIC REFIT_MENU_ENTRY  *SecureBootPolicyEntries[] = { 
+#endif
+STATIC REFIT_MENU_ENTRY  *SecureBootPolicyEntries[] = {
   SecureBootPolicyNameEntry,
   SecureBootPolicyNameEntry + 1,
   SecureBootPolicyNameEntry + 2,
