@@ -26,6 +26,8 @@
  * @APPLE_OSREFERENCE_LICENSE_HEADER_END@
  */
 
+#if !defined(LODEPNG)
+
 #ifndef __GNUC__
 #pragma optimize("g", off)
 #endif
@@ -1320,5 +1322,7 @@ EG_IMAGE * egDecodePNG(IN UINT8 *FileData, IN UINTN FileDataLength, IN UINTN Ico
   //      DBG("png decoded %dx%d datalenght=%d iconsize=%d\n", NewImage->Height, NewImage->Width, FileDataLength, IconSize);
   return NewImage;
 }
+
+#endif //LODEPNG
 
 

@@ -459,20 +459,21 @@ GetEfiBootDeviceFromNvram ()
   FILEPATH_DEVICE_PATH *FileDevPath;
   
   
-  DBG ("GetEfiBootDeviceFromNvram:");
+  DbgHeader("GetEfiBootDeviceFromNvram");
+//  DBG ("GetEfiBootDeviceFromNvram:");
   
   if (gEfiBootDeviceData != NULL) {
-    DBG ("already parsed\n");
+    DBG (" - [!] already parsed\n");
     return EFI_SUCCESS;
   }
 
   gEfiBootDeviceData = GetNvramVariable (L"efi-boot-next-data", &gEfiAppleBootGuid, NULL, &Size);
   if (gEfiBootDeviceData != NULL) {
-    DBG("got efi-boot-next-data size=%d\n", Size);
+    DBG("Got efi-boot-next-data size=%d\n", Size);
     if (IsDevicePathValid(gEfiBootDeviceData, Size)) {
-      DBG(" efi-boot-next-data: %s\n", FileDevicePathToStr (gEfiBootDeviceData));
+      DBG(" - efi-boot-next-data: %s\n", FileDevicePathToStr (gEfiBootDeviceData));
     } else {
-      DBG(" device path for efi-boot-next-data is invalid\n");
+      DBG(" - device path for efi-boot-next-data is invalid\n");
       FreePool(gEfiBootDeviceData);
       gEfiBootDeviceData = NULL;
     }
@@ -480,21 +481,21 @@ GetEfiBootDeviceFromNvram ()
   if (gEfiBootDeviceData == NULL) {
     gEfiBootDeviceData = GetNvramVariable (L"efi-boot-device-data", &gEfiAppleBootGuid, NULL, &Size);
     if (gEfiBootDeviceData != NULL) {
-      DBG("got efi-boot-device-data size=%d\n", Size);
+      DBG("Got efi-boot-device-data size=%d\n", Size);
       if (!IsDevicePathValid(gEfiBootDeviceData, Size)) {
-        DBG(" device path for efi-boot-device-data is invalid\n");
+        DBG(" - device path for efi-boot-device-data is invalid\n");
         FreePool(gEfiBootDeviceData);
         gEfiBootDeviceData = NULL;
       }
     }
   }
   if (gEfiBootDeviceData == NULL) {
-    DBG (" efi-boot-device-data not found\n");
+    DBG (" - [!] efi-boot-device-data not found\n");
     return EFI_NOT_FOUND;
   }
   
-  DBG ("\n");
-  DBG (" efi-boot-device-data: %s\n", FileDevicePathToStr (gEfiBootDeviceData));
+//  DBG ("\n");
+  DBG (" - efi-boot-device-data: %s\n", FileDevicePathToStr (gEfiBootDeviceData));
   
   gEfiBootVolume = gEfiBootDeviceData;
   
@@ -507,7 +508,7 @@ GetEfiBootDeviceFromNvram ()
     gEfiBootVolume = gBootCampHD;
 
     if (gBootCampHD == NULL) {
-      DBG (" Error: BootCampHD not found\n");
+      DBG ("  - [!] Error: BootCampHD not found\n");
       return EFI_NOT_FOUND;
     }
 
@@ -518,7 +519,7 @@ GetEfiBootDeviceFromNvram ()
       return EFI_NOT_FOUND;
     }
 
-    DBG (" BootCampHD: %s\n", FileDevicePathToStr (gBootCampHD));
+    DBG ("  - BootCampHD: %s\n", FileDevicePathToStr (gBootCampHD));
   }
   
   //
@@ -535,8 +536,8 @@ GetEfiBootDeviceFromNvram ()
     // gEfiBootVolume now contains only Volume path
   }
 
-  DBG (" Volume: '%s'\n", FileDevicePathToStr (gEfiBootVolume));
-  DBG (" LoaderPath: '%s'\n", gEfiBootLoaderPath);
+  DBG ("  - Volume: '%s'\n", FileDevicePathToStr (gEfiBootVolume));
+  DBG ("  - LoaderPath: '%s'\n", gEfiBootLoaderPath);
   
   //
   // if this is GPT disk, extract GUID
@@ -547,7 +548,7 @@ GetEfiBootDeviceFromNvram ()
     gEfiBootDeviceGuid = AllocatePool (sizeof(EFI_GUID));
     if (gEfiBootDeviceGuid != NULL) {
       CopyMem (gEfiBootDeviceGuid, Guid, sizeof(EFI_GUID));
-      DBG (" Guid = %g\n", gEfiBootDeviceGuid);
+      DBG ("  - Guid = %g\n", gEfiBootDeviceGuid);
     }
   }
   
@@ -838,6 +839,7 @@ FindStartupDiskVolume (
   
   
 //  DBG ("FindStartupDiskVolume ...\n");
+  DbgHeader("FindStartupDiskVolume");
   
   //
   // search RT vars for efi-boot-device-data
@@ -845,7 +847,7 @@ FindStartupDiskVolume (
   //
   GetEfiBootDeviceFromNvram ();
   if (gEfiBootVolume == NULL) {
-    DBG ("EfiBootVolume not found\n");
+    DBG (" - [!] EfiBootVolume not found\n");
     return -1;
   }
   
@@ -856,14 +858,14 @@ FindStartupDiskVolume (
   //
   EfiBootVolumeStr  = FileDevicePathToStr (gEfiBootVolume);
   IsPartitionVolume = NULL != FindDevicePathNodeWithType (gEfiBootVolume, MEDIA_DEVICE_PATH, 0);
-  DBG (" volume: %s = %s\n", IsPartitionVolume ? L"partition" : L"disk", EfiBootVolumeStr);
+  DBG ("  - Volume: %s = %s\n", IsPartitionVolume ? L"partition" : L"disk", EfiBootVolumeStr);
   
   //
   // 1. gEfiBootVolume + gEfiBootLoaderPath
   // PciRoot(0x0)/.../Sata(...)/HD(...)/\EFI\BOOT\XXX.EFI - set by Clover
   //
   if (gEfiBootLoaderPath != NULL) {
-    DBG (" searching for that partition and loader '%s'\n", gEfiBootLoaderPath);
+    DBG ("   - searching for that partition and loader '%s'\n", gEfiBootLoaderPath);
     for (Index = 0; ((Index < (INTN)MainMenu->EntryCount) && (MainMenu->Entries[Index]->Row == 0)); ++Index) {
       if (MainMenu->Entries[Index]->Tag == TAG_LOADER) {
         LoaderEntry = (LOADER_ENTRY *)MainMenu->Entries[Index];
@@ -875,18 +877,18 @@ FindStartupDiskVolume (
           // case insensitive cmp
           if (LoaderPath != NULL && StrCmpiBasic (gEfiBootLoaderPath, LoaderPath) == 0) {
             // that's the one
-            DBG ("  found entry %d. '%s', Volume '%s', '%s'\n", Index, LoaderEntry->me.Title, Volume->VolName, LoaderPath);
+            DBG ("    - found entry %d. '%s', Volume '%s', '%s'\n", Index, LoaderEntry->me.Title, Volume->VolName, LoaderPath);
             return Index;
           }
         }
       }
     }
-    DBG ("  not found\n");
+    DBG ("    - [!] not found\n");
     //
     // search again, but compare only Media dev path nodes
     // (in case of some dev path differences we do not cover)
     //
-    DBG (" searching again, but comparing Media dev path nodes\n");
+    DBG ("   - searching again, but comparing Media dev path nodes\n");
     for (Index = 0; ((Index < (INTN)MainMenu->EntryCount) && (MainMenu->Entries[Index]->Row == 0)); ++Index) {
       if (MainMenu->Entries[Index]->Tag == TAG_LOADER) {
         LoaderEntry = (LOADER_ENTRY *)MainMenu->Entries[Index];
@@ -898,13 +900,13 @@ FindStartupDiskVolume (
           // case insensitive cmp
           if (LoaderPath != NULL && StrCmpiBasic (gEfiBootLoaderPath, LoaderPath) == 0) {
             // that's the one
-            DBG ("  found entry %d. '%s', Volume '%s', '%s'\n", Index, LoaderEntry->me.Title, Volume->VolName, LoaderPath);
+            DBG ("   - found entry %d. '%s', Volume '%s', '%s'\n", Index, LoaderEntry->me.Title, Volume->VolName, LoaderPath);
             return Index;
           }
         }
       }
     }
-    DBG ("  not found\n");
+    DBG ("    - [!] not found\n");
   }
   
   //
@@ -912,7 +914,7 @@ FindStartupDiskVolume (
   // PciRoot(0x0)/.../Sata(...)/HD(...) - set by Clover or OSX
   //
   if (IsPartitionVolume) {
-    DBG (" searching for that partition\n");
+    DBG ("   - searching for that partition\n");
     for (Index = 0; ((Index < (INTN)MainMenu->EntryCount) && (MainMenu->Entries[Index]->Row == 0)); ++Index) {
       Volume = NULL;
       if (MainMenu->Entries[Index]->Tag == TAG_LEGACY) {
@@ -923,15 +925,15 @@ FindStartupDiskVolume (
         Volume = LoaderEntry->Volume;
       }
       if (Volume != NULL && BootVolumeDevicePathEqual (gEfiBootVolume, Volume->DevicePath)) {
-        DBG ("  found entry %d. '%s', Volume '%s'\n", Index, MainMenu->Entries[Index]->Title, Volume->VolName);
+        DBG ("    - found entry %d. '%s', Volume '%s'\n", Index, MainMenu->Entries[Index]->Title, Volume->VolName);
         return Index;
       }
     }
-    DBG ("  not found\n");
+    DBG ("    - [!] not found\n");
     //
     // search again, but compare only Media dev path nodes
     //
-    DBG (" searching again, but comparing Media dev path nodes\n");
+    DBG ("   - searching again, but comparing Media dev path nodes\n");
     for (Index = 0; ((Index < (INTN)MainMenu->EntryCount) && (MainMenu->Entries[Index]->Row == 0)); ++Index) {
       Volume = NULL;
       if (MainMenu->Entries[Index]->Tag == TAG_LEGACY) {
@@ -942,11 +944,11 @@ FindStartupDiskVolume (
         Volume = LoaderEntry->Volume;
       }
       if (Volume != NULL && BootVolumeMediaDevicePathNodesEqual (gEfiBootVolume, Volume->DevicePath)) {
-        DBG ("  found entry %d. '%s', Volume '%s'\n", Index, MainMenu->Entries[Index]->Title, Volume->VolName);
+        DBG ("    - found entry %d. '%s', Volume '%s'\n", Index, MainMenu->Entries[Index]->Title, Volume->VolName);
         return Index;
       }
     }
-    DBG ("  not found\n");
+    DBG ("    - [!] not found\n");
     return -1;
   }
   
@@ -957,18 +959,18 @@ FindStartupDiskVolume (
   // 3.1 First find disk volume in Volumes[]
   //
   DiskVolume = NULL;
-  DBG (" searching for that disk\n");
+  DBG ("   - searching for that disk\n");
   for (Index = 0; Index < (INTN)VolumesCount; ++Index) {
     Volume = Volumes[Index];
     if (BootVolumeDevicePathEqual (gEfiBootVolume, Volume->DevicePath)) {
       // that's the one
       DiskVolume = Volume;
-      DBG ("  found disk as volume %d. '%s'\n", Index, Volume->VolName);
+      DBG ("    - found disk as volume %d. '%s'\n", Index, Volume->VolName);
       break;
     }
   }
   if (DiskVolume == NULL) {
-    DBG ("  not found\n");
+    DBG ("    - [!] not found\n");
     return -1;
   }
   
@@ -976,7 +978,7 @@ FindStartupDiskVolume (
   // 3.2 DiskVolume
   // search for first entry with win loader or win partition on that disk
   //
-  DBG (" searching for first entry with win loader or win partition on that disk\n");
+  DBG ("   - searching for first entry with win loader or win partition on that disk\n");
   for (Index = 0; ((Index < (INTN)MainMenu->EntryCount) && (MainMenu->Entries[Index]->Row == 0)); ++Index) {
     if (MainMenu->Entries[Index]->Tag == TAG_LEGACY) {
       LegacyEntry = (LEGACY_ENTRY *)MainMenu->Entries[Index];
@@ -988,7 +990,7 @@ FindStartupDiskVolume (
         //DBG ("   OSType = %d\n", Volume->OSType);
         if (Volume->LegacyOS->Type == OSTYPE_WIN) {
           // that's the one - legacy win partition
-          DBG ("  found legacy entry %d. '%s', Volume '%s'\n", Index, LegacyEntry->me.Title, Volume->VolName);
+          DBG ("    - found legacy entry %d. '%s', Volume '%s'\n", Index, LegacyEntry->me.Title, Volume->VolName);
           return Index;
         }
       }
@@ -1003,27 +1005,27 @@ FindStartupDiskVolume (
         //DBG ("   LoaderType = %d\n", LoaderEntry->LoaderType);
         if (LoaderEntry->LoaderType == OSTYPE_WINEFI) {
           // that's the one - win loader entry
-          DBG ("  found loader entry %d. '%s', Volume '%s', '%s'\n", Index, LoaderEntry->me.Title, Volume->VolName, LoaderEntry->LoaderPath);
+          DBG ("    - found loader entry %d. '%s', Volume '%s', '%s'\n", Index, LoaderEntry->me.Title, Volume->VolName, LoaderEntry->LoaderPath);
           return Index;
         }
       }
     }
   }
-  DBG ("  not found\n");
+  DBG ("    - [!] not found\n");
   
   //
   // 3.3 DiskVolume, but no Win entry
   // PciRoot(0x0)/.../Sata(...)
   // just find first menu entry on that disk?
   //
-  DBG (" searching for any entry from disk '%s'\n", DiskVolume->VolName);
+  DBG ("   - searching for any entry from disk '%s'\n", DiskVolume->VolName);
   for (Index = 0; ((Index < (INTN)MainMenu->EntryCount) && (MainMenu->Entries[Index]->Row == 0)); ++Index) {
     if (MainMenu->Entries[Index]->Tag == TAG_LEGACY) {
       LegacyEntry = (LEGACY_ENTRY *)MainMenu->Entries[Index];
       Volume = LegacyEntry->Volume;
       if (Volume != NULL && Volume->WholeDiskBlockIO == DiskVolume->BlockIO) {
         // that's the one
-        DBG ("  found legacy entry %d. '%s', Volume '%s'\n", Index, LegacyEntry->me.Title, Volume->VolName);
+        DBG ("    - found legacy entry %d. '%s', Volume '%s'\n", Index, LegacyEntry->me.Title, Volume->VolName);
 
         return Index;
       }
@@ -1032,14 +1034,14 @@ FindStartupDiskVolume (
       Volume = LoaderEntry->Volume;
       if (Volume != NULL && Volume->WholeDiskBlockIO == DiskVolume->BlockIO) {
         // that's the one
-        DBG ("  found loader entry %d. '%s', Volume '%s', '%s'\n", Index, LoaderEntry->me.Title, Volume->VolName, LoaderEntry->LoaderPath);
+        DBG ("    - found loader entry %d. '%s', Volume '%s', '%s'\n", Index, LoaderEntry->me.Title, Volume->VolName, LoaderEntry->LoaderPath);
 
         return Index;
       }
     }
   }
   
-  DBG (" not found\n");
+  DBG ("    - [!] not found\n");
   return -1;
 }
 

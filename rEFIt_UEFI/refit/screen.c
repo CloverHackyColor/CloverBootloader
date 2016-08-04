@@ -95,6 +95,7 @@ static BOOLEAN haveError = FALSE;
 
 VOID InitScreen(IN BOOLEAN SetMaxResolution)
 {
+//    DbgHeader("InitScreen");
     // initialize libeg
     egInitScreen(SetMaxResolution);
     

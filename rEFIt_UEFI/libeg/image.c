@@ -36,6 +36,10 @@
 
 #include "libegint.h"
 #include "Platform.h"
+#if defined(LODEPNG)
+#include "lodepng.h"
+#endif //LODEPNG
+
 
 #define MAX_FILE_SIZE (1024*1024*1024)
 
@@ -936,7 +940,7 @@ VOID egSetPlane(IN UINT8 *DestPlanePtr, IN UINT8 Value, IN UINT64 PixelCount)
 
 VOID egCopyPlane(IN UINT8 *SrcPlanePtr, IN UINT8 *DestPlanePtr, IN UINTN PixelCount)
 {
-    UINTN i;
+  UINTN i;
   if (!SrcPlanePtr || !DestPlanePtr) {
     return;
   }
@@ -946,5 +950,38 @@ VOID egCopyPlane(IN UINT8 *SrcPlanePtr, IN UINT8 *DestPlanePtr, IN UINTN PixelCo
         DestPlanePtr += 4, SrcPlanePtr += 4;
     }
 }
+
+#if defined(LODEPNG)
+EG_IMAGE * egDecodePNG(IN UINT8 *FileData, IN UINTN FileDataLength, IN UINTN IconSize, IN BOOLEAN WantAlpha) {
+  EG_IMAGE *NewImage = NULL;
+  UINTN Error, i, ImageSize, Width, Height;
+  EG_PIXEL *PixelData;
+  EG_PIXEL *Pixel;
+
+  Error = eglodepng_decode((UINT8**) &PixelData, &Width, &Height, (CONST UINT8*) FileData, (UINTN) FileDataLength);
+
+  if (Error) {
+    return NULL;
+  }
+
+  NewImage = egCreateImage(Width, Height, WantAlpha);
+  if (NewImage == NULL) return NULL;
+
+  ImageSize = (Width * Height);
+  CopyMem(NewImage->PixelData, PixelData, sizeof(EG_PIXEL) * ImageSize);
+  lodepng_free(PixelData);
+
+  Pixel = (EG_PIXEL*)NewImage->PixelData;
+  for (i = 0; i < ImageSize; i++) {
+      UINT8 Temp;
+      Temp = Pixel->b;
+      Pixel->b = Pixel->r;
+      Pixel->r = Temp;
+      Pixel++;
+  }
+
+   return NewImage;
+}
+#endif //LODEPNG
 
 /* EOF */

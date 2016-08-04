@@ -957,11 +957,11 @@ STATIC BOOLEAN AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOptions,
   if ((LoaderPath == NULL) || (Volume == NULL) || (Volume->RootDir == NULL) || !FileExists(Volume->RootDir, LoaderPath)) {
     return FALSE;
   }
-  DBG("    AddLoaderEntry for Volume Name=%s\n", Volume->VolName);
+  DBG("        AddLoaderEntry for Volume Name=%s\n", Volume->VolName);
   //don't add hided entries
   for (HVi = 0; HVi < gSettings.HVCount; HVi++) {
     if (StriStr(LoaderPath, gSettings.HVHideStrings[HVi])) {
-      DBG("   hiding entry: %s\n", LoaderPath);
+      DBG("        hiding entry: %s\n", LoaderPath);
       return FALSE;
     }
   }
@@ -991,13 +991,14 @@ VOID ScanLoader(VOID)
   REFIT_VOLUME *Volume;
   EFI_GUID     *PartGUID;
 
-  DBG("Scanning loaders...\n");
+  //DBG("Scanning loaders...\n");
+  DbgHeader("ScanLoader");
 
   for (VolumeIndex = 0; VolumeIndex < VolumesCount; VolumeIndex++) {
     Volume = Volumes[VolumeIndex];
-    DBG("%2d: '%s'", VolumeIndex, Volume->VolName);
+    DBG("- [%02d]: '%s'", VolumeIndex, Volume->VolName);
     if (Volume->RootDir == NULL) { // || Volume->VolName == NULL)
-      DBG(" no file system\n", VolumeIndex);
+      DBG(", no file system\n", VolumeIndex);
       continue;
     }
     if (Volume->VolName == NULL) {
@@ -1010,12 +1011,12 @@ VOID ScanLoader(VOID)
         (Volume->DiskKind == DISK_KIND_INTERNAL && (GlobalConfig.DisableFlags & VOLTYPE_INTERNAL)) ||
         (Volume->DiskKind == DISK_KIND_FIREWIRE && (GlobalConfig.DisableFlags & VOLTYPE_FIREWIRE)))
     {
-      DBG(" hidden\n");
+      DBG(", hidden\n");
       continue;
     }
 
     if (Volume->Hidden) {
-      DBG(" hidden\n");
+      DBG(", hidden\n");
       continue;
     }
     DBG("\n");
@@ -1828,7 +1829,8 @@ VOID AddCustomEntries(VOID)
   CUSTOM_LOADER_ENTRY *Custom;
   UINTN                i = 0;
 
-  DBG("Custom entries start\n");
+  //DBG("Custom entries start\n");
+  DbgHeader("AddCustomEntries");
   // Traverse the custom entries
   for (Custom = gSettings.CustomEntries; Custom; ++i, Custom = Custom->Next) {
     if ((Custom->Path == NULL) && (Custom->Type != 0)) {
@@ -1857,5 +1859,5 @@ VOID AddCustomEntries(VOID)
       AddCustomEntry(i, Custom->Path, Custom, NULL);
     }
   }
-  DBG("Custom entries finish\n");
+  //DBG("Custom entries finish\n");
 }

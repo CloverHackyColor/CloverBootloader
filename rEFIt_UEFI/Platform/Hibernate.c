@@ -563,29 +563,29 @@ IsOsxHibernated (IN REFIT_VOLUME *Volume)
   //if sleep image is good but OSX was not hibernated.
   //or we choose "cancel hibernate wake" then it must be canceled
   if (GlobalConfig.NeverHibernate) {
-    DBG("     hibernated: set as never\n");
+    DBG("        hibernated: set as never\n");
     return FALSE;
   }
   
-  DBG("    Check if volume Is Hibernated:\n");
+  DBG("        Check if volume Is Hibernated:\n");
 
   // CloverEFI or UEFI with EmuVariable
   if (IsSleepImageValidBySignature(Volume)) {
     if ((gSleepTime == 0) || IsSleepImageValidBySleepTime(Volume)) {
-      DBG("     hibernated: yes\n");
+      DBG("        hibernated: yes\n");
     } else {
-      DBG("     hibernated: no - time\n");
+      DBG("        hibernated: no - time\n");
       return FALSE;
     }
 //    IsHibernate = TRUE;
   } else {
-    DBG("     hibernated: no - sign\n");
+    DBG("        hibernated: no - sign\n");
     return FALSE;
   }
   
   if (!gFirmwareClover &&
       !gDriversFlags.EmuVariableLoaded) {
-    DBG("     UEFI with NVRAM: ");
+    DBG("        UEFI with NVRAM: ");
     Status = gRT->GetVariable (L"Boot0082", &gEfiGlobalVariableGuid, NULL, &Size, Data);
     if (Status == EFI_BUFFER_TOO_SMALL) {
       DBG("yes\n");

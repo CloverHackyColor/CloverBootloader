@@ -104,7 +104,7 @@ EFI_STATUS GetEdidDiscovered(VOID)
       for (i=0; i<N; i+=16) {
         MsgLog("%02d | ", i);
         for (j=0; j<16; j++) {
-          MsgLog("%02x ", EdidDiscovered->Edid[i+j]);
+          MsgLog("%02x%a", EdidDiscovered->Edid[i+j], (j<15) ? " " : "");
         }
         MsgLog("\n");
       }

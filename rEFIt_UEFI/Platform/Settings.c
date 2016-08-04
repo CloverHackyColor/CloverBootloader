@@ -260,10 +260,10 @@ ParseLoadOptions (
     //DBG ("PlistStrings[%d] = %a\n", i, PlistStrings[i]);
     if (PlistStringsLen < TailSize) {
       if (AsciiStriNCmp (PlistStrings[i], Start, PlistStringsLen)) {
-        DBG ("Found Plist String = %a, parse XML in LoadOptions\n", PlistStrings[i]);
+        DBG (" - found plist string = %a, parse XML in LoadOptions\n", PlistStrings[i]);
         if (ParseXML (Start, Dict, (UINT32)TailSize) != EFI_SUCCESS) {
           *Dict = NULL;
-          DBG ("Xml in load options is bad\n");
+          DBG ("  - [!] xml in load options is bad\n");
           return;
         }
         return;
@@ -503,6 +503,8 @@ LoadUserSettings (
   CHAR16*    ConfigPlistPath;
   CHAR16*    ConfigOemPath;
 
+  DbgHeader("LoadUserSettings");
+
   // load config
   if ((ConfName == NULL) || (Dict == NULL)) {
     //   DBG ("Can't load plist in LoadUserSettings: NULL\n");
@@ -526,20 +528,24 @@ LoadUserSettings (
     if (EFI_ERROR (Status)) {
       Status = egLoadFile (SelfRootDir, ConfigPlistPath, (UINT8**)&gConfigPtr, &Size);
     }
+    DBG ("Using %s.plist at path: %s", ConfName, ConfigPlistPath);
   } else {
-    DBG ("Using OEM %s.plist at path: %s\n", ConfName, ConfigOemPath);
+    DBG ("Using OEM %s.plist at path: %s", ConfName, ConfigOemPath);
   }
 
-  if (EFI_ERROR (Status) || gConfigPtr == NULL) {
-    //  DBG ("Error loading %s.plist! Status=%r\n", ConfName, Status);
-    return Status;
+  if (!EFI_ERROR (Status) || gConfigPtr != NULL) {
+    //DBG ("Error loading %s.plist! Status=%r\n", ConfName, Status);
+    //return Status;
+
+    Status = ParseXML ((const CHAR8*)gConfigPtr, Dict, (UINT32)Size);
+    if (EFI_ERROR (Status)) {
+      //  Dict = NULL;
+      DBG (", plist parse error Status=%r\n", Status);
+      return Status;
+    }
   }
 
-  Status = ParseXML ((const CHAR8*)gConfigPtr, Dict, (UINT32)Size);
-  if (EFI_ERROR (Status)) {
-    //  Dict = NULL;
-    DBG (" plist parse error Status=%r\n", Status);
-  }
+  DBG (", Status=%r\n", Status);
 
   return Status;
 }
@@ -820,7 +826,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
   Prop = GetProperty (DictPointer, "FakeCPUID");
   if (Prop != NULL) {
     Patches->FakeCPUID = (UINT32)GetPropertyInteger (Prop, 0);
-    DBG ("Config set FakeCPUID=%x\n", Patches->FakeCPUID);
+    DBG ("FakeCPUID: %x\n", Patches->FakeCPUID);
   }
 
   Prop = GetProperty (DictPointer, "AsusAICPUPM");
@@ -966,7 +972,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
           break;
         }
 
-        DBG (" - [%d]:", i);
+        DBG (" - [%02d]:", i);
 
         Dict = GetProperty (Prop2, "Name");
         if (Dict == NULL) {
@@ -1080,7 +1086,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
           break;
         }
 
-        DBG (" - [%d]:", i);
+        DBG (" - [%02d]:", i);
 
         Dict = GetProperty (Prop2, "Comment");
         if (Dict != NULL) {
@@ -2154,7 +2160,8 @@ GetEarlyUserSettings (
 
   Dict = CfgDict;
   if (Dict != NULL) {
-    DBG ("Loading early settings\n");
+    //DBG ("Loading early settings\n");
+    DbgHeader("GetEarlyUserSettings");
 
     DictPointer = GetProperty (Dict, "Boot");
     if (DictPointer != NULL) {
@@ -2916,6 +2923,8 @@ GetListOfThemes ()
   CHAR8          *ThemePtr       = NULL;
   UINTN          Size = 0;
 
+  DbgHeader("GetListOfThemes");
+
   ThemesNum = 0;
   DirIterOpen (SelfRootDir, L"\\EFI\\CLOVER\\themes", &DirIter);
   while (DirIterNext(&DirIter, 1, L"*.EFI", &DirEntry)) {
@@ -2924,7 +2933,8 @@ GetListOfThemes ()
       continue;
     }
 
-    DBG ("Found theme directory: %s", DirEntry->FileName);
+    //DBG ("Found theme directory: %s", DirEntry->FileName);
+    DBG ("- [%02d]: %s", ThemesNum, DirEntry->FileName);
     ThemeTestPath = PoolPrint (L"EFI\\CLOVER\\themes\\%s", DirEntry->FileName);
     if (ThemeTestPath != NULL) {
       Status = SelfRootDir->Open (SelfRootDir, &ThemeTestDir, ThemeTestPath, EFI_FILE_MODE_READ, 0);
@@ -3538,6 +3548,8 @@ InitTheme(
   CHAR16     *TestTheme   = NULL;
   UINTN      Rnd;
 
+  DbgHeader("InitTheme");
+
   Rnd = ((Time != NULL) && (ThemesNum != 0)) ? Time->Second % ThemesNum : 0;
 
   // Free selection images which are not builtin icons
@@ -3839,7 +3851,7 @@ ParseSMBIOSSettings(
   Prop = GetProperty (DictPointer, "ChassisType");
   if (Prop != NULL) {
     gSettings.ChassisType = (UINT8)GetPropertyInteger (Prop, gSettings.ChassisType);
-    DBG ("Config set ChassisType=0x%x\n", gSettings.ChassisType);
+    DBG ("ChassisType: 0x%x\n", gSettings.ChassisType);
   }
   //gFwFeatures = 0xC0001403 - by default
   Prop = GetProperty (DictPointer, "FirmwareFeatures");
@@ -3864,7 +3876,8 @@ GetUserSettings(
 
   Dict              = CfgDict;
   if (Dict != NULL) {
-    DBG ("Loading main settings\n");
+//    DBG ("Loading main settings\n");
+    DbgHeader ("GetUserSettings");
 
     // Boot settings.
     // Discussion. Why Arguments is here? It should be SystemParameters property!
@@ -4031,16 +4044,17 @@ GetUserSettings(
         DEV_PROPERTY *DevProp;
 
         if (Count > 0) {
-          DBG ("Add %d devices\n", Count);
+          DBG ("Add %d devices:\n", Count);
           for (Index = 0; Index < Count; Index++) {
             UINTN DeviceAddr = 0U;
+            DBG (" - [%02d]:", Index);
             if (EFI_ERROR (GetElement (Prop, Index, &Prop2))) {
-              DBG ("AddProperties continue at %d\n", Index);
+              DBG (" continue\n", Index);
               continue;
             }
             Dict2 = GetProperty (Prop2, "Comment");
             if (Dict2 != NULL) {
-              DBG ("%d: %a ", Index, Dict2->string);
+              DBG (" (%a)", Index, Dict2->string);
             }
             Dict2 = GetProperty (Prop2, "PciAddr");
             if (Dict2 != NULL) {
@@ -4048,13 +4062,15 @@ GetUserSettings(
               CHAR8 *Str = Dict2->string;
 
               if (Str[2] != ':') {
-                DBG("  wrong PciAddr string: %a\n", Str);
+                DBG(" wrong PciAddr string: %a\n", Str);
                 continue;
               }
               Bus   = hexstrtouint8(Str);
               Dev   = hexstrtouint8(&Str[3]);
               Func  = hexstrtouint8(&Str[6]);
               DeviceAddr = PCIADDR(Bus, Dev, Func);
+
+              DBG(" %02x:%02x.%02x\n", Bus, Dev, Func);
             }
 
             Dict2 = GetProperty (Prop2, "CustomProperties");
@@ -4106,18 +4122,19 @@ GetUserSettings(
           INTN Index = 0;  //begin from 0 if second enter
 
           if (Count > 0) {
-            DBG ("Add %d properties\n", Count);
+            DBG ("Add %d properties:\n", Count);
             gSettings.AddProperties = AllocateZeroPool (Count * sizeof(DEV_PROPERTY));
 
             for (i = 0; i < Count; i++) {
               UINTN Size = 0;
+              DBG (" - [%02d]:");
               if (EFI_ERROR (GetElement (Prop, i, &Dict2))) {
-                DBG ("AddProperties continue at %d\n", i);
+                DBG (" continue\n", i);
                 continue;
               }
 
               if (Dict2 == NULL) {
-                DBG ("AddProperties break at %d\n", i);
+                DBG (" break\n", i);
                 break;
               }
 
@@ -4152,10 +4169,12 @@ GetUserSettings(
                 } else if (AsciiStriCmp (Prop2->string, "USB") == 0) {
                   Property->Device = DEV_USB;
                 } else {
-                  DBG (" add properties to unknown device, ignored\n");
+                  DBG (" unknown device, ignored\n", i);
                   continue;
                 }
               }
+
+              DBG (" %a", Prop2->string);
 
               Prop2 = GetProperty (Dict2, "Key");
               if (Prop2 && (Prop2->type == kTagTypeString) && Prop2->string) {
@@ -4176,6 +4195,8 @@ GetUserSettings(
                 gSettings.AddProperties[Index].Value = GetDataSetting (Dict2, "Value", &Size);
                 gSettings.AddProperties[Index].ValueLen = Size;
               }
+
+              DBG (", len: %d\n", gSettings.AddProperties[Index].ValueLen);
 
               ++Index;
             }
@@ -4292,11 +4313,11 @@ GetUserSettings(
         if (Prop != NULL) {
           gSettings.USBFixOwnership = IsPropertyTrue (Prop);
         }
-        DBG ("USB FixOwnership: %a\n", gSettings.USBFixOwnership?"true":"false");
-        
+        DBG ("USB FixOwnership: %a\n", gSettings.USBFixOwnership?"yes":"no");
+
         Prop = GetProperty (Prop2, "HighCurrent");
         gSettings.HighCurrent = IsPropertyTrue (Prop);
-        
+
         Prop = GetProperty (Prop2, "NameEH00");
         gSettings.NameEH00 = IsPropertyTrue (Prop);
       }
@@ -4309,9 +4330,10 @@ GetUserSettings(
       Prop = GetProperty (DictPointer, "DropTables");
       if (Prop) {
         INTN   i, Count = GetTagCount (Prop);
+        BOOLEAN Dropped;
 
         if (Count > 0) {
-          DBG ("Dropping %d tables\n", Count);
+          DBG ("Dropping %d tables:\n", Count);
 
           for (i = 0; i < Count; i++) {
             UINT32 Signature = 0;
@@ -4319,16 +4341,16 @@ GetUserSettings(
             UINT64 TableId = 0;
 
             if (EFI_ERROR (GetElement (Prop, i, &Dict2))) {
-              DBG ("Drop table continue at %d\n", i);
+              DBG (" - [%02d]: Drop table continue\n", i);
               continue;
             }
 
             if (Dict2 == NULL) {
-              DBG ("Drop table break at %d\n", i);
+              DBG (" - [%02d]: Drop table break\n", i);
               break;
             }
 
-            DBG ("Drop table %d", i);
+            DBG (" - [%02d]: Drop table ", i);
             // Get the table signatures to drop
             Prop2 = GetProperty (Dict2, "Signature");
             if (Prop2 && (Prop2->type == kTagTypeString) && Prop2->string) {
@@ -4384,7 +4406,8 @@ GetUserSettings(
             //set to drop
             if (gSettings.ACPIDropTables) {
               ACPI_DROP_TABLE *DropTable = gSettings.ACPIDropTables;
-              DBG ("set table: %08x, %16lx to drop:", Signature, TableId);
+              DBG ("         - set table: %08x, %16lx to drop:", Signature, TableId);
+              Dropped = FALSE;
               while (DropTable) {
                 if (((Signature == DropTable->Signature) &&
                      (!TableId || (DropTable->TableId == TableId)) &&
@@ -4392,12 +4415,12 @@ GetUserSettings(
                     (!Signature && (DropTable->TableId == TableId))) {
                   DropTable->MenuItem.BValue = TRUE;
                   gSettings.DropSSDT         = FALSE; //if one item=true then dropAll=false by default
-                  DBG ("  true\n");
+                  //DBG (" true");
+                  Dropped = TRUE;
                 }
-
                 DropTable = DropTable->Next;
               }
-              DBG ("\n");
+              DBG (" %a\n", Dropped ? "yes" : "no");
             }
           }
         }
@@ -4424,7 +4447,7 @@ GetUserSettings(
 
         Prop = GetProperty (Dict2, "Fixes");
         if (Prop != NULL) {
-          DBG ("Config set Fixes will override DSDT fix mask %08x!\n", gSettings.FixDsdt);
+          DBG ("Fixes will override DSDT fix mask %08x!\n", gSettings.FixDsdt);
 
           if (Prop->type == kTagTypeDict) {
             gSettings.FixDsdt = 0;
@@ -4581,7 +4604,7 @@ GetUserSettings(
           }
 
         }
-        DBG ("   final mask=%08x\n", gSettings.FixDsdt);
+        DBG (" - final mask=%08x\n", gSettings.FixDsdt);
 
         Prop = GetProperty (Dict2, "Patches");
         if (Prop != NULL) {
@@ -4606,18 +4629,25 @@ GetUserSettings(
                 break;
               }
 
+              DBG(" - [%02d]:", i);
+
+              Prop3 = GetProperty (Prop2, "Comment");
+              if (Prop3 != NULL && (Prop3->type == kTagTypeString) && Prop3->string) {
+                DBG(" (%a)", Prop3->string);
+              }
+
               Prop3 = GetProperty (Prop2, "Disabled");
               if ((Prop3 != NULL) && IsPropertyTrue (Prop3)) {
                 DBG(" patch disabled, skipped\n");
                 continue;
               }
 
-              DBG (" DSDT bin patch #%d ", i);
+              //DBG (" DSDT bin patch #%d ", i);
               gSettings.PatchDsdtFind[i]    = GetDataSetting (Prop2, "Find",    &Size);
-              DBG (" lenToFind=%d ", Size);
+              DBG (" lenToFind: %d", Size);
               gSettings.LenToFind[i]        = (UINT32)Size;
               gSettings.PatchDsdtReplace[i] = GetDataSetting (Prop2, "Replace", &Size);
-              DBG (" lenToReplace=%d\n", Size);
+              DBG (", lenToReplace: %d\n", Size);
               gSettings.LenToReplace[i]     = (UINT32)Size;
             }
           } //if count > 0
@@ -4741,31 +4771,31 @@ GetUserSettings(
         Prop = GetProperty (Dict2, "EnableC7");
         if (Prop != NULL) {
           gSettings.EnableC7 = IsPropertyTrue (Prop);
-          DBG ("Config set EnableC7: %a\n", gSettings.EnableC7 ? "+" : "-");
+          DBG ("EnableC7: %a\n", gSettings.EnableC7 ? "yes" : "no");
         }
 
         Prop = GetProperty (Dict2, "EnableC6");
         if (Prop != NULL) {
           gSettings.EnableC6 = IsPropertyTrue (Prop);
-          DBG ("Config set EnableC6: %a\n", gSettings.EnableC6 ? "+" : "-");
+          DBG ("EnableC6: %a\n", gSettings.EnableC6 ? "yes" : "no");
         }
 
         Prop = GetProperty (Dict2, "EnableC4");
         if (Prop != NULL) {
           gSettings.EnableC4 = IsPropertyTrue (Prop);
-          DBG ("Config set EnableC4: %a\n", gSettings.EnableC4 ? "+" : "-");
+          DBG ("EnableC4: %a\n", gSettings.EnableC4 ? "yes" : "no");
         }
 
         Prop = GetProperty (Dict2, "EnableC2");
         if (Prop != NULL) {
           gSettings.EnableC2 = IsPropertyTrue (Prop);
-          DBG ("Config set EnableC2: %a\n", gSettings.EnableC2 ? "+" : "-");
+          DBG ("EnableC2: %a\n", gSettings.EnableC2 ? "yes" : "no");
         }
 
         Prop = GetProperty (Dict2, "C3Latency");
         if (Prop != NULL) {
           gSettings.C3Latency = (UINT16)GetPropertyInteger (Prop, gSettings.C3Latency);
-          DBG ("Config set C3Latency: %d\n", gSettings.C3Latency);
+          DBG ("C3Latency: %d\n", gSettings.C3Latency);
         }
 
         Prop                       = GetProperty (Dict2, "PLimitDict");
@@ -4780,19 +4810,19 @@ GetUserSettings(
         Prop = GetProperty (Dict2, "MinMultiplier");
         if (Prop != NULL) {
           gSettings.MinMultiplier  = (UINT8)GetPropertyInteger (Prop, gSettings.MinMultiplier);
-          DBG ("Config set MinMultiplier=%d\n", gSettings.MinMultiplier);
+          DBG ("MinMultiplier: %d\n", gSettings.MinMultiplier);
         }
 
         Prop = GetProperty (Dict2, "MaxMultiplier");
         if (Prop != NULL) {
           gSettings.MaxMultiplier = (UINT8)GetPropertyInteger (Prop, gSettings.MaxMultiplier);
-          DBG ("Config set MaxMultiplier=%d\n", gSettings.MaxMultiplier);
+          DBG ("MaxMultiplier: %d\n", gSettings.MaxMultiplier);
         }
 
         Prop = GetProperty (Dict2, "PluginType");
         if (Prop != NULL) {
           gSettings.PluginType = (UINT8)GetPropertyInteger (Prop, gSettings.PluginType);
-          DBG ("Config set PluginType=%d\n", gSettings.PluginType);
+          DBG ("PluginType: %d\n", gSettings.PluginType);
         }
       }
 
@@ -4802,7 +4832,7 @@ GetUserSettings(
       Prop = GetProperty (DictPointer, "ResetAddress");
       if (Prop) {
         gSettings.ResetAddr = (UINT32)GetPropertyInteger (Prop, 0x64);
-        DBG ("Config set ResetAddr=0x%x\n", gSettings.ResetAddr);
+        DBG ("ResetAddr: 0x%x\n", gSettings.ResetAddr);
 
         if (gSettings.ResetAddr  == 0x64) {
           gSettings.ResetVal = 0xFE;
@@ -4810,13 +4840,13 @@ GetUserSettings(
           gSettings.ResetVal = 0x06;
         }
 
-        DBG ("Config calc ResetVal=0x%x\n", gSettings.ResetVal);
+        DBG ("Calc ResetVal: 0x%x\n", gSettings.ResetVal);
       }
 
       Prop = GetProperty (DictPointer, "ResetValue");
       if (Prop) {
         gSettings.ResetVal = (UINT8)GetPropertyInteger (Prop, gSettings.ResetVal);
-        DBG ("Config set ResetVal=0x%x\n", gSettings.ResetVal);
+        DBG ("ResetVal: 0x%x\n", gSettings.ResetVal);
       }
       //other known pair is 0x0CF9/0x06. What about 0x92/0x01 ?
 
@@ -4826,7 +4856,7 @@ GetUserSettings(
       Prop = GetProperty (DictPointer, "smartUPS");
       if (Prop) {
         gSettings.smartUPS   = IsPropertyTrue (Prop);
-        DBG ("Config set smartUPS present\n");
+        DBG ("smartUPS: present\n");
       }
 
       Prop               = GetProperty (DictPointer, "PatchAPIC");
@@ -4992,6 +5022,10 @@ GetUserSettings(
             break;
           }
 
+          if (!Index) {
+            DBG ("Slots->Device:");
+          }
+
           Prop2 = GetProperty (Prop3, "Device");
           DeviceN = -1;
           if (Prop2 && (Prop2->type == kTagTypeString) && Prop2->string) {
@@ -5014,11 +5048,11 @@ GetUserSettings(
             } else if (AsciiStriCmp (Prop2->string, "NVME") == 0) {
               DeviceN = 13;
             } else {
-              DBG (" add properties to unknown device %a, ignored\n", Prop2->string);
+              DBG (" - add properties to unknown device %a, ignored\n", Prop2->string);
               continue;
             }
           } else {
-            DBG (" no device  property for slot\n");
+            DBG (" - no device  property for slot\n");
             continue;
           }
 
@@ -5066,6 +5100,8 @@ GetUserSettings(
             } else {
               AsciiSPrint (SlotDevice->SlotName, 31, "PCI Slot %d", DeviceN);
             }
+
+            DBG (" - %a", SlotDevice->SlotName);
           }
         }
       }
@@ -5082,29 +5118,29 @@ GetUserSettings(
         gSettings.QPI = (UINT16)GetPropertyInteger (Prop, (INTN)gCPUStructure.ProcessorInterconnectSpeed);
         if (gSettings.QPI == 0) { //this is not default, this is zero!
           gSettings.QPI = 0xFFFF;
-          DBG ("Config set QPI = 0 disable table132\n");
+          DBG ("QPI: 0 disable table132\n");
         } else {
-          DBG ("Config set QPI=%dMHz\n", gSettings.QPI);
+          DBG ("QPI: %dMHz\n", gSettings.QPI);
         }
       }
 
       Prop = GetProperty (DictPointer, "FrequencyMHz");
       if (Prop != NULL) {
         gSettings.CpuFreqMHz = (UINT32)GetPropertyInteger (Prop, gSettings.CpuFreqMHz);
-        DBG ("Config set CpuFreq=%dMHz\n", gSettings.CpuFreqMHz);
+        DBG ("CpuFreq: %dMHz\n", gSettings.CpuFreqMHz);
       }
 
       Prop = GetProperty (DictPointer, "Type");
       gSettings.CpuType = GetAdvancedCpuType();
       if (Prop != NULL) {
         gSettings.CpuType = (UINT16)GetPropertyInteger (Prop, gSettings.CpuType);
-        DBG ("Config set CpuType=%x\n", gSettings.CpuType);
+        DBG ("CpuType: %x\n", gSettings.CpuType);
       }
 
       Prop = GetProperty (DictPointer, "QEMU");
       gSettings.QEMU = IsPropertyTrue (Prop);
       if (gSettings.QEMU) {
-        DBG ("Config set QEMU = true\n");
+        DBG ("QEMU: true\n");
       }
 
       Prop = GetProperty (DictPointer, "UseARTFrequency");
@@ -5114,7 +5150,7 @@ GetUserSettings(
       Prop = GetProperty (DictPointer, "BusSpeedkHz");
       if (Prop != NULL) {
         gSettings.BusSpeed = (UINT32)GetPropertyInteger (Prop, gSettings.BusSpeed);
-        DBG ("Config set BusSpeed=%dkHz\n", gSettings.BusSpeed);
+        DBG ("BusSpeed: %dkHz\n", gSettings.BusSpeed);
         gSettings.UserChange = TRUE;
       }
 
@@ -5638,6 +5674,8 @@ GetDevices ()
   NGFX = 0;
   //Arpt.Valid = FALSE; //global variables initialized by 0 - c-language
 
+  DbgHeader("GetDevices");
+
   // Scan PCI handles
   Status = gBS->LocateHandleBuffer (
                                     ByProtocol,
@@ -5706,7 +5744,7 @@ GetDevices ()
               AsciiSPrint (gfx->Model,  64, "%a", info->model_name);
               AsciiSPrint (gfx->Config, 64, "%a", card_configs[info->cfg_name].name);
               gfx->Ports                  = card_configs[info->cfg_name].ports;
-              DBG ("Found Radeon model=%a\n", gfx->Model);
+              DBG (" - GFX (Radeon) model=%a\n", gfx->Model);
 
               SlotDevice                  = &SlotDevices[0];
               SlotDevice->SegmentGroupNum = (UINT16)Segment;
@@ -5721,7 +5759,7 @@ GetDevices ()
             case 0x8086:
               gfx->Vendor                 = Intel;
               AsciiSPrint (gfx->Model, 64, "%a", get_gma_model (Pci.Hdr.DeviceId));
-              DBG ("Found GFX model=%a\n", gfx->Model);
+              DBG (" - GFX (Intel) model=%a\n", gfx->Model);
               gfx->Ports = 1;
               /*
                SlotDevice                  = &SlotDevices[2];
@@ -5752,7 +5790,7 @@ GetDevices ()
                                              NULL) //NULL: get from generic lists
                            );
 
-              DBG ("Found NVidia model=%a family %x\n", gfx->Model, gfx->Family);
+              DBG (" - GFX (Nvidia) model=%a family %x\n", gfx->Model, gfx->Family);
               gfx->Ports                  = 0;
 
               SlotDevice                  = &SlotDevices[1];
@@ -5802,10 +5840,10 @@ GetDevices ()
           Bar0                        = Pci.Device.Bar[0];
           gLanMmio[nLanCards++]       = (UINT8*)(UINTN)(Bar0 & ~0x0f);
           if (nLanCards >= 4) {
-            DBG("too many LAN card in the system\n");
+            DBG(" - [!] too many LAN card in the system\n");
             nLanCards = 3; // last one will be rewritten
           }
-          DBG("LAN %d, Vendor=%x, MMIO=%p\n", nLanCards-1, Pci.Hdr.VendorId, gLanMmio[nLanCards - 1]);
+          DBG(" - LAN %d, Vendor=%x, MMIO=%p\n", nLanCards-1, Pci.Hdr.VendorId, gLanMmio[nLanCards - 1]);
         }
 
         else if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_SERIAL) &&

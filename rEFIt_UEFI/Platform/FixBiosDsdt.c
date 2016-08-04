@@ -1045,14 +1045,14 @@ VOID findCPU(UINT8* dsdt, UINT32 length)
 				if (acpi_cpu_count == 0) {
 				    DBG("Found ACPI CPU: %a ", acpi_cpu_name[acpi_cpu_count]);
 				} else {
-				    DBG("And %a ", acpi_cpu_name[acpi_cpu_count]);
+				    DBG("| %a ", acpi_cpu_name[acpi_cpu_count]);
 				}
 				if (++acpi_cpu_count == 32)
 				    break;
 			}
 		}
 	}
-  DBG("\n  within the score: %a\n", acpi_cpu_score);
+  DBG(", within the score: %a\n", acpi_cpu_score);
 
   if (!acpi_cpu_count) {
     for (i=0; i<15; i++) {
@@ -1689,9 +1689,10 @@ UINT32 FixAny (UINT8* dsdt, UINT32 len, UINT8* ToFind, UINT32 LenTF, UINT8* ToRe
   UINT32 i;
   BOOLEAN found = FALSE;
   if (!ToFind || !LenTF || !LenTR) {
+    DBG(" invalid patches!\n");
     return len;
   }
-  DBG(" Patch pattern %02x%02x%02x%02x ::", ToFind[0], ToFind[1], ToFind[2], ToFind[3]);
+  DBG(" pattern %02x%02x%02x%02x,", ToFind[0], ToFind[1], ToFind[2], ToFind[3]);
   if ((LenTF + sizeof(EFI_ACPI_DESCRIPTION_HEADER)) > len) {
     DBG(" the patch is too large!\n");
     return len;
@@ -1703,7 +1704,7 @@ UINT32 FixAny (UINT8* dsdt, UINT32 len, UINT8* ToFind, UINT32 LenTF, UINT8* ToRe
       if (found) {
         DBG(" ]\n");
       } else {
-        DBG(" bin not found!\n");
+        DBG(" bin not found / already patched!\n");
       }
       return len;
     }
@@ -4968,7 +4969,8 @@ VOID FixBiosDsdt (UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, 
     return;
   }
 
-  DBG("========= Auto patch DSDT Starting ========\n");
+//  DBG("========= Auto patch DSDT Starting ========\n");
+  DbgHeader("FixBiosDsdt");
 
   // First check hardware address: GetPciADR(DevicePath, &NetworkADR1, &NetworkADR2);
   CheckHardware();
@@ -4976,7 +4978,12 @@ VOID FixBiosDsdt (UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, 
   //arbitrary fixes
   if (gSettings.PatchDsdtNum > 0) {
     UINTN i;
+    DBG("Patching DSDT:\n");
     for (i = 0; i < gSettings.PatchDsdtNum; i++) {
+      if (!gSettings.PatchDsdtFind[i] || !gSettings.LenToFind[i] || !gSettings.LenToReplace[i] || (gSettings.LenToFind[i] != gSettings.LenToReplace[i])) {
+        continue;
+      }
+      DBG(" - [%02d]:", i);
       DsdtLen = FixAny(temp, DsdtLen,
                        gSettings.PatchDsdtFind[i], gSettings.LenToFind[i],
                        gSettings.PatchDsdtReplace[i], gSettings.LenToReplace[i]);
@@ -5202,6 +5209,6 @@ VOID FixBiosDsdt (UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, 
   ((EFI_ACPI_DESCRIPTION_HEADER*)temp)->Checksum = 0;
   ((EFI_ACPI_DESCRIPTION_HEADER*)temp)->Checksum = (UINT8)(256-Checksum8(temp, DsdtLen));
 
-  DBG("========= Auto patch DSDT Finished ========\n");
+  //DBG("========= Auto patch DSDT Finished ========\n");
   //PauseForKey(L"waiting for key press...\n");
 }

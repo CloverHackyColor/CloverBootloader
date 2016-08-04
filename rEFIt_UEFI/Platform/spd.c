@@ -851,6 +851,8 @@ VOID ScanSPD()
   UINTN                 Index;
 //  UINTN                 ProtocolIndex;
   PCI_TYPE00            gPci;
+
+  DbgHeader("ScanSPD");
   
   // Scan PCI handles
   Status = gBS->LocateHandleBuffer (

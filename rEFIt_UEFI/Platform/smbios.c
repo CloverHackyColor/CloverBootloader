@@ -1863,6 +1863,7 @@ EFI_STATUS PrepatchSmbios()
 	UINTN					BufferLen;
 	EFI_PHYSICAL_ADDRESS     BufferPtr;
 //	UINTN					Index;
+  DbgHeader("PrepatchSmbios");
 
 	// Get SMBIOS Tables
 	Smbios = FindOemSMBIOSPtr();
@@ -1943,6 +1944,9 @@ EFI_STATUS PrepatchSmbios()
 
 VOID PatchSmbios(VOID) //continue
 {
+
+  DbgHeader("PatchSmbios");
+
   newSmbiosTable.Raw = (UINT8*)AllocateZeroPool(MAX_TABLE_SIZE);
 	//Slice - order of patching is significant
 	PatchTableType0();

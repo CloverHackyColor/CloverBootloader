@@ -340,7 +340,7 @@ VOID FilterKextPatches(IN LOADER_ENTRY *Entry)
     INTN i = 0;
     DBG("Filtering KextPatches:\n");
     for (; i < Entry->KernelAndKextPatches->NrKexts; ++i) {
-      DBG(" - [%d]: %a :: %a :: [OS: %a | MatchOS: %a | MatchBuild: %a]",
+      DBG(" - [%02d]: %a :: %a :: [OS: %a | MatchOS: %a | MatchBuild: %a]",
         i,
         Entry->KernelAndKextPatches->KextPatches[i].Label,
         Entry->KernelAndKextPatches->KextPatches[i].IsPlistPatch ? "PlistPatch" : "BinPatch",
@@ -371,7 +371,7 @@ VOID FilterKernelPatches(IN LOADER_ENTRY *Entry)
     INTN i = 0;
     DBG("Filtering KernelPatches:\n");
     for (; i < Entry->KernelAndKextPatches->NrKernels; ++i) {
-      DBG(" - [%d]: %a :: [OS: %a | MatchOS: %a | MatchBuild: %a]",
+      DBG(" - [%02d]: %a :: [OS: %a | MatchOS: %a | MatchBuild: %a]",
         i,
         Entry->KernelAndKextPatches->KernelPatches[i].Label,
         Entry->OSVersion,
@@ -444,16 +444,17 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
   CHAR8                   *InstallerVersion;
   TagPtr                  dict = NULL;
 
-  DBG("StartLoader() start\n");
+//  DBG("StartLoader() start\n");
+  DbgHeader("StartLoader");
   if (Entry->Settings) {
     DBG("Entry->Settings: %s\n", Entry->Settings);
     Status = LoadUserSettings(SelfRootDir, Entry->Settings, &dict);
     if (!EFI_ERROR(Status)) {
-      DBG("Found custom settings for this entry: %s\n", Entry->Settings);
+      DBG(" - found custom settings for this entry: %s\n", Entry->Settings);
       gBootChanged = TRUE;
       Status = GetUserSettings(SelfRootDir, dict);
       if (EFI_ERROR(Status)) {
-        DBG("... but: %r\n", Status);
+        DBG(" - ... but: %r\n", Status);
       } else {
         if ((gSettings.CpuFreqMHz > 100) && (gSettings.CpuFreqMHz < 20000)) {
           gCPUStructure.MaxSpeed      = gSettings.CpuFreqMHz;
@@ -464,7 +465,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
         //DBG("Custom KernelAndKextPatches copyed to started entry\n");
       }
     } else {
-      DBG("LoadUserSettings failed: %r\n", Status);
+      DBG(" - [!] LoadUserSettings failed: %r\n", Status);
     }
   }
 
@@ -595,6 +596,8 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
       FreePool(Entry->LoadOptions);
       Entry->LoadOptions = TempOptions;
     }
+
+    DbgHeader("RestSetupOSX");
 
 //    DBG("SetDevices\n");
     SetDevices(Entry);
@@ -1181,7 +1184,7 @@ VOID DisconnectSomeDevices(VOID)
   }
 
   if (gDriversFlags.HFSLoaded) {
-    DBG("HFS+ driver loaded \n");
+    DBG("HFS+ driver loaded\n");
     // get all FileSystem handles
     ControllerHandleCount = 0;
     ControllerHandles = NULL;
@@ -1308,6 +1311,8 @@ static VOID LoadDrivers(VOID)
   UINTN       VarSize = 0;
   BOOLEAN     VBiosPatchNeeded;
 
+  DbgHeader("LoadDrivers");
+
     // load drivers from /efi/drivers
 #if defined(MDE_CPU_X64)
   if (gFirmwareClover) {
@@ -1377,6 +1382,7 @@ INTN FindDefaultEntry(VOID)
   BOOLEAN             SearchForLoader;
 
 //  DBG("FindDefaultEntry ...\n");
+  DbgHeader("FindDefaultEntry");
 
   //
   // try to detect volume set by Startup Disk or previous Clover selection
@@ -1428,7 +1434,7 @@ INTN FindDefaultEntry(VOID)
         continue;
       }
 
-      DBG(" found entry %d. '%s', Volume '%s', DevicePath '%s'\n", Index, Entry->me.Title, Volume->VolName, Entry->DevicePathString);
+      DBG(" - found entry %d. '%s', Volume '%s', DevicePath '%s'\n", Index, Entry->me.Title, Volume->VolName, Entry->DevicePathString);
       // if first method failed and second succeeded - uninstall emulation
       if (gEmuVariableControl != NULL) {
         gEmuVariableControl->UninstallEmulation(gEmuVariableControl);
@@ -1452,6 +1458,8 @@ VOID SetVariablesFromNvram()
   UINTN   Size = 0;
   UINTN   index = 0, index2, len, i;
   CHAR8  *arg = NULL;
+
+  DbgHeader("SetVariablesFromNvram");
 
   tmpString = GetNvramVariable(L"boot-args", &gEfiAppleBootGuid, NULL, &Size);
   if (tmpString && (Size <= 0x1000) && (Size > 0)) {
@@ -1639,9 +1647,10 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
   PrepatchSmbios();
 
-#ifdef REVISION_STR
-  DBG(REVISION_STR);
-#endif
+//#ifdef REVISION_STR
+//  DBG(REVISION_STR);
+//#endif
+
   //replace / with _
   Size = iStrLen(gSettings.OEMProduct, 64);
   for (i=0; i<Size; i++) {
@@ -1655,8 +1664,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       gSettings.OEMBoard[i] = 0x5F;
     }
   }
-  DBG("  running on %a\n",   gSettings.OEMProduct);
-  DBG("... with board %a\n", gSettings.OEMBoard);
+//  DBG("  running on %a\n",   gSettings.OEMProduct);
+//  DBG("... with board %a\n", gSettings.OEMBoard);
+  DBG("Running on: %a (%a)\n", gSettings.OEMProduct, gSettings.OEMBoard);
 
   GetCPUProperties();
   GetDevices();
@@ -1767,9 +1777,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
   MainMenu.TimeoutSeconds = GlobalConfig.Timeout >= 0 ? GlobalConfig.Timeout : 0;
 
-  DBG("LoadDrivers() start\n");
+  //DBG("LoadDrivers() start\n");
   LoadDrivers();
-  DBG("LoadDrivers() end\n");
+  //DBG("LoadDrivers() end\n");
 
   if (!gFirmwareClover &&
       !gDriversFlags.EmuVariableLoaded) {
@@ -1784,6 +1794,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     gEmuVariableControl->InstallEmulation(gEmuVariableControl);
   }
 
+  DbgHeader("InitScreen");
   if (!GlobalConfig.FastBoot) {
     // init screen and dump video modes to log
     if (gDriversFlags.VideoLoaded) {
@@ -1826,9 +1837,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   }
 
   GetMacAddress();
-  DBG("ScanSPD() start\n");
+  //DBG("ScanSPD() start\n");
   ScanSPD();
-  DBG("ScanSPD() end\n");
+  //DBG("ScanSPD() end\n");
 
   SetPrivateVarProto();
 //  GetDefaultSettings();
@@ -1881,8 +1892,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
                                            (gCPUStructure.MaxRatio == 0) ? 1 : gCPUStructure.MaxRatio);
     gCPUStructure.ExternalClock = (UINT32)DivU64x32(gCPUStructure.FSBFrequency, kilo);
   }
-
-
 
   dropDSM = 0xFFFF; //by default we drop all OEM _DSM. They have no sense for us.
   if (defDSM) {

@@ -123,7 +123,7 @@ EG_IMAGE * BuiltinIcon(IN UINTN Id)
       Path = GetIconsExt(BuiltinIconTable[Id].Path, BuiltinIconTable[Id].Format);
       BuiltinIconTable[Id].Image = LoadIcnsFallback(ThemeDir, Path, Size);
       if (!BuiltinIconTable[Id].Image) {
-        DebugLog(1, "Icon %d (%s) not found (path: %s, ThemeDir: %p)\n", Id, Path, ThemePath, ThemeDir);
+        DebugLog(1, "        Icon %d (%s) not found (path: %s, ThemeDir: %p)\n", Id, Path, ThemePath, ThemeDir);
         if (Id >= BUILTIN_ICON_VOL_INTERNAL) {
           Path = GetIconsExt(BuiltinIconTable[BUILTIN_ICON_VOL_INTERNAL].Path, BuiltinIconTable[BUILTIN_ICON_VOL_INTERNAL].Format);
           BuiltinIconTable[Id].Image = LoadIcnsFallback(ThemeDir, Path, Size);
@@ -196,7 +196,7 @@ EG_IMAGE * BuiltinIcon(IN UINTN Id)
     //}
     egRenderText(Text, TextBuffer, 0, 0, 0xFFFF);
     BuiltinIconTable[Id].Image = TextBuffer;
-    DebugLog(1, "Icon %d: Text <%s> rendered\n", Id, Text);
+    DebugLog(1, "        Icon %d: Text <%s> rendered\n", Id, Text);
     FreePool(Text);
   }
 

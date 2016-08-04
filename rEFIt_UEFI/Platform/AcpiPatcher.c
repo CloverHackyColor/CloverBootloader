@@ -244,6 +244,8 @@ VOID GetAcpiTablesList()
   CHAR8 sign[5];
   CHAR8 OTID[9];
 
+  DbgHeader("GetAcpiTablesList");
+
   GetFadt(); //this is a first call to acpi, we need it to make a pointer to Xsdt
   gSettings.ACPIDropTables = NULL;
    
@@ -262,7 +264,8 @@ VOID GetAcpiTablesList()
       TableEntry = (EFI_ACPI_DESCRIPTION_HEADER *)((UINTN)(Entry64));
       CopyMem((CHAR8*)&sign[0], (CHAR8*)&TableEntry->Signature, 4);      
       CopyMem((CHAR8*)&OTID[0], (CHAR8*)&TableEntry->OemTableId, 8);
-      DBG(" Found table: %a  %a len=%d\n", sign, OTID, (INT32)TableEntry->Length);
+      //DBG(" Found table: %a  %a len=%d\n", sign, OTID, (INT32)TableEntry->Length);
+      DBG(" - [%02d]: %a  %a len=%d\n", Index, sign, OTID, (INT32)TableEntry->Length);
       DropTable = AllocateZeroPool(sizeof(ACPI_DROP_TABLE));
       DropTable->Signature = TableEntry->Signature;
  //     DropTable->TableId = TableEntry->OemTableId;
@@ -283,7 +286,8 @@ VOID GetAcpiTablesList()
       }
       CopyMem((CHAR8*)&sign[0], (CHAR8*)&TableEntry->Signature, 4);
       CopyMem((CHAR8*)&OTID[0], (CHAR8*)&TableEntry->OemTableId, 8);
-      DBG(" Found table: %a  %a len=%d\n", sign, OTID, (INT32)TableEntry->Length);
+      //DBG(" Found table: %a  %a len=%d\n", sign, OTID, (INT32)TableEntry->Length);
+      DBG(" - [%02d]: %a  %a len=%d\n", Index, sign, OTID, (INT32)TableEntry->Length);
       DropTable = AllocateZeroPool(sizeof(ACPI_DROP_TABLE));
       DropTable->Signature = TableEntry->Signature;
       DropTable->TableId = TableEntry->OemTableId;
@@ -293,7 +297,7 @@ VOID GetAcpiTablesList()
       gSettings.ACPIDropTables = DropTable;
     }
   } else {
-     DBG("Error! ACPI not found:\n");
+     DBG(": [!] Error! ACPI not found:\n");
   }
 
 }
@@ -396,7 +400,7 @@ VOID DropTableFromXSDT (UINT32 Signature, UINT64 TableId, UINT32 Length)
   CopyMem((CHAR8*)&OTID[0], (CHAR8*)&TableId, 8);
   DBG("Drop tables from Xsdt, SIGN=%a TableID=%a Length=%d\n", sign, OTID, (INT32)Length);
 	EntryCount = (Xsdt->Header.Length - sizeof (EFI_ACPI_DESCRIPTION_HEADER)) / sizeof(UINT64);
-  DBG(" Xsdt has tables count=%d \n", EntryCount); 
+  DBG(" Xsdt has tables count=%d\n", EntryCount); 
   if (EntryCount > 50) {
     DBG("BUG! Too many XSDT entries \n");
     EntryCount = 50;
@@ -487,7 +491,12 @@ VOID PatchAllSSDT()
       Ptr = (CHAR8*)(UINTN)ssdt;
       CopyMem(Ptr, (VOID*)TableEntry, SsdtLen);
       if (gSettings.PatchDsdtNum > 0) {
+        DBG("Patching SSDT:\n");
         for (i = 0; i < gSettings.PatchDsdtNum; i++) {
+          if (!gSettings.PatchDsdtFind[i] || !gSettings.LenToFind[i] || !gSettings.LenToReplace[i] || (gSettings.LenToFind[i] != gSettings.LenToReplace[i])) {
+            continue;
+          }
+          DBG(" - [%02d]:", i);
           SsdtLen = FixAny((UINT8*)(UINTN)ssdt, SsdtLen,
                            gSettings.PatchDsdtFind[i], gSettings.LenToFind[i],
                            gSettings.PatchDsdtReplace[i], gSettings.LenToReplace[i]);
@@ -1429,6 +1438,8 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
   OPER_REGION       *tmpRegion;
   INTN              ApicCPUBase = 0;
   CHAR16*           AcpiOemPath = PoolPrint(L"%s\\ACPI\\patched", OEMPath);
+
+  DbgHeader("PatchACPI");
   
   PathDsdt = PoolPrint(L"\\%s", gSettings.DsdtName);
 		//try to find in SystemTable
@@ -1785,6 +1796,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
   
   // Drop tables
   if (gSettings.ACPIDropTables) {
+    DbgHeader("ACPIDropTables");
     ACPI_DROP_TABLE *DropTable = gSettings.ACPIDropTables;
     while (DropTable) {
       if (DropTable->MenuItem.BValue) {
@@ -1797,10 +1809,12 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
   }
 
   if (gSettings.DropSSDT) {
+    DbgHeader("DropSSDT");
     //special case if we set into menu drop all SSDT
     DropTableFromXSDT(EFI_ACPI_4_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE, 0, 0);
     DropTableFromRSDT(EFI_ACPI_4_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE, 0, 0);
-  } else { 
+  } else {
+    DbgHeader("PatchAllSSDT");
     //all remaining SSDT tables will be patched
     PatchAllSSDT();
     //do the empty drop to clean xsdt
@@ -1809,6 +1823,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
   }
 
   if (ACPIPatchedAML) {
+    DbgHeader("ACPIPatchedAML");
     CHAR16  FullName[256];
     DBG("Start: Processing Patched AML(s): ");
     if (gSettings.SortedACPICount) {
@@ -1977,7 +1992,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
         ApicCPUNum = gCPUStructure.Threads;
       }
       
-      DBG(" CPUBase=%d and ApicCPUBase=%d ApicCPUNum=%d\n", CPUBase, ApicCPUBase, ApicCPUNum);
+      DBG("CPUBase=%d and ApicCPUBase=%d ApicCPUNum=%d\n", CPUBase, ApicCPUBase, ApicCPUNum);
  //reallocate table  
       if (gSettings.PatchNMI) {
         

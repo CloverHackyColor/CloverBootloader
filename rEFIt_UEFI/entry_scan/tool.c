@@ -278,7 +278,8 @@ VOID AddCustomTool(VOID)
 #endif //ADVICON
   UINTN              i = 0;
 
-  DBG("Custom tool start\n");
+//  DBG("Custom tool start\n");
+  DbgHeader("AddCustomTool");
   // Traverse the custom entries
   for (Custom = gSettings.CustomTool; Custom; ++i, Custom = Custom->Next) {
     if (OSFLAG_ISSET(Custom->Flags, OSFLAG_DISABLED)) {
@@ -404,5 +405,5 @@ VOID AddCustomTool(VOID)
       break; // break scan volumes, continue scan entries
     }
   }
-  DBG("Custom tool end\n");
+//  DBG("Custom tool end\n");
 }

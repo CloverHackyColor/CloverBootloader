@@ -77,10 +77,19 @@
           <string>png</string>
         </dict>
       </dict>
+
+  - ADVLOG: Thu Aug  4 18:14:19 2016
+
+    Add log routine line separator.
+
+  - LODEPNG: Thu Aug  4 18:14:19 2016
+
+    Size matter, screenshot as PNG instead of BMP. Inspired by mr. Coderush "CrScreenshotDxe". Maybe useful for other PNG encoding purposes. Activate by "-D LODEPNG".
 */
 
 //#define FKERNELPATCH 1
 #define ADVICON 1
+#define ADVLOG 1
 
 // Experimental <--
 
@@ -959,6 +968,8 @@ VOID DumpKernelAndKextPatches(KERNEL_AND_KEXT_PATCHES *Patches);
 #if defined(FKERNELPATCH)
 #define FSearchReplace(Source, Search, Replace) SearchAndReplace(Source, KERNEL_MAX_SIZE, Search, sizeof(Search), Replace, 1)
 #endif //FKERNELPATCH
+
+VOID DbgHeader(CHAR8 *str);
 
 #endif
 /*

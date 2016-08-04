@@ -631,6 +631,8 @@ GetDefaultSettings ()
   MACHINE_TYPES  Model;
   //UINT64         msr = 0;
 
+  DbgHeader("GetDefaultSettings");
+
   //gLanguage         = english;
   Model             = GetDefaultModel ();
   gSettings.CpuType	= GetAdvancedCpuType ();

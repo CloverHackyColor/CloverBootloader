@@ -377,7 +377,7 @@ VOID FillInputs(BOOLEAN New)
       InputItems[InputItemsCount++].SValue = gSettings.InjectIntel?L"[+]":L"[ ]";
       } */
       InputItems[InputItemsCount].ItemType = Hex; //22+6i
-      InputItems[InputItemsCount++].SValue = PoolPrint(L"%08lx", gSettings.IgPlatform);;
+      InputItems[InputItemsCount++].SValue = PoolPrint(L"%08lx", gSettings.IgPlatform);
     }
 
     if (gGraphics[i].Vendor == Intel) {
@@ -4550,7 +4550,7 @@ REFIT_MENU_ENTRY  *SubMenuDsdtFix()
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
   InputBootArgs->Entry.Title = PoolPrint(L"Drop _DSM:");
   InputBootArgs->Entry.Tag = TAG_INPUT;
-  InputBootArgs->Entry.Row = StrLen(InputItems[101].SValue);; //cursor
+  InputBootArgs->Entry.Row = StrLen(InputItems[101].SValue); //cursor
   InputBootArgs->Item = &InputItems[101];
   InputBootArgs->Entry.AtClick = ActionEnter;
   InputBootArgs->Entry.AtRightClick = ActionDetails;

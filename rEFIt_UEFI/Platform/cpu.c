@@ -125,6 +125,8 @@ VOID GetCPUProperties (VOID)
 	UINTN         Device;
 	UINTN         Function;
   CHAR8         str[128];
+
+  DbgHeader("GetCPUProperties");
 	
   //initial values
 	gCPUStructure.MaxRatio = 10; //keep it as K*10

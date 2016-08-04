@@ -36,6 +36,10 @@
 
 #include "libegint.h"
 
+#if defined(LODEPNG)
+#include "lodepng.h"
+#endif //LODEPNG
+
 //#include <efiUgaDraw.h>
 #include <Protocol/GraphicsOutput.h>
 //#include <Protocol/efiConsoleControl.h>
@@ -143,7 +147,8 @@ VOID egDumpSetConsoleVideoModes(VOID)
         for (i=1; i <= (UINTN)gST->ConOut->Mode->MaxMode; i++) {
             Status = gST->ConOut->QueryMode(gST->ConOut, i-1, &Width, &Height);
             if (Status == EFI_SUCCESS) {
-                MsgLog("  Mode %d: %dx%d%s\n", i, Width, Height, (i-1==(UINTN)gST->ConOut->Mode->Mode)?L" (current mode)":L"");
+                //MsgLog("  Mode %d: %dx%d%s\n", i, Width, Height, (i-1==(UINTN)gST->ConOut->Mode->Mode)?L" (current mode)":L"");
+                MsgLog(" - [%02d]: %dx%d%s\n", i, Width, Height, (i-1==(UINTN)gST->ConOut->Mode->Mode)?L" (current mode)":L"");
                 // Select highest mode (-1) or lowest mode (-2) as/if requested
                 if ((GlobalConfig.ConsoleMode == -1 && (BestMode == 0 || Width > BestWidth || (Width == BestWidth && Height > BestHeight))) ||
                     (GlobalConfig.ConsoleMode == -2 && (BestMode == 0 || Width < BestWidth || (Width == BestWidth && Height < BestHeight)))) {
@@ -619,9 +624,27 @@ EFI_STATUS egScreenShot(VOID)
         UgaDraw->Blt(UgaDraw, (EFI_UGA_PIXEL *)Image->PixelData, EfiUgaVideoToBltBuffer,
                      0, 0, 0, 0, (UINTN)Image->Width, (UINTN)Image->Height, 0);
     }
-    
+
+#if defined(LODEPNG)
+    EFI_UGA_PIXEL *ImagePNG = (EFI_UGA_PIXEL *)Image->PixelData;
+    UINTN   ImageSize = Image->Width * Image->Height;
+    UINTN   i;
+
+    // Convert BGR to RGBA with Alpha set to 0xFF
+    for (i = 0; i < ImageSize; i++) {
+        UINT8 Temp = ImagePNG[i].Blue;
+        ImagePNG[i].Blue = ImagePNG[i].Red;
+        ImagePNG[i].Red = Temp;
+        ImagePNG[i].Reserved = 0xFF;
+    }
+
+    // Encode raw RGB image to PNG format
+    eglodepng_encode(&FileData, &FileDataLength, (CONST UINT8*)ImagePNG, (UINTN)Image->Width, (UINTN)Image->Height);
+#else //LODEPNG
     // encode as BMP
     egEncodeBMP(Image, &FileData, &FileDataLength);
+#endif //LODEPNG
+    
     egFreeImage(Image);
     if (FileData == NULL) {
         Print(L"Error egEncodeBMP returned NULL\n");
@@ -629,7 +652,11 @@ EFI_STATUS egScreenShot(VOID)
     }
   
   for (Index=0; Index < 60; Index++) {
+#if defined(LODEPNG)
+    UnicodeSPrint(ScreenshotName, 256, L"EFI\\CLOVER\\misc\\screenshot%d.png", Index);
+#else //LODEPNG
     UnicodeSPrint(ScreenshotName, 256, L"EFI\\CLOVER\\misc\\screenshot%d.bmp", Index);
+#endif //LODEPNG
     if(!FileExists(SelfRootDir, ScreenshotName)){
       Status = egSaveFile(SelfRootDir, ScreenshotName, FileData, FileDataLength);
       if (!EFI_ERROR(Status)) {

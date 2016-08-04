@@ -2299,7 +2299,7 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
   }
   
   DBG("nVidia %a ", model);
-  DBG(" %dMB NV%02x [%04x:%04x] :: %a => device #%d \n", (UINT32)(RShiftU64(videoRam, 20)),
+  DBG(" %dMB NV%02x [%04x:%04x] :: %a => device #%d\n", (UINT32)(RShiftU64(videoRam, 20)),
       nvCardType, nvda_dev->vendor_id, nvda_dev->device_id,
       devicepath, devices_number);
   

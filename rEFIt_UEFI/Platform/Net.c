@@ -102,6 +102,8 @@ GetMacAddress()
     return;
   }
 
+  DbgHeader("GetMacAddress");
+
   Found = FALSE;
   for (Index = 0; Index < NumberOfHandles; Index++) {
     Node = NULL;

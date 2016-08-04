@@ -159,7 +159,7 @@ static LEGACY_ENTRY * AddLegacyEntry(IN CHAR16 *FullTitle, IN CHAR16 *LoaderTitl
   SubScreen = AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
   SubScreen->Title = PoolPrint(L"Boot Options for %s on %s", LoaderTitle, VolDesc);
   SubScreen->TitleImage = Entry->me.Image;
-  SubScreen->AnimeRun = GetAnime(SubScreen);;
+  SubScreen->AnimeRun = GetAnime(SubScreen);
   
   // default entry
   SubEntry = AllocateZeroPool(sizeof(LEGACY_ENTRY));
@@ -262,7 +262,8 @@ VOID AddCustomLegacy(VOID)
   EG_IMAGE            *Image, *DriveImage;
   UINTN                i = 0;
   
-  DBG("Custom legacy start\n");
+//  DBG("Custom legacy start\n");
+  DbgHeader("AddCustomLegacy");
   // Traverse the custom entries
   for (Custom = gSettings.CustomLegacy; Custom; ++i, Custom = Custom->Next) {
     if (OSFLAG_ISSET(Custom->Flags, OSFLAG_DISABLED)) {
@@ -393,5 +394,5 @@ VOID AddCustomLegacy(VOID)
       DBG("match!\n");
     }
   }
-  DBG("Custom legacy end\n");
+  //DBG("Custom legacy end\n");
 }
