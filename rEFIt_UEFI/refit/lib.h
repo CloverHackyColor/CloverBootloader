@@ -46,38 +46,6 @@
     This will skip "SearchAndCount" to boost those operations. We hope this will be safe enough. The "SearchAndReplace" always do a CompareMem before CopyMem.
     And dataLen (for search & replace) already sanitised while parsing user config & should be matched.
 
-  - ADVICON: Sun Jul 31 15:04:40 2016
-
-    Hover icons, for both 1st & 2nd row:
-      Clover will search any icons with suffix "_hover.(ext)" & use it as hovered state. Ex: func_about_hover.png, os_mac_hover.png, tool_shell_hover.png.
-    Fixed icon format:
-      One extension for all. Ex: If user has specified an ext like "png", then Clover will ignore any other extensions including default "icns".
-      Valid values: icns, png, bmp.
-
-      <key>Theme</key>
-      <dict>
-        <key>Badges</key>
-        <dict>
-          <key>Inline</key>
-          <false/>
-          <key>OffsetX</key>
-          <integer>0</integer>
-          <key>OffsetY</key>
-          <integer>0</integer>
-          <key>Scale</key>
-          <integer>16</integer>
-          <key>Show</key>
-          <true/>
-          <key>Swap</key>
-          <false/>
-        </dict>
-        <key>Icon</key>
-        <dict>
-          <key>Format</key>
-          <string>png</string>
-        </dict>
-      </dict>
-
   - ADVLOG: Thu Aug  4 18:14:19 2016
 
     Add log routine line separator.
@@ -88,7 +56,6 @@
 */
 
 //#define FKERNELPATCH 1
-#define ADVICON 1
 #define ADVLOG 1
 
 // Experimental <--
@@ -369,9 +336,7 @@ typedef struct _refit_menu_entry {
   CHAR16             ShortcutDigit;
   CHAR16             ShortcutLetter;
   EG_IMAGE          *Image;
-#if defined(ADVICON)
   EG_IMAGE          *ImageHover;
-#endif //ADVICON
   EG_IMAGE          *DriveImage;
   EG_IMAGE          *BadgeImage;
   EG_RECT            Place;
@@ -504,9 +469,7 @@ typedef struct {
   BOOLEAN     Proportional;
   BOOLEAN     NoEarlyProgress;
   INTN        PruneScrollRows;
-#if defined(ADVICON)
   INTN        IconFormat;
-#endif //ADVICON
 } REFIT_CONFIG;
 
 // types
@@ -799,22 +762,14 @@ VOID    FreeAnime(GUI_ANIME *Anime);
 //
 // icns loader module
 //
-#if defined(ADVICON)
 EG_IMAGE * LoadOSIcon(IN OUT CHAR16 *OSIconName OPTIONAL, IN CHAR16 *FallbackIconName, IN UINTN PixelSize, IN BOOLEAN BootLogo, IN BOOLEAN WantDummy);
 EG_IMAGE * LoadHoverIcon(IN CHAR16 *OSIconName, IN UINTN PixelSize);
-#else //ADVICON
-EG_IMAGE * LoadOSIcon(IN CHAR16 *OSIconName OPTIONAL, IN CHAR16 *FallbackIconName, IN UINTN PixelSize, IN BOOLEAN BootLogo, IN BOOLEAN WantDummy);
-#endif //ADVICON
-
 EG_IMAGE * LoadIcns(IN EFI_FILE_HANDLE BaseDir, IN CHAR16 *FileName, IN UINTN PixelSize);
 EG_IMAGE * LoadIcnsFallback(IN EFI_FILE_HANDLE BaseDir, IN CHAR16 *FileName, IN UINTN PixelSize);
 EG_IMAGE * DummyImage(IN UINTN PixelSize);
-
 EG_IMAGE * BuiltinIcon(IN UINTN Id);
-#if defined(ADVICON)
-CHAR16 * GetIconsExt(IN CHAR16 *Icon, IN CHAR16 *Def);
+CHAR16   * GetIconsExt(IN CHAR16 *Icon, IN CHAR16 *Def);
 EG_IMAGE * GetSmallHover(IN UINTN Id);
-#endif //ADVICON
 
 #define BUILTIN_ICON_FUNC_ABOUT                (0)
 #define BUILTIN_ICON_FUNC_OPTIONS              (1)
@@ -860,13 +815,11 @@ EG_IMAGE * GetSmallHover(IN UINTN Id);
 #define X_IS_CENTER  1
 #define BADGE_DIMENSION 64
 
-#if defined(ADVICON)
 // IconFormat
 #define ICON_FORMAT_DEF       (0)
 #define ICON_FORMAT_ICNS      (1)
 #define ICON_FORMAT_PNG       (2)
 #define ICON_FORMAT_BMP       (3)
-#endif //ADVICON
 
 VOID AddMenuInfoLine(IN REFIT_MENU_SCREEN *Screen, IN CHAR16 *InfoLine);
 VOID AddMenuEntry(IN REFIT_MENU_SCREEN *Screen, IN REFIT_MENU_ENTRY *Entry);

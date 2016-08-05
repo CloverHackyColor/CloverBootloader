@@ -1518,9 +1518,9 @@ extern ACPI_PATCHED_AML              *ACPIPatchedAML;
 // SysVariables
 extern SYSVARIABLES                   *SysVariables;
 
-#if defined(ADVICON)
+// Hold theme fixed IconFormat / extension
 extern CHAR16 *IconFormat;
-#endif //ADVICON
+
 //-----------------------------------
 
 VOID

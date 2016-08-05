@@ -200,9 +200,7 @@ typedef struct {
 typedef struct {
   EG_IMAGE    *Image;
   CHAR16      *Path;
-#if defined(ADVICON)
   CHAR16      *Format;
-#endif //ADVICON
   UINTN       PixelSize;
 } BUILTIN_ICON;
 

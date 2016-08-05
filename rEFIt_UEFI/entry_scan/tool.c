@@ -70,13 +70,8 @@
 
 extern EMU_VARIABLE_CONTROL_PROTOCOL *gEmuVariableControl;
 
-#if defined(ADVICON)
 STATIC BOOLEAN AddToolEntry(IN CHAR16 *LoaderPath, IN CHAR16 *FullTitle, IN CHAR16 *LoaderTitle,
                             IN REFIT_VOLUME *Volume, IN EG_IMAGE *Image, IN EG_IMAGE *ImageHover, IN CHAR16 ShortcutLetter, IN CHAR16 *Options)
-#else //ADVICON
-STATIC BOOLEAN AddToolEntry(IN CHAR16 *LoaderPath, IN CHAR16 *FullTitle, IN CHAR16 *LoaderTitle,
-                            IN REFIT_VOLUME *Volume, IN EG_IMAGE *Image, IN CHAR16 ShortcutLetter, IN CHAR16 *Options)
-#endif //ADVICON
 {
   LOADER_ENTRY *Entry;
   // Check the loader exists
@@ -99,9 +94,7 @@ STATIC BOOLEAN AddToolEntry(IN CHAR16 *LoaderPath, IN CHAR16 *FullTitle, IN CHAR
   Entry->me.Row = 1;
   Entry->me.ShortcutLetter = ShortcutLetter;
   Entry->me.Image = Image;
-#if defined(ADVICON)
   Entry->me.ImageHover = ImageHover;
-#endif //ADVICON
   Entry->LoaderPath = EfiStrDuplicate(LoaderPath);
   Entry->DevicePath = FileDevicePath(Volume->DeviceHandle, Entry->LoaderPath);
   Entry->DevicePathString = FileDevicePathToStr(Entry->DevicePath);
@@ -129,9 +122,7 @@ STATIC VOID AddCloverEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTitle, IN REF
   Entry->me.Row            = 1;
   Entry->me.ShortcutLetter = 'C';
   Entry->me.Image          = BuiltinIcon(BUILTIN_ICON_FUNC_CLOVER);
-#if defined(ADVICON)
   Entry->me.ImageHover     = GetSmallHover(BUILTIN_ICON_FUNC_CLOVER);
-#endif //ADVICON
   Entry->Volume = Volume;
   Entry->LoaderPath      = EfiStrDuplicate(LoaderPath);
   Entry->VolName         = Volume->VolName;
@@ -218,22 +209,12 @@ VOID ScanTool(VOID)
 //      AddToolEntry(L"\\EFI\\CLOVER\\tools\\Shell64U.efi", NULL, L"EFI Shell 64", SelfVolume, BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S');
 //    } else
     //there seems to be the best version
-#if defined(ADVICON)
       if (!AddToolEntry(L"\\EFI\\CLOVER\\tools\\Shell64U.efi", NULL, L"UEFI Shell 64", SelfVolume, BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), GetSmallHover(BUILTIN_ICON_TOOL_SHELL), 'S', NULL)) {
         AddToolEntry(L"\\EFI\\CLOVER\\tools\\Shell64.efi", NULL, L"EFI Shell 64", SelfVolume, BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), GetSmallHover(BUILTIN_ICON_TOOL_SHELL), 'S', NULL);
       }
-#else //ADVICON
-      if (!AddToolEntry(L"\\EFI\\CLOVER\\tools\\Shell64U.efi", NULL, L"UEFI Shell 64", SelfVolume, BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S', NULL)) {
-        AddToolEntry(L"\\EFI\\CLOVER\\tools\\Shell64.efi", NULL, L"EFI Shell 64", SelfVolume, BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S', NULL);
-      }
-#endif //ADVICON
 //  }
 #else
-#if defined(ADVICON)
     AddToolEntry(L"\\EFI\\CLOVER\\tools\\Shell32.efi", NULL, L"EFI Shell 32", SelfVolume, BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), GetSmallHover(BUILTIN_ICON_TOOL_SHELL), 'S', NULL);
-#else //ADVICON
-    AddToolEntry(L"\\EFI\\CLOVER\\tools\\Shell32.efi", NULL, L"EFI Shell 32", SelfVolume, BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S', NULL);
-#endif //ADVICON
 #endif
   }
 
@@ -272,10 +253,8 @@ VOID AddCustomTool(VOID)
   REFIT_VOLUME      *Volume;
   CUSTOM_TOOL_ENTRY *Custom;
   EG_IMAGE          *Image;
-#if defined(ADVICON)
   EG_IMAGE          *ImageHover = NULL;
   CHAR16            *ImageHoverPath;
-#endif //ADVICON
   UINTN              i = 0;
 
 //  DBG("Custom tool start\n");
@@ -346,8 +325,6 @@ VOID AddCustomTool(VOID)
       // Change to custom image if needed
       Image = Custom->Image;
       if ((Image == NULL) && Custom->ImagePath) {
-
-#if defined(ADVICON)
         ImageHoverPath = EfiStrDuplicate(Custom->ImagePath);
         ReplaceExtension(ImageHoverPath, L"");
         ImageHoverPath = PoolPrint(L"%s_hover.%s", ImageHoverPath, egFindExtension(Custom->ImagePath));
@@ -371,35 +348,17 @@ VOID AddCustomTool(VOID)
           ImageHover = egLoadIcon(Volume->RootDir, ImageHoverPath, 32);
         }
         FreePool(ImageHoverPath);
-#else //ADVICON
-        Image = egLoadImage(Volume->RootDir, Custom->ImagePath, TRUE);
-        if (Image == NULL) {
-          Image = egLoadImage(ThemeDir, Custom->ImagePath, TRUE);
-          if (Image == NULL) {
-            Image = egLoadImage(SelfDir, Custom->ImagePath, TRUE);
-            if (Image == NULL) {
-              Image = egLoadImage(SelfRootDir, Custom->ImagePath, TRUE);
-            }
-          }
-        }
-#endif //ADVICON
-
       } else {
         // Image base64 data
       }
       if (Image == NULL) {
         Image = BuiltinIcon(BUILTIN_ICON_TOOL_SHELL);
-#if defined(ADVICON)
         ImageHover = GetSmallHover(BUILTIN_ICON_TOOL_SHELL);
-#endif //ADVICON
       }
 
       // Create a legacy entry for this volume
-#if defined(ADVICON)
+
       AddToolEntry(Custom->Path, Custom->FullTitle, Custom->Title, Volume, Image, ImageHover, Custom->Hotkey, Custom->Options);
-#else //ADVICON
-      AddToolEntry(Custom->Path, Custom->FullTitle, Custom->Title, Volume, Image, Custom->Hotkey, Custom->Options);
-#endif //ADVICON
 
       DBG("match!\n");
       break; // break scan volumes, continue scan entries

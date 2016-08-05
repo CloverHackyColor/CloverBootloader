@@ -175,7 +175,6 @@ INTN OldChosenTheme;
 
 BOOLEAN mGuiReady = FALSE;
 
-#if defined(ADVICON)
 REFIT_MENU_ENTRY MenuEntryOptions  = { L"Options", TAG_OPTIONS, 1, 0, 'O', NULL, NULL, NULL, NULL,
   {0, 0, 0, 0}, ActionEnter, ActionEnter, ActionNone, ActionNone, NULL };
 REFIT_MENU_ENTRY MenuEntryAbout    = { L"About Clover", TAG_ABOUT, 1, 0, 'A', NULL, NULL, NULL, NULL,
@@ -188,20 +187,6 @@ REFIT_MENU_ENTRY MenuEntryReturn   = { L"Return", TAG_RETURN, 0, 0, 0, NULL, NUL
   {0, 0, 0, 0}, ActionEnter, ActionEnter, ActionNone, ActionNone,  NULL };
 REFIT_MENU_ENTRY MenuEntryHelp    = { L"Help", TAG_HELP, 1, 0, 'H', NULL, NULL, NULL, NULL,
   {0, 0, 0, 0}, ActionSelect, ActionEnter, ActionNone, ActionNone,  NULL };
-#else //ADVICON
-REFIT_MENU_ENTRY MenuEntryOptions  = { L"Options", TAG_OPTIONS, 1, 0, 'O', NULL, NULL, NULL,
-  {0, 0, 0, 0}, ActionEnter, ActionEnter, ActionNone, ActionNone, NULL };
-REFIT_MENU_ENTRY MenuEntryAbout    = { L"About Clover", TAG_ABOUT, 1, 0, 'A', NULL, NULL, NULL,
-  {0, 0, 0, 0}, ActionEnter, ActionEnter, ActionNone, ActionNone,  NULL };
-REFIT_MENU_ENTRY MenuEntryReset    = { L"Restart Computer", TAG_RESET, 1, 0, 'R', NULL, NULL, NULL,
-  {0, 0, 0, 0}, ActionSelect, ActionEnter, ActionNone, ActionNone,  NULL };
-REFIT_MENU_ENTRY MenuEntryShutdown = { L"Exit Clover", TAG_SHUTDOWN, 1, 0, 'U', NULL, NULL, NULL,
-  {0, 0, 0, 0}, ActionSelect, ActionEnter, ActionNone, ActionNone,  NULL };
-REFIT_MENU_ENTRY MenuEntryReturn   = { L"Return", TAG_RETURN, 0, 0, 0, NULL, NULL, NULL,
-  {0, 0, 0, 0}, ActionEnter, ActionEnter, ActionNone, ActionNone,  NULL };
-REFIT_MENU_ENTRY MenuEntryHelp    = { L"Help", TAG_HELP, 1, 0, 'H', NULL, NULL, NULL,
-  {0, 0, 0, 0}, ActionSelect, ActionEnter, ActionNone, ActionNone,  NULL };
-#endif //ADVICON
 
 REFIT_MENU_SCREEN MainMenu    = {1, L"Main Menu", NULL, 0, NULL, 0, NULL, 0, L"Automatic boot", NULL, FALSE, FALSE, 0, 0, 0, 0, {0, 0, 0, 0}, NULL};
 REFIT_MENU_SCREEN AboutMenu   = {2, L"About",     NULL, 0, NULL, 0, NULL, 0, NULL,              NULL, FALSE, FALSE, 0, 0, 0, 0, {0, 0, 0, 0}, NULL};
@@ -1494,15 +1479,17 @@ VOID InitSelection(VOID)
     SelectionImages[5] = egCreateFilledImage(INDICATOR_SIZE, INDICATOR_SIZE,
                                              TRUE, &MenuBackgroundPixel);
   }
-  
+
+/*
+  Button & radio, or any other next icons with builtin icon as fallback shoud synced to:
+   - BUILTIN_ICON_* in lib.h
+   - BuiltinIconTable in icns.c
+   - Data in egemb_icons.h / scroll_images.h
+*/
+
   // Radio buttons
-#if defined(ADVICON)
   Buttons[0] = egLoadImage(ThemeDir, GetIconsExt(L"radio_button", L"png"), TRUE);
   Buttons[1] = egLoadImage(ThemeDir, GetIconsExt(L"radio_button_selected", L"png"), TRUE);
-#else //ADVICON
-  Buttons[0] = egLoadImage(ThemeDir, L"radio_button.png", TRUE);
-  Buttons[1] = egLoadImage(ThemeDir, L"radio_button_selected.png", TRUE);
-#endif //ADVICON
   if (!Buttons[0]) {
     Buttons[0] = egDecodePNG(&emb_radio_button[0], sizeof(emb_radio_button), 20, TRUE);
   }
@@ -1513,13 +1500,8 @@ VOID InitSelection(VOID)
   Buttons[1] = egEnsureImageSize(Buttons[1], TextHeight, TextHeight, &MenuBackgroundPixel);
     
   // Checkbox
-#if defined(ADVICON)
   Buttons[2] = egLoadImage(ThemeDir, GetIconsExt(L"checkbox", L"png"), TRUE);
   Buttons[3] = egLoadImage(ThemeDir, GetIconsExt(L"checkbox_checked", L"png"), TRUE);
-#else //ADVICON
-  Buttons[2] = egLoadImage(ThemeDir, L"checkbox.png", TRUE);
-  Buttons[3] = egLoadImage(ThemeDir, L"checkbox_checked.png", TRUE);
-#endif //ADVICON
   if (!Buttons[2]) {
     Buttons[2] = egDecodePNG(&emb_checkbox[0], sizeof(emb_checkbox), 15, TRUE);
   }
@@ -2681,60 +2663,28 @@ VOID InitBar(VOID)
 {
   if (ThemeDir) {
     if (!ScrollbarBackgroundImage) {
-#if defined(ADVICON)
       ScrollbarBackgroundImage = egLoadImage(ThemeDir, GetIconsExt(L"scrollbar\\bar_fill", L"png"), FALSE);
-#else //ADVICON
-      ScrollbarBackgroundImage = egLoadImage(ThemeDir, L"scrollbar\\bar_fill.png", FALSE);
-#endif //ADVICON
     }
     if (!BarStartImage) {
-#if defined(ADVICON)
       BarStartImage = egLoadImage(ThemeDir, GetIconsExt(L"scrollbar\\bar_start", L"png"), TRUE);
-#else //ADVICON
-      BarStartImage = egLoadImage(ThemeDir, L"scrollbar\\bar_start.png", TRUE);
-#endif //ADVICON
     }
     if (!BarEndImage) {
-#if defined(ADVICON)
       BarEndImage = egLoadImage(ThemeDir, GetIconsExt(L"scrollbar\\bar_end", L"png"), TRUE);
-#else //ADVICON
-      BarEndImage = egLoadImage(ThemeDir, L"scrollbar\\bar_end.png", TRUE);
-#endif //ADVICON
     }
     if (!ScrollbarImage) {
-#if defined(ADVICON)
       ScrollbarImage = egLoadImage(ThemeDir, GetIconsExt(L"scrollbar\\scroll_fill", L"png"), FALSE);
-#else //ADVICON
-      ScrollbarImage = egLoadImage(ThemeDir, L"scrollbar\\scroll_fill.png", FALSE);
-#endif //ADVICON
     }
     if (!ScrollStartImage) {
-#if defined(ADVICON)
       ScrollStartImage = egLoadImage(ThemeDir, GetIconsExt(L"scrollbar\\scroll_start", L"png"), TRUE);
-#else //ADVICON
-      ScrollStartImage = egLoadImage(ThemeDir, L"scrollbar\\scroll_start.png", TRUE);
-#endif //ADVICON
     }
     if (!ScrollEndImage) {
-#if defined(ADVICON)
       ScrollEndImage = egLoadImage(ThemeDir, GetIconsExt(L"scrollbar\\scroll_end", L"png"), TRUE);
-#else //ADVICON
-      ScrollEndImage = egLoadImage(ThemeDir, L"scrollbar\\scroll_end.png", TRUE);
-#endif //ADVICON
     }
     if (!UpButtonImage) {
-#if defined(ADVICON)
       UpButtonImage = egLoadImage(ThemeDir, GetIconsExt(L"scrollbar\\up_button", L"png"), TRUE);
-#else //ADVICON
-      UpButtonImage = egLoadImage(ThemeDir, L"scrollbar\\up_button.png", TRUE);
-#endif //ADVICON
     }
     if (!DownButtonImage) {
-#if defined(ADVICON)
       DownButtonImage = egLoadImage(ThemeDir, GetIconsExt(L"scrollbar\\down_button", L"png"), TRUE);
-#else //ADVICON
-      DownButtonImage = egLoadImage(ThemeDir, L"scrollbar\\down_button.png", TRUE);
-#endif //ADVICON
     }
   }
 
@@ -2763,7 +2713,7 @@ VOID InitBar(VOID)
     DownButtonImage = egDecodePNG(&emb_scroll_down_button[0], sizeof(emb_scroll_down_button), 20, TRUE);
   }
   UpButton.Width      = ScrollWidth; // 16
-  UpButton.Height     = ScrollButtonsHeight; // 20  
+  UpButton.Height     = ScrollButtonsHeight; // 20
   DownButton.Height   = ScrollButtonsHeight;
   BarStart.Height     = ScrollBarDecorationsHeight; // 5
   BarEnd.Height       = ScrollBarDecorationsHeight;
@@ -3096,11 +3046,7 @@ static VOID DrawMainMenuEntry(REFIT_MENU_ENTRY *Entry, BOOLEAN selected, INTN XP
 
   if (!MainImage) {
     if (ThemeDir) {
-#if defined(ADVICON)
       MainImage = egLoadIcon(ThemeDir, GetIconsExt(L"icons\\os_mac", L"icns"), Scale << 3);
-#else //ADVICON
-      MainImage = egLoadIcon(ThemeDir, L"icons\\os_mac.icns", Scale << 3);
-#endif //ADVICON
     }
     if (!MainImage) {
       MainImage = DummyImage(Scale << 3);
@@ -3113,7 +3059,6 @@ static VOID DrawMainMenuEntry(REFIT_MENU_ENTRY *Entry, BOOLEAN selected, INTN XP
     SelectionImages[2]->HasAlpha = TRUE;
     SelectionImages[4]->HasAlpha = TRUE;
     //MainImage->HasAlpha = TRUE;
-#if defined(ADVICON)
     BltImageCompositeBadge(
       MainImage,
       SelectionImages[((Entry->Row == 0) ? 0 : 2) + (selected ? 0 : 1)],
@@ -3121,15 +3066,8 @@ static VOID DrawMainMenuEntry(REFIT_MENU_ENTRY *Entry, BOOLEAN selected, INTN XP
         ? (Entry->ImageHover ? Entry->ImageHover : ((Entry->Row == 0) ? Entry->BadgeImage : NULL))
         : ((Entry->Row == 0) ? Entry->BadgeImage : NULL),
       XPos, YPos, Scale);
-#else //ADVICON
-    BltImageCompositeBadge(MainImage,
-                           SelectionImages[((Entry->Row == 0) ? 0 : 2) + (selected ? 0 : 1)],
-                           (Entry->Row == 0) ? Entry->BadgeImage:NULL,
-                           XPos, YPos, Scale);
-#endif //ADVICON
 
   } else {
-#if defined(ADVICON)
     BltImageCompositeBadge(
       SelectionImages[((Entry->Row == 0) ? 0 : 2) + (selected ? 0 : 1)],
       MainImage,
@@ -3137,11 +3075,6 @@ static VOID DrawMainMenuEntry(REFIT_MENU_ENTRY *Entry, BOOLEAN selected, INTN XP
         ? (Entry->ImageHover ? Entry->ImageHover : ((Entry->Row == 0) ? Entry->BadgeImage : NULL))
         : ((Entry->Row == 0) ? Entry->BadgeImage : NULL),
       XPos, YPos, Scale);
-#else //ADVICON
-    BltImageCompositeBadge(SelectionImages[((Entry->Row == 0) ? 0 : 2) + (selected ? 0 : 1)],
-                           MainImage, (Entry->Row == 0) ? Entry->BadgeImage:NULL,
-                           XPos, YPos, Scale);
-#endif //ADVICON
   }
     
   if (GlobalConfig.BootCampStyle) {

@@ -334,10 +334,9 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath,
   LOADER_ENTRY    *Entry;
   INTN             i;
   CHAR8           *indent = "    ";
-#if defined(ADVICON)
   CHAR16          *HoverImage;
   CHAR16          *OSIconNameTmp = AllocateZeroPool(64);
-#endif //ADVICON
+
   // Check parameters are valid
   if ((LoaderPath == NULL) || (*LoaderPath == 0) || (Volume == NULL)) {
     return NULL;
@@ -578,9 +577,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath,
 
   Entry->me.ShortcutLetter = (Hotkey == 0) ? ShortcutLetter : Hotkey;
 
-#if defined(ADVICON)
   OSIconNameTmp = AllocateCopyPool(StrSize(OSIconName), OSIconName);
-#endif //ADVICON
 
   // get custom volume icon if present
 
@@ -590,11 +587,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath,
     } else if (Image) {
       Entry->me.Image = Image;
     } else {
-#if defined(ADVICON)
       Entry->me.Image = LoadOSIcon(OSIconNameTmp, L"unknown", 128, FALSE, TRUE);
-#else //ADVICON
-      Entry->me.Image = LoadOSIcon(OSIconName, L"unknown", 128, FALSE, TRUE);
-#endif //ADVICON
     }
 
   // Load DriveImage
@@ -608,19 +601,15 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath,
     } else {
       Entry->me.BadgeImage = egCopyScaledImage(Entry->me.Image, GlobalConfig.BadgeScale);
       // DBG(" Show badge as OSImage.");
-#if defined(ADVICON)
       HoverImage = AllocateZeroPool(sizeof(OSIconNameTmp));
       HoverImage = GetIconsExt(PoolPrint(L"icons\\%s", OSIconNameTmp), L"icns");
       Entry->me.ImageHover = LoadHoverIcon(HoverImage, 128);
       FreePool(HoverImage);
-#endif //ADVICON
     }
   }
 
-#if defined(ADVICON)
   FreePool(OSIconName);
   FreePool(OSIconNameTmp);
-#endif //ADVICON
 
   if (BootBgColor != NULL) {
     Entry->BootBgColor = BootBgColor;

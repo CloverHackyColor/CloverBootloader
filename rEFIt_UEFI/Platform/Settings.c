@@ -28,10 +28,8 @@
 
 
 ACPI_PATCHED_AML                *ACPIPatchedAML;
-SYSVARIABLES                     *SysVariables;
-#if defined(ADVICON)
+SYSVARIABLES                    *SysVariables;
 CHAR16                          *IconFormat = NULL;
-#endif //ADVICON
 
 TagPtr                          gConfigDict[NUM_OF_CONFIGS] = {NULL, NULL, NULL};
 
@@ -130,9 +128,7 @@ REFIT_CONFIG   GlobalConfig = {
   FALSE,          // BOOLEAN     Proportional;
   FALSE,          // BOOLEAN     NoEarlyProgress;
   0,              // INTN        PruneScrollRows;
-#if defined(ADVICON)
   ICON_FORMAT_DEF // INTN        IconFormat;
-#endif //ADVICON
 };
 
 /*
@@ -3051,14 +3047,12 @@ GetThemeTagSettings (
   }
   FreeScrollBar();
 
-#if defined(ADVICON)
   if (IconFormat != NULL) {
     FreePool (IconFormat);
     IconFormat = NULL;
   }
 
   GlobalConfig.IconFormat = ICON_FORMAT_DEF;
-#endif //ADVICON
 
   // if NULL parameter, quit after setting default values, this is embedded theme
   if (DictPointer == NULL) {
@@ -3423,7 +3417,6 @@ GetThemeTagSettings (
   }
 
   // set file defaults in case they were not set
-#if defined(ADVICON)
   Dict = GetProperty (DictPointer, "Icon");
   if (Dict != NULL) {
     Dict2 = GetProperty (Dict, "Format");
@@ -3461,26 +3454,6 @@ GetThemeTagSettings (
   if (GlobalConfig.FontFileName == NULL) {
     GlobalConfig.FontFileName = GetIconsExt(L"font", L"png");
   }
-#else //ADVICON
-  if (GlobalConfig.BackgroundName == NULL) {
-    GlobalConfig.BackgroundName         = PoolPrint (L"background.png");
-  }
-  if (GlobalConfig.BannerFileName == NULL) {
-    GlobalConfig.BannerFileName         = PoolPrint (L"logo.png");
-  }
-  if (GlobalConfig.SelectionSmallFileName == NULL) {
-    GlobalConfig.SelectionSmallFileName = PoolPrint (L"selection_small.png");
-  }
-  if (GlobalConfig.SelectionBigFileName == NULL) {
-    GlobalConfig.SelectionBigFileName   = PoolPrint (L"selection_big.png");
-  }
-  if (GlobalConfig.SelectionIndicatorName == NULL) {
-    GlobalConfig.SelectionIndicatorName = PoolPrint (L"selection_indicator.png");
-  }
-  if (GlobalConfig.FontFileName == NULL) {
-    GlobalConfig.FontFileName = PoolPrint (L"font.png");
-  }
-#endif //ADVICON
 
   return EFI_SUCCESS;
 }
@@ -5744,7 +5717,7 @@ GetDevices ()
               AsciiSPrint (gfx->Model,  64, "%a", info->model_name);
               AsciiSPrint (gfx->Config, 64, "%a", card_configs[info->cfg_name].name);
               gfx->Ports                  = card_configs[info->cfg_name].ports;
-              DBG (" - GFX (Radeon) model=%a\n", gfx->Model);
+              DBG (" - GFX: Vendor=%x model=%a (Radeon)\n", Pci.Hdr.VendorId, gfx->Model);
 
               SlotDevice                  = &SlotDevices[0];
               SlotDevice->SegmentGroupNum = (UINT16)Segment;
@@ -5759,7 +5732,7 @@ GetDevices ()
             case 0x8086:
               gfx->Vendor                 = Intel;
               AsciiSPrint (gfx->Model, 64, "%a", get_gma_model (Pci.Hdr.DeviceId));
-              DBG (" - GFX (Intel) model=%a\n", gfx->Model);
+              DBG (" - GFX: Vendor=%x model=%a (Intel)\n", Pci.Hdr.VendorId, gfx->Model);
               gfx->Ports = 1;
               /*
                SlotDevice                  = &SlotDevices[2];
@@ -5790,7 +5763,7 @@ GetDevices ()
                                              NULL) //NULL: get from generic lists
                            );
 
-              DBG (" - GFX (Nvidia) model=%a family %x\n", gfx->Model, gfx->Family);
+              DBG (" - GFX: Vendor=%x model=%a family %x (Nvidia)\n", Pci.Hdr.VendorId, gfx->Model, gfx->Family);
               gfx->Ports                  = 0;
 
               SlotDevice                  = &SlotDevices[1];
@@ -5823,30 +5796,32 @@ GetDevices ()
           AsciiSPrint (SlotDevice->SlotName, 31, "Airport");
           SlotDevice->SlotID          = 0;
           SlotDevice->SlotType        = SlotTypePciExpressX1;
+          DBG(" - WIFI: Vendor=%x (", Pci.Hdr.VendorId);
           switch (Pci.Hdr.VendorId) {
             case 0x11ab:
-              DBG("  Marvell WiFi\n");
+              DBG("Marvell");
               break;
             case 0x10ec:
-              DBG("  Realtek WiFi\n");
+              DBG("Realtek");
               break;
             case 0x14e4:
-              DBG("  Broadcom WiFi\n");
+              DBG("Broadcom");
               break;
             case 0x1969:
-              DBG("  Atheros WiFi\n");
+              DBG("Atheros");
               break;
             case 0x1814:
-              DBG("  Ralink WiFi\n");
+              DBG("Ralink");
               break;
             case 0x8086:
-              DBG("  Intel WiFi\n");
+              DBG("Intel");
               break;
-              
+
             default:
-              DBG("  Unknown vendor WiFi\n");
+              DBG("Unknown vendor");
               break;
           }
+          DBG(")\n");
         }
 
         else if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_NETWORK) &&
@@ -5863,31 +5838,32 @@ GetDevices ()
           Bar0                        = Pci.Device.Bar[0];
           gLanMmio[nLanCards++]       = (UINT8*)(UINTN)(Bar0 & ~0x0f);
           if (nLanCards >= 4) {
-            DBG(" - [!] too many LAN card in the system\n");
+            DBG(" - [!] too many LAN card in the system (upto 4 limit exceeded), overriding the last one\n");
             nLanCards = 3; // last one will be rewritten
           }
-          DBG("LAN %d, Vendor=%x ", nLanCards-1, Pci.Hdr.VendorId);
+          DBG(" - LAN: %d Vendor=%x (", nLanCards-1, Pci.Hdr.VendorId);
           switch (Pci.Hdr.VendorId) {
             case 0x11ab:
-              DBG("Marvell\n");
+              DBG("Marvell");
               break;
             case 0x10ec:
-              DBG("Realtek\n");
+              DBG("Realtek");
               break;
             case 0x14e4:
-              DBG("Broadcom\n");
+              DBG("Broadcom");
               break;
             case 0x1969:
-              DBG("Atheros\n");
+              DBG("Atheros");
               break;
             case 0x8086:
-              DBG("Intel\n");
+              DBG("Intel");
               break;
-              
+
             default:
-              DBG("Unknown vendor\n");
+              DBG("Unknown vendor");
               break;
           }
+          DBG(")\n");
         }
 
         else if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_SERIAL) &&
@@ -5901,6 +5877,7 @@ GetDevices ()
           SlotDevice->SlotID          = 3;
           SlotDevice->SlotType        = SlotTypePciExpressX4;
         }
+
         else if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_MEDIA) &&
                  ((Pci.Hdr.ClassCode[1] == PCI_CLASS_MEDIA_HDA) ||
                   (Pci.Hdr.ClassCode[1] == PCI_CLASS_MEDIA_AUDIO))) {
