@@ -5816,7 +5816,6 @@ GetDevices ()
         else if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_NETWORK) &&
                  (Pci.Hdr.ClassCode[1] == PCI_CLASS_NETWORK_OTHER)) {
           SlotDevice                  = &SlotDevices[6];
-          //       DBG ("Found AirPort. Landing enabled...\n");
           SlotDevice->SegmentGroupNum = (UINT16)Segment;
           SlotDevice->BusNum          = (UINT8)Bus;
           SlotDevice->DevFuncNum      = (UINT8)((Device << 3) | (Function & 0x07));
@@ -5824,6 +5823,30 @@ GetDevices ()
           AsciiSPrint (SlotDevice->SlotName, 31, "Airport");
           SlotDevice->SlotID          = 0;
           SlotDevice->SlotType        = SlotTypePciExpressX1;
+          switch (Pci.Hdr.VendorId) {
+            case 0x11ab:
+              DBG("  Marvell WiFi\n");
+              break;
+            case 0x10ec:
+              DBG("  Realtek WiFi\n");
+              break;
+            case 0x14e4:
+              DBG("  Broadcom WiFi\n");
+              break;
+            case 0x1969:
+              DBG("  Atheros WiFi\n");
+              break;
+            case 0x1814:
+              DBG("  Ralink WiFi\n");
+              break;
+            case 0x8086:
+              DBG("  Intel WiFi\n");
+              break;
+              
+            default:
+              DBG("  Unknown vendor WiFi\n");
+              break;
+          }
         }
 
         else if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_NETWORK) &&
@@ -5843,7 +5866,28 @@ GetDevices ()
             DBG(" - [!] too many LAN card in the system\n");
             nLanCards = 3; // last one will be rewritten
           }
-          DBG(" - LAN %d, Vendor=%x, MMIO=%p\n", nLanCards-1, Pci.Hdr.VendorId, gLanMmio[nLanCards - 1]);
+          DBG("LAN %d, Vendor=%x ", nLanCards-1, Pci.Hdr.VendorId);
+          switch (Pci.Hdr.VendorId) {
+            case 0x11ab:
+              DBG("Marvell\n");
+              break;
+            case 0x10ec:
+              DBG("Realtek\n");
+              break;
+            case 0x14e4:
+              DBG("Broadcom\n");
+              break;
+            case 0x1969:
+              DBG("Atheros\n");
+              break;
+            case 0x8086:
+              DBG("Intel\n");
+              break;
+              
+            default:
+              DBG("Unknown vendor\n");
+              break;
+          }
         }
 
         else if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_SERIAL) &&
