@@ -1354,6 +1354,8 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
     CUSTOM_LOADER_ENTRY *CustomSubEntry;
     LOADER_ENTRY        *Entry = NULL;
     EG_IMAGE            *Image, *DriveImage;
+    EG_IMAGE            *ImageHover = NULL;
+    CHAR16              *ImageHoverPath;
     EFI_GUID            *Guid = NULL;
     UINT64               VolumeSize;
 
@@ -1569,7 +1571,9 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
       DBG("skipped because path does not exist\n");
       continue;
     }
+
     // Change to custom image if needed
+/*
     Image = Custom->Image;
     if ((Image == NULL) && Custom->ImagePath) {
       Image = egLoadImage(Volume->RootDir, Custom->ImagePath, TRUE);
@@ -1586,6 +1590,37 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
         }
       }
     }
+*/
+
+    Image = Custom->Image;
+    if ((Image == NULL) && Custom->ImagePath) {
+      ImageHoverPath = EfiStrDuplicate(Custom->ImagePath);
+      ReplaceExtension(ImageHoverPath, L"");
+      ImageHoverPath = PoolPrint(L"%s_hover.%s", ImageHoverPath, egFindExtension(Custom->ImagePath));
+      Image = egLoadImage(Volume->RootDir, Custom->ImagePath, TRUE);
+      if (Image == NULL) {
+        Image = egLoadImage(ThemeDir, Custom->ImagePath, TRUE);
+        if (Image == NULL) {
+          Image = egLoadImage(SelfDir, Custom->ImagePath, TRUE);
+          if (Image == NULL) {
+            Image = egLoadImage(SelfRootDir, Custom->ImagePath, TRUE);
+            if (Image != NULL) {
+              ImageHover = egLoadImage(SelfRootDir, ImageHoverPath, TRUE);
+            }
+          } else {
+            ImageHover = egLoadImage(SelfDir, ImageHoverPath, TRUE);
+          }
+        } else {
+          ImageHover = egLoadImage(ThemeDir, ImageHoverPath, TRUE);
+        }
+      } else {
+        ImageHover = egLoadImage(Volume->RootDir, ImageHoverPath, TRUE);
+      }
+      FreePool(ImageHoverPath);
+    } else {
+      // Image base64 data
+    }
+
     // Change to custom drive image if needed
     DriveImage = Custom->DriveImage;
     if ((DriveImage == NULL) && Custom->DriveImagePath) {
@@ -1763,6 +1798,9 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
             Custom->Settings, Custom->CommonSettings?"not":"");
         if (!Custom->CommonSettings) {
           Entry->Settings = Custom->Settings;
+        }
+        if (ImageHover != NULL) {
+          Entry->me.ImageHover = ImageHover;
         }
         if (OSFLAG_ISUNSET(Custom->Flags, OSFLAG_NODEFAULTMENU)) {
           AddDefaultMenu(Entry);

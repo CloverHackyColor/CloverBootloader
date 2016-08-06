@@ -48,7 +48,8 @@
 #endif
 
 
-static LEGACY_ENTRY * AddLegacyEntry(IN CHAR16 *FullTitle, IN CHAR16 *LoaderTitle, IN REFIT_VOLUME *Volume, IN EG_IMAGE *Image, IN EG_IMAGE *DriveImage, IN CHAR16 Hotkey, IN BOOLEAN CustomEntry)
+static LEGACY_ENTRY * AddLegacyEntry(IN CHAR16 *FullTitle, IN CHAR16 *LoaderTitle, IN REFIT_VOLUME *Volume, IN EG_IMAGE *Image, IN EG_IMAGE *ImageHover,
+                                     IN EG_IMAGE *DriveImage, IN CHAR16 Hotkey, IN BOOLEAN CustomEntry)
 {
   LEGACY_ENTRY      *Entry, *SubEntry;
   REFIT_MENU_SCREEN *SubScreen;
@@ -149,7 +150,9 @@ static LEGACY_ENTRY * AddLegacyEntry(IN CHAR16 *FullTitle, IN CHAR16 *LoaderTitl
       Entry->me.BadgeImage = egCopyScaledImage(Entry->me.DriveImage, GlobalConfig.BadgeScale);
     } else {
       Entry->me.BadgeImage = egCopyScaledImage(Entry->me.Image, GlobalConfig.BadgeScale);
-      if (OSIconNameHover != NULL) {
+      if (ImageHover != NULL) {
+        Entry->me.ImageHover = ImageHover;
+      } else if (OSIconNameHover != NULL) {
         HoverImage = AllocateZeroPool(sizeof(OSIconNameHover));
         HoverImage = GetIconsExt(PoolPrint(L"icons\\%s", OSIconNameHover), L"icns");
         Entry->me.ImageHover = LoadHoverIcon(HoverImage, 128);
@@ -255,7 +258,7 @@ VOID ScanLegacy(VOID)
     
     if (ShowVolume && (!Volume->Hidden)){
       DBG(" add legacy\n");
-      AddLegacyEntry(NULL, NULL, Volume, NULL, NULL, 0, FALSE);
+      AddLegacyEntry(NULL, NULL, Volume, NULL, NULL, NULL, 0, FALSE);
     } else {
       DBG(" hidden\n");
     }
@@ -271,6 +274,8 @@ VOID AddCustomLegacy(VOID)
   CUSTOM_LEGACY_ENTRY *Custom;
   EG_IMAGE            *Image, *DriveImage;
   UINTN                i = 0;
+  EG_IMAGE            *ImageHover = NULL;
+  CHAR16              *ImageHoverPath;
   
 //  DBG("Custom legacy start\n");
   DbgHeader("AddCustomLegacy");
@@ -365,7 +370,10 @@ VOID AddCustomLegacy(VOID)
         DBG("skipped because wrong type\n");
         continue;
       }
+
       // Change to custom image if needed
+/*
+
       Image = Custom->Image;
       if ((Image == NULL) && Custom->ImagePath) {
         Image = egLoadImage(Volume->RootDir, Custom->ImagePath, TRUE);
@@ -382,6 +390,37 @@ VOID AddCustomLegacy(VOID)
           }
         }
       }
+*/
+
+      Image = Custom->Image;
+      if ((Image == NULL) && Custom->ImagePath) {
+        ImageHoverPath = EfiStrDuplicate(Custom->ImagePath);
+        ReplaceExtension(ImageHoverPath, L"");
+        ImageHoverPath = PoolPrint(L"%s_hover.%s", ImageHoverPath, egFindExtension(Custom->ImagePath));
+        Image = egLoadImage(Volume->RootDir, Custom->ImagePath, TRUE);
+        if (Image == NULL) {
+          Image = egLoadImage(ThemeDir, Custom->ImagePath, TRUE);
+          if (Image == NULL) {
+            Image = egLoadImage(SelfDir, Custom->ImagePath, TRUE);
+            if (Image == NULL) {
+              Image = egLoadImage(SelfRootDir, Custom->ImagePath, TRUE);
+              if (Image != NULL) {
+                ImageHover = egLoadImage(SelfRootDir, ImageHoverPath, TRUE);
+              }
+            } else {
+              ImageHover = egLoadImage(SelfDir, ImageHoverPath, TRUE);
+            }
+          } else {
+            ImageHover = egLoadImage(ThemeDir, ImageHoverPath, TRUE);
+          }
+        } else {
+          ImageHover = egLoadImage(Volume->RootDir, ImageHoverPath, TRUE);
+        }
+        FreePool(ImageHoverPath);
+      } else {
+        // Image base64 data
+      }
+
       // Change to custom drive image if needed
       DriveImage = Custom->DriveImage;
       if ((DriveImage == NULL) && Custom->DriveImagePath) {
@@ -400,7 +439,7 @@ VOID AddCustomLegacy(VOID)
         }
       }
       // Create a legacy entry for this volume
-      AddLegacyEntry(Custom->FullTitle, Custom->Title, Volume, Image, DriveImage, Custom->Hotkey, TRUE);
+      AddLegacyEntry(Custom->FullTitle, Custom->Title, Volume, Image, ImageHover, DriveImage, Custom->Hotkey, TRUE);
       DBG("match!\n");
     }
   }
