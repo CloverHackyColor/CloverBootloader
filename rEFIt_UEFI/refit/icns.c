@@ -205,15 +205,18 @@ EG_IMAGE * BuiltinIcon(IN UINTN Id)
 // Load an icon for an operating system
 //
 
-EG_IMAGE * LoadOSIcon(IN OUT CHAR16 *OSIconName OPTIONAL, IN CHAR16 *FallbackIconName, IN UINTN PixelSize, IN BOOLEAN BootLogo, IN BOOLEAN WantDummy)
+EG_IMAGE * LoadOSIcon(IN CHAR16 *OSIconName OPTIONAL, CHAR16 **OSIconNameHover, IN CHAR16 *FallbackIconName, IN UINTN PixelSize, IN BOOLEAN BootLogo, IN BOOLEAN WantDummy)
 {
   EG_IMAGE        *Image;
   CHAR16          CutoutName[16]/*, FirstName[16]*/, TmpName[64];
   CHAR16          FileName[256];
   UINTN           StartIndex, Index, NextIndex;
 
+  *OSIconNameHover = NULL;
+
   if (GlobalConfig.TextOnly)      // skip loading if it's not used anyway
     return NULL;
+
   Image = NULL;
   //*FirstName = 0;
 
@@ -242,7 +245,8 @@ EG_IMAGE * LoadOSIcon(IN OUT CHAR16 *OSIconName OPTIONAL, IN CHAR16 *FallbackIco
     // try to load it
     Image = egLoadIcon(ThemeDir, FileName, PixelSize);
     if (Image != NULL) {
-      UnicodeSPrint(OSIconName, 64, L"%s_hover", TmpName);
+      *OSIconNameHover = AllocateZeroPool(64);
+      UnicodeSPrint(*OSIconNameHover, 64, L"%s_hover", TmpName);
       return Image;
     }
 
@@ -260,13 +264,14 @@ EG_IMAGE * LoadOSIcon(IN OUT CHAR16 *OSIconName OPTIONAL, IN CHAR16 *FallbackIco
   UnicodeSPrint(FileName, 512, GetIconsExt(PoolPrint(L"icons\\%s", TmpName), L"icns"));
   Image = egLoadIcon(ThemeDir, FileName, PixelSize);
   if (Image != NULL) {
-    UnicodeSPrint(OSIconName, 64, L"%s_hover", TmpName);
+    *OSIconNameHover = AllocateZeroPool(64);
+    UnicodeSPrint(*OSIconNameHover, 64, L"%s_hover", TmpName);
     return Image;
   }
 
   // try the fallback name with os_ instead of boot_
   if (BootLogo) {
-    Image = LoadOSIcon(NULL, FallbackIconName, PixelSize, FALSE, WantDummy);
+    Image = LoadOSIcon(NULL, NULL, FallbackIconName, PixelSize, FALSE, WantDummy);
     if (Image != NULL)
       return Image;
   }

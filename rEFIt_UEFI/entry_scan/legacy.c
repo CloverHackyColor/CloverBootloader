@@ -55,6 +55,9 @@ static LEGACY_ENTRY * AddLegacyEntry(IN CHAR16 *FullTitle, IN CHAR16 *LoaderTitl
   CHAR16            *VolDesc;
   CHAR16             ShortcutLetter = 0;
   INTN               i;
+  CHAR16            *HoverImage;
+  CHAR16            *OSIconNameHover = NULL;
+  EG_IMAGE          *ImageTmp;
   
   if (Volume == NULL) {
     return NULL;
@@ -113,7 +116,7 @@ static LEGACY_ENTRY * AddLegacyEntry(IN CHAR16 *FullTitle, IN CHAR16 *LoaderTitl
     VolDesc = Volume->VolName;
   else
     VolDesc = (Volume->DiskKind == DISK_KIND_OPTICAL) ? L"CD" : L"HD";
-  
+
   // prepare the menu entry
   Entry = AllocateZeroPool(sizeof(LEGACY_ENTRY));
   if (FullTitle) {
@@ -128,11 +131,10 @@ static LEGACY_ENTRY * AddLegacyEntry(IN CHAR16 *FullTitle, IN CHAR16 *LoaderTitl
   Entry->me.Tag          = TAG_LEGACY;
   Entry->me.Row          = 0;
   Entry->me.ShortcutLetter = (Hotkey == 0) ? ShortcutLetter : Hotkey;
-  if (Image) {
-    Entry->me.Image = Image;
-  } else {
-    Entry->me.Image = LoadOSIcon(Volume->LegacyOS->IconName, L"legacy", 128, FALSE, TRUE);
-  }
+
+  ImageTmp = LoadOSIcon(Volume->LegacyOS->IconName, &OSIconNameHover, L"unknown", 128, FALSE, TRUE);
+  Entry->me.Image = Image ? Image : ImageTmp;
+
   Entry->me.DriveImage = (DriveImage != NULL) ? DriveImage : ScanVolumeDefaultIcon(Volume, Volume->LegacyOS->Type);
   //  DBG("HideBadges=%d Volume=%s\n", GlobalConfig.HideBadges, Volume->VolName);
   //  DBG("Title=%s OSName=%s OSIconName=%s\n", LoaderTitle, Volume->OSName, Volume->OSIconName);
@@ -147,8 +149,16 @@ static LEGACY_ENTRY * AddLegacyEntry(IN CHAR16 *FullTitle, IN CHAR16 *LoaderTitl
       Entry->me.BadgeImage = egCopyScaledImage(Entry->me.DriveImage, GlobalConfig.BadgeScale);
     } else {
       Entry->me.BadgeImage = egCopyScaledImage(Entry->me.Image, GlobalConfig.BadgeScale);
+      if (OSIconNameHover != NULL) {
+        HoverImage = AllocateZeroPool(sizeof(OSIconNameHover));
+        HoverImage = GetIconsExt(PoolPrint(L"icons\\%s", OSIconNameHover), L"icns");
+        Entry->me.ImageHover = LoadHoverIcon(HoverImage, 128);
+        FreePool(HoverImage);
+      }
     }
   }
+
+  FreePool(OSIconNameHover);
   
   Entry->Volume           = Volume;
   Entry->DevicePathString = Volume->DevicePathString;
@@ -366,7 +376,7 @@ VOID AddCustomLegacy(VOID)
             if (Image == NULL) {
               Image = egLoadImage(SelfRootDir, Custom->ImagePath, TRUE);
               if (Image == NULL) {
-                Image = LoadOSIcon(Custom->ImagePath, L"unknown", 128, FALSE, FALSE);
+                Image = LoadOSIcon(Custom->ImagePath, NULL, L"unknown", 128, FALSE, FALSE);
               }
             }
           }

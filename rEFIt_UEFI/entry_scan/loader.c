@@ -335,7 +335,8 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath,
   INTN             i;
   CHAR8           *indent = "    ";
   CHAR16          *HoverImage;
-  CHAR16          *OSIconNameTmp = AllocateZeroPool(64);
+  CHAR16          *OSIconNameHover = NULL;
+  EG_IMAGE        *ImageTmp;
 
   // Check parameters are valid
   if ((LoaderPath == NULL) || (*LoaderPath == 0) || (Volume == NULL)) {
@@ -577,18 +578,14 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath,
 
   Entry->me.ShortcutLetter = (Hotkey == 0) ? ShortcutLetter : Hotkey;
 
-  OSIconNameTmp = AllocateCopyPool(StrSize(OSIconName), OSIconName);
-
   // get custom volume icon if present
-
-    if (GlobalConfig.CustomIcons && FileExists(Volume->RootDir, L"\\.VolumeIcon.icns")){
-      Entry->me.Image = LoadIcns(Volume->RootDir, L"\\.VolumeIcon.icns", 128);
-      DBG("using VolumeIcon.icns image from Volume\n");
-    } else if (Image) {
-      Entry->me.Image = Image;
-    } else {
-      Entry->me.Image = LoadOSIcon(OSIconNameTmp, L"unknown", 128, FALSE, TRUE);
-    }
+  if (GlobalConfig.CustomIcons && FileExists(Volume->RootDir, L"\\.VolumeIcon.icns")){
+    Entry->me.Image = LoadIcns(Volume->RootDir, L"\\.VolumeIcon.icns", 128);
+    DBG("using VolumeIcon.icns image from Volume\n");
+  } else {
+    ImageTmp = LoadOSIcon(OSIconName, &OSIconNameHover, L"unknown", 128, FALSE, TRUE);
+    Entry->me.Image = Image ? Image : ImageTmp;
+  }
 
   // Load DriveImage
   Entry->me.DriveImage = (DriveImage != NULL) ? DriveImage : ScanVolumeDefaultIcon(Volume, Entry->LoaderType);
@@ -600,16 +597,18 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath,
       // DBG(" Show badge as Drive.");
     } else {
       Entry->me.BadgeImage = egCopyScaledImage(Entry->me.Image, GlobalConfig.BadgeScale);
-      // DBG(" Show badge as OSImage.");
-      HoverImage = AllocateZeroPool(sizeof(OSIconNameTmp));
-      HoverImage = GetIconsExt(PoolPrint(L"icons\\%s", OSIconNameTmp), L"icns");
-      Entry->me.ImageHover = LoadHoverIcon(HoverImage, 128);
-      FreePool(HoverImage);
+      if (OSIconNameHover != NULL) {
+        // DBG(" Show badge as OSImage.");
+        HoverImage = AllocateZeroPool(sizeof(OSIconNameHover));
+        HoverImage = GetIconsExt(PoolPrint(L"icons\\%s", OSIconNameHover), L"icns");
+        Entry->me.ImageHover = LoadHoverIcon(HoverImage, 128);
+        FreePool(HoverImage);
+      }
     }
   }
 
   FreePool(OSIconName);
-  FreePool(OSIconNameTmp);
+  FreePool(OSIconNameHover);
 
   if (BootBgColor != NULL) {
     Entry->BootBgColor = BootBgColor;
@@ -1042,39 +1041,72 @@ VOID ScanLoader(VOID)
       AddLoaderEntry(L"\\EFI\\MICROSOF\\BOOT\\CDBOOT.EFI", L"", L"Microsoft EFI CDBOOT", Volume, NULL, OSTYPE_WINEFI, 0);
     }
     if (gSettings.LinuxScan) {
-    // check for linux loaders
-    for (Index = 0; Index < LinuxEntryDataCount; ++Index) {
-      AddLoaderEntry(LinuxEntryData[Index].Path, L"", LinuxEntryData[Index].Title, Volume,
-                     LoadOSIcon(LinuxEntryData[Index].Icon, L"unknown", 128, FALSE, TRUE), OSTYPE_LIN, OSFLAG_NODEFAULTARGS);
-    }
-    // check for linux kernels
-    PartGUID = FindGPTPartitionGuidInDevicePath(Volume->DevicePath);
-    if ((PartGUID != NULL) && (Volume->RootDir != NULL)) {
-      REFIT_DIR_ITER  Iter;
-      EFI_FILE_INFO  *FileInfo = NULL;
-      EFI_TIME        PreviousTime;
-      CHAR16         *Path = NULL;
-      CHAR16         *Options;
-      // Get the partition UUID and make sure it's lower case
-      CHAR16          PartUUID[40];
-      ZeroMem(&PreviousTime, sizeof(EFI_TIME));
-      UnicodeSPrint(PartUUID, sizeof(PartUUID), L"%g", PartGUID);
-      StrToLower(PartUUID);
-      // open the /boot directory (or whatever directory path)
-      DirIterOpen(Volume->RootDir, LINUX_BOOT_PATH, &Iter);
-      // Check which kernel scan to use
-      switch (gSettings.KernelScan) {
-      case KERNEL_SCAN_FIRST:
-        // First kernel found only
-        while (DirIterNext(&Iter, 2, LINUX_LOADER_SEARCH_PATH, &FileInfo)) {
-          if (FileInfo != NULL) {
-            if (FileInfo->FileSize == 0) {
-              FreePool(FileInfo);
-              FileInfo = NULL;
-              continue;
+      // check for linux loaders
+      for (Index = 0; Index < LinuxEntryDataCount; ++Index) {
+        AddLoaderEntry(LinuxEntryData[Index].Path, L"", LinuxEntryData[Index].Title, Volume,
+                       LoadOSIcon(LinuxEntryData[Index].Icon, NULL, L"unknown", 128, FALSE, TRUE), OSTYPE_LIN, OSFLAG_NODEFAULTARGS);
+      }
+      // check for linux kernels
+      PartGUID = FindGPTPartitionGuidInDevicePath(Volume->DevicePath);
+      if ((PartGUID != NULL) && (Volume->RootDir != NULL)) {
+        REFIT_DIR_ITER  Iter;
+        EFI_FILE_INFO  *FileInfo = NULL;
+        EFI_TIME        PreviousTime;
+        CHAR16         *Path = NULL;
+        CHAR16         *Options;
+        // Get the partition UUID and make sure it's lower case
+        CHAR16          PartUUID[40];
+        ZeroMem(&PreviousTime, sizeof(EFI_TIME));
+        UnicodeSPrint(PartUUID, sizeof(PartUUID), L"%g", PartGUID);
+        StrToLower(PartUUID);
+        // open the /boot directory (or whatever directory path)
+        DirIterOpen(Volume->RootDir, LINUX_BOOT_PATH, &Iter);
+        // Check which kernel scan to use
+        switch (gSettings.KernelScan) {
+          case KERNEL_SCAN_FIRST:
+            // First kernel found only
+            while (DirIterNext(&Iter, 2, LINUX_LOADER_SEARCH_PATH, &FileInfo)) {
+              if (FileInfo != NULL) {
+                if (FileInfo->FileSize == 0) {
+                  FreePool(FileInfo);
+                  FileInfo = NULL;
+                  continue;
+                }
+                // get the kernel file path
+                Path = PoolPrint(L"%s\\%s", LINUX_BOOT_PATH, FileInfo->FileName);
+                if (Path != NULL) {
+                  Options = LinuxKernelOptions(Iter.DirHandle, Basename(Path) + StrLen(LINUX_LOADER_PATH), PartUUID, NULL);
+                  // Add the entry
+                  AddLoaderEntry(Path, (Options == NULL) ? LINUX_DEFAULT_OPTIONS : Options, NULL, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
+                  if (Options != NULL) {
+                    FreePool(Options);
+                  }
+                  FreePool(Path);
+                }
+                // free the file info
+                FreePool(FileInfo);
+                FileInfo = NULL;
+                break;
+              }
             }
-            // get the kernel file path
-            Path = PoolPrint(L"%s\\%s", LINUX_BOOT_PATH, FileInfo->FileName);
+            break;
+
+          case KERNEL_SCAN_LAST:
+            // Last kernel found only
+            while (DirIterNext(&Iter, 2, LINUX_LOADER_SEARCH_PATH, &FileInfo)) {
+              if (FileInfo != NULL) {
+                if (FileInfo->FileSize > 0) {
+                  // get the kernel file path
+                  if (Path != NULL) {
+                    FreePool(Path);
+                  }
+                  Path = PoolPrint(L"%s\\%s", LINUX_BOOT_PATH, FileInfo->FileName);
+                }
+                // free the file info
+                FreePool(FileInfo);
+                FileInfo = NULL;
+              }
+            }
             if (Path != NULL) {
               Options = LinuxKernelOptions(Iter.DirHandle, Basename(Path) + StrLen(LINUX_LOADER_PATH), PartUUID, NULL);
               // Add the entry
@@ -1084,201 +1116,168 @@ VOID ScanLoader(VOID)
               }
               FreePool(Path);
             }
-            // free the file info
-            FreePool(FileInfo);
-            FileInfo = NULL;
             break;
-          }
-        }
-        break;
 
-      case KERNEL_SCAN_LAST:
-        // Last kernel found only
-        while (DirIterNext(&Iter, 2, LINUX_LOADER_SEARCH_PATH, &FileInfo)) {
-          if (FileInfo != NULL) {
-            if (FileInfo->FileSize > 0) {
-              // get the kernel file path
-              if (Path != NULL) {
-                FreePool(Path);
-              }
-              Path = PoolPrint(L"%s\\%s", LINUX_BOOT_PATH, FileInfo->FileName);
-            }
-            // free the file info
-            FreePool(FileInfo);
-            FileInfo = NULL;
-          }
-        }
-        if (Path != NULL) {
-          Options = LinuxKernelOptions(Iter.DirHandle, Basename(Path) + StrLen(LINUX_LOADER_PATH), PartUUID, NULL);
-          // Add the entry
-          AddLoaderEntry(Path, (Options == NULL) ? LINUX_DEFAULT_OPTIONS : Options, NULL, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
-          if (Options != NULL) {
-            FreePool(Options);
-          }
-          FreePool(Path);
-        }
-        break;
-
-      case KERNEL_SCAN_NEWEST:
-        // Newest dated kernel only
-        while (DirIterNext(&Iter, 2, LINUX_LOADER_SEARCH_PATH, &FileInfo)) {
-          if (FileInfo != NULL) {
-            if (FileInfo->FileSize > 0) {
-              // get the kernel file path
-              if ((PreviousTime.Year == 0) || (TimeCmp(&PreviousTime, &(FileInfo->ModificationTime)) < 0)) {
-                if (Path != NULL) {
-                  FreePool(Path);
+          case KERNEL_SCAN_NEWEST:
+            // Newest dated kernel only
+            while (DirIterNext(&Iter, 2, LINUX_LOADER_SEARCH_PATH, &FileInfo)) {
+              if (FileInfo != NULL) {
+                if (FileInfo->FileSize > 0) {
+                  // get the kernel file path
+                  if ((PreviousTime.Year == 0) || (TimeCmp(&PreviousTime, &(FileInfo->ModificationTime)) < 0)) {
+                    if (Path != NULL) {
+                      FreePool(Path);
+                    }
+                    Path = PoolPrint(L"%s\\%s", LINUX_BOOT_PATH, FileInfo->FileName);
+                    PreviousTime = FileInfo->ModificationTime;
+                  }
                 }
-                Path = PoolPrint(L"%s\\%s", LINUX_BOOT_PATH, FileInfo->FileName);
-                PreviousTime = FileInfo->ModificationTime;
+                // free the file info
+                FreePool(FileInfo);
+                FileInfo = NULL;
               }
             }
-            // free the file info
-            FreePool(FileInfo);
-            FileInfo = NULL;
-          }
-        }
-        if (Path != NULL) {
-          Options = LinuxKernelOptions(Iter.DirHandle, Basename(Path) + StrLen(LINUX_LOADER_PATH), PartUUID, NULL);
-          // Add the entry
-          AddLoaderEntry(Path, (Options == NULL) ? LINUX_DEFAULT_OPTIONS : Options, NULL, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
-          if (Options != NULL) {
-            FreePool(Options);
-          }
-          FreePool(Path);
-        }
-        break;
+            if (Path != NULL) {
+              Options = LinuxKernelOptions(Iter.DirHandle, Basename(Path) + StrLen(LINUX_LOADER_PATH), PartUUID, NULL);
+              // Add the entry
+              AddLoaderEntry(Path, (Options == NULL) ? LINUX_DEFAULT_OPTIONS : Options, NULL, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
+              if (Options != NULL) {
+                FreePool(Options);
+              }
+              FreePool(Path);
+            }
+            break;
 
-      case KERNEL_SCAN_OLDEST:
-        // Oldest dated kernel only
-        while (DirIterNext(&Iter, 2, LINUX_LOADER_SEARCH_PATH, &FileInfo)) {
-          if (FileInfo != NULL) {
-            if (FileInfo->FileSize > 0) {
-              // get the kernel file path
-              if ((PreviousTime.Year == 0) || (TimeCmp(&PreviousTime, &(FileInfo->ModificationTime)) > 0)) {
-                if (Path != NULL) {
-                  FreePool(Path);
+          case KERNEL_SCAN_OLDEST:
+            // Oldest dated kernel only
+            while (DirIterNext(&Iter, 2, LINUX_LOADER_SEARCH_PATH, &FileInfo)) {
+              if (FileInfo != NULL) {
+                if (FileInfo->FileSize > 0) {
+                  // get the kernel file path
+                  if ((PreviousTime.Year == 0) || (TimeCmp(&PreviousTime, &(FileInfo->ModificationTime)) > 0)) {
+                    if (Path != NULL) {
+                      FreePool(Path);
+                    }
+                    Path = PoolPrint(L"%s\\%s", LINUX_BOOT_PATH, FileInfo->FileName);
+                    PreviousTime = FileInfo->ModificationTime;
+                  }
                 }
-                Path = PoolPrint(L"%s\\%s", LINUX_BOOT_PATH, FileInfo->FileName);
-                PreviousTime = FileInfo->ModificationTime;
+                // free the file info
+                FreePool(FileInfo);
+                FileInfo = NULL;
               }
             }
-            // free the file info
-            FreePool(FileInfo);
-            FileInfo = NULL;
-          }
-        }
-        if (Path != NULL) {
-          Options = LinuxKernelOptions(Iter.DirHandle, Basename(Path) + StrLen(LINUX_LOADER_PATH), PartUUID, NULL);
-          // Add the entry
-          AddLoaderEntry(Path, (Options == NULL) ? LINUX_DEFAULT_OPTIONS : Options, NULL, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
-          if (Options != NULL) {
-            FreePool(Options);
-          }
-          FreePool(Path);
-        }
-        break;
+            if (Path != NULL) {
+              Options = LinuxKernelOptions(Iter.DirHandle, Basename(Path) + StrLen(LINUX_LOADER_PATH), PartUUID, NULL);
+              // Add the entry
+              AddLoaderEntry(Path, (Options == NULL) ? LINUX_DEFAULT_OPTIONS : Options, NULL, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
+              if (Options != NULL) {
+                FreePool(Options);
+              }
+              FreePool(Path);
+            }
+            break;
 
-      case KERNEL_SCAN_MOSTRECENT:
-        // most recent kernel version only
-        while (DirIterNext(&Iter, 2, LINUX_LOADER_SEARCH_PATH, &FileInfo)) {
-          if (FileInfo != NULL) {
-            if (FileInfo->FileSize > 0) {
-              // get the kernel file path
-              CHAR16 *NewPath = PoolPrint(L"%s\\%s", LINUX_BOOT_PATH, FileInfo->FileName);
-              if (NewPath != NULL) {
-                if ((Path == NULL) || (StrCmp(Path, NewPath) < 0)) {
+          case KERNEL_SCAN_MOSTRECENT:
+            // most recent kernel version only
+            while (DirIterNext(&Iter, 2, LINUX_LOADER_SEARCH_PATH, &FileInfo)) {
+              if (FileInfo != NULL) {
+                if (FileInfo->FileSize > 0) {
+                  // get the kernel file path
+                  CHAR16 *NewPath = PoolPrint(L"%s\\%s", LINUX_BOOT_PATH, FileInfo->FileName);
+                  if (NewPath != NULL) {
+                    if ((Path == NULL) || (StrCmp(Path, NewPath) < 0)) {
+                      if (Path != NULL) {
+                        FreePool(Path);
+                      }
+                      Path = NewPath;
+                    } else {
+                      FreePool(NewPath);
+                    }
+                  }
+                }
+                // free the file info
+                FreePool(FileInfo);
+                FileInfo = NULL;
+              }
+            }
+            if (Path != NULL) {
+              Options = LinuxKernelOptions(Iter.DirHandle, Basename(Path) + StrLen(LINUX_LOADER_PATH), PartUUID, NULL);
+              // Add the entry
+              AddLoaderEntry(Path, (Options == NULL) ? LINUX_DEFAULT_OPTIONS : Options, NULL, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
+              if (Options != NULL) {
+                FreePool(Options);
+              }
+              FreePool(Path);
+            }
+            break;
+
+          case KERNEL_SCAN_EARLIEST:
+            // earliest kernel version only
+            while (DirIterNext(&Iter, 2, LINUX_LOADER_SEARCH_PATH, &FileInfo)) {
+              if (FileInfo != NULL) {
+                if (FileInfo->FileSize > 0) {
+                  // get the kernel file path
+                  CHAR16 *NewPath = PoolPrint(L"%s\\%s", LINUX_BOOT_PATH, FileInfo->FileName);
+                  if (NewPath != NULL) {
+                    if ((Path == NULL) || (StrCmp(Path, NewPath) > 0)) {
+                      if (Path != NULL) {
+                        FreePool(Path);
+                      }
+                      Path = NewPath;
+                    } else {
+                      FreePool(NewPath);
+                    }
+                  }
+                }
+                // free the file info
+                FreePool(FileInfo);
+                FileInfo = NULL;
+              }
+            }
+            if (Path != NULL) {
+              Options = LinuxKernelOptions(Iter.DirHandle, Basename(Path) + StrLen(LINUX_LOADER_PATH), PartUUID, NULL);
+              // Add the entry
+              AddLoaderEntry(Path, (Options == NULL) ? LINUX_DEFAULT_OPTIONS : Options, NULL, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
+              if (Options != NULL) {
+                FreePool(Options);
+              }
+              FreePool(Path);
+            }
+            break;
+
+          case KERNEL_SCAN_ALL:
+            // get all the filename matches
+            while (DirIterNext(&Iter, 2, LINUX_LOADER_SEARCH_PATH, &FileInfo)) {
+              if (FileInfo != NULL) {
+                if (FileInfo->FileSize > 0) {
+                  // get the kernel file path
+                  Path = PoolPrint(L"%s\\%s", LINUX_BOOT_PATH, FileInfo->FileName);
                   if (Path != NULL) {
+                    Options = LinuxKernelOptions(Iter.DirHandle, Basename(Path) + StrLen(LINUX_LOADER_PATH), PartUUID, NULL);
+                    // Add the entry
+                    AddLoaderEntry(Path, (Options == NULL) ? LINUX_DEFAULT_OPTIONS : Options, NULL, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
+                    if (Options != NULL) {
+                      FreePool(Options);
+                    }
                     FreePool(Path);
                   }
-                  Path = NewPath;
-                } else {
-                  FreePool(NewPath);
                 }
+                // free the file info
+                FreePool(FileInfo);
+                FileInfo = NULL;
               }
             }
-            // free the file info
-            FreePool(FileInfo);
-            FileInfo = NULL;
-          }
-        }
-        if (Path != NULL) {
-          Options = LinuxKernelOptions(Iter.DirHandle, Basename(Path) + StrLen(LINUX_LOADER_PATH), PartUUID, NULL);
-          // Add the entry
-          AddLoaderEntry(Path, (Options == NULL) ? LINUX_DEFAULT_OPTIONS : Options, NULL, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
-          if (Options != NULL) {
-            FreePool(Options);
-          }
-          FreePool(Path);
-        }
-        break;
+            break;
 
-      case KERNEL_SCAN_EARLIEST:
-        // earliest kernel version only
-        while (DirIterNext(&Iter, 2, LINUX_LOADER_SEARCH_PATH, &FileInfo)) {
-          if (FileInfo != NULL) {
-            if (FileInfo->FileSize > 0) {
-              // get the kernel file path
-              CHAR16 *NewPath = PoolPrint(L"%s\\%s", LINUX_BOOT_PATH, FileInfo->FileName);
-              if (NewPath != NULL) {
-                if ((Path == NULL) || (StrCmp(Path, NewPath) > 0)) {
-                  if (Path != NULL) {
-                    FreePool(Path);
-                  }
-                  Path = NewPath;
-                } else {
-                  FreePool(NewPath);
-                }
-              }
-            }
-            // free the file info
-            FreePool(FileInfo);
-            FileInfo = NULL;
-          }
+          case KERNEL_SCAN_NONE:
+          default:
+            // No kernel scan
+            break;
         }
-        if (Path != NULL) {
-          Options = LinuxKernelOptions(Iter.DirHandle, Basename(Path) + StrLen(LINUX_LOADER_PATH), PartUUID, NULL);
-          // Add the entry
-          AddLoaderEntry(Path, (Options == NULL) ? LINUX_DEFAULT_OPTIONS : Options, NULL, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
-          if (Options != NULL) {
-            FreePool(Options);
-          }
-          FreePool(Path);
-        }
-        break;
-
-      case KERNEL_SCAN_ALL:
-        // get all the filename matches
-        while (DirIterNext(&Iter, 2, LINUX_LOADER_SEARCH_PATH, &FileInfo)) {
-          if (FileInfo != NULL) {
-            if (FileInfo->FileSize > 0) {
-              // get the kernel file path
-              Path = PoolPrint(L"%s\\%s", LINUX_BOOT_PATH, FileInfo->FileName);
-              if (Path != NULL) {
-                Options = LinuxKernelOptions(Iter.DirHandle, Basename(Path) + StrLen(LINUX_LOADER_PATH), PartUUID, NULL);
-                // Add the entry
-                AddLoaderEntry(Path, (Options == NULL) ? LINUX_DEFAULT_OPTIONS : Options, NULL, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
-                if (Options != NULL) {
-                  FreePool(Options);
-                }
-                FreePool(Path);
-              }
-            }
-            // free the file info
-            FreePool(FileInfo);
-            FileInfo = NULL;
-          }
-        }
-        break;
-
-      default:
-      case KERNEL_SCAN_NONE:
-        // No kernel scan
-        break;
+        //close the directory
+        DirIterClose(&Iter);
       }
-      //close the directory
-      DirIterClose(&Iter);
-    }
     } //if linux scan
     //     DBG("search for  optical UEFI\n");
     if (Volume->DiskKind == DISK_KIND_OPTICAL) {
@@ -1581,7 +1580,7 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
           if (Image == NULL) {
             Image = egLoadImage(SelfRootDir, Custom->ImagePath, TRUE);
             if (Image == NULL) {
-              Image = LoadOSIcon(Custom->ImagePath, L"unknown", 128, FALSE, FALSE);
+              Image = LoadOSIcon(Custom->ImagePath, NULL, L"unknown", 128, FALSE, FALSE);
             }
           }
         }

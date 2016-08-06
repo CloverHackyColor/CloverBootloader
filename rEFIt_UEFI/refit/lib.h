@@ -762,7 +762,7 @@ VOID    FreeAnime(GUI_ANIME *Anime);
 //
 // icns loader module
 //
-EG_IMAGE * LoadOSIcon(IN OUT CHAR16 *OSIconName OPTIONAL, IN CHAR16 *FallbackIconName, IN UINTN PixelSize, IN BOOLEAN BootLogo, IN BOOLEAN WantDummy);
+EG_IMAGE * LoadOSIcon(IN CHAR16 *OSIconName OPTIONAL, OUT CHAR16 **OSIconNameHover, IN CHAR16 *FallbackIconName, IN UINTN PixelSize, IN BOOLEAN BootLogo, IN BOOLEAN WantDummy);
 EG_IMAGE * LoadHoverIcon(IN CHAR16 *OSIconName, IN UINTN PixelSize);
 EG_IMAGE * LoadIcns(IN EFI_FILE_HANDLE BaseDir, IN CHAR16 *FileName, IN UINTN PixelSize);
 EG_IMAGE * LoadIcnsFallback(IN EFI_FILE_HANDLE BaseDir, IN CHAR16 *FileName, IN UINTN PixelSize);

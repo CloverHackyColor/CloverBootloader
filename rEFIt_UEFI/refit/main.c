@@ -844,7 +844,8 @@ static VOID StartLegacy(IN LEGACY_ENTRY *Entry)
     egClearScreen(&DarkBackgroundPixel);
     BeginExternalScreen(TRUE, L"Booting Legacy OS");
 
-    BootLogoImage = LoadOSIcon(Entry->Volume->LegacyOS->IconName, L"legacy", 128, TRUE, TRUE);
+    BootLogoImage = LoadOSIcon(Entry->Volume->LegacyOS->IconName, NULL, L"legacy", 128, TRUE, TRUE);
+
     if (BootLogoImage != NULL)
         BltImageAlpha(BootLogoImage,
                       (UGAWidth  - BootLogoImage->Width) >> 1,
