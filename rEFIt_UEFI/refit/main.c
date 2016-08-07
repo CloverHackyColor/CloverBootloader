@@ -538,11 +538,10 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
       DBG(" %a\n", Entry->OSVersion);
     }
 
-    if (
-      (gSettings.CsrActiveConfig != 0xFFFF) &&
-      Entry->OSVersion &&
-      AsciiOSVersionToUint64(Entry->OSVersion) >= AsciiOSVersionToUint64("10.11")
-    ) {
+    if (Entry->OSVersion && (AsciiOSVersionToUint64(Entry->OSVersion) >= AsciiOSVersionToUint64("10.11"))) {
+      if (OSFLAG_ISSET(Entry->Flags, OSFLAG_NOSIP)) {
+        gSettings.CsrActiveConfig = (UINT32)0xFF;
+      }
       ReadSIPCfg();
     }
 

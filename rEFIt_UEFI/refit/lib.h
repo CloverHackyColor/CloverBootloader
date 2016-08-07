@@ -53,6 +53,12 @@
   - LODEPNG: Thu Aug  4 18:14:19 2016
 
     Size matter, screenshot as PNG instead of BMP. Inspired by mr. Coderush "CrScreenshotDxe". Maybe useful for other PNG encoding purposes. Activate by "-D LODEPNG".
+
+  - ANDX86: Mon Aug  8 04:07:13 2016
+
+    Scan grubx64 (Remix & Phoenix OS). Tested with 64bit only & live USB. Build with "-D ANDX86".
+    http://www.jide.com/remixos
+    http://www.phoenixos.com
 */
 
 //#define FKERNELPATCH 1
@@ -157,15 +163,16 @@ OSTYPE_COMPARE_IMP(OSTYPE_IS_LINUX, type1, type2) || OSTYPE_COMPARE_IMP(OSTYPE_I
 #define OSFLAG_SET(flags, flag) (flags | flag)
 #define OSFLAG_UNSET(flags, flag) (flags & (~flag))
 #define OSFLAG_TOGGLE(flags, flag) (flags ^ flag)
-#define OSFLAG_USEGRAPHICS   (1 << 0)
-#define OSFLAG_WITHKEXTS     (1 << 1)
-#define OSFLAG_CHECKFAKESMC  (1 << 2)
-#define OSFLAG_NOCACHES      (1 << 3)
-#define OSFLAG_NODEFAULTARGS (1 << 4)
-#define OSFLAG_NODEFAULTMENU (1 << 5)
-#define OSFLAG_HIDDEN        (1 << 6)
-#define OSFLAG_DISABLED      (1 << 7)
-#define OSFLAG_HIBERNATED    (1 << 8)
+#define OSFLAG_USEGRAPHICS    (1 << 0)
+#define OSFLAG_WITHKEXTS      (1 << 1)
+#define OSFLAG_CHECKFAKESMC   (1 << 2)
+#define OSFLAG_NOCACHES       (1 << 3)
+#define OSFLAG_NODEFAULTARGS  (1 << 4)
+#define OSFLAG_NODEFAULTMENU  (1 << 5)
+#define OSFLAG_HIDDEN         (1 << 6)
+#define OSFLAG_DISABLED       (1 << 7)
+#define OSFLAG_HIBERNATED     (1 << 8)
+#define OSFLAG_NOSIP          (1 << 9)
 
 #define CUSTOM_BOOT_DISABLED       0
 #define CUSTOM_BOOT_USER_DISABLED  1

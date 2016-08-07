@@ -104,6 +104,33 @@ STATIC LINUX_PATH_DATA LinuxEntryData[] = {
 };
 STATIC CONST UINTN LinuxEntryDataCount = (sizeof(LinuxEntryData) / sizeof(LINUX_PATH_DATA));
 
+#if defined(ANDX86)
+// Linux loader path data
+typedef struct ANDX86_PATH_DATA
+{
+   CHAR16 *Path;
+   CHAR16 *Title;
+   CHAR16 *Icon;
+   CHAR16 *Find;
+} ANDX86_PATH_DATA;
+
+STATIC ANDX86_PATH_DATA AndroidEntryData[] = {
+#if defined(MDE_CPU_X64)
+  //{ L"\\EFI\\boot\\grubx64.efi", L"Grub", L"grub,linux" },
+  //{ L"\\EFI\\boot\\bootx64.efi", L"Grub", L"grub,linux" },
+  { L"\\EFI\\remixos\\grubx64.efi",   L"Remix",     L"remix,grub,linux",    L"\\EFI\\remixos\\trans.tbl" },
+  { L"\\EFI\\boot\\grubx64.efi",      L"Phoenix",   L"phoenix,grub,linux",  L"\\phoenix\\initrd.img" },
+/*
+#else
+  //{ L"\\EFI\\boot\\grub.efi", L"Grub", L"grub,linux" },
+  //{ L"\\EFI\\boot\\bootia32.efi", L"Grub", L"grub,linux" },
+  { L"\\EFI\\remixos\\grubia32.efi",  L"Remix",     L"remix,grub,linux",    L"\\EFI\\remixos\\trans.tbl" },
+*/
+#endif
+};
+STATIC CONST UINTN AndroidEntryDataCount = (sizeof(AndroidEntryData) / sizeof(ANDX86_PATH_DATA));
+#endif
+
 // OS X installer paths
 STATIC CHAR16 *OSXInstallerPaths[] = {
   L"\\Mac OS X Install Data\\boot.efi",
@@ -170,7 +197,17 @@ UINT8 GetOSTypeFromPath(IN CHAR16 *Path)
   } else if (StrniCmp(Path, LINUX_FULL_LOADER_PATH, StrLen(LINUX_FULL_LOADER_PATH)) == 0) {
     return OSTYPE_LINEFI;
   } else {
-    UINTN Index = 0;
+    UINTN Index;
+#if defined(ANDX86)
+    Index = 0;
+    while (Index < AndroidEntryDataCount) {
+      if (StriCmp(Path, AndroidEntryData[Index].Path) == 0) {
+        return OSTYPE_LIN;
+      }
+      ++Index;
+    }
+#endif
+    Index = 0;
     while (Index < LinuxEntryDataCount) {
       if (StriCmp(Path, LinuxEntryData[Index].Path) == 0) {
         return OSTYPE_LIN;
@@ -184,7 +221,17 @@ UINT8 GetOSTypeFromPath(IN CHAR16 *Path)
 STATIC CHAR16 *LinuxIconNameFromPath(IN CHAR16            *Path,
                                      IN EFI_FILE_PROTOCOL *RootDir)
 {
-  UINTN Index = 0;
+  UINTN Index;
+#if defined(ANDX86)
+  Index = 0;
+  while (Index < AndroidEntryDataCount) {
+    if (StriCmp(Path, AndroidEntryData[Index].Path) == 0) {
+      return AndroidEntryData[Index].Icon;
+    }
+    ++Index;
+  }
+#endif
+  Index = 0;
   while (Index < LinuxEntryDataCount) {
     if (StriCmp(Path, LinuxEntryData[Index].Path) == 0) {
       return LinuxEntryData[Index].Icon;
@@ -719,6 +766,16 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
           SubEntry->LoadOptions     = AddLoadOption(SubEntry->LoadOptions, L"-v");
           AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
         }
+
+        if (SubEntry->OSVersion && (AsciiOSVersionToUint64(SubEntry->OSVersion) >= AsciiOSVersionToUint64("10.11"))) {
+          SubEntry = DuplicateLoaderEntry(Entry);
+          if (SubEntry) {
+            SubEntry->me.Title        = L"Boot Mac OS X with No SIP";
+            SubEntry->Flags           = OSFLAG_SET(SubEntry->Flags, OSFLAG_NOSIP);
+            //SubEntry->LoadOptions     = AddLoadOption(SubEntry->LoadOptions, L"-v");
+            AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+          }
+        }
       } else {
         SubEntry = DuplicateLoaderEntry(Entry);
         if (SubEntry) {
@@ -941,10 +998,12 @@ STATIC BOOLEAN AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOptions,
                               IN UINT8 OSType, IN UINT8 Flags)
 {
   LOADER_ENTRY *Entry;
-  INTN HVi;
+  INTN          HVi;
+
   if ((LoaderPath == NULL) || (Volume == NULL) || (Volume->RootDir == NULL) || !FileExists(Volume->RootDir, LoaderPath)) {
     return FALSE;
   }
+
   DBG("        AddLoaderEntry for Volume Name=%s\n", Volume->VolName);
   //don't add hided entries
   for (HVi = 0; HVi < gSettings.HVCount; HVi++) {
@@ -956,15 +1015,17 @@ STATIC BOOLEAN AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOptions,
 
   Entry = CreateLoaderEntry(LoaderPath, LoaderOptions, NULL, LoaderTitle, Volume, Image, NULL, OSType, Flags, 0, NULL, CUSTOM_BOOT_DISABLED, NULL, NULL, FALSE);
   if (Entry != NULL) {
-    if (gSettings.WithKexts) {
-      Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_WITHKEXTS);
-    }
-    if (gSettings.WithKextsIfNoFakeSMC) {
-      Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_CHECKFAKESMC);
-      Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_WITHKEXTS);
-    }
-    if (gSettings.NoCaches) {
-      Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_NOCACHES);
+    if ((Entry->LoaderType == OSTYPE_OSX) || (Entry->LoaderType == OSTYPE_OSX_INSTALLER ) || (Entry->LoaderType == OSTYPE_RECOVERY)) {
+      if (gSettings.WithKexts) {
+        Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_WITHKEXTS);
+      }
+      if (gSettings.WithKextsIfNoFakeSMC) {
+        Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_CHECKFAKESMC);
+        Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_WITHKEXTS);
+      }
+      if (gSettings.NoCaches) {
+        Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_NOCACHES);
+      }
     }
     AddDefaultMenu(Entry);
     AddMenuEntry(&MainMenu, (REFIT_MENU_ENTRY *)Entry);
@@ -1040,6 +1101,19 @@ VOID ScanLoader(VOID)
     if (!AddLoaderEntry(L"\\EFI\\MICROSOFT\\BOOT\\cdboot.efi", L"", L"Microsoft EFI cdboot", Volume, NULL, OSTYPE_WINEFI, 0)) {
       AddLoaderEntry(L"\\EFI\\MICROSOF\\BOOT\\CDBOOT.EFI", L"", L"Microsoft EFI CDBOOT", Volume, NULL, OSTYPE_WINEFI, 0);
     }
+
+#if defined(ANDX86)
+    if (TRUE) { //gSettings.AndroidScan
+      // check for Android loaders
+      for (Index = 0; Index < AndroidEntryDataCount; ++Index) {
+        if (FileExists(Volume->RootDir, AndroidEntryData[Index].Path) && FileExists(Volume->RootDir, AndroidEntryData[Index].Find)) {
+          AddLoaderEntry(AndroidEntryData[Index].Path, L"", AndroidEntryData[Index].Title, Volume,
+                         LoadOSIcon(AndroidEntryData[Index].Icon, NULL, L"unknown", 128, FALSE, TRUE), OSTYPE_LIN, OSFLAG_NODEFAULTARGS);
+        }
+      }
+    }
+#endif
+
     if (gSettings.LinuxScan) {
       // check for linux loaders
       for (Index = 0; Index < LinuxEntryDataCount; ++Index) {
@@ -1279,6 +1353,7 @@ VOID ScanLoader(VOID)
         DirIterClose(&Iter);
       }
     } //if linux scan
+
     //     DBG("search for  optical UEFI\n");
     if (Volume->DiskKind == DISK_KIND_OPTICAL) {
       AddLoaderEntry(BOOT_LOADER_PATH, L"", L"UEFI optical", Volume, NULL, OSTYPE_OTHER, 0);
@@ -1437,135 +1512,135 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
       DirIterOpen(Volume->RootDir, LINUX_BOOT_PATH, Iter);
       // Check if user wants to find newest kernel only
       switch (Custom->KernelScan) {
-      case KERNEL_SCAN_FIRST:
-        // First kernel found only
-        while (DirIterNext(Iter, 2, LINUX_LOADER_SEARCH_PATH, &FileInfo)) {
-          if (FileInfo != NULL) {
-            if (FileInfo->FileSize == 0) {
+        case KERNEL_SCAN_FIRST:
+          // First kernel found only
+          while (DirIterNext(Iter, 2, LINUX_LOADER_SEARCH_PATH, &FileInfo)) {
+            if (FileInfo != NULL) {
+              if (FileInfo->FileSize == 0) {
+                FreePool(FileInfo);
+                FileInfo = NULL;
+                continue;
+              }
+              // get the kernel file path
+              CustomPath = PoolPrint(L"%s\\%s", LINUX_BOOT_PATH, FileInfo->FileName);
+              // free the file info
               FreePool(FileInfo);
               FileInfo = NULL;
-              continue;
+              break;
             }
-            // get the kernel file path
-            CustomPath = PoolPrint(L"%s\\%s", LINUX_BOOT_PATH, FileInfo->FileName);
-            // free the file info
-            FreePool(FileInfo);
-            FileInfo = NULL;
-            break;
           }
-        }
-        break;
+          break;
 
-      case KERNEL_SCAN_LAST:
-        // Last kernel found only
-        while (DirIterNext(Iter, 2, LINUX_LOADER_SEARCH_PATH, &FileInfo)) {
-          if (FileInfo != NULL) {
-            if (FileInfo->FileSize > 0) {
-              // get the kernel file path
-              if (CustomPath != NULL) {
-                FreePool(CustomPath);
-              }
-              CustomPath = PoolPrint(L"%s\\%s", LINUX_BOOT_PATH, FileInfo->FileName);
-            }
-            // free the file info
-            FreePool(FileInfo);
-            FileInfo = NULL;
-          }
-        }
-        break;
-
-      case KERNEL_SCAN_NEWEST:
-        // Newest dated kernel only
-        while (DirIterNext(Iter, 2, LINUX_LOADER_SEARCH_PATH, &FileInfo)) {
-          if (FileInfo != NULL) {
-            if (FileInfo->FileSize > 0) {
-              // get the kernel file path
-              if ((PreviousTime.Year == 0) || (TimeCmp(&PreviousTime, &(FileInfo->ModificationTime)) < 0)) {
+        case KERNEL_SCAN_LAST:
+          // Last kernel found only
+          while (DirIterNext(Iter, 2, LINUX_LOADER_SEARCH_PATH, &FileInfo)) {
+            if (FileInfo != NULL) {
+              if (FileInfo->FileSize > 0) {
+                // get the kernel file path
                 if (CustomPath != NULL) {
                   FreePool(CustomPath);
                 }
                 CustomPath = PoolPrint(L"%s\\%s", LINUX_BOOT_PATH, FileInfo->FileName);
-                PreviousTime = FileInfo->ModificationTime;
               }
+              // free the file info
+              FreePool(FileInfo);
+              FileInfo = NULL;
             }
-            // free the file info
-            FreePool(FileInfo);
-            FileInfo = NULL;
           }
-        }
-        break;
+          break;
 
-      case KERNEL_SCAN_OLDEST:
-        // Oldest dated kernel only
-        while (DirIterNext(Iter, 2, LINUX_LOADER_SEARCH_PATH, &FileInfo)) {
-          if (FileInfo != NULL) {
-            if (FileInfo->FileSize > 0) {
-              // get the kernel file path
-              if ((PreviousTime.Year == 0) || (TimeCmp(&PreviousTime, &(FileInfo->ModificationTime)) > 0)) {
-                if (CustomPath != NULL) {
-                  FreePool(CustomPath);
+        case KERNEL_SCAN_NEWEST:
+          // Newest dated kernel only
+          while (DirIterNext(Iter, 2, LINUX_LOADER_SEARCH_PATH, &FileInfo)) {
+            if (FileInfo != NULL) {
+              if (FileInfo->FileSize > 0) {
+                // get the kernel file path
+                if ((PreviousTime.Year == 0) || (TimeCmp(&PreviousTime, &(FileInfo->ModificationTime)) < 0)) {
+                  if (CustomPath != NULL) {
+                    FreePool(CustomPath);
+                  }
+                  CustomPath = PoolPrint(L"%s\\%s", LINUX_BOOT_PATH, FileInfo->FileName);
+                  PreviousTime = FileInfo->ModificationTime;
                 }
-                CustomPath = PoolPrint(L"%s\\%s", LINUX_BOOT_PATH, FileInfo->FileName);
-                PreviousTime = FileInfo->ModificationTime;
               }
+              // free the file info
+              FreePool(FileInfo);
+              FileInfo = NULL;
             }
-            // free the file info
-            FreePool(FileInfo);
-            FileInfo = NULL;
           }
-        }
-        break;
+          break;
 
-      case KERNEL_SCAN_MOSTRECENT:
-        // most recent kernel version only
-        while (DirIterNext(Iter, 2, LINUX_LOADER_SEARCH_PATH, &FileInfo)) {
-          if (FileInfo != NULL) {
-            if (FileInfo->FileSize > 0) {
-              // get the kernel file path
-              CHAR16 *NewPath = PoolPrint(L"%s\\%s", LINUX_BOOT_PATH, FileInfo->FileName);
-              if ((CustomPath == NULL) || (StrCmp(CustomPath, NewPath) < 0)) {
-                if (CustomPath != NULL) {
-                  FreePool(CustomPath);
+        case KERNEL_SCAN_OLDEST:
+          // Oldest dated kernel only
+          while (DirIterNext(Iter, 2, LINUX_LOADER_SEARCH_PATH, &FileInfo)) {
+            if (FileInfo != NULL) {
+              if (FileInfo->FileSize > 0) {
+                // get the kernel file path
+                if ((PreviousTime.Year == 0) || (TimeCmp(&PreviousTime, &(FileInfo->ModificationTime)) > 0)) {
+                  if (CustomPath != NULL) {
+                    FreePool(CustomPath);
+                  }
+                  CustomPath = PoolPrint(L"%s\\%s", LINUX_BOOT_PATH, FileInfo->FileName);
+                  PreviousTime = FileInfo->ModificationTime;
                 }
-                CustomPath = NewPath;
-              } else {
-                FreePool(NewPath);
               }
+              // free the file info
+              FreePool(FileInfo);
+              FileInfo = NULL;
             }
-            // free the file info
-            FreePool(FileInfo);
-            FileInfo = NULL;
           }
-        }
-        break;
+          break;
 
-      case KERNEL_SCAN_EARLIEST:
-        // earliest kernel version only
-        while (DirIterNext(Iter, 2, LINUX_LOADER_SEARCH_PATH, &FileInfo)) {
-          if (FileInfo != NULL) {
-            if (FileInfo->FileSize > 0) {
-              // get the kernel file path
-              CHAR16 *NewPath = PoolPrint(L"%s\\%s", LINUX_BOOT_PATH, FileInfo->FileName);
-              if ((CustomPath == NULL) || (StrCmp(CustomPath, NewPath) > 0)) {
-                if (CustomPath != NULL) {
-                  FreePool(CustomPath);
+        case KERNEL_SCAN_MOSTRECENT:
+          // most recent kernel version only
+          while (DirIterNext(Iter, 2, LINUX_LOADER_SEARCH_PATH, &FileInfo)) {
+            if (FileInfo != NULL) {
+              if (FileInfo->FileSize > 0) {
+                // get the kernel file path
+                CHAR16 *NewPath = PoolPrint(L"%s\\%s", LINUX_BOOT_PATH, FileInfo->FileName);
+                if ((CustomPath == NULL) || (StrCmp(CustomPath, NewPath) < 0)) {
+                  if (CustomPath != NULL) {
+                    FreePool(CustomPath);
+                  }
+                  CustomPath = NewPath;
+                } else {
+                  FreePool(NewPath);
                 }
-                CustomPath = NewPath;
-              } else {
-                FreePool(NewPath);
               }
+              // free the file info
+              FreePool(FileInfo);
+              FileInfo = NULL;
             }
-            // free the file info
-            FreePool(FileInfo);
-            FileInfo = NULL;
           }
-        }
-        break;
+          break;
 
-      default:
-        // Set scan to all just in case
-        Custom->KernelScan = KERNEL_SCAN_ALL;
-        break;
+        case KERNEL_SCAN_EARLIEST:
+          // earliest kernel version only
+          while (DirIterNext(Iter, 2, LINUX_LOADER_SEARCH_PATH, &FileInfo)) {
+            if (FileInfo != NULL) {
+              if (FileInfo->FileSize > 0) {
+                // get the kernel file path
+                CHAR16 *NewPath = PoolPrint(L"%s\\%s", LINUX_BOOT_PATH, FileInfo->FileName);
+                if ((CustomPath == NULL) || (StrCmp(CustomPath, NewPath) > 0)) {
+                  if (CustomPath != NULL) {
+                    FreePool(CustomPath);
+                  }
+                  CustomPath = NewPath;
+                } else {
+                  FreePool(NewPath);
+                }
+              }
+              // free the file info
+              FreePool(FileInfo);
+              FileInfo = NULL;
+            }
+          }
+          break;
+
+        default:
+          // Set scan to all just in case
+          Custom->KernelScan = KERNEL_SCAN_ALL;
+          break;
       }
     } else if (!FileExists(Volume->RootDir, CustomPath)) {
       DBG("skipped because path does not exist\n");
@@ -1872,7 +1947,14 @@ VOID AddCustomEntries(VOID)
       } else if (OSTYPE_IS_WINDOWS(Custom->Type)) {
         AddCustomEntry(i, L"\\EFI\\Microsoft\\Boot\\bootmgfw.efi", Custom, NULL);
       } else if (OSTYPE_IS_LINUX(Custom->Type)) {
-        UINTN Index = 0;
+        UINTN Index;
+#if defined(ANDX86)
+        Index = 0;
+        while (Index < AndroidEntryDataCount) {
+          AddCustomEntry(i, AndroidEntryData[Index++].Path, Custom, NULL);
+        }
+#endif
+        Index = 0;
         while (Index < LinuxEntryDataCount) {
           AddCustomEntry(i, LinuxEntryData[Index++].Path, Custom, NULL);
         }
