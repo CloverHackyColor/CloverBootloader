@@ -906,7 +906,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
       for (i = 0; i < Count; i++) {
         EFI_STATUS Status = GetElement (Prop, i, &Prop2);
         if (EFI_ERROR (Status)) {
-          DBG ("error %r getting next element at index %d\n", Status, i);
+          DBG (" - [%02d]: ForceKexts error %r getting next element\n", i, Status);
           continue;
         }
 
@@ -922,7 +922,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
           if (AsciiStrLen (Prop2->string) > 0) {
             Patches->ForceKexts[Patches->NrForceKexts] = AllocateZeroPool (AsciiStrSize (Prop2->string) * sizeof(CHAR16));
             AsciiStrToUnicodeStr (Prop2->string, Patches->ForceKexts[Patches->NrForceKexts]);
-            DBG ("ForceKextsToLoad %d: %s\n", Patches->NrForceKexts, Patches->ForceKexts[Patches->NrForceKexts]);
+            DBG (" - [%d]: %s\n", Patches->NrForceKexts, Patches->ForceKexts[Patches->NrForceKexts]);
             ++Patches->NrForceKexts;
           }
         }
@@ -939,8 +939,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
       FreePool (Patches->KextPatches);
     }
     if (Count > 0) {
-      TagPtr     Prop2 = NULL;
-      TagPtr     Dict;
+      TagPtr     Prop2 = NULL, Dict = NULL;
       KEXT_PATCH *newPatches = AllocateZeroPool (Count * sizeof(KEXT_PATCH));
 
       // Patches->NrKexts = 0;
@@ -952,15 +951,12 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
       Patches->KextPatches = newPatches;
       DBG ("KextsToPatch: %d requested\n", Count);
       for (i = 0; i < Count; i++) {
-        CHAR8 *KextPatchesName;
-        CHAR8 *KextPatchesLabel;
-        UINTN FindLen = 0;
-        UINTN ReplaceLen = 0;
-        UINT8 *TmpData;
-        UINT8 *TmpPatch;
+        CHAR8 *KextPatchesName, *KextPatchesLabel;
+        UINTN FindLen = 0, ReplaceLen = 0;
+        UINT8 *TmpData, *TmpPatch;
         EFI_STATUS Status = GetElement (Prop, i, &Prop2);
         if (EFI_ERROR (Status)) {
-          DBG ("Patches error %r getting next element at index %d\n", Status, i);
+          DBG (" - [%02d]: Patches error %r getting next element\n", i, Status);
           continue;
         }
 
@@ -988,7 +984,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
 
 
         DBG (" %a", KextPatchesLabel);
-        
+
         Dict = GetProperty (Prop2, "Disabled");
         if ((Dict != NULL) && IsPropertyTrue (Dict)) {
           DBG(" :: patch disabled, skipped\n");
@@ -1002,7 +998,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
           DBG (" - invalid Find/Replace data - skipping!\n");
           continue;
         }
-        
+
         Patches->KextPatches[Patches->NrKexts].Data         = AllocateCopyPool (FindLen, TmpData);
         Patches->KextPatches[Patches->NrKexts].DataLen      = FindLen;
         Patches->KextPatches[Patches->NrKexts].Patch        = AllocateCopyPool (FindLen, TmpPatch);
@@ -1060,21 +1056,18 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
       FreePool (Patches->KernelPatches);
     }
     if (Count > 0) {
-      TagPtr        Prop2 = NULL;
-      TagPtr        Dict;
+      TagPtr        Prop2 = NULL, Dict = NULL;
       KERNEL_PATCH  *newPatches = AllocateZeroPool (Count * sizeof(KERNEL_PATCH));
 
       Patches->KernelPatches = newPatches;
       DBG ("KernelToPatch: %d requested\n", Count);
       for (i = 0; i < Count; i++) {
         CHAR8 *KernelPatchesLabel;
-        UINTN FindLen = 0;
-        UINTN ReplaceLen = 0;
-        UINT8 *TmpData;
-        UINT8 *TmpPatch;
+        UINTN FindLen = 0, ReplaceLen = 0;
+        UINT8 *TmpData, *TmpPatch;
         EFI_STATUS Status = GetElement (Prop, i, &Prop2);
         if (EFI_ERROR (Status)) {
-          DBG ("error %r getting next element at index %d\n", Status, i);
+          DBG (" - [%02d]: Patches error %r getting next element\n", i, Status);
           continue;
         }
 
@@ -1182,10 +1175,9 @@ struct
 MatchOSes *GetStrArraySeparatedByChar(CHAR8 *str, CHAR8 sep)
 {
   struct MatchOSes *mo;  
-  INTN len = 0, i = 0, inc = 1;
+  INTN len = 0, i = 0, inc = 1, newLen = 0;
   //  CHAR8 *comp = NULL; //unused
   CHAR8 doubleSep[2];
-  INTN newLen = 0;
   
   mo = AllocatePool(sizeof(struct MatchOSes));
   if (!mo) {
@@ -1205,7 +1197,7 @@ MatchOSes *GetStrArraySeparatedByChar(CHAR8 *str, CHAR8 sep)
   
   if (mo->count > 1) {
     //INTN indexes[mo->count + 1];
-    UINT8 *indexes = (UINT8 *) AllocatePool(mo->count + 1);
+    INTN *indexes = (INTN *) AllocatePool(mo->count + 1);
     
     for (i = 0; i < len; ++i) {
       CHAR8 c = str[i];
@@ -2435,7 +2427,7 @@ GetEarlyUserSettings (
       Prop = GetProperty (DictPointer, "Theme");
       if (Prop != NULL) {
         if ((Prop->type == kTagTypeString) && Prop->string) {
-          INTN i;
+          UINTN i;
           GlobalConfig.Theme = PoolPrint (L"%a", Prop->string);
           DBG ("Default theme: %s\n", GlobalConfig.Theme);
           for (i = 0; i < ThemesNum; i++) {

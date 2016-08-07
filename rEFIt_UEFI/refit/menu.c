@@ -1759,7 +1759,7 @@ VOID AddMenuEntry(IN REFIT_MENU_SCREEN *Screen, IN REFIT_MENU_ENTRY *Entry)
 
 VOID FreeMenu(IN REFIT_MENU_SCREEN *Screen)
 {
-  UINTN i;
+  INTN i;
   REFIT_MENU_ENTRY *Tentry = NULL;
 //TODO - here we must FreePool for a list of Entries, Screens, InputBootArgs  
   if (Screen->EntryCount > 0) {
@@ -2539,7 +2539,7 @@ VOID DrawBCSText(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
     FntChrsNum = 12;
   }
   
-  TextWidth = ((StrLen(Text) <= ((GlobalConfig.Font == FONT_LOAD) ? (FntChrsNum - 3) : (ChrsNum - 3))) ?
+  TextWidth = ((StrLen(Text) <= (UINTN)((GlobalConfig.Font == FONT_LOAD) ? (FntChrsNum - 3) : (ChrsNum - 3))) ?
                StrLen(Text) : ((GlobalConfig.Font == FONT_LOAD) ? FntChrsNum : ChrsNum)) *
   ((FontWidth > GlobalConfig.CharWidth) ? FontWidth : GlobalConfig.CharWidth);
   
@@ -2548,7 +2548,7 @@ VOID DrawBCSText(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
   egFillImage(TextBufferXY, &MenuBackgroundPixel);
   
   // render the text
-  if (StrLen(Text) > ((GlobalConfig.Font == FONT_LOAD) ? (FntChrsNum - 3) : (ChrsNum - 3))) {
+  if (StrLen(Text) > (UINTN)((GlobalConfig.Font == FONT_LOAD) ? (FntChrsNum - 3) : (ChrsNum - 3))) {
     BCSText = AllocatePool(sizeof(CHAR16) * ((GlobalConfig.Font == FONT_LOAD) ? FntChrsNum : ChrsNum));
     
     for (i = 0; i < ((GlobalConfig.Font == FONT_LOAD) ? FntChrsNum : ChrsNum); i++) {
@@ -2924,7 +2924,7 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
           DrawMenuText(ResultString,
                        (i == State->CurrentSelection) ? MenuWidth : 0,
                        EntriesPosX + (TextHeight + TEXT_XMARGIN), Screen->Entries[i]->Place.YPos, 0xFFFF);
-          BltImageCompositeIndicator((Screen->Entries[i]->Row == OldChosenTheme) ? Buttons[1] : Buttons[0], Buttons[0],
+          BltImageCompositeIndicator((Screen->Entries[i]->Row == (UINTN)OldChosenTheme) ? Buttons[1] : Buttons[0], Buttons[0],
                                      EntriesPosX + TEXT_XMARGIN, Screen->Entries[i]->Place.YPos + PlaceCentre, 16);
         } else {
 //          DBG("paint entry %d title=%s\n", i, Screen->Entries[i]->Title);
@@ -2965,7 +2965,7 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
         StrCpy(ResultString, Screen->Entries[State->LastSelection]->Title);
         DrawMenuText(ResultString, 0, EntriesPosX + (TextHeight + TEXT_XMARGIN),
                      EntriesPosY + (State->LastSelection - State->FirstVisible) * TextHeight, 0xFFFF);
-        BltImageCompositeIndicator((Screen->Entries[State->LastSelection]->Row == OldChosenTheme) ? Buttons[1] :
+        BltImageCompositeIndicator((Screen->Entries[State->LastSelection]->Row == (UINTN)OldChosenTheme) ? Buttons[1] :
                                    Buttons[0], Buttons[0], EntriesPosX + TEXT_XMARGIN,
                                    Screen->Entries[State->LastSelection]->Place.YPos + PlaceCentre, 16);
         
@@ -2998,7 +2998,7 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
         StrCpy(ResultString, Screen->Entries[State->CurrentSelection]->Title);
         DrawMenuText(ResultString, MenuWidth, EntriesPosX + (TextHeight + TEXT_XMARGIN),
                      EntriesPosY + (State->CurrentSelection - State->FirstVisible) * TextHeight, 0xFFFF);
-        BltImageCompositeIndicator((Screen->Entries[State->CurrentSelection]->Row == OldChosenTheme) ? Buttons[1] :
+        BltImageCompositeIndicator((Screen->Entries[State->CurrentSelection]->Row == (UINTN)OldChosenTheme) ? Buttons[1] :
                                    Buttons[0], Buttons[0], EntriesPosX + TEXT_XMARGIN,
                                    Screen->Entries[State->CurrentSelection]->Place.YPos + PlaceCentre, 16);
       } else {

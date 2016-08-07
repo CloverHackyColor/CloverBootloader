@@ -4708,7 +4708,40 @@ UINT32 FIXOTHER (UINT8 *dsdt, UINT32 len)
           DBG("found USB device NAME(_ADR,0x%08x) And Name is %a\n",
               USBADR[j], UsbName[j]);
 
-          for (k=i+1; k<i+200; k++) {
+          k = (i+1);
+          while (k < (i+200)) {
+            if (dsdt[k] == 0x14 && dsdt[k+2] == '_' && dsdt[k+3] == 'P' && dsdt[k+4] == 'R' && dsdt[k+5] == 'W') {
+              offset = k;
+              m = dsdt[k+1];
+              if (dsdt[offset+m] != 0x03) {
+                if (dsdt[offset+m] == 0x01)
+                  dsdt[offset+m] = 0x03;
+
+                if (dsdt[offset+m] == 0x04)
+                  dsdt[offset+m] = 0x01;
+
+                //DBG("found USB Method(_PRW) and will patch fix\n");
+              }
+              break;
+            }
+
+            k = (i+1);
+            while (k < (i+200)) {
+              if (dsdt[k] == 0x14 && dsdt[k+2] == '_' && dsdt[k+3] == 'S' && dsdt[k+4] == '3' && dsdt[k+5] == 'D') {
+                size = dsdt[k+1];
+                for (l=0; l<size; l++) {
+                  if (dsdt[k+1+l] == 0xA4 && dsdt[k+2+l] == 0x0A && dsdt[k+3+l] != 0x03) {
+                    dsdt[k+3+l] = 0x03;
+                  }
+                }
+                break;
+              }
+              k++;
+            }
+            k++;
+          }
+/*
+          for (k=(i+1); k<(i+200); k++) {
             if (dsdt[k] == 0x14 && dsdt[k+2] == '_' && dsdt[k+3] == 'P' && dsdt[k+4] == 'R' && dsdt[k+5] == 'W') {
               offset = k;
               m = dsdt[k+1];
@@ -4734,6 +4767,7 @@ UINT32 FIXOTHER (UINT8 *dsdt, UINT32 len)
               break;
             }
           }
+
           //for (k=i+1; k<i+200; k++) {
           //    if (dsdt[k] == 0x14 && dsdt[k+2] == '_' && dsdt[k+3] == 'P' && dsdt[k+4] == 'S' && dsdt[k+5] == 'W')
           //    {
@@ -4750,6 +4784,7 @@ UINT32 FIXOTHER (UINT8 *dsdt, UINT32 len)
           //}
           break;
         }
+*/
       }
     }
 	}
