@@ -56,9 +56,10 @@
 
   - ANDX86: Mon Aug  8 04:07:13 2016
 
-    Scan grubx64 (Remix & Phoenix OS). Tested with 64bit only & live USB. Build with "-D ANDX86".
+    Scan grubx64 (Remix, Phoenix, & Chrome OS). Tested with 64bit only & live USB. Build with "-D ANDX86".
     http://www.jide.com/remixos
     http://www.phoenixos.com
+    https://www.chromium.org/chromium-os
 */
 
 //#define FKERNELPATCH 1

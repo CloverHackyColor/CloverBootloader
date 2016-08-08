@@ -105,26 +105,25 @@ STATIC LINUX_PATH_DATA LinuxEntryData[] = {
 STATIC CONST UINTN LinuxEntryDataCount = (sizeof(LinuxEntryData) / sizeof(LINUX_PATH_DATA));
 
 #if defined(ANDX86)
-// Linux loader path data
+// ANDX86 loader path data
+#define ANDX86_FINDLEN 3
 typedef struct ANDX86_PATH_DATA
 {
-   CHAR16 *Path;
-   CHAR16 *Title;
-   CHAR16 *Icon;
-   CHAR16 *Find;
+   CHAR16   *Path;
+   CHAR16   *Title;
+   CHAR16   *Icon;
+   CHAR16   *Find[ANDX86_FINDLEN];
 } ANDX86_PATH_DATA;
 
 STATIC ANDX86_PATH_DATA AndroidEntryData[] = {
 #if defined(MDE_CPU_X64)
   //{ L"\\EFI\\boot\\grubx64.efi", L"Grub", L"grub,linux" },
   //{ L"\\EFI\\boot\\bootx64.efi", L"Grub", L"grub,linux" },
-  { L"\\EFI\\remixos\\grubx64.efi",   L"Remix",     L"remix,grub,linux",    L"\\EFI\\remixos\\trans.tbl" },
-  { L"\\EFI\\boot\\grubx64.efi",      L"Phoenix",   L"phoenix,grub,linux",  L"\\phoenix\\initrd.img" },
+  { L"\\EFI\\remixos\\grubx64.efi", L"Remix",   L"remix,grub,linux",    { L"\\isolinux\\isolinux.bin", L"\\initrd.img", L"\\kernel" } },
+  { L"\\EFI\\boot\\grubx64.efi",    L"Phoenix", L"phoenix,grub,linux",  { L"\\phoenix\\kernel", L"\\phoenix\\initrd.img", L"\\phoenix\\ramdisk.img" } },
+  { L"\\EFI\\boot\\bootx64.efi",    L"Chrome",  L"chrome,grub,linux",   { L"\\syslinux\\vmlinuz.A", L"\\syslinux\\vmlinuz.B", L"\\syslinux\\ldlinux.sys"} },
 /*
 #else
-  //{ L"\\EFI\\boot\\grub.efi", L"Grub", L"grub,linux" },
-  //{ L"\\EFI\\boot\\bootia32.efi", L"Grub", L"grub,linux" },
-  { L"\\EFI\\remixos\\grubia32.efi",  L"Remix",     L"remix,grub,linux",    L"\\EFI\\remixos\\trans.tbl" },
 */
 #endif
 };
@@ -1106,9 +1105,16 @@ VOID ScanLoader(VOID)
     if (TRUE) { //gSettings.AndroidScan
       // check for Android loaders
       for (Index = 0; Index < AndroidEntryDataCount; ++Index) {
-        if (FileExists(Volume->RootDir, AndroidEntryData[Index].Path) && FileExists(Volume->RootDir, AndroidEntryData[Index].Find)) {
-          AddLoaderEntry(AndroidEntryData[Index].Path, L"", AndroidEntryData[Index].Title, Volume,
-                         LoadOSIcon(AndroidEntryData[Index].Icon, NULL, L"unknown", 128, FALSE, TRUE), OSTYPE_LIN, OSFLAG_NODEFAULTARGS);
+        UINTN aIndex, aFound;
+        if (FileExists(Volume->RootDir, AndroidEntryData[Index].Path)) {
+          aFound = 0;
+          for (aIndex = 0; aIndex < ANDX86_FINDLEN; ++aIndex) {
+            if ((AndroidEntryData[Index].Find[aIndex] == NULL) || FileExists(Volume->RootDir, AndroidEntryData[Index].Find[aIndex])) ++aFound;
+          }
+          if (aFound && (aFound == aIndex)) {
+            AddLoaderEntry(AndroidEntryData[Index].Path, L"", AndroidEntryData[Index].Title, Volume,
+                           LoadOSIcon(AndroidEntryData[Index].Icon, NULL, L"unknown", 128, FALSE, TRUE), OSTYPE_LIN, OSFLAG_NODEFAULTARGS);
+          }
         }
       }
     }
