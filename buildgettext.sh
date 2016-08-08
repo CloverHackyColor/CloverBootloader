@@ -34,7 +34,7 @@ export DIR_LOGS=${DIR_LOGS:-$DIR_TOOLS/logs}
 # Here we set MAKEFLAGS for GCC so it knows how many cores can use
 # faster compile!
 #
-export MAKEFLAGS="-j `sysctl -n hw.ncpu`"
+export MAKEFLAGS="-j `sysctl -n hw.logicalcpu`"
 
 ### Check Functions ###
 

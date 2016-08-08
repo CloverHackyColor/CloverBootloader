@@ -19,7 +19,7 @@ declare -r SYSNAME="$(uname)"
 if [[ "$SYSNAME" == Linux ]]; then
   declare -r NUMBER_OF_CPUS=$(nproc)
 else
-  declare -r NUMBER_OF_CPUS=$(sysctl -n hw.ncpu)
+  declare -r NUMBER_OF_CPUS=$(sysctl -n hw.logicalcpu)
 fi
 declare -a EDK2_BUILD_OPTIONS=
 print_option_help_wc=

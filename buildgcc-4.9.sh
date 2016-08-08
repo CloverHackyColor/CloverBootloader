@@ -62,7 +62,8 @@ export LD=ld
 
 # Here we set MAKEFLAGS for GCC so it knows how many cores we can use
 # faster compile !
-export MAKEFLAGS="-j $(( $(sysctl -n hw.ncpu) * 2 ))"
+#export MAKEFLAGS="-j $(( $(sysctl -n hw.ncpu) * 2 ))"
+export MAKEFLAGS="-j $(sysctl -n hw.logicalcpu)"
 
 # Default locale
 export LC_ALL=POSIX
