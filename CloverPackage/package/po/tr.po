@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-04-06 20:15+0300\n"
+"POT-Creation-Date: 2016-08-08 12:52+0300\n"
 "PO-Revision-Date: 2015-09-24 20:27+0000\n"
 "Last-Translator: Taylan <taylan__@hotmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -447,80 +447,94 @@ msgstr "CloverEFI 64-bit BiosBlockIO"
 msgid "CloverEFI 64-bits using Bios Block I/O to access drives"
 msgstr "CloverEFI 64-bit sürücülere Bios Block G/Ç kullanarak erişim"
 
+#. type: "cloverEFI.64.blockio2_title"
+#: Resources/templates/Localizable.strings:75
+#, fuzzy, no-wrap
+#| msgid "CloverEFI 64-bits BiosBlockIO"
+msgid "CloverEFI 64-bits BiosBlockIO for NVIDIA NForce MCP79"
+msgstr "CloverEFI 64-bit BiosBlockIO"
+
+#. type: "cloverEFI.64.blockio2_description"
+#: Resources/templates/Localizable.strings:76
+#, fuzzy, no-wrap
+#| msgid "CloverEFI 64-bits using Bios Block I/O to access drives"
+msgid "CloverEFI 64-bits using Bios Block I/O to access drives for chipset NVIDIA NForce MCP79"
+msgstr "CloverEFI 64-bit sürücülere Bios Block G/Ç kullanarak erişim"
+
 #. type: "Ps2KeyboardDxe-32_description"
-#: Resources/templates/Localizable.strings:79
+#: Resources/templates/Localizable.strings:81
 #, no-wrap
 msgid "PS/2 keyboard driver, 32bit"
 msgstr "PS/2 klavye sürücüsü, 32bit"
 
 #. type: "Ps2MouseAbsolutePointerDxe-32_description"
-#: Resources/templates/Localizable.strings:80
+#: Resources/templates/Localizable.strings:82
 #, no-wrap
 msgid "PS/2 trackpad driver, 32bit"
 msgstr "PS/2 touchpad sürücüsü, 32bit"
 
 #. type: "Ps2MouseDxe-32_description"
-#: Resources/templates/Localizable.strings:81
+#: Resources/templates/Localizable.strings:83
 #, no-wrap
 msgid "PS/2 mouse driver, 32bit"
 msgstr "PS/2 fare sürücüsü, 32bit"
 
 #. type: "Ps2MouseDxe-64_description"
-#: Resources/templates/Localizable.strings:82
+#: Resources/templates/Localizable.strings:84
 #, no-wrap
 msgid "PS/2 mouse driver, 64bit"
 msgstr "PS/2 fare sürücüsü, 64bit"
 
 #. type: "UsbMouseDxe-32_description"
-#: Resources/templates/Localizable.strings:83
+#: Resources/templates/Localizable.strings:85
 #, no-wrap
 msgid "USB mouse driver, 32bit"
 msgstr "USB fare sürücüsü, 32bit"
 
 #. type: "UsbMouseDxe-64_description"
-#: Resources/templates/Localizable.strings:84
+#: Resources/templates/Localizable.strings:86
 #, no-wrap
 msgid "USB mouse driver, 64bit"
 msgstr "USB fare sürücüsü, 64bit"
 
 #. type: "VBoxExt2-32_description"
-#: Resources/templates/Localizable.strings:85
+#: Resources/templates/Localizable.strings:87
 #, no-wrap
 msgid "ext2/3 filesystem driver from virtualbox, 32bit"
 msgstr "Virtualbox'tan ext2/3 dosya sistemi sürücüsü, 32bit"
 
 #. type: "VBoxExt2-64_description"
-#: Resources/templates/Localizable.strings:86
+#: Resources/templates/Localizable.strings:88
 #, no-wrap
 msgid "ext2/3 filesystem driver from virtualbox, 64bit"
 msgstr "Virtualbox'tan ext2/3 dosya sistemi sürücüsü, 64bit"
 
 #. type: "VBoxExt4-32_description"
-#: Resources/templates/Localizable.strings:87
+#: Resources/templates/Localizable.strings:89
 #, no-wrap
 msgid "ext4 filesystem driver from virtualbox, 32bit"
 msgstr "Virtualbox'tan ext4 dosya sistemi sürücüsü, 32bit"
 
 #. type: "VBoxExt4-64_description"
-#: Resources/templates/Localizable.strings:88
+#: Resources/templates/Localizable.strings:90
 #, no-wrap
 msgid "ext4 filesystem driver from virtualbox, 64bit"
 msgstr "Virtualbox'tan ext4 dosya sistemi sürücüsü, 64bit"
 
 #. type: "XhciDxe-32_description"
-#: Resources/templates/Localizable.strings:89
+#: Resources/templates/Localizable.strings:91
 #, no-wrap
 msgid "USB 3.0 driver, 32bit"
 msgstr "USB 3.0 sürücüsü, 32bit"
 
 #. type: "XhciDxe-64_description"
-#: Resources/templates/Localizable.strings:90
+#: Resources/templates/Localizable.strings:92
 #, no-wrap
 msgid "USB 3.0 driver, 64bit"
 msgstr "USB 3.0 sürücüsü, 64bit"
 
 #. type: "CsmVideoDxe-64_description"
-#: Resources/templates/Localizable.strings:91
+#: Resources/templates/Localizable.strings:93
 #, no-wrap
 msgid ""
 "64bit video driver for Clover GUI allowing to choose more resolutions.\n"
@@ -534,7 +548,7 @@ msgstr ""
 "Dikkatli kullanın."
 
 #. type: "DataHubDxe-64_description"
-#: Resources/templates/Localizable.strings:95
+#: Resources/templates/Localizable.strings:97
 #, no-wrap
 msgid ""
 "This is DataHub protocol support mandatory for MacOSX.\n"
@@ -544,7 +558,7 @@ msgstr ""
 "Genelde halihazırda mevcuttur fakat bazen kayıp olabilir. Bu durumda ekranda uyarı görürsünüz."
 
 #. type: "EmuVariableUefi-64_description"
-#: Resources/templates/Localizable.strings:97
+#: Resources/templates/Localizable.strings:99
 #, no-wrap
 msgid ""
 "64bit driver for support of NVRAM variables needed by MacOSX.\n"
@@ -556,43 +570,43 @@ msgstr ""
 "Sadece yüklü olmadığında problem yaşıyorsanız kullanınız."
 
 #. type: "OsxAptioFixDrv-64_description"
-#: Resources/templates/Localizable.strings:100
+#: Resources/templates/Localizable.strings:102
 #, no-wrap
 msgid "64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio"
 msgstr "AMI Aptio gibi UEFI Firmware'lerdeki bellek sorunlarını çözen 64bit sürücü"
 
 #. type: "OsxLowMemFixDrv-64_description"
-#: Resources/templates/Localizable.strings:101
+#: Resources/templates/Localizable.strings:103
 #, no-wrap
 msgid "Simplified variant of OsxAptioFixDrv, 64bit (do not use both together)"
 msgstr "Sadeleştirilmiş OsxAptioFixDrv türevi, 64bit (ikisini birden kullanmayın)"
 
 #. type: "PartitionDxe-64_description"
-#: Resources/templates/Localizable.strings:102
+#: Resources/templates/Localizable.strings:104
 #, no-wrap
 msgid "64bit driver to support non-usual partition maps such as: hybrid GPT/MBR or Apple Partition Map."
 msgstr "Melez GPT/MBR veya Apple Partition Map gibi alışıldık olmayan bölümleri desteklemek için 64bit sürücü."
 
 #. type: "Themes_title"
-#: Resources/templates/Localizable.strings:108
+#: Resources/templates/Localizable.strings:110
 #, no-wrap
 msgid "Themes"
 msgstr "Temalar"
 
 #. type: "Themes_description"
-#: Resources/templates/Localizable.strings:109
+#: Resources/templates/Localizable.strings:111
 #, no-wrap
 msgid "Select to install themes."
 msgstr "Yükleme için tema seçin."
 
 #. type: "applestyle_title"
-#: Resources/templates/Localizable.strings:111
+#: Resources/templates/Localizable.strings:113
 #, no-wrap
 msgid "AppleStyle"
 msgstr "AppleStili"
 
 #. type: "applestyle_description"
-#: Resources/templates/Localizable.strings:112
+#: Resources/templates/Localizable.strings:114
 #, no-wrap
 msgid ""
 "AppleStyle theme from Eps,\n"
@@ -602,13 +616,13 @@ msgstr ""
 "/EFI/CLOVER/themes/applestyle konumuna yüklenir"
 
 #. type: "BGM_title"
-#: Resources/templates/Localizable.strings:115
+#: Resources/templates/Localizable.strings:117
 #, no-wrap
 msgid "Black_Green_Moody"
 msgstr "Siyah_Yeşil_Karamsar"
 
 #. type: "BGM_description"
-#: Resources/templates/Localizable.strings:116
+#: Resources/templates/Localizable.strings:118
 #, no-wrap
 msgid ""
 "BGM (Black Green and Moody) theme from Blackosx,\n"
@@ -618,13 +632,13 @@ msgstr ""
 "/EFI/CLOVER/themes/BGM konumuna yüklenir"
 
 #. type: "black_green_title"
-#: Resources/templates/Localizable.strings:119
+#: Resources/templates/Localizable.strings:121
 #, no-wrap
 msgid "Black_Green"
 msgstr "Siyah_Yeşil"
 
 #. type: "black_green_description"
-#: Resources/templates/Localizable.strings:120
+#: Resources/templates/Localizable.strings:122
 #, no-wrap
 msgid ""
 "Default black_green theme from Blackosx,\n"
@@ -634,13 +648,13 @@ msgstr ""
 "/EFI/CLOVER/themes/black_green konumuna yüklenir"
 
 #. type: "bluemac_title"
-#: Resources/templates/Localizable.strings:123
+#: Resources/templates/Localizable.strings:125
 #, no-wrap
 msgid "Bluemac"
 msgstr "Mavimac"
 
 #. type: "bluemac_description"
-#: Resources/templates/Localizable.strings:124
+#: Resources/templates/Localizable.strings:126
 #, no-wrap
 msgid ""
 "Bluemac theme from FowZiey,\n"
@@ -650,13 +664,13 @@ msgstr ""
 "/EFI/CLOVER/themes/bluemac konumuna yüklenir"
 
 #. type: "bootcamp_title"
-#: Resources/templates/Localizable.strings:127
+#: Resources/templates/Localizable.strings:129
 #, no-wrap
 msgid "BootCamp"
 msgstr "BootCamp"
 
 #. type: "bootcamp_description"
-#: Resources/templates/Localizable.strings:128
+#: Resources/templates/Localizable.strings:130
 #, no-wrap
 msgid ""
 "Bootcamp theme from Bijo,\n"
@@ -666,13 +680,13 @@ msgstr ""
 "/EFI/CLOVER/themes/bootcamp konumuna yüklenir"
 
 #. type: "BGM256_title"
-#: Resources/templates/Localizable.strings:131
+#: Resources/templates/Localizable.strings:133
 #, no-wrap
 msgid "BGM256"
 msgstr ""
 
 #. type: "BGM256_description"
-#: Resources/templates/Localizable.strings:132
+#: Resources/templates/Localizable.strings:134
 #, fuzzy, no-wrap
 #| msgid ""
 #| "Black Green and Moody theme from Blackosx,\n"
@@ -685,13 +699,13 @@ msgstr ""
 "/EFI/CLOVER/themes/BGM konumuna yüklenir"
 
 #. type: "chrome_title"
-#: Resources/templates/Localizable.strings:135
+#: Resources/templates/Localizable.strings:137
 #, no-wrap
 msgid "chrome"
 msgstr ""
 
 #. type: "chrome_description"
-#: Resources/templates/Localizable.strings:136
+#: Resources/templates/Localizable.strings:138
 #, fuzzy, no-wrap
 #| msgid ""
 #| "Orange theme from dwm,\n"
@@ -704,14 +718,14 @@ msgstr ""
 "/EFI/CLOVER/themes/orange konumuna yüklenir"
 
 #. type: "CloverX_title"
-#: Resources/templates/Localizable.strings:139
+#: Resources/templates/Localizable.strings:141
 #, fuzzy, no-wrap
 #| msgid "Clover"
 msgid "CloverX"
 msgstr "Clover"
 
 #. type: "CloverX_description"
-#: Resources/templates/Localizable.strings:140
+#: Resources/templates/Localizable.strings:142
 #, fuzzy, no-wrap
 #| msgid ""
 #| "Orange theme from dwm,\n"
@@ -724,13 +738,13 @@ msgstr ""
 "/EFI/CLOVER/themes/orange konumuna yüklenir"
 
 #. type: "dawn_title"
-#: Resources/templates/Localizable.strings:143
+#: Resources/templates/Localizable.strings:145
 #, no-wrap
 msgid "dawn"
 msgstr ""
 
 #. type: "dawn_description"
-#: Resources/templates/Localizable.strings:144
+#: Resources/templates/Localizable.strings:146
 #, fuzzy, no-wrap
 #| msgid ""
 #| "Orange theme from dwm,\n"
@@ -743,13 +757,13 @@ msgstr ""
 "/EFI/CLOVER/themes/orange konumuna yüklenir"
 
 #. type: "embedded_title"
-#: Resources/templates/Localizable.strings:147
+#: Resources/templates/Localizable.strings:149
 #, no-wrap
 msgid "embedded"
 msgstr ""
 
 #. type: "embedded_description"
-#: Resources/templates/Localizable.strings:148
+#: Resources/templates/Localizable.strings:150
 #, fuzzy, no-wrap
 #| msgid ""
 #| "Default black_green theme from Blackosx,\n"
@@ -762,13 +776,13 @@ msgstr ""
 "/EFI/CLOVER/themes/black_green konumuna yüklenir"
 
 #. type: "gold_clover_title"
-#: Resources/templates/Localizable.strings:151
+#: Resources/templates/Localizable.strings:153
 #, no-wrap
 msgid "gold_clover"
 msgstr ""
 
 #. type: "gold_clover_description"
-#: Resources/templates/Localizable.strings:152
+#: Resources/templates/Localizable.strings:154
 #, fuzzy, no-wrap
 #| msgid ""
 #| "Wooden theme from iROOTa,\n"
@@ -781,13 +795,13 @@ msgstr ""
 "/EFI/CLOVER/themes/wooden konumuna yüklenir"
 
 #. type: "iclover_title"
-#: Resources/templates/Localizable.strings:155
+#: Resources/templates/Localizable.strings:157
 #, no-wrap
 msgid "iClover"
 msgstr "iClover"
 
 #. type: "iclover_description"
-#: Resources/templates/Localizable.strings:156
+#: Resources/templates/Localizable.strings:158
 #, no-wrap
 msgid ""
 "Grey style theme by winlog,\n"
@@ -797,13 +811,13 @@ msgstr ""
 "/EFI/CLOVER/themes/iclover konumuna yüklenir"
 
 #. type: "ios7_title"
-#: Resources/templates/Localizable.strings:159
+#: Resources/templates/Localizable.strings:161
 #, no-wrap
 msgid "ios7"
 msgstr ""
 
 #. type: "ios7_description"
-#: Resources/templates/Localizable.strings:160
+#: Resources/templates/Localizable.strings:162
 #, fuzzy, no-wrap
 #| msgid ""
 #| "Grey style theme by winlog,\n"
@@ -816,13 +830,13 @@ msgstr ""
 "/EFI/CLOVER/themes/iclover konumuna yüklenir"
 
 #. type: "magnifico_title"
-#: Resources/templates/Localizable.strings:163
+#: Resources/templates/Localizable.strings:165
 #, no-wrap
 msgid "Magnifico"
 msgstr "Magnifico"
 
 #. type: "magnifico_description"
-#: Resources/templates/Localizable.strings:164
+#: Resources/templates/Localizable.strings:166
 #, no-wrap
 msgid ""
 "Magnifico theme from Magnifico,\n"
@@ -832,13 +846,13 @@ msgstr ""
 "/EFI/CLOVER/themes/magnifico konumuna yüklenir"
 
 #. type: "metal_title"
-#: Resources/templates/Localizable.strings:167
+#: Resources/templates/Localizable.strings:169
 #, no-wrap
 msgid "metal"
 msgstr "metal"
 
 #. type: "metal_description"
-#: Resources/templates/Localizable.strings:168
+#: Resources/templates/Localizable.strings:170
 #, no-wrap
 msgid ""
 "The original metal theme from Slice,\n"
@@ -848,13 +862,13 @@ msgstr ""
 "/EFI/CLOVER/themes/metal konumuna yüklenir"
 
 #. type: "mrengles_title"
-#: Resources/templates/Localizable.strings:171
+#: Resources/templates/Localizable.strings:173
 #, no-wrap
 msgid "mrengles"
 msgstr "mrengles"
 
 #. type: "mrengles_description"
-#: Resources/templates/Localizable.strings:172
+#: Resources/templates/Localizable.strings:174
 #, no-wrap
 msgid ""
 "mrengles theme from mrengles,\n"
@@ -864,13 +878,13 @@ msgstr ""
 "/EFI/CLOVER/themes/mrengles konumuna yüklenir"
 
 #. type: "orange_title"
-#: Resources/templates/Localizable.strings:175
+#: Resources/templates/Localizable.strings:177
 #, no-wrap
 msgid "Orange"
 msgstr "Turuncu"
 
 #. type: "orange_description"
-#: Resources/templates/Localizable.strings:176
+#: Resources/templates/Localizable.strings:178
 #, no-wrap
 msgid ""
 "Orange theme from dwm,\n"
@@ -880,13 +894,13 @@ msgstr ""
 "/EFI/CLOVER/themes/orange konumuna yüklenir"
 
 #. type: "os_box_title"
-#: Resources/templates/Localizable.strings:179
+#: Resources/templates/Localizable.strings:181
 #, no-wrap
 msgid "OS Box"
 msgstr "OS Box"
 
 #. type: "os_box_description"
-#: Resources/templates/Localizable.strings:180
+#: Resources/templates/Localizable.strings:182
 #, no-wrap
 msgid ""
 "OS Box theme from Kyndder,\n"
@@ -896,13 +910,13 @@ msgstr ""
 "/EFI/CLOVER/themes/os_box konumuna yüklenir"
 
 #. type: "os_one_title"
-#: Resources/templates/Localizable.strings:183
+#: Resources/templates/Localizable.strings:185
 #, no-wrap
 msgid "OS One"
 msgstr "OS One"
 
 #. type: "os_one_description"
-#: Resources/templates/Localizable.strings:184
+#: Resources/templates/Localizable.strings:186
 #, no-wrap
 msgid ""
 "OS One theme from Kyndder,\n"
@@ -912,13 +926,13 @@ msgstr ""
 "/EFI/CLOVER/themes/os_one dizinine yüklenir"
 
 #. type: "random_title"
-#: Resources/templates/Localizable.strings:187
+#: Resources/templates/Localizable.strings:189
 #, no-wrap
 msgid "random"
 msgstr ""
 
 #. type: "random_description"
-#: Resources/templates/Localizable.strings:188
+#: Resources/templates/Localizable.strings:190
 #, fuzzy, no-wrap
 #| msgid ""
 #| "Orange theme from dwm,\n"
@@ -931,15 +945,15 @@ msgstr ""
 "/EFI/CLOVER/themes/orange konumuna yüklenir"
 
 #. type: "thinkpad_title"
-#: Resources/templates/Localizable.strings:191
-#: Resources/templates/Localizable.strings:227
+#: Resources/templates/Localizable.strings:193
+#: Resources/templates/Localizable.strings:229
 #, no-wrap
 msgid "ThinkPad"
 msgstr "ThinkPad"
 
 #. type: "thinkpad_description"
-#: Resources/templates/Localizable.strings:192
-#: Resources/templates/Localizable.strings:228
+#: Resources/templates/Localizable.strings:194
+#: Resources/templates/Localizable.strings:230
 #, no-wrap
 msgid ""
 "ThinkPad theme from Kogen Mantis,\n"
@@ -949,13 +963,13 @@ msgstr ""
 "/EFI/CLOVER/themes/thinkpad konumuna yüklenir"
 
 #. type: "buttons_title"
-#: Resources/templates/Localizable.strings:195
+#: Resources/templates/Localizable.strings:197
 #, no-wrap
 msgid "buttons"
 msgstr "düğmeler"
 
 #. type: "buttons_description"
-#: Resources/templates/Localizable.strings:196
+#: Resources/templates/Localizable.strings:198
 #, no-wrap
 msgid ""
 "Buttons theme from Trauma,\n"
@@ -965,13 +979,13 @@ msgstr ""
 "/EFI/CLOVER/themes/buttons konumuna yüklenir"
 
 #. type: "hellfire_title"
-#: Resources/templates/Localizable.strings:199
+#: Resources/templates/Localizable.strings:201
 #, no-wrap
 msgid "hellfire"
 msgstr "hellfire"
 
 #. type: "hellfire_description"
-#: Resources/templates/Localizable.strings:200
+#: Resources/templates/Localizable.strings:202
 #, no-wrap
 msgid ""
 "Hellfire theme from lllevelll,\n"
@@ -981,13 +995,13 @@ msgstr ""
 "/EFI/CLOVER/themes/hellfire konumuna yüklenir"
 
 #. type: "simple_gray_title"
-#: Resources/templates/Localizable.strings:203
+#: Resources/templates/Localizable.strings:205
 #, no-wrap
 msgid "simple_gray"
 msgstr "simple_gray"
 
 #. type: "simple_gray_description"
-#: Resources/templates/Localizable.strings:204
+#: Resources/templates/Localizable.strings:206
 #, no-wrap
 msgid ""
 "Simple_gray theme from hijeane,\n"
@@ -997,13 +1011,13 @@ msgstr ""
 "/EFI/CLOVER/themes/simple_gray konumuna yükle"
 
 #. type: "Shield_title"
-#: Resources/templates/Localizable.strings:207
+#: Resources/templates/Localizable.strings:209
 #, no-wrap
 msgid "Shield"
 msgstr "Shield"
 
 #. type: "Shield_description"
-#: Resources/templates/Localizable.strings:208
+#: Resources/templates/Localizable.strings:210
 #, fuzzy, no-wrap
 #| msgid ""
 #| "Black Green and Moody theme from Blackosx,\n"
@@ -1016,13 +1030,13 @@ msgstr ""
 "/EFI/CLOVER/themes/Shield konumuna yüklenir."
 
 #. type: "wooden_title"
-#: Resources/templates/Localizable.strings:211
+#: Resources/templates/Localizable.strings:213
 #, no-wrap
 msgid "wooden"
 msgstr "wooden"
 
 #. type: "wooden_description"
-#: Resources/templates/Localizable.strings:212
+#: Resources/templates/Localizable.strings:214
 #, no-wrap
 msgid ""
 "Wooden theme from iROOTa,\n"
@@ -1032,13 +1046,13 @@ msgstr ""
 "/EFI/CLOVER/themes/wooden konumuna yüklenir"
 
 #. type: "sketched_title"
-#: Resources/templates/Localizable.strings:215
+#: Resources/templates/Localizable.strings:217
 #, no-wrap
 msgid "sketched"
 msgstr ""
 
 #. type: "sketched_description"
-#: Resources/templates/Localizable.strings:216
+#: Resources/templates/Localizable.strings:218
 #, fuzzy, no-wrap
 #| msgid ""
 #| "OS One theme from Kyndder,\n"
@@ -1051,13 +1065,13 @@ msgstr ""
 "/EFI/CLOVER/themes/os_one dizinine yüklenir"
 
 #. type: "Space_title"
-#: Resources/templates/Localizable.strings:219
+#: Resources/templates/Localizable.strings:221
 #, no-wrap
 msgid "Space"
 msgstr ""
 
 #. type: "Space_description"
-#: Resources/templates/Localizable.strings:220
+#: Resources/templates/Localizable.strings:222
 #, fuzzy, no-wrap
 #| msgid ""
 #| "Orange theme from dwm,\n"
@@ -1070,13 +1084,13 @@ msgstr ""
 "/EFI/CLOVER/themes/orange konumuna yüklenir"
 
 #. type: "steampunkblack_title"
-#: Resources/templates/Localizable.strings:223
+#: Resources/templates/Localizable.strings:225
 #, no-wrap
 msgid "steampunkblack"
 msgstr ""
 
 #. type: "steampunkblack_description"
-#: Resources/templates/Localizable.strings:224
+#: Resources/templates/Localizable.strings:226
 #, fuzzy, no-wrap
 #| msgid ""
 #| "Bootcamp theme from Bijo,\n"
@@ -1089,13 +1103,13 @@ msgstr ""
 "/EFI/CLOVER/themes/bootcamp konumuna yüklenir"
 
 #. type: "rc.scripts.on.target_title"
-#: Resources/templates/Localizable.strings:234
+#: Resources/templates/Localizable.strings:236
 #, no-wrap
 msgid "Install RC scripts on target volume"
 msgstr "Hedef bölüme RC scriptlerini yükle"
 
 #. type: "rc.scripts.on.target_description"
-#: Resources/templates/Localizable.strings:235
+#: Resources/templates/Localizable.strings:237
 #, no-wrap
 msgid ""
 "Install all RC scripts on target volume.\n"
@@ -1105,37 +1119,37 @@ msgstr ""
 "Hedef bölüm önyüklenebilir bir OS X sistem bölümü olmalıdır."
 
 #. type: "rc.scripts.on.all.volumes_title"
-#: Resources/templates/Localizable.strings:237
+#: Resources/templates/Localizable.strings:239
 #, no-wrap
 msgid "Install all RC scripts on all other bootable OSX volumes"
 msgstr "RC scriptlerini bütün diğer OS X bölümlerine yükle"
 
 #. type: "rc.scripts.on.all.volumes_description"
-#: Resources/templates/Localizable.strings:238
+#: Resources/templates/Localizable.strings:240
 #, no-wrap
 msgid "Install all RC scripts on all internal bootable OSX volumes other than the target volume."
 msgstr "RC scriptlerini hedef bölüm hariç diğer bütün dahili önyüklenebilir OS X bölümlerine yükle."
 
 #. type: "Optional RC Scripts"
-#: Resources/templates/Localizable.strings:239
+#: Resources/templates/Localizable.strings:241
 #, no-wrap
 msgid "Optional RC Scripts"
 msgstr "İsteğe bağlı RC scriptleri"
 
 #. type: "disable_sleep_proxy_client_description"
-#: Resources/templates/Localizable.strings:240
+#: Resources/templates/Localizable.strings:242
 #, no-wrap
 msgid "Disable the mDNSResponder sleep proxy client service. This will prevent the system waking from sleep every hours"
 msgstr "mDNSResponder vekil uyku istemcisi servisini devre dışı bırak. Bu, sistemin her saat uykudan uyanmasını engelleyecektir."
 
 #. type: "CloverPrefpane_title"
-#: Resources/templates/Localizable.strings:245
+#: Resources/templates/Localizable.strings:247
 #, no-wrap
 msgid "Install Clover Preference Pane"
 msgstr "Clover Tercih Panosunu yükle"
 
 #. type: "CloverPrefpane_description"
-#: Resources/templates/Localizable.strings:246
+#: Resources/templates/Localizable.strings:248
 #, no-wrap
 msgid ""
 "Install Clover Preference Pane on target volume.\n"

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-04-06 20:15+0300\n"
+"POT-Creation-Date: 2016-08-08 12:52+0300\n"
 "PO-Revision-Date: 2015-12-30 23:27+0000\n"
 "Last-Translator: Mill <ceruns@ymail.com>\n"
 "Language-Team: ko <ko@li.org>\n"
@@ -449,80 +449,94 @@ msgstr "CloverEFI 64비트 BiosBlockIO"
 msgid "CloverEFI 64-bits using Bios Block I/O to access drives"
 msgstr "CloverEFI 64비트 (드라이브 액세스에 Bios Block I/O 사용)"
 
+#. type: "cloverEFI.64.blockio2_title"
+#: Resources/templates/Localizable.strings:75
+#, fuzzy, no-wrap
+#| msgid "CloverEFI 64-bits BiosBlockIO"
+msgid "CloverEFI 64-bits BiosBlockIO for NVIDIA NForce MCP79"
+msgstr "CloverEFI 64비트 BiosBlockIO"
+
+#. type: "cloverEFI.64.blockio2_description"
+#: Resources/templates/Localizable.strings:76
+#, fuzzy, no-wrap
+#| msgid "CloverEFI 64-bits using Bios Block I/O to access drives"
+msgid "CloverEFI 64-bits using Bios Block I/O to access drives for chipset NVIDIA NForce MCP79"
+msgstr "CloverEFI 64비트 (드라이브 액세스에 Bios Block I/O 사용)"
+
 #. type: "Ps2KeyboardDxe-32_description"
-#: Resources/templates/Localizable.strings:79
+#: Resources/templates/Localizable.strings:81
 #, no-wrap
 msgid "PS/2 keyboard driver, 32bit"
 msgstr "PS/2 키보드 드라이버, 32비트"
 
 #. type: "Ps2MouseAbsolutePointerDxe-32_description"
-#: Resources/templates/Localizable.strings:80
+#: Resources/templates/Localizable.strings:82
 #, no-wrap
 msgid "PS/2 trackpad driver, 32bit"
 msgstr "PS/2 트랙패드 드라이버, 32비트"
 
 #. type: "Ps2MouseDxe-32_description"
-#: Resources/templates/Localizable.strings:81
+#: Resources/templates/Localizable.strings:83
 #, no-wrap
 msgid "PS/2 mouse driver, 32bit"
 msgstr "PS/2 마우스 드라이버, 32비트"
 
 #. type: "Ps2MouseDxe-64_description"
-#: Resources/templates/Localizable.strings:82
+#: Resources/templates/Localizable.strings:84
 #, no-wrap
 msgid "PS/2 mouse driver, 64bit"
 msgstr "PS/2 마우스 드라이버, 64비트"
 
 #. type: "UsbMouseDxe-32_description"
-#: Resources/templates/Localizable.strings:83
+#: Resources/templates/Localizable.strings:85
 #, no-wrap
 msgid "USB mouse driver, 32bit"
 msgstr "USB 마우스 드라이버, 32비트"
 
 #. type: "UsbMouseDxe-64_description"
-#: Resources/templates/Localizable.strings:84
+#: Resources/templates/Localizable.strings:86
 #, no-wrap
 msgid "USB mouse driver, 64bit"
 msgstr "USB 마우스 드라이버, 64비트"
 
 #. type: "VBoxExt2-32_description"
-#: Resources/templates/Localizable.strings:85
+#: Resources/templates/Localizable.strings:87
 #, no-wrap
 msgid "ext2/3 filesystem driver from virtualbox, 32bit"
 msgstr "Virtualbox 용 Ext2/3 파일시스템 드라이버, 32비트"
 
 #. type: "VBoxExt2-64_description"
-#: Resources/templates/Localizable.strings:86
+#: Resources/templates/Localizable.strings:88
 #, no-wrap
 msgid "ext2/3 filesystem driver from virtualbox, 64bit"
 msgstr "Virtualbox 용 Ext2/3 파일시스템 드라이버, 64비트"
 
 #. type: "VBoxExt4-32_description"
-#: Resources/templates/Localizable.strings:87
+#: Resources/templates/Localizable.strings:89
 #, no-wrap
 msgid "ext4 filesystem driver from virtualbox, 32bit"
 msgstr "Virtualbox 용 Ext4 파일시스템 드라이버, 32비트"
 
 #. type: "VBoxExt4-64_description"
-#: Resources/templates/Localizable.strings:88
+#: Resources/templates/Localizable.strings:90
 #, no-wrap
 msgid "ext4 filesystem driver from virtualbox, 64bit"
 msgstr "Virtualbox 용 Ext4 파일시스템 드라이버, 64비트"
 
 #. type: "XhciDxe-32_description"
-#: Resources/templates/Localizable.strings:89
+#: Resources/templates/Localizable.strings:91
 #, no-wrap
 msgid "USB 3.0 driver, 32bit"
 msgstr "USB 3.0 드라이버, 32비트"
 
 #. type: "XhciDxe-64_description"
-#: Resources/templates/Localizable.strings:90
+#: Resources/templates/Localizable.strings:92
 #, no-wrap
 msgid "USB 3.0 driver, 64bit"
 msgstr "USB 3.0 드라이버, 64비트"
 
 #. type: "CsmVideoDxe-64_description"
-#: Resources/templates/Localizable.strings:91
+#: Resources/templates/Localizable.strings:93
 #, no-wrap
 msgid ""
 "64bit video driver for Clover GUI allowing to choose more resolutions.\n"
@@ -536,7 +550,7 @@ msgstr ""
 "주의해서 사용해주시기 바랍니다.\n"
 
 #. type: "DataHubDxe-64_description"
-#: Resources/templates/Localizable.strings:95
+#: Resources/templates/Localizable.strings:97
 #, no-wrap
 msgid ""
 "This is DataHub protocol support mandatory for MacOSX.\n"
@@ -546,7 +560,7 @@ msgstr ""
 "대개 이미 존재하지만 간혹 없는 경우가 있습니다. 그러한 경우에는 화면에서 경고를 발견하실 수 있습니다."
 
 #. type: "EmuVariableUefi-64_description"
-#: Resources/templates/Localizable.strings:97
+#: Resources/templates/Localizable.strings:99
 #, no-wrap
 msgid ""
 "64bit driver for support of NVRAM variables needed by MacOSX.\n"
@@ -558,43 +572,43 @@ msgstr ""
 "본 드라이버 없이는 문제가 있는 경우에 한해서 사용하십시오."
 
 #. type: "OsxAptioFixDrv-64_description"
-#: Resources/templates/Localizable.strings:100
+#: Resources/templates/Localizable.strings:102
 #, no-wrap
 msgid "64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio"
 msgstr "AMI Aptio와 같은 UEFI 펌웨어 문제를 해결하기 위한 64비트 드라이버"
 
 #. type: "OsxLowMemFixDrv-64_description"
-#: Resources/templates/Localizable.strings:101
+#: Resources/templates/Localizable.strings:103
 #, no-wrap
 msgid "Simplified variant of OsxAptioFixDrv, 64bit (do not use both together)"
 msgstr "OsxAptioFixDrv의 간소화 형태(간소화되지 않는 버전과 함께 사용하지 마십시오)"
 
 #. type: "PartitionDxe-64_description"
-#: Resources/templates/Localizable.strings:102
+#: Resources/templates/Localizable.strings:104
 #, no-wrap
 msgid "64bit driver to support non-usual partition maps such as: hybrid GPT/MBR or Apple Partition Map."
 msgstr "GPT/MBR 또는 Apple Partition Map과 같은 희귀 파티션맵을 지원하기 위한 64비트 드라이버."
 
 #. type: "Themes_title"
-#: Resources/templates/Localizable.strings:108
+#: Resources/templates/Localizable.strings:110
 #, no-wrap
 msgid "Themes"
 msgstr "테마"
 
 #. type: "Themes_description"
-#: Resources/templates/Localizable.strings:109
+#: Resources/templates/Localizable.strings:111
 #, no-wrap
 msgid "Select to install themes."
 msgstr "사용자가 원하는 테마를 설치합니다."
 
 #. type: "applestyle_title"
-#: Resources/templates/Localizable.strings:111
+#: Resources/templates/Localizable.strings:113
 #, no-wrap
 msgid "AppleStyle"
 msgstr "애플스타일"
 
 #. type: "applestyle_description"
-#: Resources/templates/Localizable.strings:112
+#: Resources/templates/Localizable.strings:114
 #, no-wrap
 msgid ""
 "AppleStyle theme from Eps,\n"
@@ -604,13 +618,13 @@ msgstr ""
 "다음에 설치합니다: /EFI/CLOVER/themes/AppleStyle"
 
 #. type: "BGM_title"
-#: Resources/templates/Localizable.strings:115
+#: Resources/templates/Localizable.strings:117
 #, no-wrap
 msgid "Black_Green_Moody"
 msgstr "흑녹색조"
 
 #. type: "BGM_description"
-#: Resources/templates/Localizable.strings:116
+#: Resources/templates/Localizable.strings:118
 #, no-wrap
 msgid ""
 "BGM (Black Green and Moody) theme from Blackosx,\n"
@@ -620,13 +634,13 @@ msgstr ""
 "다음에 설치합니다: /EFI/CLOVER/themes/BGM"
 
 #. type: "black_green_title"
-#: Resources/templates/Localizable.strings:119
+#: Resources/templates/Localizable.strings:121
 #, no-wrap
 msgid "Black_Green"
 msgstr "Black_Green"
 
 #. type: "black_green_description"
-#: Resources/templates/Localizable.strings:120
+#: Resources/templates/Localizable.strings:122
 #, no-wrap
 msgid ""
 "Default black_green theme from Blackosx,\n"
@@ -636,13 +650,13 @@ msgstr ""
 "다음에 설치합니다: /EFI/CLOVER/themes/black_green"
 
 #. type: "bluemac_title"
-#: Resources/templates/Localizable.strings:123
+#: Resources/templates/Localizable.strings:125
 #, no-wrap
 msgid "Bluemac"
 msgstr "Bluemac"
 
 #. type: "bluemac_description"
-#: Resources/templates/Localizable.strings:124
+#: Resources/templates/Localizable.strings:126
 #, no-wrap
 msgid ""
 "Bluemac theme from FowZiey,\n"
@@ -652,13 +666,13 @@ msgstr ""
 "다음에 설치합니다: /EFI/CLOVER/themes/bluemac"
 
 #. type: "bootcamp_title"
-#: Resources/templates/Localizable.strings:127
+#: Resources/templates/Localizable.strings:129
 #, no-wrap
 msgid "BootCamp"
 msgstr "BootCamp"
 
 #. type: "bootcamp_description"
-#: Resources/templates/Localizable.strings:128
+#: Resources/templates/Localizable.strings:130
 #, no-wrap
 msgid ""
 "Bootcamp theme from Bijo,\n"
@@ -668,13 +682,13 @@ msgstr ""
 "다음에 설치합니다: /EFI/CLOVER/themes/bootcamp"
 
 #. type: "BGM256_title"
-#: Resources/templates/Localizable.strings:131
+#: Resources/templates/Localizable.strings:133
 #, no-wrap
 msgid "BGM256"
 msgstr "BGM256"
 
 #. type: "BGM256_description"
-#: Resources/templates/Localizable.strings:132
+#: Resources/templates/Localizable.strings:134
 #, no-wrap
 msgid ""
 "BGM A version of BGM with 256px icons theme from Blackosx,\n"
@@ -684,13 +698,13 @@ msgstr ""
 "다음에 설치합니다: /EFI/CLOVER/themes/BGM256"
 
 #. type: "chrome_title"
-#: Resources/templates/Localizable.strings:135
+#: Resources/templates/Localizable.strings:137
 #, no-wrap
 msgid "chrome"
 msgstr "크롬"
 
 #. type: "chrome_description"
-#: Resources/templates/Localizable.strings:136
+#: Resources/templates/Localizable.strings:138
 #, no-wrap
 msgid ""
 "chrome theme from chris1111,\n"
@@ -700,13 +714,13 @@ msgstr ""
 "다음에 설치합니다: /EFI/CLOVER/themes/chrome"
 
 #. type: "CloverX_title"
-#: Resources/templates/Localizable.strings:139
+#: Resources/templates/Localizable.strings:141
 #, no-wrap
 msgid "CloverX"
 msgstr "클로버X"
 
 #. type: "CloverX_description"
-#: Resources/templates/Localizable.strings:140
+#: Resources/templates/Localizable.strings:142
 #, no-wrap
 msgid ""
 "CloverX theme from =)(=,\n"
@@ -716,13 +730,13 @@ msgstr ""
 "다음에 설치합니다: /EFI/CLOVER/themes/CloverX"
 
 #. type: "dawn_title"
-#: Resources/templates/Localizable.strings:143
+#: Resources/templates/Localizable.strings:145
 #, no-wrap
 msgid "dawn"
 msgstr "새벽"
 
 #. type: "dawn_description"
-#: Resources/templates/Localizable.strings:144
+#: Resources/templates/Localizable.strings:146
 #, no-wrap
 msgid ""
 "dawn theme from Slice,\n"
@@ -732,13 +746,13 @@ msgstr ""
 "다음에 설치합니다: /EFI/CLOVER/themes/dawn"
 
 #. type: "embedded_title"
-#: Resources/templates/Localizable.strings:147
+#: Resources/templates/Localizable.strings:149
 #, no-wrap
 msgid "embedded"
 msgstr "임베디드"
 
 #. type: "embedded_description"
-#: Resources/templates/Localizable.strings:148
+#: Resources/templates/Localizable.strings:150
 #, no-wrap
 msgid ""
 "embedded theme from Blackosx,\n"
@@ -748,13 +762,13 @@ msgstr ""
 "다음에 설치합니다: /EFI/CLOVER/themes/embedded"
 
 #. type: "gold_clover_title"
-#: Resources/templates/Localizable.strings:151
+#: Resources/templates/Localizable.strings:153
 #, no-wrap
 msgid "gold_clover"
 msgstr "골드 클로버"
 
 #. type: "gold_clover_description"
-#: Resources/templates/Localizable.strings:152
+#: Resources/templates/Localizable.strings:154
 #, no-wrap
 msgid ""
 "gold_clover theme from chris1111,\n"
@@ -764,13 +778,13 @@ msgstr ""
 "다음에 설치합니다: /EFI/CLOVER/themes/gold_clover"
 
 #. type: "iclover_title"
-#: Resources/templates/Localizable.strings:155
+#: Resources/templates/Localizable.strings:157
 #, no-wrap
 msgid "iClover"
 msgstr "iClover 테마"
 
 #. type: "iclover_description"
-#: Resources/templates/Localizable.strings:156
+#: Resources/templates/Localizable.strings:158
 #, no-wrap
 msgid ""
 "Grey style theme by winlog,\n"
@@ -780,13 +794,13 @@ msgstr ""
 "다음에 설치합니다: /EFI/CLOVER/themes/iclover"
 
 #. type: "ios7_title"
-#: Resources/templates/Localizable.strings:159
+#: Resources/templates/Localizable.strings:161
 #, no-wrap
 msgid "ios7"
 msgstr "iOS7"
 
 #. type: "ios7_description"
-#: Resources/templates/Localizable.strings:160
+#: Resources/templates/Localizable.strings:162
 #, no-wrap
 msgid ""
 "ios7 theme by Ukr55, Winlog,\n"
@@ -796,13 +810,13 @@ msgstr ""
 "다음에 설치합니다: /EFI/CLOVER/themes/ios7"
 
 #. type: "magnifico_title"
-#: Resources/templates/Localizable.strings:163
+#: Resources/templates/Localizable.strings:165
 #, no-wrap
 msgid "Magnifico"
 msgstr "Magnifico"
 
 #. type: "magnifico_description"
-#: Resources/templates/Localizable.strings:164
+#: Resources/templates/Localizable.strings:166
 #, no-wrap
 msgid ""
 "Magnifico theme from Magnifico,\n"
@@ -812,13 +826,13 @@ msgstr ""
 "다음에 설치합니다: /EFI/CLOVER/themes/magnifico"
 
 #. type: "metal_title"
-#: Resources/templates/Localizable.strings:167
+#: Resources/templates/Localizable.strings:169
 #, no-wrap
 msgid "metal"
 msgstr "금속 테마"
 
 #. type: "metal_description"
-#: Resources/templates/Localizable.strings:168
+#: Resources/templates/Localizable.strings:170
 #, no-wrap
 msgid ""
 "The original metal theme from Slice,\n"
@@ -828,13 +842,13 @@ msgstr ""
 "다음에 설치합니다: /EFI/CLOVER/themes/metal"
 
 #. type: "mrengles_title"
-#: Resources/templates/Localizable.strings:171
+#: Resources/templates/Localizable.strings:173
 #, no-wrap
 msgid "mrengles"
 msgstr "mrengles 테마"
 
 #. type: "mrengles_description"
-#: Resources/templates/Localizable.strings:172
+#: Resources/templates/Localizable.strings:174
 #, no-wrap
 msgid ""
 "mrengles theme from mrengles,\n"
@@ -844,13 +858,13 @@ msgstr ""
 "다음에 설치합니다: /EFI/CLOVER/themes/mrengles"
 
 #. type: "orange_title"
-#: Resources/templates/Localizable.strings:175
+#: Resources/templates/Localizable.strings:177
 #, no-wrap
 msgid "Orange"
 msgstr "Orange"
 
 #. type: "orange_description"
-#: Resources/templates/Localizable.strings:176
+#: Resources/templates/Localizable.strings:178
 #, no-wrap
 msgid ""
 "Orange theme from dwm,\n"
@@ -860,13 +874,13 @@ msgstr ""
 "다음에 설치합니다: /EFI/CLOVER/themes/orange"
 
 #. type: "os_box_title"
-#: Resources/templates/Localizable.strings:179
+#: Resources/templates/Localizable.strings:181
 #, no-wrap
 msgid "OS Box"
 msgstr "OS Box"
 
 #. type: "os_box_description"
-#: Resources/templates/Localizable.strings:180
+#: Resources/templates/Localizable.strings:182
 #, no-wrap
 msgid ""
 "OS Box theme from Kyndder,\n"
@@ -876,13 +890,13 @@ msgstr ""
 "다음에 설치합니다: /EFI/CLOVER/themes/os_box"
 
 #. type: "os_one_title"
-#: Resources/templates/Localizable.strings:183
+#: Resources/templates/Localizable.strings:185
 #, no-wrap
 msgid "OS One"
 msgstr "OS One"
 
 #. type: "os_one_description"
-#: Resources/templates/Localizable.strings:184
+#: Resources/templates/Localizable.strings:186
 #, no-wrap
 msgid ""
 "OS One theme from Kyndder,\n"
@@ -892,13 +906,13 @@ msgstr ""
 "다음에 설치합니다: /EFI/CLOVER/themes/os_one"
 
 #. type: "random_title"
-#: Resources/templates/Localizable.strings:187
+#: Resources/templates/Localizable.strings:189
 #, no-wrap
 msgid "random"
 msgstr "랜덤"
 
 #. type: "random_description"
-#: Resources/templates/Localizable.strings:188
+#: Resources/templates/Localizable.strings:190
 #, no-wrap
 msgid ""
 "random theme from Slice,\n"
@@ -908,15 +922,15 @@ msgstr ""
 "다음에 설치합니다: /EFI/CLOVER/themes/random"
 
 #. type: "thinkpad_title"
-#: Resources/templates/Localizable.strings:191
-#: Resources/templates/Localizable.strings:227
+#: Resources/templates/Localizable.strings:193
+#: Resources/templates/Localizable.strings:229
 #, no-wrap
 msgid "ThinkPad"
 msgstr "ThinkPad"
 
 #. type: "thinkpad_description"
-#: Resources/templates/Localizable.strings:192
-#: Resources/templates/Localizable.strings:228
+#: Resources/templates/Localizable.strings:194
+#: Resources/templates/Localizable.strings:230
 #, no-wrap
 msgid ""
 "ThinkPad theme from Kogen Mantis,\n"
@@ -926,13 +940,13 @@ msgstr ""
 "다음에 설치합니다: /EFI/CLOVER/themes/thinkpad"
 
 #. type: "buttons_title"
-#: Resources/templates/Localizable.strings:195
+#: Resources/templates/Localizable.strings:197
 #, no-wrap
 msgid "buttons"
 msgstr "버튼"
 
 #. type: "buttons_description"
-#: Resources/templates/Localizable.strings:196
+#: Resources/templates/Localizable.strings:198
 #, no-wrap
 msgid ""
 "Buttons theme from Trauma,\n"
@@ -942,13 +956,13 @@ msgstr ""
 "다음에 설치합니다: /EFI/CLOVER/themes/buttons."
 
 #. type: "hellfire_title"
-#: Resources/templates/Localizable.strings:199
+#: Resources/templates/Localizable.strings:201
 #, no-wrap
 msgid "hellfire"
 msgstr "hellfire 테마"
 
 #. type: "hellfire_description"
-#: Resources/templates/Localizable.strings:200
+#: Resources/templates/Localizable.strings:202
 #, no-wrap
 msgid ""
 "Hellfire theme from lllevelll,\n"
@@ -958,13 +972,13 @@ msgstr ""
 "다음에 설치합니다: /EFI/CLOVER/themes/hellfire."
 
 #. type: "simple_gray_title"
-#: Resources/templates/Localizable.strings:203
+#: Resources/templates/Localizable.strings:205
 #, no-wrap
 msgid "simple_gray"
 msgstr "단순회색조 테마"
 
 #. type: "simple_gray_description"
-#: Resources/templates/Localizable.strings:204
+#: Resources/templates/Localizable.strings:206
 #, no-wrap
 msgid ""
 "Simple_gray theme from hijeane,\n"
@@ -974,13 +988,13 @@ msgstr ""
 "다음에 설치합니다: /EFI/CLOVER/themes/simple_gray."
 
 #. type: "Shield_title"
-#: Resources/templates/Localizable.strings:207
+#: Resources/templates/Localizable.strings:209
 #, no-wrap
 msgid "Shield"
 msgstr "Shield"
 
 #. type: "Shield_description"
-#: Resources/templates/Localizable.strings:208
+#: Resources/templates/Localizable.strings:210
 #, no-wrap
 msgid ""
 "An animated, harmonious theme from Blackosx,\n"
@@ -990,13 +1004,13 @@ msgstr ""
 "다음에 설치합니다: /EFI/CLOVER/themes/Shield."
 
 #. type: "wooden_title"
-#: Resources/templates/Localizable.strings:211
+#: Resources/templates/Localizable.strings:213
 #, no-wrap
 msgid "wooden"
 msgstr "나무 테마"
 
 #. type: "wooden_description"
-#: Resources/templates/Localizable.strings:212
+#: Resources/templates/Localizable.strings:214
 #, no-wrap
 msgid ""
 "Wooden theme from iROOTa,\n"
@@ -1006,13 +1020,13 @@ msgstr ""
 "다음에 설치합니다: /EFI/CLOVER/themes/wooden."
 
 #. type: "sketched_title"
-#: Resources/templates/Localizable.strings:215
+#: Resources/templates/Localizable.strings:217
 #, no-wrap
 msgid "sketched"
 msgstr "스케치화"
 
 #. type: "sketched_description"
-#: Resources/templates/Localizable.strings:216
+#: Resources/templates/Localizable.strings:218
 #, no-wrap
 msgid ""
 "sketched theme from kyndder,\n"
@@ -1022,13 +1036,13 @@ msgstr ""
 "다음에 설치합니다: /EFI/CLOVER/themes/sketched"
 
 #. type: "Space_title"
-#: Resources/templates/Localizable.strings:219
+#: Resources/templates/Localizable.strings:221
 #, no-wrap
 msgid "Space"
 msgstr "스페이스"
 
 #. type: "Space_description"
-#: Resources/templates/Localizable.strings:220
+#: Resources/templates/Localizable.strings:222
 #, no-wrap
 msgid ""
 "Space theme from chris1111,\n"
@@ -1038,13 +1052,13 @@ msgstr ""
 "다음에 설치합니다: /EFI/CLOVER/themes/Space"
 
 #. type: "steampunkblack_title"
-#: Resources/templates/Localizable.strings:223
+#: Resources/templates/Localizable.strings:225
 #, no-wrap
 msgid "steampunkblack"
 msgstr "스팀펑크 블랙"
 
 #. type: "steampunkblack_description"
-#: Resources/templates/Localizable.strings:224
+#: Resources/templates/Localizable.strings:226
 #, no-wrap
 msgid ""
 "steampunkblack theme from medik,\n"
@@ -1054,13 +1068,13 @@ msgstr ""
 "다음에 설치합니다: /EFI/CLOVER/themes/steampunkblack"
 
 #. type: "rc.scripts.on.target_title"
-#: Resources/templates/Localizable.strings:234
+#: Resources/templates/Localizable.strings:236
 #, no-wrap
 msgid "Install RC scripts on target volume"
 msgstr "타겟 볼륨에 RC scripts를 설치합니다."
 
 #. type: "rc.scripts.on.target_description"
-#: Resources/templates/Localizable.strings:235
+#: Resources/templates/Localizable.strings:237
 #, no-wrap
 msgid ""
 "Install all RC scripts on target volume.\n"
@@ -1070,37 +1084,37 @@ msgstr ""
 "타겟 볼륨은 반드시 OSX 시스템 볼륨이어야 합니다."
 
 #. type: "rc.scripts.on.all.volumes_title"
-#: Resources/templates/Localizable.strings:237
+#: Resources/templates/Localizable.strings:239
 #, no-wrap
 msgid "Install all RC scripts on all other bootable OSX volumes"
 msgstr "모든 부팅 가능한 OSX 볼륨에 모든 RC scripts를 설치합니다."
 
 #. type: "rc.scripts.on.all.volumes_description"
-#: Resources/templates/Localizable.strings:238
+#: Resources/templates/Localizable.strings:240
 #, no-wrap
 msgid "Install all RC scripts on all internal bootable OSX volumes other than the target volume."
 msgstr "타겟 볼륨을 제외한 모든 내장 OSX 볼륨에 모든 RC scripts를 설치합니다."
 
 #. type: "Optional RC Scripts"
-#: Resources/templates/Localizable.strings:239
+#: Resources/templates/Localizable.strings:241
 #, no-wrap
 msgid "Optional RC Scripts"
 msgstr "선택적 RC Scripts"
 
 #. type: "disable_sleep_proxy_client_description"
-#: Resources/templates/Localizable.strings:240
+#: Resources/templates/Localizable.strings:242
 #, no-wrap
 msgid "Disable the mDNSResponder sleep proxy client service. This will prevent the system waking from sleep every hours"
 msgstr "mDNSResponder 잠자기 프록시 클라이언트 서비스를 비활성화합니다. 매 시간 잠자기에서 깨어나는 문제를 방지할 수 있습니다"
 
 #. type: "CloverPrefpane_title"
-#: Resources/templates/Localizable.strings:245
+#: Resources/templates/Localizable.strings:247
 #, no-wrap
 msgid "Install Clover Preference Pane"
 msgstr "클로버 환경설정 패널 설치"
 
 #. type: "CloverPrefpane_description"
-#: Resources/templates/Localizable.strings:246
+#: Resources/templates/Localizable.strings:248
 #, no-wrap
 msgid ""
 "Install Clover Preference Pane on target volume.\n"

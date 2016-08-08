@@ -72,6 +72,8 @@ Press key 6 to boot6 = Clover EFI 64bit boot.";
 "cloverEFI.64.sata_description" = "CloverEFI 64-bits using SATA to access drives";
 "cloverEFI.64.blockio_title" = "CloverEFI 64-bits BiosBlockIO";
 "cloverEFI.64.blockio_description" = "CloverEFI 64-bits using Bios Block I/O to access drives";
+"cloverEFI.64.blockio2_title" = "CloverEFI 64-bits BiosBlockIO for NVIDIA NForce MCP79";
+"cloverEFI.64.blockio2_description" = "CloverEFI 64-bits using Bios Block I/O to access drives for chipset NVIDIA NForce MCP79";
 
 // ============================================================================
 // Drivers

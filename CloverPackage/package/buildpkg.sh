@@ -711,6 +711,26 @@ if [[ -f "${SRCROOT}/CloverV2/Bootloaders/x64/boot7" ]]; then
 fi
 # End build cloverEFI.64.blockio package
 
+# build for chipset only NVIDIA NFORCE-MCP79 cloverEFI.64.blockio2 package
+if [[ -f "${SRCROOT}/CloverV2/Bootloaders/x64/boot7-MCP79" ]]; then
+    packagesidentity="$clover_package_identity"
+    choiceId="cloverEFI.64.blockio2"
+    packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
+    mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root
+    addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}"  \
+                       --subst="CLOVER_EFI_ARCH=x64"                 \
+                       --subst="CLOVER_BOOT_FILE=boot7-MCP79"              \
+                       --subst="INSTALLER_CHOICE=$packageRefId"      \
+                       CloverEFI
+    buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/"
+    local choiceOptions=(--group="CloverEFI" --enabled="!choices['UEFI.only'].selected")
+    [[ "$nb_cloverEFI" -ge 2 ]] && \
+     choiceOptions+=(--start-selected="choicePreviouslySelected('$packageRefId')")
+    choiceOptions+=(--selected="!choices['UEFI.only'].selected")
+    addChoice ${choiceOptions[@]} --pkg-refs="$packageBiosBootRefId $packageRefId" "${choiceId}"
+fi
+# End for chipset only NVIDIA NFORCE-MCP79 cloverEFI.64.blockio2 package
+
 # build theme packages
     echo "======================== Themes ========================"
     addGroupChoices "Themes"
