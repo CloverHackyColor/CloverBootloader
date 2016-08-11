@@ -667,7 +667,11 @@ EFI_STATUS egScreenShot(VOID)
   // else save to file on the ESP
   if (EFI_ERROR(Status)) {
     for (Index=0; Index < 60; Index++) {
-      UnicodeSPrint(ScreenshotName, 256, L"EFI\\CLOVER\\misc\\screenshot%d.bmp", Index);
+#if defined(LODEPNG)
+        UnicodeSPrint(ScreenshotName, 256, L"EFI\\CLOVER\\misc\\screenshot%d.png", Index);
+#else //LODEPNG
+        UnicodeSPrint(ScreenshotName, 256, L"EFI\\CLOVER\\misc\\screenshot%d.bmp", Index);
+#endif //LODEPNG
 //     if(!FileExists(NULL, ScreenshotName)){
         Status = egSaveFile(NULL, ScreenshotName, FileData, FileDataLength);
         if (!EFI_ERROR(Status)) {

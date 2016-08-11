@@ -2845,7 +2845,7 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
       // initial painting
       egMeasureText(Screen->Title, &ItemWidth, NULL);
       if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_MENU_TITLE)) {
-        DrawMenuText(Screen->Title, 0, ((UGAWidth - ItemWidth) >> 1) - TEXT_XMARGIN, EntriesPosY - TextHeight * 2, 0xFFFF);
+        DrawTextXY(Screen->Title, (UGAWidth >> 1), EntriesPosY - TextHeight * 2, X_IS_CENTER);
       }
 
       if (Screen->TitleImage) {

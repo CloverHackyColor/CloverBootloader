@@ -1662,7 +1662,7 @@ VOID * memset(VOID *str, UINT8 c, UINTN n) {
 #endif
 */
   //INTN i, len = 100 - AsciiStrSize(str);
-  INTN len = 100 - AsciiStrSize(str)/*, i*/;
+  INTN len = 60 - AsciiStrSize(str)/*, i*/;
   CHAR8 *fill = AllocateZeroPool(len);
   //for (i = 0; i < len; ++i) fill[i] = '=';
   gBS->SetMem(fill, len, '=');
