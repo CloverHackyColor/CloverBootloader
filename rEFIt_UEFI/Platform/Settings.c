@@ -529,7 +529,7 @@ LoadUserSettings (
     DBG ("Using OEM %s.plist at path: %s", ConfName, ConfigOemPath);
   }
 
-  if (!EFI_ERROR (Status) || gConfigPtr != NULL) {
+  if (!EFI_ERROR (Status) && gConfigPtr != NULL) {
     //DBG ("Error loading %s.plist! Status=%r\n", ConfName, Status);
     //return Status;
 

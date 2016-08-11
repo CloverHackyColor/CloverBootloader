@@ -5015,7 +5015,7 @@ VOID FixBiosDsdt (UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, 
     UINTN i;
     DBG("Patching DSDT:\n");
     for (i = 0; i < gSettings.PatchDsdtNum; i++) {
-      if (!gSettings.PatchDsdtFind[i] || !gSettings.LenToFind[i] || !gSettings.LenToReplace[i] || (gSettings.LenToFind[i] != gSettings.LenToReplace[i])) {
+      if (!gSettings.PatchDsdtFind[i] || !gSettings.LenToFind[i]) {
         continue;
       }
       DBG(" - [%02d]:", i);
