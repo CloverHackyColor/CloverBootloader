@@ -850,7 +850,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
     UINTN len = 0, i=0;
 
     // ATIConnectors patch
-    Patches->KPATIConnectorsController = AllocateZeroPool (AsciiStrSize (Prop->string) * sizeof(CHAR16));
+    Patches->KPATIConnectorsController = AllocateZeroPool (AsciiStrnLenS(Prop->string, 255) * sizeof(CHAR16) + 2);
     AsciiStrToUnicodeStr (Prop->string, Patches->KPATIConnectorsController);
 
     Patches->KPATIConnectorsData = GetDataSetting (DictPointer, "ATIConnectorsData", &len);
@@ -919,8 +919,8 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
             ++Prop2->string;
           }
 
-          if (AsciiStrLen (Prop2->string) > 0) {
-            Patches->ForceKexts[Patches->NrForceKexts] = AllocateZeroPool (AsciiStrSize (Prop2->string) * sizeof(CHAR16));
+          if (AsciiStrnLenS(Prop2->string, 255) > 0) {
+            Patches->ForceKexts[Patches->NrForceKexts] = AllocateZeroPool (AsciiStrnLenS(Prop2->string, 255) * sizeof(CHAR16) + 2);
             AsciiStrToUnicodeStr (Prop2->string, Patches->ForceKexts[Patches->NrForceKexts]);
             DBG (" - [%d]: %s\n", Patches->NrForceKexts, Patches->ForceKexts[Patches->NrForceKexts]);
             ++Patches->NrForceKexts;
@@ -972,14 +972,20 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
           continue;
         }
 
-        KextPatchesName = AllocateCopyPool (AsciiStrSize (Dict->string), Dict->string);
-        KextPatchesLabel = AllocateCopyPool (AsciiStrSize (KextPatchesName), KextPatchesName);
+        KextPatchesName = AllocateCopyPool (255, Dict->string);
+        KextPatchesLabel = AllocateCopyPool (255, KextPatchesName);
 
         Dict = GetProperty (Prop2, "Comment");
         if (Dict != NULL) {
-          UnicodeStrToAsciiStr(PoolPrint(L"%a (%a)", KextPatchesLabel, Dict->string), KextPatchesLabel);
+          //this is impossible because UnicodeStrToAsciiStr not extend output size
+ //         UnicodeStrToAsciiStr(PoolPrint(L"%a (%a)", KextPatchesLabel, Dict->string), KextPatchesLabel);
+          
+          AsciiStrCatS(KextPatchesLabel, 255, " (");
+          AsciiStrCatS(KextPatchesLabel, 255, Dict->string);
+          AsciiStrCatS(KextPatchesLabel, 255, ")");
+          
         } else {
-          AsciiStrCat(KextPatchesLabel, " (NoLabel)");
+          AsciiStrCatS(KextPatchesLabel, 255, " (NoLabel)");
         }
 
 
@@ -1005,8 +1011,8 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         Patches->KextPatches[Patches->NrKexts].MatchOS      = NULL;
         Patches->KextPatches[Patches->NrKexts].MatchBuild   = NULL;
         Patches->KextPatches[Patches->NrKexts].Disabled     = FALSE;
-        Patches->KextPatches[Patches->NrKexts].Name         = AllocateCopyPool (AsciiStrSize (KextPatchesName), KextPatchesName);
-        Patches->KextPatches[Patches->NrKexts].Label        = AllocateCopyPool (AsciiStrSize (KextPatchesLabel), KextPatchesLabel);
+        Patches->KextPatches[Patches->NrKexts].Name         = AllocateCopyPool (AsciiStrnLenS(KextPatchesName, 255) + 1, KextPatchesName);
+        Patches->KextPatches[Patches->NrKexts].Label        = AllocateCopyPool (AsciiStrnLenS(KextPatchesLabel, 255) + 1, KextPatchesLabel);
 
         FreePool(TmpData);
         FreePool(TmpPatch);
@@ -1016,13 +1022,13 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         // check enable/disabled patch (OS based) by Micky1979
         Dict = GetProperty (Prop2, "MatchOS");
         if ((Dict != NULL) && (Dict->type == kTagTypeString)) {
-          Patches->KextPatches[Patches->NrKexts].MatchOS = AllocateCopyPool (AsciiStrSize (Dict->string), Dict->string);
+          Patches->KextPatches[Patches->NrKexts].MatchOS = AllocateCopyPool (AsciiStrnLenS(Dict->string, 255) + 1, Dict->string);
           DBG(" :: MatchOS: %a", Patches->KextPatches[Patches->NrKexts].MatchOS);
         }
 
         Dict = GetProperty (Prop2, "MatchBuild");
         if ((Dict != NULL) && (Dict->type == kTagTypeString)) {
-          Patches->KextPatches[Patches->NrKexts].MatchBuild = AllocateCopyPool (AsciiStrSize (Dict->string), Dict->string);
+          Patches->KextPatches[Patches->NrKexts].MatchBuild = AllocateCopyPool (AsciiStrnLenS(Dict->string, 255) + 1, Dict->string);
           DBG(" :: MatchBuild: %a", Patches->KextPatches[Patches->NrKexts].MatchBuild);
         }
 
@@ -5709,7 +5715,7 @@ GetDevices ()
               AsciiSPrint (gfx->Model,  64, "%a", info->model_name);
               AsciiSPrint (gfx->Config, 64, "%a", card_configs[info->cfg_name].name);
               gfx->Ports                  = card_configs[info->cfg_name].ports;
-              DBG (" - GFX: Vendor=%x model=%a (Radeon)\n", Pci.Hdr.VendorId, gfx->Model);
+              DBG (" - GFX: Model=%a (ATI/AMD)\n", gfx->Model);
 
               SlotDevice                  = &SlotDevices[0];
               SlotDevice->SegmentGroupNum = (UINT16)Segment;
@@ -5724,7 +5730,7 @@ GetDevices ()
             case 0x8086:
               gfx->Vendor                 = Intel;
               AsciiSPrint (gfx->Model, 64, "%a", get_gma_model (Pci.Hdr.DeviceId));
-              DBG (" - GFX: Vendor=%x model=%a (Intel)\n", Pci.Hdr.VendorId, gfx->Model);
+              DBG (" - GFX: Model=%a (Intel)\n", gfx->Model);
               gfx->Ports = 1;
               /*
                SlotDevice                  = &SlotDevices[2];
@@ -5755,7 +5761,7 @@ GetDevices ()
                                              NULL) //NULL: get from generic lists
                            );
 
-              DBG (" - GFX: Vendor=%x model=%a family %x (Nvidia)\n", Pci.Hdr.VendorId, gfx->Model, gfx->Family);
+              DBG (" - GFX: Model=%a family %x (Nvidia)\n", gfx->Model, gfx->Family);
               gfx->Ports                  = 0;
 
               SlotDevice                  = &SlotDevices[1];
@@ -5788,32 +5794,31 @@ GetDevices ()
           AsciiSPrint (SlotDevice->SlotName, 31, "Airport");
           SlotDevice->SlotID          = 0;
           SlotDevice->SlotType        = SlotTypePciExpressX1;
-          DBG(" - WIFI: Vendor=%x (", Pci.Hdr.VendorId);
+          DBG(" - WIFI: Vendor=", Pci.Hdr.VendorId);
           switch (Pci.Hdr.VendorId) {
             case 0x11ab:
-              DBG("Marvell");
+              DBG("Marvell\n");
               break;
             case 0x10ec:
-              DBG("Realtek");
+              DBG("Realtek\n");
               break;
             case 0x14e4:
-              DBG("Broadcom");
+              DBG("Broadcom\n");
               break;
             case 0x1969:
-              DBG("Atheros");
+              DBG("Atheros\n");
               break;
             case 0x1814:
-              DBG("Ralink");
+              DBG("Ralink\n");
               break;
             case 0x8086:
-              DBG("Intel");
+              DBG("Intel\n");
               break;
 
             default:
-              DBG("Unknown vendor");
+              DBG("Unknown\n");
               break;
           }
-          DBG(")\n");
         }
 
         else if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_NETWORK) &&
@@ -5833,29 +5838,28 @@ GetDevices ()
             DBG(" - [!] too many LAN card in the system (upto 4 limit exceeded), overriding the last one\n");
             nLanCards = 3; // last one will be rewritten
           }
-          DBG(" - LAN: %d Vendor=%x (", nLanCards-1, Pci.Hdr.VendorId);
+          DBG(" - LAN: %d Vendor=", nLanCards-1);
           switch (Pci.Hdr.VendorId) {
             case 0x11ab:
-              DBG("Marvell");
+              DBG("Marvell\n");
               break;
             case 0x10ec:
-              DBG("Realtek");
+              DBG("Realtek\n");
               break;
             case 0x14e4:
-              DBG("Broadcom");
+              DBG("Broadcom\n");
               break;
             case 0x1969:
-              DBG("Atheros");
+              DBG("Atheros\n");
               break;
             case 0x8086:
-              DBG("Intel");
+              DBG("Intel\n");
               break;
 
             default:
-              DBG("Unknown vendor");
+              DBG("Unknown\n");
               break;
           }
-          DBG(")\n");
         }
 
         else if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_SERIAL) &&

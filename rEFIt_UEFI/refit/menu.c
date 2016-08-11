@@ -3172,7 +3172,7 @@ VOID CountItems(IN REFIT_MENU_SCREEN *Screen)
 VOID DrawTextCorner(UINTN TextC, UINT8 Align)
 {
   INTN    Xpos;
-  CHAR16  *Text;
+  CHAR16  *Text = NULL;
 
   if (
     // HIDEUI_ALL - included

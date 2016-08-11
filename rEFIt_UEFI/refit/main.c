@@ -1667,7 +1667,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   }
 //  DBG("  running on %a\n",   gSettings.OEMProduct);
 //  DBG("... with board %a\n", gSettings.OEMBoard);
-  DBG("Running on: %a (%a)\n", gSettings.OEMProduct, gSettings.OEMBoard);
+  DBG("Running on: '%a' with board '%a'\n", gSettings.OEMProduct, gSettings.OEMBoard);
 
   GetCPUProperties();
   GetDevices();
