@@ -1754,13 +1754,13 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 //-----------------------------------------------------------
   }
 #endif //
-
+#if 0
   //testing place
   {
     CHAR16 *aaa = L"123";
-    DBG(" string %s, size=%d, len=%d\n", aaa, StrSize(aaa), StrLen(aaa));
+    DBG(" string %s, size=%d, len=%d sizeof=%d\n", aaa, StrSize(aaa), StrLen(aaa), sizeof(aaa));
   }
-
+#endif
   if (!GlobalConfig.FastBoot) {
     GetListOfThemes();
   }

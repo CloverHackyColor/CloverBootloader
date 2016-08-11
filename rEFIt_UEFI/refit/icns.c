@@ -284,7 +284,7 @@ EG_IMAGE * LoadOSIcon(IN CHAR16 *OSIconName OPTIONAL, CHAR16 **OSIconNameHover, 
   if (!GlobalConfig.Theme) { // embedded theme - return rendered icon name
     EG_IMAGE  *TextBuffer = egCreateImage(PixelSize, PixelSize, TRUE);
     egFillImage(TextBuffer, &MenuBackgroundPixel);
-//    egRenderText(FirstName, TextBuffer, PixelSize/4, PixelSize/3, 0xFFFF);
+    egRenderText(FirstName, TextBuffer, PixelSize/4, PixelSize/3, 0xFFFF);
 //    DebugLog(1, "Text <%s> rendered\n", FirstName);
     return TextBuffer;
   }

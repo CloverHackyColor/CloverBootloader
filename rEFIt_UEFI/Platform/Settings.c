@@ -2939,7 +2939,12 @@ GetListOfThemes ()
           DBG (" - bad theme because %s can't be load", CONFIG_THEME_FILENAME);
         } else {
           //we found a theme
-          ThemesList[ThemesNum++] = (CHAR16*)AllocateCopyPool (StrSize (DirEntry->FileName), DirEntry->FileName);
+          if ((StriCmp(DirEntry->FileName, L"embedded") == 0) ||
+              (StriCmp(DirEntry->FileName, L"random") == 0)) {
+            ThemePtr = NULL;
+          } else {
+            ThemesList[ThemesNum++] = (CHAR16*)AllocateCopyPool (StrSize (DirEntry->FileName), DirEntry->FileName);
+          }
         }
       }
       FreePool (ThemeTestPath);
