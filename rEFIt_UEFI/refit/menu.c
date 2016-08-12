@@ -1873,9 +1873,9 @@ static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC  Style
 
     if (Item->ItemType == BoolValue) {
       Item->BValue = !Item->BValue;
-      if (GlobalConfig.TextOnly) {
-      Item->SValue = Item->BValue?L"[+] ":L"[ ] ";
-      }
+  //    if (GlobalConfig.TextOnly) {
+  //      Item->SValue = Item->BValue?L"[+] ":L"[ ] ";
+  //    }
       MenuExit = MENU_EXIT_ENTER;
     } else if (Item->ItemType == RadioSwitch) {
       OldChosenTheme = Pos;
@@ -2538,18 +2538,21 @@ VOID DrawBCSText(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
   } else if (GlobalConfig.TileXSpace >= 50 && GlobalConfig.TileXSpace < 55) {
     ChrsNum = 22;
     FntChrsNum = 18;
-  } else {
+  } // these are inits
+  /* else {
     ChrsNum = 16;
     FntChrsNum = 12;
-  }
+  } */
   
-  TextWidth = ((StrLen(Text) <= (UINTN)((GlobalConfig.Font == FONT_LOAD) ? (FntChrsNum - 3) : (ChrsNum - 3))) ?
-               StrLen(Text) : ((GlobalConfig.Font == FONT_LOAD) ? FntChrsNum : ChrsNum)) *
-  ((FontWidth > GlobalConfig.CharWidth) ? FontWidth : GlobalConfig.CharWidth);
+  TextWidth = ((StrLen(Text) <= (UINTN)((GlobalConfig.Font == FONT_LOAD) ? (FntChrsNum - 3) :
+              (ChrsNum - 3))) ? StrLen(Text) : ((GlobalConfig.Font == FONT_LOAD) ?
+               FntChrsNum : ChrsNum)) * ((FontWidth > GlobalConfig.CharWidth) ?
+               FontWidth : GlobalConfig.CharWidth);
   
-  TextBufferXY = egCreateImage(TextWidth, FontHeight, TRUE);
-  
-  egFillImage(TextBufferXY, &MenuBackgroundPixel);
+//  TextBufferXY = egCreateImage(TextWidth, FontHeight, TRUE);
+//  egFillImage(TextBufferXY, &MenuBackgroundPixel);
+  TextBufferXY = egCreateFilledImage(TextWidth, FontHeight,
+                      TRUE, &MenuBackgroundPixel);
   
   // render the text
   if (StrLen(Text) > (UINTN)((GlobalConfig.Font == FONT_LOAD) ? (FntChrsNum - 3) : (ChrsNum - 3))) {
@@ -3460,7 +3463,8 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
           // create static text for the boot options if the BootCampStyle is used
             if (GlobalConfig.BootCampStyle && !(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)) {
               FillRectAreaOfScreen(itemPosX[i - State->FirstVisible] + (row0TileSize / 2), textPosY,
-                                   EntriesWidth, TextHeight, &MenuBackgroundPixel, X_IS_CENTER);
+                 EntriesWidth + GlobalConfig.TileXSpace, TextHeight,
+                 &MenuBackgroundPixel, X_IS_CENTER);
               DrawBCSText(Screen->Entries[i]->Title, itemPosX[i - State->FirstVisible] + (row0TileSize / 2),
                            textPosY, X_IS_CENTER);
             }
