@@ -1831,7 +1831,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
       for (Index = 0; Index < gSettings.SortedACPICount; Index++) {
         ACPI_PATCHED_AML *ACPIPatchedAMLTmp = ACPIPatchedAML;
         while (ACPIPatchedAMLTmp) {
-          if ((StrCmpiBasic(ACPIPatchedAMLTmp->FileName, gSettings.SortedACPI[Index]) == 0) &&
+          if ((StriCmp(ACPIPatchedAMLTmp->FileName, gSettings.SortedACPI[Index]) == 0) &&
             (ACPIPatchedAMLTmp->MenuItem.BValue)) {
             DBG("Disabled: %s, skip\n", ACPIPatchedAMLTmp->FileName);
             break;

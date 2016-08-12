@@ -1024,7 +1024,7 @@ VOID InitAnime(REFIT_MENU_SCREEN *Screen)
   // Check if we should clear old film vars (no anime or anime path changed)
   //
   if (gThemeOptionsChanged || !Anime || !Screen->Film || IsEmbeddedTheme() || !Screen->Theme ||
-      (/*gThemeChanged && */StrCmpiBasic(GlobalConfig.Theme, Screen->Theme) != 0)) {
+      (/*gThemeChanged && */StriCmp(GlobalConfig.Theme, Screen->Theme) != 0)) {
 //    DBG(" free screen\n");
     if (Screen->Film) {
       //free images in the film

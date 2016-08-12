@@ -283,7 +283,7 @@ EFI_STATUS FinishInitRefitLib(VOID)
 
 BOOLEAN IsEmbeddedTheme()
 {
-  if (!GlobalConfig.Theme || !StrCmpiBasic(GlobalConfig.Theme, L"embedded")) {
+  if (!GlobalConfig.Theme || !StriCmp(GlobalConfig.Theme, L"embedded")) {
     ThemeDir = NULL;
   }
   if (!ThemeDir) {

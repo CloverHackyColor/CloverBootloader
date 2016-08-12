@@ -64,6 +64,7 @@ ToUpperChar(
 
 
 /** Returns 0 if two strings are equal, !=0 otherwise. Compares just first 8 bits of chars (valid for ASCII), case insensitive. */
+/*
 UINTN
 EFIAPI
 StrCmpiBasic(
@@ -96,7 +97,7 @@ StrCmpiBasic(
     
     return Chr1 - Chr2;
 }
-
+*/
 /**
  * Returns the first occurrence of a Null-terminated Unicode SearchString
  * in a Null-terminated Unicode String.
@@ -300,7 +301,7 @@ DevicePathEqual (
                 FPath2++;
             }
             //DBG("COMPARING: '%s' and '%s'\n", FPath1, FPath2);
-            if (StrCmpiBasic(FPath1, FPath2) != 0) {
+            if (StriCmp(FPath1, FPath2) != 0) {
                 // Not equal
                 //DBG("Not equal fpaths\n");
                 break;

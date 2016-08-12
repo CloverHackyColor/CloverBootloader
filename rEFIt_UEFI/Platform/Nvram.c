@@ -872,11 +872,11 @@ FindStartupDiskVolume (
         LoaderEntry = (LOADER_ENTRY *)MainMenu->Entries[Index];
         Volume = LoaderEntry->Volume;
         LoaderPath = LoaderEntry->LoaderPath;
-        if (Volume != NULL && BootVolumeDevicePathEqual (gEfiBootVolume, Volume->DevicePath)) {
+        if (Volume != NULL && BootVolumeDevicePathEqual(gEfiBootVolume, Volume->DevicePath)) {
           //DBG ("  checking '%s'\n", DevicePathToStr (Volume->DevicePath));
           //DBG ("   '%s'\n", LoaderPath);
           // case insensitive cmp
-          if (LoaderPath != NULL && StrCmpiBasic (gEfiBootLoaderPath, LoaderPath) == 0) {
+          if (LoaderPath != NULL && StriCmp(gEfiBootLoaderPath, LoaderPath) == 0) {
             // that's the one
             DBG ("    - found entry %d. '%s', Volume '%s', '%s'\n", Index, LoaderEntry->me.Title, Volume->VolName, LoaderPath);
             return Index;
@@ -899,7 +899,7 @@ FindStartupDiskVolume (
           //DBG ("  checking '%s'\n", DevicePathToStr (Volume->DevicePath));
           //DBG ("   '%s'\n", LoaderPath);
           // case insensitive cmp
-          if (LoaderPath != NULL && StrCmpiBasic (gEfiBootLoaderPath, LoaderPath) == 0) {
+          if (LoaderPath != NULL && StriCmp(gEfiBootLoaderPath, LoaderPath) == 0) {
             // that's the one
             DBG ("   - found entry %d. '%s', Volume '%s', '%s'\n", Index, LoaderEntry->me.Title, Volume->VolName, LoaderPath);
             return Index;

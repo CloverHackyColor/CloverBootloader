@@ -366,7 +366,7 @@ SetBootCurrent(REFIT_MENU_ENTRY *LoadedEntry)
   Data = BootOption.OptionalData + 4;
   NameSize = *(UINT16*)Data;
   Data += 2;
-  if (StrCmpiBasic((CHAR16*)Data, Entry->Volume->VolName) != 0) {
+  if (StriCmp((CHAR16*)Data, Entry->Volume->VolName) != 0) {
     DBG("Boot option %d has other volume name %s\n", Entry->BootNum, (CHAR16*)Data);
     FreePool(BootVariable);
     return;
@@ -374,7 +374,7 @@ SetBootCurrent(REFIT_MENU_ENTRY *LoadedEntry)
 
   if (VarSize > NameSize + 6) {
     Data += NameSize;
-    if (StrCmpiBasic((CHAR16*)Data, Basename(Entry->LoaderPath)) != 0) {
+    if (StriCmp((CHAR16*)Data, Basename(Entry->LoaderPath)) != 0) {
       DBG("Boot option %d has other loader name %s\n", Entry->BootNum, (CHAR16*)Data);
       FreePool(BootVariable);
       return;
@@ -2438,7 +2438,7 @@ GetEarlyUserSettings (
           DBG ("Default theme: %s\n", GlobalConfig.Theme);
           OldChosenTheme = 0xFFFF; //default for embedded
           for (i = 0; i < ThemesNum; i++) {
-            if (StrCmpiBasic(GlobalConfig.Theme, ThemesList[i]) == 0) {
+            if (StriCmp(GlobalConfig.Theme, ThemesList[i]) == 0) {
               OldChosenTheme = i;
               break;
             }
@@ -2889,7 +2889,7 @@ GetListOfACPI ()
 
       for (i = 0; i < Count; i++) {
         if ((gSettings.DisabledAML[i] != NULL) &&
-          (StrCmpiBasic(ACPIPatchedAMLTmp->FileName, gSettings.DisabledAML[i]) == 0)
+          (StriCmp(ACPIPatchedAMLTmp->FileName, gSettings.DisabledAML[i]) == 0)
         ) {
           ACPIDisabled = TRUE;
           break;
@@ -3566,7 +3566,7 @@ InitTheme(
   }
 
   if (ThemesNum > 0 &&
-      (!GlobalConfig.Theme || StrCmpiBasic(GlobalConfig.Theme, L"embedded") != 0)) {
+      (!GlobalConfig.Theme || StriCmp(GlobalConfig.Theme, L"embedded") != 0)) {
     // Try special theme first
     if (Time != NULL) {
       if ((Time->Month == 12) && ((Time->Day >= 25) && (Time->Day <= 31))) {
@@ -3635,7 +3635,7 @@ InitTheme(
           DBG ("no default theme, get first theme %s\n", ThemesList[0]);
         }
       } else {
-        if (StrCmpiBasic(GlobalConfig.Theme, L"random") == 0) {
+        if (StriCmp(GlobalConfig.Theme, L"random") == 0) {
           ThemeDict = LoadTheme (ThemesList[Rnd]);
         } else {
           ThemeDict = LoadTheme (GlobalConfig.Theme);
@@ -3691,7 +3691,7 @@ finish:
     FreeTag(ThemeDict);
   }
   for (i = 0; i < ThemesNum; i++) {
-    if (StrCmpiBasic(GlobalConfig.Theme, ThemesList[i]) == 0) {
+    if (StriCmp(GlobalConfig.Theme, ThemesList[i]) == 0) {
       OldChosenTheme = i;
       break;
     }
