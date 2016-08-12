@@ -499,7 +499,7 @@ LoadUserSettings (
   CHAR16*    ConfigPlistPath;
   CHAR16*    ConfigOemPath;
 
-  DbgHeader("LoadUserSettings");
+//  DbgHeader("LoadUserSettings");
 
   // load config
   if ((ConfName == NULL) || (Dict == NULL)) {
@@ -2436,6 +2436,7 @@ GetEarlyUserSettings (
           UINTN i;
           GlobalConfig.Theme = PoolPrint (L"%a", Prop->string);
           DBG ("Default theme: %s\n", GlobalConfig.Theme);
+          OldChosenTheme = 0xFFFF; //default for embedded
           for (i = 0; i < ThemesNum; i++) {
             if (StrCmpiBasic(GlobalConfig.Theme, ThemesList[i]) == 0) {
               OldChosenTheme = i;
@@ -3020,7 +3021,7 @@ GetThemeTagSettings (
   }
 
   GlobalConfig.SelectionOnTop           = FALSE;
-  GlobalConfig.BootCampStyle   = FALSE;
+  GlobalConfig.BootCampStyle            = FALSE;
   ScrollWidth                           = 16;
   ScrollButtonsHeight                   = 20;
   ScrollBarDecorationsHeight            = 5;
@@ -3529,7 +3530,7 @@ InitTheme(
   Rnd = ((Time != NULL) && (ThemesNum != 0)) ? Time->Second % ThemesNum : 0;
 
   // Free selection images which are not builtin icons
-  for (i = 0; i < 5; i++) {
+  for (i = 0; i < 6; i++) {
     if (SelectionImages[i] != NULL) {
       if ((SelectionImages[i] != BuiltinIcon(BUILTIN_SELECTION_SMALL)) && (SelectionImages[i] != BuiltinIcon(BUILTIN_SELECTION_BIG))) {
         egFreeImage (SelectionImages[i]);
@@ -3565,7 +3566,7 @@ InitTheme(
   }
 
   if (ThemesNum > 0 &&
-      (!GlobalConfig.Theme || StrCmp (GlobalConfig.Theme, L"embedded") != 0)) {
+      (!GlobalConfig.Theme || StrCmpiBasic(GlobalConfig.Theme, L"embedded") != 0)) {
     // Try special theme first
     if (Time != NULL) {
       if ((Time->Month == 12) && ((Time->Day >= 25) && (Time->Day <= 31))) {
@@ -3634,7 +3635,7 @@ InitTheme(
           DBG ("no default theme, get first theme %s\n", ThemesList[0]);
         }
       } else {
-        if (StrCmp (GlobalConfig.Theme, L"random") == 0) {
+        if (StrCmpiBasic(GlobalConfig.Theme, L"random") == 0) {
           ThemeDict = LoadTheme (ThemesList[Rnd]);
         } else {
           ThemeDict = LoadTheme (GlobalConfig.Theme);
@@ -4423,7 +4424,7 @@ GetUserSettings(
 
         Prop = GetProperty (Dict2, "Fixes");
         if (Prop != NULL) {
-          DBG ("Fixes will override DSDT fix mask %08x!\n", gSettings.FixDsdt);
+ //         DBG ("Fixes will override DSDT fix mask %08x!\n", gSettings.FixDsdt);
 
           if (Prop->type == kTagTypeDict) {
             gSettings.FixDsdt = 0;
@@ -4580,7 +4581,7 @@ GetUserSettings(
           }
 
         }
-        DBG (" - final mask=%08x\n", gSettings.FixDsdt);
+        DBG (" - final DSDT Fix mask=%08x\n", gSettings.FixDsdt);
 
         Prop = GetProperty (Dict2, "Patches");
         if (Prop != NULL) {
@@ -5077,7 +5078,7 @@ GetUserSettings(
               AsciiSPrint (SlotDevice->SlotName, 31, "PCI Slot %d", DeviceN);
             }
 
-            DBG (" - %a", SlotDevice->SlotName);
+            DBG (" - %a\n", SlotDevice->SlotName);
           }
         }
       }
@@ -5200,7 +5201,7 @@ GetUserSettings(
       if (Prop != NULL && AsciiStrLen (Prop->string) > 0) {
         gSettings.RtMLB         = AllocateCopyPool (AsciiStrSize (Prop->string), Prop->string);
       }
-
+/*
       // Setting Clover Variables for RC Scripts in config.plist is now deprecated (r2889+)
       Prop = GetProperty (DictPointer, "MountEFI");
       if (Prop != NULL) {
@@ -5216,7 +5217,7 @@ GetUserSettings(
       if (Prop != NULL) {
         DBG ("** Warning: ignoring RtVariable LogEveryBoot set in config.plist: deprecated !\n");
       }
-
+*/
       // CsrActiveConfig
       Prop = GetProperty (DictPointer, "CsrActiveConfig");
       gSettings.CsrActiveConfig = (UINT32)GetPropertyInteger (Prop, 0x67); //the value 0xFFFF means not set
@@ -5882,7 +5883,9 @@ GetDevices ()
         else if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_MEDIA) &&
                  ((Pci.Hdr.ClassCode[1] == PCI_CLASS_MEDIA_HDA) ||
                   (Pci.Hdr.ClassCode[1] == PCI_CLASS_MEDIA_AUDIO))) {
-          if ((Pci.Hdr.VendorId == 0x1002) || (Pci.Hdr.VendorId == 0x10DE)){
+          if (IsHDMIAudio(HandleArray[Index])) {
+            DBG(" - HDMI Audio: \n");
+   //if ((Pci.Hdr.VendorId == 0x1002) || (Pci.Hdr.VendorId == 0x10DE)){
             SlotDevice = &SlotDevices[4];
             SlotDevice->SegmentGroupNum = (UINT16)Segment;
             SlotDevice->BusNum          = (UINT8)Bus;

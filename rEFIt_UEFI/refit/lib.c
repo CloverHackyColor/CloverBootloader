@@ -229,7 +229,7 @@ EFI_STATUS ReinitSelfLib(VOID)
   EFI_HANDLE                NewSelfHandle;
 	EFI_DEVICE_PATH_PROTOCOL* TmpDevicePath;
 
-  DbgHeader("ReinitSelfLib");
+//  DbgHeader("ReinitSelfLib");
   
   if (!SelfDevicePath) {
     return EFI_NOT_FOUND;
@@ -279,6 +279,17 @@ EFI_STATUS FinishInitRefitLib(VOID)
   Status = SelfRootDir->Open(SelfRootDir, &SelfDir, SelfDirPath, EFI_FILE_MODE_READ, 0);
   CheckFatalError(Status, L"while opening our installation directory");
   return Status;
+}
+
+BOOLEAN IsEmbeddedTheme()
+{
+  if (!GlobalConfig.Theme || !StrCmpiBasic(GlobalConfig.Theme, L"embedded")) {
+    ThemeDir = NULL;
+  }
+  if (!ThemeDir) {
+    return TRUE;
+  }
+  return FALSE;
 }
 
 //
@@ -609,7 +620,7 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
         Volume->LegacyOS->Name = L"FreeDOS";
         Volume->LegacyOS->Type = OSTYPE_VAR;
         Volume->BootType = BOOTING_BY_PBR;
-        
+/*
       } else if (FindMem(SectorBuffer, 512, "OS2LDR", 6) >= 0 ||
                  FindMem(SectorBuffer, 512, "OS2BOOT", 7) >= 0) {
         Volume->HasBootCode = TRUE;
@@ -639,7 +650,8 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
         Volume->LegacyOS->Name = L"Haiku";
         Volume->LegacyOS->Type = OSTYPE_VAR;
         Volume->BootType = BOOTING_BY_PBR;
-      }
+ */
+      } 
     }
     
     // NOTE: If you add an operating system with a name that starts with 'W' or 'L', you
@@ -943,7 +955,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
     }
   }
   if (!Volume->VolName) {
-    DBG("Create unknown name\n");
+//    DBG("Create unknown name\n");
     //        WaitForSingleEvent (gST->ConIn->WaitForKey, 0);
     //        gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
     

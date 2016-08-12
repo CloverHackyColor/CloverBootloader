@@ -582,7 +582,11 @@ VOID ApplyInputs(VOID)
     if (GlobalConfig.Theme) {
       FreePool(GlobalConfig.Theme);
     }
-    GlobalConfig.Theme = PoolPrint(L"%s", ThemesList[OldChosenTheme]);
+    if (OldChosenTheme == 0xFFFF) {
+      GlobalConfig.Theme = PoolPrint(L"embedded");
+    } else {
+      GlobalConfig.Theme = PoolPrint(L"%s", ThemesList[OldChosenTheme]);
+    }
 
     //will change theme after ESC
     gThemeChanged = TRUE;
@@ -1493,11 +1497,11 @@ VOID InitSelection(VOID)
   if (!Buttons[0]) {
     Buttons[0] = egDecodePNG(&emb_radio_button[0], sizeof(emb_radio_button), 20, TRUE);
   }
-  Buttons[0] = egEnsureImageSize(Buttons[0], TextHeight, TextHeight, &MenuBackgroundPixel);
+//  Buttons[0] = egEnsureImageSize(Buttons[0], TextHeight, TextHeight, &MenuBackgroundPixel);
   if (!Buttons[1]) {
     Buttons[1] = egDecodePNG(&emb_radio_button_selected[0], sizeof(emb_radio_button_selected), 20, TRUE);
   }
-  Buttons[1] = egEnsureImageSize(Buttons[1], TextHeight, TextHeight, &MenuBackgroundPixel);
+//  Buttons[1] = egEnsureImageSize(Buttons[1], TextHeight, TextHeight, &MenuBackgroundPixel);
     
   // Checkbox
   Buttons[2] = egLoadImage(ThemeDir, GetIconsExt(L"checkbox", L"png"), TRUE);
@@ -1505,11 +1509,11 @@ VOID InitSelection(VOID)
   if (!Buttons[2]) {
     Buttons[2] = egDecodePNG(&emb_checkbox[0], sizeof(emb_checkbox), 15, TRUE);
   }
-  Buttons[2] = egEnsureImageSize(Buttons[2], TextHeight, TextHeight, &MenuBackgroundPixel);
+//  Buttons[2] = egEnsureImageSize(Buttons[2], TextHeight, TextHeight, &MenuBackgroundPixel);
   if (!Buttons[3]) {
     Buttons[3] = egDecodePNG(&emb_checkbox_checked[0], sizeof(emb_checkbox_checked), 15, TRUE);
   }
-  Buttons[3] = egEnsureImageSize(Buttons[3], TextHeight, TextHeight, &MenuBackgroundPixel);
+//  Buttons[3] = egEnsureImageSize(Buttons[3], TextHeight, TextHeight, &MenuBackgroundPixel);
     
   // non-selected background images
   //TODO FALSE -> TRUE
@@ -2714,6 +2718,7 @@ VOID InitBar(VOID)
   }
   UpButton.Width      = ScrollWidth; // 16
   UpButton.Height     = ScrollButtonsHeight; // 20
+  DownButton.Width    = UpButton.Width;
   DownButton.Height   = ScrollButtonsHeight;
   BarStart.Height     = ScrollBarDecorationsHeight; // 5
   BarEnd.Height       = ScrollBarDecorationsHeight;
@@ -2727,7 +2732,6 @@ VOID SetBar(INTN PosX, INTN UpPosY, INTN DownPosY, IN SCROLL_STATE *State)
   UpButton.XPos = PosX;
   UpButton.YPos = UpPosY;
 
-  DownButton.Width = UpButton.Width;
   DownButton.XPos = UpButton.XPos;
   DownButton.YPos = DownPosY;
 
@@ -2820,7 +2824,7 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
       //VisibleHeight = (UGAHeight - EntriesPosY) / TextHeight - Screen->InfoLineCount - 1;
       VisibleHeight = ((UGAHeight - EntriesPosY) / TextHeight) - Screen->InfoLineCount - 2 - GlobalConfig.PruneScrollRows;
       //DBG("MENU_FUNCTION_INIT 1 EntriesPosY=%d VisibleHeight=%d\n", EntriesPosY, VisibleHeight);
-      if (Screen->Entries[0]->Tag == TAG_SWITCH) {
+      if ((Screen->Entries[0]->Tag == TAG_SWITCH) && (OldChosenTheme != 0xFFFF)) {
         j = OldChosenTheme;
       }
       InitScroll(State, Screen->EntryCount, Screen->EntryCount, VisibleHeight, j);
@@ -2909,9 +2913,12 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
                          EntriesPosX + (TextHeight + TEXT_XMARGIN),
                          Screen->Entries[i]->Place.YPos, 0xFFFF);
                       //   TitleLen + Screen->Entries[i]->Row);
-            BltImageCompositeIndicator((((REFIT_INPUT_DIALOG*)(Screen->Entries[i]))->Item->BValue) ? Buttons[3] :
-                                       Buttons[2], Buttons[2], EntriesPosX + TEXT_XMARGIN,
-                                       Screen->Entries[i]->Place.YPos + PlaceCentre, 16);
+ //           BltImageCompositeIndicator((((REFIT_INPUT_DIALOG*)(Screen->Entries[i]))->Item->BValue) ? Buttons[3] :Buttons[2],
+//                                       Buttons[2], EntriesPosX + TEXT_XMARGIN,
+//                                       Screen->Entries[i]->Place.YPos + PlaceCentre, 16);
+            BltImageAlpha((((REFIT_INPUT_DIALOG*)(Screen->Entries[i]))->Item->BValue) ? Buttons[3] :Buttons[2],
+                  EntriesPosX + TEXT_XMARGIN, Screen->Entries[i]->Place.YPos + PlaceCentre,
+                  &MenuBackgroundPixel, 16);
           } else {
             StrCat(ResultString, ((REFIT_INPUT_DIALOG*)(Screen->Entries[i]))->Item->SValue);
             StrCat(ResultString, L" ");
@@ -2924,8 +2931,12 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
           DrawMenuText(ResultString,
                        (i == State->CurrentSelection) ? MenuWidth : 0,
                        EntriesPosX + (TextHeight + TEXT_XMARGIN), Screen->Entries[i]->Place.YPos, 0xFFFF);
-          BltImageCompositeIndicator((Screen->Entries[i]->Row == (UINTN)OldChosenTheme) ? Buttons[1] : Buttons[0], Buttons[0],
-                                     EntriesPosX + TEXT_XMARGIN, Screen->Entries[i]->Place.YPos + PlaceCentre, 16);
+//          BltImageCompositeIndicator((Screen->Entries[i]->Row == (UINTN)OldChosenTheme) ? Buttons[1] : Buttons[0],
+//                                     Buttons[0], EntriesPosX + TEXT_XMARGIN,
+//                                     Screen->Entries[i]->Place.YPos + PlaceCentre, 16);
+          BltImageAlpha((Screen->Entries[i]->Row == (UINTN)OldChosenTheme) ? Buttons[1] : Buttons[0],
+                        EntriesPosX + TEXT_XMARGIN,Screen->Entries[i]->Place.YPos + PlaceCentre,
+                        &MenuBackgroundPixel, 16);
         } else {
 //          DBG("paint entry %d title=%s\n", i, Screen->Entries[i]->Title);
           DrawMenuText(Screen->Entries[i]->Title,
@@ -2950,9 +2961,12 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
           DrawMenuText(ResultString, 0, EntriesPosX + (TextHeight + TEXT_XMARGIN),
                        EntriesPosY + (State->LastSelection - State->FirstVisible) * TextHeight,
                        TitleLen + Screen->Entries[State->LastSelection]->Row);
-          BltImageCompositeIndicator((((REFIT_INPUT_DIALOG*)(Screen->Entries[State->LastSelection]))->Item->BValue)
-                                     ? Buttons[3] : Buttons[2], Buttons[2], EntriesPosX + TEXT_XMARGIN,
-                                     Screen->Entries[State->LastSelection]->Place.YPos + PlaceCentre, 16);
+//          BltImageCompositeIndicator((((REFIT_INPUT_DIALOG*)(Screen->Entries[State->LastSelection]))->Item->BValue)
+//                                     ? Buttons[3] : Buttons[2], Buttons[2], EntriesPosX + TEXT_XMARGIN,
+//                                     Screen->Entries[State->LastSelection]->Place.YPos + PlaceCentre, 16);
+          BltImageAlpha((((REFIT_INPUT_DIALOG*)(Screen->Entries[State->LastSelection]))->Item->BValue)? Buttons[3] : Buttons[2],
+               EntriesPosX + TEXT_XMARGIN,  Screen->Entries[State->LastSelection]->Place.YPos + PlaceCentre,
+               &MenuBackgroundPixel, 16);
         } else {
           StrCat(ResultString, ((REFIT_INPUT_DIALOG*)(Screen->Entries[State->LastSelection]))->Item->SValue +
                  ((REFIT_INPUT_DIALOG*)(Screen->Entries[State->LastSelection]))->Item->LineShift);
@@ -2965,10 +2979,12 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
         StrCpy(ResultString, Screen->Entries[State->LastSelection]->Title);
         DrawMenuText(ResultString, 0, EntriesPosX + (TextHeight + TEXT_XMARGIN),
                      EntriesPosY + (State->LastSelection - State->FirstVisible) * TextHeight, 0xFFFF);
-        BltImageCompositeIndicator((Screen->Entries[State->LastSelection]->Row == (UINTN)OldChosenTheme) ? Buttons[1] :
-                                   Buttons[0], Buttons[0], EntriesPosX + TEXT_XMARGIN,
-                                   Screen->Entries[State->LastSelection]->Place.YPos + PlaceCentre, 16);
-        
+//        BltImageCompositeIndicator((Screen->Entries[State->LastSelection]->Row == (UINTN)OldChosenTheme) ? Buttons[1] :
+//                                   Buttons[0], Buttons[0], EntriesPosX + TEXT_XMARGIN,
+//                                   Screen->Entries[State->LastSelection]->Place.YPos + PlaceCentre, 16);
+        BltImageAlpha((Screen->Entries[State->LastSelection]->Row == (UINTN)OldChosenTheme) ? Buttons[1]:Buttons[0],
+          EntriesPosX + TEXT_XMARGIN,  Screen->Entries[State->LastSelection]->Place.YPos + PlaceCentre,
+                      &MenuBackgroundPixel, 16);
       } else {
         DrawMenuText(Screen->Entries[State->LastSelection]->Title, 0,
                      EntriesPosX, EntriesPosY + (State->LastSelection - State->FirstVisible) * TextHeight, 0xFFFF);
@@ -2983,9 +2999,12 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
                        EntriesPosX + (TextHeight + TEXT_XMARGIN),
                        EntriesPosY + (State->CurrentSelection - State->FirstVisible) * TextHeight,
                        TitleLen + Screen->Entries[State->CurrentSelection]->Row);
-          BltImageCompositeIndicator((((REFIT_INPUT_DIALOG*)(Screen->Entries[State->CurrentSelection]))->Item->BValue)
-                                     ? Buttons[3] : Buttons[2], Buttons[2], EntriesPosX + TEXT_XMARGIN,
-                                     Screen->Entries[State->CurrentSelection]->Place.YPos + PlaceCentre, 16);
+//          BltImageCompositeIndicator((((REFIT_INPUT_DIALOG*)(Screen->Entries[State->CurrentSelection]))->Item->BValue)
+//                                     ? Buttons[3] : Buttons[2], Buttons[2], EntriesPosX + TEXT_XMARGIN,
+//                                     Screen->Entries[State->CurrentSelection]->Place.YPos + PlaceCentre, 16);
+          BltImageAlpha((((REFIT_INPUT_DIALOG*)(Screen->Entries[State->CurrentSelection]))->Item->BValue)? Buttons[3] : Buttons[2],
+            EntriesPosX + TEXT_XMARGIN, Screen->Entries[State->CurrentSelection]->Place.YPos + PlaceCentre,
+            &MenuBackgroundPixel, 16);
         } else {
         StrCat(ResultString, ((REFIT_INPUT_DIALOG*)(Screen->Entries[State->CurrentSelection]))->Item->SValue + ((REFIT_INPUT_DIALOG*)(Screen->Entries[State->CurrentSelection]))->Item->LineShift);
         StrCat(ResultString, L" ");
@@ -2998,9 +3017,12 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
         StrCpy(ResultString, Screen->Entries[State->CurrentSelection]->Title);
         DrawMenuText(ResultString, MenuWidth, EntriesPosX + (TextHeight + TEXT_XMARGIN),
                      EntriesPosY + (State->CurrentSelection - State->FirstVisible) * TextHeight, 0xFFFF);
-        BltImageCompositeIndicator((Screen->Entries[State->CurrentSelection]->Row == (UINTN)OldChosenTheme) ? Buttons[1] :
-                                   Buttons[0], Buttons[0], EntriesPosX + TEXT_XMARGIN,
-                                   Screen->Entries[State->CurrentSelection]->Place.YPos + PlaceCentre, 16);
+//        BltImageCompositeIndicator((Screen->Entries[State->CurrentSelection]->Row == (UINTN)OldChosenTheme) ? Buttons[1] :
+//                                   Buttons[0], Buttons[0], EntriesPosX + TEXT_XMARGIN,
+//                                   Screen->Entries[State->CurrentSelection]->Place.YPos + PlaceCentre, 16);
+        BltImageAlpha((Screen->Entries[State->CurrentSelection]->Row == (UINTN)OldChosenTheme) ? Buttons[1]:Buttons[0],
+          EntriesPosX + TEXT_XMARGIN, Screen->Entries[State->CurrentSelection]->Place.YPos + PlaceCentre,
+          &MenuBackgroundPixel, 16);
       } else {
         DrawMenuText(Screen->Entries[State->CurrentSelection]->Title, MenuWidth,
                      EntriesPosX, EntriesPosY + (State->CurrentSelection - State->FirstVisible) * TextHeight, 0xFFFF);
@@ -3045,7 +3067,7 @@ static VOID DrawMainMenuEntry(REFIT_MENU_ENTRY *Entry, BOOLEAN selected, INTN XP
   }
 
   if (!MainImage) {
-    if (ThemeDir) {
+    if (!IsEmbeddedTheme()) {
       MainImage = egLoadIcon(ThemeDir, GetIconsExt(L"icons\\os_mac", L"icns"), Scale << 3);
     }
     if (!MainImage) {
@@ -4709,6 +4731,16 @@ REFIT_MENU_ENTRY  *SubMenuThemes()
   SubScreen->AnimeRun = GetAnime(SubScreen);
 
   AddMenuInfoLine(SubScreen, L"Installed themes:");
+  //add embedded
+  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  InputBootArgs->Entry.Title = PoolPrint(L"embedded");
+  InputBootArgs->Entry.Tag = TAG_SWITCH;
+  InputBootArgs->Entry.Row = 0xFFFF;
+  InputBootArgs->Item = &InputItems[3];
+  InputBootArgs->Entry.AtClick = ActionEnter;
+  InputBootArgs->Entry.AtRightClick = ActionDetails;
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+  
   for (i = 0; i < ThemesNum; i++) {
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
     InputBootArgs->Entry.Title = PoolPrint(L"%s", ThemesList[i]);

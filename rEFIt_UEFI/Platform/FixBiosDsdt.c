@@ -764,8 +764,9 @@ VOID CheckHardware()
               ((Pci.Hdr.ClassCode[1] == PCI_CLASS_MEDIA_HDA) ||
                (Pci.Hdr.ClassCode[1] == PCI_CLASS_MEDIA_AUDIO))) {
             UINT32 codecId = 0, layoutId = 0;
-            if ((Pci.Hdr.VendorId == 0x8086) &&
-                ((Pci.Hdr.DeviceId & 0xFF00) != 0x0C00)) { //0x0C0C is HDMI sound
+            if (!IsHDMIAudio(Handle)) {
+      //      if ((Pci.Hdr.VendorId == 0x8086) &&
+      //          ((Pci.Hdr.DeviceId & 0xFF00) != 0x0C00)) { //0x0C0C is HDMI sound
               GetPciADR(DevicePath, &HDAADR1, NULL, NULL);
               codecId = HDA_getCodecVendorAndDeviceIds(PciIo);
               if (codecId > 0) {
@@ -783,7 +784,7 @@ VOID CheckHardware()
               HDAFIX = TRUE;
               HDAcodecId = codecId;
               HDAlayoutId = layoutId;
-            } else if ((Pci.Hdr.VendorId == 0x1002) || (Pci.Hdr.VendorId == 0x10DE)){ //HDMI
+            } else { //HDMI
               GetPciADR(DevicePath, &HDMIADR1, &HDMIADR2, NULL);
               GFXHDAFIX = TRUE;
             }

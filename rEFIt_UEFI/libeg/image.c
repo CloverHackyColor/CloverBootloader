@@ -956,7 +956,7 @@ EG_IMAGE * egDecodePNG(IN UINT8 *FileData, IN UINTN FileDataLength, IN UINTN Ico
   EG_IMAGE *NewImage = NULL;
   UINTN Error, i, ImageSize, Width, Height;
   EG_PIXEL *PixelData;
-  EG_PIXEL *Pixel;
+  EG_PIXEL *Pixel, *PixelD;
 
   Error = eglodepng_decode((UINT8**) &PixelData, &Width, &Height, (CONST UINT8*) FileData, (UINTN) FileDataLength);
 
@@ -968,19 +968,26 @@ EG_IMAGE * egDecodePNG(IN UINT8 *FileData, IN UINTN FileDataLength, IN UINTN Ico
   if (NewImage == NULL) return NULL;
 
   ImageSize = (Width * Height);
-  CopyMem(NewImage->PixelData, PixelData, sizeof(EG_PIXEL) * ImageSize);
-  lodepng_free(PixelData);
+//  CopyMem(NewImage->PixelData, PixelData, sizeof(EG_PIXEL) * ImageSize);
+//  lodepng_free(PixelData);
 
   Pixel = (EG_PIXEL*)NewImage->PixelData;
+  PixelD = PixelData;
   for (i = 0; i < ImageSize; i++) {
-      UINT8 Temp;
+/*      UINT8 Temp;
       Temp = Pixel->b;
       Pixel->b = Pixel->r;
-      Pixel->r = Temp;
-      Pixel++;
+      Pixel->r = Temp; */
+    Pixel->b = PixelD->r; //change r <-> b
+    Pixel->r = PixelD->b;
+    Pixel->g = PixelD->g;
+    Pixel->a = PixelD->a; // 255 is opaque, 0 - transparent
+    Pixel++;
+    PixelD++;
   }
 
-   return NewImage;
+  lodepng_free(PixelData);
+  return NewImage;
 }
 #endif //LODEPNG
 

@@ -1863,7 +1863,7 @@ EFI_STATUS PrepatchSmbios()
 	UINTN					BufferLen;
 	EFI_PHYSICAL_ADDRESS     BufferPtr;
 //	UINTN					Index;
-  DbgHeader("PrepatchSmbios");
+  DbgHeader("Get Smbios");
 
 	// Get SMBIOS Tables
 	Smbios = FindOemSMBIOSPtr();

@@ -78,6 +78,7 @@ EG_PIXEL StdBackgroundPixel   = { 0xbf, 0xbf, 0xbf, 0xff};
 EG_PIXEL MenuBackgroundPixel  = { 0x00, 0x00, 0x00, 0x00};
 EG_PIXEL InputBackgroundPixel = { 0xcf, 0xcf, 0xcf, 0x80};
 EG_PIXEL BlueBackgroundPixel  = { 0x7f, 0x0f, 0x0f, 0xff};
+EG_PIXEL EmbeddedBackgroundPixel  = { 0xaa, 0xaa, 0xaa, 0x80};
 
 EG_IMAGE *BackgroundImage = NULL;
 EG_IMAGE *Banner = NULL;
@@ -405,7 +406,7 @@ VOID BltClearScreen(IN BOOLEAN ShowBanner) //ShowBanner always TRUE
     // Banner is used in this theme
     if (!Banner) {
       // Banner is not loaded yet
-      if (!GlobalConfig.Theme) {
+      if (IsEmbeddedTheme()) {
         // embedded theme - use text as banner
    //     Banner = egCreateImage(7 * StrLen(L"CLOVER"), 32, TRUE);
    //     egFillImage(Banner, &MenuBackgroundPixel);
@@ -657,13 +658,12 @@ VOID BltImageCompositeBadge(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN EG
   CompHeight = NewTopImage->Height;
 // DBG("TopImage: Width=%d Height=%d Alfa=%d\n", CompWidth, CompHeight, NewTopImage->HasAlpha);
 
-  if (GlobalConfig.Theme) { // regular theme
+  if (!IsEmbeddedTheme()) { // regular theme
     CompImage = egCreateFilledImage((CompWidth > TotalWidth)?CompWidth:TotalWidth,
                                     (CompHeight > TotalHeight)?CompHeight:TotalHeight,
                                     TRUE,
                                     &MenuBackgroundPixel);
   } else { // embedded theme - draw box around icons
-    EG_PIXEL EmbeddedBackgroundPixel  = { 0xaa, 0xaa, 0xaa, 0xaa};
     CompImage = egCreateFilledImage((CompWidth > TotalWidth)?CompWidth:TotalWidth,
                                     (CompHeight > TotalHeight)?CompHeight:TotalHeight,
                                     TRUE,
@@ -739,7 +739,7 @@ VOID BltImageCompositeBadge(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN EG
   }
 
   // blit to screen and clean up
-  if (GlobalConfig.Theme) { // regular theme
+  if (!IsEmbeddedTheme()) { // regular theme
     if (GlobalConfig.NonSelectedGrey && !Selected) {
       BltImageAlpha(CompImage, XPos, YPos, &MenuBackgroundPixel, -16);
     } else {
@@ -780,13 +780,12 @@ VOID BltImageCompositeIndicator(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, I
     CompHeight = NewTopImage->Height;
     //DBG("TopImage: Width=%d Height=%d Alfa=%d\n", CompWidth, CompHeight, NewTopImage->HasAlpha);
     
-    if (GlobalConfig.Theme) { // regular theme
+    if (!IsEmbeddedTheme()) { // regular theme
         CompImage = egCreateFilledImage((CompWidth > TotalWidth)?CompWidth:TotalWidth,
                                         (CompHeight > TotalHeight)?CompHeight:TotalHeight,
                                         TRUE,
                                         &MenuBackgroundPixel);
     } else { // embedded theme - draw box around icons
-        EG_PIXEL EmbeddedBackgroundPixel  = { 0xaa, 0xaa, 0xaa, 0xaa};
         CompImage = egCreateFilledImage((CompWidth > TotalWidth)?CompWidth:TotalWidth,
                                         (CompHeight > TotalHeight)?CompHeight:TotalHeight,
                                         TRUE,
@@ -810,7 +809,7 @@ VOID BltImageCompositeIndicator(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, I
     }
     
     // blit to screen and clean up
-    if (GlobalConfig.Theme) {
+    if (IsEmbeddedTheme()) {
         // regular theme
       if (GlobalConfig.NonSelectedGrey && !Selected) {
         BltImageAlpha(CompImage, XPos, YPos, &MenuBackgroundPixel, -16);
@@ -1024,9 +1023,8 @@ VOID InitAnime(REFIT_MENU_SCREEN *Screen)
 
   // Check if we should clear old film vars (no anime or anime path changed)
   //
-  //if (!Anime || !Screen->Film || !GlobalConfig.Theme || !Screen->Theme ||
-  if (gThemeOptionsChanged || !Anime || !Screen->Film || !GlobalConfig.Theme || !Screen->Theme ||
-      (/*gThemeChanged && */StrCmp(GlobalConfig.Theme, Screen->Theme) != 0)) {
+  if (gThemeOptionsChanged || !Anime || !Screen->Film || IsEmbeddedTheme() || !Screen->Theme ||
+      (/*gThemeChanged && */StrCmpiBasic(GlobalConfig.Theme, Screen->Theme) != 0)) {
 //    DBG(" free screen\n");
     if (Screen->Film) {
       //free images in the film

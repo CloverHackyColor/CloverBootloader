@@ -358,7 +358,7 @@ BOOLEAN set_eth_props(pci_dt_t *eth_dev)
   if (!device)
     return FALSE;
   // -------------------------------------------------
-  DBG("LAN Controller [%04x:%04x] :: %a\n", eth_dev->vendor_id, eth_dev->device_id, devicepath);
+//  DBG("LAN Controller [%04x:%04x] :: %a\n", eth_dev->vendor_id, eth_dev->device_id, devicepath);
   if (eth_dev->vendor_id != 0x168c && builtin_set == 0) {
  		builtin_set = 1;
  		builtin = 0x01;
@@ -427,7 +427,7 @@ BOOLEAN set_usb_props(pci_dt_t *usb_dev)
   if (!device)
     return FALSE;
   // -------------------------------------------------
-  DBG("USB Controller [%04x:%04x] :: %a\n", usb_dev->vendor_id, usb_dev->device_id, devicepath);
+ // DBG("USB Controller [%04x:%04x] :: %a\n", usb_dev->vendor_id, usb_dev->device_id, devicepath);
   //  DBG("Setting dev.prop built-in=0x%x\n", builtin);
  
   if (gSettings.NrAddProperties != 0xFFFE) {
@@ -680,7 +680,7 @@ BOOLEAN set_hda_props(EFI_PCI_IO_PROTOCOL *PciIo, pci_dt_t *hda_dev, CHAR8 *OSVe
       }
     }
     if (Injected) {
-      DBG("custom USB properties injected, continue\n");
+      DBG("custom HDMI properties injected, continue\n");
       //    return TRUE;
     } else if (gSettings.UseIntelHDMI) {
       DBG(" HDMI Audio, setting hda-gfx=onboard-1\n");

@@ -720,6 +720,7 @@ PutNvramPlistToRtVars ()
   CHAR16     KeyBuf[128];
   VOID       *Value;
   
+  DbgHeader("PutNvramPlistToRtVars");
   
   if (gNvramDict == NULL) {
     Status = LoadLatestNvramPlist ();
@@ -729,7 +730,7 @@ PutNvramPlistToRtVars ()
     }
   }
   
-  DBG ("PutNvramPlistToRtVars ...\n");
+//  DBG ("PutNvramPlistToRtVars ...\n");
   // iterate over dict elements
   for (Tag = gNvramDict->tag; Tag != NULL; Tag = Tag->tagNext) {
     
@@ -1131,17 +1132,17 @@ EFI_STATUS SetStartupDiskVolume (
 VOID
 RemoveStartupDiskVolume ()
 {
-    EFI_STATUS Status;
+//    EFI_STATUS Status;
     
 //    DBG ("RemoveStartupDiskVolume:\n");
     
     /*Status =*/ DeleteNvramVariable (L"efi-boot-device", &gEfiAppleBootGuid);
 //    DBG ("  * efi-boot-device = %r\n", Status);
     
-    Status = DeleteNvramVariable (L"efi-boot-device-data", &gEfiAppleBootGuid);
+    /*Status =*/ DeleteNvramVariable (L"efi-boot-device-data", &gEfiAppleBootGuid);
 //    DBG ("  * efi-boot-device-data = %r\n", Status);
     
     /*Status =*/ DeleteNvramVariable (L"BootCampHD", &gEfiAppleBootGuid);
 //    DBG ("  * BootCampHD = %r\n", Status);
-    DBG ("Removed efi-boot-device-data variable: %r\n", Status);
+//    DBG ("Removed efi-boot-device-data variable: %r\n", Status);
 }

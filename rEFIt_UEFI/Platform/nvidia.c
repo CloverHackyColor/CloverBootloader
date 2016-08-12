@@ -1739,7 +1739,7 @@ static INT32 patch_nvidia_rom(UINT8 *rom)
     UINT8 *heads;
   } entries[MAX_NUM_DCB_ENTRIES];
   
-	DBG("patch_nvidia_rom\n");
+//	DBG("patch_nvidia_rom\n");
 	if (!rom || (rom[0] != 0x55 && rom[1] != 0xaa)) {
 		DBG("FALSE ROM signature: 0x%02x%02x\n", rom[0], rom[1]);
 		return PATCH_ROM_FAILED;
@@ -1983,7 +1983,7 @@ static INT32 devprop_add_nvidia_template(DevPropDevice *device, INTN n_ports)
   CHAR8 nkey[24];
   CHAR8 nval[24];
   
-	DBG("devprop_add_nvidia_template\n");
+//	DBG("devprop_add_nvidia_template\n");
   
 	if (!device) {
 		return 0;

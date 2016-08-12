@@ -2126,6 +2126,8 @@ FindDevicePathNodeWithType (
   IN  UINT8                    SubType      OPTIONAL
   );
 
+BOOLEAN IsHDMIAudio(EFI_HANDLE PciDevHandle);
+
 //Parses BootXXXX (XXXX = BootNum) var (from BootOption->Variable) and returns it in BootOption.
 EFI_STATUS
 ParseBootOption (OUT BO_BOOT_OPTION  *BootOption);

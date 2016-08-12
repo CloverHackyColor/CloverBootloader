@@ -1459,7 +1459,7 @@ VOID SetVariablesFromNvram()
   UINTN   index = 0, index2, len, i;
   CHAR8  *arg = NULL;
 
-  DbgHeader("SetVariablesFromNvram");
+//  DbgHeader("SetVariablesFromNvram");
 
   tmpString = GetNvramVariable(L"boot-args", &gEfiAppleBootGuid, NULL, &Size);
   if (tmpString && (Size <= 0x1000) && (Size > 0)) {
@@ -1953,7 +1953,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         InitTheme(TRUE, &Now);
         gThemeNeedInit = FALSE;
       } else if (gThemeChanged) {
-        DBG("change theme\n");
+//        DBG("change theme\n");
         InitTheme(FALSE, NULL);
         FreeMenu(&OptionMenu);
       }

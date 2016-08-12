@@ -641,13 +641,14 @@ extern REFIT_MENU_SCREEN OptionMenu;
 //extern EFI_GUID gEfiAppleBootGuid;
 
 
-EFI_STATUS InitRefitLib(IN EFI_HANDLE ImageHandle);
-EFI_STATUS GetRootFromPath(IN EFI_DEVICE_PATH_PROTOCOL* DevicePath, OUT EFI_FILE **Root);
-VOID       UninitRefitLib(VOID);
-EFI_STATUS ReinitRefitLib(VOID);
-EFI_STATUS ReinitSelfLib(VOID);
-//extern EFI_STATUS FinishInitRefitLib(VOID);
-VOID       PauseForKey(IN CHAR16 *Msg);
+EFI_STATUS  InitRefitLib(IN EFI_HANDLE ImageHandle);
+EFI_STATUS  GetRootFromPath(IN EFI_DEVICE_PATH_PROTOCOL* DevicePath, OUT EFI_FILE **Root);
+VOID        UninitRefitLib(VOID);
+EFI_STATUS  ReinitRefitLib(VOID);
+EFI_STATUS  ReinitSelfLib(VOID);
+//extern EFI_STATUS FinishInitRefitLib(VOID); -- static
+VOID        PauseForKey(IN CHAR16 *Msg);
+BOOLEAN     IsEmbeddedTheme();
 
 VOID CreateList(OUT VOID ***ListPtr, OUT UINTN *ElementCount, IN UINTN InitialElementCount);
 VOID AddListElement(IN OUT VOID ***ListPtr, IN OUT UINTN *ElementCount, IN VOID *NewElement);
