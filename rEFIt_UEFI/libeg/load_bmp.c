@@ -33,7 +33,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
+#if !defined(LODEPNG)
 #include "libegint.h"
 
 // BMP structures
@@ -267,5 +267,5 @@ VOID egEncodeBMP(IN EG_IMAGE *Image, OUT UINT8 **FileDataReturn, OUT UINTN *File
     *FileDataReturn = FileData;
     *FileDataLengthReturn = (UINTN)FileDataLength;
 }
-
+#endif
 /* EOF */

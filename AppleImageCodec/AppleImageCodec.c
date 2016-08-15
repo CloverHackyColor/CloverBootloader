@@ -34,7 +34,7 @@ PngRecognizeImageData (
   EG_IMAGE      *Image;
   
   DBG("AppleImageCodec PngRecognizeImageData: Status = ");
-  Image = egDecodePNG((UINT8*)ImageBuffer, ImageSize, 0, FALSE);
+  Image = egDecodePNG((UINT8*)ImageBuffer, ImageSize, FALSE);
   if (Image == NULL) {
     DBG("EFI_UNSUPPORTED\n");
     return EFI_UNSUPPORTED;
@@ -59,7 +59,7 @@ PngGetImageDims (
   EG_IMAGE      *Image;
   
   DBG("AppleImageCodec PngGetImageDims: Status = ");
-  Image = egDecodePNG((UINT8*)ImageBuffer, ImageSize, 0, FALSE);
+  Image = egDecodePNG((UINT8*)ImageBuffer, ImageSize, FALSE);
   if (Image == NULL) {
     DBG("EFI_UNSUPPORTED\n");
     return EFI_UNSUPPORTED;
@@ -89,7 +89,7 @@ PngDecodeImageData (
   INTN          Index;
   
   DBG("AppleImageCodec PngDecodeImageData: Status = ");
-  Image = egDecodePNG((UINT8*)ImageBuffer, ImageSize, 0, FALSE);
+  Image = egDecodePNG((UINT8*)ImageBuffer, ImageSize, FALSE);
   if (Image == NULL) {
     DBG("EFI_UNSUPPORTED\n");
     return EFI_UNSUPPORTED;

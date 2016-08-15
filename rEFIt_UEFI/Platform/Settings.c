@@ -91,7 +91,7 @@ REFIT_CONFIG   GlobalConfig = {
   FALSE,          // BOOLEAN     FastBoot;
   FALSE,          // BOOLEAN     NeverHibernate;
   FONT_ALFA,      // FONT_TYPE   Font;
-  7,              // INTN        CharWidth;
+  9,             // INTN        CharWidth;
   0xFFFFFF80,     // UINTN       SelectionColor;
   NULL,           // CHAR16      *FontFileName;
   NULL,           // CHAR16      *Theme;
@@ -1453,11 +1453,11 @@ FillinCustomEntry (
         if (len > 0) {
           UINT8 *data    = (UINT8 *)AllocateZeroPool (len);
           if (data) {
-            Entry->Image = egDecodeImage (data, hex2bin (Prop->string, data, len), NULL, TRUE);
+            Entry->Image = egDecodePNG(data, hex2bin (Prop->string, data, len), TRUE);
           }
         }
       } else if (Prop->type == kTagTypeData) {
-        Entry->Image     = egDecodeImage (Prop->data, Prop->dataLen, NULL, TRUE);
+        Entry->Image     = egDecodePNG (Prop->data, Prop->dataLen, TRUE);
       }
     }
   }
@@ -1495,11 +1495,11 @@ FillinCustomEntry (
         if (len > 0) {
           UINT8 *data = (UINT8 *)AllocateZeroPool (len);
           if (data) {
-            Entry->DriveImage = egDecodeImage (data, hex2bin (Prop->string, data, len), NULL, TRUE);
+            Entry->DriveImage = egDecodePNG (data, hex2bin (Prop->string, data, len), TRUE);
           }
         }
       } else if (Prop->type == kTagTypeData) {
-        Entry->DriveImage    = egDecodeImage (Prop->data, Prop->dataLen, NULL, TRUE);
+        Entry->DriveImage    = egDecodePNG (Prop->data, Prop->dataLen, TRUE);
       }
     }
   }
@@ -1543,7 +1543,7 @@ FillinCustomEntry (
         egFreeImage (Entry->CustomLogo);
       }
 
-      Entry->CustomLogo = egDecodeImage (Prop->data, Prop->dataLen, NULL, TRUE);
+      Entry->CustomLogo = egDecodePNG (Prop->data, Prop->dataLen, TRUE);
       if (Entry->CustomLogo == NULL) {
         DBG ("Custom boot logo not decoded from data!\n", Prop->string);
       }
@@ -1854,11 +1854,11 @@ FillinCustomLegacy (
         if (Len > 0) {
           UINT8 *Data    = (UINT8 *)AllocateZeroPool (Len);
           if (Data != NULL) {
-            Entry->Image = egDecodeImage (Data, hex2bin (Prop->string, Data, Len), NULL, TRUE);
+            Entry->Image = egDecodePNG (Data, hex2bin (Prop->string, Data, Len), TRUE);
           }
         }
       } else if (Prop->type == kTagTypeData) {
-        Entry->Image     = egDecodeImage (Prop->data, Prop->dataLen, NULL, TRUE);
+        Entry->Image     = egDecodePNG (Prop->data, Prop->dataLen, TRUE);
       }
     }
   }
@@ -1896,11 +1896,11 @@ FillinCustomLegacy (
         if (len > 0) {
           UINT8 *data = (UINT8 *)AllocateZeroPool (len);
           if (data) {
-            Entry->DriveImage = egDecodeImage (data, hex2bin (Prop->string, data, len), NULL, TRUE);
+            Entry->DriveImage = egDecodePNG (data, hex2bin (Prop->string, data, len), TRUE);
           }
         }
       } else if (Prop->type == kTagTypeData) {
-        Entry->DriveImage = egDecodeImage (Prop->data, Prop->dataLen, NULL, TRUE);
+        Entry->DriveImage = egDecodePNG (Prop->data, Prop->dataLen, TRUE);
       }
     }
   }
@@ -2066,11 +2066,11 @@ FillinCustomTool (
         if (Len > 0) {
           UINT8 *data = (UINT8 *)AllocateZeroPool (Len);
           if (data != NULL) {
-            Entry->Image = egDecodeImage (data, hex2bin (Prop->string, data, Len), NULL, TRUE);
+            Entry->Image = egDecodePNG (data, hex2bin (Prop->string, data, Len), TRUE);
           }
         }
       } else if (Prop->type == kTagTypeData) {
-        Entry->Image = egDecodeImage (Prop->data, Prop->dataLen, NULL, TRUE);
+        Entry->Image = egDecodePNG (Prop->data, Prop->dataLen, TRUE);
       }
     }
   }
@@ -2385,7 +2385,7 @@ GetEarlyUserSettings (
             egFreeImage (gSettings.CustomLogo);
           }
 
-          gSettings.CustomLogo = egDecodeImage (Prop->data, Prop->dataLen, NULL, TRUE);
+          gSettings.CustomLogo = egDecodePNG (Prop->data, Prop->dataLen, TRUE);
           if (gSettings.CustomLogo == NULL) {
             DBG ("Custom boot logo not decoded from data!\n", Prop->string);
           }
@@ -3031,7 +3031,7 @@ GetThemeTagSettings (
     FreePool (GlobalConfig.FontFileName);
     GlobalConfig.FontFileName          = NULL;
   }
-  GlobalConfig.CharWidth               = 7;
+  GlobalConfig.CharWidth               = 9;
 //  GlobalConfig.PruneScrollRows         = 0;
   GuiAnime = NULL;
 
@@ -3676,7 +3676,7 @@ finish:
     //GlobalConfig.Timeout = -1;
     GlobalConfig.SelectionColor = 0xA0A0A080;
     GlobalConfig.Font = FONT_ALFA; //to be inverted later
-    GlobalConfig.CharWidth = 7;
+    GlobalConfig.CharWidth = 9;
     GlobalConfig.HideBadges = HDBADGES_SHOW;
     GlobalConfig.BadgeScale = 16;
   } else { // theme loaded successfully

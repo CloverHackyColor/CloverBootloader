@@ -754,7 +754,7 @@ EFI_STATUS InitBootScreen(IN LOADER_ENTRY *Entry)
 
   case CUSTOM_BOOT_APPLE:
      // Gray on gray apple
-     logo = egDecodeImage(grayAppleLogo, sizeof(grayAppleLogo), NULL, TRUE);
+     logo = egDecodePNG(grayAppleLogo, sizeof(grayAppleLogo), TRUE);
      if (backgroundPixel == NULL) {
        backgroundPixel = &grayBackgroundPixel;
      }
@@ -763,7 +763,7 @@ EFI_STATUS InitBootScreen(IN LOADER_ENTRY *Entry)
 
   case CUSTOM_BOOT_ALT_APPLE:
      // Alternate white on black apple
-     logo = egDecodeImage(whiteAppleLogo, sizeof(whiteAppleLogo), NULL, TRUE);
+     logo = egDecodePNG(whiteAppleLogo, sizeof(whiteAppleLogo), TRUE);
      if (backgroundPixel == NULL) {
         backgroundPixel = &blackBackgroundPixel;
      }

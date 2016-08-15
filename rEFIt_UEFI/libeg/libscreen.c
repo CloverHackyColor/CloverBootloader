@@ -647,7 +647,7 @@ EFI_STATUS egScreenShot(VOID)
     
     egFreeImage(Image);
     if (FileData == NULL) {
-        Print(L"Error egEncodeBMP returned NULL\n");
+        Print(L"Error egEncode returned NULL\n");
         return EFI_NO_MEDIA;
     }
   

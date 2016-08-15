@@ -1281,7 +1281,7 @@ PNG_INFO *PNG_decode(/* const*/ UINT8 *in, UINT32 size)
 
 /**********************************************************************************************/
 
-EG_IMAGE * egDecodePNG(IN UINT8 *FileData, IN UINTN FileDataLength, IN UINTN IconSize, IN BOOLEAN WantAlpha)
+EG_IMAGE * egDecodePNG(IN UINT8 *FileData, IN UINTN FileDataLength, IN BOOLEAN WantAlpha)
 {
   EG_IMAGE            *NewImage;
   PNG_INFO            *info;

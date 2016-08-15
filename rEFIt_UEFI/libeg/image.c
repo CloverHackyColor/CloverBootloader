@@ -457,6 +457,7 @@ EFI_STATUS egMkDir(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CHAR16 *DirName)
   return Status;
 }
 
+/* always use egDecodePNG
 //
 // Loading images from files and embedded data
 //
@@ -473,13 +474,14 @@ static EG_IMAGE * egDecodeAny(IN UINT8 *FileData, IN UINTN FileDataLength,
     if (StriCmp(Format, L"PNG") == 0){
       //DBG("decode format PNG\n");
       DecodeFunc = egDecodePNG;
-    } else if (StriCmp(Format, L"ICNS") == 0){
+    }
+    else if (StriCmp(Format, L"ICNS") == 0){
       //DBG("decode format ICNS\n");
       DecodeFunc = egDecodeICNS;
     } else  if (StriCmp(Format, L"BMP") == 0) {
       //DBG("decode format BMP\n");
       DecodeFunc = egDecodeBMP;
-    }
+    } 
     //  else if (StriCmp(Format, L"TGA") == 0)
     //    DecodeFunc = egDecodeTGA;
 
@@ -493,23 +495,22 @@ static EG_IMAGE * egDecodeAny(IN UINT8 *FileData, IN UINTN FileDataLength,
     //automatic choose format
     NewImage = egDecodePNG(FileData, FileDataLength, IconSize, WantAlpha);
     if (!NewImage) {
- //     DBG(" ..png is wrong try to decode icns\n");
+      DBG(" ..png is wrong try to decode icns\n");
       NewImage = egDecodeICNS(FileData, FileDataLength, IconSize, WantAlpha);
-    } /* else {
-      DBG(" ..decoded as png\n");
-    } */
+    }  else {
+ //     DBG(" ..decoded as png\n");
+    } 
 
     if (!NewImage) {
-//      DBG(" ..png and icns is wrong try to decode bmp\n");
-      NewImage = egDecodeBMP(FileData, FileDataLength, IconSize, WantAlpha);
-    }
+      DBG(" ..png and icns is wrong try to decode bmp\n");
+      NewImage = egDecodeBMP(FileData, FileDataLength, IconSize, WantAlpha);/    }
   }
 #if DEBUG_IMG == 2
    PauseForKey(L"After egDecodeAny\n");
 #endif
   return NewImage;
 }
-
+*/
 //caller is responsible for free image
 EG_IMAGE * egLoadImage(IN EFI_FILE_HANDLE BaseDir, IN CHAR16 *FileName, IN BOOLEAN WantAlpha)
 {
@@ -528,7 +529,8 @@ EG_IMAGE * egLoadImage(IN EFI_FILE_HANDLE BaseDir, IN CHAR16 *FileName, IN BOOLE
     return NULL;
   //  DBG("   extension = %s\n", egFindExtension(FileName));
   // decode it
-  NewImage = egDecodeAny(FileData, FileDataLength, NULL, /*egFindExtension(FileName),*/ 128, WantAlpha);
+  NewImage = egDecodePNG(FileData, FileDataLength, WantAlpha);
+
   //  DBG("decoded\n");
   if (!NewImage) {
     DBG("%s not decoded\n", FileName);
@@ -556,17 +558,18 @@ EG_IMAGE * egLoadIcon(IN EFI_FILE_HANDLE BaseDir, IN CHAR16 *FileName, IN UINTN 
     return NULL;
 
   // decode it
-  NewImage = egDecodeAny(FileData, FileDataLength, NULL, /*egFindExtension(FileName),*/ IconSize, TRUE);
+  NewImage = egDecodePNG(FileData, FileDataLength, TRUE);
   FreePool(FileData);
 
   return NewImage;
 }
-
+/*
 EG_IMAGE * egDecodeImage(IN UINT8 *FileData, IN UINTN FileDataLength, IN CHAR16 *Format, IN BOOLEAN WantAlpha)
 {
   return egDecodeAny(FileData, FileDataLength, Format, 128, WantAlpha);
 }
-
+ */
+/*
 EG_IMAGE * egPrepareEmbeddedImage(IN EG_EMBEDDED_IMAGE *EmbeddedImage, IN BOOLEAN WantAlpha)
 {
   EG_IMAGE            *NewImage;
@@ -647,7 +650,7 @@ EG_IMAGE * egPrepareEmbeddedImage(IN EG_EMBEDDED_IMAGE *EmbeddedImage, IN BOOLEA
 
   return NewImage;
 }
-
+*/
 //
 // Compositing
 //
@@ -952,7 +955,7 @@ VOID egCopyPlane(IN UINT8 *SrcPlanePtr, IN UINT8 *DestPlanePtr, IN UINTN PixelCo
 }
 
 #if defined(LODEPNG)
-EG_IMAGE * egDecodePNG(IN UINT8 *FileData, IN UINTN FileDataLength, IN UINTN IconSize, IN BOOLEAN WantAlpha) {
+EG_IMAGE * egDecodePNG(IN UINT8 *FileData, IN UINTN FileDataLength, IN BOOLEAN WantAlpha) {
   EG_IMAGE *NewImage = NULL;
   UINTN Error, i, ImageSize, Width, Height;
   EG_PIXEL *PixelData;

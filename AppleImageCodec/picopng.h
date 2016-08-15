@@ -72,7 +72,7 @@ typedef struct {
     EFI_UGA_PIXEL   *PixelData;
 } EG_IMAGE;
 
-EG_IMAGE * egDecodePNG(IN UINT8 *FileData, IN UINTN FileDataLength, IN UINTN IconSize, IN BOOLEAN WantAlpha);
+EG_IMAGE * egDecodePNG(IN UINT8 *FileData, IN UINTN FileDataLength, IN BOOLEAN WantAlpha);
 VOID egFreeImage(IN EG_IMAGE *Image);
 
 #endif

@@ -55,9 +55,9 @@
 
 
 EG_IMAGE *FontImage = NULL;
-INTN FontWidth = 7;
-INTN FontHeight = 12;
-INTN TextHeight = 16;
+INTN FontWidth = 9;
+INTN FontHeight = 18;
+INTN TextHeight = 19;
 
 //
 // Text rendering
@@ -80,6 +80,7 @@ EG_IMAGE * egLoadFontImage(IN BOOLEAN FromTheme, IN INTN Rows, IN INTN Cols)
   EG_PIXEL    *PixelPtr;
   EG_PIXEL    FirstPixel;
   BOOLEAN     WantAlpha = TRUE;
+  BOOLEAN     Embedded = FALSE;
 
   if (FromTheme) {
     NewImage = egLoadImage(ThemeDir, GlobalConfig.FontFileName, WantAlpha);
@@ -101,11 +102,12 @@ EG_IMAGE * egLoadFontImage(IN BOOLEAN FromTheme, IN INTN Rows, IN INTN Cols)
     }
     NewImage = egLoadImage(SelfRootDir, fontFilePath, WantAlpha);
     if (!NewImage) {
-      DBG("Font %s is not loaded, using default\n", fontFilePath);
-      FreePool(fontFilePath);
-      return NULL;
+      DBG("Font %s is not loaded, using embedded\n", fontFilePath);
+      NewImage = egDecodePNG(&emb_font_data[0], sizeof(emb_font_data), WantAlpha);
+      Embedded = TRUE;
+    } else {
+      DBG("font %s loaded from common font dir %s\n", GlobalConfig.FontFileName, commonFontDir);
     }
-    DBG("font %s loaded from common font dir %s\n", GlobalConfig.FontFileName, commonFontDir);
     FreePool(fontFilePath);
   }
 
@@ -146,10 +148,10 @@ EG_IMAGE * egLoadFontImage(IN BOOLEAN FromTheme, IN INTN Rows, IN INTN Cols)
 
 VOID PrepareFont(VOID)
 {
-  BOOLEAN ChangeFont = FALSE;
-  EG_PIXEL *p;
-  INTN      Width;
-  INTN      Height;
+//  BOOLEAN ChangeFont = FALSE;
+//  EG_PIXEL *p;
+//  INTN      Width;
+//  INTN      Height;
   if (gLanguage == korean) {
     FontImage = egLoadFontImage(FALSE, 10, 28);
     if (FontImage) {
@@ -169,17 +171,18 @@ VOID PrepareFont(VOID)
   if (FontImage == NULL){
     switch (GlobalConfig.Font) {
       case FONT_ALFA:
-        ChangeFont = TRUE;
-        FontImage = egPrepareEmbeddedImage(&egemb_font, TRUE);        
-        break;
+//        ChangeFont = TRUE;
+//        FontImage = egPrepareEmbeddedImage(&egemb_font, TRUE);
+//        break;
       case FONT_GRAY:
-        ChangeFont = TRUE;
-        FontImage = egPrepareEmbeddedImage(&egemb_font_gray, TRUE);
-        break;
+//        ChangeFont = TRUE;
+//        FontImage = egPrepareEmbeddedImage(&egemb_font_gray, TRUE);        
+//        break;
       case FONT_LOAD:
-        DBG("load font image\n");
+      default:  
+        DBG("load font image type %d\n", GlobalConfig.Font);
         FontImage = egLoadFontImage(TRUE, 16, 16);
-        if (!FontImage) {
+/*        if (!FontImage) {
           ChangeFont = TRUE;
           GlobalConfig.Font = FONT_ALFA;
           FontImage = egPrepareEmbeddedImage(&egemb_font, TRUE);
@@ -193,19 +196,19 @@ VOID PrepareFont(VOID)
       //        p->a = 0xFF;    //huh!          
             }
           }
-        }
+        } */
         break;
-      default:
+ /*     default:
         FontImage = egPrepareEmbeddedImage(&egemb_font, TRUE);
-        break;
+        break; */
     }    
   }
-  if (ChangeFont) {
+/*  if (ChangeFont) {
     // set default values
-    GlobalConfig.CharWidth = 7;
+    GlobalConfig.CharWidth = 9;
     FontWidth = GlobalConfig.CharWidth;
-    FontHeight = 12;
-  }
+    FontHeight = 16;
+  } */
   TextHeight = FontHeight + TEXT_YMARGIN * 2;
   DBG("Font %d prepared WxH=%dx%d CharWidth=%d\n", GlobalConfig.Font, FontWidth, FontHeight, GlobalConfig.CharWidth);
 }
@@ -281,15 +284,15 @@ INTN egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage,
   for (i = 0; i < TextLength; i++) {
     c = Text[i];
     if (gLanguage != korean) {
-      if (GlobalConfig.Font != FONT_LOAD) {
+/*      if (GlobalConfig.Font != FONT_LOAD) {
         if (c < 0x20 || c >= 0x7F)
           c = 0x5F;
         else
           c -= 0x20;
-      } else {
+      } else { */
         c1 = (((c >=0x410) ? (c -= 0x350) : c) & 0xff); //Russian letters
         c = c1;
-      }
+//      }
 
       if (GlobalConfig.Proportional) {
         if (c0 <= 0x20) {  // space before or at buffer edge
@@ -320,7 +323,7 @@ INTN egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage,
                    RealWidth, FontHeight,
                    BufferLineOffset, FontLineOffset);
       if (i == Cursor) {
-        c = (GlobalConfig.Font == FONT_LOAD)?0x5F:0x3F;
+        c = 0x5F;
         egRawCompose(BufferPtr - LeftSpace + 2, FontPixelData + c * FontWidth + RightSpace,
                      RealWidth, FontHeight,
                      BufferLineOffset, FontLineOffset);
