@@ -286,10 +286,7 @@ BOOLEAN IsEmbeddedTheme()
   if (!GlobalConfig.Theme || !StriCmp(GlobalConfig.Theme, L"embedded")) {
     ThemeDir = NULL;
   }
-  if (!ThemeDir) {
-    return TRUE;
-  }
-  return FALSE;
+  return ThemeDir == NULL;
 }
 
 //
@@ -1673,14 +1670,18 @@ VOID * memset(VOID *str, UINT8 c, UINTN n) {
 }
 #endif
 */
-  //INTN i, len = 100 - AsciiStrSize(str);
-  INTN len = 60 - AsciiStrSize(str)/*, i*/;
-  CHAR8 *fill = AllocateZeroPool(len);
+  INTN i, len = 60 - AsciiStrLen(str);
+  //INTN len = 60 - AsciiStrSize(str)/*, i*/;
+ // CHAR8 *fill = AllocateZeroPool(len);
   //for (i = 0; i < len; ++i) fill[i] = '=';
-  gBS->SetMem(fill, len, '=');
-  fill[len] = '\0';
-  DebugLog (1, "=== [ %a ] %a\n", str, fill);
-  FreePool(fill);
+ // gBS->SetMem(fill, len, '=');
+ DebugLog (1, "=== [ %a ] ", str);
+ for (i = 0; i < len; i++) DebugLog (1, "=");
+ DebugLog (1, "\n");
+ 
+//  fill[len] = '\0';
+//  DebugLog (1, "=== [ %a ] %a\n", str, fill);
+//  FreePool(fill);
 #else //ADVLOG
   DebugLog (1, "%a:\n", str);
 #endif //ADVLOG

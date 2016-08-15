@@ -71,7 +71,8 @@
 extern EMU_VARIABLE_CONTROL_PROTOCOL *gEmuVariableControl;
 
 STATIC BOOLEAN AddToolEntry(IN CHAR16 *LoaderPath, IN CHAR16 *FullTitle, IN CHAR16 *LoaderTitle,
-                            IN REFIT_VOLUME *Volume, IN EG_IMAGE *Image, IN EG_IMAGE *ImageHover, IN CHAR16 ShortcutLetter, IN CHAR16 *Options)
+                            IN REFIT_VOLUME *Volume, IN EG_IMAGE *Image,
+                            IN CHAR16 ShortcutLetter, IN CHAR16 *Options)
 {
   LOADER_ENTRY *Entry;
   // Check the loader exists
@@ -94,7 +95,7 @@ STATIC BOOLEAN AddToolEntry(IN CHAR16 *LoaderPath, IN CHAR16 *FullTitle, IN CHAR
   Entry->me.Row = 1;
   Entry->me.ShortcutLetter = ShortcutLetter;
   Entry->me.Image = Image;
-  Entry->me.ImageHover = ImageHover;
+//  Entry->me.ImageHover = ImageHover;
   Entry->LoaderPath = EfiStrDuplicate(LoaderPath);
   Entry->DevicePath = FileDevicePath(Volume->DeviceHandle, Entry->LoaderPath);
   Entry->DevicePathString = FileDevicePathToStr(Entry->DevicePath);
@@ -122,7 +123,6 @@ STATIC VOID AddCloverEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTitle, IN REF
   Entry->me.Row            = 1;
   Entry->me.ShortcutLetter = 'C';
   Entry->me.Image          = BuiltinIcon(BUILTIN_ICON_FUNC_CLOVER);
-  Entry->me.ImageHover     = GetSmallHover(BUILTIN_ICON_FUNC_CLOVER);
   Entry->Volume = Volume;
   Entry->LoaderPath      = EfiStrDuplicate(LoaderPath);
   Entry->VolName         = Volume->VolName;
@@ -209,12 +209,12 @@ VOID ScanTool(VOID)
 //      AddToolEntry(L"\\EFI\\CLOVER\\tools\\Shell64U.efi", NULL, L"EFI Shell 64", SelfVolume, BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S');
 //    } else
     //there seems to be the best version
-      if (!AddToolEntry(L"\\EFI\\CLOVER\\tools\\Shell64U.efi", NULL, L"UEFI Shell 64", SelfVolume, BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), GetSmallHover(BUILTIN_ICON_TOOL_SHELL), 'S', NULL)) {
-        AddToolEntry(L"\\EFI\\CLOVER\\tools\\Shell64.efi", NULL, L"EFI Shell 64", SelfVolume, BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), GetSmallHover(BUILTIN_ICON_TOOL_SHELL), 'S', NULL);
+      if (!AddToolEntry(L"\\EFI\\CLOVER\\tools\\Shell64U.efi", NULL, L"UEFI Shell 64", SelfVolume, BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S', NULL)) {
+        AddToolEntry(L"\\EFI\\CLOVER\\tools\\Shell64.efi", NULL, L"EFI Shell 64", SelfVolume, BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S', NULL);
       }
 //  }
 #else
-    AddToolEntry(L"\\EFI\\CLOVER\\tools\\Shell32.efi", NULL, L"EFI Shell 32", SelfVolume, BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), GetSmallHover(BUILTIN_ICON_TOOL_SHELL), 'S', NULL);
+    AddToolEntry(L"\\EFI\\CLOVER\\tools\\Shell32.efi", NULL, L"EFI Shell 32", SelfVolume, BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S', NULL);
 #endif
   }
 
@@ -253,8 +253,6 @@ VOID AddCustomTool(VOID)
   REFIT_VOLUME      *Volume;
   CUSTOM_TOOL_ENTRY *Custom;
   EG_IMAGE          *Image;
-  EG_IMAGE          *ImageHover = NULL;
-  CHAR16            *ImageHoverPath;
   UINTN              i = 0;
 
 //  DBG("Custom tool start\n");
@@ -325,9 +323,6 @@ VOID AddCustomTool(VOID)
       // Change to custom image if needed
       Image = Custom->Image;
       if ((Image == NULL) && Custom->ImagePath) {
-        ImageHoverPath = EfiStrDuplicate(Custom->ImagePath);
-        ReplaceExtension(ImageHoverPath, L"");
-        ImageHoverPath = PoolPrint(L"%s_hover.%s", ImageHoverPath, egFindExtension(Custom->ImagePath));
         Image = egLoadImage(Volume->RootDir, Custom->ImagePath, TRUE);
         if (Image == NULL) {
           Image = egLoadImage(ThemeDir, Custom->ImagePath, TRUE);
@@ -335,33 +330,20 @@ VOID AddCustomTool(VOID)
             Image = egLoadImage(SelfDir, Custom->ImagePath, TRUE);
             if (Image == NULL) {
               Image = egLoadImage(SelfRootDir, Custom->ImagePath, TRUE);
-              if (Image != NULL) {
-                ImageHover = egLoadIcon(SelfRootDir, ImageHoverPath, 32);
-              }
-            } else {
-              ImageHover = egLoadIcon(SelfDir, ImageHoverPath, 32);
             }
-          } else {
-            ImageHover = egLoadIcon(ThemeDir, ImageHoverPath, 32);
           }
-        } else {
-          ImageHover = egLoadIcon(Volume->RootDir, ImageHoverPath, 32);
         }
-        FreePool(ImageHoverPath);
-      } else {
-        // Image base64 data
       }
       if (Image == NULL) {
         Image = BuiltinIcon(BUILTIN_ICON_TOOL_SHELL);
-        ImageHover = GetSmallHover(BUILTIN_ICON_TOOL_SHELL);
       }
 
       // Create a legacy entry for this volume
 
-      AddToolEntry(Custom->Path, Custom->FullTitle, Custom->Title, Volume, Image, ImageHover, Custom->Hotkey, Custom->Options);
+      AddToolEntry(Custom->Path, Custom->FullTitle, Custom->Title, Volume, Image, Custom->Hotkey, Custom->Options);
 
       DBG("match!\n");
-      break; // break scan volumes, continue scan entries
+//      break; // break scan volumes, continue scan entries -- why?
     }
   }
 //  DBG("Custom tool end\n");

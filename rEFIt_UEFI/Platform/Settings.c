@@ -127,7 +127,7 @@ REFIT_CONFIG   GlobalConfig = {
   24,             // INTN        TileYSpace;
   FALSE,          // BOOLEAN     Proportional;
   FALSE,          // BOOLEAN     NoEarlyProgress;
-  0,              // INTN        PruneScrollRows;
+//  0,              // INTN        PruneScrollRows;
   ICON_FORMAT_DEF // INTN        IconFormat;
 };
 
@@ -3032,7 +3032,7 @@ GetThemeTagSettings (
     GlobalConfig.FontFileName          = NULL;
   }
   GlobalConfig.CharWidth               = 7;
-  GlobalConfig.PruneScrollRows         = 0;
+//  GlobalConfig.PruneScrollRows         = 0;
   GuiAnime = NULL;
 
   if (BigBack != NULL) {
@@ -3209,8 +3209,8 @@ GetThemeTagSettings (
     Dict2 = GetProperty (Dict, "SelectionSmallWidth");
     row1TileSize = (INT32)GetPropertyInteger (Dict2, row1TileSize);
 
-    Dict2 = GetProperty (Dict, "PruneScrollRows");
-    GlobalConfig.PruneScrollRows = (INT32)GetPropertyInteger (Dict2, 0);
+//    Dict2 = GetProperty (Dict, "PruneScrollRows");
+//    GlobalConfig.PruneScrollRows = (INT32)GetPropertyInteger (Dict2, 0);
   }
 
   Dict = GetProperty (DictPointer, "Components");

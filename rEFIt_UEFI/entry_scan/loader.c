@@ -380,9 +380,6 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath,
   LOADER_ENTRY    *Entry;
   INTN             i;
   CHAR8           *indent = "    ";
-  CHAR16          *HoverImage;
-  CHAR16          *OSIconNameHover = NULL;
-  EG_IMAGE        *ImageTmp;
 
   // Check parameters are valid
   if ((LoaderPath == NULL) || (*LoaderPath == 0) || (Volume == NULL)) {
@@ -628,9 +625,10 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath,
   if (GlobalConfig.CustomIcons && FileExists(Volume->RootDir, L"\\.VolumeIcon.icns")){
     Entry->me.Image = LoadIcns(Volume->RootDir, L"\\.VolumeIcon.icns", 128);
     DBG("using VolumeIcon.icns image from Volume\n");
+  } else if (Image) {
+      Entry->me.Image = Image;
   } else {
-    ImageTmp = LoadOSIcon(OSIconName, &OSIconNameHover, L"unknown", 128, FALSE, TRUE);
-    Entry->me.Image = Image ? Image : ImageTmp;
+      Entry->me.Image = LoadOSIcon(OSIconName, L"unknown", 128, FALSE, TRUE);
   }
 
   // Load DriveImage
@@ -643,18 +641,9 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath,
       // DBG(" Show badge as Drive.");
     } else {
       Entry->me.BadgeImage = egCopyScaledImage(Entry->me.Image, GlobalConfig.BadgeScale);
-      if (OSIconNameHover != NULL) {
         // DBG(" Show badge as OSImage.");
-        HoverImage = AllocateZeroPool(sizeof(OSIconNameHover));
-        HoverImage = GetIconsExt(PoolPrint(L"icons\\%s", OSIconNameHover), L"icns");
-        Entry->me.ImageHover = LoadHoverIcon(HoverImage, 128);
-        FreePool(HoverImage);
-      }
     }
   }
-
-  FreePool(OSIconName);
-  FreePool(OSIconNameHover);
 
   if (BootBgColor != NULL) {
     Entry->BootBgColor = BootBgColor;
@@ -1044,11 +1033,11 @@ VOID ScanLoader(VOID)
 
   for (VolumeIndex = 0; VolumeIndex < VolumesCount; VolumeIndex++) {
     Volume = Volumes[VolumeIndex];
-    DBG("- [%02d]: '%s'", VolumeIndex, Volume->VolName);
     if (Volume->RootDir == NULL) { // || Volume->VolName == NULL)
-      DBG(", no file system\n", VolumeIndex);
+//      DBG(", no file system\n", VolumeIndex);
       continue;
     }
+    DBG("- [%02d]: '%s'", VolumeIndex, Volume->VolName);
     if (Volume->VolName == NULL) {
       Volume->VolName = L"Unknown";
     }
@@ -1113,7 +1102,7 @@ VOID ScanLoader(VOID)
           }
           if (aFound && (aFound == aIndex)) {
             AddLoaderEntry(AndroidEntryData[Index].Path, L"", AndroidEntryData[Index].Title, Volume,
-                           LoadOSIcon(AndroidEntryData[Index].Icon, NULL, L"unknown", 128, FALSE, TRUE), OSTYPE_LIN, OSFLAG_NODEFAULTARGS);
+                           LoadOSIcon(AndroidEntryData[Index].Icon, L"unknown", 128, FALSE, TRUE), OSTYPE_LIN, OSFLAG_NODEFAULTARGS);
           }
         }
       }
@@ -1124,7 +1113,7 @@ VOID ScanLoader(VOID)
       // check for linux loaders
       for (Index = 0; Index < LinuxEntryDataCount; ++Index) {
         AddLoaderEntry(LinuxEntryData[Index].Path, L"", LinuxEntryData[Index].Title, Volume,
-                       LoadOSIcon(LinuxEntryData[Index].Icon, NULL, L"unknown", 128, FALSE, TRUE), OSTYPE_LIN, OSFLAG_NODEFAULTARGS);
+                       LoadOSIcon(LinuxEntryData[Index].Icon, L"unknown", 128, FALSE, TRUE), OSTYPE_LIN, OSFLAG_NODEFAULTARGS);
       }
       // check for linux kernels
       PartGUID = FindGPTPartitionGuidInDevicePath(Volume->DevicePath);
@@ -1435,8 +1424,6 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
     CUSTOM_LOADER_ENTRY *CustomSubEntry;
     LOADER_ENTRY        *Entry = NULL;
     EG_IMAGE            *Image, *DriveImage;
-    EG_IMAGE            *ImageHover = NULL;
-    CHAR16              *ImageHoverPath;
     EFI_GUID            *Guid = NULL;
     UINT64               VolumeSize;
 
@@ -1654,7 +1641,6 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
     }
 
     // Change to custom image if needed
-/*
     Image = Custom->Image;
     if ((Image == NULL) && Custom->ImagePath) {
       Image = egLoadImage(Volume->RootDir, Custom->ImagePath, TRUE);
@@ -1665,41 +1651,11 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
           if (Image == NULL) {
             Image = egLoadImage(SelfRootDir, Custom->ImagePath, TRUE);
             if (Image == NULL) {
-              Image = LoadOSIcon(Custom->ImagePath, NULL, L"unknown", 128, FALSE, FALSE);
+              Image = LoadOSIcon(Custom->ImagePath, L"unknown", 128, FALSE, FALSE);
             }
           }
         }
       }
-    }
-*/
-
-    Image = Custom->Image;
-    if ((Image == NULL) && Custom->ImagePath) {
-      ImageHoverPath = EfiStrDuplicate(Custom->ImagePath);
-      ReplaceExtension(ImageHoverPath, L"");
-      ImageHoverPath = PoolPrint(L"%s_hover.%s", ImageHoverPath, egFindExtension(Custom->ImagePath));
-      Image = egLoadImage(Volume->RootDir, Custom->ImagePath, TRUE);
-      if (Image == NULL) {
-        Image = egLoadImage(ThemeDir, Custom->ImagePath, TRUE);
-        if (Image == NULL) {
-          Image = egLoadImage(SelfDir, Custom->ImagePath, TRUE);
-          if (Image == NULL) {
-            Image = egLoadImage(SelfRootDir, Custom->ImagePath, TRUE);
-            if (Image != NULL) {
-              ImageHover = egLoadImage(SelfRootDir, ImageHoverPath, TRUE);
-            }
-          } else {
-            ImageHover = egLoadImage(SelfDir, ImageHoverPath, TRUE);
-          }
-        } else {
-          ImageHover = egLoadImage(ThemeDir, ImageHoverPath, TRUE);
-        }
-      } else {
-        ImageHover = egLoadImage(Volume->RootDir, ImageHoverPath, TRUE);
-      }
-      FreePool(ImageHoverPath);
-    } else {
-      // Image base64 data
     }
 
     // Change to custom drive image if needed
@@ -1879,9 +1835,6 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
             Custom->Settings, Custom->CommonSettings?"not":"");
         if (!Custom->CommonSettings) {
           Entry->Settings = Custom->Settings;
-        }
-        if (ImageHover != NULL) {
-          Entry->me.ImageHover = ImageHover;
         }
         if (OSFLAG_ISUNSET(Custom->Flags, OSFLAG_NODEFAULTMENU)) {
           AddDefaultMenu(Entry);

@@ -739,15 +739,15 @@ VOID BltImageCompositeBadge(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN EG
   }
 
   // blit to screen and clean up
-  if (!IsEmbeddedTheme()) { // regular theme
+//  if (!IsEmbeddedTheme()) { // regular theme
     if (GlobalConfig.NonSelectedGrey && !Selected) {
       BltImageAlpha(CompImage, XPos, YPos, &MenuBackgroundPixel, -16);
     } else {
       BltImageAlpha(CompImage, XPos, YPos, &MenuBackgroundPixel, 16);
     }
-  } else { // embedded theme - don't use BltImageAlpha as it can't handle refit's built in image
+/*  } else { // embedded theme - don't use BltImageAlpha as it can't handle refit's built in image
     egDrawImageArea(CompImage, 0, 0, TotalWidth, TotalHeight, XPos, YPos);
-  }
+  } */
   egFreeImage(CompImage);
   egFreeImage(NewBaseImage);
   egFreeImage(NewTopImage);
@@ -809,18 +809,18 @@ VOID BltImageCompositeIndicator(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, I
     }
     
     // blit to screen and clean up
-    if (IsEmbeddedTheme()) {
+ //   if (IsEmbeddedTheme()) {
         // regular theme
       if (GlobalConfig.NonSelectedGrey && !Selected) {
         BltImageAlpha(CompImage, XPos, YPos, &MenuBackgroundPixel, -16);
       } else {
         BltImageAlpha(CompImage, XPos, YPos, &MenuBackgroundPixel, 16);
       }
-    } else {
+/*    } else {
       // embedded theme - don't use BltImageAlpha as it can't handle refit's built in image
       egDrawImageArea(CompImage, 0, 0, TotalWidth, TotalHeight, XPos, YPos);
     }
-    
+*/
     egFreeImage(CompImage);
     egFreeImage(NewBaseImage);
     egFreeImage(NewTopImage);

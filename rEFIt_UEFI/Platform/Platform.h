@@ -2111,13 +2111,13 @@ StrStriBasic (
   );
 */
 /** Returns 0 if two strings are equal, !=0 otherwise. Compares just first 8 bits of chars (valid for ASCII), case insensitive. */
-UINTN
+/*UINTN
 EFIAPI
 StrCmpiBasic(
   IN  CHAR16 *String1,
   IN  CHAR16 *String2
   );
-
+*/
 /** Finds and returns pointer to specified DevPath node in DevicePath or NULL. */
 EFI_DEVICE_PATH_PROTOCOL *
 FindDevicePathNodeWithType (

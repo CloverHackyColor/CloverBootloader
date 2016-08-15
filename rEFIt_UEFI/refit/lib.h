@@ -344,7 +344,6 @@ typedef struct _refit_menu_entry {
   CHAR16             ShortcutDigit;
   CHAR16             ShortcutLetter;
   EG_IMAGE          *Image;
-  EG_IMAGE          *ImageHover;
   EG_IMAGE          *DriveImage;
   EG_IMAGE          *BadgeImage;
   EG_RECT            Place;
@@ -476,7 +475,7 @@ typedef struct {
   INTN        TileYSpace;
   BOOLEAN     Proportional;
   BOOLEAN     NoEarlyProgress;
-  INTN        PruneScrollRows;
+//  INTN        PruneScrollRows;
   INTN        IconFormat;
 } REFIT_CONFIG;
 
@@ -771,8 +770,9 @@ VOID    FreeAnime(GUI_ANIME *Anime);
 //
 // icns loader module
 //
-EG_IMAGE * LoadOSIcon(IN CHAR16 *OSIconName OPTIONAL, OUT CHAR16 **OSIconNameHover, IN CHAR16 *FallbackIconName, IN UINTN PixelSize, IN BOOLEAN BootLogo, IN BOOLEAN WantDummy);
-EG_IMAGE * LoadHoverIcon(IN CHAR16 *OSIconName, IN UINTN PixelSize);
+
+EG_IMAGE * LoadOSIcon(IN CHAR16 *OSIconName OPTIONAL, IN CHAR16 *FallbackIconName, IN UINTN PixelSize, IN BOOLEAN BootLogo, IN BOOLEAN WantDummy);
+
 EG_IMAGE * LoadIcns(IN EFI_FILE_HANDLE BaseDir, IN CHAR16 *FileName, IN UINTN PixelSize);
 EG_IMAGE * LoadIcnsFallback(IN EFI_FILE_HANDLE BaseDir, IN CHAR16 *FileName, IN UINTN PixelSize);
 EG_IMAGE * DummyImage(IN UINTN PixelSize);
@@ -786,26 +786,25 @@ EG_IMAGE * GetSmallHover(IN UINTN Id);
 #define BUILTIN_ICON_FUNC_SECURE_BOOT          (3)
 #define BUILTIN_ICON_FUNC_SECURE_BOOT_CONFIG   (4)
 #define BUILTIN_ICON_FUNC_RESET                (5)
-#define BUILTIN_ICON_FUNC_SHUTDOWN             (6)
-#define BUILTIN_ICON_FUNC_EXIT                 (7)
-#define BUILTIN_ICON_FUNC_HELP                 (8)
-#define BUILTIN_ICON_TOOL_SHELL                (9)
-#define BUILTIN_ICON_TOOL_PART                 (10)
-#define BUILTIN_ICON_TOOL_RESCUE               (11)
-#define BUILTIN_ICON_POINTER                   (12)
-#define BUILTIN_ICON_VOL_INTERNAL              (13)
-#define BUILTIN_ICON_VOL_EXTERNAL              (14)
-#define BUILTIN_ICON_VOL_OPTICAL               (15)
-#define BUILTIN_ICON_VOL_FIREWIRE              (16)
-#define BUILTIN_ICON_VOL_BOOTER                (17)
-#define BUILTIN_ICON_VOL_INTERNAL_HFS          (18)
-#define BUILTIN_ICON_VOL_INTERNAL_NTFS         (19)
-#define BUILTIN_ICON_VOL_INTERNAL_EXT3         (20)
-#define BUILTIN_ICON_VOL_INTERNAL_REC          (21)
-#define BUILTIN_ICON_BANNER                    (22)
-#define BUILTIN_SELECTION_SMALL                (23)
-#define BUILTIN_SELECTION_BIG                  (24)
-#define BUILTIN_ICON_COUNT                     (25)
+#define BUILTIN_ICON_FUNC_EXIT                 (6)
+#define BUILTIN_ICON_FUNC_HELP                 (7)
+#define BUILTIN_ICON_TOOL_SHELL                (8)
+#define BUILTIN_ICON_TOOL_PART                 (9)
+#define BUILTIN_ICON_TOOL_RESCUE               (10)
+#define BUILTIN_ICON_POINTER                   (11)
+#define BUILTIN_ICON_VOL_INTERNAL              (12)
+#define BUILTIN_ICON_VOL_EXTERNAL              (13)
+#define BUILTIN_ICON_VOL_OPTICAL               (14)
+#define BUILTIN_ICON_VOL_FIREWIRE              (15)
+#define BUILTIN_ICON_VOL_BOOTER                (16)
+#define BUILTIN_ICON_VOL_INTERNAL_HFS          (17)
+#define BUILTIN_ICON_VOL_INTERNAL_NTFS         (18)
+#define BUILTIN_ICON_VOL_INTERNAL_EXT3         (19)
+#define BUILTIN_ICON_VOL_INTERNAL_REC          (20)
+#define BUILTIN_ICON_BANNER                    (21)
+#define BUILTIN_SELECTION_SMALL                (22)
+#define BUILTIN_SELECTION_BIG                  (23)
+#define BUILTIN_ICON_COUNT                     (24)
 //
 // menu module
 //

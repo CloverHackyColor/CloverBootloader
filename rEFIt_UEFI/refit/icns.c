@@ -61,12 +61,12 @@ BUILTIN_ICON BuiltinIconTable[BUILTIN_ICON_COUNT] = {
   { NULL, L"icons\\func_secureboot_config" , L"png",  /*48*/32 },
   { NULL, L"icons\\func_reset"             , L"png",  /*48*/32 },
   { NULL, L"icons\\func_shutdown"          , L"png",  /*48*/32 },
-  { NULL, L"icons\\func_exit"              , L"png",  /*48*/32 },
+//  { NULL, L"icons\\func_exit"              , L"png",  /*48*/32 },
   { NULL, L"icons\\func_help"              , L"png",  /*48*/32 },
   { NULL, L"icons\\tool_shell"             , L"png",  /*48*/32 },
   { NULL, L"icons\\tool_part"              , L"png",  /*48*/32 },
   { NULL, L"icons\\tool_rescue"            , L"png",  /*48*/32 },
-  { NULL, L"icons\\pointer"                , L"png",  /*48*/32 },//12
+  { NULL, L"icons\\pointer"                , L"png",  /*48*/32 },//11
 
   { NULL, L"icons\\vol_internal"           , L"icns", 128 },
   { NULL, L"icons\\vol_external"           , L"icns", 128 },
@@ -76,7 +76,7 @@ BUILTIN_ICON BuiltinIconTable[BUILTIN_ICON_COUNT] = {
   { NULL, L"icons\\vol_internal_hfs"       , L"icns", 128 },
   { NULL, L"icons\\vol_internal_ntfs"      , L"icns", 128 },
   { NULL, L"icons\\vol_internal_ext3"      , L"icns", 128 },
-  { NULL, L"icons\\vol_recovery"           , L"icns", 128 },//21
+  { NULL, L"icons\\vol_recovery"           , L"icns", 128 },//20
 
   { NULL, L"logo"                          , L"png",  128 },
   { NULL, L"selection_small"               , L"png",  64  },
@@ -90,21 +90,20 @@ CHAR16 * GetIconsExt(IN CHAR16 *Icon, IN CHAR16 *Def)
 {
   return PoolPrint(L"%s.%s", Icon, ((GlobalConfig.IconFormat != ICON_FORMAT_DEF) && (IconFormat != NULL)) ? IconFormat : Def);
 }
-
+/*
 EG_IMAGE * GetSmallHover(IN UINTN Id)
 {
   CHAR16 *Path = AllocateZeroPool(256);
   Path = GetIconsExt(PoolPrint(L"%s_hover", BuiltinIconTable[Id].Path), BuiltinIconTable[Id].Format);
   return egLoadIcon(ThemeDir, Path, BuiltinIconTable[Id].PixelSize);
 }
-
+*/
 EG_IMAGE * BuiltinIcon(IN UINTN Id)
 {
   INTN      Size;
   EG_IMAGE  *TextBuffer = NULL;
   CHAR16    *p;
   CHAR16    *Text;
-  CHAR16    *Path = AllocateZeroPool(256);
 
   if (Id >= BUILTIN_ICON_COUNT) {
     return NULL;
@@ -119,19 +118,22 @@ EG_IMAGE * BuiltinIcon(IN UINTN Id)
 
   //if (BuiltinIconTable[Id].Image == NULL) {
     if (ThemeDir) {
+      CHAR16    *Path;
       Path = GetIconsExt(BuiltinIconTable[Id].Path, BuiltinIconTable[Id].Format);
       BuiltinIconTable[Id].Image = LoadIcnsFallback(ThemeDir, Path, Size);
       if (!BuiltinIconTable[Id].Image) {
         DebugLog(1, "        [!] Icon %d (%s) not found (path: %s, ThemeDir: %p)\n", Id, Path, ThemePath, ThemeDir);
         if (Id >= BUILTIN_ICON_VOL_INTERNAL) {
+          FreePool(Path);
           Path = GetIconsExt(BuiltinIconTable[BUILTIN_ICON_VOL_INTERNAL].Path, BuiltinIconTable[BUILTIN_ICON_VOL_INTERNAL].Format);
           BuiltinIconTable[Id].Image = LoadIcnsFallback(ThemeDir, Path, Size);
         }
       }
+      FreePool(Path);
     }
 
     if (BuiltinIconTable[Id].Image) {
-      FreePool(Path);
+      
       return BuiltinIconTable[Id].Image;
     }
 
@@ -150,8 +152,6 @@ EG_IMAGE * BuiltinIcon(IN UINTN Id)
         DEC_BUILTIN_ICON(Id, emb_func_secureboot_config); break;
       case BUILTIN_ICON_FUNC_RESET:
         DEC_BUILTIN_ICON(Id, emb_func_reset); break;
-      case BUILTIN_ICON_FUNC_SHUTDOWN:
-        DEC_BUILTIN_ICON(Id, emb_func_shutdown); break;
       case BUILTIN_ICON_FUNC_EXIT:
         DEC_BUILTIN_ICON(Id, emb_func_exit); break;
       case BUILTIN_ICON_FUNC_HELP:
@@ -188,11 +188,10 @@ EG_IMAGE * BuiltinIcon(IN UINTN Id)
     Text = (CHAR16*)AllocateCopyPool(30, (VOID*)p);
     p = StrStr(Text, L".");
     *p = L'\0';
-    //if (StrCmp(Text, L"shutdown") == 0) {
-    //if (StrCmp(Text, L"exit") == 0) {
-    //   // icon name is shutdown from historic reasons, but function is now exit
-    //   UnicodeSPrint(Text, 30, L"exit");
-    //}
+     if (StrCmp(Text, L"shutdown") == 0) {
+       // icon name is shutdown from historic reasons, but function is now exit
+       UnicodeSPrint(Text, 30, L"exit");
+    }
     egRenderText(Text, TextBuffer, 0, 0, 0xFFFF);
     BuiltinIconTable[Id].Image = TextBuffer;
     DebugLog(1, "        [!] Icon %d: Text <%s> rendered\n", Id, Text);
@@ -206,18 +205,15 @@ EG_IMAGE * BuiltinIcon(IN UINTN Id)
 // Load an icon for an operating system
 //
 
-EG_IMAGE * LoadOSIcon(IN CHAR16 *OSIconName OPTIONAL, CHAR16 **OSIconNameHover, IN CHAR16 *FallbackIconName, IN UINTN PixelSize, IN BOOLEAN BootLogo, IN BOOLEAN WantDummy)
+EG_IMAGE * LoadOSIcon(IN CHAR16 *OSIconName OPTIONAL, IN CHAR16 *FallbackIconName, IN UINTN PixelSize, IN BOOLEAN BootLogo, IN BOOLEAN WantDummy)
 {
   EG_IMAGE        *Image;
-  CHAR16          CutoutName[16], FirstName[16], TmpName[64];
+  CHAR16          CutoutName[16], FirstName[16];
   CHAR16          FileName[256];
   UINTN           StartIndex, Index, NextIndex;
 
-  *OSIconNameHover = NULL;
-
   if (GlobalConfig.TextOnly)      // skip loading if it's not used anyway
     return NULL;
-
   Image = NULL;
   *FirstName = 0;
 
@@ -239,15 +235,12 @@ EG_IMAGE * LoadOSIcon(IN CHAR16 *OSIconName OPTIONAL, CHAR16 **OSIconNameHover, 
       continue;
     CopyMem(CutoutName, OSIconName + StartIndex, (Index - StartIndex) * sizeof(CHAR16));
     CutoutName[Index - StartIndex] = 0;
-    UnicodeSPrint(TmpName, 64, L"%s_%s",
+    UnicodeSPrint(FileName, 512, L"icons\\%s_%s.icns",
                   BootLogo ? L"boot" : L"os", CutoutName);
-    UnicodeSPrint(FileName, 512, GetIconsExt(PoolPrint(L"icons\\%s", TmpName), L"icns"));
 
     // try to load it
     Image = egLoadIcon(ThemeDir, FileName, PixelSize);
     if (Image != NULL) {
-      *OSIconNameHover = AllocateZeroPool(64);
-      UnicodeSPrint(*OSIconNameHover, 64, L"%s_hover", TmpName);
       return Image;
     }
 
@@ -260,19 +253,16 @@ EG_IMAGE * LoadOSIcon(IN CHAR16 *OSIconName OPTIONAL, CHAR16 **OSIconNameHover, 
   }
 
   // try the fallback name
-  UnicodeSPrint(TmpName, 64, L"%s_%s",
+  UnicodeSPrint(FileName, 512, L"icons\\%s_%s.icns",
                 BootLogo ? L"boot" : L"os", FallbackIconName);
-  UnicodeSPrint(FileName, 512, L"%s", GetIconsExt(PoolPrint(L"icons\\%s", TmpName), L"icns"));
   Image = egLoadIcon(ThemeDir, FileName, PixelSize);
   if (Image != NULL) {
-    *OSIconNameHover = AllocateZeroPool(64);
-    UnicodeSPrint(*OSIconNameHover, 64, L"%s_hover", TmpName);
     return Image;
   }
 
   // try the fallback name with os_ instead of boot_
   if (BootLogo) {
-    Image = LoadOSIcon(NULL, NULL, FallbackIconName, PixelSize, FALSE, WantDummy);
+    Image = LoadOSIcon(NULL, FallbackIconName, PixelSize, FALSE, WantDummy);
     if (Image != NULL)
       return Image;
   }
@@ -284,14 +274,14 @@ EG_IMAGE * LoadOSIcon(IN CHAR16 *OSIconName OPTIONAL, CHAR16 **OSIconNameHover, 
   if (IsEmbeddedTheme()) { // embedded theme - return rendered icon name
     EG_IMAGE  *TextBuffer = egCreateImage(PixelSize, PixelSize, TRUE);
     egFillImage(TextBuffer, &MenuBackgroundPixel);
-    egRenderText(FirstName, TextBuffer, PixelSize/4, PixelSize/3, 0xFFFF);
+//    egRenderText(FirstName, TextBuffer, PixelSize/4, PixelSize/3, 0xFFFF);
 //    DebugLog(1, "Text <%s> rendered\n", FirstName);
     return TextBuffer;
   }
 
   return DummyImage(PixelSize);
 }
-
+/*
 EG_IMAGE * LoadHoverIcon(IN CHAR16 *OSIconName, IN UINTN PixelSize)
 {
   EG_IMAGE        *Image = NULL;
@@ -303,7 +293,7 @@ EG_IMAGE * LoadHoverIcon(IN CHAR16 *OSIconName, IN UINTN PixelSize)
 
   return Image;
 }
-
+*/
 //
 // Load an image from a .icns file
 //

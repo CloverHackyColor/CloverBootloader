@@ -843,8 +843,7 @@ static VOID StartLegacy(IN LEGACY_ENTRY *Entry)
     egClearScreen(&DarkBackgroundPixel);
     BeginExternalScreen(TRUE, L"Booting Legacy OS");
 
-    BootLogoImage = LoadOSIcon(Entry->Volume->LegacyOS->IconName, NULL, L"legacy", 128, TRUE, TRUE);
-
+    BootLogoImage = LoadOSIcon(Entry->Volume->LegacyOS->IconName, L"legacy", 128, TRUE, TRUE);
     if (BootLogoImage != NULL)
         BltImageAlpha(BootLogoImage,
                       (UGAWidth  - BootLogoImage->Width) >> 1,
@@ -2004,25 +2003,15 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 //we should never exclude them
 //      if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_FUNCS)) {
         MenuEntryOptions.Image = BuiltinIcon(BUILTIN_ICON_FUNC_OPTIONS);
-        MenuEntryOptions.ImageHover = GetSmallHover(BUILTIN_ICON_FUNC_OPTIONS);
         AddMenuEntry(&MainMenu, &MenuEntryOptions);
         MenuEntryAbout.Image = BuiltinIcon(BUILTIN_ICON_FUNC_ABOUT);
-        MenuEntryAbout.ImageHover = GetSmallHover(BUILTIN_ICON_FUNC_ABOUT);
         AddMenuEntry(&MainMenu, &MenuEntryAbout);
-// We can now include "real" help button in 2nd row, but confuse how to activate it via theme.plist
-// Check BOOLEAN "Help" entry (HIDEUI_FLAG_HELP) currently reserved for help text on bottom corner.
-// Previously HELP is for ABOUT. Same as SHUTDOWN as EXIT.
-        //MenuEntryHelp.Image = BuiltinIcon(BUILTIN_ICON_FUNC_HELP);
-        //MenuEntryHelp.ImageHover = GetSmallHover(BUILTIN_ICON_FUNC_HELP);
-        //AddMenuEntry(&MainMenu, &MenuEntryHelp);
 //      }
 
       if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_FUNCS) || MainMenu.EntryCount == 0) {
         MenuEntryReset.Image = BuiltinIcon(BUILTIN_ICON_FUNC_RESET);
-        MenuEntryReset.ImageHover = GetSmallHover(BUILTIN_ICON_FUNC_RESET);
         AddMenuEntry(&MainMenu, &MenuEntryReset);
-        MenuEntryShutdown.Image = BuiltinIcon(BUILTIN_ICON_FUNC_SHUTDOWN);
-        MenuEntryShutdown.ImageHover = GetSmallHover(BUILTIN_ICON_FUNC_SHUTDOWN);
+        MenuEntryShutdown.Image = BuiltinIcon(BUILTIN_ICON_FUNC_EXIT);
         AddMenuEntry(&MainMenu, &MenuEntryShutdown);
       }
 // font already changed and this message very quirky, clear line here
@@ -2153,11 +2142,11 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         case TAG_ABOUT:    // About rEFIt
           AboutRefit();
           break;
-
+/* -- not passed here
         case TAG_HELP:
           HelpRefit();
           break;
-
+*/
         case TAG_LOADER:   // Boot OS via .EFI loader
           SetBootCurrent(ChosenEntry);
           StartLoader((LOADER_ENTRY *)ChosenEntry);

@@ -40,7 +40,7 @@ extern REFIT_MENU_ENTRY MenuEntryOptions;
 extern REFIT_MENU_ENTRY MenuEntryAbout;
 extern REFIT_MENU_ENTRY MenuEntryReset;
 extern REFIT_MENU_ENTRY MenuEntryShutdown;
-extern REFIT_MENU_ENTRY MenuEntryHelp;
+//extern REFIT_MENU_ENTRY MenuEntryHelp;
 extern REFIT_MENU_ENTRY MenuEntryExit;
 extern REFIT_MENU_SCREEN MainMenu;
 

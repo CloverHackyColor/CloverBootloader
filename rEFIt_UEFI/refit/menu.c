@@ -175,18 +175,18 @@ INTN OldChosenTheme;
 
 BOOLEAN mGuiReady = FALSE;
 
-REFIT_MENU_ENTRY MenuEntryOptions  = { L"Options", TAG_OPTIONS, 1, 0, 'O', NULL, NULL, NULL, NULL,
+REFIT_MENU_ENTRY MenuEntryOptions  = { L"Options", TAG_OPTIONS, 1, 0, 'O',  NULL, NULL, NULL,
   {0, 0, 0, 0}, ActionEnter, ActionEnter, ActionNone, ActionNone, NULL };
-REFIT_MENU_ENTRY MenuEntryAbout    = { L"About Clover", TAG_ABOUT, 1, 0, 'A', NULL, NULL, NULL, NULL,
+REFIT_MENU_ENTRY MenuEntryAbout    = { L"About Clover", TAG_ABOUT, 1, 0, 'A', NULL, NULL, NULL,
   {0, 0, 0, 0}, ActionEnter, ActionEnter, ActionNone, ActionNone,  NULL };
-REFIT_MENU_ENTRY MenuEntryReset    = { L"Restart Computer", TAG_RESET, 1, 0, 'R', NULL, NULL, NULL, NULL,
+REFIT_MENU_ENTRY MenuEntryReset    = { L"Restart Computer", TAG_RESET, 1, 0, 'R', NULL, NULL, NULL,
   {0, 0, 0, 0}, ActionSelect, ActionEnter, ActionNone, ActionNone,  NULL };
-REFIT_MENU_ENTRY MenuEntryShutdown = { L"Exit Clover", TAG_SHUTDOWN, 1, 0, 'U', NULL, NULL, NULL, NULL,
+REFIT_MENU_ENTRY MenuEntryShutdown = { L"Exit Clover", TAG_SHUTDOWN, 1, 0, 'U',  NULL, NULL, NULL,
   {0, 0, 0, 0}, ActionSelect, ActionEnter, ActionNone, ActionNone,  NULL };
-REFIT_MENU_ENTRY MenuEntryReturn   = { L"Return", TAG_RETURN, 0, 0, 0, NULL, NULL, NULL, NULL,
+REFIT_MENU_ENTRY MenuEntryReturn   = { L"Return", TAG_RETURN, 0, 0, 0,  NULL, NULL, NULL,
   {0, 0, 0, 0}, ActionEnter, ActionEnter, ActionNone, ActionNone,  NULL };
-REFIT_MENU_ENTRY MenuEntryHelp    = { L"Help", TAG_HELP, 1, 0, 'H', NULL, NULL, NULL, NULL,
-  {0, 0, 0, 0}, ActionSelect, ActionEnter, ActionNone, ActionNone,  NULL };
+//REFIT_MENU_ENTRY MenuEntryHelp    = { L"Help", TAG_HELP, 1, 0, 'H', NULL, NULL, NULL,
+//  {0, 0, 0, 0}, ActionSelect, ActionEnter, ActionNone, ActionNone,  NULL };
 
 REFIT_MENU_SCREEN MainMenu    = {1, L"Main Menu", NULL, 0, NULL, 0, NULL, 0, L"Automatic boot", NULL, FALSE, FALSE, 0, 0, 0, 0, {0, 0, 0, 0}, NULL};
 REFIT_MENU_SCREEN AboutMenu   = {2, L"About",     NULL, 0, NULL, 0, NULL, 0, NULL,              NULL, FALSE, FALSE, 0, 0, 0, 0, {0, 0, 0, 0}, NULL};
@@ -2825,7 +2825,7 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
       EntriesPosY = ((UGAHeight - LAYOUT_TOTAL_HEIGHT) >> 1) + LayoutBannerOffset + (TextHeight << 1);
 
       //VisibleHeight = (UGAHeight - EntriesPosY) / TextHeight - Screen->InfoLineCount - 1;
-      VisibleHeight = ((UGAHeight - EntriesPosY) / TextHeight) - Screen->InfoLineCount - 2 - GlobalConfig.PruneScrollRows;
+      VisibleHeight = ((UGAHeight - EntriesPosY) / TextHeight) - Screen->InfoLineCount - 2;/* - GlobalConfig.PruneScrollRows; */
       //DBG("MENU_FUNCTION_INIT 1 EntriesPosY=%d VisibleHeight=%d\n", EntriesPosY, VisibleHeight);
       if ((Screen->Entries[0]->Tag == TAG_SWITCH) && (OldChosenTheme != 0xFFFF)) {
         j = OldChosenTheme;
@@ -3087,18 +3087,12 @@ static VOID DrawMainMenuEntry(REFIT_MENU_ENTRY *Entry, BOOLEAN selected, INTN XP
     BltImageCompositeBadge(
       MainImage,
       SelectionImages[((Entry->Row == 0) ? 0 : 2) + (selected ? 0 : 1)],
-      selected
-        ? (Entry->ImageHover ? Entry->ImageHover : ((Entry->Row == 0) ? Entry->BadgeImage : NULL))
-        : ((Entry->Row == 0) ? Entry->BadgeImage : NULL),
+                           (Entry->Row == 0) ? Entry->BadgeImage:NULL,
       XPos, YPos, Scale);
 
   } else {
-    BltImageCompositeBadge(
-      SelectionImages[((Entry->Row == 0) ? 0 : 2) + (selected ? 0 : 1)],
-      MainImage,
-      selected
-        ? (Entry->ImageHover ? Entry->ImageHover : ((Entry->Row == 0) ? Entry->BadgeImage : NULL))
-        : ((Entry->Row == 0) ? Entry->BadgeImage : NULL),
+    BltImageCompositeBadge(SelectionImages[((Entry->Row == 0) ? 0 : 2) + (selected ? 0 : 1)],
+                           MainImage, (Entry->Row == 0) ? Entry->BadgeImage:NULL,
       XPos, YPos, Scale);
   }
     
