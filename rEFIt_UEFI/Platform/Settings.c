@@ -3698,7 +3698,7 @@ finish:
   }
 
   //  DBG("8\n");
-  PrepareFont();
+  PrepareFont(FALSE);
   return Status;
 }
 

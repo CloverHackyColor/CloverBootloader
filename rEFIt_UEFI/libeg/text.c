@@ -146,12 +146,11 @@ EG_IMAGE * egLoadFontImage(IN BOOLEAN FromTheme, IN INTN Rows, IN INTN Cols)
   return NewFontImage;  
 } 
 
-VOID PrepareFont(VOID)
+VOID PrepareFont(BOOLEAN Invert)
 {
-//  BOOLEAN ChangeFont = FALSE;
-//  EG_PIXEL *p;
-//  INTN      Width;
-//  INTN      Height;
+  EG_PIXEL *p;
+  INTN      Width;
+  INTN      Height;
   if (gLanguage == korean) {
     FontImage = egLoadFontImage(FALSE, 10, 28);
     if (FontImage) {
@@ -169,46 +168,21 @@ VOID PrepareFont(VOID)
 
   // load the font
   if (FontImage == NULL){
-    switch (GlobalConfig.Font) {
-      case FONT_ALFA:
-//        ChangeFont = TRUE;
-//        FontImage = egPrepareEmbeddedImage(&egemb_font, TRUE);
-//        break;
-      case FONT_GRAY:
-//        ChangeFont = TRUE;
-//        FontImage = egPrepareEmbeddedImage(&egemb_font_gray, TRUE);        
-//        break;
-      case FONT_LOAD:
-      default:  
-        DBG("load font image type %d\n", GlobalConfig.Font);
-        FontImage = egLoadFontImage(TRUE, 16, 16);
-/*        if (!FontImage) {
-          ChangeFont = TRUE;
-          GlobalConfig.Font = FONT_ALFA;
-          FontImage = egPrepareEmbeddedImage(&egemb_font, TRUE);
-          //invert the font
-          p = FontImage->PixelData;
-          for (Height = 0; Height < FontImage->Height; Height++){
-            for (Width = 0; Width < FontImage->Width; Width++, p++){
-              p->b ^= 0xFF;
-              p->g ^= 0xFF;
-              p->r ^= 0xFF;
-      //        p->a = 0xFF;    //huh!          
-            }
-          }
-        } */
-        break;
- /*     default:
-        FontImage = egPrepareEmbeddedImage(&egemb_font, TRUE);
-        break; */
-    }    
+    DBG("load font image type %d\n", GlobalConfig.Font);
+    FontImage = egLoadFontImage(TRUE, 16, 16);
+    if ((GlobalConfig.Font == FONT_ALFA) && Invert) {
+      //invert the font
+      p = FontImage->PixelData;
+      for (Height = 0; Height < FontImage->Height; Height++){
+        for (Width = 0; Width < FontImage->Width; Width++, p++){
+          p->b ^= 0xFF;
+          p->g ^= 0xFF;
+          p->r ^= 0xFF;
+          //        p->a = 0xFF;    //huh!
+        }
+      }
+    }
   }
-/*  if (ChangeFont) {
-    // set default values
-    GlobalConfig.CharWidth = 9;
-    FontWidth = GlobalConfig.CharWidth;
-    FontHeight = 16;
-  } */
   TextHeight = FontHeight + TEXT_YMARGIN * 2;
   DBG("Font %d prepared WxH=%dx%d CharWidth=%d\n", GlobalConfig.Font, FontWidth, FontHeight, GlobalConfig.CharWidth);
 }
@@ -260,8 +234,8 @@ INTN egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage,
   // clip the text
   TextLength = StrLen(Text);
   if (!FontImage) {
-    GlobalConfig.Font = FONT_LOAD;
-    PrepareFont();
+    GlobalConfig.Font = FONT_ALFA;
+    PrepareFont(TRUE);
   }
   
 //  DBG("TextLength =%d PosX=%d PosY=%d\n", TextLength, PosX, PosY);
