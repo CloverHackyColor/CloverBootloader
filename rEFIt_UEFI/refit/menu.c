@@ -2938,7 +2938,7 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
 //                                     Buttons[0], EntriesPosX + TEXT_XMARGIN,
 //                                     Screen->Entries[i]->Place.YPos + PlaceCentre, 16);
           BltImageAlpha((Screen->Entries[i]->Row == (UINTN)OldChosenTheme) ? Buttons[1] : Buttons[0],
-                        EntriesPosX + TEXT_XMARGIN,Screen->Entries[i]->Place.YPos + PlaceCentre,
+                        EntriesPosX + TEXT_XMARGIN, Screen->Entries[i]->Place.YPos + PlaceCentre,
                         &MenuBackgroundPixel, 16);
         } else {
 //          DBG("paint entry %d title=%s\n", i, Screen->Entries[i]->Title);
@@ -3098,11 +3098,18 @@ static VOID DrawMainMenuEntry(REFIT_MENU_ENTRY *Entry, BOOLEAN selected, INTN XP
     
   if (GlobalConfig.BootCampStyle) {
     if (Entry->Row == 0) {
-      BltImageCompositeIndicator(SelectionImages[(4) + (selected ? 0 : 1)], SelectionImages[5],
+/*      BltImageCompositeIndicator(SelectionImages[(4) + (selected ? 0 : 1)], SelectionImages[5],
                                      XPos + (row0TileSize / 2) - (INDICATOR_SIZE / 2),
                                      row0PosY + row0TileSize
                                      + ((GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL) ? 10 :
-                                        (FontHeight - TEXT_YMARGIN + 20)), Scale);
+                                        (FontHeight - TEXT_YMARGIN + 20)), Scale); */
+      BltImageAlpha(SelectionImages[(4) + (selected ? 0 : 1)],
+                    XPos + (row0TileSize / 2) - (INDICATOR_SIZE / 2),
+                    row0PosY + row0TileSize
+                    + ((GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL) ? 10 :
+                       (FontHeight - TEXT_YMARGIN + 20)),
+                    &MenuBackgroundPixel, Scale);
+
     }
   }
     

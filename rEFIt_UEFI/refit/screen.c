@@ -753,7 +753,7 @@ VOID BltImageCompositeBadge(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN EG
   egFreeImage(NewTopImage);
   GraphicsScreenDirty = TRUE;
 }
-
+/*
 VOID BltImageCompositeIndicator(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN INTN XPos, IN INTN YPos, INTN Scale)
 {
     INTN TotalWidth, TotalHeight, CompWidth, CompHeight, OffsetX, OffsetY;
@@ -816,17 +816,17 @@ VOID BltImageCompositeIndicator(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, I
       } else {
         BltImageAlpha(CompImage, XPos, YPos, &MenuBackgroundPixel, 16);
       }
-/*    } else {
+//    } else {
       // embedded theme - don't use BltImageAlpha as it can't handle refit's built in image
-      egDrawImageArea(CompImage, 0, 0, TotalWidth, TotalHeight, XPos, YPos);
-    }
-*/
+//      egDrawImageArea(CompImage, 0, 0, TotalWidth, TotalHeight, XPos, YPos);
+//    }
+//
     egFreeImage(CompImage);
     egFreeImage(NewBaseImage);
     egFreeImage(NewTopImage);
     GraphicsScreenDirty = TRUE;
 }
-
+*/
 #define MAX_SIZE_ANIME 256
 
 VOID FreeAnime(GUI_ANIME *Anime)

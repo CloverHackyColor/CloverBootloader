@@ -33,7 +33,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-//Slice 2011 - 2015 numerous improvements
+//Slice 2011 - 2016 numerous improvements
 
 #include "libegint.h"
 
