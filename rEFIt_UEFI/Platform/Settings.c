@@ -90,8 +90,8 @@ REFIT_CONFIG   GlobalConfig = {
   FALSE,          // BOOLEAN     DebugLog;
   FALSE,          // BOOLEAN     FastBoot;
   FALSE,          // BOOLEAN     NeverHibernate;
-  FONT_ALFA,      // FONT_TYPE   Font;
-  9,             // INTN        CharWidth;
+  FONT_GRAY,      // FONT_TYPE   Font; //Welcome should be white
+  9,              // INTN        CharWidth;
   0xFFFFFF80,     // UINTN       SelectionColor;
   NULL,           // CHAR16      *FontFileName;
   NULL,           // CHAR16      *Theme;
@@ -3310,15 +3310,17 @@ GetThemeTagSettings (
         GlobalConfig.Font = FONT_LOAD;
       }
     }
-    Dict2 = GetProperty (Dict, "Path");
-    if (Dict2 != NULL && (Dict2->type == kTagTypeString) && Dict2->string) {
-      GlobalConfig.FontFileName = PoolPrint (L"%a", Dict2->string);
+    if (GlobalConfig.Font == FONT_LOAD) {
+      Dict2 = GetProperty (Dict, "Path");
+      if (Dict2 != NULL && (Dict2->type == kTagTypeString) && Dict2->string) {
+        GlobalConfig.FontFileName = PoolPrint (L"%a", Dict2->string);
+      }
     }
 
     Dict2 = GetProperty (Dict, "CharWidth");
     GlobalConfig.CharWidth = (UINTN)GetPropertyInteger (Dict2, GlobalConfig.CharWidth);
     if (GlobalConfig.CharWidth & 1) {
-      MsgLog("Warning! Character width should be even!\n");
+      MsgLog("Warning! Character width %d should be even!\n", GlobalConfig.CharWidth);
     }
 
     Dict2 = GetProperty (Dict, "Proportional");
@@ -3698,7 +3700,7 @@ finish:
   }
 
   //  DBG("8\n");
-  PrepareFont(FALSE);
+  PrepareFont();
   return Status;
 }
 

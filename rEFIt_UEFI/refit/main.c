@@ -1753,7 +1753,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 //-----------------------------------------------------------
   }
 #endif //
-#if 1
+#if 0
   //testing place
   {
     CHAR16 *aaa = L"12345";

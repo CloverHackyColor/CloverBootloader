@@ -146,7 +146,7 @@ EG_IMAGE * egLoadFontImage(IN BOOLEAN FromTheme, IN INTN Rows, IN INTN Cols)
   return NewFontImage;  
 } 
 
-VOID PrepareFont(BOOLEAN Invert)
+VOID PrepareFont()
 {
   EG_PIXEL *p;
   INTN      Width;
@@ -170,8 +170,8 @@ VOID PrepareFont(BOOLEAN Invert)
   if (FontImage == NULL){
     DBG("load font image type %d\n", GlobalConfig.Font);
     FontImage = egLoadFontImage(TRUE, 16, 16);
-    if ((GlobalConfig.Font == FONT_ALFA) && Invert) {
-      //invert the font
+    if (GlobalConfig.Font == FONT_GRAY) {
+      //invert the font. embedded is dark
       p = FontImage->PixelData;
       for (Height = 0; Height < FontImage->Height; Height++){
         for (Width = 0; Width < FontImage->Width; Width++, p++){
@@ -234,8 +234,8 @@ INTN egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage,
   // clip the text
   TextLength = StrLen(Text);
   if (!FontImage) {
-    GlobalConfig.Font = FONT_ALFA;
-    PrepareFont(TRUE);
+//    GlobalConfig.Font = FONT_ALFA;
+    PrepareFont();
   }
   
 //  DBG("TextLength =%d PosX=%d PosY=%d\n", TextLength, PosX, PosY);
