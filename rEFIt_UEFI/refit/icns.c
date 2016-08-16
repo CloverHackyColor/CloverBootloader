@@ -34,7 +34,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "Platform.h"
+#include "libegint.h"
 #include "../include/egemb_icons.h"
 
 #ifndef DEBUG_ALL
@@ -84,7 +84,12 @@ BUILTIN_ICON BuiltinIconTable[BUILTIN_ICON_COUNT] = {
 };
 
 //#define DEC_BUILTIN_ICON(id, ico) BuiltinIconTable[id].Image = egDecodePNG(ico, sizeof(ico), BuiltinIconTable[id].PixelSize, TRUE)
-#define DEC_BUILTIN_ICON(id, ico) BuiltinIconTable[id].Image = egDecodePNG(ico, sizeof(ico), TRUE)
+#define DEC_BUILTIN_ICON(id, ico) {\
+  BuiltinIconTable[id].Image = egDecodePNG(ico, sizeof(ico), TRUE);\
+  if (!BuiltinIconTable[id].Image) {\
+    BuiltinIconTable[id].Image = egDecodeICNS(ico, sizeof(ico), BuiltinIconTable[id].PixelSize, TRUE);\
+  }\
+}
 
 CHAR16 * GetIconsExt(IN CHAR16 *Icon, IN CHAR16 *Def)
 {

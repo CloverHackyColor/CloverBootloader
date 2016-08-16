@@ -1484,12 +1484,12 @@ VOID InitSelection(VOID)
                                              TRUE, &MenuBackgroundPixel);
   }
 
-/*
+  /*
   Button & radio, or any other next icons with builtin icon as fallback shoud synced to:
    - BUILTIN_ICON_* in lib.h
    - BuiltinIconTable in icns.c
    - Data in egemb_icons.h / scroll_images.h
-*/
+  */
 
   // Radio buttons
   Buttons[0] = egLoadImage(ThemeDir, GetIconsExt(L"radio_button", L"png"), TRUE);
@@ -2493,9 +2493,9 @@ INTN DrawTextXY(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
     TextWidth = UGAWidth - XPos - 1;
     XText = XPos;
   }
-  TextBufferXY = egCreateImage(TextWidth, TextHeight, TRUE);
-
-  egFillImage(TextBufferXY, &MenuBackgroundPixel);
+//  TextBufferXY = egCreateImage(TextWidth, TextHeight, TRUE);
+//  egFillImage(TextBufferXY, &MenuBackgroundPixel);
+  TextBufferXY = egCreateFilledImage(TextWidth, TextHeight, TRUE, &MenuBackgroundPixel);
   // render the text
   TextWidth = egRenderText(Text, TextBufferXY, 0, 0, 0xFFFF);
   if (XAlign != X_IS_LEFT) { // shift 64 is prohibited
@@ -2508,8 +2508,8 @@ INTN DrawTextXY(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
 
 VOID DrawBCSText(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
 {
-  INTN      ChrsNum = 16;
-  INTN      FntChrsNum = 12;
+  INTN      ChrsNum = 12;
+  INTN      Ellipsis = 3;
   INTN      TextWidth = 0;
   INTN      XText = 0;
   INTN      i = 0;
@@ -2521,51 +2521,45 @@ VOID DrawBCSText(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
   }
   
   if (GlobalConfig.TileXSpace >= 25 && GlobalConfig.TileXSpace < 30) {
-    ChrsNum = 17;
-    FntChrsNum = 13;
+    ChrsNum = 13;
   } else if (GlobalConfig.TileXSpace >= 30 && GlobalConfig.TileXSpace < 35) {
-    ChrsNum = 18;
-    FntChrsNum = 14;
+    ChrsNum = 14;
   } else if (GlobalConfig.TileXSpace >= 35 && GlobalConfig.TileXSpace < 40) {
-    ChrsNum = 19;
-    FntChrsNum = 15;
+    ChrsNum = 15;
   } else if (GlobalConfig.TileXSpace >= 40 && GlobalConfig.TileXSpace < 45) {
-    ChrsNum = 20;
-    FntChrsNum = 16;
-  } else if (GlobalConfig.TileXSpace >= 45 && GlobalConfig.TileXSpace < 50) {
-    ChrsNum = 21;
-    FntChrsNum = 17;
-  } else if (GlobalConfig.TileXSpace >= 50 && GlobalConfig.TileXSpace < 55) {
-    ChrsNum = 22;
-    FntChrsNum = 18;
-  } // these are inits
-  /* else {
     ChrsNum = 16;
-    FntChrsNum = 12;
-  } */
+  } else if (GlobalConfig.TileXSpace >= 45 && GlobalConfig.TileXSpace < 50) {
+    ChrsNum = 17;
+  } else if (GlobalConfig.TileXSpace >= 50 && GlobalConfig.TileXSpace < 55) {
+    ChrsNum = 18;
+  }
   
-  TextWidth = ((StrLen(Text) <= (UINTN)((GlobalConfig.Font == FONT_LOAD) ? (FntChrsNum - 3) :
-              (ChrsNum - 3))) ? StrLen(Text) : ((GlobalConfig.Font == FONT_LOAD) ?
-               FntChrsNum : ChrsNum)) * ((FontWidth > GlobalConfig.CharWidth) ?
+  TextWidth = ((StrLen(Text) <= ChrsNum - Ellipsis) ? StrLen(Text) : ChrsNum) * ((FontWidth > GlobalConfig.CharWidth) ?
                FontWidth : GlobalConfig.CharWidth);
   
-//  TextBufferXY = egCreateImage(TextWidth, FontHeight, TRUE);
-//  egFillImage(TextBufferXY, &MenuBackgroundPixel);
-  TextBufferXY = egCreateFilledImage(TextWidth, FontHeight,
-                      TRUE, &MenuBackgroundPixel);
-  
   // render the text
-  if (StrLen(Text) > (UINTN)((GlobalConfig.Font == FONT_LOAD) ? (FntChrsNum - 3) : (ChrsNum - 3))) {
-    BCSText = AllocatePool(sizeof(CHAR16) * ((GlobalConfig.Font == FONT_LOAD) ? FntChrsNum : ChrsNum));
-    
-    for (i = 0; i < ((GlobalConfig.Font == FONT_LOAD) ? FntChrsNum : ChrsNum); i++) {
-      if (i < ((GlobalConfig.Font == FONT_LOAD) ? (FntChrsNum - 3) : (ChrsNum - 3))) {
+  
+  TextBufferXY = egCreateFilledImage(TextWidth, FontHeight, TRUE, &MenuBackgroundPixel);
+
+  if (XAlign == X_IS_LEFT) {
+    TextWidth = UGAWidth - XPos - 1;
+    XText = XPos;
+  } else { // shift 64 is prohibited
+    XText = XPos - (TextWidth >> XAlign);
+  }
+
+  if (StrLen(Text) > ChrsNum - Ellipsis) {
+    BCSText = AllocatePool(sizeof(CHAR16) * ChrsNum);
+
+    for (i = 0; i < ChrsNum; i++) {
+      if (i < ChrsNum - Ellipsis) {
         BCSText[i] = Text[i];
       } else {
         BCSText[i] = L'.';
       }
     }
-    BCSText[((GlobalConfig.Font == FONT_LOAD) ? FntChrsNum : ChrsNum)] = '\0';
+    
+    BCSText[ChrsNum] = '\0';
     
     if (!BCSText) {
       return;
@@ -2576,13 +2570,6 @@ VOID DrawBCSText(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
     FreePool(BCSText);
   } else {
     TextWidth = egRenderText(Text, TextBufferXY, 0, 0, 0xFFFF);
-  }
-  
-  if (XAlign == X_IS_LEFT) {
-    TextWidth = UGAWidth - XPos - 1;
-    XText = XPos;
-  } else { // shift 64 is prohibited
-    XText = XPos - (TextWidth >> XAlign);
   }
   
   BltImageAlpha(TextBufferXY, XText, YPos,  &MenuBackgroundPixel, 16);
@@ -2811,7 +2798,7 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
   INTN X, t1, t2;
   INTN VisibleHeight = 0; //assume vertical layout
   CHAR16 ResultString[SVALUE_MAX_SIZE / sizeof(CHAR16) + 128]; // assume a title max length of around 128
-  INTN PlaceCentre = (GlobalConfig.Font == FONT_LOAD) ? ((TextHeight / 2) - 7) : 0;
+  INTN PlaceCentre = (TextHeight / 2) - 7;
   
   HidePointer();
 
@@ -3558,7 +3545,6 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
   }
 }
 
-
 REFIT_MENU_ENTRY  *SubMenuGraphics()
 {
   UINTN  i, N, Ven = 97;
@@ -3952,7 +3938,7 @@ REFIT_MENU_ENTRY  *SubMenuBinaries()
   InputBootArgs->Entry.Title = PoolPrint(L"Fake CPUID:");
   InputBootArgs->Entry.Tag = TAG_INPUT;
   InputBootArgs->Entry.Row = StrLen(InputItems[104].SValue); //cursor
-//  InputBootArgs->Entry.ShortcutLetter = 'I';
+  //InputBootArgs->Entry.ShortcutLetter = 'I';
   InputBootArgs->Item = &InputItems[104];
   InputBootArgs->Entry.AtClick = ActionSelect;
   InputBootArgs->Entry.AtRightClick = ActionEnter;

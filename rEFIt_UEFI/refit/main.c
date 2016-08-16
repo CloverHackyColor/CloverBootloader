@@ -1753,10 +1753,10 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 //-----------------------------------------------------------
   }
 #endif //
-#if 0
+#if 1
   //testing place
   {
-    CHAR16 *aaa = L"123";
+    CHAR16 *aaa = L"12345";
     DBG(" string %s, size=%d, len=%d sizeof=%d\n", aaa, StrSize(aaa), StrLen(aaa), sizeof(aaa));
   }
 #endif

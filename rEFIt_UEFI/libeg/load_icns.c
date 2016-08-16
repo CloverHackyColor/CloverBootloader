@@ -33,7 +33,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#if !defined(LODEPNG)
+//#if !defined(LODEPNG)
 #include "libegint.h"
 
 //
@@ -79,9 +79,9 @@ VOID egDecompressIcnsRLE(IN OUT UINT8 **CompData, IN OUT UINTN *CompLen, IN UINT
         pp_left -= len;
     }
     
-    if (pp_left > 0) {
-        Print(L" egDecompressIcnsRLE: still need %d bytes of pixel data\n", pp_left);
-    }
+//    if (pp_left > 0) {
+//        Print(L" egDecompressIcnsRLE: still need %d bytes of pixel data\n", pp_left);
+//    }
     
     // record what's left of the compressed data stream
     *CompData = cp;
@@ -222,5 +222,5 @@ EG_IMAGE * egDecodeICNS(IN UINT8 *FileData, IN UINTN FileDataLength, IN UINTN Ic
     
     return NewImage;
 }
-#endif
+//#endif
 /* EOF */
