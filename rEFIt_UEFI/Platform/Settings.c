@@ -3302,9 +3302,9 @@ GetThemeTagSettings (
   if (Dict != NULL) {
     Dict2 = GetProperty (Dict, "Type");
     if (Dict2 != NULL && (Dict2->type == kTagTypeString) && Dict2->string) {
-      if ((Dict2->string[0] == 'A') || (Dict2->string[0] == 'a')) {
+      if ((Dict2->string[0] == 'A') || (Dict2->string[0] == 'B')) {
         GlobalConfig.Font = FONT_ALFA;
-      } else if ((Dict2->string[0] == 'G') || (Dict2->string[0] == 'g')) {
+      } else if ((Dict2->string[0] == 'G') || (Dict2->string[0] == 'W')) {
         GlobalConfig.Font = FONT_GRAY;
       } else if ((Dict2->string[0] == 'L') || (Dict2->string[0] == 'l')) {
         GlobalConfig.Font = FONT_LOAD;
