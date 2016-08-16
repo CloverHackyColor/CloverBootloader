@@ -89,6 +89,7 @@ extern EFI_RUNTIME_SERVICES*	gRS;
 #define TAG_INPUT              (9)
 #define TAG_HELP               (10)
 #define TAG_SWITCH             (11)
+#define TAG_CHECKBIT           (12)
 #define TAG_SECURE_BOOT        (13)
 #define TAG_SECURE_BOOT_CONFIG (14)
 #define TAG_CLOVER             (100)
@@ -263,6 +264,7 @@ typedef enum {
   ASString,
   UNIString,
   RadioSwitch,
+  CheckBit,
   
 } ITEM_TYPE;
 
