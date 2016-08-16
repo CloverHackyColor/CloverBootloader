@@ -3,17 +3,21 @@
 <plist version="1.0">
 <dict>
 	<key>Author</key>
-	<string>Kogen Mantis</string>
+	<string>tluck</string>
 	<key>Description</key>
-	<string>Custom OEM theme for Lenovo ThinkPad&apos;s. Based on bluemac theme.</string>
+	<string>ThinkPad-Apple</string>
 	<key>Theme</key>
 	<dict>
 		<key>Background</key>
 		<dict>
+			<key>Dark</key>
+			<true/>
 			<key>Path</key>
-			<string>Leaf_ThinkPad_scale.png</string>
+			<string>Dot_ThinkPad_tile.png</string>
+			<key>Sharp</key>
+			<string>0x00</string>
 			<key>Type</key>
-			<string>Scale</string>
+			<string>Tile</string>
 		</dict>
 		<key>Badges</key>
 		<dict>
@@ -25,13 +29,18 @@
 			<true/>
 		</dict>
 		<key>Banner</key>
-		<string>Banner1_ThinkPad_F1.png</string>
+		<string>LogoWhite.png</string>
+		<key>Components</key>
+		<dict>
+			<key>Help</key>
+			<false/>
+		</dict>
 		<key>Font</key>
 		<dict>
 			<key>CharWidth</key>
-			<integer>10</integer>
+			<integer>9</integer>
 			<key>Path</key>
-			<string>GoB_PTMono_10W.png</string>
+			<string>font.png</string>
 			<key>Type</key>
 			<string>Load</string>
 		</dict>
@@ -40,12 +49,12 @@
 			<key>Big</key>
 			<string>Selection_big.png</string>
 			<key>Color</key>
-			<string>0x2A3f5590</string>
+			<string>0x07ABF750</string>
 			<key>Small</key>
 			<string>Selection_small.png</string>
 		</dict>
 	</dict>
 	<key>Year</key>
-	<string>2013</string>
+	<string>2016</string>
 </dict>
 </plist>

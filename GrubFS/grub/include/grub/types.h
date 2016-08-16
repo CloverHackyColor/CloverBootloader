@@ -179,7 +179,7 @@ static inline grub_uint16_t grub_swap_bytes16(grub_uint16_t _x)
                     | (_x >> 56)); \
 })
 
-#if defined(__GNUC__) && (__GNUC__ > 3) && (__GNUC__ > 4 || __GNUC_MINOR__ >= 3)
+#if (defined(__GNUC__) && (__GNUC__ > 3) && (__GNUC__ > 4 || __GNUC_MINOR__ >= 3)) || defined(__clang__)
 static inline grub_uint32_t grub_swap_bytes32(grub_uint32_t x)
 {
 	return __builtin_bswap32(x);

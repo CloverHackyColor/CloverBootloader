@@ -465,7 +465,13 @@ grub_ufs_lookup_symlink (struct grub_ufs_data *data, int ino)
       && INODE_SIZE (data) <= sizeof (data->inode.symlink))
     grub_strcpy (symlink, (char *) data->inode.symlink);
   else
-    grub_ufs_read_file (data, 0, 0, 0, sz, symlink);
+    {
+      if (grub_ufs_read_file (data, 0, 0, 0, sz, symlink) < 0)
+	{
+	  grub_free(symlink);
+	  return grub_errno;
+	}
+    }
   symlink[sz] = '\0';
 
   /* The symlink is an absolute path, go back to the root inode.  */
@@ -604,7 +610,8 @@ grub_ufs_mount (grub_disk_t disk)
 	 endiannesses.  */
       if (data->sblock.magic == grub_cpu_to_ufs32_compile_time (GRUB_UFS_MAGIC)
 	  && data->sblock.bsize != 0
-	  && ((data->sblock.bsize & (data->sblock.bsize - 1)) == 0))
+	  && ((data->sblock.bsize & (data->sblock.bsize - 1)) == 0)
+	  && data->sblock.ino_per_group != 0)
 	{
 	  for (data->log2_blksz = 0; 
 	       (1U << data->log2_blksz) < grub_ufs_to_cpu32 (data->sblock.bsize);
