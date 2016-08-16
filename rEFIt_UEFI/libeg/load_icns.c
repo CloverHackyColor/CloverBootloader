@@ -36,6 +36,19 @@
 //#if !defined(LODEPNG)
 #include "libegint.h"
 
+#ifndef DEBUG_ALL
+#define DEBUG_IMG 0
+#else
+#define DEBUG_IMG DEBUG_ALL
+#endif
+
+#if DEBUG_IMG == 0
+#define DBG(...)
+#else
+#define DBG(...) DebugLog(DEBUG_IMG, __VA_ARGS__)
+#endif
+
+
 //
 // Decompress .icns RLE data
 //
@@ -79,9 +92,9 @@ VOID egDecompressIcnsRLE(IN OUT UINT8 **CompData, IN OUT UINTN *CompLen, IN UINT
         pp_left -= len;
     }
     
-//    if (pp_left > 0) {
-//        Print(L" egDecompressIcnsRLE: still need %d bytes of pixel data\n", pp_left);
-//    }
+  if (pp_left > 0) {
+    DBG(" egDecompressIcnsRLE: still need %d bytes of pixel data\n", pp_left);
+  }
     
     // record what's left of the compressed data stream
     *CompData = cp;
@@ -106,7 +119,8 @@ EG_IMAGE * egDecodeICNS(IN UINT8 *FileData, IN UINTN FileDataLength, IN UINTN Ic
     if (FileDataLength < 8 || FileData == NULL ||
         FileData[0] != 'i' || FileData[1] != 'c' || FileData[2] != 'n' || FileData[3] != 's') {
         // not an icns file...
-        return NULL;
+      DBG("not icns\n");
+      return NULL;
     }
     
     FetchPixelSize = IconSize;
@@ -168,17 +182,19 @@ EG_IMAGE * egDecodeICNS(IN UINT8 *FileData, IN UINTN FileDataLength, IN UINTN Ic
             Ptr += BlockLen;
         }
         //TODO - take different larger size if not found
-        /* FUTURE: try to load a different size and scale it later
-            if (DataPtr == NULL && FetchPixelSize == 32) {
-                FetchPixelSize = 128;
+        // FUTURE: try to load a different size and scale it later
+            if (DataPtr == NULL && FetchPixelSize == 128) {
+                FetchPixelSize = 32;
                 continue;
             }
-        */
+        
         break;
     }
     
-    if (DataPtr == NULL)
-        return NULL;   // no image found
+  if (DataPtr == NULL) {
+    DBG("not found such IconSize\n");
+    return NULL;   // no image found
+  }
     
     // allocate image structure and buffer
     NewImage = egCreateImage(FetchPixelSize, FetchPixelSize, WantAlpha);
@@ -196,7 +212,7 @@ EG_IMAGE * egDecodeICNS(IN UINT8 *FileData, IN UINTN FileDataLength, IN UINTN Ic
         egDecompressIcnsRLE(&CompData, &CompLen, PLPTR(NewImage, b), PixelCount);
         // possible assertion: CompLen == 0
         if (CompLen > 0) {
-            Print(L" egLoadICNSIcon: %d bytes of compressed data left\n", CompLen);
+            DBG(" egLoadICNSIcon: %d bytes of compressed data left\n", CompLen);
         }
         
     } else {

@@ -84,12 +84,7 @@ BUILTIN_ICON BuiltinIconTable[BUILTIN_ICON_COUNT] = {
 };
 
 //#define DEC_BUILTIN_ICON(id, ico) BuiltinIconTable[id].Image = egDecodePNG(ico, sizeof(ico), BuiltinIconTable[id].PixelSize, TRUE)
-#define DEC_BUILTIN_ICON(id, ico) {\
-  BuiltinIconTable[id].Image = egDecodePNG(ico, sizeof(ico), TRUE);\
-  if (!BuiltinIconTable[id].Image) {\
-    BuiltinIconTable[id].Image = egDecodeICNS(ico, sizeof(ico), BuiltinIconTable[id].PixelSize, TRUE);\
-  }\
-}
+#define DEC_BUILTIN_ICON(id, ico) BuiltinIconTable[id].Image = egDecodePNG(ico, sizeof(ico), TRUE)
 
 CHAR16 * GetIconsExt(IN CHAR16 *Icon, IN CHAR16 *Def)
 {
@@ -127,7 +122,7 @@ EG_IMAGE * BuiltinIcon(IN UINTN Id)
       Path = GetIconsExt(BuiltinIconTable[Id].Path, BuiltinIconTable[Id].Format);
       BuiltinIconTable[Id].Image = LoadIcnsFallback(ThemeDir, Path, Size);
       if (!BuiltinIconTable[Id].Image) {
-        DebugLog(1, "        [!] Icon %d (%s) not found (path: %s, ThemeDir: %p)\n", Id, Path, ThemePath, ThemeDir);
+        DebugLog(1, "        [!] Icon %d (%s) not found (path: %s)\n", Id, Path, ThemePath);
         if (Id >= BUILTIN_ICON_VOL_INTERNAL) {
           FreePool(Path);
           Path = GetIconsExt(BuiltinIconTable[BUILTIN_ICON_VOL_INTERNAL].Path, BuiltinIconTable[BUILTIN_ICON_VOL_INTERNAL].Format);
