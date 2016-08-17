@@ -939,6 +939,10 @@ VOID DumpKernelAndKextPatches(KERNEL_AND_KEXT_PATCHES *Patches);
 
 //VOID FilterKextPatches(IN LOADER_ENTRY *Entry);
 
+#ifdef CHECK_FLAGS
+UINT32 EncodeOptions(CHAR16 *Options);
+#endif
+
 #define KERNEL_MAX_SIZE 40000000
 #if defined(FKERNELPATCH)
 #define FSearchReplace(Source, Search, Replace) SearchAndReplace(Source, KERNEL_MAX_SIZE, Search, sizeof(Search), Replace, 1)

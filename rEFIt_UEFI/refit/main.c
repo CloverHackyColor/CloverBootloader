@@ -1949,6 +1949,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     }
 
     if (!GlobalConfig.FastBoot) {
+      CHAR16 *TmpArgs;
       if (gThemeNeedInit) {
         InitTheme(TRUE, &Now);
         gThemeNeedInit = FALSE;
@@ -1962,7 +1963,10 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
       //now it is a time to set RtVariables
       SetVariablesFromNvram();
+      TmpArgs = PoolPrint(L"%a", gSettings.BootArgs);
+      gSettings.OptionsBits = EncodeOptions(TmpArgs);
       FillInputs(TRUE);
+      FreePool(TmpArgs);
       // scan for loaders and tools, add then to the menu
       if (GlobalConfig.LegacyFirst){
         AddCustomLegacy();

@@ -794,7 +794,11 @@ VOID ApplyInputs(VOID)
     gSettings.FixDsdt = k;
   }
 */
-  i = 68;
+  i = 67;
+  if (InputItems[i].Valid) {
+    gSettings.FixDsdt = InputItems[i].IValue;
+  }
+  i++;
   if (InputItems[i].Valid) {
     gSettings.OptionsBits = InputItems[i].IValue;
   }
@@ -1024,11 +1028,6 @@ VOID ApplyInputs(VOID)
   if (InputItems[i].Valid) {
     gSettings.KernelPatchesAllowed = InputItems[i].BValue;
     gBootChanged = TRUE;
-  }
-  
-  i++; //109
-  if (InputItems[i].Valid) {
-    gSettings.FixDsdt = InputItems[i].IValue;
   }
 
   if (SysVariables) {
@@ -4844,14 +4843,12 @@ UINTN RunMainMenu(IN REFIT_MENU_SCREEN *Screen, IN INTN DefaultSelection, OUT RE
       DBG("set OptionsBits = %x\n", gSettings.OptionsBits);
       gSettings.OptionsBits |= EncodeOptions(((LOADER_ENTRY*)TempChosenEntry)->LoadOptions);
       DBG("add OptionsBits = %x\n", gSettings.OptionsBits);
-      FreePool(TmpArgs);
-
       DecodeOptions((LOADER_ENTRY*)TempChosenEntry);
       DBG("get OptionsBits = %x\n", gSettings.OptionsBits);
       ((LOADER_ENTRY*)TempChosenEntry)->Flags |= (UINT16)(gSettings.FlagsBits & 0x0FFF);
       DBG("get FlagsBits = %x\n", gSettings.FlagsBits);
 #endif
-
+      FreePool(TmpArgs);
       MenuExit = RunGenericMenu(TempChosenEntry->SubScreen, Style, &SubMenuIndex, &TempChosenEntry);
       if (MenuExit == MENU_EXIT_ENTER && TempChosenEntry->Tag == TAG_LOADER) {
 #ifdef CHECK_FLAGS
