@@ -47,8 +47,8 @@ extern REFIT_MENU_SCREEN MainMenu;
 // common
 EG_IMAGE *LoadBuiltinIcon(IN CHAR16 *IconName);
 LOADER_ENTRY * DuplicateLoaderEntry(IN LOADER_ENTRY *Entry);
-CHAR16 *AddLoadOption(IN CHAR16 *LoadOptions, IN CHAR16 *LoadOption);
-CHAR16 *RemoveLoadOption(IN CHAR16 *LoadOptions, IN CHAR16 *LoadOption);
+//CHAR16 *AddLoadOption(IN CHAR16 *LoadOptions, IN CHAR16 *LoadOption);
+//CHAR16 *RemoveLoadOption(IN CHAR16 *LoadOptions, IN CHAR16 *LoadOption);
 EG_IMAGE * ScanVolumeDefaultIcon(REFIT_VOLUME *Volume, IN UINT8 OSType);
 /*
 INTN StrniCmp(IN CHAR16 *Str1,

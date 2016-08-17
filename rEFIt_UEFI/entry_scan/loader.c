@@ -660,7 +660,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath,
 STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
 {
   CHAR16            *FileName, *TempOptions;
-  CHAR16            DiagsFileName[256];
+//  CHAR16            DiagsFileName[256];
   LOADER_ENTRY      *SubEntry;
   REFIT_MENU_SCREEN *SubScreen;
   REFIT_VOLUME      *Volume;
@@ -700,18 +700,46 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
     FreePool(GuidStr);
   }
   AddMenuInfoLine(SubScreen, PoolPrint(L"Options: %s", Entry->LoadOptions));
-
+/*
   // default entry
   SubEntry = DuplicateLoaderEntry(Entry);
   if (SubEntry) {
     SubEntry->me.Title = (Entry->LoaderType == OSTYPE_OSX ||
                           Entry->LoaderType == OSTYPE_OSX_INSTALLER ||
                           Entry->LoaderType == OSTYPE_RECOVERY) ?
-    L"Boot Mac OS X" : PoolPrint(L"Run %s", FileName);
+      L"Boot Mac OS X" : PoolPrint(L"Run %s", FileName);
     AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
   }
+ */
   // loader-specific submenu entries
   if (Entry->LoaderType == OSTYPE_OSX || Entry->LoaderType == OSTYPE_OSX_INSTALLER || Entry->LoaderType == OSTYPE_RECOVERY) { // entries for Mac OS X
+#ifdef CHECK_FLAGS
+
+    if (!KernelIs64BitOnly) {
+      AddMenuCheck(SubScreen, "OSX 32bit", OPT_I386, 68);
+      AddMenuCheck(SubScreen, "OSX 64bit", OPT_X64,  68);
+    }
+    AddMenuCheck(SubScreen, "Verbose",      OPT_VERBOSE, 68);
+    AddMenuCheck(SubScreen, "Single User",  OPT_SINGLE_USER, 68);
+    AddMenuCheck(SubScreen, "Safe Mode",    OPT_SAFE, 68);
+    AddMenuCheck(SubScreen, "nv_disable=1", OPT_NVDISABLE, 68);
+    AddMenuCheck(SubScreen, "nvda_drv=1",   OPT_NVWEBON, 68);
+
+    AddMenuCheck(SubScreen, "Hibernate wake", OSFLAG_HIBERNATED, 69);
+//    AddMenuCheck(SubScreen, "Cancel hibernate wake", OSFLAG_NOHIBERNATED, 69);
+    if (gSettings.CsrActiveConfig == 0) {
+      AddMenuCheck(SubScreen, "No SIP", OSFLAG_NOSIP, 69);
+    }
+    
+    AddMenuCheck(SubScreen, "Without caches",       OSFLAG_NOCACHES, 69);
+    AddMenuCheck(SubScreen, "With injected kexts",  OSFLAG_WITHKEXTS, 69);
+        
+    SubEntry = DuplicateLoaderEntry(Entry);
+    if (SubEntry) {
+      SubEntry->me.Title        = L"Boot Mac OS X with selected options";
+      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+    }
+#else
 #if defined(MDE_CPU_X64)
     if (!KernelIs64BitOnly) {
       SubEntry = DuplicateLoaderEntry(Entry);
@@ -874,7 +902,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
         }
       }
     }
-
+/*
     // check for Apple hardware diagnostics
     StrCpy(DiagsFileName, L"\\System\\Library\\CoreServices\\.diagnostics\\diags.efi");
     if (FileExists(Volume->RootDir, DiagsFileName) && !(GlobalConfig.DisableFlags & HIDEUI_FLAG_HWTEST)) {
@@ -882,7 +910,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
 
       // NOTE: Sothor - I'm not sure if to duplicate parent entry here.
       SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
-      SubEntry->me.Title        = L"Run Apple Hardware Test";
+      SubEntry->me.Title        = PoolPrint(L"Run Apple Hardware Test");
       SubEntry->me.Tag          = TAG_LOADER;
       SubEntry->LoaderPath      = EfiStrDuplicate(DiagsFileName);
       SubEntry->Volume          = Volume;
@@ -893,10 +921,19 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
       SubEntry->me.AtClick      = ActionEnter;
       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
     }
-
+ */
+#endif
   } else if (Entry->LoaderType == OSTYPE_LINEFI) {
     BOOLEAN Quiet = (StrStr(Entry->LoadOptions, L"quiet") != NULL);
     BOOLEAN WithSplash = (StrStr(Entry->LoadOptions, L"splash") != NULL);
+    
+    // default entry
+    SubEntry = DuplicateLoaderEntry(Entry);
+    if (SubEntry) {
+      SubEntry->me.Title = PoolPrint(L"Run %s", FileName);
+      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+    }
+
     SubEntry = DuplicateLoaderEntry(Entry);
     if (SubEntry) {
       FreePool(SubEntry->LoadOptions);
@@ -949,18 +986,25 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
     AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
   } else if ((Entry->LoaderType == OSTYPE_WIN) || (Entry->LoaderType == OSTYPE_WINEFI)) {
     // by default, skip the built-in selection and boot from hard disk only
-    Entry->LoadOptions = L"-s -h";
-
+    Entry->LoadOptions = PoolPrint(L"-s -h");
+    
+    // default entry
     SubEntry = DuplicateLoaderEntry(Entry);
     if (SubEntry) {
-      SubEntry->me.Title        = L"Boot Windows from Hard Disk";
+      SubEntry->me.Title = PoolPrint(L"Run %s", FileName);
       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
     }
 
     SubEntry = DuplicateLoaderEntry(Entry);
     if (SubEntry) {
-      SubEntry->me.Title        = L"Boot Windows from CD-ROM";
-      SubEntry->LoadOptions     = L"-s -c";
+      SubEntry->me.Title        = PoolPrint(L"Boot Windows from Hard Disk");
+      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+    }
+
+    SubEntry = DuplicateLoaderEntry(Entry);
+    if (SubEntry) {
+      SubEntry->me.Title        = PoolPrint(L"Boot Windows from CD-ROM");
+      SubEntry->LoadOptions     = PoolPrint(L"-s -c");
       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
     }
 
@@ -968,7 +1012,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
     if (SubEntry) {
       SubEntry->me.Title        = PoolPrint(L"Run %s in text mode", FileName);
       SubEntry->Flags           = OSFLAG_UNSET(SubEntry->Flags, OSFLAG_USEGRAPHICS);
-      SubEntry->LoadOptions     = L"-v";
+      SubEntry->LoadOptions     = PoolPrint(L"-v");
       SubEntry->LoaderType      = OSTYPE_OTHER; // Sothor - Why are we using OSTYPE_OTHER here?
       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
     }

@@ -3548,6 +3548,14 @@ InitTheme(
     }
     Banner  = NULL;
   }
+  
+  //Free buttons images
+  for (i = 0; i < 4; i++) {
+    if (Buttons[i] != NULL) {
+      egFreeImage(Buttons[i]);
+      Buttons[i] = NULL;
+    }
+  }
 
   // Kill mouse before we invalidate builtin pointer image
   KillMouse();

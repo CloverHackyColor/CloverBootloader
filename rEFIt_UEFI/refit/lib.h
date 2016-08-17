@@ -184,6 +184,15 @@ OSTYPE_COMPARE_IMP(OSTYPE_IS_LINUX, type1, type2) || OSTYPE_COMPARE_IMP(OSTYPE_I
 #define CUSTOM_BOOT_THEME          5
 #define CUSTOM_BOOT_USER           6
 
+#define OPT_I386            (1 << 0)
+#define OPT_X64             (1 << 1)
+#define OPT_VERBOSE         (1 << 2)
+#define OPT_SINGLE_USER     (1 << 3)
+#define OPT_SAFE            (1 << 4)
+#define OPT_NVDISABLE       (1 << 5)
+#define OPT_NVWEBON         (1 << 6)
+
+
 #define IS_EXTENDED_PART_TYPE(type) ((type) == 0x05 || (type) == 0x0f || (type) == 0x85)
 
 typedef struct {
@@ -633,6 +642,7 @@ extern EG_IMAGE         *Banner;
 extern EG_IMAGE         *BigBack;
 extern EG_IMAGE         *FontImage;
 extern EG_IMAGE         *SelectionImages[];
+extern EG_IMAGE         *Buttons[];
 extern BOOLEAN          gThemeChanged;
 //extern BOOLEAN          gBootArgsChanged;
 extern BOOLEAN          gBootChanged;
@@ -832,7 +842,9 @@ EG_IMAGE * GetSmallHover(IN UINTN Id);
 #define ICON_FORMAT_BMP       (3)
 
 VOID AddMenuInfoLine(IN REFIT_MENU_SCREEN *Screen, IN CHAR16 *InfoLine);
+VOID AddMenuInfo(  REFIT_MENU_SCREEN  *SubScreen, CHAR16 *Line);
 VOID AddMenuEntry(IN REFIT_MENU_SCREEN *Screen, IN REFIT_MENU_ENTRY *Entry);
+VOID AddMenuCheck(REFIT_MENU_SCREEN *SubScreen, CONST CHAR8 *Text, UINTN Bit, INTN ItemNum);
 VOID FreeMenu(IN REFIT_MENU_SCREEN *Screen);
 UINTN RunMenu(IN REFIT_MENU_SCREEN *Screen, OUT REFIT_MENU_ENTRY **ChosenEntry);
 UINTN RunMainMenu(IN REFIT_MENU_SCREEN *Screen, IN INTN DefaultSelection, OUT REFIT_MENU_ENTRY **ChosenEntry);

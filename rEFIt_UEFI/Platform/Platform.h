@@ -1167,6 +1167,9 @@ typedef struct {
   // ACPI/PATCHED/AML
   UINT32                  DisabledAMLCount;
   CHAR16                  **DisabledAML;
+  
+  UINT32 OptionsBits;
+  UINT32 FlagsBits;
   BOOLEAN                 ExposeSysVariables;
 
 } SETTINGS_DATA;
@@ -2096,6 +2099,10 @@ VOID deallocMatchOSes(struct MatchOSes *s);
 /** count occurrences of a given char in a char* string. */
 INTN
 countOccurrences(CHAR8 *s, CHAR8 c);
+
+
+CHAR16 *AddLoadOption(IN CHAR16 *LoadOptions, IN CHAR16 *LoadOption);
+CHAR16 *RemoveLoadOption(IN CHAR16 *LoadOptions, IN CHAR16 *LoadOption);
 
 //
 // BootOptions.c
