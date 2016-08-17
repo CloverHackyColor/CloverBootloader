@@ -2575,8 +2575,6 @@ VOID DrawBCSText(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
   if (XAlign == X_IS_LEFT) {
     TextWidth = UGAWidth - XPos - 1;
     XText = XPos;
-  } else { // shift 64 is prohibited
-    XText = XPos - (TextWidth >> XAlign);
   }
 
   if (StrLen(Text) > ChrsNum - Ellipsis) {
@@ -2603,8 +2601,11 @@ VOID DrawBCSText(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
     TextWidth = egRenderText(Text, TextBufferXY, 0, 0, 0xFFFF);
   }
   
-  BltImageAlpha(TextBufferXY, XText, YPos,  &MenuBackgroundPixel, 16);
+  if (XAlign != X_IS_LEFT) { // shift 64 is prohibited
+    XText = XPos - (TextWidth >> XAlign);
+  }
     
+  BltImageAlpha(TextBufferXY, XText, YPos,  &MenuBackgroundPixel, 16);
   egFreeImage(TextBufferXY);
 }
 
@@ -3488,9 +3489,11 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
                               itemPosX[i - State->FirstVisible], row0PosY);
           // create static text for the boot options if the BootCampStyle is used
             if (GlobalConfig.BootCampStyle && !(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)) {
+              // clear the screen
               FillRectAreaOfScreen(itemPosX[i - State->FirstVisible] + (row0TileSize / 2), textPosY,
-                 EntriesWidth + GlobalConfig.TileXSpace, TextHeight,
-                 &MenuBackgroundPixel, X_IS_CENTER);
+                                   EntriesWidth + GlobalConfig.TileXSpace, TextHeight, &MenuBackgroundPixel,
+                                   X_IS_CENTER);
+              // draw the text
               DrawBCSText(Screen->Entries[i]->Title, itemPosX[i - State->FirstVisible] + (row0TileSize / 2),
                            textPosY, X_IS_CENTER);
             }
