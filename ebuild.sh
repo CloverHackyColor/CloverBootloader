@@ -62,6 +62,8 @@ USE_LOW_EBDA=1
 CLANG=0
 GENPAGE=0
 
+FORCEREBUILD=0
+
 declare -r GIT=`which git`
 #declare -r GITDIR=`git status 2> /dev/null`        # unsafe as git repository may exist in parent directory
 declare -r VERSTXT="vers.txt"
@@ -272,6 +274,9 @@ usage() {
     print_option_help "--no-lto" "disable Link Time Optimisation"
     print_option_help "--edk2shell <MinimumShell|FullShell>" "copy edk2 Shell to EFI tools dir"
     echo
+    echo "build options:"
+    print_option_help "-fr, --force-rebuild" "force rebuild all targets"
+    echo
     echo "Report bugs to https://sourceforge.net/p/cloverefiboot/discussion/1726372/"
 }
 
@@ -312,6 +317,7 @@ checkCmdlineArguments() {
             -mc | --x64-mcp)     TARGETARCH=X64 ; USE_BIOS_BLOCKIO=1 ;;
             -clean)    TARGETRULE=clean ;;
             -cleanall) TARGETRULE=cleanall ;;
+            -fr | --force-rebuild) FORCEREBUILD=1 ;;
 #            -d | -debug | --debug)  BUILDTARGET=DEBUG ;;
 #            -r | -release | --release) BUILDTARGET=RELEASE ;;
             -a) TARGETARCH=$(argument $option "$@"); shift
@@ -529,7 +535,7 @@ MainBuildScript() {
 
     local cmd="${EDK2_BUILD_OPTIONS[@]}"
 
-    if (( $SkipAutoGen == 1 )); then
+    if (( $SkipAutoGen == 1 )) && (( $FORCEREBUILD == 0 )); then
         cmd="build --skip-autogen $cmd"
     else
         cmd="build $cmd"
@@ -544,7 +550,7 @@ MainBuildScript() {
     echo
 
     # Build Clover version
-    if (( $SkipAutoGen == 0 )); then
+    if (( $SkipAutoGen == 0 )) || (( $FORCEREBUILD == 1 )); then
       local clover_revision=$(cat "${CLOVERROOT}/${VERSTXT}")
       local clover_build_date=$(date '+%Y-%m-%d %H:%M:%S')
       #echo "#define FIRMWARE_VERSION \"2.31\"" > "$CLOVERROOT"/Version.h
