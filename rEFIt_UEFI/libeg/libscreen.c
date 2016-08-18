@@ -137,49 +137,56 @@ VOID egDumpGOPVideoModes(VOID)
 */
 VOID egDumpSetConsoleVideoModes(VOID)
 {
-    UINTN i;
-    UINTN Width, Height;
-    UINTN BestMode = 0, BestWidth = 0, BestHeight = 0;
-    EFI_STATUS Status;
-
-    if (gST->ConOut != NULL && gST->ConOut->Mode != NULL) {
-        MsgLog("Console modes reported: %d, available modes:\n",gST->ConOut->Mode->MaxMode);
-        for (i=1; i <= (UINTN)gST->ConOut->Mode->MaxMode; i++) {
-            Status = gST->ConOut->QueryMode(gST->ConOut, i-1, &Width, &Height);
-            if (Status == EFI_SUCCESS) {
-                //MsgLog("  Mode %d: %dx%d%s\n", i, Width, Height, (i-1==(UINTN)gST->ConOut->Mode->Mode)?L" (current mode)":L"");
-                MsgLog(" - [%02d]: %dx%d%s\n", i, Width, Height, (i-1==(UINTN)gST->ConOut->Mode->Mode)?L" (current mode)":L"");
-                // Select highest mode (-1) or lowest mode (-2) as/if requested
-                if ((GlobalConfig.ConsoleMode == -1 && (BestMode == 0 || Width > BestWidth || (Width == BestWidth && Height > BestHeight))) ||
-                    (GlobalConfig.ConsoleMode == -2 && (BestMode == 0 || Width < BestWidth || (Width == BestWidth && Height < BestHeight)))) {
-                    BestMode = i;
-                    BestWidth = Width;
-                    BestHeight = Height;
-                }
-            }
+  UINTN i;
+  UINTN Width, Height;
+  UINTN BestMode = 0, BestWidth = 0, BestHeight = 0;
+  EFI_STATUS Status;
+  STATIC int Once=0;
+  
+  if (gST->ConOut != NULL && gST->ConOut->Mode != NULL) {
+    if (!Once) {
+      MsgLog("Console modes reported: %d, available modes:\n",gST->ConOut->Mode->MaxMode);
+    }
+    
+    for (i=1; i <= (UINTN)gST->ConOut->Mode->MaxMode; i++) {
+      Status = gST->ConOut->QueryMode(gST->ConOut, i-1, &Width, &Height);
+      if (Status == EFI_SUCCESS) {
+        //MsgLog("  Mode %d: %dx%d%s\n", i, Width, Height, (i-1==(UINTN)gST->ConOut->Mode->Mode)?L" (current mode)":L"");
+        if (!Once) {
+          MsgLog(" - [%02d]: %dx%d%s\n", i, Width, Height, (i-1==(UINTN)gST->ConOut->Mode->Mode)?L" (current mode)":L"");
         }
+        // Select highest mode (-1) or lowest mode (-2) as/if requested
+        if ((GlobalConfig.ConsoleMode == -1 && (BestMode == 0 || Width > BestWidth || (Width == BestWidth && Height > BestHeight))) ||
+            (GlobalConfig.ConsoleMode == -2 && (BestMode == 0 || Width < BestWidth || (Width == BestWidth && Height < BestHeight)))) {
+          BestMode = i;
+          BestWidth = Width;
+          BestHeight = Height;
+        }
+      }
+    }
+    Once++;
+  } else {
+    MsgLog("Console modes are not available.\n");
+    return;
+  }
+  
+  if (GlobalConfig.ConsoleMode > 0) {
+    // Specific mode chosen, try to set it
+    BestMode = GlobalConfig.ConsoleMode;
+  }
+  
+  if (BestMode >= 1 && BestMode <= (UINTN)gST->ConOut->Mode->MaxMode) {
+    // Mode is valid
+    if (BestMode-1 != (UINTN)gST->ConOut->Mode->Mode) {
+      Status = gST->ConOut->SetMode(gST->ConOut, BestMode-1);
+      MsgLog("  Setting mode (%d): %r\n",BestMode, Status);
     } else {
-        MsgLog("Console modes are not available.\n");
-        return;
+      MsgLog("  Selected mode (%d) is already set\n",BestMode);
     }
-
-    if (GlobalConfig.ConsoleMode > 0) {
-      // Specific mode chosen, try to set it
-      BestMode = GlobalConfig.ConsoleMode;
-    }
-    
-    if (BestMode >= 1 && BestMode <= (UINTN)gST->ConOut->Mode->MaxMode) {
-        // Mode is valid
-        if (BestMode-1 != (UINTN)gST->ConOut->Mode->Mode) {
-            Status = gST->ConOut->SetMode(gST->ConOut, BestMode-1);
-            MsgLog("  Setting mode (%d): %r\n",BestMode, Status);
-        } else {
-            MsgLog("  Selected mode (%d) is already set\n",BestMode);
-        }
-    } else if (BestMode != 0) {
-        MsgLog("  Selected mode (%d) is not valid\n",BestMode);
-    }
-    
+  } else if (BestMode != 0) {
+    MsgLog("  Selected mode (%d) is not valid\n",BestMode);
+  }
+  
 }
 
 EFI_STATUS egSetMaxResolution()

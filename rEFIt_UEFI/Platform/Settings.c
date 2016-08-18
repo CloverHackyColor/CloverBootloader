@@ -512,9 +512,9 @@ LoadUserSettings (
   // DBG ("PlistPath: %s\n", ConfigPlistPath);
   if (FileExists (SelfRootDir, ConfigOemPath)) {
     Status = egLoadFile (SelfRootDir, ConfigOemPath, (UINT8**)&gConfigPtr, &Size);
-  } else {
+  } //else {
     //    DBG ("Oem %s.plist not found at path: %s\n", ConfName, ConfigOemPath);
-  }
+  //}
 
   if (EFI_ERROR (Status)) {
     if ((RootDir != NULL) && FileExists (RootDir, ConfigPlistPath)) {
@@ -525,9 +525,9 @@ LoadUserSettings (
       Status = egLoadFile (SelfRootDir, ConfigPlistPath, (UINT8**)&gConfigPtr, &Size);
     }
     DBG ("Using %s.plist at path: %s", ConfName, ConfigPlistPath);
-  } else {
-    DBG ("Using OEM %s.plist at path: %s", ConfName, ConfigOemPath);
-  }
+  } //else {
+    //DBG ("Using OEM %s.plist at path: %s", ConfName, ConfigOemPath);
+    //}
 
   if (!EFI_ERROR (Status) && gConfigPtr != NULL) {
     //DBG ("Error loading %s.plist! Status=%r\n", ConfName, Status);
@@ -3534,7 +3534,9 @@ InitTheme(
   // Free selection images which are not builtin icons
   for (i = 0; i < 6; i++) {
     if (SelectionImages[i] != NULL) {
-      if ((SelectionImages[i] != BuiltinIcon(BUILTIN_SELECTION_SMALL)) && (SelectionImages[i] != BuiltinIcon(BUILTIN_SELECTION_BIG))) {
+//      if ((SelectionImages[i] != BuiltinIcon(BUILTIN_SELECTION_SMALL)) && (SelectionImages[i] != BuiltinIcon(BUILTIN_SELECTION_BIG))) {
+      if ((SelectionImages[i] != BuiltinIconTable[BUILTIN_SELECTION_SMALL].Image) &&
+        (SelectionImages[i] != BuiltinIconTable[BUILTIN_SELECTION_BIG].Image)) {
         egFreeImage (SelectionImages[i]);
       }
       SelectionImages[i] = NULL;
@@ -3543,7 +3545,8 @@ InitTheme(
 
   // Free banner which is not builtin icon
   if (Banner != NULL) {
-    if (Banner != BuiltinIcon(BUILTIN_ICON_BANNER)) {
+//    if (Banner != BuiltinIcon(BUILTIN_ICON_BANNER)) {
+    if (Banner != BuiltinIconTable[BUILTIN_ICON_BANNER].Image) {
       egFreeImage (Banner);
     }
     Banner  = NULL;

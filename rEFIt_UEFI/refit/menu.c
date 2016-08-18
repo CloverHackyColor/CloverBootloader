@@ -2055,8 +2055,9 @@ static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC  Style
   }
   Item->Valid = FALSE;
   FreePool(Backup);
-  MsgLog("EDITED: %s\n", Item->SValue);
-
+  if (Item->SValue) {
+    MsgLog("EDITED: %s\n", Item->SValue);
+  }
   return 0;
 }
 
