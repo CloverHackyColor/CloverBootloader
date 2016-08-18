@@ -1932,6 +1932,10 @@ VOID AddCustomEntries(VOID)
 {
   CUSTOM_LOADER_ENTRY *Custom;
   UINTN                i = 0;
+  
+  if (!gSettings.CustomEntries) {
+    return;
+  }
 
   //DBG("Custom entries start\n");
   DbgHeader("AddCustomEntries");

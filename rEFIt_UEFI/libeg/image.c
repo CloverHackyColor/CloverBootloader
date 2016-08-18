@@ -554,7 +554,7 @@ EG_IMAGE * egLoadIcon(IN EFI_FILE_HANDLE BaseDir, IN CHAR16 *FileName, IN UINTN 
   // load file
   Status = egLoadFile(BaseDir, FileName, &FileData, &FileDataLength);
   if (EFI_ERROR(Status)) {
-    DBG("egLoadIcon status=%r\n", Status);
+//    DBG("egLoadIcon status=%r\n", Status);
     return NULL;
   }
 

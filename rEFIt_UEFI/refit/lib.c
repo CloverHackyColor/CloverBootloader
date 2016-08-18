@@ -1662,26 +1662,11 @@ BOOLEAN DumpVariable(CHAR16* Name, EFI_GUID* Guid, INTN DevicePathAt)
 VOID DbgHeader(CHAR8 *str)
 {
 #if defined(ADVLOG)
-/*
-#if defined(_MSC_VER) && !defined(LODEPNG)
-VOID * memset(VOID *str, UINT8 c, UINTN n) {
-    gBS->SetMem(str, n, c);
-    return str;
-}
-#endif
-*/
-  INTN i, len = 60 - AsciiStrLen(str);
-  //INTN len = 60 - AsciiStrSize(str)/*, i*/;
- // CHAR8 *fill = AllocateZeroPool(len);
-  //for (i = 0; i < len; ++i) fill[i] = '=';
- // gBS->SetMem(fill, len, '=');
- DebugLog (1, "=== [ %a ] ", str);
- for (i = 0; i < len; i++) DebugLog (1, "=");
- DebugLog (1, "\n");
+  INTN i, len = 50 - AsciiStrLen(str);
+  DebugLog (1, "=== [ %a ] ", str);
+  for (i = 0; i < len; i++) DebugLog (1, "=");
+  DebugLog (1, "\n");
  
-//  fill[len] = '\0';
-//  DebugLog (1, "=== [ %a ] %a\n", str, fill);
-//  FreePool(fill);
 #else //ADVLOG
   DebugLog (1, "%a:\n", str);
 #endif //ADVLOG

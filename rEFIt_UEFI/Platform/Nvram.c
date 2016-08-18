@@ -463,17 +463,17 @@ GetEfiBootDeviceFromNvram ()
 //  DBG ("GetEfiBootDeviceFromNvram:");
   
   if (gEfiBootDeviceData != NULL) {
-    DBG (" - [!] already parsed\n");
+//    DBG (" - [!] already parsed\n");
     return EFI_SUCCESS;
   }
 
   gEfiBootDeviceData = GetNvramVariable (L"efi-boot-next-data", &gEfiAppleBootGuid, NULL, &Size);
   if (gEfiBootDeviceData != NULL) {
-    DBG("Got efi-boot-next-data size=%d\n", Size);
+//    DBG("Got efi-boot-next-data size=%d\n", Size);
     if (IsDevicePathValid(gEfiBootDeviceData, Size)) {
-      DBG(" - efi-boot-next-data: %s\n", FileDevicePathToStr (gEfiBootDeviceData));
+//      DBG(" - efi-boot-next-data: %s\n", FileDevicePathToStr (gEfiBootDeviceData));
     } else {
-      DBG(" - device path for efi-boot-next-data is invalid\n");
+//      DBG(" - device path for efi-boot-next-data is invalid\n");
       FreePool(gEfiBootDeviceData);
       gEfiBootDeviceData = NULL;
     }
@@ -481,16 +481,16 @@ GetEfiBootDeviceFromNvram ()
   if (gEfiBootDeviceData == NULL) {
     gEfiBootDeviceData = GetNvramVariable (L"efi-boot-device-data", &gEfiAppleBootGuid, NULL, &Size);
     if (gEfiBootDeviceData != NULL) {
-      DBG("Got efi-boot-device-data size=%d\n", Size);
+//      DBG("Got efi-boot-device-data size=%d\n", Size);
       if (!IsDevicePathValid(gEfiBootDeviceData, Size)) {
-        DBG(" - device path for efi-boot-device-data is invalid\n");
+//        DBG(" - device path for efi-boot-device-data is invalid\n");
         FreePool(gEfiBootDeviceData);
         gEfiBootDeviceData = NULL;
       }
     }
   }
   if (gEfiBootDeviceData == NULL) {
-    DBG (" - [!] efi-boot-device-data not found\n");
+//    DBG (" - [!] efi-boot-device-data not found\n");
     return EFI_NOT_FOUND;
   }
   
@@ -508,12 +508,12 @@ GetEfiBootDeviceFromNvram ()
     gEfiBootVolume = gBootCampHD;
 
     if (gBootCampHD == NULL) {
-      DBG ("  - [!] Error: BootCampHD not found\n");
+//      DBG ("  - [!] Error: BootCampHD not found\n");
       return EFI_NOT_FOUND;
     }
 
     if (!IsDevicePathValid(gBootCampHD, Size)) {
-      DBG (" Error: BootCampHD device path is invalid\n");
+//      DBG (" Error: BootCampHD device path is invalid\n");
       FreePool(gBootCampHD);
       gEfiBootVolume = gBootCampHD = NULL;
       return EFI_NOT_FOUND;
@@ -580,7 +580,7 @@ LoadNvramPlist (
     //
     Status = egLoadFile (RootDir, NVRAMPlistPath, (UINT8**)&NvramPtr, &Size);
     if(EFI_ERROR(Status)) {
-        DBG (" not present\n");
+//        DBG (" not present\n");
         return Status;
     }
 
@@ -590,9 +590,9 @@ LoadNvramPlist (
     // parse it into gNvramDict 
     //
     Status = ParseXML ((const CHAR8*)NvramPtr, &gNvramDict,0);
-    if(Status != EFI_SUCCESS) {
-        DBG (" parsing error\n");
-    }
+//    if(Status != EFI_SUCCESS) {
+//        DBG (" parsing error\n");
+//    }
     
     FreePool (NvramPtr);
     // we will leave nvram.plist loaded and parsed for later processing
@@ -720,8 +720,6 @@ PutNvramPlistToRtVars ()
   CHAR16     KeyBuf[128];
   VOID       *Value;
   
-  DbgHeader("PutNvramPlistToRtVars");
-  
   if (gNvramDict == NULL) {
     Status = LoadLatestNvramPlist ();
     if (gNvramDict == NULL) {
@@ -730,6 +728,7 @@ PutNvramPlistToRtVars ()
     }
   }
   
+  DbgHeader("PutNvramPlistToRtVars");
 //  DBG ("PutNvramPlistToRtVars ...\n");
   // iterate over dict elements
   for (Tag = gNvramDict->tag; Tag != NULL; Tag = Tag->tagNext) {
@@ -840,7 +839,7 @@ FindStartupDiskVolume (
   
   
 //  DBG ("FindStartupDiskVolume ...\n");
-  DbgHeader("FindStartupDiskVolume");
+  
   
   //
   // search RT vars for efi-boot-device-data
@@ -848,10 +847,11 @@ FindStartupDiskVolume (
   //
   GetEfiBootDeviceFromNvram ();
   if (gEfiBootVolume == NULL) {
-    DBG (" - [!] EfiBootVolume not found\n");
+//    DBG (" - [!] EfiBootVolume not found\n");
     return -1;
   }
   
+  DbgHeader("FindStartupDiskVolume");
 //  DBG ("FindStartupDiskVolume searching ...\n");
   
   //

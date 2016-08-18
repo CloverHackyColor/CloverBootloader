@@ -1962,13 +1962,14 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       }
       gThemeChanged = FALSE;
       DBG("Choosing theme %s\n", GlobalConfig.Theme);
-
+//      DBG("initial boot-args=%a\n", gSettings.BootArgs);
       //now it is a time to set RtVariables
       SetVariablesFromNvram();
 #ifdef CHECK_FLAGS
-      TmpArgs = PoolPrint(L"%a", gSettings.BootArgs);
+      TmpArgs = PoolPrint(L"%a ", gSettings.BootArgs);
+      DBG("after NVRAM boot-args=%a\n", gSettings.BootArgs);
       gSettings.OptionsBits = EncodeOptions(TmpArgs);
-      DBG("initial OptionsBits %x\n", gSettings.OptionsBits);
+//      DBG("initial OptionsBits %x\n", gSettings.OptionsBits);
       FreePool(TmpArgs);
 #endif
       FillInputs(TRUE);

@@ -4755,26 +4755,27 @@ UINTN RunMenu(IN REFIT_MENU_SCREEN *Screen, OUT REFIT_MENU_ENTRY **ChosenEntry)
 UINT32 EncodeOptions(CHAR16 *Options)
 {
   UINT32 OptionsBits = 0;
-  if (StrStr(Options, L"-v") == 0) {
+  if (StrStr(Options, L"-v")) {
     OptionsBits |= OPT_VERBOSE;
   }
-  if (StrStr(Options, L"-s") == 0) {
+  if (StrStr(Options, L"-s")) {
     OptionsBits |= OPT_SINGLE_USER;
   }
-  if (StrStr(Options, L"-x") == 0) {
+  if (StrStr(Options, L"-x")) {
     OptionsBits |= OPT_SAFE;
   }
-  if (StrStr(Options, L"arch=i386") == 0) {
+  if (StrStr(Options, L"arch=i386")) {
     OptionsBits |= OPT_I386;
+    OptionsBits &= ~OPT_X64;
   }
-  if (StrStr(Options, L"arch=x86_64") == 0) {
+  if (StrStr(Options, L"arch=x86_64")) {
     OptionsBits |= OPT_X64;
     OptionsBits &= ~OPT_I386;
   }
-  if (StrStr(Options, L"nv_disable=1") == 0) {
+  if (StrStr(Options, L"nv_disable=1")) {
     OptionsBits |= OPT_NVDISABLE;
   }
-  if (StrStr(Options, L"nvda_drv=1") == 0) {
+  if (StrStr(Options, L"nvda_drv=1")) {
     OptionsBits |= OPT_NVWEBON;
   }
   
@@ -4838,24 +4839,24 @@ UINTN RunMainMenu(IN REFIT_MENU_SCREEN *Screen, IN INTN DefaultSelection, OUT RE
       SubMenuIndex = -1;
 #ifdef CHECK_FLAGS      
       gSettings.FlagsBits = ((LOADER_ENTRY*)TempChosenEntry)->Flags;
-      DBG("set FlagsBits = %x\n", gSettings.FlagsBits);
-  //    gSettings.OptionsBits = EncodeOptions(TmpArgs);
-      DBG("main OptionsBits = %x\n", gSettings.OptionsBits);
+  //    DBG("set FlagsBits = %x\n", gSettings.FlagsBits);
+      gSettings.OptionsBits = EncodeOptions(TmpArgs);
+  //    DBG("main OptionsBits = %x\n", gSettings.OptionsBits);
       gSettings.OptionsBits |= EncodeOptions(((LOADER_ENTRY*)TempChosenEntry)->LoadOptions);
-      DBG("add OptionsBits = %x\n", gSettings.OptionsBits);
+  //    DBG("add OptionsBits = %x\n", gSettings.OptionsBits);
       DecodeOptions((LOADER_ENTRY*)TempChosenEntry);
-      DBG("get OptionsBits = %x\n", gSettings.OptionsBits);
+  //    DBG("get OptionsBits = %x\n", gSettings.OptionsBits);
       ((LOADER_ENTRY*)TempChosenEntry)->Flags |= (UINT16)(gSettings.FlagsBits & 0x0FFF);
-      DBG("get FlagsBits = %x\n", gSettings.FlagsBits);
+  //    DBG("get FlagsBits = %x\n", gSettings.FlagsBits);
 #endif
       FreePool(TmpArgs);
       MenuExit = RunGenericMenu(TempChosenEntry->SubScreen, Style, &SubMenuIndex, &TempChosenEntry);
       if (MenuExit == MENU_EXIT_ENTER && TempChosenEntry->Tag == TAG_LOADER) {
 #ifdef CHECK_FLAGS
         DecodeOptions((LOADER_ENTRY*)TempChosenEntry);
-        DBG("get OptionsBits = %x\n", gSettings.OptionsBits);
+  //      DBG("get OptionsBits = %x\n", gSettings.OptionsBits);
         ((LOADER_ENTRY*)TempChosenEntry)->Flags = (UINT16)(gSettings.FlagsBits & 0x0FFF);
-        DBG("get FlagsBits = %x\n", gSettings.FlagsBits);
+  //      DBG("get FlagsBits = %x\n", gSettings.FlagsBits);
 #endif
         AsciiSPrint(gSettings.BootArgs, 255, "%s", ((LOADER_ENTRY*)TempChosenEntry)->LoadOptions);
       }
