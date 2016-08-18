@@ -4422,9 +4422,7 @@ GetUserSettings(
         }
 
         Prop = GetProperty (Dict2, "Debug");
-        if (Prop != NULL && IsPropertyTrue (Prop)) {
-          gSettings.DebugDSDT = TRUE;
-        }
+        gSettings.DebugDSDT = IsPropertyTrue (Prop);
 
         Prop = GetProperty (Dict2, "Rtc8Allowed");
         gSettings.Rtc8Allowed = IsPropertyTrue (Prop);

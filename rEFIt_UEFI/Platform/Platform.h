@@ -903,7 +903,7 @@ typedef struct {
   BOOLEAN                 EnableC7;
   UINT8                   SavingMode;
 
-  CHAR16                  DsdtName[60];
+  CHAR16                  DsdtName[28];
   UINT32                  FixDsdt;
   UINT8                   MinMultiplier;
   UINT8                   MaxMultiplier;

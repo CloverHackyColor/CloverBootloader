@@ -714,25 +714,31 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
   // loader-specific submenu entries
   if (Entry->LoaderType == OSTYPE_OSX || Entry->LoaderType == OSTYPE_OSX_INSTALLER || Entry->LoaderType == OSTYPE_RECOVERY) { // entries for Mac OS X
 #ifdef CHECK_FLAGS
-
+    AddMenuCheck(SubScreen, "Hibernate wake",       OSFLAG_HIBERNATED, 69);
+    //    AddMenuCheck(SubScreen, "Cancel hibernate wake", OSFLAG_NOHIBERNATED, 69);
+    AddMenuCheck(SubScreen, "Without caches",       OSFLAG_NOCACHES, 69);
+    AddMenuCheck(SubScreen, "With injected kexts",  OSFLAG_WITHKEXTS, 69);
+    AddMenuInfo(SubScreen, L"=== boot-args ===");
     if (!KernelIs64BitOnly) {
-      AddMenuCheck(SubScreen, "OSX 32bit", OPT_I386, 68);
-      AddMenuCheck(SubScreen, "OSX 64bit", OPT_X64,  68);
+      AddMenuCheck(SubScreen, "OSX 32bit",          OPT_I386, 68);
+      AddMenuCheck(SubScreen, "OSX 64bit",          OPT_X64,  68);
     }
-    AddMenuCheck(SubScreen, "Verbose",      OPT_VERBOSE, 68);
-    AddMenuCheck(SubScreen, "Single User",  OPT_SINGLE_USER, 68);
-    AddMenuCheck(SubScreen, "Safe Mode",    OPT_SAFE, 68);
-    AddMenuCheck(SubScreen, "nv_disable=1", OPT_NVDISABLE, 68);
-    AddMenuCheck(SubScreen, "nvda_drv=1",   OPT_NVWEBON, 68);
+    AddMenuCheck(SubScreen, "Verbose",              OPT_VERBOSE, 68);
+    AddMenuCheck(SubScreen, "Single User",          OPT_SINGLE_USER, 68);
+    AddMenuCheck(SubScreen, "Safe Mode",            OPT_SAFE, 68);
+    AddMenuCheck(SubScreen, "nv_disable=1",         OPT_NVDISABLE, 68);
+    AddMenuCheck(SubScreen, "nvda_drv=1",           OPT_NVWEBON, 68); 
+    AddMenuCheck(SubScreen, "Disable PowerNap",     OPT_POWERNAPOFF, 68);
+    AddMenuCheck(SubScreen, "Use XNU CPUPM",        OPT_XCPM, 68);    
+    AddMenuCheck(SubScreen, "Disable Intel Idle Mode", OPT_GNOIDLE, 68); 
+    AddMenuCheck(SubScreen, "Sleep Uses Shutdown",  OPT_GNOSLEEP, 68);
+    AddMenuCheck(SubScreen, "Force No Msi Int",     OPT_GNOMSI, 68);
+    AddMenuCheck(SubScreen, "EHC manage USB2 ports",   OPT_EHCUSB, 68);
 
-    AddMenuCheck(SubScreen, "Hibernate wake", OSFLAG_HIBERNATED, 69);
-//    AddMenuCheck(SubScreen, "Cancel hibernate wake", OSFLAG_NOHIBERNATED, 69);
     if (gSettings.CsrActiveConfig == 0) {
       AddMenuCheck(SubScreen, "No SIP", OSFLAG_NOSIP, 69);
     }
     
-    AddMenuCheck(SubScreen, "Without caches",       OSFLAG_NOCACHES, 69);
-    AddMenuCheck(SubScreen, "With injected kexts",  OSFLAG_WITHKEXTS, 69);
         
     SubEntry = DuplicateLoaderEntry(Entry);
     if (SubEntry) {

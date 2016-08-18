@@ -216,9 +216,9 @@ VOID FillInputs(BOOLEAN New)
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, SVALUE_MAX_SIZE, L"%a ", gSettings.BootArgs);
   InputItems[InputItemsCount].ItemType = UNIString; //1
   if (New) {
-    InputItems[InputItemsCount].SValue = AllocateZeroPool(63);
+    InputItems[InputItemsCount].SValue = AllocateZeroPool(32);
   }
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 63, L"%s", gSettings.DsdtName); // 1-> 2
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 32, L"%s", gSettings.DsdtName); // 1-> 2
   InputItems[InputItemsCount].ItemType = UNIString; //2
   if (New) {
     InputItems[InputItemsCount].SValue = AllocateZeroPool(63);
@@ -579,11 +579,11 @@ VOID ApplyInputs(VOID)
   }
   i++; //1
   if (InputItems[i].Valid) {
-    UnicodeSPrint(gSettings.DsdtName, 120, L"%s", InputItems[i].SValue);
+    UnicodeSPrint(gSettings.DsdtName, sizeof(gSettings.DsdtName), L"%s", InputItems[i].SValue);
   }
   i++; //2
   if (InputItems[i].Valid) {
-    UnicodeSPrint(gSettings.BlockKexts, 120, L"%s", InputItems[i].SValue);
+    UnicodeSPrint(gSettings.BlockKexts, sizeof(gSettings.BlockKexts), L"%s", InputItems[i].SValue);
   }
   i++; //3
   if (InputItems[i].Valid) {
@@ -4778,13 +4778,30 @@ UINT32 EncodeOptions(CHAR16 *Options)
   if (StrStr(Options, L"nvda_drv=1")) {
     OptionsBits |= OPT_NVWEBON;
   }
+  if (StrStr(Options, L"darkwake=0")) {
+    OptionsBits |= OPT_POWERNAPOFF;
+  }
+  if (StrStr(Options, L"-xcpm")) {
+    OptionsBits |= OPT_XCPM;
+  }
+  if (StrStr(Options, L"-gux_no_idle")) {
+    OptionsBits |= OPT_GNOIDLE;
+  }
+  if (StrStr(Options, L"-gux_nosleep")) {
+    OptionsBits |= OPT_GNOSLEEP;
+  }
+  if (StrStr(Options, L"-gux_nomsi")) {
+    OptionsBits |= OPT_GNOMSI;
+  }
+  if (StrStr(Options, L"-gux_defer_usb2")) {
+    OptionsBits |= OPT_EHCUSB;
+  }
   
   return OptionsBits;
 }
 
 VOID DecodeOptions(LOADER_ENTRY *Entry)
-{
-  
+{  
   if (gSettings.OptionsBits & OPT_VERBOSE) {
     Entry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"-v");
   }
@@ -4806,7 +4823,24 @@ VOID DecodeOptions(LOADER_ENTRY *Entry)
   if (gSettings.OptionsBits & OPT_NVWEBON) {
     Entry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"nvda_drv=1");
   }
-  
+  if (gSettings.OptionsBits & OPT_POWERNAPOFF) {
+    Entry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"darkwake=0");
+  }
+  if (gSettings.OptionsBits & OPT_XCPM) {
+    Entry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"-xcpm");
+  }
+  if (gSettings.OptionsBits & OPT_GNOIDLE) {
+    Entry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"-gux_no_idle");
+  }
+  if (gSettings.OptionsBits & OPT_GNOSLEEP) {
+    Entry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"-gux_nosleep");
+  }
+  if (gSettings.OptionsBits & OPT_GNOMSI) {
+    Entry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"-gux_nomsi");
+  }
+  if (gSettings.OptionsBits & OPT_EHCUSB) {
+    Entry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"-gux_defer_usb2");
+  }
 }
 
 #endif
@@ -4859,9 +4893,11 @@ UINTN RunMainMenu(IN REFIT_MENU_SCREEN *Screen, IN INTN DefaultSelection, OUT RE
   //      DBG("get FlagsBits = %x\n", gSettings.FlagsBits);
 #endif
         AsciiSPrint(gSettings.BootArgs, 255, "%s", ((LOADER_ENTRY*)TempChosenEntry)->LoadOptions);
+        DBG("boot with args: %a\n", gSettings.BootArgs);
       }
-      if (MenuExit == MENU_EXIT_ESCAPE || TempChosenEntry->Tag == TAG_RETURN)
+      if (MenuExit == MENU_EXIT_ESCAPE || TempChosenEntry->Tag == TAG_RETURN) {
         MenuExit = 0;
+      }
     }
   }
 

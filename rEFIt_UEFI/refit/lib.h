@@ -191,7 +191,12 @@ OSTYPE_COMPARE_IMP(OSTYPE_IS_LINUX, type1, type2) || OSTYPE_COMPARE_IMP(OSTYPE_I
 #define OPT_SAFE            (1 << 4)
 #define OPT_NVDISABLE       (1 << 5)
 #define OPT_NVWEBON         (1 << 6)
-
+#define OPT_POWERNAPOFF     (1 << 7)
+#define OPT_XCPM            (1 << 8) 
+#define OPT_GNOIDLE         (1 << 9) 
+#define OPT_GNOSLEEP        (1 << 10) 
+#define OPT_GNOMSI          (1 << 11)
+#define OPT_EHCUSB          (1 << 12)
 
 #define IS_EXTENDED_PART_TYPE(type) ((type) == 0x05 || (type) == 0x0f || (type) == 0x85)
 
@@ -842,7 +847,7 @@ EG_IMAGE * GetSmallHover(IN UINTN Id);
 #define ICON_FORMAT_BMP       (3)
 
 VOID AddMenuInfoLine(IN REFIT_MENU_SCREEN *Screen, IN CHAR16 *InfoLine);
-VOID AddMenuInfo(  REFIT_MENU_SCREEN  *SubScreen, CHAR16 *Line);
+VOID AddMenuInfo(IN REFIT_MENU_SCREEN  *SubScreen, IN CHAR16 *Line);
 VOID AddMenuEntry(IN REFIT_MENU_SCREEN *Screen, IN REFIT_MENU_ENTRY *Entry);
 VOID AddMenuCheck(REFIT_MENU_SCREEN *SubScreen, CONST CHAR8 *Text, UINTN Bit, INTN ItemNum);
 VOID FreeMenu(IN REFIT_MENU_SCREEN *Screen);
