@@ -4839,8 +4839,8 @@ UINTN RunMainMenu(IN REFIT_MENU_SCREEN *Screen, IN INTN DefaultSelection, OUT RE
 #ifdef CHECK_FLAGS      
       gSettings.FlagsBits = ((LOADER_ENTRY*)TempChosenEntry)->Flags;
       DBG("set FlagsBits = %x\n", gSettings.FlagsBits);
-      gSettings.OptionsBits = EncodeOptions(TmpArgs);
-      DBG("set OptionsBits = %x\n", gSettings.OptionsBits);
+  //    gSettings.OptionsBits = EncodeOptions(TmpArgs);
+      DBG("main OptionsBits = %x\n", gSettings.OptionsBits);
       gSettings.OptionsBits |= EncodeOptions(((LOADER_ENTRY*)TempChosenEntry)->LoadOptions);
       DBG("add OptionsBits = %x\n", gSettings.OptionsBits);
       DecodeOptions((LOADER_ENTRY*)TempChosenEntry);

@@ -2,12 +2,13 @@
 
 #  ebuild.sh ->ebuild.sh  //renamed to be unique file begining from E
 #  Script for building CloverEFI source under OS X or Linux
-#  Supported chainloads(compilers) are XCODE32, UNIXGCC and CLANG
+#  Supported chainloads(compilers) are XCODE*, GCC*, UNIXGCC and CLANG
 #
 #
 #  Created by Jadran Puharic on 1/6/12.
 #  Modified by JrCs on 3/9/13.
 #  Zenith432, STLVNUB, cecekpawon 2016
+#  Micky1979 2016
 
 # Go to the Clover root directory
 cd "$(dirname $0)"
@@ -246,10 +247,10 @@ usage() {
     echo "Toolchain:"
     print_option_help "-clang"     "use XCode Clang toolchain"
     print_option_help "-gcc47"     "use GCC 4.7 toolchain"
-    print_option_help "-gcc49"     "use GCC 4.9 toolchain [Default]"
+    print_option_help "-gcc49"     "use GCC 4.9 toolchain"
     print_option_help "-gcc53"     "use GCC 5.3 toolchain"
     print_option_help "-xcode"     "use XCode 3.2 toolchain"
-    print_option_help "-xcode5"     "use XCode 5+ toolchain"
+    print_option_help "-xcode5"     "use XCode 5+ toolchain  [Default]"
     print_option_help "-t TOOLCHAIN, --tagname=TOOLCHAIN" "force to use a specific toolchain"
     echo
     echo "Target:"
@@ -426,6 +427,8 @@ MainBuildScript() {
     if [[ -f "$CLOVERROOT"/rEFIt_UEFI/Version.h ]]; then
         local builtedRev=$(cat "$CLOVERROOT"/rEFIt_UEFI/Version.h  \
                            | grep '#define FIRMWARE_REVISION L' | awk -v FS="(\"|\")" '{print $2}')
+#echo "old revision ${builtedRev}" >echo.txt
+#echo "new revision ${repoRev}" >>echo.txt
 
         if [ "${repoRev}" = "${builtedRev}" ]; then SkipAutoGen=1; fi
     fi
@@ -540,30 +543,32 @@ MainBuildScript() {
     echo "$cmd"
     echo
 
-    # Build Clover
-    local clover_revision=$(cat "${CLOVERROOT}/${VERSTXT}")
-    local clover_build_date=$(date '+%Y-%m-%d %H:%M:%S')
-    echo "#define FIRMWARE_VERSION \"2.31\"" > "$CLOVERROOT"/Version.h
-    echo "#define FIRMWARE_BUILDDATE \"${clover_build_date}\"" >> "$CLOVERROOT"/Version.h
-    echo "#define FIRMWARE_REVISION L\"${clover_revision}\""   >> "$CLOVERROOT"/Version.h
-    echo "#define REVISION_STR \"Clover revision: ${clover_revision}\"" >> "$CLOVERROOT"/Version.h
+    # Build Clover version
+    if (( $SkipAutoGen == 0 )); then
+      local clover_revision=$(cat "${CLOVERROOT}/${VERSTXT}")
+      local clover_build_date=$(date '+%Y-%m-%d %H:%M:%S')
+      #echo "#define FIRMWARE_VERSION \"2.31\"" > "$CLOVERROOT"/Version.h
+      echo "#define FIRMWARE_BUILDDATE \"${clover_build_date}\"" > "$CLOVERROOT"/Version.h
+      echo "#define FIRMWARE_REVISION L\"${clover_revision}\""   >> "$CLOVERROOT"/Version.h
+      echo "#define REVISION_STR \"Clover revision: ${clover_revision}\"" >> "$CLOVERROOT"/Version.h
 
-    local clover_build_info="Args: ./${SELF}"
-    if [[ -n "$@" ]]; then
-      clover_build_info="${clover_build_info} $@"
+      local clover_build_info="Args: ./${SELF}"
+      if [[ -n "$@" ]]; then
+        clover_build_info="${clover_build_info} $@"
+      fi
+      clover_build_info="${clover_build_info} | Command: $(echo $cmd | xargs)"
+
+      if [[ -n "${OSVER:-}" ]]; then
+        clover_build_info="${clover_build_info} | OS: ${OSVER}"
+      fi
+      if [[ -n "${XCODE_VERSION:-}" ]]; then
+        clover_build_info="${clover_build_info} | XCODE: ${XCODE_VERSION}"
+      fi
+    
+      echo "#define BUILDINFOS_STR \"${clover_build_info}\"" >> "$CLOVERROOT"/Version.h
+
+      cp "$CLOVERROOT"/Version.h "$CLOVERROOT"/rEFIt_UEFI/
     fi
-    clover_build_info="${clover_build_info} | Command: $(echo $cmd | xargs)"
-
-    if [[ -n "${OSVER:-}" ]]; then
-      clover_build_info="${clover_build_info} | OS: ${OSVER}"
-    fi
-    if [[ -n "${XCODE_VERSION:-}" ]]; then
-      clover_build_info="${clover_build_info} | XCODE: ${XCODE_VERSION}"
-    fi
-
-    echo "#define BUILDINFOS_STR \"${clover_build_info}\"" >> "$CLOVERROOT"/Version.h
-
-    cp "$CLOVERROOT"/Version.h "$CLOVERROOT"/rEFIt_UEFI/
 
     eval "$cmd"
 }
