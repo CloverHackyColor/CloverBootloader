@@ -410,12 +410,24 @@ MainBuildScript() {
     #checkToolchain
     checkPatch
 
+    local repoRev="0000"
     if [[ -d .svn ]]; then
-        svnversion -n | tr -d [:alpha:] > "${VERSTXT}"
+        repoRev=$(svnversion -n | tr -d [:alpha:])
     elif [[ -d .git ]]; then
-        git svn find-rev git-svn | tr -cd [:digit:] > "${VERSTXT}"
-    else
-        echo -n "0000" > "${VERSTXT}"
+        repoRev=$(git svn find-rev git-svn | tr -cd [:digit:])
+    fi
+
+    echo -n "${repoRev}" > "${VERSTXT}"
+
+    #
+    # we are building the same rev as before?
+    local SkipAutoGen=0
+    #
+    if [[ -f "$CLOVERROOT"/rEFIt_UEFI/Version.h ]]; then
+        local builtedRev=$(cat "$CLOVERROOT"/rEFIt_UEFI/Version.h  \
+                           | grep '#define FIRMWARE_REVISION L' | awk -v FS="(\"|\")" '{print $2}')
+
+        if [ "${repoRev}" = "${builtedRev}" ]; then SkipAutoGen=1; fi
     fi
 
     #
@@ -512,7 +524,14 @@ MainBuildScript() {
     [[ "$USE_LOW_EBDA" -ne 0 ]] && addEdk2BuildMacro 'USE_LOW_EBDA'
     [[ "$CLANG" -ne 0 ]] && addEdk2BuildMacro 'CLANG'
 
-    local cmd="build ${EDK2_BUILD_OPTIONS[@]}"
+    local cmd="${EDK2_BUILD_OPTIONS[@]}"
+
+    if (( $SkipAutoGen == 1 )); then
+        cmd="build --skip-autogen $cmd"
+    else
+        cmd="build $cmd"
+    fi
+
     cmd="$cmd -p $PLATFORMFILE $MODULEFILE -a $TARGETARCH -b $BUILDTARGET"
     cmd="$cmd -t $TOOLCHAIN -n $BUILDTHREADS $TARGETRULE"
 
@@ -564,6 +583,48 @@ copyBin() {
   cp -f "$cpSrc" "$cpDest" 2>/dev/null 
 }
 
+setInitBootMsg(){
+
+    local byte="35"
+    case "${1}" in
+    *boot2)
+        byte="32"
+    ;;
+    *boot3)
+        byte="33"
+    ;;
+    *boot4)
+        byte="34"
+    ;;
+    *boot5)
+        byte="35"
+    ;;
+    *boot6)
+        byte="36"
+    ;;
+    *boot7)
+        byte="37"
+    ;;
+    *boot7-MCP79)
+        byte="4d"
+    ;;
+    *boot8)
+        byte="38"
+    ;;
+    *boot9)
+        byte="39"
+    ;;
+    *)
+        return;
+    ;;
+    esac
+
+    if [[ -f "${1}" ]]; then
+        echo -e "Changing byte at 0xa9 of $(basename ${1}) to show \x${byte} as init message:"
+        printf "\x${byte}" | dd conv=notrunc of="${1}" bs=1 seek=$((0xa9))
+    fi
+}
+
 # Deploy Clover files for packaging
 MainPostBuildScript() {
     if [[ -z "$EDK_TOOLS_PATH" ]]; then
@@ -610,6 +671,7 @@ MainPostBuildScript() {
 
       # CloverEFI
       copyBin "${BUILD_DIR}"/FV/boot "$CLOVER_PKG_DIR"/Bootloaders/ia32/$cloverEFIFile
+      setInitBootMsg "$CLOVER_PKG_DIR"/Bootloaders/ia32/$cloverEFIFile
       copyBin "$BUILD_DIR_ARCH"/CLOVER${TARGETARCH}.efi "$CLOVER_PKG_DIR"/EFI/BOOT/BOOTIA32.efi
       copyBin "$BUILD_DIR_ARCH"/CLOVER${TARGETARCH}.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/
 
@@ -706,6 +768,7 @@ MainPostBuildScript() {
       # Install CloverEFI file
       echo "Copy CloverEFI:"
       copyBin "${BUILD_DIR}"/FV/boot "$CLOVER_PKG_DIR"/Bootloaders/x64/$cloverEFIFile
+      setInitBootMsg "$CLOVER_PKG_DIR"/Bootloaders/x64/$cloverEFIFile
       copyBin "$BUILD_DIR_ARCH"/CLOVER${TARGETARCH}.efi "$CLOVER_PKG_DIR"/EFI/BOOT/BOOTX64.efi
       copyBin "$BUILD_DIR_ARCH"/CLOVER${TARGETARCH}.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/
 
