@@ -2793,7 +2793,7 @@ GetEarlyUserSettings (
 
       //InjectEDID
       Prop = GetProperty (DictPointer, "InjectEDID");
-      gSettings.InjectEDID = IsPropertyTrue (Prop);
+      gSettings.InjectEDID = !IsPropertyFalse(Prop);
 
       Prop = GetProperty (DictPointer, "CustomEDID");
       if (Prop != NULL) {

@@ -99,7 +99,7 @@ EFI_STATUS GetEdidDiscovered(VOID)
     if (!gSettings.CustomEDID) {
       gSettings.CustomEDID = gEDID; //copy pointer but data if no CustomEDID
     }
-    CopyMem(gEDID, EdidDiscovered->Edid, N);
+    CopyMem(gEDID, EdidDiscovered->Edid, N); //and then copy data to CustomEDID
     if (!GlobalConfig.DebugLog) {
       for (i=0; i<N; i+=16) {
         MsgLog("%02d | ", i);
