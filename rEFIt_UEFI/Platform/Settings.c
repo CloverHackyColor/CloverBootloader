@@ -5823,6 +5823,7 @@ GetDevices ()
               DBG("Broadcom\n");
               break;
             case 0x1969:
+            case 0x168C:
               DBG("Atheros\n");
               break;
             case 0x1814:
@@ -5867,10 +5868,14 @@ GetDevices ()
               DBG("Broadcom\n");
               break;
             case 0x1969:
+            case 0x168C:
               DBG("Atheros\n");
               break;
             case 0x8086:
               DBG("Intel\n");
+              break;
+            case 0x10de:
+              DBG("Nforce\n");
               break;
 
             default:
