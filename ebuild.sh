@@ -134,7 +134,7 @@ checkPatch() {
       if [[ "$SYSNAME" != Linux ]]; then
         echo "Build it with the buidnasm.sh script." >&2
       fi
-      exit 1
+#      exit 1
   fi
 }
 

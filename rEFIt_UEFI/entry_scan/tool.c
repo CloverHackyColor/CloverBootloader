@@ -240,6 +240,7 @@ VOID ScanTool(VOID)
           DBG(" Found Clover\n");
           // Volume->BootType = BOOTING_BY_EFI;
           AddCloverEntry(CLOVER_MEDIA_FILE_NAME, L"Clover Boot Options", Volume);
+          break;
         }
       }
     }

@@ -4632,7 +4632,8 @@ RELEASE_GCC48_AARCH64_CC_FLAGS   = DEF(GCC48_AARCH64_CC_FLAGS) -Wno-unused-but-s
 *_GCC49_*_APP_FLAGS                    =
 *_GCC49_*_ASL_FLAGS                    = DEF(IASL_FLAGS)
 *_GCC49_*_ASL_OUTFLAGS                 = DEF(IASL_OUTFLAGS)
-*_GCC49_*_NASM_PATH   		         = ENV(HOME)/src/opt/local/bin/nasm
+#*_GCC49_*_NASM_PATH   		         = ENV(HOME)/src/opt/local/bin/nasm
+*_GCC49_*_NASM_PATH   		         = /opt/local/bin/nasm
 
 ##################
 # GCC49 IA32 definitions
@@ -4714,7 +4715,8 @@ RELEASE_GCC48_AARCH64_CC_FLAGS   = DEF(GCC48_AARCH64_CC_FLAGS) -Wno-unused-but-s
 *_GCC53_IA32_GCCLINK_PREFIX            = -Wl,
 
 *_GCC53_*_ASL_PATH                     = DEF(UNIX_IASL_BIN)
-*_GCC53_*_NASM_PATH   		         = ENV(HOME)/src/opt/local/bin/nasm
+#*_GCC53_*_NASM_PATH   		         = ENV(HOME)/src/opt/local/bin/nasm
+*_GCC53_*_NASM_PATH   		         = /opt/local/bin/nasm
 
 *_GCC53_*_PP_FLAGS                     = DEF(GCC_PP_FLAGS)
 *_GCC53_*_ASLPP_FLAGS                  = DEF(GCC_ASLPP_FLAGS)
@@ -6760,7 +6762,8 @@ RELEASE_XCLANG_*_MTOC_FLAGS = -align 0x20
 *_XCLANG_*_ASLPP_PATH   = gcc
 #*_XCLANG_*_ASLDLINK_PATH  = DEF(CLANG_BIN)clang
 *_XCLANG_*_ASLDLINK_PATH  = ld
-*_XCLANG_*_NASM_PATH     = ENV(HOME)/src/opt/local/bin/nasm
+#*_XCLANG_*_NASM_PATH     = ENV(HOME)/src/opt/local/bin/nasm
+*_XCLANG_*_NASM_PATH     = /opt/local/bin/nasm
 
 ####################
 # IA-32 definitions
@@ -6847,7 +6850,8 @@ RELEASE_XCODE5_*_DLINK_PATH   = clang
 *_XCODE5_*_ASLCC_PATH   = clang
 *_XCODE5_*_ASLPP_PATH   = clang
 *_XCODE5_*_ASLDLINK_PATH  = ld
-*_XCODE5_*_NASM_PATH     = ENV(HOME)/src/opt/local/bin/nasm
+#*_XCODE5_*_NASM_PATH     = ENV(HOME)/src/opt/local/bin/nasm
+*_XCODE5_*_NASM_PATH     = /opt/local/bin/nasm
 
 ####################
 # IA-32 definitions
