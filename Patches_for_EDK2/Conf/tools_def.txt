@@ -7337,8 +7337,11 @@ RELEASE_ARMLINUXGCC_AARCH64_CC_FLAGS = $(ARCHCC_FLAGS) $(PLATFORM_FLAGS) DEF(GCC
 ##################
 # NASM tool definitions
 ##################
-#*_*_*_NASM_PATH                = ENV(HOME)/src/opt/local/bin/nasm
-# sometimes system installed nasm should be used
-*_*_*_NASM_PATH                = nasm
+*_*_*_NASM_PATH                = ENV(NASM_PREFIX)nasm
 # NASMB uses NASM produce a .bin from a .nasmb NASM source file
 *_*_*_NASMB_FLAGS              = -f bin
+
+#################
+# Build rule order
+#################
+*_*_*_*_BUILDRULEORDER = nasm asm Asm ASM S s
