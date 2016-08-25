@@ -154,11 +154,12 @@ VOID PrepareFont()
   if (gLanguage == korean) {
     FontImage = egLoadFontImage(FALSE, 10, 28);
     if (FontImage) {
-      FontHeight = 16;
+//      FontHeight = 16;
       GlobalConfig.CharWidth = 20;
-      FontWidth = GlobalConfig.CharWidth;
+//      FontWidth = GlobalConfig.CharWidth;
       TextHeight = FontHeight + TEXT_YMARGIN * 2;
       DBG("Using Korean font matrix\n");
+      GlobalConfig.Proportional = FALSE;
       return;
     } else {
       DBG("font image not loaded, use english\n");
@@ -326,25 +327,25 @@ INTN egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage,
       }
 //        DBG("Cho=%d Joong=%d Jong=%d\n", Cho, Joong, Jong);
       if (Shift == 18) {
-        egRawCompose(BufferPtr, FontPixelData + Cho * 28 + 4 + FontLineOffset,
+        egRawCompose(BufferPtr, FontPixelData + Cho * FontWidth + 4 + FontLineOffset,
                      GlobalConfig.CharWidth, FontHeight,
                      BufferLineOffset, FontLineOffset);
       } else {
-        egRawCompose(BufferPtr + BufferLineOffset * 3, FontPixelData + Cho * 28 + 2,
+        egRawCompose(BufferPtr + BufferLineOffset * 3, FontPixelData + Cho * FontWidth + 2,
                      GlobalConfig.CharWidth, FontHeight,
                      BufferLineOffset, FontLineOffset);
       }
       if (i == Cursor) {
         c = 99;
-        egRawCompose(BufferPtr, FontPixelData + c * 28 + 2,
+        egRawCompose(BufferPtr, FontPixelData + c * FontWidth + 2,
                      GlobalConfig.CharWidth, FontHeight,
                      BufferLineOffset, FontLineOffset);
       }
       if (Shift == 18) {
-        egRawCompose(BufferPtr + 8, FontPixelData + Joong * 28 + 6, //9 , 4 are tunable
+        egRawCompose(BufferPtr + 8, FontPixelData + Joong * FontWidth + 6, //9 , 4 are tunable
                      GlobalConfig.CharWidth - 8, FontHeight,
                      BufferLineOffset, FontLineOffset);
-        egRawCompose(BufferPtr + BufferLineOffset * 10, FontPixelData + Jong * 28 + 5,
+        egRawCompose(BufferPtr + BufferLineOffset * 10, FontPixelData + Jong * FontWidth + 5,
                      GlobalConfig.CharWidth, FontHeight - 10,
                      BufferLineOffset, FontLineOffset);
 
