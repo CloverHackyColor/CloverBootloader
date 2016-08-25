@@ -142,9 +142,9 @@ checkPatch() {
 #    exit 1
 #  fi
   if [[ -f "/opt/local/bin/nasm" ]]; then
-    export NASM_PREFIX="/opt/local/bin"
-  elif [[ -f "(HOME)/src/opt/local/bin" ]]; then
-    export NASM_PREFIX="(HOME)/src/opt/local/bin"
+    export NASM_PREFIX="/opt/local/bin/"
+  elif [[ -f "(HOME)/src/opt/local/bin/nasm" ]]; then
+    export NASM_PREFIX="(HOME)/src/opt/local/bin/"
   else
     export NASM_PREFIX=""
   fi
@@ -152,7 +152,7 @@ checkPatch() {
   echo "NASM_PREFIX: $NASM_PREFIX"
 
   #NASM_VER=`nasm -v | awk '/version/ {print $3}'`
-  NASM_VER=`${NASM_PREFIX}/nasm -v | sed -nE 's/^.*version.([0-9\.]+).*$/\1/p'`
+  NASM_VER=`${NASM_PREFIX}nasm -v | sed -nE 's/^.*version.([0-9\.]+).*$/\1/p'`
 
   echo "NASM_VER: $NASM_VER"
 }
@@ -268,8 +268,8 @@ needNASM() {
         echo "${good}"
       fi
 #        echo "..but will not be used.."
-        cp -R "${good}" "${NASM_PREFIX}"/
-        echo "${good} copied to ${NASM_PREFIX}/!"
+#        cp -R "${good}" "${NASM_PREFIX}"/
+#        echo "${good} copied to ${NASM_PREFIX}/!"
       
     else
       # no nasm versions suitable for Clover
@@ -512,7 +512,7 @@ MainBuildScript() {
     #checkToolchain
     checkPatch
 
-    echo "NASM_PREFIX: ${NASM_PREFIX}"
+#    echo "NASM_PREFIX: ${NASM_PREFIX}"
 
     local repoRev="0000"
     if [[ -d .svn ]]; then
