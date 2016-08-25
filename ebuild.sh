@@ -40,6 +40,7 @@ export BUILDTARGET=RELEASE
 export BUILDTHREADS=$(( NUMBER_OF_CPUS + 1 ))
 export WORKSPACE=${WORKSPACE:-}
 export CONF_PATH=${CONF_PATH:-}
+#export NASM_PREFIX=
 
 # if building through Xcode, then TOOLCHAIN_DIR is not defined
 # checking if it is where CloverGrowerPro put it
@@ -63,6 +64,7 @@ CLANG=0
 GENPAGE=0
 
 FORCEREBUILD=0
+NOBOOTFILES=0
 
 declare -r GIT=`which git`
 #declare -r GITDIR=`git status 2> /dev/null`        # unsafe as git repository may exist in parent directory
@@ -129,13 +131,30 @@ checkPatch() {
     fi
   fi
 
-  if [[ ! -x "$TOOLCHAIN_DIR"/bin/nasm ]]; then
-      echo "No nasm binary found in toolchain directory !" >&2
-      if [[ "$SYSNAME" != Linux ]]; then
-        echo "Build it with the buidnasm.sh script." >&2
-      fi
+#  if [[ ! -x "$TOOLCHAIN_DIR"/bin/nasm ]]; then
+#      echo "No nasm binary found in toolchain directory !" >&2
+#      if [[ "$SYSNAME" != Linux ]]; then
+#        echo "Build it with the buidnasm.sh script." >&2
+#      fi
 #      exit 1
+#  fi
+#  if needNASM; then
+#    exit 1
+#  fi
+  if [[ -f "/opt/local/bin/nasm" ]]; then
+    export NASM_PREFIX="/opt/local/bin"
+  elif [[ -f "(HOME)/src/opt/local/bin" ]]; then
+    export NASM_PREFIX="(HOME)/src/opt/local/bin"
+  else
+    export NASM_PREFIX=""
   fi
+
+  echo "NASM_PREFIX: $NASM_PREFIX"
+
+  #NASM_VER=`nasm -v | awk '/version/ {print $3}'`
+  NASM_VER=`${NASM_PREFIX}/nasm -v | sed -nE 's/^.*version.([0-9\.]+).*$/\1/p'`
+
+  echo "NASM_VER: $NASM_VER"
 }
 
 print_option_help () {
@@ -210,6 +229,81 @@ addEdk2BuildMacro() {
     M_APPLEHFS=1
   fi
   addEdk2BuildOption "-D" "$macro"
+}
+
+# Check NASM
+restoreIFS() {
+  IFS=$' \t\n';
+}
+
+needNASM() {
+  restoreIFS
+  local nasmPath=""
+  local nasmArray=( $(which -a nasm) )
+  local needInstall=1
+  local good=""
+
+  if [ ${#nasmArray[@]} -ge "1" ]; then
+
+    for i in "${nasmArray[@]}"
+    do
+      echo "found nasm v$(${i} -v | grep 'NASM version' | awk '{print $3}') at $(dirname ${i})"
+    done
+
+    # we have a good nasm?
+    for i in "${nasmArray[@]}"
+    do
+      if isNASMGood "${i}"; then
+        good="${i}"
+        break
+      fi
+    done
+
+    if [[ -x "${good}" ]] ; then
+      # only nasm at index 0 is used!
+      if [[ "${good}" == "${nasmArray[0]}" ]]; then
+        echo "nasm is ok.."
+      else
+        echo "this one is good:"
+        echo "${good}"
+      fi
+#        echo "..but will not be used.."
+        cp -R "${good}" "${NASM_PREFIX}"/
+        echo "${good} copied to ${NASM_PREFIX}/!"
+      
+    else
+      # no nasm versions suitable for Clover
+      echo "nasm found, but is not good to build Clover.."
+      needInstall=0
+    fi
+  else
+    needInstall=0
+    echo "nasm not found.."
+  fi
+  return $needInstall
+}
+
+isNASMGood() {
+  restoreIFS
+
+  IFS='.';
+  local array=($( "${1}" -v | grep 'NASM version' | awk '{print $3}') )
+
+  case "${#array[@]}" in
+  "2" | "3")
+    if [ "${array[0]}" -ge "3" ]; then
+      return 0;
+    fi
+    if [ "${array[0]}" -eq "2" ] && [ "${array[1]}" -ge "12" ]; then
+      return 0;
+    fi
+  ;;
+    *)
+    echo "Unknown nasm version format.."
+  ;;
+  esac
+
+  return 1
 }
 
 # Check Xcode toolchain
@@ -318,6 +412,7 @@ checkCmdlineArguments() {
             -clean)    TARGETRULE=clean ;;
             -cleanall) TARGETRULE=cleanall ;;
             -fr | --force-rebuild) FORCEREBUILD=1 ;;
+            -nb | --no-bootfiles) NOBOOTFILES=1 ;;
 #            -d | -debug | --debug)  BUILDTARGET=DEBUG ;;
 #            -r | -release | --release) BUILDTARGET=RELEASE ;;
             -a) TARGETARCH=$(argument $option "$@"); shift
@@ -416,6 +511,8 @@ MainBuildScript() {
     checkCmdlineArguments $@
     #checkToolchain
     checkPatch
+
+    echo "NASM_PREFIX: ${NASM_PREFIX}"
 
     local repoRev="0000"
     if [[ -d .svn ]]; then
@@ -660,16 +757,16 @@ MainPostBuildScript() {
 
     if [[ "${TARGETARCH}" = IA32 ]]; then
       cloverEFIFile=boot3
-      "$BASETOOLS_DIR"/GenFw --rebase 0x10000 -o "$BUILD_DIR_ARCH/EfiLoader.efi" "$BUILD_DIR_ARCH/EfiLoader.efi"
-      "$BASETOOLS_DIR"/EfiLdrImage -o "${BUILD_DIR}"/FV/Efildr32 \
-       "${BUILD_DIR}"/${TARGETARCH}/EfiLoader.efi                \
-       "${BUILD_DIR}"/FV/DxeIpl${TARGETARCH}.z                   \
-       "${BUILD_DIR}"/FV/DxeMain${TARGETARCH}.z                  \
-       "${BUILD_DIR}"/FV/DUETEFIMAINFV${TARGETARCH}.z
-
-      cat $BOOTSECTOR_BIN_DIR/start32H.com2 $BOOTSECTOR_BIN_DIR/efi32.com3 \
-       "${BUILD_DIR}"/FV/Efildr32 > "${BUILD_DIR}"/FV/boot
-
+      if (( $NOBOOTFILES == 0 )); then
+        "$BASETOOLS_DIR"/GenFw --rebase 0x10000 -o "$BUILD_DIR_ARCH/EfiLoader.efi" "$BUILD_DIR_ARCH/EfiLoader.efi"
+        "$BASETOOLS_DIR"/EfiLdrImage -o "${BUILD_DIR}"/FV/Efildr32 \
+        "${BUILD_DIR}"/${TARGETARCH}/EfiLoader.efi                \
+        "${BUILD_DIR}"/FV/DxeIpl${TARGETARCH}.z                   \
+        "${BUILD_DIR}"/FV/DxeMain${TARGETARCH}.z                  \
+        "${BUILD_DIR}"/FV/DUETEFIMAINFV${TARGETARCH}.z
+        cat $BOOTSECTOR_BIN_DIR/start32H.com2 $BOOTSECTOR_BIN_DIR/efi32.com3 \
+        "${BUILD_DIR}"/FV/Efildr32 > "${BUILD_DIR}"/FV/boot
+      fi
       rm -Rf "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers3* 2> /dev/null
       rm -Rf "$CLOVER_PKG_DIR"/drivers-Off/drivers3* 2> /dev/null
 
@@ -704,7 +801,7 @@ MainPostBuildScript() {
         copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers32/$efi-32.efi
       done
 
-      if [[ $M_NOGRUB -eq 0 ]]; then
+      if [[ $M_NOGRUB -eq 0 ]] && (( $NOBOOTFILES == 0 )); then
         binArray=( GrubEXFAT GrubISO9660 GrubNTFS GrubUDF )
         for efi in "${binArray[@]}"
         do
@@ -731,38 +828,39 @@ MainPostBuildScript() {
 
     if [[ "$TARGETARCH" = X64 ]]; then
       cloverEFIFile=boot$((6 + USE_BIOS_BLOCKIO))
-
-      "$BASETOOLS_DIR"/GenFw --rebase 0x10000 -o "$BUILD_DIR_ARCH/EfiLoader.efi" "$BUILD_DIR_ARCH/EfiLoader.efi"
-      "$BASETOOLS_DIR"/EfiLdrImage -o "${BUILD_DIR}"/FV/Efildr64 \
-      "$BUILD_DIR_ARCH"/EfiLoader.efi                \
-      "${BUILD_DIR}"/FV/DxeIpl${TARGETARCH}.z        \
-      "${BUILD_DIR}"/FV/DxeMain${TARGETARCH}.z       \
-      "${BUILD_DIR}"/FV/DUETEFIMAINFV${TARGETARCH}.z
-      if [[ "$GENPAGE" -eq 0 && "$USE_LOW_EBDA" -ne 0 ]]; then
-        if [[ "$SYSNAME" == Linux ]]; then
-          local -r EL_SIZE=$(stat -c "%s" "${BUILD_DIR}"/FV/Efildr64)
+     if (( $NOBOOTFILES == 0 )); then
+        "$BASETOOLS_DIR"/GenFw --rebase 0x10000 -o "$BUILD_DIR_ARCH/EfiLoader.efi" "$BUILD_DIR_ARCH/EfiLoader.efi"
+        "$BASETOOLS_DIR"/EfiLdrImage -o "${BUILD_DIR}"/FV/Efildr64 \
+        "$BUILD_DIR_ARCH"/EfiLoader.efi                \
+        "${BUILD_DIR}"/FV/DxeIpl${TARGETARCH}.z        \
+        "${BUILD_DIR}"/FV/DxeMain${TARGETARCH}.z       \
+        "${BUILD_DIR}"/FV/DUETEFIMAINFV${TARGETARCH}.z
+        if [[ "$GENPAGE" -eq 0 && "$USE_LOW_EBDA" -ne 0 ]]; then
+          if [[ "$SYSNAME" == Linux ]]; then
+            local -r EL_SIZE=$(stat -c "%s" "${BUILD_DIR}"/FV/Efildr64)
+          else
+            local -r EL_SIZE=$(stat -f "%z" "${BUILD_DIR}"/FV/Efildr64)
+          fi
+          if (( $((EL_SIZE)) > 417792 )); then
+            echo 'warning: boot file bigger than low-ebda permits, switching to --std-ebda'
+            USE_LOW_EBDA=0
+          fi
+        fi
+        local -ar COM_NAMES=(H H2 H3 H4 H5 H6 H5 H6)           # Note: (H{,2,3,4,5,6,5,6}) works in Linux bash, but not Darwin bash
+        startBlock=Start64${COM_NAMES[$((GENPAGE << 2 | USE_LOW_EBDA << 1 | USE_BIOS_BLOCKIO))]}.com
+        if [[ "$GENPAGE" -ne 0 ]]; then
+          cat $BOOTSECTOR_BIN_DIR/$startBlock $BOOTSECTOR_BIN_DIR/efi64.com3 "${BUILD_DIR}"/FV/Efildr64 > "${BUILD_DIR}"/FV/boot
         else
-          local -r EL_SIZE=$(stat -f "%z" "${BUILD_DIR}"/FV/Efildr64)
-        fi
-        if (( $((EL_SIZE)) > 417792 )); then
-          echo 'warning: boot file bigger than low-ebda permits, switching to --std-ebda'
-          USE_LOW_EBDA=0
-        fi
-      fi
-      local -ar COM_NAMES=(H H2 H3 H4 H5 H6 H5 H6)           # Note: (H{,2,3,4,5,6,5,6}) works in Linux bash, but not Darwin bash
-      startBlock=Start64${COM_NAMES[$((GENPAGE << 2 | USE_LOW_EBDA << 1 | USE_BIOS_BLOCKIO))]}.com
-      if [[ "$GENPAGE" -ne 0 ]]; then
-        cat $BOOTSECTOR_BIN_DIR/$startBlock $BOOTSECTOR_BIN_DIR/efi64.com3 "${BUILD_DIR}"/FV/Efildr64 > "${BUILD_DIR}"/FV/boot
-      else
-        cat $BOOTSECTOR_BIN_DIR/$startBlock $BOOTSECTOR_BIN_DIR/efi64.com3 "${BUILD_DIR}"/FV/Efildr64 > "${BUILD_DIR}"/FV/Efildr20Pure
+          cat $BOOTSECTOR_BIN_DIR/$startBlock $BOOTSECTOR_BIN_DIR/efi64.com3 "${BUILD_DIR}"/FV/Efildr64 > "${BUILD_DIR}"/FV/Efildr20Pure
 
-        if [[ "$USE_LOW_EBDA" -ne 0 ]]; then
-          "$BASETOOLS_DIR"/GenPage "${BUILD_DIR}"/FV/Efildr20Pure -b 0x88000 -f 0x68000 -o "${BUILD_DIR}"/FV/Efildr20
-        else
-          "$BASETOOLS_DIR"/GenPage "${BUILD_DIR}"/FV/Efildr20Pure -o "${BUILD_DIR}"/FV/Efildr20
+          if [[ "$USE_LOW_EBDA" -ne 0 ]]; then
+            "$BASETOOLS_DIR"/GenPage "${BUILD_DIR}"/FV/Efildr20Pure -b 0x88000 -f 0x68000 -o "${BUILD_DIR}"/FV/Efildr20
+          else
+            "$BASETOOLS_DIR"/GenPage "${BUILD_DIR}"/FV/Efildr20Pure -o "${BUILD_DIR}"/FV/Efildr20
+          fi
+          # Create CloverEFI file
+          dd if="${BUILD_DIR}"/FV/Efildr20 of="${BUILD_DIR}"/FV/boot bs=512 skip=1
         fi
-        # Create CloverEFI file
-        dd if="${BUILD_DIR}"/FV/Efildr20 of="${BUILD_DIR}"/FV/boot bs=512 skip=1
       fi
 
       rm -Rf "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers6* 2> /dev/null
@@ -858,7 +956,7 @@ if [[ "$SYSNAME" != Linux ]]; then
 fi
 
 MainBuildScript $@
-if [[ -z $MODULEFILE  ]]; then
+if [[ -z $MODULEFILE  ]] && (( $NOBOOTFILES == 0 )); then
     MainPostBuildScript
 fi
 
