@@ -138,13 +138,13 @@ checkPatch() {
 #      fi
 #      exit 1
 #  fi
-#  if needNASM; then
-#    exit 1
-#  fi
+
   if [[ -f "/opt/local/bin/nasm" ]]; then
     export NASM_PREFIX="/opt/local/bin/"
-  elif [[ -f "(HOME)/src/opt/local/bin/nasm" ]]; then
-    export NASM_PREFIX="(HOME)/src/opt/local/bin/"
+  elif [[ -f "${TOOLCHAIN_DIR}/bin/nasm" ]]; then
+    # using $TOOLCHAIN_DIR here should allow Clover source to be
+    # inside any sub folder instead off only in ~/
+    export NASM_PREFIX="${TOOLCHAIN_DIR}/bin/"
   else
     export NASM_PREFIX=""
   fi
@@ -155,6 +155,9 @@ checkPatch() {
   NASM_VER=`${NASM_PREFIX}nasm -v | sed -nE 's/^.*version.([0-9\.]+).*$/\1/p'`
 
   echo "NASM_VER: $NASM_VER"
+  if [[ "$SYSNAME" == Darwin ]]; then
+    if ! isNASMGood "${NASM_PREFIX}nasm"; then echo "your nasm is not good to build Clover!" && exit 1; fi
+  fi
 }
 
 print_option_help () {
@@ -236,6 +239,13 @@ restoreIFS() {
   IFS=$' \t\n';
 }
 
+IsNumericOnly() {
+  if [[ "${1}" =~ ^-?[0-9]+$ ]]; then
+    return 0 # no, contains other or is empty
+  else
+    return 1 # yes is an integer (no matter for bash if there are zeroes at the beginning comparing it as integer)
+  fi
+}
 needNASM() {
   restoreIFS
   local nasmPath=""
@@ -262,15 +272,11 @@ needNASM() {
     if [[ -x "${good}" ]] ; then
       # only nasm at index 0 is used!
       if [[ "${good}" == "${nasmArray[0]}" ]]; then
-        echo "nasm is ok.."
+        echo "${good} is ok.."
       else
         echo "this one is good:"
         echo "${good}"
       fi
-#        echo "..but will not be used.."
-#        cp -R "${good}" "${NASM_PREFIX}"/
-#        echo "${good} copied to ${NASM_PREFIX}/!"
-      
     else
       # no nasm versions suitable for Clover
       echo "nasm found, but is not good to build Clover.."
@@ -284,26 +290,30 @@ needNASM() {
 }
 
 isNASMGood() {
-  restoreIFS
-
+  # nasm should be greater or equal to 2.12.02 to be good building Clover.
+  # There was a bad macho relocation in outmacho.c, fixed by Zenith432
+  # and accepted by nasm devel during 2.12.rcxx (release candidate)
   IFS='.';
+  result=1
   local array=($( "${1}" -v | grep 'NASM version' | awk '{print $3}') )
 
   case "${#array[@]}" in
-  "2" | "3")
-    if [ "${array[0]}" -ge "3" ]; then
-      return 0;
-    fi
+  "2")
+      if [ "${array[0]}" -ge "3" ]; then result=0; fi
+      if [ "${array[0]}" -eq "2" ] && [ "${array[1]}" -ge "12" ]; then result=0; fi
+  ;;
+  "3")
+      if [ "${array[0]}" -ge "3" ]; then result=0; fi
     if [ "${array[0]}" -eq "2" ] && [ "${array[1]}" -ge "12" ]; then
-      return 0;
+        if IsNumericOnly "${array[2]}" && [ "${array[2]}" -ge "2" ]; then result=0; fi
     fi
   ;;
     *)
     echo "Unknown nasm version format.."
   ;;
   esac
-
-  return 1
+  restoreIFS
+  return $result
 }
 
 # Check Xcode toolchain
