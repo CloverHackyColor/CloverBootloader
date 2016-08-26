@@ -4756,13 +4756,13 @@ UINTN RunMenu(IN REFIT_MENU_SCREEN *Screen, OUT REFIT_MENU_ENTRY **ChosenEntry)
 UINT32 EncodeOptions(CHAR16 *Options)
 {
   UINT32 OptionsBits = 0;
-  if (StrStr(Options, L"-v")) {
+  if (StrStr(Options, L"-v ")) {
     OptionsBits |= OPT_VERBOSE;
   }
-  if (StrStr(Options, L"-s")) {
+  if (StrStr(Options, L"-s ")) {
     OptionsBits |= OPT_SINGLE_USER;
   }
-  if (StrStr(Options, L"-x")) {
+  if (StrStr(Options, L"-x ")) {
     OptionsBits |= OPT_SAFE;
   }
   if (StrStr(Options, L"arch=i386")) {
@@ -4804,13 +4804,13 @@ UINT32 EncodeOptions(CHAR16 *Options)
 VOID DecodeOptions(LOADER_ENTRY *Entry)
 {  
   if (gSettings.OptionsBits & OPT_VERBOSE) {
-    Entry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"-v");
+    Entry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"-v ");
   }
   if (gSettings.OptionsBits & OPT_SINGLE_USER) {
-    Entry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"-s");
+    Entry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"-s ");
   }
   if (gSettings.OptionsBits & OPT_SAFE) {
-    Entry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"-x");
+    Entry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"-x ");
   }
   if (gSettings.OptionsBits & OPT_I386) {
     Entry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"arch=i386");
