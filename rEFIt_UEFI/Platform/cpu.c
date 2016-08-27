@@ -448,6 +448,7 @@ VOID GetCPUProperties (VOID)
            case CPU_MODEL_HASWELL_ULT:
            case CPU_MODEL_CRYSTALWELL:
            case CPU_MODEL_BROADWELL_HQ:
+           case CPU_MODEL_BROADWELL_E5:
            case CPU_MODEL_SKYLAKE_U:
            case CPU_MODEL_SKYLAKE_S:
              gCPUStructure.TSCFrequency = MultU64x32(gCPUStructure.CurrentSpeed, Mega); //MHz -> Hz
