@@ -723,17 +723,17 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
       AddMenuCheck(SubScreen, "OSX 32bit",          OPT_I386, 68);
       AddMenuCheck(SubScreen, "OSX 64bit",          OPT_X64,  68);
     }
-    AddMenuCheck(SubScreen, "Verbose",              OPT_VERBOSE, 68);
-    AddMenuCheck(SubScreen, "Single User",          OPT_SINGLE_USER, 68);
-    AddMenuCheck(SubScreen, "Safe Mode",            OPT_SAFE, 68);
-    AddMenuCheck(SubScreen, "nv_disable=1",         OPT_NVDISABLE, 68);
-    AddMenuCheck(SubScreen, "nvda_drv=1",           OPT_NVWEBON, 68); 
-    AddMenuCheck(SubScreen, "Disable PowerNap",     OPT_POWERNAPOFF, 68);
-    AddMenuCheck(SubScreen, "Use XNU CPUPM",        OPT_XCPM, 68);    
-    AddMenuCheck(SubScreen, "Disable Intel Idle Mode", OPT_GNOIDLE, 68); 
-    AddMenuCheck(SubScreen, "Sleep Uses Shutdown",  OPT_GNOSLEEP, 68);
-    AddMenuCheck(SubScreen, "Force No Msi Int",     OPT_GNOMSI, 68);
-    AddMenuCheck(SubScreen, "EHC manage USB2 ports",   OPT_EHCUSB, 68);
+    AddMenuCheck(SubScreen, "Verbose (-v)",                               OPT_VERBOSE, 68);
+    AddMenuCheck(SubScreen, "Single User (-s)",                           OPT_SINGLE_USER, 68);
+    AddMenuCheck(SubScreen, "Safe Mode (-x)",                             OPT_SAFE, 68);
+    AddMenuCheck(SubScreen, "Disable Nvidia (nv_disable=1)",              OPT_NVDISABLE, 68);
+    AddMenuCheck(SubScreen, "Use Nvidia Web (nvda_drv=1)",                OPT_NVWEBON, 68);
+    AddMenuCheck(SubScreen, "Disable PowerNap (darkwake=0)",              OPT_POWERNAPOFF, 68);
+    AddMenuCheck(SubScreen, "Use XNU CPUPM (-xcpm)",                      OPT_XCPM, 68);
+    AddMenuCheck(SubScreen, "Disable Intel Idle Mode (-gux_no_idle)",     OPT_GNOIDLE, 68);
+    AddMenuCheck(SubScreen, "Sleep Uses Shutdown (-gux_nosleep)",         OPT_GNOSLEEP, 68);
+    AddMenuCheck(SubScreen, "Force No Msi Int (-gux_nomsi)",              OPT_GNOMSI, 68);
+    AddMenuCheck(SubScreen, "EHC manage USB2 ports (-gux_defer_usb2)",    OPT_EHCUSB, 68);
 
     if (gSettings.CsrActiveConfig == 0) {
       AddMenuCheck(SubScreen, "No SIP", OSFLAG_NOSIP, 69);
