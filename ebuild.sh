@@ -72,7 +72,9 @@ declare -r VERSTXT="vers.txt"
 if [[ -x "/usr/bin/sw_vers" ]]; then
   declare -r OSVER="$(sw_vers -productVersion | sed -e 's/\.0$//g')"
 elif [[ -x "/usr/bin/lsb_release" ]]; then
-  declare -r OSVER="$(lsb_release -sir)"
+  # Linux print the name+version in in two lines, sed serves to made it in one line!
+  # ..otherwise Clover fail because Version.h will have a line with no null terminated char.
+  declare -r OSVER="$(lsb_release -sir | sed -e ':a;N;$!ba;s/\n/ /g')"
 fi
 PATCH_FILE=
 
@@ -123,13 +125,19 @@ checkPatch() {
       esac
     fi
 
-    if [[ ! -x "$TOOLCHAIN_DIR"/cross/bin/x86_64-clover-linux-gnu-gcc && \
-          ! -x "$TOOLCHAIN_DIR"/cross/bin/i686-clover-linux-gnu-gcc ]] && [[ $TOOLCHAIN == GCC* ]] ; then
-        echo "No clover toolchain found !" >&2
-        echo "Build it with the buidgcc.sh script or defined the TOOLCHAIN_DIR variable." >&2
-        exit 1
-    fi
+#  Ubuntu 16 has a good gcc and there's no need for a cross compilation
+#  ..also will fail because /usr/bin/gcc is a symlink, and anyway we already have
+#  a check some lines above
+
+#  if [[ ! -x "$TOOLCHAIN_DIR"/cross/bin/x86_64-clover-linux-gnu-gcc && \
+#    ! -x "$TOOLCHAIN_DIR"/cross/bin/i686-clover-linux-gnu-gcc ]] && [[ $TOOLCHAIN == GCC* ]] ; then
+#    echo "No clover toolchain found !" >&2
+#    echo "Build it with the buidgcc.sh script or defined the TOOLCHAIN_DIR variable." >&2
+#    exit 1
+#  fi
   fi
+
+# Linux does not come with nasm installed!
 
 #  if [[ ! -x "$TOOLCHAIN_DIR"/bin/nasm ]]; then
 #      echo "No nasm binary found in toolchain directory !" >&2
@@ -143,7 +151,7 @@ checkPatch() {
     export NASM_PREFIX="/opt/local/bin/"
   elif [[ -f "${TOOLCHAIN_DIR}/bin/nasm" ]]; then
     # using $TOOLCHAIN_DIR here should allow Clover source to be
-    # inside any sub folder instead off only in ~/
+    # inside any sub folder instead of only in ~/
     export NASM_PREFIX="${TOOLCHAIN_DIR}/bin/"
   else
     export NASM_PREFIX=""
@@ -293,23 +301,44 @@ isNASMGood() {
   # nasm should be greater or equal to 2.12.02 to be good building Clover.
   # There was a bad macho relocation in outmacho.c, fixed by Zenith432
   # and accepted by nasm devel during 2.12.rcxx (release candidate)
+
   IFS='.';
   result=1
-  local array=($( "${1}" -v | grep 'NASM version' | awk '{print $3}') )
+
+  local array=($( "${1}" -v | grep 'NASM version' | awk '{print $3}' ))
+
+  local index0=0; local index1=0; local index2=0
+
+  # we accept rc versions too (with outmacho.c fix):
+  # http://www.nasm.us/pub/nasm/releasebuilds/
+
+  if [ "${#array[@]}" -eq 2 ];then
+    index0="$(echo ${array[0]} | egrep -o '^[^rc]+')"
+    index1="$(echo ${array[1]} | egrep -o '^[^rc]+')"
+  fi
+  if [ "${#array[@]}" -eq 3 ];then
+    index0="$(echo ${array[0]} | egrep -o '^[^rc]+')"
+    index1="$(echo ${array[1]} | egrep -o '^[^rc]+')"
+    index2="$(echo ${array[2]} | egrep -o '^[^rc]+')"
+    fi
+
+  for comp in ${array[@]}
+  do
+    if ! IsNumericOnly $comp; then restoreIFS && echo "invalid nasm version component: \"$comp\"" && return $result;fi
+  done
 
   case "${#array[@]}" in
-  "2")
-      if [ "${array[0]}" -ge "3" ]; then result=0; fi
-      if [ "${array[0]}" -eq "2" ] && [ "${array[1]}" -ge "12" ]; then result=0; fi
+  "2") # two components like "2.12"
+    if [ "${index0}" -ge "3" ]; then result=0; fi # index0 > 3 good!
+    if [ "${index0}" -eq "2" ] && [ "${index1}" -gt "12" ]; then result=0; fi # index0 = 2 and index1 > 12 good!
   ;;
-  "3")
-      if [ "${array[0]}" -ge "3" ]; then result=0; fi
-    if [ "${array[0]}" -eq "2" ] && [ "${array[1]}" -ge "12" ]; then
-        if IsNumericOnly "${array[2]}" && [ "${array[2]}" -ge "2" ]; then result=0; fi
-    fi
+  "3") # three components like "2.12.02"
+    if [ "${index0}" -ge "3" ]; then result=0; fi # index 0 > 3 good!
+    if [ "${index0}" -eq "2" ] && [ "${index1}" -gt "12" ]; then result=0; fi # index0 = 2 and index1 > 12 good!
+    if [ "${index0}" -eq "2" ] && [ "${index1}" -eq "12" ] && [ "${index2}" -ge "2" ]; then result=0; fi
   ;;
-    *)
-    echo "Unknown nasm version format.."
+  *) # don' know a version of nasm with 1 component or > 3
+    echo "Unknown nasm version format (${1}), expected 2 or three components.."
   ;;
   esac
   restoreIFS
@@ -540,8 +569,8 @@ MainBuildScript() {
     if [[ -f "$CLOVERROOT"/rEFIt_UEFI/Version.h ]]; then
         local builtedRev=$(cat "$CLOVERROOT"/rEFIt_UEFI/Version.h  \
                            | grep '#define FIRMWARE_REVISION L' | awk -v FS="(\"|\")" '{print $2}')
-#echo "old revision ${builtedRev}" >echo.txt
-#echo "new revision ${repoRev}" >>echo.txt
+#    echo "old revision ${builtedRev}" >echo.txt
+#    echo "new revision ${repoRev}" >>echo.txt
 
         if [ "${repoRev}" = "${builtedRev}" ]; then SkipAutoGen=1; fi
     fi
@@ -702,7 +731,6 @@ copyBin() {
 }
 
 setInitBootMsg(){
-
     local byte="35"
     case "${1}" in
     *boot2)
