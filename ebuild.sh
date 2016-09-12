@@ -707,6 +707,9 @@ MainBuildScript() {
         clover_build_info="${clover_build_info} | XCODE: ${XCODE_VERSION}"
       fi
     
+      clover_build_info=$(echo ${clover_build_info} | sed -e 's/ -fr / /' \
+                         | sed -e 's/ --force-rebuild / /' | sed -e 's/ --skip-autogen / /' )
+
       echo "#define BUILDINFOS_STR \"${clover_build_info}\"" >> "$CLOVERROOT"/Version.h
 
       cp "$CLOVERROOT"/Version.h "$CLOVERROOT"/rEFIt_UEFI/
