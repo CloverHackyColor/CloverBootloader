@@ -727,7 +727,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
     AddMenuCheck(SubScreen, "Single User (-s)",                           OPT_SINGLE_USER, 68);
     AddMenuCheck(SubScreen, "Safe Mode (-x)",                             OPT_SAFE, 68);
     AddMenuCheck(SubScreen, "Disable Nvidia (nv_disable=1)",              OPT_NVDISABLE, 68);
-    AddMenuCheck(SubScreen, "Use Nvidia Web (nvda_drv=1)",                OPT_NVWEBON, 68);
+//    AddMenuCheck(SubScreen, "Use Nvidia Web (nvda_drv=1)",                OPT_NVWEBON, 68);
     AddMenuCheck(SubScreen, "Disable PowerNap (darkwake=0)",              OPT_POWERNAPOFF, 68);
     AddMenuCheck(SubScreen, "Use XNU CPUPM (-xcpm)",                      OPT_XCPM, 68);
     AddMenuCheck(SubScreen, "Disable Intel Idle Mode (-gux_no_idle)",     OPT_GNOIDLE, 68);

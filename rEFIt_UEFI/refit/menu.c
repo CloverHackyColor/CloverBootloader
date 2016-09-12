@@ -4877,9 +4877,11 @@ UINT32 EncodeOptions(CHAR16 *Options)
   if (StrStr(Options, L"nv_disable=1")) {
     OptionsBits |= OPT_NVDISABLE;
   }
+  /*
   if (StrStr(Options, L"nvda_drv=1")) {
     OptionsBits |= OPT_NVWEBON;
   }
+   */
   if (StrStr(Options, L"darkwake=0")) {
     OptionsBits |= OPT_POWERNAPOFF;
   }
@@ -4922,9 +4924,11 @@ VOID DecodeOptions(LOADER_ENTRY *Entry)
   if (gSettings.OptionsBits & OPT_NVDISABLE) {
     Entry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"nv_disable=1");
   }
+  /*
   if (gSettings.OptionsBits & OPT_NVWEBON) {
     Entry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"nvda_drv=1");
   }
+   */
   if (gSettings.OptionsBits & OPT_POWERNAPOFF) {
     Entry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"darkwake=0");
   }
