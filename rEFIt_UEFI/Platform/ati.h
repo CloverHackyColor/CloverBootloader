@@ -91,6 +91,8 @@ typedef enum {
     CHIP_FAMILY_TOPAS,
     CHIP_FAMILY_AMETHYST,
     CHIP_FAMILY_TONGA,
+  CHIP_FAMILY_ELLESMERE, /* Polaris 10 */
+  CHIP_FAMILY_BAFFIN,   /* Polaris 11 */
 	CHIP_FAMILY_LAST
 } ati_chip_family_t;
 

@@ -274,12 +274,17 @@ radeon_card_info_t radeon_cards[] = {
   //	{ 0x67BA,	0x00000000, CHIP_FAMILY_HAWAII,	"AMD Radeon",             kFutomaki	},
   //	{ 0x67BE,	0x00000000, CHIP_FAMILY_HAWAII,	"AMD Radeon",             kFutomaki	},
   
-  //Polaris
-  { 0x67C0,	0x00000000, CHIP_FAMILY_HAWAII,	"AMD Radeon Polaris 10",        kNull	},
-  { 0x67DF,	0x00000000, CHIP_FAMILY_HAWAII,	"AMD Radeon RX480",             kNull	},
-  { 0x67E0,	0x00000000, CHIP_FAMILY_HAWAII,	"AMD Radeon RX460",             kNull	},
-  { 0x67EF,	0x00000000, CHIP_FAMILY_HAWAII,	"AMD Radeon RX460",             kNull	},
-  { 0x67FF,	0x00000000, CHIP_FAMILY_HAWAII,	"AMD Radeon Polaris 11",        kNull	},
+  //Polaris 10
+  { 0x67C0,	0x00000000, CHIP_FAMILY_ELLESMERE,	"AMD Radeon Polaris 10",    kNull	},
+  { 0x67DF,	0x00000000, CHIP_FAMILY_ELLESMERE,	"AMD Radeon RX480",         kNull	},
+  //Polaris 11
+  { 0x67E0,	0x00000000, CHIP_FAMILY_BAFFIN,	"AMD Radeon Polaris 11",        kNull	},
+  { 0x67E1,	0x00000000, CHIP_FAMILY_BAFFIN,	"AMD Radeon Polaris 11",        kNull	},
+  { 0x67E8,	0x00000000, CHIP_FAMILY_BAFFIN,	"AMD Radeon Polaris 11",        kNull	},
+  { 0x67E9,	0x00000000, CHIP_FAMILY_BAFFIN,	"AMD Radeon Polaris 11",        kNull	},
+  { 0x67EB,	0x00000000, CHIP_FAMILY_BAFFIN,	"AMD Radeon Polaris 11",        kNull	},
+  { 0x67EF,	0x00000000, CHIP_FAMILY_BAFFIN,	"AMD Radeon RX460",             kNull	},
+  { 0x67FF,	0x00000000, CHIP_FAMILY_BAFFIN,	"AMD Radeon Polaris 11",        kNull	},
   
   // PITCAIRN
   { 0x6800,	0x00000000, CHIP_FAMILY_PITCAIRN,	"AMD Radeon HD 7970M",        kBuri	}, // Mobile
