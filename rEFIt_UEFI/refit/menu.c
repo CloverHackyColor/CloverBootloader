@@ -1089,6 +1089,8 @@ VOID ApplyInputs(VOID)
           }
         } else if (StrCmp(SysVariablesTmp->Key, L"InjectSystemID") == 0) {
           gSettings.InjectSystemID = SysVariablesTmp->MenuItem.BValue;
+        } else if (StrCmp(SysVariablesTmp->Key, L"NvidiaWeb") == 0) {
+          gSettings.NvidiaWeb = SysVariablesTmp->MenuItem.BValue;
         }
       }
       SysVariablesTmp = SysVariablesTmp->Next;

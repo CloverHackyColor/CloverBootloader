@@ -1515,6 +1515,18 @@ VOID SetVariablesFromNvram()
     }
     FreePool(arg);
   }
+  if (tmpString) {
+    FreePool(tmpString);
+  }
+  
+  tmpString = GetNvramVariable(L"nvda_drv", &gEfiAppleBootGuid, NULL, NULL);
+  if (tmpString && AsciiStrCmp(tmpString, "1") == 0) {
+    gSettings.NvidiaWeb = TRUE;
+  }
+  if (tmpString) {
+    FreePool(tmpString);
+  }
+
 }
 
 VOID SetOEMPath(CHAR16 *ConfName)

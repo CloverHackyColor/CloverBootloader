@@ -971,7 +971,8 @@ typedef struct {
   UINT8                   Dcfg[8];
   UINT8                   NVCAP[20];
   INT8                    BootDisplay;
-  UINT8                   pad41[3];
+  BOOLEAN                 NvidiaWeb;
+  UINT8                   pad41[2];
   UINT32                  DualLink;
   UINT32                  IgPlatform;
 

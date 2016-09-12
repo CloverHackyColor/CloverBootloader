@@ -3709,7 +3709,11 @@ finish:
       break;
     }
   }
-
+  
+  if (ChosenTheme != NULL) {
+    FreePool (ChosenTheme);
+  }
+  
   //  DBG("8\n");
   PrepareFont();
   return Status;
@@ -5291,9 +5295,11 @@ GetUserSettings(
       gSettings.InjectSystemID = gSettings.InjectSystemID ? !IsPropertyFalse(Prop) : IsPropertyTrue (Prop);
 
       Prop                     = GetProperty (DictPointer, "ExposeSysVariables");
-      if (Prop && IsPropertyTrue (Prop)) {
-        gSettings.ExposeSysVariables = TRUE;
-      }
+      gSettings.ExposeSysVariables = IsPropertyTrue (Prop);
+      
+      Prop                     = GetProperty (DictPointer, "NvidiaWeb");
+      gSettings.NvidiaWeb      = IsPropertyTrue (Prop);
+
     }
 
     // SysVars -->
@@ -5331,7 +5337,7 @@ GetUserSettings(
       SysVariablesTmp                    = AllocateZeroPool (sizeof(SYSVARIABLES));
       SysVariablesTmp->Key               = PoolPrint(L"InjectSystemID");
       if (GlobalConfig.TextOnly) {
-      SysVariablesTmp->MenuItem.SValue   = gSettings.InjectSystemID?L"[+]":L"[ ]";
+        SysVariablesTmp->MenuItem.SValue   = gSettings.InjectSystemID?L"[+]":L"[ ]";
       }
       SysVariablesTmp->MenuItem.BValue   = gSettings.InjectSystemID;
       SysVariablesTmp->MenuItem.ItemType = BoolValue;
@@ -5347,6 +5353,16 @@ GetUserSettings(
         SysVariables                       = SysVariablesTmp;
       }
     }
+    
+    SysVariablesTmp                    = AllocateZeroPool (sizeof(SYSVARIABLES));
+    SysVariablesTmp->Key               = PoolPrint(L"NvidiaWeb");
+    if (GlobalConfig.TextOnly) {
+      SysVariablesTmp->MenuItem.SValue   = gSettings.NvidiaWeb?L"[+]":L"[ ]";
+    }
+    SysVariablesTmp->MenuItem.BValue   = gSettings.NvidiaWeb;
+    SysVariablesTmp->MenuItem.ItemType = BoolValue;
+    SysVariablesTmp->Next              = SysVariables;
+    SysVariables                       = SysVariablesTmp;
 
     if (SysVarsTmp != NULL) {
       FreePool(SysVarsTmp);

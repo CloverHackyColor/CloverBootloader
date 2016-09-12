@@ -144,6 +144,7 @@ SetVariablesForOSX()
   UINT32  FwFeaturesMask;
   UINT32  Color;
   CHAR8   *None;
+  CHAR8   *NvidiaWebValue;
 
   CHAR16  *KbdPrevLang;
   UINTN   LangLen;
@@ -267,6 +268,13 @@ SetVariablesForOSX()
 
   if (gSettings.BooterConfig != 0xFFFF) {
     SetNvramVariable(L"bootercfg", &gEfiAppleBootGuid, Attributes, sizeof(gSettings.BooterConfig), &gSettings.BooterConfig);
+  }
+  
+  if (gSettings.NvidiaWeb) {
+    NvidiaWebValue = "1";
+    SetNvramVariable(L"nvda_drv", &gEfiAppleBootGuid, Attributes, 2, (VOID*)NvidiaWebValue);
+  } else {
+    DeleteNvramVariable(L"nvda_drv", &gEfiAppleBootGuid);
   }
 
   return EFI_SUCCESS;
