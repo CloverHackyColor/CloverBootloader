@@ -2030,6 +2030,6 @@ VOID FinalizeSmbios() //continue
 		//PauseForKey(L"installing SMBIOS in Hob\n");
 		*Table = (UINT32)(UINTN)SmbiosEpsNew;
 	} 
-	
+//	egSaveFile(NULL, L"EFI\\CLOVER\\misc\\smbios.bin", (UINT8*)(UINTN)SmbiosEpsNew, SmbiosEpsNew->TableLength);
 	return;
 }

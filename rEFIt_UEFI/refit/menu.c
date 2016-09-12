@@ -365,6 +365,7 @@ VOID FillInputs(BOOLEAN New)
     InputItems[InputItemsCount++].BValue = bit;
   }
 */
+  
   InputItemsCount = 67;
   InputItems[InputItemsCount].ItemType = CheckBit; //67
   InputItems[InputItemsCount++].IValue = gSettings.FixDsdt; 
@@ -373,7 +374,6 @@ VOID FillInputs(BOOLEAN New)
   InputItems[InputItemsCount].ItemType = CheckBit; //69
   InputItems[InputItemsCount++].IValue = gSettings.FlagsBits;
 
-  
   InputItems[InputItemsCount].ItemType = Decimal;  //70
   InputItems[InputItemsCount++].SValue = PoolPrint(L"%02d", gSettings.PointerSpeed);
   InputItems[InputItemsCount].ItemType = Decimal;  //71
@@ -534,6 +534,12 @@ VOID FillInputs(BOOLEAN New)
     InputItems[InputItemsCount++].BValue = bit;
   }
 */
+  
+  // CSR - aka System Integrity Protection configuration
+  InputItemsCount = 111;
+  InputItems[InputItemsCount].ItemType = CheckBit; //111
+  InputItems[InputItemsCount++].IValue = gSettings.CsrActiveConfig;
+  
   //menu for drop table
   if (gSettings.ACPIDropTables) {
     ACPI_DROP_TABLE *DropTable = gSettings.ACPIDropTables;
@@ -1030,6 +1036,12 @@ VOID ApplyInputs(VOID)
     gBootChanged = TRUE;
   }
 
+  // CSR
+  i = 111; // 111
+  if (InputItems[i].Valid) {
+    gSettings.CsrActiveConfig = InputItems[i].IValue; // i = 111
+  }
+
   if (SysVariables) {
     SYSVARIABLES *SysVariablesTmp = SysVariables;
     CHAR8 *SysVarsTmp = NULL;
@@ -1092,7 +1104,7 @@ VOID ApplyInputs(VOID)
   }
 }
 
-VOID AddMenuInfo(  REFIT_MENU_SCREEN  *SubScreen, CHAR16 *Line)
+VOID AddMenuInfo(REFIT_MENU_SCREEN *SubScreen, CHAR16 *Line)
 {
   REFIT_INPUT_DIALOG *InputBootArgs;
 
@@ -1167,260 +1179,260 @@ VOID HelpRefit(VOID)
     switch (gLanguage)
     {
       case russian:
-        AddMenuInfoLine(&HelpMenu, L"ESC - Выход из подменю, обновление главного меню");
-        AddMenuInfoLine(&HelpMenu, L"F1  - Помощь по горячим клавишам");
-        AddMenuInfoLine(&HelpMenu, L"F2  - Сохранить отчет в preboot.log (только если FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F3  - Показать скрытые значки в меню");
-        AddMenuInfoLine(&HelpMenu, L"F4  - Родной DSDT сохранить в EFI/CLOVER/ACPI/origin/ (FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F5  - Патченный DSDT сохранить в EFI/CLOVER/ACPI/origin/ (FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F6  - Сохранить ВидеоБиос в EFI/CLOVER/misc/ (FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F10 - Снимок экрана в папку EFI/CLOVER/misc/ (FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F12 - Извлечь указанный DVD");
-        AddMenuInfoLine(&HelpMenu, L"Пробел - Подробнее о выбранном пункте");
-        AddMenuInfoLine(&HelpMenu, L"Цифры 1-9 - Быстрый запуск тома по порядку в меню");
-        AddMenuInfoLine(&HelpMenu, L"A - О загрузчике");
-        AddMenuInfoLine(&HelpMenu, L"O - Дополнительные настройки");
-        AddMenuInfoLine(&HelpMenu, L"R - Теплый перезапуск");
-        AddMenuInfoLine(&HelpMenu, L"U - Завершить работу в Кловере");
+        AddMenuInfo(&HelpMenu, L"ESC - Выход из подменю, обновление главного меню");
+        AddMenuInfo(&HelpMenu, L"F1  - Помощь по горячим клавишам");
+        AddMenuInfo(&HelpMenu, L"F2  - Сохранить отчет в preboot.log (только если FAT32)");
+        AddMenuInfo(&HelpMenu, L"F3  - Показать скрытые значки в меню");
+        AddMenuInfo(&HelpMenu, L"F4  - Родной DSDT сохранить в EFI/CLOVER/ACPI/origin/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F5  - Патченный DSDT сохранить в EFI/CLOVER/ACPI/origin/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F6  - Сохранить ВидеоБиос в EFI/CLOVER/misc/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F10 - Снимок экрана в папку EFI/CLOVER/misc/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F12 - Извлечь указанный DVD");
+        AddMenuInfo(&HelpMenu, L"Пробел - Подробнее о выбранном пункте");
+        AddMenuInfo(&HelpMenu, L"Цифры 1-9 - Быстрый запуск тома по порядку в меню");
+        AddMenuInfo(&HelpMenu, L"A - О загрузчике");
+        AddMenuInfo(&HelpMenu, L"O - Дополнительные настройки");
+        AddMenuInfo(&HelpMenu, L"R - Теплый перезапуск");
+        AddMenuInfo(&HelpMenu, L"U - Завершить работу в Кловере");
         break;
       case ukrainian:
-        AddMenuInfoLine(&HelpMenu, L"ESC - Вийти з меню, оновити головне меню");
-        AddMenuInfoLine(&HelpMenu, L"F1  - Ця довідка");
-        AddMenuInfoLine(&HelpMenu, L"F2  - Зберегти preboot.log (тiльки FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F3  - Відображати приховані розділи");
-        AddMenuInfoLine(&HelpMenu, L"F4  - Зберегти OEM DSDT в EFI/CLOVER/ACPI/origin/ (FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F5  - Зберегти патчений DSDT в EFI/CLOVER/ACPI/origin/ (FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F6  - Зберегти VideoBios в EFI/CLOVER/misc/ (FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F10 - Зберегти знімок екрану в EFI/CLOVER/misc/ (FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F12 - Відкрити обраний диск (DVD)");
-        AddMenuInfoLine(&HelpMenu, L"Пробіл - докладніше про обраний пункт меню");
-        AddMenuInfoLine(&HelpMenu, L"Клавіші 1-9 -  клавіші пунктів меню");
-        AddMenuInfoLine(&HelpMenu, L"A - Про систему");
-        AddMenuInfoLine(&HelpMenu, L"O - Опції меню");
-        AddMenuInfoLine(&HelpMenu, L"R - Перезавантаження");
-        AddMenuInfoLine(&HelpMenu, L"U - Відключити ПК");
+        AddMenuInfo(&HelpMenu, L"ESC - Вийти з меню, оновити головне меню");
+        AddMenuInfo(&HelpMenu, L"F1  - Ця довідка");
+        AddMenuInfo(&HelpMenu, L"F2  - Зберегти preboot.log (тiльки FAT32)");
+        AddMenuInfo(&HelpMenu, L"F3  - Відображати приховані розділи");
+        AddMenuInfo(&HelpMenu, L"F4  - Зберегти OEM DSDT в EFI/CLOVER/ACPI/origin/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F5  - Зберегти патчений DSDT в EFI/CLOVER/ACPI/origin/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F6  - Зберегти VideoBios в EFI/CLOVER/misc/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F10 - Зберегти знімок екрану в EFI/CLOVER/misc/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F12 - Відкрити обраний диск (DVD)");
+        AddMenuInfo(&HelpMenu, L"Пробіл - докладніше про обраний пункт меню");
+        AddMenuInfo(&HelpMenu, L"Клавіші 1-9 -  клавіші пунктів меню");
+        AddMenuInfo(&HelpMenu, L"A - Про систему");
+        AddMenuInfo(&HelpMenu, L"O - Опції меню");
+        AddMenuInfo(&HelpMenu, L"R - Перезавантаження");
+        AddMenuInfo(&HelpMenu, L"U - Відключити ПК");
         break;
       case spanish:
-        AddMenuInfoLine(&HelpMenu, L"ESC - Salir de submenu o actualizar el menu principal");
-        AddMenuInfoLine(&HelpMenu, L"F1  - Esta Ayuda");
-        AddMenuInfoLine(&HelpMenu, L"F2  - Guardar preboot.log (Solo FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F3  - Show hidden entries");
-        AddMenuInfoLine(&HelpMenu, L"F4  - Guardar DSDT oem en EFI/CLOVER/ACPI/origin/ (FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F5  - Guardar DSDT parcheado en EFI/CLOVER/ACPI/origin/ (FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F6  - Guardar VideoBios en EFI/CLOVER/misc/ (FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F10 - Guardar Captura de pantalla en EFI/CLOVER/misc/ (FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F12 - Expulsar volumen seleccionado (DVD)");
-        AddMenuInfoLine(&HelpMenu, L"Espacio - Detalles acerca selected menu entry");
-        AddMenuInfoLine(&HelpMenu, L"Digitos 1-9 - Atajo a la entrada del menu");
-        AddMenuInfoLine(&HelpMenu, L"A - Menu Acerca de");
-        AddMenuInfoLine(&HelpMenu, L"O - Menu Optiones");
-        AddMenuInfoLine(&HelpMenu, L"R - Reiniciar Equipo");
-        AddMenuInfoLine(&HelpMenu, L"U - Apagar");
+        AddMenuInfo(&HelpMenu, L"ESC - Salir de submenu o actualizar el menu principal");
+        AddMenuInfo(&HelpMenu, L"F1  - Esta Ayuda");
+        AddMenuInfo(&HelpMenu, L"F2  - Guardar preboot.log (Solo FAT32)");
+        AddMenuInfo(&HelpMenu, L"F3  - Show hidden entries");
+        AddMenuInfo(&HelpMenu, L"F4  - Guardar DSDT oem en EFI/CLOVER/ACPI/origin/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F5  - Guardar DSDT parcheado en EFI/CLOVER/ACPI/origin/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F6  - Guardar VideoBios en EFI/CLOVER/misc/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F10 - Guardar Captura de pantalla en EFI/CLOVER/misc/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F12 - Expulsar volumen seleccionado (DVD)");
+        AddMenuInfo(&HelpMenu, L"Espacio - Detalles acerca selected menu entry");
+        AddMenuInfo(&HelpMenu, L"Digitos 1-9 - Atajo a la entrada del menu");
+        AddMenuInfo(&HelpMenu, L"A - Menu Acerca de");
+        AddMenuInfo(&HelpMenu, L"O - Menu Optiones");
+        AddMenuInfo(&HelpMenu, L"R - Reiniciar Equipo");
+        AddMenuInfo(&HelpMenu, L"U - Apagar");
         break;
       case portuguese:
       case brasil:
-        AddMenuInfoLine(&HelpMenu, L"ESC - Sai do submenu, atualiza o menu principal");
-        AddMenuInfoLine(&HelpMenu, L"F1  - Esta ajuda");
-        AddMenuInfoLine(&HelpMenu, L"F2  - Salva preboot.log (somente FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F3  - Show hidden entries");
-        AddMenuInfoLine(&HelpMenu, L"F4  - Salva oem DSDT em EFI/CLOVER/ACPI/origin/ (somente FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F5  - Salva DSDT corrigido em EFI/CLOVER/ACPI/origin/ (somente FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F6  - Salva VideoBios em EFI/CLOVER/misc/ (somente FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F10 - Salva screenshot em EFI/CLOVER/misc/ (somente FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F12 - Ejeta o volume selecionado (DVD)");
-        AddMenuInfoLine(&HelpMenu, L"Espaco - Detalhes sobre a opcao do menu selecionada");
-        AddMenuInfoLine(&HelpMenu, L"Tecle 1-9 - Atalho para as entradas do menu");
-        AddMenuInfoLine(&HelpMenu, L"A - Sobre o Menu");
-        AddMenuInfoLine(&HelpMenu, L"O - Opcoes do Menu");
-        AddMenuInfoLine(&HelpMenu, L"R - Reiniciar");
-        AddMenuInfoLine(&HelpMenu, L"U - Desligar");
+        AddMenuInfo(&HelpMenu, L"ESC - Sai do submenu, atualiza o menu principal");
+        AddMenuInfo(&HelpMenu, L"F1  - Esta ajuda");
+        AddMenuInfo(&HelpMenu, L"F2  - Salva preboot.log (somente FAT32)");
+        AddMenuInfo(&HelpMenu, L"F3  - Show hidden entries");
+        AddMenuInfo(&HelpMenu, L"F4  - Salva oem DSDT em EFI/CLOVER/ACPI/origin/ (somente FAT32)");
+        AddMenuInfo(&HelpMenu, L"F5  - Salva DSDT corrigido em EFI/CLOVER/ACPI/origin/ (somente FAT32)");
+        AddMenuInfo(&HelpMenu, L"F6  - Salva VideoBios em EFI/CLOVER/misc/ (somente FAT32)");
+        AddMenuInfo(&HelpMenu, L"F10 - Salva screenshot em EFI/CLOVER/misc/ (somente FAT32)");
+        AddMenuInfo(&HelpMenu, L"F12 - Ejeta o volume selecionado (DVD)");
+        AddMenuInfo(&HelpMenu, L"Espaco - Detalhes sobre a opcao do menu selecionada");
+        AddMenuInfo(&HelpMenu, L"Tecle 1-9 - Atalho para as entradas do menu");
+        AddMenuInfo(&HelpMenu, L"A - Sobre o Menu");
+        AddMenuInfo(&HelpMenu, L"O - Opcoes do Menu");
+        AddMenuInfo(&HelpMenu, L"R - Reiniciar");
+        AddMenuInfo(&HelpMenu, L"U - Desligar");
         break;
       case italian:
-        AddMenuInfoLine(&HelpMenu, L"ESC - Esci dal submenu, Aggiorna menu principale");
-        AddMenuInfoLine(&HelpMenu, L"F1  - Aiuto");
-        AddMenuInfoLine(&HelpMenu, L"F2  - Salva il preboot.log (solo su FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F3  - Show hidden entries");
-        AddMenuInfoLine(&HelpMenu, L"F4  - Salva il DSDT oem in EFI/CLOVER/ACPI/origin/ (solo suFAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F5  - Salva il patched DSDT in EFI/CLOVER/ACPI/origin/ (FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F6  - Salva il VideoBios in EFI/CLOVER/misc/ (FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F10 - Salva screenshot in EFI/CLOVER/misc/ (solo su FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F12 - Espelli il volume selezionato (DVD)");
-        AddMenuInfoLine(&HelpMenu, L"Spazio - Dettagli sul menu selezionato");
-        AddMenuInfoLine(&HelpMenu, L"Digita 1-9 - Abbreviazioni per il menu");
-        AddMenuInfoLine(&HelpMenu, L"A - Informazioni");
-        AddMenuInfoLine(&HelpMenu, L"O - Menu Opzioni");
-        AddMenuInfoLine(&HelpMenu, L"R - Riavvio");
-        AddMenuInfoLine(&HelpMenu, L"U - Spegnimento");
+        AddMenuInfo(&HelpMenu, L"ESC - Esci dal submenu, Aggiorna menu principale");
+        AddMenuInfo(&HelpMenu, L"F1  - Aiuto");
+        AddMenuInfo(&HelpMenu, L"F2  - Salva il preboot.log (solo su FAT32)");
+        AddMenuInfo(&HelpMenu, L"F3  - Show hidden entries");
+        AddMenuInfo(&HelpMenu, L"F4  - Salva il DSDT oem in EFI/CLOVER/ACPI/origin/ (solo suFAT32)");
+        AddMenuInfo(&HelpMenu, L"F5  - Salva il patched DSDT in EFI/CLOVER/ACPI/origin/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F6  - Salva il VideoBios in EFI/CLOVER/misc/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F10 - Salva screenshot in EFI/CLOVER/misc/ (solo su FAT32)");
+        AddMenuInfo(&HelpMenu, L"F12 - Espelli il volume selezionato (DVD)");
+        AddMenuInfo(&HelpMenu, L"Spazio - Dettagli sul menu selezionato");
+        AddMenuInfo(&HelpMenu, L"Digita 1-9 - Abbreviazioni per il menu");
+        AddMenuInfo(&HelpMenu, L"A - Informazioni");
+        AddMenuInfo(&HelpMenu, L"O - Menu Opzioni");
+        AddMenuInfo(&HelpMenu, L"R - Riavvio");
+        AddMenuInfo(&HelpMenu, L"U - Spegnimento");
         break;
       case german:
-        AddMenuInfoLine(&HelpMenu, L"ESC - Zurueck aus Untermenue, Hauptmenue erneuern");
-        AddMenuInfoLine(&HelpMenu, L"F1  - Diese Hilfe");
-        AddMenuInfoLine(&HelpMenu, L"F2  - Sichere preboot.log (nur mit FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F3  - Show hidden entries");
-        AddMenuInfoLine(&HelpMenu, L"F4  - Sichere OEM DSDT in EFI/CLOVER/ACPI/origin/ (nur mit FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F5  - Sichere gepatchtes DSDT in EFI/CLOVER/ACPI/origin/ (FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F6  - Sichere VideoBios in EFI/CLOVER/misc/ (FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F10 - Sichere Bildschirmfoto in EFI/CLOVER/misc/ (nur mit FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F12 - Volume auswerfen (DVD)");
-        AddMenuInfoLine(&HelpMenu, L"Leertaste - Details über den gewählten Menue Eintrag");
-        AddMenuInfoLine(&HelpMenu, L"Zahlen 1-9 - Kurzwahl zum Menue Eintrag");
-        AddMenuInfoLine(&HelpMenu, L"A - Menue Informationen");
-        AddMenuInfoLine(&HelpMenu, L"O - Menue Optionen");
-        AddMenuInfoLine(&HelpMenu, L"R - Neustart");
-        AddMenuInfoLine(&HelpMenu, L"U - Ausschalten");
+        AddMenuInfo(&HelpMenu, L"ESC - Zurueck aus Untermenue, Hauptmenue erneuern");
+        AddMenuInfo(&HelpMenu, L"F1  - Diese Hilfe");
+        AddMenuInfo(&HelpMenu, L"F2  - Sichere preboot.log (nur mit FAT32)");
+        AddMenuInfo(&HelpMenu, L"F3  - Show hidden entries");
+        AddMenuInfo(&HelpMenu, L"F4  - Sichere OEM DSDT in EFI/CLOVER/ACPI/origin/ (nur mit FAT32)");
+        AddMenuInfo(&HelpMenu, L"F5  - Sichere gepatchtes DSDT in EFI/CLOVER/ACPI/origin/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F6  - Sichere VideoBios in EFI/CLOVER/misc/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F10 - Sichere Bildschirmfoto in EFI/CLOVER/misc/ (nur mit FAT32)");
+        AddMenuInfo(&HelpMenu, L"F12 - Volume auswerfen (DVD)");
+        AddMenuInfo(&HelpMenu, L"Leertaste - Details über den gewählten Menue Eintrag");
+        AddMenuInfo(&HelpMenu, L"Zahlen 1-9 - Kurzwahl zum Menue Eintrag");
+        AddMenuInfo(&HelpMenu, L"A - Menue Informationen");
+        AddMenuInfo(&HelpMenu, L"O - Menue Optionen");
+        AddMenuInfo(&HelpMenu, L"R - Neustart");
+        AddMenuInfo(&HelpMenu, L"U - Ausschalten");
         break;
       case dutch:
-        AddMenuInfoLine(&HelpMenu, L"ESC - Verlaat submenu, Vernieuwen hoofdmenu");
-        AddMenuInfoLine(&HelpMenu, L"F1  - Onderdeel hulp");
-        AddMenuInfoLine(&HelpMenu, L"F2  - preboot.log opslaan (FAT32 only)");
-        AddMenuInfoLine(&HelpMenu, L"F3  - Show hidden entries");
-        AddMenuInfoLine(&HelpMenu, L"F4  - Opslaan oem DSDT in EFI/CLOVER/ACPI/origin/ (FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F5  - Opslaan gepatchte DSDT in EFI/CLOVER/ACPI/origin/ (FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F6  - Opslaan VideoBios in EFI/CLOVER/misc/ (FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F10 - Opslaan schermafdruk in EFI/CLOVER/misc/ (FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F12 - Uitwerpen geselecteerd volume (DVD)");
-        AddMenuInfoLine(&HelpMenu, L"Spatie - Details over geselecteerd menuoptie");
-        AddMenuInfoLine(&HelpMenu, L"Cijfers 1-9 - Snelkoppeling naar menuoptie");
-        AddMenuInfoLine(&HelpMenu, L"A - Menu Over");
-        AddMenuInfoLine(&HelpMenu, L"O - Menu Opties");
-        AddMenuInfoLine(&HelpMenu, L"R - Soft Reset");
-        AddMenuInfoLine(&HelpMenu, L"U - Verlaten");
+        AddMenuInfo(&HelpMenu, L"ESC - Verlaat submenu, Vernieuwen hoofdmenu");
+        AddMenuInfo(&HelpMenu, L"F1  - Onderdeel hulp");
+        AddMenuInfo(&HelpMenu, L"F2  - preboot.log opslaan (FAT32 only)");
+        AddMenuInfo(&HelpMenu, L"F3  - Show hidden entries");
+        AddMenuInfo(&HelpMenu, L"F4  - Opslaan oem DSDT in EFI/CLOVER/ACPI/origin/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F5  - Opslaan gepatchte DSDT in EFI/CLOVER/ACPI/origin/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F6  - Opslaan VideoBios in EFI/CLOVER/misc/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F10 - Opslaan schermafdruk in EFI/CLOVER/misc/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F12 - Uitwerpen geselecteerd volume (DVD)");
+        AddMenuInfo(&HelpMenu, L"Spatie - Details over geselecteerd menuoptie");
+        AddMenuInfo(&HelpMenu, L"Cijfers 1-9 - Snelkoppeling naar menuoptie");
+        AddMenuInfo(&HelpMenu, L"A - Menu Over");
+        AddMenuInfo(&HelpMenu, L"O - Menu Opties");
+        AddMenuInfo(&HelpMenu, L"R - Soft Reset");
+        AddMenuInfo(&HelpMenu, L"U - Verlaten");
         break;
       case french:
-        AddMenuInfoLine(&HelpMenu, L"ESC - Quitter sous-menu, Retour menu principal");
-        AddMenuInfoLine(&HelpMenu, L"F1  - Aide");
-        AddMenuInfoLine(&HelpMenu, L"F2  - Enregistrer preboot.log (FAT32 only)");
-        AddMenuInfoLine(&HelpMenu, L"F3  - Show hidden entries");
-        AddMenuInfoLine(&HelpMenu, L"F4  - Enregistrer oem DSDT dans EFI/CLOVER/ACPI/origin/ (FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F5  - Enregistrer DSDT modifié dans EFI/CLOVER/ACPI/origin/ (FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F6  - Enregistrer VideoBios dans EFI/CLOVER/misc/ (FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F10 - Enregistrer la capture d'écran dans EFI/CLOVER/misc/ (FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F12 - Ejecter le volume (DVD)");
-        AddMenuInfoLine(&HelpMenu, L"Space - Détails a propos du menu selectionné");
-        AddMenuInfoLine(&HelpMenu, L"Digits 1-9 - Raccourci vers entrée menu");
-        AddMenuInfoLine(&HelpMenu, L"A - A propos");
-        AddMenuInfoLine(&HelpMenu, L"O - Options Menu");
-        AddMenuInfoLine(&HelpMenu, L"R - Redémarrer");
-        AddMenuInfoLine(&HelpMenu, L"U - Eteindre");
+        AddMenuInfo(&HelpMenu, L"ESC - Quitter sous-menu, Retour menu principal");
+        AddMenuInfo(&HelpMenu, L"F1  - Aide");
+        AddMenuInfo(&HelpMenu, L"F2  - Enregistrer preboot.log (FAT32 only)");
+        AddMenuInfo(&HelpMenu, L"F3  - Show hidden entries");
+        AddMenuInfo(&HelpMenu, L"F4  - Enregistrer oem DSDT dans EFI/CLOVER/ACPI/origin/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F5  - Enregistrer DSDT modifié dans EFI/CLOVER/ACPI/origin/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F6  - Enregistrer VideoBios dans EFI/CLOVER/misc/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F10 - Enregistrer la capture d'écran dans EFI/CLOVER/misc/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F12 - Ejecter le volume (DVD)");
+        AddMenuInfo(&HelpMenu, L"Space - Détails a propos du menu selectionné");
+        AddMenuInfo(&HelpMenu, L"Digits 1-9 - Raccourci vers entrée menu");
+        AddMenuInfo(&HelpMenu, L"A - A propos");
+        AddMenuInfo(&HelpMenu, L"O - Options Menu");
+        AddMenuInfo(&HelpMenu, L"R - Redémarrer");
+        AddMenuInfo(&HelpMenu, L"U - Eteindre");
         break;
       case indonesian:
-        AddMenuInfoLine(&HelpMenu, L"ESC - Keluar submenu, Refresh main menu");
-        AddMenuInfoLine(&HelpMenu, L"F1  - Help");
-        AddMenuInfoLine(&HelpMenu, L"F2  - Simpan preboot.log ke EFI/CLOVER/ACPI/misc/ (FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F3  - Show hidden entries");
-        AddMenuInfoLine(&HelpMenu, L"F4  - Simpan oem DSDT ke EFI/CLOVER/ACPI/origin/ (FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F5  - Simpan patched DSDT ke EFI/CLOVER/ACPI/origin/ (FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F6  - Simpan VideoBios ke EFI/CLOVER/misc/ (FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F10 - Simpan screenshot ke EFI/CLOVER/misc/ (FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F12 - Eject volume (DVD)");
-        AddMenuInfoLine(&HelpMenu, L"Spasi - Detail dari menu yang dipilih");
-        AddMenuInfoLine(&HelpMenu, L"Tombol 1-9 - Shortcut pilihan menu");
-        AddMenuInfoLine(&HelpMenu, L"A - About");
-        AddMenuInfoLine(&HelpMenu, L"O - Opsi");
-        AddMenuInfoLine(&HelpMenu, L"R - Soft Reset");
-        AddMenuInfoLine(&HelpMenu, L"U - Shutdown");
+        AddMenuInfo(&HelpMenu, L"ESC - Keluar submenu, Refresh main menu");
+        AddMenuInfo(&HelpMenu, L"F1  - Help");
+        AddMenuInfo(&HelpMenu, L"F2  - Simpan preboot.log ke EFI/CLOVER/ACPI/misc/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F3  - Show hidden entries");
+        AddMenuInfo(&HelpMenu, L"F4  - Simpan oem DSDT ke EFI/CLOVER/ACPI/origin/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F5  - Simpan patched DSDT ke EFI/CLOVER/ACPI/origin/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F6  - Simpan VideoBios ke EFI/CLOVER/misc/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F10 - Simpan screenshot ke EFI/CLOVER/misc/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F12 - Eject volume (DVD)");
+        AddMenuInfo(&HelpMenu, L"Spasi - Detail dari menu yang dipilih");
+        AddMenuInfo(&HelpMenu, L"Tombol 1-9 - Shortcut pilihan menu");
+        AddMenuInfo(&HelpMenu, L"A - About");
+        AddMenuInfo(&HelpMenu, L"O - Opsi");
+        AddMenuInfo(&HelpMenu, L"R - Soft Reset");
+        AddMenuInfo(&HelpMenu, L"U - Shutdown");
         break;
       case polish:
-        AddMenuInfoLine(&HelpMenu, L"ESC - Wyjscie z podmenu, Odswiezenie glownego menu");
-        AddMenuInfoLine(&HelpMenu, L"F1  - Pomoc");
-        AddMenuInfoLine(&HelpMenu, L"F2  - Zapis preboot.log (tylko FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F3  - Show hidden entries");
-        AddMenuInfoLine(&HelpMenu, L"F4  - Zapis DSDT do EFI/CLOVER/ACPI/origin/ (tylko FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F5  - Zapis poprawionego DSDT do EFI/CLOVER/ACPI/origin/ (FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F6  - Zapis BIOSu k. graficznej do EFI/CLOVER/misc/ (FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F10 - Zapis zrzutu ekranu do EFI/CLOVER/misc/ (tylko FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F12 - Wysuniecie zaznaczonego dysku (tylko dla DVD)");
-        AddMenuInfoLine(&HelpMenu, L"Spacja - Informacje nt. dostepnych opcji dla zaznaczonego dysku");
-        AddMenuInfoLine(&HelpMenu, L"Znaki 1-9 - Skroty opcji dla wybranego dysku");
-        AddMenuInfoLine(&HelpMenu, L"A - Menu Informacyjne");
-        AddMenuInfoLine(&HelpMenu, L"O - Menu Opcje");
-        AddMenuInfoLine(&HelpMenu, L"R - Restart komputera");
-        AddMenuInfoLine(&HelpMenu, L"U - Wylaczenie komputera");
+        AddMenuInfo(&HelpMenu, L"ESC - Wyjscie z podmenu, Odswiezenie glownego menu");
+        AddMenuInfo(&HelpMenu, L"F1  - Pomoc");
+        AddMenuInfo(&HelpMenu, L"F2  - Zapis preboot.log (tylko FAT32)");
+        AddMenuInfo(&HelpMenu, L"F3  - Show hidden entries");
+        AddMenuInfo(&HelpMenu, L"F4  - Zapis DSDT do EFI/CLOVER/ACPI/origin/ (tylko FAT32)");
+        AddMenuInfo(&HelpMenu, L"F5  - Zapis poprawionego DSDT do EFI/CLOVER/ACPI/origin/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F6  - Zapis BIOSu k. graficznej do EFI/CLOVER/misc/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F10 - Zapis zrzutu ekranu do EFI/CLOVER/misc/ (tylko FAT32)");
+        AddMenuInfo(&HelpMenu, L"F12 - Wysuniecie zaznaczonego dysku (tylko dla DVD)");
+        AddMenuInfo(&HelpMenu, L"Spacja - Informacje nt. dostepnych opcji dla zaznaczonego dysku");
+        AddMenuInfo(&HelpMenu, L"Znaki 1-9 - Skroty opcji dla wybranego dysku");
+        AddMenuInfo(&HelpMenu, L"A - Menu Informacyjne");
+        AddMenuInfo(&HelpMenu, L"O - Menu Opcje");
+        AddMenuInfo(&HelpMenu, L"R - Restart komputera");
+        AddMenuInfo(&HelpMenu, L"U - Wylaczenie komputera");
         break;
       case croatian:
-        AddMenuInfoLine(&HelpMenu, L"ESC - izlaz iz podizbornika, Osvježi glavni izbornik");
-        AddMenuInfoLine(&HelpMenu, L"F1  - Ovaj izbornik");
-        AddMenuInfoLine(&HelpMenu, L"F2  - Spremi preboot.log (samo na FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F3  - Show hidden entries");
-        AddMenuInfoLine(&HelpMenu, L"F4  - Spremi oem DSDT u EFI/CLOVER/ACPI/origin/ (FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F5  - Spremi patched DSDT into EFI/CLOVER/ACPI/origin/ (FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F6  - Spremi VideoBios into EFI/CLOVER/misc/ (FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F10 - Spremi screenshot into EFI/CLOVER/misc/ (FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F12 - Izbaci izabrai (DVD)");
-        AddMenuInfoLine(&HelpMenu, L"Space - Detalji o odabranom sistemu");
-        AddMenuInfoLine(&HelpMenu, L"Brojevi 1 do 9 su prečac do izbora");
-        AddMenuInfoLine(&HelpMenu, L"A - Izbornik o meni");
-        AddMenuInfoLine(&HelpMenu, L"O - Izbornik opcije");
-        AddMenuInfoLine(&HelpMenu, L"R - Restart računala");
-        AddMenuInfoLine(&HelpMenu, L"U - Isključivanje računala");
+        AddMenuInfo(&HelpMenu, L"ESC - izlaz iz podizbornika, Osvježi glavni izbornik");
+        AddMenuInfo(&HelpMenu, L"F1  - Ovaj izbornik");
+        AddMenuInfo(&HelpMenu, L"F2  - Spremi preboot.log (samo na FAT32)");
+        AddMenuInfo(&HelpMenu, L"F3  - Show hidden entries");
+        AddMenuInfo(&HelpMenu, L"F4  - Spremi oem DSDT u EFI/CLOVER/ACPI/origin/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F5  - Spremi patched DSDT into EFI/CLOVER/ACPI/origin/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F6  - Spremi VideoBios into EFI/CLOVER/misc/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F10 - Spremi screenshot into EFI/CLOVER/misc/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F12 - Izbaci izabrai (DVD)");
+        AddMenuInfo(&HelpMenu, L"Space - Detalji o odabranom sistemu");
+        AddMenuInfo(&HelpMenu, L"Brojevi 1 do 9 su prečac do izbora");
+        AddMenuInfo(&HelpMenu, L"A - Izbornik o meni");
+        AddMenuInfo(&HelpMenu, L"O - Izbornik opcije");
+        AddMenuInfo(&HelpMenu, L"R - Restart računala");
+        AddMenuInfo(&HelpMenu, L"U - Isključivanje računala");
         break;
       case czech:
-        AddMenuInfoLine(&HelpMenu, L"ESC - Vrátit se do hlavní nabídky");
-        AddMenuInfoLine(&HelpMenu, L"F1  - Tato Nápověda");
-        AddMenuInfoLine(&HelpMenu, L"F2  - Uložit preboot.log (FAT32 only)");
-        AddMenuInfoLine(&HelpMenu, L"F3  - Show hidden entries");
-        AddMenuInfoLine(&HelpMenu, L"F4  - Uložit oem DSDT do EFI/CLOVER/ACPI/origin/ (FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F5  - Uložit patchnuté DSDT do EFI/CLOVER/ACPI/origin/ (FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F6  - Uložit VideoBios do EFI/CLOVER/misc/ (FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F10 - Uložit snímek obrazovky do EFI/CLOVER/misc/ (FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F12 - Vysunout vybranou mechaniku (DVD)");
-        AddMenuInfoLine(&HelpMenu, L"Mezerník - Podrobnosti o vybraném disku");
-        AddMenuInfoLine(&HelpMenu, L"čísla 1-9 - Klávesové zkratky pro disky");
-        AddMenuInfoLine(&HelpMenu, L"A - Menu O Programu");
-        AddMenuInfoLine(&HelpMenu, L"O - Menu Možnosti");
-        AddMenuInfoLine(&HelpMenu, L"R - Částečný restart");
-        AddMenuInfoLine(&HelpMenu, L"U - Odejít");
+        AddMenuInfo(&HelpMenu, L"ESC - Vrátit se do hlavní nabídky");
+        AddMenuInfo(&HelpMenu, L"F1  - Tato Nápověda");
+        AddMenuInfo(&HelpMenu, L"F2  - Uložit preboot.log (FAT32 only)");
+        AddMenuInfo(&HelpMenu, L"F3  - Show hidden entries");
+        AddMenuInfo(&HelpMenu, L"F4  - Uložit oem DSDT do EFI/CLOVER/ACPI/origin/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F5  - Uložit patchnuté DSDT do EFI/CLOVER/ACPI/origin/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F6  - Uložit VideoBios do EFI/CLOVER/misc/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F10 - Uložit snímek obrazovky do EFI/CLOVER/misc/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F12 - Vysunout vybranou mechaniku (DVD)");
+        AddMenuInfo(&HelpMenu, L"Mezerník - Podrobnosti o vybraném disku");
+        AddMenuInfo(&HelpMenu, L"čísla 1-9 - Klávesové zkratky pro disky");
+        AddMenuInfo(&HelpMenu, L"A - Menu O Programu");
+        AddMenuInfo(&HelpMenu, L"O - Menu Možnosti");
+        AddMenuInfo(&HelpMenu, L"R - Částečný restart");
+        AddMenuInfo(&HelpMenu, L"U - Odejít");
         break;
       case korean:
-        AddMenuInfoLine(&HelpMenu, L"ESC - 하위메뉴에서 나감, 메인메뉴 새로 고침");
-        AddMenuInfoLine(&HelpMenu, L"F1  - 이 도움말");
-        AddMenuInfoLine(&HelpMenu, L"F2  - preboot.log를 저장합니다. (FAT32방식에만 해당됨)");
-        AddMenuInfoLine(&HelpMenu, L"F3  - Show hidden entries");
-        AddMenuInfoLine(&HelpMenu, L"F4  - oem DSDT를 EFI/CLOVER/ACPI/origin/에 저장합니다. (FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F5  - 패치된 DSDT를 EFI/CLOVER/ACPI/origin/에 저장합니다. (FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F6  - VideoBios를 EFI/CLOVER/misc/에 저장합니다. (FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F10 - 스크린샷을 EFI/CLOVER/misc/에 저장합니다. (FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F12 - 선택한 볼륨을 제거합니다. (DVD)");
-        AddMenuInfoLine(&HelpMenu, L"Space - 선택한 메뉴의 상세 설명");
-        AddMenuInfoLine(&HelpMenu, L"Digits 1-9 - 메뉴 단축 번호");
-        AddMenuInfoLine(&HelpMenu, L"A - 단축키 - 이 부트로더에 관하여");
-        AddMenuInfoLine(&HelpMenu, L"O - 단축키 - 부트 옵션");
-        AddMenuInfoLine(&HelpMenu, L"R - 단축키 - 리셋");
-        AddMenuInfoLine(&HelpMenu, L"U - 단축키 - 시스템 종료");
+        AddMenuInfo(&HelpMenu, L"ESC - 하위메뉴에서 나감, 메인메뉴 새로 고침");
+        AddMenuInfo(&HelpMenu, L"F1  - 이 도움말");
+        AddMenuInfo(&HelpMenu, L"F2  - preboot.log를 저장합니다. (FAT32방식에만 해당됨)");
+        AddMenuInfo(&HelpMenu, L"F3  - Show hidden entries");
+        AddMenuInfo(&HelpMenu, L"F4  - oem DSDT를 EFI/CLOVER/ACPI/origin/에 저장합니다. (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F5  - 패치된 DSDT를 EFI/CLOVER/ACPI/origin/에 저장합니다. (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F6  - VideoBios를 EFI/CLOVER/misc/에 저장합니다. (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F10 - 스크린샷을 EFI/CLOVER/misc/에 저장합니다. (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F12 - 선택한 볼륨을 제거합니다. (DVD)");
+        AddMenuInfo(&HelpMenu, L"Space - 선택한 메뉴의 상세 설명");
+        AddMenuInfo(&HelpMenu, L"Digits 1-9 - 메뉴 단축 번호");
+        AddMenuInfo(&HelpMenu, L"A - 단축키 - 이 부트로더에 관하여");
+        AddMenuInfo(&HelpMenu, L"O - 단축키 - 부트 옵션");
+        AddMenuInfo(&HelpMenu, L"R - 단축키 - 리셋");
+        AddMenuInfo(&HelpMenu, L"U - 단축키 - 시스템 종료");
         break;
       case romanian:
-        AddMenuInfoLine(&HelpMenu, L"ESC - Iesire din sub-meniu, Refresh meniul principal");
-        AddMenuInfoLine(&HelpMenu, L"F1  - Ajutor");
-        AddMenuInfoLine(&HelpMenu, L"F2  - Salvare preboot.log (doar pentru FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F4  - Salvare oem DSDT in EFI/ACPI/origin/ (FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F5  - Salvare DSDT modificat in EFI/ACPI/origin/ (FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F6  - Salvare VideoBios in EFI/misc/ (FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F10 - Salvare screenshot in EFI/misc/ (FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F12 - Scoatere volum selectat (DVD)");
-        AddMenuInfoLine(&HelpMenu, L"Space - Detalii despre item-ul selectat");
-        AddMenuInfoLine(&HelpMenu, L"Cifre 1-9 - Scurtaturi pentru itemele meniului");
-        AddMenuInfoLine(&HelpMenu, L"A - Despre");
-        AddMenuInfoLine(&HelpMenu, L"O - Optiuni");
-        AddMenuInfoLine(&HelpMenu, L"R - Soft Reset");
-        AddMenuInfoLine(&HelpMenu, L"U - Inchidere");
+        AddMenuInfo(&HelpMenu, L"ESC - Iesire din sub-meniu, Refresh meniul principal");
+        AddMenuInfo(&HelpMenu, L"F1  - Ajutor");
+        AddMenuInfo(&HelpMenu, L"F2  - Salvare preboot.log (doar pentru FAT32)");
+        AddMenuInfo(&HelpMenu, L"F4  - Salvare oem DSDT in EFI/ACPI/origin/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F5  - Salvare DSDT modificat in EFI/ACPI/origin/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F6  - Salvare VideoBios in EFI/misc/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F10 - Salvare screenshot in EFI/misc/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F12 - Scoatere volum selectat (DVD)");
+        AddMenuInfo(&HelpMenu, L"Space - Detalii despre item-ul selectat");
+        AddMenuInfo(&HelpMenu, L"Cifre 1-9 - Scurtaturi pentru itemele meniului");
+        AddMenuInfo(&HelpMenu, L"A - Despre");
+        AddMenuInfo(&HelpMenu, L"O - Optiuni");
+        AddMenuInfo(&HelpMenu, L"R - Soft Reset");
+        AddMenuInfo(&HelpMenu, L"U - Inchidere");
         break;
       case english:
       default:
-        AddMenuInfoLine(&HelpMenu, L"ESC - Escape from submenu, Refresh main menu");
-        AddMenuInfoLine(&HelpMenu, L"F1  - This help");
-        AddMenuInfoLine(&HelpMenu, L"F2  - Save preboot.log into EFI/CLOVER/misc/ (FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F3  - Show hidden entries");
-        AddMenuInfoLine(&HelpMenu, L"F4  - Save oem DSDT into EFI/CLOVER/ACPI/origin/ (FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F5  - Save patched DSDT into EFI/CLOVER/ACPI/origin/ (FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F6  - Save VideoBios into EFI/CLOVER/misc/ (FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F10 - Save screenshot into EFI/CLOVER/misc/ (FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F12 - Eject selected volume (DVD)");
-        AddMenuInfoLine(&HelpMenu, L"Space - Details about selected menu entry");
-        AddMenuInfoLine(&HelpMenu, L"Digits 1-9 - Shortcut to menu entry");
-        AddMenuInfoLine(&HelpMenu, L"A - Menu About");
-        AddMenuInfoLine(&HelpMenu, L"O - Menu Options");
-        AddMenuInfoLine(&HelpMenu, L"R - Soft Reset");
-        AddMenuInfoLine(&HelpMenu, L"U - Exit");
+        AddMenuInfo(&HelpMenu, L"ESC - Escape from submenu, Refresh main menu");
+        AddMenuInfo(&HelpMenu, L"F1  - This help");
+        AddMenuInfo(&HelpMenu, L"F2  - Save preboot.log into EFI/CLOVER/misc/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F3  - Show hidden entries");
+        AddMenuInfo(&HelpMenu, L"F4  - Save oem DSDT into EFI/CLOVER/ACPI/origin/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F5  - Save patched DSDT into EFI/CLOVER/ACPI/origin/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F6  - Save VideoBios into EFI/CLOVER/misc/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F10 - Save screenshot into EFI/CLOVER/misc/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F12 - Eject selected volume (DVD)");
+        AddMenuInfo(&HelpMenu, L"Space - Details about selected menu entry");
+        AddMenuInfo(&HelpMenu, L"Digits 1-9 - Shortcut to menu entry");
+        AddMenuInfo(&HelpMenu, L"A - Menu About");
+        AddMenuInfo(&HelpMenu, L"O - Menu Options");
+        AddMenuInfo(&HelpMenu, L"R - Soft Reset");
+        AddMenuInfo(&HelpMenu, L"U - Exit");
         break;
     }
     HelpMenu.AnimeRun = GetAnime(&HelpMenu);
@@ -2428,6 +2440,9 @@ static VOID TextMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
           } else {
             StrCat(ResultString, ((REFIT_INPUT_DIALOG*)(Screen->Entries[i]))->Item->SValue);
           }
+        } else if (Screen->Entries[i]->Tag == TAG_CHECKBIT) {
+          StrCat(ResultString, (((REFIT_INPUT_DIALOG*)(Screen->Entries[i]))->Item->IValue &
+                                (Screen->Entries[i]->Row)) ? L":[+]":L":[ ]");
         }
 				for (j = StrLen(ResultString); j < (INTN)TextMenuWidth; j++)
 					ResultString[j] = L' ';
@@ -2461,6 +2476,9 @@ static VOID TextMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
         } else {
           StrCat(ResultString, ((REFIT_INPUT_DIALOG*)(Screen->Entries[State->LastSelection]))->Item->SValue);
         }
+      } else if (Screen->Entries[State->LastSelection]->Tag == TAG_CHECKBIT) {
+        StrCat(ResultString, (((REFIT_INPUT_DIALOG*)(Screen->Entries[State->LastSelection]))->Item->IValue &
+                              (Screen->Entries[State->LastSelection]->Row)) ? L":[+]":L":[ ]");
       }
 			for (j = StrLen(ResultString); j < (INTN)TextMenuWidth; j++) {
 				ResultString[j] = L' ';
@@ -2478,6 +2496,9 @@ static VOID TextMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
         } else {
           StrCat(ResultString, ((REFIT_INPUT_DIALOG*)(Screen->Entries[State->CurrentSelection]))->Item->SValue);
         }
+      } else if (Screen->Entries[State->CurrentSelection]->Tag == TAG_CHECKBIT) {
+        StrCat(ResultString, (((REFIT_INPUT_DIALOG*)(Screen->Entries[State->CurrentSelection]))->Item->IValue &
+                              (Screen->Entries[State->CurrentSelection]->Row)) ? L":[+]":L":[ ]");
       }
 			for (j = StrLen(ResultString); j < (INTN)TextMenuWidth; j++) {
 				ResultString[j] = L' ';
@@ -2537,8 +2558,13 @@ INTN DrawTextXY(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
   return TextWidth;
 }
 
+/*
+ * Adapted DrawTextXY function to draw the text for the Boot Camp Style.
+ * Author: Needy.
+ */
 VOID DrawBCSText(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
 {
+  // init
   INTN      ChrsNum = 12;
   INTN      Ellipsis = 3;
   INTN      TextWidth = 0;
@@ -2547,10 +2573,12 @@ VOID DrawBCSText(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
   EG_IMAGE  *TextBufferXY = NULL;
   CHAR16    *BCSText = NULL;
   
+  // check if text was provided
   if (!Text) {
     return;
   }
   
+  // more space, more characters
   if (GlobalConfig.TileXSpace >= 25 && GlobalConfig.TileXSpace < 30) {
     ChrsNum = 13;
   } else if (GlobalConfig.TileXSpace >= 30 && GlobalConfig.TileXSpace < 35) {
@@ -2565,11 +2593,11 @@ VOID DrawBCSText(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
     ChrsNum = 18;
   }
   
+  // calculate the text width
   TextWidth = ((StrLen(Text) <= ChrsNum - Ellipsis) ? StrLen(Text) : ChrsNum) * ((FontWidth > GlobalConfig.CharWidth) ?
                FontWidth : GlobalConfig.CharWidth);
   
   // render the text
-  
   TextBufferXY = egCreateFilledImage(TextWidth, FontHeight, TRUE, &MenuBackgroundPixel);
 
   if (XAlign == X_IS_LEFT) {
@@ -2577,6 +2605,8 @@ VOID DrawBCSText(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
     XText = XPos;
   }
 
+  // if the text exceeds the given limit,
+  // copy the permited amound of chars and add ellipsis
   if (StrLen(Text) > ChrsNum - Ellipsis) {
     BCSText = AllocatePool(sizeof(CHAR16) * ChrsNum);
 
@@ -2590,12 +2620,14 @@ VOID DrawBCSText(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
     
     BCSText[ChrsNum] = '\0';
     
+    // error check
     if (!BCSText) {
       return;
     }
     
     TextWidth = egRenderText(BCSText, TextBufferXY, 0, 0, 0xFFFF);
     
+    // free the allocated memory
     FreePool(BCSText);
   } else {
     TextWidth = egRenderText(Text, TextBufferXY, 0, 0, 0xFFFF);
@@ -4571,6 +4603,57 @@ REFIT_MENU_ENTRY  *SubMenuThemes()
   return Entry;
 }
 
+/* 
+ * This is a simple and user friendly submenu which makes it possible to modify 
+ * the System Integrity Protection configuration from the Clover's GUI.
+ * Author: Needy.
+ * The below function is based on the SubMenuDsdtFix function.
+ */
+REFIT_MENU_ENTRY *SubMenuCSR()
+{
+  // init
+  REFIT_MENU_ENTRY   *Entry;
+  REFIT_MENU_SCREEN  *SubScreen;
+  
+  // create the entry in the main menu
+  Entry = AllocateZeroPool(sizeof(REFIT_MENU_ENTRY));
+  Entry->Title = PoolPrint(L"System Integrity Protection [0x%03x]->", gSettings.CsrActiveConfig);
+  Entry->Image =  OptionMenu.TitleImage;
+  Entry->Tag = TAG_OPTIONS;
+  Entry->AtClick = ActionEnter;
+  
+  // create the submenu
+  SubScreen = AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
+  SubScreen->Title = Entry->Title;
+  SubScreen->TitleImage = Entry->Image;
+  SubScreen->ID = SCREEN_CSR;
+  SubScreen->AnimeRun = GetAnime(SubScreen);
+  
+  // submenu description
+  AddMenuInfoLine(SubScreen, PoolPrint(L"Modify the System Integrity Protection configuration."));
+  AddMenuInfoLine(SubScreen, PoolPrint(L"All configuration changes apply to the entire machine."));
+  
+  // available configurations
+  AddMenuCheck(SubScreen, "Allow Untrusted Kexts", CSR_UNTRUSTED_KEXTS_BIT, 111);
+  AddMenuCheck(SubScreen, "Allow Unrestricted FS", CSR_UNRESTRICTED_FS_BIT, 111);
+  AddMenuCheck(SubScreen, "Allow Task For PID", CSR_TASK_FOR_PID_BIT, 111);
+  AddMenuCheck(SubScreen, "Allow Kernel Debuger", CSR_KERNEL_DEBUGGER_BIT, 111);
+  AddMenuCheck(SubScreen, "Allow Apple Internal", CSR_APPLE_INTERNAL_BIT, 111);
+  /*AddMenuCheck(SubScreen, "Allow Destructive DTrace", CSR_DESTRUCTIVE_DTRACE_BIT, 111);*/
+  AddMenuCheck(SubScreen, "Allow Unrestricted DTrace", CSR_UNRESTRICTED_DTRACE_BIT, 111);
+  AddMenuCheck(SubScreen, "Allow Unrestricted NVRAM", CSR_UNRESTRICTED_NVRAM_BIT, 111);
+  AddMenuCheck(SubScreen, "Allow Device Configuration", CSR_DEVICE_CONFIGURATION_BIT, 111);
+  
+  // check for the right booter flag to allow the application
+  // of the new System Integrity Protection configuration.
+  if (gSettings.BooterConfig != 0x28)
+    gSettings.BooterConfig = 0x28;
+  
+  // return
+  AddMenuEntry(SubScreen, &MenuEntryReturn);
+  Entry->SubScreen = SubScreen;
+  return Entry;
+}
 
 VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
 {
@@ -4674,12 +4757,14 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     AddMenuEntry(&OptionMenu, SubMenuSpeedStep());
     AddMenuEntry(&OptionMenu, SubMenuGraphics());
     AddMenuEntry(&OptionMenu, SubMenuBinaries());
+    AddMenuEntry(&OptionMenu, SubMenuCSR());
+    
     if (SysVariables) {
       AddMenuEntry(&OptionMenu, SubMenuSysVariables());
     }
 
     AddMenuEntry(&OptionMenu, &MenuEntryReturn);
-    //    DBG("option menu created entries=%d\n", OptionMenu.EntryCount);
+    //DBG("option menu created entries=%d\n", OptionMenu.EntryCount);
   }
 
   while (!MenuExit) {
@@ -4699,26 +4784,42 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
             ApplyInputs();
             if ((*ChosenEntry)->SubScreen->ID == SCREEN_DSDT) {
               UnicodeSPrint((*ChosenEntry)->Title, 255, L"DSDT fix mask [0x%08x]->", gSettings.FixDsdt);
-       //       MsgLog("@ESC: %s\n", (*ChosenEntry)->Title);
+              //MsgLog("@ESC: %s\n", (*ChosenEntry)->Title);
+            } else if ((*ChosenEntry)->SubScreen->ID == SCREEN_CSR) {
+              // CSR
+              UnicodeSPrint((*ChosenEntry)->Title, 255, L"System Integrity Protection configuration [0x%03x]->",
+                            gSettings.CsrActiveConfig);
+              //MsgLog("@ESC: %s\n", (*ChosenEntry)->Title);
             }
             break;
           }
           if (SubMenuExit == MENU_EXIT_ENTER) {
-            //enter input dialog
+            // enter input dialog
             SubMenuExit = 0;
             if ((*ChosenEntry)->SubScreen->ID == SCREEN_DSDT) {
               CHAR16 *TmpTitle;
               ApplyInputs();
               TmpTitle = PoolPrint(L"DSDT fix mask [0x%08x]->", gSettings.FixDsdt);
-      //        MsgLog("@ENTER: tmp=%s\n", TmpTitle);
+              //MsgLog("@ENTER: tmp=%s\n", TmpTitle);
               while (*TmpTitle) {
                 *((*ChosenEntry)->Title)++ = *TmpTitle++;
               }
-      //        MsgLog("@ENTER: chosen=%s\n", (*ChosenEntry)->Title);
+              //MsgLog("@ENTER: chosen=%s\n", (*ChosenEntry)->Title);
+            } else if ((*ChosenEntry)->SubScreen->ID == SCREEN_CSR) {
+              // CSR
+              CHAR16 *CSRTmpTitle;
+              ApplyInputs();
+              CSRTmpTitle = PoolPrint(L"System Integrity Protection configuration [0x%03x]->",
+                                      gSettings.CsrActiveConfig);
+              //MsgLog("@ENTER: tmp=%s\n", CSRTmpTitle);
+              while (*CSRTmpTitle) {
+                *((*ChosenEntry)->Title)++ = *CSRTmpTitle++;
+              }
+              //MsgLog("@ENTER: chosen=%s\n", (*ChosenEntry)->Title);
             }
             if (TmpChosenEntry->ShortcutDigit == 0xF1) {
               MenuExit = MENU_EXIT_ENTER;
-              //     DBG("Escape menu from input dialog\n");
+              //DBG("Escape menu from input dialog\n");
               goto exit;
             } //if F1
           }

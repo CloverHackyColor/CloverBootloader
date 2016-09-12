@@ -559,6 +559,17 @@ MSR C001006B  0000-0000-0000-0000
 #define DEV_IMEI      bit(14)
 #define DEV_BY_PCI    bit(31)
 
+// CSR Bits
+#define CSR_UNTRUSTED_KEXTS_BIT      bit(0)
+#define CSR_UNRESTRICTED_FS_BIT      bit(1)
+#define CSR_TASK_FOR_PID_BIT         bit(2)
+#define CSR_KERNEL_DEBUGGER_BIT      bit(3)
+#define CSR_APPLE_INTERNAL_BIT       bit(4)
+/*#define CSR_DESTRUCTIVE_DTRACE_BIT   bit(5)*/
+#define CSR_UNRESTRICTED_DTRACE_BIT  bit(5)
+#define CSR_UNRESTRICTED_NVRAM_BIT   bit(6)
+#define CSR_DEVICE_CONFIGURATION_BIT bit(7)
+
 #define NUM_OF_CONFIGS 3
 
 // Kernel scan states
