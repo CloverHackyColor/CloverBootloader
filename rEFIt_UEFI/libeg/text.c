@@ -42,7 +42,7 @@
 //#define FONT_CELL_HEIGHT (12)
 
 #ifndef DEBUG_ALL
-#define DEBUG_TEXT 0
+#define DEBUG_TEXT 1
 #else
 #define DEBUG_TEXT DEBUG_ALL
 #endif
@@ -70,7 +70,7 @@ VOID egMeasureText(IN CHAR16 *Text, OUT INTN *Width, OUT INTN *Height)
     if (Height != NULL)
         *Height = FontHeight;
 }
-
+#if 0
 EG_IMAGE * egLoadFontImage(IN BOOLEAN FromTheme, IN INTN Rows, IN INTN Cols)
 {
   EG_IMAGE            *NewImage = NULL;
@@ -146,31 +146,113 @@ EG_IMAGE * egLoadFontImage(IN BOOLEAN FromTheme, IN INTN Rows, IN INTN Cols)
   return NewFontImage;  
 } 
 
+#else
+EG_IMAGE * egLoadFontImage(IN BOOLEAN FromTheme, IN INTN Rows, IN INTN Cols)
+{
+  EG_IMAGE    *NewImage = NULL, *NewFontImage;
+  INTN        ImageWidth, ImageHeight, x, y, Ypos, j;
+  EG_PIXEL    *PixelPtr, FirstPixel;
+  BOOLEAN     isKorean = (gLanguage == korean);
+  CHAR16      *fontFilePath, *commonFontDir = L"EFI\\CLOVER\\font";
+  
+  if (IsEmbeddedTheme() && !isKorean) {
+    DBG("Using embedded font\n");
+    goto F_EMBEDDED;
+  } else {
+    NewImage = egLoadImage(ThemeDir, isKorean ? L"FontKorean.png" : GlobalConfig.FontFileName, TRUE);
+    DBG("Loading font from ThemeDir: %a\n", NewImage ? "Success" : "Error");
+  }
+  
+  if (NewImage) {
+    goto F_THEME;
+  } else {
+    fontFilePath = PoolPrint(L"%s\\%s", commonFontDir, isKorean ? L"FontKorean.png" : GlobalConfig.FontFileName);
+    NewImage = egLoadImage(SelfRootDir, fontFilePath, TRUE);
+    
+    if (!NewImage) {
+      if (!isKorean) {
+        DBG("Font %s is not loaded, using embedded\n", fontFilePath);
+        FreePool(fontFilePath);
+        goto F_EMBEDDED;
+      }
+      FreePool(fontFilePath);
+      return NULL;
+    } else {
+      DBG("font %s loaded from common font dir %s\n", GlobalConfig.FontFileName, commonFontDir);
+      FreePool(fontFilePath);
+      goto F_THEME;
+    }
+  }
+  
+F_EMBEDDED:
+  //NewImage = DEC_PNG_BUILTIN(emb_font_data);
+  NewImage = egDecodePNG(&emb_font_data[0], sizeof(emb_font_data), TRUE);
+  
+F_THEME:
+  ImageWidth = NewImage->Width;
+  //DBG("ImageWidth=%d\n", ImageWidth);
+  ImageHeight = NewImage->Height;
+  //DBG("ImageHeight=%d\n", ImageHeight);
+  PixelPtr = NewImage->PixelData;
+  DBG("Font loaded: ImageWidth=%d ImageHeight=%d\n", ImageWidth, ImageHeight);
+  NewFontImage = egCreateImage(ImageWidth * Rows, ImageHeight / Rows, TRUE);
+  
+  if (NewFontImage == NULL) {
+    DBG("Can't create new font image!\n");
+    return NULL;
+  }
+  
+  FontWidth = ImageWidth / Cols;
+  FontHeight = ImageHeight / Rows;
+  FirstPixel = *PixelPtr;
+  for (y = 0; y < Rows; y++) {
+    for (j = 0; j < FontHeight; j++) {
+      Ypos = ((j * Rows) + y) * ImageWidth;
+      for (x = 0; x < ImageWidth; x++) {
+        if (//WantAlpha &&
+            (PixelPtr->b == FirstPixel.b) &&
+            (PixelPtr->g == FirstPixel.g) &&
+            (PixelPtr->r == FirstPixel.r)
+            ) {
+          PixelPtr->a = 0;
+        }
+        NewFontImage->PixelData[Ypos + x] = *PixelPtr++;
+      }
+    }
+  }
+  
+  egFreeImage(NewImage);
+  
+  return NewFontImage;
+}
+#endif
 VOID PrepareFont()
 {
-  EG_PIXEL *p;
-  INTN      Width;
-  INTN      Height;
+  EG_PIXEL    *p;
+  INTN         Width, Height;
+  
   if (gLanguage == korean) {
     FontImage = egLoadFontImage(FALSE, 10, 28);
     if (FontImage) {
-//      FontHeight = 16;
-      GlobalConfig.CharWidth = 20;
-//      FontWidth = GlobalConfig.CharWidth;
+//      FontHeight = 16;  //delete?
+      GlobalConfig.CharWidth = 22;
+//      FontWidth = GlobalConfig.CharWidth; //delete?
       TextHeight = FontHeight + TEXT_YMARGIN * 2;
       DBG("Using Korean font matrix\n");
-      GlobalConfig.Proportional = FALSE;
       return;
     } else {
       DBG("font image not loaded, use english\n");
       gLanguage = english;
     }
   }
-
+  
   // load the font
   if (FontImage == NULL){
     DBG("load font image type %d\n", GlobalConfig.Font);
     FontImage = egLoadFontImage(TRUE, 16, 16);
+  }
+  
+  if (FontImage) {
     if (GlobalConfig.Font == FONT_GRAY) {
       //invert the font. embedded is dark
       p = FontImage->PixelData;
@@ -179,14 +261,18 @@ VOID PrepareFont()
           p->b ^= 0xFF;
           p->g ^= 0xFF;
           p->r ^= 0xFF;
-          //        p->a = 0xFF;    //huh!
+          //p->a = 0xFF;    //huh!
         }
       }
     }
+    
+    TextHeight = FontHeight + TEXT_YMARGIN * 2;
+    DBG("Font %d prepared WxH=%dx%d CharWidth=%d\n", GlobalConfig.Font, FontWidth, FontHeight, GlobalConfig.CharWidth);
+  } else {
+    DBG("Failed to load font\n");
   }
-  TextHeight = FontHeight + TEXT_YMARGIN * 2;
-  DBG("Font %d prepared WxH=%dx%d CharWidth=%d\n", GlobalConfig.Font, FontWidth, FontHeight, GlobalConfig.CharWidth);
 }
+
 
 static inline BOOLEAN EmptyPix(EG_PIXEL *Ptr, EG_PIXEL *FirstPixel)
 {
@@ -342,10 +428,10 @@ INTN egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage,
                      BufferLineOffset, FontLineOffset);
       }
       if (Shift == 18) {
-        egRawCompose(BufferPtr + 8, FontPixelData + Joong * FontWidth + 6, //9 , 4 are tunable
+        egRawCompose(BufferPtr + 9, FontPixelData + Joong * FontWidth + 6, //9 , 4 are tunable
                      GlobalConfig.CharWidth - 8, FontHeight,
                      BufferLineOffset, FontLineOffset);
-        egRawCompose(BufferPtr + BufferLineOffset * 10, FontPixelData + Jong * FontWidth + 5,
+        egRawCompose(BufferPtr + BufferLineOffset * 9, FontPixelData + Jong * FontWidth + 5,
                      GlobalConfig.CharWidth, FontHeight - 10,
                      BufferLineOffset, FontLineOffset);
 
