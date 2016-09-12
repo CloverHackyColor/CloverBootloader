@@ -2595,7 +2595,7 @@ VOID DrawBCSText(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
     ChrsNum = 18;
   }
   
-  // calculate the text width
+  // calculate text's width
   TextWidth = ((StrLen(Text) <= ChrsNum - Ellipsis) ? StrLen(Text) : ChrsNum) * ((FontWidth > GlobalConfig.CharWidth) ?
                FontWidth : GlobalConfig.CharWidth);
   
@@ -4789,7 +4789,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
               //MsgLog("@ESC: %s\n", (*ChosenEntry)->Title);
             } else if ((*ChosenEntry)->SubScreen->ID == SCREEN_CSR) {
               // CSR
-              UnicodeSPrint((*ChosenEntry)->Title, 255, L"System Integrity Protection configuration [0x%03x]->",
+              UnicodeSPrint((*ChosenEntry)->Title, 255, L"System Integrity Protection [0x%03x]->",
                             gSettings.CsrActiveConfig);
               //MsgLog("@ESC: %s\n", (*ChosenEntry)->Title);
             }
@@ -4811,7 +4811,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
               // CSR
               CHAR16 *CSRTmpTitle;
               ApplyInputs();
-              CSRTmpTitle = PoolPrint(L"System Integrity Protection configuration [0x%03x]->",
+              CSRTmpTitle = PoolPrint(L"System Integrity Protection [0x%03x]->",
                                       gSettings.CsrActiveConfig);
               //MsgLog("@ENTER: tmp=%s\n", CSRTmpTitle);
               while (*CSRTmpTitle) {
