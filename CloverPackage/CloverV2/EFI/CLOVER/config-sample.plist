@@ -465,8 +465,17 @@
 	</dict>
 	<key>Graphics</key>
 	<dict>
-		<key>#CustomEDID</key>
-		<data>AP///////wAyDADfAAAAAAASAQOAIRV4CunVmVlTjigmUFQAAAABAQEBAQEBAQEBAQEBAQEB3iGgcFCEHzAgIFYAS88QAAAY3iGgcFCEHzAgIFYAS88QAAAAAAAA/gBXNjU3RwAxNTRXUDEKAAAA/gAjMz1IZYSq/wIBCiAgAJo=</data>
+		<key>EDID</key>
+		<dict>
+			<key>#Custom</key>
+			<data>AP///////wAGECGSAAAAAAASAQOAIRV4CunVmVlTjigmUFQAAAABAQEBAQEBAQEBAQEBAQEB3iGgcFCEHzAgIFYAS88QAAAY3iGgcFCEHzAgIFYAS88QAAAAAAAA/gBXNjU3RwAxNTRXUDEKAAAA/gAjMz1IZYSq/wIBCiAgAJo=</data>
+			<key>#Inject</key>
+			<true/>
+			<key>#VendorID</key>
+			<string>0x1006</string>
+			<key>#ProductID</key>
+			<string>0x9221</string>
+		</dict>
 		<key>#DualLink</key>
 		<integer>0</integer>
 		<key>#FBName</key>
@@ -480,8 +489,6 @@
 			<key>NVidia</key>
 			<false/>
 		</dict>
-		<key>#InjectEDID</key>
-		<true/>
 		<key>#LoadVBios</key>
 		<false/>
 		<key>#NVCAP</key>

@@ -100,6 +100,13 @@ EFI_STATUS GetEdidDiscovered(VOID)
       gSettings.CustomEDID = gEDID; //copy pointer but data if no CustomEDID
     }
     CopyMem(gEDID, EdidDiscovered->Edid, N); //and then copy data to CustomEDID
+    //apply Fake Vendor and Product, if set
+    if (gSettings.VendorEDID) {
+      ((UINT16*)gEDID)[4] = gSettings.VendorEDID;
+    }
+    if (gSettings.ProductEDID) {
+      ((UINT16*)gEDID)[5] = gSettings.ProductEDID;
+    }
     if (!GlobalConfig.DebugLog) {
       for (i=0; i<N; i+=16) {
         MsgLog("%02d | ", i);

@@ -866,17 +866,22 @@ typedef struct {
   CHAR8                   Language[16];
   CHAR8                   BootArgs[256];
   CHAR16                  CustomUuid[40];
+  
   CHAR16                  *DefaultVolume;
 #if defined(MDE_CPU_IA32)
   UINT32                  align10;
 #endif
-  BOOLEAN                 LastBootedVolume;
-  UINT8                   Pad21[7];
-
   CHAR16                  *DefaultLoader;
 #if defined(MDE_CPU_IA32)
   UINT32                  align11;
 #endif
+  
+  BOOLEAN                 LastBootedVolume;
+  UINT8                   Pad21[3];
+  
+  UINT16                  VendorEDID;
+  UINT16                  ProductEDID;
+  
   UINT16                  BacklightLevel;
   BOOLEAN                 BacklightLevelConfig;
   BOOLEAN                 IntelBacklight;
@@ -890,14 +895,14 @@ typedef struct {
   BOOLEAN                 Debug;
   BOOLEAN                 Proportional;
   UINT8                   Pad22[1];
-  UINT32                DefaultBackgroundColor;
+  UINT32                  DefaultBackgroundColor;
 
   //ACPI
-  UINT64	              ResetAddr;
-  UINT8 	              ResetVal;
-  BOOLEAN	              UseDSDTmini;
+  UINT64                  ResetAddr;
+  UINT8                   ResetVal;
+  BOOLEAN                 UseDSDTmini; //not used
   BOOLEAN                 DropSSDT;
-  BOOLEAN	              GeneratePStates;
+  BOOLEAN                 GeneratePStates;
   BOOLEAN                 GenerateCStates;
   UINT8                   PLimitDict;
   UINT8                   UnderVoltStep;

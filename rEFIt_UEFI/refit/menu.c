@@ -365,6 +365,17 @@ VOID FillInputs(BOOLEAN New)
     InputItems[InputItemsCount++].BValue = bit;
   }
 */
+  //VendorEDID & ProductEDID 53, 54
+  InputItems[InputItemsCount].ItemType = Decimal;  //53
+  if (New) {
+    InputItems[InputItemsCount].SValue = AllocateZeroPool(16);
+  }
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 16, L"0x%04x", gSettings.VendorEDID);
+  InputItems[InputItemsCount].ItemType = Decimal;  //54
+  if (New) {
+    InputItems[InputItemsCount].SValue = AllocateZeroPool(16);
+  }
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 16, L"0x%04x", gSettings.ProductEDID);
   
   InputItemsCount = 67;
   InputItems[InputItemsCount].ItemType = CheckBit; //67
@@ -375,9 +386,15 @@ VOID FillInputs(BOOLEAN New)
   InputItems[InputItemsCount++].IValue = gSettings.FlagsBits;
 
   InputItems[InputItemsCount].ItemType = Decimal;  //70
-  InputItems[InputItemsCount++].SValue = PoolPrint(L"%02d", gSettings.PointerSpeed);
+  if (New) {
+    InputItems[InputItemsCount].SValue = AllocateZeroPool(8);
+  }
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 8, L"%02d", gSettings.PointerSpeed);
   InputItems[InputItemsCount].ItemType = Decimal;  //71
-  InputItems[InputItemsCount++].SValue = PoolPrint(L"%04d", gSettings.DoubleClickTime);
+  if (New) {
+    InputItems[InputItemsCount].SValue = AllocateZeroPool(16);
+  }
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 16, L"%04d", gSettings.DoubleClickTime);
   InputItems[InputItemsCount].ItemType = BoolValue; //72
   InputItems[InputItemsCount++].BValue = gSettings.PointerMirror;
   
@@ -780,6 +797,15 @@ VOID ApplyInputs(VOID)
   if (InputItems[i].Valid) {
     gSettings.InjectEDID = InputItems[i].BValue;
   }
+  i++; //53
+  if (InputItems[i].Valid) {
+    gSettings.VendorEDID = (UINT16)StrHexToUint64(InputItems[i].SValue);
+  }
+  i++; //54
+  if (InputItems[i].Valid) {
+    gSettings.ProductEDID = (UINT16)StrHexToUint64(InputItems[i].SValue);
+  }
+  
   /*
   k=0;
   for (j=0; j<16; j++) {
@@ -3648,6 +3674,23 @@ REFIT_MENU_ENTRY  *SubMenuGraphics()
   InputBootArgs->Entry.AtClick = ActionEnter;
   InputBootArgs->Entry.AtRightClick = ActionDetails;
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+  
+  InputBootArgs->Entry.Title = PoolPrint(L"Fake Vendor EDID:");
+  InputBootArgs->Entry.Tag = TAG_INPUT;
+  InputBootArgs->Entry.Row = StrLen(InputItems[53].SValue); //cursor
+  InputBootArgs->Item = &InputItems[53];
+  InputBootArgs->Entry.AtClick = ActionSelect;
+  InputBootArgs->Entry.AtDoubleClick = ActionEnter;
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+
+  InputBootArgs->Entry.Title = PoolPrint(L"Fake Product EDID:");
+  InputBootArgs->Entry.Tag = TAG_INPUT;
+  InputBootArgs->Entry.Row = StrLen(InputItems[54].SValue); //cursor
+  InputBootArgs->Item = &InputItems[54];
+  InputBootArgs->Entry.AtClick = ActionSelect;
+  InputBootArgs->Entry.AtDoubleClick = ActionEnter;
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+
 
   for (i = 0; i < NGFX; i++) {
     AddMenuInfoLine(SubScreen, PoolPrint(L"Card DeviceID=%04x", gGraphics[i].DeviceID));
