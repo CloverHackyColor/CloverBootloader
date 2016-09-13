@@ -2525,6 +2525,10 @@ ShellSearchHandle(
     }
   }
 
+  if (*FileList == NULL || (*FileList != NULL && IsListEmpty(&(*FileList)->Link))) {
+    Status = EFI_NOT_FOUND;
+  }
+
   FreePool(CurrentFilePattern);
   return (Status);
 }
