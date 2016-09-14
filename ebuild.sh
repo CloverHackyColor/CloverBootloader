@@ -710,7 +710,7 @@ MainBuildScript() {
       # removing force rebuild related flags, and ensure only one blank space is used as separator
       clover_build_info=$(echo ${clover_build_info} | sed -e 's/ -fr / /' \
                          | sed -e 's/ --force-rebuild / /' | sed -e 's/ --skip-autogen / /' \
-                         | sed -e 's/build//' | sed -e 's/  / /')
+                         | sed -e 's/build//' | sed -e 's/Args: | /Args: /' | sed -e 's/  / /')
 
       echo "#define BUILDINFOS_STR \"${clover_build_info}\"" >> "$CLOVERROOT"/Version.h
 
