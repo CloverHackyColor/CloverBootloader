@@ -144,7 +144,7 @@ struct EDID
     UINT8	version;			//18
     UINT8	revision;			//19
     UINT8	displayParams[5];	//20
-    UINT8	colorCHAR8acteristics[10];	//25
+    UINT8	colorcharacteristics[10];	//25
     UINT8	establishedTimings[3];		//35
     UINT16	standardTimings[8];			//38
     UINT8	detailedTimings[72];		//54

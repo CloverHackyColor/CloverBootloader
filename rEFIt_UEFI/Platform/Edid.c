@@ -14,7 +14,6 @@
 #define DBG(...) DebugLog(DEBUG_EDID, __VA_ARGS__)
 #endif
 
-
 EFI_STATUS EFIAPI GetEdidImpl(
                               IN  EFI_EDID_OVERRIDE_PROTOCOL          *This,
                               IN  EFI_HANDLE                          *ChildHandle,
@@ -107,6 +106,7 @@ EFI_STATUS GetEdidDiscovered(VOID)
     if (gSettings.ProductEDID) {
       ((UINT16*)gEDID)[5] = gSettings.ProductEDID;
     }
+    ((UINT8*)gEDID)[127] = (UINT8)(256 - Checksum8(gEDID, 127));
     if (!GlobalConfig.DebugLog) {
       for (i=0; i<N; i+=16) {
         MsgLog("%02d | ", i);

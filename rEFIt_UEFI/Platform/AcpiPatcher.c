@@ -195,7 +195,7 @@ UINT32* ScanRSDT (UINT32 Signature, UINT64 TableId)
     return NULL;
   }
 
-  EntryCount = (Rsdt->Header.Length - sizeof (EFI_ACPI_DESCRIPTION_HEADER)) / sizeof(UINT32);
+  EntryCount = (Rsdt->Header.Length - sizeof(EFI_ACPI_DESCRIPTION_HEADER)) / sizeof(UINT32);
 
   EntryPtr = &Rsdt->Entry;
   for (Index = 0; Index < EntryCount; Index++, EntryPtr++) {
