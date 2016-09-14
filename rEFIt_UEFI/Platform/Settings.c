@@ -2136,6 +2136,51 @@ FillinCustomTool (
   }  return TRUE;
 }
 
+VOID
+GetEDIDSettings(TagPtr DictPointer)
+{
+  TagPtr Prop, Dict2;
+  UINTN j = 128;
+  //InjectEDID old way, keep for compatibility
+  Prop = GetProperty (DictPointer, "InjectEDID");
+  gSettings.InjectEDID = !IsPropertyFalse(Prop);
+  
+  Prop = GetProperty (DictPointer, "CustomEDID");
+  if (Prop != NULL) {    
+    gSettings.CustomEDID   = GetDataSetting (DictPointer, "CustomEDID", &j);
+    if ((j % 128) != 0) {
+      DBG ("CustomEDID has wrong length=%d\n", j);
+    } else {
+      DBG ("CustomEDID ok\n");
+      InitializeEdidOverride ();
+    }
+  }
+  //InjectEDID new way
+  Dict2 = GetProperty (DictPointer, "EDID");
+  if (Dict2 != NULL) {
+    Prop = GetProperty (Dict2, "Inject");
+    gSettings.InjectEDID = !IsPropertyFalse(Prop); //default = true!
+    
+    Prop = GetProperty (Dict2, "Custom");
+    if (Prop != NULL) {
+      gSettings.CustomEDID   = GetDataSetting(Dict2, "Custom", &j);
+      if ((j % 128) != 0) {
+        DBG ("CustomEDID has wrong length=%d\n", j);
+      } else {
+        DBG ("CustomEDID ok\n");
+        InitializeEdidOverride();
+      }
+    }
+    
+    Prop = GetProperty (Dict2, "VendorID");
+    gSettings.VendorEDID = (UINT16)GetPropertyInteger(Prop, gSettings.VendorEDID);
+    
+    Prop = GetProperty (Dict2, "ProductID");
+    gSettings.ProductEDID = (UINT16)GetPropertyInteger(Prop, gSettings.ProductEDID);
+    
+  }
+}
+
 EFI_STATUS
 GetEarlyUserSettings (
                       IN EFI_FILE *RootDir,
@@ -2790,47 +2835,8 @@ GetEarlyUserSettings (
           }
         }
       }
-
-      //InjectEDID old way, keep for compatibility
-      Prop = GetProperty (DictPointer, "InjectEDID");
-      gSettings.InjectEDID = !IsPropertyFalse(Prop);
-
-      Prop = GetProperty (DictPointer, "CustomEDID");
-      if (Prop != NULL) {
-        UINTN j = 128;
-        gSettings.CustomEDID   = GetDataSetting (DictPointer, "CustomEDID", &j);
-        if ((j % 128) != 0) {
-          DBG ("CustomEDID has wrong length=%d\n", j);
-        } else {
-          DBG ("CustomEDID ok\n");
-          InitializeEdidOverride ();
-        }
-      }
-      //InjectEDID new way
-      Dict2 = GetProperty (DictPointer, "EDID");
-      if (Dict2 != NULL) {
-        Prop = GetProperty (Dict2, "Inject");
-        gSettings.InjectEDID = !IsPropertyFalse(Prop); //default = true!
-        
-        Prop = GetProperty (Dict2, "Custom");
-        if (Prop != NULL) {
-          UINTN j = 128;
-          gSettings.CustomEDID   = GetDataSetting (Dict2, "Custom", &j);
-          if ((j % 128) != 0) {
-            DBG ("CustomEDID has wrong length=%d\n", j);
-          } else {
-            DBG ("CustomEDID ok\n");
-            InitializeEdidOverride ();
-          }
-        }
-        
-        Prop = GetProperty (Dict2, "VendorID"); 
-        gSettings.VendorEDID = (UINT16)GetPropertyInteger(Prop, gSettings.VendorEDID);
-        
-        Prop = GetProperty (Dict2, "ProductID");
-        gSettings.ProductEDID = (UINT16)GetPropertyInteger(Prop, gSettings.ProductEDID);
-        
-      }
+      
+      GetEDIDSettings(DictPointer);
 
       // ErmaC: NvidiaGeneric
       Prop = GetProperty (DictPointer, "NvidiaGeneric");
@@ -3997,42 +4003,7 @@ GetUserSettings(
 
       //InjectEDID - already done in earlysettings
       //No! Take again
-
-      Prop = GetProperty (DictPointer, "InjectEDID");
-      gSettings.InjectEDID = IsPropertyTrue (Prop);
-
-      Prop = GetProperty (DictPointer, "CustomEDID");
-      if (Prop != NULL) {
-        UINTN j = 128;
-        gSettings.CustomEDID   = GetDataSetting (DictPointer, "CustomEDID", &j);
-      }
-      //new way
-      //InjectEDID new way
-      Dict2 = GetProperty (DictPointer, "EDID");
-      if (Dict2 != NULL) {
-        Prop = GetProperty (Dict2, "Inject");
-        gSettings.InjectEDID = !IsPropertyFalse(Prop); //default = true!
-        
-        Prop = GetProperty (Dict2, "Custom");
-        if (Prop != NULL) {
-          UINTN j = 128;
-          gSettings.CustomEDID   = GetDataSetting (Dict2, "Custom", &j);
-          if ((j % 128) != 0) {
-            DBG ("CustomEDID has wrong length=%d\n", j);
-          } else {
-            DBG ("CustomEDID ok\n");
-            InitializeEdidOverride ();
-          }
-        }
-        
-        Prop = GetProperty (Dict2, "VendorID");
-        gSettings.VendorEDID = (UINT16)GetPropertyInteger(Prop, gSettings.VendorEDID);
-        
-        Prop = GetProperty (Dict2, "ProductID");
-        gSettings.ProductEDID = (UINT16)GetPropertyInteger(Prop, gSettings.ProductEDID);
-        
-      }
-
+      GetEDIDSettings(DictPointer);
 
       // ErmaC: NvidiaGeneric
       Prop = GetProperty (DictPointer, "NvidiaGeneric");
