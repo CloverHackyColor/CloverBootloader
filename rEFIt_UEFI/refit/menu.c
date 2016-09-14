@@ -205,7 +205,7 @@ VOID FillInputs(BOOLEAN New)
 
   InputItemsCount = 0;
   if (New) {
-    InputItems = AllocateZeroPool(128 * sizeof(INPUT_ITEM)); //XXX
+    InputItems = AllocateZeroPool(110 * sizeof(INPUT_ITEM)); //XXX
   }
 
   InputItems[InputItemsCount].ItemType = ASString;  //0
@@ -234,9 +234,15 @@ VOID FillInputs(BOOLEAN New)
   InputItems[InputItemsCount].ItemType = BoolValue;  //6
   InputItems[InputItemsCount++].BValue = gSettings.SlpSmiEnable;
   InputItems[InputItemsCount].ItemType = Decimal;  //7
-  InputItems[InputItemsCount++].SValue = PoolPrint(L"%02d", gSettings.PLimitDict);
+  if (New) {
+    InputItems[InputItemsCount].SValue = AllocateZeroPool(8);
+  }
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 8, L"%02d", gSettings.PLimitDict);
   InputItems[InputItemsCount].ItemType = Decimal;  //8
-  InputItems[InputItemsCount++].SValue = PoolPrint(L"%02d", gSettings.UnderVoltStep);
+  if (New) {
+    InputItems[InputItemsCount].SValue = AllocateZeroPool(8);
+  }
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 8, L"%02d", gSettings.UnderVoltStep);
   InputItems[InputItemsCount].ItemType = BoolValue; //9
   InputItems[InputItemsCount++].BValue = gSettings.GenerateCStates;
   InputItems[InputItemsCount].ItemType = BoolValue; //10
@@ -248,28 +254,40 @@ VOID FillInputs(BOOLEAN New)
   InputItems[InputItemsCount].ItemType = BoolValue; //13
   InputItems[InputItemsCount++].BValue = gSettings.EnableISS;
   InputItems[InputItemsCount].ItemType = Decimal;  //14
-  InputItems[InputItemsCount++].SValue = PoolPrint(L"%06d", gSettings.QPI);
+  if (New) {
+    InputItems[InputItemsCount].SValue = AllocateZeroPool(16);
+  }
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 16, L"%06d", gSettings.QPI);
   InputItems[InputItemsCount].ItemType = BoolValue; //15
   InputItems[InputItemsCount++].BValue = gSettings.PatchNMI;
   InputItems[InputItemsCount].ItemType = BoolValue; //16
   InputItems[InputItemsCount++].BValue = gSettings.PatchVBios;
   InputItems[InputItemsCount].ItemType = Decimal;  //17
-  InputItems[InputItemsCount++].SValue = PoolPrint(L"%08d", gSettings.PlatformFeature);
+  if (New) {
+    InputItems[InputItemsCount].SValue = AllocateZeroPool(20);
+  }
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 20, L"%08d", gSettings.PlatformFeature);
   InputItems[InputItemsCount].ItemType = Hex;  //18
   if (New) {
     InputItems[InputItemsCount].SValue = AllocateZeroPool(36);
   }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 36, L"0x%X", gSettings.BacklightLevel); // Download-Fritz: There is no GUI element for BacklightLevel; please revise
   InputItems[InputItemsCount].ItemType = Decimal;  //19
+  if (New) {
+    InputItems[InputItemsCount].SValue = AllocateZeroPool(16);
+  }
   if (gSettings.BusSpeed > 20000) {
-    InputItems[InputItemsCount++].SValue = PoolPrint(L"%06d", gSettings.BusSpeed);
+    UnicodeSPrint(InputItems[InputItemsCount++].SValue, 16, L"%06d", gSettings.BusSpeed);
   } else {
-    InputItems[InputItemsCount++].SValue = PoolPrint(L"%06d", gCPUStructure.ExternalClock);
+    UnicodeSPrint(InputItems[InputItemsCount++].SValue, 16, L"%06d", gCPUStructure.ExternalClock);
   }
   InputItemsCount = 20;
   for (i=0; i<NGFX; i++) {
     InputItems[InputItemsCount].ItemType = ASString;  //20+i*6
-    InputItems[InputItemsCount++].SValue = PoolPrint(L"%a", gGraphics[i].Model);
+    if (New) {
+      InputItems[InputItemsCount].SValue = AllocateZeroPool(64);
+    }
+    UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%a", gGraphics[i].Model);
 
     if (gGraphics[i].Vendor == Ati) {
       InputItems[InputItemsCount].ItemType = BoolValue; //21+i*6
@@ -300,7 +318,10 @@ VOID FillInputs(BOOLEAN New)
       InputItems[InputItemsCount].ItemType = BoolValue; //21+i*6
       InputItems[InputItemsCount++].BValue = gSettings.InjectIntel;
       InputItems[InputItemsCount].ItemType = Hex; //22+6i
-      InputItems[InputItemsCount++].SValue = PoolPrint(L"%08lx", gSettings.IgPlatform);
+      if (New) {
+        InputItems[InputItemsCount].SValue = AllocateZeroPool(20);
+      }
+      UnicodeSPrint(InputItems[InputItemsCount++].SValue, 20, L"%08lx", gSettings.IgPlatform);
     }
 
     if (gGraphics[i].Vendor == Intel) {
@@ -309,10 +330,13 @@ VOID FillInputs(BOOLEAN New)
     }
 
     InputItems[InputItemsCount].ItemType = Decimal;  //23+6i
+    if (New) {
+      InputItems[InputItemsCount].SValue = AllocateZeroPool(8);
+    }
     if (gSettings.VideoPorts > 0) {
-      InputItems[InputItemsCount++].SValue = PoolPrint(L"%02d", gSettings.VideoPorts);
+      UnicodeSPrint(InputItems[InputItemsCount++].SValue, 8, L"%02d", gSettings.VideoPorts);
     } else {
-      InputItems[InputItemsCount++].SValue = PoolPrint(L"%02d", gGraphics[i].Ports);
+      UnicodeSPrint(InputItems[InputItemsCount++].SValue, 8, L"%02d", gGraphics[i].Ports);
     }
 
 
@@ -332,7 +356,7 @@ VOID FillInputs(BOOLEAN New)
 
   InputItemsCount = 43;
     // ErmaC: NvidiaGeneric menu selector y/n
-  InputItems[InputItemsCount].ItemType = BoolValue; //26+6i
+  InputItems[InputItemsCount].ItemType = BoolValue; //43
   InputItems[InputItemsCount++].BValue = gSettings.NvidiaGeneric;
   InputItems[InputItemsCount].ItemType = BoolValue; //44
   InputItems[InputItemsCount++].BValue = gSettings.KextPatchesAllowed;
@@ -348,9 +372,12 @@ VOID FillInputs(BOOLEAN New)
   InputItems[InputItemsCount++].BValue = gSettings.DropMCFG;
 
   InputItems[InputItemsCount].ItemType = Decimal;  //50
-  InputItems[InputItemsCount++].SValue = PoolPrint(L"%d", gSettings.RefCLK);
+  if (New) {
+    InputItems[InputItemsCount].SValue = AllocateZeroPool(16);
+  }
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 16, L"%06d", gSettings.RefCLK);
 
-  InputItems[InputItemsCount].ItemType = ASString;  //51
+  InputItems[InputItemsCount].ItemType = ASString;  //51 OS version if non-detected
   if (New) {
     InputItems[InputItemsCount].SValue = AllocateZeroPool(SVALUE_MAX_SIZE);
   }
@@ -358,13 +385,7 @@ VOID FillInputs(BOOLEAN New)
 
   InputItems[InputItemsCount].ItemType = BoolValue; //52
   InputItems[InputItemsCount++].BValue = gSettings.InjectEDID;
-/*
-  for (j=0; j<16; j++) {
-    InputItems[InputItemsCount].ItemType = BoolValue; //53+j
-    bit = (gSettings.FixDsdt & (1<<j)) != 0;
-    InputItems[InputItemsCount++].BValue = bit;
-  }
-*/
+
   //VendorEDID & ProductEDID 53, 54
   InputItems[InputItemsCount].ItemType = Decimal;  //53
   if (New) {
@@ -377,7 +398,14 @@ VOID FillInputs(BOOLEAN New)
   }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 16, L"0x%04x", gSettings.ProductEDID);
   
-  InputItemsCount = 67;
+  // CSR - aka System Integrity Protection configuration
+  InputItemsCount = 65;
+  InputItems[InputItemsCount].ItemType = CheckBit; //65
+  InputItems[InputItemsCount++].IValue = gSettings.BooterConfig;
+  InputItems[InputItemsCount].ItemType = CheckBit; //66
+  InputItems[InputItemsCount++].IValue = gSettings.CsrActiveConfig;
+  
+
   InputItems[InputItemsCount].ItemType = CheckBit; //67
   InputItems[InputItemsCount++].IValue = gSettings.FixDsdt; 
   InputItems[InputItemsCount].ItemType = CheckBit; //68
@@ -405,11 +433,20 @@ VOID FillInputs(BOOLEAN New)
   InputItems[InputItemsCount++].BValue = gSettings.USBFixOwnership;
 
   InputItems[InputItemsCount].ItemType = Hex;  //75
-  InputItems[InputItemsCount++].SValue = PoolPrint(L"0x%04x", gSettings.C3Latency);
+  if (New) {
+    InputItems[InputItemsCount].SValue = AllocateZeroPool(16);
+  }
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 16, L"0x%04x", gSettings.C3Latency);
   InputItems[InputItemsCount].ItemType = Decimal;  //76
-  InputItems[InputItemsCount++].SValue = PoolPrint(L"%02d", gSettings.EnabledCores);
+  if (New) {
+    InputItems[InputItemsCount].SValue = AllocateZeroPool(16);
+  }
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 16, L"%02d", gSettings.EnabledCores);
   InputItems[InputItemsCount].ItemType = Decimal;  //77
-  InputItems[InputItemsCount++].SValue = PoolPrint(L"%d", gSettings.SavingMode);
+  if (New) {
+    InputItems[InputItemsCount].SValue = AllocateZeroPool(16);
+  }
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 16, L"%02d", gSettings.SavingMode);
 
   InputItems[InputItemsCount].ItemType = ASString;  //78
   if (New) {
@@ -463,13 +500,13 @@ VOID FillInputs(BOOLEAN New)
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%a", gSettings.ReleaseDate);
 
   InputItems[InputItemsCount].ItemType = BoolValue; //88
-  InputItems[InputItemsCount++].BValue   = gSettings.DoubleFirstState;
+  InputItems[InputItemsCount++].BValue = gSettings.DoubleFirstState;
   InputItems[InputItemsCount].ItemType = BoolValue; //89
   InputItems[InputItemsCount++].BValue = gSettings.EnableC7;
 
   InputItems[InputItemsCount].ItemType = UNIString; //90
   if (New) {
-    InputItems[InputItemsCount].SValue   = AllocateZeroPool(64);
+    InputItems[InputItemsCount].SValue = AllocateZeroPool(64);
   }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%s", gSettings.ConfigName);
 
@@ -477,9 +514,9 @@ VOID FillInputs(BOOLEAN New)
   InputItems[InputItemsCount++].BValue = gSettings.KernelAndKextPatches.KPLapicPanic;
 
   InputItems[InputItemsCount].ItemType = BoolValue; //92
-  InputItems[InputItemsCount++].BValue   = gSettings.USBInjection;
+  InputItems[InputItemsCount++].BValue = gSettings.USBInjection;
   InputItems[InputItemsCount].ItemType = BoolValue; //93
-  InputItems[InputItemsCount++].BValue   = gSettings.InjectClockID;
+  InputItems[InputItemsCount++].BValue = gSettings.InjectClockID;
 
   InputItems[InputItemsCount].ItemType = Hex;  //94
   if (New) {
@@ -544,18 +581,6 @@ VOID FillInputs(BOOLEAN New)
   InputItems[InputItemsCount].ItemType = BoolValue; //108
   InputItems[InputItemsCount++].BValue = gSettings.KernelPatchesAllowed;
 
-//  InputItemsCount = 110;
-/*  for (j=0; j<16; j++) {
-    InputItems[InputItemsCount].ItemType = BoolValue; //110+j
-    bit = (gSettings.FixDsdt & (1<<(j+16))) != 0;
-    InputItems[InputItemsCount++].BValue = bit;
-  }
-*/
-  
-  // CSR - aka System Integrity Protection configuration
-  InputItemsCount = 111;
-  InputItems[InputItemsCount].ItemType = CheckBit; //111
-  InputItems[InputItemsCount++].IValue = gSettings.CsrActiveConfig;
   
   //menu for drop table
   if (gSettings.ACPIDropTables) {
@@ -806,27 +831,18 @@ VOID ApplyInputs(VOID)
     gSettings.ProductEDID = (UINT16)StrHexToUint64(InputItems[i].SValue);
   }
   
-  /*
-  k=0;
-  for (j=0; j<16; j++) {
-    i++; //53-68
-    if (InputItems[i].BValue) {
-      k += (1<<j);
-    }
+  // CSR
+  i = 65; // 111
+  if (InputItems[i].Valid) {
+    gSettings.BooterConfig = InputItems[i].IValue; // i = 65
   }
-  i=110;
-  for (j=16; j<32; j++) {
-    if (InputItems[i++].BValue) {
-      k += (1<<j);
-    }
+  
+  i++;
+  if (InputItems[i].Valid) {
+    gSettings.CsrActiveConfig = InputItems[i].IValue; // i = 66
   }
 
-  if (gSettings.FixDsdt != k) {
-    DBG("applied FixDsdt=%08x\n", k);
-    gSettings.FixDsdt = k;
-  }
-*/
-  i = 67;
+  i++;
   if (InputItems[i].Valid) {
     gSettings.FixDsdt = InputItems[i].IValue;
   }
@@ -1060,12 +1076,6 @@ VOID ApplyInputs(VOID)
   if (InputItems[i].Valid) {
     gSettings.KernelPatchesAllowed = InputItems[i].BValue;
     gBootChanged = TRUE;
-  }
-
-  // CSR
-  i = 111; // 111
-  if (InputItems[i].Valid) {
-    gSettings.CsrActiveConfig = InputItems[i].IValue; // i = 111
   }
 
   if (SysVariables) {
@@ -4679,20 +4689,21 @@ REFIT_MENU_ENTRY *SubMenuCSR()
   AddMenuInfoLine(SubScreen, PoolPrint(L"All configuration changes apply to the entire machine."));
   
   // available configurations
-  AddMenuCheck(SubScreen, "Allow Untrusted Kexts", CSR_UNTRUSTED_KEXTS_BIT, 111);
-  AddMenuCheck(SubScreen, "Allow Unrestricted FS", CSR_UNRESTRICTED_FS_BIT, 111);
-  AddMenuCheck(SubScreen, "Allow Task For PID", CSR_TASK_FOR_PID_BIT, 111);
-  AddMenuCheck(SubScreen, "Allow Kernel Debuger", CSR_KERNEL_DEBUGGER_BIT, 111);
-  AddMenuCheck(SubScreen, "Allow Apple Internal", CSR_APPLE_INTERNAL_BIT, 111);
-  /*AddMenuCheck(SubScreen, "Allow Destructive DTrace", CSR_DESTRUCTIVE_DTRACE_BIT, 111);*/
-  AddMenuCheck(SubScreen, "Allow Unrestricted DTrace", CSR_UNRESTRICTED_DTRACE_BIT, 111);
-  AddMenuCheck(SubScreen, "Allow Unrestricted NVRAM", CSR_UNRESTRICTED_NVRAM_BIT, 111);
-  AddMenuCheck(SubScreen, "Allow Device Configuration", CSR_DEVICE_CONFIGURATION_BIT, 111);
+  AddMenuCheck(SubScreen, "Allow Untrusted Kexts", CSR_UNTRUSTED_KEXTS_BIT, 66);
+  AddMenuCheck(SubScreen, "Allow Unrestricted FS", CSR_UNRESTRICTED_FS_BIT, 66);
+  AddMenuCheck(SubScreen, "Allow Task For PID", CSR_TASK_FOR_PID_BIT, 66);
+  AddMenuCheck(SubScreen, "Allow Kernel Debuger", CSR_KERNEL_DEBUGGER_BIT, 66);
+  AddMenuCheck(SubScreen, "Allow Apple Internal", CSR_APPLE_INTERNAL_BIT, 66);
+  /*AddMenuCheck(SubScreen, "Allow Destructive DTrace", CSR_DESTRUCTIVE_DTRACE_BIT, 66);*/
+  AddMenuCheck(SubScreen, "Allow Unrestricted DTrace", CSR_UNRESTRICTED_DTRACE_BIT, 66);
+  AddMenuCheck(SubScreen, "Allow Unrestricted NVRAM", CSR_UNRESTRICTED_NVRAM_BIT, 66);
+  AddMenuCheck(SubScreen, "Allow Device Configuration", CSR_DEVICE_CONFIGURATION_BIT, 66);
   
   // check for the right booter flag to allow the application
   // of the new System Integrity Protection configuration.
-  if (gSettings.BooterConfig != 0x28)
+  if (gSettings.BooterConfig != 0x28) {
     gSettings.BooterConfig = 0x28;
+  }
   
   // return
   AddMenuEntry(SubScreen, &MenuEntryReturn);

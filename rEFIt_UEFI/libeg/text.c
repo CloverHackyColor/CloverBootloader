@@ -42,7 +42,7 @@
 //#define FONT_CELL_HEIGHT (12)
 
 #ifndef DEBUG_ALL
-#define DEBUG_TEXT 1
+#define DEBUG_TEXT 0
 #else
 #define DEBUG_TEXT DEBUG_ALL
 #endif
