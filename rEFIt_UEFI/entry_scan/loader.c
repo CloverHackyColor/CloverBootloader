@@ -726,6 +726,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
     AddMenuCheck(SubScreen, "Verbose (-v)",                               OPT_VERBOSE, 68);
     AddMenuCheck(SubScreen, "Single User (-s)",                           OPT_SINGLE_USER, 68);
     AddMenuCheck(SubScreen, "Safe Mode (-x)",                             OPT_SAFE, 68);
+    AddMenuCheck(SubScreen, "Disable KASLR (slide=0)",                    OPT_SLIDE, 68);
     AddMenuCheck(SubScreen, "Disable Nvidia (nv_disable=1)",              OPT_NVDISABLE, 68);
 //    AddMenuCheck(SubScreen, "Use Nvidia Web (nvda_drv=1)",                OPT_NVWEBON, 68);
     AddMenuCheck(SubScreen, "Disable PowerNap (darkwake=0)",              OPT_POWERNAPOFF, 68);
@@ -734,6 +735,11 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
     AddMenuCheck(SubScreen, "Sleep Uses Shutdown (-gux_nosleep)",         OPT_GNOSLEEP, 68);
     AddMenuCheck(SubScreen, "Force No Msi Int (-gux_nomsi)",              OPT_GNOMSI, 68);
     AddMenuCheck(SubScreen, "EHC manage USB2 ports (-gux_defer_usb2)",    OPT_EHCUSB, 68);
+    AddMenuCheck(SubScreen, "Keep symbols on panic (keepsyms=1)",         OPT_KEEPSYMS, 68);
+    AddMenuCheck(SubScreen, "Don't reboot on panic (debug=0x100)",        OPT_DEBUG, 68);
+    AddMenuCheck(SubScreen, "Debug kexts (kextlog=0xffff)",               OPT_KEXTLOG, 68);
+    AddMenuCheck(SubScreen, "Disable AppleALC (-alcoff)",                 OPT_APPLEALC, 68);
+    AddMenuCheck(SubScreen, "Disable Shiki (-shikioff)",                  OPT_SHIKI, 68);
 
     if (gSettings.CsrActiveConfig == 0) {
       AddMenuCheck(SubScreen, "No SIP", OSFLAG_NOSIP, 69);

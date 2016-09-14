@@ -4933,11 +4933,6 @@ UINT32 EncodeOptions(CHAR16 *Options)
   if (StrStr(Options, L"nv_disable=1")) {
     OptionsBits |= OPT_NVDISABLE;
   }
-  /*
-  if (StrStr(Options, L"nvda_drv=1")) {
-    OptionsBits |= OPT_NVWEBON;
-  }
-   */
   if (StrStr(Options, L"darkwake=0")) {
     OptionsBits |= OPT_POWERNAPOFF;
   }
@@ -4955,6 +4950,24 @@ UINT32 EncodeOptions(CHAR16 *Options)
   }
   if (StrStr(Options, L"-gux_defer_usb2")) {
     OptionsBits |= OPT_EHCUSB;
+  }
+  if (StrStr(Options, L"slide=0")) {
+    OptionsBits |= OPT_SLIDE;
+  }
+  if (StrStr(Options, L"keepsyms=1")) {
+    OptionsBits |= OPT_KEEPSYMS;
+  }
+  if (StrStr(Options, L"debug=0x100")) {
+    OptionsBits |= OPT_DEBUG;
+  }
+  if (StrStr(Options, L"kextlog=0xffff")) {
+    OptionsBits |= OPT_KEXTLOG;
+  }
+  if (StrStr(Options, L"-alcoff")) {
+    OptionsBits |= OPT_APPLEALC;
+  }
+  if (StrStr(Options, L"-shikioff")) {
+    OptionsBits |= OPT_SHIKI;
   }
   
   return OptionsBits;
@@ -4980,11 +4993,6 @@ VOID DecodeOptions(LOADER_ENTRY *Entry)
   if (gSettings.OptionsBits & OPT_NVDISABLE) {
     Entry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"nv_disable=1");
   }
-  /*
-  if (gSettings.OptionsBits & OPT_NVWEBON) {
-    Entry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"nvda_drv=1");
-  }
-   */
   if (gSettings.OptionsBits & OPT_POWERNAPOFF) {
     Entry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"darkwake=0");
   }
@@ -5002,6 +5010,24 @@ VOID DecodeOptions(LOADER_ENTRY *Entry)
   }
   if (gSettings.OptionsBits & OPT_EHCUSB) {
     Entry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"-gux_defer_usb2");
+  }
+  if (gSettings.OptionsBits & OPT_SLIDE) {
+    Entry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"slide=0");
+  }
+  if (gSettings.OptionsBits & OPT_KEEPSYMS) {
+    Entry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"keepsyms=1");
+  }
+  if (gSettings.OptionsBits & OPT_DEBUG) {
+    Entry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"debug=0x100");
+  }
+  if (gSettings.OptionsBits & OPT_KEXTLOG) {
+    Entry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"kextlog=0xffff");
+  }
+  if (gSettings.OptionsBits & OPT_APPLEALC) {
+    Entry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"-alcoff");
+  }
+  if (gSettings.OptionsBits & OPT_SHIKI) {
+    Entry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"-shikioff");
   }
 }
 
