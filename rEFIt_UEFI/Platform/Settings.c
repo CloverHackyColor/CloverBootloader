@@ -28,7 +28,7 @@
 
 
 ACPI_PATCHED_AML                *ACPIPatchedAML;
-SYSVARIABLES                    *SysVariables;
+//SYSVARIABLES                    *SysVariables;
 CHAR16                          *IconFormat = NULL;
 
 TagPtr                          gConfigDict[NUM_OF_CONFIGS] = {NULL, NULL, NULL};
@@ -5134,7 +5134,7 @@ GetUserSettings(
         AsmWriteMsr64 (MSR_IA32_MISC_ENABLE, msr);
       }
     }
-
+/*
     // SysVars -->
     gSettings.ExposeSysVariables = FALSE;
     CHAR16 *SysVarsTmp = NULL;
@@ -5142,7 +5142,7 @@ GetUserSettings(
     UINT32 SysVarsTmpCsrActiveConfig = 0x67;
     UINT16 SysVarsTmpBooterConfig = 0xFFFF;
     // SysVars <--
-
+*/
     BOOLEAN IsValidCustomUUID = FALSE;
 
     // RtVariables
@@ -5194,12 +5194,12 @@ GetUserSettings(
       // CsrActiveConfig
       Prop = GetProperty (DictPointer, "CsrActiveConfig");
       gSettings.CsrActiveConfig = (UINT32)GetPropertyInteger (Prop, 0x67); //the value 0xFFFF means not set
-      SysVarsTmpCsrActiveConfig = gSettings.CsrActiveConfig;
+ //     SysVarsTmpCsrActiveConfig = gSettings.CsrActiveConfig;
 
       //BooterConfig
       Prop = GetProperty (DictPointer, "BooterConfig");
-      gSettings.BooterConfig = (UINT16)GetPropertyInteger (Prop, 0xFFFF); //the value 0xFFFF means not set
-      SysVarsTmpBooterConfig = gSettings.BooterConfig;
+      gSettings.BooterConfig = (UINT16)GetPropertyInteger (Prop, 0); //the value 0 means not set
+//      SysVarsTmpBooterConfig = gSettings.BooterConfig;
     }
 
     if (gSettings.RtROM == NULL) {
@@ -5252,14 +5252,14 @@ GetUserSettings(
       Prop                     = GetProperty (DictPointer, "InjectSystemID");
       gSettings.InjectSystemID = gSettings.InjectSystemID ? !IsPropertyFalse(Prop) : IsPropertyTrue (Prop);
 
-      Prop                     = GetProperty (DictPointer, "ExposeSysVariables");
-      gSettings.ExposeSysVariables = IsPropertyTrue (Prop);
+//      Prop                     = GetProperty (DictPointer, "ExposeSysVariables");
+//      gSettings.ExposeSysVariables = IsPropertyTrue (Prop);
       
       Prop                     = GetProperty (DictPointer, "NvidiaWeb");
       gSettings.NvidiaWeb      = IsPropertyTrue (Prop);
 
     }
-
+/*
     // SysVars -->
     SysVariablesTmp                    = AllocateZeroPool (sizeof(SYSVARIABLES));
     SysVariablesTmp->Key               = PoolPrint(L"CsrActiveConfig");
@@ -5326,7 +5326,7 @@ GetUserSettings(
       FreePool(SysVarsTmp);
     }
     // SysVars <--
-
+*/
 
     /*
      {

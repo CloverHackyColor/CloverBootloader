@@ -728,7 +728,6 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
     AddMenuCheck(SubScreen, "Safe Mode (-x)",                             OPT_SAFE, 68);
     AddMenuCheck(SubScreen, "Disable KASLR (slide=0)",                    OPT_SLIDE, 68);
     AddMenuCheck(SubScreen, "Disable Nvidia (nv_disable=1)",              OPT_NVDISABLE, 68);
-//    AddMenuCheck(SubScreen, "Use Nvidia Web (nvda_drv=1)",                OPT_NVWEBON, 68);
     AddMenuCheck(SubScreen, "Disable PowerNap (darkwake=0)",              OPT_POWERNAPOFF, 68);
     AddMenuCheck(SubScreen, "Use XNU CPUPM (-xcpm)",                      OPT_XCPM, 68);
     AddMenuCheck(SubScreen, "Disable Intel Idle Mode (-gux_no_idle)",     OPT_GNOIDLE, 68);
@@ -745,7 +744,6 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
       AddMenuCheck(SubScreen, "No SIP", OSFLAG_NOSIP, 69);
     }
     
-        
     SubEntry = DuplicateLoaderEntry(Entry);
     if (SubEntry) {
       SubEntry->me.Title        = L"Boot Mac OS X with selected options";

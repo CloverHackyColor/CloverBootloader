@@ -266,7 +266,7 @@ SetVariablesForOSX()
     SetNvramVariable(L"csr-active-config", &gEfiAppleBootGuid, Attributes, sizeof(gSettings.CsrActiveConfig), &gSettings.CsrActiveConfig);
   }
 
-  if (gSettings.BooterConfig != 0xFFFF) {
+  if (gSettings.BooterConfig != 0) {
     SetNvramVariable(L"bootercfg", &gEfiAppleBootGuid, Attributes, sizeof(gSettings.BooterConfig), &gSettings.BooterConfig);
   }
   

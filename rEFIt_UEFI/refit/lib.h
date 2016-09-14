@@ -202,6 +202,8 @@ OSTYPE_COMPARE_IMP(OSTYPE_IS_LINUX, type1, type2) || OSTYPE_COMPARE_IMP(OSTYPE_I
 #define OPT_KEXTLOG         (1 << 15)
 #define OPT_APPLEALC        (1 << 16)
 #define OPT_SHIKI           (1 << 17)
+#define NUM_OPT             18
+extern CHAR16* ArgOptional[];
 
 #define IS_EXTENDED_PART_TYPE(type) ((type) == 0x05 || (type) == 0x0f || (type) == 0x85)
 
@@ -354,6 +356,7 @@ extern INTN ScrollbarYMovement;
 #define SCREEN_THEME      14
 #define SCREEN_SYSVARS    15
 #define SCREEN_CSR        16
+#define SCREEN_BLC        17
 
 #define MAX_ANIME  41
 

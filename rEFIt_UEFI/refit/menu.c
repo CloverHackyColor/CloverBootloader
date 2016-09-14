@@ -192,6 +192,28 @@ REFIT_MENU_SCREEN MainMenu    = {1, L"Main Menu", NULL, 0, NULL, 0, NULL, 0, L"A
 REFIT_MENU_SCREEN AboutMenu   = {2, L"About",     NULL, 0, NULL, 0, NULL, 0, NULL,              NULL, FALSE, FALSE, 0, 0, 0, 0, {0, 0, 0, 0}, NULL};
 REFIT_MENU_SCREEN HelpMenu    = {3, L"Help",      NULL, 0, NULL, 0, NULL, 0, NULL,              NULL, FALSE, FALSE, 0, 0, 0, 0, {0, 0, 0, 0}, NULL};
 
+CHAR16* ArgOptional[NUM_OPT] = {
+  L"arch=i386",
+  L"arch=x86_64",
+  L"-v ",
+  L"-s ",
+  L"-x ",
+  L"nv_disable=1",
+  L"slide=0",
+  L"darkwake=0",
+  L"-xcpm",
+  L"-gux_no_idle",
+  L"-gux_nosleep",
+  L"-gux_nomsi",
+  L"-gux_defer_usb2",
+  L"keepsyms=1",
+  L"debug=0x100",
+  L"kextlog=0xffff",
+  L"-alcoff",
+  L"-shikioff"
+  
+};
+
 UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc, IN OUT INTN *DefaultEntryIndex, OUT REFIT_MENU_ENTRY **ChosenEntry);
 
 
@@ -322,9 +344,6 @@ VOID FillInputs(BOOLEAN New)
         InputItems[InputItemsCount].SValue = AllocateZeroPool(20);
       }
       UnicodeSPrint(InputItems[InputItemsCount++].SValue, 20, L"%08lx", gSettings.IgPlatform);
-    }
-
-    if (gGraphics[i].Vendor == Intel) {
       InputItemsCount += 3;
       continue;
     }
@@ -354,10 +373,7 @@ VOID FillInputs(BOOLEAN New)
   }
   //and so on
 
-  InputItemsCount = 43;
-    // ErmaC: NvidiaGeneric menu selector y/n
-  InputItems[InputItemsCount].ItemType = BoolValue; //43
-  InputItems[InputItemsCount++].BValue = gSettings.NvidiaGeneric;
+  InputItemsCount = 44;
   InputItems[InputItemsCount].ItemType = BoolValue; //44
   InputItems[InputItemsCount++].BValue = gSettings.KextPatchesAllowed;
   InputItems[InputItemsCount].ItemType = BoolValue; //45
@@ -398,6 +414,12 @@ VOID FillInputs(BOOLEAN New)
   }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 16, L"0x%04x", gSettings.ProductEDID);
   
+  // ErmaC: NvidiaGeneric menu selector y/n
+  InputItems[InputItemsCount].ItemType = BoolValue; //55
+  InputItems[InputItemsCount++].BValue = gSettings.NvidiaGeneric;
+  InputItems[InputItemsCount].ItemType = BoolValue; //56
+  InputItems[InputItemsCount++].BValue = gSettings.NvidiaWeb;
+
   // CSR - aka System Integrity Protection configuration
   InputItemsCount = 65;
   InputItems[InputItemsCount].ItemType = CheckBit; //65
@@ -772,11 +794,6 @@ VOID ApplyInputs(VOID)
     }
   }  //end of Graphics Cards
   // next number == 42
-  i = 43; //26
-  // ErmaC: NvidiaGeneric bool(Y/N)
-  if (InputItems[i].Valid) {
-    gSettings.NvidiaGeneric = InputItems[i].BValue;
-  }
 
   i = 44;
   if (InputItems[i].Valid) {
@@ -830,16 +847,24 @@ VOID ApplyInputs(VOID)
   if (InputItems[i].Valid) {
     gSettings.ProductEDID = (UINT16)StrHexToUint64(InputItems[i].SValue);
   }
+  i++; //55
+  // ErmaC: NvidiaGeneric bool(Y/N)
+  if (InputItems[i].Valid) {
+    gSettings.NvidiaGeneric = InputItems[i].BValue;
+  }
+  i++; //56
+  if (InputItems[i].Valid) {
+    gSettings.NvidiaWeb = InputItems[i].BValue;
+  }
   
   // CSR
   i = 65; // 111
   if (InputItems[i].Valid) {
-    gSettings.BooterConfig = InputItems[i].IValue; // i = 65
-  }
-  
+    gSettings.BooterConfig = InputItems[i].IValue & 0x7F; 
+  }  
   i++;
   if (InputItems[i].Valid) {
-    gSettings.CsrActiveConfig = InputItems[i].IValue; // i = 66
+    gSettings.CsrActiveConfig = InputItems[i].IValue; 
   }
 
   i++;
@@ -1077,7 +1102,7 @@ VOID ApplyInputs(VOID)
     gSettings.KernelPatchesAllowed = InputItems[i].BValue;
     gBootChanged = TRUE;
   }
-
+/*
   if (SysVariables) {
     SYSVARIABLES *SysVariablesTmp = SysVariables;
     CHAR8 *SysVarsTmp = NULL;
@@ -1136,7 +1161,7 @@ VOID ApplyInputs(VOID)
       FreePool(SysVarsTmp);
     }
   }
-
+*/
   if (NeedSave) {
     SaveSettings();
   }
@@ -3764,14 +3789,23 @@ REFIT_MENU_ENTRY  *SubMenuGraphics()
 
     // ErmaC: NvidiaGeneric entry
     if (gGraphics[i].Vendor == Nvidia) {
-       InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-       InputBootArgs->Entry.Title = PoolPrint(L"Generic NVIDIA name");
-       InputBootArgs->Entry.Tag = TAG_INPUT;
-       InputBootArgs->Entry.Row = 0xFFFF; //cursor
-       InputBootArgs->Item = &InputItems[43];
-       InputBootArgs->Entry.AtClick = ActionEnter;
-       InputBootArgs->Entry.AtRightClick = ActionDetails;
-       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+      InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+      InputBootArgs->Entry.Title = PoolPrint(L"Generic NVIDIA name");
+      InputBootArgs->Entry.Tag = TAG_INPUT;
+      InputBootArgs->Entry.Row = 0xFFFF; //cursor
+      InputBootArgs->Item = &InputItems[55];
+      InputBootArgs->Entry.AtClick = ActionEnter;
+      InputBootArgs->Entry.AtRightClick = ActionDetails;
+      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+      
+      InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+      InputBootArgs->Entry.Title = PoolPrint(L"Use NVIDIA WEB drivers");
+      InputBootArgs->Entry.Tag = TAG_INPUT;
+      InputBootArgs->Entry.Row = 0xFFFF; //cursor
+      InputBootArgs->Item = &InputItems[56];
+      InputBootArgs->Entry.AtClick = ActionEnter;
+      InputBootArgs->Entry.AtRightClick = ActionDetails;
+      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
     }
 
     if (gGraphics[i].Vendor == Intel) {
@@ -4229,7 +4263,7 @@ REFIT_MENU_ENTRY  *SubMenuDropTables()
   Entry->SubScreen = SubScreen;
   return Entry;
 }
-
+/*
 REFIT_MENU_ENTRY  *SubMenuSysVariables()
 {
   REFIT_MENU_ENTRY    *Entry; //, *SubEntry;
@@ -4270,7 +4304,7 @@ REFIT_MENU_ENTRY  *SubMenuSysVariables()
   Entry->SubScreen = SubScreen;
   return Entry;
 }
-
+*/
 
 REFIT_MENU_ENTRY  *SubMenuSmbios()
 {
@@ -4412,6 +4446,19 @@ VOID AddMenuCheck(REFIT_MENU_SCREEN *SubScreen, CONST CHAR8 *Text, UINTN Bit, IN
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
 }
 
+VOID ModifyTitles(REFIT_MENU_ENTRY *ChosenEntry)
+{
+  if (ChosenEntry->SubScreen->ID == SCREEN_DSDT) {
+    UnicodeSPrint(ChosenEntry->Title, 128, L"DSDT fix mask [0x%08x]->", gSettings.FixDsdt);
+    //MsgLog("@ESC: %s\n", (*ChosenEntry)->Title);
+  } else if (ChosenEntry->SubScreen->ID == SCREEN_CSR) {
+    // CSR
+    UnicodeSPrint(ChosenEntry->Title, 128, L"System Integrity Protection [0x%04x]->", gSettings.CsrActiveConfig);
+  } else if (ChosenEntry->SubScreen->ID == SCREEN_BLC) {
+    UnicodeSPrint(ChosenEntry->Title, 128, L"boot_args->flags [0x%04x]->", gSettings.BooterConfig);
+  }
+}
+
 REFIT_MENU_ENTRY  *SubMenuDsdtFix()
 {
   REFIT_MENU_ENTRY   *Entry; //, *SubEntry;
@@ -4419,7 +4466,8 @@ REFIT_MENU_ENTRY  *SubMenuDsdtFix()
   REFIT_INPUT_DIALOG *InputBootArgs;
   
   Entry = AllocateZeroPool(sizeof(REFIT_MENU_ENTRY));
-  Entry->Title = PoolPrint(L"DSDT fix mask [0x%08x]->", gSettings.FixDsdt);
+  Entry->Title = AllocateZeroPool(128);
+  //  Entry->Title = PoolPrint(L"DSDT fix mask [0x%08x]->", gSettings.FixDsdt);
   Entry->Image =  OptionMenu.TitleImage;
   Entry->Tag = TAG_OPTIONS;
   Entry->AtClick = ActionEnter;
@@ -4494,6 +4542,8 @@ REFIT_MENU_ENTRY  *SubMenuDsdtFix()
   
   AddMenuEntry(SubScreen, &MenuEntryReturn);
   Entry->SubScreen = SubScreen;
+  ModifyTitles(Entry);
+
   return Entry;
 }
 
@@ -4672,7 +4722,8 @@ REFIT_MENU_ENTRY *SubMenuCSR()
   
   // create the entry in the main menu
   Entry = AllocateZeroPool(sizeof(REFIT_MENU_ENTRY));
-  Entry->Title = PoolPrint(L"System Integrity Protection [0x%03x]->", gSettings.CsrActiveConfig);
+  Entry->Title = AllocateZeroPool(128);
+//  Entry->Title = PoolPrint(L"System Integrity Protection [0x%04x]->", gSettings.CsrActiveConfig);
   Entry->Image =  OptionMenu.TitleImage;
   Entry->Tag = TAG_OPTIONS;
   Entry->AtClick = ActionEnter;
@@ -4689,25 +4740,67 @@ REFIT_MENU_ENTRY *SubMenuCSR()
   AddMenuInfoLine(SubScreen, PoolPrint(L"All configuration changes apply to the entire machine."));
   
   // available configurations
-  AddMenuCheck(SubScreen, "Allow Untrusted Kexts", CSR_UNTRUSTED_KEXTS_BIT, 66);
-  AddMenuCheck(SubScreen, "Allow Unrestricted FS", CSR_UNRESTRICTED_FS_BIT, 66);
-  AddMenuCheck(SubScreen, "Allow Task For PID", CSR_TASK_FOR_PID_BIT, 66);
-  AddMenuCheck(SubScreen, "Allow Kernel Debuger", CSR_KERNEL_DEBUGGER_BIT, 66);
-  AddMenuCheck(SubScreen, "Allow Apple Internal", CSR_APPLE_INTERNAL_BIT, 66);
-  /*AddMenuCheck(SubScreen, "Allow Destructive DTrace", CSR_DESTRUCTIVE_DTRACE_BIT, 66);*/
-  AddMenuCheck(SubScreen, "Allow Unrestricted DTrace", CSR_UNRESTRICTED_DTRACE_BIT, 66);
-  AddMenuCheck(SubScreen, "Allow Unrestricted NVRAM", CSR_UNRESTRICTED_NVRAM_BIT, 66);
-  AddMenuCheck(SubScreen, "Allow Device Configuration", CSR_DEVICE_CONFIGURATION_BIT, 66);
+  AddMenuCheck(SubScreen, "Allow Untrusted Kexts", CSR_ALLOW_UNTRUSTED_KEXTS, 66);
+  AddMenuCheck(SubScreen, "Allow Unrestricted FS", CSR_ALLOW_UNRESTRICTED_FS, 66);
+  AddMenuCheck(SubScreen, "Allow Task For PID", CSR_ALLOW_TASK_FOR_PID, 66);
+  AddMenuCheck(SubScreen, "Allow Kernel Debuger", CSR_ALLOW_KERNEL_DEBUGGER, 66);
+  AddMenuCheck(SubScreen, "Allow Apple Internal", CSR_ALLOW_APPLE_INTERNAL, 66);
+  AddMenuCheck(SubScreen, "Allow Unrestricted DTrace", CSR_ALLOW_UNRESTRICTED_DTRACE, 66);
+  AddMenuCheck(SubScreen, "Allow Unrestricted NVRAM", CSR_ALLOW_UNRESTRICTED_NVRAM, 66);
+  AddMenuCheck(SubScreen, "Allow Device Configuration", CSR_ALLOW_DEVICE_CONFIGURATION, 66);
   
   // check for the right booter flag to allow the application
   // of the new System Integrity Protection configuration.
-  if (gSettings.BooterConfig != 0x28) {
-    gSettings.BooterConfig = 0x28;
-  }
+  //it can't be here, because this is constructor, not run
+//  if (gSettings.BooterConfig == 0) {
+//    gSettings.BooterConfig = 0x28;
+//  }
   
   // return
   AddMenuEntry(SubScreen, &MenuEntryReturn);
   Entry->SubScreen = SubScreen;
+  ModifyTitles(Entry);
+  return Entry;
+}
+
+REFIT_MENU_ENTRY *SubMenuBLC()
+{
+  // init
+  REFIT_MENU_ENTRY   *Entry;
+  REFIT_MENU_SCREEN  *SubScreen;
+  
+  // create the entry in the main menu
+  Entry = AllocateZeroPool(sizeof(REFIT_MENU_ENTRY));
+  Entry->Title = AllocateZeroPool(128);
+//  Entry->Title = PoolPrint(L"boot_args->flags [0x%02x]->", gSettings.BooterConfig);
+  Entry->Image =  OptionMenu.TitleImage;
+  Entry->Tag = TAG_OPTIONS;
+  Entry->AtClick = ActionEnter;
+  
+  // create the submenu
+  SubScreen = AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
+  SubScreen->Title = Entry->Title;
+  SubScreen->TitleImage = Entry->Image;
+  SubScreen->ID = SCREEN_BLC;
+  SubScreen->AnimeRun = GetAnime(SubScreen);
+  
+  // submenu description
+  AddMenuInfoLine(SubScreen, PoolPrint(L"Modify flags for boot.efi"));
+
+  AddMenuCheck(SubScreen, "Reboot On Panic",    kBootArgsFlagRebootOnPanic, 65);
+  AddMenuCheck(SubScreen, "Hi DPI",             kBootArgsFlagHiDPI, 65);
+  AddMenuCheck(SubScreen, "Black Screen",       kBootArgsFlagBlack, 65);
+  AddMenuCheck(SubScreen, "CSR Active Config",  kBootArgsFlagCSRActiveConfig, 65);
+  AddMenuCheck(SubScreen, "CSR Pending Config", kBootArgsFlagCSRPendingConfig, 65);
+  AddMenuCheck(SubScreen, "CSR Boot",           kBootArgsFlagCSRBoot, 65);
+  AddMenuCheck(SubScreen, "Black Background",   kBootArgsFlagBlackBg, 65);
+  AddMenuCheck(SubScreen, "Login UI",           kBootArgsFlagLoginUI, 65);
+  AddMenuCheck(SubScreen, "Install UI",         kBootArgsFlagInstallUI, 65);
+  
+  AddMenuEntry(SubScreen, &MenuEntryReturn);
+  Entry->SubScreen = SubScreen;
+  ModifyTitles(Entry);
+  
   return Entry;
 }
 
@@ -4814,11 +4907,12 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     AddMenuEntry(&OptionMenu, SubMenuGraphics());
     AddMenuEntry(&OptionMenu, SubMenuBinaries());
     AddMenuEntry(&OptionMenu, SubMenuCSR());
-    
+    AddMenuEntry(&OptionMenu, SubMenuBLC());
+/*
     if (SysVariables) {
       AddMenuEntry(&OptionMenu, SubMenuSysVariables());
     }
-
+*/
     AddMenuEntry(&OptionMenu, &MenuEntryReturn);
     //DBG("option menu created entries=%d\n", OptionMenu.EntryCount);
   }
@@ -4838,34 +4932,42 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
           SubMenuExit = RunGenericMenu((*ChosenEntry)->SubScreen, SubStyle, &SubMenuIndex, &TmpChosenEntry);
           if (SubMenuExit == MENU_EXIT_ESCAPE || TmpChosenEntry->Tag == TAG_RETURN){
             ApplyInputs();
-            if ((*ChosenEntry)->SubScreen->ID == SCREEN_DSDT) {
+            ModifyTitles(*ChosenEntry);
+/*            if ((*ChosenEntry)->SubScreen->ID == SCREEN_DSDT) {
               UnicodeSPrint((*ChosenEntry)->Title, 255, L"DSDT fix mask [0x%08x]->", gSettings.FixDsdt);
               //MsgLog("@ESC: %s\n", (*ChosenEntry)->Title);
             } else if ((*ChosenEntry)->SubScreen->ID == SCREEN_CSR) {
               // CSR
-              UnicodeSPrint((*ChosenEntry)->Title, 255, L"System Integrity Protection [0x%03x]->",
+              UnicodeSPrint((*ChosenEntry)->Title, 255, L"System Integrity Protection [0x%04x]->",
                             gSettings.CsrActiveConfig);
               //MsgLog("@ESC: %s\n", (*ChosenEntry)->Title);
-            }
+            } else if ((*ChosenEntry)->SubScreen->ID == SCREEN_BLC) {
+              UnicodeSPrint((*ChosenEntry)->Title, 255, L"boot_args->flags [0x%02x]->",
+                            gSettings.BooterConfig);
+            } */
             break;
           }
           if (SubMenuExit == MENU_EXIT_ENTER) {
             // enter input dialog
             SubMenuExit = 0;
-            if ((*ChosenEntry)->SubScreen->ID == SCREEN_DSDT) {
+            ApplyInputs();
+            ModifyTitles(*ChosenEntry);
+
+ /*           if ((*ChosenEntry)->SubScreen->ID == SCREEN_DSDT) {
               CHAR16 *TmpTitle;
               ApplyInputs();
-              TmpTitle = PoolPrint(L"DSDT fix mask [0x%08x]->", gSettings.FixDsdt);
+              //TmpTitle = PoolPrint(L"DSDT fix mask [0x%08x]->", gSettings.FixDsdt);
               //MsgLog("@ENTER: tmp=%s\n", TmpTitle);
-              while (*TmpTitle) {
-                *((*ChosenEntry)->Title)++ = *TmpTitle++;
-              }
+              //while (*TmpTitle) {
+              //  *((*ChosenEntry)->Title)++ = *TmpTitle++;
+              //}
+              UnicodeSPrint((*ChosenEntry)->Title, 255, L"DSDT fix mask [0x%08x]->", gSettings.FixDsdt);
               //MsgLog("@ENTER: chosen=%s\n", (*ChosenEntry)->Title);
             } else if ((*ChosenEntry)->SubScreen->ID == SCREEN_CSR) {
               // CSR
               CHAR16 *CSRTmpTitle;
               ApplyInputs();
-              CSRTmpTitle = PoolPrint(L"System Integrity Protection [0x%03x]->",
+              CSRTmpTitle = PoolPrint(L"System Integrity Protection [0x%04x]->",
                                       gSettings.CsrActiveConfig);
               //MsgLog("@ENTER: tmp=%s\n", CSRTmpTitle);
               while (*CSRTmpTitle) {
@@ -4873,6 +4975,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
               }
               //MsgLog("@ENTER: chosen=%s\n", (*ChosenEntry)->Title);
             }
+  */
             if (TmpChosenEntry->ShortcutDigit == 0xF1) {
               MenuExit = MENU_EXIT_ENTER;
               //DBG("Escape menu from input dialog\n");
@@ -4910,124 +5013,29 @@ UINTN RunMenu(IN REFIT_MENU_SCREEN *Screen, OUT REFIT_MENU_ENTRY **ChosenEntry)
 }
 
 #ifdef CHECK_FLAGS
+
 UINT32 EncodeOptions(CHAR16 *Options)
 {
   UINT32 OptionsBits = 0;
-  if (StrStr(Options, L"-v ")) {
-    OptionsBits |= OPT_VERBOSE;
+  INTN Index;
+  for (Index = 0; Index < NUM_OPT; Index++) {
+    if (StrStr(Options, ArgOptional[Index])) {
+      OptionsBits |= (1 << Index);
+      if (Index == 1) {
+        OptionsBits &= ~1;
+      }
+    }
   }
-  if (StrStr(Options, L"-s ")) {
-    OptionsBits |= OPT_SINGLE_USER;
-  }
-  if (StrStr(Options, L"-x ")) {
-    OptionsBits |= OPT_SAFE;
-  }
-  if (StrStr(Options, L"arch=i386")) {
-    OptionsBits |= OPT_I386;
-    OptionsBits &= ~OPT_X64;
-  }
-  if (StrStr(Options, L"arch=x86_64")) {
-    OptionsBits |= OPT_X64;
-    OptionsBits &= ~OPT_I386;
-  }
-  if (StrStr(Options, L"nv_disable=1")) {
-    OptionsBits |= OPT_NVDISABLE;
-  }
-  if (StrStr(Options, L"darkwake=0")) {
-    OptionsBits |= OPT_POWERNAPOFF;
-  }
-  if (StrStr(Options, L"-xcpm")) {
-    OptionsBits |= OPT_XCPM;
-  }
-  if (StrStr(Options, L"-gux_no_idle")) {
-    OptionsBits |= OPT_GNOIDLE;
-  }
-  if (StrStr(Options, L"-gux_nosleep")) {
-    OptionsBits |= OPT_GNOSLEEP;
-  }
-  if (StrStr(Options, L"-gux_nomsi")) {
-    OptionsBits |= OPT_GNOMSI;
-  }
-  if (StrStr(Options, L"-gux_defer_usb2")) {
-    OptionsBits |= OPT_EHCUSB;
-  }
-  if (StrStr(Options, L"slide=0")) {
-    OptionsBits |= OPT_SLIDE;
-  }
-  if (StrStr(Options, L"keepsyms=1")) {
-    OptionsBits |= OPT_KEEPSYMS;
-  }
-  if (StrStr(Options, L"debug=0x100")) {
-    OptionsBits |= OPT_DEBUG;
-  }
-  if (StrStr(Options, L"kextlog=0xffff")) {
-    OptionsBits |= OPT_KEXTLOG;
-  }
-  if (StrStr(Options, L"-alcoff")) {
-    OptionsBits |= OPT_APPLEALC;
-  }
-  if (StrStr(Options, L"-shikioff")) {
-    OptionsBits |= OPT_SHIKI;
-  }
-  
   return OptionsBits;
 }
 
 VOID DecodeOptions(LOADER_ENTRY *Entry)
-{  
-  if (gSettings.OptionsBits & OPT_VERBOSE) {
-    Entry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"-v ");
-  }
-  if (gSettings.OptionsBits & OPT_SINGLE_USER) {
-    Entry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"-s ");
-  }
-  if (gSettings.OptionsBits & OPT_SAFE) {
-    Entry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"-x ");
-  }
-  if (gSettings.OptionsBits & OPT_I386) {
-    Entry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"arch=i386");
-  }
-  if (gSettings.OptionsBits & OPT_X64) {
-    Entry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"arch=x86_64");
-  }
-  if (gSettings.OptionsBits & OPT_NVDISABLE) {
-    Entry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"nv_disable=1");
-  }
-  if (gSettings.OptionsBits & OPT_POWERNAPOFF) {
-    Entry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"darkwake=0");
-  }
-  if (gSettings.OptionsBits & OPT_XCPM) {
-    Entry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"-xcpm");
-  }
-  if (gSettings.OptionsBits & OPT_GNOIDLE) {
-    Entry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"-gux_no_idle");
-  }
-  if (gSettings.OptionsBits & OPT_GNOSLEEP) {
-    Entry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"-gux_nosleep");
-  }
-  if (gSettings.OptionsBits & OPT_GNOMSI) {
-    Entry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"-gux_nomsi");
-  }
-  if (gSettings.OptionsBits & OPT_EHCUSB) {
-    Entry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"-gux_defer_usb2");
-  }
-  if (gSettings.OptionsBits & OPT_SLIDE) {
-    Entry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"slide=0");
-  }
-  if (gSettings.OptionsBits & OPT_KEEPSYMS) {
-    Entry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"keepsyms=1");
-  }
-  if (gSettings.OptionsBits & OPT_DEBUG) {
-    Entry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"debug=0x100");
-  }
-  if (gSettings.OptionsBits & OPT_KEXTLOG) {
-    Entry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"kextlog=0xffff");
-  }
-  if (gSettings.OptionsBits & OPT_APPLEALC) {
-    Entry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"-alcoff");
-  }
-  if (gSettings.OptionsBits & OPT_SHIKI) {
-    Entry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"-shikioff");
+{
+  INTN Index;
+  for (Index = 0; Index < NUM_OPT; Index++) {
+    if (gSettings.OptionsBits & (1 << Index)) {
+      Entry->LoadOptions     = AddLoadOption(Entry->LoadOptions, ArgOptional[Index]);
+    }
   }
 }
 

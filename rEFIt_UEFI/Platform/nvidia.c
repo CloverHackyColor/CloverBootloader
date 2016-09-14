@@ -1951,7 +1951,7 @@ CHAR8 *get_nvidia_model(UINT32 device_id, UINT32 subsys_id, CARDLIST * nvcard)
     if (nvidia_card_generic[i].device == device_id) {
       //--
 			//ErmaC added selector for nVidia "old" style in System Profiler
-			if (gSettings.NvidiaGeneric == TRUE) {
+			if (gSettings.NvidiaGeneric) {
 				DBG("Apply NvidiaGeneric\n");
 				AsciiSPrint(generic_name, 128, "NVIDIA %a", nvidia_card_generic[i].name_model);
 				return &generic_name[0]; // generic_name;

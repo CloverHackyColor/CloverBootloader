@@ -666,7 +666,7 @@ GetDefaultSettings ()
   gSettings.RtROM                = NULL;
   gSettings.RtROMLen             = 0;
   gSettings.CsrActiveConfig      = 0xFFFF;
-  gSettings.BooterConfig         = 0xFFFF;
+  gSettings.BooterConfig         = 0;
 
   if (gCPUStructure.Model >= CPU_MODEL_IVY_BRIDGE) {
     gSettings.GeneratePStates    = TRUE;
