@@ -694,11 +694,12 @@ MainBuildScript() {
       echo "#define FIRMWARE_REVISION L\"${clover_revision}\""   >> "$CLOVERROOT"/Version.h
       echo "#define REVISION_STR \"Clover revision: ${clover_revision}\"" >> "$CLOVERROOT"/Version.h
 
-      local clover_build_info="Args: ./${SELF}"
+      local clover_build_info="Args: "
       if [[ -n "$@" ]]; then
         clover_build_info="${clover_build_info} $@"
       fi
-      clover_build_info="${clover_build_info} | Command: $(echo $cmd | xargs)"
+      
+      clover_build_info="${clover_build_info} | $(echo $cmd | xargs | sed -e "s, -p ${PLATFORMFILE} , ,")"
 
       if [[ -n "${OSVER:-}" ]]; then
         clover_build_info="${clover_build_info} | OS: ${OSVER}"
@@ -706,9 +707,10 @@ MainBuildScript() {
       if [[ -n "${XCODE_VERSION:-}" ]]; then
         clover_build_info="${clover_build_info} | XCODE: ${XCODE_VERSION}"
       fi
-    
+      # removing force rebuild related flags, and ensure only one blank space is used as separator
       clover_build_info=$(echo ${clover_build_info} | sed -e 's/ -fr / /' \
-                         | sed -e 's/ --force-rebuild / /' | sed -e 's/ --skip-autogen / /' )
+                         | sed -e 's/ --force-rebuild / /' | sed -e 's/ --skip-autogen / /' \
+                         | sed -e 's/build//' | sed -e 's/  / /')
 
       echo "#define BUILDINFOS_STR \"${clover_build_info}\"" >> "$CLOVERROOT"/Version.h
 
