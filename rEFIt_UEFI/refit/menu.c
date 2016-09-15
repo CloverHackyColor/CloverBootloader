@@ -576,13 +576,13 @@ VOID FillInputs(BOOLEAN New)
     InputItems[InputItemsCount].SValue = AllocateZeroPool(26);
   }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeXHCI);
-  InputItems[InputItemsCount].ItemType = Hex;  //101
+  InputItems[InputItemsCount].ItemType = CheckBit;  //101
+  InputItems[InputItemsCount++].IValue = dropDSM;
 /*  if (New) {
     InputItems[InputItemsCount].SValue = AllocateZeroPool(26);
   }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%04X", dropDSM);
  */
-  InputItems[InputItemsCount++].IValue = dropDSM;
   
   InputItems[InputItemsCount].ItemType = BoolValue; //102
   InputItems[InputItemsCount++].BValue = gSettings.DebugDSDT;
@@ -4467,7 +4467,7 @@ VOID ModifyTitles(REFIT_MENU_ENTRY *ChosenEntry)
   } else if (ChosenEntry->SubScreen->ID == SCREEN_BLC) {
     UnicodeSPrint(ChosenEntry->Title, 128, L"boot_args->flags [0x%04x]->", gSettings.BooterConfig);
   } else if (ChosenEntry->SubScreen->ID == SCREEN_DSM) {
-    UnicodeSPrint(ChosenEntry->Title, 128, L"Drop OEM _DSM [0x%04x]->", gSettings.DropOEM_DSM);
+    UnicodeSPrint(ChosenEntry->Title, 128, L"Drop OEM _DSM [0x%04x]->", dropDSM);
   }
 }
 
@@ -4570,7 +4570,7 @@ REFIT_MENU_ENTRY  *SubMenuDsdtFix()
   InputBootArgs->Entry.AtRightClick = ActionDetails;
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
 */
-//  AddMenuEntry(SubScreen, SubMenuDropDSM()); //seems new level is not possible
+//  AddMenuEntry(SubScreen, SubMenuDropDSM()); //seems new level is not possible?
   
   AddMenuCheck(SubScreen, "Add DTGP",     FIX_DTGP, 67);
   AddMenuCheck(SubScreen, "Fix Darwin",   FIX_WARNING, 67);

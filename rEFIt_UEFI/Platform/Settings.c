@@ -4617,7 +4617,7 @@ GetUserSettings(
         defDSM = FALSE;
 
         if (Prop != NULL) {
-          defDSM = TRUE;
+          defDSM = TRUE; //set by user
           if (IsPropertyTrue (Prop)) {
             gSettings.DropOEM_DSM = 0xFFFF;
           } else if (IsPropertyFalse (Prop)) {
