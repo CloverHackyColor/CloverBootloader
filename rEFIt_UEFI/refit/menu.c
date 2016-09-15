@@ -577,10 +577,13 @@ VOID FillInputs(BOOLEAN New)
   }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeXHCI);
   InputItems[InputItemsCount].ItemType = Hex;  //101
-  if (New) {
+/*  if (New) {
     InputItems[InputItemsCount].SValue = AllocateZeroPool(26);
   }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%04X", dropDSM);
+ */
+  InputItems[InputItemsCount++].IValue = dropDSM;
+  
   InputItems[InputItemsCount].ItemType = BoolValue; //102
   InputItems[InputItemsCount++].BValue = gSettings.DebugDSDT;
   InputItems[InputItemsCount].ItemType = Hex;  //103
@@ -858,7 +861,7 @@ VOID ApplyInputs(VOID)
   }
   
   // CSR
-  i = 65; // 111
+  i = 65; 
   if (InputItems[i].Valid) {
     gSettings.BooterConfig = InputItems[i].IValue & 0x7F; 
   }  
@@ -979,7 +982,7 @@ VOID ApplyInputs(VOID)
     gSettings.EnableC7 = InputItems[i].BValue;
   }
 
-  i=90; //90
+  i++; //90
   if (InputItems[i].Valid) {
     if (StriCmp(InputItems[i].SValue, gSettings.ConfigName) != 0) {
       gBootChanged = TRUE;
@@ -1062,8 +1065,9 @@ VOID ApplyInputs(VOID)
 
   i++; //101
   if (InputItems[i].Valid) {
-    gSettings.DropOEM_DSM = (UINT16)StrHexToUint64(InputItems[i].SValue);
-    dropDSM = gSettings.DropOEM_DSM;
+//    gSettings.DropOEM_DSM = (UINT16)StrHexToUint64(InputItems[i].SValue);
+    gSettings.DropOEM_DSM = (UINT16)InputItems[i].IValue;
+    dropDSM = gSettings.DropOEM_DSM; //?
 //    defDSM = TRUE;
   }
   i++; //102
@@ -4454,10 +4458,66 @@ VOID ModifyTitles(REFIT_MENU_ENTRY *ChosenEntry)
   } else if (ChosenEntry->SubScreen->ID == SCREEN_CSR) {
     // CSR
     UnicodeSPrint(ChosenEntry->Title, 128, L"System Integrity Protection [0x%04x]->", gSettings.CsrActiveConfig);
+    // check for the right booter flag to allow the application
+    // of the new System Integrity Protection configuration.
+    if (gSettings.CsrActiveConfig != 0 && gSettings.BooterConfig == 0) {
+        gSettings.BooterConfig = 0x28;
+    }
+
   } else if (ChosenEntry->SubScreen->ID == SCREEN_BLC) {
     UnicodeSPrint(ChosenEntry->Title, 128, L"boot_args->flags [0x%04x]->", gSettings.BooterConfig);
+  } else if (ChosenEntry->SubScreen->ID == SCREEN_DSM) {
+    UnicodeSPrint(ChosenEntry->Title, 128, L"Drop OEM _DSM [0x%04x]->", gSettings.DropOEM_DSM);
   }
 }
+
+REFIT_MENU_ENTRY *SubMenuDropDSM()
+{
+  // init
+  REFIT_MENU_ENTRY   *Entry;
+  REFIT_MENU_SCREEN  *SubScreen;
+  
+  // create the entry in the main menu
+  Entry = AllocateZeroPool(sizeof(REFIT_MENU_ENTRY));
+  Entry->Title = AllocateZeroPool(128);
+  //  Entry->Title = PoolPrint(L"Drop OEM _DSM [0x%04x]->", gSettings.DropOEM_DSM);
+  Entry->Image =  OptionMenu.TitleImage;
+  Entry->Tag = TAG_OPTIONS;
+  Entry->AtClick = ActionEnter;
+  
+  // create the submenu
+  SubScreen = AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
+  SubScreen->Title = Entry->Title;
+  SubScreen->TitleImage = Entry->Image;
+  SubScreen->ID = SCREEN_DSM;
+  SubScreen->AnimeRun = GetAnime(SubScreen);
+  
+  // submenu description
+  AddMenuInfoLine(SubScreen, PoolPrint(L"Choose devices to drop OEM _DSM methods from DSDT"));
+  
+  AddMenuCheck(SubScreen, "ATI/AMD Graphics",     DEV_ATI, 101);
+  AddMenuCheck(SubScreen, "Nvidia Graphics",      DEV_NVIDIA, 101);
+  AddMenuCheck(SubScreen, "Intel Graphics",       DEV_INTEL, 101);
+  AddMenuCheck(SubScreen, "PCI HDA audio",        DEV_HDA, 101);
+  AddMenuCheck(SubScreen, "HDMI audio",           DEV_HDMI, 101);
+  AddMenuCheck(SubScreen, "PCI LAN Adapter",      DEV_LAN, 101);
+  AddMenuCheck(SubScreen, "PCI WiFi Adapter",     DEV_WIFI, 101);
+  AddMenuCheck(SubScreen, "IDE HDD",              DEV_IDE, 101);
+  AddMenuCheck(SubScreen, "SATA HDD",             DEV_SATA, 101);
+  AddMenuCheck(SubScreen, "USB Controllers",      DEV_USB, 101);
+  AddMenuCheck(SubScreen, "LPC Controller",       DEV_LPC, 101);
+  AddMenuCheck(SubScreen, "SMBUS Controller",     DEV_SMBUS, 101);
+  AddMenuCheck(SubScreen, "IMEI Device",          DEV_IMEI, 101);
+  AddMenuCheck(SubScreen, "Firewire",             DEV_FIREWIRE, 101);
+  
+  AddMenuEntry(SubScreen, &MenuEntryReturn);
+  Entry->SubScreen = SubScreen;
+  ModifyTitles(Entry);
+  
+  return Entry;
+}
+
+
 
 REFIT_MENU_ENTRY  *SubMenuDsdtFix()
 {
@@ -4500,7 +4560,7 @@ REFIT_MENU_ENTRY  *SubMenuDsdtFix()
   InputBootArgs->Entry.AtClick = ActionSelect;
   InputBootArgs->Entry.AtDoubleClick = ActionEnter;
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-  
+/*
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
   InputBootArgs->Entry.Title = PoolPrint(L"Drop _DSM:");
   InputBootArgs->Entry.Tag = TAG_INPUT;
@@ -4509,6 +4569,8 @@ REFIT_MENU_ENTRY  *SubMenuDsdtFix()
   InputBootArgs->Entry.AtClick = ActionEnter;
   InputBootArgs->Entry.AtRightClick = ActionDetails;
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+*/
+//  AddMenuEntry(SubScreen, SubMenuDropDSM()); //seems new level is not possible
   
   AddMenuCheck(SubScreen, "Add DTGP",     FIX_DTGP, 67);
   AddMenuCheck(SubScreen, "Fix Darwin",   FIX_WARNING, 67);
@@ -4723,7 +4785,6 @@ REFIT_MENU_ENTRY *SubMenuCSR()
   // create the entry in the main menu
   Entry = AllocateZeroPool(sizeof(REFIT_MENU_ENTRY));
   Entry->Title = AllocateZeroPool(128);
-//  Entry->Title = PoolPrint(L"System Integrity Protection [0x%04x]->", gSettings.CsrActiveConfig);
   Entry->Image =  OptionMenu.TitleImage;
   Entry->Tag = TAG_OPTIONS;
   Entry->AtClick = ActionEnter;
@@ -4748,13 +4809,6 @@ REFIT_MENU_ENTRY *SubMenuCSR()
   AddMenuCheck(SubScreen, "Allow Unrestricted DTrace", CSR_ALLOW_UNRESTRICTED_DTRACE, 66);
   AddMenuCheck(SubScreen, "Allow Unrestricted NVRAM", CSR_ALLOW_UNRESTRICTED_NVRAM, 66);
   AddMenuCheck(SubScreen, "Allow Device Configuration", CSR_ALLOW_DEVICE_CONFIGURATION, 66);
-  
-  // check for the right booter flag to allow the application
-  // of the new System Integrity Protection configuration.
-  //it can't be here, because this is constructor, not run
-//  if (gSettings.BooterConfig == 0) {
-//    gSettings.BooterConfig = 0x28;
-//  }
   
   // return
   AddMenuEntry(SubScreen, &MenuEntryReturn);
@@ -4806,16 +4860,16 @@ REFIT_MENU_ENTRY *SubMenuBLC()
 
 VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
 {
-  REFIT_MENU_ENTRY  *TmpChosenEntry = NULL;
-  UINTN             MenuExit = 0;
-  UINTN             SubMenuExit;
+  REFIT_MENU_ENTRY    *TmpChosenEntry = NULL;
+  UINTN               MenuExit = 0;
+  UINTN               SubMenuExit;
   //CHAR16*           Flags;
-  MENU_STYLE_FUNC   Style = TextMenuStyle;
-  MENU_STYLE_FUNC   SubStyle;
-  INTN              EntryIndex = 0;
-  INTN              SubMenuIndex;
+  MENU_STYLE_FUNC     Style = TextMenuStyle;
+  MENU_STYLE_FUNC     SubStyle;
+  INTN                EntryIndex = 0;
+  INTN                SubMenuIndex;
   REFIT_INPUT_DIALOG* InputBootArgs;
-  BOOLEAN           OldFontStyle = GlobalConfig.Proportional;
+  BOOLEAN             OldFontStyle = GlobalConfig.Proportional;
 
   GlobalConfig.Proportional = FALSE; //temporary disable proportional
 
@@ -4900,6 +4954,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     }
 
     AddMenuEntry(&OptionMenu, SubMenuDropTables());
+    AddMenuEntry(&OptionMenu, SubMenuDropDSM());
     AddMenuEntry(&OptionMenu, SubMenuDsdtFix());
     AddMenuEntry(&OptionMenu, SubMenuSmbios());
     AddMenuEntry(&OptionMenu, SubMenuPCI());
@@ -4933,18 +4988,6 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
           if (SubMenuExit == MENU_EXIT_ESCAPE || TmpChosenEntry->Tag == TAG_RETURN){
             ApplyInputs();
             ModifyTitles(*ChosenEntry);
-/*            if ((*ChosenEntry)->SubScreen->ID == SCREEN_DSDT) {
-              UnicodeSPrint((*ChosenEntry)->Title, 255, L"DSDT fix mask [0x%08x]->", gSettings.FixDsdt);
-              //MsgLog("@ESC: %s\n", (*ChosenEntry)->Title);
-            } else if ((*ChosenEntry)->SubScreen->ID == SCREEN_CSR) {
-              // CSR
-              UnicodeSPrint((*ChosenEntry)->Title, 255, L"System Integrity Protection [0x%04x]->",
-                            gSettings.CsrActiveConfig);
-              //MsgLog("@ESC: %s\n", (*ChosenEntry)->Title);
-            } else if ((*ChosenEntry)->SubScreen->ID == SCREEN_BLC) {
-              UnicodeSPrint((*ChosenEntry)->Title, 255, L"boot_args->flags [0x%02x]->",
-                            gSettings.BooterConfig);
-            } */
             break;
           }
           if (SubMenuExit == MENU_EXIT_ENTER) {
@@ -4952,30 +4995,6 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
             SubMenuExit = 0;
             ApplyInputs();
             ModifyTitles(*ChosenEntry);
-
- /*           if ((*ChosenEntry)->SubScreen->ID == SCREEN_DSDT) {
-              CHAR16 *TmpTitle;
-              ApplyInputs();
-              //TmpTitle = PoolPrint(L"DSDT fix mask [0x%08x]->", gSettings.FixDsdt);
-              //MsgLog("@ENTER: tmp=%s\n", TmpTitle);
-              //while (*TmpTitle) {
-              //  *((*ChosenEntry)->Title)++ = *TmpTitle++;
-              //}
-              UnicodeSPrint((*ChosenEntry)->Title, 255, L"DSDT fix mask [0x%08x]->", gSettings.FixDsdt);
-              //MsgLog("@ENTER: chosen=%s\n", (*ChosenEntry)->Title);
-            } else if ((*ChosenEntry)->SubScreen->ID == SCREEN_CSR) {
-              // CSR
-              CHAR16 *CSRTmpTitle;
-              ApplyInputs();
-              CSRTmpTitle = PoolPrint(L"System Integrity Protection [0x%04x]->",
-                                      gSettings.CsrActiveConfig);
-              //MsgLog("@ENTER: tmp=%s\n", CSRTmpTitle);
-              while (*CSRTmpTitle) {
-                *((*ChosenEntry)->Title)++ = *CSRTmpTitle++;
-              }
-              //MsgLog("@ENTER: chosen=%s\n", (*ChosenEntry)->Title);
-            }
-  */
             if (TmpChosenEntry->ShortcutDigit == 0xF1) {
               MenuExit = MENU_EXIT_ENTER;
               //DBG("Escape menu from input dialog\n");
