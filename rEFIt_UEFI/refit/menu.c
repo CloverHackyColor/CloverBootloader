@@ -3714,6 +3714,7 @@ REFIT_MENU_ENTRY  *SubMenuGraphics()
   InputBootArgs->Entry.AtRightClick = ActionDetails;
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
   
+  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
   InputBootArgs->Entry.Title = PoolPrint(L"Fake Vendor EDID:");
   InputBootArgs->Entry.Tag = TAG_INPUT;
   InputBootArgs->Entry.Row = StrLen(InputItems[53].SValue); //cursor
@@ -3722,6 +3723,7 @@ REFIT_MENU_ENTRY  *SubMenuGraphics()
   InputBootArgs->Entry.AtDoubleClick = ActionEnter;
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
 
+  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
   InputBootArgs->Entry.Title = PoolPrint(L"Fake Product EDID:");
   InputBootArgs->Entry.Tag = TAG_INPUT;
   InputBootArgs->Entry.Row = StrLen(InputItems[54].SValue); //cursor
