@@ -1468,6 +1468,10 @@ VOID SetVariablesFromNvram()
 //    DeleteNvramVariable(L"boot-args", &gEfiAppleBootGuid);
     Size = AsciiStrLen(tmpString); // some EFI implementations include '\0' in Size, and others don't, so update Size to string length
     arg = AllocatePool(Size+1);
+    
+    if (AsciiStrStr(tmpString, "nvda_drv=1")) { //found substring
+      gSettings.NvidiaWeb = TRUE;
+    }
     //first we will find new args that is not present in main args
     index = 0;
     while ((index < Size) && (tmpString[index] != 0x0)) {

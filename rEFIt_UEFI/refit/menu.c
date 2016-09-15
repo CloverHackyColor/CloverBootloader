@@ -210,8 +210,8 @@ CHAR16* ArgOptional[NUM_OPT] = {
   L"debug=0x100",
   L"kextlog=0xffff",
   L"-alcoff",
-  L"-shikioff"
-  
+  L"-shikioff",
+  L"nvda_drv=1"
 };
 
 UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc, IN OUT INTN *DefaultEntryIndex, OUT REFIT_MENU_ENTRY **ChosenEntry);
@@ -5034,8 +5034,12 @@ VOID DecodeOptions(LOADER_ENTRY *Entry)
   INTN Index;
   for (Index = 0; Index < NUM_OPT; Index++) {
     if (gSettings.OptionsBits & (1 << Index)) {
-      Entry->LoadOptions     = AddLoadOption(Entry->LoadOptions, ArgOptional[Index]);
+      Entry->LoadOptions = AddLoadOption(Entry->LoadOptions, ArgOptional[Index]);
     }
+  }
+  
+  if (gSettings.OptionsBits & OPT_NVWEBON) {
+    gSettings.NvidiaWeb = TRUE;
   }
 }
 
