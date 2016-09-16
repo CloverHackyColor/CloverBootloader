@@ -4153,7 +4153,7 @@ REFIT_MENU_ENTRY *SubMenuGUI()
   REFIT_MENU_SCREEN  *SubScreen;
   
   // create the entry in the options menu
-  NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_ACPI, "GUI tuning->");
+  NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_GUI, "GUI tuning->");
   
   // submenu description
   AddMenuInfoLine(SubScreen, PoolPrint(L"Choose options to tune the Interface"));
@@ -4238,7 +4238,7 @@ REFIT_MENU_ENTRY *SubMenuSystem()
   REFIT_MENU_SCREEN  *SubScreen;
   
   // create the entry in the options menu
-  NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_ACPI, "System Parameters->");
+  NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_SYSTEM, "System Parameters->");
   
   // submenu description
   AddMenuInfoLine(SubScreen, PoolPrint(L"Choose options for booted OS"));
