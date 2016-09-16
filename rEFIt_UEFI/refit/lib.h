@@ -202,7 +202,8 @@ OSTYPE_COMPARE_IMP(OSTYPE_IS_LINUX, type1, type2) || OSTYPE_COMPARE_IMP(OSTYPE_I
 #define OPT_KEXTLOG         (1 << 15)
 #define OPT_APPLEALC        (1 << 16)
 #define OPT_SHIKI           (1 << 17)
-#define OPT_NVWEBON         (1 << 18)
+#define INX_NVWEBON         18
+#define OPT_NVWEBON         (1 << INX_NVWEBON)
 #define NUM_OPT             19
 extern CHAR16* ArgOptional[];
 

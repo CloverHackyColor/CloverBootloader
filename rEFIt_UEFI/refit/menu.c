@@ -5053,15 +5053,18 @@ UINT32 EncodeOptions(CHAR16 *Options)
 VOID DecodeOptions(LOADER_ENTRY *Entry)
 {
   INTN Index;
-  for (Index = 0; Index < NUM_OPT; Index++) {
+  for (Index = 0; Index < INX_NVWEBON; Index++) { //not including INX_NVWEBON
     if (gSettings.OptionsBits & (1 << Index)) {
       Entry->LoadOptions = AddLoadOption(Entry->LoadOptions, ArgOptional[Index]);
     }
   }
-  
   if (gSettings.OptionsBits & OPT_NVWEBON) {
-    gSettings.NvidiaWeb = TRUE;
-  }
+    if (AsciiOSVersionToUint64(Entry->OSVersion) >= AsciiOSVersionToUint64("10.12")) {
+      gSettings.NvidiaWeb = TRUE;
+    } else {
+      Entry->LoadOptions = AddLoadOption(Entry->LoadOptions, ArgOptional[INX_NVWEBON]);
+    }
+  }  
 }
 
 #endif

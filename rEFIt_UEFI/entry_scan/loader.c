@@ -713,6 +713,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
  */
   // loader-specific submenu entries
   if (Entry->LoaderType == OSTYPE_OSX || Entry->LoaderType == OSTYPE_OSX_INSTALLER || Entry->LoaderType == OSTYPE_RECOVERY) { // entries for Mac OS X
+    AddMenuInfoLine(SubScreen, PoolPrint(L"macOS %a", Entry->OSVersion));
 #ifdef CHECK_FLAGS
     AddMenuCheck(SubScreen, "Hibernate wake",       OSFLAG_HIBERNATED, 69);
     //    AddMenuCheck(SubScreen, "Cancel hibernate wake", OSFLAG_NOHIBERNATED, 69);
