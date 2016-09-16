@@ -3685,6 +3685,21 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
   }
 }
 
+//
+// user-callable dispatcher functions
+//
+
+UINTN RunMenu(IN REFIT_MENU_SCREEN *Screen, OUT REFIT_MENU_ENTRY **ChosenEntry)
+{
+  INTN Index = -1;
+  MENU_STYLE_FUNC Style = TextMenuStyle;
+  
+  if (AllowGraphicsMode)
+    Style = GraphicsMenuStyle;
+  
+  return RunGenericMenu(Screen, Style, &Index, ChosenEntry);
+}
+
 REFIT_MENU_ENTRY  *SubMenuGraphics()
 {
   UINTN  i, N, Ven = 97;
@@ -4525,7 +4540,7 @@ REFIT_MENU_ENTRY  *SubMenuDsdtFix()
 {
   REFIT_MENU_ENTRY   *Entry; //, *SubEntry;
   REFIT_MENU_SCREEN  *SubScreen;
-  REFIT_INPUT_DIALOG *InputBootArgs;
+//  REFIT_INPUT_DIALOG *InputBootArgs;
   
   Entry = AllocateZeroPool(sizeof(REFIT_MENU_ENTRY));
   Entry->Title = AllocateZeroPool(128);
@@ -4539,37 +4554,6 @@ REFIT_MENU_ENTRY  *SubMenuDsdtFix()
   SubScreen->TitleImage = Entry->Image;
   SubScreen->ID = SCREEN_DSDT;
   SubScreen->AnimeRun = GetAnime(SubScreen);
-  
-  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"Debug DSDT");
-  InputBootArgs->Entry.Tag = TAG_INPUT;
-  InputBootArgs->Entry.Row = 0xFFFF; //cursor
-  InputBootArgs->Item = &InputItems[102];
-  InputBootArgs->Entry.AtClick = ActionEnter;
-  InputBootArgs->Entry.AtRightClick = ActionDetails;
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-  
-  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"DSDT name:");
-  InputBootArgs->Entry.Tag = TAG_INPUT;
-  InputBootArgs->Entry.Row = StrLen(InputItems[1].SValue);
-  //InputBootArgs->Entry.ShortcutDigit = 0;
-  InputBootArgs->Entry.ShortcutLetter = 'D';
-  InputBootArgs->Item = &InputItems[1];    //1
-  InputBootArgs->Entry.AtClick = ActionSelect;
-  InputBootArgs->Entry.AtDoubleClick = ActionEnter;
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-/*
-  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"Drop _DSM:");
-  InputBootArgs->Entry.Tag = TAG_INPUT;
-  InputBootArgs->Entry.Row = StrLen(InputItems[101].SValue); //cursor
-  InputBootArgs->Item = &InputItems[101];
-  InputBootArgs->Entry.AtClick = ActionEnter;
-  InputBootArgs->Entry.AtRightClick = ActionDetails;
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-*/
-  AddMenuEntry(SubScreen, SubMenuDropDSM()); //seems new level is not possible?
   
   AddMenuCheck(SubScreen, "Add DTGP",     FIX_DTGP, 67);
   AddMenuCheck(SubScreen, "Fix Darwin",   FIX_WARNING, 67);
@@ -4607,6 +4591,62 @@ REFIT_MENU_ENTRY  *SubMenuDsdtFix()
 
   return Entry;
 }
+
+
+REFIT_MENU_ENTRY *SubMenuACPI()
+{
+  // init
+  REFIT_MENU_ENTRY   *Entry;
+  REFIT_MENU_SCREEN  *SubScreen;
+  REFIT_INPUT_DIALOG *InputBootArgs;
+  
+  // create the entry in the options menu
+  Entry = AllocateZeroPool(sizeof(REFIT_MENU_ENTRY));
+  Entry->Title = PoolPrint(L"ACPI patching->");
+  Entry->Image =  OptionMenu.TitleImage;
+  Entry->Tag = TAG_OPTIONS;
+  Entry->AtClick = ActionEnter;
+  
+  // create the submenu
+  SubScreen = AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
+  SubScreen->Title = Entry->Title;
+  SubScreen->TitleImage = Entry->Image;
+  SubScreen->ID = SCREEN_ACPI;
+  SubScreen->AnimeRun = GetAnime(SubScreen);
+  
+  // submenu description
+  AddMenuInfoLine(SubScreen, PoolPrint(L"Choose options to patch ACPI"));
+
+  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  InputBootArgs->Entry.Title = PoolPrint(L"Debug DSDT");
+  InputBootArgs->Entry.Tag = TAG_INPUT;
+  InputBootArgs->Entry.Row = 0xFFFF; //cursor
+  InputBootArgs->Item = &InputItems[102];
+  InputBootArgs->Entry.AtClick = ActionEnter;
+  InputBootArgs->Entry.AtRightClick = ActionDetails;
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+  
+  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  InputBootArgs->Entry.Title = PoolPrint(L"DSDT name:");
+  InputBootArgs->Entry.Tag = TAG_INPUT;
+  InputBootArgs->Entry.Row = StrLen(InputItems[1].SValue);
+  //InputBootArgs->Entry.ShortcutDigit = 0;
+  //InputBootArgs->Entry.ShortcutLetter = 'D';
+  InputBootArgs->Item = &InputItems[1];    //1
+  InputBootArgs->Entry.AtClick = ActionSelect;
+  InputBootArgs->Entry.AtDoubleClick = ActionEnter;
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+
+  AddMenuEntry(SubScreen, SubMenuDropTables());
+  AddMenuEntry(SubScreen, SubMenuDropDSM());
+  AddMenuEntry(SubScreen, SubMenuDsdtFix()); 
+  
+  AddMenuEntry(SubScreen, &MenuEntryReturn);
+  Entry->SubScreen = SubScreen;
+  
+  return Entry;
+}
+
 
 REFIT_MENU_ENTRY  *SubMenuPCI()
 {
@@ -4865,19 +4905,16 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
   UINTN               SubMenuExit;
   UINTN               NextMenuExit;
   //CHAR16*           Flags;
-  MENU_STYLE_FUNC     Style = TextMenuStyle;
-  MENU_STYLE_FUNC     SubStyle;
-  INTN                EntryIndex = 0;
-  INTN                SubMenuIndex;
-  INTN                NextMenuIndex;
+//  MENU_STYLE_FUNC     Style = TextMenuStyle;
+//  INTN                EntryIndex = 0;
   REFIT_INPUT_DIALOG* InputBootArgs;
   BOOLEAN             OldFontStyle = GlobalConfig.Proportional;
 
   GlobalConfig.Proportional = FALSE; //temporary disable proportional
 
-  if (AllowGraphicsMode) {
-    Style = GraphicsMenuStyle;
-  }
+//  if (AllowGraphicsMode) {
+//    Style = GraphicsMenuStyle;
+//  }
 
   // remember, if you extended this menu then change procedures
   // FillInputs and ApplyInputs
@@ -4956,9 +4993,10 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
       AddMenuEntry(&OptionMenu, SubMenuThemes());
     }
 
-    AddMenuEntry(&OptionMenu, SubMenuDropTables());
+//    AddMenuEntry(&OptionMenu, SubMenuDropTables());
 //    AddMenuEntry(&OptionMenu, SubMenuDropDSM());
-    AddMenuEntry(&OptionMenu, SubMenuDsdtFix());
+//    AddMenuEntry(&OptionMenu, SubMenuDsdtFix());
+    AddMenuEntry(&OptionMenu, SubMenuACPI());
     AddMenuEntry(&OptionMenu, SubMenuSmbios());
     AddMenuEntry(&OptionMenu, SubMenuPCI());
     AddMenuEntry(&OptionMenu, SubMenuSpeedStep());
@@ -4977,17 +5015,16 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
 
   while (!MenuExit) {
 
-    MenuExit = RunGenericMenu(&OptionMenu, Style, &EntryIndex, ChosenEntry);
+//    MenuExit = RunGenericMenu(&OptionMenu, Style, &EntryIndex, ChosenEntry);
+    MenuExit = RunMenu(&OptionMenu, ChosenEntry);
     if (MenuExit == MENU_EXIT_ESCAPE || (*ChosenEntry)->Tag == TAG_RETURN)
       break;
     if (MenuExit == MENU_EXIT_ENTER) {
       //enter input dialog or subscreen
       if ((*ChosenEntry)->SubScreen != NULL) {
-        SubMenuIndex = -1;
         SubMenuExit = 0;
-        SubStyle = Style;
         while (!SubMenuExit) {
-          SubMenuExit = RunGenericMenu((*ChosenEntry)->SubScreen, SubStyle, &SubMenuIndex, &TmpChosenEntry);
+          SubMenuExit = RunMenu((*ChosenEntry)->SubScreen, &TmpChosenEntry);
           if (SubMenuExit == MENU_EXIT_ESCAPE || TmpChosenEntry->Tag == TAG_RETURN){
             ApplyInputs();
             ModifyTitles(*ChosenEntry);
@@ -4995,10 +5032,9 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
           }
           if (SubMenuExit == MENU_EXIT_ENTER) {
             if (TmpChosenEntry->SubScreen != NULL) {
-              NextMenuIndex = -1;
               NextMenuExit = 0;
               while (!NextMenuExit) {
-                NextMenuExit = RunGenericMenu(TmpChosenEntry->SubScreen, SubStyle, &NextMenuIndex, &NextChosenEntry);
+                NextMenuExit = RunMenu(TmpChosenEntry->SubScreen, &NextChosenEntry);
                 if (NextMenuExit == MENU_EXIT_ESCAPE || NextChosenEntry->Tag == TAG_RETURN){
                   ApplyInputs();
                   ModifyTitles(TmpChosenEntry);
@@ -5040,21 +5076,6 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
 exit:
   GlobalConfig.Proportional = OldFontStyle;
   ApplyInputs();
-}
-
-//
-// user-callable dispatcher functions
-//
-
-UINTN RunMenu(IN REFIT_MENU_SCREEN *Screen, OUT REFIT_MENU_ENTRY **ChosenEntry)
-{
-    INTN index = -1;
-    MENU_STYLE_FUNC Style = TextMenuStyle;
-
-    if (AllowGraphicsMode)
-        Style = GraphicsMenuStyle;
-
-    return RunGenericMenu(Screen, Style, &index, ChosenEntry);
 }
 
 #ifdef CHECK_FLAGS

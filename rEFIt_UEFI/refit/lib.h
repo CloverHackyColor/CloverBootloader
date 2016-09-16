@@ -360,7 +360,7 @@ extern INTN ScrollbarYMovement;
 #define SCREEN_CSR        16
 #define SCREEN_BLC        17
 #define SCREEN_DSM        18
-
+#define SCREEN_ACPI       19
 #define MAX_ANIME  41
 
 typedef struct _refit_menu_screen REFIT_MENU_SCREEN;
