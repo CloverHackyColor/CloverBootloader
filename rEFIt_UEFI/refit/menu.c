@@ -4809,6 +4809,57 @@ REFIT_MENU_ENTRY  *SubMenuThemes()
   return Entry;
 }
 
+REFIT_MENU_ENTRY *SubMenuGUI()
+{
+  // init
+  REFIT_MENU_ENTRY   *Entry;
+  REFIT_MENU_SCREEN  *SubScreen;
+  REFIT_INPUT_DIALOG *InputBootArgs;
+  
+  // create the entry in the options menu
+  Entry = AllocateZeroPool(sizeof(REFIT_MENU_ENTRY));
+  Entry->Title = PoolPrint(L"GUI tuning->");
+  Entry->Image =  OptionMenu.TitleImage;
+  Entry->Tag = TAG_OPTIONS;
+  Entry->AtClick = ActionEnter;
+  
+  // create the submenu
+  SubScreen = AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
+  SubScreen->Title = Entry->Title;
+  SubScreen->TitleImage = Entry->Image;
+  SubScreen->ID = SCREEN_ACPI;
+  SubScreen->AnimeRun = GetAnime(SubScreen);
+  
+  // submenu description
+  AddMenuInfoLine(SubScreen, PoolPrint(L"Choose options to tune the Interface"));
+  
+    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+    InputBootArgs->Entry.Title = PoolPrint(L"Pointer speed:");
+    InputBootArgs->Entry.Tag = TAG_INPUT;
+    InputBootArgs->Entry.Row = StrLen(InputItems[70].SValue); //cursor
+    InputBootArgs->Item = &InputItems[70];
+    InputBootArgs->Entry.AtClick = ActionSelect;
+    InputBootArgs->Entry.AtDoubleClick = ActionEnter;
+    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+    
+    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+    InputBootArgs->Entry.Title = PoolPrint(L"Mirror move");
+    InputBootArgs->Entry.Tag = TAG_INPUT;
+    InputBootArgs->Entry.Row = 0xFFFF;
+    InputBootArgs->Item = &InputItems[72];
+    InputBootArgs->Entry.AtClick = ActionEnter;
+    InputBootArgs->Entry.AtRightClick = ActionDetails;
+    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+    
+    AddMenuEntry(SubScreen, SubMenuThemes());
+  
+  AddMenuEntry(SubScreen, &MenuEntryReturn);
+  Entry->SubScreen = SubScreen;
+  
+  return Entry;
+}
+
+
 /* 
  * This is a simple and user friendly submenu which makes it possible to modify 
  * the System Integrity Protection configuration from the Clover's GUI.
@@ -4897,6 +4948,58 @@ REFIT_MENU_ENTRY *SubMenuBLC()
   return Entry;
 }
 
+REFIT_MENU_ENTRY *SubMenuSystem()
+{
+  // init
+  REFIT_MENU_ENTRY   *Entry;
+  REFIT_MENU_SCREEN  *SubScreen;
+  REFIT_INPUT_DIALOG *InputBootArgs;
+  
+  // create the entry in the options menu
+  Entry = AllocateZeroPool(sizeof(REFIT_MENU_ENTRY));
+  Entry->Title = PoolPrint(L"System Parameters->");
+  Entry->Image =  OptionMenu.TitleImage;
+  Entry->Tag = TAG_OPTIONS;
+  Entry->AtClick = ActionEnter;
+  
+  // create the submenu
+  SubScreen = AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
+  SubScreen->Title = Entry->Title;
+  SubScreen->TitleImage = Entry->Image;
+  SubScreen->ID = SCREEN_ACPI;
+  SubScreen->AnimeRun = GetAnime(SubScreen);
+  
+  // submenu description
+  AddMenuInfoLine(SubScreen, PoolPrint(L"Choose options for booted OS"));
+  
+  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  InputBootArgs->Entry.Title = PoolPrint(L"Block kext:");
+  InputBootArgs->Entry.Tag = TAG_INPUT;
+  InputBootArgs->Entry.Row = StrLen(InputItems[2].SValue);
+  InputBootArgs->Item = &InputItems[2];
+  InputBootArgs->Entry.AtClick = ActionSelect;
+  InputBootArgs->Entry.AtDoubleClick = ActionEnter;
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+  
+  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  InputBootArgs->Entry.Title = PoolPrint(L"Set OS version if not:");
+  InputBootArgs->Entry.Tag = TAG_INPUT;
+  InputBootArgs->Entry.Row = StrLen(InputItems[51].SValue);
+  InputBootArgs->Item = &InputItems[51];
+  InputBootArgs->Entry.AtClick = ActionSelect;
+  InputBootArgs->Entry.AtDoubleClick = ActionEnter;
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+  
+  AddMenuEntry(SubScreen, SubMenuCSR());
+  AddMenuEntry(SubScreen, SubMenuBLC());
+  
+  AddMenuEntry(SubScreen, &MenuEntryReturn);
+  Entry->SubScreen = SubScreen;
+  
+  return Entry;
+}
+
+
 VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
 {
   REFIT_MENU_ENTRY    *TmpChosenEntry = NULL;
@@ -4952,58 +5055,20 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     InputBootArgs->Entry.AtDoubleClick = ActionEnter;
     AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
 
-    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-    InputBootArgs->Entry.Title = PoolPrint(L"Block kext:");
-    InputBootArgs->Entry.Tag = TAG_INPUT;
-    InputBootArgs->Entry.Row = StrLen(InputItems[2].SValue);
-    InputBootArgs->Item = &InputItems[2];
-    InputBootArgs->Entry.AtClick = ActionSelect;
-    InputBootArgs->Entry.AtDoubleClick = ActionEnter;
-    AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
-
-    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-    InputBootArgs->Entry.Title = PoolPrint(L"Set OS version if not:");
-    InputBootArgs->Entry.Tag = TAG_INPUT;
-    InputBootArgs->Entry.Row = StrLen(InputItems[51].SValue);
-    InputBootArgs->Item = &InputItems[51];
-    InputBootArgs->Entry.AtClick = ActionSelect;
-    InputBootArgs->Entry.AtDoubleClick = ActionEnter;
-    AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
+//    AddMenuEntry(&OptionMenu, SubMenuDropTables());
 
     if (AllowGraphicsMode) {
-      InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-      InputBootArgs->Entry.Title = PoolPrint(L"Pointer speed:");
-      InputBootArgs->Entry.Tag = TAG_INPUT;
-      InputBootArgs->Entry.Row = StrLen(InputItems[70].SValue); //cursor
-      InputBootArgs->Entry.ShortcutLetter = 'P';
-      InputBootArgs->Item = &InputItems[70];
-      InputBootArgs->Entry.AtClick = ActionSelect;
-      InputBootArgs->Entry.AtDoubleClick = ActionEnter;
-      AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
-
-      InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-      InputBootArgs->Entry.Title = PoolPrint(L"Mirror move");
-      InputBootArgs->Entry.Tag = TAG_INPUT;
-      InputBootArgs->Entry.Row = 0xFFFF;
-      InputBootArgs->Item = &InputItems[72];
-      InputBootArgs->Entry.AtClick = ActionEnter;
-      InputBootArgs->Entry.AtRightClick = ActionDetails;
-      AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
-
-      AddMenuEntry(&OptionMenu, SubMenuThemes());
+      AddMenuEntry(&OptionMenu, SubMenuGUI());
     }
-
-//    AddMenuEntry(&OptionMenu, SubMenuDropTables());
-//    AddMenuEntry(&OptionMenu, SubMenuDropDSM());
-//    AddMenuEntry(&OptionMenu, SubMenuDsdtFix());
     AddMenuEntry(&OptionMenu, SubMenuACPI());
     AddMenuEntry(&OptionMenu, SubMenuSmbios());
     AddMenuEntry(&OptionMenu, SubMenuPCI());
     AddMenuEntry(&OptionMenu, SubMenuSpeedStep());
     AddMenuEntry(&OptionMenu, SubMenuGraphics());
     AddMenuEntry(&OptionMenu, SubMenuBinaries());
-    AddMenuEntry(&OptionMenu, SubMenuCSR());
-    AddMenuEntry(&OptionMenu, SubMenuBLC());
+    AddMenuEntry(&OptionMenu, SubMenuSystem());
+//    AddMenuEntry(&OptionMenu, SubMenuCSR());
+//    AddMenuEntry(&OptionMenu, SubMenuBLC());
 /*
     if (SysVariables) {
       AddMenuEntry(&OptionMenu, SubMenuSysVariables());
