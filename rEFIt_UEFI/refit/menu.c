@@ -4555,9 +4555,6 @@ REFIT_MENU_ENTRY  *SubMenuDsdtFix()
   InputBootArgs->Entry.Row = StrLen(InputItems[1].SValue);
   //InputBootArgs->Entry.ShortcutDigit = 0;
   InputBootArgs->Entry.ShortcutLetter = 'D';
-  InputBootArgs->Entry.Image = NULL;
-  InputBootArgs->Entry.BadgeImage = NULL;
-  InputBootArgs->Entry.SubScreen = NULL;
   InputBootArgs->Item = &InputItems[1];    //1
   InputBootArgs->Entry.AtClick = ActionSelect;
   InputBootArgs->Entry.AtDoubleClick = ActionEnter;
@@ -4572,7 +4569,7 @@ REFIT_MENU_ENTRY  *SubMenuDsdtFix()
   InputBootArgs->Entry.AtRightClick = ActionDetails;
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
 */
-//  AddMenuEntry(SubScreen, SubMenuDropDSM()); //seems new level is not possible?
+  AddMenuEntry(SubScreen, SubMenuDropDSM()); //seems new level is not possible?
   
   AddMenuCheck(SubScreen, "Add DTGP",     FIX_DTGP, 67);
   AddMenuCheck(SubScreen, "Fix Darwin",   FIX_WARNING, 67);
@@ -4863,20 +4860,24 @@ REFIT_MENU_ENTRY *SubMenuBLC()
 VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
 {
   REFIT_MENU_ENTRY    *TmpChosenEntry = NULL;
+  REFIT_MENU_ENTRY    *NextChosenEntry = NULL;
   UINTN               MenuExit = 0;
   UINTN               SubMenuExit;
+  UINTN               NextMenuExit;
   //CHAR16*           Flags;
   MENU_STYLE_FUNC     Style = TextMenuStyle;
   MENU_STYLE_FUNC     SubStyle;
   INTN                EntryIndex = 0;
   INTN                SubMenuIndex;
+  INTN                NextMenuIndex;
   REFIT_INPUT_DIALOG* InputBootArgs;
   BOOLEAN             OldFontStyle = GlobalConfig.Proportional;
 
   GlobalConfig.Proportional = FALSE; //temporary disable proportional
 
-  if (AllowGraphicsMode)
+  if (AllowGraphicsMode) {
     Style = GraphicsMenuStyle;
+  }
 
   // remember, if you extended this menu then change procedures
   // FillInputs and ApplyInputs
@@ -4956,7 +4957,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     }
 
     AddMenuEntry(&OptionMenu, SubMenuDropTables());
-    AddMenuEntry(&OptionMenu, SubMenuDropDSM());
+//    AddMenuEntry(&OptionMenu, SubMenuDropDSM());
     AddMenuEntry(&OptionMenu, SubMenuDsdtFix());
     AddMenuEntry(&OptionMenu, SubMenuSmbios());
     AddMenuEntry(&OptionMenu, SubMenuPCI());
@@ -4993,12 +4994,35 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
             break;
           }
           if (SubMenuExit == MENU_EXIT_ENTER) {
+            if (TmpChosenEntry->SubScreen != NULL) {
+              NextMenuIndex = -1;
+              NextMenuExit = 0;
+              while (!NextMenuExit) {
+                NextMenuExit = RunGenericMenu(TmpChosenEntry->SubScreen, SubStyle, &NextMenuIndex, &NextChosenEntry);
+                if (NextMenuExit == MENU_EXIT_ESCAPE || NextChosenEntry->Tag == TAG_RETURN){
+                  ApplyInputs();
+                  ModifyTitles(TmpChosenEntry);
+                  break;
+                }
+                if (NextMenuExit == MENU_EXIT_ENTER) {
+                  // enter input dialog
+                  NextMenuExit = 0;
+                  ApplyInputs();
+                  ModifyTitles(TmpChosenEntry);
+                  if (TmpChosenEntry->ShortcutDigit == 0xF1) {
+                    NextMenuExit = MENU_EXIT_ENTER;
+                    //DBG("Escape menu from input dialog\n");
+                    break;
+                  } //if F1
+                }
+              } //while(!NextMenuExit)
+            }
             // enter input dialog
             SubMenuExit = 0;
             ApplyInputs();
-            ModifyTitles(*ChosenEntry);
-            if (TmpChosenEntry->ShortcutDigit == 0xF1) {
-              MenuExit = MENU_EXIT_ENTER;
+            ModifyTitles(TmpChosenEntry);
+            if (NextChosenEntry->ShortcutDigit == 0xF1) {
+              SubMenuExit = MENU_EXIT_ENTER;
               //DBG("Escape menu from input dialog\n");
               goto exit;
             } //if F1
