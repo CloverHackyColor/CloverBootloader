@@ -3700,84 +3700,105 @@ UINTN RunMenu(IN REFIT_MENU_SCREEN *Screen, OUT REFIT_MENU_ENTRY **ChosenEntry)
   return RunGenericMenu(Screen, Style, &Index, ChosenEntry);
 }
 
+VOID NewEntry(REFIT_MENU_ENTRY **Entry, REFIT_MENU_SCREEN **SubScreen, ACTION AtClick, UINTN ID, CONST CHAR8 *Title)
+{
+  //create entry
+  *Entry = AllocateZeroPool(sizeof(REFIT_MENU_ENTRY));
+  if (Title) {
+    (*Entry)->Title = PoolPrint(L"%a", Title);
+  } else {
+    (*Entry)->Title = AllocateZeroPool(128);
+  }
+  
+  (*Entry)->Image =  OptionMenu.TitleImage;
+  (*Entry)->Tag = TAG_OPTIONS;
+  (*Entry)->AtClick = AtClick;
+  // create the submenu
+  *SubScreen = AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
+  (*SubScreen)->Title = (*Entry)->Title;
+  (*SubScreen)->TitleImage = (*Entry)->Image;
+  (*SubScreen)->ID = ID;
+  (*SubScreen)->AnimeRun = GetAnime(*SubScreen);
+  (*Entry)->SubScreen = *SubScreen;
+}
+
+VOID AddMenuCheck(REFIT_MENU_SCREEN *SubScreen, CONST CHAR8 *Text, UINTN Bit, INTN ItemNum)
+{
+  REFIT_INPUT_DIALOG *InputBootArgs;
+  
+  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  InputBootArgs->Entry.Title = PoolPrint(L"%a", Text);
+  InputBootArgs->Entry.Tag = TAG_CHECKBIT;
+  InputBootArgs->Entry.Row = Bit;
+  InputBootArgs->Item = &InputItems[ItemNum];
+  InputBootArgs->Entry.AtClick = ActionEnter;
+  InputBootArgs->Entry.AtRightClick = ActionDetails;
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+}
+
+VOID ModifyTitles(REFIT_MENU_ENTRY *ChosenEntry)
+{
+  if (ChosenEntry->SubScreen->ID == SCREEN_DSDT) {
+    UnicodeSPrint(ChosenEntry->Title, 128, L"DSDT fix mask [0x%08x]->", gSettings.FixDsdt);
+    //MsgLog("@ESC: %s\n", (*ChosenEntry)->Title);
+  } else if (ChosenEntry->SubScreen->ID == SCREEN_CSR) {
+    // CSR
+    UnicodeSPrint(ChosenEntry->Title, 128, L"System Integrity Protection [0x%04x]->", gSettings.CsrActiveConfig);
+    // check for the right booter flag to allow the application
+    // of the new System Integrity Protection configuration.
+    if (gSettings.CsrActiveConfig != 0 && gSettings.BooterConfig == 0) {
+      gSettings.BooterConfig = 0x28;
+    }
+    
+  } else if (ChosenEntry->SubScreen->ID == SCREEN_BLC) {
+    UnicodeSPrint(ChosenEntry->Title, 128, L"boot_args->flags [0x%04x]->", gSettings.BooterConfig);
+  } else if (ChosenEntry->SubScreen->ID == SCREEN_DSM) {
+    UnicodeSPrint(ChosenEntry->Title, 128, L"Drop OEM _DSM [0x%04x]->", dropDSM);
+  }
+}
+
+VOID AddMenuItem(REFIT_MENU_SCREEN  *SubScreen, INTN Inx, CONST CHAR8 *Title, UINTN Tag, BOOLEAN Cursor)
+{
+  REFIT_INPUT_DIALOG *InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+
+  InputBootArgs->Entry.Title          = PoolPrint(L"%a", Title);
+  InputBootArgs->Entry.Tag            = Tag;
+  InputBootArgs->Entry.Row            = Cursor?StrLen(InputItems[Inx].SValue):0xFFFF;
+  InputBootArgs->Item                 = &InputItems[Inx];
+  InputBootArgs->Entry.AtClick        = Cursor?ActionSelect:ActionEnter;
+  InputBootArgs->Entry.AtRightClick   = Cursor?ActionNone:ActionDetails;
+  InputBootArgs->Entry.AtDoubleClick  = Cursor?ActionEnter:ActionNone;
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+}
+
 REFIT_MENU_ENTRY  *SubMenuGraphics()
 {
   UINTN  i, N, Ven = 97;
   REFIT_MENU_ENTRY   *Entry; //, *SubEntry;
   REFIT_MENU_SCREEN  *SubScreen;
-  REFIT_INPUT_DIALOG *InputBootArgs;
 
-  Entry = AllocateZeroPool(sizeof(REFIT_MENU_ENTRY));
-  Entry->Title = PoolPrint(L"Graphics Injector ->");
-  Entry->Image =  OptionMenu.TitleImage;
-  Entry->Tag = TAG_OPTIONS;
-  Entry->AtClick = ActionEnter;
-  // create the submenu
-  SubScreen = AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
-  SubScreen->Title = Entry->Title;
-  SubScreen->TitleImage = Entry->Image;
-  SubScreen->ID = SCREEN_GRAPHICS;
-  SubScreen->AnimeRun = GetAnime(SubScreen);
+  NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_GRAPHICS, "Graphics Injector->");
   AddMenuInfoLine(SubScreen, PoolPrint(L"Number of VideoCards=%d", NGFX));
 
-  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"InjectEDID");
-  InputBootArgs->Entry.Tag = TAG_INPUT;
-  InputBootArgs->Entry.Row = 0xFFFF; //cursor
-  InputBootArgs->Item = &InputItems[52];
-  InputBootArgs->Entry.AtClick = ActionEnter;
-  InputBootArgs->Entry.AtRightClick = ActionDetails;
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-  
-  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"Fake Vendor EDID:");
-  InputBootArgs->Entry.Tag = TAG_INPUT;
-  InputBootArgs->Entry.Row = StrLen(InputItems[53].SValue); //cursor
-  InputBootArgs->Item = &InputItems[53];
-  InputBootArgs->Entry.AtClick = ActionSelect;
-  InputBootArgs->Entry.AtDoubleClick = ActionEnter;
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-
-  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"Fake Product EDID:");
-  InputBootArgs->Entry.Tag = TAG_INPUT;
-  InputBootArgs->Entry.Row = StrLen(InputItems[54].SValue); //cursor
-  InputBootArgs->Item = &InputItems[54];
-  InputBootArgs->Entry.AtClick = ActionSelect;
-  InputBootArgs->Entry.AtDoubleClick = ActionEnter;
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-
+  AddMenuItem(SubScreen, 52, "InjectEDID", TAG_INPUT, FALSE);
+  AddMenuItem(SubScreen, 53, "Fake Vendor EDID:", TAG_INPUT, TRUE);
+  AddMenuItem(SubScreen, 54, "Fake Product EDID:", TAG_INPUT, TRUE);
 
   for (i = 0; i < NGFX; i++) {
-    AddMenuInfoLine(SubScreen, PoolPrint(L"Card DeviceID=%04x", gGraphics[i].DeviceID));
+    AddMenuInfo(SubScreen, PoolPrint(L"Card DeviceID=%04x", gGraphics[i].DeviceID));
     N = 20 + i * 6;
-    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-    InputBootArgs->Entry.Title = PoolPrint(L"Model:");
-    InputBootArgs->Entry.Tag = TAG_INPUT;
-    InputBootArgs->Entry.Row = StrLen(InputItems[N].SValue); //cursor
-    InputBootArgs->Item = &InputItems[N];
-    InputBootArgs->Entry.AtClick = ActionSelect;
-    InputBootArgs->Entry.AtDoubleClick = ActionEnter;
-    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-
-    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+    AddMenuItem(SubScreen, N, "Model:", TAG_INPUT, TRUE);
+    
     if (gGraphics[i].Vendor == Nvidia) {
-      InputBootArgs->Entry.Title = PoolPrint(L"InjectNVidia");
+      AddMenuItem(SubScreen, N+1, "InjectNVidia", TAG_INPUT, FALSE);
     } else if (gGraphics[i].Vendor == Ati) {
-      InputBootArgs->Entry.Title = PoolPrint(L"InjectATI");
+      AddMenuItem(SubScreen, N+1, "InjectATI", TAG_INPUT, FALSE);
     } else if (gGraphics[i].Vendor == Intel) {
-      InputBootArgs->Entry.Title = PoolPrint(L"InjectIntel");
+      AddMenuItem(SubScreen, N+1, "InjectIntel", TAG_INPUT, FALSE);
     } else {
-      InputBootArgs->Entry.Title = PoolPrint(L"InjectX3");
+      AddMenuItem(SubScreen, N+1, "InjectX3", TAG_INPUT, FALSE);
     }
-    InputBootArgs->Entry.Tag = TAG_INPUT;
-    InputBootArgs->Entry.Row = 0xFFFF; //cursor
-    InputBootArgs->Item = &InputItems[N+1];
-    InputBootArgs->Entry.AtClick = ActionEnter;
-    InputBootArgs->Entry.AtRightClick = ActionDetails;
-    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
 
-    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
     if (gGraphics[i].Vendor == Nvidia) {
       Ven = 95;
     } else if (gGraphics[i].Vendor == Ati) {
@@ -3785,106 +3806,37 @@ REFIT_MENU_ENTRY  *SubMenuGraphics()
     } else /*if (gGraphics[i].Vendor == Intel)*/ {
       Ven = 96;
     }
-    InputBootArgs->Entry.Title = PoolPrint(L"FakeID:");
-    InputBootArgs->Entry.Tag = TAG_INPUT;
-    InputBootArgs->Entry.Row = StrLen(InputItems[Ven].SValue); //cursor
-    InputBootArgs->Item = &InputItems[Ven];
-    InputBootArgs->Entry.AtClick = ActionSelect;
-    InputBootArgs->Entry.AtDoubleClick = ActionEnter;
-    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+    AddMenuItem(SubScreen, Ven, "FakeID:", TAG_INPUT, TRUE);
 
-    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
     if (gGraphics[i].Vendor == Nvidia) {
-      InputBootArgs->Entry.Title = PoolPrint(L"DisplayCFG:");
+      AddMenuItem(SubScreen, N+2, "DisplayCFG:", TAG_INPUT, TRUE);
     } else if (gGraphics[i].Vendor == Ati) {
-      InputBootArgs->Entry.Title = PoolPrint(L"FBConfig:");
+      AddMenuItem(SubScreen, N+2, "FBConfig:", TAG_INPUT, TRUE);
     } else /*if (gGraphics[i].Vendor == Intel)*/{
-      InputBootArgs->Entry.Title = PoolPrint(L"*-platform-id:");
+      AddMenuItem(SubScreen, N+2, "*-platform-id:", TAG_INPUT, TRUE);
     }
-    InputBootArgs->Entry.Tag = TAG_INPUT;
-    InputBootArgs->Entry.Row = StrLen(InputItems[N+2].SValue); //cursor
-    InputBootArgs->Item = &InputItems[N+2];
-    InputBootArgs->Entry.AtClick = ActionSelect;
-    InputBootArgs->Entry.AtDoubleClick = ActionEnter;
-    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
 
     // ErmaC: NvidiaGeneric entry
     if (gGraphics[i].Vendor == Nvidia) {
-      InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-      InputBootArgs->Entry.Title = PoolPrint(L"Generic NVIDIA name");
-      InputBootArgs->Entry.Tag = TAG_INPUT;
-      InputBootArgs->Entry.Row = 0xFFFF; //cursor
-      InputBootArgs->Item = &InputItems[55];
-      InputBootArgs->Entry.AtClick = ActionEnter;
-      InputBootArgs->Entry.AtRightClick = ActionDetails;
-      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-      
-      InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-      InputBootArgs->Entry.Title = PoolPrint(L"Use NVIDIA WEB drivers");
-      InputBootArgs->Entry.Tag = TAG_INPUT;
-      InputBootArgs->Entry.Row = 0xFFFF; //cursor
-      InputBootArgs->Item = &InputItems[56];
-      InputBootArgs->Entry.AtClick = ActionEnter;
-      InputBootArgs->Entry.AtRightClick = ActionDetails;
-      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+      AddMenuItem(SubScreen, 55, "Generic NVIDIA name", TAG_INPUT, FALSE);
+      AddMenuItem(SubScreen, 56, "Use NVIDIA WEB drivers", TAG_INPUT, FALSE);
     }
 
     if (gGraphics[i].Vendor == Intel) {
       continue;
     }
-
-    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-    InputBootArgs->Entry.Title = PoolPrint(L"Ports:");
-    InputBootArgs->Entry.Tag = TAG_INPUT;
-    InputBootArgs->Entry.Row = StrLen(InputItems[N+3].SValue); //cursor
-    InputBootArgs->Item = &InputItems[N+3];
-    InputBootArgs->Entry.AtClick = ActionSelect;
-    InputBootArgs->Entry.AtDoubleClick = ActionEnter;
-    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+    AddMenuItem(SubScreen, N+3, "Ports:", TAG_INPUT, TRUE);
 
     if (gGraphics[i].Vendor == Nvidia) {
-      InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-      InputBootArgs->Entry.Title = PoolPrint(L"NVCAP:");
-      InputBootArgs->Entry.Tag = TAG_INPUT;
-      InputBootArgs->Entry.Row = StrLen(InputItems[N+4].SValue); //cursor
-      InputBootArgs->Item = &InputItems[N+4];
-      InputBootArgs->Entry.AtClick = ActionSelect;
-      InputBootArgs->Entry.AtDoubleClick = ActionEnter;
-      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+      AddMenuItem(SubScreen, N+4, "NVCAP:", TAG_INPUT, TRUE);
     } else {
-      InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-      InputBootArgs->Entry.Title = PoolPrint(L"RefCLK:");
-      InputBootArgs->Entry.Tag = TAG_INPUT;
-      InputBootArgs->Entry.Row = StrLen(InputItems[50].SValue); //cursor
-      InputBootArgs->Item = &InputItems[50];
-      InputBootArgs->Entry.AtClick = ActionSelect;
-      InputBootArgs->Entry.AtDoubleClick = ActionEnter;
-      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+      AddMenuItem(SubScreen, 50, "RefCLK:", TAG_INPUT, TRUE);
     }
-
-    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-    InputBootArgs->Entry.Title = PoolPrint(L"LoadVideoBios");
-    InputBootArgs->Entry.Tag = TAG_INPUT;
-    InputBootArgs->Entry.Row = 0xFFFF; //cursor
-    InputBootArgs->Item = &InputItems[N+5];
-    InputBootArgs->Entry.AtClick = ActionEnter;
-    InputBootArgs->Entry.AtRightClick = ActionDetails;
-    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-
+    AddMenuItem(SubScreen, N+5, "Load Video Bios", TAG_INPUT, FALSE);
   }
-
-  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"Backlight Level:");
-  InputBootArgs->Entry.Tag = TAG_INPUT;
-  InputBootArgs->Entry.Row = StrLen(InputItems[18].SValue); //cursor
-  InputBootArgs->Item = &InputItems[18];
-  InputBootArgs->Entry.AtClick = ActionSelect;
-  InputBootArgs->Entry.AtDoubleClick = ActionEnter;
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-
+  AddMenuItem(SubScreen, 18, "Backlight Level:", TAG_INPUT, TRUE);
 
   AddMenuEntry(SubScreen, &MenuEntryReturn);
-  Entry->SubScreen = SubScreen;
   return Entry;
 }
 
@@ -3894,19 +3846,8 @@ REFIT_MENU_ENTRY  *SubMenuSpeedStep()
 {
   REFIT_MENU_ENTRY   *Entry; //, *SubEntry;
   REFIT_MENU_SCREEN  *SubScreen;
-  REFIT_INPUT_DIALOG *InputBootArgs;
 
-  Entry = AllocateZeroPool(sizeof(REFIT_MENU_ENTRY));
-  Entry->Title = PoolPrint(L"CPU tuning ->");
-  Entry->Image =  OptionMenu.TitleImage;
-  Entry->Tag = TAG_OPTIONS;
-  Entry->AtClick = ActionEnter;
-  // create the submenu
-  SubScreen = AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
-  SubScreen->Title = Entry->Title;
-  SubScreen->TitleImage = Entry->Image;
-  SubScreen->ID = SCREEN_CPU;
-  SubScreen->AnimeRun = GetAnime(SubScreen);
+  NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_CPU, "CPU tuning->");
   AddMenuInfoLine(SubScreen, PoolPrint(L"%a", gCPUStructure.BrandString));
   AddMenuInfoLine(SubScreen, PoolPrint(L"Model: %2x/%2x/%2x",
       gCPUStructure.Family, gCPUStructure.Model, gCPUStructure.Stepping));
@@ -3920,179 +3861,25 @@ REFIT_MENU_ENTRY  *SubMenuSpeedStep()
      nya(gCPUStructure.MinRatio), nya(gCPUStructure.MaxRatio),
      nya(gCPUStructure.Turbo4), nya(gCPUStructure.Turbo3), nya(gCPUStructure.Turbo2), nya(gCPUStructure.Turbo1)));
 
-  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"Cores enabled:");
-  InputBootArgs->Entry.Tag = TAG_INPUT;
-  InputBootArgs->Entry.Row = StrLen(InputItems[76].SValue); //cursor
-  InputBootArgs->Entry.ShortcutLetter = 'E';
-  InputBootArgs->Item = &InputItems[76];
-  InputBootArgs->Entry.AtClick = ActionSelect;
-  InputBootArgs->Entry.AtRightClick = ActionEnter;
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-
-  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"GeneratePStates");
-  InputBootArgs->Entry.Tag = TAG_INPUT;
-  InputBootArgs->Entry.Row = 0xFFFF; //cursor
-  InputBootArgs->Entry.ShortcutLetter = 'G';
-  InputBootArgs->Item = &InputItems[5];
-  InputBootArgs->Entry.AtClick = ActionEnter;
-  InputBootArgs->Entry.AtRightClick = ActionDetails;
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-
-  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"Halt Enabler");
-  InputBootArgs->Entry.Tag = TAG_INPUT;
-  InputBootArgs->Entry.Row = 0xFFFF; //cursor
-  InputBootArgs->Entry.ShortcutLetter = 'H';
-  InputBootArgs->Item = &InputItems[6];
-  InputBootArgs->Entry.AtClick = ActionEnter;
-  InputBootArgs->Entry.AtRightClick = ActionDetails;
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-
-  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"PLimitDict:");
-  InputBootArgs->Entry.Tag = TAG_INPUT;
-  InputBootArgs->Entry.Row = StrLen(InputItems[7].SValue); //cursor
-  InputBootArgs->Entry.ShortcutLetter = 'P';
-  InputBootArgs->Item = &InputItems[7];
-  InputBootArgs->Entry.AtClick = ActionSelect;
-  InputBootArgs->Entry.AtDoubleClick = ActionEnter;
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-
-  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"UnderVoltStep:");
-  InputBootArgs->Entry.Tag = TAG_INPUT;
-  InputBootArgs->Entry.Row = StrLen(InputItems[8].SValue); //cursor
-  InputBootArgs->Entry.ShortcutLetter = 'U';
-  InputBootArgs->Item = &InputItems[8];
-  InputBootArgs->Entry.AtClick = ActionSelect;
-  InputBootArgs->Entry.AtDoubleClick = ActionEnter;
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-
-  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"DoubleFirstState");
-  InputBootArgs->Entry.Tag = TAG_INPUT;
-  InputBootArgs->Entry.Row = 0xFFFF; //cursor
-  InputBootArgs->Entry.ShortcutLetter = 'D';
-  InputBootArgs->Item = &InputItems[88];
-  InputBootArgs->Entry.AtClick = ActionEnter;
-  InputBootArgs->Entry.AtDoubleClick = ActionDetails;
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-
-  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"GenerateCStates");
-  InputBootArgs->Entry.Tag = TAG_INPUT;
-  InputBootArgs->Entry.Row = 0xFFFF; //cursor
-  InputBootArgs->Entry.ShortcutLetter = 'C';
-  InputBootArgs->Item = &InputItems[9];
-  InputBootArgs->Entry.AtClick = ActionEnter;
-  InputBootArgs->Entry.AtRightClick = ActionDetails;
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-
-  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"EnableC2");
-  InputBootArgs->Entry.Tag = TAG_INPUT;
-  InputBootArgs->Entry.Row = 0xFFFF; //cursor
-  InputBootArgs->Entry.ShortcutLetter = '2';
-  InputBootArgs->Item = &InputItems[10];
-  InputBootArgs->Entry.AtClick = ActionEnter;
-  InputBootArgs->Entry.AtRightClick = ActionDetails;
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-
-  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"EnableC4");
-  InputBootArgs->Entry.Tag = TAG_INPUT;
-  InputBootArgs->Entry.Row = 0xFFFF; //cursor
-  InputBootArgs->Entry.ShortcutLetter = '4';
-  InputBootArgs->Item = &InputItems[11];
-  InputBootArgs->Entry.AtClick = ActionEnter;
-  InputBootArgs->Entry.AtRightClick = ActionDetails;
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-
-  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"EnableC6");
-  InputBootArgs->Entry.Tag = TAG_INPUT;
-  InputBootArgs->Entry.Row = 0xFFFF; //cursor
-  InputBootArgs->Entry.ShortcutLetter = '6';
-  InputBootArgs->Item = &InputItems[12];
-  InputBootArgs->Entry.AtClick = ActionEnter;
-  InputBootArgs->Entry.AtRightClick = ActionDetails;
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-
-  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"EnableC7");
-  InputBootArgs->Entry.Tag = TAG_INPUT;
-  InputBootArgs->Entry.Row = 0xFFFF; //cursor
-  InputBootArgs->Entry.ShortcutLetter = '7';
-  InputBootArgs->Item = &InputItems[89];
-  InputBootArgs->Entry.AtClick = ActionEnter;
-  InputBootArgs->Entry.AtRightClick = ActionDetails;
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-
-  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"Use SystemIO");
-  InputBootArgs->Entry.Tag = TAG_INPUT;
-  InputBootArgs->Entry.Row = 0xFFFF; //cursor
-  InputBootArgs->Entry.ShortcutLetter = 'S';
-  InputBootArgs->Item = &InputItems[13];
-  InputBootArgs->Entry.AtClick = ActionEnter;
-  InputBootArgs->Entry.AtRightClick = ActionDetails;
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-
-  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"C3Latency:");
-  InputBootArgs->Entry.Tag = TAG_INPUT;
-  InputBootArgs->Entry.Row = StrLen(InputItems[75].SValue); //cursor
-  InputBootArgs->Entry.ShortcutLetter = 'L';
-  InputBootArgs->Item = &InputItems[75];
-  InputBootArgs->Entry.AtClick = ActionSelect;
-  InputBootArgs->Entry.AtDoubleClick = ActionEnter;
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-
-  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"BusSpeed [kHz]:");
-  InputBootArgs->Entry.Tag = TAG_INPUT;
-  InputBootArgs->Entry.Row = StrLen(InputItems[19].SValue); //cursor
-  InputBootArgs->Entry.ShortcutLetter = 'B';
-  InputBootArgs->Item = &InputItems[19];
-  InputBootArgs->Entry.AtClick = ActionSelect;
-  InputBootArgs->Entry.AtDoubleClick = ActionEnter;
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-
-  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"QPI:");
-  InputBootArgs->Entry.Tag = TAG_INPUT;
-  InputBootArgs->Entry.Row = StrLen(InputItems[14].SValue); //cursor
-  InputBootArgs->Entry.ShortcutLetter = 'Q';
-  InputBootArgs->Item = &InputItems[14];
-  InputBootArgs->Entry.AtClick = ActionSelect;
-  InputBootArgs->Entry.AtDoubleClick = ActionEnter;
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-
-  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"Saving Mode:");
-  InputBootArgs->Entry.Tag = TAG_INPUT;
-  InputBootArgs->Entry.Row = StrLen(InputItems[77].SValue); //cursor
-  InputBootArgs->Entry.ShortcutLetter = 'V';
-  InputBootArgs->Item = &InputItems[77];
-  InputBootArgs->Entry.AtClick = ActionSelect;
-  InputBootArgs->Entry.AtDoubleClick = ActionEnter;
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-
-  //15
-  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"PatchAPIC");
-  InputBootArgs->Entry.Tag = TAG_INPUT;
-  InputBootArgs->Entry.Row = 0xFFFF;
-  //InputBootArgs->Entry.ShortcutDigit = 0;
-  InputBootArgs->Item = &InputItems[15];
-  InputBootArgs->Entry.AtClick = ActionEnter;
-  InputBootArgs->Entry.AtRightClick = ActionDetails;
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+  AddMenuItem(SubScreen, 76, "Cores enabled:", TAG_INPUT, TRUE);
+  AddMenuItem(SubScreen, 6,  "Halt Enabler", TAG_INPUT, FALSE);
+  AddMenuItem(SubScreen, 7,  "PLimitDict:", TAG_INPUT, TRUE);
+  AddMenuItem(SubScreen, 8,  "UnderVoltStep:", TAG_INPUT, TRUE);
+  AddMenuItem(SubScreen, 88, "DoubleFirstState", TAG_INPUT, FALSE);
+  AddMenuItem(SubScreen, 5,  "GeneratePStates", TAG_INPUT, FALSE);
+  AddMenuItem(SubScreen, 9,  "GenerateCStates", TAG_INPUT, FALSE);
+  AddMenuItem(SubScreen, 10, "EnableC2", TAG_INPUT, FALSE);
+  AddMenuItem(SubScreen, 11, "EnableC4", TAG_INPUT, FALSE);
+  AddMenuItem(SubScreen, 12, "EnableC6", TAG_INPUT, FALSE);
+  AddMenuItem(SubScreen, 89, "EnableC7", TAG_INPUT, FALSE);
+  AddMenuItem(SubScreen, 13, "Use SystemIO", TAG_INPUT, FALSE);
+  AddMenuItem(SubScreen, 75, "C3Latency:", TAG_INPUT, TRUE);
+  AddMenuItem(SubScreen, 19, "BusSpeed [kHz]:", TAG_INPUT, TRUE);
+  AddMenuItem(SubScreen, 14, "QPI [MHz]:", TAG_INPUT, TRUE);
+  AddMenuItem(SubScreen, 77, "Saving Mode:", TAG_INPUT, TRUE);
+  AddMenuItem(SubScreen, 15, "PatchAPIC", TAG_INPUT, FALSE);  //-> move to ACPI?
 
   AddMenuEntry(SubScreen, &MenuEntryReturn);
-  Entry->SubScreen = SubScreen;
   return Entry;
 }
 
@@ -4100,107 +3887,23 @@ REFIT_MENU_ENTRY  *SubMenuBinaries()
 {
   REFIT_MENU_ENTRY   *Entry; //, *SubEntry;
   REFIT_MENU_SCREEN  *SubScreen;
-  REFIT_INPUT_DIALOG *InputBootArgs;
 
-  Entry = AllocateZeroPool(sizeof(REFIT_MENU_ENTRY));
-  Entry->Title = PoolPrint(L"Binaries patching ->");
-  Entry->Image =  OptionMenu.TitleImage;
-  Entry->Tag = TAG_OPTIONS;
-  Entry->AtClick = ActionEnter;
-  // create the submenu
-  SubScreen = AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
-  SubScreen->Title = Entry->Title;
-  SubScreen->TitleImage = Entry->Image;
-  SubScreen->ID = SCREEN_BINARIES;
-  SubScreen->AnimeRun = GetAnime(SubScreen);
+  NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_BINARIES, "Binaries patching->");
+
   AddMenuInfoLine(SubScreen, PoolPrint(L"%a", gCPUStructure.BrandString));
   AddMenuInfoLine(SubScreen, PoolPrint(L"Real CPUID: 0x%06x", gCPUStructure.Signature));
 
-
-  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"Fake CPUID:");
-  InputBootArgs->Entry.Tag = TAG_INPUT;
-  InputBootArgs->Entry.Row = StrLen(InputItems[104].SValue); //cursor
-  //InputBootArgs->Entry.ShortcutLetter = 'I';
-  InputBootArgs->Item = &InputItems[104];
-  InputBootArgs->Entry.AtClick = ActionSelect;
-  InputBootArgs->Entry.AtRightClick = ActionEnter;
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-
-  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"Kext patching allowed");
-  InputBootArgs->Entry.Tag = TAG_INPUT;
-  InputBootArgs->Entry.Row = 0xFFFF; //cursor
-  InputBootArgs->Item = &InputItems[44];
-  InputBootArgs->Entry.AtClick = ActionEnter;
-  InputBootArgs->Entry.AtRightClick = ActionDetails;
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-
-  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"Kernel patching allowed");
-  InputBootArgs->Entry.Tag = TAG_INPUT;
-  InputBootArgs->Entry.Row = 0xFFFF; //cursor
-  InputBootArgs->Item = &InputItems[108];
-  InputBootArgs->Entry.AtClick = ActionEnter;
-  InputBootArgs->Entry.AtRightClick = ActionDetails;
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-
-  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"Kernel Support CPU");
-  InputBootArgs->Entry.Tag = TAG_INPUT;
-  InputBootArgs->Entry.Row = 0xFFFF; //cursor
-  InputBootArgs->Item = &InputItems[45];
-  InputBootArgs->Entry.AtClick = ActionEnter;
-  InputBootArgs->Entry.AtRightClick = ActionDetails;
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-
-  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"Kernel Lapic Patch");
-  InputBootArgs->Entry.Tag = TAG_INPUT;
-  InputBootArgs->Entry.Row = 0xFFFF; //cursor
-  InputBootArgs->Item = &InputItems[91];
-  InputBootArgs->Entry.AtClick = ActionEnter;
-  InputBootArgs->Entry.AtRightClick = ActionDetails;
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-
-  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"Kernel Haswell-E Patch");
-  InputBootArgs->Entry.Tag = TAG_INPUT;
-  InputBootArgs->Entry.Row = 0xFFFF; //cursor
-  InputBootArgs->Item = &InputItems[105];
-  InputBootArgs->Entry.AtClick = ActionEnter;
-  InputBootArgs->Entry.AtRightClick = ActionDetails;
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-
-  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"Kernel PM Patch");
-  InputBootArgs->Entry.Tag = TAG_INPUT;
-  InputBootArgs->Entry.Row = 0xFFFF; //cursor
-  InputBootArgs->Item = &InputItems[48];
-  InputBootArgs->Entry.AtClick = ActionEnter;
-  InputBootArgs->Entry.AtRightClick = ActionDetails;
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-
-  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"AppleIntelCPUPM patch");
-  InputBootArgs->Entry.Tag = TAG_INPUT;
-  InputBootArgs->Entry.Row = 0xFFFF; //cursor
-  InputBootArgs->Item = &InputItems[46];
-  InputBootArgs->Entry.AtClick = ActionEnter;
-  InputBootArgs->Entry.AtRightClick = ActionDetails;
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-
-  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"AppleRTC patch");
-  InputBootArgs->Entry.Tag = TAG_INPUT;
-  InputBootArgs->Entry.Row = 0xFFFF; //cursor
-  InputBootArgs->Item = &InputItems[47];
-  InputBootArgs->Entry.AtClick = ActionEnter;
-  InputBootArgs->Entry.AtRightClick = ActionDetails;
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+  AddMenuItem(SubScreen, 104, "Fake CPUID:", TAG_INPUT, TRUE);
+  AddMenuItem(SubScreen, 44,  "Kext patching allowed", TAG_INPUT, FALSE);
+  AddMenuItem(SubScreen, 108, "Kernel patching allowed", TAG_INPUT, FALSE);
+  AddMenuItem(SubScreen, 45,  "Kernel Support CPU", TAG_INPUT, FALSE);
+  AddMenuItem(SubScreen, 91,  "Kernel Lapic Patch", TAG_INPUT, FALSE);
+  AddMenuItem(SubScreen, 105, "Kernel Haswell-E Patch", TAG_INPUT, FALSE);
+  AddMenuItem(SubScreen, 48,  "Kernel PM Patch", TAG_INPUT, FALSE);
+  AddMenuItem(SubScreen, 46,  "AppleIntelCPUPM Patch", TAG_INPUT, FALSE);
+  AddMenuItem(SubScreen, 47,  "AppleRTC Patch", TAG_INPUT, FALSE);
 
   AddMenuEntry(SubScreen, &MenuEntryReturn);
-  Entry->SubScreen = SubScreen;
   return Entry;
 }
 
@@ -4208,34 +3911,20 @@ REFIT_MENU_ENTRY  *SubMenuDropTables()
 {
   CHAR8               sign[5];
   CHAR8               OTID[9];
- // CHAR16*             Flags;
-  REFIT_MENU_ENTRY    *Entry; //, *SubEntry;
+  REFIT_MENU_ENTRY    *Entry;
   REFIT_MENU_SCREEN   *SubScreen;
   REFIT_INPUT_DIALOG  *InputBootArgs;
 
   sign[4] = 0;
   OTID[8] = 0;
-//  Flags = AllocateZeroPool(255);
 
-  Entry = AllocateZeroPool(sizeof(REFIT_MENU_ENTRY));
-  Entry->Title = PoolPrint(L"Tables dropping ->");
-  Entry->Image =  OptionMenu.TitleImage;
-  Entry->Tag = TAG_OPTIONS;
-  Entry->AtClick = ActionEnter;
-  // create the submenu
-  SubScreen = AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
-  SubScreen->Title = Entry->Title;
-  SubScreen->TitleImage = Entry->Image;
-  SubScreen->ID = SCREEN_TABLES;
-  SubScreen->AnimeRun = GetAnime(SubScreen);
+  NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_TABLES, "Tables dropping->");
 
-  //AddMenuInfoLine(SubScreen, L"OEM ACPI TABLE:");
   if (gSettings.ACPIDropTables) {
     ACPI_DROP_TABLE *DropTable = gSettings.ACPIDropTables;
     while (DropTable) {
       CopyMem((CHAR8*)&sign, (CHAR8*)&(DropTable->Signature), 4);
       CopyMem((CHAR8*)&OTID, (CHAR8*)&(DropTable->TableId), 8);
-
       //MsgLog("adding to menu %a (%x) %a (%lx) L=%d(0x%x)\n",
       //       sign, DropTable->Signature,
       //       OTID, DropTable->TableId,
@@ -4253,16 +3942,7 @@ REFIT_MENU_ENTRY  *SubMenuDropTables()
     }
   }
 
-  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"Drop all OEM SSDT");
-  InputBootArgs->Entry.Tag = TAG_INPUT;
-  InputBootArgs->Entry.Row = 0xFFFF; //cursor
-  //InputBootArgs->Entry.ShortcutDigit = 0;
-  InputBootArgs->Entry.ShortcutLetter = 'S';
-  InputBootArgs->Item = &InputItems[4];
-  InputBootArgs->Entry.AtClick = ActionEnter;
-  InputBootArgs->Entry.AtRightClick = ActionDetails;
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+  AddMenuItem(SubScreen, 4, "Drop all OEM SSDT", TAG_INPUT, FALSE);
 
   //AddMenuInfoLine(SubScreen, L"PATCHED AML:");
   if (ACPIPatchedAML) {
@@ -4281,211 +3961,34 @@ REFIT_MENU_ENTRY  *SubMenuDropTables()
   }
 
   AddMenuEntry(SubScreen, &MenuEntryReturn);
-  Entry->SubScreen = SubScreen;
   return Entry;
 }
-/*
-REFIT_MENU_ENTRY  *SubMenuSysVariables()
-{
-  REFIT_MENU_ENTRY    *Entry; //, *SubEntry;
-  REFIT_MENU_SCREEN   *SubScreen;
-  REFIT_INPUT_DIALOG  *InputRT;
-
-  Entry = AllocateZeroPool(sizeof(REFIT_MENU_ENTRY));
-  Entry->Title = PoolPrint(L"System Variables ->");
-  Entry->Image =  OptionMenu.TitleImage;
-  Entry->Tag = TAG_OPTIONS;
-  Entry->AtClick = ActionEnter;
-
-  // create the submenu
-  SubScreen = AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
-  SubScreen->Title = Entry->Title;
-  SubScreen->TitleImage = Entry->Image;
-  SubScreen->ID = SCREEN_SYSVARS;
-  SubScreen->AnimeRun = GetAnime(SubScreen);
-
-  AddMenuInfoLine(SubScreen, L"More: SystemParameters -> ExposeSysVariables = TRUE");
-  if (SysVariables) {
-    SYSVARIABLES *SysVariablesTmp = SysVariables;
-    while (SysVariablesTmp) {
-      InputRT = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-      InputRT->Entry.Title = PoolPrint((SysVariablesTmp->MenuItem.ItemType == BoolValue) ? L"%s" : L"%s:",
-                                       SysVariablesTmp->Key);
-      InputRT->Entry.Tag = TAG_INPUT;
-      InputRT->Entry.Row = (SysVariablesTmp->MenuItem.ItemType == BoolValue) ? 0xFFFF : StrLen(SysVariablesTmp->MenuItem.SValue); //cursor
-      InputRT->Item = &(SysVariablesTmp->MenuItem);
-      InputRT->Entry.AtClick = ActionEnter;
-      InputRT->Entry.AtRightClick = ActionDetails;
-      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputRT);
-      SysVariablesTmp = SysVariablesTmp->Next;
-    }
-  }
-
-  AddMenuEntry(SubScreen, &MenuEntryReturn);
-  Entry->SubScreen = SubScreen;
-  return Entry;
-}
-*/
 
 REFIT_MENU_ENTRY  *SubMenuSmbios()
 {
   REFIT_MENU_ENTRY   *Entry;
   REFIT_MENU_SCREEN  *SubScreen;
-  REFIT_INPUT_DIALOG *InputBootArgs;
 
-  Entry = AllocateZeroPool(sizeof(REFIT_MENU_ENTRY));
-  Entry->Title = PoolPrint(L"SMBIOS ->");
-  Entry->Image =  OptionMenu.TitleImage;
-  Entry->Tag = TAG_OPTIONS;
-  Entry->AtClick = ActionEnter;
-  // create the submenu
-  SubScreen = AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
-  SubScreen->Title = Entry->Title;
-  SubScreen->TitleImage = Entry->Image;
-  SubScreen->ID = SCREEN_SMBIOS;
-  SubScreen->AnimeRun = GetAnime(SubScreen);
+  NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_SMBIOS, "SMBIOS->");
+
   AddMenuInfoLine(SubScreen, PoolPrint(L"%a", gCPUStructure.BrandString));
   AddMenuInfoLine(SubScreen, PoolPrint(L"%a", gSettings.OEMProduct));
   AddMenuInfoLine(SubScreen, PoolPrint(L"with board %a", gSettings.OEMBoard));
 
-  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"Product name:");
-  InputBootArgs->Entry.Tag = TAG_INPUT;
-  InputBootArgs->Entry.Row = StrLen(InputItems[78].SValue);
-  InputBootArgs->Entry.ShortcutDigit = 0xF1;
-  InputBootArgs->Item = &InputItems[78];
-  InputBootArgs->Entry.AtClick = ActionSelect;
-  InputBootArgs->Entry.AtDoubleClick = ActionEnter;
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-
-  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"Product version:");
-  InputBootArgs->Entry.Tag = TAG_INPUT;
-  InputBootArgs->Entry.Row = StrLen(InputItems[79].SValue);
-  InputBootArgs->Item = &InputItems[79];
-  InputBootArgs->Entry.AtClick = ActionSelect;
-  InputBootArgs->Entry.AtDoubleClick = ActionEnter;
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-
-  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"Product sn:");
-  InputBootArgs->Entry.Tag = TAG_INPUT;
-  InputBootArgs->Entry.Row = StrLen(InputItems[80].SValue);
-  InputBootArgs->Item = &InputItems[80];
-  InputBootArgs->Entry.AtClick = ActionSelect;
-  InputBootArgs->Entry.AtDoubleClick = ActionEnter;
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-
-  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"Board ID:");
-  InputBootArgs->Entry.Tag = TAG_INPUT;
-  InputBootArgs->Entry.Row = StrLen(InputItems[81].SValue);
-  InputBootArgs->Item = &InputItems[81];
-  InputBootArgs->Entry.AtClick = ActionSelect;
-  InputBootArgs->Entry.AtDoubleClick = ActionEnter;
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-
-  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"Board sn:");
-  InputBootArgs->Entry.Tag = TAG_INPUT;
-  InputBootArgs->Entry.Row = StrLen(InputItems[82].SValue);
-  InputBootArgs->Item = &InputItems[82];
-  InputBootArgs->Entry.AtClick = ActionSelect;
-  InputBootArgs->Entry.AtDoubleClick = ActionEnter;
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-
-  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"Board type:");
-  InputBootArgs->Entry.Tag = TAG_INPUT;
-  InputBootArgs->Entry.Row = StrLen(InputItems[83].SValue);
-  InputBootArgs->Item = &InputItems[83];
-  InputBootArgs->Entry.AtClick = ActionSelect;
-  InputBootArgs->Entry.AtDoubleClick = ActionEnter;
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-
-  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"Board version:");
-  InputBootArgs->Entry.Tag = TAG_INPUT;
-  InputBootArgs->Entry.Row = StrLen(InputItems[84].SValue);
-  InputBootArgs->Item = &InputItems[84];
-  InputBootArgs->Entry.AtClick = ActionSelect;
-  InputBootArgs->Entry.AtDoubleClick = ActionEnter;
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-
-  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"Chassis type:");
-  InputBootArgs->Entry.Tag = TAG_INPUT;
-  InputBootArgs->Entry.Row = StrLen(InputItems[85].SValue);
-  InputBootArgs->Item = &InputItems[85];
-  InputBootArgs->Entry.AtClick = ActionSelect;
-  InputBootArgs->Entry.AtDoubleClick = ActionEnter;
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-
-  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"ROM version:");
-  InputBootArgs->Entry.Tag = TAG_INPUT;
-  InputBootArgs->Entry.Row = StrLen(InputItems[86].SValue);
-  InputBootArgs->Item = &InputItems[86];
-  InputBootArgs->Entry.AtClick = ActionSelect;
-  InputBootArgs->Entry.AtDoubleClick = ActionEnter;
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-
-  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"ROM release date:");
-  InputBootArgs->Entry.Tag = TAG_INPUT;
-  InputBootArgs->Entry.Row = StrLen(InputItems[87].SValue);
-  InputBootArgs->Item = &InputItems[87];
-  InputBootArgs->Entry.AtClick = ActionSelect;
-  InputBootArgs->Entry.AtDoubleClick = ActionEnter;
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-
-  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"PlatformFeature:");
-  InputBootArgs->Entry.Tag = TAG_INPUT;
-  InputBootArgs->Entry.Row = StrLen(InputItems[17].SValue); //cursor
-  InputBootArgs->Item = &InputItems[17];
-  InputBootArgs->Entry.AtClick = ActionSelect;
-  InputBootArgs->Entry.AtDoubleClick = ActionEnter;
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+  AddMenuItem(SubScreen, 78, "Product Name:", TAG_INPUT, TRUE);
+  AddMenuItem(SubScreen, 79, "Product Version:", TAG_INPUT, TRUE);
+  AddMenuItem(SubScreen, 80, "Product SN:", TAG_INPUT, TRUE);
+  AddMenuItem(SubScreen, 81, "Board ID:", TAG_INPUT, TRUE);
+  AddMenuItem(SubScreen, 82, "Board SN:", TAG_INPUT, TRUE);
+  AddMenuItem(SubScreen, 83, "Board Type:", TAG_INPUT, TRUE);
+  AddMenuItem(SubScreen, 84, "Board Version:", TAG_INPUT, TRUE);
+  AddMenuItem(SubScreen, 85, "Chassis Type:", TAG_INPUT, TRUE);
+  AddMenuItem(SubScreen, 86, "ROM Version:", TAG_INPUT, TRUE);
+  AddMenuItem(SubScreen, 87, "ROM Release Date:", TAG_INPUT, TRUE);
+  AddMenuItem(SubScreen, 17, "PlatformFeature:", TAG_INPUT, TRUE);
 
   AddMenuEntry(SubScreen, &MenuEntryReturn);
-  Entry->SubScreen = SubScreen;
   return Entry;
-}
-
-VOID AddMenuCheck(REFIT_MENU_SCREEN *SubScreen, CONST CHAR8 *Text, UINTN Bit, INTN ItemNum)
-{
-  REFIT_INPUT_DIALOG *InputBootArgs;
-  
-  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"%a", Text);
-  InputBootArgs->Entry.Tag = TAG_CHECKBIT;
-  InputBootArgs->Entry.Row = Bit; 
-  InputBootArgs->Item = &InputItems[ItemNum];
-  InputBootArgs->Entry.AtClick = ActionEnter;
-  InputBootArgs->Entry.AtRightClick = ActionDetails;
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-}
-
-VOID ModifyTitles(REFIT_MENU_ENTRY *ChosenEntry)
-{
-  if (ChosenEntry->SubScreen->ID == SCREEN_DSDT) {
-    UnicodeSPrint(ChosenEntry->Title, 128, L"DSDT fix mask [0x%08x]->", gSettings.FixDsdt);
-    //MsgLog("@ESC: %s\n", (*ChosenEntry)->Title);
-  } else if (ChosenEntry->SubScreen->ID == SCREEN_CSR) {
-    // CSR
-    UnicodeSPrint(ChosenEntry->Title, 128, L"System Integrity Protection [0x%04x]->", gSettings.CsrActiveConfig);
-    // check for the right booter flag to allow the application
-    // of the new System Integrity Protection configuration.
-    if (gSettings.CsrActiveConfig != 0 && gSettings.BooterConfig == 0) {
-        gSettings.BooterConfig = 0x28;
-    }
-
-  } else if (ChosenEntry->SubScreen->ID == SCREEN_BLC) {
-    UnicodeSPrint(ChosenEntry->Title, 128, L"boot_args->flags [0x%04x]->", gSettings.BooterConfig);
-  } else if (ChosenEntry->SubScreen->ID == SCREEN_DSM) {
-    UnicodeSPrint(ChosenEntry->Title, 128, L"Drop OEM _DSM [0x%04x]->", dropDSM);
-  }
 }
 
 REFIT_MENU_ENTRY *SubMenuDropDSM()
@@ -4495,19 +3998,8 @@ REFIT_MENU_ENTRY *SubMenuDropDSM()
   REFIT_MENU_SCREEN  *SubScreen;
   
   // create the entry in the main menu
-  Entry = AllocateZeroPool(sizeof(REFIT_MENU_ENTRY));
-  Entry->Title = AllocateZeroPool(128);
+  NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_DSM, NULL);
   //  Entry->Title = PoolPrint(L"Drop OEM _DSM [0x%04x]->", gSettings.DropOEM_DSM);
-  Entry->Image =  OptionMenu.TitleImage;
-  Entry->Tag = TAG_OPTIONS;
-  Entry->AtClick = ActionEnter;
-  
-  // create the submenu
-  SubScreen = AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
-  SubScreen->Title = Entry->Title;
-  SubScreen->TitleImage = Entry->Image;
-  SubScreen->ID = SCREEN_DSM;
-  SubScreen->AnimeRun = GetAnime(SubScreen);
   
   // submenu description
   AddMenuInfoLine(SubScreen, PoolPrint(L"Choose devices to drop OEM _DSM methods from DSDT"));
@@ -4528,13 +4020,10 @@ REFIT_MENU_ENTRY *SubMenuDropDSM()
   AddMenuCheck(SubScreen, "Firewire",             DEV_FIREWIRE, 101);
   
   AddMenuEntry(SubScreen, &MenuEntryReturn);
-  Entry->SubScreen = SubScreen;
   ModifyTitles(Entry);
   
   return Entry;
 }
-
-
 
 REFIT_MENU_ENTRY  *SubMenuDsdtFix()
 {
@@ -4542,18 +4031,8 @@ REFIT_MENU_ENTRY  *SubMenuDsdtFix()
   REFIT_MENU_SCREEN  *SubScreen;
 //  REFIT_INPUT_DIALOG *InputBootArgs;
   
-  Entry = AllocateZeroPool(sizeof(REFIT_MENU_ENTRY));
-  Entry->Title = AllocateZeroPool(128);
+  NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_DSDT, NULL);
   //  Entry->Title = PoolPrint(L"DSDT fix mask [0x%08x]->", gSettings.FixDsdt);
-  Entry->Image =  OptionMenu.TitleImage;
-  Entry->Tag = TAG_OPTIONS;
-  Entry->AtClick = ActionEnter;
-  // create the submenu
-  SubScreen = AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
-  SubScreen->Title = Entry->Title;
-  SubScreen->TitleImage = Entry->Image;
-  SubScreen->ID = SCREEN_DSDT;
-  SubScreen->AnimeRun = GetAnime(SubScreen);
   
   AddMenuCheck(SubScreen, "Add DTGP",     FIX_DTGP, 67);
   AddMenuCheck(SubScreen, "Fix Darwin",   FIX_WARNING, 67);
@@ -4586,7 +4065,6 @@ REFIT_MENU_ENTRY  *SubMenuDsdtFix()
   AddMenuCheck(SubScreen, "Fix Regions",  FIX_REGIONS, 67);
   
   AddMenuEntry(SubScreen, &MenuEntryReturn);
-  Entry->SubScreen = SubScreen;
   ModifyTitles(Entry);
 
   return Entry;
@@ -4598,52 +4076,21 @@ REFIT_MENU_ENTRY *SubMenuACPI()
   // init
   REFIT_MENU_ENTRY   *Entry;
   REFIT_MENU_SCREEN  *SubScreen;
-  REFIT_INPUT_DIALOG *InputBootArgs;
   
   // create the entry in the options menu
-  Entry = AllocateZeroPool(sizeof(REFIT_MENU_ENTRY));
-  Entry->Title = PoolPrint(L"ACPI patching->");
-  Entry->Image =  OptionMenu.TitleImage;
-  Entry->Tag = TAG_OPTIONS;
-  Entry->AtClick = ActionEnter;
-  
-  // create the submenu
-  SubScreen = AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
-  SubScreen->Title = Entry->Title;
-  SubScreen->TitleImage = Entry->Image;
-  SubScreen->ID = SCREEN_ACPI;
-  SubScreen->AnimeRun = GetAnime(SubScreen);
+  NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_ACPI, "ACPI patching->");
   
   // submenu description
   AddMenuInfoLine(SubScreen, PoolPrint(L"Choose options to patch ACPI"));
 
-  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"Debug DSDT");
-  InputBootArgs->Entry.Tag = TAG_INPUT;
-  InputBootArgs->Entry.Row = 0xFFFF; //cursor
-  InputBootArgs->Item = &InputItems[102];
-  InputBootArgs->Entry.AtClick = ActionEnter;
-  InputBootArgs->Entry.AtRightClick = ActionDetails;
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+  AddMenuItem(SubScreen, 102, "Debug DSDT", TAG_INPUT, FALSE);
+  AddMenuItem(SubScreen, 1,   "DSDT name:", TAG_INPUT, TRUE);
   
-  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"DSDT name:");
-  InputBootArgs->Entry.Tag = TAG_INPUT;
-  InputBootArgs->Entry.Row = StrLen(InputItems[1].SValue);
-  //InputBootArgs->Entry.ShortcutDigit = 0;
-  //InputBootArgs->Entry.ShortcutLetter = 'D';
-  InputBootArgs->Item = &InputItems[1];    //1
-  InputBootArgs->Entry.AtClick = ActionSelect;
-  InputBootArgs->Entry.AtDoubleClick = ActionEnter;
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-
   AddMenuEntry(SubScreen, SubMenuDropTables());
   AddMenuEntry(SubScreen, SubMenuDropDSM());
   AddMenuEntry(SubScreen, SubMenuDsdtFix()); 
   
   AddMenuEntry(SubScreen, &MenuEntryReturn);
-  Entry->SubScreen = SubScreen;
-  
   return Entry;
 }
 
@@ -4652,110 +4099,19 @@ REFIT_MENU_ENTRY  *SubMenuPCI()
 {
   REFIT_MENU_ENTRY   *Entry;
   REFIT_MENU_SCREEN  *SubScreen;
-  REFIT_INPUT_DIALOG *InputBootArgs;
 
-  Entry = AllocateZeroPool(sizeof(REFIT_MENU_ENTRY));
-  Entry->Title = PoolPrint(L"PCI devices ->");
-  Entry->Image =  OptionMenu.TitleImage;
-  Entry->Tag = TAG_OPTIONS;
-  Entry->AtClick = ActionEnter;
+  NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_USB, "PCI devices->");
 
-  // create the submenu
-  SubScreen = AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
-  SubScreen->Title = Entry->Title;
-  SubScreen->TitleImage = Entry->Image;
-  SubScreen->ID = SCREEN_USB;
-  SubScreen->AnimeRun = GetAnime(SubScreen);
-
-  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"USB Ownership");
-  InputBootArgs->Entry.Tag = TAG_INPUT;
-  InputBootArgs->Entry.Row = 0xFFFF;
-  InputBootArgs->Item = &InputItems[74];
-  InputBootArgs->Entry.AtClick = ActionEnter;
-  InputBootArgs->Entry.AtRightClick = ActionDetails;
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-
-  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"USB Injection");
-  InputBootArgs->Entry.Tag = TAG_INPUT;
-  InputBootArgs->Entry.Row = 0xFFFF;
-  InputBootArgs->Item = &InputItems[92];
-  InputBootArgs->Entry.AtClick = ActionEnter;
-  InputBootArgs->Entry.AtRightClick = ActionDetails;
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-
-  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"Inject ClockID");
-  InputBootArgs->Entry.Tag = TAG_INPUT;
-  InputBootArgs->Entry.Row = 0xFFFF;
-  InputBootArgs->Item = &InputItems[93];
-  InputBootArgs->Entry.AtClick = ActionEnter;
-  InputBootArgs->Entry.AtRightClick = ActionDetails;
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-
-  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"Inject EFI Strings");
-  InputBootArgs->Entry.Tag = TAG_INPUT;
-  InputBootArgs->Entry.Row = 0xFFFF;
-  InputBootArgs->Item = &InputItems[106];
-  InputBootArgs->Entry.AtClick = ActionEnter;
-  InputBootArgs->Entry.AtRightClick = ActionDetails;
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-
-  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"No Default Properties");
-  InputBootArgs->Entry.Tag = TAG_INPUT;
-  InputBootArgs->Entry.Row = 0xFFFF;
-  InputBootArgs->Item = &InputItems[107];
-  InputBootArgs->Entry.AtClick = ActionEnter;
-  InputBootArgs->Entry.AtRightClick = ActionDetails;
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-
-  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"FakeID LAN:");
-  InputBootArgs->Entry.Tag = TAG_INPUT;
-  InputBootArgs->Entry.Row = StrLen(InputItems[97].SValue); //cursor
-  InputBootArgs->Item = &InputItems[97];
-  InputBootArgs->Entry.AtClick = ActionSelect;
-  InputBootArgs->Entry.AtDoubleClick = ActionEnter;
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-
-  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"FakeID WIFI:");
-  InputBootArgs->Entry.Tag = TAG_INPUT;
-  InputBootArgs->Entry.Row = StrLen(InputItems[98].SValue); //cursor
-  InputBootArgs->Item = &InputItems[98];
-  InputBootArgs->Entry.AtClick = ActionSelect;
-  InputBootArgs->Entry.AtDoubleClick = ActionEnter;
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-
-  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"FakeID SATA:");
-  InputBootArgs->Entry.Tag = TAG_INPUT;
-  InputBootArgs->Entry.Row = StrLen(InputItems[99].SValue); //cursor
-  InputBootArgs->Item = &InputItems[99];
-  InputBootArgs->Entry.AtClick = ActionSelect;
-  InputBootArgs->Entry.AtDoubleClick = ActionEnter;
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-
-  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"FakeID XHCI:");
-  InputBootArgs->Entry.Tag = TAG_INPUT;
-  InputBootArgs->Entry.Row = StrLen(InputItems[100].SValue); //cursor
-  InputBootArgs->Item = &InputItems[100];
-  InputBootArgs->Entry.AtClick = ActionSelect;
-  InputBootArgs->Entry.AtDoubleClick = ActionEnter;
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-
-  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"FakeID IMEI:");
-  InputBootArgs->Entry.Tag = TAG_INPUT;
-  InputBootArgs->Entry.Row = StrLen(InputItems[103].SValue); //cursor
-  InputBootArgs->Item = &InputItems[103];
-  InputBootArgs->Entry.AtClick = ActionSelect;
-  InputBootArgs->Entry.AtDoubleClick = ActionEnter;
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+  AddMenuItem(SubScreen, 74,  "USB Ownership", TAG_INPUT, FALSE);
+  AddMenuItem(SubScreen, 92,  "USB Injection", TAG_INPUT, FALSE);
+  AddMenuItem(SubScreen, 93,  "Inject ClockID", TAG_INPUT, FALSE);
+  AddMenuItem(SubScreen, 106, "Inject EFI Strings", TAG_INPUT, FALSE);
+  AddMenuItem(SubScreen, 107, "No Default Properties", TAG_INPUT, FALSE);
+  AddMenuItem(SubScreen, 97,  "FakeID LAN:", TAG_INPUT, TRUE);
+  AddMenuItem(SubScreen, 98,  "FakeID WIFI:", TAG_INPUT, TRUE);
+  AddMenuItem(SubScreen, 99,  "FakeID SATA:", TAG_INPUT, TRUE);
+  AddMenuItem(SubScreen, 100, "FakeID XHCI:", TAG_INPUT, TRUE);
+  AddMenuItem(SubScreen, 103, "FakeID IMEI:", TAG_INPUT, TRUE);
 
   AddMenuEntry(SubScreen, &MenuEntryReturn);
   Entry->SubScreen = SubScreen;
@@ -4770,29 +4126,11 @@ REFIT_MENU_ENTRY  *SubMenuThemes()
   REFIT_INPUT_DIALOG *InputBootArgs;
   UINTN               i;
 
-  Entry = AllocateZeroPool(sizeof(REFIT_MENU_ENTRY));
-  Entry->Title = PoolPrint(L"Themes ->");
-  Entry->Image =  OptionMenu.TitleImage;
-  Entry->Tag = TAG_OPTIONS;
-  Entry->AtClick = ActionEnter;
-
-  // create the submenu
-  SubScreen = AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
-  SubScreen->Title = Entry->Title;
-  SubScreen->TitleImage = Entry->Image;
-  SubScreen->ID = SCREEN_THEME;
-  SubScreen->AnimeRun = GetAnime(SubScreen);
+  NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_THEME, "Themes->");
 
   AddMenuInfoLine(SubScreen, L"Installed themes:");
   //add embedded
-  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"embedded");
-  InputBootArgs->Entry.Tag = TAG_SWITCH;
-  InputBootArgs->Entry.Row = 0xFFFF;
-  InputBootArgs->Item = &InputItems[3];
-  InputBootArgs->Entry.AtClick = ActionEnter;
-  InputBootArgs->Entry.AtRightClick = ActionDetails;
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+  AddMenuItem(SubScreen, 3,  "embedded", TAG_SWITCH, FALSE);
   
   for (i = 0; i < ThemesNum; i++) {
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
@@ -4805,7 +4143,6 @@ REFIT_MENU_ENTRY  *SubMenuThemes()
     AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
   }
   AddMenuEntry(SubScreen, &MenuEntryReturn);
-  Entry->SubScreen = SubScreen;
   return Entry;
 }
 
@@ -4814,48 +4151,19 @@ REFIT_MENU_ENTRY *SubMenuGUI()
   // init
   REFIT_MENU_ENTRY   *Entry;
   REFIT_MENU_SCREEN  *SubScreen;
-  REFIT_INPUT_DIALOG *InputBootArgs;
   
   // create the entry in the options menu
-  Entry = AllocateZeroPool(sizeof(REFIT_MENU_ENTRY));
-  Entry->Title = PoolPrint(L"GUI tuning->");
-  Entry->Image =  OptionMenu.TitleImage;
-  Entry->Tag = TAG_OPTIONS;
-  Entry->AtClick = ActionEnter;
-  
-  // create the submenu
-  SubScreen = AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
-  SubScreen->Title = Entry->Title;
-  SubScreen->TitleImage = Entry->Image;
-  SubScreen->ID = SCREEN_ACPI;
-  SubScreen->AnimeRun = GetAnime(SubScreen);
+  NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_ACPI, "GUI tuning->");
   
   // submenu description
   AddMenuInfoLine(SubScreen, PoolPrint(L"Choose options to tune the Interface"));
   
-    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-    InputBootArgs->Entry.Title = PoolPrint(L"Pointer speed:");
-    InputBootArgs->Entry.Tag = TAG_INPUT;
-    InputBootArgs->Entry.Row = StrLen(InputItems[70].SValue); //cursor
-    InputBootArgs->Item = &InputItems[70];
-    InputBootArgs->Entry.AtClick = ActionSelect;
-    InputBootArgs->Entry.AtDoubleClick = ActionEnter;
-    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-    
-    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-    InputBootArgs->Entry.Title = PoolPrint(L"Mirror move");
-    InputBootArgs->Entry.Tag = TAG_INPUT;
-    InputBootArgs->Entry.Row = 0xFFFF;
-    InputBootArgs->Item = &InputItems[72];
-    InputBootArgs->Entry.AtClick = ActionEnter;
-    InputBootArgs->Entry.AtRightClick = ActionDetails;
-    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-    
-    AddMenuEntry(SubScreen, SubMenuThemes());
+  AddMenuItem(SubScreen, 70, "Pointer Speed:", TAG_INPUT, TRUE);
+  AddMenuItem(SubScreen, 72, "Mirror Move", TAG_INPUT, FALSE);
+      
+  AddMenuEntry(SubScreen, SubMenuThemes());
   
   AddMenuEntry(SubScreen, &MenuEntryReturn);
-  Entry->SubScreen = SubScreen;
-  
   return Entry;
 }
 
@@ -4873,18 +4181,7 @@ REFIT_MENU_ENTRY *SubMenuCSR()
   REFIT_MENU_SCREEN  *SubScreen;
   
   // create the entry in the main menu
-  Entry = AllocateZeroPool(sizeof(REFIT_MENU_ENTRY));
-  Entry->Title = AllocateZeroPool(128);
-  Entry->Image =  OptionMenu.TitleImage;
-  Entry->Tag = TAG_OPTIONS;
-  Entry->AtClick = ActionEnter;
-  
-  // create the submenu
-  SubScreen = AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
-  SubScreen->Title = Entry->Title;
-  SubScreen->TitleImage = Entry->Image;
-  SubScreen->ID = SCREEN_CSR;
-  SubScreen->AnimeRun = GetAnime(SubScreen);
+  NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_CSR, NULL);
   
   // submenu description
   AddMenuInfoLine(SubScreen, PoolPrint(L"Modify the System Integrity Protection configuration."));
@@ -4902,7 +4199,6 @@ REFIT_MENU_ENTRY *SubMenuCSR()
   
   // return
   AddMenuEntry(SubScreen, &MenuEntryReturn);
-  Entry->SubScreen = SubScreen;
   ModifyTitles(Entry);
   return Entry;
 }
@@ -4914,19 +4210,8 @@ REFIT_MENU_ENTRY *SubMenuBLC()
   REFIT_MENU_SCREEN  *SubScreen;
   
   // create the entry in the main menu
-  Entry = AllocateZeroPool(sizeof(REFIT_MENU_ENTRY));
-  Entry->Title = AllocateZeroPool(128);
+  NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_BLC, NULL);
 //  Entry->Title = PoolPrint(L"boot_args->flags [0x%02x]->", gSettings.BooterConfig);
-  Entry->Image =  OptionMenu.TitleImage;
-  Entry->Tag = TAG_OPTIONS;
-  Entry->AtClick = ActionEnter;
-  
-  // create the submenu
-  SubScreen = AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
-  SubScreen->Title = Entry->Title;
-  SubScreen->TitleImage = Entry->Image;
-  SubScreen->ID = SCREEN_BLC;
-  SubScreen->AnimeRun = GetAnime(SubScreen);
   
   // submenu description
   AddMenuInfoLine(SubScreen, PoolPrint(L"Modify flags for boot.efi"));
@@ -4942,9 +4227,7 @@ REFIT_MENU_ENTRY *SubMenuBLC()
   AddMenuCheck(SubScreen, "Install UI",         kBootArgsFlagInstallUI, 65);
   
   AddMenuEntry(SubScreen, &MenuEntryReturn);
-  Entry->SubScreen = SubScreen;
   ModifyTitles(Entry);
-  
   return Entry;
 }
 
@@ -4953,49 +4236,20 @@ REFIT_MENU_ENTRY *SubMenuSystem()
   // init
   REFIT_MENU_ENTRY   *Entry;
   REFIT_MENU_SCREEN  *SubScreen;
-  REFIT_INPUT_DIALOG *InputBootArgs;
   
   // create the entry in the options menu
-  Entry = AllocateZeroPool(sizeof(REFIT_MENU_ENTRY));
-  Entry->Title = PoolPrint(L"System Parameters->");
-  Entry->Image =  OptionMenu.TitleImage;
-  Entry->Tag = TAG_OPTIONS;
-  Entry->AtClick = ActionEnter;
-  
-  // create the submenu
-  SubScreen = AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
-  SubScreen->Title = Entry->Title;
-  SubScreen->TitleImage = Entry->Image;
-  SubScreen->ID = SCREEN_ACPI;
-  SubScreen->AnimeRun = GetAnime(SubScreen);
+  NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_ACPI, "System Parameters->");
   
   // submenu description
   AddMenuInfoLine(SubScreen, PoolPrint(L"Choose options for booted OS"));
   
-  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"Block kext:");
-  InputBootArgs->Entry.Tag = TAG_INPUT;
-  InputBootArgs->Entry.Row = StrLen(InputItems[2].SValue);
-  InputBootArgs->Item = &InputItems[2];
-  InputBootArgs->Entry.AtClick = ActionSelect;
-  InputBootArgs->Entry.AtDoubleClick = ActionEnter;
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-  
-  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"Set OS version if not:");
-  InputBootArgs->Entry.Tag = TAG_INPUT;
-  InputBootArgs->Entry.Row = StrLen(InputItems[51].SValue);
-  InputBootArgs->Item = &InputItems[51];
-  InputBootArgs->Entry.AtClick = ActionSelect;
-  InputBootArgs->Entry.AtDoubleClick = ActionEnter;
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+  AddMenuItem(SubScreen, 2,  "Block kext:", TAG_INPUT, TRUE);
+  AddMenuItem(SubScreen, 51, "Set OS version if not:", TAG_INPUT, TRUE);
   
   AddMenuEntry(SubScreen, SubMenuCSR());
   AddMenuEntry(SubScreen, SubMenuBLC());
   
   AddMenuEntry(SubScreen, &MenuEntryReturn);
-  Entry->SubScreen = SubScreen;
-  
   return Entry;
 }
 
@@ -5037,25 +4291,10 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
     *ChosenEntry = (REFIT_MENU_ENTRY*)InputBootArgs;
 
-    InputBootArgs->Entry.Title = PoolPrint(L"Config:");
-    InputBootArgs->Entry.Tag = TAG_INPUT;
-    InputBootArgs->Entry.Row = StrLen(InputItems[90].SValue);
-    InputBootArgs->Entry.ShortcutDigit = 0xF1;
-    InputBootArgs->Item = &InputItems[90];    //0
-    InputBootArgs->Entry.AtClick = ActionSelect;
-    InputBootArgs->Entry.AtDoubleClick = ActionEnter;
-    AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
+    AddMenuItem(&OptionMenu, 90, "Config:", TAG_INPUT, TRUE);
+//   InputBootArgs->Entry.ShortcutDigit = 0xF1;
 
-    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-    InputBootArgs->Entry.Title = PoolPrint(L"Boot Args:");
-    InputBootArgs->Entry.Tag = TAG_INPUT;
-    InputBootArgs->Entry.Row = StrLen(InputItems[0].SValue);
-    InputBootArgs->Item = &InputItems[0];
-    InputBootArgs->Entry.AtClick = ActionSelect;
-    InputBootArgs->Entry.AtDoubleClick = ActionEnter;
-    AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
-
-//    AddMenuEntry(&OptionMenu, SubMenuDropTables());
+    AddMenuItem(&OptionMenu, 0, "Boot Args:", TAG_INPUT, TRUE);
 
     if (AllowGraphicsMode) {
       AddMenuEntry(&OptionMenu, SubMenuGUI());
@@ -5067,13 +4306,6 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     AddMenuEntry(&OptionMenu, SubMenuGraphics());
     AddMenuEntry(&OptionMenu, SubMenuBinaries());
     AddMenuEntry(&OptionMenu, SubMenuSystem());
-//    AddMenuEntry(&OptionMenu, SubMenuCSR());
-//    AddMenuEntry(&OptionMenu, SubMenuBLC());
-/*
-    if (SysVariables) {
-      AddMenuEntry(&OptionMenu, SubMenuSysVariables());
-    }
-*/
     AddMenuEntry(&OptionMenu, &MenuEntryReturn);
     //DBG("option menu created entries=%d\n", OptionMenu.EntryCount);
   }
@@ -5110,11 +4342,11 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
                   NextMenuExit = 0;
                   ApplyInputs();
                   ModifyTitles(TmpChosenEntry);
-                  if (TmpChosenEntry->ShortcutDigit == 0xF1) {
+           /*       if (TmpChosenEntry->ShortcutDigit == 0xF1) {
                     NextMenuExit = MENU_EXIT_ENTER;
                     //DBG("Escape menu from input dialog\n");
                     break;
-                  } //if F1
+                  } //if F1 */
                 }
               } //while(!NextMenuExit)
             }
@@ -5122,23 +4354,23 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
             SubMenuExit = 0;
             ApplyInputs();
             ModifyTitles(TmpChosenEntry);
-            if (NextChosenEntry->ShortcutDigit == 0xF1) {
+       /*     if (NextChosenEntry->ShortcutDigit == 0xF1) {
               SubMenuExit = MENU_EXIT_ENTER;
               //DBG("Escape menu from input dialog\n");
               goto exit;
-            } //if F1
+            } //if F1 */
           }
         } //while(!SubMenuExit)
       }
       MenuExit = 0;
-      if ((*ChosenEntry)->ShortcutDigit == 0xF1) {
+ /*     if ((*ChosenEntry)->ShortcutDigit == 0xF1) {
         MenuExit = MENU_EXIT_ENTER;
         //     DBG("Escape options menu\n");
         break;
-      } //if F1
+      } //if F1 */
     } // if MENU_EXIT_ENTER
   }
-exit:
+//exit:
   GlobalConfig.Proportional = OldFontStyle;
   ApplyInputs();
 }
