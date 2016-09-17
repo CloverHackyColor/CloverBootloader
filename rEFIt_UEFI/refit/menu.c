@@ -4262,16 +4262,19 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
   UINTN               SubMenuExit;
   UINTN               NextMenuExit;
   //CHAR16*           Flags;
-//  MENU_STYLE_FUNC     Style = TextMenuStyle;
-//  INTN                EntryIndex = 0;
-  REFIT_INPUT_DIALOG* InputBootArgs;
+  MENU_STYLE_FUNC     Style = TextMenuStyle;
+  INTN                EntryIndex = 0;
+  INTN                SubEntryIndex = -1; //value -1 means old position to remember
+  INTN                NextEntryIndex = -1;
+
+  //  REFIT_INPUT_DIALOG* InputBootArgs;
   BOOLEAN             OldFontStyle = GlobalConfig.Proportional;
 
   GlobalConfig.Proportional = FALSE; //temporary disable proportional
 
-//  if (AllowGraphicsMode) {
-//    Style = GraphicsMenuStyle;
-//  }
+  if (AllowGraphicsMode) {
+    Style = GraphicsMenuStyle;
+  }
 
   // remember, if you extended this menu then change procedures
   // FillInputs and ApplyInputs
@@ -4288,8 +4291,8 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     gThemeOptionsChanged = TRUE;
     OptionMenu.ID = SCREEN_OPTIONS;
     OptionMenu.AnimeRun = GetAnime(&OptionMenu); //FALSE;
-    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-    *ChosenEntry = (REFIT_MENU_ENTRY*)InputBootArgs;
+    //    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+    //    *ChosenEntry = (REFIT_MENU_ENTRY*)InputBootArgs;
 
     AddMenuItem(&OptionMenu, 90, "Config:", TAG_INPUT, TRUE);
 //   InputBootArgs->Entry.ShortcutDigit = 0xF1;
@@ -4311,9 +4314,8 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
   }
 
   while (!MenuExit) {
-
-//    MenuExit = RunGenericMenu(&OptionMenu, Style, &EntryIndex, ChosenEntry);
-    MenuExit = RunMenu(&OptionMenu, ChosenEntry);
+    MenuExit = RunGenericMenu(&OptionMenu, Style, &EntryIndex, ChosenEntry);
+    //    MenuExit = RunMenu(&OptionMenu, ChosenEntry);
     if (MenuExit == MENU_EXIT_ESCAPE || (*ChosenEntry)->Tag == TAG_RETURN)
       break;
     if (MenuExit == MENU_EXIT_ENTER) {
@@ -4321,7 +4323,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
       if ((*ChosenEntry)->SubScreen != NULL) {
         SubMenuExit = 0;
         while (!SubMenuExit) {
-          SubMenuExit = RunMenu((*ChosenEntry)->SubScreen, &TmpChosenEntry);
+          SubMenuExit = RunGenericMenu((*ChosenEntry)->SubScreen, Style, &SubEntryIndex, &TmpChosenEntry);
           if (SubMenuExit == MENU_EXIT_ESCAPE || TmpChosenEntry->Tag == TAG_RETURN){
             ApplyInputs();
             ModifyTitles(*ChosenEntry);
@@ -4331,7 +4333,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
             if (TmpChosenEntry->SubScreen != NULL) {
               NextMenuExit = 0;
               while (!NextMenuExit) {
-                NextMenuExit = RunMenu(TmpChosenEntry->SubScreen, &NextChosenEntry);
+                NextMenuExit = RunGenericMenu(TmpChosenEntry->SubScreen, Style, &NextEntryIndex, &NextChosenEntry);
                 if (NextMenuExit == MENU_EXIT_ESCAPE || NextChosenEntry->Tag == TAG_RETURN){
                   ApplyInputs();
                   ModifyTitles(TmpChosenEntry);
