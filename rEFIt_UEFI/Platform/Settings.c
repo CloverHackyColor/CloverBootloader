@@ -6132,7 +6132,7 @@ SetDevices (
           /* Scan Port */
           Status = PciIo->Pci.Read (PciIo, EfiPciIoWidthUint32, 0xF0, 1, &Rcba);
           if (EFI_ERROR (Status)) continue;
-          Rcba &= 0xFFFFC000;
+  //        Rcba &= 0xFFFFC000;
           if ((Rcba & 0xFFFFC000) == 0) {
             MsgLog (" RCBA disabled; cannot use it\n");
             continue;
@@ -6144,6 +6144,7 @@ SetDevices (
             PciIo->Pci.Write (PciIo, EfiPciIoWidthUint32, 0xF0, 1, &Rcba);
           }
 
+          Rcba &= 0xFFFFC000;
           if (gSettings.ForceHPET) {
             Hptc = REG32 ((UINTN)Rcba, 0x3404);
             if ((Hptc & 0x80) != 0) {
