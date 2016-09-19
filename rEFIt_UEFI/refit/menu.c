@@ -3029,10 +3029,8 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
           if (((REFIT_INPUT_DIALOG*)Entry)->Item->ItemType == BoolValue) {
             Entry->Place.Width = StrLen(ResultString) * GlobalConfig.CharWidth;
             DrawMenuText(L" ", 0, EntriesPosX, Entry->Place.YPos, 0xFFFF);
-            DrawMenuText(ResultString,
-                         (i == State->CurrentSelection)?(MenuWidth - (TextHeight + TEXT_XMARGIN)):0,
-                         EntriesPosX + (TextHeight + TEXT_XMARGIN),
-                         Entry->Place.YPos, 0xFFFF);
+            DrawMenuText(ResultString, (i == State->CurrentSelection) ? (MenuWidth) : 0,
+                         EntriesPosX + (TextHeight + TEXT_XMARGIN), Entry->Place.YPos, 0xFFFF);
             BltImageAlpha((((REFIT_INPUT_DIALOG*)(Entry))->Item->BValue) ? Buttons[3] :Buttons[2],
                   EntriesPosX + TEXT_XMARGIN, Entry->Place.YPos + PlaceCentre,
                   &MenuBackgroundPixel, 16);
@@ -3046,15 +3044,11 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
           }
         } else if (Entry->Tag == TAG_CHECKBIT) {
           DrawMenuText(L" ", 0, EntriesPosX, Entry->Place.YPos, 0xFFFF);
-          DrawMenuText(ResultString,
-                       (i == State->CurrentSelection)?(MenuWidth - (TextHeight + TEXT_XMARGIN)):0,
-                       EntriesPosX + (TextHeight + TEXT_XMARGIN),
-                       Entry->Place.YPos, 0xFFFF);
+          DrawMenuText(ResultString, (i == State->CurrentSelection) ? (MenuWidth) : 0,
+                       EntriesPosX + (TextHeight + TEXT_XMARGIN), Entry->Place.YPos, 0xFFFF);
           BltImageAlpha((((REFIT_INPUT_DIALOG*)(Entry))->Item->IValue & Entry->Row) ? Buttons[3] :Buttons[2],
                         EntriesPosX + TEXT_XMARGIN, Entry->Place.YPos + PlaceCentre,
                         &MenuBackgroundPixel, 16);
-
-          
         } else if (Entry->Tag == TAG_SWITCH) {
           DrawMenuText(ResultString,
                        (i == State->CurrentSelection) ? MenuWidth : 0,
@@ -3087,8 +3081,7 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
       if (EntryL->Tag == TAG_INPUT) {
         if (((REFIT_INPUT_DIALOG*)EntryL)->Item->ItemType == BoolValue) {
           DrawMenuText(ResultString, 0, EntriesPosX + (TextHeight + TEXT_XMARGIN),
-                       EntriesPosY + (State->LastSelection - State->FirstVisible) * TextHeight,
-                       TitleLen + EntryL->Row);
+                       EntryL->Place.YPos, 0xFFFF);
           BltImageAlpha((((REFIT_INPUT_DIALOG*)EntryL)->Item->BValue)? Buttons[3] : Buttons[2],
                         EntriesPosX + TEXT_XMARGIN,  EntryL->Place.YPos + PlaceCentre,
                         &MenuBackgroundPixel, 16);
@@ -3101,16 +3094,13 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
                        TitleLen + EntryL->Row);
         }
       } else if (EntryL->Tag == TAG_SWITCH) {
-   //     StrCpy(ResultString, EntryL->Title);
         DrawMenuText(ResultString, 0, EntriesPosX + (TextHeight + TEXT_XMARGIN),
                      EntriesPosY + (State->LastSelection - State->FirstVisible) * TextHeight, 0xFFFF);
         BltImageAlpha((EntryL->Row == (UINTN)OldChosenTheme) ? Buttons[1]:Buttons[0],
           EntriesPosX + TEXT_XMARGIN, EntryL->Place.YPos + PlaceCentre,
                       &MenuBackgroundPixel, 16);
       } else if (EntryL->Tag == TAG_CHECKBIT) {
-   //     DrawMenuText(L" ", 0, EntriesPosX, EntryL->Place.YPos, 0xFFFF);
-        DrawMenuText(ResultString, 0, EntriesPosX + (TextHeight + TEXT_XMARGIN),
-                     EntryL->Place.YPos, 0xFFFF);
+        DrawMenuText(ResultString, 0, EntriesPosX + (TextHeight + TEXT_XMARGIN), EntryL->Place.YPos, 0xFFFF);
         BltImageAlpha((((REFIT_INPUT_DIALOG*)EntryL)->Item->IValue & EntryL->Row) ? Buttons[3] :Buttons[2],
                       EntriesPosX + TEXT_XMARGIN, EntryL->Place.YPos + PlaceCentre,
                       &MenuBackgroundPixel, 16);        
@@ -3124,10 +3114,7 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
       TitleLen = StrLen(EntryC->Title);
       if (EntryC->Tag == TAG_INPUT) {
         if (((REFIT_INPUT_DIALOG*)EntryC)->Item->ItemType == BoolValue) {
-          DrawMenuText(ResultString, MenuWidth,
-                       EntriesPosX + (TextHeight + TEXT_XMARGIN),
-                       EntriesPosY + (State->CurrentSelection - State->FirstVisible) * TextHeight,
-                       TitleLen + EntryC->Row);
+          DrawMenuText(ResultString, MenuWidth, EntriesPosX + (TextHeight + TEXT_XMARGIN), EntryC->Place.YPos, 0xFFFF);
           BltImageAlpha((((REFIT_INPUT_DIALOG*)EntryC)->Item->BValue)? Buttons[3] : Buttons[2],
                         EntriesPosX + TEXT_XMARGIN, EntryC->Place.YPos + PlaceCentre,
                         &MenuBackgroundPixel, 16);
@@ -3148,10 +3135,7 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
           EntriesPosX + TEXT_XMARGIN, EntryC->Place.YPos + PlaceCentre,
           &MenuBackgroundPixel, 16);
       } else if (EntryC->Tag == TAG_CHECKBIT) {
- //       DrawMenuText(L" ", 0, EntriesPosX, EntryC->Place.YPos, 0xFFFF);
-        DrawMenuText(ResultString, MenuWidth,
-                     EntriesPosX + (TextHeight + TEXT_XMARGIN),
-                     EntryC->Place.YPos, 0xFFFF);
+        DrawMenuText(ResultString, MenuWidth, EntriesPosX + (TextHeight + TEXT_XMARGIN), EntryC->Place.YPos, 0xFFFF);
         BltImageAlpha((((REFIT_INPUT_DIALOG*)EntryC)->Item->IValue & EntryC->Row) ? Buttons[3] :Buttons[2],
                       EntriesPosX + TEXT_XMARGIN, EntryC->Place.YPos + PlaceCentre,
                       &MenuBackgroundPixel, 16);
