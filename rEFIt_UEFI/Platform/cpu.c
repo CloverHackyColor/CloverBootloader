@@ -560,6 +560,11 @@ VOID GetCPUProperties (VOID)
                gCPUStructure.MaxRatio = (UINT32)DivU64x32(gCPUStructure.TSCFrequency, 200 * Mega);
              }
              gCPUStructure.MaxRatio = gCPUStructure.MaxRatio * 10 + gCPUStructure.SubDivider * 5;
+             if (AsciiStrStr(gCPUStructure.BrandString, "P8400")) {
+               gCPUStructure.MaxRatio = 85;
+               gCPUStructure.FSBFrequency = DivU64x32(MultU64x32(gCPUStructure.TSCFrequency, 10), gCPUStructure.MaxRatio);
+               DBG("workaround for Code2Duo P8400, MaxRatio=8.5\n");
+             }
              if (TurboMsr == 6) {
                TurboMsr = AsmReadMsr64(MSR_PLATFORM_INFO); //0xCE
                gCPUStructure.Turbo4 = ((UINT32)(RShiftU64(TurboMsr, 8)) & 0x1f) * 10; //workaround for Harpertown
