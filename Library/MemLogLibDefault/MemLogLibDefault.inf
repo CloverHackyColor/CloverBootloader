@@ -31,3 +31,7 @@
   DebugLib
   PciLib
   IoLib
+
+[BuildOptions]
+  XCODE:*_*_*_CC_FLAGS = -Os -fno-lto -DMDEPKG_NDEBUG
+  GCC:*_*_*_CC_FLAGS = -Os -fno-lto -DMDEPKG_NDEBUG
