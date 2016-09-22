@@ -725,7 +725,7 @@ BiosVideoChildHandleInstall (
   if ((RemainingDevicePath == NULL) || (!IsDevicePathEnd (RemainingDevicePath))) {
     if (RemainingDevicePath == NULL) {
 //      DBG("null RemainingDevicePath\n");
-      ZeroMem (&AcpiDeviceNode, sizeof (ACPI_ADR_DEVICE_PATH));
+      gBS->SetMem (&AcpiDeviceNode, sizeof (ACPI_ADR_DEVICE_PATH), 0);
       AcpiDeviceNode.Header.Type = ACPI_DEVICE_PATH;
       AcpiDeviceNode.Header.SubType = ACPI_ADR_DP;
       AcpiDeviceNode.ADR = ACPI_DISPLAY_ADR (1, 0, 0, 1, 0, ACPI_ADR_DISPLAY_TYPE_VGA, 0, 0);
@@ -1487,7 +1487,7 @@ BiosVideoCheckForVbe (
     return Status;
   }
 
-  ZeroMem (&ValidEdidTiming, sizeof (VESA_BIOS_EXTENSIONS_VALID_EDID_TIMING));
+  gBS->SetMem (&ValidEdidTiming, sizeof (VESA_BIOS_EXTENSIONS_VALID_EDID_TIMING), 0);
   
   //
   // Fill in the VBE related data structures
@@ -2195,7 +2195,7 @@ BiosVideoSetModeWorker (
   //
   // Clear all registers
   //
-  ZeroMem (&Regs, sizeof (Regs));
+  gBS->SetMem (&Regs, sizeof (Regs), 0);
 
   if (ModeData->VbeModeNumber < 0x100) {
     //
@@ -2225,7 +2225,7 @@ BiosVideoSetModeWorker (
     //
     Regs.X.AX = VESA_BIOS_EXTENSIONS_SET_MODE;
     Regs.X.BX = (UINT16) (ModeData->VbeModeNumber | VESA_BIOS_EXTENSIONS_MODE_NUMBER_LINEAR_FRAME_BUFFER);
-    ZeroMem (BiosVideoPrivate->VbeCrtcInformationBlock, sizeof (VESA_BIOS_EXTENSIONS_CRTC_INFORMATION_BLOCK));
+    gBS->SetMem (BiosVideoPrivate->VbeCrtcInformationBlock, sizeof (VESA_BIOS_EXTENSIONS_CRTC_INFORMATION_BLOCK), 0);
     Regs.X.ES = EFI_SEGMENT ((UINTN) BiosVideoPrivate->VbeCrtcInformationBlock);
     Regs.X.DI = EFI_OFFSET ((UINTN) BiosVideoPrivate->VbeCrtcInformationBlock);
     BiosVideoPrivate->LegacyBios->Int86 (BiosVideoPrivate->LegacyBios, 0x10, &Regs);
