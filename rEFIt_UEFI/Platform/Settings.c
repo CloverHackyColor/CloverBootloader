@@ -2087,7 +2087,7 @@ GetEDIDSettings(TagPtr DictPointer)
       DBG ("CustomEDID has wrong length=%d\n", j);
     } else {
       DBG ("CustomEDID ok\n");
-      gSettings.InjectEDID = true;
+      gSettings.InjectEDID = TRUE;
       InitializeEdidOverride ();
     }
   }
@@ -2104,7 +2104,7 @@ GetEDIDSettings(TagPtr DictPointer)
         DBG ("CustomEDID has wrong length=%d\n", j);
       } else {
         DBG ("CustomEDID ok\n");
-        gSettings.InjectEDID = true;
+        gSettings.InjectEDID = TRUE;
         InitializeEdidOverride();
       }
     }
@@ -2112,13 +2112,13 @@ GetEDIDSettings(TagPtr DictPointer)
     Prop = GetProperty (Dict2, "VendorID");
     if (Prop) {
       gSettings.VendorEDID = (UINT16)GetPropertyInteger(Prop, gSettings.VendorEDID);
-      gSettings.InjectEDID = true;
+      gSettings.InjectEDID = TRUE;
     }
         
     Prop = GetProperty (Dict2, "ProductID");
     if (Prop) {
       gSettings.ProductEDID = (UINT16)GetPropertyInteger(Prop, gSettings.ProductEDID);
-      gSettings.InjectEDID = true;
+      gSettings.InjectEDID = TRUE;
     }    
   }
 }
