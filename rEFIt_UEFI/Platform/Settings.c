@@ -3714,7 +3714,7 @@ ParseSMBIOSSettings(
     } else {
       //if new model then fill at least as MacPro3,1, except custom ProductName
       // something else?
-      SetDMISettingsForModel (MacPro31, FALSE);
+      SetDMISettingsForModel (iMac132, FALSE);
     }
   }
 
