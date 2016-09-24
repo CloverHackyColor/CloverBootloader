@@ -19,7 +19,7 @@ if [[ ! -x "$TOOLCHAIN_DIR"/bin/gcc || \
       ! -x "$TOOLCHAIN_DIR"/bin/g++ ]]; then
     echo "No clover toolchain found !" >&2
     echo "Build it with the buidgcc.sh script or defined the TOOLCHAIN_DIR variable." >&2
-    exit 1
+//    exit 1
 fi
 
 # ./configure arguments for Nasm
