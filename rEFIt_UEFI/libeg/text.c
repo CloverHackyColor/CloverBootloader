@@ -431,8 +431,8 @@ INTN egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage,
         egRawCompose(BufferPtr + 9, FontPixelData + Joong * FontWidth + 6, //9 , 4 are tunable
                      GlobalConfig.CharWidth - 8, FontHeight,
                      BufferLineOffset, FontLineOffset);
-        egRawCompose(BufferPtr + BufferLineOffset * 9, FontPixelData + Jong * FontWidth + 5,
-                     GlobalConfig.CharWidth, FontHeight - 10,
+        egRawCompose(BufferPtr + BufferLineOffset * 9, FontPixelData + Jong * FontWidth + 1,
+                     GlobalConfig.CharWidth, FontHeight - 3,
                      BufferLineOffset, FontLineOffset);
 
       }
