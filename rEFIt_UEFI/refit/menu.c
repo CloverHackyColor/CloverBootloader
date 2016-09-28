@@ -4432,7 +4432,7 @@ UINTN RunMainMenu(IN REFIT_MENU_SCREEN *Screen, IN INTN DefaultSelection, OUT RE
   //    DBG("add OptionsBits = %x\n", gSettings.OptionsBits);
       DecodeOptions((LOADER_ENTRY*)TempChosenEntry);
   //    DBG("get OptionsBits = %x\n", gSettings.OptionsBits);
-      ((LOADER_ENTRY*)TempChosenEntry)->Flags |= (UINT16)(gSettings.FlagsBits & 0x0FFF);
+  //    ((LOADER_ENTRY*)TempChosenEntry)->Flags |= (UINT16)(gSettings.FlagsBits & 0x0FFF);
   //    DBG("get FlagsBits = %x\n", gSettings.FlagsBits);
 #endif
       FreePool(TmpArgs);

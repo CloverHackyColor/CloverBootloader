@@ -21,7 +21,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 
 
 #ifndef DEBUG_ALL
-#define DEBUG_CSM 1
+#define DEBUG_CSM 2
 #else
 #define DEBUG_CSM DEBUG_ALL
 #endif
@@ -213,7 +213,8 @@ BiosVideoDriverBindingSupported (
   }
 
   Status = EFI_UNSUPPORTED;
-  if (Pci.Hdr.ClassCode[2] == 0x03 || (Pci.Hdr.ClassCode[2] == 0x00 && Pci.Hdr.ClassCode[1] == 0x01)) {
+  if ((Pci.Hdr.ClassCode[2] == 0x03 || (Pci.Hdr.ClassCode[2] == 0x00 && Pci.Hdr.ClassCode[1] == 0x01))
+      && Pci.Hdr.VendorId == 0x8086) {
 
     Status = EFI_SUCCESS;
     //
@@ -363,8 +364,8 @@ BiosVideoDriverBindingStart (
   Supports &= (EFI_PCI_IO_ATTRIBUTE_VGA_IO | EFI_PCI_IO_ATTRIBUTE_VGA_IO_16);
   if (Supports == 0 || Supports == (EFI_PCI_IO_ATTRIBUTE_VGA_IO | EFI_PCI_IO_ATTRIBUTE_VGA_IO_16)) {
 //    Status = EFI_UNSUPPORTED;
-    DBG("mixed support=%x\n", Supports);
-    Supports = EFI_PCI_IO_ATTRIBUTE_VGA_IO; //we choose this as in CloverEFI
+    DBG("mixed support=%x => 0\n", Supports);
+    Supports = 0; //EFI_PCI_IO_ATTRIBUTE_VGA_IO; //we choose this as in CloverEFI
 //    goto Done;
   }  
 
