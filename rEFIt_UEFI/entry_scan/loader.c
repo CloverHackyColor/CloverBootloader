@@ -557,6 +557,10 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath,
       if (OSType == OSTYPE_OSX && IsOsxHibernated(Volume)) {
         Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_HIBERNATED);
       }
+      //always set with kexts for installer
+      if (OSType == OSTYPE_OSX_INSTALLER){
+        Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_WITHKEXTS);
+      }
       ShortcutLetter = 'M';
       if ((Entry->VolName == NULL) || (StrLen(Entry->VolName) == 0)) {
         // else no sense to override it with dubious name
