@@ -782,6 +782,25 @@ fi
         buildpackage "$packageRefId" "${themeName}" "${PKG_BUILD_DIR}/${themeName}" "${themeDestDir}"
         addChoice --start-visible="false"  --start-selected="true"  --pkg-refs="$packageRefId" "${themeName}"
     done
+
+    # build CloverThemeManager package
+    local CTM_Dir="${SRCROOT}"/CloverThemeManager
+    local CTM_Dest='/Applications'
+
+    packagesidentity="${clover_package_identity}".CTM.themes
+    choiceId="CloverThemeManager"
+    packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
+
+    ditto --noextattr --noqtn "$CTM_Dir"  \
+     "${PKG_BUILD_DIR}/${choiceId}/Root/${CTM_Dest}"/
+    buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/"
+    # CloverThemeManager.app can update it-self,
+    # so there's no need to record the choice as 'previously selected'.
+    addChoice --group="Themes" --start-selected="false" \
+              --start-enabled="checkFileExists('/Users')" \
+              --start-visible="checkFileExists('/Users')" \
+              --pkg-refs="$packageRefId" "${choiceId}"
+    # end CloverThemeManager package
 # End build theme packages
  
 if [[ "$add_ia32" -eq 1 ]]; then

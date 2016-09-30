@@ -1,8 +1,0 @@
-Rename "Generic_OSX_Icon.icns" to one of the options below and put
-inside of the icons folder if you want the simple look...
-
-os_cougar.icns > OS X Mountain Lion 10.8
-os_lion.icns > OS X Lion 10.7
-os_snow.icns > OS X Snow Leopard 10.6
-os_leo.icns > OS X Leopard 10.5
-os_tiger.icns > OS X Tiger 10.4

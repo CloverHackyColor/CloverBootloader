@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-08-08 12:52+0300\n"
+"POT-Creation-Date: 2016-09-30 11:14+0300\n"
 "PO-Revision-Date: 2014-02-14 07:37+0000\n"
 "Last-Translator: Xpam.AmAdEuS <miljenkohalapir@outlook.com>\n"
 "Language-Team: hr <hr@li.org>\n"
@@ -616,30 +616,14 @@ msgstr "Teme"
 msgid "Select to install themes."
 msgstr "Odaberi za instalaciju teme."
 
-#. type: "applestyle_title"
-#: Resources/templates/Localizable.strings:113
-#, no-wrap
-msgid "AppleStyle"
-msgstr "AppleStyle"
-
-#. type: "applestyle_description"
-#: Resources/templates/Localizable.strings:114
-#, no-wrap
-msgid ""
-"AppleStyle theme from Eps,\n"
-"Install to /EFI/CLOVER/themes/applestyle"
-msgstr ""
-"AppleStyle tema od kreatora Eps,\n"
-"Instaliraj u /EFI/CLOVER/themes/applestyle"
-
 #. type: "BGM_title"
-#: Resources/templates/Localizable.strings:117
+#: Resources/templates/Localizable.strings:113
 #, no-wrap
 msgid "Black_Green_Moody"
 msgstr "Crno_Zelena_Čudna"
 
 #. type: "BGM_description"
-#: Resources/templates/Localizable.strings:118
+#: Resources/templates/Localizable.strings:114
 #, no-wrap
 msgid ""
 "BGM (Black Green and Moody) theme from Blackosx,\n"
@@ -648,139 +632,14 @@ msgstr ""
 "BGM (Black Green and Moody) tema od kreatora Blackosx,\n"
 "Instaliraj u /EFI/CLOVER/themes/BGM"
 
-#. type: "black_green_title"
-#: Resources/templates/Localizable.strings:121
-#, no-wrap
-msgid "Black_Green"
-msgstr "crno_zelena"
-
-#. type: "black_green_description"
-#: Resources/templates/Localizable.strings:122
-#, no-wrap
-msgid ""
-"Default black_green theme from Blackosx,\n"
-"Install to /EFI/CLOVER/themes/black_green"
-msgstr ""
-"Uobičajena tema od kreatora Blackosx,\n"
-"Instaliraj u /EFI/CLOVER/themes/black_green."
-
-#. type: "bluemac_title"
-#: Resources/templates/Localizable.strings:125
-#, no-wrap
-msgid "Bluemac"
-msgstr "Plavimek"
-
-#. type: "bluemac_description"
-#: Resources/templates/Localizable.strings:126
-#, no-wrap
-msgid ""
-"Bluemac theme from FowZiey,\n"
-"Install to /EFI/CLOVER/themes/bluemac"
-msgstr ""
-"Prekrasna tema  od kreatora FowZiey,\n"
-"Instaliraj u /EFI/CLOVER/themes/bluemac."
-
-#. type: "bootcamp_title"
-#: Resources/templates/Localizable.strings:129
-#, no-wrap
-msgid "BootCamp"
-msgstr "BootKamp"
-
-#. type: "bootcamp_description"
-#: Resources/templates/Localizable.strings:130
-#, no-wrap
-msgid ""
-"Bootcamp theme from Bijo,\n"
-"Install to /EFI/CLOVER/themes/bootcamp"
-msgstr ""
-"Tema apple bootcamp-a od kreatora Bijo,\n"
-"Instaliraj u /EFI/CLOVER/themes/bootcamp."
-
-#. type: "BGM256_title"
-#: Resources/templates/Localizable.strings:133
-#, no-wrap
-msgid "BGM256"
-msgstr ""
-
-#. type: "BGM256_description"
-#: Resources/templates/Localizable.strings:134
-#, fuzzy, no-wrap
-#| msgid ""
-#| "BGM (Black Green and Moody) theme from Blackosx,\n"
-#| "Install to /EFI/CLOVER/themes/BGM"
-msgid ""
-"BGM A version of BGM with 256px icons theme from Blackosx,\n"
-"Install to /EFI/CLOVER/themes/BGM256"
-msgstr ""
-"BGM (Black Green and Moody) tema od kreatora Blackosx,\n"
-"Instaliraj u /EFI/CLOVER/themes/BGM"
-
-#. type: "chrome_title"
-#: Resources/templates/Localizable.strings:137
-#, no-wrap
-msgid "chrome"
-msgstr ""
-
-#. type: "chrome_description"
-#: Resources/templates/Localizable.strings:138
-#, fuzzy, no-wrap
-#| msgid ""
-#| "Orange theme from dwm,\n"
-#| "Install to /EFI/CLOVER/themes/orange"
-msgid ""
-"chrome theme from chris1111,\n"
-"Install to /EFI/CLOVER/themes/chrome"
-msgstr ""
-"naranđasta tema od kreatora dwm,\n"
-"Installiraj u  /EFI/CLOVER/themes/orange."
-
-#. type: "CloverX_title"
-#: Resources/templates/Localizable.strings:141
-#, fuzzy, no-wrap
-#| msgid "Clover"
-msgid "CloverX"
-msgstr "Clover"
-
-#. type: "CloverX_description"
-#: Resources/templates/Localizable.strings:142
-#, fuzzy, no-wrap
-#| msgid ""
-#| "Orange theme from dwm,\n"
-#| "Install to /EFI/CLOVER/themes/orange"
-msgid ""
-"CloverX theme from =)(=,\n"
-"Install to /EFI/CLOVER/themes/CloverX"
-msgstr ""
-"naranđasta tema od kreatora dwm,\n"
-"Installiraj u  /EFI/CLOVER/themes/orange."
-
-#. type: "dawn_title"
-#: Resources/templates/Localizable.strings:145
-#, no-wrap
-msgid "dawn"
-msgstr ""
-
-#. type: "dawn_description"
-#: Resources/templates/Localizable.strings:146
-#, fuzzy, no-wrap
-#| msgid ""
-#| "Orange theme from dwm,\n"
-#| "Install to /EFI/CLOVER/themes/orange"
-msgid ""
-"dawn theme from Slice,\n"
-"Install to /EFI/CLOVER/themes/dawn"
-msgstr ""
-"naranđasta tema od kreatora dwm,\n"
-"Installiraj u  /EFI/CLOVER/themes/orange."
-
 #. type: "embedded_title"
-#: Resources/templates/Localizable.strings:149
+#: Resources/templates/Localizable.strings:117
 #, no-wrap
 msgid "embedded"
 msgstr ""
 
 #. type: "embedded_description"
-#: Resources/templates/Localizable.strings:150
+#: Resources/templates/Localizable.strings:118
 #, fuzzy, no-wrap
 #| msgid ""
 #| "Default black_green theme from Blackosx,\n"
@@ -792,84 +651,14 @@ msgstr ""
 "Uobičajena tema od kreatora Blackosx,\n"
 "Instaliraj u /EFI/CLOVER/themes/black_green."
 
-#. type: "gold_clover_title"
-#: Resources/templates/Localizable.strings:153
-#, no-wrap
-msgid "gold_clover"
-msgstr ""
-
-#. type: "gold_clover_description"
-#: Resources/templates/Localizable.strings:154
-#, fuzzy, no-wrap
-#| msgid ""
-#| "Wooden theme from iROOTa,\n"
-#| "Install to /EFI/CLOVER/themes/wooden."
-msgid ""
-"gold_clover theme from chris1111,\n"
-"Install to /EFI/CLOVER/themes/gold_clover"
-msgstr ""
-"Tema drva od kreatora iROOTa,\n"
-"Install to /EFI/CLOVER/themes/wooden."
-
-#. type: "iclover_title"
-#: Resources/templates/Localizable.strings:157
-#, no-wrap
-msgid "iClover"
-msgstr "iClover"
-
-#. type: "iclover_description"
-#: Resources/templates/Localizable.strings:158
-#, no-wrap
-msgid ""
-"Grey style theme by winlog,\n"
-"Install to /EFI/CLOVER/themes/iclover"
-msgstr ""
-"Siva tema kreatora winlog,\n"
-"Installiraj u  /EFI/CLOVER/themes/iclover."
-
-#. type: "ios7_title"
-#: Resources/templates/Localizable.strings:161
-#, no-wrap
-msgid "ios7"
-msgstr ""
-
-#. type: "ios7_description"
-#: Resources/templates/Localizable.strings:162
-#, fuzzy, no-wrap
-#| msgid ""
-#| "Grey style theme by winlog,\n"
-#| "Install to /EFI/CLOVER/themes/iclover"
-msgid ""
-"ios7 theme by Ukr55, Winlog,\n"
-"Install to /EFI/CLOVER/themes/ios7"
-msgstr ""
-"Siva tema kreatora winlog,\n"
-"Installiraj u  /EFI/CLOVER/themes/iclover."
-
-#. type: "magnifico_title"
-#: Resources/templates/Localizable.strings:165
-#, no-wrap
-msgid "Magnifico"
-msgstr "Magnifico"
-
-#. type: "magnifico_description"
-#: Resources/templates/Localizable.strings:166
-#, no-wrap
-msgid ""
-"Magnifico theme from Magnifico,\n"
-"Install to /EFI/CLOVER/themes/magnifico"
-msgstr ""
-"Tema  od kreatora Magnifico,\n"
-"Instaliraj u /EFI/CLOVER/themes/magnifico."
-
 #. type: "metal_title"
-#: Resources/templates/Localizable.strings:169
+#: Resources/templates/Localizable.strings:121
 #, no-wrap
 msgid "metal"
 msgstr "metal"
 
 #. type: "metal_description"
-#: Resources/templates/Localizable.strings:170
+#: Resources/templates/Localizable.strings:122
 #, no-wrap
 msgid ""
 "The original metal theme from Slice,\n"
@@ -878,78 +667,14 @@ msgstr ""
 "Originalna početna tema od kreatora Slice,\n"
 "Instaliraj u  /EFI/CLOVER/themes/metal."
 
-#. type: "mrengles_title"
-#: Resources/templates/Localizable.strings:173
-#, no-wrap
-msgid "mrengles"
-msgstr "mrengles"
-
-#. type: "mrengles_description"
-#: Resources/templates/Localizable.strings:174
-#, no-wrap
-msgid ""
-"mrengles theme from mrengles,\n"
-"Install to /EFI/CLOVER/themes/mrengles"
-msgstr ""
-"mrengles tema od kreatora mrengles,\n"
-"Instaliraj u /EFI/CLOVER/themes/mrengles."
-
-#. type: "orange_title"
-#: Resources/templates/Localizable.strings:177
-#, no-wrap
-msgid "Orange"
-msgstr "Naranča"
-
-#. type: "orange_description"
-#: Resources/templates/Localizable.strings:178
-#, no-wrap
-msgid ""
-"Orange theme from dwm,\n"
-"Install to /EFI/CLOVER/themes/orange"
-msgstr ""
-"naranđasta tema od kreatora dwm,\n"
-"Installiraj u  /EFI/CLOVER/themes/orange."
-
-#. type: "os_box_title"
-#: Resources/templates/Localizable.strings:181
-#, no-wrap
-msgid "OS Box"
-msgstr "OS kutija"
-
-#. type: "os_box_description"
-#: Resources/templates/Localizable.strings:182
-#, no-wrap
-msgid ""
-"OS Box theme from Kyndder,\n"
-"Install to /EFI/CLOVER/themes/os_box"
-msgstr ""
-"OS kutija od kreatora Kyndder,\n"
-"Installiraj u  /EFI/CLOVER/themes/os_box."
-
-#. type: "os_one_title"
-#: Resources/templates/Localizable.strings:185
-#, no-wrap
-msgid "OS One"
-msgstr "OS jedan"
-
-#. type: "os_one_description"
-#: Resources/templates/Localizable.strings:186
-#, no-wrap
-msgid ""
-"OS One theme from Kyndder,\n"
-"Install to /EFI/CLOVER/themes/os_one"
-msgstr ""
-"OS jedan od kreatora Kyndder,\n"
-"Instaliraj u  /EFI/CLOVER/themes/os_one."
-
 #. type: "random_title"
-#: Resources/templates/Localizable.strings:189
+#: Resources/templates/Localizable.strings:125
 #, no-wrap
 msgid "random"
 msgstr ""
 
 #. type: "random_description"
-#: Resources/templates/Localizable.strings:190
+#: Resources/templates/Localizable.strings:126
 #, fuzzy, no-wrap
 #| msgid ""
 #| "Orange theme from dwm,\n"
@@ -961,150 +686,14 @@ msgstr ""
 "naranđasta tema od kreatora dwm,\n"
 "Installiraj u  /EFI/CLOVER/themes/orange."
 
-#. type: "thinkpad_title"
-#: Resources/templates/Localizable.strings:193
-#: Resources/templates/Localizable.strings:229
-#, no-wrap
-msgid "ThinkPad"
-msgstr "ThinkPad"
-
-#. type: "thinkpad_description"
-#: Resources/templates/Localizable.strings:194
-#: Resources/templates/Localizable.strings:230
-#, no-wrap
-msgid ""
-"ThinkPad theme from Kogen Mantis,\n"
-"Install to /EFI/CLOVER/themes/thinkpad"
-msgstr ""
-"ThinkPad  tema od kreatora Kogen Mantis,\n"
-"Instaliraj u /EFI/CLOVER/themes/thinkpad."
-
-#. type: "buttons_title"
-#: Resources/templates/Localizable.strings:197
-#, no-wrap
-msgid "buttons"
-msgstr "Gumbići"
-
-#. type: "buttons_description"
-#: Resources/templates/Localizable.strings:198
-#, no-wrap
-msgid ""
-"Buttons theme from Trauma,\n"
-"Install to /EFI/CLOVER/themes/buttons."
-msgstr ""
-"Gumbići od kreatora Trauma,\n"
-"Install to /EFI/CLOVER/themes/buttons."
-
-#. type: "hellfire_title"
-#: Resources/templates/Localizable.strings:201
-#, no-wrap
-msgid "hellfire"
-msgstr "hellfire"
-
-#. type: "hellfire_description"
-#: Resources/templates/Localizable.strings:202
-#, no-wrap
-msgid ""
-"Hellfire theme from lllevelll,\n"
-"Install to /EFI/CLOVER/themes/hellfire."
-msgstr ""
-"Vatra iz pakla od kreatora lllevelll,\n"
-"Install to /EFI/CLOVER/themes/hellfire."
-
-#. type: "simple_gray_title"
-#: Resources/templates/Localizable.strings:205
-#, no-wrap
-msgid "simple_gray"
-msgstr "simple_gray"
-
-#. type: "simple_gray_description"
-#: Resources/templates/Localizable.strings:206
-#, no-wrap
-msgid ""
-"Simple_gray theme from hijeane,\n"
-"Install to /EFI/CLOVER/themes/simple_gray."
-msgstr ""
-"Jednostavna siva od kreatora hijeane,\n"
-"Install to /EFI/CLOVER/themes/simple_gray."
-
-#. type: "Shield_title"
-#: Resources/templates/Localizable.strings:209
-#, no-wrap
-msgid "Shield"
-msgstr "Štit"
-
-#. type: "Shield_description"
-#: Resources/templates/Localizable.strings:210
-#, no-wrap
-msgid ""
-"An animated, harmonious theme from Blackosx,\n"
-"Install to /EFI/CLOVER/themes/Shield."
-msgstr ""
-"Animirana, skladna  tema od kreatora Blackosx,\n"
-"Instaliraj u /EFI/CLOVER/themes/BGM"
-
-#. type: "wooden_title"
-#: Resources/templates/Localizable.strings:213
-#, no-wrap
-msgid "wooden"
-msgstr "wooden"
-
-#. type: "wooden_description"
-#: Resources/templates/Localizable.strings:214
-#, no-wrap
-msgid ""
-"Wooden theme from iROOTa,\n"
-"Install to /EFI/CLOVER/themes/wooden."
-msgstr ""
-"Tema drva od kreatora iROOTa,\n"
-"Install to /EFI/CLOVER/themes/wooden."
-
-#. type: "sketched_title"
-#: Resources/templates/Localizable.strings:217
-#, no-wrap
-msgid "sketched"
-msgstr ""
-
-#. type: "sketched_description"
-#: Resources/templates/Localizable.strings:218
-#, fuzzy, no-wrap
-#| msgid ""
-#| "OS One theme from Kyndder,\n"
-#| "Install to /EFI/CLOVER/themes/os_one"
-msgid ""
-"sketched theme from kyndder,\n"
-"Install to /EFI/CLOVER/themes/sketched."
-msgstr ""
-"OS jedan od kreatora Kyndder,\n"
-"Instaliraj u  /EFI/CLOVER/themes/os_one."
-
-#. type: "Space_title"
-#: Resources/templates/Localizable.strings:221
-#, no-wrap
-msgid "Space"
-msgstr ""
-
-#. type: "Space_description"
-#: Resources/templates/Localizable.strings:222
-#, fuzzy, no-wrap
-#| msgid ""
-#| "Orange theme from dwm,\n"
-#| "Install to /EFI/CLOVER/themes/orange"
-msgid ""
-"Space theme from chris1111,\n"
-"Install to /EFI/CLOVER/themes/Space"
-msgstr ""
-"naranđasta tema od kreatora dwm,\n"
-"Installiraj u  /EFI/CLOVER/themes/orange."
-
 #. type: "steampunkblack_title"
-#: Resources/templates/Localizable.strings:225
+#: Resources/templates/Localizable.strings:129
 #, no-wrap
 msgid "steampunkblack"
 msgstr ""
 
 #. type: "steampunkblack_description"
-#: Resources/templates/Localizable.strings:226
+#: Resources/templates/Localizable.strings:130
 #, fuzzy, no-wrap
 #| msgid ""
 #| "Bootcamp theme from Bijo,\n"
@@ -1116,14 +705,31 @@ msgstr ""
 "Tema apple bootcamp-a od kreatora Bijo,\n"
 "Instaliraj u /EFI/CLOVER/themes/bootcamp."
 
+#
+#. type: "CloverThemeManager_title"
+#: Resources/templates/Localizable.strings:133
+#, fuzzy, no-wrap
+#| msgid "Clover Theme"
+msgid "CloverThemeManager.app"
+msgstr "Clover Tema"
+
+#. type: "CloverThemeManager_description"
+#: Resources/templates/Localizable.strings:134
+#, no-wrap
+msgid ""
+"CloverThemeManager.app by blackosx,\n"
+"keeps your Themes up to date, remove or install them by choosing from a wide selection.\n"
+"Install to /Applications"
+msgstr ""
+
 #. type: "rc.scripts.on.target_title"
-#: Resources/templates/Localizable.strings:236
+#: Resources/templates/Localizable.strings:140
 #, no-wrap
 msgid "Install RC scripts on target volume"
 msgstr "Instaliraj RC skripte na odabrani disk"
 
 #. type: "rc.scripts.on.target_description"
-#: Resources/templates/Localizable.strings:237
+#: Resources/templates/Localizable.strings:141
 #, no-wrap
 msgid ""
 "Install all RC scripts on target volume.\n"
@@ -1133,37 +739,37 @@ msgstr ""
 "Mora biti odabran OSX bootabilni sistemski disk."
 
 #. type: "rc.scripts.on.all.volumes_title"
-#: Resources/templates/Localizable.strings:239
+#: Resources/templates/Localizable.strings:143
 #, no-wrap
 msgid "Install all RC scripts on all other bootable OSX volumes"
 msgstr "Instaliraj sve RC skripte na sve OSX bootabilne diskove"
 
 #. type: "rc.scripts.on.all.volumes_description"
-#: Resources/templates/Localizable.strings:240
+#: Resources/templates/Localizable.strings:144
 #, no-wrap
 msgid "Install all RC scripts on all internal bootable OSX volumes other than the target volume."
 msgstr "Instalira sve RC skripte na sve interne OSX bootabilne diskove."
 
 #. type: "Optional RC Scripts"
-#: Resources/templates/Localizable.strings:241
+#: Resources/templates/Localizable.strings:145
 #, no-wrap
 msgid "Optional RC Scripts"
 msgstr "Opcionalne RC skripte"
 
 #. type: "disable_sleep_proxy_client_description"
-#: Resources/templates/Localizable.strings:242
+#: Resources/templates/Localizable.strings:146
 #, no-wrap
 msgid "Disable the mDNSResponder sleep proxy client service. This will prevent the system waking from sleep every hours"
 msgstr "Isključuje mDNSResponder spavajuči proxy client service.Ovo sprečava da se sistem budi iz sleepa svakih nekoliko sati"
 
 #. type: "CloverPrefpane_title"
-#: Resources/templates/Localizable.strings:247
+#: Resources/templates/Localizable.strings:151
 #, no-wrap
 msgid "Install Clover Preference Pane"
 msgstr "Instaliraj Clover Preference Pane"
 
 #. type: "CloverPrefpane_description"
-#: Resources/templates/Localizable.strings:248
+#: Resources/templates/Localizable.strings:152
 #, no-wrap
 msgid ""
 "Install Clover Preference Pane on target volume.\n"
@@ -1513,6 +1119,259 @@ msgstr "Odaberi EFI direktorij"
 #, no-wrap
 msgid "Unknown"
 msgstr "Nepoznat"
+
+#~ msgid "AppleStyle"
+#~ msgstr "AppleStyle"
+
+#~ msgid ""
+#~ "AppleStyle theme from Eps,\n"
+#~ "Install to /EFI/CLOVER/themes/applestyle"
+#~ msgstr ""
+#~ "AppleStyle tema od kreatora Eps,\n"
+#~ "Instaliraj u /EFI/CLOVER/themes/applestyle"
+
+#~ msgid "Black_Green"
+#~ msgstr "crno_zelena"
+
+#~ msgid ""
+#~ "Default black_green theme from Blackosx,\n"
+#~ "Install to /EFI/CLOVER/themes/black_green"
+#~ msgstr ""
+#~ "Uobičajena tema od kreatora Blackosx,\n"
+#~ "Instaliraj u /EFI/CLOVER/themes/black_green."
+
+#~ msgid "Bluemac"
+#~ msgstr "Plavimek"
+
+#~ msgid ""
+#~ "Bluemac theme from FowZiey,\n"
+#~ "Install to /EFI/CLOVER/themes/bluemac"
+#~ msgstr ""
+#~ "Prekrasna tema  od kreatora FowZiey,\n"
+#~ "Instaliraj u /EFI/CLOVER/themes/bluemac."
+
+#~ msgid "BootCamp"
+#~ msgstr "BootKamp"
+
+#~ msgid ""
+#~ "Bootcamp theme from Bijo,\n"
+#~ "Install to /EFI/CLOVER/themes/bootcamp"
+#~ msgstr ""
+#~ "Tema apple bootcamp-a od kreatora Bijo,\n"
+#~ "Instaliraj u /EFI/CLOVER/themes/bootcamp."
+
+#, fuzzy
+#~| msgid ""
+#~| "BGM (Black Green and Moody) theme from Blackosx,\n"
+#~| "Install to /EFI/CLOVER/themes/BGM"
+#~ msgid ""
+#~ "BGM A version of BGM with 256px icons theme from Blackosx,\n"
+#~ "Install to /EFI/CLOVER/themes/BGM256"
+#~ msgstr ""
+#~ "BGM (Black Green and Moody) tema od kreatora Blackosx,\n"
+#~ "Instaliraj u /EFI/CLOVER/themes/BGM"
+
+#, fuzzy
+#~| msgid ""
+#~| "Orange theme from dwm,\n"
+#~| "Install to /EFI/CLOVER/themes/orange"
+#~ msgid ""
+#~ "chrome theme from chris1111,\n"
+#~ "Install to /EFI/CLOVER/themes/chrome"
+#~ msgstr ""
+#~ "naranđasta tema od kreatora dwm,\n"
+#~ "Installiraj u  /EFI/CLOVER/themes/orange."
+
+#, fuzzy
+#~| msgid "Clover"
+#~ msgid "CloverX"
+#~ msgstr "Clover"
+
+#, fuzzy
+#~| msgid ""
+#~| "Orange theme from dwm,\n"
+#~| "Install to /EFI/CLOVER/themes/orange"
+#~ msgid ""
+#~ "CloverX theme from =)(=,\n"
+#~ "Install to /EFI/CLOVER/themes/CloverX"
+#~ msgstr ""
+#~ "naranđasta tema od kreatora dwm,\n"
+#~ "Installiraj u  /EFI/CLOVER/themes/orange."
+
+#, fuzzy
+#~| msgid ""
+#~| "Orange theme from dwm,\n"
+#~| "Install to /EFI/CLOVER/themes/orange"
+#~ msgid ""
+#~ "dawn theme from Slice,\n"
+#~ "Install to /EFI/CLOVER/themes/dawn"
+#~ msgstr ""
+#~ "naranđasta tema od kreatora dwm,\n"
+#~ "Installiraj u  /EFI/CLOVER/themes/orange."
+
+#, fuzzy
+#~| msgid ""
+#~| "Wooden theme from iROOTa,\n"
+#~| "Install to /EFI/CLOVER/themes/wooden."
+#~ msgid ""
+#~ "gold_clover theme from chris1111,\n"
+#~ "Install to /EFI/CLOVER/themes/gold_clover"
+#~ msgstr ""
+#~ "Tema drva od kreatora iROOTa,\n"
+#~ "Install to /EFI/CLOVER/themes/wooden."
+
+#~ msgid "iClover"
+#~ msgstr "iClover"
+
+#~ msgid ""
+#~ "Grey style theme by winlog,\n"
+#~ "Install to /EFI/CLOVER/themes/iclover"
+#~ msgstr ""
+#~ "Siva tema kreatora winlog,\n"
+#~ "Installiraj u  /EFI/CLOVER/themes/iclover."
+
+#, fuzzy
+#~| msgid ""
+#~| "Grey style theme by winlog,\n"
+#~| "Install to /EFI/CLOVER/themes/iclover"
+#~ msgid ""
+#~ "ios7 theme by Ukr55, Winlog,\n"
+#~ "Install to /EFI/CLOVER/themes/ios7"
+#~ msgstr ""
+#~ "Siva tema kreatora winlog,\n"
+#~ "Installiraj u  /EFI/CLOVER/themes/iclover."
+
+#~ msgid "Magnifico"
+#~ msgstr "Magnifico"
+
+#~ msgid ""
+#~ "Magnifico theme from Magnifico,\n"
+#~ "Install to /EFI/CLOVER/themes/magnifico"
+#~ msgstr ""
+#~ "Tema  od kreatora Magnifico,\n"
+#~ "Instaliraj u /EFI/CLOVER/themes/magnifico."
+
+#~ msgid "mrengles"
+#~ msgstr "mrengles"
+
+#~ msgid ""
+#~ "mrengles theme from mrengles,\n"
+#~ "Install to /EFI/CLOVER/themes/mrengles"
+#~ msgstr ""
+#~ "mrengles tema od kreatora mrengles,\n"
+#~ "Instaliraj u /EFI/CLOVER/themes/mrengles."
+
+#~ msgid "Orange"
+#~ msgstr "Naranča"
+
+#~ msgid ""
+#~ "Orange theme from dwm,\n"
+#~ "Install to /EFI/CLOVER/themes/orange"
+#~ msgstr ""
+#~ "naranđasta tema od kreatora dwm,\n"
+#~ "Installiraj u  /EFI/CLOVER/themes/orange."
+
+#~ msgid "OS Box"
+#~ msgstr "OS kutija"
+
+#~ msgid ""
+#~ "OS Box theme from Kyndder,\n"
+#~ "Install to /EFI/CLOVER/themes/os_box"
+#~ msgstr ""
+#~ "OS kutija od kreatora Kyndder,\n"
+#~ "Installiraj u  /EFI/CLOVER/themes/os_box."
+
+#~ msgid "OS One"
+#~ msgstr "OS jedan"
+
+#~ msgid ""
+#~ "OS One theme from Kyndder,\n"
+#~ "Install to /EFI/CLOVER/themes/os_one"
+#~ msgstr ""
+#~ "OS jedan od kreatora Kyndder,\n"
+#~ "Instaliraj u  /EFI/CLOVER/themes/os_one."
+
+#~ msgid "ThinkPad"
+#~ msgstr "ThinkPad"
+
+#~ msgid ""
+#~ "ThinkPad theme from Kogen Mantis,\n"
+#~ "Install to /EFI/CLOVER/themes/thinkpad"
+#~ msgstr ""
+#~ "ThinkPad  tema od kreatora Kogen Mantis,\n"
+#~ "Instaliraj u /EFI/CLOVER/themes/thinkpad."
+
+#~ msgid "buttons"
+#~ msgstr "Gumbići"
+
+#~ msgid ""
+#~ "Buttons theme from Trauma,\n"
+#~ "Install to /EFI/CLOVER/themes/buttons."
+#~ msgstr ""
+#~ "Gumbići od kreatora Trauma,\n"
+#~ "Install to /EFI/CLOVER/themes/buttons."
+
+#~ msgid "hellfire"
+#~ msgstr "hellfire"
+
+#~ msgid ""
+#~ "Hellfire theme from lllevelll,\n"
+#~ "Install to /EFI/CLOVER/themes/hellfire."
+#~ msgstr ""
+#~ "Vatra iz pakla od kreatora lllevelll,\n"
+#~ "Install to /EFI/CLOVER/themes/hellfire."
+
+#~ msgid "simple_gray"
+#~ msgstr "simple_gray"
+
+#~ msgid ""
+#~ "Simple_gray theme from hijeane,\n"
+#~ "Install to /EFI/CLOVER/themes/simple_gray."
+#~ msgstr ""
+#~ "Jednostavna siva od kreatora hijeane,\n"
+#~ "Install to /EFI/CLOVER/themes/simple_gray."
+
+#~ msgid "Shield"
+#~ msgstr "Štit"
+
+#~ msgid ""
+#~ "An animated, harmonious theme from Blackosx,\n"
+#~ "Install to /EFI/CLOVER/themes/Shield."
+#~ msgstr ""
+#~ "Animirana, skladna  tema od kreatora Blackosx,\n"
+#~ "Instaliraj u /EFI/CLOVER/themes/BGM"
+
+#~ msgid "wooden"
+#~ msgstr "wooden"
+
+#~ msgid ""
+#~ "Wooden theme from iROOTa,\n"
+#~ "Install to /EFI/CLOVER/themes/wooden."
+#~ msgstr ""
+#~ "Tema drva od kreatora iROOTa,\n"
+#~ "Install to /EFI/CLOVER/themes/wooden."
+
+#, fuzzy
+#~| msgid ""
+#~| "OS One theme from Kyndder,\n"
+#~| "Install to /EFI/CLOVER/themes/os_one"
+#~ msgid ""
+#~ "sketched theme from kyndder,\n"
+#~ "Install to /EFI/CLOVER/themes/sketched."
+#~ msgstr ""
+#~ "OS jedan od kreatora Kyndder,\n"
+#~ "Instaliraj u  /EFI/CLOVER/themes/os_one."
+
+#, fuzzy
+#~| msgid ""
+#~| "Orange theme from dwm,\n"
+#~| "Install to /EFI/CLOVER/themes/orange"
+#~ msgid ""
+#~ "Space theme from chris1111,\n"
+#~ "Install to /EFI/CLOVER/themes/Space"
+#~ msgstr ""
+#~ "naranđasta tema od kreatora dwm,\n"
+#~ "Installiraj u  /EFI/CLOVER/themes/orange."
 
 #
 #~ msgid " "
