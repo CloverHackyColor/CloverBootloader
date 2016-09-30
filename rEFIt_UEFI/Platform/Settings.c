@@ -52,6 +52,8 @@ UINTN                           nLanPaths;        // number of LAN pathes
 
 UINTN                           ThemesNum                   = 0;
 CHAR16                          *ThemesList[50]; //no more then 50 themes?
+INTN                            ConfigsNum;
+CHAR16                          *ConfigsList[20];
 
 // firmware
 BOOLEAN                         gFirmwareClover             = FALSE;
@@ -2829,6 +2831,39 @@ GetEarlyUserSettings (
   }
 
   return Status;
+}
+
+VOID
+GetListOfConfigs ()
+{
+  REFIT_DIR_ITER    DirIter;
+  EFI_FILE_INFO     *DirEntry;
+  INTN              NameLen;
+  
+  ConfigsNum = 0;
+  OldChosenConfig = 0;
+  
+  DirIterOpen(SelfRootDir, OEMPath, &DirIter);
+  DbgHeader("Found config plists");
+  while (DirIterNext(&DirIter, 2, L"config*.plist", &DirEntry)) {
+    CHAR16  FullName[256];
+    if (DirEntry->FileName[0] == L'.') {
+      continue;
+    }
+    
+    UnicodeSPrint(FullName, 512, L"%s\\%s", OEMPath, DirEntry->FileName);
+    if (FileExists(SelfRootDir, FullName)) {
+      if (StriCmp(DirEntry->FileName, L"config.plist") == 0) {
+        OldChosenConfig = ConfigsNum;
+      }
+      NameLen = StrLen(DirEntry->FileName) - 6; //without ".plist"
+      ConfigsList[ConfigsNum] = (CHAR16*)AllocateCopyPool (NameLen * sizeof(CHAR16) + 2, DirEntry->FileName);
+      ConfigsList[ConfigsNum++][NameLen] = L'\0';
+      DBG("- %s\n", DirEntry->FileName);
+    }
+  }
+  
+  DirIterClose(&DirIter);
 }
 
 

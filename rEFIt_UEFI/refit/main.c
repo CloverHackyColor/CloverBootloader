@@ -1779,6 +1779,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 #endif
   if (!GlobalConfig.FastBoot) {
     GetListOfThemes();
+    GetListOfConfigs();
   }
 
   for (i=0; i<2; i++) {

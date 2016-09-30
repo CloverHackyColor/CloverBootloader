@@ -685,7 +685,7 @@ VOID AddListElement(IN OUT VOID ***ListPtr, IN OUT UINTN *ElementCount, IN VOID 
 //VOID FreeList(IN OUT VOID ***ListPtr, IN OUT UINTN *ElementCount /*, IN Callback*/);
 
 VOID GetListOfThemes(VOID);
-
+VOID GetListOfConfigs(VOID);
 VOID GetListOfACPI(VOID);
 
 EFI_STATUS ExtractLegacyLoaderPaths(EFI_DEVICE_PATH **PathList, UINTN MaxPaths, EFI_DEVICE_PATH **HardcodedPathList);
