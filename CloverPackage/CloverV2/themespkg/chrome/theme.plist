@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Author</key>
+	<string>chris1111</string>
+	<key>Description</key>
+	<string>chrome</string>
+	<key>Theme</key>
+	<dict>
+		<key>Background</key>
+		<dict>
+			<key>Path</key>
+			<string>background.png</string>
+			<key>Type</key>
+			<string>Tile</string>
+		</dict>
+		<key>Badges</key>
+		<dict>
+			<key>Inline</key>
+			<false/>
+			<key>Show</key>
+			<true/>
+			<key>Swap</key>
+			<true/>
+                        <key>Scale</key>
+                        <integer>5</integer>
+		</dict>
+		<key>Banner</key>
+		<string>logo.png</string>
+		<key>Font</key>
+		<dict>
+
+                </dict>
+		<key>Anime</key>
+		<array>
+			<dict>
+				<key>ID</key>
+				<integer>1</integer>
+				<key>Path</key>
+				<string>chrome_logo</string>
+				<key>Frames</key>
+				<integer>12</integer>
+				<key>FrameTime</key>
+				<integer>200</integer>
+			</dict>
+			<key>CharWidth</key>
+			<integer>10</integer>
+			<key>Path</key>
+			<string>WoG_Monaco_ExtraSmooth_10W.png</string>
+			<key>Type</key>
+			<string>Load</string>
+		</array>
+		<key>Selection</key>
+		<dict>
+                      	<key>Big</key>
+			<string>selection_big.png</string>
+			<key>Color</key>
+			<string>0xFFFFFF7F</string>
+			<key>Small</key>
+			<string>selection_small.png</string>
+		</dict>
+	</dict>
+	<key>Year</key>
+	<string>2014</string>
+</dict>
+</plist>
+              	
+			

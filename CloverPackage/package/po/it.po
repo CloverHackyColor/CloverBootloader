@@ -707,7 +707,7 @@ msgid "CloverThemeManager.app"
 msgstr ""
 "CloverThemeManager.app by blackosx,\n"
 "mantiene i temi di Clover aggiornati, puoi rimuoverli o installarli scegliendo tra una vasta selezione.\n"
-"App installata in  /Applications/Utilities."
+"App installata in  /Applications."
 
 #. type: "CloverThemeManager_description"
 #: Resources/templates/Localizable.strings:134
