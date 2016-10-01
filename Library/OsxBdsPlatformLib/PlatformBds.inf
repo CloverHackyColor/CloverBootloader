@@ -58,6 +58,7 @@
   gEfiAcpi20TableGuid
   gEfiMpsTableGuid
   gEfiSmbiosTableGuid
+  gEfiSmbios3TableGuid
   gEfiAcpiTableGuid
   gLdrMemoryDescriptorGuid
   

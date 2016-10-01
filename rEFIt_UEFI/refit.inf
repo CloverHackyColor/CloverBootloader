@@ -172,6 +172,7 @@
   gEfiPartTypeLegacyMbrGuid
   gEfiPartTypeSystemPartGuid
   gEfiSmbiosTableGuid
+  gEfiSmbios3TableGuid
   gEfiSasDevicePathGuid
   gEfiImageSecurityDatabaseGuid
   gEfiCertX509Guid

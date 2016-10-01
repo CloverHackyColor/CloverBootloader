@@ -39,7 +39,7 @@
 #define CPUID_FEATURE_EST			_HBit(7)		
 
 EFI_GUID						gUuid;
-EFI_GUID						*gTableGuidArray[] = {&gEfiSmbiosTableGuid};
+EFI_GUID						*gTableGuidArray[] = {&gEfiSmbiosTableGuid, &gEfiSmbios3TableGuid};
 
 //EFI_PHYSICAL_ADDRESS			*smbiosTable;
 VOID                        *Smbios;  //pointer to SMBIOS data
@@ -180,6 +180,13 @@ VOID* GetSmbiosTablesFromHob (VOID)
 			return (VOID *)(UINTN)*Table;
 		}
 	}
+  GuidHob.Raw = GetFirstGuidHob (&gEfiSmbios3TableGuid);
+  if (GuidHob.Raw != NULL) {
+    Table = GET_GUID_HOB_DATA (GuidHob.Guid);
+    if (Table != NULL) {
+      return (VOID *)(UINTN)*Table;
+    }
+  }
 	return NULL;
 }
 
@@ -188,9 +195,13 @@ VOID* GetSmbiosTablesFromConfigTables (VOID)
 	EFI_STATUS              Status;
 	EFI_PHYSICAL_ADDRESS    *Table;
 	
-	Status = EfiGetSystemConfigurationTable (&gEfiSmbiosTableGuid, (VOID **)  &Table);
-	if (EFI_ERROR (Status) || Table == NULL) {
+	Status = EfiGetSystemConfigurationTable (&gEfiSmbiosTableGuid, (VOID **)&Table);
+	if (EFI_ERROR(Status) || Table == NULL) {
 		Table = NULL;
+    Status = EfiGetSystemConfigurationTable (&gEfiSmbios3TableGuid, (VOID **)&Table);
+    if (EFI_ERROR(Status)) {
+      Table = NULL;
+    }
 	}
 	
 	return Table;
@@ -1984,6 +1995,7 @@ VOID FinalizeSmbios() //continue
 	EFI_PEI_HOB_POINTERS	HobStart;
 	EFI_PHYSICAL_ADDRESS    *Table = NULL;
 	//UINTN					TableLength = 0;
+  BOOLEAN FoundTable3 = FALSE;
 	
 	// Get Hob List
 	HobStart.Raw = GetHobList ();
@@ -1996,6 +2008,10 @@ VOID FinalizeSmbios() //continue
 				Table = GET_GUID_HOB_DATA (GuidHob.Guid);
 				//TableLength = GET_GUID_HOB_DATA_SIZE (GuidHob);
 				if (Table != NULL) {
+          if (Index != 0) {
+            FoundTable3 = TRUE;
+            DBG("Found SMBIOS3 Table\n");
+          }
 					break;
 				} 
 			}
@@ -2008,7 +2024,7 @@ VOID FinalizeSmbios() //continue
 	SmbiosEpsNew->NumberOfSmbiosStructures = NumberOfRecords;
 	SmbiosEpsNew->MaxStructureSize = MaxStructureSize;
 	SmbiosEpsNew->IntermediateChecksum = 0;
-	SmbiosEpsNew->IntermediateChecksum = (UINT8)(256 - Checksum8((UINT8*)SmbiosEpsNew + 0x10, 																	SmbiosEpsNew->EntryPointLength - 0x10));
+	SmbiosEpsNew->IntermediateChecksum = (UINT8)(256 - Checksum8((UINT8*)SmbiosEpsNew + 0x10, SmbiosEpsNew->EntryPointLength - 0x10));
 	SmbiosEpsNew->EntryPointStructureChecksum = 0;
 	SmbiosEpsNew->EntryPointStructureChecksum = (UINT8)(256 - Checksum8((UINT8*)SmbiosEpsNew, SmbiosEpsNew->EntryPointLength));
 //	DBG("SmbiosEpsNew->EntryPointLength = %d\n", SmbiosEpsNew->EntryPointLength);

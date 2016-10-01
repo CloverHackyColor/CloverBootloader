@@ -32,7 +32,7 @@ extern BOOLEAN  gConnectAllHappened;
 extern USB_CLASS_FORMAT_DEVICE_PATH gUsbClassKeyboardDevicePath;
 
 EFI_GUID                    *gTableGuidArray[] = {
-    &gEfiAcpi10TableGuid, &gEfiAcpiTableGuid, &gEfiSmbiosTableGuid //, &gEfiMpsTableGuid
+    &gEfiAcpi10TableGuid, &gEfiAcpiTableGuid, &gEfiSmbiosTableGuid, &gEfiSmbios3TableGuid //, &gEfiMpsTableGuid
   };
 
 //
@@ -1517,7 +1517,8 @@ Returns:
   //
   // If matches smbios guid, convert Smbios table.
   //
-  if (CompareGuid(TableGuid, &gEfiSmbiosTableGuid)){
+  if (CompareGuid(TableGuid, &gEfiSmbiosTableGuid) ||
+      CompareGuid(TableGuid, &gEfiSmbios3TableGuid)){
     Status = ConvertSmbiosTable (Table);
     return Status;
   }

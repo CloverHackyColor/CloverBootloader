@@ -250,6 +250,7 @@ MAP_EFI_GUID_STR EfiGuidStrMap[] = {
   {&gEfiHobListGuid, L"gEfiHobListGuid"},
   {&gEfiMpsTableGuid, L"gEfiMpsTableGuid"},
   {&gEfiSmbiosTableGuid, L"gEfiSmbiosTableGuid"},
+  {&gEfiSmbios3TableGuid, L"gEfiSmbios3TableGuid"},
 
   {&mEfiMemoryTypeInformationGuid, L"gEfiMemoryTypeInformationGuid"},
   {&mEfiSimplePointerProtocolGuid, L"gEfiSimplePointerProtocolGuid"},

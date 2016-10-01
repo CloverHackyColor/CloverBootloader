@@ -96,6 +96,7 @@
   gEfiHobListGuid
   gEfiMpsTableGuid
   gEfiSmbiosTableGuid
+  gEfiSmbios3TableGuid
   gEfiPartTypeSystemPartGuid
   
 
