@@ -32,8 +32,6 @@
 		A30F62BE1736B22C0012B429 /* ru */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = ru; path = ru.lproj/CloverPrefpane.xib; sourceTree = "<group>"; };
 		A3153E2017B7C77D007B2FE5 /* lv */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = lv; path = lv.lproj/CloverPrefpane.xib; sourceTree = "<group>"; };
 		A3153E2117B7C77D007B2FE5 /* lv */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = lv; path = lv.lproj/Localizable.strings; sourceTree = "<group>"; };
-		A3153E2417B7CAC5007B2FE5 /* sv */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = sv; path = sv.lproj/CloverPrefpane.xib; sourceTree = "<group>"; };
-		A3153E2517B7CAC5007B2FE5 /* sv */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sv; path = sv.lproj/Localizable.strings; sourceTree = "<group>"; };
 		A33207131746DB6700939AFB /* DefaultThemes.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = DefaultThemes.plist; sourceTree = "<group>"; };
 		A33207151746E96300939AFB /* NoPreview.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = NoPreview.png; sourceTree = "<group>"; };
 		A3340A5B1733DDF80065BC3F /* CloverPrefpane.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CloverPrefpane.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
@@ -347,7 +345,6 @@
 				A34A27A6175CAB0C005E486D /* zh_TW */,
 				A34A27A9175CAC90005E486D /* zh_CN */,
 				A3153E2117B7C77D007B2FE5 /* lv */,
-				A3153E2517B7CAC5007B2FE5 /* sv */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
@@ -373,7 +370,6 @@
 				A34A27A5175CAB0C005E486D /* zh_TW */,
 				A34A27A8175CAC90005E486D /* zh_CN */,
 				A3153E2017B7C77D007B2FE5 /* lv */,
-				A3153E2417B7CAC5007B2FE5 /* sv */,
 			);
 			name = CloverPrefpane.xib;
 			sourceTree = "<group>";

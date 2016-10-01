@@ -3045,10 +3045,6 @@ UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
         aml_add_string(pack, "device-id");
         aml_add_byte_buffer(pack, data1ATH, 4);
       }
-      aml_add_string(pack, "subsystem-id");
-      aml_add_byte_buffer(pack, data2ATH, 4);
-      aml_add_string(pack, "subsystem-vendor-id");
-      aml_add_byte_buffer(pack, data3ATH, 4);
     }
     aml_add_string(pack, "device_type");
     aml_add_string_buffer(pack, "Airport");

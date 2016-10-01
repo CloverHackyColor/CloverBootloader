@@ -33,7 +33,6 @@
 		A30F62B81736B18F0012B429 /* hr */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = hr; path = hr.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		A30F62B91736B1A30012B429 /* ru */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = ru; path = ru.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		A3153E2217B7CA4F007B2FE5 /* lv */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = lv; path = lv.lproj/MainMenu.xib; sourceTree = "<group>"; };
-		A3153E2317B7CA58007B2FE5 /* sv */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = sv; path = sv.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		A3298B0D1736975F000EFB93 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		A34F498A175CB9DC00790888 /* ja */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = ja; path = ja.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		A34F498B175CB9EC00790888 /* zh_CN */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = zh_CN; path = zh_CN.lproj/MainMenu.xib; sourceTree = "<group>"; };
@@ -288,7 +287,6 @@
 				A34F498B175CB9EC00790888 /* zh_CN */,
 				A34F498C175CB9FB00790888 /* zh_TW */,
 				A3153E2217B7CA4F007B2FE5 /* lv */,
-				A3153E2317B7CA58007B2FE5 /* sv */,
 			);
 			name = MainMenu.xib;
 			sourceTree = "<group>";
