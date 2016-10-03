@@ -3027,7 +3027,7 @@ UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
     aml_add_byte_buffer(pack, data2ATH, 4);
     aml_add_string(pack, "subsystem-vendor-id");
     aml_add_byte_buffer(pack, data3ATH, 4);
-    if (ArptBCM) {
+/*    if (ArptBCM) {
       if (!gSettings.FakeWIFI) {
         aml_add_string(pack, "model");
         aml_add_string_buffer(pack, "Dell Wireless 1395");
@@ -3046,6 +3046,7 @@ UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
         aml_add_byte_buffer(pack, data1ATH, 4);
       }
     }
+ */
     aml_add_string(pack, "device_type");
     aml_add_string_buffer(pack, "Airport");
 //    aml_add_string(pack, "AAPL,slot-name");
