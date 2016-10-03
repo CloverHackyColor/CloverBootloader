@@ -360,7 +360,7 @@ SetBootCurrent(REFIT_MENU_ENTRY *LoadedEntry)
   if ((BootOption.OptionalDataSize == 0) ||
       (BootOption.OptionalData == NULL) ||
       (*(UINT32*)BootOption.OptionalData != CLOVER_SIGN)) {
-    DBG("BootOption of the entry is empty\n");
+    DBG("BootVariable of the entry is empty\n");
     FreePool(BootVariable);
     return;
   }
