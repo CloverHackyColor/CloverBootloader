@@ -4485,6 +4485,7 @@ UINTN RunMainMenu(IN REFIT_MENU_SCREEN *Screen, IN INTN DefaultSelection, OUT RE
   MENU_STYLE_FUNC Style = TextMenuStyle;
   MENU_STYLE_FUNC MainStyle = TextMenuStyle;
   REFIT_MENU_ENTRY *TempChosenEntry = 0;
+  REFIT_MENU_ENTRY *MainChosenEntry = 0;
   UINTN MenuExit = 0;
   INTN DefaultEntryIndex = DefaultSelection;
   INTN SubMenuIndex;
@@ -4500,38 +4501,45 @@ UINTN RunMainMenu(IN REFIT_MENU_SCREEN *Screen, IN INTN DefaultSelection, OUT RE
 
   while (!MenuExit) {
     Screen->AnimeRun = MainAnime;
-    MenuExit = RunGenericMenu(Screen, MainStyle, &DefaultEntryIndex, &TempChosenEntry);
+    MenuExit = RunGenericMenu(Screen, MainStyle, &DefaultEntryIndex, &MainChosenEntry);
     Screen->TimeoutSeconds = 0;
 
-    if (MenuExit == MENU_EXIT_DETAILS && TempChosenEntry->SubScreen != NULL) {
+    if (MenuExit == MENU_EXIT_DETAILS && MainChosenEntry->SubScreen != NULL) {
       CHAR16 *TmpArgs = PoolPrint(L"%a", gSettings.BootArgs);
       SubMenuIndex = -1;
 #ifdef CHECK_FLAGS      
-      gSettings.FlagsBits = ((LOADER_ENTRY*)TempChosenEntry)->Flags;
+      gSettings.FlagsBits = ((LOADER_ENTRY*)MainChosenEntry)->Flags;
   //    DBG("set FlagsBits = %x\n", gSettings.FlagsBits);
       gSettings.OptionsBits = EncodeOptions(TmpArgs);
   //    DBG("main OptionsBits = %x\n", gSettings.OptionsBits);
-      gSettings.OptionsBits |= EncodeOptions(((LOADER_ENTRY*)TempChosenEntry)->LoadOptions);
+      gSettings.OptionsBits |= EncodeOptions(((LOADER_ENTRY*)MainChosenEntry)->LoadOptions);
   //    DBG("add OptionsBits = %x\n", gSettings.OptionsBits);
-      DecodeOptions((LOADER_ENTRY*)TempChosenEntry);
+      DecodeOptions((LOADER_ENTRY*)MainChosenEntry);
   //    DBG("get OptionsBits = %x\n", gSettings.OptionsBits);
   //    ((LOADER_ENTRY*)TempChosenEntry)->Flags |= (UINT16)(gSettings.FlagsBits & 0x0FFF);
   //    DBG("get FlagsBits = %x\n", gSettings.FlagsBits);
 #endif
       FreePool(TmpArgs);
-      MenuExit = RunGenericMenu(TempChosenEntry->SubScreen, Style, &SubMenuIndex, &TempChosenEntry);
-      if (MenuExit == MENU_EXIT_ENTER && TempChosenEntry->Tag == TAG_LOADER) {
+      MenuExit = 0;
+      while (!MenuExit) {
+        MenuExit = RunGenericMenu(MainChosenEntry->SubScreen, Style, &SubMenuIndex, &TempChosenEntry);
+        if (MenuExit == MENU_EXIT_ESCAPE) {
+          MenuExit = 0;
+          continue;
+        }
+        if (MenuExit == MENU_EXIT_ENTER && MainChosenEntry->Tag == TAG_LOADER) {
 #ifdef CHECK_FLAGS
-        DecodeOptions((LOADER_ENTRY*)TempChosenEntry);
+          DecodeOptions((LOADER_ENTRY*)MainChosenEntry);
   //      DBG("get OptionsBits = %x\n", gSettings.OptionsBits);
-        ((LOADER_ENTRY*)TempChosenEntry)->Flags = (UINT16)(gSettings.FlagsBits & 0x0FFF);
+          ((LOADER_ENTRY*)MainChosenEntry)->Flags = (UINT16)(gSettings.FlagsBits & 0x0FFF);
   //      DBG("get FlagsBits = %x\n", gSettings.FlagsBits);
 #endif
-        AsciiSPrint(gSettings.BootArgs, 255, "%s", ((LOADER_ENTRY*)TempChosenEntry)->LoadOptions);
-        DBG("boot with args: %a\n", gSettings.BootArgs);
-      }
-      if (MenuExit == MENU_EXIT_ESCAPE || TempChosenEntry->Tag == TAG_RETURN) {
-        MenuExit = 0;
+          AsciiSPrint(gSettings.BootArgs, 255, "%s", ((LOADER_ENTRY*)MainChosenEntry)->LoadOptions);
+          DBG("boot with args: %a\n", gSettings.BootArgs);
+        }
+        if (/*MenuExit == MENU_EXIT_ESCAPE ||*/ TempChosenEntry->Tag == TAG_RETURN) {
+          MenuExit = 0;
+        }
       }
     }
   }
