@@ -31,7 +31,7 @@ EFI_GUID gAppleDeviceControlProtocolGuid  = {0x8ECE08D8, 0xA6D4, 0x430B, {0xA7, 
 EFI_GUID gAppleSystemInfoProducerNameGuid = {0x64517CC8, 0x6561, 0x4051, {0xB0, 0x3C, 0x59, 0x64, 0xB6, 0x0F, 0x4C, 0x7A}};
 EFI_GUID gAppleFsbFrequencyPropertyGuid   = {0xD1A04D55, 0x75B9, 0x41A3, {0x90, 0x36, 0x8F, 0x4A, 0x26, 0x1C, 0xBB, 0xA2}};
 EFI_GUID gAppleDevicePathsSupportedGuid   = {0x5BB91CF7, 0xD816, 0x404B, {0x86, 0x72, 0x68, 0xF2, 0x7F, 0x78, 0x31, 0xDC}};
-
+EFI_GUID gAppleSMCProtocolGuid            = {0x17407e5a, 0xaf6c, 0x4ee8, {0x98, 0xa8, 0x00, 0x21, 0x04, 0x53, 0xcd, 0xd9}};
 
              
 //all these codes are still under the question
@@ -51,6 +51,8 @@ EFI_GUID GPT_EMPTY_PARTITION = \
 //TODO - discover the follow guids
 //efi/configuration-table/5751DA6E-1376-4E02-BA92-D294FDD30901
 //efi/configuration-table/F76761DC-FF89-44E4-9C0C-CD0ADA4EF983
+// C5C5DA95-7D5C-45E6-B2F1-3FD52BB10077
+// 03622D6D-362A-4E47-9710-C238B23755C1
 /*
  * Copyright (c) 2007 Apple Inc. All rights reserved.
  *

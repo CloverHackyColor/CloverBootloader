@@ -427,6 +427,7 @@
   # Misc
   Clover/FSInject/FSInject.inf
   Clover/MsgLog/MsgLog.inf
+  Clover/SMCHelper/SMCHelper.inf
 !ifdef DEBUG_ON_SERIAL_PORT
 
   Clover/DumpUefiCalls/DumpUefiCalls.inf {
