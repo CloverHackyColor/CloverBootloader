@@ -456,6 +456,8 @@
 		1290174B1A2F8EA50069691F /* RuntimeServices.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RuntimeServices.h; sourceTree = "<group>"; };
 		1290174C1A2F8EA50069691F /* StandaloneCompilation.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = StandaloneCompilation.txt; sourceTree = "<group>"; };
 		1294CC311A231CA80056FF03 /* scroll_images.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = scroll_images.h; sourceTree = "<group>"; };
+		12A4B5C21DA3B3F300E9057A /* SMCHelper.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = SMCHelper.c; sourceTree = "<group>"; };
+		12A4B5C31DA3B3F300E9057A /* SMCHelper.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = SMCHelper.inf; sourceTree = "<group>"; };
 		12A7ABAE1CCE1C8E00BD837C /* config-sample.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "config-sample.plist"; path = "../../CloverPackage/CloverV2/EFI/CLOVER/config-sample.plist"; sourceTree = "<group>"; };
 		12A88C5D1A7B6E0A008C4829 /* ComponentName.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ComponentName.c; sourceTree = "<group>"; };
 		12A88C5E1A7B6E0A008C4829 /* ComponentName.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ComponentName.h; sourceTree = "<group>"; };
@@ -1363,6 +1365,16 @@
 			children = (
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		12A4B5C11DA3B3F300E9057A /* SMCHelper */ = {
+			isa = PBXGroup;
+			children = (
+				12A4B5C21DA3B3F300E9057A /* SMCHelper.c */,
+				12A4B5C31DA3B3F300E9057A /* SMCHelper.inf */,
+			);
+			name = SMCHelper;
+			path = ../../SMCHelper;
 			sourceTree = "<group>";
 		};
 		12A88C5C1A7B6E0A008C4829 /* XhciDxe */ = {
@@ -3194,6 +3206,7 @@
 				2C794CF31A0AA85900D845B0 /* FSInject */,
 				2C794D131A0AA85900D845B0 /* OsxAptioFixDrv */,
 				2C794D171A0AA85900D845B0 /* OsxFatBinaryDrv */,
+				12A4B5C11DA3B3F300E9057A /* SMCHelper */,
 				2C794D1E1A0AA85900D845B0 /* OsxLowMemFixDrv */,
 			);
 			name = CloverUEFI;

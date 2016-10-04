@@ -61,6 +61,7 @@ Headers collection for procedures
 #include <Protocol/MsgLog.h>
 #include <Protocol/efiConsoleControl.h>
 #include <Protocol/EmuVariableControl.h>
+#include <Protocol/AppleSMC.h>
 
 #include "../refit/lib.h"
 #include "string.h"
@@ -1795,7 +1796,9 @@ VOID
 PutNvramPlistToRtVars ();
 
 VOID
-GetSmcKeys ();
+GetSmcKeys(BOOLEAN WriteToSMC);
+
+VOID DumpSmcKeys();
 
 VOID
 GetMacAddress();

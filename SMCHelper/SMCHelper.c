@@ -37,7 +37,8 @@
 #endif
 
 
-#define APPLE_SMC_SIGNATURE SIGNATURE_64('A','P','P','L','E','S','M','C')
+//#define APPLE_SMC_SIGNATURE SIGNATURE_64('A','P','P','L','E','S','M','C')
+#define APPLE_SMC_SIGNATURE SIGNATURE_64('S','M','C','H','E','L','P','E')
 
 EFI_HANDLE              mHandle = NULL;
 
@@ -46,6 +47,7 @@ typedef struct _SMC_STACK SMC_STACK;
 struct _SMC_STACK {
   SMC_STACK *Next;
   UINT32 Id;
+  INTN  DataLen;
   UINT8 *Data;
 };
 
@@ -66,23 +68,74 @@ CHAR8 *StringId(UINT32 DataId)
 EFI_STATUS EFIAPI
 ReadData (IN APPLE_SMC_PROTOCOL* This, IN UINT32 DataId, IN UINT32 DataLength, IN VOID* DataBuffer)
 {
+  SMC_STACK *TmpStack = SmcStack;
+  INTN Len;
   CHAR8 *Str = StringId(DataId);
   DBG("asked for SMC=%x (%a) len=%d\n", DataId, Str, DataLength);
   FreePool(Str);
+  while (TmpStack) {
+    if (TmpStack->Id == DataId) {
+      Len = MIN(TmpStack->DataLen, DataLength);
+      CopyMem(DataBuffer, TmpStack->Data, Len);
+      return EFI_SUCCESS;
+    } else {
+      TmpStack = TmpStack->Next;
+    }
+  }
   return EFI_NOT_FOUND;
 }
  
 EFI_STATUS EFIAPI
 WriteData (IN APPLE_SMC_PROTOCOL* This, IN UINT32 DataId, IN UINT32 DataLength, IN VOID* DataBuffer)
 {
-  return EFI_NOT_FOUND;
+  SMC_STACK *TmpStack = SmcStack;
+  INTN Len;
+  //First find existing key
+  while (TmpStack) {
+    if (TmpStack->Id == DataId) {
+      Len = MIN(TmpStack->DataLen, DataLength);
+      CopyMem(TmpStack->Data, DataBuffer, Len);
+      return EFI_SUCCESS;
+    } else {
+      TmpStack = TmpStack->Next;
+    }
+  }
+  //if not found then create new
+  TmpStack = AllocatePool(sizeof(SMC_STACK));
+  TmpStack->Next = SmcStack;
+  TmpStack->Id = DataId;
+  TmpStack->DataLen = DataLength;
+  TmpStack->Data = AllocateCopyPool(DataLength, DataBuffer);
+  SmcStack = TmpStack;
+  return EFI_SUCCESS;
+}
+
+EFI_STATUS EFIAPI
+DumpData (IN APPLE_SMC_PROTOCOL* This)
+{
+  INTN Index;
+  SMC_STACK *TmpStack = SmcStack;
+  
+  while (TmpStack) {
+    CHAR8 *Str = StringId(TmpStack->Id);
+    DBG("found SMC=%x (%a) len=%d data:", TmpStack->Id, Str, TmpStack->DataLen);
+    for (Index = 0; Index < TmpStack->DataLen; Index++) {
+      DBG("%02x ", *((UINT8*)(TmpStack->Data) + Index));
+    }
+    DBG("\n");
+    FreePool(Str);
+    TmpStack = TmpStack->Next;
+  }
+  return EFI_SUCCESS;
 }
 
 APPLE_SMC_PROTOCOL SMCHelperProtocol = {
   APPLE_SMC_SIGNATURE,
   ReadData,
   WriteData,
+  DumpData,
 };
+
 
 /****************************************************************
  * Entry point

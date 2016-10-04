@@ -19,7 +19,7 @@
 #define DBG(...) DebugLog (DEBUG_SET, __VA_ARGS__)
 #endif
 
-
+#define NON_APPLE_SMC_SIGNATURE SIGNATURE_64('S','M','C','H','E','L','P','E')
 
 // for saving nvram.plist and it's data
 TagPtr                   gNvramDict;
@@ -43,7 +43,7 @@ CHAR16                   *gEfiBootLoaderPath;
 // contains GPT GUID from gEfiBootDeviceData or gBootCampHD (if exists)
 EFI_GUID                 *gEfiBootDeviceGuid;
 
-
+APPLE_SMC_PROTOCOL        *gAppleSmc = NULL;
 
 /** returns given time as miliseconds.
  *  assumes 31 days per month, so it's not correct,
@@ -202,9 +202,21 @@ DeleteNvramVariable (
 ///
 //  Print all fakesmc variables, i.e. SMC keys
 ///
+UINT32 KeyFromName(CHAR16 *Name)
+{
+  //fakesmc-key-CLKT-ui32: Size = 4, Data: 00 00 8C BE
+  UINT32 Key;
+  Key = ((Name[12] & 0xFF) << 24) + ((Name[13] & 0xFF) << 16) +
+  ((Name[14] & 0xFF) << 8) + ((Name[15] & 0xFF) << 0);
+  return Key;
+}
+
+INT8 NKey[4] = {0, 0, 0, 0};
+INT8 SAdr[4] = {0, 0, 3, 0};
+INT8 SNum[1] = {1};
 
 VOID
-GetSmcKeys ()
+GetSmcKeys (BOOLEAN WriteToSMC)
 {
   EFI_STATUS                  Status;
   UINTN                       Index;
@@ -214,13 +226,23 @@ GetSmcKeys ()
   UINTN                       NewNameSize;
   UINT8                       *Data;
   UINTN                       DataSize;
+  INTN                        NumKey = 0;
+  
 
   NameSize = sizeof (CHAR16);
   Name     = AllocateZeroPool (NameSize);
   if (Name == NULL) {
     return;
   }
-  DBG("Dump SMC keys from NVRAM:\n");
+  DbgHeader("Dump SMC keys from NVRAM");
+  Status = gBS->LocateProtocol(&gAppleSMCProtocolGuid, NULL, (VOID**)&gAppleSmc);
+  if (!EFI_ERROR(Status)) {
+    DBG("found AppleSMC protocol\n");    
+  } else {
+    DBG("no AppleSMC protocol\n");
+    gAppleSmc = NULL;
+  }
+
   while (TRUE) {
     NewNameSize = NameSize;
     Status = gRT->GetNextVariableName (&NewNameSize, Name, &Guid);
@@ -249,11 +271,30 @@ GetSmcKeys ()
         DBG("%02x ", *((UINT8*)Data + Index));
       }
       DBG("\n");
+      if (gAppleSmc && WriteToSMC) {
+        Status = gAppleSmc->WriteData(gAppleSmc, KeyFromName(Name), DataSize, Data);
+ //       DBG("Write to AppleSMC status=%r\n", Status);
+        NumKey++;
+      }
       FreePool (Data);
     }
   }
-  
+  if (WriteToSMC && gAppleSmc && (gAppleSmc->Signature == NON_APPLE_SMC_SIGNATURE)) {
+    NKey[3] = NumKey & 0xFF;
+    NKey[2] = (NumKey >> 8) & 0xFF;
+    gAppleSmc->WriteData(gAppleSmc, KeyFromName(L"#KEY"), 4, &NKey);
+    gAppleSmc->WriteData(gAppleSmc, KeyFromName(L"$Adr"), 4, &SAdr);
+    gAppleSmc->WriteData(gAppleSmc, KeyFromName(L"$Num"), 1, &SNum);
+  }
   FreePool (Name);
+}
+
+VOID DumpSmcKeys()
+{
+  if (!gAppleSmc || !gAppleSmc->DumpData) {
+    return;
+  }
+  gAppleSmc->DumpData(gAppleSmc);
 }
 
 

@@ -120,7 +120,7 @@
 // 1 - will capture and display all file system access
 // 0 - will skip capturing file system access
 //
-#define CAPTURE_FILESYSTEM_ACCESS	1
+#define CAPTURE_FILESYSTEM_ACCESS	0
 
 //
 // CAPTURE_CONSOLE_OUTPUT

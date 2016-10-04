@@ -56,6 +56,12 @@
 #define HIBERNATE 0
 #endif
 
+
+#ifndef CHECK_SMC
+#define CHECK_SMC 0
+#endif
+
+
 // variables
 
 //static CHAR8 FirmwareRevisionStr[] = FIRMWARE_REVISION_STR;
@@ -1805,11 +1811,11 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   LoadDrivers();
   //DBG("LoadDrivers() end\n");
 
-  if (!gFirmwareClover &&
+/*  if (!gFirmwareClover &&
       !gDriversFlags.EmuVariableLoaded) {
-    GetSmcKeys ();  // later we can get here SMC information
-  }
-
+    GetSmcKeys(FALSE);  // later we can get here SMC information
+  } */
+  
   Status = gBS->LocateProtocol (&gEmuVariableControlProtocolGuid, NULL, (VOID**)&gEmuVariableControl);
   if (EFI_ERROR(Status)) {
     gEmuVariableControl = NULL;
@@ -1966,6 +1972,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     }
 
     if (!GlobalConfig.FastBoot) {
+      
 #ifdef CHECK_FLAGS
       CHAR16 *TmpArgs;
 #endif
@@ -1982,6 +1989,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 //      DBG("initial boot-args=%a\n", gSettings.BootArgs);
       //now it is a time to set RtVariables
       SetVariablesFromNvram();
+      
 #ifdef CHECK_FLAGS
       TmpArgs = PoolPrint(L"%a ", gSettings.BootArgs);
       DBG("after NVRAM boot-args=%a\n", gSettings.BootArgs);
@@ -1999,6 +2007,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         }
       }
     }
+    GetSmcKeys(TRUE);
 
     // Add custom entries
     AddCustomEntries();
@@ -2050,6 +2059,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     }
     // wait for user ACK when there were errors
     FinishTextScreen(FALSE);
+#if CHECK_SMC
+    DumpSmcKeys();
+#endif
 
     DefaultIndex = FindDefaultEntry();
     DBG("DefaultIndex=%d and MainMenu.EntryCount=%d\n", DefaultIndex, MainMenu.EntryCount);

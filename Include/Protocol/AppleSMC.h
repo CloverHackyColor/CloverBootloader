@@ -17,12 +17,14 @@ typedef struct _APPLE_SMC_PROTOCOL APPLE_SMC_PROTOCOL;
 typedef EFI_STATUS (EFIAPI* APPLE_SMC_READ_DATA)(IN APPLE_SMC_PROTOCOL* This, IN UINT32 DataId, IN UINT32 DataLength, OUT VOID* DataBuffer);
 
 typedef EFI_STATUS (EFIAPI* APPLE_SMC_WRITE_DATA)(IN APPLE_SMC_PROTOCOL* This, IN UINT32 DataId, IN UINT32 DataLength, IN VOID* DataBuffer);
+typedef EFI_STATUS (EFIAPI* APPLE_SMC_DUMP_DATA)(IN APPLE_SMC_PROTOCOL* This);
 
 struct _APPLE_SMC_PROTOCOL
 {
-	UINT64																	Signature;
-	APPLE_SMC_READ_DATA											ReadData;
-  APPLE_SMC_WRITE_DATA										WriteData;
+	UINT64																Signature;
+	APPLE_SMC_READ_DATA										ReadData;
+  APPLE_SMC_WRITE_DATA									WriteData;
+  APPLE_SMC_DUMP_DATA										DumpData;
 };
 
 extern EFI_GUID gAppleSMCProtocolGuid;
