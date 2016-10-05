@@ -1097,13 +1097,15 @@ VOID GetTableType16()
   //
   mTotalSystemMemory = 0; //later we will add to the value, here initialize it
   TotalCount = 0;
-  // Get Table Type16 and set Device Count
-  SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_PHYSICAL_MEMORY_ARRAY, 0);
-  if (SmbiosTable.Raw == NULL) {
-    DBG("SmbiosTable: Type 16 (Physical Memory Array) not found!\n");
-    return;
+  for (Index = 0; Index < 8; Index++) {  //how many tables there may be?
+    SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_PHYSICAL_MEMORY_ARRAY, Index);
+    if (SmbiosTable.Raw == NULL) {
+      DBG("SmbiosTable: Type 16 (Physical Memory Array) not found!\n");
+      continue;
+    }
+    DBG("Type 16 Index = %d\n", Index);
+    TotalCount += SmbiosTable.Type16->NumberOfMemoryDevices;
   }
-  TotalCount = SmbiosTable.Type16->NumberOfMemoryDevices;
   if (!TotalCount) {
     TotalCount = MAX_RAM_SLOTS;
   }
