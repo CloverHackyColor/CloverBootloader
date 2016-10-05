@@ -1767,13 +1767,13 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
     TableHeader = (EFI_ACPI_DESCRIPTION_HEADER*)(UINTN)FadtPointer->Dsdt;
     bufferLen = TableHeader->Length;
 //    DBG("DSDT len = 0x%x", bufferLen);
-    bufferLen = bufferLen + bufferLen / 8;
+//    bufferLen = bufferLen + bufferLen / 8;
 //    DBG(" new len = 0x%x\n", bufferLen);
 
     dsdt = EFI_SYSTEM_TABLE_MAX_ADDRESS;
     Status = gBS->AllocatePages(AllocateMaxAddress,
                                 EfiACPIReclaimMemory,
-                                EFI_SIZE_TO_PAGES(bufferLen),
+                                EFI_SIZE_TO_PAGES(bufferLen + bufferLen / 8),
                                 &dsdt);
 
     //if success insert dsdt pointer into ACPI tables
