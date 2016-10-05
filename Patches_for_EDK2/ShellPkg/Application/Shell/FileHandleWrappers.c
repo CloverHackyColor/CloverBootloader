@@ -627,7 +627,7 @@ FileInterfaceStdInRead(
       if (InTabScrolling) {
 //        ASSERT(FoundFileList != NULL);
 //        ASSERT(TabLinePos != NULL);
-        if (!FoundFileList || !TabLinePos) {
+ /*       if (!FoundFileList || !TabLinePos) {
           return EFI_NO_MEDIA;
         }
         TabLinePos = (EFI_SHELL_FILE_INFO*)GetNextNode(&(FoundFileList->Link), &TabLinePos->Link);
@@ -666,7 +666,12 @@ FileInterfaceStdInRead(
           } else {
             *TabStr = CHAR_NULL;
             StrnCatS(TabStr, (*BufferSize)/sizeof(CHAR16), CurrentString + TabPos, StringLen - TabPos);
-          }
+          } */
+        if (!TabCompleteList) {
+          return EFI_NO_MEDIA;
+        }
+        if (TabCurrent == NULL) {
+          TabCurrent = (EFI_SHELL_FILE_INFO*) GetFirstNode (&TabCompleteList->Link);
         } else {
           TabCurrent = (EFI_SHELL_FILE_INFO*) GetNextNode (&TabCompleteList->Link, &TabCurrent->Link);
         }
@@ -674,7 +679,7 @@ FileInterfaceStdInRead(
         //
         // Skip over the empty list beginning node
         //
-        if (EFI_ERROR (Status) || FoundFileList == NULL) {
+ /*       if (EFI_ERROR (Status) || FoundFileList == NULL) {
           InTabScrolling = FALSE;
           TabLinePos = NULL;
           continue;
@@ -709,7 +714,10 @@ FileInterfaceStdInRead(
             } else {
               ShellInfoObject.NewEfiShellProtocol->FreeFileList (&FoundFileList);
             }
-          }
+          } */
+        if (IsNull(&TabCompleteList->Link, &TabCurrent->Link)) {
+          TabCurrent = (EFI_SHELL_FILE_INFO*) GetNextNode (&TabCompleteList->Link, &TabCurrent->Link);
+
         }
       }
       break;
@@ -1108,6 +1116,7 @@ FileInterfaceEnvClose(
   VOID*       NewBuffer;
   UINTN       NewSize;
   EFI_STATUS  Status;
+  BOOLEAN     Volatile;
 
   //
   // Most if not all UEFI commands will have an '\r\n' at the end of any output. 
@@ -1117,6 +1126,11 @@ FileInterfaceEnvClose(
   //
   NewBuffer   = NULL;
   NewSize     = 0;
+
+  Status = IsVolatileEnv (((EFI_FILE_PROTOCOL_ENVIRONMENT*)This)->Name, &Volatile);
+  if (EFI_ERROR (Status)) {
+    return Status;
+  }
 
   Status = SHELL_GET_ENVIRONMENT_VARIABLE(((EFI_FILE_PROTOCOL_ENVIRONMENT*)This)->Name, &NewSize, NewBuffer);
   if (Status == EFI_BUFFER_TOO_SMALL) {
@@ -1136,7 +1150,7 @@ FileInterfaceEnvClose(
         ((CHAR16*)NewBuffer)[(StrSize(NewBuffer)/2) - 3] = CHAR_NULL;   
       }
     
-      if (IsVolatileEnv(((EFI_FILE_PROTOCOL_ENVIRONMENT*)This)->Name)) {
+      if (Volatile) {
         Status = SHELL_SET_ENVIRONMENT_VARIABLE_V(((EFI_FILE_PROTOCOL_ENVIRONMENT*)This)->Name, StrSize(NewBuffer), NewBuffer);
       } else {
         Status = SHELL_SET_ENVIRONMENT_VARIABLE_NV(((EFI_FILE_PROTOCOL_ENVIRONMENT*)This)->Name, StrSize(NewBuffer), NewBuffer);
@@ -1294,11 +1308,18 @@ CreateFileInterfaceEnv(
   IN CONST CHAR16 *EnvName
   )
 {
+  EFI_STATUS                     Status;
   EFI_FILE_PROTOCOL_ENVIRONMENT  *EnvFileInterface;
   UINTN                          EnvNameSize;
+  BOOLEAN                        Volatile;
 
   if (EnvName == NULL) {
     return (NULL);
+  }
+
+  Status = IsVolatileEnv (EnvName, &Volatile);
+  if (EFI_ERROR (Status)) {
+    return NULL;
   }
 
   //
@@ -1329,7 +1350,7 @@ CreateFileInterfaceEnv(
   //
   // Assign the different members for Volatile and Non-Volatile variables
   //
-  if (IsVolatileEnv(EnvName)) {
+  if (Volatile) {
     EnvFileInterface->Write       = FileInterfaceEnvVolWrite;
   } else {
     EnvFileInterface->Write       = FileInterfaceEnvNonVolWrite;
@@ -1663,8 +1684,9 @@ CreateFileInterfaceMem(
   FileInterface->Unicode     = Unicode;
 
 //  ASSERT(FileInterface->Buffer      == NULL);
-  if (FileInterface->Buffer ) {
+  if (FileInterface->Buffer) {
     FreePool(FileInterface->Buffer);
+    FileInterface->Buffer  = NULL;
   }
 //  ASSERT(FileInterface->BufferSize  == 0);
   FileInterface->BufferSize  = 0;

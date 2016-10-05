@@ -1,7 +1,7 @@
 /** @file
   Main file for support of shell consist mapping.
 
-  Copyright (c) 2005 - 2015, Intel Corporation. All rights reserved.<BR>
+  Copyright (c) 2005 - 2016, Intel Corporation. All rights reserved.<BR>
   This program and the accompanying materials
   are licensed and made available under the terms and conditions of the BSD License
   which accompanies this distribution. The full text of the license may be found at
@@ -53,10 +53,12 @@ typedef struct {
   @param  MapInfo          The map info.
   @param  OrigDevPath      The original device path protocol.
 
+  @retval EFI_OUT_OF_RESOURCES    Out of resources.
+  @retval EFI_SUCCESS             The appending was successful.
 **/
 typedef 
-VOID 
-(EFIAPI *SERIAL_DECODE_FUNCTION) (
+EFI_STATUS 
+(*SERIAL_DECODE_FUNCTION) (
   EFI_DEVICE_PATH_PROTOCOL    *DevPath, 
   DEVICE_CONSIST_MAPPING_INFO *MapInfo,
   EFI_DEVICE_PATH_PROTOCOL    *OrigDevPath
@@ -78,12 +80,11 @@ typedef struct {
   @param  Fmt      The format string
   @param  ...      The data will be printed.
 
-  @return Allocated buffer with the formatted string printed in it.
-          The caller must free the allocated buffer.
-          The buffer allocation is not packed.
+  @retval EFI_SUCCESS          The string is concatenated successfully.
+  @retval EFI_OUT_OF_RESOURCES Out of resources.
 
 **/
-CHAR16 *
+EFI_STATUS
 EFIAPI
 CatPrint (
   IN OUT POOL_PRINT   *Str,
@@ -94,11 +95,11 @@ CatPrint (
   UINT16  *AppendStr;
   VA_LIST Args;
   UINTN   StringSize;
+  CHAR16  *NewStr;
 
   AppendStr = AllocateZeroPool (0x1000);
   if (AppendStr == NULL) {
-    ASSERT(FALSE);
-    return Str->Str;
+    return EFI_OUT_OF_RESOURCES;
   }
 
   VA_START (Args, Fmt);
@@ -106,25 +107,28 @@ CatPrint (
   VA_END (Args);
   if (NULL == Str->Str) {
     StringSize   = StrSize (AppendStr);
-    Str->Str  = AllocateZeroPool (StringSize);
-    ASSERT (Str->Str != NULL);
+    NewStr = AllocateZeroPool (StringSize);
   } else {
     StringSize = StrSize (AppendStr);
     StringSize += (StrSize (Str->Str) - sizeof (UINT16));
 
-    Str->Str = ReallocatePool (
+    NewStr = ReallocatePool (
                 StrSize (Str->Str),
                 StringSize,
                 Str->Str
                );
-    ASSERT (Str->Str != NULL);
+  }
+  if (NewStr == NULL) {
+    FreePool (AppendStr);
+    return EFI_OUT_OF_RESOURCES;
   }
 
+  Str->Str = NewStr;
   StrCatS (Str->Str, StringSize/sizeof(CHAR16), AppendStr);
   Str->Len = StringSize;
 
   FreePool (AppendStr);
-  return Str->Str;
+  return EFI_SUCCESS;
 }
 
 MTD_NAME  mMTDName[] = {
@@ -156,30 +160,33 @@ MTD_NAME  mMTDName[] = {
   @param[in, out] Str          The string so append onto.
   @param[in]      Num          The number to divide and append.
 
-  @retval EFI_INVALID_PARAMETER   A parameter was NULL.
+  @retval EFI_OUT_OF_RESOURCES    Out of resources.
   @retval EFI_SUCCESS             The appending was successful.
 **/
 EFI_STATUS
-EFIAPI
 AppendCSDNum2 (
   IN OUT POOL_PRINT       *Str,
   IN UINT64               Num
   )
 {
+  EFI_STATUS Status;
   UINT64  Result;
   UINT32   Rem;
 
-  if (Str == NULL) {
-    return (EFI_INVALID_PARAMETER);
+  // ASSERT (Str != NULL);
+  If (!Str) {
+    return EFI_OUT_OF_RESOURCES;
   }
 
   Result = DivU64x32Remainder (Num, 25, &Rem);
   if (Result > 0) {
-    AppendCSDNum2 (Str, Result);
+    Status = AppendCSDNum2 (Str, Result);
+    if (EFI_ERROR (Status)) {
+      return Status;
+    }
   }
 
-  CatPrint (Str, L"%c", Rem + 'a');
-  return (EFI_SUCCESS);
+  return CatPrint (Str, L"%c", Rem + 'a');
 }
 
 /**
@@ -188,29 +195,32 @@ AppendCSDNum2 (
   @param[in, out] MappingItem  The mapping info object to append onto.
   @param[in]      Num          The info to append.
 
-  @retval EFI_INVALID_PARAMETER   A parameter was NULL.
+  @retval EFI_OUT_OF_RESOURCES    Out of resources.
   @retval EFI_SUCCESS             The appending was successful.
+
 **/
 EFI_STATUS
-EFIAPI
 AppendCSDNum (
   IN OUT DEVICE_CONSIST_MAPPING_INFO            *MappingItem,
   IN     UINT64                                 Num
   )
 {
+  EFI_STATUS Status;
   if (MappingItem == NULL) {
-    return EFI_INVALID_PARAMETER;
+    return EFI_OUT_OF_RESOURCES;
   }
 
   if (MappingItem->Digital) {
-    CatPrint (&MappingItem->Csd, L"%ld", Num);
+    Status = CatPrint (&MappingItem->Csd, L"%ld", Num);
   } else {
-    AppendCSDNum2 (&MappingItem->Csd, Num);
+    Status = AppendCSDNum2 (&MappingItem->Csd, Num);
   }
 
-  MappingItem->Digital = (BOOLEAN)!(MappingItem->Digital);
+  if (!EFI_ERROR (Status)) {
+    MappingItem->Digital = (BOOLEAN) !(MappingItem->Digital);
+  }
 
-  return (EFI_SUCCESS);
+  return Status;
 }
 
 /**
@@ -219,17 +229,17 @@ AppendCSDNum (
   @param[in, out] MappingItem  The mapping info object to append onto.
   @param[in]      Str          The info to append.
 
-  @retval EFI_INVALID_PARAMETER   A parameter was NULL.
+  @retval EFI_OUT_OF_RESOURCES    Out of resources.
   @retval EFI_SUCCESS             The appending was successful.
 **/
 EFI_STATUS
-EFIAPI
 AppendCSDStr (
   IN OUT DEVICE_CONSIST_MAPPING_INFO            *MappingItem,
   IN     CHAR16                                 *Str
   )
 {
   CHAR16  *Index;
+  EFI_STATUS Status = EFI_SUCCESS;
 
   if (Str == NULL || MappingItem == NULL) {
     return (EFI_INVALID_PARAMETER);
@@ -252,11 +262,11 @@ AppendCSDStr (
       case '7':
       case '8':
       case '9':
-        CatPrint (&MappingItem->Csd, L"%c", *Index);
+        Status = CatPrint (&MappingItem->Csd, L"%c", *Index);
         break;
 
       case '1':
-        CatPrint (&MappingItem->Csd, L"16");
+        Status = CatPrint (&MappingItem->Csd, L"16");
         break;
 
       case 'a':
@@ -265,7 +275,7 @@ AppendCSDStr (
       case 'd':
       case 'e':
       case 'f':
-        CatPrint (&MappingItem->Csd, L"1%c", *Index - 'a' + '0');
+        Status = CatPrint (&MappingItem->Csd, L"1%c", *Index - 'a' + '0');
         break;
 
       case 'A':
@@ -274,8 +284,12 @@ AppendCSDStr (
       case 'D':
       case 'E':
       case 'F':
-        CatPrint (&MappingItem->Csd, L"1%c", *Index - 'A' + '0');
+        Status = CatPrint (&MappingItem->Csd, L"1%c", *Index - 'A' + '0');
         break;
+      }
+
+      if (EFI_ERROR (Status)) {
+        return Status;
       }
     }
   } else {
@@ -286,11 +300,15 @@ AppendCSDStr (
       //  a  b  c  d  e  f  g  h  i  j  k  l  m  n  o  p
       //
       if (*Index >= '0' && *Index <= '9') {
-        CatPrint (&MappingItem->Csd, L"%c", *Index - '0' + 'a');
+        Status = CatPrint (&MappingItem->Csd, L"%c", *Index - '0' + 'a');
       } else if (*Index >= 'a' && *Index <= 'f') {
-        CatPrint (&MappingItem->Csd, L"%c", *Index - 'a' + 'k');
+        Status = CatPrint (&MappingItem->Csd, L"%c", *Index - 'a' + 'k');
       } else if (*Index >= 'A' && *Index <= 'F') {
-        CatPrint (&MappingItem->Csd, L"%c", *Index - 'A' + 'k');
+        Status = CatPrint (&MappingItem->Csd, L"%c", *Index - 'A' + 'k');
+      }
+
+      if (EFI_ERROR (Status)) {
+        return Status;
       }
     }
   }
@@ -306,11 +324,10 @@ AppendCSDStr (
   @param[in, out] MappingItem  The item to append onto.
   @param[in]      Guid         The guid to append.
 
-  @retval EFI_SUCCESS           The appending operation was successful.
-  @retval EFI_INVALID_PARAMETER A parameter was NULL.
+  @retval EFI_OUT_OF_RESOURCES    Out of resources.
+  @retval EFI_SUCCESS             The appending was successful.
 **/
 EFI_STATUS
-EFIAPI
 AppendCSDGuid (
   DEVICE_CONSIST_MAPPING_INFO            *MappingItem,
   EFI_GUID                               *Guid
@@ -329,9 +346,7 @@ AppendCSDGuid (
     Guid
    );
 
-  AppendCSDStr (MappingItem, Buffer);
-
-  return (EFI_SUCCESS);
+  return AppendCSDStr (MappingItem, Buffer);
 }
 
 /**
@@ -445,9 +460,11 @@ DevPathCompareDefault (
   @param[in] DevicePathNode   The node to get info on.
   @param[in] MappingItem      The info item to populate.
   @param[in] DevicePath       Ignored.
+
+  @retval EFI_OUT_OF_RESOURCES    Out of resources.
+  @retval EFI_SUCCESS             The appending was successful.
 **/
-VOID
-EFIAPI
+EFI_STATUS
 DevPathSerialHardDrive (
   IN EFI_DEVICE_PATH_PROTOCOL     *DevicePathNode,
   IN DEVICE_CONSIST_MAPPING_INFO  *MappingItem,
@@ -464,7 +481,7 @@ DevPathSerialHardDrive (
     MappingItem->Mtd = MTDTypeHardDisk;
   }
 
-  AppendCSDNum (MappingItem, Hd->PartitionNumber);
+  return AppendCSDNum (MappingItem, Hd->PartitionNumber);
 }
 
 /**
@@ -473,9 +490,11 @@ DevPathSerialHardDrive (
   @param[in] DevicePathNode   The node to get info on.
   @param[in] MappingItem      The info item to populate.
   @param[in] DevicePath       Ignored.
+
+  @retval EFI_OUT_OF_RESOURCES    Out of resources.
+  @retval EFI_SUCCESS             The appending was successful.
 **/
-VOID
-EFIAPI
+EFI_STATUS
 DevPathSerialAtapi (
   IN EFI_DEVICE_PATH_PROTOCOL     *DevicePathNode,
   IN DEVICE_CONSIST_MAPPING_INFO  *MappingItem,
@@ -488,7 +507,7 @@ DevPathSerialAtapi (
   ASSERT(MappingItem != NULL);
 
   Atapi = (ATAPI_DEVICE_PATH *) DevicePathNode;
-  AppendCSDNum (MappingItem, (Atapi->PrimarySecondary * 2 + Atapi->SlaveMaster));
+  return AppendCSDNum (MappingItem, (Atapi->PrimarySecondary * 2 + Atapi->SlaveMaster));
 }
 
 /**
@@ -497,9 +516,11 @@ DevPathSerialAtapi (
   @param[in] DevicePathNode   The node to get info on.
   @param[in] MappingItem      The info item to populate.
   @param[in] DevicePath       Ignored.
+
+  @retval EFI_OUT_OF_RESOURCES    Out of resources.
+  @retval EFI_SUCCESS             The appending was successful.
 **/
-VOID
-EFIAPI
+EFI_STATUS
 DevPathSerialCdRom (
   IN EFI_DEVICE_PATH_PROTOCOL     *DevicePathNode,
   IN DEVICE_CONSIST_MAPPING_INFO  *MappingItem,
@@ -513,7 +534,7 @@ DevPathSerialCdRom (
 
   Cd                = (CDROM_DEVICE_PATH *) DevicePathNode;
   MappingItem->Mtd  = MTDTypeCDRom;
-  AppendCSDNum (MappingItem, Cd->BootEntry);
+  return AppendCSDNum (MappingItem, Cd->BootEntry);
 }
 
 /**
@@ -522,23 +543,29 @@ DevPathSerialCdRom (
   @param[in] DevicePathNode   The node to get info on.
   @param[in] MappingItem      The info item to populate.
   @param[in] DevicePath       Ignored.
+
+  @retval EFI_OUT_OF_RESOURCES    Out of resources.
+  @retval EFI_SUCCESS             The appending was successful.
 **/
-VOID
-EFIAPI
+EFI_STATUS
 DevPathSerialFibre (
   IN EFI_DEVICE_PATH_PROTOCOL     *DevicePathNode,
   IN DEVICE_CONSIST_MAPPING_INFO  *MappingItem,
   IN EFI_DEVICE_PATH_PROTOCOL     *DevicePath
   )
 {
+  EFI_STATUS                Status;
   FIBRECHANNEL_DEVICE_PATH  *Fibre;
 
   ASSERT(DevicePathNode != NULL);
   ASSERT(MappingItem != NULL);
 
   Fibre = (FIBRECHANNEL_DEVICE_PATH *) DevicePathNode;
-  AppendCSDNum (MappingItem, Fibre->WWN);
-  AppendCSDNum (MappingItem, Fibre->Lun);
+  Status = AppendCSDNum (MappingItem, Fibre->WWN);
+  if (!EFI_ERROR (Status)) {
+    Status = AppendCSDNum (MappingItem, Fibre->Lun);
+  }
+  return Status;
 }
 
 /**
@@ -547,25 +574,35 @@ DevPathSerialFibre (
   @param[in] DevicePathNode   The node to get info on.
   @param[in] MappingItem      The info item to populate.
   @param[in] DevicePath       Ignored.
+
+  @retval EFI_OUT_OF_RESOURCES    Out of resources.
+  @retval EFI_SUCCESS             The appending was successful.
 **/
-VOID
-EFIAPI
+EFI_STATUS
 DevPathSerialUart (
   IN EFI_DEVICE_PATH_PROTOCOL     *DevicePathNode,
   IN DEVICE_CONSIST_MAPPING_INFO  *MappingItem,
   IN EFI_DEVICE_PATH_PROTOCOL     *DevicePath
   )
 {
+  EFI_STATUS                Status;
   UART_DEVICE_PATH  *Uart;
 
   ASSERT(DevicePathNode != NULL);
   ASSERT(MappingItem != NULL);
 
   Uart = (UART_DEVICE_PATH *) DevicePathNode;
-  AppendCSDNum (MappingItem, Uart->BaudRate);
-  AppendCSDNum (MappingItem, Uart->DataBits);
-  AppendCSDNum (MappingItem, Uart->Parity);
-  AppendCSDNum (MappingItem, Uart->StopBits);
+  Status = AppendCSDNum (MappingItem, Uart->BaudRate);
+  if (!EFI_ERROR (Status)) {
+    Status = AppendCSDNum (MappingItem, Uart->DataBits);
+  }
+  if (!EFI_ERROR (Status)) {
+    Status = AppendCSDNum (MappingItem, Uart->Parity);
+  }
+  if (!EFI_ERROR (Status)) {
+    Status = AppendCSDNum (MappingItem, Uart->StopBits);
+  }
+  return Status;
 }
 
 /**
@@ -574,9 +611,11 @@ DevPathSerialUart (
   @param[in] DevicePathNode   The node to get info on.
   @param[in] MappingItem      The info item to populate.
   @param[in] DevicePath       Ignored.
+
+  @retval EFI_OUT_OF_RESOURCES    Out of resources.
+  @retval EFI_SUCCESS             The appending was successful.
 **/
-VOID
-EFIAPI
+EFI_STATUS
 DevPathSerialUsb (
   IN EFI_DEVICE_PATH_PROTOCOL     *DevicePathNode,
   IN DEVICE_CONSIST_MAPPING_INFO  *MappingItem,
@@ -592,11 +631,19 @@ DevPathSerialUsb (
 
 //  ASSERT(DevicePathNode != NULL);
 //  ASSERT(MappingItem != NULL);
-  if (!DevicePathNode || !MappingItem) return;
+  if (!DevicePathNode || !MappingItem) {
+    return EFI_OUT_OF_RESOURCES;
+  }
 
   Usb = (USB_DEVICE_PATH *) DevicePathNode;
-  AppendCSDNum (MappingItem, Usb->ParentPortNumber);
-  AppendCSDNum (MappingItem, Usb->InterfaceNumber);
+  Status = AppendCSDNum (MappingItem, Usb->ParentPortNumber);
+  if (!EFI_ERROR (Status)) {
+    Status = AppendCSDNum (MappingItem, Usb->InterfaceNumber);
+  }
+
+  if (EFI_ERROR (Status)) {
+    return Status;
+  }
 
   if (PcdGetBool(PcdUsbExtendedDecode)) {
     Status = gBS->LocateDevicePath( &gEfiUsbIoProtocolGuid, &DevicePath, &TempHandle );
@@ -626,6 +673,7 @@ DevPathSerialUsb (
       }
     } 
   }
+  return Status;
 }
 
 /**
@@ -635,34 +683,46 @@ DevPathSerialUsb (
   @param[in] MappingItem      The info item to populate.
   @param[in] DevicePath       Ignored.
 
+  @retval EFI_OUT_OF_RESOURCES    Out of resources.
+  @retval EFI_SUCCESS             The appending was successful.
 **/
-VOID
-EFIAPI
+EFI_STATUS
 DevPathSerialVendor (
   IN EFI_DEVICE_PATH_PROTOCOL     *DevicePathNode,
   IN DEVICE_CONSIST_MAPPING_INFO  *MappingItem,
   IN EFI_DEVICE_PATH_PROTOCOL     *DevicePath
   )
 {
+  EFI_STATUS          Status;
   VENDOR_DEVICE_PATH  *Vendor;
   SAS_DEVICE_PATH     *Sas;
   UINTN               TargetNameLength;
   UINTN               Index;
   CHAR16              *Buffer;
+  CHAR16              *NewBuffer;
 
   if (DevicePathNode == NULL || MappingItem == NULL) {
-    return;
+    return EFI_OUT_OF_RESOURCES;
   }
 
   Vendor = (VENDOR_DEVICE_PATH *) DevicePathNode;
-  AppendCSDGuid (MappingItem, &Vendor->Guid);
+  Status = AppendCSDGuid (MappingItem, &Vendor->Guid);
+  if (EFI_ERROR (Status)) {
+    return Status;
+  }
 
   if (CompareGuid (&gEfiSasDevicePathGuid, &Vendor->Guid)) {
     Sas = (SAS_DEVICE_PATH *) Vendor;
-    AppendCSDNum (MappingItem, Sas->SasAddress);
-    AppendCSDNum (MappingItem, Sas->Lun);
-    AppendCSDNum (MappingItem, Sas->DeviceTopology);
-    AppendCSDNum (MappingItem, Sas->RelativeTargetPort);
+    Status = AppendCSDNum (MappingItem, Sas->SasAddress);
+    if (!EFI_ERROR (Status)) {
+      Status = AppendCSDNum (MappingItem, Sas->Lun);
+    }
+    if (!EFI_ERROR (Status)) {
+      Status = AppendCSDNum (MappingItem, Sas->DeviceTopology);
+    }
+    if (!EFI_ERROR (Status)) {
+      Status = AppendCSDNum (MappingItem, Sas->RelativeTargetPort);
+    }
   } else {
     TargetNameLength = MIN(DevicePathNodeLength (DevicePathNode) - sizeof (VENDOR_DEVICE_PATH), PcdGet32(PcdShellVendorExtendedDecode));
     if (TargetNameLength != 0) {
@@ -670,26 +730,33 @@ DevPathSerialVendor (
       // String is 2 chars per data byte, plus NULL terminator
       //
       Buffer = AllocateZeroPool (((TargetNameLength * 2) + 1) * sizeof(CHAR16));
-      ASSERT(Buffer != NULL);
       if (Buffer == NULL) {
-        return;
+        return EFI_OUT_OF_RESOURCES;
   }
 
       //
       // Build the string data
       //
       for (Index = 0; Index < TargetNameLength; Index++) {
-        Buffer = CatSPrint (Buffer, L"%02x", *((UINT8*)Vendor + sizeof (VENDOR_DEVICE_PATH) + Index));
+        NewBuffer = CatSPrint (Buffer, L"%02x", *((UINT8*)Vendor + sizeof (VENDOR_DEVICE_PATH) + Index));
+        if (NewBuffer == NULL) {
+          Status = EFI_OUT_OF_RESOURCES;
+          break;
+        }
+        Buffer = NewBuffer;
 }
 
       //
       // Append the new data block
       //
-      AppendCSDStr (MappingItem, Buffer);
+      if (!EFI_ERROR (Status)) {
+        Status = AppendCSDStr (MappingItem, Buffer);
+      }
 
       FreePool(Buffer);
     }
   }
+  return Status;
 }
 
 /**
@@ -698,9 +765,11 @@ DevPathSerialVendor (
   @param[in] DevicePathNode   The node to get info on.
   @param[in] MappingItem      The info item to populate.
   @param[in] DevicePath       Ignored.
+
+  @retval EFI_OUT_OF_RESOURCES    Out of resources.
+  @retval EFI_SUCCESS             The appending was successful.
 **/
-VOID
-EFIAPI
+EFI_STATUS
 DevPathSerialLun (
   IN EFI_DEVICE_PATH_PROTOCOL     *DevicePathNode,
   IN DEVICE_CONSIST_MAPPING_INFO  *MappingItem,
@@ -713,7 +782,7 @@ DevPathSerialLun (
   ASSERT(MappingItem != NULL);
 
   Lun = (DEVICE_LOGICAL_UNIT_DEVICE_PATH *) DevicePathNode;
-  AppendCSDNum (MappingItem, Lun->Lun);
+  return AppendCSDNum (MappingItem, Lun->Lun);
 }
 
 /**
@@ -722,24 +791,32 @@ DevPathSerialLun (
   @param[in] DevicePathNode   The node to get info on.
   @param[in] MappingItem      The info item to populate.
   @param[in] DevicePath       Ignored.
+
+  @retval EFI_OUT_OF_RESOURCES    Out of resources.
+  @retval EFI_SUCCESS             The appending was successful.
 **/
-VOID
-EFIAPI
+EFI_STATUS
 DevPathSerialSata (
   IN EFI_DEVICE_PATH_PROTOCOL     *DevicePathNode,
   IN DEVICE_CONSIST_MAPPING_INFO  *MappingItem,
   IN EFI_DEVICE_PATH_PROTOCOL     *DevicePath
   )
 {
+  EFI_STATUS        Status;
   SATA_DEVICE_PATH  *Sata;
 
   ASSERT(DevicePathNode != NULL);
   ASSERT(MappingItem != NULL);
 
   Sata = (SATA_DEVICE_PATH  *) DevicePathNode;
-  AppendCSDNum (MappingItem, Sata->HBAPortNumber);
-  AppendCSDNum (MappingItem, Sata->PortMultiplierPortNumber);
-  AppendCSDNum (MappingItem, Sata->Lun);
+  Status = AppendCSDNum (MappingItem, Sata->HBAPortNumber);
+  if (!EFI_ERROR (Status)) {
+    Status = AppendCSDNum (MappingItem, Sata->PortMultiplierPortNumber);
+  }
+  if (!EFI_ERROR (Status)) {
+    Status = AppendCSDNum (MappingItem, Sata->Lun);
+  }
+  return Status;
 }
 
 /**
@@ -748,15 +825,18 @@ DevPathSerialSata (
   @param[in] DevicePathNode   The node to get info on.
   @param[in] MappingItem      The info item to populate.
   @param[in] DevicePath       Ignored.
+
+  @retval EFI_OUT_OF_RESOURCES    Out of resources.
+  @retval EFI_SUCCESS             The appending was successful.
 **/
-VOID
-EFIAPI
+EFI_STATUS
 DevPathSerialIScsi (
   IN EFI_DEVICE_PATH_PROTOCOL     *DevicePathNode,
   IN DEVICE_CONSIST_MAPPING_INFO  *MappingItem,
   IN EFI_DEVICE_PATH_PROTOCOL     *DevicePath
   )
 {
+  EFI_STATUS         Status;
   ISCSI_DEVICE_PATH  *IScsi;
   UINT8              *IScsiTargetName;
   CHAR16             *TargetName;
@@ -766,25 +846,39 @@ DevPathSerialIScsi (
   ASSERT(DevicePathNode != NULL);
   ASSERT(MappingItem != NULL);
 
+  Status = EFI_SUCCESS;
+
   if (PcdGetBool(PcdShellDecodeIScsiMapNames)) {
     IScsi = (ISCSI_DEVICE_PATH  *) DevicePathNode;
-    AppendCSDNum (MappingItem, IScsi->NetworkProtocol);
-    AppendCSDNum (MappingItem, IScsi->LoginOption);
-    AppendCSDNum (MappingItem, IScsi->Lun);
-    AppendCSDNum (MappingItem, IScsi->TargetPortalGroupTag);
+    Status = AppendCSDNum (MappingItem, IScsi->NetworkProtocol);
+    if (!EFI_ERROR (Status)) {
+      Status = AppendCSDNum (MappingItem, IScsi->LoginOption);
+    }
+    if (!EFI_ERROR (Status)) {
+      Status = AppendCSDNum (MappingItem, IScsi->Lun);
+    }
+    if (!EFI_ERROR (Status)) {
+      Status = AppendCSDNum (MappingItem, IScsi->TargetPortalGroupTag);
+    }
+    if (EFI_ERROR (Status)) {
+      return Status;
+    }
     TargetNameLength = DevicePathNodeLength (DevicePathNode) - sizeof (ISCSI_DEVICE_PATH);
     if (TargetNameLength > 0) {
       TargetName = AllocateZeroPool ((TargetNameLength + 1) * sizeof (CHAR16));
-      if (TargetName != NULL) {
+      if (TargetName == NULL) {
+        Status = EFI_OUT_OF_RESOURCES;
+      } else {
         IScsiTargetName = (UINT8 *) (IScsi + 1);
         for (Index = 0; Index < TargetNameLength; Index++) {
           TargetName[Index] = (CHAR16) IScsiTargetName[Index];
         }
-        AppendCSDStr (MappingItem, TargetName);
+        Status = AppendCSDStr (MappingItem, TargetName);
         FreePool (TargetName);
       }
     }
   }
+  return Status;
 }
 
 /**
@@ -793,9 +887,11 @@ DevPathSerialIScsi (
   @param[in] DevicePathNode   The node to get info on.
   @param[in] MappingItem      The info item to populate.
   @param[in] DevicePath       Ignored.
+
+  @retval EFI_OUT_OF_RESOURCES    Out of resources.
+  @retval EFI_SUCCESS             The appending was successful.
 **/
-VOID
-EFIAPI
+EFI_STATUS
 DevPathSerialI2O (
   IN EFI_DEVICE_PATH_PROTOCOL     *DevicePathNode,
   IN DEVICE_CONSIST_MAPPING_INFO  *MappingItem,
@@ -808,7 +904,7 @@ DevPathSerialI2O (
   ASSERT(MappingItem != NULL);
 
   DevicePath_I20 = (I2O_DEVICE_PATH *) DevicePathNode;
-  AppendCSDNum (MappingItem, DevicePath_I20->Tid);
+  return AppendCSDNum (MappingItem, DevicePath_I20->Tid);
 }
 
 /**
@@ -817,9 +913,11 @@ DevPathSerialI2O (
   @param[in] DevicePathNode   The node to get info on.
   @param[in] MappingItem      The info item to populate.
   @param[in] DevicePath       Ignored.
+
+  @retval EFI_OUT_OF_RESOURCES    Out of resources.
+  @retval EFI_SUCCESS             The appending was successful.
 **/
-VOID
-EFIAPI
+EFI_STATUS
 DevPathSerialMacAddr (
   IN EFI_DEVICE_PATH_PROTOCOL     *DevicePathNode,
   IN DEVICE_CONSIST_MAPPING_INFO  *MappingItem,
@@ -846,7 +944,7 @@ DevPathSerialMacAddr (
     UnicodeSPrint (PBuffer, 0, L"%02x", (UINTN) Mac->MacAddress.Addr[Index]);
   }
 
-  AppendCSDStr (MappingItem, Buffer);
+  return AppendCSDStr (MappingItem, Buffer);
 }
 
 /**
@@ -855,15 +953,18 @@ DevPathSerialMacAddr (
   @param[in] DevicePathNode   The node to get info on.
   @param[in] MappingItem      The info item to populate.
   @param[in] DevicePath       Ignored.
+
+  @retval EFI_OUT_OF_RESOURCES    Out of resources.
+  @retval EFI_SUCCESS             The appending was successful.
 **/
-VOID
-EFIAPI
+EFI_STATUS
 DevPathSerialInfiniBand (
   IN EFI_DEVICE_PATH_PROTOCOL     *DevicePathNode,
   IN DEVICE_CONSIST_MAPPING_INFO  *MappingItem,
   IN EFI_DEVICE_PATH_PROTOCOL     *DevicePath
   )
 {
+  EFI_STATUS              Status;
   INFINIBAND_DEVICE_PATH  *InfiniBand;
   UINTN                   Index;
   CHAR16                  Buffer[64];
@@ -877,10 +978,17 @@ DevPathSerialInfiniBand (
     UnicodeSPrint (PBuffer, 0, L"%02x", (UINTN) InfiniBand->PortGid[Index]);
   }
 
-  AppendCSDStr (MappingItem, Buffer);
-  AppendCSDNum (MappingItem, InfiniBand->ServiceId);
-  AppendCSDNum (MappingItem, InfiniBand->TargetPortId);
-  AppendCSDNum (MappingItem, InfiniBand->DeviceId);
+  Status = AppendCSDStr (MappingItem, Buffer);
+  if (!EFI_ERROR (Status)) {
+    Status = AppendCSDNum (MappingItem, InfiniBand->ServiceId);
+  }
+  if (!EFI_ERROR (Status)) {
+    Status = AppendCSDNum (MappingItem, InfiniBand->TargetPortId);
+  }
+  if (!EFI_ERROR (Status)) {
+    Status = AppendCSDNum (MappingItem, InfiniBand->DeviceId);
+  }
+  return Status;
 }
 
 /**
@@ -889,21 +997,26 @@ DevPathSerialInfiniBand (
   @param[in] DevicePathNode   The node to get info on.
   @param[in] MappingItem      The info item to populate.
   @param[in] DevicePath       Ignored.
+
+  @retval EFI_OUT_OF_RESOURCES    Out of resources.
+  @retval EFI_SUCCESS             The appending was successful.
 **/
-VOID
-EFIAPI
+EFI_STATUS
 DevPathSerialIPv4 (
   IN EFI_DEVICE_PATH_PROTOCOL     *DevicePathNode,
   IN DEVICE_CONSIST_MAPPING_INFO  *MappingItem,
   IN EFI_DEVICE_PATH_PROTOCOL     *DevicePath
   )
 {
+  EFI_STATUS        Status;
   IPv4_DEVICE_PATH  *Ip;
   CHAR16            Buffer[10];
 
 //  ASSERT(DevicePathNode != NULL);
 //  ASSERT(MappingItem != NULL);
-  if (!DevicePathNode || !MappingItem) return;
+  if (!DevicePathNode || !MappingItem) {
+    return EFI_OUT_OF_RESOURCES;
+  }
 
   Ip = (IPv4_DEVICE_PATH *) DevicePathNode;
   UnicodeSPrint (
@@ -915,8 +1028,11 @@ DevPathSerialIPv4 (
     (UINTN) Ip->LocalIpAddress.Addr[2],
     (UINTN) Ip->LocalIpAddress.Addr[3]
    );
-  AppendCSDStr (MappingItem, Buffer);
-  AppendCSDNum (MappingItem, Ip->LocalPort);
+  Status = AppendCSDStr (MappingItem, Buffer);
+  if (!EFI_ERROR (Status)) {
+    Status = AppendCSDNum (MappingItem, Ip->LocalPort);
+  }
+  if (!EFI_ERROR (Status)) {
   UnicodeSPrint (
     Buffer,
     0,
@@ -926,8 +1042,12 @@ DevPathSerialIPv4 (
     (UINTN) Ip->RemoteIpAddress.Addr[2],
     (UINTN) Ip->RemoteIpAddress.Addr[3]
    );
-  AppendCSDStr (MappingItem, Buffer);
-  AppendCSDNum (MappingItem, Ip->RemotePort);
+    Status = AppendCSDStr (MappingItem, Buffer);
+  }
+  if (!EFI_ERROR (Status)) {
+    Status = AppendCSDNum (MappingItem, Ip->RemotePort);
+  }
+  return Status;
 }
 
 /**
@@ -937,15 +1057,17 @@ DevPathSerialIPv4 (
   @param[in] MappingItem      The info item to populate.
   @param[in] DevicePath       Ignored.
 
+  @retval EFI_OUT_OF_RESOURCES    Out of resources.
+  @retval EFI_SUCCESS             The appending was successful.
 **/
-VOID
-EFIAPI
+EFI_STATUS
 DevPathSerialIPv6 (
   IN EFI_DEVICE_PATH_PROTOCOL     *DevicePathNode,
   IN DEVICE_CONSIST_MAPPING_INFO  *MappingItem,
   IN EFI_DEVICE_PATH_PROTOCOL     *DevicePath
   )
 {
+  EFI_STATUS        Status;
   IPv6_DEVICE_PATH  *Ip;
   UINTN             Index;
   CHAR16            Buffer[64];
@@ -953,21 +1075,30 @@ DevPathSerialIPv6 (
 
 //  ASSERT(DevicePathNode != NULL);
 //  ASSERT(MappingItem != NULL);
-  if (!DevicePathNode || !MappingItem) return;
+  if (!DevicePathNode || !MappingItem) {
+    return EFI_OUT_OF_RESOURCES;
+  }
 
   Ip = (IPv6_DEVICE_PATH *) DevicePathNode;
   for (Index = 0, PBuffer = Buffer; Index < 16; Index++, PBuffer += 2) {
     UnicodeSPrint (PBuffer, 0, L"%02x", (UINTN) Ip->LocalIpAddress.Addr[Index]);
   }
 
-  AppendCSDStr (MappingItem, Buffer);
-  AppendCSDNum (MappingItem, Ip->LocalPort);
+  Status = AppendCSDStr (MappingItem, Buffer);
+  if (!EFI_ERROR (Status)) {
+    Status = AppendCSDNum (MappingItem, Ip->LocalPort);
+  }
+  if (!EFI_ERROR (Status)) {
   for (Index = 0, PBuffer = Buffer; Index < 16; Index++, PBuffer += 2) {
     UnicodeSPrint (PBuffer, 0, L"%02x", (UINTN) Ip->RemoteIpAddress.Addr[Index]);
   }
 
-  AppendCSDStr (MappingItem, Buffer);
-  AppendCSDNum (MappingItem, Ip->RemotePort);
+    Status = AppendCSDStr (MappingItem, Buffer);
+  }
+  if (!EFI_ERROR (Status)) {
+    Status = AppendCSDNum (MappingItem, Ip->RemotePort);
+  }
+  return Status;
 }
 
 /**
@@ -977,24 +1108,31 @@ DevPathSerialIPv6 (
   @param[in] MappingItem      The info item to populate.
   @param[in] DevicePath       Ignored.
 
+  @retval EFI_OUT_OF_RESOURCES    Out of resources.
+  @retval EFI_SUCCESS             The appending was successful.
 **/
-VOID
-EFIAPI
+EFI_STATUS
 DevPathSerialScsi (
   IN EFI_DEVICE_PATH_PROTOCOL     *DevicePathNode,
   IN DEVICE_CONSIST_MAPPING_INFO  *MappingItem,
   IN EFI_DEVICE_PATH_PROTOCOL     *DevicePath
   )
 {
+  EFI_STATUS        Status;
   SCSI_DEVICE_PATH  *Scsi;
 
 //  ASSERT(DevicePathNode != NULL);
 //  ASSERT(MappingItem != NULL);
-  if (!DevicePathNode || !MappingItem) return;
+  if (!DevicePathNode || !MappingItem) {
+    return EFI_OUT_OF_RESOURCES;
+  }
 
   Scsi = (SCSI_DEVICE_PATH *) DevicePathNode;
-  AppendCSDNum (MappingItem, Scsi->Pun);
-  AppendCSDNum (MappingItem, Scsi->Lun);
+  Status = AppendCSDNum (MappingItem, Scsi->Pun);
+  if (!EFI_ERROR (Status)) {
+    Status = AppendCSDNum (MappingItem, Scsi->Lun);
+  }
+  return Status;
 }
 
 /**
@@ -1003,9 +1141,11 @@ DevPathSerialScsi (
   @param[in] DevicePathNode   The node to get info on.
   @param[in] MappingItem      The info item to populate.
   @param[in] DevicePath       Ignored.
+
+  @retval EFI_OUT_OF_RESOURCES    Out of resources.
+  @retval EFI_SUCCESS             The appending was successful.
 **/
-VOID
-EFIAPI
+EFI_STATUS
 DevPathSerial1394 (
   IN EFI_DEVICE_PATH_PROTOCOL     *DevicePathNode,
   IN DEVICE_CONSIST_MAPPING_INFO  *MappingItem,
@@ -1017,11 +1157,13 @@ DevPathSerial1394 (
 
 //  ASSERT(DevicePathNode != NULL);
 //  ASSERT(MappingItem != NULL);
-  if (!DevicePathNode || !MappingItem) return;
+  if (!DevicePathNode || !MappingItem) {
+    return EFI_OUT_OF_RESOURCES;
+  }
 
   DevicePath_F1394 = (F1394_DEVICE_PATH *) DevicePathNode;
   UnicodeSPrint (Buffer, 0, L"%lx", DevicePath_F1394->Guid);
-  AppendCSDStr (MappingItem, Buffer);
+  return AppendCSDStr (MappingItem, Buffer);
 }
 
 /**
@@ -1030,9 +1172,11 @@ DevPathSerial1394 (
   @param[in] DevicePathNode   The node to get info on.
   @param[in] MappingItem      The info item to populate.
   @param[in] DevicePath       Ignored.
+
+  @retval EFI_OUT_OF_RESOURCES    Out of resources.
+  @retval EFI_SUCCESS             The appending was successful.
 **/
-VOID
-EFIAPI
+EFI_STATUS
 DevPathSerialAcpi (
   IN EFI_DEVICE_PATH_PROTOCOL     *DevicePathNode,
   IN DEVICE_CONSIST_MAPPING_INFO  *MappingItem,
@@ -1043,15 +1187,18 @@ DevPathSerialAcpi (
 
 //  ASSERT(DevicePathNode != NULL);
 //  ASSERT(MappingItem != NULL);
-  if (!DevicePathNode || !MappingItem) return;
+  if (!DevicePathNode || !MappingItem) {
+    return EFI_OUT_OF_RESOURCES;
+  }
 
   Acpi = (ACPI_HID_DEVICE_PATH *) DevicePathNode;
   if ((Acpi->HID & PNP_EISA_ID_MASK) == PNP_EISA_ID_CONST) {
     if (EISA_ID_TO_NUM (Acpi->HID) == 0x0604) {
       MappingItem->Mtd = MTDTypeFloppy;
-      AppendCSDNum (MappingItem, Acpi->UID);
+      return AppendCSDNum (MappingItem, Acpi->UID);
     }
   }
+  return EFI_SUCCESS;
 }
 
 /**
@@ -1061,17 +1208,17 @@ DevPathSerialAcpi (
   @param[in] MappingItem          Ignored.
   @param[in] DevicePath           Ignored.
 
-  Does nothing.
+  @retval EFI_OUT_OF_RESOURCES    Out of resources.
+  @retval EFI_SUCCESS             The appending was successful.
 **/
-VOID
-EFIAPI
+EFI_STATUS
 DevPathSerialDefault (
   IN EFI_DEVICE_PATH_PROTOCOL     *DevicePathNode,
   IN DEVICE_CONSIST_MAPPING_INFO  *MappingItem,
   IN EFI_DEVICE_PATH_PROTOCOL     *DevicePath
   )
 {
-  return;
+  return EFI_SUCCESS;
 }
 
 DEV_PATH_CONSIST_MAPPING_TABLE  DevPathConsistMappingTable[] = {
@@ -1313,6 +1460,7 @@ GetDeviceConsistMappingInfo (
   IN EFI_DEVICE_PATH_PROTOCOL       *DevicePath
   )
 {
+  EFI_STATUS                Status;
   SERIAL_DECODE_FUNCTION    SerialFun;
   UINTN                     Index;
   EFI_DEVICE_PATH_PROTOCOL  *OriginalDevicePath;
@@ -1339,7 +1487,11 @@ GetDeviceConsistMappingInfo (
       }
     }
 
-    SerialFun (DevicePath, MappingItem, OriginalDevicePath);
+    Status = SerialFun (DevicePath, MappingItem, OriginalDevicePath);
+    if (EFI_ERROR (Status)) {
+      SHELL_FREE_NON_NULL (MappingItem->Csd.Str);
+      return Status;
+    }
 
     //
     // Next device path node
@@ -1486,11 +1638,12 @@ ShellCommandConsistMappingGenMappingName (
   IN EFI_DEVICE_PATH_PROTOCOL    **Table
   )
 {
+  EFI_STATUS                  Status;
   POOL_PRINT                  Str;
   DEVICE_CONSIST_MAPPING_INFO MappingInfo;
   EFI_DEVICE_PATH_PROTOCOL    *HIDevicePath;
   UINTN                       Index;
-  UINTN                       NewSize;
+  CHAR16                      *NewStr;
 
   ASSERT(DevicePath         != NULL);
   ASSERT(Table  != NULL);
@@ -1515,7 +1668,10 @@ ShellCommandConsistMappingGenMappingName (
   MappingInfo.Mtd     = MTDTypeUnknown;
   MappingInfo.Digital = FALSE;
 
-  GetDeviceConsistMappingInfo (&MappingInfo, DevicePath);
+  Status = GetDeviceConsistMappingInfo (&MappingInfo, DevicePath);
+  if (EFI_ERROR (Status)) {
+    return NULL;
+  }
 
   SetMem (&Str, sizeof (Str), 0);
   for (Index = 0; mMTDName[Index].MTDType != MTDTypeEnd; Index++) {
@@ -1525,26 +1681,32 @@ ShellCommandConsistMappingGenMappingName (
   }
 
   if (mMTDName[Index].MTDType != MTDTypeEnd) {
-    CatPrint (&Str, L"%s", mMTDName[Index].Name);
+    Status = CatPrint (&Str, L"%s", mMTDName[Index].Name);
   }
 
-  CatPrint (&Str, L"%d", (UINTN) MappingInfo.Hi);
-  if (MappingInfo.Csd.Str != NULL) {
-    CatPrint (&Str, L"%s", MappingInfo.Csd.Str);
+  if (!EFI_ERROR (Status)) {
+    Status = CatPrint (&Str, L"%d", (UINTN) MappingInfo.Hi);
+  }
+  if (!EFI_ERROR (Status) && MappingInfo.Csd.Str != NULL) {
+    Status = CatPrint (&Str, L"%s", MappingInfo.Csd.Str);
     FreePool (MappingInfo.Csd.Str);
   }
 
-  if (Str.Str != NULL) {
-    CatPrint (&Str, L":");
+  if (!EFI_ERROR (Status) && Str.Str != NULL) {
+    Status = CatPrint (&Str, L":");
+  }
+  if (EFI_ERROR (Status)) {
+    SHELL_FREE_NON_NULL (Str.Str);
+    return NULL;
   }
 
-  NewSize           = (Str.Len + 1) * sizeof (CHAR16);
-  Str.Str           = ReallocatePool (Str.Len, NewSize, Str.Str);
-  if (Str.Str == NULL) {
+  NewStr = ReallocatePool (Str.Len * sizeof (CHAR16), (Str.Len + 1) * sizeof (CHAR16), Str.Str);
+  if (NewStr == NULL) {
+    SHELL_FREE_NON_NULL (Str.Str);
     return (NULL);
   }
-  Str.Str[Str.Len]  = CHAR_NULL;
-  return Str.Str;
+  NewStr[Str.Len] = CHAR_NULL;
+  return NewStr;
 }
 
 /**

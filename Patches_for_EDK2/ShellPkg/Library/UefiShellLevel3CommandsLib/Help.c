@@ -440,6 +440,7 @@ ShellCommandRunHelp (
             }
           }
         }
+
         //
         // Search the .man file for Shell applications (Shell external commands).
         //

@@ -216,7 +216,7 @@ ContainsSplit(
 
   FirstQuote    = FindNextInstance (CmdLine, L"\"", TRUE);
   SecondQuote   = NULL;
-  TempSpot      = ShellFindFirstCharacter(CmdLine, L"|", TRUE);
+  TempSpot      = FindFirstCharacter(CmdLine, L"|", L'^');
 
   if (FirstQuote == NULL    || 
       TempSpot == NULL      || 
@@ -239,7 +239,7 @@ ContainsSplit(
       continue;
     } else {
       FirstQuote = FindNextInstance (SecondQuote + 1, L"\"", TRUE);
-      TempSpot = ShellFindFirstCharacter(TempSpot + 1, L"|", TRUE);
+      TempSpot = FindFirstCharacter(TempSpot + 1, L"|", L'^');
       continue;
     } 
   }
@@ -464,6 +464,7 @@ UefiMain (
       return Status;
     }
     Status = ShellInitEnvVarList ();
+
     //
     // Check the command line
     //
@@ -969,10 +970,9 @@ ProcessCommandLine(
                                   NULL,
                                   (VOID **) &UnicodeCollation
                                   );
-    
-  }
-  if (EFI_ERROR (Status)) {
-    return Status;
+    if (EFI_ERROR (Status)) {
+      return Status;
+    }
   }
 
   // Set default options
@@ -1377,11 +1377,11 @@ AddBufferToFreeList(
     return (NULL);
   }
 
-  BufferListEntry = AllocateZeroPool(sizeof(BUFFER_LIST));
-//  ASSERT(BufferListEntry != NULL);
-  if (!BufferListEntry) {
+  BufferListEntry = AllocateZeroPool (sizeof (BUFFER_LIST));
+  if (BufferListEntry == NULL) {
     return NULL;
   }
+
   BufferListEntry->Buffer = Buffer;
   InsertTailList(&ShellInfoObject.BufferToFreeList.Link, &BufferListEntry->Link);
   return (Buffer);
@@ -1442,16 +1442,16 @@ AddLineToCommandHistory(
 
 
   Node = AllocateZeroPool(sizeof(BUFFER_LIST));
-//  ASSERT(Node != NULL);
-  if (!Node) {
+  if (Node == NULL) {
     return;
   }
-  Node->Buffer = AllocateCopyPool(StrSize(Buffer), Buffer);
-//  ASSERT(Node->Buffer != NULL);
-  if (!Node->Buffer) {
-    FreePool(Node);
+
+  Node->Buffer = AllocateCopyPool (StrSize (Buffer), Buffer);
+  if (Node->Buffer == NULL) {
+    FreePool (Node);
     return;
   }
+
   for ( Walker = (BUFFER_LIST*)GetFirstNode(&ShellInfoObject.ViewingSettings.CommandHistory.Link)
       ; !IsNull(&ShellInfoObject.ViewingSettings.CommandHistory.Link, &Walker->Link)
       ; Walker = (BUFFER_LIST*)GetNextNode(&ShellInfoObject.ViewingSettings.CommandHistory.Link, &Walker->Link)
@@ -1786,9 +1786,8 @@ RunSplitCommand(
   // make a SPLIT_LIST item and add to list
   //
   Split = AllocateZeroPool(sizeof(SPLIT_LIST));
-//  ASSERT(Split != NULL);
-  if (!Split) {
-    return (EFI_OUT_OF_RESOURCES);
+  if (Split == NULL) {
+    return EFI_OUT_OF_RESOURCES;
   }
   Split->SplitStdIn   = StdIn;
   Split->SplitStdOut  = ConvertEfiFileProtocolToShellHandle(CreateFileInterfaceMem(Unicode), NULL);
@@ -2060,7 +2059,7 @@ IsValidSplit(
       return (EFI_OUT_OF_RESOURCES);
     }
     TempWalker = (CHAR16*)Temp;
-    if (!EFI_ERROR(ShellGetNextParameter(&TempWalker, FirstParameter, StrSize(CmdLine), TRUE))) {
+    if (!EFI_ERROR(GetNextParameter(&TempWalker, &FirstParameter, StrSize(CmdLine), TRUE))) {
     if (GetOperationType(FirstParameter) == Unknown_Invalid) {
       ShellPrintHiiEx(-1, -1, NULL, STRING_TOKEN (STR_SHELL_NOT_FOUND), ShellInfoObject.HiiHandle, FirstParameter);
       SetLastError(SHELL_NOT_FOUND);
@@ -2109,7 +2108,7 @@ VerifySplit(
   //
   // recurse to verify the next item
   //
-  TempSpot = ShellFindFirstCharacter(CmdLine, L"|", TRUE) + 1;
+  TempSpot = FindFirstCharacter(CmdLine, L"|", L'^') + 1;
   if (*TempSpot == L'a' && 
       (*(TempSpot + 1) == L' ' || *(TempSpot + 1) == CHAR_NULL)
      ) {
@@ -2227,7 +2226,7 @@ DoHelpUpdate(
 
   Walker = *CmdLine;
   while(Walker != NULL && *Walker != CHAR_NULL) {
-    if (!EFI_ERROR(ShellGetNextParameter(&Walker, CurrentParameter, StrSize(*CmdLine), TRUE))) {
+    if (!EFI_ERROR(GetNextParameter(&Walker, &CurrentParameter, StrSize(*CmdLine), TRUE))) {
     if (StrStr(CurrentParameter, L"-?") == CurrentParameter) {
         CurrentParameter[0] = L' ';
         CurrentParameter[1] = L' ';
@@ -2727,7 +2726,7 @@ RunShellCommand(
     return (EFI_OUT_OF_RESOURCES);
   }
   TempWalker = CleanOriginal;
-  if (!EFI_ERROR(ShellGetNextParameter(&TempWalker, FirstParameter, StrSize(CleanOriginal), TRUE))) {
+  if (!EFI_ERROR(GetNextParameter(&TempWalker, &FirstParameter, StrSize(CleanOriginal), TRUE))) {
   //
   // Depending on the first parameter we change the behavior
   //
@@ -2859,10 +2858,6 @@ if (!ShellCommandGetScriptExit()) {
   // Set up the name
   //
 //  ASSERT(NewScriptFile->ScriptName == NULL);
-  if (NewScriptFile->ScriptName) {
-    FreePool(NewScriptFile);
-    return EFI_INVALID_PARAMETER;
-  }
   NewScriptFile->ScriptName = StrnCatGrow(&NewScriptFile->ScriptName, NULL, Name, 0);
   if (NewScriptFile->ScriptName == NULL) {
     DeleteScriptFileStruct(NewScriptFile);
@@ -3231,3 +3226,37 @@ RunScriptFile (
   return (Status);
 }
 
+/**
+  Return the pointer to the first occurrence of any character from a list of characters.
+
+  @param[in] String           the string to parse
+  @param[in] CharacterList    the list of character to look for
+  @param[in] EscapeCharacter  An escape character to skip
+
+  @return the location of the first character in the string
+  @retval CHAR_NULL no instance of any character in CharacterList was found in String
+**/
+CONST CHAR16*
+EFIAPI
+FindFirstCharacter(
+  IN CONST CHAR16 *String,
+  IN CONST CHAR16 *CharacterList,
+  IN CONST CHAR16 EscapeCharacter
+  )
+{
+  UINT32 WalkChar;
+  UINT32 WalkStr;
+
+  for (WalkStr = 0; WalkStr < StrLen(String); WalkStr++) {
+    if (String[WalkStr] == EscapeCharacter) {
+      WalkStr++;
+      continue;
+    }
+    for (WalkChar = 0; WalkChar < StrLen(CharacterList); WalkChar++) {
+      if (String[WalkStr] == CharacterList[WalkChar]) {
+        return (&String[WalkStr]);
+      }
+    }
+  }
+  return (String + StrLen(String));
+}

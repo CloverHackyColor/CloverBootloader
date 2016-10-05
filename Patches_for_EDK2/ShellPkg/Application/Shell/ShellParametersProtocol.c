@@ -34,7 +34,7 @@ FindEndOfParameter(
   CONST CHAR16 *First;
   CONST CHAR16 *CloseQuote;
 
-  First = ShellFindFirstCharacter(String, L" \"", TRUE);
+  First = FindFirstCharacter(String, L" \"", L'^');
 
   //
   // nothing, all one parameter remaining
@@ -51,7 +51,7 @@ FindEndOfParameter(
     return (First);
   }
 
-  CloseQuote = ShellFindFirstCharacter (First+1, L"\"", TRUE);
+  CloseQuote = FindFirstCharacter (First+1, L"\"", L'^');
 
   //
   // We did not find a terminator...
@@ -85,7 +85,7 @@ FindEndOfParameter(
   @return   EFI_INALID_PARAMETER  A required parameter was NULL or pointed to a NULL or empty string.
   @return   EFI_NOT_FOUND         A closing " could not be found on the specified string
 **/
-/*EFI_STATUS
+EFI_STATUS
 EFIAPI
 GetNextParameter(
   IN OUT CHAR16   **Walker,
@@ -175,7 +175,7 @@ DEBUG_CODE_END();
 
   return EFI_SUCCESS;
 }
-*/
+
 /**
   Function to populate Argc and Argv.
 
@@ -242,7 +242,7 @@ ParseCommandLineToArgs(
       ; Walker != NULL && *Walker != CHAR_NULL
       ; Count++
       ) {
-    if (EFI_ERROR(ShellGetNextParameter(&Walker, TempParameter, Size, TRUE))) {
+    if (EFI_ERROR(GetNextParameter(&Walker, &TempParameter, Size, TRUE))) {
       break;
     }
   }
@@ -260,7 +260,7 @@ ParseCommandLineToArgs(
   Walker = (CHAR16*)NewCommandLine;
   while(Walker != NULL && *Walker != CHAR_NULL) {
     SetMem16(TempParameter, Size, CHAR_NULL);
-    if (EFI_ERROR(ShellGetNextParameter(&Walker, TempParameter, Size, StripQuotation))) {
+    if (EFI_ERROR(GetNextParameter(&Walker, &TempParameter, Size, StripQuotation))) {
       Status = EFI_INVALID_PARAMETER;
       goto Done;
     }
@@ -749,6 +749,7 @@ UpdateStdInStdOutStdErr(
   UINTN             Size;
   SPLIT_LIST        *Split;
   CHAR16            *FirstLocation;
+  BOOLEAN           Volatile;
 
   OutUnicode      = TRUE;
   InUnicode       = TRUE;
@@ -1124,8 +1125,8 @@ UpdateStdInStdOutStdErr(
       //
       // Check for no volatile environment variables
       //
-      ||(StdErrVarName  != NULL && !IsVolatileEnv(StdErrVarName))
-      ||(StdOutVarName  != NULL && !IsVolatileEnv(StdOutVarName))
+      ||(StdErrVarName  != NULL && !EFI_ERROR (IsVolatileEnv (StdErrVarName, &Volatile)) && !Volatile)
+      ||(StdOutVarName  != NULL && !EFI_ERROR (IsVolatileEnv (StdOutVarName, &Volatile)) && !Volatile)
       //
       // Cant redirect during a reconnect operation.
       //

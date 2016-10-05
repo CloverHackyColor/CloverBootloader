@@ -482,6 +482,10 @@ EfiShellGetFilePathFromDevicePath(
 
           AlignedNode = AllocateCopyPool (DevicePathNodeLength(FilePath), FilePath);
  //       ASSERT (AlignedNode != NULL);
+         if (AlignedNode == NULL) {
+          FreePool (PathForReturn);
+          return NULL;
+        }
 
           // File Path Device Path Nodes 'can optionally add a "\" separator to
           //  the beginning and/or the end of the Path Name string.'
@@ -1150,13 +1154,18 @@ EfiShellCreateFile(
 {
   EFI_DEVICE_PATH_PROTOCOL  *DevicePath;
   EFI_STATUS                Status;
+  BOOLEAN                   Volatile;
 
   //
   // Is this for an environment variable
   // do we start with >v
   //
   if (StrStr(FileName, L">v") == FileName) {
-    if (!IsVolatileEnv(FileName+2)) {
+    Status = IsVolatileEnv (FileName + 2, &Volatile);
+    if (EFI_ERROR (Status)) {
+      return Status;
+    }
+    if (!Volatile) {
       return (EFI_INVALID_PARAMETER);
     }
     *FileHandle = CreateFileInterfaceEnv(FileName+2);
@@ -1266,6 +1275,7 @@ EfiShellOpenFileByName(
 {
   EFI_DEVICE_PATH_PROTOCOL        *DevicePath;
   EFI_STATUS                      Status;
+  BOOLEAN                         Volatile;
 
   *FileHandle = NULL;
 
@@ -1329,7 +1339,11 @@ EfiShellOpenFileByName(
   // do we start with >v
   //
   if (StrStr(FileName, L">v") == FileName) {
-    if (!IsVolatileEnv(FileName+2) &&
+    Status = IsVolatileEnv (FileName + 2, &Volatile);
+    if (EFI_ERROR (Status)) {
+      return Status;
+    }
+    if (!Volatile &&
         ((OpenMode & EFI_FILE_MODE_WRITE) != 0)) {
       return (EFI_INVALID_PARAMETER);
     }
@@ -2166,6 +2180,14 @@ EfiShellFindFilesInDir(
       ; !EFI_ERROR(Status) && !NoFile
       ; Status = FileHandleFindNextFile(FileDirHandle, FileInfo, &NoFile)
      ){
+    if (ShellFileList == NULL) {
+      ShellFileList = (EFI_SHELL_FILE_INFO*)AllocateZeroPool(sizeof(EFI_SHELL_FILE_INFO));
+      if (ShellFileList == NULL) {
+        SHELL_FREE_NON_NULL (BasePath);
+        return EFI_OUT_OF_RESOURCES;
+      }
+      InitializeListHead(&ShellFileList->Link);
+    }
     //
     // allocate a new EFI_SHELL_FILE_INFO and populate it...
     //
@@ -2175,14 +2197,12 @@ EfiShellFindFilesInDir(
       FileInfo->FileName,
       NULL, // no handle since not open
       FileInfo);
-
-    if (ShellFileList == NULL) {
-      ShellFileList = (EFI_SHELL_FILE_INFO*)AllocateZeroPool(sizeof(EFI_SHELL_FILE_INFO));
- //     ASSERT(ShellFileList != NULL);
-      if (!ShellFileList) {
-        return EFI_OUT_OF_RESOURCES;
-      }
-      InitializeListHead(&ShellFileList->Link);
+    if (ShellFileListItem == NULL) {
+      Status = EFI_OUT_OF_RESOURCES;
+      //
+      // Free resources outside the loop.
+      //
+      break;
     }
     InsertTailList(&ShellFileList->Link, &ShellFileListItem->Link);
   }
@@ -2389,10 +2409,10 @@ ShellSearchHandle(
      ; NextFilePatternStart++);
 
   CurrentFilePattern = AllocateZeroPool((NextFilePatternStart-FilePattern+1)*sizeof(CHAR16));
-//  ASSERT(CurrentFilePattern != NULL);
-  if (!CurrentFilePattern) {
+  if (CurrentFilePattern == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
+
   StrnCpyS(CurrentFilePattern, NextFilePatternStart-FilePattern+1, FilePattern, NextFilePatternStart-FilePattern);
 
   if (CurrentFilePattern[0]   == CHAR_NULL
@@ -2500,7 +2520,6 @@ ShellSearchHandle(
             // copy the information we need into a new Node
             //
             NewShellNode = InternalDuplicateShellFileInfo(ShellInfoNode, FALSE);
-    //        ASSERT(NewShellNode != NULL);
             if (NewShellNode == NULL) {
               Status = EFI_OUT_OF_RESOURCES;
             }
@@ -2893,37 +2912,29 @@ InternalEfiShellSetEnv(
   )
 {
   EFI_STATUS      Status;
-  UINT32          Atts;
-
-  Atts = 0x0;
   
   if (Value == NULL || StrLen(Value) == 0) {
     Status = SHELL_DELETE_ENVIRONMENT_VARIABLE(Name);
     if (!EFI_ERROR(Status)) {
       ShellRemvoeEnvVarFromList(Name);
     }
-    return Status;
   } else {
     SHELL_DELETE_ENVIRONMENT_VARIABLE(Name);
-    if (Volatile) {
-      Status = SHELL_SET_ENVIRONMENT_VARIABLE_V(Name, StrSize(Value), Value);
-      if (!EFI_ERROR(Status)) {
-        Atts   &= ~EFI_VARIABLE_NON_VOLATILE;
-        Atts   |= EFI_VARIABLE_BOOTSERVICE_ACCESS;
-        ShellAddEnvVarToList(Name, Value, StrSize(Value), Atts);
+    Status = ShellAddEnvVarToList(
+               Name, Value, StrSize(Value),
+               EFI_VARIABLE_BOOTSERVICE_ACCESS | (Volatile ? 0 : EFI_VARIABLE_NON_VOLATILE)
+               );
+    if (!EFI_ERROR (Status)) {
+      Status = Volatile
+             ? SHELL_SET_ENVIRONMENT_VARIABLE_V(Name, StrSize(Value), Value)
+             : SHELL_SET_ENVIRONMENT_VARIABLE_NV(Name, StrSize(Value), Value);
+      if (EFI_ERROR (Status)) {
+        ShellRemvoeEnvVarFromList(Name);
       }
-      return Status;
-    } else {
-      Status = SHELL_SET_ENVIRONMENT_VARIABLE_NV(Name, StrSize(Value), Value);
-      if (!EFI_ERROR(Status)) {
-        Atts   |= EFI_VARIABLE_NON_VOLATILE;
-        Atts   |= EFI_VARIABLE_BOOTSERVICE_ACCESS;
-        ShellAddEnvVarToList(Name, Value, StrSize(Value), Atts);
-      } 
-      return Status;
     }
-  }
-}
+  } 
+  return Status;
+ }
 
 /**
   Sets the environment variable.
@@ -3270,7 +3281,9 @@ EfiShellGetHelpText(
     && (Command[StrLen(Command)-4] == L'.')
     ) {
       FixCommand = AllocateZeroPool(StrSize(Command) - 4 * sizeof (CHAR16));
-//      ASSERT(FixCommand != NULL);
+      if (FixCommand == NULL) {
+        return EFI_OUT_OF_RESOURCES;
+      }
 
       StrnCpyS( FixCommand, 
                 (StrSize(Command) - 4 * sizeof (CHAR16))/sizeof(CHAR16), 
@@ -3449,7 +3462,9 @@ EfiShellGetAlias(
   // Convert to lowercase to make aliases case-insensitive
   if (Alias != NULL) {
     AliasLower = AllocateCopyPool (StrSize (Alias), Alias);
-    ASSERT (AliasLower != NULL);
+    if (AliasLower == NULL) {
+      return NULL;
+    }
     ToLower (AliasLower);
 
     if (Volatile == NULL) {
@@ -3513,7 +3528,9 @@ InternalSetAlias(
   // Convert to lowercase to make aliases case-insensitive
   if (Alias != NULL) {
     AliasLower = AllocateCopyPool (StrSize (Alias), Alias);
-    ASSERT (AliasLower != NULL);
+    if (AliasLower == NULL) {
+      return EFI_OUT_OF_RESOURCES;
+    }
     ToLower (AliasLower);
   } else {
     AliasLower = NULL;
@@ -3672,6 +3689,7 @@ CreatePopulateInstallShellProtocol (
   EFI_HANDLE                  *Buffer;
   UINTN                       HandleCounter;
   SHELL_PROTOCOL_HANDLE_LIST  *OldProtocolNode;
+  EFI_SHELL_PROTOCOL          *OldShell;
 
   if (NewShell == NULL) {
     return (EFI_INVALID_PARAMETER);
@@ -3723,23 +3741,27 @@ CreatePopulateInstallShellProtocol (
     // now overwrite each of them, but save the info to restore when we end.
     //
     for (HandleCounter = 0 ; HandleCounter < (BufferSize/sizeof(EFI_HANDLE)) ; HandleCounter++) {
-      OldProtocolNode = AllocateZeroPool(sizeof(SHELL_PROTOCOL_HANDLE_LIST));
- //     ASSERT(OldProtocolNode != NULL);
-      if (!OldProtocolNode) {
-        return EFI_OUT_OF_RESOURCES;
-      }
       Status = gBS->OpenProtocol(Buffer[HandleCounter],
                                 &gEfiShellProtocolGuid,
-                                (VOID **) &(OldProtocolNode->Interface),
+                                (VOID **) &OldShell,
                                 gImageHandle,
                                 NULL,
                                 EFI_OPEN_PROTOCOL_GET_PROTOCOL
                                );
       if (!EFI_ERROR(Status)) {
+        OldProtocolNode = AllocateZeroPool(sizeof(SHELL_PROTOCOL_HANDLE_LIST));
+        if (OldProtocolNode == NULL) {
+          if (!IsListEmpty (&ShellInfoObject.OldShellList.Link)) {
+            CleanUpShellProtocol (&mShellProtocol);
+          }
+          Status = EFI_OUT_OF_RESOURCES;
+          break;
+        }
         //
         // reinstall over the old one...
         //
         OldProtocolNode->Handle = Buffer[HandleCounter];
+        OldProtocolNode->Interface = OldShell;
         Status = gBS->ReinstallProtocolInterface(
                             OldProtocolNode->Handle,
                             &gEfiShellProtocolGuid,
@@ -3795,39 +3817,51 @@ CreatePopulateInstallShellProtocol (
   @retval EFI_SUCCESS       The operation was successful.
 **/
 EFI_STATUS
-EFIAPI
 CleanUpShellProtocol (
   IN OUT EFI_SHELL_PROTOCOL  *NewShell
   )
 {
-  EFI_STATUS                        Status;
   SHELL_PROTOCOL_HANDLE_LIST        *Node2;
-  EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL *SimpleEx;
 
   //
   // if we need to restore old protocols...
   //
   if (!IsListEmpty(&ShellInfoObject.OldShellList.Link)) {
-    for (Node2 = (SHELL_PROTOCOL_HANDLE_LIST *)GetFirstNode(&ShellInfoObject.OldShellList.Link)
+    for (Node2 = (SHELL_PROTOCOL_HANDLE_LIST *) GetFirstNode (&ShellInfoObject.OldShellList.Link)
          ; !IsListEmpty (&ShellInfoObject.OldShellList.Link)
-         ; Node2 = (SHELL_PROTOCOL_HANDLE_LIST *)GetFirstNode(&ShellInfoObject.OldShellList.Link)
-        ){
-      RemoveEntryList(&Node2->Link);
-      /*Status = */gBS->ReinstallProtocolInterface(Node2->Handle,
-                                               &gEfiShellProtocolGuid,
-                                               NewShell,
-                                               Node2->Interface);
-      FreePool(Node2);
+         ; Node2 = (SHELL_PROTOCOL_HANDLE_LIST *) GetFirstNode (&ShellInfoObject.OldShellList.Link)
+         ) {
+      RemoveEntryList (&Node2->Link);
+      gBS->ReinstallProtocolInterface (Node2->Handle, &gEfiShellProtocolGuid, NewShell, Node2->Interface);
+      FreePool (Node2);
     }
   } else {
     //
     // no need to restore
     //
-    /*Status = */gBS->UninstallProtocolInterface(gImageHandle,
-                                             &gEfiShellProtocolGuid,
-                                             NewShell);
+    gBS->UninstallProtocolInterface (gImageHandle, &gEfiShellProtocolGuid, NewShell);
   }
-  /*Status = */gBS->CloseEvent(NewShell->ExecutionBreak);
+  return EFI_SUCCESS;
+  }
+
+/**
+  Cleanup the shell environment.
+
+  @param[in, out] NewShell   The pointer to the new shell protocol structure.
+
+  @retval EFI_SUCCESS       The operation was successful.
+**/
+EFI_STATUS
+CleanUpShellEnvironment (
+  IN OUT EFI_SHELL_PROTOCOL  *NewShell
+  )
+{
+  EFI_STATUS                        Status;
+  EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL *SimpleEx;
+  
+  CleanUpShellProtocol (NewShell);
+
+  Status = gBS->CloseEvent(NewShell->ExecutionBreak);
   NewShell->ExecutionBreak = NULL;
 
   Status = gBS->OpenProtocol(
