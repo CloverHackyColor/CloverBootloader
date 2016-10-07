@@ -4967,16 +4967,16 @@ VOID GetBiosRegions(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt)
           }
         }
         if (tmp.Address) {
-        OPER_REGION *newRegion = AllocateZeroPool(sizeof(OPER_REGION));
+          OPER_REGION *newRegion = AllocateZeroPool(sizeof(OPER_REGION));
           DBG("Found OperationRegion(%a, SystemMemory, %x, ...)\n", tmp.Name, tmp.Address);
           //OPER_REGION *newRegion = AllocateZeroPool(sizeof(OPER_REGION));
           newRegion = AllocateZeroPool(sizeof(OPER_REGION));
-        *newRegion = tmp;
-        newRegion->next = gRegions;
-        gRegions = newRegion;
+          *newRegion = tmp;
+          newRegion->next = gRegions;
+          gRegions = newRegion;
         } else {
           // ignore OperationRegion where the address cannot be determined
-          DBG("Unable to determine address for OperationRegion(%a, SystemMemory, ...) skipping\n", tmp.Name);
+          //DBG("Unable to determine address for OperationRegion(%a, SystemMemory, ...) skipping\n", tmp.Name);
         }
       }
     }

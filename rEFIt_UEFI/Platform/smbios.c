@@ -1100,7 +1100,7 @@ VOID GetTableType16()
   for (Index = 0; Index < 8; Index++) {  //how many tables there may be?
     SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_PHYSICAL_MEMORY_ARRAY, Index);
     if (SmbiosTable.Raw == NULL) {
-      DBG("SmbiosTable: Type 16 (Physical Memory Array) not found!\n");
+//      DBG("SmbiosTable: Type 16 (Physical Memory Array) not found!\n");
       continue;
     }
     DBG("Type 16 Index = %d\n", Index);

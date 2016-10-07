@@ -530,7 +530,7 @@ LoadUserSettings (
     if (EFI_ERROR (Status)) {
       Status = egLoadFile (SelfRootDir, ConfigPlistPath, (UINT8**)&gConfigPtr, &Size);
     }
-    DBG ("Using %s.plist at path: %s", ConfName, ConfigPlistPath);
+    DBG ("Using %s.plist at path: %s\n", ConfName, ConfigPlistPath);
   } //else {
     //DBG ("Using OEM %s.plist at path: %s", ConfName, ConfigOemPath);
     //}
@@ -542,12 +542,12 @@ LoadUserSettings (
     Status = ParseXML ((const CHAR8*)gConfigPtr, Dict, (UINT32)Size);
     if (EFI_ERROR (Status)) {
       //  Dict = NULL;
-      DBG (", plist parse error Status=%r\n", Status);
+      DBG ("config.plist parse error Status=%r\n", Status);
       return Status;
     }
   }
 
-  DBG (", Status=%r\n", Status);
+//  DBG (", Status=%r\n", Status);
 
   return Status;
 }
@@ -4125,9 +4125,9 @@ GetUserSettings(
 
             for (i = 0; i < Count; i++) {
               UINTN Size = 0;
-              DBG (" - [%02d]:");
+              DBG (" - [%02d]:", i);
               if (EFI_ERROR (GetElement (Prop, i, &Dict2))) {
-                DBG (" continue\n", i);
+                DBG (" continue\n");
                 continue;
               }
 
@@ -5019,7 +5019,7 @@ GetUserSettings(
           }
 
           if (!Index) {
-            DBG ("Slots->Device:");
+            DBG ("Slots->Devices:\n");
           }
 
           Prop2 = GetProperty (Prop3, "Device");

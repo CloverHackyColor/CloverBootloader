@@ -108,10 +108,11 @@ EFI_STATUS GetEdidDiscovered(VOID)
     }
     ((UINT8*)gEDID)[127] = (UINT8)(256 - Checksum8(gEDID, 127));
     if (!GlobalConfig.DebugLog) {
-      for (i=0; i<N; i+=16) {
-        MsgLog("%02d | ", i);
-        for (j=0; j<16; j++) {
-          MsgLog("%02x%a", EdidDiscovered->Edid[i+j], (j<15) ? " " : "");
+      for (i=0; i<N; i+=10) {
+        MsgLog("%03d  |", i);
+        for (j=0; j<10; j++) {
+          if (i+j > N-1) break;
+          MsgLog("  %02x", EdidDiscovered->Edid[i+j]);
         }
         MsgLog("\n");
       }

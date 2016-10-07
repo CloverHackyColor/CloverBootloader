@@ -262,18 +262,18 @@ EFIAPI OurBlockIoRead (
       BlockSize = 512;
     }
     
-    DBG(" OurBlockIoRead: Lba=%lx, Offset=%lx (BlockSize=%d)\n", Lba, MultU64x32(Lba, BlockSize), BlockSize);
+    DBG("    OurBlockIoRead: Lba=%lx, Offset=%lx (BlockSize=%d)\n", Lba, MultU64x32(Lba, BlockSize), BlockSize);
     
     Header = (IOHibernateImageHeaderMin *) Buffer;
     Header2 = (IOHibernateImageHeaderMinSnow *) Buffer;
-    DBG(" sig lion: %x\n", Header->signature);
-    DBG(" sig snow: %x\n", Header2->signature);
+    DBG("    sig lion: %x\n", Header->signature);
+    DBG("    sig snow: %x\n", Header2->signature);
     // DBG(" sig swap: %x\n", SwapBytes32(Header->signature));
     
     if (Header->signature == kIOHibernateHeaderSignature ||
         Header2->signature == kIOHibernateHeaderSignature) {
       gSleepImageOffset = MultU64x32(Lba, BlockSize);
-      DBG(" got sleep image offset\n");
+      DBG("    got sleep image offset\n");
       //save sleep time as lvs1974 suggested
       if (Header->signature == kIOHibernateHeaderSignature) {
         gSleepTime = Header->sleepTime;
@@ -282,7 +282,7 @@ EFIAPI OurBlockIoRead (
       // return invalid parameter in case of success in order to prevent driver from caching our buffer
       return EFI_INVALID_PARAMETER;
     } else {
-      DBG(" no valid sleep image offset was found\n");
+      DBG("    no valid sleep image offset was found\n");
       gSleepImageOffset = 0;
     }
   }
@@ -563,29 +563,29 @@ IsOsxHibernated (IN REFIT_VOLUME *Volume)
   //if sleep image is good but OSX was not hibernated.
   //or we choose "cancel hibernate wake" then it must be canceled
   if (GlobalConfig.NeverHibernate) {
-    DBG("        hibernated: set as never\n");
+    DBG("    hibernated: set as never\n");
     return FALSE;
   }
   
-  DBG("        Check if volume Is Hibernated:\n");
+  DBG("    Check if volume Is Hibernated:\n");
 
   // CloverEFI or UEFI with EmuVariable
   if (IsSleepImageValidBySignature(Volume)) {
     if ((gSleepTime == 0) || IsSleepImageValidBySleepTime(Volume)) {
-      DBG("        hibernated: yes\n");
+      DBG("    hibernated: yes\n");
     } else {
-      DBG("        hibernated: no - time\n");
+      DBG("    hibernated: no - time\n");
       return FALSE;
     }
 //    IsHibernate = TRUE;
   } else {
-    DBG("        hibernated: no - sign\n");
+    DBG("    hibernated: no - sign\n");
     return FALSE;
   }
   
   if (!gFirmwareClover &&
       !gDriversFlags.EmuVariableLoaded) {
-    DBG("        UEFI with NVRAM: ");
+    DBG("    UEFI with NVRAM: ");
     Status = gRT->GetVariable (L"Boot0082", &gEfiGlobalVariableGuid, NULL, &Size, Data);
     if (Status == EFI_BUFFER_TOO_SMALL) {
       DBG("yes\n");

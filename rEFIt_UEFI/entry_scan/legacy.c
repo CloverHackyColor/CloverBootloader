@@ -263,7 +263,10 @@ VOID AddCustomLegacy(VOID)
   UINTN                i = 0;
   
 //  DBG("Custom legacy start\n");
-  DbgHeader("AddCustomLegacy");
+  if (gSettings.CustomLegacy) {
+    DbgHeader("AddCustomLegacy");
+  }
+
   // Traverse the custom entries
   for (Custom = gSettings.CustomLegacy; Custom; ++i, Custom = Custom->Next) {
     if (OSFLAG_ISSET(Custom->Flags, OSFLAG_DISABLED)) {

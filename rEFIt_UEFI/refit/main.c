@@ -1388,7 +1388,7 @@ INTN FindDefaultEntry(VOID)
   BOOLEAN             SearchForLoader;
 
 //  DBG("FindDefaultEntry ...\n");
-  DbgHeader("FindDefaultEntry");
+  //DbgHeader("FindDefaultEntry");
 
   //
   // try to detect volume set by Startup Disk or previous Clover selection
