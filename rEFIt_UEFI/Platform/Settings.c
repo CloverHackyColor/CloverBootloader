@@ -64,20 +64,24 @@ UINT16                          dropDSM;
 
 BOOLEAN                         GetLegacyLanAddress;
 
-extern MEM_STRUCTURE            gRAM;
-extern BOOLEAN                  NeedPMfix;
-
 
 GUI_ANIME                       *GuiAnime                   = NULL;
+EG_IMAGE *SelectionImages[6] = {NULL, NULL, NULL, NULL, NULL, NULL};
+EG_IMAGE *Buttons[4] = {NULL, NULL, NULL, NULL};
+EG_PIXEL SelectionBackgroundPixel = { 0xef, 0xef, 0xef, 0xff }; //non-trasparent
+
+INTN row0TileSize = 144;
+INTN row1TileSize = 64;
+
+
+extern MEM_STRUCTURE            gRAM;
+extern BOOLEAN                  NeedPMfix;
 
 extern INTN                     ScrollWidth;
 extern INTN                     ScrollButtonsHeight;
 extern INTN                     ScrollBarDecorationsHeight;
 extern INTN                     ScrollScrollDecorationsHeight;
 
-extern UINT8 GetOSTypeFromPath (
-                                IN  CHAR16 *Path
-                                );
 
 // global configuration with default values
 REFIT_CONFIG   GlobalConfig = {
@@ -3212,10 +3216,10 @@ GetThemeTagSettings (
     GlobalConfig.TileYSpace = (INT32)GetPropertyInteger (Dict2, GlobalConfig.TileYSpace);
 
     Dict2 = GetProperty (Dict, "SelectionBigWidth");
-    row0TileSize = (INT32)GetPropertyInteger (Dict2, row0TileSize);
+    row0TileSize = (INTN)GetPropertyInteger (Dict2, row0TileSize);
 
     Dict2 = GetProperty (Dict, "SelectionSmallWidth");
-    row1TileSize = (INT32)GetPropertyInteger (Dict2, row1TileSize);
+    row1TileSize = (INTN)GetPropertyInteger (Dict2, row1TileSize);
 
 //    Dict2 = GetProperty (Dict, "PruneScrollRows");
 //    GlobalConfig.PruneScrollRows = (INT32)GetPropertyInteger (Dict2, 0);

@@ -126,14 +126,14 @@ INTN ScrollbarYMovement;
 #define ROW0_SCROLLSIZE (100)
 #define INDICATOR_SIZE (52)
 
-EG_IMAGE *SelectionImages[6] = {NULL, NULL, NULL, NULL, NULL, NULL};
-EG_IMAGE *Buttons[4] = {NULL, NULL, NULL, NULL};
+//EG_IMAGE *SelectionImages[6] = {NULL, NULL, NULL, NULL, NULL, NULL};
+//EG_IMAGE *Buttons[4] = {NULL, NULL, NULL, NULL};
 static EG_IMAGE *TextBuffer = NULL;
 
-EG_PIXEL SelectionBackgroundPixel = { 0xef, 0xef, 0xef, 0xff }; //non-trasparent
+//EG_PIXEL SelectionBackgroundPixel = { 0xef, 0xef, 0xef, 0xff }; //non-trasparent
 
-INTN row0TileSize = 144;
-INTN row1TileSize = 64;
+//INTN row0TileSize = 144;
+//INTN row1TileSize = 64;
 
 static INTN row0Count, row0PosX, row0PosXRunning;
 static INTN row1Count, row1PosX, row1PosXRunning;
@@ -1607,6 +1607,11 @@ VOID InitSelection(VOID)
       
     }
     SelectionImages[4] = egEnsureImageSize(SelectionImages[4], INDICATOR_SIZE, INDICATOR_SIZE, &MenuBackgroundPixel);
+    if (!SelectionImages[4]) {
+      SelectionImages[4] = egCreateFilledImage(INDICATOR_SIZE, INDICATOR_SIZE,
+                                               TRUE, &StdBackgroundPixel);
+
+    }
     SelectionImages[5] = egCreateFilledImage(INDICATOR_SIZE, INDICATOR_SIZE,
                                              TRUE, &MenuBackgroundPixel);
   }
@@ -3255,7 +3260,9 @@ static VOID DrawMainMenuEntry(REFIT_MENU_ENTRY *Entry, BOOLEAN selected, INTN XP
   if (GlobalConfig.SelectionOnTop) {
     SelectionImages[0]->HasAlpha = TRUE;
     SelectionImages[2]->HasAlpha = TRUE;
-    SelectionImages[4]->HasAlpha = TRUE;
+    if (GlobalConfig.BootCampStyle) {
+      SelectionImages[4]->HasAlpha = TRUE;
+    }
     //MainImage->HasAlpha = TRUE;
     BltImageCompositeBadge(MainImage,
                            SelectionImages[((Entry->Row == 0) ? 0 : 2) + (selected ? 0 : 1)],

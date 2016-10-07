@@ -679,6 +679,7 @@ EFI_STATUS  ReinitSelfLib(VOID);
 //extern EFI_STATUS FinishInitRefitLib(VOID); -- static
 VOID        PauseForKey(IN CHAR16 *Msg);
 BOOLEAN     IsEmbeddedTheme();
+UINT8       GetOSTypeFromPath (IN  CHAR16 *Path);
 
 VOID CreateList(OUT VOID ***ListPtr, OUT UINTN *ElementCount, IN UINTN InitialElementCount);
 VOID AddListElement(IN OUT VOID ***ListPtr, IN OUT UINTN *ElementCount, IN VOID *NewElement);
@@ -761,6 +762,7 @@ extern EG_PIXEL MenuBackgroundPixel;
 extern EG_PIXEL InputBackgroundPixel;
 extern EG_PIXEL BlueBackgroundPixel;
 extern EG_PIXEL DarkBackgroundPixel;
+extern EG_PIXEL SelectionBackgroundPixel;
 
 extern EG_RECT  BannerPlace;
 extern EG_IMAGE *BackgroundImage;
