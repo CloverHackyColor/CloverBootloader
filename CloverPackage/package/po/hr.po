@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-09-30 11:14+0300\n"
+"POT-Creation-Date: 2016-10-07 18:59+0300\n"
 "PO-Revision-Date: 2014-02-14 07:37+0000\n"
 "Last-Translator: Xpam.AmAdEuS <miljenkohalapir@outlook.com>\n"
 "Language-Team: hr <hr@li.org>\n"
@@ -604,26 +604,32 @@ msgstr "Pojednostavljena verzija OsxAptioFixDrv,64 bitna. ( nemojte koristiti ob
 msgid "64bit driver to support non-usual partition maps such as: hybrid GPT/MBR or Apple Partition Map."
 msgstr "64 bitni upravljački program za podršku ne uobičajenih particija poput  hybrid GPT/MBR ili Apple Partition Map"
 
+#. type: "SMCHelper-64_description"
+#: Resources/templates/Localizable.strings:105
+#, no-wrap
+msgid "Restore SMC keys left in nvram by FakeSMC"
+msgstr ""
+
 #. type: "Themes_title"
-#: Resources/templates/Localizable.strings:110
+#: Resources/templates/Localizable.strings:111
 #, no-wrap
 msgid "Themes"
 msgstr "Teme"
 
 #. type: "Themes_description"
-#: Resources/templates/Localizable.strings:111
+#: Resources/templates/Localizable.strings:112
 #, no-wrap
 msgid "Select to install themes."
 msgstr "Odaberi za instalaciju teme."
 
 #. type: "BGM_title"
-#: Resources/templates/Localizable.strings:113
+#: Resources/templates/Localizable.strings:114
 #, no-wrap
 msgid "Black_Green_Moody"
 msgstr "Crno_Zelena_Čudna"
 
 #. type: "BGM_description"
-#: Resources/templates/Localizable.strings:114
+#: Resources/templates/Localizable.strings:115
 #, no-wrap
 msgid ""
 "BGM (Black Green and Moody) theme from Blackosx,\n"
@@ -633,13 +639,13 @@ msgstr ""
 "Instaliraj u /EFI/CLOVER/themes/BGM"
 
 #. type: "embedded_title"
-#: Resources/templates/Localizable.strings:117
+#: Resources/templates/Localizable.strings:118
 #, no-wrap
 msgid "embedded"
 msgstr ""
 
 #. type: "embedded_description"
-#: Resources/templates/Localizable.strings:118
+#: Resources/templates/Localizable.strings:119
 #, fuzzy, no-wrap
 #| msgid ""
 #| "Default black_green theme from Blackosx,\n"
@@ -652,13 +658,13 @@ msgstr ""
 "Instaliraj u /EFI/CLOVER/themes/black_green."
 
 #. type: "metal_title"
-#: Resources/templates/Localizable.strings:121
+#: Resources/templates/Localizable.strings:122
 #, no-wrap
 msgid "metal"
 msgstr "metal"
 
 #. type: "metal_description"
-#: Resources/templates/Localizable.strings:122
+#: Resources/templates/Localizable.strings:123
 #, no-wrap
 msgid ""
 "The original metal theme from Slice,\n"
@@ -668,13 +674,13 @@ msgstr ""
 "Instaliraj u  /EFI/CLOVER/themes/metal."
 
 #. type: "random_title"
-#: Resources/templates/Localizable.strings:125
+#: Resources/templates/Localizable.strings:126
 #, no-wrap
 msgid "random"
 msgstr ""
 
 #. type: "random_description"
-#: Resources/templates/Localizable.strings:126
+#: Resources/templates/Localizable.strings:127
 #, fuzzy, no-wrap
 #| msgid ""
 #| "Orange theme from dwm,\n"
@@ -687,13 +693,13 @@ msgstr ""
 "Installiraj u  /EFI/CLOVER/themes/orange."
 
 #. type: "steampunkblack_title"
-#: Resources/templates/Localizable.strings:129
+#: Resources/templates/Localizable.strings:130
 #, no-wrap
 msgid "steampunkblack"
 msgstr ""
 
 #. type: "steampunkblack_description"
-#: Resources/templates/Localizable.strings:130
+#: Resources/templates/Localizable.strings:131
 #, fuzzy, no-wrap
 #| msgid ""
 #| "Bootcamp theme from Bijo,\n"
@@ -707,14 +713,14 @@ msgstr ""
 
 #
 #. type: "CloverThemeManager_title"
-#: Resources/templates/Localizable.strings:133
+#: Resources/templates/Localizable.strings:134
 #, fuzzy, no-wrap
 #| msgid "Clover Theme"
 msgid "CloverThemeManager.app"
 msgstr "Clover Tema"
 
 #. type: "CloverThemeManager_description"
-#: Resources/templates/Localizable.strings:134
+#: Resources/templates/Localizable.strings:135
 #, no-wrap
 msgid ""
 "CloverThemeManager.app by blackosx,\n"
@@ -723,13 +729,13 @@ msgid ""
 msgstr ""
 
 #. type: "rc.scripts.on.target_title"
-#: Resources/templates/Localizable.strings:140
+#: Resources/templates/Localizable.strings:141
 #, no-wrap
 msgid "Install RC scripts on target volume"
 msgstr "Instaliraj RC skripte na odabrani disk"
 
 #. type: "rc.scripts.on.target_description"
-#: Resources/templates/Localizable.strings:141
+#: Resources/templates/Localizable.strings:142
 #, no-wrap
 msgid ""
 "Install all RC scripts on target volume.\n"
@@ -739,37 +745,37 @@ msgstr ""
 "Mora biti odabran OSX bootabilni sistemski disk."
 
 #. type: "rc.scripts.on.all.volumes_title"
-#: Resources/templates/Localizable.strings:143
+#: Resources/templates/Localizable.strings:144
 #, no-wrap
 msgid "Install all RC scripts on all other bootable OSX volumes"
 msgstr "Instaliraj sve RC skripte na sve OSX bootabilne diskove"
 
 #. type: "rc.scripts.on.all.volumes_description"
-#: Resources/templates/Localizable.strings:144
+#: Resources/templates/Localizable.strings:145
 #, no-wrap
 msgid "Install all RC scripts on all internal bootable OSX volumes other than the target volume."
 msgstr "Instalira sve RC skripte na sve interne OSX bootabilne diskove."
 
 #. type: "Optional RC Scripts"
-#: Resources/templates/Localizable.strings:145
+#: Resources/templates/Localizable.strings:146
 #, no-wrap
 msgid "Optional RC Scripts"
 msgstr "Opcionalne RC skripte"
 
 #. type: "disable_sleep_proxy_client_description"
-#: Resources/templates/Localizable.strings:146
+#: Resources/templates/Localizable.strings:147
 #, no-wrap
 msgid "Disable the mDNSResponder sleep proxy client service. This will prevent the system waking from sleep every hours"
 msgstr "Isključuje mDNSResponder spavajuči proxy client service.Ovo sprečava da se sistem budi iz sleepa svakih nekoliko sati"
 
 #. type: "CloverPrefpane_title"
-#: Resources/templates/Localizable.strings:151
+#: Resources/templates/Localizable.strings:152
 #, no-wrap
 msgid "Install Clover Preference Pane"
 msgstr "Instaliraj Clover Preference Pane"
 
 #. type: "CloverPrefpane_description"
-#: Resources/templates/Localizable.strings:152
+#: Resources/templates/Localizable.strings:153
 #, no-wrap
 msgid ""
 "Install Clover Preference Pane on target volume.\n"

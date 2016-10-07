@@ -102,6 +102,7 @@ Use it only if you have a problem without it";
 "OsxAptioFixDrv-64_description" = "64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio";
 "OsxLowMemFixDrv-64_description" = "Simplified variant of OsxAptioFixDrv, 64bit (do not use both together)";
 "PartitionDxe-64_description" = "64bit driver to support non-usual partition maps such as: hybrid GPT/MBR or Apple Partition Map.";
+"SMCHelper-64_description" = "Restore SMC keys left in nvram by FakeSMC";
 
 // ============================================================================
 // Themes
