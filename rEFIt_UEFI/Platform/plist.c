@@ -140,7 +140,7 @@ INTN GetTagCount( TagPtr dict )
   INTN count = 0;
   TagPtr tagList, tag;
   
-  if (dict->type != kTagTypeDict && dict->type != kTagTypeArray) {
+  if (!dict || (dict->type != kTagTypeDict && dict->type != kTagTypeArray)) {
     return 0;
   }
   tag = 0;

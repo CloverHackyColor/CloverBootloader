@@ -299,12 +299,18 @@ GetSleepImageLocation(IN REFIT_VOLUME *Volume, REFIT_VOLUME **SleepImageVolume, 
   UINTN               PrefBufferLen = 0;
   TagPtr              PrefDict, dict, dict2, prop;
   CHAR16              *PrefName = L"\\Library\\Preferences\\SystemConfiguration\\com.apple.PowerManagement.plist";
+  CHAR16              *PrefName2 = L"\\Library\\Preferences\\com.apple.PowerManagement.plist";
   CHAR16              *ImageName = NULL;
   REFIT_VOLUME        *ImageVolume = Volume;
   
   // find sleep image entry from plist
   Status = egLoadFile(Volume->RootDir, PrefName, &PrefBuffer, &PrefBufferLen);
-  DBG("    read prefs %s status=%r\n", PrefName, Status);
+  if (EFI_ERROR(Status)) {
+    Status = egLoadFile(Volume->RootDir, PrefName2, &PrefBuffer, &PrefBufferLen);
+     DBG("    read prefs %s status=%r\n", PrefName2, Status);
+  } else {
+    DBG("    read prefs %s status=%r\n", PrefName, Status);
+  }
   if (!EFI_ERROR(Status)) {
     Status = ParseXML((const CHAR8*)PrefBuffer, &PrefDict, 0);
     if (!EFI_ERROR(Status)) {

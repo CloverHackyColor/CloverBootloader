@@ -816,38 +816,38 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
   }
 
   Prop = GetProperty (DictPointer, "Debug");
-  if (Prop != NULL) {
+  if (Prop != NULL || gBootChanged) {
     Patches->KPDebug = IsPropertyTrue (Prop);
   }
 
   Prop = GetProperty (DictPointer, "KernelCpu");
-  if (Prop != NULL) {
+  if (Prop != NULL || gBootChanged) {
     Patches->KPKernelCpu = IsPropertyTrue (Prop);
   }
 
   Prop = GetProperty (DictPointer, "FakeCPUID");
-  if (Prop != NULL) {
+  if (Prop != NULL || gBootChanged) {
     Patches->FakeCPUID = (UINT32)GetPropertyInteger (Prop, 0);
     DBG ("FakeCPUID: %x\n", Patches->FakeCPUID);
   }
 
   Prop = GetProperty (DictPointer, "AsusAICPUPM");
-  if (Prop != NULL) {
+  if (Prop != NULL || gBootChanged) {
     Patches->KPAsusAICPUPM = IsPropertyTrue (Prop);
   }
 
   Prop = GetProperty (DictPointer, "KernelPm");
-  if (Prop != NULL) {
+  if (Prop != NULL || gBootChanged) {
     Patches->KPKernelPm = IsPropertyTrue (Prop);
   }
 
   Prop = GetProperty (DictPointer, "KernelLapic");
-  if (Prop != NULL) {
+  if (Prop != NULL || gBootChanged) {
     Patches->KPLapicPanic = IsPropertyTrue (Prop);
   }
 
   Prop = GetProperty(DictPointer, "KernelHaswellE");
-  if (Prop != NULL) {
+  if (Prop != NULL || gBootChanged) {
     Patches->KPHaswellE = IsPropertyTrue(Prop);
   }
 
@@ -890,7 +890,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
   }
 
   Prop = GetProperty (DictPointer, "AppleRTC");
-  if (Prop != NULL) {
+  if (Prop != NULL || gBootChanged) {
     Patches->KPAppleRTC = !IsPropertyFalse (Prop);  //default = TRUE
   }
 
