@@ -92,4 +92,4 @@ fi
 rm -f "${DEST_VOL}/boottype"
 
 # Remove link to the partition that contain the EFI folder
-rm -f "${DEST_VOL}"/EFIROOTDIR
+rm -rf "${DEST_VOL}"/EFIROOTDIR
