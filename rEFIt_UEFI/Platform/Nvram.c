@@ -211,6 +211,11 @@ UINT32 KeyFromName(CHAR16 *Name)
   return Key;
 }
 
+UINT32 FourCharKey(CHAR8 *Name)
+{
+  return (Name[0] << 24) + (Name[1] << 16) + (Name[2] << 8) + Name[3]; //Big Endian
+}
+
 INT8 NKey[4] = {0, 0, 0, 0};
 INT8 SAdr[4] = {0, 0, 3, 0};
 INT8 SNum[1] = {1};
@@ -282,9 +287,9 @@ GetSmcKeys (BOOLEAN WriteToSMC)
   if (WriteToSMC && gAppleSmc && (gAppleSmc->Signature == NON_APPLE_SMC_SIGNATURE)) {
     NKey[3] = NumKey & 0xFF;
     NKey[2] = (NumKey >> 8) & 0xFF;
-    gAppleSmc->WriteData(gAppleSmc, KeyFromName(L"#KEY"), 4, &NKey);
-    gAppleSmc->WriteData(gAppleSmc, KeyFromName(L"$Adr"), 4, &SAdr);
-    gAppleSmc->WriteData(gAppleSmc, KeyFromName(L"$Num"), 1, &SNum);
+    gAppleSmc->WriteData(gAppleSmc, FourCharKey("#KEY"), 4, &NKey);
+    gAppleSmc->WriteData(gAppleSmc, FourCharKey("$Adr"), 4, &SAdr);
+    gAppleSmc->WriteData(gAppleSmc, FourCharKey("$Num"), 1, &SNum);
   }
   FreePool (Name);
 }

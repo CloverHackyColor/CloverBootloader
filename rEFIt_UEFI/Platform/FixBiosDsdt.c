@@ -546,6 +546,7 @@ VOID GetPciADR(IN EFI_DEVICE_PATH_PROTOCOL *DevicePath, OUT UINT32 *Addr1, OUT U
 
   // sanity check - expecting ACPI path for PciRoot
   if (TmpDevicePath->Type != ACPI_DEVICE_PATH && TmpDevicePath->SubType != ACPI_DP) {
+    FreePool(TmpDevicePath);
     return;
   }
 
@@ -4969,8 +4970,6 @@ VOID GetBiosRegions(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt)
         if (tmp.Address) {
           OPER_REGION *newRegion = AllocateZeroPool(sizeof(OPER_REGION));
           DBG("Found OperationRegion(%a, SystemMemory, %x, ...)\n", tmp.Name, tmp.Address);
-          //OPER_REGION *newRegion = AllocateZeroPool(sizeof(OPER_REGION));
-          newRegion = AllocateZeroPool(sizeof(OPER_REGION));
           *newRegion = tmp;
           newRegion->next = gRegions;
           gRegions = newRegion;

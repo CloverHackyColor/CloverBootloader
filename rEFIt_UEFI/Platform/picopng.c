@@ -436,6 +436,7 @@ void Inflator_getTreeInflateDynamic(HuffmanTree *tree, HuffmanTree *treeD, const
 	if (*bp >> 3 >= inlength - 2)
 	{
 		Inflator_error = 49; // the bit pointer is or will go past the memory
+    png_alloc_free(codelengthcodetree);
 		return;
 	}
 	HLIT = Zlib_readBitsFromStream(bp, in, 5) + 257;	// number of literal/length codes + 257

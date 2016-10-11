@@ -307,6 +307,9 @@ VideoBiosPatchNativeFromEdid (
   map = open_vbios(CT_UNKNOWN);
   if (map == NULL) {
     DBG (" = unknown video bios.\n");
+    if (ReleaseEdid) {
+      FreePool (Edid);
+    }
     return EFI_UNSUPPORTED;
   }
   

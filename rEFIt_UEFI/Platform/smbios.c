@@ -944,7 +944,7 @@ VOID PatchTableType7()
     // Handle = 0x0700 + CoreN<<2 + CacheN (4-level cache is supported
     // L1[CoreN] = Handle
   
-	CHAR8* SSocketD;
+	CHAR8 SSocketD[9];
 	BOOLEAN correctSD = FALSE;
 	
 	//according to spec for Smbios v2.0 max handle is 0xFFFE, for v>2.0 (we made 2.6) max handle=0xFEFF.
@@ -966,7 +966,8 @@ VOID PatchTableType7()
 		CoreCache = newSmbiosTable.Type7->CacheConfiguration & 3; 
 		Once = TRUE;
 
-		SSocketD = "L1-Cache";
+		//SSocketD = "L1-Cache";
+    CopyMem(SSocketD, "L1-Cache", 9);
 		if(correctSD) {
 			SSocketD[1] = (CHAR8)(0x31 + CoreCache);
 			UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type7->SocketDesignation, SSocketD);		
