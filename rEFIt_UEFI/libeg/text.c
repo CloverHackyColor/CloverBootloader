@@ -80,9 +80,9 @@ EG_IMAGE * egLoadFontImage(IN BOOLEAN FromTheme, IN INTN Rows, IN INTN Cols)
   CHAR16      *fontFilePath = NULL;
   CHAR16      *commonFontDir = L"EFI\\CLOVER\\font";
   
-  if (IsEmbeddedTheme() && !isKorean) {
-    MsgLog("Using embedded font\n");
+  if (IsEmbeddedTheme() && !isKorean) { //or initial screen before theme init
     NewImage = egDecodePNG(&emb_font_data[0], sizeof(emb_font_data), TRUE);
+    MsgLog("Using embedded font: %a\n", NewImage ? "Success" : "Error");
   } else {
     NewImage = egLoadImage(ThemeDir, isKorean ? L"FontKorean.png" : GlobalConfig.FontFileName, TRUE);
     MsgLog("Loading font from ThemeDir: %a\n", NewImage ? "Success" : "Error");
@@ -144,6 +144,11 @@ VOID PrepareFont()
 {
   EG_PIXEL    *p;
   INTN         Width, Height;
+  
+  if (FontImage) {
+    egFreeImage(FontImage);
+    FontImage = NULL;
+  }
   
   if (gLanguage == korean) {
     FontImage = egLoadFontImage(FALSE, 10, 28);

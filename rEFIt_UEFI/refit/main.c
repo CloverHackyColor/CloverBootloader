@@ -1687,8 +1687,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       gSettings.OEMBoard[i] = 0x5F;
     }
   }
-//  DBG("  running on %a\n",   gSettings.OEMProduct);
-//  DBG("... with board %a\n", gSettings.OEMBoard);
   DBG("Running on: '%a' with board '%a'\n", gSettings.OEMProduct, gSettings.OEMBoard);
 
   GetCPUProperties();

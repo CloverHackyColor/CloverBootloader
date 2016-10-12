@@ -164,6 +164,7 @@ EfiStrDuplicate (
   return Dest;
 }
 //Compare strings case insensitive
+// return 0 if strings are equal not accounting match case
 INTN
 StriCmp (
 		IN      CONST CHAR16              *FirstS,
@@ -173,11 +174,11 @@ StriCmp (
 	
 	while (*FirstS != L'\0') {
 		if ( (((*FirstS >= 'a') && (*FirstS <= 'z')) ? (*FirstS - ('a' - 'A')) : *FirstS ) !=
-            (((*SecondS >= 'a') && (*SecondS <= 'z')) ? (*SecondS - ('a' - 'A')) : *SecondS ) ) break;
+            (((*SecondS >= 'a') && (*SecondS <= 'z')) ? (*SecondS - ('a' - 'A')) : *SecondS ) ) return 1;
 		FirstS++;
 		SecondS++;
 	}
-	return *FirstS - *SecondS;
+	return *SecondS; //if all chars equal then compare sizes, last char in SecondS will be 0
 }
 
 // If Null-terminated strings are case insensitive equal or its sSize symbols are equal then TRUE
