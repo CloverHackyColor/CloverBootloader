@@ -70,135 +70,48 @@ VOID egMeasureText(IN CHAR16 *Text, OUT INTN *Width, OUT INTN *Height)
     if (Height != NULL)
         *Height = FontHeight;
 }
-#if 0
-EG_IMAGE * egLoadFontImage(IN BOOLEAN FromTheme, IN INTN Rows, IN INTN Cols)
-{
-  EG_IMAGE            *NewImage = NULL;
-  EG_IMAGE            *NewFontImage;
-  INTN        ImageWidth, ImageHeight;
-  INTN        x, y, Ypos, j;
-  EG_PIXEL    *PixelPtr;
-  EG_PIXEL    FirstPixel;
-  BOOLEAN     WantAlpha = TRUE;
-  BOOLEAN     Embedded = FALSE;
 
-  if (FromTheme) {
-    NewImage = egLoadImage(ThemeDir, GlobalConfig.FontFileName, WantAlpha);
-  }
-
-  if (NewImage) {
-    if (FromTheme) {
-      DBG("font %s loaded from themedir\n", GlobalConfig.FontFileName);
-    } else {
-      DBG("Korean font loaded from themedir\n");
-    }
-  } else {
-    CHAR16 *commonFontDir = L"EFI\\CLOVER\\font";
-    CHAR16 *fontFilePath;
-    if (FromTheme) {
-      fontFilePath = PoolPrint(L"%s\\%s", commonFontDir, GlobalConfig.FontFileName);
-    } else {
-      fontFilePath = PoolPrint(L"%s\\%s", commonFontDir, L"FontKorean.png");
-    }
-    NewImage = egLoadImage(SelfRootDir, fontFilePath, WantAlpha);
-    if (!NewImage) {
-      DBG("Font %s is not loaded, using embedded\n", fontFilePath);
-      NewImage = egDecodePNG(&emb_font_data[0], sizeof(emb_font_data), WantAlpha);
-      Embedded = TRUE;
-    } else {
-      DBG("font %s loaded from common font dir %s\n", GlobalConfig.FontFileName, commonFontDir);
-    }
-    FreePool(fontFilePath);
-  }
-
-  ImageWidth = NewImage->Width;
-//  DBG("ImageWidth=%d\n", ImageWidth);
-  ImageHeight = NewImage->Height;
-//  DBG("ImageHeight=%d\n", ImageHeight);
-  PixelPtr = NewImage->PixelData;
-  DBG("Font loaded: ImageWidth=%d ImageHeight=%d\n", ImageWidth, ImageHeight);
-  NewFontImage = egCreateImage(ImageWidth * Rows, ImageHeight / Rows, WantAlpha);
-  if (NewFontImage == NULL) {
-    DBG("Can't create new font image!\n");
-    return NULL;
-  }
-  
-  FontWidth = ImageWidth / Cols;
-  FontHeight = ImageHeight / Rows;
-  FirstPixel = *PixelPtr;
-  for (y = 0; y < Rows; y++) {
-    for (j = 0; j < FontHeight; j++) {
-      Ypos = ((j * Rows) + y) * ImageWidth;
-      for (x = 0; x < ImageWidth; x++) {
-       if (WantAlpha && 
-           (PixelPtr->b == FirstPixel.b) &&
-           (PixelPtr->g == FirstPixel.g) &&
-           (PixelPtr->r == FirstPixel.r)
-           ) {
-          PixelPtr->a = 0;
-        }
-        NewFontImage->PixelData[Ypos + x] = *PixelPtr++;
-      }
-    }    
-  }
-  egFreeImage(NewImage);
-  
-  return NewFontImage;  
-} 
-
-#else
 EG_IMAGE * egLoadFontImage(IN BOOLEAN FromTheme, IN INTN Rows, IN INTN Cols)
 {
   EG_IMAGE    *NewImage = NULL, *NewFontImage;
   INTN        ImageWidth, ImageHeight, x, y, Ypos, j;
   EG_PIXEL    *PixelPtr, FirstPixel;
   BOOLEAN     isKorean = (gLanguage == korean);
-  CHAR16      *fontFilePath, *commonFontDir = L"EFI\\CLOVER\\font";
+  CHAR16      *fontFilePath = NULL;
+  CHAR16      *commonFontDir = L"EFI\\CLOVER\\font";
   
   if (IsEmbeddedTheme() && !isKorean) {
-    DBG("Using embedded font\n");
-    goto F_EMBEDDED;
+    MsgLog("Using embedded font\n");
+    NewImage = egDecodePNG(&emb_font_data[0], sizeof(emb_font_data), TRUE);
   } else {
     NewImage = egLoadImage(ThemeDir, isKorean ? L"FontKorean.png" : GlobalConfig.FontFileName, TRUE);
-    DBG("Loading font from ThemeDir: %a\n", NewImage ? "Success" : "Error");
+    MsgLog("Loading font from ThemeDir: %a\n", NewImage ? "Success" : "Error");
   }
   
-  if (NewImage) {
-    goto F_THEME;
-  } else {
+  if (!NewImage) {
+    //then take from common font folder
     fontFilePath = PoolPrint(L"%s\\%s", commonFontDir, isKorean ? L"FontKorean.png" : GlobalConfig.FontFileName);
     NewImage = egLoadImage(SelfRootDir, fontFilePath, TRUE);
-    
+    //else use embedded
     if (!NewImage) {
-      if (!isKorean) {
-        DBG("Font %s is not loaded, using embedded\n", fontFilePath);
-        FreePool(fontFilePath);
-        goto F_EMBEDDED;
-      }
-      FreePool(fontFilePath);
-      return NULL;
-    } else {
-      DBG("font %s loaded from common font dir %s\n", GlobalConfig.FontFileName, commonFontDir);
-      FreePool(fontFilePath);
-      goto F_THEME;
+      MsgLog("Font %s is not loaded, using embedded\n", fontFilePath);
+      NewImage = egDecodePNG(&emb_font_data[0], sizeof(emb_font_data), TRUE);
     }
+    FreePool(fontFilePath);
   }
   
-F_EMBEDDED:
-  //NewImage = DEC_PNG_BUILTIN(emb_font_data);
-  NewImage = egDecodePNG(&emb_font_data[0], sizeof(emb_font_data), TRUE);
-  
-F_THEME:
   ImageWidth = NewImage->Width;
-  //DBG("ImageWidth=%d\n", ImageWidth);
+  DBG("ImageWidth=%d\n", ImageWidth);
   ImageHeight = NewImage->Height;
-  //DBG("ImageHeight=%d\n", ImageHeight);
+  DBG("ImageHeight=%d\n", ImageHeight);
   PixelPtr = NewImage->PixelData;
-  DBG("Font loaded: ImageWidth=%d ImageHeight=%d\n", ImageWidth, ImageHeight);
   NewFontImage = egCreateImage(ImageWidth * Rows, ImageHeight / Rows, TRUE);
   
   if (NewFontImage == NULL) {
     DBG("Can't create new font image!\n");
+    if (NewImage) {
+      egFreeImage(NewImage);
+    }
     return NULL;
   }
   
@@ -209,7 +122,8 @@ F_THEME:
     for (j = 0; j < FontHeight; j++) {
       Ypos = ((j * Rows) + y) * ImageWidth;
       for (x = 0; x < ImageWidth; x++) {
-        if (//WantAlpha &&
+        if (
+            //First pixel is accounting as "blue key"
             (PixelPtr->b == FirstPixel.b) &&
             (PixelPtr->g == FirstPixel.g) &&
             (PixelPtr->r == FirstPixel.r)
@@ -225,7 +139,7 @@ F_THEME:
   
   return NewFontImage;
 }
-#endif
+
 VOID PrepareFont()
 {
   EG_PIXEL    *p;
