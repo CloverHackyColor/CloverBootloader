@@ -174,7 +174,7 @@ AppendCSDNum2 (
   UINT32   Rem;
 
   // ASSERT (Str != NULL);
-  If (!Str) {
+  if (!Str) {
     return EFI_OUT_OF_RESOURCES;
   }
 
@@ -1359,7 +1359,6 @@ DEV_PATH_CONSIST_MAPPING_TABLE  DevPathConsistMappingTable[] = {
   @retval FALSE   The node is not Hi.
 **/
 BOOLEAN
-EFIAPI
 IsHIDevicePathNode (
   IN EFI_DEVICE_PATH_PROTOCOL *DevicePathNode
   )
@@ -1396,7 +1395,6 @@ IsHIDevicePathNode (
   @return   the device path portion that is Hi.
 **/
 EFI_DEVICE_PATH_PROTOCOL *
-EFIAPI
 GetHIDevicePath (
   IN EFI_DEVICE_PATH_PROTOCOL        *DevicePath
   )
@@ -1454,7 +1452,6 @@ GetHIDevicePath (
   @return EFI_SUCCESS         Always returns success.
 **/
 EFI_STATUS
-EFIAPI
 GetDeviceConsistMappingInfo (
   IN DEVICE_CONSIST_MAPPING_INFO    *MappingItem,
   IN EFI_DEVICE_PATH_PROTOCOL       *DevicePath

@@ -26,7 +26,6 @@
   @retval FALSE           The move is within a file system.
 **/
 BOOLEAN
-EFIAPI
 IsBetweenFileSystem(
   IN CONST CHAR16     *FullName,
   IN CONST CHAR16     *Cwd,
@@ -79,7 +78,6 @@ IsBetweenFileSystem(
   @retval FALSE       The move is not
 **/
 BOOLEAN
-EFIAPI
 IsValidMove(
   IN CONST CHAR16     *SourcePath,
   IN CONST CHAR16     *Cwd,
@@ -165,7 +163,6 @@ IsValidMove(
   @retval SHELL_SUCCESS            The operation was sucessful.
 **/
 SHELL_STATUS
-EFIAPI
 GetDestinationLocation(
   IN CONST CHAR16               *DestParameter,
   IN OUT CHAR16                 **DestPathPointer,
@@ -293,7 +290,6 @@ GetDestinationLocation(
   @retval SHELL_SUCCESS     The source file was moved to the destination.
 **/
 EFI_STATUS
-EFIAPI
 MoveBetweenFileSystems(
   IN EFI_SHELL_FILE_INFO  *Node,
   IN CONST CHAR16         *DestPath,
@@ -341,7 +337,6 @@ MoveBetweenFileSystems(
   @retval SHELL_OUT_OF_RESOURCES    a memory allocation failed
 **/
 EFI_STATUS
-EFIAPI
 CreateFullDestPath(
   IN CONST CHAR16 **DestPath,
   OUT CHAR16      **FullDestPath, 
@@ -380,7 +375,6 @@ CreateFullDestPath(
   @retval SHELL_OUT_OF_RESOURCES  A memory allocation failed.
 **/
 EFI_STATUS
-EFIAPI
 MoveWithinFileSystems(
   IN EFI_SHELL_FILE_INFO  *Node,
   IN CHAR16               *DestPath,
@@ -461,7 +455,6 @@ MoveWithinFileSystems(
   @retval SHELL_OUT_OF_RESOURCES    a memory allocation failed
 **/
 SHELL_STATUS
-EFIAPI
 ValidateAndMoveFiles(
   IN EFI_SHELL_FILE_INFO        *FileList,
   OUT VOID                      **Resp,

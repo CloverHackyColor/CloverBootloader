@@ -302,7 +302,6 @@ FileInterfaceNulWrite(
   @param[out] TabUpdatePos      Return the TAB update position.
 **/
 EFI_STATUS
-EFIAPI
 CreateTabCompletionList (
   IN CONST CHAR16             *InputString,
   IN CONST UINTN              StringLen, 
@@ -1303,7 +1302,6 @@ FileInterfaceEnvNonVolWrite(
   @return other     a pointer to an EFI_FILE_PROTOCOL structure
 **/
 EFI_FILE_PROTOCOL*
-EFIAPI
 CreateFileInterfaceEnv(
   IN CONST CHAR16 *EnvName
   )
@@ -1366,7 +1364,6 @@ CreateFileInterfaceEnv(
   @param[in, out] Row         Current row of the cursor position
 **/
 VOID
-EFIAPI
 MoveCursorBackward (
   IN     UINTN                   LineLength,
   IN OUT UINTN                   *Column,
@@ -1396,7 +1393,6 @@ MoveCursorBackward (
   @param[in, out] Row         Current row of the cursor position
 **/
 VOID
-EFIAPI
 MoveCursorForward (
   IN     UINTN                   LineLength,
   IN     UINTN                   TotalRow,
@@ -1428,7 +1424,6 @@ MoveCursorForward (
   @param[in] StartColumn  which column to start at
 **/
 VOID
-EFIAPI
 PrintCommandHistory (
   IN CONST UINTN TotalCols,
   IN CONST UINTN TotalRows,
@@ -1652,7 +1647,6 @@ FileInterfaceMemClose(
   @return other     A pointer to an EFI_FILE_PROTOCOL structure.
 **/
 EFI_FILE_PROTOCOL*
-EFIAPI
 CreateFileInterfaceMem(
   IN CONST BOOLEAN Unicode
   )

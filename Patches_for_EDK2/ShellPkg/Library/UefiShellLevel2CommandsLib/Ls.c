@@ -22,7 +22,6 @@
   @param[in] TheList           a list of files from the volume.
 **/
 EFI_STATUS
-EFIAPI
 PrintSfoVolumeInfoTableEntry(
   IN CONST EFI_SHELL_FILE_INFO *TheList
   )
@@ -164,7 +163,6 @@ PrintSfoVolumeInfoTableEntry(
 
 **/
 VOID
-EFIAPI
 PrintFileInformation(
   IN CONST BOOLEAN              Sfo, 
   IN CONST EFI_SHELL_FILE_INFO  *TheNode, 
@@ -282,7 +280,6 @@ PrintFileInformation(
   @param[in] Path           String with starting path.
 **/
 VOID
-EFIAPI
 PrintNonSfoHeader(
   IN CONST CHAR16 *Path
   )
@@ -319,7 +316,6 @@ PrintNonSfoHeader(
   @param[in] Dirs             The number of directories.
 **/
 VOID
-EFIAPI
 PrintNonSfoFooter(
   IN UINT64                     Files, 
   IN UINT64                     Size, 
@@ -358,7 +354,6 @@ PrintNonSfoFooter(
   @retval SHELL_SUCCESS     the printing was sucessful.
 **/
 SHELL_STATUS
-EFIAPI
 PrintLsOutput(
   IN CONST BOOLEAN Rec,
   IN CONST UINT64  Attribs,

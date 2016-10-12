@@ -4457,6 +4457,9 @@ UINT32 EncodeOptions(CHAR16 *Options)
 {
   UINT32 OptionsBits = 0;
   INTN Index;
+  if (!Options) {
+    return 0;
+  }
   for (Index = 0; Index < NUM_OPT; Index++) {
     if (StrStr(Options, ArgOptional[Index])) {
       OptionsBits |= (1 << Index);
@@ -4472,6 +4475,9 @@ VOID DecodeOptions(LOADER_ENTRY *Entry)
 {
   //set checked option
   INTN Index;
+  if (!Entry) {
+    return;
+  }
   for (Index = 0; Index < INX_NVWEBON; Index++) { //not including INX_NVWEBON
     if (gSettings.OptionsBits & (1 << Index)) {
       Entry->LoadOptions = AddLoadOption(Entry->LoadOptions, ArgOptional[Index]);
@@ -4527,7 +4533,10 @@ UINTN RunMainMenu(IN REFIT_MENU_SCREEN *Screen, IN INTN DefaultSelection, OUT RE
     Screen->TimeoutSeconds = 0;
 
     if (MenuExit == MENU_EXIT_DETAILS && MainChosenEntry->SubScreen != NULL) {
-      CHAR16 *TmpArgs = PoolPrint(L"%a", gSettings.BootArgs);
+      CHAR16 *TmpArgs = NULL;
+      if (AsciiStrLen(gSettings.BootArgs) > 0) {
+        TmpArgs = PoolPrint(L"%a", gSettings.BootArgs);
+      }
       SubMenuIndex = -1;
 #ifdef CHECK_FLAGS      
       gSettings.FlagsBits = ((LOADER_ENTRY*)MainChosenEntry)->Flags;
@@ -4541,7 +4550,9 @@ UINTN RunMainMenu(IN REFIT_MENU_SCREEN *Screen, IN INTN DefaultSelection, OUT RE
       ((LOADER_ENTRY*)TempChosenEntry)->Flags |= (UINT16)(gSettings.FlagsBits & 0x0FFF);
 //      DBG("get FlagsBits = 0x%x\n", gSettings.FlagsBits);
 #endif
-      FreePool(TmpArgs);
+      if (TmpArgs) {
+        FreePool(TmpArgs);
+      }      
       SubMenuExit = 0;
       while (!SubMenuExit) {
         SubMenuExit = RunGenericMenu(MainChosenEntry->SubScreen, Style, &SubMenuIndex, &TempChosenEntry);
@@ -4555,7 +4566,9 @@ UINTN RunMainMenu(IN REFIT_MENU_SCREEN *Screen, IN INTN DefaultSelection, OUT RE
           SubMenuExit = 0;
         }
         if (/*MenuExit == MENU_EXIT_ENTER &&*/ MainChosenEntry->Tag == TAG_LOADER) {
-          AsciiSPrint(gSettings.BootArgs, 255, "%s", ((LOADER_ENTRY*)MainChosenEntry)->LoadOptions);
+          if (((LOADER_ENTRY*)MainChosenEntry)->LoadOptions) {
+            AsciiSPrint(gSettings.BootArgs, 255, "%s", ((LOADER_ENTRY*)MainChosenEntry)->LoadOptions);
+          }
           DBG("boot with args: %a\n", gSettings.BootArgs);
         }
         if (/*MenuExit == MENU_EXIT_ESCAPE ||*/ TempChosenEntry->Tag == TAG_RETURN) {

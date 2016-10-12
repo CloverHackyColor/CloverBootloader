@@ -50,7 +50,6 @@ EfiShellClose (
   @retval FALSE     gEfiBlockIoProtocolGuid was not found.
 **/
 BOOLEAN
-EFIAPI
 InternalShellProtocolIsBlockIoPresent(
   IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath
   )
@@ -80,7 +79,6 @@ InternalShellProtocolIsBlockIoPresent(
   @retval FALSE     gEfiSimpleFileSystemProtocolGuid was not found.
 **/
 BOOLEAN
-EFIAPI
 InternalShellProtocolIsSimpleFileSystemPresent(
   IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath
   )
@@ -113,7 +111,6 @@ InternalShellProtocolIsSimpleFileSystemPresent(
   @sa OpenProtocol
 **/
 EFI_STATUS
-EFIAPI
 InternalShellProtocolDebugPrintMessage (
   IN CONST CHAR16                   *Mapping,
   IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath
@@ -972,7 +969,6 @@ EfiShellBatchIsActive (
   @retval other                   an error ocurred.
 **/
 EFI_STATUS
-EFIAPI
 InternalOpenFileDevicePath(
   IN OUT EFI_DEVICE_PATH_PROTOCOL *DevicePath,
   OUT SHELL_FILE_HANDLE           *FileHandle,
@@ -1454,7 +1450,6 @@ EfiShellEnablePageBreak (
   @retval EFI_UNSUPPORTED   Nested shell invocations are not allowed.
 **/
 EFI_STATUS
-EFIAPI
 InternalShellExecuteDevicePath(
   IN CONST EFI_HANDLE               *ParentImageHandle,
   IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath,
@@ -1672,7 +1667,6 @@ FreeAlloc:
   @retval EFI_UNSUPPORTED   Nested shell invocations are not allowed.
 **/
 EFI_STATUS
-EFIAPI
 InternalShellExecute(
   IN CONST CHAR16                   *CommandLine OPTIONAL,
   IN CONST CHAR16                   **Environment OPTIONAL,
@@ -1716,7 +1710,6 @@ InternalShellExecute(
 **/
 STATIC
 BOOLEAN
-EFIAPI
 NestingEnabled(
 )
 {
@@ -1855,7 +1848,6 @@ EfiShellExecute(
   @param FileListNode     pointer to the list node to free
 **/
 VOID
-EFIAPI
 InternalFreeShellFileInfoNode(
   IN EFI_SHELL_FILE_INFO *FileListNode
   )
@@ -1983,7 +1975,6 @@ typedef struct {
   @return != NULL     a pointer to the new node
 **/
 EFI_SHELL_FILE_INFO*
-EFIAPI
 InternalDuplicateShellFileInfo(
   IN       EFI_SHELL_FILE_INFO *Node,
   IN BOOLEAN                   Save
@@ -2036,7 +2027,6 @@ InternalDuplicateShellFileInfo(
   @return                     a pointer to the newly allocated structure.
 **/
 EFI_SHELL_FILE_INFO *
-EFIAPI
 CreateAndPopulateShellFileInfo(
   IN CONST CHAR16 *BasePath,
   IN CONST EFI_STATUS Status,
@@ -2307,7 +2297,6 @@ EfiShellGetGuidName(
   @retval EFI_OUT_OF_RESOURCES
 **/
 EFI_STATUS
-EFIAPI
 UpdateFileName(
   IN CONST CHAR16 *BasePath,
   IN OUT CHAR16   **Path
@@ -2370,7 +2359,6 @@ UpdateFileName(
   @retval EFI_OUT_OF_RESOURCES  a memory allocation failed
 **/
 EFI_STATUS
-EFIAPI
 ShellSearchHandle(
   IN     CONST CHAR16                         *FilePattern,
   IN           EFI_UNICODE_COLLATION_PROTOCOL *UnicodeCollation,
@@ -2904,7 +2892,6 @@ EfiShellGetEnv(
   @retval EFI_SUCCESS           The environment variable was successfully updated.
 **/
 EFI_STATUS
-EFIAPI
 InternalEfiShellSetEnv(
   IN CONST CHAR16 *Name,
   IN CONST CHAR16 *Value,
@@ -3343,7 +3330,6 @@ EfiShellIsRootShell(
   @return !NULL   a list of all alias'
 **/
 CHAR16 *
-EFIAPI
 InternalEfiShellGetListAlias(
   )
 {
@@ -3515,7 +3501,6 @@ EfiShellGetAlias(
   @retval EFI_NOT_FOUND         the Alias intended to be deleted was not found
 **/
 EFI_STATUS
-EFIAPI
 InternalSetAlias(
   IN CONST CHAR16 *Command,
   IN CONST CHAR16 *Alias,
@@ -3679,7 +3664,6 @@ EFI_SHELL_PROTOCOL         mShellProtocol = {
   @return                 An error from LocateHandle, CreateEvent, or other core function.
 **/
 EFI_STATUS
-EFIAPI
 CreatePopulateInstallShellProtocol (
   IN OUT EFI_SHELL_PROTOCOL  **NewShell
   )
@@ -3922,7 +3906,6 @@ NotificationFunction(
   @retval EFI_OUT_OF_RESOURCES  There is not enough mnemory available.
 **/
 EFI_STATUS
-EFIAPI
 InernalEfiShellStartMonitor(
   VOID
   )
