@@ -69,8 +69,6 @@ extern CHAR8            *NonDetected;
 extern BOOLEAN          GetLegacyLanAddress;
 extern UINT8            gLanMac[4][6]; // their MAC addresses
 
-extern UINT32           InitFlags;
-
 INTN LayoutBannerOffset = 64;
 INTN LayoutButtonOffset = 0;
 INTN LayoutTextOffset = 0;
@@ -4553,16 +4551,16 @@ UINTN RunMainMenu(IN REFIT_MENU_SCREEN *Screen, IN INTN DefaultSelection, OUT RE
 #define OSFLAG_HIBERNATED     (1 << 8)
 #define OSFLAG_NOSIP          (1 << 9)
 */
-      gSettings.FlagsBits = ((LOADER_ENTRY*)MainChosenEntry)->Flags;
-      DBG("set FlagsBits = 0x%x\n", gSettings.FlagsBits);
+ //     gSettings.FlagsBits = ((LOADER_ENTRY*)MainChosenEntry)->Flags;
+ //     DBG("set FlagsBits = 0x%x\n", gSettings.FlagsBits);
       gSettings.OptionsBits = EncodeOptions(TmpArgs);
-      DBG("main OptionsBits = 0x%x\n", gSettings.OptionsBits);
+//      DBG("main OptionsBits = 0x%x\n", gSettings.OptionsBits);
       gSettings.OptionsBits |= EncodeOptions(((LOADER_ENTRY*)MainChosenEntry)->LoadOptions);
-      DBG("add OptionsBits = 0x%x\n", gSettings.OptionsBits);
+//      DBG("add OptionsBits = 0x%x\n", gSettings.OptionsBits);
       DecodeOptions((LOADER_ENTRY*)MainChosenEntry);
-      DBG("get OptionsBits = 0x%x\n", gSettings.OptionsBits);
-      ((LOADER_ENTRY*)TempChosenEntry)->Flags |= (UINT16)(gSettings.FlagsBits & 0x0FFF);
-      DBG("get FlagsBits = 0x%x\n", gSettings.FlagsBits);
+//      DBG("get OptionsBits = 0x%x\n", gSettings.OptionsBits);
+//      ((LOADER_ENTRY*)TempChosenEntry)->Flags |= (UINT16)(gSettings.FlagsBits & 0x0FFF);
+//      DBG("get FlagsBits = 0x%x\n", gSettings.FlagsBits);
 #endif
       if (TmpArgs) {
         FreePool(TmpArgs);
@@ -4572,9 +4570,9 @@ UINTN RunMainMenu(IN REFIT_MENU_SCREEN *Screen, IN INTN DefaultSelection, OUT RE
         SubMenuExit = RunGenericMenu(MainChosenEntry->SubScreen, Style, &SubMenuIndex, &TempChosenEntry);
 #ifdef CHECK_FLAGS
         DecodeOptions((LOADER_ENTRY*)MainChosenEntry);
-        DBG("get OptionsBits = 0x%x\n", gSettings.OptionsBits);
-        ((LOADER_ENTRY*)MainChosenEntry)->Flags = (UINT16)(gSettings.FlagsBits & 0x0FFF);
-        DBG("get FlagsBits = 0x%x\n", gSettings.FlagsBits);
+//        DBG("get OptionsBits = 0x%x\n", gSettings.OptionsBits);
+//        ((LOADER_ENTRY*)MainChosenEntry)->Flags = (UINT16)(gSettings.FlagsBits & 0x0FFF);
+//        DBG("get FlagsBits = 0x%x\n", gSettings.FlagsBits);
 #endif
         if (SubMenuExit == MENU_EXIT_ESCAPE) {
           SubMenuExit = 0;

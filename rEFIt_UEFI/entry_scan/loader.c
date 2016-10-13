@@ -1101,7 +1101,7 @@ STATIC BOOLEAN AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOptions,
       }
     }
     //TODO there is a problem that Entry->Flags is unique while InputItmes are global ;(
-    InputItems[69].IValue = Entry->Flags;
+//    InputItems[69].IValue = Entry->Flags;
     AddDefaultMenu(Entry);
     AddMenuEntry(&MainMenu, (REFIT_MENU_ENTRY *)Entry);
     return TRUE;
