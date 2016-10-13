@@ -1210,7 +1210,7 @@ PlatformBdsEnterFrontPage (
       break;
     }
 
-  } while ((Status == EFI_SUCCESS) && (gCallbackKey != FRONT_PAGE_KEY_CONTINUE));
+  } while (/*(Status == EFI_SUCCESS) && (*/gCallbackKey != FRONT_PAGE_KEY_CONTINUE); //);
 
   if (mLanguageString != NULL) {
     FreePool (mLanguageString);

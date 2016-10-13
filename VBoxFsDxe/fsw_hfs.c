@@ -371,7 +371,8 @@ static fsw_status_t fsw_hfs_volume_mount(struct fsw_hfs_volume *vol)
     vol->extents_tree.node_size = be16_to_cpu (tree_header.nodeSize);
     
     rv = FSW_SUCCESS;
-  } while (0);
+    break;
+  } while (1);
   
 #undef CHECK
   

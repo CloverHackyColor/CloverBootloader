@@ -2069,6 +2069,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       DefaultEntry = NULL;
     }
 
+    MainLoopRunning = TRUE;
     //    MainMenu.TimeoutSeconds = GlobalConfig.Timeout >= 0 ? GlobalConfig.Timeout : 0;
     if (GlobalConfig.FastBoot && DefaultEntry) {
       if (DefaultEntry->Tag == TAG_LOADER) {
@@ -2076,11 +2077,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       } else if (DefaultEntry->Tag == TAG_LEGACY){
         StartLegacy((LEGACY_ENTRY *)DefaultEntry);
       }
-      MainLoopRunning = FALSE;
       GlobalConfig.FastBoot = FALSE; //Hmm... will never be here
     }
     MainAnime = GetAnime(&MainMenu);
-    MainLoopRunning = TRUE;
 
     AfterTool = FALSE;
     gEvent = 0; //clear to cancel loop

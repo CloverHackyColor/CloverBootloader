@@ -1378,7 +1378,8 @@ CallDriverHealth (
 
   Status = GetAllControllersHealthStatus (&DriverHealthList);
 //  ASSERT (Status != EFI_OUT_OF_RESOURCES);
-  if (!EndOpCodeHandleRepair) {
+//  if (!EndOpCodeHandleRepair) {
+  if (Status == EFI_OUT_OF_RESOURCES) {
     return;
   }
 
