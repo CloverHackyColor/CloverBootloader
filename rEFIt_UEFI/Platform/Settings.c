@@ -257,7 +257,7 @@ ParseLoadOptions (
     return;
   }
 
-  for (i = 0; PlistStrings[i] != '\0'; i++) {
+  for (i = 0; PlistStrings[i][0] != '\0'; i++) {
     PlistStringsLen = AsciiStrLen (PlistStrings[i]);
     //DBG ("PlistStrings[%d] = %a\n", i, PlistStrings[i]);
     if (PlistStringsLen < TailSize) {
