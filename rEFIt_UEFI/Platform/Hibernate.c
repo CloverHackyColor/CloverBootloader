@@ -586,7 +586,7 @@ IsOsxHibernated (IN REFIT_VOLUME *Volume)
 //    IsHibernate = TRUE;
   } else {
     DBG("    hibernated: no - sign\n");
-    return FALSE;
+    return TRUE; //test
   }
   
   if (!gFirmwareClover &&

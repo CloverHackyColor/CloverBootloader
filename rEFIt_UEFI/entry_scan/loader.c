@@ -556,6 +556,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath,
       }
       if (OSType == OSTYPE_OSX && IsOsxHibernated(Volume)) {
         Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_HIBERNATED);
+        DBG("set entry as hiberbated\n");
       }
       //always set with kexts for installer
       if (OSType == OSTYPE_OSX_INSTALLER){
@@ -719,10 +720,39 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
   if (Entry->LoaderType == OSTYPE_OSX || Entry->LoaderType == OSTYPE_OSX_INSTALLER || Entry->LoaderType == OSTYPE_RECOVERY) { // entries for Mac OS X
     AddMenuInfoLine(SubScreen, PoolPrint(L"macOS %a", Entry->OSVersion));
 #ifdef CHECK_FLAGS
-    AddMenuCheck(SubScreen, "Hibernate wake",       OSFLAG_HIBERNATED, 69);
+    //AddMenuCheck(SubScreen, "Hibernate wake",       OSFLAG_HIBERNATED, 69);
     //    AddMenuCheck(SubScreen, "Cancel hibernate wake", OSFLAG_NOHIBERNATED, 69);
-    AddMenuCheck(SubScreen, "Without caches",       OSFLAG_NOCACHES, 69);
-    AddMenuCheck(SubScreen, "With injected kexts",  OSFLAG_WITHKEXTS, 69);
+/*    SubEntry = DuplicateLoaderEntry(Entry);
+    if (SubEntry) {
+      SubEntry->me.Title        = L"Force hibernate wake";
+      SubEntry->Flags           = OSFLAG_SET(SubEntry->Flags, OSFLAG_HIBERNATED);
+      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+    }
+ */
+    SubEntry = DuplicateLoaderEntry(Entry);
+    if (SubEntry) {
+      SubEntry->me.Title        = L"Cancel hibernate wake";
+      SubEntry->Flags           = OSFLAG_UNSET(SubEntry->Flags, OSFLAG_HIBERNATED);
+      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+    }
+    SubEntry = DuplicateLoaderEntry(Entry);
+    if (SubEntry) {
+      SubEntry->me.Title        = L"Boot Mac OS X with selected options";
+      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+    }
+    SubEntry = DuplicateLoaderEntry(Entry);
+    if (SubEntry) {
+      SubEntry->me.Title        = OSFLAG_ISSET(SubEntry->Flags, OSFLAG_WITHKEXTS) ?
+      L"Boot Mac OS X without injected kexts" :
+      L"Boot Mac OS X with injected kexts";
+      SubEntry->Flags           = OSFLAG_TOGGLE(SubEntry->Flags, OSFLAG_WITHKEXTS);
+      SubEntry->LoadOptions     = AddLoadOption(SubEntry->LoadOptions, L"-v");
+      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+    }
+
+    
+//    AddMenuCheck(SubScreen, "Without caches",       OSFLAG_NOCACHES, 69);
+//    AddMenuCheck(SubScreen, "With injected kexts",  OSFLAG_WITHKEXTS, 69);
     AddMenuInfo(SubScreen, L"=== boot-args ===");
     if (!KernelIs64BitOnly) {
       AddMenuCheck(SubScreen, "OSX 32bit",          OPT_I386, 68);
@@ -750,11 +780,6 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
       AddMenuCheck(SubScreen, "No SIP", OSFLAG_NOSIP, 69);
     }
     
-    SubEntry = DuplicateLoaderEntry(Entry);
-    if (SubEntry) {
-      SubEntry->me.Title        = L"Boot Mac OS X with selected options";
-      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
-    }
 #else
 #if defined(MDE_CPU_X64)
     if (!KernelIs64BitOnly) {
@@ -1075,6 +1100,8 @@ STATIC BOOLEAN AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOptions,
         Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_NOCACHES);
       }
     }
+    //TODO there is a problem that Entry->Flags is unique while InputItmes are global ;(
+    InputItems[69].IValue = Entry->Flags;
     AddDefaultMenu(Entry);
     AddMenuEntry(&MainMenu, (REFIT_MENU_ENTRY *)Entry);
     return TRUE;
