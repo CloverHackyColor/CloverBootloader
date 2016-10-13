@@ -34,6 +34,8 @@
   AppleImageCodec.c
   picopng.h
   picopng.c
+  load_bmp.c
+  load_icns.c
 
 
 [Guids]

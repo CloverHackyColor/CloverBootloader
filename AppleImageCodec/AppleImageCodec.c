@@ -14,11 +14,31 @@
 #include <Protocol/UgaDraw.h>
 #include <Protocol/AppleImageCodecProtocol.h>
 
-#include <picopng.h>
+#include "picopng.h"
 
 //#define DBG(...) AsciiPrint(__VA_ARGS__);
 #define DBG(...)
 
+static EG_IMAGE * egDecodeAny(IN UINT8 *FileData, IN UINTN FileDataLength,
+                              IN BOOLEAN WantAlpha)
+{
+  EG_IMAGE        *NewImage;
+  
+  //automatic choose format
+  NewImage = egDecodePNG(FileData, FileDataLength, WantAlpha);
+  
+  if (!NewImage) {
+    DBG(" ..png is wrong try to decode icns\n");
+    NewImage = egDecodeICNS(FileData, FileDataLength, 128, WantAlpha);
+  }
+  
+  if (!NewImage) {
+    DBG(" ..png and icns is wrong try to decode bmp\n");
+    NewImage = egDecodeBMP(FileData, FileDataLength, WantAlpha);
+  }
+  
+  return NewImage;
+}
 
 //
 // PNG Image codec protocol instance implementation
@@ -26,7 +46,7 @@
 
 EFI_STATUS
 EFIAPI
-PngRecognizeImageData (
+RecognizeImageData (
   VOID         *ImageBuffer,
   UINTN         ImageSize
   )
@@ -34,7 +54,7 @@ PngRecognizeImageData (
   EG_IMAGE      *Image;
   
   DBG("AppleImageCodec PngRecognizeImageData: Status = ");
-  Image = egDecodePNG((UINT8*)ImageBuffer, ImageSize, FALSE);
+  Image = egDecodeAny((UINT8*)ImageBuffer, ImageSize, FALSE);
   if (Image == NULL) {
     DBG("EFI_UNSUPPORTED\n");
     return EFI_UNSUPPORTED;
@@ -49,7 +69,7 @@ PngRecognizeImageData (
 
 EFI_STATUS
 EFIAPI
-PngGetImageDims (
+GetImageDims (
   VOID          *ImageBuffer,
   UINTN         ImageSize,
   UINT32         *ImageWidth,
@@ -58,8 +78,8 @@ PngGetImageDims (
 {
   EG_IMAGE      *Image;
   
-  DBG("AppleImageCodec PngGetImageDims: Status = ");
-  Image = egDecodePNG((UINT8*)ImageBuffer, ImageSize, FALSE);
+  DBG("AppleImageCodec GetImageDims: Status = ");
+  Image = egDecodeAny((UINT8*)ImageBuffer, ImageSize, FALSE);
   if (Image == NULL) {
     DBG("EFI_UNSUPPORTED\n");
     return EFI_UNSUPPORTED;
@@ -78,7 +98,7 @@ PngGetImageDims (
 
 EFI_STATUS
 EFIAPI
-PngDecodeImageData (
+DecodeImageData (
   VOID          *ImageBuffer,
   UINTN         ImageSize,
   EFI_UGA_PIXEL **RawImageData,
@@ -87,9 +107,10 @@ PngDecodeImageData (
 {
   EG_IMAGE      *Image;
   INTN          Index;
+  //automatic choose format
   
-  DBG("AppleImageCodec PngDecodeImageData: Status = ");
-  Image = egDecodePNG((UINT8*)ImageBuffer, ImageSize, FALSE);
+  DBG("AppleImageCodec DecodeImageData: Status = ");
+  Image = egDecodeAny((UINT8*)ImageBuffer, ImageSize, FALSE);
   if (Image == NULL) {
     DBG("EFI_UNSUPPORTED\n");
     return EFI_UNSUPPORTED;
@@ -108,22 +129,22 @@ PngDecodeImageData (
   return EFI_SUCCESS;
 }
 
-/** PNG Image codec protocol instance. */
-APPLE_IMAGE_CODEC_PROTOCOL gPngImageCodec = {
+/** Image codec protocol instance. */
+APPLE_IMAGE_CODEC_PROTOCOL gAppleImageCodec = {
   // Version
   1,
   
   // FileExt
   0,
   
-  // RecognizeImageData
-  PngRecognizeImageData,
+  RecognizeImageData,
+  //PngRecognizeImageData,
   
-  // GetImageDims
-  PngGetImageDims,
+  GetImageDims,
+  //PngGetImageDims,
   
-  // DecodeImageData
-  PngDecodeImageData
+  DecodeImageData,
+  //PngDecodeImageData
 };
 
 /** Driver's entry point. Installs our StartImage to detect boot loader start. */
@@ -142,7 +163,7 @@ AppleImageCodecEntrypoint (
   // PNG files
   //
   NewHandle = NULL;  // install to a new handle
-  Status = gBS->InstallMultipleProtocolInterfaces(&NewHandle, &gAppleImageCodecProtocolGuid, &gPngImageCodec, NULL);
+  Status = gBS->InstallMultipleProtocolInterfaces(&NewHandle, &gAppleImageCodecProtocolGuid, &gAppleImageCodec, NULL);
   if (EFI_ERROR(Status)) {
     DBG("AppleImageCodec: error installing protocol, Status = %r\n", Status);
   }

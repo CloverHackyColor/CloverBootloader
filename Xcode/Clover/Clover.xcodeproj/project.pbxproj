@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		1288B5211A30CEFB007CBCEF /* Net.c in Sources */ = {isa = PBXBuildFile; fileRef = 1288B5201A30CEFB007CBCEF /* Net.c */; };
+		12A31EB91DAFB20E004DCF13 /* load_bmp.c in Sources */ = {isa = PBXBuildFile; fileRef = 12A31EB71DAFB20E004DCF13 /* load_bmp.c */; };
+		12A31EBA1DAFB20E004DCF13 /* load_icns.c in Sources */ = {isa = PBXBuildFile; fileRef = 12A31EB81DAFB20E004DCF13 /* load_icns.c */; };
 		12E3015A1D5A413A00EED426 /* lodepng.c in Sources */ = {isa = PBXBuildFile; fileRef = 12E301581D5A413A00EED426 /* lodepng.c */; };
 		12E38DDA1A2DB6EB0093F748 /* DriverOverride.c in Sources */ = {isa = PBXBuildFile; fileRef = 12E38DD81A2DB6EB0093F748 /* DriverOverride.c */; };
 		2C794D201A0AA85900D845B0 /* Reset.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C7949ED1A0AA85900D845B0 /* Reset.c */; };
@@ -456,6 +458,8 @@
 		1290174B1A2F8EA50069691F /* RuntimeServices.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RuntimeServices.h; sourceTree = "<group>"; };
 		1290174C1A2F8EA50069691F /* StandaloneCompilation.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = StandaloneCompilation.txt; sourceTree = "<group>"; };
 		1294CC311A231CA80056FF03 /* scroll_images.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = scroll_images.h; sourceTree = "<group>"; };
+		12A31EB71DAFB20E004DCF13 /* load_bmp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = load_bmp.c; sourceTree = "<group>"; };
+		12A31EB81DAFB20E004DCF13 /* load_icns.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = load_icns.c; sourceTree = "<group>"; };
 		12A4B5C21DA3B3F300E9057A /* SMCHelper.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = SMCHelper.c; sourceTree = "<group>"; };
 		12A4B5C31DA3B3F300E9057A /* SMCHelper.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = SMCHelper.inf; sourceTree = "<group>"; };
 		12A7ABAE1CCE1C8E00BD837C /* config-sample.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "config-sample.plist"; path = "../../CloverPackage/CloverV2/EFI/CLOVER/config-sample.plist"; sourceTree = "<group>"; };
@@ -3063,6 +3067,8 @@
 				2C794CE01A0AA85900D845B0 /* AppleImageCodec.c */,
 				2C794CE11A0AA85900D845B0 /* AppleImageCodec.inf */,
 				2C794CE21A0AA85900D845B0 /* picopng.c */,
+				12A31EB71DAFB20E004DCF13 /* load_bmp.c */,
+				12A31EB81DAFB20E004DCF13 /* load_icns.c */,
 				2C794CE31A0AA85900D845B0 /* picopng.h */,
 			);
 			name = AppleImageCodec;
@@ -3606,6 +3612,8 @@
 				2C794D431A0AA85900D845B0 /* CpuInterrupt.nasm in Sources */,
 				2C794DB61A0AA85900D845B0 /* Dependency.c in Sources */,
 				12E38DDA1A2DB6EB0093F748 /* DriverOverride.c in Sources */,
+				12A31EB91DAFB20E004DCF13 /* load_bmp.c in Sources */,
+				12A31EBA1DAFB20E004DCF13 /* load_icns.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

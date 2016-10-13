@@ -88,7 +88,7 @@
 	Platform/nvidia.c
 #	Platform/nvidia.h
 #	Platform/pci.c
-	Platform/picopng.c
+#	Platform/picopng.c
 #	Platform/picopng.h
 	Platform/Platform.h
 	Platform/platformdata.c
