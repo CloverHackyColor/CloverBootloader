@@ -53,7 +53,7 @@
   entry_scan/lockedgraphics.c
   libeg/BmLib.c
   libeg/image.c
-  libeg/load_bmp.c
+#  libeg/load_bmp.c
   libeg/load_icns.c
   libeg/libscreen.c
   libeg/lodepng.c
