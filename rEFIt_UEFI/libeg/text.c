@@ -71,7 +71,7 @@ VOID egMeasureText(IN CHAR16 *Text, OUT INTN *Width, OUT INTN *Height)
         *Height = FontHeight;
 }
 
-EG_IMAGE * egLoadFontImage(IN BOOLEAN FromTheme, IN INTN Rows, IN INTN Cols)
+EG_IMAGE * egLoadFontImage(IN BOOLEAN UseEmbedded, IN INTN Rows, IN INTN Cols)
 {
   EG_IMAGE    *NewImage = NULL, *NewFontImage;
   INTN        ImageWidth, ImageHeight, x, y, Ypos, j;
@@ -94,8 +94,13 @@ EG_IMAGE * egLoadFontImage(IN BOOLEAN FromTheme, IN INTN Rows, IN INTN Cols)
     NewImage = egLoadImage(SelfRootDir, fontFilePath, TRUE);
     //else use embedded
     if (!NewImage) {
-      MsgLog("Font %s is not loaded, using embedded\n", fontFilePath);
-      NewImage = egDecodePNG(&emb_font_data[0], sizeof(emb_font_data), TRUE);
+      if (UseEmbedded) {
+        NewImage = egDecodePNG(&emb_font_data[0], sizeof(emb_font_data), TRUE);
+      } else {
+        MsgLog("Font %s is not loaded\n", fontFilePath);
+        FreePool(fontFilePath);
+        return NULL;
+      }
     }
     FreePool(fontFilePath);
   }
@@ -157,10 +162,10 @@ VOID PrepareFont()
       GlobalConfig.CharWidth = 22;
 //      FontWidth = GlobalConfig.CharWidth; //delete?
       TextHeight = FontHeight + TEXT_YMARGIN * 2;
-      DBG("Using Korean font matrix\n");
+      MsgLog("Using Korean font matrix\n");
       return;
     } else {
-      DBG("font image not loaded, use english\n");
+      MsgLog("Korean font image not loaded, use english\n");
       gLanguage = english;
     }
   }
@@ -168,7 +173,7 @@ VOID PrepareFont()
   // load the font
   if (FontImage == NULL){
     DBG("load font image type %d\n", GlobalConfig.Font);
-    FontImage = egLoadFontImage(TRUE, 16, 16);
+    FontImage = egLoadFontImage(TRUE, 16, 16); //anyway success
   }
   
   if (FontImage) {
