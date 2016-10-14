@@ -4581,28 +4581,12 @@ UINTN RunMainMenu(IN REFIT_MENU_SCREEN *Screen, IN INTN DefaultSelection, OUT RE
       }
       SubMenuIndex = -1;
 #ifdef CHECK_FLAGS   
-/*
-#define OSFLAG_USEGRAPHICS    (1 << 0)
-#define OSFLAG_WITHKEXTS      (1 << 1)
-#define OSFLAG_CHECKFAKESMC   (1 << 2)
-#define OSFLAG_NOCACHES       (1 << 3)
-#define OSFLAG_NODEFAULTARGS  (1 << 4)
-#define OSFLAG_NODEFAULTMENU  (1 << 5)
-#define OSFLAG_HIDDEN         (1 << 6)
-#define OSFLAG_DISABLED       (1 << 7)
-#define OSFLAG_HIBERNATED     (1 << 8)
-#define OSFLAG_NOSIP          (1 << 9)
-*/
- //     gSettings.FlagsBits = ((LOADER_ENTRY*)MainChosenEntry)->Flags;
- //     DBG("set FlagsBits = 0x%x\n", gSettings.FlagsBits);
       gSettings.OptionsBits = EncodeOptions(TmpArgs);
 //      DBG("main OptionsBits = 0x%x\n", gSettings.OptionsBits);
       gSettings.OptionsBits |= EncodeOptions(((LOADER_ENTRY*)MainChosenEntry)->LoadOptions);
 //      DBG("add OptionsBits = 0x%x\n", gSettings.OptionsBits);
       DecodeOptions((LOADER_ENTRY*)MainChosenEntry);
-//      DBG("get OptionsBits = 0x%x\n", gSettings.OptionsBits);
-//      ((LOADER_ENTRY*)TempChosenEntry)->Flags |= (UINT16)(gSettings.FlagsBits & 0x0FFF);
-//      DBG("get FlagsBits = 0x%x\n", gSettings.FlagsBits);
+      DBG("enter menu with LoadOptions: %s\n", ((LOADER_ENTRY*)MainChosenEntry)->LoadOptions);
 #endif
       if (TmpArgs) {
         FreePool(TmpArgs);
@@ -4613,12 +4597,15 @@ UINTN RunMainMenu(IN REFIT_MENU_SCREEN *Screen, IN INTN DefaultSelection, OUT RE
 #ifdef CHECK_FLAGS
         DecodeOptions((LOADER_ENTRY*)MainChosenEntry);
 //        DBG("get OptionsBits = 0x%x\n", gSettings.OptionsBits);
-//        ((LOADER_ENTRY*)MainChosenEntry)->Flags = (UINT16)(gSettings.FlagsBits & 0x0FFF);
 //        DBG("get FlagsBits = 0x%x\n", gSettings.FlagsBits);
 #endif
         if (SubMenuExit == MENU_EXIT_ESCAPE) {
           SubMenuExit = 0;
         }
+        if (MainChosenEntry->Tag == TAG_CLOVER) {
+          ((LOADER_ENTRY*)MainChosenEntry)->LoadOptions = EfiStrDuplicate(((LOADER_ENTRY*)TempChosenEntry)->LoadOptions);
+        }
+        DBG("exit menu with LoadOptions: %s\n", ((LOADER_ENTRY*)MainChosenEntry)->LoadOptions);
         if (SubMenuExit == MENU_EXIT_ENTER) {
           ((LOADER_ENTRY*)MainChosenEntry)->Flags = ((LOADER_ENTRY*)TempChosenEntry)->Flags;
         }
