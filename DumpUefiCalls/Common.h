@@ -152,6 +152,7 @@
 #include "RuntimeServices.h"
 #include "DataHub.h"
 #include "Fs.h"
+#include "AppleProtocols.h"
 
 #endif // __DMP_COMMON_H__
 

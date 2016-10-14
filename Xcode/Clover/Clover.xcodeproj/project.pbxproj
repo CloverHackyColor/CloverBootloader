@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		12506B6E1DB0F15F00ACD402 /* AppleProtocols.c in Sources */ = {isa = PBXBuildFile; fileRef = 12506B6D1DB0F15F00ACD402 /* AppleProtocols.c */; };
 		1288B5211A30CEFB007CBCEF /* Net.c in Sources */ = {isa = PBXBuildFile; fileRef = 1288B5201A30CEFB007CBCEF /* Net.c */; };
 		12A31EB91DAFB20E004DCF13 /* load_bmp.c in Sources */ = {isa = PBXBuildFile; fileRef = 12A31EB71DAFB20E004DCF13 /* load_bmp.c */; };
 		12A31EBA1DAFB20E004DCF13 /* load_icns.c in Sources */ = {isa = PBXBuildFile; fileRef = 12A31EB81DAFB20E004DCF13 /* load_icns.c */; };
@@ -335,6 +336,8 @@
 
 /* Begin PBXFileReference section */
 		12344F581CAB9A5700318A6E /* AppleSmBios.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleSmBios.h; sourceTree = "<group>"; };
+		12506B6D1DB0F15F00ACD402 /* AppleProtocols.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = AppleProtocols.c; sourceTree = "<group>"; };
+		12506B7A1DB1044E00ACD402 /* AppleProtocols.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleProtocols.h; sourceTree = "<group>"; };
 		1261513A1A15BBB000903E7B /* bootscreen.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = bootscreen.c; sourceTree = "<group>"; };
 		1261513B1A15BBB000903E7B /* common.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = common.c; sourceTree = "<group>"; };
 		1261513C1A15BBB000903E7B /* entry_scan.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = entry_scan.h; sourceTree = "<group>"; };
@@ -1337,6 +1340,8 @@
 		129017361A2F8EA50069691F /* DumpUefiCalls */ = {
 			isa = PBXGroup;
 			children = (
+				12506B6D1DB0F15F00ACD402 /* AppleProtocols.c */,
+				12506B7A1DB1044E00ACD402 /* AppleProtocols.h */,
 				129017371A2F8EA50069691F /* BootServices.c */,
 				129017381A2F8EA50069691F /* BootServices.h */,
 				129017391A2F8EA50069691F /* build.sh */,
@@ -3614,6 +3619,7 @@
 				12E38DDA1A2DB6EB0093F748 /* DriverOverride.c in Sources */,
 				12A31EB91DAFB20E004DCF13 /* load_bmp.c in Sources */,
 				12A31EBA1DAFB20E004DCF13 /* load_icns.c in Sources */,
+				12506B6E1DB0F15F00ACD402 /* AppleProtocols.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -24,7 +24,7 @@
 //  gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0xFFFFFFFF
 // in package DSC file
 
-#define DBG_SMC 3
+#define DBG_SMC 2
 
 #if DBG_SMC == 3
 #define DBG(...) MemLog(FALSE, 0, __VA_ARGS__)

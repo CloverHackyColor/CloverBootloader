@@ -46,7 +46,7 @@ static EG_IMAGE * egDecodeAny(IN UINT8 *FileData, IN UINTN FileDataLength,
 
 EFI_STATUS
 EFIAPI
-RecognizeImageData (
+RecognizeImageData (IN APPLE_IMAGE_CODEC_PROTOCOL* This,
   VOID         *ImageBuffer,
   UINTN         ImageSize
   )
@@ -69,7 +69,7 @@ RecognizeImageData (
 
 EFI_STATUS
 EFIAPI
-GetImageDims (
+GetImageDims (IN APPLE_IMAGE_CODEC_PROTOCOL* This,
   VOID          *ImageBuffer,
   UINTN         ImageSize,
   UINT32         *ImageWidth,
@@ -98,7 +98,7 @@ GetImageDims (
 
 EFI_STATUS
 EFIAPI
-DecodeImageData (
+DecodeImageData (IN APPLE_IMAGE_CODEC_PROTOCOL* This,
   VOID          *ImageBuffer,
   UINTN         ImageSize,
   EFI_UGA_PIXEL **RawImageData,
@@ -108,6 +108,9 @@ DecodeImageData (
   EG_IMAGE      *Image;
   INTN          Index;
   //automatic choose format
+  if (!RawImageData || !*RawImageData || !RawImageDataSize) {
+    return EFI_INVALID_PARAMETER;
+  }
   
   DBG("AppleImageCodec DecodeImageData: Status = ");
   Image = egDecodeAny((UINT8*)ImageBuffer, ImageSize, FALSE);

@@ -52,6 +52,7 @@
 [Packages]
   MdePkg/MdePkg.dec
   IntelFrameworkPkg/IntelFrameworkPkg.dec
+  Clover/CloverPkg.dec
 
 [LibraryClasses]
   UefiLib
@@ -82,6 +83,7 @@
   DataHub.c
   Fs.h
   Fs.c
+  AppleProtocols.c
 
 
 [Guids]
@@ -110,6 +112,8 @@
   gEfiDiskIo2ProtocolGuid
   gEfiGraphicsOutputProtocolGuid
   gEfiDataHubProtocolGuid
+  gAppleSMCProtocolGuid
+  gAppleImageCodecProtocolGuid
 
 [Depex]
   TRUE  

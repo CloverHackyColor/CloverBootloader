@@ -38,6 +38,8 @@ StartOverrides()
 	#if PRINT_DUMPS >= 2
 	OvrDataHub();
 	#endif
+  OvrAppleSMC();
+  OvrAppleImageCodec();
 	return EFI_SUCCESS;
 }
 
