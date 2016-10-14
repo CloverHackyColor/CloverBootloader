@@ -120,7 +120,7 @@
 // 1 - will capture and display all file system access
 // 0 - will skip capturing file system access
 //
-#define CAPTURE_FILESYSTEM_ACCESS	0
+#define CAPTURE_FILESYSTEM_ACCESS	1
 
 //
 // CAPTURE_CONSOLE_OUTPUT
@@ -128,7 +128,7 @@
 // 1 - will capture conout, allowing it to be displayed to screen also (useful when saving to file)
 // 0 - will skip capturing conout
 //
-#define CAPTURE_CONSOLE_OUTPUT		2
+#define CAPTURE_CONSOLE_OUTPUT		1
 
 //
 // CLEANER_LOG

@@ -14,6 +14,7 @@
 #include <Protocol/UgaDraw.h>
 #include <Protocol/AppleSMC.h>
 #include <Protocol/AppleImageCodecProtocol.h>
+#include <Protocol/AppleKeyState.h>
 //#include <Protocol/AppleEvent.h>
 #include <Protocol/FirmwareVolume.h>
 
@@ -36,7 +37,7 @@ OvrReadData (IN APPLE_SMC_PROTOCOL* This, IN UINT32 DataId, IN UINT32 DataLength
 	EFI_STATUS				Status;
   
   Status = gOrgAppleSMC.ReadData(This, DataId, DataLength, DataBuffer);
-  PRINT("->AppleSMC.ReadData SMC=%x (%c%c%c%c) len=%d\n", (DataId >> 24) & 0xFF,
+  PRINT("->AppleSMC.ReadData SMC=%x (%c%c%c%c) len=%d\n", DataId, (DataId >> 24) & 0xFF,
         (DataId >> 16) & 0xFF, (DataId >> 8) & 0xFF,  DataId & 0xFF, DataLength);
   return Status;
 }
@@ -166,5 +167,56 @@ OvrAppleImageCodec(VOID)
 	
 	PRINT("AppleImageCodec overriden!\n");
 	return EFI_SUCCESS;
+}
+
+/****************************************************/
+/**/
+/** Installs our AppleKeyState overrides. */
+
+APPLE_KEY_STATE_PROTOCOL gOrgAppleKeyState;
+APPLE_KEY_STATE_PROTOCOL *gAppleKeyState;
+
+EFI_STATUS
+EFIAPI
+OvrReadKeyState (IN APPLE_KEY_STATE_PROTOCOL *This,
+                 OUT UINT16 *ModifyFlags,
+                 OUT UINTN  *PressedKeyStatesCount,
+                 OUT CHAR16 *PressedKeyStates)
+{
+  EFI_STATUS				Status;
+
+  Status = gOrgAppleKeyState.ReadKeyState(This, ModifyFlags, PressedKeyStatesCount, PressedKeyStates);
+  PRINT("->ReadKeyState(), count=%d, flags=0x%x states=%s, status=%r\n",
+        PressedKeyStatesCount?*PressedKeyStatesCount:0,
+        ModifyFlags?*ModifyFlags:0,
+        PressedKeyStates, Status);
+  return Status;
+}
+
+
+
+EFI_STATUS EFIAPI
+OvrAppleKeyState(VOID)
+{
+  EFI_STATUS				Status;
+
+  PRINT("Overriding AppleKeyState ...\n");
+
+  // Locate AppleKeyState protocol
+  Status = gBS->LocateProtocol(&gAppleKeyStateProtocolGuid, NULL, (VOID **) &gAppleKeyState);
+  if (EFI_ERROR(Status)) {
+    PRINT("Error Overriding AppleKeyState: %r\n", Status);
+    return Status;
+  }
+
+  // Store originals
+  CopyMem(&gOrgAppleKeyState, gAppleKeyState, sizeof(APPLE_KEY_STATE_PROTOCOL));
+
+  // Override with our implementation
+  gAppleKeyState->ReadKeyState = OvrReadKeyState;
+
+  PRINT("AppleKeyState overriden!\n");
+  return EFI_SUCCESS;
+
 }
 

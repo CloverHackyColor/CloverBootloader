@@ -437,6 +437,7 @@
 		1261519E1A15BBB000903E7B /* screen.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = screen.c; sourceTree = "<group>"; };
 		1261519F1A15BBB000903E7B /* refit.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = refit.inf; sourceTree = "<group>"; };
 		126151A01A15BBB000903E7B /* Version.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Version.h; sourceTree = "<group>"; };
+		1261CBB51DB17AC200E26E00 /* AppleKeyState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppleKeyState.h; sourceTree = "<group>"; };
 		1288B5201A30CEFB007CBCEF /* Net.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Net.c; sourceTree = "<group>"; };
 		129017371A2F8EA50069691F /* BootServices.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BootServices.c; sourceTree = "<group>"; };
 		129017381A2F8EA50069691F /* BootServices.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BootServices.h; sourceTree = "<group>"; };
@@ -1848,6 +1849,7 @@
 				2C794AD21A0AA85900D845B0 /* AppleDeviceControl.h */,
 				2C794AD31A0AA85900D845B0 /* AppleDiskIo.h */,
 				2C794AD41A0AA85900D845B0 /* AppleImageCodecProtocol.h */,
+				1261CBB51DB17AC200E26E00 /* AppleKeyState.h */,
 				2C794AD51A0AA85900D845B0 /* AppleSMC.h */,
 				2C794AD61A0AA85900D845B0 /* efiConsoleControl.h */,
 				2C794AD71A0AA85900D845B0 /* EmuVariableControl.h */,

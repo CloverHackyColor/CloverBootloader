@@ -114,6 +114,7 @@
   gEfiDataHubProtocolGuid
   gAppleSMCProtocolGuid
   gAppleImageCodecProtocolGuid
+  gAppleKeyStateProtocolGuid
 
 [Depex]
   TRUE  

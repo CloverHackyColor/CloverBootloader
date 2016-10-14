@@ -15,4 +15,8 @@ OvrAppleSMC(VOID);
 EFI_STATUS EFIAPI
 OvrAppleImageCodec(VOID);
 
+EFI_STATUS EFIAPI
+OvrAppleKeyState(VOID);
+
+
 #endif
