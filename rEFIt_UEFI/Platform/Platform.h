@@ -2269,7 +2269,7 @@ ParseSMBIOSSettings (
 //
 // Hibernate.c
 //
-/** Returns TRUE if given OSX on given volume is hibernated
+/** Returns TRUE if given macOS on given volume is hibernated
  *  (/private/var/vm/sleepimage exists and it's modification time is close to volume modification time).
  */
 BOOLEAN

@@ -603,7 +603,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
       Entry->LoadOptions = TempOptions;
     }
 
-    DbgHeader("RestSetupOSX");
+    DbgHeader("RestSetup macOS");
 
 //    DBG("SetDevices\n");
     SetDevices(Entry);
@@ -691,7 +691,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     SetStartupDiskVolume(Entry->Volume, Entry->LoaderType == OSTYPE_OSX ? NULL : Entry->LoaderPath);
   } else if (gSettings.DefaultVolume != NULL) {
     // DefaultVolume specified in Config.plist or in Boot Option
-    // we'll remove OSX Startup Disk vars which may be present if it is used
+    // we'll remove macOS Startup Disk vars which may be present if it is used
     // to reboot into another volume
     RemoveStartupDiskVolume();
   }
@@ -842,7 +842,7 @@ static VOID StartLegacy(IN LEGACY_ENTRY *Entry)
       SetStartupDiskVolume(Entry->Volume, NULL);
     } else if (gSettings.DefaultVolume != NULL) {
       // DefaultVolume specified in Config.plist:
-      // we'll remove OSX Startup Disk vars which may be present if it is used
+      // we'll remove macOS Startup Disk vars which may be present if it is used
       // to reboot into another volume
       RemoveStartupDiskVolume();
     }
@@ -1943,7 +1943,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 // UEFI boot: get gEfiBootDeviceGuid from NVRAM.
 // if present, ScanVolumes() will skip scanning other volumes
 // in the first run.
-// this speeds up loading of default OSX volume.
+// this speeds up loading of default macOS  volume.
      GetEfiBootDeviceFromNvram();
   }
 

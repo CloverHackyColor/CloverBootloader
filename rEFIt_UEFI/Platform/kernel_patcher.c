@@ -104,7 +104,7 @@ VOID KernelPatcher_64(VOID* kernelData, LOADER_ENTRY *Entry)
     // make sure only kernels for OSX 10.6.0 to 10.7.3 are being patched by this approach
     if (os_version >= AsciiOSVersionToUint64("10.6") && os_version <= AsciiOSVersionToUint64("10.7.3")) {
 
-        DBG_RT(Entry, "will patch kernel for OSX 10.6.0 to 10.7.3\n");
+        DBG_RT(Entry, "will patch kernel for macOS 10.6.0 to 10.7.3\n");
 
         // remove tsc_init: unknown CPU family panic for kernels prior to 10.6.2 which still had Atom support
         if (os_version < AsciiOSVersionToUint64("10.6.2")) {
@@ -216,7 +216,7 @@ VOID KernelPatcher_64(VOID* kernelData, LOADER_ENTRY *Entry)
     // it needs to be exploited in diff manner due to the lack of space
     else if (os_version >= AsciiOSVersionToUint64("10.7.4")) {
 
-        DBG_RT(Entry, "will patch kernel for OSX 10.7.4+\n");
+        DBG_RT(Entry, "will patch kernel for macOS 10.7.4+\n");
 
         /*
          Here is our switchaddress location ... it should be case 20 from CPUID switch statement

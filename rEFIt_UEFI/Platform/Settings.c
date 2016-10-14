@@ -1637,7 +1637,8 @@ FillinCustomEntry (
 
   Prop = GetProperty (DictPointer, "Type");
   if (Prop != NULL && (Prop->type == kTagTypeString)) {
-    if (AsciiStriCmp (Prop->string, "OSX") == 0) {
+    if ((AsciiStriCmp (Prop->string, "OSX") == 0) ||
+        (AsciiStriCmp (Prop->string, "macOS") == 0)) {
       Entry->Type = OSTYPE_OSX;
     } else if (AsciiStriCmp (Prop->string, "OSXInstaller") == 0) {
       Entry->Type = OSTYPE_OSX_INSTALLER;
@@ -1670,7 +1671,7 @@ FillinCustomEntry (
     if (OSTYPE_IS_OSX_RECOVERY (Entry->Type)) {
       Entry->Title = PoolPrint (L"Recovery");
     } else if (OSTYPE_IS_OSX_INSTALLER (Entry->Type)) {
-      Entry->Title = PoolPrint (L"Install OSX");
+      Entry->Title = PoolPrint (L"Install macOS");
     }
   }
   if ((Entry->Image == NULL) && (Entry->ImagePath == NULL)) {
@@ -5440,7 +5441,7 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
       i++;
     }
 
-    if (SystemPlists[i] != NULL) { // found OSX System
+    if (SystemPlists[i] != NULL) { // found macOS System
       Status = egLoadFile (Entry->Volume->RootDir, SystemPlists[i], (UINT8 **)&PlistBuffer, &PlistLen);
       if (!EFI_ERROR (Status) && PlistBuffer != NULL && ParseXML (PlistBuffer, &Dict, 0) == EFI_SUCCESS) {
         Prop = GetProperty (Dict, "ProductVersion");

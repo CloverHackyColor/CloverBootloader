@@ -1012,7 +1012,7 @@ VOID PatchTableType9()
 	 Real Mac always contain Airport table 9 as
 	 09 0D xx xx 01 A5 08 03 03 00 00 04 06 "AirPort"
 	 */
-  //usage in OSX:
+  //usage in macOS:
   // SlotID == value of Name(_SUN, SlotID) 8bit
   // SlotDesignation == name to "AAPL,slot-name"
   // SlotType = 32bit PCI/SlotTypePciExpressX1/x4/x16
@@ -2040,7 +2040,7 @@ VOID FinalizeSmbios() //continue
 	// Fix it in Hob list
 	//
 	// No smbios in Hob list on Aptio, so no need to update it there.
-	// But even if it would be there, loading of OSX would overwrite it
+	// But even if it would be there, loading of macOS would overwrite it
 	// since this list on my board is inside space needed for kernel
 	// (ha! like many other UEFI stuff).
 	// It's enough to add it to Conf.table.

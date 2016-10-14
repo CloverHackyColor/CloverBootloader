@@ -285,7 +285,7 @@ mapped */
 #define	LC_DYLD_INFO 	0x22	/* compressed dyld information */
 #define	LC_DYLD_INFO_ONLY (0x22|LC_REQ_DYLD)	/* compressed dyld information only */
 #define	LC_LOAD_UPWARD_DYLIB (0x23 | LC_REQ_DYLD) /* load upward dylib */
-#define LC_VERSION_MIN_MACOSX 0x24   /* build for MacOSX min OS version */
+#define LC_VERSION_MIN_MACOSX 0x24   /* build for macOS min OS version */
 #define LC_VERSION_MIN_IPHONEOS 0x25 /* build for iPhoneOS min OS version */
 #define LC_FUNCTION_STARTS 0x26 /* compressed table of function start addresses */
 #define LC_DYLD_ENVIRONMENT 0x27 /* string for dyld to treat

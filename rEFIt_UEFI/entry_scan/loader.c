@@ -607,7 +607,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath,
   } else {
     //DBG("encounter LoaderTitle ==%s and Entry->VolName ==%s\n", LoaderTitle, Entry->VolName);
     if (GlobalConfig.BootCampStyle) {
-      if ((StriCmp(LoaderTitle, L"Mac OS X") == 0) || (StriCmp(LoaderTitle, L"Recovery") == 0)) {
+      if ((StriCmp(LoaderTitle, L"macOS") == 0) || (StriCmp(LoaderTitle, L"Recovery") == 0)) {
         Entry->me.Title = PoolPrint(L"%s", Entry->VolName);
       } else {
         Entry->me.Title = PoolPrint(L"%s", (LoaderTitle != NULL) ? LoaderTitle : Basename(LoaderPath));
@@ -712,7 +712,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
     SubEntry->me.Title = (Entry->LoaderType == OSTYPE_OSX ||
                           Entry->LoaderType == OSTYPE_OSX_INSTALLER ||
                           Entry->LoaderType == OSTYPE_RECOVERY) ?
-      L"Boot Mac OS X" : PoolPrint(L"Run %s", FileName);
+      L"Boot macOS" : PoolPrint(L"Run %s", FileName);
     AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
   }
  */
@@ -737,14 +737,14 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
     }
     SubEntry = DuplicateLoaderEntry(Entry);
     if (SubEntry) {
-      SubEntry->me.Title        = L"Boot Mac OS X with selected options";
+      SubEntry->me.Title        = L"Boot macOS with selected options";
       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
     }
     SubEntry = DuplicateLoaderEntry(Entry);
     if (SubEntry) {
       SubEntry->me.Title        = OSFLAG_ISSET(SubEntry->Flags, OSFLAG_WITHKEXTS) ?
-      L"Boot Mac OS X without injected kexts" :
-      L"Boot Mac OS X with injected kexts";
+      L"Boot macOS without injected kexts" :
+      L"Boot macOS with injected kexts";
       SubEntry->Flags           = OSFLAG_TOGGLE(SubEntry->Flags, OSFLAG_WITHKEXTS);
       SubEntry->LoadOptions     = AddLoadOption(SubEntry->LoadOptions, L"-v");
       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
@@ -755,8 +755,8 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
 //    AddMenuCheck(SubScreen, "With injected kexts",  OSFLAG_WITHKEXTS, 69);
     AddMenuInfo(SubScreen, L"=== boot-args ===");
     if (!KernelIs64BitOnly) {
-      AddMenuCheck(SubScreen, "OSX 32bit",          OPT_I386, 68);
-      AddMenuCheck(SubScreen, "OSX 64bit",          OPT_X64,  68);
+      AddMenuCheck(SubScreen, "macOS 32bit",          OPT_I386, 68);
+      AddMenuCheck(SubScreen, "macOS 64bit",          OPT_X64,  68);
     }
     AddMenuCheck(SubScreen, "Verbose (-v)",                               OPT_VERBOSE, 68);
     AddMenuCheck(SubScreen, "Single User (-s)",                           OPT_SINGLE_USER, 68);
@@ -786,7 +786,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
       SubEntry = DuplicateLoaderEntry(Entry);
       if (SubEntry) {
         SubEntry->LoadOptions     = AddLoadOption(SubEntry->LoadOptions, L"arch=x86_64");
-        SubEntry->me.Title        = L"Boot Mac OS X (64-bit)";
+        SubEntry->me.Title        = L"Boot macOS  (64-bit)";
         AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
       }
     }
@@ -794,7 +794,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
     if (!KernelIs64BitOnly) {
       SubEntry = DuplicateLoaderEntry(Entry);
       if (SubEntry) {
-        SubEntry->me.Title        = L"Boot Mac OS X (32-bit)";
+        SubEntry->me.Title        = L"Boot macOS  (32-bit)";
         SubEntry->LoadOptions     = AddLoadOption(SubEntry->LoadOptions, L"arch=i386");
         AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
       }
@@ -818,7 +818,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
       if (KernelIs64BitOnly) {
         SubEntry = DuplicateLoaderEntry(Entry);
         if (SubEntry) {
-          SubEntry->me.Title        = L"Boot Mac OS X in verbose mode";
+          SubEntry->me.Title        = L"Boot macOS  in verbose mode";
           SubEntry->Flags           = OSFLAG_UNSET(SubEntry->Flags, OSFLAG_USEGRAPHICS);
           SubEntry->LoadOptions     = AddLoadOption(SubEntry->LoadOptions, L"-v");
           AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
@@ -827,7 +827,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
         if (SubEntry->OSVersion && (AsciiOSVersionToUint64(SubEntry->OSVersion) >= AsciiOSVersionToUint64("10.11"))) {
           SubEntry = DuplicateLoaderEntry(Entry);
           if (SubEntry) {
-            SubEntry->me.Title        = L"Boot Mac OS X with No SIP";
+            SubEntry->me.Title        = L"Boot macOS  with No SIP";
             SubEntry->Flags           = OSFLAG_SET(SubEntry->Flags, OSFLAG_NOSIP);
             //SubEntry->LoadOptions     = AddLoadOption(SubEntry->LoadOptions, L"-v");
             AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
@@ -836,7 +836,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
       } else {
         SubEntry = DuplicateLoaderEntry(Entry);
         if (SubEntry) {
-          SubEntry->me.Title        = L"Boot Mac OS X in verbose mode (64bit)";
+          SubEntry->me.Title        = L"Boot macOS  in verbose mode (64bit)";
           SubEntry->Flags           = OSFLAG_UNSET(SubEntry->Flags, OSFLAG_USEGRAPHICS);
           TempOptions = AddLoadOption(SubEntry->LoadOptions, L"-v");
           SubEntry->LoadOptions     = AddLoadOption(TempOptions, L"arch=x86_64");
@@ -850,7 +850,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
       if (!KernelIs64BitOnly) {
         SubEntry = DuplicateLoaderEntry(Entry);
         if (SubEntry) {
-          SubEntry->me.Title        = L"Boot Mac OS X in verbose mode (32-bit)";
+          SubEntry->me.Title        = L"Boot macOS in verbose mode (32-bit)";
           SubEntry->Flags           = OSFLAG_SET(SubEntry->Flags, OSFLAG_USEGRAPHICS);
           TempOptions = AddLoadOption(SubEntry->LoadOptions, L"-v");
           SubEntry->LoadOptions     = AddLoadOption(TempOptions, L"arch=i386");
@@ -861,7 +861,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
 
       SubEntry = DuplicateLoaderEntry(Entry);
       if (SubEntry) {
-        SubEntry->me.Title        = L"Boot Mac OS X in safe mode";
+        SubEntry->me.Title        = L"Boot macOS in safe mode";
         SubEntry->Flags           = OSFLAG_UNSET(SubEntry->Flags, OSFLAG_USEGRAPHICS);
         TempOptions = AddLoadOption(SubEntry->LoadOptions, L"-v");
         SubEntry->LoadOptions     = AddLoadOption(TempOptions, L"-x");
@@ -871,7 +871,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
 
       SubEntry = DuplicateLoaderEntry(Entry);
       if (SubEntry) {
-        SubEntry->me.Title        = L"Boot Mac OS X in single user verbose mode";
+        SubEntry->me.Title        = L"Boot macOS in single user verbose mode";
         SubEntry->Flags           = OSFLAG_UNSET(SubEntry->Flags, OSFLAG_USEGRAPHICS);
         TempOptions = AddLoadOption(SubEntry->LoadOptions, L"-v");
         SubEntry->LoadOptions     = AddLoadOption(TempOptions, L"-s");
@@ -882,8 +882,8 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
       SubEntry = DuplicateLoaderEntry(Entry);
       if (SubEntry) {
         SubEntry->me.Title        = OSFLAG_ISSET(SubEntry->Flags, OSFLAG_NOCACHES) ?
-        L"Boot Mac OS X with caches" :
-        L"Boot Mac OS X without caches";
+        L"Boot macOS with caches" :
+        L"Boot macOS without caches";
         SubEntry->Flags           = OSFLAG_TOGGLE(SubEntry->Flags, OSFLAG_NOCACHES);
         SubEntry->LoadOptions     = AddLoadOption(SubEntry->LoadOptions, L"-v");
         AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
@@ -892,8 +892,8 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
       SubEntry = DuplicateLoaderEntry(Entry);
       if (SubEntry) {
         SubEntry->me.Title        = OSFLAG_ISSET(SubEntry->Flags, OSFLAG_WITHKEXTS) ?
-        L"Boot Mac OS X without injected kexts" :
-        L"Boot Mac OS X with injected kexts";
+        L"Boot macOS without injected kexts" :
+        L"Boot macOS with injected kexts";
         SubEntry->Flags           = OSFLAG_TOGGLE(SubEntry->Flags, OSFLAG_WITHKEXTS);
         SubEntry->LoadOptions     = AddLoadOption(SubEntry->LoadOptions, L"-v");
         AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
@@ -905,7 +905,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
         {
           SubEntry = DuplicateLoaderEntry(Entry);
           if (SubEntry) {
-            SubEntry->me.Title        = L"Boot Mac OS X with caches and without injected kexts";
+            SubEntry->me.Title        = L"Boot macOS with caches and without injected kexts";
             SubEntry->Flags           = OSFLAG_UNSET(OSFLAG_UNSET(SubEntry->Flags, OSFLAG_NOCACHES), OSFLAG_WITHKEXTS);
             SubEntry->LoadOptions     = AddLoadOption(SubEntry->LoadOptions, L"-v");
             AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
@@ -915,7 +915,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
         {
           SubEntry = DuplicateLoaderEntry(Entry);
           if (SubEntry) {
-            SubEntry->me.Title        = L"Boot Mac OS X without caches and without injected kexts";
+            SubEntry->me.Title        = L"Boot macOS without caches and without injected kexts";
             SubEntry->Flags           = OSFLAG_UNSET(OSFLAG_SET(SubEntry->Flags, OSFLAG_NOCACHES), OSFLAG_WITHKEXTS);
             SubEntry->LoadOptions     = AddLoadOption(SubEntry->LoadOptions, L"-v");
             AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
@@ -926,7 +926,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
       {
         SubEntry = DuplicateLoaderEntry(Entry);
         if (SubEntry) {
-          SubEntry->me.Title        = L"Boot Mac OS X with caches and with injected kexts";
+          SubEntry->me.Title        = L"Boot macOS with caches and with injected kexts";
           SubEntry->Flags           = OSFLAG_SET(OSFLAG_UNSET(SubEntry->Flags, OSFLAG_NOCACHES), OSFLAG_WITHKEXTS);
           SubEntry->LoadOptions     = AddLoadOption(SubEntry->LoadOptions, L"-v");
           AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
@@ -936,7 +936,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
       {
         SubEntry = DuplicateLoaderEntry(Entry);
         if (SubEntry) {
-          SubEntry->me.Title        = L"Boot Mac OS X without caches and with injected kexts";
+          SubEntry->me.Title        = L"Boot macOS without caches and with injected kexts";
           SubEntry->Flags           = OSFLAG_SET(OSFLAG_SET(SubEntry->Flags, OSFLAG_NOCACHES), OSFLAG_WITHKEXTS);
           SubEntry->LoadOptions     = AddLoadOption(SubEntry->LoadOptions, L"-v");
           AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
@@ -1155,7 +1155,7 @@ VOID ScanLoader(VOID)
     // That file indentifies a 2nd-stage Install Media, so when present, skip standard path to avoid entry duplication
     if (!FileExists(Volume->RootDir, L"\\.IAPhysicalMedia")) {
       if(EFI_ERROR(GetRootUUID(Volume)) || isFirstRootUUID(Volume)) {
-        AddLoaderEntry(MACOSX_LOADER_PATH, NULL, L"Mac OS X", Volume, NULL, OSTYPE_OSX, 0);
+        AddLoaderEntry(MACOSX_LOADER_PATH, NULL, L"macOS", Volume, NULL, OSTYPE_OSX, 0);
       }
     }
 
@@ -1574,7 +1574,7 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
       continue;
     }
     if (StriCmp(CustomPath, MACOSX_LOADER_PATH) == 0 && FileExists(Volume->RootDir, L"\\.IAPhysicalMedia")) {
-      DBG("skipped standard OSX path because volume is 2nd stage Install Media\n");
+      DBG("skipped standard macOS path because volume is 2nd stage Install Media\n");
       continue;
     }
     Guid = FindGPTPartitionGuidInDevicePath(Volume->DevicePath);

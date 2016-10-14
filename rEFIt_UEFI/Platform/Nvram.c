@@ -380,7 +380,7 @@ BootVolumeDevicePathEqual (
     //
     // Some eSata device can have path:
     //  PciRoot(0x0)/Pci(0x1C,0x5)/Pci(0x0,0x0)/VenHw(CF31FAC5-C24E-11D2-85F3-00A0C93EC93B,80)
-    // while OSX can set it as
+    // while macOS can set it as
     //  PciRoot(0x0)/Pci(0x1C,0x5)/Pci(0x0,0x0)/Sata(0x0,0x0,0x0)
     // we'll assume VenHw and Sata nodes to be equal to cover that
     //
@@ -396,7 +396,7 @@ BootVolumeDevicePathEqual (
     }
     
     //
-    // UEFI can see it as PcieRoot, while OSX could generate PciRoot
+    // UEFI can see it as PcieRoot, while macOS could generate PciRoot
     // we'll assume Acpi dev path nodes to be equal to cover that
     //
     if (Type1 == ACPI_DEVICE_PATH && Type2 == ACPI_DEVICE_PATH) {
@@ -958,7 +958,7 @@ FindStartupDiskVolume (
   
   //
   // 2. gEfiBootVolume - partition volume
-  // PciRoot(0x0)/.../Sata(...)/HD(...) - set by Clover or OSX
+  // PciRoot(0x0)/.../Sata(...)/HD(...) - set by Clover or macOS
   //
   if (IsPartitionVolume) {
     DBG ("   - searching for that partition\n");
@@ -1001,7 +1001,7 @@ FindStartupDiskVolume (
   
   //
   // 3. gEfiBootVolume - disk volume
-  // PciRoot(0x0)/.../Sata(...) - set by OSX for Win boot
+  // PciRoot(0x0)/.../Sata(...) - set by macOS for Win boot
   //
   // 3.1 First find disk volume in Volumes[]
   //
