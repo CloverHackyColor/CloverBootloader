@@ -4577,6 +4577,9 @@ UINTN RunMainMenu(IN REFIT_MENU_SCREEN *Screen, IN INTN DefaultSelection, OUT RE
         if (SubMenuExit == MENU_EXIT_ESCAPE) {
           SubMenuExit = 0;
         }
+        if (SubMenuExit == MENU_EXIT_ENTER) {
+          ((LOADER_ENTRY*)MainChosenEntry)->Flags = ((LOADER_ENTRY*)TempChosenEntry)->Flags;
+        }
         if (/*MenuExit == MENU_EXIT_ENTER &&*/ MainChosenEntry->Tag == TAG_LOADER) {
           if (((LOADER_ENTRY*)MainChosenEntry)->LoadOptions) {
             AsciiSPrint(gSettings.BootArgs, 255, "%s", ((LOADER_ENTRY*)MainChosenEntry)->LoadOptions);
@@ -4584,7 +4587,6 @@ UINTN RunMainMenu(IN REFIT_MENU_SCREEN *Screen, IN INTN DefaultSelection, OUT RE
           DBG("boot with args: %a\n", gSettings.BootArgs);
         }
         if (/*MenuExit == MENU_EXIT_ESCAPE ||*/ TempChosenEntry->Tag == TAG_RETURN) {
-          ((LOADER_ENTRY*)MainChosenEntry)->Flags = ((LOADER_ENTRY*)TempChosenEntry)->Flags;
           SubMenuExit = MENU_EXIT_ENTER;
           MenuExit = 0;
         }
