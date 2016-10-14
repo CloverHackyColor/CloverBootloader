@@ -84,7 +84,7 @@
 //        usefull only when printing to serial in VBox for example
 // 0 - will stop printing when ExitBootServices() are called
 //
-#define WORK_DURING_RUNTIME		0
+#define WORK_DURING_RUNTIME		2
 
 //
 // PRINT_DUMPS:

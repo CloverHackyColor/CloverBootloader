@@ -423,6 +423,12 @@ VOID FillInputs(BOOLEAN New)
   InputItems[InputItemsCount++].BValue = gSettings.NvidiaGeneric;
   InputItems[InputItemsCount].ItemType = BoolValue; //56
   InputItems[InputItemsCount++].BValue = gSettings.NvidiaWeb;
+  InputItems[InputItemsCount].ItemType = BoolValue; //57
+  InputItems[InputItemsCount++].BValue = gSettings.ResetHDA;
+  InputItems[InputItemsCount].ItemType = BoolValue; //58
+  InputItems[InputItemsCount++].BValue = gSettings.AFGLowPowerState;
+// gSettings.HDALayoutId
+// gSettings.HDAInjection
 
   // CSR - aka System Integrity Protection configuration
   InputItemsCount = 65;
@@ -865,6 +871,14 @@ VOID ApplyInputs(VOID)
   i++; //56
   if (InputItems[i].Valid) {
     gSettings.NvidiaWeb = InputItems[i].BValue;
+  }
+  i++; //57
+  if (InputItems[i].Valid) {
+    gSettings.ResetHDA = InputItems[i].BValue;
+  }
+  i++; //58
+  if (InputItems[i].Valid) {
+    gSettings.AFGLowPowerState = InputItems[i].BValue;
   }
   
   // CSR
@@ -3889,6 +3903,33 @@ REFIT_MENU_ENTRY  *SubMenuGraphics()
   return Entry;
 }
 
+// ErmaC: Audio submenu
+REFIT_MENU_ENTRY  *SubMenuAudio()
+{
+  // init
+  REFIT_MENU_ENTRY   *Entry;
+  REFIT_MENU_SCREEN  *SubScreen;
+
+  // create the entry in the main menu
+  NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_AUDIO, "Audio tuning->");
+
+  // submenu description
+  AddMenuInfoLine(SubScreen, PoolPrint(L"Choose options to tune the HDA devices"));
+  //AddMenuInfoLine(SubScreen, PoolPrint(L"Number of Audio Controller=%d", NHDA));
+
+  //TODO
+  // gSettings.HDALayoutId
+  // gSettings.HDAInjection
+
+  // avaiable configuration
+  AddMenuItem(SubScreen, 57, "ResetHDA", TAG_INPUT, FALSE);
+  AddMenuItem(SubScreen, 58, "AFGLowPowerState", TAG_INPUT, FALSE);
+
+  // return
+  AddMenuEntry(SubScreen, &MenuEntryReturn);
+  return Entry;
+}
+
 #define nya(x) x/10,x%10
 
 REFIT_MENU_ENTRY  *SubMenuSpeedStep()
@@ -4381,6 +4422,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     AddMenuEntry(&OptionMenu, SubMenuPCI());
     AddMenuEntry(&OptionMenu, SubMenuSpeedStep());
     AddMenuEntry(&OptionMenu, SubMenuGraphics());
+    AddMenuEntry(&OptionMenu, SubMenuAudio());
     AddMenuEntry(&OptionMenu, SubMenuBinaries());
     AddMenuEntry(&OptionMenu, SubMenuSystem());
     AddMenuEntry(&OptionMenu, &MenuEntryReturn);

@@ -382,13 +382,13 @@ OvrRuntimeServices(EFI_RUNTIME_SERVICES	*RS)
 	#if WORK_DURING_RUNTIME == 2
 	// new style - does not work on Phoenix UEFI
 	Status = gBS->CreateEventEx (
-	EVT_NOTIFY_SIGNAL,
-	TPL_NOTIFY,
-	VirtualAddressChangeEvent,
-	NULL,
-	&gEfiEventVirtualAddressChangeGuid,
-	&gVirtualAddressChangeEvent
-	);
+                               EVT_NOTIFY_SIGNAL,
+                               TPL_NOTIFY,
+                               VirtualAddressChangeEvent,
+                               NULL,
+                               &gEfiEventVirtualAddressChangeGuid,
+                               &gVirtualAddressChangeEvent
+                               );
 	#elif WORK_DURING_RUNTIME == 1
 	// old style
 	Status = gBS->CreateEvent (

@@ -77,10 +77,10 @@ OvrAllocatePages(
 )
 {
 	EFI_STATUS			Status;
-	EFI_PHYSICAL_ADDRESS	inMemory = *Memory;
+//	EFI_PHYSICAL_ADDRESS	inMemory = *Memory;
 	
 	Status = gOrgBS.AllocatePages(Type, MemoryType, NumberOfPages, Memory);
-	PRINT("-> AllocatePages(%s, %s, 0x%x, 0x%lx/0x%lx) = %r\n", EfiAllocateTypeDesc[Type], EfiMemoryTypeDesc[MemoryType], NumberOfPages, inMemory, *Memory, Status);
+//	PRINT("-> AllocatePages(%s, %s, 0x%x, 0x%lx/0x%lx) = %r\n", EfiAllocateTypeDesc[Type], EfiMemoryTypeDesc[MemoryType], NumberOfPages, inMemory, *Memory, Status);
 	return Status;
 }
 
@@ -93,7 +93,7 @@ OvrFreePages(
 	EFI_STATUS			Status;
 	
 	Status = gOrgBS.FreePages(Memory, Pages);
-	PRINT("->FreePages(0x%lx, 0x%x) = %r\n", Memory, Pages, Status);
+//	PRINT("->FreePages(0x%lx, 0x%x) = %r\n", Memory, Pages, Status);
 	return Status;
 }
 
@@ -107,11 +107,11 @@ OvrGetMemoryMap(
 )
 {
 	EFI_STATUS			Status;
-	UINTN				inMemoryMapSize = *MemoryMapSize;
+//	UINTN				inMemoryMapSize = *MemoryMapSize;
 	
 	Status = gOrgBS.GetMemoryMap(MemoryMapSize, MemoryMap, MapKey, DescriptorSize, DescriptorVersion);
 	// if print to console, then ExitBootServices will not work
-	PRINT("->GetMemoryMap(0x%x/0x%x, %p, 0x%x, 0x%x, 0x%x) = %r\n", inMemoryMapSize, *MemoryMapSize, MemoryMap, *MapKey, *DescriptorSize, *DescriptorVersion, Status);
+//	PRINT("->GetMemoryMap(0x%x/0x%x, %p, 0x%x, 0x%x, 0x%x) = %r\n", inMemoryMapSize, *MemoryMapSize, MemoryMap, *MapKey, *DescriptorSize, *DescriptorVersion, Status);
 	if (Status == EFI_SUCCESS) {
 		#if PRINT_MEMORY_MAP == 1
 		PrintMemMap(*MemoryMapSize, MemoryMap, *DescriptorSize, *DescriptorVersion);
