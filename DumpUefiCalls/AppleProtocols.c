@@ -149,7 +149,7 @@ OvrAppleImageCodec(VOID)
 	PRINT("Overriding AppleImageCodec ...\n");
 	
 	// Locate AppleSMC protocol
-	Status = gBS->LocateProtocol(&gAppleSMCProtocolGuid, NULL, (VOID **) &gAppleImageCodec);
+	Status = gBS->LocateProtocol(&gAppleImageCodecProtocolGuid, NULL, (VOID **) &gAppleImageCodec);
 	if (EFI_ERROR(Status)) {
 		PRINT("Error Overriding AppleImageCodec: %r\n", Status);
 		return Status;
