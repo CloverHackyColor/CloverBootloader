@@ -1148,6 +1148,7 @@ static nvidia_pci_info_t nvidia_card_generic[] = {
 	// 1100 - 110F
 	// 1110 - 111F
 	// 1120 - 112F
+	{ 0x10DE1128,	"GeForce GTX 970M" },
 	// 1130 - 113F
 	// 1140 - 114F
 	{ 0x10DE1140,	"GeForce GT 610M" },
@@ -1334,6 +1335,7 @@ static nvidia_pci_info_t nvidia_card_generic[] = {
   //	{ 0x10DE1601,	"Graphics Device" }, //
   //	{ 0x10DE1602,	"Graphics Device" }, //
   //	{ 0x10DE1603,	"Graphics Device" }, //
+	{ 0x10DE1617,	"GeForce GTX 980M" }, //
   //	{ 0x10DE1630,	"Graphics Device" }, //
   //	{ 0x10DE1631,	"Graphics Device" }, //
   //	{ 0x10DE1780,	"Graphics Device" }, //
@@ -1350,7 +1352,7 @@ static nvidia_pci_info_t nvidia_card_generic[] = {
   //	{ 0x10DE17BD,	"Graphics Device" }, //
 	{ 0x10DE17BE,	"GM107 CS1" }, // GM107
   //	{ 0x10DE17C1,	"Graphics Device" }, //
-  //	{ 0x10DE17C2,	"Graphics Device" }, //
+	{ 0x10DE17C2,	"GeForce GTX Titan X" }, //
   { 0x10DE17C8,	"GeForce GTX 980 TI" }, //
   //	{ 0x10DE17EE,	"Graphics Device" }, //
   //	{ 0x10DE17EF,	"Graphics Device" }, //

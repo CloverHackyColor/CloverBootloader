@@ -53,7 +53,7 @@ case `uname` in
         echo DumpUefiCalls requires Snow Leopard or later OS
         exit 1
       else
-        TARGET_TOOLS=GCC47
+        TARGET_TOOLS=XCODE5
       fi
       ;;
   Linux*)

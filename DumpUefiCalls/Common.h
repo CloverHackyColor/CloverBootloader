@@ -58,7 +58,7 @@
 #ifdef DEBUG_ON_SERIAL_PORT
 #define LOG_TO_FILE			0
 #else
-#define LOG_TO_FILE			4
+#define LOG_TO_FILE			3
 #endif
 
 //
@@ -92,7 +92,7 @@
 // 1 - will print dumps for ST, RT vars when ExitBootServices() is called
 // 0 - will skip printing dumps
 //
-#define PRINT_DUMPS			1
+#define PRINT_DUMPS			0
 
 //
 // PRINT_SHELL_VARS:
@@ -128,7 +128,7 @@
 // 1 - will capture conout, allowing it to be displayed to screen also (useful when saving to file)
 // 0 - will skip capturing conout
 //
-#define CAPTURE_CONSOLE_OUTPUT		1
+#define CAPTURE_CONSOLE_OUTPUT		2
 
 //
 // CLEANER_LOG
