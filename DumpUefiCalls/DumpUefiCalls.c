@@ -41,6 +41,7 @@ StartOverrides()
   OvrAppleSMC();
   OvrAppleImageCodec();
   OvrAppleKeyState();
+  OvrOSInfo();
 	return EFI_SUCCESS;
 }
 

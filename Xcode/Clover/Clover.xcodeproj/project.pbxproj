@@ -11,6 +11,7 @@
 		1288B5211A30CEFB007CBCEF /* Net.c in Sources */ = {isa = PBXBuildFile; fileRef = 1288B5201A30CEFB007CBCEF /* Net.c */; };
 		12A31EB91DAFB20E004DCF13 /* load_bmp.c in Sources */ = {isa = PBXBuildFile; fileRef = 12A31EB71DAFB20E004DCF13 /* load_bmp.c */; };
 		12A31EBA1DAFB20E004DCF13 /* load_icns.c in Sources */ = {isa = PBXBuildFile; fileRef = 12A31EB81DAFB20E004DCF13 /* load_icns.c */; };
+		12A60F131DB514030068BF8B /* OSInfo.c in Sources */ = {isa = PBXBuildFile; fileRef = 12A60F121DB514030068BF8B /* OSInfo.c */; };
 		12E3015A1D5A413A00EED426 /* lodepng.c in Sources */ = {isa = PBXBuildFile; fileRef = 12E301581D5A413A00EED426 /* lodepng.c */; };
 		12E38DDA1A2DB6EB0093F748 /* DriverOverride.c in Sources */ = {isa = PBXBuildFile; fileRef = 12E38DD81A2DB6EB0093F748 /* DriverOverride.c */; };
 		2C794D201A0AA85900D845B0 /* Reset.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C7949ED1A0AA85900D845B0 /* Reset.c */; };
@@ -466,6 +467,9 @@
 		12A31EB81DAFB20E004DCF13 /* load_icns.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = load_icns.c; sourceTree = "<group>"; };
 		12A4B5C21DA3B3F300E9057A /* SMCHelper.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = SMCHelper.c; sourceTree = "<group>"; };
 		12A4B5C31DA3B3F300E9057A /* SMCHelper.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = SMCHelper.inf; sourceTree = "<group>"; };
+		12A60F0F1DB512B00068BF8B /* OSInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OSInfo.h; path = ../../../macosxbootloader/ApplePkg.git/trunk/Include/Protocol/OSInfo.h; sourceTree = "<group>"; };
+		12A60F121DB514030068BF8B /* OSInfo.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = OSInfo.c; sourceTree = "<group>"; };
+		12A60F141DB517050068BF8B /* OSInfo.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = OSInfo.inf; sourceTree = "<group>"; };
 		12A7ABAE1CCE1C8E00BD837C /* config-sample.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "config-sample.plist"; path = "../../CloverPackage/CloverV2/EFI/CLOVER/config-sample.plist"; sourceTree = "<group>"; };
 		12A88C5D1A7B6E0A008C4829 /* ComponentName.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ComponentName.c; sourceTree = "<group>"; };
 		12A88C5E1A7B6E0A008C4829 /* ComponentName.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ComponentName.h; sourceTree = "<group>"; };
@@ -1387,6 +1391,16 @@
 			path = ../../SMCHelper;
 			sourceTree = "<group>";
 		};
+		12A60F111DB513240068BF8B /* OSInfo */ = {
+			isa = PBXGroup;
+			children = (
+				12A60F121DB514030068BF8B /* OSInfo.c */,
+				12A60F141DB517050068BF8B /* OSInfo.inf */,
+			);
+			name = OSInfo;
+			path = ../../OSInfo;
+			sourceTree = "<group>";
+		};
 		12A88C5C1A7B6E0A008C4829 /* XhciDxe */ = {
 			isa = PBXGroup;
 			children = (
@@ -1855,6 +1869,7 @@
 				2C794AD71A0AA85900D845B0 /* EmuVariableControl.h */,
 				2C794AD81A0AA85900D845B0 /* FSInjectProtocol.h */,
 				2C794AD91A0AA85900D845B0 /* MsgLog.h */,
+				12A60F0F1DB512B00068BF8B /* OSInfo.h */,
 				2C794ADA1A0AA85900D845B0 /* PciIoImp.h */,
 				2C794ADB1A0AA85900D845B0 /* UsbMassImpl.h */,
 			);
@@ -3220,6 +3235,7 @@
 				2C794D131A0AA85900D845B0 /* OsxAptioFixDrv */,
 				2C794D171A0AA85900D845B0 /* OsxFatBinaryDrv */,
 				12A4B5C11DA3B3F300E9057A /* SMCHelper */,
+				12A60F111DB513240068BF8B /* OSInfo */,
 				2C794D1E1A0AA85900D845B0 /* OsxLowMemFixDrv */,
 			);
 			name = CloverUEFI;
@@ -3622,6 +3638,7 @@
 				12A31EB91DAFB20E004DCF13 /* load_bmp.c in Sources */,
 				12A31EBA1DAFB20E004DCF13 /* load_icns.c in Sources */,
 				12506B6E1DB0F15F00ACD402 /* AppleProtocols.c in Sources */,
+				12A60F131DB514030068BF8B /* OSInfo.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

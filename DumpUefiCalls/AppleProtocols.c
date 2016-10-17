@@ -19,6 +19,7 @@
 #include <Protocol/AppleSMC.h>
 #include <Protocol/AppleImageCodecProtocol.h>
 #include <Protocol/AppleKeyState.h>
+#include <Protocol/OSInfo.h>
 //#include <Protocol/AppleEvent.h>
 #include <Protocol/FirmwareVolume.h>
 
@@ -405,4 +406,56 @@ OvrAppleKeyState(VOID)
   return EFI_SUCCESS;
 
 }
+
+//**************************************************
+EFI_OS_INFO_PROTOCOL gOrgOSInfo;
+EFI_OS_INFO_PROTOCOL *gOSInfo;
+
+// OSInfoOSNameImpl
+VOID
+EFIAPI
+OvrOSName (IN CHAR8 *OSName)
+{
+//  EFI_STATUS				Status;
+  gOrgOSInfo.OSName(OSName);
+  PRINT("->OSInfo.OSName=%a\n", OSName);
+}
+
+// OSInfoOSVendorImpl
+VOID
+EFIAPI
+OvrOSVendor (IN CHAR8 *OSVendor)
+{
+//  EFI_STATUS				Status;
+  gOrgOSInfo.OSVendor(OSVendor);
+  PRINT("->OSInfo.OSVendor=%a\n", OSVendor);
+}
+
+
+EFI_STATUS EFIAPI
+OvrOSInfo(VOID)
+{
+  EFI_STATUS				Status;
+  
+  PRINT("Overriding OSInfo ...\n");
+  
+  // Locate AppleKeyState protocol
+  Status = gBS->LocateProtocol(&gEfiOSInfoProtocolGuid, NULL, (VOID **) &gOSInfo);
+  if (EFI_ERROR(Status)) {
+    PRINT("Error Overriding OSInfo: %r\n", Status);
+    return Status;
+  }
+  
+  // Store originals
+  CopyMem(&gOrgOSInfo, gOSInfo, sizeof(EFI_OS_INFO_PROTOCOL));
+  
+  // Override with our implementation
+  gOSInfo->OSVendor = OvrOSVendor;
+  gOSInfo->OSName = OvrOSName;
+  
+  PRINT("EfiOSInfo overriden!\n");
+  return EFI_SUCCESS;
+  
+}
+
 

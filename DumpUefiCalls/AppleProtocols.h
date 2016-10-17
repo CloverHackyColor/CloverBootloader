@@ -18,5 +18,8 @@ OvrAppleImageCodec(VOID);
 EFI_STATUS EFIAPI
 OvrAppleKeyState(VOID);
 
+EFI_STATUS EFIAPI
+OvrOSInfo(VOID);
+
 
 #endif
