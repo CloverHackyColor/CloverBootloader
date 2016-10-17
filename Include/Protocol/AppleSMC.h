@@ -137,7 +137,7 @@ typedef
 EFI_STATUS
 (EFIAPI *SMC_IO_SMC_GET_KEY_COUNT)(
 IN  APPLE_SMC_IO_PROTOCOL  *This,
-OUT UINT32                 *Count
+OUT SMC_DATA               *Count
 );
 
 // SMC_IO_SMC_MAKE_KEY

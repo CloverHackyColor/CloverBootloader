@@ -212,10 +212,11 @@ SmcWriteValueImpl (IN  APPLE_SMC_IO_PROTOCOL  *This,
 EFI_STATUS
 EFIAPI
 SmcGetKeyCountImpl (IN  APPLE_SMC_IO_PROTOCOL  *This,
-                    OUT UINT32                 *Count
+                    OUT SMC_DATA               *Count
                     )
 {
   UINT32 Index = 0;
+  SMC_DATA *Big = Count;
   SMC_STACK *TmpStack = SmcStack;
   if (!Count) {
     return EFI_INVALID_PARAMETER;
@@ -224,7 +225,11 @@ SmcGetKeyCountImpl (IN  APPLE_SMC_IO_PROTOCOL  *This,
     Index++;
     TmpStack = TmpStack->Next;
   }
-  *Count = Index;
+  //take into account BigEndian
+  *Big++ = Index >> 24;
+  *Big++ = Index >> 16;
+  *Big++ = Index >> 8;
+  *Big++ = Index >> 0;
   return EFI_SUCCESS;
 }
 

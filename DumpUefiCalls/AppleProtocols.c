@@ -90,12 +90,12 @@ OvrWriteValue (IN  APPLE_SMC_IO_PROTOCOL  *This,
 EFI_STATUS
 EFIAPI
 OvrGetKeyCount (IN  APPLE_SMC_IO_PROTOCOL  *This,
-                    OUT UINT32             *Count
+                    OUT SMC_DATA           *Count
                     )
 {
   EFI_STATUS				Status;
   Status = gOrgAppleSMC.SmcGetKeyCount(This, Count);
-  PRINT("->AppleSMC.SmcGetKeyCount(%p), =>%d\n", Count, Count?*Count:0);
+  PRINT("->AppleSMC.SmcGetKeyCount(%p), =>%d\n", Count, Count?(Count[3] + Count[2]*16):0);
   return Status;
 }
                
