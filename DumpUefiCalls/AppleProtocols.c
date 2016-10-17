@@ -414,21 +414,33 @@ EFI_OS_INFO_PROTOCOL *gOSInfo;
 // OSInfoOSNameImpl
 VOID
 EFIAPI
-OvrOSName (IN CHAR8 *OSName)
+OvrOSName (
+           IN CHAR8 *Name)
 {
 //  EFI_STATUS				Status;
-  gOrgOSInfo.OSName(OSName);
-  PRINT("->OSInfo.OSName=%a\n", OSName);
+  gOrgOSInfo.OSName(Name);
+  PRINT("->OSInfo.OSName=%a\n", Name);
 }
 
 // OSInfoOSVendorImpl
 VOID
 EFIAPI
-OvrOSVendor (IN CHAR8 *OSVendor)
+OvrOSVendor (
+             IN CHAR8 *Name)
 {
 //  EFI_STATUS				Status;
-  gOrgOSInfo.OSVendor(OSVendor);
-  PRINT("->OSInfo.OSVendor=%a\n", OSVendor);
+  gOrgOSInfo.OSVendor(Name);
+  PRINT("->OSInfo.OSVendor=%a\n", Name);
+}
+
+VOID
+EFIAPI
+OvrOSEmpty (
+           IN CHAR8 *Name)
+{
+  //  EFI_STATUS				Status;
+  gOrgOSInfo.OSName(Name);
+  PRINT("->OSInfo.OSEmpty=%a\n", Name);
 }
 
 
@@ -452,6 +464,7 @@ OvrOSInfo(VOID)
   // Override with our implementation
   gOSInfo->OSVendor = OvrOSVendor;
   gOSInfo->OSName = OvrOSName;
+  gOSInfo->OSEmpty = OvrOSEmpty;
   
   PRINT("EfiOSInfo overriden!\n");
   return EFI_SUCCESS;

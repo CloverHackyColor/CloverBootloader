@@ -439,6 +439,7 @@
 		1261519F1A15BBB000903E7B /* refit.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = refit.inf; sourceTree = "<group>"; };
 		126151A01A15BBB000903E7B /* Version.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Version.h; sourceTree = "<group>"; };
 		1261CBB51DB17AC200E26E00 /* AppleKeyState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppleKeyState.h; sourceTree = "<group>"; };
+		12676CCE1DB5624B00CFC57E /* OSInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OSInfo.h; sourceTree = "<group>"; };
 		1288B5201A30CEFB007CBCEF /* Net.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Net.c; sourceTree = "<group>"; };
 		129017371A2F8EA50069691F /* BootServices.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BootServices.c; sourceTree = "<group>"; };
 		129017381A2F8EA50069691F /* BootServices.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BootServices.h; sourceTree = "<group>"; };
@@ -467,7 +468,6 @@
 		12A31EB81DAFB20E004DCF13 /* load_icns.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = load_icns.c; sourceTree = "<group>"; };
 		12A4B5C21DA3B3F300E9057A /* SMCHelper.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = SMCHelper.c; sourceTree = "<group>"; };
 		12A4B5C31DA3B3F300E9057A /* SMCHelper.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = SMCHelper.inf; sourceTree = "<group>"; };
-		12A60F0F1DB512B00068BF8B /* OSInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OSInfo.h; path = ../../../macosxbootloader/ApplePkg.git/trunk/Include/Protocol/OSInfo.h; sourceTree = "<group>"; };
 		12A60F121DB514030068BF8B /* OSInfo.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = OSInfo.c; sourceTree = "<group>"; };
 		12A60F141DB517050068BF8B /* OSInfo.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = OSInfo.inf; sourceTree = "<group>"; };
 		12A7ABAE1CCE1C8E00BD837C /* config-sample.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "config-sample.plist"; path = "../../CloverPackage/CloverV2/EFI/CLOVER/config-sample.plist"; sourceTree = "<group>"; };
@@ -1869,7 +1869,7 @@
 				2C794AD71A0AA85900D845B0 /* EmuVariableControl.h */,
 				2C794AD81A0AA85900D845B0 /* FSInjectProtocol.h */,
 				2C794AD91A0AA85900D845B0 /* MsgLog.h */,
-				12A60F0F1DB512B00068BF8B /* OSInfo.h */,
+				12676CCE1DB5624B00CFC57E /* OSInfo.h */,
 				2C794ADA1A0AA85900D845B0 /* PciIoImp.h */,
 				2C794ADB1A0AA85900D845B0 /* UsbMassImpl.h */,
 			);

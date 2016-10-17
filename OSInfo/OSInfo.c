@@ -54,11 +54,22 @@ OSInfoOSVendorImpl (
   
 }
 
+VOID
+EFIAPI
+EmptyImpl (
+                  OUT CHAR8 *OSName
+                  )
+{
+
+}
+
+
 // mEfiOSInfo
 EFI_OS_INFO_PROTOCOL mEfiOSInfo = {
   EFI_OS_INFO_PROTOCOL_REVISION,
   OSInfoOSNameImpl,
-  OSInfoOSVendorImpl
+  OSInfoOSVendorImpl,
+  EmptyImpl
 };
 
 
