@@ -10,6 +10,10 @@
 #include <Library/DebugLib.h>
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/UefiRuntimeServicesTableLib.h>
+#include <Library/MemoryAllocationLib.h>
+#include <Library/DebugLib.h>
+#include <Library/PrintLib.h>
+
 
 #include <Protocol/UgaDraw.h>
 #include <Protocol/AppleSMC.h>
@@ -28,17 +32,188 @@
 /** Installs our AppleSMC overrides. */
 
 /** Original DataHub protocol. */
-APPLE_SMC_PROTOCOL gOrgAppleSMC;
-APPLE_SMC_PROTOCOL *gAppleSMC;
+APPLE_SMC_IO_PROTOCOL gOrgAppleSMC;
+APPLE_SMC_IO_PROTOCOL *gAppleSMC;
 
 EFI_STATUS EFIAPI
-OvrReadData (IN APPLE_SMC_PROTOCOL* This, IN UINT32 DataId, IN UINT32 DataLength, IN VOID* DataBuffer)
+OvrReadData (IN  APPLE_SMC_IO_PROTOCOL  *This,
+             IN  SMC_KEY                Key,
+             IN  SMC_DATA_SIZE          Size,
+             OUT SMC_DATA               *Value
+             )
 {
 	EFI_STATUS				Status;
+  CHAR8 Str[512];
+  CHAR8 StrSmall[3];
+  INTN i;
   
-  Status = gOrgAppleSMC.ReadData(This, DataId, DataLength, DataBuffer);
-  PRINT("->AppleSMC.ReadData SMC=%x (%c%c%c%c) len=%d\n", DataId, (DataId >> 24) & 0xFF,
-        (DataId >> 16) & 0xFF, (DataId >> 8) & 0xFF,  DataId & 0xFF, DataLength);
+  Status = gOrgAppleSMC.SmcReadValue(This, Key, Size, Value);
+  PRINT("->AppleSMC.SmcReadValue SMC=%x (%c%c%c%c) len=%d\n", Key, (Key >> 24) & 0xFF,
+        (Key >> 16) & 0xFF, (Key >> 8) & 0xFF,  Key & 0xFF, Size);
+  AsciiSPrint(Str, 512, "--> data=:");
+  for (i=0; i<Size; i++) {
+    AsciiSPrint(StrSmall, 3, "%02x ", Value[i]);
+    Str[11+i*3] = StrSmall[0];
+    Str[12+i*3] = StrSmall[1];
+    Str[13+i*3] = ' ';
+  }
+  PRINT("%a\n", Str);
+  return Status;
+}
+
+EFI_STATUS EFIAPI
+OvrWriteValue (IN  APPLE_SMC_IO_PROTOCOL  *This,
+               IN  SMC_KEY                Key,
+               IN  SMC_DATA_SIZE          Size,
+               OUT SMC_DATA               *Value
+               )
+{
+	EFI_STATUS				Status;
+  CHAR8 Str[512];
+  CHAR8 StrSmall[3];
+  INTN i;
+  
+  Status = gOrgAppleSMC.SmcWriteValue(This, Key, Size, Value);
+  PRINT("->AppleSMC.SmcWriteValue SMC=%x (%c%c%c%c) len=%d\n", Key, (Key >> 24) & 0xFF,
+        (Key >> 16) & 0xFF, (Key >> 8) & 0xFF,  Key & 0xFF, Size);
+  AsciiSPrint(Str, 512, "--> data=:");
+  for (i=0; i<Size; i++) {
+    AsciiSPrint(StrSmall, 3, "%02x ", Value[i]);
+    Str[11+i*3] = StrSmall[0];
+    Str[12+i*3] = StrSmall[1];
+    Str[13+i*3] = ' ';
+  }
+  PRINT("%a\n", Str);
+  return Status;
+}
+      
+EFI_STATUS
+EFIAPI
+OvrGetKeyCount (IN  APPLE_SMC_IO_PROTOCOL  *This,
+                    OUT UINT32             *Count
+                    )
+{
+  EFI_STATUS				Status;
+  Status = gOrgAppleSMC.SmcGetKeyCount(This, Count);
+  PRINT("->AppleSMC.SmcGetKeyCount(%p), =>%d\n", Count, Count?*Count:0);
+  return Status;
+}
+               
+EFI_STATUS
+EFIAPI
+OvrAddKey (IN  APPLE_SMC_IO_PROTOCOL  *This,
+           IN   SMC_KEY                Key,
+           IN   SMC_DATA_SIZE          Size,
+           IN   SMC_KEY_TYPE           Type,
+           IN   SMC_KEY_ATTRIBUTES     Attributes
+           )
+{
+  EFI_STATUS				Status;
+  Status = gOrgAppleSMC.SmcAddKey(This, Key, Size, Type, Attributes);
+  PRINT("->AppleSMC.SmcAddKey SMC=%x (%c%c%c%c) len=%d type=%a, attr=%x\n", Key, (Key >> 24) & 0xFF,
+        (Key >> 16) & 0xFF, (Key >> 8) & 0xFF,  Key & 0xFF, Size, Type, Attributes);
+  return Status;
+}
+
+EFI_STATUS
+EFIAPI
+OvrKeyFromIndex (IN  APPLE_SMC_IO_PROTOCOL  *This,
+                 IN  SMC_INDEX              Index,
+                 OUT SMC_KEY                *Key
+                )
+{
+  EFI_STATUS				Status;
+  Status = gOrgAppleSMC.SmcGetKeyFromIndex(This, Index, Key);
+  PRINT("->AppleSMC.SmcGetKeyFromIndex(%d), =>0x%x\n", Index, Key?*Key:0);
+  return Status;
+}
+
+EFI_STATUS
+EFIAPI
+OvrGetKeyInfo (IN  APPLE_SMC_IO_PROTOCOL  *This,
+           IN   SMC_KEY                Key,
+           OUT   SMC_DATA_SIZE          *Size,
+           OUT   SMC_KEY_TYPE           *Type,
+           OUT   SMC_KEY_ATTRIBUTES     *Attributes
+           )
+{
+  EFI_STATUS				Status;
+  Status = gOrgAppleSMC.SmcGetKeyInfo(This, Key, Size, Type, Attributes);
+  PRINT("->AppleSMC.SmcGetKeyInfo SMC=%x (%c%c%c%c) len=%d type=%a, attr=%x\n", Key, (Key >> 24) & 0xFF,
+        (Key >> 16) & 0xFF, (Key >> 8) & 0xFF,  Key & 0xFF, Size?*Size:0, Type?*Type:0, Attributes?*Attributes:0);
+  return Status;
+}
+
+EFI_STATUS
+EFIAPI
+OvrReset (IN  APPLE_SMC_IO_PROTOCOL  *This,
+          IN UINT32                 Mode
+          )
+{
+  EFI_STATUS				Status;
+  Status = gOrgAppleSMC.SmcReset(This, Mode);
+  PRINT("->AppleSMC.SmcReset(%d)\n", Mode);
+  return Status;
+}
+
+EFI_STATUS
+EFIAPI
+OvrUnknown1 (IN  APPLE_SMC_IO_PROTOCOL  *This
+             )
+{
+  EFI_STATUS				Status;
+  Status = gOrgAppleSMC.SmcUnknown1(This);
+  PRINT("->AppleSMC.SmcUnknown1()\n");
+  return Status;
+}
+
+EFI_STATUS
+EFIAPI
+OvrUnknown2 (IN  APPLE_SMC_IO_PROTOCOL  *This,
+             IN UINTN                 Unkn1,
+             IN UINTN                 Unkn2
+             )
+{
+  EFI_STATUS				Status;
+  Status = gOrgAppleSMC.SmcUnknown2(This, Unkn1, Unkn2);
+  PRINT("->AppleSMC.SmcUnknown2(0x%x, 0x%x)\n", Unkn1, Unkn2);
+  return Status;
+}
+
+EFI_STATUS
+EFIAPI
+OvrUnknown3 (IN  APPLE_SMC_IO_PROTOCOL  *This,
+             IN UINTN                 Unkn1,
+             IN UINTN                 Unkn2
+             )
+{
+  EFI_STATUS				Status;
+  Status = gOrgAppleSMC.SmcUnknown3(This, Unkn1, Unkn2);
+  PRINT("->AppleSMC.SmcUnknown3(0x%x, 0x%x)\n", Unkn1, Unkn2);
+  return Status;
+}
+
+EFI_STATUS
+EFIAPI
+OvrUnknown4 (IN  APPLE_SMC_IO_PROTOCOL  *This,
+             IN UINTN                 Mode
+             )
+{
+  EFI_STATUS				Status;
+  Status = gOrgAppleSMC.SmcUnknown4(This, Mode);
+  PRINT("->AppleSMC.SmcUnknown4(0x%x)\n", Mode);
+  return Status;
+}
+
+EFI_STATUS
+EFIAPI
+OvrUnknown5 (IN  APPLE_SMC_IO_PROTOCOL  *This,
+             IN UINTN                 Mode
+             )
+{
+  EFI_STATUS				Status;
+  Status = gOrgAppleSMC.SmcUnknown5(This, Mode);
+  PRINT("->AppleSMC.SmcUnknown5(0x%x)\n", Mode);
   return Status;
 }
 
@@ -58,10 +233,21 @@ OvrAppleSMC(VOID)
 	}
 	
 	// Store originals
-	CopyMem(&gOrgAppleSMC, gAppleSMC, sizeof(APPLE_SMC_PROTOCOL));
+	CopyMem(&gOrgAppleSMC, gAppleSMC, sizeof(APPLE_SMC_IO_PROTOCOL));
 	
 	// Override with our implementation
-	gAppleSMC->ReadData = OvrReadData;
+	gAppleSMC->SmcReadValue = OvrReadData;
+	gAppleSMC->SmcWriteValue = OvrWriteValue;
+	gAppleSMC->SmcGetKeyCount = OvrGetKeyCount;
+	gAppleSMC->SmcAddKey = OvrAddKey;
+	gAppleSMC->SmcGetKeyFromIndex = OvrKeyFromIndex;
+	gAppleSMC->SmcGetKeyInfo = OvrGetKeyInfo;
+	gAppleSMC->SmcReset = OvrReset;
+	gAppleSMC->SmcUnknown1 = OvrUnknown1;
+	gAppleSMC->SmcUnknown2 = OvrUnknown2;
+	gAppleSMC->SmcUnknown3 = OvrUnknown3;
+	gAppleSMC->SmcUnknown4 = OvrUnknown4;
+	gAppleSMC->SmcUnknown5 = OvrUnknown5;
 	
 	PRINT("AppleSMC overriden!\n");
 	return EFI_SUCCESS;
