@@ -52,6 +52,7 @@ typedef UINT32 SMC_INDEX;
 typedef UINT8 SMC_DATA;
 typedef UINT8 SMC_DATA_SIZE;
 typedef UINT8 SMC_RESULT;
+typedef UINT32 SMC_ADDRESS;
 
 typedef UINT8 SMC_KEY_ATTRIBUTES;
 // Key Attributes
