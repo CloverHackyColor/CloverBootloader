@@ -19,7 +19,6 @@
 #define DBG(...) DebugLog (DEBUG_SET, __VA_ARGS__)
 #endif
 
-#define NON_APPLE_SMC_SIGNATURE SIGNATURE_64('S','M','C','H','E','L','P','E')
 
 // for saving nvram.plist and it's data
 TagPtr                   gNvramDict;
@@ -43,7 +42,7 @@ CHAR16                   *gEfiBootLoaderPath;
 // contains GPT GUID from gEfiBootDeviceData or gBootCampHD (if exists)
 EFI_GUID                 *gEfiBootDeviceGuid;
 
-APPLE_SMC_PROTOCOL        *gAppleSmc = NULL;
+APPLE_SMC_IO_PROTOCOL        *gAppleSmc = NULL;
 
 /** returns given time as miliseconds.
  *  assumes 31 days per month, so it's not correct,
@@ -211,6 +210,19 @@ UINT32 KeyFromName(CHAR16 *Name)
   return Key;
 }
 
+UINT32 TypeFromName(CHAR16 *Name)
+{
+  //fakesmc-key-CLKT-ui32: Size = 4, Data: 00 00 8C BE
+  UINT32 Key;
+  Key = ((Name[17] & 0xFF) << 24) + ((Name[18] & 0xFF) << 16) +
+  ((Name[19] & 0xFF) << 8) + ((Name[20] & 0xFF) << 0);
+  if (Name[20] == '\0') {
+    Key += ' ';
+  }
+  return Key;
+}
+
+
 UINT32 FourCharKey(CHAR8 *Name)
 {
   return (Name[0] << 24) + (Name[1] << 16) + (Name[2] << 8) + Name[3]; //Big Endian
@@ -277,23 +289,40 @@ GetSmcKeys (BOOLEAN WriteToSMC)
       }
       DBG("\n");
       if (gAppleSmc && WriteToSMC) {
-        Status = gAppleSmc->WriteData(gAppleSmc, KeyFromName(Name), DataSize, Data);
- //       DBG("Write to AppleSMC status=%r\n", Status);
+        Status = gAppleSmc->SmcAddKey(gAppleSmc, KeyFromName(Name), DataSize, TypeFromName(Name), 0xC0);
+        if (!EFI_ERROR(Status)) {
+          Status = gAppleSmc->SmcWriteValue(gAppleSmc, KeyFromName(Name), DataSize, Data);
+          //       DBG("Write to AppleSMC status=%r\n", Status);
+        }
         NumKey++;
       }
       FreePool (Data);
     }
   }
-  if (WriteToSMC && gAppleSmc && (gAppleSmc->Signature == NON_APPLE_SMC_SIGNATURE)) {
+  if (WriteToSMC && gAppleSmc  && (gAppleSmc->Signature == NON_APPLE_SMC_SIGNATURE)) {
+    CHAR8 Mode = SMC_MODE_APPCODE;
     NKey[3] = NumKey & 0xFF;
-    NKey[2] = (NumKey >> 8) & 0xFF;
-    gAppleSmc->WriteData(gAppleSmc, FourCharKey("#KEY"), 4, &NKey);
-    gAppleSmc->WriteData(gAppleSmc, FourCharKey("$Adr"), 4, &SAdr);
-    gAppleSmc->WriteData(gAppleSmc, FourCharKey("$Num"), 1, &SNum);
+    NKey[2] = (NumKey >> 8) & 0xFF; //key, size, type, attr
+    Status = gAppleSmc->SmcAddKey(gAppleSmc, FourCharKey("#KEY"), 4, SmcKeyTypeUint32, 0xC0);
+    if (!EFI_ERROR(Status)) {
+      Status = gAppleSmc->SmcWriteValue(gAppleSmc, FourCharKey("#KEY"), 4, (SMC_DATA *)&NKey);
+    }
+    Status = gAppleSmc->SmcAddKey(gAppleSmc, FourCharKey("$Adr"), 4, SmcKeyTypeUint32, 0x08);
+    if (!EFI_ERROR(Status)) {
+      Status = gAppleSmc->SmcWriteValue(gAppleSmc, FourCharKey("$Adr"), 4, (SMC_DATA *)&SAdr);
+    }
+    Status = gAppleSmc->SmcAddKey(gAppleSmc, FourCharKey("$Num"), 1, SmcKeyTypeUint8, 0x08);
+    if (!EFI_ERROR(Status)) {
+      Status = gAppleSmc->SmcWriteValue(gAppleSmc, FourCharKey("$Num"), 1, (SMC_DATA *)&SNum);
+    }
+    Status = gAppleSmc->SmcAddKey(gAppleSmc, FourCharKey("RMde"), 1, SmcKeyTypeChar,  0xC0);
+    if (!EFI_ERROR(Status)) {
+      Status = gAppleSmc->SmcWriteValue(gAppleSmc, FourCharKey("RMde"), 1, (SMC_DATA *)&Mode);
+    }
   }
   FreePool (Name);
 }
-
+/*
 VOID DumpSmcKeys()
 {
   if (!gAppleSmc || !gAppleSmc->DumpData) {
@@ -301,7 +330,7 @@ VOID DumpSmcKeys()
   }
   gAppleSmc->DumpData(gAppleSmc);
 }
-
+*/
 
 /** Searches for GPT HDD dev path node and return pointer to partition GUID or NULL. */
 EFI_GUID

@@ -27,8 +27,13 @@ struct _APPLE_SMC_PROTOCOL
   APPLE_SMC_DUMP_DATA										DumpData;
 };
 
+#define SMC_PORT_BASE                   0x0300
+#define SMC_PORT_LENGTH                 0x0020
+#define APPLE_SMC_IO_PROTOCOL_REVISION  0x33
+
 #define SMC_MAKE_IDENTIFIER(A, B, C, D)  \
 (((A) << 24) | ((B) << 16) | ((C) << 8) | (D))
+#define SMC_MAKE_KEY(A, B, C, D)      SMC_MAKE_IDENTIFIER ((A), (B), (C), (D))
 #define SMC_MAKE_KEY_TYPE(A, B, C, D) SMC_MAKE_IDENTIFIER ((A), (B), (C), (D))
 #define SMC_KEY_NUM      SMC_MAKE_KEY ('$', 'N', 'u', 'm')
 #define SMC_KEY_ADR      SMC_MAKE_KEY ('$', 'A', 'd', 'r')
@@ -47,15 +52,53 @@ typedef CHAR8 *SMC_MODE;
 
 // SMC_KEY_TYPE
 typedef UINT32 SMC_KEY_TYPE;
+enum {
+  SmcKeyTypeCh8    = SMC_MAKE_KEY_TYPE ('c', 'h', '8', '*'),
+  SmcKeyTypeChar   = SMC_MAKE_KEY_TYPE ('c', 'h', 'a', 'r'),
+  SmcKeyTypeFlag   = SMC_MAKE_KEY_TYPE ('f', 'l', 'a', 'g'),
+  SmcKeyTypeFp1f   = SMC_MAKE_KEY_TYPE ('f', 'p', '1', 'f'),
+  SmcKeyTypeFp4c   = SMC_MAKE_KEY_TYPE ('f', 'p', '4', 'c'),
+  SmcKeyTypeFp5b   = SMC_MAKE_KEY_TYPE ('f', 'p', '5', 'b'),
+  SmcKeyTypeFp6a5b = SMC_MAKE_KEY_TYPE ('f', 'p', '6', 'a'),
+  SmcKeyTypeFp79   = SMC_MAKE_KEY_TYPE ('f', 'p', '7', '9'),
+  SmcKeyTypeFpa6   = SMC_MAKE_KEY_TYPE ('f', 'p', 'a', '6'),
+  SmcKeyTypeFpc4   = SMC_MAKE_KEY_TYPE ('f', 'p', 'c', '4'),
+  SmcKeyTypeFpe2   = SMC_MAKE_KEY_TYPE ('f', 'p', 'e', '2'),
+  SmcKeyTypeSint8  = SMC_MAKE_KEY_TYPE ('s', 'i', '8', ' '),
+  SmcKeyTypeSint16 = SMC_MAKE_KEY_TYPE ('s', 'i', '1', '6'),
+  SmcKeyTypeSp1e   = SMC_MAKE_KEY_TYPE ('s', 'p', '1', 'e'),
+  SmcKeyTypeSp3c   = SMC_MAKE_KEY_TYPE ('s', 'p', '3', 'c'),
+  SmcKeyTypeSp4b   = SMC_MAKE_KEY_TYPE ('s', 'p', '4', 'b'),
+  SmcKeyTypeSp5a   = SMC_MAKE_KEY_TYPE ('s', 'p', '5', 'a'),
+  SmcKeyTypeSp69   = SMC_MAKE_KEY_TYPE ('s', 'p', '6', '9'),
+  SmcKeyTypeSp78   = SMC_MAKE_KEY_TYPE ('s', 'p', '7', '8'),
+  SmcKeyTypeSp87   = SMC_MAKE_KEY_TYPE ('s', 'p', '8', '7'),
+  SmcKeyTypeSp96   = SMC_MAKE_KEY_TYPE ('s', 'p', '9', '6'),
+  SmcKeyTypeSpb4   = SMC_MAKE_KEY_TYPE ('s', 'p', 'b', '4'),
+  SmcKeyTypeSpf0   = SMC_MAKE_KEY_TYPE ('s', 'p', 'f', '0'),
+  SmcKeyTypeUint8  = SMC_MAKE_KEY_TYPE ('u', 'i', '8', ' '),
+  SmcKeyTypeUint16 = SMC_MAKE_KEY_TYPE ('u', 'i', '1', '6'),
+  SmcKeyTypeUint32 = SMC_MAKE_KEY_TYPE ('u', 'i', '3', '2'),
+  SmcKeyTypeLim    = SMC_MAKE_KEY_TYPE ('{', 'l', 'i', 'm'),
+  SmcKeyTypePwm    = SMC_MAKE_KEY_TYPE ('{', 'p', 'w', 'm'),
+  SmcKeyTypeAla    = SMC_MAKE_KEY_TYPE ('{', 'a', 'l', 'a'),
+  SmcKeyTypeAlc    = SMC_MAKE_KEY_TYPE ('{', 'a', 'l', 'c'),
+  SmcKeyTypeAli    = SMC_MAKE_KEY_TYPE ('{', 'a', 'l', 'i'),
+  SmcKeyTypeAlr    = SMC_MAKE_KEY_TYPE ('{', 'a', 'l', 'r'),
+  SmcKeyTypeAlt    = SMC_MAKE_KEY_TYPE ('{', 'a', 'l', 't')
+};
+
 typedef UINT32 SMC_KEY;
 typedef UINT32 SMC_INDEX;
-typedef UINT8 SMC_DATA;
-typedef UINT8 SMC_DATA_SIZE;
-typedef UINT8 SMC_RESULT;
+typedef UINT8  SMC_DATA;
+typedef UINT8  SMC_DATA_SIZE;
+typedef UINT8  SMC_RESULT;
 typedef UINT32 SMC_ADDRESS;
 
 typedef UINT8 SMC_KEY_ATTRIBUTES;
 // Key Attributes
+
+#define BIT(n)		            	(1u << (n))
 
 #define	SMC_KEY_ATTRIBUTE_PRIVATE   BIT (0)
 #define	SMC_KEY_ATTRIBUTE_UKN_0x02  BIT (1)
@@ -85,7 +128,7 @@ EFI_STATUS
 (EFIAPI *SMC_IO_SMC_WRITE_VALUE)(
 IN  APPLE_SMC_IO_PROTOCOL  *This,
 IN  SMC_KEY                Key,
-IN  UINT32                 Size,
+IN  SMC_DATA_SIZE          Size,
 OUT SMC_DATA               *Value
 );
 
@@ -101,9 +144,21 @@ OUT UINT32                 *Count
 typedef
 EFI_STATUS
 (EFIAPI *SMC_IO_SMC_MAKE_KEY)(
+IN  APPLE_SMC_IO_PROTOCOL  *This,
 IN  CHAR8    *Name,
 OUT SMC_KEY  *Key
 );
+
+typedef
+EFI_STATUS
+(EFIAPI *SMC_IO_SMC_ADD_KEY)(
+IN   APPLE_SMC_IO_PROTOCOL  *This,
+IN   SMC_KEY                Key,
+IN   SMC_DATA_SIZE          Size,
+IN   SMC_KEY_TYPE           Type,
+IN   SMC_KEY_ATTRIBUTES     Attributes
+);
+
 
 // SMC_IO_SMC_GET_KEY_FROM_INDEX
 typedef
@@ -164,14 +219,14 @@ IN SMC_DATA               *Data
 typedef
 EFI_STATUS
 (EFIAPI *SMC_IO_SMC_UNSUPPORTED)(
-VOID
+IN  APPLE_SMC_IO_PROTOCOL  *This
 );
 
 // SMC_IO_SMC_UNKNOWN_1
 typedef
 EFI_STATUS
 (EFIAPI *SMC_IO_SMC_UNKNOWN_1)(
-VOID
+IN  APPLE_SMC_IO_PROTOCOL  *This
 );
 
 // SMC_IO_SMC_UNKNOWN_2
@@ -210,11 +265,12 @@ IN UINTN                  Ukn1
 
 // APPLE_SMC_IO_PROTOCOL
 struct _APPLE_SMC_IO_PROTOCOL {
-  UINT64                        Revision;            ///<
+  UINT64                        Signature; //Revision;            ///<
   SMC_IO_SMC_READ_VALUE         SmcReadValue;        ///<
   SMC_IO_SMC_WRITE_VALUE        SmcWriteValue;       ///<
   SMC_IO_SMC_GET_KEY_COUNT      SmcGetKeyCount;      ///<
-  SMC_IO_SMC_MAKE_KEY           SmcMakeKey;          ///<
+  //SMC_IO_SMC_MAKE_KEY           SmcMakeKey;          ///<
+  SMC_IO_SMC_ADD_KEY            SmcAddKey;          ///<
   SMC_IO_SMC_GET_KEY_FROM_INDEX SmcGetKeyFromIndex;  ///<
   SMC_IO_SMC_GET_KEY_INFO       SmcGetKeyInfo;       ///<
   SMC_IO_SMC_RESET              SmcReset;            ///<

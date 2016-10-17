@@ -63,6 +63,7 @@ EFI_GUID gDataHubPlatformGuid = {
 };
 
 extern EFI_GUID gDataHubPlatformGuid;
+extern APPLE_SMC_IO_PROTOCOL        *gAppleSmc;
 
 typedef union {
   EFI_CPU_DATA_RECORD *DataRecord;
@@ -276,7 +277,7 @@ SetVariablesForOSX()
   } else {
     DeleteNvramVariable(L"nvda_drv", &gEfiAppleBootGuid);
   }
-
+  
   return EFI_SUCCESS;
 }
 
@@ -378,6 +379,19 @@ SetupDataForOSX()
     // this is the error message that we want user to see on the screen!
     Print(L"DataHubProtocol is not found! Load the module DataHubDxe manually!\n");
     DBG("DataHubProtocol is not found! Load the module DataHubDxe manually!\n");
-    gBS->Stall(5000000);
+//    gBS->Stall(5000000);
+  }
+  if (gAppleSmc && (gAppleSmc->Signature == NON_APPLE_SMC_SIGNATURE)) {
+    gAppleSmc->SmcAddKey(gAppleSmc,     SMC_MAKE_KEY('R','P','l','t'), 8, SmcKeyTypeCh8, 0xC0);
+    gAppleSmc->SmcWriteValue(gAppleSmc, SMC_MAKE_KEY('R','P','l','t'), 8, (SMC_DATA *)&gSettings.RPlt);
+    gAppleSmc->SmcAddKey(gAppleSmc,     SMC_MAKE_KEY('R','B','r',' '), 8, SmcKeyTypeCh8, 0xC0);
+    gAppleSmc->SmcWriteValue(gAppleSmc, SMC_MAKE_KEY('R','B','r',' '), 8, (SMC_DATA *)&gSettings.RBr);
+    gAppleSmc->SmcAddKey(gAppleSmc,     SMC_MAKE_KEY('E','P','C','I'), 4, SmcKeyTypeUint32, 0xC0);
+    gAppleSmc->SmcWriteValue(gAppleSmc, SMC_MAKE_KEY('E','P','C','I'), 4, (SMC_DATA *)&gSettings.EPCI);
+    gAppleSmc->SmcAddKey(gAppleSmc,     SMC_MAKE_KEY('R','E','V',' '), 6, SmcKeyTypeCh8, 0xC0);
+    gAppleSmc->SmcWriteValue(gAppleSmc, SMC_MAKE_KEY('R','E','V',' '), 6, (SMC_DATA *)&gSettings.REV);
+    gAppleSmc->SmcAddKey(gAppleSmc,     SMC_MAKE_KEY('B','E','M','B'), 1, SmcKeyTypeFlag, 0xC0);
+    gAppleSmc->SmcWriteValue(gAppleSmc, SMC_MAKE_KEY('B','E','M','B'), 1, (SMC_DATA *)&gSettings.Mobile);
+
   }
 }

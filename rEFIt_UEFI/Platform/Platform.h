@@ -72,7 +72,9 @@ Headers collection for procedures
 #include "kext_inject.h"
 //#include "entry_scan.h"
 
-#define CLOVER_SIGN        SIGNATURE_32('C','l','v','r')
+#define CLOVER_SIGN             SIGNATURE_32('C','l','v','r')
+#define NON_APPLE_SMC_SIGNATURE SIGNATURE_64('S','M','C','H','E','L','P','E')
+
 
 /* XML Tags */
 #define kXMLTagPList     "plist"
@@ -1798,7 +1800,7 @@ PutNvramPlistToRtVars ();
 VOID
 GetSmcKeys(BOOLEAN WriteToSMC);
 
-VOID DumpSmcKeys();
+//VOID DumpSmcKeys();
 
 VOID
 GetMacAddress();

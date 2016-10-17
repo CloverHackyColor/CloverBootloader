@@ -37,18 +37,20 @@
 #endif
 
 
-//#define APPLE_SMC_SIGNATURE SIGNATURE_64('A','P','P','L','E','S','M','C')
-#define APPLE_SMC_SIGNATURE SIGNATURE_64('S','M','C','H','E','L','P','E')
+#define APPLE_SMC_SIGNATURE     SIGNATURE_64('A','P','P','L','E','S','M','C')
+#define NON_APPLE_SMC_SIGNATURE SIGNATURE_64('S','M','C','H','E','L','P','E')
 
 EFI_HANDLE              mHandle = NULL;
 
 typedef struct _SMC_STACK SMC_STACK;
 
 struct _SMC_STACK {
-  SMC_STACK *Next;
-  UINT32 Id;
-  INTN  DataLen;
-  UINT8 *Data;
+  SMC_STACK           *Next;
+  SMC_KEY             Id;
+  SMC_KEY_TYPE        Type;
+  SMC_DATA_SIZE       DataLen;
+  SMC_KEY_ATTRIBUTES  Attributes;
+  SMC_DATA            *Data;
 };
 
 SMC_STACK *SmcStack = NULL;
@@ -64,6 +66,8 @@ CHAR8 *StringId(UINT32 DataId)
   Str[0] = (DataId >> 24) & 0xFF;
   return Str;
 }
+
+/*
 
 EFI_STATUS EFIAPI
 ReadData (IN APPLE_SMC_PROTOCOL* This, IN UINT32 DataId, IN UINT32 DataLength, IN VOID* DataBuffer)
@@ -135,7 +139,309 @@ APPLE_SMC_PROTOCOL SMCHelperProtocol = {
   WriteData,
   DumpData,
 };
+ 
+ */
 
+// *************************************************************
+// and then we switch to full protocol APPLE_SMC_IO_PROTOCOL
+
+EFI_STATUS EFIAPI
+SmcReadValueImpl (IN  APPLE_SMC_IO_PROTOCOL  *This,
+                  IN  SMC_KEY                Key,
+                  IN  SMC_DATA_SIZE          Size,
+                  OUT SMC_DATA               *Value
+                  )
+{
+
+  SMC_STACK *TmpStack = SmcStack;
+  INTN Len;
+  CHAR8 *Str;
+  
+  if (!Value || !Size) {
+    return EFI_BUFFER_TOO_SMALL;
+  }
+  
+  Str = StringId(Key);
+  DBG("asked for SMC=%x (%a) len=%d\n", Key, Str, Size);
+  FreePool(Str);
+  while (TmpStack) {
+    if (TmpStack->Id == Key) {
+      Len = MIN(TmpStack->DataLen, Size);
+      CopyMem(Value, TmpStack->Data, Len);
+      return EFI_SUCCESS;
+    } else {
+      TmpStack = TmpStack->Next;
+    }
+  }
+  return EFI_NOT_FOUND;
+  
+}
+
+EFI_STATUS EFIAPI
+SmcWriteValueImpl (IN  APPLE_SMC_IO_PROTOCOL  *This,
+                   IN  SMC_KEY                Key,
+                   IN  SMC_DATA_SIZE          Size,
+                   OUT SMC_DATA               *Value
+                   )
+{  //IN UINT32 DataId, IN UINT32 DataLength, IN VOID* DataBuffer
+  SMC_STACK *TmpStack = SmcStack;
+  UINTN Len;
+  //First find existing key
+  while (TmpStack) {
+    if (TmpStack->Id == Key) {
+      Len = MIN(TmpStack->DataLen, Size);
+      CopyMem(TmpStack->Data, Value, Len);
+      return EFI_SUCCESS;
+    } else {
+      TmpStack = TmpStack->Next;
+    }
+  }
+  //if not found then create new
+  TmpStack = AllocatePool(sizeof(SMC_STACK));
+  TmpStack->Next = SmcStack;
+  TmpStack->Id = Key;
+  TmpStack->DataLen = Size;
+  TmpStack->Attributes = SMC_KEY_ATTRIBUTE_WRITE | SMC_KEY_ATTRIBUTE_READ;
+  TmpStack->Data = AllocateCopyPool(Size, Value);
+  TmpStack->Type = SmcKeyTypeFlag;
+  SmcStack = TmpStack;
+  return EFI_SUCCESS;
+}
+
+// SmcIoSmcGetKeyCountImpl
+EFI_STATUS
+EFIAPI
+SmcGetKeyCountImpl (IN  APPLE_SMC_IO_PROTOCOL  *This,
+                    OUT UINT32                 *Count
+                    )
+{
+  UINT32 Index = 0;
+  SMC_STACK *TmpStack = SmcStack;
+  if (!Count) {
+    return EFI_INVALID_PARAMETER;
+  }
+  while (TmpStack) {
+    Index++;
+    TmpStack = TmpStack->Next;
+  }
+  *Count = Index;
+  return EFI_SUCCESS;
+}
+
+EFI_STATUS
+EFIAPI
+SmcMakeKeyImpl (IN  APPLE_SMC_IO_PROTOCOL  *This,
+                IN  CHAR8    *Name,
+                OUT SMC_KEY  *Key
+                )
+{
+  if (!Key || !Name) {
+    return EFI_INVALID_PARAMETER;
+  }
+  *Key = SMC_MAKE_IDENTIFIER(Name[0], Name[1], Name[2], Name[3]);
+  return EFI_SUCCESS;
+}
+
+EFI_STATUS
+EFIAPI
+SmcAddKeyImpl (IN   APPLE_SMC_IO_PROTOCOL  *This,
+               IN   SMC_KEY                Key,
+               IN   SMC_DATA_SIZE          Size,
+               IN   SMC_KEY_TYPE           Type,
+               IN   SMC_KEY_ATTRIBUTES     Attributes
+               )
+{
+  SMC_STACK *TmpStack;
+  TmpStack = AllocatePool(sizeof(SMC_STACK));
+  TmpStack->Next = SmcStack;
+  TmpStack->Id = Key;
+  TmpStack->DataLen = Size;
+  TmpStack->Attributes = Attributes;
+  TmpStack->Data = AllocatePool(Size);
+  TmpStack->Type = Type;
+  SmcStack = TmpStack;
+  return EFI_SUCCESS;
+}
+
+EFI_STATUS
+EFIAPI
+SmcGetKeyFromIndexImpl(IN  APPLE_SMC_IO_PROTOCOL  *This,
+                       IN  SMC_INDEX              Index,
+                       OUT SMC_KEY                *Key
+                       )
+{
+  UINT32 Num = 0;
+  SMC_STACK *TmpStack = SmcStack;
+  if (!Key) {
+    return EFI_INVALID_PARAMETER;
+  }
+  while (TmpStack) {
+    if (Num == Index) {
+      *Key = TmpStack->Id;
+      return EFI_SUCCESS;
+    }
+    Num++;
+    TmpStack = TmpStack->Next;
+  }
+  return EFI_NOT_FOUND;
+}
+
+EFI_STATUS
+EFIAPI
+SmcGetKeyInfoImpl (IN  APPLE_SMC_IO_PROTOCOL  *This,
+                   IN  SMC_KEY                Key,
+                   OUT SMC_DATA_SIZE          *Size,
+                   OUT SMC_KEY_TYPE           *Type,
+                   OUT SMC_KEY_ATTRIBUTES     *Attributes
+                   )
+{
+  UINT32 Num = 0;
+  SMC_STACK *TmpStack = SmcStack;
+  if (!Size || !Type || !Attributes) {
+    return EFI_INVALID_PARAMETER;
+  }
+  while (TmpStack) {
+    if (Key == TmpStack->Id) {
+      *Size = TmpStack->DataLen;
+      *Type = TmpStack->Type;
+      *Attributes = TmpStack->Attributes;
+      return EFI_SUCCESS;
+    }
+    Num++;
+    TmpStack = TmpStack->Next;
+  }
+  return EFI_NOT_FOUND;  
+}
+
+EFI_STATUS
+EFIAPI
+SmcResetImpl (IN APPLE_SMC_IO_PROTOCOL  *This,
+              IN UINT32                 Mode
+              )
+{
+  SMC_STACK *TmpStack = SmcStack;
+  if (Mode) {
+    while (TmpStack) {
+      FreePool(TmpStack->Data);
+      SmcStack = TmpStack->Next;
+      FreePool(TmpStack);
+      TmpStack = SmcStack;
+    }
+  }
+  return EFI_SUCCESS;
+}
+
+EFI_STATUS
+EFIAPI
+SmcFlashTypeImpl(IN APPLE_SMC_IO_PROTOCOL  *This,
+                 IN UINT32                 Type
+                 )
+{
+  return EFI_SUCCESS; //EFI_NOT_IMPLEMENTED;
+}
+
+EFI_STATUS
+EFIAPI
+SmcFlashWriteImpl (
+                        IN APPLE_SMC_IO_PROTOCOL  *This,
+                        IN UINT32                 Unknown,
+                        IN UINT32                 Size,
+                        IN SMC_DATA               *Data
+                        )
+{
+  return EFI_SUCCESS; //EFI_NOT_IMPLEMENTED;
+}
+
+EFI_STATUS
+EFIAPI
+SmcFlashAuthImpl (
+                       IN APPLE_SMC_IO_PROTOCOL  *This,
+                       IN UINT32                 Size,
+                       IN SMC_DATA               *Data
+                       )
+{
+  return EFI_SUCCESS; //EFI_NOT_IMPLEMENTED;
+}
+
+EFI_STATUS
+EFIAPI
+SmcUnsupportedImpl (IN APPLE_SMC_IO_PROTOCOL  *This
+                    )
+{
+  return EFI_UNSUPPORTED;
+}
+
+EFI_STATUS
+EFIAPI
+SmcUnknown1Impl (IN APPLE_SMC_IO_PROTOCOL  *This
+                 )
+{
+  return EFI_SUCCESS;
+}
+
+EFI_STATUS
+EFIAPI
+SmcUnknown2Impl (IN APPLE_SMC_IO_PROTOCOL  *This,
+                 IN UINTN                  Ukn1,
+                 IN UINTN                  Ukn2
+                 )
+{
+  return EFI_SUCCESS;
+}
+
+EFI_STATUS
+EFIAPI
+SmcUnknown3Impl (IN APPLE_SMC_IO_PROTOCOL  *This,
+                 IN UINTN                  Ukn1,
+                 IN UINTN                  Ukn2
+                 )
+{
+  return EFI_SUCCESS;
+}
+
+EFI_STATUS
+EFIAPI
+SmcUnknown4Impl (IN APPLE_SMC_IO_PROTOCOL  *This,
+                 IN UINTN                  Ukn1
+                 )
+{
+  return EFI_SUCCESS;
+}
+
+EFI_STATUS
+EFIAPI
+SmcUnknown5Impl (IN APPLE_SMC_IO_PROTOCOL  *This,
+                 IN UINTN                  Ukn1
+                 )
+{
+  return EFI_SUCCESS;
+}
+
+
+
+// gAppleSmcIoProtocolTemplate
+APPLE_SMC_IO_PROTOCOL SMCHelperProtocol = {
+  NON_APPLE_SMC_SIGNATURE, //APPLE_SMC_IO_PROTOCOL_REVISION,
+  SmcReadValueImpl,
+  SmcWriteValueImpl,
+  SmcGetKeyCountImpl,
+  SmcAddKeyImpl,  //SmcMakeKeyImpl
+  SmcGetKeyFromIndexImpl,
+  SmcGetKeyInfoImpl,
+  SmcResetImpl,
+  SmcFlashTypeImpl,
+  SmcUnsupportedImpl,
+  SmcFlashWriteImpl,
+  SmcFlashAuthImpl,
+  0,
+  SMC_PORT_BASE,
+  FALSE,
+  SmcUnknown1Impl,
+  SmcUnknown2Impl,
+  SmcUnknown3Impl,
+  SmcUnknown4Impl,
+  SmcUnknown5Impl
+};
 
 
 
@@ -157,7 +463,6 @@ SMCHelperEntrypoint (
   EFI_BOOT_SERVICES*			gBS; 
   
   gBS				= SystemTable->BootServices;
-
   
   Status = gBS->InstallMultipleProtocolInterfaces (
                 &mHandle,
