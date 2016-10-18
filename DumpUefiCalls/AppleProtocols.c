@@ -20,6 +20,7 @@
 #include <Protocol/AppleImageCodecProtocol.h>
 #include <Protocol/AppleKeyState.h>
 #include <Protocol/OSInfo.h>
+#include <Protocol/AppleGraphConfig.h>
 //#include <Protocol/AppleEvent.h>
 #include <Protocol/FirmwareVolume.h>
 
@@ -451,7 +452,7 @@ OvrOSInfo(VOID)
   
   PRINT("Overriding OSInfo ...\n");
   
-  // Locate AppleKeyState protocol
+  // Locate EfiOSInfo protocol
   Status = gBS->LocateProtocol(&gEfiOSInfoProtocolGuid, NULL, (VOID **) &gOSInfo);
   if (EFI_ERROR(Status)) {
     PRINT("Error Overriding OSInfo: %r\n", Status);
@@ -471,4 +472,47 @@ OvrOSInfo(VOID)
   
 }
 
+//**************************************************
+APPLE_GRAPH_CONFIG_PROTOCOL gOrgGraphConfig;
+APPLE_GRAPH_CONFIG_PROTOCOL *gGraphConfig;
+
+EFI_STATUS
+EFIAPI
+OvrRestoreConfig (APPLE_GRAPH_CONFIG_PROTOCOL* This,
+               UINT32 Param1, UINT32 Param2, VOID* Param3, VOID* Param4, VOID* Param5
+               )
+{
+  EFI_STATUS				Status;
+  Status = gOrgGraphConfig.RestoreConfig(This, Param1, Param2, Param3, Param4, Param5);
+  PRINT("->GraphConfig.RestoreConfig(%x, %x, %p, %p, %p) status=%r\n",
+        Param1, Param2, Param3, Param4, Param5, Status);
+  return EFI_SUCCESS;
+}
+
+
+
+EFI_STATUS EFIAPI
+OvrGraphConfig(VOID)
+{
+  EFI_STATUS				Status;
+  
+  PRINT("Overriding GraphConfig ...\n");
+  
+  // Locate AppleGraphConfig protocol
+  Status = gBS->LocateProtocol(&gAppleGraphConfigProtocolGuid, NULL, (VOID **) &gGraphConfig);
+  if (EFI_ERROR(Status)) {
+    PRINT("Error Overriding GraphConfig: %r\n", Status);
+    return Status;
+  }
+  
+  // Store originals
+  CopyMem(&gOrgGraphConfig, gGraphConfig, sizeof(APPLE_GRAPH_CONFIG_PROTOCOL));
+  
+  // Override with our implementation
+  gGraphConfig->RestoreConfig = OvrRestoreConfig;
+  
+  PRINT("AppleGraphConfig overriden!\n");
+  return EFI_SUCCESS;
+  
+}
 

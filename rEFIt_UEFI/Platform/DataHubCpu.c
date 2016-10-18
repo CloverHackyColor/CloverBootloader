@@ -258,8 +258,19 @@ SetVariablesForOSX()
   if (gSettings.DefaultBackgroundColor == 0x80000000) {
     DeleteNvramVariable(L"DefaultBackgroundColor", &gEfiAppleNvramGuid);
   } else {
+    UINT8 Scale = 2;
+    UINT16 ActualDensity = 0xE1;
+    UINT16 DensityThreshold = 0x96;
+    UINT64 ConfigStatus = 0;
+    UINT32 EFILoginHiDPI = 1;
     Color = gSettings.DefaultBackgroundColor;
     AddNvramVariable(L"DefaultBackgroundColor", &gEfiAppleNvramGuid, Attributes, 4, &Color);
+    //add some UI variables
+    AddNvramVariable(L"UIScale", &gEfiAppleNvramGuid, Attributes, 1, &Scale);
+    AddNvramVariable(L"ActualDensity", &gEfiAppleBootGuid, Attributes, 2, &ActualDensity);
+    AddNvramVariable(L"DensityThreshold", &gEfiAppleBootGuid, Attributes, 2, &DensityThreshold);
+    AddNvramVariable(L"gfx-saved-config-restore-status", &gEfiAppleNvramGuid, Attributes, 8, &ConfigStatus);
+    AddNvramVariable(L"EFILoginHiDPI", &gEfiAppleBootGuid, Attributes, 4, &EFILoginHiDPI);
   }
 
   //Hack for recovery by Asgorath
@@ -382,6 +393,7 @@ SetupDataForOSX()
 //    gBS->Stall(5000000);
   }
   if (gAppleSmc && (gAppleSmc->Signature == NON_APPLE_SMC_SIGNATURE)) {
+    UINT16 Zero = 0;
     gAppleSmc->SmcAddKey(gAppleSmc,     SMC_MAKE_KEY('R','P','l','t'), 8, SmcKeyTypeCh8, 0xC0);
     gAppleSmc->SmcWriteValue(gAppleSmc, SMC_MAKE_KEY('R','P','l','t'), 8, (SMC_DATA *)&gSettings.RPlt);
     gAppleSmc->SmcAddKey(gAppleSmc,     SMC_MAKE_KEY('R','B','r',' '), 8, SmcKeyTypeCh8, 0xC0);
@@ -392,6 +404,12 @@ SetupDataForOSX()
     gAppleSmc->SmcWriteValue(gAppleSmc, SMC_MAKE_KEY('R','E','V',' '), 6, (SMC_DATA *)&gSettings.REV);
     gAppleSmc->SmcAddKey(gAppleSmc,     SMC_MAKE_KEY('B','E','M','B'), 1, SmcKeyTypeFlag, 0xC0);
     gAppleSmc->SmcWriteValue(gAppleSmc, SMC_MAKE_KEY('B','E','M','B'), 1, (SMC_DATA *)&gSettings.Mobile);
+    gAppleSmc->SmcAddKey(gAppleSmc,     SMC_MAKE_KEY('M','S','T','c'), 1, SmcKeyTypeUint8, 0xC0);
+    gAppleSmc->SmcWriteValue(gAppleSmc, SMC_MAKE_KEY('M','S','T','c'), 1, (SMC_DATA *)&Zero);
+    gAppleSmc->SmcAddKey(gAppleSmc,     SMC_MAKE_KEY('M','S','A','c'), 2, SmcKeyTypeUint16, 0xC0);
+    gAppleSmc->SmcWriteValue(gAppleSmc, SMC_MAKE_KEY('M','S','A','c'), 2, (SMC_DATA *)&Zero);
+    gAppleSmc->SmcAddKey(gAppleSmc,     SMC_MAKE_KEY('M','S','W','r'), 1, SmcKeyTypeUint8, 0xC0);
+    gAppleSmc->SmcWriteValue(gAppleSmc, SMC_MAKE_KEY('M','S','W','r'), 1, (SMC_DATA *)&Zero);
 
   }
 }

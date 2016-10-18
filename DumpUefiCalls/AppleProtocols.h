@@ -21,5 +21,7 @@ OvrAppleKeyState(VOID);
 EFI_STATUS EFIAPI
 OvrOSInfo(VOID);
 
+EFI_STATUS EFIAPI
+OvrGraphConfig(VOID);
 
 #endif

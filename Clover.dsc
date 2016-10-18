@@ -427,8 +427,9 @@
   # Misc
   Clover/FSInject/FSInject.inf
   Clover/MsgLog/MsgLog.inf
-  Clover/SMCHelper/SMCHelper.inf
-  Clover/OSInfo/OSInfo.inf
+  Clover/Protocols/SMCHelper/SMCHelper.inf
+  Clover/Protocols/OSInfo/OSInfo.inf
+  Clover/Protocols/AppleGraphicsConfig/GraphicsConfig.inf
 !ifdef DEBUG_ON_SERIAL_PORT
 
   Clover/DumpUefiCalls/DumpUefiCalls.inf {
@@ -465,7 +466,7 @@
       gEfiMdeModulePkgTokenSpaceGuid.PcdHwErrStorageSize|0x0000
   }
 
-  Clover/AppleImageCodec/AppleImageCodec.inf
+  Clover/Protocols/AppleImageCodec/AppleImageCodec.inf
   #
   # Sample Application
   #

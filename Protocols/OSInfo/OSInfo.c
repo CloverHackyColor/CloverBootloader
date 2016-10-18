@@ -78,7 +78,7 @@ EFI_OS_INFO_PROTOCOL mEfiOSInfo = {
  ***************************************************************/
 
 /**
- * SMCHelper entry point. Installs AppleOSInfoProtocol.
+ * OSInfo entry point. Installs AppleOSInfoProtocol.
  */
 EFI_STATUS
 EFIAPI
@@ -88,8 +88,7 @@ OSInfoEntrypoint (
                      )
 {
   EFI_STATUS					Status; // = EFI_SUCCESS;
-  EFI_BOOT_SERVICES*			gBS;
-  
+  EFI_BOOT_SERVICES*			gBS;  
   gBS				= SystemTable->BootServices;
   
   Status = gBS->InstallMultipleProtocolInterfaces (
