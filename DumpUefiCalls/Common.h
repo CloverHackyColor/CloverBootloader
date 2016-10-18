@@ -58,7 +58,7 @@
 #ifdef DEBUG_ON_SERIAL_PORT
 #define LOG_TO_FILE			0
 #else
-#define LOG_TO_FILE			3
+#define LOG_TO_FILE			4
 #endif
 
 //

@@ -159,7 +159,6 @@
   gEfiAcpi20TableGuid
   gEfiAppleBootGuid
   gEfiAppleNvramGuid
-  gAppleScreenInfoProtocolGuid
   gEfiAppleVendorGuid
   gEfiDxeServicesTableGuid
   gEfiEventReadyToBootGuid
@@ -231,6 +230,7 @@
   gEfiSecurity2ArchProtocolGuid
 
   AppleDevicePropertyProtocolGuid
+  gAppleScreenInfoProtocolGuid
   gEfiConsoleControlProtocolGuid
   gEfiLegacyBiosProtocolGuid
   gEfiTimerArchProtocolGuid
