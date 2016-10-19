@@ -19,6 +19,38 @@
 //#define DBG(...) AsciiPrint(__VA_ARGS__);
 #define DBG(...)
 
+struct EFI_RES_ENTRY {
+  CHAR8 Name[64];
+  UINT32 DataOffset;
+  UINT32 DataLength;
+};
+
+struct EFI_RES {
+  UINT16 Magic; // 0x200 (BigEndian) or 0x02 (LE)
+  UINT16 Num;   // LE
+  struct EFI_RES_ENTRY Entries[1]; //NUM - dynamic array
+};
+
+//Fool Proof
+/*
+ 02 00 14 00 61 76 61 74 61 72 2E 70 6E 67 00 00
+ 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ 00 00 00 00 EC 05 00 00 AF 2D 00 00
+                                      
+ 61 76 61 74 61 72 40 32 78 2E 70 6E 67 00 00 00
+ 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ 9B 33 00 00 32 84 00 00
+ 
+ Num=20
+ 1. avatar.png Offset=0x05EC (LittleEndian) Size=0x2DAF Offset+Size=0x339B
+ 2. avatar@2x.png Offset=0x339C (!) Aligned Size=0x8432 End=0xB7CE
+ 3. Offset=0xB7CD = 0x339B+0x8432 Not alinged(!!!) File=0xB7CE Aligned
+ */
+
 static EG_IMAGE * egDecodeAny(IN UINT8 *FileData, IN UINTN FileDataLength,
                               IN BOOLEAN WantAlpha)
 {
@@ -46,14 +78,22 @@ static EG_IMAGE * egDecodeAny(IN UINT8 *FileData, IN UINTN FileDataLength,
 
 EFI_STATUS
 EFIAPI
-RecognizeImageData (IN APPLE_IMAGE_CODEC_PROTOCOL* This,
+RecognizeImageData (//IN APPLE_IMAGE_CODEC_PROTOCOL* This,
   VOID         *ImageBuffer,
-  UINTN         ImageSize
+  UINTN         ImageSize,
+  OUT VOID    **OutBuffer
   )
 {
   EG_IMAGE      *Image;
   
-  DBG("AppleImageCodec PngRecognizeImageData: Status = ");
+  if (!ImageBuffer) {
+    return EFI_INVALID_PARAMETER;
+  }
+  if (*(UINT16*)ImageBuffer == 0x02) {
+    return EFI_SUCCESS; //this is efires image
+  }
+  
+  DBG("AppleImageCodec RecognizeImageData: Status = ");
   Image = egDecodeAny((UINT8*)ImageBuffer, ImageSize, FALSE);
   if (Image == NULL) {
     DBG("EFI_UNSUPPORTED\n");
@@ -69,7 +109,7 @@ RecognizeImageData (IN APPLE_IMAGE_CODEC_PROTOCOL* This,
 
 EFI_STATUS
 EFIAPI
-GetImageDims (IN APPLE_IMAGE_CODEC_PROTOCOL* This,
+GetImageDims (//IN APPLE_IMAGE_CODEC_PROTOCOL* This,
   VOID          *ImageBuffer,
   UINTN         ImageSize,
   UINT32         *ImageWidth,
@@ -98,11 +138,11 @@ GetImageDims (IN APPLE_IMAGE_CODEC_PROTOCOL* This,
 
 EFI_STATUS
 EFIAPI
-DecodeImageData (IN APPLE_IMAGE_CODEC_PROTOCOL* This,
+DecodeImageData (//IN APPLE_IMAGE_CODEC_PROTOCOL* This,
   VOID          *ImageBuffer,
   UINTN         ImageSize,
   EFI_UGA_PIXEL **RawImageData,
-  UINTN         *RawImageDataSize
+  UINT32         *RawImageDataSize
   )
 {
   EG_IMAGE      *Image;
@@ -132,22 +172,33 @@ DecodeImageData (IN APPLE_IMAGE_CODEC_PROTOCOL* This,
   return EFI_SUCCESS;
 }
 
+EFI_STATUS
+EFIAPI
+Unknown1 (VOID* ImageBuffer, UINTN Param1, UINTN Param2, UINTN Param3)
+{
+  return EFI_SUCCESS;
+}
+
+EFI_STATUS
+EFIAPI
+Unknown2 (VOID* ImageBuffer, UINTN Param1, UINTN Param2, UINTN Param3)
+{
+  return EFI_SUCCESS;
+}
+
 /** Image codec protocol instance. */
 APPLE_IMAGE_CODEC_PROTOCOL gAppleImageCodec = {
   // Version
-  1,
-  
+  1,  
   // FileExt
   0,
   
   RecognizeImageData,
-  //PngRecognizeImageData,
-  
   GetImageDims,
-  //PngGetImageDims,
-  
   DecodeImageData,
-  //PngDecodeImageData
+
+  Unknown1,
+  Unknown2,
 };
 
 /** Driver's entry point. Installs our StartImage to detect boot loader start. */

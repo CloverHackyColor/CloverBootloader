@@ -16,10 +16,10 @@
 
 typedef struct _APPLE_IMAGE_CODEC_PROTOCOL APPLE_IMAGE_CODEC_PROTOCOL;
 
-typedef EFI_STATUS (EFIAPI* RECOGNIZE_IMAGE_DATA)(APPLE_IMAGE_CODEC_PROTOCOL* This, VOID* ImageBuffer, UINTN ImageSize);
-typedef EFI_STATUS (EFIAPI* GET_IMAGE_DIMS)(APPLE_IMAGE_CODEC_PROTOCOL* This, VOID* ImageBuffer, UINTN ImageSize, UINT32* ImageWidth, UINT32* ImageHeight);
-typedef EFI_STATUS (EFIAPI* DECODE_IMAGE_DATA)(APPLE_IMAGE_CODEC_PROTOCOL* This, VOID* ImageBuffer, UINTN ImageSize, EFI_UGA_PIXEL** RawImageData, UINTN* RawImageDataSize);
-typedef EFI_STATUS (EFIAPI* UNKNOWN_IMAGE_DATA)(APPLE_IMAGE_CODEC_PROTOCOL* This, VOID* ImageBuffer, UINTN ImageSize);
+typedef EFI_STATUS (EFIAPI* RECOGNIZE_IMAGE_DATA)(VOID* ImageBuffer, UINTN ImageSize, OUT VOID  **OutBuffer);
+typedef EFI_STATUS (EFIAPI* GET_IMAGE_DIMS)(VOID* ImageBuffer, UINTN ImageSize, UINT32* ImageWidth, UINT32* ImageHeight);
+typedef EFI_STATUS (EFIAPI* DECODE_IMAGE_DATA)(VOID* ImageBuffer, UINTN ImageSize, EFI_UGA_PIXEL** RawImageData, UINT32* RawImageDataSize);
+typedef EFI_STATUS (EFIAPI* UNKNOWN_IMAGE_DATA)(VOID* ImageBuffer, UINTN Param1, UINTN Param2, UINTN Param3);
 
 struct _APPLE_IMAGE_CODEC_PROTOCOL
 {
@@ -28,7 +28,8 @@ struct _APPLE_IMAGE_CODEC_PROTOCOL
 	RECOGNIZE_IMAGE_DATA										RecognizeImageData;
 	GET_IMAGE_DIMS													GetImageDims;
 	DECODE_IMAGE_DATA												DecodeImageData;
-  UNKNOWN_IMAGE_DATA                      Unknown;
+  UNKNOWN_IMAGE_DATA                      Unknown1;
+  UNKNOWN_IMAGE_DATA                      Unknown2;
 };
 
 extern EFI_GUID gAppleImageCodecProtocolGuid;

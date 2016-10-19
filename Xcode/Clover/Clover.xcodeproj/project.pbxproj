@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		12506B6E1DB0F15F00ACD402 /* AppleProtocols.c in Sources */ = {isa = PBXBuildFile; fileRef = 12506B6D1DB0F15F00ACD402 /* AppleProtocols.c */; };
 		1288B5211A30CEFB007CBCEF /* Net.c in Sources */ = {isa = PBXBuildFile; fileRef = 1288B5201A30CEFB007CBCEF /* Net.c */; };
 		12A60F5A1DB610500068BF8B /* AppleImageCodec.c in Sources */ = {isa = PBXBuildFile; fileRef = 12A60F4E1DB610500068BF8B /* AppleImageCodec.c */; };
 		12A60F5B1DB610500068BF8B /* load_bmp.c in Sources */ = {isa = PBXBuildFile; fileRef = 12A60F501DB610500068BF8B /* load_bmp.c */; };
@@ -18,7 +17,6 @@
 		12A60F611DB610840068BF8B /* GraphicsConfig.c in Sources */ = {isa = PBXBuildFile; fileRef = 12A60F601DB610840068BF8B /* GraphicsConfig.c */; };
 		12AAF3A51DB75DC800A52B12 /* FirmwareVolume.c in Sources */ = {isa = PBXBuildFile; fileRef = 12AAF3A41DB75DC800A52B12 /* FirmwareVolume.c */; };
 		12E3015A1D5A413A00EED426 /* lodepng.c in Sources */ = {isa = PBXBuildFile; fileRef = 12E301581D5A413A00EED426 /* lodepng.c */; };
-		12E38DDA1A2DB6EB0093F748 /* DriverOverride.c in Sources */ = {isa = PBXBuildFile; fileRef = 12E38DD81A2DB6EB0093F748 /* DriverOverride.c */; };
 		2C794D201A0AA85900D845B0 /* Reset.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C7949ED1A0AA85900D845B0 /* Reset.c */; };
 		2C794D211A0AA85900D845B0 /* AhciMode.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C7949F01A0AA85900D845B0 /* AhciMode.c */; };
 		2C794D221A0AA85900D845B0 /* AtaAtapiPassThru.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C7949F21A0AA85900D845B0 /* AtaAtapiPassThru.c */; };
@@ -133,7 +131,6 @@
 		2C794D8F1A0AA85900D845B0 /* 915resolution.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C794B461A0AA85900D845B0 /* 915resolution.c */; };
 		2C794D901A0AA85900D845B0 /* edid.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C794B481A0AA85900D845B0 /* edid.c */; };
 		2C794D911A0AA85900D845B0 /* VideoBiosPatchLib.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C794B4A1A0AA85900D845B0 /* VideoBiosPatchLib.c */; };
-		2C794D921A0AA85900D845B0 /* MsgLog.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C794B541A0AA85900D845B0 /* MsgLog.c */; };
 		2C794D931A0AA85900D845B0 /* ComponentName.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C794B571A0AA85900D845B0 /* ComponentName.c */; };
 		2C794D941A0AA85900D845B0 /* Ohci.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C794B5A1A0AA85900D845B0 /* Ohci.c */; };
 		2C794D951A0AA85900D845B0 /* OhciDebug.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C794B5C1A0AA85900D845B0 /* OhciDebug.c */; };
@@ -302,8 +299,6 @@
 		2C794E381A0AA85900D845B0 /* lslr.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C794CD01A0AA85900D845B0 /* lslr.c */; };
 		2C794E391A0AA85900D845B0 /* lsroot.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C794CD11A0AA85900D845B0 /* lsroot.c */; };
 		2C794E3A1A0AA85900D845B0 /* VBoxFsDxe.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C794CD61A0AA85900D845B0 /* VBoxFsDxe.c */; };
-		2C794E3D1A0AA85900D845B0 /* EmuVariable.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C794CE51A0AA85900D845B0 /* EmuVariable.c */; };
-		2C794E3E1A0AA85900D845B0 /* InitVariable.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C794CE71A0AA85900D845B0 /* InitVariable.c */; };
 		2C794E3F1A0AA85900D845B0 /* FSInject.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C794CEA1A0AA85900D845B0 /* FSInject.c */; };
 		2C794E401A0AA85900D845B0 /* Test.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C794CF11A0AA85900D845B0 /* Test.c */; };
 		2C794E411A0AA85900D845B0 /* BootArgs.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C794CF51A0AA85900D845B0 /* BootArgs.c */; };
@@ -320,7 +315,6 @@
 		2C794E4C1A0AA85900D845B0 /* AsmFuncsX64.nasm in Sources */ = {isa = PBXBuildFile; fileRef = 2C794D0F1A0AA85900D845B0 /* AsmFuncsX64.nasm */; };
 		2C794E4D1A0AA85900D845B0 /* AsmFuncsX64.S in Sources */ = {isa = PBXBuildFile; fileRef = 2C794D101A0AA85900D845B0 /* AsmFuncsX64.S */; };
 		2C794E4E1A0AA85900D845B0 /* TestAsm32.asm in Sources */ = {isa = PBXBuildFile; fileRef = 2C794D111A0AA85900D845B0 /* TestAsm32.asm */; };
-		2C794E4F1A0AA85900D845B0 /* OsxFatBinaryDrv.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C794D141A0AA85900D845B0 /* OsxFatBinaryDrv.c */; };
 		2C794E501A0AA85900D845B0 /* Lib.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C794D181A0AA85900D845B0 /* Lib.c */; };
 		2C794E511A0AA85900D845B0 /* NVRAMDebug.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C794D1A1A0AA85900D845B0 /* NVRAMDebug.c */; };
 		2C794E521A0AA85900D845B0 /* OsxLowMemFixDrv.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C794D1C1A0AA85900D845B0 /* OsxLowMemFixDrv.c */; };
@@ -340,8 +334,6 @@
 
 /* Begin PBXFileReference section */
 		12344F581CAB9A5700318A6E /* AppleSmBios.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleSmBios.h; sourceTree = "<group>"; };
-		12506B6D1DB0F15F00ACD402 /* AppleProtocols.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = AppleProtocols.c; sourceTree = "<group>"; };
-		12506B7A1DB1044E00ACD402 /* AppleProtocols.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleProtocols.h; sourceTree = "<group>"; };
 		1261513A1A15BBB000903E7B /* bootscreen.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = bootscreen.c; sourceTree = "<group>"; };
 		1261513B1A15BBB000903E7B /* common.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = common.c; sourceTree = "<group>"; };
 		1261513C1A15BBB000903E7B /* entry_scan.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = entry_scan.h; sourceTree = "<group>"; };
@@ -444,28 +436,6 @@
 		1261CBB51DB17AC200E26E00 /* AppleKeyState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppleKeyState.h; sourceTree = "<group>"; };
 		12676CCE1DB5624B00CFC57E /* OSInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OSInfo.h; sourceTree = "<group>"; };
 		1288B5201A30CEFB007CBCEF /* Net.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Net.c; sourceTree = "<group>"; };
-		129017371A2F8EA50069691F /* BootServices.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BootServices.c; sourceTree = "<group>"; };
-		129017381A2F8EA50069691F /* BootServices.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BootServices.h; sourceTree = "<group>"; };
-		129017391A2F8EA50069691F /* build.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = build.sh; sourceTree = "<group>"; };
-		1290173A1A2F8EA50069691F /* Common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Common.h; sourceTree = "<group>"; };
-		1290173B1A2F8EA50069691F /* DataHub.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = DataHub.c; sourceTree = "<group>"; };
-		1290173C1A2F8EA50069691F /* DataHub.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DataHub.h; sourceTree = "<group>"; };
-		1290173D1A2F8EA50069691F /* DumpUefiCalls.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = DumpUefiCalls.c; sourceTree = "<group>"; };
-		1290173E1A2F8EA50069691F /* DumpUefiCalls.dsc */ = {isa = PBXFileReference; lastKnownFileType = text; path = DumpUefiCalls.dsc; sourceTree = "<group>"; };
-		1290173F1A2F8EA50069691F /* DumpUefiCalls.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = DumpUefiCalls.inf; sourceTree = "<group>"; };
-		129017401A2F8EA50069691F /* FileLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = FileLib.c; sourceTree = "<group>"; };
-		129017411A2F8EA50069691F /* FileLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FileLib.h; sourceTree = "<group>"; };
-		129017421A2F8EA50069691F /* Fs.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Fs.c; sourceTree = "<group>"; };
-		129017431A2F8EA50069691F /* Fs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Fs.h; sourceTree = "<group>"; };
-		129017441A2F8EA50069691F /* Lib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Lib.c; sourceTree = "<group>"; };
-		129017451A2F8EA50069691F /* Lib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Lib.h; sourceTree = "<group>"; };
-		129017461A2F8EA50069691F /* Log.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Log.c; sourceTree = "<group>"; };
-		129017471A2F8EA50069691F /* Log.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Log.h; sourceTree = "<group>"; };
-		129017481A2F8EA50069691F /* MemLog.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = MemLog.c; sourceTree = "<group>"; };
-		129017491A2F8EA50069691F /* MemLog.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MemLog.h; sourceTree = "<group>"; };
-		1290174A1A2F8EA50069691F /* RuntimeServices.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = RuntimeServices.c; sourceTree = "<group>"; };
-		1290174B1A2F8EA50069691F /* RuntimeServices.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RuntimeServices.h; sourceTree = "<group>"; };
-		1290174C1A2F8EA50069691F /* StandaloneCompilation.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = StandaloneCompilation.txt; sourceTree = "<group>"; };
 		1294CC311A231CA80056FF03 /* scroll_images.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = scroll_images.h; sourceTree = "<group>"; };
 		12A60F4E1DB610500068BF8B /* AppleImageCodec.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = AppleImageCodec.c; sourceTree = "<group>"; };
 		12A60F4F1DB610500068BF8B /* AppleImageCodec.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AppleImageCodec.inf; sourceTree = "<group>"; };
@@ -495,10 +465,43 @@
 		12AAF3A41DB75DC800A52B12 /* FirmwareVolume.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = FirmwareVolume.c; sourceTree = "<group>"; };
 		12AAF3A61DB75F4800A52B12 /* FirmwareVolume.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = FirmwareVolume.inf; sourceTree = "<group>"; };
 		12AAF3B41DB76ACC00A52B12 /* EfiImageFormat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EfiImageFormat.h; sourceTree = "<group>"; };
+		12AAF3C51DB7743E00A52B12 /* DriverOverride.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = DriverOverride.c; sourceTree = "<group>"; };
+		12AAF3C61DB7743E00A52B12 /* DriverOverride.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = DriverOverride.inf; sourceTree = "<group>"; };
+		12AAF3C81DB7744B00A52B12 /* AppleProtocols.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = AppleProtocols.c; sourceTree = "<group>"; };
+		12AAF3C91DB7744B00A52B12 /* AppleProtocols.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleProtocols.h; sourceTree = "<group>"; };
+		12AAF3CA1DB7744B00A52B12 /* BootServices.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BootServices.c; sourceTree = "<group>"; };
+		12AAF3CB1DB7744B00A52B12 /* BootServices.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BootServices.h; sourceTree = "<group>"; };
+		12AAF3CC1DB7744B00A52B12 /* build.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = build.sh; sourceTree = "<group>"; };
+		12AAF3CD1DB7744B00A52B12 /* Common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Common.h; sourceTree = "<group>"; };
+		12AAF3CE1DB7744B00A52B12 /* DataHub.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = DataHub.c; sourceTree = "<group>"; };
+		12AAF3CF1DB7744B00A52B12 /* DataHub.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DataHub.h; sourceTree = "<group>"; };
+		12AAF3D01DB7744B00A52B12 /* DumpUefiCalls.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = DumpUefiCalls.c; sourceTree = "<group>"; };
+		12AAF3D11DB7744B00A52B12 /* DumpUefiCalls.dsc */ = {isa = PBXFileReference; lastKnownFileType = text; path = DumpUefiCalls.dsc; sourceTree = "<group>"; };
+		12AAF3D21DB7744B00A52B12 /* DumpUefiCalls.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = DumpUefiCalls.inf; sourceTree = "<group>"; };
+		12AAF3D31DB7744B00A52B12 /* FileLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = FileLib.c; sourceTree = "<group>"; };
+		12AAF3D41DB7744B00A52B12 /* FileLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FileLib.h; sourceTree = "<group>"; };
+		12AAF3D51DB7744B00A52B12 /* Fs.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Fs.c; sourceTree = "<group>"; };
+		12AAF3D61DB7744B00A52B12 /* Fs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Fs.h; sourceTree = "<group>"; };
+		12AAF3D71DB7744B00A52B12 /* Lib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Lib.c; sourceTree = "<group>"; };
+		12AAF3D81DB7744B00A52B12 /* Lib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Lib.h; sourceTree = "<group>"; };
+		12AAF3D91DB7744B00A52B12 /* Log.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Log.c; sourceTree = "<group>"; };
+		12AAF3DA1DB7744B00A52B12 /* Log.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Log.h; sourceTree = "<group>"; };
+		12AAF3DB1DB7744B00A52B12 /* MemLog.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = MemLog.c; sourceTree = "<group>"; };
+		12AAF3DC1DB7744B00A52B12 /* MemLog.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MemLog.h; sourceTree = "<group>"; };
+		12AAF3DD1DB7744B00A52B12 /* RuntimeServices.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = RuntimeServices.c; sourceTree = "<group>"; };
+		12AAF3DE1DB7744B00A52B12 /* RuntimeServices.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RuntimeServices.h; sourceTree = "<group>"; };
+		12AAF3DF1DB7744B00A52B12 /* StandaloneCompilation.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = StandaloneCompilation.txt; sourceTree = "<group>"; };
+		12AAF3E11DB7745A00A52B12 /* EmuVariable.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = EmuVariable.c; sourceTree = "<group>"; };
+		12AAF3E21DB7745A00A52B12 /* EmuVariableRuntimeDxe.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = EmuVariableRuntimeDxe.inf; sourceTree = "<group>"; };
+		12AAF3E31DB7745A00A52B12 /* InitVariable.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = InitVariable.c; sourceTree = "<group>"; };
+		12AAF3E41DB7745A00A52B12 /* Variable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Variable.h; sourceTree = "<group>"; };
+		12AAF3E61DB7746700A52B12 /* MsgLog.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = MsgLog.c; sourceTree = "<group>"; };
+		12AAF3E71DB7746700A52B12 /* MsgLog.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = MsgLog.inf; sourceTree = "<group>"; };
+		12AAF3E91DB7747400A52B12 /* OsxFatBinaryDrv.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = OsxFatBinaryDrv.c; sourceTree = "<group>"; };
+		12AAF3EA1DB7747400A52B12 /* OsxFatBinaryDrv.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OsxFatBinaryDrv.h; sourceTree = "<group>"; };
+		12AAF3EB1DB7747400A52B12 /* OsxFatBinaryDrv.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = OsxFatBinaryDrv.inf; sourceTree = "<group>"; };
 		12E301581D5A413A00EED426 /* lodepng.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lodepng.c; sourceTree = "<group>"; };
 		12E301591D5A413A00EED426 /* lodepng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lodepng.h; sourceTree = "<group>"; };
-		12E38DD81A2DB6EB0093F748 /* DriverOverride.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = DriverOverride.c; sourceTree = "<group>"; };
-		12E38DD91A2DB6EB0093F748 /* DriverOverride.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DriverOverride.inf; sourceTree = "<group>"; };
 		12EF3B1C1A7AB8D40056AF22 /* ComponentName.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ComponentName.c; sourceTree = "<group>"; };
 		12EF3B1D1A7AB8D40056AF22 /* ComponentName.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ComponentName.h; sourceTree = "<group>"; };
 		12EF3B1E1A7AB8D40056AF22 /* UsbHcMem.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = UsbHcMem.c; sourceTree = "<group>"; };
@@ -804,8 +807,6 @@
 		2C794B501A0AA85900D845B0 /* Logo.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Logo.inf; sourceTree = "<group>"; };
 		2C794B511A0AA85900D845B0 /* Logo_CloverEFI.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = Logo_CloverEFI.bmp; sourceTree = "<group>"; };
 		2C794B521A0AA85900D845B0 /* LogoBW.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = LogoBW.bmp; sourceTree = "<group>"; };
-		2C794B541A0AA85900D845B0 /* MsgLog.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = MsgLog.c; sourceTree = "<group>"; };
-		2C794B551A0AA85900D845B0 /* MsgLog.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MsgLog.inf; sourceTree = "<group>"; };
 		2C794B571A0AA85900D845B0 /* ComponentName.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ComponentName.c; sourceTree = "<group>"; };
 		2C794B581A0AA85900D845B0 /* ComponentName.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComponentName.h; sourceTree = "<group>"; };
 		2C794B591A0AA85900D845B0 /* Descriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Descriptor.h; sourceTree = "<group>"; };
@@ -1131,10 +1132,6 @@
 		2C794CDB1A0AA85900D845B0 /* VBoxReiserFS.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = VBoxReiserFS.inf; sourceTree = "<group>"; };
 		2C794CDD1A0AA85900D845B0 /* vers.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = vers.txt; path = ../../vers.txt; sourceTree = "<group>"; };
 		2C794CDE1A0AA85900D845B0 /* Version.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Version.h; path = ../../Version.h; sourceTree = "<group>"; };
-		2C794CE51A0AA85900D845B0 /* EmuVariable.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = EmuVariable.c; sourceTree = "<group>"; };
-		2C794CE61A0AA85900D845B0 /* EmuVariableRuntimeDxe.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = EmuVariableRuntimeDxe.inf; sourceTree = "<group>"; };
-		2C794CE71A0AA85900D845B0 /* InitVariable.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = InitVariable.c; sourceTree = "<group>"; };
-		2C794CE81A0AA85900D845B0 /* Variable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Variable.h; sourceTree = "<group>"; };
 		2C794CEA1A0AA85900D845B0 /* FSInject.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = FSInject.c; sourceTree = "<group>"; };
 		2C794CEB1A0AA85900D845B0 /* FSInject.dec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = FSInject.dec; sourceTree = "<group>"; };
 		2C794CEC1A0AA85900D845B0 /* FSInject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FSInject.h; sourceTree = "<group>"; };
@@ -1170,9 +1167,6 @@
 		2C794D0F1A0AA85900D845B0 /* AsmFuncsX64.nasm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.nasm; path = AsmFuncsX64.nasm; sourceTree = "<group>"; };
 		2C794D101A0AA85900D845B0 /* AsmFuncsX64.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = AsmFuncsX64.S; sourceTree = "<group>"; };
 		2C794D111A0AA85900D845B0 /* TestAsm32.asm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm.asm; path = TestAsm32.asm; sourceTree = "<group>"; };
-		2C794D141A0AA85900D845B0 /* OsxFatBinaryDrv.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = OsxFatBinaryDrv.c; sourceTree = "<group>"; };
-		2C794D151A0AA85900D845B0 /* OsxFatBinaryDrv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OsxFatBinaryDrv.h; sourceTree = "<group>"; };
-		2C794D161A0AA85900D845B0 /* OsxFatBinaryDrv.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = OsxFatBinaryDrv.inf; sourceTree = "<group>"; };
 		2C794D181A0AA85900D845B0 /* Lib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Lib.c; sourceTree = "<group>"; };
 		2C794D191A0AA85900D845B0 /* Lib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Lib.h; sourceTree = "<group>"; };
 		2C794D1A1A0AA85900D845B0 /* NVRAMDebug.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = NVRAMDebug.c; sourceTree = "<group>"; };
@@ -1351,38 +1345,6 @@
 			path = refit;
 			sourceTree = "<group>";
 		};
-		129017361A2F8EA50069691F /* DumpUefiCalls */ = {
-			isa = PBXGroup;
-			children = (
-				12506B6D1DB0F15F00ACD402 /* AppleProtocols.c */,
-				12506B7A1DB1044E00ACD402 /* AppleProtocols.h */,
-				129017371A2F8EA50069691F /* BootServices.c */,
-				129017381A2F8EA50069691F /* BootServices.h */,
-				129017391A2F8EA50069691F /* build.sh */,
-				1290173A1A2F8EA50069691F /* Common.h */,
-				1290173B1A2F8EA50069691F /* DataHub.c */,
-				1290173C1A2F8EA50069691F /* DataHub.h */,
-				1290173D1A2F8EA50069691F /* DumpUefiCalls.c */,
-				1290173E1A2F8EA50069691F /* DumpUefiCalls.dsc */,
-				1290173F1A2F8EA50069691F /* DumpUefiCalls.inf */,
-				129017401A2F8EA50069691F /* FileLib.c */,
-				129017411A2F8EA50069691F /* FileLib.h */,
-				129017421A2F8EA50069691F /* Fs.c */,
-				129017431A2F8EA50069691F /* Fs.h */,
-				129017441A2F8EA50069691F /* Lib.c */,
-				129017451A2F8EA50069691F /* Lib.h */,
-				129017461A2F8EA50069691F /* Log.c */,
-				129017471A2F8EA50069691F /* Log.h */,
-				129017481A2F8EA50069691F /* MemLog.c */,
-				129017491A2F8EA50069691F /* MemLog.h */,
-				1290174A1A2F8EA50069691F /* RuntimeServices.c */,
-				1290174B1A2F8EA50069691F /* RuntimeServices.h */,
-				1290174C1A2F8EA50069691F /* StandaloneCompilation.txt */,
-			);
-			name = DumpUefiCalls;
-			path = ../../DumpUefiCalls;
-			sourceTree = "<group>";
-		};
 		12912A3F1AE0FEF30086B81B /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -1395,8 +1357,13 @@
 			children = (
 				12A60F4C1DB610500068BF8B /* AppleGraphicsConfig */,
 				12A60F4D1DB610500068BF8B /* AppleImageCodec */,
+				12AAF3C41DB7743E00A52B12 /* DriverOverride */,
+				12AAF3C71DB7744B00A52B12 /* DumpUefiCalls */,
+				12AAF3E01DB7745A00A52B12 /* EmuVariableUefi */,
 				12AAF3A21DB75DAA00A52B12 /* FirmwareVolume */,
+				12AAF3E51DB7746700A52B12 /* MsgLog */,
 				12A60F541DB610500068BF8B /* OSInfo */,
+				12AAF3E81DB7747400A52B12 /* OsxFatBinaryDrv */,
 				12A60F571DB610500068BF8B /* SMCHelper */,
 			);
 			name = Protocols;
@@ -1471,14 +1438,74 @@
 			path = FirmwareVolume;
 			sourceTree = "<group>";
 		};
-		12E38DD71A2DB6EB0093F748 /* DriverOverride */ = {
+		12AAF3C41DB7743E00A52B12 /* DriverOverride */ = {
 			isa = PBXGroup;
 			children = (
-				12E38DD81A2DB6EB0093F748 /* DriverOverride.c */,
-				12E38DD91A2DB6EB0093F748 /* DriverOverride.inf */,
+				12AAF3C51DB7743E00A52B12 /* DriverOverride.c */,
+				12AAF3C61DB7743E00A52B12 /* DriverOverride.inf */,
 			);
-			name = DriverOverride;
-			path = ../../DriverOverride;
+			path = DriverOverride;
+			sourceTree = "<group>";
+		};
+		12AAF3C71DB7744B00A52B12 /* DumpUefiCalls */ = {
+			isa = PBXGroup;
+			children = (
+				12AAF3C81DB7744B00A52B12 /* AppleProtocols.c */,
+				12AAF3C91DB7744B00A52B12 /* AppleProtocols.h */,
+				12AAF3CA1DB7744B00A52B12 /* BootServices.c */,
+				12AAF3CB1DB7744B00A52B12 /* BootServices.h */,
+				12AAF3CC1DB7744B00A52B12 /* build.sh */,
+				12AAF3CD1DB7744B00A52B12 /* Common.h */,
+				12AAF3CE1DB7744B00A52B12 /* DataHub.c */,
+				12AAF3CF1DB7744B00A52B12 /* DataHub.h */,
+				12AAF3D01DB7744B00A52B12 /* DumpUefiCalls.c */,
+				12AAF3D11DB7744B00A52B12 /* DumpUefiCalls.dsc */,
+				12AAF3D21DB7744B00A52B12 /* DumpUefiCalls.inf */,
+				12AAF3D31DB7744B00A52B12 /* FileLib.c */,
+				12AAF3D41DB7744B00A52B12 /* FileLib.h */,
+				12AAF3D51DB7744B00A52B12 /* Fs.c */,
+				12AAF3D61DB7744B00A52B12 /* Fs.h */,
+				12AAF3D71DB7744B00A52B12 /* Lib.c */,
+				12AAF3D81DB7744B00A52B12 /* Lib.h */,
+				12AAF3D91DB7744B00A52B12 /* Log.c */,
+				12AAF3DA1DB7744B00A52B12 /* Log.h */,
+				12AAF3DB1DB7744B00A52B12 /* MemLog.c */,
+				12AAF3DC1DB7744B00A52B12 /* MemLog.h */,
+				12AAF3DD1DB7744B00A52B12 /* RuntimeServices.c */,
+				12AAF3DE1DB7744B00A52B12 /* RuntimeServices.h */,
+				12AAF3DF1DB7744B00A52B12 /* StandaloneCompilation.txt */,
+			);
+			path = DumpUefiCalls;
+			sourceTree = "<group>";
+		};
+		12AAF3E01DB7745A00A52B12 /* EmuVariableUefi */ = {
+			isa = PBXGroup;
+			children = (
+				12AAF3E11DB7745A00A52B12 /* EmuVariable.c */,
+				12AAF3E21DB7745A00A52B12 /* EmuVariableRuntimeDxe.inf */,
+				12AAF3E31DB7745A00A52B12 /* InitVariable.c */,
+				12AAF3E41DB7745A00A52B12 /* Variable.h */,
+			);
+			path = EmuVariableUefi;
+			sourceTree = "<group>";
+		};
+		12AAF3E51DB7746700A52B12 /* MsgLog */ = {
+			isa = PBXGroup;
+			children = (
+				12AAF3E61DB7746700A52B12 /* MsgLog.c */,
+				12AAF3E71DB7746700A52B12 /* MsgLog.inf */,
+			);
+			path = MsgLog;
+			sourceTree = "<group>";
+		};
+		12AAF3E81DB7747400A52B12 /* OsxFatBinaryDrv */ = {
+			isa = PBXGroup;
+			children = (
+				12AAF3E91DB7747400A52B12 /* OsxFatBinaryDrv.c */,
+				12AAF3EA1DB7747400A52B12 /* OsxFatBinaryDrv.h */,
+				12AAF3EB1DB7747400A52B12 /* OsxFatBinaryDrv.inf */,
+			);
+			path = OsxFatBinaryDrv;
 			sourceTree = "<group>";
 		};
 		12EF3B1B1A7AB8D40056AF22 /* XhciDxe */ = {
@@ -1505,6 +1532,7 @@
 			children = (
 				126151371A15BB7700903E7B /* CloverGUI */,
 				2C794CDF1A0AA85900D845B0 /* CloverEFI */,
+				2C794ADD1A0AA85900D845B0 /* Include */,
 				2C794D1F1A0AA85900D845B0 /* CloverUEFI */,
 				2C7949E41A0AA7F700D845B0 /* Products */,
 			);
@@ -2221,16 +2249,6 @@
 			);
 			name = Logo;
 			path = ../../Logo;
-			sourceTree = "<group>";
-		};
-		2C794B561A0AA85900D845B0 /* MsgLog */ = {
-			isa = PBXGroup;
-			children = (
-				2C794B541A0AA85900D845B0 /* MsgLog.c */,
-				2C794B551A0AA85900D845B0 /* MsgLog.inf */,
-			);
-			name = MsgLog;
-			path = ../../MsgLog;
 			sourceTree = "<group>";
 		};
 		2C794B671A0AA85900D845B0 /* OhciDxe */ = {
@@ -3097,7 +3115,6 @@
 				2C794A4B1A0AA85900D845B0 /* CloverPkg.dec */,
 				12A7ABAE1CCE1C8E00BD837C /* config-sample.plist */,
 				2C794A571A0AA85900D845B0 /* CpuDxe */,
-				12E38DD71A2DB6EB0093F748 /* DriverOverride */,
 				2C794A5C1A0AA85900D845B0 /* DVDBus */,
 				2C794A611A0AA85900D845B0 /* DVDDisk */,
 				2C794A621A0AA85900D845B0 /* ebuild.sh */,
@@ -3106,11 +3123,9 @@
 				2C794AA51A0AA85900D845B0 /* gptsync */,
 				2C794AAB1A0AA85900D845B0 /* GraphicsConsoleDxe */,
 				2C794AB61A0AA85900D845B0 /* HFSPlus */,
-				2C794ADD1A0AA85900D845B0 /* Include */,
 				2C794B0A1A0AA85900D845B0 /* LegacyBios */,
 				2C794B4E1A0AA85900D845B0 /* Library */,
 				2C794B531A0AA85900D845B0 /* Logo */,
-				2C794B561A0AA85900D845B0 /* MsgLog */,
 				2C794B671A0AA85900D845B0 /* OhciDxe */,
 				2C794B6B1A0AA85900D845B0 /* OsxAcpiPlatformDxe */,
 				2C794B771A0AA85900D845B0 /* OsxAcpiTableDxe */,
@@ -3134,18 +3149,6 @@
 			);
 			name = CloverEFI;
 			path = ../CloverEFI;
-			sourceTree = "<group>";
-		};
-		2C794CE91A0AA85900D845B0 /* EmuVariableUefi */ = {
-			isa = PBXGroup;
-			children = (
-				2C794CE51A0AA85900D845B0 /* EmuVariable.c */,
-				2C794CE61A0AA85900D845B0 /* EmuVariableRuntimeDxe.inf */,
-				2C794CE71A0AA85900D845B0 /* InitVariable.c */,
-				2C794CE81A0AA85900D845B0 /* Variable.h */,
-			);
-			name = EmuVariableUefi;
-			path = ../../EmuVariableUefi;
 			sourceTree = "<group>";
 		};
 		2C794CEF1A0AA85900D845B0 /* Protocol */ = {
@@ -3239,17 +3242,6 @@
 			path = ../../OsxAptioFixDrv;
 			sourceTree = "<group>";
 		};
-		2C794D171A0AA85900D845B0 /* OsxFatBinaryDrv */ = {
-			isa = PBXGroup;
-			children = (
-				2C794D141A0AA85900D845B0 /* OsxFatBinaryDrv.c */,
-				2C794D151A0AA85900D845B0 /* OsxFatBinaryDrv.h */,
-				2C794D161A0AA85900D845B0 /* OsxFatBinaryDrv.inf */,
-			);
-			name = OsxFatBinaryDrv;
-			path = ../../OsxFatBinaryDrv;
-			sourceTree = "<group>";
-		};
 		2C794D1E1A0AA85900D845B0 /* OsxLowMemFixDrv */ = {
 			isa = PBXGroup;
 			children = (
@@ -3267,11 +3259,8 @@
 		2C794D1F1A0AA85900D845B0 /* CloverUEFI */ = {
 			isa = PBXGroup;
 			children = (
-				129017361A2F8EA50069691F /* DumpUefiCalls */,
-				2C794CE91A0AA85900D845B0 /* EmuVariableUefi */,
 				2C794CF31A0AA85900D845B0 /* FSInject */,
 				2C794D131A0AA85900D845B0 /* OsxAptioFixDrv */,
-				2C794D171A0AA85900D845B0 /* OsxFatBinaryDrv */,
 				2C794D1E1A0AA85900D845B0 /* OsxLowMemFixDrv */,
 				12A60F4B1DB610500068BF8B /* Protocols */,
 			);
@@ -3401,7 +3390,6 @@
 				2C794DE91A0AA85900D845B0 /* PciIo.c in Sources */,
 				2C794D6E1A0AA85900D845B0 /* BiosKeyboard.c in Sources */,
 				2C794E221A0AA85900D845B0 /* Init16.asm in Sources */,
-				2C794E4F1A0AA85900D845B0 /* OsxFatBinaryDrv.c in Sources */,
 				2C794DBC1A0AA85900D845B0 /* Tpl.c in Sources */,
 				2C794D311A0AA85900D845B0 /* boot0ss.s in Sources */,
 				2C794D231A0AA85900D845B0 /* ComponentName.c in Sources */,
@@ -3543,13 +3531,11 @@
 				2C794D811A0AA85900D845B0 /* Performance.c in Sources */,
 				2C794D2C1A0AA85900D845B0 /* BiosVideoNew.c in Sources */,
 				2C794DB71A0AA85900D845B0 /* Dispatcher.c in Sources */,
-				2C794E3E1A0AA85900D845B0 /* InitVariable.c in Sources */,
 				2C794D471A0AA85900D845B0 /* CpuInterrupt.S in Sources */,
 				2C794DC71A0AA85900D845B0 /* Notify.c in Sources */,
 				2C794E1D1A0AA85900D845B0 /* MtrrLib.c in Sources */,
 				2C794E381A0AA85900D845B0 /* lslr.c in Sources */,
 				2C794D2A1A0AA85900D845B0 /* LegacyBiosThunk.c in Sources */,
-				2C794E3D1A0AA85900D845B0 /* EmuVariable.c in Sources */,
 				2C794DB41A0AA85900D845B0 /* MemoryTest.c in Sources */,
 				2C794E4A1A0AA85900D845B0 /* VMem.c in Sources */,
 				2C794D451A0AA85900D845B0 /* CpuInterrupt.asm in Sources */,
@@ -3593,7 +3579,6 @@
 				2C794E031A0AA85900D845B0 /* CpuAsm.asm in Sources */,
 				2C794D8D1A0AA85900D845B0 /* BasePeCoff.c in Sources */,
 				2C794E0B1A0AA85900D845B0 /* CpuIoPei.c in Sources */,
-				2C794D921A0AA85900D845B0 /* MsgLog.c in Sources */,
 				2C794D731A0AA85900D845B0 /* LegacyPlatform.c in Sources */,
 				2C794E491A0AA85900D845B0 /* OsxAptioFixDrv.c in Sources */,
 				2C794D681A0AA85900D845B0 /* BiosBlkIo.c in Sources */,
@@ -3669,8 +3654,6 @@
 				2C794E1E1A0AA85900D845B0 /* IpfTimerLib.c in Sources */,
 				2C794D431A0AA85900D845B0 /* CpuInterrupt.nasm in Sources */,
 				2C794DB61A0AA85900D845B0 /* Dependency.c in Sources */,
-				12E38DDA1A2DB6EB0093F748 /* DriverOverride.c in Sources */,
-				12506B6E1DB0F15F00ACD402 /* AppleProtocols.c in Sources */,
 				12A60F5A1DB610500068BF8B /* AppleImageCodec.c in Sources */,
 				12A60F5B1DB610500068BF8B /* load_bmp.c in Sources */,
 				12A60F5C1DB610500068BF8B /* load_icns.c in Sources */,
