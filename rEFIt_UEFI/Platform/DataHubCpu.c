@@ -272,12 +272,12 @@ SetVariablesForOSX()
   if (gSettings.UIScale == 0x80000000) {
     DeleteNvramVariable(L"UIScale", &gEfiAppleNvramGuid);
   } else {
-    AddNvramVariable(L"UIScale", &gEfiAppleNvramGuid, Attributes, 1, &gSettings.UIScale);
+    SetNvramVariable(L"UIScale", &gEfiAppleNvramGuid, Attributes, 1, &gSettings.UIScale);
   }
   if (gSettings.EFILoginHiDPI == 0x80000000) {
     DeleteNvramVariable(L"EFILoginHiDPI", &gEfiAppleNvramGuid);
   } else {
-    AddNvramVariable(L"EFILoginHiDPI", &gEfiAppleNvramGuid, Attributes, 4, &gSettings.EFILoginHiDPI);
+    SetNvramVariable(L"EFILoginHiDPI", &gEfiAppleNvramGuid, Attributes, 4, &gSettings.EFILoginHiDPI);
   }
 
   //Hack for recovery by Asgorath

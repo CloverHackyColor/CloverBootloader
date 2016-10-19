@@ -1312,37 +1312,43 @@ VOID egFreeImage(IN EG_IMAGE *Image)
 
 EG_IMAGE * egDecodePNG(IN UINT8 *FileData, IN UINTN FileDataLength, IN BOOLEAN WantAlpha)
 {
-    EG_IMAGE            *NewImage;
-    PNG_INFO            *info;
-    EFI_UGA_PIXEL       *Pixel;
-    INTN                x, y;
-    
-    // read and check header
-    info = PNG_decode(FileData, (UINT32)FileDataLength);
-    if (info == NULL) {
-        return NULL;
+  EG_IMAGE            *NewImage;
+  PNG_INFO            *info;
+  EFI_UGA_PIXEL       *Pixel, *PixelD;
+  INTN                x, y;
+
+  // read and check header
+  info = PNG_decode(FileData, (UINT32)FileDataLength);
+  if (info == NULL) {
+    return NULL;
+  }
+
+  NewImage = egCreateImage((INTN)info->width, (INTN)info->height, WantAlpha);
+  if (NewImage == NULL) {
+    return NULL;
+  }
+
+  //   CopyMem(NewImage->PixelData, info->image->data, info->image->size);
+  PixelD = (EFI_UGA_PIXEL*)info->image->data;
+  Pixel = (EFI_UGA_PIXEL*)NewImage->PixelData;
+  for (y = 0; y < NewImage->Height; y++) {
+    for (x = 0; x < NewImage->Width; x++) {
+      /*        UINT8	Temp;
+       Temp = Pixel->Blue;
+       Pixel->Blue = Pixel->Red;
+       Pixel->Red = Temp;
+       // It seems 0 is opaque and 255 is fully transparent
+       Pixel->Reserved = 255 - Pixel->Reserved; */
+      Pixel->Blue = PixelD->Red;
+      Pixel->Red = PixelD->Blue;
+      Pixel->Green = PixelD->Green;
+      Pixel->Reserved = PixelD->Reserved;
+      Pixel++;
+      PixelD++;
     }
-    
-    NewImage = egCreateImage((INTN)info->width, (INTN)info->height, WantAlpha);
-    if (NewImage == NULL) {
-        return NULL;
-    }
-    
-    CopyMem(NewImage->PixelData, info->image->data, info->image->size);
-    png_alloc_free_all();
-    Pixel = (EFI_UGA_PIXEL*)NewImage->PixelData;
-    for (y = 0; y < NewImage->Height; y++) {
-        for (x = 0; x < NewImage->Width; x++) {
-            UINT8	Temp;
-            Temp = Pixel->Blue;
-            Pixel->Blue = Pixel->Red;
-            Pixel->Red = Temp;
-            // It seems 0 is opaque and 255 is fully transparent
-            Pixel->Reserved = 255 - Pixel->Reserved;
-            Pixel++;
-        }
-    }
-    return NewImage;
+  }
+  png_alloc_free_all();
+  return NewImage;
 }
 
 
