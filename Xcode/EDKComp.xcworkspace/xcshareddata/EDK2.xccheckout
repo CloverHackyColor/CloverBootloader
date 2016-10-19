@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>A1D65AEA-1949-405A-8D19-951F001B1757</string>
+	<key>IDESourceControlProjectName</key>
+	<string>EDK2</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>52d7a1c0-eba5-4e63-a9d7-e3186cd7c462</key>
+		<string>svn+ssh://svn.code.sf.net/p/cloverefiboot/code</string>
+		<key>6f19259b-4bc3-4df7-8a09-765794883524++6387</key>
+		<string>https://svn.code.sf.net/p/edk2/code/trunk/edk2</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>Xcode/EDK2/EDK2.xcodeproj</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>52d7a1c0-eba5-4e63-a9d7-e3186cd7c462</key>
+		<string>../../../..</string>
+		<key>6f19259b-4bc3-4df7-8a09-765794883524++6387</key>
+		<string>../../../../..</string>
+	</dict>
+	<key>IDESourceControlProjectRepositoryRootDictionary</key>
+	<dict>
+		<key>6f19259b-4bc3-4df7-8a09-765794883524++6387</key>
+		<string>https://svn.code.sf.net/p/edk2/code</string>
+	</dict>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>52d7a1c0-eba5-4e63-a9d7-e3186cd7c462</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.subversion</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>6f19259b-4bc3-4df7-8a09-765794883524++6387</string>
+			<key>IDESourceControlWCCName</key>
+			<string></string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.subversion</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>52d7a1c0-eba5-4e63-a9d7-e3186cd7c462</string>
+			<key>IDESourceControlWCCName</key>
+			<string>Clover</string>
+		</dict>
+	</array>
+</dict>
+</plist>
