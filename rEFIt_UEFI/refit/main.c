@@ -2188,6 +2188,11 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         case TAG_LOADER:   // Boot OS via .EFI loader
           SetBootCurrent(ChosenEntry);
           StartLoader((LOADER_ENTRY *)ChosenEntry);
+          //if boot.efi failed we should somehow exit from the loop
+          TerminateScreen();
+          MainLoopRunning = FALSE;
+          ReinitDesktop = FALSE;
+          AfterTool = TRUE;
           break;
 
         case TAG_LEGACY:   // Boot legacy OS

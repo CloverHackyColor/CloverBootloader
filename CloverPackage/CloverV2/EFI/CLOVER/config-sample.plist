@@ -744,8 +744,15 @@
 		<true/>
 		<key>#NvidiaWeb</key>
 		<false/>
+	</dict>
+	<key>BootGraphics</key>
+	<dict>
 		<key>#DefaultBackgroundColor</key>
 		<string>0xF0F0F0</string>
+		<key>UIScale</key>
+		<integer>1</integer>
+		<key>EFILoginHiDPI</key>
+		<integer>1</integer>
 	</dict>
 </dict>
 </plist>

@@ -1177,9 +1177,11 @@ typedef struct {
   UINT32                  DisabledAMLCount;
   CHAR16                  **DisabledAML;
   
+  // boot.efi 
   UINT32 OptionsBits;
   UINT32 FlagsBits;
-  BOOLEAN                 ExposeSysVariables;
+  UINT32 UIScale;
+  UINT32 EFILoginHiDPI;
 
 } SETTINGS_DATA;
 

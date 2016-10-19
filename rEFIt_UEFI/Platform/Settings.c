@@ -509,36 +509,29 @@ LoadUserSettings (
 
   // load config
   if ((ConfName == NULL) || (Dict == NULL)) {
-    //   DBG ("Can't load plist in LoadUserSettings: NULL\n");
     return EFI_NOT_FOUND;
   }
 
   ConfigPlistPath = PoolPrint (L"EFI\\CLOVER\\%s.plist", ConfName);
   ConfigOemPath   = PoolPrint (L"%s\\%s.plist", OEMPath, ConfName);
-  // DBG ("PlistPath: %s\n", ConfigPlistPath);
   if (FileExists (SelfRootDir, ConfigOemPath)) {
     Status = egLoadFile (SelfRootDir, ConfigOemPath, (UINT8**)&gConfigPtr, &Size);
-  } //else {
-    //    DBG ("Oem %s.plist not found at path: %s\n", ConfName, ConfigOemPath);
-  //}
-
+  }
   if (EFI_ERROR (Status)) {
     if ((RootDir != NULL) && FileExists (RootDir, ConfigPlistPath)) {
       Status = egLoadFile (RootDir, ConfigPlistPath, (UINT8**)&gConfigPtr, &Size);
     }
-
-    if (EFI_ERROR (Status)) {
+    if (!EFI_ERROR (Status)) {
+      DBG ("Using %s.plist at RootDir at path: %s\n", ConfName, ConfigPlistPath);
+    } else {
       Status = egLoadFile (SelfRootDir, ConfigPlistPath, (UINT8**)&gConfigPtr, &Size);
+      if (!EFI_ERROR (Status)) {
+        DBG ("Using %s.plist at SelfRootDir at path: %s\n", ConfName, ConfigPlistPath);
+      }
     }
-    DBG ("Using %s.plist at path: %s\n", ConfName, ConfigPlistPath);
-  } //else {
-    //DBG ("Using OEM %s.plist at path: %s", ConfName, ConfigOemPath);
-    //}
+  } 
 
   if (!EFI_ERROR (Status) && gConfigPtr != NULL) {
-    //DBG ("Error loading %s.plist! Status=%r\n", ConfName, Status);
-    //return Status;
-
     Status = ParseXML ((const CHAR8*)gConfigPtr, Dict, (UINT32)Size);
     if (EFI_ERROR (Status)) {
       //  Dict = NULL;
@@ -546,9 +539,6 @@ LoadUserSettings (
       return Status;
     }
   }
-
-//  DBG (", Status=%r\n", Status);
-
   return Status;
 }
 
@@ -5181,15 +5171,7 @@ GetUserSettings(
         AsmWriteMsr64 (MSR_IA32_MISC_ENABLE, msr);
       }
     }
-/*
-    // SysVars -->
-    gSettings.ExposeSysVariables = FALSE;
-    CHAR16 *SysVarsTmp = NULL;
-    SYSVARIABLES  *SysVariablesTmp;
-    UINT32 SysVarsTmpCsrActiveConfig = 0x67;
-    UINT16 SysVarsTmpBooterConfig = 0xFFFF;
-    // SysVars <--
-*/
+
     BOOLEAN IsValidCustomUUID = FALSE;
 
     // RtVariables
@@ -5274,9 +5256,6 @@ GetUserSettings(
         gSettings.BacklightLevelConfig = TRUE;
       }
 
-      Prop = GetProperty (DictPointer, "DefaultBackgroundColor");
-      gSettings.DefaultBackgroundColor = (UINT32)GetPropertyInteger (Prop, 0x80000000); //the value 0x80000000 means not set
-
       Prop = GetProperty (DictPointer, "CustomUUID");
       if (Prop != NULL) {
         if (IsValidGuidAsciiString (Prop->string)) {
@@ -5299,82 +5278,25 @@ GetUserSettings(
       Prop                     = GetProperty (DictPointer, "InjectSystemID");
       gSettings.InjectSystemID = gSettings.InjectSystemID ? !IsPropertyFalse(Prop) : IsPropertyTrue (Prop);
 
-//      Prop                     = GetProperty (DictPointer, "ExposeSysVariables");
-//      gSettings.ExposeSysVariables = IsPropertyTrue (Prop);
-      
       Prop                     = GetProperty (DictPointer, "NvidiaWeb");
       gSettings.NvidiaWeb      = IsPropertyTrue (Prop);
 
     }
-/*
-    // SysVars -->
-    SysVariablesTmp                    = AllocateZeroPool (sizeof(SYSVARIABLES));
-    SysVariablesTmp->Key               = PoolPrint(L"CsrActiveConfig");
-    SysVariablesTmp->MenuItem.SValue   = PoolPrint(L"0x%02x", SysVarsTmpCsrActiveConfig);
-    SysVariablesTmp->MenuItem.ItemType = Hex;
-    SysVariablesTmp->Next              = SysVariables;
-    SysVariables                       = SysVariablesTmp;
+    
+    
+    DictPointer = GetProperty (Dict, "BootGraphics");
+    if (DictPointer != NULL) {
+      Prop = GetProperty (DictPointer, "DefaultBackgroundColor");
+      gSettings.DefaultBackgroundColor = (UINT32)GetPropertyInteger (Prop, 0x80000000); //the value 0x80000000 means not set
 
-    SysVariablesTmp                    = AllocateZeroPool (sizeof(SYSVARIABLES));
-    SysVariablesTmp->Key               = PoolPrint(L"BooterConfig");
-    SysVariablesTmp->MenuItem.SValue   = PoolPrint(L"0x%02x", SysVarsTmpBooterConfig);
-    SysVariablesTmp->MenuItem.ItemType = Hex;
-    SysVariablesTmp->Next              = SysVariables;
-    SysVariables                       = SysVariablesTmp;
-
-    if (gSettings.ExposeSysVariables) {
-      SysVarsTmp = AllocateZeroPool((gSettings.RtROMLen * 2) + 1);
-      AsciiStrToUnicodeStr(Bytes2HexStr(gSettings.RtROM, gSettings.RtROMLen), SysVarsTmp);
-      SysVariablesTmp                    = AllocateZeroPool (sizeof(SYSVARIABLES));
-      SysVariablesTmp->Key               = PoolPrint(L"ROM");
-      SysVariablesTmp->MenuItem.SValue   = PoolPrint(L"%s", SysVarsTmp);
-      SysVariablesTmp->MenuItem.ItemType = ASString;
-      SysVariablesTmp->Next              = SysVariables;
-      SysVariables                       = SysVariablesTmp;
-
-      SysVariablesTmp                    = AllocateZeroPool (sizeof(SYSVARIABLES));
-      SysVariablesTmp->Key               = PoolPrint(L"MLB");
-      SysVariablesTmp->MenuItem.SValue   = PoolPrint(L"%a", gSettings.RtMLB);
-      SysVariablesTmp->MenuItem.ItemType = ASString;
-      SysVariablesTmp->Next              = SysVariables;
-      SysVariables                       = SysVariablesTmp;
-
-      SysVariablesTmp                    = AllocateZeroPool (sizeof(SYSVARIABLES));
-      SysVariablesTmp->Key               = PoolPrint(L"InjectSystemID");
-      if (GlobalConfig.TextOnly) {
-        SysVariablesTmp->MenuItem.SValue   = gSettings.InjectSystemID?L"[+]":L"[ ]";
-      }
-      SysVariablesTmp->MenuItem.BValue   = gSettings.InjectSystemID;
-      SysVariablesTmp->MenuItem.ItemType = BoolValue;
-      SysVariablesTmp->Next              = SysVariables;
-      SysVariables                       = SysVariablesTmp;
-
-      if (IsValidCustomUUID) {
-        SysVariablesTmp                    = AllocateZeroPool (sizeof(SYSVARIABLES));
-        SysVariablesTmp->Key               = PoolPrint(L"CustomUUID");
-        SysVariablesTmp->MenuItem.SValue   = PoolPrint(L"%s", gSettings.CustomUuid);
-        SysVariablesTmp->MenuItem.ItemType = ASString;
-        SysVariablesTmp->Next              = SysVariables;
-        SysVariables                       = SysVariablesTmp;
-      }
+      Prop = GetProperty (DictPointer, "UIScale");
+      gSettings.UIScale = (UINT32)GetPropertyInteger (Prop, 0x80000000);
+      
+      Prop = GetProperty (DictPointer, "EFILoginHiDPI");
+      gSettings.EFILoginHiDPI = (UINT32)GetPropertyInteger (Prop, 0x80000000);
+      
     }
     
-    SysVariablesTmp                    = AllocateZeroPool (sizeof(SYSVARIABLES));
-    SysVariablesTmp->Key               = PoolPrint(L"NvidiaWeb");
-    if (GlobalConfig.TextOnly) {
-      SysVariablesTmp->MenuItem.SValue   = gSettings.NvidiaWeb?L"[+]":L"[ ]";
-    }
-    SysVariablesTmp->MenuItem.BValue   = gSettings.NvidiaWeb;
-    SysVariablesTmp->MenuItem.ItemType = BoolValue;
-    SysVariablesTmp->Next              = SysVariables;
-    SysVariables                       = SysVariablesTmp;
-
-    if (SysVarsTmp != NULL) {
-      FreePool(SysVarsTmp);
-    }
-    // SysVars <--
-*/
-
     /*
      {
      EFI_GUID AppleGuid;
@@ -5386,9 +5308,7 @@ GetUserSettings(
      DBG ("Platform Uuid: %g, InjectSystemID: %a\n", &AppleGuid, gSettings.InjectSystemID ? "Yes" : "No");
      }
      */
-    // KernelAndKextPatches
-    //if (!StrLen(gSettings.ConfigName)) {
-    //if (gBootArgsChanged) {
+
     if (gBootChanged) {
       DictPointer = GetProperty (Dict, "KernelAndKextPatches");
       if (DictPointer != NULL) {
