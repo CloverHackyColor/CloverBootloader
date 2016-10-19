@@ -145,10 +145,11 @@ DecodeImageData (//IN APPLE_IMAGE_CODEC_PROTOCOL* This,
   UINT32         *RawImageDataSize
   )
 {
+  EFI_STATUS    Status;
   EG_IMAGE      *Image;
   INTN          Index;
   //automatic choose format
-  if (!RawImageData || !*RawImageData || !RawImageDataSize) {
+  if (!RawImageData || !RawImageDataSize) {
     return EFI_INVALID_PARAMETER;
   }
   
@@ -159,8 +160,11 @@ DecodeImageData (//IN APPLE_IMAGE_CODEC_PROTOCOL* This,
     return EFI_UNSUPPORTED;
   }
   
-  *RawImageData = Image->PixelData;
   *RawImageDataSize = Image->Width * Image->Height * sizeof(EFI_UGA_PIXEL);
+  Status = gBS->AllocatePool(EfiBootServicesData, *RawImageDataSize, (VOID **)RawImageData);
+  if (!EFI_ERROR(Status)) {
+    gBS->CopyMem(*RawImageData, &Image->PixelData, *RawImageDataSize);
+  }
   
   DBG("EFI_SUCCESS, RawImageDataSize=%d\n", *RawImageDataSize);
   DBG("ImageBuffer=%p, ImageSize=%d\n", ImageBuffer, ImageSize);
