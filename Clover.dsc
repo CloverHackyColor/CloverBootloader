@@ -425,7 +425,7 @@
   Clover/LegacyBios/Region2Dxe/LegacyRegion2Dxe.inf
 
   # Misc
-  Clover/Protocols/FSInject/FSInject.inf
+  Clover/FSInject/FSInject.inf
   Clover/Protocols/MsgLog/MsgLog.inf
   Clover/Protocols/SMCHelper/SMCHelper.inf
   Clover/Protocols/OSInfo/OSInfo.inf
