@@ -2240,7 +2240,7 @@ EfiShellGetGuidFromName(
   Status = GetGuidFromStringName(GuidName, NULL, &NewGuid);
 
   if (!EFI_ERROR(Status)) {
-    CopyGuid(NewGuid, Guid);
+    CopyGuid(Guid, NewGuid);
   }
 
   return (Status);
