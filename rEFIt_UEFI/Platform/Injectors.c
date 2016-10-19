@@ -123,6 +123,13 @@ typedef struct {
 EFI_STATUS EFIAPI GetScreenInfo(VOID* This, UINT64* baseAddress, UINT64* frameBufferSize,
                          UINT32* bpr, UINT32* w, UINT32* h, UINT32* colorDepth)
 {
+  /*
+   * This implementation has no sense
+   * as this protocol will be called only if GOP is absent. Somehow as a replacement
+   * There will be a sense to find bootargs->frame_address
+   * and fill other values
+   * but we always have GOP ;)
+   */
 	EFI_GRAPHICS_OUTPUT_PROTOCOL	*mGraphicsOutput=NULL;
 	EFI_STATUS						Status;
 	

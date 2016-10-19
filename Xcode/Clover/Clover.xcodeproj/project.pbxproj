@@ -16,6 +16,7 @@
 		12A60F5E1DB610500068BF8B /* OSInfo.c in Sources */ = {isa = PBXBuildFile; fileRef = 12A60F551DB610500068BF8B /* OSInfo.c */; };
 		12A60F5F1DB610500068BF8B /* SMCHelper.c in Sources */ = {isa = PBXBuildFile; fileRef = 12A60F581DB610500068BF8B /* SMCHelper.c */; };
 		12A60F611DB610840068BF8B /* GraphicsConfig.c in Sources */ = {isa = PBXBuildFile; fileRef = 12A60F601DB610840068BF8B /* GraphicsConfig.c */; };
+		12AAF3A51DB75DC800A52B12 /* FirmwareVolume.c in Sources */ = {isa = PBXBuildFile; fileRef = 12AAF3A41DB75DC800A52B12 /* FirmwareVolume.c */; };
 		12E3015A1D5A413A00EED426 /* lodepng.c in Sources */ = {isa = PBXBuildFile; fileRef = 12E301581D5A413A00EED426 /* lodepng.c */; };
 		12E38DDA1A2DB6EB0093F748 /* DriverOverride.c in Sources */ = {isa = PBXBuildFile; fileRef = 12E38DD81A2DB6EB0093F748 /* DriverOverride.c */; };
 		2C794D201A0AA85900D845B0 /* Reset.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C7949ED1A0AA85900D845B0 /* Reset.c */; };
@@ -491,6 +492,9 @@
 		12A88C651A7B6E0A008C4829 /* XhciReg.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XhciReg.h; sourceTree = "<group>"; };
 		12A88C661A7B6E0A008C4829 /* XhciSched.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = XhciSched.c; sourceTree = "<group>"; };
 		12A88C671A7B6E0A008C4829 /* XhciSched.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XhciSched.h; sourceTree = "<group>"; };
+		12AAF3A41DB75DC800A52B12 /* FirmwareVolume.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = FirmwareVolume.c; sourceTree = "<group>"; };
+		12AAF3A61DB75F4800A52B12 /* FirmwareVolume.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = FirmwareVolume.inf; sourceTree = "<group>"; };
+		12AAF3B41DB76ACC00A52B12 /* EfiImageFormat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EfiImageFormat.h; sourceTree = "<group>"; };
 		12E301581D5A413A00EED426 /* lodepng.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lodepng.c; sourceTree = "<group>"; };
 		12E301591D5A413A00EED426 /* lodepng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lodepng.h; sourceTree = "<group>"; };
 		12E38DD81A2DB6EB0093F748 /* DriverOverride.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = DriverOverride.c; sourceTree = "<group>"; };
@@ -1391,6 +1395,7 @@
 			children = (
 				12A60F4C1DB610500068BF8B /* AppleGraphicsConfig */,
 				12A60F4D1DB610500068BF8B /* AppleImageCodec */,
+				12AAF3A21DB75DAA00A52B12 /* FirmwareVolume */,
 				12A60F541DB610500068BF8B /* OSInfo */,
 				12A60F571DB610500068BF8B /* SMCHelper */,
 			);
@@ -1455,6 +1460,15 @@
 			);
 			name = XhciDxe;
 			path = ../../Patches_for_EDK2/XhciDxe;
+			sourceTree = "<group>";
+		};
+		12AAF3A21DB75DAA00A52B12 /* FirmwareVolume */ = {
+			isa = PBXGroup;
+			children = (
+				12AAF3A41DB75DC800A52B12 /* FirmwareVolume.c */,
+				12AAF3A61DB75F4800A52B12 /* FirmwareVolume.inf */,
+			);
+			path = FirmwareVolume;
 			sourceTree = "<group>";
 		};
 		12E38DD71A2DB6EB0093F748 /* DriverOverride */ = {
@@ -1918,6 +1932,7 @@
 			isa = PBXGroup;
 			children = (
 				2C794AB71A0AA85900D845B0 /* EfiFlashMap.h */,
+				12AAF3B41DB76ACC00A52B12 /* EfiImageFormat.h */,
 				2C794AB81A0AA85900D845B0 /* EfiLdrHandoff.h */,
 				2C794AB91A0AA85900D845B0 /* FlashLayout.h */,
 				2C794AC11A0AA85900D845B0 /* Guid */,
@@ -3663,6 +3678,7 @@
 				12A60F5E1DB610500068BF8B /* OSInfo.c in Sources */,
 				12A60F5F1DB610500068BF8B /* SMCHelper.c in Sources */,
 				12A60F611DB610840068BF8B /* GraphicsConfig.c in Sources */,
+				12AAF3A51DB75DC800A52B12 /* FirmwareVolume.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

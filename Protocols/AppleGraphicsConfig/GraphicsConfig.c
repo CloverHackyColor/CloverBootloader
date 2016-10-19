@@ -11,6 +11,7 @@
 #include <Library/DebugLib.h>
 #include <Library/UefiBootServicesTableLib.h>
 
+#include <EfiImageFormat.h>
 //#include <Protocol/UgaDraw.h>
 #include <Protocol/AppleGraphConfig.h>
 

@@ -43,6 +43,7 @@ StartOverrides()
   OvrAppleKeyState();
   OvrOSInfo();
   OvrGraphConfig();
+  OvrFirmwareVolume();
 	return EFI_SUCCESS;
 }
 

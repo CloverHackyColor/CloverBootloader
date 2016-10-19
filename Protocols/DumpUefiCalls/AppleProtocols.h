@@ -24,4 +24,7 @@ OvrOSInfo(VOID);
 EFI_STATUS EFIAPI
 OvrGraphConfig(VOID);
 
+EFI_STATUS EFIAPI
+OvrFirmwareVolume(VOID);
+
 #endif

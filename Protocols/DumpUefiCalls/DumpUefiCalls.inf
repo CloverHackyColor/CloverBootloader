@@ -112,6 +112,7 @@
   gEfiDiskIo2ProtocolGuid
   gEfiGraphicsOutputProtocolGuid
   gEfiDataHubProtocolGuid
+  gEfiFirmwareVolumeProtocolGuid
   gAppleSMCProtocolGuid
   gAppleImageCodecProtocolGuid
   gAppleKeyStateProtocolGuid

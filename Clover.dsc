@@ -318,7 +318,7 @@
   #IntelFrameworkModulePkg/Universal/DataHubStdErrDxe/DataHubStdErrDxe.inf
   
   # foreign file system support
-  Clover/DriverOverride/DriverOverride.inf
+  Clover/Protocols/DriverOverride/DriverOverride.inf
   Clover/VBoxFsDxe/VBoxHfs.inf
   Clover/VBoxFsDxe/VBoxIso9660.inf
   #Clover/VBoxFsDxe/VBoxFsDxe.inf
@@ -425,14 +425,15 @@
   Clover/LegacyBios/Region2Dxe/LegacyRegion2Dxe.inf
 
   # Misc
-  Clover/FSInject/FSInject.inf
-  Clover/MsgLog/MsgLog.inf
+  Clover/Protocols/FSInject/FSInject.inf
+  Clover/Protocols/MsgLog/MsgLog.inf
   Clover/Protocols/SMCHelper/SMCHelper.inf
   Clover/Protocols/OSInfo/OSInfo.inf
   Clover/Protocols/AppleGraphicsConfig/GraphicsConfig.inf
+  Clover/Protocols/FirmwareVolume/FirmwareVolume.inf
 !ifdef DEBUG_ON_SERIAL_PORT
 
-  Clover/DumpUefiCalls/DumpUefiCalls.inf {
+  Clover/Protocols/DumpUefiCalls/DumpUefiCalls.inf {
     <PcdsFixedAtBuild>
       gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x07
       gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0xFFFFFFFF
@@ -443,7 +444,7 @@
 
 !else
 
-  Clover/DumpUefiCalls/DumpUefiCalls.inf {
+  Clover/Protocols/DumpUefiCalls/DumpUefiCalls.inf {
   	<LibraryClasses>
   		PeCoffLib|Clover/Library/VBoxPeCoffLib/VBoxPeCoffLib.inf
   }
@@ -452,11 +453,11 @@
 !endif
   
   # Drivers for Aptio loading - should go to Clover's /EFI/drivers64UEFI dir
-  Clover/OsxFatBinaryDrv/OsxFatBinaryDrv.inf
+  Clover/Protocols/OsxFatBinaryDrv/OsxFatBinaryDrv.inf
 
 
   # Drivers for Phoenix UEFI loading - should go to Clover's /EFI/drivers64UEFI dir
-  Clover/EmuVariableUefi/EmuVariableRuntimeDxe.inf {
+  Clover/Protocols/EmuVariableUefi/EmuVariableRuntimeDxe.inf {
     <PcdsFixedAtBuild>
       gEfiMdeModulePkgTokenSpaceGuid.PcdEmuVariableNvStoreReserved|0
       gEfiMdeModulePkgTokenSpaceGuid.PcdMaxVariableSize|0x3000

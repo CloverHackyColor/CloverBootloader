@@ -14,7 +14,7 @@
 #include <Library/DebugLib.h>
 #include <Library/PrintLib.h>
 
-
+//#include <EfiImageFormat.h>
 #include <Protocol/UgaDraw.h>
 #include <Protocol/AppleSMC.h>
 #include <Protocol/AppleImageCodecProtocol.h>
@@ -46,7 +46,7 @@ OvrReadData (IN  APPLE_SMC_IO_PROTOCOL  *This,
 {
 	EFI_STATUS				Status;
   CHAR8 Str[512];
-  CHAR8 StrSmall[3];
+  CHAR8 StrSmall[4];
   INTN i;
   
   Status = gOrgAppleSMC.SmcReadValue(This, Key, Size, Value);
@@ -54,7 +54,7 @@ OvrReadData (IN  APPLE_SMC_IO_PROTOCOL  *This,
         (Key >> 16) & 0xFF, (Key >> 8) & 0xFF,  Key & 0xFF, Size);
   AsciiSPrint(Str, 512, "--> data=:");
   for (i=0; i<Size; i++) {
-    AsciiSPrint(StrSmall, 3, "%02x ", Value[i]);
+    AsciiSPrint(StrSmall, 4, "%02x ", Value[i]);
     Str[11+i*3] = StrSmall[0];
     Str[12+i*3] = StrSmall[1];
     Str[13+i*3] = ' ';
@@ -512,6 +512,75 @@ OvrGraphConfig(VOID)
   gGraphConfig->RestoreConfig = OvrRestoreConfig;
   
   PRINT("AppleGraphConfig overriden!\n");
+  return EFI_SUCCESS;
+  
+}
+
+//**********************************************
+EFI_FIRMWARE_VOLUME_PROTOCOL gOrgFV;
+EFI_FIRMWARE_VOLUME_PROTOCOL *gFirmwareVolume;
+
+EFI_STATUS
+EFIAPI
+OvrFvReadFile (
+            IN EFI_FIRMWARE_VOLUME_PROTOCOL   *This,
+            IN EFI_GUID                       *NameGuid,
+            IN OUT VOID                       **Buffer,
+            IN OUT UINTN                      *BufferSize,
+            OUT EFI_FV_FILETYPE               *FoundType,
+            OUT EFI_FV_FILE_ATTRIBUTES        *FileAttributes,
+            OUT UINT32                        *AuthenticationStatus
+            )
+{
+  EFI_STATUS				Status;
+  Status = gOrgFV.ReadFile(This, NameGuid, Buffer, BufferSize, FoundType, FileAttributes, AuthenticationStatus);
+  PRINT("->FirmwareVolume.ReadFile(%g, size=%d) status=%r\n",
+        NameGuid, BufferSize?*BufferSize:0, Status);
+  return Status;
+}
+
+EFI_STATUS
+EFIAPI
+OvrFvReadSection (
+               IN EFI_FIRMWARE_VOLUME_PROTOCOL   *This,
+               IN EFI_GUID                       *NameGuid,
+               IN EFI_SECTION_TYPE               SectionType,
+               IN UINTN                          SectionInstance,
+               IN OUT VOID                       **Buffer,
+               IN OUT UINTN                      *BufferSize,
+               OUT UINT32                        *AuthenticationStatus
+               )
+{
+  EFI_STATUS				Status;
+  Status = gOrgFV.ReadSection(This, NameGuid, SectionType, SectionInstance, Buffer, BufferSize, AuthenticationStatus);
+  PRINT("->FirmwareVolume.ReadSection(%g, type=%x, #%d, %d) status=%r\n",
+        NameGuid, SectionType, SectionInstance, BufferSize?*BufferSize:0, Status);
+  return Status;
+}
+
+
+EFI_STATUS EFIAPI
+OvrFirmwareVolume(VOID)
+{
+  EFI_STATUS				Status;
+  
+  PRINT("Overriding FirmwareVolume ...\n");
+  
+  // Locate FirmwareVolume protocol
+  Status = gBS->LocateProtocol(&gEfiFirmwareVolumeProtocolGuid, NULL, (VOID **) &gFirmwareVolume);
+  if (EFI_ERROR(Status)) {
+    PRINT("Error Overriding GraphConfig: %r\n", Status);
+    return Status;
+  }
+  
+  // Store originals
+  CopyMem(&gOrgFV, gFirmwareVolume, sizeof(EFI_FIRMWARE_VOLUME_PROTOCOL));
+  
+  // Override with our implementation
+  gFirmwareVolume->ReadSection = OvrFvReadSection;
+  gFirmwareVolume->ReadFile = OvrFvReadFile;
+  
+  PRINT("FirmwareVolume overriden!\n");
   return EFI_SUCCESS;
   
 }
