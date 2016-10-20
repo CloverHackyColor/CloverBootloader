@@ -389,7 +389,7 @@ OvrReadKeyState (IN APPLE_KEY_STATE_PROTOCOL *This,
   PRINT("->ReadKeyState(), count=%d, flags=0x%x states=%s, status=%r\n",
         PressedKeyStatesCount?*PressedKeyStatesCount:0,
         ModifyFlags?*ModifyFlags:0,
-        PressedKeyStates, Status);
+        PressedKeyStates?*PressedKeyStates:0, Status);
   return Status;
 }
 

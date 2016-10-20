@@ -299,6 +299,15 @@ SetVariablesForOSX()
   return EFI_SUCCESS;
 }
 
+VOID
+AddSMCkey(UINT32 Key, UINT32 Size, SMC_DATA *Data, SMC_KEY_TYPE Type)
+{
+  if (gAppleSmc && (gAppleSmc->Signature == NON_APPLE_SMC_SIGNATURE)) {
+    gAppleSmc->SmcAddKey(gAppleSmc,     Key, Size, Type, 0xC0);
+    gAppleSmc->SmcWriteValue(gAppleSmc, Key, Size, Data);
+  }
+}
+
 // SetupDataForOSX
 /// Sets the DataHub data used by OS X
 VOID EFIAPI
@@ -320,6 +329,7 @@ SetupDataForOSX()
 #else
   Revision = gST->FirmwareRevision;
 #endif
+
 
   // fool proof
   FrontSideBus = gCPUStructure.FSBFrequency;

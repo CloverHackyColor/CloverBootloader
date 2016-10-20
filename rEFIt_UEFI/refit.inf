@@ -234,6 +234,7 @@
   gEfiConsoleControlProtocolGuid
   gEfiLegacyBiosProtocolGuid
   gEfiTimerArchProtocolGuid
+  gAppleImageCodecProtocolGuid
   
   gFSInjectProtocolGuid
   gMsgLogProtocolGuid

@@ -56,12 +56,14 @@ Headers collection for procedures
 #include <Protocol/Smbios.h>
 #include <Protocol/VariableWrite.h>
 #include <Protocol/Variable.h>
+#include <Protocol/UgaDraw.h>
 
 #include <Protocol/FSInjectProtocol.h>
 #include <Protocol/MsgLog.h>
 #include <Protocol/efiConsoleControl.h>
 #include <Protocol/EmuVariableControl.h>
 #include <Protocol/AppleSMC.h>
+#include <Protocol/AppleImageCodecProtocol.h>
 
 #include "../refit/lib.h"
 #include "string.h"

@@ -38,6 +38,7 @@
 #include "libegint.h"   //this includes platform.h
 #include "../include/scroll_images.h"
 #include "Version.h"
+//#include "colors.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_MENU 1
@@ -2187,6 +2188,56 @@ static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC  Style
   }
   return 0;
 }
+/*
+VOID TestImage()
+{
+  EFI_STATUS              Status;
+  UINTN                   HandleCount = 0;
+  UINTN                   Index, i, j;
+  EFI_HANDLE              *Handles = NULL;
+  APPLE_IMAGE_CODEC_PROTOCOL *AppleImageCodec;
+  UINT8                   *Buffer = NULL;
+  UINT32      Width = 0, Height = 0, RawSize = 0;
+  
+  // get all handles
+  Status = gBS->LocateHandleBuffer(ByProtocol, &gAppleImageCodecProtocolGuid, NULL, &HandleCount, &Handles);
+  if (Status == EFI_SUCCESS) {
+    for (Index = 0; Index < HandleCount; Index++) {
+      Status = gBS->HandleProtocol(Handles[Index], &gAppleImageCodecProtocolGuid, (VOID **) &AppleImageCodec);
+      if (EFI_ERROR(Status)) {
+        continue;
+      }
+      Status = AppleImageCodec->RecognizeImageData(&colors_png, sizeof(colors_png), (VOID**)&Buffer);
+      if (EFI_ERROR(Status)) {
+        DBG("Cannot recognize: %r\n", Status);
+        continue;
+      }
+      DBG("buffer at %x\n", Buffer);
+      Status = AppleImageCodec->GetImageDims(&colors_png, sizeof(colors_png), &Width, &Height);
+      if (EFI_ERROR(Status)) {
+        DBG("Cannot GetImageDims: %r\n", Status);
+        continue;
+      }
+      Status = AppleImageCodec->DecodeImageData(&colors_png, sizeof(colors_png), (EFI_UGA_PIXEL **)&Buffer, &RawSize);
+      if (EFI_ERROR(Status) || !Buffer) {
+        DBG("Cannot DecodeImageData: %r\n", Status);
+        continue;
+      }
+      DBG("Decoded data:\n");
+      for (i=0; i<128; i+=16) {
+        DBG("%03d  |", i);
+        for (j=0; j<16; j++) {
+          if (i+j > 127) break;
+          DBG("  %02x", Buffer[i+j]);
+        }
+        DBG("\n");
+      }
+      
+    }
+    FreePool(Handles);
+  }
+}
+*/
 
 UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc, IN OUT INTN *DefaultEntryIndex, OUT REFIT_MENU_ENTRY **ChosenEntry)
 {
@@ -2426,6 +2477,9 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
  //this way screen is dirty
         break;
  */
+/*      case SCAN_F8:
+        TestImage();
+        break; */
       case SCAN_F9:
         SetNextScreenMode(1);
         break;

@@ -1340,10 +1340,10 @@ EG_IMAGE * egDecodePNG(IN UINT8 *FileData, IN UINTN FileDataLength, IN BOOLEAN W
        Pixel->Red = Temp; */
        // It seems 0 is opaque and 255 is fully transparent
       // Pixel->Reserved = 255 - Pixel->Reserved; */
-      Pixel->Blue = *Data++;
-      Pixel->Green = *Data++;
       Pixel->Red = *Data++;
-      Pixel->Reserved = *Data++;
+      Pixel->Green = *Data++;
+      Pixel->Blue = *Data++;
+      Pixel->Reserved = 255 - *Data++;
       Pixel++;
     //  PixelD++;
     }
