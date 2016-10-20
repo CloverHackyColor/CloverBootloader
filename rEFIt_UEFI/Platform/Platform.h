@@ -1184,6 +1184,7 @@ typedef struct {
   UINT32 FlagsBits;
   UINT32 UIScale;
   UINT32 EFILoginHiDPI;
+  UINT8  flagstate[32];
 
 } SETTINGS_DATA;
 

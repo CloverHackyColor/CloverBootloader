@@ -279,6 +279,12 @@ SetVariablesForOSX()
   } else {
     SetNvramVariable(L"EFILoginHiDPI", &gEfiAppleNvramGuid, Attributes, 4, &gSettings.EFILoginHiDPI);
   }
+  //->GetVariable(flagstate, gEfiAppleBootGuid, 0/0, 20, 10FE110) = Not Found
+  if (gSettings.flagstate[3] == 0x80) {
+    DeleteNvramVariable(L"flagstate", &gEfiAppleBootGuid);
+  } else {
+    SetNvramVariable(L"flagstate", &gEfiAppleBootGuid, Attributes, 32, &gSettings.flagstate);
+  }
 
   //Hack for recovery by Asgorath
   if (gSettings.CsrActiveConfig != 0xFFFF) {
@@ -295,6 +301,8 @@ SetVariablesForOSX()
   } else {
     DeleteNvramVariable(L"nvda_drv", &gEfiAppleBootGuid);
   }
+  
+  
   
   return EFI_SUCCESS;
 }

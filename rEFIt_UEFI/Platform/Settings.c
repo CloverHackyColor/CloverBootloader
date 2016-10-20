@@ -5294,7 +5294,10 @@ GetUserSettings(
       
       Prop = GetProperty (DictPointer, "EFILoginHiDPI");
       gSettings.EFILoginHiDPI = (UINT32)GetPropertyInteger (Prop, 0x80000000);
-      
+   
+      Prop = GetProperty (DictPointer, "flagstate");
+      *(UINT32*)&gSettings.flagstate[0] = (UINT32)GetPropertyInteger (Prop, 0x80000000);
+
     }
     
     /*
