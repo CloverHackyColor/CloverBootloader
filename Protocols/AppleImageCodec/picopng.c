@@ -1314,7 +1314,8 @@ EG_IMAGE * egDecodePNG(IN UINT8 *FileData, IN UINTN FileDataLength, IN BOOLEAN W
 {
   EG_IMAGE            *NewImage;
   PNG_INFO            *info;
-  EFI_UGA_PIXEL       *Pixel, *PixelD;
+  EFI_UGA_PIXEL       *Pixel;
+  UINT8               *Data;
   INTN                x, y;
 
   // read and check header
@@ -1328,23 +1329,23 @@ EG_IMAGE * egDecodePNG(IN UINT8 *FileData, IN UINTN FileDataLength, IN BOOLEAN W
     return NULL;
   }
 
-  //   CopyMem(NewImage->PixelData, info->image->data, info->image->size);
-  PixelD = (EFI_UGA_PIXEL*)info->image->data;
+  //CopyMem(NewImage->PixelData, info->image->data, info->image->size);
+  Data = (UINT8*)info->image->data;
   Pixel = (EFI_UGA_PIXEL*)NewImage->PixelData;
   for (y = 0; y < NewImage->Height; y++) {
     for (x = 0; x < NewImage->Width; x++) {
-      /*        UINT8	Temp;
+     /*  UINT8	Temp;
        Temp = Pixel->Blue;
        Pixel->Blue = Pixel->Red;
-       Pixel->Red = Temp;
+       Pixel->Red = Temp; */
        // It seems 0 is opaque and 255 is fully transparent
-       Pixel->Reserved = 255 - Pixel->Reserved; */
-      Pixel->Blue = PixelD->Red;
-      Pixel->Red = PixelD->Blue;
-      Pixel->Green = PixelD->Green;
-      Pixel->Reserved = PixelD->Reserved;
+      // Pixel->Reserved = 255 - Pixel->Reserved; */
+      Pixel->Blue = *Data++;
+      Pixel->Green = *Data++;
+      Pixel->Red = *Data++;
+      Pixel->Reserved = *Data++;
       Pixel++;
-      PixelD++;
+    //  PixelD++;
     }
   }
   png_alloc_free_all();
