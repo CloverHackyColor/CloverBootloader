@@ -18,6 +18,29 @@
 
 EFI_HANDLE              mHandle = NULL;
 
+//
+// Keyboard input
+//
+
+BOOLEAN ReadAllKeyStrokes(VOID)
+{
+  BOOLEAN       GotKeyStrokes;
+  EFI_STATUS    Status;
+  EFI_INPUT_KEY key;
+  
+  GotKeyStrokes = FALSE;
+  for (;;) {
+    Status = gST->ConIn->ReadKeyStroke (gST->ConIn, &key);
+    if (Status == EFI_SUCCESS) {
+      GotKeyStrokes = TRUE;
+      continue;
+    }
+    break;
+  }
+  return GotKeyStrokes;
+}
+
+
 EFI_STATUS
 EFIAPI
 ReadKeyState (APPLE_KEY_STATE_PROTOCOL* This,
@@ -25,29 +48,23 @@ ReadKeyState (APPLE_KEY_STATE_PROTOCOL* This,
               OUT UINTN  *PressedKeyStatesCount,
               OUT APPLE_KEY *PressedKeyStates)
 {
+  EFI_STATUS				Status;
   EFI_INPUT_KEY Key;
   UINTN         Ind = 0;
 
   if (!ModifyFlags || !PressedKeyStatesCount || !PressedKeyStates) {
     return EFI_INVALID_PARAMETER;
   }
-  /*
-  Status = gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
-  if (Status == EFI_NOT_READY) {
-    gBS->WaitForEvent(1, &gST->ConIn->WaitForKey, &Ind);
-  }
 
-  if (ReadAllKeyStrokes()) {  // remove buffered key strokes
-    gBS->Stall(500000);      // 0.5 seconds delay
-    ReadAllKeyStrokes();    // empty the buffer again
-  }
-  */
+  while (ReadAllKeyStrokes()) gBS->Stall(500 * 1000);
+
   gBS->WaitForEvent(1, &gST->ConIn->WaitForKey, &Ind);
   Status = gST->ConIn->ReadKeyStroke(gST->ConIn, &Key);
   
   *PressedKeyStatesCount = 2;
-  PressedKeyStates[0] = Key.Unicode; 
+  PressedKeyStates[0] = Key.UnicodeChar; 
   PressedKeyStates[1] = Key.ScanCode;
+  *ModifyFlags = 0;
   return Status;
 }
 

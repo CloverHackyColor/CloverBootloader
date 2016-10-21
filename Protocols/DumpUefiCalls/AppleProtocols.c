@@ -401,7 +401,7 @@ OvrReadKeyState (IN APPLE_KEY_STATE_PROTOCOL *This,
   Status = gOrgAppleKeyState.ReadKeyState(This, ModifyFlags, PressedKeyStatesCount, PressedKeyStates);
   if (PressedKeyStatesCount && *PressedKeyStatesCount && PressedKeyStates) {
     PRINT("->ReadKeyState(), count=%d, flags=0x%x states={%x,%x}, status=%r\n",
-          PressedKeyStatesCount,
+          *PressedKeyStatesCount,
           ModifyFlags?*ModifyFlags:0,
           PressedKeyStates[0],
           PressedKeyStates[1],

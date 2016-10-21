@@ -431,6 +431,9 @@
   Clover/Protocols/OSInfo/OSInfo.inf
   Clover/Protocols/AppleGraphicsConfig/GraphicsConfig.inf
   Clover/Protocols/FirmwareVolume/FirmwareVolume.inf
+  Clover/Protocols/AppleKeyState/AppleKeyState.inf
+  Clover/Protocols/AppleImageCodec/AppleImageCodec.inf
+  
 !ifdef DEBUG_ON_SERIAL_PORT
 
   Clover/Protocols/DumpUefiCalls/DumpUefiCalls.inf {
@@ -455,7 +458,6 @@
   # Drivers for Aptio loading - should go to Clover's /EFI/drivers64UEFI dir
   Clover/Protocols/OsxFatBinaryDrv/OsxFatBinaryDrv.inf
 
-
   # Drivers for Phoenix UEFI loading - should go to Clover's /EFI/drivers64UEFI dir
   Clover/Protocols/EmuVariableUefi/EmuVariableRuntimeDxe.inf {
     <PcdsFixedAtBuild>
@@ -467,7 +469,6 @@
       gEfiMdeModulePkgTokenSpaceGuid.PcdHwErrStorageSize|0x0000
   }
 
-  Clover/Protocols/AppleImageCodec/AppleImageCodec.inf
   #
   # Sample Application
   #
