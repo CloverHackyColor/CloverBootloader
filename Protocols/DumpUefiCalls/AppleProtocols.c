@@ -27,7 +27,7 @@
 #include "Common.h"
 
 //#define APPLE_SMC_PROTOCOL_GUID         {0x17407e5a, 0xaf6c, 0x4ee8, {0x98, 0xa8, 0x00, 0x21, 0x04, 0x53, 0xcd, 0xd9}}
-//#define APPLE_IMAGE_CODEC_PROTOCOL_GUID	{0x0dfce9f6, 0xc4e3, 0x45ee, 0xa0, 0x6a, 0xa8, 0x61, 0x3b, 0x98, 0xa5, 0x07}
+//#define APPLE_IMAGE_CODEC_PROTOCOL_GUID	{0x0dfce9f6, 0xc4e3, 0x45ee, {0xa0, 0x6a, 0xa8, 0x61, 0x3b, 0x98, 0xa5, 0x07}}
 
 /****************************************************/
 /**/
@@ -46,19 +46,23 @@ OvrReadData (IN  APPLE_SMC_IO_PROTOCOL  *This,
 {
 	EFI_STATUS				Status;
   CHAR8 Str[512];
-  CHAR8 StrSmall[4];
+  CHAR8 StrSmall[10];
+  CHAR8 *Ptr;
   INTN i;
   
   Status = gOrgAppleSMC.SmcReadValue(This, Key, Size, Value);
   PRINT("->AppleSMC.SmcReadValue SMC=%x (%c%c%c%c) len=%d\n", Key, (Key >> 24) & 0xFF,
         (Key >> 16) & 0xFF, (Key >> 8) & 0xFF,  Key & 0xFF, Size);
   AsciiSPrint(Str, 512, "--> data=:");
-  for (i=0; i<Size; i++) {
-    AsciiSPrint(StrSmall, 4, "%02x ", Value[i]);
-    Str[11+i*3] = StrSmall[0];
-    Str[12+i*3] = StrSmall[1];
-    Str[13+i*3] = ' ';
+  Ptr = &Str[10];
+  *Ptr++ = ' ';
+  for (i=0; i<Min(Size, 500); i++) {
+    AsciiSPrint(StrSmall, 10, "%02x ", Value[i]);
+    *Ptr++ = StrSmall[0];
+    *Ptr++ = StrSmall[1];
+    *Ptr++ = ' ';
   }
+  *Ptr++ = '\0';
   PRINT("%a\n", Str);
   return Status;
 }
@@ -72,19 +76,23 @@ OvrWriteValue (IN  APPLE_SMC_IO_PROTOCOL  *This,
 {
 	EFI_STATUS				Status;
   CHAR8 Str[512];
-  CHAR8 StrSmall[3];
+  CHAR8 StrSmall[10];
+  CHAR8 *Ptr;
   INTN i;
   
   Status = gOrgAppleSMC.SmcWriteValue(This, Key, Size, Value);
   PRINT("->AppleSMC.SmcWriteValue SMC=%x (%c%c%c%c) len=%d\n", Key, (Key >> 24) & 0xFF,
         (Key >> 16) & 0xFF, (Key >> 8) & 0xFF,  Key & 0xFF, Size);
   AsciiSPrint(Str, 512, "--> data=:");
-  for (i=0; i<Size; i++) {
-    AsciiSPrint(StrSmall, 3, "%02x ", Value[i]);
-    Str[11+i*3] = StrSmall[0];
-    Str[12+i*3] = StrSmall[1];
-    Str[13+i*3] = ' ';
+  Ptr = &Str[10];
+  *Ptr++ = ' ';
+  for (i=0; i<Min(Size, 500); i++) {
+    AsciiSPrint(StrSmall, 10, "%02x ", Value[i]);
+    *Ptr++ = StrSmall[0];
+    *Ptr++ = StrSmall[1];
+    *Ptr++ = ' ';
   }
+  *Ptr++ = '\0';
   PRINT("%a\n", Str);
   return Status;
 }
@@ -225,7 +233,7 @@ OvrAppleSMC(VOID)
 {
 	EFI_STATUS				Status;
 	
-	PRINT("Overriding AppleSMC ...\n");
+//	PRINT("Overriding AppleSMC ...\n");
 	
 	// Locate AppleSMC protocol
 	Status = gBS->LocateProtocol(&gAppleSMCProtocolGuid, NULL, (VOID **) &gAppleSMC);
@@ -273,8 +281,10 @@ OvrRecognizeImageData (//IN APPLE_IMAGE_CODEC_PROTOCOL* This,
   EFI_STATUS				Status;
   
   Status = gOrgAppleImageCodec.RecognizeImageData(ImageBuffer, ImageSize, OutBuffer);
-  PRINT("->AppleImageCodec.RecognizeImageData(%p, 0x%x, %p), sign=%4x, status=%r\n", ImageBuffer, ImageSize, OutBuffer,
-        ImageBuffer?(*(UINT32*)ImageBuffer):0, Status);
+  if (EFI_ERROR(Status)) {
+    PRINT("->AppleImageCodec.RecognizeImageData(%p, 0x%x, %p), sign=%4x, status=%r\n", ImageBuffer, ImageSize, OutBuffer,
+          ImageBuffer?(*(UINT32*)ImageBuffer):0, Status);
+  }
   return Status;
 }
 
@@ -290,9 +300,10 @@ OvrGetImageDims (//IN APPLE_IMAGE_CODEC_PROTOCOL* This,
   EFI_STATUS				Status;
   
   Status = gOrgAppleImageCodec.GetImageDims(ImageBuffer, ImageSize, ImageWidth, ImageHeight);
-  PRINT("->AppleImageCodec.GetImageDims(%p, 0x%x, %p, %p), status=%r\n", ImageBuffer, ImageSize, ImageWidth, ImageHeight, Status);
-  if (!EFI_ERROR(Status)) {
-    PRINT("--> ImageWidth=%d, ImageHeight=%d\n", ImageWidth?*ImageWidth:0, ImageHeight?*ImageHeight:0);
+  if (EFI_ERROR(Status)) {
+    PRINT("->AppleImageCodec.GetImageDims(%p, 0x%x, %p, %p), status=%r\n",
+          ImageBuffer, ImageSize, ImageWidth, ImageHeight, Status);
+//    PRINT("--> ImageWidth=%d, ImageHeight=%d\n", ImageWidth?*ImageWidth:0, ImageHeight?*ImageHeight:0);
   }
   return Status;
 }
@@ -309,9 +320,11 @@ OvrDecodeImageData (//IN APPLE_IMAGE_CODEC_PROTOCOL* This,
   EFI_STATUS				Status;
   
   Status = gOrgAppleImageCodec.DecodeImageData(ImageBuffer, ImageSize, RawImageData, RawImageDataSize);
-  PRINT("->AppleImageCodec.DecodeImageData(%p, 0x%x, %p, %p), status=%r\n", ImageBuffer, ImageSize, RawImageData, RawImageDataSize, Status);
-  if (!EFI_ERROR(Status)) {
-    PRINT("--> RawImageDataSize=%d\n", RawImageDataSize?*RawImageDataSize:0);
+  if (EFI_ERROR(Status)) {
+    PRINT("->AppleImageCodec.DecodeImageData(%p, 0x%x, %p, %p), status=%r\n",
+          ImageBuffer, ImageSize, RawImageData, RawImageDataSize, Status);
+ // if (!EFI_ERROR(Status)) {
+ //   PRINT("--> RawImageDataSize=%d\n", RawImageDataSize?*RawImageDataSize:0);
   }
   return Status;  
 }
@@ -346,7 +359,7 @@ OvrAppleImageCodec(VOID)
 {
 	EFI_STATUS				Status;
 	
-	PRINT("Overriding AppleImageCodec ...\n");
+//	PRINT("Overriding AppleImageCodec ...\n");
 	
 	// Locate AppleSMC protocol
 	Status = gBS->LocateProtocol(&gAppleImageCodecProtocolGuid, NULL, (VOID **) &gAppleImageCodec);
@@ -386,10 +399,12 @@ OvrReadKeyState (IN APPLE_KEY_STATE_PROTOCOL *This,
   EFI_STATUS				Status;
 
   Status = gOrgAppleKeyState.ReadKeyState(This, ModifyFlags, PressedKeyStatesCount, PressedKeyStates);
-  PRINT("->ReadKeyState(), count=%d, flags=0x%x states=%s, status=%r\n",
-        PressedKeyStatesCount?*PressedKeyStatesCount:0,
-        ModifyFlags?*ModifyFlags:0,
-        PressedKeyStates?*PressedKeyStates:0, Status);
+  if (PressedKeyStatesCount && *PressedKeyStatesCount) {
+    PRINT("->ReadKeyState(), count=%d, flags=0x%x states=%s, status=%r\n",
+          PressedKeyStatesCount?*PressedKeyStatesCount:0,
+          ModifyFlags?*ModifyFlags:0,
+          PressedKeyStates?*PressedKeyStates:0, Status);
+  }
   return Status;
 }
 
@@ -400,7 +415,7 @@ OvrAppleKeyState(VOID)
 {
   EFI_STATUS				Status;
 
-  PRINT("Overriding AppleKeyState ...\n");
+//  PRINT("Overriding AppleKeyState ...\n");
 
   // Locate AppleKeyState protocol
   Status = gBS->LocateProtocol(&gAppleKeyStateProtocolGuid, NULL, (VOID **) &gAppleKeyState);
@@ -462,7 +477,7 @@ OvrOSInfo(VOID)
 {
   EFI_STATUS				Status;
   
-  PRINT("Overriding OSInfo ...\n");
+//  PRINT("Overriding OSInfo ...\n");
   
   // Locate EfiOSInfo protocol
   Status = gBS->LocateProtocol(&gEfiOSInfoProtocolGuid, NULL, (VOID **) &gOSInfo);
@@ -508,7 +523,7 @@ OvrGraphConfig(VOID)
 {
   EFI_STATUS				Status;
   
-  PRINT("Overriding GraphConfig ...\n");
+//  PRINT("Overriding GraphConfig ...\n");
   
   // Locate AppleGraphConfig protocol
   Status = gBS->LocateProtocol(&gAppleGraphConfigProtocolGuid, NULL, (VOID **) &gGraphConfig);

@@ -165,11 +165,11 @@ EG_IMAGE * BuiltinIcon(IN UINTN Id)
       case BUILTIN_ICON_VOL_BOOTER:
         DEC_BUILTIN_ICON(Id, emb_vol_internal_booter); break;
       case BUILTIN_ICON_VOL_INTERNAL_HFS:
-        DEC_BUILTIN_ICON(Id, emb_vol_internal_hfs); break;
+        DEC_BUILTIN_ICON(Id, emb_vol_internal); break;
       case BUILTIN_ICON_VOL_INTERNAL_NTFS:
-        DEC_BUILTIN_ICON(Id, emb_vol_internal_ntfs); break;
+        DEC_BUILTIN_ICON(Id, emb_vol_internal); break;
       case BUILTIN_ICON_VOL_INTERNAL_EXT3:
-        DEC_BUILTIN_ICON(Id, emb_vol_internal_ext); break;
+        DEC_BUILTIN_ICON(Id, emb_vol_internal); break;
       case BUILTIN_ICON_VOL_INTERNAL_REC:
         DEC_BUILTIN_ICON(Id, emb_vol_internal_recovery); break;
       case BUILTIN_ICON_BANNER:

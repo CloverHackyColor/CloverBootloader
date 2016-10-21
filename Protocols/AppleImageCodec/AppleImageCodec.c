@@ -221,7 +221,14 @@ AppleImageCodecEntrypoint (
   // PNG files
   //
   NewHandle = NULL;  // install to a new handle
-  Status = gBS->InstallMultipleProtocolInterfaces(&NewHandle, &gAppleImageCodecProtocolGuid, &gAppleImageCodec, NULL);
+//  Status = gBS->InstallMultipleProtocolInterfaces(&NewHandle, &gAppleImageCodecProtocolGuid, &gAppleImageCodec, NULL);
+  Status      = gBS->InstallProtocolInterface (
+                                               &ImageHandle,
+                                               &gAppleImageCodecProtocolGuid,
+                                               EFI_NATIVE_INTERFACE,
+                                               (VOID *)&gAppleImageCodec
+                                               );
+
   if (EFI_ERROR(Status)) {
     DBG("AppleImageCodec: error installing protocol, Status = %r\n", Status);
   }
