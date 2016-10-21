@@ -1837,7 +1837,7 @@ LogDataHub (
   );
 
 EFI_STATUS
-SetVariablesForOSX ();
+SetVariablesForOSX (LOADER_ENTRY *Entry);
 
 VOID
 SetupDataForOSX ();

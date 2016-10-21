@@ -611,7 +611,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     SetFSInjection(Entry);
     //PauseForKey(L"SetFSInjection");
 //    DBG("SetVariablesForOSX\n");
-    SetVariablesForOSX();
+    SetVariablesForOSX(Entry);
 //    DBG("SetVariablesForOSX\n");
     EventsInitialize(Entry);
 //    DBG("FinalizeSmbios\n");

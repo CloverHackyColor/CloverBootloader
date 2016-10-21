@@ -137,7 +137,7 @@ LogDataHub(IN  EFI_GUID *TypeGuid,
 // SetVariablesForOSX
 /// Sets the volatile and non-volatile variables used by OS X
 EFI_STATUS EFIAPI
-SetVariablesForOSX()
+SetVariablesForOSX(LOADER_ENTRY *Entry)
 {
   // The variable names used should be made global constants to prevent them being allocated multiple times
 
@@ -302,7 +302,9 @@ SetVariablesForOSX()
     DeleteNvramVariable(L"nvda_drv", &gEfiAppleBootGuid);
   }
   
-  
+  if (StriStr(Entry->Volume->VolName, L"Recovery") == NULL) {
+    DeleteNvramVariable(L"recovery-boot-mode", &gEfiAppleBootGuid);
+  }
   
   return EFI_SUCCESS;
 }
