@@ -56,7 +56,7 @@ OvrReadData (IN  APPLE_SMC_IO_PROTOCOL  *This,
   AsciiSPrint(Str, 512, "--> data=:");
   Ptr = &Str[10];
   *Ptr++ = ' ';
-  for (i=0; i<Min(Size, 500); i++) {
+  for (i=0; i<MIN(Size, 500); i++) {
     AsciiSPrint(StrSmall, 10, "%02x ", Value[i]);
     *Ptr++ = StrSmall[0];
     *Ptr++ = StrSmall[1];
@@ -86,7 +86,7 @@ OvrWriteValue (IN  APPLE_SMC_IO_PROTOCOL  *This,
   AsciiSPrint(Str, 512, "--> data=:");
   Ptr = &Str[10];
   *Ptr++ = ' ';
-  for (i=0; i<Min(Size, 500); i++) {
+  for (i=0; i<MIN(Size, 500); i++) {
     AsciiSPrint(StrSmall, 10, "%02x ", Value[i]);
     *Ptr++ = StrSmall[0];
     *Ptr++ = StrSmall[1];
