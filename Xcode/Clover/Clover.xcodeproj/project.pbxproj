@@ -500,6 +500,8 @@
 		12AAF3E91DB7747400A52B12 /* OsxFatBinaryDrv.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = OsxFatBinaryDrv.c; sourceTree = "<group>"; };
 		12AAF3EA1DB7747400A52B12 /* OsxFatBinaryDrv.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OsxFatBinaryDrv.h; sourceTree = "<group>"; };
 		12AAF3EB1DB7747400A52B12 /* OsxFatBinaryDrv.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = OsxFatBinaryDrv.inf; sourceTree = "<group>"; };
+		12AAF4AE1DBA360700A52B12 /* AppleKeyState.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = AppleKeyState.c; sourceTree = "<group>"; };
+		12AAF4AF1DBA360700A52B12 /* AppleKeyState.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = AppleKeyState.inf; sourceTree = "<group>"; };
 		12E301581D5A413A00EED426 /* lodepng.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lodepng.c; sourceTree = "<group>"; };
 		12E301591D5A413A00EED426 /* lodepng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lodepng.h; sourceTree = "<group>"; };
 		12EF3B1C1A7AB8D40056AF22 /* ComponentName.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ComponentName.c; sourceTree = "<group>"; };
@@ -1357,6 +1359,7 @@
 			children = (
 				12A60F4C1DB610500068BF8B /* AppleGraphicsConfig */,
 				12A60F4D1DB610500068BF8B /* AppleImageCodec */,
+				12AAF4AD1DBA360700A52B12 /* AppleKeyState */,
 				12AAF3C41DB7743E00A52B12 /* DriverOverride */,
 				12AAF3C71DB7744B00A52B12 /* DumpUefiCalls */,
 				12AAF3E01DB7745A00A52B12 /* EmuVariableUefi */,
@@ -1506,6 +1509,15 @@
 				12AAF3EB1DB7747400A52B12 /* OsxFatBinaryDrv.inf */,
 			);
 			path = OsxFatBinaryDrv;
+			sourceTree = "<group>";
+		};
+		12AAF4AD1DBA360700A52B12 /* AppleKeyState */ = {
+			isa = PBXGroup;
+			children = (
+				12AAF4AE1DBA360700A52B12 /* AppleKeyState.c */,
+				12AAF4AF1DBA360700A52B12 /* AppleKeyState.inf */,
+			);
+			path = AppleKeyState;
 			sourceTree = "<group>";
 		};
 		12EF3B1B1A7AB8D40056AF22 /* XhciDxe */ = {

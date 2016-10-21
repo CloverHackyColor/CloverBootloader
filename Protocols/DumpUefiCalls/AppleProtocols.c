@@ -394,19 +394,44 @@ EFIAPI
 OvrReadKeyState (IN APPLE_KEY_STATE_PROTOCOL *This,
                  OUT UINT16 *ModifyFlags,
                  OUT UINTN  *PressedKeyStatesCount,
-                 OUT CHAR16 *PressedKeyStates)
+                 OUT APPLE_KEY *PressedKeyStates)
 {
   EFI_STATUS				Status;
 
   Status = gOrgAppleKeyState.ReadKeyState(This, ModifyFlags, PressedKeyStatesCount, PressedKeyStates);
-  if (PressedKeyStatesCount && *PressedKeyStatesCount) {
-    PRINT("->ReadKeyState(), count=%d, flags=0x%x states=%s, status=%r\n",
-          PressedKeyStatesCount?*PressedKeyStatesCount:0,
+  if (PressedKeyStatesCount && *PressedKeyStatesCount && PressedKeyStates) {
+    PRINT("->ReadKeyState(), count=%d, flags=0x%x states={%x,%x}, status=%r\n",
+          PressedKeyStatesCount,
           ModifyFlags?*ModifyFlags:0,
-          PressedKeyStates?*PressedKeyStates:0, Status);
+          PressedKeyStates[0],
+          PressedKeyStates[1],
+          Status);
   }
   return Status;
 }
+
+EFI_STATUS
+EFIAPI
+OvrSearchKeyStroke (APPLE_KEY_STATE_PROTOCOL* This,
+                 IN UINT16 ModifyFlags,
+                 IN UINTN PressedKeyStatesCount,
+                 IN OUT APPLE_KEY *PressedKeyStates,
+                 IN BOOLEAN ExactMatch)
+{
+  EFI_STATUS				Status;
+  
+  Status = gOrgAppleKeyState.SearchKeyStroke(This, ModifyFlags, PressedKeyStatesCount,
+                                             PressedKeyStates, ExactMatch);
+  if (PressedKeyStates) {
+    PRINT("->SearchKeyStroke(), count=%d, flags=0x%x, %a match, states={%x,%x}, status=%r\n",
+          PressedKeyStatesCount,
+          ModifyFlags, ExactMatch?"exact":"~",
+          PressedKeyStates[0], PressedKeyStates[1], Status);
+  }
+
+  return Status;
+}
+
 
 
 
@@ -429,6 +454,7 @@ OvrAppleKeyState(VOID)
 
   // Override with our implementation
   gAppleKeyState->ReadKeyState = OvrReadKeyState;
+  gAppleKeyState->SearchKeyStroke = OvrSearchKeyStroke;
 
   PRINT("AppleKeyState overriden!\n");
   return EFI_SUCCESS;
