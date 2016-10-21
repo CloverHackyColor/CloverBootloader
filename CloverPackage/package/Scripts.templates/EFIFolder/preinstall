@@ -168,7 +168,7 @@ for pkg in $pkgs; do
     location=$(/usr/sbin/pkgutil --volume "$DEST_VOL" --pkg-info $pkg 2>/dev/null | sed -n 's/^location: *//p')
     pkgutil --volume "$DEST_VOL" --files $pkg 2>/dev/null  | \
      xargs -I @@ echo "$DEST_VOL/$location/@@"             | \
-     /usr/bin/grep -iE 'EFI/CLOVER/(themes|drivers\w+)/'   | \
+     /usr/bin/grep -iE 'EFI/CLOVER/(drivers\w+)/'   | \
      xargs -I @@ rm -rf '@@'
     rm -f "$DEST_VOL"/Library/Receipts/"$pkg".{plist,bom}
 done
