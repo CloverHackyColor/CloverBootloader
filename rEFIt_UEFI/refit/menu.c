@@ -1247,7 +1247,7 @@ VOID AboutRefit(VOID)
     AddMenuInfo(&AboutMenu, L"  FrodoKenny, skoczi, crazybirdy, Oscar09, xsmile");
     AddMenuInfo(&AboutMenu, L"  cparm, rehabman, nms42, sherlocks, Zenith432");
     AddMenuInfo(&AboutMenu, L"  stinga11, TheRacerMaster, solstice, SoThOr, DF");
-    AddMenuInfo(&AboutMenu, L"  cecekpawon, Micky1979, Needy, joevt");
+    AddMenuInfo(&AboutMenu, L"  cecekpawon, Micky1979, Needy, joevt, ErmaC");
     AddMenuInfo(&AboutMenu, L"  projectosx.com, applelife.ru, insanelymac.com");
     AddMenuInfo(&AboutMenu, L"");
     AddMenuInfo(&AboutMenu, L"Running on:");
