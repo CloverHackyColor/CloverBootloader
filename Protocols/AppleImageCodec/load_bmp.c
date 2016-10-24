@@ -47,7 +47,7 @@ typedef struct {
     UINT8   Blue;
     UINT8   Green;
     UINT8   Red;
-    UINT8   Reserved;
+    UINT8   Alpha;
 } BMP_COLOR_MAP;
 
 typedef struct {
@@ -57,10 +57,10 @@ typedef struct {
     UINT16        Reserved[2];
     UINT32        ImageOffset;
     UINT32        HeaderSize;
-    UINT32        PixelWidth;
-    UINT32        PixelHeight;
+    INT32         PixelWidth;
+    INT32         PixelHeight;
     UINT16        Planes;       // Must be 1
-    UINT16        BitPerPixel;  // 1, 4, 8, or 24
+    UINT16        BitPerPixel;  // 1, 4, 8, 24, or 32
     UINT32        CompressionType;
     UINT32        ImageSize;    // Compressed image size in bytes
     UINT32        XPixelsPerMeter;
@@ -81,6 +81,7 @@ EG_IMAGE * egDecodeBMP(IN UINT8 *FileData, IN UINTN FileDataLength, IN BOOLEAN W
   BMP_IMAGE_HEADER    *BmpHeader;
   BMP_COLOR_MAP       *BmpColorMap;
   UINTN               x, y;
+  INT32               RealPixelHeight, RealPixelWidth;
   UINT8               *ImagePtr;
   UINT8               *ImagePtrBase;
   UINTN               ImageLineOffset;
@@ -95,15 +96,19 @@ EG_IMAGE * egDecodeBMP(IN UINT8 *FileData, IN UINTN FileDataLength, IN BOOLEAN W
   BmpHeader = (BMP_IMAGE_HEADER *) FileData;
   if (BmpHeader->CharB != 'B' || BmpHeader->CharM != 'M')
     return NULL;
-  if (BmpHeader->CompressionType != 0)
-    return NULL;
   if (BmpHeader->BitPerPixel != 1 && BmpHeader->BitPerPixel != 4 &&
-      BmpHeader->BitPerPixel != 8 && BmpHeader->BitPerPixel != 24)
+      BmpHeader->BitPerPixel != 8 && BmpHeader->BitPerPixel != 24 &&
+      BmpHeader->BitPerPixel != 32)
+    return NULL;
+  // 32-bit images are always stored uncompressed
+  if (BmpHeader->CompressionType > 0 && BmpHeader->BitPerPixel != 32)
     return NULL;
   
   // calculate parameters
   ImageLineOffset = BmpHeader->PixelWidth;
-  if (BmpHeader->BitPerPixel == 24)
+  if (BmpHeader->BitPerPixel == 32)
+    ImageLineOffset *= 4;
+  else if (BmpHeader->BitPerPixel == 24)
     ImageLineOffset *= 3;
   else if (BmpHeader->BitPerPixel == 1)
     ImageLineOffset = (ImageLineOffset + 7) >> 3;
@@ -111,12 +116,15 @@ EG_IMAGE * egDecodeBMP(IN UINT8 *FileData, IN UINTN FileDataLength, IN BOOLEAN W
     ImageLineOffset = (ImageLineOffset + 1) >> 1;
   if ((ImageLineOffset % 4) != 0)
     ImageLineOffset = ImageLineOffset + (4 - (ImageLineOffset % 4));
+  
   // check bounds
-  if (BmpHeader->ImageOffset + ImageLineOffset * BmpHeader->PixelHeight > FileDataLength)
+  RealPixelHeight = BmpHeader->PixelHeight > 0 ? BmpHeader->PixelHeight : -BmpHeader->PixelHeight;
+  RealPixelWidth = BmpHeader->PixelWidth > 0 ? BmpHeader->PixelWidth : -BmpHeader->PixelWidth;
+  if (BmpHeader->ImageOffset + ImageLineOffset * RealPixelHeight > FileDataLength)
     return NULL;
   
   // allocate image structure and buffer
-  NewImage = egCreateImage(BmpHeader->PixelWidth, BmpHeader->PixelHeight, WantAlpha);
+  NewImage = egCreateImage(RealPixelWidth, RealPixelHeight, WantAlpha);
   if (NewImage == NULL)
     return NULL;
   AlphaValue = WantAlpha ? 255 : 0;
@@ -124,15 +132,20 @@ EG_IMAGE * egDecodeBMP(IN UINT8 *FileData, IN UINTN FileDataLength, IN BOOLEAN W
   // convert image
   BmpColorMap = (BMP_COLOR_MAP *)(FileData + sizeof(BMP_IMAGE_HEADER));
   ImagePtrBase = FileData + BmpHeader->ImageOffset;
-  for (y = 0; y < BmpHeader->PixelHeight; y++) {
+  for (y = 0; y < RealPixelHeight; y++) {
     ImagePtr = ImagePtrBase;
     ImagePtrBase += ImageLineOffset;
-    PixelPtr = NewImage->PixelData + (BmpHeader->PixelHeight - 1 - y) * BmpHeader->PixelWidth;
+    // vertically mirror
+    if (BmpHeader->PixelHeight != RealPixelHeight) {
+      PixelPtr = NewImage->PixelData + y * RealPixelWidth;
+    } else {
+      PixelPtr = NewImage->PixelData + (RealPixelHeight - 1 - y) * RealPixelWidth;
+    }    
     
     switch (BmpHeader->BitPerPixel) {
         
       case 1:
-        for (x = 0; x < BmpHeader->PixelWidth; x++) {
+        for (x = 0; x < RealPixelWidth; x++) {
           BitIndex = x & 0x07;
           if (BitIndex == 0)
             ImageValue = *ImagePtr++;
@@ -147,7 +160,7 @@ EG_IMAGE * egDecodeBMP(IN UINT8 *FileData, IN UINTN FileDataLength, IN BOOLEAN W
         break;
         
       case 4:
-        for (x = 0; x <= BmpHeader->PixelWidth - 2; x += 2) {
+        for (x = 0; x <= RealPixelWidth - 2; x += 2) {
           ImageValue = *ImagePtr++;
           
           Index = ImageValue >> 4;
@@ -164,7 +177,7 @@ EG_IMAGE * egDecodeBMP(IN UINT8 *FileData, IN UINTN FileDataLength, IN BOOLEAN W
           PixelPtr->Reserved = AlphaValue;
           PixelPtr++;
         }
-        if (x < BmpHeader->PixelWidth) {
+        if (x < RealPixelWidth) {
           ImageValue = *ImagePtr++;
           
           Index = ImageValue >> 4;
@@ -177,7 +190,7 @@ EG_IMAGE * egDecodeBMP(IN UINT8 *FileData, IN UINTN FileDataLength, IN BOOLEAN W
         break;
         
       case 8:
-        for (x = 0; x < BmpHeader->PixelWidth; x++) {
+        for (x = 0; x < RealPixelWidth; x++) {
           Index = *ImagePtr++;
           PixelPtr->Blue = BmpColorMap[Index].Blue;
           PixelPtr->Green = BmpColorMap[Index].Green;
@@ -188,7 +201,7 @@ EG_IMAGE * egDecodeBMP(IN UINT8 *FileData, IN UINTN FileDataLength, IN BOOLEAN W
         break;
         
       case 24:
-        for (x = 0; x < BmpHeader->PixelWidth; x++) {
+        for (x = 0; x < RealPixelWidth; x++) {
           PixelPtr->Blue = *ImagePtr++;
           PixelPtr->Green = *ImagePtr++;
           PixelPtr->Red = *ImagePtr++;
@@ -196,6 +209,16 @@ EG_IMAGE * egDecodeBMP(IN UINT8 *FileData, IN UINTN FileDataLength, IN BOOLEAN W
           PixelPtr++;
         }
         break;
+      case 32:
+        for (x = 0; x < RealPixelWidth; x++) {
+          PixelPtr->Blue = *ImagePtr++;
+          PixelPtr->Green = *ImagePtr++;
+          PixelPtr->Red = *ImagePtr++;
+          PixelPtr->Reserved = *ImagePtr++;
+          if (!WantAlpha)
+            PixelPtr->Reserved = 255 - PixelPtr->Reserved;
+          PixelPtr++;
+        }
         
     }
   }
