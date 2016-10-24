@@ -518,6 +518,12 @@
 		12AAF5311DBE348100A52B12 /* UsbKbDxe.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = UsbKbDxe.inf; sourceTree = "<group>"; };
 		12AAF5321DBE348100A52B12 /* UsbKbDxe.uni */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = UsbKbDxe.uni; sourceTree = "<group>"; };
 		12AAF5331DBE348100A52B12 /* UsbKbDxeExtra.uni */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = UsbKbDxeExtra.uni; sourceTree = "<group>"; };
+		12AAF55C1DBE447200A52B12 /* AppleHid.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleHid.h; sourceTree = "<group>"; };
+		12AAF55E1DBE448000A52B12 /* UsbHid.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UsbHid.h; sourceTree = "<group>"; };
+		12AAF55F1DBE44A300A52B12 /* AppleKeyMapDatabase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleKeyMapDatabase.h; sourceTree = "<group>"; };
+		12AAF5601DBE44AD00A52B12 /* ApplePlatformInfoDatabase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ApplePlatformInfoDatabase.h; sourceTree = "<group>"; };
+		12AAF5611DBE44BC00A52B12 /* Hash.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Hash.h; sourceTree = "<group>"; };
+		12AAF5621DBE44C500A52B12 /* KeyboardInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KeyboardInfo.h; sourceTree = "<group>"; };
 		12E301581D5A413A00EED426 /* lodepng.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lodepng.c; sourceTree = "<group>"; };
 		12E301591D5A413A00EED426 /* lodepng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lodepng.h; sourceTree = "<group>"; };
 		12EF3B1C1A7AB8D40056AF22 /* ComponentName.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ComponentName.c; sourceTree = "<group>"; };
@@ -1975,12 +1981,14 @@
 		2C794AC91A0AA85900D845B0 /* IndustryStandard */ = {
 			isa = PBXGroup;
 			children = (
+				12AAF55C1DBE447200A52B12 /* AppleHid.h */,
 				12344F581CAB9A5700318A6E /* AppleSmBios.h */,
 				2C794AC21A0AA85900D845B0 /* AtomBios.h */,
 				2C794AC31A0AA85900D845B0 /* PciBus.h */,
 				2C794AC41A0AA85900D845B0 /* PciCommand.h */,
 				2C794AC51A0AA85900D845B0 /* PeImage.h */,
 				2C794AC61A0AA85900D845B0 /* PiBootMode.h */,
+				12AAF55E1DBE448000A52B12 /* UsbHid.h */,
 				2C794AC81A0AA85900D845B0 /* VesaBiosExtensions.h */,
 			);
 			path = IndustryStandard;
@@ -2009,10 +2017,14 @@
 				12A60F621DB611190068BF8B /* AppleGraphConfig.h */,
 				2C794AD41A0AA85900D845B0 /* AppleImageCodecProtocol.h */,
 				1261CBB51DB17AC200E26E00 /* AppleKeyState.h */,
+				12AAF55F1DBE44A300A52B12 /* AppleKeyMapDatabase.h */,
+				12AAF5601DBE44AD00A52B12 /* ApplePlatformInfoDatabase.h */,
 				2C794AD51A0AA85900D845B0 /* AppleSMC.h */,
 				2C794AD61A0AA85900D845B0 /* efiConsoleControl.h */,
 				2C794AD71A0AA85900D845B0 /* EmuVariableControl.h */,
+				12AAF5611DBE44BC00A52B12 /* Hash.h */,
 				2C794AD81A0AA85900D845B0 /* FSInjectProtocol.h */,
+				12AAF5621DBE44C500A52B12 /* KeyboardInfo.h */,
 				2C794AD91A0AA85900D845B0 /* MsgLog.h */,
 				12676CCE1DB5624B00CFC57E /* OSInfo.h */,
 				2C794ADA1A0AA85900D845B0 /* PciIoImp.h */,

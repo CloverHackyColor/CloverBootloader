@@ -103,7 +103,7 @@ EFI_GUID gEfiLegacy8259ProtocolGuid				= {0x38321dba, 0x4fe0, 0x4e17, {0x8a, 0xe
 
 MAP_EFI_GUID_STR EfiGuidStrMap[] = {
 	{NULL, L"Tmp buffer AE074D26-6E9E-11E1-A5B8-9BFC4824019B"},
-	{&gEfiFileInfoGuid, L"gEfiFileInfoGuid"},
+/*	{&gEfiFileInfoGuid, L"gEfiFileInfoGuid"},
 	{&gEfiFileSystemInfoGuid, L"gEfiFileSystemInfoGuid"},
 	{&gEfiFileSystemVolumeLabelInfoIdGuid, L"gEfiFileSystemVolumeLabelInfoIdGuid"},
 	{&gEfiLoadedImageProtocolGuid, L"gEfiLoadedImageProtocolGuid"},
@@ -134,7 +134,7 @@ MAP_EFI_GUID_STR EfiGuidStrMap[] = {
 	{&gEfiProcessorSubClassGuid, L"gEfiProcessorSubClassGuid"},
 	{&gEfiMemorySubClassGuid, L"gEfiMemorySubClassGuid"},
 	{&gMsgLogProtocolGuid, L"gMsgLogProtocolGuid"},
-	{&gEfiLegacy8259ProtocolGuid, L"gEfiLegacy8259ProtocolGuid"},
+	{&gEfiLegacy8259ProtocolGuid, L"gEfiLegacy8259ProtocolGuid"}, */
 	{NULL, NULL}
 };
 
