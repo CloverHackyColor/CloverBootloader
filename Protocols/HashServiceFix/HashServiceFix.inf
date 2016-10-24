@@ -1,0 +1,40 @@
+## @file
+# Copyright (c) 2007 - 2010, Intel Corporation. All rights reserved.<BR>
+#
+# This program and the accompanying materials have not been licensed.
+# Neither is its usage, its redistribution, in source or binary form,
+# licensed, nor implicitely or explicitely permitted, except when
+# required by applicable law.
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
+# OR CONDITIONS OF ANY KIND, either express or implied.
+##
+
+[Defines]
+  BASE_NAME   = HashServiceFix
+  FILE_GUID   = 4C3B37B7-08F8-46AF-B585-8C6B27E00CCA
+  MODULE_TYPE = UEFI_DRIVER
+  ENTRY_POINT = HSEntryPoint
+  INF_VERSION = 0x00010005
+  VERSION_STRING = 1.0
+
+[Packages]
+  Clover/CloverPkg.dec
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  IntelFrameworkPkg/IntelFrameworkPkg.dec
+
+[Protocols]
+  gEfiHashServiceBindingProtocolGuid ## PRODUCES
+  gEfiHashProtocolGuid               ## PRODUCES
+
+[LibraryClasses]
+  UefiLib
+  UefiDriverEntryPoint
+  MemoryAllocationLib
+  PrintLib
+
+[Sources]
+  HashServiceFix.c
+  sha1.c

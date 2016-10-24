@@ -436,6 +436,7 @@
   Clover/Protocols/AppleImageCodec/AppleImageCodec.inf
   Clover/Protocols/AppleUITheme/AppleUITheme.inf
   Clover/Protocols/AppleEvent/AppleEvent.inf
+  Clover/Protocols/HashServiceFix/HashServiceFix.inf
   
 !ifdef DEBUG_ON_SERIAL_PORT
 
