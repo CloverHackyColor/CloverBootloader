@@ -21,11 +21,11 @@
 [Defines]
   INF_VERSION                    = 0x00010005
   BASE_NAME                      = CsmVideo2Dxe
-  FILE_GUID                      = 0B04B2ED-861C-42cd-A22F-C3AAFACCB897
+  FILE_GUID                      = 0B04B2EE-861C-42cd-A22F-C3AAFACCB897
   MODULE_TYPE                    = UEFI_DRIVER
   VERSION_STRING                 = 1.0
 
-  ENTRY_POINT                    = BiosVideoEntryPoint
+  ENTRY_POINT                    = CsmVideoEntryPoint
 
 #
 # The following information is for reference only and not required by the build tools.

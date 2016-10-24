@@ -21,7 +21,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 
 
 #ifndef DEBUG_ALL
-#define DEBUG_CSM 2
+#define DEBUG_CSM 1
 #else
 #define DEBUG_CSM DEBUG_ALL
 #endif
@@ -3532,7 +3532,7 @@ BiosVideoNotifyExitBootServices (
 **/
 EFI_STATUS
 EFIAPI
-BiosVideoEntryPoint(
+CsmVideoEntryPoint(
   IN EFI_HANDLE           ImageHandle,
   IN EFI_SYSTEM_TABLE     *SystemTable
   )

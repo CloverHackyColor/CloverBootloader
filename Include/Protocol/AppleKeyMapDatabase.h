@@ -1,16 +1,18 @@
 /** @file
-  The Apple protocol to manage the database of pressed keys during the boot process.
+  Copyright (C) 2005 - 2016, Apple Inc.  All rights reserved.
+  Portions Copyright (C) 2014 - 2016, CupertinoNet.  All rights reserved.<BR>
 
-  Copyright (C) 2005 - 2015, Apple Inc.  All rights reserved.<BR>
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
 
-  This program and the accompanying materials have not been licensed.
-  Neither is its usage, its redistribution, in source or binary form,
-  licensed, nor implicitely or explicitely permitted, except when
-  required by applicable law.
+      http://www.apache.org/licenses/LICENSE-2.0
 
   Unless required by applicable law or agreed to in writing, software
-  distributed is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
-  OR CONDITIONS OF ANY KIND, either express or implied.
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
 **/
 
 #ifndef APPLE_KEY_MAP_DATABASE_H_

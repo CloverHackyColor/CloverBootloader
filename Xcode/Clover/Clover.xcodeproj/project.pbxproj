@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		125CC4F21DBAB06900142ADA /* BiosVideo2.c in Sources */ = {isa = PBXBuildFile; fileRef = 125CC4F11DBAB06900142ADA /* BiosVideo2.c */; };
 		1288B5211A30CEFB007CBCEF /* Net.c in Sources */ = {isa = PBXBuildFile; fileRef = 1288B5201A30CEFB007CBCEF /* Net.c */; };
 		12A60F5A1DB610500068BF8B /* AppleImageCodec.c in Sources */ = {isa = PBXBuildFile; fileRef = 12A60F4E1DB610500068BF8B /* AppleImageCodec.c */; };
 		12A60F5B1DB610500068BF8B /* load_bmp.c in Sources */ = {isa = PBXBuildFile; fileRef = 12A60F501DB610500068BF8B /* load_bmp.c */; };
@@ -337,6 +338,8 @@
 
 /* Begin PBXFileReference section */
 		12344F581CAB9A5700318A6E /* AppleSmBios.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleSmBios.h; sourceTree = "<group>"; };
+		125CC4F11DBAB06900142ADA /* BiosVideo2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = BiosVideo2.c; sourceTree = "<group>"; };
+		125CC4F31DBAB07200142ADA /* VideoDxe2.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = VideoDxe2.inf; sourceTree = "<group>"; };
 		1261513A1A15BBB000903E7B /* bootscreen.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = bootscreen.c; sourceTree = "<group>"; };
 		1261513B1A15BBB000903E7B /* common.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = common.c; sourceTree = "<group>"; };
 		1261513C1A15BBB000903E7B /* entry_scan.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = entry_scan.h; sourceTree = "<group>"; };
@@ -2122,8 +2125,10 @@
 			isa = PBXGroup;
 			children = (
 				2C794B021A0AA85900D845B0 /* BiosVideo.c */,
+				125CC4F11DBAB06900142ADA /* BiosVideo2.c */,
 				2C794B031A0AA85900D845B0 /* BiosVideo.h */,
 				2C794B041A0AA85900D845B0 /* ComponentName.c */,
+				125CC4F31DBAB07200142ADA /* VideoDxe2.inf */,
 				2C794B051A0AA85900D845B0 /* VideoDxe.inf */,
 			);
 			path = VideoDxe;
@@ -3440,6 +3445,7 @@
 				2C794E411A0AA85900D845B0 /* BootArgs.c in Sources */,
 				2C794DD01A0AA85900D845B0 /* Stall.c in Sources */,
 				2C794D361A0AA85900D845B0 /* Makefile in Sources */,
+				125CC4F21DBAB06900142ADA /* BiosVideo2.c in Sources */,
 				2C794D341A0AA85900D845B0 /* boot1h.s in Sources */,
 				2C794E431A0AA85900D845B0 /* DecodedKernelCheck.c in Sources */,
 				2C794D5D1A0AA85900D845B0 /* ReadWrite.c in Sources */,
