@@ -311,7 +311,7 @@
 			<key>#IMEI</key>
 			<string>0x1e208086</string>
 		</dict>
-		<key>#InjectString</key>
+		<key>#Inject</key>
 		<false/>
 		<key>UseIntelHDMI</key>
 		<false/>
