@@ -16,6 +16,9 @@
 		12A60F5F1DB610500068BF8B /* SMCHelper.c in Sources */ = {isa = PBXBuildFile; fileRef = 12A60F581DB610500068BF8B /* SMCHelper.c */; };
 		12A60F611DB610840068BF8B /* GraphicsConfig.c in Sources */ = {isa = PBXBuildFile; fileRef = 12A60F601DB610840068BF8B /* GraphicsConfig.c */; };
 		12AAF3A51DB75DC800A52B12 /* FirmwareVolume.c in Sources */ = {isa = PBXBuildFile; fileRef = 12AAF3A41DB75DC800A52B12 /* FirmwareVolume.c */; };
+		12AAF5341DBE348100A52B12 /* ComponentName.c in Sources */ = {isa = PBXBuildFile; fileRef = 12AAF52C1DBE348100A52B12 /* ComponentName.c */; };
+		12AAF5351DBE348100A52B12 /* EfiKey.c in Sources */ = {isa = PBXBuildFile; fileRef = 12AAF52D1DBE348100A52B12 /* EfiKey.c */; };
+		12AAF5361DBE348100A52B12 /* KeyBoard.c in Sources */ = {isa = PBXBuildFile; fileRef = 12AAF52F1DBE348100A52B12 /* KeyBoard.c */; };
 		12E3015A1D5A413A00EED426 /* lodepng.c in Sources */ = {isa = PBXBuildFile; fileRef = 12E301581D5A413A00EED426 /* lodepng.c */; };
 		2C794D201A0AA85900D845B0 /* Reset.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C7949ED1A0AA85900D845B0 /* Reset.c */; };
 		2C794D211A0AA85900D845B0 /* AhciMode.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C7949F01A0AA85900D845B0 /* AhciMode.c */; };
@@ -507,6 +510,14 @@
 		12AAF5141DBE287A00A52B12 /* AppleEvent.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = AppleEvent.c; sourceTree = "<group>"; };
 		12AAF5151DBE287A00A52B12 /* AppleEvent.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = AppleEvent.inf; sourceTree = "<group>"; };
 		12AAF5171DBE28B800A52B12 /* AppleEvent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleEvent.h; sourceTree = "<group>"; };
+		12AAF52C1DBE348100A52B12 /* ComponentName.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ComponentName.c; sourceTree = "<group>"; };
+		12AAF52D1DBE348100A52B12 /* EfiKey.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = EfiKey.c; sourceTree = "<group>"; };
+		12AAF52E1DBE348100A52B12 /* EfiKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EfiKey.h; sourceTree = "<group>"; };
+		12AAF52F1DBE348100A52B12 /* KeyBoard.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = KeyBoard.c; sourceTree = "<group>"; };
+		12AAF5301DBE348100A52B12 /* KeyBoard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyBoard.h; sourceTree = "<group>"; };
+		12AAF5311DBE348100A52B12 /* UsbKbDxe.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = UsbKbDxe.inf; sourceTree = "<group>"; };
+		12AAF5321DBE348100A52B12 /* UsbKbDxe.uni */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = UsbKbDxe.uni; sourceTree = "<group>"; };
+		12AAF5331DBE348100A52B12 /* UsbKbDxeExtra.uni */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = UsbKbDxeExtra.uni; sourceTree = "<group>"; };
 		12E301581D5A413A00EED426 /* lodepng.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lodepng.c; sourceTree = "<group>"; };
 		12E301591D5A413A00EED426 /* lodepng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lodepng.h; sourceTree = "<group>"; };
 		12EF3B1C1A7AB8D40056AF22 /* ComponentName.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ComponentName.c; sourceTree = "<group>"; };
@@ -1543,6 +1554,22 @@
 				12AAF5151DBE287A00A52B12 /* AppleEvent.inf */,
 			);
 			path = AppleEvent;
+			sourceTree = "<group>";
+		};
+		12AAF52B1DBE348100A52B12 /* UsbKbDxe */ = {
+			isa = PBXGroup;
+			children = (
+				12AAF52C1DBE348100A52B12 /* ComponentName.c */,
+				12AAF52D1DBE348100A52B12 /* EfiKey.c */,
+				12AAF52E1DBE348100A52B12 /* EfiKey.h */,
+				12AAF52F1DBE348100A52B12 /* KeyBoard.c */,
+				12AAF5301DBE348100A52B12 /* KeyBoard.h */,
+				12AAF5311DBE348100A52B12 /* UsbKbDxe.inf */,
+				12AAF5321DBE348100A52B12 /* UsbKbDxe.uni */,
+				12AAF5331DBE348100A52B12 /* UsbKbDxeExtra.uni */,
+			);
+			name = UsbKbDxe;
+			path = ../../UsbKbDxe;
 			sourceTree = "<group>";
 		};
 		12EF3B1B1A7AB8D40056AF22 /* XhciDxe */ = {
@@ -3178,6 +3205,7 @@
 				2C794C381A0AA85900D845B0 /* Ps2MouseDxe */,
 				2C794C3F1A0AA85900D845B0 /* SataControllerDxe */,
 				2C794CB31A0AA85900D845B0 /* UefiCpuPkg */,
+				12AAF52B1DBE348100A52B12 /* UsbKbDxe */,
 				2C794CB41A0AA85900D845B0 /* UsbMouseDxe */,
 				2C794CDC1A0AA85900D845B0 /* VBoxFsDxe */,
 				12A88C5C1A7B6E0A008C4829 /* XhciDxe */,
@@ -3700,6 +3728,9 @@
 				12A60F5F1DB610500068BF8B /* SMCHelper.c in Sources */,
 				12A60F611DB610840068BF8B /* GraphicsConfig.c in Sources */,
 				12AAF3A51DB75DC800A52B12 /* FirmwareVolume.c in Sources */,
+				12AAF5341DBE348100A52B12 /* ComponentName.c in Sources */,
+				12AAF5351DBE348100A52B12 /* EfiKey.c in Sources */,
+				12AAF5361DBE348100A52B12 /* KeyBoard.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -379,7 +379,8 @@
   Clover/Patches_for_EDK2/XhciDxe/XhciDxe.inf
 #  MdeModulePkg/Bus/Usb/UsbBusDxe/UsbBusDxe.inf
   Clover/Patches_for_EDK2/UsbBusDxe/UsbBusDxe.inf
-  MdeModulePkg/Bus/Usb/UsbKbDxe/UsbKbDxe.inf
+#  MdeModulePkg/Bus/Usb/UsbKbDxe/UsbKbDxe.inf
+  Clover/UsbKbDxe/UsbKbDxe.inf
   MdeModulePkg/Bus/Usb/UsbMassStorageDxe/UsbMassStorageDxe.inf
   MdeModulePkg/Bus/Usb/UsbMouseDxe/UsbMouseDxe.inf
   #Clover/Patches_for_EDK2/UsbMouseDxe/UsbMouseDxe.inf
