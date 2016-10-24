@@ -428,8 +428,13 @@ VOID FillInputs(BOOLEAN New)
   InputItems[InputItemsCount++].BValue = gSettings.ResetHDA;
   InputItems[InputItemsCount].ItemType = BoolValue; //58
   InputItems[InputItemsCount++].BValue = gSettings.AFGLowPowerState;
-// gSettings.HDALayoutId
-// gSettings.HDAInjection
+  InputItems[InputItemsCount].ItemType = BoolValue; //59
+  InputItems[InputItemsCount++].BValue = gSettings.HDAInjection;
+  InputItems[InputItemsCount].ItemType = Decimal;  // 60
+  if (New) {
+    InputItems[InputItemsCount].SValue = AllocateZeroPool(64);
+  }
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%d", gSettings.HDALayoutId);
 
   // CSR - aka System Integrity Protection configuration
   InputItemsCount = 65;
@@ -880,6 +885,14 @@ VOID ApplyInputs(VOID)
   i++; //58
   if (InputItems[i].Valid) {
     gSettings.AFGLowPowerState = InputItems[i].BValue;
+  }
+  i++; //59
+  if (InputItems[i].Valid) {
+    gSettings.HDAInjection = InputItems[i].BValue;
+  }
+  i++; //60
+  if (InputItems[i].Valid) {
+    gSettings.HDALayoutId = (UINT8)(StrDecimalToUintn(InputItems[i].SValue) & 0x0F);
   }
   
   // CSR
@@ -4050,7 +4063,7 @@ REFIT_MENU_ENTRY  *SubMenuGraphics()
   REFIT_MENU_SCREEN  *SubScreen;
 
   NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_GRAPHICS, "Graphics Injector->");
-  AddMenuInfoLine(SubScreen, PoolPrint(L"Number of VideoCards=%d", NGFX));
+  AddMenuInfoLine(SubScreen, PoolPrint(L"Number of VideoCard%a=%d",((NGFX!=1)?"s":""), NGFX));
 
   AddMenuItem(SubScreen, 52, "InjectEDID", TAG_INPUT, FALSE);
   AddMenuItem(SubScreen, 53, "Fake Vendor EDID:", TAG_INPUT, TRUE);
@@ -4115,6 +4128,9 @@ REFIT_MENU_ENTRY  *SubMenuGraphics()
 // ErmaC: Audio submenu
 REFIT_MENU_ENTRY  *SubMenuAudio()
 {
+
+  UINTN  i;
+
   // init
   REFIT_MENU_ENTRY   *Entry;
   REFIT_MENU_SCREEN  *SubScreen;
@@ -4124,11 +4140,16 @@ REFIT_MENU_ENTRY  *SubMenuAudio()
 
   // submenu description
   AddMenuInfoLine(SubScreen, PoolPrint(L"Choose options to tune the HDA devices"));
-  //AddMenuInfoLine(SubScreen, PoolPrint(L"Number of Audio Controller=%d", NHDA));
+  AddMenuInfoLine(SubScreen, PoolPrint(L"Number of Audio Controller%a=%d", ((NHDA!=1)?"s":""), NHDA));
+  for (i = 0; i < NHDA; i++) {
+      AddMenuInfoLine(SubScreen, PoolPrint(L"%d) HDA Controller [%04x][%04x]", (i+1), gAudios[i].VendorID, gAudios[i].DeviceID));
+  }
 
-  //TODO
-  // gSettings.HDALayoutId
-  // gSettings.HDAInjection
+  //TODO check and TEST
+  //AddMenuItem(SubScreen, 59, "HDAInjection", TAG_INPUT, FALSE);
+  if (gSettings.HDAInjection) {
+    AddMenuItem(SubScreen, 60, "HDALayoutId:", TAG_INPUT, TRUE);
+  }
 
   // avaiable configuration
   AddMenuItem(SubScreen, 57, "ResetHDA", TAG_INPUT, FALSE);

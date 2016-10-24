@@ -36,6 +36,7 @@ TagPtr                          gConfigDict[NUM_OF_CONFIGS] = {NULL, NULL, NULL}
 SETTINGS_DATA                   gSettings;
 LANGUAGES                       gLanguage;
 GFX_PROPERTIES                  gGraphics[4]; //no more then 4 graphics cards
+HDA_PROPERTIES                  gAudios[4]; //no more then 4 Audio Controllers
 //SLOT_DEVICE                     Arpt;
 SLOT_DEVICE                     SlotDevices[16]; //assume DEV_XXX, Arpt=6
 EFI_EDID_DISCOVERED_PROTOCOL    *EdidDiscovered;
@@ -43,6 +44,7 @@ UINT8                           *gEDID = NULL;
 //EFI_GRAPHICS_OUTPUT_PROTOCOL    *GraphicsOutput;
 //UINT16                          gCPUtype;
 UINTN                           NGFX                        = 0; // number of GFX
+UINTN                           NHDA                        = 0; // number of HDA Devices
 
 UINTN                           nLanCards;        // number of LAN cards
 UINT16                          gLanVendor[4];    // their vendors
@@ -5604,6 +5606,7 @@ GetDevices ()
   SLOT_DEVICE         *SlotDevice;
 
   NGFX = 0;
+  NHDA = 0;
   //Arpt.Valid = FALSE; //global variables initialized by 0 - c-language
 
   DbgHeader("GetDevices");
@@ -5842,7 +5845,57 @@ GetDevices ()
 
         else if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_MEDIA) &&
                  ((Pci.Hdr.ClassCode[1] == PCI_CLASS_MEDIA_HDA) ||
-                  (Pci.Hdr.ClassCode[1] == PCI_CLASS_MEDIA_AUDIO))) {
+                  (Pci.Hdr.ClassCode[1] == PCI_CLASS_MEDIA_AUDIO)) &&
+            (NHDA < 4)) {
+
+            HDA_PROPERTIES *hda = &gAudios[NHDA];
+            hda->VendorID       = Pci.Hdr.VendorId;
+            hda->DeviceID       = Pci.Hdr.DeviceId;
+
+          switch (Pci.Hdr.VendorId) {
+              case 0x8086:
+                  hda->Vendor = Intel;
+                  AsciiSPrint (hda->Model, 64, "pci%x,%x", Pci.Hdr.VendorId, Pci.Hdr.DeviceId);
+                  break;
+
+              case 0x10de:
+                  hda->Vendor = Nvidia;
+                  AsciiSPrint (hda->Model, 64, "pci%x,%x", Pci.Hdr.VendorId, Pci.Hdr.DeviceId);
+                  break;
+
+              case 0x1002:
+                  hda->Vendor = Ati;
+                  AsciiSPrint (hda->Model, 64, "pci%x,%x", Pci.Hdr.VendorId, Pci.Hdr.DeviceId);
+                  break;
+
+              case 0x17f3:
+                  hda->Vendor = RDC;
+                  AsciiSPrint (hda->Model, 64, "pci%x,%x", Pci.Hdr.VendorId, Pci.Hdr.DeviceId);
+                  break;
+
+              case 0x1106:
+                  hda->Vendor = VIA;
+                  AsciiSPrint (hda->Model, 64, "pci%x,%x", Pci.Hdr.VendorId, Pci.Hdr.DeviceId);
+                  break;
+
+              case 0x1039:
+                  hda->Vendor = SiS;
+                  AsciiSPrint (hda->Model, 64, "pci%x,%x", Pci.Hdr.VendorId, Pci.Hdr.DeviceId);
+                  break;
+
+              case 0x10b9:
+                  hda->Vendor = ULI;
+                  AsciiSPrint (hda->Model, 64, "pci%x,%x", Pci.Hdr.VendorId, Pci.Hdr.DeviceId);
+                  break;
+
+              default:
+                  hda->Vendor = Unknown;
+                  AsciiSPrint (hda->Model, 64, "pci%x,%x", Pci.Hdr.VendorId, Pci.Hdr.DeviceId);
+                  break;
+          }
+
+            AsciiSPrint (hda->Model, 64, "pci%x,%x", Pci.Hdr.VendorId, Pci.Hdr.DeviceId);
+
           if (IsHDMIAudio(HandleArray[Index])) {
             DBG(" - HDMI Audio: \n");
    //if ((Pci.Hdr.VendorId == 0x1002) || (Pci.Hdr.VendorId == 0x10DE)){
@@ -5868,7 +5921,8 @@ GetDevices ()
             PciIo->Pci.Write (PciIo, EfiPciIoWidthUint8, 0x44, 1, &Value);
             //ResetControllerHDA();
           }
-        }
+          NHDA++;
+        } // if Audio device
       }
     }
   }

@@ -1355,12 +1355,15 @@ typedef enum {
   Unknown,
   Ati,
   Intel,
-  Nvidia
-
-} GFX_MANUFACTERER;
+  Nvidia,
+  RDC,	/* 0x17f3 */
+  VIA,	/* 0x1106 */
+  SiS,	/* 0x1039 */
+  ULI	/* 0x10b9 */
+} HRDW_MANUFACTERER;
 
 typedef struct {
-  GFX_MANUFACTERER  Vendor;
+  HRDW_MANUFACTERER  Vendor;
   UINT8             Ports;
   UINT16            DeviceID;
   UINT16            Family;
@@ -1377,6 +1380,13 @@ typedef struct {
   EFI_HANDLE        Handle;
   UINT8             *Mmio;
 } GFX_PROPERTIES;
+
+typedef struct {
+    HRDW_MANUFACTERER  Vendor;
+    UINT16            VendorID;
+    UINT16            DeviceID;
+    CHAR8             Model[64];
+} HDA_PROPERTIES;
 
 typedef struct {
   UINT16            SegmentGroupNum;
@@ -1451,7 +1461,9 @@ typedef struct {
 //extern CHAR8                          *msgCursor;
 extern APPLE_SMBIOS_STRUCTURE_POINTER SmbiosTable;
 extern GFX_PROPERTIES                 gGraphics[];
+extern HDA_PROPERTIES                 gAudios[];
 extern UINTN                          NGFX;
+extern UINTN                          NHDA;
 extern BOOLEAN                        gMobile;
 extern BOOLEAN                        DoHibernateWake;
 //extern UINT32                         gCpuSpeed;  //kHz
