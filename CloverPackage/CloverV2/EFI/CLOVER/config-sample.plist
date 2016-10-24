@@ -230,6 +230,8 @@
 		<string>LastBootedVolume</string>
 		<key>NeverHibernate</key>
 		<false/>
+		<key>SkipHibernateTimeout</key>
+		<false/>
 		<key>Fast</key>
 		<false/>
 		<key>Legacy</key>

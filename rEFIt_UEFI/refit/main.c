@@ -2071,7 +2071,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
     MainLoopRunning = TRUE;
     //    MainMenu.TimeoutSeconds = GlobalConfig.Timeout >= 0 ? GlobalConfig.Timeout : 0;
-    if (GlobalConfig.FastBoot && DefaultEntry) {
+    if (DefaultEntry && (GlobalConfig.FastBoot ||
+                         (gSettings.SkipHibernateTimeout &&
+                          OSFLAG_ISSET(((LOADER_ENTRY *)DefaultEntry)->Flags, OSFLAG_HIBERNATED)))) {
       if (DefaultEntry->Tag == TAG_LOADER) {
         StartLoader((LOADER_ENTRY *)DefaultEntry);
       } else if (DefaultEntry->Tag == TAG_LEGACY){

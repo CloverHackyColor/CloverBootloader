@@ -2150,6 +2150,9 @@ GetEarlyUserSettings (
         GlobalConfig.Timeout = (INT32)GetPropertyInteger (Prop, GlobalConfig.Timeout);
         DBG ("timeout set to %d\n", GlobalConfig.Timeout);
       }
+      
+      Prop = GetProperty (DictPointer, "SkipHibernateTimeout");
+      gSettings.SkipHibernateTimeout = IsPropertyTrue(Prop);
 
       Prop = GetProperty (DictPointer, "Arguments");
       if (Prop != NULL && (Prop->type == kTagTypeString) && Prop->string != NULL) {

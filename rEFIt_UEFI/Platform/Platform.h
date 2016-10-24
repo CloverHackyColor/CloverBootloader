@@ -871,7 +871,8 @@ typedef struct {
 #endif
   
   BOOLEAN                 LastBootedVolume;
-  UINT8                   Pad21[3];
+  BOOLEAN                 SkipHibernateTimeout;
+  UINT8                   Pad21[2];
   
   UINT16                  VendorEDID;
   UINT16                  ProductEDID;
