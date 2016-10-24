@@ -433,6 +433,7 @@
   Clover/Protocols/FirmwareVolume/FirmwareVolume.inf
   Clover/Protocols/AppleKeyState/AppleKeyState.inf
   Clover/Protocols/AppleImageCodec/AppleImageCodec.inf
+  Clover/Protocols/AppleUITheme/AppleUITheme.inf
   
 !ifdef DEBUG_ON_SERIAL_PORT
 
