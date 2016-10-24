@@ -104,83 +104,81 @@ EG_IMAGE * BuiltinIcon(IN UINTN Id)
   EG_IMAGE  *TextBuffer = NULL;
   CHAR16    *p;
   CHAR16    *Text;
-
+  
   if (Id >= BUILTIN_ICON_COUNT) {
     return NULL;
   }
-
+  
   if (BuiltinIconTable[Id].Image != NULL) {
     return BuiltinIconTable[Id].Image;
   }
-
+  
   Size = BuiltinIconTable[Id].PixelSize;
   //DBG("Load Icon [id:%d]");
-
-  //if (BuiltinIconTable[Id].Image == NULL) {
-    if (ThemeDir) {
-      CHAR16    *Path;
-      Path = GetIconsExt(BuiltinIconTable[Id].Path, BuiltinIconTable[Id].Format);
-      BuiltinIconTable[Id].Image = LoadIcnsFallback(ThemeDir, Path, Size);
-      if (!BuiltinIconTable[Id].Image) {
-        DebugLog(1, "        [!] Icon %d (%s) not found (path: %s)\n", Id, Path, ThemePath);
-        if (Id >= BUILTIN_ICON_VOL_INTERNAL) {
-          FreePool(Path);
-          Path = GetIconsExt(BuiltinIconTable[BUILTIN_ICON_VOL_INTERNAL].Path, BuiltinIconTable[BUILTIN_ICON_VOL_INTERNAL].Format);
-          BuiltinIconTable[Id].Image = LoadIcnsFallback(ThemeDir, Path, Size);
-        }
+  
+  if (ThemeDir) {
+    CHAR16    *Path;
+    Path = GetIconsExt(BuiltinIconTable[Id].Path, BuiltinIconTable[Id].Format);
+    BuiltinIconTable[Id].Image = LoadIcnsFallback(ThemeDir, Path, Size);
+    if (!BuiltinIconTable[Id].Image) {
+      DebugLog(1, "        [!] Icon %d (%s) not found (path: %s)\n", Id, Path, ThemePath);
+      if (Id >= BUILTIN_ICON_VOL_INTERNAL) {
+        FreePool(Path);
+        Path = GetIconsExt(BuiltinIconTable[BUILTIN_ICON_VOL_INTERNAL].Path, BuiltinIconTable[BUILTIN_ICON_VOL_INTERNAL].Format);
+        BuiltinIconTable[Id].Image = LoadIcnsFallback(ThemeDir, Path, Size);
       }
-      FreePool(Path);
     }
-
-    if (BuiltinIconTable[Id].Image) {
-      
-      return BuiltinIconTable[Id].Image;
-    }
-
-    switch (Id) {
-      case BUILTIN_ICON_POINTER:
-        DEC_BUILTIN_ICON(Id, emb_pointer); break;
-      case BUILTIN_ICON_FUNC_ABOUT:
-        DEC_BUILTIN_ICON(Id, emb_func_about); break;
-      case BUILTIN_ICON_FUNC_OPTIONS:
-        DEC_BUILTIN_ICON(Id, emb_func_options); break;
-      case BUILTIN_ICON_FUNC_CLOVER:
-        DEC_BUILTIN_ICON(Id, emb_func_clover); break;
-      case BUILTIN_ICON_FUNC_SECURE_BOOT:
-        DEC_BUILTIN_ICON(Id, emb_func_secureboot); break;
-      case BUILTIN_ICON_FUNC_SECURE_BOOT_CONFIG:
-        DEC_BUILTIN_ICON(Id, emb_func_secureboot_config); break;
-      case BUILTIN_ICON_FUNC_RESET:
-        DEC_BUILTIN_ICON(Id, emb_func_reset); break;
-      case BUILTIN_ICON_FUNC_EXIT:
-        DEC_BUILTIN_ICON(Id, emb_func_exit); break;
-      case BUILTIN_ICON_FUNC_HELP:
-        DEC_BUILTIN_ICON(Id, emb_func_help); break;
-      case BUILTIN_ICON_TOOL_SHELL:
-        DEC_BUILTIN_ICON(Id, emb_func_shell); break;
-      case BUILTIN_ICON_VOL_INTERNAL:
-        DEC_BUILTIN_ICON(Id, emb_vol_internal); break;
-      case BUILTIN_ICON_VOL_EXTERNAL:
-        DEC_BUILTIN_ICON(Id, emb_vol_internal); break;
-      case BUILTIN_ICON_VOL_BOOTER:
-        DEC_BUILTIN_ICON(Id, emb_vol_internal_booter); break;
-      case BUILTIN_ICON_VOL_INTERNAL_HFS:
-        DEC_BUILTIN_ICON(Id, emb_vol_internal); break;
-      case BUILTIN_ICON_VOL_INTERNAL_NTFS:
-        DEC_BUILTIN_ICON(Id, emb_vol_internal); break;
-      case BUILTIN_ICON_VOL_INTERNAL_EXT3:
-        DEC_BUILTIN_ICON(Id, emb_vol_internal); break;
-      case BUILTIN_ICON_VOL_INTERNAL_REC:
-        DEC_BUILTIN_ICON(Id, emb_vol_internal_recovery); break;
-      case BUILTIN_ICON_BANNER:
-        DEC_BUILTIN_ICON(Id, emb_logo); break;
-      case BUILTIN_SELECTION_SMALL:
-        DEC_BUILTIN_ICON(Id, emb_selection_small); break;
-      case BUILTIN_SELECTION_BIG:
-        DEC_BUILTIN_ICON(Id, emb_selection_big); break;
-    }
-  //}
-
+    FreePool(Path);
+  }
+  
+  if (BuiltinIconTable[Id].Image) {
+    
+    return BuiltinIconTable[Id].Image;
+  }
+  
+  switch (Id) {
+    case BUILTIN_ICON_POINTER:
+      DEC_BUILTIN_ICON(Id, emb_pointer); break;
+    case BUILTIN_ICON_FUNC_ABOUT:
+      DEC_BUILTIN_ICON(Id, emb_func_about); break;
+    case BUILTIN_ICON_FUNC_OPTIONS:
+      DEC_BUILTIN_ICON(Id, emb_func_options); break;
+    case BUILTIN_ICON_FUNC_CLOVER:
+      DEC_BUILTIN_ICON(Id, emb_func_clover); break;
+    case BUILTIN_ICON_FUNC_SECURE_BOOT:
+      DEC_BUILTIN_ICON(Id, emb_func_secureboot); break;
+    case BUILTIN_ICON_FUNC_SECURE_BOOT_CONFIG:
+      DEC_BUILTIN_ICON(Id, emb_func_secureboot_config); break;
+    case BUILTIN_ICON_FUNC_RESET:
+      DEC_BUILTIN_ICON(Id, emb_func_reset); break;
+    case BUILTIN_ICON_FUNC_EXIT:
+      DEC_BUILTIN_ICON(Id, emb_func_exit); break;
+    case BUILTIN_ICON_FUNC_HELP:
+      DEC_BUILTIN_ICON(Id, emb_func_help); break;
+    case BUILTIN_ICON_TOOL_SHELL:
+      DEC_BUILTIN_ICON(Id, emb_func_shell); break;
+    case BUILTIN_ICON_VOL_INTERNAL:
+      DEC_BUILTIN_ICON(Id, emb_vol_internal); break;
+    case BUILTIN_ICON_VOL_EXTERNAL:
+      DEC_BUILTIN_ICON(Id, emb_vol_internal); break;
+    case BUILTIN_ICON_VOL_BOOTER:
+      DEC_BUILTIN_ICON(Id, emb_vol_internal_booter); break;
+    case BUILTIN_ICON_VOL_INTERNAL_HFS:
+      DEC_BUILTIN_ICON(Id, emb_vol_internal_hfs); break;
+    case BUILTIN_ICON_VOL_INTERNAL_NTFS:
+      DEC_BUILTIN_ICON(Id, emb_vol_internal_ntfs); break;
+    case BUILTIN_ICON_VOL_INTERNAL_EXT3:
+      DEC_BUILTIN_ICON(Id, emb_vol_internal_ext); break;
+    case BUILTIN_ICON_VOL_INTERNAL_REC:
+      DEC_BUILTIN_ICON(Id, emb_vol_internal_recovery); break;
+    case BUILTIN_ICON_BANNER:
+      DEC_BUILTIN_ICON(Id, emb_logo); break;
+    case BUILTIN_SELECTION_SMALL:
+      DEC_BUILTIN_ICON(Id, emb_selection_small); break;
+    case BUILTIN_SELECTION_BIG:
+      DEC_BUILTIN_ICON(Id, emb_selection_big); break;
+  }
+  
   if (!BuiltinIconTable[Id].Image) {
     TextBuffer = egCreateImage(Size, Size, TRUE);
     egFillImage(TextBuffer, &MenuBackgroundPixel);
@@ -188,16 +186,16 @@ EG_IMAGE * BuiltinIcon(IN UINTN Id)
     Text = (CHAR16*)AllocateCopyPool(30, (VOID*)p);
     p = StrStr(Text, L".");
     *p = L'\0';
-     if (StrCmp(Text, L"shutdown") == 0) {
-       // icon name is shutdown from historic reasons, but function is now exit
-       UnicodeSPrint(Text, 30, L"exit");
+    if (StrCmp(Text, L"shutdown") == 0) {
+      // icon name is shutdown from historic reasons, but function is now exit
+      UnicodeSPrint(Text, 30, L"exit");
     }
     egRenderText(Text, TextBuffer, 0, 0, 0xFFFF);
     BuiltinIconTable[Id].Image = TextBuffer;
     DebugLog(1, "        [!] Icon %d: Text <%s> rendered\n", Id, Text);
     FreePool(Text);
   }
-
+  
   return BuiltinIconTable[Id].Image;
 }
 
