@@ -504,6 +504,9 @@
 		12AAF4AF1DBA360700A52B12 /* AppleKeyState.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = AppleKeyState.inf; sourceTree = "<group>"; };
 		12AAF5061DBE167600A52B12 /* AppleUITheme.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = AppleUITheme.c; sourceTree = "<group>"; };
 		12AAF5071DBE167600A52B12 /* AppleUITheme.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = AppleUITheme.inf; sourceTree = "<group>"; };
+		12AAF5141DBE287A00A52B12 /* AppleEvent.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = AppleEvent.c; sourceTree = "<group>"; };
+		12AAF5151DBE287A00A52B12 /* AppleEvent.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = AppleEvent.inf; sourceTree = "<group>"; };
+		12AAF5171DBE28B800A52B12 /* AppleEvent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleEvent.h; sourceTree = "<group>"; };
 		12E301581D5A413A00EED426 /* lodepng.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lodepng.c; sourceTree = "<group>"; };
 		12E301591D5A413A00EED426 /* lodepng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lodepng.h; sourceTree = "<group>"; };
 		12EF3B1C1A7AB8D40056AF22 /* ComponentName.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ComponentName.c; sourceTree = "<group>"; };
@@ -1359,6 +1362,7 @@
 		12A60F4B1DB610500068BF8B /* Protocols */ = {
 			isa = PBXGroup;
 			children = (
+				12AAF5131DBE287A00A52B12 /* AppleEvent */,
 				12A60F4C1DB610500068BF8B /* AppleGraphicsConfig */,
 				12A60F4D1DB610500068BF8B /* AppleImageCodec */,
 				12AAF4AD1DBA360700A52B12 /* AppleKeyState */,
@@ -1530,6 +1534,15 @@
 				12AAF5071DBE167600A52B12 /* AppleUITheme.inf */,
 			);
 			path = AppleUITheme;
+			sourceTree = "<group>";
+		};
+		12AAF5131DBE287A00A52B12 /* AppleEvent */ = {
+			isa = PBXGroup;
+			children = (
+				12AAF5141DBE287A00A52B12 /* AppleEvent.c */,
+				12AAF5151DBE287A00A52B12 /* AppleEvent.inf */,
+			);
+			path = AppleEvent;
 			sourceTree = "<group>";
 		};
 		12EF3B1B1A7AB8D40056AF22 /* XhciDxe */ = {
@@ -1965,6 +1978,7 @@
 			children = (
 				2C794AD21A0AA85900D845B0 /* AppleDeviceControl.h */,
 				2C794AD31A0AA85900D845B0 /* AppleDiskIo.h */,
+				12AAF5171DBE28B800A52B12 /* AppleEvent.h */,
 				12A60F621DB611190068BF8B /* AppleGraphConfig.h */,
 				2C794AD41A0AA85900D845B0 /* AppleImageCodecProtocol.h */,
 				1261CBB51DB17AC200E26E00 /* AppleKeyState.h */,

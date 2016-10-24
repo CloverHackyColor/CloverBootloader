@@ -434,6 +434,7 @@
   Clover/Protocols/AppleKeyState/AppleKeyState.inf
   Clover/Protocols/AppleImageCodec/AppleImageCodec.inf
   Clover/Protocols/AppleUITheme/AppleUITheme.inf
+  Clover/Protocols/AppleEvent/AppleEvent.inf
   
 !ifdef DEBUG_ON_SERIAL_PORT
 
