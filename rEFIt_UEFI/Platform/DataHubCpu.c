@@ -302,7 +302,10 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
     DeleteNvramVariable(L"nvda_drv", &gEfiAppleBootGuid);
   }
   
-  if (StriStr(Entry->Volume->VolName, L"Recovery") == NULL) {
+  if (Entry->LoaderType == OSTYPE_RECOVERY) {
+    CHAR8 *FdeRecovery = "fde-recovery";
+    SetNvramVariable(L"recovery-boot-mode", &gEfiAppleBootGuid, Attributes, 12, (VOID*)FdeRecovery);
+  } else {
     DeleteNvramVariable(L"recovery-boot-mode", &gEfiAppleBootGuid);
   }
   
