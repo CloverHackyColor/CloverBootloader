@@ -44,6 +44,7 @@ StartOverrides()
   OvrOSInfo();
   OvrGraphConfig();
   OvrFirmwareVolume();
+  OvrEfiKeyboardInfo();
 	return EFI_SUCCESS;
 }
 

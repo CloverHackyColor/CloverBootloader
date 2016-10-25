@@ -23,6 +23,7 @@
 #include <Protocol/AppleGraphConfig.h>
 //#include <Protocol/AppleEvent.h>
 #include <Protocol/FirmwareVolume.h>
+#include <Protocol/KeyboardInfo.h> 
 
 #include "Common.h"
 
@@ -622,7 +623,7 @@ OvrFirmwareVolume(VOID)
   // Locate FirmwareVolume protocol
   Status = gBS->LocateProtocol(&gEfiFirmwareVolumeProtocolGuid, NULL, (VOID **) &gFirmwareVolume);
   if (EFI_ERROR(Status)) {
-    PRINT("Error Overriding GraphConfig: %r\n", Status);
+    PRINT("Error Overriding FirmwareVolume: %r\n", Status);
     return Status;
   }
   
@@ -637,4 +638,56 @@ OvrFirmwareVolume(VOID)
   return EFI_SUCCESS;
   
 }
+
+/****************************************************/
+/**/
+/** Installs our AppleKeyboardInfo overrides. */
+
+EFI_KEYBOARD_INFO_PROTOCOL gOrgAppleKeyboardInfo;
+EFI_KEYBOARD_INFO_PROTOCOL *gAppleKeyboardInfo;
+
+EFI_STATUS
+EFIAPI
+GetKeyboardDeviceInfo (
+                            OUT UINT16  *IdVendor,
+                            OUT UINT16  *IdProduct,
+                            OUT UINT8   *CountryCode
+                            )
+{
+/*  *IdVendor    = mIdVendor;
+  *IdProduct   = mIdProduct;
+  *CountryCode = mCountryCode; */
+  EFI_STATUS				Status;
+  Status = gOrgAppleKeyboardInfo.GetInfo(IdVendor, IdProduct, CountryCode);
+  PRINT("->KeyboardInfo => Vendor=0x%4x, Product=0x%4x, CountryCode=%x\n",
+        IdVendor?*IdVendor:0, IdProduct?*IdProduct:0, CountryCode?*CountryCode:0);
+  
+  return Status;
+}
+
+EFI_STATUS EFIAPI
+OvrEfiKeyboardInfo(VOID)
+{
+  EFI_STATUS				Status;
+  
+  PRINT("Overriding EfiKeyboardInfo ...\n");
+  
+  // Locate EfiKeyboardInfo protocol
+  Status = gBS->LocateProtocol(&gEfiKeyboardInfoProtocolGuid, NULL, (VOID **)&gAppleKeyboardInfo);
+  if (EFI_ERROR(Status)) {
+    PRINT("Error Overriding EfiKeyboardInfo: %r\n", Status);
+    return Status;
+  }
+  
+  // Store originals
+  CopyMem(&gOrgAppleKeyboardInfo, gAppleKeyboardInfo, sizeof(EFI_KEYBOARD_INFO_PROTOCOL));
+  
+  // Override with our implementation
+  gAppleKeyboardInfo->GetInfo = GetKeyboardDeviceInfo;
+  
+  PRINT("EfiKeyboardInfo overriden!\n");
+  return EFI_SUCCESS;
+  
+}
+
 

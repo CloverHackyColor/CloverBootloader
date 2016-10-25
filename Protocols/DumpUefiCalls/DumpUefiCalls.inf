@@ -118,6 +118,7 @@
   gAppleKeyStateProtocolGuid
   gEfiOSInfoProtocolGuid
   gAppleGraphConfigProtocolGuid
+  gEfiKeyboardInfoProtocolGuid
   
 [Depex]
   TRUE  

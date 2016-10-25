@@ -65,7 +65,7 @@ EFI_DRIVER_BINDING_PROTOCOL gUsbKeyboardDriverBinding = {
   USBKeyboardDriverBindingSupported,
   USBKeyboardDriverBindingStart,
   USBKeyboardDriverBindingStop,
-  0xa,
+  0x10,
   NULL,
   NULL
 };
@@ -99,9 +99,11 @@ USBKeyboardDriverBindingEntryPoint (
              &gUsbKeyboardComponentName,
              &gUsbKeyboardComponentName2
              );
-  ASSERT_EFI_ERROR (Status);
+  // Discuss - we can't return Status? We have to always return SUCCESS?
+  // This handle is clean, the installation on it is successful if EFI system is good enough.
+//  ASSERT_EFI_ERROR (Status);
 
-  return EFI_SUCCESS;
+  return Status;
 }
 
 /**
@@ -145,7 +147,7 @@ USBKeyboardDriverBindingSupported (
   // Use the USB I/O Protocol interface to check whether Controller is
   // a keyboard device that can be managed by this driver.
   //
-  Status = EFI_SUCCESS;
+  //Status = EFI_SUCCESS; //assumed
 
   if (!IsUSBKeyboard (UsbIo)) {
     Status = EFI_UNSUPPORTED;
@@ -230,7 +232,10 @@ USBKeyboardDriverBindingStart (
   }
 
   UsbKeyboardDevice = AllocateZeroPool (sizeof (USB_KB_DEV));
-  ASSERT (UsbKeyboardDevice != NULL);
+//  ASSERT (UsbKeyboardDevice != NULL);
+  if (!UsbKeyboardDevice) {
+    goto ErrorExit;
+  }
 
   //
   // Get the Device Path Protocol on Controller's handle
@@ -247,6 +252,7 @@ USBKeyboardDriverBindingStart (
   if (EFI_ERROR (Status)) {
     goto ErrorExit;
   }
+  
   //
   // Report that the USB keyboard is being enabled
   //

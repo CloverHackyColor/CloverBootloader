@@ -27,4 +27,8 @@ OvrGraphConfig(VOID);
 EFI_STATUS EFIAPI
 OvrFirmwareVolume(VOID);
 
+
+EFI_STATUS EFIAPI
+OvrEfiKeyboardInfo(VOID);
+
 #endif
