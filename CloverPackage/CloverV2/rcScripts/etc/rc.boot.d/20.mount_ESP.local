@@ -40,7 +40,13 @@ function mountESP {
 
     if [[ "$arg" == Yes ]]; then
         ESPDevice=$(LC_ALL=C diskutil info / 2>/dev/null | \
-         sed -n 's/.*Part [Oo]f Whole: *//p')
+         sed -n 's/.*PV UUID (disk): .*(//p' | \
+         sed -n 's/s[0-9])//p')
+
+        if [[ "$ESPDevice" == "" ]]; then
+            ESPDevice=$(LC_ALL=C diskutil info / 2>/dev/null | \
+             sed -n 's/.*Part [Oo]f Whole: *//p')
+        fi
     elif [[ "$arg" =~ $guidRegExp ]]; then
         ESPDevice=$(LC_ALL=C diskutil info "$arg" 2>/dev/null | \
          sed -n 's/.*Part [Oo]f Whole: *//p')
