@@ -2153,6 +2153,10 @@ GetEarlyUserSettings (
       
       Prop = GetProperty (DictPointer, "SkipHibernateTimeout");
       gSettings.SkipHibernateTimeout = IsPropertyTrue(Prop);
+      
+      //DisableCloverHotkeys
+      Prop = GetProperty (DictPointer, "DisableCloverHotkeys");
+      gSettings.DisableCloverHotkeys = IsPropertyTrue (Prop);
 
       Prop = GetProperty (DictPointer, "Arguments");
       if (Prop != NULL && (Prop->type == kTagTypeString) && Prop->string != NULL) {
@@ -5234,6 +5238,7 @@ GetUserSettings(
       Prop = GetProperty (DictPointer, "BooterConfig");
       gSettings.BooterConfig = (UINT16)GetPropertyInteger (Prop, 0); //the value 0 means not set
 //      SysVarsTmpBooterConfig = gSettings.BooterConfig;
+
     }
 
     if (gSettings.RtROM == NULL) {

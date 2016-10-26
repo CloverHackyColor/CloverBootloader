@@ -232,6 +232,8 @@
 		<false/>
 		<key>SkipHibernateTimeout</key>
 		<false/>
+		<key>DisableCloverHotkeys</key>
+		<false/>
 		<key>Fast</key>
 		<false/>
 		<key>Legacy</key>

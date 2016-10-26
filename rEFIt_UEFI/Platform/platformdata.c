@@ -667,6 +667,7 @@ GetDefaultSettings ()
   gSettings.RtROMLen             = 0;
   gSettings.CsrActiveConfig      = 0xFFFF;
   gSettings.BooterConfig         = 0;
+  gSettings.DisableCloverHotkeys = FALSE;
 
   if (gCPUStructure.Model >= CPU_MODEL_IVY_BRIDGE) {
     gSettings.GeneratePStates    = TRUE;

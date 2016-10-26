@@ -2038,17 +2038,24 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 #endif // ENABLE_SECURE_BOOT
         }
       }
-//we should never exclude them
-//      if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_FUNCS)) {
-        MenuEntryOptions.Image = BuiltinIcon(BUILTIN_ICON_FUNC_OPTIONS);
-        AddMenuEntry(&MainMenu, &MenuEntryOptions);
-        MenuEntryAbout.Image = BuiltinIcon(BUILTIN_ICON_FUNC_ABOUT);
-        AddMenuEntry(&MainMenu, &MenuEntryAbout);
-//      }
+
+      MenuEntryOptions.Image = BuiltinIcon(BUILTIN_ICON_FUNC_OPTIONS);
+      if (gSettings.DisableCloverHotkeys)
+        MenuEntryOptions.ShortcutLetter = 0x00;
+      AddMenuEntry(&MainMenu, &MenuEntryOptions);
+      MenuEntryAbout.Image = BuiltinIcon(BUILTIN_ICON_FUNC_ABOUT);
+      if (gSettings.DisableCloverHotkeys)
+        MenuEntryAbout.ShortcutLetter = 0x00;
+      AddMenuEntry(&MainMenu, &MenuEntryAbout);
+
 
       if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_FUNCS) || MainMenu.EntryCount == 0) {
+        if (gSettings.DisableCloverHotkeys)
+          MenuEntryReset.ShortcutLetter = 0x00;
         MenuEntryReset.Image = BuiltinIcon(BUILTIN_ICON_FUNC_RESET);
         AddMenuEntry(&MainMenu, &MenuEntryReset);
+        if (gSettings.DisableCloverHotkeys)
+          MenuEntryShutdown.ShortcutLetter = 0x00;
         MenuEntryShutdown.Image = BuiltinIcon(BUILTIN_ICON_FUNC_EXIT);
         AddMenuEntry(&MainMenu, &MenuEntryShutdown);
       }
