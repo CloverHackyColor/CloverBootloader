@@ -447,7 +447,8 @@ USBKeyboardDriverBindingStart (
 
   gBS->RestoreTPL (OldTpl);
   
-#if PcdEnableDisconnectOnExitBootServicesInUsbKbDriver
+//#if PcdEnableDisconnectOnExitBootServicesInUsbKbDriver
+#ifdef EXIT_USBKB
 //  if (PcdEnableDisconnectOnExitBootServicesInUsbKbDriver) {
     Status = gBS->CreateEvent (
                     EVT_SIGNAL_EXIT_BOOT_SERVICES,
@@ -480,7 +481,8 @@ ErrorExit:
       ReleaseKeyboardLayoutResources (UsbKeyboardDevice);
       gBS->CloseEvent (UsbKeyboardDevice->KeyboardLayoutEvent);
     }
-#if PcdEnableDisconnectOnExitBootServicesInUsbKbDriver    
+//#if PcdEnableDisconnectOnExitBootServicesInUsbKbDriver
+#ifdef EXIT_USBKB
     if (UsbKeyboardDevice->ExitBootServicesEvent != NULL) {
       gBS->CloseEvent (UsbKeyboardDevice->ExitBootServicesEvent);
     }
@@ -585,13 +587,13 @@ USBKeyboardDriverBindingStop (
          This->DriverBindingHandle,
          Controller
          );
-
+//#ifdef EXIT_USBKB
   if (!PcdEnableDisconnectOnExitBootServicesInUsbKbDriver ||
       !mExitingBootServices) {
     UsbKbFreeAppleKeyMapDb (UsbKeyboardDevice);
-    
-    
-    
+
+
+
     Status = gBS->UninstallMultipleProtocolInterfaces (
                                                        Controller,
                                                        &gEfiSimpleTextInProtocolGuid,
@@ -608,23 +610,23 @@ USBKeyboardDriverBindingStop (
     gBS->CloseEvent (UsbKeyboardDevice->DelayedRecoveryEvent);
     gBS->CloseEvent (UsbKeyboardDevice->SimpleInput.WaitForKey);
     gBS->CloseEvent (UsbKeyboardDevice->SimpleInputEx.WaitForKeyEx);
-#if PcdEnableDisconnectOnExitBootServicesInUsbKbDriver    
-    
+//#if PcdEnableDisconnectOnExitBootServicesInUsbKbDriver
+#ifdef EXIT_USBKB
     gBS->CloseEvent (UsbKeyboardDevice->ExitBootServicesEvent);
-    
+
 #endif
     KbdFreeNotifyList (&UsbKeyboardDevice->NotifyList);
-    
+
     ReleaseKeyboardLayoutResources (UsbKeyboardDevice);
     gBS->CloseEvent (UsbKeyboardDevice->KeyboardLayoutEvent);
-    
+
     if (UsbKeyboardDevice->ControllerNameTable != NULL) {
       FreeUnicodeStringTable (UsbKeyboardDevice->ControllerNameTable);
     }
-    
+
     DestroyQueue (&UsbKeyboardDevice->UsbKeyQueue);
     DestroyQueue (&UsbKeyboardDevice->EfiKeyQueue);
-    
+
     FreePool (UsbKeyboardDevice);
   }
 
@@ -632,7 +634,7 @@ USBKeyboardDriverBindingStop (
 }
 
 /**
-  Internal function to read the next keystroke from the keyboard buffer.
+ Internal function to read the next keystroke from the keyboard buffer.
 
   @param  UsbKeyboardDevice       USB keyboard's private structure.
   @param  KeyData                 A pointer to buffer to hold the keystroke
@@ -892,7 +894,8 @@ USBKeyboardTimerHandler (
   @param  Event                    Indicates the event that invoke this function.
   @param  Context                  Indicates the calling context.
 **/
-#if PcdEnableDisconnectOnExitBootServicesInUsbKbDriver
+//#if PcdEnableDisconnectOnExitBootServicesInUsbKbDriver
+#ifdef EXIT_USBKB
 VOID
 EFIAPI
 USBKeyboardExitBootServices (

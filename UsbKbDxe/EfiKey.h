@@ -57,8 +57,11 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 
 #define BOOT_PROTOCOL       0
 #define REPORT_PROTOCOL     1
-
+#ifdef EXIT_USBKB
+#define PcdEnableDisconnectOnExitBootServicesInUsbKbDriver 1
+#else
 #define PcdEnableDisconnectOnExitBootServicesInUsbKbDriver 0
+#endif
 
 typedef struct {
   BOOLEAN  Down;
@@ -165,7 +168,8 @@ typedef struct {
   USB_NS_KEY                        *CurrentNsKey;
   EFI_KEY_DESCRIPTOR                *mKeyConvertionTable;
   EFI_EVENT                         KeyboardLayoutEvent;
-#if PcdEnableDisconnectOnExitBootServicesInUsbKbDriver
+//#if PcdEnableDisconnectOnExitBootServicesInUsbKbDriver
+#ifdef EXIT_USBKB
   EFI_EVENT                         ExitBootServicesEvent;
 #endif
 } USB_KB_DEV;
