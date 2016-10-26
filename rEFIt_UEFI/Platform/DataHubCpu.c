@@ -302,7 +302,7 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
     DeleteNvramVariable(L"nvda_drv", &gEfiAppleBootGuid);
   }
   
-  if (Entry->LoaderType == OSTYPE_RECOVERY) {
+  if (0 && Entry->LoaderType == OSTYPE_RECOVERY) { //fixme: Remove "0 &&" when OsxAptioFix can launch nested boot.efi ©vit9696
     CHAR8 *FdeRecovery = "fde-recovery";
     SetNvramVariable(L"recovery-boot-mode", &gEfiAppleBootGuid, Attributes, 12, (VOID*)FdeRecovery);
   } else {
