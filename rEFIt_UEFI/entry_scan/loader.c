@@ -387,7 +387,8 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath,
   }
 
   // Get the loader device path
-  LoaderDevicePath = FileDevicePath(Volume->DeviceHandle, (*LoaderPath == L'\\') ? (LoaderPath + 1) : LoaderPath);
+//  LoaderDevicePath = FileDevicePath(Volume->DeviceHandle, (*LoaderPath == L'\\') ? (LoaderPath + 1) : LoaderPath);
+  LoaderDevicePath = FileDevicePath(Volume->DeviceHandle, LoaderPath);
   if (LoaderDevicePath == NULL) {
     return NULL;
   }

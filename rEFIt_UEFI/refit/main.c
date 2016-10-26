@@ -421,7 +421,9 @@ VOID ReadSIPCfg() {
     StrCat(csrLog, PoolPrint(L"%a%a", StrLen(csrLog) ? " | " : "", "CSR_ALLOW_UNRESTRICTED_NVRAM"));
   if (csrCfg & CSR_ALLOW_DEVICE_CONFIGURATION)
     StrCat(csrLog, PoolPrint(L"%a%a", StrLen(csrLog) ? " | " : "", "CSR_ALLOW_DEVICE_CONFIGURATION"));
-
+  if (csrCfg & CSR_DISABLE_BASESYSTEM_VERIFICATION)
+    StrCat(csrLog, PoolPrint(L"%a%a", StrLen(csrLog) ? " | " : "", "CSR_DISABLE_BASESYSTEM_VERIFICATION"));
+    
   if (StrLen(csrLog)) DBG("CSR_CFG: %s\n", csrLog);
 
   FreePool(csrLog);

@@ -4516,6 +4516,7 @@ REFIT_MENU_ENTRY *SubMenuCSR()
   AddMenuCheck(SubScreen, "Allow Unrestricted DTrace", CSR_ALLOW_UNRESTRICTED_DTRACE, 66);
   AddMenuCheck(SubScreen, "Allow Unrestricted NVRAM", CSR_ALLOW_UNRESTRICTED_NVRAM, 66);
   AddMenuCheck(SubScreen, "Allow Device Configuration", CSR_ALLOW_DEVICE_CONFIGURATION, 66);
+  AddMenuCheck(SubScreen, "Disable BaseSystem Verification", CSR_DISABLE_BASESYSTEM_VERIFICATION, 66);
   
   // return
   AddMenuEntry(SubScreen, &MenuEntryReturn);
