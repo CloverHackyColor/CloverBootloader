@@ -129,7 +129,7 @@ typedef EFI_STATUS (EFIAPI *SEARCH_KEY_STROKE)(IN APPLE_KEY_STATE_PROTOCOL *This
 
 struct _APPLE_KEY_STATE_PROTOCOL
 {
-	UINT64																	Signature;
+	UINTN 																	Signature;
 	READ_KEY_STATE													ReadKeyState;
   SEARCH_KEY_STROKE                       SearchKeyStroke;
 };

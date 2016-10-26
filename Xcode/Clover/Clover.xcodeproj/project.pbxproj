@@ -20,6 +20,7 @@
 		12AAF5341DBE348100A52B12 /* ComponentName.c in Sources */ = {isa = PBXBuildFile; fileRef = 12AAF52C1DBE348100A52B12 /* ComponentName.c */; };
 		12AAF5351DBE348100A52B12 /* EfiKey.c in Sources */ = {isa = PBXBuildFile; fileRef = 12AAF52D1DBE348100A52B12 /* EfiKey.c */; };
 		12AAF5361DBE348100A52B12 /* KeyBoard.c in Sources */ = {isa = PBXBuildFile; fileRef = 12AAF52F1DBE348100A52B12 /* KeyBoard.c */; };
+		12AAF5B11DC0DD0700A52B12 /* AppleKeyMapAggregator.c in Sources */ = {isa = PBXBuildFile; fileRef = 12AAF5AE1DC0DD0700A52B12 /* AppleKeyMapAggregator.c */; };
 		12E3015A1D5A413A00EED426 /* lodepng.c in Sources */ = {isa = PBXBuildFile; fileRef = 12E301581D5A413A00EED426 /* lodepng.c */; };
 		2C794D201A0AA85900D845B0 /* Reset.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C7949ED1A0AA85900D845B0 /* Reset.c */; };
 		2C794D211A0AA85900D845B0 /* AhciMode.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C7949F01A0AA85900D845B0 /* AhciMode.c */; };
@@ -529,6 +530,9 @@
 		12AAF5621DBE44C500A52B12 /* KeyboardInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KeyboardInfo.h; sourceTree = "<group>"; };
 		12AAF5881DC0A48500A52B12 /* AppleKey.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = AppleKey.c; sourceTree = "<group>"; };
 		12AAF5891DC0A48500A52B12 /* AppleKey.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleKey.h; sourceTree = "<group>"; };
+		12AAF5AE1DC0DD0700A52B12 /* AppleKeyMapAggregator.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = AppleKeyMapAggregator.c; sourceTree = "<group>"; };
+		12AAF5AF1DC0DD0700A52B12 /* AppleKeyMapAggregator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppleKeyMapAggregator.h; sourceTree = "<group>"; };
+		12AAF5B01DC0DD0700A52B12 /* AppleKeyMapAggregator.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AppleKeyMapAggregator.inf; sourceTree = "<group>"; };
 		12E301581D5A413A00EED426 /* lodepng.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lodepng.c; sourceTree = "<group>"; };
 		12E301591D5A413A00EED426 /* lodepng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lodepng.h; sourceTree = "<group>"; };
 		12EF3B1C1A7AB8D40056AF22 /* ComponentName.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ComponentName.c; sourceTree = "<group>"; };
@@ -1387,6 +1391,7 @@
 				12AAF5131DBE287A00A52B12 /* AppleEvent */,
 				12A60F4C1DB610500068BF8B /* AppleGraphicsConfig */,
 				12A60F4D1DB610500068BF8B /* AppleImageCodec */,
+				12AAF5AD1DC0DD0700A52B12 /* AppleKeyMap */,
 				12AAF4AD1DBA360700A52B12 /* AppleKeyState */,
 				12AAF5051DBE167600A52B12 /* AppleUITheme */,
 				12AAF3C41DB7743E00A52B12 /* DriverOverride */,
@@ -1583,6 +1588,16 @@
 			);
 			name = UsbKbDxe;
 			path = ../../UsbKbDxe;
+			sourceTree = "<group>";
+		};
+		12AAF5AD1DC0DD0700A52B12 /* AppleKeyMap */ = {
+			isa = PBXGroup;
+			children = (
+				12AAF5AE1DC0DD0700A52B12 /* AppleKeyMapAggregator.c */,
+				12AAF5AF1DC0DD0700A52B12 /* AppleKeyMapAggregator.h */,
+				12AAF5B01DC0DD0700A52B12 /* AppleKeyMapAggregator.inf */,
+			);
+			path = AppleKeyMap;
 			sourceTree = "<group>";
 		};
 		12EF3B1B1A7AB8D40056AF22 /* XhciDxe */ = {
@@ -3753,6 +3768,7 @@
 				12AAF5341DBE348100A52B12 /* ComponentName.c in Sources */,
 				12AAF5351DBE348100A52B12 /* EfiKey.c in Sources */,
 				12AAF5361DBE348100A52B12 /* KeyBoard.c in Sources */,
+				12AAF5B11DC0DD0700A52B12 /* AppleKeyMapAggregator.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1,0 +1,45 @@
+## @file
+# Copyright (C) 2005 - 2015, Apple Inc.  All rights reserved.<BR>
+#
+# This program and the accompanying materials have not been licensed.
+# Neither is its usage, its redistribution, in source or binary form,
+# licensed, nor implicitely or explicitely permitted, except when
+# required by applicable law.
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
+# OR CONDITIONS OF ANY KIND, either express or implied.
+#
+#  
+##
+
+[Defines]
+  BASE_NAME   = AppleKeyAggregator
+  FILE_GUID   = AC4CE557-F5CD-439E-963C-40F09683DAC5
+  MODULE_TYPE = UEFI_DRIVER
+  ENTRY_POINT = AggregatorEntryPoint
+  INF_VERSION = 0x00010005
+  VERSION_STRING  = 1.0
+
+[Packages]
+  Clover/CloverPkg.dec
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+
+[Protocols]
+  gAppleKeyStateProtocolGuid  ## PRODUCES
+  gAppleKeyMapDatabaseProtocolGuid    ## PRODUCES
+
+[LibraryClasses]
+  BaseLib
+  UefiLib
+  UefiDriverEntryPoint
+  UefiBootServicesTableLib
+  UefiRuntimeServicesTableLib
+  BaseMemoryLib
+  MemoryAllocationLib
+  DebugLib
+  PrintLib
+
+[Sources]
+  AppleKeyMapAggregator.c
