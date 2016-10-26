@@ -15,48 +15,10 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 **/
 
 #include "EfiKey.h"
+#include "AppleKey.h"
 #include "KeyBoard.h"
 
-//#include <MiscBase.h>
-
-#include <Protocol/KeyboardInfo.h>
-#include <Protocol/ApplePlatformInfoDatabase.h>
-
-#include <Library/DevicePathLib.h>
-
-extern EFI_GUID gApplePlatformInfoKeyboardGuid;
-
-STATIC APPLE_PLATFORM_INFO_DATABASE_PROTOCOL *mPlatformInfo = NULL;
-
-STATIC UINT8 mCountryCode = 0;
-
-STATIC BOOLEAN mIdsInitialized = FALSE;
-
-STATIC UINT16 mIdVendor = 0;
-
-STATIC UINT16 mIdProduct = 0;
-
 STATIC BOOLEAN mExitingBootServices = FALSE;
-
-EFI_STATUS
-EFIAPI
-UsbKbGetKeyboardDeviceInfo (
-  OUT UINT16  *IdVendor,
-  OUT UINT16  *IdProduct,
-  OUT UINT8   *CountryCode
-  )
-{
-  *IdVendor    = mIdVendor;
-  *IdProduct   = mIdProduct;
-  *CountryCode = mCountryCode;
-
-  return EFI_SUCCESS;
-}
-
-// mKeyboardInfo
-EFI_KEYBOARD_INFO_PROTOCOL mKeyboardInfo = {
-  UsbKbGetKeyboardDeviceInfo
-};
 
 //
 // USB Keyboard Driver Global Variables
@@ -199,15 +161,6 @@ USBKeyboardDriverBindingStart (
   UINT8                         PacketSize;
   BOOLEAN                       Found;
   EFI_TPL                       OldTpl;
-  APPLE_KEY_MAP_DATABASE_PROTOCOL *AppleKeyMapDb;
-  EFI_DEV_PATH_PTR                DevicePath;
-  UINTN                           Size;
-  EFI_GUID                        NameGuid;
-  UINT32                          Data;
-  UINT8                           InterfaceNum;
-  EFI_USB_HID_DESCRIPTOR          HidDescriptor;
-  UINT32                          Value;
-  UINTN                           Shift;
 
   OldTpl = gBS->RaiseTPL (TPL_CALLBACK);
   //
@@ -224,17 +177,11 @@ USBKeyboardDriverBindingStart (
   if (EFI_ERROR (Status)) {
     goto ErrorExit1;
   }
-  
-  Status = gBS->LocateProtocol (&gAppleKeyMapDatabaseProtocolGuid, NULL, (VOID **)&AppleKeyMapDb);
-
-  if (EFI_ERROR (Status)) {
-    AppleKeyMapDb = NULL;
-  }
 
   UsbKeyboardDevice = AllocateZeroPool (sizeof (USB_KB_DEV));
 //  ASSERT (UsbKeyboardDevice != NULL);
   if (!UsbKeyboardDevice) {
-    goto ErrorExit;
+    goto ErrorExit1;
   }
 
   //
@@ -272,19 +219,8 @@ USBKeyboardDriverBindingStart (
     );
 
   UsbKeyboardDevice->UsbIo = UsbIo;
-  UsbKeyboardDevice->KeyMapDb = AppleKeyMapDb;
-
-  if (AppleKeyMapDb != NULL) {
-    Status = AppleKeyMapDb->CreateKeyStrokesBuffer (
-                              AppleKeyMapDb,
-                              6,
-                              &UsbKeyboardDevice->KeyMapDbIndex
-                              );
-
-    if (EFI_ERROR (Status)) {
-      UsbKeyboardDevice->KeyMapDb = NULL;
-    }
-  }
+//  UsbKeyboardDevice->KeyMapDb = AppleKeyMapDb;
+  UsbKbLocateAppleKeyMapDb (UsbKeyboardDevice);
 
   Status = UsbIo->UsbGetDeviceDescriptor (
                     UsbIo,
@@ -316,7 +252,7 @@ USBKeyboardDriverBindingStart (
     return EFI_UNSUPPORTED;
   }
 
-  InterfaceNum = UsbKeyboardDevice->InterfaceDescriptor.InterfaceNumber;
+//  InterfaceNum = UsbKeyboardDevice->InterfaceDescriptor.InterfaceNumber;
 
   //
   // Traverse endpoints to find interrupt endpoint
@@ -410,66 +346,7 @@ USBKeyboardDriverBindingStart (
     goto ErrorExit;
   }
 
-  DevicePath.DevPath = UsbKeyboardDevice->DevicePath;
-  NameGuid           = gApplePlatformInfoKeyboardGuid;
-  Shift              = 20;
-  Value              = 0;
-  Index              = 1;
-
-  do {
-    if ((DevicePathType (DevicePath.DevPath) == HARDWARE_DEVICE_PATH)
-     && (DevicePathSubType (DevicePath.DevPath) == HW_PCI_DP)) {
-      Value = (((UINT32)(DevicePath.Pci->Device & 0x1F) | (DevicePath.Pci->Function << 5)) << 24);
-    }
-
-    if ((DevicePathType (DevicePath.DevPath) == MESSAGING_DEVICE_PATH)
-     && (DevicePathSubType (DevicePath.DevPath) == MSG_USB_DP)) {
-      Value |= (((UINT32)DevicePath.Usb->ParentPortNumber + 1) << Shift);
-      Shift -= 4;
-    }
-
-    if (IsDevicePathEnd (DevicePath.DevPath)) {
-      break;
-    }
-  } while ((Index++) < 20);
-
-  Size = 4;
-
-  if (mPlatformInfo == NULL) {
-    gBS->LocateProtocol (&gApplePlatformInfoDatabaseProtocolGuid, NULL, (VOID **)&mPlatformInfo);
-
-    if (mPlatformInfo == NULL) {
-      goto Skip;
-    }
-  }
-
-  Status = mPlatformInfo->GetFirstDataSize (mPlatformInfo, &NameGuid, &Size);
-
-  if (!EFI_ERROR (Status) && (Size == sizeof (Data))) {
-    Status = mPlatformInfo->GetFirstData (mPlatformInfo, &NameGuid, &Data, &Size);
-
-    if ((Status == EFI_SUCCESS) && (Value == Data) && !mIdsInitialized) {
-      Status = UsbGetHidDescriptor (UsbIo, InterfaceNum, &HidDescriptor);
-
-      if (Status == EFI_SUCCESS) {
-        mCountryCode = HidDescriptor.CountryCode;
-      }
-
-      mIdVendor       = UsbKeyboardDevice->DeviceDescriptor.IdVendor;
-      mIdProduct      = UsbKeyboardDevice->DeviceDescriptor.IdProduct;
-      mIdsInitialized = TRUE;
-
-      gBS->InstallProtocolInterface (
-             NULL,
-             &gEfiKeyboardInfoProtocolGuid,
-             EFI_NATIVE_INTERFACE,
-             (VOID *)&mKeyboardInfo
-             );
-    }
-  }
-
-Skip:
-
+  //UsbKbInstallKeyboardDeviceInfoProtocol (UsbKeyboardDevice, UsbIo);
   //
   // Install Simple Text Input Protocol and Simple Text Input Ex Protocol
   // for the USB keyboard device.
@@ -569,8 +446,9 @@ Skip:
     );
 
   gBS->RestoreTPL (OldTpl);
-/*
-  if (PcdGetBool (PcdEnableDisconnectOnExitBootServicesInUsbKbDriver)) {
+  
+#if PcdEnableDisconnectOnExitBootServicesInUsbKbDriver
+//  if (PcdEnableDisconnectOnExitBootServicesInUsbKbDriver) {
     Status = gBS->CreateEvent (
                     EVT_SIGNAL_EXIT_BOOT_SERVICES,
                     TPL_NOTIFY,
@@ -578,9 +456,11 @@ Skip:
                     UsbKeyboardDevice,
                     &UsbKeyboardDevice->ExitBootServicesEvent
                     );
-  }
-*/
+//  }
+  return Status;
+#else
   return EFI_SUCCESS;
+#endif
 
 //
 // Error handler
@@ -600,12 +480,11 @@ ErrorExit:
       ReleaseKeyboardLayoutResources (UsbKeyboardDevice);
       gBS->CloseEvent (UsbKeyboardDevice->KeyboardLayoutEvent);
     }
-    /*
-    if (PcdGetBool (PcdEnableDisconnectOnExitBootServicesInUsbKbDriver)
-     && (UsbKeyboardDevice->ExitBootServicesEvent != NULL)) {
+#if PcdEnableDisconnectOnExitBootServicesInUsbKbDriver    
+    if (UsbKeyboardDevice->ExitBootServicesEvent != NULL) {
       gBS->CloseEvent (UsbKeyboardDevice->ExitBootServicesEvent);
     }
-     */
+#endif     
     FreePool (UsbKeyboardDevice);
     UsbKeyboardDevice = NULL;
   }
@@ -706,50 +585,48 @@ USBKeyboardDriverBindingStop (
          This->DriverBindingHandle,
          Controller
          );
-/*
-  if (!PcdGetBool (PcdEnableDisconnectOnExitBootServicesInUsbKbDriver)
-   || !mExitingBootServices) {
-    if (UsbKeyboardDevice->KeyMapDb != NULL) 
-      UsbKeyboardDevice->KeyMapDb->RemoveKeyStrokesBuffer (
-                                     UsbKeyboardDevice->KeyMapDb,
-                                     UsbKeyboardDevice->KeyMapDbIndex
-                                     );
-*/    
 
-  Status = gBS->UninstallMultipleProtocolInterfaces (
-                  Controller,
-                  &gEfiSimpleTextInProtocolGuid,
-                  &UsbKeyboardDevice->SimpleInput,
-                  &gEfiSimpleTextInputExProtocolGuid,
-                  &UsbKeyboardDevice->SimpleInputEx,
-                  NULL
-                  );
-  //
-  // Free all resources.
-  //
-  gBS->CloseEvent (UsbKeyboardDevice->TimerEvent);
-  gBS->CloseEvent (UsbKeyboardDevice->RepeatTimer);
-  gBS->CloseEvent (UsbKeyboardDevice->DelayedRecoveryEvent);
-  gBS->CloseEvent (UsbKeyboardDevice->SimpleInput.WaitForKey);
-  gBS->CloseEvent (UsbKeyboardDevice->SimpleInputEx.WaitForKeyEx);
-/*
-    if (PcdGetBool (PcdEnableDisconnectOnExitBootServicesInUsbKbDriver)) {
-      gBS->CloseEvent (UsbKeyboardDevice->ExitBootServicesEvent);
+  if (!PcdEnableDisconnectOnExitBootServicesInUsbKbDriver ||
+      !mExitingBootServices) {
+    UsbKbFreeAppleKeyMapDb (UsbKeyboardDevice);
+    
+    
+    
+    Status = gBS->UninstallMultipleProtocolInterfaces (
+                                                       Controller,
+                                                       &gEfiSimpleTextInProtocolGuid,
+                                                       &UsbKeyboardDevice->SimpleInput,
+                                                       &gEfiSimpleTextInputExProtocolGuid,
+                                                       &UsbKeyboardDevice->SimpleInputEx,
+                                                       NULL
+                                                       );
+    //
+    // Free all resources.
+    //
+    gBS->CloseEvent (UsbKeyboardDevice->TimerEvent);
+    gBS->CloseEvent (UsbKeyboardDevice->RepeatTimer);
+    gBS->CloseEvent (UsbKeyboardDevice->DelayedRecoveryEvent);
+    gBS->CloseEvent (UsbKeyboardDevice->SimpleInput.WaitForKey);
+    gBS->CloseEvent (UsbKeyboardDevice->SimpleInputEx.WaitForKeyEx);
+#if PcdEnableDisconnectOnExitBootServicesInUsbKbDriver    
+    
+    gBS->CloseEvent (UsbKeyboardDevice->ExitBootServicesEvent);
+    
+#endif
+    KbdFreeNotifyList (&UsbKeyboardDevice->NotifyList);
+    
+    ReleaseKeyboardLayoutResources (UsbKeyboardDevice);
+    gBS->CloseEvent (UsbKeyboardDevice->KeyboardLayoutEvent);
+    
+    if (UsbKeyboardDevice->ControllerNameTable != NULL) {
+      FreeUnicodeStringTable (UsbKeyboardDevice->ControllerNameTable);
     }
-*/
-  KbdFreeNotifyList (&UsbKeyboardDevice->NotifyList);
-
-  ReleaseKeyboardLayoutResources (UsbKeyboardDevice);
-  gBS->CloseEvent (UsbKeyboardDevice->KeyboardLayoutEvent);
-
-  if (UsbKeyboardDevice->ControllerNameTable != NULL) {
-    FreeUnicodeStringTable (UsbKeyboardDevice->ControllerNameTable);
+    
+    DestroyQueue (&UsbKeyboardDevice->UsbKeyQueue);
+    DestroyQueue (&UsbKeyboardDevice->EfiKeyQueue);
+    
+    FreePool (UsbKeyboardDevice);
   }
-
-  DestroyQueue (&UsbKeyboardDevice->UsbKeyQueue);
-  DestroyQueue (&UsbKeyboardDevice->EfiKeyQueue);
-
-  FreePool (UsbKeyboardDevice);
 
   return Status;
 }
@@ -1015,6 +892,7 @@ USBKeyboardTimerHandler (
   @param  Event                    Indicates the event that invoke this function.
   @param  Context                  Indicates the calling context.
 **/
+#if PcdEnableDisconnectOnExitBootServicesInUsbKbDriver
 VOID
 EFIAPI
 USBKeyboardExitBootServices (
@@ -1034,7 +912,7 @@ USBKeyboardExitBootServices (
          NULL
          );
 }
-
+#endif
 /**
   Free keyboard notify list.
 

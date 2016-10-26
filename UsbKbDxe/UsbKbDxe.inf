@@ -46,6 +46,8 @@
 #
 
 [Sources]
+  AppleKey.c
+  AppleKey.h
   EfiKey.c
   EfiKey.h
   KeyBoard.c
@@ -96,6 +98,8 @@
   
 [FeaturePcd]
   gEfiMdeModulePkgTokenSpaceGuid.PcdDisableDefaultKeyboardLayoutInUsbKbDriver ## CONSUMES
+#   gCupertinoModulePkgTokenSpaceGuid.PcdNotifyAppleKeyMapDbInUsbKbDriver                ## CONSUMES
+
   
 # [Event]
 # EVENT_TYPE_RELATIVE_TIMER        ## CONSUMES
