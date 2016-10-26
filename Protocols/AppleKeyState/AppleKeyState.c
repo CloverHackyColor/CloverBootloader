@@ -50,7 +50,7 @@ ReadKeyState (APPLE_KEY_STATE_PROTOCOL* This,
 {
   EFI_STATUS				Status;
   EFI_INPUT_KEY Key;
-  UINTN         Ind = 0;
+ // UINTN         Ind = 0;
 
   if (!ModifyFlags || !PressedKeyStatesCount || !PressedKeyStates) {
     return EFI_INVALID_PARAMETER;
@@ -58,7 +58,7 @@ ReadKeyState (APPLE_KEY_STATE_PROTOCOL* This,
 
   while (ReadAllKeyStrokes()) gBS->Stall(500 * 1000);
 
-  gBS->WaitForEvent(1, &gST->ConIn->WaitForKey, &Ind);
+  //gBS->WaitForEvent(1, &gST->ConIn->WaitForKey, &Ind);
   Status = gST->ConIn->ReadKeyStroke(gST->ConIn, &Key);
   
   *PressedKeyStatesCount = 2;
