@@ -19,7 +19,7 @@
 
 #include <Protocol/AppleKeyState.h>
 #include <Protocol/AppleKeyMapDatabase.h>
-#include "AppleKeyMapAggregator.h"
+#include "AppleKeyAggregator.h"
 
 // KeyMapGetKeyStrokesByIndex
 APPLE_KEY_STROKES_INFO *
