@@ -42,4 +42,4 @@
   PrintLib
 
 [Sources]
-  AppleKeyMapAggregator.c
+  AppleKeyAggregator.c

@@ -437,7 +437,7 @@
   Clover/Protocols/AppleUITheme/AppleUITheme.inf
   Clover/Protocols/AppleEvent/AppleEvent.inf
   Clover/Protocols/HashServiceFix/HashServiceFix.inf
-  Clover/Protocols/AppleKeyMap/AppleKeyMapAggregator.inf
+  Clover/Protocols/AppleKeyAggregator/AppleKeyAggregator.inf
   
 !ifdef DEBUG_ON_SERIAL_PORT
 
