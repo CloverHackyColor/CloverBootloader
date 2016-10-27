@@ -108,9 +108,6 @@ KeyMapCreateKeyStrokesBuffer (
   if (!This || !Index) {
     return EFI_INVALID_PARAMETER;
   }
-  if (KeyBufferSize == 0) {
-    return EFI_SUCCESS;
-  }
   
   Aggregator = APPLE_KEY_MAP_AGGREGATOR_PRIVATE_FROM_DATABASE (This);
   
@@ -125,10 +122,8 @@ KeyMapCreateKeyStrokesBuffer (
   Status                     = EFI_OUT_OF_RESOURCES;
   
   if (Memory != NULL) {
-    KeyStrokesInfo = AllocateZeroPool (
-                                       sizeof (*KeyStrokesInfo)
-                                       + (KeyBufferSize * sizeof (APPLE_KEY))
-                                       );
+    KeyStrokesInfo = AllocateZeroPool (sizeof (APPLE_KEY_STROKES_INFO)
+                                       + (KeyBufferSize * sizeof (APPLE_KEY)));
     Status         = EFI_OUT_OF_RESOURCES;
     
     if (KeyStrokesInfo != NULL) {
@@ -137,10 +132,8 @@ KeyMapCreateKeyStrokesBuffer (
       KeyStrokesInfo->Hdr.Index         = Aggregator->NextKeyStrokeIndex;
       ++Aggregator->NextKeyStrokeIndex;
       
-      InsertTailList (
-                      &Aggregator->KeyStrokesInfoList,
-                      &KeyStrokesInfo->Hdr.This
-                      );
+      InsertTailList (&Aggregator->KeyStrokesInfoList,
+                      &KeyStrokesInfo->Hdr.This);
       
       Status = EFI_SUCCESS;
       *Index = KeyStrokesInfo->Hdr.Index;
@@ -243,12 +236,12 @@ ReadKeyState (APPLE_KEY_STATE_PROTOCOL* This,
   UINTN                    Index2;
   APPLE_KEY                Key;
   
-  if (!This || !ModifyFlags || !PressedKeyCount || !Keys) {
+  if (!This || !ModifyFlags || !PressedKeyCount) {
     return EFI_INVALID_PARAMETER;
   }
-  if (!*PressedKeyCount) {
-    return EFI_SUCCESS;
-  }
+//  if (!*PressedKeyCount) {
+//    return EFI_SUCCESS;
+//  }
   
   Aggregator     = APPLE_KEY_MAP_AGGREGATOR_PRIVATE_FROM_AGGREGATOR (This);
   KeyStrokesInfo = APPLE_KEY_STROKES_INFO_FROM_LIST_ENTRY (GetFirstNode (&Aggregator->KeyStrokesInfoList));
@@ -301,7 +294,9 @@ ReadKeyState (APPLE_KEY_STATE_PROTOCOL* This,
   *PressedKeyCount    = DbNoKeyStrokes;
   Status     = EFI_SUCCESS;
   
-  gBS->CopyMem((VOID *)Keys, (VOID *)Aggregator->KeyBuffer, (DbNoKeyStrokes * sizeof(APPLE_KEY)));
+  if (Keys != NULL) {
+    gBS->CopyMem((VOID *)Keys, (VOID *)Aggregator->KeyBuffer, (DbNoKeyStrokes * sizeof(APPLE_KEY)));
+  }
     
   return Status;
 }
@@ -329,7 +324,7 @@ SearchKeyStroke (APPLE_KEY_STATE_PROTOCOL* This,
     return EFI_INVALID_PARAMETER;
   }
   if (!PressedKeyCount) {
-    return EFI_SUCCESS;
+    return EFI_NOT_FOUND;
   }
   
   DbNoKeys = DB_KEYS_NUM;

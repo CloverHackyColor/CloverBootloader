@@ -39,7 +39,14 @@
     APPLE_KEY_STROKES_INFO_SIGNATURE                 \
   )                                                \
 ))
+/*
+typedef struct _EFI_LIST_ENTRY {
+  struct _EFI_LIST_ENTRY  *ForwardLink;
+  struct _EFI_LIST_ENTRY  *BackLink;
+} EFI_LIST_ENTRY;
 
+typedef EFI_LIST_ENTRY EFI_LIST;
+*/
 
 // APPLE_KEY_STROKES_INFO_HDR
 typedef struct {
@@ -60,14 +67,14 @@ typedef struct {
 
 // APPLE_KEY_MAP_AGGREGATOR
 typedef struct {
-  UINTN                             Signature;           ///<
-  UINTN                             NextKeyStrokeIndex;  ///<
-  APPLE_KEY                         *KeyBuffer;          ///<
-  UINTN                             KeyBuffersSize;      ///<
-  LIST_ENTRY                        KeyStrokesInfoList;  ///<
-  APPLE_KEY_MAP_DATABASE_PROTOCOL   DatabaseProtocol;    ///<
-  APPLE_KEY_STATE_PROTOCOL          AggregatorProtocol;  ///<
-} APPLE_KEY_MAP_AGGREGATOR;
+  UINTN                             Signature;           ///<0
+  UINTN                             NextKeyStrokeIndex;  ///<0x08
+  APPLE_KEY                         *KeyBuffer;          ///<0x10
+  UINTN                             KeyBuffersSize;      ///<0x18
+  LIST_ENTRY                        KeyStrokesInfoList;  ///<0x20
+  APPLE_KEY_MAP_DATABASE_PROTOCOL   DatabaseProtocol;    ///<0x30 size=8*4
+  APPLE_KEY_STATE_PROTOCOL          AggregatorProtocol;  ///<0x50 size=8*3
+} APPLE_KEY_MAP_AGGREGATOR;  //size=0x68
 
 
 
