@@ -4843,6 +4843,8 @@ UINTN RunMainMenu(IN REFIT_MENU_SCREEN *Screen, IN INTN DefaultSelection, OUT RE
         if (/*MenuExit == MENU_EXIT_ENTER &&*/ MainChosenEntry->Tag == TAG_LOADER) {
           if (((LOADER_ENTRY*)MainChosenEntry)->LoadOptions) {
             AsciiSPrint(gSettings.BootArgs, 255, "%s", ((LOADER_ENTRY*)MainChosenEntry)->LoadOptions);
+          } else {
+            ZeroMem(&gSettings.BootArgs, 255);
           }
           DBG("boot with args: %a\n", gSettings.BootArgs);
         }
