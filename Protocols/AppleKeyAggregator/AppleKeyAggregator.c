@@ -174,7 +174,7 @@ KeyMapRemoveKeyStrokesBuffer (
   
   return Status;
 }
-
+//->SetKeyStrokeBufferKeys => Index=3000, Modifiers=0, NoKeys=0, Keys={5518, 0}, Status=Success
 EFI_STATUS
 EFIAPI
 KeyMapSetKeyStrokeBufferKeys (
@@ -192,9 +192,6 @@ KeyMapSetKeyStrokeBufferKeys (
   
   if (!This || !Keys) {
     return EFI_INVALID_PARAMETER;
-  }
-  if (NumberOfKeys == 0) {
-    return EFI_SUCCESS;
   }
   
   Aggregator     = APPLE_KEY_MAP_AGGREGATOR_PRIVATE_FROM_DATABASE (This);
@@ -217,7 +214,7 @@ KeyMapSetKeyStrokeBufferKeys (
   return Status;
 }
 
-
+//->ReadKeyState(), count=1, flags=0x0 states={7028,0}, status=Success
 EFI_STATUS
 EFIAPI
 ReadKeyState (APPLE_KEY_STATE_PROTOCOL* This,

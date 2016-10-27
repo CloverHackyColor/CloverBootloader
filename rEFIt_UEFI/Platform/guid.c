@@ -301,6 +301,7 @@ StrToGuidLE (
   return EFI_SUCCESS;
 }
 
+//the caller is responsible to free the buffer
 CHAR16 * GuidLEToStr(EFI_GUID *Guid)
 {
   CHAR16 *Str = PoolPrint(L"%8x-%4x-%4x-%2x%2x-%2x%2x%2x%2x%2x%2x",

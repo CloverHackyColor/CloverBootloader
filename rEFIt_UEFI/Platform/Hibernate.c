@@ -566,8 +566,8 @@ IsOsxHibernated (IN LOADER_ENTRY    *Entry)
   UINT8               *Data               = NULL;
   REFIT_VOLUME        *ThisVolume = Entry->Volume;
   REFIT_VOLUME        *Volume = ThisVolume;
-  UINTN               VolumeIndex;
-  EFI_GUID            *VolumeUUID;
+//  UINTN               VolumeIndex;
+//  EFI_GUID            *VolumeUUID;
 
   Status = GetRootUUID(ThisVolume);
   
@@ -589,8 +589,8 @@ IsOsxHibernated (IN LOADER_ENTRY    *Entry)
     </dict>
 */ 
  //   Volume = from UUID
- //   
-
+ //   We can obtain Partition UUID but not Volume UUID
+/*
     Status = EFI_NOT_FOUND;
     for (VolumeIndex = 0; VolumeIndex < VolumesCount; VolumeIndex++) {
       Volume = Volumes[VolumeIndex];
@@ -606,7 +606,7 @@ IsOsxHibernated (IN LOADER_ENTRY    *Entry)
       Volume = ThisVolume;
       DBG("cant find volume with UUID=%s\n", GuidLEToStr(&ThisVolume->RootUUID));
     }
-    
+*/
   }
 
   //if sleep image is good but OSX was not hibernated.
