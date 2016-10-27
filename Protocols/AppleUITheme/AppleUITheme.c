@@ -7,8 +7,8 @@
 #include <Library/UefiBootServicesTableLib.h>
 
 
-STATIC UINT32  mCurrentColor;
-EFI_RUNTIME_SERVICES*   gRT;
+STATIC UINT32           mCurrentColor;
+STATIC EFI_HANDLE       Handle = NULL;
 
 extern EFI_GUID gEfiAppleNvramGuid;
 
@@ -61,12 +61,14 @@ UserInterfaceThemeEntryPoint (
   EFI_STATUS                    Status;
   UINTN                         DataSize;
   UINT32                        Color;
-  EFI_HANDLE                    Handle;
-
+  EFI_BOOT_SERVICES*			gBS;
+  EFI_RUNTIME_SERVICES*   		gRT;
   // Default color is black
   mCurrentColor = BLACK_COLOR;
   
-  gRT = SystemTable->RuntimeServices;
+  gRT = SystemTable->RuntimeServices;      
+  gBS = SystemTable->BootServices;
+
 
   DataSize = 0;
   Status = gRT->GetVariable(L"DefaultBackgroundColor", &gEfiAppleNvramGuid, 0, &DataSize, &Color);

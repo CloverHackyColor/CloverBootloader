@@ -303,7 +303,10 @@ StrToGuidLE (
 
 CHAR16 * GuidLEToStr(EFI_GUID *Guid)
 {
-//  CHAR16 *Str = PoolPrint(L"%8x-%4x-%4x-%2x%2x-%2x%2x%2x%2x%2x%2x%2x%2x", );
+  CHAR16 *Str = PoolPrint(L"%8x-%4x-%4x-%2x%2x-%2x%2x%2x%2x%2x%2x",
+  Guid->Data1, Guid->Data2, Guid->Data3, Guid->Data4[0], Guid->Data4[1], 
+  Guid->Data4[2], Guid->Data4[3], Guid->Data4[4], Guid->Data4[5], Guid->Data4[6], Guid->Data4[7]);
+  return Str;
 }
 
 #if 0

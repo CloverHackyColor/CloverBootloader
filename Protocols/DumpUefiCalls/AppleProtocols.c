@@ -24,6 +24,7 @@
 //#include <Protocol/AppleEvent.h>
 #include <Protocol/FirmwareVolume.h>
 #include <Protocol/KeyboardInfo.h> 
+#include <Protocol/AppleKeyMapDatabase.h> 
 
 #include "Common.h"
 
@@ -690,4 +691,87 @@ OvrEfiKeyboardInfo(VOID)
   
 }
 
+//************************
+// APPLE_KEY_MAP_DATABASE_PROTOCOL
+
+APPLE_KEY_MAP_DATABASE_PROTOCOL gOrgAppleKeyMapDb;
+APPLE_KEY_MAP_DATABASE_PROTOCOL *gAppleKeyMapDb;
+
+EFI_STATUS
+EFIAPI
+OvrCreateKeyStrokesBuffer (IN  APPLE_KEY_MAP_DATABASE_PROTOCOL  *This,
+                           IN  UINTN                            KeyBufferSize,
+                           OUT UINTN                            *Index)
+{
+  EFI_STATUS               Status;
+  Status = gOrgAppleKeyMapDb.CreateKeyStrokesBuffer(This, KeyBufferSize, Index);
+  PRINT("->CreateKeyStrokesBuffer => KeyBufferSize=%d, Index=%d, Status=%r\n",
+        KeyBufferSize, Index?*Index:0, Status);
+  
+  return Status;
+}
+
+EFI_STATUS
+EFIAPI
+OvrRemoveKeyStrokesBuffer (
+                              IN APPLE_KEY_MAP_DATABASE_PROTOCOL  *This,
+                              IN UINTN                            Index
+                              )
+{
+  EFI_STATUS               Status;
+  Status = gOrgAppleKeyMapDb.RemoveKeyStrokesBuffer(This, Index);
+  PRINT("->RemoveKeyStrokesBuffer => Index=%d, Status=%r\n",
+        Index, Status);
+  
+  return Status;
+}
+  
+ EFI_STATUS
+EFIAPI
+OvrSetKeyStrokeBufferKeys (
+                              IN APPLE_KEY_MAP_DATABASE_PROTOCOL  *This,
+                              IN UINTN                            Index,
+                              IN APPLE_MODIFIER_MAP               Modifiers,
+                              IN UINTN                            NumberOfKeys,
+                              IN APPLE_KEY                        *Keys
+                              )
+{
+  EFI_STATUS               Status;
+  Status = gOrgAppleKeyMapDb.SetKeyStrokeBufferKeys(This, Index, Modifiers, NumberOfKeys, Keys);
+  PRINT("->SetKeyStrokeBufferKeys => Index=%d, Modifiers=%x, NoKeys=%d, Keys={%x, %x}, Status=%r\n",
+        Index, Modifiers, NumberOfKeys, Keys?*Keys:0, (Keys && NumberOfKeys>1)?Keys[1]:0, Status);
+  
+  return Status;
+}
+
+
+
+EFI_STATUS EFIAPI
+OvrAppleKeyMapDb(VOID)
+{
+  EFI_STATUS				Status;
+  
+  PRINT("Overriding AppleKeyMapDb ...\n");
+  
+  // Locate AppleKeyMapDb protocol
+  Status = gBS->LocateProtocol(&gAppleKeyMapDatabaseProtocolGuid, NULL, (VOID **)&gAppleKeyMapDb);
+  if (EFI_ERROR(Status)) {
+    PRINT("Error Overriding AppleKeyMapDb: %r\n", Status);
+    return Status;
+  }
+  
+  // Store originals
+  CopyMem(&gOrgAppleKeyMapDb, gAppleKeyMapDb, sizeof(APPLE_KEY_MAP_DATABASE_PROTOCOL));
+  
+  // Override with our implementation
+  gAppleKeyMapDb->CreateKeyStrokesBuffer = OvrCreateKeyStrokesBuffer;
+  gAppleKeyMapDb->RemoveKeyStrokesBuffer = OvrRemoveKeyStrokesBuffer;
+  gAppleKeyMapDb->SetKeyStrokeBufferKeys = OvrSetKeyStrokeBufferKeys;
+  
+  
+  
+  PRINT("AppleKeyMapDb overriden!\n");
+  return EFI_SUCCESS;
+  
+}
 

@@ -595,7 +595,7 @@ IsOsxHibernated (IN LOADER_ENTRY    *Entry)
     for (VolumeIndex = 0; VolumeIndex < VolumesCount; VolumeIndex++) {
       Volume = Volumes[VolumeIndex];
       VolumeUUID = FindGPTPartitionGuidInDevicePath(Volume->DevicePath);
-      DBG("Volume[%d] has UUID=%g\n", VolumeIndex, VolumeUUID);
+      DBG("Volume[%d] has UUID=%s\n", VolumeIndex, GuidLEToStr(VolumeUUID));
       if (CompareGuid(&ThisVolume->RootUUID, VolumeUUID)) {
         DBG("found root volume at path: %s\n", FileDevicePathToStr(Volume->DevicePath));
         Status = EFI_SUCCESS;
@@ -604,7 +604,7 @@ IsOsxHibernated (IN LOADER_ENTRY    *Entry)
     }
     if (EFI_ERROR(Status)) {
       Volume = ThisVolume;
-      DBG("cant find volume with UUID=%g\n", &ThisVolume->RootUUID);
+      DBG("cant find volume with UUID=%s\n", GuidLEToStr(&ThisVolume->RootUUID));
     }
     
   }

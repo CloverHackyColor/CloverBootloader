@@ -31,4 +31,8 @@ OvrFirmwareVolume(VOID);
 EFI_STATUS EFIAPI
 OvrEfiKeyboardInfo(VOID);
 
+EFI_STATUS EFIAPI
+OvrAppleKeyMapDb(VOID);
+
+
 #endif

@@ -45,7 +45,8 @@ StartOverrides()
   OvrGraphConfig();
   OvrFirmwareVolume();
   OvrEfiKeyboardInfo();
-	return EFI_SUCCESS;
+  OvrAppleKeyMapDb();
+  return EFI_SUCCESS;
 }
 
 CHAR16					*BootLoaders[] = BOOT_LOADERS;
