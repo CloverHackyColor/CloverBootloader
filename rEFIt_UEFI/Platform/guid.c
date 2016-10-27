@@ -294,8 +294,16 @@ StrToGuidLE (
   
   StrHToBuf (&GuidLE[10], 6, Str);
 
-  CopyMem((UINT8*)Guid, &GuidLE[0], 16);
+  if (Guid) {
+    CopyMem((UINT8*)Guid, &GuidLE[0], sizeof(EFI_GUID));
+  }
+  
   return EFI_SUCCESS;
+}
+
+CHAR16 * GuidLEToStr(EFI_GUID *Guid)
+{
+//  CHAR16 *Str = PoolPrint(L"%8x-%4x-%4x-%2x%2x-%2x%2x%2x%2x%2x%2x%2x%2x", );
 }
 
 #if 0

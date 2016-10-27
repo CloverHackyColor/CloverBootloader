@@ -5516,9 +5516,7 @@ CHAR16
 
 //Get the UUID of the AppleRaid or CoreStorage volume from the boot helper partition
 EFI_STATUS
-GetRootUUID (
-             IN  REFIT_VOLUME *Volume
-             )
+GetRootUUID (IN  REFIT_VOLUME *Volume)
 {
   EFI_STATUS Status;
   CHAR8      *PlistBuffer;

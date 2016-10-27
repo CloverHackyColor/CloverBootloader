@@ -236,7 +236,7 @@ typedef struct {
   EFI_HANDLE          WholeDiskDeviceHandle;
   MBR_PARTITION_INFO  *MbrPartitionTable;
   UINT32              DriveCRC32;
-  EFI_GUID            RootUUID;
+  EFI_GUID            RootUUID; //for recovery it is UUID of parent partition
   UINT64              SleepImageOffset;
 } REFIT_VOLUME;
 

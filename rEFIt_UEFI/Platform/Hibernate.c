@@ -410,14 +410,14 @@ GetSleepImagePosition (IN REFIT_VOLUME *Volume, REFIT_VOLUME **SleepImageVolume)
   if (Volume->SleepImageOffset != 0) {
     if (SleepImageVolume != NULL) {
       // Update caller's SleepImageVolume when requested
-      GetSleepImageLocation(Volume,SleepImageVolume,&ImageName);
+      GetSleepImageLocation(Volume, SleepImageVolume, &ImageName);
     }
     DBG("    returning previously calculated offset: %lx\n", Volume->SleepImageOffset);
     return Volume->SleepImageOffset;
   }
   
   // Get sleepimage name and volume
-  GetSleepImageLocation(Volume,&ImageVolume,&ImageName);
+  GetSleepImageLocation(Volume, &ImageVolume, &ImageName);
 
   // Open sleepimage
   Status = ImageVolume->RootDir->Open(ImageVolume->RootDir, &File, ImageName, EFI_FILE_MODE_READ, 0);
@@ -559,12 +559,55 @@ IsSleepImageValidBySignature (IN REFIT_VOLUME *Volume)
 
 /** Returns TRUE if given OSX on given volume is hibernated. */
 BOOLEAN
-IsOsxHibernated (IN REFIT_VOLUME *Volume)
+IsOsxHibernated (IN LOADER_ENTRY    *Entry)
 {
-//  BOOLEAN IsHibernate = FALSE;
   EFI_STATUS          Status;
   UINTN               Size                = 0;
   UINT8               *Data               = NULL;
+  REFIT_VOLUME        *ThisVolume = Entry->Volume;
+  REFIT_VOLUME        *Volume = ThisVolume;
+  UINTN               VolumeIndex;
+  EFI_GUID            *VolumeUUID;
+
+  Status = GetRootUUID(ThisVolume);
+  
+  if (!EFI_ERROR(Status)) { //this is set by scan loaders only for Recovery volumes
+/*
+    FP.1EE01920[\].Open('com.apple.boot.R', 1, 0) = Not Found
+    FP.1EE01920[\].Open('com.apple.boot.P', 1, 0) = Not Found
+    FP.1EE01920[\].Open('com.apple.boot.S', 1, 0) = EFI_SUCCESS -> FP.1EE01A20[\com.apple.boot.S]
+    FP.1EE01A20[\com.apple.boot.S].Open('Library\Preferences\SystemConfiguration\com.apple.Boot.plist', 1, 0) = EFI_SUCCESS -> FP.1F7F7F20[\com.apple.boot.S\Library\Preferences\SystemConfiguration\com.apple.Boot.plist]
+    FP.1F7F7F20[\com.apple.boot.S\Library\Preferences\SystemConfiguration\com.apple.Boot.plist].GetInfo(gEfiFileInfoGuid, 122, 1F7FAE18) = Success
+    FP.1F7F7F20[\com.apple.boot.S\Library\Preferences\SystemConfiguration\com.apple.Boot.plist].Read(309, 1CF27018) = Success
+    FP.1F7F7F20[\com.apple.boot.S\Library\Preferences\SystemConfiguration\com.apple.Boot.plist].Close() = Success
+
+    <dict>
+      <key>Kernel Flags</key>
+      <string></string>
+      <key>Root UUID</key>
+      <string>D6E74829-F4A5-3CBA-B8EE-D0B6E40E4D53</string>
+    </dict>
+*/ 
+ //   Volume = from UUID
+ //   
+
+    Status = EFI_NOT_FOUND;
+    for (VolumeIndex = 0; VolumeIndex < VolumesCount; VolumeIndex++) {
+      Volume = Volumes[VolumeIndex];
+      VolumeUUID = FindGPTPartitionGuidInDevicePath(Volume->DevicePath);
+      DBG("Volume[%d] has UUID=%g\n", VolumeIndex, VolumeUUID);
+      if (CompareGuid(&ThisVolume->RootUUID, VolumeUUID)) {
+        DBG("found root volume at path: %s\n", FileDevicePathToStr(Volume->DevicePath));
+        Status = EFI_SUCCESS;
+        break;
+      }
+    }
+    if (EFI_ERROR(Status)) {
+      Volume = ThisVolume;
+      DBG("cant find volume with UUID=%g\n", &ThisVolume->RootUUID);
+    }
+    
+  }
 
   //if sleep image is good but OSX was not hibernated.
   //or we choose "cancel hibernate wake" then it must be canceled
@@ -639,7 +682,7 @@ PrepareHibernation (IN REFIT_VOLUME *Volume)
   DBG("PrepareHibernation:\n");
   
   // Find sleep image offset
-  SleepImageOffset = GetSleepImagePosition (Volume,&SleepImageVolume);
+  SleepImageOffset = GetSleepImagePosition (Volume, &SleepImageVolume);
   DBG(" SleepImageOffset: %lx\n", SleepImageOffset);
   if (SleepImageOffset == 0 || SleepImageVolume == NULL) {
     DBG(" sleepimage offset not found\n");

@@ -298,7 +298,7 @@ STATIC BOOLEAN isFirstRootUUID(REFIT_VOLUME *Volume)
   for (VolumeIndex = 0; VolumeIndex < VolumesCount; VolumeIndex++) {
     scanedVolume = Volumes[VolumeIndex];
 
-    if ( scanedVolume == Volume)
+    if (scanedVolume == Volume)
       return TRUE;
 
     if (CompareGuid(&scanedVolume->RootUUID, &Volume->RootUUID))
@@ -555,7 +555,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath,
         // OSX is not booting verbose, so we can set console to graphics mode
         Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_USEGRAPHICS);
       }
-      if (OSType == OSTYPE_OSX && IsOsxHibernated(Volume)) {
+      if (OSType == OSTYPE_OSX && IsOsxHibernated(Entry)) {
         Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_HIBERNATED);
         DBG("set entry as hiberbated\n");
       }

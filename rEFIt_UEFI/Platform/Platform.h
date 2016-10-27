@@ -1719,7 +1719,7 @@ CHAR16
 
 EFI_STATUS
 GetRootUUID (
-  IN  REFIT_VOLUME *Volume
+  IN OUT REFIT_VOLUME *Volume
   );
 
 EFI_STATUS
@@ -2295,7 +2295,7 @@ ParseSMBIOSSettings (
  */
 BOOLEAN
 IsOsxHibernated (
-  IN REFIT_VOLUME *Volume
+  IN LOADER_ENTRY    *Entry
   );
 
 /** Prepares nvram vars needed for boot.efi to wake from hibernation. */
