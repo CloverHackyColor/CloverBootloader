@@ -60,10 +60,10 @@ EFI_STATUS
 
 struct _APPLE_GETVAR_PROTOCOL {
   UINT64    Sign;
-  EFI_STATUS(EFIAPI *Unknown1)(IN VOID *);
-  EFI_STATUS(EFIAPI *Unknown2)(IN VOID *);
-  EFI_STATUS(EFIAPI *Unknown3)(IN VOID *);
-  APPLE_GETVAR_PROTOCOL_GET_DEVICE_PROPS  GetDevProps;
+  EFI_STATUS(EFIAPI *Unknown1)(IN VOID *);              //GetPropertyValue
+  EFI_STATUS(EFIAPI *Unknown2)(IN VOID *);              //SetProperty
+  EFI_STATUS(EFIAPI *Unknown3)(IN VOID *);              //RemoveProperty
+  APPLE_GETVAR_PROTOCOL_GET_DEVICE_PROPS  GetDevProps;  //GetPropertyBuffer
   APPLE_GETVAR_PROTOCOL_GET_DEVICE_PROPS  GetDevProps1;
 };
 

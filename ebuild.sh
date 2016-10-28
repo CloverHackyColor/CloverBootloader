@@ -926,9 +926,15 @@ MainPostBuildScript() {
 
       # Mandatory drivers
       echo "Copy Mandatory drivers:"
-      copyBin "$BUILD_DIR_ARCH"/FSInject.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers64/FSInject-64.efi
+#copyBin "$BUILD_DIR_ARCH"/FSInject.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers64/FSInject-64.efi
+      binArray=( FSInject AppleImageCodec AppleUITheme HashServiceFix AppleKeyAggregator FirmwareVolume SMCHelper )
+      for efi in "${binArray[@]}"
+      do
+        copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers64/$efi-64.efi
+      done
 
-      binArray=( FSInject OsxFatBinaryDrv )
+
+      binArray=( FSInject OsxFatBinaryDrv AppleImageCodec AppleUITheme AppleKeyAggregator FirmwareVolume SMCHelper DataHubDxe )
       for efi in "${binArray[@]}"
       do
         copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers64UEFI/$efi-64.efi
@@ -959,7 +965,7 @@ MainPostBuildScript() {
       fi
 
       # drivers64UEFI      
-binArray=( CsmVideoDxe DataHubDxe EmuVariableUefi OsxAptioFix2Drv OsxAptioFixDrv OsxLowMemFixDrv PartitionDxe SMCHelper FirmwareVolume AppleImageCodec AppleUITheme HashServiceFix AppleKeyAggregator UsbKbDxe )
+      binArray=( CsmVideoDxe EmuVariableUefi OsxAptioFix2Drv OsxAptioFixDrv OsxLowMemFixDrv PartitionDxe UsbKbDxe HashServiceFix)
       for efi in "${binArray[@]}"
       do
         copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/$efi-64.efi
