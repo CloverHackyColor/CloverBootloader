@@ -232,9 +232,13 @@
   AppleDevicePropertyProtocolGuid
   gAppleScreenInfoProtocolGuid
   gEfiConsoleControlProtocolGuid
+  gAppleGraphConfigProtocolGuid
   gEfiLegacyBiosProtocolGuid
   gEfiTimerArchProtocolGuid
   gAppleImageCodecProtocolGuid
+  gAppleEventProtocolGuid
+  gEfiOSInfoProtocolGuid
+  gEfiKeyboardInfoProtocolGuid
   
   gFSInjectProtocolGuid
   gMsgLogProtocolGuid

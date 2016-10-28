@@ -13,6 +13,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #include "entry_scan.h"
 #include "device_tree.h"
 #include "kernel_patcher.h"
+#include <Protocol/AppleEvent.h>
 
 #define PATCH_DEBUG 0
 #define MEM_DEB 0
@@ -27,6 +28,20 @@ EFI_EVENT   mVirtualAddressChangeEvent = NULL;
 EFI_EVENT   OnReadyToBootEvent = NULL;
 EFI_EVENT   ExitBootServiceEvent = NULL;
 EFI_EVENT   mSimpleFileSystemChangeEvent = NULL;
+EFI_HANDLE  mHandle = NULL;
+
+
+extern EFI_GUID gAppleEventProtocolGuid;
+
+STATIC APPLE_EVENT_PROTOCOL mAppleEventProtocol = {
+  1,
+  NULL,
+  NULL,
+  NULL,
+  NULL,
+  NULL
+};
+
 /*
 VOID WaitForCR()
 {
@@ -46,6 +61,8 @@ VOID WaitForCR()
   }
 }
 */
+
+//this procedure was developed for 10.5. Seems no more needed
 VOID CorrectMemoryMap(IN UINT32 memMap, 
                       IN UINT32 memDescriptorSize,
                       IN OUT UINT32 *memMapSize)
@@ -401,8 +418,9 @@ EventsInitialize (IN LOADER_ENTRY *Entry)
 	 &mVirtualAddressChangeEvent
 	 );
      */
-	
-	return EFI_SUCCESS;
+  Status = gBS->InstallProtocolInterface(&mHandle, &gAppleEventProtocolGuid, EFI_NATIVE_INTERFACE, &mAppleEventProtocol);
+	// and what if EFI_ERROR?
+	return Status;
 }
 
 EFI_STATUS EjectVolume(IN REFIT_VOLUME *Volume)

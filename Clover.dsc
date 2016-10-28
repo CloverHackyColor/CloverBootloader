@@ -429,13 +429,13 @@
   Clover/FSInject/FSInject.inf
   Clover/Protocols/MsgLog/MsgLog.inf
   Clover/Protocols/SMCHelper/SMCHelper.inf
-  Clover/Protocols/OSInfo/OSInfo.inf
-  Clover/Protocols/AppleGraphicsConfig/GraphicsConfig.inf
+  #Clover/Protocols/OSInfo/OSInfo.inf
+  #Clover/Protocols/AppleGraphicsConfig/GraphicsConfig.inf
   Clover/Protocols/FirmwareVolume/FirmwareVolume.inf
-  Clover/Protocols/AppleKeyState/AppleKeyState.inf
+  #Clover/Protocols/AppleKeyState/AppleKeyState.inf
   Clover/Protocols/AppleImageCodec/AppleImageCodec.inf
   Clover/Protocols/AppleUITheme/AppleUITheme.inf
-  Clover/Protocols/AppleEvent/AppleEvent.inf
+  #Clover/Protocols/AppleEvent/AppleEvent.inf
   Clover/Protocols/HashServiceFix/HashServiceFix.inf
   Clover/Protocols/AppleKeyAggregator/AppleKeyAggregator.inf
   

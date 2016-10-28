@@ -43,6 +43,7 @@ Headers collection for procedures
 #include <IndustryStandard/Acpi10.h>
 #include <IndustryStandard/Acpi20.h>
 #include <IndustryStandard/Atapi.h>
+#include <IndustryStandard/AppleHid.h>
 #include <IndustryStandard/AppleSmBios.h>
 #include <IndustryStandard/Bmp.h>
 
@@ -1505,7 +1506,8 @@ extern UINT32                         cPropSize;
 extern UINT8                          *cProperties;
 extern CHAR8                          *cDeviceProperties;
 extern INPUT_ITEM                     *InputItems;
-extern BOOLEAN SavePreBootLog;
+extern BOOLEAN                        SavePreBootLog;
+extern CHAR8                          *BootOSName;
 //extern EFI_GRAPHICS_OUTPUT_PROTOCOL *GraphicsOutput;
 
 extern EFI_GUID	                      gEfiAppleBootGuid;
