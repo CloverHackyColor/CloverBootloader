@@ -263,6 +263,8 @@
 		<integer>7</integer>
 		<key>#TurboDisable</key>
 		<true/>
+		<key>#HWPEnable</key>
+		<true/>
 	</dict>
 	<key>Devices</key>
 	<dict>

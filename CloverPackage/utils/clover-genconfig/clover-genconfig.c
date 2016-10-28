@@ -475,6 +475,7 @@ void PrintConfig(CFTypeRef data)
   addInteger(cpuDict, CFSTR("SavingMode"), s->SavingMode);
   addBoolean(cpuDict, CFSTR("#UseARTFrequency"), s->UseARTFreq);
   addBoolean(cpuDict, CFSTR("#TurboDisable"), (s->Turbo == 0));
+  addBoolean(cpuDict, CFSTR("#HWPEnable"), (s->HWP == 0));
   // these values read only
   addInteger(cpuDict, CFSTR("EnabledCores"), s->EnabledCores);
 

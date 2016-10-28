@@ -393,7 +393,7 @@ Headers collection for procedures
 
 //Skylake
 #define BASE_ART_CLOCK_SOURCE 	24000000ULL	/* 24Mhz */
-
+#define MSR_IA32_PM_ENABLE          0x770
 
 //AMD
 #define K8_FIDVID_STATUS            0xC0010042
@@ -873,7 +873,8 @@ typedef struct {
   
   BOOLEAN                 LastBootedVolume;
   BOOLEAN                 SkipHibernateTimeout;
-  UINT8                   Pad21[2];
+  BOOLEAN                 HWP;
+  UINT8                   Pad21[1];
   
   UINT16                  VendorEDID;
   UINT16                  ProductEDID;
