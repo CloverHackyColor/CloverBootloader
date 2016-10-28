@@ -158,7 +158,6 @@ EG_IMAGE * BuiltinIcon(IN UINTN Id)
     case BUILTIN_ICON_TOOL_SHELL:
       DEC_BUILTIN_ICON(Id, emb_func_shell); break;
     case BUILTIN_ICON_VOL_INTERNAL:
-      DEC_BUILTIN_ICON(Id, emb_vol_internal); break;
     case BUILTIN_ICON_VOL_EXTERNAL:
       DEC_BUILTIN_ICON(Id, emb_vol_internal); break;
     case BUILTIN_ICON_VOL_BOOTER:

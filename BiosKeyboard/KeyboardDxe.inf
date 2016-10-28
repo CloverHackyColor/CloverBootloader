@@ -36,6 +36,8 @@
 #
 
 [Sources]
+  AppleKey.c
+  AppleKey.h
   ComponentName.c
   ComponentName.h
   BiosKeyboard.c
@@ -44,6 +46,7 @@
 
 
 [Packages]
+  Clover/CloverPkg.dec
   MdePkg/MdePkg.dec
   MdeModulePkg/MdeModulePkg.dec
   IntelFrameworkPkg/IntelFrameworkPkg.dec
@@ -69,6 +72,8 @@
    gEfiLegacy8259ProtocolGuid					 # PROTOCOL TO_START
   gEfiPs2PolicyProtocolGuid                     # PROTOCOL ALWAYS_CONSUMED
   gEfiDevicePathProtocolGuid                    # PROTOCOL ALWAYS_CONSUMED
+  gAppleKeyMapDatabaseProtocolGuid              ## SOMETIMES_CONSUMES
+
 
 [FeaturePcd]
 #  gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdPs2KbdExtendedVerification|FALSE

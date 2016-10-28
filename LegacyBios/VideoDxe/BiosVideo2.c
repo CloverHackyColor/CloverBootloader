@@ -279,7 +279,7 @@ BiosVideoDriverBindingStart (
   EFI_PCI_IO_PROTOCOL       *PciIo;
   EFI_LEGACY_BIOS_PROTOCOL  *LegacyBios;
   UINTN                     Flags;
-  UINT64                    Supports;
+ // UINT64                    Supports;
 
   DBG("CsmVideoDriverBindingStart\n");
 
@@ -332,6 +332,7 @@ BiosVideoDriverBindingStart (
   //
   // Save original PCI attributes
   //
+  /*
   if (!mPciAttributesSaved) {
   Status = PciIo->Attributes (
                     PciIo,
@@ -368,29 +369,30 @@ BiosVideoDriverBindingStart (
     Supports = 0; //EFI_PCI_IO_ATTRIBUTE_VGA_IO; //we choose this as in CloverEFI
 //    goto Done;
   }  
-
-/*  REPORT_STATUS_CODE_WITH_DEVICE_PATH (
+*/
+  REPORT_STATUS_CODE_WITH_DEVICE_PATH (
     EFI_PROGRESS_CODE,
     EFI_PERIPHERAL_LOCAL_CONSOLE | EFI_P_PC_ENABLE,
     ParentDevicePath
-    ); */
+    ); 
   //
   // Enable the device and make sure VGA cycles are being forwarded to this VGA device
   //
+  /* don't set for Intel Embedded
   Status = PciIo->Attributes (
              PciIo,
              EfiPciIoAttributeOperationEnable,
              EFI_PCI_DEVICE_ENABLE | EFI_PCI_IO_ATTRIBUTE_VGA_MEMORY | Supports,
              NULL
              );
-  
+  */
   if (EFI_ERROR (Status)) { 
     DBG("Enable the device status=%r\n", Status);
-/*    REPORT_STATUS_CODE_WITH_DEVICE_PATH (
+    REPORT_STATUS_CODE_WITH_DEVICE_PATH (
       EFI_ERROR_CODE | EFI_ERROR_MINOR,
       EFI_PERIPHERAL_LOCAL_CONSOLE | EFI_P_EC_RESOURCE_CONFLICT,
       ParentDevicePath
-      ); */
+      ); 
     goto Done;
   }
   //
@@ -411,11 +413,11 @@ BiosVideoDriverBindingStart (
   //
   // Post the legacy option ROM if it is available.
   //
-/*  REPORT_STATUS_CODE_WITH_DEVICE_PATH (
+  REPORT_STATUS_CODE_WITH_DEVICE_PATH (
     EFI_PROGRESS_CODE,
     EFI_P_PC_RESET,
     ParentDevicePath
-    ); */
+    ); 
   Status = LegacyBios->InstallPciRom (
                          LegacyBios,
                          Controller,
@@ -429,11 +431,11 @@ BiosVideoDriverBindingStart (
   
   if (EFI_ERROR (Status)) {
     DBG("InstallPciRom status=%r\n", Status);
-/*      REPORT_STATUS_CODE_WITH_DEVICE_PATH (
+      REPORT_STATUS_CODE_WITH_DEVICE_PATH (
       EFI_ERROR_CODE | EFI_ERROR_MINOR,
       EFI_PERIPHERAL_LOCAL_CONSOLE | EFI_P_EC_CONTROLLER_ERROR,
       ParentDevicePath
-      ); */
+      ); 
     goto Done;
   }
 
@@ -484,13 +486,14 @@ Done:
       //
       // Restore original PCI attributes
       //
+      /*  don't set for Intel Embedded
       PciIo->Attributes (
                       PciIo,
                       EfiPciIoAttributeOperationSet,
                         mOriginalPciAttributes,
                       NULL
                       );
-        DBG("attributes Restored\n");
+        DBG("attributes Restored\n"); */
       }
     }
     //
@@ -584,12 +587,14 @@ BiosVideoDriverBindingStop (
       //
       // Restore original PCI attributes
       //
-      /*Status = */PciIo->Attributes (
+     /*   don't set for Intel Embedded
+      Status = PciIo->Attributes (
                         PciIo,
                         EfiPciIoAttributeOperationSet,
                         mOriginalPciAttributes,
                         NULL
                         );
+      */
       }
     }
   }

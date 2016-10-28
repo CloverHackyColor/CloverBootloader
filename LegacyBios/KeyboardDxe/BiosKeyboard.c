@@ -15,6 +15,8 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 **/
 
 #include "BiosKeyboard.h"
+#include "AppleKey.h"
+
 
 //
 // EFI Driver Binding Protocol Instance
@@ -253,6 +255,8 @@ BiosKeyboardDriverBindingStart (
     Status = EFI_OUT_OF_RESOURCES;
     goto Done;
   }
+  
+  BiosKbLocateAppleKeyMapDb (BiosKeyboardPrivate);
 
   //
   // Initialize the private device structure
@@ -538,6 +542,8 @@ BiosKeyboardDriverBindingStop (
   }
   
   BiosKeyboardPrivate = BIOS_KEYBOARD_DEV_FROM_THIS (SimpleTextIn);
+  
+  BiosKbFreeAppleKeyMapDb (BiosKeyboardPrivate);
 
   Status = gBS->UninstallMultipleProtocolInterfaces (
                   Controller,
@@ -934,7 +940,7 @@ KeyboardReadKeyStrokeWorker (
   }
 
   //
-  // Use TimerEvent callback funciton to check whether there's any key pressed
+  // Use TimerEvent callback function to check whether there's any key pressed
   //
   
   //
@@ -1074,7 +1080,7 @@ BiosKeyboardReset (
     }
     //
     // 5
-    // disable mouse (via KBC) and Keyborad device
+    // disable mouse (via KBC) and Keyboard device
     //
     Status = KeyboardCommand (
                BiosKeyboardPrivate,
@@ -1729,6 +1735,10 @@ BiosKeyboardTimerHandler (
   EFI_KEY_DATA                       KeyData;
   LIST_ENTRY                         *Link;
   BIOS_KEYBOARD_CONSOLE_IN_EX_NOTIFY *CurrentNotify;
+  //for AppleDb
+  //UINTN               NumberOfKeys;
+  //APPLE_KEY           Keys[8];
+
 
   BiosKeyboardPrivate = Context;
 
@@ -1783,7 +1793,7 @@ BiosKeyboardTimerHandler (
   KeyData.KeyState.KeyShiftState  = EFI_SHIFT_STATE_VALID;
   KeyData.KeyState.KeyToggleState = EFI_TOGGLE_STATE_VALID;
   //
-  // Leagcy Bios use Int 9 which is IRQ1 interrupt handler to get keystroke scancode to KB  buffer in BDA (BIOS DATE AREA),  then 
+  // Legacy Bios use Int 9 which is IRQ1 interrupt handler to get keystroke scancode to KB  buffer in BDA (BIOS DATE AREA),  then 
   // Int 16 depend  KB buffer and some key bits in BDA to translate the scancode to ASCII code, and  return both the scancode and ASCII 
   // code to Int 16 caller. This translation process works well if the Int 9  could response user input in time. But in Tiano enviorment,  the Int 9 
   // will be disabled after the thunk call finish, which means if user crazy input during int 9 being disabled, some keystrokes will be lost when 
@@ -1954,6 +1964,39 @@ BiosKeyboardTimerHandler (
   // Leave critical section and return
   //
   gBS->RestoreTPL (OldTpl);
+/* a method from UsbKb
+ 
+ // Following code checks current keyboard input report against old key code buffer.
+ // According to USB HID Firmware Specification, the report consists of 8 bytes.
+ // Byte 0 is map of Modifier keys.
+ // Byte 1 is reserved.
+ // Bytes 2 to 7 are keycodes. -> KeyData.Key.ScanCode
+ //
+  CurKeyCodeBuffer  = (UINT8 *) Data;
+  CurModifierMap  = CurKeyCodeBuffer[0]; -> KeyData.KeyState.KeyShiftState
+  NumberOfKeys          = 0;
+  
+  //
+  // Pass the data to the Apple protocol
+  //
+  for (Index = 2; Index < 8; Index++) {
+    if (USBKBD_VALID_KEYCODE (CurKeyCodeBuffer[Index])) {
+      Keys[NumberOfKeys] = APPLE_HID_USB_KB_KP_USAGE (CurKeyCodeBuffer[Index]);
+      ++NumberOfKeys;
+    }
+  }
+  
+  if (BiosKeyboardPrivate->KeyMapDb != NULL) {
+    BiosKeyboardPrivate->KeyMapDb->SetKeyStrokeBufferKeys (
+                                                         BiosKeyboardPrivate->KeyMapDb,
+                                                         BiosKeyboardPrivate->KeyMapDbIndex,
+                                                         (APPLE_MODIFIER_MAP)CurModifierMap,
+                                                         NumberOfKeys,
+                                                         &Keys[0]
+                                                         );
+  }
+*/  
+
 
   return ;  
 }

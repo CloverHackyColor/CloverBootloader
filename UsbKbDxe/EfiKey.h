@@ -166,7 +166,7 @@ typedef struct {
   //
   LIST_ENTRY                        NsKeyList;
   USB_NS_KEY                        *CurrentNsKey;
-  EFI_KEY_DESCRIPTOR                *mKeyConvertionTable;
+  EFI_KEY_DESCRIPTOR                *KeyConvertionTable;
   EFI_EVENT                         KeyboardLayoutEvent;
 //#if PcdEnableDisconnectOnExitBootServicesInUsbKbDriver
 #ifdef EXIT_USBKB

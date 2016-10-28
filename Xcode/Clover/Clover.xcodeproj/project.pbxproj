@@ -337,6 +337,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		12098E971DC38514008B4AC3 /* AppleKey.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = AppleKey.c; sourceTree = "<group>"; };
+		12098E981DC38514008B4AC3 /* AppleKey.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleKey.h; sourceTree = "<group>"; };
+		12098E9F1DC38C26008B4AC3 /* AppleKey.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = AppleKey.c; sourceTree = "<group>"; };
+		12098EA01DC38C26008B4AC3 /* AppleKey.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleKey.h; sourceTree = "<group>"; };
 		12344F581CAB9A5700318A6E /* AppleSmBios.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleSmBios.h; sourceTree = "<group>"; };
 		125CC4F11DBAB06900142ADA /* BiosVideo2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = BiosVideo2.c; sourceTree = "<group>"; };
 		125CC4F31DBAB07200142ADA /* VideoDxe2.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = VideoDxe2.inf; sourceTree = "<group>"; };
@@ -1680,6 +1684,8 @@
 		2C794A061A0AA85900D845B0 /* BiosKeyboard */ = {
 			isa = PBXGroup;
 			children = (
+				12098E9F1DC38C26008B4AC3 /* AppleKey.c */,
+				12098EA01DC38C26008B4AC3 /* AppleKey.h */,
 				2C794A001A0AA85900D845B0 /* BiosKeyboard.c */,
 				2C794A011A0AA85900D845B0 /* BiosKeyboard.h */,
 				2C794A021A0AA85900D845B0 /* ComponentName.c */,
@@ -2096,6 +2102,8 @@
 		2C794AEE1A0AA85900D845B0 /* KeyboardDxe */ = {
 			isa = PBXGroup;
 			children = (
+				12098E971DC38514008B4AC3 /* AppleKey.c */,
+				12098E981DC38514008B4AC3 /* AppleKey.h */,
 				2C794AE91A0AA85900D845B0 /* BiosKeyboard.c */,
 				2C794AEA1A0AA85900D845B0 /* BiosKeyboard.h */,
 				2C794AEB1A0AA85900D845B0 /* ComponentName.c */,

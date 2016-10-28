@@ -14,8 +14,8 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 **/
 // Slice - exclude LegacyBios
 
-#include "BiosKeyboard.h"
-
+//#include "BiosKeyboard.h"
+#include "AppleKey.h"
 //
 // EFI Driver Binding Protocol Instance
 //
@@ -298,6 +298,8 @@ BiosKeyboardDriverBindingStart (
     Status = EFI_OUT_OF_RESOURCES;
     goto Done;
   }
+
+  BiosKbLocateAppleKeyMapDb (BiosKeyboardPrivate);
 
   //
   // Initialize the private device structure
@@ -616,6 +618,8 @@ BiosKeyboardDriverBindingStop (
   }
   
   BiosKeyboardPrivate = BIOS_KEYBOARD_DEV_FROM_THIS (SimpleTextIn);
+  
+  BiosKbFreeAppleKeyMapDb (BiosKeyboardPrivate);
 
   Status = gBS->UninstallMultipleProtocolInterfaces (
                   Controller,
@@ -1020,7 +1024,7 @@ KeyboardReadKeyStrokeWorker (
   }
 
   //
-  // Use TimerEvent callback funciton to check whether there's any key pressed
+  // Use TimerEvent callback function to check whether there's any key pressed
   //
   
   //
@@ -1815,6 +1819,9 @@ BiosKeyboardTimerHandler (
   EFI_KEY_DATA                       KeyData;
   LIST_ENTRY                         *Link;
   BIOS_KEYBOARD_CONSOLE_IN_EX_NOTIFY *CurrentNotify;
+  //for AppleDb
+  //UINTN               NumberOfKeys;
+  //APPLE_KEY           Keys[8];
 
   ZeroMem (&Regs, sizeof (EFI_IA32_REGISTER_SET));
 
@@ -2044,6 +2051,39 @@ BiosKeyboardTimerHandler (
   // Leave critical section and return
   //
   gBS->RestoreTPL (OldTpl);
+/* a method from UsbKb
+ 
+ // Following code checks current keyboard input report against old key code buffer.
+ // According to USB HID Firmware Specification, the report consists of 8 bytes.
+ // Byte 0 is map of Modifier keys.
+ // Byte 1 is reserved.
+ // Bytes 2 to 7 are keycodes. -> KeyData.Key.ScanCode
+ //
+  CurKeyCodeBuffer  = (UINT8 *) Data;
+  CurModifierMap  = CurKeyCodeBuffer[0]; -> KeyData.KeyState.KeyShiftState
+  NumberOfKeys          = 0;
+  
+  //
+  // Pass the data to the Apple protocol
+  //
+  for (Index = 2; Index < 8; Index++) {
+    if (USBKBD_VALID_KEYCODE (CurKeyCodeBuffer[Index])) {
+      Keys[NumberOfKeys] = APPLE_HID_USB_KB_KP_USAGE (CurKeyCodeBuffer[Index]);
+      ++NumberOfKeys;
+    }
+  }
+  
+  if (BiosKeyboardPrivate->KeyMapDb != NULL) {
+    BiosKeyboardPrivate->KeyMapDb->SetKeyStrokeBufferKeys (
+                                                         BiosKeyboardPrivate->KeyMapDb,
+                                                         BiosKeyboardPrivate->KeyMapDbIndex,
+                                                         (APPLE_MODIFIER_MAP)CurModifierMap,
+                                                         NumberOfKeys,
+                                                         &Keys[0]
+                                                         );
+  }
+*/  
+
 
   return ;  
 }
@@ -2084,7 +2124,7 @@ BiosKeyboardFreeNotifyList (
 /**
   Check if key is registered.
 
-  @param  RegsiteredData    A pointer to a buffer that is filled in with the keystroke 
+  @param  RegisteredData    A pointer to a buffer that is filled in with the keystroke 
                             state data for the key that was registered.
   @param  InputData         A pointer to a buffer that is filled in with the keystroke 
                             state data for the key that was pressed.
@@ -2095,29 +2135,29 @@ BiosKeyboardFreeNotifyList (
 **/
 BOOLEAN
 IsKeyRegistered (
-  IN EFI_KEY_DATA  *RegsiteredData,
+  IN EFI_KEY_DATA  *RegisteredData,
   IN EFI_KEY_DATA  *InputData
   )
 {
-//  ASSERT (RegsiteredData != NULL && InputData != NULL);
-  if (!RegsiteredData || !InputData) {
+//  ASSERT (RegisteredData != NULL && InputData != NULL);
+  if (!RegisteredData || !InputData) {
     return FALSE;
   }
 
-  if ((RegsiteredData->Key.ScanCode    != InputData->Key.ScanCode) ||
-      (RegsiteredData->Key.UnicodeChar != InputData->Key.UnicodeChar)) {
+  if ((RegisteredData->Key.ScanCode    != InputData->Key.ScanCode) ||
+      (RegisteredData->Key.UnicodeChar != InputData->Key.UnicodeChar)) {
     return FALSE;  
   }      
   
   //
   // Assume KeyShiftState/KeyToggleState = 0 in Registered key data means these state could be ignored.
   //
-  if (RegsiteredData->KeyState.KeyShiftState != 0 &&
-      RegsiteredData->KeyState.KeyShiftState != InputData->KeyState.KeyShiftState) {
+  if (RegisteredData->KeyState.KeyShiftState != 0 &&
+      RegisteredData->KeyState.KeyShiftState != InputData->KeyState.KeyShiftState) {
     return FALSE;    
   }   
-  if (RegsiteredData->KeyState.KeyToggleState != 0 &&
-      RegsiteredData->KeyState.KeyToggleState != InputData->KeyState.KeyToggleState) {
+  if (RegisteredData->KeyState.KeyToggleState != 0 &&
+      RegisteredData->KeyState.KeyToggleState != InputData->KeyState.KeyToggleState) {
     return FALSE;    
   }     
   

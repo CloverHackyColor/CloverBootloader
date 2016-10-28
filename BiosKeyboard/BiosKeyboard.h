@@ -19,6 +19,9 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 
 #include <FrameworkDxe.h>
 
+#include <IndustryStandard/Pci.h>
+#include <IndustryStandard/AppleHid.h>
+
 #include <Guid/StatusCodeDataTypeId.h>
 #include <Protocol/SimpleTextIn.h>
 #include <Protocol/SimpleTextInEx.h>
@@ -27,6 +30,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #include <Protocol/IsaIo.h>
 #include <Protocol/DevicePath.h>
 #include <Protocol/Ps2Policy.h>
+#include <Protocol/AppleKeyMapDatabase.h>
 
 #include <Library/DebugLib.h>
 #include <Library/UefiLib.h>
@@ -37,6 +41,8 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #include <Library/MemoryAllocationLib.h>
 #include <Library/BaseLib.h>
 #include <Library/PcdLib.h>
+#include <Library/DevicePathLib.h>
+
 
 //
 // Driver Binding Externs
@@ -46,10 +52,8 @@ extern EFI_COMPONENT_NAME_PROTOCOL  gBiosKeyboardComponentName;
 extern EFI_COMPONENT_NAME2_PROTOCOL gBiosKeyboardComponentName2;
 
 
-#include <IndustryStandard/Pci.h>
-
 //
-// BISO Keyboard Defines
+// BIOS Keyboard Defines
 //
 #define CHAR_SCANCODE                   0xe0
 #define CHAR_ESC                        0x1b
@@ -217,6 +221,9 @@ typedef struct {
 	EFI_ISA_IO_PROTOCOL                         *IsaIo;
 	EFI_SIMPLE_TEXT_INPUT_PROTOCOL              SimpleTextIn;
 	EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL           SimpleTextInputEx;
+  APPLE_KEY_MAP_DATABASE_PROTOCOL             *KeyMapDb;
+  UINTN                                       KeyMapDbIndex;
+
 	UINT16                                      DataRegisterAddress;
 	UINT16                                      StatusRegisterAddress;
 	UINT16                                      CommandRegisterAddress;
