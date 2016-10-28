@@ -555,19 +555,70 @@ IsSleepImageValidBySignature (IN REFIT_VOLUME *Volume)
   return (GetSleepImagePosition (Volume, NULL) != 0);
 }
 
+UINT16 PartNumForVolume(REFIT_VOLUME *Volume)
+{
+  UINT32 PartNum = 0; //if not found then zero mean whole disk
+	HARDDRIVE_DEVICE_PATH       *HdPath     = NULL;
+	EFI_DEVICE_PATH_PROTOCOL    *DevicePath = Volume->DevicePath;
 
+  while (!IsDevicePathEnd (DevicePath)) {
+		if ((DevicePathType (DevicePath) == MEDIA_DEVICE_PATH) &&
+        (DevicePathSubType (DevicePath) == MEDIA_HARDDRIVE_DP)) {
+			HdPath = (HARDDRIVE_DEVICE_PATH *)DevicePath;
+			break;
+		}
+		DevicePath = NextDevicePathNode (DevicePath);
+	}
+	
+	if (HdPath != NULL) {
+    PartNum = HdPath->PartitionNumber;
+  }
+  return PartNum;
+}
+
+REFIT_VOLUME *FoundParentVolume(REFIT_VOLUME *Volume)
+{
+  UINTN         VolumeIndex;
+  REFIT_VOLUME  *Volume1 = NULL;
+  INT16         SearchPartNum = PartNumForVolume(Volume);
+  
+  if (SearchPartNum < 3) {
+    // 0 - whole disk
+    // 1 - ESP
+    // 2 - a partition to search
+    // 3 - minimum # for recovery
+    DBG("    the volume has wrong partition number %d\n", SearchPartNum);
+    return NULL; //don't search!
+  }
+
+  for (VolumeIndex = 0; VolumeIndex < VolumesCount; VolumeIndex++) {
+    Volume1 = Volumes[VolumeIndex];
+    if (Volume1 != Volume &&
+        Volume1->WholeDiskBlockIO == Volume->WholeDiskBlockIO) {
+      if (PartNumForVolume(Volume1) == SearchPartNum - 1) {
+        return Volume1;
+      }
+    }
+  }
+  return NULL;
+}
 
 /** Returns TRUE if given OSX on given volume is hibernated. */
 BOOLEAN
-IsOsxHibernated (IN LOADER_ENTRY    *Entry)
+IsOsxHibernated (IN LOADER_ENTRY *Entry)
 {
-  EFI_STATUS          Status;
-  UINTN               Size                = 0;
-  UINT8               *Data               = NULL;
-  REFIT_VOLUME        *ThisVolume = Entry->Volume;
-  REFIT_VOLUME        *Volume = ThisVolume;
-//  UINTN               VolumeIndex;
-//  EFI_GUID            *VolumeUUID;
+  EFI_STATUS      Status;
+  UINTN           Size            = 0;
+  UINT8           *Data           = NULL;
+  REFIT_VOLUME    *ThisVolume     = Entry->Volume;
+  REFIT_VOLUME    *Volume         = ThisVolume;
+//  UINTN           VolumeIndex;
+//  EFI_GUID        *VolumeUUID;
+  CHAR16          *VolumeUUIDStr  = NULL;
+  
+  if (!Volume) {
+    return FALSE;
+  }
 
   Status = GetRootUUID(ThisVolume);
   
@@ -607,6 +658,19 @@ IsOsxHibernated (IN LOADER_ENTRY    *Entry)
       DBG("cant find volume with UUID=%s\n", GuidLEToStr(&ThisVolume->RootUUID));
     }
 */
+    VolumeUUIDStr = GuidLEToStr(&ThisVolume->RootUUID);
+    DBG("    Search for Volume with UUID: %s\n", VolumeUUIDStr);
+    if (VolumeUUIDStr) {
+      FreePool(VolumeUUIDStr);
+    }
+    
+    Volume = FoundParentVolume(ThisVolume);
+    if (Volume) {
+      DBG("    Found parent Volume with name %s\n", Volume->VolName);
+    } else {
+      DBG("    Parent Volume not found, use this one\n");
+      Volume = ThisVolume;
+    }    
   }
 
   //if sleep image is good but OSX was not hibernated.
@@ -669,7 +733,7 @@ IsOsxHibernated (IN LOADER_ENTRY    *Entry)
 BOOLEAN
 PrepareHibernation (IN REFIT_VOLUME *Volume)
 {
-  EFI_STATUS          Status;
+  EFI_STATUS      Status;
   UINT64          SleepImageOffset;
   CHAR16          OffsetHexStr[17];
   EFI_DEVICE_PATH_PROTOCOL    *BootImageDevPath;
