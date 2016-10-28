@@ -301,6 +301,8 @@ StrToGuidLE (
   return EFI_SUCCESS;
 }
 
+//Slice - I need GuidBEToStr :(
+#if 0
 //the caller is responsible to free the buffer
 CHAR16 * GuidLEToStr(EFI_GUID *Guid)
 {
@@ -310,7 +312,7 @@ CHAR16 * GuidLEToStr(EFI_GUID *Guid)
   return Str;
 }
 
-#if 0
+
 EFI_STATUS
 StrToGuid (
 		   IN  CHAR16   *Str,

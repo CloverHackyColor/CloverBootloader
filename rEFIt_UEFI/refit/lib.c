@@ -906,10 +906,10 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
       Volume->VolName = EfiStrDuplicate(tmpName);
       FreePool(tmpName);
     } else if (!Volume->VolName) {
-      Volume->VolName =  L"Whole Disc Boot";
+      Volume->VolName =  EfiStrDuplicate(L"Whole Disc Boot");
     }
     if (!Volume->LegacyOS->IconName)
-      Volume->LegacyOS->IconName = L"legacy";
+      Volume->LegacyOS->IconName = EfiStrDuplicate(L"legacy");
     
     return EFI_SUCCESS;
   }

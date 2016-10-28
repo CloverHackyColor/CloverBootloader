@@ -290,11 +290,11 @@ EFIAPI OurBlockIoRead (
   return Status;
 }
 
-/** Get slep image location (volume and name) */
+/** Get sleep image location (volume and name) */
 VOID
 GetSleepImageLocation(IN REFIT_VOLUME *Volume, REFIT_VOLUME **SleepImageVolume, CHAR16 **SleepImageName)
 {
-  EFI_STATUS          Status;
+  EFI_STATUS          Status = EFI_NOT_FOUND;
   UINT8               *PrefBuffer = NULL;
   UINTN               PrefBufferLen = 0;
   TagPtr              PrefDict, dict, dict2, prop;
@@ -302,15 +302,18 @@ GetSleepImageLocation(IN REFIT_VOLUME *Volume, REFIT_VOLUME **SleepImageVolume, 
   CHAR16              *PrefName2 = L"\\Library\\Preferences\\com.apple.PowerManagement.plist";
   CHAR16              *ImageName = NULL;
   REFIT_VOLUME        *ImageVolume = Volume;
-  
-  // find sleep image entry from plist
-  Status = egLoadFile(Volume->RootDir, PrefName, &PrefBuffer, &PrefBufferLen);
-  if (EFI_ERROR(Status)) {
-    Status = egLoadFile(Volume->RootDir, PrefName2, &PrefBuffer, &PrefBufferLen);
-     DBG("    read prefs %s status=%r\n", PrefName2, Status);
-  } else {
-    DBG("    read prefs %s status=%r\n", PrefName, Status);
+
+  if (Volume->RootDir) {
+    // find sleep image entry from plist
+    Status = egLoadFile(Volume->RootDir, PrefName, &PrefBuffer, &PrefBufferLen);
+    if (EFI_ERROR(Status)) {
+      Status = egLoadFile(Volume->RootDir, PrefName2, &PrefBuffer, &PrefBufferLen);
+      DBG("    read prefs %s status=%r\n", PrefName2, Status);
+    } else {
+      DBG("    read prefs %s status=%r\n", PrefName, Status);
+    }
   }
+
   if (!EFI_ERROR(Status)) {
     Status = ParseXML((const CHAR8*)PrefBuffer, &PrefDict, 0);
     if (!EFI_ERROR(Status)) {
@@ -419,11 +422,13 @@ GetSleepImagePosition (IN REFIT_VOLUME *Volume, REFIT_VOLUME **SleepImageVolume)
   // Get sleepimage name and volume
   GetSleepImageLocation(Volume, &ImageVolume, &ImageName);
 
-  // Open sleepimage
-  Status = ImageVolume->RootDir->Open(ImageVolume->RootDir, &File, ImageName, EFI_FILE_MODE_READ, 0);
-  if (EFI_ERROR(Status)) {
-    DBG("    sleepimage not found -> %r\n", Status);
-    return 0;
+  if (ImageVolume->RootDir) {
+    // Open sleepimage
+    Status = ImageVolume->RootDir->Open(ImageVolume->RootDir, &File, ImageName, EFI_FILE_MODE_READ, 0);
+    if (EFI_ERROR(Status)) {
+      DBG("    sleepimage not found -> %r\n", Status);
+      return 0;
+    }
   }
 
   // We want to read the first 512 bytes from sleepimage
@@ -435,6 +440,11 @@ GetSleepImagePosition (IN REFIT_VOLUME *Volume, REFIT_VOLUME **SleepImageVolume)
   }
 
   DBG("    Reading first %d bytes of sleepimage ...\n", BufferSize);
+
+  if (!ImageVolume->WholeDiskBlockIO) {
+    DBG("     can not get whole disk -> %r\n", Status);
+    return 0;
+  }
 
   // Override disk BlockIo
   OrigBlockIoRead = ImageVolume->WholeDiskBlockIO->ReadBlocks;
@@ -561,7 +571,7 @@ UINT16 PartNumForVolume(REFIT_VOLUME *Volume)
 	HARDDRIVE_DEVICE_PATH       *HdPath     = NULL;
 	EFI_DEVICE_PATH_PROTOCOL    *DevicePath = Volume->DevicePath;
 
-  while (!IsDevicePathEnd (DevicePath)) {
+  while (DevicePath && !IsDevicePathEnd (DevicePath)) {
 		if ((DevicePathType (DevicePath) == MEDIA_DEVICE_PATH) &&
         (DevicePathSubType (DevicePath) == MEDIA_HARDDRIVE_DP)) {
 			HdPath = (HARDDRIVE_DEVICE_PATH *)DevicePath;
@@ -614,14 +624,13 @@ IsOsxHibernated (IN LOADER_ENTRY *Entry)
   REFIT_VOLUME    *Volume         = ThisVolume;
 //  UINTN           VolumeIndex;
 //  EFI_GUID        *VolumeUUID;
-  CHAR16          *VolumeUUIDStr  = NULL;
+//  CHAR16          *VolumeUUIDStr  = NULL;
   
   if (!Volume) {
     return FALSE;
   }
 
   Status = GetRootUUID(ThisVolume);
-  
   if (!EFI_ERROR(Status)) { //this is set by scan loaders only for Recovery volumes
 /*
     FP.1EE01920[\].Open('com.apple.boot.R', 1, 0) = Not Found
@@ -658,15 +667,20 @@ IsOsxHibernated (IN LOADER_ENTRY *Entry)
       DBG("cant find volume with UUID=%s\n", GuidLEToStr(&ThisVolume->RootUUID));
     }
 */
-    VolumeUUIDStr = GuidLEToStr(&ThisVolume->RootUUID);
+    DBG("    got RootUUID %g\n", &ThisVolume->RootUUID);
+
+/*    VolumeUUIDStr = GuidLEToStr(&ThisVolume->RootUUID);
     DBG("    Search for Volume with UUID: %s\n", VolumeUUIDStr);
     if (VolumeUUIDStr) {
       FreePool(VolumeUUIDStr);
     }
-    
+ */
     Volume = FoundParentVolume(ThisVolume);
     if (Volume) {
       DBG("    Found parent Volume with name %s\n", Volume->VolName);
+      if (Volume->RootDir == NULL) {
+        return FALSE;
+      }
     } else {
       DBG("    Parent Volume not found, use this one\n");
       Volume = ThisVolume;

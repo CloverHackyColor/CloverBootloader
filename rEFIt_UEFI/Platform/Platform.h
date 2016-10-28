@@ -1670,7 +1670,7 @@ StrToGuidLE (
   IN      CHAR16   *Str,
      OUT  EFI_GUID *Guid);
 
-CHAR16 * GuidLEToStr(EFI_GUID *Guid);
+//CHAR16 * GuidLEToStr(EFI_GUID *Guid);
 
 EFI_STATUS
 InitBootScreen (

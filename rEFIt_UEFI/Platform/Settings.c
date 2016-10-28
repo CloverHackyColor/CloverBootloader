@@ -5541,7 +5541,7 @@ GetRootUUID (IN  REFIT_VOLUME *Volume)
 
   Status = EFI_NOT_FOUND;
   if (Volume == NULL) {
-    return Status;
+    return EFI_NOT_FOUND;
   }
 
   SystemPlistR = L"\\com.apple.boot.R\\Library\\Preferences\\SystemConfiguration\\com.apple.Boot.plist";
