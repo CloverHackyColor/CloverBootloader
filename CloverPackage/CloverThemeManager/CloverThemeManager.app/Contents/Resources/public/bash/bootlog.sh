@@ -170,7 +170,7 @@ ReadBootLog()
     do
     
         if [[ "$lineRead" == *"Starting Clover"* ]]; then
-            blCloverRevision="${lineRead##*Starting Clover rev }"
+            blCloverRevision="${lineRead##*Starting Clover revision: }"
             blCloverRevision="${blCloverRevision% on*}"
             blBootType="${lineRead#*on }"
             if [[ "$blBootType" == *"CLOVER EFI"* ]]; then

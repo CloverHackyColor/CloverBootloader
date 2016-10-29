@@ -728,7 +728,7 @@ $(function()
         ResetButtonsAndBandsToDefault();
         hideButtons();
         
-        // show all themes, even if asked to hide uninstalled
+        // show all themes, even if asked to Show Installed
         $(".accordion").css("display","block");
         
         // Reset global var for updated themes
@@ -787,13 +787,13 @@ $(function()
                 .closest("#ThemeBand")                   // Traverse up the DOM to the ThemeBand div
                 .nextAll('[class="accordionContent"]')   // find the next siblings with class .accordionContent
                 .first()                                 // just use first one
-                .slideUp('normal');                      // Slide up
+                .slideUp('fast');                        // Slide up
             } else {
                 $(this)
                 .closest("#ThemeBand")
                 .nextAll('[class="accordionContent"]')
                 .first()
-                .slideToggle('normal');
+                .slideToggle('fast');
             }
         } else {
             return;
@@ -848,19 +848,19 @@ $(function()
     });	
     
     //-----------------------------------------------------
-    // On clicking the Hide UnInstalled / Show All button
+    // On clicking the Show Installed / Show All button
     $("#ShowHideToggleButton").on('click', function() {
     
         // Change text of button
         var textState = $(this).text();
-        if (textState.indexOf("Hide") >= 0) {
+        if (textState.indexOf("Show Installed") >= 0) {
             SetShowHideButton("Hide");
             // Send a message to the bash script to record user choice in prefs
             macgap.app.launch("CTM_hideUninstalled");
             // Close all preview images for UnInstalled themes
             ClosePreviewsForUninstalledThemes();
         }
-        if (textState.indexOf("Show") >= 0) {     
+        if (textState.indexOf("Show All") >= 0) {     
             SetShowHideButton("Show");   
             // Send a message to the bash script to record user choice in prefs
             macgap.app.launch("CTM_showUninstalled");
@@ -971,8 +971,8 @@ function SetBootLogState(state)
                 $('#header').css("z-index",0);
                 
                 var newHeaderHeight = (currentHeaderHeight + bootLogContainerHeight);
-                $('#BootLogContainer').show(500);
-                $('#content').animate({ left: '0', top: '+=' + (bootLogContainerHeight)}, 500, function () {
+                $('#BootLogContainer').show(200);
+                $('#content').animate({ left: '0', top: '+=' + (bootLogContainerHeight)}, 200, function () {
                         // Action after animation has completed
                         SetListingThemesMessageAndProgressBarPosition();
                         
@@ -991,8 +991,8 @@ function SetBootLogState(state)
                 $('#header').css("z-index",0);
                 
                 var newHeaderHeight = (currentHeaderHeight - bootLogContainerHeight);
-                $('#BootLogContainer').hide(500);
-                $('#content').animate({ left: '0', top: '-=' + (bootLogContainerHeight)}, 500, function () {
+                $('#BootLogContainer').hide(200);
+                $('#content').animate({ left: '0', top: '-=' + (bootLogContainerHeight)}, 200, function () {
                         // Action after animation has completed
                         $('#header').height(newHeaderHeight);
                         SetListingThemesMessageAndProgressBarPosition();
@@ -1109,9 +1109,10 @@ function SetShowHideButton(state)
         $("#ShowHideToggleButton").css("color","#82f3ff");
         GetShowHideButtonStateAndUpdateUI();
     } else if (state == "Show") {
-        $("#ShowHideToggleButton").text("Hide UnInstalled");
+        $("#ShowHideToggleButton").text("Show Installed");
         $("#ShowHideToggleButton").css("background-image","-webkit-linear-gradient(top, rgba(110,110,110,1) 0%,rgba(0,0,0,1) 100%)");
         $("#ShowHideToggleButton").css("border","1px solid #282828");
+        $("#ShowHideToggleButton").css("color","#FFF");
         GetShowHideButtonStateAndUpdateUI();
     }
 }
@@ -1229,7 +1230,7 @@ function UpdateMessageBox(messageOne,messageTwo)
                 ResetButtonsAndBandsToDefault();
                 hideButtons();
         
-                // show all themes, even if asked to hide uninstalled
+                // show all themes, even if asked to Show Installed
                 $(".accordion").css("display","block");
             }
         } else if (messageOne == "Cancelled") {
@@ -1330,9 +1331,9 @@ function GetShowHideButtonStateAndUpdateUI()
 {
     var showHideState=$("[id='ShowHideToggleButton']").text();
     var expandCollapseState=$("[id='preview_Toggle_Button']").text();
-    if (showHideState.indexOf("Hide") >= 0) {
+    if (showHideState.indexOf("Show Installed") >= 0) {
         showHideState="Hide";
-    } else if (showHideState.indexOf("Show") >= 0) {
+    } else if (showHideState.indexOf("Show All") >= 0) {
         showHideState="Show";
     }
     ShowHideUnInstalledThemes(showHideState,expandCollapseState);
@@ -1645,10 +1646,10 @@ function ChangeButtonAndBandToUpdate(themeName)
     var currentThemeBand = $("[id='button_" + themeName + "']").closest("#ThemeBand");
     var currentBandClass = currentThemeBand.attr('class');
     
-    // if UI is currently set to 'Hide Uninstalled' themes
+    // if UI is currently set to 'Show Installed' themes
     // then we only need to show update bands without shadows.
     var viewState = $(ShowHideToggleButton).text();
-    if (viewState.indexOf("Show") >= 0) {
+    if (viewState.indexOf("Show All") >= 0) {
         $(currentThemeBand).attr("class","accordionUpdateNoShadow");
     } else {
         // UI is set to 'Show all' themes so we need to figure out

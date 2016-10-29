@@ -201,7 +201,7 @@ function readLogFileForMessages()
                 } else if (/CTM_RepositoryError/i.test(splitContent[i])) {
                            $("#status_Repository").css("color","#DD171B");
                            ChangeMessageBoxHeaderColour("red");
-                           SetMessageBoxText('Attention: Repository' , 'The remote Clover Theme repository is not responding. This app cannot continue and will exit when you close this dialog box.<br><br> <a href="http://sourceforge.net/p/cloverthemes/git/ci/master/tree/" target="_blank">Check Repo in Web Browser</a>');
+                           SetMessageBoxText('Attention: Repository' , 'The remote Clover Theme repository is not responding. This app cannot continue and will exit when you close this dialog box.<br><br> <a href="https://sourceforge.net/p/cloverefiboot/themes/ci/master/tree/" target="_blank">Check Repo in Web Browser</a>');
                            $("#AnimatedBar").css("display","none");
                            ShowMessageBox();
                            // Send native notification

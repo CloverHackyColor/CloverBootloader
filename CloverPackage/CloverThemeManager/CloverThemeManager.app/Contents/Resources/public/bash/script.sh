@@ -22,7 +22,7 @@
 # Thanks to apianti, dmazar & JrCs for their git know-how. 
 # Thanks to alexq, asusfreak, chris1111, droplets, eMatoS, kyndder & oswaldini for testing.
 
-VERS="0.77.3"
+VERS="0.77.4"
 
 # =======================================================================================
 # Helper Functions/Routines
@@ -1048,30 +1048,53 @@ IsRepositoryLive()
     [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndent}IsRepositoryLive()"
     
     local noConnection=1
-
-    # First check if there is a network connection. Check IPv4
+    local checkService=""
+    local defaultGateway=""
+    
     WriteToLog "CTM_RepositoryCheckNetwork"
+
+    # Check if there is a network connection. Check IPv4
+
     # Check for discoveryd or mDNSResponder
-    local checkService=$( ps -ax | grep discoveryd | grep ?? | head -n1 )
+    checkService=$( ps -ax | grep discoveryd | grep ?? | head -n1 )
+    [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}checkService discoveryd: $checkService"
     if [ "$checkService" != "" ] && [[ "$checkService" != *"grep discoveryd"* ]] ; then
-        local defaultGateway=$( netstat -r | grep default | head -n1 | awk '{print $2}' )
-    else
-        local checkService=$( ps -ax | grep mDNSResponder | grep ?? | head -n1 )
-        if [ "$checkService" != "" ] && [[ "$checkService" != *"grep mDNSResponder"* ]]; then
-           local defaultGateway=$( /usr/sbin/system_profiler SPNetworkDataType | grep Router: | head -n1 | tr -d ' ' )
+        defaultGateway=$( netstat -r | grep default | head -n1 | awk '{print $2}' )
+        [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}discoveryd: defaultGateway=$defaultGateway"
+    fi
+
+    checkService=$( ps -ax | grep mDNSResponder | grep ?? | head -n1 )
+    [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}checkService mDNSResponder: $checkService"
+    if [ "$checkService" != "" ] && [[ "$checkService" != *"grep mDNSResponder"* ]]; then
+        defaultGateway=$( /usr/sbin/system_profiler SPNetworkDataType | grep Router: | head -n1 | tr -d ' ' )
+        if [ "$defaultGateway" != "" ]; then
+            defaultGateway="${defaultGateway##*:}"
+            [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}mDNSResponder: defaultGateway=$defaultGateway"
+        fi
+    fi
+
+    # Add a final check, based on OS version.
+    if [ "$defaultGateway" == "" ]; then
+        [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}Default gateway not found. Checking directly for Router in SPNetworkDataType"
+        if [ $(CheckOsVersion) -ge 15 ]; then
+            [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}OS version >= 15"
+            defaultGateway=$( /usr/sbin/system_profiler SPNetworkDataType | grep Router: | head -n1 | tr -d ' ' )
             if [ "$defaultGateway" != "" ]; then
                 defaultGateway="${defaultGateway##*:}"
+                [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}defaultGateway=$defaultGateway"
             fi
         fi
     fi
+
     if [ "$defaultGateway" != "" ]; then
-        [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}Default Gateway $defaultGateway"
-            
+
         # Continue to check if repository is live
         WriteToLog "CTM_RepositoryChecking"
+
         local gitRepositoryUrl=$( echo ${remoteRepositoryUrl}/ | sed 's/http:/git:/' )
-        [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}Connecting to $gitRepositoryUrl"
+        [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}Connecting to ${gitRepositoryUrl}themes"
         local testConnection=$( "$gitCmd" ls-remote ${gitRepositoryUrl}themes )
+        [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}$testConnection"
         if [ "$testConnection" ]; then
             WriteToLog "CTM_RepositorySuccess"
         else
