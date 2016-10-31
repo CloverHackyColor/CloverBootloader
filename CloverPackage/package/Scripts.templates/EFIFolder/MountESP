@@ -1,22 +1,44 @@
 #!/bin/bash
 
-DEST_VOL="$1"
+DEST_VOL="${1}"
 EFI_ROOT_DIR="${2:-${DEST_VOL%*/}/EFIROOTDIR}"
 partutil="./partutil"
 
-DiskDevice=$(LC_ALL=C diskutil info "$DEST_VOL" 2>/dev/null | \
-# sed -n 's/.*Part [oO]f Whole: *//p')
-sed -n 's/.*PV UUID (disk): .*(//p' | \
-sed -n 's/s[0-9])//p')
+DiskDevice=$(LC_ALL=C diskutil info "${DEST_VOL}" 2>/dev/null | \
+                              sed -n 's/.*Part [oO]f Whole: *//p')
 
-if [[ "$ESPDevice" == "" ]]; then
-  ESPDevice=$(LC_ALL=C diskutil info "$DEST_VOL" 2>/dev/null | \
-  sed -n 's/.*Part [Oo]f Whole: *//p')
-fi
 if [[ -z "$DiskDevice" ]]; then
-    echo "Can't find volume with the name $DEST_VOL"
+    echo "Can't find volume with the name ${DEST_VOL}"
     exit 1
 fi
+
+# check if target volume is a logical Volume instead of physical
+if [[ "$(echo $(LC_ALL=C diskutil list | grep -i 'Logical Volume' | \
+          awk '{print tolower($0)}'))" == *"logical volume"* ]]; then
+    # ok, we have a logical volume somewhere.. so that can assume that we can use "diskutil cs"
+    LC_ALL=C diskutil cs info $DiskDevice > /dev/null 2>&1
+    if [[ $? -eq 0 ]] ; then
+        # logical volumes does not have an EFI partition (or not suitable for us?)
+        echo "$DiskDevice is a logical volume"
+        # find the partition uuid
+        UUID=$(LC_ALL=C diskutil info "${DiskDevice}" 2>/dev/null | \
+                                      sed -n 's/.*artition UUID: *//p')
+        # with the partition uuid we can find the real disk in in diskutil list output
+        if [[ -n "$UUID" ]]; then
+            realDisk=$(LC_ALL=C diskutil list | \
+                grep -B 1 "$UUID" | \
+                grep -i 'logical volume' | awk '{print $NF}')
+            if [[ -n "$realDisk" ]]; then
+                DiskDevice=$(LC_ALL=C diskutil info "${realDisk}" 2>/dev/null | \
+                                             sed -n 's/.*Part [oO]f Whole: *//p')
+            fi
+        fi
+    fi
+fi
+
+# echo "realDisk = $realDisk"
+# echo "UUID = $UUID"
+# echo "DiskDevice = $DiskDevice"
 
 # Check if the disk is a GPT disk
 disk_partition_scheme=$("$partutil" --show-partitionscheme "$DiskDevice")
@@ -66,7 +88,7 @@ if [[ "$disk_partition_scheme" = "GUID_partition_scheme" ]]; then
     fi
 else
     # Disk is not GPT use the DEST_VOL as EFI_ROOT_DIR
-    ln -sf "$DEST_VOL" "$EFI_ROOT_DIR"
+    ln -sf "${DEST_VOL}" "$EFI_ROOT_DIR"
     exitcode=0
 fi
 
