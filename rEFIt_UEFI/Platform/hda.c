@@ -117,6 +117,8 @@ static hda_controller_devices know_hda_controller[] = {
     { HDA_NVIDIA_GK106,	"GK106" /*, 0, ? */ },
     { HDA_NVIDIA_GK107,	"GK107" /*, 0, ? */ },
     { HDA_NVIDIA_GK104,	"GK104" /*, 0, ? */ },
+    { HDA_NVIDIA_GP104_2, "Pascal GP104-200" /*, 0, ? */ },
+    { HDA_NVIDIA_GM204_2, "Maxwell GP204-200" /*, 0, ? */ },
     
     //1002  Advanced Micro Devices [AMD] nee ATI Technologies Inc
     { HDA_ATI_SB450,	"SB4x0" /*, 0, 0 */ },
