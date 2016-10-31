@@ -5180,6 +5180,12 @@ GetUserSettings(
         gSettings.HWP = TRUE;
         AsmWriteMsr64 (MSR_IA32_PM_ENABLE, 1);
       }
+      Prop                 = GetProperty (DictPointer, "HWPValue");
+      if (Prop && gSettings.HWP) {
+        gSettings.HWPValue = (UINT32)GetPropertyInteger(Prop, 0);
+        AsmWriteMsr64 (MSR_IA32_HWP_REQUEST, gSettings.HWPValue);
+      }
+
 
       Prop                 = GetProperty (DictPointer, "TurboDisable");
       if (Prop && IsPropertyTrue (Prop)) {
