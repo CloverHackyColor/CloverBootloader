@@ -1686,8 +1686,11 @@ FillinCustomEntry (
 
     Prop = GetProperty (DictPointer, "InjectKexts");
     if (Prop != NULL) {
-      if (IsPropertyTrue (Prop)) {
+      if (Prop->type == kTagTypeTrue) {
         Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_WITHKEXTS);
+      } else if ((Prop->type == kTagTypeString) &&
+                 (AsciiStriCmp (Prop->string, "Yes") == 0)) {
+        Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_CHECKFAKESMC);
       } else if ((Prop->type == kTagTypeString) &&
                  (AsciiStriCmp (Prop->string, "Detect") == 0)) {
         Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_CHECKFAKESMC);

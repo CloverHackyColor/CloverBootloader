@@ -4824,7 +4824,9 @@ UINTN RunMainMenu(IN REFIT_MENU_SCREEN *Screen, IN INTN DefaultSelection, OUT RE
       gSettings.OptionsBits |= EncodeOptions(((LOADER_ENTRY*)MainChosenEntry)->LoadOptions);
 //      DBG("add OptionsBits = 0x%x\n", gSettings.OptionsBits);
       DecodeOptions((LOADER_ENTRY*)MainChosenEntry);
-      DBG("enter menu with LoadOptions: %s\n", ((LOADER_ENTRY*)MainChosenEntry)->LoadOptions);
+      DBG(" enter menu with LoadOptions: %s\n", ((LOADER_ENTRY*)MainChosenEntry)->LoadOptions);
+      gSettings.FlagsBits = ((LOADER_ENTRY*)MainChosenEntry)->Flags;
+      DBG(" and with FlagsBits = 0x%x\n", gSettings.FlagsBits);
 #endif
       if (TmpArgs) {
         FreePool(TmpArgs);
@@ -4835,7 +4837,7 @@ UINTN RunMainMenu(IN REFIT_MENU_SCREEN *Screen, IN INTN DefaultSelection, OUT RE
 #ifdef CHECK_FLAGS
         DecodeOptions((LOADER_ENTRY*)MainChosenEntry);
 //        DBG("get OptionsBits = 0x%x\n", gSettings.OptionsBits);
-//        DBG("get FlagsBits = 0x%x\n", gSettings.FlagsBits);
+//        DBG(" get FlagsBits = 0x%x\n", gSettings.FlagsBits);
 #endif
         if (SubMenuExit == MENU_EXIT_ESCAPE) {
           SubMenuExit = 0;
@@ -4843,9 +4845,11 @@ UINTN RunMainMenu(IN REFIT_MENU_SCREEN *Screen, IN INTN DefaultSelection, OUT RE
         if (MainChosenEntry->Tag == TAG_CLOVER) {
           ((LOADER_ENTRY*)MainChosenEntry)->LoadOptions = EfiStrDuplicate(((LOADER_ENTRY*)TempChosenEntry)->LoadOptions);
         }
-        DBG("exit menu with LoadOptions: %s\n", ((LOADER_ENTRY*)MainChosenEntry)->LoadOptions);
-        if (SubMenuExit == MENU_EXIT_ENTER) {
+        DBG(" exit menu with LoadOptions: %s\n", ((LOADER_ENTRY*)MainChosenEntry)->LoadOptions);
+        if ((SubMenuExit == MENU_EXIT_ENTER) &&
+            (TempChosenEntry->Tag != TAG_RETURN)) {
           ((LOADER_ENTRY*)MainChosenEntry)->Flags = ((LOADER_ENTRY*)TempChosenEntry)->Flags;
+          DBG(" get FlagsBits = 0x%x\n", gSettings.FlagsBits);
         }
         if (/*MenuExit == MENU_EXIT_ENTER &&*/ MainChosenEntry->Tag == TAG_LOADER) {
           if (((LOADER_ENTRY*)MainChosenEntry)->LoadOptions) {
@@ -4853,7 +4857,7 @@ UINTN RunMainMenu(IN REFIT_MENU_SCREEN *Screen, IN INTN DefaultSelection, OUT RE
           } else {
             ZeroMem(&gSettings.BootArgs, 255);
           }
-          DBG("boot with args: %a\n", gSettings.BootArgs);
+          DBG(" boot with args: %a\n", gSettings.BootArgs);
         }
         if (/*MenuExit == MENU_EXIT_ESCAPE ||*/ TempChosenEntry->Tag == TAG_RETURN) {
           SubMenuExit = MENU_EXIT_ENTER;
