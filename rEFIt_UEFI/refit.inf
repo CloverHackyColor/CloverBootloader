@@ -77,6 +77,8 @@
 #	Platform/device_tree.h
 	Platform/Edid.c
 	Platform/Events.c
+	Platform/hda.c
+#	Platform/hda.h
 	Platform/gma.c
 #	Platform/gma.h
 	Platform/guid.c

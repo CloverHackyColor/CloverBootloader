@@ -1710,13 +1710,16 @@ static VOID InitScroll(OUT SCROLL_STATE *State, IN INTN ItemCount, IN UINTN MaxC
   //MaxIndex, MaxScroll, MaxVisible are indexes, 0..N-1
   State->MaxIndex = (INTN)MaxCount - 1;
   State->MaxScroll = ItemCount - 1;
-  if (VisibleSpace == 0)
-    State->MaxVisible = State->MaxScroll;
-  else
-    State->MaxVisible = (INTN)VisibleSpace - 1;
 
-  if (State->MaxVisible >= ItemCount)
+  if (VisibleSpace == 0) {
+    State->MaxVisible = State->MaxScroll;
+  } else {
+    State->MaxVisible = (INTN)VisibleSpace - 1;
+  }
+
+  if (State->MaxVisible >= ItemCount) {
       State->MaxVisible = ItemCount - 1;
+  }
 
   State->MaxFirstVisible = State->MaxScroll - State->MaxVisible;
   CONSTRAIN_MIN(State->MaxFirstVisible, 0);
@@ -4142,10 +4145,14 @@ REFIT_MENU_ENTRY  *SubMenuAudio()
   AddMenuInfoLine(SubScreen, PoolPrint(L"Choose options to tune the HDA devices"));
   AddMenuInfoLine(SubScreen, PoolPrint(L"Number of Audio Controller%a=%d", ((NHDA!=1)?"s":""), NHDA));
   for (i = 0; i < NHDA; i++) {
-      AddMenuInfoLine(SubScreen, PoolPrint(L"%d) HDA Controller [%04x][%04x]", (i+1), gAudios[i].VendorID, gAudios[i].DeviceID));
+      AddMenuInfoLine(SubScreen, PoolPrint(L"%d) %a [%04x][%04x]",
+                                           (i+1),
+                                           gAudios[i].Model,
+                                           gAudios[i].VendorID,
+                                           gAudios[i].DeviceID)
+                      );
   }
 
-  //TODO check and TEST
   //AddMenuItem(SubScreen, 59, "HDAInjection", TAG_INPUT, FALSE);
   if (gSettings.HDAInjection) {
     AddMenuItem(SubScreen, 60, "HDALayoutId:", TAG_INPUT, TRUE);

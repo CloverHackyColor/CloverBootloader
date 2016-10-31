@@ -1888,6 +1888,18 @@ CHAR8
   );
 
 BOOLEAN
+setup_hda_devprop (
+  pci_dt_t *hda_dev,
+  CHAR8 *OSVersion
+  );
+
+CHAR8
+*get_hda_controller_name (
+  UINT16 controller_device_id,
+  UINT16 controller_vendor_id
+  );
+
+BOOLEAN
 setup_nvidia_devprop (
   pci_dt_t *nvda_dev
   );

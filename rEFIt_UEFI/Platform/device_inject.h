@@ -167,6 +167,5 @@ VOID			devprop_free_string(DevPropString *string);
 
 BOOLEAN set_eth_props(pci_dt_t *eth_dev);
 BOOLEAN set_usb_props(pci_dt_t *usb_dev);
-BOOLEAN set_hda_props(EFI_PCI_IO_PROTOCOL *PciIo, pci_dt_t *hda_dev, CHAR8 *OSVersion);
 
 #endif /* !__LIBSAIO_DEVICE_INJECT_H */

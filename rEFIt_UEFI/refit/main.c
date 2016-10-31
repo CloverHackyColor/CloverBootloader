@@ -1612,6 +1612,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   InitializeConsoleSim();
   InitBooterLog();
   ZeroMem((VOID*)&gGraphics[0], sizeof(GFX_PROPERTIES) * 4);
+  ZeroMem((VOID*)&gAudios[0], sizeof(HDA_PROPERTIES) * 4);
 
   DBG("\n");
   if (Now.TimeZone < 0 || Now.TimeZone > 24) {

@@ -5861,9 +5861,13 @@ GetDevices ()
             (NHDA < 4)) {
 
             HDA_PROPERTIES *hda = &gAudios[NHDA];
+
+// TODO refactor or remove vendor and device ID
             hda->VendorID       = Pci.Hdr.VendorId;
             hda->DeviceID       = Pci.Hdr.DeviceId;
 
+// TODO remove the above switch
+/*
           switch (Pci.Hdr.VendorId) {
               case 0x8086:
                   hda->Vendor = Intel;
@@ -5905,8 +5909,12 @@ GetDevices ()
                   AsciiSPrint (hda->Model, 64, "pci%x,%x", Pci.Hdr.VendorId, Pci.Hdr.DeviceId);
                   break;
           }
+*/
+            AsciiSPrint ( hda->Model,64, "%a",
+                         get_hda_controller_name ( Pci.Hdr.DeviceId, Pci.Hdr.VendorId )
+                         );
 
-            AsciiSPrint (hda->Model, 64, "pci%x,%x", Pci.Hdr.VendorId, Pci.Hdr.DeviceId);
+            //AsciiSPrint (hda->Model, 64, "pci%x,%x", Pci.Hdr.VendorId, Pci.Hdr.DeviceId);
 
           if (IsHDMIAudio(HandleArray[Index])) {
             DBG(" - HDMI Audio: \n");
@@ -6113,7 +6121,7 @@ SetDevices (
           //no HDMI injection
           if ((Pci.Hdr.VendorId != 0x1002) &&
               (Pci.Hdr.VendorId != 0x10de)) {
-            TmpDirty    = set_hda_props (PciIo, &PCIdevice, Entry->OSVersion);
+            TmpDirty    = setup_hda_devprop (&PCIdevice, Entry->OSVersion);
             StringDirty |= TmpDirty;
           }
         }
