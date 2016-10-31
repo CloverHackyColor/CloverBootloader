@@ -275,9 +275,9 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
     SetNvramVariable(L"UIScale", &gEfiAppleNvramGuid, Attributes, 1, &gSettings.UIScale);
   }
   if (gSettings.EFILoginHiDPI == 0x80000000) {
-    DeleteNvramVariable(L"EFILoginHiDPI", &gEfiAppleNvramGuid);
+    DeleteNvramVariable(L"EFILoginHiDPI", &gEfiAppleBootGuid);
   } else {
-    SetNvramVariable(L"EFILoginHiDPI", &gEfiAppleNvramGuid, Attributes, 4, &gSettings.EFILoginHiDPI);
+    SetNvramVariable(L"EFILoginHiDPI", &gEfiAppleBootGuid, Attributes, 4, &gSettings.EFILoginHiDPI);
   }
   //->GetVariable(flagstate, gEfiAppleBootGuid, 0/0, 20, 10FE110) = Not Found
   if (gSettings.flagstate[3] == 0x80) {
