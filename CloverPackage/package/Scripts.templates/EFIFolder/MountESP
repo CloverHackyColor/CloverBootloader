@@ -5,7 +5,14 @@ EFI_ROOT_DIR="${2:-${DEST_VOL%*/}/EFIROOTDIR}"
 partutil="./partutil"
 
 DiskDevice=$(LC_ALL=C diskutil info "$DEST_VOL" 2>/dev/null | \
- sed -n 's/.*Part [oO]f Whole: *//p')
+# sed -n 's/.*Part [oO]f Whole: *//p')
+sed -n 's/.*PV UUID (disk): .*(//p' | \
+sed -n 's/s[0-9])//p')
+
+if [[ "$ESPDevice" == "" ]]; then
+  ESPDevice=$(LC_ALL=C diskutil info "$DEST_VOL" 2>/dev/null | \
+  sed -n 's/.*Part [Oo]f Whole: *//p')
+fi
 if [[ -z "$DiskDevice" ]]; then
     echo "Can't find volume with the name $DEST_VOL"
     exit 1
