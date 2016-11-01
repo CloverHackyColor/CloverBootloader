@@ -87,17 +87,18 @@ extern INTN                     ScrollScrollDecorationsHeight;
 
 // global configuration with default values
 REFIT_CONFIG   GlobalConfig = {
-  FALSE,          // BOOLEAN     TextOnly;
   -1,             // INTN        Timeout;
   0,              // UINTN       DisableFlags;
   0,              // UINTN       HideBadges;
   0,              // UINTN       HideUIFlags;
+  FALSE,          // BOOLEAN     TextOnly;
   TRUE,           // BOOLEAN     Quiet;
   FALSE,          // BOOLEAN     LegacyFirst;
   FALSE,          // BOOLEAN     NoLegacy;
   FALSE,          // BOOLEAN     DebugLog;
   FALSE,          // BOOLEAN     FastBoot;
   FALSE,          // BOOLEAN     NeverHibernate;
+  FALSE,          // BOOLEAN     StrictHibernate;
   FONT_GRAY,      // FONT_TYPE   Font; //Welcome should be white
   9,              // INTN        CharWidth;
   0xFFFFFF80,     // UINTN       SelectionColor;
@@ -2213,6 +2214,11 @@ GetEarlyUserSettings (
       Prop = GetProperty (DictPointer, "NeverHibernate");
       if (IsPropertyTrue (Prop)) {
         GlobalConfig.NeverHibernate = TRUE;
+      }
+      
+      Prop = GetProperty (DictPointer, "StrictHibernate");
+      if (IsPropertyTrue (Prop)) {
+        GlobalConfig.StrictHibernate = TRUE;
       }
 
       //      Prop = GetProperty (DictPointer, "GetLegacyLanAddress");

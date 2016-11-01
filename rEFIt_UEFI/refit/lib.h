@@ -458,17 +458,18 @@ typedef enum {
 } SCALING;
 
 typedef struct {
-  BOOLEAN     TextOnly;
   INTN        Timeout;
   UINTN       DisableFlags;
   UINTN       HideBadges;
   UINTN       HideUIFlags;
+  BOOLEAN     TextOnly;
   BOOLEAN     Quiet;
   BOOLEAN     LegacyFirst;
   BOOLEAN     NoLegacy;
   BOOLEAN     DebugLog;
   BOOLEAN     FastBoot;
   BOOLEAN     NeverHibernate;
+  BOOLEAN     StrictHibernate;
   FONT_TYPE   Font;
   INTN        CharWidth;
   UINTN       SelectionColor;

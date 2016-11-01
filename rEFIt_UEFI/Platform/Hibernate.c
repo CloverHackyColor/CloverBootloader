@@ -622,17 +622,20 @@ IsOsxHibernated (IN LOADER_ENTRY *Entry)
   UINT8           *Data           = NULL;
   REFIT_VOLUME    *ThisVolume     = Entry->Volume;
   REFIT_VOLUME    *Volume         = ThisVolume;
-//  UINTN           VolumeIndex;
-//  EFI_GUID        *VolumeUUID;
+  EFI_GUID        *BootGUID       = NULL;
+  BOOLEAN         ret             = FALSE;
+  VOID            *Value          = NULL;
+
+  //  UINTN           VolumeIndex;
+  EFI_GUID        *VolumeUUID;
 //  CHAR16          *VolumeUUIDStr  = NULL;
   
   if (!Volume) {
     return FALSE;
   }
-
+/*
   Status = GetRootUUID(ThisVolume);
   if (!EFI_ERROR(Status)) { //this is set by scan loaders only for Recovery volumes
-/*
     FP.1EE01920[\].Open('com.apple.boot.R', 1, 0) = Not Found
     FP.1EE01920[\].Open('com.apple.boot.P', 1, 0) = Not Found
     FP.1EE01920[\].Open('com.apple.boot.S', 1, 0) = EFI_SUCCESS -> FP.1EE01A20[\com.apple.boot.S]
@@ -647,10 +650,10 @@ IsOsxHibernated (IN LOADER_ENTRY *Entry)
       <key>Root UUID</key>
       <string>D6E74829-F4A5-3CBA-B8EE-D0B6E40E4D53</string>
     </dict>
-*/ 
+ 
  //   Volume = from UUID
  //   We can obtain Partition UUID but not Volume UUID
-/*
+
     Status = EFI_NOT_FOUND;
     for (VolumeIndex = 0; VolumeIndex < VolumesCount; VolumeIndex++) {
       Volume = Volumes[VolumeIndex];
@@ -666,15 +669,15 @@ IsOsxHibernated (IN LOADER_ENTRY *Entry)
       Volume = ThisVolume;
       DBG("cant find volume with UUID=%s\n", GuidLEToStr(&ThisVolume->RootUUID));
     }
-*/
+
     DBG("    got RootUUID %g\n", &ThisVolume->RootUUID);
 
-/*    VolumeUUIDStr = GuidLEToStr(&ThisVolume->RootUUID);
+    VolumeUUIDStr = GuidLEToStr(&ThisVolume->RootUUID);
     DBG("    Search for Volume with UUID: %s\n", VolumeUUIDStr);
     if (VolumeUUIDStr) {
       FreePool(VolumeUUIDStr);
     }
- */
+ 
     Volume = FoundParentVolume(ThisVolume);
     if (Volume) {
       DBG("    Found parent Volume with name %s\n", Volume->VolName);
@@ -686,7 +689,8 @@ IsOsxHibernated (IN LOADER_ENTRY *Entry)
       Volume = ThisVolume;
     }    
   }
-
+*/
+  
   //if sleep image is good but OSX was not hibernated.
   //or we choose "cancel hibernate wake" then it must be canceled
   if (GlobalConfig.NeverHibernate) {
@@ -696,33 +700,68 @@ IsOsxHibernated (IN LOADER_ENTRY *Entry)
   
   DBG("    Check if volume Is Hibernated:\n");
 
-  // CloverEFI or UEFI with EmuVariable
-  if (IsSleepImageValidBySignature(Volume)) {
-    if ((gSleepTime == 0) || IsSleepImageValidBySleepTime(Volume)) {
-      DBG("    hibernated: yes\n");
+  if (!GlobalConfig.StrictHibernate) {
+    // CloverEFI or UEFI with EmuVariable
+    if (IsSleepImageValidBySignature(Volume)) {
+      if ((gSleepTime == 0) || IsSleepImageValidBySleepTime(Volume)) {
+        DBG("    hibernated: yes\n");
+        ret = TRUE;
+      } else {
+        DBG("    hibernated: no - time\n");
+        return FALSE;
+      }
+      //    IsHibernate = TRUE;
     } else {
-      DBG("    hibernated: no - time\n");
-      return FALSE;
+      DBG("    hibernated: no - sign\n");
+      return FALSE; //test
     }
-//    IsHibernate = TRUE;
-  } else {
-    DBG("    hibernated: no - sign\n");
-    return FALSE; //test
   }
   
   if (!gFirmwareClover &&
       !gDriversFlags.EmuVariableLoaded) {
     DBG("    UEFI with NVRAM: ");
     Status = gRT->GetVariable (L"Boot0082", &gEfiGlobalVariableGuid, NULL, &Size, Data);
-    if (Status == EFI_BUFFER_TOO_SMALL) {
-      DBG("yes\n");
-//      return TRUE;
-    } else {
+    if (Status != EFI_BUFFER_TOO_SMALL) {
       DBG("Boot0082 no\n");
-      return FALSE;
+      ret = FALSE;
+    } else {
+      DBG("yes\n");
+      Data = AllocatePool(Size);
+      Status = gRT->GetVariable (L"Boot0082", &gEfiGlobalVariableGuid, NULL, &Size, Data);
+      if (EFI_ERROR(Status)) {
+        //1. Boot0082 not exists
+        ret = FALSE;
+      } else {
+        //2. Check that Boot0082 points to this volume
+        BootGUID = (EFI_GUID*)(Data + 0x3C);
+        DBG(" Boot0082 points to UUID:%g\n", BootGUID);
+        VolumeUUID = FindGPTPartitionGuidInDevicePath(Volume->DevicePath);
+        DBG("Volume has PartUUID=%g\n", VolumeUUID);
+        if (!CompareGuid(BootGUID, VolumeUUID)) {
+          ret = FALSE;
+        } else {
+        //3. Checks for boot-image exists
+          if (GlobalConfig.StrictHibernate) {
+            /*
+            Variable NV+RT+BS '7C436110-AB2A-4BBB-A880-FE41995C9F82:boot-image' DataSize = 0x3A
+            00000000: 02 01 0C 00 D0 41 03 0A-00 00 00 00 01 01 06 00  *.....A..........*
+            00000010: 02 1F 03 12 0A 00 00 00-00 00 00 00 04 04 1A 00  *................*
+            00000020: 33 00 36 00 63 00 34 00-64 00 64 00 63 00 30 00  *3.6.c.4.d.d.c.0.*
+            00000030: 30 00 30 00 00 00 7F FF-04 00                    *0.0.......*
+             */
+            Status = GetVariable2 (L"boot-image", &gEfiAppleBootGuid, &Value, &Size);
+            if (EFI_ERROR(Status)) {
+              // leave it as is
+              DBG(" boot-image not found while we want StrictHibernate\n");
+              ret = FALSE;
+            }
+          } //else boot-image will be created
+        }
+      }
+      FreePool(Data);
     }
   }
-  return TRUE;
+  return ret;
 }
 
 
@@ -747,48 +786,50 @@ IsOsxHibernated (IN LOADER_ENTRY *Entry)
 BOOLEAN
 PrepareHibernation (IN REFIT_VOLUME *Volume)
 {
-  EFI_STATUS      Status;
-  UINT64          SleepImageOffset;
-  CHAR16          OffsetHexStr[17];
+  EFI_STATUS                  Status;
+  UINT64                      SleepImageOffset;
+  CHAR16                      OffsetHexStr[17];
   EFI_DEVICE_PATH_PROTOCOL    *BootImageDevPath;
-  UINTN           Size;
-  VOID            *Value;
-  AppleRTCHibernateVars RtcVars;
-  UINT8           *VarData = NULL;
-  REFIT_VOLUME    *SleepImageVolume;
+  UINTN                       Size;
+  VOID                        *Value;
+  AppleRTCHibernateVars       RtcVars;
+  UINT8                       *VarData = NULL;
+  REFIT_VOLUME                *SleepImageVolume;
   
   DBG("PrepareHibernation:\n");
   
-  // Find sleep image offset
-  SleepImageOffset = GetSleepImagePosition (Volume, &SleepImageVolume);
-  DBG(" SleepImageOffset: %lx\n", SleepImageOffset);
-  if (SleepImageOffset == 0 || SleepImageVolume == NULL) {
-    DBG(" sleepimage offset not found\n");
-    return FALSE;
+  if (!GlobalConfig.StrictHibernate) {
+    // Find sleep image offset
+    SleepImageOffset = GetSleepImagePosition (Volume, &SleepImageVolume);
+    DBG(" SleepImageOffset: %lx\n", SleepImageOffset);
+    if (SleepImageOffset == 0 || SleepImageVolume == NULL) {
+      DBG(" sleepimage offset not found\n");
+      return FALSE;
+    }
+        
+    // Set boot-image var
+    UnicodeSPrint(OffsetHexStr, sizeof(OffsetHexStr), L"%lx", SleepImageOffset);
+    BootImageDevPath = FileDevicePath(SleepImageVolume->WholeDiskDeviceHandle, OffsetHexStr);
+    //  DBG(" boot-image device path:\n");
+    Size = GetDevicePathSize(BootImageDevPath);
+    VarData = (UINT8*)BootImageDevPath;
+    PrintBytes(VarData, Size);
+    DBG("boot-image before: %s\n", FileDevicePathToStr(BootImageDevPath));
+    //      VarData[6] = 8;
+    
+    //  VarData[24] = 0xFF;
+    //  VarData[25] = 0xFF;
+    //  DBG("boot-image corrected: %s\n", FileDevicePathToStr(BootImageDevPath));
+    
+    Status = gRT->SetVariable(L"boot-image", &gEfiAppleBootGuid,
+                              EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                              Size , BootImageDevPath);
+    if (EFI_ERROR(Status)) {
+      DBG(" can not write boot-image -> %r\n", Status);
+      return FALSE;
+    }
   }
   
-  // Set boot-image var
-  UnicodeSPrint(OffsetHexStr, sizeof(OffsetHexStr), L"%lx", SleepImageOffset);
-  BootImageDevPath = FileDevicePath(SleepImageVolume->WholeDiskDeviceHandle, OffsetHexStr);
-//  DBG(" boot-image device path:\n");
-  Size = GetDevicePathSize(BootImageDevPath);
-  VarData = (UINT8*)BootImageDevPath;
-  PrintBytes(VarData, Size);
-  DBG("boot-image before: %s\n", FileDevicePathToStr(BootImageDevPath));
-  //      VarData[6] = 8;
-  
-//  VarData[24] = 0xFF;
-//  VarData[25] = 0xFF;
-//  DBG("boot-image corrected: %s\n", FileDevicePathToStr(BootImageDevPath));
-  
-  Status = gRT->SetVariable(L"boot-image", &gEfiAppleBootGuid,
-                            EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-                            Size , BootImageDevPath);
-  if (EFI_ERROR(Status)) {
-    DBG(" can not write boot-image -> %r\n", Status);
-    return FALSE;
-  }
-
   // now we should delete boot0082 to do hibernate only once
   Status = DeleteBootOption(0x82);
   if (EFI_ERROR(Status)) {
