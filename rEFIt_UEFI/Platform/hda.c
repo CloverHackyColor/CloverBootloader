@@ -367,38 +367,35 @@ BOOLEAN IsHDMIAudio(EFI_HANDLE PciDevHandle)
     return FALSE;
 }
 
-BOOLEAN setup_hda_devprop(pci_dt_t *hda_dev, CHAR8 *OSVersion)
+BOOLEAN setup_hda_devprop(EFI_PCI_IO_PROTOCOL *PciIo, pci_dt_t *hda_dev, CHAR8 *OSVersion)
 {
-	EFI_PCI_IO_PROTOCOL	*PciIo = NULL;
-	CHAR8                   *devicepath = NULL;
+#if DEBUG_INJECT
+    CHAR8           *devicepath;
+#endif
 	DevPropDevice           *device;
 	UINT32                  layoutId = 0;
 	UINT32                  codecId = 0;
 	BOOLEAN                 Injected = FALSE;
 	INT32                   i;
-	CHAR8			*controller_name = NULL;
-	UINT16                  controller_vendor_id = hda_dev->vendor_id;
-	UINT16                  controller_device_id = hda_dev->device_id;
 
     if (!gSettings.HDAInjection) {
         return FALSE;
     }
-    
     if (!string) {
         string = devprop_create_string();
     }
-
+#if DEBUG_INJECT
     devicepath = get_pci_dev_path(hda_dev);
-
-    controller_name = get_hda_controller_name(controller_device_id, controller_vendor_id);
-
+#endif
     //device = devprop_add_device(string, devicepath);
     device = devprop_add_device_pci(string, hda_dev);
     if (!device) {
         return FALSE;
     }
 
+#if DEBUG_INJECT
     DBG("HDA Controller [%04x:%04x] :: %a =>", hda_dev->vendor_id, hda_dev->device_id, devicepath);
+#endif
     
     if (IsHDMIAudio(hda_dev->DeviceHandle)) {
         if (gSettings.NrAddProperties != 0xFFFE) {
@@ -470,8 +467,6 @@ BOOLEAN setup_hda_devprop(pci_dt_t *hda_dev, CHAR8 *OSVersion)
             devprop_add_value(device, "MaximumBootBeepVolume", (UINT8 *)&layoutId, 1);
             devprop_add_value(device, "PinConfigurations", (UINT8 *)&layoutId, 1);
         }
-        
     }
-    
     return TRUE;
 }

@@ -24,7 +24,7 @@
 
 //extern CHAR8 *gDeviceProperties;
 
-BOOLEAN setup_hda_devprop(pci_dt_t *hda_dev, CHAR8 *OSVersion);
+//BOOLEAN setup_hda_devprop(pci_dt_t *hda_dev, CHAR8 *OSVersion);
 
 struct hda_controller_devices;
 typedef struct

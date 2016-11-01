@@ -6130,7 +6130,7 @@ SetDevices (
           //no HDMI injection
           if ((Pci.Hdr.VendorId != 0x1002) &&
               (Pci.Hdr.VendorId != 0x10de)) {
-            TmpDirty    = setup_hda_devprop (&PCIdevice, Entry->OSVersion);
+            TmpDirty    = setup_hda_devprop (PciIo, &PCIdevice, Entry->OSVersion);
             StringDirty |= TmpDirty;
           }
         }

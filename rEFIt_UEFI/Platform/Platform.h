@@ -1893,6 +1893,7 @@ CHAR8
 
 BOOLEAN
 setup_hda_devprop (
+  EFI_PCI_IO_PROTOCOL *PciIo,
   pci_dt_t *hda_dev,
   CHAR8 *OSVersion
   );
