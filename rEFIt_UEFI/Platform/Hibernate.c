@@ -564,7 +564,7 @@ IsSleepImageValidBySignature (IN REFIT_VOLUME *Volume)
   DBG("    Check sleep image 'by signature':\n");
   return (GetSleepImagePosition (Volume, NULL) != 0);
 }
-
+/*
 UINT16 PartNumForVolume(REFIT_VOLUME *Volume)
 {
   UINT32 PartNum = 0; //if not found then zero mean whole disk
@@ -612,7 +612,7 @@ REFIT_VOLUME *FoundParentVolume(REFIT_VOLUME *Volume)
   }
   return NULL;
 }
-
+*/
 /** Returns TRUE if given OSX on given volume is hibernated. */
 BOOLEAN
 IsOsxHibernated (IN LOADER_ENTRY *Entry)
@@ -620,11 +620,11 @@ IsOsxHibernated (IN LOADER_ENTRY *Entry)
   EFI_STATUS      Status;
   UINTN           Size            = 0;
   UINT8           *Data           = NULL;
-  REFIT_VOLUME    *ThisVolume     = Entry->Volume;
-  REFIT_VOLUME    *Volume         = ThisVolume;
+//  REFIT_VOLUME    *ThisVolume     = Entry->Volume;
+  REFIT_VOLUME    *Volume         = Entry->Volume;
   EFI_GUID        *BootGUID       = NULL;
   BOOLEAN         ret             = FALSE;
-  VOID            *Value          = NULL;
+  UINT8           *Value          = NULL;
 
   //  UINTN           VolumeIndex;
   EFI_GUID        *VolumeUUID;
@@ -722,10 +722,11 @@ IsOsxHibernated (IN LOADER_ENTRY *Entry)
     DBG("    UEFI with NVRAM: ");
     Status = gRT->GetVariable (L"Boot0082", &gEfiGlobalVariableGuid, NULL, &Size, Data);
     if (Status != EFI_BUFFER_TOO_SMALL) {
-      DBG("Boot0082 no\n");
+      DBG(" Boot0082 no\n");
       ret = FALSE;
     } else {
       DBG("yes\n");
+      ret = TRUE;
       Data = AllocatePool(Size);
       Status = gRT->GetVariable (L"Boot0082", &gEfiGlobalVariableGuid, NULL, &Size, Data);
       if (EFI_ERROR(Status)) {
@@ -734,9 +735,9 @@ IsOsxHibernated (IN LOADER_ENTRY *Entry)
       } else {
         //2. Check that Boot0082 points to this volume
         BootGUID = (EFI_GUID*)(Data + 0x3C);
-        DBG(" Boot0082 points to UUID:%g\n", BootGUID);
+        DBG("    Boot0082 points to UUID:%g\n", BootGUID);
         VolumeUUID = FindGPTPartitionGuidInDevicePath(Volume->DevicePath);
-        DBG("Volume has PartUUID=%g\n", VolumeUUID);
+        DBG("    Volume has PartUUID=%g\n", VolumeUUID);
         if (!CompareGuid(BootGUID, VolumeUUID)) {
           ret = FALSE;
         } else {
@@ -749,11 +750,14 @@ IsOsxHibernated (IN LOADER_ENTRY *Entry)
             00000020: 33 00 36 00 63 00 34 00-64 00 64 00 63 00 30 00  *3.6.c.4.d.d.c.0.*
             00000030: 30 00 30 00 00 00 7F FF-04 00                    *0.0.......*
              */
-            Status = GetVariable2 (L"boot-image", &gEfiAppleBootGuid, &Value, &Size);
+            Status = GetVariable2 (L"boot-image", &gEfiAppleBootGuid, (VOID**)&Value, &Size);
             if (EFI_ERROR(Status)) {
               // leave it as is
-              DBG(" boot-image not found while we want StrictHibernate\n");
+              DBG("    boot-image not found while we want StrictHibernate\n");
               ret = FALSE;
+            } else if (Value) {
+              CHAR16* ImageLocStr = (CHAR16*)(Value + 0x20);
+              DBG("    image location %s\n", ImageLocStr);
             }
           } //else boot-image will be created
         }

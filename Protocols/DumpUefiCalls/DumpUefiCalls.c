@@ -36,16 +36,16 @@ StartOverrides()
 	OvrBootServices(gBS);
 	OvrRuntimeServices(gRT);
 	#if PRINT_DUMPS >= 2
-	OvrDataHub();
+//	OvrDataHub();
 	#endif
   OvrAppleSMC();
-  OvrAppleImageCodec();
-  OvrAppleKeyState();
-  OvrOSInfo();
-  OvrGraphConfig();
-  OvrFirmwareVolume();
-  OvrEfiKeyboardInfo();
-  OvrAppleKeyMapDb();
+//  OvrAppleImageCodec();
+//  OvrAppleKeyState();
+//  OvrOSInfo();
+//  OvrGraphConfig();
+//  OvrFirmwareVolume();
+//  OvrEfiKeyboardInfo();
+//  OvrAppleKeyMapDb();
   return EFI_SUCCESS;
 }
 
