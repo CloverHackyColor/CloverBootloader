@@ -27,7 +27,8 @@ if [[ "$(echo $(LC_ALL=C diskutil list | grep -i 'Logical Volume' | \
         if [[ -n "$UUID" ]]; then
             realDisk=$(LC_ALL=C diskutil list | \
                 grep -B 1 "$UUID" | \
-                grep -i 'logical volume' | awk '{print $NF}')
+                grep -i 'logical volume' | awk '{print $4}' | \
+                sed -e 's/,//g' | sed -e 's/ //g')
             if [[ -n "$realDisk" ]]; then
                 DiskDevice=$(LC_ALL=C diskutil info "${realDisk}" 2>/dev/null | \
                                              sed -n 's/.*Part [oO]f Whole: *//p')
