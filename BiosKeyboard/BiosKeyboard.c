@@ -2168,7 +2168,7 @@ IsKeyRegistered (
 /**
   Waiting on the keyboard event, if there's any key pressed by the user, signal the event
 
-  @param  Event    The event that be siganlled when any key has been stroked.
+  @param  Event    The event that be signalled when any key has been stroked.
   @param  Context  Pointer of the protocol EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL.
   
 **/

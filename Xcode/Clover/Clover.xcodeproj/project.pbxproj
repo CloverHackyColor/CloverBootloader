@@ -13,9 +13,7 @@
 		12A60F5B1DB610500068BF8B /* load_bmp.c in Sources */ = {isa = PBXBuildFile; fileRef = 12A60F501DB610500068BF8B /* load_bmp.c */; };
 		12A60F5C1DB610500068BF8B /* load_icns.c in Sources */ = {isa = PBXBuildFile; fileRef = 12A60F511DB610500068BF8B /* load_icns.c */; };
 		12A60F5D1DB610500068BF8B /* picopng.c in Sources */ = {isa = PBXBuildFile; fileRef = 12A60F521DB610500068BF8B /* picopng.c */; };
-		12A60F5E1DB610500068BF8B /* OSInfo.c in Sources */ = {isa = PBXBuildFile; fileRef = 12A60F551DB610500068BF8B /* OSInfo.c */; };
 		12A60F5F1DB610500068BF8B /* SMCHelper.c in Sources */ = {isa = PBXBuildFile; fileRef = 12A60F581DB610500068BF8B /* SMCHelper.c */; };
-		12A60F611DB610840068BF8B /* GraphicsConfig.c in Sources */ = {isa = PBXBuildFile; fileRef = 12A60F601DB610840068BF8B /* GraphicsConfig.c */; };
 		12AAF3A51DB75DC800A52B12 /* FirmwareVolume.c in Sources */ = {isa = PBXBuildFile; fileRef = 12AAF3A41DB75DC800A52B12 /* FirmwareVolume.c */; };
 		12AAF5341DBE348100A52B12 /* ComponentName.c in Sources */ = {isa = PBXBuildFile; fileRef = 12AAF52C1DBE348100A52B12 /* ComponentName.c */; };
 		12AAF5351DBE348100A52B12 /* EfiKey.c in Sources */ = {isa = PBXBuildFile; fileRef = 12AAF52D1DBE348100A52B12 /* EfiKey.c */; };
@@ -455,13 +453,9 @@
 		12A60F511DB610500068BF8B /* load_icns.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = load_icns.c; sourceTree = "<group>"; };
 		12A60F521DB610500068BF8B /* picopng.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = picopng.c; sourceTree = "<group>"; };
 		12A60F531DB610500068BF8B /* picopng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = picopng.h; sourceTree = "<group>"; };
-		12A60F551DB610500068BF8B /* OSInfo.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = OSInfo.c; sourceTree = "<group>"; };
-		12A60F561DB610500068BF8B /* OSInfo.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = OSInfo.inf; sourceTree = "<group>"; };
 		12A60F581DB610500068BF8B /* SMCHelper.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = SMCHelper.c; sourceTree = "<group>"; };
 		12A60F591DB610500068BF8B /* SMCHelper.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SMCHelper.inf; sourceTree = "<group>"; };
-		12A60F601DB610840068BF8B /* GraphicsConfig.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = GraphicsConfig.c; sourceTree = "<group>"; };
 		12A60F621DB611190068BF8B /* AppleGraphConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppleGraphConfig.h; sourceTree = "<group>"; };
-		12A60F671DB616910068BF8B /* GraphicsConfig.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = GraphicsConfig.inf; sourceTree = "<group>"; };
 		12A7ABAE1CCE1C8E00BD837C /* config-sample.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "config-sample.plist"; path = "../../CloverPackage/CloverV2/EFI/CLOVER/config-sample.plist"; sourceTree = "<group>"; };
 		12A88C5D1A7B6E0A008C4829 /* ComponentName.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ComponentName.c; sourceTree = "<group>"; };
 		12A88C5E1A7B6E0A008C4829 /* ComponentName.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ComponentName.h; sourceTree = "<group>"; };
@@ -512,12 +506,8 @@
 		12AAF3E91DB7747400A52B12 /* OsxFatBinaryDrv.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = OsxFatBinaryDrv.c; sourceTree = "<group>"; };
 		12AAF3EA1DB7747400A52B12 /* OsxFatBinaryDrv.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OsxFatBinaryDrv.h; sourceTree = "<group>"; };
 		12AAF3EB1DB7747400A52B12 /* OsxFatBinaryDrv.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = OsxFatBinaryDrv.inf; sourceTree = "<group>"; };
-		12AAF4AE1DBA360700A52B12 /* AppleKeyState.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = AppleKeyState.c; sourceTree = "<group>"; };
-		12AAF4AF1DBA360700A52B12 /* AppleKeyState.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = AppleKeyState.inf; sourceTree = "<group>"; };
 		12AAF5061DBE167600A52B12 /* AppleUITheme.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = AppleUITheme.c; sourceTree = "<group>"; };
 		12AAF5071DBE167600A52B12 /* AppleUITheme.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = AppleUITheme.inf; sourceTree = "<group>"; };
-		12AAF5141DBE287A00A52B12 /* AppleEvent.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = AppleEvent.c; sourceTree = "<group>"; };
-		12AAF5151DBE287A00A52B12 /* AppleEvent.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = AppleEvent.inf; sourceTree = "<group>"; };
 		12AAF5171DBE28B800A52B12 /* AppleEvent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleEvent.h; sourceTree = "<group>"; };
 		12AAF52C1DBE348100A52B12 /* ComponentName.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ComponentName.c; sourceTree = "<group>"; };
 		12AAF52D1DBE348100A52B12 /* EfiKey.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = EfiKey.c; sourceTree = "<group>"; };
@@ -1395,32 +1385,19 @@
 		12A60F4B1DB610500068BF8B /* Protocols */ = {
 			isa = PBXGroup;
 			children = (
-				12AAF5131DBE287A00A52B12 /* AppleEvent */,
-				12A60F4C1DB610500068BF8B /* AppleGraphicsConfig */,
 				12A60F4D1DB610500068BF8B /* AppleImageCodec */,
 				12AAF5F11DC0F03B00A52B12 /* AppleKeyAggregator */,
-				12AAF4AD1DBA360700A52B12 /* AppleKeyState */,
 				12AAF5051DBE167600A52B12 /* AppleUITheme */,
 				12AAF3C41DB7743E00A52B12 /* DriverOverride */,
 				12AAF3C71DB7744B00A52B12 /* DumpUefiCalls */,
 				12AAF3E01DB7745A00A52B12 /* EmuVariableUefi */,
 				12AAF3A21DB75DAA00A52B12 /* FirmwareVolume */,
 				12AAF3E51DB7746700A52B12 /* MsgLog */,
-				12A60F541DB610500068BF8B /* OSInfo */,
 				12AAF3E81DB7747400A52B12 /* OsxFatBinaryDrv */,
 				12A60F571DB610500068BF8B /* SMCHelper */,
 			);
 			name = Protocols;
 			path = ../../Protocols;
-			sourceTree = "<group>";
-		};
-		12A60F4C1DB610500068BF8B /* AppleGraphicsConfig */ = {
-			isa = PBXGroup;
-			children = (
-				12A60F601DB610840068BF8B /* GraphicsConfig.c */,
-				12A60F671DB616910068BF8B /* GraphicsConfig.inf */,
-			);
-			path = AppleGraphicsConfig;
 			sourceTree = "<group>";
 		};
 		12A60F4D1DB610500068BF8B /* AppleImageCodec */ = {
@@ -1434,15 +1411,6 @@
 				12A60F531DB610500068BF8B /* picopng.h */,
 			);
 			path = AppleImageCodec;
-			sourceTree = "<group>";
-		};
-		12A60F541DB610500068BF8B /* OSInfo */ = {
-			isa = PBXGroup;
-			children = (
-				12A60F551DB610500068BF8B /* OSInfo.c */,
-				12A60F561DB610500068BF8B /* OSInfo.inf */,
-			);
-			path = OSInfo;
 			sourceTree = "<group>";
 		};
 		12A60F571DB610500068BF8B /* SMCHelper */ = {
@@ -1552,15 +1520,6 @@
 			path = OsxFatBinaryDrv;
 			sourceTree = "<group>";
 		};
-		12AAF4AD1DBA360700A52B12 /* AppleKeyState */ = {
-			isa = PBXGroup;
-			children = (
-				12AAF4AE1DBA360700A52B12 /* AppleKeyState.c */,
-				12AAF4AF1DBA360700A52B12 /* AppleKeyState.inf */,
-			);
-			path = AppleKeyState;
-			sourceTree = "<group>";
-		};
 		12AAF5051DBE167600A52B12 /* AppleUITheme */ = {
 			isa = PBXGroup;
 			children = (
@@ -1568,15 +1527,6 @@
 				12AAF5071DBE167600A52B12 /* AppleUITheme.inf */,
 			);
 			path = AppleUITheme;
-			sourceTree = "<group>";
-		};
-		12AAF5131DBE287A00A52B12 /* AppleEvent */ = {
-			isa = PBXGroup;
-			children = (
-				12AAF5141DBE287A00A52B12 /* AppleEvent.c */,
-				12AAF5151DBE287A00A52B12 /* AppleEvent.inf */,
-			);
-			path = AppleEvent;
 			sourceTree = "<group>";
 		};
 		12AAF52B1DBE348100A52B12 /* UsbKbDxe */ = {
@@ -3772,9 +3722,7 @@
 				12A60F5B1DB610500068BF8B /* load_bmp.c in Sources */,
 				12A60F5C1DB610500068BF8B /* load_icns.c in Sources */,
 				12A60F5D1DB610500068BF8B /* picopng.c in Sources */,
-				12A60F5E1DB610500068BF8B /* OSInfo.c in Sources */,
 				12A60F5F1DB610500068BF8B /* SMCHelper.c in Sources */,
-				12A60F611DB610840068BF8B /* GraphicsConfig.c in Sources */,
 				12AAF3A51DB75DC800A52B12 /* FirmwareVolume.c in Sources */,
 				12AAF5341DBE348100A52B12 /* ComponentName.c in Sources */,
 				12AAF5351DBE348100A52B12 /* EfiKey.c in Sources */,

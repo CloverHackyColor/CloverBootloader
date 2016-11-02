@@ -965,7 +965,7 @@ MainPostBuildScript() {
       fi
 
       # drivers64UEFI      
-      binArray=( CsmVideoDxe EmuVariableUefi OsxAptioFix2Drv OsxAptioFixDrv OsxLowMemFixDrv PartitionDxe UsbKbDxe HashServiceFix)
+      binArray=( CsmVideoDxe EmuVariableUefi OsxAptioFix2Drv OsxAptioFixDrv OsxLowMemFixDrv PartitionDxe Fat )
       for efi in "${binArray[@]}"
       do
         copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/$efi-64.efi

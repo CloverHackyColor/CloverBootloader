@@ -302,6 +302,18 @@ StrToGuidLE (
 }
 
 //Slice - I need GuidBEToStr :(
+CHAR16 * GuidBeToStr(EFI_GUID *Guid)
+{
+  UINT8 *GuidData = (UINT8 *)Guid;
+  CHAR16 *Str = PoolPrint(L"%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x",                          
+                          GuidData[3], GuidData[2], GuidData[1], GuidData[0],
+                          GuidData[5], GuidData[4],
+                          GuidData[7], GuidData[6],
+                          GuidData[8], GuidData[9], GuidData[10], GuidData[11],
+                          GuidData[12], GuidData[13], GuidData[14], GuidData[15]);
+  return Str;
+}
+
 #if 0
 //the caller is responsible to free the buffer
 CHAR16 * GuidLEToStr(EFI_GUID *Guid)

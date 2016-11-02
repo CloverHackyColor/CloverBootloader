@@ -38,7 +38,7 @@ StartOverrides()
 	#if PRINT_DUMPS >= 2
 //	OvrDataHub();
 	#endif
-  OvrAppleSMC();
+//  OvrAppleSMC();
 //  OvrAppleImageCodec();
 //  OvrAppleKeyState();
 //  OvrOSInfo();
@@ -53,14 +53,14 @@ CHAR16					*BootLoaders[] = BOOT_LOADERS;
 /** Our implementation of StartImage. Used to detect boot loader start. */
 EFI_STATUS EFIAPI
 OStartImage(
-	IN EFI_HANDLE				ImageHandle,
-	OUT UINTN				*ExitDataSize,
+	IN EFI_HANDLE			ImageHandle,
+	OUT UINTN         *ExitDataSize,
 	OUT CHAR16				**ExitData  OPTIONAL
 )
 {
 	EFI_STATUS				Status;
 	EFI_LOADED_IMAGE_PROTOCOL		*Image;
-	CHAR16					*FilePathText = NULL;
+	CHAR16            *FilePathText = NULL;
 //	CHAR16					*BootLoaders[] = BOOT_LOADERS;
 	UINTN					Index;
 	
