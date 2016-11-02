@@ -783,6 +783,7 @@ IsOsxHibernated (IN LOADER_ENTRY *Entry)
               EFI_DEVICE_PATH_PROTOCOL    *BootImageDevPath;
               UINTN                       Size;
               
+              DBG("    boot-image before: %s\n", FileDevicePathToStr((EFI_DEVICE_PATH_PROTOCOL*)Value));
               UnicodeSPrint(OffsetHexStr, sizeof(OffsetHexStr), L"%s", (CHAR16 *)(Value + 0x20));
               FreePool(Value);
               BootImageDevPath = FileDevicePath(Volume->WholeDiskDeviceHandle, OffsetHexStr);
@@ -790,7 +791,7 @@ IsOsxHibernated (IN LOADER_ENTRY *Entry)
               Size = GetDevicePathSize(BootImageDevPath);
               Value = (UINT8*)BootImageDevPath;
               PrintBytes(Value, Size);
-              DBG("boot-image before: %s\n", FileDevicePathToStr(BootImageDevPath));
+              DBG("    boot-image after: %s\n", FileDevicePathToStr(BootImageDevPath));
               
 #else
               //Apple's device path differs from UEFI BIOS device path that will be used by boot.efi

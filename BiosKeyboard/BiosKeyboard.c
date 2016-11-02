@@ -1472,7 +1472,7 @@ BiosKeyboardReadKeyStroke (
   BiosKeyboardPrivate = BIOS_KEYBOARD_DEV_FROM_THIS (This);
 
   Status = KeyboardReadKeyStrokeWorker (BiosKeyboardPrivate, &KeyData);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR (Status)) {  //EFI_NOT_READY mean the queue is empty
     return Status;
   }
 
