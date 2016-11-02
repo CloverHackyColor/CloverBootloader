@@ -557,7 +557,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath,
       }
       if (OSType == OSTYPE_OSX && IsOsxHibernated(Entry)) {
         Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_HIBERNATED);
-        DBG("set entry as hiberbated\n");
+        DBG("  =>set entry as hibernated\n");
       }
       //always set with kexts for installer
       if (OSType == OSTYPE_OSX_INSTALLER){

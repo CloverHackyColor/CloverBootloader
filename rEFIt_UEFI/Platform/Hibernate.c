@@ -24,7 +24,7 @@
 //#define DBG(...) AsciiPrint(__VA_ARGS__);
 #endif
 
-#define CREATE_NEW_BOOT_IMAGE 1
+#define CREATE_NEW_BOOT_IMAGE 0
 
 #pragma pack(push, 1)
 
@@ -795,7 +795,7 @@ IsOsxHibernated (IN LOADER_ENTRY *Entry)
               
 #else
               //Apple's device path differs from UEFI BIOS device path that will be used by boot.efi
-              Value[6] = 8; //Acpi(PNP0A08,0)              
+              //Value[6] = 8; //Acpi(PNP0A08,0)
               Value[24] = 0xFF;
               Value[25] = 0xFF;
               DBG("    boot-image corrected: %s\n", FileDevicePathToStr((EFI_DEVICE_PATH_PROTOCOL*)Value));              
