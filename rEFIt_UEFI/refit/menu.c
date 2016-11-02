@@ -1244,7 +1244,7 @@ VOID AboutRefit(VOID)
     AboutMenu.TitleImage = NULL;
   }
   if (AboutMenu.EntryCount == 0) {
-    AddMenuInfo(&AboutMenu, PoolPrint(L"Clover Version 2.3k rev %s", FIRMWARE_REVISION)); // by Slice, dmazar, apianti, JrCs, pene and others");
+    AddMenuInfo(&AboutMenu, PoolPrint(L"Clover Version 2.3k rev %s", gFirmwareRevision)); // by Slice, dmazar, apianti, JrCs, pene and others");
 #ifdef FIRMWARE_BUILDDATE
     AddMenuInfo(&AboutMenu, PoolPrint(L" Build: %a", FIRMWARE_BUILDDATE));
 #else
@@ -3623,11 +3623,7 @@ VOID DrawTextCorner(UINTN TextC, UINT8 Align)
 
   switch (TextC) {
     case TEXT_CORNER_REVISION:
-#ifdef FIRMWARE_REVISION
-      Text = FIRMWARE_REVISION;
-#else
-      Text = gST->FirmwareRevision;
-#endif
+      Text = gFirmwareRevision;
       break;
     case TEXT_CORNER_HELP:
       Text = L"F1:Help";

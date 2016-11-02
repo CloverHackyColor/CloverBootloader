@@ -256,7 +256,7 @@ static VOID DrawScreenHeader(IN CHAR16 *Title)
 
   // print header text
   gST->ConOut->SetCursorPosition (gST->ConOut, 3, 1);
-  Print(L"Clover - %s", Title);
+  Print(L"Clover rev %s - %s", gFirmwareRevision, Title);
 
   // reposition cursor
   gST->ConOut->SetAttribute (gST->ConOut, ATTR_BASIC);

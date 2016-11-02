@@ -38,7 +38,7 @@
 
 
 #include "Platform.h"
-#include "Version.h"
+//#include "Version.h"
 
 #include <Guid/DataHubRecords.h>
 
@@ -338,12 +338,7 @@ SetupDataForOSX()
   UINTN      Revision;
   UINT16     Zero = 0;
 
-#ifdef FIRMWARE_REVISION
-  Revision = StrDecimalToUintn(FIRMWARE_REVISION);
-#else
-  Revision = gST->FirmwareRevision;
-#endif
-
+  Revision = StrDecimalToUintn(gFirmwareRevision);
 
   // fool proof
   FrontSideBus = gCPUStructure.FSBFrequency;

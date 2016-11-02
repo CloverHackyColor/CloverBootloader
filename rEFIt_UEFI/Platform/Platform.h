@@ -1558,7 +1558,8 @@ extern ACPI_PATCHED_AML              *ACPIPatchedAML;
 //extern SYSVARIABLES                   *SysVariables;
 
 // Hold theme fixed IconFormat / extension
-extern CHAR16 *IconFormat;
+extern CHAR16               *IconFormat;
+extern CHAR16               *gFirmwareRevision;
 
 //-----------------------------------
 

@@ -63,8 +63,11 @@
 
 
 // variables
-
-//static CHAR8 FirmwareRevisionStr[] = FIRMWARE_REVISION_STR;
+#ifdef FIRMWARE_REVISION
+CHAR16 *gFirmwareRevision = FIRMWARE_REVISION;
+#else
+CHAR16 *gFirmwareRevision = NULL;
+#endif
 
 BOOLEAN                 gGuiIsReady = FALSE;
 BOOLEAN                 gThemeNeedInit = TRUE;
@@ -1609,6 +1612,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
   // firmware detection
   gFirmwareClover = StrCmp(gST->FirmwareVendor, L"CLOVER") == 0;
+  if (!gFirmwareRevision) {
+    gFirmwareRevision = PoolPrint(L"%d", gST->FirmwareRevision);
+  }
   InitializeConsoleSim();
   InitBooterLog();
   ZeroMem((VOID*)&gGraphics[0], sizeof(GFX_PROPERTIES) * 4);
@@ -1851,7 +1857,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   }
   //  DBG("DBG: messages\n");
   if (!GlobalConfig.NoEarlyProgress && !GlobalConfig.FastBoot  && GlobalConfig.Timeout>0) {
-    FirstMessage = PoolPrint(L"   Welcome to Clover %s   ", FIRMWARE_REVISION);
+    FirstMessage = PoolPrint(L"   Welcome to Clover %s   ", gFirmwareRevision);
     DrawTextXY(FirstMessage, (UGAWidth >> 1), UGAHeight >> 1, X_IS_CENTER);
     FreePool(FirstMessage);
     FirstMessage = PoolPrint(L"... testing hardware ...");
