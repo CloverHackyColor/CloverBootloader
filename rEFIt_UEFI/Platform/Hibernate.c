@@ -633,7 +633,7 @@ STATIC CHAR16 OffsetHexStr[100];
 BOOLEAN
 IsOsxHibernated (IN LOADER_ENTRY *Entry)
 {
-  EFI_STATUS      Status;
+  EFI_STATUS      Status  = EFI_SUCCESS;
   UINTN           Size            = 0;
   UINT8           *Data           = NULL;
 //  REFIT_VOLUME    *ThisVolume     = Entry->Volume;
@@ -706,7 +706,26 @@ IsOsxHibernated (IN LOADER_ENTRY *Entry)
     }    
   }
 */
-  
+  //For tests
+/*  Status = GetRootUUID(Volume);
+  if (!EFI_ERROR(Status)) {
+    EFI_GUID TmpGuid;
+    CHAR16 *TmpStr = NULL;
+    CHAR16 *Ptr = GuidLEToStr(&Volume->RootUUID);
+    DBG("got str=%s\n", Ptr);
+    Status = StrToGuidLE (Ptr, &TmpGuid);
+    if (EFI_ERROR(Status)) {
+      DBG("    cant convert Str %s to GUID\n", Ptr);
+    } else {
+      TmpStr = PoolPrint(L"%g", &TmpGuid);  //PoolPrint не работает!!!
+      DBG("got the guid %s\n", TmpStr);
+      CopyMem((VOID*)Ptr, TmpStr, StrSize(TmpStr));
+      DBG("fter CopyMem: %s\n", Ptr);
+      FreePool(TmpStr);
+    }
+  }
+ */
+
   //if sleep image is good but OSX was not hibernated.
   //or we choose "cancel hibernate wake" then it must be canceled
   if (GlobalConfig.NeverHibernate) {
@@ -795,23 +814,29 @@ IsOsxHibernated (IN LOADER_ENTRY *Entry)
               
               DBG("    boot-image before: %s\n", FileDevicePathToStr((EFI_DEVICE_PATH_PROTOCOL*)Value));
               UnicodeSPrint(OffsetHexStr, sizeof(OffsetHexStr), L"%s", (CHAR16 *)(Value + 0x20));
+        //      DBG("OffsetHexStr=%s\n", OffsetHexStr);
               while ((*Ptr != L':') && (*Ptr != 0)) {
                 Ptr++;
               }
+       //       DBG(" have ptr=%p, in Str=%p, text:%s\n", Ptr, &OffsetHexStr, Ptr);
               if (*Ptr++ == L':') {
                 //Convert BeUUID to LeUUID
                 //Ptr points to begin L"A82E84C6-9DD6-49D6-960A-0F4C2FE4851C"
                 EFI_GUID TmpGuid;
                 CHAR16 *TmpStr = NULL;
+       //         DBG("got str=%s\n", Ptr);
                 Status = StrToGuidLE (Ptr, &TmpGuid);
                 if (EFI_ERROR(Status)) {
                   DBG("    cant convert Str %s to GUID\n", Ptr);
                 } else {
-                  TmpStr = PoolPrint(L"%g", &TmpGuid);
+                  //TmpStr = PoolPrint(L"%g", &TmpGuid);
+                  TmpStr =  GuidLEToStr(&TmpGuid);
+       //           DBG("got the guid %s\n", TmpStr);
                   CopyMem((VOID*)Ptr, TmpStr, StrSize(TmpStr));
                   FreePool(TmpStr);
                 }
               }
+       //       DBG("finl str=%s\n", OffsetHexStr);
               FreePool(Value);
               BootImageDevPath = FileDevicePath(Volume->WholeDiskDeviceHandle, OffsetHexStr);
               //  DBG(" boot-image device path:\n");
