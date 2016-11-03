@@ -24,7 +24,7 @@
 //#define DBG(...) AsciiPrint(__VA_ARGS__);
 #endif
 
-#define CREATE_NEW_BOOT_IMAGE 0
+#define CREATE_NEW_BOOT_IMAGE 1
 
 #pragma pack(push, 1)
 
@@ -791,13 +791,27 @@ IsOsxHibernated (IN LOADER_ENTRY *Entry)
 #if CREATE_NEW_BOOT_IMAGE
               EFI_DEVICE_PATH_PROTOCOL    *BootImageDevPath;
               UINTN                       Size;
-           //   CHAR16                      *Ptr = (CHAR16*)(Value + 0x20);
+              CHAR16                      *Ptr = (CHAR16*)&OffsetHexStr[0];
               
               DBG("    boot-image before: %s\n", FileDevicePathToStr((EFI_DEVICE_PATH_PROTOCOL*)Value));
               UnicodeSPrint(OffsetHexStr, sizeof(OffsetHexStr), L"%s", (CHAR16 *)(Value + 0x20));
-            /*  while (*Ptr) {
-                OffsetHexStr
-              } */
+              while ((*Ptr != L':') && (*Ptr != 0)) {
+                Ptr++;
+              }
+              if (*Ptr++ == L':') {
+                //Convert BeUUID to LeUUID
+                //Ptr points to begin L"A82E84C6-9DD6-49D6-960A-0F4C2FE4851C"
+                EFI_GUID TmpGuid;
+                CHAR16 *TmpStr = NULL;
+                Status = StrToGuidLE (Ptr, &TmpGuid);
+                if (EFI_ERROR(Status)) {
+                  DBG("    cant convert Str %s to GUID\n", Ptr);
+                } else {
+                  TmpStr = PoolPrint(L"%g", &TmpGuid);
+                  CopyMem((VOID*)Ptr, TmpStr, StrSize(TmpStr));
+                  FreePool(TmpStr);
+                }
+              }
               FreePool(Value);
               BootImageDevPath = FileDevicePath(Volume->WholeDiskDeviceHandle, OffsetHexStr);
               //  DBG(" boot-image device path:\n");
