@@ -627,7 +627,7 @@ REFIT_VOLUME *FoundParentVolume(REFIT_VOLUME *Volume)
 }
 
 
-STATIC CHAR16 OffsetHexStr[17];
+STATIC CHAR16 OffsetHexStr[100];
 
 /** Returns TRUE if given OSX on given volume is hibernated. */
 BOOLEAN
@@ -761,17 +761,26 @@ IsOsxHibernated (IN LOADER_ENTRY *Entry)
 
         //3. Checks for boot-image exists
           if (GlobalConfig.StrictHibernate) {
-            /*
-            Variable NV+RT+BS '7C436110-AB2A-4BBB-A880-FE41995C9F82:boot-image' DataSize = 0x3A
-            00000000: 02 01 0C 00 D0 41 03 0A-00 00 00 00 01 01 06 00  *.....A..........*
-            00000010: 02 1F 03 12 0A 00 00 00-00 00 00 00 04 04 1A 00  *................*
-            00000020: 33 00 36 00 63 00 34 00-64 00 64 00 63 00 30 00  *3.6.c.4.d.d.c.0.*
-            00000030: 30 00 30 00 00 00 7F FF-04 00                    *0.0.......*
-             02 - ACPI_DEVICE_PATH
-             01 - ACPI_DP
-             0C - 4 bytes
-             00 D0 41 03 - PNP0A03
-             */
+/*
+    Variable NV+RT+BS '7C436110-AB2A-4BBB-A880-FE41995C9F82:boot-image' DataSize = 0x3A
+    00000000: 02 01 0C 00 D0 41 03 0A-00 00 00 00 01 01 06 00  *.....A..........*
+    00000010: 02 1F 03 12 0A 00 00 00-00 00 00 00 04 04 1A 00  *................*
+    00000020: 33 00 36 00 63 00 34 00-64 00 64 00 63 00 30 00  *3.6.c.4.d.d.c.0.*
+    00000030: 30 00 30 00 00 00 7F FF-04 00                    *0.0.......*
+     02 - ACPI_DEVICE_PATH
+     01 - ACPI_DP
+     0C - 4 bytes
+     00 D0 41 03 - PNP0A03
+     
+ // FileVault2
+  4:609  0:000      Boot0082 points to Volume with UUID:BA92975E-E2FB-48E6-95CC-8138B286F646
+  4:609  0:000      boot-image before: PciRoot(0x0)\Pci(0x1F,0x2)\Sata(0x5,0x0,0x0)\25593c7000:A82E84C6-9DD6-49D6-960A-0F4C2FE4851C
+  4:609  0:000  02 01 0C 00 D0 41 03 0A 00 00 00 00 01 01 06 00 | .....A..........
+  4:609  0:000  02 1F 03 12 0A 00 05 00 FF FF 00 00 04 04 26 00 | ..............&.
+  4:609  0:000  32 00 35 00 35 00 39 00 33 00 63 00 37 00 30 00 | 2.5.5.9.3.c.7.0.
+  4:609  0:000  30 00 30 00 3A 00 41 00 38 00 32 00 45 00 38 00 | 0.0.:.A.8.2.E.8.
+  4:609  0:000  00 00 7F FF 04 00                               | ......
+*/
             Status = GetVariable2 (L"boot-image", &gEfiAppleBootGuid, (VOID**)&Value, &Size);
             if (EFI_ERROR(Status)) {
               // leave it as is
@@ -782,9 +791,13 @@ IsOsxHibernated (IN LOADER_ENTRY *Entry)
 #if CREATE_NEW_BOOT_IMAGE
               EFI_DEVICE_PATH_PROTOCOL    *BootImageDevPath;
               UINTN                       Size;
+           //   CHAR16                      *Ptr = (CHAR16*)(Value + 0x20);
               
               DBG("    boot-image before: %s\n", FileDevicePathToStr((EFI_DEVICE_PATH_PROTOCOL*)Value));
               UnicodeSPrint(OffsetHexStr, sizeof(OffsetHexStr), L"%s", (CHAR16 *)(Value + 0x20));
+            /*  while (*Ptr) {
+                OffsetHexStr
+              } */
               FreePool(Value);
               BootImageDevPath = FileDevicePath(Volume->WholeDiskDeviceHandle, OffsetHexStr);
               //  DBG(" boot-image device path:\n");
