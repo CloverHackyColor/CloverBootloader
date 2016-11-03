@@ -38,14 +38,14 @@ StartOverrides()
 	#if PRINT_DUMPS >= 2
 //	OvrDataHub();
 	#endif
-//  OvrAppleSMC();
+  OvrAppleSMC();
 //  OvrAppleImageCodec();
-//  OvrAppleKeyState();
+  OvrAppleKeyState();
 //  OvrOSInfo();
 //  OvrGraphConfig();
 //  OvrFirmwareVolume();
 //  OvrEfiKeyboardInfo();
-//  OvrAppleKeyMapDb();
+  OvrAppleKeyMapDb();
   return EFI_SUCCESS;
 }
 

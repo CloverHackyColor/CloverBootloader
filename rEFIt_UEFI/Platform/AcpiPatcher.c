@@ -1634,6 +1634,9 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
       newFadt->IaPcBootArch = 0x3;
 //    }
     newFadt->Flags |= 0x400; //Reset Register Supported
+    if (gSettings.NoASPM) {
+      newFadt->Flags |= 0x10;
+    }
     XDsdt = newFadt->XDsdt; //save values if present
     XFirmwareCtrl = newFadt->XFirmwareCtrl;
     CopyMem((UINT8*)&newFadt->ResetReg, pmBlock, 0x80);

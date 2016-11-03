@@ -4858,6 +4858,9 @@ GetUserSettings(
       Prop = GetProperty (DictPointer, "HaltEnabler");
       gSettings.SlpSmiEnable = IsPropertyTrue (Prop);
 
+      Prop = GetProperty (DictPointer, "DisableASPM");
+      gSettings.NoASPM = IsPropertyTrue (Prop);
+
       Prop = GetProperty (DictPointer, "smartUPS");
       if (Prop) {
         gSettings.smartUPS   = IsPropertyTrue (Prop);

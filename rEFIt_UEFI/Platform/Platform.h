@@ -897,7 +897,7 @@ typedef struct {
   //ACPI
   UINT64                  ResetAddr;
   UINT8                   ResetVal;
-  BOOLEAN                 UseDSDTmini; //not used
+  BOOLEAN                 NoASPM;
   BOOLEAN                 DropSSDT;
   BOOLEAN                 GeneratePStates;
   BOOLEAN                 GenerateCStates;
@@ -1001,8 +1001,7 @@ typedef struct {
   INT32                   HDALayoutId;
 
   // USB DeviceTree injection
-  BOOLEAN USBInjection;
-  // USB ownership fix
+  BOOLEAN                 USBInjection;
   BOOLEAN                 USBFixOwnership;
   BOOLEAN                 InjectClockID;
   BOOLEAN                 HighCurrent;

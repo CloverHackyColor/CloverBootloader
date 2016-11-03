@@ -173,6 +173,8 @@
 		<string>0x64</string>
 		<key>#ResetValue</key>
 		<string>0xFE</string>
+		<key>DisableASPM</key>
+		<false/>
 		<key>SSDT</key>
 		<dict>
 			<key>#DoubleFirstState</key>

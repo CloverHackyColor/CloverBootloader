@@ -99,8 +99,7 @@ USBKeyboardDriverBindingSupported (
                   (VOID **) &UsbIo,
                   This->DriverBindingHandle,
                   Controller,
-                  //EFI_OPEN_PROTOCOL_BY_DRIVER
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                  EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
   if (EFI_ERROR (Status)) {
     return Status;
@@ -173,9 +172,9 @@ USBKeyboardDriverBindingStart (
                   (VOID **) &UsbIo,
                   This->DriverBindingHandle,
                   Controller,
-                  EFI_OPEN_PROTOCOL_BY_DRIVER
+                  EFI_OPEN_PROTOCOL_BY_DRIVER | EFI_OPEN_PROTOCOL_EXCLUSIVE
                   );
-  if (Status == EFI_ACCESS_DENIED) {
+  if (0 && Status == EFI_ACCESS_DENIED) {
     Status = gBS->DisconnectController (
                   Controller,
                   NULL,
