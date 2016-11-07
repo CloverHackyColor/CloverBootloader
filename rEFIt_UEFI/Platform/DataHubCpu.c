@@ -302,11 +302,11 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
     DeleteNvramVariable(L"nvda_drv", &gEfiAppleBootGuid);
   }
   
-  if (gSettings.NeverDoRecovery) {
+//  if (gSettings.NeverDoRecovery) {
     DeleteNvramVariable(L"recovery-boot-mode", &gEfiAppleBootGuid);
-  } else {
+//  } else {
     //Check for AptioFix2Drv loaded to store efi-boot-device for special boot
-    if (gDriversFlags.AptioFix2Loaded||gDriversFlags.AptioFixLoaded)  {
+    if (gDriversFlags.AptioFix2Loaded || gDriversFlags.AptioFixLoaded)  {
       EFI_STATUS          Status;
       REFIT_VOLUME *Volume = Entry->Volume;
       EFI_DEVICE_PATH_PROTOCOL    *DevicePath = Volume->DevicePath;
@@ -324,7 +324,7 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
       //will not change the variable if it is already exists
       AddNvramVariable(L"recovery-boot-mode", &gEfiAppleBootGuid, Attributes, 12, (VOID*)FdeRecovery);
     }*/
-  }
+//  }
 /*
   if (0 && Entry->LoaderType == OSTYPE_RECOVERY) { //fixme: Remove "0 &&" when OsxAptioFix can launch nested boot.efi ©vit9696
     CHAR8 *FdeRecovery = "fde-recovery";
