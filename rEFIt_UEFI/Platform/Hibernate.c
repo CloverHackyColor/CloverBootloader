@@ -626,6 +626,51 @@ REFIT_VOLUME *FoundParentVolume(REFIT_VOLUME *Volume)
   return NULL;
 }
 
+//Savvas
+/* Function for parsing nodes from device path
+ * IN : DevicePath, sizeof(DevicePath)
+ * OUT: Size of cutted device path
+ * Description:
+ * Device path contains device nodes.
+ * From UEFI specification device node struct looks like:
+ *typedef struct {
+ *  UINT8 Type;   ///< 0x01 Hardware Device Path.
+ *                ///< 0x02 ACPI Device Path.
+ *                ///< 0x03 Messaging Device Path.
+ *                ///< 0x04 Media Device Path.
+ *                ///< 0x05 BIOS Boot Specification Device Path.
+ *                ///< 0x7F End of Hardware Device Path.
+ *
+ *  UINT8 SubType;///< Varies by Type
+ *                ///< 0xFF End Entire Device Path, or
+ *                ///< 0x01 End This Instance of a Device Path and start a new
+ *                ///< Device Path.
+ *
+ *  UINT8 Length[2];  ///< Specific Device Path data. Type and Sub-Type define
+ *                    ///< type of data. Size of data is included in Length.
+ *
+ * } EFI_DEVICE_PATH_PROTOCOL;
+ */
+UINTN
+NodeParser  (UINT8 *DevPath, UINTN PathSize, UINT8 Type)
+{
+  UINTN i;
+  for (i=0; i<PathSize+1;){
+    if (DevPath[i] == Type)
+    {
+      //This type corresponds to media device path
+      //So.. save position and exit from loop
+      //Cut size
+      PathSize = i;
+      break;
+    }
+    //Store device node len in to local variable
+    UINT16 len = ((UINT16)DevPath[i+3]<<8) | DevPath[i+2];
+    //Jump to the next device node type
+    i += len;
+  }
+  return PathSize;
+}
 
 STATIC CHAR16 OffsetHexStr[100];
 
@@ -755,21 +800,17 @@ IsOsxHibernated (IN LOADER_ENTRY *Entry)
   if (!gFirmwareClover &&
       !gDriversFlags.EmuVariableLoaded) {
     DBG("    UEFI with NVRAM: ");
-    Status = gRT->GetVariable (L"Boot0082", &gEfiGlobalVariableGuid, NULL, &Size, Data);
-    if (Status != EFI_BUFFER_TOO_SMALL) {
-      DBG(" Boot0082 no\n");
+    Status = GetVariable2 (L"Boot0082", &gEfiGlobalVariableGuid, (VOID**)&Data, &Size);
+    if (EFI_ERROR(Status))  {
+      DBG(" Boot0082 not exists\n");
       ret = FALSE;
     } else {
-      DBG("yes\n");
-      ret = TRUE;
-      Data = AllocatePool(Size);
-      Status = gRT->GetVariable (L"Boot0082", &gEfiGlobalVariableGuid, NULL, &Size, Data);
-      if (EFI_ERROR(Status)) {
-        //1. Boot0082 not exists
-        ret = FALSE;
-      } else {
-        //2. Check that Boot0082 points to this volume
-        BootGUID = (EFI_GUID*)(Data + 0x3C);
+       //1. Parse Media Device Path from Boot0082 load option
+       //Cut Data pointer by 0x08 up to DevicePath
+       Data += 0x08;
+       Size -= 0x08;
+       //We get starting offset of media device path, and then jumping 24 bytes to GUID start
+       BootGUID = (EFI_GUID*)(Data + NodeParser(Data, Size, 0x04) + 0x18);
         //DBG("    Boot0082 points to UUID:%g\n", BootGUID);
         VolumeUUID = FindGPTPartitionGuidInDevicePath(Volume->DevicePath);
         //DBG("    Volume has PartUUID=%g\n", VolumeUUID);
@@ -794,11 +835,6 @@ IsOsxHibernated (IN LOADER_ENTRY *Entry)
  // FileVault2
   4:609  0:000      Boot0082 points to Volume with UUID:BA92975E-E2FB-48E6-95CC-8138B286F646
   4:609  0:000      boot-image before: PciRoot(0x0)\Pci(0x1F,0x2)\Sata(0x5,0x0,0x0)\25593c7000:A82E84C6-9DD6-49D6-960A-0F4C2FE4851C
-  4:609  0:000  02 01 0C 00 D0 41 03 0A 00 00 00 00 01 01 06 00 | .....A..........
-  4:609  0:000  02 1F 03 12 0A 00 05 00 FF FF 00 00 04 04 26 00 | ..............&.
-  4:609  0:000  32 00 35 00 35 00 39 00 33 00 63 00 37 00 30 00 | 2.5.5.9.3.c.7.0.
-  4:609  0:000  30 00 30 00 3A 00 41 00 38 00 32 00 45 00 38 00 | 0.0.:.A.8.2.E.8.
-  4:609  0:000  00 00 7F FF 04 00                               | ......
 */
             Status = GetVariable2 (L"boot-image", &gEfiAppleBootGuid, (VOID**)&Value, &Size);
             if (EFI_ERROR(Status)) {
@@ -807,7 +843,6 @@ IsOsxHibernated (IN LOADER_ENTRY *Entry)
               ret = FALSE;
             } else {
 //              DeleteNvramVariable (L"boot-image", &gEfiAppleBootGuid);
-#if CREATE_NEW_BOOT_IMAGE
               EFI_DEVICE_PATH_PROTOCOL    *BootImageDevPath;
               UINTN                       Size;
               CHAR16                      *Ptr = (CHAR16*)&OffsetHexStr[0];
@@ -845,13 +880,13 @@ IsOsxHibernated (IN LOADER_ENTRY *Entry)
               PrintBytes(Value, Size);
               DBG("    boot-image after: %s\n", FileDevicePathToStr(BootImageDevPath));
               
-#else
+
               //Apple's device path differs from UEFI BIOS device path that will be used by boot.efi
               //Value[6] = 8; //Acpi(PNP0A08,0)
-              Value[24] = 0xFF;
-              Value[25] = 0xFF;
-              DBG("    boot-image corrected: %s\n", FileDevicePathToStr((EFI_DEVICE_PATH_PROTOCOL*)Value));              
-#endif
+              //Value[24] = 0xFF;
+              //Value[25] = 0xFF;
+              //DBG("    boot-image corrected: %s\n", FileDevicePathToStr((EFI_DEVICE_PATH_PROTOCOL*)Value));
+
               Status = gRT->SetVariable(L"boot-image", &gEfiAppleBootGuid,
                                         EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                                         Size , Value);
@@ -862,7 +897,7 @@ IsOsxHibernated (IN LOADER_ENTRY *Entry)
             }
           } //else boot-image will be created
         }
-      }
+ //     }
       FreePool(Data);
     }
   }

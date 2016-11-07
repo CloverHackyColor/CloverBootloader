@@ -1074,7 +1074,7 @@ typedef struct {
   UINT32                  CsrActiveConfig;
   UINT16                  BooterConfig;
   BOOLEAN                 DisableCloverHotkeys;
-  UINT8                   pad71[1];
+  BOOLEAN                 NeverDoRecovery;
 
   // Multi-config
   CHAR16  *ConfigName;

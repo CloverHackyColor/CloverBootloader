@@ -2137,6 +2137,17 @@ GetEarlyUserSettings (
   TagPtr      Dict2;
   TagPtr      DictPointer;
   TagPtr      Prop;
+  VOID        *Value = NULL;
+  UINTN       Size = 0;
+  BOOLEAN     SpecialBootMode = FALSE;
+  //read aptiofixflag from nvram for special boot
+  Status = GetVariable2 (L"aptiofixflag", &gEfiAppleBootGuid, &Value, &Size);
+  if (!EFI_ERROR(Status)) {
+    SpecialBootMode = TRUE;
+    FreePool(Value);
+  }
+  
+  
 
   gSettings.KextPatchesAllowed              = TRUE;
   gSettings.KernelAndKextPatches.KPAppleRTC = TRUE;
@@ -2209,6 +2220,10 @@ GetEarlyUserSettings (
       Prop = GetProperty (DictPointer, "NoEarlyProgress");
       if (IsPropertyTrue (Prop)) {
         GlobalConfig.NoEarlyProgress = TRUE;
+      }
+
+      if (SpecialBootMode) {
+        GlobalConfig.FastBoot       = TRUE;
       }
 
       Prop = GetProperty (DictPointer, "NeverHibernate");
@@ -3908,6 +3923,9 @@ GetUserSettings(
         //gBootArgsChanged = TRUE;
         //gBootChanged = TRUE;
       }
+      
+      Prop                     = GetProperty (DictPointer, "NeverDoRecovery");
+      gSettings.NeverDoRecovery  = IsPropertyTrue (Prop);
     }
 
 
@@ -5314,7 +5332,7 @@ GetUserSettings(
 
       Prop                     = GetProperty (DictPointer, "NvidiaWeb");
       gSettings.NvidiaWeb      = IsPropertyTrue (Prop);
-
+            
     }
     
     

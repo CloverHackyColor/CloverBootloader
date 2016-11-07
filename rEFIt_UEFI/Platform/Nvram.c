@@ -554,11 +554,20 @@ GetEfiBootDeviceFromNvram ()
     }
   }
   if (gEfiBootDeviceData == NULL) {
-    gEfiBootDeviceData = GetNvramVariable (L"efi-boot-device-data", &gEfiAppleBootGuid, NULL, &Size);
+    VOID *Value;
+    UINTN Size2=0;
+    EFI_STATUS Status;
+    Status = GetVariable2 (L"aptiofixflag", &gEfiAppleBootGuid, &Value, &Size2);
+    if (EFI_ERROR(Status)) {
+      gEfiBootDeviceData = GetNvramVariable (L"efi-boot-device-data", &gEfiAppleBootGuid, NULL, &Size);
+    } else {
+      gEfiBootDeviceData = GetNvramVariable (L"specialbootdevice", &gEfiAppleBootGuid, NULL, &Size);
+    }
+    
     if (gEfiBootDeviceData != NULL) {
-//      DBG("Got efi-boot-device-data size=%d\n", Size);
+      //      DBG("Got efi-boot-device-data size=%d\n", Size);
       if (!IsDevicePathValid(gEfiBootDeviceData, Size)) {
-//        DBG(" - device path for efi-boot-device-data is invalid\n");
+        //        DBG(" - device path for efi-boot-device-data is invalid\n");
         FreePool(gEfiBootDeviceData);
         gEfiBootDeviceData = NULL;
       }

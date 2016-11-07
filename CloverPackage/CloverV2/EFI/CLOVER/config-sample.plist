@@ -232,6 +232,8 @@
 		<string>LastBootedVolume</string>
 		<key>NeverHibernate</key>
 		<false/>
+		<key>NeverDoRecovery</key>
+		<true/>
 		<key>SkipHibernateTimeout</key>
 		<false/>
 		<key>StrictHibernate</key>
