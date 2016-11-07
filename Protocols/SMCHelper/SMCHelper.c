@@ -24,7 +24,7 @@
 //  gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0xFFFFFFFF
 // in package DSC file
 
-#define DBG_SMC 2
+#define DBG_SMC 0
 
 #if DBG_SMC == 3
 #define DBG(...) MemLog(FALSE, 0, __VA_ARGS__)
@@ -41,6 +41,9 @@
 #define NON_APPLE_SMC_SIGNATURE SIGNATURE_64('S','M','C','H','E','L','P','E')
 
 EFI_HANDLE              mHandle = NULL;
+EFI_BOOT_SERVICES*			gBS;
+
+extern EFI_GUID gEfiAppleBootGuid;
 
 typedef struct _SMC_STACK SMC_STACK;
 
@@ -177,6 +180,34 @@ SmcReadValueImpl (IN  APPLE_SMC_IO_PROTOCOL  *This,
   
 }
 
+
+//fakesmc-key-CLKT-ui32: Size = 4, Data: 00 00 8C BE
+EFI_STATUS EFIAPI SetNvramForTheKey(
+                                    IN  SMC_KEY             Key,
+                                    IN  SMC_KEY_TYPE        Type,
+                                    IN  SMC_DATA_SIZE       Size,
+                                    IN  SMC_DATA            *Value
+                                    )
+{
+  EFI_STATUS Status;
+  CHAR16 *Name = AllocateCopyPool(44, L"fakesmc-key-CLKT-ui32");
+  Name[12] = (Key >> 24) & 0xFF;
+  Name[13] = (Key >> 16) & 0xFF;
+  Name[14] = (Key >> 8) & 0xFF;
+  Name[15] = (Key >> 0) & 0xFF;
+  Name[17] = (Type >> 24) & 0xFF;
+  Name[18] = (Type >> 16) & 0xFF;
+  Name[19] = (Type >> 8) & 0xFF;
+  Name[20] = (Type >> 0) & 0xFF;
+    
+  Status = gRT->SetVariable(Name, &gEfiAppleBootGuid,
+                            EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                            Size, (UINT8 *)Value);
+  DBG("NVRAM Variable %s set\n", Name);
+  FreePool(Name);
+  return Status;
+}
+
 EFI_STATUS EFIAPI
 SmcWriteValueImpl (IN  APPLE_SMC_IO_PROTOCOL  *This,
                    IN  SMC_KEY                Key,
@@ -191,12 +222,13 @@ SmcWriteValueImpl (IN  APPLE_SMC_IO_PROTOCOL  *This,
     if (TmpStack->Id == Key) {
       Len = MIN(TmpStack->DataLen, Size);
       CopyMem(TmpStack->Data, Value, Len);
+      SetNvramForTheKey(Key, TmpStack->Type, Size, Value);
       return EFI_SUCCESS;
     } else {
       TmpStack = TmpStack->Next;
     }
   }
-  //if not found then create new
+  //if not found then create new. Not recommended!
   TmpStack = AllocatePool(sizeof(SMC_STACK));
   TmpStack->Next = SmcStack;
   TmpStack->Id = Key;
@@ -464,8 +496,7 @@ SMCHelperEntrypoint (
                     IN EFI_SYSTEM_TABLE		*SystemTable
                     )
 {
-  EFI_STATUS					Status; // = EFI_SUCCESS;
-  EFI_BOOT_SERVICES*			gBS; 
+  EFI_STATUS					Status; // = EFI_SUCCESS; 
   
   gBS				= SystemTable->BootServices;
   

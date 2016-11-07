@@ -44,6 +44,7 @@
   SMCHelper.c
 
 [Guids]
+  gEfiAppleBootGuid         ## SOMETIMES CONSUMED
 
 [Protocols]
   gAppleSMCProtocolGuid			## PRODUCES and CONSUMES
