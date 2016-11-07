@@ -46,6 +46,7 @@
 
 #include "../Version.h"
 CONST CHAR8* CloverRevision = REVISION_STR;
+STATIC UINTN Counter = 0;
 
 
 // defines the size of block that will be allocated for kernel image relocation,
@@ -529,6 +530,9 @@ MOStartImage (
 	EFI_LOADED_IMAGE_PROTOCOL	*Image;
 	CHAR16						*FilePathText = NULL;
 	UINTN						Size = 0;
+  	VOID                        *Value        = NULL;
+  	UINTN                       Size2         = 0;
+  	CHAR16                      *StartFlag    = NULL;	
 	
 	DBG("StartImage(%lx)\n", ImageHandle);
 
@@ -553,9 +557,44 @@ MOStartImage (
 	Status = gRT->GetVariable(L"boot-switch-vars", &gEfiAppleBootGuid, NULL, &Size, NULL);
 	gHibernateWake = (Status == EFI_BUFFER_TOO_SMALL);
 	
+	if (StrStriBasic(FilePathText,L"boot.efi")){
+    Status = GetVariable2 (L"aptiofixflag", &gEfiAppleBootGuid, &Value, &Size2);
+    if (!EFI_ERROR(Status)) {
+      Status = gRT->SetVariable(L"recovery-boot-mode", &gEfiAppleBootGuid,
+                                EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                                Size2, Value);
+      if (EFI_ERROR(Status)) {
+        DBG(" Something goes wrong while setting recovery-boot-mode\n");
+      }
+      Status = gRT->SetVariable (L"aptiofixflag", &gEfiAppleBootGuid, 0, 0, NULL);
+      FreePool(Value);
+    }
+    
+    Size2 =0;
+    //Check recovery-boot-mode present for nested boot.efi
+    Status = GetVariable2 (L"recovery-boot-mode", &gEfiAppleBootGuid, &Value, &Size2);
+    if (!EFI_ERROR(Status)) {
+      //If it presents, then wait for \com.apple.recovery.boot\boot.efi boot
+      DBG(" recovery-boot-mode present\n");
+      StartFlag = StrStriBasic(FilePathText,L"\\com.apple.recovery.boot\\boot.efi");
+      if (Counter > 0x00){
+        Status = gRT->SetVariable(L"aptiofixflag", &gEfiAppleBootGuid,
+                                  EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                                  Size2, Value);
+        if (EFI_ERROR(Status)) {
+          DBG("Something goes wrong! \n");
+      	}
+          gRT->ResetSystem(EfiResetWarm, EFI_SUCCESS, 0, NULL);
+      }
+    } else {
+      StartFlag = StrStriBasic(FilePathText,L"boot.efi");
+    }
+    	FreePool(Value);
+  	}
+
 	// check if this is boot.efi
-	if (StrStriBasic(FilePathText, L"boot.efi") && !gHibernateWake) {
-		
+	if (StartFlag && !gHibernateWake) {
+		Counter++;
 		Print(L"OsxAptioFixDrv: Starting overrides for %s\nUsing reloc block: yes, hibernate wake: %s \n",
 			  FilePathText, gHibernateWake ? L"yes" : L"no");
 		//gBS->Stall(2000000);

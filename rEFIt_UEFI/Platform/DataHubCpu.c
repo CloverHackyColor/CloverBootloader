@@ -306,7 +306,7 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
     DeleteNvramVariable(L"recovery-boot-mode", &gEfiAppleBootGuid);
   } else {
     //Check for AptioFix2Drv loaded to store efi-boot-device for special boot
-    if (gDriversFlags.AptioFix2Loaded)  {
+    if (gDriversFlags.AptioFix2Loaded||gDriversFlags.AptioFixLoaded)  {
       EFI_STATUS          Status;
       REFIT_VOLUME *Volume = Entry->Volume;
       EFI_DEVICE_PATH_PROTOCOL    *DevicePath = Volume->DevicePath;
@@ -318,11 +318,12 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
         DBG("can't set  specialbootdevice!\n");
       }
     }
-    if (Entry->LoaderType == OSTYPE_RECOVERY) {
+    //reboot-boot-mode uses only for special boot, we shouldn't set this variable for statndard recovery boot
+    /*if (Entry->LoaderType == OSTYPE_RECOVERY) {
       CHAR8 *FdeRecovery = "none";
       //will not change the variable if it is already exists
       AddNvramVariable(L"recovery-boot-mode", &gEfiAppleBootGuid, Attributes, 12, (VOID*)FdeRecovery);
-    }
+    }*/
   }
 /*
   if (0 && Entry->LoaderType == OSTYPE_RECOVERY) { //fixme: Remove "0 &&" when OsxAptioFix can launch nested boot.efi ©vit9696

@@ -805,6 +805,8 @@ IsOsxHibernated (IN LOADER_ENTRY *Entry)
       DBG(" Boot0082 not exists\n");
       ret = FALSE;
     } else {
+       DBG("yes\n");
+       ret = TRUE;
        //1. Parse Media Device Path from Boot0082 load option
        //Cut Data pointer by 0x08 up to DevicePath
        Data += 0x08;
