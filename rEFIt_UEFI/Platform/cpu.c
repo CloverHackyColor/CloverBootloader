@@ -258,6 +258,7 @@ VOID GetCPUProperties (VOID)
       case CPU_MODEL_MOOREFIELD:
       case CPU_MODEL_GOLDMONT:
       case CPU_MODEL_ATOM_X3:
+      case CPU_MODEL_SKYLAKE_D:
       case CPU_MODEL_SKYLAKE_S:
       case CPU_MODEL_CANNONLAKE:
         msr = AsmReadMsr64(MSR_CORE_THREAD_COUNT);  //0x35
@@ -450,6 +451,7 @@ VOID GetCPUProperties (VOID)
            case CPU_MODEL_BROADWELL_HQ:
            case CPU_MODEL_BROADWELL_E5:
            case CPU_MODEL_SKYLAKE_U:
+           case CPU_MODEL_SKYLAKE_D:
            case CPU_MODEL_SKYLAKE_S:
              gCPUStructure.TSCFrequency = MultU64x32(gCPUStructure.CurrentSpeed, Mega); //MHz -> Hz
              gCPUStructure.CPUFrequency = gCPUStructure.TSCFrequency;
@@ -916,6 +918,7 @@ UINT16 GetAdvancedCpuType ()
           case CPU_MODEL_CRYSTALWELL:
           case CPU_MODEL_BROADWELL_HQ:
           case CPU_MODEL_SKYLAKE_U:
+          case CPU_MODEL_SKYLAKE_D:
           case CPU_MODEL_SKYLAKE_S:
             if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i3"))
 							return 0x905; // Core i3 - Apple doesn't use it
@@ -1079,6 +1082,7 @@ MACHINE_TYPES GetDefaultModel()
       case CPU_MODEL_HASWELL_U5:
         DefaultType = iMac151;
         break;
+      case CPU_MODEL_SKYLAKE_D:  
       case CPU_MODEL_SKYLAKE_S:
         DefaultType = iMac171;
         break;

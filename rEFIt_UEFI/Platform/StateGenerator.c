@@ -94,6 +94,7 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
     case CPU_MODEL_HASWELL_U5:
     case CPU_MODEL_BROADWELL_HQ:
     case CPU_MODEL_SKYLAKE_U:
+    case CPU_MODEL_SKYLAKE_D:
     case CPU_MODEL_SKYLAKE_S:
     case CPU_MODEL_ATOM_3700:
     {
@@ -222,6 +223,7 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
           case CPU_MODEL_HASWELL_U5:
           case CPU_MODEL_BROADWELL_HQ:
           case CPU_MODEL_SKYLAKE_U:
+          case CPU_MODEL_SKYLAKE_D:
           case CPU_MODEL_SKYLAKE_S:
           case CPU_MODEL_ATOM_3700:
 					{
@@ -270,6 +272,7 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
                     (gCPUStructure.Model == CPU_MODEL_HASWELL_U5) ||
                     (gCPUStructure.Model == CPU_MODEL_BROADWELL_HQ) ||
                     (gCPUStructure.Model == CPU_MODEL_SKYLAKE_U) ||
+                    (gCPUStructure.Model == CPU_MODEL_SKYLAKE_D) ||
                     (gCPUStructure.Model == CPU_MODEL_SKYLAKE_S) ||
                     (gCPUStructure.Model == CPU_MODEL_JAKETOWN)) {
                   j = i << 8;

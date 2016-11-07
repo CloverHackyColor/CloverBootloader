@@ -588,7 +588,7 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
         AsciiStrCpy (gSettings.RPlt, "j44");
         break;
 
-      case CPU_MODEL_SKYLAKE_S:
+      case CPU_MODEL_SKYLAKE_D:
         AsciiStrCpy (gSettings.RPlt, "j95");
         break;
 

@@ -174,17 +174,23 @@ Headers collection for procedures
 #define CPU_MODEL_HASWELL_ULT		0x45	/* Haswell ULT */
 #define CPU_MODEL_CRYSTALWELL		0x46	/* Haswell ULX CPUID_MODEL_CRYSTALWELL */
 #define CPU_MODEL_BROADWELL_HQ  0x47
-#define CPU_MODEL_AIRMONT       0x4C
-#define CPU_MODEL_AVOTON        0x4D
-#define CPU_MODEL_SKYLAKE_U     0x4E
+#define CPU_MODEL_MERRIFIELD	0x4A /* Tangier */
+#define CPU_MODEL_AIRMONT       0x4C /* CherryTrail / Braswell */
+#define CPU_MODEL_AVOTON        0x4D /* Avaton/Rangely */
+#define CPU_MODEL_SKYLAKE_U     0x4E /* Skylake Mobile */
 #define CPU_MODEL_BROADWELL_E5  0x4F
+#define CPU_MODEL_SKYLAKE_S     0x55 /* Skylake Server */
 #define CPU_MODEL_BROADWELL_DE  0x56
-#define CPU_MODEL_KNIGHT        0x57
-#define CPU_MODEL_MOOREFIELD    0x5A
+#define CPU_MODEL_KNIGHT        0x57 /* Knights Landing */
+#define CPU_MODEL_MOOREFIELD    0x5A /* Annidale */
 #define CPU_MODEL_GOLDMONT      0x5C
 #define CPU_MODEL_ATOM_X3       0x5D
-#define CPU_MODEL_SKYLAKE_S     0x5E
+#define CPU_MODEL_SKYLAKE_D     0x5E /* Skylake Desktop */
+#define CPU_MODEL_DENVERTON     0x5F /* Goldmont Microserver */
 #define CPU_MODEL_CANNONLAKE    0x66
+#define CPU_MODEL_XEON_MILL	    0x85 /* Knights Mill */
+#define CPU_MODEL_KABYLAKE1    	0x8E /* Kabylake Mobile */
+#define CPU_MODEL_KABYLAKE2     0x9E /* Kabylake Dektop */
 
 #define CPU_VENDOR_INTEL        0x756E6547
 #define CPU_VENDOR_AMD          0x68747541
