@@ -164,6 +164,7 @@ EFI_INTERFACE_SCREEN_INFO mScreenInfo=
 // OS_INFO_VENDOR_NAME
 #define OS_INFO_VENDOR_NAME  "Apple Inc."
 
+extern EFI_GUID gAppleOsLoadedNamedEventGuid;
 // OSInfoOSNameImpl
 VOID
 EFIAPI
@@ -175,6 +176,8 @@ OSInfoOSNameImpl (
   // this variable can be used at OnExitBoootServices,
   // as it will be set by boot.efi
   BootOSName = AllocateCopyPool(AsciiStrLen(OSName) + 1, (VOID*)OSName);
+
+  EfiNamedEventSignal (&gAppleOsLoadedNamedEventGuid);
 }
 
 // OSInfoOSVendorImpl

@@ -183,7 +183,9 @@
   gEfiCertRsa2048Guid
   gEfiCertRsa2048Sha256Guid
   gEfiCertTypeRsa2048Sha256Guid
-	
+
+  gAppleOsLoadedNamedEventGuid
+
 
 [Ppis]
 
