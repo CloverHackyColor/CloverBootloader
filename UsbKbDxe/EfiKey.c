@@ -20,6 +20,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 
 STATIC BOOLEAN mExitingBootServices = FALSE;
 
+extern EFI_GUID gAppleOsLoadedNamedEventGuid;
 //
 // USB Keyboard Driver Global Variables
 //
@@ -365,6 +366,19 @@ USBKeyboardDriverBindingStart (
     goto ErrorExit;
   }
 
+  Status = EfiNamedEventListen(
+              &gAppleOsLoadedNamedEventGuid,
+              TPL_NOTIFY,
+              WaitForOs,
+              UsbKeyboardDevice,
+              NULL
+              );
+  if (EFI_ERROR (Status)) {
+//    goto ErrorExit;
+    //do nothing
+  }
+
+  
   //UsbKbInstallKeyboardDeviceInfoProtocol (UsbKeyboardDevice, UsbIo);
   //
   // Install Simple Text Input Protocol and Simple Text Input Ex Protocol
@@ -935,6 +949,38 @@ USBKeyboardExitBootServices (
          );
 }
 #endif
+
+VOID
+EFIAPI
+WaitForOs (IN  EFI_EVENT Event, IN  VOID *Context)
+{
+  EFI_STATUS                  Status;
+  USB_KB_DEV                  *UsbKeyboardDevice = (USB_KB_DEV *)Context;
+  EFI_HANDLE                  Controller;
+  UINTN                       NumberHandles;
+  EFI_HANDLE                  *Buffer;
+  INTN                        Index;
+
+  Status = gBS->LocateHandleBuffer (
+                                    ByProtocol,
+                                    &gEfiSimpleTextInProtocolGuid,
+                                    NULL,
+                                    &NumberHandles,
+                                    &Buffer
+                                    );
+  for (Index = 0; Index < NumberHandles; Index++) {
+    Controller = Buffer[Index];
+    if (UsbKeyboardDevice->ControllerHandle == Controller) {
+      continue;
+    }
+    gBS->DisconnectController (Controller,
+                               NULL,
+                               NULL
+                               ); 
+  }
+}
+
+
 /**
   Free keyboard notify list.
 

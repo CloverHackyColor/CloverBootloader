@@ -587,6 +587,9 @@ CpuGetTimerValue (
       //
       // BugBug: Hard coded. Don't know how to do this generically
       //
+      //Slice: Don't wonder. This value is for Tsc timer.
+      // using ACPI, HPET or TMR timer we will use other value for TimerPeriod.
+      // ;)
       *TimerPeriod = 1000000000;
   }
 

@@ -630,5 +630,9 @@ USBKeyboardExitBootServices (
   IN  VOID                      *Context
   );
 
+VOID
+EFIAPI
+WaitForOs (IN  EFI_EVENT Event, IN  VOID *Context);
+
 #endif
 

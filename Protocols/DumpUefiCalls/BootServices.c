@@ -194,7 +194,7 @@ OvrWaitForEvent(
 	EFI_STATUS			Status;
 	
 	Status = gOrgBS.WaitForEvent(NumberOfEvents, Event, Index);
-	PRINT("->WaitForEvent(%d, %p, %d) = %r\n", NumberOfEvents, *Event, *Index, Status);
+//	PRINT("->WaitForEvent(%d, %p, %d) = %r\n", NumberOfEvents, *Event, *Index, Status);
 	return Status;
 }
 
@@ -834,7 +834,7 @@ OvrCreateEventEx(
 	EFI_STATUS			Status;
 	
 	Status = gOrgBS.CreateEventEx(Type, NotifyTpl, NotifyFunction, NotifyContext, EventGroup, Event);
-	PRINT("->CreateEventEx(0x%x, 0x%x, %p, %p, %g, %p) = %r\n", Type, NotifyTpl, NotifyFunction, NotifyContext, EventGroup, *Event, Status);
+//	PRINT("->CreateEventEx(0x%x, 0x%x, %p, %p, %g, %p) = %r\n", Type, NotifyTpl, NotifyFunction, NotifyContext, EventGroup, *Event, Status);
 	return Status;
 }
 
