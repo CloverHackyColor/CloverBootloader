@@ -63,6 +63,22 @@ VERIFY_SIZE_OF (UINT64, 8);
 VERIFY_SIZE_OF (CHAR8, 1);
 VERIFY_SIZE_OF (CHAR16, 2);
 
+typedef enum {
+  __VerifyUint8EnumValue = 0xff
+} __VERIFY_UINT8_ENUM_SIZE;
+
+typedef enum {
+  __VerifyUint16EnumValue = 0xffff
+} __VERIFY_UINT16_ENUM_SIZE;
+
+typedef enum {
+  __VerifyUint32EnumValue = 0xffffffff
+} __VERIFY_UINT32_ENUM_SIZE;
+
+VERIFY_SIZE_OF (__VERIFY_UINT8_ENUM_SIZE, 4);
+VERIFY_SIZE_OF (__VERIFY_UINT16_ENUM_SIZE, 4);
+VERIFY_SIZE_OF (__VERIFY_UINT32_ENUM_SIZE, 4);
+
 //
 // The Microsoft* C compiler can removed references to unreferenced data items
 //  if the /OPT:REF linker option is used. We defined a macro as this is a
@@ -89,10 +105,11 @@ VERIFY_SIZE_OF (CHAR16, 2);
 // warnings.
 //
 #ifndef UNREACHABLE
-  #ifdef __GNUC__
+  #if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ > 4)
     ///
     /// Signal compilers and analyzers that this call is not reachable.  It is
     /// up to the compiler to remove any code past that point.
+    /// Not implemented by GCC 4.4 or earlier.
     ///
     #define UNREACHABLE()  __builtin_unreachable ()
   #elif defined (__has_feature)
@@ -301,7 +318,7 @@ struct _LIST_ENTRY {
 
 //
 //  UEFI specification claims 1 and 0. We are concerned about the
-//  complier portability so we did it this way.
+//  compiler portability so we did it this way.
 //
 
 ///
@@ -320,6 +337,11 @@ struct _LIST_ENTRY {
 /// NULL pointer (VOID *)
 ///
 #define NULL  ((VOID *) 0)
+
+//
+// Null character
+//
+#define CHAR_NULL             0x0000
 
 ///
 /// Maximum values for common UEFI Data Types
@@ -613,8 +635,11 @@ struct _LIST_ENTRY {
 //#elif defined(__GNUC__) && !defined(NO_BUILTIN_VA_FUNCS)
 #elif defined(USE_CLANG_BUILTIN_VA_LIST) || (defined(__GNUC__) && !defined(__x86_64__))
 //
-// Use GCC built-in macros for variable argument lists.
+// X64 only. Use MS ABI version of GCC built-in macros for variable argument lists.
 //
+///
+/// Both GCC and LLVM 3.8 for X64 support new variable argument intrinsics for Microsoft ABI
+///
 
 ///
 /// Variable used to traverse the list of arguments. This type can vary by
@@ -1219,6 +1244,19 @@ typedef UINTN RETURN_STATUS;
   **/
   #define RETURN_ADDRESS(L)     ((VOID *) 0)
 #endif
+
+/**
+  Return the number of elements in an array.
+
+  @param  Array  An object of array type. Array is only used as an argument to
+                 the sizeof operator, therefore Array is never evaluated. The
+                 caller is responsible for ensuring that Array's type is not
+                 incomplete; that is, Array must have known constant size.
+
+  @return The number of elements in Array. The result has type UINTN.
+
+**/
+#define ARRAY_SIZE(Array) (sizeof (Array) / sizeof ((Array)[0]))
 
 #endif
 

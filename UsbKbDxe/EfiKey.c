@@ -62,9 +62,21 @@ USBKeyboardDriverBindingEntryPoint (
              &gUsbKeyboardComponentName,
              &gUsbKeyboardComponentName2
              );
-  // Discuss - we can't return Status? We have to always return SUCCESS?
-  // This handle is clean, the installation on it is successful if EFI system is good enough.
-//  ASSERT_EFI_ERROR (Status);
+
+  if (EFI_ERROR(Status)) {
+    // Discuss - we can't return Status? We have to always return SUCCESS?
+    // This handle is clean, the installation on it is successful if EFI system is good enough.
+    //  ASSERT_EFI_ERROR (Status);
+    return Status;
+  }
+
+  Status = EfiNamedEventListen(
+            &gAppleOsLoadedNamedEventGuid,
+            TPL_NOTIFY,
+            WaitForOs,
+            NULL,
+            NULL
+            );
 
   return Status;
 }
@@ -365,19 +377,6 @@ USBKeyboardDriverBindingStart (
   if (EFI_ERROR (Status)) {
     goto ErrorExit;
   }
-
-  Status = EfiNamedEventListen(
-              &gAppleOsLoadedNamedEventGuid,
-              TPL_NOTIFY,
-              WaitForOs,
-              UsbKeyboardDevice,
-              NULL
-              );
-  if (EFI_ERROR (Status)) {
-//    goto ErrorExit;
-    //do nothing
-  }
-
   
   //UsbKbInstallKeyboardDeviceInfoProtocol (UsbKeyboardDevice, UsbIo);
   //
@@ -952,32 +951,39 @@ USBKeyboardExitBootServices (
 
 VOID
 EFIAPI
-WaitForOs (IN  EFI_EVENT Event, IN  VOID *Context)
+WaitForOs (IN EFI_EVENT Event, IN VOID *Context)
 {
   EFI_STATUS                  Status;
-  USB_KB_DEV                  *UsbKeyboardDevice = (USB_KB_DEV *)Context;
   EFI_HANDLE                  Controller;
   UINTN                       NumberHandles;
   EFI_HANDLE                  *Buffer;
   INTN                        Index;
 
   Status = gBS->LocateHandleBuffer (
-                                    ByProtocol,
-                                    &gEfiSimpleTextInProtocolGuid,
-                                    NULL,
-                                    &NumberHandles,
-                                    &Buffer
-                                    );
+    ByProtocol,
+    &gEfiSimpleTextInProtocolGuid,
+    NULL,
+    &NumberHandles,
+    &Buffer
+  );
+
+  //Print(L"LocateHandleBuffer: %r\n", Status);
+  if (EFI_ERROR(Status)) {
+    return;
+  }
+
   for (Index = 0; Index < NumberHandles; Index++) {
     Controller = Buffer[Index];
-    if (UsbKeyboardDevice->ControllerHandle == Controller) {
-      continue;
-    }
-    gBS->DisconnectController (Controller,
-                               NULL,
-                               NULL
-                               ); 
-  }
+    Status = gBS->DisconnectController (
+      Controller,
+      NULL,
+      NULL
+    ); 
+    //Print(L"DisconnectController: %r\n", Status);
+
+    Status = gBS->ConnectController(Controller, NULL, NULL, TRUE);
+    //Print(L"ConnectController: %r\n", Status);
+  }  
 }
 
 

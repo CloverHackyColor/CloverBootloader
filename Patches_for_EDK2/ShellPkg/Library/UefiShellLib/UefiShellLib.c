@@ -3415,7 +3415,8 @@ ShellPromptForResponse (
             break;
         }
       }
-      break;    case ShellPromptResponseTypeYesNoAllCancel:
+      break;
+      case ShellPromptResponseTypeYesNoAllCancel:
        if (Prompt != NULL) {
         ShellPrintEx(-1, -1, L"%s", Prompt);
       }
@@ -3433,7 +3434,11 @@ ShellPromptForResponse (
         if (EFI_ERROR(Status)) {
           break;
         }
-        ShellPrintEx(-1, -1, L"%c", Key.UnicodeChar);
+
+        if (Key.UnicodeChar <= 127 && Key.UnicodeChar >= 32) {
+          ShellPrintEx (-1, -1, L"%c", Key.UnicodeChar);
+        }
+
         switch (Key.UnicodeChar) {
           case L'Y':
           case L'y':

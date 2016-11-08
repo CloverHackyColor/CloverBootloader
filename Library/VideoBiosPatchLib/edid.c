@@ -19,7 +19,7 @@
 
 #define FBMON_FIX_HEADER 1
 #define FBMON_FIX_INPUT  2
-#define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
+//#define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))   //defined in EDK2 since 23000
 
 #define DEFAULT_SCREEN_WIDTH 1024
 #define DEFAULT_SCREEN_HEIGHT 600

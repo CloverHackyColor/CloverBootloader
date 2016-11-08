@@ -1051,7 +1051,7 @@ const CHAR8 *chip_family_name[] = {
 };
 
 AtiDevProp ati_devprop_list[] = {
-  {FLAGTRUE, FALSE, "@0,AAPL,boot-display",  get_bootdisplay_val, NULVAL    },
+  {FLAGTRUE, FALSE, "@1,AAPL,boot-display",  get_bootdisplay_val, NULVAL    },
   // {FLAGTRUE, FALSE, "@0,ATY,EFIDisplay",  NULL,     STRVAL("TMDSA")   },
   
   //{FLAGTRUE, TRUE, "@0,AAPL,vram-memory",  get_vrammemory_val,  NULVAL    },
