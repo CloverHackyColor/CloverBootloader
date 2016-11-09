@@ -625,9 +625,14 @@ OvrLocateHandleBuffer(
 )
 {
 	EFI_STATUS			Status;
+  STATIC UINTN OldBuffer = 0;
 	
 	Status = gOrgBS.LocateHandleBuffer(SearchType, Protocol, SearchKey, NoHandles, Buffer);
-	PRINT("->LocateHandleBuffer(%s, %s, %p, %d, %p) = %r\n", EfiLocateSearchType[SearchType], GuidStr(Protocol), SearchKey, *NoHandles, *Buffer, Status);
+  if (!CompareGuid(Protocol, &mEfiSimplePointerProtocolGuid) || (UINTN)Buffer != OldBuffer) {
+    OldBuffer = (UINTN)Buffer;
+    PRINT("->LocateHandleBuffer(%s, %s, %p, %d, %p) = %r\n", EfiLocateSearchType[SearchType], GuidStr(Protocol), SearchKey, *NoHandles, *Buffer, Status);
+    
+  }
 	return Status;
 }
 

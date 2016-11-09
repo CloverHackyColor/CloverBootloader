@@ -120,6 +120,7 @@
   gAppleGraphConfigProtocolGuid
   gEfiKeyboardInfoProtocolGuid
   gAppleKeyMapDatabaseProtocolGuid
+  gEfiSimplePointerProtocolGuid
   
 [Depex]
   TRUE  

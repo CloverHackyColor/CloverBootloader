@@ -154,5 +154,7 @@
 #include "Fs.h"
 #include "AppleProtocols.h"
 
+extern EFI_GUID mEfiSimplePointerProtocolGuid;
+
 #endif // __DMP_COMMON_H__
 
