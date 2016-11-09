@@ -1557,14 +1557,16 @@ extern UINT16	                        dropDSM;
 extern TagPtr                         gConfigDict[];
 
 // ACPI/PATCHED/AML
-extern ACPI_PATCHED_AML              *ACPIPatchedAML;
+extern ACPI_PATCHED_AML               *ACPIPatchedAML;
 
 // SysVariables
 //extern SYSVARIABLES                   *SysVariables;
 
 // Hold theme fixed IconFormat / extension
-extern CHAR16               *IconFormat;
-extern CHAR16               *gFirmwareRevision;
+extern CHAR16                         *IconFormat;
+extern CHAR16                         *gFirmwareRevision;
+
+extern BOOLEAN                        ResumeFromCoreStorage;
 
 //-----------------------------------
 
@@ -1869,7 +1871,7 @@ EFI_STATUS
 SetVariablesForOSX (LOADER_ENTRY *Entry);
 
 VOID
-SetupDataForOSX ();
+SetupDataForOSX (BOOLEAN Hibernate);
 
 EFI_STATUS
 SetPrivateVarProto ();

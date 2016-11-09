@@ -348,7 +348,7 @@ AddSMCkey(SMC_KEY Key, SMC_DATA_SIZE Size, SMC_KEY_TYPE Type, SMC_DATA *Data)
 // SetupDataForOSX
 /// Sets the DataHub data used by OS X
 VOID EFIAPI
-SetupDataForOSX()
+SetupDataForOSX(BOOLEAN Hibernate)
 {
   EFI_STATUS Status;	
 
@@ -453,7 +453,7 @@ SetupDataForOSX()
   AddSMCkey(SMC_MAKE_KEY('M','S','T','c'), 1, SmcKeyTypeUint8, (SMC_DATA *)&Zero); // CPU Plimit
   AddSMCkey(SMC_MAKE_KEY('M','S','A','c'), 2, SmcKeyTypeUint16, (SMC_DATA *)&Zero);// GPU Plimit
   AddSMCkey(SMC_MAKE_KEY('M','S','L','D'), 1, SmcKeyTypeUint8, (SMC_DATA *)&Zero);   //isLidClosed
-  Zero = 25;
+  Zero = Hibernate?(ResumeFromCoreStorage?25:29):0;
   AddSMCkey(SMC_MAKE_KEY('M','S','W','r'), 1, SmcKeyTypeUint8, (SMC_DATA *)&Zero);
   Zero = 0x300;
   AddSMCkey(SMC_MAKE_KEY('M','S','P','S'), 2, SmcKeyTypeUint16, (SMC_DATA *)&Zero);

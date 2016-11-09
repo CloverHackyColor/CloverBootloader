@@ -199,6 +199,9 @@ EFI_STATUS EFIAPI SetNvramForTheKey(
   Name[18] = (Type >> 16) & 0xFF;
   Name[19] = (Type >> 8) & 0xFF;
   Name[20] = (Type >> 0) & 0xFF;
+  if (Name[20] == 0x20) {
+    Name[20] = 0;
+  }
     
   Status = gRT->SetVariable(Name, &gEfiAppleBootGuid,
                             EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
@@ -410,7 +413,7 @@ SmcUnsupportedImpl (IN APPLE_SMC_IO_PROTOCOL  *This
 
 EFI_STATUS
 EFIAPI
-SmcUnknown1Impl (IN APPLE_SMC_IO_PROTOCOL  *This
+SmcUnknown1Impl (IN APPLE_SMC_STATE_PROTOCOL  *This
                  )
 {
   return EFI_SUCCESS;
@@ -418,7 +421,7 @@ SmcUnknown1Impl (IN APPLE_SMC_IO_PROTOCOL  *This
 
 EFI_STATUS
 EFIAPI
-SmcUnknown2Impl (IN APPLE_SMC_IO_PROTOCOL  *This,
+SmcUnknown2Impl (IN APPLE_SMC_STATE_PROTOCOL  *This,
                  IN UINTN                  Ukn1,
                  IN UINTN                  Ukn2
                  )
@@ -428,7 +431,7 @@ SmcUnknown2Impl (IN APPLE_SMC_IO_PROTOCOL  *This,
 
 EFI_STATUS
 EFIAPI
-SmcUnknown3Impl (IN APPLE_SMC_IO_PROTOCOL  *This,
+SmcUnknown3Impl (IN APPLE_SMC_STATE_PROTOCOL  *This,
                  IN UINTN                  Ukn1,
                  IN UINTN                  Ukn2
                  )
@@ -438,16 +441,19 @@ SmcUnknown3Impl (IN APPLE_SMC_IO_PROTOCOL  *This,
 
 EFI_STATUS
 EFIAPI
-SmcUnknown4Impl (IN APPLE_SMC_IO_PROTOCOL  *This,
-                 IN UINTN                  Ukn1
+SmcUnknown4Impl (IN APPLE_SMC_STATE_PROTOCOL  *This,
+                 OUT UINTN                  *Ukn1
                  )
 {
+  if (Ukn1) {
+    *Ukn1 = 0;
+  }
   return EFI_SUCCESS;
 }
 
 EFI_STATUS
 EFIAPI
-SmcUnknown5Impl (IN APPLE_SMC_IO_PROTOCOL  *This,
+SmcUnknown5Impl (IN APPLE_SMC_STATE_PROTOCOL  *This,
                  IN UINTN                  Ukn1
                  )
 {
@@ -473,12 +479,22 @@ APPLE_SMC_IO_PROTOCOL SMCHelperProtocol = {
   0,
   SMC_PORT_BASE,
   FALSE,
+/*  SmcUnknown1Impl,
+  SmcUnknown2Impl,
+  SmcUnknown3Impl,
+  SmcUnknown4Impl,
+  SmcUnknown5Impl */
+};
+
+APPLE_SMC_STATE_PROTOCOL SMCStateProtocol = {
+  1,            
   SmcUnknown1Impl,
   SmcUnknown2Impl,
   SmcUnknown3Impl,
   SmcUnknown4Impl,
   SmcUnknown5Impl
 };
+
 
 
 
@@ -504,6 +520,8 @@ SMCHelperEntrypoint (
                 &mHandle,
                 &gAppleSMCProtocolGuid,
                 &SMCHelperProtocol,
+                &gAppleSMCStateProtocolGuid,
+                &SMCStateProtocol,
                 NULL
                 );
   

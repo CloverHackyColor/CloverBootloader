@@ -47,7 +47,8 @@
   gEfiAppleBootGuid         ## SOMETIMES CONSUMED
 
 [Protocols]
-  gAppleSMCProtocolGuid			## PRODUCES and CONSUMES
+  gAppleSMCProtocolGuid			  ## PRODUCES and CONSUMES
+  gAppleSMCStateProtocolGuid  ## PRODUCES and CONSUMES
   
 [BuildOptions]
 #  MSFT:*_*_*_ASM_FLAGS = /Fl

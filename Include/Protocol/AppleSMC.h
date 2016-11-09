@@ -110,7 +110,8 @@ typedef UINT8 SMC_KEY_ATTRIBUTES;
 #define	SMC_KEY_ATTRIBUTE_READ      BIT (7)
 
 
-typedef struct _APPLE_SMC_IO_PROTOCOL APPLE_SMC_IO_PROTOCOL;
+typedef struct _APPLE_SMC_IO_PROTOCOL    APPLE_SMC_IO_PROTOCOL;
+typedef struct _APPLE_SMC_STATE_PROTOCOL APPLE_SMC_STATE_PROTOCOL;
 
 // SMC_IO_SMC_READ_VALUE
 typedef
@@ -225,15 +226,15 @@ IN  APPLE_SMC_IO_PROTOCOL  *This
 // SMC_IO_SMC_UNKNOWN_1
 typedef
 EFI_STATUS
-(EFIAPI *SMC_IO_SMC_UNKNOWN_1)(
-IN  APPLE_SMC_IO_PROTOCOL  *This
+(EFIAPI *SMC_STATE_UNKNOWN_1)(
+IN  APPLE_SMC_STATE_PROTOCOL  *This
 );
 
 // SMC_IO_SMC_UNKNOWN_2
 typedef
 EFI_STATUS
-(EFIAPI *SMC_IO_SMC_UNKNOWN_2)(
-IN APPLE_SMC_IO_PROTOCOL  *This,
+(EFIAPI *SMC_STATE_UNKNOWN_2)(
+IN APPLE_SMC_STATE_PROTOCOL  *This,
 IN UINTN                  Ukn1,
 IN UINTN                  Ukn2
 );
@@ -241,8 +242,8 @@ IN UINTN                  Ukn2
 // SMC_IO_SMC_UNKNOWN_3
 typedef
 EFI_STATUS
-(EFIAPI *SMC_IO_SMC_UNKNOWN_3)(
-IN APPLE_SMC_IO_PROTOCOL  *This,
+(EFIAPI *SMC_STATE_UNKNOWN_3)(
+IN APPLE_SMC_STATE_PROTOCOL  *This,
 IN UINTN                  Ukn1,
 IN UINTN                  Ukn2
 );
@@ -250,24 +251,24 @@ IN UINTN                  Ukn2
 // SMC_IO_SMC_UNKNOWN_4
 typedef
 EFI_STATUS
-(EFIAPI *SMC_IO_SMC_UNKNOWN_4)(
-IN APPLE_SMC_IO_PROTOCOL  *This,
-IN UINTN                  Ukn1
+(EFIAPI *SMC_STATE_GET_STATE)(
+IN APPLE_SMC_STATE_PROTOCOL  *This,
+OUT UINTN                  *Ukn1
 );
 
 // SMC_IO_SMC_UNKNOWN_5
 typedef
 EFI_STATUS
-(EFIAPI *SMC_IO_SMC_UNKNOWN_5)(
-IN APPLE_SMC_IO_PROTOCOL  *This,
+(EFIAPI *SMC_STATE_UNKNOWN_5)(
+IN APPLE_SMC_STATE_PROTOCOL  *This,
 IN UINTN                  Ukn1
 );
 
 // APPLE_SMC_IO_PROTOCOL
 struct _APPLE_SMC_IO_PROTOCOL {
-  UINT64                        Signature; //Revision;            ///<
-  SMC_IO_SMC_READ_VALUE         SmcReadValue;        ///<
-  SMC_IO_SMC_WRITE_VALUE        SmcWriteValue;       ///<
+  UINT64                        Signature; //Revision;  
+  SMC_IO_SMC_READ_VALUE         SmcReadValue;        ///< 0x08
+  SMC_IO_SMC_WRITE_VALUE        SmcWriteValue;       ///< 0x10
   SMC_IO_SMC_GET_KEY_COUNT      SmcGetKeyCount;      ///<
   //SMC_IO_SMC_MAKE_KEY           SmcMakeKey;          ///<
   SMC_IO_SMC_ADD_KEY            SmcAddKey;          ///<
@@ -281,14 +282,27 @@ struct _APPLE_SMC_IO_PROTOCOL {
   SMC_INDEX                     Index;               ///<
   SMC_ADDRESS                   Address;             ///<
   BOOLEAN                       Mmio;                ///<
-  SMC_IO_SMC_UNKNOWN_1          SmcUnknown1;         ///<
+/*  SMC_IO_SMC_UNKNOWN_1          SmcUnknown1;         ///<
   SMC_IO_SMC_UNKNOWN_2          SmcUnknown2;         ///<
   SMC_IO_SMC_UNKNOWN_3          SmcUnknown3;         ///<
   SMC_IO_SMC_UNKNOWN_4          SmcUnknown4;         ///<
-  SMC_IO_SMC_UNKNOWN_5          SmcUnknown5;         ///<
+  SMC_IO_SMC_UNKNOWN_5          SmcUnknown5;         ///< */
 };
 
 
+
+struct _APPLE_SMC_STATE_PROTOCOL {
+  UINT64                       Revision;            ///<
+  SMC_STATE_UNKNOWN_1          SmcUnknown1;         ///< 0x08
+  SMC_STATE_UNKNOWN_2          SmcUnknown2;         ///< 0x10
+  SMC_STATE_UNKNOWN_3          SmcUnknown3;         ///< 0x18
+  SMC_STATE_GET_STATE          SmcUnknown4;         ///< 0x20 - really called
+  SMC_STATE_UNKNOWN_5          SmcUnknown5;         ///<
+};
+
+
+
 extern EFI_GUID gAppleSMCProtocolGuid;
+extern EFI_GUID gAppleSMCStateProtocolGuid;
 
 #endif

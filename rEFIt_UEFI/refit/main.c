@@ -622,13 +622,16 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
 //    DBG("FinalizeSmbios\n");
     FinalizeSmbios();
 //    DBG("SetupDataForOSX\n");
-    SetupDataForOSX();
+//    SetupDataForOSX();
 
     SetCPUProperties();
 
     if (OSFLAG_ISSET(Entry->Flags, OSFLAG_HIBERNATED)) {
       DoHibernateWake = PrepareHibernation(Entry->Volume);
     }
+    SetupDataForOSX(DoHibernateWake);
+    
+
     if (gDriversFlags.AptioFixLoaded &&
         !DoHibernateWake &&
         !StrStr(Entry->LoadOptions, L"slide=")) {

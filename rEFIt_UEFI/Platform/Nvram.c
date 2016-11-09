@@ -216,8 +216,8 @@ UINT32 TypeFromName(CHAR16 *Name)
   UINT32 Key;
   Key = ((Name[17] & 0xFF) << 24) + ((Name[18] & 0xFF) << 16) +
   ((Name[19] & 0xFF) << 8) + ((Name[20] & 0xFF) << 0);
-  if (Name[20] == '\0') {
-    Key += ' ';
+  if (Name[20] == L'\0') {
+    Key += 0x20; //' '
   }
   return Key;
 }
@@ -277,7 +277,7 @@ GetSmcKeys (BOOLEAN WriteToSMC)
       break;  //no more variables
     }
 
-    if (!StrStr(Name, L"fakesmc")) {
+    if (!StrStr(Name, L"fakesmc-key")) {
       continue; //the variable is not interesting for us
     }
 

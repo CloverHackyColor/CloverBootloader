@@ -65,6 +65,7 @@ BOOLEAN                         defDSM;
 UINT16                          dropDSM;
 
 BOOLEAN                         GetLegacyLanAddress;
+BOOLEAN                         ResumeFromCoreStorage;
 
 
 GUI_ANIME                       *GuiAnime                   = NULL;

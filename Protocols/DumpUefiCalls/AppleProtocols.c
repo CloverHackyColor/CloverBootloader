@@ -167,7 +167,7 @@ OvrReset (IN  APPLE_SMC_IO_PROTOCOL  *This,
   PRINT("->AppleSMC.SmcReset(%d)\n", Mode);
   return Status;
 }
-
+/*
 EFI_STATUS
 EFIAPI
 OvrUnknown1 (IN  APPLE_SMC_IO_PROTOCOL  *This
@@ -228,7 +228,7 @@ OvrUnknown5 (IN  APPLE_SMC_IO_PROTOCOL  *This,
   PRINT("->AppleSMC.SmcUnknown5(0x%x)\n", Mode);
   return Status;
 }
-
+*/
 
 EFI_STATUS EFIAPI
 OvrAppleSMC(VOID)
@@ -255,11 +255,11 @@ OvrAppleSMC(VOID)
 	gAppleSMC->SmcGetKeyFromIndex = OvrKeyFromIndex;
 	gAppleSMC->SmcGetKeyInfo = OvrGetKeyInfo;
 	gAppleSMC->SmcReset = OvrReset;
-	gAppleSMC->SmcUnknown1 = OvrUnknown1;
+/*	gAppleSMC->SmcUnknown1 = OvrUnknown1;
 	gAppleSMC->SmcUnknown2 = OvrUnknown2;
 	gAppleSMC->SmcUnknown3 = OvrUnknown3;
 	gAppleSMC->SmcUnknown4 = OvrUnknown4;
-	gAppleSMC->SmcUnknown5 = OvrUnknown5;
+	gAppleSMC->SmcUnknown5 = OvrUnknown5; */
 	
 	PRINT("AppleSMC overriden!\n");
 	return EFI_SUCCESS;
