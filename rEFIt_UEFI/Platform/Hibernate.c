@@ -809,10 +809,11 @@ IsOsxHibernated (IN LOADER_ENTRY *Entry)
        ret = TRUE;
        //1. Parse Media Device Path from Boot0082 load option
        //Cut Data pointer by 0x08 up to DevicePath
-       Data += 0x08;
-       Size -= 0x08;
+      // Data += 0x08;
+      // Size -= 0x08;
        //We get starting offset of media device path, and then jumping 24 bytes to GUID start
-       BootGUID = (EFI_GUID*)(Data + NodeParser(Data, Size, 0x04) + 0x18);
+      // BootGUID = (EFI_GUID*)(Data + NodeParser(Data, Size, 0x04) + 0x18);
+      BootGUID = (EFI_GUID*)(Data + 0x3C);
         //DBG("    Boot0082 points to UUID:%g\n", BootGUID);
         VolumeUUID = FindGPTPartitionGuidInDevicePath(Volume->DevicePath);
         //DBG("    Volume has PartUUID=%g\n", VolumeUUID);
