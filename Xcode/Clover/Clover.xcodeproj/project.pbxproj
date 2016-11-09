@@ -528,6 +528,7 @@
 		12AAF5F21DC0F03B00A52B12 /* AppleKeyAggregator.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = AppleKeyAggregator.c; sourceTree = "<group>"; };
 		12AAF5F31DC0F03B00A52B12 /* AppleKeyAggregator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleKeyAggregator.h; sourceTree = "<group>"; };
 		12AAF5F41DC0F03B00A52B12 /* AppleKeyAggregator.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = AppleKeyAggregator.inf; sourceTree = "<group>"; };
+		12B804401DD3295400F955DF /* SimpleAudioOut.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SimpleAudioOut.h; sourceTree = "<group>"; };
 		12E301581D5A413A00EED426 /* lodepng.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lodepng.c; sourceTree = "<group>"; };
 		12E301591D5A413A00EED426 /* lodepng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lodepng.h; sourceTree = "<group>"; };
 		12EF3B1C1A7AB8D40056AF22 /* ComponentName.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ComponentName.c; sourceTree = "<group>"; };
@@ -2009,6 +2010,7 @@
 				2C794AD91A0AA85900D845B0 /* MsgLog.h */,
 				12676CCE1DB5624B00CFC57E /* OSInfo.h */,
 				2C794ADA1A0AA85900D845B0 /* PciIoImp.h */,
+				12B804401DD3295400F955DF /* SimpleAudioOut.h */,
 				2C794ADB1A0AA85900D845B0 /* UsbMassImpl.h */,
 			);
 			path = Protocol;

@@ -1518,7 +1518,7 @@ BiosKeyboardWaitForKey (
   //
   gBS->Stall (1000);
   //
-  // Use TimerEvent callback funciton to check whether there's any key pressed
+  // Use TimerEvent callback function to check whether there's any key pressed
   //
   BiosKeyboardTimerHandler (NULL, BIOS_KEYBOARD_DEV_FROM_THIS (Context));
 
@@ -1820,8 +1820,8 @@ BiosKeyboardTimerHandler (
   LIST_ENTRY                         *Link;
   BIOS_KEYBOARD_CONSOLE_IN_EX_NOTIFY *CurrentNotify;
   //for AppleDb
-  //UINTN               NumberOfKeys;
-  //APPLE_KEY           Keys[8];
+  UINTN               NumberOfKeys;
+  APPLE_KEY           Keys[8];
 
   ZeroMem (&Regs, sizeof (EFI_IA32_REGISTER_SET));
 
@@ -2055,7 +2055,7 @@ BiosKeyboardTimerHandler (
  
  // Following code checks current keyboard input report against old key code buffer.
  // According to USB HID Firmware Specification, the report consists of 8 bytes.
- // Byte 0 is map of Modifier keys.
+ // Byte 0 is map of Modifier keys. 
  // Byte 1 is reserved.
  // Bytes 2 to 7 are keycodes. -> KeyData.Key.ScanCode
  //
@@ -2073,16 +2073,21 @@ BiosKeyboardTimerHandler (
     }
   }
   
+*/  
+  NumberOfKeys = 3;
+  Keys[0] = KeyData.KeyState.KeyShiftState;
+  Keys[1] = KeyData.KeyState.KeyToggleState;  //or 0?
+  Keys[2] = KeyData.Key.ScanCode;
+  
   if (BiosKeyboardPrivate->KeyMapDb != NULL) {
     BiosKeyboardPrivate->KeyMapDb->SetKeyStrokeBufferKeys (
-                                                         BiosKeyboardPrivate->KeyMapDb,
-                                                         BiosKeyboardPrivate->KeyMapDbIndex,
-                                                         (APPLE_MODIFIER_MAP)CurModifierMap,
-                                                         NumberOfKeys,
-                                                         &Keys[0]
-                                                         );
+                                                           BiosKeyboardPrivate->KeyMapDb,
+                                                           BiosKeyboardPrivate->KeyMapDbIndex,
+                                                           (APPLE_MODIFIER_MAP)(Keys[0]),
+                                                           NumberOfKeys,
+                                                           &Keys[0]
+                                                           );
   }
-*/  
 
 
   return ;  

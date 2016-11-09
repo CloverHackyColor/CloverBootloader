@@ -236,9 +236,6 @@ ReadKeyState (APPLE_KEY_STATE_PROTOCOL* This,
   if (!This || !ModifyFlags || !PressedKeyCount) {
     return EFI_INVALID_PARAMETER;
   }
-//  if (!*PressedKeyCount) {
-//    return EFI_SUCCESS;
-//  }
   
   Aggregator     = APPLE_KEY_MAP_AGGREGATOR_PRIVATE_FROM_AGGREGATOR (This);
   KeyStrokesInfo = APPLE_KEY_STROKES_INFO_FROM_LIST_ENTRY (GetFirstNode (&Aggregator->KeyStrokesInfoList));
