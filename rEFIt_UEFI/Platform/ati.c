@@ -1736,6 +1736,7 @@ BOOLEAN read_disabled_vbios(VOID)
 BOOLEAN radeon_card_posted(VOID)
 {
   UINT32 reg;
+  ati_chip_family_t chip_family = card->info->chip_family;
   
   // first check CRTCs
   reg = REG32(card->mmio, RADEON_CRTC_GEN_CNTL) | REG32(card->mmio, RADEON_CRTC2_GEN_CNTL);
