@@ -1,7 +1,7 @@
 /** @file
   The XHCI controller driver.
 
-Copyright (c) 2011 - 2015, Intel Corporation. All rights reserved.<BR>
+Copyright (c) 2011 - 2016, Intel Corporation. All rights reserved.<BR>
 This program and the accompanying materials
 are licensed and made available under the terms and conditions of the BSD License
 which accompanies this distribution.  The full text of the license may be found at
@@ -144,7 +144,7 @@ XhcGetCapability (
   Xhc             = XHC_FROM_THIS (This);
   *MaxSpeed       = EFI_USB_SPEED_SUPER;
   *PortNumber     = (UINT8) (Xhc->HcSParams1.Data.MaxPorts);
-  *Is64BitCapable = (UINT8) (Xhc->HcCParams.Data.Ac64);
+  *Is64BitCapable = (UINT8) Xhc->Support64BitDma; //(UINT8) (Xhc->HcCParams.Data.Ac64);
 //  DEBUG ((EFI_D_INFO, "XhcGetCapability: %d ports, 64 bit %d\n", *PortNumber, *Is64BitCapable));
   DBG("XhcGetCapability: %d ports, 64 bit capable=%d\n", *PortNumber, *Is64BitCapable);
 
@@ -1005,7 +1005,7 @@ XhcControlTransfer (
         // Store a copy of device scriptor as hub device need this info to configure endpoint.
         //
         CopyMem (&Xhc->UsbDevContext[SlotId].DevDesc, Data, *DataLength);
-        if (Xhc->UsbDevContext[SlotId].DevDesc.BcdUSB == 0x0300) {
+        if (Xhc->UsbDevContext[SlotId].DevDesc.BcdUSB >= 0x0300) {
           //
           // If it's a usb3.0 device, then its max packet size is a 2^n.
           //
@@ -2125,7 +2125,27 @@ XhcDriverBindingStart (
 //    DEBUG ((EFI_D_ERROR, "XhcDriverBindingStart: failed to create USB2_HC\n"));
     return EFI_OUT_OF_RESOURCES;
   }
-DBG("XhcSetBiosOwnership\n");
+
+  //
+  // Enable 64-bit DMA support in the PCI layer if this controller
+  // supports it.
+  //
+  if (Xhc->HcCParams.Data.Ac64 != 0) {
+    Status = PciIo->Attributes (
+                      PciIo,
+                      EfiPciIoAttributeOperationEnable,
+                      EFI_PCI_IO_ATTRIBUTE_DUAL_ADDRESS_CYCLE,
+                      NULL
+                      );
+    if (!EFI_ERROR (Status)) {
+      Xhc->Support64BitDma = TRUE;
+    } else {
+      DEBUG ((EFI_D_WARN,
+        "%a: failed to enable 64-bit DMA on 64-bit capable controller @ %p (%r)\n",
+        __FUNCTION__, Controller, Status));
+    }
+  }
+
   XhcSetBiosOwnership (Xhc);
 DBG("XhcIntelQuirks\n");
   XhcIntelQuirks(PciIo);
@@ -2248,7 +2268,7 @@ CLOSE_PCIIO:
 
 
 /**
-  Stop this driver on ControllerHandle. Support stoping any child handles
+  Stop this driver on ControllerHandle. Support stopping any child handles
   created by this driver.
 
   @param  This                 Protocol instance pointer.

@@ -86,7 +86,7 @@ typedef struct _USB_DEV_CONTEXT      USB_DEV_CONTEXT;
 #define INT_INTER_ASYNC              4
 
 //
-// Iterate through the doule linked list. This is delete-safe.
+// Iterate through the double linked list. This is delete-safe.
 // Don't touch NextEntry
 //
 #define EFI_LIST_FOR_EACH_SAFE(Entry, NextEntry, ListHead) \
@@ -258,6 +258,8 @@ struct _USB_XHCI_INSTANCE {
   // The array supports up to 255 devices, entry 0 is reserved and should not be used.
   //
   USB_DEV_CONTEXT           UsbDevContext[256];
+
+  BOOLEAN                   Support64BitDma; // Whether 64 bit DMA may be used with this device
 };
 
 
@@ -308,7 +310,7 @@ XhcDriverBindingStart (
   );
 
 /**
-  Stop this driver on ControllerHandle. Support stoping any child handles
+  Stop this driver on ControllerHandle. Support stopping any child handles
   created by this driver.
 
   @param  This                 Protocol instance pointer.

@@ -602,7 +602,7 @@ UsbHcFreeMem (
       Bit   = ((ToFree - Block->BufHost) / USBHC_MEM_UNIT) % 8;
 
       //
-      // reset associated bits in bit arry
+      // reset associated bits in bit array
       //
       for (Count = 0; Count < (AllocSize / USBHC_MEM_UNIT); Count++) {
 //        ASSERT (USB_HC_BIT_IS_SET (Block->Bits[Byte], Bit));

@@ -159,7 +159,7 @@ GetVariableDataPtr (
   //
   // Be careful about pad size for alignment
   //
-  return (UINT8 *) ((UINTN) GET_VARIABLE_NAME_PTR (Variable) + Variable->NameSize + GET_PAD_SIZE (Variable->NameSize));
+  return (UINT8 *) ((UINTN) (GET_VARIABLE_NAME_PTR (Variable)) + Variable->NameSize + GET_PAD_SIZE (Variable->NameSize));
 }
 
 /**
@@ -323,9 +323,9 @@ UpdateVariableInfo (
  //     ASSERT (gVariableInfo != NULL);
 
       CopyGuid (&gVariableInfo->VendorGuid, VendorGuid);
-      gVariableInfo->Name = AllocatePool (StrSize (VariableName));
+      gVariableInfo->Name = AllocateZeroPool (StrSize (VariableName));
  //     ASSERT (gVariableInfo->Name != NULL);
-      StrCpy (gVariableInfo->Name, VariableName);
+      StrnCpy (gVariableInfo->Name, VariableName, StrLen (VariableName));
       gVariableInfo->Volatile = Volatile;
 
       gBS->InstallConfigurationTable (&gEfiVariableGuid, gVariableInfo);
@@ -361,9 +361,9 @@ UpdateVariableInfo (
  //       ASSERT (Entry->Next != NULL);
 
         CopyGuid (&Entry->Next->VendorGuid, VendorGuid);
-        Entry->Next->Name = AllocatePool (StrSize (VariableName));
+        Entry->Next->Name = AllocateZeroPool (StrSize (VariableName));
  //       ASSERT (Entry->Next->Name != NULL);
-        StrCpy (Entry->Next->Name, VariableName);
+        StrnCpy (Entry->Next->Name, VariableName, StrLen (VariableName));
         Entry->Next->Volatile = Volatile;
       }
 
@@ -1186,6 +1186,10 @@ EmuGetVariable (
     return EFI_INVALID_PARAMETER;
   }
 
+  if (VariableName[0] == 0) {
+    return EFI_NOT_FOUND;
+  }
+
   AcquireLockOnlyAtBootTime(&Global->VariableServicesLock);
 
   //
@@ -1400,14 +1404,22 @@ EmuSetVariable (
   if ((Attributes & (EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS)) == EFI_VARIABLE_RUNTIME_ACCESS) {
     return EFI_INVALID_PARAMETER;
   }
+
+  
+  if ((UINTN)(~0) - DataSize < StrSize(VariableName)){
+    //
+    // Prevent whole variable size overflow 
+    // 
+    return EFI_INVALID_PARAMETER;
+  }
+
   //
   //  The size of the VariableName, including the Unicode Null in bytes plus
   //  the DataSize is limited to maximum size of PcdGet32 (PcdMaxHardwareErrorVariableSize)
   //  bytes for HwErrRec, and PcdGet32 (PcdMaxVariableSize) bytes for the others.
   //
   if ((Attributes & EFI_VARIABLE_HARDWARE_ERROR_RECORD) == EFI_VARIABLE_HARDWARE_ERROR_RECORD) {
-    if ((DataSize > PcdGet32 (PcdMaxHardwareErrorVariableSize)) ||                                                       
-        (sizeof (VARIABLE_HEADER) + StrSize (VariableName) + DataSize > PcdGet32 (PcdMaxHardwareErrorVariableSize))) {
+    if (StrSize (VariableName) + DataSize > PcdGet32 (PcdMaxHardwareErrorVariableSize) - sizeof (VARIABLE_HEADER)) {
       return EFI_INVALID_PARAMETER;
     }
     //
@@ -1421,8 +1433,7 @@ EmuSetVariable (
   //  The size of the VariableName, including the Unicode Null in bytes plus
   //  the DataSize is limited to maximum size of PcdGet32 (PcdMaxVariableSize) bytes.
   //
-    if ((DataSize > PcdGet32 (PcdMaxVariableSize)) ||
-        (sizeof (VARIABLE_HEADER) + StrSize (VariableName) + DataSize > PcdGet32 (PcdMaxVariableSize))) {
+    if (StrSize (VariableName) + DataSize > PcdGet32 (PcdMaxVariableSize) - sizeof (VARIABLE_HEADER)) {
       return EFI_INVALID_PARAMETER;
     }  
   }
@@ -1612,7 +1623,7 @@ InitializeVariableStore (
   IN  BOOLEAN               VolatileStore
   )
 {
-  EFI_STATUS            Status;
+  EFI_STATUS            Status = EFI_SUCCESS;
   VARIABLE_STORE_HEADER *VariableStore;
   BOOLEAN               FullyInitializeStore;
   EFI_PHYSICAL_ADDRESS  *VariableBase;
@@ -1639,6 +1650,9 @@ InitializeVariableStore (
   // PcdVariableStoreSize.
   //
 //  ASSERT (PcdGet32 (PcdHwErrStorageSize) <= PcdGet32 (PcdVariableStoreSize));
+  if (PcdGet32 (PcdHwErrStorageSize) > PcdGet32 (PcdVariableStoreSize)) {
+    return EFI_OUT_OF_RESOURCES;
+  }
 
   //
   // Allocate memory for variable store.
@@ -1710,6 +1724,11 @@ InitializeVariableStore (
             ) {
    //       ASSERT (Variable->State == VAR_ADDED);
    //       ASSERT ((Variable->Attributes & EFI_VARIABLE_NON_VOLATILE) != 0);
+          if ((Variable->State != VAR_ADDED) || 
+          ((Variable->Attributes & EFI_VARIABLE_NON_VOLATILE) == 0)) {
+            return EFI_OUT_OF_RESOURCES;
+          }
+
           VariableData = GetVariableDataPtr (Variable);
           Status = EmuSetVariable (
                      GET_VARIABLE_NAME_PTR (Variable),
@@ -1722,15 +1741,12 @@ InitializeVariableStore (
                      &mVariableModuleGlobal->NonVolatileLastVariableOffset
                      );
    //       ASSERT_EFI_ERROR (Status);
-            if (EFI_ERROR (Status)) {
-                return (Status);
-            }
         }
       }
     }
   }
 
-  return EFI_SUCCESS;
+  return Status; //EFI_SUCCESS;
 }
 
 /**
