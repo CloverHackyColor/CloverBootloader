@@ -1743,7 +1743,11 @@ BOOLEAN radeon_card_posted(VOID)
     return TRUE;
   
   // then check MEM_SIZE, in case something turned the crtcs off
-  reg = REG32(card->mmio, R600_CONFIG_MEMSIZE);
+  if ( (chip_family >= CHIP_FAMILY_MULLINS) ) {  // <--- check, if cards chip_family is newer than MULLINS (Routine by ErmaC)
+    reg = IoRead32(R600_CONFIG_MEMSIZE);  //this is incorrect
+  } else {                                       // <--- if it is older, than do next step
+    reg = REG32(card->mmio, R600_CONFIG_MEMSIZE);
+  }
   if (reg)
     return TRUE;
   

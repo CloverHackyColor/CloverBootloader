@@ -1159,66 +1159,7 @@ VOID ApplyInputs(VOID)
     gSettings.KernelPatchesAllowed = InputItems[i].BValue;
     gBootChanged = TRUE;
   }
-/*
-  if (SysVariables) {
-    SYSVARIABLES *SysVariablesTmp = SysVariables;
-    CHAR8 *SysVarsTmp = NULL;
-    while (SysVariablesTmp) {
-      if (SysVariablesTmp->MenuItem.Valid) {
-        if (StrCmp(SysVariablesTmp->Key, L"CsrActiveConfig") == 0) {
-          gSettings.CsrActiveConfig = (UINT32)StrHexToUint64(SysVariablesTmp->MenuItem.SValue);
-        } else if (StrCmp(SysVariablesTmp->Key, L"BooterConfig") == 0) {
-          gSettings.BooterConfig = (UINT16)StrHexToUint64(SysVariablesTmp->MenuItem.SValue);
-        } else if (StrCmp(SysVariablesTmp->Key, L"MLB") == 0) {
-          gSettings.RtMLB = AllocateZeroPool(StrSize(SysVariablesTmp->MenuItem.SValue));
-          UnicodeStrToAsciiStr(SysVariablesTmp->MenuItem.SValue, gSettings.RtMLB);
-        } else if (StrCmp(SysVariablesTmp->Key, L"ROM") == 0) {
-          UINT32 len;
-          SysVarsTmp = AllocateZeroPool(StrSize(SysVariablesTmp->MenuItem.SValue));
-          UnicodeStrToAsciiStr(SysVariablesTmp->MenuItem.SValue, SysVarsTmp);
-          if (AsciiStriCmp(SysVarsTmp, "UseMacAddr0") == 0) {
-            gSettings.RtROM     = &gLanMac[0][0];
-            gSettings.RtROMLen  = 6;
-          } else if (AsciiStriCmp(SysVarsTmp, "UseMacAddr1") == 0) {
-            gSettings.RtROM     = &gLanMac[1][0];
-            gSettings.RtROMLen  = 6;
-          } else {
-            len = (UINT32)(AsciiStrLen(SysVarsTmp) >> 1);
-            gSettings.RtROM = (UINT8*)AllocateZeroPool(len);
-            gSettings.RtROMLen = hex2bin(SysVarsTmp, gSettings.RtROM, len);
-          }
-        } else if (StrCmp(SysVariablesTmp->Key, L"CustomUUID") == 0) {
-          BOOLEAN IsValidCustomUUID = FALSE;
-          SysVarsTmp = AllocateZeroPool(StrSize(SysVariablesTmp->MenuItem.SValue));
-          UnicodeStrToAsciiStr(SysVariablesTmp->MenuItem.SValue, SysVarsTmp);
-          if (IsValidGuidAsciiString (SysVarsTmp)) {
-            AsciiStrToUnicodeStr (SysVarsTmp, gSettings.CustomUuid);
-            Status = StrToGuidLE (gSettings.CustomUuid, &gUuid);
-            if (!EFI_ERROR (Status)) {
-              IsValidCustomUUID = TRUE;
-              // if CustomUUID specified, then default for InjectSystemID=FALSE
-              // to stay compatibile with previous Clover behaviour
-              gSettings.InjectSystemID = FALSE;
-            }
-          }
 
-          if (!IsValidCustomUUID && (AsciiStrLen(SysVarsTmp) > 0)) {
-            DBG ("Error: invalid CustomUUID '%a' - should be in the format XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX\n", SysVarsTmp);
-          }
-        } else if (StrCmp(SysVariablesTmp->Key, L"InjectSystemID") == 0) {
-          gSettings.InjectSystemID = SysVariablesTmp->MenuItem.BValue;
-        } else if (StrCmp(SysVariablesTmp->Key, L"NvidiaWeb") == 0) {
-          gSettings.NvidiaWeb = SysVariablesTmp->MenuItem.BValue;
-        }
-      }
-      SysVariablesTmp = SysVariablesTmp->Next;
-    }
-
-    if (SysVarsTmp != NULL) {
-      FreePool(SysVarsTmp);
-    }
-  }
-*/
   if (NeedSave) {
     SaveSettings();
   }

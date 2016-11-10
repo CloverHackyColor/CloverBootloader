@@ -206,6 +206,15 @@ EFI_OS_INFO_PROTOCOL mEfiOSInfo = {
   NULL
 };
 
+//Usage
+/*RestoreConfig(This, 2, 400, R, G, B)
+->LocateProtocol(gAppleGraphConfigProtocolGuid, 0, 78000000438/1F7DAEC8) = Success
+ call sub_30150
+  ->GetVariable(boot-gamma, gEfiAppleBootGuid, 0/50, 0, 0) = Not Found
+ mRestored = TRUE;
+->GraphConfig.RestoreConfig(2, 400, 1FFCE8B0, 1FFCE0B0, 1FFCD8B0) status=Success
+*/
+
 EFI_STATUS
 EFIAPI
 RestoreConfig (APPLE_GRAPH_CONFIG_PROTOCOL* This,
