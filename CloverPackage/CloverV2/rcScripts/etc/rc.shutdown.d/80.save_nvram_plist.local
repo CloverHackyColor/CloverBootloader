@@ -37,7 +37,7 @@ shopt -s nocasematch
 # Catch signal to clean up
 trap 'rmdir "${NVRAMMountPoint}" &>/dev/null' EXIT
 
-function findFirstAppleBootDevice {
+function findFirstAppleBootDeviceOld {
     local devices=$(LC_ALL=C ls /dev/disk* | sed -n '/\/dev\/disk[0-9]*$/p')
     # Iterate over all devices
     for device in $devices; do
@@ -52,6 +52,20 @@ function findFirstAppleBootDevice {
     done
     # If index found return the device and partition (like diskXsY)
     [[ -n "$index" ]] && echo "${device##*/}s$index"
+}
+
+function findFirstAppleBootDevice {
+  local rootDevice=$(LC_ALL=C diskutil info /|awk '{ if ($1 == "Device" && $2 == "Node:") {print $3}}')
+  recoveryDisk=$(LC_ALL=C diskutil info /|awk '{ if ($1 == "Recovery" && $2 == "Disk:") {print $3}}')
+  device=$(LC_ALL=C diskutil info $recoveryDisk|awk '{ if ($1 == "Part" && $2 == "of" && $3 == "Whole:") {print $4}}')
+  # Find EFI partition signature
+  index=$(LC_ALL=C /usr/sbin/gpt -r show "$device" 2>/dev/null | \
+    awk 'toupper($7) == "C12A7328-F81F-11D2-BA4B-00A0C93EC93B" {print $3; exit}')
+  if [[ ! $index =~ ^[0-9]+$ ]];then
+    index=
+  fi
+  # If index found return the device and partition (like diskXsY)
+  [[ -n "$index" ]] && echo "${device##*/}s$index"
 }
 
 function mountNVRAMDisk {

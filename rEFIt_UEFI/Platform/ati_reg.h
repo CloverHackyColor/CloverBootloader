@@ -4075,6 +4075,8 @@
 #define R600_MEDIUM_VID_LOWER_GPIO_CNTL                            0x720
 #define R600_LOW_VID_LOWER_GPIO_CNTL                               0x724
 
+#define mmCONFIG_MEMSIZE                                           0x150a
+
 #define R600_MC_VM_FB_LOCATION                                     0x2180
 #define R600_MC_VM_AGP_TOP                                         0x2184
 #define R600_MC_VM_AGP_BOT                                         0x2188
