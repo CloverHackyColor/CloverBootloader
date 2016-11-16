@@ -35,7 +35,7 @@
  */
 
 #include "libegint.h"
-#include "../include/egemb_icons.h"
+//#include "../include/egemb_icons.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_ICNS 1
@@ -84,7 +84,7 @@ BUILTIN_ICON BuiltinIconTable[BUILTIN_ICON_COUNT] = {
 };
 
 //#define DEC_BUILTIN_ICON(id, ico) BuiltinIconTable[id].Image = egDecodePNG(ico, sizeof(ico), BuiltinIconTable[id].PixelSize, TRUE)
-#define DEC_BUILTIN_ICON(id, ico) BuiltinIconTable[id].Image = egDecodePNG(ico, sizeof(ico), TRUE)
+#define DEC_BUILTIN_ICON(id, ico) BuiltinIconTable[id].Image = egDecodePNG(&ico[0], SZ_##ico, TRUE)
 
 CHAR16 * GetIconsExt(IN CHAR16 *Icon, IN CHAR16 *Def)
 {
@@ -177,9 +177,10 @@ EG_IMAGE * BuiltinIcon(IN UINTN Id)
     case BUILTIN_SELECTION_BIG:
       DEC_BUILTIN_ICON(Id, emb_selection_big); break;
   }
+  DBG("Icon %d decoded, pointer %x\n", Id, (UINTN)(BuiltinIconTable[Id].Image));
   
   if (!BuiltinIconTable[Id].Image) {
-    TextBuffer = egCreateImage(Size, Size, TRUE);
+    TextBuffer = egCreateImage(Size, Size, TRUE);  //new pointer
     egFillImage(TextBuffer, &MenuBackgroundPixel);
     p = StrStr(BuiltinIconTable[Id].Path, L"_"); p++;
     Text = (CHAR16*)AllocateCopyPool(30, (VOID*)p);

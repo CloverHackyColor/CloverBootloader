@@ -1300,13 +1300,13 @@ EG_IMAGE * egCreateImage(IN INTN Width, IN INTN Height, IN BOOLEAN HasAlpha)
 
 VOID egFreeImage(IN EG_IMAGE *Image)
 {
-    if (Image != NULL) {
-        if (Image->PixelData != NULL) {
-            FreePool(Image->PixelData);
-            Image->PixelData = NULL; //FreePool will not zero pointer
-        }
-        FreePool(Image);
+  if (Image != NULL) {
+    if (Image->PixelData != NULL) {
+      FreePool(Image->PixelData);
+      Image->PixelData = NULL; //FreePool will not zero pointer
     }
+    FreePool(Image);
+  }
 }
 
 

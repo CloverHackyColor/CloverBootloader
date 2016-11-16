@@ -51,6 +51,9 @@
   entry_scan/securevars.c
   entry_scan/bootscreen.c
   entry_scan/lockedgraphics.c
+  libeg/egemb_icons.c
+  libeg/egemb_font.c
+  libeg/scroll_images.c
   libeg/BmLib.c
   libeg/image.c
 #  libeg/load_bmp.c

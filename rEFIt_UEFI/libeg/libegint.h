@@ -43,9 +43,80 @@
 
 #include "Platform.h"
 
+/* embedded arrays */
+extern UINT8 emb_font_data[];
+extern UINT8 emb_pointer[];
+extern UINT8 emb_func_about[];
+extern UINT8 emb_func_clover[];
+extern UINT8 emb_func_options[];
+extern UINT8 emb_func_reset[];
+extern UINT8 emb_func_secureboot_config[];
+extern UINT8 emb_func_secureboot[];
+extern UINT8 emb_func_shell[];
+extern UINT8 emb_func_exit[];
+extern UINT8 emb_func_help[];
+extern UINT8 emb_logo[];
+extern UINT8 emb_selection_big[];
+extern UINT8 emb_selection_small[];
+extern UINT8 emb_vol_internal[];
+extern UINT8 emb_vol_internal_booter[];
+extern UINT8 emb_vol_internal_hfs[];
+extern UINT8 emb_vol_internal_ntfs[];
+extern UINT8 emb_vol_internal_ext[];
+extern UINT8 emb_vol_internal_recovery[];
+extern UINT8 emb_scroll_up_button[];
+extern UINT8 emb_scroll_bar_start[];
+extern UINT8 emb_scroll_scroll_start[];
+extern UINT8 emb_scroll_scroll_fill[];
+extern UINT8 emb_scroll_scroll_end[];
+extern UINT8 emb_scroll_bar_fill[];
+extern UINT8 emb_scroll_bar_end[];
+extern UINT8 emb_scroll_down_button[];
+extern UINT8 emb_radio_button_selected[];
+extern UINT8 emb_radio_button[];
+extern UINT8 emb_selection_indicator[];
+extern UINT8 emb_checkbox[];
+extern UINT8 emb_checkbox_checked[];
+
+
+#define SZ_emb_font_data 1549
+#define SZ_emb_pointer 509
+#define SZ_emb_func_about 199
+#define SZ_emb_func_clover 209
+#define SZ_emb_func_options 222
+#define SZ_emb_func_reset 217
+#define SZ_emb_func_secureboot_config 194
+#define SZ_emb_func_secureboot 200
+#define SZ_emb_func_shell 196
+#define SZ_emb_func_exit 210
+#define SZ_emb_func_help 199
+#define SZ_emb_logo 3025
+#define SZ_emb_selection_big 712
+#define SZ_emb_selection_small 180
+#define SZ_emb_vol_internal 918
+#define SZ_emb_vol_internal_booter 1081
+#define SZ_emb_vol_internal_hfs 923
+#define SZ_emb_vol_internal_ntfs 935
+#define SZ_emb_vol_internal_ext 947
+#define SZ_emb_vol_internal_recovery 845
+#define SZ_emb_scroll_up_button 162
+#define SZ_emb_scroll_bar_start 151
+#define SZ_emb_scroll_scroll_start 142
+#define SZ_emb_scroll_scroll_fill 112
+#define SZ_emb_scroll_scroll_end 142
+#define SZ_emb_scroll_bar_fill 134
+#define SZ_emb_scroll_bar_end 150
+#define SZ_emb_scroll_down_button 174
+#define SZ_emb_radio_button_selected 418
+#define SZ_emb_radio_button 324
+#define SZ_emb_selection_indicator 1637
+#define SZ_emb_checkbox 173
+#define SZ_emb_checkbox_checked 367
+
+
 /* types */
 
-typedef EG_IMAGE * (*EG_DECODE_FUNC)(IN UINT8 *FileData, IN UINTN FileDataLength, IN UINTN IconSize, IN BOOLEAN WantAlpha);
+//typedef EG_IMAGE * (*EG_DECODE_FUNC)(IN UINT8 *FileData, IN UINTN FileDataLength, IN UINTN IconSize, IN BOOLEAN WantAlpha);
 
 /* functions */
 

@@ -18,6 +18,9 @@
 		12AAF5341DBE348100A52B12 /* ComponentName.c in Sources */ = {isa = PBXBuildFile; fileRef = 12AAF52C1DBE348100A52B12 /* ComponentName.c */; };
 		12AAF5351DBE348100A52B12 /* EfiKey.c in Sources */ = {isa = PBXBuildFile; fileRef = 12AAF52D1DBE348100A52B12 /* EfiKey.c */; };
 		12AAF5361DBE348100A52B12 /* KeyBoard.c in Sources */ = {isa = PBXBuildFile; fileRef = 12AAF52F1DBE348100A52B12 /* KeyBoard.c */; };
+		12B8EBBE1DDCE91200AC0A2C /* egemb_font.c in Sources */ = {isa = PBXBuildFile; fileRef = 12B8EBBC1DDCE91200AC0A2C /* egemb_font.c */; };
+		12B8EBBF1DDCE91200AC0A2C /* egemb_icons.c in Sources */ = {isa = PBXBuildFile; fileRef = 12B8EBBD1DDCE91200AC0A2C /* egemb_icons.c */; };
+		12B8EBC21DDCEA2A00AC0A2C /* scroll_images.c in Sources */ = {isa = PBXBuildFile; fileRef = 12B8EBC11DDCEA2A00AC0A2C /* scroll_images.c */; };
 		12E3015A1D5A413A00EED426 /* lodepng.c in Sources */ = {isa = PBXBuildFile; fileRef = 12E301581D5A413A00EED426 /* lodepng.c */; };
 		2C794D201A0AA85900D845B0 /* Reset.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C7949ED1A0AA85900D845B0 /* Reset.c */; };
 		2C794D211A0AA85900D845B0 /* AhciMode.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C7949F01A0AA85900D845B0 /* AhciMode.c */; };
@@ -357,12 +360,10 @@
 		126151441A15BBB000903E7B /* securevars.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = securevars.c; sourceTree = "<group>"; };
 		126151451A15BBB000903E7B /* tool.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = tool.c; sourceTree = "<group>"; };
 		126151461A15BBB000903E7B /* uefibootoption.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = uefibootoption.c; sourceTree = "<group>"; };
-		126151481A15BBB000903E7B /* egemb_icons.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = egemb_icons.h; sourceTree = "<group>"; };
 		126151491A15BBB000903E7B /* Handle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Handle.h; sourceTree = "<group>"; };
 		1261514A1A15BBB000903E7B /* syslinux_mbr.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = syslinux_mbr.h; sourceTree = "<group>"; };
 		1261514C1A15BBB000903E7B /* BmLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BmLib.c; sourceTree = "<group>"; };
 		1261514D1A15BBB000903E7B /* EfiFileLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EfiFileLib.h; sourceTree = "<group>"; };
-		1261514E1A15BBB000903E7B /* egemb_font.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = egemb_font.h; sourceTree = "<group>"; };
 		1261514F1A15BBB000903E7B /* image.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = image.c; sourceTree = "<group>"; };
 		126151501A15BBB000903E7B /* libeg.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = libeg.h; sourceTree = "<group>"; };
 		126151511A15BBB000903E7B /* libegint.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = libegint.h; sourceTree = "<group>"; };
@@ -446,7 +447,6 @@
 		1261CBB51DB17AC200E26E00 /* AppleKeyState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppleKeyState.h; sourceTree = "<group>"; };
 		12676CCE1DB5624B00CFC57E /* OSInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OSInfo.h; sourceTree = "<group>"; };
 		1288B5201A30CEFB007CBCEF /* Net.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Net.c; sourceTree = "<group>"; };
-		1294CC311A231CA80056FF03 /* scroll_images.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = scroll_images.h; sourceTree = "<group>"; };
 		12A60F4E1DB610500068BF8B /* AppleImageCodec.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = AppleImageCodec.c; sourceTree = "<group>"; };
 		12A60F4F1DB610500068BF8B /* AppleImageCodec.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AppleImageCodec.inf; sourceTree = "<group>"; };
 		12A60F501DB610500068BF8B /* load_bmp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = load_bmp.c; sourceTree = "<group>"; };
@@ -529,6 +529,9 @@
 		12AAF5F31DC0F03B00A52B12 /* AppleKeyAggregator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleKeyAggregator.h; sourceTree = "<group>"; };
 		12AAF5F41DC0F03B00A52B12 /* AppleKeyAggregator.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = AppleKeyAggregator.inf; sourceTree = "<group>"; };
 		12B804401DD3295400F955DF /* SimpleAudioOut.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SimpleAudioOut.h; sourceTree = "<group>"; };
+		12B8EBBC1DDCE91200AC0A2C /* egemb_font.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = egemb_font.c; sourceTree = "<group>"; };
+		12B8EBBD1DDCE91200AC0A2C /* egemb_icons.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = egemb_icons.c; sourceTree = "<group>"; };
+		12B8EBC11DDCEA2A00AC0A2C /* scroll_images.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = scroll_images.c; sourceTree = "<group>"; };
 		12E301581D5A413A00EED426 /* lodepng.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lodepng.c; sourceTree = "<group>"; };
 		12E301591D5A413A00EED426 /* lodepng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lodepng.h; sourceTree = "<group>"; };
 		12EF3B1C1A7AB8D40056AF22 /* ComponentName.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ComponentName.c; sourceTree = "<group>"; };
@@ -1261,9 +1264,7 @@
 		126151471A15BBB000903E7B /* include */ = {
 			isa = PBXGroup;
 			children = (
-				126151481A15BBB000903E7B /* egemb_icons.h */,
 				126151491A15BBB000903E7B /* Handle.h */,
-				1294CC311A231CA80056FF03 /* scroll_images.h */,
 				1261514A1A15BBB000903E7B /* syslinux_mbr.h */,
 			);
 			path = include;
@@ -1274,7 +1275,8 @@
 			children = (
 				1261514C1A15BBB000903E7B /* BmLib.c */,
 				1261514D1A15BBB000903E7B /* EfiFileLib.h */,
-				1261514E1A15BBB000903E7B /* egemb_font.h */,
+				12B8EBBC1DDCE91200AC0A2C /* egemb_font.c */,
+				12B8EBBD1DDCE91200AC0A2C /* egemb_icons.c */,
 				1261514F1A15BBB000903E7B /* image.c */,
 				126151501A15BBB000903E7B /* libeg.h */,
 				126151511A15BBB000903E7B /* libegint.h */,
@@ -1283,6 +1285,7 @@
 				126151541A15BBB000903E7B /* load_icns.c */,
 				12E301581D5A413A00EED426 /* lodepng.c */,
 				12E301591D5A413A00EED426 /* lodepng.h */,
+				12B8EBC11DDCEA2A00AC0A2C /* scroll_images.c */,
 				126151551A15BBB000903E7B /* text.c */,
 			);
 			path = libeg;
@@ -3427,6 +3430,8 @@
 				2C794E411A0AA85900D845B0 /* BootArgs.c in Sources */,
 				2C794DD01A0AA85900D845B0 /* Stall.c in Sources */,
 				2C794D361A0AA85900D845B0 /* Makefile in Sources */,
+				12B8EBBE1DDCE91200AC0A2C /* egemb_font.c in Sources */,
+				12B8EBC21DDCEA2A00AC0A2C /* scroll_images.c in Sources */,
 				125CC4F21DBAB06900142ADA /* BiosVideo2.c in Sources */,
 				2C794D341A0AA85900D845B0 /* boot1h.s in Sources */,
 				2C794E431A0AA85900D845B0 /* DecodedKernelCheck.c in Sources */,
@@ -3640,6 +3645,7 @@
 				2C794D381A0AA85900D845B0 /* BootDuet.S in Sources */,
 				2C794DE31A0AA85900D845B0 /* PciBus.c in Sources */,
 				2C794E3F1A0AA85900D845B0 /* FSInject.c in Sources */,
+				12B8EBBF1DDCE91200AC0A2C /* egemb_icons.c in Sources */,
 				2C794D4A1A0AA85900D845B0 /* ComponentName.c in Sources */,
 				2C794DA11A0AA85900D845B0 /* AmlOption.c in Sources */,
 				2C794E031A0AA85900D845B0 /* CpuAsm.asm in Sources */,
