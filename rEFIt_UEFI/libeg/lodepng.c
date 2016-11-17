@@ -1440,7 +1440,7 @@ static size_t searchCodeIndex(const unsigned* array, size_t array_size, size_t v
   size_t right = array_size - 1;
   while(left <= right)
   {
-    size_t mid = (left + right) >> 2;
+    size_t mid = (left + right) >> 1;
     if(array[mid] <= value) left = mid + 1; /*the value to find is more to the right*/
     else if(array[mid - 1] > value) right = mid - 1; /*the value to find is more to the left*/
     else return mid - 1;
@@ -1897,7 +1897,7 @@ static unsigned deflateDynamic(ucvector* out, size_t* bp, Hash* hash,
     else
     {
       if(!uivector_resize(&lz77_encoded, datasize)) ERROR_BREAK(83 /*alloc fail*/);
-      for(i = datapos; i < dataend; ++i) lz77_encoded.data[i - datapos] = data[i]; /*no LZ77, but still will be Huffman compressed*/
+      for(i = datapos; i < dataend; ++i) lz77_encoded.data[i] = data[i]; /*no LZ77, but still will be Huffman compressed*/
     }
 
     if(!uivector_resizev(&frequencies_ll, 286, 0)) ERROR_BREAK(83 /*alloc fail*/);
@@ -2494,10 +2494,9 @@ static unsigned readBitsFromReversedStream(size_t* bitpointer, const unsigned ch
 {
   unsigned result = 0;
   size_t i;
-  for(i = 0 ; i < nbits; ++i)
+  for(i = nbits - 1; i < nbits; --i)
   {
-    result <<= 1;
-    result |= (unsigned)readBitFromReversedStream(bitpointer, bitstream);
+    result += (unsigned)readBitFromReversedStream(bitpointer, bitstream) << i;
   }
   return result;
 }
@@ -3764,9 +3763,9 @@ unsigned lodepng_get_color_profile(LodePNGColorProfile* profile,
   }
   else /* < 16-bit */
   {
-    unsigned char r = 0, g = 0, b = 0, a = 0;
     for(i = 0; i != numpixels; ++i)
     {
+      unsigned char r = 0, g = 0, b = 0, a = 0;
       getPixelColorRGBA8(&r, &g, &b, &a, in, i, mode);
 
       if(!bits_done && profile->bits < 8)
@@ -3833,6 +3832,7 @@ unsigned lodepng_get_color_profile(LodePNGColorProfile* profile,
 
     if(profile->key && !profile->alpha) {
       for(i = 0; i != numpixels; ++i) {
+        unsigned char r = 0, g = 0, b = 0, a = 0;
         getPixelColorRGBA8(&r, &g, &b, &a, in, i, mode);
         if(a != 0 && r == profile->key_r && g == profile->key_g && b == profile->key_b) {
           /* Color key cannot be used if an opaque pixel also has that RGB color. */
