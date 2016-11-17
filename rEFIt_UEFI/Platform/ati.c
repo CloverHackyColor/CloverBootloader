@@ -1561,7 +1561,7 @@ void get_vram_size(void)
       
       // ErmaC: mem size workaround for Polaris10/11
       if ( (chip_family == CHIP_FAMILY_ELLESMERE) || (chip_family == CHIP_FAMILY_BAFFIN) ) {
-        card->vram_size = ((UINT64)REG32(card->mmio, mmCONFIG_MEMSIZE)) << 20; // ydeng
+        card->vram_size = ((UINT64)REG32(card->mmio, POLARIS_CONFIG_MEMSIZE)) << 20; // ydeng
       } else {
         card->vram_size = ((UINT64)REG32(card->mmio, R600_CONFIG_MEMSIZE)) << 20;
       }
@@ -1745,7 +1745,7 @@ BOOLEAN radeon_card_posted(VOID)
   
   // then check MEM_SIZE, in case something turned the crtcs off
   if ( (chip_family >= CHIP_FAMILY_MULLINS) ) {  // <--- check, if cards chip_family is newer than MULLINS (Routine by ErmaC)
-    reg = REG32(card->mmio, mmCONFIG_MEMSIZE);;  //?
+    reg = REG32(card->mmio, POLARIS_CONFIG_MEMSIZE);  //?
   } else {                                       // <--- if it is older, than do next step
     reg = REG32(card->mmio, R600_CONFIG_MEMSIZE);
   }

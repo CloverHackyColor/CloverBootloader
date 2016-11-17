@@ -52,23 +52,23 @@
 #ifndef _ATI_REG_H_
 #define _ATI_REG_H_
 
-#define ATI_DATATYPE_VQ				0
-#define ATI_DATATYPE_CI4			1
-#define ATI_DATATYPE_CI8			2
-#define ATI_DATATYPE_ARGB1555			3
-#define ATI_DATATYPE_RGB565			4
-#define ATI_DATATYPE_RGB888			5
-#define ATI_DATATYPE_ARGB8888			6
-#define ATI_DATATYPE_RGB332			7
-#define ATI_DATATYPE_Y8				8
-#define ATI_DATATYPE_RGB8			9
-#define ATI_DATATYPE_CI16			10
-#define ATI_DATATYPE_VYUY_422			11
-#define ATI_DATATYPE_YVYU_422			12
-#define ATI_DATATYPE_AYUV_444			14
-#define ATI_DATATYPE_ARGB4444			15
+#define ATI_DATATYPE_VQ        0
+#define ATI_DATATYPE_CI4      1
+#define ATI_DATATYPE_CI8      2
+#define ATI_DATATYPE_ARGB1555      3
+#define ATI_DATATYPE_RGB565      4
+#define ATI_DATATYPE_RGB888      5
+#define ATI_DATATYPE_ARGB8888      6
+#define ATI_DATATYPE_RGB332      7
+#define ATI_DATATYPE_Y8        8
+#define ATI_DATATYPE_RGB8      9
+#define ATI_DATATYPE_CI16      10
+#define ATI_DATATYPE_VYUY_422      11
+#define ATI_DATATYPE_YVYU_422      12
+#define ATI_DATATYPE_AYUV_444      14
+#define ATI_DATATYPE_ARGB4444      15
 
-				/* Registers for 2D/Video/Overlay */
+        /* Registers for 2D/Video/Overlay */
 #define RADEON_ADAPTER_ID                   0x0f2c /* PCI */
 #define RADEON_AGP_BASE                     0x0170
 #define RADEON_AGP_CNTL                     0x0174
@@ -451,47 +451,47 @@
 #       define RADEON_CRTC2_H_DISP          (0x01ff << 16)
 #       define RADEON_CRTC2_H_DISP_SHIFT    16
 
-#define RADEON_CRTC_OFFSET_RIGHT	    0x0220
+#define RADEON_CRTC_OFFSET_RIGHT      0x0220
 #define RADEON_CRTC_OFFSET                  0x0224
-#	define RADEON_CRTC_OFFSET__GUI_TRIG_OFFSET (1<<30)
-#	define RADEON_CRTC_OFFSET__OFFSET_LOCK 	   (1<<31)
+#  define RADEON_CRTC_OFFSET__GUI_TRIG_OFFSET (1<<30)
+#  define RADEON_CRTC_OFFSET__OFFSET_LOCK      (1<<31)
 
 #define RADEON_CRTC2_OFFSET                 0x0324
-#	define RADEON_CRTC2_OFFSET__GUI_TRIG_OFFSET (1<<30)
-#	define RADEON_CRTC2_OFFSET__OFFSET_LOCK	    (1<<31)
+#  define RADEON_CRTC2_OFFSET__GUI_TRIG_OFFSET (1<<30)
+#  define RADEON_CRTC2_OFFSET__OFFSET_LOCK      (1<<31)
 #define RADEON_CRTC_OFFSET_CNTL             0x0228
 #       define RADEON_CRTC_TILE_LINE_SHIFT              0
 #       define RADEON_CRTC_TILE_LINE_RIGHT_SHIFT        4
-#	define R300_CRTC_X_Y_MODE_EN_RIGHT		(1 << 6)
-#	define R300_CRTC_MICRO_TILE_BUFFER_RIGHT_MASK   (3 << 7)
-#	define R300_CRTC_MICRO_TILE_BUFFER_RIGHT_AUTO   (0 << 7)
-#	define R300_CRTC_MICRO_TILE_BUFFER_RIGHT_SINGLE (1 << 7)
-#	define R300_CRTC_MICRO_TILE_BUFFER_RIGHT_DOUBLE (2 << 7)
-#	define R300_CRTC_MICRO_TILE_BUFFER_RIGHT_DIS    (3 << 7)
-#	define R300_CRTC_X_Y_MODE_EN			(1 << 9)
-#	define R300_CRTC_MICRO_TILE_BUFFER_MASK   	(3 << 10)
-#	define R300_CRTC_MICRO_TILE_BUFFER_AUTO   	(0 << 10)
-#	define R300_CRTC_MICRO_TILE_BUFFER_SINGLE 	(1 << 10)
-#	define R300_CRTC_MICRO_TILE_BUFFER_DOUBLE 	(2 << 10)
-#	define R300_CRTC_MICRO_TILE_BUFFER_DIS    	(3 << 10)
-#	define R300_CRTC_MICRO_TILE_EN_RIGHT		(1 << 12)
-#	define R300_CRTC_MICRO_TILE_EN			(1 << 13)
-#	define R300_CRTC_MACRO_TILE_EN_RIGHT		(1 << 14)
+#  define R300_CRTC_X_Y_MODE_EN_RIGHT    (1 << 6)
+#  define R300_CRTC_MICRO_TILE_BUFFER_RIGHT_MASK   (3 << 7)
+#  define R300_CRTC_MICRO_TILE_BUFFER_RIGHT_AUTO   (0 << 7)
+#  define R300_CRTC_MICRO_TILE_BUFFER_RIGHT_SINGLE (1 << 7)
+#  define R300_CRTC_MICRO_TILE_BUFFER_RIGHT_DOUBLE (2 << 7)
+#  define R300_CRTC_MICRO_TILE_BUFFER_RIGHT_DIS    (3 << 7)
+#  define R300_CRTC_X_Y_MODE_EN      (1 << 9)
+#  define R300_CRTC_MICRO_TILE_BUFFER_MASK     (3 << 10)
+#  define R300_CRTC_MICRO_TILE_BUFFER_AUTO     (0 << 10)
+#  define R300_CRTC_MICRO_TILE_BUFFER_SINGLE   (1 << 10)
+#  define R300_CRTC_MICRO_TILE_BUFFER_DOUBLE   (2 << 10)
+#  define R300_CRTC_MICRO_TILE_BUFFER_DIS      (3 << 10)
+#  define R300_CRTC_MICRO_TILE_EN_RIGHT    (1 << 12)
+#  define R300_CRTC_MICRO_TILE_EN      (1 << 13)
+#  define R300_CRTC_MACRO_TILE_EN_RIGHT    (1 << 14)
 #       define R300_CRTC_MACRO_TILE_EN                  (1 << 15)
 #       define RADEON_CRTC_TILE_EN_RIGHT                (1 << 14)
 #       define RADEON_CRTC_TILE_EN                      (1 << 15)
 #       define RADEON_CRTC_OFFSET_FLIP_CNTL             (1 << 16)
 #       define RADEON_CRTC_STEREO_OFFSET_EN             (1 << 17)
 
-#define R300_CRTC_TILE_X0_Y0	            0x0350
-#define R300_CRTC2_TILE_X0_Y0	            0x0358
+#define R300_CRTC_TILE_X0_Y0              0x0350
+#define R300_CRTC2_TILE_X0_Y0              0x0358
 
 #define RADEON_CRTC2_OFFSET_CNTL            0x0328
 #       define RADEON_CRTC2_OFFSET_FLIP_CNTL (1 << 16)
 #       define RADEON_CRTC2_TILE_EN         (1 << 15)
 #define RADEON_CRTC_PITCH                   0x022c
-#	define RADEON_CRTC_PITCH__SHIFT		 0
-#	define RADEON_CRTC_PITCH__RIGHT_SHIFT	16
+#  define RADEON_CRTC_PITCH__SHIFT     0
+#  define RADEON_CRTC_PITCH__RIGHT_SHIFT  16
 
 #define RADEON_CRTC2_PITCH                  0x032c
 #define RADEON_CRTC_STATUS                  0x005c
@@ -648,7 +648,7 @@
 #define RADEON_DEVICE_ID                    0x0f02 /* PCI */
 #define RADEON_DISP_MISC_CNTL               0x0d00
 #       define RADEON_SOFT_RESET_GRPH_PP    (1 << 0)
-#define RADEON_DISP_MERGE_CNTL		  0x0d60
+#define RADEON_DISP_MERGE_CNTL      0x0d60
 #       define RADEON_DISP_ALPHA_MODE_MASK  0x03
 #       define RADEON_DISP_ALPHA_MODE_KEY   0
 #       define RADEON_DISP_ALPHA_MODE_PER_PIXEL 1
@@ -656,8 +656,8 @@
 #       define RADEON_DISP_RGB_OFFSET_EN    (1 << 8)
 #       define RADEON_DISP_GRPH_ALPHA_MASK  (0xff << 16)
 #       define RADEON_DISP_OV0_ALPHA_MASK   (0xff << 24)
-#	define RADEON_DISP_LIN_TRANS_BYPASS (0x01 << 9)
-#define RADEON_DISP2_MERGE_CNTL		    0x0d68
+#      define RADEON_DISP_LIN_TRANS_BYPASS (0x01 << 9)
+#define RADEON_DISP2_MERGE_CNTL        0x0d68
 #       define RADEON_DISP2_RGB_OFFSET_EN   (1 << 8)
 #define RADEON_DISP_LIN_TRANS_GRPH_A        0x0d80
 #define RADEON_DISP_LIN_TRANS_GRPH_B        0x0d84
@@ -912,7 +912,7 @@
 #       define RADEON_VERT_STRETCH_LINEREP     (0     << 26)
 #       define RADEON_VERT_STRETCH_BLEND       (1     << 26)
 #       define RADEON_VERT_AUTO_RATIO_EN       (1     << 27)
-#	define RADEON_VERT_AUTO_RATIO_INC      (1     << 31)
+#  define RADEON_VERT_AUTO_RATIO_INC      (1     << 31)
 #       define RADEON_VERT_STRETCH_RESERVED    0x71000000
 #define RS400_FP_2ND_GEN_CNTL               0x0384
 #       define RS400_FP_2ND_ON              (1 << 0)
@@ -997,7 +997,7 @@
 #define RADEON_HTOTAL2_CNTL                 0x002e /* PLL */
 
        /* Multimedia I2C bus */
-#define RADEON_I2C_CNTL_0		    0x0090
+#define RADEON_I2C_CNTL_0        0x0090
 #define RADEON_I2C_DONE                     (1 << 0)
 #define RADEON_I2C_NACK                     (1 << 1)
 #define RADEON_I2C_HALT                     (1 << 2)
@@ -1012,15 +1012,15 @@
 #define RADEON_I2C_CNTL_1                   0x0094
 #define RADEON_I2C_SEL                      (1 << 16)
 #define RADEON_I2C_EN                       (1 << 17)
-#define RADEON_I2C_DATA			    0x0098
+#define RADEON_I2C_DATA          0x0098
 
-#define RADEON_DVI_I2C_CNTL_0		    0x02e0
+#define RADEON_DVI_I2C_CNTL_0        0x02e0
 #       define R200_DVI_I2C_PIN_SEL(x)      ((x) << 3)
 #       define R200_SEL_DDC1                0 /* 0x60 - VGA_DDC */
 #       define R200_SEL_DDC2                1 /* 0x64 - DVI_DDC */
 #       define R200_SEL_DDC3                2 /* 0x68 - MONID_DDC */
 #define RADEON_DVI_I2C_CNTL_1               0x02e4
-#define RADEON_DVI_I2C_DATA		    0x02e8
+#define RADEON_DVI_I2C_DATA        0x02e8
 
 #define RADEON_INTERRUPT_LINE               0x0f3c /* PCI */
 #define RADEON_INTERRUPT_PIN                0x0f3d /* PCI */
@@ -1086,7 +1086,7 @@
 #define RADEON_MDGPIO_EN_REG                0x01b0
 #define RADEON_MDGPIO_MASK                  0x0198
 #define RADEON_GPIOPAD_MASK                 0x0198
-#define RADEON_GPIOPAD_A		    0x019c
+#define RADEON_GPIOPAD_A        0x019c
 #define RADEON_MDGPIO_Y_REG                 0x01b4
 #define RADEON_MEM_ADDR_CONFIG              0x0148
 #define RADEON_MEM_BASE                     0x0f10 /* PCI */
@@ -1130,7 +1130,7 @@
 #define R300_MC_IND_DATA                    0x01fc
 #define R300_MC_READ_CNTL_AB                0x017c
 #       define R300_MEM_RBS_POSITION_A_MASK 0x03
-#define R300_MC_READ_CNTL_CD_mcind	    0x24
+#define R300_MC_READ_CNTL_CD_mcind      0x24
 #       define R300_MEM_RBS_POSITION_C_MASK 0x03
 
 #define RADEON_N_VIF_COUNT                  0x0248
@@ -1731,7 +1731,7 @@
 
 
 
-				/* Registers for 3D/TCL */
+        /* Registers for 3D/TCL */
 #define RADEON_PP_BORDER_COLOR_0            0x1d40
 #define RADEON_PP_BORDER_COLOR_1            0x1d44
 #define RADEON_PP_BORDER_COLOR_2            0x1d48
@@ -2304,26 +2304,26 @@
 #       define RADEON_ROUND_PREC_8TH_PIX     (1 << 30)
 #       define RADEON_ROUND_PREC_4TH_PIX     (2 << 30)
 #       define RADEON_ROUND_PREC_HALF_PIX    (3 << 30)
-#define R200_RE_CNTL				0x1c50 
-#       define R200_STIPPLE_ENABLE		0x1
-#       define R200_SCISSOR_ENABLE		0x2
-#       define R200_PATTERN_ENABLE		0x4
-#       define R200_PERSPECTIVE_ENABLE		0x8
-#       define R200_POINT_SMOOTH		0x20
-#       define R200_VTX_STQ0_D3D		0x00010000
-#       define R200_VTX_STQ1_D3D		0x00040000
-#       define R200_VTX_STQ2_D3D		0x00100000
-#       define R200_VTX_STQ3_D3D		0x00400000
-#       define R200_VTX_STQ4_D3D		0x01000000
-#       define R200_VTX_STQ5_D3D		0x04000000
-#define R200_RE_SCISSOR_TL_0			0x1cd8
-#define R200_RE_SCISSOR_BR_0			0x1cdc
-#define R200_RE_SCISSOR_TL_1			0x1ce0
-#define R200_RE_SCISSOR_BR_1			0x1ce4
-#define R200_RE_SCISSOR_TL_2			0x1ce8
-#define R200_RE_SCISSOR_BR_2			0x1cec
-#       define R200_SCISSOR_X_SHIFT		0
-#       define R200_SCISSOR_Y_SHIFT		16
+#define R200_RE_CNTL        0x1c50 
+#       define R200_STIPPLE_ENABLE    0x1
+#       define R200_SCISSOR_ENABLE    0x2
+#       define R200_PATTERN_ENABLE    0x4
+#       define R200_PERSPECTIVE_ENABLE    0x8
+#       define R200_POINT_SMOOTH    0x20
+#       define R200_VTX_STQ0_D3D    0x00010000
+#       define R200_VTX_STQ1_D3D    0x00040000
+#       define R200_VTX_STQ2_D3D    0x00100000
+#       define R200_VTX_STQ3_D3D    0x00400000
+#       define R200_VTX_STQ4_D3D    0x01000000
+#       define R200_VTX_STQ5_D3D    0x04000000
+#define R200_RE_SCISSOR_TL_0      0x1cd8
+#define R200_RE_SCISSOR_BR_0      0x1cdc
+#define R200_RE_SCISSOR_TL_1      0x1ce0
+#define R200_RE_SCISSOR_BR_1      0x1ce4
+#define R200_RE_SCISSOR_TL_2      0x1ce8
+#define R200_RE_SCISSOR_BR_2      0x1cec
+#       define R200_SCISSOR_X_SHIFT    0
+#       define R200_SCISSOR_Y_SHIFT    16
 #define RADEON_SE_CNTL_STATUS               0x2140
 #       define RADEON_VC_NO_SWAP            (0 << 0)
 #       define RADEON_VC_16BIT_SWAP         (1 << 0)
@@ -2595,141 +2595,141 @@
 #       define RADEON_VF_INDEX_SIZE_SHIFT             11
 #       define RADEON_VF_NUM_VERTICES_SHIFT           16
 
-#define RADEON_SE_PORT_DATA0			0x2000
+#define RADEON_SE_PORT_DATA0      0x2000
  
-#define R200_SE_VAP_CNTL			0x2080
-#       define R200_VAP_TCL_ENABLE		0x00000001
-#       define R200_VAP_SINGLE_BUF_STATE_ENABLE	0x00000010
-#       define R200_VAP_FORCE_W_TO_ONE		0x00010000
-#       define R200_VAP_D3D_TEX_DEFAULT		0x00020000
-#       define R200_VAP_VF_MAX_VTX_NUM__SHIFT	18
-#       define R200_VAP_VF_MAX_VTX_NUM		(9 << 18)
-#       define R200_VAP_DX_CLIP_SPACE_DEF	0x00400000
-#define R200_VF_MAX_VTX_INDX			0x210c
-#define R200_VF_MIN_VTX_INDX			0x2110
-#define R200_SE_VTE_CNTL			0x20b0
-#       define R200_VPORT_X_SCALE_ENA			0x00000001
-#       define R200_VPORT_X_OFFSET_ENA			0x00000002
-#       define R200_VPORT_Y_SCALE_ENA			0x00000004
-#       define R200_VPORT_Y_OFFSET_ENA			0x00000008
-#       define R200_VPORT_Z_SCALE_ENA			0x00000010
-#       define R200_VPORT_Z_OFFSET_ENA			0x00000020
-#       define R200_VTX_XY_FMT				0x00000100
-#       define R200_VTX_Z_FMT				0x00000200
-#       define R200_VTX_W0_FMT				0x00000400
-#       define R200_VTX_W0_NORMALIZE			0x00000800
-#       define R200_VTX_ST_DENORMALIZED		0x00001000
-#define R200_SE_VAP_CNTL_STATUS			0x2140
-#       define R200_VC_NO_SWAP			(0 << 0)
-#       define R200_VC_16BIT_SWAP		(1 << 0)
-#       define R200_VC_32BIT_SWAP		(2 << 0)
-#define R200_RE_AUX_SCISSOR_CNTL		0x26f0
-#       define R200_EXCLUSIVE_SCISSOR_0		0x01000000
-#       define R200_EXCLUSIVE_SCISSOR_1		0x02000000
-#       define R200_EXCLUSIVE_SCISSOR_2		0x04000000
-#       define R200_SCISSOR_ENABLE_0		0x10000000
-#       define R200_SCISSOR_ENABLE_1		0x20000000
-#       define R200_SCISSOR_ENABLE_2		0x40000000
-#define R200_PP_TXFILTER_0			0x2c00 
-#define R200_PP_TXFILTER_1			0x2c20
-#define R200_PP_TXFILTER_2			0x2c40
-#define R200_PP_TXFILTER_3			0x2c60
-#define R200_PP_TXFILTER_4			0x2c80
-#define R200_PP_TXFILTER_5			0x2ca0
-#       define R200_MAG_FILTER_NEAREST		(0  <<  0)
-#       define R200_MAG_FILTER_LINEAR		(1  <<  0)
-#       define R200_MAG_FILTER_MASK		(1  <<  0)
-#       define R200_MIN_FILTER_NEAREST		(0  <<  1)
-#       define R200_MIN_FILTER_LINEAR		(1  <<  1)
+#define R200_SE_VAP_CNTL      0x2080
+#       define R200_VAP_TCL_ENABLE    0x00000001
+#       define R200_VAP_SINGLE_BUF_STATE_ENABLE  0x00000010
+#       define R200_VAP_FORCE_W_TO_ONE    0x00010000
+#       define R200_VAP_D3D_TEX_DEFAULT    0x00020000
+#       define R200_VAP_VF_MAX_VTX_NUM__SHIFT  18
+#       define R200_VAP_VF_MAX_VTX_NUM    (9 << 18)
+#       define R200_VAP_DX_CLIP_SPACE_DEF  0x00400000
+#define R200_VF_MAX_VTX_INDX      0x210c
+#define R200_VF_MIN_VTX_INDX      0x2110
+#define R200_SE_VTE_CNTL      0x20b0
+#       define R200_VPORT_X_SCALE_ENA      0x00000001
+#       define R200_VPORT_X_OFFSET_ENA      0x00000002
+#       define R200_VPORT_Y_SCALE_ENA      0x00000004
+#       define R200_VPORT_Y_OFFSET_ENA      0x00000008
+#       define R200_VPORT_Z_SCALE_ENA      0x00000010
+#       define R200_VPORT_Z_OFFSET_ENA      0x00000020
+#       define R200_VTX_XY_FMT        0x00000100
+#       define R200_VTX_Z_FMT        0x00000200
+#       define R200_VTX_W0_FMT        0x00000400
+#       define R200_VTX_W0_NORMALIZE      0x00000800
+#       define R200_VTX_ST_DENORMALIZED    0x00001000
+#define R200_SE_VAP_CNTL_STATUS      0x2140
+#       define R200_VC_NO_SWAP      (0 << 0)
+#       define R200_VC_16BIT_SWAP    (1 << 0)
+#       define R200_VC_32BIT_SWAP    (2 << 0)
+#define R200_RE_AUX_SCISSOR_CNTL    0x26f0
+#       define R200_EXCLUSIVE_SCISSOR_0    0x01000000
+#       define R200_EXCLUSIVE_SCISSOR_1    0x02000000
+#       define R200_EXCLUSIVE_SCISSOR_2    0x04000000
+#       define R200_SCISSOR_ENABLE_0    0x10000000
+#       define R200_SCISSOR_ENABLE_1    0x20000000
+#       define R200_SCISSOR_ENABLE_2    0x40000000
+#define R200_PP_TXFILTER_0      0x2c00 
+#define R200_PP_TXFILTER_1      0x2c20
+#define R200_PP_TXFILTER_2      0x2c40
+#define R200_PP_TXFILTER_3      0x2c60
+#define R200_PP_TXFILTER_4      0x2c80
+#define R200_PP_TXFILTER_5      0x2ca0
+#       define R200_MAG_FILTER_NEAREST    (0  <<  0)
+#       define R200_MAG_FILTER_LINEAR    (1  <<  0)
+#       define R200_MAG_FILTER_MASK    (1  <<  0)
+#       define R200_MIN_FILTER_NEAREST    (0  <<  1)
+#       define R200_MIN_FILTER_LINEAR    (1  <<  1)
 #       define R200_MIN_FILTER_NEAREST_MIP_NEAREST (2  <<  1)
 #       define R200_MIN_FILTER_NEAREST_MIP_LINEAR (3  <<  1)
 #       define R200_MIN_FILTER_LINEAR_MIP_NEAREST (6  <<  1)
 #       define R200_MIN_FILTER_LINEAR_MIP_LINEAR (7  <<  1)
-#       define R200_MIN_FILTER_ANISO_NEAREST	(8  <<  1)
-#       define R200_MIN_FILTER_ANISO_LINEAR	(9  <<  1)
+#       define R200_MIN_FILTER_ANISO_NEAREST  (8  <<  1)
+#       define R200_MIN_FILTER_ANISO_LINEAR  (9  <<  1)
 #       define R200_MIN_FILTER_ANISO_NEAREST_MIP_NEAREST (10 <<  1)
 #       define R200_MIN_FILTER_ANISO_NEAREST_MIP_LINEAR (11 <<  1)
-#       define R200_MIN_FILTER_MASK		(15 <<  1)
-#       define R200_MAX_ANISO_1_TO_1		(0  <<  5)
-#       define R200_MAX_ANISO_2_TO_1		(1  <<  5)
-#       define R200_MAX_ANISO_4_TO_1		(2  <<  5)
-#       define R200_MAX_ANISO_8_TO_1		(3  <<  5)
-#       define R200_MAX_ANISO_16_TO_1		(4  <<  5)
-#       define R200_MAX_ANISO_MASK		(7  <<  5)
-#       define R200_MAX_MIP_LEVEL_MASK		(0x0f << 16)
-#       define R200_MAX_MIP_LEVEL_SHIFT		16
-#       define R200_YUV_TO_RGB			(1  << 20)
-#       define R200_YUV_TEMPERATURE_COOL	(0  << 21)
-#       define R200_YUV_TEMPERATURE_HOT		(1  << 21)
-#       define R200_YUV_TEMPERATURE_MASK	(1  << 21)
-#       define R200_WRAPEN_S			(1  << 22)
-#       define R200_CLAMP_S_WRAP		(0  << 23)
-#       define R200_CLAMP_S_MIRROR		(1  << 23)
-#       define R200_CLAMP_S_CLAMP_LAST		(2  << 23)
-#       define R200_CLAMP_S_MIRROR_CLAMP_LAST	(3  << 23)
-#       define R200_CLAMP_S_CLAMP_BORDER	(4  << 23)
-#       define R200_CLAMP_S_MIRROR_CLAMP_BORDER	(5  << 23)
-#       define R200_CLAMP_S_CLAMP_GL		(6  << 23)
-#       define R200_CLAMP_S_MIRROR_CLAMP_GL	(7  << 23)
-#       define R200_CLAMP_S_MASK		(7  << 23)
-#       define R200_WRAPEN_T			(1  << 26)
-#       define R200_CLAMP_T_WRAP		(0  << 27)
-#       define R200_CLAMP_T_MIRROR		(1  << 27)
-#       define R200_CLAMP_T_CLAMP_LAST		(2  << 27)
-#       define R200_CLAMP_T_MIRROR_CLAMP_LAST	(3  << 27)
-#       define R200_CLAMP_T_CLAMP_BORDER	(4  << 27)
-#       define R200_CLAMP_T_MIRROR_CLAMP_BORDER	(5  << 27)
-#       define R200_CLAMP_T_CLAMP_GL		(6  << 27)
-#       define R200_CLAMP_T_MIRROR_CLAMP_GL	(7  << 27)
-#       define R200_CLAMP_T_MASK		(7  << 27)
-#       define R200_KILL_LT_ZERO		(1  << 30)
-#       define R200_BORDER_MODE_OGL		(0  << 31)
-#       define R200_BORDER_MODE_D3D		(1  << 31)
-#define R200_PP_TXFORMAT_0			0x2c04
-#define R200_PP_TXFORMAT_1			0x2c24
-#define R200_PP_TXFORMAT_2			0x2c44
-#define R200_PP_TXFORMAT_3			0x2c64
-#define R200_PP_TXFORMAT_4			0x2c84
-#define R200_PP_TXFORMAT_5			0x2ca4
-#       define R200_TXFORMAT_I8			(0 << 0)
-#       define R200_TXFORMAT_AI88		(1 << 0)
-#       define R200_TXFORMAT_RGB332		(2 << 0)
-#       define R200_TXFORMAT_ARGB1555		(3 << 0)
-#       define R200_TXFORMAT_RGB565		(4 << 0)
-#       define R200_TXFORMAT_ARGB4444		(5 << 0)
-#       define R200_TXFORMAT_ARGB8888		(6 << 0)
-#       define R200_TXFORMAT_RGBA8888		(7 << 0)
-#       define R200_TXFORMAT_Y8			(8 << 0)
-#       define R200_TXFORMAT_AVYU4444		(9 << 0)
-#       define R200_TXFORMAT_VYUY422		(10 << 0)
-#       define R200_TXFORMAT_YVYU422		(11 << 0)
-#       define R200_TXFORMAT_DXT1		(12 << 0)
-#       define R200_TXFORMAT_DXT23		(14 << 0)
-#       define R200_TXFORMAT_DXT45		(15 << 0)
-#       define R200_TXFORMAT_ABGR8888		(22 << 0)
-#       define R200_TXFORMAT_FORMAT_MASK	(31 <<	0)
-#       define R200_TXFORMAT_FORMAT_SHIFT	0
-#       define R200_TXFORMAT_ALPHA_IN_MAP	(1 << 6)
-#       define R200_TXFORMAT_NON_POWER2		(1 << 7)
-#       define R200_TXFORMAT_WIDTH_MASK		(15 <<	8)
-#       define R200_TXFORMAT_WIDTH_SHIFT	8
-#       define R200_TXFORMAT_HEIGHT_MASK	(15 << 12)
-#       define R200_TXFORMAT_HEIGHT_SHIFT	12
-#       define R200_TXFORMAT_F5_WIDTH_MASK	(15 << 16)	/* cube face 5 */
-#       define R200_TXFORMAT_F5_WIDTH_SHIFT	16
-#       define R200_TXFORMAT_F5_HEIGHT_MASK	(15 << 20)
-#       define R200_TXFORMAT_F5_HEIGHT_SHIFT	20
-#       define R200_TXFORMAT_ST_ROUTE_STQ0	(0 << 24)
-#       define R200_TXFORMAT_ST_ROUTE_STQ1	(1 << 24)
-#       define R200_TXFORMAT_ST_ROUTE_STQ2	(2 << 24)
-#       define R200_TXFORMAT_ST_ROUTE_STQ3	(3 << 24)
-#       define R200_TXFORMAT_ST_ROUTE_STQ4	(4 << 24)
-#       define R200_TXFORMAT_ST_ROUTE_STQ5	(5 << 24)
-#       define R200_TXFORMAT_ST_ROUTE_MASK	(7 << 24)
-#       define R200_TXFORMAT_ST_ROUTE_SHIFT	24
-#       define R200_TXFORMAT_ALPHA_MASK_ENABLE	(1 << 28)
-#       define R200_TXFORMAT_CHROMA_KEY_ENABLE	(1 << 29)
-#       define R200_TXFORMAT_CUBIC_MAP_ENABLE		(1 << 30)
+#       define R200_MIN_FILTER_MASK    (15 <<  1)
+#       define R200_MAX_ANISO_1_TO_1    (0  <<  5)
+#       define R200_MAX_ANISO_2_TO_1    (1  <<  5)
+#       define R200_MAX_ANISO_4_TO_1    (2  <<  5)
+#       define R200_MAX_ANISO_8_TO_1    (3  <<  5)
+#       define R200_MAX_ANISO_16_TO_1    (4  <<  5)
+#       define R200_MAX_ANISO_MASK    (7  <<  5)
+#       define R200_MAX_MIP_LEVEL_MASK    (0x0f << 16)
+#       define R200_MAX_MIP_LEVEL_SHIFT    16
+#       define R200_YUV_TO_RGB      (1  << 20)
+#       define R200_YUV_TEMPERATURE_COOL  (0  << 21)
+#       define R200_YUV_TEMPERATURE_HOT    (1  << 21)
+#       define R200_YUV_TEMPERATURE_MASK  (1  << 21)
+#       define R200_WRAPEN_S      (1  << 22)
+#       define R200_CLAMP_S_WRAP    (0  << 23)
+#       define R200_CLAMP_S_MIRROR    (1  << 23)
+#       define R200_CLAMP_S_CLAMP_LAST    (2  << 23)
+#       define R200_CLAMP_S_MIRROR_CLAMP_LAST  (3  << 23)
+#       define R200_CLAMP_S_CLAMP_BORDER  (4  << 23)
+#       define R200_CLAMP_S_MIRROR_CLAMP_BORDER  (5  << 23)
+#       define R200_CLAMP_S_CLAMP_GL    (6  << 23)
+#       define R200_CLAMP_S_MIRROR_CLAMP_GL  (7  << 23)
+#       define R200_CLAMP_S_MASK    (7  << 23)
+#       define R200_WRAPEN_T      (1  << 26)
+#       define R200_CLAMP_T_WRAP    (0  << 27)
+#       define R200_CLAMP_T_MIRROR    (1  << 27)
+#       define R200_CLAMP_T_CLAMP_LAST    (2  << 27)
+#       define R200_CLAMP_T_MIRROR_CLAMP_LAST  (3  << 27)
+#       define R200_CLAMP_T_CLAMP_BORDER  (4  << 27)
+#       define R200_CLAMP_T_MIRROR_CLAMP_BORDER  (5  << 27)
+#       define R200_CLAMP_T_CLAMP_GL    (6  << 27)
+#       define R200_CLAMP_T_MIRROR_CLAMP_GL  (7  << 27)
+#       define R200_CLAMP_T_MASK    (7  << 27)
+#       define R200_KILL_LT_ZERO    (1  << 30)
+#       define R200_BORDER_MODE_OGL    (0  << 31)
+#       define R200_BORDER_MODE_D3D    (1  << 31)
+#define R200_PP_TXFORMAT_0      0x2c04
+#define R200_PP_TXFORMAT_1      0x2c24
+#define R200_PP_TXFORMAT_2      0x2c44
+#define R200_PP_TXFORMAT_3      0x2c64
+#define R200_PP_TXFORMAT_4      0x2c84
+#define R200_PP_TXFORMAT_5      0x2ca4
+#       define R200_TXFORMAT_I8      (0 << 0)
+#       define R200_TXFORMAT_AI88    (1 << 0)
+#       define R200_TXFORMAT_RGB332    (2 << 0)
+#       define R200_TXFORMAT_ARGB1555    (3 << 0)
+#       define R200_TXFORMAT_RGB565    (4 << 0)
+#       define R200_TXFORMAT_ARGB4444    (5 << 0)
+#       define R200_TXFORMAT_ARGB8888    (6 << 0)
+#       define R200_TXFORMAT_RGBA8888    (7 << 0)
+#       define R200_TXFORMAT_Y8      (8 << 0)
+#       define R200_TXFORMAT_AVYU4444    (9 << 0)
+#       define R200_TXFORMAT_VYUY422    (10 << 0)
+#       define R200_TXFORMAT_YVYU422    (11 << 0)
+#       define R200_TXFORMAT_DXT1    (12 << 0)
+#       define R200_TXFORMAT_DXT23    (14 << 0)
+#       define R200_TXFORMAT_DXT45    (15 << 0)
+#       define R200_TXFORMAT_ABGR8888    (22 << 0)
+#       define R200_TXFORMAT_FORMAT_MASK  (31 <<  0)
+#       define R200_TXFORMAT_FORMAT_SHIFT  0
+#       define R200_TXFORMAT_ALPHA_IN_MAP  (1 << 6)
+#       define R200_TXFORMAT_NON_POWER2    (1 << 7)
+#       define R200_TXFORMAT_WIDTH_MASK    (15 <<  8)
+#       define R200_TXFORMAT_WIDTH_SHIFT  8
+#       define R200_TXFORMAT_HEIGHT_MASK  (15 << 12)
+#       define R200_TXFORMAT_HEIGHT_SHIFT  12
+#       define R200_TXFORMAT_F5_WIDTH_MASK  (15 << 16)  /* cube face 5 */
+#       define R200_TXFORMAT_F5_WIDTH_SHIFT  16
+#       define R200_TXFORMAT_F5_HEIGHT_MASK  (15 << 20)
+#       define R200_TXFORMAT_F5_HEIGHT_SHIFT  20
+#       define R200_TXFORMAT_ST_ROUTE_STQ0  (0 << 24)
+#       define R200_TXFORMAT_ST_ROUTE_STQ1  (1 << 24)
+#       define R200_TXFORMAT_ST_ROUTE_STQ2  (2 << 24)
+#       define R200_TXFORMAT_ST_ROUTE_STQ3  (3 << 24)
+#       define R200_TXFORMAT_ST_ROUTE_STQ4  (4 << 24)
+#       define R200_TXFORMAT_ST_ROUTE_STQ5  (5 << 24)
+#       define R200_TXFORMAT_ST_ROUTE_MASK  (7 << 24)
+#       define R200_TXFORMAT_ST_ROUTE_SHIFT  24
+#       define R200_TXFORMAT_ALPHA_MASK_ENABLE  (1 << 28)
+#       define R200_TXFORMAT_CHROMA_KEY_ENABLE  (1 << 29)
+#       define R200_TXFORMAT_CUBIC_MAP_ENABLE    (1 << 30)
 #define R200_PP_TXFORMAT_X_0                    0x2c08
 #define R200_PP_TXFORMAT_X_1                    0x2c28
 #define R200_PP_TXFORMAT_X_2                    0x2c48
@@ -2737,393 +2737,393 @@
 #define R200_PP_TXFORMAT_X_4                    0x2c88
 #define R200_PP_TXFORMAT_X_5                    0x2ca8
 
-#define R200_PP_TXSIZE_0			0x2c0c /* NPOT only */
-#define R200_PP_TXSIZE_1			0x2c2c /* NPOT only */
-#define R200_PP_TXSIZE_2			0x2c4c /* NPOT only */
-#define R200_PP_TXSIZE_3			0x2c6c /* NPOT only */
-#define R200_PP_TXSIZE_4			0x2c8c /* NPOT only */
-#define R200_PP_TXSIZE_5			0x2cac /* NPOT only */
+#define R200_PP_TXSIZE_0      0x2c0c /* NPOT only */
+#define R200_PP_TXSIZE_1      0x2c2c /* NPOT only */
+#define R200_PP_TXSIZE_2      0x2c4c /* NPOT only */
+#define R200_PP_TXSIZE_3      0x2c6c /* NPOT only */
+#define R200_PP_TXSIZE_4      0x2c8c /* NPOT only */
+#define R200_PP_TXSIZE_5      0x2cac /* NPOT only */
 
 #define R200_PP_TXPITCH_0                       0x2c10 /* NPOT only */
-#define R200_PP_TXPITCH_1			0x2c30 /* NPOT only */
-#define R200_PP_TXPITCH_2			0x2c50 /* NPOT only */
-#define R200_PP_TXPITCH_3			0x2c70 /* NPOT only */
-#define R200_PP_TXPITCH_4			0x2c90 /* NPOT only */
-#define R200_PP_TXPITCH_5			0x2cb0 /* NPOT only */
+#define R200_PP_TXPITCH_1      0x2c30 /* NPOT only */
+#define R200_PP_TXPITCH_2      0x2c50 /* NPOT only */
+#define R200_PP_TXPITCH_3      0x2c70 /* NPOT only */
+#define R200_PP_TXPITCH_4      0x2c90 /* NPOT only */
+#define R200_PP_TXPITCH_5      0x2cb0 /* NPOT only */
 
-#define R200_PP_TXOFFSET_0			0x2d00
-#       define R200_TXO_ENDIAN_NO_SWAP		(0 << 0)
-#       define R200_TXO_ENDIAN_BYTE_SWAP	(1 << 0)
-#       define R200_TXO_ENDIAN_WORD_SWAP	(2 << 0)
-#       define R200_TXO_ENDIAN_HALFDW_SWAP	(3 << 0)
-#       define R200_TXO_MACRO_LINEAR		(0 << 2)
-#       define R200_TXO_MACRO_TILE		(1 << 2)
-#       define R200_TXO_MICRO_LINEAR		(0 << 3)
-#       define R200_TXO_MICRO_TILE		(1 << 3)
-#       define R200_TXO_OFFSET_MASK		0xffffffe0
-#       define R200_TXO_OFFSET_SHIFT		5
-#define R200_PP_TXOFFSET_1			0x2d18
-#define R200_PP_TXOFFSET_2			0x2d30
-#define R200_PP_TXOFFSET_3			0x2d48
-#define R200_PP_TXOFFSET_4			0x2d60
-#define R200_PP_TXOFFSET_5			0x2d78
+#define R200_PP_TXOFFSET_0      0x2d00
+#       define R200_TXO_ENDIAN_NO_SWAP    (0 << 0)
+#       define R200_TXO_ENDIAN_BYTE_SWAP  (1 << 0)
+#       define R200_TXO_ENDIAN_WORD_SWAP  (2 << 0)
+#       define R200_TXO_ENDIAN_HALFDW_SWAP  (3 << 0)
+#       define R200_TXO_MACRO_LINEAR    (0 << 2)
+#       define R200_TXO_MACRO_TILE    (1 << 2)
+#       define R200_TXO_MICRO_LINEAR    (0 << 3)
+#       define R200_TXO_MICRO_TILE    (1 << 3)
+#       define R200_TXO_OFFSET_MASK    0xffffffe0
+#       define R200_TXO_OFFSET_SHIFT    5
+#define R200_PP_TXOFFSET_1      0x2d18
+#define R200_PP_TXOFFSET_2      0x2d30
+#define R200_PP_TXOFFSET_3      0x2d48
+#define R200_PP_TXOFFSET_4      0x2d60
+#define R200_PP_TXOFFSET_5      0x2d78
 
-#define R200_PP_TFACTOR_0			0x2ee0
-#define R200_PP_TFACTOR_1			0x2ee4
-#define R200_PP_TFACTOR_2			0x2ee8
-#define R200_PP_TFACTOR_3			0x2eec
-#define R200_PP_TFACTOR_4			0x2ef0
-#define R200_PP_TFACTOR_5			0x2ef4
+#define R200_PP_TFACTOR_0      0x2ee0
+#define R200_PP_TFACTOR_1      0x2ee4
+#define R200_PP_TFACTOR_2      0x2ee8
+#define R200_PP_TFACTOR_3      0x2eec
+#define R200_PP_TFACTOR_4      0x2ef0
+#define R200_PP_TFACTOR_5      0x2ef4
 
-#define R200_PP_TXCBLEND_0			0x2f00
-#       define R200_TXC_ARG_A_ZERO		(0)
-#       define R200_TXC_ARG_A_CURRENT_COLOR	(2)
-#       define R200_TXC_ARG_A_CURRENT_ALPHA	(3)
-#       define R200_TXC_ARG_A_DIFFUSE_COLOR	(4)
-#       define R200_TXC_ARG_A_DIFFUSE_ALPHA	(5)
-#       define R200_TXC_ARG_A_SPECULAR_COLOR	(6)
-#       define R200_TXC_ARG_A_SPECULAR_ALPHA	(7)
-#       define R200_TXC_ARG_A_TFACTOR_COLOR	(8)
-#       define R200_TXC_ARG_A_TFACTOR_ALPHA	(9)
-#       define R200_TXC_ARG_A_R0_COLOR		(10)
-#       define R200_TXC_ARG_A_R0_ALPHA		(11)
-#       define R200_TXC_ARG_A_R1_COLOR		(12)
-#       define R200_TXC_ARG_A_R1_ALPHA		(13)
-#       define R200_TXC_ARG_A_R2_COLOR		(14)
-#       define R200_TXC_ARG_A_R2_ALPHA		(15)
-#       define R200_TXC_ARG_A_R3_COLOR		(16)
-#       define R200_TXC_ARG_A_R3_ALPHA		(17)
-#       define R200_TXC_ARG_A_R4_COLOR		(18)
-#       define R200_TXC_ARG_A_R4_ALPHA		(19)
-#       define R200_TXC_ARG_A_R5_COLOR		(20)
-#       define R200_TXC_ARG_A_R5_ALPHA		(21)
-#       define R200_TXC_ARG_A_TFACTOR1_COLOR	(26)
-#       define R200_TXC_ARG_A_TFACTOR1_ALPHA	(27)
-#       define R200_TXC_ARG_A_MASK		(31 << 0)
-#       define R200_TXC_ARG_A_SHIFT		0
-#       define R200_TXC_ARG_B_ZERO		(0 << 5)
-#       define R200_TXC_ARG_B_CURRENT_COLOR	(2 << 5)
-#       define R200_TXC_ARG_B_CURRENT_ALPHA	(3 << 5)
-#       define R200_TXC_ARG_B_DIFFUSE_COLOR	(4 << 5)
-#       define R200_TXC_ARG_B_DIFFUSE_ALPHA	(5 << 5)
-#       define R200_TXC_ARG_B_SPECULAR_COLOR	(6 << 5)
-#       define R200_TXC_ARG_B_SPECULAR_ALPHA	(7 << 5)
-#       define R200_TXC_ARG_B_TFACTOR_COLOR	(8 << 5)
-#       define R200_TXC_ARG_B_TFACTOR_ALPHA	(9 << 5)
-#       define R200_TXC_ARG_B_R0_COLOR		(10 << 5)
-#       define R200_TXC_ARG_B_R0_ALPHA		(11 << 5)
-#       define R200_TXC_ARG_B_R1_COLOR		(12 << 5)
-#       define R200_TXC_ARG_B_R1_ALPHA		(13 << 5)
-#       define R200_TXC_ARG_B_R2_COLOR		(14 << 5)
-#       define R200_TXC_ARG_B_R2_ALPHA		(15 << 5)
-#       define R200_TXC_ARG_B_R3_COLOR		(16 << 5)
-#       define R200_TXC_ARG_B_R3_ALPHA		(17 << 5)
-#       define R200_TXC_ARG_B_R4_COLOR		(18 << 5)
-#       define R200_TXC_ARG_B_R4_ALPHA		(19 << 5)
-#       define R200_TXC_ARG_B_R5_COLOR		(20 << 5)
-#       define R200_TXC_ARG_B_R5_ALPHA		(21 << 5)
-#       define R200_TXC_ARG_B_TFACTOR1_COLOR	(26 << 5)
-#       define R200_TXC_ARG_B_TFACTOR1_ALPHA	(27 << 5)
-#       define R200_TXC_ARG_B_MASK		(31 << 5)
-#       define R200_TXC_ARG_B_SHIFT		5
-#       define R200_TXC_ARG_C_ZERO		(0 << 10)
-#       define R200_TXC_ARG_C_CURRENT_COLOR	(2 << 10)
-#       define R200_TXC_ARG_C_CURRENT_ALPHA	(3 << 10)
-#       define R200_TXC_ARG_C_DIFFUSE_COLOR	(4 << 10)
-#       define R200_TXC_ARG_C_DIFFUSE_ALPHA	(5 << 10)
-#       define R200_TXC_ARG_C_SPECULAR_COLOR	(6 << 10)
-#       define R200_TXC_ARG_C_SPECULAR_ALPHA	(7 << 10)
-#       define R200_TXC_ARG_C_TFACTOR_COLOR	(8 << 10)
-#       define R200_TXC_ARG_C_TFACTOR_ALPHA	(9 << 10)
-#       define R200_TXC_ARG_C_R0_COLOR		(10 << 10)
-#       define R200_TXC_ARG_C_R0_ALPHA		(11 << 10)
-#       define R200_TXC_ARG_C_R1_COLOR		(12 << 10)
-#       define R200_TXC_ARG_C_R1_ALPHA		(13 << 10)
-#       define R200_TXC_ARG_C_R2_COLOR		(14 << 10)
-#       define R200_TXC_ARG_C_R2_ALPHA		(15 << 10)
-#       define R200_TXC_ARG_C_R3_COLOR		(16 << 10)
-#       define R200_TXC_ARG_C_R3_ALPHA		(17 << 10)
-#       define R200_TXC_ARG_C_R4_COLOR		(18 << 10)
-#       define R200_TXC_ARG_C_R4_ALPHA		(19 << 10)
-#       define R200_TXC_ARG_C_R5_COLOR		(20 << 10)
-#       define R200_TXC_ARG_C_R5_ALPHA		(21 << 10)
-#       define R200_TXC_ARG_C_TFACTOR1_COLOR	(26 << 10)
-#       define R200_TXC_ARG_C_TFACTOR1_ALPHA	(27 << 10)
-#       define R200_TXC_ARG_C_MASK		(31 << 10)
-#       define R200_TXC_ARG_C_SHIFT		10
-#       define R200_TXC_COMP_ARG_A		(1 << 16)
-#       define R200_TXC_COMP_ARG_A_SHIFT	(16)
-#       define R200_TXC_BIAS_ARG_A		(1 << 17)
-#       define R200_TXC_SCALE_ARG_A		(1 << 18)
-#       define R200_TXC_NEG_ARG_A		(1 << 19)
-#       define R200_TXC_COMP_ARG_B		(1 << 20)
-#       define R200_TXC_COMP_ARG_B_SHIFT	(20)
-#       define R200_TXC_BIAS_ARG_B		(1 << 21)
-#       define R200_TXC_SCALE_ARG_B		(1 << 22)
-#       define R200_TXC_NEG_ARG_B		(1 << 23)
-#       define R200_TXC_COMP_ARG_C		(1 << 24)
-#       define R200_TXC_COMP_ARG_C_SHIFT	(24)
-#       define R200_TXC_BIAS_ARG_C		(1 << 25)
-#       define R200_TXC_SCALE_ARG_C		(1 << 26)
-#       define R200_TXC_NEG_ARG_C		(1 << 27)
-#       define R200_TXC_OP_MADD			(0 << 28)
-#       define R200_TXC_OP_CND0			(2 << 28)
-#       define R200_TXC_OP_LERP			(3 << 28)
-#       define R200_TXC_OP_DOT3			(4 << 28)
-#       define R200_TXC_OP_DOT4			(5 << 28)
-#       define R200_TXC_OP_CONDITIONAL		(6 << 28)
-#       define R200_TXC_OP_DOT2_ADD		(7 << 28)
-#       define R200_TXC_OP_MASK			(7 << 28)
-#define R200_PP_TXCBLEND2_0		0x2f04
-#       define R200_TXC_TFACTOR_SEL_SHIFT	0
-#       define R200_TXC_TFACTOR_SEL_MASK	0x7
-#       define R200_TXC_TFACTOR1_SEL_SHIFT	4
-#       define R200_TXC_TFACTOR1_SEL_MASK	(0x7 << 4)
-#       define R200_TXC_SCALE_SHIFT		8
-#       define R200_TXC_SCALE_MASK		(7 << 8)
-#       define R200_TXC_SCALE_1X		(0 << 8)
-#       define R200_TXC_SCALE_2X		(1 << 8)
-#       define R200_TXC_SCALE_4X		(2 << 8)
-#       define R200_TXC_SCALE_8X		(3 << 8)
-#       define R200_TXC_SCALE_INV2		(5 << 8)
-#       define R200_TXC_SCALE_INV4		(6 << 8)
-#       define R200_TXC_SCALE_INV8		(7 << 8)
-#       define R200_TXC_CLAMP_SHIFT		12
-#       define R200_TXC_CLAMP_MASK		(3 << 12)
-#       define R200_TXC_CLAMP_WRAP		(0 << 12)
-#       define R200_TXC_CLAMP_0_1		(1 << 12)
-#       define R200_TXC_CLAMP_8_8		(2 << 12)
-#       define R200_TXC_OUTPUT_REG_MASK		(7 << 16)
-#       define R200_TXC_OUTPUT_REG_NONE		(0 << 16)
-#       define R200_TXC_OUTPUT_REG_R0		(1 << 16)
-#       define R200_TXC_OUTPUT_REG_R1		(2 << 16)
-#       define R200_TXC_OUTPUT_REG_R2		(3 << 16)
-#       define R200_TXC_OUTPUT_REG_R3		(4 << 16)
-#       define R200_TXC_OUTPUT_REG_R4		(5 << 16)
-#       define R200_TXC_OUTPUT_REG_R5		(6 << 16)
-#       define R200_TXC_OUTPUT_MASK_MASK	(7 << 20)
-#       define R200_TXC_OUTPUT_MASK_RGB		(0 << 20)
-#       define R200_TXC_OUTPUT_MASK_RG		(1 << 20)
-#       define R200_TXC_OUTPUT_MASK_RB		(2 << 20)
-#       define R200_TXC_OUTPUT_MASK_R		(3 << 20)
-#       define R200_TXC_OUTPUT_MASK_GB		(4 << 20)
-#       define R200_TXC_OUTPUT_MASK_G		(5 << 20)
-#       define R200_TXC_OUTPUT_MASK_B		(6 << 20)
-#       define R200_TXC_OUTPUT_MASK_NONE	(7 << 20)
-#       define R200_TXC_REPL_NORMAL		0
-#       define R200_TXC_REPL_RED		1
-#       define R200_TXC_REPL_GREEN		2
-#       define R200_TXC_REPL_BLUE		3
-#       define R200_TXC_REPL_ARG_A_SHIFT	26
-#       define R200_TXC_REPL_ARG_A_MASK		(3 << 26)
-#       define R200_TXC_REPL_ARG_B_SHIFT	28
-#       define R200_TXC_REPL_ARG_B_MASK		(3 << 28)
-#       define R200_TXC_REPL_ARG_C_SHIFT	30
-#       define R200_TXC_REPL_ARG_C_MASK		(3 << 30)
-#define R200_PP_TXABLEND_0			0x2f08
-#       define R200_TXA_ARG_A_ZERO		(0)
-#       define R200_TXA_ARG_A_CURRENT_ALPHA	(2) /* guess */
-#       define R200_TXA_ARG_A_CURRENT_BLUE	(3) /* guess */
-#       define R200_TXA_ARG_A_DIFFUSE_ALPHA	(4)
-#       define R200_TXA_ARG_A_DIFFUSE_BLUE	(5)
-#       define R200_TXA_ARG_A_SPECULAR_ALPHA	(6)
-#       define R200_TXA_ARG_A_SPECULAR_BLUE	(7)
-#       define R200_TXA_ARG_A_TFACTOR_ALPHA	(8)
-#       define R200_TXA_ARG_A_TFACTOR_BLUE	(9)
-#       define R200_TXA_ARG_A_R0_ALPHA		(10)
-#       define R200_TXA_ARG_A_R0_BLUE		(11)
-#       define R200_TXA_ARG_A_R1_ALPHA		(12)
-#       define R200_TXA_ARG_A_R1_BLUE		(13)
-#       define R200_TXA_ARG_A_R2_ALPHA		(14)
-#       define R200_TXA_ARG_A_R2_BLUE		(15)
-#       define R200_TXA_ARG_A_R3_ALPHA		(16)
-#       define R200_TXA_ARG_A_R3_BLUE		(17)
-#       define R200_TXA_ARG_A_R4_ALPHA		(18)
-#       define R200_TXA_ARG_A_R4_BLUE		(19)
-#       define R200_TXA_ARG_A_R5_ALPHA		(20)
-#       define R200_TXA_ARG_A_R5_BLUE		(21)
-#       define R200_TXA_ARG_A_TFACTOR1_ALPHA	(26)
-#       define R200_TXA_ARG_A_TFACTOR1_BLUE	(27)
-#       define R200_TXA_ARG_A_MASK		(31 << 0)
-#       define R200_TXA_ARG_A_SHIFT		0
-#       define R200_TXA_ARG_B_ZERO		(0 << 5)
-#       define R200_TXA_ARG_B_CURRENT_ALPHA	(2 << 5) /* guess */
-#       define R200_TXA_ARG_B_CURRENT_BLUE	(3 << 5) /* guess */
-#       define R200_TXA_ARG_B_DIFFUSE_ALPHA	(4 << 5)
-#       define R200_TXA_ARG_B_DIFFUSE_BLUE	(5 << 5)
-#       define R200_TXA_ARG_B_SPECULAR_ALPHA	(6 << 5)
-#       define R200_TXA_ARG_B_SPECULAR_BLUE	(7 << 5)
-#       define R200_TXA_ARG_B_TFACTOR_ALPHA	(8 << 5)
-#       define R200_TXA_ARG_B_TFACTOR_BLUE	(9 << 5)
-#       define R200_TXA_ARG_B_R0_ALPHA		(10 << 5)
-#       define R200_TXA_ARG_B_R0_BLUE		(11 << 5)
-#       define R200_TXA_ARG_B_R1_ALPHA		(12 << 5)
-#       define R200_TXA_ARG_B_R1_BLUE		(13 << 5)
-#       define R200_TXA_ARG_B_R2_ALPHA		(14 << 5)
-#       define R200_TXA_ARG_B_R2_BLUE		(15 << 5)
-#       define R200_TXA_ARG_B_R3_ALPHA		(16 << 5)
-#       define R200_TXA_ARG_B_R3_BLUE		(17 << 5)
-#       define R200_TXA_ARG_B_R4_ALPHA		(18 << 5)
-#       define R200_TXA_ARG_B_R4_BLUE		(19 << 5)
-#       define R200_TXA_ARG_B_R5_ALPHA		(20 << 5)
-#       define R200_TXA_ARG_B_R5_BLUE		(21 << 5)
-#       define R200_TXA_ARG_B_TFACTOR1_ALPHA	(26 << 5)
-#       define R200_TXA_ARG_B_TFACTOR1_BLUE	(27 << 5)
-#       define R200_TXA_ARG_B_MASK		(31 << 5)
-#       define R200_TXA_ARG_B_SHIFT			5
-#       define R200_TXA_ARG_C_ZERO		(0 << 10)
-#       define R200_TXA_ARG_C_CURRENT_ALPHA	(2 << 10) /* guess */
-#       define R200_TXA_ARG_C_CURRENT_BLUE	(3 << 10) /* guess */
-#       define R200_TXA_ARG_C_DIFFUSE_ALPHA	(4 << 10)
-#       define R200_TXA_ARG_C_DIFFUSE_BLUE	(5 << 10)
-#       define R200_TXA_ARG_C_SPECULAR_ALPHA	(6 << 10)
-#       define R200_TXA_ARG_C_SPECULAR_BLUE	(7 << 10)
-#       define R200_TXA_ARG_C_TFACTOR_ALPHA	(8 << 10)
-#       define R200_TXA_ARG_C_TFACTOR_BLUE	(9 << 10)
-#       define R200_TXA_ARG_C_R0_ALPHA		(10 << 10)
-#       define R200_TXA_ARG_C_R0_BLUE		(11 << 10)
-#       define R200_TXA_ARG_C_R1_ALPHA		(12 << 10)
-#       define R200_TXA_ARG_C_R1_BLUE		(13 << 10)
-#       define R200_TXA_ARG_C_R2_ALPHA		(14 << 10)
-#       define R200_TXA_ARG_C_R2_BLUE		(15 << 10)
-#       define R200_TXA_ARG_C_R3_ALPHA		(16 << 10)
-#       define R200_TXA_ARG_C_R3_BLUE		(17 << 10)
-#       define R200_TXA_ARG_C_R4_ALPHA		(18 << 10)
-#       define R200_TXA_ARG_C_R4_BLUE		(19 << 10)
-#       define R200_TXA_ARG_C_R5_ALPHA		(20 << 10)
-#       define R200_TXA_ARG_C_R5_BLUE		(21 << 10)
-#       define R200_TXA_ARG_C_TFACTOR1_ALPHA	(26 << 10)
-#       define R200_TXA_ARG_C_TFACTOR1_BLUE	(27 << 10)
-#       define R200_TXA_ARG_C_MASK		(31 << 10)
-#       define R200_TXA_ARG_C_SHIFT		10
-#       define R200_TXA_COMP_ARG_A		(1 << 16)
-#       define R200_TXA_COMP_ARG_A_SHIFT	(16)
-#       define R200_TXA_BIAS_ARG_A		(1 << 17)
-#       define R200_TXA_SCALE_ARG_A		(1 << 18)
-#       define R200_TXA_NEG_ARG_A		(1 << 19)
-#       define R200_TXA_COMP_ARG_B		(1 << 20)
-#       define R200_TXA_COMP_ARG_B_SHIFT	(20)
-#       define R200_TXA_BIAS_ARG_B		(1 << 21)
-#       define R200_TXA_SCALE_ARG_B		(1 << 22)
-#       define R200_TXA_NEG_ARG_B		(1 << 23)
-#       define R200_TXA_COMP_ARG_C		(1 << 24)
-#       define R200_TXA_COMP_ARG_C_SHIFT	(24)
-#       define R200_TXA_BIAS_ARG_C		(1 << 25)
-#       define R200_TXA_SCALE_ARG_C		(1 << 26)
-#       define R200_TXA_NEG_ARG_C		(1 << 27)
-#       define R200_TXA_OP_MADD			(0 << 28)
-#       define R200_TXA_OP_CND0			(2 << 28)
-#       define R200_TXA_OP_LERP			(3 << 28)
-#       define R200_TXA_OP_CONDITIONAL		(6 << 28)
-#       define R200_TXA_OP_MASK			(7 << 28)
-#define R200_PP_TXABLEND2_0			0x2f0c
-#       define R200_TXA_TFACTOR_SEL_SHIFT	0
-#       define R200_TXA_TFACTOR_SEL_MASK	0x7
-#       define R200_TXA_TFACTOR1_SEL_SHIFT	4
-#       define R200_TXA_TFACTOR1_SEL_MASK	(0x7 << 4)
-#       define R200_TXA_SCALE_SHIFT		8
-#       define R200_TXA_SCALE_MASK		(7 << 8)
-#       define R200_TXA_SCALE_1X		(0 << 8)
-#       define R200_TXA_SCALE_2X		(1 << 8)
-#       define R200_TXA_SCALE_4X		(2 << 8)
-#       define R200_TXA_SCALE_8X		(3 << 8)
-#       define R200_TXA_SCALE_INV2		(5 << 8)
-#       define R200_TXA_SCALE_INV4		(6 << 8)
-#       define R200_TXA_SCALE_INV8		(7 << 8)
-#       define R200_TXA_CLAMP_SHIFT		12
-#       define R200_TXA_CLAMP_MASK		(3 << 12)
-#       define R200_TXA_CLAMP_WRAP		(0 << 12)
-#       define R200_TXA_CLAMP_0_1		(1 << 12)
-#       define R200_TXA_CLAMP_8_8		(2 << 12)
-#       define R200_TXA_OUTPUT_REG_MASK		(7 << 16)
-#       define R200_TXA_OUTPUT_REG_NONE		(0 << 16)
-#       define R200_TXA_OUTPUT_REG_R0		(1 << 16)
-#       define R200_TXA_OUTPUT_REG_R1		(2 << 16)
-#       define R200_TXA_OUTPUT_REG_R2		(3 << 16)
-#       define R200_TXA_OUTPUT_REG_R3		(4 << 16)
-#       define R200_TXA_OUTPUT_REG_R4		(5 << 16)
-#       define R200_TXA_OUTPUT_REG_R5		(6 << 16)
-#       define R200_TXA_DOT_ALPHA		(1 << 20)
-#       define R200_TXA_REPL_NORMAL		0
-#       define R200_TXA_REPL_RED		1
-#       define R200_TXA_REPL_GREEN		2
-#       define R200_TXA_REPL_ARG_A_SHIFT	26
-#       define R200_TXA_REPL_ARG_A_MASK		(3 << 26)
-#       define R200_TXA_REPL_ARG_B_SHIFT	28
-#       define R200_TXA_REPL_ARG_B_MASK		(3 << 28)
-#       define R200_TXA_REPL_ARG_C_SHIFT	30
-#       define R200_TXA_REPL_ARG_C_MASK		(3 << 30)
-#define R200_PP_TXCBLEND_1			0x2f10
-#define R200_PP_TXCBLEND2_1			0x2f14
-#define R200_PP_TXABLEND_1			0x2f18
-#define R200_PP_TXABLEND2_1			0x2f1c
-#define R200_PP_TXCBLEND_2			0x2f20
-#define R200_PP_TXCBLEND2_2			0x2f24
-#define R200_PP_TXABLEND_2			0x2f28
-#define R200_PP_TXABLEND2_2			0x2f2c
-#define R200_PP_TXCBLEND_3			0x2f30
-#define R200_PP_TXCBLEND2_3			0x2f34
-#define R200_PP_TXABLEND_3			0x2f38
-#define R200_PP_TXABLEND2_3			0x2f3c
+#define R200_PP_TXCBLEND_0      0x2f00
+#       define R200_TXC_ARG_A_ZERO    (0)
+#       define R200_TXC_ARG_A_CURRENT_COLOR  (2)
+#       define R200_TXC_ARG_A_CURRENT_ALPHA  (3)
+#       define R200_TXC_ARG_A_DIFFUSE_COLOR  (4)
+#       define R200_TXC_ARG_A_DIFFUSE_ALPHA  (5)
+#       define R200_TXC_ARG_A_SPECULAR_COLOR  (6)
+#       define R200_TXC_ARG_A_SPECULAR_ALPHA  (7)
+#       define R200_TXC_ARG_A_TFACTOR_COLOR  (8)
+#       define R200_TXC_ARG_A_TFACTOR_ALPHA  (9)
+#       define R200_TXC_ARG_A_R0_COLOR    (10)
+#       define R200_TXC_ARG_A_R0_ALPHA    (11)
+#       define R200_TXC_ARG_A_R1_COLOR    (12)
+#       define R200_TXC_ARG_A_R1_ALPHA    (13)
+#       define R200_TXC_ARG_A_R2_COLOR    (14)
+#       define R200_TXC_ARG_A_R2_ALPHA    (15)
+#       define R200_TXC_ARG_A_R3_COLOR    (16)
+#       define R200_TXC_ARG_A_R3_ALPHA    (17)
+#       define R200_TXC_ARG_A_R4_COLOR    (18)
+#       define R200_TXC_ARG_A_R4_ALPHA    (19)
+#       define R200_TXC_ARG_A_R5_COLOR    (20)
+#       define R200_TXC_ARG_A_R5_ALPHA    (21)
+#       define R200_TXC_ARG_A_TFACTOR1_COLOR  (26)
+#       define R200_TXC_ARG_A_TFACTOR1_ALPHA  (27)
+#       define R200_TXC_ARG_A_MASK    (31 << 0)
+#       define R200_TXC_ARG_A_SHIFT    0
+#       define R200_TXC_ARG_B_ZERO    (0 << 5)
+#       define R200_TXC_ARG_B_CURRENT_COLOR  (2 << 5)
+#       define R200_TXC_ARG_B_CURRENT_ALPHA  (3 << 5)
+#       define R200_TXC_ARG_B_DIFFUSE_COLOR  (4 << 5)
+#       define R200_TXC_ARG_B_DIFFUSE_ALPHA  (5 << 5)
+#       define R200_TXC_ARG_B_SPECULAR_COLOR  (6 << 5)
+#       define R200_TXC_ARG_B_SPECULAR_ALPHA  (7 << 5)
+#       define R200_TXC_ARG_B_TFACTOR_COLOR  (8 << 5)
+#       define R200_TXC_ARG_B_TFACTOR_ALPHA  (9 << 5)
+#       define R200_TXC_ARG_B_R0_COLOR    (10 << 5)
+#       define R200_TXC_ARG_B_R0_ALPHA    (11 << 5)
+#       define R200_TXC_ARG_B_R1_COLOR    (12 << 5)
+#       define R200_TXC_ARG_B_R1_ALPHA    (13 << 5)
+#       define R200_TXC_ARG_B_R2_COLOR    (14 << 5)
+#       define R200_TXC_ARG_B_R2_ALPHA    (15 << 5)
+#       define R200_TXC_ARG_B_R3_COLOR    (16 << 5)
+#       define R200_TXC_ARG_B_R3_ALPHA    (17 << 5)
+#       define R200_TXC_ARG_B_R4_COLOR    (18 << 5)
+#       define R200_TXC_ARG_B_R4_ALPHA    (19 << 5)
+#       define R200_TXC_ARG_B_R5_COLOR    (20 << 5)
+#       define R200_TXC_ARG_B_R5_ALPHA    (21 << 5)
+#       define R200_TXC_ARG_B_TFACTOR1_COLOR  (26 << 5)
+#       define R200_TXC_ARG_B_TFACTOR1_ALPHA  (27 << 5)
+#       define R200_TXC_ARG_B_MASK    (31 << 5)
+#       define R200_TXC_ARG_B_SHIFT    5
+#       define R200_TXC_ARG_C_ZERO    (0 << 10)
+#       define R200_TXC_ARG_C_CURRENT_COLOR  (2 << 10)
+#       define R200_TXC_ARG_C_CURRENT_ALPHA  (3 << 10)
+#       define R200_TXC_ARG_C_DIFFUSE_COLOR  (4 << 10)
+#       define R200_TXC_ARG_C_DIFFUSE_ALPHA  (5 << 10)
+#       define R200_TXC_ARG_C_SPECULAR_COLOR  (6 << 10)
+#       define R200_TXC_ARG_C_SPECULAR_ALPHA  (7 << 10)
+#       define R200_TXC_ARG_C_TFACTOR_COLOR  (8 << 10)
+#       define R200_TXC_ARG_C_TFACTOR_ALPHA  (9 << 10)
+#       define R200_TXC_ARG_C_R0_COLOR    (10 << 10)
+#       define R200_TXC_ARG_C_R0_ALPHA    (11 << 10)
+#       define R200_TXC_ARG_C_R1_COLOR    (12 << 10)
+#       define R200_TXC_ARG_C_R1_ALPHA    (13 << 10)
+#       define R200_TXC_ARG_C_R2_COLOR    (14 << 10)
+#       define R200_TXC_ARG_C_R2_ALPHA    (15 << 10)
+#       define R200_TXC_ARG_C_R3_COLOR    (16 << 10)
+#       define R200_TXC_ARG_C_R3_ALPHA    (17 << 10)
+#       define R200_TXC_ARG_C_R4_COLOR    (18 << 10)
+#       define R200_TXC_ARG_C_R4_ALPHA    (19 << 10)
+#       define R200_TXC_ARG_C_R5_COLOR    (20 << 10)
+#       define R200_TXC_ARG_C_R5_ALPHA    (21 << 10)
+#       define R200_TXC_ARG_C_TFACTOR1_COLOR  (26 << 10)
+#       define R200_TXC_ARG_C_TFACTOR1_ALPHA  (27 << 10)
+#       define R200_TXC_ARG_C_MASK    (31 << 10)
+#       define R200_TXC_ARG_C_SHIFT    10
+#       define R200_TXC_COMP_ARG_A    (1 << 16)
+#       define R200_TXC_COMP_ARG_A_SHIFT  (16)
+#       define R200_TXC_BIAS_ARG_A    (1 << 17)
+#       define R200_TXC_SCALE_ARG_A    (1 << 18)
+#       define R200_TXC_NEG_ARG_A    (1 << 19)
+#       define R200_TXC_COMP_ARG_B    (1 << 20)
+#       define R200_TXC_COMP_ARG_B_SHIFT  (20)
+#       define R200_TXC_BIAS_ARG_B    (1 << 21)
+#       define R200_TXC_SCALE_ARG_B    (1 << 22)
+#       define R200_TXC_NEG_ARG_B    (1 << 23)
+#       define R200_TXC_COMP_ARG_C    (1 << 24)
+#       define R200_TXC_COMP_ARG_C_SHIFT  (24)
+#       define R200_TXC_BIAS_ARG_C    (1 << 25)
+#       define R200_TXC_SCALE_ARG_C    (1 << 26)
+#       define R200_TXC_NEG_ARG_C    (1 << 27)
+#       define R200_TXC_OP_MADD      (0 << 28)
+#       define R200_TXC_OP_CND0      (2 << 28)
+#       define R200_TXC_OP_LERP      (3 << 28)
+#       define R200_TXC_OP_DOT3      (4 << 28)
+#       define R200_TXC_OP_DOT4      (5 << 28)
+#       define R200_TXC_OP_CONDITIONAL    (6 << 28)
+#       define R200_TXC_OP_DOT2_ADD    (7 << 28)
+#       define R200_TXC_OP_MASK      (7 << 28)
+#define R200_PP_TXCBLEND2_0    0x2f04
+#       define R200_TXC_TFACTOR_SEL_SHIFT  0
+#       define R200_TXC_TFACTOR_SEL_MASK  0x7
+#       define R200_TXC_TFACTOR1_SEL_SHIFT  4
+#       define R200_TXC_TFACTOR1_SEL_MASK  (0x7 << 4)
+#       define R200_TXC_SCALE_SHIFT    8
+#       define R200_TXC_SCALE_MASK    (7 << 8)
+#       define R200_TXC_SCALE_1X    (0 << 8)
+#       define R200_TXC_SCALE_2X    (1 << 8)
+#       define R200_TXC_SCALE_4X    (2 << 8)
+#       define R200_TXC_SCALE_8X    (3 << 8)
+#       define R200_TXC_SCALE_INV2    (5 << 8)
+#       define R200_TXC_SCALE_INV4    (6 << 8)
+#       define R200_TXC_SCALE_INV8    (7 << 8)
+#       define R200_TXC_CLAMP_SHIFT    12
+#       define R200_TXC_CLAMP_MASK    (3 << 12)
+#       define R200_TXC_CLAMP_WRAP    (0 << 12)
+#       define R200_TXC_CLAMP_0_1    (1 << 12)
+#       define R200_TXC_CLAMP_8_8    (2 << 12)
+#       define R200_TXC_OUTPUT_REG_MASK    (7 << 16)
+#       define R200_TXC_OUTPUT_REG_NONE    (0 << 16)
+#       define R200_TXC_OUTPUT_REG_R0    (1 << 16)
+#       define R200_TXC_OUTPUT_REG_R1    (2 << 16)
+#       define R200_TXC_OUTPUT_REG_R2    (3 << 16)
+#       define R200_TXC_OUTPUT_REG_R3    (4 << 16)
+#       define R200_TXC_OUTPUT_REG_R4    (5 << 16)
+#       define R200_TXC_OUTPUT_REG_R5    (6 << 16)
+#       define R200_TXC_OUTPUT_MASK_MASK  (7 << 20)
+#       define R200_TXC_OUTPUT_MASK_RGB    (0 << 20)
+#       define R200_TXC_OUTPUT_MASK_RG    (1 << 20)
+#       define R200_TXC_OUTPUT_MASK_RB    (2 << 20)
+#       define R200_TXC_OUTPUT_MASK_R    (3 << 20)
+#       define R200_TXC_OUTPUT_MASK_GB    (4 << 20)
+#       define R200_TXC_OUTPUT_MASK_G    (5 << 20)
+#       define R200_TXC_OUTPUT_MASK_B    (6 << 20)
+#       define R200_TXC_OUTPUT_MASK_NONE  (7 << 20)
+#       define R200_TXC_REPL_NORMAL    0
+#       define R200_TXC_REPL_RED    1
+#       define R200_TXC_REPL_GREEN    2
+#       define R200_TXC_REPL_BLUE    3
+#       define R200_TXC_REPL_ARG_A_SHIFT  26
+#       define R200_TXC_REPL_ARG_A_MASK    (3 << 26)
+#       define R200_TXC_REPL_ARG_B_SHIFT  28
+#       define R200_TXC_REPL_ARG_B_MASK    (3 << 28)
+#       define R200_TXC_REPL_ARG_C_SHIFT  30
+#       define R200_TXC_REPL_ARG_C_MASK    (3 << 30)
+#define R200_PP_TXABLEND_0      0x2f08
+#       define R200_TXA_ARG_A_ZERO    (0)
+#       define R200_TXA_ARG_A_CURRENT_ALPHA  (2) /* guess */
+#       define R200_TXA_ARG_A_CURRENT_BLUE  (3) /* guess */
+#       define R200_TXA_ARG_A_DIFFUSE_ALPHA  (4)
+#       define R200_TXA_ARG_A_DIFFUSE_BLUE  (5)
+#       define R200_TXA_ARG_A_SPECULAR_ALPHA  (6)
+#       define R200_TXA_ARG_A_SPECULAR_BLUE  (7)
+#       define R200_TXA_ARG_A_TFACTOR_ALPHA  (8)
+#       define R200_TXA_ARG_A_TFACTOR_BLUE  (9)
+#       define R200_TXA_ARG_A_R0_ALPHA    (10)
+#       define R200_TXA_ARG_A_R0_BLUE    (11)
+#       define R200_TXA_ARG_A_R1_ALPHA    (12)
+#       define R200_TXA_ARG_A_R1_BLUE    (13)
+#       define R200_TXA_ARG_A_R2_ALPHA    (14)
+#       define R200_TXA_ARG_A_R2_BLUE    (15)
+#       define R200_TXA_ARG_A_R3_ALPHA    (16)
+#       define R200_TXA_ARG_A_R3_BLUE    (17)
+#       define R200_TXA_ARG_A_R4_ALPHA    (18)
+#       define R200_TXA_ARG_A_R4_BLUE    (19)
+#       define R200_TXA_ARG_A_R5_ALPHA    (20)
+#       define R200_TXA_ARG_A_R5_BLUE    (21)
+#       define R200_TXA_ARG_A_TFACTOR1_ALPHA  (26)
+#       define R200_TXA_ARG_A_TFACTOR1_BLUE  (27)
+#       define R200_TXA_ARG_A_MASK    (31 << 0)
+#       define R200_TXA_ARG_A_SHIFT    0
+#       define R200_TXA_ARG_B_ZERO    (0 << 5)
+#       define R200_TXA_ARG_B_CURRENT_ALPHA  (2 << 5) /* guess */
+#       define R200_TXA_ARG_B_CURRENT_BLUE  (3 << 5) /* guess */
+#       define R200_TXA_ARG_B_DIFFUSE_ALPHA  (4 << 5)
+#       define R200_TXA_ARG_B_DIFFUSE_BLUE  (5 << 5)
+#       define R200_TXA_ARG_B_SPECULAR_ALPHA  (6 << 5)
+#       define R200_TXA_ARG_B_SPECULAR_BLUE  (7 << 5)
+#       define R200_TXA_ARG_B_TFACTOR_ALPHA  (8 << 5)
+#       define R200_TXA_ARG_B_TFACTOR_BLUE  (9 << 5)
+#       define R200_TXA_ARG_B_R0_ALPHA    (10 << 5)
+#       define R200_TXA_ARG_B_R0_BLUE    (11 << 5)
+#       define R200_TXA_ARG_B_R1_ALPHA    (12 << 5)
+#       define R200_TXA_ARG_B_R1_BLUE    (13 << 5)
+#       define R200_TXA_ARG_B_R2_ALPHA    (14 << 5)
+#       define R200_TXA_ARG_B_R2_BLUE    (15 << 5)
+#       define R200_TXA_ARG_B_R3_ALPHA    (16 << 5)
+#       define R200_TXA_ARG_B_R3_BLUE    (17 << 5)
+#       define R200_TXA_ARG_B_R4_ALPHA    (18 << 5)
+#       define R200_TXA_ARG_B_R4_BLUE    (19 << 5)
+#       define R200_TXA_ARG_B_R5_ALPHA    (20 << 5)
+#       define R200_TXA_ARG_B_R5_BLUE    (21 << 5)
+#       define R200_TXA_ARG_B_TFACTOR1_ALPHA  (26 << 5)
+#       define R200_TXA_ARG_B_TFACTOR1_BLUE  (27 << 5)
+#       define R200_TXA_ARG_B_MASK    (31 << 5)
+#       define R200_TXA_ARG_B_SHIFT      5
+#       define R200_TXA_ARG_C_ZERO    (0 << 10)
+#       define R200_TXA_ARG_C_CURRENT_ALPHA  (2 << 10) /* guess */
+#       define R200_TXA_ARG_C_CURRENT_BLUE  (3 << 10) /* guess */
+#       define R200_TXA_ARG_C_DIFFUSE_ALPHA  (4 << 10)
+#       define R200_TXA_ARG_C_DIFFUSE_BLUE  (5 << 10)
+#       define R200_TXA_ARG_C_SPECULAR_ALPHA  (6 << 10)
+#       define R200_TXA_ARG_C_SPECULAR_BLUE  (7 << 10)
+#       define R200_TXA_ARG_C_TFACTOR_ALPHA  (8 << 10)
+#       define R200_TXA_ARG_C_TFACTOR_BLUE  (9 << 10)
+#       define R200_TXA_ARG_C_R0_ALPHA    (10 << 10)
+#       define R200_TXA_ARG_C_R0_BLUE    (11 << 10)
+#       define R200_TXA_ARG_C_R1_ALPHA    (12 << 10)
+#       define R200_TXA_ARG_C_R1_BLUE    (13 << 10)
+#       define R200_TXA_ARG_C_R2_ALPHA    (14 << 10)
+#       define R200_TXA_ARG_C_R2_BLUE    (15 << 10)
+#       define R200_TXA_ARG_C_R3_ALPHA    (16 << 10)
+#       define R200_TXA_ARG_C_R3_BLUE    (17 << 10)
+#       define R200_TXA_ARG_C_R4_ALPHA    (18 << 10)
+#       define R200_TXA_ARG_C_R4_BLUE    (19 << 10)
+#       define R200_TXA_ARG_C_R5_ALPHA    (20 << 10)
+#       define R200_TXA_ARG_C_R5_BLUE    (21 << 10)
+#       define R200_TXA_ARG_C_TFACTOR1_ALPHA  (26 << 10)
+#       define R200_TXA_ARG_C_TFACTOR1_BLUE  (27 << 10)
+#       define R200_TXA_ARG_C_MASK    (31 << 10)
+#       define R200_TXA_ARG_C_SHIFT    10
+#       define R200_TXA_COMP_ARG_A    (1 << 16)
+#       define R200_TXA_COMP_ARG_A_SHIFT  (16)
+#       define R200_TXA_BIAS_ARG_A    (1 << 17)
+#       define R200_TXA_SCALE_ARG_A    (1 << 18)
+#       define R200_TXA_NEG_ARG_A    (1 << 19)
+#       define R200_TXA_COMP_ARG_B    (1 << 20)
+#       define R200_TXA_COMP_ARG_B_SHIFT  (20)
+#       define R200_TXA_BIAS_ARG_B    (1 << 21)
+#       define R200_TXA_SCALE_ARG_B    (1 << 22)
+#       define R200_TXA_NEG_ARG_B    (1 << 23)
+#       define R200_TXA_COMP_ARG_C    (1 << 24)
+#       define R200_TXA_COMP_ARG_C_SHIFT  (24)
+#       define R200_TXA_BIAS_ARG_C    (1 << 25)
+#       define R200_TXA_SCALE_ARG_C    (1 << 26)
+#       define R200_TXA_NEG_ARG_C    (1 << 27)
+#       define R200_TXA_OP_MADD      (0 << 28)
+#       define R200_TXA_OP_CND0      (2 << 28)
+#       define R200_TXA_OP_LERP      (3 << 28)
+#       define R200_TXA_OP_CONDITIONAL    (6 << 28)
+#       define R200_TXA_OP_MASK      (7 << 28)
+#define R200_PP_TXABLEND2_0      0x2f0c
+#       define R200_TXA_TFACTOR_SEL_SHIFT  0
+#       define R200_TXA_TFACTOR_SEL_MASK  0x7
+#       define R200_TXA_TFACTOR1_SEL_SHIFT  4
+#       define R200_TXA_TFACTOR1_SEL_MASK  (0x7 << 4)
+#       define R200_TXA_SCALE_SHIFT    8
+#       define R200_TXA_SCALE_MASK    (7 << 8)
+#       define R200_TXA_SCALE_1X    (0 << 8)
+#       define R200_TXA_SCALE_2X    (1 << 8)
+#       define R200_TXA_SCALE_4X    (2 << 8)
+#       define R200_TXA_SCALE_8X    (3 << 8)
+#       define R200_TXA_SCALE_INV2    (5 << 8)
+#       define R200_TXA_SCALE_INV4    (6 << 8)
+#       define R200_TXA_SCALE_INV8    (7 << 8)
+#       define R200_TXA_CLAMP_SHIFT    12
+#       define R200_TXA_CLAMP_MASK    (3 << 12)
+#       define R200_TXA_CLAMP_WRAP    (0 << 12)
+#       define R200_TXA_CLAMP_0_1    (1 << 12)
+#       define R200_TXA_CLAMP_8_8    (2 << 12)
+#       define R200_TXA_OUTPUT_REG_MASK    (7 << 16)
+#       define R200_TXA_OUTPUT_REG_NONE    (0 << 16)
+#       define R200_TXA_OUTPUT_REG_R0    (1 << 16)
+#       define R200_TXA_OUTPUT_REG_R1    (2 << 16)
+#       define R200_TXA_OUTPUT_REG_R2    (3 << 16)
+#       define R200_TXA_OUTPUT_REG_R3    (4 << 16)
+#       define R200_TXA_OUTPUT_REG_R4    (5 << 16)
+#       define R200_TXA_OUTPUT_REG_R5    (6 << 16)
+#       define R200_TXA_DOT_ALPHA    (1 << 20)
+#       define R200_TXA_REPL_NORMAL    0
+#       define R200_TXA_REPL_RED    1
+#       define R200_TXA_REPL_GREEN    2
+#       define R200_TXA_REPL_ARG_A_SHIFT  26
+#       define R200_TXA_REPL_ARG_A_MASK    (3 << 26)
+#       define R200_TXA_REPL_ARG_B_SHIFT  28
+#       define R200_TXA_REPL_ARG_B_MASK    (3 << 28)
+#       define R200_TXA_REPL_ARG_C_SHIFT  30
+#       define R200_TXA_REPL_ARG_C_MASK    (3 << 30)
+#define R200_PP_TXCBLEND_1      0x2f10
+#define R200_PP_TXCBLEND2_1      0x2f14
+#define R200_PP_TXABLEND_1      0x2f18
+#define R200_PP_TXABLEND2_1      0x2f1c
+#define R200_PP_TXCBLEND_2      0x2f20
+#define R200_PP_TXCBLEND2_2      0x2f24
+#define R200_PP_TXABLEND_2      0x2f28
+#define R200_PP_TXABLEND2_2      0x2f2c
+#define R200_PP_TXCBLEND_3      0x2f30
+#define R200_PP_TXCBLEND2_3      0x2f34
+#define R200_PP_TXABLEND_3      0x2f38
+#define R200_PP_TXABLEND2_3      0x2f3c
 
-#define R200_SE_VTX_FMT_0			0x2088
-#       define R200_VTX_XY			0 /* always have xy */
-#       define R200_VTX_Z0			(1<<0)
-#       define R200_VTX_W0			(1<<1)
-#       define R200_VTX_WEIGHT_COUNT_SHIFT	(2)
-#       define R200_VTX_PV_MATRIX_SEL		(1<<5)
-#       define R200_VTX_N0			(1<<6)
-#       define R200_VTX_POINT_SIZE		(1<<7)
-#       define R200_VTX_DISCRETE_FOG		(1<<8)
-#       define R200_VTX_SHININESS_0		(1<<9)
-#       define R200_VTX_SHININESS_1		(1<<10)
-#       define   R200_VTX_COLOR_NOT_PRESENT	0
-#       define   R200_VTX_PK_RGBA		1
-#       define   R200_VTX_FP_RGB		2
-#       define   R200_VTX_FP_RGBA		3
-#       define   R200_VTX_COLOR_MASK		3
-#       define R200_VTX_COLOR_0_SHIFT		11
-#       define R200_VTX_COLOR_1_SHIFT		13
-#       define R200_VTX_COLOR_2_SHIFT		15
-#       define R200_VTX_COLOR_3_SHIFT		17
-#       define R200_VTX_COLOR_4_SHIFT		19
-#       define R200_VTX_COLOR_5_SHIFT		21
-#       define R200_VTX_COLOR_6_SHIFT		23
-#       define R200_VTX_COLOR_7_SHIFT		25
-#       define R200_VTX_XY1			(1<<28)
-#       define R200_VTX_Z1			(1<<29)
-#       define R200_VTX_W1			(1<<30)
-#       define R200_VTX_N1			(1<<31)
-#define R200_SE_VTX_FMT_1			0x208c
-#       define R200_VTX_TEX0_COMP_CNT_SHIFT	0
-#       define R200_VTX_TEX1_COMP_CNT_SHIFT	3
-#       define R200_VTX_TEX2_COMP_CNT_SHIFT	6
-#       define R200_VTX_TEX3_COMP_CNT_SHIFT	9
-#       define R200_VTX_TEX4_COMP_CNT_SHIFT	12
-#       define R200_VTX_TEX5_COMP_CNT_SHIFT	15
+#define R200_SE_VTX_FMT_0      0x2088
+#       define R200_VTX_XY      0 /* always have xy */
+#       define R200_VTX_Z0      (1<<0)
+#       define R200_VTX_W0      (1<<1)
+#       define R200_VTX_WEIGHT_COUNT_SHIFT  (2)
+#       define R200_VTX_PV_MATRIX_SEL    (1<<5)
+#       define R200_VTX_N0      (1<<6)
+#       define R200_VTX_POINT_SIZE    (1<<7)
+#       define R200_VTX_DISCRETE_FOG    (1<<8)
+#       define R200_VTX_SHININESS_0    (1<<9)
+#       define R200_VTX_SHININESS_1    (1<<10)
+#       define   R200_VTX_COLOR_NOT_PRESENT  0
+#       define   R200_VTX_PK_RGBA    1
+#       define   R200_VTX_FP_RGB    2
+#       define   R200_VTX_FP_RGBA    3
+#       define   R200_VTX_COLOR_MASK    3
+#       define R200_VTX_COLOR_0_SHIFT    11
+#       define R200_VTX_COLOR_1_SHIFT    13
+#       define R200_VTX_COLOR_2_SHIFT    15
+#       define R200_VTX_COLOR_3_SHIFT    17
+#       define R200_VTX_COLOR_4_SHIFT    19
+#       define R200_VTX_COLOR_5_SHIFT    21
+#       define R200_VTX_COLOR_6_SHIFT    23
+#       define R200_VTX_COLOR_7_SHIFT    25
+#       define R200_VTX_XY1      (1<<28)
+#       define R200_VTX_Z1      (1<<29)
+#       define R200_VTX_W1      (1<<30)
+#       define R200_VTX_N1      (1<<31)
+#define R200_SE_VTX_FMT_1      0x208c
+#       define R200_VTX_TEX0_COMP_CNT_SHIFT  0
+#       define R200_VTX_TEX1_COMP_CNT_SHIFT  3
+#       define R200_VTX_TEX2_COMP_CNT_SHIFT  6
+#       define R200_VTX_TEX3_COMP_CNT_SHIFT  9
+#       define R200_VTX_TEX4_COMP_CNT_SHIFT  12
+#       define R200_VTX_TEX5_COMP_CNT_SHIFT  15
 
-#define R200_SE_TCL_OUTPUT_VTX_FMT_0		0x2090
-#define R200_SE_TCL_OUTPUT_VTX_FMT_1		0x2094
-#define R200_SE_TCL_OUTPUT_VTX_COMP_SEL		0x2250
-#       define R200_OUTPUT_XYZW			(1<<0)
-#       define R200_OUTPUT_COLOR_0		(1<<8)
-#       define R200_OUTPUT_COLOR_1		(1<<9)
-#       define R200_OUTPUT_TEX_0		(1<<16)
-#       define R200_OUTPUT_TEX_1		(1<<17)
-#       define R200_OUTPUT_TEX_2		(1<<18)
-#       define R200_OUTPUT_TEX_3		(1<<19)
-#       define R200_OUTPUT_TEX_4		(1<<20)
-#       define R200_OUTPUT_TEX_5		(1<<21)
-#       define R200_OUTPUT_TEX_MASK		(0x3f<<16)
-#       define R200_OUTPUT_DISCRETE_FOG		(1<<24)
-#       define R200_OUTPUT_PT_SIZE		(1<<25)
-#       define R200_FORCE_INORDER_PROC		(1<<31)
-#define R200_PP_CNTL_X				0x2cc4
-#define R200_PP_TXMULTI_CTL_0			0x2c1c
-#define R200_SE_VTX_STATE_CNTL			0x2180
+#define R200_SE_TCL_OUTPUT_VTX_FMT_0    0x2090
+#define R200_SE_TCL_OUTPUT_VTX_FMT_1    0x2094
+#define R200_SE_TCL_OUTPUT_VTX_COMP_SEL    0x2250
+#       define R200_OUTPUT_XYZW      (1<<0)
+#       define R200_OUTPUT_COLOR_0    (1<<8)
+#       define R200_OUTPUT_COLOR_1    (1<<9)
+#       define R200_OUTPUT_TEX_0    (1<<16)
+#       define R200_OUTPUT_TEX_1    (1<<17)
+#       define R200_OUTPUT_TEX_2    (1<<18)
+#       define R200_OUTPUT_TEX_3    (1<<19)
+#       define R200_OUTPUT_TEX_4    (1<<20)
+#       define R200_OUTPUT_TEX_5    (1<<21)
+#       define R200_OUTPUT_TEX_MASK    (0x3f<<16)
+#       define R200_OUTPUT_DISCRETE_FOG    (1<<24)
+#       define R200_OUTPUT_PT_SIZE    (1<<25)
+#       define R200_FORCE_INORDER_PROC    (1<<31)
+#define R200_PP_CNTL_X        0x2cc4
+#define R200_PP_TXMULTI_CTL_0      0x2c1c
+#define R200_SE_VTX_STATE_CNTL      0x2180
 #       define R200_UPDATE_USER_COLOR_0_ENA_MASK (1<<16)
 
-				/* Registers for CP and Microcode Engine */
+        /* Registers for CP and Microcode Engine */
 #define RADEON_CP_ME_RAM_ADDR               0x07d4
 #define RADEON_CP_ME_RAM_RADDR              0x07d8
 #define RADEON_CP_ME_RAM_DATAH              0x07dc
@@ -3166,13 +3166,13 @@
 
 
 
-				/* Constants */
+        /* Constants */
 #define RADEON_LAST_FRAME_REG               RADEON_GUI_SCRATCH_REG0
 #define RADEON_LAST_CLEAR_REG               RADEON_GUI_SCRATCH_REG2
 
 
 
-				/* CP packet types */
+        /* CP packet types */
 #define RADEON_CP_PACKET0                           0x00000000
 #define RADEON_CP_PACKET1                           0x40000000
 #define RADEON_CP_PACKET2                           0x80000000
@@ -3301,15 +3301,15 @@
 #       define RADEON_TV_ASYNC_RST               (1 <<  0)
 #       define RADEON_CRT_ASYNC_RST              (1 <<  1)
 #       define RADEON_RESTART_PHASE_FIX          (1 <<  3)
-#	define RADEON_TV_FIFO_ASYNC_RST		 (1 <<  4)
-#	define RADEON_VIN_ASYNC_RST		 (1 <<  5)
-#	define RADEON_AUD_ASYNC_RST		 (1 <<  6)
-#	define RADEON_DVS_ASYNC_RST		 (1 <<  7)
+#  define RADEON_TV_FIFO_ASYNC_RST     (1 <<  4)
+#  define RADEON_VIN_ASYNC_RST     (1 <<  5)
+#  define RADEON_AUD_ASYNC_RST     (1 <<  6)
+#  define RADEON_DVS_ASYNC_RST     (1 <<  7)
 #       define RADEON_CRT_FIFO_CE_EN             (1 <<  9)
 #       define RADEON_TV_FIFO_CE_EN              (1 << 10)
 #       define RADEON_RE_SYNC_NOW_SEL_MASK       (3 << 14)
 #       define RADEON_TVCLK_ALWAYS_ONb           (1 << 30)
-#	define RADEON_TV_ON			 (1 << 31)
+#  define RADEON_TV_ON       (1 << 31)
 #define RADEON_TV_PRE_DAC_MUX_CNTL               0x0888
 #       define RADEON_Y_RED_EN                   (1 << 0)
 #       define RADEON_C_GRN_EN                   (1 << 1)
@@ -3320,18 +3320,18 @@
 #       define RADEON_BLU_MX_FORCE_DAC_DATA      (6 << 12)
 #       define RADEON_TV_FORCE_DAC_DATA_SHIFT    16
 #define RADEON_TV_RGB_CNTL                           0x0804
-#       define RADEON_SWITCH_TO_BLUE		  (1 <<  4)
-#       define RADEON_RGB_DITHER_EN		  (1 <<  5)
-#       define RADEON_RGB_SRC_SEL_MASK		  (3 <<  8)
-#       define RADEON_RGB_SRC_SEL_CRTC1		  (0 <<  8)
-#       define RADEON_RGB_SRC_SEL_RMX		  (1 <<  8)
-#       define RADEON_RGB_SRC_SEL_CRTC2		  (2 <<  8)
-#       define RADEON_RGB_CONVERT_BY_PASS	  (1 << 10)
-#       define RADEON_UVRAM_READ_MARGIN_SHIFT	  16
-#       define RADEON_FIFORAM_FFMACRO_READ_MARGIN_SHIFT	  20
-#	define RADEON_RGB_ATTEN_SEL(x) 		  ((x) << 24)
-#	define RADEON_TVOUT_SCALE_EN 		  (1 << 26)
-#	define RADEON_RGB_ATTEN_VAL(x) 		  ((x) << 28)
+#       define RADEON_SWITCH_TO_BLUE      (1 <<  4)
+#       define RADEON_RGB_DITHER_EN      (1 <<  5)
+#       define RADEON_RGB_SRC_SEL_MASK      (3 <<  8)
+#       define RADEON_RGB_SRC_SEL_CRTC1      (0 <<  8)
+#       define RADEON_RGB_SRC_SEL_RMX      (1 <<  8)
+#       define RADEON_RGB_SRC_SEL_CRTC2      (2 <<  8)
+#       define RADEON_RGB_CONVERT_BY_PASS    (1 << 10)
+#       define RADEON_UVRAM_READ_MARGIN_SHIFT    16
+#       define RADEON_FIFORAM_FFMACRO_READ_MARGIN_SHIFT    20
+#  define RADEON_RGB_ATTEN_SEL(x)       ((x) << 24)
+#  define RADEON_TVOUT_SCALE_EN       (1 << 26)
+#  define RADEON_RGB_ATTEN_VAL(x)       ((x) << 28)
 #define RADEON_TV_SYNC_CNTL                          0x0808
 #       define RADEON_SYNC_OE                     (1 <<  0)
 #       define RADEON_SYNC_OUT                    (1 <<  1)
@@ -3354,14 +3354,14 @@
 #define RADEON_TV_HOST_READ_DATA                     0x0840
 #define RADEON_TV_HOST_WRITE_DATA                    0x0844
 #define RADEON_TV_HOST_RD_WT_CNTL                    0x0848
-#	define RADEON_HOST_FIFO_RD		 (1 << 12)
-#	define RADEON_HOST_FIFO_RD_ACK		 (1 << 13)
-#	define RADEON_HOST_FIFO_WT		 (1 << 14)
-#	define RADEON_HOST_FIFO_WT_ACK		 (1 << 15)
+#  define RADEON_HOST_FIFO_RD     (1 << 12)
+#  define RADEON_HOST_FIFO_RD_ACK     (1 << 13)
+#  define RADEON_HOST_FIFO_WT     (1 << 14)
+#  define RADEON_HOST_FIFO_WT_ACK     (1 << 15)
 #define RADEON_TV_VSCALER_CNTL1                      0x084c
 #       define RADEON_UV_INC_MASK                0xffff
 #       define RADEON_UV_INC_SHIFT               0
-#       define RADEON_Y_W_EN			 (1 << 24)
+#       define RADEON_Y_W_EN       (1 << 24)
 #       define RADEON_RESTART_FIELD              (1 << 29) /* restart on field 0 */
 #       define RADEON_Y_DEL_W_SIG_SHIFT          26
 #define RADEON_TV_TIMING_CNTL                        0x0850
@@ -3383,8 +3383,8 @@
 #       define RADEON_Y_RISE_PING_PONG           (1 << 16)
 #define RADEON_TV_Y_SAW_TOOTH_CNTL                   0x0860
 #define RADEON_TV_UPSAMP_AND_GAIN_CNTL               0x0864
-#	define RADEON_YUPSAMP_EN		 (1 <<  0)
-#	define RADEON_UVUPSAMP_EN		 (1 <<  2)
+#  define RADEON_YUPSAMP_EN     (1 <<  0)
+#  define RADEON_UVUPSAMP_EN     (1 <<  2)
 #define RADEON_TV_GAIN_LIMIT_SETTINGS                0x0868
 #       define RADEON_Y_GAIN_LIMIT_SHIFT         0
 #       define RADEON_UV_GAIN_LIMIT_SHIFT        16
@@ -3392,13 +3392,13 @@
 #       define RADEON_Y_GAIN_SHIFT               0
 #       define RADEON_UV_GAIN_SHIFT              16
 #define RADEON_TV_MODULATOR_CNTL1                    0x0870
-#	define RADEON_YFLT_EN			 (1 <<  2)
-#	define RADEON_UVFLT_EN			 (1 <<  3)
+#  define RADEON_YFLT_EN       (1 <<  2)
+#  define RADEON_UVFLT_EN       (1 <<  3)
 #       define RADEON_ALT_PHASE_EN               (1 <<  6)
 #       define RADEON_SYNC_TIP_LEVEL             (1 <<  7)
 #       define RADEON_BLANK_LEVEL_SHIFT          8
 #       define RADEON_SET_UP_LEVEL_SHIFT         16
-#	define RADEON_SLEW_RATE_LIMIT		 (1 << 23)
+#  define RADEON_SLEW_RATE_LIMIT     (1 << 23)
 #       define RADEON_CY_FILT_BLEND_SHIFT        28
 #define RADEON_TV_MODULATOR_CNTL2                    0x0874
 #       define RADEON_TV_U_BURST_LEVEL_MASK     0x1ff
@@ -3406,20 +3406,20 @@
 #       define RADEON_TV_V_BURST_LEVEL_SHIFT    16
 #define RADEON_TV_CRC_CNTL                           0x0890
 #define RADEON_TV_UV_ADR                             0x08ac
-#	define RADEON_MAX_UV_ADR_MASK		 0x000000ff
-#	define RADEON_MAX_UV_ADR_SHIFT		 0
-#	define RADEON_TABLE1_BOT_ADR_MASK	 0x0000ff00
-#	define RADEON_TABLE1_BOT_ADR_SHIFT	 8
-#	define RADEON_TABLE3_TOP_ADR_MASK	 0x00ff0000
-#	define RADEON_TABLE3_TOP_ADR_SHIFT	 16
-#	define RADEON_HCODE_TABLE_SEL_MASK	 0x06000000
-#	define RADEON_HCODE_TABLE_SEL_SHIFT	 25
-#	define RADEON_VCODE_TABLE_SEL_MASK	 0x18000000
-#	define RADEON_VCODE_TABLE_SEL_SHIFT	 27
-#	define RADEON_TV_MAX_FIFO_ADDR		 0x1a7
-#	define RADEON_TV_MAX_FIFO_ADDR_INTERNAL	 0x1ff
-#define RADEON_TV_PLL_FINE_CNTL			     0x0020	/* PLL */
-#define RADEON_TV_PLL_CNTL                           0x0021	/* PLL */
+#  define RADEON_MAX_UV_ADR_MASK     0x000000ff
+#  define RADEON_MAX_UV_ADR_SHIFT     0
+#  define RADEON_TABLE1_BOT_ADR_MASK   0x0000ff00
+#  define RADEON_TABLE1_BOT_ADR_SHIFT   8
+#  define RADEON_TABLE3_TOP_ADR_MASK   0x00ff0000
+#  define RADEON_TABLE3_TOP_ADR_SHIFT   16
+#  define RADEON_HCODE_TABLE_SEL_MASK   0x06000000
+#  define RADEON_HCODE_TABLE_SEL_SHIFT   25
+#  define RADEON_VCODE_TABLE_SEL_MASK   0x18000000
+#  define RADEON_VCODE_TABLE_SEL_SHIFT   27
+#  define RADEON_TV_MAX_FIFO_ADDR     0x1a7
+#  define RADEON_TV_MAX_FIFO_ADDR_INTERNAL   0x1ff
+#define RADEON_TV_PLL_FINE_CNTL           0x0020  /* PLL */
+#define RADEON_TV_PLL_CNTL                           0x0021  /* PLL */
 #       define RADEON_TV_M0LO_MASK               0xff
 #       define RADEON_TV_M0HI_MASK               0x7
 #       define RADEON_TV_M0HI_SHIFT              18
@@ -3431,7 +3431,7 @@
 #       define RADEON_TV_P_SHIFT                 24
 #       define RADEON_TV_SLIP_EN                 (1 << 23)
 #       define RADEON_TV_DTO_EN                  (1 << 28)
-#define RADEON_TV_PLL_CNTL1                          0x0022	/* PLL */
+#define RADEON_TV_PLL_CNTL1                          0x0022  /* PLL */
 #       define RADEON_TVPLL_RESET                (1 <<  1)
 #       define RADEON_TVPLL_SLEEP                (1 <<  3)
 #       define RADEON_TVPLL_REFCLK_SEL           (1 <<  4)
@@ -3444,26 +3444,26 @@
 #       define RADEON_TVPLL_TEST_DIS             (1 << 31)
 #       define RADEON_TVCLK_SRC_SEL_TVPLL        (1 << 30)
 
-#define RS400_DISP2_REQ_CNTL1			0xe30
+#define RS400_DISP2_REQ_CNTL1      0xe30
 #       define RS400_DISP2_START_REQ_LEVEL_SHIFT   0
 #       define RS400_DISP2_START_REQ_LEVEL_MASK    0x3ff
 #       define RS400_DISP2_STOP_REQ_LEVEL_SHIFT    12
 #       define RS400_DISP2_STOP_REQ_LEVEL_MASK     0x3ff
 #       define RS400_DISP2_ALLOW_FID_LEVEL_SHIFT   22
 #       define RS400_DISP2_ALLOW_FID_LEVEL_MASK    0x3ff
-#define RS400_DISP2_REQ_CNTL2			0xe34
+#define RS400_DISP2_REQ_CNTL2      0xe34
 #       define RS400_DISP2_CRITICAL_POINT_START_SHIFT    12
 #       define RS400_DISP2_CRITICAL_POINT_START_MASK     0x3ff
 #       define RS400_DISP2_CRITICAL_POINT_STOP_SHIFT     22
 #       define RS400_DISP2_CRITICAL_POINT_STOP_MASK      0x3ff
-#define RS400_DMIF_MEM_CNTL1			0xe38
+#define RS400_DMIF_MEM_CNTL1      0xe38
 #       define RS400_DISP2_START_ADR_SHIFT      0
 #       define RS400_DISP2_START_ADR_MASK       0x3ff
 #       define RS400_DISP1_CRITICAL_POINT_START_SHIFT    12
 #       define RS400_DISP1_CRITICAL_POINT_START_MASK     0x3ff
 #       define RS400_DISP1_CRITICAL_POINT_STOP_SHIFT     22
 #       define RS400_DISP1_CRITICAL_POINT_STOP_MASK      0x3ff
-#define RS400_DISP1_REQ_CNTL1			0xe3c
+#define RS400_DISP1_REQ_CNTL1      0xe3c
 #       define RS400_DISP1_START_REQ_LEVEL_SHIFT   0
 #       define RS400_DISP1_START_REQ_LEVEL_MASK    0x3ff
 #       define RS400_DISP1_STOP_REQ_LEVEL_SHIFT    12
@@ -3471,22 +3471,22 @@
 #       define RS400_DISP1_ALLOW_FID_LEVEL_SHIFT   22
 #       define RS400_DISP1_ALLOW_FID_LEVEL_MASK    0x3ff
 
-#define RS690_MC_INDEX				0x78
-#	define RS690_MC_INDEX_MASK		0x1ff
-#	define RS690_MC_INDEX_WR_EN		(1 << 9)
-#	define RS690_MC_INDEX_WR_ACK		0x7f
-#define RS690_MC_DATA				0x7c
+#define RS690_MC_INDEX        0x78
+#  define RS690_MC_INDEX_MASK    0x1ff
+#  define RS690_MC_INDEX_WR_EN    (1 << 9)
+#  define RS690_MC_INDEX_WR_ACK    0x7f
+#define RS690_MC_DATA        0x7c
 
-#define RS690_MC_FB_LOCATION			0x100
-#define RS690_MC_AGP_LOCATION			0x101
-#define RS690_MC_AGP_BASE			0x102
+#define RS690_MC_FB_LOCATION      0x100
+#define RS690_MC_AGP_LOCATION      0x101
+#define RS690_MC_AGP_BASE      0x102
 #define RS690_MC_AGP_BASE_2                     0x103
 #define RS690_MC_INIT_MISC_LAT_TIMER            0x104
 #define RS690_MC_STATUS                         0x90
 #define RS690_MC_STATUS_IDLE                    (1 << 0)
 
 #define RS600_MC_INDEX                          0x70
-#	define RS600_MC_ADDR_MASK		0xffff
+#  define RS600_MC_ADDR_MASK    0xffff
 #       define RS600_MC_IND_SEQ_RBS_0           (1 << 16)
 #       define RS600_MC_IND_SEQ_RBS_1           (1 << 17)
 #       define RS600_MC_IND_SEQ_RBS_2           (1 << 18)
@@ -3497,46 +3497,46 @@
 #       define RS600_MC_IND_WR_EN               (1 << 23)
 #define RS600_MC_DATA                           0x74
 
-#define RS600_MC_STATUS			        0x0
-#	define RS600_MC_IDLE		        (1 << 1)
+#define RS600_MC_STATUS              0x0
+#  define RS600_MC_IDLE            (1 << 1)
 #define RS600_MC_FB_LOCATION                    0x4
 #define RS600_MC_AGP_LOCATION                   0x5
 #define RS600_AGP_BASE                          0x6
 #define RS600_AGP_BASE2                         0x7
 
-#define AVIVO_MC_INDEX				0x0070
+#define AVIVO_MC_INDEX        0x0070
 #define R520_MC_STATUS                          0x00
 #       define R520_MC_STATUS_IDLE              (1 << 1)
 #define RV515_MC_STATUS                         0x08
 #       define RV515_MC_STATUS_IDLE             (1 << 4)
 #define RV515_MC_INIT_MISC_LAT_TIMER            0x09
-#define AVIVO_MC_DATA				0x0074
+#define AVIVO_MC_DATA        0x0074
 
 #define RV515_MC_FB_LOCATION   0x1
 #define RV515_MC_AGP_LOCATION  0x2
 #define RV515_MC_AGP_BASE      0x3
 #define RV515_MC_AGP_BASE_2    0x4
 #define RV515_MC_CNTL          0x5
-#	define RV515_MEM_NUM_CHANNELS_MASK  0x3
+#  define RV515_MEM_NUM_CHANNELS_MASK  0x3
 #define R520_MC_FB_LOCATION    0x4
 #define R520_MC_AGP_LOCATION   0x5
 #define R520_MC_AGP_BASE       0x6
 #define R520_MC_AGP_BASE_2     0x7
 #define R520_MC_CNTL0          0x8
-#	define R520_MEM_NUM_CHANNELS_MASK  (0x3 << 24)
-#	define R520_MEM_NUM_CHANNELS_SHIFT  24
-#	define R520_MC_CHANNEL_SIZE  (1 << 23)
+#  define R520_MEM_NUM_CHANNELS_MASK  (0x3 << 24)
+#  define R520_MEM_NUM_CHANNELS_SHIFT  24
+#  define R520_MC_CHANNEL_SIZE  (1 << 23)
 
-#define RS780_MC_INDEX				0x28f8
-#	define RS780_MC_INDEX_MASK		0x1ff
-#	define RS780_MC_INDEX_WR_EN		(1 << 9)
-#define RS780_MC_DATA				0x28fc
+#define RS780_MC_INDEX        0x28f8
+#  define RS780_MC_INDEX_MASK    0x1ff
+#  define RS780_MC_INDEX_WR_EN    (1 << 9)
+#define RS780_MC_DATA        0x28fc
 
-#define R600_RAMCFG				       0x2408
+#define R600_RAMCFG               0x2408
 #       define R600_CHANSIZE                           (1 << 7)
 #       define R600_CHANSIZE_OVERRIDE                  (1 << 10)
 
-#define R600_SRBM_STATUS			       0x0e50
+#define R600_SRBM_STATUS             0x0e50
 
 #define AVIVO_CP_DYN_CNTL                              0x000f /* PLL */
 #       define AVIVO_CP_FORCEON                        (1 << 0)
@@ -3547,35 +3547,35 @@
 
 #define AVIVO_HDP_FB_LOCATION 0x134
 
-#define AVIVO_VGA_RENDER_CONTROL				0x0300
+#define AVIVO_VGA_RENDER_CONTROL        0x0300
 #       define AVIVO_VGA_VSTATUS_CNTL_MASK                      (3 << 16)
-#define AVIVO_D1VGA_CONTROL					0x0330
+#define AVIVO_D1VGA_CONTROL          0x0330
 #       define AVIVO_DVGA_CONTROL_MODE_ENABLE (1<<0)
 #       define AVIVO_DVGA_CONTROL_TIMING_SELECT (1<<8)
 #       define AVIVO_DVGA_CONTROL_SYNC_POLARITY_SELECT (1<<9)
 #       define AVIVO_DVGA_CONTROL_OVERSCAN_TIMING_SELECT (1<<10)
 #       define AVIVO_DVGA_CONTROL_OVERSCAN_COLOR_EN (1<<16)
 #       define AVIVO_DVGA_CONTROL_ROTATE (1<<24)
-#define AVIVO_D2VGA_CONTROL					0x0338
+#define AVIVO_D2VGA_CONTROL          0x0338
 
-#define AVIVO_VGA25_PPLL_REF_DIV_SRC				0x0360
-#define AVIVO_VGA25_PPLL_REF_DIV				0x0364
-#define AVIVO_VGA28_PPLL_REF_DIV_SRC				0x0368
-#define AVIVO_VGA28_PPLL_REF_DIV				0x036c
-#define AVIVO_VGA41_PPLL_REF_DIV_SRC				0x0370
-#define AVIVO_VGA41_PPLL_REF_DIV				0x0374
-#define AVIVO_VGA25_PPLL_FB_DIV				0x0378
-#define AVIVO_VGA28_PPLL_FB_DIV				0x037c
-#define AVIVO_VGA41_PPLL_FB_DIV				0x0380
-#define AVIVO_VGA25_PPLL_POST_DIV_SRC				0x0384
-#define AVIVO_VGA25_PPLL_POST_DIV				0x0388
-#define AVIVO_VGA28_PPLL_POST_DIV_SRC				0x038c
-#define AVIVO_VGA28_PPLL_POST_DIV				0x0390
-#define AVIVO_VGA41_PPLL_POST_DIV_SRC				0x0394
-#define AVIVO_VGA41_PPLL_POST_DIV				0x0398
-#define AVIVO_VGA25_PPLL_CNTL					0x039c
-#define AVIVO_VGA28_PPLL_CNTL					0x03a0
-#define AVIVO_VGA41_PPLL_CNTL					0x03a4
+#define AVIVO_VGA25_PPLL_REF_DIV_SRC        0x0360
+#define AVIVO_VGA25_PPLL_REF_DIV        0x0364
+#define AVIVO_VGA28_PPLL_REF_DIV_SRC        0x0368
+#define AVIVO_VGA28_PPLL_REF_DIV        0x036c
+#define AVIVO_VGA41_PPLL_REF_DIV_SRC        0x0370
+#define AVIVO_VGA41_PPLL_REF_DIV        0x0374
+#define AVIVO_VGA25_PPLL_FB_DIV        0x0378
+#define AVIVO_VGA28_PPLL_FB_DIV        0x037c
+#define AVIVO_VGA41_PPLL_FB_DIV        0x0380
+#define AVIVO_VGA25_PPLL_POST_DIV_SRC        0x0384
+#define AVIVO_VGA25_PPLL_POST_DIV        0x0388
+#define AVIVO_VGA28_PPLL_POST_DIV_SRC        0x038c
+#define AVIVO_VGA28_PPLL_POST_DIV        0x0390
+#define AVIVO_VGA41_PPLL_POST_DIV_SRC        0x0394
+#define AVIVO_VGA41_PPLL_POST_DIV        0x0398
+#define AVIVO_VGA25_PPLL_CNTL          0x039c
+#define AVIVO_VGA28_PPLL_CNTL          0x03a0
+#define AVIVO_VGA41_PPLL_CNTL          0x03a4
 
 #define AVIVO_EXT1_PPLL_REF_DIV_SRC                             0x400
 #define AVIVO_EXT1_PPLL_REF_DIV                                 0x404
@@ -3609,14 +3609,14 @@
 #define AVIVO_PCLK_CRTC1_CNTL                                   0x480
 #define AVIVO_PCLK_CRTC2_CNTL                                   0x484
 
-#define AVIVO_D1CRTC_H_TOTAL					0x6000
+#define AVIVO_D1CRTC_H_TOTAL          0x6000
 #define AVIVO_D1CRTC_H_BLANK_START_END                          0x6004
 #define AVIVO_D1CRTC_H_SYNC_A                                   0x6008
 #define AVIVO_D1CRTC_H_SYNC_A_CNTL                              0x600c
 #define AVIVO_D1CRTC_H_SYNC_B                                   0x6010
 #define AVIVO_D1CRTC_H_SYNC_B_CNTL                              0x6014
 
-#define AVIVO_D1CRTC_V_TOTAL					0x6020
+#define AVIVO_D1CRTC_V_TOTAL          0x6020
 #define AVIVO_D1CRTC_V_BLANK_START_END                          0x6024
 #define AVIVO_D1CRTC_V_SYNC_A                                   0x6028
 #define AVIVO_D1CRTC_V_SYNC_A_CNTL                              0x602c
@@ -3763,19 +3763,19 @@
 #define AVIVO_D1MODE_EXT_OVERSCAN_TOP_BOTTOM    0x658c
 
 #define AVIVO_D1SCL_SCALER_ENABLE               0x6590
-#define AVIVO_D1SCL_SCALER_TAP_CONTROL	 	0x6594
+#define AVIVO_D1SCL_SCALER_TAP_CONTROL     0x6594
 #define AVIVO_D1SCL_UPDATE                      0x65cc
 #       define AVIVO_D1SCL_UPDATE_LOCK         (1<<16)
 
 /* second crtc */
-#define AVIVO_D2CRTC_H_TOTAL					0x6800
+#define AVIVO_D2CRTC_H_TOTAL          0x6800
 #define AVIVO_D2CRTC_H_BLANK_START_END                          0x6804
 #define AVIVO_D2CRTC_H_SYNC_A                                   0x6808
 #define AVIVO_D2CRTC_H_SYNC_A_CNTL                              0x680c
 #define AVIVO_D2CRTC_H_SYNC_B                                   0x6810
 #define AVIVO_D2CRTC_H_SYNC_B_CNTL                              0x6814
 
-#define AVIVO_D2CRTC_V_TOTAL					0x6820
+#define AVIVO_D2CRTC_V_TOTAL          0x6820
 #define AVIVO_D2CRTC_V_BLANK_START_END                          0x6824
 #define AVIVO_D2CRTC_V_SYNC_A                                   0x6828
 #define AVIVO_D2CRTC_V_SYNC_A_CNTL                              0x682c
@@ -3818,41 +3818,41 @@
 #define AVIVO_D2MODE_EXT_OVERSCAN_TOP_BOTTOM    0x6d8c
 
 #define AVIVO_D2SCL_SCALER_ENABLE               0x6d90
-#define AVIVO_D2SCL_SCALER_TAP_CONTROL	 	0x6d94
+#define AVIVO_D2SCL_SCALER_TAP_CONTROL     0x6d94
 #define AVIVO_D2SCL_UPDATE                      0x6dcc
 
-#define AVIVO_DDIA_BIT_DEPTH_CONTROL				0x7214
+#define AVIVO_DDIA_BIT_DEPTH_CONTROL        0x7214
 
-#define AVIVO_DACA_ENABLE					0x7800
-#	define AVIVO_DAC_ENABLE				(1 << 0)
-#define AVIVO_DACA_SOURCE_SELECT				0x7804
+#define AVIVO_DACA_ENABLE          0x7800
+#  define AVIVO_DAC_ENABLE        (1 << 0)
+#define AVIVO_DACA_SOURCE_SELECT        0x7804
 #       define AVIVO_DAC_SOURCE_CRTC1                   (0 << 0)
 #       define AVIVO_DAC_SOURCE_CRTC2                   (1 << 0)
 #       define AVIVO_DAC_SOURCE_TV                      (2 << 0)
 
-#define AVIVO_DACA_FORCE_OUTPUT_CNTL				0x783c
+#define AVIVO_DACA_FORCE_OUTPUT_CNTL        0x783c
 # define AVIVO_DACA_FORCE_OUTPUT_CNTL_FORCE_DATA_EN             (1 << 0)
 # define AVIVO_DACA_FORCE_OUTPUT_CNTL_DATA_SEL_SHIFT            (8)
 # define AVIVO_DACA_FORCE_OUTPUT_CNTL_DATA_SEL_BLUE             (1 << 0)
 # define AVIVO_DACA_FORCE_OUTPUT_CNTL_DATA_SEL_GREEN            (1 << 1)
 # define AVIVO_DACA_FORCE_OUTPUT_CNTL_DATA_SEL_RED              (1 << 2)
 # define AVIVO_DACA_FORCE_OUTPUT_CNTL_DATA_ON_BLANKB_ONLY       (1 << 24)
-#define AVIVO_DACA_POWERDOWN					0x7850
+#define AVIVO_DACA_POWERDOWN          0x7850
 # define AVIVO_DACA_POWERDOWN_POWERDOWN                         (1 << 0)
 # define AVIVO_DACA_POWERDOWN_BLUE                              (1 << 8)
 # define AVIVO_DACA_POWERDOWN_GREEN                             (1 << 16)
 # define AVIVO_DACA_POWERDOWN_RED                               (1 << 24)
 
-#define AVIVO_DACB_ENABLE					0x7a00
-#define AVIVO_DACB_SOURCE_SELECT				0x7a04
-#define AVIVO_DACB_FORCE_OUTPUT_CNTL				0x7a3c
+#define AVIVO_DACB_ENABLE          0x7a00
+#define AVIVO_DACB_SOURCE_SELECT        0x7a04
+#define AVIVO_DACB_FORCE_OUTPUT_CNTL        0x7a3c
 # define AVIVO_DACB_FORCE_OUTPUT_CNTL_FORCE_DATA_EN             (1 << 0)
 # define AVIVO_DACB_FORCE_OUTPUT_CNTL_DATA_SEL_SHIFT            (8)
 # define AVIVO_DACB_FORCE_OUTPUT_CNTL_DATA_SEL_BLUE             (1 << 0)
 # define AVIVO_DACB_FORCE_OUTPUT_CNTL_DATA_SEL_GREEN            (1 << 1)
 # define AVIVO_DACB_FORCE_OUTPUT_CNTL_DATA_SEL_RED              (1 << 2)
 # define AVIVO_DACB_FORCE_OUTPUT_CNTL_DATA_ON_BLANKB_ONLY       (1 << 24)
-#define AVIVO_DACB_POWERDOWN					0x7a50
+#define AVIVO_DACB_POWERDOWN          0x7a50
 # define AVIVO_DACB_POWERDOWN_POWERDOWN                         (1 << 0)
 # define AVIVO_DACB_POWERDOWN_BLUE                              (1 << 8)
 # define AVIVO_DACB_POWERDOWN_GREEN                             (1 << 16)
@@ -3866,11 +3866,11 @@
 #   define AVIVO_TMDSA_CNTL_PIXEL_ENCODING       (1 << 16)
 #   define AVIVO_TMDSA_CNTL_DUAL_LINK_ENABLE     (1 << 24)
 #   define AVIVO_TMDSA_CNTL_SWAP                 (1 << 28)
-#define AVIVO_TMDSA_SOURCE_SELECT				0x7884
+#define AVIVO_TMDSA_SOURCE_SELECT        0x7884
 /* 78a8 appears to be some kind of (reasonably tolerant) clock?
  * 78d0 definitely hits the transmitter, definitely clock. */
 /* MYSTERY1 This appears to control dithering? */
-#define AVIVO_TMDSA_BIT_DEPTH_CONTROL		0x7894
+#define AVIVO_TMDSA_BIT_DEPTH_CONTROL    0x7894
 #   define AVIVO_TMDS_BIT_DEPTH_CONTROL_TRUNCATE_EN           (1 << 0)
 #   define AVIVO_TMDS_BIT_DEPTH_CONTROL_TRUNCATE_DEPTH        (1 << 4)
 #   define AVIVO_TMDS_BIT_DEPTH_CONTROL_SPATIAL_DITHER_EN     (1 << 8)
@@ -3902,23 +3902,23 @@
 #   define AVIVO_TMDSA_TRANSMITTER_ENABLE_LNKCEN_HPD_MASK     (1 << 17)
 #   define AVIVO_TMDSA_TRANSMITTER_ENABLE_LNKDEN_HPD_MASK     (1 << 18)
 
-#define AVIVO_TMDSA_TRANSMITTER_CONTROL				0x7910
-#	define AVIVO_TMDSA_TRANSMITTER_CONTROL_PLL_ENABLE	(1 << 0)
-#	define AVIVO_TMDSA_TRANSMITTER_CONTROL_PLL_RESET  	(1 << 1)
-#	define AVIVO_TMDSA_TRANSMITTER_CONTROL_PLL_HPD_MASK_SHIFT	(2)
-#	define AVIVO_TMDSA_TRANSMITTER_CONTROL_IDSCKSEL	        (1 << 4)
+#define AVIVO_TMDSA_TRANSMITTER_CONTROL        0x7910
+#  define AVIVO_TMDSA_TRANSMITTER_CONTROL_PLL_ENABLE  (1 << 0)
+#  define AVIVO_TMDSA_TRANSMITTER_CONTROL_PLL_RESET    (1 << 1)
+#  define AVIVO_TMDSA_TRANSMITTER_CONTROL_PLL_HPD_MASK_SHIFT  (2)
+#  define AVIVO_TMDSA_TRANSMITTER_CONTROL_IDSCKSEL          (1 << 4)
 #       define AVIVO_TMDSA_TRANSMITTER_CONTROL_BGSLEEP          (1 << 5)
-#	define AVIVO_TMDSA_TRANSMITTER_CONTROL_PLL_PWRUP_SEQ_EN	(1 << 6)
-#	define AVIVO_TMDSA_TRANSMITTER_CONTROL_TMCLK	        (1 << 8)
-#	define AVIVO_TMDSA_TRANSMITTER_CONTROL_TMCLK_FROM_PADS	(1 << 13)
-#	define AVIVO_TMDSA_TRANSMITTER_CONTROL_TDCLK	        (1 << 14)
-#	define AVIVO_TMDSA_TRANSMITTER_CONTROL_TDCLK_FROM_PADS	(1 << 15)
+#  define AVIVO_TMDSA_TRANSMITTER_CONTROL_PLL_PWRUP_SEQ_EN  (1 << 6)
+#  define AVIVO_TMDSA_TRANSMITTER_CONTROL_TMCLK          (1 << 8)
+#  define AVIVO_TMDSA_TRANSMITTER_CONTROL_TMCLK_FROM_PADS  (1 << 13)
+#  define AVIVO_TMDSA_TRANSMITTER_CONTROL_TDCLK          (1 << 14)
+#  define AVIVO_TMDSA_TRANSMITTER_CONTROL_TDCLK_FROM_PADS  (1 << 15)
 #       define AVIVO_TMDSA_TRANSMITTER_CONTROL_CLK_PATTERN_SHIFT (16)
-#	define AVIVO_TMDSA_TRANSMITTER_CONTROL_BYPASS_PLL	(1 << 28)
+#  define AVIVO_TMDSA_TRANSMITTER_CONTROL_BYPASS_PLL  (1 << 28)
 #       define AVIVO_TMDSA_TRANSMITTER_CONTROL_USE_CLK_DATA     (1 << 29)
-#	define AVIVO_TMDSA_TRANSMITTER_CONTROL_INPUT_TEST_CLK_SEL	(1 << 31)
+#  define AVIVO_TMDSA_TRANSMITTER_CONTROL_INPUT_TEST_CLK_SEL  (1 << 31)
 
-#define AVIVO_LVTMA_CNTL					0x7a80
+#define AVIVO_LVTMA_CNTL          0x7a80
 #   define AVIVO_LVTMA_CNTL_ENABLE               (1 << 0)
 #   define AVIVO_LVTMA_CNTL_HPD_MASK             (1 << 4)
 #   define AVIVO_LVTMA_CNTL_HPD_SELECT           (1 << 8)
@@ -3949,8 +3949,8 @@
 #define AVIVO_LVTMA_DATA_SYNCHRONIZATION                0x78d8
 #   define AVIVO_LVTMA_DATA_SYNCHRONIZATION_DSYNSEL           (1 << 0)
 #   define AVIVO_LVTMA_DATA_SYNCHRONIZATION_PFREQCHG          (1 << 8)
-#define R500_LVTMA_CLOCK_ENABLE			0x7b00
-#define R600_LVTMA_CLOCK_ENABLE			0x7b04
+#define R500_LVTMA_CLOCK_ENABLE      0x7b00
+#define R600_LVTMA_CLOCK_ENABLE      0x7b04
 
 #define R500_LVTMA_TRANSMITTER_ENABLE              0x7b04
 #define R600_LVTMA_TRANSMITTER_ENABLE              0x7b08
@@ -3966,38 +3966,38 @@
 #   define AVIVO_LVTMA_TRANSMITTER_ENABLE_LNKCEN_HPD_MASK     (1 << 17)
 #   define AVIVO_LVTMA_TRANSMITTER_ENABLE_LNKDEN_HPD_MASK     (1 << 18)
 
-#define R500_LVTMA_TRANSMITTER_CONTROL			        0x7b10
-#define R600_LVTMA_TRANSMITTER_CONTROL			        0x7b14
-#	define AVIVO_LVTMA_TRANSMITTER_CONTROL_PLL_ENABLE	  (1 << 0)
-#	define AVIVO_LVTMA_TRANSMITTER_CONTROL_PLL_RESET  	  (1 << 1)
-#	define AVIVO_LVTMA_TRANSMITTER_CONTROL_PLL_HPD_MASK_SHIFT (2)
-#	define AVIVO_LVTMA_TRANSMITTER_CONTROL_IDSCKSEL	          (1 << 4)
+#define R500_LVTMA_TRANSMITTER_CONTROL              0x7b10
+#define R600_LVTMA_TRANSMITTER_CONTROL              0x7b14
+#  define AVIVO_LVTMA_TRANSMITTER_CONTROL_PLL_ENABLE    (1 << 0)
+#  define AVIVO_LVTMA_TRANSMITTER_CONTROL_PLL_RESET      (1 << 1)
+#  define AVIVO_LVTMA_TRANSMITTER_CONTROL_PLL_HPD_MASK_SHIFT (2)
+#  define AVIVO_LVTMA_TRANSMITTER_CONTROL_IDSCKSEL            (1 << 4)
 #       define AVIVO_LVTMA_TRANSMITTER_CONTROL_BGSLEEP            (1 << 5)
-#	define AVIVO_LVTMA_TRANSMITTER_CONTROL_PLL_PWRUP_SEQ_EN	  (1 << 6)
-#	define AVIVO_LVTMA_TRANSMITTER_CONTROL_TMCLK	          (1 << 8)
-#	define AVIVO_LVTMA_TRANSMITTER_CONTROL_TMCLK_FROM_PADS	  (1 << 13)
-#	define AVIVO_LVTMA_TRANSMITTER_CONTROL_TDCLK	          (1 << 14)
-#	define AVIVO_LVTMA_TRANSMITTER_CONTROL_TDCLK_FROM_PADS	  (1 << 15)
+#  define AVIVO_LVTMA_TRANSMITTER_CONTROL_PLL_PWRUP_SEQ_EN    (1 << 6)
+#  define AVIVO_LVTMA_TRANSMITTER_CONTROL_TMCLK            (1 << 8)
+#  define AVIVO_LVTMA_TRANSMITTER_CONTROL_TMCLK_FROM_PADS    (1 << 13)
+#  define AVIVO_LVTMA_TRANSMITTER_CONTROL_TDCLK            (1 << 14)
+#  define AVIVO_LVTMA_TRANSMITTER_CONTROL_TDCLK_FROM_PADS    (1 << 15)
 #       define AVIVO_LVTMA_TRANSMITTER_CONTROL_CLK_PATTERN_SHIFT  (16)
-#	define AVIVO_LVTMA_TRANSMITTER_CONTROL_BYPASS_PLL	  (1 << 28)
+#  define AVIVO_LVTMA_TRANSMITTER_CONTROL_BYPASS_PLL    (1 << 28)
 #       define AVIVO_LVTMA_TRANSMITTER_CONTROL_USE_CLK_DATA       (1 << 29)
-#	define AVIVO_LVTMA_TRANSMITTER_CONTROL_INPUT_TEST_CLK_SEL (1 << 31)
+#  define AVIVO_LVTMA_TRANSMITTER_CONTROL_INPUT_TEST_CLK_SEL (1 << 31)
 
-#define R500_LVTMA_PWRSEQ_CNTL						0x7af0
-#define R600_LVTMA_PWRSEQ_CNTL						0x7af4
-#	define AVIVO_LVTMA_PWRSEQ_EN					    (1 << 0)
-#	define AVIVO_LVTMA_PWRSEQ_PLL_ENABLE_MASK			    (1 << 2)
-#	define AVIVO_LVTMA_PWRSEQ_PLL_RESET_MASK			    (1 << 3)
-#	define AVIVO_LVTMA_PWRSEQ_TARGET_STATE				    (1 << 4)
-#	define AVIVO_LVTMA_SYNCEN					    (1 << 8)
-#	define AVIVO_LVTMA_SYNCEN_OVRD					    (1 << 9)
-#	define AVIVO_LVTMA_SYNCEN_POL					    (1 << 10)
-#	define AVIVO_LVTMA_DIGON					    (1 << 16)
-#	define AVIVO_LVTMA_DIGON_OVRD					    (1 << 17)
-#	define AVIVO_LVTMA_DIGON_POL					    (1 << 18)
-#	define AVIVO_LVTMA_BLON						    (1 << 24)
-#	define AVIVO_LVTMA_BLON_OVRD					    (1 << 25)
-#	define AVIVO_LVTMA_BLON_POL					    (1 << 26)
+#define R500_LVTMA_PWRSEQ_CNTL            0x7af0
+#define R600_LVTMA_PWRSEQ_CNTL            0x7af4
+#  define AVIVO_LVTMA_PWRSEQ_EN              (1 << 0)
+#  define AVIVO_LVTMA_PWRSEQ_PLL_ENABLE_MASK          (1 << 2)
+#  define AVIVO_LVTMA_PWRSEQ_PLL_RESET_MASK          (1 << 3)
+#  define AVIVO_LVTMA_PWRSEQ_TARGET_STATE            (1 << 4)
+#  define AVIVO_LVTMA_SYNCEN              (1 << 8)
+#  define AVIVO_LVTMA_SYNCEN_OVRD              (1 << 9)
+#  define AVIVO_LVTMA_SYNCEN_POL              (1 << 10)
+#  define AVIVO_LVTMA_DIGON              (1 << 16)
+#  define AVIVO_LVTMA_DIGON_OVRD              (1 << 17)
+#  define AVIVO_LVTMA_DIGON_POL              (1 << 18)
+#  define AVIVO_LVTMA_BLON                (1 << 24)
+#  define AVIVO_LVTMA_BLON_OVRD              (1 << 25)
+#  define AVIVO_LVTMA_BLON_POL              (1 << 26)
 
 #define R500_LVTMA_PWRSEQ_STATE                        0x7af4
 #define R600_LVTMA_PWRSEQ_STATE                        0x7af8
@@ -4008,12 +4008,12 @@
 #       define AVIVO_LVTMA_PWRSEQ_STATE_DONE                    (1 << 4)
 #       define AVIVO_LVTMA_PWRSEQ_STATE_STATUS_SHIFT            (8)
 
-#define AVIVO_LVDS_BACKLIGHT_CNTL			0x7af8
-#	define AVIVO_LVDS_BACKLIGHT_CNTL_EN			(1 << 0)
-#	define AVIVO_LVDS_BACKLIGHT_LEVEL_MASK		0x0000ff00
-#	define AVIVO_LVDS_BACKLIGHT_LEVEL_SHIFT		8
+#define AVIVO_LVDS_BACKLIGHT_CNTL      0x7af8
+#  define AVIVO_LVDS_BACKLIGHT_CNTL_EN      (1 << 0)
+#  define AVIVO_LVDS_BACKLIGHT_LEVEL_MASK    0x0000ff00
+#  define AVIVO_LVDS_BACKLIGHT_LEVEL_SHIFT    8
 
-#define AVIVO_DVOA_BIT_DEPTH_CONTROL			0x7988
+#define AVIVO_DVOA_BIT_DEPTH_CONTROL      0x7988
 
 #define AVIVO_GPIO_0                        0x7e30
 #define AVIVO_GPIO_1                        0x7e40
@@ -4025,21 +4025,21 @@
 #define AVIVO_DC_GPIO_HPD_EN                0x7e98
 #define AVIVO_DC_GPIO_HPD_Y                 0x7e9c
 
-#define AVIVO_I2C_STATUS					0x7d30
-#	define AVIVO_I2C_STATUS_DONE				(1 << 0)
-#	define AVIVO_I2C_STATUS_NACK				(1 << 1)
-#	define AVIVO_I2C_STATUS_HALT				(1 << 2)
-#	define AVIVO_I2C_STATUS_GO				(1 << 3)
-#	define AVIVO_I2C_STATUS_MASK				0x7
+#define AVIVO_I2C_STATUS          0x7d30
+#  define AVIVO_I2C_STATUS_DONE        (1 << 0)
+#  define AVIVO_I2C_STATUS_NACK        (1 << 1)
+#  define AVIVO_I2C_STATUS_HALT        (1 << 2)
+#  define AVIVO_I2C_STATUS_GO        (1 << 3)
+#  define AVIVO_I2C_STATUS_MASK        0x7
 /* If radeon_mm_i2c is to be believed, this is HALT, NACK, and maybe
  * DONE? */
-#	define AVIVO_I2C_STATUS_CMD_RESET			0x7
-#	define AVIVO_I2C_STATUS_CMD_WAIT			(1 << 3)
-#define AVIVO_I2C_STOP						0x7d34
-#define AVIVO_I2C_START_CNTL				0x7d38
-#	define AVIVO_I2C_START						(1 << 8)
-#	define AVIVO_I2C_CONNECTOR0					(0 << 16)
-#	define AVIVO_I2C_CONNECTOR1					(1 << 16)
+#  define AVIVO_I2C_STATUS_CMD_RESET      0x7
+#  define AVIVO_I2C_STATUS_CMD_WAIT      (1 << 3)
+#define AVIVO_I2C_STOP            0x7d34
+#define AVIVO_I2C_START_CNTL        0x7d38
+#  define AVIVO_I2C_START            (1 << 8)
+#  define AVIVO_I2C_CONNECTOR0          (0 << 16)
+#  define AVIVO_I2C_CONNECTOR1          (1 << 16)
 #define R520_I2C_START (1<<0)
 #define R520_I2C_STOP (1<<1)
 #define R520_I2C_RX (1<<2)
@@ -4048,26 +4048,26 @@
 #define R520_I2C_DDC2 (1<<16)
 #define R520_I2C_DDC3 (2<<16)
 #define R520_I2C_DDC_MASK (3<<16)
-#define AVIVO_I2C_CONTROL2					0x7d3c
-#	define AVIVO_I2C_7D3C_SIZE_SHIFT			8
-#	define AVIVO_I2C_7D3C_SIZE_MASK				(0xf << 8)
-#define AVIVO_I2C_CONTROL3						0x7d40
+#define AVIVO_I2C_CONTROL2          0x7d3c
+#  define AVIVO_I2C_7D3C_SIZE_SHIFT      8
+#  define AVIVO_I2C_7D3C_SIZE_MASK        (0xf << 8)
+#define AVIVO_I2C_CONTROL3            0x7d40
 /* Reading is done 4 bytes at a time: read the bottom 8 bits from
  * 7d44, four times in a row.
  * Writing is a little more complex.  First write DATA with
  * 0xnnnnnnzz, then 0xnnnnnnyy, where nnnnnn is some non-deterministic
  * magic number, zz is, I think, the slave address, and yy is the byte
  * you want to write. */
-#define AVIVO_I2C_DATA						0x7d44
+#define AVIVO_I2C_DATA            0x7d44
 #define R520_I2C_ADDR_COUNT_MASK (0x7)
 #define R520_I2C_DATA_COUNT_SHIFT (8)
 #define R520_I2C_DATA_COUNT_MASK (0xF00)
-#define AVIVO_I2C_CNTL						0x7d50
-#	define AVIVO_I2C_EN							(1 << 0)
-#	define AVIVO_I2C_RESET						(1 << 8)
+#define AVIVO_I2C_CNTL            0x7d50
+#  define AVIVO_I2C_EN              (1 << 0)
+#  define AVIVO_I2C_RESET            (1 << 8)
 
 #define R600_GENERAL_PWRMGT                                        0x618
-#	define R600_OPEN_DRAIN_PADS				   (1 << 11)
+#  define R600_OPEN_DRAIN_PADS           (1 << 11)
 
 #define R600_LOWER_GPIO_ENABLE                                     0x710
 #define R600_CTXSW_VID_LOWER_GPIO_CNTL                             0x718
@@ -4075,7 +4075,9 @@
 #define R600_MEDIUM_VID_LOWER_GPIO_CNTL                            0x720
 #define R600_LOW_VID_LOWER_GPIO_CNTL                               0x724
 
-#define mmCONFIG_MEMSIZE                                           0x150a
+#define POLARIS_CONFIG_MEMSIZE                                  0x150a
+#define POLARIS_CONFIG_APER_SIZE                                0x150c
+#define POLARIS_ARB_RAMCFG                                      0x9d8
 
 #define R600_MC_VM_FB_LOCATION                                     0x2180
 #define R600_MC_VM_AGP_TOP                                         0x2184
@@ -4266,7 +4268,7 @@
 #define EVERGREEN_DC_GPIO_HPD_EN                        0x64b8
 #define EVERGREEN_DC_GPIO_HPD_Y                         0x64bc
 
-#define R300_GB_TILE_CONFIG				0x4018
+#define R300_GB_TILE_CONFIG        0x4018
 #       define R300_ENABLE_TILING                       (1 << 0)
 #       define R300_PIPE_COUNT_RV350                    (0 << 1)
 #       define R300_PIPE_COUNT_R300                     (3 << 1)
@@ -4277,11 +4279,11 @@
 #       define R300_TILE_SIZE_32                        (2 << 4)
 #       define R300_SUBPIXEL_1_12                       (0 << 16)
 #       define R300_SUBPIXEL_1_16                       (1 << 16)
-#define R300_GB_SELECT				        0x401c
-#define R300_GB_ENABLE				        0x4008
-#define R300_GB_AA_CONFIG				0x4020
+#define R300_GB_SELECT                0x401c
+#define R300_GB_ENABLE                0x4008
+#define R300_GB_AA_CONFIG        0x4020
 #define R400_GB_PIPE_SELECT                             0x402c
-#define R300_GB_MSPOS0				        0x4010
+#define R300_GB_MSPOS0                0x4010
 #       define R300_MS_X0_SHIFT                         0
 #       define R300_MS_Y0_SHIFT                         4
 #       define R300_MS_X1_SHIFT                         8
@@ -4290,7 +4292,7 @@
 #       define R300_MS_Y2_SHIFT                         20
 #       define R300_MSBD0_Y_SHIFT                       24
 #       define R300_MSBD0_X_SHIFT                       28
-#define R300_GB_MSPOS1				        0x4014
+#define R300_GB_MSPOS1                0x4014
 #       define R300_MS_X3_SHIFT                         0
 #       define R300_MS_Y3_SHIFT                         4
 #       define R300_MS_X4_SHIFT                         8
@@ -4299,23 +4301,23 @@
 #       define R300_MS_Y5_SHIFT                         20
 #       define R300_MSBD1_SHIFT                         24
 
-#define R300_GA_ENHANCE				        0x4274
+#define R300_GA_ENHANCE                0x4274
 #       define R300_GA_DEADLOCK_CNTL                    (1 << 0)
 #       define R300_GA_FASTSYNC_CNTL                    (1 << 1)
 
-#define R300_GA_POLY_MODE				0x4288
+#define R300_GA_POLY_MODE        0x4288
 #       define R300_FRONT_PTYPE_POINT                   (0 << 4)
 #       define R300_FRONT_PTYPE_LINE                    (1 << 4)
 #       define R300_FRONT_PTYPE_TRIANGE                 (2 << 4)
 #       define R300_BACK_PTYPE_POINT                    (0 << 7)
 #       define R300_BACK_PTYPE_LINE                     (1 << 7)
 #       define R300_BACK_PTYPE_TRIANGE                  (2 << 7)
-#define R300_GA_ROUND_MODE				0x428c
+#define R300_GA_ROUND_MODE        0x428c
 #       define R300_GEOMETRY_ROUND_TRUNC                (0 << 0)
 #       define R300_GEOMETRY_ROUND_NEAREST              (1 << 0)
 #       define R300_COLOR_ROUND_TRUNC                   (0 << 2)
 #       define R300_COLOR_ROUND_NEAREST                 (1 << 2)
-#define R300_GA_COLOR_CONTROL			        0x4278
+#define R300_GA_COLOR_CONTROL              0x4278
 #       define R300_RGB0_SHADING_SOLID                  (0 << 0)
 #       define R300_RGB0_SHADING_FLAT                   (1 << 0)
 #       define R300_RGB0_SHADING_GOURAUD                (2 << 0)
@@ -4340,14 +4342,14 @@
 #       define R300_ALPHA3_SHADING_SOLID                (0 << 14)
 #       define R300_ALPHA3_SHADING_FLAT                 (1 << 14)
 #       define R300_ALPHA3_SHADING_GOURAUD              (2 << 14)
-#define R300_GA_OFFSET				        0x4290
+#define R300_GA_OFFSET                0x4290
 
 #define R500_SU_REG_DEST                                0x42c8
 
-#define R300_VAP_CNTL_STATUS				0x2140
+#define R300_VAP_CNTL_STATUS        0x2140
 #       define R300_PVS_BYPASS                          (1 << 8)
-#define R300_VAP_PVS_STATE_FLUSH_REG		        0x2284
-#define R300_VAP_CNTL				        0x2080
+#define R300_VAP_PVS_STATE_FLUSH_REG            0x2284
+#define R300_VAP_CNTL                0x2080
 #       define R300_PVS_NUM_SLOTS_SHIFT                 0
 #       define R300_PVS_NUM_CNTLRS_SHIFT                4
 #       define R300_PVS_NUM_FPUS_SHIFT                  8
@@ -4355,7 +4357,7 @@
 #       define R300_GL_CLIP_SPACE_DEF                   (0 << 22)
 #       define R300_DX_CLIP_SPACE_DEF                   (1 << 22)
 #       define R500_TCL_STATE_OPTIMIZATION              (1 << 23)
-#define R300_VAP_VTE_CNTL				0x20B0
+#define R300_VAP_VTE_CNTL        0x20B0
 #       define R300_VPORT_X_SCALE_ENA                   (1 << 0)
 #       define R300_VPORT_X_OFFSET_ENA                  (1 << 1)
 #       define R300_VPORT_Y_SCALE_ENA                   (1 << 2)
@@ -4365,9 +4367,9 @@
 #       define R300_VTX_XY_FMT                          (1 << 8)
 #       define R300_VTX_Z_FMT                           (1 << 9)
 #       define R300_VTX_W0_FMT                          (1 << 10)
-#define R300_VAP_VTX_STATE_CNTL		                0x2180
-#define R300_VAP_PSC_SGN_NORM_CNTL		        0x21DC
-#define R300_VAP_PROG_STREAM_CNTL_0		        0x2150
+#define R300_VAP_VTX_STATE_CNTL                    0x2180
+#define R300_VAP_PSC_SGN_NORM_CNTL            0x21DC
+#define R300_VAP_PROG_STREAM_CNTL_0            0x2150
 #       define R300_DATA_TYPE_0_SHIFT                   0
 #       define R300_DATA_TYPE_FLOAT_1                   0
 #       define R300_DATA_TYPE_FLOAT_2                   1
@@ -4390,7 +4392,7 @@
 #       define R300_LAST_VEC_1                          (1 << 29)
 #       define R300_SIGNED_1                            (1 << 30)
 #       define R300_NORMALIZE_1                         (1 << 31)
-#define R300_VAP_PROG_STREAM_CNTL_1		        0x2154
+#define R300_VAP_PROG_STREAM_CNTL_1            0x2154
 #       define R300_DATA_TYPE_2_SHIFT                   0
 #       define R300_SKIP_DWORDS_2_SHIFT                 4
 #       define R300_DST_VEC_LOC_2_SHIFT                 8
@@ -4403,7 +4405,7 @@
 #       define R300_LAST_VEC_3                          (1 << 29)
 #       define R300_SIGNED_3                            (1 << 30)
 #       define R300_NORMALIZE_3                         (1 << 31)
-#define R300_VAP_PROG_STREAM_CNTL_EXT_0	                0x21e0
+#define R300_VAP_PROG_STREAM_CNTL_EXT_0                  0x21e0
 #       define R300_SWIZZLE_SELECT_X_0_SHIFT            0
 #       define R300_SWIZZLE_SELECT_Y_0_SHIFT            3
 #       define R300_SWIZZLE_SELECT_Z_0_SHIFT            6
@@ -4424,7 +4426,7 @@
 #       define R300_SWIZZLE_SELECT_Z_1_SHIFT            22
 #       define R300_SWIZZLE_SELECT_W_1_SHIFT            25
 #       define R300_WRITE_ENA_1_SHIFT                   28
-#define R300_VAP_PROG_STREAM_CNTL_EXT_1	                0x21e4
+#define R300_VAP_PROG_STREAM_CNTL_EXT_1                  0x21e4
 #       define R300_SWIZZLE_SELECT_X_2_SHIFT            0
 #       define R300_SWIZZLE_SELECT_Y_2_SHIFT            3
 #       define R300_SWIZZLE_SELECT_Z_2_SHIFT            6
@@ -4435,20 +4437,20 @@
 #       define R300_SWIZZLE_SELECT_Z_3_SHIFT            22
 #       define R300_SWIZZLE_SELECT_W_3_SHIFT            25
 #       define R300_WRITE_ENA_3_SHIFT                   28
-#define R300_VAP_PVS_CODE_CNTL_0			0x22D0
+#define R300_VAP_PVS_CODE_CNTL_0      0x22D0
 #       define R300_PVS_FIRST_INST_SHIFT                0
 #       define R300_PVS_XYZW_VALID_INST_SHIFT           10
 #       define R300_PVS_LAST_INST_SHIFT                 20
-#define R300_VAP_PVS_CODE_CNTL_1			0x22D8
+#define R300_VAP_PVS_CODE_CNTL_1      0x22D8
 #       define R300_PVS_LAST_VTX_SRC_INST_SHIFT         0
-#define R300_VAP_PVS_VECTOR_INDX_REG		        0x2200
+#define R300_VAP_PVS_VECTOR_INDX_REG            0x2200
 #       define R300_PVS_CODE_START                      0
 #       define R300_PVS_CONST_START                     512
 #       define R500_PVS_CONST_START                     1024
 #       define R300_PVS_VECTOR_INST_INDEX(x)            ((x) + R300_PVS_CODE_START)
 #       define R300_PVS_VECTOR_CONST_INDEX(x)           ((x) + R300_PVS_CONST_START)
 #       define R500_PVS_VECTOR_CONST_INDEX(x)           ((x) + R500_PVS_CONST_START)
-#define R300_VAP_PVS_VECTOR_DATA_REG		        0x2204
+#define R300_VAP_PVS_VECTOR_DATA_REG            0x2204
 /* PVS instructions */
 /* Opcode and dst instruction */
 #define R300_PVS_DST_OPCODE(x)                          ((x) << 0)
@@ -4570,15 +4572,15 @@
 #       define R300_PVS_CONST_BASE_OFFSET(x)            ((x) << 0)
 #       define R300_PVS_MAX_CONST_ADDR(x)               ((x) << 16)
 
-#define R300_VAP_PVS_FLOW_CNTL_OPC		        0x22dc
-#define R300_VAP_OUT_VTX_FMT_0			        0x2090
+#define R300_VAP_PVS_FLOW_CNTL_OPC            0x22dc
+#define R300_VAP_OUT_VTX_FMT_0              0x2090
 #       define R300_VTX_POS_PRESENT                     (1 << 0)
 #       define R300_VTX_COLOR_0_PRESENT                 (1 << 1)
 #       define R300_VTX_COLOR_1_PRESENT                 (1 << 2)
 #       define R300_VTX_COLOR_2_PRESENT                 (1 << 3)
 #       define R300_VTX_COLOR_3_PRESENT                 (1 << 4)
 #       define R300_VTX_PT_SIZE_PRESENT                 (1 << 16)
-#define R300_VAP_OUT_VTX_FMT_1			        0x2094
+#define R300_VAP_OUT_VTX_FMT_1              0x2094
 #       define R300_TEX_0_COMP_CNT_SHIFT                0
 #       define R300_TEX_1_COMP_CNT_SHIFT                3
 #       define R300_TEX_2_COMP_CNT_SHIFT                6
@@ -4587,12 +4589,12 @@
 #       define R300_TEX_5_COMP_CNT_SHIFT                15
 #       define R300_TEX_6_COMP_CNT_SHIFT                18
 #       define R300_TEX_7_COMP_CNT_SHIFT                21
-#define R300_VAP_VTX_SIZE				0x20b4
-#define R300_VAP_GB_VERT_CLIP_ADJ		        0x2220
-#define R300_VAP_GB_VERT_DISC_ADJ		        0x2224
-#define R300_VAP_GB_HORZ_CLIP_ADJ		        0x2228
-#define R300_VAP_GB_HORZ_DISC_ADJ		        0x222c
-#define R300_VAP_CLIP_CNTL				0x221c
+#define R300_VAP_VTX_SIZE        0x20b4
+#define R300_VAP_GB_VERT_CLIP_ADJ            0x2220
+#define R300_VAP_GB_VERT_DISC_ADJ            0x2224
+#define R300_VAP_GB_HORZ_CLIP_ADJ            0x2228
+#define R300_VAP_GB_HORZ_DISC_ADJ            0x222c
+#define R300_VAP_CLIP_CNTL        0x221c
 #       define R300_UCP_ENA_0                           (1 << 0)
 #       define R300_UCP_ENA_1                           (1 << 1)
 #       define R300_UCP_ENA_2                           (1 << 2)
@@ -4603,63 +4605,63 @@
 #       define R300_CLIP_DISABLE                        (1 << 16)
 #       define R300_UCP_CULL_ONLY_ENA                   (1 << 17)
 #       define R300_BOUNDARY_EDGE_FLAG_ENA              (1 << 18)
-#define R300_VAP_PVS_STATE_FLUSH_REG			0x2284
+#define R300_VAP_PVS_STATE_FLUSH_REG      0x2284
 
-#define R500_VAP_INDEX_OFFSET			        0x208c
+#define R500_VAP_INDEX_OFFSET              0x208c
 
-#define R300_SU_TEX_WRAP				0x42a0
-#define R300_SU_POLY_OFFSET_ENABLE		        0x42b4
-#define R300_SU_CULL_MODE				0x42b8
+#define R300_SU_TEX_WRAP        0x42a0
+#define R300_SU_POLY_OFFSET_ENABLE            0x42b4
+#define R300_SU_CULL_MODE        0x42b8
 #       define R300_CULL_FRONT                          (1 << 0)
 #       define R300_CULL_BACK                           (1 << 1)
 #       define R300_FACE_POS                            (0 << 2)
 #       define R300_FACE_NEG                            (1 << 2)
-#define R300_SU_DEPTH_SCALE				0x42c0
-#define R300_SU_DEPTH_OFFSET			        0x42c4
+#define R300_SU_DEPTH_SCALE        0x42c0
+#define R300_SU_DEPTH_OFFSET              0x42c4
 
-#define R300_RS_COUNT				        0x4300
-#	define R300_RS_COUNT_IT_COUNT_SHIFT		0
-#	define R300_RS_COUNT_IC_COUNT_SHIFT		7
-#	define R300_RS_COUNT_HIRES_EN			(1 << 18)
+#define R300_RS_COUNT                0x4300
+#  define R300_RS_COUNT_IT_COUNT_SHIFT    0
+#  define R300_RS_COUNT_IC_COUNT_SHIFT    7
+#  define R300_RS_COUNT_HIRES_EN      (1 << 18)
 
-#define R300_RS_IP_0				        0x4310
-#define R300_RS_IP_1				        0x4314
-#	define R300_RS_TEX_PTR(x)		        ((x) << 0)
-#	define R300_RS_COL_PTR(x)		        ((x) << 6)
-#	define R300_RS_COL_FMT(x)		        ((x) << 9)
-#	define R300_RS_COL_FMT_RGBA		        0
-#	define R300_RS_COL_FMT_RGB0		        2
-#	define R300_RS_COL_FMT_RGB1		        3
-#	define R300_RS_COL_FMT_000A		        4
-#	define R300_RS_COL_FMT_0000		        5
-#	define R300_RS_COL_FMT_0001		        6
-#	define R300_RS_COL_FMT_111A		        8
-#	define R300_RS_COL_FMT_1110		        9
-#	define R300_RS_COL_FMT_1111		        10
-#	define R300_RS_SEL_S(x)		                ((x) << 13)
-#	define R300_RS_SEL_T(x)		                ((x) << 16)
-#	define R300_RS_SEL_R(x)		                ((x) << 19)
-#	define R300_RS_SEL_Q(x)		                ((x) << 22)
-#	define R300_RS_SEL_C0		                0
-#	define R300_RS_SEL_C1		                1
-#	define R300_RS_SEL_C2		                2
-#	define R300_RS_SEL_C3		                3
-#	define R300_RS_SEL_K0		                4
-#	define R300_RS_SEL_K1		                5
-#define R300_RS_INST_COUNT				0x4304
-#	define R300_INST_COUNT_RS(x)		        ((x) << 0)
-#	define R300_RS_W_EN			        (1 << 4)
-#	define R300_TX_OFFSET_RS(x)		        ((x) << 5)
-#define R300_RS_INST_0				        0x4330
-#define R300_RS_INST_1				        0x4334
-#	define R300_INST_TEX_ID(x)		        ((x) << 0)
-#       define R300_RS_INST_TEX_CN_WRITE		(1 << 3)
-#	define R300_INST_TEX_ADDR(x)		        ((x) << 6)
+#define R300_RS_IP_0                0x4310
+#define R300_RS_IP_1                0x4314
+#  define R300_RS_TEX_PTR(x)            ((x) << 0)
+#  define R300_RS_COL_PTR(x)            ((x) << 6)
+#  define R300_RS_COL_FMT(x)            ((x) << 9)
+#  define R300_RS_COL_FMT_RGBA            0
+#  define R300_RS_COL_FMT_RGB0            2
+#  define R300_RS_COL_FMT_RGB1            3
+#  define R300_RS_COL_FMT_000A            4
+#  define R300_RS_COL_FMT_0000            5
+#  define R300_RS_COL_FMT_0001            6
+#  define R300_RS_COL_FMT_111A            8
+#  define R300_RS_COL_FMT_1110            9
+#  define R300_RS_COL_FMT_1111            10
+#  define R300_RS_SEL_S(x)                    ((x) << 13)
+#  define R300_RS_SEL_T(x)                    ((x) << 16)
+#  define R300_RS_SEL_R(x)                    ((x) << 19)
+#  define R300_RS_SEL_Q(x)                    ((x) << 22)
+#  define R300_RS_SEL_C0                    0
+#  define R300_RS_SEL_C1                    1
+#  define R300_RS_SEL_C2                    2
+#  define R300_RS_SEL_C3                    3
+#  define R300_RS_SEL_K0                    4
+#  define R300_RS_SEL_K1                    5
+#define R300_RS_INST_COUNT        0x4304
+#  define R300_INST_COUNT_RS(x)            ((x) << 0)
+#  define R300_RS_W_EN              (1 << 4)
+#  define R300_TX_OFFSET_RS(x)            ((x) << 5)
+#define R300_RS_INST_0                0x4330
+#define R300_RS_INST_1                0x4334
+#  define R300_INST_TEX_ID(x)            ((x) << 0)
+#       define R300_RS_INST_TEX_CN_WRITE    (1 << 3)
+#  define R300_INST_TEX_ADDR(x)            ((x) << 6)
 
-#define R300_TX_INVALTAGS				0x4100
-#define R300_TX_FILTER0_0				0x4400
-#define R300_TX_FILTER0_1				0x4404
-#define R300_TX_FILTER0_2				0x4408
+#define R300_TX_INVALTAGS        0x4100
+#define R300_TX_FILTER0_0        0x4400
+#define R300_TX_FILTER0_1        0x4404
+#define R300_TX_FILTER0_2        0x4408
 #       define R300_TX_CLAMP_S(x)                       ((x) << 0)
 #       define R300_TX_CLAMP_T(x)                       ((x) << 3)
 #       define R300_TX_CLAMP_R(x)                       ((x) << 6)
@@ -4676,88 +4678,88 @@
 #       define R300_TX_MAG_FILTER_LINEAR                (2 << 9)
 #       define R300_TX_MIN_FILTER_LINEAR                (2 << 11)
 #       define R300_TX_ID_SHIFT                         28
-#define R300_TX_FILTER1_0				0x4440
-#define R300_TX_FILTER1_1				0x4444
-#define R300_TX_FILTER1_2				0x4448
-#define R300_TX_FORMAT0_0				0x4480
-#define R300_TX_FORMAT0_1				0x4484
-#define R300_TX_FORMAT0_2				0x4488
+#define R300_TX_FILTER1_0        0x4440
+#define R300_TX_FILTER1_1        0x4444
+#define R300_TX_FILTER1_2        0x4448
+#define R300_TX_FORMAT0_0        0x4480
+#define R300_TX_FORMAT0_1        0x4484
+#define R300_TX_FORMAT0_2        0x4488
 #       define R300_TXWIDTH_SHIFT                       0
 #       define R300_TXHEIGHT_SHIFT                      11
 #       define R300_NUM_LEVELS_SHIFT                    26
 #       define R300_NUM_LEVELS_MASK                     0x
 #       define R300_TXPROJECTED                         (1 << 30)
 #       define R300_TXPITCH_EN                          (1 << 31)
-#define R300_TX_FORMAT1_0				0x44c0
-#define R300_TX_FORMAT1_1				0x44c4
-#define R300_TX_FORMAT1_2				0x44c8
-#	define R300_TX_FORMAT_X8		    0x0
-#	define R300_TX_FORMAT_X16		    0x1
-#	define R300_TX_FORMAT_Y4X4		    0x2
-#	define R300_TX_FORMAT_Y8X8		    0x3
-#	define R300_TX_FORMAT_Y16X16		    0x4
-#	define R300_TX_FORMAT_Z3Y3X2		    0x5
-#	define R300_TX_FORMAT_Z5Y6X5		    0x6
-#	define R300_TX_FORMAT_Z6Y5X5		    0x7
-#	define R300_TX_FORMAT_Z11Y11X10		    0x8
-#	define R300_TX_FORMAT_Z10Y11X11		    0x9
-#	define R300_TX_FORMAT_W4Z4Y4X4		    0xA
-#	define R300_TX_FORMAT_W1Z5Y5X5		    0xB
-#	define R300_TX_FORMAT_W8Z8Y8X8		    0xC
-#	define R300_TX_FORMAT_W2Z10Y10X10	    0xD
-#	define R300_TX_FORMAT_W16Z16Y16X16	    0xE
-#	define R300_TX_FORMAT_DXT1	    	    0xF
-#	define R300_TX_FORMAT_DXT3	    	    0x10
-#	define R300_TX_FORMAT_DXT5	    	    0x11
-#	define R300_TX_FORMAT_D3DMFT_CxV8U8	    0x12     /* no swizzle */
-#	define R300_TX_FORMAT_A8R8G8B8	    	    0x13     /* no swizzle */
-#	define R300_TX_FORMAT_B8G8_B8G8	    	    0x14     /* no swizzle */
-#	define R300_TX_FORMAT_G8R8_G8B8	    	    0x15     /* no swizzle */
-#	define R300_TX_FORMAT_VYUY422	    	    0x14     /* no swizzle */
-#	define R300_TX_FORMAT_YVYU422	    	    0x15     /* no swizzle */
-#	define R300_TX_FORMAT_X24_Y8	    	    0x1e
-#	define R300_TX_FORMAT_X32	    	    0x1e
-	/* Floating point formats */
-	/* Note - hardware supports both 16 and 32 bit floating point */
-#	define R300_TX_FORMAT_FL_I16	    	    0x18
-#	define R300_TX_FORMAT_FL_I16A16	    	    0x19
-#	define R300_TX_FORMAT_FL_R16G16B16A16	    0x1A
-#	define R300_TX_FORMAT_FL_I32	    	    0x1B
-#	define R300_TX_FORMAT_FL_I32A32	    	    0x1C
-#	define R300_TX_FORMAT_FL_R32G32B32A32	    0x1D
-	/* alpha modes, convenience mostly */
-	/* if you have alpha, pick constant appropriate to the
-	   number of channels (1 for I8, 2 for I8A8, 4 for R8G8B8A8, etc */
-# 	define R300_TX_FORMAT_ALPHA_1CH		    0x000
-# 	define R300_TX_FORMAT_ALPHA_2CH		    0x200
-# 	define R300_TX_FORMAT_ALPHA_4CH		    0x600
-# 	define R300_TX_FORMAT_ALPHA_NONE	    0xA00
-	/* Swizzling */
-	/* constants */
-#	define R300_TX_FORMAT_X		0
-#	define R300_TX_FORMAT_Y		1
-#	define R300_TX_FORMAT_Z		2
-#	define R300_TX_FORMAT_W		3
-#	define R300_TX_FORMAT_ZERO	4
-#	define R300_TX_FORMAT_ONE	5
-	/* 2.0*Z, everything above 1.0 is set to 0.0 */
-#	define R300_TX_FORMAT_CUT_Z	6
-	/* 2.0*W, everything above 1.0 is set to 0.0 */
-#	define R300_TX_FORMAT_CUT_W	7
+#define R300_TX_FORMAT1_0        0x44c0
+#define R300_TX_FORMAT1_1        0x44c4
+#define R300_TX_FORMAT1_2        0x44c8
+#  define R300_TX_FORMAT_X8        0x0
+#  define R300_TX_FORMAT_X16        0x1
+#  define R300_TX_FORMAT_Y4X4        0x2
+#  define R300_TX_FORMAT_Y8X8        0x3
+#  define R300_TX_FORMAT_Y16X16        0x4
+#  define R300_TX_FORMAT_Z3Y3X2        0x5
+#  define R300_TX_FORMAT_Z5Y6X5        0x6
+#  define R300_TX_FORMAT_Z6Y5X5        0x7
+#  define R300_TX_FORMAT_Z11Y11X10        0x8
+#  define R300_TX_FORMAT_Z10Y11X11        0x9
+#  define R300_TX_FORMAT_W4Z4Y4X4        0xA
+#  define R300_TX_FORMAT_W1Z5Y5X5        0xB
+#  define R300_TX_FORMAT_W8Z8Y8X8        0xC
+#  define R300_TX_FORMAT_W2Z10Y10X10      0xD
+#  define R300_TX_FORMAT_W16Z16Y16X16      0xE
+#  define R300_TX_FORMAT_DXT1            0xF
+#  define R300_TX_FORMAT_DXT3            0x10
+#  define R300_TX_FORMAT_DXT5            0x11
+#  define R300_TX_FORMAT_D3DMFT_CxV8U8      0x12     /* no swizzle */
+#  define R300_TX_FORMAT_A8R8G8B8            0x13     /* no swizzle */
+#  define R300_TX_FORMAT_B8G8_B8G8            0x14     /* no swizzle */
+#  define R300_TX_FORMAT_G8R8_G8B8            0x15     /* no swizzle */
+#  define R300_TX_FORMAT_VYUY422            0x14     /* no swizzle */
+#  define R300_TX_FORMAT_YVYU422            0x15     /* no swizzle */
+#  define R300_TX_FORMAT_X24_Y8            0x1e
+#  define R300_TX_FORMAT_X32            0x1e
+  /* Floating point formats */
+  /* Note - hardware supports both 16 and 32 bit floating point */
+#  define R300_TX_FORMAT_FL_I16            0x18
+#  define R300_TX_FORMAT_FL_I16A16            0x19
+#  define R300_TX_FORMAT_FL_R16G16B16A16      0x1A
+#  define R300_TX_FORMAT_FL_I32            0x1B
+#  define R300_TX_FORMAT_FL_I32A32            0x1C
+#  define R300_TX_FORMAT_FL_R32G32B32A32      0x1D
+  /* alpha modes, convenience mostly */
+  /* if you have alpha, pick constant appropriate to the
+     number of channels (1 for I8, 2 for I8A8, 4 for R8G8B8A8, etc */
+#   define R300_TX_FORMAT_ALPHA_1CH        0x000
+#   define R300_TX_FORMAT_ALPHA_2CH        0x200
+#   define R300_TX_FORMAT_ALPHA_4CH        0x600
+#   define R300_TX_FORMAT_ALPHA_NONE      0xA00
+  /* Swizzling */
+  /* constants */
+#  define R300_TX_FORMAT_X    0
+#  define R300_TX_FORMAT_Y    1
+#  define R300_TX_FORMAT_Z    2
+#  define R300_TX_FORMAT_W    3
+#  define R300_TX_FORMAT_ZERO  4
+#  define R300_TX_FORMAT_ONE  5
+  /* 2.0*Z, everything above 1.0 is set to 0.0 */
+#  define R300_TX_FORMAT_CUT_Z  6
+  /* 2.0*W, everything above 1.0 is set to 0.0 */
+#  define R300_TX_FORMAT_CUT_W  7
 
-#	define R300_TX_FORMAT_B_SHIFT	18
-#	define R300_TX_FORMAT_G_SHIFT	15
-#	define R300_TX_FORMAT_R_SHIFT	12
-#	define R300_TX_FORMAT_A_SHIFT	9
+#  define R300_TX_FORMAT_B_SHIFT  18
+#  define R300_TX_FORMAT_G_SHIFT  15
+#  define R300_TX_FORMAT_R_SHIFT  12
+#  define R300_TX_FORMAT_A_SHIFT  9
 
-	/* Convenience macro to take care of layout and swizzling */
-#	define R300_EASY_TX_FORMAT(B, G, R, A, FMT)	(		\
-		((R300_TX_FORMAT_##B)<<R300_TX_FORMAT_B_SHIFT)		\
-		| ((R300_TX_FORMAT_##G)<<R300_TX_FORMAT_G_SHIFT)	\
-		| ((R300_TX_FORMAT_##R)<<R300_TX_FORMAT_R_SHIFT)	\
-		| ((R300_TX_FORMAT_##A)<<R300_TX_FORMAT_A_SHIFT)	\
-		| (R300_TX_FORMAT_##FMT)				\
-		)
+  /* Convenience macro to take care of layout and swizzling */
+#  define R300_EASY_TX_FORMAT(B, G, R, A, FMT)  (    \
+    ((R300_TX_FORMAT_##B)<<R300_TX_FORMAT_B_SHIFT)    \
+    | ((R300_TX_FORMAT_##G)<<R300_TX_FORMAT_G_SHIFT)  \
+    | ((R300_TX_FORMAT_##R)<<R300_TX_FORMAT_R_SHIFT)  \
+    | ((R300_TX_FORMAT_##A)<<R300_TX_FORMAT_A_SHIFT)  \
+    | (R300_TX_FORMAT_##FMT)        \
+    )
 
 #       define R300_TX_FORMAT_YUV_TO_RGB_CLAMP         (1 << 22)
 #       define R300_TX_FORMAT_YUV_TO_RGB_NO_CLAMP      (2 << 22)
@@ -4771,32 +4773,32 @@
 #       define R300_TX_FORMAT_CACHE_FOURTH_REGION_2    (6 << 27)
 #       define R300_TX_FORMAT_CACHE_FOURTH_REGION_3    (7 << 27)
 
-#define R300_TX_FORMAT2_0				0x4500
-#define R300_TX_FORMAT2_1				0x4504
-#define R300_TX_FORMAT2_2				0x4508
+#define R300_TX_FORMAT2_0        0x4500
+#define R300_TX_FORMAT2_1        0x4504
+#define R300_TX_FORMAT2_2        0x4508
 #       define R500_TXWIDTH_11                          (1 << 15)
 #       define R500_TXHEIGHT_11                         (1 << 16)
 
-#define R300_TX_OFFSET_0				0x4540
-#define R300_TX_OFFSET_1				0x4544
-#define R300_TX_OFFSET_2				0x4548
+#define R300_TX_OFFSET_0        0x4540
+#define R300_TX_OFFSET_1        0x4544
+#define R300_TX_OFFSET_2        0x4548
 #       define R300_ENDIAN_SWAP_16_BIT                  (1 << 0)
 #       define R300_ENDIAN_SWAP_32_BIT                  (2 << 0)
 #       define R300_ENDIAN_SWAP_HALF_DWORD              (3 << 0)
 #       define R300_MACRO_TILE                          (1 << 2)
 
-#define R300_TX_BORDER_COLOR_0			        0x45c0
+#define R300_TX_BORDER_COLOR_0              0x45c0
 
-#define R300_TX_ENABLE				        0x4104
+#define R300_TX_ENABLE                0x4104
 #       define R300_TEX_0_ENABLE                        (1 << 0)
 #       define R300_TEX_1_ENABLE                        (1 << 1)
 #       define R300_TEX_2_ENABLE                        (1 << 2)
 
-#define R300_US_W_FMT				        0x46b4
-#define R300_US_OUT_FMT_1				0x46a8
-#define R300_US_OUT_FMT_2				0x46ac
-#define R300_US_OUT_FMT_3				0x46b0
-#define R300_US_OUT_FMT_0				0x46a4
+#define R300_US_W_FMT                0x46b4
+#define R300_US_OUT_FMT_1        0x46a8
+#define R300_US_OUT_FMT_2        0x46ac
+#define R300_US_OUT_FMT_3        0x46b0
+#define R300_US_OUT_FMT_0        0x46a4
 #       define R300_OUT_FMT_C4_8                        (0 << 0)
 #       define R300_OUT_FMT_C4_10                       (1 << 0)
 #       define R300_OUT_FMT_C4_10_GAMMA                 (2 << 0)
@@ -4834,30 +4836,30 @@
 #       define R300_OUT_FMT_C3_SEL_RED                  (1 << 14)
 #       define R300_OUT_FMT_C3_SEL_GREEN                (2 << 14)
 #       define R300_OUT_FMT_C3_SEL_BLUE                 (3 << 14)
-#define R300_US_CONFIG				        0x4600
+#define R300_US_CONFIG                0x4600
 #       define R300_NLEVEL_SHIFT                        0
 #       define R300_FIRST_TEX                           (1 << 3)
 #       define R500_ZERO_TIMES_ANYTHING_EQUALS_ZERO     (1 << 1)
-#define R300_US_PIXSIZE				        0x4604
-#define R300_US_CODE_OFFSET				0x4608
+#define R300_US_PIXSIZE                0x4604
+#define R300_US_CODE_OFFSET        0x4608
 #       define R300_ALU_CODE_OFFSET(x)                  ((x) << 0)
 #       define R300_ALU_CODE_SIZE(x)                    ((x) << 6)
 #       define R300_TEX_CODE_OFFSET(x)                  ((x) << 13)
 #       define R300_TEX_CODE_SIZE(x)                    ((x) << 18)
-#define R300_US_CODE_ADDR_0				0x4610
+#define R300_US_CODE_ADDR_0        0x4610
 #       define R300_ALU_START(x)                        ((x) << 0)
 #       define R300_ALU_SIZE(x)                         ((x) << 6)
 #       define R300_TEX_START(x)                        ((x) << 12)
 #       define R300_TEX_SIZE(x)                         ((x) << 17)
 #       define R300_RGBA_OUT                            (1 << 22)
 #       define R300_W_OUT                               (1 << 23)
-#define R300_US_CODE_ADDR_1				0x4614
-#define R300_US_CODE_ADDR_2				0x4618
-#define R300_US_CODE_ADDR_3				0x461c
-#define R300_US_TEX_INST_0				0x4620
-#define R300_US_TEX_INST_1				0x4624
-#define R300_US_TEX_INST_2				0x4628
-#define R300_US_TEX_INST(x)			        (R300_US_TEX_INST_0 + (x)*4)
+#define R300_US_CODE_ADDR_1        0x4614
+#define R300_US_CODE_ADDR_2        0x4618
+#define R300_US_CODE_ADDR_3        0x461c
+#define R300_US_TEX_INST_0        0x4620
+#define R300_US_TEX_INST_1        0x4624
+#define R300_US_TEX_INST_2        0x4628
+#define R300_US_TEX_INST(x)              (R300_US_TEX_INST_0 + (x)*4)
 #       define R300_TEX_SRC_ADDR(x)                     ((x) << 0)
 #       define R300_TEX_DST_ADDR(x)                     ((x) << 6)
 #       define R300_TEX_ID(x)                           ((x) << 11)
@@ -4867,10 +4869,10 @@
 #       define R300_TEX_INST_TEXKILL                    2
 #       define R300_TEX_INST_PROJ                       3
 #       define R300_TEX_INST_LODBIAS                    4
-#define R300_US_ALU_RGB_ADDR_0			        0x46c0
-#define R300_US_ALU_RGB_ADDR_1			        0x46c4
-#define R300_US_ALU_RGB_ADDR_2			        0x46c8
-#define R300_US_ALU_RGB_ADDR(x)			        (R300_US_ALU_RGB_ADDR_0 + (x)*4)
+#define R300_US_ALU_RGB_ADDR_0              0x46c0
+#define R300_US_ALU_RGB_ADDR_1              0x46c4
+#define R300_US_ALU_RGB_ADDR_2              0x46c8
+#define R300_US_ALU_RGB_ADDR(x)              (R300_US_ALU_RGB_ADDR_0 + (x)*4)
 /* for ADDR0-2, values 0-31 specify a location in the pixel stack,
    values 32-63 specify a constant */
 #       define R300_ALU_RGB_ADDR0(x)                    ((x) << 0)
@@ -4891,10 +4893,10 @@
 #       define R300_ALU_RGB_TARGET_B                    (1 << 29)
 #       define R300_ALU_RGB_TARGET_C                    (2 << 29)
 #       define R300_ALU_RGB_TARGET_D                    (3 << 29)
-#define R300_US_ALU_RGB_INST_0			        0x48c0
-#define R300_US_ALU_RGB_INST_1			        0x48c4
-#define R300_US_ALU_RGB_INST_2			        0x48c8
-#define R300_US_ALU_RGB_INST(x)			        (R300_US_ALU_RGB_INST_0 + (x)*4)
+#define R300_US_ALU_RGB_INST_0              0x48c0
+#define R300_US_ALU_RGB_INST_1              0x48c4
+#define R300_US_ALU_RGB_INST_2              0x48c8
+#define R300_US_ALU_RGB_INST(x)              (R300_US_ALU_RGB_INST_0 + (x)*4)
 #       define R300_ALU_RGB_SEL_A(x)                    ((x) << 0)
 #       define R300_ALU_RGB_SRC0_RGB                    0
 #       define R300_ALU_RGB_SRC0_RRR                    1
@@ -4938,10 +4940,10 @@
 #       define R300_ALU_RGB_SEL_C(x)                    ((x) << 14)
 #       define R300_ALU_RGB_MOD_C(x)                    ((x) << 19)
 #       define R300_ALU_RGB_SRCP_OP(x)                  ((x) << 21)
-#       define R300_ALU_RGB_SRCP_OP_1_MINUS_2RGB0	0
-#       define R300_ALU_RGB_SRCP_OP_RGB1_MINUS_RGB0	1
-#       define R300_ALU_RGB_SRCP_OP_RGB1_PLUS_RGB0	2
-#       define R300_ALU_RGB_SRCP_OP_1_MINUS_RGB0	3
+#       define R300_ALU_RGB_SRCP_OP_1_MINUS_2RGB0  0
+#       define R300_ALU_RGB_SRCP_OP_RGB1_MINUS_RGB0  1
+#       define R300_ALU_RGB_SRCP_OP_RGB1_PLUS_RGB0  2
+#       define R300_ALU_RGB_SRCP_OP_1_MINUS_RGB0  3
 #       define R300_ALU_RGB_OP(x)                       ((x) << 23)
 #       define R300_ALU_RGB_OP_MAD                      0
 #       define R300_ALU_RGB_OP_DP3                      1
@@ -4963,10 +4965,10 @@
 #       define R300_ALU_RGB_OMOD_DIV_8                  6
 #       define R300_ALU_RGB_CLAMP                       (1 << 30)
 #       define R300_ALU_RGB_INSERT_NOP                  (1 << 31)
-#define R300_US_ALU_ALPHA_ADDR_0		        0x47c0
-#define R300_US_ALU_ALPHA_ADDR_1		        0x47c4
-#define R300_US_ALU_ALPHA_ADDR_2		        0x47c8
-#define R300_US_ALU_ALPHA_ADDR(x)		        (R300_US_ALU_ALPHA_ADDR_0 + (x)*4)
+#define R300_US_ALU_ALPHA_ADDR_0            0x47c0
+#define R300_US_ALU_ALPHA_ADDR_1            0x47c4
+#define R300_US_ALU_ALPHA_ADDR_2            0x47c8
+#define R300_US_ALU_ALPHA_ADDR(x)            (R300_US_ALU_ALPHA_ADDR_0 + (x)*4)
 /* for ADDR0-2, values 0-31 specify a location in the pixel stack,
    values 32-63 specify a constant */
 #       define R300_ALU_ALPHA_ADDR0(x)                  ((x) << 0)
@@ -4985,10 +4987,10 @@
 #       define R300_ALU_ALPHA_TARGET_B                  (1 << 25)
 #       define R300_ALU_ALPHA_TARGET_C                  (2 << 25)
 #       define R300_ALU_ALPHA_TARGET_D                  (3 << 25)
-#define R300_US_ALU_ALPHA_INST_0		        0x49c0
-#define R300_US_ALU_ALPHA_INST_1		        0x49c4
-#define R300_US_ALU_ALPHA_INST_2		        0x49c8
-#define R300_US_ALU_ALPHA_INST(x)		        (R300_US_ALU_ALPHA_INST_0 + (x)*4)
+#define R300_US_ALU_ALPHA_INST_0            0x49c0
+#define R300_US_ALU_ALPHA_INST_1            0x49c4
+#define R300_US_ALU_ALPHA_INST_2            0x49c8
+#define R300_US_ALU_ALPHA_INST(x)            (R300_US_ALU_ALPHA_INST_0 + (x)*4)
 #       define R300_ALU_ALPHA_SEL_A(x)                  ((x) << 0)
 #       define R300_ALU_ALPHA_SRC0_R                    0
 #       define R300_ALU_ALPHA_SRC0_G                    1
@@ -5019,10 +5021,10 @@
 #       define R300_ALU_ALPHA_SEL_C(x)                  ((x) << 14)
 #       define R300_ALU_ALPHA_MOD_C(x)                  ((x) << 19)
 #       define R300_ALU_ALPHA_SRCP_OP(x)                ((x) << 21)
-#       define R300_ALU_ALPHA_SRCP_OP_1_MINUS_2RGB0	0
-#       define R300_ALU_ALPHA_SRCP_OP_RGB1_MINUS_RGB0	1
-#       define R300_ALU_ALPHA_SRCP_OP_RGB1_PLUS_RGB0	2
-#       define R300_ALU_ALPHA_SRCP_OP_1_MINUS_RGB0	3
+#       define R300_ALU_ALPHA_SRCP_OP_1_MINUS_2RGB0  0
+#       define R300_ALU_ALPHA_SRCP_OP_RGB1_MINUS_RGB0  1
+#       define R300_ALU_ALPHA_SRCP_OP_RGB1_PLUS_RGB0  2
+#       define R300_ALU_ALPHA_SRCP_OP_1_MINUS_RGB0  3
 #       define R300_ALU_ALPHA_OP(x)                     ((x) << 23)
 #       define R300_ALU_ALPHA_OP_MAD                    0
 #       define R300_ALU_ALPHA_OP_DP                     1
@@ -5054,45 +5056,45 @@
 #define R300_US_ALU_CONST_A_0                           0x4c0c
 #define R300_US_ALU_CONST_A(x)                          (R300_US_ALU_CONST_A_0 + (x)*16)
 
-#define R300_FG_DEPTH_SRC				0x4bd8
-#define R300_FG_FOG_BLEND				0x4bc0
-#define R300_FG_ALPHA_FUNC				0x4bd4
+#define R300_FG_DEPTH_SRC        0x4bd8
+#define R300_FG_FOG_BLEND        0x4bc0
+#define R300_FG_ALPHA_FUNC        0x4bd4
 
-#define R300_DST_PIPE_CONFIG		                0x170c
+#define R300_DST_PIPE_CONFIG                    0x170c
 #       define R300_PIPE_AUTO_CONFIG                    (1 << 31)
-#define R300_RB2D_DSTCACHE_MODE		                0x3428
-#define R300_RB2D_DSTCACHE_MODE		                0x3428
+#define R300_RB2D_DSTCACHE_MODE                    0x3428
+#define R300_RB2D_DSTCACHE_MODE                    0x3428
 #       define R300_DC_AUTOFLUSH_ENABLE                 (1 << 8)
 #       define R300_DC_DC_DISABLE_IGNORE_PE             (1 << 17)
-#define R300_RB2D_DSTCACHE_CTLSTAT		        0x342c /* use DSTCACHE_CTLSTAT instead */
-#define R300_DSTCACHE_CTLSTAT		                0x1714
+#define R300_RB2D_DSTCACHE_CTLSTAT            0x342c /* use DSTCACHE_CTLSTAT instead */
+#define R300_DSTCACHE_CTLSTAT                    0x1714
 #       define R300_DC_FLUSH_2D                         (1 << 0)
 #       define R300_DC_FREE_2D                          (1 << 2)
 #       define R300_RB2D_DC_FLUSH_ALL                   (R300_DC_FLUSH_2D | R300_DC_FREE_2D)
 #       define R300_RB2D_DC_BUSY                        (1 << 31)
-#define R300_RB3D_DSTCACHE_CTLSTAT		        0x4e4c
+#define R300_RB3D_DSTCACHE_CTLSTAT            0x4e4c
 #       define R300_DC_FLUSH_3D                         (2 << 0)
 #       define R300_DC_FREE_3D                          (2 << 2)
 #       define R300_RB3D_DC_FLUSH_ALL                   (R300_DC_FLUSH_3D | R300_DC_FREE_3D)
 #       define R300_DC_FINISH_3D                        (1 << 4)
-#define R300_RB3D_ZCACHE_CTLSTAT			0x4f18
+#define R300_RB3D_ZCACHE_CTLSTAT      0x4f18
 #       define R300_ZC_FLUSH                            (1 << 0)
 #       define R300_ZC_FREE                             (1 << 1)
 #       define R300_ZC_FLUSH_ALL                        0x3
-#define R300_RB3D_ZSTENCILCNTL			        0x4f04
-#define R300_RB3D_ZCACHE_CTLSTAT		        0x4f18
-#define R300_RB3D_BW_CNTL				0x4f1c
-#define R300_RB3D_ZCNTL				        0x4f00
-#define R300_RB3D_ZTOP				        0x4f14
-#define R300_RB3D_ROPCNTL				0x4e18
-#define R300_RB3D_BLENDCNTL				0x4e04
+#define R300_RB3D_ZSTENCILCNTL              0x4f04
+#define R300_RB3D_ZCACHE_CTLSTAT            0x4f18
+#define R300_RB3D_BW_CNTL        0x4f1c
+#define R300_RB3D_ZCNTL                0x4f00
+#define R300_RB3D_ZTOP                0x4f14
+#define R300_RB3D_ROPCNTL        0x4e18
+#define R300_RB3D_BLENDCNTL        0x4e04
 #       define R300_ALPHA_BLEND_ENABLE                  (1 << 0)
 #       define R300_SEPARATE_ALPHA_ENABLE               (1 << 1)
 #       define R300_READ_ENABLE                         (1 << 2)
-#define R300_RB3D_ABLENDCNTL			        0x4e08
-#define R300_RB3D_DSTCACHE_CTLSTAT		        0x4e4c
-#define R300_RB3D_COLOROFFSET0			        0x4e28
-#define R300_RB3D_COLORPITCH0			        0x4e38
+#define R300_RB3D_ABLENDCNTL              0x4e08
+#define R300_RB3D_DSTCACHE_CTLSTAT            0x4e4c
+#define R300_RB3D_COLOROFFSET0              0x4e28
+#define R300_RB3D_COLORPITCH0              0x4e38
 #       define R300_COLORTILE                           (1 << 16)
 #       define R300_COLORENDIAN_WORD                    (1 << 19)
 #       define R300_COLORENDIAN_DWORD                   (2 << 19)
@@ -5108,37 +5110,37 @@
 #       define R300_COLORFORMAT_UV88                    (13 << 21)
 #       define R300_COLORFORMAT_ARGB4444                (15 << 21)
 
-#define R300_RB3D_AARESOLVE_CTL			        0x4e88
-#define R300_RB3D_COLOR_CHANNEL_MASK	                0x4e0c
+#define R300_RB3D_AARESOLVE_CTL              0x4e88
+#define R300_RB3D_COLOR_CHANNEL_MASK                  0x4e0c
 #       define R300_BLUE_MASK_EN                        (1 << 0)
 #       define R300_GREEN_MASK_EN                       (1 << 1)
 #       define R300_RED_MASK_EN                         (1 << 2)
 #       define R300_ALPHA_MASK_EN                       (1 << 3)
 #define R300_RB3D_COLOR_CLEAR_VALUE                     0x4e14
-#define R300_RB3D_DSTCACHE_CTLSTAT		        0x4e4c
-#define R300_RB3D_CCTL				        0x4e00
-#define R300_RB3D_DITHER_CTL			        0x4e50
+#define R300_RB3D_DSTCACHE_CTLSTAT            0x4e4c
+#define R300_RB3D_CCTL                0x4e00
+#define R300_RB3D_DITHER_CTL              0x4e50
 
-#define R300_SC_EDGERULE				0x43a8
-#define R300_SC_SCISSOR0				0x43e0
-#define R300_SC_SCISSOR1				0x43e4
+#define R300_SC_EDGERULE        0x43a8
+#define R300_SC_SCISSOR0        0x43e0
+#define R300_SC_SCISSOR1        0x43e4
 #       define R300_SCISSOR_X_SHIFT                     0
 #       define R300_SCISSOR_Y_SHIFT                     13
-#define R300_SC_CLIP_0_A				0x43b0
-#define R300_SC_CLIP_0_B				0x43b4
+#define R300_SC_CLIP_0_A        0x43b0
+#define R300_SC_CLIP_0_B        0x43b4
 #       define R300_CLIP_X_SHIFT                        0
 #       define R300_CLIP_Y_SHIFT                        13
-#define R300_SC_CLIP_RULE				0x43d0
-#define R300_SC_SCREENDOOR				0x43e8
+#define R300_SC_CLIP_RULE        0x43d0
+#define R300_SC_SCREENDOOR        0x43e8
 
 /* R500 US has to be loaded through an index/data pair */
-#define R500_GA_US_VECTOR_INDEX				0x4250
-#   define R500_US_VECTOR_TYPE_INST			(0 << 16)
-#   define R500_US_VECTOR_TYPE_CONST			(1 << 16)
-#   define R500_US_VECTOR_CLAMP				(1 << 17)
-#   define R500_US_VECTOR_INST_INDEX(x)			((x) | R500_US_VECTOR_TYPE_INST)
-#   define R500_US_VECTOR_CONST_INDEX(x)		((x) | R500_US_VECTOR_TYPE_CONST)
-#define R500_GA_US_VECTOR_DATA				0x4254
+#define R500_GA_US_VECTOR_INDEX        0x4250
+#   define R500_US_VECTOR_TYPE_INST      (0 << 16)
+#   define R500_US_VECTOR_TYPE_CONST      (1 << 16)
+#   define R500_US_VECTOR_CLAMP        (1 << 17)
+#   define R500_US_VECTOR_INST_INDEX(x)      ((x) | R500_US_VECTOR_TYPE_INST)
+#   define R500_US_VECTOR_CONST_INDEX(x)    ((x) | R500_US_VECTOR_TYPE_CONST)
+#define R500_GA_US_VECTOR_DATA        0x4254
 
 /*
  * The R500 unified shader (US) registers come in banks of 512 each, one
@@ -5147,504 +5149,504 @@
  * writes to R500_GA_US_VECTOR_DATA autoincrement the index after the
  * instruction is fully specified.
  */
-#define R500_US_ALU_ALPHA_INST_0			0xa800
-#   define R500_ALPHA_OP_MAD				0
-#   define R500_ALPHA_OP_DP				1
-#   define R500_ALPHA_OP_MIN				2
-#   define R500_ALPHA_OP_MAX				3
-/* #define R500_ALPHA_OP_RESERVED			4 */
-#   define R500_ALPHA_OP_CND				5
-#   define R500_ALPHA_OP_CMP				6
-#   define R500_ALPHA_OP_FRC				7
-#   define R500_ALPHA_OP_EX2				8
-#   define R500_ALPHA_OP_LN2				9
-#   define R500_ALPHA_OP_RCP				10
-#   define R500_ALPHA_OP_RSQ				11
-#   define R500_ALPHA_OP_SIN				12
-#   define R500_ALPHA_OP_COS				13
-#   define R500_ALPHA_OP_MDH				14
-#   define R500_ALPHA_OP_MDV				15
-#   define R500_ALPHA_ADDRD(x)				((x) << 4)
-#   define R500_ALPHA_ADDRD_REL				(1 << 11)
-#   define R500_ALPHA_SEL_A_SRC0			(0 << 12)
-#   define R500_ALPHA_SEL_A_SRC1			(1 << 12)
-#   define R500_ALPHA_SEL_A_SRC2			(2 << 12)
-#   define R500_ALPHA_SEL_A_SRCP			(3 << 12)
-#   define R500_ALPHA_SWIZ_A_R				(0 << 14)
-#   define R500_ALPHA_SWIZ_A_G				(1 << 14)
-#   define R500_ALPHA_SWIZ_A_B				(2 << 14)
-#   define R500_ALPHA_SWIZ_A_A				(3 << 14)
-#   define R500_ALPHA_SWIZ_A_0				(4 << 14)
-#   define R500_ALPHA_SWIZ_A_HALF			(5 << 14)
-#   define R500_ALPHA_SWIZ_A_1				(6 << 14)
-/* #define R500_ALPHA_SWIZ_A_UNUSED			(7 << 14) */
-#   define R500_ALPHA_MOD_A_NOP				(0 << 17)
-#   define R500_ALPHA_MOD_A_NEG				(1 << 17)
-#   define R500_ALPHA_MOD_A_ABS				(2 << 17)
-#   define R500_ALPHA_MOD_A_NAB				(3 << 17)
-#   define R500_ALPHA_SEL_B_SRC0			(0 << 19)
-#   define R500_ALPHA_SEL_B_SRC1			(1 << 19)
-#   define R500_ALPHA_SEL_B_SRC2			(2 << 19)
-#   define R500_ALPHA_SEL_B_SRCP			(3 << 19)
-#   define R500_ALPHA_SWIZ_B_R				(0 << 21)
-#   define R500_ALPHA_SWIZ_B_G				(1 << 21)
-#   define R500_ALPHA_SWIZ_B_B				(2 << 21)
-#   define R500_ALPHA_SWIZ_B_A				(3 << 21)
-#   define R500_ALPHA_SWIZ_B_0				(4 << 21)
-#   define R500_ALPHA_SWIZ_B_HALF			(5 << 21)
-#   define R500_ALPHA_SWIZ_B_1				(6 << 21)
-/* #define R500_ALPHA_SWIZ_B_UNUSED			(7 << 21) */
-#   define R500_ALPHA_MOD_B_NOP				(0 << 24)
-#   define R500_ALPHA_MOD_B_NEG				(1 << 24)
-#   define R500_ALPHA_MOD_B_ABS				(2 << 24)
-#   define R500_ALPHA_MOD_B_NAB				(3 << 24)
-#   define R500_ALPHA_OMOD_IDENTITY			(0 << 26)
-#   define R500_ALPHA_OMOD_MUL_2			(1 << 26)
-#   define R500_ALPHA_OMOD_MUL_4			(2 << 26)
-#   define R500_ALPHA_OMOD_MUL_8			(3 << 26)
-#   define R500_ALPHA_OMOD_DIV_2			(4 << 26)
-#   define R500_ALPHA_OMOD_DIV_4			(5 << 26)
-#   define R500_ALPHA_OMOD_DIV_8			(6 << 26)
-#   define R500_ALPHA_OMOD_DISABLE			(7 << 26)
-#   define R500_ALPHA_TARGET(x)				((x) << 29)
-#   define R500_ALPHA_W_OMASK				(1 << 31)
-#define R500_US_ALU_ALPHA_ADDR_0			0x9800
-#   define R500_ALPHA_ADDR0(x)				((x) << 0)
-#   define R500_ALPHA_ADDR0_CONST			(1 << 8)
-#   define R500_ALPHA_ADDR0_REL				(1 << 9)
-#   define R500_ALPHA_ADDR1(x)				((x) << 10)
-#   define R500_ALPHA_ADDR1_CONST			(1 << 18)
-#   define R500_ALPHA_ADDR1_REL				(1 << 19)
-#   define R500_ALPHA_ADDR2(x)				((x) << 20)
-#   define R500_ALPHA_ADDR2_CONST			(1 << 28)
-#   define R500_ALPHA_ADDR2_REL				(1 << 29)
-#   define R500_ALPHA_SRCP_OP_1_MINUS_2A0		(0 << 30)
-#   define R500_ALPHA_SRCP_OP_A1_MINUS_A0		(1 << 30)
-#   define R500_ALPHA_SRCP_OP_A1_PLUS_A0		(2 << 30)
-#   define R500_ALPHA_SRCP_OP_1_MINUS_A0		(3 << 30)
-#define R500_US_ALU_RGBA_INST_0				0xb000
-#   define R500_ALU_RGBA_OP_MAD				(0 << 0)
-#   define R500_ALU_RGBA_OP_DP3				(1 << 0)
-#   define R500_ALU_RGBA_OP_DP4				(2 << 0)
-#   define R500_ALU_RGBA_OP_D2A				(3 << 0)
-#   define R500_ALU_RGBA_OP_MIN				(4 << 0)
-#   define R500_ALU_RGBA_OP_MAX				(5 << 0)
-/* #define R500_ALU_RGBA_OP_RESERVED			(6 << 0) */
-#   define R500_ALU_RGBA_OP_CND				(7 << 0)
-#   define R500_ALU_RGBA_OP_CMP				(8 << 0)
-#   define R500_ALU_RGBA_OP_FRC				(9 << 0)
-#   define R500_ALU_RGBA_OP_SOP				(10 << 0)
-#   define R500_ALU_RGBA_OP_MDH				(11 << 0)
-#   define R500_ALU_RGBA_OP_MDV				(12 << 0)
-#   define R500_ALU_RGBA_ADDRD(x)			((x) << 4)
-#   define R500_ALU_RGBA_ADDRD_REL			(1 << 11)
-#   define R500_ALU_RGBA_SEL_C_SRC0			(0 << 12)
-#   define R500_ALU_RGBA_SEL_C_SRC1			(1 << 12)
-#   define R500_ALU_RGBA_SEL_C_SRC2			(2 << 12)
-#   define R500_ALU_RGBA_SEL_C_SRCP			(3 << 12)
-#   define R500_ALU_RGBA_R_SWIZ_R			(0 << 14)
-#   define R500_ALU_RGBA_R_SWIZ_G			(1 << 14)
-#   define R500_ALU_RGBA_R_SWIZ_B			(2 << 14)
-#   define R500_ALU_RGBA_R_SWIZ_A			(3 << 14)
-#   define R500_ALU_RGBA_R_SWIZ_0			(4 << 14)
-#   define R500_ALU_RGBA_R_SWIZ_HALF			(5 << 14)
-#   define R500_ALU_RGBA_R_SWIZ_1			(6 << 14)
-/* #define R500_ALU_RGBA_R_SWIZ_UNUSED			(7 << 14) */
-#   define R500_ALU_RGBA_G_SWIZ_R			(0 << 17)
-#   define R500_ALU_RGBA_G_SWIZ_G			(1 << 17)
-#   define R500_ALU_RGBA_G_SWIZ_B			(2 << 17)
-#   define R500_ALU_RGBA_G_SWIZ_A			(3 << 17)
-#   define R500_ALU_RGBA_G_SWIZ_0			(4 << 17)
-#   define R500_ALU_RGBA_G_SWIZ_HALF			(5 << 17)
-#   define R500_ALU_RGBA_G_SWIZ_1			(6 << 17)
-/* #define R500_ALU_RGBA_G_SWIZ_UNUSED			(7 << 17) */
-#   define R500_ALU_RGBA_B_SWIZ_R			(0 << 20)
-#   define R500_ALU_RGBA_B_SWIZ_G			(1 << 20)
-#   define R500_ALU_RGBA_B_SWIZ_B			(2 << 20)
-#   define R500_ALU_RGBA_B_SWIZ_A			(3 << 20)
-#   define R500_ALU_RGBA_B_SWIZ_0			(4 << 20)
-#   define R500_ALU_RGBA_B_SWIZ_HALF			(5 << 20)
-#   define R500_ALU_RGBA_B_SWIZ_1			(6 << 20)
-/* #define R500_ALU_RGBA_B_SWIZ_UNUSED			(7 << 20) */
-#   define R500_ALU_RGBA_MOD_C_NOP			(0 << 23)
-#   define R500_ALU_RGBA_MOD_C_NEG			(1 << 23)
-#   define R500_ALU_RGBA_MOD_C_ABS			(2 << 23)
-#   define R500_ALU_RGBA_MOD_C_NAB			(3 << 23)
-#   define R500_ALU_RGBA_ALPHA_SEL_C_SRC0		(0 << 25)
-#   define R500_ALU_RGBA_ALPHA_SEL_C_SRC1		(1 << 25)
-#   define R500_ALU_RGBA_ALPHA_SEL_C_SRC2		(2 << 25)
-#   define R500_ALU_RGBA_ALPHA_SEL_C_SRCP		(3 << 25)
-#   define R500_ALU_RGBA_A_SWIZ_R			(0 << 27)
-#   define R500_ALU_RGBA_A_SWIZ_G			(1 << 27)
-#   define R500_ALU_RGBA_A_SWIZ_B			(2 << 27)
-#   define R500_ALU_RGBA_A_SWIZ_A			(3 << 27)
-#   define R500_ALU_RGBA_A_SWIZ_0			(4 << 27)
-#   define R500_ALU_RGBA_A_SWIZ_HALF			(5 << 27)
-#   define R500_ALU_RGBA_A_SWIZ_1			(6 << 27)
-/* #define R500_ALU_RGBA_A_SWIZ_UNUSED			(7 << 27) */
-#   define R500_ALU_RGBA_ALPHA_MOD_C_NOP		(0 << 30)
-#   define R500_ALU_RGBA_ALPHA_MOD_C_NEG		(1 << 30)
-#   define R500_ALU_RGBA_ALPHA_MOD_C_ABS		(2 << 30)
-#   define R500_ALU_RGBA_ALPHA_MOD_C_NAB		(3 << 30)
-#define R500_US_ALU_RGB_INST_0				0xa000
-#   define R500_ALU_RGB_SEL_A_SRC0			(0 << 0)
-#   define R500_ALU_RGB_SEL_A_SRC1			(1 << 0)
-#   define R500_ALU_RGB_SEL_A_SRC2			(2 << 0)
-#   define R500_ALU_RGB_SEL_A_SRCP			(3 << 0)
-#   define R500_ALU_RGB_R_SWIZ_A_R			(0 << 2)
-#   define R500_ALU_RGB_R_SWIZ_A_G			(1 << 2)
-#   define R500_ALU_RGB_R_SWIZ_A_B			(2 << 2)
-#   define R500_ALU_RGB_R_SWIZ_A_A			(3 << 2)
-#   define R500_ALU_RGB_R_SWIZ_A_0			(4 << 2)
-#   define R500_ALU_RGB_R_SWIZ_A_HALF			(5 << 2)
-#   define R500_ALU_RGB_R_SWIZ_A_1			(6 << 2)
-/* #define R500_ALU_RGB_R_SWIZ_A_UNUSED			(7 << 2) */
-#   define R500_ALU_RGB_G_SWIZ_A_R			(0 << 5)
-#   define R500_ALU_RGB_G_SWIZ_A_G			(1 << 5)
-#   define R500_ALU_RGB_G_SWIZ_A_B			(2 << 5)
-#   define R500_ALU_RGB_G_SWIZ_A_A			(3 << 5)
-#   define R500_ALU_RGB_G_SWIZ_A_0			(4 << 5)
-#   define R500_ALU_RGB_G_SWIZ_A_HALF			(5 << 5)
-#   define R500_ALU_RGB_G_SWIZ_A_1			(6 << 5)
-/* #define R500_ALU_RGB_G_SWIZ_A_UNUSED			(7 << 5) */
-#   define R500_ALU_RGB_B_SWIZ_A_R			(0 << 8)
-#   define R500_ALU_RGB_B_SWIZ_A_G			(1 << 8)
-#   define R500_ALU_RGB_B_SWIZ_A_B			(2 << 8)
-#   define R500_ALU_RGB_B_SWIZ_A_A			(3 << 8)
-#   define R500_ALU_RGB_B_SWIZ_A_0			(4 << 8)
-#   define R500_ALU_RGB_B_SWIZ_A_HALF			(5 << 8)
-#   define R500_ALU_RGB_B_SWIZ_A_1			(6 << 8)
-/* #define R500_ALU_RGB_B_SWIZ_A_UNUSED			(7 << 8) */
-#   define R500_ALU_RGB_MOD_A_NOP			(0 << 11)
-#   define R500_ALU_RGB_MOD_A_NEG			(1 << 11)
-#   define R500_ALU_RGB_MOD_A_ABS			(2 << 11)
-#   define R500_ALU_RGB_MOD_A_NAB			(3 << 11)
-#   define R500_ALU_RGB_SEL_B_SRC0			(0 << 13)
-#   define R500_ALU_RGB_SEL_B_SRC1			(1 << 13)
-#   define R500_ALU_RGB_SEL_B_SRC2			(2 << 13)
-#   define R500_ALU_RGB_SEL_B_SRCP			(3 << 13)
-#   define R500_ALU_RGB_R_SWIZ_B_R			(0 << 15)
-#   define R500_ALU_RGB_R_SWIZ_B_G			(1 << 15)
-#   define R500_ALU_RGB_R_SWIZ_B_B			(2 << 15)
-#   define R500_ALU_RGB_R_SWIZ_B_A			(3 << 15)
-#   define R500_ALU_RGB_R_SWIZ_B_0			(4 << 15)
-#   define R500_ALU_RGB_R_SWIZ_B_HALF			(5 << 15)
-#   define R500_ALU_RGB_R_SWIZ_B_1			(6 << 15)
-/* #define R500_ALU_RGB_R_SWIZ_B_UNUSED			(7 << 15) */
-#   define R500_ALU_RGB_G_SWIZ_B_R			(0 << 18)
-#   define R500_ALU_RGB_G_SWIZ_B_G			(1 << 18)
-#   define R500_ALU_RGB_G_SWIZ_B_B			(2 << 18)
-#   define R500_ALU_RGB_G_SWIZ_B_A			(3 << 18)
-#   define R500_ALU_RGB_G_SWIZ_B_0			(4 << 18)
-#   define R500_ALU_RGB_G_SWIZ_B_HALF			(5 << 18)
-#   define R500_ALU_RGB_G_SWIZ_B_1			(6 << 18)
-/* #define R500_ALU_RGB_G_SWIZ_B_UNUSED			(7 << 18) */
-#   define R500_ALU_RGB_B_SWIZ_B_R			(0 << 21)
-#   define R500_ALU_RGB_B_SWIZ_B_G			(1 << 21)
-#   define R500_ALU_RGB_B_SWIZ_B_B			(2 << 21)
-#   define R500_ALU_RGB_B_SWIZ_B_A			(3 << 21)
-#   define R500_ALU_RGB_B_SWIZ_B_0			(4 << 21)
-#   define R500_ALU_RGB_B_SWIZ_B_HALF			(5 << 21)
-#   define R500_ALU_RGB_B_SWIZ_B_1			(6 << 21)
-/* #define R500_ALU_RGB_B_SWIZ_B_UNUSED			(7 << 21) */
-#   define R500_ALU_RGB_MOD_B_NOP			(0 << 24)
-#   define R500_ALU_RGB_MOD_B_NEG			(1 << 24)
-#   define R500_ALU_RGB_MOD_B_ABS			(2 << 24)
-#   define R500_ALU_RGB_MOD_B_NAB			(3 << 24)
-#   define R500_ALU_RGB_OMOD_IDENTITY			(0 << 26)
-#   define R500_ALU_RGB_OMOD_MUL_2			(1 << 26)
-#   define R500_ALU_RGB_OMOD_MUL_4			(2 << 26)
-#   define R500_ALU_RGB_OMOD_MUL_8			(3 << 26)
-#   define R500_ALU_RGB_OMOD_DIV_2			(4 << 26)
-#   define R500_ALU_RGB_OMOD_DIV_4			(5 << 26)
-#   define R500_ALU_RGB_OMOD_DIV_8			(6 << 26)
-#   define R500_ALU_RGB_OMOD_DISABLE			(7 << 26)
-#   define R500_ALU_RGB_TARGET(x)			((x) << 29)
-#   define R500_ALU_RGB_WMASK				(1 << 31)
-#define R500_US_ALU_RGB_ADDR_0				0x9000
-#   define R500_RGB_ADDR0(x)				((x) << 0)
-#   define R500_RGB_ADDR0_CONST				(1 << 8)
-#   define R500_RGB_ADDR0_REL				(1 << 9)
-#   define R500_RGB_ADDR1(x)				((x) << 10)
-#   define R500_RGB_ADDR1_CONST				(1 << 18)
-#   define R500_RGB_ADDR1_REL				(1 << 19)
-#   define R500_RGB_ADDR2(x)				((x) << 20)
-#   define R500_RGB_ADDR2_CONST				(1 << 28)
-#   define R500_RGB_ADDR2_REL				(1 << 29)
-#   define R500_RGB_SRCP_OP_1_MINUS_2RGB0		(0 << 30)
-#   define R500_RGB_SRCP_OP_RGB1_MINUS_RGB0		(1 << 30)
-#   define R500_RGB_SRCP_OP_RGB1_PLUS_RGB0		(2 << 30)
-#   define R500_RGB_SRCP_OP_1_MINUS_RGB0		(3 << 30)
-#define R500_US_CMN_INST_0				0xb800
-#   define R500_INST_TYPE_ALU				(0 << 0)
-#   define R500_INST_TYPE_OUT				(1 << 0)
-#   define R500_INST_TYPE_FC				(2 << 0)
-#   define R500_INST_TYPE_TEX				(3 << 0)
-#   define R500_INST_TEX_SEM_WAIT			(1 << 2)
-#   define R500_INST_RGB_PRED_SEL_NONE			(0 << 3)
-#   define R500_INST_RGB_PRED_SEL_RGBA			(1 << 3)
-#   define R500_INST_RGB_PRED_SEL_RRRR			(2 << 3)
-#   define R500_INST_RGB_PRED_SEL_GGGG			(3 << 3)
-#   define R500_INST_RGB_PRED_SEL_BBBB			(4 << 3)
-#   define R500_INST_RGB_PRED_SEL_AAAA			(5 << 3)
-#   define R500_INST_RGB_PRED_INV			(1 << 6)
-#   define R500_INST_WRITE_INACTIVE			(1 << 7)
-#   define R500_INST_LAST				(1 << 8)
-#   define R500_INST_NOP				(1 << 9)
-#   define R500_INST_ALU_WAIT				(1 << 10)
-#   define R500_INST_RGB_WMASK_R			(1 << 11)
-#   define R500_INST_RGB_WMASK_G			(1 << 12)
-#   define R500_INST_RGB_WMASK_B			(1 << 13)
-#   define R500_INST_ALPHA_WMASK			(1 << 14)
-#   define R500_INST_RGB_OMASK_R			(1 << 15)
-#   define R500_INST_RGB_OMASK_G			(1 << 16)
-#   define R500_INST_RGB_OMASK_B			(1 << 17)
-#   define R500_INST_ALPHA_OMASK			(1 << 18)
-#   define R500_INST_RGB_CLAMP				(1 << 19)
-#   define R500_INST_ALPHA_CLAMP			(1 << 20)
-#   define R500_INST_ALU_RESULT_SEL			(1 << 21)
-#   define R500_INST_ALPHA_PRED_INV			(1 << 22)
-#   define R500_INST_ALU_RESULT_OP_EQ			(0 << 23)
-#   define R500_INST_ALU_RESULT_OP_LT			(1 << 23)
-#   define R500_INST_ALU_RESULT_OP_GE			(2 << 23)
-#   define R500_INST_ALU_RESULT_OP_NE			(3 << 23)
-#   define R500_INST_ALPHA_PRED_SEL_NONE		(0 << 25)
-#   define R500_INST_ALPHA_PRED_SEL_RGBA		(1 << 25)
-#   define R500_INST_ALPHA_PRED_SEL_RRRR		(2 << 25)
-#   define R500_INST_ALPHA_PRED_SEL_GGGG		(3 << 25)
-#   define R500_INST_ALPHA_PRED_SEL_BBBB		(4 << 25)
-#   define R500_INST_ALPHA_PRED_SEL_AAAA		(5 << 25)
+#define R500_US_ALU_ALPHA_INST_0      0xa800
+#   define R500_ALPHA_OP_MAD        0
+#   define R500_ALPHA_OP_DP        1
+#   define R500_ALPHA_OP_MIN        2
+#   define R500_ALPHA_OP_MAX        3
+/* #define R500_ALPHA_OP_RESERVED      4 */
+#   define R500_ALPHA_OP_CND        5
+#   define R500_ALPHA_OP_CMP        6
+#   define R500_ALPHA_OP_FRC        7
+#   define R500_ALPHA_OP_EX2        8
+#   define R500_ALPHA_OP_LN2        9
+#   define R500_ALPHA_OP_RCP        10
+#   define R500_ALPHA_OP_RSQ        11
+#   define R500_ALPHA_OP_SIN        12
+#   define R500_ALPHA_OP_COS        13
+#   define R500_ALPHA_OP_MDH        14
+#   define R500_ALPHA_OP_MDV        15
+#   define R500_ALPHA_ADDRD(x)        ((x) << 4)
+#   define R500_ALPHA_ADDRD_REL        (1 << 11)
+#   define R500_ALPHA_SEL_A_SRC0      (0 << 12)
+#   define R500_ALPHA_SEL_A_SRC1      (1 << 12)
+#   define R500_ALPHA_SEL_A_SRC2      (2 << 12)
+#   define R500_ALPHA_SEL_A_SRCP      (3 << 12)
+#   define R500_ALPHA_SWIZ_A_R        (0 << 14)
+#   define R500_ALPHA_SWIZ_A_G        (1 << 14)
+#   define R500_ALPHA_SWIZ_A_B        (2 << 14)
+#   define R500_ALPHA_SWIZ_A_A        (3 << 14)
+#   define R500_ALPHA_SWIZ_A_0        (4 << 14)
+#   define R500_ALPHA_SWIZ_A_HALF      (5 << 14)
+#   define R500_ALPHA_SWIZ_A_1        (6 << 14)
+/* #define R500_ALPHA_SWIZ_A_UNUSED      (7 << 14) */
+#   define R500_ALPHA_MOD_A_NOP        (0 << 17)
+#   define R500_ALPHA_MOD_A_NEG        (1 << 17)
+#   define R500_ALPHA_MOD_A_ABS        (2 << 17)
+#   define R500_ALPHA_MOD_A_NAB        (3 << 17)
+#   define R500_ALPHA_SEL_B_SRC0      (0 << 19)
+#   define R500_ALPHA_SEL_B_SRC1      (1 << 19)
+#   define R500_ALPHA_SEL_B_SRC2      (2 << 19)
+#   define R500_ALPHA_SEL_B_SRCP      (3 << 19)
+#   define R500_ALPHA_SWIZ_B_R        (0 << 21)
+#   define R500_ALPHA_SWIZ_B_G        (1 << 21)
+#   define R500_ALPHA_SWIZ_B_B        (2 << 21)
+#   define R500_ALPHA_SWIZ_B_A        (3 << 21)
+#   define R500_ALPHA_SWIZ_B_0        (4 << 21)
+#   define R500_ALPHA_SWIZ_B_HALF      (5 << 21)
+#   define R500_ALPHA_SWIZ_B_1        (6 << 21)
+/* #define R500_ALPHA_SWIZ_B_UNUSED      (7 << 21) */
+#   define R500_ALPHA_MOD_B_NOP        (0 << 24)
+#   define R500_ALPHA_MOD_B_NEG        (1 << 24)
+#   define R500_ALPHA_MOD_B_ABS        (2 << 24)
+#   define R500_ALPHA_MOD_B_NAB        (3 << 24)
+#   define R500_ALPHA_OMOD_IDENTITY      (0 << 26)
+#   define R500_ALPHA_OMOD_MUL_2      (1 << 26)
+#   define R500_ALPHA_OMOD_MUL_4      (2 << 26)
+#   define R500_ALPHA_OMOD_MUL_8      (3 << 26)
+#   define R500_ALPHA_OMOD_DIV_2      (4 << 26)
+#   define R500_ALPHA_OMOD_DIV_4      (5 << 26)
+#   define R500_ALPHA_OMOD_DIV_8      (6 << 26)
+#   define R500_ALPHA_OMOD_DISABLE      (7 << 26)
+#   define R500_ALPHA_TARGET(x)        ((x) << 29)
+#   define R500_ALPHA_W_OMASK        (1 << 31)
+#define R500_US_ALU_ALPHA_ADDR_0      0x9800
+#   define R500_ALPHA_ADDR0(x)        ((x) << 0)
+#   define R500_ALPHA_ADDR0_CONST      (1 << 8)
+#   define R500_ALPHA_ADDR0_REL        (1 << 9)
+#   define R500_ALPHA_ADDR1(x)        ((x) << 10)
+#   define R500_ALPHA_ADDR1_CONST      (1 << 18)
+#   define R500_ALPHA_ADDR1_REL        (1 << 19)
+#   define R500_ALPHA_ADDR2(x)        ((x) << 20)
+#   define R500_ALPHA_ADDR2_CONST      (1 << 28)
+#   define R500_ALPHA_ADDR2_REL        (1 << 29)
+#   define R500_ALPHA_SRCP_OP_1_MINUS_2A0    (0 << 30)
+#   define R500_ALPHA_SRCP_OP_A1_MINUS_A0    (1 << 30)
+#   define R500_ALPHA_SRCP_OP_A1_PLUS_A0    (2 << 30)
+#   define R500_ALPHA_SRCP_OP_1_MINUS_A0    (3 << 30)
+#define R500_US_ALU_RGBA_INST_0        0xb000
+#   define R500_ALU_RGBA_OP_MAD        (0 << 0)
+#   define R500_ALU_RGBA_OP_DP3        (1 << 0)
+#   define R500_ALU_RGBA_OP_DP4        (2 << 0)
+#   define R500_ALU_RGBA_OP_D2A        (3 << 0)
+#   define R500_ALU_RGBA_OP_MIN        (4 << 0)
+#   define R500_ALU_RGBA_OP_MAX        (5 << 0)
+/* #define R500_ALU_RGBA_OP_RESERVED      (6 << 0) */
+#   define R500_ALU_RGBA_OP_CND        (7 << 0)
+#   define R500_ALU_RGBA_OP_CMP        (8 << 0)
+#   define R500_ALU_RGBA_OP_FRC        (9 << 0)
+#   define R500_ALU_RGBA_OP_SOP        (10 << 0)
+#   define R500_ALU_RGBA_OP_MDH        (11 << 0)
+#   define R500_ALU_RGBA_OP_MDV        (12 << 0)
+#   define R500_ALU_RGBA_ADDRD(x)      ((x) << 4)
+#   define R500_ALU_RGBA_ADDRD_REL      (1 << 11)
+#   define R500_ALU_RGBA_SEL_C_SRC0      (0 << 12)
+#   define R500_ALU_RGBA_SEL_C_SRC1      (1 << 12)
+#   define R500_ALU_RGBA_SEL_C_SRC2      (2 << 12)
+#   define R500_ALU_RGBA_SEL_C_SRCP      (3 << 12)
+#   define R500_ALU_RGBA_R_SWIZ_R      (0 << 14)
+#   define R500_ALU_RGBA_R_SWIZ_G      (1 << 14)
+#   define R500_ALU_RGBA_R_SWIZ_B      (2 << 14)
+#   define R500_ALU_RGBA_R_SWIZ_A      (3 << 14)
+#   define R500_ALU_RGBA_R_SWIZ_0      (4 << 14)
+#   define R500_ALU_RGBA_R_SWIZ_HALF      (5 << 14)
+#   define R500_ALU_RGBA_R_SWIZ_1      (6 << 14)
+/* #define R500_ALU_RGBA_R_SWIZ_UNUSED      (7 << 14) */
+#   define R500_ALU_RGBA_G_SWIZ_R      (0 << 17)
+#   define R500_ALU_RGBA_G_SWIZ_G      (1 << 17)
+#   define R500_ALU_RGBA_G_SWIZ_B      (2 << 17)
+#   define R500_ALU_RGBA_G_SWIZ_A      (3 << 17)
+#   define R500_ALU_RGBA_G_SWIZ_0      (4 << 17)
+#   define R500_ALU_RGBA_G_SWIZ_HALF      (5 << 17)
+#   define R500_ALU_RGBA_G_SWIZ_1      (6 << 17)
+/* #define R500_ALU_RGBA_G_SWIZ_UNUSED      (7 << 17) */
+#   define R500_ALU_RGBA_B_SWIZ_R      (0 << 20)
+#   define R500_ALU_RGBA_B_SWIZ_G      (1 << 20)
+#   define R500_ALU_RGBA_B_SWIZ_B      (2 << 20)
+#   define R500_ALU_RGBA_B_SWIZ_A      (3 << 20)
+#   define R500_ALU_RGBA_B_SWIZ_0      (4 << 20)
+#   define R500_ALU_RGBA_B_SWIZ_HALF      (5 << 20)
+#   define R500_ALU_RGBA_B_SWIZ_1      (6 << 20)
+/* #define R500_ALU_RGBA_B_SWIZ_UNUSED      (7 << 20) */
+#   define R500_ALU_RGBA_MOD_C_NOP      (0 << 23)
+#   define R500_ALU_RGBA_MOD_C_NEG      (1 << 23)
+#   define R500_ALU_RGBA_MOD_C_ABS      (2 << 23)
+#   define R500_ALU_RGBA_MOD_C_NAB      (3 << 23)
+#   define R500_ALU_RGBA_ALPHA_SEL_C_SRC0    (0 << 25)
+#   define R500_ALU_RGBA_ALPHA_SEL_C_SRC1    (1 << 25)
+#   define R500_ALU_RGBA_ALPHA_SEL_C_SRC2    (2 << 25)
+#   define R500_ALU_RGBA_ALPHA_SEL_C_SRCP    (3 << 25)
+#   define R500_ALU_RGBA_A_SWIZ_R      (0 << 27)
+#   define R500_ALU_RGBA_A_SWIZ_G      (1 << 27)
+#   define R500_ALU_RGBA_A_SWIZ_B      (2 << 27)
+#   define R500_ALU_RGBA_A_SWIZ_A      (3 << 27)
+#   define R500_ALU_RGBA_A_SWIZ_0      (4 << 27)
+#   define R500_ALU_RGBA_A_SWIZ_HALF      (5 << 27)
+#   define R500_ALU_RGBA_A_SWIZ_1      (6 << 27)
+/* #define R500_ALU_RGBA_A_SWIZ_UNUSED      (7 << 27) */
+#   define R500_ALU_RGBA_ALPHA_MOD_C_NOP    (0 << 30)
+#   define R500_ALU_RGBA_ALPHA_MOD_C_NEG    (1 << 30)
+#   define R500_ALU_RGBA_ALPHA_MOD_C_ABS    (2 << 30)
+#   define R500_ALU_RGBA_ALPHA_MOD_C_NAB    (3 << 30)
+#define R500_US_ALU_RGB_INST_0        0xa000
+#   define R500_ALU_RGB_SEL_A_SRC0      (0 << 0)
+#   define R500_ALU_RGB_SEL_A_SRC1      (1 << 0)
+#   define R500_ALU_RGB_SEL_A_SRC2      (2 << 0)
+#   define R500_ALU_RGB_SEL_A_SRCP      (3 << 0)
+#   define R500_ALU_RGB_R_SWIZ_A_R      (0 << 2)
+#   define R500_ALU_RGB_R_SWIZ_A_G      (1 << 2)
+#   define R500_ALU_RGB_R_SWIZ_A_B      (2 << 2)
+#   define R500_ALU_RGB_R_SWIZ_A_A      (3 << 2)
+#   define R500_ALU_RGB_R_SWIZ_A_0      (4 << 2)
+#   define R500_ALU_RGB_R_SWIZ_A_HALF      (5 << 2)
+#   define R500_ALU_RGB_R_SWIZ_A_1      (6 << 2)
+/* #define R500_ALU_RGB_R_SWIZ_A_UNUSED      (7 << 2) */
+#   define R500_ALU_RGB_G_SWIZ_A_R      (0 << 5)
+#   define R500_ALU_RGB_G_SWIZ_A_G      (1 << 5)
+#   define R500_ALU_RGB_G_SWIZ_A_B      (2 << 5)
+#   define R500_ALU_RGB_G_SWIZ_A_A      (3 << 5)
+#   define R500_ALU_RGB_G_SWIZ_A_0      (4 << 5)
+#   define R500_ALU_RGB_G_SWIZ_A_HALF      (5 << 5)
+#   define R500_ALU_RGB_G_SWIZ_A_1      (6 << 5)
+/* #define R500_ALU_RGB_G_SWIZ_A_UNUSED      (7 << 5) */
+#   define R500_ALU_RGB_B_SWIZ_A_R      (0 << 8)
+#   define R500_ALU_RGB_B_SWIZ_A_G      (1 << 8)
+#   define R500_ALU_RGB_B_SWIZ_A_B      (2 << 8)
+#   define R500_ALU_RGB_B_SWIZ_A_A      (3 << 8)
+#   define R500_ALU_RGB_B_SWIZ_A_0      (4 << 8)
+#   define R500_ALU_RGB_B_SWIZ_A_HALF      (5 << 8)
+#   define R500_ALU_RGB_B_SWIZ_A_1      (6 << 8)
+/* #define R500_ALU_RGB_B_SWIZ_A_UNUSED      (7 << 8) */
+#   define R500_ALU_RGB_MOD_A_NOP      (0 << 11)
+#   define R500_ALU_RGB_MOD_A_NEG      (1 << 11)
+#   define R500_ALU_RGB_MOD_A_ABS      (2 << 11)
+#   define R500_ALU_RGB_MOD_A_NAB      (3 << 11)
+#   define R500_ALU_RGB_SEL_B_SRC0      (0 << 13)
+#   define R500_ALU_RGB_SEL_B_SRC1      (1 << 13)
+#   define R500_ALU_RGB_SEL_B_SRC2      (2 << 13)
+#   define R500_ALU_RGB_SEL_B_SRCP      (3 << 13)
+#   define R500_ALU_RGB_R_SWIZ_B_R      (0 << 15)
+#   define R500_ALU_RGB_R_SWIZ_B_G      (1 << 15)
+#   define R500_ALU_RGB_R_SWIZ_B_B      (2 << 15)
+#   define R500_ALU_RGB_R_SWIZ_B_A      (3 << 15)
+#   define R500_ALU_RGB_R_SWIZ_B_0      (4 << 15)
+#   define R500_ALU_RGB_R_SWIZ_B_HALF      (5 << 15)
+#   define R500_ALU_RGB_R_SWIZ_B_1      (6 << 15)
+/* #define R500_ALU_RGB_R_SWIZ_B_UNUSED      (7 << 15) */
+#   define R500_ALU_RGB_G_SWIZ_B_R      (0 << 18)
+#   define R500_ALU_RGB_G_SWIZ_B_G      (1 << 18)
+#   define R500_ALU_RGB_G_SWIZ_B_B      (2 << 18)
+#   define R500_ALU_RGB_G_SWIZ_B_A      (3 << 18)
+#   define R500_ALU_RGB_G_SWIZ_B_0      (4 << 18)
+#   define R500_ALU_RGB_G_SWIZ_B_HALF      (5 << 18)
+#   define R500_ALU_RGB_G_SWIZ_B_1      (6 << 18)
+/* #define R500_ALU_RGB_G_SWIZ_B_UNUSED      (7 << 18) */
+#   define R500_ALU_RGB_B_SWIZ_B_R      (0 << 21)
+#   define R500_ALU_RGB_B_SWIZ_B_G      (1 << 21)
+#   define R500_ALU_RGB_B_SWIZ_B_B      (2 << 21)
+#   define R500_ALU_RGB_B_SWIZ_B_A      (3 << 21)
+#   define R500_ALU_RGB_B_SWIZ_B_0      (4 << 21)
+#   define R500_ALU_RGB_B_SWIZ_B_HALF      (5 << 21)
+#   define R500_ALU_RGB_B_SWIZ_B_1      (6 << 21)
+/* #define R500_ALU_RGB_B_SWIZ_B_UNUSED      (7 << 21) */
+#   define R500_ALU_RGB_MOD_B_NOP      (0 << 24)
+#   define R500_ALU_RGB_MOD_B_NEG      (1 << 24)
+#   define R500_ALU_RGB_MOD_B_ABS      (2 << 24)
+#   define R500_ALU_RGB_MOD_B_NAB      (3 << 24)
+#   define R500_ALU_RGB_OMOD_IDENTITY      (0 << 26)
+#   define R500_ALU_RGB_OMOD_MUL_2      (1 << 26)
+#   define R500_ALU_RGB_OMOD_MUL_4      (2 << 26)
+#   define R500_ALU_RGB_OMOD_MUL_8      (3 << 26)
+#   define R500_ALU_RGB_OMOD_DIV_2      (4 << 26)
+#   define R500_ALU_RGB_OMOD_DIV_4      (5 << 26)
+#   define R500_ALU_RGB_OMOD_DIV_8      (6 << 26)
+#   define R500_ALU_RGB_OMOD_DISABLE      (7 << 26)
+#   define R500_ALU_RGB_TARGET(x)      ((x) << 29)
+#   define R500_ALU_RGB_WMASK        (1 << 31)
+#define R500_US_ALU_RGB_ADDR_0        0x9000
+#   define R500_RGB_ADDR0(x)        ((x) << 0)
+#   define R500_RGB_ADDR0_CONST        (1 << 8)
+#   define R500_RGB_ADDR0_REL        (1 << 9)
+#   define R500_RGB_ADDR1(x)        ((x) << 10)
+#   define R500_RGB_ADDR1_CONST        (1 << 18)
+#   define R500_RGB_ADDR1_REL        (1 << 19)
+#   define R500_RGB_ADDR2(x)        ((x) << 20)
+#   define R500_RGB_ADDR2_CONST        (1 << 28)
+#   define R500_RGB_ADDR2_REL        (1 << 29)
+#   define R500_RGB_SRCP_OP_1_MINUS_2RGB0    (0 << 30)
+#   define R500_RGB_SRCP_OP_RGB1_MINUS_RGB0    (1 << 30)
+#   define R500_RGB_SRCP_OP_RGB1_PLUS_RGB0    (2 << 30)
+#   define R500_RGB_SRCP_OP_1_MINUS_RGB0    (3 << 30)
+#define R500_US_CMN_INST_0        0xb800
+#   define R500_INST_TYPE_ALU        (0 << 0)
+#   define R500_INST_TYPE_OUT        (1 << 0)
+#   define R500_INST_TYPE_FC        (2 << 0)
+#   define R500_INST_TYPE_TEX        (3 << 0)
+#   define R500_INST_TEX_SEM_WAIT      (1 << 2)
+#   define R500_INST_RGB_PRED_SEL_NONE      (0 << 3)
+#   define R500_INST_RGB_PRED_SEL_RGBA      (1 << 3)
+#   define R500_INST_RGB_PRED_SEL_RRRR      (2 << 3)
+#   define R500_INST_RGB_PRED_SEL_GGGG      (3 << 3)
+#   define R500_INST_RGB_PRED_SEL_BBBB      (4 << 3)
+#   define R500_INST_RGB_PRED_SEL_AAAA      (5 << 3)
+#   define R500_INST_RGB_PRED_INV      (1 << 6)
+#   define R500_INST_WRITE_INACTIVE      (1 << 7)
+#   define R500_INST_LAST        (1 << 8)
+#   define R500_INST_NOP        (1 << 9)
+#   define R500_INST_ALU_WAIT        (1 << 10)
+#   define R500_INST_RGB_WMASK_R      (1 << 11)
+#   define R500_INST_RGB_WMASK_G      (1 << 12)
+#   define R500_INST_RGB_WMASK_B      (1 << 13)
+#   define R500_INST_ALPHA_WMASK      (1 << 14)
+#   define R500_INST_RGB_OMASK_R      (1 << 15)
+#   define R500_INST_RGB_OMASK_G      (1 << 16)
+#   define R500_INST_RGB_OMASK_B      (1 << 17)
+#   define R500_INST_ALPHA_OMASK      (1 << 18)
+#   define R500_INST_RGB_CLAMP        (1 << 19)
+#   define R500_INST_ALPHA_CLAMP      (1 << 20)
+#   define R500_INST_ALU_RESULT_SEL      (1 << 21)
+#   define R500_INST_ALPHA_PRED_INV      (1 << 22)
+#   define R500_INST_ALU_RESULT_OP_EQ      (0 << 23)
+#   define R500_INST_ALU_RESULT_OP_LT      (1 << 23)
+#   define R500_INST_ALU_RESULT_OP_GE      (2 << 23)
+#   define R500_INST_ALU_RESULT_OP_NE      (3 << 23)
+#   define R500_INST_ALPHA_PRED_SEL_NONE    (0 << 25)
+#   define R500_INST_ALPHA_PRED_SEL_RGBA    (1 << 25)
+#   define R500_INST_ALPHA_PRED_SEL_RRRR    (2 << 25)
+#   define R500_INST_ALPHA_PRED_SEL_GGGG    (3 << 25)
+#   define R500_INST_ALPHA_PRED_SEL_BBBB    (4 << 25)
+#   define R500_INST_ALPHA_PRED_SEL_AAAA    (5 << 25)
 /* XXX next four are kind of guessed */
-#   define R500_INST_STAT_WE_R				(1 << 28)
-#   define R500_INST_STAT_WE_G				(1 << 29)
-#   define R500_INST_STAT_WE_B				(1 << 30)
-#   define R500_INST_STAT_WE_A				(1 << 31)
+#   define R500_INST_STAT_WE_R        (1 << 28)
+#   define R500_INST_STAT_WE_G        (1 << 29)
+#   define R500_INST_STAT_WE_B        (1 << 30)
+#   define R500_INST_STAT_WE_A        (1 << 31)
 /* note that these are 8 bit lengths, despite the offsets, at least for R500 */
-#define R500_US_CODE_ADDR				0x4630
-#   define R500_US_CODE_START_ADDR(x)			((x) << 0)
-#   define R500_US_CODE_END_ADDR(x)			((x) << 16)
-#define R500_US_CODE_OFFSET				0x4638
-#   define R500_US_CODE_OFFSET_ADDR(x)			((x) << 0)
-#define R500_US_CODE_RANGE				0x4634
-#   define R500_US_CODE_RANGE_ADDR(x)			((x) << 0)
-#   define R500_US_CODE_RANGE_SIZE(x)			((x) << 16)
-#define R500_US_CONFIG					0x4600
-#   define R500_ZERO_TIMES_ANYTHING_EQUALS_ZERO		(1 << 1)
-#define R500_US_FC_ADDR_0				0xa000
-#   define R500_FC_BOOL_ADDR(x)				((x) << 0)
-#   define R500_FC_INT_ADDR(x)				((x) << 8)
-#   define R500_FC_JUMP_ADDR(x)				((x) << 16)
-#   define R500_FC_JUMP_GLOBAL				(1 << 31)
-#define R500_US_FC_BOOL_CONST				0x4620
-#   define R500_FC_KBOOL(x)				(x)
-#define R500_US_FC_CTRL					0x4624
-#   define R500_FC_TEST_EN				(1 << 30)
-#   define R500_FC_FULL_FC_EN				(1 << 31)
-#define R500_US_FC_INST_0				0x9800
-#   define R500_FC_OP_JUMP				(0 << 0)
-#   define R500_FC_OP_LOOP				(1 << 0)
-#   define R500_FC_OP_ENDLOOP				(2 << 0)
-#   define R500_FC_OP_REP				(3 << 0)
-#   define R500_FC_OP_ENDREP				(4 << 0)
-#   define R500_FC_OP_BREAKLOOP				(5 << 0)
-#   define R500_FC_OP_BREAKREP				(6 << 0)
-#   define R500_FC_OP_CONTINUE				(7 << 0)
-#   define R500_FC_B_ELSE				(1 << 4)
-#   define R500_FC_JUMP_ANY				(1 << 5)
-#   define R500_FC_A_OP_NONE				(0 << 6)
-#   define R500_FC_A_OP_POP				(1 << 6)
-#   define R500_FC_A_OP_PUSH				(2 << 6)
-#   define R500_FC_JUMP_FUNC(x)				((x) << 8)
-#   define R500_FC_B_POP_CNT(x)				((x) << 16)
-#   define R500_FC_B_OP0_NONE				(0 << 24)
-#   define R500_FC_B_OP0_DECR				(1 << 24)
-#   define R500_FC_B_OP0_INCR				(2 << 24)
-#   define R500_FC_B_OP1_DECR				(0 << 26)
-#   define R500_FC_B_OP1_NONE				(1 << 26)
-#   define R500_FC_B_OP1_INCR				(2 << 26)
-#   define R500_FC_IGNORE_UNCOVERED			(1 << 28)
-#define R500_US_FC_INT_CONST_0				0x4c00
-#   define R500_FC_INT_CONST_KR(x)			((x) << 0)
-#   define R500_FC_INT_CONST_KG(x)			((x) << 8)
-#   define R500_FC_INT_CONST_KB(x)			((x) << 16)
+#define R500_US_CODE_ADDR        0x4630
+#   define R500_US_CODE_START_ADDR(x)      ((x) << 0)
+#   define R500_US_CODE_END_ADDR(x)      ((x) << 16)
+#define R500_US_CODE_OFFSET        0x4638
+#   define R500_US_CODE_OFFSET_ADDR(x)      ((x) << 0)
+#define R500_US_CODE_RANGE        0x4634
+#   define R500_US_CODE_RANGE_ADDR(x)      ((x) << 0)
+#   define R500_US_CODE_RANGE_SIZE(x)      ((x) << 16)
+#define R500_US_CONFIG          0x4600
+#   define R500_ZERO_TIMES_ANYTHING_EQUALS_ZERO    (1 << 1)
+#define R500_US_FC_ADDR_0        0xa000
+#   define R500_FC_BOOL_ADDR(x)        ((x) << 0)
+#   define R500_FC_INT_ADDR(x)        ((x) << 8)
+#   define R500_FC_JUMP_ADDR(x)        ((x) << 16)
+#   define R500_FC_JUMP_GLOBAL        (1 << 31)
+#define R500_US_FC_BOOL_CONST        0x4620
+#   define R500_FC_KBOOL(x)        (x)
+#define R500_US_FC_CTRL          0x4624
+#   define R500_FC_TEST_EN        (1 << 30)
+#   define R500_FC_FULL_FC_EN        (1 << 31)
+#define R500_US_FC_INST_0        0x9800
+#   define R500_FC_OP_JUMP        (0 << 0)
+#   define R500_FC_OP_LOOP        (1 << 0)
+#   define R500_FC_OP_ENDLOOP        (2 << 0)
+#   define R500_FC_OP_REP        (3 << 0)
+#   define R500_FC_OP_ENDREP        (4 << 0)
+#   define R500_FC_OP_BREAKLOOP        (5 << 0)
+#   define R500_FC_OP_BREAKREP        (6 << 0)
+#   define R500_FC_OP_CONTINUE        (7 << 0)
+#   define R500_FC_B_ELSE        (1 << 4)
+#   define R500_FC_JUMP_ANY        (1 << 5)
+#   define R500_FC_A_OP_NONE        (0 << 6)
+#   define R500_FC_A_OP_POP        (1 << 6)
+#   define R500_FC_A_OP_PUSH        (2 << 6)
+#   define R500_FC_JUMP_FUNC(x)        ((x) << 8)
+#   define R500_FC_B_POP_CNT(x)        ((x) << 16)
+#   define R500_FC_B_OP0_NONE        (0 << 24)
+#   define R500_FC_B_OP0_DECR        (1 << 24)
+#   define R500_FC_B_OP0_INCR        (2 << 24)
+#   define R500_FC_B_OP1_DECR        (0 << 26)
+#   define R500_FC_B_OP1_NONE        (1 << 26)
+#   define R500_FC_B_OP1_INCR        (2 << 26)
+#   define R500_FC_IGNORE_UNCOVERED      (1 << 28)
+#define R500_US_FC_INT_CONST_0        0x4c00
+#   define R500_FC_INT_CONST_KR(x)      ((x) << 0)
+#   define R500_FC_INT_CONST_KG(x)      ((x) << 8)
+#   define R500_FC_INT_CONST_KB(x)      ((x) << 16)
 /* _0 through _15 */
-#define R500_US_FORMAT0_0				0x4640
-#   define R500_FORMAT_TXWIDTH(x)			((x) << 0)
-#   define R500_FORMAT_TXHEIGHT(x)			((x) << 11)
-#   define R500_FORMAT_TXDEPTH(x)			((x) << 22)
+#define R500_US_FORMAT0_0        0x4640
+#   define R500_FORMAT_TXWIDTH(x)      ((x) << 0)
+#   define R500_FORMAT_TXHEIGHT(x)      ((x) << 11)
+#   define R500_FORMAT_TXDEPTH(x)      ((x) << 22)
 /* _0 through _3 */
-#define R500_US_OUT_FMT_0				0x46a4
-#   define R500_OUT_FMT_C4_8				(0 << 0)
-#   define R500_OUT_FMT_C4_10				(1 << 0)
-#   define R500_OUT_FMT_C4_10_GAMMA			(2 << 0)
-#   define R500_OUT_FMT_C_16				(3 << 0)
-#   define R500_OUT_FMT_C2_16				(4 << 0)
-#   define R500_OUT_FMT_C4_16				(5 << 0)
-#   define R500_OUT_FMT_C_16_MPEG			(6 << 0)
-#   define R500_OUT_FMT_C2_16_MPEG			(7 << 0)
-#   define R500_OUT_FMT_C2_4				(8 << 0)
-#   define R500_OUT_FMT_C_3_3_2				(9 << 0)
-#   define R500_OUT_FMT_C_6_5_6				(10 << 0)
-#   define R500_OUT_FMT_C_11_11_10			(11 << 0)
-#   define R500_OUT_FMT_C_10_11_11			(12 << 0)
-#   define R500_OUT_FMT_C_2_10_10_10			(13 << 0)
-/* #define R500_OUT_FMT_RESERVED			(14 << 0) */
-#   define R500_OUT_FMT_UNUSED				(15 << 0)
-#   define R500_OUT_FMT_C_16_FP				(16 << 0)
-#   define R500_OUT_FMT_C2_16_FP			(17 << 0)
-#   define R500_OUT_FMT_C4_16_FP			(18 << 0)
-#   define R500_OUT_FMT_C_32_FP				(19 << 0)
-#   define R500_OUT_FMT_C2_32_FP			(20 << 0)
-#   define R500_OUT_FMT_C4_32_FP			(21 << 0)
-#   define R500_C0_SEL_A				(0 << 8)
-#   define R500_C0_SEL_R				(1 << 8)
-#   define R500_C0_SEL_G				(2 << 8)
-#   define R500_C0_SEL_B				(3 << 8)
-#   define R500_C1_SEL_A				(0 << 10)
-#   define R500_C1_SEL_R				(1 << 10)
-#   define R500_C1_SEL_G				(2 << 10)
-#   define R500_C1_SEL_B				(3 << 10)
-#   define R500_C2_SEL_A				(0 << 12)
-#   define R500_C2_SEL_R				(1 << 12)
-#   define R500_C2_SEL_G				(2 << 12)
-#   define R500_C2_SEL_B				(3 << 12)
-#   define R500_C3_SEL_A				(0 << 14)
-#   define R500_C3_SEL_R				(1 << 14)
-#   define R500_C3_SEL_G				(2 << 14)
-#   define R500_C3_SEL_B				(3 << 14)
-#   define R500_OUT_SIGN(x)				((x) << 16)
-#   define R500_ROUND_ADJ				(1 << 20)
-#define R500_US_PIXSIZE					0x4604
-#   define R500_PIX_SIZE(x)				(x)
-#define R500_US_TEX_ADDR_0				0x9800
-#   define R500_TEX_SRC_ADDR(x)				((x) << 0)
-#   define R500_TEX_SRC_ADDR_REL			(1 << 7)
-#   define R500_TEX_SRC_S_SWIZ_R			(0 << 8)
-#   define R500_TEX_SRC_S_SWIZ_G			(1 << 8)
-#   define R500_TEX_SRC_S_SWIZ_B			(2 << 8)
-#   define R500_TEX_SRC_S_SWIZ_A			(3 << 8)
-#   define R500_TEX_SRC_T_SWIZ_R			(0 << 10)
-#   define R500_TEX_SRC_T_SWIZ_G			(1 << 10)
-#   define R500_TEX_SRC_T_SWIZ_B			(2 << 10)
-#   define R500_TEX_SRC_T_SWIZ_A			(3 << 10)
-#   define R500_TEX_SRC_R_SWIZ_R			(0 << 12)
-#   define R500_TEX_SRC_R_SWIZ_G			(1 << 12)
-#   define R500_TEX_SRC_R_SWIZ_B			(2 << 12)
-#   define R500_TEX_SRC_R_SWIZ_A			(3 << 12)
-#   define R500_TEX_SRC_Q_SWIZ_R			(0 << 14)
-#   define R500_TEX_SRC_Q_SWIZ_G			(1 << 14)
-#   define R500_TEX_SRC_Q_SWIZ_B			(2 << 14)
-#   define R500_TEX_SRC_Q_SWIZ_A			(3 << 14)
-#   define R500_TEX_DST_ADDR(x)				((x) << 16)
-#   define R500_TEX_DST_ADDR_REL			(1 << 23)
-#   define R500_TEX_DST_R_SWIZ_R			(0 << 24)
-#   define R500_TEX_DST_R_SWIZ_G			(1 << 24)
-#   define R500_TEX_DST_R_SWIZ_B			(2 << 24)
-#   define R500_TEX_DST_R_SWIZ_A			(3 << 24)
-#   define R500_TEX_DST_G_SWIZ_R			(0 << 26)
-#   define R500_TEX_DST_G_SWIZ_G			(1 << 26)
-#   define R500_TEX_DST_G_SWIZ_B			(2 << 26)
-#   define R500_TEX_DST_G_SWIZ_A			(3 << 26)
-#   define R500_TEX_DST_B_SWIZ_R			(0 << 28)
-#   define R500_TEX_DST_B_SWIZ_G			(1 << 28)
-#   define R500_TEX_DST_B_SWIZ_B			(2 << 28)
-#   define R500_TEX_DST_B_SWIZ_A			(3 << 28)
-#   define R500_TEX_DST_A_SWIZ_R			(0 << 30)
-#   define R500_TEX_DST_A_SWIZ_G			(1 << 30)
-#   define R500_TEX_DST_A_SWIZ_B			(2 << 30)
-#   define R500_TEX_DST_A_SWIZ_A			(3 << 30)
-#define R500_US_TEX_ADDR_DXDY_0				0xa000
-#   define R500_DX_ADDR(x)				((x) << 0)
-#   define R500_DX_ADDR_REL				(1 << 7)
-#   define R500_DX_S_SWIZ_R				(0 << 8)
-#   define R500_DX_S_SWIZ_G				(1 << 8)
-#   define R500_DX_S_SWIZ_B				(2 << 8)
-#   define R500_DX_S_SWIZ_A				(3 << 8)
-#   define R500_DX_T_SWIZ_R				(0 << 10)
-#   define R500_DX_T_SWIZ_G				(1 << 10)
-#   define R500_DX_T_SWIZ_B				(2 << 10)
-#   define R500_DX_T_SWIZ_A				(3 << 10)
-#   define R500_DX_R_SWIZ_R				(0 << 12)
-#   define R500_DX_R_SWIZ_G				(1 << 12)
-#   define R500_DX_R_SWIZ_B				(2 << 12)
-#   define R500_DX_R_SWIZ_A				(3 << 12)
-#   define R500_DX_Q_SWIZ_R				(0 << 14)
-#   define R500_DX_Q_SWIZ_G				(1 << 14)
-#   define R500_DX_Q_SWIZ_B				(2 << 14)
-#   define R500_DX_Q_SWIZ_A				(3 << 14)
-#   define R500_DY_ADDR(x)				((x) << 16)
-#   define R500_DY_ADDR_REL				(1 << 17)
-#   define R500_DY_S_SWIZ_R				(0 << 24)
-#   define R500_DY_S_SWIZ_G				(1 << 24)
-#   define R500_DY_S_SWIZ_B				(2 << 24)
-#   define R500_DY_S_SWIZ_A				(3 << 24)
-#   define R500_DY_T_SWIZ_R				(0 << 26)
-#   define R500_DY_T_SWIZ_G				(1 << 26)
-#   define R500_DY_T_SWIZ_B				(2 << 26)
-#   define R500_DY_T_SWIZ_A				(3 << 26)
-#   define R500_DY_R_SWIZ_R				(0 << 28)
-#   define R500_DY_R_SWIZ_G				(1 << 28)
-#   define R500_DY_R_SWIZ_B				(2 << 28)
-#   define R500_DY_R_SWIZ_A				(3 << 28)
-#   define R500_DY_Q_SWIZ_R				(0 << 30)
-#   define R500_DY_Q_SWIZ_G				(1 << 30)
-#   define R500_DY_Q_SWIZ_B				(2 << 30)
-#   define R500_DY_Q_SWIZ_A				(3 << 30)
-#define R500_US_TEX_INST_0				0x9000
-#   define R500_TEX_ID(x)				((x) << 16)
-#   define R500_TEX_INST_NOP				(0 << 22)
-#   define R500_TEX_INST_LD				(1 << 22)
-#   define R500_TEX_INST_TEXKILL			(2 << 22)
-#   define R500_TEX_INST_PROJ				(3 << 22)
-#   define R500_TEX_INST_LODBIAS			(4 << 22)
-#   define R500_TEX_INST_LOD				(5 << 22)
-#   define R500_TEX_INST_DXDY				(6 << 22)
-#   define R500_TEX_SEM_ACQUIRE				(1 << 25)
-#   define R500_TEX_IGNORE_UNCOVERED			(1 << 26)
-#   define R500_TEX_UNSCALED				(1 << 27)
-#define R500_US_W_FMT					0x46b4
-#   define R500_W_FMT_W0				(0 << 0)
-#   define R500_W_FMT_W24				(1 << 0)
-#   define R500_W_FMT_W24FP				(2 << 0)
-#   define R500_W_SRC_US				(0 << 2)
-#   define R500_W_SRC_RAS				(1 << 2)
+#define R500_US_OUT_FMT_0        0x46a4
+#   define R500_OUT_FMT_C4_8        (0 << 0)
+#   define R500_OUT_FMT_C4_10        (1 << 0)
+#   define R500_OUT_FMT_C4_10_GAMMA      (2 << 0)
+#   define R500_OUT_FMT_C_16        (3 << 0)
+#   define R500_OUT_FMT_C2_16        (4 << 0)
+#   define R500_OUT_FMT_C4_16        (5 << 0)
+#   define R500_OUT_FMT_C_16_MPEG      (6 << 0)
+#   define R500_OUT_FMT_C2_16_MPEG      (7 << 0)
+#   define R500_OUT_FMT_C2_4        (8 << 0)
+#   define R500_OUT_FMT_C_3_3_2        (9 << 0)
+#   define R500_OUT_FMT_C_6_5_6        (10 << 0)
+#   define R500_OUT_FMT_C_11_11_10      (11 << 0)
+#   define R500_OUT_FMT_C_10_11_11      (12 << 0)
+#   define R500_OUT_FMT_C_2_10_10_10      (13 << 0)
+/* #define R500_OUT_FMT_RESERVED      (14 << 0) */
+#   define R500_OUT_FMT_UNUSED        (15 << 0)
+#   define R500_OUT_FMT_C_16_FP        (16 << 0)
+#   define R500_OUT_FMT_C2_16_FP      (17 << 0)
+#   define R500_OUT_FMT_C4_16_FP      (18 << 0)
+#   define R500_OUT_FMT_C_32_FP        (19 << 0)
+#   define R500_OUT_FMT_C2_32_FP      (20 << 0)
+#   define R500_OUT_FMT_C4_32_FP      (21 << 0)
+#   define R500_C0_SEL_A        (0 << 8)
+#   define R500_C0_SEL_R        (1 << 8)
+#   define R500_C0_SEL_G        (2 << 8)
+#   define R500_C0_SEL_B        (3 << 8)
+#   define R500_C1_SEL_A        (0 << 10)
+#   define R500_C1_SEL_R        (1 << 10)
+#   define R500_C1_SEL_G        (2 << 10)
+#   define R500_C1_SEL_B        (3 << 10)
+#   define R500_C2_SEL_A        (0 << 12)
+#   define R500_C2_SEL_R        (1 << 12)
+#   define R500_C2_SEL_G        (2 << 12)
+#   define R500_C2_SEL_B        (3 << 12)
+#   define R500_C3_SEL_A        (0 << 14)
+#   define R500_C3_SEL_R        (1 << 14)
+#   define R500_C3_SEL_G        (2 << 14)
+#   define R500_C3_SEL_B        (3 << 14)
+#   define R500_OUT_SIGN(x)        ((x) << 16)
+#   define R500_ROUND_ADJ        (1 << 20)
+#define R500_US_PIXSIZE          0x4604
+#   define R500_PIX_SIZE(x)        (x)
+#define R500_US_TEX_ADDR_0        0x9800
+#   define R500_TEX_SRC_ADDR(x)        ((x) << 0)
+#   define R500_TEX_SRC_ADDR_REL      (1 << 7)
+#   define R500_TEX_SRC_S_SWIZ_R      (0 << 8)
+#   define R500_TEX_SRC_S_SWIZ_G      (1 << 8)
+#   define R500_TEX_SRC_S_SWIZ_B      (2 << 8)
+#   define R500_TEX_SRC_S_SWIZ_A      (3 << 8)
+#   define R500_TEX_SRC_T_SWIZ_R      (0 << 10)
+#   define R500_TEX_SRC_T_SWIZ_G      (1 << 10)
+#   define R500_TEX_SRC_T_SWIZ_B      (2 << 10)
+#   define R500_TEX_SRC_T_SWIZ_A      (3 << 10)
+#   define R500_TEX_SRC_R_SWIZ_R      (0 << 12)
+#   define R500_TEX_SRC_R_SWIZ_G      (1 << 12)
+#   define R500_TEX_SRC_R_SWIZ_B      (2 << 12)
+#   define R500_TEX_SRC_R_SWIZ_A      (3 << 12)
+#   define R500_TEX_SRC_Q_SWIZ_R      (0 << 14)
+#   define R500_TEX_SRC_Q_SWIZ_G      (1 << 14)
+#   define R500_TEX_SRC_Q_SWIZ_B      (2 << 14)
+#   define R500_TEX_SRC_Q_SWIZ_A      (3 << 14)
+#   define R500_TEX_DST_ADDR(x)        ((x) << 16)
+#   define R500_TEX_DST_ADDR_REL      (1 << 23)
+#   define R500_TEX_DST_R_SWIZ_R      (0 << 24)
+#   define R500_TEX_DST_R_SWIZ_G      (1 << 24)
+#   define R500_TEX_DST_R_SWIZ_B      (2 << 24)
+#   define R500_TEX_DST_R_SWIZ_A      (3 << 24)
+#   define R500_TEX_DST_G_SWIZ_R      (0 << 26)
+#   define R500_TEX_DST_G_SWIZ_G      (1 << 26)
+#   define R500_TEX_DST_G_SWIZ_B      (2 << 26)
+#   define R500_TEX_DST_G_SWIZ_A      (3 << 26)
+#   define R500_TEX_DST_B_SWIZ_R      (0 << 28)
+#   define R500_TEX_DST_B_SWIZ_G      (1 << 28)
+#   define R500_TEX_DST_B_SWIZ_B      (2 << 28)
+#   define R500_TEX_DST_B_SWIZ_A      (3 << 28)
+#   define R500_TEX_DST_A_SWIZ_R      (0 << 30)
+#   define R500_TEX_DST_A_SWIZ_G      (1 << 30)
+#   define R500_TEX_DST_A_SWIZ_B      (2 << 30)
+#   define R500_TEX_DST_A_SWIZ_A      (3 << 30)
+#define R500_US_TEX_ADDR_DXDY_0        0xa000
+#   define R500_DX_ADDR(x)        ((x) << 0)
+#   define R500_DX_ADDR_REL        (1 << 7)
+#   define R500_DX_S_SWIZ_R        (0 << 8)
+#   define R500_DX_S_SWIZ_G        (1 << 8)
+#   define R500_DX_S_SWIZ_B        (2 << 8)
+#   define R500_DX_S_SWIZ_A        (3 << 8)
+#   define R500_DX_T_SWIZ_R        (0 << 10)
+#   define R500_DX_T_SWIZ_G        (1 << 10)
+#   define R500_DX_T_SWIZ_B        (2 << 10)
+#   define R500_DX_T_SWIZ_A        (3 << 10)
+#   define R500_DX_R_SWIZ_R        (0 << 12)
+#   define R500_DX_R_SWIZ_G        (1 << 12)
+#   define R500_DX_R_SWIZ_B        (2 << 12)
+#   define R500_DX_R_SWIZ_A        (3 << 12)
+#   define R500_DX_Q_SWIZ_R        (0 << 14)
+#   define R500_DX_Q_SWIZ_G        (1 << 14)
+#   define R500_DX_Q_SWIZ_B        (2 << 14)
+#   define R500_DX_Q_SWIZ_A        (3 << 14)
+#   define R500_DY_ADDR(x)        ((x) << 16)
+#   define R500_DY_ADDR_REL        (1 << 17)
+#   define R500_DY_S_SWIZ_R        (0 << 24)
+#   define R500_DY_S_SWIZ_G        (1 << 24)
+#   define R500_DY_S_SWIZ_B        (2 << 24)
+#   define R500_DY_S_SWIZ_A        (3 << 24)
+#   define R500_DY_T_SWIZ_R        (0 << 26)
+#   define R500_DY_T_SWIZ_G        (1 << 26)
+#   define R500_DY_T_SWIZ_B        (2 << 26)
+#   define R500_DY_T_SWIZ_A        (3 << 26)
+#   define R500_DY_R_SWIZ_R        (0 << 28)
+#   define R500_DY_R_SWIZ_G        (1 << 28)
+#   define R500_DY_R_SWIZ_B        (2 << 28)
+#   define R500_DY_R_SWIZ_A        (3 << 28)
+#   define R500_DY_Q_SWIZ_R        (0 << 30)
+#   define R500_DY_Q_SWIZ_G        (1 << 30)
+#   define R500_DY_Q_SWIZ_B        (2 << 30)
+#   define R500_DY_Q_SWIZ_A        (3 << 30)
+#define R500_US_TEX_INST_0        0x9000
+#   define R500_TEX_ID(x)        ((x) << 16)
+#   define R500_TEX_INST_NOP        (0 << 22)
+#   define R500_TEX_INST_LD        (1 << 22)
+#   define R500_TEX_INST_TEXKILL      (2 << 22)
+#   define R500_TEX_INST_PROJ        (3 << 22)
+#   define R500_TEX_INST_LODBIAS      (4 << 22)
+#   define R500_TEX_INST_LOD        (5 << 22)
+#   define R500_TEX_INST_DXDY        (6 << 22)
+#   define R500_TEX_SEM_ACQUIRE        (1 << 25)
+#   define R500_TEX_IGNORE_UNCOVERED      (1 << 26)
+#   define R500_TEX_UNSCALED        (1 << 27)
+#define R500_US_W_FMT          0x46b4
+#   define R500_W_FMT_W0        (0 << 0)
+#   define R500_W_FMT_W24        (1 << 0)
+#   define R500_W_FMT_W24FP        (2 << 0)
+#   define R500_W_SRC_US        (0 << 2)
+#   define R500_W_SRC_RAS        (1 << 2)
 
-#define R500_RS_INST_0					0x4320
-#define R500_RS_INST_1					0x4324
-#   define R500_RS_INST_TEX_ID_SHIFT			0
-#   define R500_RS_INST_TEX_CN_WRITE			(1 << 4)
-#   define R500_RS_INST_TEX_ADDR_SHIFT			5
-#   define R500_RS_INST_COL_ID_SHIFT			12
-#   define R500_RS_INST_COL_CN_NO_WRITE			(0 << 16)
-#   define R500_RS_INST_COL_CN_WRITE			(1 << 16)
-#   define R500_RS_INST_COL_CN_WRITE_FBUFFER		(2 << 16)
-#   define R500_RS_INST_COL_CN_WRITE_BACKFACE		(3 << 16)
-#   define R500_RS_INST_COL_COL_ADDR_SHIFT		18
-#   define R500_RS_INST_TEX_ADJ				(1 << 25)
-#   define R500_RS_INST_W_CN				(1 << 26)
+#define R500_RS_INST_0          0x4320
+#define R500_RS_INST_1          0x4324
+#   define R500_RS_INST_TEX_ID_SHIFT      0
+#   define R500_RS_INST_TEX_CN_WRITE      (1 << 4)
+#   define R500_RS_INST_TEX_ADDR_SHIFT      5
+#   define R500_RS_INST_COL_ID_SHIFT      12
+#   define R500_RS_INST_COL_CN_NO_WRITE      (0 << 16)
+#   define R500_RS_INST_COL_CN_WRITE      (1 << 16)
+#   define R500_RS_INST_COL_CN_WRITE_FBUFFER    (2 << 16)
+#   define R500_RS_INST_COL_CN_WRITE_BACKFACE    (3 << 16)
+#   define R500_RS_INST_COL_COL_ADDR_SHIFT    18
+#   define R500_RS_INST_TEX_ADJ        (1 << 25)
+#   define R500_RS_INST_W_CN        (1 << 26)
 
-#define R500_US_FC_CTRL					0x4624
-#define R500_US_CODE_ADDR				0x4630
-#define R500_US_CODE_RANGE 				0x4634
-#define R500_US_CODE_OFFSET 				0x4638
+#define R500_US_FC_CTRL          0x4624
+#define R500_US_CODE_ADDR        0x4630
+#define R500_US_CODE_RANGE         0x4634
+#define R500_US_CODE_OFFSET         0x4638
 
-#define R500_RS_IP_0					0x4074
-#define R500_RS_IP_1					0x4078
-#   define R500_RS_IP_PTR_K0				62
-#   define R500_RS_IP_PTR_K1 				63
-#   define R500_RS_IP_TEX_PTR_S_SHIFT 			0
-#   define R500_RS_IP_TEX_PTR_T_SHIFT 			6
-#   define R500_RS_IP_TEX_PTR_R_SHIFT 			12
-#   define R500_RS_IP_TEX_PTR_Q_SHIFT 			18
-#   define R500_RS_IP_COL_PTR_SHIFT 			24
-#   define R500_RS_IP_COL_FMT_SHIFT 			27
-#   define R500_RS_IP_COL_FMT_RGBA			(0 << 27)
-#   define R500_RS_IP_OFFSET_EN 			(1 << 31)
+#define R500_RS_IP_0          0x4074
+#define R500_RS_IP_1          0x4078
+#   define R500_RS_IP_PTR_K0        62
+#   define R500_RS_IP_PTR_K1         63
+#   define R500_RS_IP_TEX_PTR_S_SHIFT       0
+#   define R500_RS_IP_TEX_PTR_T_SHIFT       6
+#   define R500_RS_IP_TEX_PTR_R_SHIFT       12
+#   define R500_RS_IP_TEX_PTR_Q_SHIFT       18
+#   define R500_RS_IP_COL_PTR_SHIFT       24
+#   define R500_RS_IP_COL_FMT_SHIFT       27
+#   define R500_RS_IP_COL_FMT_RGBA      (0 << 27)
+#   define R500_RS_IP_OFFSET_EN       (1 << 31)
 
 #define R500_DYN_SCLK_PWMEM_PIPE                        0x000d /* PLL */
 
 /* r6xx/r7xx stuff */
-#define R600_GRBM_STATUS                                   	   0x8010
+#define R600_GRBM_STATUS                                        0x8010
 #       define R600_CMDFIFO_AVAIL_MASK                             0x1f
 #       define R700_CMDFIFO_AVAIL_MASK                             0xf
 #       define R600_GUI_ACTIVE                                     (1 << 31)
