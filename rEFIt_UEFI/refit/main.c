@@ -1280,28 +1280,6 @@ VOID DisconnectSomeDevices(VOID)
   }
 }
 
-//UINT8 *mCurrentEdid;
-/*
-UINT8* getCurrentEdid (VOID)
-{
-  EFI_STATUS                      Status;
-  EFI_EDID_ACTIVE_PROTOCOL        *EdidProtocol;
-  UINT8                           *Edid;
-
-  DBG ("Edid:");
-  Edid = NULL;
-  Status = gBS->LocateProtocol (&gEfiEdidActiveProtocolGuid, NULL, (VOID**)&EdidProtocol);
-  if (!EFI_ERROR (Status)) {
-    DBG(" size=%d", EdidProtocol->SizeOfEdid);
-    if (EdidProtocol->SizeOfEdid > 0) {
-      Edid = AllocateCopyPool (EdidProtocol->SizeOfEdid, EdidProtocol->Edid);
-    }
-  }
-  DBG(" %a\n", Edid != NULL ? "found" : "not found");
-
-  return Edid;
-}
-*/
 
 VOID PatchVideoBios(UINT8 *Edid)
 {

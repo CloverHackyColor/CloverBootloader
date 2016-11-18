@@ -1150,7 +1150,7 @@ BOOLEAN get_edid_val(value_t *val, INTN index)
   
   if (v)
     return FALSE;
-  
+//CustomEDID will point to user EDID if set else to EdidDiscovered
   if (!gSettings.CustomEDID) {
     return FALSE;
   }

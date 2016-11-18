@@ -4019,6 +4019,8 @@ REFIT_MENU_ENTRY  *SubMenuGraphics()
   AddMenuItem(SubScreen, 52, "InjectEDID", TAG_INPUT, FALSE);
   AddMenuItem(SubScreen, 53, "Fake Vendor EDID:", TAG_INPUT, TRUE);
   AddMenuItem(SubScreen, 54, "Fake Product EDID:", TAG_INPUT, TRUE);
+  AddMenuItem(SubScreen, 18, "Backlight Level:", TAG_INPUT, TRUE);
+
 
   for (i = 0; i < NGFX; i++) {
     AddMenuInfo(SubScreen, L"----------------------");
@@ -4071,7 +4073,6 @@ REFIT_MENU_ENTRY  *SubMenuGraphics()
     }
     AddMenuItem(SubScreen, N+5, "Load Video Bios", TAG_INPUT, FALSE);
   }
-  AddMenuItem(SubScreen, 18, "Backlight Level:", TAG_INPUT, TRUE);
 
   AddMenuEntry(SubScreen, &MenuEntryReturn);
   return Entry;

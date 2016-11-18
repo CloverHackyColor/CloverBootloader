@@ -2091,7 +2091,7 @@ GetEDIDSettings(TagPtr DictPointer)
       DBG ("CustomEDID has wrong length=%d\n", j);
     } else {
       DBG ("CustomEDID ok\n");
-      gSettings.InjectEDID = TRUE;
+//      gSettings.InjectEDID = TRUE;
       InitializeEdidOverride ();
     }
   }
@@ -2108,7 +2108,7 @@ GetEDIDSettings(TagPtr DictPointer)
         DBG ("CustomEDID has wrong length=%d\n", j);
       } else {
         DBG ("CustomEDID ok\n");
-        gSettings.InjectEDID = TRUE;
+ //       gSettings.InjectEDID = TRUE;
         InitializeEdidOverride();
       }
     }
@@ -2116,13 +2116,13 @@ GetEDIDSettings(TagPtr DictPointer)
     Prop = GetProperty (Dict2, "VendorID");
     if (Prop) {
       gSettings.VendorEDID = (UINT16)GetPropertyInteger(Prop, gSettings.VendorEDID);
-      gSettings.InjectEDID = TRUE;
+//      gSettings.InjectEDID = TRUE;
     }
         
     Prop = GetProperty (Dict2, "ProductID");
     if (Prop) {
       gSettings.ProductEDID = (UINT16)GetPropertyInteger(Prop, gSettings.ProductEDID);
-      gSettings.InjectEDID = TRUE;
+//      gSettings.InjectEDID = TRUE;
     }    
   }
 }
@@ -6155,11 +6155,9 @@ SetDevices (
                  (Pci.Hdr.ClassCode[2] == PCI_CLASS_MEDIA) &&
                  ((Pci.Hdr.ClassCode[1] == PCI_CLASS_MEDIA_HDA) ||
                   (Pci.Hdr.ClassCode[1] == PCI_CLASS_MEDIA_AUDIO))) {
-          //no HDMI injection
-          if (!IsHDMIAudio(PCIdevice.DeviceHandle)) {
+          // HDMI injection inside
             TmpDirty    = setup_hda_devprop (PciIo, &PCIdevice, Entry->OSVersion);
             StringDirty |= TmpDirty;
-          }
         }
 
         //LPC

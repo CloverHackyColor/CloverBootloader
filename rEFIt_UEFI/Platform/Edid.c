@@ -57,6 +57,7 @@ InitializeEdidOverride ()
   return Status;
 }
 
+//used only if VBiosPatchNeeded and if no CustomEDID
 UINT8* getCurrentEdid (VOID)
 {
   EFI_STATUS                      Status;
@@ -77,6 +78,7 @@ UINT8* getCurrentEdid (VOID)
   return Edid;
 }
 
+//used at SetDevices()
 EFI_STATUS GetEdidDiscovered(VOID)
 {
 	EFI_STATUS						Status;
@@ -94,8 +96,11 @@ EFI_STATUS GetEdidDiscovered(VOID)
     if (N == 0) {
 			return EFI_NOT_FOUND;
 		}
+    //gEDID is a place to store Custom of Discovered EDID
     gEDID = AllocateAlignedPages(EFI_SIZE_TO_PAGES(N), 128);
     if (!gSettings.CustomEDID) {
+      //if no Custom EDID then the pointer to Discovered
+      // else Custom EDID will point to custom place
       gSettings.CustomEDID = gEDID; //copy pointer but data if no CustomEDID
     }
     CopyMem(gEDID, EdidDiscovered->Edid, N); //and then copy data to CustomEDID
