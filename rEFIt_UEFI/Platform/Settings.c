@@ -3966,7 +3966,7 @@ GetUserSettings(
       }
 
       Prop = GetProperty (DictPointer, "VRAM");
-      gSettings.VRAM = LShiftU64((UINTN)GetPropertyInteger(Prop, (INTN)gSettings.VRAM), 20); //Mb -> bytes
+      gSettings.VRAM = (UINTN)GetPropertyInteger(Prop, (UINT64)gSettings.VRAM); //Mb 
       //
       Prop = GetProperty (DictPointer, "RefCLK");
       gSettings.RefCLK = (UINT16)GetPropertyInteger (Prop, 0);
@@ -6156,8 +6156,7 @@ SetDevices (
                  ((Pci.Hdr.ClassCode[1] == PCI_CLASS_MEDIA_HDA) ||
                   (Pci.Hdr.ClassCode[1] == PCI_CLASS_MEDIA_AUDIO))) {
           //no HDMI injection
-          if ((Pci.Hdr.VendorId != 0x1002) &&
-              (Pci.Hdr.VendorId != 0x10de)) {
+          if (!IsHDMIAudio(PCIdevice.DeviceHandle)) {
             TmpDirty    = setup_hda_devprop (PciIo, &PCIdevice, Entry->OSVersion);
             StringDirty |= TmpDirty;
           }

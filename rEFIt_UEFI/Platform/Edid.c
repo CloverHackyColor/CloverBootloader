@@ -63,7 +63,7 @@ UINT8* getCurrentEdid (VOID)
   EFI_EDID_ACTIVE_PROTOCOL        *EdidProtocol;
   UINT8                           *Edid;
   
-  DBG ("Edid:");
+  DBG ("EdidActive:");
   Edid = NULL;
   Status = gBS->LocateProtocol (&gEfiEdidActiveProtocolGuid, NULL, (VOID**)&EdidProtocol);
   if (!EFI_ERROR (Status)) {
@@ -82,7 +82,7 @@ EFI_STATUS GetEdidDiscovered(VOID)
 	EFI_STATUS						Status;
 	UINTN i, j;
   UINTN N;
-  gEDID = NULL;
+  gEDID = NULL;  //global EDID
 
 	Status = gBS->LocateProtocol (&gEfiEdidDiscoveredProtocolGuid, NULL, (VOID **)&EdidDiscovered);
 
@@ -112,7 +112,7 @@ EFI_STATUS GetEdidDiscovered(VOID)
         MsgLog("%03d  |", i);
         for (j=0; j<10; j++) {
           if (i+j > N-1) break;
-          MsgLog("  %02x", EdidDiscovered->Edid[i+j]);
+          MsgLog("  %02x", gEDID[i+j]);
         }
         MsgLog("\n");
       }

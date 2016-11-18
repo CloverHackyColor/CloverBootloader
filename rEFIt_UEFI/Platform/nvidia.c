@@ -2191,13 +2191,12 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
     }
   } else {
     
-    // Amount of VRAM in kilobytes (?) no, it is already in bytes!!!
+    // Amount of VRAM in Mb
     if (gSettings.VRAM != 0) {
-      videoRam = gSettings.VRAM;
+      videoRam = gSettings.VRAM << 20;
     } else {
       videoRam = mem_detect(nvCardType, nvda_dev);
     }
-    //    gSettings.VRAM = videoRam;
 	}
   
   if (gSettings.NvidiaGeneric) {
@@ -2452,9 +2451,6 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
     devprop_add_value(device, "hda-gfx", (UINT8*)"onboard-1", 10);
   }
   
-  /*  if (gSettings.VRAM != 0) {
-   devprop_add_value(device, "VRAM,totalsize", (UINT8*)&gSettings.VRAM, 8);
-   } else */
   if (videoRam != 0) {
     devprop_add_value(device, "VRAM,totalsize", (UINT8*)&videoRam, 8);
   } else {

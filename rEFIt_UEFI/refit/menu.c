@@ -4021,6 +4021,7 @@ REFIT_MENU_ENTRY  *SubMenuGraphics()
   AddMenuItem(SubScreen, 54, "Fake Product EDID:", TAG_INPUT, TRUE);
 
   for (i = 0; i < NGFX; i++) {
+    AddMenuInfo(SubScreen, L"----------------------");
     AddMenuInfo(SubScreen, PoolPrint(L"Card DeviceID=%04x", gGraphics[i].DeviceID));
     N = 20 + i * 6;
     AddMenuItem(SubScreen, N, "Model:", TAG_INPUT, TRUE);

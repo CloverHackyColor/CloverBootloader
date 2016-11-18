@@ -1551,8 +1551,8 @@ void get_vram_size(void)
   
   card->vram_size = 128 << 20; //default 128Mb, this is minimum for OS
   if (gSettings.VRAM != 0) {
-    card->vram_size = gSettings.VRAM;
-    DBG("Set VRAM from config=%dMb\n", (INTN)RShiftU64(card->vram_size, 20));
+    card->vram_size = gSettings.VRAM << 20;
+    DBG("Set VRAM from config=%luMb\n", gSettings.VRAM);
     //    WRITEREG32(card->mmio, RADEON_CONFIG_MEMSIZE, card->vram_size);
   } else {
     if (chip_family >= CHIP_FAMILY_CEDAR) {
@@ -1565,7 +1565,7 @@ void get_vram_size(void)
       } else {
         card->vram_size = ((UINT64)REG32(card->mmio, R600_CONFIG_MEMSIZE)) << 20;
       }
-      DBG("Set VRAM for %a =%dMb\n", chip_family_name[card->info->chip_family], (INTN)RShiftU64(card->vram_size, 20));
+      DBG("Set VRAM for %a =%luMb\n", chip_family_name[card->info->chip_family], (UINT64)RShiftU64(card->vram_size, 20));
     } else if (chip_family >= CHIP_FAMILY_R600) {
       card->vram_size = REG32(card->mmio, R600_CONFIG_MEMSIZE);
     } else {
@@ -1578,7 +1578,7 @@ void get_vram_size(void)
       }
     }
   }
-  gSettings.VRAM = card->vram_size;
+  gSettings.VRAM = (UINT64)RShiftU64(card->vram_size, 20);
   DBG("ATI: get_vram_size returned 0x%x\n", card->vram_size);
 }
 

@@ -49,30 +49,6 @@ const UINT8 edid_v1_header[] = { 0x00, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x00	
 
 //----------------------------------------------------------------------------------
 /*
-INT32 edid_compare(UINT8 *edid1, UINT8 *edid2)
-{
-	INT32 x, result = 0;
-	UINT8 *block = edid1 + ID_MANUFACTURER_NAME, manufacturer1[4], manufacturer2[4];;
-	manufacturer1[0] = ((block[0] & 0x7c) >> 2) + '@';
-	manufacturer1[1] = ((block[0] & 0x03) << 3) + ((block[1] & 0xe0) >> 5) + '@';
-	manufacturer1[2] = (block[1] & 0x1f) + '@';
-	manufacturer1[3] = 0;
-	
-	block = edid2 + ID_MANUFACTURER_NAME;
-	manufacturer2[0] = ((block[0] & 0x7c) >> 2) + '@';
-	manufacturer2[1] = ((block[0] & 0x03) << 3) + ((block[1] & 0xe0) >> 5) + '@';
-	manufacturer2[2] = (block[1] & 0x1f) + '@';
-	manufacturer2[3] = 0;
-	for(x = 0; x < 4; x++)
-	{
-		if(manufacturer1[x] == manufacturer2[x])
-			result++;
-	}
-	
-	return result;
-}
- */
-/*
 INT32 check_edid(UINT8 *edid)
 {
 	UINT8 *block = edid + ID_MANUFACTURER_NAME, manufacturer[4];
@@ -255,18 +231,7 @@ VOID getResolution(UINT32* x, UINT32* y, UINT32* bp)
 {
 //	INT32 val;
 	static UINT32 xResolution, yResolution, bpResolution = 32;	// assume 32bits
-/*
-	if(getIntForKey(kScreenWidth, &val, &bootInfo->chameleonConfig))
-	{
-		xResolution = val;
-	}
-	
-	if(getIntForKey(kScreenHeight, &val, &bootInfo->chameleonConfig))
-	{
-		yResolution = val;
-	}
-*/
-	
+
 			edid_mode mode;
 		CHAR8* edidInfo = readEDID();
 		
