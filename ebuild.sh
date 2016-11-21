@@ -624,7 +624,7 @@ MainBuildScript() {
 
         echo "Cleaning bootsector files..."
         local BOOTHFS="$CLOVERROOT"/BootHFS
-        DESTDIR="$CLOVER_PKG_DIR"/CloverEFI/BootSectors make -C $BOOTHFS clean
+        DESTDIR="$CLOVER_PKG_DIR"/BootSectors make -C $BOOTHFS clean
 
         echo
         # Use subshell to use shopt
@@ -988,7 +988,7 @@ MainPostBuildScript() {
     echo
     echo "Generating BootSectors"
     local BOOTHFS="$CLOVERROOT"/BootHFS
-    DESTDIR="$CLOVER_PKG_DIR"/CloverEFI/BootSectors make -C $BOOTHFS
+    DESTDIR="$CLOVER_PKG_DIR"/BootSectors make -C $BOOTHFS
     echo "Done!"
 }
 

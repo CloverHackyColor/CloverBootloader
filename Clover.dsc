@@ -198,7 +198,7 @@
 	#DuetPkg/BootSector/BootSector.inf
 
   #DuetPkg/DxeIpl/DxeIpl.inf {
-  Clover/OsxDxeIpl/DxeIpl.inf {
+  Clover/CloverEFI/OsxDxeIpl/DxeIpl.inf {
     <LibraryClasses>
       #
       # If no following overriden for ReportStatusCodeLib library class,
@@ -209,7 +209,7 @@
       ReportStatusCodeLib|MdePkg/Library/BaseReportStatusCodeLibNull/BaseReportStatusCodeLibNull.inf
   }
  #MdeModulePkg/Core/Dxe/DxeMain.inf {
- Clover/OsxDxeCore/DxeMain.inf {
+ Clover/CloverEFI/OsxDxeCore/DxeMain.inf {
     #
     # Enable debug output for DxeCore module, this is a sample for how to enable debug output
     # for a module. If need turn on debug output for other module, please copy following overriden
@@ -260,7 +260,7 @@
   MdeModulePkg/Universal/SetupBrowserDxe/SetupBrowserDxe.inf
   MdeModulePkg/Universal/DisplayEngineDxe/DisplayEngineDxe.inf
   #MdeModulePkg/Universal/Console/GraphicsConsoleDxe/GraphicsConsoleDxe.inf
-  Clover/GraphicsConsoleDxe/GraphicsConsoleDxe.inf
+  Clover/CloverEFI/GraphicsConsoleDxe/GraphicsConsoleDxe.inf
   #MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe.inf
   MdeModulePkg/Universal/DevicePathDxe/DevicePathDxe.inf
   MdeModulePkg/Universal/SmbiosDxe/SmbiosDxe.inf
@@ -269,7 +269,7 @@
   #Clover/OemSmbiosGenDxe/SmbiosGen.inf
 
   #DuetPkg/EfiLdr/EfiLdr.inf {
-  Clover/OsxEfiLdr/EfiLdr.inf {
+  Clover/CloverEFI/OsxEfiLdr/EfiLdr.inf {
     <LibraryClasses>
       DebugLib|MdePkg/Library/BaseDebugLibNull/BaseDebugLibNull.inf
       BaseMemoryLib|MdePkg/Library/BaseMemoryLib/BaseMemoryLib.inf
@@ -278,16 +278,16 @@
       NULL|Clover/Library/LzmaCustomDecompressLib/LzmaCustomDecompressLib.inf
   }
   #IntelFrameworkModulePkg/Universal/BdsDxe/BdsDxe.inf {
-  Clover/OsxBdsDxe/BdsDxe.inf {
+  Clover/CloverEFI/OsxBdsDxe/BdsDxe.inf {
     <LibraryClasses>
       PcdLib|MdePkg/Library/DxePcdLib/DxePcdLib.inf
   }
   MdeModulePkg/Universal/EbcDxe/EbcDxe.inf
-  Clover/UefiCpuPkg/CpuIo2Dxe/CpuIo2Dxe.inf
+  Clover/CloverEFI/UefiCpuPkg/CpuIo2Dxe/CpuIo2Dxe.inf
   #UefiCpuPkg/CpuIo2Dxe/CpuIo2Dxe.inf
   #Clover/UefiCpuPkg/CpuDxe/CpuDxe.inf
   #UefiCpuPkg/CpuDxe/CpuDxe.inf
-  Clover/CpuDxe/Cpu.inf
+  Clover/CloverEFI/CpuDxe/Cpu.inf
   PcAtChipsetPkg/8259InterruptControllerDxe/8259.inf {
       <PcdsFixedAtBuild>
       gPcAtChipsetPkgTokenSpaceGuid.Pcd8259LegacyModeMask|0xFFFC
