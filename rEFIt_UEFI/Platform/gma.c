@@ -113,6 +113,7 @@ static struct gma_gpu_t KnownGPUS[] = {
     { 0x1606, "Intel HD Graphics"  }, // *
     { 0x160A, "Intel HD Graphics"  }, // Broadwell-U Integrated
     //  { 0x160B, "Intel HD Graphics"  }, // Broadwell-U Integrated
+  // 160C is HDMI device
     //  { 0x160D, "Intel HD Graphics"  }, // Broadwell-U Integrated
     { 0x1612, "Intel HD Graphics 5600"  }, // * Broadwell i7-5700HQ
     { 0x1616, "Intel HD Graphics 5500"  }, // *
@@ -123,7 +124,7 @@ static struct gma_gpu_t KnownGPUS[] = {
     { 0x1622, "Intel Iris Pro"  }, // *
     { 0x1626, "Intel HD Graphics 6000"  }, // *
     { 0x162A, "Intel Iris Pro Graphics P6300"  }, // Intel(R) Iris(TM) Pro Graphics
-    //{ 0x162B, "Intel Iris"  }, // *
+    { 0x162B, "Intel Rock Canyon"  }, // Intel NUC 5i7RYH, i7-5557U
     //{ 0x162D, "Intel Iris Pro Graphics P6300"  }, // Intel(R) Iris(TM) Pro Graphics 6300P Drivers
     { 0x162E, "Intel HD Graphics"  }, // Broadwell-U Integrated Graphics
     { 0x1632, "Intel HD Graphics"  }, // Broadwell-U Integrated Graphics

@@ -1560,11 +1560,11 @@ void get_vram_size(void)
       // XXX watch for overflow!!!
       
       // ErmaC: mem size workaround for Polaris10/11
-      if ( (chip_family == CHIP_FAMILY_ELLESMERE) || (chip_family == CHIP_FAMILY_BAFFIN) ) {
-        card->vram_size = ((UINT64)REG32(card->mmio, POLARIS_CONFIG_MEMSIZE)) << 20; // ydeng
-      } else {
+ //     if ( (chip_family == CHIP_FAMILY_ELLESMERE) || (chip_family == CHIP_FAMILY_BAFFIN) ) {
+ //       card->vram_size = ((UINT64)REG32(card->mmio, POLARIS_CONFIG_MEMSIZE)) << 20; // ydeng
+ //     } else {
         card->vram_size = ((UINT64)REG32(card->mmio, R600_CONFIG_MEMSIZE)) << 20;
-      }
+ //     }
       DBG("Set VRAM for %a =%luMb\n", chip_family_name[card->info->chip_family], (UINT64)RShiftU64(card->vram_size, 20));
     } else if (chip_family >= CHIP_FAMILY_R600) {
       card->vram_size = REG32(card->mmio, R600_CONFIG_MEMSIZE);
@@ -1736,7 +1736,7 @@ BOOLEAN read_disabled_vbios(VOID)
 BOOLEAN radeon_card_posted(VOID)
 {
   UINT32 reg;
-  ati_chip_family_t chip_family = card->info->chip_family;
+//  ati_chip_family_t chip_family = card->info->chip_family;
   
   // first check CRTCs
   reg = REG32(card->mmio, RADEON_CRTC_GEN_CNTL) | REG32(card->mmio, RADEON_CRTC2_GEN_CNTL);
@@ -1744,11 +1744,11 @@ BOOLEAN radeon_card_posted(VOID)
     return TRUE;
   
   // then check MEM_SIZE, in case something turned the crtcs off
-  if ( (chip_family >= CHIP_FAMILY_MULLINS) ) {  // <--- check, if cards chip_family is newer than MULLINS (Routine by ErmaC)
-    reg = REG32(card->mmio, POLARIS_CONFIG_MEMSIZE);  //?
-  } else {                                       // <--- if it is older, than do next step
+//  if ( (chip_family >= CHIP_FAMILY_MULLINS) ) {  // <--- check, if cards chip_family is newer than MULLINS (Routine by ErmaC)
+//    reg = REG32(card->mmio, POLARIS_CONFIG_MEMSIZE);  //?
+//  } else {                                       // <--- if it is older, than do next step
     reg = REG32(card->mmio, R600_CONFIG_MEMSIZE);
-  }
+//  }
   if (reg)
     return TRUE;
   
@@ -1785,6 +1785,7 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
   UINTN  i, j;
   INTN  n_ports = 0;
   UINTN   ExpansionRom = 0;
+  UINTN Reg1, Reg3, Reg5;
   
   card = AllocateZeroPool(sizeof(card_t));
   if (!card)
@@ -1824,12 +1825,16 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
   }
   
   card->fb    = (UINT8 *)(UINTN)(pci_config_read32(pci_dev, PCI_BASE_ADDRESS_0) & ~0x0f);
+  Reg1 = (UINTN)(pci_config_read32(pci_dev, PCI_BASE_ADDRESS_1) & ~0x0f);
   card->mmio = (UINT8 *)(UINTN)(pci_config_read32(pci_dev, PCI_BASE_ADDRESS_2) & ~0x0f);
+  Reg3 = (UINTN)(pci_config_read32(pci_dev, PCI_BASE_ADDRESS_3) & ~0x0f);
   card->io    = (UINT8 *)(UINTN)(pci_config_read32(pci_dev, PCI_BASE_ADDRESS_4) & ~0x03);
+  Reg5 = (UINTN)(pci_config_read32(pci_dev, PCI_BASE_ADDRESS_5) & ~0x0f);
   pci_dev->regs = card->mmio;
   ExpansionRom = pci_config_read32(pci_dev, PCI_EXPANSION_ROM_BASE); //0x30 as Chimera
   DBG("Framebuffer @0x%08X  MMIO @0x%08X I/O Port @0x%08X ROM Addr @0x%08X\n",
       card->fb, card->mmio, card->io, ExpansionRom);
+  DBG("PCI region 1 = 0x%8X, region3 = 0x%8X, region5 = 0x%8X\n", Reg1, Reg3, Reg5);
   
   card->posted = radeon_card_posted();
   DBG("ATI card %a, ", card->posted ? "POSTed" : "non-POSTed");
