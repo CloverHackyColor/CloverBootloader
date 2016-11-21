@@ -383,7 +383,7 @@
   Clover/Drivers/UsbKbDxe/UsbKbDxe.inf
   MdeModulePkg/Bus/Usb/UsbMassStorageDxe/UsbMassStorageDxe.inf
   MdeModulePkg/Bus/Usb/UsbMouseDxe/UsbMouseDxe.inf
-  #Clover/Patches_for_EDK2/UsbMouseDxe/UsbMouseDxe.inf
+  #Clover/Drivers/UsbMouseDxe/UsbMouseDxe.inf
 
   # ISA Support
   PcAtChipsetPkg/IsaAcpiDxe/IsaAcpi.inf
