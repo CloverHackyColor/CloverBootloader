@@ -90,21 +90,21 @@ INF  MdeModulePkg/Universal/SetupBrowserDxe/SetupBrowserDxe.inf
 INF  MdeModulePkg/Universal/DisplayEngineDxe/DisplayEngineDxe.inf
 
 #INF  MdeModulePkg/Universal/Console/GraphicsConsoleDxe/GraphicsConsoleDxe.inf
-INF  Clover/GraphicsConsoleDxe/GraphicsConsoleDxe.inf
+INF  Clover/CloverEFI/GraphicsConsoleDxe/GraphicsConsoleDxe.inf
 #INF  MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe.inf
 INF  MdeModulePkg/Universal/SmbiosDxe/SmbiosDxe.inf
 INF  DuetPkg/SmbiosGenDxe/SmbiosGen.inf
 #INF  Clover/OsxSmbiosDxe/SmbiosDxe.inf
 #INF  Clover/OemSmbiosGenDxe/SmbiosGen.inf
 #INF  IntelFrameworkModulePkg/Universal/BdsDxe/BdsDxe.inf
-INF  Clover/OsxBdsDxe/BdsDxe.inf
+INF  Clover/CloverEFI/OsxBdsDxe/BdsDxe.inf
 INF  MdeModulePkg/Universal/EbcDxe/EbcDxe.inf
 INF  MdeModulePkg/Universal/DevicePathDxe/DevicePathDxe.inf
-INF  Clover/UefiCpuPkg/CpuIo2Dxe/CpuIo2Dxe.inf
+INF  Clover/CloverEFI/UefiCpuPkg/CpuIo2Dxe/CpuIo2Dxe.inf
 #INF  Clover/UefiCpuPkg/CpuDxe/CpuDxe.inf
 
 #INF  IntelFrameworkModulePkg/Universal/CpuIoDxe/CpuIoDxe.inf
-INF  Clover/CpuDxe/Cpu.inf
+INF  Clover/CloverEFI/CpuDxe/Cpu.inf
 !ifndef CLANG
 #INF  UefiCpuPkg/CpuDxe/CpuDxe.inf
 !else
@@ -137,20 +137,20 @@ INF  Clover/VBoxFsDxe/VBoxHfs.inf
 
 INF  PcAtChipsetPkg/8259InterruptControllerDxe/8259.inf
 #INF  DuetPkg/AcpiResetDxe/Reset.inf
-INF  Clover/AcpiReset/Reset.inf
+INF  Clover/CloverEFI/AcpiReset/Reset.inf
 #INF  DuetPkg/LegacyMetronome/Metronome.inf
 INF  MdeModulePkg/Universal/Metronome/Metronome.inf
 INF  PcAtChipsetPkg/8254TimerDxe/8254Timer.inf
 #INF  PcAtChipsetPkg/HpetTimerDxe/HpetTimerDxe.inf
 #INF  PcAtChipsetPkg/PcatRealTimeClockRuntimeDxe/PcatRealTimeClockRuntimeDxe.inf
-INF Clover/PcatRealTimeClockRuntimeDxe/PcatRealTimeClockRuntimeDxe.inf
+INF Clover/CloverEFI/PcatRealTimeClockRuntimeDxe/PcatRealTimeClockRuntimeDxe.inf
 #INF  PcAtChipsetPkg/PciHostBridgeDxe/PciHostBridgeDxe.inf
 #INF  DuetPkg/PciRootBridgeNoEnumerationDxe/PciRootBridgeNoEnumeration.inf
-INF  Clover/PciRootBridgeDxe/PciRootBridge.inf
+INF  Clover/CloverEFI/PciRootBridgeDxe/PciRootBridge.inf
 #INF  DuetPkg/PciBusNoEnumerationDxe/PciBusNoEnumeration.inf
-INF  Clover/OsxPciBusNoEnumerationDxe/PciBusNoEnumeration.inf
+INF  Clover/CloverEFI/OsxPciBusNoEnumerationDxe/PciBusNoEnumeration.inf
 #INF  MdeModulePkg/Bus/Pci/PciBusDxe/PciBusDxe.inf
-#INF  Clover/PciBusDxe/PciBusDxe.inf
+#INF  Clover/CloverEFI/PciBusDxe/PciBusDxe.inf
 
     # Video
 #INF  IntelFrameworkModulePkg/Bus/Pci/VgaMiniPortDxe/VgaMiniPortDxe.inf
@@ -158,7 +158,7 @@ INF  Clover/OsxPciBusNoEnumerationDxe/PciBusNoEnumeration.inf
 #INF  IntelFrameworkModulePkg/Universal/Console/VgaClassDxe/VgaClassDxe.inf
 #INF  Clover/VgaClassDxe/VgaClassDxe.inf
 #INF  DuetPkg/BiosVideoThunkDxe/BiosVideo.inf
-INF  Clover/BiosVideo/BiosVideo.inf
+INF  Clover/CloverEFI/BiosVideo/BiosVideo.inf
 #INF  Clover/BiosVideoAuto/BiosVideo.inf
 #INF  Clover/IntelGmaDxe/Gop.inf
 #INF  Clover/LegacyBios/VideoDxe/VideoDxe.inf
@@ -167,7 +167,7 @@ INF  Clover/BiosVideo/BiosVideo.inf
 #INF  IntelFrameworkModulePkg/Csm/LegacyBiosDxe/LegacyBiosDxe.inf
 #INF  IntelFrameworkModulePkg/Csm/BiosThunk/BlockIoDxe/BlockIoDxe.inf
 #INF  IntelFrameworkModulePkg/Csm/BiosThunk/KeyboardDxe/KeyboardDxe.inf
-INF  Clover/BiosKeyboard/KeyboardDxe.inf
+INF  Clover/CloverEFI/BiosKeyboard/KeyboardDxe.inf
 #INF  IntelFrameworkModulePkg/Universal/LegacyRegionDxe/LegacyRegionDxe.inf
 #INF  MdeModulePkg/Universal/LegacyRegion2Dxe/LegacyRegion2Dxe.inf
 #INF  Clover/LegacyBios/RegionDxe/LegacyRegion2Dxe.inf
@@ -244,9 +244,9 @@ INF  Clover/PartitionDxe/PartitionDxe.inf
 
     # ACPI Support
 #INF  MdeModulePkg/Universal/Acpi/AcpiTableDxe/AcpiTableDxe.inf
-INF  Clover/OsxAcpiTableDxe/AcpiTableDxe.inf
+INF  Clover/CloverEFI/OsxAcpiTableDxe/AcpiTableDxe.inf
 #INF  MdeModulePkg/Universal/Acpi/AcpiPlatformDxe/AcpiPlatformDxe.inf
-#INF  Clover/OsxAcpiPlatformDxe/AcpiPlatformDxe.inf
+#INF  Clover/CloverEFI/OsxAcpiPlatformDxe/AcpiPlatformDxe.inf
 
     # FD
 #INF  IntelFrameworkModulePkg/Universal/Acpi/AcpiS3SaveDxe/AcpiS3SaveDxe.inf

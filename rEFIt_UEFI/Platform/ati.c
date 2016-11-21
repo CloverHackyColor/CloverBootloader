@@ -360,7 +360,6 @@ radeon_card_info_t radeon_cards[] = {
   { 0x6843, 0x00000000, CHIP_FAMILY_TURKS, "AMD Radeon HD 7670M Series",   kPondweed }, // Mobile
   { 0x6849, 0x00000000, CHIP_FAMILY_TURKS, "AMD Radeon HD 7600M Series",   kPondweed },
   
-  // PITCAIRN
   // { 0x684C, 0x00000000, CHIP_FAMILY_PITCAIRN, "AMD Radeon HD", kNull },
   
   // TURKS
@@ -450,6 +449,8 @@ radeon_card_info_t radeon_cards[] = {
   // Volcanic Island
   { 0x6900, 0x00000000, CHIP_FAMILY_TOPAZ,    "ATI Radeon R7 M260/M265",    kExmoor },
   { 0x6901, 0x00000000, CHIP_FAMILY_TOPAZ,    "ATI Radeon R5 M255",         kExmoor },
+ // { 0x6907, 0x00000000, CHIP_FAMILY_TOPAZ,    "ATI Radeon ",         kNull },
+  //Tonga
   { 0x6920, 0x00000000, CHIP_FAMILY_AMETHYST, "ATI Radeon R9 M395",         kLabrador },
   { 0x6921, 0x00000000, CHIP_FAMILY_AMETHYST, "ATI Radeon R9 M295X",        kExmoor },
   { 0x692b, 0x00000000, CHIP_FAMILY_TONGA,    "ATI Firepro W7100",          kBaladi },

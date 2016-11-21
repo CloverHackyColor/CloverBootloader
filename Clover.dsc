@@ -293,21 +293,21 @@
       gPcAtChipsetPkgTokenSpaceGuid.Pcd8259LegacyModeMask|0xFFFC
   }
   #DuetPkg/AcpiResetDxe/Reset.inf
-  Clover/AcpiReset/Reset.inf
+  Clover/CloverEFI/AcpiReset/Reset.inf
   #DuetPkg/LegacyMetronome/Metronome.inf
   MdeModulePkg/Universal/Metronome/Metronome.inf
 # EdkCompatibilityPkg/Compatibility/MpServicesOnFrameworkMpServicesThunk/MpServicesOnFrameworkMpServicesThunk.inf
 
   #Chipset
   #PcAtChipsetPkg/PcatRealTimeClockRuntimeDxe/PcatRealTimeClockRuntimeDxe.inf
-  Clover/PcatRealTimeClockRuntimeDxe/PcatRealTimeClockRuntimeDxe.inf
+  Clover/CloverEFI/PcatRealTimeClockRuntimeDxe/PcatRealTimeClockRuntimeDxe.inf
   PcAtChipsetPkg/8254TimerDxe/8254Timer.inf
   PcAtChipsetPkg/HpetTimerDxe/HpetTimerDxe.inf
   #PcAtChipsetPkg/PciHostBridgeDxe/PciHostBridgeDxe.inf
   #DuetPkg/PciRootBridgeNoEnumerationDxe/PciRootBridgeNoEnumeration.inf
-  Clover/PciRootBridgeDxe/PciRootBridge.inf
+  Clover/CloverEFI/PciRootBridgeDxe/PciRootBridge.inf
   #DuetPkg/PciBusNoEnumerationDxe/PciBusNoEnumeration.inf
-  Clover/OsxPciBusNoEnumerationDxe/PciBusNoEnumeration.inf
+  Clover/CloverEFI/OsxPciBusNoEnumerationDxe/PciBusNoEnumeration.inf
   #MdeModulePkg/Bus/Pci/PciBusDxe/PciBusDxe.inf
   #Clover/PciBusDxe/PciBusDxe.inf
   MdeModulePkg/Bus/Pci/NvmExpressDxe/NvmExpressDxe.inf
@@ -347,7 +347,7 @@
   #Clover/VgaClassDxe/VgaClassDxe.inf
   #Clover/IntelGmaDxe/Gop.inf
   #DuetPkg/BiosVideoThunkDxe/BiosVideo.inf
-  Clover/BiosVideo/BiosVideo.inf
+  Clover/CloverEFI/BiosVideo/BiosVideo.inf
   #Clover/BiosVideoAuto/BiosVideo.inf
   Clover/LegacyBios/VideoDxe/VideoDxe.inf
   Clover/LegacyBios/VideoDxe/VideoDxe2.inf
@@ -397,9 +397,9 @@
  
   # ACPI Support
   #MdeModulePkg/Universal/Acpi/AcpiTableDxe/AcpiTableDxe.inf
-  Clover/OsxAcpiTableDxe/AcpiTableDxe.inf
+  Clover/CloverEFI/OsxAcpiTableDxe/AcpiTableDxe.inf
   #MdeModulePkg/Universal/Acpi/AcpiPlatformDxe/AcpiPlatformDxe.inf
-  Clover/OsxAcpiPlatformDxe/AcpiPlatformDxe.inf
+  Clover/CloverEFI/OsxAcpiPlatformDxe/AcpiPlatformDxe.inf
 
   MdeModulePkg/Universal/Disk/DiskIoDxe/DiskIoDxe.inf
   MdeModulePkg/Universal/Disk/UnicodeCollation/EnglishDxe/EnglishDxe.inf
@@ -420,7 +420,7 @@
   #IntelFrameworkModulePkg/Csm/LegacyBiosDxe/LegacyBiosDxe.inf
   #IntelFrameworkModulePkg/Csm/BiosThunk/BlockIoDxe/BlockIoDxe.inf
   #IntelFrameworkModulePkg/Csm/BiosThunk/KeyboardDxe/KeyboardDxe.inf
-  Clover/BiosKeyboard/KeyboardDxe.inf
+  Clover/CloverEFI/BiosKeyboard/KeyboardDxe.inf
   #IntelFrameworkModulePkg/Universal/LegacyRegionDxe/LegacyRegionDxe.inf
   #MdeModulePkg/Universal/LegacyRegion2Dxe/LegacyRegion2Dxe.inf
   Clover/LegacyBios/Region2Dxe/LegacyRegion2Dxe.inf

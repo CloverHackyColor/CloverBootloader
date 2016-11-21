@@ -4074,7 +4074,7 @@
 #define R600_HIGH_VID_LOWER_GPIO_CNTL                              0x71c
 #define R600_MEDIUM_VID_LOWER_GPIO_CNTL                            0x720
 #define R600_LOW_VID_LOWER_GPIO_CNTL                               0x724
-
+//must be multiplyed by 4 to use
 #define POLARIS_CONFIG_MEMSIZE                                  0x150a
 #define POLARIS_CONFIG_APER_SIZE                                0x150c
 #define POLARIS_ARB_RAMCFG                                      0x9d8
