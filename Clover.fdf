@@ -188,15 +188,15 @@ INF   Clover/LegacyBios/Region2Dxe/LegacyRegion2Dxe.inf
   #INF  Clover/VBoxIdeControllerDxe/VBoxIdeControllerDxe.inf
   #INF  Clover/VBoxIdeBusDxe/VBoxIdeBusDxe.inf
   #INF  DuetPkg/SataControllerDxe/SataControllerDxe.inf
-  INF  Clover/SataControllerDxe/SataControllerDxe.inf
+  INF  Clover/Drivers/SataControllerDxe/SataControllerDxe.inf
   #INF  MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru.inf
-  INF  Clover/AtaAtapi/AtaAtapiPassThru.inf
+  INF  Clover/Drivers/AtaAtapi/AtaAtapiPassThru.inf
   #INF  MdeModulePkg/Bus/Ata/AtaBusDxe/AtaBusDxe.inf
-  INF  Clover/AtaBus/AtaBusDxe.inf
+  INF  Clover/Drivers/AtaBus/AtaBusDxe.inf
   #INF  MdeModulePkg/Bus/Scsi/ScsiBusDxe/ScsiBusDxe.inf
-  INF  Clover/DVDBus/ScsiBusDxe.inf
+  INF  Clover/Drivers/DVDBus/ScsiBusDxe.inf
   #INF  MdeModulePkg/Bus/Scsi/ScsiDiskDxe/ScsiDiskDxe.inf
-  INF  Clover/DVDDisk/ScsiDiskDxe.inf
+  INF  Clover/Drivers/DVDDisk/ScsiDiskDxe.inf
   #INF  IntelFrameworkModulePkg/Bus/Pci/IdeBusDxe/IdeBusDxe.inf
 !endif  
 !endif
@@ -212,17 +212,17 @@ INF   Clover/LegacyBios/Region2Dxe/LegacyRegion2Dxe.inf
 !endif
 
 !ifdef ENABLE_USB_OHCI
-  INF  Clover/OhciDxe/OhciDxe.inf
+  INF  Clover/Drivers/OhciDxe/OhciDxe.inf
 !endif
 !ifdef ENABLE_USB_XHCI
   #INF  MdeModulePkg/Bus/Pci/XhciDxe/XhciDxe.inf
-  INF  Clover/Patches_for_EDK2/XhciDxe/XhciDxe.inf
+  INF  Clover/Drivers/XhciDxe/XhciDxe.inf
 !endif
 
   #INF  MdeModulePkg/Bus/Usb/UsbBusDxe/UsbBusDxe.inf
-  INF  Clover/Patches_for_EDK2/UsbBusDxe/UsbBusDxe.inf
+  INF  Clover/Drivers/UsbBusDxe/UsbBusDxe.inf
   #INF  MdeModulePkg/Bus/Usb/UsbKbDxe/UsbKbDxe.inf
-  INF  Clover/UsbKbDxe/UsbKbDxe.inf
+  INF  Clover/Drivers/UsbKbDxe/UsbKbDxe.inf
   INF  MdeModulePkg/Bus/Usb/UsbMouseDxe/UsbMouseDxe.inf
 !ifndef DISABLE_USB_MASS_STORAGE  
   INF  MdeModulePkg/Bus/Usb/UsbMassStorageDxe/UsbMassStorageDxe.inf
@@ -240,7 +240,7 @@ INF  IntelFrameworkModulePkg/Bus/Isa/IsaBusDxe/IsaBusDxe.inf
 INF  MdeModulePkg/Universal/Disk/DiskIoDxe/DiskIoDxe.inf
 INF  MdeModulePkg/Universal/Disk/UnicodeCollation/EnglishDxe/EnglishDxe.inf
 #INF  MdeModulePkg/Universal/Disk/PartitionDxe/PartitionDxe.inf
-INF  Clover/PartitionDxe/PartitionDxe.inf
+INF  Clover/Drivers/PartitionDxe/PartitionDxe.inf
 
     # ACPI Support
 #INF  MdeModulePkg/Universal/Acpi/AcpiTableDxe/AcpiTableDxe.inf
