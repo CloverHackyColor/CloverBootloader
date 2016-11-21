@@ -359,28 +359,28 @@
   #Clover/Trash/VBoxIdeControllerDxe/VBoxIdeControllerDxe.inf
   #Clover/Trash/VBoxIdeBusDxe/VBoxIdeBusDxe.inf
   #DuetPkg/SataControllerDxe/SataControllerDxe.inf
-  Clover/SataControllerDxe/SataControllerDxe.inf
+  Clover/Drivers/SataControllerDxe/SataControllerDxe.inf
   #MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru.inf
-  Clover/AtaAtapi/AtaAtapiPassThru.inf
+  Clover/Drivers/AtaAtapi/AtaAtapiPassThru.inf
   #MdeModulePkg/Bus/Ata/AtaBusDxe/AtaBusDxe.inf
-  Clover/AtaBus/AtaBusDxe.inf
+  Clover/Drivers/AtaBus/AtaBusDxe.inf
   #MdeModulePkg/Bus/Scsi/ScsiBusDxe/ScsiBusDxe.inf
-  Clover/DVDBus/ScsiBusDxe.inf
+  Clover/Drivers/DVDBus/ScsiBusDxe.inf
   #MdeModulePkg/Bus/Scsi/ScsiDiskDxe/ScsiDiskDxe.inf
-  Clover/DVDDisk/ScsiDiskDxe.inf
+  Clover/Drivers/DVDDisk/ScsiDiskDxe.inf
   #IntelFrameworkModulePkg/Bus/Pci/IdeBusDxe/IdeBusDxe.inf
 !endif
 
   # Usb Support
   MdeModulePkg/Bus/Pci/UhciDxe/UhciDxe.inf
-  Clover/OhciDxe/OhciDxe.inf
+  Clover/Drivers/OhciDxe/OhciDxe.inf
   MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe.inf
 #  MdeModulePkg/Bus/Pci/XhciDxe/XhciDxe.inf
-  Clover/Patches_for_EDK2/XhciDxe/XhciDxe.inf
+  Clover/Drivers/XhciDxe/XhciDxe.inf
 #  MdeModulePkg/Bus/Usb/UsbBusDxe/UsbBusDxe.inf
-  Clover/Patches_for_EDK2/UsbBusDxe/UsbBusDxe.inf
+  Clover/Drivers/UsbBusDxe/UsbBusDxe.inf
 #  MdeModulePkg/Bus/Usb/UsbKbDxe/UsbKbDxe.inf
-  Clover/UsbKbDxe/UsbKbDxe.inf
+  Clover/Drivers/UsbKbDxe/UsbKbDxe.inf
   MdeModulePkg/Bus/Usb/UsbMassStorageDxe/UsbMassStorageDxe.inf
   MdeModulePkg/Bus/Usb/UsbMouseDxe/UsbMouseDxe.inf
   #Clover/Patches_for_EDK2/UsbMouseDxe/UsbMouseDxe.inf
@@ -393,7 +393,7 @@
   #IntelFrameworkModulePkg/Bus/Isa/IsaFloppyDxe/IsaFloppyDxe.inf
   IntelFrameworkModulePkg/Bus/Isa/Ps2MouseAbsolutePointerDxe/Ps2MouseAbsolutePointerDxe.inf
   #IntelFrameworkModulePkg/Bus/Isa/Ps2MouseDxe/Ps2MouseDxe.inf
-  Clover/Ps2MouseDxe/Ps2MouseDxe.inf
+  Clover/Drivers/Ps2MouseDxe/Ps2MouseDxe.inf
  
   # ACPI Support
   #MdeModulePkg/Universal/Acpi/AcpiTableDxe/AcpiTableDxe.inf
@@ -404,7 +404,7 @@
   MdeModulePkg/Universal/Disk/DiskIoDxe/DiskIoDxe.inf
   MdeModulePkg/Universal/Disk/UnicodeCollation/EnglishDxe/EnglishDxe.inf
   #MdeModulePkg/Universal/Disk/PartitionDxe/PartitionDxe.inf
-  Clover/PartitionDxe/PartitionDxe.inf
+  Clover/Drivers/PartitionDxe/PartitionDxe.inf
 
   #FD
   #IntelFrameworkModulePkg/Universal/Acpi/AcpiS3SaveDxe/AcpiS3SaveDxe.inf
