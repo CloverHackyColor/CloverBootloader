@@ -107,6 +107,7 @@
 #define RADEON_AUX_WINDOW_VERT_CNTL         0x02dc
 
 #define RADEON_BASE_CODE                    0x0f0b
+//BIOS_0_SCRATCH = 0x00000050
 #define RADEON_BIOS_0_SCRATCH               0x0010
 #       define RADEON_FP_PANEL_SCALABLE     (1 << 16)
 #       define RADEON_FP_PANEL_SCALE_EN     (1 << 17)
@@ -117,6 +118,7 @@
 #       define RADEON_DISPLAY_ROT_90        (1 << 28)
 #       define RADEON_DISPLAY_ROT_180       (2 << 28)
 #       define RADEON_DISPLAY_ROT_270       (3 << 28)
+//BIOS_1_SCRATCH = 0xC0C821A5
 #define RADEON_BIOS_1_SCRATCH               0x0014
 #define RADEON_BIOS_2_SCRATCH               0x0018
 #define RADEON_BIOS_3_SCRATCH               0x001c

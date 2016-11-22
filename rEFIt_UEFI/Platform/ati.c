@@ -1738,6 +1738,11 @@ BOOLEAN radeon_card_posted(VOID)
   
   // first check CRTCs
   reg = (UINTN)REG32(card->mmio, RADEON_CRTC_GEN_CNTL) | REG32(card->mmio, RADEON_CRTC2_GEN_CNTL);
+  DBG("RADEON_CRTC2_GEN_CNTL == 0x%08x\n", REG32(card->mmio, RADEON_CRTC2_GEN_CNTL));
+  if ((reg & 0xFFFFFFFF) == 0xFFFFFFFF) {
+    DBG(" card not posted because GEN_CNTL = -1\n");
+    return FALSE;
+  }
   if (reg & RADEON_CRTC_EN) {
     DBG(" card posted because CRTC_EN, GEN_CNTL=%x\n", reg);
     return TRUE;
@@ -1832,7 +1837,7 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
   DBG("Framebuffer @0x%08X  MMIO @0x%08X I/O Port @0x%08X ROM Addr @0x%08X\n",
       card->fb, card->mmio, card->io, ExpansionRom);
   DBG("PCI region 1 = 0x%8X, region3 = 0x%8X, region5 = 0x%8X\n", Reg1, Reg3, Reg5);
-  if (card->info->chip_family >= CHIP_FAMILY_ELLESMERE) {
+  if (card->info->chip_family >= CHIP_FAMILY_HAINAN && Reg5 != 0) {
     card->mmio = (UINT8 *)Reg5;
     DBG("Use region5 as MMIO space\n");
   }
