@@ -1831,11 +1831,15 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
   Reg3 = (UINTN)(pci_config_read32(pci_dev, PCI_BASE_ADDRESS_3) & ~0x0f);
   card->io    = (UINT8 *)(UINTN)(pci_config_read32(pci_dev, PCI_BASE_ADDRESS_4) & ~0x03);
   Reg5 = (UINTN)(pci_config_read32(pci_dev, PCI_BASE_ADDRESS_5) & ~0x0f);
-  pci_dev->regs = card->mmio;
   ExpansionRom = pci_config_read32(pci_dev, PCI_EXPANSION_ROM_BASE); //0x30 as Chimera
   DBG("Framebuffer @0x%08X  MMIO @0x%08X I/O Port @0x%08X ROM Addr @0x%08X\n",
       card->fb, card->mmio, card->io, ExpansionRom);
   DBG("PCI region 1 = 0x%8X, region3 = 0x%8X, region5 = 0x%8X\n", Reg1, Reg3, Reg5);
+  if (card->info->chip_family >= CHIP_FAMILY_ELLESMERE) {
+    card->mmio = (UINT8 *)Reg5;
+    DBG("Use region5 as MMIO space\n");
+  }
+  pci_dev->regs = card->mmio;
   
   card->posted = radeon_card_posted();
   DBG("ATI card %a, ", card->posted ? "POSTed" : "non-POSTed");
