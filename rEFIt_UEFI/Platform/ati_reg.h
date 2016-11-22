@@ -451,7 +451,7 @@
 #       define RADEON_CRTC2_H_DISP          (0x01ff << 16)
 #       define RADEON_CRTC2_H_DISP_SHIFT    16
 
-#define RADEON_CRTC_OFFSET_RIGHT      0x0220
+#define RADEON_CRTC_OFFSET_RIGHT            0x0220
 #define RADEON_CRTC_OFFSET                  0x0224
 #  define RADEON_CRTC_OFFSET__GUI_TRIG_OFFSET (1<<30)
 #  define RADEON_CRTC_OFFSET__OFFSET_LOCK      (1<<31)
@@ -483,8 +483,8 @@
 #       define RADEON_CRTC_OFFSET_FLIP_CNTL             (1 << 16)
 #       define RADEON_CRTC_STEREO_OFFSET_EN             (1 << 17)
 
-#define R300_CRTC_TILE_X0_Y0              0x0350
-#define R300_CRTC2_TILE_X0_Y0              0x0358
+#define R300_CRTC_TILE_X0_Y0                0x0350
+#define R300_CRTC2_TILE_X0_Y0               0x0358
 
 #define RADEON_CRTC2_OFFSET_CNTL            0x0328
 #       define RADEON_CRTC2_OFFSET_FLIP_CNTL (1 << 16)
