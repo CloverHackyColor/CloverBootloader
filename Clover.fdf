@@ -120,19 +120,19 @@ INF IntelFrameworkModulePkg/Universal/DataHubDxe/DataHubDxe.inf
 INF  Clover/Protocols/DriverOverride/DriverOverride.inf	
 !ifndef NO_GRUB_DRIVERS_EMBEDDED
 !ifndef NO_GRUB_DRIVERS
-INF  Clover/GrubFS/src/EXFAT.inf	
-#INF  Clover/GrubFS/src/NTFS.inf
+INF  Clover/FileSystems/GrubFS/src/EXFAT.inf	
+#INF  Clover/FileSystems/GrubFS/src/NTFS.inf
 !endif
 !endif
-#INF  Clover/VBoxFsDxe/VBoxFsDxe.inf
-#INF  Clover/VBoxFsDxe/VBoxIso9660.inf
-#INF  Clover/VBoxFsDxe/VBoxExt2.inf
-#INF  Clover/VBoxFsDxe/VBoxExt4.inf
-#INF  Clover/VBoxFsDxe/VBoxReiserFS.inf
+#INF  Clover/FileSystems/VBoxFsDxe/VBoxFsDxe.inf
+#INF  Clover/FileSystems/VBoxFsDxe/VBoxIso9660.inf
+#INF  Clover/FileSystems/VBoxFsDxe/VBoxExt2.inf
+#INF  Clover/FileSystems/VBoxFsDxe/VBoxExt4.inf
+#INF  Clover/FileSystems/VBoxFsDxe/VBoxReiserFS.inf
 !if $(USE_APPLE_HFSPLUS_DRIVER) AND ( $(ARCH) == X64 )
-INF  RuleOverride=BINARY Clover/HFSPlus/HFSPlus.inf
+INF  RuleOverride=BINARY Clover/FileSystems/HFSPlus/HFSPlus.inf
 !else
-INF  Clover/VBoxFsDxe/VBoxHfs.inf
+INF  Clover/FileSystems/VBoxFsDxe/VBoxHfs.inf
 !endif
 
 INF  PcAtChipsetPkg/8259InterruptControllerDxe/8259.inf
@@ -262,7 +262,7 @@ INF  Clover/Protocols/MsgLog/MsgLog.inf
 
     # Binary INF file to support toggle among different CPU architectures.
 #INF  RuleOverride=BINARY FatBinPkg/EnhancedFatDxe/Fat.inf
-INF  Clover/FatPkg/EnhancedFatDxe/Fat.inf
+INF  Clover/FileSystems/FatPkg/EnhancedFatDxe/Fat.inf
 
 FILE FREEFORM = PCD(gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdLogoFile) {
 	SECTION RAW = Clover/Logo/Logo.bmp

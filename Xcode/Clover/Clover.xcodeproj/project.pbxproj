@@ -1943,6 +1943,120 @@
 		12C86CC11DE4272F00BF4974 /* XhciReg.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XhciReg.h; sourceTree = "<group>"; };
 		12C86CC21DE4272F00BF4974 /* XhciSched.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = XhciSched.c; sourceTree = "<group>"; };
 		12C86CC31DE4272F00BF4974 /* XhciSched.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XhciSched.h; sourceTree = "<group>"; };
+		12C86CC81DE428E200BF4974 /* ApplePlatformInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ApplePlatformInfo.h; sourceTree = "<group>"; };
+		12C86CCD1DE428FB00BF4974 /* ComponentName.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ComponentName.c; sourceTree = "<group>"; };
+		12C86CCE1DE428FB00BF4974 /* Data.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Data.c; sourceTree = "<group>"; };
+		12C86CCF1DE428FB00BF4974 /* Debug.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Debug.c; sourceTree = "<group>"; };
+		12C86CD01DE428FB00BF4974 /* Delete.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Delete.c; sourceTree = "<group>"; };
+		12C86CD11DE428FB00BF4974 /* DirectoryCache.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = DirectoryCache.c; sourceTree = "<group>"; };
+		12C86CD21DE428FB00BF4974 /* DirectoryManage.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = DirectoryManage.c; sourceTree = "<group>"; };
+		12C86CD31DE428FB00BF4974 /* DiskCache.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = DiskCache.c; sourceTree = "<group>"; };
+		12C86CD41DE428FB00BF4974 /* EnhancedFat.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = EnhancedFat.inf; sourceTree = "<group>"; };
+		12C86CD51DE428FB00BF4974 /* Fat.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Fat.c; sourceTree = "<group>"; };
+		12C86CD61DE428FB00BF4974 /* Fat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Fat.h; sourceTree = "<group>"; };
+		12C86CD71DE428FB00BF4974 /* Fat.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = Fat.inf; sourceTree = "<group>"; };
+		12C86CD81DE428FB00BF4974 /* Fat.msa */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Fat.msa; sourceTree = "<group>"; };
+		12C86CD91DE428FB00BF4974 /* Fat.uni */ = {isa = PBXFileReference; lastKnownFileType = text; path = Fat.uni; sourceTree = "<group>"; };
+		12C86CDA1DE428FB00BF4974 /* FatExtra.uni */ = {isa = PBXFileReference; lastKnownFileType = text; path = FatExtra.uni; sourceTree = "<group>"; };
+		12C86CDB1DE428FB00BF4974 /* FatFileSystem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FatFileSystem.h; sourceTree = "<group>"; };
+		12C86CDC1DE428FB00BF4974 /* FileName.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = FileName.c; sourceTree = "<group>"; };
+		12C86CDD1DE428FB00BF4974 /* FileSpace.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = FileSpace.c; sourceTree = "<group>"; };
+		12C86CDE1DE428FB00BF4974 /* Flush.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Flush.c; sourceTree = "<group>"; };
+		12C86CDF1DE428FB00BF4974 /* Hash.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Hash.c; sourceTree = "<group>"; };
+		12C86CE01DE428FB00BF4974 /* Info.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Info.c; sourceTree = "<group>"; };
+		12C86CE11DE428FB00BF4974 /* Init.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Init.c; sourceTree = "<group>"; };
+		12C86CE21DE428FB00BF4974 /* Misc.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Misc.c; sourceTree = "<group>"; };
+		12C86CE31DE428FB00BF4974 /* Open.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Open.c; sourceTree = "<group>"; };
+		12C86CE41DE428FB00BF4974 /* OpenVolume.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = OpenVolume.c; sourceTree = "<group>"; };
+		12C86CE51DE428FB00BF4974 /* ReadWrite.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ReadWrite.c; sourceTree = "<group>"; };
+		12C86CE61DE428FB00BF4974 /* UnicodeCollation.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = UnicodeCollation.c; sourceTree = "<group>"; };
+		12C86CE71DE428FB00BF4974 /* FatPkg.dec */ = {isa = PBXFileReference; lastKnownFileType = text; path = FatPkg.dec; sourceTree = "<group>"; };
+		12C86CE81DE428FB00BF4974 /* FatPkg.dsc */ = {isa = PBXFileReference; lastKnownFileType = text; path = FatPkg.dsc; sourceTree = "<group>"; };
+		12C86CE91DE428FB00BF4974 /* FatPkg.fdf */ = {isa = PBXFileReference; lastKnownFileType = text; path = FatPkg.fdf; sourceTree = "<group>"; };
+		12C86CEA1DE428FB00BF4974 /* FatPkg.uni */ = {isa = PBXFileReference; lastKnownFileType = text; path = FatPkg.uni; sourceTree = "<group>"; };
+		12C86CEB1DE428FB00BF4974 /* FatPkgExtra.uni */ = {isa = PBXFileReference; lastKnownFileType = text; path = FatPkgExtra.uni; sourceTree = "<group>"; };
+		12C870AB1DE428FC00BF4974 /* fsw_base.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fsw_base.h; sourceTree = "<group>"; };
+		12C870AC1DE428FC00BF4974 /* fsw_core.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = fsw_core.c; sourceTree = "<group>"; };
+		12C870AD1DE428FC00BF4974 /* fsw_core.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fsw_core.h; sourceTree = "<group>"; };
+		12C870AE1DE428FC00BF4974 /* fsw_efi.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = fsw_efi.c; sourceTree = "<group>"; };
+		12C870AF1DE428FC00BF4974 /* fsw_efi.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fsw_efi.h; sourceTree = "<group>"; };
+		12C870B01DE428FC00BF4974 /* fsw_efi_base.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fsw_efi_base.h; sourceTree = "<group>"; };
+		12C870B11DE428FC00BF4974 /* fsw_efi_lib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = fsw_efi_lib.c; sourceTree = "<group>"; };
+		12C870B21DE428FC00BF4974 /* fsw_ext2.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = fsw_ext2.c; sourceTree = "<group>"; };
+		12C870B31DE428FC00BF4974 /* fsw_ext2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fsw_ext2.h; sourceTree = "<group>"; };
+		12C870B41DE428FC00BF4974 /* fsw_ext2_disk.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fsw_ext2_disk.h; sourceTree = "<group>"; };
+		12C870B51DE428FC00BF4974 /* fsw_ext4.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = fsw_ext4.c; sourceTree = "<group>"; };
+		12C870B61DE428FC00BF4974 /* fsw_ext4.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fsw_ext4.h; sourceTree = "<group>"; };
+		12C870B71DE428FC00BF4974 /* fsw_ext4_disk.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fsw_ext4_disk.h; sourceTree = "<group>"; };
+		12C870B81DE428FC00BF4974 /* fsw_hfs.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = fsw_hfs.c; sourceTree = "<group>"; };
+		12C870B91DE428FC00BF4974 /* fsw_hfs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fsw_hfs.h; sourceTree = "<group>"; };
+		12C870BA1DE428FC00BF4974 /* fsw_iso9660.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = fsw_iso9660.c; sourceTree = "<group>"; };
+		12C870BB1DE428FC00BF4974 /* fsw_iso9660.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fsw_iso9660.h; sourceTree = "<group>"; };
+		12C870BC1DE428FC00BF4974 /* fsw_lib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = fsw_lib.c; sourceTree = "<group>"; };
+		12C870BD1DE428FC00BF4974 /* fsw_reiserfs.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = fsw_reiserfs.c; sourceTree = "<group>"; };
+		12C870BE1DE428FC00BF4974 /* fsw_reiserfs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fsw_reiserfs.h; sourceTree = "<group>"; };
+		12C870BF1DE428FC00BF4974 /* fsw_reiserfs_disk.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fsw_reiserfs_disk.h; sourceTree = "<group>"; };
+		12C870C01DE428FC00BF4974 /* fsw_strfunc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fsw_strfunc.h; sourceTree = "<group>"; };
+		12C870C11DE428FC00BF4974 /* hfs_format.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = hfs_format.h; sourceTree = "<group>"; };
+		12C870C21DE428FC00BF4974 /* OverrideFunctions-kabyl.edk2.c.include */ = {isa = PBXFileReference; lastKnownFileType = text; path = "OverrideFunctions-kabyl.edk2.c.include"; sourceTree = "<group>"; };
+		12C870C41DE428FC00BF4974 /* fsw_posix.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = fsw_posix.c; sourceTree = "<group>"; };
+		12C870C51DE428FC00BF4974 /* fsw_posix.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fsw_posix.h; sourceTree = "<group>"; };
+		12C870C61DE428FC00BF4974 /* fsw_posix_base.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fsw_posix_base.h; sourceTree = "<group>"; };
+		12C870C71DE428FC00BF4974 /* lslr.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = lslr.c; sourceTree = "<group>"; };
+		12C870C81DE428FC00BF4974 /* lsroot.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = lsroot.c; sourceTree = "<group>"; };
+		12C870C91DE428FC00BF4974 /* README */ = {isa = PBXFileReference; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
+		12C870CA1DE428FC00BF4974 /* VBoxExt2.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = VBoxExt2.inf; sourceTree = "<group>"; };
+		12C870CB1DE428FC00BF4974 /* VBoxExt4.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = VBoxExt4.inf; sourceTree = "<group>"; };
+		12C870CC1DE428FC00BF4974 /* VBoxFsDxe.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = VBoxFsDxe.c; sourceTree = "<group>"; };
+		12C870CD1DE428FC00BF4974 /* VBoxFsDxe.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = VBoxFsDxe.inf; sourceTree = "<group>"; };
+		12C870CE1DE428FC00BF4974 /* VBoxFswParam.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VBoxFswParam.h; sourceTree = "<group>"; };
+		12C870CF1DE428FC00BF4974 /* VBoxHfs.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = VBoxHfs.inf; sourceTree = "<group>"; };
+		12C870D01DE428FC00BF4974 /* VBoxIso9660.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = VBoxIso9660.inf; sourceTree = "<group>"; };
+		12C870D11DE428FC00BF4974 /* VBoxReiserFS.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = VBoxReiserFS.inf; sourceTree = "<group>"; };
+		12C874981DE429EC00BF4974 /* BiosBlkIo.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BiosBlkIo.c; sourceTree = "<group>"; };
+		12C874991DE429EC00BF4974 /* BiosBlkIo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BiosBlkIo.h; sourceTree = "<group>"; };
+		12C8749A1DE429EC00BF4974 /* BiosInt13.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BiosInt13.c; sourceTree = "<group>"; };
+		12C8749B1DE429EC00BF4974 /* BlockIoDxe.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = BlockIoDxe.inf; sourceTree = "<group>"; };
+		12C8749C1DE429EC00BF4974 /* ComponentName.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ComponentName.c; sourceTree = "<group>"; };
+		12C8749D1DE429EC00BF4974 /* Edd.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Edd.h; sourceTree = "<group>"; };
+		12C8749E1DE429EC00BF4974 /* LegacyBiosThunk.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = LegacyBiosThunk.c; sourceTree = "<group>"; };
+		12C874A01DE429EC00BF4974 /* InterruptTable.asm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm.asm; path = InterruptTable.asm; sourceTree = "<group>"; };
+		12C874A11DE429EC00BF4974 /* InterruptTable.S */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm; path = InterruptTable.S; sourceTree = "<group>"; };
+		12C874A31DE429EC00BF4974 /* AppleKey.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = AppleKey.c; sourceTree = "<group>"; };
+		12C874A41DE429EC00BF4974 /* AppleKey.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleKey.h; sourceTree = "<group>"; };
+		12C874A51DE429EC00BF4974 /* BiosKeyboard.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BiosKeyboard.c; sourceTree = "<group>"; };
+		12C874A61DE429EC00BF4974 /* BiosKeyboard.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BiosKeyboard.h; sourceTree = "<group>"; };
+		12C874A71DE429EC00BF4974 /* ComponentName.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ComponentName.c; sourceTree = "<group>"; };
+		12C874A81DE429EC00BF4974 /* ComponentName.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ComponentName.h; sourceTree = "<group>"; };
+		12C874A91DE429EC00BF4974 /* KeyboardDxe.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = KeyboardDxe.inf; sourceTree = "<group>"; };
+		12C874AA1DE429EC00BF4974 /* LegacyBios.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = LegacyBios.c; sourceTree = "<group>"; };
+		12C874AB1DE429EC00BF4974 /* LegacyBiosDxe.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = LegacyBiosDxe.inf; sourceTree = "<group>"; };
+		12C874AC1DE429EC00BF4974 /* LegacyBiosInterface.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LegacyBiosInterface.h; sourceTree = "<group>"; };
+		12C874AE1DE429EC00BF4974 /* BiosSupportLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BiosSupportLib.c; sourceTree = "<group>"; };
+		12C874AF1DE429EC00BF4974 /* BiosSupportLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BiosSupportLib.h; sourceTree = "<group>"; };
+		12C874B01DE429EC00BF4974 /* BiosSupportLib.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = BiosSupportLib.inf; sourceTree = "<group>"; };
+		12C874B11DE429EC00BF4974 /* LegacyInterrupt.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = LegacyInterrupt.c; sourceTree = "<group>"; };
+		12C874B21DE429EC00BF4974 /* LegacyInterrupt.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LegacyInterrupt.h; sourceTree = "<group>"; };
+		12C874B31DE429EC00BF4974 /* LegacyPlatform.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = LegacyPlatform.c; sourceTree = "<group>"; };
+		12C874B41DE429EC00BF4974 /* LegacyPlatform.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LegacyPlatform.h; sourceTree = "<group>"; };
+		12C874B51DE429EC00BF4974 /* LegacyRegion.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = LegacyRegion.c; sourceTree = "<group>"; };
+		12C874B61DE429EC00BF4974 /* LegacyRegion.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LegacyRegion.h; sourceTree = "<group>"; };
+		12C874B81DE429EC00BF4974 /* LegacyRegion2.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = LegacyRegion2.c; sourceTree = "<group>"; };
+		12C874B91DE429EC00BF4974 /* LegacyRegion2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LegacyRegion2.h; sourceTree = "<group>"; };
+		12C874BA1DE429EC00BF4974 /* LegacyRegion2Dxe.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = LegacyRegion2Dxe.inf; sourceTree = "<group>"; };
+		12C874BC1DE429EC00BF4974 /* Thunk.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Thunk.c; sourceTree = "<group>"; };
+		12C874BE1DE429EC00BF4974 /* BiosVideo.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BiosVideo.c; sourceTree = "<group>"; };
+		12C874BF1DE429EC00BF4974 /* BiosVideo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BiosVideo.h; sourceTree = "<group>"; };
+		12C874C01DE429EC00BF4974 /* BiosVideo2.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BiosVideo2.c; sourceTree = "<group>"; };
+		12C874C11DE429EC00BF4974 /* ComponentName.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ComponentName.c; sourceTree = "<group>"; };
+		12C874C21DE429EC00BF4974 /* VideoDxe.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = VideoDxe.inf; sourceTree = "<group>"; };
+		12C874C31DE429EC00BF4974 /* VideoDxe2.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = VideoDxe2.inf; sourceTree = "<group>"; };
+		12C874C51DE429EC00BF4974 /* InterruptTable.asm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm.asm; path = InterruptTable.asm; sourceTree = "<group>"; };
+		12C874C61DE429EC00BF4974 /* InterruptTable.S */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm; path = InterruptTable.S; sourceTree = "<group>"; };
+		12C874CC1DE42A3300BF4974 /* Clover.dsc */ = {isa = PBXFileReference; lastKnownFileType = text; name = Clover.dsc; path = ../../Clover.dsc; sourceTree = "<group>"; };
+		12C874CE1DE42A3C00BF4974 /* Clover.fdf */ = {isa = PBXFileReference; lastKnownFileType = text; name = Clover.fdf; path = ../../Clover.fdf; sourceTree = "<group>"; };
+		12C874CF1DE42A4200BF4974 /* CloverPkg.dec */ = {isa = PBXFileReference; lastKnownFileType = text; name = CloverPkg.dec; path = ../../CloverPkg.dec; sourceTree = "<group>"; };
+		12C874D01DE42A4900BF4974 /* ebuild.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = ebuild.sh; path = ../../ebuild.sh; sourceTree = "<group>"; };
 		12E301581D5A413A00EED426 /* lodepng.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lodepng.c; sourceTree = "<group>"; };
 		12E301591D5A413A00EED426 /* lodepng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lodepng.h; sourceTree = "<group>"; };
 		2C7949E31A0AA7F700D845B0 /* Clover */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Clover; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -5489,16 +5603,243 @@
 			path = XhciDxe;
 			sourceTree = "<group>";
 		};
+		12C86CCA1DE428FB00BF4974 /* FileSystems */ = {
+			isa = PBXGroup;
+			children = (
+				12C86CCB1DE428FB00BF4974 /* FatPkg */,
+				12C870AA1DE428FC00BF4974 /* VBoxFsDxe */,
+			);
+			name = FileSystems;
+			path = ../../FileSystems;
+			sourceTree = "<group>";
+		};
+		12C86CCB1DE428FB00BF4974 /* FatPkg */ = {
+			isa = PBXGroup;
+			children = (
+				12C86CCC1DE428FB00BF4974 /* EnhancedFatDxe */,
+				12C86CE71DE428FB00BF4974 /* FatPkg.dec */,
+				12C86CE81DE428FB00BF4974 /* FatPkg.dsc */,
+				12C86CE91DE428FB00BF4974 /* FatPkg.fdf */,
+				12C86CEA1DE428FB00BF4974 /* FatPkg.uni */,
+				12C86CEB1DE428FB00BF4974 /* FatPkgExtra.uni */,
+			);
+			path = FatPkg;
+			sourceTree = "<group>";
+		};
+		12C86CCC1DE428FB00BF4974 /* EnhancedFatDxe */ = {
+			isa = PBXGroup;
+			children = (
+				12C86CCD1DE428FB00BF4974 /* ComponentName.c */,
+				12C86CCE1DE428FB00BF4974 /* Data.c */,
+				12C86CCF1DE428FB00BF4974 /* Debug.c */,
+				12C86CD01DE428FB00BF4974 /* Delete.c */,
+				12C86CD11DE428FB00BF4974 /* DirectoryCache.c */,
+				12C86CD21DE428FB00BF4974 /* DirectoryManage.c */,
+				12C86CD31DE428FB00BF4974 /* DiskCache.c */,
+				12C86CD41DE428FB00BF4974 /* EnhancedFat.inf */,
+				12C86CD51DE428FB00BF4974 /* Fat.c */,
+				12C86CD61DE428FB00BF4974 /* Fat.h */,
+				12C86CD71DE428FB00BF4974 /* Fat.inf */,
+				12C86CD81DE428FB00BF4974 /* Fat.msa */,
+				12C86CD91DE428FB00BF4974 /* Fat.uni */,
+				12C86CDA1DE428FB00BF4974 /* FatExtra.uni */,
+				12C86CDB1DE428FB00BF4974 /* FatFileSystem.h */,
+				12C86CDC1DE428FB00BF4974 /* FileName.c */,
+				12C86CDD1DE428FB00BF4974 /* FileSpace.c */,
+				12C86CDE1DE428FB00BF4974 /* Flush.c */,
+				12C86CDF1DE428FB00BF4974 /* Hash.c */,
+				12C86CE01DE428FB00BF4974 /* Info.c */,
+				12C86CE11DE428FB00BF4974 /* Init.c */,
+				12C86CE21DE428FB00BF4974 /* Misc.c */,
+				12C86CE31DE428FB00BF4974 /* Open.c */,
+				12C86CE41DE428FB00BF4974 /* OpenVolume.c */,
+				12C86CE51DE428FB00BF4974 /* ReadWrite.c */,
+				12C86CE61DE428FB00BF4974 /* UnicodeCollation.c */,
+			);
+			path = EnhancedFatDxe;
+			sourceTree = "<group>";
+		};
+		12C870AA1DE428FC00BF4974 /* VBoxFsDxe */ = {
+			isa = PBXGroup;
+			children = (
+				12C870AB1DE428FC00BF4974 /* fsw_base.h */,
+				12C870AC1DE428FC00BF4974 /* fsw_core.c */,
+				12C870AD1DE428FC00BF4974 /* fsw_core.h */,
+				12C870AE1DE428FC00BF4974 /* fsw_efi.c */,
+				12C870AF1DE428FC00BF4974 /* fsw_efi.h */,
+				12C870B01DE428FC00BF4974 /* fsw_efi_base.h */,
+				12C870B11DE428FC00BF4974 /* fsw_efi_lib.c */,
+				12C870B21DE428FC00BF4974 /* fsw_ext2.c */,
+				12C870B31DE428FC00BF4974 /* fsw_ext2.h */,
+				12C870B41DE428FC00BF4974 /* fsw_ext2_disk.h */,
+				12C870B51DE428FC00BF4974 /* fsw_ext4.c */,
+				12C870B61DE428FC00BF4974 /* fsw_ext4.h */,
+				12C870B71DE428FC00BF4974 /* fsw_ext4_disk.h */,
+				12C870B81DE428FC00BF4974 /* fsw_hfs.c */,
+				12C870B91DE428FC00BF4974 /* fsw_hfs.h */,
+				12C870BA1DE428FC00BF4974 /* fsw_iso9660.c */,
+				12C870BB1DE428FC00BF4974 /* fsw_iso9660.h */,
+				12C870BC1DE428FC00BF4974 /* fsw_lib.c */,
+				12C870BD1DE428FC00BF4974 /* fsw_reiserfs.c */,
+				12C870BE1DE428FC00BF4974 /* fsw_reiserfs.h */,
+				12C870BF1DE428FC00BF4974 /* fsw_reiserfs_disk.h */,
+				12C870C01DE428FC00BF4974 /* fsw_strfunc.h */,
+				12C870C11DE428FC00BF4974 /* hfs_format.h */,
+				12C870C21DE428FC00BF4974 /* OverrideFunctions-kabyl.edk2.c.include */,
+				12C870C31DE428FC00BF4974 /* test */,
+				12C870CA1DE428FC00BF4974 /* VBoxExt2.inf */,
+				12C870CB1DE428FC00BF4974 /* VBoxExt4.inf */,
+				12C870CC1DE428FC00BF4974 /* VBoxFsDxe.c */,
+				12C870CD1DE428FC00BF4974 /* VBoxFsDxe.inf */,
+				12C870CE1DE428FC00BF4974 /* VBoxFswParam.h */,
+				12C870CF1DE428FC00BF4974 /* VBoxHfs.inf */,
+				12C870D01DE428FC00BF4974 /* VBoxIso9660.inf */,
+				12C870D11DE428FC00BF4974 /* VBoxReiserFS.inf */,
+			);
+			path = VBoxFsDxe;
+			sourceTree = "<group>";
+		};
+		12C870C31DE428FC00BF4974 /* test */ = {
+			isa = PBXGroup;
+			children = (
+				12C870C41DE428FC00BF4974 /* fsw_posix.c */,
+				12C870C51DE428FC00BF4974 /* fsw_posix.h */,
+				12C870C61DE428FC00BF4974 /* fsw_posix_base.h */,
+				12C870C71DE428FC00BF4974 /* lslr.c */,
+				12C870C81DE428FC00BF4974 /* lsroot.c */,
+				12C870C91DE428FC00BF4974 /* README */,
+			);
+			path = test;
+			sourceTree = "<group>";
+		};
+		12C874961DE429EC00BF4974 /* LegacyBios */ = {
+			isa = PBXGroup;
+			children = (
+				12C874971DE429EC00BF4974 /* BlockIoDxe */,
+				12C8749F1DE429EC00BF4974 /* IA32 */,
+				12C874A21DE429EC00BF4974 /* KeyboardDxe */,
+				12C874AA1DE429EC00BF4974 /* LegacyBios.c */,
+				12C874AB1DE429EC00BF4974 /* LegacyBiosDxe.inf */,
+				12C874AC1DE429EC00BF4974 /* LegacyBiosInterface.h */,
+				12C874AD1DE429EC00BF4974 /* Platform */,
+				12C874B71DE429EC00BF4974 /* Region2Dxe */,
+				12C874BB1DE429EC00BF4974 /* Thunk */,
+				12C874BD1DE429EC00BF4974 /* VideoDxe */,
+				12C874C41DE429EC00BF4974 /* X64 */,
+			);
+			name = LegacyBios;
+			path = ../../LegacyBios;
+			sourceTree = "<group>";
+		};
+		12C874971DE429EC00BF4974 /* BlockIoDxe */ = {
+			isa = PBXGroup;
+			children = (
+				12C874981DE429EC00BF4974 /* BiosBlkIo.c */,
+				12C874991DE429EC00BF4974 /* BiosBlkIo.h */,
+				12C8749A1DE429EC00BF4974 /* BiosInt13.c */,
+				12C8749B1DE429EC00BF4974 /* BlockIoDxe.inf */,
+				12C8749C1DE429EC00BF4974 /* ComponentName.c */,
+				12C8749D1DE429EC00BF4974 /* Edd.h */,
+				12C8749E1DE429EC00BF4974 /* LegacyBiosThunk.c */,
+			);
+			path = BlockIoDxe;
+			sourceTree = "<group>";
+		};
+		12C8749F1DE429EC00BF4974 /* IA32 */ = {
+			isa = PBXGroup;
+			children = (
+				12C874A01DE429EC00BF4974 /* InterruptTable.asm */,
+				12C874A11DE429EC00BF4974 /* InterruptTable.S */,
+			);
+			path = IA32;
+			sourceTree = "<group>";
+		};
+		12C874A21DE429EC00BF4974 /* KeyboardDxe */ = {
+			isa = PBXGroup;
+			children = (
+				12C874A31DE429EC00BF4974 /* AppleKey.c */,
+				12C874A41DE429EC00BF4974 /* AppleKey.h */,
+				12C874A51DE429EC00BF4974 /* BiosKeyboard.c */,
+				12C874A61DE429EC00BF4974 /* BiosKeyboard.h */,
+				12C874A71DE429EC00BF4974 /* ComponentName.c */,
+				12C874A81DE429EC00BF4974 /* ComponentName.h */,
+				12C874A91DE429EC00BF4974 /* KeyboardDxe.inf */,
+			);
+			path = KeyboardDxe;
+			sourceTree = "<group>";
+		};
+		12C874AD1DE429EC00BF4974 /* Platform */ = {
+			isa = PBXGroup;
+			children = (
+				12C874AE1DE429EC00BF4974 /* BiosSupportLib.c */,
+				12C874AF1DE429EC00BF4974 /* BiosSupportLib.h */,
+				12C874B01DE429EC00BF4974 /* BiosSupportLib.inf */,
+				12C874B11DE429EC00BF4974 /* LegacyInterrupt.c */,
+				12C874B21DE429EC00BF4974 /* LegacyInterrupt.h */,
+				12C874B31DE429EC00BF4974 /* LegacyPlatform.c */,
+				12C874B41DE429EC00BF4974 /* LegacyPlatform.h */,
+				12C874B51DE429EC00BF4974 /* LegacyRegion.c */,
+				12C874B61DE429EC00BF4974 /* LegacyRegion.h */,
+			);
+			path = Platform;
+			sourceTree = "<group>";
+		};
+		12C874B71DE429EC00BF4974 /* Region2Dxe */ = {
+			isa = PBXGroup;
+			children = (
+				12C874B81DE429EC00BF4974 /* LegacyRegion2.c */,
+				12C874B91DE429EC00BF4974 /* LegacyRegion2.h */,
+				12C874BA1DE429EC00BF4974 /* LegacyRegion2Dxe.inf */,
+			);
+			path = Region2Dxe;
+			sourceTree = "<group>";
+		};
+		12C874BB1DE429EC00BF4974 /* Thunk */ = {
+			isa = PBXGroup;
+			children = (
+				12C874BC1DE429EC00BF4974 /* Thunk.c */,
+			);
+			path = Thunk;
+			sourceTree = "<group>";
+		};
+		12C874BD1DE429EC00BF4974 /* VideoDxe */ = {
+			isa = PBXGroup;
+			children = (
+				12C874BE1DE429EC00BF4974 /* BiosVideo.c */,
+				12C874BF1DE429EC00BF4974 /* BiosVideo.h */,
+				12C874C01DE429EC00BF4974 /* BiosVideo2.c */,
+				12C874C11DE429EC00BF4974 /* ComponentName.c */,
+				12C874C21DE429EC00BF4974 /* VideoDxe.inf */,
+				12C874C31DE429EC00BF4974 /* VideoDxe2.inf */,
+			);
+			path = VideoDxe;
+			sourceTree = "<group>";
+		};
+		12C874C41DE429EC00BF4974 /* X64 */ = {
+			isa = PBXGroup;
+			children = (
+				12C874C51DE429EC00BF4974 /* InterruptTable.asm */,
+				12C874C61DE429EC00BF4974 /* InterruptTable.S */,
+			);
+			path = X64;
+			sourceTree = "<group>";
+		};
 		2C7949DA1A0AA7F700D845B0 = {
 			isa = PBXGroup;
 			children = (
 				126151371A15BB7700903E7B /* CloverGUI */,
 				2C794ADD1A0AA85900D845B0 /* Include */,
 				12C865541DE426F600BF4974 /* Library */,
+				12C874961DE429EC00BF4974 /* LegacyBios */,
 				12C86ACC1DE4271D00BF4974 /* CloverEFI */,
 				2C794D1F1A0AA85900D845B0 /* CloverUEFI */,
 				12C86C531DE4272F00BF4974 /* Drivers */,
+				12C86CCA1DE428FB00BF4974 /* FileSystems */,
 				2C7949E41A0AA7F700D845B0 /* Products */,
+				12C874CC1DE42A3300BF4974 /* Clover.dsc */,
+				12C874CE1DE42A3C00BF4974 /* Clover.fdf */,
+				12C874CF1DE42A4200BF4974 /* CloverPkg.dec */,
+				12C874D01DE42A4900BF4974 /* ebuild.sh */,
 			);
 			sourceTree = "<group>";
 		};
@@ -5514,6 +5855,7 @@
 			isa = PBXGroup;
 			children = (
 				2C794ABA1A0AA85900D845B0 /* AcpiDescription.h */,
+				12C86CC81DE428E200BF4974 /* ApplePlatformInfo.h */,
 				2C794ABB1A0AA85900D845B0 /* ConsoleOutConfig.h */,
 				2C794ABC1A0AA85900D845B0 /* DxeCoreFileName.h */,
 				2C794ABD1A0AA85900D845B0 /* FlashMapHob.h */,

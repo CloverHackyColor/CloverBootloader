@@ -319,25 +319,25 @@
   
   # foreign file system support
   Clover/Protocols/DriverOverride/DriverOverride.inf
-  Clover/VBoxFsDxe/VBoxHfs.inf
-  Clover/VBoxFsDxe/VBoxIso9660.inf
-  #Clover/VBoxFsDxe/VBoxFsDxe.inf
-  Clover/VBoxFsDxe/VBoxExt2.inf
-  Clover/VBoxFsDxe/VBoxExt4.inf
-  Clover/VBoxFsDxe/VBoxReiserFS.inf
+  Clover/FileSystems/VBoxFsDxe/VBoxHfs.inf
+  Clover/FileSystems/VBoxFsDxe/VBoxIso9660.inf
+  #Clover/FileSystems/VBoxFsDxe/VBoxFsDxe.inf
+  Clover/FileSystems/VBoxFsDxe/VBoxExt2.inf
+  Clover/FileSystems/VBoxFsDxe/VBoxExt4.inf
+  Clover/FileSystems/VBoxFsDxe/VBoxReiserFS.inf
   #EmbeddedPkg/Universal/MmcDxe/MmcDxe.inf
   #Clover/OsxMmcDxe/MmcDxe.inf
-  Clover/FatPkg/EnhancedFatDxe/Fat.inf
+  Clover/FileSystems/FatPkg/EnhancedFatDxe/Fat.inf
   # FS from grub
 !ifndef NO_GRUB_DRIVERS
-  Clover/GrubFS/src/EXFAT.inf
-  Clover/GrubFS/src/HFSPLUS.inf
-  Clover/GrubFS/src/ISO9660.inf
-  Clover/GrubFS/src/NTFS.inf
-  Clover/GrubFS/src/UDF.inf
-  #Clover/GrubFS/src/UFS.inf
-  #Clover/GrubFS/src/UFS2.inf
-  #Clover/GrubFS/src/XFS.inf
+  Clover/FileSystems/GrubFS/src/EXFAT.inf
+  Clover/FileSystems/GrubFS/src/HFSPLUS.inf
+  Clover/FileSystems/GrubFS/src/ISO9660.inf
+  Clover/FileSystems/GrubFS/src/NTFS.inf
+  Clover/FileSystems/GrubFS/src/UDF.inf
+  #Clover/FileSystems/GrubFS/src/UFS.inf
+  #Clover/FileSystems/GrubFS/src/UFS2.inf
+  #Clover/FileSystems/GrubFS/src/XFS.inf
 !endif
 
   #Video
