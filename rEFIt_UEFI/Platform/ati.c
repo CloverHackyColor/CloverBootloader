@@ -1733,7 +1733,7 @@ BOOLEAN radeon_card_posted(VOID)
   reg = (UINTN)REG32(card->mmio, RADEON_BIOS_5_SCRATCH);
   DBG("5=0x%08x, ", reg);
   reg = (UINTN)REG32(card->mmio, RADEON_BIOS_6_SCRATCH);
-  DBG("6=0x%x\n", reg);
+  DBG("6=0x%08x\n", reg);
 #endif
   
   // first check CRTCs

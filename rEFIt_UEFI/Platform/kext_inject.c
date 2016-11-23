@@ -533,17 +533,17 @@ UINT8   KBELionReplace_X64[]   = { 0xE8, 0x0C, 0xFD, 0xFF, 0xFF, 0x90, 0x90, 0x4
 UINT8   KBEMLSearch[]  = { 0xC6, 0xE8, 0x30, 0x00, 0x00, 0x00, 0xEB, 0x08, 0x48, 0x89, 0xDF };
 UINT8   KBEMLReplace[] = { 0xC6, 0xE8, 0x30, 0x00, 0x00, 0x00, 0x90, 0x90, 0x48, 0x89, 0xDF };
 
-//0xE8, 0x27, 0x00, 0x00, 0x00, 0xEB, 0x08, 0x48, 0x89, 0xDF }; @1ecfa4
-//UINT8   KBEYosSearch[]  = {0xE8, 0x27, 0x00, 0x00, 0x00, 0xEB, 0x08, 0x48, 0x89, 0xDF };
-//UINT8   KBEYosReplace[]  = {0xE8, 0x27, 0x00, 0x00, 0x00, 0x90, 0x90, 0x48, 0x89, 0xDF };
+// PMheart: Mavericks code is the same as ML. But add a separate code to improve stability anyway.
+UINT8   KBEMavSearch[]  = { 0xE8, 0x30, 0x00, 0x00, 0x00, 0xEB, 0x08, 0x48, 0x89, 0xDF };
+UINT8   KBEMavReplace[] = { 0xE8, 0x30, 0x00, 0x00, 0x00, 0x90, 0x90, 0x48, 0x89, 0xDF };
 
 // -- startupExt -->
 UINT8 KBEYosSearch[]  = { 0xE8, 0x25, 0x00, 0x00, 0x00, 0xEB, 0x05, 0xE8, 0xCE, 0x02, 0x00, 0x00 };
 UINT8 KBEYosReplace[] = { 0xE8, 0x25, 0x00, 0x00, 0x00, 0x90, 0x90, 0xE8, 0xCE, 0x02, 0x00, 0x00 };
 
-// 10.12 dp2
-UINT8 KBEYosSearch2[]  =  { 0xE8, 0x25, 0x00, 0x00, 0x00, 0xEB, 0x05, 0xE8, 0x7E, 0x05, 0x00, 0x00 };
-UINT8 KBEYosReplace2[]  = { 0xE8, 0x25, 0x00, 0x00, 0x00, 0x90, 0x90, 0xE8, 0x7E, 0x05, 0x00, 0x00 };
+// 10.12 dp2, name changed by PMheart since may cause confusion later.
+UINT8 KBESieDP2Search[]  =  { 0xE8, 0x25, 0x00, 0x00, 0x00, 0xEB, 0x05, 0xE8, 0x7E, 0x05, 0x00, 0x00 };
+UINT8 KBESieDP2Replace[]  = { 0xE8, 0x25, 0x00, 0x00, 0x00, 0x90, 0x90, 0xE8, 0x7E, 0x05, 0x00, 0x00 };
 // -- startupExt <--
 
 // as of El Capitan DP6
@@ -573,28 +573,28 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
 #if defined(FKERNELPATCH)
   DBG_RT(Entry, "\n\nPatching (%dbit) kernel for injected kexts:\n", is64BitKernel ? 64 : 32);
 
-  if (is64BitKernel) {
+  if (is64BitKernel) { // if 10.10+
     //startupExt
-    Num = FSearchReplace(Kernel, KBEYosSearch2, KBEYosReplace2) +
+    Num = FSearchReplace(Kernel, KBESieDP2Search, KBESieDP2Replace) +
           FSearchReplace(Kernel, KBEYosSearch, KBEYosReplace);
     if (Num) {
       Num +=  FSearchReplace(Kernel, KBESieSearch, KBESieReplace) +
               FSearchReplace(Kernel, KBEECSearch, KBEECReplace);
       DBG_RT(Entry, "==> kernel 10.12/10.11/10.10:\n");
-    } else {
-      //Wheres Mavericks?
-      Num = FSearchReplace(Kernel, KBEMLSearch, KBEMLReplace) +
+    } else { // if 10.10-
+      Num = FSearchReplace(Kernel, KBEMavSearch, KBEMavReplace) +
+            FSearchReplace(Kernel, KBEMLSearch, KBEMLReplace) +
             FSearchReplace(Kernel, KBELionSearch_X64, KBELionReplace_X64) +
             FSearchReplace(Kernel, KBESnowSearch_X64, KBESnowReplace_X64);
-      DBG_RT(Entry, "==> kernel 10.8/10.7/10.6:\n");
+      DBG_RT(Entry, "==> kernel 10.9/10.8/10.7/10.6:\n");
     }
-  } else {
+  } else { // if 32-bit 10.7/10.6
     Num = FSearchReplace(Kernel, KBELionSearch_i386, KBELionReplace_i386) +
           FSearchReplace(Kernel, KBESnowSearch_i386, KBESnowReplace_i386);
     DBG_RT(Entry, "==> kernel 10.7/10.6:\n");
   }
 
-  DBG_RT(Entry, "==> %a : %d replaces done\n", Num ? "Success" : "Error", Num);
+  DBG_RT(Entry, "==> %a : %d replaces done.\n", Num ? "Success" : "Error", Num);
 
 /*
   if (NumSnow_X64 + NumSnow_i386 + NumLion_X64 + NumLion_i386 + NumML + NumYos > 1) {
@@ -612,18 +612,20 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
   UINTN   NumLion_X64 = 0;
   UINTN   NumLion_i386 = 0;
   UINTN   NumML = 0;
+  UINTN   NumMav = 0;
   UINTN   NumYos = 0; //startupExt
   
-  DBG_RT(Entry, "\nPatching kernel for injected kexts\n");
+  DBG_RT(Entry, "\nPatching kernel for injected kexts...\n");
   
   if (is64BitKernel) {
     NumLion_X64 = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBELionSearch_X64, sizeof(KBELionSearch_X64));
     NumSnow_X64 = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBESnowSearch_X64, sizeof(KBESnowSearch_X64));
     NumML  = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBEMLSearch, sizeof(KBEMLSearch));
+    NumMav = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBEMavSearch, sizeof(KBEMavSearch));
     NumYos = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBEYosSearch, sizeof(KBEYosSearch));
     if (!NumYos) {
       // 10.12 dp2
-      NumYos = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBEYosSearch2, sizeof(KBEYosSearch2));      
+      NumYos = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBESieDP2Search, sizeof(KBESieDP2Search));      
     }
   } else {
     NumLion_i386 = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBELionSearch_i386, sizeof(KBELionSearch_i386));
@@ -633,24 +635,26 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
   if (NumSnow_X64 + NumSnow_i386 + NumLion_X64 + NumLion_i386 + NumML + NumYos > 1) {
     // more then one pattern found - we do not know what to do with it
     // and we'll skipp it
-	  AsciiPrint("\nERROR patching kernel for injected kexts:\nmultiple patterns found (LionX64: %d, Lioni386: %d, ML: %d) - skipping patching!\n",
-               NumLion_X64, NumLion_i386, NumML);
+    AsciiPrint("\nERROR patching kernel for injected kexts:\nmultiple patterns found (LionX64: %d, Lioni386: %d, ML: %d) - skipping patching!\n", NumLion_X64, NumLion_i386, NumML);
 	  gBS->Stall(10000000);
 	  return;
   }
   
   if (NumML == 1) {
     Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEMLSearch, sizeof(KBEMLSearch), KBEMLReplace, 1);
-    DBG_RT(Entry, "==> kernel OS X64: %d replaces done.\n", Num);
+    DBG_RT(Entry, "==> kernel Mountain Lion: %d replaces done.\n", Num);
+  }
+  else if (NumMav == 1) { // Mavericks InjectKext by PMheart
+    Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEMavSearch, sizeof(KBEMavSearch), KBEMavReplace, 1);
+    DBG_RT(Entry, "==> kernel Mavericks: %d replaces done.\n", Num)
   }
   else if (NumYos == 1) {
 	  Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEYosSearch, sizeof(KBEYosSearch), KBEYosReplace, 1) +
 		SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEECSearch, sizeof(KBEECSearch), KBEECReplace, 1) +
     // Micky1979, was a pain to place F/R here
     SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBESieSearch, sizeof(KBESieSearch), KBESieReplace, 1) +
- //   SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBESieDP2Search, sizeof(KBESieDP2Search), KBESieDP2Replace, 1);
     // 10.12 dp2 by cecekpawon
-    SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEYosSearch2, sizeof(KBEYosSearch2), KBEYosReplace2, 1);
+    SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBESieDP2Search, sizeof(KBESieDP2Search), KBESieDP2Replace, 1);
     DBG_RT(Entry, "==> kernel Yosemite/El Capitan/Sierra: %d replaces done.\n", Num);
   }
   else if (NumLion_i386 == 1) {
