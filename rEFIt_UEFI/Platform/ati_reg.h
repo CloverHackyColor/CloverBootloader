@@ -52,21 +52,21 @@
 #ifndef _ATI_REG_H_
 #define _ATI_REG_H_
 
-#define ATI_DATATYPE_VQ        0
-#define ATI_DATATYPE_CI4      1
-#define ATI_DATATYPE_CI8      2
-#define ATI_DATATYPE_ARGB1555      3
-#define ATI_DATATYPE_RGB565      4
-#define ATI_DATATYPE_RGB888      5
-#define ATI_DATATYPE_ARGB8888      6
-#define ATI_DATATYPE_RGB332      7
-#define ATI_DATATYPE_Y8        8
-#define ATI_DATATYPE_RGB8      9
-#define ATI_DATATYPE_CI16      10
-#define ATI_DATATYPE_VYUY_422      11
-#define ATI_DATATYPE_YVYU_422      12
-#define ATI_DATATYPE_AYUV_444      14
-#define ATI_DATATYPE_ARGB4444      15
+#define ATI_DATATYPE_VQ                     0
+#define ATI_DATATYPE_CI4                    1
+#define ATI_DATATYPE_CI8                    2
+#define ATI_DATATYPE_ARGB1555               3
+#define ATI_DATATYPE_RGB565                 4
+#define ATI_DATATYPE_RGB888                 5
+#define ATI_DATATYPE_ARGB8888               6
+#define ATI_DATATYPE_RGB332                 7
+#define ATI_DATATYPE_Y8                     8
+#define ATI_DATATYPE_RGB8                   9
+#define ATI_DATATYPE_CI16                   10
+#define ATI_DATATYPE_VYUY_422               11
+#define ATI_DATATYPE_YVYU_422               12
+#define ATI_DATATYPE_AYUV_444               14
+#define ATI_DATATYPE_ARGB4444               15
 
         /* Registers for 2D/Video/Overlay */
 #define RADEON_ADAPTER_ID                   0x0f2c /* PCI */
@@ -107,8 +107,54 @@
 #define RADEON_AUX_WINDOW_VERT_CNTL         0x02dc
 
 #define RADEON_BASE_CODE                    0x0f0b
-//BIOS_0_SCRATCH = 0x00000050
+//BIOS_0_SCRATCH : 0x00000050 - R9-280X
 #define RADEON_BIOS_0_SCRATCH               0x0010
+#   define ATOM_S0_CRT1_MONO               0x00000001L
+#   define ATOM_S0_CRT1_COLOR              0x00000002L
+#   define ATOM_S0_CRT1_MASK               (ATOM_S0_CRT1_MONO+ATOM_S0_CRT1_COLOR)
+//Slice: really I have BIOS_0_SCRATCH=0x04 with DVI connector
+#   define ATOM_S0_TV1_COMPOSITE_A         0x00000004L
+#   define ATOM_S0_TV1_SVIDEO_A            0x00000008L
+#   define ATOM_S0_TV1_MASK_A              (ATOM_S0_TV1_COMPOSITE_A+ATOM_S0_TV1_SVIDEO_A)
+
+#   define ATOM_S0_CV_A                    0x00000010L
+#   define ATOM_S0_CV_DIN_A                0x00000020L
+#   define ATOM_S0_CV_MASK_A               (ATOM_S0_CV_A+ATOM_S0_CV_DIN_A)
+
+
+#   define ATOM_S0_CRT2_MONO               0x00000100L
+#   define ATOM_S0_CRT2_COLOR              0x00000200L
+#   define ATOM_S0_CRT2_MASK               (ATOM_S0_CRT2_MONO+ATOM_S0_CRT2_COLOR)
+
+#   define ATOM_S0_TV1_COMPOSITE           0x00000400L
+#   define ATOM_S0_TV1_SVIDEO              0x00000800L
+#   define ATOM_S0_TV1_SCART               0x00004000L
+#   define ATOM_S0_TV1_MASK                (ATOM_S0_TV1_COMPOSITE+ATOM_S0_TV1_SVIDEO+ATOM_S0_TV1_SCART)
+
+#   define ATOM_S0_CV                      0x00001000L
+#   define ATOM_S0_CV_DIN                  0x00002000L
+#   define ATOM_S0_CV_MASK                 (ATOM_S0_CV+ATOM_S0_CV_DIN)
+
+#   define ATOM_S0_DFP1                    0x00010000L
+#   define ATOM_S0_DFP2                    0x00020000L
+#   define ATOM_S0_LCD1                    0x00040000L
+#   define ATOM_S0_LCD2                    0x00080000L
+#   define ATOM_S0_DFP6                    0x00100000L
+#   define ATOM_S0_DFP3                    0x00200000L
+#   define ATOM_S0_DFP4                    0x00400000L
+#   define ATOM_S0_DFP5                    0x00800000L
+
+#   define ATOM_S0_DFP_MASK                ATOM_S0_DFP1 | ATOM_S0_DFP2 | ATOM_S0_DFP3 | ATOM_S0_DFP4 | ATOM_S0_DFP5 | ATOM_S0_DFP6
+
+#   define ATOM_S0_FAD_REGISTER_BUG        0x02000000L // If set, indicates we are running a PCIE asic with
+// the FAD/HDP reg access bug.  Bit is read by DAL, this is obsolete from RV5xx
+
+#   define ATOM_S0_THERMAL_STATE_MASK      0x1C000000L
+#   define ATOM_S0_THERMAL_STATE_SHIFT     26
+
+#   define ATOM_S0_SYSTEM_POWER_STATE_MASK 0xE0000000L
+#   define ATOM_S0_SYSTEM_POWER_STATE_SHIFT 29
+//older BIOS_0_SCRATCH definitions
 #       define RADEON_FP_PANEL_SCALABLE     (1 << 16)
 #       define RADEON_FP_PANEL_SCALE_EN     (1 << 17)
 #       define RADEON_FP_CHIP_SCALE_EN      (1 << 18)
@@ -118,9 +164,32 @@
 #       define RADEON_DISPLAY_ROT_90        (1 << 28)
 #       define RADEON_DISPLAY_ROT_180       (2 << 28)
 #       define RADEON_DISPLAY_ROT_270       (3 << 28)
-//BIOS_1_SCRATCH = 0xC0C821A5
+//BIOS_1_SCRATCH : 0xC0C821A5
 #define RADEON_BIOS_1_SCRATCH               0x0014
+#   define ATOM_S1_ROM_LOCATION_MASK       0x0000FFFFL
+#   define ATOM_S1_PCI_BUS_DEV_MASK        0xFFFF0000L
+
 #define RADEON_BIOS_2_SCRATCH               0x0018
+/*backlight_level = ((bios_2_scratch & ATOM_S2_CURRENT_BL_LEVEL_MASK) >>
+              ATOM_S2_CURRENT_BL_LEVEL_SHIFT); */
+#   define ATOM_S2_TV1_STANDARD_MASK       0x0000000FL
+#   define ATOM_S2_CURRENT_BL_LEVEL_MASK   0x0000FF00L
+#   define ATOM_S2_CURRENT_BL_LEVEL_SHIFT  8
+
+#   define ATOM_S2_FORCEDLOWPWRMODE_STATE_MASK       0x0C000000L
+#   define ATOM_S2_FORCEDLOWPWRMODE_STATE_MASK_SHIFT 26
+#   define ATOM_S2_FORCEDLOWPWRMODE_STATE_CHANGE     0x10000000L
+
+#   define ATOM_S2_DEVICE_DPMS_STATE       0x00010000L
+#   define ATOM_S2_VRI_BRIGHT_ENABLE       0x20000000L
+
+#   define ATOM_S2_DISPLAY_ROTATION_0_DEGREE     0x0
+#   define ATOM_S2_DISPLAY_ROTATION_90_DEGREE    0x1
+#   define ATOM_S2_DISPLAY_ROTATION_180_DEGREE   0x2
+#   define ATOM_S2_DISPLAY_ROTATION_270_DEGREE   0x3
+#   define ATOM_S2_DISPLAY_ROTATION_DEGREE_SHIFT 30
+#   define ATOM_S2_DISPLAY_ROTATION_ANGLE_MASK   0xC0000000L
+
 #define RADEON_BIOS_3_SCRATCH               0x001c
 #define RADEON_BIOS_4_SCRATCH               0x0020
 #       define RADEON_CRT1_ATTACHED_MASK    (3 << 0)
@@ -172,9 +241,66 @@
 #       define RADEON_SCREEN_BLANKING       (1 << 26)
 #       define RADEON_DRIVER_CRITICAL       (1 << 27)
 #       define RADEON_DISPLAY_SWITCHING_DIS (1 << 30)
-#define RADEON_BIOS_7_SCRATCH               0x002c
+#define RADEON_BIOS_7_SCRATCH               0x002C
 #       define RADEON_SYS_HOTKEY            (1 << 10)
 #       define RADEON_DRV_LOADED            (1 << 12)
+
+#define RADEON_BUS_CNTL                     0x0030
+#       define RADEON_BUS_MASTER_DIS         (1 << 6)
+#       define RADEON_BUS_BIOS_DIS_ROM       (1 << 12)
+#       define RADEON_BUS_RD_DISCARD_EN      (1 << 24)
+#       define RADEON_BUS_RD_ABORT_EN        (1 << 25)
+#       define RADEON_BUS_MSTR_DISCONNECT_EN (1 << 28)
+#       define RADEON_BUS_WRT_BURST          (1 << 29)
+#       define RADEON_BUS_READ_BURST         (1 << 30)
+#define RADEON_BUS_CNTL1                    0x0034
+#       define RADEON_BUS_WAIT_ON_LOCK_EN    (1 << 4)
+
+#define RADEON_PCIE_INDEX                   0x0030
+#define RADEON_PCIE_DATA                    0x0034
+#define R600_PCIE_PORT_INDEX                0x0038
+#define R600_PCIE_PORT_DATA                 0x003C
+
+
+//RS690 AMD datasheet
+#define MEDIA_0_SCRATCH                     0x00B0
+#define MEDIA_1_SCRATCH                     0x00B4
+#define RADEON_BIOS_8_SCRATCH               0x00C0
+#define RADEON_BIOS_9_SCRATCH               0x00C4
+#define RADEON_BIOS_10_SCRATCH              0x00C8
+#define RADEON_BIOS_11_SCRATCH              0x00CC
+#define RADEON_BIOS_12_SCRATCH              0x00D0
+#define RADEON_BIOS_13_SCRATCH              0x00D4
+#define RADEON_BIOS_14_SCRATCH              0x00D8
+#define RADEON_BIOS_15_SCRATCH              0x00DC
+#define RADEON_CONFIG_CNTL                  0x00E0
+#       define RADEON_CFG_ATI_REV_A11       (0   << 16)
+#       define RADEON_CFG_ATI_REV_A12       (1   << 16)
+#       define RADEON_CFG_ATI_REV_A13       (2   << 16)
+#       define RADEON_CFG_ATI_REV_ID_MASK   (0xf << 16)
+#define RADEON_CONFIG_XSTRAP                0x00E4
+#       define VGA_DISABLE                  (1 << 0)
+#       define ENINTB                       (1 << 3)  /* 1=Interrupts disabled */
+#       define ID_DISABLE                   (1 << 14) /* 1=int gfx disabled */
+#       define AP_SIZE                      (7 << 16) /* 000=128M  001=256M  010=64M  011=32M 100=512M 101=1G  */
+#       define BUSCFG                       (7 << 24) /* 0=BondingOption_INT_GFX 1=Reserved 2=ext gfx enable*/
+#define RADEON_CONFIG_BONDS                 0x00E8
+#define RADEON_CONFIG_MEMSIZE               0x00F8
+
+
+#define RADEON_CONFIG_APER_LO_BASE          0x0100
+#define RADEON_CONFIG_APER_HI_BASE          0x0104
+#define RADEON_CONFIG_APER_SIZE             0x0108
+#define RADEON_CONFIG_REG_LO_BASE           0x010C
+#define RADEON_CONFIG_REG_HI_BASE           0x0110
+#define RADEON_CONFIG_MEMSIZE_EMBEDDED      0x0114
+
+#define RADEON_HDP_FB_LOCATION              0x0134
+/* Defines the location of the frame buffer in the internal address space. The internal address space has 32 address bits. 
+ It should have the same value as MC_FB_START, and must be aligned on 256B boundary
+ Note: Bits [7:0] of this field are hardwired to 0.*/
+
+
 #define RADEON_BIOS_ROM                     0x0f30 /* PCI */
 #define RADEON_BIST                         0x0f0f /* PCI */
 #define RADEON_BRUSH_DATA0                  0x1480
@@ -243,21 +369,6 @@
 #define RADEON_BRUSH_DATA9                  0x14a4
 #define RADEON_BRUSH_SCALE                  0x1470
 #define RADEON_BRUSH_Y_X                    0x1474
-#define RADEON_BUS_CNTL                     0x0030
-#       define RADEON_BUS_MASTER_DIS         (1 << 6)
-#       define RADEON_BUS_BIOS_DIS_ROM       (1 << 12)
-#       define RADEON_BUS_RD_DISCARD_EN      (1 << 24)
-#       define RADEON_BUS_RD_ABORT_EN        (1 << 25)
-#       define RADEON_BUS_MSTR_DISCONNECT_EN (1 << 28)
-#       define RADEON_BUS_WRT_BURST          (1 << 29)
-#       define RADEON_BUS_READ_BURST         (1 << 30)
-#define RADEON_BUS_CNTL1                    0x0034
-#       define RADEON_BUS_WAIT_ON_LOCK_EN    (1 << 4)
-
-#define RADEON_PCIE_INDEX                   0x0030
-#define RADEON_PCIE_DATA                    0x0034
-#define R600_PCIE_PORT_INDEX                0x0038
-#define R600_PCIE_PORT_DATA                 0x003c
 /* PCIE_LC_LINK_WIDTH_CNTL is PCIE on r1xx-r5xx, PCIE_PORT on r6xx-r7xx */
 #define RADEON_PCIE_LC_LINK_WIDTH_CNTL      0xa2 /* PCIE */
 #       define RADEON_PCIE_LC_LINK_WIDTH_SHIFT     0
@@ -334,20 +445,6 @@
 #define RADEON_CLR_CMP_MASK_3D              0x1A28
 #define RADEON_COMMAND                      0x0f04 /* PCI */
 #define RADEON_COMPOSITE_SHADOW_ID          0x1a0c
-#define RADEON_CONFIG_APER_0_BASE           0x0100
-#define RADEON_CONFIG_APER_1_BASE           0x0104
-#define RADEON_CONFIG_APER_SIZE             0x0108
-#define RADEON_CONFIG_BONDS                 0x00e8
-#define RADEON_CONFIG_CNTL                  0x00e0
-#       define RADEON_CFG_ATI_REV_A11       (0   << 16)
-#       define RADEON_CFG_ATI_REV_A12       (1   << 16)
-#       define RADEON_CFG_ATI_REV_A13       (2   << 16)
-#       define RADEON_CFG_ATI_REV_ID_MASK   (0xf << 16)
-#define RADEON_CONFIG_MEMSIZE               0x00f8
-#define RADEON_CONFIG_MEMSIZE_EMBEDDED      0x0114
-#define RADEON_CONFIG_REG_1_BASE            0x010c
-#define RADEON_CONFIG_REG_APER_SIZE         0x0110
-#define RADEON_CONFIG_XSTRAP                0x00e4
 #define RADEON_CONSTANT_COLOR_C             0x1d34
 #       define RADEON_CONSTANT_COLOR_MASK   0x00ffffff
 #       define RADEON_CONSTANT_COLOR_ONE    0x00ffffff
@@ -3547,7 +3644,7 @@
 #define AVIVO_IDCT_DYN_CNTL                            0x0013 /* PLL */
 #       define AVIVO_IDCT_FORCEON                      (1 << 0)
 
-#define AVIVO_HDP_FB_LOCATION 0x134
+#define AVIVO_HDP_FB_LOCATION                          0x134
 
 #define AVIVO_VGA_RENDER_CONTROL        0x0300
 #       define AVIVO_VGA_VSTATUS_CNTL_MASK                      (3 << 16)

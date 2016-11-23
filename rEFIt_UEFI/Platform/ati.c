@@ -1559,7 +1559,7 @@ void get_vram_size(void)
     } else {
       card->vram_size = (UINT64)REG32(card->mmio, RADEON_CONFIG_MEMSIZE);
       if (card->vram_size == 0) {
-        card->vram_size = (UINT64)REG32(card->mmio, RADEON_CONFIG_APER_SIZE);
+        card->vram_size = (UINT64)REG32(card->mmio, RADEON_CONFIG_REG_HI_BASE);
         //Slice - previously I successfully made Radeon9000 working
         //by writing this register
         WRITEREG32(card->mmio, RADEON_CONFIG_MEMSIZE, (UINT32)card->vram_size);
