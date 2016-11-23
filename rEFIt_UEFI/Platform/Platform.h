@@ -1401,6 +1401,8 @@ typedef struct {
   UINTN             Function;
   EFI_HANDLE        Handle;
   UINT8             *Mmio;
+  UINT32            Connectors;
+  BOOLEAN           ConnChanged;
 } GFX_PROPERTIES;
 
 typedef struct {

@@ -107,7 +107,7 @@
 #define RADEON_AUX_WINDOW_VERT_CNTL         0x02dc
 
 #define RADEON_BASE_CODE                    0x0f0b
-//BIOS_0_SCRATCH : 0x00000050 - R9-280X
+//BIOS_0_SCRATCH = 0x00000050 | 0x0000002C
 #define RADEON_BIOS_0_SCRATCH               0x0010
 #   define ATOM_S0_CRT1_MONO               0x00000001L
 #   define ATOM_S0_CRT1_COLOR              0x00000002L
@@ -164,7 +164,7 @@
 #       define RADEON_DISPLAY_ROT_90        (1 << 28)
 #       define RADEON_DISPLAY_ROT_180       (2 << 28)
 #       define RADEON_DISPLAY_ROT_270       (3 << 28)
-//BIOS_1_SCRATCH : 0xC0C821A5
+//BIOS_1_SCRATCH = 0xC0C821A5 | 0x4058B880
 #define RADEON_BIOS_1_SCRATCH               0x0014
 #   define ATOM_S1_ROM_LOCATION_MASK       0x0000FFFFL
 #   define ATOM_S1_PCI_BUS_DEV_MASK        0xFFFF0000L

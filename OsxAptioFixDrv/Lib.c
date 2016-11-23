@@ -381,7 +381,7 @@ FixMemMap(
 			Desc->Type = EfiACPIMemoryNVS;
 			Desc->Attribute = 0;
 		}
-#if 1
+#if 0
     if ((Desc->PhysicalStart < 0x100000) && (PhysicalEnd >= 0xE0000)) {
 			Desc->Type = EfiACPIMemoryNVS;
 			Desc->Attribute = 0;

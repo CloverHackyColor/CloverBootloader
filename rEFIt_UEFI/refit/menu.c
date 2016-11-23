@@ -349,8 +349,8 @@ VOID FillInputs(BOOLEAN New)
         InputItems[InputItemsCount].SValue = AllocateZeroPool(20);
       }
       UnicodeSPrint(InputItems[InputItemsCount++].SValue, 20, L"%08lx", gSettings.IgPlatform);
-      InputItemsCount += 3;
-      continue;
+ //     InputItemsCount += 3;
+ //     continue;
     }
 
     InputItems[InputItemsCount].ItemType = Decimal;  //23+6i
@@ -363,15 +363,22 @@ VOID FillInputs(BOOLEAN New)
       UnicodeSPrint(InputItems[InputItemsCount++].SValue, 8, L"%02d", gGraphics[i].Ports);
     }
 
-
-    InputItems[InputItemsCount].ItemType = ASString; //24+6i
-    for (j=0; j<20; j++) {
-      AsciiSPrint((CHAR8*)&tmp[2*j], 3, "%02x", gSettings.NVCAP[j]);
+    if (gGraphics[i].Vendor == Nvidia) {
+      InputItems[InputItemsCount].ItemType = ASString; //24+6i
+      for (j=0; j<20; j++) {
+        AsciiSPrint((CHAR8*)&tmp[2*j], 3, "%02x", gSettings.NVCAP[j]);
+      }
+      if (New) {
+        InputItems[InputItemsCount].SValue = AllocateZeroPool(84);
+      }
+      UnicodeSPrint(InputItems[InputItemsCount++].SValue, 84, L"%a", tmp);
+    } else { //ATI and others there will be connectors
+      InputItems[InputItemsCount].ItemType = Hex; //24+6i
+      if (New) {
+        InputItems[InputItemsCount].SValue = AllocateZeroPool(20);
+      }
+      UnicodeSPrint(InputItems[InputItemsCount++].SValue, 20, L"%08lx", gGraphics[i].Connectors);
     }
-    if (New) {
-      InputItems[InputItemsCount].SValue = AllocateZeroPool(84);
-    }
-    UnicodeSPrint(InputItems[InputItemsCount++].SValue, 84, L"%a", tmp);
 
     InputItems[InputItemsCount].ItemType = BoolValue; //25+6i
     InputItems[InputItemsCount++].BValue = gGraphics[i].LoadVBios;
@@ -804,10 +811,15 @@ VOID ApplyInputs(VOID)
     }
     i++; //24
     if (InputItems[i].Valid) {
-      ZeroMem(AString, 256);
-      if (StrLen(InputItems[i].SValue) > 0) {
-        AsciiSPrint(AString, 255, "%s", InputItems[i].SValue);
-        hex2bin(AString, (UINT8*)&gSettings.NVCAP[0], 20);
+      if (gGraphics[j].Vendor == Nvidia) {
+        ZeroMem(AString, 256);
+        if (StrLen(InputItems[i].SValue) > 0) {
+          AsciiSPrint(AString, 255, "%s", InputItems[i].SValue);
+          hex2bin(AString, (UINT8*)&gSettings.NVCAP[0], 20);
+        }
+      } else {
+        gGraphics[j].Connectors = (UINT32)StrHexToUint64(InputItems[i].SValue);
+        gGraphics[j].ConnChanged = TRUE;
       }
     }
     i++; //25
@@ -4069,6 +4081,7 @@ REFIT_MENU_ENTRY  *SubMenuGraphics()
     if (gGraphics[i].Vendor == Nvidia) {
       AddMenuItem(SubScreen, N+4, "NVCAP:", TAG_INPUT, TRUE);
     } else {
+      AddMenuItem(SubScreen, N+4, "Connectors:", TAG_INPUT, TRUE);
       AddMenuItem(SubScreen, 50, "RefCLK:", TAG_INPUT, TRUE);
     }
     AddMenuItem(SubScreen, N+5, "Load Video Bios", TAG_INPUT, FALSE);

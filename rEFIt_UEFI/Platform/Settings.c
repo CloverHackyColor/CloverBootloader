@@ -5729,7 +5729,17 @@ GetDevices ()
               AsciiSPrint (gfx->Config, 64, "%a", card_configs[info->cfg_name].name);
               gfx->Ports                  = card_configs[info->cfg_name].ports;
               DBG (" - GFX: Model=%a (ATI/AMD)\n", gfx->Model);
-
+              
+              //get mmio
+              if (info->chip_family < CHIP_FAMILY_HAINAN) {
+                gfx->Mmio = (UINT8 *)(UINTN)(Pci.Device.Bar[2] & ~0x0f);
+              } else {
+                gfx->Mmio = (UINT8 *)(UINTN)(Pci.Device.Bar[5] & ~0x0f);
+              }
+              gfx->Connectors = *(UINT32*)(gfx->Mmio + RADEON_BIOS_0_SCRATCH);
+              DBG(" - RADEON_BIOS_0_SCRATCH = 0x%08x\n", gfx->Connectors);
+              gfx->ConnChanged = FALSE;
+              
               SlotDevice                  = &SlotDevices[0];
               SlotDevice->SegmentGroupNum = (UINT16)Segment;
               SlotDevice->BusNum          = (UINT8)Bus;
@@ -5745,6 +5755,8 @@ GetDevices ()
               AsciiSPrint (gfx->Model, 64, "%a", get_gma_model (Pci.Hdr.DeviceId));
               DBG (" - GFX: Model=%a (Intel)\n", gfx->Model);
               gfx->Ports = 1;
+              gfx->Connectors = (1 << NGFX);
+              gfx->ConnChanged = FALSE;
               /*
                SlotDevice                  = &SlotDevices[2];
                SlotDevice->SegmentGroupNum = (UINT16)Segment;
@@ -5791,6 +5803,9 @@ GetDevices ()
               gfx->Vendor = Unknown;
               AsciiSPrint (gfx->Model, 64, "pci%x,%x", Pci.Hdr.VendorId, Pci.Hdr.DeviceId);
               gfx->Ports  = 1;
+              gfx->Connectors = (1 << NGFX);
+              gfx->ConnChanged = FALSE;
+
               break;
           }
 
@@ -5996,7 +6011,7 @@ SetDevices (
   EFI_PCI_IO_PROTOCOL *PciIo;
   PCI_TYPE00          Pci;
   UINTN               HandleCount;
-  UINTN               i;
+  UINTN               i, j;
   EFI_HANDLE          *HandleBuffer;
   pci_dt_t            PCIdevice;
   UINTN               Segment;
@@ -6088,6 +6103,14 @@ SetDevices (
                     StringDirty |=  TmpDirty;
                   } else {
                     MsgLog ("ATI injection not set\n");
+                  }
+                  for (j = 0; j < 4; j++) {
+                    if (gGraphics[j].Handle == PCIdevice.DeviceHandle) {
+                      if (gGraphics[j].ConnChanged) {
+                        *(UINT32*)(gGraphics[j].Mmio + RADEON_BIOS_0_SCRATCH) = gGraphics[j].Connectors;
+                      }
+                      break;
+                    }
                   }
 
                   break;
