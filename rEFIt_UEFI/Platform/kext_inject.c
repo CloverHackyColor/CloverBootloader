@@ -517,46 +517,49 @@ EFI_STATUS InjectKexts(/*IN EFI_MEMORY_DESCRIPTOR *Desc*/ IN UINT32 deviceTreeP,
 // KernelBooterExtensionsPatch to load extra kexts besides kernelcache
 //
 //
+// Clean up code by Sherlocks
+
+// Snow Leopard i386
 UINT8   KBESnowSearch_i386[]   = { 0xE8, 0xED, 0xF9, 0xFF, 0xFF, 0xEB, 0x08, 0x89, 0x1C, 0x24 };
 UINT8   KBESnowReplace_i386[]  = { 0xE8, 0xED, 0xF9, 0xFF, 0xFF, 0x90, 0x90, 0x89, 0x1C, 0x24 };
-//E8 5A FB FF FF EB 08 48 89 DF
+
+// Snow Leopard X64
 UINT8   KBESnowSearch_X64[]    = { 0xE8, 0x5A, 0xFB, 0xFF, 0xFF, 0xEB, 0x08, 0x48, 0x89, 0xDF };
 UINT8   KBESnowReplace_X64[]   = { 0xE8, 0x5A, 0xFB, 0xFF, 0xFF, 0x90, 0x90, 0x48, 0x89, 0xDF };
 
-
+// Lion i386
 UINT8   KBELionSearch_i386[]   = { 0xE8, 0xAA, 0xFB, 0xFF, 0xFF, 0xEB, 0x08, 0x89, 0x34, 0x24 };
 UINT8   KBELionReplace_i386[]  = { 0xE8, 0xAA, 0xFB, 0xFF, 0xFF, 0x90, 0x90, 0x89, 0x34, 0x24 };
 
+// Lion X64
 UINT8   KBELionSearch_X64[]    = { 0xE8, 0x0C, 0xFD, 0xFF, 0xFF, 0xEB, 0x08, 0x48, 0x89, 0xDF };
 UINT8   KBELionReplace_X64[]   = { 0xE8, 0x0C, 0xFD, 0xFF, 0xFF, 0x90, 0x90, 0x48, 0x89, 0xDF };
 
-UINT8   KBEMLSearch[]  = { 0xC6, 0xE8, 0x30, 0x00, 0x00, 0x00, 0xEB, 0x08, 0x48, 0x89, 0xDF };
-UINT8   KBEMLReplace[] = { 0xC6, 0xE8, 0x30, 0x00, 0x00, 0x00, 0x90, 0x90, 0x48, 0x89, 0xDF };
+// Mountain Lion
+UINT8   KBEMLSearch[]          = { 0xE8, 0x30, 0x00, 0x00, 0x00, 0xEB, 0x08, 0x48, 0x89, 0xDF };
+UINT8   KBEMLReplace[]         = { 0xE8, 0x30, 0x00, 0x00, 0x00, 0x90, 0x90, 0x48, 0x89, 0xDF };
 
-// PMheart: Mavericks code is the same as ML. But add a separate code to improve stability anyway.
-UINT8   KBEMavSearch[]  = { 0xE8, 0x30, 0x00, 0x00, 0x00, 0xEB, 0x08, 0x48, 0x89, 0xDF };
-UINT8   KBEMavReplace[] = { 0xE8, 0x30, 0x00, 0x00, 0x00, 0x90, 0x90, 0x48, 0x89, 0xDF };
+// Mavericks
+UINT8   KBEMavSearch[]        = { 0xE8, 0x30, 0x00, 0x00, 0x00, 0xEB, 0x08, 0x48, 0x89, 0xDF };
+UINT8   KBEMavReplace[]       = { 0xE8, 0x30, 0x00, 0x00, 0x00, 0x90, 0x90, 0x48, 0x89, 0xDF };
 
-// -- startupExt -->
-UINT8 KBEYosSearch[]  = { 0xE8, 0x25, 0x00, 0x00, 0x00, 0xEB, 0x05, 0xE8, 0xCE, 0x02, 0x00, 0x00 };
-UINT8 KBEYosReplace[] = { 0xE8, 0x25, 0x00, 0x00, 0x00, 0x90, 0x90, 0xE8, 0xCE, 0x02, 0x00, 0x00 };
+// Yosemite
+UINT8   KBEYosSearch[]         = { 0xE8, 0x25, 0x00, 0x00, 0x00, 0xEB, 0x05, 0xE8, 0xCE, 0x02 };
+UINT8   KBEYosReplace[]        = { 0xE8, 0x25, 0x00, 0x00, 0x00, 0x90, 0x90, 0xE8, 0xCE, 0x02 };
 
-// 10.12 dp2, name changed by PMheart since may cause confusion later.
-UINT8 KBESieDP2Search[]  =  { 0xE8, 0x25, 0x00, 0x00, 0x00, 0xEB, 0x05, 0xE8, 0x7E, 0x05, 0x00, 0x00 };
-UINT8 KBESieDP2Replace[]  = { 0xE8, 0x25, 0x00, 0x00, 0x00, 0x90, 0x90, 0xE8, 0x7E, 0x05, 0x00, 0x00 };
-// -- startupExt <--
-
-// as of El Capitan DP6
+// El Capitan
 UINT8 KBEECSearch[]  = { 0xC3, 0x48, 0x85, 0xDB, 0x74, 0x70, 0x48, 0x8B, 0x03, 0x48, 0x89, 0xDF, 0xFF, 0x50, 0x28, 0x48 };
 UINT8 KBEECReplace[] = { 0xC3, 0x48, 0x85, 0xDB, 0xEB, 0x12, 0x48, 0x8B, 0x03, 0x48, 0x89, 0xDF, 0xFF, 0x50, 0x28, 0x48 };
 
-//sherlocks: Sierra DP1
-UINT8 KBESieSearch[]  = { 0xC3, 0x48, 0x85, 0xDB, 0x74, 0x71, 0x48, 0x8B, 0x03, 0x48, 0x89, 0xDF, 0xFF, 0x50, 0x28, 0x48 };
-UINT8 KBESieReplace[] = { 0xC3, 0x48, 0x85, 0xDB, 0xEB, 0x12, 0x48, 0x8B, 0x03, 0x48, 0x89, 0xDF, 0xFF, 0x50, 0x28, 0x48 };
+// Sherlocks: Sierra DP1
+UINT8   KBESieDP1Search[]      = { 0xC3, 0x48, 0x85, 0xDB, 0x74, 0x71, 0x48, 0x8B, 0x03, 0x48, 0x89, 0xDF, 0xFF, 0x50, 0x28, 0x48 };
+UINT8   KBESieDP1Replace[]     = { 0xC3, 0x48, 0x85, 0xDB, 0xEB, 0x12, 0x48, 0x8B, 0x03, 0x48, 0x89, 0xDF, 0xFF, 0x50, 0x28, 0x48 };
 
-//SieDP2
-//UINT8 KBESieDP2Search[]  = { 0x48, 0x89, 0xC3, 0x49, 0x8B, 0x04, 0x24, 0x4C, 0x89, 0xE7, 0x48, 0x85, 0xDB, 0x74, 0x77, 0xFF, 0x90, 0xD0};
-//UINT8 KBESieDP2Replace[] = { 0x48, 0x89, 0xC3, 0x49, 0x8B, 0x04, 0x24, 0x4C, 0x89, 0xE7, 0x48, 0x85, 0xDB, 0xEB, 0x77, 0xFF, 0x90, 0xD0};
+// cecekpawon: Sierra DP2
+UINT8   KBESieDP2Search[]      = { 0xE8, 0x25, 0x00, 0x00, 0x00, 0xEB, 0x05, 0xE8, 0x7E, 0x05 };
+UINT8   KBESieDP2Replace[]     = { 0xE8, 0x25, 0x00, 0x00, 0x00, 0x90, 0x90, 0xE8, 0x7E, 0x05 };
+
+// Sherlocks: Should use DP1+DP2 combination patch in Sierra. Never use only one in Sierra.
 
 //
 // We can not rely on OSVersion global variable for OS version detection,
@@ -570,66 +573,29 @@ UINT8 KBESieReplace[] = { 0xC3, 0x48, 0x85, 0xDB, 0xEB, 0x12, 0x48, 0x8B, 0x03, 
 VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
 {
   UINTN   Num = 0;
-#if defined(FKERNELPATCH)
-  DBG_RT(Entry, "\n\nPatching (%dbit) kernel for injected kexts:\n", is64BitKernel ? 64 : 32);
-
-  if (is64BitKernel) { // if 10.10+
-    //startupExt
-    Num = FSearchReplace(Kernel, KBESieDP2Search, KBESieDP2Replace) +
-          FSearchReplace(Kernel, KBEYosSearch, KBEYosReplace);
-    if (Num) {
-      Num +=  FSearchReplace(Kernel, KBESieSearch, KBESieReplace) +
-              FSearchReplace(Kernel, KBEECSearch, KBEECReplace);
-      DBG_RT(Entry, "==> kernel 10.12/10.11/10.10:\n");
-    } else { // if 10.10-
-      Num = FSearchReplace(Kernel, KBEMavSearch, KBEMavReplace) +
-            FSearchReplace(Kernel, KBEMLSearch, KBEMLReplace) +
-            FSearchReplace(Kernel, KBELionSearch_X64, KBELionReplace_X64) +
-            FSearchReplace(Kernel, KBESnowSearch_X64, KBESnowReplace_X64);
-      DBG_RT(Entry, "==> kernel 10.9/10.8/10.7/10.6:\n");
-    }
-  } else { // if 32-bit 10.7/10.6
-    Num = FSearchReplace(Kernel, KBELionSearch_i386, KBELionReplace_i386) +
-          FSearchReplace(Kernel, KBESnowSearch_i386, KBESnowReplace_i386);
-    DBG_RT(Entry, "==> kernel 10.7/10.6:\n");
-  }
-
-  DBG_RT(Entry, "==> %a : %d replaces done.\n", Num ? "Success" : "Error", Num);
-
-/*
-  if (NumSnow_X64 + NumSnow_i386 + NumLion_X64 + NumLion_i386 + NumML + NumYos > 1) {
-    // more then one pattern found - we do not know what to do with it
-    // and we'll skipp it
-    AsciiPrint("\nERROR patching kernel for injected kexts:\nmultiple patterns found (LionX64: %d, Lioni386: %d, ML: %d) - skipping patching!\n",
-      NumLion_X64, NumLion_i386, NumML);
-    gBS->Stall(10000000);
-    return;
-  }
-*/
-#else //FKERNELPATCH
   UINTN   NumSnow_X64 = 0;
   UINTN   NumSnow_i386 = 0;
   UINTN   NumLion_X64 = 0;
   UINTN   NumLion_i386 = 0;
   UINTN   NumML = 0;
   UINTN   NumMav = 0;
-  UINTN   NumYos = 0; //startupExt
+  UINTN   NumYos = 0;
+  UINTN   NumEC = 0;
+  UINTN   NumSie = 0;
   
   DBG_RT(Entry, "\nPatching kernel for injected kexts...\n");
   
   if (is64BitKernel) {
-    NumLion_X64 = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBELionSearch_X64, sizeof(KBELionSearch_X64));
     NumSnow_X64 = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBESnowSearch_X64, sizeof(KBESnowSearch_X64));
+    NumLion_X64  = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBELionSearch_X64, sizeof(KBELionSearch_X64));
     NumML  = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBEMLSearch, sizeof(KBEMLSearch));
     NumMav = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBEMavSearch, sizeof(KBEMavSearch));
     NumYos = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBEYosSearch, sizeof(KBEYosSearch));
-    if (!NumYos) {
-      // 10.12 dp2
-      NumYos = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBESieDP2Search, sizeof(KBESieDP2Search));      
-    }
+    NumEC        = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBEECSearch, sizeof(KBEECReplace));
+    NumSie       = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBESieDP1Search, sizeof(KBESieDP1Search));
   } else {
-    NumLion_i386 = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBELionSearch_i386, sizeof(KBELionSearch_i386));
     NumSnow_i386 = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBESnowSearch_i386, sizeof(KBESnowSearch_i386));
+    NumLion_i386 = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBELionSearch_i386, sizeof(KBELionSearch_i386));
   }
   
   if (NumSnow_X64 + NumSnow_i386 + NumLion_X64 + NumLion_i386 + NumML + NumYos > 1) {
@@ -640,43 +606,49 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
 	  return;
   }
   
-  if (NumML == 1) {
-    Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEMLSearch, sizeof(KBEMLSearch), KBEMLReplace, 1);
-    DBG_RT(Entry, "==> kernel Mountain Lion: %d replaces done.\n", Num);
-  }
-  else if (NumMav == 1) { // Mavericks InjectKext by PMheart
-    Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEMavSearch, sizeof(KBEMavSearch), KBEMavReplace, 1);
-    DBG_RT(Entry, "==> kernel Mavericks: %d replaces done.\n", Num)
-  }
-  else if (NumYos == 1) {
-	  Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEYosSearch, sizeof(KBEYosSearch), KBEYosReplace, 1) +
-		SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEECSearch, sizeof(KBEECSearch), KBEECReplace, 1) +
-    // Micky1979, was a pain to place F/R here
-    SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBESieSearch, sizeof(KBESieSearch), KBESieReplace, 1) +
-    // 10.12 dp2 by cecekpawon
-    SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBESieDP2Search, sizeof(KBESieDP2Search), KBESieDP2Replace, 1);
-    DBG_RT(Entry, "==> kernel Yosemite/El Capitan/Sierra: %d replaces done.\n", Num);
-  }
-  else if (NumLion_i386 == 1) {
-	  Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBELionSearch_i386, sizeof(KBELionSearch_i386), KBELionReplace_i386, 1);
-    DBG_RT(Entry, "==> Lion i386: %d replaces done.\n", Num);
+  // X64
+  if (NumSnow_X64 == 1) {
+      Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBESnowSearch_X64, sizeof(KBESnowSearch_X64), KBESnowReplace_X64, 1);
+      DBG_RT(Entry, "==> kernel Snow Leopard X64: %d replaces done.\n", Num);
   }
   else if (NumLion_X64 == 1) {
-	  Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBELionSearch_X64, sizeof(KBELionSearch_X64), KBELionReplace_X64, 1);
-    DBG_RT(Entry, "==> Lion X64: %d replaces done.\n", Num);
+      Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBELionSearch_X64, sizeof(KBELionSearch_X64), KBELionReplace_X64, 1);
+      DBG_RT(Entry, "==> kernel Lion X64: %d replaces done.\n", Num);
   }
-  else if (NumSnow_X64 == 1) {
-	  Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBESnowSearch_X64, sizeof(KBESnowSearch_X64), KBESnowReplace_X64, 1);
-	  DBG_RT(Entry, "==> Snow X64: %d replaces done.\n", Num);
+  else if (NumML == 1) {
+    Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEMLSearch, sizeof(KBEMLSearch), KBEMLReplace, 1);
+      DBG_RT(Entry, "==> kernel Mountain Lion X64: %d replaces done.\n", Num);
   }
+  else if (NumMav == 1) {
+    Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEMavSearch, sizeof(KBEMavSearch), KBEMavReplace, 1);
+      DBG_RT(Entry, "==> kernel Mavericks: %d replaces done.\n", Num);
+  }
+  else if (NumYos == 1) {
+      Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEYosSearch, sizeof(KBEYosSearch), KBEYosReplace, 1);
+      DBG_RT(Entry, "==> kernel Yosemite: %d replaces done.\n", Num);
+  }
+  else if (NumEC == 1) {
+      Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEECSearch, sizeof(KBEECSearch), KBEECReplace, 1);
+      DBG_RT(Entry, "==> kernel El Capitan: %d replaces done.\n", Num);
+  }
+  else if (NumSie == 1) {
+      Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBESieDP1Search, sizeof(KBESieDP1Search), KBESieDP1Replace, 1) +
+            SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBESieDP2Search, sizeof(KBESieDP2Search), KBESieDP2Replace, 1);
+      DBG_RT(Entry, "==> kernel Sierra: %d replaces done.\n", Num);
+  }
+
+  // i386
   else if (NumSnow_i386 == 1) {
 	  Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBESnowSearch_i386, sizeof(KBESnowSearch_i386), KBESnowReplace_i386, 1);
-    DBG_RT(Entry, "==> Snow i386: %d replaces done.\n", Num);
+      DBG_RT(Entry, "==> kernel Snow Leopard i386: %d replaces done.\n", Num);
+  }
+  else if (NumLion_i386 == 1) {
+      Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBELionSearch_i386, sizeof(KBELionSearch_i386), KBELionReplace_i386, 1);
+      DBG_RT(Entry, "==> kernel Lion i386: %d replaces done.\n", Num);
   }
   else {
     DBG_RT(Entry, "==> ERROR: NOT patched - unknown kernel.\n");
   }
-#endif //FKERNELPATCH
 
   if (Entry->KernelAndKextPatches->KPDebug) {
     DBG_RT(Entry, "Pausing 5 secs ...\n");

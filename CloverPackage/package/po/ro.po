@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-10-28 22:50+0300\n"
+"POT-Creation-Date: 2016-11-23 20:42+0300\n"
 "PO-Revision-Date: 2015-09-25 20:09+0300\n"
 "Last-Translator: arsradu <arsradu@gmail.com>\n"
 "Language-Team: ro <ro@li.org>\n"
@@ -95,7 +95,7 @@ msgstr "Facilitati:"
 #: Resources/templates/Description.html:21
 #, fuzzy
 #| msgid "- boot into 10.4 - 10.11 OSX, Windows EFI and Linux EFI"
-msgid "- boot into 10.4 - 10.9 OSX, Windows EFI and Linux EFI"
+msgid "- boot into 10.4 - 10.12 macOS, Windows EFI and Linux EFI"
 msgstr "- boot pentru: OSX 10.4 - 10.11, Windows EFI si Linux EFI"
 
 #. type: Content of: <html><body><p>
