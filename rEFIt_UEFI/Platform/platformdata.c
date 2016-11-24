@@ -19,84 +19,93 @@ UINT32  gFwFeatures             = 0xE001f537;             //default values for i
 
 CHAR8   *AppleFirmwareVersion[] =
 {
-  "MB11.88Z.0061.B03.0610121324",   // MB11
-  "MB21.88Z.00A5.B07.0706270922",   // MB21
-  "MB41.88Z.00C1.B00.0802091535",   // MB41
-  "MB51.88Z.007D.B03.0904271443",   // MB51
-  "MB52.88Z.0088.B05.0904162222",   // MB52
-  "MB61.88Z.00C8.B02.1003151501",   // MB61
-  "MB71.88Z.0039.B0E.1111071359",   // MB71
-  "MB81.88Z.0164.B14.1606231629",   // MB81
-  "MB91.88Z.0154.B07.1608151057",   // MB91
-  "MBP11.88Z.0055.B08.0610121325",  // MBP11
-  "MBP22.88Z.00A5.B07.0708131242",  // MBP22
-  "MBP31.88Z.0070.B07.0803051658",  // MBP31
-  "MBP41.88Z.00C1.B03.0802271651",  // MBP41
-  "MBP51.88Z.007E.B06.1202061253",  // MBP51
-  "MBP53.88Z.00AC.B03.0906151647",  // MBP53
-  "MBP55.88Z.00AC.B03.0906151708",  // MBP55
-  "MBP61.88Z.0057.B11.1509232013",  // MBP61
-  "MBP61.88Z.0057.B11.1509232013",  // MBP62
-  "MBP71.88Z.0039.B0E.1111071400",  // MBP71
-  "MBP81.88Z.0047.B2C.1510261540",  // MBP81
-  "MBP81.88Z.0047.B2C.1510261540",  // MBP82
-  "MBP81.88Z.0047.B2C.1510261540",  // MBP83
-  "MBP91.88Z.00D3.B0D.1602221713",  // MBP91
-  "MBP91.88Z.00D3.B0D.1602221713",  // MBP92
-  "MBP101.88Z.00EE.B0A.1509111559", // MBP101
-  "MBP102.88Z.0106.B0A.1509130955", // MBP102
-  "MBP111.88Z.0138.B17.1602221718", // MBP111
-  "MBP112.88Z.0138.B17.1602221600", // MBP112
-  "MBP114.88Z.0172.B09.1602151732", // MBP115
-  "MBP121.88Z.0167.B17.1606231721", // MBP121
-  "MBP131.88Z.0205.B02.1610121536", // MBP131
-  "MBP132.88Z.0226.B00.1610231055", // MBP132
-  "MBP133.88Z.0226.B00.1610231055", // MBP133
-  "MBA11.88Z.00BB.B03.0803171226",  // MBA11
-  "MBA21.88Z.0075.B03.0811141325",  // MBA21
-  "MBA31.88Z.0061.B07.1201241641",  // MBA31
-  "MBA41.88Z.0077.B14.1510261805",  // MBA41
-  "MBA41.88Z.0077.B14.1510261805",  // MBA42
-  "MBA51.88Z.00EF.B04.1509111654",  // MBA51
-  "MBA51.88Z.00EF.B04.1509111654",  // MBA52
-  "MBA61.88Z.0099.B22.1602221559",  // MBA61
-  "MBA61.88Z.0099.B22.1602221559",  // MBA62
-  "MBA71.88Z.0166.B12.1602221953",  // MBA71
-  "MBA71.88Z.0166.B12.1602221953",  // MBA72
-  "MM11.88Z.0055.B08.0610121326",   // MM11
-  "MM21.88Z.009A.B00.0706281359",   // MM21
-  "MM31.88Z.00AD.B00.0907171535",   // MM31
-  "MM41.88Z.0042.B03.1111072100",   // MM41
-  "MM51.88Z.0077.B14.1510261805",   // MM51
-  "MM61.88Z.0106.B0A.1509111654",   // MM61
-  "MM61.88Z.0106.B0A.1509111654",   // MM62
-  "MM71.88Z.0220.B07.1602221546",   // MM71
-  "IM81.88Z.00C1.B00.0802091538",   // IM81
-  "IM91.88Z.008D.B00.0901142258",   // IM91
-  "IM112.88Z.0057.B03.1509231647",  // IM101
-  "IM111.88Z.0034.B04.1509231906",  // IM111
-  "IM112.88Z.0057.B03.1509231647",  // IM112
-  "IM112.88Z.0057.B03.1509231647",  // IM113
-  "IM121.88Z.0047.B23.1510261412",  // IM121
-  "IM121.88Z.0047.B23.1510261412",  // IM122
-  "IM131.88Z.010A.B09.1509111558",  // IM131
-  "IM131.88Z.010A.B09.1509111558",  // IM132
-  "IM141.88Z.0118.B13.1602221714",  // IM141
-  "IM142.88Z.0118.B13.1602221716",  // IM142
-  "IM151.88Z.0207.B07.1607221823",  // IM151
-  "IM171.88Z.0105.B09.1607221343",  // IM171
-  "MP11.88Z.005C.B08.0707021221",   // MP11
-  "MP21.88Z.007F.B06.0707021348",   // MP21
-  "MP31.88Z.006C.B05.0802291410",   // MP31
-  "MP41.88Z.0081.B07.0910130729",   // MP41
-  "MP51.88Z.007F.B03.1010071432",   // MP51
-  "MP61.88Z.0116.B20.1610051057",   // MP61
+  "MB11.88Z.0061.B03.0610121324",   // MB11		// 1.83 GHz Core Duo (T2400)
+  "MB21.88Z.00A5.B07.0706270922",   // MB21		// 1.83 GHz Core 2 Duo (T5600)
+  "MB31.88Z.008E.B02.0803051832",   // MB31		// 2.2 GHz Core 2 Duo (T7500)
+  "MB41.88Z.00C1.B00.0802091535",   // MB41		// 2.1 GHz Core 2 Duo (T8100)
+  "MB51.88Z.007D.B03.0904271443",   // MB51		// 2.0 GHz Core 2 Duo (P7350)
+  "MB52.88Z.0088.B05.0904162222",   // MB52		// 2.13 GHz Core 2 Duo (P7450)
+  "MB61.88Z.00C8.B02.1003151501",   // MB61		// 2.26 GHz Core 2 Duo (P7550)
+  "MB71.88Z.0039.B0E.1111071359",   // MB71		// 2.4 GHz Core 2 Duo (P8600)
+  "MB81.88Z.0164.B14.1606231629",   // MB81		// 1.2 GHz Core M (M-5Y51)
+  "MB91.88Z.0154.B07.1608151057",   // MB91		// 1.2 GHz Core m5 (M5-6Y54)
+  "MBP11.88Z.0055.B08.0610121325",  // MBP11	// 1.67 GHz Core Duo (L2400)
+  "MBP21.88Z.00A5.B08.0708131242",  // MBP21	// 2.33 GHz Core 2 Duo (T7600)
+  "MBP22.88Z.00A5.B07.0708131242",  // MBP22	// 2.16 GHz Core 2 Duo (T7400)
+  "MBP31.88Z.0070.B07.0803051658",  // MBP31	// 2.2 GHz Core 2 Duo (T7500)
+  "MBP41.88Z.00C1.B03.0802271651",  // MBP41	// 2.4 GHz Core 2 Duo (T8300)
+  "MBP51.88Z.007E.B06.1202061253",  // MBP51	// 2.4 GHz Core 2 Duo (P8600)
+  "MBP53.88Z.00AC.B03.0906151647",  // MBP53	// 2.66 GHz Core 2 Duo (P8800)
+  "MBP55.88Z.00AC.B03.0906151708",  // MBP55	// 2.53 GHz Core 2 Duo (P8700)
+  "MBP61.88Z.0057.B11.1509232013",  // MBP61	// 2.53 GHz Core i5 (I5-540M)
+  "MBP61.88Z.0057.B11.1509232013",  // MBP62	// 2.4 GHz Core i5 (I5-520M)
+  "MBP71.88Z.0039.B0E.1111071400",  // MBP71	// 2.4 GHz Core 2 Duo (P8600)
+  "MBP81.88Z.0047.B2C.1510261540",  // MBP81	// 2.3 GHz Core i5 (I5-2415M)
+  "MBP81.88Z.0047.B2C.1510261540",  // MBP82	// 2.3 GHz Core i7 (I7-2820QM)
+  "MBP81.88Z.0047.B2C.1510261540",  // MBP83	// 2.2 GHz Core i7 (I7-2720QM)
+  "MBP91.88Z.00D3.B0D.1602221713",  // MBP91	// 2.3 GHz Core i7 (I7-3615QM)
+  "MBP91.88Z.00D3.B0D.1602221713",  // MBP92	// 2.5 GHz Core i5 (I5-3210M)
+  "MBP101.88Z.00EE.B0A.1509111559", // MBP101	// 2.3 GHz Core i7 (I7-3615QM)
+  "MBP102.88Z.0106.B0A.1509130955", // MBP102	// 2.5 GHz Core i5 (I5-3210M)
+  "MBP111.88Z.0138.B17.1602221718", // MBP111	// 2.4 GHz Core i5 (I5-4258U)
+  "MBP112.88Z.0138.B17.1602221600", // MBP112	// 2.0 GHz Core i7 (I7-4750HQ)
+  "MBP114.88Z.0172.B09.1602151732", // MBP115	// 2.3 GHz Core i7 (I7-4980HQ)
+  "MBP121.88Z.0167.B17.1606231721", // MBP121	// 2.7 GHz Core i5 (I5-5257U)
+  "MBP131.88Z.0205.B02.1610121536", // MBP131	// 2.0 GHz Core i5 (I5-6360U)
+  "MBP132.88Z.0226.B00.1610231055", // MBP132	// 2.9 GHz Core i5 (I5-6267U)
+  "MBP133.88Z.0226.B00.1610231055", // MBP133	// 2.9 GHz Core i7 (I7-6920HQ)
+  "MBA11.88Z.00BB.B03.0803171226",  // MBA11	// 1.6 GHz Core 2 Duo (P7500)
+  "MBA21.88Z.0075.B03.0811141325",  // MBA21	// 1.6 GHz Core 2 Duo (SL9300)
+  "MBA31.88Z.0061.B07.1201241641",  // MBA31	// 1.4 GHz Core 2 Duo (SU9400)
+  "MBA41.88Z.0077.B14.1510261805",  // MBA41	// 1.6 GHz Core i5 (I5-2467M)
+  "MBA41.88Z.0077.B14.1510261805",  // MBA42	// 1.8 GHz Core i7 (I7-2677M)
+  "MBA51.88Z.00EF.B04.1509111654",  // MBA51	// 1.7 GHz Core i5 (I5-3317U)
+  "MBA51.88Z.00EF.B04.1509111654",  // MBA52	// 1.8 GHz Core i5 (I5-3427U)
+  "MBA61.88Z.0099.B22.1602221559",  // MBA61	// 1.3 GHz Core i5 (I5-4250U)
+  "MBA61.88Z.0099.B22.1602221559",  // MBA62	// 1.7 GHz Core i7 (I7-4650U)
+  "MBA71.88Z.0166.B12.1602221953",  // MBA71	// 1.6 GHz Core i5 (I5-5250U)
+  "MBA71.88Z.0166.B12.1602221953",  // MBA72	// 2.2 GHz Core i7 (I7-5650U)
+  "MM11.88Z.0055.B08.0610121326",   // MM11		// 1.66 GHz Core Duo (T2300)
+  "MM21.88Z.009A.B00.0706281359",   // MM21		// 1.83 GHz Core 2 Duo (T5600)
+  "MM31.88Z.00AD.B00.0907171535",   // MM31		// 2.0 GHz Core 2 Duo (P7350)
+  "MM41.88Z.0042.B03.1111072100",   // MM41		// 2.4 GHz Core 2 Duo (P8600)
+  "MM51.88Z.0077.B14.1510261805",   // MM51		// 2.3 GHz Core i5 (I5-2415M)
+  "MM61.88Z.0106.B0A.1509111654",   // MM61		// 2.5 GHz Core i5 (I5-3210M)
+  "MM61.88Z.0106.B0A.1509111654",   // MM62		// 2.6 GHz Core i7 (I7-3720QM)
+  "MM71.88Z.0220.B07.1602221546",   // MM71		// 1.4 GHz Core i5 (I5-4260U)
+  "IM41.88Z.0055.B08.0609061538",   // IM41		// 1.83 GHz Core Duo (T2400)
+  "IM51.88Z.0090.B09.0706270921",   // IM51		// 2.0 GHz Core 2 Duo (T7200)
+  "IM61.88Z.0093.B07.0804281538",   // IM61		// 2.16 GHz Core 2 Duo (T7400)
+  "IM71.88Z.007A.B03.0803051705",   // IM71		// 2.0 GHz Core 2 Duo (T7300)
+  "IM81.88Z.00C1.B00.0802091538",   // IM81		// 2.4 GHz Core 2 Duo (E8135)
+  "IM91.88Z.008D.B00.0901142258",   // IM91		// 3.06 GHz Core 2 Duo (E8435)
+  "IM101.88Z.00CC.B00.0909031926",  // IM101	// 3.06 GHz Core 2 Duo (E7600)
+  "IM111.88Z.0034.B04.1509231906",  // IM111	// 2.66 GHz Core i5 (I5-750)
+  "IM112.88Z.0057.B03.1509231647",  // IM112	// 3.06 GHz Core i3 (I3-540)
+  "IM112.88Z.0057.B03.1509231647",  // IM113	// 3.2 GHz Core i3 (I3-550)
+  "IM121.88Z.0047.B23.1510261412",  // IM121	// 2.5 GHz Core i5 (I5-2400S)
+  "IM121.88Z.0047.B23.1510261412",  // IM122	// 3.4 GHz Core i7 (I7-2600)
+  "IM131.88Z.010A.B09.1509111558",  // IM131	// 2.9 GHz Core i5 (I5-3470S)
+  "IM131.88Z.010A.B09.1509111558",  // IM132	// 3.4 GHz Core i7 (I7-3770)
+  "IM141.88Z.0118.B13.1602221714",  // IM141	// 2.7 GHz Core i5 (I5-4570R)
+  "IM142.88Z.0118.B13.1602221716",  // IM142	// 3.5 GHz Core i7 (I7-4771)
+  "IM151.88Z.0207.B07.1607221823",  // IM151	// 3.5 GHz Core i5 (I5-4690)
+  "IM161.88Z.0207.B01.1509200943",  // IM161	// 1.6 GHz Core i5 (I5-5250U)
+  "IM162.88Z.0206.B00.1508281353",  // IM162	// 3.3 GHz Core i5 (i7-5775R)
+  "IM171.88Z.0105.B09.1607221343",  // IM171	// 3.3 GHz Core i5 (I5-6600)
+  "MP11.88Z.005C.B08.0707021221",   // MP11		// 2.0 GHz D. Core Xeon 5130 x2
+  "MP21.88Z.007F.B06.0707021348",   // MP21		// 3.0 GHz Q. Core Xeon X5365 x2
+  "MP31.88Z.006C.B05.0802291410",   // MP31		// 2.8 GHz Q. Core Xeon E5462 x2
+  "MP41.88Z.0081.B07.0910130729",   // MP41		// 2.26 GHz Q. Core Xeon E5520 x2
+  "MP51.88Z.007F.B03.1010071432",   // MP51		// 2.93 GHz 6 Core Xeon X5670 x2
+  "MP61.88Z.0116.B20.1610051057",   // MP61		// 2.7 GHz 12 Core Xeon E5-2697v2
 };
 
 CHAR8* AppleBoardID[] =    //Lion DR1 compatible
 {
   "Mac-F4208CC8",          // MB11
   "Mac-F4208CA9",          // MB21
+  "Mac-F22788C8",          // MB31
   "Mac-F22788A9",          // MB41
   "Mac-F42D89C8",          // MB51
   "Mac-F22788AA",          // MB52
@@ -105,6 +114,7 @@ CHAR8* AppleBoardID[] =    //Lion DR1 compatible
   "Mac-BE0E8AC46FE800CC",  // MB81
   "Mac-9AE82516C7C6B903",  // MB91
   "Mac-F425BEC8",          // MBP11
+  "Mac-F42189C8",          // MBP21
   "Mac-F42187C8",          // MBP22
   "Mac-F4238BC8",          // MBP31
   "Mac-F42C89C8",          // MBP41
@@ -123,6 +133,7 @@ CHAR8* AppleBoardID[] =    //Lion DR1 compatible
   "Mac-AFD8A9D944EA4843",  // MBP102
   "Mac-189A3D4F975D5FFC",  // MBP111
   "Mac-3CBD00234E554E41",  // MBP112
+  "Mac-06F11F11946D27C5",  // MBP115
   "Mac-E43C1C25D4880AD6",  // MBP121
   "Mac-473D31EABEB93F9B",  // MBP131
   "Mac-66E35819EE2D0D05",  // MBP132
@@ -146,6 +157,10 @@ CHAR8* AppleBoardID[] =    //Lion DR1 compatible
   "Mac-031AEE4D24BFF0B1",  // MM61
   "Mac-F65AE981FFA204ED",  // MM62
   "Mac-35C5E08120C7EEAF",  // MM71
+  "Mac-F42787C8",          // IM41
+  "Mac-F4228EC8",          // IM51
+  "Mac-F4218FC8",          // IM61
+  "Mac-F42386C8",          // IM71
   "Mac-F227BEC8",          // IM81
   "Mac-F2218FA9",          // IM91
   "Mac-F2268CC8",          // IM101
@@ -159,6 +174,8 @@ CHAR8* AppleBoardID[] =    //Lion DR1 compatible
   "Mac-031B6874CF7F642A",  // IM141
   "Mac-27ADBB7B4CEE8E61",  // IM142
   "Mac-42FD25EABCABB274",  // IM151
+  "Mac-A369DDC4E67F1C45",  // IM161
+  "Mac-FFE5EF870D7BA81A",  // IM162
   "Mac-DB15BD556843C820",  // IM171
   "Mac-F4208DC8",          // MP11
   "Mac-F4208DA9",          // MP21
@@ -173,6 +190,7 @@ CHAR8* AppleReleaseDate[] =
 {
   "10/12/06",    // MB11
   "06/27/07",    // MB21
+  "03/05/08",    // MB31
   "02/09/08",    // MB41
   "04/27/09",    // MB51
   "04/16/09",    // MB52
@@ -181,6 +199,7 @@ CHAR8* AppleReleaseDate[] =
   "06/23/2016",  // MB81
   "08/15/2016",  // MB91
   "10/12/06",    // MBP11
+  "08/13/07",    // MBP21
   "08/13/07",    // MBP22
   "03/05/08",    // MBP31
   "02/27/08",    // MBP41
@@ -223,9 +242,13 @@ CHAR8* AppleReleaseDate[] =
   "09/11/2015",  // MM61
   "09/11/2015",  // MM62
   "02/22/2016",  // MM71
+  "09/06/06",    // IM41
+  "06/27/07",    // IM51
+  "04/28/08",    // IM61
+  "03/05/08",    // IM71
   "02/09/08",    // IM81
   "01/14/09",    // IM91
-  "09/23/2015",  // IM101
+  "09/03/09",    // IM101
   "09/23/2015",  // IM111
   "09/23/2015",  // IM112
   "09/23/2015",  // IM113
@@ -236,6 +259,8 @@ CHAR8* AppleReleaseDate[] =
   "02/22/2016",  // IM141
   "02/22/2016",  // IM142
   "07/22/2016",  // IM151
+  "09/20/2015",  // IM161
+  "08/28/2015",  // IM162
   "07/22/2016",  // IM171
   "07/02/07",    // MP11
   "07/02/07",    // MP21
@@ -249,6 +274,7 @@ CHAR8* AppleProductName[] =
 {
   "MacBook1,1",
   "MacBook2,1",
+  "MacBook3,1",
   "MacBook4,1",
   "MacBook5,1",
   "MacBook5,2",
@@ -257,6 +283,7 @@ CHAR8* AppleProductName[] =
   "MacBook8,1",
   "MacBook9,1",
   "MacBookPro1,1",
+  "MacBookPro2,1",
   "MacBookPro2,2",
   "MacBookPro3,1",
   "MacBookPro4,1",
@@ -299,6 +326,10 @@ CHAR8* AppleProductName[] =
   "Macmini6,1",
   "Macmini6,2",
   "Macmini7,1",
+  "iMac4,1",
+  "iMac5,1",
+  "iMac6,1",
+  "iMac7,1",
   "iMac8,1",
   "iMac9,1",
   "iMac10,1",
@@ -312,6 +343,8 @@ CHAR8* AppleProductName[] =
   "iMac14,1",
   "iMac14,2",
   "iMac15,1",
+  "iMac16,1",
+  "iMac16,2",
   "iMac17,1",
   "MacPro1,1",
   "MacPro2,1",
@@ -325,6 +358,7 @@ CHAR8* AppleFamilies[] =
 {
   "MacBook",       // MB11
   "MacBook",       // MB21
+  "MacBook",       // MB31
   "MacBook",       // MB41
   "MacBook",       // MB51
   "MacBook",       // MB52
@@ -333,6 +367,7 @@ CHAR8* AppleFamilies[] =
   "MacBook",       // MB81
   "MacBook",       // MB91
   "MacBook Pro",   // MBP11
+  "MacBook Pro",   // MBP21
   "MacBook Pro",   // MBP22
   "MacBook Pro",   // MBP31
   "MacBook Pro",   // MBP41
@@ -375,6 +410,10 @@ CHAR8* AppleFamilies[] =
   "Mac mini",      // MM61
   "Mac mini",      // MM62
   "Mac mini",      // MM71
+  "iMac",          // IM41
+  "iMac",          // IM51
+  "iMac",          // IM61
+  "iMac",          // IM71
   "iMac",          // IM81
   "iMac",          // IM91
   "iMac",          // IM101
@@ -388,6 +427,8 @@ CHAR8* AppleFamilies[] =
   "iMac",          // IM141
   "iMac",          // IM142
   "iMac",          // IM151
+  "iMac",          // IM161
+  "iMac",          // IM162
   "iMac17,1",      // IM171
   "MacPro",        // MP11
   "MacPro",        // MP21
@@ -402,6 +443,7 @@ CHAR8* AppleSystemVersion[] =
 {
   "1.1",  // MB11
   "1.2",  // MB21
+  "1.3",  // MB31
   "1.3",  // MB41
   "1.3",  // MB51
   "1.3",  // MB52
@@ -410,6 +452,7 @@ CHAR8* AppleSystemVersion[] =
   "1.0",  // MB81
   "1.0",  // MB91
   "1.0",  // MBP11
+  "1.0",  // MBP21
   "1.0",  // MBP22
   "1.0",  // MBP31
   "1.0",  // MBP41
@@ -448,10 +491,14 @@ CHAR8* AppleSystemVersion[] =
   "1.1",  // MM21
   "1.0",  // MM31
   "1.0",  // MM41
-  "1.0", // MM51
+  "1.0",  // MM51
   "1.0",  // MM61
   "1.0",  // MM62
   "1.0",  // MM71
+  "1.0",  // IM41
+  "1.0",  // IM51
+  "1.0",  // IM61
+  "1.0",  // IM71
   "1.3",  // IM81
   "1.0",  // IM91
   "1.0",  // IM101
@@ -465,6 +512,8 @@ CHAR8* AppleSystemVersion[] =
   "1.0",  // IM141
   "1.0",  // IM142
   "1.0",  // IM151
+  "1.0",  // IM161
+  "1.0",  // IM162
   "1.0",  // IM171
   "1.0",  // MP11
   "1.0",  // MP21
@@ -478,6 +527,7 @@ CHAR8* AppleSerialNumber[] = //random generated
 {
   "W80A041AU9B",  // MB11
   "W88A041AWGP",  // MB21
+  "W874HACKZ62",	// MB31
   "W88A041A0P0",  // MB41
   "W8944T1S1AQ",  // MB51
   "W88AAAAA9GU",  // MB52
@@ -486,6 +536,7 @@ CHAR8* AppleSerialNumber[] = //random generated
   "C02RCE58GCN3", // MB81
   "C02RM408HDNK", // MB91
   "W884857JVJ1",  // MBP11
+  "W88130WUW0H",	// MBP21
   "W8827B4CW0L",  // MBP22
   "W8841OHZX91",  // MBP31
   "W88484F2YP4",  // MBP41
@@ -527,6 +578,10 @@ CHAR8* AppleSerialNumber[] = //random generated
   "C07JNHACDY3H", // MM61
   "C07JD041DWYN", // MM62
   "C02NN7NHG1J0", // MM71
+  "W862HACFU2N",	// IM41
+  "W871HACHVUX",	// IM51
+  "W871HACKVGN",	// IM61
+  "W874HACBX85",	// IM71
   "W89A00AAX88",  // IM81
   "W89A00A36MJ",  // IM91
   "W80AA98A5PE",  // IM101
@@ -540,6 +595,8 @@ CHAR8* AppleSerialNumber[] = //random generated
   "D25LHACKF8J3", // IM141
   "D25LHACKF8JC", // IM142
   "C02ND2VTFY11", // IM151
+  "C02QQHACGF1J",	// IM161
+  "C02PNHACGG7G",	// IM162
   "C02QFHACGG7L", // IM171
   "W88A77AXUPZ",  // MP11
   "W8930518UPZ",  // MP21
@@ -554,6 +611,7 @@ CHAR8* AppleChassisAsset[] =
 {
   "MacBook-White",      // MB11
   "MacBook-White",      // MB21
+  "MacBook-White",      // MB31
   "MacBook-Black",      // MB41
   "MacBook-Black",      // MB51
   "MacBook-Black",      // MB52
@@ -562,6 +620,7 @@ CHAR8* AppleChassisAsset[] =
   "MacBook-Aluminum",   // MB81
   "MacBook-Aluminum",   // MB91
   "MacBook-Aluminum",   // MBP11
+  "MacBook-Aluminum",   // MBP21
   "MacBook-Aluminum",   // MBP22
   "MacBook-Aluminum",   // MBP31
   "MacBook-Aluminum",   // MBP41
@@ -604,6 +663,10 @@ CHAR8* AppleChassisAsset[] =
   "Mini-Aluminum",      // MM61
   "Mini-Aluminum",      // MM62
   "Mini-Aluminum",      // MM71
+  "iMac",				// IM41
+  "iMac",				// IM51
+  "iMac",				// IM61
+  "iMac-Aluminum",      // IM71
   "iMac-Aluminum",      // IM81
   "iMac-Aluminum",      // IM91
   "iMac-Aluminum",      // IM101
@@ -617,6 +680,8 @@ CHAR8* AppleChassisAsset[] =
   "iMac-Aluminum",      // IM141
   "iMac-Aluminum",      // IM142
   "iMac-Aluminum",      // IM151
+  "iMac-Aluminum",      // IM161
+  "iMac-Aluminum",      // IM162
   "iMac-Aluminum",      // IM171
   "Pro-Enclosure",      // MP11
   "Pro-Enclosure",      // MP21
@@ -632,6 +697,7 @@ CHAR8* SmcPlatform[] =
 {
   "m70",  // MacBook1,1,
   "m75",  // MacBook2,1,
+  "NA",   // MacBook3,1,		// need to find RPlt key
   "m82",  // MacBook4,1,
   "NA",   // MacBook5,1,      // need to find RPlt key
   "m97",  // MacBook5,2,
@@ -640,6 +706,7 @@ CHAR8* SmcPlatform[] =
   "j92",  // MacBook8,1,
   "NA",   // MacBook9,1, // need to find RPlt key
   "NA",   // MacBookPro1,1,   // need to find RPlt key
+  "NA",   // MacBookPro2,1,		// need to find RPlt key
   "NA",   // MacBookPro2,2,   // need to find RPlt key
   "NA",   // MacBookPro3,1,   // need to find RPlt key
   "NA",   // MacBookPro4,1,   // need to find RPlt key
@@ -681,6 +748,10 @@ CHAR8* SmcPlatform[] =
   "NA",   // Macmini6,1,      // need to find RPlt key
   "j50s", // Macmini6,2,
   "j64",  // Macmini7,1,
+  "NA",   // iMac4,1,			// need to find RPlt key
+  "NA",   // iMac5,1,			// need to find RPlt key
+  "NA",   // iMac6,1,			// need to find RPlt key
+  "NA",   // iMac7,1,			// need to find RPlt key
   "k3",   // iMac8,1,
   "NA",   // iMac9,1,         // need to find RPlt key
   "k22",  // iMac10,1,
@@ -694,6 +765,8 @@ CHAR8* SmcPlatform[] =
   "j16",  // iMac14,1,
   "NA",   // iMac14,2, // need to find RPlt key
   "j78",  // iMac15,1,
+  "NA",   // iMac16,1,			// need to find RPlt key
+  "NA",   // iMac16,2,			// need to find RPlt key
   "j95",  // iMac17,1,
   "NA",   // MacPro1,1,       // need to find RPlt key
   "NA",   // MacPro2,1,       // need to find RPlt key
@@ -708,6 +781,7 @@ UINT8 SmcRevision[][6] =
 {
   { 0x01, 0x04, 0x0F, 0, 0, 0x12 },   // MacBook1,1,
   { 0x01, 0x13, 0x0F, 0, 0, 0x03 },   // MacBook2,1,
+  { 0x01, 0x24, 0x0F, 0, 0, 0x03 },   // MacBook3,1,
   { 0x01, 0x31, 0x0F, 0, 0, 0x01 },   // MacBook4,1,
   { 0x01, 0x32, 0x0F, 0, 0, 0x08 },   // MacBook5,1,
   { 0x01, 0x38, 0x0F, 0, 0, 0x05 },   // MacBook5,2,
@@ -716,29 +790,30 @@ UINT8 SmcRevision[][6] =
   { 0x02, 0x25, 0x0F, 0, 0, 0x87 },   // MacBook8,1,
   { 0x02, 0x35, 0x0F, 0, 1, 0x01 },   // MacBook9,1,
   { 0x01, 0x02, 0x0F, 0, 0, 0x10 },   // MacBookPro1,1,
-  { 0x01, 0x02, 0x0F, 0, 0, 0x10 },   // MacBookPro2,2,     // need to find smc rev
+  { 0x01, 0x14, 0x0F, 0, 0, 0x05 },   // MacBookPro2,1,
+  { 0x01, 0x13, 0x0F, 0, 0, 0x03 },   // MacBookPro2,2,
   { 0x01, 0x16, 0x0F, 0, 0, 0x11 },   // MacBookPro3,1,
   { 0x01, 0x27, 0x0F, 0, 0, 0x03 },   // MacBookPro4,1,
   { 0x01, 0x33, 0x0F, 0, 0, 0x08 },   // MacBookPro5,1,
-  { 0x01, 0x33, 0x0F, 0, 0, 0x08 },   // MacBookPro5,3,     // need to find smc rev
-  { 0x01, 0x33, 0x0F, 0, 0, 0x08 },   // MacBookPro5,5,     // need to find smc rev
+  { 0x01, 0x48, 0x0F, 0, 0, 0x02 },   // MacBookPro5,3,
+  { 0x01, 0x47, 0x0F, 0, 0, 0x02 },   // MacBookPro5,5,
   { 0x01, 0x57, 0x0F, 0, 0, 0x18 },   // MacBookPro6,1,
   { 0x01, 0x58, 0x0F, 0, 0, 0x17 },   // MacBookPro6,2,
   { 0x01, 0x62, 0x0F, 0, 0, 0x07 },   // MacBookPro7,1,
-  { 0x01, 0x68, 0x0F, 0, 0, 0x98 },   // MacBookPro8,1,
+  { 0x01, 0x69, 0x0F, 0, 0, 0x04 },   // MacBookPro8,1,
   { 0x01, 0x69, 0x0F, 0, 0, 0x03 },   // MacBookPro8,2,
-  { 0x01, 0x70, 0x0F, 0, 0, 0x05 },   // MacBookPro8,3,
+  { 0x01, 0x70, 0x0F, 0, 0, 0x06 },   // MacBookPro8,3,
   { 0x02, 0x01, 0x0F, 0, 1, 0x75 },   // MacBookPro9,1,
   { 0x02, 0x02, 0x0F, 0, 0, 0x44 },   // MacBookPro9,2,
   { 0x02, 0x03, 0x0F, 0, 0, 0x36 },   // MacBookPro10,1,
   { 0x02, 0x06, 0x0F, 0, 0, 0x59 },   // MacBookPro10,2,
   { 0x02, 0x16, 0x0F, 0, 0, 0x58 },   // MacBookPro11,1,
-  { 0x02, 0x16, 0x0F, 0, 0, 0x58 },   // MacBookPro11,2,    // need to find smc rev
-  { 0x02, 0x16, 0x0F, 0, 0, 0x58 },   // MacBookPro11,5,    // need to find smc rev
+  { 0x02, 0x18, 0x0F, 0, 0, 0x15 },   // MacBookPro11,2,
+  { 0x02, 0x30, 0x0F, 0, 0, 0x02 },   // MacBookPro11,5,
   { 0x02, 0x28, 0x0F, 0, 0, 0x07 },   // MacBookPro12,1,
-  { 0x02, 0x36, 0x0F, 0, 0, 0x93 },   // MacBookPro13,1
-  { 0x02, 0x36, 0x0F, 0, 0, 0x93 },   // MacBookPro13,2     // need to find smc rev
-  { 0x02, 0x36, 0x0F, 0, 0, 0x93 },   // MacBookPro13,3     // need to find smc rev
+  { 0x02, 0x36, 0x0F, 0, 0, 0x93 },   // MacBookPro13,1,
+  { 0x02, 0x38, 0x0F, 0, 0, 0x05 },   // MacBookPro13,2,
+  { 0x02, 0x38, 0x0F, 0, 0, 0x05 },   // MacBookPro13,3,
   { 0x01, 0x23, 0x0F, 0, 0, 0x20 },   // MacBookAir1,1,
   { 0x01, 0x34, 0x0F, 0, 0, 0x08 },   // MacBookAir2,1,
   { 0x01, 0x67, 0x0F, 0, 0, 0x10 },   // MacBookAir3,1,
@@ -749,17 +824,21 @@ UINT8 SmcRevision[][6] =
   { 0x02, 0x12, 0x0F, 0, 1, 0x37 },   // MacBookAir6,1,
   { 0x02, 0x13, 0x0F, 0, 0, 0x09 },   // MacBookAir6,2,
   { 0x02, 0x27, 0x0F, 0, 0, 0x02 },   // MacBookAir7,1,
-  { 0x02, 0x27, 0x0F, 0, 0, 0x02 },   // MacBookAir7,2,     // need to find smc rev
+  { 0x02, 0x27, 0x0F, 0, 0, 0x02 },   // MacBookAir7,2,
   { 0x01, 0x03, 0x0F, 0, 0, 0x04 },   // Macmini1,1,
   { 0x01, 0x19, 0x0F, 0, 0, 0x02 },   // Macmini2,1,
-  { 0x01, 0x19, 0x0F, 0, 0, 0x02 },   // Macmini3,1,        // need to find smc rev
-  { 0x01, 0x19, 0x0F, 0, 0, 0x02 },   // Macmini4,1,        // need to find smc rev
+  { 0x01, 0x35, 0x0F, 0, 0, 0x01 },   // Macmini3,1,
+  { 0x01, 0x65, 0x0F, 0, 0, 0x02 },   // Macmini4,1,
   { 0x01, 0x30, 0x0F, 0, 0, 0x03 },   // Macmini5,1,
   { 0x02, 0x08, 0x0F, 0, 0, 0x00 },   // Macmini6,1,
   { 0x02, 0x08, 0x0F, 0, 0, 0x00 },   // Macmini6,2,
   { 0x02, 0x24, 0x0F, 0, 0, 0x32 },   // Macmini7,1,
-  { 0x01, 0x30, 0x0F, 0, 0, 0x01 },   // iMac8,1,
-  { 0x01, 0x30, 0x0F, 0, 0, 0x01 },   // iMac9,1,           // need to find smc rev
+  { 0x01, 0x01, 0x0F, 0, 0, 0x05 },   // iMac4,1,
+  { 0x01, 0x08, 0x0F, 0, 0, 0x02 },   // iMac5,1,
+  { 0x01, 0x08, 0x0F, 0, 0, 0x02 },   // iMac6,1,
+  { 0x01, 0x20, 0x0F, 0, 0, 0x04 },   // iMac7,1,
+  { 0x01, 0x29, 0x0F, 0, 0, 0x01 },   // iMac8,1,
+  { 0x01, 0x36, 0x0F, 0, 0, 0x03 },   // iMac9,1,
   { 0x01, 0x53, 0x0F, 0, 0, 0x13 },   // iMac10,1,
   { 0x01, 0x54, 0x0F, 0, 0, 0x36 },   // iMac11,1,
   { 0x01, 0x64, 0x0F, 0, 0, 0x05 },   // iMac11,2,
@@ -771,6 +850,8 @@ UINT8 SmcRevision[][6] =
   { 0x02, 0x14, 0x0F, 0, 0, 0x19 },   // iMac14,1,
   { 0x02, 0x15, 0x0F, 0, 0, 0x07 },   // iMac14,2,
   { 0x02, 0x22, 0x0F, 0, 0, 0x16 },   // iMac15,1,
+  { 0x02, 0x31, 0x0F, 0, 0, 0x35 },   // iMac16,1,
+  { 0x02, 0x32, 0x0F, 0, 0, 0x20 },   // iMac16,2,
   { 0x02, 0x33, 0x0F, 0, 0, 0x10 },   // iMac17,1,
   { 0x01, 0x07, 0x0F, 0, 0, 0x10 },   // MacPro1,1,
   { 0x01, 0x15, 0x0F, 0, 0, 0x03 },   // MacPro2,1,
@@ -785,6 +866,7 @@ UINT32 SmcConfig[] =
 {
   0x71001,  //"MacBook1,1",
   0x72001,  //"MacBook2,1",
+  0x72001,  //"MacBook3,1",			// need to find EPCI key
   0x74001,  //"MacBook4,1",
   0x7a002,  //"MacBook5,1",      // need to find EPCI key
   0x7a002,  //"MacBook5,2",
@@ -793,6 +875,7 @@ UINT32 SmcConfig[] =
   0xf0e007, //"MacBook8,1",
   0xf0e007, //"MacBook9,1", // need to find EPCI key
   0x7b002,  //"MacBookPro1,1",   // need to find EPCI key
+  0x7b002,  //"MacBookPro2,1",		// need to find EPCI key
   0x7b002,  //"MacBookPro2,2",   // need to find EPCI key
   0x7b002,  //"MacBookPro3,1",   // need to find EPCI key
   0x7b002,  //"MacBookPro4,1",   // need to find EPCI key
@@ -835,6 +918,10 @@ UINT32 SmcConfig[] =
   0x7d006,  //"Macmini6,1",      // need to find EPCI key
   0x7d006,  //"Macmini6,2",
   0xf04008, //"Macmini7,1",
+  0x73002,  //"iMac4,1",			// need to find EPCI key
+  0x73002,  //"iMac5,1",			// need to find EPCI key
+  0x73002,  //"iMac6,1",			// need to find EPCI key
+  0x73002,  //"iMac7,1",			// need to find EPCI key
   0x73002,  //"iMac8,1",
   0x73002,  //"iMac9,1",         // need to find EPCI key
   0x7b002,  //"iMac10,1",
@@ -848,6 +935,8 @@ UINT32 SmcConfig[] =
   0x79007,  //"iMac14,1",
   0x7a007,  //"iMac14,2",
   0xf00008, //"iMac15,1",
+  0xf00008, //"iMac16,1",			// need to find EPCI key
+  0xf00008, //"iMac16,2",			// need to find EPCI key
   0xf0c008, //"iMac17,1",
   0x79001,  //"MacPro1,1",      // need to find EPCI key
   0x79001,  //"MacPro2,1",      // need to find EPCI key
@@ -891,6 +980,7 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
   switch (Model) {
     case MacBook11:
     case MacBook21:
+    case MacBook31:
     case MacBook41:
     case MacBook51:
     case MacBook52:
@@ -921,6 +1011,7 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
       break;
 
     case MacBookPro11:
+    case MacBookPro21:
     case MacBookPro22:
     case MacBookPro31:
     case MacBookPro41:
@@ -941,6 +1032,10 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
       gSettings.Mobile      = TRUE;
       break;
 
+    case iMac41:
+    case iMac51:
+    case iMac61:
+    case iMac71:
     case iMac81:
     case iMac91:
     case iMac101:
@@ -954,6 +1049,8 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
     case iMac141:
     case iMac142:
     case iMac151:
+    case iMac161:
+    case iMac162:
     case iMac171:
       gSettings.ChassisType = MiscChassisTypeAllInOne; //13;
       gSettings.Mobile      = FALSE;
