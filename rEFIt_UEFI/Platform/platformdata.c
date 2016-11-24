@@ -545,6 +545,7 @@ CHAR8* AppleSerialNumber[] = //random generated
   "W8035TG966D",  // MBP55
   "C02G5834DC79", // MBP61
   "CK132A91AGW",  // MBP62
+  "CK145C7NATM",  // MBP71
   "W89F9196DH2G", // MBP81
   "C02HL0FGDF8X", // MBP82
   "W88F9CDEDF93", // MBP83
@@ -716,6 +717,7 @@ CHAR8* SmcPlatform[] =
   "NA",   // MacBookPro6,1,   // need to find RPlt key
   "k74",  // MacBookPro6,2
   "k90i", // MacBookPro8,1,
+  "NA",   // MacBookPro7,1,   // need to find RPlt key
   "NA",   // MacBookPro8,2,   // need to find RPlt key
   "k92i", // MacBookPro8,3,
   "NA",   // MacBookPro9,1,   // need to find RPlt key
@@ -873,7 +875,7 @@ UINT32 SmcConfig[] =
   0x7a002,  //"MacBook6,1", // need to find EPCI key
   0x7a002,  //"MacBook7,1", // need to find EPCI key
   0xf0e007, //"MacBook8,1",
-  0xf0e007, //"MacBook9,1", // need to find EPCI key
+  0xf0e007, //"MacBook9,1"       // need to find EPCI key
   0x7b002,  //"MacBookPro1,1",   // need to find EPCI key
   0x7b002,  //"MacBookPro2,1",		// need to find EPCI key
   0x7b002,  //"MacBookPro2,2",   // need to find EPCI key
