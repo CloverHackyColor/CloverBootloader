@@ -875,7 +875,7 @@ UINT32 SmcConfig[] =
   0x7a002,  //"MacBook6,1", // need to find EPCI key
   0x7a002,  //"MacBook7,1", // need to find EPCI key
   0xf0e007, //"MacBook8,1",
-  0xf0e007, //"MacBook9,1"       // need to find EPCI key
+  0xf0e007, //"MacBook9,1",      // need to find EPCI key
   0x7b002,  //"MacBookPro1,1",   // need to find EPCI key
   0x7b002,  //"MacBookPro2,1",		// need to find EPCI key
   0x7b002,  //"MacBookPro2,2",   // need to find EPCI key

@@ -535,9 +535,13 @@ UINT8   KBELionReplace_i386[]  = { 0xE8, 0xAA, 0xFB, 0xFF, 0xFF, 0x90, 0x90, 0x8
 UINT8   KBELionSearch_X64[]    = { 0xE8, 0x0C, 0xFD, 0xFF, 0xFF, 0xEB, 0x08, 0x48, 0x89, 0xDF };
 UINT8   KBELionReplace_X64[]   = { 0xE8, 0x0C, 0xFD, 0xFF, 0xFF, 0x90, 0x90, 0x48, 0x89, 0xDF };
 
-// Mountain Lion, Mavericks
-UINT8   KBEMLMavSearch[]       = { 0xE8, 0x30, 0x00, 0x00, 0x00, 0xEB, 0x08, 0x48, 0x89, 0xDF };
-UINT8   KBEMLMavReplace[]      = { 0xE8, 0x30, 0x00, 0x00, 0x00, 0x90, 0x90, 0x48, 0x89, 0xDF };
+// Mountain Lion
+UINT8   KBEMLSearch[]          = { 0xE8, 0x30, 0x00, 0x00, 0x00, 0xEB, 0x08, 0x48, 0x89, 0xDF };
+UINT8   KBEMLReplace[]         = { 0xE8, 0x30, 0x00, 0x00, 0x00, 0x90, 0x90, 0x48, 0x89, 0xDF };
+
+// Mavericks
+UINT8   KBEMavSearch[]         = { 0xE8, 0x30, 0x00, 0x00, 0x00, 0xEB, 0x08, 0x48, 0x89, 0xDF };
+UINT8   KBEMavReplace[]        = { 0xE8, 0x30, 0x00, 0x00, 0x00, 0x90, 0x90, 0x48, 0x89, 0xDF };
 
 // Yosemite
 UINT8   KBEYosSearch[]         = { 0xE8, 0x25, 0x00, 0x00, 0x00, 0xEB, 0x05, 0xE8, 0xCE, 0x02 };
@@ -546,16 +550,19 @@ UINT8   KBEYosReplace[]        = { 0xE8, 0x25, 0x00, 0x00, 0x00, 0x90, 0x90, 0xE
 // El Capitan
 UINT8 KBEECSearch[]  = { 0xC3, 0x48, 0x85, 0xDB, 0x74, 0x70, 0x48, 0x8B, 0x03, 0x48, 0x89, 0xDF, 0xFF, 0x50, 0x28, 0x48 };
 UINT8 KBEECReplace[] = { 0xC3, 0x48, 0x85, 0xDB, 0xEB, 0x12, 0x48, 0x8B, 0x03, 0x48, 0x89, 0xDF, 0xFF, 0x50, 0x28, 0x48 };
+UINT8   KBEEC1Search[]         = { 0xE8, 0x25, 0x00, 0x00, 0x00, 0xEB, 0x05, 0xE8, 0xCE, 0x02 };
+UINT8   KBEEC1Replace[]        = { 0xE8, 0x25, 0x00, 0x00, 0x00, 0x90, 0x90, 0xE8, 0xCE, 0x02 };
 
-// Sherlocks: Sierra DP1
-UINT8   KBESieDP1Search[]      = { 0xC3, 0x48, 0x85, 0xDB, 0x74, 0x71, 0x48, 0x8B, 0x03, 0x48, 0x89, 0xDF, 0xFF, 0x50, 0x28, 0x48 };
-UINT8   KBESieDP1Replace[]     = { 0xC3, 0x48, 0x85, 0xDB, 0xEB, 0x12, 0x48, 0x8B, 0x03, 0x48, 0x89, 0xDF, 0xFF, 0x50, 0x28, 0x48 };
+// Sierra
+// Sherlocks: Universal, cecekpawon: Sie DP2+
+// PMheart: We need 2 patches in Sierra.
+UINT8   KBESieSearch[]         = { 0xC3, 0x48, 0x85, 0xDB, 0x74, 0x71, 0x48, 0x8B, 0x03, 0x48, 0x89, 0xDF, 0xFF, 0x50, 0x28, 0x48 };   // Universal.
+UINT8   KBESieReplace[]        = { 0xC3, 0x48, 0x85, 0xDB, 0xEB, 0x12, 0x48, 0x8B, 0x03, 0x48, 0x89, 0xDF, 0xFF, 0x50, 0x28, 0x48 };   // Universal.
+UINT8   KBESieDP1Search[]      = { 0xE8, 0x25, 0x00, 0x00, 0x00, 0xEB, 0x05, 0xE8, 0xCE, 0x02 };   // Only for Sierra DP1.
+UINT8   KBESieDP1Replace[]     = { 0xE8, 0x25, 0x00, 0x00, 0x00, 0x90, 0x90, 0xE8, 0xCE, 0x02 };   // Only for Sierra DP1.
+UINT8   KBESieDP2Search[]      = { 0xE8, 0x25, 0x00, 0x00, 0x00, 0xEB, 0x05, 0xE8, 0x7E, 0x05 };   // For Sie DP2+
+UINT8   KBESieDP2Replace[]     = { 0xE8, 0x25, 0x00, 0x00, 0x00, 0x90, 0x90, 0xE8, 0x7E, 0x05 };   // For Sie DP2+
 
-// cecekpawon: Sierra DP2
-UINT8   KBESieDP2Search[]      = { 0xE8, 0x25, 0x00, 0x00, 0x00, 0xEB, 0x05, 0xE8, 0x7E, 0x05 };
-UINT8   KBESieDP2Replace[]     = { 0xE8, 0x25, 0x00, 0x00, 0x00, 0x90, 0x90, 0xE8, 0x7E, 0x05 };
-
-// Sherlocks: Should use DP1+DP2 combination patch in Sierra. Never use only one.
 
 //
 // We can not rely on OSVersion global variable for OS version detection,
@@ -573,7 +580,8 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
   UINTN   NumSnow_X64 = 0;
   UINTN   NumLion_i386 = 0;
   UINTN   NumLion_X64 = 0;
-  UINTN   NumMLMav = 0;
+  UINTN   NumML = 0;
+  UINTN   NumMav = 0;
   UINTN   NumYos = 0;
   UINTN   NumEC = 0;
   UINTN   NumSie = 0;
@@ -583,19 +591,20 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
   if (is64BitKernel) {
     NumSnow_X64 = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBESnowSearch_X64, sizeof(KBESnowSearch_X64));
     NumLion_X64  = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBELionSearch_X64, sizeof(KBELionSearch_X64));
-    NumMLMav     = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBEMLMavSearch, sizeof(KBEMLMavSearch));
+    NumML        = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBEMLSearch, sizeof(KBEMLSearch));
+    NumMav       = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBEMavSearch, sizeof(KBEMavSearch));
     NumYos = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBEYosSearch, sizeof(KBEYosSearch));
-    NumEC        = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBEECSearch, sizeof(KBEECReplace));
-    NumSie       = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBESieDP1Search, sizeof(KBESieDP1Search));
+    NumEC        = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBEECSearch, sizeof(KBEECSearch));
+    NumSie       = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBESieSearch, sizeof(KBESieSearch));
   } else {
     NumSnow_i386 = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBESnowSearch_i386, sizeof(KBESnowSearch_i386));
     NumLion_i386 = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBELionSearch_i386, sizeof(KBELionSearch_i386));
   }
   
-  if (NumSnow_i386 + NumLion_i386 + NumSnow_X64 + NumLion_X64 + NumMLMav + NumYos + NumEC + NumSie > 1) {
+  if (NumSnow_i386 + NumSnow_X64 + NumLion_i386 + NumLion_X64 + NumML > 1) {
     // more then one pattern found - we do not know what to do with it
     // and we'll skipp it
-    AsciiPrint("\nERROR patching kernel for injected kexts:\nmultiple patterns found (LionX64: %d, Lioni386: %d, MLMav: %d) - skipping patching!\n", NumLion_X64, NumLion_i386, NumMLMav);
+    AsciiPrint("\nERROR patching kernel for injected kexts:\nmultiple patterns found (Snowi386: %d, SnowX64: %d, Lioni386: %d, LionX64: %d, ML: %d) - skipping patching!\n", NumSnow_i386, NumSnow_X64, NumLion_i386, NumLion_X64, NumML);
 	  gBS->Stall(10000000);
 	  return;
   }
@@ -609,20 +618,26 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
       Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBELionSearch_X64, sizeof(KBELionSearch_X64), KBELionReplace_X64, 1);
       DBG_RT(Entry, "==> kernel Lion X64: %d replaces done.\n", Num);
   }
-  else if (NumMLMav == 1) {
-    Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEMLMavSearch, sizeof(KBEMLMavSearch), KBEMLMavReplace, 1);
-      DBG_RT(Entry, "==> kernel Mountain Lion, Mavericks: %d replaces done.\n", Num);
+  else if (NumML == 1) {
+      Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEMLSearch, sizeof(KBEMLSearch), KBEMLReplace, 1);
+      DBG_RT(Entry, "==> kernel Mountain Lion: %d replaces done.\n", Num);
+  }
+  else if (NumMav == 1) {
+      Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEMavSearch, sizeof(KBEMavSearch), KBEMavReplace, 1);
+      DBG_RT(Entry, "==> kernel Mavericks: %d replaces done.\n", Num);
   }
   else if (NumYos == 1) {
       Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEYosSearch, sizeof(KBEYosSearch), KBEYosReplace, 1);
       DBG_RT(Entry, "==> kernel Yosemite: %d replaces done.\n", Num);
   }
   else if (NumEC == 1) {
-      Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEECSearch, sizeof(KBEECSearch), KBEECReplace, 1);
+      Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEECSearch, sizeof(KBEECSearch), KBEECReplace, 1) +
+            SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEEC1Search, sizeof(KBEEC1Search), KBEEC1Replace, 1);
       DBG_RT(Entry, "==> kernel El Capitan: %d replaces done.\n", Num);
   }
   else if (NumSie == 1) {
-      Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBESieDP1Search, sizeof(KBESieDP1Search), KBESieDP1Replace, 1) +
+      Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBESieSearch, sizeof(KBESieSearch), KBESieReplace, 1) +
+            SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBESieDP1Search, sizeof(KBESieDP1Search), KBESieDP1Replace, 1) +
             SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBESieDP2Search, sizeof(KBESieDP2Search), KBESieDP2Replace, 1);
       DBG_RT(Entry, "==> kernel Sierra: %d replaces done.\n", Num);
   }
