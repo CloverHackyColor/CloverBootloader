@@ -180,6 +180,8 @@ VOID GetCPUProperties (VOID)
 	gCPUStructure.Extfamily = (UINT8) bitfield(gCPUStructure.Signature, 27, 20);
 	gCPUStructure.Features  = quad(gCPUStructure.CPUID[CPUID_1][ECX], gCPUStructure.CPUID[CPUID_1][EDX]);
 	gCPUStructure.ExtFeatures  = quad(gCPUStructure.CPUID[CPUID_81][ECX], gCPUStructure.CPUID[CPUID_81][EDX]);
+
+  DBG(" The CPU%a supported SSE4.1\n", (gCPUStructure.Features & CPUID_FEATURE_SSE4_1)?"":" not");
 	/* Pack CPU Family and Model */
 	if (gCPUStructure.Family == 0x0f) {
 		gCPUStructure.Family += gCPUStructure.Extfamily;

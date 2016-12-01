@@ -633,6 +633,7 @@ DetectChipset (
       break;
 
     case 0x25C08086: // 5000
+    case 0x25D48086: // 5000V
     case 0x65C08086: // 5100
       DBG(" Intel 5000 and similar (PAM 0x59-0x5f)\n");
       mRegisterValues = mRegisterValues830;
@@ -648,6 +649,7 @@ DetectChipset (
     case 0x25708086: // 865G
     case 0x25808086: // 915G
     case 0x25908086: // 915GM
+
     case 0x27708086: // 945G
     case 0x27748086: // 955X
     case 0x277c8086: // 975X
