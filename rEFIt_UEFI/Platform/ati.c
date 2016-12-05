@@ -1103,7 +1103,7 @@ AtiDevProp ati_devprop_list[] = {
   {FLAGTRUE, FALSE, NULL, NULL, NULVAL}
 };
 
-BOOLEAN get_bootdisplay_val(value_t *val, INTN index)
+BOOLEAN get_bootdisplay_val(value_t *val, INTN index, BOOLEAN Sier)
 {
   static UINT32 v = 0;
   
@@ -1121,7 +1121,7 @@ BOOLEAN get_bootdisplay_val(value_t *val, INTN index)
   return TRUE;
 }
 
-BOOLEAN get_dual_link_val(value_t *val, INTN index)
+BOOLEAN get_dual_link_val(value_t *val, INTN index, BOOLEAN Sier)
 {
   static UINT32 v = 0;
   
@@ -1137,12 +1137,12 @@ BOOLEAN get_dual_link_val(value_t *val, INTN index)
 }
 
 
-BOOLEAN get_vrammemory_val(value_t *val, INTN index)
+BOOLEAN get_vrammemory_val(value_t *val, INTN index, BOOLEAN Sier)
 {
   return FALSE;
 }
 
-BOOLEAN get_edid_val(value_t *val, INTN index)
+BOOLEAN get_edid_val(value_t *val, INTN index, BOOLEAN Sier)
 {
   static UINT32 v = 0;
   if (!gSettings.InjectEDID) {
@@ -1166,7 +1166,7 @@ BOOLEAN get_edid_val(value_t *val, INTN index)
 static CONST CHAR8* dtyp[] = {"LCD", "CRT", "DVI", "NONE"};
 static UINT32 dti = 0;
 
-BOOLEAN get_display_type(value_t *val, INTN index)
+BOOLEAN get_display_type(value_t *val, INTN index, BOOLEAN Sier)
 {
   
   dti++;
@@ -1181,7 +1181,7 @@ BOOLEAN get_display_type(value_t *val, INTN index)
 }
 
 
-BOOLEAN get_name_val(value_t *val, INTN index)
+BOOLEAN get_name_val(value_t *val, INTN index, BOOLEAN Sier)
 {
   val->type = aty_name.type;
   val->size = aty_name.size;
@@ -1190,7 +1190,7 @@ BOOLEAN get_name_val(value_t *val, INTN index)
   return TRUE;
 }
 
-BOOLEAN get_nameparent_val(value_t *val, INTN index)
+BOOLEAN get_nameparent_val(value_t *val, INTN index, BOOLEAN Sier)
 {
   val->type = aty_nameparent.type;
   val->size = aty_nameparent.size;
@@ -1200,7 +1200,7 @@ BOOLEAN get_nameparent_val(value_t *val, INTN index)
 }
 
 static CHAR8 pciName[15];
-BOOLEAN get_name_pci_val(value_t *val, INTN index)
+BOOLEAN get_name_pci_val(value_t *val, INTN index, BOOLEAN Sier)
 {
   if (!card->info->model_name || !gSettings.FakeATI) {
     return FALSE;
@@ -1215,7 +1215,7 @@ BOOLEAN get_name_pci_val(value_t *val, INTN index)
 }
 
 
-BOOLEAN get_model_val(value_t *val, INTN index)
+BOOLEAN get_model_val(value_t *val, INTN index, BOOLEAN Sier)
 {
   if (!card->info->model_name) {
     return FALSE;
@@ -1234,9 +1234,10 @@ BOOLEAN get_model_val(value_t *val, INTN index)
 KERNEL_AND_KEXT_PATCHES *CurrentPatches;
 
 //TODO - get connectors from ATIConnectorsPatch
-BOOLEAN get_conntype_val(value_t *val, INTN index)
+BOOLEAN get_conntype_val(value_t *val, INTN index, BOOLEAN Sier)
 {
   UINT8 *ct;
+  INTN Len;
   //Connector types:
   //0x10:  VGA
   //0x04:  DL DVI-I
@@ -1248,6 +1249,7 @@ BOOLEAN get_conntype_val(value_t *val, INTN index)
     return FALSE;
   }
   ct = CurrentPatches->KPATIConnectorsPatch;
+  Len = Sier?24:16;
   
   /*  if (gMobile) {
    ct = (UINT32*)&ctm[0];
@@ -1256,7 +1258,7 @@ BOOLEAN get_conntype_val(value_t *val, INTN index)
   
   val->type = kCst;
   val->size = 4;
-  val->data = (UINT8*)&ct[index * 16];
+  val->data = (UINT8*)&ct[index * Len];
   
   //  cti++;
   //  if(cti > 3) cti = 0;
@@ -1264,7 +1266,7 @@ BOOLEAN get_conntype_val(value_t *val, INTN index)
   return TRUE;
 }
 
-BOOLEAN get_vrammemsize_val(value_t *val, INTN index)
+BOOLEAN get_vrammemsize_val(value_t *val, INTN index, BOOLEAN Sier)
 {
   static INTN idx = -1;
   static UINT64 memsize;
@@ -1280,7 +1282,7 @@ BOOLEAN get_vrammemsize_val(value_t *val, INTN index)
   return TRUE;
 }
 
-BOOLEAN get_binimage_val(value_t *val, INTN index)
+BOOLEAN get_binimage_val(value_t *val, INTN index, BOOLEAN Sier)
 {
   if (!card->rom) {
     return FALSE;
@@ -1291,7 +1293,7 @@ BOOLEAN get_binimage_val(value_t *val, INTN index)
   return TRUE;
 }
 
-BOOLEAN get_binimage_owr(value_t *val, INTN index)
+BOOLEAN get_binimage_owr(value_t *val, INTN index, BOOLEAN Sier)
 {
   static UINT32 v = 0;
   
@@ -1307,7 +1309,7 @@ BOOLEAN get_binimage_owr(value_t *val, INTN index)
 
 
 
-BOOLEAN get_romrevision_val(value_t *val, INTN index)
+BOOLEAN get_romrevision_val(value_t *val, INTN index, BOOLEAN Sier)
 {
   CHAR8* cRev="109-B77101-00";
   UINT8 *rev;
@@ -1340,7 +1342,7 @@ BOOLEAN get_romrevision_val(value_t *val, INTN index)
   return TRUE;
 }
 
-BOOLEAN get_deviceid_val(value_t *val, INTN index)
+BOOLEAN get_deviceid_val(value_t *val, INTN index, BOOLEAN Sier)
 {
   val->type = kCst;
   val->size = 2;
@@ -1349,17 +1351,17 @@ BOOLEAN get_deviceid_val(value_t *val, INTN index)
   return TRUE;
 }
 
-BOOLEAN get_mclk_val(value_t *val, INTN index)
+BOOLEAN get_mclk_val(value_t *val, INTN index, BOOLEAN Sier)
 {
   return FALSE;
 }
 
-BOOLEAN get_sclk_val(value_t *val, INTN index)
+BOOLEAN get_sclk_val(value_t *val, INTN index, BOOLEAN Sier)
 {
   return FALSE;
 }
 
-BOOLEAN get_refclk_val(value_t *val, INTN index)
+BOOLEAN get_refclk_val(value_t *val, INTN index, BOOLEAN Sier)
 {
   if (!gSettings.RefCLK) {
     return FALSE;
@@ -1373,7 +1375,7 @@ BOOLEAN get_refclk_val(value_t *val, INTN index)
   
 }
 
-BOOLEAN get_platforminfo_val(value_t *val, INTN index)
+BOOLEAN get_platforminfo_val(value_t *val, INTN index, BOOLEAN Sier)
 {
   val->data = AllocateZeroPool(0x80);
   if (!val->data)
@@ -1388,7 +1390,7 @@ BOOLEAN get_platforminfo_val(value_t *val, INTN index)
   return TRUE;
 }
 
-BOOLEAN get_vramtotalsize_val(value_t *val, INTN index)
+BOOLEAN get_vramtotalsize_val(value_t *val, INTN index, BOOLEAN Sier)
 {
   
   val->type = kCst;
@@ -1412,24 +1414,27 @@ VOID free_val(value_t *val )
     UINT32    flags;
     BOOLEAN    all_ports;
     CHAR8     *name;
-    BOOLEAN    (*get_value)(value_t *val, INTN index);
+    BOOLEAN    (*get_value)(value_t *val, INTN index, BOOLEAN Sier);
     value_t    default_val;
  } AtiDevProp;
  */
-VOID devprop_add_list(AtiDevProp devprop_list[])
+VOID devprop_add_list(AtiDevProp devprop_list[], CHAR8 *OSVersion)
 {
   INTN i, pnum;
+  BOOLEAN Sier;
   value_t *val = AllocateZeroPool(sizeof(value_t));
+  
+  Sier = (AsciiOSVersionToUint64(OSVersion) >= AsciiOSVersionToUint64("10.12"));
   
   for (i = 0; devprop_list[i].name != NULL; i++) {
     if ((devprop_list[i].flags == FLAGTRUE) || (devprop_list[i].flags & card->flags)) {
-      if (devprop_list[i].get_value && devprop_list[i].get_value(val, 0)) {
+      if (devprop_list[i].get_value && devprop_list[i].get_value(val, 0, Sier)) {
         devprop_add_value(card->device, devprop_list[i].name, val->data, val->size);
         free_val(val);
         
         if (devprop_list[i].all_ports) {
           for (pnum = 1; pnum < card->ports; pnum++) {
-            if (devprop_list[i].get_value(val, pnum)) {
+            if (devprop_list[i].get_value(val, pnum, Sier)) {
               devprop_list[i].name[1] = (CHAR8)(0x30 + pnum); // convert to ascii
               devprop_add_value(card->device, devprop_list[i].name, val->data, val->size);
               free_val(val);
@@ -1977,7 +1982,7 @@ BOOLEAN setup_ati_devprop(LOADER_ENTRY *Entry, pci_dt_t *ati_dev)
   }
   
   if (!gSettings.NoDefaultProperties) {
-    devprop_add_list(ati_devprop_list);
+    devprop_add_list(ati_devprop_list, Entry->OSVersion);
     if (gSettings.UseIntelHDMI) {
       devprop_add_value(card->device, "hda-gfx", (UINT8*)"onboard-2", 10);
     } else {
