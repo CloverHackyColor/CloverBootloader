@@ -1481,7 +1481,7 @@ BOOLEAN validate_rom(option_rom_header_t *rom_header, pci_dt_t *pci_dev)
   }
   
   if (rom_pci_header->vendor_id != pci_dev->vendor_id || rom_pci_header->device_id != pci_dev->device_id){
-    DBG("invalid ROM vendor=%x deviceID=%d\n", rom_pci_header->vendor_id, rom_pci_header->device_id);
+    DBG("invalid ROM vendor=%04x deviceID=%04x\n", rom_pci_header->vendor_id, rom_pci_header->device_id);
     return FALSE;
   }
   

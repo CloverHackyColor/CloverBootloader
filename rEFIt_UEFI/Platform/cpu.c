@@ -998,6 +998,17 @@ MACHINE_TYPES GetDefaultModel()
       case CPU_MODEL_SKYLAKE_U:
         DefaultType = MacBookPro111;
 				break;
+/*			case CPU_MODEL_HASWELL_U5:               // 5th generation Broadwell
+				if(AsciiStrStr(gCPUStructure.BrandString, "M")) {
+				   DefaultType = MacBook81;
+				   break;
+				}
+				DefaultType = MacBookPro121;
+				break;
+			case CPU_MODEL_SKYLAKE_U:
+				DefaultType = MacBookPro131;
+				break;
+*/				
 			default:
 				if ((gGraphics[0].Vendor == Nvidia) ||
             (gGraphics[1].Vendor == Nvidia)) {
@@ -1009,10 +1020,8 @@ MACHINE_TYPES GetDefaultModel()
 	} else {
 		switch (gCPUStructure.Model) {
 			case CPU_MODEL_CELERON:
-        
 				DefaultType = MacMini21;
 				break;
-        
 			case CPU_MODEL_LINCROFT:
 				DefaultType = MacMini21;
 				break;
@@ -1023,7 +1032,7 @@ MACHINE_TYPES GetDefaultModel()
 				DefaultType = iMac81;
 				break;
 			case CPU_MODEL_WOLFDALE:	//Wolfdale, Hapertown
-				DefaultType = iMac101;//MacPro31 - speedstep without patching; but it is Hackintosh
+				DefaultType = iMac101;  //MacPro31 - speedstep without patching; but it is Hackintosh
 				break;
 			case CPU_MODEL_NEHALEM:
 				DefaultType = iMac111;
