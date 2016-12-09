@@ -154,6 +154,7 @@
 		126151A01A15BBB000903E7B /* Version.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Version.h; sourceTree = "<group>"; };
 		1261CBB51DB17AC200E26E00 /* AppleKeyState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppleKeyState.h; sourceTree = "<group>"; };
 		12676CCE1DB5624B00CFC57E /* OSInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OSInfo.h; sourceTree = "<group>"; };
+		1283F7EB1DF1D3900005BFF2 /* config-sample.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "config-sample.plist"; path = "../../CloverPackage/CloverV2/EFI/CLOVER/config-sample.plist"; sourceTree = "<group>"; };
 		1288B5201A30CEFB007CBCEF /* Net.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Net.c; sourceTree = "<group>"; };
 		12A60F4E1DB610500068BF8B /* AppleImageCodec.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = AppleImageCodec.c; sourceTree = "<group>"; };
 		12A60F4F1DB610500068BF8B /* AppleImageCodec.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AppleImageCodec.inf; sourceTree = "<group>"; };
@@ -5839,6 +5840,7 @@
 				12C874CC1DE42A3300BF4974 /* Clover.dsc */,
 				12C874CE1DE42A3C00BF4974 /* Clover.fdf */,
 				12C874CF1DE42A4200BF4974 /* CloverPkg.dec */,
+				1283F7EB1DF1D3900005BFF2 /* config-sample.plist */,
 				12C874D01DE42A4900BF4974 /* ebuild.sh */,
 			);
 			sourceTree = "<group>";

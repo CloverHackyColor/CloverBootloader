@@ -1418,7 +1418,8 @@ INTN FindDefaultEntry(VOID)
       }
 
       Volume = Entry->Volume;
-      if ((Volume->VolName == NULL || StrCmp(Volume->VolName, gSettings.DefaultVolume) != 0) && !StrStr(Volume->DevicePathString, gSettings.DefaultVolume)) {
+      if ((Volume->VolName == NULL || StrCmp(Volume->VolName, gSettings.DefaultVolume) != 0) &&
+          !StrStr(Volume->DevicePathString, gSettings.DefaultVolume)) {
         continue;
       }
 

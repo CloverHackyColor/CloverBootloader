@@ -637,8 +637,9 @@ VOID PatchKext(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPl
     //others
     //
     for (i = 0; i < Entry->KernelAndKextPatches->NrKexts; i++) {
+      BOOLEAN   isBundle = (AsciiStrStr(Name, ".") != NULL);
       if ((Entry->KernelAndKextPatches->KextPatches[i].DataLen > 0) &&
-          isPatchNameMatch(gKextBundleIdentifier, Entry->KernelAndKextPatches->KextPatches[i].Name)) {
+          isBundle?(AsciiStrCmp(BundleIdentifier, Name) == 0):(AsciiStrStr(InfoPlist, Name) != NULL)) {
       //    (AsciiStrStr(InfoPlist, Entry->KernelAndKextPatches->KextPatches[i].Name) != NULL)) {
         DBG_RT(Entry, "\n\nPatch kext: %a\n", Entry->KernelAndKextPatches->KextPatches[i].Name);
         AnyKextPatch(Driver, DriverSize, InfoPlist, InfoPlistSize, i, Entry);

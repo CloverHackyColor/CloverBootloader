@@ -223,8 +223,8 @@
 	<key>Boot</key>
 	<dict>
 		<key>#Arguments</key>
-		<string>-v arch=i386 slide=0 darkwake=0</string>
-		<key>Arguments</key>
+		<string>-v arch=x86_64 slide=0 darkwake=0</string>
+		<key>##Arguments</key>
 		<string>kext-dev-mode=1 rootless=0</string>
 		<key>DefaultLoader</key>
 		<string>boot.efi</string>
@@ -263,6 +263,8 @@
 		<integer>3140</integer>
 		<key>#QPI</key>
 		<integer>4800</integer>
+		<key>#TDP</key>
+		<integer>95</integer>
 		<key>#Type</key>
 		<string>0x0201</string>
 		<key>#SavingMode</key>

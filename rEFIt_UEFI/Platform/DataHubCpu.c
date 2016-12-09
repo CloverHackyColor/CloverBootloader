@@ -377,12 +377,13 @@ SetupDataForOSX(BOOLEAN Hibernate)
       case CPU_MODEL_DOTHAN:
       case CPU_MODEL_YONAH:
       case CPU_MODEL_MEROM:
+//      case CPU_MODEL_PENRYN:
         FrontSideBus = DivU64x32(FrontSideBus, 4);
         break;
       default:
         break;
     }
-    DBG("Using QEMU FrontSideBus=%d\n", FrontSideBus);
+    DBG("Using QEMU FrontSideBus=%ull\n", FrontSideBus);
   }
 
   // Save values into gSettings for the genconfig aim
