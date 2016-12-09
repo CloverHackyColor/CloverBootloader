@@ -5214,6 +5214,8 @@ GetUserSettings(
         AsmWriteMsr64 (MSR_IA32_HWP_REQUEST, gSettings.HWPValue);
       }
 
+      Prop                 = GetProperty (DictPointer, "TDP");
+      gSettings.TDP  = (UINT8)GetPropertyInteger (Prop, 0);
 
       Prop                 = GetProperty (DictPointer, "TurboDisable");
       if (Prop && IsPropertyTrue (Prop)) {
@@ -6302,6 +6304,7 @@ SetDevices (
       mPropSize = hex2bin (gDeviceProperties, mProperties, mPropSize);
       //     DBG ("Final size of mProperties=%d\n", mPropSize);
       //---------
+//      Status = egSaveFile(SelfRootDir,  L"EFI\\CLOVER\\misc\\devprop.bin", (UINT8*)mProperties, mPropSize);
     }
   }
 

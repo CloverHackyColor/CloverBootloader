@@ -878,17 +878,17 @@ typedef struct {
 #if defined(MDE_CPU_IA32)
   UINT32                  align11;
 #endif
-  
+//Boot
   BOOLEAN                 LastBootedVolume;
   BOOLEAN                 SkipHibernateTimeout;
   UINT8                   Pad21[2];
-  
+//Monitor
   UINT16                  VendorEDID;
-  UINT16                  ProductEDID;
-  
+  UINT16                  ProductEDID;  
   UINT16                  BacklightLevel;
   BOOLEAN                 BacklightLevelConfig;
   BOOLEAN                 IntelBacklight;
+//Boot options
   BOOLEAN                 MemoryFix;
   BOOLEAN                 WithKexts;
   BOOLEAN                 WithKextsIfNoFakeSMC;
@@ -1023,7 +1023,7 @@ typedef struct {
 
   //SkyLake
   BOOLEAN                 HWP;
-  UINT8                   pad62[1];
+  UINT8                   TDP;
   UINT32                  HWPValue;
 
   //Volumes hiding

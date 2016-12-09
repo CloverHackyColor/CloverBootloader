@@ -307,6 +307,7 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
 		// Generating SSDT
 		if (p_states_count > 0)
 		{
+      INTN TDPdiv;
       SSDT_TABLE *ssdt;
 			AML_CHUNK* scop;
 			AML_CHUNK* method;
@@ -325,6 +326,12 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
       scop = aml_add_scope(root, name);
       method = aml_add_name(scop, "PSS_");
       pack = aml_add_package(method);
+      
+      if ((gSettings.TDP != 0) && (p_states[0].Frequency != 0)) {
+        TDPdiv = (gSettings.TDP * 1000) / p_states[0].Frequency;
+      } else {
+        TDPdiv = 8;
+      }
 			
       for (i = gSettings.PLimitDict; i < p_states_count; i++)
       {
@@ -334,7 +341,7 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
         if (p_states[i].Control.Control < realMin) {
           aml_add_dword(pstt, 0); //zero for power
         } else {
-          aml_add_dword(pstt, p_states[i].Frequency<<3); // Power
+          aml_add_dword(pstt, p_states[i].Frequency * TDPdiv); // Designed Power
         }
         aml_add_dword(pstt, 0x0000000A); // Latency
         aml_add_dword(pstt, 0x0000000A); // Latency
