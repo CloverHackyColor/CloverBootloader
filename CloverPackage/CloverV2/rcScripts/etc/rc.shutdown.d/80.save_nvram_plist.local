@@ -4,12 +4,12 @@
 # save nvram.plist script for CLOVER
 #
 # © JrCs 2013
+# © Taylan 2016
 
 #
-# Manage nvram.plist: try to store it in the first boot helper partition
-# or in the root directory
+# Manage nvram.plist: try to store it in the EFI partition of the boot disk
 #
-# NVRam keys used:
+# NVRam keys used: (deprecated in clover)
 #    Clover.NVRamDisk: No|Yes or empty [default empty]
 
 # Check that all variable are bound
@@ -35,31 +35,13 @@ NVRAMPartType=
 shopt -s nocasematch
 
 # Catch signal to clean up
-trap 'rmdir "${NVRAMMountPoint}" &>/dev/null' EXIT
-
-function findFirstAppleBootDeviceOld {
-    local devices=$(LC_ALL=C ls /dev/disk* | sed -n '/\/dev\/disk[0-9]*$/p')
-    # Iterate over all devices
-    for device in $devices; do
-        # Find first partition with Apple Boot partition signature
-        index=$(LC_ALL=C /usr/sbin/gpt -r show "$device" 2>/dev/null | \
-         awk 'toupper($7) == "426F6F74-0000-11AA-AA11-00306543ECAC" {print $3; exit}')
-        if [[ $index =~ ^[0-9]+$ ]];then
-            break
-        else
-            index=
-        fi
-    done
-    # If index found return the device and partition (like diskXsY)
-    [[ -n "$index" ]] && echo "${device##*/}s$index"
-}
+trap 'diskutil quiet unmount "${NVRAMMountPoint}" > /dev/null 2>&1; rmdir "${NVRAMMountPoint}" &>/dev/null' EXIT
 
 function findFirstAppleBootDevice {
-  local rootDevice=$(LC_ALL=C diskutil info /|awk '{ if ($1 == "Device" && $2 == "Node:") {print $3}}')
-  recoveryDisk=$(LC_ALL=C diskutil info /|awk '{ if ($1 == "Recovery" && $2 == "Disk:") {print $3}}')
-  device=$(LC_ALL=C diskutil info $recoveryDisk|awk '{ if ($1 == "Part" && $2 == "of" && $3 == "Whole:") {print $4}}')
+    local recoveryDisk=$(LC_ALL=C diskutil info /|awk '{ if ($1 == "Recovery" && $2 == "Disk:") {print $3}}')
+    local device=$(LC_ALL=C diskutil info $recoveryDisk|awk '{ if ($1 == "Part" && $2 == "of" && $3 == "Whole:") {print $4}}')
   # Find EFI partition signature
-  index=$(LC_ALL=C /usr/sbin/gpt -r show "$device" 2>/dev/null | \
+        index=$(LC_ALL=C sudo /usr/sbin/gpt -r show "$device" 2>/dev/null | \
     awk 'toupper($7) == "C12A7328-F81F-11D2-BA4B-00A0C93EC93B" {print $3; exit}')
   if [[ ! $index =~ ^[0-9]+$ ]];then
     index=
@@ -133,7 +115,7 @@ function mountAndSaveNVRAM {
 }
 
 function saveNVRAM {
-    local rootDevice=$(df -l / | sed -nE 's#^/dev/([^ ]*).*#\1#p')
+    local rootDevice=$(LC_ALL=C diskutil info /|awk '{ if ($1 == "Device" && $2 == "Node:") {print $3}}' | sed -nE 's#^/dev/([^ ]*).*#\1#p')
 
     # If NVRAMDevice is not specify use rootDevice
     #NVRAMDevice=${NVRAMDevice:-$rootDevice}
@@ -154,10 +136,6 @@ function saveNVRAM {
             [[ $? -eq 0 ]] && return
         fi
     fi
-
-    # Save NVRAM to specific device or root
-    mountAndSaveNVRAM "$NVRAMDevice"
-    [[ $? -ne 0 ]] && mountAndSaveNVRAM "$rootDevice"
 }
 
 #
@@ -191,6 +169,8 @@ if [[ "$NVRAMDevice" != No ]]; then
         fi
     fi
 fi
+
+exit 0
 
 # Local Variables:      #
 # mode: ksh             #
