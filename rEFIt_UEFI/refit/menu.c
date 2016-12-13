@@ -197,25 +197,25 @@ REFIT_MENU_SCREEN AboutMenu   = {2, L"About",     NULL, 0, NULL, 0, NULL, 0, NUL
 REFIT_MENU_SCREEN HelpMenu    = {3, L"Help",      NULL, 0, NULL, 0, NULL, 0, NULL,              NULL, FALSE, FALSE, 0, 0, 0, 0, {0, 0, 0, 0}, NULL};
 
 CHAR16* ArgOptional[NUM_OPT] = {
-  L"arch=i386",
-  L"arch=x86_64",
-  L"-v ",
-  L"-s ",
-  L"-x ",
-  L"nv_disable=1",
-  L"slide=0",
-  L"darkwake=0",
-  L"-xcpm",
-  L"-gux_no_idle",
-  L"-gux_nosleep",
-  L"-gux_nomsi",
-  L"-gux_defer_usb2",
-  L"keepsyms=1",
-  L"debug=0x100",
-  L"kextlog=0xffff",
-  L"-alcoff",
-  L"-shikioff",
-  L"nvda_drv=1"
+  L"arch=i386",       //0
+  L"arch=x86_64",     //1
+  L"-v ",             //2
+  L"-s ",             //3
+  L"-x ",             //4
+  L"nv_disable=1",    //5
+  L"slide=0",         //6
+  L"darkwake=0",      //7
+  L"-xcpm",           //8
+  L"-gux_no_idle",    //9
+  L"-gux_nosleep",    //10
+  L"-gux_nomsi",      //11
+  L"-gux_defer_usb2", //12
+  L"keepsyms=1",      //13
+  L"debug=0x100",     //14
+  L"kextlog=0xffff",  //15
+  L"-alcoff",         //16
+  L"-shikioff",       //17
+  L"nvda_drv=1"       //18
 };
 
 UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc, IN OUT INTN *DefaultEntryIndex, OUT REFIT_MENU_ENTRY **ChosenEntry);
