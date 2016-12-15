@@ -37,17 +37,21 @@ shopt -s nocasematch
 # Catch signal to clean up
 trap 'diskutil quiet unmount "${NVRAMMountPoint}" > /dev/null 2>&1; rmdir "${NVRAMMountPoint}" &>/dev/null' EXIT
 
-function findFirstAppleBootDevice {
-    local recoveryDisk=$(LC_ALL=C diskutil info /|awk '{ if ($1 == "Recovery" && $2 == "Disk:") {print $3}}')
-    local device=$(LC_ALL=C diskutil info $recoveryDisk|awk '{ if ($1 == "Part" && $2 == "of" && $3 == "Whole:") {print $4}}')
-  # Find EFI partition signature
-        index=$(LC_ALL=C sudo /usr/sbin/gpt -r show "$device" 2>/dev/null | \
-    awk 'toupper($7) == "C12A7328-F81F-11D2-BA4B-00A0C93EC93B" {print $3; exit}')
-  if [[ ! $index =~ ^[0-9]+$ ]];then
-    index=
-  fi
-  # If index found return the device and partition (like diskXsY)
-  [[ -n "$index" ]] && echo "${device##*/}s$index"
+function findFirstESP {
+    local devices=$(LC_ALL=C ls /dev/disk* | sed -n '/\/dev\/disk[0-9]*$/p')
+    # Iterate over all devices
+    for device in $devices; do
+        # Find first partition with Apple Boot partition signature
+        index=$(LC_ALL=C /usr/sbin/gpt -r show "$device" 2>/dev/null | \
+         awk 'toupper($7) == "C12A7328-F81F-11D2-BA4B-00A0C93EC93B" {print $3; exit}')
+        if [[ $index =~ ^[0-9]+$ ]];then
+            break
+        else
+            index=
+        fi
+    done
+    # If index found return the device and partition (like diskXsY)
+    [[ -n "$index" ]] && echo "${device##*/}s$index"
 }
 
 function mountNVRAMDisk {
@@ -89,6 +93,7 @@ function mountAndSaveNVRAM {
     # Mount the NVRamDisk device
     local mntpt=$(mountNVRAMDisk "$device" "$NVRAMMountPoint")
 
+#	echo "Mount Point $mntpt"
     if [[ -n "$mntpt" ]]; then
         mntpt="${mntpt%/}" # Remove last /
         #
@@ -99,7 +104,7 @@ function mountAndSaveNVRAM {
         fi
         nvram -x -p > "${mntpt}/${NVRAMFilename}"
         if [[ -f "${mntpt}/${NVRAMFilename}" ]]; then
-            chflags hidden "${mntpt}/${NVRAMFilename}"
+            #chflags hidden "${mntpt}/${NVRAMFilename}"
             umount "$NVRAMMountPoint" &>/dev/null
             if [[ "$mntpt" != "$NVRAMMountPoint" ]]; then
                 echo "NVRAM saved to '${mntpt}/${NVRAMFilename}' [$device]"
@@ -115,27 +120,35 @@ function mountAndSaveNVRAM {
 }
 
 function saveNVRAM {
-    local rootDevice=$(LC_ALL=C diskutil info /|awk '{ if ($1 == "Device" && $2 == "Node:") {print $3}}' | sed -nE 's#^/dev/([^ ]*).*#\1#p')
+#    local rootDevice=$(LC_ALL=C diskutil info /|awk '{ if ($1 == "Device" && $2 == "Node:") {print $3}}' | sed -nE 's#^/dev/([^ ]*).*#\1#p')
+    local rootDevice=$(df -l / | sed -nE 's#^/dev/([^ ]*).*#\1#p')
 
+#	echo "$rootDevice"
     # If NVRAMDevice is not specify use rootDevice
     #NVRAMDevice=${NVRAMDevice:-$rootDevice}
-    NVRAMDevice=${rootDevice}
+    NVRAMDevice=$(findFirstESP)
 
+#	echo "$NVRAMDevice"
     # Normalize NVRAMDevice (keep only the device name (remove /dev/)
     NVRAMDevice=${NVRAMDevice##*/}
 
+#	echo "normal $NVRAMDevice"
     if [[ ! "$NVRAMDevice" =~ ^disk[0-9]*s[0-9]*$ ]]; then
         # NVRAMDevice is a whole disk certainly a RAID device
         # try to save nvram.plist on the first Apple Boot Partition
 
-        local AppleBootDevice=$(findFirstAppleBootDevice)
-
+        local AppleBootDevice=${rootDevice}
+#		echo "$AppleBootDevice"
         if [[ -n "$AppleBootDevice" ]]; then
             # Try to save nvram.plist on the Apple Boot device
             mountAndSaveNVRAM "$AppleBootDevice"
             [[ $? -eq 0 ]] && return
         fi
     fi
+    
+    # Save NVRAM to specific device or root
+    mountAndSaveNVRAM "$NVRAMDevice"
+    [[ $? -ne 0 ]] && mountAndSaveNVRAM "$rootDevice"
 }
 
 #
