@@ -491,7 +491,7 @@ CHAR8* AppleFamilies[] =
   "iMac",          // IM151
   "iMac",          // IM161
   "iMac",          // IM162
-  "iMac",          // IM171
+  "iMac17,1",      // IM171
   "MacPro",        // MP11
   "MacPro",        // MP21
   "MacPro",        // MP31
@@ -1219,8 +1219,6 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
     case MacBook52:
     case MacBook61:
     case MacBook71:
-    case MacBook81:
-    case MacBook91:
     case MacBookAir11:
     case MacBookAir21:
     case MacBookAir31:
@@ -1231,18 +1229,39 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
     case MacBookAir52:
     case MacBookAir61:
     case MacBookAir62:
-    case MacBookAir71:
-    case MacBookAir72:
+    case MacBookPro81:
+    case MacBookPro82:
+    case MacBookPro83:
+    case MacBookPro91:
+    case MacBookPro92:
+    case MacBookPro101:
+    case MacBookPro102:
     case MacBookPro111:
     case MacBookPro112:
     case MacBookPro113:
     case MacBookPro114:
     case MacBookPro115:
+    case MacMini71:
+      gSettings.ChassisType = MiscChassisTypeNotebook; //10;
+      gSettings.Mobile      = TRUE;
+      break;
+
+    case MacBook81:
+    case MacBook91:
+    case MacBookAir71:
+    case MacBookAir72:
     case MacBookPro121:
     case MacBookPro131:
     case MacBookPro132:
     case MacBookPro133:
-      gSettings.ChassisType = MiscChassisTypeNotebook; //10;
+    case iMac161:
+    case iMac162:
+    case iMac171:
+      gSettings.ChassisType = MiscChassisTypeLapTop; //09;
+      if((Model == iMac161) || (Model == iMac162) || (Model == iMac171)) {
+          gSettings.Mobile      = FALSE;
+          break;
+      }
       gSettings.Mobile      = TRUE;
       break;
 
@@ -1260,13 +1279,6 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
     case MacBookPro61:
     case MacBookPro62:
     case MacBookPro71:
-    case MacBookPro81:
-    case MacBookPro82:
-    case MacBookPro83:
-    case MacBookPro91:
-    case MacBookPro92:
-    case MacBookPro101:
-    case MacBookPro102:
       gSettings.ChassisType = MiscChassisTypePortable; //08;
       gSettings.Mobile      = TRUE;
       break;
@@ -1292,15 +1304,16 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
     case iMac143:
     case iMac144:
     case iMac151:
-    case iMac161:
-    case iMac162:
-    case iMac171:
       gSettings.ChassisType = MiscChassisTypeAllInOne; //13;
       gSettings.Mobile      = FALSE;
       break;
 
     case MacMini11:
     case MacMini21:
+      gSettings.ChassisType = MiscChassisTypeLowProfileDesktop; //04;
+      gSettings.Mobile      = FALSE;
+      break;
+
     case MacMini31:
     case MacMini41:
     case MacMini51:
@@ -1308,20 +1321,20 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
     case MacMini53:
     case MacMini61:
     case MacMini62:
-    case MacMini71:
       gSettings.ChassisType = MiscChassisTypeLunchBox; //16;
+      gSettings.Mobile      = FALSE;
+      break;
+
+
+    case MacPro41:
+    case MacPro51:
+      gSettings.ChassisType = MiscChassisTypeTower; //07;
       gSettings.Mobile      = FALSE;
       break;
 
     case MacPro11:
     case MacPro21:
     case MacPro31:
-    case MacPro41:
-    case MacPro51:
-      gSettings.ChassisType = MiscChassisTypeMiniTower; //06;
-      gSettings.Mobile      = FALSE;
-      break;
-
     case MacPro61:
       gSettings.ChassisType = MiscChassisTypeUnknown;  //02; this is a joke but think different!
       gSettings.Mobile      = FALSE;
@@ -1337,6 +1350,7 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
        } */
       break;
   }
+
   //RPlt helper
   if (SmcPlatform[Model][0] != 'N') {
     AsciiStrCpy (gSettings.RPlt, SmcPlatform[Model]);
