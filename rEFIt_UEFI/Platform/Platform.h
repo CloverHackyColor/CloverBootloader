@@ -1334,6 +1334,7 @@ typedef enum {
   iMac122,
   iMac131,
   iMac132,
+  iMac133,
   iMac141,
   iMac142,
   iMac143,
