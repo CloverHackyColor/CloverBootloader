@@ -729,7 +729,8 @@ VOID CheckHardware()
 
           //USB
           if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_SERIAL) &&
-              (Pci.Hdr.ClassCode[1] == PCI_CLASS_SERIAL_USB)) {
+              (Pci.Hdr.ClassCode[1] == PCI_CLASS_SERIAL_USB) &&
+              (Pci.Hdr.ClassCode[0] != 0xFE)) {
             UINT16 DID = Pci.Hdr.DeviceId;
             USBIntel = (Pci.Hdr.VendorId == 0x8086);
             USBNForce = (Pci.Hdr.VendorId == 0x10de);
