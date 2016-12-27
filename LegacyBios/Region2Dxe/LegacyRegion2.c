@@ -695,12 +695,15 @@ DetectChipset (
       
     case 0x01608086: // 3rd Generation Core Processor Family DRAM Controller
     case 0x01648086: // 3rd Generation Core Processor Family DRAM Controller
-//haswell
+
     case 0x0C008086: // 4rd Generation Core Processor Family DRAM Controller
     case 0x0C048086: // 4rd Generation M-Processor Series
     case 0x0A048086: // 4rd Generation U-Processor Series
     case 0x0D048086: // 4rd Generation H-Processor Series (BGA) with GT3 Graphics
     case 0x16048086: // 5th Generation Core Processor Family DRAM Controller
+
+    case 0x191f8086: // 6th Generation (Skylake) DRAM Controller (Z170X)
+          
     case 0x0F008086: // Bay Trail Family DRAM Controller
       DBG(" Next Generation Core processors (PAM 0x80-0x86)\n");
       mRegisterValues = mRegisterValuesCP;

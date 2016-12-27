@@ -798,6 +798,36 @@ typedef struct {
   PCI_DEVICE_INDEPENDENT_REGION Hdr;
   PCI_DEVICE_HEADER_TYPE_REGION Device;
 } PCI_TYPE00;
+ 
+
+// Definitions of PCI Config Registers 
+enum {
+    kIOPCIConfigVendorID                = 0x00,
+    kIOPCIConfigDeviceID                = 0x02,
+    kIOPCIConfigCommand                 = 0x04,
+    kIOPCIConfigStatus                  = 0x06,
+    kIOPCIConfigRevisionID              = 0x08,
+    kIOPCIConfigClassCode               = 0x09,
+    kIOPCIConfigCacheLineSize           = 0x0C,
+    kIOPCIConfigLatencyTimer            = 0x0D,
+    kIOPCIConfigHeaderType              = 0x0E,
+    kIOPCIConfigBIST                    = 0x0F,
+    kIOPCIConfigBaseAddress0            = 0x10,
+    kIOPCIConfigBaseAddress1            = 0x14,
+    kIOPCIConfigBaseAddress2            = 0x18,
+    kIOPCIConfigBaseAddress3            = 0x1C,
+    kIOPCIConfigBaseAddress4            = 0x20,
+    kIOPCIConfigBaseAddress5            = 0x24,
+    kIOPCIConfigCardBusCISPtr           = 0x28,
+    kIOPCIConfigSubSystemVendorID       = 0x2C,
+    kIOPCIConfigSubSystemID             = 0x2E,
+    kIOPCIConfigExpansionROMBase        = 0x30,
+    kIOPCIConfigCapabilitiesPtr         = 0x34,
+    kIOPCIConfigInterruptLine           = 0x3C,
+    kIOPCIConfigInterruptPin            = 0x3D,
+    kIOPCIConfigMinimumGrant            = 0x3E,
+    kIOPCIConfigMaximumLatency          = 0x3F
+};
 */
 
 UINT16 GetStandardCpuType()

@@ -385,6 +385,7 @@ CascadeProcessVariables (
   SHELL_STATUS              ShellStatus;
   UINTN                     NameSize;
   CHAR16                    *RetString;
+  EFI_STATUS                SetStatus;
 
   if (ShellGetExecutionBreakFlag()) {
     return (SHELL_ABORTED);
