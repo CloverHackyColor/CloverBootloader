@@ -53,6 +53,19 @@ UINT8 GMAX3100_vals[28][4] = {
   { 0x03, 0x00, 0x22, 0x0d },    //26 "AAPL,ig-platform-id" HD4600 //bcc9 http://www.insanelymac.com/forum/topic/290783-intel-hd-graphics-4600-haswell-working-displayport/
   { 0x00, 0x00, 0x62, 0x01 }   //27 - automatic solution
 };
+
+UINT8 HD530_vals[][4] = {
+  { 0x01, 0x00, 0x00, 0x00 },	//0 "AAPL,Gfx324"
+  { 0x01, 0x00, 0x00, 0x00 },	//1 "AAPL,GfxYTile"
+  { 0xfa, 0x00, 0x00, 0x00 },	//2 "AAPL00,PanelCycleDelay"
+  { 0x3c, 0x00, 0x00, 0x08 },	//3 "AAPL00,PanelPowerDown"
+  { 0x11, 0x00, 0x00, 0x00 },	//4 "AAPL00,PanelPowerOff"
+  { 0x19, 0x01, 0x00, 0x08 },	//5 "AAPL00,PanelPowerOn"
+  { 0x30, 0x00, 0x00, 0x00 },	//6 "AAPL00,PanelPowerUp"
+  { 0x0c, 0x00, 0x00, 0x00 },	//7 "graphic-options"
+};
+
+
 // 5 - 32Mb 6 - 48Mb 9 - 64Mb, 0 - 96Mb
 
 UINT8 FakeID_126[] = {0x26, 0x01, 0x00, 0x00 };
@@ -160,7 +173,7 @@ static struct gma_gpu_t KnownGPUS[] = {
     { 0x190B, "Intel HD Graphics 510" },
     { 0x190E, "Intel Skylake GT1" },
 //GT2
-    { 0x1912, "Intel HD Graphics 530" },
+    { 0x1912, "Intel HD Graphics 7000" },
     { 0x1913, "Intel Skylake GT2f" },
     { 0x1915, "Intel Skylake GT2f" },
     { 0x1916, "Intel HD Graphics 520" },
@@ -471,7 +484,32 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
       DBG("Intel card id=%x unsupported, please report to the project home\n", gma_dev->device_id);
       return FALSE;
   }
-#if DEBUG_GMA == 2  
+//Skylake graphics fix (iMac17,1 has no such values!)
+/*
+  switch (gma_dev->device_id) {
+    case 0x1913:
+    case 0x1915:
+    case 0x1916:
+    case 0x1917:
+    case 0x191A:
+    case 0x191B:
+    case 0x191D:
+    case 0x191E:
+    case 0x1921:
+      devprop_add_value(device, "AAPL,Gfx324", HD530_vals[0], 4);  //<01000000>
+      devprop_add_value(device, "AAPL,GfxYTile", HD530_vals[1], 4); //<01000000>
+      devprop_add_value(device, "AAPL00,PanelCycleDelay", HD530_vals[2], 4); //<fa000000>
+      devprop_add_value(device, "AAPL00,PanelPowerDown", HD530_vals[3], 4);  //<3c000000>
+      devprop_add_value(device, "AAPL00,PanelPowerOff", HD530_vals[4], 4);  //<11000000>
+      devprop_add_value(device, "AAPL00,PanelPowerOn", HD530_vals[5], 4);  //<19010000>
+      devprop_add_value(device, "AAPL00,PanelPowerUp", HD530_vals[6], 4);  //<30000000>
+      devprop_add_value(device, "graphic-options", HD530_vals[7], 4);  //<0c000000>
+      break;
+    default:
+      break;
+  }
+*/
+#if DEBUG_GMA == 2
 	gBS->Stall(5000000);
 #endif  
 

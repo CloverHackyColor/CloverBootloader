@@ -6114,6 +6114,15 @@ SetDevices (
                       break;
                     }
                   }
+                  if (gSettings.DeInit) {
+                    for (j = 0; j < 4; j++) {
+                      if (gGraphics[j].Handle == PCIdevice.DeviceHandle) {
+                        *(UINT32*)(gGraphics[j].Mmio + 0x48) = 0;
+                        *(UINT32*)(gGraphics[j].Mmio + 0x4C) = 0;
+                        DBG("Device %d deinited\n", j);
+                      }
+                    }
+                  }
 
                   break;
 

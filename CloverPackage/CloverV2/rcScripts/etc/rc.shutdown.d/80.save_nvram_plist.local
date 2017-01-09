@@ -1,194 +1,274 @@
 #!/bin/bash
 
 #
-# save nvram.plist script for CLOVER
+# 2017 (c) syscl/lighting/Yating Zhou
+# dump NVRAM for Clover
 #
-# © JrCs 2013
-# © Taylan 2016
+# note: msdosfs.kext, exfat.kext should be loaded
+#
+
+#================================= GLOBAL VARS ==================================
 
 #
-# Manage nvram.plist: try to store it in the EFI partition of the boot disk
+# Script version info
 #
-# NVRam keys used: (deprecated in clover)
-#    Clover.NVRamDisk: No|Yes or empty [default empty]
+gScriptVersion=1.4
 
-# Check that all variable are bound
-set -u
+#
+# The script expects '0.5' but non-US localizations use '0,5' so we export
+# LC_NUMERIC here (for the duration of the deploy.sh) to prevent errors.
+#
+export LC_NUMERIC="en_US.UTF-8"
+
+#
+# Prevent non-printable/control characters
+#
+unset GREP_OPTIONS
+unset GREP_COLORS
+unset GREP_COLOR
+
+#
+# Define two status: 0 - Success, Turn on,
+#                    1 - Failure, Turn off
+#
+kBASHReturnSuccess=0
+kBASHReturnFailure=1
+
+#
+# Located repository
+#
+gRepo=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 #
 # Source clover rc library if needed
 #
 if [[ ! "$(type -t GetNVRamKey)" == "function" ]]; then
-	selfDir=$(cd $(dirname "$0") && pwd -P)
-    source "${selfDir}"/../rc.clover.lib
+    source "${gRepo}"/../rc.clover.lib
 fi
 
+#
 # Variables
-NVRAMFilename=nvram.plist
-NVRAMMountPoint=/tmp/NVRAM
-NVRAMPartType=
+#
+gNVRAMf=nvram.plist
+gNVRAMbuff=$(nvram -x -p)
+gDisk=($(ls /dev/disk[0-9] |grep -i -o "disk[0-9]"))
+gRootInf=$(df -l |grep -i -v "/Volumes" |grep -i -o "disk[0-9]s[0-9]")
+gESPList=""
+RETURN_VAL=${kBASHReturnSuccess}
+#
+# we write this truncate name for more flexible situation
+#
+gEmuVariableName=EmuVariable
+gEmuVariablePresent=$(nvram -x -p |grep -i "${gEmuVariableName}")
+gNvramLogPath="${CLOVER_LOG_LOCATION}/rc.shutdown.log"
 
 # Debug mode ?
 [[ "$DEBUG" -ne 0 ]] && set -x
 
-# Turn on a case-insensitive matching
-shopt -s nocasematch
+#
+#--------------------------------------------------------------------------------
+#
 
-# Catch signal to clean up
-trap 'diskutil quiet unmount "${NVRAMMountPoint}" > /dev/null 2>&1; rmdir "${NVRAMMountPoint}" &>/dev/null' EXIT
-
-function findFirstESP {
-    local devices=$(LC_ALL=C ls /dev/disk* | sed -n '/\/dev\/disk[0-9]*$/p')
-    # Iterate over all devices
-    for device in $devices; do
-        # Find first partition with Apple Boot partition signature
-        index=$(LC_ALL=C /usr/sbin/gpt -r show "$device" 2>/dev/null | \
-         awk 'toupper($7) == "C12A7328-F81F-11D2-BA4B-00A0C93EC93B" {print $3; exit}')
-        if [[ $index =~ ^[0-9]+$ ]];then
-            break
-        else
-            index=
-        fi
-    done
-    # If index found return the device and partition (like diskXsY)
-    [[ -n "$index" ]] && echo "${device##*/}s$index"
+function _toLowerCase()
+{
+    echo "`echo $1 | tr '[:upper:]' '[:lower:]'`"
 }
 
-function mountNVRAMDisk {
-    local device="$1"
-    local mntpt="$2"
+#
+#--------------------------------------------------------------------------------
+#
 
-    # Check if the device is not already mount
-    local current_mntpts=$(/bin/df -l | \
-     sed -nE 's#^/dev/(disk[^ ]*)[^/]*(/.*$)#\1 \2#p')
-    while read -r dev mnt; do
-        if [[ "$dev" == "$device" ]]; then
-            echo "$mnt" # Return the mount point
-            return 0
-        fi
-    done <<<"$current_mntpts"
-
+function _fndESP()
+{
     #
-    # Make sure mount point exists
+    # find all EFI partitions distrubuted in different disks
     #
-    [[ ! -d "$mntpt" ]] && mkdir -p "$mntpt"
-    [[ ! -d "$mntpt" ]] && return 1
-
+    # default gNVRAMf save path should be EFI as Clover's new feature
     #
-    # Unmount the mount point and device first just in case
-    #
-    umount "$mntpt"       2>/dev/null
-    umount "/dev/$device" 2>/dev/null
-    for fstype in hfs msdos exfat; do
-        mount -t $fstype /dev/$device "$mntpt" &>/dev/null
-        [[ $? -eq 0 ]] && echo "$mntpt" && return 0
+    local gEfiIDENTIFIER=""
+    local gEfiUID="C12A7328-F81F-11D2-BA4B-00A0C93EC93B"
+    local gPartIndex=""
+    for ((i=0; i<${#gDisk[@]}; ++i))
+    do
+      gPartIndex=$(gpt -r show "/dev/${gDisk[i]}" |grep -i "${gEfiUID}" |awk '{print $3}')
+      case "${gPartIndex}" in
+      [[:digit:]]* ) echo "Found EFI ${gDisk[i]}s${gPartIndex}"
+                     gESPList[$i]="${gDisk[i]}s${gPartIndex}"
+                     ;;
+      *            )
+                     ;;
+      esac
     done
-
-    return 1
 }
 
-function mountAndSaveNVRAM {
-    local device="$1"
+#
+#--------------------------------------------------------------------------------
+#
 
-    # Mount the NVRamDisk device
-    local mntpt=$(mountNVRAMDisk "$device" "$NVRAMMountPoint")
+function _mountESP()
+{
+    #
+    # mount EFI partition return mount point
+    #
+    local gESP=$1
+    local gDevRepo="/dev/${gESP}"
+    local gESPFsType=""
 
-#	echo "Mount Point $mntpt"
-    if [[ -n "$mntpt" ]]; then
-        mntpt="${mntpt%/}" # Remove last /
-        #
-        # Write NVRAM and make sure it exists
-        #
-        if [[ -f "${mntpt}/${NVRAMFilename}" ]]; then
-          rm -rf "${mntpt}/${NVRAMFilename}"
+    #
+    # get umount error information
+    #
+    local gUmountMPErr=""
+    local gDevUmountErr=""
+    local gMountPointf=""
+    #
+    # syscl: use EFIXY(diskXsY) as MountPoint can ensure uniqueness
+    #
+    # EFI01 - disk0s1 EFI11 - disk1s1 ...
+    #
+    local gAssignMountPoint="/Volumes/EFI${gESP:4:1}${gESP:6:1}"
+
+    #
+    # unmount the mount point(/Volumes/EFIXY) and device(/dev/diskXsY) first just in case
+    #
+    gUmountMPErr=$(umount ${gAssignMountPoint} 2>&1)
+    gDevUmountErr=$(umount ${gDevRepo} 2>&1)
+    if [[ ${gDevUmountErr} == *"diskutil unmount"* ]]; then
+        echo "Device mount error ${gDevUmountErr}"   >>${gNvramLogPath}
+        echo "Now use diskutil umount to release it" >>${gNvramLogPath}
+        gDevUmountErr=$(diskutil umount ${gDevRepo} 2>&1)
+        echo "diskutil: ${gDevUmountErr}"            >>${gNvramLogPath}
+    fi
+    #
+    # remove /Volumes/EFIXY folder just in case
+    #
+    if [ -d ${gAssignMountPoint} ]; then
+        gMountPointf=$(ls ${gAssignMountPoint} 2>&1)
+        if [ -z ${gMountPointf} ]; then
+            rm -r ${gAssignMountPoint}  2>/dev/null
         fi
-        nvram -x -p > "${mntpt}/${NVRAMFilename}"
-        if [[ -f "${mntpt}/${NVRAMFilename}" ]]; then
-            #chflags hidden "${mntpt}/${NVRAMFilename}"
-            umount "$NVRAMMountPoint" &>/dev/null
-            if [[ "$mntpt" != "$NVRAMMountPoint" ]]; then
-                echo "NVRAM saved to '${mntpt}/${NVRAMFilename}' [$device]"
-            else
-                echo "NVRAM saved on root of $device"
+
+        if [[ ${gMountPointf} == ${gNVRAMf} ]]; then
+            rm -r ${gAssignMountPoint}  2>/dev/null
+        fi
+    fi
+    #
+    # create mount root
+    #
+    mkdir ${gAssignMountPoint}  2>/dev/null
+    #
+    # Try to mount ESP
+    #
+    for gFsType in msdos hfs exfat;
+    do
+      case "$(_toLowerCase ${gFsType})" in
+      *hfs* ) #
+              # HFS+, use mount_hfs directly
+              #
+              mount_hfs "${gDevRepo}" "${gAssignMountPoint}"           &>/dev/null && RETURN_VAL=${kBASHReturnSuccess} || RETURN_VAL=${kBASHReturnFailure}
+              ;;
+
+      *     ) #
+              # Fat32 or exFat
+              #
+              mount -t ${gFsType} "${gDevRepo}" "${gAssignMountPoint}" &>/dev/null && RETURN_VAL=${kBASHReturnSuccess} || RETURN_VAL=${kBASHReturnFailure}
+              ;;
+      esac
+
+      if [ "${RETURN_VAL}" == ${kBASHReturnSuccess} ]; then
+          #
+          # current ESP filesystem type store here
+          #
+          gESPFsType=${gFsType}
+      fi
+    done
+
+    if [ -z ${gESPFsType} ]; then
+        #
+        # Fail, return "/"
+        #
+        echo "/"
+      else
+        #
+        # OK, return mount point
+        #
+        echo ${gAssignMountPoint}
+    fi
+}
+
+#
+#--------------------------------------------------------------------------------
+#
+
+function _dmpNVRAM()
+{
+    #
+    # dump NVRAM to target location
+    #
+    local gTarPath=$1
+    local gTarEFIDENTIFIER=$2
+
+    #
+    # one more step to see if dump NVRAM is required
+    #
+    if [[ ${gTarPath} != "/" ]]; then
+        if [[ ${gTarEFIDENTIFIER:4:1} == ${gRootInf:4:1} ]]; then
+            #
+            # nvram.plist should be in either EFI/ or /
+            #
+            if [ -f "/${gNVRAMf}" ]; then
+                rm /${gNVRAMf}
             fi
-            return 0
+          else
+            #
+            # EFI, check if there's Clover
+            #
+            if [ ! -d ${gTarPath}/EFI/Clover ]; then
+                #
+                # no Clover, return
+                #
+                echo "No Clover on ${gTarPath}, return"
+                return ${kBASHReturnFailure}
+            fi
         fi
-        umount "$NVRAMMountPoint" &>/dev/null
     fi
-    echo "NVRAM couldn't be saved to ${NVRAMFilename} on root of $device !"
-    return 1
+    #
+    # dump to NVRAM now
+    #
+    local gOldNVRAM=$(cat ${gTarPath}/${gNVRAMf} 2>&1)
+    if [[ "${gOldNVRAM}" != "${gNVRAMbuff}" ]]; then
+        #
+        # Need to refresh
+        #
+        nvram -x -p >"${gTarPath}/${gNVRAMf}" 2>&1 && RETURN_VAL=${kBASHReturnSuccess} || RETURN_VAL=${kBASHReturnFailure}
+    fi
 }
 
-function saveNVRAM {
-#    local rootDevice=$(LC_ALL=C diskutil info /|awk '{ if ($1 == "Device" && $2 == "Node:") {print $3}}' | sed -nE 's#^/dev/([^ ]*).*#\1#p')
-    local rootDevice=$(df -l / | sed -nE 's#^/dev/([^ ]*).*#\1#p')
+#==================================== START =====================================
 
-#	echo "$rootDevice"
-    # If NVRAMDevice is not specify use rootDevice
-    #NVRAMDevice=${NVRAMDevice:-$rootDevice}
-    NVRAMDevice=$(findFirstESP)
-
-#	echo "$NVRAMDevice"
-    # Normalize NVRAMDevice (keep only the device name (remove /dev/)
-    NVRAMDevice=${NVRAMDevice##*/}
-
-#	echo "normal $NVRAMDevice"
-    if [[ ! "$NVRAMDevice" =~ ^disk[0-9]*s[0-9]*$ ]]; then
-        # NVRAMDevice is a whole disk certainly a RAID device
-        # try to save nvram.plist on the first Apple Boot Partition
-
-        local AppleBootDevice=${rootDevice}
-#		echo "$AppleBootDevice"
-        if [[ -n "$AppleBootDevice" ]]; then
-            # Try to save nvram.plist on the Apple Boot device
-            mountAndSaveNVRAM "$AppleBootDevice"
-            [[ $? -eq 0 ]] && return
-        fi
-    fi
-    
-    # Save NVRAM to specific device or root
-    mountAndSaveNVRAM "$NVRAMDevice"
-    [[ $? -ne 0 ]] && mountAndSaveNVRAM "$rootDevice"
-}
+echo "v${gScriptVersion} (c) 2017 syscl/lighting/Yating Zhou" >${gNvramLogPath}
+#
+# find EFIs, added into gESPList
+#
+_fndESP                                                      >>${gNvramLogPath}
 
 #
-# Check if user requested to not save nvram
+# mount EFIs then dump NVRAM to target path
 #
-NVRAMDevice=$(GetNVRamKey 'Clover.NVRamDisk') # NVRamDisk=No|Yes or empty [default empty]
-if [[ "$NVRAMDevice" != No ]]; then
+for ((i=0; i<${#gDisk[@]}; ++i))
+do
+  gTargetPath=$(_mountESP ${gESPList[i]})
+  echo "Target path: ${gTargetPath}"                         >>${gNvramLogPath}
 
-    if [[ "$NVRAMDevice" == Yes ]]; then
-        # Always save NVRam to disk
-        saveNVRAM
-    else
-        #
-        # Check if runtime variables emulation is being used
-        # and if so, always save nvram
-        #
-        if [[ $(nvram -p | grep 'EmuVariableUefiPresent') != "" ]]; then
-            saveNVRAM
-        else
-            #
-            # Otherwise only save nvram to disk if boot from CloverEFI or EDK II
-            #
-            EFIFirmwareVendor=$(LC_ALL=C ioreg -l -pIODeviceTree | \
-             sed -nE 's@.*firmware-vendor.*<([0-9a-fA-F]*)>.*@\1@p' | xxd -r -p)
+  if [ ! -z ${gEmuVariablePresent} ]; then
+      echo "EmuVariable is present"                          >>${gNvramLogPath}
+      #
+      # dump NVRAM to target path now
+      #
+      echo "dump nvram"                                      >>${gNvramLogPath}
+      _dmpNVRAM ${gTargetPath} ${gESPList[i]}                >>${gNvramLogPath}
+  fi
+done
 
-            case "$EFIFirmwareVendor" in
-                "CLOVER"|"EDK II") saveNVRAM ;;
-                *) echo "Not saving $NVRAMFilename because booting from an UEFI firmware ($EFIFirmwareVendor)"
-                   ;;
-            esac
-        fi
-    fi
-fi
+#================================================================================
 
-exit 0
-
-# Local Variables:      #
-# mode: ksh             #
-# tab-width: 4          #
-# indent-tabs-mode: nil #
-# End:                  #
-#
-# vi: set expandtab ts=4 sw=4 sts=4: #
+exit ${RETURN_VAL}

@@ -1108,7 +1108,8 @@ typedef struct {
   BOOLEAN                 Rtc8Allowed;
   BOOLEAN                 ForceHPET;
   BOOLEAN                 ResetHDA;
-  UINT8                   pad8[3];
+  BOOLEAN                 DeInit;
+  UINT8                   pad8[2];
   UINT32                  DisableFunctions;
 
   //Patch DSDT arbitrary

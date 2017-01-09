@@ -107,6 +107,28 @@ else
     [[ $? -ne 0 ]] && rmdir "$ESPMountPoint" &>/dev/null
 fi
 
+#
+# 2017 (c) syscl/lighting/Yating Zhou specify kernel extension force load(deprecated)
+# note: kernel extesions should be loaded earlier than shutdown stage
+# otherwise we cannot mount even a single ESP
+#
+# v1.4+ 80.save_nvram_plist.local need to use logoutHook to execute
+#
+#echo "msdos and exfat forceload (c) syscl/lighting/Yating Zhou" >/Library/Logs/CloverEFI/syscl.startup.log
+#kextload /System/Library/Extensions/msdosfs.kext >>/Library/Logs/CloverEFI/syscl.startup.log
+#kextload /System/Library/Extensions/exfat.kext >>/Library/Logs/CloverEFI/syscl.startup.log
+gScriptVersion=1.4
+gLogoutHookLog="${CLOVER_LOG_LOCATION}/rc.syscl.addlogoutHook.log"
+gLogoutHookf="/etc/rc.shutdown.d/80.save_nvram_plist.local"
+if [ -f "${gLogoutHookf}" ]; then
+    #
+    # file exist, need to logoutHook
+    #
+    echo "v${gScriptVersion} (c) 2017 syscl/lighting/Yating Zhou" >${gLogoutHookLog}
+    echo "Found ${gLogoutHookf}, register logoutHook"            >>${gLogoutHookLog}
+    defaults write com.apple.loginwindow LogoutHook ${gLogoutHookf}
+fi
+
 # Local Variables:      #
 # mode: ksh             #
 # tab-width: 4          #

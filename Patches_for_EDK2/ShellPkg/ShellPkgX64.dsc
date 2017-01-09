@@ -27,7 +27,11 @@
   UefiApplicationEntryPoint|MdePkg/Library/UefiApplicationEntryPoint/UefiApplicationEntryPoint.inf
   UefiBootServicesTableLib|MdePkg/Library/UefiBootServicesTableLib/UefiBootServicesTableLib.inf
   DevicePathLib|MdePkg/Library/UefiDevicePathLib/UefiDevicePathLibOptionalDevicePathProtocol.inf
+!if $(TARGET) == RELEASE
+  DebugLib|MdePkg/Library/BaseDebugLibNull/BaseDebugLibNull.inf
+!else
   DebugLib|MdePkg/Library/UefiDebugLibConOut/UefiDebugLibConOut.inf
+!endif
   DebugPrintErrorLevelLib|MdePkg/Library/BaseDebugPrintErrorLevelLib/BaseDebugPrintErrorLevelLib.inf  
   PcdLib|MdePkg/Library/BasePcdLibNull/BasePcdLibNull.inf
   MemoryAllocationLib|MdePkg/Library/UefiMemoryAllocationLib/UefiMemoryAllocationLib.inf
@@ -86,7 +90,9 @@
   #
   ShellPkg/Library/UefiShellLib/UefiShellLib.inf
   ShellPkg/Library/UefiShellCommandLib/UefiShellCommandLib.inf
+  ShellPkg/Library/UefiShellCEntryLib/UefiShellCEntryLib.inf
   ShellPkg/Library/UefiHandleParsingLib/UefiHandleParsingLib.inf
+  ShellPkg/Library/UefiShellBcfgCommandLib/UefiShellBcfgCommandLib.inf
   ShellPkg/Library/UefiShellLevel1CommandsLib/UefiShellLevel1CommandsLib.inf
   ShellPkg/Library/UefiShellLevel2CommandsLib/UefiShellLevel2CommandsLib.inf
   ShellPkg/Library/UefiShellLevel3CommandsLib/UefiShellLevel3CommandsLib.inf
@@ -126,7 +132,7 @@
 
 [BuildOptions]
 XCODE:*_*_*_DLINK_FLAGS   = -Wl,-no_compact_unwind
-XCODE:*_*_*_CC_FLAGS   = -Os -DMDEPKG_NDEBUG 
-GCC:*_*_*_CC_FLAGS   = -Os -flto -DMDEPKG_NDEBUG 
+XCODE:*_*_*_CC_FLAGS   = -Os -DMDEPKG_NDEBUG  -D DISABLE_NEW_DEPRECATED_INTERFACES
+GCC:*_*_*_CC_FLAGS   = -Os -flto -DMDEPKG_NDEBUG  -D DISABLE_NEW_DEPRECATED_INTERFACES
 MSFT:*_*_*_CC_FLAGS = /D MDEPKG_NDEBUG
 
