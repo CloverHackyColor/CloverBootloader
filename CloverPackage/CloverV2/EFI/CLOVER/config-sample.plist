@@ -273,6 +273,8 @@
 		<true/>
 		<key>#HWPEnable</key>
 		<true/>
+		<key>#HWPValue</key>
+		<string>0x30002a01</string>
 	</dict>
 	<key>Devices</key>
 	<dict>

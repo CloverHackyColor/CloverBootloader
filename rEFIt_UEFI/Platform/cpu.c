@@ -958,6 +958,12 @@ UINT16 GetAdvancedCpuType ()
               return 0x605; // Core i5
             if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i7"))
               return 0x705; // Core i7
+            if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) m3"))
+              return 0xC05;
+            if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) m5"))
+              return 0xD05;
+            if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) m7"))
+              return 0xE05;
             if (gCPUStructure.Cores <= 2) {
               return 0x605;
             }
