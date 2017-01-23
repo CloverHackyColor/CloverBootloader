@@ -3978,7 +3978,7 @@ REFIT_MENU_ENTRY  *SubMenuKextPatches()
   KEXT_PATCH  *KextPatchesMenu = gSettings.KernelAndKextPatches.KextPatches; //zzzz
   INTN                 Index;
   
-  NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_KEXTS, "Kexts patches->");
+  NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_KEXTS, "Custom kexts patches->");
   
   for (Index = 0; Index < NrKexts; Index++) {
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
@@ -3994,6 +3994,33 @@ REFIT_MENU_ENTRY  *SubMenuKextPatches()
   AddMenuEntry(SubScreen, &MenuEntryReturn);
   return Entry;  
 }
+
+REFIT_MENU_ENTRY  *SubMenuKernelPatches()
+{
+  REFIT_MENU_ENTRY     *Entry;
+  REFIT_MENU_SCREEN    *SubScreen;
+  REFIT_INPUT_DIALOG   *InputBootArgs;
+  INTN                 NrKernels = gSettings.KernelAndKextPatches.NrKernels;
+  KERNEL_PATCH  *KernelPatchesMenu = gSettings.KernelAndKextPatches.KernelPatches; //zzzz
+  INTN                 Index;
+  
+  NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_KERNELS, "Custom kernel patches->");
+  
+  for (Index = 0; Index < NrKernels; Index++) {
+    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+    InputBootArgs->Entry.Title = PoolPrint(L"%30a", KernelPatchesMenu[Index].Label);
+    InputBootArgs->Entry.Tag = TAG_INPUT;
+    InputBootArgs->Entry.Row = 0xFFFF; //cursor
+    InputBootArgs->Item = &(KernelPatchesMenu[Index].MenuItem);
+    InputBootArgs->Entry.AtClick = ActionEnter;
+    InputBootArgs->Entry.AtRightClick = ActionDetails;
+    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+  }
+  
+  AddMenuEntry(SubScreen, &MenuEntryReturn);
+  return Entry;
+}
+
 
 REFIT_MENU_ENTRY  *SubMenuBinaries()
 {
@@ -4011,11 +4038,13 @@ REFIT_MENU_ENTRY  *SubMenuBinaries()
   AddMenuItem(SubScreen, 91,  "Kernel Lapic Patch", TAG_INPUT, FALSE);
   AddMenuItem(SubScreen, 105, "Kernel Haswell-E Patch", TAG_INPUT, FALSE);
   AddMenuItem(SubScreen, 48,  "Kernel PM Patch", TAG_INPUT, FALSE);
+  AddMenuEntry(SubScreen, SubMenuKernelPatches());
+  AddMenuInfo(SubScreen, L"----------------------");
   AddMenuItem(SubScreen, 46,  "AppleIntelCPUPM Patch", TAG_INPUT, FALSE);
-  AddMenuItem(SubScreen, 47,  "AppleRTC Patch", TAG_INPUT, FALSE);
-  
+  AddMenuItem(SubScreen, 47,  "AppleRTC Patch", TAG_INPUT, FALSE);  
   AddMenuItem(SubScreen, 44,  "Kext patching allowed", TAG_INPUT, FALSE);
   AddMenuEntry(SubScreen, SubMenuKextPatches());
+  
 
   AddMenuEntry(SubScreen, &MenuEntryReturn);
   return Entry;

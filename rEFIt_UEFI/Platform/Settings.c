@@ -715,7 +715,7 @@ CopyKernelAndKextPatches (IN OUT  KERNEL_AND_KEXT_PATCHES *Dst,
         Dst->KernelPatches[Dst->NrKernels].Label      = (CHAR8 *)AllocateCopyPool (AsciiStrSize (Src->KernelPatches[i].Label), Src->KernelPatches[i].Label);
       }
 
-      Dst->KernelPatches[Dst->NrKernels].Disabled     = Src->KernelPatches[i].Disabled;
+      Dst->KernelPatches[Dst->NrKernels].MenuItem.BValue     = Src->KernelPatches[i].MenuItem.BValue;
       Dst->KernelPatches[Dst->NrKernels].DataLen      = Src->KernelPatches[i].DataLen;
       Dst->KernelPatches[Dst->NrKernels].Data         = AllocateCopyPool (Src->KernelPatches[i].DataLen, Src->KernelPatches[i].Data);
       Dst->KernelPatches[Dst->NrKernels].Patch        = AllocateCopyPool (Src->KernelPatches[i].DataLen, Src->KernelPatches[i].Patch);
@@ -1092,10 +1092,11 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
 
         DBG (" %a", KernelPatchesLabel);
 
+        Patches->KernelPatches[Patches->NrKernels].MenuItem.BValue     = TRUE;
         Dict = GetProperty (Prop2, "Disabled");
         if ((Dict != NULL) && IsPropertyTrue (Dict)) {
-          DBG(" :: patch disabled, skipped\n");
-          continue;
+          DBG(" :: patch disabled\n");
+          Patches->KernelPatches[Patches->NrKernels].MenuItem.BValue   = FALSE;
         }
 
         TmpData    = GetDataSetting (Prop2, "Find", &FindLen);
@@ -1112,7 +1113,6 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         Patches->KernelPatches[Patches->NrKernels].Count        = 0;
         Patches->KernelPatches[Patches->NrKernels].MatchOS      = NULL;
         Patches->KernelPatches[Patches->NrKernels].MatchBuild   = NULL;
-        Patches->KernelPatches[Patches->NrKernels].Disabled     = FALSE;
         Patches->KernelPatches[Patches->NrKernels].Label        = AllocateCopyPool (AsciiStrSize (KernelPatchesLabel), KernelPatchesLabel);
 
         Dict = GetProperty (Prop2, "Count");

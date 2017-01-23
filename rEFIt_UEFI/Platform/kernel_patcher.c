@@ -1219,13 +1219,13 @@ KernelUserPatch(IN UINT8 *UKernelData, LOADER_ENTRY *Entry)
   INTN Num, i = 0, y = 0;
   for (; i < Entry->KernelAndKextPatches->NrKernels; ++i) {
     DBG_RT(Entry, "Patch[%d]: %a\n", i, Entry->KernelAndKextPatches->KernelPatches[i].Label);
-    if (Entry->KernelAndKextPatches->KernelPatches[i].Disabled) {
+    if (Entry->KernelAndKextPatches->KernelPatches[i].MenuItem.BValue) {
       //DBG_RT(Entry, "Patch[%d]: %a :: is not allowed for booted OS %a\n", i, Entry->KernelAndKextPatches->KernelPatches[i].Label, Entry->OSVersion);
-      DBG_RT(Entry, "==> is not allowed for booted OS %a\n", Entry->OSVersion);
+      DBG_RT(Entry, "==> disabled\n");
       continue;
     }
 
-#if !defined(FKERNELPATCH)
+#if 0 //!defined(FKERNELPATCH)
     Num = SearchAndCount(
       UKernelData,
       KERNEL_MAX_SIZE,

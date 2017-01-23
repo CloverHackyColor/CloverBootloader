@@ -365,6 +365,7 @@ extern INTN ScrollbarYMovement;
 #define SCREEN_SYSTEM     21
 #define SCREEN_AUDIO      22
 #define SCREEN_KEXTS      23
+#define SCREEN_KERNELS    24
 #define MAX_ANIME  41
 
 typedef struct _refit_menu_screen REFIT_MENU_SCREEN;
@@ -528,8 +529,8 @@ struct KEXT_PATCH
   UINT8       *Patch;
   CHAR8       *MatchOS;
   CHAR8       *MatchBuild;
-  KEXT_PATCH  *Next;
-  UINT64      Index;
+//  KEXT_PATCH  *Next;
+//  UINT64      Index;
   INPUT_ITEM  MenuItem;   //zzzz
 //  BOOLEAN     Disabled;
 };
@@ -542,7 +543,8 @@ typedef struct {
   INTN        Count;
   CHAR8       *MatchOS;
   CHAR8       *MatchBuild;
-  BOOLEAN     Disabled;
+  INPUT_ITEM  MenuItem;
+//  BOOLEAN     Disabled;
 } KERNEL_PATCH;
 
 typedef struct KERNEL_AND_KEXT_PATCHES
