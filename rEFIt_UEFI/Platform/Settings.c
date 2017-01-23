@@ -5916,9 +5916,9 @@ GetDevices ()
 
             HDA_PROPERTIES *hda = &gAudios[NHDA];
 
-// TODO refactor or remove vendor and device ID
-            hda->VendorID       = Pci.Hdr.VendorId;
-            hda->DeviceID       = Pci.Hdr.DeviceId;
+            // Populate Controllers IDs
+            hda->controller_vendor_id       = Pci.Hdr.VendorId;
+            hda->controller_device_id       = Pci.Hdr.DeviceId;
 
 // TODO remove the above switch
 /*
@@ -5964,11 +5964,17 @@ GetDevices ()
                   break;
           }
 */
-            AsciiSPrint ( hda->Model,64, "%a",
+
+            // HDA Controller Info
+            AsciiSPrint ( hda->controller_name,64, "%a",
                          get_hda_controller_name ( Pci.Hdr.DeviceId, Pci.Hdr.VendorId )
                          );
 
-            //AsciiSPrint (hda->Model, 64, "pci%x,%x", Pci.Hdr.VendorId, Pci.Hdr.DeviceId);
+            // HDA Codec Info
+/*            AsciiSPrint ( hda->codec_name, 64, "%a",
+                         get_hda_codec_name ( hda->codec_vendor_id, hda->codec_device_id, hda->codec_revision_id, hda->codec_stepping_id )
+                         );
+*/
 
           if (IsHDMIAudio(HandleArray[Index])) {
             DBG(" - HDMI Audio: \n");

@@ -1427,9 +1427,9 @@ typedef enum {
 
 typedef enum {
   Unknown,
-  Ati,
-  Intel,
-  Nvidia,
+  Ati,      /* 0x1002 */
+  Intel,    /* 0x8086 */
+  Nvidia,   /* 0x10de */
   RDC,	/* 0x17f3 */
   VIA,	/* 0x1106 */
   SiS,	/* 0x1039 */
@@ -1459,9 +1459,18 @@ typedef struct {
 
 typedef struct {
     HRDW_MANUFACTERER  Vendor;
-    UINT16            VendorID;
-    UINT16            DeviceID;
-    CHAR8             Model[64];
+    UINT16            controller_vendor_id;
+    UINT16            controller_device_id;
+    CHAR8             controller_name[64];
+// -- Codec Info -- //
+    UINT16            codec_vendor_id;
+    UINT16            codec_device_id;
+    UINT8             codec_revision_id;
+    UINT8             codec_stepping_id;
+    UINT8             codec_maj_rev;
+    UINT8             codec_min_rev;
+    UINT8             codec_num_function_groups;
+    CHAR8             codec_name[64];
 } HDA_PROPERTIES;
 
 typedef struct {
@@ -1974,6 +1983,14 @@ CHAR8
 *get_hda_controller_name (
   UINT16 controller_device_id,
   UINT16 controller_vendor_id
+  );
+
+CHAR8
+*get_hda_codec_name (
+  UINT16 codec_vendor_id,
+  UINT16 codec_device_id,
+  UINT8 codec_revision_id,
+  UINT8 codec_stepping_id
   );
 
 BOOLEAN
