@@ -4213,8 +4213,35 @@ REFIT_MENU_ENTRY  *SubMenuDsdtFix()
   return Entry;
 }
 
+REFIT_MENU_ENTRY  *SubMenuDSDTPatches()  //yyyy
+{
+  REFIT_MENU_ENTRY     *Entry;
+  REFIT_MENU_SCREEN    *SubScreen;
+  REFIT_INPUT_DIALOG   *InputBootArgs;
+  
+  INTN             PatchDsdtNum = gSettings.PatchDsdtNum;
+  INPUT_ITEM   *DSDTPatchesMenu = gSettings.PatchDsdtMenuItem;
+  INTN                 Index;
+  
+  NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_DSDT_PATCHES, "Custom DSDT patches->");
+  
+  for (Index = 0; Index < PatchDsdtNum; Index++) {
+    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+    InputBootArgs->Entry.Title = PoolPrint(L"%a", gSettings.PatchDsdtLabel[Index]);
+    InputBootArgs->Entry.Tag = TAG_INPUT;
+    InputBootArgs->Entry.Row = 0xFFFF; //cursor
+    InputBootArgs->Item = &DSDTPatchesMenu[Index];
+    InputBootArgs->Entry.AtClick = ActionEnter;
+    InputBootArgs->Entry.AtRightClick = ActionDetails;
+    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+  }
+  
+  AddMenuEntry(SubScreen, &MenuEntryReturn);
+  return Entry;
+}
 
-REFIT_MENU_ENTRY *SubMenuACPI()
+
+REFIT_MENU_ENTRY *SubMenuACPI() 
 {
   // init
   REFIT_MENU_ENTRY   *Entry;
@@ -4231,7 +4258,8 @@ REFIT_MENU_ENTRY *SubMenuACPI()
   
   AddMenuEntry(SubScreen, SubMenuDropTables());
   AddMenuEntry(SubScreen, SubMenuDropDSM());
-  AddMenuEntry(SubScreen, SubMenuDsdtFix()); 
+  AddMenuEntry(SubScreen, SubMenuDsdtFix());
+  AddMenuEntry(SubScreen, SubMenuDSDTPatches());
   
   AddMenuEntry(SubScreen, &MenuEntryReturn);
   return Entry;

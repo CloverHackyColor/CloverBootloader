@@ -994,7 +994,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         Patches->KextPatches[Patches->NrKexts].MenuItem.BValue     = TRUE;
         Dict = GetProperty (Prop2, "Disabled");
         if ((Dict != NULL) && IsPropertyTrue (Dict)) {
-          DBG(" :: patch disabled\n");
+          
           Patches->KextPatches[Patches->NrKexts].MenuItem.BValue     = FALSE;
         }
 
@@ -1043,7 +1043,9 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         }
 
         DBG (" :: data len: %d\n", Patches->KextPatches[Patches->NrKexts].DataLen);
-        Patches->NrKexts++; //must be out of DBG because it may be empty compiled
+        if (!Patches->KextPatches[Patches->NrKexts++].MenuItem.BValue) {
+          DBG(" - patch disabled at config\n");
+        }
       }
     }
 
@@ -4630,19 +4632,22 @@ GetUserSettings(
         }
         DBG (" - final DSDT Fix mask=%08x\n", gSettings.FixDsdt);
 
-        Prop = GetProperty (Dict2, "Patches");
+        Prop = GetProperty (Dict2, "Patches"); //yyyy
         if (Prop != NULL) {
           INTN   i, Count = GetTagCount (Prop);
           if (Count > 0) {
-            gSettings.PatchDsdtNum     = (UINT32)Count;
-            gSettings.PatchDsdtFind    = AllocateZeroPool (Count * sizeof(UINT8*));
-            gSettings.PatchDsdtReplace = AllocateZeroPool (Count * sizeof(UINT8*));
-            gSettings.LenToFind        = AllocateZeroPool (Count * sizeof(UINT32));
-            gSettings.LenToReplace     = AllocateZeroPool (Count * sizeof(UINT32));
+            gSettings.PatchDsdtNum      = (UINT32)Count;
+            gSettings.PatchDsdtFind     = AllocateZeroPool (Count * sizeof(UINT8*));
+            gSettings.PatchDsdtReplace  = AllocateZeroPool (Count * sizeof(UINT8*));
+            gSettings.LenToFind         = AllocateZeroPool (Count * sizeof(UINT32));
+            gSettings.LenToReplace      = AllocateZeroPool (Count * sizeof(UINT32));
+            gSettings.PatchDsdtLabel    = AllocateZeroPool (Count * sizeof(UINT8*));
+            gSettings.PatchDsdtMenuItem = AllocateZeroPool (Count * sizeof(INPUT_ITEM));
             DBG ("PatchesDSDT: %d requested\n", Count);
 
             for (i = 0; i < Count; i++) {
               UINTN Size = 0;
+              CHAR8 *DSDTPatchesLabel;
               Status     = GetElement (Prop, i, &Prop2);
               if (EFI_ERROR (Status)) {
                 DBG ("error %r getting next element of PatchesDSDT at index %d\n", Status, i);
@@ -4654,16 +4659,25 @@ GetUserSettings(
               }
 
               DBG(" - [%02d]:", i);
+              DSDTPatchesLabel = AllocateZeroPool(256);
 
               Prop3 = GetProperty (Prop2, "Comment");
               if (Prop3 != NULL && (Prop3->type == kTagTypeString) && Prop3->string) {
-                DBG(" (%a)", Prop3->string);
+                AsciiSPrint(DSDTPatchesLabel, 255, "%a", Prop3->string);
+              } else {
+                AsciiSPrint(DSDTPatchesLabel, 255, " (NoLabel)");
               }
+        //      gSettings.PatchDsdtLabel[i] = AllocateCopyPool(AsciiStrnLenS(DSDTPatchesLabel, 255) + 1, DSDTPatchesLabel);
+              gSettings.PatchDsdtLabel[i] = AllocateZeroPool(256);
+              AsciiSPrint(gSettings.PatchDsdtLabel[i], 255, "%a", DSDTPatchesLabel);
+              DBG(" (%a)", gSettings.PatchDsdtLabel[i]);
+              
+              FreePool(DSDTPatchesLabel);
 
+              gSettings.PatchDsdtMenuItem[i].BValue = TRUE;
               Prop3 = GetProperty (Prop2, "Disabled");
               if ((Prop3 != NULL) && IsPropertyTrue (Prop3)) {
-                DBG(" patch disabled, skipped\n");
-                continue;
+                gSettings.PatchDsdtMenuItem[i].BValue = FALSE;
               }
 
               //DBG (" DSDT bin patch #%d ", i);
@@ -4673,6 +4687,9 @@ GetUserSettings(
               gSettings.PatchDsdtReplace[i] = GetDataSetting (Prop2, "Replace", &Size);
               DBG (", lenToReplace: %d\n", Size);
               gSettings.LenToReplace[i]     = (UINT32)Size;
+              if (!gSettings.PatchDsdtMenuItem[i].BValue) {
+                DBG("  patch disabled at config\n");
+              }
             }
           } //if count > 0
         } //if prop PatchesDSDT

@@ -497,10 +497,15 @@ VOID PatchAllSSDT()
           if (!gSettings.PatchDsdtFind[i] || !gSettings.LenToFind[i]) {
             continue;
           }
-          DBG(" - [%02d]:", i);
-          SsdtLen = FixAny((UINT8*)(UINTN)ssdt, SsdtLen,
-                           gSettings.PatchDsdtFind[i], gSettings.LenToFind[i],
-                           gSettings.PatchDsdtReplace[i], gSettings.LenToReplace[i]);
+          DBG(" - [%a]:", gSettings.PatchDsdtLabel[i]); //yyyy
+          if (gSettings.PatchDsdtMenuItem[i].BValue) {
+            SsdtLen = FixAny((UINT8*)(UINTN)ssdt, SsdtLen,
+                             gSettings.PatchDsdtFind[i], gSettings.LenToFind[i],
+                             gSettings.PatchDsdtReplace[i], gSettings.LenToReplace[i]);
+            DBG(" OK\n");
+          } else {
+            DBG(" disabled\n");
+          }
         }
       }
       CopyMem ((VOID*)BasePtr, &ssdt, sizeof(UINT64));

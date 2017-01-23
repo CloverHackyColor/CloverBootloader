@@ -366,6 +366,7 @@ extern INTN ScrollbarYMovement;
 #define SCREEN_AUDIO      22
 #define SCREEN_KEXTS      23
 #define SCREEN_KERNELS    24
+#define SCREEN_DSDT_PATCHES 25
 #define MAX_ANIME  41
 
 typedef struct _refit_menu_screen REFIT_MENU_SCREEN;

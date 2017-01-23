@@ -1181,7 +1181,7 @@ typedef struct {
   CHAR16                  BlockKexts[64];
 
   //ACPI tables
-  UINTN    SortedACPICount;
+  UINTN                   SortedACPICount;
 #if defined(MDE_CPU_IA32)
   UINT32                  align37;
 #endif
@@ -1193,6 +1193,9 @@ typedef struct {
   // ACPI/PATCHED/AML
   UINT32                  DisabledAMLCount;
   CHAR16                  **DisabledAML;
+  CHAR8                   **PatchDsdtLabel; //yyyy
+  INPUT_ITEM              *PatchDsdtMenuItem;
+  
   
   // boot.efi 
   UINT32 OptionsBits;

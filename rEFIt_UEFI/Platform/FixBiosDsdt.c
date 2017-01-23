@@ -5016,10 +5016,16 @@ VOID FixBiosDsdt (UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, 
       if (!gSettings.PatchDsdtFind[i] || !gSettings.LenToFind[i]) {
         continue;
       }
-      DBG(" - [%02d]:", i);
-      DsdtLen = FixAny(temp, DsdtLen,
-                       gSettings.PatchDsdtFind[i], gSettings.LenToFind[i],
-                       gSettings.PatchDsdtReplace[i], gSettings.LenToReplace[i]);
+      
+      DBG(" - [%a]:", gSettings.PatchDsdtLabel[i]); //yyyy
+      if (gSettings.PatchDsdtMenuItem[i].BValue) {
+        DsdtLen = FixAny(temp, DsdtLen,
+                         gSettings.PatchDsdtFind[i], gSettings.LenToFind[i],
+                         gSettings.PatchDsdtReplace[i], gSettings.LenToReplace[i]);
+        DBG(" OK\n");
+      } else {
+        DBG(" disabled\n");
+      }
     }
   }
 
