@@ -516,16 +516,16 @@ VOID CheckForFakeSMC(CHAR8 *InfoPlist, LOADER_ENTRY *Entry)
 VOID AnyKextPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize, INT32 N, LOADER_ENTRY *Entry)
 {
   UINTN   Num = 0;
-  INTN Ind;
+  INTN    Ind;
   
   DBG_RT(Entry, "\nAnyKextPatch %d: driverAddr = %x, driverSize = %x\nAnyKext = %a\n",
          N, Driver, DriverSize, Entry->KernelAndKextPatches->KextPatches[N].Label);
 
-  if (Entry->KernelAndKextPatches->KextPatches[N].Disabled) {
+  if (!Entry->KernelAndKextPatches->KextPatches[N].MenuItem.BValue) {
     DBG_RT(Entry, "==> DISABLED!\n");
     return;
   }
-  
+//zzzz  
   if (Entry->KernelAndKextPatches->KPDebug) {
     ExtractKextBundleIdentifier(InfoPlist);
   }

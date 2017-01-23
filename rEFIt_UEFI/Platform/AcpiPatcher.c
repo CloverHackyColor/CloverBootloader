@@ -48,7 +48,7 @@ XSDT_TABLE    *Xsdt = NULL;
 UINT64      BiosDsdt;
 UINT32      BiosDsdtLen;
 UINT8       acpi_cpu_count;
-CHAR8*      acpi_cpu_name[32];
+CHAR8*      acpi_cpu_name[128];
 CHAR8*      acpi_cpu_score;
 
 extern OPER_REGION *gRegions;

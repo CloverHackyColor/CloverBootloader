@@ -364,6 +364,7 @@ extern INTN ScrollbarYMovement;
 #define SCREEN_GUI        20
 #define SCREEN_SYSTEM     21
 #define SCREEN_AUDIO      22
+#define SCREEN_KEXTS      23
 #define MAX_ANIME  41
 
 typedef struct _refit_menu_screen REFIT_MENU_SCREEN;
@@ -512,32 +513,36 @@ typedef struct {
 } REFIT_CONFIG;
 
 // types
-
-typedef struct {
-  CHAR8   *Name;
-  CHAR8   *Label;
-  BOOLEAN IsPlistPatch;
-  CHAR8   align[7];
-  INTN    DataLen;
+typedef struct KEXT_PATCH KEXT_PATCH;
+struct KEXT_PATCH
+{
+  CHAR8       *Name;
+  CHAR8       *Label;
+  BOOLEAN     IsPlistPatch;
+  CHAR8       align[7];
+  INTN        DataLen;
 #if defined(MDE_CPU_IA32)
-  UINT32  align1;
+  UINT32      align1;
 #endif
-  UINT8   *Data;
-  UINT8   *Patch;
-  CHAR8   *MatchOS;
-  CHAR8   *MatchBuild;
-  BOOLEAN Disabled;
-} KEXT_PATCH;
+  UINT8       *Data;
+  UINT8       *Patch;
+  CHAR8       *MatchOS;
+  CHAR8       *MatchBuild;
+  KEXT_PATCH  *Next;
+  UINT64      Index;
+  INPUT_ITEM  MenuItem;   //zzzz
+//  BOOLEAN     Disabled;
+};
 
 typedef struct {
-  CHAR8   *Label;
-  INTN    DataLen;
-  UINT8   *Data;
-  UINT8   *Patch;
-  INTN    Count;
-  CHAR8   *MatchOS;
-  CHAR8   *MatchBuild;
-  BOOLEAN Disabled;
+  CHAR8       *Label;
+  INTN        DataLen;
+  UINT8       *Data;
+  UINT8       *Patch;
+  INTN        Count;
+  CHAR8       *MatchOS;
+  CHAR8       *MatchBuild;
+  BOOLEAN     Disabled;
 } KERNEL_PATCH;
 
 typedef struct KERNEL_AND_KEXT_PATCHES
@@ -573,7 +578,7 @@ typedef struct KERNEL_AND_KEXT_PATCHES
   
   INT32   NrKexts;
   UINT32  align40;
-  KEXT_PATCH *KextPatches;
+  KEXT_PATCH *KextPatches;   //zzzz
 #if defined(MDE_CPU_IA32)
   UINT32  align5;
 #endif

@@ -688,7 +688,7 @@ CopyKernelAndKextPatches (IN OUT  KERNEL_AND_KEXT_PATCHES *Dst,
         Dst->KextPatches[Dst->NrKexts].Label      = (CHAR8 *)AllocateCopyPool (AsciiStrSize (Src->KextPatches[i].Label), Src->KextPatches[i].Label);
       }
 
-      Dst->KextPatches[Dst->NrKexts].Disabled     = Src->KextPatches[i].Disabled;
+      Dst->KextPatches[Dst->NrKexts].MenuItem.BValue     = Src->KextPatches[i].MenuItem.BValue;
       Dst->KextPatches[Dst->NrKexts].IsPlistPatch = Src->KextPatches[i].IsPlistPatch;
       Dst->KextPatches[Dst->NrKexts].DataLen      = Src->KextPatches[i].DataLen;
       Dst->KextPatches[Dst->NrKexts].Data         = AllocateCopyPool (Src->KextPatches[i].DataLen, Src->KextPatches[i].Data);
@@ -930,7 +930,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
     }
   }
 
-  Prop = GetProperty (DictPointer, "KextsToPatch");
+  Prop = GetProperty (DictPointer, "KextsToPatch"); //zzzz
   if (Prop != NULL) {
     INTN   i, Count = GetTagCount (Prop);
     //delete old and create new
@@ -990,11 +990,12 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
 
 
         DBG (" %a", KextPatchesLabel);
-
+        
+        Patches->KextPatches[Patches->NrKexts].MenuItem.BValue     = TRUE;
         Dict = GetProperty (Prop2, "Disabled");
         if ((Dict != NULL) && IsPropertyTrue (Dict)) {
-          DBG(" :: patch disabled, skipped\n");
-          continue;
+          DBG(" :: patch disabled\n");
+          Patches->KextPatches[Patches->NrKexts].MenuItem.BValue     = FALSE;
         }
 
         TmpData    = GetDataSetting (Prop2, "Find", &FindLen);
@@ -1009,8 +1010,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         Patches->KextPatches[Patches->NrKexts].DataLen      = FindLen;
         Patches->KextPatches[Patches->NrKexts].Patch        = AllocateCopyPool (FindLen, TmpPatch);
         Patches->KextPatches[Patches->NrKexts].MatchOS      = NULL;
-        Patches->KextPatches[Patches->NrKexts].MatchBuild   = NULL;
-        Patches->KextPatches[Patches->NrKexts].Disabled     = FALSE;
+        Patches->KextPatches[Patches->NrKexts].MatchBuild   = NULL;        
         Patches->KextPatches[Patches->NrKexts].Name         = AllocateCopyPool (AsciiStrnLenS(KextPatchesName, 255) + 1, KextPatchesName);
         Patches->KextPatches[Patches->NrKexts].Label        = AllocateCopyPool (AsciiStrnLenS(KextPatchesLabel, 255) + 1, KextPatchesLabel);
 

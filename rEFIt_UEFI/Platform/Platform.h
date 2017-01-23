@@ -747,7 +747,7 @@ struct CUSTOM_LOADER_ENTRY {
   UINT8                   CustomBoot;
   EG_IMAGE                *CustomLogo;
   EG_PIXEL                *BootBgColor;
-  KERNEL_AND_KEXT_PATCHES KernelAndKextPatches;
+  KERNEL_AND_KEXT_PATCHES KernelAndKextPatches; //zzzz
 };
 
 typedef struct CUSTOM_LEGACY_ENTRY CUSTOM_LEGACY_ENTRY;
@@ -1038,7 +1038,7 @@ typedef struct {
 #endif
 
   // KernelAndKextPatches
-  KERNEL_AND_KEXT_PATCHES KernelAndKextPatches;
+  KERNEL_AND_KEXT_PATCHES KernelAndKextPatches;  //zzzz
   BOOLEAN                 KextPatchesAllowed;
   BOOLEAN                 KernelPatchesAllowed; //From GUI: Only for user patches, not internal Clover
 
@@ -1611,7 +1611,7 @@ extern INTN                           OldChosenConfig;
 extern UINT64	                        BiosDsdt;
 extern UINT32	                        BiosDsdtLen;
 extern UINT8	                        acpi_cpu_count;
-extern CHAR8	                        *acpi_cpu_name[32];
+extern CHAR8	                        *acpi_cpu_name[];
 extern CHAR8	                        *acpi_cpu_score;
 extern BOOLEAN	                      SSSE3;
 extern BOOLEAN	                      defDSM;

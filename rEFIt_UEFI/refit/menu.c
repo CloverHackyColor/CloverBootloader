@@ -3969,6 +3969,32 @@ REFIT_MENU_ENTRY  *SubMenuSpeedStep()
   return Entry;
 }
 
+REFIT_MENU_ENTRY  *SubMenuKextPatches()
+{
+  REFIT_MENU_ENTRY     *Entry;
+  REFIT_MENU_SCREEN    *SubScreen;
+  REFIT_INPUT_DIALOG   *InputBootArgs;
+  INTN                 NrKexts = gSettings.KernelAndKextPatches.NrKexts;
+  KEXT_PATCH  *KextPatchesMenu = gSettings.KernelAndKextPatches.KextPatches; //zzzz
+  INTN                 Index;
+  
+  NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_KEXTS, "Kexts patches->");
+  
+  for (Index = 0; Index < NrKexts; Index++) {
+    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+    InputBootArgs->Entry.Title = PoolPrint(L"%30a", KextPatchesMenu[Index].Label);
+    InputBootArgs->Entry.Tag = TAG_INPUT;
+    InputBootArgs->Entry.Row = 0xFFFF; //cursor
+    InputBootArgs->Item = &(KextPatchesMenu[Index].MenuItem);
+    InputBootArgs->Entry.AtClick = ActionEnter;
+    InputBootArgs->Entry.AtRightClick = ActionDetails;
+    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+  }
+  
+  AddMenuEntry(SubScreen, &MenuEntryReturn);
+  return Entry;  
+}
+
 REFIT_MENU_ENTRY  *SubMenuBinaries()
 {
   REFIT_MENU_ENTRY   *Entry; //, *SubEntry;
@@ -3980,7 +4006,6 @@ REFIT_MENU_ENTRY  *SubMenuBinaries()
   AddMenuInfoLine(SubScreen, PoolPrint(L"Real CPUID: 0x%06x", gCPUStructure.Signature));
 
   AddMenuItem(SubScreen, 104, "Fake CPUID:", TAG_INPUT, TRUE);
-  AddMenuItem(SubScreen, 44,  "Kext patching allowed", TAG_INPUT, FALSE);
   AddMenuItem(SubScreen, 108, "Kernel patching allowed", TAG_INPUT, FALSE);
   AddMenuItem(SubScreen, 45,  "Kernel Support CPU", TAG_INPUT, FALSE);
   AddMenuItem(SubScreen, 91,  "Kernel Lapic Patch", TAG_INPUT, FALSE);
@@ -3988,6 +4013,9 @@ REFIT_MENU_ENTRY  *SubMenuBinaries()
   AddMenuItem(SubScreen, 48,  "Kernel PM Patch", TAG_INPUT, FALSE);
   AddMenuItem(SubScreen, 46,  "AppleIntelCPUPM Patch", TAG_INPUT, FALSE);
   AddMenuItem(SubScreen, 47,  "AppleRTC Patch", TAG_INPUT, FALSE);
+  
+  AddMenuItem(SubScreen, 44,  "Kext patching allowed", TAG_INPUT, FALSE);
+  AddMenuEntry(SubScreen, SubMenuKextPatches());
 
   AddMenuEntry(SubScreen, &MenuEntryReturn);
   return Entry;

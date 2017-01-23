@@ -343,12 +343,12 @@ VOID DumpKernelAndKextPatches(KERNEL_AND_KEXT_PATCHES *Patches)
   }
 }
 
-VOID FilterKextPatches(IN LOADER_ENTRY *Entry)
+VOID FilterKextPatches(IN LOADER_ENTRY *Entry) //zzzz
 {
   if (gSettings.KextPatchesAllowed && (Entry->KernelAndKextPatches->KextPatches != NULL) && Entry->KernelAndKextPatches->NrKexts) {
-    INTN i = 0;
+    INTN i;
     DBG("Filtering KextPatches:\n");
-    for (; i < Entry->KernelAndKextPatches->NrKexts; ++i) {
+    for (i = 0; i < Entry->KernelAndKextPatches->NrKexts; i++) {
       DBG(" - [%02d]: %a :: %a :: [OS: %a | MatchOS: %a | MatchBuild: %a]",
         i,
         Entry->KernelAndKextPatches->KextPatches[i].Label,
@@ -357,19 +357,19 @@ VOID FilterKextPatches(IN LOADER_ENTRY *Entry)
         Entry->KernelAndKextPatches->KextPatches[i].MatchOS ? Entry->KernelAndKextPatches->KextPatches[i].MatchOS : "All",
         Entry->KernelAndKextPatches->KextPatches[i].MatchBuild != NULL ? Entry->KernelAndKextPatches->KextPatches[i].MatchBuild : "All"
       );
-
+      if (!Entry->KernelAndKextPatches->KextPatches[i].MenuItem.BValue) {
+        DBG(" ==> disabled by user\n");
+        continue;
+      }
+      
       if ((Entry->BuildVersion != NULL) && (Entry->KernelAndKextPatches->KextPatches[i].MatchBuild != NULL)) {
-        //if (AsciiStrCmp(Entry->BuildVersion, Entry->KernelAndKextPatches->KextPatches[i].MatchBuild) != 0) {
-        //  Entry->KernelAndKextPatches->KextPatches[i].Disabled = TRUE;
-        //}
-        Entry->KernelAndKextPatches->KextPatches[i].Disabled = !IsPatchEnabled(Entry->KernelAndKextPatches->KextPatches[i].MatchBuild, Entry->BuildVersion);
-        DBG(" ==> %a\n", Entry->KernelAndKextPatches->KextPatches[i].Disabled ? "not allowed" : "allowed");
-        //if (!Entry->KernelAndKextPatches->KextPatches[i].Disabled)
-          continue; // If user give MatchOS, should we ignore MatchOS / keep reading 'em?
+        Entry->KernelAndKextPatches->KextPatches[i].MenuItem.BValue = IsPatchEnabled(Entry->KernelAndKextPatches->KextPatches[i].MatchBuild, Entry->BuildVersion);
+        DBG(" ==> %a\n", Entry->KernelAndKextPatches->KextPatches[i].MenuItem.BValue ? "allowed" : "not allowed");
+        continue; 
       }
 
-      Entry->KernelAndKextPatches->KextPatches[i].Disabled = !IsPatchEnabled(Entry->KernelAndKextPatches->KextPatches[i].MatchOS, Entry->OSVersion);
-      DBG(" ==> %a\n", Entry->KernelAndKextPatches->KextPatches[i].Disabled ? "not allowed" : "allowed");
+      Entry->KernelAndKextPatches->KextPatches[i].MenuItem.BValue = IsPatchEnabled(Entry->KernelAndKextPatches->KextPatches[i].MatchOS, Entry->OSVersion);
+      DBG(" ==> %a\n", Entry->KernelAndKextPatches->KextPatches[i].MenuItem.BValue ? "allowed" : "not allowed");
     }
   }
 }
@@ -389,13 +389,9 @@ VOID FilterKernelPatches(IN LOADER_ENTRY *Entry)
       );
 
       if ((Entry->BuildVersion != NULL) && (Entry->KernelAndKextPatches->KernelPatches[i].MatchBuild != NULL)) {
-        //if (AsciiStrCmp(Entry->BuildVersion, Entry->KernelAndKextPatches->KernelPatches[i].MatchBuild) != 0) {
-        //  Entry->KernelAndKextPatches->KernelPatches[i].Disabled = TRUE;
-        //}
         Entry->KernelAndKextPatches->KernelPatches[i].Disabled = !IsPatchEnabled(Entry->KernelAndKextPatches->KernelPatches[i].MatchBuild, Entry->BuildVersion);
         DBG(" ==> %a\n", Entry->KernelAndKextPatches->KernelPatches[i].Disabled ? "not allowed" : "allowed");
-        //if (!Entry->KernelAndKextPatches->KernelPatches[i].Disabled)
-          continue; // If user give MatchOS, should we ignore MatchOS / keep reading 'em?
+          continue; 
       }
 
       Entry->KernelAndKextPatches->KernelPatches[i].Disabled = !IsPatchEnabled(Entry->KernelAndKextPatches->KernelPatches[i].MatchOS, Entry->OSVersion);
@@ -404,7 +400,8 @@ VOID FilterKernelPatches(IN LOADER_ENTRY *Entry)
   }
 }
 
-VOID ReadSIPCfg() {
+VOID ReadSIPCfg()
+{
   UINT32 csrCfg = gSettings.CsrActiveConfig & CSR_VALID_FLAGS;
   CHAR16 *csrLog = AllocateZeroPool(SVALUE_MAX_SIZE);
 
@@ -561,17 +558,6 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
 
     FilterKernelPatches(Entry);
 
-    // if "InjectKexts if no FakeSMC" and OSFLAG_WITHKEXTS is not set
-    // then user selected submenu entry and requested no injection.
-    // we'll turn off global "InjectKexts if no FakeSMC" to avoid unnecessary
-    // FakeSMC scanning.
-    // apianti - unneccessary
-    /*
-    if (OSFLAG_ISUNSET(Entry->Flags, OSFLAG_WITHKEXTS)) {
-      gSettings.WithKextsIfNoFakeSMC = FALSE;
-    }
-    // */
-
     // Set boot argument for kernel if no caches, this should force kernel loading
     if (OSFLAG_ISSET(Entry->Flags, OSFLAG_NOCACHES) &&
         (StriStr(Entry->LoadOptions, L"Kernel=") == NULL)) {
@@ -621,8 +607,6 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     EventsInitialize(Entry);
 //    DBG("FinalizeSmbios\n");
     FinalizeSmbios();
-//    DBG("SetupDataForOSX\n");
-//    SetupDataForOSX();
 
     SetCPUProperties();
 
