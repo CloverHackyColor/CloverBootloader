@@ -715,13 +715,15 @@ typedef struct {
 } GUID;
 */
 
-typedef struct DEV_PROPERTY DEV_PROPERTY;
+typedef struct DEV_PROPERTY DEV_PROPERTY; //yyyy
 struct DEV_PROPERTY {
-  UINT32 Device;
-  CHAR8  *Key;
-  CHAR8  *Value;
-  UINTN  ValueLen;
-  DEV_PROPERTY *Next;
+  UINT32        Device;
+  CHAR8         *Key;
+  CHAR8         *Value;
+  UINTN         ValueLen;
+  DEV_PROPERTY  *Next;
+  CHAR8         *Label;
+  INPUT_ITEM    MenuItem;
 };
 
 typedef struct CUSTOM_LOADER_ENTRY CUSTOM_LOADER_ENTRY;

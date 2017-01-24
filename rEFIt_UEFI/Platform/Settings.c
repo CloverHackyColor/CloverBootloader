@@ -173,6 +173,10 @@ GetCrc32 (
   return x;
 }
 
+/*
+ return TRUE if the property present && value = TRUE
+ else return FALSE
+ */
 BOOLEAN
 IsPropertyTrue (
                 TagPtr Prop
@@ -184,6 +188,10 @@ IsPropertyTrue (
     ((Prop->string[0] == 'y') || (Prop->string[0] == 'Y'))));
 }
 
+/*
+ return TRUE if the property present && value = FALSE
+ else return FALSE
+ */
 BOOLEAN
 IsPropertyFalse (
                  TagPtr Prop
@@ -4066,7 +4074,7 @@ GetUserSettings(
       Prop                          = GetProperty (DictPointer, "NoDefaultProperties");
       gSettings.NoDefaultProperties = IsPropertyTrue (Prop);
 
-      Prop = GetProperty (DictPointer, "Arbitrary");
+      Prop = GetProperty (DictPointer, "Arbitrary"); //yyyy
       if (Prop != NULL) {
         INTN Index, Count = GetTagCount (Prop);
         DEV_PROPERTY *DevProp;
@@ -4075,14 +4083,11 @@ GetUserSettings(
           DBG ("Add %d devices:\n", Count);
           for (Index = 0; Index < Count; Index++) {
             UINTN DeviceAddr = 0U;
+            CHAR8 *Label;
             DBG (" - [%02d]:", Index);
             if (EFI_ERROR (GetElement (Prop, Index, &Prop2))) {
               DBG (" continue\n", Index);
               continue;
-            }
-            Dict2 = GetProperty (Prop2, "Comment");
-            if (Dict2 != NULL) {
-              DBG (" (%a)", Index, Dict2->string);
             }
             Dict2 = GetProperty (Prop2, "PciAddr");
             if (Dict2 != NULL) {
@@ -4093,14 +4098,23 @@ GetUserSettings(
                 DBG(" wrong PciAddr string: %a\n", Str);
                 continue;
               }
+              Label = AllocatePool(64);
               Bus   = hexstrtouint8(Str);
               Dev   = hexstrtouint8(&Str[3]);
               Func  = hexstrtouint8(&Str[6]);
               DeviceAddr = PCIADDR(Bus, Dev, Func);
-
-              DBG(" %02x:%02x.%02x\n", Bus, Dev, Func);
+              AsciiSPrint(Label, 64, "[%02x:%02x.%02x] ", Bus, Dev, Func);
+              DBG(" %a\n", Label);
+            } else {
+              continue;
             }
-
+            
+            Dict2 = GetProperty (Prop2, "Comment");
+            if (Dict2 != NULL) {
+              AsciiStrCatS(Label, 64, Dict2->string);
+              DBG (" (%a)", Dict2->string);
+            }
+            
             Dict2 = GetProperty (Prop2, "CustomProperties");
             if (Dict2 != NULL) {
               TagPtr Dict3;
@@ -4108,26 +4122,30 @@ GetUserSettings(
 
               for (PropIndex = 0; PropIndex < PropCount; PropIndex++) {
                 UINTN Size = 0;
-                if (!EFI_ERROR (GetElement (Dict2, PropIndex, &Dict3))) {
+                if (!EFI_ERROR(GetElement(Dict2, PropIndex, &Dict3))) {
 
                   DevProp = gSettings.AddProperties;
-                  gSettings.AddProperties = AllocateZeroPool (sizeof(DEV_PROPERTY));
+                  gSettings.AddProperties = AllocateZeroPool(sizeof(DEV_PROPERTY));
                   gSettings.AddProperties->Next = DevProp;
 
-                  gSettings.AddProperties->Device = (UINT32) DeviceAddr;
+                  gSettings.AddProperties->Device = (UINT32)DeviceAddr;
+                  gSettings.AddProperties->Label = AllocateCopyPool(AsciiStrSize(Label), Label);;
+                  
+                  Prop3 = GetProperty (Dict3, "Disabled");
+                  gSettings.AddProperties->MenuItem.BValue = !IsPropertyTrue(Prop3);
 
                   Prop3 = GetProperty (Dict3, "Key");
                   if (Prop3 && (Prop3->type == kTagTypeString) && Prop3->string) {
-                    gSettings.AddProperties->Key = AllocateCopyPool (AsciiStrSize (Prop3->string), Prop3->string);
+                    gSettings.AddProperties->Key = AllocateCopyPool(AsciiStrSize(Prop3->string), Prop3->string);
                   }
 
                   Prop3 = GetProperty (Dict3, "Value");
                   if (Prop3 && (Prop3->type == kTagTypeString) && Prop3->string) {
                     //first suppose it is Ascii string
-                    gSettings.AddProperties->Value = AllocateCopyPool (AsciiStrSize (Prop3->string), Prop3->string);
-                    gSettings.AddProperties->ValueLen = AsciiStrLen (Prop3->string) + 1;
+                    gSettings.AddProperties->Value = AllocateCopyPool(AsciiStrSize(Prop3->string), Prop3->string);
+                    gSettings.AddProperties->ValueLen = AsciiStrLen(Prop3->string) + 1;
                   } else if (Prop3 && (Prop3->type == kTagTypeInteger)) {
-                    gSettings.AddProperties->Value = AllocatePool (4);
+                    gSettings.AddProperties->Value = AllocatePool(4);
                     CopyMem (gSettings.AddProperties->Value, &(Prop3->string), 4);
                     gSettings.AddProperties->ValueLen = 4;
                   } else {
@@ -4139,6 +4157,8 @@ GetUserSettings(
                 // gSettings.NrAddProperties++;
               }   //for() device properties
             }
+            
+            FreePool(Label);
           } //for() devices
         }
         gSettings.NrAddProperties = 0xFFFE;
@@ -6081,7 +6101,7 @@ SetDevices (
         PCIdevice.subsys_id.subsys.vendor_id = Pci.Device.SubsystemVendorID;
         PCIdevice.subsys_id.subsys.device_id = Pci.Device.SubsystemID;
 
-        if (gSettings.NrAddProperties == 0xFFFE) {
+        if (gSettings.NrAddProperties == 0xFFFE) {  //yyyy it means Arbitrary
           DEV_PROPERTY *Prop = gSettings.AddProperties;
           DevPropDevice *device = NULL;
           BOOLEAN Once = TRUE;
@@ -6097,7 +6117,10 @@ SetDevices (
               device = devprop_add_device_pci(string, &PCIdevice);
               Once = FALSE;
             }
-            devprop_add_value(device, Prop->Key, (UINT8*)Prop->Value, Prop->ValueLen);
+            if (Prop->MenuItem.BValue) {
+              devprop_add_value(device, Prop->Key, (UINT8*)Prop->Value, Prop->ValueLen);
+            }
+            
             StringDirty = TRUE;
             Prop = Prop->Next;
           }

@@ -4265,6 +4265,42 @@ REFIT_MENU_ENTRY *SubMenuACPI()
   return Entry;
 }
 
+REFIT_MENU_ENTRY  *SubMenuCustomDevices() //yyyy
+{
+  REFIT_MENU_ENTRY    *Entry;
+  REFIT_MENU_SCREEN   *SubScreen;
+  REFIT_INPUT_DIALOG  *InputBootArgs;
+  UINT32              DevAddr, OldDevAddr = 0;
+    
+  NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_DEVICES, "Custom properies->");
+  
+  if (gSettings.AddProperties) {
+    DEV_PROPERTY *Prop = gSettings.AddProperties;
+    while (Prop) {
+      DevAddr = Prop->Device;
+      if (DevAddr != OldDevAddr) {
+        OldDevAddr = DevAddr;
+        AddMenuInfo(SubScreen, L"------------");
+        AddMenuInfo(SubScreen, PoolPrint(L"%a", Prop->Label));
+      }
+      InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+      InputBootArgs->Entry.Title = PoolPrint(L"  key: %a", Prop->Key);
+      InputBootArgs->Entry.Tag = TAG_INPUT;
+      InputBootArgs->Entry.Row = 0xFFFF; //cursor
+      InputBootArgs->Item = &(Prop->MenuItem);
+      InputBootArgs->Entry.AtClick = ActionEnter;
+      InputBootArgs->Entry.AtRightClick = ActionDetails;
+      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+      AddMenuInfo(SubScreen, PoolPrint(L"     value[%d]: %08x", Prop->ValueLen, *(UINT64*)Prop->Value));
+      
+      Prop = Prop->Next;
+    }
+  }
+  AddMenuEntry(SubScreen, &MenuEntryReturn);
+  Entry->SubScreen = SubScreen;
+  return Entry;
+}
+
 
 REFIT_MENU_ENTRY  *SubMenuPCI()
 {
@@ -4283,6 +4319,7 @@ REFIT_MENU_ENTRY  *SubMenuPCI()
   AddMenuItem(SubScreen, 99,  "FakeID SATA:", TAG_INPUT, TRUE);
   AddMenuItem(SubScreen, 100, "FakeID XHCI:", TAG_INPUT, TRUE);
   AddMenuItem(SubScreen, 103, "FakeID IMEI:", TAG_INPUT, TRUE);
+  AddMenuEntry(SubScreen, SubMenuCustomDevices());
 
   AddMenuEntry(SubScreen, &MenuEntryReturn);
   Entry->SubScreen = SubScreen;

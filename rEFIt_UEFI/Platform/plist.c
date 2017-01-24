@@ -521,7 +521,7 @@ EFI_STATUS ParseTagKey( char * buffer, TagPtr* tag, UINT32* lenPtr)
   
   *tag = tmpTag;
   *lenPtr = length + length2;
-  DBG("parse key success len=%d\n",  *lenPtr);
+  DBG("parse key %a success len=%d\n", tmpString, *lenPtr);
   return EFI_SUCCESS;
 }
 
@@ -560,7 +560,7 @@ EFI_STATUS ParseTagString(CHAR8* buffer, TagPtr * tag,UINT32* lenPtr)
   tmpTag->offset = (UINT32)(buffer_start ? buffer - buffer_start: 0);
   *tag = tmpTag;
   *lenPtr = length;
-  
+  DBG(" parse string %a\n", tmpString);
   return EFI_SUCCESS;
 }
 
