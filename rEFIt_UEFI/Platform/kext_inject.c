@@ -551,11 +551,14 @@ UINT8   KBEECSearchSIP[]         = { 0xC3, 0x48, 0x85, 0xDB, 0x74, 0x70, 0x48, 0
 UINT8   KBEECReplaceSIP[]        = { 0xC3, 0x48, 0x85, 0xDB, 0xEB, 0x12, 0x48, 0x8B, 0x03, 0x48, 0x89, 0xDF, 0xFF, 0x50, 0x28, 0x48 };
 
 // Sierra
-// Sherlocks: Sierra SIP, cecekpawon: Sierra DP2+
+// Sherlocks: Sierra SIP, cecekpawon: Sierra DP2+, Micky1979: 10.12.4+
 // need to use KBEYos*EXT patch for Sierra DP1
 // need to use KBESie*EXT patch for Sierra DP2+
+// need to use KBESie4*EXT patch for 10.12.4+
 UINT8   KBESieSearchEXT[]        = { 0xE8, 0x25, 0x00, 0x00, 0x00, 0xEB, 0x05, 0xE8, 0x7E, 0x05, 0x00, 0x00 };
 UINT8   KBESieReplaceEXT[]       = { 0xE8, 0x25, 0x00, 0x00, 0x00, 0x90, 0x90, 0xE8, 0x7E, 0x05, 0x00, 0x00 };
+UINT8   KBESie4SearchEXT[]       = { 0xE8, 0x25, 0x00, 0x00, 0x00, 0xEB, 0x05, 0xE8, 0x9E, 0x05, 0x00, 0x00 };
+UINT8   KBESie4ReplaceEXT[]      = { 0xE8, 0x25, 0x00, 0x00, 0x00, 0x90, 0x90, 0xE8, 0x9E, 0x05, 0x00, 0x00 };
 UINT8   KBESieSearchSIP[]        = { 0xC3, 0x48, 0x85, 0xDB, 0x74, 0x71, 0x48, 0x8B, 0x03, 0x48, 0x89, 0xDF, 0xFF, 0x50, 0x28, 0x48 };
 UINT8   KBESieReplaceSIP[]       = { 0xC3, 0x48, 0x85, 0xDB, 0xEB, 0x12, 0x48, 0x8B, 0x03, 0x48, 0x89, 0xDF, 0xFF, 0x50, 0x28, 0x48 };
 
@@ -565,11 +568,6 @@ UINT8   KBESieDebugReplaceEXT[]  = { 0xE8, 0x47, 0x00, 0x00, 0x00, 0x90, 0x90, 0
 UINT8   KBESieDebugSearchSIP[]   = { 0x31, 0xC9, 0x39, 0xC1, 0x0F, 0x85, 0x3C, 0x00, 0x00, 0x00, 0x48, 0x8B, 0x85, 0xF8, 0xFE, 0xFF };
 UINT8   KBESieDebugReplaceSIP[]  = { 0x31, 0xC9, 0x39, 0xC1, 0xEB, 0x80, 0x90, 0x90, 0x90, 0x90, 0x48, 0x8B, 0x85, 0xF8, 0xFE, 0xFF };
 
-// Sierra develop kernel
-UINT8   KBESieDevelSearchEXT[]   = { 0xE8, 0x47, 0x00, 0x00, 0x00, 0xE9, 0x09, 0x00, 0x00, 0x00, 0x48, 0x8B, 0x7D, 0xE8, 0xE8, 0xD9 };
-UINT8   KBESieDevelReplaceEXT[]  = { 0xE8, 0x47, 0x00, 0x00, 0x00, 0x90, 0x90, 0x00, 0x00, 0x00, 0x48, 0x8B, 0x7D, 0xE8, 0xE8, 0xD9 };
-UINT8   KBESieDevelSearchSIP[]   = { 0x31, 0xC9, 0x39, 0xC1, 0x0F, 0x85, 0x3C, 0x00, 0x00, 0x00, 0x48, 0x8B, 0x85, 0xF8, 0xFE, 0xFF };
-UINT8   KBESieDevelReplaceSIP[]  = { 0x31, 0xC9, 0x39, 0xC1, 0xEB, 0x80, 0x90, 0x90, 0x90, 0x90, 0x48, 0x8B, 0x85, 0xF8, 0xFE, 0xFF };
 
 //
 // We can not rely on OSVersion global variable for OS version detection,
@@ -592,7 +590,6 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
   UINTN   NumEC = 0;
   UINTN   NumSie = 0;
   UINTN   NumSieDebug = 0;
-  UINTN   NumSieDevel = 0;
 
   
   DBG_RT(Entry, "\nPatching kernel for injected kexts...\n");
@@ -605,7 +602,6 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
     NumEC        = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBEECSearchSIP, sizeof(KBEECSearchSIP));
     NumSie       = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBESieSearchSIP, sizeof(KBESieSearchSIP));
     NumSieDebug  = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBESieDebugSearchSIP, sizeof(KBESieDebugSearchSIP));
-    NumSieDevel  = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBESieDevelSearchSIP, sizeof(KBESieDevelSearchSIP));
   } else {
     NumSnow_i386 = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBESnowSearchEXT_i386, sizeof(KBESnowSearchEXT_i386));
     NumLion_i386 = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBELionSearchEXT_i386, sizeof(KBELionSearchEXT_i386));
@@ -650,6 +646,7 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
   }
   else if (NumSie == 1) {
       Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBESieSearchEXT, sizeof(KBESieSearchEXT), KBESieReplaceEXT, 1) +
+            SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBESie4SearchEXT, sizeof(KBESie4SearchEXT), KBESie4ReplaceEXT, 1) +
             SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBESieSearchSIP, sizeof(KBESieSearchSIP), KBESieReplaceSIP, 1);
       DBG_RT(Entry, "==> kernel Sierra: %d replaces done.\n", Num);
   }
@@ -657,11 +654,6 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
       Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBESieDebugSearchEXT, sizeof(KBESieDebugSearchEXT), KBESieDebugReplaceEXT, 1) +
             SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBESieDebugSearchSIP, sizeof(KBESieDebugSearchSIP), KBESieDebugReplaceSIP, 1);
       DBG_RT(Entry, "==> kernel Sierra Debug: %d replaces done.\n", Num);
-  }
-  else if (NumSieDevel == 1) {
-      Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBESieDevelSearchEXT, sizeof(KBESieDevelSearchEXT), KBESieDevelReplaceEXT, 1) +
-            SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBESieDevelSearchSIP, sizeof(KBESieDevelSearchSIP), KBESieDevelReplaceSIP, 1);
-      DBG_RT(Entry, "==> kernel Sierra Development: %d replaces done.\n", Num);
   }
 
 
