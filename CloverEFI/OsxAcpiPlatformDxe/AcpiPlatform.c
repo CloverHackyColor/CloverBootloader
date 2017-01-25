@@ -537,7 +537,7 @@ AcpiPlatformEntryPoint (
 	// Read tables from the first volume.
 	//
 	for (Index=0; Index<NUM_TABLES; Index++) {
-		StrCpy(FileName, ACPInames[Index]);
+		StrCpyS(FileName, 32, ACPInames[Index]);
 //		DBG(L"File probe %s\n", FileName);
 		Status = Root->Open (Root, &ThisFile, FileName, EFI_FILE_MODE_READ, 0);
 		if (EFI_ERROR (Status)) {

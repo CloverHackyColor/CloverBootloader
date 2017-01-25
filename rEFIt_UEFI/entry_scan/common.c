@@ -317,7 +317,7 @@ STATIC CHAR16 **CreateInfoLines(IN CHAR16 *Message, OUT UINTN *Count)
   }
   // Copy strings
   Information[Index++] = Ptr = (CHAR16 *)(Information + Total);
-  StrCpy(Ptr, Message);
+  StrCpyS(Ptr, Length + 1, Message);
   while ((Index < Total) &&
          ((Ptr = StrStr(Ptr, L"\n")) != NULL)) {
     *Ptr++ = 0;

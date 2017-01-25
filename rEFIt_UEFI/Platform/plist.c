@@ -198,11 +198,12 @@ EFI_STATUS ParseXML(const CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
   TagPtr    tag = NULL;
   CHAR8*    configBuffer = NULL;
   UINT32    bufferSize = 0;
+  INTN      i;
   
   if (bufSize) {
-    bufferSize=bufSize;
+    bufferSize = bufSize;
   } else {
-    bufferSize=(UINT32)AsciiStrLen(buffer);
+    bufferSize = (UINT32)AsciiStrLen(buffer);
   }
   
   if(dict == NULL) {
@@ -215,6 +216,12 @@ EFI_STATUS ParseXML(const CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
   }
   
   CopyMem(configBuffer, buffer, bufferSize);
+  for (i=0; i<bufferSize; i++) {
+    if (configBuffer[i] == 0) {
+      configBuffer[i] = 0x20;  //replace random zero bytes to spaces
+    }
+  }
+    
   buffer_start = configBuffer;
   while (TRUE)
   {
@@ -521,7 +528,7 @@ EFI_STATUS ParseTagKey( char * buffer, TagPtr* tag, UINT32* lenPtr)
   
   *tag = tmpTag;
   *lenPtr = length + length2;
-  DBG("parse key %a success len=%d\n", tmpString, *lenPtr);
+  DBG("parse key '%a' success len=%d\n", tmpString, *lenPtr);
   return EFI_SUCCESS;
 }
 
@@ -922,7 +929,7 @@ CHAR8* NewSymbol(CHAR8* tmpString)
     // Set the symbol's data.
     symbol->refCount = 0;
     
-    AsciiStrnCpy(symbol->string, tmpString, len);
+    AsciiStrnCpyS(symbol->string, len+1, tmpString, len);
     
     // Add the symbol to the list.
     symbol->next = gSymbolsHead;

@@ -73,7 +73,7 @@ CHAR8 *get_pci_dev_path(pci_dt_t *PciDt)
     return NULL;
   devpathstr = FileDevicePathToStr(DevicePath);
   tmp = AllocateZeroPool((StrLen(devpathstr)+1)*sizeof(CHAR16));
-  UnicodeStrToAsciiStr(devpathstr, tmp);
+  UnicodeStrToAsciiStrS(devpathstr, tmp, (StrLen(devpathstr)+1));
   return tmp;
   
 }

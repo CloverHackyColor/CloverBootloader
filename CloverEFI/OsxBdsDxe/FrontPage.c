@@ -461,7 +461,7 @@ InitializeFrontPage (
       if (EFI_ERROR (Status)) {
         StringBuffer = AllocatePool (AsciiStrSize (Lang) * sizeof (CHAR16));
         ASSERT (StringBuffer != NULL);
-        AsciiStrToUnicodeStr (Lang, StringBuffer);
+        AsciiStrToUnicodeStrS (Lang, StringBuffer, AsciiStrSize(Lang));
       }
 
       ASSERT (StringBuffer != NULL);
@@ -642,9 +642,9 @@ ConvertProcessorToString (
     StringBuffer = L"   ";
   }
   Index = UnicodeValueToString (StringBuffer, LEFT_JUSTIFY, FreqMhz / 1000, 3);
-  StrCat (StringBuffer, L".");
+  StrCatS (StringBuffer, 32, L".");
   UnicodeValueToString (StringBuffer + Index + 1, PREFIX_ZERO, (FreqMhz % 1000) / 10, 2);
-  StrCat (StringBuffer, L" GHz");
+  StrCatS (StringBuffer, 32, L" GHz");
   *String = (CHAR16 *) StringBuffer;
   return ;
 }
@@ -672,7 +672,7 @@ ConvertMemorySizeToString (
   }
 
   UnicodeValueToString (StringBuffer, LEFT_JUSTIFY, MemorySize, 6);
-  StrCat (StringBuffer, L" MB RAM");
+  StrCatS (StringBuffer, 32, L" MB RAM");
 
   *String = (CHAR16 *) StringBuffer;
 
@@ -720,7 +720,7 @@ GetOptionalStringByIndex (
     *String = GetStringById (STRING_TOKEN (STR_MISSING_STRING));
   } else {
     *String = AllocatePool (StrSize * sizeof (CHAR16));
-    AsciiStrToUnicodeStr (OptionalStrStart, *String);
+    AsciiStrToUnicodeStrS (OptionalStrStart, *String, StrSize);
   }
 
   return EFI_SUCCESS;

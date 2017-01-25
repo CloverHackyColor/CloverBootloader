@@ -2328,7 +2328,7 @@ AsciiStrToUnicodeStrS (
   while ((*Source != '\0') && (--DestMax > 0)) {
     *(Destination++) = (CHAR16)*(Source++);
   }
-  *Destination = '\0';
+  *Destination = L'\0';
 
   return RETURN_SUCCESS;
 }

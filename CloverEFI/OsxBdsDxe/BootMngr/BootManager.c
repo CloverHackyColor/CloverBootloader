@@ -210,6 +210,7 @@ CallBootManager (
   EFI_HII_HANDLE              HiiHandle;
   EFI_BROWSER_ACTION_REQUEST  ActionRequest;
   UINTN                       TempSize;
+  INTN                        HelpSize;
   VOID                        *StartOpCodeHandle;
   VOID                        *EndOpCodeHandle;
   EFI_IFR_GUID_LABEL          *StartLabel;
@@ -328,14 +329,15 @@ CallBootManager (
 
     TempStr = FileDevicePathToStr (Option->DevicePath);
     TempSize = StrSize (TempStr);
-    HelpString = AllocateZeroPool (TempSize + StrSize (L"Device Path : "));
+    HelpSize = TempSize + StrSize (L"Device Path : ");
+    HelpString = AllocateZeroPool (HelpSize);
  //   ASSERT (HelpString != NULL);
    if (!HelpString) {
      return;
    }
    
-    StrCat (HelpString, L"Device Path : ");
-    StrCat (HelpString, TempStr);
+    StrCatS (HelpString, HelpSize / sizeof(HelpString[0]), L"Device Path : ");
+    StrCatS (HelpString, HelpSize / sizeof(HelpString[0]), TempStr);
 
     HelpToken = HiiSetString (HiiHandle, 0, HelpString, NULL);
 

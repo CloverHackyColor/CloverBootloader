@@ -61,12 +61,13 @@ GetNormalizedFName(IN CHAR16 *Parent, IN CHAR16 *FName)
 	else {
 		Len = StrSize(Parent) + StrSize(FName); // has place for extra char (\\) if needed
 		TmpStr = AllocateZeroPool(Len);
-		StrCpy(TmpStr, Parent);
+		StrCpyS(TmpStr, Len/sizeof(CHAR16), Parent);
 		TmpStr2 = GetStrLastChar(Parent);
 		if (TmpStr2 == NULL || *TmpStr2 != L'\\') {
-			StrCat(TmpStr, L"\\");
+			StrCatS(TmpStr, Len/sizeof(CHAR16), L"\\");
 		}
-		FName = StrCat(TmpStr, FName);
+		StrCatS(TmpStr, Len/sizeof(CHAR16), FName);
+    return TmpStr;
 	}
 	//DBG("='%s' ", FName);
 	return FName;

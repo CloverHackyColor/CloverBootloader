@@ -231,10 +231,10 @@ extern FILE  *stdout;
 #define memmove(dest,source,count)        CopyMem(dest,source,(UINTN)(count))
 #define strcmp                            AsciiStrCmp
 #define strncmp(string1,string2,count)    (int)(AsciiStrnCmp(string1,string2,(UINTN)(count)))
-#define strcpy(strDest,strSource)         AsciiStrCpy(strDest,strSource)
-#define strncpy(strDest,strSource,count)  AsciiStrnCpy(strDest,strSource,(UINTN)count)
+#define strcpy(strDest,strSource)         AsciiStrCpyS(strDest,AsciiStrLen(strDest)+1,strSource)
+#define strncpy(strDest,strSource,count)  AsciiStrnCpyS(strDest,AsciiStrLen(strDest)+1,strSource,(UINTN)count)
 #define strlen(str)                       (size_t)(AsciiStrLen(str))
-#define strcat(strDest,strSource)         AsciiStrCat(strDest,strSource)
+#define strcat(strDest,strSource)         AsciiStrCatS(strDest,AsciiStrLen(strDest)+1,strSource)
 #define strchr(str,ch)                    ScanMem8((VOID *)(str),AsciiStrSize(str),(UINT8)ch)
 #define abort()                           ASSERT (FALSE)
 #define assert(expression)

@@ -487,7 +487,7 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
       while ((i>0) && (tmp[--i] == 0x20)) {}
       tmp[i+1] = 0;
 			//	if (*p != 0) {
-      AsciiStrToUnicodeStr((CHAR8*)&tmp[0], volumeName);
+      AsciiStrToUnicodeStrS((CHAR8*)&tmp[0], volumeName, 255);
 			//	}
       DBG("Detected name %s\n", volumeName);
       Volume->VolName = PoolPrint(L"%s", volumeName);
@@ -1546,7 +1546,7 @@ VOID ReplaceExtension(IN OUT CHAR16 *Path, IN CHAR16 *Extension)
     if (Path[i] == '\\' || Path[i] == '/')
       break;
   }
-  StrCat(Path, Extension);
+  StrCatS(Path, StrLen(Path)/sizeof(CHAR16)+1, Extension);
 }
 
 CHAR16 * egFindExtension(IN CHAR16 *FileName)
@@ -1588,6 +1588,7 @@ CHAR16 *FileDevicePathToStr(IN EFI_DEVICE_PATH_PROTOCOL *DevPath)
 {
   CHAR16      *FilePath;
   CHAR16      *Char;
+  CHAR16      *Tail;
   
   FilePath = DevicePathToStr(DevPath);
   // fix / into '\\'
@@ -1601,7 +1602,11 @@ CHAR16 *FileDevicePathToStr(IN EFI_DEVICE_PATH_PROTOCOL *DevPath)
   // "\\\\" into '\\'
   Char = StrStr(FilePath, L"\\\\");
   while (Char != NULL) {
-    StrCpy(Char, Char + 1);
+//    StrCpyS(Char, 4, Char + 1);  //can't overlap
+    Tail = Char + 1;
+    while (*Tail != 0) {
+      *(Char++) = *(Tail++);
+    }
     Char = StrStr(FilePath, L"\\\\");
   }
   return FilePath;

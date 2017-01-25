@@ -306,7 +306,7 @@ ParseLoadOptions (
   if (AsciiConf != NULL) {
     *(AsciiConf + TailSize) = '\0';
     *Conf = AllocateZeroPool ((TailSize + 1) * sizeof (CHAR16));
-    AsciiStrToUnicodeStr (AsciiConf, *Conf);
+    AsciiStrToUnicodeStrS (AsciiConf, *Conf, TailSize);
     FreePool (AsciiConf);
   }
 }
@@ -859,7 +859,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
 
     // ATIConnectors patch
     Patches->KPATIConnectorsController = AllocateZeroPool (AsciiStrnLenS(Prop->string, 255) * sizeof(CHAR16) + 2);
-    AsciiStrToUnicodeStr (Prop->string, Patches->KPATIConnectorsController);
+    AsciiStrToUnicodeStrS (Prop->string, Patches->KPATIConnectorsController, AsciiStrnLenS(Prop->string, 255));
 
     Patches->KPATIConnectorsData = GetDataSetting (DictPointer, "ATIConnectorsData", &len);
     Patches->KPATIConnectorsDataLen = len;
@@ -929,7 +929,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
 
           if (AsciiStrnLenS(Prop2->string, 255) > 0) {
             Patches->ForceKexts[Patches->NrForceKexts] = AllocateZeroPool (AsciiStrnLenS(Prop2->string, 255) * sizeof(CHAR16) + 2);
-            AsciiStrToUnicodeStr (Prop2->string, Patches->ForceKexts[Patches->NrForceKexts]);
+            AsciiStrToUnicodeStrS(Prop2->string, Patches->ForceKexts[Patches->NrForceKexts], 255);
             DBG (" - [%d]: %s\n", Patches->NrForceKexts, Patches->ForceKexts[Patches->NrForceKexts]);
             ++Patches->NrForceKexts;
           }
@@ -2186,7 +2186,7 @@ GetEarlyUserSettings (
 
       Prop = GetProperty (DictPointer, "Arguments");
       if (Prop != NULL && (Prop->type == kTagTypeString) && Prop->string != NULL) {
-        AsciiStrnCpy(gSettings.BootArgs, Prop->string, 255);
+        AsciiStrnCpyS(gSettings.BootArgs, 256, Prop->string, 255);
       }
 
       // defaults if "DefaultVolume" is not present or is empty
@@ -2207,7 +2207,7 @@ GetEarlyUserSettings (
             gSettings.LastBootedVolume = TRUE;
           } else {
             gSettings.DefaultVolume = AllocateZeroPool (Size * sizeof(CHAR16));
-            AsciiStrToUnicodeStr (Prop->string, gSettings.DefaultVolume);
+            AsciiStrToUnicodeStrS(Prop->string, gSettings.DefaultVolume, Size);
           }
         }
       }
@@ -2215,7 +2215,7 @@ GetEarlyUserSettings (
       Prop = GetProperty (DictPointer, "DefaultLoader");
       if (Prop != NULL) {
         gSettings.DefaultLoader = AllocateZeroPool (AsciiStrSize (Prop->string) * sizeof(CHAR16));
-        AsciiStrToUnicodeStr (Prop->string, gSettings.DefaultLoader);
+        AsciiStrToUnicodeStrS (Prop->string, gSettings.DefaultLoader, AsciiStrSize (Prop->string));
       }
 
       Prop = GetProperty (DictPointer, "Debug");
@@ -2363,7 +2363,7 @@ GetEarlyUserSettings (
       // Legacy bios protocol
       Prop = GetProperty (DictPointer, "Legacy");
       if (Prop != NULL)  {
-        AsciiStrToUnicodeStr (Prop->string, gSettings.LegacyBoot);
+        AsciiStrToUnicodeStrS (Prop->string, gSettings.LegacyBoot, 32);
       } else if (gFirmwareClover) {
         // default for CLOVER EFI boot
         UnicodeSPrint (gSettings.LegacyBoot, sizeof(gSettings.LegacyBoot), L"PBR");
@@ -2513,8 +2513,7 @@ GetEarlyUserSettings (
 
       Prop = GetProperty (DictPointer, "Language");
       if (Prop != NULL) {
-        //      AsciiStrToUnicodeStr (Prop->string, gSettings.Language);
-        AsciiStrCpy (gSettings.Language, Prop->string);
+        AsciiStrCpyS (gSettings.Language, 16, Prop->string);
         if (AsciiStrStr (Prop->string, "en")) {
           gLanguage = english;
         } else if (AsciiStrStr (Prop->string, "ru")) {
@@ -3778,7 +3777,7 @@ ParseSMBIOSSettings(
   Prop = GetProperty (DictPointer, "ProductName");
   if (Prop != NULL) {
     MACHINE_TYPES Model;
-    AsciiStrCpy (gSettings.ProductName, Prop->string);
+    AsciiStrCpyS (gSettings.ProductName, 64, Prop->string);
     // let's fill all other fields based on this ProductName
     // to serve as default
     Model = GetModelFromString (gSettings.ProductName);
@@ -3794,44 +3793,44 @@ ParseSMBIOSSettings(
 
   Prop = GetProperty (DictPointer, "BiosVendor");
   if (Prop != NULL) {
-    AsciiStrCpy (gSettings.VendorName, Prop->string);
+    AsciiStrCpyS (gSettings.VendorName, 64, Prop->string);
   }
 
   Prop = GetProperty (DictPointer, "BiosVersion");
   if (Prop != NULL) {
-    AsciiStrCpy (gSettings.RomVersion, Prop->string);
+    AsciiStrCpyS (gSettings.RomVersion, 64, Prop->string);
   }
 
   Prop = GetProperty (DictPointer, "BiosReleaseDate");
   if (Prop != NULL) {
-    AsciiStrCpy (gSettings.ReleaseDate, Prop->string);
+    AsciiStrCpyS (gSettings.ReleaseDate, 64, Prop->string);
   }
 
   Prop = GetProperty (DictPointer, "Manufacturer");
   if (Prop != NULL) {
-    AsciiStrCpy (gSettings.ManufactureName, Prop->string);
+    AsciiStrCpyS (gSettings.ManufactureName, 64, Prop->string);
   }
 
   Prop = GetProperty (DictPointer, "Version");
   if (Prop != NULL) {
-    AsciiStrCpy (gSettings.VersionNr, Prop->string);
+    AsciiStrCpyS (gSettings.VersionNr, 64, Prop->string);
   }
 
   Prop = GetProperty (DictPointer, "Family");
   if (Prop != NULL) {
-    AsciiStrCpy (gSettings.FamilyName, Prop->string);
+    AsciiStrCpyS (gSettings.FamilyName, 64, Prop->string);
   }
 
   Prop = GetProperty (DictPointer, "SerialNumber");
   if (Prop != NULL) {
     ZeroMem(gSettings.SerialNr, 64);
-    AsciiStrCpy (gSettings.SerialNr, Prop->string);
+    AsciiStrCpyS (gSettings.SerialNr, 64, Prop->string);
   }
 
   Prop = GetProperty (DictPointer, "SmUUID");
   if (Prop != NULL) {
     if (IsValidGuidAsciiString (Prop->string)) {
-      AsciiStrToUnicodeStr (Prop->string, (CHAR16*)&UStr[0]);
+      AsciiStrToUnicodeStrS (Prop->string, (CHAR16*)&UStr[0], 64);
       StrToGuidLE ((CHAR16*)&UStr[0], &gSettings.SmUUID);
       gSettings.SmUUIDConfig = TRUE;
     } else {
@@ -3841,24 +3840,24 @@ ParseSMBIOSSettings(
 
   Prop = GetProperty (DictPointer, "BoardManufacturer");
   if (Prop != NULL) {
-    AsciiStrCpy (gSettings.BoardManufactureName, Prop->string);
+    AsciiStrCpyS (gSettings.BoardManufactureName, 64, Prop->string);
   }
 
   Prop = GetProperty (DictPointer, "BoardSerialNumber");
   if (Prop != NULL && AsciiStrLen (Prop->string) > 0) {
-    AsciiStrCpy (gSettings.BoardSerialNumber, Prop->string);
+    AsciiStrCpyS (gSettings.BoardSerialNumber, 64, Prop->string);
   }
 
   Prop = GetProperty (DictPointer, "Board-ID");
   if (Prop != NULL) {
-    AsciiStrCpy (gSettings.BoardNumber, Prop->string);
+    AsciiStrCpyS (gSettings.BoardNumber, 64, Prop->string);
   }
 
   Prop = GetProperty (DictPointer, "BoardVersion");
   if (Prop != NULL) {
-    AsciiStrCpy (gSettings.BoardVersion, Prop->string);
+    AsciiStrCpyS (gSettings.BoardVersion, 64, Prop->string);
   } else if (!Default) {
-    AsciiStrCpy (gSettings.BoardVersion, gSettings.ProductName);
+    AsciiStrCpyS (gSettings.BoardVersion, 64, gSettings.ProductName);
   }
 
   Prop = GetProperty (DictPointer, "BoardType");
@@ -3876,17 +3875,17 @@ ParseSMBIOSSettings(
 
   Prop = GetProperty (DictPointer, "LocationInChassis");
   if (Prop != NULL) {
-    AsciiStrCpy (gSettings.LocationInChassis, Prop->string);
+    AsciiStrCpyS (gSettings.LocationInChassis, 64, Prop->string);
   }
 
   Prop = GetProperty (DictPointer, "ChassisManufacturer");
   if (Prop != NULL) {
-    AsciiStrCpy (gSettings.ChassisManufacturer, Prop->string);
+    AsciiStrCpyS (gSettings.ChassisManufacturer, 64, Prop->string);
   }
 
   Prop = GetProperty (DictPointer, "ChassisAssetTag");
   if (Prop != NULL) {
-    AsciiStrCpy (gSettings.ChassisAssetTag, Prop->string);
+    AsciiStrCpyS (gSettings.ChassisAssetTag, 64, Prop->string);
   }
 
   Prop = GetProperty (DictPointer, "ChassisType");
@@ -3930,7 +3929,7 @@ GetUserSettings(
       Prop = GetProperty (DictPointer, "Arguments");
       //if (Prop != NULL && (Prop->type == kTagTypeString) && Prop->string != NULL) {
       if ((Prop != NULL) && (Prop->type == kTagTypeString) && (Prop->string != NULL) && (AsciiStrStr(gSettings.BootArgs, Prop->string) == NULL)) {
-        AsciiStrnCpy(gSettings.BootArgs, Prop->string, 255);
+        AsciiStrnCpyS(gSettings.BootArgs, 256, Prop->string, 255);
         //gBootArgsChanged = TRUE;
         //gBootChanged = TRUE;
       }
@@ -3996,7 +3995,7 @@ GetUserSettings(
 
       Prop = GetProperty (DictPointer, "FBName");
       if (Prop != NULL) {
-        AsciiStrToUnicodeStr (Prop->string, gSettings.FBName);
+        AsciiStrToUnicodeStrS(Prop->string, gSettings.FBName, 16);
       }
 
       Prop = GetProperty (DictPointer, "NVCAP");
@@ -4053,7 +4052,7 @@ GetUserSettings(
         EFI_PHYSICAL_ADDRESS  BufferPtr = EFI_SYSTEM_TABLE_MAX_ADDRESS; //0xFE000000;
         UINTN strlength   = AsciiStrLen (Prop->string);
         cDeviceProperties = AllocateZeroPool (strlength + 1);
-        AsciiStrCpy (cDeviceProperties, Prop->string);
+        AsciiStrCpyS (cDeviceProperties, strlength + 1, Prop->string);
         //-------
         Status = gBS->AllocatePages (
                                      AllocateMaxAddress,
@@ -4104,8 +4103,9 @@ GetUserSettings(
               Func  = hexstrtouint8(&Str[6]);
               DeviceAddr = PCIADDR(Bus, Dev, Func);
               AsciiSPrint(Label, 64, "[%02x:%02x.%02x] ", Bus, Dev, Func);
-              DBG(" %a\n", Label);
+              DBG(" %a", Label);
             } else {
+              DBG (" no PciAddr\n");
               continue;
             }
             
@@ -4114,7 +4114,7 @@ GetUserSettings(
               AsciiStrCatS(Label, 64, Dict2->string);
               DBG (" (%a)", Dict2->string);
             }
-            
+            DBG ("\n");
             Dict2 = GetProperty (Prop2, "CustomProperties");
             if (Dict2 != NULL) {
               TagPtr Dict3;
@@ -4479,7 +4479,7 @@ GetUserSettings(
         //gSettings.DsdtName by default is "DSDT.aml", but name "BIOS" will mean autopatch
         Prop = GetProperty (Dict2, "Name");
         if (Prop != NULL) {
-          AsciiStrToUnicodeStr (Prop->string, gSettings.DsdtName);
+          AsciiStrToUnicodeStrS (Prop->string, gSettings.DsdtName, 28);
         }
 
         Prop = GetProperty (Dict2, "Debug");
@@ -5351,7 +5351,7 @@ GetUserSettings(
       Prop = GetProperty (DictPointer, "CustomUUID");
       if (Prop != NULL) {
         if (IsValidGuidAsciiString (Prop->string)) {
-          AsciiStrToUnicodeStr (Prop->string, gSettings.CustomUuid);
+          AsciiStrToUnicodeStrS(Prop->string, gSettings.CustomUuid, 40);
           Status = StrToGuidLE (gSettings.CustomUuid, &gUuid);
           if (!EFI_ERROR (Status)) {
             IsValidCustomUUID = TRUE;
@@ -5502,22 +5502,16 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
           if (Prop != NULL && Prop->string != NULL && Prop->string[0] != '\0') {
             if (AsciiStrStr (Prop->string, "Install%20OS%20X%20Mavericks.app")) {
               OSVersion = AllocateCopyPool (5, "10.9");
-    //          UnicodeStrToAsciiStr (L"10.9", OSVersion);
             } else if (AsciiStrStr (Prop->string, "Install%20macOS%20Sierra") || AsciiStrStr (Prop->string, "Install%20OS%20X%2010.12")) {
               OSVersion = AllocateCopyPool (6, "10.12");
-    //          UnicodeStrToAsciiStr (L"10.12", OSVersion);
             } else if (AsciiStrStr (Prop->string, "Install%20OS%20X%20El%20Capitan") || AsciiStrStr (Prop->string, "Install%20OS%20X%2010.11")) {
               OSVersion = AllocateCopyPool (6, "10.11");
-    //          UnicodeStrToAsciiStr (L"10.11", OSVersion);
             } else if (AsciiStrStr (Prop->string, "Install%20OS%20X%20Yosemite") || AsciiStrStr (Prop->string, "Install%20OS%20X%2010.10")) {
               OSVersion = AllocateCopyPool (6, "10.10");
-    //          UnicodeStrToAsciiStr (L"10.10", OSVersion);
-            } else if (AsciiStrStr (Prop->string, "Install%20OS%20X%20Mountain%20Lion")) {
+             } else if (AsciiStrStr (Prop->string, "Install%20OS%20X%20Mountain%20Lion")) {
               OSVersion = AllocateCopyPool (5, "10.8");
-     //         UnicodeStrToAsciiStr (L"10.8", OSVersion);
             } else if (AsciiStrStr (Prop->string, "Install%20Mac%20OS%20X%20Lion")) {
               OSVersion = AllocateCopyPool (5, "10.7");
-     //         UnicodeStrToAsciiStr (L"10.7", OSVersion);
             }
           }
         }
@@ -5543,7 +5537,6 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
     } else if (FileExists (Entry->Volume->RootDir, L"\\com.apple.recovery.boot\\boot.efi")) {
       // Special case - com.apple.recovery.boot/boot.efi exists but SystemVersion.plist doesn't --> 10.9 recovery
       OSVersion    = AllocateCopyPool (5, "10.9");
- //     UnicodeStrToAsciiStr (L"10.9", OSVersion); // >= 10.9 ?
     }
   }
 
@@ -5663,7 +5656,7 @@ GetRootUUID (IN  REFIT_VOLUME *Volume)
 
     Prop = GetProperty (Dict, "Root UUID");
     if (Prop != NULL) {
-      AsciiStrToUnicodeStr (Prop->string, Uuid);
+      AsciiStrToUnicodeStrS(Prop->string, Uuid, 40);
       Status = StrToGuidLE (Uuid, &Volume->RootUUID);
     }
 
@@ -6417,7 +6410,7 @@ CHAR16
   CHAR8  *DotPtr;
 
   if (OSVersion != NULL) {
-    AsciiStrnCpy(FixedVersion, OSVersion, 5);
+    AsciiStrnCpyS(FixedVersion, 6, OSVersion, 5);
     // OSVersion may contain minor version too (can be 10.x or 10.x.y)
     if ((DotPtr = AsciiStrStr (FixedVersion, ".")) != NULL) {
       DotPtr = AsciiStrStr (DotPtr+1, "."); // second dot

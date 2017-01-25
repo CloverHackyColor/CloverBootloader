@@ -673,7 +673,7 @@ LoadNvramPlist (
     //
     // parse it into gNvramDict 
     //
-    Status = ParseXML ((const CHAR8*)NvramPtr, &gNvramDict,0);
+    Status = ParseXML ((const CHAR8*)NvramPtr, &gNvramDict, Size);
 //    if(Status != EFI_SUCCESS) {
 //        DBG (" parsing error\n");
 //    }
@@ -825,7 +825,7 @@ PutNvramPlistToRtVars ()
       DBG (" ERROR: Tag is not <key>, type = %d\n", Tag->type);
       continue;
     }
-    
+//    DBG("tag: %a\n", Tag->string);
     // skip OsxAptioFixDrv-RelocBase - appears and causes trouble
     // in kernel and kext patcher when mixing UEFI and CloverEFI boot
     if (AsciiStrCmp (Tag->string, "OsxAptioFixDrv-RelocBase") == 0) {
@@ -845,7 +845,7 @@ PutNvramPlistToRtVars ()
       continue;
     }
 
-    AsciiStrToUnicodeStr (Tag->string, KeyBuf);
+    AsciiStrToUnicodeStrS(Tag->string, KeyBuf, 128);
     if (!GlobalConfig.DebugLog) {
       DBG (" Adding Key: %s: ", KeyBuf);
     }

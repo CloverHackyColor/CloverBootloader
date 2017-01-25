@@ -340,7 +340,7 @@ WriteToOsS3PerformanceData (
       if ((AsciiStrnCmp (Token, "PEIM", PEI_PERFORMANCE_STRING_SIZE) == 0) && (Handle != NULL)) {
         AsciiSPrint (PerfData->Token, PERF_TOKEN_LENGTH, "0x%11p", Handle);
       } else {
-        AsciiStrnCpy (PerfData->Token, Token, PERF_TOKEN_LENGTH);
+        AsciiStrnCpyS (PerfData->Token, PERF_TOKEN_LENGTH+1, Token, PERF_TOKEN_LENGTH);
       }
       if (StartTicker == 1) {
         StartTicker = StartValue;

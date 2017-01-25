@@ -814,27 +814,27 @@ struct SYSVARIABLES
 typedef struct {
 
   // SMBIOS TYPE0
-  CHAR8                 	VendorName[64];
+  CHAR8                   VendorName[64];
   CHAR8	                  RomVersion[64];
   CHAR8	                  ReleaseDate[64];
   // SMBIOS TYPE1
-  CHAR8                 	ManufactureName[64];
-  CHAR8                 	ProductName[64];
-  CHAR8                 	VersionNr[64];
+  CHAR8                   ManufactureName[64];
+  CHAR8                   ProductName[64];
+  CHAR8                   VersionNr[64];
   CHAR8	                  SerialNr[64];
   EFI_GUID                SmUUID;
   BOOLEAN                 SmUUIDConfig;
   CHAR8                   pad0[7];
 //CHAR8	                  Uuid[64];
 //CHAR8	                  SKUNumber[64];
-  CHAR8                 	FamilyName[64];
+  CHAR8                   FamilyName[64];
   CHAR8                   OEMProduct[64];
   CHAR8                   OEMVendor[64];
   // SMBIOS TYPE2
   CHAR8	                  BoardManufactureName[64];
   CHAR8	                  BoardSerialNumber[64];
-  CHAR8                 	BoardNumber[64]; //Board-ID
-  CHAR8                 	LocationInChassis[64];
+  CHAR8                   BoardNumber[64]; //Board-ID
+  CHAR8                   LocationInChassis[64];
   CHAR8                   BoardVersion[64];
   CHAR8                   OEMBoard[64];
   UINT8                   BoardType;
@@ -845,17 +845,17 @@ typedef struct {
   CHAR8	                  ChassisManufacturer[64];
   CHAR8	                  ChassisAssetTag[64];
   // SMBIOS TYPE4
-  UINT32	                CpuFreqMHz;
-  UINT32	                BusSpeed; //in kHz
+  UINT32	              CpuFreqMHz;
+  UINT32	              BusSpeed; //in kHz
   BOOLEAN                 Turbo;
   UINT8                   EnabledCores;
   BOOLEAN                 UserChange;
   BOOLEAN                 QEMU;
   // SMBIOS TYPE17
-  CHAR8                 	MemoryManufacturer[64];
-  CHAR8                 	MemorySerialNumber[64];
-  CHAR8                 	MemoryPartNumber[64];
-  CHAR8                 	MemorySpeed[64];
+  CHAR8                   MemoryManufacturer[64];
+  CHAR8                   MemorySerialNumber[64];
+  CHAR8                   MemoryPartNumber[64];
+  CHAR8                   MemorySpeed[64];
   // SMBIOS TYPE131
   UINT16                  CpuType;
   // SMBIOS TYPE132
@@ -865,7 +865,7 @@ typedef struct {
   INT8                    XMPDetection;
   BOOLEAN                 UseARTFreq;
   // SMBIOS TYPE133
-  UINT64	                PlatformFeature;
+  UINT64	              PlatformFeature;
 
   // OS parameters
   CHAR8                   Language[16];

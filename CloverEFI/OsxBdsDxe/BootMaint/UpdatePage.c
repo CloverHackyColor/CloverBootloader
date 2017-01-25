@@ -836,7 +836,7 @@ UpdateConModePage (
     //
     UnicodeValueToString (ModeString, 0, Col, 0);
     PStr = &ModeString[0];
-    StrnCat (PStr, L" x ", StrLen(L" x ") + 1);
+    StrnCatS (PStr, 50, L" x ", StrLen(L" x ") + 1);
     PStr = PStr + StrLen (PStr);
     UnicodeValueToString (PStr , 0, Row, 0);
 

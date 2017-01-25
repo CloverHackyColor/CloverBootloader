@@ -589,9 +589,9 @@ FileDevicePathToText(EFI_DEVICE_PATH_PROTOCOL *FilePathProto)
 			Size = (DevicePathNodeLength(FilePathProto) - 4) / 2;
 			if (SizeAll + Size < 256) {
 				if (SizeAll > 0 && FilePathText[SizeAll / 2 - 2] != L'\\') {
-					StrCat(FilePathText, L"\\");
+					StrCatS(FilePathText, 256, L"\\");
 				}
-				StrCat(FilePathText, FilePath->PathName);
+				StrCatS(FilePathText, 256, FilePath->PathName);
 				SizeAll = StrSize(FilePathText);
 			}
 		}
@@ -607,7 +607,7 @@ FileDevicePathToText(EFI_DEVICE_PATH_PROTOCOL *FilePathProto)
 		// we are allocating mem here - should be released by caller
 		Status = gBS->AllocatePool(EfiBootServicesData, Size, (VOID*)&OutFilePathText);
 		if (Status == EFI_SUCCESS) {
-			StrCpy(OutFilePathText, FilePathText);
+			StrCpyS(OutFilePathText, Size/sizeof(CHAR16), FilePathText);
 		} else {
 			OutFilePathText = NULL;
 		}

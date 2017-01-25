@@ -105,14 +105,14 @@ EFI_STATUS EFIAPI LoadKext(IN LOADER_ENTRY *Entry, IN EFI_FILE *RootDir, IN CHAR
     }
     NoContents = TRUE;
 	}
-  if(ParseXML((CHAR8*)infoDictBuffer,&dict,0)!=0) {
+  if(ParseXML((CHAR8*)infoDictBuffer,&dict,infoDictBufferLength)!=0) {
     FreePool(infoDictBuffer);
     MsgLog("Failed to load extra kext (failed to parse Info.plist): %s\n", FileName);
     return EFI_NOT_FOUND;
   }
   prop=GetProperty(dict,"CFBundleExecutable");
   if(prop!=0) {
-    AsciiStrToUnicodeStr(prop->string,Executable);
+    AsciiStrToUnicodeStrS(prop->string, Executable, 256);
     if (NoContents) {
       UnicodeSPrint(TempName, 512, L"%s\\%s", FileName, Executable);
     } else {
@@ -134,7 +134,7 @@ EFI_STATUS EFIAPI LoadKext(IN LOADER_ENTRY *Entry, IN EFI_FILE *RootDir, IN CHAR
   }
   bundlePathBufferLength = StrLen(FileName) + 1;
   bundlePathBuffer = AllocateZeroPool(bundlePathBufferLength);
-  UnicodeStrToAsciiStr(FileName, bundlePathBuffer);
+  UnicodeStrToAsciiStrS(FileName, bundlePathBuffer, bundlePathBufferLength);
   
   kext->length = (UINT32)(sizeof(_BooterKextFileInfo) + infoDictBufferLength + executableBufferLength + bundlePathBufferLength);
   infoAddr = (_BooterKextFileInfo *)AllocatePool(kext->length);

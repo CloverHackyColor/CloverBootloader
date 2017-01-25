@@ -393,7 +393,7 @@ GetMacAddressString(
   }
 
   *PBuffer = String;
-  StrCpy(String, L"MAC:");
+  StrCpyS(String, BufferLen/sizeof(CHAR16), L"MAC:");
   String += 4;
   
   //
@@ -1409,7 +1409,7 @@ CallDriverHealth (
     //
     // Add the Driver name & Controller name into FormSetTitle string
     // 
-    StrnCat (String, DriverName, StrLen (DriverName));
+    StrnCatS (String, 512, DriverName, StrLen (DriverName));
 
 
     Status = DriverHealthGetControllerName (
@@ -1423,15 +1423,15 @@ CallDriverHealth (
       //
       // Can not get the Controller name, just let it empty.
       //
-      StrnCat (String, L"    ", StrLen (L"    "));
-      StrnCat (String, ControllerName, StrLen (ControllerName));   
+      StrnCatS (String, 512, L"    ", StrLen (L"    "));
+      StrnCatS (String, 512, ControllerName, StrLen (ControllerName));
     }
    
     //
     // Add the message of the Module itself provided after the string item.
     //
     if ((DriverHealthInfo->MessageList != NULL) && (DriverHealthInfo->MessageList->StringId != 0)) {
-       StrnCat (String, L"    ", StrLen (L"    "));
+       StrnCatS (String, 512, L"    ", StrLen (L"    "));
        TmpString = HiiGetString (
                      DriverHealthInfo->MessageList->HiiHandle, 
                      DriverHealthInfo->MessageList->StringId, 
@@ -1465,7 +1465,7 @@ CallDriverHealth (
 
 //    ASSERT (TmpString != NULL);
     if (TmpString) {
-      StrCat (String, TmpString);
+      StrCatS (String, 512, TmpString);
       FreePool (TmpString);
     }
 

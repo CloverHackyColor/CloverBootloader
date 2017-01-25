@@ -1168,8 +1168,8 @@ SetupResetReminder (
         FreePool (StringBuffer1);
         return;
       }
-      StrCpy (StringBuffer1, L"Configuration changed. Reset to apply it Now.");
-      StrCpy (StringBuffer2, L"Press ENTER to reset");
+      StrCpyS (StringBuffer1, MAX_STRING_LEN, L"Configuration changed. Reset to apply it Now.");
+      StrCpyS (StringBuffer2, MAX_STRING_LEN, L"Press ENTER to reset");
       //
       // Popup a menu to notice user
       //

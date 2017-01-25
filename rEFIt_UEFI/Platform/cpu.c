@@ -338,7 +338,7 @@ VOID GetCPUProperties (VOID)
     for (s = str; *s != '\0'; s++){
       if (*s != ' ') break; //remove leading spaces
     }
-    AsciiStrnCpy(gCPUStructure.BrandString, s, 48);
+    AsciiStrnCpyS(gCPUStructure.BrandString, 48, s, 48);
     
     if (!AsciiStrnCmp((const CHAR8*)gCPUStructure.BrandString, (const CHAR8*)CPU_STRING_UNKNOWN, iStrLen((gCPUStructure.BrandString) + 1, 48)))
     {

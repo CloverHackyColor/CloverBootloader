@@ -1198,23 +1198,23 @@ CHAR8 *AppleBoardLocation = "Part Component";
 VOID
 SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
 {
-  AsciiStrCpy (gSettings.VendorName,           BiosVendor);
-  AsciiStrCpy (gSettings.RomVersion,           AppleFirmwareVersion[Model]);
-  AsciiStrCpy (gSettings.ReleaseDate,          AppleReleaseDate[Model]);
-  AsciiStrCpy (gSettings.ManufactureName,      BiosVendor);
+  AsciiStrCpyS (gSettings.VendorName, 64,      BiosVendor);
+  AsciiStrCpyS (gSettings.RomVersion, 64,      AppleFirmwareVersion[Model]);
+  AsciiStrCpyS (gSettings.ReleaseDate, 64,     AppleReleaseDate[Model]);
+  AsciiStrCpyS (gSettings.ManufactureName, 64, BiosVendor);
   if (Redefine) {
-    AsciiStrCpy (gSettings.ProductName,          AppleProductName[Model]);
+    AsciiStrCpyS (gSettings.ProductName, 64,   AppleProductName[Model]);
   }
-  AsciiStrCpy (gSettings.VersionNr,            AppleSystemVersion[Model]);
-  AsciiStrCpy (gSettings.SerialNr,             AppleSerialNumber[Model]);
-  AsciiStrCpy (gSettings.FamilyName,           AppleFamilies[Model]);
-  AsciiStrCpy (gSettings.BoardManufactureName, BiosVendor);
-  AsciiStrCpy (gSettings.BoardSerialNumber,    AppleBoardSN);
-  AsciiStrCpy (gSettings.BoardNumber,          AppleBoardID[Model]);
-  AsciiStrCpy (gSettings.BoardVersion,         AppleProductName[Model]);
-  AsciiStrCpy (gSettings.LocationInChassis,    AppleBoardLocation);
-  AsciiStrCpy (gSettings.ChassisManufacturer,  BiosVendor);
-  AsciiStrCpy (gSettings.ChassisAssetTag,      AppleChassisAsset[Model]);
+  AsciiStrCpyS (gSettings.VersionNr, 64,       AppleSystemVersion[Model]);
+  AsciiStrCpyS (gSettings.SerialNr, 64,        AppleSerialNumber[Model]);
+  AsciiStrCpyS (gSettings.FamilyName, 64,      AppleFamilies[Model]);
+  AsciiStrCpyS (gSettings.BoardManufactureName, 64, BiosVendor);
+  AsciiStrCpyS (gSettings.BoardSerialNumber, 64,    AppleBoardSN);
+  AsciiStrCpyS (gSettings.BoardNumber, 64,          AppleBoardID[Model]);
+  AsciiStrCpyS (gSettings.BoardVersion, 64,         AppleProductName[Model]);
+  AsciiStrCpyS (gSettings.LocationInChassis, 64,    AppleBoardLocation);
+  AsciiStrCpyS (gSettings.ChassisManufacturer, 64,  BiosVendor);
+  AsciiStrCpyS (gSettings.ChassisAssetTag, 64,      AppleChassisAsset[Model]);
 
   if (Model >= MacPro31) {
     gSettings.BoardType = BaseBoardTypeProcessorMemoryModule; //11;
@@ -1370,120 +1370,120 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
 
   //RPlt helper
   if (SmcPlatform[Model][0] != 'N') {
-    AsciiStrCpy (gSettings.RPlt, SmcPlatform[Model]);
+    AsciiStrCpyS (gSettings.RPlt, 8, SmcPlatform[Model]);
   } else {
     switch (gCPUStructure.Model) {
       case CPU_MODEL_PENTIUM_M:
       case CPU_MODEL_CELERON:
-        AsciiStrCpy (gSettings.RPlt, "m70");
+        AsciiStrCpyS (gSettings.RPlt, 8, "m70");
         break;
 
       case CPU_MODEL_YONAH:
-        AsciiStrCpy (gSettings.RPlt, "k22");
+        AsciiStrCpyS (gSettings.RPlt, 8, "k22");
         break;
 
       case CPU_MODEL_MEROM: //TODO check for mobile
-        AsciiStrCpy (gSettings.RPlt, "m75");
+        AsciiStrCpyS (gSettings.RPlt, 8, "m75");
         break;
 
       case CPU_MODEL_PENRYN:
         if (gSettings.Mobile) {
-          AsciiStrCpy (gSettings.RPlt, "m82");
+          AsciiStrCpyS (gSettings.RPlt, 8, "m82");
         } else {
-          AsciiStrCpy (gSettings.RPlt, "k36");
+          AsciiStrCpyS (gSettings.RPlt, 8, "k36");
         }
         break;
 
       case CPU_MODEL_SANDY_BRIDGE:
         if (gSettings.Mobile) {
-          AsciiStrCpy (gSettings.RPlt, "k90i");
+          AsciiStrCpyS (gSettings.RPlt, 8, "k90i");
         } else {
-          AsciiStrCpy (gSettings.RPlt, "k60");
+          AsciiStrCpyS (gSettings.RPlt, 8, "k60");
         }
         break;
 
       case CPU_MODEL_IVY_BRIDGE:
-        AsciiStrCpy (gSettings.RPlt, "j30");
+        AsciiStrCpyS (gSettings.RPlt, 8, "j30");
         break;
 
       case CPU_MODEL_IVY_BRIDGE_E5:
-        AsciiStrCpy (gSettings.RPlt, "j90");
+        AsciiStrCpyS (gSettings.RPlt, 8, "j90");
         break;
 
       case CPU_MODEL_HASWELL_ULT:
-        AsciiStrCpy (gSettings.RPlt, "j44");
+        AsciiStrCpyS (gSettings.RPlt, 8, "j44");
         break;
 
       case CPU_MODEL_SKYLAKE_D:
-        AsciiStrCpy (gSettings.RPlt, "j95");
+        AsciiStrCpyS (gSettings.RPlt, 8, "j95");
         break;
 
       case CPU_MODEL_SKYLAKE_U:
-        AsciiStrCpy (gSettings.RPlt, "j79");
+        AsciiStrCpyS (gSettings.RPlt, 8, "j79");
         break;
 
       default:
-        AsciiStrCpy (gSettings.RPlt, "t9");
+        AsciiStrCpyS (gSettings.RPlt, 8, "t9");
         break;
     }
   }
     
   //RBr helper
   if (SmcBranch[Model][0] != 'N') {
-    AsciiStrCpy (gSettings.RBr, SmcBranch[Model]);
+    AsciiStrCpyS (gSettings.RBr, 8, SmcBranch[Model]);
   } else {
     switch (gCPUStructure.Model) {
       case CPU_MODEL_PENTIUM_M:
       case CPU_MODEL_CELERON:
-        AsciiStrCpy (gSettings.RBr, "m70");
+        AsciiStrCpyS (gSettings.RBr, 8, "m70");
         break;
                 
       case CPU_MODEL_YONAH:
-        AsciiStrCpy (gSettings.RBr, "k22");
+        AsciiStrCpyS (gSettings.RBr, 8, "k22");
         break;
                 
       case CPU_MODEL_MEROM: //TODO check for mobile
-        AsciiStrCpy (gSettings.RBr, "m75");
+        AsciiStrCpyS (gSettings.RBr, 8, "m75");
         break;
                 
       case CPU_MODEL_PENRYN:
         if (gSettings.Mobile) {
-          AsciiStrCpy (gSettings.RBr, "m82");
+          AsciiStrCpyS (gSettings.RBr, 8, "m82");
         } else {
-          AsciiStrCpy (gSettings.RBr, "k36");
+          AsciiStrCpyS (gSettings.RBr, 8, "k36");
         }
         break;
                 
       case CPU_MODEL_SANDY_BRIDGE:
         if (gSettings.Mobile) {
-          AsciiStrCpy (gSettings.RBr, "k90i");
+          AsciiStrCpyS (gSettings.RBr, 8, "k90i");
         } else {
-          AsciiStrCpy (gSettings.RBr, "k60");
+          AsciiStrCpyS (gSettings.RBr, 8, "k60");
         }
         break;
                 
       case CPU_MODEL_IVY_BRIDGE:
-        AsciiStrCpy (gSettings.RBr, "j30");
+        AsciiStrCpyS (gSettings.RBr, 8, "j30");
         break;
                 
       case CPU_MODEL_IVY_BRIDGE_E5:
-        AsciiStrCpy (gSettings.RBr, "j90");
+        AsciiStrCpyS (gSettings.RBr, 8, "j90");
         break;
                 
       case CPU_MODEL_HASWELL_ULT:
-        AsciiStrCpy (gSettings.RBr, "j44");
+        AsciiStrCpyS (gSettings.RBr, 8, "j44");
         break;
                 
       case CPU_MODEL_SKYLAKE_D:
-        AsciiStrCpy (gSettings.RBr, "j95");
+        AsciiStrCpyS (gSettings.RBr, 8, "j95");
         break;
                 
       case CPU_MODEL_SKYLAKE_U:
-        AsciiStrCpy (gSettings.RBr, "j79");
+        AsciiStrCpyS (gSettings.RBr, 8, "j79");
         break;
                 
       default:
-        AsciiStrCpy (gSettings.RBr, "t9");
+        AsciiStrCpyS (gSettings.RBr, 8, "t9");
         break;
     }
   }
@@ -1545,7 +1545,7 @@ GetDefaultSettings ()
   gSettings.HDAInjection         = TRUE;
   //gSettings.HDALayoutId          = 0;
   gSettings.USBInjection         = TRUE; // enabled by default to have the same behavior as before
-  StrCpy (gSettings.DsdtName, L"DSDT.aml");
+  StrCpyS (gSettings.DsdtName, 28, L"DSDT.aml");
   gSettings.BacklightLevel       = 0xFFFF; //0x0503; -- the value from MBA52
   gSettings.BacklightLevelConfig = FALSE;
   gSettings.TrustSMBIOS          = TRUE;

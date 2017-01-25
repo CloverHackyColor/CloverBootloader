@@ -344,7 +344,7 @@ STATIC EFI_STATUS GetOSXVolumeName(LOADER_ENTRY *Entry)
 
       //Convert to Unicode
       tmpName = (CHAR16*)AllocateZeroPool((fileLen+1)*2);
-      AsciiStrToUnicodeStr(targetString, tmpName);
+      AsciiStrToUnicodeStrS(targetString, tmpName, fileLen);
 
       Entry->VolName = EfiStrDuplicate(tmpName);
       DBG("Created name:%s\n", Entry->VolName);

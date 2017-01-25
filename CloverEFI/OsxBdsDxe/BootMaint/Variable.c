@@ -572,7 +572,7 @@ Var_UpdateDriverOption (
     );
 
   if (*DescriptionData == 0x0000) {
-    StrCpy (DescriptionData, DriverString);
+    StrCpyS (DescriptionData, 12, DriverString);
   }
 
   BufferSize = sizeof (UINT32) + sizeof (UINT16) + StrSize (DescriptionData);
@@ -756,7 +756,7 @@ Var_UpdateBootOption (
   UnicodeSPrint (BootString, sizeof (BootString), L"Boot%04x", Index);
 
   if (NvRamMap->BootDescriptionData[0] == 0x0000) {
-    StrCpy (NvRamMap->BootDescriptionData, BootString);
+    StrCpyS (NvRamMap->BootDescriptionData, 10, BootString);
   }
 
   BufferSize = sizeof (UINT32) + sizeof (UINT16) + StrSize (NvRamMap->BootDescriptionData);

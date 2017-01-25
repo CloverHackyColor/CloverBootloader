@@ -325,7 +325,7 @@ UpdateVariableInfo (
       CopyGuid (&gVariableInfo->VendorGuid, VendorGuid);
       gVariableInfo->Name = AllocateZeroPool (StrSize (VariableName));
  //     ASSERT (gVariableInfo->Name != NULL);
-      StrnCpy (gVariableInfo->Name, VariableName, StrLen (VariableName));
+      StrnCpyS (gVariableInfo->Name, StrLen(VariableName)+1, VariableName, StrLen (VariableName));
       gVariableInfo->Volatile = Volatile;
 
       gBS->InstallConfigurationTable (&gEfiVariableGuid, gVariableInfo);
@@ -363,7 +363,7 @@ UpdateVariableInfo (
         CopyGuid (&Entry->Next->VendorGuid, VendorGuid);
         Entry->Next->Name = AllocateZeroPool (StrSize (VariableName));
  //       ASSERT (Entry->Next->Name != NULL);
-        StrnCpy (Entry->Next->Name, VariableName, StrLen (VariableName));
+        StrnCpyS (Entry->Next->Name, StrLen(VariableName)+1, VariableName, StrLen(VariableName));
         Entry->Next->Volatile = Volatile;
       }
 

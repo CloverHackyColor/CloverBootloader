@@ -325,7 +325,7 @@ BdsMemoryTest (
         //
         // TmpStr size is 64, StrPercent is reserved to 16.
         //
-          StrnCat (StrPercent, TmpStr, sizeof (StrPercent) / sizeof (CHAR16) - StrLen (StrPercent) - 1);
+          StrnCatS (StrPercent, 80, TmpStr, sizeof (StrPercent) / sizeof (CHAR16) - StrLen (StrPercent) - 1);
         PrintXY (10, 10, NULL, NULL, StrPercent);
         FreePool (TmpStr);
       }
@@ -390,7 +390,7 @@ Done:
 
   TmpStr = GetStringById (STRING_TOKEN (STR_MEM_TEST_COMPLETED));
   if (TmpStr != NULL) {
-      StrnCat (StrTotalMemory, TmpStr, StrTotalMemorySize / sizeof (CHAR16) - StrLen (StrTotalMemory) - 1);
+      StrnCatS (StrTotalMemory, 80, TmpStr, StrTotalMemorySize / sizeof (CHAR16) - StrLen (StrTotalMemory) - 1);
     FreePool (TmpStr);
   }
 

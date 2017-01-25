@@ -38,25 +38,30 @@ DevicePathToStr (
 // and DevicePathToStr connects them with /, but we need '\\'
 CHAR16 *FileDevicePathToStr(IN EFI_DEVICE_PATH_PROTOCOL *DevPath)
 {
-    CHAR16      *FilePath;
-    CHAR16      *Char;
-    
-    FilePath = DevicePathToStr(DevPath);
-    // fix / into '\\'
-    if (FilePath != NULL) {
-        for (Char = FilePath; *Char != L'\0'; Char++) {
-            if (*Char == L'/') {
-                *Char = L'\\';
-            }
-        }
+  CHAR16      *FilePath;
+  CHAR16      *Char;
+  CHAR16     *Tail;
+  
+  FilePath = DevicePathToStr(DevPath);
+  // fix / into '\\'
+  if (FilePath != NULL) {
+    for (Char = FilePath; *Char != L'\0'; Char++) {
+      if (*Char == L'/') {
+        *Char = L'\\';
+      }
     }
-    // "\\\\" into '\\'
+  }
+  // "\\\\" into '\\'
+  Char = StrStr(FilePath, L"\\\\");
+  while (Char != NULL) {
+    Tail = Char + 1;
+    while (*Tail != 0) {
+      *(Char++) = *(Tail++); 
+    }
+//    StrCpyS(Char, 4, Char + 1);  //can't overlap!
     Char = StrStr(FilePath, L"\\\\");
-    while (Char != NULL) {
-      StrCpy(Char, Char + 1);
-      Char = StrStr(FilePath, L"\\\\");
-    }
-    return FilePath;
+  }
+  return FilePath;
 }
 
 #if 0
@@ -111,7 +116,7 @@ CatPrint (
 
   Str->Maxlen = MAX_CHAR * sizeof (UINT16);
   if (StringSize < Str->Maxlen) {
-    StrCat (Str->Str, AppendStr);
+    StrCatS (Str->Str, StringSize, AppendStr);
     Str->Len = StringSize - sizeof (UINT16);
   }
 

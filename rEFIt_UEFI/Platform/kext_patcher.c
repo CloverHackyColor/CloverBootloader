@@ -735,9 +735,9 @@ UINT64 GetPlistHexValue(CHAR8 *Plist, CHAR8 *Key, CHAR8 *WholePlist)
     DBG(L"\nIDLen too big\n");
     return 0;
   }
-  AsciiStrCpy(Buffer, "<integer ID=\"");
-  AsciiStrnCat(Buffer, IDStart, IDLen);
-  AsciiStrCat(Buffer, "\"");
+  AsciiStrCpyS(Buffer, 48, "<integer ID=\"");
+  AsciiStrnCatS(Buffer, 48, IDStart, IDLen);
+  AsciiStrCatS(Buffer, 48, "\"");
   /*
    if (DbgCount < 3) {
    DBG(L"Searching: '%a'\n", Buffer);

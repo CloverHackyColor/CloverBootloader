@@ -410,25 +410,27 @@ VOID ReadSIPCfg()
   CHAR16 *csrLog = AllocateZeroPool(SVALUE_MAX_SIZE);
 
   if (csrCfg & CSR_ALLOW_UNTRUSTED_KEXTS)
-    StrCat(csrLog, L"CSR_ALLOW_UNTRUSTED_KEXTS");
+    StrCatS(csrLog, SVALUE_MAX_SIZE/2, L"CSR_ALLOW_UNTRUSTED_KEXTS");
   if (csrCfg & CSR_ALLOW_UNRESTRICTED_FS)
-    StrCat(csrLog, PoolPrint(L"%a%a", StrLen(csrLog) ? " | " : "", "CSR_ALLOW_UNRESTRICTED_FS"));
+    StrCatS(csrLog, SVALUE_MAX_SIZE/2, PoolPrint(L"%a%a", StrLen(csrLog) ? " | " : "", "CSR_ALLOW_UNRESTRICTED_FS"));
   if (csrCfg & CSR_ALLOW_TASK_FOR_PID)
-    StrCat(csrLog, PoolPrint(L"%a%a", StrLen(csrLog) ? " | " : "", "CSR_ALLOW_TASK_FOR_PID"));
+    StrCatS(csrLog, SVALUE_MAX_SIZE/2, PoolPrint(L"%a%a", StrLen(csrLog) ? " | " : "", "CSR_ALLOW_TASK_FOR_PID"));
   if (csrCfg & CSR_ALLOW_KERNEL_DEBUGGER)
-    StrCat(csrLog, PoolPrint(L"%a%a", StrLen(csrLog) ? " | " : "", "CSR_ALLOW_KERNEL_DEBUGGER"));
+    StrCatS(csrLog, SVALUE_MAX_SIZE/2, PoolPrint(L"%a%a", StrLen(csrLog) ? " | " : "", "CSR_ALLOW_KERNEL_DEBUGGER"));
   if (csrCfg & CSR_ALLOW_APPLE_INTERNAL)
-    StrCat(csrLog, PoolPrint(L"%a%a", StrLen(csrLog) ? " | " : "", "CSR_ALLOW_APPLE_INTERNAL"));
+    StrCatS(csrLog, SVALUE_MAX_SIZE/2, PoolPrint(L"%a%a", StrLen(csrLog) ? " | " : "", "CSR_ALLOW_APPLE_INTERNAL"));
   if (csrCfg & CSR_ALLOW_UNRESTRICTED_DTRACE)
-    StrCat(csrLog, PoolPrint(L"%a%a", StrLen(csrLog) ? " | " : "", "CSR_ALLOW_UNRESTRICTED_DTRACE"));
+    StrCatS(csrLog, SVALUE_MAX_SIZE/2, PoolPrint(L"%a%a", StrLen(csrLog) ? " | " : "", "CSR_ALLOW_UNRESTRICTED_DTRACE"));
   if (csrCfg & CSR_ALLOW_UNRESTRICTED_NVRAM)
-    StrCat(csrLog, PoolPrint(L"%a%a", StrLen(csrLog) ? " | " : "", "CSR_ALLOW_UNRESTRICTED_NVRAM"));
+    StrCatS(csrLog, SVALUE_MAX_SIZE/2, PoolPrint(L"%a%a", StrLen(csrLog) ? " | " : "", "CSR_ALLOW_UNRESTRICTED_NVRAM"));
   if (csrCfg & CSR_ALLOW_DEVICE_CONFIGURATION)
-    StrCat(csrLog, PoolPrint(L"%a%a", StrLen(csrLog) ? " | " : "", "CSR_ALLOW_DEVICE_CONFIGURATION"));
+    StrCatS(csrLog, SVALUE_MAX_SIZE/2, PoolPrint(L"%a%a", StrLen(csrLog) ? " | " : "", "CSR_ALLOW_DEVICE_CONFIGURATION"));
   if (csrCfg & CSR_DISABLE_BASESYSTEM_VERIFICATION)
-    StrCat(csrLog, PoolPrint(L"%a%a", StrLen(csrLog) ? " | " : "", "CSR_DISABLE_BASESYSTEM_VERIFICATION"));
+    StrCatS(csrLog, SVALUE_MAX_SIZE/2, PoolPrint(L"%a%a", StrLen(csrLog) ? " | " : "", "CSR_DISABLE_BASESYSTEM_VERIFICATION"));
     
-  if (StrLen(csrLog)) DBG("CSR_CFG: %s\n", csrLog);
+  if (StrLen(csrLog)) {
+    DBG("CSR_CFG: %s\n", csrLog);
+  }
 
   FreePool(csrLog);
 }
@@ -1769,7 +1771,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     if (gConfigDict[i]) {
       Status = GetEarlyUserSettings(SelfRootDir, gConfigDict[i]);
       if (EFI_ERROR(Status)) {
-        DBG("Error in Early settings%d: %r\n", i, Status);
+ //       DBG("Error in Early settings%d: %r\n", i, Status);
       }
     }
   }

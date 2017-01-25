@@ -1022,11 +1022,11 @@ BOpt_GetBootOptions (
     
     StringSize = StrSize((UINT16*)LoadOptionPtr);
 
-    NewLoadContext->Description = AllocateZeroPool (StrSize((UINT16*)LoadOptionPtr));
-    ASSERT (NewLoadContext->Description != NULL);
-    StrCpy (NewLoadContext->Description, (UINT16*)LoadOptionPtr);
+    NewLoadContext->Description = AllocateZeroPool (StringSize);
+ //   ASSERT (NewLoadContext->Description != NULL);
+    StrCpyS (NewLoadContext->Description, StringSize / sizeof(CHAR16), (UINT16*)LoadOptionPtr);
     
-    ASSERT (NewLoadContext->Description != NULL);
+//    ASSERT (NewLoadContext->Description != NULL);
     NewMenuEntry->DisplayString = NewLoadContext->Description;
 
     LoadOptionPtr += StringSize;
@@ -1099,8 +1099,8 @@ BOpt_AppendFileName (
   IN  CHAR16  *Str2
   )
 {
-  UINTN   Size1;
-  UINTN   Size2;
+  UINTN   Size1, Size2, Size;
+  INTN Len;
   CHAR16  *Str;
   CHAR16  *TmpStr;
   CHAR16  *Ptr;
@@ -1108,18 +1108,20 @@ BOpt_AppendFileName (
 
   Size1 = StrSize (Str1);
   Size2 = StrSize (Str2);
-  Str   = AllocateZeroPool (Size1 + Size2 + sizeof (CHAR16));
+  Size = Size1 + Size2 + sizeof (CHAR16);
+  Len = Size / 2;  //including zero terminating
+  Str   = AllocateZeroPool (Size);
 //  ASSERT (Str != NULL);
 
-  TmpStr = AllocateZeroPool (Size1 + Size2 + sizeof (CHAR16)); 
+  TmpStr = AllocateZeroPool (Size); 
 //  ASSERT (TmpStr != NULL);
 
-  StrCat (Str, Str1);
+  StrCatS (Str, Len, Str1);
   if (!((*Str == '\\') && (*(Str + 1) == 0))) {
-    StrCat (Str, L"\\");
+    StrCatS (Str, Len, L"\\");
   }
 
-  StrCat (Str, Str2);
+  StrCatS (Str, Len, Str2);
 
   Ptr       = Str;
   LastSlash = Str;
@@ -1135,8 +1137,8 @@ BOpt_AppendFileName (
       // Use TmpStr as a backup, as StrCpy in BaseLib does not handle copy of two strings 
       // that overlap.
       //
-      StrCpy (TmpStr, Ptr + 3);
-      StrCpy (LastSlash, TmpStr);
+      StrCpyS (TmpStr, Len, Ptr + 3);
+      StrCpyS (LastSlash, Len, TmpStr);
       Ptr = LastSlash;
     } else if (*Ptr == '\\' && *(Ptr + 1) == '.' && *(Ptr + 2) == '\\') {
       //
@@ -1147,8 +1149,8 @@ BOpt_AppendFileName (
       // Use TmpStr as a backup, as StrCpy in BaseLib does not handle copy of two strings 
       // that overlap.
       //
-      StrCpy (TmpStr, Ptr + 2);
-      StrCpy (Ptr, TmpStr);
+      StrCpyS (TmpStr, Len, Ptr + 2);
+      StrCpyS (Ptr, Len, TmpStr);
       Ptr = LastSlash;
     } else if (*Ptr == '\\') {
       LastSlash = Ptr;
