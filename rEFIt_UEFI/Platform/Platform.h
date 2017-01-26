@@ -724,6 +724,7 @@ struct DEV_PROPERTY {
   DEV_PROPERTY  *Next;
   CHAR8         *Label;
   INPUT_ITEM    MenuItem;
+  TAG_TYPE      ValueType;
 };
 
 typedef struct CUSTOM_LOADER_ENTRY CUSTOM_LOADER_ENTRY;

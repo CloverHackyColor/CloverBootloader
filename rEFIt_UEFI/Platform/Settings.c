@@ -4144,14 +4144,27 @@ GetUserSettings(
                     //first suppose it is Ascii string
                     gSettings.AddProperties->Value = AllocateCopyPool(AsciiStrSize(Prop3->string), Prop3->string);
                     gSettings.AddProperties->ValueLen = AsciiStrLen(Prop3->string) + 1;
+                    gSettings.AddProperties->ValueType = kTagTypeString;
                   } else if (Prop3 && (Prop3->type == kTagTypeInteger)) {
                     gSettings.AddProperties->Value = AllocatePool(4);
                     CopyMem (gSettings.AddProperties->Value, &(Prop3->string), 4);
                     gSettings.AddProperties->ValueLen = 4;
-                  } else {
+                    gSettings.AddProperties->ValueType = kTagTypeInteger;
+                  } else if (Prop3 && (Prop3->type == kTagTypeTrue)) {
+                    gSettings.AddProperties->Value = AllocateZeroPool(4);
+                    gSettings.AddProperties->Value[0] = TRUE;
+                    gSettings.AddProperties->ValueLen = 1;
+                    gSettings.AddProperties->ValueType = kTagTypeTrue;
+                  } else if (Prop3 && (Prop3->type == kTagTypeFalse)) {
+                    gSettings.AddProperties->Value = AllocateZeroPool(4);
+                    //gSettings.AddProperties->Value[0] = FALSE;
+                    gSettings.AddProperties->ValueLen = 1;
+                    gSettings.AddProperties->ValueType = kTagTypeFalse;
+                 } else {
                     //else  data
                     gSettings.AddProperties->Value = GetDataSetting (Dict3, "Value", &Size);
                     gSettings.AddProperties->ValueLen = Size;
+                    gSettings.AddProperties->ValueType = kTagTypeData;
                   }
                 }
                 // gSettings.NrAddProperties++;
@@ -6156,8 +6169,9 @@ SetDevices (
                   if (gSettings.DeInit) {
                     for (j = 0; j < 4; j++) {
                       if (gGraphics[j].Handle == PCIdevice.DeviceHandle) {
-                        *(UINT32*)(gGraphics[j].Mmio + 0x48) = 0;
-                        *(UINT32*)(gGraphics[j].Mmio + 0x4C) = 0;
+                 //       *(UINT32*)(gGraphics[j].Mmio + 0x48) = 0;
+                 //       *(UINT32*)(gGraphics[j].Mmio + 0x4C) = 0;
+                        *(UINT32*)(gGraphics[j].Mmio + R600_BIOS_0_SCRATCH) = 0x00810000;
                         DBG("Device %d deinited\n", j);
                       }
                     }

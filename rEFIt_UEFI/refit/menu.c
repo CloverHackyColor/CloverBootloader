@@ -4289,7 +4289,26 @@ REFIT_MENU_ENTRY  *SubMenuCustomDevices() //yyyy
       InputBootArgs->Entry.AtClick = ActionEnter;
       InputBootArgs->Entry.AtRightClick = ActionDetails;
       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-      AddMenuInfo(SubScreen, PoolPrint(L"     value[%d]: %16x", Prop->ValueLen, *(UINT64*)Prop->Value));
+      switch (Prop->ValueType) {
+        case kTagTypeInteger:
+          AddMenuInfo(SubScreen, PoolPrint(L"     value: 0x%08x", *(UINT64*)Prop->Value));
+          break;
+        case kTagTypeString:
+          AddMenuInfo(SubScreen, PoolPrint(L"     value: %30a", Prop->Value));
+          break;
+        case   kTagTypeFalse:
+          AddMenuInfo(SubScreen, PoolPrint(L"     value: false"));
+          break;
+        case   kTagTypeTrue:
+          AddMenuInfo(SubScreen, PoolPrint(L"     value: true"));
+          break;
+
+        default: //type data, print first 24 bytes
+          //CHAR8* Bytes2HexStr(UINT8 *data, UINTN len)
+          AddMenuInfo(SubScreen, PoolPrint(L"     value[%d]: %24a", Prop->ValueLen, Bytes2HexStr((UINT8*)Prop->Value, MIN(24, Prop->ValueLen))));
+          break;
+      }
+
       
       Prop = Prop->Next;
     }

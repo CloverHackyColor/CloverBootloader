@@ -1415,12 +1415,12 @@ AsciiStrnCmp (
     return 1;
   }
 
-  if (PcdGet32 (PcdMaximumAsciiStringLength) != 0) {
-    ASSERT (Length <= PcdGet32 (PcdMaximumAsciiStringLength));
-    if (Length > PcdGet32 (PcdMaximumAsciiStringLength)) {
-      Length = PcdGet32 (PcdMaximumAsciiStringLength);
-    }
-  }
+//  if (PcdGet32 (PcdMaximumAsciiStringLength) != 0) {
+//    ASSERT (Length <= PcdGet32 (PcdMaximumAsciiStringLength));
+//    if (Length > PcdGet32 (PcdMaximumAsciiStringLength)) {
+//      Length = PcdGet32 (PcdMaximumAsciiStringLength);
+//    }
+//  }
 
   while ((*FirstString != '\0') &&
          (*SecondString != '\0') &&
@@ -1579,9 +1579,9 @@ AsciiStrStr (
   //
   // ASSERT both strings are less long than PcdMaximumAsciiStringLength
   //
-  ASSERT (AsciiStrSize (String) != 0);
-  ASSERT (AsciiStrSize (SearchString) != 0);
-  if (!AsciiStrSize (String) || !AsciiStrSize (SearchString)) {
+//  ASSERT (AsciiStrSize (String) != 0);
+//  ASSERT (AsciiStrSize (SearchString) != 0);
+  if (!String || !SearchString) {
     return NULL;
   }
 
