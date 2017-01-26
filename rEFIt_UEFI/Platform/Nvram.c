@@ -244,6 +244,10 @@ GetSmcKeys (BOOLEAN WriteToSMC)
   UINT8                       *Data;
   UINTN                       DataSize;
   INTN                        NumKey = 0;
+  STATIC UINTN Once = 0;
+  if (Once++) {
+    return;
+  }
   
 
   NameSize = sizeof (CHAR16);

@@ -299,7 +299,7 @@ radeon_card_info_t radeon_cards[] = {
   { 0x67CA, 0x00000000, CHIP_FAMILY_ELLESMERE, "AMD Radeon Polaris 10",    kNull },
   { 0x67CC, 0x00000000, CHIP_FAMILY_ELLESMERE, "AMD Radeon Polaris 10",    kNull },
   { 0x67CF, 0x00000000, CHIP_FAMILY_ELLESMERE, "AMD Radeon Polaris 10",    kNull },
-  { 0x67DF, 0x00000000, CHIP_FAMILY_ELLESMERE, "AMD Radeon RX480",         kDayman },
+  { 0x67DF, 0x00000000, CHIP_FAMILY_ELLESMERE, "AMD Radeon RX480",         kBaladi },
   
   // Polaris 11
   { 0x67E0, 0x00000000, CHIP_FAMILY_BAFFIN, "AMD Radeon RX460",             kAcre },
