@@ -620,7 +620,7 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
   }
   else if ((os_version >= AsciiOSVersionToUint64("10.8")) && (os_version < AsciiOSVersionToUint64("10.10"))) {
     Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEMLMavSearchEXT, sizeof(KBEMLMavSearchEXT), KBEMLMavReplaceEXT, 1);
-    DBG_RT(Entry, "==> kernelMountain Lion, Mavericks: %d replaces done.\n", Num);
+    DBG_RT(Entry, "==> kernel Mountain Lion/Mavericks: %d replaces done.\n", Num);
   }
   else if ((os_version >= AsciiOSVersionToUint64("10.10")) && (os_version < AsciiOSVersionToUint64("10.11"))) {
     Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEYosSearchEXT, sizeof(KBEYosSearchEXT), KBEYosReplaceEXT, 1);
@@ -632,14 +632,15 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
     DBG_RT(Entry, "==> kernel  El Capitan: %d replaces done.\n", Num);
   }
   else if ((os_version >= AsciiOSVersionToUint64("10.12")) && (os_version <= AsciiOSVersionToUint64("10.12.3"))) {
-    Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEYosSearchEXT, sizeof(KBEYosSearchEXT), KBEYosReplaceEXT, 1) +
-          SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBESieSearchSIP, sizeof(KBESieSearchSIP), KBESieReplaceSIP, 1);
-    DBG_RT(Entry, "==> kernel  El Capitan: %d replaces done.\n", Num);
+    Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEYosSearchEXT, sizeof(KBEYosSearchEXT), KBEYosReplaceEXT, 1) +    // SieDP1
+          SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBESieSearchEXT, sizeof(KBESieSearchEXT), KBESieReplaceEXT, 1) +    // Missing KBESie* for 10.12 DP2 - 10.12.3, filled by PMheart.
+          SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBESieSearchSIP, sizeof(KBESieSearchSIP), KBESieReplaceSIP, 1);     // Universal.
+    DBG_RT(Entry, "==> kernel Sierra: %d replaces done.\n", Num);
   }
-  else if ((os_version >= AsciiOSVersionToUint64("10.12.4")) && (os_version <= AsciiOSVersionToUint64("10.12.4"))) {
+  else if ((os_version >= AsciiOSVersionToUint64("10.12.4")) /* && (os_version <= AsciiOSVersionToUint64("10.12.4"))*/) {
     Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBESie4SearchEXT, sizeof(KBESie4SearchEXT), KBESie4ReplaceEXT, 1) +
           SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBESieSearchSIP, sizeof(KBESieSearchSIP), KBESieReplaceSIP, 1);
-    DBG_RT(Entry, "==> kernel  El Capitan: %d replaces done.\n", Num);
+    DBG_RT(Entry, "==> kernel Sierra 10.12.4: %d replaces done.\n", Num);
   }
 
   if (Entry->KernelAndKextPatches->KPDebug) {
@@ -696,7 +697,7 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
   }
   else if (NumMLMav == 1) {
       Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEMLMavSearchEXT, sizeof(KBEMLMavSearchEXT), KBEMLMavReplaceEXT, 1);
-      DBG_RT(Entry, "==> kernel Mountain Lion, Mavericks: %d replaces done.\n", Num);
+      DBG_RT(Entry, "==> kernel Mountain Lion/Mavericks: %d replaces done.\n", Num);
   }
   else if (NumYos == 1) {                                                                                                         // To divide Yosemite and El Capitan and Sierra DP1.
         if (NumYos == 1 && NumEC != 1 && NumSie != 1) {
