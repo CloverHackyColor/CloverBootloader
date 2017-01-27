@@ -14,9 +14,11 @@
 
 #include "BaseLibInternals.h"
 // this is 1.000.000
-#define RSIZE_MAX  (PcdGet32 (PcdMaximumUnicodeStringLength))
+#define RSIZE_MAX  1000000  
+//(PcdGet32 (PcdMaximumUnicodeStringLength))
 
-#define ASCII_RSIZE_MAX  (PcdGet32 (PcdMaximumAsciiStringLength))
+#define ASCII_RSIZE_MAX  1000000
+//(PcdGet32 (PcdMaximumAsciiStringLength))
 
 #define SAFE_STRING_CONSTRAINT_CHECK(Expression, Status)  \
   do { \
@@ -336,10 +338,10 @@ StrnCpyS (
   //
   // 2. Neither DestMax nor Length shall be greater than RSIZE_MAX
   //
-  if (RSIZE_MAX != 0) {
-    SAFE_STRING_CONSTRAINT_CHECK ((DestMax <= RSIZE_MAX), RETURN_INVALID_PARAMETER);
-    SAFE_STRING_CONSTRAINT_CHECK ((Length <= RSIZE_MAX), RETURN_INVALID_PARAMETER);
-  }
+//  if (RSIZE_MAX != 0) {
+//    SAFE_STRING_CONSTRAINT_CHECK ((DestMax <= RSIZE_MAX), RETURN_INVALID_PARAMETER);
+//    SAFE_STRING_CONSTRAINT_CHECK ((Length <= RSIZE_MAX), RETURN_INVALID_PARAMETER);
+//  }
 
   //
   // 3. DestMax shall not equal zero.
@@ -350,9 +352,9 @@ StrnCpyS (
   // 4. If Length is not less than DestMax, then DestMax shall be greater than StrnLenS(Source, DestMax).
   //
   SourceLen = StrnLenS (Source, DestMax); //Slice: SourceLen <= DestMax
-  if (Length >= DestMax) {
+//  if (Length >= DestMax) {
 //    SAFE_STRING_CONSTRAINT_CHECK ((DestMax > SourceLen), RETURN_BUFFER_TOO_SMALL);
-  }
+//  }
 
   //
   // 5. Copying shall not take place between objects that overlap.
@@ -437,12 +439,12 @@ StrCatS (
   //
   // 2. DestMax shall not be greater than RSIZE_MAX.
   //
-  if (RSIZE_MAX != 0) {
+//  if (RSIZE_MAX != 0) {
 //    SAFE_STRING_CONSTRAINT_CHECK ((DestMax <= RSIZE_MAX), RETURN_INVALID_PARAMETER);
-    if (DestMax > RSIZE_MAX) {
-      DestMax = RSIZE_MAX;
-    }
-  }
+//    if (DestMax > RSIZE_MAX) {
+//      DestMax = RSIZE_MAX;
+//    }
+//  }
 
   //
   // 3. DestMax shall not equal zero.
@@ -543,10 +545,10 @@ StrnCatS (
   //
   // 2. Neither DestMax nor Length shall be greater than RSIZE_MAX.
   //
-  if (RSIZE_MAX != 0) {
-    SAFE_STRING_CONSTRAINT_CHECK ((DestMax <= RSIZE_MAX), RETURN_INVALID_PARAMETER);
-    SAFE_STRING_CONSTRAINT_CHECK ((Length <= RSIZE_MAX), RETURN_INVALID_PARAMETER);
-  }
+//  if (RSIZE_MAX != 0) {
+//    SAFE_STRING_CONSTRAINT_CHECK ((DestMax <= RSIZE_MAX), RETURN_INVALID_PARAMETER);
+//    SAFE_STRING_CONSTRAINT_CHECK ((Length <= RSIZE_MAX), RETURN_INVALID_PARAMETER);
+//  }
 
   //
   // 3. DestMax shall not equal zero.
@@ -658,9 +660,9 @@ StrDecimalToUintnS (
   //
   // 2. The length of String shall not be greater than RSIZE_MAX.
   //
-  if (RSIZE_MAX != 0) {
-    SAFE_STRING_CONSTRAINT_CHECK ((StrnLenS (String, RSIZE_MAX + 1) <= RSIZE_MAX), RETURN_INVALID_PARAMETER);
-  }
+//  if (RSIZE_MAX != 0) {
+//    SAFE_STRING_CONSTRAINT_CHECK ((StrnLenS (String, RSIZE_MAX + 1) <= RSIZE_MAX), RETURN_INVALID_PARAMETER);
+//  }
 
   if (EndPointer != NULL) {
     *EndPointer = (CHAR16 *) String;
@@ -773,9 +775,9 @@ StrDecimalToUint64S (
   //
   // 2. The length of String shall not be greater than RSIZE_MAX.
   //
-  if (RSIZE_MAX != 0) {
-    SAFE_STRING_CONSTRAINT_CHECK ((StrnLenS (String, RSIZE_MAX + 1) <= RSIZE_MAX), RETURN_INVALID_PARAMETER);
-  }
+//  if (RSIZE_MAX != 0) {
+//    SAFE_STRING_CONSTRAINT_CHECK ((StrnLenS (String, RSIZE_MAX + 1) <= RSIZE_MAX), RETURN_INVALID_PARAMETER);
+//  }
 
   if (EndPointer != NULL) {
     *EndPointer = (CHAR16 *) String;
@@ -893,9 +895,9 @@ StrHexToUintnS (
   //
   // 2. The length of String shall not be greater than RSIZE_MAX.
   //
-  if (RSIZE_MAX != 0) {
-    SAFE_STRING_CONSTRAINT_CHECK ((StrnLenS (String, RSIZE_MAX + 1) <= RSIZE_MAX), RETURN_INVALID_PARAMETER);
-  }
+//  if (RSIZE_MAX != 0) {
+//    SAFE_STRING_CONSTRAINT_CHECK ((StrnLenS (String, RSIZE_MAX + 1) <= RSIZE_MAX), RETURN_INVALID_PARAMETER);
+//  }
 
   if (EndPointer != NULL) {
     *EndPointer = (CHAR16 *) String;
@@ -1024,9 +1026,9 @@ StrHexToUint64S (
   //
   // 2. The length of String shall not be greater than RSIZE_MAX.
   //
-  if (RSIZE_MAX != 0) {
-    SAFE_STRING_CONSTRAINT_CHECK ((StrnLenS (String, RSIZE_MAX + 1) <= RSIZE_MAX), RETURN_INVALID_PARAMETER);
-  }
+//  if (RSIZE_MAX != 0) {
+//    SAFE_STRING_CONSTRAINT_CHECK ((StrnLenS (String, RSIZE_MAX + 1) <= RSIZE_MAX), RETURN_INVALID_PARAMETER);
+//  }
 
   if (EndPointer != NULL) {
     *EndPointer = (CHAR16 *) String;
@@ -1217,9 +1219,9 @@ AsciiStrCpyS (
   //
   // 2. DestMax shall not be greater than ASCII_RSIZE_MAX.
   //
-  if (ASCII_RSIZE_MAX != 0) {
-    SAFE_STRING_CONSTRAINT_CHECK ((DestMax <= ASCII_RSIZE_MAX), RETURN_INVALID_PARAMETER);
-  }
+//  if (ASCII_RSIZE_MAX != 0) {
+//    SAFE_STRING_CONSTRAINT_CHECK ((DestMax <= ASCII_RSIZE_MAX), RETURN_INVALID_PARAMETER);
+//  }
 
   //
   // 3. DestMax shall not equal zero.
@@ -1297,10 +1299,10 @@ AsciiStrnCpyS (
   //
   // 2. Neither DestMax nor Length shall be greater than ASCII_RSIZE_MAX
   //
-  if (ASCII_RSIZE_MAX != 0) {
-    SAFE_STRING_CONSTRAINT_CHECK ((DestMax <= ASCII_RSIZE_MAX), RETURN_INVALID_PARAMETER);
-    SAFE_STRING_CONSTRAINT_CHECK ((Length <= ASCII_RSIZE_MAX), RETURN_INVALID_PARAMETER);
-  }
+//  if (ASCII_RSIZE_MAX != 0) {
+//    SAFE_STRING_CONSTRAINT_CHECK ((DestMax <= ASCII_RSIZE_MAX), RETURN_INVALID_PARAMETER);
+//    SAFE_STRING_CONSTRAINT_CHECK ((Length <= ASCII_RSIZE_MAX), RETURN_INVALID_PARAMETER);
+//  }
 
   //
   // 3. DestMax shall not equal zero.
@@ -1393,9 +1395,9 @@ AsciiStrCatS (
   //
   // 2. DestMax shall not be greater than ASCII_RSIZE_MAX.
   //
-  if (ASCII_RSIZE_MAX != 0) {
-    SAFE_STRING_CONSTRAINT_CHECK ((DestMax <= ASCII_RSIZE_MAX), RETURN_INVALID_PARAMETER);
-  }
+//  if (ASCII_RSIZE_MAX != 0) {
+//    SAFE_STRING_CONSTRAINT_CHECK ((DestMax <= ASCII_RSIZE_MAX), RETURN_INVALID_PARAMETER);
+//  }
 
   //
   // 3. DestMax shall not equal zero.
@@ -1491,10 +1493,10 @@ AsciiStrnCatS (
   //
   // 2. Neither DestMax nor Length shall be greater than ASCII_RSIZE_MAX.
   //
-  if (ASCII_RSIZE_MAX != 0) {
-    SAFE_STRING_CONSTRAINT_CHECK ((DestMax <= ASCII_RSIZE_MAX), RETURN_INVALID_PARAMETER);
-    SAFE_STRING_CONSTRAINT_CHECK ((Length <= ASCII_RSIZE_MAX), RETURN_INVALID_PARAMETER);
-  }
+//  if (ASCII_RSIZE_MAX != 0) {
+//    SAFE_STRING_CONSTRAINT_CHECK ((DestMax <= ASCII_RSIZE_MAX), RETURN_INVALID_PARAMETER);
+//    SAFE_STRING_CONSTRAINT_CHECK ((Length <= ASCII_RSIZE_MAX), RETURN_INVALID_PARAMETER);
+//  }
 
   //
   // 3. DestMax shall not equal zero.
@@ -1603,9 +1605,9 @@ AsciiStrDecimalToUintnS (
   //
   // 2. The length of String shall not be greater than ASCII_RSIZE_MAX.
   //
-  if (ASCII_RSIZE_MAX != 0) {
-    SAFE_STRING_CONSTRAINT_CHECK ((AsciiStrnLenS (String, ASCII_RSIZE_MAX + 1) <= ASCII_RSIZE_MAX), RETURN_INVALID_PARAMETER);
-  }
+//  if (ASCII_RSIZE_MAX != 0) {
+//    SAFE_STRING_CONSTRAINT_CHECK ((AsciiStrnLenS (String, ASCII_RSIZE_MAX + 1) <= ASCII_RSIZE_MAX), RETURN_INVALID_PARAMETER);
+//  }
 
   if (EndPointer != NULL) {
     *EndPointer = (CHAR8 *) String;
@@ -1715,9 +1717,9 @@ AsciiStrDecimalToUint64S (
   //
   // 2. The length of String shall not be greater than ASCII_RSIZE_MAX.
   //
-  if (ASCII_RSIZE_MAX != 0) {
-    SAFE_STRING_CONSTRAINT_CHECK ((AsciiStrnLenS (String, ASCII_RSIZE_MAX + 1) <= ASCII_RSIZE_MAX), RETURN_INVALID_PARAMETER);
-  }
+//  if (ASCII_RSIZE_MAX != 0) {
+//    SAFE_STRING_CONSTRAINT_CHECK ((AsciiStrnLenS (String, ASCII_RSIZE_MAX + 1) <= ASCII_RSIZE_MAX), RETURN_INVALID_PARAMETER);
+ // }
 
   if (EndPointer != NULL) {
     *EndPointer = (CHAR8 *) String;
@@ -1831,9 +1833,9 @@ AsciiStrHexToUintnS (
   //
   // 2. The length of String shall not be greater than ASCII_RSIZE_MAX.
   //
-  if (ASCII_RSIZE_MAX != 0) {
-    SAFE_STRING_CONSTRAINT_CHECK ((AsciiStrnLenS (String, ASCII_RSIZE_MAX + 1) <= ASCII_RSIZE_MAX), RETURN_INVALID_PARAMETER);
-  }
+//  if (ASCII_RSIZE_MAX != 0) {
+//    SAFE_STRING_CONSTRAINT_CHECK ((AsciiStrnLenS (String, ASCII_RSIZE_MAX + 1) <= ASCII_RSIZE_MAX), RETURN_INVALID_PARAMETER);
+//  }
 
   if (EndPointer != NULL) {
     *EndPointer = (CHAR8 *) String;
@@ -1958,9 +1960,9 @@ AsciiStrHexToUint64S (
   //
   // 2. The length of String shall not be greater than ASCII_RSIZE_MAX.
   //
-  if (ASCII_RSIZE_MAX != 0) {
-    SAFE_STRING_CONSTRAINT_CHECK ((AsciiStrnLenS (String, ASCII_RSIZE_MAX + 1) <= ASCII_RSIZE_MAX), RETURN_INVALID_PARAMETER);
-  }
+//  if (ASCII_RSIZE_MAX != 0) {
+ //   SAFE_STRING_CONSTRAINT_CHECK ((AsciiStrnLenS (String, ASCII_RSIZE_MAX + 1) <= ASCII_RSIZE_MAX), RETURN_INVALID_PARAMETER);
+//  }
 
   if (EndPointer != NULL) {
     *EndPointer = (CHAR8 *) String;
@@ -2079,12 +2081,12 @@ UnicodeStrToAsciiStrS (
   //
   // 2. DestMax shall not be greater than ASCII_RSIZE_MAX or RSIZE_MAX.
   //
-  if (ASCII_RSIZE_MAX != 0) {
-    SAFE_STRING_CONSTRAINT_CHECK ((DestMax <= ASCII_RSIZE_MAX), RETURN_INVALID_PARAMETER);
-  }
-  if (RSIZE_MAX != 0) {
-    SAFE_STRING_CONSTRAINT_CHECK ((DestMax <= RSIZE_MAX), RETURN_INVALID_PARAMETER);
-  }
+//  if (ASCII_RSIZE_MAX != 0) {
+//    SAFE_STRING_CONSTRAINT_CHECK ((DestMax <= ASCII_RSIZE_MAX), RETURN_INVALID_PARAMETER);
+//  }
+//  if (RSIZE_MAX != 0) {
+//    SAFE_STRING_CONSTRAINT_CHECK ((DestMax <= RSIZE_MAX), RETURN_INVALID_PARAMETER);
+//  }
 
   //
   // 3. DestMax shall not equal zero.
@@ -2190,7 +2192,7 @@ UnicodeStrnToAsciiStrS (
   // 2. Neither Length nor DestMax shall be greater than ASCII_RSIZE_MAX or
   // RSIZE_MAX.
   //
-  if (ASCII_RSIZE_MAX != 0) {
+/*  if (ASCII_RSIZE_MAX != 0) {
     SAFE_STRING_CONSTRAINT_CHECK ((Length <= ASCII_RSIZE_MAX), RETURN_INVALID_PARAMETER);
     SAFE_STRING_CONSTRAINT_CHECK ((DestMax <= ASCII_RSIZE_MAX), RETURN_INVALID_PARAMETER);
   }
@@ -2198,7 +2200,7 @@ UnicodeStrnToAsciiStrS (
     SAFE_STRING_CONSTRAINT_CHECK ((Length <= RSIZE_MAX), RETURN_INVALID_PARAMETER);
     SAFE_STRING_CONSTRAINT_CHECK ((DestMax <= RSIZE_MAX), RETURN_INVALID_PARAMETER);
   }
-
+*/
   //
   // 3. DestMax shall not equal zero.
   //
@@ -2231,7 +2233,7 @@ UnicodeStrnToAsciiStrS (
     // If any Unicode characters in Source contain non-zero value in the upper
     // 8 bits, then ASSERT().
     //
-    ASSERT (*Source < 0x100);
+//    ASSERT (*Source < 0x100);
     *(Destination++) = (CHAR8) (*(Source++)  & 0xFF);
     SourceLen--;
     (*DestinationLength)++;
@@ -2299,13 +2301,13 @@ AsciiStrToUnicodeStrS (
   //
   // 2. DestMax shall not be greater than RSIZE_MAX or ASCII_RSIZE_MAX.
   //
-  if (RSIZE_MAX != 0) {
+/*  if (RSIZE_MAX != 0) {
     SAFE_STRING_CONSTRAINT_CHECK ((DestMax <= RSIZE_MAX), RETURN_INVALID_PARAMETER);
   }
   if (ASCII_RSIZE_MAX != 0) {
     SAFE_STRING_CONSTRAINT_CHECK ((DestMax <= ASCII_RSIZE_MAX), RETURN_INVALID_PARAMETER);
   }
-
+*/
   //
   // 3. DestMax shall not equal zero.
   //
@@ -2402,7 +2404,7 @@ AsciiStrnToUnicodeStrS (
   // 2. Neither Length nor DestMax shall be greater than ASCII_RSIZE_MAX or
   // RSIZE_MAX.
   //
-  if (RSIZE_MAX != 0) {
+/*  if (RSIZE_MAX != 0) {
     SAFE_STRING_CONSTRAINT_CHECK ((Length <= RSIZE_MAX), RETURN_INVALID_PARAMETER);
     SAFE_STRING_CONSTRAINT_CHECK ((DestMax <= RSIZE_MAX), RETURN_INVALID_PARAMETER);
   }
@@ -2410,7 +2412,7 @@ AsciiStrnToUnicodeStrS (
     SAFE_STRING_CONSTRAINT_CHECK ((Length <= ASCII_RSIZE_MAX), RETURN_INVALID_PARAMETER);
     SAFE_STRING_CONSTRAINT_CHECK ((DestMax <= ASCII_RSIZE_MAX), RETURN_INVALID_PARAMETER);
   }
-
+*/
   //
   // 3. DestMax shall not equal zero.
   //

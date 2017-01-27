@@ -131,8 +131,11 @@ StrnCpy (
   ASSERT ((UINTN)(Destination - Source) > StrLen (Source));
   ASSERT ((UINTN)(Source - Destination) >= Length);
 
-  if (PcdGet32 (PcdMaximumUnicodeStringLength) != 0) {
-    ASSERT (Length <= PcdGet32 (PcdMaximumUnicodeStringLength));
+//  if (PcdGet32 (PcdMaximumUnicodeStringLength) != 0) {
+//    ASSERT (Length <= PcdGet32 (PcdMaximumUnicodeStringLength));
+//  }
+  if (Length > 1000000) {
+    return Destination;
   }
 
   ReturnValue = Destination;
@@ -172,7 +175,7 @@ StrLen (
 {
   UINTN                             Length;
 
-  ASSERT (String != NULL);
+//  ASSERT (String != NULL);
   ASSERT (((UINTN) String & BIT0) == 0);
   if (!String) {
     return 0;
@@ -183,12 +186,12 @@ StrLen (
     // If PcdMaximumUnicodeStringLength is not zero,
     // length should not more than PcdMaximumUnicodeStringLength
     //
-    if (PcdGet32 (PcdMaximumUnicodeStringLength) != 0) {
+//    if (PcdGet32 (PcdMaximumUnicodeStringLength) != 0) {
 //      ASSERT (Length < PcdGet32 (PcdMaximumUnicodeStringLength));
-      if (Length == PcdGet32 (PcdMaximumUnicodeStringLength)) {
+      if (Length >= 1000000) {
         break;
       }
-    }
+//    }
   }
   return Length;
 }
@@ -333,12 +336,12 @@ StrnCmp (
   ASSERT (StrSize (FirstString) != 0);
   ASSERT (StrSize (SecondString) != 0);
 
-  if (PcdGet32 (PcdMaximumUnicodeStringLength) != 0) {
+//  if (PcdGet32 (PcdMaximumUnicodeStringLength) != 0) {
 //    ASSERT (Length <= PcdGet32 (PcdMaximumUnicodeStringLength));
-    if (Length > PcdGet32 (PcdMaximumUnicodeStringLength)) {
-      Length = PcdGet32 (PcdMaximumUnicodeStringLength);
+    if (Length > 1000000) {
+      Length = 1000000;
     }
-  }
+//  }
 
   while ((*FirstString != L'\0') &&
          (*SecondString != L'\0') &&
@@ -1093,12 +1096,12 @@ AsciiStrnCpy (
   ASSERT ((UINTN)(Destination - Source) > AsciiStrLen (Source));
   ASSERT ((UINTN)(Source - Destination) >= Length);
 
-  if (PcdGet32 (PcdMaximumAsciiStringLength) != 0) {
+//  if (PcdGet32 (PcdMaximumAsciiStringLength) != 0) {
 //    ASSERT (Length <= PcdGet32 (PcdMaximumAsciiStringLength));
-    if (Length <= PcdGet32 (PcdMaximumAsciiStringLength)) {
-      Length = PcdGet32 (PcdMaximumAsciiStringLength);
+    if (Length <= 1000000) {
+      Length = 1000000;
     }
-  }
+//  }
 
   ReturnValue = Destination;
 
@@ -1147,12 +1150,12 @@ AsciiStrLen (
     // If PcdMaximumUnicodeStringLength is not zero,
     // length should not more than PcdMaximumUnicodeStringLength
     //
-    if (PcdGet32 (PcdMaximumAsciiStringLength) != 0) {
+ //   if (PcdGet32 (PcdMaximumAsciiStringLength) != 0) {
  //     ASSERT (Length < PcdGet32 (PcdMaximumAsciiStringLength));
-      if (Length == PcdGet32 (PcdMaximumAsciiStringLength)) {
+      if (Length == 1000000) {
         break;
       }
-    }
+ //   }
   }
   return Length;
 }
@@ -1417,9 +1420,9 @@ AsciiStrnCmp (
 
 //  if (PcdGet32 (PcdMaximumAsciiStringLength) != 0) {
 //    ASSERT (Length <= PcdGet32 (PcdMaximumAsciiStringLength));
-//    if (Length > PcdGet32 (PcdMaximumAsciiStringLength)) {
-//      Length = PcdGet32 (PcdMaximumAsciiStringLength);
-//    }
+    if (Length > 1000000) {
+      Length = 1000000;
+    }
 //  }
 
   while ((*FirstString != '\0') &&
