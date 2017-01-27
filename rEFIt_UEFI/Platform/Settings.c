@@ -4166,6 +4166,15 @@ GetUserSettings(
                     gSettings.AddProperties->ValueLen = Size;
                     gSettings.AddProperties->ValueType = kTagTypeData;
                   }
+                  
+                  //Special case. In future there must be more such cases
+                  if ((AsciiStrStr(gSettings.AddProperties->Key, "ig-platform-id") != NULL) &&
+                      (gSettings.IgPlatform != 0)) {
+                    gSettings.AddProperties->Value = AllocatePool(4);
+                    CopyMem (gSettings.AddProperties->Value, (CHAR8*)&gSettings.IgPlatform, 4);
+                    gSettings.AddProperties->ValueLen = 4;
+                    gSettings.AddProperties->ValueType = kTagTypeInteger;
+                  }
                 }
                 // gSettings.NrAddProperties++;
               }   //for() device properties
@@ -6123,8 +6132,13 @@ SetDevices (
               device = devprop_add_device_pci(string, &PCIdevice);
               Once = FALSE;
             }
+            //special corrections
             if (Prop->MenuItem.BValue) {
-              devprop_add_value(device, Prop->Key, (UINT8*)Prop->Value, Prop->ValueLen);
+              if (AsciiStrStr(Prop->Key, "-platform-id") != NULL) {
+                devprop_add_value(device, Prop->Key, (UINT8*)&gSettings.IgPlatform, 4);
+              } else {
+                devprop_add_value(device, Prop->Key, (UINT8*)Prop->Value, Prop->ValueLen);
+              }
             }
             
             StringDirty = TRUE;
