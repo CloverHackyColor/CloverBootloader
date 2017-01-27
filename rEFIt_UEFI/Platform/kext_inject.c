@@ -580,7 +580,7 @@ UINT8   KBESieDebugReplaceSIP[]  = { 0x31, 0xC9, 0x39, 0xC1, 0xEB, 0x80, 0x90, 0
 // or write specific patterns into config.plist->KernelPatches with MatchOS
 // Now I want to make this procedure faster and secure
 
-#if 0  //need testing
+#if 1  //need testing
 VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
 {
   UINTN   Num = 0;
@@ -589,8 +589,8 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
   UINT64  os_version = AsciiOSVersionToUint64(Entry->OSVersion);
   
   DBG_RT(Entry, "\nPatching kernel for injected kexts...\n");
-  if (os_version >= AsciiOSVersionToUint64("10.6") &&
-      os_version <= AsciiOSVersionToUint64("10.7") &&
+  if (os_version >= AsciiOSVersionToUint64("10.6.0") &&
+      os_version <= AsciiOSVersionToUint64("10.7.5") &&
       !is64BitKernel) {    
     NumSnow_i386 = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBESnowSearchEXT_i386, sizeof(KBESnowSearchEXT_i386));
     NumLion_i386 = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBELionSearchEXT_i386, sizeof(KBELionSearchEXT_i386));
@@ -621,10 +621,6 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
   else if ((os_version >= AsciiOSVersionToUint64("10.8")) && (os_version < AsciiOSVersionToUint64("10.10"))) {
     Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEMLMavSearchEXT, sizeof(KBEMLMavSearchEXT), KBEMLMavReplaceEXT, 1);
     DBG_RT(Entry, "==> kernelMountain Lion, Mavericks: %d replaces done.\n", Num);
-  }
-  else if ((os_version >= AsciiOSVersionToUint64("10.8")) && (os_version < AsciiOSVersionToUint64("10.10"))) {
-    Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEMLMavSearchEXT, sizeof(KBEMLMavSearchEXT), KBEMLMavReplaceEXT, 1);
-    DBG_RT(Entry, "==> kernel Mountain Lion, Mavericks: %d replaces done.\n", Num);
   }
   else if ((os_version >= AsciiOSVersionToUint64("10.10")) && (os_version < AsciiOSVersionToUint64("10.11"))) {
     Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEYosSearchEXT, sizeof(KBEYosSearchEXT), KBEYosReplaceEXT, 1);
