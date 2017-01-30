@@ -537,28 +537,23 @@ UINT8   KBELionReplaceEXT_i386[] = { 0xE8, 0xAA, 0xFB, 0xFF, 0xFF, 0x90, 0x90, 0
 UINT8   KBELionSearchEXT_X64[]   = { 0xE8, 0x0C, 0xFD, 0xFF, 0xFF, 0xEB, 0x08, 0x48, 0x89, 0xDF };
 UINT8   KBELionReplaceEXT_X64[]  = { 0xE8, 0x0C, 0xFD, 0xFF, 0xFF, 0x90, 0x90, 0x48, 0x89, 0xDF };
 
-// Mountain Lion, Mavericks
+// Mountain Lion/Mavericks
 UINT8   KBEMLMavSearchEXT[]      = { 0xC6, 0xE8, 0x30, 0x00, 0x00, 0x00, 0xEB, 0x08, 0x48, 0x89, 0xDF };
 UINT8   KBEMLMavReplaceEXT[]     = { 0xC6, 0xE8, 0x30, 0x00, 0x00, 0x00, 0x90, 0x90, 0x48, 0x89, 0xDF };
 
 // Yosemite
-UINT8   KBEYosSearchEXT[]        = { 0xE8, 0x25, 0x00, 0x00, 0x00, 0xEB, 0x05, 0xE8, 0xCE, 0x02, 0x00, 0x00 };
-UINT8   KBEYosReplaceEXT[]       = { 0xE8, 0x25, 0x00, 0x00, 0x00, 0x90, 0x90, 0xE8, 0xCE, 0x02, 0x00, 0x00 };
+UINT8   KBEYosSearchEXT[]        = { 0xE8, 0x25, 0x00, 0x00, 0x00, 0xEB, 0x05, 0xE8 };
+UINT8   KBEYosReplaceEXT[]       = { 0xE8, 0x25, 0x00, 0x00, 0x00, 0x90, 0x90, 0xE8 };
 
 // El Capitan
+// crazybirdy: Checked KBEYos*EXT for El Captian
 // need to use KBEYos*EXT patch for El Capitan
 UINT8   KBEECSearchSIP[]         = { 0xC3, 0x48, 0x85, 0xDB, 0x74, 0x70, 0x48, 0x8B, 0x03, 0x48, 0x89, 0xDF, 0xFF, 0x50, 0x28, 0x48 };
 UINT8   KBEECReplaceSIP[]        = { 0xC3, 0x48, 0x85, 0xDB, 0xEB, 0x12, 0x48, 0x8B, 0x03, 0x48, 0x89, 0xDF, 0xFF, 0x50, 0x28, 0x48 };
 
 // Sierra
-// Sherlocks: Sierra SIP, cecekpawon: Sierra DP2+, Micky1979: 10.12.4+
-// need to use KBEYos*EXT patch for Sierra DP1
-// need to use KBESie*EXT patch for Sierra DP2+
-// need to use KBESie4*EXT patch for 10.12.4+
-UINT8   KBESieSearchEXT[]        = { 0xE8, 0x25, 0x00, 0x00, 0x00, 0xEB, 0x05, 0xE8, 0x7E, 0x05, 0x00, 0x00 };
-UINT8   KBESieReplaceEXT[]       = { 0xE8, 0x25, 0x00, 0x00, 0x00, 0x90, 0x90, 0xE8, 0x7E, 0x05, 0x00, 0x00 };
-UINT8   KBESie4SearchEXT[]       = { 0xE8, 0x25, 0x00, 0x00, 0x00, 0xEB, 0x05, 0xE8, 0x9E, 0x05, 0x00, 0x00 };
-UINT8   KBESie4ReplaceEXT[]      = { 0xE8, 0x25, 0x00, 0x00, 0x00, 0x90, 0x90, 0xE8, 0x9E, 0x05, 0x00, 0x00 };
+// crazybirdy: Checked KBEYos*EXT for Sierra
+// need to use KBEYos*EXT patch for Sierra
 UINT8   KBESieSearchSIP[]        = { 0xC3, 0x48, 0x85, 0xDB, 0x74, 0x71, 0x48, 0x8B, 0x03, 0x48, 0x89, 0xDF, 0xFF, 0x50, 0x28, 0x48 };
 UINT8   KBESieReplaceSIP[]       = { 0xC3, 0x48, 0x85, 0xDB, 0xEB, 0x12, 0x48, 0x8B, 0x03, 0x48, 0x89, 0xDF, 0xFF, 0x50, 0x28, 0x48 };
 
@@ -586,6 +581,8 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
   UINTN   Num = 0;
   UINTN   NumSnow_i386 = 0;
   UINTN   NumLion_i386 = 0;
+  UINTN   NumSie = 0;
+  UINTN   NumSieDebug = 0;
   UINT64  os_version = AsciiOSVersionToUint64(Entry->OSVersion);
   
   DBG_RT(Entry, "\nPatching kernel for injected kexts...\n");
@@ -631,10 +628,12 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
           SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEECSearchSIP, sizeof(KBEECSearchSIP), KBEECReplaceSIP, 1);
     DBG_RT(Entry, "==> kernel  El Capitan: %d replaces done.\n", Num);
   }
-  else if ((os_version >= AsciiOSVersionToUint64("10.12")) && (os_version <= AsciiOSVersionToUint64("10.12.3"))) {
-    Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEYosSearchEXT, sizeof(KBEYosSearchEXT), KBEYosReplaceEXT, 1) +    // SieDP1
-          SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBESieSearchEXT, sizeof(KBESieSearchEXT), KBESieReplaceEXT, 1) +    // Missing KBESie* for 10.12 DP2 - 10.12.3, filled by PMheart.
-          SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBESieSearchSIP, sizeof(KBESieSearchSIP), KBESieReplaceSIP, 1);     // Universal.
+  else if ((os_version >= AsciiOSVersionToUint64("10.12")) && (os_version < AsciiOSVersionToUint64("10.13"))) {
+      NumSie       = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBESieSearchSIP, sizeof(KBESieSearchSIP));
+      NumSieDebug  = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBESieDebugSearchSIP, sizeof(KBESieDebugSearchSIP));
+      if (NumSie == 1) {
+          Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEYosSearchEXT, sizeof(KBEYosSearchEXT), KBEYosReplaceEXT, 1) +
+                SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBESieSearchSIP, sizeof(KBESieSearchSIP), KBESieReplaceSIP, 1);
     DBG_RT(Entry, "==> kernel Sierra: %d replaces done.\n", Num);
   }
   else if ((os_version >= AsciiOSVersionToUint64("10.12.4")) /* && (os_version <= AsciiOSVersionToUint64("10.12.4"))*/) {
@@ -699,25 +698,17 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
       Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEMLMavSearchEXT, sizeof(KBEMLMavSearchEXT), KBEMLMavReplaceEXT, 1);
       DBG_RT(Entry, "==> kernel Mountain Lion/Mavericks: %d replaces done.\n", Num);
   }
-  else if (NumYos == 1) {                                                                                                         // To divide Yosemite and El Capitan and Sierra DP1.
-        if (NumYos == 1 && NumEC != 1 && NumSie != 1) {
+  else if (NumYos == 1) {
             Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEYosSearchEXT, sizeof(KBEYosSearchEXT), KBEYosReplaceEXT, 1);
       DBG_RT(Entry, "==> kernel Yosemite: %d replaces done.\n", Num);
     }
-        else if (NumYos == 1 && NumEC == 1 && NumSie != 1) {
+  else if (NumEC == 1) {
             Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEYosSearchEXT, sizeof(KBEYosSearchEXT), KBEYosReplaceEXT, 1) +
                   SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEECSearchSIP, sizeof(KBEECSearchSIP), KBEECReplaceSIP, 1);
       DBG_RT(Entry, "==> kernel El Capitan: %d replaces done.\n", Num);
     }
-        else if (NumYos == 1 && NumEC != 1 && NumSie == 1)  {
-            Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEYosSearchEXT, sizeof(KBEYosSearchEXT), KBEYosReplaceEXT, 1) +
-                  SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBESieSearchSIP, sizeof(KBESieSearchSIP), KBESieReplaceSIP, 1);
-            DBG_RT(Entry, "==> kernel Sierra DP1: %d replaces done.\n", Num);
-        }
-  }
   else if (NumSie == 1) {
-      Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBESieSearchEXT, sizeof(KBESieSearchEXT), KBESieReplaceEXT, 1) +
-            SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBESie4SearchEXT, sizeof(KBESie4SearchEXT), KBESie4ReplaceEXT, 1) +
+      Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEYosSearchEXT, sizeof(KBEYosSearchEXT), KBEYosReplaceEXT, 1) +
             SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBESieSearchSIP, sizeof(KBESieSearchSIP), KBESieReplaceSIP, 1);
       DBG_RT(Entry, "==> kernel Sierra: %d replaces done.\n", Num);
   }
