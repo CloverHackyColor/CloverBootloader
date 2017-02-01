@@ -636,10 +636,14 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
                 SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBESieSearchSIP, sizeof(KBESieSearchSIP), KBESieReplaceSIP, 1);
     DBG_RT(Entry, "==> kernel Sierra: %d replaces done.\n", Num);
   }
-  else if ((os_version >= AsciiOSVersionToUint64("10.12.4")) /* && (os_version <= AsciiOSVersionToUint64("10.12.4"))*/) {
-    Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBESie4SearchEXT, sizeof(KBESie4SearchEXT), KBESie4ReplaceEXT, 1) +
-          SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBESieSearchSIP, sizeof(KBESieSearchSIP), KBESieReplaceSIP, 1);
-    DBG_RT(Entry, "==> kernel Sierra 10.12.4: %d replaces done.\n", Num);
+      else if (NumSieDebug == 1) {
+          Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBESieDebugSearchEXT, sizeof(KBESieDebugSearchEXT), KBESieDebugReplaceEXT, 1) +
+                SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBESieDebugSearchSIP, sizeof(KBESieDebugSearchSIP), KBESieDebugReplaceSIP, 1);
+                DBG_RT(Entry, "==> kernel Sierra Debug: %d replaces done.\n", Num);
+      }
+  }
+  else {
+      DBG_RT(Entry, "==> ERROR: NOT patched - unknown kernel.\n");
   }
 
   if (Entry->KernelAndKextPatches->KPDebug) {
