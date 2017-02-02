@@ -1102,12 +1102,13 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
 
         DBG (" %a", KernelPatchesLabel);
 
-        Patches->KernelPatches[Patches->NrKernels].MenuItem.BValue     = TRUE;
+        //Patches->KernelPatches[Patches->NrKernels].MenuItem.BValue     = TRUE;
         Dict = GetProperty (Prop2, "Disabled");
-        if ((Dict != NULL) && IsPropertyTrue (Dict)) {
+   /*     if ((Dict != NULL) && IsPropertyTrue (Dict)) {
           DBG(" :: patch disabled\n");
           Patches->KernelPatches[Patches->NrKernels].MenuItem.BValue   = FALSE;
-        }
+        } */
+        Patches->KernelPatches[Patches->NrKernels].MenuItem.BValue   = !IsPropertyTrue (Dict);
 
         TmpData    = GetDataSetting (Prop2, "Find", &FindLen);
         TmpPatch   = GetDataSetting (Prop2, "Replace", &ReplaceLen);
@@ -4168,12 +4169,13 @@ GetUserSettings(
                   }
                   
                   //Special case. In future there must be more such cases
-                  if ((AsciiStrStr(gSettings.AddProperties->Key, "ig-platform-id") != NULL) &&
-                      (gSettings.IgPlatform != 0)) {
-                    gSettings.AddProperties->Value = AllocatePool(4);
-                    CopyMem (gSettings.AddProperties->Value, (CHAR8*)&gSettings.IgPlatform, 4);
+                  if ((AsciiStrStr(gSettings.AddProperties->Key, "-platform-id") != NULL)/* &&
+                      (gSettings.IgPlatform != 0)*/) {
+                    CopyMem ((CHAR8*)&gSettings.IgPlatform, gSettings.AddProperties->Value, 4);
+                  /*  gSettings.AddProperties->Value = AllocatePool(4);
+                    CopyMem (gSettings.AddProperties->Value, (CHAR8*)&gSettings.IgPlatform, 4);                        
                     gSettings.AddProperties->ValueLen = 4;
-                    gSettings.AddProperties->ValueType = kTagTypeInteger;
+                    gSettings.AddProperties->ValueType = kTagTypeInteger; */
                   }
                 }
                 // gSettings.NrAddProperties++;
