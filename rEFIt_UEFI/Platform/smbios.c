@@ -40,6 +40,12 @@
 
 EFI_GUID						gUuid;
 EFI_GUID						*gTableGuidArray[] = {&gEfiSmbiosTableGuid, &gEfiSmbios3TableGuid};
+//
+// syscl: implement Dell truncate fix
+// remap EFI_SMBIOS_TABLE_1 to new guid to fix Dell
+// SMBIOS Table 1 truncate issue credit David Passmore
+//
+EFI_GUID                        gRemapEfiSmbiosTableGuid = REMAP_SMBIOS_TABLE_GUID;
 
 //EFI_PHYSICAL_ADDRESS			*smbiosTable;
 VOID                        *Smbios;  //pointer to SMBIOS data
@@ -2029,7 +2035,30 @@ VOID FinalizeSmbios() //continue
 	SmbiosEpsNew->EntryPointStructureChecksum = (UINT8)(256 - Checksum8((UINT8*)SmbiosEpsNew, SmbiosEpsNew->EntryPointLength));
 //	DBG("SmbiosEpsNew->EntryPointLength = %d\n", SmbiosEpsNew->EntryPointLength);
 //	DBG("DMI checksum = %d\n", Checksum8((UINT8*)SmbiosEpsNew, SmbiosEpsNew->EntryPointLength));
-	gBS->InstallConfigurationTable (&gEfiSmbiosTableGuid, (VOID*)SmbiosEpsNew);
+    
+    //
+    // syscl: one more step: check if we need remap SMBIOS Table Type 1 Guid
+    //
+    // to fix Dell's SMBIOS truncate credit David Passmore
+    //
+    if (gRemapSmBiosIsRequire)
+    {
+      //
+      // syscl: rempap smbios table 1 guid
+      //
+        
+      DBG("Remap smbios table type 1 guid.\n");
+      gBS->InstallConfigurationTable (&gRemapEfiSmbiosTableGuid, (VOID*)SmbiosEpsNew);
+    }
+    else
+    {
+      //
+      // use origin smbios guid table
+      //
+      DBG("Use origin smbios table type 1 guid.\n");
+	  gBS->InstallConfigurationTable (&gEfiSmbiosTableGuid, (VOID*)SmbiosEpsNew);
+    }
+    
 	gST->Hdr.CRC32 = 0;
 	gBS->CalculateCrc32 ((UINT8 *) &gST->Hdr, gST->Hdr.HeaderSize, &gST->Hdr.CRC32);
 	

@@ -1318,6 +1318,7 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
   KextPatchesNeeded = (
     Entry->KernelAndKextPatches->KPAsusAICPUPM ||
     Entry->KernelAndKextPatches->KPAppleRTC ||
+    Entry->KernelAndKextPatches->KPDELLSMBIOS ||
     (Entry->KernelAndKextPatches->KPATIConnectorsPatch != NULL) ||
     ((Entry->KernelAndKextPatches->NrKexts > 0) && (Entry->KernelAndKextPatches->KextPatches != NULL))
   );

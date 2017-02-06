@@ -1,18 +1,17 @@
 #!/bin/bash
-
 #
-# 2017 (c) syscl/lighting/Yating Zhou/tluck
+# 2017 (c) syscl/lighting/Yating Zhou/tluck/Sherlocks
 # dump NVRAM for Clover
 #
 # note: msdosfs.kext, exfat.kext should be loaded
 #
+# Editor tluck, Sherlocks
+#
 
 #================================= GLOBAL VARS ==================================
 
-#
 # Script version info
-#
-gScriptVersion=1.6
+gScriptVersion=1.13
 
 #
 # The script expects '0.5' but non-US localizations use '0,5' so we export
@@ -43,30 +42,39 @@ gRepo=/etc/rc.shutdown.d
 #
 # Source clover rc library if needed
 #
-if [[ ! "$(type -t GetNVRamKey)" == "function" ]]; then
+if [[ ! "$(type -t GetNVRamKey)" == "function" ]];
+then
     source "${gRepo}"/../rc.clover.lib
 fi
 
 #
 # Variables
 #
+gDmpTimeStamp=""
 gNVRAMf=nvram.plist
 gNVRAMbuf=$(nvram -x -p)
-gDisk=($(ls /dev/disk?|grep -i -o "disk[0-9]" ))
-#gRootInf=$(df -l |grep -i -v "/Volumes" |grep -i -o "disk[0-9]s[0-9]")
+gEfiEmuVariableIsPresent=""
+gLegacyEmuVariableIsPresent=""
+gDisk=($(ls /dev/disk? |grep -i -o "disk[0-9]"))
 gESPList=""
-RETURN_VAL=${kBASHReturnSuccess}
+#
+# ESP list index
+#
+let gESPListIndex=0
 #
 # we write this truncate name for more flexible situation
 #
-gEmuVariableName=EmuVariable
-#gEmuVariablePresent=$(nvram -x -p |grep -i "${gEmuVariableName}")
-gEmuVariablePresent=$( printf "$gNVRAMbuf" |grep -i "${gEmuVariableName}")
-gEmuVariableLegacy=""
-if [[  "${gEmuVariablePresent}" == "" ]]; then
+gEmuVariableName=emuvariable
+if [[ `echo "${gNVRAMbuf}" |tr '[:upper:]' '[:lower:]'` == *"${gEmuVariableName}"* ]];
+then
+    gEfiEmuVariableIsPresent="true"
+    gLegacyEmuVariableIsPresent="false"
+else
+    gEfiEmuVariableIsPresent="false"
+    gLegacyEmuVariableIsPresent="true"
     gEFIFirmwareVendor=$(LC_ALL=C ioreg -l -pIODeviceTree | sed -nE 's@.*firmware-vendor.*<([0-9a-fA-F]*)>.*@\1@p' | xxd -r -p | tr '[:upper:]' '[:lower:]')
     case "${gEFIFirmwareVendor}" in
-        *"clover"* | *"edk ii"* ) gEmuVariableLegacy="true"
+        *"clover"* | *"edk ii"* ) gLegacyEmuVariableIsPresent="true"
                                   ;;
         *                       )
                                   ;;
@@ -80,13 +88,22 @@ gNvramLogPath="${CLOVER_LOG_LOCATION}/rc.shutdown.log"
 [[ "$DEBUG" -ne 0 ]] && set -x
 
 #
-#--------------------------------------------------------------------------------
 #
-
-function _toLowerCase()
-{
-    echo "`echo $1 | tr '[:upper:]' '[:lower:]'`"
-}
+# syscl:
+# note: 80.save.nvram_plist.local will be called twice(one for logout hook? one for CloverDameon?)
+# thus log information will be incorrected
+# use this method to prevent script being called multiple times
+# 2f5fba4136edf285c357254567341958 == syscl
+#
+#gTmpRepo="/tmp/2f5fba4136edf285c357254567341958"
+#if [ -f "${gTmpRepo}" ];
+#then
+    #
+    # script has been executed, return
+    #
+#    rm -r "${gTmpRepo}"
+#    exit ${kBASHReturnFailure}
+#fi
 
 #
 #--------------------------------------------------------------------------------
@@ -97,27 +114,42 @@ function _fndESP()
     #
     # find all EFI partitions distrubuted in different disks
     #
-    # default gNVRAMf save path should be EFI as Clover's new feature
+    # default gNVRAMf save path should be EFI as Clover now support FileVault
     #
     local gEfiIDENTIFIER=""
     local gEfiUID="C12A7328-F81F-11D2-BA4B-00A0C93EC93B"
     local gPartIndex=""
-    n=0
     for ((i=0; i<${#gDisk[@]}; ++i))
     do
       gPartIndex=$(gpt -r show "/dev/${gDisk[i]}" 2> /dev/null |grep -i "${gEfiUID}" |awk '{print $3}')
+      gDmpTimeStamp=$(date +%Y-%m-%d-%H:%M:%S)
       case "${gPartIndex}" in
-      [[:digit:]]* ) echo -n "Found ESP on ${gDisk[i]}s${gPartIndex}"
+      [[:digit:]]* ) echo -n "${gDmpTimeStamp}  Found ESP on ${gDisk[i]}s${gPartIndex}"
                      local gESP="${gDisk[i]}s${gPartIndex}"
                      local gMountPoint=$(_mountESP ${gESP})
-                     if [ -d "${gMountPoint}/EFI/CLOVER" ]; then
-                         echo " and found Clover in ${gMountPoint}/EFI/CLOVER"
-                         gESPList[$n]="${gMountPoint}"
-			 n=$((n+1))
+                     if [[ "$gMountPoint" != *"fail"* ]];
+                     then
+                         #
+                         # Mount success, see if there's Clover
+                         #
+                         if [ -d "${gMountPoint}/EFI/CLOVER" ];
+                         then
+                             echo " with ${gMountPoint}/EFI/CLOVER"
+                             #
+                             # Added mount point to list
+                             #
+                             gESPList[${gESPListIndex}]="${gMountPoint}"
+                             ((gESPListIndex++))
+                         else
+                             echo " without a Clover directory -- skipping"
+                             #
+                             # leave it umount
+                             #
+                             (umount "${gMountPoint}" 2>&1) > /dev/null &
+                         fi
                      else
-			 echo ""
-			 umount "${gMountPoint}"
-		     fi
+                         echo "**** ${gESP} ${gMountPoint}"
+                     fi
                      ;;
       *            )
                      ;;
@@ -145,52 +177,133 @@ function _mountESP()
     local gDevUmountErr=""
     local gMountPointf=""
     #
-    # syscl: use EFIXY(diskXsY) as MountPoint can ensure uniqueness
+    # syscl: use EFI-XY(diskXsY) as MountPoint can ensure uniqueness
     #
     # ESP-01 - disk0s1 ESP-11 - disk1s1 ...
     #
     local gAssignMountPoint="/Volumes/ESP-${gESP:4:1}${gESP:6:1}"
+    local gDevMountedPoint=""
 
     #
-    # create mount point - or use existing
+    # check for already mounted ESP
     #
-
-    mounted=( $( mount |grep $gESP ) )
-    if [[ $? == 0 ]]; 
+    gDevMountedPoint=($(mount |grep ${gESP}))
+    if [[ "${gDevMountedPoint}" != "" ]];
     then
-	printf "${mounted[2]}"
+        #
+        # already mount, remap mount point
+        #
+        gAssignMountPoint="${gDevMountedPoint[2]}"
     else
+        #
+        # ESP do not mount
+        # 1) make mount point
+        # 2) determine the filesystem type
+        # 3) mount the ESP and return mount point
+        # 4) if failed to mount, use umount to see if this work
+        # 5) if still failed, use umount -f
+        # 6) if we get disk damage information: use fsck to try to fix ESP
+        # 7) still fail, return failed
+        #
+        mkdir ${gAssignMountPoint}  2>/dev/null
 
-    mkdir ${gAssignMountPoint}  2>/dev/null
-    #
-    # Try to mount ESP
-    #
-    for gFsType in msdos hfs exfat;
-    do
-      case "${gFsType}" in
-      *hfs* ) #
-              # HFS+, use mount_hfs directly
-              #
-              mount_hfs "${gDevRepo}" "${gAssignMountPoint}"           &>/dev/null && RETURN_VAL=${kBASHReturnSuccess} || RETURN_VAL=${kBASHReturnFailure}
-              ;;
+        fstype=$(file -sb ${gDevRepo/disk/rdisk} | cut -c-20)
+        if   [[ "$fstype" = "DOS/MBR boot sector," ]];
+        then
+            gFsType=msdos
+        elif [[ "$fstype" = "DOS/MBR boot sector " ]];
+        then
+            gFsType=exfat
+        elif [[ "$fstype" = "Macintosh HFS Extend" ]];
+        then
+            gFsType=hfs
+        fi
 
-      *     ) #
-              # Fat32 or exFat
-              #
-              mount -t ${gFsType} "${gDevRepo}" "${gAssignMountPoint}" &>/dev/null && RETURN_VAL=${kBASHReturnSuccess} || RETURN_VAL=${kBASHReturnFailure}
-              ;;
-      esac
+        #
+        # now, let's mount it
+        #
+        case "${gFsType}" in
+          *hfs* ) #
+                  # HFS+, use mount_hfs directly
+                  #
+                  mount_hfs "${gDevRepo}" "${gAssignMountPoint}"                                     &>/dev/null
+                  RETURN_VAL=$?
+                  ;;
 
-      if [ "${RETURN_VAL}" == ${kBASHReturnSuccess} ]; then
-          #
-          # current ESP filesystem type store here
-          #
-          gESPFsType=${gFsType}
-      fi
-    done
+          *     ) #
+                  # Fat32 or exFat
+                  #
+                  mount -t ${gFsType} -o noowners,sync,noasync "${gDevRepo}" "${gAssignMountPoint}" &>/dev/null
+                  RETURN_VAL=$?
+                  ;;
+        esac
+        if [[ ${RETURN_VAL} != ${kBASHReturnSuccess} ]];
+        then
+            #
+            # we encounter mount issue, umount it
+            #
+            gDmpTimeStamp=$(date +%Y-%m-%d-%H:%M:%S)
+            gDevUmountErr=$(umount ${gDevRepo} 2>&1)
+            gUmountMPErr=$(umount ${gAssignMountPoint} 2>&1)
+            if [[ "${gDevUmountErr}" == *"diskutil unmount"* ]]; then
+                echo "${gDmpTimeStamp}  Device mount error ${gDevUmountErr}"   >>${gNvramLogPath}
+                echo "${gDmpTimeStamp}  Now use umount -f to release it"       >>${gNvramLogPath}
+                gDevUmountErr=$(umount -f ${gDevRepo} 2>&1)
+            fi
+            sleep 0
+            #
+            # remove /Volumes/ESPXY folder just in case
+            #
+            if [ -d ${gAssignMountPoint} ]; then
+                gMountPointf=$(ls ${gAssignMountPoint} 2>&1)
+                if [[ ${gMountPointf} == "" || ${gMountPointf} == ${gNVRAMf} ]]; then
+                    #
+                    # use rmdir instead of rm -r for safe reason
+                    #
+                    rmdir ${gAssignMountPoint}  2>/dev/null
+                fi
+            fi
+            #
+            # create mount root again
+            #
+            mkdir ${gAssignMountPoint}  2>/dev/null
+            #
+            # Try to mount ESP
+            #
+            for gFsType in msdos hfs exfat;
+            do
+              case "${gFsType}" in
+              *hfs* ) #
+                      # HFS+, use mount_hfs directly
+                      #
+                      mount_hfs "${gDevRepo}" "${gAssignMountPoint}"           &>/dev/null && RETURN_VAL=${kBASHReturnSuccess} || RETURN_VAL=${kBASHReturnFailure}
+                      ;;
 
-    printf "${gAssignMountPoint}"
+              *     ) #
+                      # Fat32 or exFat
+                      #
+                      mount -t ${gFsType} "${gDevRepo}" "${gAssignMountPoint}" &>/dev/null && RETURN_VAL=${kBASHReturnSuccess} || RETURN_VAL=${kBASHReturnFailure}
+                      ;;
+              esac
 
+              if [ "${RETURN_VAL}" == ${kBASHReturnSuccess} ]; then
+                  #
+                  # current ESP filesystem type store here
+                  #
+                  gESPFsType=${gFsType}
+              fi
+            done
+        fi
+    fi
+
+    if [[ ${gDevMountedPoint} != "" || ${RETURN_VAL} == 0 ]];
+    then
+        #
+        # We obtain mountpoint, return it
+        #
+        echo "${gAssignMountPoint}"
+    else
+        echo "Get mount point failed"
     fi
 }
 
@@ -205,50 +318,71 @@ function _dmpNVRAM()
     #
     local gTarPath=$1
     local gOldNVRAM=$(cat ${gTarPath}/${gNVRAMf} 2>&1)
-    if [[ "${gOldNVRAM}" != "${gNVRAMbuf}" ]]; then
+    RETURN_VAL=${kBASHReturnSuccess}
+    gDmpTimeStamp=$(date +%Y-%m-%d-%H:%M:%S)
+    if [[ "${gOldNVRAM}" != "${gNVRAMbuf}" ]];
+    then
         #
         # Need to refresh
         #
-        #nvram -x -p >"${gTarPath}/${gNVRAMf}" 2>&1 && RETURN_VAL=${kBASHReturnSuccess} || RETURN_VAL=${kBASHReturnFailure}
-        printf "${gNVRAMbuf}" > "${gTarPath}/${gNVRAMf}" 
-        if [ "$?" == ${kBASHReturnSuccess} ]; then
-            echo " saved new values to NVRAM"
+        # we've already obtained NVRAM in gNVRAMbuf, no need to call nvram again
+        #
+        printf "${gNVRAMbuf}" >"${gTarPath}/${gNVRAMf}" 2>&1 && RETURN_VAL=${kBASHReturnSuccess} || RETURN_VAL=${kBASHReturnFailure};
+        if [ ${RETURN_VAL} == ${kBASHReturnSuccess} ];
+        then
+            echo "${gDmpTimeStamp}  Values changed, updated ${gNVRAMf}"
         else
-            echo " *** ERROR **** during save of NVRAM"
-	fi
+            echo "${gDmpTimeStamp}  Error during update ${gTarPath}/${gNVRAMf}"
+        fi
     else
-	echo " no change in NVRAM"
+        echo "${gDmpTimeStamp}  No change in nvram.plist"
     fi
 }
 
 #==================================== START =====================================
 
-echo "v${gScriptVersion} (c) 2017 syscl/lighting/Yating Zhou" >${gNvramLogPath}
 #
-# find EFIs, added into gESPList
+# create indicator to prevent script being called multiple times
+#
+#touch "${gTmpRepo}"
+#
+# now, let's get started
+#
+echo "v${gScriptVersion} (c) 2017 syscl/lighting/Yating Zhou"     >${gNvramLogPath}
 #
 # save NVRAM for legacy Clover and/or for EmuVariable present
-if [[ "${gEmuVariableLegacy}" == "true" || "${gEmuVariablePresent}" != "" ]]; 
-then
+#
+if [[ "${gLegacyEmuVariableIsPresent}" == "true" || "${gEfiEmuVariableIsPresent}" == "true" ]]; then
+    #
+    # find EFIs, added into gESPList
+    #
     _fndESP                                                      >>${gNvramLogPath}
-#
-# mount ESP with Clover - otherwise write to root if no ESP
-# then dump NVRAM to target path
-#
-if [ "${#gESPList[@]}" -eq 0 ]; then
-      _dmpNVRAM /
-else    
-for ((i=0; i<${#gESPList[@]}; ++i))
-do
-  echo -n "Target path: ${gESPList[i]}"                         >>${gNvramLogPath}
-      #
-      # dump NVRAM to target path now
-      #
-      _dmpNVRAM ${gESPList[i]}                                  >>${gNvramLogPath}
-      umount "${gESPList[i]}"                                   >>${gNvramLogPath}
-done
-fi
-
+    #
+    # mount ESP with Clover - otherwise write to root if no ESP
+    # then dump NVRAM to target path
+    #
+    if [ "${#gESPList[@]}" -eq 0 ];
+    then
+        #
+        # no ESP found, write file to root(/) just in case
+        #
+        gDmpTimeStamp=$(date +%Y-%m-%d-%H:%M:%S)
+        echo "${gDmpTimeStamp}  No ESP found or mounted"         >>${gNvramLogPath}
+        _dmpNVRAM /
+    else
+        #
+        # ESP found, write file to ESP
+        #
+        RETURN_VAL=0
+        for ((i=0; i<${#gESPList[@]}; ++i))
+        do
+          #
+          # dump NVRAM to target path now
+          #
+          _dmpNVRAM "${gESPList[i]}"                             >>${gNvramLogPath}
+          (umount   "${gESPList[i]}" 2>&1) > /dev/null &
+        done
+    fi
 fi
 
 #================================================================================

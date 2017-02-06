@@ -652,6 +652,7 @@ CopyKernelAndKextPatches (IN OUT  KERNEL_AND_KEXT_PATCHES *Dst,
   Dst->KPLapicPanic  = Src->KPLapicPanic;
   Dst->KPAsusAICPUPM = Src->KPAsusAICPUPM;
   Dst->KPAppleRTC    = Src->KPAppleRTC;
+  Dst->KPDELLSMBIOS  = Src->KPDELLSMBIOS;
   Dst->KPKernelPm    = Src->KPKernelPm;
   Dst->FakeCPUID     = Src->FakeCPUID;
 
@@ -894,6 +895,19 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
   Prop = GetProperty (DictPointer, "AppleRTC");
   if (Prop != NULL || gBootChanged) {
     Patches->KPAppleRTC = !IsPropertyFalse (Prop);  //default = TRUE
+  }
+
+  //
+  // Dell SMBIOS Fix
+  //
+  Prop = GetProperty (DictPointer, "DellSMBIOSPatch");
+  if (Prop != NULL || gBootChanged)
+  {
+    Patches->KPDELLSMBIOS = !IsPropertyFalse (Prop);  //default = TRUE
+    //
+    // Reemap smbios table guid is required
+    //
+    gRemapSmBiosIsRequire = TRUE;
   }
 
   Prop = GetProperty (DictPointer, "ForceKextsToLoad");
@@ -2163,6 +2177,7 @@ GetEarlyUserSettings (
 
   gSettings.KextPatchesAllowed              = TRUE;
   gSettings.KernelAndKextPatches.KPAppleRTC = TRUE;
+  gSettings.KernelAndKextPatches.KPDELLSMBIOS = TRUE;
   gSettings.KernelPatchesAllowed            = TRUE;
 
   Dict = CfgDict;

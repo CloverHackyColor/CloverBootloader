@@ -442,6 +442,12 @@ VOID FillInputs(BOOLEAN New)
     InputItems[InputItemsCount].SValue = AllocateZeroPool(64);
   }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%d", gSettings.HDALayoutId);
+  
+      // syscl change here
+  InputItems[InputItemsCount].ItemType = BoolValue; //61
+  InputItems[InputItemsCount++].BValue = gSettings.KernelAndKextPatches.KPDELLSMBIOS;
+    // end of change
+
 
   // CSR - aka System Integrity Protection configuration
   InputItemsCount = 65;
@@ -906,6 +912,12 @@ VOID ApplyInputs(VOID)
   if (InputItems[i].Valid) {
     gSettings.HDALayoutId = (UINT8)(StrDecimalToUintn(InputItems[i].SValue) & 0x0F);
   }
+  i++; //61
+  if (InputItems[i].Valid) {
+    gSettings.KernelAndKextPatches.KPDELLSMBIOS = InputItems[i].BValue;
+    gBootChanged = TRUE;
+  }
+
   
   // CSR
   i = 65; 
@@ -1214,7 +1226,7 @@ VOID AboutRefit(VOID)
     AddMenuInfo(&AboutMenu, L"  cparm, rehabman, nms42, Sherlocks, Zenith432");
     AddMenuInfo(&AboutMenu, L"  stinga11, TheRacerMaster, solstice, SoThOr, DF");
     AddMenuInfo(&AboutMenu, L"  cecekpawon, Micky1979, Needy, joevt, ErmaC, vit9696");
-    AddMenuInfo(&AboutMenu, L"  ath, savvas");
+    AddMenuInfo(&AboutMenu, L"  ath, savvas, syscl");
     AddMenuInfo(&AboutMenu, L"  projectosx.com, applelife.ru, insanelymac.com");
     AddMenuInfo(&AboutMenu, L"");
     AddMenuInfo(&AboutMenu, L"Running on:");
@@ -4040,6 +4052,7 @@ REFIT_MENU_ENTRY  *SubMenuBinaries()
   AddMenuInfo(SubScreen, L"----------------------");
   AddMenuItem(SubScreen, 46,  "AppleIntelCPUPM Patch", TAG_INPUT, FALSE);
   AddMenuItem(SubScreen, 47,  "AppleRTC Patch", TAG_INPUT, FALSE);  
+  AddMenuItem(SubScreen, 61,  "Dell SMBIOS Patch", TAG_INPUT, FALSE);
   AddMenuItem(SubScreen, 44,  "Kext patching allowed", TAG_INPUT, FALSE);
   AddMenuEntry(SubScreen, SubMenuKextPatches());
   

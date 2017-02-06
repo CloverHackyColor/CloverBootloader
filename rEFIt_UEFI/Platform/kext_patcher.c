@@ -501,6 +501,61 @@ VOID CheckForFakeSMC(CHAR8 *InfoPlist, LOADER_ENTRY *Entry)
 
 ////////////////////////////////////
 //
+// Dell SMBIOS Patch by syscl
+//
+// Remap SMBIOS Table 1 for  both AppleSMBIOS and AppleACPIPlatform
+//
+// EB9D2D31-2D88-11D3-9A16-0090273F -> EB9D2D35-2D88-11D3-9A16-0090273F
+//
+UINT8   DELL_SMBIOS_GUID_Search[]  = { 0x45, 0x42, 0x39, 0x44, 0x32, 0x44, 0x33, 0x31 };
+UINT8   DELL_SMBIOS_GUID_Replace[] = { 0x45, 0x42, 0x39, 0x44, 0x32, 0x44, 0x33, 0x35 };
+
+//
+// EB9D2D31-2D88-11D3-9A16-0090273F is the standard SMBIOS Table Type 1 for
+// all computers even though Apple.Inc should obey the rule
+// that's why we can be so confident to write patch pattern this way - syscl
+//
+VOID DellSMBIOSPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize, LOADER_ENTRY *Entry)
+{
+    //
+    // syscl
+    // Note, smbios truncate issue only affects Broadwell platform and platform
+    // later than Broadwell thus we don't need to consider OS versinos earlier
+    // than Yosemite, they are all pure 64bit platforms
+    //
+    UINTN gPatchCount = 0;
+    
+    DBG_RT(Entry, "\nDellSMBIOSPatch: driverAddr = %x, driverSize = %x\n", Driver, DriverSize);
+    if (Entry->KernelAndKextPatches->KPDebug)
+    {
+        ExtractKextBundleIdentifier(InfoPlist);
+    }
+    DBG_RT(Entry, "Kext: %a\n", gKextBundleIdentifier);
+    
+    //
+    // now, let's patch it!
+    //
+    gPatchCount = SearchAndReplace(Driver, DriverSize, DELL_SMBIOS_GUID_Search, sizeof(DELL_SMBIOS_GUID_Search), DELL_SMBIOS_GUID_Replace, 1);
+    
+    if (gPatchCount == 1)
+    {
+        DBG_RT(Entry, "==> AppleSMBIOS: %d replaces done.\n", gPatchCount);
+    }
+    else
+    {
+        DBG_RT(Entry, "==> Patterns not found - patching NOT done.\n");
+    }
+
+    if (Entry->KernelAndKextPatches->KPDebug)
+    {
+        gBS->Stall(5000000);
+    }
+}
+
+
+
+////////////////////////////////////
+//
 // Place other kext patches here
 //
 
@@ -632,6 +687,25 @@ VOID PatchKext(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPl
     // AppleRTC
     //
     AppleRTCPatch(Driver, DriverSize, InfoPlist, InfoPlistSize, Entry);
+  } else if (Entry->KernelAndKextPatches->KPDELLSMBIOS &&
+           (AsciiStrStr(InfoPlist, "com.apple.driver.AppleSMBIOS") != NULL)) {
+    //
+    // DellSMBIOS
+    //
+    DBG_RT(Entry, "Remap SMBIOS Table require, patching kext...\n");
+    gRemapSmBiosIsRequire = TRUE;
+    // syscl: indeed we need to change SMBIOS GUID Table 1
+    // AppleSMBIOS
+    //
+    DellSMBIOSPatch(Driver, DriverSize, InfoPlist, InfoPlistSize, Entry);
+  } else if (Entry->KernelAndKextPatches->KPDELLSMBIOS &&
+             (AsciiStrStr(InfoPlist, "com.apple.driver.AppleACPIPlatform") != NULL)) {
+    //
+    // DellSMBIOS
+    //
+    // AppleACPIPlatform
+    //
+    DellSMBIOSPatch(Driver, DriverSize, InfoPlist, InfoPlistSize, Entry);
   } else {
     //
     //others

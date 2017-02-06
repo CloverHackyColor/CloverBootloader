@@ -14,10 +14,10 @@
 
 #include "BaseLibInternals.h"
 // this is 1.000.000
-#define RSIZE_MAX  1000000  
+#define RSIZE_MAX  100000000ull 
 //(PcdGet32 (PcdMaximumUnicodeStringLength))
 
-#define ASCII_RSIZE_MAX  1000000
+#define ASCII_RSIZE_MAX  100000000ull
 //(PcdGet32 (PcdMaximumAsciiStringLength))
 
 #define SAFE_STRING_CONSTRAINT_CHECK(Expression, Status)  \

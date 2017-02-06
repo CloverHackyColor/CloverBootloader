@@ -319,6 +319,8 @@ VOID DumpKernelAndKextPatches(KERNEL_AND_KEXT_PATCHES *Patches)
   DBG("\tHaswell-E: %c\n", Patches->KPHaswellE ? 'y' : 'n');
   DBG("\tAICPUPM: %c\n", Patches->KPAsusAICPUPM ? 'y' : 'n');
   DBG("\tAppleRTC: %c\n", Patches->KPAppleRTC ? 'y' : 'n');
+  // Dell smbios truncate fix
+  DBG("\tDellSMBIOSPatch: %c\n", Patches->KPDELLSMBIOS ? 'y' : 'n');
   DBG("\tKernelPm: %c\n", Patches->KPKernelPm ? 'y' : 'n');
   DBG("\tFakeCPUID: 0x%x\n", Patches->FakeCPUID);
   DBG("\tATIController: %s\n", (Patches->KPATIConnectorsController == NULL) ? L"null": Patches->KPATIConnectorsController);

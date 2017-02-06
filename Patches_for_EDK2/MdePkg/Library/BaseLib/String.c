@@ -835,6 +835,7 @@ StrHexToUintn (
   @retval Value translated from String.
 
 **/
+#if 0
 UINT64
 EFIAPI
 StrHexToUint64 (
@@ -850,6 +851,66 @@ StrHexToUint64 (
   }
   return Result;
 }
+#else
+UINT64
+EFIAPI
+StrHexToUint64 (
+                IN      CONST CHAR16             *String
+                )
+{
+  UINT64    Result;
+  
+  //
+  // ASSERT String is less long than PcdMaximumUnicodeStringLength.
+  // Length tests are performed inside StrLen().
+  //
+//  ASSERT (StrSize (String) != 0);
+  if (!String) {
+    return 0;
+  }
+  
+  //
+  // Ignore the pad spaces (space or tab)
+  //
+  while ((*String == L' ') || (*String == L'\t')) {
+    String++;
+  }
+  
+  //
+  // Ignore leading Zeros after the spaces
+  //
+  while (*String == L'0') {
+    String++;
+  }
+  
+  if (InternalCharToUpper (*String) == L'X') {
+//    ASSERT (*(String - 1) == L'0');
+    if (*(String - 1) != L'0') {
+      return 0;
+    }
+    //
+    // Skip the 'X'
+    //
+    String++;
+  }
+  
+  Result = 0;
+  
+  while (InternalIsHexaDecimalDigitCharacter (*String)) {
+    //
+    // If the Hex Number represented by String overflows according
+    // to the range defined by UINTN, then ASSERT().
+    //
+ //   ASSERT (Result <= RShiftU64 (((UINT64) ~0) - InternalHexCharToUintn (*String) , 4));
+    
+    Result = LShiftU64 (Result, 4);
+    Result = Result + InternalHexCharToUintn (*String);
+    String++;
+  }
+  
+  return Result;
+}
+#endif
 
 /**
   Check if a ASCII character is a decimal character.

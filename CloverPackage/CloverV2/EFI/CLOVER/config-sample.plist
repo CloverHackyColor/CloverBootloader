@@ -545,6 +545,8 @@
 		<string>040000001402000000010000000004040004000004030000000100001102010500000000000000000000000000000000</string>
 		<key>AppleRTC</key>
 		<true/>
+		<key>DellSMBIOSPatch</key>
+		<false/>
 		<key>AsusAICPUPM</key>
 		<false/>
 		<key>Debug</key>

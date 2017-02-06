@@ -558,8 +558,9 @@ typedef struct KERNEL_AND_KEXT_PATCHES
   BOOLEAN KPHaswellE;
   BOOLEAN KPAsusAICPUPM;
   BOOLEAN KPAppleRTC;
-  BOOLEAN KPKernelPm;
-  UINT8   pad[1];
+  BOOLEAN KPKernelPm; 
+  BOOLEAN KPDELLSMBIOS;  // Dell SMBIOS patch
+//  UINT8   pad[1];
   UINT32  FakeCPUID;
   UINT32  align0;
   CHAR16  *KPATIConnectorsController;
