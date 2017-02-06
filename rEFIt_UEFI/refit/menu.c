@@ -1209,7 +1209,7 @@ VOID AboutRefit(VOID)
     AboutMenu.TitleImage = NULL;
   }
   if (AboutMenu.EntryCount == 0) {
-    AddMenuInfo(&AboutMenu, PoolPrint(L"Clover Version 2.3k rev %s", gFirmwareRevision)); // by Slice, dmazar, apianti, JrCs, pene and others");
+    AddMenuInfo(&AboutMenu, PoolPrint(L"Clover Version 2.4k rev %s", gFirmwareRevision)); // by Slice, dmazar, apianti, JrCs, pene and others");
 #ifdef FIRMWARE_BUILDDATE
     AddMenuInfo(&AboutMenu, PoolPrint(L" Build: %a", FIRMWARE_BUILDDATE));
 #else

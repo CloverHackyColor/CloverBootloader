@@ -19,7 +19,7 @@ export LC_COLLATE='C'
 export LC_CTYPE='C'
 
 # ====== REVISION/VERSION ======
-declare -r CLOVER_VERSION='v2.3k'
+declare -r CLOVER_VERSION='v2.4k'
 declare -r CLOVER_REVISION=$( cat "$PKGROOT"/../../vers.txt )
 
 # ==== CHECK ENVIRONEMENT ====
