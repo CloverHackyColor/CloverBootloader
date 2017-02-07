@@ -690,13 +690,9 @@ VOID PatchKext(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPl
   } else if (Entry->KernelAndKextPatches->KPDELLSMBIOS &&
            (AsciiStrStr(InfoPlist, "com.apple.driver.AppleSMBIOS") != NULL)) {
     //
-    // DellSMBIOS
+    // DellSMBIOSPatch
     //
-    DBG_RT(Entry, "Remap SMBIOS Table require, patching kext...\n");
-    gRemapSmBiosIsRequire = TRUE;
-    // syscl: indeed we need to change SMBIOS GUID Table 1
-    // AppleSMBIOS
-    //
+    DBG_RT(Entry, "Remap SMBIOS Table require, AppleSMBIOS...\n");
     DellSMBIOSPatch(Driver, DriverSize, InfoPlist, InfoPlistSize, Entry);
   } else if (Entry->KernelAndKextPatches->KPDELLSMBIOS &&
              (AsciiStrStr(InfoPlist, "com.apple.driver.AppleACPIPlatform") != NULL)) {

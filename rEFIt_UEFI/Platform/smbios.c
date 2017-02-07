@@ -2044,9 +2044,8 @@ VOID FinalizeSmbios() //continue
     if (gRemapSmBiosIsRequire)
     {
       //
-      // syscl: rempap smbios table 1 guid
+      // syscl: remap smbios table 1 guid
       //
-        
       DBG("Remap smbios table type 1 guid.\n");
       gBS->InstallConfigurationTable (&gRemapEfiSmbiosTableGuid, (VOID*)SmbiosEpsNew);
     }

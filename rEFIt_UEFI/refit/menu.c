@@ -915,9 +915,10 @@ VOID ApplyInputs(VOID)
   i++; //61
   if (InputItems[i].Valid) {
     gSettings.KernelAndKextPatches.KPDELLSMBIOS = InputItems[i].BValue;
+    // yes, we do need to change gRemapSmBiosIsRequire here as well
+    gRemapSmBiosIsRequire = InputItems[i].BValue;
     gBootChanged = TRUE;
   }
-
   
   // CSR
   i = 65; 

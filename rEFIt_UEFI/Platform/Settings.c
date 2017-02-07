@@ -898,17 +898,16 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
   }
 
   //
-  // Dell SMBIOS Fix
+  // Dell SMBIOS Patch
   //
-  Prop = GetProperty (DictPointer, "DellSMBIOSPatch");
-  if (Prop != NULL || gBootChanged)
-  {
-    Patches->KPDELLSMBIOS = !IsPropertyFalse (Prop);  //default = TRUE
-    //
-    // Reemap smbios table guid is required
-    //
-    gRemapSmBiosIsRequire = TRUE;
-  }
+  // syscl: we do not need gBootChanged and Prop is empty condition
+  // this change will boost Dell SMBIOS Patch a bit
+  // but the major target is to make code clean
+  Prop = GetProperty(DictPointer, "DellSMBIOSPatch");
+  Patches->KPDELLSMBIOS = IsPropertyTrue(Prop); // default == FALSE
+  gRemapSmBiosIsRequire = Patches->KPDELLSMBIOS;
+
+
 
   Prop = GetProperty (DictPointer, "ForceKextsToLoad");
   if (Prop != NULL) {
@@ -2177,7 +2176,7 @@ GetEarlyUserSettings (
 
   gSettings.KextPatchesAllowed              = TRUE;
   gSettings.KernelAndKextPatches.KPAppleRTC = TRUE;
-  gSettings.KernelAndKextPatches.KPDELLSMBIOS = TRUE;
+  gSettings.KernelAndKextPatches.KPDELLSMBIOS = FALSE; // default is false
   gSettings.KernelPatchesAllowed            = TRUE;
 
   Dict = CfgDict;
