@@ -306,7 +306,7 @@
 			<key>#Inject</key>
 			<string>0x0887</string>
 		</dict>
-		<key>FakeID</key>
+		<key>#FakeID</key>
 		<dict>
 			<key>#ATI</key>
 			<string>0x67501002</string>

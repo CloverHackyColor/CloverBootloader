@@ -690,13 +690,14 @@ StrDecimalToUintnS (
     // defined by UINTN, then MAX_UINTN is stored in *Data and
     // RETURN_UNSUPPORTED is returned.
     //
-    if (*Data > ((MAX_UINTN - (*String - L'0')) / 10)) {
-      *Data = MAX_UINTN;
-      if (EndPointer != NULL) {
-        *EndPointer = (CHAR16 *) String;
-      }
-      return RETURN_UNSUPPORTED;
-    }
+//    if (*Data > ((MAX_UINTN - (*String - L'0')) / 10)) {
+//      *Data = MAX_UINTN;
+//      if (EndPointer != NULL) {
+//        *EndPointer = (CHAR16 *) String;
+//      }
+//      return RETURN_UNSUPPORTED;
+//      ASSERT (*Data <= ((((UINTN) ~0) - (*String - L'0')) / 10));
+//    }
 
     *Data = *Data * 10 + (*String - L'0');
     String++;
@@ -805,13 +806,14 @@ StrDecimalToUint64S (
     // defined by UINT64, then MAX_UINT64 is stored in *Data and
     // RETURN_UNSUPPORTED is returned.
     //
-    if (*Data > DivU64x32 (MAX_UINT64 - (*String - L'0'), 10)) {
-      *Data = MAX_UINT64;
-      if (EndPointer != NULL) {
-        *EndPointer = (CHAR16 *) String;
-      }
-      return RETURN_UNSUPPORTED;
-    }
+//    if (*Data > DivU64x32 (MAX_UINT64 - (*String - L'0'), 10)) {
+//      *Data = MAX_UINT64;
+//      if (EndPointer != NULL) {
+//        *EndPointer = (CHAR16 *) String;
+//      }
+//      return RETURN_UNSUPPORTED;
+//    }
+//    ASSERT (*Data <= DivU64x32 (((UINT64) ~0) - (*String - L'0') , 10));
 
     *Data = MultU64x32 (*Data, 10) + (*String - L'0');
     String++;
@@ -936,13 +938,14 @@ StrHexToUintnS (
     // defined by UINTN, then MAX_UINTN is stored in *Data and
     // RETURN_UNSUPPORTED is returned.
     //
-    if (*Data > ((MAX_UINTN - InternalHexCharToUintn (*String)) >> 4)) {
-      *Data = MAX_UINTN;
-      if (EndPointer != NULL) {
-        *EndPointer = (CHAR16 *) String;
-      }
-      return RETURN_UNSUPPORTED;
-    }
+//    if (*Data > ((MAX_UINTN - InternalHexCharToUintn (*String)) >> 4)) {
+//      *Data = MAX_UINTN;
+//      if (EndPointer != NULL) {
+//        *EndPointer = (CHAR16 *) String;
+//      }
+//      return RETURN_UNSUPPORTED;
+//    }
+//      ASSERT (*Data <= ((((UINTN) ~0) - InternalHexCharToUintn (*String)) >> 4));
 
     *Data = (*Data << 4) + InternalHexCharToUintn (*String);
     String++;
@@ -1067,13 +1070,14 @@ StrHexToUint64S (
     // defined by UINT64, then MAX_UINT64 is stored in *Data and
     // RETURN_UNSUPPORTED is returned.
     //
-    if (*Data > RShiftU64 (MAX_UINT64 - InternalHexCharToUintn (*String), 4)) {
-      *Data = MAX_UINT64;
-      if (EndPointer != NULL) {
-        *EndPointer = (CHAR16 *) String;
-      }
-      return RETURN_UNSUPPORTED;
-    }
+//    if (*Data > RShiftU64 (MAX_UINT64 - InternalHexCharToUintn (*String), 4)) {
+//      *Data = MAX_UINT64;
+//      if (EndPointer != NULL) {
+//        *EndPointer = (CHAR16 *) String;
+//      }
+//      return RETURN_UNSUPPORTED;
+//    }
+//    ASSERT (*Data <= RShiftU64 (((UINT64) ~0) - InternalHexCharToUintn (*String) , 4));
 
     *Data = LShiftU64 (*Data, 4) + InternalHexCharToUintn (*String);
     String++;
@@ -1635,13 +1639,14 @@ AsciiStrDecimalToUintnS (
     // defined by UINTN, then MAX_UINTN is stored in *Data and
     // RETURN_UNSUPPORTED is returned.
     //
-    if (*Data > ((MAX_UINTN - (*String - '0')) / 10)) {
-      *Data = MAX_UINTN;
-      if (EndPointer != NULL) {
-        *EndPointer = (CHAR8 *) String;
-      }
-      return RETURN_UNSUPPORTED;
-    }
+//    if (*Data > ((MAX_UINTN - (*String - '0')) / 10)) {
+//      *Data = MAX_UINTN;
+//      if (EndPointer != NULL) {
+//        *EndPointer = (CHAR8 *) String;
+//      }
+//     return RETURN_UNSUPPORTED;
+//    }
+//    ASSERT (*Data <= ((((UINTN) ~0) - (*String - L'0')) / 10));
 
     *Data = *Data * 10 + (*String - '0');
     String++;
@@ -1747,13 +1752,14 @@ AsciiStrDecimalToUint64S (
     // defined by UINT64, then MAX_UINT64 is stored in *Data and
     // RETURN_UNSUPPORTED is returned.
     //
-    if (*Data > DivU64x32 (MAX_UINT64 - (*String - '0'), 10)) {
-      *Data = MAX_UINT64;
-      if (EndPointer != NULL) {
-        *EndPointer = (CHAR8 *) String;
-      }
-      return RETURN_UNSUPPORTED;
-    }
+//    if (*Data > DivU64x32 (MAX_UINT64 - (*String - '0'), 10)) {
+//     *Data = MAX_UINT64;
+//      if (EndPointer != NULL) {
+//        *EndPointer = (CHAR8 *) String;
+//      }
+//      return RETURN_UNSUPPORTED;
+//    }
+//    ASSERT (*Data <= DivU64x32 (((UINT64) ~0) - (*String - L'0') , 10));
 
     *Data = MultU64x32 (*Data, 10) + (*String - '0');
     String++;
@@ -1874,13 +1880,14 @@ AsciiStrHexToUintnS (
     // defined by UINTN, then MAX_UINTN is stored in *Data and
     // RETURN_UNSUPPORTED is returned.
     //
-    if (*Data > ((MAX_UINTN - InternalAsciiHexCharToUintn (*String)) >> 4)) {
-      *Data = MAX_UINTN;
-      if (EndPointer != NULL) {
-        *EndPointer = (CHAR8 *) String;
-      }
-      return RETURN_UNSUPPORTED;
-    }
+//    if (*Data > ((MAX_UINTN - InternalAsciiHexCharToUintn (*String)) >> 4)) {
+//      *Data = MAX_UINTN;
+//      if (EndPointer != NULL) {
+//        *EndPointer = (CHAR8 *) String;
+//      }
+//     return RETURN_UNSUPPORTED;
+//    }
+//    ASSERT (*Data <= ((((UINTN) ~0) - InternalHexCharToUintn (*String)) >> 4));
 
     *Data = (*Data << 4) + InternalAsciiHexCharToUintn (*String);
     String++;
@@ -2001,13 +2008,14 @@ AsciiStrHexToUint64S (
     // defined by UINT64, then MAX_UINT64 is stored in *Data and
     // RETURN_UNSUPPORTED is returned.
     //
-    if (*Data > RShiftU64 (MAX_UINT64 - InternalAsciiHexCharToUintn (*String), 4)) {
-      *Data = MAX_UINT64;
-      if (EndPointer != NULL) {
-        *EndPointer = (CHAR8 *) String;
-      }
-      return RETURN_UNSUPPORTED;
-    }
+//    if (*Data > RShiftU64 (MAX_UINT64 - InternalAsciiHexCharToUintn (*String), 4)) {
+//      *Data = MAX_UINT64;
+//      if (EndPointer != NULL) {
+//        *EndPointer = (CHAR8 *) String;
+//      }
+//      return RETURN_UNSUPPORTED;
+//    }
+//      ASSERT (*Data <= RShiftU64 (((UINT64) ~0) - InternalHexCharToUintn (*String) , 4));
 
     *Data = LShiftU64 (*Data, 4) + InternalAsciiHexCharToUintn (*String);
     String++;
