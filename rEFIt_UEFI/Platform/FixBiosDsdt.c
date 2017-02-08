@@ -228,6 +228,7 @@ static struct ide_chipsets_t ide_chipset[] =
   {0x80862828},
 };
 //2820? 2825?
+/*
 struct ahci_chipsets_t {
     UINT32 id;
 };
@@ -251,7 +252,7 @@ static struct ahci_chipsets_t ahci_chipset[] =
   {0x10de0ab9},
   {0x10de0b88},
 };
-
+*/
 UINT8 dtgp[] = // Method (DTGP, 5, NotSerialized) ......
 {
    0x14, 0x3F, 0x44, 0x54, 0x47, 0x50, 0x05, 0xA0,
@@ -506,7 +507,7 @@ BOOLEAN get_ide_model(UINT32 id) {
 	}
 	return TRUE;
 }
-
+/*
 BOOLEAN get_ahci_model(UINT32 id) {
 	int	i;
 
@@ -517,7 +518,7 @@ BOOLEAN get_ahci_model(UINT32 id) {
 	}
 	return TRUE;
 }
-
+*/
 CHAR8* get_net_model(UINT32 id) {
 	int	i;
 
@@ -3739,6 +3740,26 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
       aml_add_word(pack1, 0x03E8);
     }
   }
+  //new systems has new strings
+  /*
+  Method (_DSM, 4, NotSerialized)  // _DSM: Device-Specific Method
+  {
+    Store (Package (0x08)
+           {
+             "kUSBSleepPowerSupply",
+             0x13EC,
+             "kUSBSleepPortCurrentLimit",
+             0x0834,
+             "kUSBWakePowerSupply",
+             0x13EC,
+             "kUSBWakePortCurrentLimit",
+             0x0834
+           }, Local0)
+    DTGP (Arg0, Arg1, Arg2, Arg3, RefOf (Local0))
+    Return (Local0)
+  }
+*/
+  
   aml_add_byte_buffer(pack1, dataBuiltin, sizeof(dataBuiltin));
   aml_add_local0(met2);
   aml_add_buffer(met1, dtgp_1, sizeof(dtgp_1));
@@ -4522,7 +4543,7 @@ UINT32 FIXWAK (UINT8 *dsdt, UINT32 len, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABL
   DBG("return len=%x\n", len);
   return len;
 }
-
+#if 0
 UINT32 FIXGPE (UINT8 *dsdt, UINT32 len)
 {
   UINT32 i, j, k, l, m, n;
@@ -4597,7 +4618,8 @@ UINT32 FIXGPE (UINT8 *dsdt, UINT32 len)
 
   return len;
 }
-
+#endif
+#if 0
 UINT32 FIXPWRB (UINT8* dsdt, UINT32 len)
 {
   UINT32 i, j=0;
@@ -4641,7 +4663,7 @@ UINT32 FIXPWRB (UINT8* dsdt, UINT32 len)
 
   return len;
 }
-
+#endif
 UINT32 FIXSHUTDOWN_ASUS (UINT8 *dsdt, UINT32 len)
 {
   UINT32 i, j, sizeoffset = 0;
@@ -4691,7 +4713,7 @@ UINT32 FIXSHUTDOWN_ASUS (UINT8 *dsdt, UINT32 len)
   len += shift;
   return len;
 }
-
+#if 0
 //Slice - this procedure was not corrected and mostly wrong
 UINT32 FIXOTHER (UINT8 *dsdt, UINT32 len)
 {
@@ -4816,7 +4838,7 @@ UINT32 FIXOTHER (UINT8 *dsdt, UINT32 len)
   return len;
 
 }
-
+#endif
 VOID FixRegions (UINT8 *dsdt, UINT32 len)
 {
   UINTN i, j;

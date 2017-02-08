@@ -835,7 +835,7 @@ StrHexToUintn (
   @retval Value translated from String.
 
 **/
-#if 0
+#if 1
 UINT64
 EFIAPI
 StrHexToUint64 (
