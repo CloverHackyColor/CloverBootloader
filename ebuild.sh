@@ -409,6 +409,7 @@ usage() {
     echo
     echo "build options:"
     print_option_help "-fr, --force-rebuild" "force rebuild all targets"
+    print_option_help "-nb, --no-bootfiles" "don't generate boot files"
     echo
     echo "Report bugs to https://sourceforge.net/p/cloverefiboot/discussion/1726372/"
 }
@@ -822,7 +823,8 @@ MainPostBuildScript() {
 
       # CloverEFI
       copyBin "${BUILD_DIR}"/FV/boot "$CLOVER_PKG_DIR"/Bootloaders/ia32/$cloverEFIFile
-      setInitBootMsg "$CLOVER_PKG_DIR"/Bootloaders/ia32/$cloverEFIFile
+      # The following line is bad because the character '3' is at offset 0xc5 of start32H.com2, not offset 0xa9 - zenith432
+      #setInitBootMsg "$CLOVER_PKG_DIR"/Bootloaders/ia32/$cloverEFIFile
       copyBin "$BUILD_DIR_ARCH"/CLOVER${TARGETARCH}.efi "$CLOVER_PKG_DIR"/EFI/BOOT/BOOTIA32.efi
       copyBin "$BUILD_DIR_ARCH"/CLOVER${TARGETARCH}.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/
 
@@ -920,7 +922,10 @@ MainPostBuildScript() {
       # Install CloverEFI file
       echo "Copy CloverEFI:"
       copyBin "${BUILD_DIR}"/FV/boot "$CLOVER_PKG_DIR"/Bootloaders/x64/$cloverEFIFile
-      setInitBootMsg "$CLOVER_PKG_DIR"/Bootloaders/x64/$cloverEFIFile
+      # For GENPAGE, the character "[TX]" is at offset 0x74 of Start64H[56].com, not offset 0xa9 - zenith432
+      if [[ "$GENPAGE" -eq 0 ]]; then
+        setInitBootMsg "$CLOVER_PKG_DIR"/Bootloaders/x64/$cloverEFIFile
+      fi
       copyBin "$BUILD_DIR_ARCH"/CLOVER${TARGETARCH}.efi "$CLOVER_PKG_DIR"/EFI/BOOT/BOOTX64.efi
       copyBin "$BUILD_DIR_ARCH"/CLOVER${TARGETARCH}.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/
 
