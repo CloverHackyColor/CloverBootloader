@@ -4680,11 +4680,11 @@ GetUserSettings(
             if (Prop2 != NULL && IsPropertyTrue (Prop2)) {
               gSettings.FixDsdt |= FIX_REGIONS;
             }
-
+/*
             Prop2 = GetProperty (Prop, "NewWay_80000000");
             if (Prop2 != NULL && IsPropertyTrue (Prop2)) {
               gSettings.FixDsdt |= FIX_NEW_WAY;
-            }
+            } */
           }
 
         }

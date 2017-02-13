@@ -71,8 +71,6 @@
 				<true/>
 				<key>FixUSB_1000</key>
 				<true/>
-				<key>NewWay_80000000</key>
-				<true/>
 				<key>FIX_RTC_20000</key>
 				<true/>
 				<key>FIX_TMR_40000</key>

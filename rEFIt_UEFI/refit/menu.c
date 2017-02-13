@@ -4205,7 +4205,7 @@ REFIT_MENU_ENTRY  *SubMenuDsdtFix()
   AddMenuCheck(SubScreen, "Fix LAN",      FIX_LAN, 67);
   AddMenuCheck(SubScreen, "Fix Airport",  FIX_WIFI, 67);
   AddMenuCheck(SubScreen, "Fix sound",    FIX_HDA, 67);
-  AddMenuCheck(SubScreen, "Fix new way",  FIX_NEW_WAY, 67);
+//  AddMenuCheck(SubScreen, "Fix new way",  FIX_NEW_WAY, 67);
   AddMenuCheck(SubScreen, "Fix RTC",      FIX_RTC, 67);
   AddMenuCheck(SubScreen, "Fix TMR",      FIX_TMR, 67);
   AddMenuCheck(SubScreen, "Add IMEI",     FIX_IMEI, 67);

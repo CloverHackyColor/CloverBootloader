@@ -2219,7 +2219,7 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
   BOOLEAN DISPLAYFIX = FALSE;
   BOOLEAN NonUsable = FALSE;
   BOOLEAN DsmFound = FALSE;
-  BOOLEAN NeedHDMI = ((gSettings.FixDsdt & FIX_NEW_WAY) && (gSettings.FixDsdt & FIX_HDMI));
+  BOOLEAN NeedHDMI = !!(gSettings.FixDsdt & FIX_HDMI);
   AML_CHUNK *root = NULL;
   AML_CHUNK *gfx0, *peg0;
   AML_CHUNK *met, *met2;
@@ -5066,15 +5066,13 @@ VOID FixBiosDsdt (UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, 
   gSettings.PCIRootUID = (UINT16)findPciRoot(temp, DsdtLen);
 
   // Fix RTC
-  if (((gSettings.FixDsdt & FIX_HPET) && !(gSettings.FixDsdt & FIX_NEW_WAY)) ||
-      ((gSettings.FixDsdt & FIX_RTC))) {
+  if ((gSettings.FixDsdt & FIX_RTC)) {
  //   DBG("patch RTC in DSDT \n");
     DsdtLen = FixRTC(temp, DsdtLen);
   }
 
   // Fix TMR
-  if (((gSettings.FixDsdt & FIX_HPET) && !(gSettings.FixDsdt & FIX_NEW_WAY)) ||
-      ((gSettings.FixDsdt & FIX_TMR)))  {
+  if ((gSettings.FixDsdt & FIX_TMR))  {
 //    DBG("patch TMR in DSDT \n");
     DsdtLen = FixTMR(temp, DsdtLen);
   }
@@ -5102,18 +5100,11 @@ VOID FixBiosDsdt (UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, 
     INT32 i;
     for (i=0; i<4; i++) {
       if (DisplayADR1[i]) {
-        if (gSettings.FixDsdt & FIX_NEW_WAY) {
           if (((DisplayVendor[i] != 0x8086) && (gSettings.FixDsdt & FIX_DISPLAY)) ||
               ((DisplayVendor[i] == 0x8086) && (gSettings.FixDsdt & FIX_INTELGFX))) {
             DsdtLen = FIXDisplay(temp, DsdtLen, i);
-            DBG("patch Display #%d of Vendor=0x%4x in DSDT new way\n", i, DisplayVendor[i]);
+            DBG("patch Display #%d of Vendor=0x%4x\n", i, DisplayVendor[i]);
           }
-        } else {
-          if (gSettings.FixDsdt & FIX_DISPLAY) {
-            DsdtLen = FIXDisplay(temp, DsdtLen, i);
-            DBG("patch Display #%d of Vendor=0x%4x in DSDT old way\n", i, DisplayVendor[i]);
-          }
-        }
       }
     }
   }
@@ -5172,13 +5163,11 @@ VOID FixBiosDsdt (UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, 
     DsdtLen = AddMCHC(temp, DsdtLen);
   }
   //add IMEI
-  if (((gSettings.FixDsdt & FIX_MCHC) && !(gSettings.FixDsdt & FIX_NEW_WAY)) ||
-       ((gSettings.FixDsdt & FIX_NEW_WAY) && (gSettings.FixDsdt & FIX_IMEI))) {
+  if ((gSettings.FixDsdt & FIX_IMEI)) {
     DsdtLen = AddIMEI(temp, DsdtLen);
   }
   //Add HDMI device
-  if (((gSettings.FixDsdt & FIX_DISPLAY) && !(gSettings.FixDsdt & FIX_NEW_WAY)) ||
-      ((gSettings.FixDsdt & FIX_NEW_WAY) && (gSettings.FixDsdt & FIX_HDMI))) {
+  if ((gSettings.FixDsdt & FIX_HDMI)) {
     DsdtLen = AddHDMI(temp, DsdtLen);
   }
 
@@ -5187,8 +5176,7 @@ VOID FixBiosDsdt (UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, 
     DsdtLen = FIXUSB(temp, DsdtLen);
   }
 
-  if (((gSettings.FixDsdt & FIX_WARNING) && !(gSettings.FixDsdt & FIX_NEW_WAY)) ||
-      ((gSettings.FixDsdt & FIX_NEW_WAY) && (gSettings.FixDsdt & FIX_WAK))){
+  if ((gSettings.FixDsdt & FIX_WAK)){
     // Always Fix _WAK Return value
     DsdtLen = FIXWAK(temp, DsdtLen, fadt);
   }
@@ -5201,8 +5189,7 @@ VOID FixBiosDsdt (UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, 
 
     // USB Device remove error Fix
    // DsdtLen = FIXGPE(temp, DsdtLen);
-    if (((gSettings.FixDsdt & FIX_WARNING) && !(gSettings.FixDsdt & FIX_NEW_WAY)) ||
-        ((gSettings.FixDsdt & FIX_NEW_WAY) && (gSettings.FixDsdt & FIX_UNUSED))) {
+  if ((gSettings.FixDsdt & FIX_UNUSED)) {
     //I want these fixes even if no Display fix. We have GraphicsInjector
     DsdtLen = DeleteDevice("CRT_", temp, DsdtLen);
     DsdtLen = DeleteDevice("DVI_", temp, DsdtLen);
@@ -5213,39 +5200,35 @@ VOID FixBiosDsdt (UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, 
     DsdtLen = DeleteDevice("FDC0", temp, DsdtLen);
     DsdtLen = DeleteDevice("ECP1", temp, DsdtLen);
     DsdtLen = DeleteDevice("LPT1", temp, DsdtLen);
-    }
+  }
 
-  if (((gSettings.FixDsdt & FIX_WARNING) && !(gSettings.FixDsdt & FIX_NEW_WAY)) ||
-     ((gSettings.FixDsdt & FIX_NEW_WAY) && (gSettings.FixDsdt & FIX_ACST))) {
+  if ((gSettings.FixDsdt & FIX_ACST)) {
     ReplaceName(temp, DsdtLen, "ACST", "OCST");
     ReplaceName(temp, DsdtLen, "ACSS", "OCSS");
     ReplaceName(temp, DsdtLen, "APSS", "OPSS");
     ReplaceName(temp, DsdtLen, "APSN", "OPSN");
     ReplaceName(temp, DsdtLen, "APLF", "OPLF");
-    }
+  }
 
-  if (((gSettings.FixDsdt & FIX_WARNING) && !(gSettings.FixDsdt & FIX_NEW_WAY)) ||
-      ((gSettings.FixDsdt & FIX_NEW_WAY) && (gSettings.FixDsdt & FIX_PNLF))) {
+  if ((gSettings.FixDsdt & FIX_PNLF)) {
       DsdtLen = AddPNLF(temp, DsdtLen);
-    }
+  }
 
-  if (((gSettings.FixDsdt & FIX_WARNING) && !(gSettings.FixDsdt & FIX_NEW_WAY)) ||
-      ((gSettings.FixDsdt & FIX_NEW_WAY) && (gSettings.FixDsdt & FIX_S3D))) {
+  if ((gSettings.FixDsdt & FIX_S3D)) {
     FixS3D(temp, DsdtLen);
   }
   //Fix OperationRegions
-  if (((gSettings.FixDsdt & FIX_WARNING) && !(gSettings.FixDsdt & FIX_NEW_WAY)) ||
-      ((gSettings.FixDsdt & FIX_NEW_WAY) && (gSettings.FixDsdt & FIX_REGIONS))) {
+  if ((gSettings.FixDsdt & FIX_REGIONS)) {
     FixRegions(temp, DsdtLen);
   }
 
      // pwrb add _CID sleep button fix
-  if (((gSettings.FixDsdt & FIX_WARNING) && !(gSettings.FixDsdt & FIX_NEW_WAY)) ||
-      ((gSettings.FixDsdt & FIX_NEW_WAY) && (gSettings.FixDsdt & FIX_ADP1))) {
+  if ((gSettings.FixDsdt & FIX_ADP1)) {
       DsdtLen = FixADP1(temp, DsdtLen);
-    }
+  }
     // other compiler warning fix _T_X,  MUTE .... USB _PRW value form 0x04 => 0x01
 //     DsdtLen = FIXOTHER(temp, DsdtLen);
+  
   if (gSettings.FixDsdt & FIX_WARNING) {
     if (!FindMethod(temp, DsdtLen, "GET9") &&
         !FindMethod(temp, DsdtLen, "STR9") &&
@@ -5254,8 +5237,7 @@ VOID FixBiosDsdt (UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, 
     }
   }
   // Fix SHUTDOWN For ASUS
-  if (((gSettings.FixDsdt & FIX_WARNING) && !(gSettings.FixDsdt & FIX_NEW_WAY)) ||
-      ((gSettings.FixDsdt & FIX_SHUTDOWN))) {
+  if ((gSettings.FixDsdt & FIX_SHUTDOWN)) {
     DsdtLen = FIXSHUTDOWN_ASUS(temp, DsdtLen); //safe to do twice
   }
 
