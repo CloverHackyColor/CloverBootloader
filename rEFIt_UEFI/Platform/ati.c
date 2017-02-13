@@ -312,6 +312,14 @@ radeon_card_info_t radeon_cards[] = {
   { 0x67EF, 0x00000000, CHIP_FAMILY_BAFFIN, "AMD Radeon RX460",             kAcre },
   { 0x67FF, 0x00000000, CHIP_FAMILY_BAFFIN, "AMD Radeon Polaris 11",        kNull },
   
+  /* Polaris12 */
+  {0x6980, 0x00000000, CHIP_FAMILY_GREENLAND, "AMD Radeon Polaris 12",        kNull },
+  {0x6981, 0x00000000, CHIP_FAMILY_GREENLAND, "AMD Radeon Polaris 12",        kNull },
+  {0x6985, 0x00000000, CHIP_FAMILY_GREENLAND, "AMD Radeon Polaris 12",        kNull },
+  {0x6986, 0x00000000, CHIP_FAMILY_GREENLAND, "AMD Radeon Polaris 12",        kNull },
+  {0x6987, 0x00000000, CHIP_FAMILY_GREENLAND, "AMD Radeon Polaris 12",        kNull },
+  {0x699F, 0x00000000, CHIP_FAMILY_GREENLAND, "AMD Radeon Polaris 12",        kNull },
+
   // PITCAIRN
   { 0x6800, 0x00000000, CHIP_FAMILY_PITCAIRN, "AMD Radeon HD 7970M",        kBuri }, // Mobile
   { 0x6801, 0x00000000, CHIP_FAMILY_PITCAIRN, "AMD Radeon HD 8970M Series", kFutomaki }, // Mobile
@@ -1048,6 +1056,7 @@ const CHAR8 *chip_family_name[] = {
   "Tobago",
   "Ellesmere",
   "Baffin",
+  "Greenland",
   ""
 };
 
@@ -1558,7 +1567,7 @@ void get_vram_size(void)
       // size in MB on evergreen
       // XXX watch for overflow!!!
       card->vram_size = ((UINT64)REG32(card->mmio, R600_CONFIG_MEMSIZE)) << 20;
-      DBG("Set VRAM for %a =%luMb\n", chip_family_name[card->info->chip_family], (UINT64)RShiftU64(card->vram_size, 20));
+//      DBG("Set VRAM for %a =%luMb\n", chip_family_name[card->info->chip_family], (UINT64)RShiftU64(card->vram_size, 20));
     } else if (chip_family >= CHIP_FAMILY_R600) {
       card->vram_size = (UINT64)REG32(card->mmio, R600_CONFIG_MEMSIZE);
     } else {
@@ -1570,6 +1579,8 @@ void get_vram_size(void)
         WRITEREG32(card->mmio, RADEON_CONFIG_MEMSIZE, (UINT32)card->vram_size);
       }
     }
+    DBG("Set VRAM for %a =%luMb\n", chip_family_name[card->info->chip_family], (UINT64)RShiftU64(card->vram_size, 20));
+
   }
   gSettings.VRAM = (UINT64)RShiftU64(card->vram_size, 20);
   DBG("ATI: get_vram_size returned 0x%x\n", card->vram_size);

@@ -497,14 +497,14 @@ VOID PatchAllSSDT()
           if (!gSettings.PatchDsdtFind[i] || !gSettings.LenToFind[i]) {
             continue;
           }
-          DBG(" - [%a]:", gSettings.PatchDsdtLabel[i]); //yyyy
+          DBG("%d. [%a]:", i, gSettings.PatchDsdtLabel[i]); //yyyy
           if (gSettings.PatchDsdtMenuItem[i].BValue) {
             SsdtLen = FixAny((UINT8*)(UINTN)ssdt, SsdtLen,
                              gSettings.PatchDsdtFind[i], gSettings.LenToFind[i],
                              gSettings.PatchDsdtReplace[i], gSettings.LenToReplace[i]);
-            DBG(" OK\n");
+ /*           DBG(" OK\n");
           } else {
-            DBG(" disabled\n");
+            DBG(" disabled\n"); */
           }
         }
       }
