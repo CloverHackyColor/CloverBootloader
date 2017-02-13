@@ -476,6 +476,12 @@ VOID GetCPUProperties (VOID)
              MsgLog("MSR 0xCE              %08x_%08x\n", (msr>>32), msr);
              gCPUStructure.MaxRatio = (UINT8)RShiftU64(msr, 8) & 0xff;
              gCPUStructure.MinRatio = (UINT8)MultU64x32(RShiftU64(msr, 40) & 0xff, 10);
+             //--- Check if EIST locked
+             msr = AsmReadMsr64(MSR_IA32_MISC_ENABLE); //0x1A0
+             MsgLog("MSR 0x1A0             %08x\n", msr);
+             if (msr & _Bit(20)) {
+               MsgLog("   EIST is locked and %a\n", (msr & _Bit(16))?"enabled":"disabled");
+             }
              msr = AsmReadMsr64(MSR_FLEX_RATIO);   //0x194
              if ((RShiftU64(msr, 16) & 0x01) != 0) {
                // bcc9 patch
