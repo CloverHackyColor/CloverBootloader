@@ -457,7 +457,7 @@ void PrintConfig(CFTypeRef data)
     addString(moduleDict, CFSTR("#Frequency"), s->MemorySpeed);
     addString(moduleDict, CFSTR("#Type"), "DDRx");
   }
-  CFMutableArrayRef slotsArray = addDict(smbiosDict, CFSTR("#Slots"));
+  CFMutableArrayRef slotsArray = addArray(smbiosDict, CFSTR("#Slots"));
   CFMutableDictionaryRef slotsDict = addDictToArray(slotsArray);
   addString(slotsDict, CFSTR("Comment"), "there is a sample");
   addString(slotsDict, CFSTR("Device"), "WIFI");
@@ -669,18 +669,6 @@ void PrintConfig(CFTypeRef data)
   addInteger(KernelAndKextPatchesDict, CFSTR("#Number of KextsToPatch"), s->KernelAndKextPatches.NrKexts);
   addInteger(KernelAndKextPatchesDict, CFSTR("#Number of Patchs To Kernel"), s->KernelAndKextPatches.NrKernels);
   addHex(KernelAndKextPatchesDict, CFSTR("#FakeCPUID"), s->KernelAndKextPatches.FakeCPUID);
-/*
-  BOOLEAN KPDebug;
-  BOOLEAN KPKernelCpu;
-  BOOLEAN KPLapicPanic;
-  BOOLEAN KPHaswellE;
-  BOOLEAN KPAsusAICPUPM;
-  BOOLEAN KPAppleRTC;
-  BOOLEAN KPKernelPm;
-  BOOLEAN KPDELLSMBIOS;  // Dell SMBIOS patch
-  //  UINT8   pad[1];
-  UINT32  FakeCPUID;
-*/
     
   CFMutableArrayRef KKPatchArray = addArray(KernelAndKextPatchesDict, CFSTR("#KextsToPatch"));
   CFMutableDictionaryRef patchDict1 = addDictToArray(KKPatchArray);
@@ -700,6 +688,13 @@ void PrintConfig(CFTypeRef data)
   
   CFMutableArrayRef disArray = addArray(dict, CFSTR("#DisableDrivers"));
   addStringToArray(disArray, "_NOT_SHOWN_");
+  
+  CFMutableDictionaryRef bootGraphicsDict = addDict(dict, CFSTR("BootGraphics"));
+  addHex(bootGraphicsDict, CFSTR("DefaultBackgroundColor"), s->DefaultBackgroundColor);
+  addInteger(bootGraphicsDict, CFSTR("UIScale"), s->UIScale);  
+  addInteger(bootGraphicsDict, CFSTR("EFILoginHiDPI"), s->EFILoginHiDPI); 
+  addInteger(bootGraphicsDict, CFSTR("flagstate"), s->flagstate[0]);
+  
   
   dump_plist(dict);
   
