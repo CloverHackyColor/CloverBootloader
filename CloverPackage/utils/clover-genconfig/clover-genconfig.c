@@ -321,6 +321,13 @@ void PrintConfig(CFTypeRef data)
   addString(bootDict, CFSTR("#Timeout"), "_NOT_SHOWN_");
   addBoolean(bootDict, CFSTR("Fast"), 0);
   addString(bootDict, CFSTR("#CustomLogo"), "_NOT_SHOWN_");
+  addBoolean(bootDict, CFSTR("#NeverHibernate"), 0);
+  addBoolean(bootDict, CFSTR("#StrictHibernate"), 0);  
+  addBoolean(bootDict, CFSTR("NeverDoRecovery"), s->NeverDoRecovery);
+  addBoolean(bootDict, CFSTR("SkipHibernateTimeout"), s->SkipHibernateTimeout);  
+  addBoolean(bootDict, CFSTR("DisableCloverHotkeys"), s->DisableCloverHotkeys);  
+  addInteger(bootDict, CFSTR("#LegacyBiosDefaultEntry"), s->LegacyBiosDefaultEntry);
+  
   
   
   // SystemParameters
@@ -330,6 +337,8 @@ void PrintConfig(CFTypeRef data)
   addHex(systemParametersDict, CFSTR("BacklightLevel"),s->BacklightLevel);
 //  addBoolean(systemParametersDict, CFSTR("InjectKexts"), 0);
   addString(systemParametersDict, CFSTR("#InjectKexts"), "Detect");
+  addBoolean(systemParametersDict, CFSTR("NvidiaWeb"), s->NvidiaWeb);
+  
 
   // GUI
   CFMutableDictionaryRef guiDict = addDict(dict, CFSTR("GUI"));
@@ -396,23 +405,6 @@ void PrintConfig(CFTypeRef data)
       addBoolean(tool1Dict, CFSTR("#Disabled"), 1);
       addBoolean(tool1Dict, CFSTR("#Hidden"), 1);
   
-/*  
-  CFMutableDictionaryRef volumesDict = addDict(guiDict, CFSTR("Volumes"));
-  addInteger(volumesDict, CFSTR("Hide Count"), s->HVCount);
-  
-  CFMutableDictionaryRef hideEntriesDict = addDict(guiDict, CFSTR("HideEntries"));
-  addBoolean(hideEntriesDict, CFSTR("OSXInstall"), s->HVHideAllOSXInstall);
-  addBoolean(hideEntriesDict, CFSTR("Recovery"), s->HVHideAllRecovery);
-  addBoolean(hideEntriesDict, CFSTR("Duplicate"), s->HVHideDuplicatedBootTarget);
-  addBoolean(hideEntriesDict, CFSTR("WindowsEFI"), s->HVHideAllWindowsEFI);
-  addBoolean(hideEntriesDict, CFSTR("Ubuntu"), s->HVHideAllUbuntu);
-  addBoolean(hideEntriesDict, CFSTR("Grub"), s->HVHideAllGrub);
-  addBoolean(hideEntriesDict, CFSTR("Gentoo"), s->HVHideAllGentoo);
-  addBoolean(hideEntriesDict, CFSTR("OpticalUEFI"), s->HVHideOpticalUEFI);
-  addBoolean(hideEntriesDict, CFSTR("InternalUEFI"), s->HVHideInternalUEFI);
-  addBoolean(hideEntriesDict, CFSTR("ExternalUEFI"), s->HVHideExternalUEFI);
-  addBoolean(hideEntriesDict, CFSTR("UEFIBootOptions"), s->HVHideUEFIBootOptions);
-*/  
   // SMBIOS
   CFMutableDictionaryRef smbiosDict = addDict(dict, CFSTR("SMBIOS"));
   // SMBIOS TYPE0
@@ -465,6 +457,14 @@ void PrintConfig(CFTypeRef data)
     addString(moduleDict, CFSTR("#Frequency"), s->MemorySpeed);
     addString(moduleDict, CFSTR("#Type"), "DDRx");
   }
+  CFMutableArrayRef slotsArray = addDict(smbiosDict, CFSTR("#Slots"));
+  CFMutableDictionaryRef slotsDict = addDictToArray(slotsArray);
+  addString(slotsDict, CFSTR("Comment"), "there is a sample");
+  addString(slotsDict, CFSTR("Device"), "WIFI");
+  addInteger(slotsDict, CFSTR("ID"), 5);
+  addInteger(slotsDict, CFSTR("Type"), 1);
+  addString(slotsDict, CFSTR("Name"), "Airport");
+
   
   // CPU
   CFMutableDictionaryRef cpuDict = addDict(dict, CFSTR("CPU"));
@@ -475,14 +475,12 @@ void PrintConfig(CFTypeRef data)
   addInteger(cpuDict, CFSTR("SavingMode"), s->SavingMode);
   addBoolean(cpuDict, CFSTR("#UseARTFrequency"), s->UseARTFreq);
   addBoolean(cpuDict, CFSTR("#TurboDisable"), (s->Turbo == 0));
-  addBoolean(cpuDict, CFSTR("#HWPEnable"), (s->HWP == 0));
-  // these values read only
+  addBoolean(cpuDict, CFSTR("#HWPEnable"), s->HWP);
+  addInteger(cpuDict, CFSTR("#HWPValue"), s->HWPValue);
   addInteger(cpuDict, CFSTR("EnabledCores"), s->EnabledCores);
+  addBoolean(cpuDict, CFSTR("#TDP"), s->TDP);
+  addBoolean(cpuDict, CFSTR("#QEMU"), s->QEMU);
 
-//  addBoolean(cpuDict, CFSTR("C2"), s->EnableC2);
-//  addBoolean(cpuDict, CFSTR("C4"), s->EnableC4);
-//  addBoolean(cpuDict, CFSTR("C6"), s->EnableC6);
-//  addInteger(cpuDict, CFSTR("Latency"), s->C3Latency);
   
   // Devices
   CFMutableDictionaryRef pciDict = addDict(dict, CFSTR("Devices"));
@@ -533,8 +531,8 @@ void PrintConfig(CFTypeRef data)
   addBoolean(injectDict, CFSTR("Intel"), s->InjectIntel);
   
   addBoolean(graphicsDict, CFSTR("LoadVBios"), s->LoadVBios);
-  addBoolean(graphicsDict, CFSTR("InjectEDID"), s->InjectEDID);
-  addString(graphicsDict, CFSTR("#CustomEDID"), "_NOT_SHOWN_");
+//  addBoolean(graphicsDict, CFSTR("InjectEDID"), s->InjectEDID);
+//  addString(graphicsDict, CFSTR("#CustomEDID"), "_NOT_SHOWN_");
   addBoolean(graphicsDict, CFSTR("PatchVBios"), s->PatchVBios);
   addInteger(graphicsDict, CFSTR("VideoPorts"), s->VideoPorts);
   addInteger(graphicsDict, CFSTR("VRAM"), s->VRAM);
@@ -545,6 +543,7 @@ void PrintConfig(CFTypeRef data)
   addIntArray(graphicsDict, CFSTR("display-cfg"), &s->Dcfg[0], 8);
   addIntArray(graphicsDict, CFSTR("NVCAP"), &s->NVCAP[0], 20);
   addBoolean(graphicsDict, CFSTR("NvidiaGeneric"), s->NvidiaGeneric);
+  addBoolean(graphicsDict, CFSTR("NvidiaSingle"), s->NvidiaSingle);
   // INTEL specific
   addHex(graphicsDict, CFSTR("ig-platform-id"), s->IgPlatform);
   addInteger(graphicsDict, CFSTR("#PatchVBiosBytes Count"), s->PatchVBiosBytesCount);
@@ -552,6 +551,12 @@ void PrintConfig(CFTypeRef data)
   CFMutableDictionaryRef vbiosDict = addDictToArray(vbiosArray);
   addString(vbiosDict, CFSTR("#Find"), "_NOT_SHOWN_");
   addString(vbiosDict, CFSTR("#Replace"), "_NOT_SHOWN_");
+  //EDID
+   CFMutableDictionaryRef edidDict = addDict(graphicsDict, CFSTR("EDID"));
+  addBoolean(edidDict, CFSTR("Inject"), s->InjectEDID);
+  addString(edidDict, CFSTR("#Custom"), "_NOT_SHOWN_");
+  addHex(edidDict, CFSTR("#VendorID"), s->VendorEDID);
+  addHex(edidDict, CFSTR("#ProductID"), s->ProductEDID);
   
   //ACPI
   CFMutableDictionaryRef acpiDict = addDict(dict, CFSTR("ACPI"));
@@ -563,7 +568,6 @@ void PrintConfig(CFTypeRef data)
 
   CFMutableDictionaryRef dsdtDict = addDict(acpiDict, CFSTR("DSDT"));
   addUString(dsdtDict, CFSTR("Name"), (const UniChar *)&s->DsdtName);
-//  addHex(dsdtDict, CFSTR("FixMask"), s->FixDsdt);
   addBoolean(dsdtDict, CFSTR("Debug"), s->DebugDSDT);
   addBoolean(dsdtDict, CFSTR("ReuseFFFF"), s->ReuseFFFF);
   addBoolean(dsdtDict, CFSTR("SuspendOverride"), s->SuspendOverride);
@@ -601,7 +605,7 @@ void PrintConfig(CFTypeRef data)
   addBoolean(fixDict, CFSTR("FIX_ACST_4000000"),   !!(s->FixDsdt & FIX_ACST));
   addBoolean(fixDict, CFSTR("AddHDMI_8000000"),    !!(s->FixDsdt & FIX_HDMI));
   addBoolean(fixDict, CFSTR("FixRegions_10000000"),!!(s->FixDsdt & FIX_REGIONS));
-  addBoolean(fixDict, CFSTR("NewWay_80000000"),    !!(s->FixDsdt & FIX_NEW_WAY));
+//  addBoolean(fixDict, CFSTR("NewWay_80000000"),    !!(s->FixDsdt & FIX_NEW_WAY));
 
   CFMutableArrayRef dsdtPatchArray = addArray(dsdtDict, CFSTR("Patches"));
     CFMutableDictionaryRef dsdtPatchDict = addDictToArray(dsdtPatchArray);
@@ -648,6 +652,8 @@ void PrintConfig(CFTypeRef data)
   addString(drop1Dict, CFSTR("#TableId"), "_NOT_SHOWN_");
   addInteger(drop1Dict, CFSTR("#Length"), 0);
   
+  CFMutableArrayRef sortedArray = addArray(acpiDict, CFSTR("#SortedOrder"));
+  addInteger(acpiDict, CFSTR("#Sorted ACPI tables Count"), s->SortedACPICount);
   
   // KernelAndKextPatches
   CFMutableDictionaryRef KernelAndKextPatchesDict = addDict(dict, CFSTR("KernelAndKextPatches"));
@@ -658,24 +664,39 @@ void PrintConfig(CFTypeRef data)
   addBoolean(KernelAndKextPatchesDict, CFSTR("KernelHaswellE"), s->KernelAndKextPatches.KPHaswellE);
   addBoolean(KernelAndKextPatchesDict, CFSTR("AppleRTC"), s->KernelAndKextPatches.KPAppleRTC);
   addBoolean(KernelAndKextPatchesDict, CFSTR("AsusAICPUPM"), s->KernelAndKextPatches.KPAsusAICPUPM);
+  addBoolean(KernelAndKextPatchesDict, CFSTR("DellSMBIOSPatch"), s->KernelAndKextPatches.KPDELLSMBIOS);
   //addBoolean(KernelAndKextPatchesDict, CFSTR("KextPatchesAllowed"), s->KextPatchesAllowed);
-  addInteger(KernelAndKextPatchesDict, CFSTR("#Number_of_KextsToPatch"), s->KernelAndKextPatches.NrKexts);
-  addString(KernelAndKextPatchesDict, CFSTR("#FakeCPUID"), "0x0");
+  addInteger(KernelAndKextPatchesDict, CFSTR("#Number of KextsToPatch"), s->KernelAndKextPatches.NrKexts);
+  addInteger(KernelAndKextPatchesDict, CFSTR("#Number of Patchs To Kernel"), s->KernelAndKextPatches.NrKernels);
+  addHex(KernelAndKextPatchesDict, CFSTR("#FakeCPUID"), s->KernelAndKextPatches.FakeCPUID);
+/*
+  BOOLEAN KPDebug;
+  BOOLEAN KPKernelCpu;
+  BOOLEAN KPLapicPanic;
+  BOOLEAN KPHaswellE;
+  BOOLEAN KPAsusAICPUPM;
+  BOOLEAN KPAppleRTC;
+  BOOLEAN KPKernelPm;
+  BOOLEAN KPDELLSMBIOS;  // Dell SMBIOS patch
+  //  UINT8   pad[1];
+  UINT32  FakeCPUID;
+*/
     
-  CFMutableArrayRef KKPatchArray = addArray(KernelAndKextPatchesDict, CFSTR("KextsToPatch"));
-  for (i = 0; i < s->KernelAndKextPatches.NrKexts; i++) {
-    patchDict[i] = addDictToArray(KKPatchArray);
-    addString(patchDict[i], CFSTR("#Name"), "_NOT_SHOWN_");
-    addString(patchDict[i], CFSTR("#Find"), "_NOT_SHOWN_");
-    addString(patchDict[i], CFSTR("#Replace"), "_NOT_SHOWN_");
-  }
+  CFMutableArrayRef KKPatchArray = addArray(KernelAndKextPatchesDict, CFSTR("#KextsToPatch"));
+  CFMutableDictionaryRef patchDict1 = addDictToArray(KKPatchArray);
+  addString(patchDict1, CFSTR("Comment"), "this is a sample");
+  addString(patchDict1, CFSTR("#Name"), "AppleUSBXHCIPCI");
+  addString(patchDict1, CFSTR("#Find"), "_NOT_SHOWN_");
+  addString(patchDict1, CFSTR("#Replace"), "_NOT_SHOWN_");
+  addBoolean(patchDict1, CFSTR("Disabled"), 1);  
+  addString(patchDict1, CFSTR("#MatchOS"), "10.11.6,10.12.x");
+  addString(patchDict1, CFSTR("#MatchBuild"), "16D1111");  
   
-//  CFMutableDictionaryRef rtVariablesDict = addDict(dict, CFSTR("RtVariables"));
-//  addString(rtVariablesDict, CFSTR("ROM"), "_NOT_SHOWN_" /*s->RtROM*/);
-//  addString(rtVariablesDict, CFSTR("MLB"), s->BoardSerialNumber);
-//  addString(rtVariablesDict, CFSTR("MountEFI"), "_NOT_SHOWN_");
-//  addInteger(rtVariablesDict, CFSTR("LogLineCount"), s->LogLineCount);
-//  addString(rtVariablesDict, CFSTR("LogEveryBoot"), "_NOT_SHOWN_");
+  CFMutableDictionaryRef rtVariablesDict = addDict(dict, CFSTR("RtVariables"));
+  addString(rtVariablesDict, CFSTR("#ROM"), "UseMacAddr0");
+  addString(rtVariablesDict, CFSTR("#MLB"), s->BoardSerialNumber); 
+  addHex(rtVariablesDict, CFSTR("CsrActiveConfig"), s->CsrActiveConfig);
+  addHex(rtVariablesDict, CFSTR("BooterConfig"), s->BooterConfig);
   
   CFMutableArrayRef disArray = addArray(dict, CFSTR("#DisableDrivers"));
   addStringToArray(disArray, "_NOT_SHOWN_");
