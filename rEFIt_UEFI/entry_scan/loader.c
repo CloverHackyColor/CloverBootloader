@@ -563,8 +563,9 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath,
         Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_HIBERNATED);
         DBG("  =>set entry as hibernated\n");
       }
-      //always set with kexts for installer
+      //always unset checkFakeSmc for installer
       if (OSType == OSTYPE_OSX_INSTALLER){
+        Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_CHECKFAKESMC);
         Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_WITHKEXTS);
       }
       ShortcutLetter = 'M';
@@ -1099,7 +1100,7 @@ STATIC BOOLEAN AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOptions,
       }
       if (gSettings.WithKextsIfNoFakeSMC) {
         Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_CHECKFAKESMC);
- //       Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_WITHKEXTS);
+        Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_WITHKEXTS);
       }
       if (gSettings.NoCaches) {
         Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_NOCACHES);

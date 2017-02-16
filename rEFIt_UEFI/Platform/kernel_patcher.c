@@ -1455,7 +1455,7 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
  //   Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_WITHKEXTS); //Slice - we are already here
     
       DBG_RT(Entry, "\nInjectKexts: disabled because FakeSMC is already present and InjectKexts option set to Detect\n");
-      gBS->Stall(200000);
+      gBS->Stall(500000);
     }
   }
 
