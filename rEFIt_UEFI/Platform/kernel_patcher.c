@@ -1418,7 +1418,7 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
   //
 
   // we need to scan kexts if "InjectKexts true and CheckFakeSMC"
-  if (OSFLAG_ISSET(Entry->Flags, OSFLAG_WITHKEXTS) &&
+  if (/*OSFLAG_ISSET(Entry->Flags, OSFLAG_WITHKEXTS) || */
       OSFLAG_ISSET(Entry->Flags, OSFLAG_CHECKFAKESMC)) {
     DBG_RT(Entry, "\nAllowing kext patching to check if FakeSMC is present\n");
     gSettings.KextPatchesAllowed = TRUE;
@@ -1434,7 +1434,7 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
     KernelAndKextPatcherInit(Entry);
     if (KernelData == NULL) goto NoKernelData;
     DBG_RT(Entry, "\nKext patching STARTED\n");
-    KextPatcherStart(Entry);
+    KextPatcherStart(Entry);  //is FakeSMC found in cache then inject will be disabled
     DBG_RT(Entry, "\nKext patching ENDED\n");
   } else {
     DBG_RT(Entry, "Disabled\n");
@@ -1448,16 +1448,18 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
   //
   // Kext add
   //
-  if (Entry != 0 && OSFLAG_ISSET(Entry->Flags, OSFLAG_CHECKFAKESMC) && OSFLAG_ISUNSET(Entry->Flags, OSFLAG_WITHKEXTS)) {
-    // disable kext injection if FakeSMC is already present
-    Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_WITHKEXTS);
-    if (Entry->KernelAndKextPatches->KPDebug) {
+  if (Entry->KernelAndKextPatches->KPDebug) {
+    if (OSFLAG_ISSET(Entry->Flags, OSFLAG_CHECKFAKESMC) &&
+        OSFLAG_ISUNSET(Entry->Flags, OSFLAG_WITHKEXTS)) {
+    // disabled kext injection if FakeSMC is already present
+ //   Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_WITHKEXTS); //Slice - we are already here
+    
       DBG_RT(Entry, "\nInjectKexts: disabled because FakeSMC is already present and InjectKexts option set to Detect\n");
-      gBS->Stall(500000);
+      gBS->Stall(200000);
     }
   }
 
-  if ((Entry != 0) && OSFLAG_ISSET(Entry->Flags, OSFLAG_WITHKEXTS)) {
+  if (OSFLAG_ISSET(Entry->Flags, OSFLAG_WITHKEXTS)) {
     UINT32      deviceTreeP;
     UINT32      deviceTreeLength;
     EFI_STATUS  Status;
@@ -1493,7 +1495,7 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
   return;
 
 NoKernelData:
-  if (/*(KernelData == NULL) && */Entry->KernelAndKextPatches->KPDebug) {
+  if (Entry->KernelAndKextPatches->KPDebug) {
     DBG_RT(Entry, "==> ERROR: Kernel not found\n");
     gBS->Stall(5000000);
   }

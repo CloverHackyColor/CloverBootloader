@@ -1099,13 +1099,13 @@ STATIC BOOLEAN AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOptions,
       }
       if (gSettings.WithKextsIfNoFakeSMC) {
         Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_CHECKFAKESMC);
-        Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_WITHKEXTS);
+ //       Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_WITHKEXTS);
       }
       if (gSettings.NoCaches) {
         Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_NOCACHES);
       }
     }
-    //TODO there is a problem that Entry->Flags is unique while InputItmes are global ;(
+    //TODO there is a problem that Entry->Flags is unique while InputItems are global ;(
 //    InputItems[69].IValue = Entry->Flags;
     AddDefaultMenu(Entry);
     AddMenuEntry(&MainMenu, (REFIT_MENU_ENTRY *)Entry);

@@ -1727,7 +1727,7 @@ UINT32 FixAny (UINT8* dsdt, UINT32 len, UINT8* ToFind, UINT32 LenTF, UINT8* ToRe
     len = CorrectOuters(dsdt, len, adr + i - 3, sizeoffset);
     i += adr + LenTR;
   }
-
+  DBG(" ]\n"); //should not be here
   return len;
 }
 
@@ -5044,9 +5044,9 @@ VOID FixBiosDsdt (UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, 
         DsdtLen = FixAny(temp, DsdtLen,
                          gSettings.PatchDsdtFind[i], gSettings.LenToFind[i],
                          gSettings.PatchDsdtReplace[i], gSettings.LenToReplace[i]);
-        DBG(" OK\n");
+  /*      DBG(" OK\n");
       } else {
-        DBG(" disabled\n");
+        DBG(" disabled\n"); */
       }
     }
   }

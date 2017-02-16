@@ -1025,7 +1025,7 @@ VOID PatchLoadedKexts(LOADER_ENTRY *Entry)
                     );
 
           // Check for FakeSMC here
-          CheckForFakeSMC(InfoPlist, Entry);
+        //  CheckForFakeSMC(InfoPlist, Entry);  //Slice - no reason to check loaded kext to disable load kexts
 
           InfoPlist[KextFileInfo->infoDictLength] = SavedValue;
           //DbgCount++;

@@ -188,6 +188,13 @@ VOID ScanLegacy(VOID)
   
   for (VolumeIndex = 0; VolumeIndex < VolumesCount; VolumeIndex++) {
     Volume = Volumes[VolumeIndex];
+    if ((Volume->BootType != BOOTING_BY_PBR) &&
+        (Volume->BootType != BOOTING_BY_MBR) &&
+        (Volume->BootType != BOOTING_BY_CD)) {
+//      DBG(" not legacy\n");
+      continue;
+    }
+
     DBG("%2d: '%s' (%s)", VolumeIndex, Volume->VolName, Volume->LegacyOS->IconName);
     
 #if 0 // REFIT_DEBUG > 0
@@ -205,12 +212,6 @@ VOID ScanLegacy(VOID)
         (Volume->DiskKind == DISK_KIND_FIREWIRE && (GlobalConfig.DisableFlags & VOLTYPE_FIREWIRE)))
     {
       DBG(" hidden\n");
-      continue;
-    }
-    if ((Volume->BootType != BOOTING_BY_PBR) &&
-        (Volume->BootType != BOOTING_BY_MBR) &&
-        (Volume->BootType != BOOTING_BY_CD)) {
-      DBG(" not legacy\n");
       continue;
     }
     

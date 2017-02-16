@@ -128,7 +128,7 @@ EFI_STATUS MouseBirth()
     return Status;
   }
 //  CurrentMode = gPointer.SimplePointerProtocol->Mode;
-  DBG("Found Mouse device:\n");
+//  DBG("Found Mouse device:\n");
 //  DBG(" - ResolutionX=%ld\n", CurrentMode->ResolutionX);
 //  DBG(" - ResolutionY=%ld\n", CurrentMode->ResolutionY);
 //  DBG(" - ResolutionZ=%ld\n", CurrentMode->ResolutionZ);

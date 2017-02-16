@@ -1716,7 +1716,7 @@ FillinCustomEntry (
         Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_WITHKEXTS);
       } else if ((Prop->type == kTagTypeString) &&
                  (AsciiStriCmp (Prop->string, "Yes") == 0)) {
-        Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_CHECKFAKESMC);
+        Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_WITHKEXTS);
       } else if ((Prop->type == kTagTypeString) &&
                  (AsciiStriCmp (Prop->string, "Detect") == 0)) {
         Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_CHECKFAKESMC);
@@ -2453,16 +2453,18 @@ GetEarlyUserSettings (
           gSettings.WithKexts            = TRUE;
         } else if ((Prop->type == kTagTypeString) &&
                    (AsciiStriCmp (Prop->string, "Detect") == 0)) {
-          gSettings.WithKexts            = TRUE;
+       //   gSettings.WithKexts            = TRUE;
           gSettings.WithKextsIfNoFakeSMC = TRUE;
         }
+      } else {
+        gSettings.WithKexts            = TRUE;  //default
       }
 
-      // No caches
+      // No caches - obsolete
       Prop = GetProperty (DictPointer, "NoCaches");
       if (IsPropertyTrue (Prop)) {
         gSettings.NoCaches = TRUE;
-      }
+      } 
     }
 
     // KernelAndKextPatches
@@ -6160,8 +6162,10 @@ SetDevices (
             StringDirty = TRUE;
             Prop = Prop->Next;
           }
-          DBG("custom properties for device %02x:%02x.%02x injected, continue\n",
-              Bus, Device, Function);
+          if (!Once) {
+            DBG("custom properties for device %02x:%02x.%02x injected, continue\n",
+                Bus, Device, Function);
+          }
           continue;
         }
         // GFX

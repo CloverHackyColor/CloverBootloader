@@ -450,7 +450,7 @@ VOID DropTableFromXSDT (UINT32 Signature, UINT64 TableId, UINT32 Length)
     BasePtr -= sizeof(UINT64); //SunKi
     Xsdt->Header.Length -= sizeof(UINT64);
   }
-  DBG("corrected XSDT length=%d\n", Xsdt->Header.Length);
+//  DBG("corrected XSDT length=%d\n", Xsdt->Header.Length);
 }
 
 VOID PatchAllSSDT()
@@ -477,9 +477,9 @@ VOID PatchAllSSDT()
       //will patch here
       CopyMem((CHAR8*)&sign, (CHAR8*)&TableEntry->Signature, 4); //must be SSDT
       CopyMem((CHAR8*)&OTID, (CHAR8*)&TableEntry->OemTableId, 8);
-      DBG("Patch table: %a  %a\n", sign, OTID);
       SsdtLen = TableEntry->Length;
-      DBG(" SSDT len = 0x%x\n", SsdtLen);
+      DBG("Patch table: %a  %a len=0x%x\n", sign, OTID, SsdtLen);
+ //     DBG(" SSDT len = 0x%x\n", SsdtLen);
       ssdt = EFI_SYSTEM_TABLE_MAX_ADDRESS;
       Status = gBS->AllocatePages(AllocateMaxAddress,
                                   EfiACPIReclaimMemory,
@@ -492,7 +492,7 @@ VOID PatchAllSSDT()
       Ptr = (CHAR8*)(UINTN)ssdt;
       CopyMem(Ptr, (VOID*)TableEntry, SsdtLen);
       if (gSettings.PatchDsdtNum > 0) {
-        DBG("Patching SSDT:\n");
+  //      DBG("Patching SSDT:\n");
         for (i = 0; i < gSettings.PatchDsdtNum; i++) {
           if (!gSettings.PatchDsdtFind[i] || !gSettings.LenToFind[i]) {
             continue;
@@ -1855,7 +1855,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
   if (ACPIPatchedAML) {
     DbgHeader("ACPIPatchedAML");
     CHAR16  FullName[256];
-    DBG("Start: Processing Patched AML(s): ");
+//    DBG("Start: Processing Patched AML(s): ");
     if (gSettings.SortedACPICount) {
       DBG("Sorted\n");
       for (Index = 0; Index < gSettings.SortedACPICount; Index++) {
@@ -1916,7 +1916,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
         ACPIPatchedAMLTmp = ACPIPatchedAMLTmp->Next;
       }
     }
-    DBG("End: Processing Patched AML(s)\n");
+//    DBG("End: Processing Patched AML(s)\n");
   }
 
 /*

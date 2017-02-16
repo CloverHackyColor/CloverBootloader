@@ -1556,40 +1556,40 @@ VOID InitSelection(VOID)
   SelectionBackgroundPixel.a = (GlobalConfig.SelectionColor >> 0) & 0xFF;
 
   if (SelectionImages[0] != NULL) {
-    DBG("selections ready\n");
+//    DBG("selections ready\n");
     return;
   }
   // load small selection image
   if (GlobalConfig.SelectionSmallFileName != NULL){
-    DBG("SelectionSmallFileName != NULL\n");
+//    DBG("SelectionSmallFileName != NULL\n");
     SelectionImages[2] = egLoadImage(ThemeDir, GlobalConfig.SelectionSmallFileName, FALSE);
   }
   if (SelectionImages[2] == NULL){
-    DBG("SelectionImages[2] == NULL\n");
+//    DBG("SelectionImages[2] == NULL\n");
     SelectionImages[2] = BuiltinIcon(BUILTIN_SELECTION_SMALL);
     CopyMem(&BlueBackgroundPixel, &StdBackgroundPixel, sizeof(EG_PIXEL));
   }
   SelectionImages[2] = egEnsureImageSize(SelectionImages[2],
                                          row1TileSize, row1TileSize, &MenuBackgroundPixel);
   if (SelectionImages[2] == NULL) {
-    DBG("SelectionImages[2] == NULL second\n");
+//    DBG("SelectionImages[2] == NULL second\n");
     return;
   }
   // load big selection image
   if (GlobalConfig.SelectionBigFileName != NULL) {
-    DBG("SelectionBigFileName != NULL\n");
+//    DBG("SelectionBigFileName != NULL\n");
     SelectionImages[0] = egLoadImage(ThemeDir, GlobalConfig.SelectionBigFileName, FALSE);
     SelectionImages[0] = egEnsureImageSize(SelectionImages[0],
                                            row0TileSize, row0TileSize,
                                            &MenuBackgroundPixel);
   }
   if (SelectionImages[0] == NULL) {
-    DBG("SelectionImages[0] == NULL\n");
+//    DBG("SelectionImages[0] == NULL\n");
     // calculate big selection image from small one
     SelectionImages[0] = BuiltinIcon(BUILTIN_SELECTION_BIG);
     CopyMem(&BlueBackgroundPixel, &StdBackgroundPixel, sizeof(EG_PIXEL));
     if (SelectionImages[0] == NULL) {
-      DBG("SelectionImages[0] == NULL second\n");
+//      DBG("SelectionImages[0] == NULL second\n");
       egFreeImage(SelectionImages[2]);
       SelectionImages[2] = NULL;
       return;

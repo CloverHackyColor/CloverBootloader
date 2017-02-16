@@ -236,7 +236,6 @@ VOID
 GetSmcKeys (BOOLEAN WriteToSMC)
 {
   EFI_STATUS                  Status;
-  UINTN                       Index;
   CHAR16                      *Name;
   EFI_GUID                    Guid;
   UINTN                       NameSize;
@@ -287,11 +286,12 @@ GetSmcKeys (BOOLEAN WriteToSMC)
 
     Data = GetNvramVariable (Name, &Guid, NULL, &DataSize);
     if (Data) {
+ /*     UINTN                       Index;
       DBG("   %s:", Name);
       for (Index = 0; Index < DataSize; Index++) {
         DBG("%02x ", *((UINT8*)Data + Index));
       }
-      DBG("\n");
+      DBG("\n"); */
       if (gAppleSmc && WriteToSMC) {
         Status = gAppleSmc->SmcAddKey(gAppleSmc, KeyFromName(Name), DataSize, TypeFromName(Name), 0xC0);
         if (!EFI_ERROR(Status)) {

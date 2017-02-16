@@ -1123,7 +1123,7 @@ BOOLEAN GetAnime(REFIT_MENU_SCREEN *Screen)
     return FALSE;
   }
   
-  DBG("Use anime=%s frames=%d\n", Anime->Path, Anime->Frames);
+//  DBG("Use anime=%s frames=%d\n", Anime->Path, Anime->Frames);
   
   return TRUE;
 }

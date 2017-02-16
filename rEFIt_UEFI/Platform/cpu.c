@@ -205,7 +205,9 @@ VOID GetCPUProperties (VOID)
       DBG("CPUID_4_eax=%x\n", gCPUStructure.CPUID[CPUID_4][EAX]);
     } else {
       gCPUStructure.CoresPerPackage = (UINT32)bitfield(gCPUStructure.CPUID[CPUID_1][EBX], 18, 16);
-      DBG("got cores from CPUID_1 = %d\n", gCPUStructure.CoresPerPackage);
+      if (gCPUStructure.CoresPerPackage) {
+        DBG("got cores from CPUID_1 = %d\n", gCPUStructure.CoresPerPackage);
+      }
     }
   } else if (gCPUStructure.Vendor == CPU_VENDOR_AMD) {
 

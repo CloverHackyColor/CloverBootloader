@@ -264,12 +264,12 @@ EFIAPI OurBlockIoRead (
       BlockSize = 512;
     }
     
-    DBG("    OurBlockIoRead: Lba=%lx, Offset=%lx (BlockSize=%d)\n", Lba, MultU64x32(Lba, BlockSize), BlockSize);
+ //   DBG("    OurBlockIoRead: Lba=%lx, Offset=%lx (BlockSize=%d)\n", Lba, MultU64x32(Lba, BlockSize), BlockSize);
     
     Header = (IOHibernateImageHeaderMin *) Buffer;
     Header2 = (IOHibernateImageHeaderMinSnow *) Buffer;
-    DBG("    sig lion: %x\n", Header->signature);
-    DBG("    sig snow: %x\n", Header2->signature);
+ //   DBG("    sig lion: %x\n", Header->signature);
+ //   DBG("    sig snow: %x\n", Header2->signature);
     // DBG(" sig swap: %x\n", SwapBytes32(Header->signature));
     
     if (Header->signature == kIOHibernateHeaderSignature ||
@@ -452,7 +452,7 @@ GetSleepImagePosition (IN REFIT_VOLUME *Volume, REFIT_VOLUME **SleepImageVolume)
     return 0;
   }
 
-  DBG("    Reading first %d bytes of sleepimage ...\n", BufferSize);
+//  DBG("    Reading first %d bytes of sleepimage ...\n", BufferSize);
 
   if (!ImageVolume->WholeDiskBlockIO) {
     DBG("     can not get whole disk -> %r\n", Status);
@@ -472,7 +472,7 @@ GetSleepImagePosition (IN REFIT_VOLUME *Volume, REFIT_VOLUME **SleepImageVolume)
   if (Status == EFI_INVALID_PARAMETER) {
     Status = EFI_SUCCESS;
   }
-  DBG("    Reading completed -> %r\n", Status);
+//  DBG("    Reading completed -> %r\n", Status);
 
   // Close sleepimage
   File->Close(File);
