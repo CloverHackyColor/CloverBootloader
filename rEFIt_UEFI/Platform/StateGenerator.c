@@ -97,6 +97,8 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
     case CPU_MODEL_SKYLAKE_D:
     case CPU_MODEL_SKYLAKE_S:
     case CPU_MODEL_ATOM_3700:
+    case CPU_MODEL_KABYLAKE1:
+    case CPU_MODEL_KABYLAKE2:
     {
       Aplf = 0;
       break;

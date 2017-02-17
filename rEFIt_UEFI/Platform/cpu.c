@@ -265,6 +265,8 @@ VOID GetCPUProperties (VOID)
       case CPU_MODEL_SKYLAKE_D:
       case CPU_MODEL_SKYLAKE_S:
       case CPU_MODEL_CANNONLAKE:
+      case CPU_MODEL_KABYLAKE1:
+      case CPU_MODEL_KABYLAKE2:
         msr = AsmReadMsr64(MSR_CORE_THREAD_COUNT);  //0x35
         gCPUStructure.Cores   = (UINT8)bitfield((UINT32)msr, 31, 16);
         gCPUStructure.Threads = (UINT8)bitfield((UINT32)msr, 15,  0);
@@ -457,6 +459,8 @@ VOID GetCPUProperties (VOID)
            case CPU_MODEL_SKYLAKE_U:
            case CPU_MODEL_SKYLAKE_D:
            case CPU_MODEL_SKYLAKE_S:
+           case CPU_MODEL_KABYLAKE1:
+           case CPU_MODEL_KABYLAKE2:
              gCPUStructure.TSCFrequency = MultU64x32(gCPUStructure.CurrentSpeed, Mega); //MHz -> Hz
              gCPUStructure.CPUFrequency = gCPUStructure.TSCFrequency;
              
@@ -960,6 +964,8 @@ UINT16 GetAdvancedCpuType ()
           case CPU_MODEL_SKYLAKE_U:
           case CPU_MODEL_SKYLAKE_D:
           case CPU_MODEL_SKYLAKE_S:
+          case CPU_MODEL_KABYLAKE1:
+          case CPU_MODEL_KABYLAKE2:
             if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i3"))
               return 0x905; // Core i3 - Apple doesn't use it
             if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i5"))
@@ -1139,6 +1145,8 @@ MACHINE_TYPES GetDefaultModel()
         break;
       case CPU_MODEL_SKYLAKE_D:  
       case CPU_MODEL_SKYLAKE_S:
+      case CPU_MODEL_KABYLAKE1:
+      case CPU_MODEL_KABYLAKE2:
         DefaultType = iMac171;
         break;
       case CPU_MODEL_HASWELL:
