@@ -78,6 +78,7 @@ static hda_controller_devices know_hda_controller[] = {
     { HDA_INTEL_LPTLP2,	"Lynx Point-LP"		/*, 0, 0 */ },
     { HDA_INTEL_SRSPLP,	"Sunrise Point-LP"	/*, 0, 0 */ },
     { HDA_INTEL_SRSP,	"Sunrise Point"		/*, 0, 0 */ },
+    { HDA_INTEL_UNPT,	"Union Point"		/*, 0, 0 */ },
     
     //10de  NVIDIA Corporation
     { HDA_NVIDIA_MCP51,	"MCP51" /*, 0, HDAC_QUIRK_MSI */ },

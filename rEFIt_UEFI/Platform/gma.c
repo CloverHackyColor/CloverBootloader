@@ -203,6 +203,9 @@ static struct gma_gpu_t KnownGPUS[] = {
 //  { 0x193B, "Intel Iris Pro Graphics 580"  }, // Intel(R) Iris(TM) Pro Graphics 580
 //  { 0x193D, "Intel Iris Pro Graphics P580"  }, // Intel(R) Iris(TM) Pro Graphics P580
   // 0x0e08 - Xeon E5-1620
+
+    { 0x5902, "Intel HD Graphics 630 GT1" },
+    { 0x5912, "Intel HD Graphics 630 GT2" },
 };
 
 CHAR8 *get_gma_model(UINT16 id)
@@ -402,6 +405,8 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
     case 0x193A:
     case 0x193B://#
     case 0x193D://#
+    case 0x5902:
+    case 0x5912:
       if (!SetSnb) {
         switch (gma_dev->device_id) {
           case 0x162:

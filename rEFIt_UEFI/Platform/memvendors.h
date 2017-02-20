@@ -924,6 +924,7 @@ VenIdName vendorMap[] = {
 		{ 6, 0xf2, "Muscle Power"},
 		{ 6, 0x73, "Energy Micro"},
 		{ 6, 0xf4, "Innofidei"},
+		{ 0x85, 0x9B, "Crucial Technology"},
 		{ 9, 0xff, ""}
 };
 
