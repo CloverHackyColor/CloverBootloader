@@ -228,6 +228,8 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
           case CPU_MODEL_SKYLAKE_D:
           case CPU_MODEL_SKYLAKE_S:
           case CPU_MODEL_ATOM_3700:
+          case CPU_MODEL_KABYLAKE1:
+          case CPU_MODEL_KABYLAKE2:
 					{
             maximum.Control.Control = RShiftU64(AsmReadMsr64(MSR_PLATFORM_INFO), 8) & 0xff;
             if (gSettings.MaxMultiplier) {
@@ -276,6 +278,8 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
                     (gCPUStructure.Model == CPU_MODEL_SKYLAKE_U) ||
                     (gCPUStructure.Model == CPU_MODEL_SKYLAKE_D) ||
                     (gCPUStructure.Model == CPU_MODEL_SKYLAKE_S) ||
+                    (gCPUStructure.Model == CPU_MODEL_KABYLAKE1) ||
+                    (gCPUStructure.Model == CPU_MODEL_KABYLAKE2) ||
                     (gCPUStructure.Model == CPU_MODEL_JAKETOWN)) {
                   j = i << 8;
                   p_states[p_states_count].Frequency = (UINT32)(100 * i);
@@ -307,8 +311,7 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
 		}
 		
 		// Generating SSDT
-		if (p_states_count > 0)
-		{
+		if (p_states_count > 0) {
       INTN TDPdiv;
       SSDT_TABLE *ssdt;
 			AML_CHUNK* scop;
@@ -326,72 +329,74 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
       AsciiSPrint(name2, 31, "%a%4aPCT_", acpi_cpu_score, acpi_cpu_name[0]);
       
       scop = aml_add_scope(root, name);
-      method = aml_add_name(scop, "PSS_");
-      pack = aml_add_package(method);
       
-      if ((gSettings.TDP != 0) && (p_states[0].Frequency != 0)) {
-        TDPdiv = (gSettings.TDP * 1000) / p_states[0].Frequency;
-      } else {
-        TDPdiv = 8;
-      }
-			
-      for (i = gSettings.PLimitDict; i < p_states_count; i++)
-      {
-        AML_CHUNK* pstt = aml_add_package(pack);
+      if (!gSettings.HWP) {
+        method = aml_add_name(scop, "PSS_");
+        pack = aml_add_package(method);
         
-        aml_add_dword(pstt, p_states[i].Frequency);
-        if (p_states[i].Control.Control < realMin) {
-          aml_add_dword(pstt, 0); //zero for power
+        if ((gSettings.TDP != 0) && (p_states[0].Frequency != 0)) {
+          TDPdiv = (gSettings.TDP * 1000) / p_states[0].Frequency;
         } else {
-          aml_add_dword(pstt, p_states[i].Frequency * TDPdiv); // Designed Power
+          TDPdiv = 8;
         }
-        aml_add_dword(pstt, 0x0000000A); // Latency
-        aml_add_dword(pstt, 0x0000000A); // Latency
-        aml_add_dword(pstt, p_states[i].Control.Control);
-        aml_add_dword(pstt, p_states[i].Control.Control); // Status
+        
+        for (i = gSettings.PLimitDict; i < p_states_count; i++)
+        {
+          AML_CHUNK* pstt = aml_add_package(pack);
+          
+          aml_add_dword(pstt, p_states[i].Frequency);
+          if (p_states[i].Control.Control < realMin) {
+            aml_add_dword(pstt, 0); //zero for power
+          } else {
+            aml_add_dword(pstt, p_states[i].Frequency * TDPdiv); // Designed Power
+          }
+          aml_add_dword(pstt, 0x0000000A); // Latency
+          aml_add_dword(pstt, 0x0000000A); // Latency
+          aml_add_dword(pstt, p_states[i].Control.Control);
+          aml_add_dword(pstt, p_states[i].Control.Control); // Status
+        }
+        metPSS = aml_add_method(scop, "_PSS", 0);
+        aml_add_return_name(metPSS, "PSS_");
+        //    metPSS = aml_add_method(scop, "APSS", 0);
+        //    aml_add_return_name(metPSS, "PSS_");
+        metPPC = aml_add_method(scop, "_PPC", 0);
+        aml_add_return_byte(metPPC, gSettings.PLimitDict);
+        namePCT = aml_add_name(scop, "PCT_");
+        packPCT = aml_add_package(namePCT);
+        resource_template_register_fixedhw[8] = 0x00;
+        resource_template_register_fixedhw[9] = 0x00;
+        resource_template_register_fixedhw[18] = 0x00;
+        aml_add_buffer(packPCT, resource_template_register_fixedhw, sizeof(resource_template_register_fixedhw));
+        aml_add_buffer(packPCT, resource_template_register_fixedhw, sizeof(resource_template_register_fixedhw));
+        metPCT = aml_add_method(scop, "_PCT", 0);
+        aml_add_return_name(metPCT, "PCT_");
+        
+        if (gCPUStructure.Family >= 2) {
+          aml_add_name(scop, "APSN");
+          aml_add_byte(scop, (UINT8)Apsn);
+          aml_add_name(scop, "APLF");
+          aml_add_byte(scop, (UINT8)Aplf);
+        }
+        
+        // Add CPUs
+        for (i = 1; i < Number; i++) {
+          
+          AsciiSPrint(name, 31, "%a%4a", acpi_cpu_score, acpi_cpu_name[i]);
+          scop = aml_add_scope(root, name);
+          metPSS = aml_add_method(scop, "_PSS", 0);
+          aml_add_return_name(metPSS, name1);
+          //      metPSS = aml_add_method(scop, "APSS", 0);
+          //      aml_add_return_name(metPSS, name1);
+          metPPC = aml_add_method(scop, "_PPC", 0);
+          aml_add_return_byte(metPPC, gSettings.PLimitDict);
+          metPCT = aml_add_method(scop, "_PCT", 0);
+          aml_add_return_name(metPCT, name2);        
+        }
       }
-      metPSS = aml_add_method(scop, "_PSS", 0);
-      aml_add_return_name(metPSS, "PSS_");
-  //    metPSS = aml_add_method(scop, "APSS", 0);
-  //    aml_add_return_name(metPSS, "PSS_");
-      metPPC = aml_add_method(scop, "_PPC", 0);
-      aml_add_return_byte(metPPC, gSettings.PLimitDict);
-      namePCT = aml_add_name(scop, "PCT_");
-      packPCT = aml_add_package(namePCT);
-      resource_template_register_fixedhw[8] = 0x00;
-      resource_template_register_fixedhw[9] = 0x00;
-      resource_template_register_fixedhw[18] = 0x00;
-      aml_add_buffer(packPCT, resource_template_register_fixedhw, sizeof(resource_template_register_fixedhw));
-      aml_add_buffer(packPCT, resource_template_register_fixedhw, sizeof(resource_template_register_fixedhw));
-      metPCT = aml_add_method(scop, "_PCT", 0);
-      aml_add_return_name(metPCT, "PCT_");
       if (gSettings.PluginType) {
         aml_add_buffer(scop, plugin_type, sizeof(plugin_type));
         aml_add_byte(scop, gSettings.PluginType);
-      }
-      
-      if (gCPUStructure.Family >= 2) {
-        aml_add_name(scop, "APSN");
-        aml_add_byte(scop, (UINT8)Apsn);
-        aml_add_name(scop, "APLF");
-        aml_add_byte(scop, (UINT8)Aplf);        
-      }
-            
-			// Add CPUs
-			for (i = 1; i < Number; i++) {
-        
-				AsciiSPrint(name, 31, "%a%4a", acpi_cpu_score, acpi_cpu_name[i]);
-				scop = aml_add_scope(root, name);
-        metPSS = aml_add_method(scop, "_PSS", 0);
-        aml_add_return_name(metPSS, name1);
-  //      metPSS = aml_add_method(scop, "APSS", 0);
-  //      aml_add_return_name(metPSS, name1);
-        metPPC = aml_add_method(scop, "_PPC", 0);
-        aml_add_return_byte(metPPC, gSettings.PLimitDict);
-        metPCT = aml_add_method(scop, "_PCT", 0);
-        aml_add_return_name(metPCT, name2);
-        
-			}
+      }      
 			
 			aml_calculate_size(root);
 			
@@ -403,7 +408,11 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
 			
 			aml_destroy_node(root);
 			
-			MsgLog ("SSDT with CPU P-States generated successfully\n");			
+      if (!gSettings.HWP) {
+        MsgLog ("SSDT with CPU P-States generated successfully\n");
+      } else {
+        MsgLog ("SSDT with plugin-type without P-States is generated\n");
+      }
 			return ssdt;
 		}
 	}

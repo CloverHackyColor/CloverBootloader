@@ -5392,12 +5392,14 @@ GetUserSettings(
       if (Prop != NULL) {
         if (IsValidGuidAsciiString (Prop->string)) {
           AsciiStrToUnicodeStrS(Prop->string, gSettings.CustomUuid, 40);
+          DBG("Converted CustomUUID %s\n", gSettings.CustomUuid);
           Status = StrToGuidLE (gSettings.CustomUuid, &gUuid);
           if (!EFI_ERROR (Status)) {
             IsValidCustomUUID = TRUE;
             // if CustomUUID specified, then default for InjectSystemID=FALSE
             // to stay compatibile with previous Clover behaviour
             gSettings.InjectSystemID = FALSE;
+//            DBG("The UUID is valid\n");
           }
         }
 
@@ -5406,6 +5408,7 @@ GetUserSettings(
         }
       }
       //else gUuid value from SMBIOS
+ //     DBG("Finally use %g\n", &gUuid);
 
       Prop                     = GetProperty (DictPointer, "InjectSystemID");
       gSettings.InjectSystemID = gSettings.InjectSystemID ? !IsPropertyFalse(Prop) : IsPropertyTrue (Prop);

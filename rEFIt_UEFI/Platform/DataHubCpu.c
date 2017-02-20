@@ -235,6 +235,9 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
   None           = "none";
   AddNvramVariable(L"security-mode", &gEfiAppleBootGuid, Attributes, 5, (VOID*)None);
 
+ // AddNvramVariable(L"test_boot_guid", &gEfiAppleBootGuid, Attributes, 5, (VOID*)None);
+ // AddNvramVariable(L"test_nvram_guid", &gEfiAppleNvramGuid, Attributes, 5, (VOID*)None);
+
   // we should have two UUID: platform and system
   // NO! Only Platform is the best solution
 

@@ -3,15 +3,14 @@
 # 2017 (c) syscl/lighting/Yating Zhou/tluck/Sherlocks
 # dump NVRAM for Clover
 #
-# note: msdosfs.kext, exfat.kext should be loaded
-#
-# Editor tluck, Sherlocks
+# note: msdosfs.kext, exfat.kext should be loaded if 80.save_nvram_plist.local is
+# called at shutdown stage
 #
 
 #================================= GLOBAL VARS ==================================
 
 # Script version info
-gScriptVersion=1.13
+gScriptVersion=1.15
 
 #
 # The script expects '0.5' but non-US localizations use '0,5' so we export
@@ -57,6 +56,7 @@ gEfiEmuVariableIsPresent=""
 gLegacyEmuVariableIsPresent=""
 gDisk=($(ls /dev/disk? |grep -i -o "disk[0-9]"))
 gESPList=""
+gTurn=""
 #
 # ESP list index
 #
@@ -114,7 +114,7 @@ function _fndESP()
     #
     # find all EFI partitions distrubuted in different disks
     #
-    # default gNVRAMf save path should be EFI as Clover now support FileVault
+    # default gNVRAMf save path should be EFI as Clover now supports FileVault
     #
     local gEfiIDENTIFIER=""
     local gEfiUID="C12A7328-F81F-11D2-BA4B-00A0C93EC93B"
@@ -339,6 +339,65 @@ function _dmpNVRAM()
     fi
 }
 
+#
+#--------------------------------------------------------------------------------
+#
+
+function _spinWait()
+{
+    #
+    # tluck: first introduce v1.14
+    # wait for any background daemons(diskatribrationd will launch /sbin/umount)
+    # on filesystems to complete process after logout
+    # use a debug loop to watch the processes after logout
+    #
+    local gCommand=$1
+    ps -ef |grep -v -i grep |grep -i "${gCommand}"      >/dev/null
+    if [[ $? == 0 ]]; then
+        gTurn=0
+        while [ ${gTurn} -eq 0 ];
+        do
+          #
+          # do spin wait
+          #
+          sleep 1
+          ps -ef|grep -v -i grep |grep -i "${gCommand}" >/dev/null
+          gTurn=$?
+        done
+    fi
+
+    if [[ ${DEBUG} != 0 ]]; then
+        echo mount
+        mount
+        echo
+    fi
+}
+
+#
+#--------------------------------------------------------------------------------
+#
+
+function _disableESPIndex()
+{
+    #
+    # syscl: first introduce v1.15
+    # Note: disable index on ESP will significantly boost shutdown and reboot
+    # progress. Touch .metadata_never_index on ESP is a very good idea to boost
+    # shutdown/reboot. No matter we have this script or not, once we disable
+    # index on ESP, the shutdown/reboot progress will significant faster.
+    # So we'd better disable Spotlight search on ESP partitions
+    #
+    local MountPoint=$1
+    local gIndexConfigf="${MountPoint}/.metadata_never_index"
+    if [ ! -f ${gIndexConfigf} ]; then
+        #
+        # Spotlight index is enable, now we turn it off
+        #
+        echo "${gDmpTimeStamp}  Disable indexing on ${MountPoint}"
+        touch ${gIndexConfigf}
+    fi
+}
+
 #==================================== START =====================================
 
 #
@@ -348,7 +407,7 @@ function _dmpNVRAM()
 #
 # now, let's get started
 #
-echo "v${gScriptVersion} (c) 2017 syscl/lighting/Yating Zhou"     >${gNvramLogPath}
+echo "v${gScriptVersion} (c) 2017 syscl/lighting/Yating Zhou/tluck/Sherlocks"
 #
 # save NVRAM for legacy Clover and/or for EmuVariable present
 #
@@ -356,7 +415,11 @@ if [[ "${gLegacyEmuVariableIsPresent}" == "true" || "${gEfiEmuVariableIsPresent}
     #
     # find EFIs, added into gESPList
     #
-    _fndESP                                                      >>${gNvramLogPath}
+    _fndESP
+    #
+    # first do _spinWait(&umount->pid)
+    #
+    _spinWait umount
     #
     # mount ESP with Clover - otherwise write to root if no ESP
     # then dump NVRAM to target path
@@ -367,7 +430,7 @@ if [[ "${gLegacyEmuVariableIsPresent}" == "true" || "${gEfiEmuVariableIsPresent}
         # no ESP found, write file to root(/) just in case
         #
         gDmpTimeStamp=$(date +%Y-%m-%d-%H:%M:%S)
-        echo "${gDmpTimeStamp}  No ESP found or mounted"         >>${gNvramLogPath}
+        echo "${gDmpTimeStamp}  No ESP found or mounted"
         _dmpNVRAM /
     else
         #
@@ -377,9 +440,13 @@ if [[ "${gLegacyEmuVariableIsPresent}" == "true" || "${gEfiEmuVariableIsPresent}
         for ((i=0; i<${#gESPList[@]}; ++i))
         do
           #
+          # check and disable index on ESP
+          #
+          _disableESPIndex "${gESPList[i]}"
+          #
           # dump NVRAM to target path now
           #
-          _dmpNVRAM "${gESPList[i]}"                             >>${gNvramLogPath}
+          _dmpNVRAM "${gESPList[i]}"
           (umount   "${gESPList[i]}" 2>&1) > /dev/null &
         done
     fi
