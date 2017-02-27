@@ -84,6 +84,7 @@ EMU_VARIABLE_CONTROL_PROTOCOL *gEmuVariableControl = NULL;
 
 extern VOID HelpRefit(VOID);
 extern VOID AboutRefit(VOID);
+extern BOOLEAN BooterPatch(IN UINT8 *BooterData, IN INTN BooterSize, LOADER_ENTRY *Entry);
 
 static EFI_STATUS LoadEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
                                     IN CHAR16 *ImageTitle,
@@ -177,7 +178,7 @@ static EFI_STATUS StartEFILoadedImage(IN EFI_HANDLE ChildImageHandle,
   }
   //DBG("Image loaded at: %p\n", ChildLoadedImage->ImageBase);
   //PauseForKey(L"continue");
-
+  
   // close open file handles
   UninitRefitLib();
 
@@ -406,6 +407,36 @@ VOID FilterKernelPatches(IN LOADER_ENTRY *Entry)
   }
 }
 
+VOID FilterBootPatches(IN LOADER_ENTRY *Entry)
+{
+  if ((Entry->KernelAndKextPatches->BootPatches != NULL) && Entry->KernelAndKextPatches->NrBoots) {
+    INTN i = 0;
+    DBG("Filtering BootPatches:\n");
+    for (; i < Entry->KernelAndKextPatches->NrBoots; ++i) {
+      DBG(" - [%02d]: %a :: [OS: %a | MatchOS: %a | MatchBuild: %a]",
+          i,
+          Entry->KernelAndKextPatches->BootPatches[i].Label,
+          Entry->OSVersion,
+          Entry->KernelAndKextPatches->BootPatches[i].MatchOS ? Entry->KernelAndKextPatches->BootPatches[i].MatchOS : "All",
+          Entry->KernelAndKextPatches->BootPatches[i].MatchBuild != NULL ? Entry->KernelAndKextPatches->BootPatches[i].MatchBuild : "All"
+          );
+      if (!Entry->KernelAndKextPatches->BootPatches[i].MenuItem.BValue) {
+        DBG(" ==> disabled by user\n");
+        continue;
+      }
+      
+      if ((Entry->BuildVersion != NULL) && (Entry->KernelAndKextPatches->BootPatches[i].MatchBuild != NULL)) {
+        Entry->KernelAndKextPatches->BootPatches[i].MenuItem.BValue = IsPatchEnabled(Entry->KernelAndKextPatches->BootPatches[i].MatchBuild, Entry->BuildVersion);
+        DBG(" ==> %a\n", Entry->KernelAndKextPatches->BootPatches[i].MenuItem.BValue ? "allowed" : "not allowed");
+        continue;
+      }
+      
+      Entry->KernelAndKextPatches->BootPatches[i].MenuItem.BValue = IsPatchEnabled(Entry->KernelAndKextPatches->BootPatches[i].MatchOS, Entry->OSVersion);
+      DBG(" ==> %a\n", Entry->KernelAndKextPatches->BootPatches[i].MenuItem.BValue ? "allowed" : "not allowed");
+    }
+  }
+}
+
 VOID ReadSIPCfg()
 {
   UINT32 csrCfg = gSettings.CsrActiveConfig & CSR_VALID_FLAGS;
@@ -563,8 +594,11 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     }
 
     FilterKextPatches(Entry);
-
     FilterKernelPatches(Entry);
+    FilterBootPatches(Entry);
+    if (!BooterPatch(LoadedImage->ImageBase, LoadedImage->ImageSize, Entry)) {
+      DBG("Will not patch boot.efi\n");
+    }
 
     // Set boot argument for kernel if no caches, this should force kernel loading
     if (OSFLAG_ISSET(Entry->Flags, OSFLAG_NOCACHES) &&

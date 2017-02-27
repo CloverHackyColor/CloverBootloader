@@ -1166,6 +1166,92 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
       }
     }
   }
+  
+  Prop = GetProperty (DictPointer, "BootPatches");
+  if (Prop != NULL) {
+    INTN   i, Count = GetTagCount (Prop);
+    //delete old and create new
+    if (Patches->BootPatches) {
+      Patches->NrBoots = 0;
+      FreePool (Patches->BootPatches);
+    }
+    if (Count > 0) {
+      TagPtr        Prop2 = NULL, Dict = NULL;
+      KERNEL_PATCH  *newPatches = AllocateZeroPool (Count * sizeof(KERNEL_PATCH));
+      
+      Patches->BootPatches = newPatches;
+      DBG ("BootPatches: %d requested\n", Count);
+      for (i = 0; i < Count; i++) {
+        CHAR8 *BootPatchesLabel;
+        UINTN FindLen = 0, ReplaceLen = 0;
+        UINT8 *TmpData, *TmpPatch;
+        EFI_STATUS Status = GetElement (Prop, i, &Prop2);
+        if (EFI_ERROR (Status)) {
+          DBG (" - [%02d]: error %r getting next element\n", i, Status);
+          continue;
+        }
+        
+        if (Prop2 == NULL) {
+          break;
+        }
+        
+        DBG (" - [%02d]:", i);
+        
+        Dict = GetProperty (Prop2, "Comment");
+        if (Dict != NULL) {
+          BootPatchesLabel = AllocateCopyPool (AsciiStrSize (Dict->string), Dict->string);
+        } else {
+          BootPatchesLabel = AllocateCopyPool (8, "NoLabel");
+        }
+        
+        DBG (" %a", BootPatchesLabel);
+        
+        Dict = GetProperty (Prop2, "Disabled");
+        Patches->BootPatches[Patches->NrBoots].MenuItem.BValue   = !IsPropertyTrue (Dict);
+        
+        TmpData    = GetDataSetting (Prop2, "Find", &FindLen);
+        TmpPatch   = GetDataSetting (Prop2, "Replace", &ReplaceLen);
+        
+        if (!FindLen || !ReplaceLen || (FindLen != ReplaceLen)) {
+          DBG (" :: invalid Find/Replace data - skipping!\n");
+          continue;
+        }
+        
+        Patches->BootPatches[Patches->NrBoots].Data         = AllocateCopyPool (FindLen, TmpData);
+        Patches->BootPatches[Patches->NrBoots].DataLen      = FindLen;
+        Patches->BootPatches[Patches->NrBoots].Patch        = AllocateCopyPool (FindLen, TmpPatch);
+        Patches->BootPatches[Patches->NrBoots].Count        = 0;
+        Patches->BootPatches[Patches->NrBoots].MatchOS      = NULL;
+        Patches->BootPatches[Patches->NrBoots].MatchBuild   = NULL;
+        Patches->BootPatches[Patches->NrBoots].Label        = AllocateCopyPool (AsciiStrSize (BootPatchesLabel), BootPatchesLabel);
+        
+        Dict = GetProperty (Prop2, "Count");
+        if (Dict != NULL) {
+          Patches->BootPatches[Patches->NrBoots].Count = GetPropertyInteger (Dict, 0);
+        }
+        
+        FreePool(TmpData);
+        FreePool(TmpPatch);
+        FreePool(BootPatchesLabel);
+        
+        Dict = GetProperty (Prop2, "MatchOS");
+        if ((Dict != NULL) && (Dict->type == kTagTypeString)) {
+          Patches->BootPatches[Patches->NrBoots].MatchOS = AllocateCopyPool (AsciiStrSize (Dict->string), Dict->string);
+          DBG(" :: MatchOS: %a", Patches->BootPatches[Patches->NrBoots].MatchOS);
+        }
+        
+        Dict = GetProperty (Prop2, "MatchBuild");
+        if ((Dict != NULL) && (Dict->type == kTagTypeString)) {
+          Patches->BootPatches[Patches->NrBoots].MatchBuild = AllocateCopyPool (AsciiStrSize (Dict->string), Dict->string);
+          DBG(" :: MatchBuild: %a", Patches->BootPatches[Patches->NrBoots].MatchBuild);
+        }
+        
+        DBG (" :: data len: %d\n", Patches->BootPatches[Patches->NrBoots].DataLen);
+        Patches->NrBoots++;
+      }
+    }
+  }
+
 
   return TRUE;
 }

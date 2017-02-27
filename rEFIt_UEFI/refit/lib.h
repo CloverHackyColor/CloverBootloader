@@ -368,6 +368,7 @@ extern INTN ScrollbarYMovement;
 #define SCREEN_KERNELS    24
 #define SCREEN_DSDT_PATCHES 25
 #define SCREEN_DEVICES    26
+#define SCREEN_BOOTER     27
 
 #define MAX_ANIME  41
 
@@ -597,6 +598,9 @@ typedef struct KERNEL_AND_KEXT_PATCHES
 #endif
   INT32   NrKernels;
   KERNEL_PATCH *KernelPatches;
+  INT32   NrBoots;
+  KERNEL_PATCH *BootPatches;
+  
 } KERNEL_AND_KEXT_PATCHES;
 
 typedef struct {

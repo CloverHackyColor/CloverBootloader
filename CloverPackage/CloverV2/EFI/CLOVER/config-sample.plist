@@ -618,6 +618,21 @@
 				<data>BAAAABQCAAAAAQAAAAAEBAAEAAAEAwAAAAEAABECAQUAAAAAAAAAAAAAAAAAAAAA</data>
 			</dict>
 		</array>
+		<key>#BootPatches</key>
+		<array>
+			<dict>
+				<key>Comment</key>
+				<string>Example</string>
+				<key>MatchOS</key>
+				<string>All</string>
+				<key>Disabled</key>
+				<true/>
+				<key>Find</key>
+				<data>RXh0ZXJuYWw=</data>
+				<key>Replace</key>
+				<data>SW50ZXJuYWw=</data>
+			</dict>
+		</array>
 	</dict>
 	<key>RtVariables</key>
 	<dict>

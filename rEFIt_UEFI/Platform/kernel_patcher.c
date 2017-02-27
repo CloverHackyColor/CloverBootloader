@@ -1258,6 +1258,36 @@ KernelUserPatch(IN UINT8 *UKernelData, LOADER_ENTRY *Entry)
   return (y != 0);
 }
 
+BOOLEAN
+BooterPatch(IN UINT8 *BooterData, IN INT64 BooterSize, LOADER_ENTRY *Entry)
+{
+  INTN Num, i = 0, y = 0;
+  for (; i < Entry->KernelAndKextPatches->NrBoots; ++i) {
+    DBG_RT(Entry, "Patch[%d]: %a\n", i, Entry->KernelAndKextPatches->BootPatches[i].Label);
+    if (!Entry->KernelAndKextPatches->BootPatches[i].MenuItem.BValue) {
+      DBG_RT(Entry, "==> disabled\n");
+      continue;
+    }
+    
+    Num = SearchAndReplace(
+                           BooterData,
+                           BooterSize,
+                           Entry->KernelAndKextPatches->BootPatches[i].Data,
+                           Entry->KernelAndKextPatches->BootPatches[i].DataLen,
+                           Entry->KernelAndKextPatches->BootPatches[i].Patch,
+                           Entry->KernelAndKextPatches->BootPatches[i].Count
+                           );
+    
+    if (Num) {
+      y++;
+    }
+    
+    DBG_RT(Entry, "==> %a : %d replaces done\n", Num ? "Success" : "Error", Num);
+  }
+  
+  return (y != 0);
+}
+
 VOID
 KernelAndKextPatcherInit(IN LOADER_ENTRY *Entry)
 {

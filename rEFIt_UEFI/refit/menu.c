@@ -4032,10 +4032,35 @@ REFIT_MENU_ENTRY  *SubMenuKernelPatches()
   return Entry;
 }
 
+REFIT_MENU_ENTRY  *SubMenuBootPatches()
+{
+  REFIT_MENU_ENTRY     *Entry;
+  REFIT_MENU_SCREEN    *SubScreen;
+  REFIT_INPUT_DIALOG   *InputBootArgs;
+  INTN                 NrBoots = gSettings.KernelAndKextPatches.NrBoots;
+  KERNEL_PATCH  *BootPatchesMenu = gSettings.KernelAndKextPatches.BootPatches; //zzzz
+  INTN                 Index;
+  
+  NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_BOOTER, "Custom booter patches->");
+  
+  for (Index = 0; Index < NrBoots; Index++) {
+    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+    InputBootArgs->Entry.Title = PoolPrint(L"%30a", BootPatchesMenu[Index].Label);
+    InputBootArgs->Entry.Tag = TAG_INPUT;
+    InputBootArgs->Entry.Row = 0xFFFF; //cursor
+    InputBootArgs->Item = &(BootPatchesMenu[Index].MenuItem);
+    InputBootArgs->Entry.AtClick = ActionEnter;
+    InputBootArgs->Entry.AtRightClick = ActionDetails;
+    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+  }
+  
+  AddMenuEntry(SubScreen, &MenuEntryReturn);
+  return Entry;
+}
 
 REFIT_MENU_ENTRY  *SubMenuBinaries()
 {
-  REFIT_MENU_ENTRY   *Entry; //, *SubEntry;
+  REFIT_MENU_ENTRY   *Entry; 
   REFIT_MENU_SCREEN  *SubScreen;
 
   NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_BINARIES, "Binaries patching->");
@@ -4056,6 +4081,8 @@ REFIT_MENU_ENTRY  *SubMenuBinaries()
   AddMenuItem(SubScreen, 61,  "Dell SMBIOS Patch", TAG_INPUT, FALSE);
 //  AddMenuItem(SubScreen, 44,  "Kext patching allowed", TAG_INPUT, FALSE);
   AddMenuEntry(SubScreen, SubMenuKextPatches());
+  AddMenuInfo(SubScreen, L"----------------------");
+  AddMenuEntry(SubScreen, SubMenuBootPatches());
   
 
   AddMenuEntry(SubScreen, &MenuEntryReturn);
