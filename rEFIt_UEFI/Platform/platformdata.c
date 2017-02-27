@@ -114,7 +114,7 @@ CHAR8   *AppleFirmwareVersion[] =
   "MP31.88Z.006C.B05.0802291410",   // MP31
   "MP41.88Z.0081.B07.0910130729",   // MP41
   "MP51.88Z.007F.B03.1010071432",   // MP51
-  "MP61.88Z.0116.B21.1610201524",   // MP61
+  "MP61.88Z.0116.B22.1612151901",   // MP61
 };
 
 CHAR8* AppleBoardID[] =    //Lion DR1 compatible
@@ -308,7 +308,7 @@ CHAR8* AppleReleaseDate[] =
   "02/29/08",    // MP31
   "10/13/09",    // MP41
   "10/07/10",    // MP51
-  "10/20/2016",  // MP61
+  "12/15/2016",  // MP61
 };
 
 CHAR8* AppleProductName[] =
