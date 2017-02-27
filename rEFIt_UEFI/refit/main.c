@@ -487,7 +487,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
   EFI_STATUS              Status;
   EFI_TEXT_STRING         ConOutOutputString = 0;
   EFI_HANDLE              ImageHandle = NULL;
-  EFI_LOADED_IMAGE        *LoadedImage;
+  EFI_LOADED_IMAGE        *LoadedImage = NULL;
   CHAR8                   *InstallerVersion;
   TagPtr                  dict = NULL;
 
@@ -596,7 +596,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     FilterKextPatches(Entry);
     FilterKernelPatches(Entry);
     FilterBootPatches(Entry);
-    if (!BooterPatch(LoadedImage->ImageBase, LoadedImage->ImageSize, Entry)) {
+    if (LoadedImage && !BooterPatch(LoadedImage->ImageBase, LoadedImage->ImageSize, Entry)) {
       DBG("Will not patch boot.efi\n");
     }
 
