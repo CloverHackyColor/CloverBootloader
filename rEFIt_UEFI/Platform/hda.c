@@ -53,6 +53,7 @@ static hda_controller_devices know_hda_controller[] = {
     { HDA_INTEL_HSW2,	"Haswell"		/*, 0, 0 */ },
     { HDA_INTEL_HSW3,	"Haswell"		/*, 0, 0 */ },
     { HDA_INTEL_BDW,	"Broadwell"		/*, 0, 0 */ },
+    { HDA_INTEL_BROXTON_T,	"Broxton-T"	/*, 0, 0 */ },
     { HDA_INTEL_CPT,	"Cougar Point"		/*, 0, 0 */ },
     { HDA_INTEL_PATSBURG,	"Patsburg"		/*, 0, 0 */ },
     { HDA_INTEL_PPT1,	"Panther Point"		/*, 0, 0 */ },
@@ -67,6 +68,7 @@ static hda_controller_devices know_hda_controller[] = {
     { HDA_INTEL_82801JD,	"82801JD"		/*, 0, 0 */ },
     { HDA_INTEL_PCH,	"5 Series/3400 Series"	/*, 0, 0 */ },
     { HDA_INTEL_PCH2,	"5 Series/3400 Series"	/*, 0, 0 */ },
+    { HDA_INTEL_BROXTON_P,	"Apollolake"	/*, 0, 0 */ }, // Broxton-P
     { HDA_INTEL_SCH,	"SCH"			/*, 0, 0 */ },
     { HDA_INTEL_LPT1,	"Lynx Point"		/*, 0, 0 */ },
     { HDA_INTEL_LPT2,	"Lynx Point"		/*, 0, 0 */ },
@@ -77,8 +79,12 @@ static hda_controller_devices know_hda_controller[] = {
     { HDA_INTEL_LPTLP1,	"Lynx Point-LP"		/*, 0, 0 */ },
     { HDA_INTEL_LPTLP2,	"Lynx Point-LP"		/*, 0, 0 */ },
     { HDA_INTEL_SRSPLP,	"Sunrise Point-LP"	/*, 0, 0 */ },
+    { HDA_INTEL_KABYLAKE_LP,	"Kabylake-LP"	/*, 0, 0 */ }, // Kabylake-LP
     { HDA_INTEL_SRSP,	"Sunrise Point"		/*, 0, 0 */ },
-    { HDA_INTEL_UNPT,	"Union Point"		/*, 0, 0 */ },
+    { HDA_INTEL_KABYLAKE,	"Kabylake"	/*, 0, 0 */ }, // Kabylake
+    { HDA_INTEL_LEWISBURG1,	"Lewisburg"	/*, 0, 0 */ }, // Lewisburg
+    { HDA_INTEL_LEWISBURG2,	"Lewisburg"	/*, 0, 0 */ }, // Lewisburg
+    { HDA_INTEL_UNPT,	"Union Point"		/*, 0, 0 */ }, // Kabylake-H
     
     //10de  NVIDIA Corporation
     { HDA_NVIDIA_MCP51,	"MCP51" /*, 0, HDAC_QUIRK_MSI */ },
@@ -269,6 +275,8 @@ static hdacc_codecs know_codecs[] = {
     { HDA_CODEC_ALC898, 0,          "ALC898" },
     //	{ HDA_CODEC_ALC899, 0,		"ALC899" },
     { HDA_CODEC_ALC900, 0,          "ALC1150" },
+    { HDA_CODEC_ALCS1220A, 0,		"ALCS1220A" },
+    { HDA_CODEC_ALC1220, 0,		"ALC1220" },
     
     { HDA_CODEC_AD1882, 0,          "AD1882" },
     { HDA_CODEC_AD1882A, 0,         "AD1882A" },
@@ -521,26 +529,26 @@ static hdacc_codecs know_codecs[] = {
     { HDA_CODEC_SII1392, 0,         "SiI1392 HDMi" },
     
     // Unknown CODECs
-    { HDA_CODEC_ATIXXXX, 0,         "ATI" },
-    { HDA_CODEC_CSXXXX, 0,          "Cirrus Logic" },
-    { HDA_CODEC_MOTOXXXX, 0,        "Motorola" },
-    { HDA_CODEC_SIIXXXX, 0,         "Silicon Image" },
-    { HDA_CODEC_NVIDIAXXXX, 0,      "NVIDIA" },
-    { HDA_CODEC_ALCXXXX, 0,         "Realtek" },
-    { HDA_CODEC_CAXXXX, 0,          "Creative" },
-    { HDA_CODEC_VTXXXX, 0,          "VIA" },
-    { HDA_CODEC_IDTXXXX, 0,         "IDT" },
-    { HDA_CODEC_AGEREXXXX, 0,       "LSI" },
     { HDA_CODEC_ADXXXX, 0,          "Analog Devices" },
+    { HDA_CODEC_AGEREXXXX, 0,       "LSI" },
+    { HDA_CODEC_ALCXXXX, 0,         "Realtek" },
+    { HDA_CODEC_ATIXXXX, 0,         "ATI" },
+    { HDA_CODEC_CAXXXX, 0,          "Creative" },
     { HDA_CODEC_CMIXXXX, 0,         "CMedia" },
+    { HDA_CODEC_CMIXXXX2, 0,        "CMedia" },
+    { HDA_CODEC_CSXXXX, 0,          "Cirrus Logic" },
     { HDA_CODEC_CXXXXX, 0,          "Conexant" },
     { HDA_CODEC_CHXXXX, 0,          "Chrontel" },
     { HDA_CODEC_LGXXXX, 0,          "LG" },
     { HDA_CODEC_WMXXXX, 0,          "Wolfson Microelectronics" },
     { HDA_CODEC_QEMUXXXX, 0,        "QEMU" },
-    { HDA_CODEC_CMIXXXX2, 0,        "CMedia" },
+    { HDA_CODEC_IDTXXXX, 0,         "IDT" },
     { HDA_CODEC_INTELXXXX, 0,       "Intel" },
+    { HDA_CODEC_MOTOXXXX, 0,        "Motorola" },
+    { HDA_CODEC_NVIDIAXXXX, 0,      "NVIDIA" },
+    { HDA_CODEC_SIIXXXX, 0,         "Silicon Image" },
     { HDA_CODEC_STACXXXX, 0,        "Sigmatel" },
+    { HDA_CODEC_VTXXXX, 0,          "VIA" },
 };
 #define HDACC_CODECS_LEN (sizeof(know_codecs) / sizeof(know_codecs[0]))
 
