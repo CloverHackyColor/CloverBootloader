@@ -1,7 +1,16 @@
 #ifndef SHA1_H
 #define SHA1_H
 
-#include <stdint.h>
+//#include <stdint.h>
+#include <Library/UefiLib.h>
+#include <Library/BaseMemoryLib.h>
+#include <Library/UefiBootServicesTableLib.h>
+#include <Library/MemoryAllocationLib.h>
+
+
+#define uint32_t UINT32
+#define memcpy CopyMem
+#define memset(s,c,n) SetMem(s,n,c)
 
 /* ================ sha1.h ================ */
 /*

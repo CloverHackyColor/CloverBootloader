@@ -10,10 +10,6 @@
 
 #include <Protocol/ServiceBinding.h>
 #include <Protocol/Hash.h>
-#include <Library/UefiLib.h>
-#include <Library/BaseMemoryLib.h>
-#include <Library/UefiBootServicesTableLib.h>
-#include <Library/MemoryAllocationLib.h>
 
 #include "sha1.h"
 
