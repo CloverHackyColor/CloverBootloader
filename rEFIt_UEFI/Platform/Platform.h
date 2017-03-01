@@ -1744,10 +1744,12 @@ IsValidGuidAsciiString (
   IN CHAR8 *Str
   );
 
+#if 0
 EFI_STATUS
-StrToGuid (
+StrToGuid2 (
   IN      CHAR16   *Str,
      OUT  EFI_GUID *Guid);
+#endif
 
 EFI_STATUS
 StrToGuidLE (

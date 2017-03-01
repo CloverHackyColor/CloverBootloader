@@ -329,7 +329,7 @@ CHAR16 * GuidLEToStr(EFI_GUID *Guid)
 
 #if 0
 EFI_STATUS
-StrToGuid (
+StrToGuid2 (
 		   IN  CHAR16   *Str,
 		   OUT EFI_GUID *Guid
 		   )
