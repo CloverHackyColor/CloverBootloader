@@ -27,12 +27,12 @@ set -u # exit with error if unbound variables
 # GCC toolchain source version
 # here we can change source versions of tools
 #
-export BINUTILS_VERSION=${BINUTILS_VERSION:-binutils-2.26}
-export GCC_VERSION=${GCC_VERSION:-5.3.0}
+export BINUTILS_VERSION=${BINUTILS_VERSION:-binutils-2.27}
+export GCC_VERSION=${GCC_VERSION:-6.3.0}
 
 # Version of libraries are from ./contrib/download_prerequisites in gcc source directory
-export GMP_VERSION=${GMP_VERSION:-gmp-6.1.0}
-export MPFR_VERSION=${MPFR_VERSION:-mpfr-3.1.4}
+export GMP_VERSION=${GMP_VERSION:-gmp-6.1.2}
+export MPFR_VERSION=${MPFR_VERSION:-mpfr-3.1.5}
 export MPC_VERSION=${MPC_VERSION:-mpc-1.0.3}
 export ISL_VERSION=${ISL_VERSION:-isl-0.16.1}
 
@@ -385,7 +385,7 @@ GCC_native () {
         export LDFLAGS="-L$PREFIX/lib -L$PREFIX/sdk/lib"
 
 
-        local cmd="${GCC_DIR}/configure --prefix='$PREFIX' --with-sysroot='$TOOLCHAIN_SDK_DIR' --enable-languages=c,c++ --libdir='$PREFIX/lib/gcc$GCC_MAJOR_VERSION' --includedir='$PREFIX/include/gcc$GCC_MAJOR_VERSION' --datarootdir='$PREFIX/share/gcc$GCC_MAJOR_VERSION' --with-gettext=$PREFIX --with-system-zlib --disable-nls --enable-plugin --with-gxx-include-dir='$PREFIX/include/gcc$GCC_MAJOR_VERSION/c++/' --with-gmp='$PREFIX' --with-mpfr='$PREFIX' --with-mpc='$PREFIX' --with-isl='$PREFIX' --enable-cloog-backend=isl --disable-bootstrap  --disable-isl-version-check"
+        local cmd="${GCC_DIR}/configure --prefix='$PREFIX' --with-sysroot='$TOOLCHAIN_SDK_DIR' --enable-languages=c,c++ --libdir='$PREFIX/lib/gcc$GCC_MAJOR_VERSION' --includedir='$PREFIX/include/gcc$GCC_MAJOR_VERSION' --datarootdir='$PREFIX/share/gcc$GCC_MAJOR_VERSION' --with-gettext=$PREFIX --with-system-zlib --disable-nls --enable-plugin --with-gxx-include-dir='$PREFIX/include/gcc$GCC_MAJOR_VERSION/c++/' --with-gmp='$PREFIX' --with-mpfr='$PREFIX' --with-mpc='$PREFIX' --with-isl='$PREFIX' --enable-cloog-backend=isl --disable-bootstrap  --disable-isl-version-check --enable-lto"
         local logfile="$DIR_LOGS/gcc-native.$ARCH.configure.log.txt"
         echo "$cmd" > "$logfile"
         echo "- gcc-${GCC_VERSION} (native) configure..."
@@ -464,7 +464,7 @@ CompileCrossGCC () {
     export BOOT_CPPFLAGS="-Os -I$PREFIX/include -I$PREFIX/sdk/include"
 
     echo "- gcc-${GCC_VERSION} configure..."
-    "${GCC_DIR}"/configure --host=${BUILDARCH}-apple-darwin${BUILDREV} --build=${BUILDARCH}-apple-darwin${BUILDREV} --target=$TARGET --prefix="$PREFIX/cross" --with-sysroot="$PREFIX" --with-gmp="$PREFIX" --with-mpfr="$PREFIX" --with-mpc="$PREFIX" --with-isl="$PREFIX" --with-system-zlib --with-gnu-as --with-gnu-ld --with-newlib --disable-libssp --disable-nls --disable-werror --enable-languages=c,c++ --enable-cloog-backend=isl --enable-plugin --disable-isl-version-check  > "$DIR_LOGS"/gcc.$ARCH.configure.log.txt 2> /dev/null
+    "${GCC_DIR}"/configure --host=${BUILDARCH}-apple-darwin${BUILDREV} --build=${BUILDARCH}-apple-darwin${BUILDREV} --target=$TARGET --prefix="$PREFIX/cross" --with-sysroot="$PREFIX" --with-gmp="$PREFIX" --with-mpfr="$PREFIX" --with-mpc="$PREFIX" --with-isl="$PREFIX" --with-system-zlib --with-gnu-as --with-gnu-ld --with-newlib --disable-libssp --disable-nls --disable-werror --enable-languages=c,c++ --enable-cloog-backend=isl --enable-plugin --disable-isl-version-check --enable-lto  > "$DIR_LOGS"/gcc.$ARCH.configure.log.txt 2> /dev/null
 
     echo "- gcc-${GCC_VERSION} make..."
     make all-gcc 1> /dev/null 2> $DIR_LOGS/gcc.$ARCH.make.log.txt
