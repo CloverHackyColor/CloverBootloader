@@ -191,7 +191,7 @@ IsaDeviceLookup (
   @param This            Point to instance of EFI_ISA_ACPI_PROTOCOL
   @param Device          Point to device ID instance 
 
-  @retval EFI_NOT_FOUND Can not found the next Isa device.
+  @retval EFI_NOT_FOUND  Can not found the next Isa device.
   @retval EFI_SUCCESS    Success retrieve the next Isa device for enumration.
 
 **/

@@ -600,12 +600,13 @@ struct _LIST_ENTRY {
   @return The aligned size.
 **/
 #define _INT_SIZE_OF(n) ((sizeof (n) + sizeof (UINTN) - 1) &~(sizeof (UINTN) - 1))
+
 #define GCC_VERSION (__GNUC__ * 10 + __GNUC_MINOR__)
-#ifdef __clang__
+
 /*
  * clang defines __MACH__ if the target is OS X, but not if the target is Windows
  */
-#if !defined(__MACH__) && defined(__x86_64__)
+#if defined(__clang__) && !defined(__MACH__) && defined(__x86_64__)
 #ifdef __apple_build_version__      // Apple clang
 #if (__clang_major__ * 0x100 + __clang_minor__) >= 0x703
 // Use __builtin_ms_va_list if Apple clang ver >= 7.3.0
@@ -617,12 +618,8 @@ struct _LIST_ENTRY {
 #define USE_CLANG_BUILTIN_MS_VA_LIST
 #endif
 #endif  // end Apple/Generic clang
-#endif  // end !__MACH__ && __x86_64__
-// Use __builtin_va_list in rest of clang cases
-#ifndef USE_CLANG_BUILTIN_MS_VA_LIST
-#define USE_CLANG_BUILTIN_VA_LIST
-#endif
-#endif  // end __clang__
+#endif  // end __clang__ && !__MACH__ && __x86_64__
+
 #if defined(__CC_ARM)
 //
 // RVCT ARM variable argument list support.
@@ -653,14 +650,35 @@ struct _LIST_ENTRY {
 
 #define VA_COPY(Dest, Start)          __va_copy (Dest, Start)
 
-//#elif defined(__GNUC__) && !defined(NO_BUILTIN_VA_FUNCS)
-#elif defined(USE_CLANG_BUILTIN_VA_LIST) || (defined(__GNUC__) && !defined(__x86_64__))
+#elif defined(__GNUC__)
+
+//#if defined(MDE_CPU_X64) && !defined(NO_MSABI_VA_FUNCS)
+#if defined(USE_CLANG_BUILTIN_MS_VA_LIST) || (defined(__x86_64__) && !defined(NO_MSABI_VA_FUNCS) && (GCC_VERSION >= 48))
 //
 // X64 only. Use MS ABI version of GCC built-in macros for variable argument lists.
 //
 ///
 /// Both GCC and LLVM 3.8 for X64 support new variable argument intrinsics for Microsoft ABI
 ///
+
+///
+/// Variable used to traverse the list of arguments. This type can vary by
+/// implementation and could be an array or structure.
+///
+typedef __builtin_ms_va_list VA_LIST;
+
+#define VA_START(Marker, Parameter)  __builtin_ms_va_start (Marker, Parameter)
+
+#define VA_ARG(Marker, TYPE)         ((sizeof (TYPE) < sizeof (UINTN)) ? (TYPE)(__builtin_va_arg (Marker, UINTN)) : (TYPE)(__builtin_va_arg (Marker, TYPE)))
+
+#define VA_END(Marker)               __builtin_ms_va_end (Marker)
+
+#define VA_COPY(Dest, Start)         __builtin_ms_va_copy (Dest, Start)
+
+#else
+//
+// Use GCC built-in macros for variable argument lists.
+//
 
 ///
 /// Variable used to traverse the list of arguments. This type can vary by
@@ -676,18 +694,7 @@ typedef __builtin_va_list VA_LIST;
 
 #define VA_COPY(Dest, Start)         __builtin_va_copy (Dest, Start)
 
-#elif defined(USE_CLANG_BUILTIN_MS_VA_LIST) || (defined(__GNUC__) && defined(__x86_64__) && (GCC_VERSION >= 48))
-
-  typedef __builtin_ms_va_list VA_LIST;
-
-  #define VA_START(Marker, Parameter)  __builtin_ms_va_start (Marker, Parameter)
-
-  #define VA_ARG(Marker, TYPE)         ((sizeof (TYPE) < sizeof (UINTN)) ? (TYPE)(__builtin_va_arg (Marker, UINTN)) : (TYPE)(__builtin_va_arg (Marker, TYPE)))
-
-  #define VA_END(Marker)               __builtin_ms_va_end (Marker)
-
-  #define VA_COPY(Dest, Start)         __builtin_ms_va_copy (Dest, Start)
-
+#endif
 
 #else
 ///
