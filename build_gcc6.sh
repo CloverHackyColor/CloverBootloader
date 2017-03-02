@@ -239,7 +239,7 @@ CompileLibs () {
         rm -rf "${DIR_BUILD}/$ARCH-gmp"
         mkdir -p "${DIR_BUILD}/$ARCH-gmp" && cd "${DIR_BUILD}/$ARCH-gmp"
         echo "- ${GMP_VERSION} configure..."
-        "${GMP_DIR}"/configure --prefix=$PREFIX --with-gettext=$PREFIX > $DIR_LOGS/gmp.$ARCH.configure.log.txt 2> /dev/null
+        "${GMP_DIR}"/configure --prefix=$PREFIX > $DIR_LOGS/gmp.$ARCH.configure.log.txt 2>&1
         echo "- ${GMP_VERSION} make..."
         make 1> /dev/null 2> $DIR_LOGS/gmp.$ARCH.make.log.txt
         make install 1> $DIR_LOGS/gmp.$ARCH.install.log.txt 2> /dev/null
@@ -259,7 +259,7 @@ CompileLibs () {
         mkdir -p "${DIR_BUILD}/$ARCH-mpfr" && cd "${DIR_BUILD}/$ARCH-mpfr"
         curl -L http://www.mpfr.org/mpfr-current/allpatches | patch -N -Z -p1 --directory="${MPFR_DIR}"
         echo "- ${MPFR_VERSION} configure..."
-        "${MPFR_DIR}"/configure --prefix=$PREFIX --with-gettext=$PREFIX --with-gmp=$PREFIX > $DIR_LOGS/mpfr.$ARCH.configure.log.txt 2> /dev/null
+        "${MPFR_DIR}"/configure --prefix=$PREFIX --with-gmp=$PREFIX > $DIR_LOGS/mpfr.$ARCH.configure.log.txt 2>&1
         echo "- ${MPFR_VERSION} make..."
         make 1> /dev/null 2> $DIR_LOGS/mpfr.$ARCH.make.log.txt
         make install 1> $DIR_LOGS/mpfr.$ARCH.install.log.txt 2> /dev/null
@@ -277,7 +277,7 @@ CompileLibs () {
         rm -rf "${DIR_BUILD}/$ARCH-mpc"
         mkdir -p "${DIR_BUILD}/$ARCH-mpc" && cd "${DIR_BUILD}/$ARCH-mpc"
         echo "- ${MPC_VERSION} configure..."
-        "${MPC_DIR}"/configure --prefix=$PREFIX --with-gettext=$PREFIX --with-gmp=$PREFIX --with-mpfr=$PREFIX --disable-debug  > $DIR_LOGS/mpc.$ARCH.configure.log.txt 2> /dev/null
+        "${MPC_DIR}"/configure --prefix=$PREFIX --with-gmp=$PREFIX --with-mpfr=$PREFIX > $DIR_LOGS/mpc.$ARCH.configure.log.txt 2>&1
         echo "- ${MPC_VERSION} make..."
         make 1> /dev/null 2> $DIR_LOGS/mpc.$ARCH.make.log.txt
         make install 1> $DIR_LOGS/mpc.$ARCH.install.log.txt 2> /dev/null
@@ -295,7 +295,7 @@ CompileLibs () {
         rm -rf "${DIR_BUILD}/$ARCH-isl"
         mkdir -p "${DIR_BUILD}/$ARCH-isl" && cd "${DIR_BUILD}/$ARCH-isl"
         echo "- ${ISL_VERSION} configure..."
-        "${ISL_DIR}"/configure --prefix=$PREFIX --with-gettext=$PREFIX --with-gmp-prefix=$PREFIX --with-mpfr=$PREFIX --with-mpc=$PREFIX --with-gcc-arch=$ARCH > $DIR_LOGS/isl.$ARCH.configure.log.txt 2> /dev/null
+        "${ISL_DIR}"/configure --prefix=$PREFIX --with-gmp-prefix=$PREFIX --with-gcc-arch=$ARCH > $DIR_LOGS/isl.$ARCH.configure.log.txt 2>&1
         echo "- ${ISL_VERSION} make..."
         make 1> /dev/null 2> $DIR_LOGS/isl.$ARCH.make.log.txt
         make install 1> $DIR_LOGS/isl.$ARCH.install.log.txt 2> /dev/null
@@ -333,7 +333,7 @@ CompileBinutils () {
     rm -rf "$BUILD_BINUTILS_DIR"
     mkdir -p "$BUILD_BINUTILS_DIR" && cd "$BUILD_BINUTILS_DIR"
     echo "- ${BINUTILS_VERSION} configure..."
-    local cmd="${BINUTILS_DIR}/configure --host=${BUILDARCH}-apple-darwin${BUILDREV} --enable-plugins --build=${BUILDARCH}-apple-darwin${BUILDREV} --target=$TARGET --prefix=$PREFIX/cross --with-gettext=$PREFIX --with-sysroot=$PREFIX --disable-werror --with-gmp=$PREFIX --with-mpfr=$PREFIX --with-mpc=$PREFIX --with-isl=$PREFIX --disable-isl-version-check"
+    local cmd="${BINUTILS_DIR}/configure --host=${BUILDARCH}-apple-darwin${BUILDREV} --enable-plugins --build=${BUILDARCH}-apple-darwin${BUILDREV} --target=$TARGET --prefix=$PREFIX/cross --with-included-gettext --with-sysroot=$PREFIX --disable-werror --with-gmp=$PREFIX --with-mpfr=$PREFIX --with-mpc=$PREFIX --with-isl=$PREFIX --disable-isl-version-check"
     local logfile="$DIR_LOGS/binutils.$ARCH.configure.log.txt"
     echo "$cmd" > "$logfile"
     eval "$cmd" >> "$logfile" 2>&1
@@ -385,7 +385,7 @@ GCC_native () {
         export LDFLAGS="-L$PREFIX/lib -L$PREFIX/sdk/lib"
 
 
-        local cmd="${GCC_DIR}/configure --prefix='$PREFIX' --with-sysroot='$TOOLCHAIN_SDK_DIR' --enable-languages=c,c++ --libdir='$PREFIX/lib/gcc$GCC_MAJOR_VERSION' --includedir='$PREFIX/include/gcc$GCC_MAJOR_VERSION' --datarootdir='$PREFIX/share/gcc$GCC_MAJOR_VERSION' --with-gettext=$PREFIX --with-system-zlib --disable-nls --enable-plugin --with-gxx-include-dir='$PREFIX/include/gcc$GCC_MAJOR_VERSION/c++/' --with-gmp='$PREFIX' --with-mpfr='$PREFIX' --with-mpc='$PREFIX' --with-isl='$PREFIX' --enable-cloog-backend=isl --disable-bootstrap  --disable-isl-version-check --enable-lto"
+        local cmd="${GCC_DIR}/configure --prefix='$PREFIX' --with-sysroot='$TOOLCHAIN_SDK_DIR' --enable-languages=c,c++ --libdir='$PREFIX/lib/gcc$GCC_MAJOR_VERSION' --includedir='$PREFIX/include/gcc$GCC_MAJOR_VERSION' --datarootdir='$PREFIX/share/gcc$GCC_MAJOR_VERSION' --with-included-gettext --with-system-zlib --disable-nls --enable-plugin --with-gxx-include-dir='$PREFIX/include/gcc$GCC_MAJOR_VERSION/c++/' --with-gmp='$PREFIX' --with-mpfr='$PREFIX' --with-mpc='$PREFIX' --with-isl='$PREFIX' --disable-bootstrap  --disable-isl-version-check --enable-lto"
         local logfile="$DIR_LOGS/gcc-native.$ARCH.configure.log.txt"
         echo "$cmd" > "$logfile"
         echo "- gcc-${GCC_VERSION} (native) configure..."
@@ -464,7 +464,7 @@ CompileCrossGCC () {
     export BOOT_CPPFLAGS="-Os -I$PREFIX/include -I$PREFIX/sdk/include"
 
     echo "- gcc-${GCC_VERSION} configure..."
-    "${GCC_DIR}"/configure --host=${BUILDARCH}-apple-darwin${BUILDREV} --build=${BUILDARCH}-apple-darwin${BUILDREV} --target=$TARGET --prefix="$PREFIX/cross" --with-sysroot="$PREFIX" --with-gmp="$PREFIX" --with-mpfr="$PREFIX" --with-mpc="$PREFIX" --with-isl="$PREFIX" --with-system-zlib --with-gnu-as --with-gnu-ld --with-newlib --disable-libssp --disable-nls --disable-werror --enable-languages=c,c++ --enable-cloog-backend=isl --enable-plugin --disable-isl-version-check --enable-lto  > "$DIR_LOGS"/gcc.$ARCH.configure.log.txt 2> /dev/null
+    "${GCC_DIR}"/configure --host=${BUILDARCH}-apple-darwin${BUILDREV} --build=${BUILDARCH}-apple-darwin${BUILDREV} --target=$TARGET --prefix="$PREFIX/cross" --with-sysroot="$PREFIX" --with-gmp="$PREFIX" --with-mpfr="$PREFIX" --with-mpc="$PREFIX" --with-isl="$PREFIX" --with-system-zlib --with-gnu-as --with-gnu-ld --with-newlib --disable-libssp --disable-nls --disable-werror --enable-languages=c,c++ --enable-plugin --disable-isl-version-check --enable-lto > "$DIR_LOGS"/gcc.$ARCH.configure.log.txt 2>&1
 
     echo "- gcc-${GCC_VERSION} make..."
     make all-gcc 1> /dev/null 2> $DIR_LOGS/gcc.$ARCH.make.log.txt
