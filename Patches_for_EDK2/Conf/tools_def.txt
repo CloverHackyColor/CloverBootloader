@@ -190,8 +190,8 @@ DEFINE GCC48_X64_PREFIX        = ENV(TOOLCHAIN_DIR)/cross/bin/x86_64-clover-linu
 DEFINE GCC49_IA32_PREFIX       =  ENV(TOOLCHAIN_DIR)/cross/bin/x86_64-clover-linux-gnu-
 DEFINE GCC49_X64_PREFIX        =  ENV(TOOLCHAIN_DIR)/cross/bin/x86_64-clover-linux-gnu-
 
-DEFINE GCC53_IA32_PREFIX       = ENV(TOOLCHAIN_DIR)/cross/bin/x86_64-clover-linux-gnu-
-DEFINE GCC53_X64_PREFIX        = ENV(TOOLCHAIN_DIR)/cross/bin/x86_64-clover-linux-gnu-
+DEFINE GCC53_IA32_PREFIX       = ENV(GCC53_BIN)
+DEFINE GCC53_X64_PREFIX        = ENV(GCC53_BIN)
 
 DEFINE UNIX_IASL_BIN           = /usr/local/bin/iasl
 #DEFINE UNIX_IASL_BIN           = $(HOME)/programs/iasl

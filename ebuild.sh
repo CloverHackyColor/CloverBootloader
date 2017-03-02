@@ -114,6 +114,7 @@ checkPatch() {
         echo "Install on your system or define the TOOLCHAIN_DIR variable." >&2
         exit 1
     fi
+    export GCC53_BIN="$TOOLCHAIN_DIR/bin/"
   else
     if [[ -n "${XCODE_BUILD:-}" ]]; then
       #declare -r XCODE_MAJOR_VERSION="$(xcodebuild -version | sed -nE 's/^Xcode ([0-9]).*/\1/p')"
@@ -135,6 +136,7 @@ checkPatch() {
 #    echo "Build it with the buidgcc.sh script or defined the TOOLCHAIN_DIR variable." >&2
 #    exit 1
 #  fi
+    export GCC53_BIN="$TOOLCHAIN_DIR/cross/bin/x86_64-clover-linux-gnu-"
   fi
 
 # Linux does not come with nasm installed!
