@@ -455,7 +455,12 @@ GetSleepImagePosition (IN REFIT_VOLUME *Volume, REFIT_VOLUME **SleepImageVolume)
 //  DBG("    Reading first %d bytes of sleepimage ...\n", BufferSize);
 
   if (!ImageVolume->WholeDiskBlockIO) {
+#if 0
+    // Status is either undefined or EFI_SUCCESS if get here
     DBG("     can not get whole disk -> %r\n", Status);
+#else
+    DBG("     can not get whole disk\n");
+#endif
     return 0;
   }
 

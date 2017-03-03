@@ -705,6 +705,7 @@ VOID DumpChildSsdt(EFI_ACPI_DESCRIPTION_HEADER *TableEntry, CHAR16 *DirName, CHA
           pacBody += 1 + 8 + 1 + 1;
 
           adr = ReadUnaligned32((UINT32*)(pacBody));
+          len = 0;
           pacBody += 4;
 
           if (*pacBody == AML_CHUNK_DWORD) {

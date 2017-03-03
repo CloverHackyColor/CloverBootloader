@@ -2974,7 +2974,7 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
   INTN VisibleHeight = 0; //assume vertical layout
   CHAR16 ResultString[TITLE_MAX_LEN]; // assume a title max length of around 128
   INTN PlaceCentre = (TextHeight / 2) - 7;
-  INTN OldChosenItem;
+  INTN OldChosenItem = -1;
   
   HidePointer();
 
