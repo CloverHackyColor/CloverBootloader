@@ -9,11 +9,10 @@
 
 # Change PREFIX if you want nasm installed on different place
 #
-[ -z $TOOLCHAIN ] && export TOOLCHAIN=GCC53
 TOOLCHAIN_DIR=${TOOLCHAIN_DIR:-~/src/opt/local}
 export PREFIX=${PREFIX:-$TOOLCHAIN_DIR}
 
-if [[ ! -x "$TOOLCHAIN_DIR"/bin/gcc || ! -x "$TOOLCHAIN_DIR"/bin/g++ ]]; then
+if [[ "$(uname)" == Darwin ]] && [[ ! -x "$TOOLCHAIN_DIR"/cross/bin/x86_64-clover-linux-gnu-gcc ]]; then
     echo "No clover toolchain found !" >&2
     if [ -z $CLEAN_BUILD ]; then
    	  echo "Press b to BUILD it OR else define the TOOLCHAIN_DIR variable." >&2
@@ -23,7 +22,7 @@ if [[ ! -x "$TOOLCHAIN_DIR"/bin/gcc || ! -x "$TOOLCHAIN_DIR"/bin/g++ ]]; then
       echo -n b
   	fi
    	echo "uilding it"
- 	./build_gcc5.sh
+ 	./build_gcc6.sh
    	echo "Continuing..."
 fi
 
@@ -120,7 +119,7 @@ function echoc(){
 [ ! -d ${DIR_TOOLS} ]      && mkdir ${DIR_TOOLS}
 [ ! -d ${DIR_DOWNLOADS} ]  && mkdir ${DIR_DOWNLOADS}
 [ ! -d ${DIR_LOGS} ]       && mkdir ${DIR_LOGS}
-[ ! -d ${PREFIX}/include ] && mkdir -p ${PREFIX}/include
+[ ! -d ${PREFIX}/bin ]     && mkdir -p ${PREFIX}/bin
 echo
 
 # Function: to manage PATH
@@ -138,9 +137,6 @@ pathmunge () {
 
 # Add XCode bin directory for the command line tools to the PATH
 pathmunge "$(xcode-select --print-path)"/usr/bin
-
-# Add toolchain bin directory to the PATH
-pathmunge "$TOOLCHAIN_DIR"/bin
 
 cd ${DIR_DOWNLOADS}
 iaslLocalVers=
@@ -210,4 +206,3 @@ if [[ "$nasmUpdate" == "Yes" ]]; then
   rm -Rf ${DIR_DOWNLOADS}/nasm-${NASM_VERSION}
   echo
 fi
-

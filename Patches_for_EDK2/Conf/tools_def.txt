@@ -176,8 +176,8 @@ DEFINE GCC45_X64_PREFIX        = /usr/bin/
 
 #DEFINE GCC46_IA32_PREFIX       = /opt/local/ia32/
 #DEFINE GCC46_X64_PREFIX        = /opt/local/x64/
-DEFINE GCC46_IA32_PREFIX       = ENV(TOOLCHAIN_DIR)/ia32/
-DEFINE GCC46_X64_PREFIX        = ENV(TOOLCHAIN_DIR)/x64/
+DEFINE GCC46_IA32_PREFIX       = ENV(TOOLCHAIN_DIR)/cross/bin/x86_64-clover-linux-gnu-
+DEFINE GCC46_X64_PREFIX        = ENV(TOOLCHAIN_DIR)/cross/bin/x86_64-clover-linux-gnu-
 #DEFINE GCC46_IA32_PREFIX = ENV(WORKSPACE)/BaseTools/gcc/symlinks/Ia32/
 #DEFINE GCC46_X64_PREFIX  = ENV(WORKSPACE)/BaseTools/gcc/symlinks/X64/
 

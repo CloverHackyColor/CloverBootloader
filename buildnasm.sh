@@ -15,13 +15,6 @@ export NASM_VERSION=${NASM_VERSION:-2.12.02}
 TOOLCHAIN_DIR=${TOOLCHAIN_DIR:-~/src/opt/local}
 export PREFIX=${PREFIX:-$TOOLCHAIN_DIR}
 
-if [[ ! -x "$TOOLCHAIN_DIR"/bin/gcc || \
-      ! -x "$TOOLCHAIN_DIR"/bin/g++ ]]; then
-    echo "No clover toolchain found !" >&2
-    echo "Build it with the buidgcc.sh script or defined the TOOLCHAIN_DIR variable." >&2
-#    exit 1
-fi
-
 # ./configure arguments for Nasm
 #
 export NASM_CONFIG="--prefix=$PREFIX"
@@ -61,7 +54,7 @@ fnCheckXcode () {
 [ ! -d ${DIR_TOOLS} ]      && mkdir ${DIR_TOOLS}
 [ ! -d ${DIR_DOWNLOADS} ]  && mkdir ${DIR_DOWNLOADS}
 [ ! -d ${DIR_LOGS} ]       && mkdir ${DIR_LOGS}
-[ ! -d ${PREFIX}/include ] && mkdir -p ${PREFIX}/include
+[ ! -d ${PREFIX}/bin ]     && mkdir -p ${PREFIX}/bin
 echo
 
 # Function: to manage PATH
@@ -215,8 +208,5 @@ fnNasm ()
 
 # Add XCode bin directory for the command line tools to the PATH
 pathmunge "$(xcode-select --print-path)"/usr/bin
-
-# Add toolchain bin directory to the PATH
-pathmunge "$TOOLCHAIN_DIR"/bin
 
 fnNasm

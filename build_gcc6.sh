@@ -79,11 +79,11 @@ CheckXCode () {
     export BUILDARCH="$OSXARCH"
     export BUILDREV="$OSXREV"
     echo "  Running on Mac OS X ${OSXVER}, with ${OSXARCH} architecture."
-    if [[ ! -x /usr/bin/xcodebuild ]]; then
+    if [[ ! -x /usr/bin/xcrun ]]; then
         echo "ERROR: Install Xcode Tools from Apple before using this script." >&2
         exit 1
     else
-        export SDK="`/usr/bin/xcodebuild -version -sdk macosx${OSXVER} Path 2>/dev/null`"
+        export SDK="`/usr/bin/xcrun --show-sdk-path 2>/dev/null`"
         [ -z "${SDK}" ] && export SDK="/"
         if [ ! -d "${SDK}/usr/include" ]; then
             echo "ERROR: Cannot find Xcode SDK." >&2
@@ -316,7 +316,7 @@ CompileBinutils () {
     [[ ! -f $PREFIX/include/mpfr.h ]] && echo "Error: ${MPFR_VERSION} not installed, check logs" && exit
     [[ ! -f $PREFIX/include/mpc.h ]]  && echo "Error: ${MPC_VERSION} not installed, check logs"  && exit
 
-    [[ ! -x $PREFIX/bin/gcc ]] && echo "Error native ${GCC_VERSION} not installed !" && exit
+#   [[ ! -x $PREFIX/bin/gcc ]] && echo "Error native ${GCC_VERSION} not installed !" && exit
 
     # Mount RamDisk
     mountRamDisk
@@ -333,7 +333,7 @@ CompileBinutils () {
     rm -rf "$BUILD_BINUTILS_DIR"
     mkdir -p "$BUILD_BINUTILS_DIR" && cd "$BUILD_BINUTILS_DIR"
     echo "- ${BINUTILS_VERSION} configure..."
-    local cmd="${BINUTILS_DIR}/configure --host=${BUILDARCH}-apple-darwin${BUILDREV} --enable-plugins --build=${BUILDARCH}-apple-darwin${BUILDREV} --target=$TARGET --prefix=$PREFIX/cross --with-included-gettext --with-sysroot=$PREFIX --disable-werror --with-gmp=$PREFIX --with-mpfr=$PREFIX --with-mpc=$PREFIX --with-isl=$PREFIX --disable-isl-version-check"
+    local cmd="${BINUTILS_DIR}/configure --host=${BUILDARCH}-apple-darwin${BUILDREV} --enable-plugins --build=${BUILDARCH}-apple-darwin${BUILDREV} --target=$TARGET --prefix=$PREFIX/cross --with-included-gettext --with-sysroot=${SDK} --disable-werror --with-gmp=$PREFIX --with-mpfr=$PREFIX --with-mpc=$PREFIX --with-isl=$PREFIX --disable-isl-version-check"
     local logfile="$DIR_LOGS/binutils.$ARCH.configure.log.txt"
     echo "$cmd" > "$logfile"
     eval "$cmd" >> "$logfile" 2>&1
@@ -385,7 +385,7 @@ GCC_native () {
         export LDFLAGS="-L$PREFIX/lib -L$PREFIX/sdk/lib"
 
 
-        local cmd="${GCC_DIR}/configure --prefix='$PREFIX' --with-sysroot='$TOOLCHAIN_SDK_DIR' --enable-languages=c,c++ --libdir='$PREFIX/lib/gcc$GCC_MAJOR_VERSION' --includedir='$PREFIX/include/gcc$GCC_MAJOR_VERSION' --datarootdir='$PREFIX/share/gcc$GCC_MAJOR_VERSION' --with-included-gettext --with-system-zlib --disable-nls --enable-plugin --with-gxx-include-dir='$PREFIX/include/gcc$GCC_MAJOR_VERSION/c++/' --with-gmp='$PREFIX' --with-mpfr='$PREFIX' --with-mpc='$PREFIX' --with-isl='$PREFIX' --disable-bootstrap  --disable-isl-version-check --enable-lto"
+        local cmd="${GCC_DIR}/configure --prefix='$PREFIX' --with-sysroot='$TOOLCHAIN_SDK_DIR' --enable-languages=c,c++ --libdir='$PREFIX/lib/gcc$GCC_MAJOR_VERSION' --includedir='$PREFIX/include/gcc$GCC_MAJOR_VERSION' --datarootdir='$PREFIX/share/gcc$GCC_MAJOR_VERSION' --with-included-gettext --with-system-zlib --disable-nls --enable-plugin --with-gxx-include-dir='$PREFIX/include/gcc$GCC_MAJOR_VERSION/c++/' --with-gmp='$PREFIX' --with-mpfr='$PREFIX' --with-mpc='$PREFIX' --with-isl='$PREFIX' --disable-bootstrap  --disable-isl-version-check"
         local logfile="$DIR_LOGS/gcc-native.$ARCH.configure.log.txt"
         echo "$cmd" > "$logfile"
         echo "- gcc-${GCC_VERSION} (native) configure..."
@@ -464,7 +464,7 @@ CompileCrossGCC () {
     export BOOT_CPPFLAGS="-Os -I$PREFIX/include -I$PREFIX/sdk/include"
 
     echo "- gcc-${GCC_VERSION} configure..."
-    "${GCC_DIR}"/configure --host=${BUILDARCH}-apple-darwin${BUILDREV} --build=${BUILDARCH}-apple-darwin${BUILDREV} --target=$TARGET --prefix="$PREFIX/cross" --with-sysroot="$PREFIX" --with-gmp="$PREFIX" --with-mpfr="$PREFIX" --with-mpc="$PREFIX" --with-isl="$PREFIX" --with-system-zlib --with-gnu-as --with-gnu-ld --with-newlib --disable-libssp --disable-nls --disable-werror --enable-languages=c,c++ --enable-plugin --disable-isl-version-check --enable-lto > "$DIR_LOGS"/gcc.$ARCH.configure.log.txt 2>&1
+    "${GCC_DIR}"/configure --host=${BUILDARCH}-apple-darwin${BUILDREV} --build=${BUILDARCH}-apple-darwin${BUILDREV} --target=$TARGET --prefix="$PREFIX/cross" --with-sysroot="$SDK" --with-gmp="$PREFIX" --with-mpfr="$PREFIX" --with-mpc="$PREFIX" --with-isl="$PREFIX" --with-system-zlib --with-gnu-as --with-gnu-ld --with-newlib --disable-libssp --disable-nls --disable-werror --enable-languages=c,c++ --enable-plugin --disable-isl-version-check > "$DIR_LOGS"/gcc.$ARCH.configure.log.txt 2>&1
 
     echo "- gcc-${GCC_VERSION} make..."
     make all-gcc 1> /dev/null 2> $DIR_LOGS/gcc.$ARCH.make.log.txt
@@ -499,8 +499,8 @@ DownloadSource  || exit 1
 startBuildEpoch=$(date -u "+%s")
 
 CompileLibs     || exit 1
-GCC_native      || exit 1
-CompileBinutils || exit 1
+#GCC_native     || exit 1
+CompileBinutils || exit 1
 CompileCrossGCC || exit 1
 
 # Remove GCC source directory

@@ -109,12 +109,12 @@ checkPatch() {
   checkToolchain
 
   if [[ "$SYSNAME" == Linux ]]; then
-    if [[ ! -x "$TOOLCHAIN_DIR"/bin/gcc ]]; then
+    export GCC53_BIN="$TOOLCHAIN_DIR/bin/"
+    if [[ ! -x "${GCC53_BIN}gcc" ]]; then
         echo "No clover toolchain found !" >&2
         echo "Install on your system or define the TOOLCHAIN_DIR variable." >&2
         exit 1
     fi
-    export GCC53_BIN="$TOOLCHAIN_DIR/bin/"
   else
     if [[ -n "${XCODE_BUILD:-}" ]]; then
       #declare -r XCODE_MAJOR_VERSION="$(xcodebuild -version | sed -nE 's/^Xcode ([0-9]).*/\1/p')"
@@ -126,17 +126,12 @@ checkPatch() {
       esac
     fi
 
-#  Ubuntu 16 has a good gcc and there's no need for a cross compilation
-#  ..also will fail because /usr/bin/gcc is a symlink, and anyway we already have
-#  a check some lines above
-
-#  if [[ ! -x "$TOOLCHAIN_DIR"/cross/bin/x86_64-clover-linux-gnu-gcc && \
-#    ! -x "$TOOLCHAIN_DIR"/cross/bin/i686-clover-linux-gnu-gcc ]] && [[ $TOOLCHAIN == GCC* ]] ; then
-#    echo "No clover toolchain found !" >&2
-#    echo "Build it with the buidgcc.sh script or defined the TOOLCHAIN_DIR variable." >&2
-#    exit 1
-#  fi
     export GCC53_BIN="$TOOLCHAIN_DIR/cross/bin/x86_64-clover-linux-gnu-"
+    if [[ $TOOLCHAIN == GCC* ]] && [[ ! -x "${GCC53_BIN}gcc" ]]; then
+      echo "No clover toolchain found !" >&2
+      echo "Build it with the buid_gcc6.sh script or define the TOOLCHAIN_DIR variable." >&2
+      exit 1
+    fi
   fi
 
 # Linux does not come with nasm installed!
@@ -1005,11 +1000,6 @@ trap 'exitTrap' EXIT
 # Default locale
 export LC_ALL=POSIX
 
-
-# Add toolchain bin directory to the PATH
-if [[ "$SYSNAME" != Linux ]]; then
-  pathmunge "$TOOLCHAIN_DIR/bin"
-fi
 
 MainBuildScript $@
 if [[ -z $MODULEFILE  ]] && (( $NOBOOTFILES == 0 )); then
