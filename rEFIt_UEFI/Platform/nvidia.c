@@ -2132,7 +2132,7 @@ UINT64 mem_detect(UINT16 nvCardType, pci_dt_t *nvda_dev)
 		default:
 			break;
 	}
-	DBG("mem_detected %ld\n", vram_size);
+	DBG("mem_detected %ldMb\n", (vram_size >> 20));
 	return vram_size;
 }
 

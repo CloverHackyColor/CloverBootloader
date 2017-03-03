@@ -472,11 +472,11 @@ VOID GetCPUProperties (VOID)
                MsgLog("MSR 0xE2 is locked, PM patches will be turned on\n");
                NeedPMfix = TRUE;
              }
-             //        AsmWriteMsr64(MSR_PKG_CST_CONFIG_CONTROL, (msr & 0x8000000ULL));
-             //        msr = AsmReadMsr64(MSR_PKG_CST_CONFIG_CONTROL);
-             //        MsgLog("MSR 0xE2 after  patch %08x\n", msr);
-             msr = AsmReadMsr64(MSR_PMG_IO_CAPTURE_BASE);
-             MsgLog("MSR 0xE4              %08x\n", msr);
+             //   AsmWriteMsr64(MSR_PKG_CST_CONFIG_CONTROL, (msr & 0x8000000ULL));
+             //   msr = AsmReadMsr64(MSR_PKG_CST_CONFIG_CONTROL);
+             //   MsgLog("MSR 0xE2 after  patch %08x\n", msr);
+             //   msr = AsmReadMsr64(MSR_PMG_IO_CAPTURE_BASE);
+             //   MsgLog("MSR 0xE4              %08x\n", msr);
              //------------
              msr = AsmReadMsr64(MSR_PLATFORM_INFO);       //0xCE
              MsgLog("MSR 0xCE              %08x_%08x\n", (msr>>32), msr);
@@ -492,7 +492,7 @@ VOID GetCPUProperties (VOID)
              if ((RShiftU64(msr, 16) & 0x01) != 0) {
                // bcc9 patch
                UINT8 flex_ratio = RShiftU64(msr, 8) & 0xff;
-               MsgLog("non-usable FLEX_RATIO = %x\n", msr);
+               // MsgLog("non-usable FLEX_RATIO = %x\n", msr);
                if (flex_ratio == 0) {
                  AsmWriteMsr64(MSR_FLEX_RATIO, (msr & 0xFFFFFFFFFFFEFFFFULL));
                  gBS->Stall(10);
@@ -734,8 +734,8 @@ VOID GetCPUProperties (VOID)
   }
   gCPUStructure.MaxSpeed = (UINT32)(DivU64x32(MultU64x64(gCPUStructure.FSBFrequency, gCPUStructure.MaxRatio), Mega * 10)); //kHz->MHz
   
-  DBG("Vendor/Model/Stepping: 0x%x/0x%x/0x%x\n", gCPUStructure.Vendor, gCPUStructure.Model, gCPUStructure.Stepping);
-  DBG("Family/ExtFamily: 0x%x/0x%x\n", gCPUStructure.Family, gCPUStructure.Extfamily);
+//  DBG("Vendor/Model/Stepping: 0x%x/0x%x/0x%x\n", gCPUStructure.Vendor, gCPUStructure.Model, gCPUStructure.Stepping);
+//  DBG("Family/ExtFamily: 0x%x/0x%x\n", gCPUStructure.Family, gCPUStructure.Extfamily);
   DBG("MaxDiv/MinDiv: %d.%d/%d\n", gCPUStructure.MaxRatio/10, gCPUStructure.MaxRatio%10 , gCPUStructure.MinRatio/10);
   DBG("Turbo: %d/%d/%d/%d\n", gCPUStructure.Turbo4/10, gCPUStructure.Turbo3/10, gCPUStructure.Turbo2/10, gCPUStructure.Turbo1/10);
   DBG("Features: 0x%08x\n",gCPUStructure.Features);

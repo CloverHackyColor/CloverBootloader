@@ -265,7 +265,7 @@ static EFI_STATUS StartEFIImage(IN EFI_DEVICE_PATH *DevicePath,
   return Status;
 }
 
-
+/*
 static EFI_STATUS StartEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
                                 IN CHAR16 *LoadOptions, IN CHAR16 *LoadOptionsPrefix,
                                 IN CHAR16 *ImageTitle,
@@ -285,7 +285,7 @@ static EFI_STATUS StartEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
   }
   return Status;
 }
-
+*/
 
 static CHAR8 *SearchString (
   IN  CHAR8       *Source,
@@ -388,7 +388,7 @@ VOID FilterKernelPatches(IN LOADER_ENTRY *Entry)
         Entry->KernelAndKextPatches->KernelPatches[i].Label,
         Entry->OSVersion,
         Entry->KernelAndKextPatches->KernelPatches[i].MatchOS ? Entry->KernelAndKextPatches->KernelPatches[i].MatchOS : "All",
-        Entry->KernelAndKextPatches->KernelPatches[i].MatchBuild != NULL ? Entry->KernelAndKextPatches->KernelPatches[i].MatchBuild : "All"
+        Entry->KernelAndKextPatches->KernelPatches[i].MatchBuild != NULL ? Entry->KernelAndKextPatches->KernelPatches[i].MatchBuild : "no"
       );
       if (!Entry->KernelAndKextPatches->KernelPatches[i].MenuItem.BValue) {
         DBG(" ==> disabled by user\n");
@@ -397,12 +397,12 @@ VOID FilterKernelPatches(IN LOADER_ENTRY *Entry)
 
       if ((Entry->BuildVersion != NULL) && (Entry->KernelAndKextPatches->KernelPatches[i].MatchBuild != NULL)) {
         Entry->KernelAndKextPatches->KernelPatches[i].MenuItem.BValue = IsPatchEnabled(Entry->KernelAndKextPatches->KernelPatches[i].MatchBuild, Entry->BuildVersion);
-        DBG(" ==> %a\n", Entry->KernelAndKextPatches->KernelPatches[i].MenuItem.BValue ? "allowed" : "not allowed");
+        DBG(" ==> %a by build\n", Entry->KernelAndKextPatches->KernelPatches[i].MenuItem.BValue ? "allowed" : "not allowed");
         continue; 
       }
 
       Entry->KernelAndKextPatches->KernelPatches[i].MenuItem.BValue = IsPatchEnabled(Entry->KernelAndKextPatches->KernelPatches[i].MatchOS, Entry->OSVersion);
-      DBG(" ==> %a\n", Entry->KernelAndKextPatches->KernelPatches[i].MenuItem.BValue ? "allowed" : "not allowed");
+      DBG(" ==> %a by OS\n", Entry->KernelAndKextPatches->KernelPatches[i].MenuItem.BValue ? "allowed" : "not allowed");
     }
   }
 }
@@ -418,7 +418,7 @@ VOID FilterBootPatches(IN LOADER_ENTRY *Entry)
           Entry->KernelAndKextPatches->BootPatches[i].Label,
           Entry->OSVersion,
           Entry->KernelAndKextPatches->BootPatches[i].MatchOS ? Entry->KernelAndKextPatches->BootPatches[i].MatchOS : "All",
-          Entry->KernelAndKextPatches->BootPatches[i].MatchBuild != NULL ? Entry->KernelAndKextPatches->BootPatches[i].MatchBuild : "All"
+          Entry->KernelAndKextPatches->BootPatches[i].MatchBuild != NULL ? Entry->KernelAndKextPatches->BootPatches[i].MatchBuild : "no"
           );
       if (!Entry->KernelAndKextPatches->BootPatches[i].MenuItem.BValue) {
         DBG(" ==> disabled by user\n");
@@ -427,12 +427,12 @@ VOID FilterBootPatches(IN LOADER_ENTRY *Entry)
       
       if ((Entry->BuildVersion != NULL) && (Entry->KernelAndKextPatches->BootPatches[i].MatchBuild != NULL)) {
         Entry->KernelAndKextPatches->BootPatches[i].MenuItem.BValue = IsPatchEnabled(Entry->KernelAndKextPatches->BootPatches[i].MatchBuild, Entry->BuildVersion);
-        DBG(" ==> %a\n", Entry->KernelAndKextPatches->BootPatches[i].MenuItem.BValue ? "allowed" : "not allowed");
+        DBG(" ==> %a by build\n", Entry->KernelAndKextPatches->BootPatches[i].MenuItem.BValue ? "allowed" : "not allowed");
         continue;
       }
       
       Entry->KernelAndKextPatches->BootPatches[i].MenuItem.BValue = IsPatchEnabled(Entry->KernelAndKextPatches->BootPatches[i].MatchOS, Entry->OSVersion);
-      DBG(" ==> %a\n", Entry->KernelAndKextPatches->BootPatches[i].MenuItem.BValue ? "allowed" : "not allowed");
+      DBG(" ==> %a by OS\n", Entry->KernelAndKextPatches->BootPatches[i].MenuItem.BValue ? "allowed" : "not allowed");
     }
   }
 }
@@ -800,7 +800,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
   FinishExternalScreen();
 //  PauseForKey(L"System started?!");
 }
-
+/*
 // early 2006 Core Duo / Core Solo models
 static UINT8 LegacyLoaderDevicePath1Data[] = {
     0x01, 0x03, 0x18, 0x00, 0x0B, 0x00, 0x00, 0x00,
@@ -854,7 +854,7 @@ static EFI_DEVICE_PATH *LegacyLoaderList[] = {
     (EFI_DEVICE_PATH *)LegacyLoaderDevicePath5Data,
     NULL
 };
-
+*/
 #define MAX_DISCOVERED_PATHS (16)
 //#define PREBOOT_LOG L"EFI\\CLOVER\\misc\\preboot.log"
 
@@ -862,8 +862,8 @@ static VOID StartLegacy(IN LEGACY_ENTRY *Entry)
 {
     EFI_STATUS          Status = EFI_UNSUPPORTED;
     EG_IMAGE            *BootLogoImage;
-    UINTN               ErrorInStep = 0;
-    EFI_DEVICE_PATH     *DiscoveredPathList[MAX_DISCOVERED_PATHS];
+//    UINTN               ErrorInStep = 0;
+//    EFI_DEVICE_PATH     *DiscoveredPathList[MAX_DISCOVERED_PATHS];
 
     // Unload EmuVariable before booting legacy.
     // This is not needed in most cases, but it seems to interfere with legacy OS
@@ -891,7 +891,7 @@ static VOID StartLegacy(IN LEGACY_ENTRY *Entry)
                       (UGAHeight - BootLogoImage->Height) >> 1,
                       &StdBackgroundPixel, 16);
 
-    if (StrCmp(gSettings.LegacyBoot, L"Apple") != 0) { // not Apple-style LegacyBoot
+ //   if (StrCmp(gSettings.LegacyBoot, L"Apple") != 0) { // not Apple-style LegacyBoot
       //try my LegacyBoot
       switch (Entry->Volume->BootType) {
         case BOOTING_BY_CD:
@@ -916,7 +916,7 @@ static VOID StartLegacy(IN LEGACY_ENTRY *Entry)
           break;
       }
       CheckError(Status, L"while LegacyBoot");
-    } else { // Apple-style LegacyBoot
+/*    } else { // Apple-style LegacyBoot
 //      if (0 && Entry->Volume->IsMbrPartition && !Entry->Volume->HasBootCode)
 //         ActivateMbrPartition(Entry->Volume->WholeDiskBlockIO, Entry->Volume->MbrPartitionIndex);
 
@@ -933,6 +933,7 @@ static VOID StartLegacy(IN LEGACY_ENTRY *Entry)
         }
       }
     }
+ */
     FinishExternalScreen();
 }
 

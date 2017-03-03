@@ -490,7 +490,7 @@ VOID CheckForFakeSMC(CHAR8 *InfoPlist, LOADER_ENTRY *Entry)
     {
       Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_WITHKEXTS);
       if (Entry->KernelAndKextPatches->KPDebug) {
-        DBG_RT(Entry, "\nFakeSMC found\n");
+        DBG_RT(Entry, "\nFakeSMC found, UNSET WITHKEXTS\n");
         gBS->Stall(5000000);
       }
     }

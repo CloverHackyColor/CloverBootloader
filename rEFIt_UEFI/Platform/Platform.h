@@ -175,7 +175,7 @@ Headers collection for procedures
 #define CPU_MODEL_HASWELL_ULT   0x45  /* Haswell ULT */
 #define CPU_MODEL_CRYSTALWELL   0x46  /* Haswell ULX CPUID_MODEL_CRYSTALWELL */
 #define CPU_MODEL_BROADWELL_HQ  0x47
-#define CPU_MODEL_MERRIFIELD  0x4A /* Tangier */
+#define CPU_MODEL_MERRIFIELD    0x4A /* Tangier */
 #define CPU_MODEL_AIRMONT       0x4C /* CherryTrail / Braswell */
 #define CPU_MODEL_AVOTON        0x4D /* Avaton/Rangely */
 #define CPU_MODEL_SKYLAKE_U     0x4E /* Skylake Mobile */
