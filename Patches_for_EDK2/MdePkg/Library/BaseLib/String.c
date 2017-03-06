@@ -618,7 +618,7 @@ InternalHexCharToUintn (
     return Char - L'0';
   }
 
-  return (UINTN) (10 + InternalCharToUpper (Char) - L'A');
+  return (10 + InternalCharToUpper (Char) - L'A');
 }
 
 /**
@@ -1352,7 +1352,7 @@ InternalAsciiHexCharToUintn (
     return Char - '0';
   }
 
-  return (UINTN) (10 + InternalBaseLibAsciiToUpper (Char) - 'A');
+  return (10 + InternalBaseLibAsciiToUpper (Char) - 'A');
 }
 
 
