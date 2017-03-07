@@ -1250,6 +1250,7 @@ StrToIpv6Address (
         //
         // Uintn won't exceed MAX_UINT16 if number of hexadecimal digit characters is no more than 4.
         //
+//      ASSERT (AddressIndex + 1 < ARRAY_SIZE (Address->Addr));
         LocalAddress.Addr[AddressIndex] = (UINT8) ((UINT16) Uintn >> 8);
         LocalAddress.Addr[AddressIndex + 1] = (UINT8) Uintn;
         AddressIndex += 2;
@@ -1302,11 +1303,13 @@ StrToIpv6Address (
   }
   CopyMem (&Address->Addr[0], &LocalAddress.Addr[0], CompressStart);
   ZeroMem (&Address->Addr[CompressStart], ARRAY_SIZE (Address->Addr) - AddressIndex);
-  CopyMem (
-    &Address->Addr[CompressStart + ARRAY_SIZE (Address->Addr) - AddressIndex],
-    &LocalAddress.Addr[CompressStart],
-    AddressIndex - CompressStart
-    );
+  if (AddressIndex > CompressStart) {
+    CopyMem (
+      &Address->Addr[CompressStart + ARRAY_SIZE (Address->Addr) - AddressIndex],
+      &LocalAddress.Addr[CompressStart],
+      AddressIndex - CompressStart
+      );
+  }
 
   if (PrefixLength != NULL) {
     *PrefixLength = LocalPrefixLength;
@@ -3224,6 +3227,7 @@ AsciiStrToIpv6Address (
         //
         // Uintn won't exceed MAX_UINT16 if number of hexadecimal digit characters is no more than 4.
         //
+//      ASSERT (AddressIndex + 1 < ARRAY_SIZE (Address->Addr));
         LocalAddress.Addr[AddressIndex] = (UINT8) ((UINT16) Uintn >> 8);
         LocalAddress.Addr[AddressIndex + 1] = (UINT8) Uintn;
         AddressIndex += 2;
@@ -3276,11 +3280,14 @@ AsciiStrToIpv6Address (
   }
   CopyMem (&Address->Addr[0], &LocalAddress.Addr[0], CompressStart);
   ZeroMem (&Address->Addr[CompressStart], ARRAY_SIZE (Address->Addr) - AddressIndex);
-  CopyMem (
-    &Address->Addr[CompressStart + ARRAY_SIZE (Address->Addr) - AddressIndex],
-    &LocalAddress.Addr[CompressStart],
-    AddressIndex - CompressStart
-    );
+  if (AddressIndex > CompressStart) {
+    CopyMem (
+      &Address->Addr[CompressStart + ARRAY_SIZE (Address->Addr) - AddressIndex],
+      &LocalAddress.Addr[CompressStart],
+      AddressIndex - CompressStart
+      );
+
+  }
 
   if (PrefixLength != NULL) {
     *PrefixLength = LocalPrefixLength;
