@@ -1001,6 +1001,11 @@ trap 'exitTrap' EXIT
 export LC_ALL=POSIX
 
 
+# Add toolchain bin directory to the PATH
+if [[ "$SYSNAME" != Linux ]]; then
+  pathmunge "$TOOLCHAIN_DIR/bin"
+fi
+
 MainBuildScript $@
 if [[ -z $MODULEFILE  ]] && (( $NOBOOTFILES == 0 )); then
     MainPostBuildScript

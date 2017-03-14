@@ -138,6 +138,9 @@ pathmunge () {
 # Add XCode bin directory for the command line tools to the PATH
 pathmunge "$(xcode-select --print-path)"/usr/bin
 
+# Add toolchain bin directory to the PATH
+pathmunge "$TOOLCHAIN_DIR"/bin
+
 cd ${DIR_DOWNLOADS}
 iaslLocalVers=
 if [[ -f ${PREFIX}/bin/iasl ]]; then
