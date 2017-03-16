@@ -328,7 +328,7 @@ AppendSingleVariableToFile (
   //
   // Crc32
   //
-  gBS->CalculateCrc32 (Buffer, (UINTN) (Ptr - Buffer), (UINT32 *) Ptr);
+  gBS->CalculateCrc32 (Buffer, (UINTN) Ptr - (UINTN) Buffer, (UINT32 *) Ptr);
 
   Status = ShellWriteFile (FileHandle, &BufferSize, Buffer);
   FreePool (Buffer);
