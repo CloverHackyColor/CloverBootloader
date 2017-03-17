@@ -1901,6 +1901,12 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   gCPUStructure.ExternalClock = (UINT32)DivU64x32(gCPUStructure.FSBFrequency, kilo);
   gCPUStructure.MaxSpeed = (UINT32)DivU64x32(gCPUStructure.TSCFrequency + (Mega >> 1), Mega);
 
+  // Check if QPI is used
+  if (gSettings.QPI == 0) {
+    // Not used, quad-pumped FSB; divide ExternalClock by 4
+    gCPUStructure.ExternalClock = gCPUStructure.ExternalClock / 4;
+  }
+
   if (!GlobalConfig.NoEarlyProgress && !GlobalConfig.FastBoot && GlobalConfig.Timeout>0) {
     FirstMessage = PoolPrint(L"... user settings ...");
  //   i = (UGAWidth - StrLen(FirstMessage) * GlobalConfig.CharWidth) >> 1;

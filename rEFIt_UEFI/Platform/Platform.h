@@ -1235,7 +1235,7 @@ typedef struct {
   CHAR8                   BrandString[48];
 
   //values from BIOS
-  UINT32                  ExternalClock; //keep this values as kHz
+  UINT64                  ExternalClock;
   UINT32                  MaxSpeed;       //MHz
   UINT32                  CurrentSpeed;   //MHz
   UINT32                  Pad;

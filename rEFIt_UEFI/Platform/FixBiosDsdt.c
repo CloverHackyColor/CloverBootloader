@@ -2824,8 +2824,8 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
   // add Method(_DSM,4,NotSerialized) for network
   if (gSettings.FakeLAN || !gSettings.NoDefaultProperties) {
     met = aml_add_method(dev, "_DSM", 4);
-  met2 = aml_add_store(met);
-  pack = aml_add_package(met2);
+    met2 = aml_add_store(met);
+    pack = aml_add_package(met2);
 
     aml_add_string(pack, "built-in");
     aml_add_byte_buffer(pack, dataBuiltin, sizeof(dataBuiltin));

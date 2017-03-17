@@ -708,6 +708,11 @@ VOID GetTableType4()
   }
 
 	gCPUStructure.ExternalClock = (UINT32)((SmbiosTable.Type4->ExternalClock * 1000) + (res * 110));//MHz->kHz  
+    // Check if QPI is used
+    if (gSettings.QPI == 0) {
+      // Not used, quad-pumped FSB; divide ExternalClock by 4
+      gCPUStructure.ExternalClock = gCPUStructure.ExternalClock / 4;
+    }
 //	UnicodeSPrint(gSettings.BusSpeed, 10, L"%d", gCPUStructure.ExternalClock);
 //  gSettings.BusSpeed = gCPUStructure.ExternalClock; //why duplicate??
 	gCPUStructure.CurrentSpeed = SmbiosTable.Type4->CurrentSpeed;
@@ -773,6 +778,7 @@ VOID PatchTableType4()
 //		if (newSmbiosTable.Type4->CoreCount < newSmbiosTable.Type4->EnabledCoreCount) {
 //			newSmbiosTable.Type4->EnabledCoreCount = gCPUStructure.Cores;
 //		}
+        newSmbiosTable.Type4->ExternalClock = DivU64x32 (gCPUStructure.ExternalClock, kilo);
 		newSmbiosTable.Type4->EnabledCoreCount = gSettings.EnabledCores;
     //some verifications
     if ((newSmbiosTable.Type4->ThreadCount < newSmbiosTable.Type4->CoreCount) ||
@@ -1829,7 +1835,7 @@ VOID PatchTableType131()
 
 VOID PatchTableType132()
 {
-  if (gSettings.QPI == 0xFFFF) {
+  if (gSettings.QPI == 0) {
     return;
   }
 	// Get Table Type132

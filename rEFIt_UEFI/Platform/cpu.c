@@ -118,6 +118,7 @@ VOID GetCPUProperties (VOID)
   UINT32        qpibusspeed; //units=kHz
   UINT32        qpimult = 2;
   UINT32        BusSpeed = 0; //units kHz
+  UINT64        ExternalClock;
   UINT64        tmpU;
   UINT16        did, vid;
   UINTN         Segment;
@@ -658,22 +659,31 @@ VOID GetCPUProperties (VOID)
     gCPUStructure.FSBFrequency = DivU64x32(LShiftU64(gCPUStructure.TSCFrequency, 1), gCPUStructure.MaxRatio);
     gCPUStructure.MaxRatio *= 5;
   }
-  
+
+  // Check if QPI is used
+  if (gSettings.QPI == 0) {
+    // Not used, quad-pumped FSB; multiply ExternalClock by 4
+    ExternalClock = gCPUStructure.ExternalClock * 4;
+  } else {
+    // Used; keep the same value for ExternalClock
+    ExternalClock = gCPUStructure.ExternalClock;
+  }
+
   // DBG("take FSB\n");
   tmpU = gCPUStructure.FSBFrequency;
   //  DBG("divide by 1000\n");
   BusSpeed = (UINT32)DivU64x32(tmpU, kilo); //Hz -> kHz
-  DBG("FSBFrequency=%dMHz DMIvalue=%dkHz\n", DivU64x32(tmpU, Mega), gCPUStructure.ExternalClock);
+  DBG ("FSBFrequency = %d MHz, DMI FSBFrequency = %d MHz, ", DivU64x32 (tmpU, Mega), DivU64x32 (ExternalClock, kilo));
   //now check if SMBIOS has ExternalClock = 4xBusSpeed
   if ((BusSpeed > 50*kilo) &&
-      ((gCPUStructure.ExternalClock > BusSpeed * 3) || (gCPUStructure.ExternalClock < 50*kilo))) { //khz
+      ((ExternalClock > BusSpeed * 3) || (ExternalClock < 50*kilo))) { //khz
     gCPUStructure.ExternalClock = BusSpeed;
   } else {
-    tmpU = MultU64x32(gCPUStructure.ExternalClock, kilo); //kHz -> Hz
+    tmpU = MultU64x32(ExternalClock, kilo); //kHz -> Hz
     gCPUStructure.FSBFrequency = tmpU;
   }
   tmpU = gCPUStructure.FSBFrequency;
-  DBG("Corrected FSBFrequency=%dMHz\n", DivU64x32(tmpU, Mega));
+  DBG("Corrected FSBFrequency = %d MHz\n", DivU64x32(tmpU, Mega));
   
   if ((gCPUStructure.Vendor == CPU_VENDOR_INTEL) && (gCPUStructure.Model == CPU_MODEL_NEHALEM)) {
     //Slice - for Nehalem we can do more calculation as in Cham
