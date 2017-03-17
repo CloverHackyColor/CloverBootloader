@@ -200,8 +200,9 @@
 		129262E91A305AEB005F1426 /* rc.clover.lib */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = rc.clover.lib; sourceTree = "<group>"; };
 		129262EB1A305AEB005F1426 /* 80.save_nvram_plist.local */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = 80.save_nvram_plist.local; sourceTree = "<group>"; };
 		129262EF1A305AEB005F1426 /* CloverDaemon */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = CloverDaemon; sourceTree = "<group>"; };
-		129262F11A305AEB005F1426 /* com.projectosx.clover.daemon.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = com.projectosx.clover.daemon.plist; sourceTree = "<group>"; };
-		129262F21A305B0E005F1426 /* ebuild.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = ebuild.sh; path = ../../ebuild.sh; sourceTree = "<group>"; };
+		129262F11A305AEB005F1426 /* CloverDaemon-stopservice */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "CloverDaemon-stopservice"; sourceTree = "<group>"; };
+		129262F21A305AEB005F1426 /* com.projectosx.clover.daemon.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = com.projectosx.clover.daemon.plist; sourceTree = "<group>"; };
+		129262F31A305B0E005F1426 /* ebuild.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = ebuild.sh; path = ../../ebuild.sh; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -311,7 +312,7 @@
 				129262E01A305AB6005F1426 /* Makefile */,
 				129262E11A305AB6005F1426 /* makeiso */,
 				129262E21A305AB6005F1426 /* makepkg */,
-				129262F21A305B0E005F1426 /* ebuild.sh */,
+				129262F31A305B0E005F1426 /* ebuild.sh */,
 				129262E31A305AEB005F1426 /* rcScripts */,
 				129260BF1A305A3E005F1426 /* Products */,
 			);
@@ -1052,6 +1053,7 @@
 			isa = PBXGroup;
 			children = (
 				129262EF1A305AEB005F1426 /* CloverDaemon */,
+				129262F11A305AEB005F1426 /* CloverDaemon-stopservice */,
 			);
 			path = Clover;
 			sourceTree = "<group>";
@@ -1059,7 +1061,7 @@
 		129262F01A305AEB005F1426 /* LaunchDaemons */ = {
 			isa = PBXGroup;
 			children = (
-				129262F11A305AEB005F1426 /* com.projectosx.clover.daemon.plist */,
+				129262F21A305AEB005F1426 /* com.projectosx.clover.daemon.plist */,
 			);
 			path = LaunchDaemons;
 			sourceTree = "<group>";

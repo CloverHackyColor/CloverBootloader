@@ -23,7 +23,7 @@ if [[ ! "$(type -t GetNVRamKey)" == "function" ]]; then
 fi
 
 # Variables
-ESPMountPoint=/Volumes/EFI
+ESPMountPoint=/Volumes/ESP
 declare -r plistbuddy='/usr/libexec/PlistBuddy'
 
 # Debug mode ?
@@ -108,25 +108,43 @@ else
 fi
 
 #
-# 2017 (c) syscl/lighting/Yating Zhou specify kernel extension force load(deprecated)
-# note: kernel extesions should be loaded earlier than shutdown stage
-# otherwise we cannot mount even a single ESP
+# 2017 (c) syscl/lighting/Yating Zhou/tluck/Sherlocks
 #
-# v1.4+ 80.save_nvram_plist.local need to use logoutHook to execute
-#
-#echo "msdos and exfat forceload (c) syscl/lighting/Yating Zhou" >/Library/Logs/CloverEFI/syscl.startup.log
-#kextload /System/Library/Extensions/msdosfs.kext >>/Library/Logs/CloverEFI/syscl.startup.log
-#kextload /System/Library/Extensions/exfat.kext >>/Library/Logs/CloverEFI/syscl.startup.log
-gScriptVersion=1.4
-gLogoutHookLog="${CLOVER_LOG_LOCATION}/rc.syscl.addlogoutHook.log"
-gLogoutHookf="/etc/rc.shutdown.d/80.save_nvram_plist.local"
-if [ -f "${gLogoutHookf}" ]; then
+gScriptVersion=1.16.1
+gEmuVariableName=emuvariable
+gEfiEmuVariableIsPresent=""
+gLegacyEmuVariableIsPresent=""
+gLogoutHookf="/Library/Application Support/Clover/CloverDaemon-stopservice"
+gNVRAMbuf=$(nvram -x -p)
+
+if [[ `printf "${gNVRAMbuf}" |tr '[:upper:]' '[:lower:]'` == *"${gEmuVariableName}"* ]];
+then
+    gEfiEmuVariableIsPresent="true"
+    gLegacyEmuVariableIsPresent="false"
+else
+    gEfiEmuVariableIsPresent="false"
+    gLegacyEmuVariableIsPresent="true"
+    gEFIFirmwareVendor=$(LC_ALL=C ioreg -l -pIODeviceTree | sed -nE 's@.*firmware-vendor.*<([0-9a-fA-F]*)>.*@\1@p' | xxd -r -p | tr '[:upper:]' '[:lower:]')
+    case "${gEFIFirmwareVendor}" in
+        *"clover"* | *"edk ii"* ) gLegacyEmuVariableIsPresent="true"
+                                  ;;
+        *                       )
+                                  ;;
+    esac
+fi
+
+# set LogoutHook
+if [[ "${gLegacyEmuVariableIsPresent}" == "true" || "${gEfiEmuVariableIsPresent}" == "true" ]]; 
+then
+    if [ -f "${gLogoutHookf}" ]; 
+    then
     #
     # file exist, need to logoutHook
     #
-    echo "v${gScriptVersion} (c) 2017 syscl/lighting/Yating Zhou" >${gLogoutHookLog}
-    echo "Found ${gLogoutHookf}, register logoutHook"            >>${gLogoutHookLog}
-    defaults write com.apple.loginwindow LogoutHook ${gLogoutHookf}
+        echo "v${gScriptVersion} (c) 2017 syscl/lighting/Yating Zhou/tluck/Sherlocks"
+        echo "Registering LogoutHook as ${gLogoutHookf}"
+        defaults write com.apple.loginwindow LogoutHook "${gLogoutHookf}"
+    fi
 fi
 
 # Local Variables:      #

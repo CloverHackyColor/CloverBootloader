@@ -1048,6 +1048,7 @@ fi
     fixperms "${PKG_BUILD_DIR}/${choiceId}/Root/"
     chmod 644 "${PKG_BUILD_DIR}/${choiceId}/Root/Library/LaunchDaemons/com.projectosx.clover.daemon.plist"
     chmod 744 "${PKG_BUILD_DIR}/${choiceId}/Root/Library/Application Support/Clover/CloverDaemon"
+    chmod 744 "${PKG_BUILD_DIR}/${choiceId}/Root/Library/Application Support/Clover/CloverDaemon-stopservice"
     chmod 755 "${PKG_BUILD_DIR}/${choiceId}/Root/etc"/rc.*.d/*.{local,local.disabled}
     chmod 755 "${PKG_BUILD_DIR}/${choiceId}/Scripts/postinstall"
     packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")

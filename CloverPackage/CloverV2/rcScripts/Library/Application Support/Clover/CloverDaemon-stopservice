@@ -133,7 +133,7 @@ source "$rcScriptsDir"/rc.clover.lib
 # Check that all variables are bound
 set -u
 
-StartService # Launch @ boot
+StopService # Launch @ boot
 
 #trap StopService SIGTERM # SIGTERM @ shutdown
 #while true; do
