@@ -1389,7 +1389,7 @@ typedef struct {
 
 typedef struct {
 
-  UINT64        Frequency;
+  UINT32        Frequency;
   UINT32        Divider;
   UINT8         TRC;
   UINT8         TRP;

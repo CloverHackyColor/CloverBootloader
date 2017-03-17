@@ -1219,6 +1219,9 @@ VOID GetTableType17()
     if ((SmbiosTable.Type17->Speed > 0) && (SmbiosTable.Type17->Speed <= MAX_RAM_FREQUENCY)) {
       gRAM.SMBIOS[Index].InUse = TRUE;
       gRAM.SMBIOS[Index].Frequency = SmbiosTable.Type17->Speed;
+      if (SmbiosTable.Type17->Speed > gRAM.Frequency) {
+      	gRAM.Frequency = SmbiosTable.Type17->Speed;
+      }
     } else {
       DBG("Ignoring insane frequency value %dMHz\n", SmbiosTable.Type17->Speed);
     }
@@ -1316,7 +1319,7 @@ VOID PatchTableType17()
          AsciiSPrint(deviceLocator, 10, "DIMM%d", gRAMCount + 1);
       } else {
          AsciiSPrint(deviceLocator, 10, "DIMM%d", bank);
-         AsciiSPrint(bankLocator, 10, "BANK%d", Index % channels);
+         AsciiSPrint(bankLocator, 10, "BANK %d", Index % channels);
          UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->BankLocator, (CHAR8*)&bankLocator[0]);
       }
       UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->DeviceLocator, (CHAR8*)&deviceLocator[0]);
@@ -1597,7 +1600,11 @@ VOID PatchTableType17()
       } else {
         UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->PartNumber, "unknown");
       }
-      newSmbiosTable.Type17->Speed = (UINT16)gRAM.SPD[SPDIndex].Frequency;
+      if (gRAM.Frequency > gRAM.SPD[SPDIndex].Frequency) {
+        newSmbiosTable.Type17->Speed = (UINT16)gRAM.Frequency;
+      } else {
+      	newSmbiosTable.Type17->Speed = (UINT16)gRAM.SPD[SPDIndex].Frequency;
+      }
       newSmbiosTable.Type17->Size = (UINT16)gRAM.SPD[SPDIndex].ModuleSize;
       newSmbiosTable.Type17->MemoryType = gRAM.SPD[SPDIndex].Type;
     }
@@ -1622,7 +1629,7 @@ VOID PatchTableType17()
       AsciiSPrint(bankLocator, 10, "");
     } else {
       AsciiSPrint(deviceLocator, 10, "DIMM%d", bank);
-      AsciiSPrint(bankLocator, 10, "BANK%d", Index % channels);
+      AsciiSPrint(bankLocator, 10, "BANK %d", Index % channels);
     }
     UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->DeviceLocator, (CHAR8*)&deviceLocator[0]);
     if (isMacPro) {

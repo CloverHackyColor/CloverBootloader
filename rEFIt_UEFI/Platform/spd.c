@@ -800,6 +800,7 @@ STATIC VOID read_smb(EFI_PCI_IO_PROTOCOL *PciIo, UINT16	vid, UINT16	did)
     DBG("DDR speed %dMHz\n", speed);
     if (gRAM.SPD[i].Frequency<speed) gRAM.SPD[i].Frequency = speed;
 
+#if 0
     // pci memory controller if available, is more reliable
     if (gRAM.Frequency > 0) {
       UINT32 freq = (UINT32)DivU64x32(gRAM.Frequency, 500000);
@@ -815,6 +816,7 @@ STATIC VOID read_smb(EFI_PCI_IO_PROTOCOL *PciIo, UINT16	vid, UINT16	did)
       gRAM.SPD[i].Frequency = freq;
       DBG("RAM speed %dMHz\n", freq);
     }
+#endif
 
     MsgLog("Slot: %d Type %d %dMB %dMHz Vendor=%a PartNo=%a SerialNo=%a\n",
            i,
