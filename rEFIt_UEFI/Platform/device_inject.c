@@ -382,7 +382,7 @@ BOOLEAN set_eth_props(pci_dt_t *eth_dev)
   }
   
   //  DBG("Setting dev.prop built-in=0x%x\n", builtin);
-  devprop_add_value(device, "device_type", (UINT8*)"Ethernet", 9);
+//  devprop_add_value(device, "device_type", (UINT8*)"Ethernet", 9);
   if (gSettings.FakeLAN) {
     UINT32 FakeID = gSettings.FakeLAN >> 16;
     devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);

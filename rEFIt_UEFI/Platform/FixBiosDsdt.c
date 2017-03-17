@@ -2831,8 +2831,8 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
     aml_add_byte_buffer(pack, dataBuiltin, sizeof(dataBuiltin));
     aml_add_string(pack, "model");
     aml_add_string_buffer(pack, Netmodel);
-    aml_add_string(pack, "device_type");
-    aml_add_string_buffer(pack, "Ethernet");
+//    aml_add_string(pack, "device_type");
+//    aml_add_string_buffer(pack, "Ethernet");
     if (gSettings.FakeLAN) {
       //    aml_add_string(pack, "model");
       //    aml_add_string_buffer(pack, "Apple LAN card");
