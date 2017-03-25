@@ -115,6 +115,9 @@ CHAR8   *AppleFirmwareVersion[] =
   "MP41.88Z.0081.B07.0910130729",   // MP41
   "MP51.88Z.007F.B03.1010071432",   // MP51
   "MP61.88Z.0116.B25.1702171857",   // MP61
+  "XS11.88Z.0080.B01.0706271533",   // XS11
+  "XS21.88Z.006C.B06.0804011317",   // XS21
+  "XS31.88Z.0081.B06.0908061300",   // XS31
 };
 
 CHAR8* AppleBoardID[] =    //Lion DR1 compatible
@@ -212,6 +215,9 @@ CHAR8* AppleBoardID[] =    //Lion DR1 compatible
   "Mac-F221BEC8",          // MP41    Intel Xeon X5670 @ 2.93 GHz x2
   "Mac-F221BEC8",          // MP51    Intel Xeon X5675 @ 3.06 GHz x2
   "Mac-F60DEB81FF30ACF6",  // MP61    Intel Xeon E5-1650 v2 @ 3.50 GHz 
+  "Mac-F4208AC8",          // XS11    Intel Xeon E5345 @ 2.33 GHz x2
+  "Mac-F42289C8",          // XS21    Intel Xeon E5472 @ 3.00 GHz x2
+  "Mac-F223BEC8",          // XS31    Intel Xeon E5520 @ 2.26 GHz
 };
 
 CHAR8* AppleReleaseDate[] =
@@ -309,6 +315,9 @@ CHAR8* AppleReleaseDate[] =
   "10/13/09",    // MP41
   "10/07/10",    // MP51
   "02/17/2017",  // MP61
+  "06/27/07",    // XS11
+  "04/01/08",    // XS21
+  "08/06/09",    // XS31
 };
 
 CHAR8* AppleProductName[] =
@@ -406,6 +415,9 @@ CHAR8* AppleProductName[] =
   "MacPro4,1",
   "MacPro5,1",
   "MacPro6,1",
+  "Xserve1,1",
+  "Xserve2,1",
+  "Xserve3,1",
 };
 
 CHAR8* AppleFamilies[] =
@@ -503,6 +515,9 @@ CHAR8* AppleFamilies[] =
   "MacPro",        // MP41
   "MacPro",        // MP51
   "MacPro",        // MP61
+  "Xserve",        // XS11
+  "Xserve",        // XS21
+  "Xserve",        // XS31
 };
 
 
@@ -601,6 +616,9 @@ CHAR8* AppleSystemVersion[] =
   "1.4",  // MP41
   "1.2",  // MP51
   "1.0",  // MP61
+  "1.0",  // XS11
+  "1.0",  // XS21
+  "1.0",  // XS31
 };
 
 CHAR8* AppleSerialNumber[] = //random generated
@@ -698,6 +716,9 @@ CHAR8* AppleSerialNumber[] = //random generated
   "CT93051DK9Y",  // MP41
   "C07J77F7F4MC", // MP51  - C07J50F7F4MC  CK04000AHFC  "CG154TB9WU3"
   "F5KLA770F9VM", // MP61
+  "CK703E1EV2Q",  // XS11
+  "CK830DLQX8S",  // XS21
+  "CK933YJ16HS",  // XS31
 };
 
 //no! ChassisVersion == BoardID
@@ -796,6 +817,9 @@ CHAR8* AppleChassisAsset[] =
   "Pro-Enclosure",      // MP41
   "Pro-Enclosure",      // MP51
   "Pro-Enclosure",      // MP61
+  "Xserve",             // XS11
+  "Xserve",             // XS21
+  "Xserve",             // XS31
 };
 
 //TODO - find more information and correct all SMC arrays
@@ -895,6 +919,9 @@ CHAR8* SmcPlatform[] =
   "NA",   // MacPro4,1, // need to find RPlt key
   "k5",   // MacPro5,1,
   "j90",  // MacPro6,1,
+  "NA",   // Xserve1,1, // need to find RPlt key
+  "NA",   // Xserve2,1, // need to find RPlt key
+  "NA",   // Xserve3,1, // need to find RPlt key
 };
 
 //REV
@@ -998,6 +1025,9 @@ UINT8 SmcRevision[][6] =
   { 0x01, 0x39, 0x0F, 0, 0, 0x05 },   // MacPro4,1,
   { 0x01, 0x39, 0x0F, 0, 0, 0x11 },   // MacPro5,1,
   { 0x02, 0x20, 0x0F, 0, 0, 0x18 },   // MacPro6,1,
+  { 0x01, 0x11, 0x0F, 0, 0, 0x05 },   // Xserve1,1,
+  { 0x01, 0x26, 0x0F, 0, 0, 0x03 },   // Xserve2,1,
+  { 0x01, 0x43, 0x0F, 0, 0, 0x04 },   // Xserve3,1,
 };
 
 //RBr
@@ -1096,6 +1126,9 @@ CHAR8* SmcBranch[] =
   "NA",        // MacPro4,1,       // need to find RBr key
   "k5",        // MacPro5,1,
   "j90",       // MacPro6,1,
+  "NA",        // Xserve1,1,       // need to find RBr key
+  "NA",        // Xserve2,1,       // need to find RBr key
+  "NA",        // Xserve3,1,       // need to find RBr key
 };
 
 //EPCI
@@ -1194,6 +1227,9 @@ UINT32 SmcConfig[] =
   0x7c002,  //"MacPro4,1",
   0x7c002,  //"MacPro5,1",
   0xf0f006, //"MacPro6,1",
+  0x79001,  //"Xserve1,1",      // need to find EPCI key
+  0x79001,  //"Xserve2,1",      // need to find EPCI key
+  0x79001,  //"Xserve3,1",      // need to find EPCI key
 };
 
 
@@ -1222,9 +1258,9 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
   AsciiStrCpyS (gSettings.ChassisAssetTag, 64,      AppleChassisAsset[Model]);
 
   if (Model >= MacPro31) {
-    gSettings.BoardType = BaseBoardTypeProcessorMemoryModule; //11;
+    gSettings.BoardType = BaseBoardTypeProcessorMemoryModule; //0xB;
   } else {
-    gSettings.BoardType = BaseBoardTypeMotherBoard; //10;
+    gSettings.BoardType = BaseBoardTypeMotherBoard; //0xA;
   }
 
   switch (Model) {
@@ -1259,7 +1295,7 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
     case MacBookPro114:
     case MacBookPro115:
     case MacMini71:
-      gSettings.ChassisType = MiscChassisTypeNotebook; //10;
+      gSettings.ChassisType = MiscChassisTypeNotebook; //0x0A;
       gSettings.Mobile      = TRUE;
       break;
 
@@ -1274,7 +1310,7 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
     case iMac161:
     case iMac162:
     case iMac171:
-      gSettings.ChassisType = MiscChassisTypeLapTop; //09;
+      gSettings.ChassisType = MiscChassisTypeLapTop; //0x09;
       if((Model == iMac162) || (Model == iMac171)) {
           gSettings.Mobile      = FALSE;
           break;
@@ -1296,7 +1332,7 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
     case MacBookPro61:
     case MacBookPro62:
     case MacBookPro71:
-      gSettings.ChassisType = MiscChassisTypePortable; //08;
+      gSettings.ChassisType = MiscChassisTypePortable; //0x08;
       gSettings.Mobile      = TRUE;
       break;
 
@@ -1322,7 +1358,7 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
     case iMac143:
     case iMac144:
     case iMac151:
-      gSettings.ChassisType = MiscChassisTypeAllInOne; //13;
+      gSettings.ChassisType = MiscChassisTypeAllInOne; //0x0D;
       if(Model == iMac144) {
           gSettings.Mobile      = TRUE;
           break;
@@ -1332,7 +1368,7 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
 
     case MacMini11:
     case MacMini21:
-      gSettings.ChassisType = MiscChassisTypeLowProfileDesktop; //04;
+      gSettings.ChassisType = MiscChassisTypeLowProfileDesktop; //0x04;
       gSettings.Mobile      = FALSE;
       break;
 
@@ -1343,14 +1379,14 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
     case MacMini53:
     case MacMini61:
     case MacMini62:
-      gSettings.ChassisType = MiscChassisTypeLunchBox; //16;
+      gSettings.ChassisType = MiscChassisTypeLunchBox; //0x10;
       gSettings.Mobile      = FALSE;
       break;
 
 
     case MacPro41:
     case MacPro51:
-      gSettings.ChassisType = MiscChassisTypeTower; //07;
+      gSettings.ChassisType = MiscChassisTypeTower; //0x07;
       gSettings.Mobile      = FALSE;
       break;
 
@@ -1358,7 +1394,14 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
     case MacPro21:
     case MacPro31:
     case MacPro61:
-      gSettings.ChassisType = MiscChassisTypeUnknown;  //02; this is a joke but think different!
+      gSettings.ChassisType = MiscChassisTypeUnknown;  //0x02; this is a joke but think different!
+      gSettings.Mobile      = FALSE;
+      break;
+          
+    case Xserve11:
+    case Xserve21:
+    case Xserve31:
+      gSettings.ChassisType = MiscChassisTypeRackMountChassis;  //0x17
       gSettings.Mobile      = FALSE;
       break;
 
@@ -1368,7 +1411,7 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
       /*      if (gMobile) {
        gSettings.ChassisType = 10; //notebook
        } else {
-       gSettings.ChassisType = MiscChassisTypeDeskTop; //03;
+       gSettings.ChassisType = MiscChassisTypeDeskTop; //0x03;
        } */
       break;
   }

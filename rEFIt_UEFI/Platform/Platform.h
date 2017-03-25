@@ -1364,6 +1364,9 @@ typedef enum {
   MacPro41,
   MacPro51,
   MacPro61,
+  Xserve11,
+  Xserve21,
+  Xserve31,
 
   MaxMachineType
 

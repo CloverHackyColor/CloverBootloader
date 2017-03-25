@@ -108,22 +108,19 @@ else
 fi
 
 #
-# 2017 (c) syscl/lighting/Yating Zhou/tluck/Sherlocks
+# 2017 (c) syscl/lighting/Yating Zhou, tluck, Sherlocks
 #
-gScriptVersion=1.16.1
+gScriptVersion=1.16.2
 gEmuVariableName=emuvariable
-gEfiEmuVariableIsPresent=""
-gLegacyEmuVariableIsPresent=""
 gLogoutHookf="/Library/Application Support/Clover/CloverDaemon-stopservice"
 gNVRAMbuf=$(nvram -x -p)
 
+gEfiEmuVariableIsPresent="false"
+gLegacyEmuVariableIsPresent="false"
 if [[ `printf "${gNVRAMbuf}" |tr '[:upper:]' '[:lower:]'` == *"${gEmuVariableName}"* ]];
 then
     gEfiEmuVariableIsPresent="true"
-    gLegacyEmuVariableIsPresent="false"
 else
-    gEfiEmuVariableIsPresent="false"
-    gLegacyEmuVariableIsPresent="true"
     gEFIFirmwareVendor=$(LC_ALL=C ioreg -l -pIODeviceTree | sed -nE 's@.*firmware-vendor.*<([0-9a-fA-F]*)>.*@\1@p' | xxd -r -p | tr '[:upper:]' '[:lower:]')
     case "${gEFIFirmwareVendor}" in
         *"clover"* | *"edk ii"* ) gLegacyEmuVariableIsPresent="true"
@@ -141,7 +138,7 @@ then
     #
     # file exist, need to logoutHook
     #
-        echo "v${gScriptVersion} (c) 2017 syscl/lighting/Yating Zhou/tluck/Sherlocks"
+        echo "v${gScriptVersion} (c) 2017 syscl/lighting/Yating Zhou, tluck, Sherlocks"
         echo "Registering LogoutHook as ${gLogoutHookf}"
         defaults write com.apple.loginwindow LogoutHook "${gLogoutHookf}"
     fi

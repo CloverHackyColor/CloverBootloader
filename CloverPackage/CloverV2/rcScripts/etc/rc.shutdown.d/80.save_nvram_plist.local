@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# 2017 (c) syscl/lighting/Yating Zhou/tluck/Sherlocks
+# 2017 (c) syscl/lighting/Yating Zhou, tluck, Sherlocks
 # dump NVRAM for Clover
 #
 # note: msdosfs.kext, exfat.kext should be loaded if 80.save_nvram_plist.local is
@@ -10,7 +10,7 @@
 #================================= GLOBAL VARS ==================================
 
 # Script version info
-gScriptVersion=1.16.1
+gScriptVersion=1.16.2
 
 #
 # The script expects '0.5' but non-US localizations use '0,5' so we export
@@ -52,8 +52,6 @@ fi
 gDmpTimeStamp=""
 gNVRAMf=nvram.plist
 gNVRAMbuf=$(nvram -x -p)
-gEfiEmuVariableIsPresent=""
-gLegacyEmuVariableIsPresent=""
 gDisk=($(ls /dev/disk? |grep -i -o "disk[0-9]"))
 gESPList=""
 gTurn=""
@@ -65,13 +63,12 @@ let gESPListIndex=0
 # we write this truncate name for more flexible situation
 #
 gEmuVariableName=emuvariable
+gLegacyEmuVariableIsPresent="false"
+gEfiEmuVariableIsPresent="false"
 if [[ `printf "${gNVRAMbuf}" |tr '[:upper:]' '[:lower:]'` == *"${gEmuVariableName}"* ]];
 then
     gEfiEmuVariableIsPresent="true"
-    gLegacyEmuVariableIsPresent="false"
 else
-    gEfiEmuVariableIsPresent="false"
-    gLegacyEmuVariableIsPresent="true"
     gEFIFirmwareVendor=$(LC_ALL=C ioreg -l -pIODeviceTree | sed -nE 's@.*firmware-vendor.*<([0-9a-fA-F]*)>.*@\1@p' | xxd -r -p | tr '[:upper:]' '[:lower:]')
     case "${gEFIFirmwareVendor}" in
         *"clover"* | *"edk ii"* ) gLegacyEmuVariableIsPresent="true"
@@ -87,11 +84,8 @@ gNvramLogPath="${CLOVER_LOG_LOCATION}/rc.shutdown.log"
 #
 [[ "$DEBUG" -ne 0 ]] && set -x
 
-#
-#
 # syscl:
 # note: 80.save.nvram_plist.local will be called twice(one for logout hook? one for CloverDameon?)
-# thus log information will be incorrected
 # use this method to prevent script being called multiple times
 # 2f5fba4136edf285c357254567341958 == syscl
 #
@@ -425,19 +419,12 @@ function _disableESPIndex()
 }
 
 #==================================== START =====================================
-
-#
-# create indicator to prevent script being called multiple times
-#
-#touch "${gTmpRepo}"
-#
-# now, let's get started
-#
-printf "v${gScriptVersion} (c) 2017 syscl/lighting/Yating Zhou/tluck/Sherlocks\n"
 #
 # save NVRAM for legacy Clover and/or for EmuVariable present
 #
 if [[ "${gLegacyEmuVariableIsPresent}" == "true" || "${gEfiEmuVariableIsPresent}" == "true" ]]; then
+    #
+    printf "v${gScriptVersion} (c) 2017 syscl/lighting/Yating Zhou, tluck, Sherlocks\n"
     #
     # find EFIs, added into gESPList
     #
@@ -481,6 +468,5 @@ if [[ "${gLegacyEmuVariableIsPresent}" == "true" || "${gEfiEmuVariableIsPresent}
     fi
 fi
 
-#================================================================================
-
 exit ${RETURN_VAL}
+#================================================================================
