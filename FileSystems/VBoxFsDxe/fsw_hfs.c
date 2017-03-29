@@ -722,7 +722,7 @@ fill_fileinfo (
     {
       HFSPlusCatalogFolder *info = (HFSPlusCatalogFolder *) base;
 
-      finfo->id = be32_to_cpu_ua (&info->folderID);
+      finfo->id = be32_to_cpu_ua ((fsw_u32*)(void*)&info->folderID);
       finfo->type = FSW_DNODE_TYPE_DIR;
       /* @todo: return number of elements, maybe use smth else */
       finfo->size = be32_to_cpu (info->valence); //this is wrong because of deleted entries
@@ -738,7 +738,7 @@ fill_fileinfo (
   case kHFSPlusFileThreadRecord:
     {  //never happen
       HFSPlusCatalogThread *info = (HFSPlusCatalogThread *) base;
-      finfo->id = be32_to_cpu_ua(&info->parentID);
+      finfo->id = be32_to_cpu_ua((fsw_u32*)(void*)&info->parentID);
       finfo->type = FSW_DNODE_TYPE_SPECIAL;
 //      DBG("  CatalogThread\n");
 //      DBG("  folderID=%d\n\n", finfo->id);
@@ -773,7 +773,7 @@ fill_fileinfo (
         finfo->isdirlink = 0; //do nothing for now
       }
       if ((finfo->isfilelink || finfo->isdirlink)/* && !(flags & HFS_LOOKUP_HARDLINK)*/) {
-        finfo->ilink = be32_to_cpu_ua (&info->bsdInfo.special.iNodeNum);
+        finfo->ilink = be32_to_cpu_ua ((fsw_u32*)(void*)&info->bsdInfo.special.iNodeNum);
         if (finfo->type != FSW_DNODE_TYPE_SYMLINK) {
           status = fsw_hfs_dir_lookup_id(vol, finfo->ilink, &tmp_finfo);
           if (!status) {
@@ -813,9 +813,9 @@ fill_fileinfo (
 //      DBG("  fileMode=%x\n", finfo->fileMode);
 //      DBG("  flags=%x\n", flags);
 //      DBG("  fileID=%d\n", finfo->id);
-      finfo->size = be64_to_cpu_ua(&info->dataFork.logicalSize);
+      finfo->size = be64_to_cpu_ua((fsw_u64*)(void*)&info->dataFork.logicalSize);
       finfo->used =
-        LShiftU64 ((fsw_u64)be32_to_cpu_ua (&info->dataFork.totalBlocks),
+        LShiftU64 ((fsw_u64)be32_to_cpu_ua ((fsw_u32*)(void*)&info->dataFork.totalBlocks),
                    vol->block_size_shift);
 //      DBG("file size=%ld, used=%ld\n\n", finfo->size, finfo->used);
 //      if (finfo->size == 0) {
