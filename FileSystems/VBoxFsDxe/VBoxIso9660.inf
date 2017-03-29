@@ -69,7 +69,7 @@
   gEfiMdePkgTokenSpaceGuid.PcdUefiVariableDefaultPlatformLang
 
 [BuildOptions.common]
-  GCC:*_*_*_CC_FLAGS = -O0 -DFSTYPE=iso9660
+  GCC:*_*_*_CC_FLAGS = -O0 -DFSTYPE=iso9660 -Wno-address-of-packed-member
 
   INTEL:*_*_*_CC_FLAGS = -DFSTYPE=iso9660
 

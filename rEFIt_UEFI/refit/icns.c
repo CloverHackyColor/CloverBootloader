@@ -329,10 +329,10 @@ EG_IMAGE * DummyImage(IN UINTN PixelSize)
                 *Ptr++ = 0;
             } else {
                 *Ptr++ = 0;
-                *Ptr++ = 255; //yellow
-                *Ptr++ = 255;
+                *Ptr++ = -1; //yellow
+                *Ptr++ = -1;
             }
-            *Ptr++ = 144;
+            *Ptr++ = -112;
         }
         YPtr += LineOffset;
     }

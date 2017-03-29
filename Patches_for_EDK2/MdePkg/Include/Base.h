@@ -607,17 +607,19 @@ struct _LIST_ENTRY {
  * clang defines __MACH__ if the target is OS X, but not if the target is Windows
  */
 #if defined(__clang__) && !defined(__MACH__) && defined(__x86_64__)
+#define CLANG_VERSION (__clang_major__ * 0x100 + __clang_minor__)
 #ifdef __apple_build_version__      // Apple clang
-#if (__clang_major__ * 0x100 + __clang_minor__) >= 0x703
-// Use __builtin_ms_va_list if Apple clang ver >= 7.3.0
+#if CLANG_VERSION >= 0x0703 && CLANG_VERSION < 0x0801
+// Use __builtin_ms_va_list if Apple clang ver >= 7.3.0 and < 8.1.0
 #define USE_CLANG_BUILTIN_MS_VA_LIST
 #endif
 #else   // Generic clang
-// Use __builtin_ms_va_list if Generic clang ver >= 3.7.0
-#if (__clang_major__ * 0x100 + __clang_minor__) >= 0x307
+// Use __builtin_ms_va_list if Generic clang ver >= 3.7.0 and < 3.9.0
+#if CLANG_VERSION >= 0x0307 && CLANG_VERSION < 0x0309
 #define USE_CLANG_BUILTIN_MS_VA_LIST
 #endif
 #endif  // end Apple/Generic clang
+#undef CLANG_VERSION
 #endif  // end __clang__ && !__MACH__ && __x86_64__
 
 #if defined(__CC_ARM)

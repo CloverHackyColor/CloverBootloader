@@ -1,7 +1,7 @@
 ## @file
 # This file is used to parse meta files
 #
-# Copyright (c) 2008 - 2016, Intel Corporation. All rights reserved.<BR>
+# Copyright (c) 2008 - 2017, Intel Corporation. All rights reserved.<BR>
 # (C) Copyright 2015-2016 Hewlett Packard Enterprise Development LP<BR>
 # This program and the accompanying materials
 # are licensed and made available under the terms and conditions of the BSD License
@@ -852,6 +852,8 @@ class DscParser(MetaFileParser):
 
     SymbolPattern = ValueExpression.SymbolPattern
 
+    IncludedFiles = set()
+
     ## Constructor of DscParser
     #
     #  Initialize object of DscParser
@@ -1493,6 +1495,8 @@ class DscParser(MetaFileParser):
             Owner = self._Content[self._ContentIndex - 1][0]
             Parser = DscParser(IncludedFile1, self._FileType, self._Arch, IncludedFileTable,
                                Owner=Owner, From=Owner)
+
+            self.IncludedFiles.add (IncludedFile1)
 
             # Does not allow lower level included file to include upper level included file
             if Parser._From != Owner and int(Owner) > int (Parser._From):
