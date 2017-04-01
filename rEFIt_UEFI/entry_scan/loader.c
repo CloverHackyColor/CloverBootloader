@@ -189,6 +189,7 @@ UINT8 GetOSTypeFromPath(IN CHAR16 *Path)
   } else if ((StriCmp(Path, L"\\OS X Install Data\\boot.efi") == 0) ||
              (StriCmp(Path, L"\\Mac OS X Install Data\\boot.efi") == 0) ||
              (StriCmp(Path, L"\\macOS Install Data\\boot.efi") == 0) ||
+             (StriCmp(Path, L"\\macOS Install Data\\Locked Files\\Boot Files\\boot.efi") == 0) ||
              (StriCmp(Path, L"\\.IABootFiles\\boot.efi") == 0)) {
     return OSTYPE_OSX_INSTALLER;
   } else if (StriCmp(Path, L"\\com.apple.recovery.boot\\boot.efi") == 0) {
@@ -1156,6 +1157,7 @@ VOID ScanLoader(VOID)
     AddLoaderEntry(L"\\OS X Install Data\\boot.efi", NULL, L"OS X Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
     AddLoaderEntry(L"\\Mac OS X Install Data\\boot.efi", NULL, L"Mac OS X Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
     AddLoaderEntry(L"\\macOS Install Data\\boot.efi", NULL, L"macOS Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
+    AddLoaderEntry(L"\\macOS Install Data\\Locked Files\\Boot Files\\boot.efi", NULL, L"macOS Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
     AddLoaderEntry(L"\\.IABootFiles\\boot.efi", NULL, L"OS X Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
 
     // Use standard location for boot.efi, unless the file /.IAPhysicalMedia is present
