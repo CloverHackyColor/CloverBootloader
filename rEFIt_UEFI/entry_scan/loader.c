@@ -138,6 +138,7 @@ STATIC CONST UINTN AndroidEntryDataCount = (sizeof(AndroidEntryData) / sizeof(AN
 STATIC CHAR16 *OSXInstallerPaths[] = {
   L"\\Mac OS X Install Data\\boot.efi",
   L"\\macOS Install Data\\boot.efi",
+  L"\\macOS Install Data\\Locked Files\\Boot Files\\boot.efi",
   L"\\OS X Install Data\\boot.efi",
   L"\\.IABootFiles\\boot.efi"
 };
