@@ -17,6 +17,7 @@ extern CHAR8	*gLogLineBuffer;
 
 /** Prints log messages to outputs defined by PRINT_TO_* defs in Common.h. */
 VOID
+EFIAPI
 LogPrint(CHAR8 *Format, ...);
 
 /** Called when ExitBootServices() is executed to give loggers a chance

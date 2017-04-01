@@ -67,12 +67,14 @@ Output (
   );
 /*
 UINTN
+EFIAPI
 Print (
   IN CHAR16     *fmt,
   ...
   ); */
 
 UINTN
+EFIAPI
 PrintAt (
   IN UINTN      Column,
   IN UINTN      Row,
@@ -81,6 +83,7 @@ PrintAt (
   );
 /*
 UINTN
+EFIAPI
 SPrint (
   OUT CHAR16    *Str,
   IN UINTN      StrSize,
@@ -89,6 +92,7 @@ SPrint (
   );
 
 UINTN
+EFIAPI
 PrintToken (
   IN UINT16             Token,
   IN EFI_HII_HANDLE     Handle,
@@ -96,6 +100,7 @@ PrintToken (
   );
 
 UINTN
+EFIAPI
 IPrint (
   IN EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL     *Out,
   IN CHAR16                           *fmt,
@@ -111,12 +116,14 @@ VSPrint (
   );
 */
 CHAR16                                *
+EFIAPI
 PoolPrint (
   IN CHAR16                           *fmt,
   ...
   );
 /*
 CHAR16                                *
+EFIAPI
 CatPrint (
   IN OUT POOL_PRINT     *Str,
   IN CHAR16             *fmt,
@@ -124,6 +131,7 @@ CatPrint (
   );
 
 INTN
+EFIAPI
 DbgPrint (
   IN INTN       mask,
   IN CHAR8      *fmt,
@@ -155,6 +163,7 @@ IInput (
   );
 
 UINTN
+EFIAPI
 IPrintAt (
   IN EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL     *Out,
   IN UINTN                            Column,
@@ -164,6 +173,7 @@ IPrintAt (
   );
 /*
 UINTN
+EFIAPI
 APrint (
   IN CHAR8                            *fmt,
   ...

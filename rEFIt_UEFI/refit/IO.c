@@ -294,6 +294,7 @@ Returns:
 }
 
 CHAR16 *
+EFIAPI
 PoolPrint (
   IN CHAR16             *fmt,
   ...
@@ -328,6 +329,7 @@ Returns:
 }
 
 UINTN
+EFIAPI
 PrintAt (
   IN UINTN      Column,
   IN UINTN      Row,
@@ -434,6 +436,7 @@ Returns:
 }
 
 UINTN
+EFIAPI
 IPrint (
   IN EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL     *Out,
   IN CHAR16                           *fmt,
@@ -467,6 +470,7 @@ Returns:
 }
 
 UINTN
+EFIAPI
 IPrintAt (
   IN EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL       *Out,
   IN UINTN                              Column,

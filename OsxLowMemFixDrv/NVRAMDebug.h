@@ -44,4 +44,5 @@ extern EFI_GUID gEfiNVRAMDebugVarGuid;
 
 /** Appends given data to the log and writes it to NVRAM variable. */
 EFI_STATUS
+EFIAPI
 NVRAMDebugLog(CHAR8 *Format, ...);

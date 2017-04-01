@@ -359,6 +359,7 @@ CopyRTVariables (
  Installs EmuVariable runtime var services.
  **/
 EFI_STATUS
+EFIAPI
 EmuVariableControlProtocolInstallEmulation (
   IN EMU_VARIABLE_CONTROL_PROTOCOL  *This
   )
@@ -469,6 +470,7 @@ EmuVariableControlProtocolInstallEmulation (
  Installs original runtime var services.
  **/
 EFI_STATUS
+EFIAPI
 EmuVariableControlProtocolUninstallEmulation (
   IN EMU_VARIABLE_CONTROL_PROTOCOL  *This
   )

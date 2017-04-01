@@ -1709,6 +1709,7 @@ SaveBooterLog (
   );
 
 VOID
+EFIAPI
 DebugLog (
   IN        INTN  DebugMode,
   IN  CONST CHAR8 *FormatString, ...);
@@ -1937,6 +1938,7 @@ GetEfiTimeInMs (IN EFI_TIME *T);
 
 
 EFI_STATUS
+EFIAPI
 LogDataHub (
   EFI_GUID *TypeGuid,
   CHAR16   *Name,
@@ -1945,9 +1947,11 @@ LogDataHub (
   );
 
 EFI_STATUS
+EFIAPI
 SetVariablesForOSX (LOADER_ENTRY *Entry);
 
 VOID
+EFIAPI
 SetupDataForOSX (BOOLEAN Hibernate);
 
 EFI_STATUS

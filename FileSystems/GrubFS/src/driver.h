@@ -49,9 +49,6 @@
 # include <Guid/FileInfo.h>
 # include <Guid/FileSystemVolumeLabelInfo.h>
 
-# define va_list VA_LIST
-# define va_start VA_START
-# define va_end VA_END
 # define Atoi (INTN)StrDecimalToUintn
 # define APrint AsciiPrint
 # define strlena AsciiStrLen
@@ -169,7 +166,7 @@ extern VOID strcpya(CHAR8 *dst, CONST CHAR8 *src);
 extern CHAR8 *strchra(const CHAR8 *s, INTN c);
 extern CHAR8 *strrchra(const CHAR8 *s, INTN c);
 extern VOID SetLogging(VOID);
-extern VOID PrintStatusError(EFI_STATUS Status, const CHAR16 *Format, ...);
+extern VOID EFIAPI PrintStatusError(EFI_STATUS Status, const CHAR16 *Format, ...);
 extern VOID GrubDriverInit(VOID);
 extern VOID GrubDriverExit(VOID);
 extern CHAR16 *GrubGetUuid(EFI_FS *This);

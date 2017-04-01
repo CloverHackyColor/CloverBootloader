@@ -20,6 +20,7 @@ typedef struct {
 
 /** Prints log messages to memory buffer. */
 EFI_STATUS
+EFIAPI
 MemLogPrint(IN MEM_LOG *MemLog, IN CHAR8 *Format, ...);
 
 /** Saves log to Log.txt in the same dir as driver. */

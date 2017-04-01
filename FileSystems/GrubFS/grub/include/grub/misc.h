@@ -35,10 +35,17 @@
 #define free FreePool
 #define malloc AllocateZeroPool
 #define printf_ AsciiPrint
+#if defined(__MACH__) || defined(__ELF__)
+#define va_list __builtin_va_list
+#define va_start __builtin_va_start
+#define va_end __builtin_va_end
+#define va_arg __builtin_va_arg
+#else
 #define va_list VA_LIST
 #define va_start VA_START
 #define va_end VA_END
 #define va_arg VA_ARG
+#endif
 #define memcmp CompareMem
 #define strcpy AsciiStrCpy
 #define memmove CopyMem

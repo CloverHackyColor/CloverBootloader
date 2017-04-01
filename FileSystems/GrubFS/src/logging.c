@@ -46,20 +46,21 @@ INTN LogLevel = DEFAULT_LOGLEVEL;
  * @v ...			Any extra parameters
  */
 VOID
+EFIAPI
 PrintStatusError(EFI_STATUS Status, const CHAR16 *Format, ...)
 {
-	va_list ap;
+	VA_LIST ap;
     CHAR8 *param;
 
 	if (LogLevel < FS_LOGLEVEL_ERROR)
 		return;
 
-	va_start(ap, Format);
+	VA_START(ap, Format);
     while ((param = VA_ARG(ap, CHAR8 *)) != NULL)
     {
       AsciiPrint(param);
     }
-	va_end(ap);
+	VA_END(ap);
 	Print(L": [%d]\n", Status);
 }
 
