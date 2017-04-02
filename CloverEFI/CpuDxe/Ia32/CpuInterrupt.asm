@@ -45,6 +45,7 @@ InitDescriptor PROC C
 InitDescriptor ENDP
 
 ; VOID
+; EFIAPI
 ; InstallInterruptHandler (
 ;     UINTN Vector,
 ;     VOID  (*Handler)(VOID)

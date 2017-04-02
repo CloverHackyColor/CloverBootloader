@@ -61,6 +61,7 @@ ASM_PFX(InitDescriptor):
 
 
 ; VOID
+; EFIAPI
 ; InstallInterruptHandler (
 ;     UINTN Vector,             //6(SP)
 ;     void  (*Handler)(void)    //10(SP)

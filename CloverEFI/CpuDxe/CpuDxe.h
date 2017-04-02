@@ -126,6 +126,7 @@ CpuSetMemoryAttributes(
   );  
 
 VOID
+EFIAPI
 InstallInterruptHandler (
   UINTN Vector,
   VOID  (*Handler)(VOID)
