@@ -5044,9 +5044,9 @@ VOID FixBiosDsdt (UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, 
         DsdtLen = FixAny(temp, DsdtLen,
                          gSettings.PatchDsdtFind[i], gSettings.LenToFind[i],
                          gSettings.PatchDsdtReplace[i], gSettings.LenToReplace[i]);
-  /*      DBG(" OK\n");
+  /*      DBG(" OK\n"); */
       } else {
-        DBG(" disabled\n"); */
+        DBG(" disabled\n"); 
       }
     }
   }

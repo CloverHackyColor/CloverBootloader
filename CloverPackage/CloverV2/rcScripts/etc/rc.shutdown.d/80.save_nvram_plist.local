@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# 2017 (c) syscl/lighting/Yating Zhou, tluck, Sherlocks
+# 2017 (c) syscl/lighting/Yating Zhou, tluck, Sherlocks, lvs1974
 # dump NVRAM for Clover
 #
 # note: msdosfs.kext, exfat.kext should be loaded if 80.save_nvram_plist.local is
@@ -10,7 +10,7 @@
 #================================= GLOBAL VARS ==================================
 
 # Script version info
-gScriptVersion=1.16.2
+gScriptVersion=1.16.3
 
 #
 # The script expects '0.5' but non-US localizations use '0,5' so we export
@@ -341,14 +341,14 @@ function _dumpNVRAM()
         if [ ${RETURN_VAL} == ${kBASHReturnSuccess} ];
         then
             gUtcTimeStamp=$(date -u +%Y%m%d%H%M.%S)
-            touch -t "$gUtcTimeStamp" "${gTarPath}/${gNVRAMf}"
+            touch -t "${gUtcTimeStamp}" "${gTarPath}/${gNVRAMf}"
             printf "${gDmpTimeStamp}  NVRAM: Updated new values in ${gTarPath}/${gNVRAMf}\n"
         else
             printf "${gDmpTimeStamp}  NVRAM: Error during update ${gTarPath}/${gNVRAMf}\n"
         fi
     else
         gUtcTimeStamp=$(date -u +%Y%m%d%H%M.%S)
-        touch -t "$gUtcTimeStamp" "${gTarPath}/${gNVRAMf}"
+        touch -t "${gUtcTimeStamp}" "${gTarPath}/${gNVRAMf}"
         printf "${gDmpTimeStamp}  NVRAM: No change since last update in ${gTarPath}/${gNVRAMf}\n"
     fi
 }
@@ -428,7 +428,7 @@ function _disableESPIndex()
 #
 if [[ "${gLegacyEmuVariableIsPresent}" == "true" || "${gEfiEmuVariableIsPresent}" == "true" ]]; then
     #
-    printf "v${gScriptVersion} (c) 2017 syscl/lighting/Yating Zhou, tluck, Sherlocks\n"
+    printf "v${gScriptVersion} (c) 2017 syscl/lighting/Yating Zhou, tluck, Sherlocks, lvs1974\n"
     #
     # find EFIs, added into gESPList
     #

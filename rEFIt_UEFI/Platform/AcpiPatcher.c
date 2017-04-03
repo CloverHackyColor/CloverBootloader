@@ -502,9 +502,9 @@ VOID PatchAllSSDT()
             SsdtLen = FixAny((UINT8*)(UINTN)ssdt, SsdtLen,
                              gSettings.PatchDsdtFind[i], gSettings.LenToFind[i],
                              gSettings.PatchDsdtReplace[i], gSettings.LenToReplace[i]);
- /*           DBG(" OK\n");
+ /*           DBG(" OK\n"); */
           } else {
-            DBG(" disabled\n"); */
+            DBG(" disabled\n");
           }
         }
       }
