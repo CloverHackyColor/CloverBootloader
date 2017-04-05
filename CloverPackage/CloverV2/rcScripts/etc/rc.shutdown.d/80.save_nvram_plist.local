@@ -1,17 +1,11 @@
 #!/bin/bash
 #
 # 2017 (c) syscl/lighting/Yating Zhou, tluck, Sherlocks, lvs1974
-# dump NVRAM for Clover
+# dump NVRAM for UEFI Clover with EmuVariable or Legacy Clover
 #
-# note: msdosfs.kext, exfat.kext should be loaded if 80.save_nvram_plist.local is
-# called at shutdown stage
-#
-
-#================================= GLOBAL VARS ==================================
-
 # Script version info
-gScriptVersion=1.16.3
-
+gScriptVersion=1.16.4
+#================================= GLOBAL VARS ==================================
 #
 # The script expects '0.5' but non-US localizations use '0,5' so we export
 # LC_NUMERIC here (for the duration of the 80.save_nvram_plist.local) to prevent errors
@@ -49,22 +43,17 @@ fi
 #
 # Variables
 #
-gDmpTimeStamp=""
 gNVRAMf=nvram.plist
 gNVRAMbuf=$(nvram -x -p)
+gNVRAMLogPath="${CLOVER_LOG_LOCATION}/rc.shutdown.log"
 gDisk=($(ls /dev/disk? |grep -i -o "disk[0-9]"))
 gESPList=""
-gTurn=""
-#
-# ESP list index
-#
-let gESPListIndex=0
-#
-# we write this truncate name for more flexible situation
-#
-gEmuVariableName=emuvariable
+gESPListIndex=0
+gTurn=0
+gEmuVariableName=emuvariable # use a truncated name for comparison
 gLegacyEmuVariableIsPresent="false"
 gEfiEmuVariableIsPresent="false"
+
 if [[ `printf "${gNVRAMbuf}" |tr '[:upper:]' '[:lower:]'` == *"${gEmuVariableName}"* ]];
 then
     gEfiEmuVariableIsPresent="true"
@@ -77,7 +66,6 @@ else
                                   ;;
     esac
 fi
-gNvramLogPath="${CLOVER_LOG_LOCATION}/rc.shutdown.log"
 
 #
 # Debug mode?
@@ -116,9 +104,9 @@ function _findESP()
     for ((i=0; i<${#gDisk[@]}; ++i))
     do
       gPartIndex=$(gpt -r show "/dev/${gDisk[i]}" 2> /dev/null |grep -i "${gEfiUID}" |awk '{print $3}')
-      gDmpTimeStamp=$(date +%Y-%m-%d-%H:%M:%S)
+      gLogTimeStamp=$(date +%Y-%m-%d-%H:%M:%S)
       case "${gPartIndex}" in
-      [[:digit:]]* ) printf "${gDmpTimeStamp}  ${gDisk[i]}: ESP --"
+      [[:digit:]]* ) printf "${gLogTimeStamp}  ${gDisk[i]}: ESP --"
                      local gESP="${gDisk[i]}s${gPartIndex}"
                      local gMountPoint=$(_mountESP ${gESP})
                      if [[ "$gMountPoint" != *"fail"* ]];
@@ -146,7 +134,7 @@ function _findESP()
                          printf "**** ${gESP} ${gMountPoint}\n"
                      fi
                      ;;
-      *            ) printf "${gDmpTimeStamp}  ${gDisk[i]}: ------ Ignored -- No ESP on disk\n"
+      *            ) printf "${gLogTimeStamp}  ${gDisk[i]}: ------ Ignored -- No ESP on disk\n"
                      ;;
       esac
     done
@@ -243,12 +231,12 @@ function _mountESP()
             #
             # we encounter mount issue, umount it
             #
-            gDmpTimeStamp=$(date +%Y-%m-%d-%H:%M:%S)
+            gLogTimeStamp=$(date +%Y-%m-%d-%H:%M:%S)
             gDevUmountErr=$(umount ${gDevESP} 2>&1)
             gUmountMPErr=$(umount ${gAssignMountPoint} 2>&1)
             if [[ "${gDevUmountErr}" == *"diskutil unmount"* ]]; then
-                printf "${gDmpTimeStamp}  Device unmount error ${gDevUmountErr}\n"
-                printf "${gDmpTimeStamp}  Now use umount again to release it\n"
+                printf "${gLogTimeStamp}  Device unmount error ${gDevUmountErr}\n"
+                printf "${gLogTimeStamp}  Now use umount again to release it\n"
                 gDevUmountErr=$(umount ${gDevESP} 2>&1)
             fi
             sleep 0
@@ -329,7 +317,8 @@ function _dumpNVRAM()
     local gTarPath="$1"
     local gOldNVRAM=$(cat "${gTarPath}/${gNVRAMf}" 2>&1)
     RETURN_VAL=${kBASHReturnSuccess}
-    gDmpTimeStamp=$(date -u +%Y-%m-%d-%H:%M:%S)
+    gLogTimeStamp=$(date +%Y-%m-%d-%H:%M:%S)
+    gUtcTimeStamp=$(date -u +%Y%m%d%H%M.%S)
     if [[ "${gOldNVRAM}" != "${gNVRAMbuf}" ]];
     then
         #
@@ -340,16 +329,14 @@ function _dumpNVRAM()
         printf "${gNVRAMbuf}" >"${gTarPath}/${gNVRAMf}" 2>&1 && RETURN_VAL=${kBASHReturnSuccess} || RETURN_VAL=${kBASHReturnFailure};
         if [ ${RETURN_VAL} == ${kBASHReturnSuccess} ];
         then
-            gUtcTimeStamp=$(date -u +%Y%m%d%H%M.%S)
             touch -t "${gUtcTimeStamp}" "${gTarPath}/${gNVRAMf}"
-            printf "${gDmpTimeStamp}  NVRAM: Updated new values in ${gTarPath}/${gNVRAMf}\n"
+            printf "${gLogTimeStamp}  NVRAM: Updated new values in ${gTarPath}/${gNVRAMf}\n"
         else
-            printf "${gDmpTimeStamp}  NVRAM: Error during update ${gTarPath}/${gNVRAMf}\n"
+            printf "${gLogTimeStamp}  NVRAM: Error during update ${gTarPath}/${gNVRAMf}\n"
         fi
     else
-        gUtcTimeStamp=$(date -u +%Y%m%d%H%M.%S)
         touch -t "${gUtcTimeStamp}" "${gTarPath}/${gNVRAMf}"
-        printf "${gDmpTimeStamp}  NVRAM: No change since last update in ${gTarPath}/${gNVRAMf}\n"
+        printf "${gLogTimeStamp}  NVRAM: No change since last update in ${gTarPath}/${gNVRAMf}\n"
     fi
 }
 
@@ -409,14 +396,15 @@ function _disableESPIndex()
         #
         # Spotlight index is enable, now we turn it off
         #
+        gLogTimeStamp=$(date +%Y-%m-%d-%H:%M:%S)
         if [[ "${gIndexFile}" != "/.metadata_never_index" ]]; 
         then
-            printf "${gDmpTimeStamp}  Disabling indexing on ${MountPoint}\n"
+            printf "${gLogTimeStamp}  Disabling indexing on ${MountPoint}\n"
             touch "${gIndexFile}"
         fi
         if [[ "${gSpotLight}" != "/.Spotlight-V100" ]]; 
         then
-            printf "${gDmpTimeStamp}  Remove SpotLight indexing on ${MountPoint}\n"
+            printf "${gLogTimeStamp}  Remove SpotLight indexing on ${MountPoint}\n"
             /bin/rm -rf "${gSpotLight}"
         fi
     fi
@@ -441,13 +429,13 @@ if [[ "${gLegacyEmuVariableIsPresent}" == "true" || "${gEfiEmuVariableIsPresent}
     # mount ESP with Clover - otherwise write to root if no ESP
     # then dump NVRAM to target path
     #
+    gLogTimeStamp=$(date +%Y-%m-%d-%H:%M:%S)
     if [ "${#gESPList[@]}" -eq 0 ];
     then
         #
         # no ESP found, write file to root(/) just in case
         #
-        gDmpTimeStamp=$(date +%Y-%m-%d-%H:%M:%S)
-        printf "${gDmpTimeStamp}  No ESP found or mounted\n"
+        printf "${gLogTimeStamp}  No ESP found or mounted\n"
         _dumpNVRAM /
     else
         #
