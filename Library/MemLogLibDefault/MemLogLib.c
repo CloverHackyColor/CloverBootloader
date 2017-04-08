@@ -208,7 +208,7 @@ MemLogInit (
                                                    );
   MemLog(TRUE, 1, "MemLog inited, TSC freq: %ld\n", mMemLog->TscFreqSec);
   if (InitError[0] != '\0') {
-    MemLog(TRUE, 1, "MemLog was calibrated without ACPI PM Timer: %a\n", InitError);
+    MemLog(TRUE, 1, "CPU was calibrated without ACPI PM Timer: %a, use RTC\n", InitError);
   }
   return Status;
 }
