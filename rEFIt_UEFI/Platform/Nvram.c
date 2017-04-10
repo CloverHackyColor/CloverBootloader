@@ -823,6 +823,8 @@ PutNvramPlistToRtVars ()
     
     Value  = NULL;
     ValTag = (TagPtr)Tag->tag;
+
+    EFI_GUID *VendorGuid = &gEfiAppleBootGuid;
     
     // process only valid <key> tags
     if (Tag->type != kTagTypeKey || ValTag == NULL) {
@@ -841,12 +843,19 @@ PutNvramPlistToRtVars ()
     } else if (AsciiStrCmp (Tag->string, "EmuVariableUefiPresent") == 0) {
       DBG (" Skipping EmuVariableUefiPresent\n");
       continue;
+    } else if (AsciiStrCmp (Tag->string, "aapl,panic-info") == 0) {
+        DBG (" Skipping aapl,panic-info\n");
+        continue;
     }
 
     // key to unicode; check if key buffer is large enough
     if (AsciiStrLen (Tag->string) > (sizeof(KeyBuf) / 2 - 1)) {
       DBG (" ERROR: Skipping too large key %s\n", Tag->string);
       continue;
+    }
+
+    if (AsciiStrCmp (Tag->string, "Boot0082") == 0 || AsciiStrCmp (Tag->string, "BootNext") == 0) {
+        VendorGuid = &gEfiGlobalVariableGuid;
     }
 
     AsciiStrToUnicodeStrS(Tag->string, KeyBuf, 128);
@@ -887,7 +896,7 @@ PutNvramPlistToRtVars ()
     // set RT var: all vars visible in nvram.plist are gEfiAppleBootGuid
 /*   Status = gRS->SetVariable (
                     KeyBuf,
-                    &gEfiAppleBootGuid,
+                    VendorGuid,
                     EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                     Size,
                     Value
@@ -895,7 +904,7 @@ PutNvramPlistToRtVars ()
 
     SetNvramVariable (
                       KeyBuf,
-                      &gEfiAppleBootGuid,
+                      VendorGuid,
                       EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                       Size,
                       Value
