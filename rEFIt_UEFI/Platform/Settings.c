@@ -2185,55 +2185,49 @@ FillinCustomTool (
   return TRUE;
 }
 
+// EDID code was rewritten by Sherlocks
 VOID
 GetEDIDSettings(TagPtr DictPointer)
 {
   TagPtr Prop, Dict2;
   UINTN j = 128;
-  //InjectEDID old way, keep for compatibility
-  Prop = GetProperty (DictPointer, "InjectEDID");
-  gSettings.InjectEDID = IsPropertyTrue(Prop);
   
-  Prop = GetProperty (DictPointer, "CustomEDID");
-  if (Prop != NULL) {    
-    gSettings.CustomEDID   = GetDataSetting (DictPointer, "CustomEDID", &j);
-    if ((j % 128) != 0) {
-      DBG ("CustomEDID has wrong length=%d\n", j);
-    } else {
-      DBG ("CustomEDID ok\n");
-//      gSettings.InjectEDID = TRUE;
-      InitializeEdidOverride ();
-    }
-  }
-  //InjectEDID new way
   Dict2 = GetProperty (DictPointer, "EDID");
   if (Dict2 != NULL) {
     Prop = GetProperty (Dict2, "Inject");
-    gSettings.InjectEDID = IsPropertyTrue(Prop); //default = false!
+    gSettings.InjectEDID = IsPropertyTrue(Prop); // default = false!
     
-    Prop = GetProperty (Dict2, "Custom");
-    if (Prop != NULL) {
-      gSettings.CustomEDID   = GetDataSetting(Dict2, "Custom", &j);
-      if ((j % 128) != 0) {
-        DBG ("CustomEDID has wrong length=%d\n", j);
-      } else {
-        DBG ("CustomEDID ok\n");
- //       gSettings.InjectEDID = TRUE;
-        InitializeEdidOverride();
+    if (gSettings.InjectEDID){
+      //DBG ("Inject EDID\n");
+      Prop = GetProperty (Dict2, "Custom");
+      if (Prop != NULL) {
+        gSettings.CustomEDID   = GetDataSetting(Dict2, "Custom", &j);
+        if ((j % 128) != 0) {
+          DBG (" Custom EDID has wrong length=%d\n", j);
+        } else {
+          DBG (" Custom EDID is ok\n");
+          InitializeEdidOverride();
+        }
+      }
+      else{
+        //DBG (" No Custom EDID\n");
+      }
+      
+      Prop = GetProperty (Dict2, "VendorID");
+      if (Prop) {
+        gSettings.VendorEDID = (UINT16)GetPropertyInteger(Prop, gSettings.VendorEDID);
+        //DBG("  VendorID = 0x%04lx\n", gSettings.VendorEDID);
+      }
+      
+      Prop = GetProperty (Dict2, "ProductID");
+      if (Prop) {
+        gSettings.ProductEDID = (UINT16)GetPropertyInteger(Prop, gSettings.ProductEDID);
+        //DBG("  ProductID = 0x%04lx\n", gSettings.ProductEDID);
       }
     }
-    
-    Prop = GetProperty (Dict2, "VendorID");
-    if (Prop) {
-      gSettings.VendorEDID = (UINT16)GetPropertyInteger(Prop, gSettings.VendorEDID);
-//      gSettings.InjectEDID = TRUE;
+    else {
+      //DBG ("Not Inject EDID\n");
     }
-        
-    Prop = GetProperty (Dict2, "ProductID");
-    if (Prop) {
-      gSettings.ProductEDID = (UINT16)GetPropertyInteger(Prop, gSettings.ProductEDID);
-//      gSettings.InjectEDID = TRUE;
-    }    
   }
 }
 
@@ -6306,7 +6300,7 @@ SetDevices (
                   if (gSettings.InjectIntel) {
                     TmpDirty    = setup_gma_devprop(&PCIdevice);
                     StringDirty |=  TmpDirty;
-                    MsgLog ("Intel GFX revision  =0x%x\n", PCIdevice.revision);
+                    MsgLog ("Intel GFX revision  = 0x%x\n", PCIdevice.revision);
                   } else {
                     MsgLog ("Intel GFX injection not set\n");
                   }
