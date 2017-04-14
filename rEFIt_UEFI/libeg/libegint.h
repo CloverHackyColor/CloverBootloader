@@ -95,7 +95,7 @@ extern UINT8 emb_checkbox_checked[];
 #define SZ_emb_selection_small 180
 #define SZ_emb_vol_internal 918
 #define SZ_emb_vol_internal_booter 1081
-#define SZ_emb_vol_internal_hfs 923
+#define SZ_emb_vol_internal_hfs 924
 #define SZ_emb_vol_internal_ntfs 935
 #define SZ_emb_vol_internal_ext 947
 #define SZ_emb_vol_internal_recovery 845

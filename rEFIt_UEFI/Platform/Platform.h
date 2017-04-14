@@ -818,7 +818,6 @@ struct SYSVARIABLES
 //
 #define REMAP_SMBIOS_TABLE_GUID { 0xeb9d2d35, 0x2d88, 0x11d3, {0x9a, 0x16, 0x0, 0x90, 0x27, 0x3f, 0xc1, 0x4d } }
 
-BOOLEAN                  gRemapSmBiosIsRequire;  // syscl: pass argument for Dell SMBIOS here
 
 typedef struct {
 
@@ -1656,6 +1655,8 @@ extern CHAR16                         *IconFormat;
 extern CHAR16                         *gFirmwareRevision;
 
 extern BOOLEAN                        ResumeFromCoreStorage;
+extern BOOLEAN                        gRemapSmBiosIsRequire;  // syscl: pass argument for Dell SMBIOS here
+
 
 //-----------------------------------
 

@@ -66,6 +66,7 @@ UINT16                          dropDSM;
 
 BOOLEAN                         GetLegacyLanAddress;
 BOOLEAN                         ResumeFromCoreStorage;
+BOOLEAN                         gRemapSmBiosIsRequire;
 
 
 GUI_ANIME                       *GuiAnime                   = NULL;

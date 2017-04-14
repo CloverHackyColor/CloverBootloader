@@ -72,11 +72,11 @@ CHAR16 *gFirmwareRevision = NULL;
 BOOLEAN                 gGuiIsReady = FALSE;
 BOOLEAN                 gThemeNeedInit = TRUE;
 BOOLEAN                 DoHibernateWake = FALSE;
-EFI_HANDLE              gImageHandle;
-EFI_SYSTEM_TABLE*       gST;
-EFI_BOOT_SERVICES*      gBS;
+//extern EFI_HANDLE              gImageHandle;
+//extern EFI_SYSTEM_TABLE*       gST;
+//extern EFI_BOOT_SERVICES*      gBS;
+//extern EFI_DXE_SERVICES*       gDS;
 EFI_RUNTIME_SERVICES*   gRS;
-EFI_DXE_SERVICES*       gDS;
 
 DRIVERS_FLAGS gDriversFlags = {FALSE, FALSE, FALSE, FALSE, FALSE, FALSE};  //the initializer is not needed for global variables
 
