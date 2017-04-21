@@ -539,7 +539,7 @@ checkCmdlineArguments() {
 ## Check tools for the toolchain
 checkToolchain() {
     case "$TOOLCHAIN" in
-        XCLANG|XCODE32|XCODE5) checkXcode ;;
+        XCLANG|XCODE*) checkXcode ;;
     esac
 }
 
