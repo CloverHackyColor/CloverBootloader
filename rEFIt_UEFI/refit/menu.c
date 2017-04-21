@@ -348,7 +348,7 @@ VOID FillInputs(BOOLEAN New)
       if (New) {
         InputItems[InputItemsCount].SValue = AllocateZeroPool(20);
       }
-      UnicodeSPrint(InputItems[InputItemsCount++].SValue, 20, L"%08lx", gSettings.IgPlatform);
+      UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.IgPlatform);
  //     InputItemsCount += 3;
  //     continue;
     }
@@ -803,6 +803,7 @@ VOID ApplyInputs(VOID)
       } else if (gGraphics[j].Vendor == Intel) {
         //ig-platform-id for Ivy+ and snb-platform-id for Sandy
         gSettings.IgPlatform = (UINT32)StrHexToUint64(InputItems[i].SValue);
+        DBG("applied *-platform-id=0x%x\n", gSettings.IgPlatform);
       }
     }
 

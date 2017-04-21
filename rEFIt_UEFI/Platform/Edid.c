@@ -107,7 +107,7 @@ EFI_STATUS GetEdidDiscovered(VOID)
         gSettings.CustomEDID = gEDID;
         
         if (!GlobalConfig.DebugLog) {
-          MsgLog("        |  EDID Table\n");
+          MsgLog("------- EDID Table\n");
           for (i=0; i<N; i+=10) {
             MsgLog("%03d  |", i);
             for (j=0; j<10; j++) {
@@ -128,7 +128,7 @@ EFI_STATUS GetEdidDiscovered(VOID)
           gSettings.CustomEDID = gEDID;
           
           if (!GlobalConfig.DebugLog) {
-            MsgLog("        |  New EDID Table\n");
+            MsgLog("------- New EDID Table\n");
             for (i=0; i<N; i+=10) {
               MsgLog("%03d  |", i);
               for (j=0; j<10; j++) {
@@ -147,7 +147,7 @@ EFI_STATUS GetEdidDiscovered(VOID)
           gSettings.CustomEDID = gEDID;
           
           if (!GlobalConfig.DebugLog) {
-            MsgLog("        |  New EDID Table\n");
+            MsgLog("------- New EDID Table\n");
             for (i=0; i<N; i+=10) {
               MsgLog("%03d  |", i);
               for (j=0; j<10; j++) {
@@ -166,7 +166,7 @@ EFI_STATUS GetEdidDiscovered(VOID)
           gSettings.CustomEDID = gEDID;
           
           if (!GlobalConfig.DebugLog) {
-            MsgLog("        |  New EDID Table\n");
+            MsgLog("------- New EDID Table\n");
             for (i=0; i<N; i+=10) {
               MsgLog("%03d  |", i);
               for (j=0; j<10; j++) {
@@ -185,7 +185,7 @@ EFI_STATUS GetEdidDiscovered(VOID)
           //MsgLog("    Custom EDID Checksum is ok\n");
           
           if (!GlobalConfig.DebugLog) {
-            MsgLog("        |  Custom EDID Table\n");
+            MsgLog("------- Custom EDID Table\n");
             for (i=0; i<N; i+=10) {
               MsgLog("%03d  |", i);
               for (j=0; j<10; j++) {
@@ -205,7 +205,7 @@ EFI_STATUS GetEdidDiscovered(VOID)
           //MsgLog("    Custom EDID Checksum is ok\n");
           
           if (!GlobalConfig.DebugLog) {
-            MsgLog("        |  Custom EDID table with fixed Checksum\n");
+            MsgLog("------- Custom EDID Table with fixed Checksum\n");
             for (i=0; i<N; i+=10) {
               MsgLog("%03d  |", i);
               for (j=0; j<10; j++) {
@@ -226,7 +226,7 @@ EFI_STATUS GetEdidDiscovered(VOID)
           ((UINT8*)gSettings.CustomEDID)[127] = (UINT8)(256 - Checksum8(gSettings.CustomEDID, 127));
           
           if (!GlobalConfig.DebugLog) {
-            MsgLog("        |  New Custom EDID Table\n");
+            MsgLog("------- New Custom EDID Table\n");
             for (i=0; i<N; i+=10) {
               MsgLog("%03d  |", i);
               for (j=0; j<10; j++) {
@@ -244,7 +244,7 @@ EFI_STATUS GetEdidDiscovered(VOID)
           ((UINT8*)gSettings.CustomEDID)[127] = (UINT8)(256 - Checksum8(gSettings.CustomEDID, 127));
           
           if (!GlobalConfig.DebugLog) {
-            MsgLog("        |  New Custom EDID Table\n");
+            MsgLog("------- New Custom EDID Table\n");
             for (i=0; i<N; i+=10) {
               MsgLog("%03d  |", i);
               for (j=0; j<10; j++) {
@@ -262,7 +262,7 @@ EFI_STATUS GetEdidDiscovered(VOID)
           ((UINT8*)gSettings.CustomEDID)[127] = (UINT8)(256 - Checksum8(gSettings.CustomEDID, 127));
           
           if (!GlobalConfig.DebugLog) {
-            MsgLog("        |  New Custom EDID Table\n");
+            MsgLog("------- New Custom EDID Table\n");
             for (i=0; i<N; i+=10) {
               MsgLog("%03d  |", i);
               for (j=0; j<10; j++) {
@@ -282,7 +282,7 @@ EFI_STATUS GetEdidDiscovered(VOID)
       gSettings.CustomEDID = gEDID;
       
       if (!GlobalConfig.DebugLog) {
-        MsgLog("        |  EDID Table\n");
+        MsgLog("------- EDID Table\n");
         for (i=0; i<N; i+=10) {
           MsgLog("%03d  |", i);
           for (j=0; j<10; j++) {
