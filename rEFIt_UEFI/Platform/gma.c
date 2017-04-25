@@ -294,19 +294,10 @@ UINT8 skylake_hd_vals[8][4] = {
 };
 
 
-UINT8 OsInfo[20]  = {
+// The following values came from MacBookPro6,1
+UINT8 mbp_HD_os_info[20]  = {
   0x30, 0x49, 0x01, 0x11, 0x01, 0x10, 0x08, 0x00, 0x00, 0x01,
   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0xFF, 0xFF
-};
-
-UINT8 HD2000_tbl_info[18] = {
-  0x30, 0x44, 0x02, 0x02, 0x02, 0x02, 0x00, 0x00, 0x00,
-  0x00, 0x01, 0x02, 0x02, 0x02, 0x00, 0x01, 0x02, 0x02
-};
-
-UINT8 HD2000_os_info[20] = {
-  0x30, 0x49, 0x01, 0x11, 0x11, 0x11, 0x08, 0x00, 0x00, 0x01,
-  0xf0, 0x1f, 0x01, 0x00, 0x00, 0x00, 0x10, 0x07, 0x00, 0x00
 };
 
 // The following values came from MacBookAir4,1
@@ -347,58 +338,58 @@ UINT8 mn_HD3000_os_info[20] = {
 
 
 static struct gma_gpu_t KnownGPUS[] = {
-  
+
   //============== 1st generation ============
   //----------------Auburn--------------------
   { 0x7800, "Intel 740"                      }, // Desktop - Intel 740 GMCH Express Chipset Family
-  
+
   //----------------Portola-------------------
   { 0x1240, "Intel 752"                      }, // Desktop - Intel 752 GMCH Express Chipset Family
-  
+
   //----------------Whitney-------------------
   { 0x7121, "Intel 3D graphics 810"          }, // Desktop - Intel 810 GMCH Express Chipset Family
   { 0x7123, "Intel 3D graphics 810"          }, // Desktop - Intel 810-DC100 GMCH Express Chipset Family
   { 0x7125, "Intel 3D graphics 810"          }, // Desktop - Intel 810E GMCH Express Chipset Family
-  
+
   //----------------Solano--------------------
   { 0x1132, "Intel 3D graphics 815"          }, // Desktop - Intel 815 GMCH Express Chipset Family
-  
-  
+
+
   //============== 2nd generation ============
   //----------------Almador-------------------
   { 0x3577, "Intel Extreme Graphics 830"     }, // Mobile - Intel 830M GMCH Express Chipset Family
   { 0x357B, "Intel Extreme Graphics 835"     }, // Desktop - Intel 835G GMCH Express Chipset Family
-  
+
   //----------------Brookdale-----------------
   { 0x2562, "Intel Extreme Graphics 845"     }, // Desktop - Intel 845G GMCH Express Chipset Family
-  
+
   //----------------Montara-------------------
   { 0x358E, "Intel Extreme Graphics 2 854"   }, // Mobile - Intel 852GM/855GM GMCH Express Chipset Family
   { 0x3582, "Intel Extreme Graphics 2 855"   }, // Mobile - Intel 852GM/855GM GMCH Express Chipset Family
-  
+
   //----------------Springdale----------------
   { 0x2572, "Intel Extreme Graphics 2 865"   }, // Desktop - Intel 865G Express Chipset Family
-  
-  
+
+
   //============== 3rd generation ============
   //----------------Grantsdale----------------
   { 0x2582, "Intel GMA 900"                  }, // Desktop - Intel 915G Express Chipset Family
   { 0x258A, "Intel GMA 900"                  }, // Desktop - Intel 915GM Express Chipset Family
   { 0x2782, "Intel GMA 900"                  }, // Desktop - Intel 915GV Express Chipset Family
-  
+
   //----------------Alviso--------------------
   { 0x2592, "Intel GMA 900"                  }, // Mobile - Intel 82915GM/GMS, 910GML Express Chipset Family
   { 0x2792, "Intel GMA 900"                  }, // Mobile - Intel 82915GM/GMS, 910GML Express Chipset Family
-  
+
   //----------------Lakeport------------------
   { 0x2772, "Intel GMA 950"                  }, // Desktop - Intel 82945G Express Chipset Family
   { 0x2776, "Intel GMA 950"                  }, // Desktop - Intel 82945G Express Chipset Family
-  
+
   //----------------Calistoga-----------------
   { 0x27A2, "Intel GMA 950"                  }, // Mobile - Intel 945GM Express Chipset Family - MacBook1,1, MacBook2,1
   { 0x27A6, "Intel GMA 950"                  }, // Mobile - Intel 945GM Express Chipset Family
   { 0x27AE, "Intel GMA 950"                  }, // Mobile - Intel 945GM Express Chipset Family
-  
+
   //----------------Bearlake------------------
   { 0x29B2, "Intel GMA 3100"                 }, // Desktop - Intel Q35 Express Chipset Family
   { 0x29B3, "Intel GMA 3100"                 }, // Desktop - Intel Q35 Express Chipset Family
@@ -406,35 +397,35 @@ static struct gma_gpu_t KnownGPUS[] = {
   { 0x29C3, "Intel GMA 3100"                 }, // Desktop - Intel G33/G31 Express Chipset Family
   { 0x29D2, "Intel GMA 3100"                 }, // Desktop - Intel Q33 Express Chipset Family
   { 0x29D3, "Intel GMA 3100"                 }, // Desktop - Intel Q33 Express Chipset Family
-  
+
   //----------------Pineview------------------
   { 0xA001, "Intel GMA 3150"                 }, // Nettop - Intel NetTop Atom D410
   { 0xA002, "Intel GMA 3150"                 }, // Nettop - Intel NetTop Atom D510
   { 0xA011, "Intel GMA 3150"                 }, // Netbook - Intel NetBook Atom N4x0
   { 0xA012, "Intel GMA 3150"                 }, // Netbook - Intel NetBook Atom N4x0
-  
-  
+
+
   //============== 4th generation ============
   //----------------Lakeport------------------
   { 0x2972, "Intel GMA 3000"                 }, // Desktop - Intel 946GZ Express Chipset Family
   { 0x2973, "Intel GMA 3000"                 }, // Desktop - Intel 946GZ Express Chipset Family
-  
+
   //----------------Broadwater----------------
   { 0x2992, "Intel GMA 3000"                 }, // Desktop - Intel Q965/Q963 Express Chipset Family
   { 0x2993, "Intel GMA 3000"                 }, // Desktop - Intel Q965/Q963 Express Chipset Family
   { 0x29A2, "Intel GMA X3000"                }, // Desktop - Intel G965 Express Chipset Family
   { 0x29A3, "Intel GMA X3000"                }, // Desktop - Intel G965 Express Chipset Family
-  
+
   //----------------Crestline-----------------
   { 0x2A02, "Intel GMA X3100"                }, // Mobile - Intel 965 Express Chipset Family - MacBook3,1, MacBook4,1, MacbookAir1,1
   { 0x2A03, "Intel GMA X3100"                }, // Mobile - Intel 965 Express Chipset Family
   { 0x2A12, "Intel GMA X3100"                }, // Mobile - Intel 965 Express Chipset Family
   { 0x2A13, "Intel GMA X3100"                }, // Mobile - Intel 965 Express Chipset Family
-  
+
   //----------------Bearlake------------------
   { 0x2982, "Intel GMA X3500"                }, // Desktop - Intel G35 Express Chipset Family
   { 0x2983, "Intel GMA X3500"                }, // Desktop - Intel G35 Express Chipset Family
-  
+
   //----------------Eaglelake-----------------
   { 0x2E02, "Intel GMA 4500"                 }, // Desktop - Intel 4 Series Express Chipset Family
   { 0x2E03, "Intel GMA 4500"                 }, // Desktop - Intel 4 Series Express Chipset Family
@@ -448,18 +439,18 @@ static struct gma_gpu_t KnownGPUS[] = {
   { 0x2E33, "Intel GMA X4500"                }, // Desktop - Intel G45/G43 Express Chipset Family
   { 0x2E22, "Intel GMA X4500"                }, // Mobile - Intel G45/G43 Express Chipset Family
   { 0x2E23, "Intel GMA X4500HD"              }, // Mobile - Intel G45/G43 Express Chipset Family
-  
+
   //----------------Cantiga-------------------
   { 0x2A42, "Intel GMA X4500MHD"             }, // Mobile - Intel 4 Series Express Chipset Family
   { 0x2A43, "Intel GMA X4500MHD"             }, // Mobile - Intel 4 Series Express Chipset Family
-  
-  
+
+
   //============== 5th generation ============
   //----------------Ironlake------------------
   { 0x0042, "Intel HD Graphics"              }, // Desktop - Clarkdale
   { 0x0046, "Intel HD Graphics"              }, // Mobile - Arrandale - MacBookPro6,1
-  
-  
+
+
   //============== 6th generation ============
   //----------------Sandy bridge--------------
   //GT1
@@ -471,8 +462,8 @@ static struct gma_gpu_t KnownGPUS[] = {
   { 0x0116, "Intel HD Graphics 3000"         }, // Mobile - MacBookAir4,1, MacBookAir4,2, MacBookPro8,2
   { 0x0122, "Intel HD Graphics 3000"         }, // Desktop
   { 0x0126, "Intel HD Graphics 3000"         }, // Mobile - MacBookPro8,1 Macmini5,1, Macmini5,2, Macmini5,3
-  
-  
+
+
   //============== 7th generation ============
   //----------------Ivy bridge----------------
   //GT1
@@ -489,8 +480,8 @@ static struct gma_gpu_t KnownGPUS[] = {
   { 0x0172, "Intel HD Graphics 2500"         }, //
   //GT5
   { 0x0176, "Intel HD Graphics 2500"         }, //
-  
-  
+
+
   //============== 7.5th generation ==========
   //----------------Haswell-------------------
   //GT1
@@ -565,8 +556,8 @@ static struct gma_gpu_t KnownGPUS[] = {
   { 0x0D2A, "Intel Haswell GT3"              }, // Server CRW
   { 0x0D2B, "Intel Haswell GT3"              }, // CRW
   { 0x0D2E, "Intel Haswell GT3"              }, // CRW
-  
-  
+
+
   //============== 8th generation ============
   //----------------Broadwell-----------------
   //GT1
@@ -596,8 +587,8 @@ static struct gma_gpu_t KnownGPUS[] = {
   { 0x163B, "Intel Broadwell GT3"            }, //
   { 0x163D, "Intel Broadwell GT3"            }, //
   { 0x163E, "Intel Broadwell GT3"            }, //
-  
-  
+
+
   //============== 9th generation ============
   //----------------Skylake-------------------
   //GT1
@@ -630,8 +621,8 @@ static struct gma_gpu_t KnownGPUS[] = {
   { 0x193A, "Intel Iris Pro Graphics P580"   }, // Workstation, Mobile Workstation
   { 0x193B, "Intel Iris Pro Graphics 580"    }, // Desktop, Mobile
   { 0x193D, "Intel Iris Pro Graphics P580"   }, // Workstation, Mobile Workstation
-  
-  
+
+
   //============== 9.5th generation ==========
   //----------------Kabylake------------------
   //GT1
@@ -660,20 +651,20 @@ static struct gma_gpu_t KnownGPUS[] = {
   { 0x5927, "Intel Iris Pro Graphics 650"    }, //
   //GT4
   { 0x593B, "Intel Kabylake GT4"             }, //
-  
+
 };
 
 
 CHAR8 *get_gma_model(UINT16 id)
 {
-	INT32 i;
-	
-	for (i = 0; i < (sizeof(KnownGPUS) / sizeof(KnownGPUS[0])); i++)
-	{
-		if (KnownGPUS[i].device == id)
-			return KnownGPUS[i].name;
-	}
-	return KnownGPUS[0].name;
+  INT32 i;
+
+  for (i = 0; i < (sizeof(KnownGPUS) / sizeof(KnownGPUS[0])); i++)
+  {
+    if (KnownGPUS[i].device == id)
+      return KnownGPUS[i].name;
+  }
+  return KnownGPUS[0].name;
 }
 
 
@@ -684,20 +675,20 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
   CHAR8           *devicepath;
   CHAR8           *model;
   DevPropDevice   *device;
-	UINT8           BuiltIn = 0x00;
+  UINT8           BuiltIn = 0x00;
   UINT32			FakeID;
   UINT32          DualLink = 0;
   BOOLEAN         Injected = FALSE;
   BOOLEAN         SetFake = FALSE;
   BOOLEAN         SetSnb = FALSE;
   BOOLEAN         SetIg = FALSE;
-  
+
   MACHINE_TYPES   MacModel = GetModelFromString(gSettings.ProductName);
-  
-	devicepath = get_pci_dev_path(gma_dev);
-  
-	model = get_gma_model(gma_dev->device_id);
-  
+
+  devicepath = get_pci_dev_path(gma_dev);
+
+  model = get_gma_model(gma_dev->device_id);
+
   for (j = 0; j < NGFX; j++) {
     if ((gGraphics[j].Vendor == Intel) &&
         (gGraphics[j].DeviceID == gma_dev->device_id)) {
@@ -706,10 +697,10 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
     }
   }
   //DBG("Finally model=%a\n", model);
-	
+
   DBG("%a [%04x:%04x] :: %a\n",
       model, gma_dev->vendor_id, gma_dev->device_id, devicepath);
-	
+
   // Resolution
   switch (UGAWidth) {
     case 160:
@@ -915,7 +906,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
           break;
         default:
           break;
-          
+
       }
       break;
     case 4096:
@@ -966,20 +957,20 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
       DBG ("  Found Unknown Resolution Display - ?:? :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
       break;
   }
-  
+
   if (!string) {
     string = devprop_create_string();
   }
-	
+
   //device = devprop_add_device(string, devicepath); // AllocatePool inside
   device = devprop_add_device_pci(string, gma_dev);
-	
+
   if (!device) {
     DBG("  Failed initializing dev-prop string dev-entry\n");
     //pause();
     return FALSE;
   }
-  
+
   if (gSettings.NrAddProperties != 0xFFFE) {
     for (i = 0; i < gSettings.NrAddProperties; i++) {
       if (gSettings.AddProperties[i].Device != DEV_INTEL) {
@@ -991,21 +982,21 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
                         gSettings.AddProperties[i].ValueLen);
     }
   }
-  
+
   if (Injected) {
     DBG("  Custom Intel GFX properties injected, continue\n");
   }
-  
+
   if (gSettings.NoDefaultProperties) {
     DBG("  Intel: no default properties\n");
     return TRUE;
   }
-  
+
   if (gSettings.UseIntelHDMI) {
     devprop_add_value(device, "hda-gfx", (UINT8*)"onboard-1", 10);
     DBG("  IntelHDMI: used\n");
   }
-  
+
   if (gSettings.InjectEDID && gSettings.CustomEDID) {
     switch (gma_dev->device_id) {
       case 0x2772: // "Intel GMA 950"                   // Desktop - Intel 82945G Express Chipset Family
@@ -1030,81 +1021,76 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
         break;
     }
   }
-  
+
   // DualLink
-  if (gSettings.DualLink != 0) {
-    // Default DualLink is 1 in platformdata.c.
-    // High resolution(1600x900+)
-    if (UGAWidth < 1600) {
-      // low resolution(1366x768)
-      switch (gma_dev->device_id) {
-        case 0x2772: // "Intel GMA 950"                   // Desktop - Intel 82945G Express Chipset Family
-        case 0x2776: // "Intel GMA 950"                   // Desktop - Intel 82945G Express Chipset Family
-        case 0x27A2: // "Intel GMA 950"                   // Mobile - Intel 945GM Express Chipset Family - MacBook1,1, MacBook2,1
-        case 0x27A6: // "Intel GMA 950"                   // Mobile - Intel 945GM Express Chipset Family
-        case 0x27AE: // "Intel GMA 950"                   // Mobile - Intel 945GM Express Chipset Family
-        case 0xA001: // "Intel GMA 3150"                  // Nettop - Intel NetTop Atom D410
-        case 0xA002: // "Intel GMA 3150"                  // Nettop - Intel NetTop Atom D510
-        case 0xA011: // "Intel GMA 3150"                  // Netbook - Intel NetBook Atom N4x0
-        case 0xA012: // "Intel GMA 3150"                  // Netbook - Intel NetBook Atom N4x0
-        case 0x2A02: // "Intel GMA X3100"                 // Mobile - Intel 965 Express Chipset Family - MacBook3,1, MacBook4,1, MacbookAir1,1
-        case 0x2A03: // "Intel GMA X3100"                 // Mobile - Intel 965 Express Chipset Family
-        case 0x2A12: // "Intel GMA X3100"                 // Mobile - Intel 965 Express Chipset Family
-        case 0x2A13: // "Intel GMA X3100"                 // Mobile - Intel 965 Express Chipset Family
-          // Models with Intel GMA series have low resolution.
+  // Low resolution(1366x768-) - DualLink = 0, but no need it
+  // High resolution(1400x1050+) - DualLink = 1
+  // Default DualLink is 1 in platformdata.c.
+  switch (gma_dev->device_id) {
+    case 0x2772: // "Intel GMA 950"                   // Desktop - Intel 82945G Express Chipset Family
+    case 0x2776: // "Intel GMA 950"                   // Desktop - Intel 82945G Express Chipset Family
+    case 0x27A2: // "Intel GMA 950"                   // Mobile - Intel 945GM Express Chipset Family - MacBook1,1, MacBook2,1
+    case 0x27A6: // "Intel GMA 950"                   // Mobile - Intel 945GM Express Chipset Family
+    case 0x27AE: // "Intel GMA 950"                   // Mobile - Intel 945GM Express Chipset Family
+    case 0xA001: // "Intel GMA 3150"                  // Nettop - Intel NetTop Atom D410
+    case 0xA002: // "Intel GMA 3150"                  // Nettop - Intel NetTop Atom D510
+    case 0xA011: // "Intel GMA 3150"                  // Netbook - Intel NetBook Atom N4x0
+    case 0xA012: // "Intel GMA 3150"                  // Netbook - Intel NetBook Atom N4x0
+    case 0x2A02: // "Intel GMA X3100"                 // Mobile - Intel 965 Express Chipset Family - MacBook3,1, MacBook4,1, MacbookAir1,1
+    case 0x2A03: // "Intel GMA X3100"                 // Mobile - Intel 965 Express Chipset Family
+    case 0x2A12: // "Intel GMA X3100"                 // Mobile - Intel 965 Express Chipset Family
+    case 0x2A13: // "Intel GMA X3100"                 // Mobile - Intel 965 Express Chipset Family
+      if (gSettings.DualLink != 0) {
+        if (UGAWidth < 1400) {
           DBG("  Default AAPL01,DualLink = 1\n");
           DBG("  Low Resolution Display\n");
+          DBG("  AAPL01,DualLink: changed from 1 to not used\n");
+        }
+        else {
+          devprop_add_value(device, "AAPL01,DualLink", (UINT8*)&gSettings.DualLink, 1);
+          DBG("  AAPL01,DualLink = 1\n");
+        }
+      }
+      else {
+        if (UGAWidth >= 1400) {
+          DBG("  Default AAPL01,DualLink = 0\n");
+          DBG("  High Resolution Display\n");
+          DualLink = 1;
           devprop_add_value(device, "AAPL01,DualLink", (UINT8*)&DualLink, 1);
-          DBG("  AAPL01,DualLink: changed from 1 to 0\n");
-          break;
-        default:
+          DBG("  AAPL01,DualLink: changed from 0 to 1\n");
+        }
+        else {
+          DBG("  AAPL01,DualLink: not used\n");
+        }
+      }
+      break;
+    default:
+      if (gSettings.DualLink != 0) {
+        if (UGAWidth < 1400) {
           DBG("  Default AAPL00,DualLink = 1\n");
           DBG("  Low Resolution Display\n");
           DBG("  AAPL00,DualLink: changed from 1 to not used\n");
-          break;
+        }
+        else {
+          devprop_add_value(device, "AAPL00,DualLink", (UINT8*)&gSettings.DualLink, 1);
+          DBG("  AAPL00,DualLink = 1\n");
+        }
       }
-    }
-    else {
-      devprop_add_value(device, "AAPL00,DualLink", (UINT8*)&gSettings.DualLink, 1);
-      DBG("  AAPL00,DualLink = 1\n");
-    }
-  }
-  else {
-    // Low resolution(1366x768)
-    if (UGAWidth >= 1600) {
-      // High resolution(1600x900+)
-      DBG("  Default AAPL00,DualLink = 0\n");
-      DBG("  High Resolution Display\n");
-      DualLink = 1;
-      devprop_add_value(device, "AAPL00,DualLink", (UINT8*)&DualLink, 1);
-      DBG("  AAPL00,DualLink: changed from 0 to 1\n");
-    }
-    else {
-      switch (gma_dev->device_id) {
-        case 0x2772: // "Intel GMA 950"                   // Desktop - Intel 82945G Express Chipset Family
-        case 0x2776: // "Intel GMA 950"                   // Desktop - Intel 82945G Express Chipset Family
-        case 0x27A2: // "Intel GMA 950"                   // Mobile - Intel 945GM Express Chipset Family - MacBook1,1, MacBook2,1
-        case 0x27A6: // "Intel GMA 950"                   // Mobile - Intel 945GM Express Chipset Family
-        case 0x27AE: // "Intel GMA 950"                   // Mobile - Intel 945GM Express Chipset Family
-        case 0xA001: // "Intel GMA 3150"                  // Nettop - Intel NetTop Atom D410
-        case 0xA002: // "Intel GMA 3150"                  // Nettop - Intel NetTop Atom D510
-        case 0xA011: // "Intel GMA 3150"                  // Netbook - Intel NetBook Atom N4x0
-        case 0xA012: // "Intel GMA 3150"                  // Netbook - Intel NetBook Atom N4x0
-        case 0x2A02: // "Intel GMA X3100"                 // Mobile - Intel 965 Express Chipset Family - MacBook3,1, MacBook4,1, MacbookAir1,1
-        case 0x2A03: // "Intel GMA X3100"                 // Mobile - Intel 965 Express Chipset Family
-        case 0x2A12: // "Intel GMA X3100"                 // Mobile - Intel 965 Express Chipset Family
-        case 0x2A13: // "Intel GMA X3100"                 // Mobile - Intel 965 Express Chipset Family
-          // Models with Intel GMA series have low resolution.
-          devprop_add_value(device, "AAPL01,DualLink", (UINT8*)&gSettings.DualLink, 1);
-          DBG("  AAPL01,DualLink = 0\n");
-          break;
-        default:
+      else {
+        if (UGAWidth >= 1400) {
+          DBG("  Default AAPL00,DualLink = 0\n");
+          DBG("  High Resolution Display\n");
+          DualLink = 1;
+          devprop_add_value(device, "AAPL00,DualLink", (UINT8*)&DualLink, 1);
+          DBG("  AAPL00,DualLink: changed from 0 to 1\n");
+        }
+        else {
           DBG("  AAPL00,DualLink: not used\n");
-          break;
+        }
       }
-    }
+      break;
   }
-  
+
   if (gSettings.FakeIntel) {
     FakeID = gSettings.FakeIntel >> 16;
     devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
@@ -1116,119 +1102,112 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
   else {
     DBG("  FakeID Intel GFX: not set\n");
   }
-  
-  if (gSettings.IgPlatform != 0) {
-    switch (gma_dev->device_id) {
-      case 0x0102: // "Intel HD Graphics 2000"          // Desktop
-      case 0x0106: // "Intel HD Graphics 3000"          // Mobile
-      case 0x010A: // "Intel HD Graphics P3000"         // Server
-      case 0x0112: // "Intel HD Graphics 3000"          // Desktop
-      case 0x0116: // "Intel HD Graphics 3000"          // Mobile
-      case 0x0122: // "Intel HD Graphics 3000"          // Desktop
-      case 0x0126: // "Intel HD Graphics 3000"          // Mobile - MacBookPro8,1, Macmini5,1
+
+  // platform-id
+  switch (gma_dev->device_id) {
+    case 0x0102: // "Intel HD Graphics 2000"          // Desktop
+    case 0x0106: // "Intel HD Graphics 3000"          // Mobile
+    case 0x010A: // "Intel HD Graphics P3000"         // Server
+    case 0x0112: // "Intel HD Graphics 3000"          // Desktop
+    case 0x0116: // "Intel HD Graphics 3000"          // Mobile
+    case 0x0122: // "Intel HD Graphics 3000"          // Desktop
+    case 0x0126: // "Intel HD Graphics 3000"          // Mobile - MacBookPro8,1, Macmini5,1
+      if (gSettings.IgPlatform != 0) {
         devprop_add_value(device, "AAPL,snb-platform-id",	(UINT8*)&gSettings.IgPlatform, 4);
         DBG("  snb-platform-id = 0x%08lx\n", gSettings.IgPlatform);
         SetSnb = TRUE;
-        break;
-      default:
+      }
+      else {
+        DBG("  snb-platform-id: not set\n");
+      }
+      break;
+    default:
+      if (gSettings.IgPlatform != 0) {
         devprop_add_value(device, "AAPL,ig-platform-id", (UINT8*)&gSettings.IgPlatform, 4);
         DBG("  ig-platform-id = 0x%08lx\n", gSettings.IgPlatform);
         SetIg = TRUE;
-        break;
-    }
-  }
-  else {
-    switch (gma_dev->device_id) {
-      case 0x0102: // "Intel HD Graphics 2000"          // Desktop
-      case 0x0106: // "Intel HD Graphics 3000"          // Mobile
-      case 0x010A: // "Intel HD Graphics P3000"         // Server
-      case 0x0112: // "Intel HD Graphics 3000"          // Desktop
-      case 0x0116: // "Intel HD Graphics 3000"          // Mobile
-      case 0x0122: // "Intel HD Graphics 3000"          // Desktop
-      case 0x0126: // "Intel HD Graphics 3000"          // Mobile - MacBookPro8,1, Macmini5,1
-        DBG("  snb-platform-id: not set\n");
-        break;
-      default:
+      }
+      else {
         DBG("  ig-platform-id: not set\n");
-        break;
-    }
+      }
+      break;
   }
-  
+
   devprop_add_value(device, "model", (UINT8*)model, (UINT32)AsciiStrLen(model));
   devprop_add_value(device, "device_type", (UINT8*)"display", 7);
   devprop_add_value(device, "subsystem-vendor-id", common_vals[2], 4);
   devprop_add_value(device, "class-code",	(UINT8*)ClassFix, 4);
-  
-  
+
+
   // Clover will automatically detect these values if there is no ig-platform-id or FakeID Intel GFX value.
   // If there are Intel GFX values in ACPI Injection, their values will be overwritten on the values of Intel GFX auto-detection.
-  
+
   if ((SetSnb && SetFake) || (SetIg && SetFake)) {
     //DBG("  Beginning ACPI Injection\n");
   }
   else {
     DBG("  Beginning Intel GFX auto-detection with ACPI Injection\n");
   }
-  
+
   switch (gma_dev->device_id) {
-      
+
       //============== 1st generation ============
       //----------------Auburn--------------------
     case 0x7800: // "Intel 740"                       // Desktop - Intel 740 GMCH Express Chipset Family
       break;
-      
+
       //----------------Portola-------------------
     case 0x1240: // "Intel 752"                       // Desktop - Intel 752 GMCH Express Chipset Family
       break;
-      
+
       //----------------Whitney-------------------
     case 0x7121: // "Intel 3D graphics 810"           // Desktop - Intel 810 GMCH Express Chipset Family
     case 0x7123: // "Intel 3D graphics 810"           // Desktop - Intel 810-DC100 GMCH Express Chipset Family
     case 0x7125: // "Intel 3D graphics 810"           // Desktop - Intel 810E GMCH Express Chipset Family
       break;
-      
+
       //----------------Solano--------------------
     case 0x1132: // "Intel 3D graphics 815"           // Desktop - Intel 815 GMCH Express Chipset Family
       break;
-      
-      
+
+
       //============== 2nd generation ============
       //----------------Almador-------------------
     case 0x3577: // "Intel Extreme Graphics 830"      // Mobile - Intel 830M GMCH Express Chipset Family
     case 0x357B: // "Intel Extreme Graphics 835"      // Desktop - Intel 835G GMCH Express Chipset Family
       break;
-      
+
       //----------------Brookdale-----------------
     case 0x2562: // "Intel Extreme Graphics 845"      // Desktop - Intel 845G GMCH Express Chipset Family
       break;
-      
+
       //----------------Montara-------------------
     case 0x358E: // "Intel Extreme Graphics 2 854"    // Mobile - Intel 852GM/855GM GMCH Express Chipset Family
     case 0x3582: // "Intel Extreme Graphics 2 855"    // Mobile - Intel 852GM/855GM GMCH Express Chipset Family
       break;
-      
+
       //----------------Springdale----------------
     case 0x2572: // "Intel Extreme Graphics 2 865"    // Desktop - Intel 865G Express Chipset Family
       break;
-      
-      
+
+
       //============== 3rd generation ============
       //----------------Grantsdale----------------
     case 0x2582: // "Intel GMA 900"                   // Desktop - Intel 915G Express Chipset Family
     case 0x258A: // "Intel GMA 900"                   // Desktop - Intel 915GM Express Chipset Family
     case 0x2782: // "Intel GMA 900"                   // Desktop - Intel 915GV Express Chipset Family
       break;
-      
+
       //----------------Alviso--------------------
     case 0x2592: // "Intel GMA 900"                   // Mobile - Intel 82915GM/GMS, 910GML Express Chipset Family
     case 0x2792: // "Intel GMA 900"                   // Mobile - Intel 82915GM/GMS, 910GML Express Chipset Family
       break;
-      
+
       //----------------Lakeport------------------
     case 0x2772: // "Intel GMA 950"                   // Desktop - Intel 82945G Express Chipset Family
     case 0x2776: // "Intel GMA 950"                   // Desktop - Intel 82945G Express Chipset Family
-      break;
-      
+      //break;
+
       //----------------Calistoga-----------------
     case 0x27A2: // "Intel GMA 950"                   // Mobile - Intel 945GM Express Chipset Family - MacBook1,1, MacBook2,1
     case 0x27A6: // "Intel GMA 950"                   // Mobile - Intel 945GM Express Chipset Family
@@ -1241,27 +1220,26 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
         devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
       }
       devprop_add_value(device, "built-in", &BuiltIn, 1);
-      devprop_add_value(device, "AAPL,os-info", (UINT8*)&OsInfo, sizeof(OsInfo));
-      devprop_add_value(device, "AAPL,HasLid", calistoga_gma_vals[0], 4);
+      //devprop_add_value(device, "AAPL,HasLid", calistoga_gma_vals[0], 4);
       devprop_add_value(device, "AAPL,HasPanel", calistoga_gma_vals[1], 4);
-      devprop_add_value(device, "AAPL,NumDisplays", calistoga_gma_vals[2], 4);
-      devprop_add_value(device, "AAPL,NumFramebuffers", calistoga_gma_vals[3], 4);
+      //devprop_add_value(device, "AAPL,NumDisplays", calistoga_gma_vals[2], 4);
+      //devprop_add_value(device, "AAPL,NumFramebuffers", calistoga_gma_vals[3], 4);
       devprop_add_value(device, "AAPL01,BacklightIntensity", calistoga_gma_vals[4], 4);
       devprop_add_value(device, "AAPL01,BootDisplay", calistoga_gma_vals[5], 4);
-      devprop_add_value(device, "AAPL01,CurrentDisplay", calistoga_gma_vals[6], 4);
+      //devprop_add_value(device, "AAPL01,CurrentDisplay", calistoga_gma_vals[6], 4);
       devprop_add_value(device, "AAPL01,DataJustify", calistoga_gma_vals[7], 4);
-      devprop_add_value(device, "AAPL01,Depth", calistoga_gma_vals[8], 4);
+      //devprop_add_value(device, "AAPL01,Depth", calistoga_gma_vals[8], 4);
       devprop_add_value(device, "AAPL01,Dither", calistoga_gma_vals[9], 4);
-      devprop_add_value(device, "AAPL01,Height", calistoga_gma_vals[10], 4);
+      //devprop_add_value(device, "AAPL01,Height", calistoga_gma_vals[10], 4);
       devprop_add_value(device, "AAPL01,Interlace", calistoga_gma_vals[11], 4);
       devprop_add_value(device, "AAPL01,Inverter", calistoga_gma_vals[12], 4);
       devprop_add_value(device, "AAPL01,InverterCurrent", calistoga_gma_vals[13], 4);
-      devprop_add_value(device, "AAPL01,InverterFrequency", calistoga_gma_vals[14], 4);
-      devprop_add_value(device, "AAPL01,IODisplayMode", calistoga_gma_vals[15], 4);
+      //devprop_add_value(device, "AAPL01,InverterFrequency", calistoga_gma_vals[14], 4);
+      //devprop_add_value(device, "AAPL01,IODisplayMode", calistoga_gma_vals[15], 4);
       devprop_add_value(device, "AAPL01,LinkFormat", calistoga_gma_vals[16], 4);
       devprop_add_value(device, "AAPL01,LinkType", calistoga_gma_vals[17], 4);
       devprop_add_value(device, "AAPL01,Pipe", calistoga_gma_vals[18], 4);
-      devprop_add_value(device, "AAPL01,PixelFormat", calistoga_gma_vals[19], 4);
+      //devprop_add_value(device, "AAPL01,PixelFormat", calistoga_gma_vals[19], 4);
       devprop_add_value(device, "AAPL01,Refresh", calistoga_gma_vals[20], 4);
       devprop_add_value(device, "AAPL01,Stretch", calistoga_gma_vals[21], 4);
       devprop_add_value(device, "AAPL01,T1", calistoga_gma_vals[22], 4);
@@ -1271,9 +1249,9 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
       devprop_add_value(device, "AAPL01,T5", calistoga_gma_vals[26], 4);
       devprop_add_value(device, "AAPL01,T6", calistoga_gma_vals[27], 4);
       devprop_add_value(device, "AAPL01,T7", calistoga_gma_vals[28], 4);
-      devprop_add_value(device, "AAPL01,Width", calistoga_gma_vals[29], 4);
+      //devprop_add_value(device, "AAPL01,Width", calistoga_gma_vals[29], 4);
       break;
-      
+
       //----------------Bearlake------------------
     case 0x29B2: // "Intel GMA 3100"                  // Desktop - Intel Q35 Express Chipset Family
     case 0x29B3: // "Intel GMA 3100"                  // Desktop - Intel Q35 Express Chipset Family
@@ -1282,7 +1260,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
     case 0x29D2: // "Intel GMA 3100"                  // Desktop - Intel Q33 Express Chipset Family
     case 0x29D3: // "Intel GMA 3100"                  // Desktop - Intel Q33 Express Chipset Family
       break;
-      
+
       //----------------Pineview------------------
     case 0xA001: // "Intel GMA 3150"                  // Nettop - Intel NetTop Atom D410
     case 0xA002: // "Intel GMA 3150"                  // Nettop - Intel NetTop Atom D510
@@ -1301,27 +1279,26 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
         // Replace: b800000002909090909090909090eb0400000000
       }
       devprop_add_value(device, "built-in", &BuiltIn, 1);
-      devprop_add_value(device, "AAPL,os-info", (UINT8*)&OsInfo, sizeof(OsInfo));
-      devprop_add_value(device, "AAPL,HasLid", calistoga_gma_vals[0], 4);
+      //devprop_add_value(device, "AAPL,HasLid", calistoga_gma_vals[0], 4);
       devprop_add_value(device, "AAPL,HasPanel", calistoga_gma_vals[1], 4);
-      devprop_add_value(device, "AAPL,NumDisplays", calistoga_gma_vals[2], 4);
-      devprop_add_value(device, "AAPL,NumFramebuffers", calistoga_gma_vals[3], 4);
+      //devprop_add_value(device, "AAPL,NumDisplays", calistoga_gma_vals[2], 4);
+      //devprop_add_value(device, "AAPL,NumFramebuffers", calistoga_gma_vals[3], 4);
       devprop_add_value(device, "AAPL01,BacklightIntensity", calistoga_gma_vals[4], 4);
       devprop_add_value(device, "AAPL01,BootDisplay", calistoga_gma_vals[5], 4);
-      devprop_add_value(device, "AAPL01,CurrentDisplay", calistoga_gma_vals[6], 4);
+      //devprop_add_value(device, "AAPL01,CurrentDisplay", calistoga_gma_vals[6], 4);
       devprop_add_value(device, "AAPL01,DataJustify", calistoga_gma_vals[7], 4);
-      devprop_add_value(device, "AAPL01,Depth", calistoga_gma_vals[8], 4);
+      //devprop_add_value(device, "AAPL01,Depth", calistoga_gma_vals[8], 4);
       devprop_add_value(device, "AAPL01,Dither", calistoga_gma_vals[9], 4);
-      devprop_add_value(device, "AAPL01,Height", calistoga_gma_vals[10], 4);
+      //devprop_add_value(device, "AAPL01,Height", calistoga_gma_vals[10], 4);
       devprop_add_value(device, "AAPL01,Interlace", calistoga_gma_vals[11], 4);
       devprop_add_value(device, "AAPL01,Inverter", calistoga_gma_vals[12], 4);
       devprop_add_value(device, "AAPL01,InverterCurrent", calistoga_gma_vals[13], 4);
-      devprop_add_value(device, "AAPL01,InverterFrequency", calistoga_gma_vals[14], 4);
-      devprop_add_value(device, "AAPL01,IODisplayMode", calistoga_gma_vals[15], 4);
+      //devprop_add_value(device, "AAPL01,InverterFrequency", calistoga_gma_vals[14], 4);
+      //devprop_add_value(device, "AAPL01,IODisplayMode", calistoga_gma_vals[15], 4);
       devprop_add_value(device, "AAPL01,LinkFormat", calistoga_gma_vals[16], 4);
       devprop_add_value(device, "AAPL01,LinkType", calistoga_gma_vals[17], 4);
       devprop_add_value(device, "AAPL01,Pipe", calistoga_gma_vals[18], 4);
-      devprop_add_value(device, "AAPL01,PixelFormat", calistoga_gma_vals[19], 4);
+      //devprop_add_value(device, "AAPL01,PixelFormat", calistoga_gma_vals[19], 4);
       devprop_add_value(device, "AAPL01,Refresh", calistoga_gma_vals[20], 4);
       devprop_add_value(device, "AAPL01,Stretch", calistoga_gma_vals[21], 4);
       devprop_add_value(device, "AAPL01,T1", calistoga_gma_vals[22], 4);
@@ -1331,23 +1308,23 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
       devprop_add_value(device, "AAPL01,T5", calistoga_gma_vals[26], 4);
       devprop_add_value(device, "AAPL01,T6", calistoga_gma_vals[27], 4);
       devprop_add_value(device, "AAPL01,T7", calistoga_gma_vals[28], 4);
-      devprop_add_value(device, "AAPL01,Width", calistoga_gma_vals[29], 4);
+      //devprop_add_value(device, "AAPL01,Width", calistoga_gma_vals[29], 4);
       break;
-      
-      
+
+
       //============== 4th generation ============
       //----------------Lakeport------------------
     case 0x2972: // "Intel GMA 3000"                  // Desktop - Intel 946GZ Express Chipset Family
     case 0x2973: // "Intel GMA 3000"                  // Desktop - Intel 946GZ Express Chipset Family
       break;
-      
+
       //----------------Broadwater----------------
     case 0x2992: // "Intel GMA 3000"                  // Desktop - Intel Q965/Q963 Express Chipset Family
     case 0x2993: // "Intel GMA 3000"                  // Desktop - Intel Q965/Q963 Express Chipset Family
     case 0x29A2: // "Intel GMA X3000"                 // Desktop - Intel G965 Express Chipset Family
     case 0x29A3: // "Intel GMA X3000"                 // Desktop - Intel G965 Express Chipset Family
       break;
-      
+
       //----------------Crestline-----------------
     case 0x2A02: // "Intel GMA X3100"                 // Mobile - Intel 965 Express Chipset Family - MacBook3,1, MacBook4,1, MacbookAir1,1
     case 0x2A03: // "Intel GMA X3100"                 // Mobile - Intel 965 Express Chipset Family
@@ -1361,11 +1338,10 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
         devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
       }
       devprop_add_value(device, "built-in", &BuiltIn, 1);
-      devprop_add_value(device, "AAPL,os-info", (UINT8*)&OsInfo, sizeof(OsInfo));
-      devprop_add_value(device, "AAPL,HasLid", crestline_gma_vals[0], 4);
+      //devprop_add_value(device, "AAPL,HasLid", crestline_gma_vals[0], 4);
       devprop_add_value(device, "AAPL,HasPanel", crestline_gma_vals[1], 4);
-      devprop_add_value(device, "AAPL,NumDisplays", crestline_gma_vals[2], 4);
-      devprop_add_value(device, "AAPL,NumFramebuffers", crestline_gma_vals[3], 4);
+      //devprop_add_value(device, "AAPL,NumDisplays", crestline_gma_vals[2], 4);
+      //devprop_add_value(device, "AAPL,NumFramebuffers", crestline_gma_vals[3], 4);
       devprop_add_value(device, "AAPL,SelfRefreshSupported", crestline_gma_vals[4], 4);
       devprop_add_value(device, "AAPL,aux-power-connected", crestline_gma_vals[5], 4);
       devprop_add_value(device, "AAPL,backlight-control", crestline_gma_vals[6], 4);
@@ -1373,19 +1349,19 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
       devprop_add_value(device, "AAPL01,BootDisplay", crestline_gma_vals[8], 4);
       devprop_add_value(device, "AAPL01,BacklightIntensity", crestline_gma_vals[9], 4);
       devprop_add_value(device, "AAPL01,blackscreen-preferences", crestline_gma_vals[10], 4);
-      devprop_add_value(device, "AAPL01,CurrentDisplay", crestline_gma_vals[11], 4);
+      //devprop_add_value(device, "AAPL01,CurrentDisplay", crestline_gma_vals[11], 4);
       devprop_add_value(device, "AAPL01,DataJustify", crestline_gma_vals[12], 4);
-      devprop_add_value(device, "AAPL01,Depth", crestline_gma_vals[13], 4);
+      //devprop_add_value(device, "AAPL01,Depth", crestline_gma_vals[13], 4);
       devprop_add_value(device, "AAPL01,Dither", crestline_gma_vals[14], 4);
-      devprop_add_value(device, "AAPL01,Height", crestline_gma_vals[15], 4);
+      //devprop_add_value(device, "AAPL01,Height", crestline_gma_vals[15], 4);
       devprop_add_value(device, "AAPL01,Interlace", crestline_gma_vals[16], 4);
       devprop_add_value(device, "AAPL01,Inverter", crestline_gma_vals[17], 4);
       devprop_add_value(device, "AAPL01,InverterCurrent", crestline_gma_vals[18], 4);
-      devprop_add_value(device, "AAPL01,InverterFrequency", crestline_gma_vals[19], 4);
+      //devprop_add_value(device, "AAPL01,InverterFrequency", crestline_gma_vals[19], 4);
       devprop_add_value(device, "AAPL01,LinkFormat", crestline_gma_vals[20], 4);
       devprop_add_value(device, "AAPL01,LinkType", crestline_gma_vals[21], 4);
       devprop_add_value(device, "AAPL01,Pipe", crestline_gma_vals[22], 4);
-      devprop_add_value(device, "AAPL01,PixelFormat", crestline_gma_vals[23], 4);
+      //devprop_add_value(device, "AAPL01,PixelFormat", crestline_gma_vals[23], 4);
       devprop_add_value(device, "AAPL01,Refresh", crestline_gma_vals[24], 4);
       devprop_add_value(device, "AAPL01,Stretch", crestline_gma_vals[25], 4);
       devprop_add_value(device, "AAPL01,T1", crestline_gma_vals[26], 4);
@@ -1395,14 +1371,14 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
       devprop_add_value(device, "AAPL01,T5", crestline_gma_vals[30], 4);
       devprop_add_value(device, "AAPL01,T6", crestline_gma_vals[31], 4);
       devprop_add_value(device, "AAPL01,T7", crestline_gma_vals[32], 4);
-      devprop_add_value(device, "AAPL01,Width", crestline_gma_vals[33], 4);
+      //devprop_add_value(device, "AAPL01,Width", crestline_gma_vals[33], 4);
       break;
-      
+
       //----------------Bearlake------------------
     case 0x2982: // "Intel GMA X3500"                 // Desktop - Intel G35 Express Chipset Family
     case 0x2983: // "Intel GMA X3500"                 // Desktop - Intel G35 Express Chipset Family
       break;
-      
+
       //----------------Eaglelake-----------------
     case 0x2E02: // "Intel GMA 4500"                  // Desktop - Intel 4 Series Express Chipset Family
     case 0x2E03: // "Intel GMA 4500"                  // Desktop - Intel 4 Series Express Chipset Family
@@ -1417,41 +1393,39 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
     case 0x2E22: // "Intel GMA X4500"                 // Mobile - Intel G45/G43 Express Chipset Family
     case 0x2E23: // "Intel GMA X4500HD"               // Mobile - Intel G45/G43 Express Chipset Family
       break;
-      
+
       //----------------Cantiga-------------------
     case 0x2A42: // "Intel GMA X4500MHD"              // Mobile - Intel 4 Series Express Chipset Family
     case 0x2A43: // "Intel GMA X4500MHD"              // Mobile - Intel 4 Series Express Chipset Family
       break;
-      
-      
+
+
       //============== 5th generation ============
       //----------------Ironlake------------------
     case 0x0042: // "Intel HD Graphics"               // Desktop - Clarkdale
     case 0x0046: // "Intel HD Graphics"               // Mobile - Arrandale - MacBookPro6,1
-      switch (gma_dev->device_id) {
-        case 0x0042:
-          if (!SetFake) {
+      if (!SetFake) {
+        switch (gma_dev->device_id) {
+          case 0x0042:
             FakeID = 0x00428086 >> 16;
             DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
             devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
             FakeID = 0x00428086 & 0xFFFF;
             devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
-          }
-          break;
-        case 0x0046:
-          if (!SetFake) {
+            break;
+          case 0x0046:
             FakeID = 0x00468086 >> 16;
             DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
             devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
             FakeID = 0x00468086 & 0xFFFF;
             devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
-          }
-          break;
-        default:
-          break;
+            break;
+          default:
+            break;
+        }
       }
       devprop_add_value(device, "built-in", &BuiltIn, 1);
-      devprop_add_value(device, "AAPL,os-info", (UINT8*)&OsInfo, sizeof(OsInfo));
+      devprop_add_value(device, "AAPL,os-info", (UINT8*)&mbp_HD_os_info, sizeof(mbp_HD_os_info));
       devprop_add_value(device, "VRAM,totalsize", ironlake_hd_vals[0], 4);
       devprop_add_value(device, "AAPL,aux-power-connected", ironlake_hd_vals[1], 4);
       devprop_add_value(device, "AAPL,backlight-control", ironlake_hd_vals[2], 4);
@@ -1463,8 +1437,8 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
       devprop_add_value(device, "AAPL00,T6", ironlake_hd_vals[8], 4);
       devprop_add_value(device, "AAPL00,T7", ironlake_hd_vals[9], 4);
       break;
-      
-      
+
+
       //============== 6th generation ============
       //----------------Sandy bridge--------------
       //GT1
@@ -1476,85 +1450,39 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
     case 0x0116: // "Intel HD Graphics 3000"          // Mobile - MacBookAir4,1, MacBookAir4,2, MacBookPro8,2
     case 0x0122: // "Intel HD Graphics 3000"          // Desktop
     case 0x0126: // "Intel HD Graphics 3000"          // Mobile - MacBookPro8,1 Macmini5,1, Macmini5,2, Macmini5,3
-      switch (gma_dev->device_id) {
-        case 0x0102:
-          if (!SetFake) {
-            FakeID = 0x01268086 >> 16;
-            DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
-            devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
-            FakeID = 0x01268086 & 0xFFFF;
-            devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
-          }
-          devprop_add_value(device, "AAPL,tbl-info", HD2000_tbl_info, 18);
-          devprop_add_value(device, "AAPL,os-info", HD2000_os_info, 20);
-          break;
-        case 0x0106:
-        case 0x0112:
-        case 0x0116:
-          if (!SetFake) {
+      if (!SetFake) {
+        switch (gma_dev->device_id) {
+          case 0x0102:
+          case 0x0106:
+          case 0x010A:
+          case 0x0112:
+          case 0x0116:
             FakeID = 0x01168086 >> 16;
             DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
             devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
             FakeID = 0x01168086 & 0xFFFF;
             devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
-          }
-          switch (MacModel) {
-            case MacBookAir41:
-            case MacBookAir42:
-              devprop_add_value(device, "AAPL,tbl-info", mba_HD3000_tbl_info, 18);
-              devprop_add_value(device, "AAPL,os-info", mba_HD3000_os_info, 20);
-              break;
-            case MacBookPro81:
-            case MacBookPro82:
-            case MacBookPro83:
-              devprop_add_value(device, "AAPL,tbl-info", mbp_HD3000_tbl_info, 18);
-              devprop_add_value(device, "AAPL,os-info", mbp_HD3000_os_info, 20);
-              break;
-            default:
-              devprop_add_value(device, "AAPL,tbl-info", mn_HD3000_tbl_info, 18);
-              devprop_add_value(device, "AAPL,os-info", mn_HD3000_os_info, 20);
-              break;
-          }
-          break;
-        case 0x010A:
-        case 0x0122:
-        case 0x0126:
-          if (!SetFake) {
+            break;
+          case 0x0122:
+          case 0x0126:
             FakeID = 0x01268086 >> 16;
             DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
             devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
             FakeID = 0x01268086 & 0xFFFF;
             devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
-          }
-          switch (MacModel) {
-            case MacBookAir41:
-            case MacBookAir42:
-              devprop_add_value(device, "AAPL,tbl-info", mba_HD3000_tbl_info, 18);
-              devprop_add_value(device, "AAPL,os-info", mba_HD3000_os_info, 20);
-              break;
-            case MacBookPro81:
-            case MacBookPro82:
-            case MacBookPro83:
-              devprop_add_value(device, "AAPL,tbl-info", mbp_HD3000_tbl_info, 18);
-              devprop_add_value(device, "AAPL,os-info", mbp_HD3000_os_info, 20);
-              break;
-            default:
-              devprop_add_value(device, "AAPL,tbl-info", mn_HD3000_tbl_info, 18);
-              devprop_add_value(device, "AAPL,os-info", mn_HD3000_os_info, 20);
-              break;
-          }
-          break;
-        default:
-          break;
+            break;
+          default:
+            break;
+        }
       }
       if (!SetSnb) {
         switch (MacModel) {
+          case MacBookAir41:
+          case MacBookAir42:
           case MacBookPro81:
           case MacBookPro82:
           case MacBookPro83:
-          case MacBookAir41:
-          case MacBookAir42:
-            // Normally, use the snb-platform-id of the MacBook Pro 8,1 with a lot of ports. because of the HDMI and VGA patches.
+            // Normally, use the snb-platform-id of the MacBookPro8,1 with a lot of ports. because of the HDMI and VGA patches.
             devprop_add_value(device, "AAPL,snb-platform-id", sandy_bridge_snb_vals[0], 4);
             DBG("  Found snb-platform-id = 0x00010000\n");
             break;
@@ -1566,6 +1494,13 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
         }
       }
       switch (MacModel) {
+        case MacBookAir41:
+        case MacBookAir42:
+          devprop_add_value(device, "built-in", &BuiltIn, 1);
+          devprop_add_value(device, "graphic-options", sandy_bridge_hd_vals[0], 4);
+          devprop_add_value(device, "AAPL,tbl-info", mba_HD3000_tbl_info, 18);
+          devprop_add_value(device, "AAPL,os-info", mba_HD3000_os_info, 20);
+          break;
         case MacBookPro81:
         case MacBookPro82:
         case MacBookPro83:
@@ -1583,15 +1518,19 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
           devprop_add_value(device, "AAPL00,T5", sandy_bridge_hd_vals[10], 4);
           devprop_add_value(device, "AAPL00,T6", sandy_bridge_hd_vals[11], 4);
           devprop_add_value(device, "AAPL00,T7", sandy_bridge_hd_vals[12], 4);
+          devprop_add_value(device, "AAPL,tbl-info", mbp_HD3000_tbl_info, 18);
+          devprop_add_value(device, "AAPL,os-info", mbp_HD3000_os_info, 20);
           break;
         default:
           devprop_add_value(device, "built-in", &BuiltIn, 1);
           devprop_add_value(device, "graphic-options", sandy_bridge_hd_vals[0], 4);
+          devprop_add_value(device, "AAPL,tbl-info", mn_HD3000_tbl_info, 18);
+          devprop_add_value(device, "AAPL,os-info", mn_HD3000_os_info, 20);
           break;
       }
       break;
-      
-      
+
+
       //============== 7th generation ============
       //----------------Ivy bridge----------------
       //GT1
@@ -1647,22 +1586,34 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
         }
       }
       if (!SetIg) {
-        if (UGAWidth < 1600) {
-          // low resolution(1366x768)
-          devprop_add_value(device, "AAPL,ig-platform-id", ivy_bridge_ig_vals[3], 4);
-          DBG("  Found ig-platform-id = 0x01660003\n");
-        }
-        else {
-          // high resolution(1600x900+)
-          devprop_add_value(device, "AAPL,ig-platform-id", ivy_bridge_ig_vals[4], 4);
-          DBG("  Found ig-platform-id = 0x01660004\n");
+        switch (MacModel) {
+          case MacBookAir51:
+          case MacBookAir52:
+          case MacBookPro91:
+          case MacBookPro92:
+          case MacBookPro101:
+          case MacBookPro102:
+            if (UGAWidth < 1600) {
+              devprop_add_value(device, "AAPL,ig-platform-id", ivy_bridge_ig_vals[3], 4);
+              DBG("  Found ig-platform-id = 0x01660003\n");
+            }
+            else {
+              // HD+(1600x900+)
+              devprop_add_value(device, "AAPL,ig-platform-id", ivy_bridge_ig_vals[4], 4);
+              DBG("  Found ig-platform-id = 0x01660004\n");
+            }
+            break;
+          default:
+            devprop_add_value(device, "AAPL,ig-platform-id", ivy_bridge_ig_vals[10], 4);
+            DBG("  Found ig-platform-id = 0x0166000A\n");
+            break;
         }
       }
       devprop_add_value(device, "built-in", &BuiltIn, 1);
       devprop_add_value(device, "graphic-options", ivy_bridge_hd_vals[0], 4);
       break;
-      
-      
+
+
       //============== 7.5th generation ==========
       //----------------Haswell-------------------
       //GT1
@@ -1737,73 +1688,86 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
     case 0x0D2A: // "Intel Haswell GT3"               // Server CRW
     case 0x0D2B: // "Intel Haswell GT3"               // CRW
     case 0x0D2E: // "Intel Haswell GT3"               // CRW
-      switch (gma_dev->device_id) {
-        case 0x0412:
-        case 0x0416:
-        case 0x041A:
-        case 0x041E:
-        case 0x0A0E:
-        case 0x0A16:
-        case 0x0A1E:
-        case 0x0D06:
-        case 0x0D12:
-        case 0x0D16:
-          if (!SetFake) {
+      if (!SetFake) {
+        switch (gma_dev->device_id) {
+          case 0x0412:
+          case 0x0416:
+          case 0x041A:
+          case 0x041E:
+          case 0x0A0E:
+          case 0x0A16:
+          case 0x0A1E:
+          case 0x0D06:
+          case 0x0D12:
+          case 0x0D16:
             FakeID = 0x04128086 >> 16;
             DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
             devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
             FakeID = 0x04128086 & 0xFFFF;
             devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
-          }
-          break;
-        case 0x0A26:
-          if (!SetFake) {
+            break;
+          case 0x0A26:
             FakeID = 0x0A268086 >> 16;
             DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
             devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
             FakeID = 0x0A268086 & 0xFFFF;
             devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
-          }
-          break;
-        case 0x0A2E:
-          if (!SetFake) {
+            break;
+          case 0x0A2E:
             FakeID = 0x0A2E8086 >> 16;
             DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
             devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
             FakeID = 0x0A2E8086 & 0xFFFF;
             devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
-          }
-          break;
-        case 0x0D22:
-          if (!SetFake) {
+            break;
+          case 0x0D22:
             FakeID = 0x0D228086 >> 16;
             DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
             devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
             FakeID = 0x0D228086 & 0xFFFF;
             devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
-          }
-          break;
-        case 0x0D26:
-          if (!SetFake) {
+            break;
+          case 0x0D26:
             FakeID = 0x0D268086 >> 16;
             DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
             devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
             FakeID = 0x0D268086 & 0xFFFF;
             devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
-          }
-          break;
-        default:
-          break;
+            break;
+          default:
+            break;
+        }
       }
       if (!SetIg) {
-        devprop_add_value(device, "AAPL,ig-platform-id", haswell_ig_vals[12], 4);
-        DBG("  Found ig-platform-id = 0x0A260006\n");
+        switch (MacModel) {
+          case MacBookAir61:
+          case MacBookAir62:
+          case MacBookPro111:
+          case MacBookPro112:
+          case MacBookPro113:
+          case MacBookPro114:
+          case MacBookPro115:
+            if (UGAWidth < 2560) {
+              devprop_add_value(device, "AAPL,ig-platform-id", haswell_ig_vals[12], 4);
+              DBG("  Found ig-platform-id = 0x0A260006\n");
+            }
+            else {
+              // QHD+(2560x1440+)
+              devprop_add_value(device, "AAPL,ig-platform-id", haswell_ig_vals[14], 4);
+              DBG("  Found ig-platform-id = 0x0A2E0008\n");
+            }
+            break;
+          default:
+            devprop_add_value(device, "AAPL,ig-platform-id", haswell_ig_vals[9], 4);
+            DBG("  Found ig-platform-id = 0x0D220003\n");
+            break;
+        }
       }
       devprop_add_value(device, "built-in", &BuiltIn, 1);
       devprop_add_value(device, "graphic-options", haswell_hd_vals[0], 4);
       break;
-      
-      
+
+
       //============== 8th generation ============
       //----------------Broadwell-----------------
       //GT1
@@ -1833,89 +1797,88 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
     case 0x163B: // "Intel Broadwell GT3"             //
     case 0x163D: // "Intel Broadwell GT3"             //
     case 0x163E: // "Intel Broadwell GT3"             //
-      switch (gma_dev->device_id) {
-        case 0x1612:
-          if (!SetFake) {
+      if (!SetFake) {
+        switch (gma_dev->device_id) {
+          case 0x1612:
             FakeID = 0x16128086 >> 16;
             DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
             devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
             FakeID = 0x16128086 & 0xFFFF;
             devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
-          }
-          if (!SetIg) {
-            devprop_add_value(device, "AAPL,ig-platform-id", broadwell_ig_vals[13], 4);
-            DBG("  Found ig-platform-id = 0x16120003\n");
-          }
-          break;
-        case 0x1616:
-          if (!SetFake) {
+            break;
+          case 0x1616:
             FakeID = 0x16168086 >> 16;
             DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
             devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
             FakeID = 0x16168086 & 0xFFFF;
             devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
-          }
-          if (!SetIg) {
-            devprop_add_value(device, "AAPL,ig-platform-id", broadwell_ig_vals[1], 4);
-            DBG("  Found ig-platform-id = 0x16160000\n");
-          }
-          break;
-        case 0x161E:
-          if (!SetFake) {
+            break;
+          case 0x161E:
             FakeID = 0x161E8086 >> 16;
             DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
             devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
             FakeID = 0x161E8086 & 0xFFFF;
             devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
-          }
-          if (!SetIg) {
-            devprop_add_value(device, "AAPL,ig-platform-id", broadwell_ig_vals[2], 4);
-            DBG("  Found ig-platform-id = 0x161E0000\n");
-          }
-          break;
-        case 0x1622:
-        case 0x162A:
-        case 0x162D:
-          if (!SetFake) {
+            break;
+          case 0x1622:
             FakeID = 0x16228086 >> 16;
             DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
             devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
             FakeID = 0x16228086 & 0xFFFF;
             devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
-          }
-          if (!SetIg) {
-            devprop_add_value(device, "AAPL,ig-platform-id", broadwell_ig_vals[5], 4);
-            DBG("  Found ig-platform-id = 0x16220000\n");
-          }
-          break;
-        case 0x1626:
-          if (!SetFake) {
+            break;
+          case 0x1626:
+          case 0x162A:
             FakeID = 0x16268086 >> 16;
             DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
             devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
             FakeID = 0x16268086 & 0xFFFF;
             devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
-          }
-          if (!SetIg) {
-            devprop_add_value(device, "AAPL,ig-platform-id", broadwell_ig_vals[3], 4);
-            DBG("  Found ig-platform-id = 0x16260000\n");
-          }
-          break;
-        case 0x162B:
-          if (!SetFake) {
+            break;
+          case 0x162B:
+          case 0x162D:
             FakeID = 0x162B8086 >> 16;
             DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
             devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
             FakeID = 0x162B8086 & 0xFFFF;
             devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
-          }
-          if (!SetIg) {
-            devprop_add_value(device, "AAPL,ig-platform-id", broadwell_ig_vals[4], 4);
-            DBG("  Found ig-platform-id = 0x162B0000\n");
-          }
-          break;
-        default:
-          break;
+            break;
+          default:
+            break;
+        }
+      }
+      if (!SetIg) {
+        switch (MacModel) {
+          case MacBook81:
+          case MacBookAir61:
+          case MacBookAir62:
+          case MacBookAir71:
+          case MacBookAir72:
+          case MacBookPro121:
+            devprop_add_value(device, "AAPL,ig-platform-id", broadwell_ig_vals[17], 4);
+            DBG("  Found ig-platform-id = 0x16260006\n");
+            break;
+          default:
+            switch (gma_dev->device_id) {
+              case 0x1612:
+              case 0x1616:
+              case 0x161E:
+                devprop_add_value(device, "AAPL,ig-platform-id", broadwell_ig_vals[9], 4);
+                DBG("  Found ig-platform-id = 0x16160002\n");
+                break;
+              case 0x1622:
+              case 0x1626:
+              case 0x162A:
+              case 0x162B:
+              case 0x162D:
+                devprop_add_value(device, "AAPL,ig-platform-id", broadwell_ig_vals[15], 4);
+                DBG("  Found ig-platform-id = 0x16260004\n");
+                break;
+              default:
+                break;
+            }
+            break;
+        }
       }
       switch (MacModel) {
         case MacBook81:
@@ -1927,8 +1890,8 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
           break;
       }
       break;
-      
-      
+
+
       //============== 9th generation ============
       //----------------Skylake-------------------
       //GT1
@@ -2080,8 +2043,8 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
           break;
       }
       break;
-      
-      
+
+
       //============== 9.5th generation ==========
       //----------------Kabylake------------------
       //GT1
@@ -2217,8 +2180,8 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
   }
   
 #if DEBUG_GMA == 2
-	gBS->Stall(5000000);
+  gBS->Stall(5000000);
 #endif
   
-	return TRUE;
+  return TRUE;
 }
