@@ -172,7 +172,7 @@ function _mountESP()
     # check for already mounted ESP
     #
 #    gDevMountedPoint=($(mount |grep ${gESP}))
-    s=$(mount | grep ${gESP})
+    s=$(mount | grep "${gESP} ")
     s=${s#* on *}
     gDevMountedPoint=${s%* (*}
     if [[ "${gDevMountedPoint}" != "" ]];
