@@ -594,8 +594,8 @@ rem # drop compiled files to EFI folder
 
   call:copybin "%BUILD_DIR%\FV\boot%TARGETARCH_INT%" "%DEST_BOOTLOADERS%\x%TARGETARCH_INT%" "%cloverEFIFile%"
   call:copybin "%BUILD_DIR_ARCH%\bdmesg.efi" "%DEST_TOOLS%" "bdmesg-%TARGETARCH_INT%.efi"
-  call:copybin "%BUILD_DIR_ARCH%\CLOVER%TARGETARCH%.efi" "%DEST_CLOVER%" "CLOVER%TARGETARCH%.efi"
-  call:copybin "%BUILD_DIR_ARCH%\CLOVER%TARGETARCH%.efi" "%DEST_BOOT%" "BOOT%TARGETARCH%.efi"
+  call:copybin "%BUILD_DIR_ARCH%\CLOVER.efi" "%DEST_CLOVER%" "CLOVER%TARGETARCH%.efi"
+  call:copybin "%BUILD_DIR_ARCH%\CLOVER.efi" "%DEST_BOOT%" "BOOT%TARGETARCH%.efi"
 
   if ["%CLOVER_EDK2SHELL%"] == [""] goto donebuild64
 
@@ -677,8 +677,8 @@ rem # drop compiled files to EFI folder
 
   call:copybin "%BUILD_DIR%\FV\boot%TARGETARCH_INT%" "%DEST_BOOTLOADERS%\ia%TARGETARCH_INT%" "%cloverEFIFile%"
   call:copybin "%BUILD_DIR_ARCH%\bdmesg.efi" "%DEST_TOOLS%" "bdmesg-%TARGETARCH_INT%.efi"
-  call:copybin "%BUILD_DIR_ARCH%\CLOVER%TARGETARCH%.efi" "%DEST_CLOVER%" "CLOVER%TARGETARCH%.efi"
-  call:copybin "%BUILD_DIR_ARCH%\CLOVER%TARGETARCH%.efi" "%DEST_BOOT%" "BOOT%TARGETARCH%.efi"
+  call:copybin "%BUILD_DIR_ARCH%\CLOVER.efi" "%DEST_CLOVER%" "CLOVER%TARGETARCH%.efi"
+  call:copybin "%BUILD_DIR_ARCH%\CLOVER.efi" "%DEST_BOOT%" "BOOT%TARGETARCH%.efi"
 
   if ["%CLOVER_EDK2SHELL%"] == [""] goto donebuild32
 

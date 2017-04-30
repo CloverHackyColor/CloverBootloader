@@ -822,8 +822,8 @@ MainPostBuildScript() {
       copyBin "${BUILD_DIR}"/FV/boot "$CLOVER_PKG_DIR"/Bootloaders/ia32/$cloverEFIFile
       # The following line is bad because the character '3' is at offset 0xc5 of start32H.com2, not offset 0xa9 - zenith432
       #setInitBootMsg "$CLOVER_PKG_DIR"/Bootloaders/ia32/$cloverEFIFile
-      copyBin "$BUILD_DIR_ARCH"/CLOVER${TARGETARCH}.efi "$CLOVER_PKG_DIR"/EFI/BOOT/BOOTIA32.efi
-      copyBin "$BUILD_DIR_ARCH"/CLOVER${TARGETARCH}.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/
+      copyBin "$BUILD_DIR_ARCH"/CLOVER.efi "$CLOVER_PKG_DIR"/EFI/BOOT/BOOTIA32.efi
+      copyBin "$BUILD_DIR_ARCH"/CLOVER.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/CLOVERIA32.efi
 
       # Mandatory drivers
       echo "Copy Mandatory drivers:"
@@ -923,8 +923,8 @@ MainPostBuildScript() {
       if [[ "$GENPAGE" -eq 0 ]]; then
         setInitBootMsg "$CLOVER_PKG_DIR"/Bootloaders/x64/$cloverEFIFile
       fi
-      copyBin "$BUILD_DIR_ARCH"/CLOVER${TARGETARCH}.efi "$CLOVER_PKG_DIR"/EFI/BOOT/BOOTX64.efi
-      copyBin "$BUILD_DIR_ARCH"/CLOVER${TARGETARCH}.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/
+      copyBin "$BUILD_DIR_ARCH"/CLOVER.efi "$CLOVER_PKG_DIR"/EFI/BOOT/BOOTX64.efi
+      copyBin "$BUILD_DIR_ARCH"/CLOVER.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/CLOVERX64.efi
 
       # Mandatory drivers
       echo "Copy Mandatory drivers:"
