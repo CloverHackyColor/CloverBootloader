@@ -115,7 +115,7 @@ VOID GetCPUProperties (VOID)
   //  UINTN         ArrayCount;
   UINTN         HandleIndex;
   //  UINTN         ProtocolIndex;
-  UINT32        qpibusspeed; //units=kHz
+  UINT64        qpibusspeed; //units=kHz
   UINT32        qpimult = 2;
   UINT32        BusSpeed = 0; //units kHz
   UINT64        ExternalClock;
@@ -735,7 +735,7 @@ VOID GetCPUProperties (VOID)
     }
     
     DBG("qpimult %d\n", qpimult);
-    qpibusspeed = qpimult * 2 * gCPUStructure.ExternalClock; //kHz
+    qpibusspeed = MultU64x32(gCPUStructure.ExternalClock, qpimult * 2); //kHz
     DBG("qpibusspeed %dkHz\n", qpibusspeed);
     gCPUStructure.ProcessorInterconnectSpeed = DivU64x32(qpibusspeed, kilo); //kHz->MHz
     

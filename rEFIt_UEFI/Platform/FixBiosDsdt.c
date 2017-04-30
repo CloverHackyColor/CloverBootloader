@@ -1497,7 +1497,7 @@ UINT32 devFind(UINT8 *dsdt, UINT32 address)
 
 BOOLEAN AddProperties(AML_CHUNK* pack, UINT32 Dev)
 {
-  INT32 i;
+  UINTN i;
   BOOLEAN Injected = FALSE;
   if (gSettings.NrAddProperties == 0xFFFE) {
     return FALSE; // not do this for Arbitrary properties?

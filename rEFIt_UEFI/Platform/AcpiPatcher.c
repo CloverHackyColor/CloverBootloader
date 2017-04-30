@@ -1827,8 +1827,8 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
 
   // Drop tables
   if (gSettings.ACPIDropTables) {
-    DbgHeader("ACPIDropTables");
     ACPI_DROP_TABLE *DropTable = gSettings.ACPIDropTables;
+    DbgHeader("ACPIDropTables");
     while (DropTable) {
       if (DropTable->MenuItem.BValue) {
  //       DBG("Attempting to drop \"%4.4a\" (%8.8X) \"%8.8a\" (%16.16lX) L=%d\n", &(DropTable->Signature), DropTable->Signature, &(DropTable->TableId), DropTable->TableId, DropTable->Length);
@@ -1854,8 +1854,8 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
   }
 
   if (ACPIPatchedAML) {
-    DbgHeader("ACPIPatchedAML");
     CHAR16  FullName[256];
+    DbgHeader("ACPIPatchedAML");
 //    DBG("Start: Processing Patched AML(s): ");
     if (gSettings.SortedACPICount) {
       DBG("Sorted\n");

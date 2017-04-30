@@ -696,11 +696,10 @@ CHAR8 *get_hda_codec_name(UINT16 codec_vendor_id, UINT16 codec_device_id, UINT8 
         }
     }
     
-    if ( ( lName_format != UNKNOWN ) && ( AsciiStrStr(lName_format, "%a" ) != NULL ) )
+    if ( AsciiStrStr(lName_format, "%a" ) != NULL )
     {
         // Dirty way to remove '%a' from the end of the lName_format
-        int len = AsciiStrLen(lName_format);
-        lName_format[len-2] = '\0';
+        lName_format[AsciiStrLen(lName_format)-3] = '\0';
     }
     
     // Not in table
@@ -856,7 +855,7 @@ BOOLEAN setup_hda_devprop(EFI_PCI_IO_PROTOCOL *PciIo, pci_dt_t *hda_dev, CHAR8 *
 	UINT32                  layoutId = 0;
 	UINT32                  codecId = 0;
 	BOOLEAN                 Injected = FALSE;
-	INT32                   i;
+	UINTN                   i;
 
     if (!gSettings.HDAInjection) {
         return FALSE;

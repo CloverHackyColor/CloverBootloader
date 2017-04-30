@@ -84,7 +84,7 @@ EMU_VARIABLE_CONTROL_PROTOCOL *gEmuVariableControl = NULL;
 
 extern VOID HelpRefit(VOID);
 extern VOID AboutRefit(VOID);
-extern BOOLEAN BooterPatch(IN UINT8 *BooterData, IN INTN BooterSize, LOADER_ENTRY *Entry);
+extern BOOLEAN BooterPatch(IN UINT8 *BooterData, IN UINT64 BooterSize, LOADER_ENTRY *Entry);
 
 static EFI_STATUS LoadEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
                                     IN CHAR16 *ImageTitle,

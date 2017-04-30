@@ -671,7 +671,7 @@ CHAR8 *get_gma_model(UINT16 id)
 BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
 {
   UINTN           j;
-  INT32           i;
+  UINTN           i;
   CHAR8           *devicepath;
   CHAR8           *model;
   DevPropDevice   *device;

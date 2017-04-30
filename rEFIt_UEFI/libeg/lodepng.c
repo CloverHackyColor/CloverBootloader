@@ -37,6 +37,8 @@ Rename this file to lodepng.cpp to use it for C++, or to lodepng.c to use it for
 
 #include <Uefi.h>
 #include <Library/UefiBootServicesTableLib.h>
+#include <Library/BaseMemoryLib.h>
+#include <Library/BaseLib.h>
 
 // Floating point operations are used here, this must be defined to prevent linker error
 CONST INT32 _fltused = 0;
@@ -279,8 +281,10 @@ static unsigned uivector_resize(uivector* p, size_t size)
 static unsigned uivector_resizev(uivector* p, size_t size, unsigned value)
 {
   size_t oldsize = p->size, i;
+  // Prevent memset from being emitted by making this volatile
+  volatile uivector *tmp = p;
   if(!uivector_resize(p, size)) return 0;
-  for(i = oldsize; i < size; ++i) p->data[i] = value;
+  for(i = oldsize; i < size; ++i) tmp->data[i] = value;
   return 1;
 }
 
@@ -897,7 +901,7 @@ unsigned lodepng_huffman_code_lengths(unsigned* lengths, const unsigned* frequen
   BPMNode* leaves; /*the symbols, only those with > 0 frequency*/
 
   if(numcodes == 0) return 80; /*error: a tree of 0 symbols is not supposed to be made*/
-  if((1ULL << maxbitlen) < numcodes) return 80; /*error: represent all symbols*/
+  if(LShiftU64(1ULL, maxbitlen) < numcodes) return 80; /*error: represent all symbols*/
 
   leaves = (BPMNode*)lodepng_malloc(numcodes * sizeof(*leaves));
   if(!leaves) return 83; /*alloc fail*/
@@ -1132,8 +1136,8 @@ static unsigned getTreeInflateDynamic(HuffmanTree* tree_ll, HuffmanTree* tree_d,
     bitlen_ll = (unsigned*)lodepng_malloc(NUM_DEFLATE_CODE_SYMBOLS * sizeof(unsigned));
     bitlen_d = (unsigned*)lodepng_malloc(NUM_DISTANCE_SYMBOLS * sizeof(unsigned));
     if(!bitlen_ll || !bitlen_d) ERROR_BREAK(83 /*alloc fail*/);
-    for(i = 0; i != NUM_DEFLATE_CODE_SYMBOLS; ++i) bitlen_ll[i] = 0;
-    for(i = 0; i != NUM_DISTANCE_SYMBOLS; ++i) bitlen_d[i] = 0;
+    SetMem(bitlen_ll, NUM_DEFLATE_CODE_SYMBOLS * sizeof(unsigned), 0);
+    SetMem(bitlen_d, NUM_DISTANCE_SYMBOLS * sizeof(unsigned), 0);
 
     /*i is the current symbol we're reading in the part that contains the code lengths of lit/len and dist codes*/
     i = 0;
@@ -3113,8 +3117,7 @@ struct ColorTree
 
 static void color_tree_init(ColorTree* tree)
 {
-  int i;
-  for(i = 0; i != 16; ++i) tree->children[i] = 0;
+  SetMem(tree->children, sizeof(tree->children), 0);
   tree->index = -1;
 }
 
@@ -3583,7 +3586,7 @@ unsigned lodepng_convert(unsigned char* out, const unsigned char* in,
   {
     size_t palettesize = mode_out->palettesize;
     const unsigned char* palette = mode_out->palette;
-    size_t palsize = 1ULL << mode_out->bitdepth;
+    size_t palsize = LShiftU64(1ULL, mode_out->bitdepth);
     /*if the user specified output palette but did not give the values, assume
     they want the values of the input color type (assuming that one is palette).
     Note that we never create a new palette ourselves.*/
@@ -4812,7 +4815,7 @@ static void decodeGeneric(unsigned char** out, unsigned* w, unsigned* h,
   }
   if(!state->error)
   {
-    for(i = 0; i < outsize; i++) (*out)[i] = 0;
+    SetMem(*out, outsize, 0);
     state->error = postProcessScanlines(*out, scanlines.data, *w, *h, &state->info_png);
   }
   ucvector_cleanup(&scanlines);
@@ -5431,7 +5434,7 @@ static unsigned filter(unsigned char* out, const unsigned char* in, unsigned w, 
       for(type = 0; type != 5; ++type)
       {
         filterScanline(attempt[type], &in[y * linebytes], prevline, linebytes, bytewidth, type);
-        for(x = 0; x != 256; ++x) count[x] = 0;
+        SetMem(count, sizeof(count), 0);
         for(x = 0; x != linebytes; ++x) ++count[attempt[type][x]];
         ++count[type]; /*the filter type itself is part of the scanline*/
         sum[type] = 0;

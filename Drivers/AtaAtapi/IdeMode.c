@@ -177,7 +177,7 @@ IdeWritePortWMultiple (
   )
 {
   UINT16  *AlignedBuffer;
-  UINT32  *WorkingBuffer;
+  UINT32  *WorkingBuffer = NULL;
   UINTN   Size;
 
   if (((UINTN) Buffer) & 1U) {
@@ -243,7 +243,7 @@ IdeReadPortWMultiple (
   )
 {
   UINT16  *AlignedBuffer;
-  UINT16  *WorkingBuffer;
+  UINT16  *WorkingBuffer = NULL;
   UINTN   Size = 0U;
 
   if (((UINTN) Buffer) & 1U) {

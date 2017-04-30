@@ -136,7 +136,7 @@ VOID KextPatcherStart(LOADER_ENTRY *Entry);
 // Searches Source for Search pattern of size SearchSize
 // and returns the number of occurences.
 //
-UINTN SearchAndCount(UINT8 *Source, UINT32 SourceSize, UINT8 *Search, UINTN SearchSize);
+UINTN SearchAndCount(UINT8 *Source, UINT64 SourceSize, UINT8 *Search, UINTN SearchSize);
 
 //
 // Searches Source for Search pattern of size SearchSize
@@ -145,7 +145,7 @@ UINTN SearchAndCount(UINT8 *Source, UINT32 SourceSize, UINT8 *Search, UINTN Sear
 // Replace should have the same size as Search.
 // Returns number of replaces done.
 //
-UINTN SearchAndReplace(UINT8 *Source, UINT32 SourceSize, UINT8 *Search, UINTN SearchSize, UINT8 *Replace, INTN MaxReplaces);
+UINTN SearchAndReplace(UINT8 *Source, UINT64 SourceSize, UINT8 *Search, UINTN SearchSize, UINT8 *Replace, INTN MaxReplaces);
 
 
 #endif /* !__LIBSAIO_KERNEL_PATCHER_H */

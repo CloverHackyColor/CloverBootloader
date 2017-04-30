@@ -1960,7 +1960,7 @@ BOOLEAN setup_ati_devprop(LOADER_ENTRY *Entry, pci_dt_t *ati_dev)
   CHAR8 compatible[64];
   CHAR8 *devicepath;
   UINT32 FakeID = 0;
-  INT32 i;
+  UINTN i;
   
   if (!init_card(ati_dev)) {
     return FALSE;

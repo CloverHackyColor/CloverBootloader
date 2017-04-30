@@ -24,7 +24,7 @@
 // Searches Source for Search pattern of size SearchSize
 // and returns the number of occurences.
 //
-UINTN SearchAndCount(UINT8 *Source, UINT32 SourceSize, UINT8 *Search, UINTN SearchSize)
+UINTN SearchAndCount(UINT8 *Source, UINT64 SourceSize, UINT8 *Search, UINTN SearchSize)
 {
   UINTN     NumFounds = 0;
   UINT8     *End = Source + SourceSize;
@@ -47,7 +47,7 @@ UINTN SearchAndCount(UINT8 *Source, UINT32 SourceSize, UINT8 *Search, UINTN Sear
 // Replace should have the same size as Search.
 // Returns number of replaces done.
 //
-UINTN SearchAndReplace(UINT8 *Source, UINT32 SourceSize, UINT8 *Search, UINTN SearchSize, UINT8 *Replace, INTN MaxReplaces)
+UINTN SearchAndReplace(UINT8 *Source, UINT64 SourceSize, UINT8 *Search, UINTN SearchSize, UINT8 *Replace, INTN MaxReplaces)
 {
   UINTN     NumReplaces = 0;
   BOOLEAN   NoReplacesRestriction = MaxReplaces <= 0;
@@ -69,10 +69,10 @@ UINTN SearchAndReplace(UINT8 *Source, UINT32 SourceSize, UINT8 *Search, UINTN Se
   return NumReplaces;
 }
 
-UINTN SearchAndReplaceTxt(UINT8 *Source, UINT32 SourceSize, UINT8 *Search, UINTN SearchSize, UINT8 *Replace, INTN MaxReplaces)
+UINTN SearchAndReplaceTxt(UINT8 *Source, UINT64 SourceSize, UINT8 *Search, UINTN SearchSize, UINT8 *Replace, INTN MaxReplaces)
 {
   UINTN     NumReplaces = 0;
-  UINTN     Skip;
+  UINTN     Skip = 0;
   BOOLEAN   NoReplacesRestriction = MaxReplaces <= 0;
   UINT8     *End = Source + SourceSize;
   UINT8     *SearchEnd = Search + SearchSize;

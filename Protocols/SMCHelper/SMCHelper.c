@@ -261,10 +261,10 @@ SmcGetKeyCountImpl (IN  APPLE_SMC_IO_PROTOCOL  *This,
     TmpStack = TmpStack->Next;
   }
   //take into account BigEndian
-  *Big++ = Index >> 24;
-  *Big++ = Index >> 16;
-  *Big++ = Index >> 8;
-  *Big++ = Index >> 0;
+  *Big++ = (SMC_DATA)(Index >> 24);
+  *Big++ = (SMC_DATA)(Index >> 16);
+  *Big++ = (SMC_DATA)(Index >> 8);
+  *Big++ = (SMC_DATA)Index;
   return EFI_SUCCESS;
 }
 

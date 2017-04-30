@@ -80,7 +80,7 @@ EG_IMAGE * egDecodeBMP(IN UINT8 *FileData, IN UINTN FileDataLength, IN BOOLEAN W
   EG_IMAGE            *NewImage;
   BMP_IMAGE_HEADER    *BmpHeader;
   BMP_COLOR_MAP       *BmpColorMap;
-  UINTN               x, y;
+  INT32               x, y;
   INT32               RealPixelHeight, RealPixelWidth;
   UINT8               *ImagePtr;
   UINT8               *ImagePtrBase;

@@ -343,7 +343,7 @@ BOOLEAN set_eth_props(pci_dt_t *eth_dev)
   DevPropDevice   *device;
   UINT8           builtin = 0x0;
   BOOLEAN         Injected = FALSE;
-  INT32           i;
+  UINTN           i;
   CHAR8           compatible[64];
   
   
@@ -415,7 +415,7 @@ BOOLEAN set_usb_props(pci_dt_t *usb_dev)
   DevPropDevice   *device;
   UINT32          fake_devid;
   BOOLEAN         Injected = FALSE;
-  INT32           i;
+  UINTN           i;
   
   if (!string)
     string = devprop_create_string();

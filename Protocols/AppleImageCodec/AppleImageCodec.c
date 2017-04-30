@@ -160,7 +160,7 @@ DecodeImageData (//IN APPLE_IMAGE_CODEC_PROTOCOL* This,
     return EFI_UNSUPPORTED;
   }
   
-  *RawImageDataSize = Image->Width * Image->Height * sizeof(EFI_UGA_PIXEL);
+  *RawImageDataSize = (UINT32)(Image->Width * Image->Height * sizeof(EFI_UGA_PIXEL));
   Status = gBS->AllocatePool(EfiBootServicesData, *RawImageDataSize, (VOID **)RawImageData);
   if (!EFI_ERROR(Status)) {
     gBS->CopyMem(*RawImageData, (VOID*)Image->PixelData, *RawImageDataSize);

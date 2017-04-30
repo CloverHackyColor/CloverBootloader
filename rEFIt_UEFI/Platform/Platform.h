@@ -602,6 +602,16 @@ MSR C001006B  0000-0000-0000-0000
 // User policy, white and black list with query
 #define SECURE_BOOT_POLICY_USER      (6)
 
+// ADDRESS_OF
+/// Get the address of a structure member
+/// @param INSTANCETYPE The type of the instance structure
+/// @param Instance     An instance of a structure to get the address of a member
+/// @param FIELDTYPE    The type of the member field
+/// @param Field        The name of the field of which to get the address
+/// @return The address of the offset of the member field in the instance structure
+#define ADDRESS_OF(INSTANCETYPE, Instance, FIELDTYPE, Field) (FIELDTYPE *)(((UINT8 *)(Instance)) + OFFSET_OF(INSTANCETYPE, Field))
+
+
 struct aml_chunk
 {
   UINT8              Type;
@@ -1178,7 +1188,7 @@ typedef struct {
 #endif
 
   //Add custom properties
-  INTN                    NrAddProperties;
+  UINTN                   NrAddProperties;
 #if defined(MDE_CPU_IA32)
   UINT32  align8;
 #endif

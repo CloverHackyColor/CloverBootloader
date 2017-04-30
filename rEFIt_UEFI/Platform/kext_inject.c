@@ -105,7 +105,7 @@ EFI_STATUS EFIAPI LoadKext(IN LOADER_ENTRY *Entry, IN EFI_FILE *RootDir, IN CHAR
     }
     NoContents = TRUE;
 	}
-  if(ParseXML((CHAR8*)infoDictBuffer,&dict,infoDictBufferLength)!=0) {
+  if(ParseXML((CHAR8*)infoDictBuffer,&dict,(UINT32)infoDictBufferLength)!=0) {
     FreePool(infoDictBuffer);
     MsgLog("Failed to load extra kext (failed to parse Info.plist): %s\n", FileName);
     return EFI_NOT_FOUND;

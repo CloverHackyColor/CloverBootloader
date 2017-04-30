@@ -348,7 +348,7 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
           if (p_states[i].Control.Control < realMin) {
             aml_add_dword(pstt, 0); //zero for power
           } else {
-            aml_add_dword(pstt, p_states[i].Frequency * TDPdiv); // Designed Power
+            aml_add_dword(pstt, (UINT32)(p_states[i].Frequency * TDPdiv)); // Designed Power
           }
           aml_add_dword(pstt, 0x0000000A); // Latency
           aml_add_dword(pstt, 0x0000000A); // Latency

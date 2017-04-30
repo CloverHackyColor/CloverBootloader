@@ -52,7 +52,6 @@
 #define DBG(...) DebugLog(DEBUG_MENU, __VA_ARGS__)
 #endif
 
-
 //#define PREBOOT_LOG L"EFI\\CLOVER\\misc\\preboot.log"
 #define VBIOS_BIN L"EFI\\CLOVER\\misc\\c0000.bin"
 
@@ -64,7 +63,7 @@ REFIT_MENU_SCREEN OptionMenu  = {4, L"Options", NULL, 0, NULL, 0, NULL, 0, NULL,
 extern REFIT_MENU_ENTRY MenuEntryReturn;
 extern UINTN            ThemesNum;
 extern CHAR16           *ThemesList[];
-extern INTN             ConfigsNum;
+extern UINTN            ConfigsNum;
 extern CHAR16           *ConfigsList[];
 extern CHAR8            *NonDetected;
 extern BOOLEAN          GetLegacyLanAddress;
@@ -2677,11 +2676,11 @@ INTN DrawTextXY(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
 VOID DrawBCSText(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
 {
   // init
-  INTN      ChrsNum = 12;
-  INTN      Ellipsis = 3;
+  UINTN     ChrsNum = 12;
+  UINTN     Ellipsis = 3;
   INTN      TextWidth = 0;
   INTN      XText = 0;
-  INTN      i = 0;
+  UINTN     i = 0;
   EG_IMAGE  *TextBufferXY = NULL;
   CHAR16    *BCSText = NULL;
   
@@ -2706,7 +2705,7 @@ VOID DrawBCSText(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
   }
   
   // calculate text's width
-  TextWidth = ((StrLen(Text) <= ChrsNum - Ellipsis) ? StrLen(Text) : ChrsNum) * ((FontWidth > GlobalConfig.CharWidth) ?
+  TextWidth = ((StrLen(Text) <= (ChrsNum - Ellipsis)) ? StrLen(Text) : ChrsNum) * ((FontWidth > GlobalConfig.CharWidth) ?
                FontWidth : GlobalConfig.CharWidth);
   
   // render the text
@@ -2719,7 +2718,7 @@ VOID DrawBCSText(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
 
   // if the text exceeds the given limit,
   // copy the permited amound of chars and add ellipsis
-  if (StrLen(Text) > ChrsNum - Ellipsis) {
+  if (StrLen(Text) > (ChrsNum - Ellipsis)) {
     BCSText = AllocatePool(sizeof(CHAR16) * ChrsNum);
 
     for (i = 0; i < ChrsNum; i++) {
@@ -2975,7 +2974,7 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
   INTN VisibleHeight = 0; //assume vertical layout
   CHAR16 ResultString[TITLE_MAX_LEN]; // assume a title max length of around 128
   INTN PlaceCentre = (TextHeight / 2) - 7;
-  INTN OldChosenItem = -1;
+  UINTN OldChosenItem = ~(UINTN)0;
   
   HidePointer();
 
@@ -4327,7 +4326,7 @@ REFIT_MENU_ENTRY  *SubMenuCustomDevices() //yyyy
       InputBootArgs->Entry.Title = PoolPrint(L"  key: %a", Prop->Key);
       InputBootArgs->Entry.Tag = TAG_INPUT;
       InputBootArgs->Entry.Row = 0xFFFF; //cursor
-      InputBootArgs->Item = &(Prop->MenuItem);
+      InputBootArgs->Item = ADDRESS_OF(DEV_PROPERTY, Prop, INPUT_ITEM, MenuItem);
       InputBootArgs->Entry.AtClick = ActionEnter;
       InputBootArgs->Entry.AtRightClick = ActionDetails;
       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);

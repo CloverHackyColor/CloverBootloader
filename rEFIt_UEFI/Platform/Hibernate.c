@@ -328,7 +328,7 @@ GetSleepImageLocation(IN REFIT_VOLUME *Volume, REFIT_VOLUME **SleepImageVolume, 
   }
 
   if (!EFI_ERROR(Status)) {
-    Status = ParseXML((const CHAR8*)PrefBuffer, &PrefDict, PrefBufferLen);
+    Status = ParseXML((const CHAR8*)PrefBuffer, &PrefDict, (UINT32)PrefBufferLen);
     if (!EFI_ERROR(Status)) {
       dict = GetProperty(PrefDict, "Custom Profile");
       if (dict) {
@@ -406,7 +406,7 @@ UINT64
 GetSleepImagePosition (IN REFIT_VOLUME *Volume, REFIT_VOLUME **SleepImageVolume)
 {
   EFI_STATUS          Status;
-  EFI_FILE            *File;
+  EFI_FILE            *File = NULL;
   VOID                *Buffer;
   UINTN               BufferSize;
   CHAR16              *ImageName;
@@ -585,7 +585,7 @@ IsSleepImageValidBySignature (IN REFIT_VOLUME *Volume)
 
 UINT16 PartNumForVolume(REFIT_VOLUME *Volume)
 {
-  UINT32 PartNum = 0; //if not found then zero mean whole disk
+  UINT16 PartNum = 0; //if not found then zero mean whole disk
 	HARDDRIVE_DEVICE_PATH       *HdPath     = NULL;
 	EFI_DEVICE_PATH_PROTOCOL    *DevicePath = Volume->DevicePath;
 
@@ -599,7 +599,7 @@ UINT16 PartNumForVolume(REFIT_VOLUME *Volume)
 	}
 	
 	if (HdPath != NULL) {
-    PartNum = HdPath->PartitionNumber;
+    PartNum = (UINT16)(HdPath->PartitionNumber);
   }
   return PartNum;
 }
@@ -669,10 +669,8 @@ NodeParser  (UINT8 *DevPath, UINTN PathSize, UINT8 Type)
       PathSize = i;
       break;
     }
-    //Store device node len in to local variable
-    UINT16 len = ((UINT16)DevPath[i+3]<<8) | DevPath[i+2];
     //Jump to the next device node type
-    i += len;
+    i += (((UINT16)DevPath[i+3]<<8) | DevPath[i+2]);
   }
   return PathSize;
 }

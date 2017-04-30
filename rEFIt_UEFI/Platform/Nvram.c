@@ -293,9 +293,9 @@ GetSmcKeys (BOOLEAN WriteToSMC)
       }
       DBG("\n"); */
       if (gAppleSmc && WriteToSMC) {
-        Status = gAppleSmc->SmcAddKey(gAppleSmc, KeyFromName(Name), DataSize, TypeFromName(Name), 0xC0);
+        Status = gAppleSmc->SmcAddKey(gAppleSmc, KeyFromName(Name), (SMC_DATA_SIZE)DataSize, TypeFromName(Name), 0xC0);
         if (!EFI_ERROR(Status)) {
-          Status = gAppleSmc->SmcWriteValue(gAppleSmc, KeyFromName(Name), DataSize, Data);
+          Status = gAppleSmc->SmcWriteValue(gAppleSmc, KeyFromName(Name), (SMC_DATA_SIZE)DataSize, Data);
           //       DBG("Write to AppleSMC status=%r\n", Status);
         }
         NumKey++;
@@ -677,7 +677,7 @@ LoadNvramPlist (
     //
     // parse it into gNvramDict 
     //
-    Status = ParseXML ((const CHAR8*)NvramPtr, &gNvramDict, Size);
+    Status = ParseXML ((const CHAR8*)NvramPtr, &gNvramDict, (UINT32)Size);
 //    if(Status != EFI_SUCCESS) {
 //        DBG (" parsing error\n");
 //    }
@@ -820,12 +820,10 @@ PutNvramPlistToRtVars ()
 //  DBG ("PutNvramPlistToRtVars ...\n");
   // iterate over dict elements
   for (Tag = gNvramDict->tag; Tag != NULL; Tag = Tag->tagNext) {
-    
+    EFI_GUID *VendorGuid = &gEfiAppleBootGuid;
     Value  = NULL;
     ValTag = (TagPtr)Tag->tag;
 
-    EFI_GUID *VendorGuid = &gEfiAppleBootGuid;
-    
     // process only valid <key> tags
     if (Tag->type != kTagTypeKey || ValTag == NULL) {
       DBG (" ERROR: Tag is not <key>, type = %d\n", Tag->type);

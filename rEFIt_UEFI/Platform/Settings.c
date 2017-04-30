@@ -54,7 +54,7 @@ UINTN                           nLanPaths;        // number of LAN pathes
 
 UINTN                           ThemesNum                   = 0;
 CHAR16                          *ThemesList[50]; //no more then 50 themes?
-INTN                            ConfigsNum;
+UINTN                           ConfigsNum;
 CHAR16                          *ConfigsList[20];
 
 // firmware
@@ -3010,9 +3010,9 @@ GetListOfACPI ()
   EFI_FILE_INFO     *DirEntry;
   ACPI_PATCHED_AML  *ACPIPatchedAMLTmp;
   INTN i, Count = gSettings.DisabledAMLCount;
-  ACPIPatchedAML = NULL;
-
   CHAR16*     AcpiPath = PoolPrint(L"%s\\ACPI\\patched", OEMPath);
+
+  ACPIPatchedAML = NULL;
 
   DirIterOpen(SelfRootDir, AcpiPath, &DirIter);
 
@@ -4010,6 +4010,7 @@ GetUserSettings(
   TagPtr     Prop2;
   TagPtr     Prop3;
   TagPtr     DictPointer;
+  BOOLEAN    IsValidCustomUUID = FALSE;
   //UINTN      i;
 
   Dict              = CfgDict;
@@ -4073,7 +4074,7 @@ GetUserSettings(
       }
 
       Prop = GetProperty (DictPointer, "VRAM");
-      gSettings.VRAM = (UINTN)GetPropertyInteger(Prop, (UINT64)gSettings.VRAM); //Mb 
+      gSettings.VRAM = (UINTN)GetPropertyInteger(Prop, (INTN)gSettings.VRAM); //Mb 
       //
       Prop = GetProperty (DictPointer, "RefCLK");
       gSettings.RefCLK = (UINT16)GetPropertyInteger (Prop, 0);
@@ -5049,8 +5050,8 @@ GetUserSettings(
 
       Prop               = GetProperty (DictPointer, "SortedOrder");
       if (Prop) {
-        Prop2 = NULL;
         INTN   i, Count = GetTagCount (Prop);
+        Prop2 = NULL;
         if (Count > 0) {
           gSettings.SortedACPICount = 0;
           gSettings.SortedACPI = AllocateZeroPool (Count * sizeof(CHAR16 *));
@@ -5066,8 +5067,8 @@ GetUserSettings(
 
       Prop = GetProperty (DictPointer, "DisabledAML");
       if (Prop) {
-        Prop2 = NULL;
         INTN   i, Count = GetTagCount (Prop);
+        Prop2 = NULL;
         if (Count > 0) {
           gSettings.DisabledAMLCount = 0;
           gSettings.DisabledAML = AllocateZeroPool (Count * sizeof(CHAR16 *));
@@ -5383,8 +5384,6 @@ GetUserSettings(
         AsmWriteMsr64 (MSR_IA32_MISC_ENABLE, msr);
       }
     }
-
-    BOOLEAN IsValidCustomUUID = FALSE;
 
     // RtVariables
     DictPointer = GetProperty (Dict, "RtVariables");

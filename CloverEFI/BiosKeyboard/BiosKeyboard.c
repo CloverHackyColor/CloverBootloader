@@ -2075,9 +2075,9 @@ BiosKeyboardTimerHandler (
   
 */  
   NumberOfKeys = 3;
-  Keys[0] = KeyData.KeyState.KeyShiftState;
-  Keys[1] = KeyData.KeyState.KeyToggleState;  //or 0?
-  Keys[2] = KeyData.Key.ScanCode;
+  Keys[0] = (APPLE_KEY)KeyData.KeyState.KeyShiftState;
+  Keys[1] = (APPLE_KEY)KeyData.KeyState.KeyToggleState;  //or 0?
+  Keys[2] = (APPLE_KEY)KeyData.Key.ScanCode;
   
   if (BiosKeyboardPrivate->KeyMapDb != NULL) {
     BiosKeyboardPrivate->KeyMapDb->SetKeyStrokeBufferKeys (

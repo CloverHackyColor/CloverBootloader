@@ -974,7 +974,7 @@ WaitForOs (IN EFI_EVENT Event, IN VOID *Context)
   EFI_HANDLE                  Controller;
   UINTN                       NumberHandles;
   EFI_HANDLE                  *Buffer;
-  INTN                        Index;
+  UINTN                       Index;
 
   if ((StrCmp(gST->FirmwareVendor, L"CLOVER") == 0) || ((gST->FirmwareRevision >> 16) < 2)) {
     //Use this disconnect only for Aptio rev > 0x20000

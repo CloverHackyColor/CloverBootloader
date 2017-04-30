@@ -1259,7 +1259,7 @@ KernelUserPatch(IN UINT8 *UKernelData, LOADER_ENTRY *Entry)
 }
 
 BOOLEAN
-BooterPatch(IN UINT8 *BooterData, IN INT64 BooterSize, LOADER_ENTRY *Entry)
+BooterPatch(IN UINT8 *BooterData, IN UINT64 BooterSize, LOADER_ENTRY *Entry)
 {
   INTN Num, i = 0, y = 0;
   for (; i < Entry->KernelAndKextPatches->NrBoots; ++i) {

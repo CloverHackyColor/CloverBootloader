@@ -8,7 +8,7 @@
 #include <Library/MemoryAllocationLib.h>
 
 
-#define uint32_t UINT32
+#define uint32_t UINT64
 #define memcpy CopyMem
 #define memset(s,c,n) SetMem(s,n,c)
 

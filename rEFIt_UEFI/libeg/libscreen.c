@@ -633,20 +633,22 @@ EFI_STATUS egScreenShot(VOID)
     }
 
 #if defined(LODEPNG)
-    EFI_UGA_PIXEL *ImagePNG = (EFI_UGA_PIXEL *)Image->PixelData;
-    UINTN   ImageSize = Image->Width * Image->Height;
-    UINTN   i;
+    {
+      EFI_UGA_PIXEL *ImagePNG = (EFI_UGA_PIXEL *)Image->PixelData;
+      UINTN   ImageSize = Image->Width * Image->Height;
+      UINTN   i;
 
-    // Convert BGR to RGBA with Alpha set to 0xFF
-    for (i = 0; i < ImageSize; i++) {
-        UINT8 Temp = ImagePNG[i].Blue;
-        ImagePNG[i].Blue = ImagePNG[i].Red;
-        ImagePNG[i].Red = Temp;
-        ImagePNG[i].Reserved = 0xFF;
+      // Convert BGR to RGBA with Alpha set to 0xFF
+      for (i = 0; i < ImageSize; i++) {
+          UINT8 Temp = ImagePNG[i].Blue;
+          ImagePNG[i].Blue = ImagePNG[i].Red;
+          ImagePNG[i].Red = Temp;
+          ImagePNG[i].Reserved = 0xFF;
+      }
+
+      // Encode raw RGB image to PNG format
+      eglodepng_encode(&FileData, &FileDataLength, (CONST UINT8*)ImagePNG, (UINTN)Image->Width, (UINTN)Image->Height);
     }
-
-    // Encode raw RGB image to PNG format
-    eglodepng_encode(&FileData, &FileDataLength, (CONST UINT8*)ImagePNG, (UINTN)Image->Width, (UINTN)Image->Height);
 #else //LODEPNG
     // encode as BMP
     egEncodeBMP(Image, &FileData, &FileDataLength);
