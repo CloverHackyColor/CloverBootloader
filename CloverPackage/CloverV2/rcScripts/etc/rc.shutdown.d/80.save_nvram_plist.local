@@ -4,7 +4,7 @@
 # dump NVRAM for UEFI Clover with EmuVariable or Legacy Clover
 #
 # Script version info
-gScriptVersion=1.16.4
+gScriptVersion=1.16.5
 #================================= GLOBAL VARS ==================================
 #
 # The script expects '0.5' but non-US localizations use '0,5' so we export
@@ -370,7 +370,7 @@ function _spinWait()
     if [[ ${DEBUG} != 0 ]]; then
         printf "mount\n"
         mount
-        printf
+        printf ""
     fi
 }
 
@@ -430,7 +430,8 @@ if [[ "${gLegacyEmuVariableIsPresent}" == "true" || "${gEfiEmuVariableIsPresent}
     # then dump NVRAM to target path
     #
     gLogTimeStamp=$(date +%Y-%m-%d-%H:%M:%S)
-    if [ "${#gESPList[@]}" -eq 0 ];
+    test $DEBUG -eq 1 && printf "gESPListIndex $gESPListIndex\n"
+    if [[ "${gESPListIndex}" == "0" ]];
     then
         #
         # no ESP found, write file to root(/) just in case
