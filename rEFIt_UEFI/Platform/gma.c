@@ -455,7 +455,7 @@ static struct gma_gpu_t KnownGPUS[] = {
   //----------------Sandy bridge--------------
   //GT1
   { 0x0102, "Intel HD Graphics 2000"         }, // Desktop - iMac12,1, iMac12,2
-  { 0x0106, "Intel HD Graphics 3000"         }, // Mobile
+  { 0x0106, "Intel HD Graphics 2000"         }, // Mobile
   { 0x010A, "Intel HD Graphics P3000"        }, // Server
   //GT2
   { 0x0112, "Intel HD Graphics 3000"         }, // Desktop
@@ -507,7 +507,7 @@ static struct gma_gpu_t KnownGPUS[] = {
   { 0x0A06, "Intel Haswell GT1"              }, // Mobile ULT
   { 0x0A0A, "Intel Haswell GT1"              }, // Server ULT
   { 0x0A0B, "Intel Haswell GT1"              }, // ULT
-  { 0x0A0E, "Intel HD Graphics 4400"         }, // ULT
+  { 0x0A0E, "Intel Haswell GT1"              }, // ULT
   //GT2
   { 0x0A12, "Intel Haswell GT2"              }, // Desktop ULT
   { 0x0A16, "Intel HD Graphics 4400"         }, // Mobile ULT
@@ -676,8 +676,10 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
   CHAR8           *model;
   DevPropDevice   *device;
   UINT8           BuiltIn = 0x00;
-  UINT32			FakeID;
+  UINT32          FakeID;
   UINT32          DualLink = 0;
+  BOOLEAN         SetUGAWidth = FALSE;
+  BOOLEAN         SetUGAHeight = FALSE;
   BOOLEAN         Injected = FALSE;
   BOOLEAN         SetFake = FALSE;
   BOOLEAN         SetSnb = FALSE;
@@ -704,252 +706,372 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
   // Resolution
   switch (UGAWidth) {
     case 160:
+      SetUGAWidth = TRUE;
       if(UGAHeight == 120) {
+        SetUGAHeight = TRUE;
         DBG ("  Found quarter quarter VGA Display - 4:3 :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
       }
+	  else {
+        DBG ("  Found Unknown Resolution Display - ?:? :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
+	  }
       break;
     case 240:
+      SetUGAWidth = TRUE;
       if(UGAHeight == 160) {
+        SetUGAHeight = TRUE;
         DBG ("  Found Half quarter VGA Display - 3:2 :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
       }
+	  else {
+        DBG ("  Found Unknown Resolution Display - ?:? :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
+	  }
       break;
     case 320:
+      SetUGAWidth = TRUE;
       if(UGAHeight == 240) {
+        SetUGAHeight = TRUE;
         DBG ("  Found quarter VGA Display - 4:3 :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
       }
+	  else {
+        DBG ("  Found Unknown Resolution Display - ?:? :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
+	  }
       break;
     case 400:
+      SetUGAWidth = TRUE;
       if(UGAHeight == 240) {
+        SetUGAHeight = TRUE;
         DBG ("  Found Wide quarter VGA Display - 5:3 :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
       }
+	  else {
+        DBG ("  Found Unknown Resolution Display - ?:? :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
+	  }
       break;
     case 480:
+      SetUGAWidth = TRUE;
       if(UGAHeight == 320) {
+        SetUGAHeight = TRUE;
         DBG ("  Found Half-size VGA Display - 3:2 :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
       }
+	  else {
+        DBG ("  Found Unknown Resolution Display - ?:? :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
+	  }
       break;
     case 640:
+      SetUGAWidth = TRUE;
       switch (UGAHeight) {
         case 360:
+          SetUGAHeight = TRUE;
           DBG ("  Found one ninth of a Full HD Display - 16:9 :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
           break;
         case 480:
+          SetUGAHeight = TRUE;
           DBG ("  Found VGA Display - 4:3 :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
           break;
         default:
+          DBG ("  Found Unknown Resolution Display - ?:? :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
           break;
       }
       break;
     case 800:
+      SetUGAWidth = TRUE;
       switch (UGAHeight) {
         case 480:
+          SetUGAHeight = TRUE;
           DBG ("  Found Wide VGA Display - 5:3 :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
           break;
         case 600:
+          SetUGAHeight = TRUE;
           DBG ("  Found Super VGA Display - 4:3 :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
           break;
         default:
+          DBG ("  Found Unknown Resolution Display - ?:? :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
           break;
       }
       break;
     case 854:
+      SetUGAWidth = TRUE;
       if(UGAHeight == 480) {
+        SetUGAHeight = TRUE;
         DBG ("  Found Full Wide VGA Display - 16:9 :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
       }
+	  else {
+        DBG ("  Found Unknown Resolution Display - ?:? :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
+	  }
       break;
     case 960:
+      SetUGAWidth = TRUE;
       switch (UGAHeight) {
         case 540:
+          SetUGAHeight = TRUE;
           DBG ("  Found one quarter of Full HD Display - 16:9 :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
           break;
         case 640:
+          SetUGAHeight = TRUE;
           DBG ("  Found Double-size VGA Display - 3:2 :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
           break;
         default:
+          DBG ("  Found Unknown Resolution Display - ?:? :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
           break;
       }
       break;
     case 1024:
+      SetUGAWidth = TRUE;
       switch (UGAHeight) {
         case 576:
+          SetUGAHeight = TRUE;
           DBG ("  Found Wide Super VGA Display - 16:9 :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
           break;
         case 600:
+          SetUGAHeight = TRUE;
           DBG ("  Found Wide Super VGA Display - 17:10 :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
           break;
         case 768:
+          SetUGAHeight = TRUE;
           DBG ("  Found XGA Display - 4:3 :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
           break;
         default:
+          DBG ("  Found Unknown Resolution Display - ?:? :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
           break;
       }
       break;
     case 1152:
+      SetUGAWidth = TRUE;
       if(UGAHeight == 864) {
+        SetUGAHeight = TRUE;
         DBG ("  Found XGA Plus Display - 4:3 :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
       }
+	  else {
+        DBG ("  Found Unknown Resolution Display - ?:? :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
+	  }
       break;
     case 1280:
+      SetUGAWidth = TRUE;
       switch (UGAHeight) {
         case 720:
+          SetUGAHeight = TRUE;
           DBG ("  Found HD Display - 16:9 :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
           break;
         case 768:
+          SetUGAHeight = TRUE;
           DBG ("  Found Wide XGA Display - 5:3 :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
           break;
         case 800:
+          SetUGAHeight = TRUE;
           DBG ("  Found Wide XGA Display - 16:10 :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
           break;
         case 1024:
+          SetUGAHeight = TRUE;
           DBG ("  Found Super XGA Display - 5:4 :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
           break;
         default:
+          DBG ("  Found Unknown Resolution Display - ?:? :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
           break;
       }
       break;
     case 1366:
+      SetUGAWidth = TRUE;
       if(UGAHeight == 768) {
+        SetUGAHeight = TRUE;
         DBG ("  Found Full Wide XGA Display - 16:9 :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
       }
+	  else {
+        DBG ("  Found Unknown Resolution Display - ?:? :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
+	  }
       break;
     case 1400:
+      SetUGAWidth = TRUE;
       if(UGAHeight == 1050) {
+        SetUGAHeight = TRUE;
         DBG ("  Found Super XGA Plus Display - 4:3 :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
       }
       break;
     case 1440:
+      SetUGAWidth = TRUE;
       if(UGAHeight == 900) {
+        SetUGAHeight = TRUE;
         DBG ("  Found Wide XGA Plus Display - 16:10 :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
       }
+	  else {
+        DBG ("  Found Unknown Resolution Display - ?:? :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
+	  }
       break;
     case 1600:
+      SetUGAWidth = TRUE;
       switch (UGAHeight) {
         case 900:
+          SetUGAHeight = TRUE;
           DBG ("  Found HD Plus Display - 16:9 :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
           break;
         case 1200:
+          SetUGAHeight = TRUE;
           DBG ("  Found Ultra XGA Display - 4:3 :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
           break;
         case 1050:
+          SetUGAHeight = TRUE;
           DBG ("  Found Widescreen Super XGA Display - 16:10 :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
           break;
         default:
+          DBG ("  Found Unknown Resolution Display - ?:? :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
           break;
       }
       break;
     case 1920:
+      SetUGAWidth = TRUE;
       switch (UGAHeight) {
         case 1080:
+          SetUGAHeight = TRUE;
           DBG ("  Found Full HD Display - 16:9 :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
           break;
         case 1200:
+          SetUGAHeight = TRUE;
           DBG ("  Found Wide Ultra XGA Display - 16:10 :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
           break;
         default:
+          DBG ("  Found Unknown Resolution Display - ?:? :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
           break;
       }
       break;
     case 2048:
+      SetUGAWidth = TRUE;
       switch (UGAHeight) {
         case 1152:
+          SetUGAHeight = TRUE;
           DBG ("  Found Quad Wide XGA Display - 16:9 :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
           break;
         case 1536:
+          SetUGAHeight = TRUE;
           DBG ("  Found Quad XGA Display - 4:3 :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
           break;
         default:
+          DBG ("  Found Unknown Resolution Display - ?:? :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
           break;
       }
       break;
     case 2560:
+      SetUGAWidth = TRUE;
       switch (UGAHeight) {
         case 1440:
+          SetUGAHeight = TRUE;
           DBG ("  Found Quad HD Display - 16:9 :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
           break;
         case 1600:
+          SetUGAHeight = TRUE;
           DBG ("  Found Wide Quad XGA Display - 16:10 :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
           break;
         case 2048:
+          SetUGAHeight = TRUE;
           DBG ("  Found Quad Wide XGA Display - 5:4 :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
           break;
         default:
+          DBG ("  Found Unknown Resolution Display - ?:? :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
           break;
       }
       break;
     case 2880:
+      SetUGAWidth = TRUE;
       if(UGAHeight == 1800) {
+        SetUGAHeight = TRUE;
         DBG ("  Found Wide Quad XGA Display - 16:10 :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
       }
+	  else {
+        DBG ("  Found Unknown Resolution Display - ?:? :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
+	  }
       break;
     case 3200:
+      SetUGAWidth = TRUE;
       switch (UGAHeight) {
         case 1800:
+          SetUGAHeight = TRUE;
           DBG ("  Found Quad HD Plus Display - 16:9 :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
           break;
         case 2048:
+          SetUGAHeight = TRUE;
           DBG ("  Found Wide Quad Super XGA Display - 25:16 :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
           break;
         case 2400:
+          SetUGAHeight = TRUE;
           DBG ("  Found Quad Ultra XGA Display - 4:3 :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
           break;
         default:
+          DBG ("  Found Unknown Resolution Display - ?:? :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
           break;
       }
       break;
     case 3840:
+      SetUGAWidth = TRUE;
       switch (UGAHeight) {
         case 2160:
+          SetUGAHeight = TRUE;
           DBG ("  Found Ultra HD, 4K Display - 16:9 :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
           break;
         case 2400:
+          SetUGAHeight = TRUE;
           DBG ("  Found Wide Quad Ultra XGA Display - 16:10 :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
           break;
         default:
+          DBG ("  Found Unknown Resolution Display - ?:? :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
           break;
 
       }
       break;
     case 4096:
+      SetUGAWidth = TRUE;
       if(UGAHeight == 3072) {
+        SetUGAHeight = TRUE;
         DBG ("  Found Hex XGA Display - 4:3 :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
       }
+	  else {
+        DBG ("  Found Unknown Resolution Display - ?:? :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
+	  }
       break;
     case 5120:
+      SetUGAWidth = TRUE;
       switch (UGAHeight) {
         case 2880:
+          SetUGAHeight = TRUE;
           DBG ("  Found Ultra HD Plus Display - 16:9 :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
           break;
         case 3200:
+          SetUGAHeight = TRUE;
           DBG ("  Found Wide Hex XGA Display - 16:10 :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
           break;
         case 4096:
+          SetUGAHeight = TRUE;
           DBG ("  Found Hex Super XGA Display - 5:4 :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
           break;
         default:
+          DBG ("  Found Unknown Resolution Display - ?:? :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
           break;
       }
       break;
     case 6400:
+      SetUGAWidth = TRUE;
       switch (UGAHeight) {
         case 4096:
+          SetUGAHeight = TRUE;
           DBG ("  Found Wide Hex Super XGA Display - 25:16 :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
           break;
         case 4800:
+          SetUGAHeight = TRUE;
           DBG ("  Found Hex Ultra XGA Display - 4:3 :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
           break;
         default:
+          DBG ("  Found Unknown Resolution Display - ?:? :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
           break;
       }
       break;
     case 7680:
+      SetUGAWidth = TRUE;
       switch (UGAHeight) {
         case 4320:
+          SetUGAHeight = TRUE;
           DBG ("  Found Full Ultra HD Display - 16:9 :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
           break;
         case 4800:
+          SetUGAHeight = TRUE;
           DBG ("  Found Wide Hex Ultra XGA Display - 16:10 :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
           break;
         default:
+          DBG ("  Found Unknown Resolution Display - ?:? :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
           break;
       }
       break;
@@ -1040,49 +1162,71 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
     case 0x2A03: // "Intel GMA X3100"                 // Mobile - Intel 965 Express Chipset Family
     case 0x2A12: // "Intel GMA X3100"                 // Mobile - Intel 965 Express Chipset Family
     case 0x2A13: // "Intel GMA X3100"                 // Mobile - Intel 965 Express Chipset Family
-      if (gSettings.DualLink != 0) {
-        if (UGAWidth < 1400) {
-          DBG("  Default AAPL01,DualLink = 1\n");
-          DBG("  Low Resolution Display\n");
-          DBG("  AAPL01,DualLink: changed from 1 to not used\n");
+      if (SetUGAWidth && SetUGAHeight) {
+        if (gSettings.DualLink != 0) {
+          if (UGAWidth < 1400) {
+			DBG("  Default AAPL01,DualLink = 1\n");
+			DBG("  Low Resolution Display\n");
+			DBG("  AAPL01,DualLink: changed from 1 to not used\n");
+          }
+          else {
+			devprop_add_value(device, "AAPL01,DualLink", (UINT8*)&gSettings.DualLink, 1);
+			DBG("  AAPL01,DualLink = 1\n");
+          }
         }
         else {
-          devprop_add_value(device, "AAPL01,DualLink", (UINT8*)&gSettings.DualLink, 1);
-          DBG("  AAPL01,DualLink = 1\n");
+          if (UGAWidth >= 1400) {
+			DBG("  Default AAPL01,DualLink = 0\n");
+			DBG("  High Resolution Display\n");
+			DualLink = 1;
+			devprop_add_value(device, "AAPL01,DualLink", (UINT8*)&DualLink, 1);
+			DBG("  AAPL01,DualLink: changed from 0 to 1\n");
+          }
+          else {
+			DBG("  AAPL01,DualLink: not used\n");
+          }
         }
       }
       else {
-        if (UGAWidth >= 1400) {
-          DBG("  Default AAPL01,DualLink = 0\n");
-          DBG("  High Resolution Display\n");
-          DualLink = 1;
-          devprop_add_value(device, "AAPL01,DualLink", (UINT8*)&DualLink, 1);
-          DBG("  AAPL01,DualLink: changed from 0 to 1\n");
+        if (gSettings.DualLink != 0) {
+          devprop_add_value(device, "AAPL01,DualLink", (UINT8*)&gSettings.DualLink, 1);
+          DBG("  AAPL01,DualLink = 1\n");
         }
         else {
           DBG("  AAPL01,DualLink: not used\n");
         }
-      }
+	  }
       break;
     default:
-      if (gSettings.DualLink != 0) {
-        if (UGAWidth < 1400) {
-          DBG("  Default AAPL00,DualLink = 1\n");
-          DBG("  Low Resolution Display\n");
-          DBG("  AAPL00,DualLink: changed from 1 to not used\n");
+      if (SetUGAWidth && SetUGAHeight) {
+        if (gSettings.DualLink != 0) {
+          if (UGAWidth < 1400) {
+			DBG("  Default AAPL00,DualLink = 1\n");
+			DBG("  Low Resolution Display\n");
+			DBG("  AAPL00,DualLink: changed from 1 to not used\n");
+          }
+          else {
+			devprop_add_value(device, "AAPL00,DualLink", (UINT8*)&gSettings.DualLink, 1);
+			DBG("  AAPL00,DualLink = 1\n");
+          }
         }
         else {
-          devprop_add_value(device, "AAPL00,DualLink", (UINT8*)&gSettings.DualLink, 1);
-          DBG("  AAPL00,DualLink = 1\n");
+          if (UGAWidth >= 1400) {
+			DBG("  Default AAPL00,DualLink = 0\n");
+			DBG("  High Resolution Display\n");
+			DualLink = 1;
+			devprop_add_value(device, "AAPL00,DualLink", (UINT8*)&DualLink, 1);
+			DBG("  AAPL00,DualLink: changed from 0 to 1\n");
+          }
+          else {
+			DBG("  AAPL00,DualLink: not used\n");
+          }
         }
       }
       else {
-        if (UGAWidth >= 1400) {
-          DBG("  Default AAPL00,DualLink = 0\n");
-          DBG("  High Resolution Display\n");
-          DualLink = 1;
-          devprop_add_value(device, "AAPL00,DualLink", (UINT8*)&DualLink, 1);
-          DBG("  AAPL00,DualLink: changed from 0 to 1\n");
+        if (gSettings.DualLink != 0) {
+          devprop_add_value(device, "AAPL00,DualLink", (UINT8*)&gSettings.DualLink, 1);
+          DBG("  AAPL00,DualLink = 1\n");
         }
         else {
           DBG("  AAPL00,DualLink: not used\n");
@@ -1106,7 +1250,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
   // platform-id
   switch (gma_dev->device_id) {
     case 0x0102: // "Intel HD Graphics 2000"          // Desktop
-    case 0x0106: // "Intel HD Graphics 3000"          // Mobile
+    case 0x0106: // "Intel HD Graphics 2000"          // Mobile
     case 0x010A: // "Intel HD Graphics P3000"         // Server
     case 0x0112: // "Intel HD Graphics 3000"          // Desktop
     case 0x0116: // "Intel HD Graphics 3000"          // Mobile
@@ -1140,13 +1284,13 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
 
 
   // Clover will automatically detect these values if there is no ig-platform-id or FakeID Intel GFX value.
-  // If there are Intel GFX values in ACPI Injection, their values will be overwritten on the values of Intel GFX auto-detection.
+  // If there are Intel GFX values in ACPI injection, their values will be overwritten on the values of Intel GFX auto-detection.
 
   if ((SetSnb && SetFake) || (SetIg && SetFake)) {
-    //DBG("  Beginning ACPI Injection\n");
+    //DBG("  Beginning ACPI injection\n");
   }
   else {
-    DBG("  Beginning Intel GFX auto-detection with ACPI Injection\n");
+    DBG("  Beginning Intel GFX auto-detection with ACPI injection\n");
   }
 
   switch (gma_dev->device_id) {
@@ -1443,7 +1587,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
       //----------------Sandy bridge--------------
       //GT1
     case 0x0102: // "Intel HD Graphics 2000"          // Desktop - iMac12,1, iMac12,2
-    case 0x0106: // "Intel HD Graphics 3000"          // Mobile
+    case 0x0106: // "Intel HD Graphics 2000"          // Mobile
     case 0x010A: // "Intel HD Graphics P3000"         // Server
       //GT2
     case 0x0112: // "Intel HD Graphics 3000"          // Desktop
@@ -1639,7 +1783,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
     case 0x0A06: // "Intel Haswell GT1"               // Mobile ULT
     case 0x0A0A: // "Intel Haswell GT1"               // Server ULT
     case 0x0A0B: // "Intel Haswell GT1"               // ULT
-    case 0x0A0E: // "Intel HD Graphics 4400"          // ULT
+    case 0x0A0E: // "Intel Haswell GT1"               // ULT
       //GT2
     case 0x0A12: // "Intel Haswell GT2"               // Desktop ULT
     case 0x0A16: // "Intel HD Graphics 4400"          // Mobile ULT
@@ -1694,12 +1838,8 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
           case 0x0416:
           case 0x041A:
           case 0x041E:
-          case 0x0A0E:
           case 0x0A16:
           case 0x0A1E:
-          case 0x0D06:
-          case 0x0D12:
-          case 0x0D16:
             FakeID = 0x04128086 >> 16;
             DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
             devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
@@ -1707,6 +1847,9 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
             devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
             break;
           case 0x0A26:
+          case 0x0D06:
+          case 0x0D12:
+          case 0x0D16:
             FakeID = 0x0A268086 >> 16;
             DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
             devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
@@ -1821,6 +1964,8 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
             devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
             break;
           case 0x1622:
+          case 0x162A:
+          case 0x162D:
             FakeID = 0x16228086 >> 16;
             DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
             devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
@@ -1828,7 +1973,6 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
             devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
             break;
           case 0x1626:
-          case 0x162A:
             FakeID = 0x16268086 >> 16;
             DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
             devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
@@ -1836,7 +1980,6 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
             devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
             break;
           case 0x162B:
-          case 0x162D:
             FakeID = 0x162B8086 >> 16;
             DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
             devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
@@ -1854,6 +1997,11 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
           case MacBookAir62:
           case MacBookAir71:
           case MacBookAir72:
+          case MacBookPro111:
+          case MacBookPro112:
+          case MacBookPro113:
+          case MacBookPro114:
+          case MacBookPro115:
           case MacBookPro121:
             devprop_add_value(device, "AAPL,ig-platform-id", broadwell_ig_vals[17], 4);
             DBG("  Found ig-platform-id = 0x16260006\n");
@@ -2027,11 +2175,21 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
           break;
       }
       switch (MacModel) {
-        case iMac171:
-        case MacPro61:
-          devprop_add_value(device, "AAPL,GfxYTile", skylake_hd_vals[2], 4);
-          break;
-        default:
+        case MacBook81:
+        case MacBook91:
+        case MacBookAir61:
+        case MacBookAir62:
+        case MacBookAir71:
+        case MacBookAir72:
+        case MacBookPro111:
+        case MacBookPro112:
+        case MacBookPro113:
+        case MacBookPro114:
+        case MacBookPro115:
+        case MacBookPro121:
+        case MacBookPro131:
+        case MacBookPro132:
+        case MacBookPro133:
           devprop_add_value(device, "graphic-options", skylake_hd_vals[0], 4);
           devprop_add_value(device, "AAPL,Gfx324", skylake_hd_vals[1], 4);
           devprop_add_value(device, "AAPL,GfxYTile", skylake_hd_vals[2], 4);
@@ -2040,6 +2198,9 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
           devprop_add_value(device, "AAPL00,PanelPowerOff", skylake_hd_vals[5], 4);
           devprop_add_value(device, "AAPL00,PanelPowerOn", skylake_hd_vals[6], 4);
           devprop_add_value(device, "AAPL00,PanelPowerUp", skylake_hd_vals[7], 4);
+          break;
+        default:
+          devprop_add_value(device, "AAPL,GfxYTile", skylake_hd_vals[2], 4);
           break;
       }
       break;
@@ -2158,11 +2319,21 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
           break;
       }
       switch (MacModel) {
-        case iMac171:
-        case MacPro61:
-          devprop_add_value(device, "AAPL,GfxYTile", skylake_hd_vals[2], 4);
-          break;
-        default:
+        case MacBook81:
+        case MacBook91:
+        case MacBookAir61:
+        case MacBookAir62:
+        case MacBookAir71:
+        case MacBookAir72:
+        case MacBookPro111:
+        case MacBookPro112:
+        case MacBookPro113:
+        case MacBookPro114:
+        case MacBookPro115:
+        case MacBookPro121:
+        case MacBookPro131:
+        case MacBookPro132:
+        case MacBookPro133:
           devprop_add_value(device, "graphic-options", skylake_hd_vals[0], 4);
           devprop_add_value(device, "AAPL,Gfx324", skylake_hd_vals[1], 4);
           devprop_add_value(device, "AAPL,GfxYTile", skylake_hd_vals[2], 4);
@@ -2171,6 +2342,9 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
           devprop_add_value(device, "AAPL00,PanelPowerOff", skylake_hd_vals[5], 4);
           devprop_add_value(device, "AAPL00,PanelPowerOn", skylake_hd_vals[6], 4);
           devprop_add_value(device, "AAPL00,PanelPowerUp", skylake_hd_vals[7], 4);
+          break;
+        default:
+          devprop_add_value(device, "AAPL,GfxYTile", skylake_hd_vals[2], 4);
           break;
       }
       break;
