@@ -10,6 +10,15 @@ image iso: utils
 pkg installer:
 	@${SRCROOT}/makepkg
 
+slimpkg1:
+	@${SRCROOT}/makepkg 1
+
+slimpkg2:
+	@${SRCROOT}/makepkg 2
+
+slimpkg3:
+	@${SRCROOT}/makepkg 3
+
 updatepo:
 	@${SRCROOT}/package/translate.sh --update-po
 

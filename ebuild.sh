@@ -240,9 +240,6 @@ addEdk2BuildMacro() {
 }
 
 # Check NASM
-restoreIFS() {
-  IFS=$' \t\n';
-}
 
 IsNumericOnly() {
   if [[ "${1}" =~ ^-?[0-9]+$ ]]; then
@@ -252,7 +249,6 @@ IsNumericOnly() {
   fi
 }
 needNASM() {
-  restoreIFS
   local nasmPath=""
   local nasmArray=( $(which -a nasm) )
   local needInstall=1
@@ -299,46 +295,16 @@ isNASMGood() {
   # There was a bad macho relocation in outmacho.c, fixed by Zenith432
   # and accepted by nasm devel during 2.12.rcxx (release candidate)
 
-  IFS='.';
   result=1
+  local nasmver=$( "${1}" -v | grep 'NASM version' | awk '{print $3}' )
 
-  local array=($( "${1}" -v | grep 'NASM version' | awk '{print $3}' ))
-
-  local index0=0; local index1=0; local index2=0
-
-  # we accept rc versions too (with outmacho.c fix):
-  # http://www.nasm.us/pub/nasm/releasebuilds/
-
-  if [ "${#array[@]}" -eq 2 ];then
-    index0="$(echo ${array[0]} | egrep -o '^[^rc]+')"
-    index1="$(echo ${array[1]} | egrep -o '^[^rc]+')"
-  fi
-  if [ "${#array[@]}" -eq 3 ];then
-    index0="$(echo ${array[0]} | egrep -o '^[^rc]+')"
-    index1="$(echo ${array[1]} | egrep -o '^[^rc]+')"
-    index2="$(echo ${array[2]} | egrep -o '^[^rc]+')"
-    fi
-
-  for comp in ${array[@]}
-  do
-    if ! IsNumericOnly $comp; then restoreIFS && echo "invalid nasm version component: \"$comp\"" && return $result;fi
-  done
-
-  case "${#array[@]}" in
-  "2") # two components like "2.12"
-    if [ "${index0}" -ge "3" ]; then result=0; fi # index0 > 3 good!
-    if [ "${index0}" -eq "2" ] && [ "${index1}" -gt "12" ]; then result=0; fi # index0 = 2 and index1 > 12 good!
-  ;;
-  "3") # three components like "2.12.02"
-    if [ "${index0}" -ge "3" ]; then result=0; fi # index 0 > 3 good!
-    if [ "${index0}" -eq "2" ] && [ "${index1}" -gt "12" ]; then result=0; fi # index0 = 2 and index1 > 12 good!
-    if [ "${index0}" -eq "2" ] && [ "${index1}" -eq "12" ] && [ "${index2}" -ge "2" ]; then result=0; fi
-  ;;
-  *) # don' know a version of nasm with 1 component or > 3
-    echo "Unknown nasm version format (${1}), expected 2 or three components.."
-  ;;
+  case "$nasmver" in
+  2.12.0[2-9]* | 2.12.[1-9]* | 2.1[3-9]* | 2.[2-9]* | [3-9]* | [1-9][1-9]*)
+	result=0;;
+  *)
+	printf "\n\e[1;33mUnknown or unsupported NASM version found at:\n${1}\n\n\e[0m";;
   esac
-  restoreIFS
+
   return $result
 }
 

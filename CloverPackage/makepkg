@@ -58,7 +58,7 @@ fi
 
 # Start to build installer.
 
-package/buildpkg.sh "$SRCROOT" "sym" "$PKG_BUILD_DIR" || exit $?
+package/buildpkg.sh "$SRCROOT" "sym" "$PKG_BUILD_DIR" "$1" || exit $?
 
 (cd sym ; zip Clover_${version}_r${revision}.zip \
  Clover_${version}_r${revision}.pkg              \
@@ -72,10 +72,10 @@ rm -f  revision
 
 # Workspace = edk2/Clover/CloverPackage
 # Open the final folder.
-if [ "$1" == "" ]; then
-    ls -la sym
-    open sym
-fi
+#if [ "$1" == "" ]; then
+ls -la sym
+open sym
+#fi
 # Finish building installer.
 
 exit 0

@@ -18,6 +18,7 @@ declare -r PKGROOT="${0%/*}"    # ie. edk2/Clover/CloverPackage/package
 declare -r SRCROOT="${1}"       # ie. edk2/Clover/CloverPackage
 declare -r SYMROOT="${2}"       # ie. edk2/Clover/CloverPackage/sym
 declare -r PKG_BUILD_DIR="${3}" # ie. edk2/Clover/CloverPackage/sym/package
+declare -r EXTRAPKG="${4}"		# ie. 1, 2 or 3
 declare -r SCPT_TPL_DIR="${PKGROOT}/Scripts.templates"
 declare -r SCPT_LIB_DIR="${PKGROOT}/Scripts.libraries"
 
@@ -28,6 +29,12 @@ fi
 if [[ ! -d "$SYMROOT" ]];then
     echo "Directory ${SYMROOT} doesn't exit. Aborting..." >&2 && exit 1
 fi
+
+# NOEXTRAS, skip packaging something (Micky1979)
+[ "$EXTRAPKG" == "" ] && NOEXTRAS=0 || NOEXTRAS=${EXTRAPKG}
+# NOEXTRAS=1 skip themes
+# NOEXTRAS=2 skip themes, clover updater and prefpanel
+# NOEXTRAS=3 skip themes, clover updater, prefpanel, RC script and Clover EFI (slim package UEFI only)
 
 # ====== LANGUAGE SETUP ======
 export LANG='en_US.UTF-8'
@@ -442,10 +449,15 @@ main ()
 
     rm -R -f "${PKG_BUILD_DIR}"
     echo ""
-    echo -e $COL_CYAN"  ----------------------------------"$COL_RESET
+    echo -e $COL_CYAN"  -------------------------------"$COL_RESET
     echo -e $COL_CYAN"  Building $packagename Install Package"$COL_RESET
-    echo -e $COL_CYAN"  ----------------------------------"$COL_RESET
+    echo -e $COL_CYAN"  -------------------------------"$COL_RESET
     echo ""
+	case ${NOEXTRAS} in
+		1) echo -e $COL_CYAN"  Excluded packages: Themes\n"$COL_RESET;;
+		2) echo -e $COL_CYAN"  Excluded packages:\n  Themes\n  Clover Updater\n  Clover Prefpane\n"$COL_RESET;;
+		3) echo -e $COL_CYAN"  Excluded packages:\n  Themes\n  Clover Updater\n  Clover Prefpane\n  RC scripts\n  Clover EFI\n"$COL_RESET;;
+	esac
 
 # build Pre package
     echo "====================== Preinstall ======================"
@@ -473,8 +485,13 @@ main ()
     addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}" \
                        --subst="INSTALLER_CHOICE=$packageRefId" MarkChoice
     buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/EFIROOTDIR"
-    addChoice --start-visible="true" --start-selected="choicePreviouslySelected('$packageRefId')"  \
-              --pkg-refs="$packageRefId" "${choiceId}"
+    if [ "$NOEXTRAS" -lt 3 ]; then
+        addChoice --start-visible="true" --start-selected="choicePreviouslySelected('$packageRefId')"  \
+                  --pkg-refs="$packageRefId" "${choiceId}"
+    else
+        addChoice --start-visible="false" --start-selected="true"  \
+                  --pkg-refs="$packageRefId" "${choiceId}"
+    fi
 # End UEFI only
 
 # build EFI target
@@ -493,6 +510,7 @@ main ()
 # End build EFI target
 
 # build BiosBoot package
+if [ "$NOEXTRAS" -lt 3 ]; then
     echo "=================== BiosBoot ==========================="
     packagesidentity="$clover_package_identity"
     choiceId="BiosBoot"
@@ -528,7 +546,7 @@ main ()
     buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/"
     addChoice --start-visible="false" --start-selected="false" --pkg-refs="$packageRefId" "${choiceId}"
 # End build BiosBoot package
-
+fi
 # build Utils package
     echo "===================== Utils ============================"
     packagesidentity="$clover_package_identity"
@@ -574,11 +592,12 @@ main ()
 # End build EFI folder package
 
 # Create Bootloader Node
+if [ "$NOEXTRAS" -lt 3 ]; then
     addGroupChoices --enabled="!choices['UEFI.only'].selected" --exclusive_one_choice "Bootloader"
     echo "===================== BootLoaders ======================"
     packagesidentity="$clover_package_identity".bootloader
 
-# build alternative booting package
+    # build alternative booting package
     choiceId="AltBoot"
     packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
     altbootRefId=$packageRefId
@@ -594,9 +613,9 @@ main ()
               --selected="!choices['UEFI.only'].selected &amp;&amp; choices['$choiceId'].selected"  \
               --visible="choices['boot0af'].selected || choices['boot0ss'].selected"                \
               --pkg-refs="$packageBiosBootRefId $packageUtilsRefId $packageRefId" "${choiceId}"
-# End alternative booting package
+    # End alternative booting package
 
-# build bootNo package
+    # build bootNo package
     choiceId="bootNo"
     packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
     mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root
@@ -610,9 +629,9 @@ main ()
               --start-selected="choicePreviouslySelected('$packageRefId') || checkBootFromUEFI()" \
               --force-selected="choices['UEFI.only'].selected"                                    \
               --pkg-refs="$packageRefId" "${choiceId}"
-# End build bootNo package
+    # End build bootNo package
 
-# build boot0af package
+    # build boot0af package
     choiceId="boot0af"
     packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
     mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root
@@ -626,9 +645,9 @@ main ()
               --enabled="!choices['UEFI.only'].selected"                   \
               --start-selected="choicePreviouslySelected('$packageRefId')" \
               --pkg-refs="$packageBiosBootRefId $packageUtilsRefId $packageRefId" "${choiceId}"
-# End build boot0af package
+    # End build boot0af package
 
-# build boot0ss package
+    # build boot0ss package
     choiceId="boot0ss"
     packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
     mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root
@@ -642,96 +661,98 @@ main ()
               --enabled="!choices['UEFI.only'].selected"                    \
               --start-selected="choicePreviouslySelected('$packageRefId')"  \
               --pkg-refs="$packageBiosBootRefId $packageUtilsRefId $packageRefId" "${choiceId}"
-# End build boot0ss package
+    # End build boot0ss package
 
-# Create CloverEFI Node
+    # Create CloverEFI Node
     echo "====================== CloverEFI ======================="
     nb_cloverEFI=$(find "${SRCROOT}"/CloverV2/Bootloaders -type f -name 'boot?' | wc -l)
     local cloverEFIGroupOption=(--exclusive_one_choice)
     [[ "$nb_cloverEFI" -lt 2 ]] && cloverEFIGroupOption=(--selected="!choices['UEFI.only'].selected")
     addGroupChoices --enabled="!choices['UEFI.only'].selected" ${cloverEFIGroupOption[@]} "CloverEFI"
 
-# build cloverEFI.32 package
-if [[ -f "${SRCROOT}/CloverV2/Bootloaders/ia32/boot3" ]]; then
-    packagesidentity="$clover_package_identity"
-    choiceId="cloverEFI.32"
-    packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
-    mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root
-    addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}"  \
-                       --subst="CLOVER_EFI_ARCH=ia32"                \
-                       --subst="CLOVER_BOOT_FILE=boot3"              \
-                       --subst="INSTALLER_CHOICE=$packageRefId"      \
-                       CloverEFI
-    buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/"
-    local choiceOptions=(--group="CloverEFI" --enabled="!choices['UEFI.only'].selected")
-    [[ "$nb_cloverEFI" -ge 2 ]] && \
-     choiceOptions+=(--start-selected="choicePreviouslySelected('$packageRefId')")
-    choiceOptions+=(--selected="!choices['UEFI.only'].selected")
-    addChoice ${choiceOptions[@]} --pkg-refs="$packageBiosBootRefId $packageRefId" "${choiceId}"
-fi
-# End build cloverEFI.32 package
+    # build cloverEFI.32 package
+    if [[ -f "${SRCROOT}/CloverV2/Bootloaders/ia32/boot3" ]]; then
+        packagesidentity="$clover_package_identity"
+        choiceId="cloverEFI.32"
+        packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
+        mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root
+        addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}"  \
+                        --subst="CLOVER_EFI_ARCH=ia32"                \
+                        --subst="CLOVER_BOOT_FILE=boot3"              \
+                        --subst="INSTALLER_CHOICE=$packageRefId"      \
+                        CloverEFI
+        buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/"
+        local choiceOptions=(--group="CloverEFI" --enabled="!choices['UEFI.only'].selected")
+        [[ "$nb_cloverEFI" -ge 2 ]] && \
+        choiceOptions+=(--start-selected="choicePreviouslySelected('$packageRefId')")
+        choiceOptions+=(--selected="!choices['UEFI.only'].selected")
+        addChoice ${choiceOptions[@]} --pkg-refs="$packageBiosBootRefId $packageRefId" "${choiceId}"
+    fi
+    # End build cloverEFI.32 package
 
-# build cloverEFI.64.sata package
-if [[ -f "${SRCROOT}/CloverV2/Bootloaders/x64/boot6" ]]; then
-    packagesidentity="$clover_package_identity"
-    choiceId="cloverEFI.64.sata"
-    packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
-    mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root
-    addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}"  \
-                       --subst="CLOVER_EFI_ARCH=x64"                 \
-                       --subst="CLOVER_BOOT_FILE=boot6"              \
-                       --subst="INSTALLER_CHOICE=$packageRefId"      \
-                       CloverEFI
-    buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/"
-    local choiceOptions=(--group="CloverEFI" --enabled="!choices['UEFI.only'].selected")
-    [[ "$nb_cloverEFI" -ge 2 ]] && \
-     choiceOptions+=(--start-selected="choicePreviouslySelected('$packageRefId')")
-    choiceOptions+=(--selected="!choices['UEFI.only'].selected")
-    addChoice ${choiceOptions[@]} --pkg-refs="$packageBiosBootRefId $packageRefId" "${choiceId}"
-fi
-# End build boot64 package
+    # build cloverEFI.64.sata package
+    if [[ -f "${SRCROOT}/CloverV2/Bootloaders/x64/boot6" ]]; then
+        packagesidentity="$clover_package_identity"
+        choiceId="cloverEFI.64.sata"
+        packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
+        mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root
+        addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}"  \
+                        --subst="CLOVER_EFI_ARCH=x64"                 \
+                        --subst="CLOVER_BOOT_FILE=boot6"              \
+                        --subst="INSTALLER_CHOICE=$packageRefId"      \
+                        CloverEFI
+        buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/"
+        local choiceOptions=(--group="CloverEFI" --enabled="!choices['UEFI.only'].selected")
+        [[ "$nb_cloverEFI" -ge 2 ]] && \
+        choiceOptions+=(--start-selected="choicePreviouslySelected('$packageRefId')")
+        choiceOptions+=(--selected="!choices['UEFI.only'].selected")
+        addChoice ${choiceOptions[@]} --pkg-refs="$packageBiosBootRefId $packageRefId" "${choiceId}"
+    fi
+    # End build boot64 package
 
-# build cloverEFI.64.blockio package
-if [[ -f "${SRCROOT}/CloverV2/Bootloaders/x64/boot7" ]]; then
-    packagesidentity="$clover_package_identity"
-    choiceId="cloverEFI.64.blockio"
-    packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
-    mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root
-    addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}"  \
-                       --subst="CLOVER_EFI_ARCH=x64"                 \
-                       --subst="CLOVER_BOOT_FILE=boot7"              \
-                       --subst="INSTALLER_CHOICE=$packageRefId"      \
-                       CloverEFI
-    buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/"
-    local choiceOptions=(--group="CloverEFI" --enabled="!choices['UEFI.only'].selected")
-    [[ "$nb_cloverEFI" -ge 2 ]] && \
-     choiceOptions+=(--start-selected="choicePreviouslySelected('$packageRefId')")
-    choiceOptions+=(--selected="!choices['UEFI.only'].selected")
-    addChoice ${choiceOptions[@]} --pkg-refs="$packageBiosBootRefId $packageRefId" "${choiceId}"
-fi
-# End build cloverEFI.64.blockio package
+    # build cloverEFI.64.blockio package
+    if [[ -f "${SRCROOT}/CloverV2/Bootloaders/x64/boot7" ]]; then
+        packagesidentity="$clover_package_identity"
+        choiceId="cloverEFI.64.blockio"
+        packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
+        mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root
+        addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}"  \
+                        --subst="CLOVER_EFI_ARCH=x64"                 \
+                        --subst="CLOVER_BOOT_FILE=boot7"              \
+                        --subst="INSTALLER_CHOICE=$packageRefId"      \
+                        CloverEFI
+        buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/"
+        local choiceOptions=(--group="CloverEFI" --enabled="!choices['UEFI.only'].selected")
+        [[ "$nb_cloverEFI" -ge 2 ]] && \
+        choiceOptions+=(--start-selected="choicePreviouslySelected('$packageRefId')")
+        choiceOptions+=(--selected="!choices['UEFI.only'].selected")
+        addChoice ${choiceOptions[@]} --pkg-refs="$packageBiosBootRefId $packageRefId" "${choiceId}"
+    fi
+    # End build cloverEFI.64.blockio package
 
-# build for chipset only NVIDIA NFORCE-MCP79 cloverEFI.64.blockio2 package
-if [[ -f "${SRCROOT}/CloverV2/Bootloaders/x64/boot7-MCP79" ]]; then
-    packagesidentity="$clover_package_identity"
-    choiceId="cloverEFI.64.blockio2"
-    packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
-    mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root
-    addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}"  \
-                       --subst="CLOVER_EFI_ARCH=x64"                 \
-                       --subst="CLOVER_BOOT_FILE=boot7-MCP79"              \
-                       --subst="INSTALLER_CHOICE=$packageRefId"      \
-                       CloverEFI
-    buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/"
-    local choiceOptions=(--group="CloverEFI" --enabled="!choices['UEFI.only'].selected")
-    [[ "$nb_cloverEFI" -ge 2 ]] && \
-     choiceOptions+=(--start-selected="choicePreviouslySelected('$packageRefId')")
-    choiceOptions+=(--selected="!choices['UEFI.only'].selected")
-    addChoice ${choiceOptions[@]} --pkg-refs="$packageBiosBootRefId $packageRefId" "${choiceId}"
+    # build for chipset only NVIDIA NFORCE-MCP79 cloverEFI.64.blockio2 package
+    if [[ -f "${SRCROOT}/CloverV2/Bootloaders/x64/boot7-MCP79" ]]; then
+        packagesidentity="$clover_package_identity"
+        choiceId="cloverEFI.64.blockio2"
+        packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
+        mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root
+        addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}"  \
+                        --subst="CLOVER_EFI_ARCH=x64"                 \
+                        --subst="CLOVER_BOOT_FILE=boot7-MCP79"              \
+                        --subst="INSTALLER_CHOICE=$packageRefId"      \
+                        CloverEFI
+        buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/"
+        local choiceOptions=(--group="CloverEFI" --enabled="!choices['UEFI.only'].selected")
+        [[ "$nb_cloverEFI" -ge 2 ]] && \
+        choiceOptions+=(--start-selected="choicePreviouslySelected('$packageRefId')")
+        choiceOptions+=(--selected="!choices['UEFI.only'].selected")
+        addChoice ${choiceOptions[@]} --pkg-refs="$packageBiosBootRefId $packageRefId" "${choiceId}"
+    fi
+    # End for chipset only NVIDIA NFORCE-MCP79 cloverEFI.64.blockio2 package
 fi
-# End for chipset only NVIDIA NFORCE-MCP79 cloverEFI.64.blockio2 package
 
 # build theme packages
+if [ "$NOEXTRAS" -lt 1 ]; then
     echo "======================== Themes ========================"
     addGroupChoices "Themes"
     local specialThemes=('christmas' 'newyear')
@@ -782,8 +803,10 @@ fi
         buildpackage "$packageRefId" "${themeName}" "${PKG_BUILD_DIR}/${themeName}" "${themeDestDir}"
         addChoice --start-visible="false"  --start-selected="true"  --pkg-refs="$packageRefId" "${themeName}"
     done
+fi
 
-    # build CloverThemeManager package
+# build CloverThemeManager package
+if [[ -d "${SRCROOT}"/CloverThemeManager ]] && [ "$NOEXTRAS" -lt 1 ]; then
     local CTM_Dir="${SRCROOT}"/CloverThemeManager
     local CTM_Dest='/Applications'
 
@@ -802,65 +825,68 @@ fi
               --pkg-refs="$packageRefId" "${choiceId}"
     # end CloverThemeManager package
 # End build theme packages
+fi
  
 if [[ "$add_ia32" -eq 1 ]]; then
 # build mandatory drivers-ia32 packages
-    echo "================= drivers32 mandatory =================="
-    packagesidentity="${clover_package_identity}".drivers32.mandatory
-    local drivers=($( find "${SRCROOT}/CloverV2/EFI/CLOVER/drivers32" -type f -name '*.efi' -depth 1 ))
-    local driverDestDir='/EFIROOTDIR/EFI/CLOVER/drivers32'
-    for (( i = 0 ; i < ${#drivers[@]} ; i++ ))
-    do
-        local driver="${drivers[$i]##*/}"
-        local driverChoice="${driver%.efi}"
-        ditto --noextattr --noqtn --arch i386 "${drivers[$i]}" "${PKG_BUILD_DIR}/${driverChoice}/Root/"
-        find "${PKG_BUILD_DIR}/${driverChoice}" -name '.DS_Store' -exec rm -R -f {} \; 2>/dev/null
-        fixperms "${PKG_BUILD_DIR}/${driverChoice}/Root/"
+    if [ "$NOEXTRAS" -lt 3 ]; then
+        echo "================= drivers32 mandatory =================="
+        packagesidentity="${clover_package_identity}".drivers32.mandatory
+        local drivers=($( find "${SRCROOT}/CloverV2/EFI/CLOVER/drivers32" -type f -name '*.efi' -depth 1 ))
+        local driverDestDir='/EFIROOTDIR/EFI/CLOVER/drivers32'
+        for (( i = 0 ; i < ${#drivers[@]} ; i++ ))
+        do
+            local driver="${drivers[$i]##*/}"
+            local driverChoice="${driver%.efi}"
+            ditto --noextattr --noqtn --arch i386 "${drivers[$i]}" "${PKG_BUILD_DIR}/${driverChoice}/Root/"
+            find "${PKG_BUILD_DIR}/${driverChoice}" -name '.DS_Store' -exec rm -R -f {} \; 2>/dev/null
+            fixperms "${PKG_BUILD_DIR}/${driverChoice}/Root/"
 
-        packageRefId=$(getPackageRefId "${packagesidentity}" "${driverChoice}")
-        # Add postinstall script for VBoxHfs driver to remove it if HFSPlus driver exists
-        [[ "$driver" == VBoxHfs* ]] && \
-         addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${driverChoice}"  \
-                            --subst="DRIVER_NAME=$driver"                     \
-                            --subst="DRIVER_DIR=$(basename $driverDestDir)"   \
-                            "VBoxHfs"
-        buildpackage "$packageRefId" "${driverChoice}" "${PKG_BUILD_DIR}/${driverChoice}" "${driverDestDir}"
-        addChoice --start-visible="false" --selected="!choices['UEFI.only'].selected"  \
-         --pkg-refs="$packageRefId"  "${driverChoice}"
-        rm -R -f "${PKG_BUILD_DIR}/${driverChoice}"
-    done
-# End mandatory drivers-ia32 packages
+            packageRefId=$(getPackageRefId "${packagesidentity}" "${driverChoice}")
+            # Add postinstall script for VBoxHfs driver to remove it if HFSPlus driver exists
+            [[ "$driver" == VBoxHfs* ]] && \
+            addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${driverChoice}"  \
+                                --subst="DRIVER_NAME=$driver"                     \
+                                --subst="DRIVER_DIR=$(basename $driverDestDir)"   \
+                                "VBoxHfs"
+            buildpackage "$packageRefId" "${driverChoice}" "${PKG_BUILD_DIR}/${driverChoice}" "${driverDestDir}"
+            addChoice --start-visible="false" --selected="!choices['UEFI.only'].selected"  \
+            --pkg-refs="$packageRefId"  "${driverChoice}"
+            rm -R -f "${PKG_BUILD_DIR}/${driverChoice}"
+        done
+        # End mandatory drivers-ia32 packages
 
-# build drivers-ia32 packages
-    echo "===================== drivers32 ========================"
-    addGroupChoices --title="Drivers32" --description="Drivers32"  \
-                    --enabled="!choices['UEFI.only'].selected"     \
-                    "Drivers32"
-    packagesidentity="${clover_package_identity}".drivers32
-    local drivers=($( find "${SRCROOT}/CloverV2/drivers-Off/drivers32" -type f -name '*.efi' -depth 1 ))
-    local driverDestDir='/EFIROOTDIR/EFI/CLOVER/drivers32'
-    for (( i = 0 ; i < ${#drivers[@]} ; i++ )); do
-        local driver="${drivers[$i]##*/}"
-        local driverName="${driver%.efi}"
-        ditto --noextattr --noqtn --arch i386 "${drivers[$i]}" "${PKG_BUILD_DIR}/${driverName}/Root/"
-        find "${PKG_BUILD_DIR}/${driverName}" -name '.DS_Store' -exec rm -R -f {} \; 2>/dev/null
-        fixperms "${PKG_BUILD_DIR}/${driverName}/Root/"
+        # build drivers-ia32 packages
+        echo "===================== drivers32 ========================"
+        addGroupChoices --title="Drivers32" --description="Drivers32"  \
+                        --enabled="!choices['UEFI.only'].selected"     \
+                        "Drivers32"
+        packagesidentity="${clover_package_identity}".drivers32
+        local drivers=($( find "${SRCROOT}/CloverV2/drivers-Off/drivers32" -type f -name '*.efi' -depth 1 ))
+        local driverDestDir='/EFIROOTDIR/EFI/CLOVER/drivers32'
+        for (( i = 0 ; i < ${#drivers[@]} ; i++ )); do
+            local driver="${drivers[$i]##*/}"
+            local driverName="${driver%.efi}"
+            ditto --noextattr --noqtn --arch i386 "${drivers[$i]}" "${PKG_BUILD_DIR}/${driverName}/Root/"
+            find "${PKG_BUILD_DIR}/${driverName}" -name '.DS_Store' -exec rm -R -f {} \; 2>/dev/null
+            fixperms "${PKG_BUILD_DIR}/${driverName}/Root/"
 
-        packageRefId=$(getPackageRefId "${packagesidentity}" "${driverName}")
-        addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${driverName}" \
-                           --subst="INSTALLER_CHOICE=$packageRefId" MarkChoice
-        buildpackage "$packageRefId" "${driverName}" "${PKG_BUILD_DIR}/${driverName}" "${driverDestDir}"
-        addChoice --group="Drivers32" --title="$driverName"                                               \
-                  --enabled="!choices['UEFI.only'].selected"                                              \
-                  --start-selected="choicePreviouslySelected('$packageRefId')"                            \
-                  --selected="!choices['UEFI.only'].selected &amp;&amp; choices['$driverName'].selected"  \
-                  --pkg-refs="$packageRefId"                                                              \
-                  "${driverName}"
-        rm -R -f "${PKG_BUILD_DIR}/${driverName}"
-    done
-# End build drivers-ia32 packages
+            packageRefId=$(getPackageRefId "${packagesidentity}" "${driverName}")
+            addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${driverName}" \
+                            --subst="INSTALLER_CHOICE=$packageRefId" MarkChoice
+            buildpackage "$packageRefId" "${driverName}" "${PKG_BUILD_DIR}/${driverName}" "${driverDestDir}"
+            addChoice --group="Drivers32" --title="$driverName"                                               \
+                    --enabled="!choices['UEFI.only'].selected"                                              \
+                    --start-selected="choicePreviouslySelected('$packageRefId')"                            \
+                    --selected="!choices['UEFI.only'].selected &amp;&amp; choices['$driverName'].selected"  \
+                    --pkg-refs="$packageRefId"                                                              \
+                    "${driverName}"
+            rm -R -f "${PKG_BUILD_DIR}/${driverName}"
+        done
+        # End build drivers-ia32 packages
+    fi
 
-# build mandatory drivers-ia32UEFI packages
+    # build mandatory drivers-ia32UEFI packages
     echo "=============== drivers32 UEFI mandatory ==============="
     packagesidentity="${clover_package_identity}".drivers32UEFI.mandatory
     local drivers=($( find "${SRCROOT}/CloverV2/EFI/CLOVER/drivers32UEFI" -type f -name '*.efi' -depth 1 ))
@@ -888,7 +914,7 @@ if [[ "$add_ia32" -eq 1 ]]; then
 fi
 
 # build mandatory drivers-x64 packages
-if [[ -d "${SRCROOT}/CloverV2/EFI/CLOVER/drivers64"  ]]; then
+if [[ -d "${SRCROOT}/CloverV2/EFI/CLOVER/drivers64"  ]] && [ "$NOEXTRAS" -lt 3 ]; then
     echo "================= drivers64 mandatory =================="
     packagesidentity="${clover_package_identity}".drivers64.mandatory
     local drivers=($( find "${SRCROOT}/CloverV2/EFI/CLOVER/drivers64" -type f -name '*.efi' -depth 1 ))
@@ -917,7 +943,7 @@ fi
 # End mandatory drivers-x64 packages
 
 # build drivers-x64 packages
-if [[ -d "${SRCROOT}/CloverV2/drivers-Off/drivers64" ]]; then
+if [[ -d "${SRCROOT}/CloverV2/drivers-Off/drivers64" ]] && [ "$NOEXTRAS" -lt 3 ]; then
     echo "===================== drivers64 ========================"
     addGroupChoices --title="Drivers64" --description="Drivers64"  \
                     --enabled="!choices['UEFI.only'].selected"     \
@@ -1003,6 +1029,7 @@ fi
 # End build drivers-x64UEFI packages
 
 # build rc scripts package
+if [ "$NOEXTRAS" -lt 3 ]; then
     echo "===================== RC Scripts ======================="
     packagesidentity="$clover_package_identity"
 
@@ -1090,10 +1117,11 @@ fi
                   --pkg-refs="$packageRefId" "${choiceId}"
     done
 # End build optional rc scripts package
+fi
 
 local cloverUpdaterDir="${SRCROOT}"/CloverUpdater
 local cloverPrefpaneDir="${SRCROOT}"/CloverPrefpane
-if [[ -x "$cloverPrefpaneDir"/build/Clover.prefPane/Contents/MacOS/Clover ]]; then
+if [[ -x "$cloverPrefpaneDir"/build/Clover.prefPane/Contents/MacOS/Clover ]] && [ "$NOEXTRAS" -lt 2 ]; then
 # build CloverPrefpane package
     echo "==================== Clover Prefpane ==================="
     packagesidentity="$clover_package_identity"
