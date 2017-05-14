@@ -41,7 +41,9 @@ Rename this file to lodepng.cpp to use it for C++, or to lodepng.c to use it for
 #include <Library/BaseLib.h>
 
 // Floating point operations are used here, this must be defined to prevent linker error
+#ifndef ENABLE_SECURE_BOOT
 CONST INT32 _fltused = 0;
+#endif
 
 /*
 // External qsort implementation used
