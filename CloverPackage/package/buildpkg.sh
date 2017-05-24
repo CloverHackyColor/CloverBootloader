@@ -11,30 +11,57 @@
 
 # Prevent the script from doing bad things
 set -u  # Abort with unset variables
+#set -x
+
+usage () {
+printf "\n\e[1m%s\e[0m" "Usage: $0 --srcroot <path> --symroot <name> --builddir <path> [flag1 flag2...]"
+echo
+printf "\n%s" "The following options are mandatory:"
+echo
+printf "\n\e[1m%s\e[0m\t%s \e[1m(%s)\e[0m." "--srcroot" "Specifies the Clover Package root dir" "usually edk2/Clover/CloverPackage"
+printf "\n\e[1m%s\e[0m\t%s \e[1m(%s)\e[0m." "--symroot" "Specifies the name for the subfolder that will contain the final product" "usually sym"
+printf "\n\e[1m%s\e[0m\t%s \e[1m(%s)\e[0m." "--builddir" "Specifies the Clover Package temp build dir" "usually edk2/Clover/CloverPackage/sym/package"
+echo
+printf "\n%s" "The following flags are optional and exclude options (subpackages) from the final Clover package."
+printf "\n%s" "Possible values:"
+echo
+printf "\n\e[1m%s\e[0m\t%s" "--nothemes" "Excludes the Themes subpackage."
+printf "\n\e[1m%s\e[0m\t%s" "--noprefpane" "Excludes the Clover Prefpane / Clover Updater subpackage."
+printf "\n\e[1m%s\e[0m\t\t%s" "--norc" "Excludes the RC scripts subpackage."
+printf "\n\e[1m%s\e[0m\t%s\n\n" "--nolegacy" "Excludes the CloverEFI subpackages."
+}
+
+if [[ $# -eq 0 ]]; then usage; exit 1; fi
+
+declare NOEXTRAS=""
+
+while [[ $# -gt 0 ]]; do
+	case "${1}" in
+		--srcroot ) declare -r SRCROOT="${2}"; shift;; # ie. edk2/Clover/CloverPackage
+		--symroot ) declare -r SYMROOT="${2}"; shift;; # ie. edk2/Clover/CloverPackage/sym
+		--builddir ) declare -r PKG_BUILD_DIR="${2}"; shift;; # ie. edk2/Clover/CloverPackage/sym/package
+		--nothemes ) NOEXTRAS+=", Clover Themes";;
+		--noprefpane ) NOEXTRAS+=", Clover Prefpane/Clover Updater";;
+		--norc ) NOEXTRAS+=", RC scripts";;
+		--nolegacy ) NOEXTRAS+=", CloverEFI";;
+		* ) printf "\e[1m%s\e[0m\n" "Invalid option: ${1} !" >&2; usage; exit 1;;
+	esac
+	shift
+done
+
+if [[ -z "$SRCROOT" || -z "$SYMROOT" || -z "$PKG_BUILD_DIR" ]]; then
+	printf "\e[1m%s\e[0m\n" "Too few arguments provided. Aborting..." >&2
+	usage
+	exit 1
+fi
+
+if [[ ! -d "$SYMROOT" ]]; then printf "\e[1m%s\e[0m\n" "Directory ${SYMROOT} doesn't exit. Aborting..." >&2; exit 1; fi
 
 packagename="Clover"
 
 declare -r PKGROOT="${0%/*}"    # ie. edk2/Clover/CloverPackage/package
-declare -r SRCROOT="${1}"       # ie. edk2/Clover/CloverPackage
-declare -r SYMROOT="${2}"       # ie. edk2/Clover/CloverPackage/sym
-declare -r PKG_BUILD_DIR="${3}" # ie. edk2/Clover/CloverPackage/sym/package
-declare -r EXTRAPKG="${4}"		# ie. 1, 2 or 3
 declare -r SCPT_TPL_DIR="${PKGROOT}/Scripts.templates"
 declare -r SCPT_LIB_DIR="${PKGROOT}/Scripts.libraries"
-
-if [[ $# -lt 3 ]];then
-    echo "Too few arguments. Aborting..." >&2 && exit 1
-fi
-
-if [[ ! -d "$SYMROOT" ]];then
-    echo "Directory ${SYMROOT} doesn't exit. Aborting..." >&2 && exit 1
-fi
-
-# NOEXTRAS, skip packaging something (Micky1979)
-[ "$EXTRAPKG" == "" ] && NOEXTRAS=0 || NOEXTRAS=${EXTRAPKG}
-# NOEXTRAS=1 skip themes
-# NOEXTRAS=2 skip themes, clover updater and prefpanel
-# NOEXTRAS=3 skip themes, clover updater, prefpanel, RC script and Clover EFI (slim package UEFI only)
 
 # ====== LANGUAGE SETUP ======
 export LANG='en_US.UTF-8'
@@ -453,11 +480,7 @@ main ()
     echo -e $COL_CYAN"  Building $packagename Install Package"$COL_RESET
     echo -e $COL_CYAN"  -------------------------------"$COL_RESET
     echo ""
-	case ${NOEXTRAS} in
-		1) echo -e $COL_CYAN"  Excluded packages: Themes\n"$COL_RESET;;
-		2) echo -e $COL_CYAN"  Excluded packages:\n  Themes\n  Clover Updater\n  Clover Prefpane\n"$COL_RESET;;
-		3) echo -e $COL_CYAN"  Excluded packages:\n  Themes\n  Clover Updater\n  Clover Prefpane\n  RC scripts\n  Clover EFI\n"$COL_RESET;;
-	esac
+	if [[ ! -z ${NOEXTRAS} ]]; then printf "$COL_CYAN  %s$COL_RESET\n\n" "Excluded packages: ${NOEXTRAS:2}"; fi
 
 # build Pre package
     echo "====================== Preinstall ======================"
@@ -485,7 +508,7 @@ main ()
     addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}" \
                        --subst="INSTALLER_CHOICE=$packageRefId" MarkChoice
     buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/EFIROOTDIR"
-    if [ "$NOEXTRAS" -lt 3 ]; then
+    if [[ ${NOEXTRAS} != *"CloverEFI"* ]]; then
         addChoice --start-visible="true" --start-selected="choicePreviouslySelected('$packageRefId')"  \
                   --pkg-refs="$packageRefId" "${choiceId}"
     else
@@ -510,7 +533,7 @@ main ()
 # End build EFI target
 
 # build BiosBoot package
-if [ "$NOEXTRAS" -lt 3 ]; then
+if [[ ${NOEXTRAS} != *"CloverEFI"* ]]; then
     echo "=================== BiosBoot ==========================="
     packagesidentity="$clover_package_identity"
     choiceId="BiosBoot"
@@ -592,7 +615,7 @@ fi
 # End build EFI folder package
 
 # Create Bootloader Node
-if [ "$NOEXTRAS" -lt 3 ]; then
+if [[ ${NOEXTRAS} != *"CloverEFI"* ]]; then
     addGroupChoices --enabled="!choices['UEFI.only'].selected" --exclusive_one_choice "Bootloader"
     echo "===================== BootLoaders ======================"
     packagesidentity="$clover_package_identity".bootloader
@@ -752,7 +775,7 @@ if [ "$NOEXTRAS" -lt 3 ]; then
 fi
 
 # build theme packages
-if [ "$NOEXTRAS" -lt 1 ]; then
+if [[ ${NOEXTRAS} != *"Clover Themes"* ]]; then
     echo "======================== Themes ========================"
     addGroupChoices "Themes"
     local specialThemes=('christmas' 'newyear')
@@ -806,7 +829,7 @@ if [ "$NOEXTRAS" -lt 1 ]; then
 fi
 
 # build CloverThemeManager package
-if [[ -d "${SRCROOT}"/CloverThemeManager ]] && [ "$NOEXTRAS" -lt 1 ]; then
+if [[ -d "${SRCROOT}"/CloverThemeManager && ${NOEXTRAS} != *"Clover Themes"* ]]; then
     local CTM_Dir="${SRCROOT}"/CloverThemeManager
     local CTM_Dest='/Applications'
 
@@ -829,7 +852,7 @@ fi
  
 if [[ "$add_ia32" -eq 1 ]]; then
 # build mandatory drivers-ia32 packages
-    if [ "$NOEXTRAS" -lt 3 ]; then
+    if [[ ${NOEXTRAS} != *"CloverEFI"* ]]; then
         echo "================= drivers32 mandatory =================="
         packagesidentity="${clover_package_identity}".drivers32.mandatory
         local drivers=($( find "${SRCROOT}/CloverV2/EFI/CLOVER/drivers32" -type f -name '*.efi' -depth 1 ))
@@ -914,7 +937,7 @@ if [[ "$add_ia32" -eq 1 ]]; then
 fi
 
 # build mandatory drivers-x64 packages
-if [[ -d "${SRCROOT}/CloverV2/EFI/CLOVER/drivers64"  ]] && [ "$NOEXTRAS" -lt 3 ]; then
+if [[ -d "${SRCROOT}/CloverV2/EFI/CLOVER/drivers64" && ${NOEXTRAS} != *"CloverEFI"* ]]; then
     echo "================= drivers64 mandatory =================="
     packagesidentity="${clover_package_identity}".drivers64.mandatory
     local drivers=($( find "${SRCROOT}/CloverV2/EFI/CLOVER/drivers64" -type f -name '*.efi' -depth 1 ))
@@ -943,7 +966,7 @@ fi
 # End mandatory drivers-x64 packages
 
 # build drivers-x64 packages
-if [[ -d "${SRCROOT}/CloverV2/drivers-Off/drivers64" ]] && [ "$NOEXTRAS" -lt 3 ]; then
+if [[ -d "${SRCROOT}/CloverV2/drivers-Off/drivers64" && ${NOEXTRAS} != *"CloverEFI"* ]]; then
     echo "===================== drivers64 ========================"
     addGroupChoices --title="Drivers64" --description="Drivers64"  \
                     --enabled="!choices['UEFI.only'].selected"     \
@@ -1029,7 +1052,7 @@ fi
 # End build drivers-x64UEFI packages
 
 # build rc scripts package
-if [ "$NOEXTRAS" -lt 3 ]; then
+if [[ ${NOEXTRAS} != *"RC scripts"* ]]; then
     echo "===================== RC Scripts ======================="
     packagesidentity="$clover_package_identity"
 
@@ -1121,7 +1144,7 @@ fi
 
 local cloverUpdaterDir="${SRCROOT}"/CloverUpdater
 local cloverPrefpaneDir="${SRCROOT}"/CloverPrefpane
-if [[ -x "$cloverPrefpaneDir"/build/Clover.prefPane/Contents/MacOS/Clover ]] && [ "$NOEXTRAS" -lt 2 ]; then
+if [[ -x "$cloverPrefpaneDir"/build/Clover.prefPane/Contents/MacOS/Clover && ${NOEXTRAS} != *"Clover Prefpane"* ]]; then
 # build CloverPrefpane package
     echo "==================== Clover Prefpane ==================="
     packagesidentity="$clover_package_identity"
