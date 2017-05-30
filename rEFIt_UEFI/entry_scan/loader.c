@@ -1180,7 +1180,7 @@ VOID ScanLoader(VOID)
     // If there is bootmgfw-orig.efi, then do not check for bootmgfw.efi
     // since on some systems this will actually be CloverX64.efi
     // renamed to bootmgfw.efi
-    AddLoaderEntry(L"\\EFI\\microsoft\\Boot\\bootmgfw.efi", L"", L"Microsoft EFI boot", Volume, NULL, OSTYPE_WINEFI, 0);
+    AddLoaderEntry(L"\\EFI\\microsoft\\Boot\\bootmgfw.efi", L"", L"Microsoft EFI Boot", Volume, NULL, OSTYPE_WINEFI, 0);
     // check for Microsoft boot loader/menu. This entry is redundant
     AddLoaderEntry(L"\\bootmgr.efi", L"", L"Microsoft EFI mgrboot", Volume, NULL, OSTYPE_WINEFI, 0);
     // check for Microsoft boot loader/menu on CDROM
