@@ -192,7 +192,7 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
                    &gFwFeatures);
 
   // Download-Fritz: Should be added to SMBIOS or at least to some other config section
-  FwFeaturesMask = 0xC003ffff;
+  FwFeaturesMask = 0xffffffff;
   AddNvramVariable(L"FirmwareFeaturesMask",
                    &gEfiAppleNvramGuid,
                    Attributes,
