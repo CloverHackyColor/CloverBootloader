@@ -1770,7 +1770,7 @@ VOID PatchTableType128()
 		newSmbiosTable.Type128->Hdr.Length = sizeof(SMBIOS_TABLE_TYPE128); 
 		newSmbiosTable.Type128->Hdr.Handle = 0x8000; //common rule
 		newSmbiosTable.Type128->FirmwareFeatures = gFwFeatures; //0x80001417; //imac112 -> 0x1403
-    newSmbiosTable.Type128->FirmwareFeaturesMask = 0xffffffff; //0xC003ff37; 
+        newSmbiosTable.Type128->FirmwareFeaturesMask = 0xffffffff; //0xC003ff37; 
 		/*
 		 FW_REGION_RESERVED   = 0,
 		 FW_REGION_RECOVERY   = 1,

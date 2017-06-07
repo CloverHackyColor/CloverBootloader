@@ -15,7 +15,7 @@ CHAR8   *BiosVendor             = "Apple Inc.";
 
 CHAR8   *AppleManufacturer      = "Apple Computer, Inc."; //Old name, before 2007
 
-UINT32  gFwFeatures             = 0xE001f537;             //default values for iMac13,1
+UINT32  gFwFeatures             = 0xE907F537;             //default values for iMac13,1
 
 // All SMBIOS data were updated by Sherlocks, PMheart.
 // FredWst supported SmcExtract.

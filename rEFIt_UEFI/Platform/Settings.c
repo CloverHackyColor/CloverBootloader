@@ -5625,6 +5625,8 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
           if (Prop != NULL && Prop->string != NULL && Prop->string[0] != '\0') {
             if (AsciiStrStr (Prop->string, "Install%20OS%20X%20Mavericks.app")) {
               OSVersion = AllocateCopyPool (5, "10.9");
+            } else if (AsciiStrStr (Prop->string, "Install%20macOS%20%High20Sierra") || AsciiStrStr (Prop->string, "Install%20macOS%2010.13")) {
+              OSVersion = AllocateCopyPool (6, "10.13");
             } else if (AsciiStrStr (Prop->string, "Install%20macOS%20Sierra") || AsciiStrStr (Prop->string, "Install%20OS%20X%2010.12")) {
               OSVersion = AllocateCopyPool (6, "10.12");
             } else if (AsciiStrStr (Prop->string, "Install%20OS%20X%20El%20Capitan") || AsciiStrStr (Prop->string, "Install%20OS%20X%2010.11")) {
@@ -5678,6 +5680,9 @@ CHAR16
   CHAR16 *OSIconName;
   if (OSVersion == NULL) {
     OSIconName = L"mac";
+  } else if (AsciiStrStr (OSVersion, "10.13") != 0) {
+      // High Sierra
+    OSIconName = L"hsierra,mac";
   } else if (AsciiStrStr (OSVersion, "10.12") != 0) {
     // Sierra
     OSIconName = L"sierra,mac";
