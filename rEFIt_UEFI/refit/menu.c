@@ -447,6 +447,12 @@ VOID FillInputs(BOOLEAN New)
   InputItems[InputItemsCount++].BValue = gSettings.KernelAndKextPatches.KPDELLSMBIOS;
     // end of change
 
+  InputItems[InputItemsCount].ItemType = Hex;  //62
+  if (New) {
+    InputItems[InputItemsCount].SValue = AllocateZeroPool(24);
+  }
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 24, L"0x%08x", gFwFeatures);
+
 
   // CSR - aka System Integrity Protection configuration
   InputItemsCount = 65;
@@ -919,7 +925,12 @@ VOID ApplyInputs(VOID)
     gRemapSmBiosIsRequire = InputItems[i].BValue;
     gBootChanged = TRUE;
   }
-  
+
+  i++; //62
+  if (InputItems[i].Valid) {
+    gFwFeatures = (UINT32)StrHexToUint64(InputItems[i].SValue);
+  }
+
   // CSR
   i = 65; 
   if (InputItems[i].Valid) {
@@ -4158,6 +4169,7 @@ REFIT_MENU_ENTRY  *SubMenuSmbios()
   AddMenuItem(SubScreen, 85, "Chassis Type:", TAG_INPUT, TRUE);
   AddMenuItem(SubScreen, 86, "ROM Version:", TAG_INPUT, TRUE);
   AddMenuItem(SubScreen, 87, "ROM Release Date:", TAG_INPUT, TRUE);
+  AddMenuItem(SubScreen, 62, "FirmwareFeature:", TAG_INPUT, TRUE);
   AddMenuItem(SubScreen, 17, "PlatformFeature:", TAG_INPUT, TRUE);
 
   AddMenuEntry(SubScreen, &MenuEntryReturn);
