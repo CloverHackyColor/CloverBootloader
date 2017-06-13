@@ -679,6 +679,7 @@ typedef struct _DRIVERS_FLAGS {
   BOOLEAN AptioFixLoaded;
   BOOLEAN AptioFix2Loaded;
   BOOLEAN HFSLoaded;
+  BOOLEAN APFSLoaded;
 } DRIVERS_FLAGS;
 
 #pragma pack(push)
@@ -1290,6 +1291,7 @@ typedef enum {
   MacBook71,
   MacBook81,
   MacBook91,
+  MacBook101,
   MacBookPro11,
   MacBookPro12,
   MacBookPro21,
@@ -1320,6 +1322,9 @@ typedef enum {
   MacBookPro131,
   MacBookPro132,
   MacBookPro133,
+  MacBookPro141,
+  MacBookPro142,
+  MacBookPro143,
   MacBookAir11,
   MacBookAir21,
   MacBookAir31,
@@ -1367,6 +1372,9 @@ typedef enum {
   iMac161,
   iMac162,
   iMac171,
+  iMac181,
+  iMac182,
+  iMac183,
   MacPro11,
   MacPro21,
   MacPro31,
@@ -1602,6 +1610,8 @@ extern LANGUAGES                      gLanguage;
 extern BOOLEAN                        gFirmwareClover;
 extern DRIVERS_FLAGS                  gDriversFlags;
 extern UINT32                         gFwFeatures;
+extern UINT32                         gFwFeaturesMask;
+extern UINT64                         gPlatformFeature;
 extern CPU_STRUCTURE                  gCPUStructure;
 extern EFI_GUID                       gUuid;
 extern SLOT_DEVICE                    SlotDevices[];

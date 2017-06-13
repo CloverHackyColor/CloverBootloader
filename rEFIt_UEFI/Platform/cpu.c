@@ -1056,6 +1056,7 @@ MACHINE_TYPES GetDefaultModel()
       case CPU_MODEL_HASWELL_U5:
       case CPU_MODEL_BROADWELL_HQ:
       case CPU_MODEL_SKYLAKE_U:
+      case CPU_MODEL_KABYLAKE1:
         DefaultType = MacBookPro111;
         break;
 /*      case CPU_MODEL_HASWELL_U5:               // 5th generation Broadwell
@@ -1066,8 +1067,19 @@ MACHINE_TYPES GetDefaultModel()
         DefaultType = MacBookPro121;
         break;
       case CPU_MODEL_SKYLAKE_U:
+        if(AsciiStrStr(gCPUStructure.BrandString, "m")) {
+           DefaultType = MacBook91;
+           break;
+        }
         DefaultType = MacBookPro131;
         break;
+      case CPU_MODEL_KABYLAKE1:
+        if(AsciiStrStr(gCPUStructure.BrandString, "Y")) {
+           DefaultType = MacBook101;
+           break;
+        }
+        DefaultType = MacBookPro141;
+        break;;
 */        
       default:
         if ((gGraphics[0].Vendor == Nvidia) ||

@@ -168,11 +168,11 @@ UINT8 ironlake_hd_vals[10][4] = {
 
 
 UINT8 sandy_bridge_snb_vals[5][4] = {
-  { 0x00, 0x00, 0x01, 0x00 },	  //0 *MacBookPro8,1 - Intel HD Graphics 3000 - FB: 00MB, Pipes: 0, Ports: 7, FBMem: 0, Connector(0x00040201): LVDS1, DP3
-  { 0x00, 0x00, 0x02, 0x00 },	  //1 *MacBookPro8,3 - Intel HD Graphics 3000 - FB: 00MB, Pipes: 0, Ports: 7, FBMem: 0, Connector(0x00030201): LVDS1, DP2
-  { 0x10, 0x00, 0x03, 0x00 },	  //2 *Macmini5,1 - Intel HD Graphics 3000 - FB: 00MB, Pipes: 0, Ports: 7, FBMem: 0, Connector(0x00040301): HDMI1, DP3
-  { 0x20, 0x00, 0x03, 0x00 },	  //3 *Macmini5,2 - Intel HD Graphics 3000 - FB: 00MB, Pipes: 0, Ports: 7, FBMem: 0, Connector(0x00030200): HDMI1, DP2
-  { 0x00, 0x00, 0x04, 0x00 },	  //4 *MacBookAir4,1 - Intel HD Graphics 3000 - FB: 00MB, Pipes: 0, Ports: 7, FBMem: 0, Connector(0x00030201): LVDS1, DP2
+  { 0x00, 0x00, 0x01, 0x00 },	  //0 *MacBookPro8,1 - Intel HD Graphics 3000 - 0x00040201- Ports: 4, Connector: LVDS1, DP3
+  { 0x00, 0x00, 0x02, 0x00 },	  //1 *MacBookPro8,3 - Intel HD Graphics 3000 - 0x00030201 - Ports: 3, Connector: LVDS1, DP2
+  { 0x10, 0x00, 0x03, 0x00 },	  //2 *Macmini5,1 - Intel HD Graphics 3000 - 0x00030200 - Ports: 3, Connector: HDMI1, DP2
+  { 0x20, 0x00, 0x03, 0x00 },	  //3 *Macmini5,2 - Intel HD Graphics 3000 - 0x00040301 - Ports: 4, Connector: HDMI1, DP3
+  { 0x00, 0x00, 0x04, 0x00 },	  //4 *MacBookAir4,1 - Intel HD Graphics 3000 - 0x00030201 - Ports: 3, Connector: LVDS1, DP2
 };
 
 UINT8 sandy_bridge_hd_vals[13][4] = {
@@ -193,18 +193,18 @@ UINT8 sandy_bridge_hd_vals[13][4] = {
 
 
 UINT8 ivy_bridge_ig_vals[12][4] = {
-  { 0x00, 0x00, 0x66, 0x01 },	  //0 Intel HD Graphics 4000 - FB: 96MB, Pipes: 3, Ports: 4, FBMem: 3, Connector: LVDS1, DP3
-  { 0x01, 0x00, 0x66, 0x01 },	  //1 *MacBookPro10,2 - Intel HD Graphics 4000 - FB: 96MB, Pipes: 3, Ports: 4, FBMem: 3, Connector: LVDS1, HDMI1, DP2
-  { 0x02, 0x00, 0x66, 0x01 },	  //2 *MacBookPro10,1 - Intel HD Graphics 4000 - FB: 64MB, Pipes: 3, Ports: 1, FBMem: 1, Connector: LVDS1
-  { 0x03, 0x00, 0x66, 0x01 },	  //3 *MacBookPro9,2 - Intel HD Graphics 4000 - FB: 64MB, Pipes: 2, Ports: 2, FBMem: 2, Connector: LVDS1, DP3
-  { 0x04, 0x00, 0x66, 0x01 },	  //4 *MacBookPro9,1 - Intel HD Graphics 4000 - FB: 32MB, Pipes: 3, Ports: 1, FBMem: 1, Connector: LVDS1
-  { 0x05, 0x00, 0x62, 0x01 },	  //5 Intel HD Graphics 4000 - FB: 32MB, Pipes: 2, Ports: 3, FBMem: 2, Connector: DP3
-  { 0x06, 0x00, 0x62, 0x01 },	  //6 *iMac13,1 - Intel HD Graphics 4000 - FB: 0MB, Pipes: 0, Ports: 0, FBMem: 0
-  { 0x07, 0x00, 0x62, 0x01 },	  //7 *iMac13,2 - Intel HD Graphics 4000 - FB: 0MB, Pipes: 0, Ports: 0, FBMem: 0
-  { 0x08, 0x00, 0x66, 0x01 },	  //8 *MacBookAir5,1 - Intel HD Graphics 4000 - FB: 64MB, Pipes: 3, Ports: 3, FBMem: 3, Connector: LVDS1, DP2
-  { 0x09, 0x00, 0x66, 0x01 },	  //9 *MacBookAir5,2 - Intel HD Graphics 4000 - FB: 64MB, Pipes: 3, Ports: 3, FBMem: 3, Connector: LVDS1, DP2
-  { 0x0a, 0x00, 0x66, 0x01 },	  //10 *Macmini6,1 - Intel HD Graphics 4000 - FB: 32MB, Pipes: 2, Ports: 3, FBMem: 2, Connector: HDMI1, DP2
-  { 0x0b, 0x00, 0x66, 0x01 },	  //11 *Macmini6,2 - Intel HD Graphics 4000 - FB: 32MB, Pipes: 2, Ports: 3, FBMem: 2, Connector: HDMI1, DP2
+  { 0x00, 0x00, 0x66, 0x01 },	  //0 Intel HD Graphics 4000 - Port Count: 4, Pipes: 3, BIOS-allocated memory: 96MB, FBM(cursor): 24MB, Connector: LVDS1, DP3
+  { 0x01, 0x00, 0x66, 0x01 },	  //1 *MacBookPro10,2 - Intel HD Graphics 4000 - Port Count: 4, Pipes: 3, BIOS-allocated memory: 96MB, FBM(cursor): 24MB, Connector: LVDS1, DP2, HDMI1
+  { 0x02, 0x00, 0x66, 0x01 },	  //2 *MacBookPro10,1 - Intel HD Graphics 4000 - Port Count: 1, Pipes: 3, BIOS-allocated memory: 64MB, FBM(cursor): 24MB, Connector: LVDS1
+  { 0x03, 0x00, 0x66, 0x01 },	  //3 *MacBookPro9,2 - Intel HD Graphics 4000 - Port Count: 4, Pipes: 2, BIOS-allocated memory: 64MB, FBM(cursor): 16MB, Connector: LVDS1, DP3
+  { 0x04, 0x00, 0x66, 0x01 },	  //4 *MacBookPro9,1 - Intel HD Graphics 4000 - Port Count: 1, Pipes: 1, BIOS-allocated memory: 32MB, FBM(cursor): 16MB, Connector: LVDS1
+  { 0x05, 0x00, 0x62, 0x01 },	  //5 *iMac13,1, iMac13,2 - Intel HD Graphics 4000 - Port Count: 3, Pipes: 2, BIOS-allocated memory: 32MB, FBM(cursor): 16MB, Connector: DP3
+  { 0x06, 0x00, 0x62, 0x01 },	  //6 Intel HD Graphics 4000 - Port Count: 0, Pipes: 0, BIOS-allocated memory: 0MB, FBM(cursor): 0MB, Connector:
+  { 0x07, 0x00, 0x62, 0x01 },	  //7 Intel HD Graphics 4000 - Port Count: 0, Pipes: 0, BIOS-allocated memory: 0MB, FBM(cursor): 0MB, Connector:
+  { 0x08, 0x00, 0x66, 0x01 },	  //8 *MacBookAir5,1 - Intel HD Graphics 4000 - Port Count: 3, Pipes: 3, BIOS-allocated memory: 64MB, FBM(cursor): 34MB, Connector: LVDS1, DP2
+  { 0x09, 0x00, 0x66, 0x01 },	  //9 *MacBookAir5,2 - Intel HD Graphics 4000 - Port Count: 3, Pipes: 3, BIOS-allocated memory: 64MB, FBM(cursor): 34MB, Connector: LVDS1, DP2
+  { 0x0a, 0x00, 0x66, 0x01 },	  //10 *Macmini6,1 - Intel HD Graphics 4000 - Port Count: 3, Pipes: 2, BIOS-allocated memory: 32MB, FBM(cursor): 32MB, Connector: DP2, HDMI1
+  { 0x0b, 0x00, 0x66, 0x01 },	  //11 *Macmini6,2 - Intel HD Graphics 4000 - Port Count: 3, Pipes: 2, BIOS-allocated memory: 32MB, FBM(cursor): 34MB, Connector: DP2, HDMI1
 };
 
 UINT8 ivy_bridge_hd_vals[1][4] = {
@@ -213,21 +213,21 @@ UINT8 ivy_bridge_hd_vals[1][4] = {
 
 
 UINT8 haswell_ig_vals[15][4] = {
-  { 0x00, 0x00, 0x06, 0x04 },	  //0 FB: 64MB, Pipes: 3, Ports: 3, FBMem: 3, Connector: DVI1, HDMI1
-  { 0x00, 0x00, 0x06, 0x0c },	  //1 FB: 64MB, Pipes: 3, Ports: 3, FBMem: 3, Connector: DVI1, HDMI1
-  { 0x00, 0x00, 0x16, 0x04 },	  //2 Intel HD Graphics 4600 - FB: 64MB, Pipes: 3, Ports: 3, FBMem: 3, Connector: DVI1, HDMI1
-  { 0x00, 0x00, 0x16, 0x0a },	  //3 Intel HD Graphics 4400 - FB: 64MB, Pipes: 3, Ports: 3, FBMem: 3, Connector: DVI1, HDMI1
-  { 0x00, 0x00, 0x16, 0x0c },	  //4 FB: 64MB, Pipes: 3, Ports: 3, FBMem: 3, Connector: DVI1, HDMI1
-  { 0x00, 0x00, 0x26, 0x04 },	  //5 FB: 64MB, Pipes: 3, Ports: 3, FBMem: 3, Connector: DVI1, HDMI1
-  { 0x00, 0x00, 0x26, 0x0a },	  //6 Intel HD Graphics 5000 - FB: 64MB, Pipes: 3, Ports: 3, FBMem: 3, Connector: DVI1, HDMI1
-  { 0x00, 0x00, 0x26, 0x0c },	  //7 FB: 64MB, Pipes: 3, Ports: 3, FBMem: 3, Connector: DVI1, HDMI1
-  { 0x00, 0x00, 0x26, 0x0d },	  //8 Intel Iris Pro Graphics 5200 - FB: 64MB, Pipes: 3, Ports: 3, FBMem: 3, Connector: DVI1, HDMI1
-  { 0x03, 0x00, 0x22, 0x0d },	  //9 *iMac14,1, iMac14,4 - Intel Iris Pro Graphics 5200 - FB: 0MB, Pipes: 0, Ports: 0, FBMem: 0
-  { 0x04, 0x00, 0x12, 0x04 },	  //10 Intel HD Graphics 4600 - FB: 32MB, Pipes: 3, Ports: 3, FBMem: 3
-  { 0x05, 0x00, 0x26, 0x0a },	  //11 Intel HD Graphics 5000 - FB: 32MB, Pipes: 3, Ports: 3, Connector: LVDS1, DP2
-  { 0x06, 0x00, 0x26, 0x0a },	  //12 *MacBookAir6,1, MacBookAir6,2, Macmini7,1 - Intel HD Graphics 5000 - FB: 32MB, Pipes: 3, Ports: 3, Connector: LVDS1, DP2
-  { 0x07, 0x00, 0x26, 0x0d },	  //13 *MacBookPro11,2, MacBookPro11,3 - Intel Iris Pro Graphics 5200 - FB: 64MB, Pipes: 3, Ports: 4, FBMem: 3, Connector: LVDS1, DP2
-  { 0x08, 0x00, 0x2e, 0x0a },	  //14 *MacBookPro11,1 - Intel Iris Graphics 5100 - FB: 64MB, Pipes: 3, Ports: 3, FBMem: 3, Connector: LVDS1, DP2
+  { 0x00, 0x00, 0x06, 0x04 },	  //0 Port Count: 3, Pipes: 3, BIOS-allocated memory: 64MB, FBM(cursor): 16MB, Connector: LVDS1, eDP1, HDMI1
+  { 0x00, 0x00, 0x06, 0x0c },	  //1 Port Count: 3, Pipes: 3, BIOS-allocated memory: 64MB, FBM(cursor): 16MB, Connector: LVDS1, eDP1, HDMI1
+  { 0x00, 0x00, 0x16, 0x04 },	  //2 Intel HD Graphics 4600 - Port Count: 3, Pipes: 3, BIOS-allocated memory: 64MB, FBM(cursor): 16MB, Connector: LVDS1, eDP1, HDMI1
+  { 0x00, 0x00, 0x16, 0x0a },	  //3 Intel HD Graphics 4400 - Port Count: 3, Pipes: 3, BIOS-allocated memory: 64MB, FBM(cursor): 16MB, Connector: LVDS1, eDP1, HDMI1
+  { 0x00, 0x00, 0x16, 0x0c },	  //4 Port Count: 3, Pipes: 3, BIOS-allocated memory: 64MB, FBM(cursor): 16MB, Connector: LVDS1, eDP1, HDMI1
+  { 0x00, 0x00, 0x26, 0x04 },	  //5 Port Count: 3, Pipes: 3, BIOS-allocated memory: 64MB, FBM(cursor): 16MB, Connector: LVDS1, eDP1, HDMI1
+  { 0x00, 0x00, 0x26, 0x0a },	  //6 Intel HD Graphics 5000 - Port Count: 3, Pipes: 3, BIOS-allocated memory: 64MB, FBM(cursor): 16MB, Connector: LVDS1, eDP1, HDMI1
+  { 0x00, 0x00, 0x26, 0x0c },	  //7 Port Count: 3, Pipes: 3, BIOS-allocated memory: 64MB, FBM(cursor): 16MB, Connector: LVDS1, eDP1, HDMI1
+  { 0x00, 0x00, 0x26, 0x0d },	  //8 Intel Iris Pro Graphics 5200 - Port Count: 3, Pipes: 3, BIOS-allocated memory: 64MB, FBM(cursor): 16MB, Connector: LVDS1, eDP1, HDMI1
+  { 0x03, 0x00, 0x22, 0x0d },	  //9 *iMac14,1, iMac14,4 - Intel Iris Pro Graphics 5200 - Port Count: 3, Pipes: 3, BIOS-allocated memory: 32MB, FBM(cursor): 19MB, Connector: LVDS1, DP2
+  { 0x04, 0x00, 0x12, 0x04 },	  //10 Intel HD Graphics 4600 - Port Count: 0, Pipes: 0, BIOS-allocated memory: 32MB, FBM(cursor): 0MB, Connector:
+  { 0x05, 0x00, 0x26, 0x0a },	  //11 Intel HD Graphics 5000 - Port Count: 3, Pipes: 3, BIOS-allocated memory: 32MB, FBM(cursor): 19MB, Connector: LVDS1, DP2
+  { 0x06, 0x00, 0x26, 0x0a },	  //12 *MacBookAir6,1, MacBookAir6,2, Macmini7,1 - Intel HD Graphics 5000 - Port Count: 3, Pipes: 3, BIOS-allocated memory: 32MB, FBM(cursor): 19MB, Connector: LVDS1, DP2
+  { 0x07, 0x00, 0x26, 0x0d },	  //13 *MacBookPro11,2, MacBookPro11,3 - Intel Iris Pro Graphics 5200 - Port Count: 4, Pipes: 3, BIOS-allocated memory: 64MB, FBM(cursor): 34MB, Connector: LVDS1, DP2, HDMI1
+  { 0x08, 0x00, 0x2e, 0x0a },	  //14 *MacBookPro11,1 - Intel Iris Graphics 5100 - Port Count: 3, Pipes: 3, BIOS-allocated memory: 64MB, FBM(cursor): 34MB, Connector: LVDS1, DP2
 };
 
 UINT8 haswell_hd_vals[1][4] = {
@@ -236,27 +236,27 @@ UINT8 haswell_hd_vals[1][4] = {
 
 
 UINT8 broadwell_ig_vals[21][4] = {
-  { 0x00, 0x00, 0x06, 0x16 },   //0 FB: 16MB, Pipes: 9, Ports: 3, FBMem: 3
-  { 0x00, 0x00, 0x16, 0x16 },   //1 Intel HD Graphics 5500 - FB: 16MB, Pipes: 9, Ports: 3, FBMem: 3, Connector: LVDS1, eDP1, HDMI1
-  { 0x00, 0x00, 0x1e, 0x16 },   //2 Intel HD Graphics 5300 - FB: 16MB, Pipes: 9, Ports: 3, FBMem: 3, Connector: LVDS1, eDP1, HDMI1
-  { 0x00, 0x00, 0x26, 0x16 },   //3 Intel HD Graphics 6000 - FB: 16MB, Pipes: 9, Ports: 3, FBMem: 3, Connector: LVDS1, eDP1, HDMI1
-  { 0x00, 0x00, 0x2b, 0x16 },   //4 Intel Iris Graphics 6100 - FB: 16MB, Pipes: 9, Ports: 3, FBMem: 3, Connector: LVDS1, eDP1, HDMI1
-  { 0x00, 0x00, 0x22, 0x16 },   //5 Intel Iris Pro Graphics 6200 - FB: 16MB, Pipes: 9, Ports: 3, FBMem: 3, Connector: LVDS1, eDP1, HDMI1
-  { 0x01, 0x00, 0x0e, 0x16 },   //6 FB: 38MB, Pipes: 9, Ports: 3, FBMem: 3
-  { 0x01, 0x00, 0x1e, 0x16 },   //7 *MacBook8,1 - Intel HD Graphics 5300 - FB: 38MB, Pipes: 9, Ports: 3, FBMem: 3, Connector: LVDS1, DP1
-  { 0x02, 0x00, 0x06, 0x16 },   //8 FB: 34MB, Pipes: 9, Ports: 3, FBMem: 3, Connector: DP2
-  { 0x02, 0x00, 0x16, 0x16 },   //9 Intel HD Graphics 5500 - FB: 34MB, Pipes: 9, Ports: 3, FBMem: 3, Connector: LVDS1, DP2
-  { 0x02, 0x00, 0x26, 0x16 },   //10 Intel HD Graphics 6000 - FB: 34MB, Pipes: 9, Ports: 3, FBMem: 3, Connector: LVDS1, DP2
-  { 0x02, 0x00, 0x06, 0x16 },   //11 Intel Iris Pro Graphics 6200 - FB: 34MB, Pipes: 9, Ports: 3, FBMem: 3, Connector: LVDS1, DP2
-  { 0x02, 0x00, 0x2b, 0x16 },   //12 *MacBookPro12,1 - Intel Iris Graphics 6100 - FB: 34MB, Pipes: 9, Ports: 3, FBMem: 3, Connector: LVDS1, DP2
-  { 0x03, 0x00, 0x12, 0x16 },   //13 Intel HD Graphics 5600 - FB: 34MB, Pipes: 9, Ports: 3, FBMem: 3, Connector: LVDS1, DP2
-  { 0x04, 0x00, 0x2b, 0x16 },   //14 Intel Iris Graphics 6100 - FB: 34MB, Pipes: 9, Ports: 3, FBMem: 3, Connector: LVDS1, DP2
-  { 0x04, 0x00, 0x26, 0x16 },   //15 Intel HD Graphics 6000 - FB: 34MB, Pipes: 9, Ports: 3, FBMem: 3, Connector: LVDS1, DP2
-  { 0x05, 0x00, 0x26, 0x16 },   //16 Intel HD Graphics 6000 - FB: 34MB, Pipes: 9, Ports: 3, FBMem: 3, Connector: LVDS1, DP2
-  { 0x06, 0x00, 0x26, 0x16 },   //17 *iMac16,1, MacBookAir7,1, MacBookAir7,2 - Intel HD Graphics 6000 - FB: 34MB, Pipes: 9, Ports: 3, FBMem: 3, Connector: LVDS1, DP2
-  { 0x07, 0x00, 0x22, 0x16 },   //18 *iMac16,2 - Intel Iris Pro Graphics 6200 - FB: 38MB, Pipes: 9, Ports: 3, FBMem: 3, Connector: LVDS1, DP2
-  { 0x08, 0x00, 0x26, 0x16 },   //19 Intel HD Graphics 6000 - FB: 34MB, Pipes: 9, Ports: 3, FBMem: 3, Connector: LVDS1, DP2
-  { 0x08, 0x00, 0x2b, 0x16 },   //20 Intel Iris Graphics 6100 - FB: 34MB, Pipes: 9, Ports: 3, FBMem: 3, Connector: LVDS1, DP2
+  { 0x00, 0x00, 0x06, 0x16 },	  //0 Port Count: 3, Pipes: 3, BIOS-allocated memory: 16MB, FBM(cursor): 15MB, Connector: LVDS1, eDP1, HDMI1
+  { 0x01, 0x00, 0x0e, 0x16 },	  //1 Port Count: 3, Pipes: 3, BIOS-allocated memory: 34MB, FBM(cursor): 0MB, Connector: LVDS1, DP2
+  { 0x00, 0x00, 0x16, 0x16 },	  //2 Intel HD Graphics 5500 - Port Count: 3, Pipes: 3, BIOS-allocated memory: 16MB, FBM(cursor): 15MB, Connector: LVDS1, eDP1, HDMI1
+  { 0x00, 0x00, 0x1e, 0x16 },	  //3 Intel HD Graphics 5300 - Port Count: 3, Pipes: 3, BIOS-allocated memory: 16MB, FBM(cursor): 15MB, Connector: LVDS1, eDP1, HDMI1
+  { 0x00, 0x00, 0x22, 0x16 },	  //4 Intel Iris Pro Graphics 6200 - Port Count: 3, Pipes: 3, BIOS-allocated memory: 16MB, FBM(cursor): 15MB, Connector: LVDS1, eDP1, HDMI1
+  { 0x00, 0x00, 0x26, 0x16 },	  //5 Intel HD Graphics 6000 - Port Count: 3, Pipes: 3, BIOS-allocated memory: 16MB, FBM(cursor): 15MB, Connector: LVDS1, eDP1, HDMI1
+  { 0x00, 0x00, 0x2b, 0x16 },	  //6 Intel Iris Graphics 6100 - Port Count: 3, Pipes: 3, BIOS-allocated memory: 16MB, FBM(cursor): 15MB, Connector: LVDS1, eDP1, HDMI1
+  { 0x01, 0x00, 0x1e, 0x16 },	  //7 *MacBook8,1 - Intel HD Graphics 5300 - Port Count: 3, Pipes: 3, BIOS-allocated memory: 38MB, FBM(cursor): 21MB, Connector: LVDS1, DP2
+  { 0x02, 0x00, 0x06, 0x16 },	  //8 Port Count: 3, Pipes: 3, BIOS-allocated memory: 34MB, FBM(cursor): 21MB, Connector: LVDS1, DP2
+  { 0x02, 0x00, 0x16, 0x16 },	  //9 Intel HD Graphics 5500 - Port Count: 3, Pipes: 3, BIOS-allocated memory: 34MB, FBM(cursor): 21MB, Connector: LVDS1, DP2
+  { 0x02, 0x00, 0x22, 0x16 },	  //10 Intel Iris Pro Graphics 6200 - Port Count: 3, Pipes: 3, BIOS-allocated memory: 34MB, FBM(cursor): 0MB, Connector: LVDS1, DP2
+  { 0x02, 0x00, 0x26, 0x16 },	  //11 Intel HD Graphics 6000 - Port Count: 3, Pipes: 3, BIOS-allocated memory: 34MB, FBM(cursor): 21MB, Connector: LVDS1, DP2
+  { 0x02, 0x00, 0x2b, 0x16 },	  //12 *MacBookPro12,1 - Intel Iris Graphics 6100 - Port Count: 3, Pipes: 3, BIOS-allocated memory: 34MB, FBM(cursor): 21MB, Connector: LVDS1, DP2
+  { 0x03, 0x00, 0x12, 0x16 },	  //13 Intel HD Graphics 5600 - Port Count: 3, Pipes: 3, BIOS-allocated memory: 34MB, FBM(cursor): 0MB, Connector: LVDS1, DP2
+  { 0x04, 0x00, 0x26, 0x16 },	  //14 Intel HD Graphics 6000 - Port Count: 3, Pipes: 3, BIOS-allocated memory: 34MB, FBM(cursor): 21MB, Connector: LVDS1, DP2
+  { 0x04, 0x00, 0x2b, 0x16 },	  //15 Intel Iris Graphics 6100 - Port Count: 3, Pipes: 3, BIOS-allocated memory: 34MB, FBM(cursor): 21MB, Connector: LVDS1, DP2
+  { 0x05, 0x00, 0x26, 0x16 },	  //16 Intel HD Graphics 6000 - Port Count: 3, Pipes: 3, BIOS-allocated memory: 34MB, FBM(cursor): 21MB, Connector: LVDS1, DP2
+  { 0x06, 0x00, 0x26, 0x16 },	  //17 *iMac16,1, MacBookAir7,1, MacBookAir7,2 - Intel HD Graphics 6000 - Port Count: 3, Pipes: 3, BIOS-allocated memory: 34MB, FBM(cursor): 21MB, Connector: LVDS1, DP2
+  { 0x07, 0x00, 0x22, 0x16 },	  //18 *iMac16,2 - Intel Iris Pro Graphics 6200 - Port Count: 3, Pipes: 3, BIOS-allocated memory: 38MB, FBM(cursor): 38MB, Connector: LVDS1, DP2
+  { 0x08, 0x00, 0x26, 0x16 },	  //19 Intel HD Graphics 6000 - Port Count: 2, Pipes: 2, BIOS-allocated memory: 34MB, FBM(cursor): 34MB, Connector: LVDS1, DP1
+  { 0x08, 0x00, 0x2b, 0x16 },	  //20 Intel Iris Graphics 6100 - Port Count: 3, Pipes: 3, BIOS-allocated memory: 34MB, FBM(cursor): 0MB, Connector: LVDS1, DP2
 };
 
 UINT8 broadwell_hd_vals[2][4] = {
@@ -266,23 +266,50 @@ UINT8 broadwell_hd_vals[2][4] = {
 
 
 UINT8 skylake_ig_vals[14][4] = {
-  { 0x00, 0x00, 0x12, 0x19 },	  //0 Intel HD Graphics 530 - FB: 1MB, Pipes: 9, Ports: 0, FBMem: 0, Connector: LVDS1, DP2
-  { 0x00, 0x00, 0x16, 0x19 },	  //1 Intel HD Graphics 520 - FB: 1MB, Pipes: 9, Ports: 0, FBMem: 0, Connector: LVDS1, DP2
-  { 0x00, 0x00, 0x26, 0x19 },	  //2 Intel Iris Graphics 540 - FB: 1MB, Pipes: 9, Ports: 0, FBMem: 0, Connector: LVDS1, DP2
-  { 0x00, 0x00, 0x27, 0x19 },	  //3 Intel Iris Graphics 550 - FB: 1MB, Pipes: 9, Ports: 0, FBMem: 0, Connector: LVDS1, DP2
-  { 0x00, 0x00, 0x1b, 0x19 },	  //4 Intel HD Graphics 530 - FB: 1MB, Pipes: 9, Ports: 0, FBMem: 0, Connector: LVDS1, DP2
-  { 0x00, 0x00, 0x1e, 0x19 },	  //5 Intel HD Graphics 515 - FB: 1MB, Pipes: 9, Ports: 0, FBMem: 0, Connector: LVDS1, DP2
-  { 0x00, 0x00, 0x3b, 0x19 },	  //6 Intel Iris Pro Graphics 580 - FB: 1MB, Pipes: 9, Ports: 0, FBMem: 0, Connector: LVDS1, DP2
-  { 0x02, 0x00, 0x16, 0x19 },	  //7 Intel HD Graphics 520 - FB: 1MB, Pipes: 9, Ports: 0, FBMem: 0, Connector: LVDS1, DP2
-  { 0x02, 0x00, 0x26, 0x19 },	  //8 *MacBookPro13,1 - Intel Iris Graphics 540 - FB: 1MB, Pipes: 9, Ports: 0, FBMem: 0, Connector: LVDS1, DP2
-  { 0x03, 0x00, 0x1e, 0x19 },	  //9 *MacBook9,1 - Intel HD Graphics 515 - FB: 1MB, Pipes: 9, Ports: 0, FBMem: 0, Connector: LVDS1, DP2
-  { 0x04, 0x00, 0x26, 0x19 },	  //10 Intel Iris Graphics 540 - FB: 1MB, Pipes: 9, Ports: 0, FBMem: 0, Connector: LVDS1, DP2
-  { 0x04, 0x00, 0x27, 0x19 },	  //11 *MacBookPro13,2 - Intel Iris Graphics 550 - FB: 1MB, Pipes: 9, Ports: 0, FBMem: 0, Connector: LVDS1, DP2
-  { 0x06, 0x00, 0x1b, 0x19 },	  //12 *MacBookPro13,3 - Intel HD Graphics 530 - FB: 1MB, Pipes: 9, Ports: 0, FBMem: 0, Connector: LVDS1, DP2
-  { 0x07, 0x00, 0x26, 0x19 },	  //13 Intel Iris Graphics 540 - FB: 1MB, Pipes: 9, Ports: 0, FBMem: 0, Connector: LVDS1, DP2
+  { 0x00, 0x00, 0x12, 0x19 },	  //0 Intel HD Graphics 530 - Port Count: 3, Pipes: 3, BIOS-allocated memory: 34MB, FBM(cursor): 21MB, Connector: DP3
+  { 0x00, 0x00, 0x16, 0x19 },	  //1 Intel HD Graphics 520 - Port Count: 3, Pipes: 3, BIOS-allocated memory: 34MB, FBM(cursor): 21MB, Connector: LVDS1, DP2
+  { 0x00, 0x00, 0x26, 0x19 },	  //2 Intel Iris Graphics 540 - Port Count: 3, Pipes: 3, BIOS-allocated memory: 34MB, FBM(cursor): 21MB, Connector: LVDS1, DP2
+  { 0x00, 0x00, 0x27, 0x19 },	  //3 Intel Iris Graphics 550 - Port Count: 3, Pipes: 3, BIOS-allocated memory: 34MB, FBM(cursor): 21MB, Connector: LVDS1, DP2
+  { 0x00, 0x00, 0x1b, 0x19 },	  //4 *MacBookPro13,3 - Intel HD Graphics 530 - Port Count: 3, Pipes: 3, BIOS-allocated memory: 34MB, FBM(cursor): 21MB, Connector: LVDS1, DP2
+  { 0x00, 0x00, 0x1e, 0x19 },	  //5 Intel HD Graphics 515 - Port Count: 3, Pipes: 3, BIOS-allocated memory: 34MB, FBM(cursor): 21MB, Connector: LVDS1, DP2
+  { 0x00, 0x00, 0x3b, 0x19 },	  //6 Intel Iris Pro Graphics 580 - Port Count: 3, Pipes: 3, BIOS-allocated memory: 34MB, FBM(cursor): 21MB, Connector: LVDS1, DP1, HDMI1
+  { 0x02, 0x00, 0x16, 0x19 },	  //7 Intel HD Graphics 520 - Port Count: 3, Pipes: 3, BIOS-allocated memory: 57MB, FBM(cursor): 0MB, Connector: LVDS1, DP2
+  { 0x02, 0x00, 0x26, 0x19 },	  //8 *MacBookPro13,1 - Intel Iris Graphics 540 - Port Count: 3, Pipes: 3, BIOS-allocated memory: 57MB, FBM(cursor): 0MB, Connector: LVDS1, DP2
+  { 0x03, 0x00, 0x1e, 0x19 },	  //9 *MacBook9,1 - Intel HD Graphics 515 - Port Count: 3, Pipes: 3, BIOS-allocated memory: 34MB, FBM(cursor): 21MB, Connector: LVDS1, DP2
+  { 0x04, 0x00, 0x26, 0x19 },	  //10 Intel Iris Graphics 540 - Port Count: 3, Pipes: 3, BIOS-allocated memory: 34MB, FBM(cursor): 0MB, Connector: LVDS1, DP2
+  { 0x04, 0x00, 0x27, 0x19 },	  //11 *MacBookPro13,2 - Intel Iris Graphics 550 - Port Count: 3, Pipes: 3, BIOS-allocated memory: 34MB, FBM(cursor): 21MB, Connector: LVDS1, DP2
+  { 0x06, 0x00, 0x1b, 0x19 },	  //12 Intel HD Graphics 530 - Port Count: 1, Pipes: 1, BIOS-allocated memory: 38MB, FBM(cursor): 0MB
+  { 0x07, 0x00, 0x26, 0x19 },	  //13 Intel Iris Graphics 540 - Port Count: 3, Pipes: 3, BIOS-allocated memory: 34MB, FBM(cursor): 0MB, Connector: LVDS1, DP2
 };
 
 UINT8 skylake_hd_vals[8][4] = {
+  { 0x0c, 0x00, 0x00, 0x00 },	  //0 "graphic-options"
+  { 0x01, 0x00, 0x00, 0x00 },	  //1 "AAPL,Gfx324"
+  { 0x01, 0x00, 0x00, 0x00 },	  //2 "AAPL,GfxYTile"
+  { 0xfa, 0x00, 0x00, 0x00 },	  //3 "AAPL00,PanelCycleDelay"
+  { 0x3c, 0x00, 0x00, 0x08 },	  //4 "AAPL00,PanelPowerDown"
+  { 0x11, 0x00, 0x00, 0x00 },	  //5 "AAPL00,PanelPowerOff"
+  { 0x19, 0x01, 0x00, 0x08 },	  //6 "AAPL00,PanelPowerOn"
+  { 0x30, 0x00, 0x00, 0x00 },	  //7 "AAPL00,PanelPowerUp"
+};
+
+
+UINT8 kabylake_ig_vals[12][4] = {
+  { 0x00, 0x00, 0x12, 0x59 },	  //0 Intel HD Graphics 630 - Port Count: 3, Pipes: 3, BIOS-allocated memory: 38MB, FBM(cursor): 0MB, Connector: DP3
+  { 0x00, 0x00, 0x16, 0x59 },	  //1 Intel HD Graphics 620 - Port Count: 3, Pipes: 3, BIOS-allocated memory: 34MB, FBM(cursor): 0MB, Connector: LVDS1, DP1, HDMI1
+  { 0x00, 0x00, 0x26, 0x59 },	  //2 Intel Iris Plus Graphics 640 - Port Count: 3, Pipes: 3, BIOS-allocated memory: 38MB, FBM(cursor): 0MB, Connector: LVDS1, DP2
+  { 0x00, 0x00, 0x27, 0x59 },	  //3 Intel Iris Plus Graphics 650 - Port Count: 3, Pipes: 3, BIOS-allocated memory: 38MB, FBM(cursor): 0MB, Connector: LVDS1, DP2
+  { 0x00, 0x00, 0x1b, 0x59 },	  //4 *MacBookPro14,3, iMac18,2, iMac18,3 - Intel HD Graphics 630 - Port Count: 3, Pipes: 3, BIOS-allocated memory: 38MB, FBM(cursor): 21MB, Connector: LVDS1, DP1, HDMI1
+  { 0x00, 0x00, 0x1e, 0x59 },	  //5 Intel HD Graphics 615 - Port Count: 3, Pipes: 3, BIOS-allocated memory: 34MB, FBM(cursor): 0MB, Connector: LVDS1, DP2
+  { 0x00, 0x00, 0x23, 0x59 },	  //6 Intel HD Graphics 635 - Port Count: 3, Pipes: 3, BIOS-allocated memory: 38MB, FBM(cursor): 0MB, Connector: LVDS1, DP2
+  { 0x01, 0x00, 0x1e, 0x59 },	  //7 *MacBook10,1 - Intel HD Graphics 615 - Port Count: 3, Pipes: 3, BIOS-allocated memory: 38MB, FBM(cursor): 0MB, Connector: LVDS1, DP2
+  { 0x02, 0x00, 0x26, 0x59 },	  //8 *MacBookPro14,1, iMac18,1 - Intel Iris Plus Graphics 640 - Port Count: 3, Pipes: 3, BIOS-allocated memory: 57MB, FBM(cursor): 0MB, Connector: LVDS1, DP2
+  { 0x04, 0x00, 0x27, 0x59 },	  //9 *MacBookPro14,2 - Intel Iris Plus Graphics 650 - Port Count: 3, Pipes: 3, BIOS-allocated memory: 57MB, FBM(cursor): 0MB, Connector: LVDS1, DP2
+  { 0x07, 0x00, 0x26, 0x59 },	  //10 Intel Iris Plus Graphics 640 - Port Count: 3, Pipes: 3, BIOS-allocated memory: 57MB, FBM(cursor): 21MB, Connector: LVDS1, DP2
+  { 0x09, 0x00, 0x27, 0x59 },	  //11 Intel Iris Plus Graphics 650 - Port Count: 3, Pipes: 3, BIOS-allocated memory: 38MB, FBM(cursor): 0MB, Connector: LVDS1, DP2
+};
+
+UINT8 kabylake_hd_vals[8][4] = {
   { 0x0c, 0x00, 0x00, 0x00 },	  //0 "graphic-options"
   { 0x01, 0x00, 0x00, 0x00 },	  //1 "AAPL,Gfx324"
   { 0x01, 0x00, 0x00, 0x00 },	  //2 "AAPL,GfxYTile"
@@ -647,8 +674,8 @@ static struct gma_gpu_t KnownGPUS[] = {
   { 0x5921, "Intel Kabylake GT2F"            }, //
   //GT3
   { 0x5923, "Intel HD Graphics 635"          }, //
-  { 0x5926, "Intel Iris Pro Graphics 640"    }, // Mobile
-  { 0x5927, "Intel Iris Pro Graphics 650"    }, //
+  { 0x5926, "Intel Iris Plus Graphics 640"   }, // Mobile
+  { 0x5927, "Intel Iris Plus Graphics 650"   }, //
   //GT4
   { 0x593B, "Intel Kabylake GT4"             }, //
 
@@ -2019,7 +2046,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
               case 0x162A:
               case 0x162B:
               case 0x162D:
-                devprop_add_value(device, "AAPL,ig-platform-id", broadwell_ig_vals[15], 4);
+                devprop_add_value(device, "AAPL,ig-platform-id", broadwell_ig_vals[14], 4);
                 DBG("  Found ig-platform-id = 0x16260004\n");
                 break;
               default:
@@ -2230,89 +2257,101 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
     case 0x5921: // "Intel Kabylake GT2F"             //
       //GT3
     case 0x5923: // "Intel HD Graphics 635"           //
-    case 0x5926: // "Intel Iris Pro Graphics 640"     // Mobile
-    case 0x5927: // "Intel Iris Pro Graphics 650"     //
+    case 0x5926: // "Intel Iris Plus Graphics 640"     // Mobile
+    case 0x5927: // "Intel Iris Plus Graphics 650"     //
       //GT4
     case 0x593B: // "Intel Kabylake GT4"              //
       switch (gma_dev->device_id) {
         case 0x5912:
           if (!SetFake) {
-            FakeID = 0x19128086 >> 16;
+            FakeID = 0x59128086 >> 16;
             DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
             devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
-            FakeID = 0x19128086 & 0xFFFF;
+            FakeID = 0x59128086 & 0xFFFF;
             devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
           }
           if (!SetIg) {
-            devprop_add_value(device, "AAPL,ig-platform-id", skylake_ig_vals[0], 4);
-            DBG("  Found ig-platform-id = 0x19120000\n");
+            devprop_add_value(device, "AAPL,ig-platform-id", kabylake_ig_vals[0], 4);
+            DBG("  Found ig-platform-id = 0x59120000\n");
           }
           break;
         case 0x5916:
           if (!SetFake) {
-            FakeID = 0x19168086 >> 16;
+            FakeID = 0x59168086 >> 16;
             DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
             devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
-            FakeID = 0x19168086 & 0xFFFF;
+            FakeID = 0x59168086 & 0xFFFF;
             devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
           }
           if (!SetIg) {
-            devprop_add_value(device, "AAPL,ig-platform-id", skylake_ig_vals[1], 4);
-            DBG("  Found ig-platform-id = 0x19160000\n");
+            devprop_add_value(device, "AAPL,ig-platform-id", kabylake_ig_vals[1], 4);
+            DBG("  Found ig-platform-id = 0x59160000\n");
           }
           break;
         case 0x591B:
         case 0x591D:
-        case 0x5923:
           if (!SetFake) {
-            FakeID = 0x191B8086 >> 16;
+            FakeID = 0x591B8086 >> 16;
             DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
             devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
-            FakeID = 0x191B8086 & 0xFFFF;
+            FakeID = 0x591B8086 & 0xFFFF;
             devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
           }
           if (!SetIg) {
-            devprop_add_value(device, "AAPL,ig-platform-id", skylake_ig_vals[4], 4);
-            DBG("  Found ig-platform-id = 0x191B0000\n");
+            devprop_add_value(device, "AAPL,ig-platform-id", kabylake_ig_vals[4], 4);
+            DBG("  Found ig-platform-id = 0x591B0000\n");
           }
           break;
         case 0x591E:
           if (!SetFake) {
-            FakeID = 0x191E8086 >> 16;
+            FakeID = 0x591E8086 >> 16;
             DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
             devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
-            FakeID = 0x191E8086 & 0xFFFF;
+            FakeID = 0x591E8086 & 0xFFFF;
             devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
           }
           if (!SetIg) {
-            devprop_add_value(device, "AAPL,ig-platform-id", skylake_ig_vals[5], 4);
-            DBG("  Found ig-platform-id = 0x191E0000\n");
+            devprop_add_value(device, "AAPL,ig-platform-id", kabylake_ig_vals[5], 4);
+            DBG("  Found ig-platform-id = 0x591E0000\n");
+          }
+          break;
+        case 0x5923:
+          if (!SetFake) {
+            FakeID = 0x59238086 >> 16;
+            DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
+            devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
+            FakeID = 0x59238086 & 0xFFFF;
+            devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
+          }
+          if (!SetIg) {
+            devprop_add_value(device, "AAPL,ig-platform-id", kabylake_ig_vals[6], 4);
+            DBG("  Found ig-platform-id = 0x59230000\n");
           }
           break;
         case 0x5926:
           if (!SetFake) {
-            FakeID = 0x19268086 >> 16;
+            FakeID = 0x59268086 >> 16;
             DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
             devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
-            FakeID = 0x19268086 & 0xFFFF;
+            FakeID = 0x59268086 & 0xFFFF;
             devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
           }
           if (!SetIg) {
-            devprop_add_value(device, "AAPL,ig-platform-id", skylake_ig_vals[2], 4);
-            DBG("  Found ig-platform-id = 0x19260000\n");
+            devprop_add_value(device, "AAPL,ig-platform-id", kabylake_ig_vals[2], 4);
+            DBG("  Found ig-platform-id = 0x59260000\n");
           }
           break;
         case 0x5927:
           if (!SetFake) {
-            FakeID = 0x19278086 >> 16;
+            FakeID = 0x59278086 >> 16;
             DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
             devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
-            FakeID = 0x19278086 & 0xFFFF;
+            FakeID = 0x59278086 & 0xFFFF;
             devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
           }
           if (!SetIg) {
-            devprop_add_value(device, "AAPL,ig-platform-id", skylake_ig_vals[3], 4);
-            DBG("  Found ig-platform-id = 0x19270000\n");
+            devprop_add_value(device, "AAPL,ig-platform-id", kabylake_ig_vals[3], 4);
+            DBG("  Found ig-platform-id = 0x59270000\n");
           }
           break;
         default:
@@ -2321,6 +2360,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
       switch (MacModel) {
         case MacBook81:
         case MacBook91:
+        case MacBook101:
         case MacBookAir61:
         case MacBookAir62:
         case MacBookAir71:
@@ -2334,17 +2374,20 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
         case MacBookPro131:
         case MacBookPro132:
         case MacBookPro133:
-          devprop_add_value(device, "graphic-options", skylake_hd_vals[0], 4);
-          devprop_add_value(device, "AAPL,Gfx324", skylake_hd_vals[1], 4);
-          devprop_add_value(device, "AAPL,GfxYTile", skylake_hd_vals[2], 4);
-          devprop_add_value(device, "AAPL00,PanelCycleDelay", skylake_hd_vals[3], 4);
-          devprop_add_value(device, "AAPL00,PanelPowerDown", skylake_hd_vals[4], 4);
-          devprop_add_value(device, "AAPL00,PanelPowerOff", skylake_hd_vals[5], 4);
-          devprop_add_value(device, "AAPL00,PanelPowerOn", skylake_hd_vals[6], 4);
-          devprop_add_value(device, "AAPL00,PanelPowerUp", skylake_hd_vals[7], 4);
+        case MacBookPro141:
+        case MacBookPro142:
+        case MacBookPro143:
+          devprop_add_value(device, "graphic-options", kabylake_hd_vals[0], 4);
+          devprop_add_value(device, "AAPL,Gfx324", kabylake_hd_vals[1], 4);
+          devprop_add_value(device, "AAPL,GfxYTile", kabylake_hd_vals[2], 4);
+          devprop_add_value(device, "AAPL00,PanelCycleDelay", kabylake_hd_vals[3], 4);
+          devprop_add_value(device, "AAPL00,PanelPowerDown", kabylake_hd_vals[4], 4);
+          devprop_add_value(device, "AAPL00,PanelPowerOff", kabylake_hd_vals[5], 4);
+          devprop_add_value(device, "AAPL00,PanelPowerOn", kabylake_hd_vals[6], 4);
+          devprop_add_value(device, "AAPL00,PanelPowerUp", kabylake_hd_vals[7], 4);
           break;
         default:
-          devprop_add_value(device, "AAPL,GfxYTile", skylake_hd_vals[2], 4);
+          devprop_add_value(device, "AAPL,GfxYTile", kabylake_hd_vals[2], 4);
           break;
       }
       break;

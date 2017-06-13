@@ -453,6 +453,12 @@ VOID FillInputs(BOOLEAN New)
   }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 24, L"0x%08x", gFwFeatures);
 
+  InputItems[InputItemsCount].ItemType = Hex;  //63
+  if (New) {
+    InputItems[InputItemsCount].SValue = AllocateZeroPool(24);
+  }
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 24, L"0x%08x", gFwFeaturesMask);
+
 
   // CSR - aka System Integrity Protection configuration
   InputItemsCount = 65;
@@ -929,6 +935,11 @@ VOID ApplyInputs(VOID)
   i++; //62
   if (InputItems[i].Valid) {
     gFwFeatures = (UINT32)StrHexToUint64(InputItems[i].SValue);
+  }
+
+  i++; //63
+  if (InputItems[i].Valid) {
+    gFwFeaturesMask = (UINT32)StrHexToUint64(InputItems[i].SValue);
   }
 
   // CSR
@@ -4170,6 +4181,7 @@ REFIT_MENU_ENTRY  *SubMenuSmbios()
   AddMenuItem(SubScreen, 86, "ROM Version:", TAG_INPUT, TRUE);
   AddMenuItem(SubScreen, 87, "ROM Release Date:", TAG_INPUT, TRUE);
   AddMenuItem(SubScreen, 62, "FirmwareFeature:", TAG_INPUT, TRUE);
+  AddMenuItem(SubScreen, 63, "FirmwareFeaturesMask:", TAG_INPUT, TRUE);
   AddMenuItem(SubScreen, 17, "PlatformFeature:", TAG_INPUT, TRUE);
 
   AddMenuEntry(SubScreen, &MenuEntryReturn);

@@ -420,6 +420,8 @@ STATIC UINT8 StrCpuid1[] = {
   0xb8, 0x01, 0x00, 0x00, 0x00, 0x31, 0xdb, 0x89, 0xd9, 0x89, 0xda, 0x0f, 0xa2};
 
 STATIC UINT8 StrMsr8b[]       = {0xb9, 0x8b, 0x00, 0x00, 0x00, 0x0f, 0x32};
+
+// Snow Leopard
 /*
  This patch searches
   and eax, 0xf0   ||    and eax, 0x0f0000
@@ -427,10 +429,11 @@ STATIC UINT8 StrMsr8b[]       = {0xb9, 0x8b, 0x00, 0x00, 0x00, 0x0f, 0x32};
  and replaces to
   mov eax, FakeModel  | mov eax, FakeExt
  */
-STATIC UINT8 SearchModel106[]  = {0x25, 0xf0, 0x00, 0x00, 0x00, 0xc1, 0xe8, 0x04};
-STATIC UINT8 SearchExt106[]    = {0x25, 0x00, 0x00, 0x0f, 0x00, 0xc1, 0xe8, 0x10};
-STATIC UINT8 ReplaceModel106[] = {0xb8, 0x07, 0x00, 0x00, 0x00, 0x90, 0x90, 0x90};
+STATIC UINT8 SnowSearchModel[]  = {0x25, 0xf0, 0x00, 0x00, 0x00, 0xc1, 0xe8, 0x04};
+STATIC UINT8 SnowSearchExt[]    = {0x25, 0x00, 0x00, 0x0f, 0x00, 0xc1, 0xe8, 0x10};
+STATIC UINT8 SnowReplaceModel[] = {0xb8, 0x07, 0x00, 0x00, 0x00, 0x90, 0x90, 0x90};
 
+// Lion
 /*
  This patch searches
   mov ecx, eax
@@ -438,10 +441,11 @@ STATIC UINT8 ReplaceModel106[] = {0xb8, 0x07, 0x00, 0x00, 0x00, 0x90, 0x90, 0x90
  and replaces to
   mov ecx, FakeModel  || mov ecx, FakeExt
  */
-STATIC UINT8 SearchModel107[]  = {0x89, 0xc1, 0xc1, 0xe9, 0x04};
-STATIC UINT8 SearchExt107[]    = {0x89, 0xc1, 0xc1, 0xe9, 0x10};
-STATIC UINT8 ReplaceModel107[] = {0xb9, 0x07, 0x00, 0x00, 0x00};
+STATIC UINT8 LionSearchModel[]  = {0x89, 0xc1, 0xc1, 0xe9, 0x04};
+STATIC UINT8 LionSearchExt[]    = {0x89, 0xc1, 0xc1, 0xe9, 0x10};
+STATIC UINT8 LionReplaceModel[] = {0xb9, 0x07, 0x00, 0x00, 0x00};
 
+// Mountain Lion/Mavericks
 /*
  This patch searches
   mov bl, al     ||   shr eax, 0x10
@@ -449,11 +453,12 @@ STATIC UINT8 ReplaceModel107[] = {0xb9, 0x07, 0x00, 0x00, 0x00};
  and replaces to
   mov ebx, FakeModel || mov eax, FakeExt
  */
-STATIC UINT8 SearchModel109[]   = {0x88, 0xc3, 0xc0, 0xeb, 0x04};
-STATIC UINT8 SearchExt109[]     = {0xc1, 0xe8, 0x10, 0x24, 0x0f};
-STATIC UINT8 ReplaceModel109[]  = {0xbb, 0x0a, 0x00, 0x00, 0x00};
-STATIC UINT8 ReplaceExt109[]    = {0xb8, 0x02, 0x00, 0x00, 0x00};
+STATIC UINT8 MLMavSearchModel[]   = {0x88, 0xc3, 0xc0, 0xeb, 0x04};
+STATIC UINT8 MLMavSearchExt[]     = {0xc1, 0xe8, 0x10, 0x24, 0x0f};
+STATIC UINT8 MLMavReplaceModel[]  = {0xbb, 0x0a, 0x00, 0x00, 0x00};
+STATIC UINT8 MLMavReplaceExt[]    = {0xb8, 0x02, 0x00, 0x00, 0x00};
 
+// Yosemite/El Capitan/Sierra
 /*
  This patch searches
   mov cl, al     ||   mov ecx, eax
@@ -461,8 +466,20 @@ STATIC UINT8 ReplaceExt109[]    = {0xb8, 0x02, 0x00, 0x00, 0x00};
  and replaces to
   mov ecx, FakeModel || mov ecx, FakeExt
  */
-STATIC UINT8 SearchModel101[]   = {0x88, 0xc1, 0xc0, 0xe9, 0x04};
-STATIC UINT8 SearchExt101[]     = {0x89, 0xc1, 0xc1, 0xe9, 0x10};
+STATIC UINT8 YosECSieSearchModel[]   = {0x88, 0xc1, 0xc0, 0xe9, 0x04};
+STATIC UINT8 YosECSieSearchExt[]     = {0x89, 0xc1, 0xc1, 0xe9, 0x10};
+// Need to use LionReplaceModel
+
+// High Sierra
+/*
+ This patch searches
+  mov ecx, ecx   ||   mov ecx, eax
+  shr cl, 0x04   ||   shr ecx, 0x10
+ and replaces to
+  mov ecx, FakeModel || mov ecx, FakeExt
+ */
+STATIC UINT8 HSieSearchModel[]   = {0x89, 0xc1, 0xc0, 0xe9, 0x04};
+// Need to use YosECSieSearchExt, LionReplaceModel
 
 
 BOOLEAN PatchCPUID(UINT8* bytes, UINT8* Location, INT32 LenLoc,
@@ -500,35 +517,44 @@ BOOLEAN PatchCPUID(UINT8* bytes, UINT8* Location, INT32 LenLoc,
 
 VOID KernelCPUIDPatch(UINT8* kernelData, LOADER_ENTRY *Entry)
 {
-//Snow patterns
-  DBG_RT(Entry, "CPUID: try Snow patch...\n");
-  if (PatchCPUID(kernelData, &StrCpuid1[0], sizeof(StrCpuid1), &SearchModel106[0],
-                 &SearchExt106[0], &ReplaceModel106[0], &ReplaceModel106[0],
-                 sizeof(SearchModel106), Entry)) {
+// Snow Leopard patterns
+  DBG_RT(Entry, "CPUID: try Snow Leopard patch...\n");
+  if (PatchCPUID(kernelData, &StrCpuid1[0], sizeof(StrCpuid1), &SnowSearchModel[0],
+                 &SnowSearchExt[0], &SnowReplaceModel[0], &SnowReplaceModel[0],
+                 sizeof(SnowSearchModel), Entry)) {
     DBG_RT(Entry, "...done!\n");
     return;
   }
-//Lion patterns
+// Lion patterns
   DBG_RT(Entry, "CPUID: try Lion patch...\n");
-  if (PatchCPUID(kernelData, &StrMsr8b[0], sizeof(StrMsr8b), &SearchModel107[0],
-                 &SearchExt107[0], &ReplaceModel107[0], &ReplaceModel107[0],
-                 sizeof(SearchModel107), Entry)) {
+  if (PatchCPUID(kernelData, &StrMsr8b[0], sizeof(StrMsr8b), &LionSearchModel[0],
+                 &LionSearchExt[0], &LionReplaceModel[0], &LionReplaceModel[0],
+                 sizeof(LionSearchModel), Entry)) {
     DBG_RT(Entry, "...done!\n");
     return;
   }
-//Mavericks
-  DBG_RT(Entry, "CPUID: try Mavericks patch...\n");
-  if (PatchCPUID(kernelData, &StrMsr8b[0], sizeof(StrMsr8b), &SearchModel109[0],
-                 &SearchExt109[0], &ReplaceModel109[0], &ReplaceExt109[0],
-                 sizeof(SearchModel109), Entry)) {
+// Mountain Lion/Mavericks patterns
+  DBG_RT(Entry, "CPUID: try Mountain Lion/Mavericks patch...\n");
+  if (PatchCPUID(kernelData, &StrMsr8b[0], sizeof(StrMsr8b), &MLMavSearchModel[0],
+                 &MLMavSearchExt[0], &MLMavReplaceModel[0], &MLMavReplaceExt[0],
+                 sizeof(MLMavSearchModel), Entry)) {
     DBG_RT(Entry, "...done!\n");
     return;
   }
-//Yosemite
-  DBG_RT(Entry, "CPUID: try Yosemite patch...\n");
-  if (PatchCPUID(kernelData, &StrMsr8b[0], sizeof(StrMsr8b), &SearchModel101[0],
-                 &SearchExt101[0], &ReplaceModel107[0], &ReplaceModel107[0],
-                 sizeof(SearchModel107), Entry)) {
+// Yosemite/El Capitan/Sierra patterns
+  DBG_RT(Entry, "CPUID: try Yosemite/El Capitan/Sierra patch...\n");
+  if (PatchCPUID(kernelData, &StrMsr8b[0], sizeof(StrMsr8b), &YosECSieSearchModel[0],
+                 &YosECSieSearchExt[0], &LionReplaceModel[0], &LionReplaceModel[0],
+                 sizeof(YosECSieSearchModel), Entry)) {
+    DBG_RT(Entry, "...done!\n");
+    return;
+  }
+// High Sierra patterns
+// Sherlocks: 10.13.DP1
+  DBG_RT(Entry, "CPUID: try High Sierra patch...\n");
+  if (PatchCPUID(kernelData, &StrMsr8b[0], sizeof(StrMsr8b), &HSieSearchModel[0],
+                 &YosECSieSearchExt[0], &LionReplaceModel[0], &LionReplaceModel[0],
+                 sizeof(HSieSearchModel), Entry)) {
     DBG_RT(Entry, "...done!\n");
     return;
   }
@@ -663,7 +689,7 @@ BOOLEAN KernelPatchPm(VOID *kernelData)
       DBG("Kernel power management patch 10.11.1(beta 15B38b)(data3) found and patched\n");
       return TRUE;
     }
-    // sherlocks: change for 10.12 DP1
+    // Sherlocks: change for 10.12 DP1
     else if (0x00003390000000E2ULL == (*((UINT64 *)Ptr))) {
         (*((UINT64 *)Ptr)) = 0x0000000000000000ULL;
         DBG("Kernel power management patch 10.12 DP1 found and patched\n");
@@ -683,7 +709,7 @@ BOOLEAN KernelPatchPm(VOID *kernelData)
 
 BOOLEAN KernelLapicPatch_64(VOID *kernelData)
 {
-  // Credits to donovan6000 and sherlocks for providing the lapic kernel patch source used to build this function
+  // Credits to donovan6000 and Sherlocks for providing the lapic kernel patch source used to build this function
 
   UINT8       *bytes = (UINT8*)kernelData;
   UINT32      patchLocation=0;
@@ -721,7 +747,7 @@ BOOLEAN KernelLapicPatch_64(VOID *kernelData)
       patchLocation = i+28;
       DBG("Found Yosemite Lapic panic at 0x%08x\n", patchLocation);
       break;
-      //sherlocks: 10.11.DB1
+      //Sherlocks: 10.11.DB1
     } else if (bytes[i+0] == 0x65 && bytes[i+1] == 0x8B && bytes[i+2] == 0x0C && bytes[i+3] == 0x25 &&
                bytes[i+4] == 0x1C && bytes[i+5] == 0x00 && bytes[i+6] == 0x00 && bytes[i+7] == 0x00 &&
                bytes[i+1411] == 0x65 && bytes[i+1412] == 0x8B && bytes[i+1413] == 0x0C && bytes[i+1414] == 0x25 &&
@@ -729,7 +755,7 @@ BOOLEAN KernelLapicPatch_64(VOID *kernelData)
       patchLocation = i+1400;
       DBG("Found El Capitan Lapic panic at 0x%08x\n", patchLocation);
       break;
-      //sherlocks: 10.12.DP1
+      //Sherlocks: 10.12.DP1
     } else if (bytes[i+0] == 0x65 && bytes[i+1] == 0x8B && bytes[i+2] == 0x0C && bytes[i+3] == 0x25 &&
                bytes[i+4] == 0x1C && bytes[i+5] == 0x00 && bytes[i+6] == 0x00 && bytes[i+7] == 0x00 &&
                bytes[i+1409] == 0x65 && bytes[i+1410] == 0x8B && bytes[i+1411] == 0x0C && bytes[i+1412] == 0x25 &&
@@ -737,7 +763,7 @@ BOOLEAN KernelLapicPatch_64(VOID *kernelData)
         patchLocation = i+1398;
         DBG("Found Sierra Lapic panic at 0x%08x\n", patchLocation);
         break;
-      // PMheart: 10.13 DP1
+      //PMheart: 10.13 DP1
     } else if(bytes[i+0] == 0x65 && bytes[i+1] == 0x8B && bytes[i+2] == 0x0C && bytes[i+3] == 0x25 &&
               bytes[i+4] == 0x1C && bytes[i+5] == 0x00 && bytes[i+6] == 0x00 && bytes[i+7] == 0x00 &&
               bytes[i+1407] == 0x65 && bytes[i+1408] == 0x8B && bytes[i+1409] == 0x0C && bytes[i+1410] == 0x25 &&
@@ -772,7 +798,7 @@ BOOLEAN KernelLapicPatch_64(VOID *kernelData)
 
 BOOLEAN KernelLapicPatch_32(VOID *kernelData)
 {
-  // Credits to donovan6000 and sherlocks for providing the lapic kernel patch source used to build this function
+  // Credits to donovan6000 and Sherlocks for providing the lapic kernel patch source used to build this function
 
   UINT8       *bytes = (UINT8*)kernelData;
   UINT32      patchLocation=0;

@@ -1022,6 +1022,8 @@ static VOID ScanDriverDir(IN CHAR16 *Path, OUT EFI_HANDLE **DriversToConnect, OU
       gDriversFlags.PartitionLoaded = TRUE;
     } else if (StrStr(FileName, L"HFS") != NULL) {
       gDriversFlags.HFSLoaded = TRUE;
+    } else if (StrStr(FileName, L"apfs") != NULL) {
+      gDriversFlags.APFSLoaded = TRUE;
     }
     if (DriverHandle != NULL && DriversToConnectNum != NULL && DriversToConnect != NULL) {
       // driver loaded - check for EFI_DRIVER_BINDING_PROTOCOL
@@ -1225,8 +1227,14 @@ VOID DisconnectSomeDevices(VOID)
     DBG("\n");
   }
 
+  if ((gDriversFlags.HFSLoaded) || (gDriversFlags.APFSLoaded)) {
   if (gDriversFlags.HFSLoaded) {
     DBG("HFS+ driver loaded\n");
+    }
+    if (gDriversFlags.APFSLoaded) {
+      DBG("APFS driver loaded\n");
+    }
+
     // get all FileSystem handles
     ControllerHandleCount = 0;
     ControllerHandles = NULL;
@@ -1262,7 +1270,7 @@ VOID DisconnectSomeDevices(VOID)
         if (EFI_ERROR(Status)) {
           continue;
         }
-        if (StriStr(DriverName, L"HFS")) {
+        if ((StriStr(DriverName, L"HFS")) || (StriStr(DriverName, L"apfs"))) {
           for (Index2 = 0; Index2 < ControllerHandleCount; Index2++) {
             Status = gBS->DisconnectController(ControllerHandles[Index2],
                                                Handles[Index], NULL);

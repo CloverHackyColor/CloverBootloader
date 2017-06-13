@@ -673,6 +673,8 @@
 		<string>MacBook</string>
 		<key>#FirmwareFeatures</key>
 		<string>0xC0001403</string>
+		<key>#FirmwareFeaturesMask</key>
+		<string>0xFFFFFFFF</string>
 		<key>#LocationInChassis</key>
 		<string>MLB</string>
 		<key>Manufacturer</key>
