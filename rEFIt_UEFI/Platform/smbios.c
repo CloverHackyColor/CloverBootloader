@@ -1765,48 +1765,48 @@ VOID PatchTableType128()
    *
    * FW_REGION_RESERVED   = 0,
    * FW_REGION_RECOVERY   = 1,
-   * FW_REGION_MAIN       = 2, 
+   * FW_REGION_MAIN       = 2,
    * gHob->MemoryAbove1MB.PhysicalStart + ResourceLength or fix as 0x200000 - 0x600000,
    * FW_REGION_NVRAM      = 3,
    * FW_REGION_CONFIG     = 4,
    * FW_REGION_DIAGVAULT  = 5.
    */
-  
+
   // Get the existing 128 table if exists.
   //SmbiosTable = GetSmbiosTableFromType (EntryPoint, 128, 0);
-		
+
   // initialise new table
-		ZeroMem((VOID*)newSmbiosTable.Type128, MAX_TABLE_SIZE);	
-  
+	ZeroMem((VOID*)newSmbiosTable.Type128, MAX_TABLE_SIZE);
+
   // common rules
-		newSmbiosTable.Type128->Hdr.Type = 128;
-		newSmbiosTable.Type128->Hdr.Length = sizeof(SMBIOS_TABLE_TYPE128); 
-    newSmbiosTable.Type128->Hdr.Handle = 0x8000;
-  
+	newSmbiosTable.Type128->Hdr.Type = 128;
+	newSmbiosTable.Type128->Hdr.Length = sizeof(SMBIOS_TABLE_TYPE128);
+  newSmbiosTable.Type128->Hdr.Handle = 0x8000;
+
   // set firmware-features, example: 0x80001417, imac11,2 -> 0x1403.
   newSmbiosTable.Type128->FirmwareFeatures = gFwFeatures;
   // set firmware-features mask
-  newSmbiosTable.Type128->FirmwareFeaturesMask = 0xFFFFFFFF;
-  
+  newSmbiosTable.Type128->FirmwareFeaturesMask = gFwFeaturesMask;
+
   /**
    * TODO: I have an idea that region should be the same as Efivar.bin
    * @author Slice
-		 */
-		newSmbiosTable.Type128->RegionCount = 1; 
-		newSmbiosTable.Type128->RegionType[0] = FW_REGION_MAIN; 
+	 */
+	newSmbiosTable.Type128->RegionCount = 1;
+	newSmbiosTable.Type128->RegionType[0] = FW_REGION_MAIN;
 		//UpAddress = mTotalSystemMemory << 20; //Mb -> b
   //gHob->MemoryAbove1MB.PhysicalStart;
-		newSmbiosTable.Type128->FlashMap[0].StartAddress = 0xFFE00000; //0xF0000;
+	newSmbiosTable.Type128->FlashMap[0].StartAddress = 0xFFE00000; //0xF0000;
   //gHob->MemoryAbove1MB.PhysicalStart + gHob->MemoryAbove1MB.ResourceLength - 1;
-		newSmbiosTable.Type128->FlashMap[0].EndAddress = 0xFFEFFFFF;
+	newSmbiosTable.Type128->FlashMap[0].EndAddress = 0xFFEFFFFF;
   //newSmbiosTable.Type128->RegionType[1] = FW_REGION_NVRAM; //Efivar
   //newSmbiosTable.Type128->FlashMap[1].StartAddress = 0x15000; //0xF0000;
   //newSmbiosTable.Type128->FlashMap[1].EndAddress = 0x1FFFF;
-		//region type=1 also present in mac
-  
+	//region type=1 also present in mac
+
   // log the new, 128, sbmios  table
-		LogSmbiosTable(newSmbiosTable);
-		return ;		
+	LogSmbiosTable(newSmbiosTable);
+	return ;
 }
 
 VOID PatchTableType130()
