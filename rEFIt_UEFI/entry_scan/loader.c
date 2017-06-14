@@ -1130,8 +1130,8 @@ VOID ScanLoader(VOID)
   DbgHeader("ScanLoader");
   /************************************************************************/
   /*Allocate Memory for systemplists and recoveryplists********************/
-  SystemPlists = AllocateZeroPool(VolumesCount*sizeof(CHAR16));
-  RecoveryPlists = AllocateZeroPool(VolumesCount*0x59*sizeof(CHAR16));
+  SystemPlists = AllocateZeroPool((2*VolumesCount+3)*sizeof(CHAR16 *));//array of pointers
+  RecoveryPlists = AllocateZeroPool((VolumesCount+2)*sizeof(CHAR16 *));//array of pointers
   /* Fill it with standard paths*******************************************/
   SystemPlists[0] = L"\\System\\Library\\CoreServices\\SystemVersion.plist";
   SystemPlists[1] = L"\\System\\Library\\CoreServices\\ServerVersion.plist";
